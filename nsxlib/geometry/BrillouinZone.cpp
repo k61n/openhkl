@@ -1,33 +1,3 @@
-/*
- * nsxtool : Neutron Single Crystal analysis toolkit
-    ------------------------------------------------------------------------------------------
-    Copyright (C)
-    2017- Laurent C. Chapon, Eric C. Pellegrini Institut Laue-Langevin
-          Jonathan Fisher, Forschungszentrum Juelich GmbH
-    BP 156
-    6, rue Jules Horowitz
-    38042 Grenoble Cedex 9
-    France
-    chapon[at]ill.fr
-    pellegrini[at]ill.fr
-    j.fisher[at]fz-juelich.de
-
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
-
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *
- */
-
 #include "BrillouinZone.h"
 #include "../crystal/NiggliReduction.h"
 
@@ -148,8 +118,13 @@ void BrillouinZone::compute()
     _vertices.clear();
     assert(_r2 > 0.0);
 
+    // Compute the lowerbound for the norm of the B matrix which can defined as the minimum stretch induced by B on any Q vector
+    // see for more explanation:
+    //  - http://web.stanford.edu/class/archive/ee/ee263/ee263.1082/lectures/symm.pdf
+    //  - https://math.stackexchange.com/questions/290267/need-help-understanding-matrix-norm-notation
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(_B*_B.transpose());
     const double lambda = solver.eigenvalues().minCoeff();
+    // Scale the maximum sphere radius defined on q vectors with the lowerbound to have a bound defined in hkl space
     const double bound2 = 4.0 * _r2 / lambda + _eps;
     const double bound = std::sqrt(bound2);
 
@@ -157,8 +132,10 @@ void BrillouinZone::compute()
         for (int k = -bound-1; k <= bound; ++k) {
             for (int l = -bound-1; l <= bound; ++l) {
 
+                // Compute the "squared-norm" of hkl integer vector
                 auto hkl2 = h*h + k*k + l*l;
 
+                // hkl < 1 => reject the hkl null-vector
                 if (hkl2 < 1 || hkl2 > bound2) {
                     continue;
                 }
