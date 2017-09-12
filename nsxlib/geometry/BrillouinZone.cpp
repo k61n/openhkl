@@ -35,17 +35,23 @@
 #include <utility>
 #include <iostream>
 
-
-void remove_duplicates(std::vector<Eigen::RowVector3d>& vect, bool reflect, double eps)
+/**
+ * @brief Update a list of Q-vectors by removing the duplicates.
+ *  Two Q-Vectors are defined as duplicates if the norm of their difference is under a given tolerance.
+ *  @param q_vectors the set of q_vectors from which duplicates will be removed
+ *  @param reflect if true the opposite of each vectors are also checked for duplication
+ *  @param eps the tolerance under which two vectors are defined as duplicate
+**/
+void remove_duplicates(std::vector<Eigen::RowVector3d>& q_vectors, bool reflect, double eps)
 {
     const double eps2 = eps*eps;
-    const int n = vect.size();
-    std::vector<Eigen::RowVector3d> new_vect;
+    const int n = q_vectors.size();
+    std::vector<Eigen::RowVector3d> unique_q_vectors;
 
-    for (const auto v: vect) {
+    for (const auto v: q_vectors) {
         bool duplicate = false;
 
-        for (const auto w: new_vect) {
+        for (const auto w: unique_q_vectors) {
             if ((v-w).squaredNorm() < eps2 || (reflect && (v+w).squaredNorm() < eps2)) {
                 duplicate = true;
                 break;
@@ -53,10 +59,10 @@ void remove_duplicates(std::vector<Eigen::RowVector3d>& vect, bool reflect, doub
         }
 
         if (!duplicate) {
-            new_vect.emplace_back(v);
+            unique_q_vectors.emplace_back(v);
         }
     }
-    std::swap(vect, new_vect);
+    std::swap(q_vectors, unique_q_vectors);
 }
 
 namespace nsx {
@@ -83,12 +89,12 @@ BrillouinZone::BrillouinZone(const Eigen::Matrix3d& B, double eps):
 
 bool BrillouinZone::inside(const Eigen::RowVector3d& q) const 
 {
-    // outside of the bounding sphere
+    // first-pass check: the point is outside of the bounding sphere
     if (q.squaredNorm() > (1+_eps)*_r2) {
         return false;
     }
 
-    // check that it is in the convex hull
+    // second-pass check: the point is inside the convex hull
     for (auto&& q1: _qs) {
         if (std::fabs(q1.dot(q) / q1.dot(q1)) > 0.5+_eps) {
             return false;
@@ -103,7 +109,6 @@ void BrillouinZone::clean_qs()
     remove_duplicates(_qs, true, _eps);
     // remove external vertices
     std::remove_if(_qs.begin(), _qs.end(), [&](const Eigen::RowVector3d& v) { return !inside(0.5*v);});
-
 
     std::vector<Eigen::RowVector3d> new_qs;
     const auto n = _qs.size();
@@ -132,13 +137,13 @@ void BrillouinZone::compute()
 {
     _qs.clear();    
 
-    // start with initial parallelpiped; compute bounding sphere
+    // start with initial parallelepiped; compute bounding sphere
     for (int i = 0; i < 3; ++i) {
         auto q = _B.row(i);
         _qs.emplace_back(q);  
     }
 
-    // get vertices of parallelpiped
+    // get vertices of parallelepiped
     compute_vertices();   
     _vertices.clear();
     assert(_r2 > 0.0);
@@ -184,17 +189,27 @@ void BrillouinZone::compute_vertices()
     Eigen::Matrix3d A;
     Eigen::Vector3d b;
 
+    // Loop over each q-triplet and define the intersection of the corresponding Bragg plane
+    // The problem is stated like so.
+    // Each q is the normal of a plane (see https://en.wikipedia.org/wiki/File:Brillouin_zone.svg)
+    // and by definition of BZ passes through q/2.
+    // Hence the equation of the plane is q.(x-q/2) = 0 ==> q.x = 0.5*q^2
     for (auto i = 0; i < n; ++i) {
         A.row(0) = normals[i];
-        b(0) = -0.5*A.row(0).squaredNorm();
+        b(0) = 0.5*A.row(0).squaredNorm();
         for (auto j = i+1; j < n; ++j) {
             A.row(1) = normals[j];
-            b(1) = -0.5*A.row(1).squaredNorm();
+            b(1) = 0.5*A.row(1).squaredNorm();
             for (auto k = j+1; k < n; ++k) {            
                 A.row(2) = normals[k];
-                b(2) = -0.5*A.row(2).squaredNorm();
+                b(2) = 0.5*A.row(2).squaredNorm();
 
-                // check if the 3 planes intersect
+                // Check if the 3 planes intersect
+                // We have to solve the following system of equations:
+                // q1.x = 0.5*q1^2
+                // q2.x = 0.5*q2^2
+                // q3.x = 0.5*q3^2
+                // ==> A.X = B where A = [q1 q2 q3] (in row) and B = 0.5*[q1^2 q2^2 a3^2]
                 auto QR = A.colPivHouseholderQr();
 
                 // rank != 3 => planes either do not intersect, or do not intersect at a unique point
@@ -202,9 +217,10 @@ void BrillouinZone::compute_vertices()
                     continue;
                 }
                 
-                // get the point of intersection, check if it is inside the Brillouin Zone
+                // get the point of intersection
                 auto x = QR.solve(b);
 
+                // check if it is inside the Brillouin Zone
                 if (!inside((1.0-_eps)*x.transpose())) {
                     continue;                    
                 }
@@ -214,7 +230,7 @@ void BrillouinZone::compute_vertices()
     }
     remove_duplicates(_vertices, false, _eps);
 
-    // now compute radii
+    // now compute the radii
     _r2 = 0.0;
 
     for (auto v: _vertices) {

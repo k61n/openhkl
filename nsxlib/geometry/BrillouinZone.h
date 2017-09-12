@@ -46,24 +46,6 @@ namespace nsx {
 //! as normals to the faces of the zone. Then, it is a straightforward geometry problem to determine the 
 //! bounding vertices by taking 3-fold intersections of the bounding planes.
 class BrillouinZone {
-    //! List of lattice vectors defining the Bragg planes of the Brillouin zone
-    std::vector<Eigen::RowVector3d> _qs;  
-    //! Parameter to control numerical stability
-    double _eps;
-    //! The basis matrix (row vectors)
-    Eigen::Matrix3d _B;
-    //! List of vertices generating the Brillouin zone as a convex hull
-    std::vector<Eigen::RowVector3d> _vertices;
-    //! squared radius of the smallest sphere containing the zone
-    double _r2;
-
-    //! Calculate bounding planes of the Brillouin zone
-    void compute();
-    //! Remove extraneous bounding planes
-    void clean_qs();
-    //! Compute the bounding vertices
-    void compute_vertices();
-
 
 public:
     //! Create a Brillouin zone out of the given (row) basis matrix B.
@@ -82,6 +64,25 @@ public:
     //! Return radius of smallest sphere containing the zone.
     double outerRadius() const;
 
+private:
+
+    //! List of lattice vectors defining the Bragg planes of the Brillouin zone
+    std::vector<Eigen::RowVector3d> _qs;
+    //! Parameter to control numerical stability
+    double _eps;
+    //! The basis matrix (row vectors)
+    Eigen::Matrix3d _B;
+    //! List of vertices generating the Brillouin zone as a convex hull
+    std::vector<Eigen::RowVector3d> _vertices;
+    //! squared radius of the smallest sphere containing the zone
+    double _r2;
+
+    //! Calculate bounding planes of the Brillouin zone
+    void compute();
+    //! Remove extraneous bounding planes
+    void clean_qs();
+    //! Compute the bounding vertices
+    void compute_vertices();
 
 };
 
