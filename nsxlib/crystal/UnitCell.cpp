@@ -390,11 +390,11 @@ UnitCell UnitCell::applyNiggliConstraints() const
     Eigen::FullPivLU<Eigen::MatrixXd> lu(C);
     Eigen::MatrixXd kernel = lu.kernel();
 
-    Eigen::Vector3d x(nparams);
+    Eigen::VectorXd x(nparams);
 
     // get rotation matrix from three parameters via quaternion
-    auto rotation = [&]() -> Eigen::Matrix3d {
-        const double d = 1.0 / std::sqrt(1 + x.squaredNorm());
+    auto rotation = [&x]() -> Eigen::Matrix3d {
+        const double d = 1.0 / std::sqrt(1 + x(0)*x(0)+x(1)*x(1)+x(2)*x(2));
         // quaternion representing rotation
         Eigen::Quaterniond q(d, d*x(0), d*x(1), d*x(2));
         // rotation matrix
@@ -405,12 +405,12 @@ UnitCell UnitCell::applyNiggliConstraints() const
     Eigen::Matrix3d U0 = UnitCell(niggliBasis()).orientation();
 
     // helper routine to create a unit cell satisfying Niggli constraints
-    auto new_uc = [&]() {
+    auto new_uc = [&x, this, kernel, &rotation, U0]() {
         // lattice character
         Eigen::VectorXd ch(6);
         ch.setZero();        
         // parameters defining lattice chatacer
-        for (auto i = 3; i < nparams; ++i) {
+        for (auto i = 3; i < x.size(); ++i) {
             ch += x(i)*kernel.col(i-3);
         }
         // get new unit cell
@@ -426,7 +426,7 @@ UnitCell UnitCell::applyNiggliConstraints() const
 
     // residuals used for least-squares fitting
     // these are just the differences A-A0 and B-B0 as described above
-    auto functor = [&](Eigen::VectorXd& residuals) -> int {
+    auto functor = [&x, this, a, b, &new_uc](Eigen::VectorXd& residuals) -> int {
         UnitCell uc = new_uc();
         Eigen::Matrix3d A = uc.basis();
         Eigen::Matrix3d B = uc.reciprocalBasis();
@@ -458,6 +458,10 @@ UnitCell UnitCell::applyNiggliConstraints() const
         params.addParameter(&x(i));
     }
 
+
+    // debugging
+    std::cout << "initial x " << x.transpose() << std::endl;
+
     min.initialize(params, 9+9);
     min.set_f(functor);
 
@@ -468,6 +472,9 @@ UnitCell UnitCell::applyNiggliConstraints() const
     if (!min.fit(100)) {
         throw std::runtime_error("ERROR: failed to apply Niggli constraints!");
     }
+    std::cout << "fit x " << x.transpose() << std::endl;
+    std::cout << "num iter " << min.numIterations() << std::endl;
+    
     return new_uc();
 }
 

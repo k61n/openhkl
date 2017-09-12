@@ -427,6 +427,35 @@ FitParameters UBSolution::fitParameters()
 {
     FitParameters params;
     // todo!!!
+
+
+    params.addParameter(&_uOffsets(0));
+    params.addParameter(&_uOffsets(1));
+    params.addParameter(&_uOffsets(2));
+
+    params.addParameter(&_character(0));
+    params.addParameter(&_character(1));
+    params.addParameter(&_character(2));
+    params.addParameter(&_character(3));
+    params.addParameter(&_character(4));
+    params.addParameter(&_character(5));
+
+    if (_refineSource) {
+        params.addParameter(&_sourceOffset);
+    }
+
+    for (auto i = 0; i < _nSampleAxes; ++i) {
+        if (_refineSample[i]) {
+            params.addParameter(&_sampleOffsets[i]);
+        }
+    }
+
+    for (auto i = 0; i < _nDetectorAxes; ++i) {
+        if (_refineDetector[i]) {
+            params.addParameter(&_detectorOffsets[i]);
+        }
+    }
+
     return params;
 }
 

@@ -54,6 +54,11 @@ int run_test()
     params.addParameter(&x(1));
     params.addParameter(&x(2));
 
+    nsx::Minimizer min;
+    min.initialize(params, 40);
+    min.set_f(residual_fn);
+    BOOST_CHECK(min.fit(100));
+
     BOOST_CHECK_CLOSE(x(0), 5.0, 1e-6);
     BOOST_CHECK_CLOSE(x(1), 0.1, 1e-6);
     BOOST_CHECK_CLOSE(x(2), 1.0, 1e-6);

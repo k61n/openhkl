@@ -88,18 +88,9 @@ public:
     //! Compute the residuals given an input vector
     int residuals(Eigen::VectorXd& r);
 
-    void refineSource(bool refine);
-    void refineSample(unsigned int idx, bool refine);
-    void refineDetector(unsigned int idx, bool refine);
-
 private:
     UBSolution _solution;
-
     std::vector<std::pair<Peak3D,Eigen::RowVector3d>> _peaks;
-    //sptrDetector _detector;
-    //sptrSample _sample;
-    //sptrSource _source;
-    //std::vector<bool> _fixedParameters;
 
 };
 
