@@ -125,6 +125,8 @@ void BrillouinZone::compute()
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(_B*_B.transpose());
     const double lambda = solver.eigenvalues().minCoeff();
     // Scale the maximum sphere radius defined on q vectors with the lowerbound to have a bound defined in hkl space
+    // The 4.0 factor comes from the fact that this bound will be used to look for q vectors for which
+    // q/2 is another plane that build the Brillouin zone.
     const double bound2 = 4.0 * _r2 / lambda + _eps;
     const double bound = std::sqrt(bound2);
 
