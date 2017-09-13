@@ -15,6 +15,7 @@ class BasicFrameIterator;
 class DataSet;
 class IDataReader;
 class IFrameIterator;
+class IFrameInterval;
 class MetaData;
 class PeakFinder;
 class ThreadedFrameIterator;
