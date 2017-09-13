@@ -1,11 +1,4 @@
-/*
- * AggregateFrameInterval.cpp
- *
- *  Created on: Sep 13, 2017
- *      Author: pellegrini
- */
-
-#include <nsxlib/data/AggregateFrameInterval.h>
+#include "AggregateFrameInterval.h"
 
 namespace nsx {
 
