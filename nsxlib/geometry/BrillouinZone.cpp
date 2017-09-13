@@ -122,16 +122,21 @@ void BrillouinZone::compute()
     // see for more explanation:
     //  - http://web.stanford.edu/class/archive/ee/ee263/ee263.1082/lectures/symm.pdf
     //  - https://math.stackexchange.com/questions/290267/need-help-understanding-matrix-norm-notation
+    // By definition, lmin*||x|| < || [hkl]*B || < lmax*||x|| where lmin and lmax are resp. the minimum and
+    // and maximum eigen vales of B.B^t
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(_B*_B.transpose());
     const double lambda = solver.eigenvalues().minCoeff();
-    // Scale the maximum sphere radius defined on q vectors with the lowerbound to have a bound defined in hkl space
-    // The 4.0 factor comes from the fact that this bound will be used to look for q vectors for which
-    // q/2 is another plane that build the Brillouin zone.
+    // we have lmin*||x|| < ||[hkl]*B|| = ||Q|| < Qmax ==> ||x|| < Qmax/lmin
+    // Qmax/lmin is therefore the bound for searching for ew vertices of the BZ
+    // Qmax = 2*r2 ==> ||x|| << 4.0*Qmax/lmin
     const double bound2 = 4.0 * _r2 / lambda + _eps;
     const double bound = std::sqrt(bound2);
 
+    // No need to store the lower side of Q space
     for (int h = 0; h <= bound; ++h) {
+
         for (int k = -bound-1; k <= bound; ++k) {
+
             for (int l = -bound-1; l <= bound; ++l) {
 
                 // Compute the "squared-norm" of hkl integer vector
