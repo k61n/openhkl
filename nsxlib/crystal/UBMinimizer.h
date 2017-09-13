@@ -26,8 +26,7 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXLIB_UBMINIMIZER_H
-#define NSXLIB_UBMINIMIZER_H
+#pragma once
 
 #include <map>
 #include <ostream>
@@ -49,51 +48,34 @@ class UBSolution;
 //! Class for UB and offset refinement
 class UBMinimizer {
 public:
-    //! Default constructor
-    UBMinimizer();
-
-    //! Destructor
-    ~UBMinimizer();
-
-    /*
-     * @brief Add a peak (e.g. an observation) to the minimizer
-     * @param peak the peak to be added
-     */
+    //! Construct minimizer with a given set of initial values.
+    UBMinimizer(const UBSolution& initialState);
+    //! Add a peak to be used in the residual calculation.
     void addPeak(const Peak3D& peak, const Eigen::RowVector3d& hkl);
 
-    void clearPeaks();
-
-
-
-
-
-    /*
-     * @brief Run the minimization using GSL implementation
-     * @return the status of the minimization (1 if everything OK)
-     */
-    int run(const UBSolution& initialState, unsigned int maxIter);
-    /*
-     * @brief Returns the solution of the last minization
-     * @return the solution
-     */
+    //! Run the fit with the maximum specified number of iterations.
+    int run(unsigned int maxIter);
+    //! Returns the current value of the solution (even if the fit did not converge).
     const UBSolution& solution() const;
 
-
-    /*
-     * @brief Returns the number of values of the functor (e.g. the number of observations)
-     * @return the number of inputs
-     */
-    int values() const;
-
-    //! Compute the residuals given an input vector
-    int residuals(Eigen::VectorXd& r);
+    void refineSource(bool refine);
+    void refineSample(unsigned int id, bool refine);
+    void refineDetector(unsigned int id, bool refine);
 
 private:
+    //! Compute the residuals given an input vector
+    int residuals(Eigen::VectorXd& r);
+    //! Return the set of fit parameters constructed from the UBSolution
+    FitParameters fitParameters();
+
     UBSolution _solution;
     std::vector<std::pair<Peak3D,Eigen::RowVector3d>> _peaks;
-
+    bool _refineSource;
+    double _sigmaSource;
+    std::vector<bool> _refineSample;
+    std::vector<bool> _refineDetector;
+    Eigen::VectorXd _sigmaDetector;
+    Eigen::VectorXd _sigmaSample;
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_UBMINIMIZER_H

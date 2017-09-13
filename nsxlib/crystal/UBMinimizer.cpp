@@ -21,6 +21,15 @@
 
 namespace nsx {
 
+UBMinimizer::UBMinimizer(const UBSolution& initialState): 
+    _solution(initialState),
+    _refineSource(false),
+    _refineSample(initialState._sampleOffset.size(), false),
+    _refineDetector(initialState._detectorOffset.size(), false)
+{
+
+}
+
 int UBMinimizer::residuals(Eigen::VectorXd &fvec)
 {
     const unsigned int npeaks = _peaks.size();
@@ -47,34 +56,16 @@ int UBMinimizer::residuals(Eigen::VectorXd &fvec)
     return 0;
 }
 
-int UBMinimizer::values() const
-{
-    return 3*_peaks.size();
-}
 
-UBMinimizer::UBMinimizer() : _solution()
-{
-}
-
-UBMinimizer::~UBMinimizer()
-{
-}
 
 void UBMinimizer::addPeak(const Peak3D& peak, const Eigen::RowVector3d& hkl)
 {
     _peaks.push_back(std::make_pair(peak, hkl));
 }
 
-void UBMinimizer::clearPeaks()
-{    
-    _peaks.clear();
-}
-
-
-int UBMinimizer::run(const UBSolution& initialState, unsigned int maxIter)
+int UBMinimizer::run(unsigned int maxIter)
 {
-    _solution = initialState;
-    FitParameters params = _solution.fitParameters();
+    FitParameters params = fitParameters();
     
     auto functor = [this] (Eigen::VectorXd& r) -> int
     {
@@ -83,7 +74,7 @@ int UBMinimizer::run(const UBSolution& initialState, unsigned int maxIter)
 
     Minimizer minimizer;
 
-    minimizer.initialize(params, values());
+    minimizer.initialize(params, 3*_peaks.size());
     minimizer.set_f(functor);
 
     minimizer.setxTol(1e-10);
@@ -139,6 +130,56 @@ int UBMinimizer::run(const UBSolution& initialState, unsigned int maxIter)
 const UBSolution& UBMinimizer::solution() const
 {
     return _solution;
+}
+
+
+void UBMinimizer::refineSource(bool refine)
+{
+    _refineSource = refine;
+}
+
+void UBMinimizer::refineSample(unsigned int id, bool refine)
+{
+    _refineSample[id] = refine;
+}
+
+void UBMinimizer::refineDetector(unsigned int id, bool refine)
+{
+    _refineDetector[id] = refine;
+}
+
+FitParameters UBMinimizer::fitParameters() 
+{
+    FitParameters params;
+
+    params.addParameter(&_solution._uOffsets(0));
+    params.addParameter(&_solution._uOffsets(1));
+    params.addParameter(&_solution._uOffsets(2));
+
+    params.addParameter(&_solution._character(0));
+    params.addParameter(&_solution._character(1));
+    params.addParameter(&_solution._character(2));
+    params.addParameter(&_solution._character(3));
+    params.addParameter(&_solution._character(4));
+    params.addParameter(&_solution._character(5));
+
+    if (_refineSource) {
+        params.addParameter(&_solution._sourceOffset);
+    }
+
+    for (auto i = 0; i < _solution._sampleOffset.size(); ++i) {
+        if (_refineSample[i]) {
+            params.addParameter(&_solution._sampleOffset[i]);
+        }
+    }
+
+    for (auto i = 0; i < _solution._detectorOffset.size(); ++i) {
+        if (_refineDetector[i]) {
+            params.addParameter(&_solution._detectorOffset[i]);
+        }
+    }
+
+    return params;
 }
 
 } // end namespace nsx

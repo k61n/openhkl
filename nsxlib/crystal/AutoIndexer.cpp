@@ -142,22 +142,10 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
 
     //#pragma omp parallel for
     for (int idx = 0; idx < newSolutions.size(); ++idx) {
-
-        UBMinimizer minimizer;
-
-        UBSolution ub_state;
-        ub_state.setSample(sample);
-        ub_state.setDetector(detector);
-        ub_state.setSource(source);
-
         auto cell = newSolutions[idx].first;
         cell->setHKLTolerance(_params.HKLTolerance);
-
-        // Only the UB matrix parameters are used for fit
-        //for (int i = 0; i < ub_state.inputs(); ++i) {
-        //    const bool refine = (i < 9);
-        //    ub_state.refineParameter(i, refine);
-        //}
+        UBSolution ub_state(source, sample, detector, cell);
+        UBMinimizer minimizer(ub_state);
 
         int success = 0;
         for (auto peak : _peaks) {
@@ -173,19 +161,14 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
         if (success < 10) {
             continue;
         }
-
-        //ub_state._ub = cell->getReciprocalStandardM();
-        ub_state.setCell(cell);
-        ub_state.resetParameters();
-        ub_state.unzip(ub_state.zip());
        
-        int ret = minimizer.run(ub_state, 100);
+        int ret = minimizer.run(100);
         if (ret == 1) {
             UBSolution sln = minimizer.solution();
             try {
                 Eigen::Matrix3d ub = sln.ub();
                 cell = sptrUnitCell(new UnitCell(ub, true));
-                cell->setReciprocalCovariance(sln.covub());
+                //cell->setReciprocalCovariance(sln.covub());
 
             } catch(std::exception& e) {
                 if (_handler) {
