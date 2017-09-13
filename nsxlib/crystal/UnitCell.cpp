@@ -70,33 +70,6 @@ UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, doub
     setParams(a,b,c,alpha,beta,gamma);
 }
 
-UnitCell::UnitCell(const UnitCell& other)
-: UnitCell()
-{
-    *this = other;
-}
-
-UnitCell& UnitCell::operator=(const UnitCell& other)
-{
-    if (this == &other) {
-        return *this;
-    }
-    _A = other._A;
-    _B = other._B;
-    _Acov = other._Acov;
-    _Bcov = other._Bcov;
-    _material = other._material;
-    _centring = other._centring;
-    _bravaisType = other._bravaisType;
-    _Z = other._Z;
-    _group=other._group;
-    _name = other._name;
-    _hklTolerance = other._hklTolerance;
-    _niggli = other._niggli;
-    _NP = other._NP;
-    return *this;
-}
-
 void UnitCell::setParams(double a, double b, double c, double alpha, double beta, double gamma)
 {
     const double cos_alpha = std::cos(alpha);
@@ -152,10 +125,6 @@ void UnitCell::setABCDEF(double A, double B, double C, double D, double E, doubl
     gamma = std::acos(F / a / b);
 
     setParams(a, b, c, alpha, beta, gamma);
-}
-
-UnitCell::~UnitCell()
-{
 }
 
 void UnitCell::setLatticeCentring(LatticeCentring centring)
@@ -823,6 +792,75 @@ Eigen::Matrix3d UnitCell::orientation() const
         }
     }
     return Q;
+}
+
+Eigen::VectorXd UnitCell::parameters() const
+{
+    // note that we use NP to transform to the Niggli cell (in case we are currently a Gruber cell)
+    Eigen::Matrix3d B0 = _NP*_B;
+    Eigen::Matrix3d A0 = _A*_NP.inverse();
+    Eigen::Matrix3d G = A0.transpose()*A0;
+    Eigen::VectorXd ch(6);
+    ch << G(0,0), G(1,1), G(2,2), G(1,2), G(0,2), G(0,1);
+
+    // no constraints to be applied:
+    if (_niggli.number == 31 || _niggli.number == 44) {
+        return ch;
+    }
+    
+    // matrix of Niggli character constraints, taken from the table 9.2.5.1
+    Eigen::MatrixXd C = _niggli.C;
+    // number of constraints on the 6 lattice parameters
+    const int nconstraints = C.rows();
+    // free parameters in character + euler angles
+    const int nparams = (6-nconstraints); 
+
+    // used for the space of constraints
+    Eigen::FullPivLU<Eigen::MatrixXd> lu(C);
+    Eigen::MatrixXd kernel = lu.kernel();
+    
+    // get starting values: these are just the lattice character (components of metric tensor)
+    return (kernel.transpose()*kernel).inverse()*kernel.transpose()*ch;
+}
+
+UnitCell UnitCell::fromParameters(const Eigen::Matrix3d& U0, const Eigen::Vector3d& uOffset, const Eigen::VectorXd& parameters) const
+{
+    // get new orientation from offsets
+    Eigen::Quaterniond q(1.0, uOffset(0), uOffset(1), uOffset(2));
+    q.normalize();
+
+    Eigen::Matrix3d U = q.toRotationMatrix()*U0;
+
+    Eigen::MatrixXd kernel;
+
+    // no constraints f
+    if (_niggli.number == 31 || _niggli.number == 44) {
+        kernel.setIdentity(6, 6);
+    } else {
+        // matrix of Niggli character constraints, taken from the table 9.2.5.1
+        Eigen::MatrixXd C = _niggli.C;
+        // compute kernel of Niggli constraints
+        Eigen::FullPivLU<Eigen::MatrixXd> lu(_niggli.C);
+        kernel = lu.kernel();
+    }
+
+    const int nparams = kernel.cols();
+    assert(nparams == parameters.size());
+
+    // lattice character
+    Eigen::VectorXd ch(6);
+    ch.setZero();        
+    // parameters defining lattice chatacer
+    for (auto i = 0; i < nparams; ++i) {
+        ch += parameters(i)*kernel.col(i);
+    }
+
+    // create new unit cell
+    UnitCell uc(*this);
+    uc.setABCDEF(ch(0), ch(1), ch(2), ch(3), ch(4), ch(5));
+    uc.setBasis(U*uc._A*_NP);
+
+    return uc;
 }
 
 } // end namespace nsx

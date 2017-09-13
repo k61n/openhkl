@@ -95,20 +95,16 @@ namespace nsx {
 class UnitCell 
 {
 public:
-
     //! Empty UnitCell, initialiazed to right-handed orthonormal system
     UnitCell();
     //! Create unit cell from a basis
     UnitCell(const Eigen::Matrix3d& basis_, bool reciprocal=false);
     //! Construct unitCell from lattice parameters, the A matrix is built with avector along x, bvector in the xy-plane.
     UnitCell(double a, double b, double c, double alpha, double beta, double gamma);
-    
-    //! Copy constructor
-    UnitCell(const UnitCell&);
-    //! Assignment
-    UnitCell& operator=(const UnitCell& other);
-    ~UnitCell();
 
+    //! Copy constructor
+    UnitCell(const UnitCell& other) = default;
+  
     //! Set lattice parameters
     void setParams(double a, double b, double c, double alpha, double beta, double gamma);
 
@@ -244,6 +240,11 @@ public:
     //! Return the orientation matrix Q such that _A = Q*R where R is 
     //! upper triangular with positive entries on the diagonal
     Eigen::Matrix3d orientation() const;
+
+    //! \brief Return parameters of the unit cell in an internal format.
+    Eigen::VectorXd parameters() const;
+    //! \brief Construct a new unit cell from a reference orientation, an orientation offset, and a set of parameters.
+    UnitCell fromParameters(const Eigen::Matrix3d& U0, const Eigen::Vector3d& uOffset, const Eigen::VectorXd& parameters) const;
 
     #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW

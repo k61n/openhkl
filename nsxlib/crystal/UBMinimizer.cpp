@@ -152,16 +152,13 @@ FitParameters UBMinimizer::fitParameters()
 {
     FitParameters params;
 
-    params.addParameter(&_solution._uOffsets(0));
-    params.addParameter(&_solution._uOffsets(1));
-    params.addParameter(&_solution._uOffsets(2));
+    for (int i = 0; i < 3; ++i) {
+        params.addParameter(&_solution._uOffsets(i));
+    }
 
-    params.addParameter(&_solution._character(0));
-    params.addParameter(&_solution._character(1));
-    params.addParameter(&_solution._character(2));
-    params.addParameter(&_solution._character(3));
-    params.addParameter(&_solution._character(4));
-    params.addParameter(&_solution._character(5));
+    for (int i = 0; i < _solution._cellParameters.size(); ++i) {
+        params.addParameter(&_solution._cellParameters(i));
+    }
 
     if (_refineSource) {
         params.addParameter(&_solution._sourceOffset);

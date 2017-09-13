@@ -27,6 +27,9 @@ UBSolution::UBSolution(sptrSource source, sptrSample sample, sptrDetector detect
     _detector(detector),
     _cell(cell)
 {
+    // cell must be non-null. The other arguments may be null.
+    assert(_cell != nullptr);
+
     _nSampleAxes = _sample && _sample->hasGonio() ? _sample->getGonio()->getNAxes() : 0;         
     _sampleOffset.resize(_nSampleAxes);
     _sigmaSample.resize(_nSampleAxes);
@@ -48,18 +51,12 @@ UBSolution::UBSolution(sptrSource source, sptrSample sample, sptrDetector detect
     _sourceOffset = _source ? _source->getSelectedMonochromator().getOffset() : 0.0;
     _sigmaSource = 0.0;
 
-    if (_cell) {
-        _NP = cell->niggliTransformation();
-        _uOffsets.setZero();
-        _u0 = cell->busingLevyU();
-    
-        Eigen::Matrix3d A = cell->basis()*_NP.inverse();
-        Eigen::Matrix3d G = A.transpose()*A;
-    
-        _initialCharacter.resize(6);
-        _initialCharacter << G(0,0), G(1,1), G(2,2), G(1,2), G(0,2), G(0,1);
-        _character = _initialCharacter;
-    }
+    _NP = cell->niggliTransformation();
+    _uOffsets.setZero();
+    UnitCell constrained = cell->applyNiggliConstraints();
+    _u0 = constrained.busingLevyU();
+    _initialParameters = constrained.parameters();
+    _cellParameters = _initialParameters;   
 }
 
 std::ostream& operator<<(std::ostream& os, const UBSolution& solution)
@@ -128,44 +125,8 @@ void UBSolution::apply()
 
 Eigen::Matrix3d UBSolution::ub() const
 {
-    UnitCell uc;
-    uc.setABCDEF(_character(0), _character(1), _character(2), _character(3), _character(4), _character(5));
-    const double d = 1.0 / std::sqrt(1.0 + _uOffsets.squaredNorm());
-    Eigen::Matrix3d du = Eigen::Quaterniond(d, d*_uOffsets(0), d*_uOffsets(1), d*_uOffsets(2)).toRotationMatrix();
-    Eigen::Matrix3d A = du*_u0*uc.basis();
-    return A.inverse();
-}
-
-void UBSolution::setNiggliConstraint(bool constrain, double weight)
-{
-    _niggliConstraint = constrain;
-    _niggliWeight = weight;
-}
-
-int UBSolution::numNiggliConstraints() const
-{
-    if (!_niggliConstraint || !_cell) {
-        return 0;
-    }
-    return _cell->niggliCharacter().C.rows();
-}
-
-Eigen::VectorXd UBSolution::niggliConstraints() const
-{
-    if (numNiggliConstraints() <= 0) {
-        return {};
-    }
-    const Eigen::Matrix3d NA = ub().inverse();
-    const Eigen::Matrix3d G = NA.transpose()*NA;
-    const Eigen::MatrixXd C = _cell->niggliCharacter().C;
-    Eigen::VectorXd x(6);
-    x << G(0,0), G(1,1), G(2,2), G(1,2), G(0,2), G(0,1);
-    return C * x;
-}
-
-double UBSolution::niggliWeight() const
-{
-    return _niggliWeight;
+    UnitCell uc = _cell->fromParameters(_u0, _uOffsets, _cellParameters);
+    return uc.reciprocalBasis();
 }
 
 } // end namespace nsx
