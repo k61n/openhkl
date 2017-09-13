@@ -3,6 +3,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <Eigen/Dense>
+
 #include <nsxlib/geometry/ReciprocalVector.h>
 
 int run_test() {
