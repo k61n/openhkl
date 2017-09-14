@@ -97,7 +97,7 @@ if (NSX_SANITIZE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=${NSX_SANITIZER} -fsanitize-recover=all")
 endif()
 
-message("Finished configuring comspiler")
+message("Finished configuring compiler")
 message(STATUS "The c++ compiler is ${CMAKE_CXX_COMPILER_ID}")
 message(STATUS "The build type is ${CMAKE_BUILD_TYPE}")
 

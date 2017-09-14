@@ -24,31 +24,21 @@ public:
                                   nsx::PeakList peaks,
                                   QWidget *parent = 0);
     ~DialogRefineUnitCell();
-    void setLatticeParams();
-    void setSampleOffsets();
-    void setDetectorOffsets();
-    void setWavelength();
-    void setMinimizer();
-    void setSolution(const nsx::UBSolution& solution);
 
-signals:
-    void cellUpdated(nsx::sptrUnitCell);
-
-private slots:
-    
-    void cellSampleHasChanged(int i, int j);
-    void cellDetectorHasChanged(int i, int j);
+private slots:    
     void refineParameters();
-    void createOffsetsTables();
     void resetParameters();
 
 private:
+    void createOffsetsTables();
+    void updateParameters();
+    nsx::UBSolution getCurrentValues() const;
+
+    nsx::UBSolution _initialValues;
     Ui::DialogRefineUnitCell *ui;
     nsx::sptrExperiment _experiment;
     nsx::sptrUnitCell _unitCell;
     nsx::PeakList _peaks;
-    nsx::UBMinimizer _minimizer;
-    nsx::UBSolution _solution;
 };
 
 #endif // NSXQT_DIALOGREFINEUNITCELL_H
