@@ -307,4 +307,17 @@ int Minimizer::numIterations()
     return _numIter;
 }
 
+double Minimizer::meanSquaredError() const
+{
+    const gsl_vector* residual = _gsl->workspace->f;
+    const int size = residual->size;
+    double mse = 0.0;
+
+    for (int i = 0; i < size; ++i) {
+        const double ri = gsl_vector_get(residual, i);
+        mse += ri*ri;
+    }
+    return mse / (size - _params.size());
+}
+
 } // end namespace nsx

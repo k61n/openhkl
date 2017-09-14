@@ -32,7 +32,8 @@ DialogRefineUnitCell::DialogRefineUnitCell(nsx::sptrExperiment experiment,
     _experiment(std::move(experiment)),
     _unitCell(std::move(unitCell)),
     _peaks(std::move(peaks)),
-    _initialValues(nullptr, nullptr, nullptr, unitCell)
+    _initialValues(nullptr, nullptr, nullptr, unitCell),
+    _currentValues(nullptr, nullptr, nullptr, unitCell)
 {
     ui->setupUi(this);
 
@@ -45,9 +46,15 @@ DialogRefineUnitCell::DialogRefineUnitCell(nsx::sptrExperiment experiment,
 
     ui->tableWidget_Sample->setEditTriggers(QAbstractItemView::AllEditTriggers);
     ui->tableWidget_Detector->setEditTriggers(QAbstractItemView::AllEditTriggers);
+    
+    auto diffractometer = _experiment->getDiffractometer();
+    auto detector = diffractometer->getDetector();
+    auto sample = diffractometer->getSample();
+    auto source = diffractometer->getSource();
 
     // get starting values of UB and offsets
-    _initialValues = getCurrentValues();
+    _initialValues = nsx::UBSolution(source, sample, detector, _unitCell);
+    _currentValues = _initialValues;
 
     // Fill up the sample and detector offsets tables
     createOffsetTables();
@@ -67,15 +74,6 @@ DialogRefineUnitCell::~DialogRefineUnitCell()
     delete ui;
 }
 
-nsx::UBSolution DialogRefineUnitCell::getCurrentValues() const
-{
-    auto diffractometer = _experiment->getDiffractometer();
-    auto detector = diffractometer->getDetector();
-    auto sample = diffractometer->getSample();
-    auto source = diffractometer->getSource();
-    return nsx::UBSolution(source, sample, detector, _unitCell);
-}
-
 void DialogRefineUnitCell::updateParameters()
 {
     // update UC parameters
@@ -91,41 +89,36 @@ void DialogRefineUnitCell::updateParameters()
     auto& mono = _experiment->getDiffractometer()->getSource()->getSelectedMonochromator();
     ui->doubleSpinBox_Wavelength->setValue(mono.getWavelength());
 
-    // retrieve current values of offset + sigma
-    nsx::UBSolution values = getCurrentValues();
-
     // Fill the table
-    for (int i = 0; i < values._sampleOffset.size(); ++i) {
+    for (int i = 0; i < _currentValues._sampleOffset.size(); ++i) {
         // Set the first column of the table: the axis name
         auto item1 = ui->tableWidget_Sample->item(i, 1);
         auto item2 = ui->tableWidget_Sample->item(i, 2);
 
         // offset values
-        item1->setData(Qt::EditRole, values._sampleOffset(i));
+        item1->setData(Qt::EditRole, _currentValues._sampleOffset(i));
 
         // the axis offsets errors
-        item2->setData(Qt::EditRole, values._sigmaSample(i));      
+        item2->setData(Qt::EditRole, _currentValues._sigmaSample(i));      
     }
     
     // Fill the table
-    for (int i = 0; i < values._detectorOffset.size(); ++i) {
+    for (int i = 0; i < _currentValues._detectorOffset.size(); ++i) {
         // Set the first column of the table: the axis name
         auto item1 = ui->tableWidget_Detector->item(i, 1);
         auto item2 = ui->tableWidget_Detector->item(i, 2);
     
         // offset values
-        item1->setData(Qt::EditRole, values._detectorOffset(i));
+        item1->setData(Qt::EditRole, _currentValues._detectorOffset(i));
     
         // the axis offsets errors
-        item2->setData(Qt::EditRole, values._sigmaDetector(i));      
+        item2->setData(Qt::EditRole, _currentValues._sigmaDetector(i));      
     }
 }
 
-
 void DialogRefineUnitCell::refineParameters()
 {
-    nsx::UBSolution currentValues = getCurrentValues();
-    nsx::UBMinimizer minimizer(currentValues);
+    nsx::UBMinimizer minimizer(_currentValues);
 
     // determine which parameters to refine
     if (ui->checkBox_Wavelength) {
@@ -133,14 +126,14 @@ void DialogRefineUnitCell::refineParameters()
     }
 
     // sample parameters
-    for (int i = 0; i < currentValues._sampleOffset.size(); ++i) {
+    for (int i = 0; i < _currentValues._sampleOffset.size(); ++i) {
         auto item3 = dynamic_cast<QCheckBox*>(ui->tableWidget_Sample->cellWidget(i, 3));
         assert(item3 != nullptr);
         minimizer.refineSample(i, item3->isChecked());
     }
 
     // detector parameters
-    for (int i = 0; i < currentValues._detectorOffset.size(); ++i) {
+    for (int i = 0; i < _currentValues._detectorOffset.size(); ++i) {
         auto item3 = dynamic_cast<QCheckBox*>(ui->tableWidget_Detector->cellWidget(i, 3));
         assert(item3 != nullptr);
         minimizer.refineDetector(i, item3->isChecked());
@@ -169,10 +162,9 @@ void DialogRefineUnitCell::refineParameters()
         return; // why not change ?
     }
 
-    currentValues = minimizer.solution();
-    currentValues.apply();
-
-    os << currentValues;
+    _currentValues = minimizer.solution();
+    _currentValues.apply();
+    os << _currentValues;
 
     // calculate the new quality of the fit
     unsigned int total = 0, count = 0;

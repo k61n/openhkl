@@ -63,6 +63,8 @@ public:
     void refineDetector(unsigned int id, bool refine);
 
 private:
+    //! Update the error from given covariance matrix
+    void updateError(const Eigen::MatrixXd& cov);
     //! Compute the residuals given an input vector
     int residuals(Eigen::VectorXd& r);
     //! Return the set of fit parameters constructed from the UBSolution
@@ -76,6 +78,10 @@ private:
     std::vector<bool> _refineDetector;
     Eigen::VectorXd _sigmaDetector;
     Eigen::VectorXd _sigmaSample;
+    int _sourceID;
+    std::vector<int> _sampleID;
+    std::vector<int> _detectorID;
+    std::vector<int> _ucID;
 };
 
 } // end namespace nsx

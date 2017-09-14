@@ -25,7 +25,10 @@ UBMinimizer::UBMinimizer(const UBSolution& initialState):
     _solution(initialState),
     _refineSource(false),
     _refineSample(initialState._sampleOffset.size(), false),
-    _refineDetector(initialState._detectorOffset.size(), false)
+    _sampleID(initialState._sampleOffset.size(), -1),
+    _refineDetector(initialState._detectorOffset.size(), false),
+    _detectorID(initialState._detectorOffset.size(), -1),
+    _ucID(initialState._cellParameters.size(), -1)
 {
 
 }
@@ -56,8 +59,6 @@ int UBMinimizer::residuals(Eigen::VectorXd &fvec)
     return 0;
 }
 
-
-
 void UBMinimizer::addPeak(const Peak3D& peak, const Eigen::RowVector3d& hkl)
 {
     _peaks.push_back(std::make_pair(peak, hkl));
@@ -83,46 +84,11 @@ int UBMinimizer::run(unsigned int maxIter)
 
     bool status = minimizer.fit(maxIter);
 
-    // todo...
-    #if 0
-    if (status) {
-        params = minimizer.params();
-
-        // Create a vector to calculate final residuals
-        Eigen::VectorXd fvec(values());
-        // Calculate final residuals
-        residuals(params, fvec);
-
-        // The MSE is computed as SSE/dof where dof is the number of degrees of freedom
-        auto&& fixed_parameters = _solution.fixedParameters();
-        const int nFixed = std::count(fixed_parameters.begin(), fixed_parameters.end(), true);
-        int nFreeParameters=_solution.inputs()-nFixed;
-        double mse = fvec.squaredNorm()/(values()-nFreeParameters);
-        int removed = 0;
-        Eigen::MatrixXd jac = minimizer.jacobian();
-        Eigen::MatrixXd JtJ = jac.transpose()*jac;
-
-        for (unsigned int i = 9; i < fixed_parameters.size(); ++i) {
-            if (fixed_parameters[i]) {
-                removeColumn(JtJ, i-removed);
-                removeRow(JtJ, i-removed);
-                removed++;
-            }
-        }
-        // The covariance matrix
-        Eigen::MatrixXd covariance = JtJ.inverse();
-        // rescale by mean-squared error to get estimate of variance-covariance in parameters
-        covariance *= mse;
-        _solution.update(params, covariance);        
-    }
-    nsx::UBSolution(initialState).apply();
-
-    // debugging only
-    #ifndef NDEBUG
-    std::cout << "status is " << minimizer.getStatusStr()
-              << " after " << minimizer.numIterations() << " iterations" << std::endl;
-    #endif
-    #endif
+    // covariance matrix of the fit parameters
+    const double mse = minimizer.meanSquaredError();
+    auto&& jac = minimizer.jacobian();
+    Eigen::MatrixXd cov = mse * (jac.transpose()*jac).inverse();
+    updateError(cov);
 
     return status;
 }
@@ -131,7 +97,6 @@ const UBSolution& UBMinimizer::solution() const
 {
     return _solution;
 }
-
 
 void UBMinimizer::refineSource(bool refine)
 {
@@ -157,26 +122,44 @@ FitParameters UBMinimizer::fitParameters()
     }
 
     for (int i = 0; i < _solution._cellParameters.size(); ++i) {
-        params.addParameter(&_solution._cellParameters(i));
+        _ucID[i] = params.addParameter(&_solution._cellParameters(i));
     }
 
     if (_refineSource) {
-        params.addParameter(&_solution._sourceOffset);
+        _sourceID = params.addParameter(&_solution._sourceOffset);
     }
 
     for (auto i = 0; i < _solution._sampleOffset.size(); ++i) {
         if (_refineSample[i]) {
-            params.addParameter(&_solution._sampleOffset[i]);
+            _sampleID[i] = params.addParameter(&_solution._sampleOffset[i]);
         }
     }
 
     for (auto i = 0; i < _solution._detectorOffset.size(); ++i) {
         if (_refineDetector[i]) {
-            params.addParameter(&_solution._detectorOffset[i]);
+            _detectorID[i] = params.addParameter(&_solution._detectorOffset[i]);
         }
     }
 
     return params;
+}
+
+void UBMinimizer::updateError(const Eigen::MatrixXd& cov)
+{
+    // error in source
+    _solution._sigmaSource = _refineSource ? std::sqrt(cov(_sourceID, _sourceID)) : 0.0;
+    
+    // error in sample offsets
+    for (int i = 0; i < _solution._sampleOffset.size(); ++i) {
+        int id = _sampleID[i];
+        _solution._sigmaSample[i] = _refineSample[i] ? std::sqrt(cov(id, id)) : 0.0;
+    }
+    
+    // error in detector offsets
+    for (int i = 0; i < _solution._detectorOffset.size(); ++i) {
+        int id = _detectorID[i];
+        _solution._sigmaDetector[i] = _refineDetector[i] ? std::sqrt(cov(id, id)) : 0.0;
+    }
 }
 
 } // end namespace nsx

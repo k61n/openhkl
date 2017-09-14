@@ -103,6 +103,8 @@ public:
     {
         _df = static_cast<df_type>(functor);
     }
+    //! Return the mean squared error with respect to the current minimizer values.
+    double meanSquaredError() const;
 
 private:
     //! Clean up the GSL workspace and allocated vectors.

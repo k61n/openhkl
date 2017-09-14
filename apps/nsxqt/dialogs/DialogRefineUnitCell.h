@@ -32,9 +32,9 @@ private slots:
 private:
     void createOffsetTables();
     void updateParameters();
-    nsx::UBSolution getCurrentValues() const;
 
     nsx::UBSolution _initialValues;
+    nsx::UBSolution _currentValues;
     Ui::DialogRefineUnitCell *ui;
     nsx::sptrExperiment _experiment;
     nsx::sptrUnitCell _unitCell;
