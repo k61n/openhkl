@@ -87,40 +87,10 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
     cell = nsx::UnitCell(AA);
     BOOST_CHECK_CLOSE(cell.volume(), std::fabs(AA.determinant()), 1e-10);
 
-    Eigen::Matrix<double, 9, 9> cov;
-
-    for (auto i = 0; i < 9; ++i) {
-        for (auto j = 0; j < 9; ++j) {
-            cov(i, j) = AA(i/3, i%3)*AA(j/3, j%3);
-        }
-    }
-
-    cell.setCovariance(cov);
-
-    for (auto i = 0; i < 3; ++i) {
-        auto col = AA.col(i);
-        auto row = AA.row(i);
-        auto col_cov = cell.covariance(i);
-        auto row_cov = cell.reciprocalCovariance(i);
-
-        BOOST_CHECK_SMALL((col_cov-col*col.transpose()).norm(), 1e-10);
-        BOOST_CHECK_SMALL((row_cov-row.transpose()*row).norm(), 1e-10);
-    }
-
-    cell.setCovariance(cov);
-    auto rcov = cell.reciprocalCovariance();
-    cell.setReciprocalCovariance(rcov);
-
-    BOOST_CHECK_SMALL((cov-cell.covariance()).norm(), 1e-10);
-    BOOST_CHECK_SMALL((rcov-cell.reciprocalCovariance()).norm(), 1e-10);
-
-    cell.setReciprocalCovariance(cov);
-    rcov = cell.covariance();
-    cell.setCovariance(rcov);
-
-    BOOST_CHECK_SMALL((rcov-cell.covariance()).norm(), 1e-10);
-    BOOST_CHECK_SMALL((cov-cell.reciprocalCovariance()).norm(), 1e-10);
-
+    // computed covariance matrix
+    Eigen::Matrix<double, 6, 6> cov;
+    cov.setZero();
+   
     // random number generator
     auto get_random = []()
     {
@@ -133,9 +103,6 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
     // generate random unit cells, with some non-zero correlation in components
     // check that we correctly calculate the errors in the lattice character
     nsx::CellCharacter sigma_expected;
-
-    cov *= 0.0;
-
     const int nmax = 1000;
 
     AA <<
@@ -145,36 +112,27 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
 
     cell.setBasis(AA);
     auto A_cc = cell.character();
+    nsx::CellCharacter ch = cell.character();
     
     for (auto n = 0; n < nmax; ++n) {
-        Eigen::Matrix3d dA;
+        // random perturbation to character
+        double d[6];
 
-        for (auto j = 0; j < 3; ++j) {            
-            for (auto k = 0; k < 3; ++k) {
-                //dA(k, j) = (j-k)*d;
-                dA(k, j) = get_random();
-            }
-
-            // introduce linear correlation by hand
-            dA.col(2) += 0.3 * dA.col(0) + 0.2 * dA.col(1);
+        for (auto i = 0; i < 6; ++i) {
+            d[i] = get_random();
         }
-
-        for (auto i = 0; i < 9; ++i) {
-            for (auto j = 0; j < 9; ++j) {
-                int a = i/3;
-                int b = i%3;
-                int c = j/3;
-                int d = j%3;
-                BOOST_CHECK_EQUAL(3*a+b, i);
-                BOOST_CHECK_EQUAL(3*c+d, j);                
-                cov(i, j) += dA(a,b)*dA(c,d);
+        
+        // update covariance matrix
+        for (auto i = 0; i < 6; ++i) {
+            for (auto j = 0; j < 6; ++j) {            
+                cov(i, j) += d[i]*d[j];
                 cov(j, i) = cov(i, j);
             }
         }
 
-        auto AdA = A+dA;
-        auto g = AdA.transpose()*AdA;
-        nsx::CellCharacter dA_cc(g);
+        nsx::UnitCell new_cell = cell;
+        new_cell.setABCDEF(ch.A+d[0], ch.B+d[1], ch.C+d[2], ch.D+d[3], ch.E+d[4], ch.F+d[5]);
+        nsx::CellCharacter dA_cc = new_cell.character();
 
         sigma_expected.A += std::pow(A_cc.A-dA_cc.A, 2) / nmax;
         sigma_expected.B += std::pow(A_cc.B-dA_cc.B, 2) / nmax;
@@ -194,7 +152,7 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
     cov /= nmax;
 
     cell.setBasis(AA);
-    cell.setCovariance(cov);
+    cell.setParameterCovariance(cov);
 
     sigma_expected.A = std::sqrt(sigma_expected.A);
     sigma_expected.B = std::sqrt(sigma_expected.B);
@@ -212,13 +170,18 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
 
     auto sigma = cell.characterSigmas();
 
-    BOOST_CHECK_CLOSE(sigma.A, sigma_expected.A, 10.0);
-    BOOST_CHECK_CLOSE(sigma.B, sigma_expected.B, 10.0);
-    BOOST_CHECK_CLOSE(sigma.C, sigma_expected.C, 10.0);
-    BOOST_CHECK_CLOSE(sigma.D, sigma_expected.D, 10.0);
-    BOOST_CHECK_CLOSE(sigma.E, sigma_expected.E, 10.0);
-    BOOST_CHECK_CLOSE(sigma.F, sigma_expected.F, 10.0);
+    // because of the way UnitCell computes sigmas,
+    // for ABCDEF the sigma should be almost exact
+    BOOST_CHECK_CLOSE(sigma.A, sigma_expected.A, 1e-3);
+    BOOST_CHECK_CLOSE(sigma.B, sigma_expected.B, 1e-3);
+    BOOST_CHECK_CLOSE(sigma.C, sigma_expected.C, 1e-3);
+    BOOST_CHECK_CLOSE(sigma.D, sigma_expected.D, 1e-3);
+    BOOST_CHECK_CLOSE(sigma.E, sigma_expected.E, 1e-3);
+    BOOST_CHECK_CLOSE(sigma.F, sigma_expected.F, 1e-3);
 
+    // the sigmas of parameters a,b,c,alpha,beta,gamma are 
+    // computed by first order propagation of errors, so we do
+    // not expect them to be so close to the true value
     BOOST_CHECK_CLOSE(sigma.a, sigma_expected.a, 10.0);
     BOOST_CHECK_CLOSE(sigma.b, sigma_expected.b, 10.0);
     BOOST_CHECK_CLOSE(sigma.c, sigma_expected.c, 10.0);
@@ -231,7 +194,7 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
     int num = cell.reduce(false, 1e-2, 5e-3);
     BOOST_CHECK_EQUAL(num, 32);
     auto new_cell = cell.applyNiggliConstraints();
-    auto ch = new_cell.character();
+    ch = new_cell.character();
 
     BOOST_CHECK_CLOSE(ch.a, 55.03, 1e-3);
     BOOST_CHECK_CLOSE(ch.b, 58.60, 1e-3);

@@ -190,15 +190,6 @@ public:
     //! Return the volume of the unit cell
     double volume() const;
 
-    //! Return the 9x9 covariance matrix, stored as row-major
-    const Eigen::Matrix<double, 9, 9>& covariance() const;
-    //! Set the covariance
-    void setCovariance(const Eigen::MatrixXd&);
-    //! Return the reciprocal covariance
-    const Eigen::Matrix<double, 9, 9>& reciprocalCovariance() const;
-    //! Set the reciprocal covariance
-    void setReciprocalCovariance(const Eigen::MatrixXd&);
-
     //! Return the index of a given q vector (not necessarily integral!!)
     Eigen::RowVector3d index(const Eigen::RowVector3d& q) const;
     //! Return q vector from a given hkl
@@ -220,11 +211,6 @@ public:
     //! according to the classification into 44 lattice types.
     int reduce(bool niggli_only, double niggliTolerance, double gruberTolerance);
 
-    //! Return the covariance matrix of a real-space basis vector
-    Eigen::Matrix3d covariance(int col) const;
-    //! Return the covariance matrix of a reciprocal-space basis vector
-    Eigen::Matrix3d reciprocalCovariance(int row) const;
-
     //! transform the unit cell (perform a change of basis)
     //! Note: in the future it might be better to make this method private
     void transform(const Eigen::Matrix3d& P);
@@ -243,6 +229,10 @@ public:
 
     //! \brief Return parameters of the unit cell in an internal format.
     Eigen::VectorXd parameters() const;
+    //! \brief Set the uncertainty in the cell parameters.
+    //! We use the parameter uncertainty and propagation of error to estimate the uncertainty in the cell parameters
+    // \f$a\f$,\f$b\f$,\f$c\f$,\f$\alpha\f$,\f$\beta\f$,\f$\gamma\f$.
+    void setParameterCovariance(const Eigen::MatrixXd& cov);
     //! \brief Construct a new unit cell from a reference orientation, an orientation offset, and a set of parameters.
     UnitCell fromParameters(const Eigen::Matrix3d& U0, const Eigen::Vector3d& uOffset, const Eigen::VectorXd& parameters) const;
 
@@ -251,18 +241,10 @@ public:
     #endif
 
 private:
-    //! Compute the new covariance matrix, assuming a transformation of the form A -> M*A*N
-    static Eigen::Matrix<double, 9, 9>transformCovariance(const Eigen::Matrix3d& M, const Eigen::Matrix3d& N, const Eigen::Matrix<double, 9, 9>& C);
-
-private:
     //! Real-space basis of column vectors
     Eigen::Matrix3d _A;
     //! Reciprocal-space basis of row vectors
     Eigen::Matrix3d _B;
-    //! 9x9 Covariance matrix for _A, stored row-major
-    Eigen::Matrix<double, 9, 9> _Acov;
-    //! 9x9 Covariance matrix fo _B, stored row-major
-    Eigen::Matrix<double, 9, 9> _Bcov;
     //! _NP is the transformation such that _A*_NP.inverse() is the Niggli cell
     Eigen::Matrix3d _NP; 
 
@@ -274,6 +256,7 @@ private:
     std::string _name;
     double _hklTolerance;
     NiggliCharacter _niggli;
+    CellCharacter _characterSigmas;
 };
 
 //! Print to a stream
