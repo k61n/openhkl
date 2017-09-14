@@ -122,13 +122,13 @@ void BrillouinZone::compute()
     // see for more explanation:
     //  - http://web.stanford.edu/class/archive/ee/ee263/ee263.1082/lectures/symm.pdf
     //  - https://math.stackexchange.com/questions/290267/need-help-understanding-matrix-norm-notation
-    // By definition, lmin*||x|| < || [hkl]*B || < lmax*||x|| where lmin and lmax are resp. the minimum and
+    // By definition, sqrt(lmin)*||x|| < || [hkl]*B || < sqrt(lmax)*||x|| where lmin and lmax are resp. the minimum and
     // and maximum eigen vales of B.B^t
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(_B*_B.transpose());
     const double lambda = solver.eigenvalues().minCoeff();
-    // we have lmin*||x|| < ||[hkl]*B|| = ||Q|| < Qmax ==> ||x|| < Qmax/lmin
-    // Qmax/lmin is therefore the bound for searching for ew vertices of the BZ
-    // Qmax = 2*r2 ==> ||x|| << 4.0*Qmax/lmin
+    // we have sqrt(lmin)*||x|| < ||[hkl]*B|| = ||Q|| < Qmax ==> ||x|| < Qmax/sqrt(lmin)
+    // Qmax/sqrt(lmin) is therefore the bound for searching for new vertices of the BZ
+    // Qmax = 2*r ==> ||x|| << 4.0*Qmax^2/lmin
     const double bound2 = 4.0 * _r2 / lambda + _eps;
     const double bound = std::sqrt(bound2);
 
