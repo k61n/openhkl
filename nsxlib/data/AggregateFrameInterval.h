@@ -8,6 +8,12 @@ namespace nsx {
 
 class AggregateFrameInterval : public IFrameInterval {
 
+private:
+
+    using FrameSet = std::set<IFrameInterval*>;
+
+    FrameSet _intervals;
+
 public:
 
     using IFrameInterval::IFrameInterval;
@@ -18,9 +24,13 @@ public:
 
     void addInterval(IFrameInterval* interval);
 
-private:
+    using iterator = FrameSet::iterator;
+    iterator begin();
+    iterator end();
 
-    std::set<IFrameInterval*> _intervals;
+    using const_iterator = FrameSet::const_iterator;
+    const_iterator cbegin() const;
+    const_iterator cend() const;
 
 };
 

@@ -25,4 +25,25 @@ void AggregateFrameInterval::addInterval(IFrameInterval* interval)
     _intervals.insert(interval);
 }
 
+AggregateFrameInterval::iterator AggregateFrameInterval::begin()
+{
+    return _intervals.begin();
+}
+
+AggregateFrameInterval::const_iterator AggregateFrameInterval::cbegin() const
+{
+    return _intervals.cbegin();
+}
+
+AggregateFrameInterval::iterator AggregateFrameInterval::end()
+{
+    return _intervals.end();
+}
+
+AggregateFrameInterval::const_iterator AggregateFrameInterval::cend() const
+{
+    return _intervals.cend();
+}
+
 } /* namespace nsx */
+
