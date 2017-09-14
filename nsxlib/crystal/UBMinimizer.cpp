@@ -87,7 +87,7 @@ int UBMinimizer::run(unsigned int maxIter)
     // covariance matrix of the fit parameters
     const double mse = minimizer.meanSquaredError();
     auto&& jac = minimizer.jacobian();
-    Eigen::MatrixXd cov = mse * (jac.transpose()*jac).inverse();
+    Eigen::MatrixXd cov = mse*minimizer.covariance();
     updateError(cov);
 
     return status;
