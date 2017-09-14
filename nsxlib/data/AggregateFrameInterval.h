@@ -6,7 +6,7 @@
 
 namespace nsx {
 
-class AggregateFrameInterval : public IFrameInterval{
+class AggregateFrameInterval : public IFrameInterval {
 
 public:
 
