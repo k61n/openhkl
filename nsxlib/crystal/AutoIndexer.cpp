@@ -98,9 +98,6 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
     std::vector<tVector> tvects = indexing.findOnSphere(qvects, _params.nStacks, _params.nSolutions);
     qvects.clear();
 
-    auto source = _experiment->getDiffractometer()->getSource();
-    auto detector = _experiment->getDiffractometer()->getDetector();
-    auto sample = _experiment->getDiffractometer()->getSample();
 
     std::vector<std::pair<sptrUnitCell,double>> newSolutions;
     newSolutions.reserve(_params.nSolutions*_params.nSolutions*_params.nSolutions);
@@ -144,15 +141,17 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
     for (int idx = 0; idx < newSolutions.size(); ++idx) {
         auto cell = newSolutions[idx].first;
         cell->setHKLTolerance(_params.HKLTolerance);
-        UBSolution ub_state(source, sample, detector, cell);
-        UBMinimizer minimizer(ub_state);
+        Eigen::Matrix3d B = cell->reciprocalBasis();
+        std::vector<Eigen::RowVector3d> hkls;
+        std::vector<Eigen::RowVector3d> qs;
 
         int success = 0;
         for (auto peak : _peaks) {
             Eigen::RowVector3d hkl;
             bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
             if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
-                minimizer.addPeak(*peak,hkl);
+                hkls.emplace_back(hkl);
+                qs.emplace_back(peak->getQ());
                 ++success;
             }
         }
@@ -161,25 +160,48 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
         if (success < 10) {
             continue;
         }
-       
-        int ret = minimizer.run(100);
-        if (ret == 1) {
-            UBSolution sln = minimizer.solution();
-            try {
-                Eigen::Matrix3d ub = sln.ub();
-                cell = sptrUnitCell(new UnitCell(ub, true));
-                //cell->setReciprocalCovariance(sln.covub());
 
+        auto residuals = [&B, &hkls, &qs] (Eigen::VectorXd& f) -> int
+        {
+            int n = f.size() / 3;
+
+            for (int i = 0; i < n; ++i) {
+                auto dq = qs[i]-hkls[i]*B;
+                f(3*i+0) = dq(0);
+                f(3*i+1) = dq(1);
+                f(3*i+2) = dq(2);
+            }
+            return 0;
+        };
+
+        FitParameters params;
+
+        for (int r = 0; r < 3; ++r) {
+            for (int c = 0; c < 3; ++c) {
+                params.addParameter(&B(r,c));
+            }
+        }
+
+        Minimizer minimizer;
+        minimizer.initialize(params, 3*success);     
+        minimizer.set_f(residuals);  
+        minimizer.setxTol(1e-10);
+        minimizer.setfTol(1e-10);
+        minimizer.setgTol(1e-10);
+        auto ret = minimizer.fit(100);
+
+        if (ret) {
+            try {
+                cell = sptrUnitCell(new UnitCell(B, true));
+                cell->setHKLTolerance(_params.HKLTolerance);
+                cell->reduce(_params.niggliReduction, _params.niggliTolerance, _params.gruberTolerance);
+                *cell = cell->applyNiggliConstraints();
             } catch(std::exception& e) {
                 if (_handler) {
                     _handler->log("exception: " +std::string(e.what()));
                 }
                 continue;
             }
-
-            cell->setHKLTolerance(_params.HKLTolerance);
-            cell->reduce(_params.niggliReduction, _params.niggliTolerance, _params.gruberTolerance);
-            //*cell = cell->applyNiggliConstraints(100.0);
 
             double score = 0.0;
             double maxscore = 0.0;

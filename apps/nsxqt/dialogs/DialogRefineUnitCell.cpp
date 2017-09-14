@@ -50,8 +50,10 @@ DialogRefineUnitCell::DialogRefineUnitCell(nsx::sptrExperiment experiment,
     _initialValues = getCurrentValues();
 
     // Fill up the sample and detector offsets tables
+    createOffsetTables();
     updateParameters();
 
+    // alpha, beta, gamma are special characters
     ui->labelalpha->setText(QString(QChar(0x03B1)));
     ui->labelbeta->setText(QString(QChar(0x03B2)));
     ui->labelgamma->setText(QString(QChar(0x03B3)));
@@ -76,6 +78,7 @@ nsx::UBSolution DialogRefineUnitCell::getCurrentValues() const
 
 void DialogRefineUnitCell::updateParameters()
 {
+    // update UC parameters
     nsx::CellCharacter ch = _unitCell->character();
     ui->doubleSpinBoxa->setValue(ch.a);
     ui->doubleSpinBoxb->setValue(ch.b);
@@ -84,10 +87,124 @@ void DialogRefineUnitCell::updateParameters()
     ui->doubleSpinBoxbeta->setValue(ch.beta/nsx::deg);
     ui->doubleSpinBoxgamma->setValue(ch.gamma/nsx::deg);
 
+    // update wavelength
     auto& mono = _experiment->getDiffractometer()->getSource()->getSelectedMonochromator();
     ui->doubleSpinBox_Wavelength->setValue(mono.getWavelength());
 
+    // retrieve current values of offset + sigma
+    nsx::UBSolution values = getCurrentValues();
 
+    // Fill the table
+    for (int i = 0; i < values._sampleOffset.size(); ++i) {
+        // Set the first column of the table: the axis name
+        auto item1 = ui->tableWidget_Sample->item(i, 1);
+        auto item2 = ui->tableWidget_Sample->item(i, 2);
+
+        // offset values
+        item1->setData(Qt::EditRole, values._sampleOffset(i));
+
+        // the axis offsets errors
+        item2->setData(Qt::EditRole, values._sigmaSample(i));      
+    }
+    
+    // Fill the table
+    for (int i = 0; i < values._detectorOffset.size(); ++i) {
+        // Set the first column of the table: the axis name
+        auto item1 = ui->tableWidget_Detector->item(i, 1);
+        auto item2 = ui->tableWidget_Detector->item(i, 2);
+    
+        // offset values
+        item1->setData(Qt::EditRole, values._detectorOffset(i));
+    
+        // the axis offsets errors
+        item2->setData(Qt::EditRole, values._sigmaDetector(i));      
+    }
+}
+
+
+void DialogRefineUnitCell::refineParameters()
+{
+    nsx::UBSolution currentValues = getCurrentValues();
+    nsx::UBMinimizer minimizer(currentValues);
+
+    // determine which parameters to refine
+    if (ui->checkBox_Wavelength) {
+        minimizer.refineSource(true);
+    }
+
+    // sample parameters
+    for (int i = 0; i < currentValues._sampleOffset.size(); ++i) {
+        auto item3 = dynamic_cast<QCheckBox*>(ui->tableWidget_Sample->cellWidget(i, 3));
+        assert(item3 != nullptr);
+        minimizer.refineSample(i, item3->isChecked());
+    }
+
+    // detector parameters
+    for (int i = 0; i < currentValues._detectorOffset.size(); ++i) {
+        auto item3 = dynamic_cast<QCheckBox*>(ui->tableWidget_Detector->cellWidget(i, 3));
+        assert(item3 != nullptr);
+        minimizer.refineDetector(i, item3->isChecked());
+    }
+
+    // peaks to be used in fit
+    int nhits = 0;
+    for (auto&& peak: _peaks) {
+        Eigen::RowVector3d hkl;
+        bool indexingSuccess = peak->getMillerIndices(*_unitCell,hkl,true);
+        if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
+            minimizer.addPeak(*peak,hkl);
+            ++nhits;
+        }
+    }
+
+    std::ostringstream os;
+    os<<nhits<<" peaks considered for UB-refinement";
+    ui->textEdit_Solution->setText(QString::fromStdString(os.str()));
+    os.str("");
+
+    int test = minimizer.run(100);
+    if (test != 1) {
+        ui->textEdit_Solution->setTextColor(QColor("red"));
+        ui->textEdit_Solution->setText("No solution found within convergence criteria.");
+        return; // why not change ?
+    }
+
+    currentValues = minimizer.solution();
+    currentValues.apply();
+
+    os << currentValues;
+
+    // calculate the new quality of the fit
+    unsigned int total = 0, count = 0;
+    for (auto&& peak: _peaks) {
+        if(!peak->isMasked() && peak->isSelected()) {
+            ++total;
+            Eigen::RowVector3d hkl;
+            bool indexingSuccess = peak->getMillerIndices(*_unitCell,hkl,true);
+            if (indexingSuccess) {
+                ++count;
+            }
+        }
+    }
+    os << "Quality: " << double(count) * 100.0 / double(total);
+
+    // update textbox with output
+    ui->textEdit_Solution->append(QString::fromStdString(os.str()));
+    ui->textEdit_Solution->append(QString::fromStdString(os.str()));
+
+    // update the displayed paramters in the GUI
+    updateParameters();
+}
+
+void DialogRefineUnitCell::resetParameters()
+{
+    _initialValues.apply();
+    ui->textEdit_Solution->append("\nResetting parameters to initial values.\n");
+    updateParameters();
+}
+
+void DialogRefineUnitCell::createOffsetTables()
+{
     //Get the sample, iterate over axis
     auto sample = _experiment->getDiffractometer()->getSample();
     int nAxesSample = sample->hasGonio() ? sample->getGonio()->getNAxes() : 0;
@@ -180,66 +297,5 @@ void DialogRefineUnitCell::updateParameters()
         //item3->setChecked(!axis->hasOffsetFixed());
         item3->setChecked(false);
         ui->tableWidget_Detector->setCellWidget(i, 3, item3);
-    }
-}
-
-
-void DialogRefineUnitCell::refineParameters()
-{
-    nsx::UBSolution currentValues = getCurrentValues();
-    nsx::UBMinimizer minimizer(currentValues);
-
-    int nhits = 0;
-    for (auto&& peak: _peaks) {
-        Eigen::RowVector3d hkl;
-        bool indexingSuccess = peak->getMillerIndices(*_unitCell,hkl,true);
-        if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
-            minimizer.addPeak(*peak,hkl);
-            ++nhits;
-        }
-    }
-
-    std::ostringstream os;
-    os<<nhits<<" peaks considered for UB-refinement";
-    ui->textEdit_Solution->setText(QString::fromStdString(os.str()));
-    os.str("");
-
-    int test = minimizer.run(100);
-    if (test != 1) {
-        ui->textEdit_Solution->setTextColor(QColor("red"));
-        ui->textEdit_Solution->setText("No solution found within convergence criteria.");
-        return; // why not change ?
-    }
-
-    currentValues = minimizer.solution();
-    currentValues.apply();
-
-    os << currentValues;
-
-    // calculate the new quality of the fit
-    unsigned int total = 0, count = 0;
-    for (auto&& peak: _peaks) {
-        if(!peak->isMasked() && peak->isSelected()) {
-            ++total;
-            Eigen::RowVector3d hkl;
-            bool indexingSuccess = peak->getMillerIndices(*_unitCell,hkl,true);
-            if (indexingSuccess) {
-                ++count;
-            }
-        }
-    }
-    os << "Quality: " << double(count) * 100.0 / double(total);
-
-    // update textbox with output
-    ui->textEdit_Solution->append(QString::fromStdString(os.str()));
-    ui->textEdit_Solution->append(QString::fromStdString(os.str()));
-
-    // update the displayed paramters in the GUI
-    updateParameters();
-}
-
-void DialogRefineUnitCell::resetParameters()
-{
-    _initialValues.apply();
-    updateParameters();
+    }   
 }

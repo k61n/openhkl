@@ -30,7 +30,7 @@ private slots:
     void resetParameters();
 
 private:
-    void createOffsetsTables();
+    void createOffsetTables();
     void updateParameters();
     nsx::UBSolution getCurrentValues() const;
 

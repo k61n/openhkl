@@ -13,6 +13,8 @@
 #include <nsxlib/crystal/AutoIndexer.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/PeakPredictor.h>
+#include <nsxlib/crystal/UBSolution.h>
+#include <nsxlib/crystal/UBMinimizer.h>
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/data/DataSet.h>
