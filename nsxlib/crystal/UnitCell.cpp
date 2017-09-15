@@ -694,13 +694,15 @@ void UnitCell::setParameterCovariance(const Eigen::MatrixXd& cov)
         const int i1 = (i-3+1)%3;
         const int i2 = (i-3+2)%3;
 
+        const double Dbc = ABC[i] / abc[i1] / abc[i2];
+
         // diagonal part of Jacobian, e.g. d(alpha) / dD
-        J(i, i) = -factor * abc[i1] * abc[i2] / ABC[i] / ABC[i];
+        J(i, i) = -factor / abc[i1] / abc[i2];
 
         // off-diagonal part of Jacobian, e.g.
         // d(alpha)/dB and d(alpha)/dC
-        J(i,i1) = factor * abc[i2] / 2.0 / abc[i1] / ABC[i];
-        J(i,i2) = factor * abc[i1] / 2.0 / abc[i2] / ABC[i];
+        J(i,i1) = factor * Dbc / 2.0 / ABC[i1];
+        J(i,i2) = factor * Dbc / 2.0 / ABC[i2];
         
     }
 

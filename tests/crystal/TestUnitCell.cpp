@@ -182,12 +182,12 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
     // the sigmas of parameters a,b,c,alpha,beta,gamma are 
     // computed by first order propagation of errors, so we do
     // not expect them to be so close to the true value
-    BOOST_CHECK_CLOSE(sigma.a, sigma_expected.a, 10.0);
-    BOOST_CHECK_CLOSE(sigma.b, sigma_expected.b, 10.0);
-    BOOST_CHECK_CLOSE(sigma.c, sigma_expected.c, 10.0);
-    BOOST_CHECK_CLOSE(sigma.alpha, sigma_expected.alpha, 10.0);
-    BOOST_CHECK_CLOSE(sigma.beta, sigma_expected.beta, 10.0);
-    BOOST_CHECK_CLOSE(sigma.gamma, sigma_expected.gamma, 10.0);    
+    BOOST_CHECK_CLOSE(sigma.a, sigma_expected.a, 1e-1);
+    BOOST_CHECK_CLOSE(sigma.b, sigma_expected.b, 1e-1);
+    BOOST_CHECK_CLOSE(sigma.c, sigma_expected.c, 1e-1);
+    BOOST_CHECK_CLOSE(sigma.alpha, sigma_expected.alpha, 1.0);
+    BOOST_CHECK_CLOSE(sigma.beta, sigma_expected.beta, 1.0);
+    BOOST_CHECK_CLOSE(sigma.gamma, sigma_expected.gamma, 1.0);    
 
     // test niggli constraints
     cell.setParams(55.03, 58.60, 66.89, 1.569, 1.57, 1.571);
