@@ -9,7 +9,7 @@ class IFrameInterval {
 
 public:
 
-    IFrameInterval(DataSet& data);
+    IFrameInterval(sptrDataSet data);
 
     virtual ~IFrameInterval()=0;
 
@@ -17,7 +17,7 @@ public:
 
 protected:
 
-    DataSet& _data;
+    sptrDataSet _data;
 
 };
 

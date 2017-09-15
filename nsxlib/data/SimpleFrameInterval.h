@@ -10,9 +10,9 @@ class SimpleFrameInterval : public IFrameInterval {
 
 public:
 
-    SimpleFrameInterval(DataSet& data);
+    SimpleFrameInterval(sptrDataSet data);
 
-    SimpleFrameInterval(DataSet& data, int index_min, int index_max);
+    SimpleFrameInterval(sptrDataSet data, size_t index_min, size_t index_max);
 
     ~SimpleFrameInterval()=default;
 
@@ -20,8 +20,8 @@ public:
 
 private:
 
-    int _index_min;
-    int _index_max;
+    const int _index_min;
+    const int _index_max;
 };
 
 } // end namespace nsx

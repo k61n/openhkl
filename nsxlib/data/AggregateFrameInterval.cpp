@@ -2,7 +2,8 @@
 
 namespace nsx {
 
-AggregateFrameInterval::~AggregateFrameInterval() {
+AggregateFrameInterval::~AggregateFrameInterval()
+{
     for (auto ptr : _intervals) {
         delete ptr;
     }
@@ -45,5 +46,5 @@ AggregateFrameInterval::const_iterator AggregateFrameInterval::cend() const
     return _intervals.cend();
 }
 
-} /* namespace nsx */
+} // end namespace nsx
 

@@ -4,6 +4,8 @@
 
 #include "IFrameInterval.h"
 
+#include "../crystal/CrystalTypes.h"
+
 namespace nsx {
 
 class AggregateFrameInterval : public IFrameInterval {
@@ -34,4 +36,4 @@ public:
 
 };
 
-} /* namespace nsx */
+} // end namespace nsx
