@@ -210,7 +210,7 @@ void IDataReader::saveHDF5(const std::string& filename)
         std::string info;
 
         try {
-            info = boost::any_cast<std::string>(item.second);
+            info = item.second.cast<std::string>();
             H5::Attribute intAtt(infogroup.createAttribute(item.first, str80, metaSpace));
             intAtt.write(str80, info);
         } catch(...) {
@@ -225,13 +225,13 @@ void IDataReader::saveHDF5(const std::string& filename)
         int value;
 
         try {
-            value = boost::any_cast<int>(item.second);
+            value = item.second.cast<int>();
             H5::Attribute intAtt(metadatagroup.createAttribute(item.first, H5::PredType::NATIVE_INT32, metaSpace));
             intAtt.write(H5::PredType::NATIVE_INT, &value);
         } catch(...) {
             try {
                 double dvalue;
-                dvalue = boost::any_cast<double>(item.second);
+                dvalue = item.second.cast<double>();
                 H5::Attribute intAtt(metadatagroup.createAttribute(item.first, H5::PredType::NATIVE_DOUBLE, metaSpace));
                 intAtt.write(H5::PredType::NATIVE_DOUBLE, &dvalue);
             } catch(...) {

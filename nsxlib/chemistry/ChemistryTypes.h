@@ -1,12 +1,11 @@
-#ifndef NSXLIB_CHEMISTRYTYPES_H
-#define NSXLIB_CHEMISTRYTYPES_H
+#pragma once
 
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/any.hpp>
+#include "../utils/Some.h"
 
 namespace nsx {
 
@@ -22,8 +21,6 @@ using isotopeContents = std::map<std::string,double>;
 
 using compoundList = std::vector<std::pair<isotopeContents,double>>;
 
-using isotopeProperties = std::map<std::string,boost::any>;
+using isotopeProperties = std::map<std::string,Some<>>;
 
 } // end namespace nsx
-
-#endif // NSXLIB_CHEMISTRYTYPES_H

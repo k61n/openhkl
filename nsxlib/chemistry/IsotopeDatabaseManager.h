@@ -8,10 +8,9 @@
 
 #include "yaml-cpp/yaml.h"
 
-#include <boost/any.hpp>
-
 #include "../kernel/Singleton.h"
 #include "../chemistry/ChemistryTypes.h"
+#include "../utils/Some.h"
 
 namespace nsx {
 
@@ -48,7 +47,7 @@ private:
 template <typename T>
 T IsotopeDatabaseManager::getProperty(const std::string& isotope, const std::string& property) const
 {
-	return boost::any_cast<T>(_isotopes.at(isotope).at(property));
+	return _isotopes.at(isotope).at(property).cast<T>();
 }
 
 } // end namespace nsx

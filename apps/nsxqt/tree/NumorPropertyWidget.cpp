@@ -38,17 +38,17 @@ NumorPropertyWidget::NumorPropertyWidget(NumorItem* caller,QWidget *parent) :
         QTableWidgetItem* col1=new QTableWidgetItem();
         col0->setData(Qt::EditRole,QString(element.first));
 
-        if (typeid(int)==element.second.type())
+        if (element.second.is<int>())
         {
-            col1->setData(Qt::EditRole,int(boost::any_cast<int>(element.second)));
+            col1->setData(Qt::EditRole,element.second.cast<int>());
         }
-        else if (typeid(double)==element.second.type())
+        else if (element.second.is<double>())
         {
-            col1->setData(Qt::EditRole,double(boost::any_cast<double>(element.second)));
+            col1->setData(Qt::EditRole,element.second.cast<double>());
         }
-        else if (typeid(std::string)==element.second.type())
+        else if (element.second.is<std::string>())
         {
-            col1->setData(Qt::EditRole,QString(QString::fromStdString(boost::any_cast<std::string>(element.second))));
+            col1->setData(Qt::EditRole,QString(QString::fromStdString(element.second.cast<std::string>())));
         }
         else
         {
