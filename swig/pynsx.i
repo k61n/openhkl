@@ -198,9 +198,7 @@ namespace property_tree=boost::property_tree;
 #include "imaging/ConvolutionKernel.h"
 
 #include "kernel/Composite.h"
-#include "kernel/Store.h"
 
-#include "kernel/Store.h"
 #include "kernel/Memento.h"
 #include "kernel/Singleton.h"
 #include "kernel/Factory.h"
@@ -531,7 +529,6 @@ namespace nsx {
  //%include "physics/PhysicalUnit.h"
 
  //%include "kernel/Composite.h"
-%include "kernel/Store.h"
  //%include "kernel/State.h"
 %include "kernel/Memento.h"
 %include "kernel/Singleton.h"

@@ -26,8 +26,7 @@
  *
  */
 
-#ifndef NSXLIB_METADATA_H
-#define NSXLIB_METADATA_H
+#pragma once
 
 #include <map>
 #include <set>
@@ -41,9 +40,8 @@ namespace nsx {
 /*! \brief Class to store MetaData of a DataSet stored by a map of key/value pair
  *
  *  MetaData class allow to store metadata associated with a data file  into a map indexed by the string
- * of the entry. Any parameter type can be stored, using a template argument. Internally, MetaData
- * stores the value using boost::any.
- * A specific key can be retrieved using the templated type if known.
+ * of the entry. Any parameter type can be stored, using the corresponding template argument.
+ * A specific key can be retrieved back using the template type defined when the key was registered.
  * From C++0x onwards, a parameter can be retrieved even if its type is unknown by the user
  * using auto.
  */
@@ -64,9 +62,9 @@ public:
 	template <class _type>  _type getKey(const std::string& key) const;
 	//! Get the value associated with the key. User must know the return type, otherwise use method that return boost_any
 	template <class _type>  _type getKey(const char* key) const;
-	//! Return the value as boost::any. Explicit casting with boost::any_cast must be performed.
+	//! Return the value
 	//@ return : value corresponding to key
-	boost::any getKey(const std::string& key) const;
+	Some<> getKey(const std::string& key) const;
 	//! Is this key in the metadata
 	bool isKey(const std::string& key) const;
 	//!Is this key in the metadata
@@ -110,7 +108,7 @@ template <typename _type>
 	auto it2=_map.find(ptr);
 	if (it2==_map.end())
 		throw std::runtime_error("Could not find key :"+key+" in MetaData");
-	return boost::any_cast<_type>((*it2).second);
+	return it2->second.cast<_type>();
 }
 
 template <typename _type>
@@ -120,5 +118,3 @@ template <typename _type>
 }
 
 } // end namespace nsx
-
-#endif // NSXLIB_METADATA_H

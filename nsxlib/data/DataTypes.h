@@ -7,7 +7,7 @@
 #include <set>
 #include <vector>
 
-#include <boost/any.hpp>
+#include "../utils/Some.h"
 
 namespace nsx {
 
@@ -32,7 +32,7 @@ using DataList = std::vector<sptrDataSet>;
 
 using FrameIteratorCallback = std::function<IFrameIterator*(DataSet&, int)>;
 
-using MetaDataMap = std::map<const char*,boost::any>;
+using MetaDataMap = std::map<const char*,Some<>>;
 using MetaDataKeySet = std::set<std::string>;
 
 } // end namespace nsx
