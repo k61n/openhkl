@@ -60,7 +60,7 @@ void DialogAutoIndexing::autoIndex()
        }
     });
 
-    nsx::AutoIndexer indexer(_experiment, handler);
+    nsx::AutoIndexer indexer(handler);
 
     if (_unitCells.empty()) {
         throw std::runtime_error("cannot auto index: no unit cell");
