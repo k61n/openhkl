@@ -72,10 +72,9 @@ bool AutoIndexer::autoIndex(const IndexerParameters& params)
         
     computeFFTSolutions();
     refineSolutions();
-
-    // remove the bad solutions
-    auto remove = std::remove_if(_solutions.begin(), _solutions.end(), [] (const RankedSolution& s) { return s.second < 0.1; });
-    _solutions.erase(remove, _solutions.end());
+    removeBad(10.0);
+    // refine the constrained unit cells in order to get the uncertainties
+    refineConstraints();
 
     if (_handler) {
         _handler->log("Done refining solutions, building solution table.");
@@ -90,6 +89,13 @@ bool AutoIndexer::autoIndex(const IndexerParameters& params)
 void AutoIndexer::addPeak(const sptrPeak3D &peak)
 {
     _peaks.emplace_back(peak);
+}
+
+void AutoIndexer::removeBad(double quality)
+{
+    // remove the bad solutions
+    auto remove = std::remove_if(_solutions.begin(), _solutions.end(), [=] (const RankedSolution& s) { return s.second < quality; });
+    _solutions.erase(remove, _solutions.end());
 }
 
 const std::vector<std::pair<sptrUnitCell, double> > &AutoIndexer::getSolutions() const
@@ -149,12 +155,11 @@ void AutoIndexer::computeFFTSolutions()
                 if (equivalent) {
                     continue;
                 }    
-                _solutions.push_back(std::make_pair(cell, 0.0));
+                _solutions.push_back(std::make_pair(cell, -1.0));
             }
         }
     }
 }
-
 
 void AutoIndexer::rankSolutions()
 {
@@ -172,8 +177,8 @@ void AutoIndexer::rankSolutions()
 
 void AutoIndexer::refineSolutions()
 {
-     //#pragma omp parallel for
-     for (auto&& soln: _solutions) {
+    //#pragma omp parallel for
+    for (auto&& soln: _solutions) {
         auto cell = soln.first;
         cell->setHKLTolerance(_params.HKLTolerance);
         Eigen::Matrix3d B = cell->reciprocalBasis();
@@ -192,7 +197,7 @@ void AutoIndexer::refineSolutions()
         }
 
         // The number of peaks must be at least for a proper minimization
-        if (success < 10) {            
+        if (success < 10) {      
             continue;
         }
 
@@ -242,6 +247,60 @@ void AutoIndexer::refineSolutions()
             continue;
         }
 
+        double score = 0.0;
+        double maxscore = 0.0;
+        for (auto peak : _peaks) {
+            if (peak->isSelected() && !peak->isMasked()) {
+                maxscore++;
+                Eigen::RowVector3d hkl;
+                bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
+                if (indexingSuccess) {
+                    score++;
+                }
+            }
+        }
+        // Percentage of indexing
+        score /= 0.01*maxscore;
+        soln.second = score;
+    }
+}
+
+void AutoIndexer::refineConstraints()
+{
+     //#pragma omp parallel for
+     for (auto&& soln: _solutions) {
+        auto cell = soln.first;
+
+        if (soln.second <= 0.0) {
+            continue;
+        }
+
+        UBSolution ub_soln(nullptr, nullptr, nullptr, cell);
+        UBMinimizer min(ub_soln);
+
+        int success = 0;
+        for (auto peak : _peaks) {
+            Eigen::RowVector3d hkl;
+            bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
+            if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
+                min.addPeak(*peak, hkl);
+                ++success;
+            }
+        }
+
+        // The number of peaks must be at least for a proper minimization
+        if (success < 10) {      
+            continue;
+        }
+
+        // fails to fit
+        if (!min.run(100)) {
+            continue;
+        }
+
+        ub_soln = min.solution();
+        ub_soln.apply();
+ 
         double score = 0.0;
         double maxscore = 0.0;
         for (auto peak : _peaks) {

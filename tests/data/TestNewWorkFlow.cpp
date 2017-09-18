@@ -133,7 +133,6 @@ int run_test()
     BOOST_CHECK(indexed_peaks > 600);
 
     // get that DataSet::getEvents works properly
-    int i = 0;
     for (auto peak: dataf->getPeaks()) {
         if (!peak->isSelected() || peak->isMasked()) {
             continue;

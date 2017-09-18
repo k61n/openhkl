@@ -74,6 +74,8 @@ private:
     void computeFFTSolutions();
     void refineSolutions();
     void rankSolutions();
+    void refineConstraints();
+    void removeBad(double quality);
   
 
     IndexerParameters _params;
