@@ -62,6 +62,8 @@ struct IndexerParameters {
 class AutoIndexer {
 
 public:
+    using RankedSolution = std::pair<sptrUnitCell, double>;
+
     AutoIndexer(const std::shared_ptr<ProgressHandler>& handler = nullptr);
 
     bool autoIndex(const IndexerParameters& params);
@@ -69,11 +71,14 @@ public:
     const std::vector<std::pair<sptrUnitCell,double>>& getSolutions() const;
 
 private:
-    void computeFFTSolutions(const IndexerParameters& _params);
+    void computeFFTSolutions();
     void refineSolutions();
+    void rankSolutions();
+  
 
+    IndexerParameters _params;
     std::vector<std::shared_ptr<Peak3D>> _peaks;
-    std::vector<std::pair<sptrUnitCell,double>> _solutions;
+    std::vector<RankedSolution> _solutions;
     std::shared_ptr<ProgressHandler> _handler;
 };
 

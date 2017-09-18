@@ -59,8 +59,9 @@ AutoIndexer::AutoIndexer(const std::shared_ptr<ProgressHandler>& handler):
 {
 }
 
-bool AutoIndexer::autoIndex(const IndexerParameters& _params)
+bool AutoIndexer::autoIndex(const IndexerParameters& params)
 {
+    _params = params;
     // Check that a minimum number of peaks have been selected for indexing
     if (_peaks.size() < 10) {
         if (_handler) {
@@ -69,127 +70,19 @@ bool AutoIndexer::autoIndex(const IndexerParameters& _params)
         return false;
     }
         
+    computeFFTSolutions();
+    refineSolutions();
 
-    computeFFTSolutions(_params);
-    auto newSolutions = _solutions;
+    // remove the bad solutions
+    auto remove = std::remove_if(_solutions.begin(), _solutions.end(), [] (const RankedSolution& s) { return s.second < 0.1; });
+    _solutions.erase(remove, _solutions.end());
 
-     //#pragma omp parallel for
-    for (int idx = 0; idx < newSolutions.size(); ++idx) {
-        auto cell = newSolutions[idx].first;
-        cell->setHKLTolerance(_params.HKLTolerance);
-        Eigen::Matrix3d B = cell->reciprocalBasis();
-        std::vector<Eigen::RowVector3d> hkls;
-        std::vector<Eigen::RowVector3d> qs;
-
-        int success = 0;
-        for (auto peak : _peaks) {
-            Eigen::RowVector3d hkl;
-            bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
-            if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
-                hkls.emplace_back(hkl);
-                qs.emplace_back(peak->getQ());
-                ++success;
-            }
-        }
-
-        // The number of peaks must be at least for a proper minimization
-        if (success < 10) {
-            continue;
-        }
-
-        auto residuals = [&B, &hkls, &qs] (Eigen::VectorXd& f) -> int
-        {
-            int n = f.size() / 3;
-
-            for (int i = 0; i < n; ++i) {
-                auto dq = qs[i]-hkls[i]*B;
-                f(3*i+0) = dq(0);
-                f(3*i+1) = dq(1);
-                f(3*i+2) = dq(2);
-            }
-            return 0;
-        };
-
-        FitParameters params;
-
-        for (int r = 0; r < 3; ++r) {
-            for (int c = 0; c < 3; ++c) {
-                params.addParameter(&B(r,c));
-            }
-        }
-
-        Minimizer minimizer;
-        minimizer.initialize(params, 3*success);     
-        minimizer.set_f(residuals);  
-        minimizer.setxTol(1e-10);
-        minimizer.setfTol(1e-10);
-        minimizer.setgTol(1e-10);
-
-        // fails to fit
-        if (!minimizer.fit(100)) {
-            continue;
-        }
-
-
-        try {
-            cell = sptrUnitCell(new UnitCell(B, true));
-            cell->setHKLTolerance(_params.HKLTolerance);
-            cell->reduce(_params.niggliReduction, _params.niggliTolerance, _params.gruberTolerance);
-            *cell = cell->applyNiggliConstraints();
-        } catch(std::exception& e) {
-            if (_handler) {
-                _handler->log("exception: " +std::string(e.what()));
-            }
-            continue;
-        }
-
-        double score = 0.0;
-        double maxscore = 0.0;
-        for (auto peak : _peaks) {
-            if (peak->isSelected() && !peak->isMasked()) {
-                maxscore++;
-                Eigen::RowVector3d hkl;
-                bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
-                if (indexingSuccess) {
-                    score++;
-                }
-            }
-        }
-        // Percentage of indexing
-        score /= 0.01*maxscore;
-        newSolutions[idx].first = cell;
-        newSolutions[idx].second = score;
-
-    }
-
-    _solutions.clear();
-    _solutions.reserve(newSolutions.size());
-
-    // remove the false solutions
-    for (auto&& it = newSolutions.begin(); it != newSolutions.end(); ++it) {
-        if (it->second < 0.1) {
-            continue;
-        }
-        _solutions.push_back(*it);
-    }
-    _solutions.shrink_to_fit();
     if (_handler) {
         _handler->log("Done refining solutions, building solution table.");
     }
 
-    // Sort solutions by decreasing quality.
-    // For equal quality, smallest volume is first
-
-    using soluce = std::pair<sptrUnitCell,double>;
-    std::sort(_solutions.begin(),_solutions.end(),[](const soluce& s1, const soluce& s2) -> bool
-    {
-        if (s1.second==s2.second)
-            return (s1.first->volume()<s2.first->volume());
-        else
-            return (s1.second>s2.second);
-    }
-    );
-
+    // finally, rank the solutions
+    rankSolutions();
 
     return true;
 }
@@ -204,7 +97,7 @@ const std::vector<std::pair<sptrUnitCell, double> > &AutoIndexer::getSolutions()
     return _solutions;
 }
 
-void AutoIndexer::computeFFTSolutions(const IndexerParameters& _params)
+void AutoIndexer::computeFFTSolutions()
 {
     _solutions.clear();
     const int npeaks = _peaks.size();
@@ -242,7 +135,7 @@ void AutoIndexer::computeFFTSolutions(const IndexerParameters& _params)
                 if (cell->volume() < 20.0) {                    
                     continue;
                 }
-                    bool equivalent = false;
+                bool equivalent = false;
     
                 // check to see if the cell is equivalent to a previous one
                 // todo: tolerance should not be hard-coded
@@ -259,7 +152,112 @@ void AutoIndexer::computeFFTSolutions(const IndexerParameters& _params)
                 _solutions.push_back(std::make_pair(cell, 0.0));
             }
         }
-    }    
+    }
+}
+
+
+void AutoIndexer::rankSolutions()
+{
+    // Sort solutions by decreasing quality.
+    // For equal quality, smallest volume is first
+    std::sort(_solutions.begin(),_solutions.end(),[](const RankedSolution& s1, const RankedSolution& s2) -> bool
+    {
+        if (s1.second == s2.second) {
+            return (s1.first->volume() < s2.first->volume());
+        } else {
+            return (s1.second > s2.second);
+        }
+    });
+}
+
+void AutoIndexer::refineSolutions()
+{
+     //#pragma omp parallel for
+     for (auto&& soln: _solutions) {
+        auto cell = soln.first;
+        cell->setHKLTolerance(_params.HKLTolerance);
+        Eigen::Matrix3d B = cell->reciprocalBasis();
+        std::vector<Eigen::RowVector3d> hkls;
+        std::vector<Eigen::RowVector3d> qs;
+
+        int success = 0;
+        for (auto peak : _peaks) {
+            Eigen::RowVector3d hkl;
+            bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
+            if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
+                hkls.emplace_back(hkl);
+                qs.emplace_back(peak->getQ());
+                ++success;
+            }
+        }
+
+        // The number of peaks must be at least for a proper minimization
+        if (success < 10) {            
+            continue;
+        }
+
+        // function to compute residuals
+        auto residuals = [&B, &hkls, &qs] (Eigen::VectorXd& f) -> int
+        {
+            int n = f.size() / 3;
+
+            for (int i = 0; i < n; ++i) {
+                auto dq = qs[i]-hkls[i]*B;
+                f(3*i+0) = dq(0);
+                f(3*i+1) = dq(1);
+                f(3*i+2) = dq(2);
+            }
+            return 0;
+        };
+
+        FitParameters params;
+
+        for (int r = 0; r < 3; ++r) {
+            for (int c = 0; c < 3; ++c) {
+                params.addParameter(&B(r,c));
+            }
+        }
+
+        Minimizer minimizer;
+        minimizer.initialize(params, 3*success);     
+        minimizer.set_f(residuals);  
+        minimizer.setxTol(1e-10);
+        minimizer.setfTol(1e-10);
+        minimizer.setgTol(1e-10);
+
+        // fails to fit
+        if (!minimizer.fit(100)) {
+            continue;
+        }
+
+        try {
+            cell->setReciprocalBasis(B);
+            cell->setHKLTolerance(_params.HKLTolerance);
+            cell->reduce(_params.niggliReduction, _params.niggliTolerance, _params.gruberTolerance);
+            *cell = cell->applyNiggliConstraints();
+        } catch(std::exception& e) {
+            if (_handler) {
+                _handler->log("exception: " +std::string(e.what()));
+            }
+            continue;
+        }
+
+        double score = 0.0;
+        double maxscore = 0.0;
+        for (auto peak : _peaks) {
+            if (peak->isSelected() && !peak->isMasked()) {
+                maxscore++;
+                Eigen::RowVector3d hkl;
+                bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
+                if (indexingSuccess) {
+                    score++;
+                }
+            }
+        }
+        // Percentage of indexing
+        score /= 0.01*maxscore;
+        soln.second = score;
+    }
 }
 
 } // end namespace nsx
