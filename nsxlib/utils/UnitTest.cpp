@@ -69,5 +69,23 @@ void NSXTest::triggerSuccess() {
 
 }
 
+static NSXTest all_tests;
+
+#define TEST_CHECK_THROW(expression,error) \
+    try {                                  \
+        expression;                        \
+        all_tests.triggerFailure(#expression " is not throwing " #error, __FILE__,__LINE__);    \
+    } catch (const error& exception) {     \
+        all_tests.triggerSuccess();               \
+    }
+
+#define TEST_CHECK_NOT_THROW(expression)   \
+    try {                                  \
+        expression;                        \
+        all_tests.triggerSuccess();               \
+    } catch (...) {                        \
+        all_tests.triggerFailure(#expression " is throwing ", __FILE__,__LINE__);    \
+    }
+
 
 } // end unamed namespace
