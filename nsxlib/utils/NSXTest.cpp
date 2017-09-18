@@ -58,4 +58,10 @@ int NSXTest::nTests() const
     return _n_failures + _n_successes;
 }
 
+void NSXTest::reset()
+{
+    _n_failures = 0;
+    _n_successes = 0;
+}
+
 } // end namespace nsx
