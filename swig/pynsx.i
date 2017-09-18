@@ -46,6 +46,7 @@
 %shared_ptr(nsx::Gonio)
 
 %{
+#pragma GCC diagnostic ignored "-Wpedantic"
 #define SWIG_FILE_WITH_INIT
 
 #include <Python.h>
