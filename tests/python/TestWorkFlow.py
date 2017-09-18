@@ -45,7 +45,7 @@ class TestWorkFlow(unittest.TestCase):
         self.assertTrue(len(peaks) > 800)
         self.assertTrue(len(selected_peaks) > 650)
                
-        indexer = nsx.AutoIndexer(expt, nsx.ProgressHandler())
+        indexer = nsx.AutoIndexer(nsx.ProgressHandler())
 
         for peak in selected_peaks:
             indexer.addPeak(peak)

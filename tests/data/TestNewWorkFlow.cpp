@@ -90,7 +90,7 @@ int run_test()
 
     // at this stage we have the peaks, now we index
     nsx::IndexerParameters params;
-    nsx::AutoIndexer indexer(expt, progressHandler);
+    nsx::AutoIndexer indexer(progressHandler);
 
     auto numIndexedPeaks = [&]() -> unsigned int
     {

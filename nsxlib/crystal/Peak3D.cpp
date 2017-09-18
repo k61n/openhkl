@@ -270,6 +270,12 @@ Intensity Peak3D::getRawIntensity() const
     return _intensity * getData()->getSampleStepSize();
 }
 
+void Peak3D::setRawIntensity(const Intensity& i)
+{  
+    // note: the scaling factor is taken to be consistent with Peak3D::getRawIntensity()
+    _intensity = i / getData()->getSampleStepSize();
+}
+
 Intensity Peak3D::getScaledIntensity() const
 {
     return getRawIntensity() * _scale;

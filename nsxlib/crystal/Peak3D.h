@@ -112,6 +112,8 @@ public:
 
     //! Return the raw intensity of the peak.
     Intensity getRawIntensity() const;
+    //! Set the raw intensity of the peak. Warning: this should normally done by calling Peak3D::updateIntegration().
+    void setRawIntensity(const Intensity& I);
 
     //!
     double getIOverSigmaI() const;
