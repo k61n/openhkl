@@ -89,8 +89,6 @@ BOOST_AUTO_TEST_CASE(Test_CC)
         data0.addPeak(p);
     }
 
-    double I_sum = 0.0;
-    double I2_sum = 0.0;
     const double n = group.groupElements().size() * 2.0;
     unsigned int num_raw_peaks = 0;
 
@@ -104,13 +102,10 @@ BOOST_AUTO_TEST_CASE(Test_CC)
             data1.addPeak(p1);
             ++num_raw_peaks;
         }
-
-        I_sum += intensity;
-        I2_sum += std::pow(intensity, 2);
     }
 
-    double J_sum;
-    double J2_sum;
+    double J_sum = 0.0;
+    double J2_sum = 0.0;
 
     for (auto&& peak: data1.getPeaks()) {
         const double i = peak.getIntensity().value();
