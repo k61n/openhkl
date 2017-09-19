@@ -4,14 +4,14 @@
 
 namespace nsx {
 
-NSXTest::NSXTest() : _n_failures(0), _n_successes(0)
+NSXTest::NSXTest() : _n_failures(0), _n_successes(0), _n_skipped(0)
 {
 }
 
 NSXTest::~NSXTest()
 {
     std::cout << "------------------------------------------------------\n";
-    std::cout << "test completed: " << _n_successes << " successes; " << _n_failures << " failures.";
+    std::cout << "all test completed: " << _n_successes << " successes -- " << _n_failures << " failures -- "<< _n_skipped << " skipped.";
     std::cout << std::endl;
 
     if (_n_failures > 0) {
@@ -19,22 +19,28 @@ NSXTest::~NSXTest()
     }
 }
 
-void NSXTest::testCheckAssert(bool condition, const std::string& pred, const std::string& filename, int lineno) {
+void NSXTest::testCheckAssert(bool condition, bool expectedFailure, const std::string& description, const std::string& filename, int lineno) {
 
     if (condition) {
         ++_n_successes;
-        return;
+    } else {
+        if (expectedFailure) {
+            ++_n_skipped;
+        } else {
+            ++_n_failures;
+            std::cout << filename << "(" << lineno << "): TEST `" << description << "' FAILED" << std::endl;
+        }
     }
-    ++_n_failures;
-    std::cout << filename << "(" << lineno << "): TEST `" << pred << "' FAILED" << std::endl;
-
 }
 
-void NSXTest::triggerFailure(const std::string& description, const std::string& filename, int lineno) {
+void NSXTest::triggerFailure(bool expectedFailure, const std::string& description, const std::string& filename, int lineno) {
 
-    std::cout << filename << "(" << lineno << "): TEST `" << description << "' FAILED" << std::endl;
-    ++_n_failures;
-
+    if (expectedFailure) {
+        ++_n_skipped;
+    } else {
+        std::cout << filename << "(" << lineno << "): TEST `" << description << "' FAILED" << std::endl;
+        ++_n_failures;
+    }
 }
 
 void NSXTest::triggerSuccess() {
@@ -53,15 +59,14 @@ int NSXTest::nSuccesses() const
     return _n_successes;
 }
 
-int NSXTest::nTests() const
+int NSXTest::nSkipped() const
 {
-    return _n_failures + _n_successes;
+    return _n_skipped;
 }
 
-void NSXTest::reset()
+int NSXTest::nTests() const
 {
-    _n_failures = 0;
-    _n_successes = 0;
+    return _n_failures + _n_successes + _n_skipped;
 }
 
 } // end namespace nsx

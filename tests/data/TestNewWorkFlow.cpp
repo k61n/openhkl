@@ -84,6 +84,9 @@ int run_test()
         std::cout << "ERROR: exception in PeakFinder::find()" << std::endl;
     }
 
+    std::cout<<dataf->getPeaks().size()<<std::endl;
+
+
     BOOST_CHECK(dataf->getPeaks().size() >= 800);
 
     // at this stage we have the peaks, now we index
