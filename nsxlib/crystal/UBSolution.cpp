@@ -55,16 +55,9 @@ UBSolution::UBSolution(sptrSource source, sptrSample sample, sptrDetector detect
     _uOffsets.setZero();
 
     // note: applyNiggliConstraints can throw
-    try {
-        UnitCell constrained = cell->applyNiggliConstraints();
-        _u0 = constrained.busingLevyU();
-        _initialParameters = constrained.parameters();
-        _cellParameters = _initialParameters;   
-    } catch (...) {
-        _u0 = cell->busingLevyU();
-        _initialParameters = cell->parameters();
-    }
-    _cellParameters = _initialParameters;  
+    UnitCell constrained = cell->applyNiggliConstraints();
+    _u0 = constrained.busingLevyU();
+    _cellParameters = constrained.parameters();
 }
 
 std::ostream& operator<<(std::ostream& os, const UBSolution& solution)

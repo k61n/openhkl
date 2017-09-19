@@ -267,39 +267,46 @@ void AutoIndexer::refineSolutions()
 
 void AutoIndexer::refineConstraints()
 {
-     //#pragma omp parallel for
-     for (auto&& soln: _solutions) {
+    //#pragma omp parallel for
+    for (auto&& soln: _solutions) {
         auto cell = soln.first;
 
         if (soln.second <= 0.0) {
             continue;
         }
 
-        UBSolution ub_soln(nullptr, nullptr, nullptr, cell);
-        UBMinimizer min(ub_soln);
+        // UBSolution constructor can throw if constraints are not met
+        try {
+            UBSolution ub_soln(nullptr, nullptr, nullptr, cell);
+            UBMinimizer min(ub_soln);
 
-        int success = 0;
-        for (auto peak : _peaks) {
-            Eigen::RowVector3d hkl;
-            bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
-            if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
-                min.addPeak(*peak, hkl);
-                ++success;
+            int success = 0;
+            for (auto peak : _peaks) {
+                Eigen::RowVector3d hkl;
+                bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
+                if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
+                    min.addPeak(*peak, hkl);
+                    ++success;
+                }
             }
-        }
 
-        // The number of peaks must be at least for a proper minimization
-        if (success < 10) {      
+            // The number of peaks must be at least for a proper minimization
+            if (success < 10) {      
+                continue;
+            }
+
+            // fails to fit
+            if (!min.run(100)) {
+                continue;
+            }
+
+            ub_soln = min.solution();
+            ub_soln.apply();
+        } catch(...) {
+            // force the solution to be excluded from the final list
+            soln.second = -1.0;
             continue;
         }
-
-        // fails to fit
-        if (!min.run(100)) {
-            continue;
-        }
-
-        ub_soln = min.solution();
-        ub_soln.apply();
  
         double score = 0.0;
         double maxscore = 0.0;

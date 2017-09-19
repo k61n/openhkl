@@ -205,4 +205,33 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
     BOOST_CHECK_CLOSE(ch.gamma, M_PI/2.0, 1e-6);
 
     BOOST_CHECK_EQUAL(new_cell.equivalent(cell, 1e-3), true);
+   
+    const double deg = M_PI / 180.0;
+    nsx::NiggliCharacter nch;
+
+    // from D19 reference data
+    // this unit cell proved to be tricky
+
+    // first check with Niggli only
+    cell = nsx::UnitCell(5.557, 5.77, 16.138, 96.314*deg, 90.0*deg, 90.0*deg);
+    cell.reduce(true, 1e-2, 1e-3);
+    nch = cell.niggliCharacter();
+    BOOST_CHECK_EQUAL(nch.number, 35);
+    BOOST_CHECK_NO_THROW(cell = cell.applyNiggliConstraints());
+
+    // Niggli + Gruber
+    cell = nsx::UnitCell(5.557, 5.77, 16.138, 96.314*deg, 90.0*deg, 90.0*deg);
+    cell.reduce(false, 1e-2, 1e-3);
+    nch = cell.niggliCharacter();
+    BOOST_CHECK_EQUAL(nch.number, 35);
+    BOOST_CHECK_NO_THROW(cell = cell.applyNiggliConstraints());
+
+    ch = cell.character();
+    BOOST_CHECK_CLOSE(ch.a, 5.76, 1.0);
+    BOOST_CHECK_CLOSE(ch.b, 5.55, 1.0);
+    BOOST_CHECK_CLOSE(ch.c, 16.12, 1.0);
+    BOOST_CHECK_CLOSE(ch.alpha, 90.0*deg, 1.0);
+    BOOST_CHECK_CLOSE(ch.beta, 96.3*deg, 1.0);
+    BOOST_CHECK_CLOSE(ch.gamma, 90.0*deg, 1.0);
+    
 }

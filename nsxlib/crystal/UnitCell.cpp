@@ -344,7 +344,8 @@ UnitCell UnitCell::applyNiggliConstraints() const
 
     // residuals used for least-squares fitting
     // these are just the differences A-A0 and B-B0 as described above
-    auto functor = [&](Eigen::VectorXd& residuals) -> int {
+    auto functor = [&](Eigen::VectorXd& residuals) -> int
+    {
         UnitCell uc = this->fromParameters(U, uOffset, p);
         Eigen::Matrix3d A = uc.basis();
         Eigen::Matrix3d B = uc.reciprocalBasis();
@@ -376,10 +377,18 @@ UnitCell UnitCell::applyNiggliConstraints() const
     min.setfTol(1e-6);
     min.setgTol(1e-6);
 
-    if (!min.fit(100)) {
-        throw std::runtime_error("ERROR: failed to apply Niggli constraints!");
-    }
-    return fromParameters(U, uOffset, p);
+    // note: if the UC already satisfies the constraints, the minimizer will fail with GSL_ENOPROG
+    // so we don't check the return value of Minimizer::fit
+    min.fit(100);
+    nsx::UnitCell new_uc = fromParameters(U, uOffset, p);
+
+    // check if the new UC is close to the old one
+    const double delta = (new_uc.reciprocalBasis()-_B).norm() / _B.norm();
+
+    if (delta < 1e-3) {
+        return new_uc;
+    } 
+    throw std::runtime_error("ERROR: could not apply symmetry constraints to unit cell");
 }
 
 Eigen::RowVector3d UnitCell::index(const Eigen::RowVector3d& q) const
@@ -600,7 +609,7 @@ UnitCell UnitCell::fromParameters(const Eigen::Matrix3d& U0, const Eigen::Vector
 
     Eigen::MatrixXd kernel;
 
-    // no constraints f
+    // no constraints
     if (_niggli.number == 31 || _niggli.number == 44) {
         kernel.setIdentity(6, 6);
     } else {

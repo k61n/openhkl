@@ -190,7 +190,11 @@ void DialogRefineUnitCell::refineParameters()
 
 void DialogRefineUnitCell::resetParameters()
 {
+    _initialValues._sourceOffset = 0.0;
+    _initialValues._sampleOffset.setZero();
+    _initialValues._detectorOffset.setZero();
     _initialValues.apply();
+    _currentValues = _initialValues;
     ui->textEdit_Solution->append("\nResetting parameters to initial values.\n");
     updateParameters();
 }

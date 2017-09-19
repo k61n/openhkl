@@ -24,7 +24,9 @@ namespace nsx {
 //! Struct to store UB and offset refinement
 class UBSolution {
 public:
-    //! Construct with given source, sample, detector, and unit cell. Only the cell must be non-null.
+    //! \brief Construct with given source, sample, detector, and unit cell. Only the cell must be non-null.
+    //! WARNING: If the cell parameters do not match its Niggli number, the UBSolution object cannot be
+    //! created and this constructor will throw std::exception.
     UBSolution(sptrSource source, sptrSample sample, sptrDetector detector, sptrUnitCell cell);
 
     //! Apply solution to selected cell, sample, source, and detector
@@ -45,7 +47,6 @@ private:
     //! The original orientation matrix of the unit cell
     Eigen::Matrix3d _u0; 
 
-    Eigen::VectorXd _initialParameters;
     //! Niggli to Gruber transformation
     Eigen::Matrix3d _NP;
 
