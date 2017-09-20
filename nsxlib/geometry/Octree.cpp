@@ -125,8 +125,6 @@ bool Octree::hasData() const
 
 std::set<Octree::collision_pair> Octree::getCollisions() const
 {
-    using CollisionSet = std::set<const Ellipsoid*>;
-
     std::set<collision_pair> collisions;
 
     // loop over chambers of the ndtree
