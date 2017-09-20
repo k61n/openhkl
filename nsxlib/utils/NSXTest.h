@@ -119,66 +119,66 @@ void NSXTest::testCheckNotClose(T observed, T predicted, T epsilon, bool expecte
     }
 }
 
-static NSXTest all_tests;
+NSXTest&  allTests();
 
 } // end namespace nsx
 
 #define NSX_CHECK_EXCEPTION(expression,error)                                                \
     try {                                                                                         \
         expression;                                                                               \
-        nsx::all_tests.triggerFailure(false, #expression " is not throwing " #error, __FILE__,__LINE__); \
+        nsx::allTests().triggerFailure(false, #expression " is not throwing " #error, __FILE__,__LINE__); \
     } catch (const error& exception) {                                                            \
-        nsx::all_tests.triggerSuccess();                                                          \
+        nsx::allTests().triggerSuccess();                                                          \
     }
 
 #define NSX_CHECK_ANY_EXCEPTION(expression)                                          \
     try {                                                                                 \
         expression;                                                                       \
-        nsx::all_tests.triggerFailure(false, #expression " is not throwing", __FILE__,__LINE__); \
+        nsx::allTests().triggerFailure(false, #expression " is not throwing", __FILE__,__LINE__); \
     } catch (...) {                                                                       \
-        nsx::all_tests.triggerSuccess();                                                  \
+        nsx::allTests().triggerSuccess();                                                  \
     }
 
 #define NSX_CHECK_NO_EXCEPTION(expression)                                       \
     try {                                                                             \
         expression;                                                                   \
-        nsx::all_tests.triggerSuccess();                                              \
+        nsx::allTests().triggerSuccess();                                              \
     } catch (...) {                                                                   \
-        nsx::all_tests.triggerFailure(false, #expression " is throwing", __FILE__,__LINE__); \
+        nsx::allTests().triggerFailure(false, #expression " is throwing", __FILE__,__LINE__); \
     }
 
 // nsx unit test check for assertion
-#define NSX_CHECK_ASSERT_1(condition) nsx::all_tests.testCheckAssert(condition, false, #condition, __FILE__, __LINE__)
-#define NSX_CHECK_ASSERT_2(condition,expectedFailure) nsx::all_tests.testCheckAssert(condition, expectedFailure, #condition, __FILE__, __LINE__)
+#define NSX_CHECK_ASSERT_1(condition) nsx::allTests().testCheckAssert(condition, false, #condition, __FILE__, __LINE__)
+#define NSX_CHECK_ASSERT_2(condition,expectedFailure) nsx::allTests().testCheckAssert(condition, expectedFailure, #condition, __FILE__, __LINE__)
 #define NSX_CHECK_ASSERT_X(x,A,B,FUNC, ...) FUNC
 #define NSX_CHECK_ASSERT(...) NSX_CHECK_ASSERT_X(,##__VA_ARGS__,NSX_CHECK_ASSERT_2(__VA_ARGS__),NSX_CHECK_ASSERT_1(__VA_ARGS__))
 
 // nsx unit test check for integral type equality
-#define NSX_CHECK_EQUAL_1(observed,predicted) nsx::all_tests.testCheckEqual(observed, predicted, false, #observed" == " #predicted, __FILE__, __LINE__)
-#define NSX_CHECK_EQUAL_2(observed,predicted,expectedFailure) nsx::all_tests.testCheckEqual(observed, predicted, expectedFailure, #observed" == " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_EQUAL_1(observed,predicted) nsx::allTests().testCheckEqual(observed, predicted, false, #observed" == " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_EQUAL_2(observed,predicted,expectedFailure) nsx::allTests().testCheckEqual(observed, predicted, expectedFailure, #observed" == " #predicted, __FILE__, __LINE__)
 #define NSX_CHECK_EQUAL_X(x,A,B,C,FUNC, ...) FUNC
 #define NSX_CHECK_EQUAL(...) NSX_CHECK_EQUAL_X(,##__VA_ARGS__,NSX_CHECK_EQUAL_2(__VA_ARGS__),NSX_CHECK_EQUAL_1(__VA_ARGS__))
 
 // nsx unit test check for integral type inequality
-#define NSX_CHECK_NOT_EQUAL_1(observed,predicted) nsx::all_tests.testCheckNotEqual(observed, predicted, false, #observed" != " #predicted, __FILE__, __LINE__)
-#define NSX_CHECK_NOT_EQUAL_2(observed,predicted,expectedFailure) nsx::all_tests.testCheckNotEqual(observed, predicted, expectedFailure, #observed" != " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_NOT_EQUAL_1(observed,predicted) nsx::allTests().testCheckNotEqual(observed, predicted, false, #observed" != " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_NOT_EQUAL_2(observed,predicted,expectedFailure) nsx::allTests().testCheckNotEqual(observed, predicted, expectedFailure, #observed" != " #predicted, __FILE__, __LINE__)
 #define NSX_CHECK_NOT_EQUAL_X(x,A,B,C,FUNC, ...) FUNC
 #define NSX_CHECK_NOT_EQUAL(...) NSX_CHECK_NOT_EQUAL_X(,##__VA_ARGS__,NSX_CHECK_NOT_EQUAL_2(__VA_ARGS__),NSX_CHECK_NOT_EQUAL_1(__VA_ARGS__))
 
 // nsx unit test check for floating type equality
-#define NSX_CHECK_CLOSE_1(observed,predicted,epsilon) nsx::all_tests.testCheckClose(observed, predicted, epsilon, false, "|"#observed" - " #predicted"| < "#epsilon, __FILE__, __LINE__)
-#define NSX_CHECK_CLOSE_2(observed,predicted,epsilon,expectedFailure) nsx::all_tests.testCheckClose(observed, predicted, epsilon, expectedFailure, "|"#observed" - " #predicted"| < "#epsilon, __FILE__, __LINE__)
+#define NSX_CHECK_CLOSE_1(observed,predicted,epsilon) nsx::allTests().testCheckClose(observed, predicted, epsilon, false, "|"#observed" - " #predicted"| < "#epsilon, __FILE__, __LINE__)
+#define NSX_CHECK_CLOSE_2(observed,predicted,epsilon,expectedFailure) nsx::allTests().testCheckClose(observed, predicted, epsilon, expectedFailure, "|"#observed" - " #predicted"| < "#epsilon, __FILE__, __LINE__)
 #define NSX_CHECK_CLOSE_X(x,A,B,C,D,FUNC, ...) FUNC
 #define NSX_CHECK_CLOSE(...) NSX_CHECK_CLOSE_X(,##__VA_ARGS__,NSX_CHECK_CLOSE_2(__VA_ARGS__),NSX_CHECK_CLOSE_1(__VA_ARGS__))
 
 // nsx unit test check for floating type inequality
-#define NSX_CHECK_NOT_CLOSE_1(observed,predicted,epsilon) nsx::all_tests.testCheckNotClose(observed, predicted, epsilon, false, "|"#observed" - " #predicted"| > "#epsilon, __FILE__, __LINE__)
-#define NSX_CHECK_NOT_CLOSE_2(observed,predicted,epsilon,expectedFailure) nsx::all_tests.testCheckNotClose(observed, predicted, epsilon, expectedFailure, "|"#observed" - " #predicted"| > "#epsilon, __FILE__, __LINE__)
+#define NSX_CHECK_NOT_CLOSE_1(observed,predicted,epsilon) nsx::allTests().testCheckNotClose(observed, predicted, epsilon, false, "|"#observed" - " #predicted"| > "#epsilon, __FILE__, __LINE__)
+#define NSX_CHECK_NOT_CLOSE_2(observed,predicted,epsilon,expectedFailure) nsx::allTests().testCheckNotClose(observed, predicted, epsilon, expectedFailure, "|"#observed" - " #predicted"| > "#epsilon, __FILE__, __LINE__)
 #define NSX_CHECK_NOT_CLOSE_X(x,A,B,C,D,FUNC, ...) FUNC
 #define NSX_CHECK_NOT_CLOSE(...) NSX_CHECK_NOT_CLOSE_X(,##__VA_ARGS__,NSX_CHECK_NOT_CLOSE_2(__VA_ARGS__),NSX_CHECK_NOT_CLOSE_1(__VA_ARGS__))
 
 // nsx failure trigger
-#define NSX_FAIL_1(description) nsx::all_tests.triggerFailure(false, description,__FILE__,__LINE__)
-#define NSX_FAIL_2(expectedFailure, description) nsx::all_tests.triggerFailure(expectedFailure, description,__FILE__,__LINE__)
+#define NSX_FAIL_1(description) nsx::allTests().triggerFailure(false, description,__FILE__,__LINE__)
+#define NSX_FAIL_2(expectedFailure, description) nsx::allTests().triggerFailure(expectedFailure, description,__FILE__,__LINE__)
 #define NSX_FAIL_X(x,A,B,FUNC, ...) FUNC
 #define NSX_FAIL(...) NSX_FAIL_X(,##__VA_ARGS__,NSX_FAIL_2(__VA_ARGS__),NSX_FAIL_1(__VA_ARGS__))

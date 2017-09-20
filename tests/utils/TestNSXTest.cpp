@@ -53,7 +53,8 @@ int main() {
 
     NSX_FAIL(true, "I want you to fail !");
 
-    using nsx::all_tests;
+    auto& all_tests = nsx::allTests();
+
     if (all_tests.nTests() != 16)
     {
         std::cout<<"Invalid number of unit tests"<<std::endl;
