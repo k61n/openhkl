@@ -42,6 +42,14 @@
 // anonymous namespace for helper structures and routines
 namespace nsx {
 
+Profile3d::Profile3d(double background, double A, const Eigen::Vector3d& c, const Eigen::Matrix3d& CI):
+    _background(background), _A(A), _c(c),
+    _Dxx(CI(0,0)),_Dxy(CI(0,1)),_Dxz(CI(0,2)),_Dyy(CI(1,1)),_Dyz(CI(1,2)),_Dzz(CI(2,2))
+{
+
+}
+
+
 void Profile3d::evaluateInPlace(Eigen::VectorXd& result, const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const
 {
     const int n = result.size();
@@ -59,6 +67,7 @@ void Profile3d::evaluateInPlace(Eigen::VectorXd& result, const Eigen::ArrayXd& x
     result.array() = _background + _A * arg.exp();
 }
 
+// note: the ordering of the columns of J corresponds to the order in which parameters are added to FitParameters in Profile3d::fit().
 void Profile3d::jacobianInPlace(Eigen::MatrixXd& J, const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const
 {
     const int n = J.rows();
@@ -87,17 +96,17 @@ void Profile3d::jacobianInPlace(Eigen::MatrixXd& J, const Eigen::ArrayXd& x, con
     // derivative wrt background
     J.col(0).array() = 1;
 
+    // derivative wrt A
+    J.col(1).array() = e;
+
     // derivative wrt x0
-    J.col(1).array() = _A*e * (_Dxx*dx + _Dxy*dy + _Dxz*dz);
+    J.col(2).array() = _A*e * (_Dxx*dx + _Dxy*dy + _Dxz*dz);
 
     // derivative wrt y0
-    J.col(2).array() = _A*e * (_Dyy*dy + _Dxy*dx + _Dyz*dz);
+    J.col(3).array() = _A*e * (_Dyy*dy + _Dxy*dx + _Dyz*dz);
 
     // derivative wrt z0
-    J.col(3).array() = _A*e * (_Dzz*dz + _Dxz*dx + _Dyz*dy);
-
-    // derivative wrt A
-    J.col(4).array() = e;
+    J.col(4).array() = _A*e * (_Dzz*dz + _Dxz*dx + _Dyz*dy);
 
     // derivative wrt dxx
     J.col(5).array() = -0.5*_A*e*dxdx;
@@ -209,6 +218,8 @@ Profile3d Profile3d::fit(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const
 
     Profile3d result(*this);
     FitParameters params;
+    // note: the order in which we add parameters matters, because we have to get the 
+    // correct indicies in the Jacobian calculation!
     params.addParameter(&result._background);
     params.addParameter(&result._A);
     params.addParameter(&result._c(0));
@@ -241,6 +252,10 @@ Profile3d Profile3d::fit(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const
     min.setWeights(I.sqrt().array());
     min.set_f(f);
     min.set_df(df);
+    min.setxTol(1e-8);
+    min.setfTol(1e-8);
+    min.setgTol(1e-12);
+
     bool success = min.fit(maxiter);
 
     Eigen::ArrayXd result_profile = result.evaluate(x, y, z);

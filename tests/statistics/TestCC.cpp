@@ -26,8 +26,6 @@ using namespace nsx;
 
 BOOST_AUTO_TEST_CASE(Test_CC)
 {
-    // todo: we need to rewrite part of this test now that PeakCalc has been removed!!
-
     nsx::DataReaderFactory factory;    
     nsx::sptrExperiment expt(new nsx::Experiment("test", "BioDiff2500"));
     auto diff = expt->getDiffractometer();

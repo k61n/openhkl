@@ -43,6 +43,8 @@ namespace nsx {
 //! Class for 3d peak profile fitting
 class Profile3d {
 public: 
+    //! Create a profile with given initial parameters
+    Profile3d(double background, double A, const Eigen::Vector3d& c, const Eigen::Matrix3d& CI);
     //! Create a profile with an initial guess calculated (not fit) from the given data.
     Profile3d(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z, const Eigen::ArrayXd& I);
     //! Fit using the provided data points
@@ -75,12 +77,13 @@ private:
     //! Covariance matrix
     Eigen::Matrix3d _covariance;
 
+public:
     //! Background value
     double _background;
-    //! center of mass
-    Eigen::Vector3d _c;
     //! Amplitude
     double _A;
+    //! center of mass
+    Eigen::Vector3d _c;
     //! Components of inverse covariance matrix. 
     double _Dxx, _Dxy, _Dxz, _Dyy, _Dyz, _Dzz;
 
