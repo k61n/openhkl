@@ -47,9 +47,6 @@ private:
     //! The original orientation matrix of the unit cell
     Eigen::Matrix3d _u0; 
 
-    //! Niggli to Gruber transformation
-    Eigen::Matrix3d _NP;
-
     friend std::ostream& operator<<(std::ostream& os, const UBSolution& solution);
     int _nSampleAxes;
     int _nDetectorAxes;

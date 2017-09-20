@@ -6,6 +6,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <nsxlib/crystal/UnitCell.h>
+#include <nsxlib/mathematics/Minimizer.h>
 #include <nsxlib/utils/Units.h>
 
 
@@ -233,5 +234,69 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
     BOOST_CHECK_CLOSE(ch.alpha, 90.0*deg, 1.0);
     BOOST_CHECK_CLOSE(ch.beta, 96.3*deg, 1.0);
     BOOST_CHECK_CLOSE(ch.gamma, 90.0*deg, 1.0);
-    
+
+    // simulated data
+    std::vector<Eigen::RowVector3d> q;
+    std::vector<Eigen::RowVector3d> hkl;
+    const int hkl_max = 10;
+
+    for (int h = -hkl_max; h < hkl_max; ++h) {
+        for (int k = -hkl_max; k < hkl_max; ++k) {
+            for (int l = -hkl_max; l < hkl_max; ++l) {
+                hkl.emplace_back(Eigen::RowVector3d(h,k,l));
+                q.emplace_back(hkl.back()*cell.reciprocalBasis());
+            }
+        }
+    }
+
+    nsx::FitParameters params;
+    Eigen::Vector3d u;
+    const Eigen::Matrix3d U = cell.niggliOrientation();
+    Eigen::VectorXd x = cell.parameters();    
+    u.setZero();
+
+    auto residual = [&](Eigen::VectorXd& f) -> int
+    {
+        nsx::UnitCell uc = cell.fromParameters(U, u, x);
+
+        for (auto i = 0; i < q.size(); ++i) {
+            auto dq = q[i] - hkl[i]*uc.reciprocalBasis();
+            f(3*i+0) = dq(0);
+            f(3*i+1) = dq(1);
+            f(3*i+2) = dq(2);
+        }
+        return 0;
+    };
+
+    std::cout << "u offsets " << u.transpose() << std::endl;
+    std::cout << "cell parameters " << x.transpose() << std::endl;
+
+    // perturb the cell slightly
+    for (auto i = 0; i < x.size(); ++i) {
+        x(i) += x(i)*0.1;
+        params.addParameter(&x(i));
+    }
+    // add u to fit
+    for (auto i = 0; i < 3; ++i) {
+        params.addParameter(&u(i));
+    }
+
+    // try to fit the perturbed cell
+    nsx::Minimizer min;
+    min.initialize(params, 3*q.size());
+    min.set_f(residual);
+    BOOST_CHECK_EQUAL(min.fit(100), true);
+
+    std::cout << "u offsets " << u.transpose() << std::endl;
+    std::cout << "cell parameters " << x.transpose() << std::endl;
+
+    // new character of fitted cell
+    ch = cell.fromParameters(U, u, x).character();
+
+    BOOST_CHECK_CLOSE(ch.a, 5.76, 1.0);
+    BOOST_CHECK_CLOSE(ch.b, 5.55, 1.0);
+    BOOST_CHECK_CLOSE(ch.c, 16.12, 1.0);
+    BOOST_CHECK_CLOSE(ch.alpha, 90.0*deg, 1.0);
+    BOOST_CHECK_CLOSE(ch.beta, 96.3*deg, 1.0);
+    BOOST_CHECK_CLOSE(ch.gamma, 90.0*deg, 1.0);
 }

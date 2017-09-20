@@ -202,11 +202,6 @@ public:
     //! Return the reciprocal character of the cell
     CellCharacter reciprocalCharacter() const;
 
-    //! Get Busing-Levy B (note: column vector convention)
-    Eigen::Matrix3d busingLevyB() const;
-    //! Get Busing-Levy U (note: column vector convention)
-    Eigen::Matrix3d busingLevyU() const;
-
     //! Reduce the unit cell to Niggli or conventional cell. Returns the number 
     //! according to the classification into 44 lattice types.
     int reduce(bool niggli_only, double niggliTolerance, double gruberTolerance);
@@ -224,8 +219,14 @@ public:
     const Eigen::Matrix3d& niggliTransformation() const;
 
     //! Return the orientation matrix Q such that _A = Q*R where R is 
-    //! upper triangular with positive entries on the diagonal
+    //! upper triangular with positive entries on the diagonal, i.e. transformation
+    //! mapping crystal space into real space.
     Eigen::Matrix3d orientation() const;
+
+    //! Return the orientation matrix Q such that _A*_NP^{-1} = Q*R where R is 
+    //! upper triangular with positive entries on the diagonal. This is similar to UnitCell::orientation()
+    //! except that the orientation is computed for the Niggli cell.
+    Eigen::Matrix3d niggliOrientation() const;
 
     //! \brief Return parameters of the unit cell in an internal format.
     Eigen::VectorXd parameters() const;

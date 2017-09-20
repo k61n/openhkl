@@ -338,7 +338,7 @@ UnitCell UnitCell::applyNiggliConstraints() const
     const double a = std::pow(std::fabs(_A.determinant()), 1.0/3.0);
     const double b = std::pow(std::fabs(_B.determinant()), 1.0/3.0);
 
-    Eigen::Matrix3d U = orientation();
+    Eigen::Matrix3d U = niggliOrientation();
     Eigen::Vector3d uOffset(0,0,0);
     Eigen::VectorXd p = parameters();
 
@@ -486,16 +486,6 @@ int UnitCell::reduce(bool niggli_only, double niggliTolerance, double gruberTole
     return _niggli.number;
 }
 
-Eigen::Matrix3d UnitCell::busingLevyB() const
-{
-    return orientation().transpose() * _B;
-}
-
-Eigen::Matrix3d UnitCell::busingLevyU() const
-{
-    return orientation();
-}
-
 void UnitCell::setBasis(const Eigen::Matrix3d& b)
 {
     _A = b;
@@ -561,6 +551,20 @@ Eigen::Matrix3d UnitCell::orientation() const
 {
     Eigen::Matrix3d Q = _A.householderQr().householderQ();
     Eigen::Matrix3d R = Q.transpose() * _A;
+
+    for (auto i = 0; i < 3; ++i) {
+        if (R(i,i) < 0) {
+            Q.col(i) *= -1.0;
+        }
+    }
+    return Q;
+}
+
+Eigen::Matrix3d UnitCell::niggliOrientation() const
+{
+    const Eigen::Matrix3d NA  =_A*_NP.inverse();
+    Eigen::Matrix3d Q = NA.householderQr().householderQ();
+    Eigen::Matrix3d R = Q.transpose() * NA;
 
     for (auto i = 0; i < 3; ++i) {
         if (R(i,i) < 0) {

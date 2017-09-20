@@ -51,12 +51,10 @@ UBSolution::UBSolution(sptrSource source, sptrSample sample, sptrDetector detect
     _sourceOffset = _source ? _source->getSelectedMonochromator().getOffset() : 0.0;
     _sigmaSource = 0.0;
 
-    _NP = cell->niggliTransformation();
     _uOffsets.setZero();
-
     // note: applyNiggliConstraints can throw
     UnitCell constrained = cell->applyNiggliConstraints();
-    _u0 = constrained.busingLevyU();
+    _u0 = constrained.niggliOrientation();
     _cellParameters = constrained.parameters();
 }
 
