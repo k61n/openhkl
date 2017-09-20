@@ -87,7 +87,7 @@ int run_test()
 
     // hard fit: using guessed parameters as input
     // check that it converges with few iterations
-    nsx::Profile3d hardfit = guess.fit(x, y, z, I, 15);
+    nsx::Profile3d hardfit = guess.fit(x, y, z, I, 30);
 
     BOOST_CHECK(hardfit.success() == true);
 

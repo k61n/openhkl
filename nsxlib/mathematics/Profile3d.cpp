@@ -252,9 +252,6 @@ Profile3d Profile3d::fit(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const
     min.setWeights(I.sqrt().array());
     min.set_f(f);
     min.set_df(df);
-    min.setxTol(1e-8);
-    min.setfTol(1e-8);
-    min.setgTol(1e-12);
 
     bool success = min.fit(maxiter);
 
