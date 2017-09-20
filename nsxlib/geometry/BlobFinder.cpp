@@ -436,8 +436,31 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, Equivalen
     oct.setMaxDepth(6);
     oct.setMaxStorage(6);
 
-    for (auto&& it: boxes) {
-        oct.addData(it.first);
+    std::vector<const Ellipsoid*> xyz_sorted_ellipsoids;
+    xyz_sorted_ellipsoids.reserve(boxes.size());
+    for (auto&& it : boxes)
+        xyz_sorted_ellipsoids.push_back(it.first);
+
+    // Sort the ellipsoid by increasing x, y and z
+    auto cmp = [](const Ellipsoid* ell1, const Ellipsoid* ell2) -> bool {
+        auto&& c1 = ell1->center();
+        auto&& c2 = ell2->center();
+
+        if (c1[0] < c2[0]) return true;
+        if (c1[0] > c2[0]) return false;
+
+        if (c1[0] < c2[0]) return true;
+        if (c1[0] > c2[0]) return false;
+
+        if (c1[0] < c2[0]) return true;
+        if (c1[0] > c2[0]) return false;
+
+        return false;
+    };
+    std::sort(xyz_sorted_ellipsoids.begin(),xyz_sorted_ellipsoids.end(),cmp);
+
+    for (auto it: xyz_sorted_ellipsoids) {
+        oct.addData(it);
     }
 
     auto collisions = oct.getCollisions();
