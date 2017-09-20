@@ -29,13 +29,17 @@ int main() {
 
     // Check floatings equality/inequality within a given tolerance
 
-    NSX_CHECK_CLOSE(1.0,1.1,0.5);
+    // 1 and 1.1 are close at 15%
+    NSX_CHECK_CLOSE(1.0,1.1,15.0);
 
-    NSX_CHECK_CLOSE(1.0f,18.3f,0.2f,true);
+    // 1.0 and 1.1 and not close at8%
+    NSX_CHECK_CLOSE(1.0f,1.1f,8.0f,true);
 
-    NSX_CHECK_NOT_CLOSE(1.0f,1.3f,0.2f);
+    // 1.0 and 1.3 are not close at 10%
+    NSX_CHECK_NOT_CLOSE(1.0f,1.3f,10.0f);
 
-    NSX_CHECK_NOT_CLOSE(1.0,2.0,10.0,true);
+    // 1.0 and 2.0 close at 60%
+    NSX_CHECK_NOT_CLOSE(1.0,2.0,60.0,true);
 
     // Check exception throwed
 

@@ -93,7 +93,7 @@ void NSXTest::testCheckNotEqual(T observed, T predicted, bool expectedFailure, c
 template <typename T>
 void NSXTest::testCheckClose(T observed, T predicted, T epsilon, bool expectedFailure, const std::string& description, const std::string& filename, int lineno) {
 
-    if (std::fabs(observed - predicted) < epsilon) {
+    if (std::fabs((observed - predicted)/predicted) < 0.01*epsilon) {
         ++_n_successes;
     } else {
         if (expectedFailure) {
@@ -107,7 +107,7 @@ void NSXTest::testCheckClose(T observed, T predicted, T epsilon, bool expectedFa
 
 template <typename T>
 void NSXTest::testCheckNotClose(T observed, T predicted, T epsilon, bool expectedFailure, const std::string& description, const std::string& filename, int lineno) {
-    if (std::fabs(observed - predicted) > epsilon) {
+    if (std::fabs((observed - predicted)/predicted) > 0.01*epsilon) {
         ++_n_successes;
     } else {
         if (expectedFailure) {
@@ -166,14 +166,14 @@ NSXTest&  allTests();
 #define NSX_CHECK_NOT_EQUAL(...) NSX_CHECK_NOT_EQUAL_X(,##__VA_ARGS__,NSX_CHECK_NOT_EQUAL_2(__VA_ARGS__),NSX_CHECK_NOT_EQUAL_1(__VA_ARGS__))
 
 // nsx unit test check for floating type equality
-#define NSX_CHECK_CLOSE_1(observed,predicted,epsilon) nsx::allTests().testCheckClose(observed, predicted, epsilon, false, "|"#observed" - " #predicted"| < "#epsilon, __FILE__, __LINE__)
-#define NSX_CHECK_CLOSE_2(observed,predicted,epsilon,expectedFailure) nsx::allTests().testCheckClose(observed, predicted, epsilon, expectedFailure, "|"#observed" - " #predicted"| < "#epsilon, __FILE__, __LINE__)
+#define NSX_CHECK_CLOSE_1(observed,predicted,epsilon) nsx::allTests().testCheckClose(observed, predicted, epsilon, false, "|("#observed" - " #predicted")/"#predicted"| < "#epsilon"%", __FILE__, __LINE__)
+#define NSX_CHECK_CLOSE_2(observed,predicted,epsilon,expectedFailure) nsx::allTests().testCheckClose(observed, predicted, epsilon, expectedFailure, "|("#observed" - " #predicted")/"#predicted"| < "#epsilon"%", __FILE__, __LINE__)
 #define NSX_CHECK_CLOSE_X(x,A,B,C,D,FUNC, ...) FUNC
 #define NSX_CHECK_CLOSE(...) NSX_CHECK_CLOSE_X(,##__VA_ARGS__,NSX_CHECK_CLOSE_2(__VA_ARGS__),NSX_CHECK_CLOSE_1(__VA_ARGS__))
 
 // nsx unit test check for floating type inequality
-#define NSX_CHECK_NOT_CLOSE_1(observed,predicted,epsilon) nsx::allTests().testCheckNotClose(observed, predicted, epsilon, false, "|"#observed" - " #predicted"| > "#epsilon, __FILE__, __LINE__)
-#define NSX_CHECK_NOT_CLOSE_2(observed,predicted,epsilon,expectedFailure) nsx::allTests().testCheckNotClose(observed, predicted, epsilon, expectedFailure, "|"#observed" - " #predicted"| > "#epsilon, __FILE__, __LINE__)
+#define NSX_CHECK_NOT_CLOSE_1(observed,predicted,epsilon) nsx::allTests().testCheckNotClose(observed, predicted, epsilon, false, "|("#observed" - " #predicted")/"#predicted"| > "#epsilon"%", __FILE__, __LINE__)
+#define NSX_CHECK_NOT_CLOSE_2(observed,predicted,epsilon,expectedFailure) nsx::allTests().testCheckNotClose(observed, predicted, epsilon, expectedFailure, "|("#observed" - " #predicted")/"#predicted"| > "#epsilon"%", __FILE__, __LINE__)
 #define NSX_CHECK_NOT_CLOSE_X(x,A,B,C,D,FUNC, ...) FUNC
 #define NSX_CHECK_NOT_CLOSE(...) NSX_CHECK_NOT_CLOSE_X(,##__VA_ARGS__,NSX_CHECK_NOT_CLOSE_2(__VA_ARGS__),NSX_CHECK_NOT_CLOSE_1(__VA_ARGS__))
 
