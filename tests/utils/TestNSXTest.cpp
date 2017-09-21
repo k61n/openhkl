@@ -43,17 +43,17 @@ int main() {
 
     // Check exception throwed
 
-    NSX_CHECK_EXCEPTION(throw std::runtime_error("I am failing"),std::runtime_error);
+    NSX_CHECK_THROW(throw std::runtime_error("I am failing"),std::runtime_error);
 
-    NSX_CHECK_EXCEPTION(throw MyException(),MyException);
+    NSX_CHECK_THROW(throw MyException(),MyException);
 
-    NSX_CHECK_EXCEPTION(throw MyException(),std::exception);
+    NSX_CHECK_THROW(throw MyException(),std::exception);
 
-    NSX_CHECK_ANY_EXCEPTION(throw MyException());
+    NSX_CHECK_THROW_ANY(throw MyException());
 
     // Check no exception throwed
 
-    NSX_CHECK_NO_EXCEPTION(true);
+    NSX_CHECK_NO_THROW(true);
 
     NSX_FAIL(true, "I want you to fail !");
 
