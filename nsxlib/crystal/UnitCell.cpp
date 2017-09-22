@@ -318,7 +318,7 @@ void UnitCell::setNiggli(const NiggliCharacter& niggli)
 //! and R is upper triangular. The upper triangular matrix R is parameterized by the 6 lattice character components
 //! A, B, C, D, E, F on which the constraints are linear. We construct the rotation matrix U1 from a unit quaternion,
 //! which is parameterized by 3 real numbers. So the total number of parameters is
-//! 3 quaterion components + 6 lattice characters - # constraints. 
+//! 3 quaternion components + 6 lattice characters - # constraints.
 //!
 //! We further note that the factorization U = U1 * U0 is done for numerical stability (since we expect U1 to be small)
 //! and that we use quaternions to compute U1 also for numerical stability (and furthermore to guarantee that U1 is
