@@ -338,8 +338,11 @@ UnitCell UnitCell::applyNiggliConstraints() const
     const double a = std::pow(std::fabs(_A.determinant()), 1.0/3.0);
     const double b = std::pow(std::fabs(_B.determinant()), 1.0/3.0);
 
+    // The orientation matrix (in direct space)
     Eigen::Matrix3d U = niggliOrientation();
+    // The offsets of the orientation matrix
     Eigen::Vector3d uOffset(0,0,0);
+    // The unit cell parameters
     Eigen::VectorXd p = parameters();
 
     // residuals used for least-squares fitting

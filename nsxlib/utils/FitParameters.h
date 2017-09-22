@@ -45,9 +45,9 @@ namespace nsx {
 //! \class FitParameters
 //! \brief Class to encapsulate parameters to be passed to nsx::Minimizer.
 class FitParameters {
-    //! Vector of addresses to fit parameters. Pointers are _not_ owned.
-    std::vector<double*> _params;
+
 public:
+
     //! Add a parameter to be fit. The return value is the index of the parameter.
     int addParameter(double* addr);
     //! Set values of the parameters from a GSL vector.
@@ -56,6 +56,12 @@ public:
     void writeValues(gsl_vector* v) const;
     //! Return the number of parameters
     size_t size() const;
+
+private:
+
+    //! Vector of addresses to fit parameters. Pointers are _not_ owned.
+    std::vector<double*> _params;
+
 };
 
 } // end namespace nsx

@@ -51,7 +51,7 @@ namespace nsx {
 
     //! \brief Structure to encapsulate lattice cell character.
     struct CellCharacter {
-        //! Lattice character \f$A = \mathbf{a} \cdot \mathbf{b}\f$
+        //! Lattice character \f$A = \mathbf{a} \cdot \mathbf{a}\f$
         double A;
         //! Lattice character \f$B = \mathbf{b} \cdot \mathbf{b}\f$
         double B;
@@ -234,6 +234,7 @@ public:
     //! We use the parameter uncertainty and propagation of error to estimate the uncertainty in the cell parameters
     // \f$a\f$,\f$b\f$,\f$c\f$,\f$\alpha\f$,\f$\beta\f$,\f$\gamma\f$.
     void setParameterCovariance(const Eigen::MatrixXd& cov);
+
     //! \brief Construct a new unit cell from a reference orientation, an orientation offset, and a set of parameters.
     UnitCell fromParameters(const Eigen::Matrix3d& U0, const Eigen::Vector3d& uOffset, const Eigen::VectorXd& parameters) const;
 

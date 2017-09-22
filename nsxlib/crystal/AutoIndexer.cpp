@@ -70,9 +70,14 @@ bool AutoIndexer::autoIndex(const IndexerParameters& params)
         return false;
     }
         
+    // Find the Q-space directions along which the projection of the the Q-vectors shows the highest periodicity
     computeFFTSolutions();
+
     refineSolutions();
-    removeBad(10.0);
+
+    // Remove the solution whose percentage of successfully indexed peaks is under a given cutoff
+    removeBad(_params.solutionCutoff);
+
     // refine the constrained unit cells in order to get the uncertainties
     refineConstraints();
 
@@ -112,10 +117,11 @@ void AutoIndexer::computeFFTSolutions()
         _handler->log("Searching direct lattice vectors using" + std::to_string(npeaks) + "peaks defined on numors:");
     }
     
-    // Store Q vectors at rest
+    // Store the q-vectors of the peaks for auto-indexing
     std::vector<Eigen::Vector3d> qvects;
     qvects.reserve(npeaks);
     for (auto peak : _peaks) {
+        // Keep only the peak that have selected and that are not masked
         if (peak->isSelected() && !peak->isMasked()) {
             qvects.push_back(peak->getQ());
         }
@@ -129,32 +135,38 @@ void AutoIndexer::computeFFTSolutions()
     qvects.clear();
     
     for (int i = 0; i < _params.nSolutions; ++i) {
+
         for (int j = i+1; j < _params.nSolutions; ++j) {
+
             for (int k = j+1; k < _params.nSolutions; ++k) {
+
+                // Build up a unit cell out of the current directions triplet
                 Eigen::Matrix3d A;
                 A.col(0) = tvects[i]._vect;
                 A.col(1) = tvects[j]._vect;
                 A.col(2) = tvects[k]._vect;
-    
                 auto cell = std::shared_ptr<UnitCell>(new UnitCell(A));
-                // todo: 20.0 should not be hard-coded
-                if (cell->volume() < 20.0) {                    
+
+                // If the unit cell volume is below the user-defined minimum volume, skip it
+                if (cell->volume() < _params.minUnitCellVolume) {
                     continue;
                 }
+
                 bool equivalent = false;
     
-                // check to see if the cell is equivalent to a previous one
-                // todo: tolerance should not be hard-coded
+                // check to see if the cell is equivalent to a previous one. If so, skip it
                 for (auto solution: _solutions) {
-                    if (cell->equivalent(*solution.first, 0.05)) {
+                    if (cell->equivalent(*solution.first, _params.unitCellEquivalenceTolerance)) {
                         equivalent = true;
                         break;
                     }
-                }    
+                }
                 // cell is equivalent to a previous one in the list
                 if (equivalent) {
                     continue;
-                }    
+                }
+
+                // Add this solution to the list of solution with a scored to be defined futher
                 _solutions.push_back(std::make_pair(cell, -1.0));
             }
         }
@@ -185,6 +197,7 @@ void AutoIndexer::refineSolutions()
         std::vector<Eigen::RowVector3d> hkls;
         std::vector<Eigen::RowVector3d> qs;
 
+        // Collect all the selected peaks for which the auto-indexing has been successful (integer Miller indices)
         int success = 0;
         for (auto peak : _peaks) {
             Eigen::RowVector3d hkl;
@@ -201,7 +214,7 @@ void AutoIndexer::refineSolutions()
             continue;
         }
 
-        // function to compute residuals
+        // Lambda to compute residuals
         auto residuals = [&B, &hkls, &qs] (Eigen::VectorXd& f) -> int
         {
             int n = f.size() / 3;
@@ -215,16 +228,17 @@ void AutoIndexer::refineSolutions()
             return 0;
         };
 
+        // Pass by address the parameters to be fitted to the parameter store
         FitParameters params;
-
         for (int r = 0; r < 3; ++r) {
             for (int c = 0; c < 3; ++c) {
                 params.addParameter(&B(r,c));
             }
         }
 
+        // Set the Minimizer with the parameters store and the size of the residual vector
         Minimizer minimizer;
-        minimizer.initialize(params, 3*success);     
+        minimizer.initialize(params, 3*success);
         minimizer.set_f(residuals);  
         minimizer.setxTol(1e-10);
         minimizer.setfTol(1e-10);
@@ -235,6 +249,7 @@ void AutoIndexer::refineSolutions()
             continue;
         }
 
+        // Update the cell with the fitter one and reduce it
         try {
             cell->setReciprocalBasis(B);
             cell->setHKLTolerance(_params.HKLTolerance);
@@ -247,6 +262,7 @@ void AutoIndexer::refineSolutions()
             continue;
         }
 
+        // Define the final score of this solution by computing the percentage of the selected peaks which have been successfully indexed
         double score = 0.0;
         double maxscore = 0.0;
         for (auto peak : _peaks) {
@@ -277,6 +293,7 @@ void AutoIndexer::refineConstraints()
 
         // UBSolution constructor can throw if constraints are not met
         try {
+            // The UB minimization will be performed with fixed instruments offset (no pointer for Detector, Sample and Source provided)
             UBSolution ub_soln(nullptr, nullptr, nullptr, cell);
             UBMinimizer min(ub_soln);
 
