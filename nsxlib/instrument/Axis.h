@@ -76,14 +76,8 @@ public:
 	void setAxis(const Eigen::Vector3d& axis);
 	//! Get the normalized direction of this axis
 	const Eigen::Vector3d& getAxis() const;
-	//! Set the axis as offsetable or not
-	void setOffsetFixed(bool fixed=true);
-	//! Return true if the axis offset can't be modidied
-	bool hasOffsetFixed() const;
 	//! Set the current offset
 	void setOffset(double offset,bool override=false);
-	//! Add an offset to the existing one
-	void addOffset(double offset);
 	//! Return the value of the offset
 	double getOffset() const;
 	//! Set the range of values accessible for this axis
@@ -122,8 +116,6 @@ protected:
 	double _min;
 	//! The maximum value allowed for the value of the axis.
 	double _max;
-	//! Defines whether or not the offset will be fixed when refining the axis value.
-	bool _offsetFixed;
 	//! Defines whether the axis is physical or not. A physical axis is related to metadata.
 	bool _physical;
 	//! The instrument id (e.g. MAD number for instrument related to ILL ASCII Data).

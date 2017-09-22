@@ -126,9 +126,7 @@ int run_test()
             cell.setABCDEF(A, B, C, D, E, F);
 
             Eigen::Matrix3d G = cell.metric();
-
             Eigen::Matrix3d P, NG, NP;
-
             NG = G;
 
             nsx::GruberReduction gruber(G, gruber_tolerance);
@@ -149,8 +147,6 @@ int run_test()
         }
         ++condition;
     }
-
-
     return 0;
 }
 

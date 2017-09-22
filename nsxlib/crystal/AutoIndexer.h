@@ -54,7 +54,9 @@ struct IndexerParameters {
     double niggliTolerance = 1e-3;
     double gruberTolerance = 4e-2;
     bool niggliReduction = false;
-        //Parameters() = default;
+    double minUnitCellVolume = 20.0;
+    double unitCellEquivalenceTolerance = 0.05;
+    double solutionCutoff = 10.0;
 };
 
 //! \class AutoIndexer
@@ -62,16 +64,44 @@ struct IndexerParameters {
 class AutoIndexer {
 
 public:
-    AutoIndexer(std::shared_ptr<Experiment>& expt, const std::shared_ptr<ProgressHandler>& handler = nullptr);
 
+    using RankedSolution = std::pair<sptrUnitCell, double>;
+
+    //! Constructor
+    //! @param handler the handler that will monitor the progresses
+    AutoIndexer(const std::shared_ptr<ProgressHandler>& handler = nullptr);
+
+    //! Performs the auto-indexing
+    //! @param params the parameter of the auto-indexing algorithm
+    //! @return true if auto-indexing succeeded, false if failed
     bool autoIndex(const IndexerParameters& params);
+
+    //! Add a new peak for the auto-indexing procedure
+    //! @param peak the shared pointer to the peak to be added
     void addPeak(const std::shared_ptr<Peak3D>& peak);
-    const std::vector<std::pair<sptrUnitCell,double>>& getSolutions() const;
-    //void buildSolutionsTable();
+
+    //! Returns the best solutions found for the auto-indexing
+    //! @return a list of the best solutions ordered by percentage of successfully auto-indexed peaks
+    const std::vector<RankedSolution>& getSolutions() const;
+
 private:
+
+    void computeFFTSolutions();
+
+    void refineSolutions();
+
+    void rankSolutions();
+
+    void refineConstraints();
+
+    void removeBad(double quality);
+  
+    IndexerParameters _params;
+
     std::vector<std::shared_ptr<Peak3D>> _peaks;
-    std::shared_ptr<Experiment> _experiment;
-    std::vector<std::pair<sptrUnitCell,double>> _solutions;
+
+    std::vector<RankedSolution> _solutions;
+
     std::shared_ptr<ProgressHandler> _handler;
 };
 

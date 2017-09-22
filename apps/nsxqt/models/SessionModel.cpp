@@ -60,11 +60,12 @@
 #include <QVector>
 
 #include <nsxlib/crystal/MergedPeak.h>
-#include <nsxlib/crystal/PeakFit.h>
 #include <nsxlib/crystal/PeakPredictor.h>
 #include <nsxlib/crystal/ResolutionShell.h>
 #include <nsxlib/statistics/RFactor.h>
 #include <nsxlib/crystal/SpaceGroup.h>
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/MergedData.h>
 #include <nsxlib/data/PeakFinder.h>
@@ -86,9 +87,7 @@
 #include "dialogs/DialogExperiment.h"
 #include "dialogs/FriedelDialog.h"
 #include "dialogs/LogFileDialog.h"
-#include "dialogs/PeakFitDialog.h"
 #include "dialogs/ResolutionCutoffDialog.h"
-#include "dialogs/ScaleDialog.h"
 #include "dialogs/SpaceGroupDialog.h"
 #include "externals/qcustomplot.h"
 #include "models/DataItem.h"
@@ -322,8 +321,7 @@ void SessionModel::findFriedelPairs()
 void SessionModel::peakFitDialog()
 {
     nsx::debug() << "peakFitDialog() triggered";
-    PeakFitDialog* dialog = new PeakFitDialog(this, nullptr);
-    dialog->exec();
+    nsx::error() << "this feature has been deprecated";
 }
 
 void SessionModel::findPeaks(const QModelIndex& index)
@@ -823,23 +821,6 @@ bool SessionModel::writeXDS(std::string filename, const nsx::PeakList& peaks, bo
     return result;
 }
 
-void SessionModel::fitAllPeaks()
-{
-    auto numors = getSelectedNumors();
-
-    for (auto&& numor: numors) {
-        auto peaks = numor->getPeaks();
-
-        for (auto&& peak: peaks) {
-            if (!peak->isSelected() || peak->isMasked()) {
-                continue;
-            }
-
-            nsx::PeakFit peak_fit(peak);
-            // todo...
-        }
-    }
-}
 
 void SessionModel::autoAssignUnitCell()
 {

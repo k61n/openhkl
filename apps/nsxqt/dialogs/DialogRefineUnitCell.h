@@ -3,6 +3,7 @@
 
 #include <nsxlib/crystal/CrystalTypes.h>
 #include <nsxlib/crystal/UBMinimizer.h>
+#include <nsxlib/crystal/UBSolution.h>
 #include <nsxlib/instrument/InstrumentTypes.h>
 
 #include <QDialog>
@@ -23,30 +24,21 @@ public:
                                   nsx::PeakList peaks,
                                   QWidget *parent = 0);
     ~DialogRefineUnitCell();
-    void setLatticeParams();
-    void setSampleOffsets();
-    void setDetectorOffsets();
-    void setWavelength();
-    void setMinimizer();
-    void setSolution(const nsx::UBSolution& solution);
 
-signals:
-    void cellUpdated(nsx::sptrUnitCell);
-
-private slots:
-    void refineParameter(bool checked, int i);
-    void cellSampleHasChanged(int i, int j);
-    void cellDetectorHasChanged(int i, int j);
+private slots:    
     void refineParameters();
-    void createOffsetsTables();
     void resetParameters();
 
 private:
+    void createOffsetTables();
+    void updateParameters();
+
+    nsx::UBSolution _initialValues;
+    nsx::UBSolution _currentValues;
     Ui::DialogRefineUnitCell *ui;
     nsx::sptrExperiment _experiment;
     nsx::sptrUnitCell _unitCell;
     nsx::PeakList _peaks;
-    nsx::UBMinimizer _minimizer;
 };
 
 #endif // NSXQT_DIALOGREFINEUNITCELL_H

@@ -41,11 +41,11 @@
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_vector.h>
 
-namespace {
-    class MinimizerGSL;
-}
+#include "../utils/FitParameters.h"
+
 
 namespace nsx {
+class MinimizerGSL;
 
 //! \class Minimizer
 //! \brief Class to wrap the GSL non-linear least squares minimization routines.
@@ -53,9 +53,9 @@ namespace nsx {
 class Minimizer {
 public:
     //! The signature of the function f which specifies the vector of residuals.
-    using f_type = std::function<int(const Eigen::VectorXd&, Eigen::VectorXd&)>;
+    using f_type = std::function<int(Eigen::VectorXd&)>;
     //! The signature of the function df which is the Jacobian of the residuals.
-    using df_type = std::function<int(const Eigen::VectorXd&, Eigen::MatrixXd&)>;
+    using df_type = std::function<int(Eigen::MatrixXd&)>;
 
     //! Default construct: initializes parameters to reasonable default values.
     Minimizer();
@@ -70,7 +70,7 @@ public:
     //! Initialize a GSL workspace with given number of parameters and values.
     //! \param [in] params The number of parameters to fit.
     //! \param [in] values The size of the residual vector.
-    void initialize(int params, int values);
+    void initialize(FitParameters& params, int values);
 
     //! Return the GSL status string
     const char* getStatusStr();
@@ -86,10 +86,6 @@ public:
     void setfTol(double ftol);
     //! Return the Jacobian matrix.
     Eigen::MatrixXd jacobian();
-    //! Return the values of the fit parameters.
-    Eigen::VectorXd params();
-    //! Set the initial values of the fit parameters.
-    void setParams(const Eigen::VectorXd& x);
     //! Set the weights of the residuals.
     void setWeights(const Eigen::VectorXd& wt);
     //! Return the number of iterations of the fit.
@@ -107,6 +103,8 @@ public:
     {
         _df = static_cast<df_type>(functor);
     }
+    //! Return the mean squared error with respect to the current minimizer values.
+    double meanSquaredError() const;
 
 private:
     //! Clean up the GSL workspace and allocated vectors.
@@ -118,15 +116,11 @@ private:
     //! GSL wrapper function. Static method because it needs access to private members
     static int gsl_df_wrapper(const gsl_vector*, void*, gsl_matrix*);
     //! Implementation detail: used to convert between Eigen and GSL vectors.
-    Eigen::VectorXd _inputEigen;
-    //! Implementation detail: used to convert between Eigen and GSL vectors.
     Eigen::VectorXd _dfInputEigen;
     //! Implementation detail: used to convert between Eigen and GSL vectors.
     Eigen::VectorXd _outputEigen;
     //! Implementation detail: used to convert between Eigen and GSL vectors.
     Eigen::MatrixXd _dfOutputEigen;
-    //! Vector of fit parameters.
-    Eigen::VectorXd _x;
     //! Vector of weights for the residuals.
     Eigen::VectorXd _wt;
     //! Jacobian matrix of the residual function.
@@ -134,9 +128,7 @@ private:
     //! Variance-covariance matrix of the fit parameters.
     Eigen::MatrixXd _covariance;
     //! Number of values in the fit, i.e. size of residual vector.
-    int _numValues;
-    //! Number of parameters to fit.
-    int _numParams;
+    int _numValues;   
     //! Number of iterations used to fit.
     int _numIter;
     //! Relative tolerance of parameters.
@@ -149,6 +141,8 @@ private:
     f_type _f;
     //! The function computing the analytic gradient.
     df_type _df;
+    //! Pointers to the fit parameters
+    FitParameters _params;
 };
 
 } // end namespace nsx

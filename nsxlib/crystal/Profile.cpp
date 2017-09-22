@@ -39,6 +39,7 @@
 
 #include "../crystal/Profile.h"
 #include "../mathematics/Minimizer.h"
+#include "../utils/FitParameters.h"
 
 static const double g_pi = double(M_PI);
 
@@ -78,17 +79,17 @@ bool Profile::fit(const Eigen::VectorXd &y, int max_iter)
         var += i*i*rho(i);
     }
     var -= mu*mu;
-    const double sigma = std::sqrt(var);
-    const double b = sum / (g_pi*mu);
-    const double a = std::sqrt( std::fabs(sum * b / g_pi));
-    const double a2 = std::sqrt(y.sum() / std::sqrt(2*3.141592*sigma*sigma));
+    double sigma = std::sqrt(var);
+    double b = sum / (g_pi*mu);
+    double a = std::sqrt( std::fabs(sum * b / g_pi));
+    double a2 = std::sqrt(y.sum() / std::sqrt(2*3.141592*sigma*sigma));
+    double mu2 = mu;
 
-    auto func = [y, num_params](const Eigen::VectorXd params, Eigen::VectorXd& res) -> int {
-        assert(params.size() == num_params);
+    auto func = [&] (Eigen::VectorXd& res) -> int {
         assert(res.size() == y.size());
 
-        Lorentzian lor(params(0), params(1), params(2));
-        Gaussian gauss(params(3), params(4), params(5));
+        Lorentzian lor(a, b, mu);
+        Gaussian gauss(a2, mu2, sigma);
         Profile pro(lor, gauss);
 
         for (auto i = 0; i < y.size(); ++i) {
@@ -98,12 +99,16 @@ bool Profile::fit(const Eigen::VectorXd &y, int max_iter)
         return 0;
     };
 
-    Eigen::VectorXd params(num_params);
-    params << a, b, mu,
-            a2, mu, sigma;
+    FitParameters params;
 
-    min.initialize(num_params, y.size());
-    min.setParams(params);
+    params.addParameter(&a);
+    params.addParameter(&b);
+    params.addParameter(&mu);
+    params.addParameter(&a2);
+    params.addParameter(&mu2);
+    params.addParameter(&sigma);
+
+    min.initialize(params, y.size());
     min.setWeights(wt);
     min.set_f(func);
 
@@ -112,9 +117,8 @@ bool Profile::fit(const Eigen::VectorXd &y, int max_iter)
         return false;
     }
 
-    auto p = min.params();
-    _lorentz = Lorentzian(p(0), p(1), p(2));
-    _gauss = Gaussian(p(3), p(4), p(5));
+    _lorentz = Lorentzian(a, b, mu);
+    _gauss = Gaussian(a2, mu2, sigma);
     return true;
 }
 

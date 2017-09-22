@@ -46,6 +46,7 @@
 %shared_ptr(nsx::Gonio)
 
 %{
+#pragma GCC diagnostic ignored "-Wpedantic"
 #define SWIG_FILE_WITH_INIT
 
 #include <Python.h>
@@ -80,6 +81,7 @@ namespace property_tree=boost::property_tree;
 #include "mathematics/GCD.h"
 #include "mathematics/Interpolator.h"
 #include "mathematics/Lorentzian.h"
+#include "utils/FitParameters.h"
 #include "mathematics/Minimizer.h"
 #include "mathematics/Round.h"
 #include "mathematics/RNG.h"
@@ -111,6 +113,7 @@ namespace property_tree=boost::property_tree;
 #include "utils/ProgressHandler.h"
 
 #include "crystal/PeakPredictor.h"
+#include "crystal/UBSolution.h"
 #include "crystal/UBMinimizer.h"
 #include "crystal/AutoIndexer.h"
 #include "crystal/Profile.h"
@@ -125,7 +128,6 @@ namespace property_tree=boost::property_tree;
 
 #include "crystal/PeakRecord.h"
 #include "crystal/Mosaic.h"
-#include "crystal/PeakFit.h"
 #include "crystal/FFTIndexing.h"
 
 #include "crystal/MergedPeak.h"
@@ -418,6 +420,7 @@ namespace nsx {
 %include "mathematics/Interpolator.h"
 %include "mathematics/Lorentzian.h"
 %include "mathematics/Round.h"
+%include "utils/FitParameters.h"
 %include "mathematics/Minimizer.h"
 %include "mathematics/RNG.h"
 %include "mathematics/Profile3d.h"
@@ -446,6 +449,7 @@ namespace nsx {
  //%include "utils/EigenMatrixParser.h"
 %include "utils/ProgressHandler.h"
 %include "crystal/PeakPredictor.h"
+%include "crystal/UBSolution.h"
 %include "crystal/UBMinimizer.h"
 %include "geometry/Basis.h"
 %include "crystal/Profile.h"
@@ -460,7 +464,6 @@ namespace nsx {
 
 %include "crystal/PeakRecord.h"
 %include "crystal/Mosaic.h"
-%include "crystal/PeakFit.h"
 %include "crystal/FFTIndexing.h"
 %include "crystal/MergedPeak.h"
 %include "crystal/Peak2D.h"

@@ -32,7 +32,8 @@ DialogRefineUnitCell::DialogRefineUnitCell(nsx::sptrExperiment experiment,
     _experiment(std::move(experiment)),
     _unitCell(std::move(unitCell)),
     _peaks(std::move(peaks)),
-    _minimizer()
+    _initialValues(nullptr, nullptr, nullptr, unitCell),
+    _currentValues(nullptr, nullptr, nullptr, unitCell)
 {
     ui->setupUi(this);
 
@@ -45,27 +46,27 @@ DialogRefineUnitCell::DialogRefineUnitCell(nsx::sptrExperiment experiment,
 
     ui->tableWidget_Sample->setEditTriggers(QAbstractItemView::AllEditTriggers);
     ui->tableWidget_Detector->setEditTriggers(QAbstractItemView::AllEditTriggers);
+    
+    auto diffractometer = _experiment->getDiffractometer();
+    auto detector = diffractometer->getDetector();
+    auto sample = diffractometer->getSample();
+    auto source = diffractometer->getSource();
 
-    // Fill up the UB matrix parameters with the current value
-    setLatticeParams();
-
-    // Fill up the wavelength with the current value
-    setWavelength();
-
-    // Set up the minimizer
-    setMinimizer();
+    // get starting values of UB and offsets
+    _initialValues = nsx::UBSolution(source, sample, detector, _unitCell);
+    _currentValues = _initialValues;
 
     // Fill up the sample and detector offsets tables
-    createOffsetsTables();
+    createOffsetTables();
+    updateParameters();
 
+    // alpha, beta, gamma are special characters
     ui->labelalpha->setText(QString(QChar(0x03B1)));
     ui->labelbeta->setText(QString(QChar(0x03B2)));
     ui->labelgamma->setText(QString(QChar(0x03B3)));
 
-    // Connect checkbox for wavelength refinement
-    connect(ui->checkBox_Wavelength,&QCheckBox::toggled,[=](bool checked){refineParameter(checked,9);});
-    connect(ui->pushButton_Refine,SIGNAL(clicked()),this,SLOT(refineParameters()));
-    connect(ui->pushButton_Reset,SIGNAL(clicked()),this,SLOT(resetParameters()));
+    connect(ui->pushButton_Refine, SIGNAL(clicked()), this, SLOT(refineParameters()));
+    connect(ui->pushButton_Reset, SIGNAL(clicked()), this, SLOT(resetParameters()));
 }
 
 DialogRefineUnitCell::~DialogRefineUnitCell()
@@ -73,41 +74,9 @@ DialogRefineUnitCell::~DialogRefineUnitCell()
     delete ui;
 }
 
-void DialogRefineUnitCell::setMinimizer()
+void DialogRefineUnitCell::updateParameters()
 {
-    auto diffractometer = _experiment->getDiffractometer();
-    auto detector = diffractometer->getDetector();
-    auto sample = diffractometer->getSample();
-    auto source = diffractometer->getSource();
-
-    // Set the UB minimizer with parameters
-    _minimizer.setDetector(detector);
-    _minimizer.setSample(sample);
-    _minimizer.setSource(source);
-
-    int start=10;
-
-    auto& mono = source->getSelectedMonochromator();
-    _minimizer.refineParameter(9,!mono.isOffsetFixed());
-
-    int nSampleOffsets = sample->hasGonio() ? sample->getGonio()->getNAxes() : 0;
-    for (int i = 0; i < nSampleOffsets; ++i) {
-        auto axis=sample->getGonio()->getAxis(i);
-        _minimizer.refineParameter(start+i,!axis->hasOffsetFixed());
-        _minimizer.setStartingValue(start+i,axis->getOffset());
-    }
-
-    start += nSampleOffsets;
-    int nDetectorOffsets = detector->hasGonio() ? detector->getGonio()->getNAxes() : 0;
-    for (int i = 0; i < nDetectorOffsets; ++i) {
-        auto axis=detector->getGonio()->getAxis(i);
-        _minimizer.refineParameter(start+i,!axis->hasOffsetFixed());
-        _minimizer.setStartingValue(start+i,axis->getOffset());
-    }
-}
-
-void DialogRefineUnitCell::setLatticeParams()
-{
+    // update UC parameters
     nsx::CellCharacter ch = _unitCell->character();
     ui->doubleSpinBoxa->setValue(ch.a);
     ui->doubleSpinBoxb->setValue(ch.b);
@@ -115,15 +84,122 @@ void DialogRefineUnitCell::setLatticeParams()
     ui->doubleSpinBoxalpha->setValue(ch.alpha/nsx::deg);
     ui->doubleSpinBoxbeta->setValue(ch.beta/nsx::deg);
     ui->doubleSpinBoxgamma->setValue(ch.gamma/nsx::deg);
-}
 
-void DialogRefineUnitCell::setWavelength()
-{
+    // update wavelength
     auto& mono = _experiment->getDiffractometer()->getSource()->getSelectedMonochromator();
     ui->doubleSpinBox_Wavelength->setValue(mono.getWavelength());
+
+    // Fill the table
+    for (int i = 0; i < _currentValues._sampleOffset.size(); ++i) {
+        // Set the first column of the table: the axis name
+        auto item1 = ui->tableWidget_Sample->item(i, 1);
+        auto item2 = ui->tableWidget_Sample->item(i, 2);
+
+        // offset values
+        item1->setData(Qt::EditRole, _currentValues._sampleOffset(i));
+
+        // the axis offsets errors
+        item2->setData(Qt::EditRole, _currentValues._sigmaSample(i));      
+    }
+    
+    // Fill the table
+    for (int i = 0; i < _currentValues._detectorOffset.size(); ++i) {
+        // Set the first column of the table: the axis name
+        auto item1 = ui->tableWidget_Detector->item(i, 1);
+        auto item2 = ui->tableWidget_Detector->item(i, 2);
+    
+        // offset values
+        item1->setData(Qt::EditRole, _currentValues._detectorOffset(i));
+    
+        // the axis offsets errors
+        item2->setData(Qt::EditRole, _currentValues._sigmaDetector(i));      
+    }
 }
 
-void DialogRefineUnitCell::setSampleOffsets()
+void DialogRefineUnitCell::refineParameters()
+{
+    nsx::UBMinimizer minimizer(_currentValues);
+
+    // determine which parameters to refine
+    if (ui->checkBox_Wavelength) {
+        minimizer.refineSource(true);
+    }
+
+    // sample parameters
+    for (int i = 0; i < _currentValues._sampleOffset.size(); ++i) {
+        auto item3 = dynamic_cast<QCheckBox*>(ui->tableWidget_Sample->cellWidget(i, 3));
+        assert(item3 != nullptr);
+        minimizer.refineSample(i, item3->isChecked());
+    }
+
+    // detector parameters
+    for (int i = 0; i < _currentValues._detectorOffset.size(); ++i) {
+        auto item3 = dynamic_cast<QCheckBox*>(ui->tableWidget_Detector->cellWidget(i, 3));
+        assert(item3 != nullptr);
+        minimizer.refineDetector(i, item3->isChecked());
+    }
+
+    // peaks to be used in fit
+    int nhits = 0;
+    for (auto&& peak: _peaks) {
+        Eigen::RowVector3d hkl;
+        bool indexingSuccess = peak->getMillerIndices(*_unitCell,hkl,true);
+        if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
+            minimizer.addPeak(*peak,hkl);
+            ++nhits;
+        }
+    }
+
+    std::ostringstream os;
+    os<<nhits<<" peaks considered for UB-refinement";
+    ui->textEdit_Solution->setText(QString::fromStdString(os.str()));
+    os.str("");
+
+    int test = minimizer.run(100);
+    if (test != 1) {
+        ui->textEdit_Solution->setTextColor(QColor("red"));
+        ui->textEdit_Solution->setText("No solution found within convergence criteria.");
+        return; // why not change ?
+    }
+
+    _currentValues = minimizer.solution();
+    _currentValues.apply();
+    os << _currentValues;
+
+    // calculate the new quality of the fit
+    unsigned int total = 0, count = 0;
+    for (auto&& peak: _peaks) {
+        if(!peak->isMasked() && peak->isSelected()) {
+            ++total;
+            Eigen::RowVector3d hkl;
+            bool indexingSuccess = peak->getMillerIndices(*_unitCell,hkl,true);
+            if (indexingSuccess) {
+                ++count;
+            }
+        }
+    }
+    os << "Quality: " << double(count) * 100.0 / double(total);
+
+    // update textbox with output
+    ui->textEdit_Solution->append(QString::fromStdString(os.str()));
+    ui->textEdit_Solution->append(QString::fromStdString(os.str()));
+
+    // update the displayed paramters in the GUI
+    updateParameters();
+}
+
+void DialogRefineUnitCell::resetParameters()
+{
+    _initialValues._sourceOffset = 0.0;
+    _initialValues._sampleOffset.setZero();
+    _initialValues._detectorOffset.setZero();
+    _initialValues.apply();
+    _currentValues = _initialValues;
+    ui->textEdit_Solution->append("\nResetting parameters to initial values.\n");
+    updateParameters();
+}
+
+void DialogRefineUnitCell::createOffsetTables()
 {
     //Get the sample, iterate over axis
     auto sample = _experiment->getDiffractometer()->getSample();
@@ -167,18 +243,11 @@ void DialogRefineUnitCell::setSampleOffsets()
 
         // Set the fourth column of the table: the axis refinable state
         auto item3 = new QCheckBox(this);
-        item3->setChecked(!axis->hasOffsetFixed());
+        //item3->setChecked(!axis->hasOffsetFixed());
+        item3->setChecked(false);
         // Connect checkbox to fixing this parameter
-        connect(item3,&QCheckBox::toggled, [=](bool checked){refineParameter(checked,10+i);});
         ui->tableWidget_Sample->setCellWidget(i,3,item3);
     }
-}
-
-void DialogRefineUnitCell::setDetectorOffsets()
-{
-    // Get the number of axis for the sample
-    auto sample = _experiment->getDiffractometer()->getSample();
-    int nAxesSample = sample->hasGonio() ? sample->getGonio()->getNAxes() : 0;
 
     // Get the detector
     auto detector = _experiment->getDiffractometer()->getDetector();
@@ -221,147 +290,8 @@ void DialogRefineUnitCell::setDetectorOffsets()
 
         // Set the fourth column of the table: the axis refinable state
         auto item3 = new QCheckBox(this);
-        item3->setChecked(!axis->hasOffsetFixed());
+        //item3->setChecked(!axis->hasOffsetFixed());
+        item3->setChecked(false);
         ui->tableWidget_Detector->setCellWidget(i, 3, item3);
-        //Connect checkbox to fixing parameters
-        connect(item3,&QCheckBox::toggled, [=](bool checked){refineParameter(checked,10+i+nAxesSample);});
-    }
-}
-
-void DialogRefineUnitCell::setSolution(const nsx::UBSolution& solution)
-{
-    // Get the sample
-    auto sample = _experiment->getDiffractometer()->getSample();
-    int nAxesSample = sample->hasGonio() ? sample->getGonio()->getNAxes() : 0;
-
-    for (int i = 0; i < nAxesSample; ++i) {
-        ui->tableWidget_Sample->item(i,1)->setData(Qt::EditRole, solution._sampleOffsets[i]);
-        ui->tableWidget_Sample->item(i,2)->setData(Qt::EditRole, solution._sigmaSampleOffsets[i]);
-    }
-
-    // Get the detector
-    auto detector = _experiment->getDiffractometer()->getDetector();
-    int nAxesDet = detector->hasGonio() ? detector->getGonio()->getNAxes() : 0;
-
-    for (int i = 0; i < nAxesDet; ++i) {
-        ui->tableWidget_Detector->item(i,1)->setData(Qt::EditRole, solution._detectorOffsets[i]);
-        ui->tableWidget_Detector->item(i,2)->setData(Qt::EditRole, solution._sigmaDetectorOffsets[i]);
-    }
-    setLatticeParams();
-}
-
-void DialogRefineUnitCell::refineParameter(bool checked, int i)
-{
-    _minimizer.refineParameter(i, checked);
-}
-
-void DialogRefineUnitCell::cellSampleHasChanged(int i, int j)
-{
-    // A new offset has been entered
-    if (j == 1) {
-        auto axis = _experiment->getDiffractometer()->getSample()->getGonio()->getAxis(i);
-        bool offsetFixed = axis->hasOffsetFixed();
-        axis->setOffsetFixed(false);
-        double value = ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble();
-        axis->setOffset(value);
-        axis->setOffsetFixed(offsetFixed);
-        _minimizer.setStartingValue(10+i,value);
-    }
-}
-
-void DialogRefineUnitCell::cellDetectorHasChanged(int i, int j)
-{
-    // A new offset has been entered
-    if (j==1) {
-        auto axis=_experiment->getDiffractometer()->getDetector()->getGonio()->getAxis(i);
-        bool offsetFixed=axis->hasOffsetFixed();
-        axis->setOffsetFixed(false);
-        double value=ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble();
-        axis->setOffset(value);
-        axis->setOffsetFixed(offsetFixed);
-
-        // Get the sample
-        auto sample=_experiment->getDiffractometer()->getSample();
-        int nAxesSample = sample->hasGonio() ? sample->getGonio()->getNAxes() : 0;
-        _minimizer.setStartingValue(10+nAxesSample+i,value);
-    }
-}
-
-void DialogRefineUnitCell::refineParameters()
-{
-    int nhits = 0;
-    for (auto&& peak: _peaks) {
-        Eigen::RowVector3d hkl;
-        bool indexingSuccess = peak->getMillerIndices(*_unitCell,hkl,true);
-        if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
-            _minimizer.addPeak(*peak,hkl);
-            ++nhits;
-        }
-    }
-
-    std::ostringstream os;
-    os<<nhits<<" peaks considered for UB-refinement";
-    ui->textEdit_Solution->setText(QString::fromStdString(os.str()));
-    os.str("");
-
-    auto M=_unitCell->reciprocalBasis();
-    _minimizer.setStartingUBMatrix(M);
-
-    int test = _minimizer.run(100);
-    if (test != 1) {
-        ui->textEdit_Solution->setTextColor(QColor("red"));
-        ui->textEdit_Solution->setText("No solution found within convergence criteria.");
-        return; // why not change ?
-    }
-
-    const auto& solution=_minimizer.getSolution();
-    os << solution;
-
-    _unitCell->setReciprocalBasis(solution._ub);
-
-    // calculate the new quality of the fit
-    unsigned int total = 0, count = 0;
-    for (auto&& peak: _peaks) {
-        if(!peak->isMasked() && peak->isSelected()) {
-            ++total;
-            Eigen::RowVector3d hkl;
-            bool indexingSuccess = peak->getMillerIndices(*_unitCell,hkl,true);
-            if (indexingSuccess) {
-                ++count;
-            }
-        }
-    }
-    os << "Quality: " << double(count) * 100.0 / double(total);
-
-    // update textbox with output
-    ui->textEdit_Solution->append(QString::fromStdString(os.str()));
-    ui->textEdit_Solution->append(QString::fromStdString(os.str()));
-    setSolution(solution);
-}
-
-void DialogRefineUnitCell::createOffsetsTables()
-{
-    setSampleOffsets();
-    setDetectorOffsets();
-    connect(ui->tableWidget_Sample,SIGNAL(cellChanged(int,int)),this,SLOT(cellSampleHasChanged(int,int)));
-    connect(ui->tableWidget_Detector,SIGNAL(cellChanged(int,int)),this,SLOT(cellDetectorHasChanged(int,int)));
-}
-
-void DialogRefineUnitCell::resetParameters()
-{
-    // Get the sample
-    auto sampleAxes=_experiment->getDiffractometer()->getSample()->getGonio()->getAxes();
-    for (auto a : sampleAxes) {
-        a->setOffset(0.00);
-    }
-    setSampleOffsets();
-    ui->tableWidget_Sample->update();
-
-    // Get the detector
-    auto detectorAxes=_experiment->getDiffractometer()->getDetector()->getGonio()->getAxes();
-    for (auto a : detectorAxes) {
-        a->setOffset(0.00);
-    }
-    setDetectorOffsets();
-    ui->tableWidget_Detector->update();
+    }   
 }

@@ -21,6 +21,8 @@
 #include <QString>
 #include <QVector>
 
+#include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/logger/Logger.h>
 
@@ -32,8 +34,6 @@
 #include "dialogs/DialogRawData.h"
 #include "dialogs/DialogTransformationMatrix.h"
 #include "dialogs/FriedelDialog.h"
-#include "dialogs/PeakFitDialog.h"
-#include "dialogs/ScaleDialog.h"
 #include "dialogs/SpaceGroupDialog.h"
 #include "externals/qcustomplot.h"
 #include "DetectorScene.h"

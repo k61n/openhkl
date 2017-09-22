@@ -13,6 +13,8 @@
 #include <nsxlib/crystal/AutoIndexer.h>
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/crystal/PeakPredictor.h>
+#include <nsxlib/crystal/UBSolution.h>
+#include <nsxlib/crystal/UBMinimizer.h>
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/PeakFinder.h>
 #include <nsxlib/data/DataSet.h>
@@ -88,7 +90,7 @@ int run_test()
 
     // at this stage we have the peaks, now we index
     nsx::IndexerParameters params;
-    nsx::AutoIndexer indexer(expt, progressHandler);
+    nsx::AutoIndexer indexer(progressHandler);
 
     auto numIndexedPeaks = [&]() -> unsigned int
     {
@@ -131,7 +133,6 @@ int run_test()
     BOOST_CHECK(indexed_peaks > 600);
 
     // get that DataSet::getEvents works properly
-    int i = 0;
     for (auto peak: dataf->getPeaks()) {
         if (!peak->isSelected() || peak->isMasked()) {
             continue;

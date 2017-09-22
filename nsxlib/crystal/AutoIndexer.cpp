@@ -39,6 +39,7 @@
 #include "../crystal/NiggliReduction.h"
 #include "../crystal/Peak3D.h"
 #include "../crystal/UBMinimizer.h"
+#include "../crystal/UBSolution.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/Experiment.h"
@@ -51,207 +52,41 @@
 namespace nsx {
 
  
-AutoIndexer::AutoIndexer(std::shared_ptr<Experiment>& expt, const std::shared_ptr<ProgressHandler>& handler):
+AutoIndexer::AutoIndexer(const std::shared_ptr<ProgressHandler>& handler):
     _peaks(),
-    _experiment(expt),
     _solutions(),
     _handler(handler)
 {
 }
 
-bool AutoIndexer::autoIndex(const IndexerParameters& _params)
+bool AutoIndexer::autoIndex(const IndexerParameters& params)
 {
-    const int npeaks = _peaks.size();
-
+    _params = params;
     // Check that a minimum number of peaks have been selected for indexing
-    if (npeaks < 10) {
+    if (_peaks.size() < 10) {
         if (_handler) {
             _handler->log("AutoIndexer: too few peaks to index!");
         }
         return false;
     }
-    if (_experiment == nullptr) {
-        if (_handler) {
-            _handler->log("AutoIndexer: cannot index without an experiment!");
-        }
-        return false;
-    }
+        
+    // Find the Q-space directions along which the projection of the the Q-vectors shows the highest periodicity
+    computeFFTSolutions();
+
+    refineSolutions();
+
+    // Remove the solution whose percentage of successfully indexed peaks is under a given cutoff
+    removeBad(_params.solutionCutoff);
+
+    // refine the constrained unit cells in order to get the uncertainties
+    refineConstraints();
 
     if (_handler) {
-        _handler->log("Searching direct lattice vectors using" + std::to_string(npeaks) + "peaks defined on numors:");
+        _handler->log("Done refining solutions, building solution table.");
     }
 
-    // Store Q vectors at rest
-    std::vector<Eigen::Vector3d> qvects;
-    qvects.reserve(npeaks);
-    for (auto peak : _peaks) {
-        if (peak->isSelected() && !peak->isMasked()) {
-            qvects.push_back(peak->getQ());
-        }
-    }
-
-    // Set up a FFT indexer object
-    FFTIndexing indexing(_params.subdiv, _params.maxdim);
-
-    // Find the best tvectors
-    std::vector<tVector> tvects = indexing.findOnSphere(qvects, _params.nStacks, _params.nSolutions);
-    qvects.clear();
-
-    auto source = _experiment->getDiffractometer()->getSource();
-    auto detector = _experiment->getDiffractometer()->getDetector();
-    auto sample = _experiment->getDiffractometer()->getSample();
-
-    std::vector<std::pair<sptrUnitCell,double>> newSolutions;
-    newSolutions.reserve(_params.nSolutions*_params.nSolutions*_params.nSolutions);
-
-    for (int i = 0; i < _params.nSolutions; ++i) {
-        for (int j = i+1; j < _params.nSolutions; ++j) {
-            for (int k = j+1; k < _params.nSolutions; ++k) {
-                Eigen::Vector3d& v1=tvects[i]._vect;
-                Eigen::Vector3d& v2=tvects[j]._vect;
-                Eigen::Vector3d& v3=tvects[k]._vect;
-
-                if (v1.dot(v2.cross(v3)) > 20.0) {
-                    Eigen::Matrix3d basis;
-                    basis.col(0) = v1;
-                    basis.col(1) = v2;
-                    basis.col(2) = v3;
-                    auto cell = std::shared_ptr<UnitCell>(new UnitCell(basis));
-                    newSolutions.push_back(std::make_pair(cell, 0.0));
-                }
-            }
-        }
-    }
-
-    //#pragma omp parallel for
-    for (int idx = 0; idx < newSolutions.size(); ++idx) {
-
-        UBMinimizer minimizer;
-        minimizer.setSample(sample);
-        minimizer.setDetector(detector);
-        minimizer.setSource(source);
-
-        auto cell = newSolutions[idx].first;
-        cell->setHKLTolerance(_params.HKLTolerance);
-
-        // Only the UB matrix parameters are used for fit
-        int nParameters = 10;
-
-        if (sample->hasGonio()) {
-            nParameters += sample->getGonio()->getNAxes();
-        }
-        if (detector->hasGonio()) {
-            nParameters += detector->getGonio()->getNAxes();
-        }
-
-        for (int i = 9; i < nParameters; ++i) {
-            minimizer.refineParameter(i,false);
-        }
-
-        int success = 0;
-        for (auto peak : _peaks) {
-            Eigen::RowVector3d hkl;
-            bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
-            if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
-                minimizer.addPeak(*peak,hkl);
-                ++success;
-            }
-        }
-
-        // The number of peaks must be at least for a proper minimization
-        if (success < 10) {
-            continue;
-        }
-        Eigen::Matrix3d M = cell->reciprocalBasis();
-        minimizer.setStartingUBMatrix(M);
-        int ret = minimizer.run(100);
-        if (ret == 1) {
-            UBSolution sln = minimizer.getSolution();
-            try {
-                cell = sptrUnitCell(new UnitCell(sln._ub, true));
-                cell->setReciprocalCovariance(sln._covub);
-
-            } catch(std::exception& e) {
-                if (_handler) {
-                    _handler->log("exception: " +std::string(e.what()));
-                }
-                continue;
-            }
-
-            // cell.setName(selectedUnitCell->getName());
-            cell->setHKLTolerance(_params.HKLTolerance);
-
-            NiggliReduction niggli(cell->metric(), _params.niggliTolerance);
-            Eigen::Matrix3d newg, P;
-            niggli.reduce(newg, P);
-            cell->transform(P);
-
-            // use GruberReduction::reduce to get Bravais type
-            GruberReduction gruber(cell->metric(), _params.gruberTolerance);
-            LatticeCentring c;
-            BravaisType b;
-
-            try {
-                gruber.reduce(P,c,b);
-                cell->setLatticeCentring(c);
-                cell->setBravaisType(b);
-            }
-            catch(std::exception& e) {
-                //qDebug() << "Gruber reduction error:" << e.what();
-                //continue;
-            }
-
-            if (_params.niggliReduction == false) {
-                cell->transform(P);
-            }
-
-            double score = 0.0;
-            double maxscore = 0.0;
-            for (auto peak : _peaks) {
-                if (peak->isSelected() && !peak->isMasked()) {
-                    maxscore++;
-                    Eigen::RowVector3d hkl;
-                    bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
-                    if (indexingSuccess) {
-                        score++;
-                    }
-                }
-            }
-            // Percentage of indexing
-            score /= 0.01*maxscore;
-            newSolutions[idx].first = cell;
-            newSolutions[idx].second = score;
-        }
-        minimizer.resetParameters();
-    }
-
-    _solutions.clear();
-    _solutions.reserve(newSolutions.size());
-
-    // remove the false solutions
-    for (auto&& it = newSolutions.begin(); it != newSolutions.end(); ++it) {
-        if (it->second > 0.1) {
-            _solutions.push_back(*it);
-        }
-    }
-    _solutions.shrink_to_fit();
-    if (_handler) {
-        _handler->log("Done refining solutions, building solutions table.");
-    }
-
-    // Sort solutions by decreasing quality.
-    // For equal quality, smallest volume is first
-
-    using soluce = std::pair<sptrUnitCell,double>;
-    std::sort(_solutions.begin(),_solutions.end(),[](const soluce& s1, const soluce& s2) -> bool
-    {
-        if (s1.second==s2.second)
-            return (s1.first->volume()<s2.first->volume());
-        else
-            return (s1.second>s2.second);
-    }
-    );
-
+    // finally, rank the solutions
+    rankSolutions();
 
     return true;
 }
@@ -261,9 +96,252 @@ void AutoIndexer::addPeak(const sptrPeak3D &peak)
     _peaks.emplace_back(peak);
 }
 
+void AutoIndexer::removeBad(double quality)
+{
+    // remove the bad solutions
+    auto remove = std::remove_if(_solutions.begin(), _solutions.end(), [=] (const RankedSolution& s) { return s.second < quality; });
+    _solutions.erase(remove, _solutions.end());
+}
+
 const std::vector<std::pair<sptrUnitCell, double> > &AutoIndexer::getSolutions() const
 {
     return _solutions;
+}
+
+void AutoIndexer::computeFFTSolutions()
+{
+    _solutions.clear();
+    const int npeaks = _peaks.size();
+    
+    if (_handler) {
+        _handler->log("Searching direct lattice vectors using" + std::to_string(npeaks) + "peaks defined on numors:");
+    }
+    
+    // Store the q-vectors of the peaks for auto-indexing
+    std::vector<Eigen::Vector3d> qvects;
+    qvects.reserve(npeaks);
+    for (auto peak : _peaks) {
+        // Keep only the peak that have selected and that are not masked
+        if (peak->isSelected() && !peak->isMasked()) {
+            qvects.push_back(peak->getQ());
+        }
+    }
+    
+    // Set up a FFT indexer object
+    FFTIndexing indexing(_params.subdiv, _params.maxdim);
+    
+    // Find the best vectors via FFT
+    std::vector<tVector> tvects = indexing.findOnSphere(qvects, _params.nStacks, _params.nSolutions);
+    qvects.clear();
+    
+    for (int i = 0; i < _params.nSolutions; ++i) {
+
+        for (int j = i+1; j < _params.nSolutions; ++j) {
+
+            for (int k = j+1; k < _params.nSolutions; ++k) {
+
+                // Build up a unit cell out of the current directions triplet
+                Eigen::Matrix3d A;
+                A.col(0) = tvects[i]._vect;
+                A.col(1) = tvects[j]._vect;
+                A.col(2) = tvects[k]._vect;
+                // Build a unit cell with direct vectors
+                auto cell = std::shared_ptr<UnitCell>(new UnitCell(A,true));
+
+                // If the unit cell volume is below the user-defined minimum volume, skip it
+                if (cell->volume() < _params.minUnitCellVolume) {
+                    continue;
+                }
+
+                bool equivalent = false;
+    
+                // check to see if the cell is equivalent to a previous one. If so, skip it
+                for (auto solution: _solutions) {
+                    if (cell->equivalent(*solution.first, _params.unitCellEquivalenceTolerance)) {
+                        equivalent = true;
+                        break;
+                    }
+                }
+                // cell is equivalent to a previous one in the list
+                if (equivalent) {
+                    continue;
+                }
+
+                // Add this solution to the list of solution with a scored to be defined futher
+                _solutions.push_back(std::make_pair(cell, -1.0));
+            }
+        }
+    }
+}
+
+void AutoIndexer::rankSolutions()
+{
+    // Sort solutions by decreasing quality.
+    // For equal quality, smallest volume is first
+    std::sort(_solutions.begin(),_solutions.end(),[](const RankedSolution& s1, const RankedSolution& s2) -> bool
+    {
+        if (s1.second == s2.second) {
+            return (s1.first->volume() < s2.first->volume());
+        } else {
+            return (s1.second > s2.second);
+        }
+    });
+}
+
+void AutoIndexer::refineSolutions()
+{
+    //#pragma omp parallel for
+    for (auto&& soln: _solutions) {
+        auto cell = soln.first;
+        cell->setHKLTolerance(_params.HKLTolerance);
+        Eigen::Matrix3d B = cell->reciprocalBasis();
+        std::vector<Eigen::RowVector3d> hkls;
+        std::vector<Eigen::RowVector3d> qs;
+
+        // Collect all the selected peaks for which the auto-indexing has been successful (integer Miller indices)
+        int success = 0;
+        for (auto peak : _peaks) {
+            Eigen::RowVector3d hkl;
+            bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
+            if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
+                hkls.emplace_back(hkl);
+                qs.emplace_back(peak->getQ());
+                ++success;
+            }
+        }
+
+        // The number of peaks must be at least for a proper minimization
+        if (success < 10) {      
+            continue;
+        }
+
+        // Lambda to compute residuals
+        auto residuals = [&B, &hkls, &qs] (Eigen::VectorXd& f) -> int
+        {
+            int n = f.size() / 3;
+
+            for (int i = 0; i < n; ++i) {
+                auto dq = qs[i]-hkls[i]*B;
+                f(3*i+0) = dq(0);
+                f(3*i+1) = dq(1);
+                f(3*i+2) = dq(2);
+            }
+            return 0;
+        };
+
+        // Pass by address the parameters to be fitted to the parameter store
+        FitParameters params;
+        for (int r = 0; r < 3; ++r) {
+            for (int c = 0; c < 3; ++c) {
+                params.addParameter(&B(r,c));
+            }
+        }
+
+        // Set the Minimizer with the parameters store and the size of the residual vector
+        Minimizer minimizer;
+        minimizer.initialize(params, 3*success);
+        minimizer.set_f(residuals);  
+        minimizer.setxTol(1e-10);
+        minimizer.setfTol(1e-10);
+        minimizer.setgTol(1e-10);
+
+        // fails to fit
+        if (!minimizer.fit(100)) {
+            continue;
+        }
+
+        // Update the cell with the fitter one and reduce it
+        try {
+            cell->setReciprocalBasis(B);
+            cell->setHKLTolerance(_params.HKLTolerance);
+            cell->reduce(_params.niggliReduction, _params.niggliTolerance, _params.gruberTolerance);
+            *cell = cell->applyNiggliConstraints();
+        } catch(std::exception& e) {
+            if (_handler) {
+                _handler->log("exception: " +std::string(e.what()));
+            }
+            continue;
+        }
+
+        // Define the final score of this solution by computing the percentage of the selected peaks which have been successfully indexed
+        double score = 0.0;
+        double maxscore = 0.0;
+        for (auto peak : _peaks) {
+            if (peak->isSelected() && !peak->isMasked()) {
+                maxscore++;
+                Eigen::RowVector3d hkl;
+                bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
+                if (indexingSuccess) {
+                    score++;
+                }
+            }
+        }
+        // Percentage of indexing
+        score /= 0.01*maxscore;
+        soln.second = score;
+    }
+}
+
+void AutoIndexer::refineConstraints()
+{
+    //#pragma omp parallel for
+    for (auto&& soln: _solutions) {
+        auto cell = soln.first;
+
+        if (soln.second <= 0.0) {
+            continue;
+        }
+
+        // UBSolution constructor can throw if constraints are not met
+        try {
+            // The UB minimization will be performed with fixed instruments offset (no pointer for Detector, Sample and Source provided)
+            UBSolution ub_soln(nullptr, nullptr, nullptr, cell);
+            UBMinimizer min(ub_soln);
+
+            int success = 0;
+            for (auto peak : _peaks) {
+                Eigen::RowVector3d hkl;
+                bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
+                if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
+                    min.addPeak(*peak, hkl);
+                    ++success;
+                }
+            }
+
+            // The number of peaks must be at least for a proper minimization
+            if (success < 10) {      
+                continue;
+            }
+
+            // fails to fit
+            if (!min.run(100)) {
+                continue;
+            }
+
+            ub_soln = min.solution();
+            ub_soln.apply();
+        } catch(...) {
+            // force the solution to be excluded from the final list
+            soln.second = -1.0;
+            continue;
+        }
+ 
+        double score = 0.0;
+        double maxscore = 0.0;
+        for (auto peak : _peaks) {
+            if (peak->isSelected() && !peak->isMasked()) {
+                maxscore++;
+                Eigen::RowVector3d hkl;
+                bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
+                if (indexingSuccess) {
+                    score++;
+                }
+            }
+        }
+        // Percentage of indexing
+        score /= 0.01*maxscore;
+        soln.second = score;
+    }
 }
 
 } // end namespace nsx

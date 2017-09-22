@@ -51,7 +51,7 @@ namespace nsx {
 
     //! \brief Structure to encapsulate lattice cell character.
     struct CellCharacter {
-        //! Lattice character \f$A = \mathbf{a} \cdot \mathbf{b}\f$
+        //! Lattice character \f$A = \mathbf{a} \cdot \mathbf{a}\f$
         double A;
         //! Lattice character \f$B = \mathbf{b} \cdot \mathbf{b}\f$
         double B;
@@ -95,20 +95,16 @@ namespace nsx {
 class UnitCell 
 {
 public:
-
     //! Empty UnitCell, initialiazed to right-handed orthonormal system
     UnitCell();
     //! Create unit cell from a basis
     UnitCell(const Eigen::Matrix3d& basis_, bool reciprocal=false);
     //! Construct unitCell from lattice parameters, the A matrix is built with avector along x, bvector in the xy-plane.
     UnitCell(double a, double b, double c, double alpha, double beta, double gamma);
-    
-    //! Copy constructor
-    UnitCell(const UnitCell&);
-    //! Assignment
-    UnitCell& operator=(const UnitCell& other);
-    ~UnitCell();
 
+    //! Copy constructor
+    UnitCell(const UnitCell& other) = default;
+  
     //! Set lattice parameters
     void setParams(double a, double b, double c, double alpha, double beta, double gamma);
 
@@ -194,15 +190,6 @@ public:
     //! Return the volume of the unit cell
     double volume() const;
 
-    //! Return the 9x9 covariance matrix, stored as row-major
-    const Eigen::Matrix<double, 9, 9>& covariance() const;
-    //! Set the covariance
-    void setCovariance(const Eigen::MatrixXd&);
-    //! Return the reciprocal covariance
-    const Eigen::Matrix<double, 9, 9>& reciprocalCovariance() const;
-    //! Set the reciprocal covariance
-    void setReciprocalCovariance(const Eigen::MatrixXd&);
-
     //! Return the index of a given q vector (not necessarily integral!!)
     Eigen::RowVector3d index(const Eigen::RowVector3d& q) const;
     //! Return q vector from a given hkl
@@ -215,19 +202,9 @@ public:
     //! Return the reciprocal character of the cell
     CellCharacter reciprocalCharacter() const;
 
-    //! Get Busing-Levy B (note: column vector convention)
-    Eigen::Matrix3d busingLevyB() const;
-    //! Get Busing-Levy U (note: column vector convention)
-    Eigen::Matrix3d busingLevyU() const;
-
     //! Reduce the unit cell to Niggli or conventional cell. Returns the number 
     //! according to the classification into 44 lattice types.
     int reduce(bool niggli_only, double niggliTolerance, double gruberTolerance);
-
-    //! Return the covariance matrix of a real-space basis vector
-    Eigen::Matrix3d covariance(int col) const;
-    //! Return the covariance matrix of a reciprocal-space basis vector
-    Eigen::Matrix3d reciprocalCovariance(int row) const;
 
     //! transform the unit cell (perform a change of basis)
     //! Note: in the future it might be better to make this method private
@@ -242,26 +219,34 @@ public:
     const Eigen::Matrix3d& niggliTransformation() const;
 
     //! Return the orientation matrix Q such that _A = Q*R where R is 
-    //! upper triangular with positive entries on the diagonal
+    //! upper triangular with positive entries on the diagonal, i.e. transformation
+    //! mapping crystal space into real space.
     Eigen::Matrix3d orientation() const;
+
+    //! Return the orientation matrix Q such that _A*_NP^{-1} = Q*R where R is 
+    //! upper triangular with positive entries on the diagonal. This is similar to UnitCell::orientation()
+    //! except that the orientation is computed for the Niggli cell.
+    Eigen::Matrix3d niggliOrientation() const;
+
+    //! \brief Return parameters of the unit cell in an internal format.
+    Eigen::VectorXd parameters() const;
+    //! \brief Set the uncertainty in the cell parameters.
+    //! We use the parameter uncertainty and propagation of error to estimate the uncertainty in the cell parameters
+    // \f$a\f$,\f$b\f$,\f$c\f$,\f$\alpha\f$,\f$\beta\f$,\f$\gamma\f$.
+    void setParameterCovariance(const Eigen::MatrixXd& cov);
+
+    //! \brief Construct a new unit cell from a reference orientation, an orientation offset, and a set of parameters.
+    UnitCell fromParameters(const Eigen::Matrix3d& U0, const Eigen::Vector3d& uOffset, const Eigen::VectorXd& parameters) const;
 
     #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     #endif
 
 private:
-    //! Compute the new covariance matrix, assuming a transformation of the form A -> M*A*N
-    static Eigen::Matrix<double, 9, 9>transformCovariance(const Eigen::Matrix3d& M, const Eigen::Matrix3d& N, const Eigen::Matrix<double, 9, 9>& C);
-
-private:
     //! Real-space basis of column vectors
     Eigen::Matrix3d _A;
     //! Reciprocal-space basis of row vectors
     Eigen::Matrix3d _B;
-    //! 9x9 Covariance matrix for _A, stored row-major
-    Eigen::Matrix<double, 9, 9> _Acov;
-    //! 9x9 Covariance matrix fo _B, stored row-major
-    Eigen::Matrix<double, 9, 9> _Bcov;
     //! _NP is the transformation such that _A*_NP.inverse() is the Niggli cell
     Eigen::Matrix3d _NP; 
 
@@ -273,6 +258,7 @@ private:
     std::string _name;
     double _hklTolerance;
     NiggliCharacter _niggli;
+    CellCharacter _characterSigmas;
 };
 
 //! Print to a stream

@@ -49,6 +49,9 @@ UnitCell::UnitCell(const Eigen::Matrix3d& b, bool reciprocal): UnitCell()
 }
 
 UnitCell::UnitCell():
+    _A(Eigen::Matrix3d::Identity()),
+    _B(Eigen::Matrix3d::Identity()),
+    _NP(Eigen::Matrix3d::Identity()),
     _material(),
     _centring(LatticeCentring::P),
     _bravaisType(BravaisType::Triclinic),
@@ -56,45 +59,13 @@ UnitCell::UnitCell():
     _group("P 1"),
     _name("uc"),
     _hklTolerance(0.2),
-    _niggli(),
-    _A(Eigen::Matrix3d::Identity()),
-    _B(Eigen::Matrix3d::Identity()),
-    _Acov(),
-    _Bcov(), 
-    _NP(Eigen::Matrix3d::Identity())
+    _niggli()
 {
 }
 
 UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, double gamma): UnitCell()
 {
     setParams(a,b,c,alpha,beta,gamma);
-}
-
-UnitCell::UnitCell(const UnitCell& other)
-: UnitCell()
-{
-    *this = other;
-}
-
-UnitCell& UnitCell::operator=(const UnitCell& other)
-{
-    if (this == &other) {
-        return *this;
-    }
-    _A = other._A;
-    _B = other._B;
-    _Acov = other._Acov;
-    _Bcov = other._Bcov;
-    _material = other._material;
-    _centring = other._centring;
-    _bravaisType = other._bravaisType;
-    _Z = other._Z;
-    _group=other._group;
-    _name = other._name;
-    _hklTolerance = other._hklTolerance;
-    _niggli = other._niggli;
-    _NP = other._NP;
-    return *this;
 }
 
 void UnitCell::setParams(double a, double b, double c, double alpha, double beta, double gamma)
@@ -118,10 +89,6 @@ void UnitCell::setParams(double a, double b, double c, double alpha, double beta
         0, 0, c3;
 
     _B = _A.inverse();
-
-    // reset covariance
-    _Acov *= 0;
-    _Bcov *= 0;
 }
 
 void UnitCell::setABCDEF(double A, double B, double C, double D, double E, double F)
@@ -152,10 +119,6 @@ void UnitCell::setABCDEF(double A, double B, double C, double D, double E, doubl
     gamma = std::acos(F / a / b);
 
     setParams(a, b, c, alpha, beta, gamma);
-}
-
-UnitCell::~UnitCell()
-{
 }
 
 void UnitCell::setLatticeCentring(LatticeCentring centring)
@@ -355,7 +318,7 @@ void UnitCell::setNiggli(const NiggliCharacter& niggli)
 //! and R is upper triangular. The upper triangular matrix R is parameterized by the 6 lattice character components
 //! A, B, C, D, E, F on which the constraints are linear. We construct the rotation matrix U1 from a unit quaternion,
 //! which is parameterized by 3 real numbers. So the total number of parameters is
-//! 3 quaterion components + 6 lattice characters - # constraints. 
+//! 3 quaternion components + 6 lattice characters - # constraints.
 //!
 //! We further note that the factorization U = U1 * U0 is done for numerical stability (since we expect U1 to be small)
 //! and that we use quaternions to compute U1 also for numerical stability (and furthermore to guarantee that U1 is
@@ -369,63 +332,24 @@ UnitCell UnitCell::applyNiggliConstraints() const
     if (_niggli.number == 31 || _niggli.number == 44) {
         return *this;
     }
-
-    // matrix of Niggli character constraints, taken from the table 9.2.5.1
-    Eigen::MatrixXd C = _niggli.C;
-    // note that we use NP to transform to the Niggli cell (in case we are currently a Gruber cell)
-    Eigen::Matrix3d B0 = _NP*_B;
-    Eigen::Matrix3d A0 = _A*_NP.inverse();
     
     // geometric mean of side-lengths of unit cell & reciprocal unit cell
-    // we use these to scale the residuals in the fitting function below
-    const double a = std::pow(std::fabs(A0.determinant()), 1.0/3.0);
-    const double b = std::pow(std::fabs(B0.determinant()), 1.0/3.0);
+    // we use these to scale the residuals in the fitting function below   
+    const double a = std::pow(std::fabs(_A.determinant()), 1.0/3.0);
+    const double b = std::pow(std::fabs(_B.determinant()), 1.0/3.0);
 
-    // number of constraints on the 6 lattice parameters
-    const int nconstraints = C.rows();
-    // free parameters in character + euler angles
-    const int nparams = 3 + (6-nconstraints); 
-
-    // used for the space of constraints
-    Eigen::FullPivLU<Eigen::MatrixXd> lu(C);
-    Eigen::MatrixXd kernel = lu.kernel();
-
-    // get rotation matrix from three parameters via quaternion
-    auto rotation = [](const Eigen::Vector3d& x) -> Eigen::Matrix3d {
-        const double d = 1.0 / std::sqrt(1 + x.squaredNorm());
-        // quaternion representing rotation
-        Eigen::Quaterniond q(d, d*x(0), d*x(1), d*x(2));
-        // rotation matrix
-        return q.toRotationMatrix();
-    };
-
-    // get initial orientation matrix
-    Eigen::Matrix3d U0 = UnitCell(niggliBasis()).orientation();
-
-    // helper routine to create a unit cell satisfying Niggli constraints
-    auto new_uc = [=](const Eigen::VectorXd& x) {
-        // lattice character
-        Eigen::VectorXd ch(6);
-        ch.setZero();        
-        // parameters defining lattice chatacer
-        for (auto i = 3; i < nparams; ++i) {
-            ch += x(i)*kernel.col(i-3);
-        }
-        // get new unit cell
-        UnitCell uc;
-        // set lattice parameters
-        uc.setABCDEF(ch(0), ch(1), ch(2), ch(3), ch(4), ch(5));
-        // rotation matrix
-        Eigen::Matrix3d U1 = rotation({x(0), x(1), x(2)});
-        // rotate unit cell
-        uc.setBasis(U1*U0*uc._A*_NP);
-        return uc;
-    };
+    // The orientation matrix (in direct space)
+    Eigen::Matrix3d U = niggliOrientation();
+    // The offsets of the orientation matrix
+    Eigen::Vector3d uOffset(0,0,0);
+    // The unit cell parameters
+    Eigen::VectorXd p = parameters();
 
     // residuals used for least-squares fitting
     // these are just the differences A-A0 and B-B0 as described above
-    auto functor = [=](const Eigen::VectorXd& x, Eigen::VectorXd& residuals) -> int {
-        UnitCell uc = new_uc(x);
+    auto functor = [&](Eigen::VectorXd& residuals) -> int
+    {
+        UnitCell uc = this->fromParameters(U, uOffset, p);
         Eigen::Matrix3d A = uc.basis();
         Eigen::Matrix3d B = uc.reciprocalBasis();
 
@@ -439,34 +363,35 @@ UnitCell UnitCell::applyNiggliConstraints() const
     };
 
     nsx::Minimizer min;
+    FitParameters params;
 
-    // starting parameters
-    Eigen::VectorXd p(nparams);
-    p.setZero();
-
-    // lattice character
-    Eigen::Matrix3d G = A0.transpose()*A0;
-    Eigen::VectorXd ch(6);
-    ch << G(0,0), G(1,1), G(2,2), G(1,2), G(0,2), G(0,1);
-    
-    // get starting values: these are just the lattice character (components of metric tensor)
-    auto y = (kernel.transpose()*kernel).inverse()*kernel.transpose()*ch;
-    for (auto i = 0; i < nparams; ++i) {
-        p(i) = i < 3 ? 0.0 : y(i-3);
+    for (auto i = 0; i < 3; ++i) {
+        params.addParameter(&uOffset(i));
     }
 
-    min.initialize(nparams, 9+9);
-    min.setParams(p);
+    for (auto i = 0; i < p.size(); ++i) {
+        params.addParameter(&p(i));
+    }
+
+    min.initialize(params, 9+9);
     min.set_f(functor);
 
     min.setxTol(1e-6);
     min.setfTol(1e-6);
     min.setgTol(1e-6);
 
-    if (!min.fit(100)) {
-        throw std::runtime_error("ERROR: failed to apply Niggli constraints!");
-    }
-    return new_uc(min.params());
+    // note: if the UC already satisfies the constraints, the minimizer will fail with GSL_ENOPROG
+    // so we don't check the return value of Minimizer::fit
+    min.fit(100);
+    nsx::UnitCell new_uc = fromParameters(U, uOffset, p);
+
+    // check if the new UC is close to the old one
+    const double delta = (new_uc.reciprocalBasis()-_B).norm() / _B.norm();
+
+    if (delta < 1e-3) {
+        return new_uc;
+    } 
+    throw std::runtime_error("ERROR: could not apply symmetry constraints to unit cell");
 }
 
 Eigen::RowVector3d UnitCell::index(const Eigen::RowVector3d& q) const
@@ -484,88 +409,9 @@ CellCharacter UnitCell::character() const
     return CellCharacter(metric());
 }
 
-//! we calculate errors in the unit cell parameters using a simple propagation of error.
-//! For a function f(x) of a random variable x, with variance-covariance matrix C, we perform
-//! the first order approximation
-//!
-//! f(x) ~ f(mu) + f'(mu)(x-mu)
-//!
-//! Using this approximation, we obtain the approxmation
-//!
-//! sigma^2(f) ~ f'(mu).dot(C*f'(mu))
-//!
-//! The non-trivial part of this function is to calculate the derivatives f' of the lattice
-//! parameters as functions of the components of the unit cell basis vectors.
 CellCharacter UnitCell::characterSigmas() const
 {   
-    CellCharacter sigma;
-    double sigma_abc[6];
-    double sigma_ABC[6];
-
-    // flatten 3x3 matrix into a 9-vector
-    auto idx = [](int i, int j) { return 3*i+j; };
-
-    for (int col = 0; col < 3; ++col) {
-        Eigen::Matrix<double, 9, 1> J;
-        J.setZero();
-        auto col1 = (col+1)%3;
-        auto col2 = (col+2)%3;
-        const auto& a = _A.col(col);
-        const auto& b = _A.col(col1);
-        const auto& c = _A.col(col2);
-        const auto& cov = _Acov;
-
-        // compute Jacobian for norm-squared of the column
-        for (int row = 0; row < 3; ++row) {
-            auto rc = idx(row,col);
-            J(rc) = 2.0*a(row);
-        }
-        const double sigma_sq = std::sqrt(J.dot(cov*J));
-        // error in squared-norm
-        sigma_ABC[col] = sigma_sq;
-        // error in norm
-        sigma_abc[col] = 0.5 * sigma_sq / a.norm();
-
-        // compute the Jacobian for D = b.c where b and c are the other two columns
-        J.setZero();
-        for (int row = 0; row < 3; ++row) {
-            auto rc = idx(row,col1);
-            J(rc) = c(row);
-            rc = idx(row,col2);
-            J(rc) = b(row);
-        }
-        sigma_ABC[3+col] = std::sqrt(J.dot(cov*J));
-
-        // compute the Jacobian for alpha = acos(b.c/|b||c|) where b and c are the other two columns
-        J.setZero();
-        const double nb = b.norm();
-        const double nc = c.norm();
-        const double bc = b.dot(c);
-        const double factor = -1.0 / std::sqrt(nb*nb*nc*nc - bc*bc);
-        for (int row = 0; row < 3; ++row) {
-            auto rc = idx(row,col1);
-            J(rc) = factor * (c(row)  + bc*b(row) / nb / nb);
-            rc = idx(row,col2);
-            J(rc) = factor * (b(row)  + bc*c(row) / nc / nc);
-        }
-        sigma_abc[3+col] = std::sqrt(J.dot(cov*J));
-    }
-
-    sigma.A = sigma_ABC[0];
-    sigma.B = sigma_ABC[1];
-    sigma.C = sigma_ABC[2];
-    sigma.D = sigma_ABC[3];
-    sigma.E = sigma_ABC[4];
-    sigma.F = sigma_ABC[5];
-
-    sigma.a = sigma_abc[0];
-    sigma.b = sigma_abc[1];
-    sigma.c = sigma_abc[2];
-    sigma.alpha = sigma_abc[3];
-    sigma.beta = sigma_abc[4];
-    sigma.gamma = sigma_abc[5];
-
-    return sigma;
+    return _characterSigmas;
 }
 
 CellCharacter UnitCell::reciprocalCharacter() const
@@ -602,17 +448,12 @@ void UnitCell::setReciprocalBasis(const Eigen::Matrix3d& B)
 {
     _B = B;
     _A = B.inverse();
-    // note: we lose covariance invormation!
-    _Acov *= 0;
-    _Bcov *= 0;
 }
 
 void UnitCell::transform(const Eigen::Matrix3d& P)
 {
     _A = _A*P;
     _B = _A.inverse();
-    _Acov = transformCovariance(Eigen::Matrix3d::Identity(), P, _Acov);
-    _Bcov = transformCovariance(_A, _A, _Acov);
 }
 
 int UnitCell::reduce(bool niggli_only, double niggliTolerance, double gruberTolerance)
@@ -648,104 +489,10 @@ int UnitCell::reduce(bool niggli_only, double niggliTolerance, double gruberTole
     return _niggli.number;
 }
 
-Eigen::Matrix3d UnitCell::busingLevyB() const
-{
-    return orientation().transpose() * _B;
-}
-
-Eigen::Matrix3d UnitCell::busingLevyU() const
-{
-    return orientation();
-}
-
 void UnitCell::setBasis(const Eigen::Matrix3d& b)
 {
     _A = b;
     _B = b.inverse();
-}
-
-// For uncorrelated errors, given a matrix A with inverse A-1,
-// then the uncertainty squared [sigmaA-1]^2_{alpha,beta}=[A-1]^2_{alpha,i}.[sigmaA]^2_{i,j}.[A-1]^2_{j,beta}
-// Here, use the fact that A^-1=B, or B^-1=A when converting from direct to reciprocal or reciprocal to direct
-// Explained in M. Lefebvre, R.K. Keeler, R. Sobie, J. White, Propagation of errors for matrix inversion,
-// Nuclear Instruments and Methods in Physics Research Section A: Accelerators, Spectrometers, Detectors and Associated Equipment, Volume 451, Issue 2, 1 September 2000, Pages 520-528
-Eigen::Matrix<double, 9, 9> UnitCell::transformCovariance(const Eigen::Matrix3d& M, const Eigen::Matrix3d& N, const Eigen::Matrix<double, 9, 9>& C)
-{
-    Eigen::Matrix<double, 9, 9> R;
-
-    auto unpack = [](int ij, int& i, int& j) -> void
-    {
-        j = ij%3;
-        i = ij/3;
-    };
-
-    for (int ij = 0; ij < 9; ++ij) {
-        int i, j;
-        unpack(ij, i, j);
-        for (int kl = 0; kl < 9; ++kl) {
-            int k, l;
-            unpack(kl, k, l);
-            R(ij, kl) = 0.0;
-            for (int ab = 0; ab < 9; ++ab) {
-                int a, b;
-                unpack(ab, a, b);
-                for (int cd = 0; cd < 9; ++cd) {
-                    int c, d;
-                    unpack(cd, c, d);
-                    const double C_ijab = M(i, a) * N(b, j);
-                    const double C_klcd = M(k, c) * N(d, l);
-                    R(ij, kl) += C_ijab * C(ab, cd) * C_klcd;
-                }
-            }
-        }
-    }
-    return R;
-}
-
-const Eigen::Matrix<double, 9, 9>& UnitCell::covariance() const
-{
-    return _Acov;
-}
-
-const Eigen::Matrix<double, 9, 9>& UnitCell::reciprocalCovariance() const
-{
-    return _Bcov;
-}
-
-void UnitCell::setCovariance(const Eigen::MatrixXd& Acov)
-{
-    _Acov = Acov;
-    _Bcov = transformCovariance(_B, _B, _Acov);
-}
-
-void UnitCell::setReciprocalCovariance(const Eigen::MatrixXd& Bcov)
-{
-    _Bcov = Bcov;
-    _Acov = transformCovariance(_A, _A, _Bcov);
-}
-
-Eigen::Matrix3d UnitCell::covariance(int col) const
-{
-    Eigen::Matrix3d cov;
-    auto index = [](int i, int j) { return 3*i+j;};
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            cov(i, j) = _Acov(index(i, col), index(j, col));
-        }
-    }
-    return cov;
-}
-
-Eigen::Matrix3d UnitCell::reciprocalCovariance(int row) const
-{
-    Eigen::Matrix3d cov;
-    auto index = [](int i, int j) { return 3*i+j;};
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            cov(i, j) = _Acov(index(row, i), index(row, j));
-        }
-    }
-    return cov;
 }
 
 const NiggliCharacter& UnitCell::niggliCharacter() const
@@ -814,6 +561,176 @@ Eigen::Matrix3d UnitCell::orientation() const
         }
     }
     return Q;
+}
+
+Eigen::Matrix3d UnitCell::niggliOrientation() const
+{
+    const Eigen::Matrix3d NA  =_A*_NP.inverse();
+    Eigen::Matrix3d Q = NA.householderQr().householderQ();
+    Eigen::Matrix3d R = Q.transpose() * NA;
+
+    for (auto i = 0; i < 3; ++i) {
+        if (R(i,i) < 0) {
+            Q.col(i) *= -1.0;
+        }
+    }
+    return Q;
+}
+
+Eigen::VectorXd UnitCell::parameters() const
+{
+    // note that we use NP to transform to the Niggli cell (in case we are currently a Gruber cell)
+    Eigen::Matrix3d A0 = _A*_NP.inverse();
+    Eigen::Matrix3d G = A0.transpose()*A0;
+    Eigen::VectorXd ch(6);
+    ch << G(0,0), G(1,1), G(2,2), G(1,2), G(0,2), G(0,1);
+
+    // no constraints to be applied:
+    if (_niggli.number == 31 || _niggli.number == 44) {
+        return ch;
+    }
+    
+    // matrix of Niggli character constraints, taken from the table 9.2.5.1
+    Eigen::MatrixXd C = _niggli.C;
+
+    // used for the space of constraints
+    Eigen::FullPivLU<Eigen::MatrixXd> lu(C);
+    Eigen::MatrixXd kernel = lu.kernel();
+    
+    // get starting values: these are just the lattice character (components of metric tensor)
+    return (kernel.transpose()*kernel).inverse()*kernel.transpose()*ch;
+}
+
+UnitCell UnitCell::fromParameters(const Eigen::Matrix3d& U0, const Eigen::Vector3d& uOffset, const Eigen::VectorXd& parameters) const
+{
+    // get new orientation from offsets
+    Eigen::Quaterniond q(1.0, uOffset(0), uOffset(1), uOffset(2));
+    q.normalize();
+
+    Eigen::Matrix3d U = q.toRotationMatrix()*U0;
+
+    Eigen::MatrixXd kernel;
+
+    // no constraints
+    if (_niggli.number == 31 || _niggli.number == 44) {
+        kernel.setIdentity(6, 6);
+    } else {
+        // matrix of Niggli character constraints, taken from the table 9.2.5.1
+        Eigen::MatrixXd C = _niggli.C;
+        // compute kernel of Niggli constraints
+        Eigen::FullPivLU<Eigen::MatrixXd> lu(_niggli.C);
+        kernel = lu.kernel();
+    }
+
+    const int nparams = kernel.cols();
+    assert(nparams == parameters.size());
+
+    // lattice character
+    Eigen::VectorXd ch(6);
+    ch.setZero();        
+    // parameters defining lattice chatacer
+    for (auto i = 0; i < nparams; ++i) {
+        ch += parameters(i)*kernel.col(i);
+    }
+
+    // create new unit cell
+    UnitCell uc(*this);
+    uc.setABCDEF(ch(0), ch(1), ch(2), ch(3), ch(4), ch(5));
+    uc.setBasis(U*uc._A*_NP);
+
+    return uc;
+}
+
+//! We calculate errors in the unit cell parameters using a simple propagation of error.
+//! For a function f(x) of a random variable x, with variance-covariance matrix C, we perform
+//! the first order approximation
+//!
+//! f(x) ~ f(mu) + f'(mu)(x-mu)
+//!
+//! Using this approximation, we obtain the approxmation
+//!
+//! sigma^2(f) ~ f'(mu).dot(C*f'(mu))
+//!
+//! The non-trivial part of this function is to calculate the derivatives f' of the lattice
+//! parameters as functions of the components of the unit cell basis vectors.
+void UnitCell::setParameterCovariance(const Eigen::MatrixXd& cov)
+{
+    const Eigen::VectorXd params = parameters();
+    assert(params.size() == cov.rows());
+    assert(params.size() == cov.cols());
+
+    // the kernel matrix of the Niggli constraints
+    Eigen::MatrixXd kernel;
+    
+    // no constraints?
+    if (_niggli.number == 31 || _niggli.number == 44) {
+        kernel.setIdentity(6, 6);
+    } else {
+        // matrix of Niggli character constraints, taken from the table 9.2.5.1
+        Eigen::MatrixXd C = _niggli.C;
+        // compute kernel of Niggli constraints
+        Eigen::FullPivLU<Eigen::MatrixXd> lu(_niggli.C);
+        kernel = lu.kernel();
+    }
+    
+    // covariance matrix of the paramters A, B, C, D, E, F
+    Eigen::MatrixXd ABC_cov = kernel.transpose() * cov * kernel;
+    
+    // lattice character
+    CellCharacter ch = character();
+    // store character in these arrays to make symbolic calculation easier
+    const double ABC[6] = {ch.A, ch.B, ch.C, ch.D, ch.E, ch.F};
+    const double abc[6] = {ch.a, ch.b, ch.c, ch.alpha, ch.beta, ch.gamma}; 
+
+    // Jacobian of the transformation (A,B,C,D,E,F) -> (a,b,c,alpha,beta,gamma)
+    Eigen::MatrixXd J(6, 6);
+    J.setZero();    
+
+    // Jacobian entries for a,b,c
+    for (int i = 0; i < 3; ++i) {
+        J(i,i) = 1 / 2.0 / abc[i];
+    }
+
+    // Jacobian entries for alpha,beta,gamma
+    // e.g. alpha = acos(b*c/D)
+    // so we calculate the derivative analytically
+    for (int i = 3; i < 6; ++i) {
+        // derivative of inverse cosine
+        const double factor = -1.0 / std::sin(abc[i]);
+
+        // shift of index, used for convenience
+        const int i1 = (i-3+1)%3;
+        const int i2 = (i-3+2)%3;
+
+        const double Dbc = ABC[i] / abc[i1] / abc[i2];
+
+        // diagonal part of Jacobian, e.g. d(alpha) / dD
+        J(i, i) = -factor / abc[i1] / abc[i2];
+
+        // off-diagonal part of Jacobian, e.g.
+        // d(alpha)/dB and d(alpha)/dC
+        J(i,i1) = factor * Dbc / 2.0 / ABC[i1];
+        J(i,i2) = factor * Dbc / 2.0 / ABC[i2];
+        
+    }
+
+    // covariance matrix of the paramters a, b, c, alpha, beta, gamma
+    Eigen::MatrixXd abc_cov = J * ABC_cov * J.transpose();
+
+    // store the result
+    _characterSigmas.A = std::sqrt(ABC_cov(0,0));
+    _characterSigmas.B = std::sqrt(ABC_cov(1,1));
+    _characterSigmas.C = std::sqrt(ABC_cov(2,2));
+    _characterSigmas.D = std::sqrt(ABC_cov(3,3));
+    _characterSigmas.E = std::sqrt(ABC_cov(4,4));
+    _characterSigmas.F = std::sqrt(ABC_cov(5,5));
+
+    _characterSigmas.a = std::sqrt(abc_cov(0,0));
+    _characterSigmas.b = std::sqrt(abc_cov(1,1));
+    _characterSigmas.c = std::sqrt(abc_cov(2,2));
+    _characterSigmas.alpha = std::sqrt(abc_cov(3,3));
+    _characterSigmas.beta = std::sqrt(abc_cov(4,4));
+    _characterSigmas.gamma = std::sqrt(abc_cov(5,5));
 }
 
 } // end namespace nsx

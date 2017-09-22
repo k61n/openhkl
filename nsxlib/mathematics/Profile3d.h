@@ -40,93 +40,34 @@
 
 namespace nsx {
 
-//! convenience data structure for converting between named parameters and flattened arrays
-struct ProfileParams {
-    //! The total number of parameters (compile time constant).
-    static const int nparams;
-    //! Background value
-    double background;
-    //! x component of center of mass
-    double x0;
-    //! y component of center of mass
-    double y0;
-    //! z component of center of mass
-    double z0;
-    //! Amplitude
-    double A;
-    //! xx component of inverse covariance matrix
-    double dxx;
-    //! xy component of inverse covariance matrix
-    double dxy;
-    //! xz component of inverse covariance matrix
-    double dxz;
-    //! yy component of inverse covariance matrix
-    double dyy;
-    //! yz component of inverse covariance matrix
-    double dyz;
-    //! zz component of inverse covariance matrix
-    double dzz;
-
-    //! Default constructor
-    ProfileParams() = default;
-    //! Initialize by guessing parameters from the given data points
-    ProfileParams(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z, const Eigen::ArrayXd& I);
-
-    //! Pack the parameters into a flat array.
-    Eigen::VectorXd pack() const
-    {
-        Eigen::VectorXd p(nparams);
-        p << background, x0, y0, z0, A, dxx, dxy, dxz, dyy, dyz, dzz;
-        return p;
-    }
-
-    //! Unpack the parameters from a flat array.
-    void unpack(const Eigen::VectorXd& p)
-    {
-        assert(p.size() == nparams);
-        background = p(0);
-        x0 = p(1);
-        y0 = p(2);
-        z0 = p(3);
-        A = p(4);
-        dxx = p(5);
-        dxy = p(6);
-        dxz = p(7);
-        dyy = p(8);
-        dyz = p(9);
-        dzz = p(10);
-    }
-};
-
 //! Class for 3d peak profile fitting
 class Profile3d {
-public:
-    //! Initialize with a given set of parameters
-    Profile3d(const ProfileParams& p);
-    //! Destructor
-    ~Profile3d();
-
+public: 
+    //! Create a profile with given initial parameters
+    Profile3d(double background, double A, const Eigen::Vector3d& c, const Eigen::Matrix3d& CI);
+    //! Create a profile with an initial guess calculated (not fit) from the given data.
+    Profile3d(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z, const Eigen::ArrayXd& I);
     //! Fit using the provided data points
     Profile3d fit(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z, const Eigen::ArrayXd& I, int maxiter=100) const;
 
     //! Value of the profile at the given point (including background)
-    double profile(Eigen::Vector3d p) const;
+    double evaluate(Eigen::Vector3d p) const;
 
     //! Values of the profile at the given points (including background)
-    Eigen::ArrayXd profile(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const;
+    Eigen::ArrayXd evaluate(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const;
 
     //! Pearson correlation coefficient of the fit
     double pearson() const;
-
-    //! Return the named parameters of the profile
-    ProfileParams parameters() const;
 
     //! Return whether this profile is the result of a successful fit
     bool success() const;
 
 private:
-    //! Parameters of the profile
-    Eigen::VectorXd _params;
+    //! Evaluate profile in place, assuming result has already been allocated
+    void evaluateInPlace(Eigen::VectorXd& result, const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const;
+    //! Evaluate the Jacobian in place, assuming J has already been allocated
+    void jacobianInPlace(Eigen::MatrixXd& J, const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const;
+
     //! Pearson correlation coefficient
     double _pearson;
     //! Flag to determine whether this profile is the result of a successful fit
@@ -135,6 +76,16 @@ private:
     Eigen::Vector3d _center;
     //! Covariance matrix
     Eigen::Matrix3d _covariance;
+
+public:
+    //! Background value
+    double _background;
+    //! Amplitude
+    double _A;
+    //! center of mass
+    Eigen::Vector3d _c;
+    //! Components of inverse covariance matrix. 
+    double _Dxx, _Dxy, _Dxz, _Dyy, _Dyz, _Dzz;
 
 };
 
