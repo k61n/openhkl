@@ -1,10 +1,5 @@
-#define BOOST_TEST_MODULE "Test Mosaic Class"
-#define BOOST_TEST_DYN_LINK
-
 #include <string>
 #include <vector>
-
-#include <boost/test/unit_test.hpp>
 
 #include <nsxlib/crystal/Mosaic.h>
 #include <nsxlib/data/DataReaderFactory.h>
@@ -13,9 +8,10 @@
 #include <nsxlib/geometry/Ellipsoid.h>
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Sample.h>
+#include <nsxlib/utils/NSXTest.h>
 #include <nsxlib/utils/Units.h>
 
-int run_test()
+int main()
 {
 
     nsx::Sample s("test");
@@ -54,7 +50,7 @@ int run_test()
         nsx::DataList numors;
         numors.push_back(dataf);
         bool result = mos.run(numors,1e5,overlap);
-        BOOST_CHECK(result);
+        NSX_CHECK_ASSERT(result);
     }
 
     Eigen::Vector3d center1(0,0,0);
@@ -71,9 +67,4 @@ int run_test()
     nsx::Ellipsoid ell2(center2,evals2,evecs2);
 
     return 0;
-}
-
-BOOST_AUTO_TEST_CASE(Test_Mosaic)
-{
-    BOOST_CHECK(run_test() == 0);
 }

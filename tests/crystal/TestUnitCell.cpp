@@ -1,18 +1,14 @@
-#define BOOST_TEST_MODULE "Test Unit Cell"
-#define BOOST_TEST_DYN_LINK
-
 #include <random>
 #include <iostream>
-#include <boost/test/unit_test.hpp>
 
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/mathematics/Minimizer.h>
+#include <nsxlib/utils/NSXTest.h>
 #include <nsxlib/utils/Units.h>
-
 
 const double tolerance=1e-6;
 
-BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
+int main()
 {
     double a=6.32;
     double b=7.22;
@@ -21,61 +17,61 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
     nsx::UnitCell cell(a,b,c,alpha,alpha,alpha);
     auto cc = cell.character();
 
-    BOOST_CHECK_CLOSE(cc.a,a,tolerance);
-    BOOST_CHECK_CLOSE(cc.b,b,tolerance);
-    BOOST_CHECK_CLOSE(cc.c,c,tolerance);
-    BOOST_CHECK_CLOSE(cc.alpha,alpha,tolerance);
-    BOOST_CHECK_CLOSE(cc.beta,alpha,tolerance);
-    BOOST_CHECK_CLOSE(cc.gamma,alpha,tolerance);
+    NSX_CHECK_CLOSE(cc.a,a,tolerance);
+    NSX_CHECK_CLOSE(cc.b,b,tolerance);
+    NSX_CHECK_CLOSE(cc.c,c,tolerance);
+    NSX_CHECK_CLOSE(cc.alpha,alpha,tolerance);
+    NSX_CHECK_CLOSE(cc.beta,alpha,tolerance);
+    NSX_CHECK_CLOSE(cc.gamma,alpha,tolerance);
 
-    BOOST_CHECK_CLOSE(cell.volume(),a*b*c,tolerance);
+    NSX_CHECK_CLOSE(cell.volume(),a*b*c,tolerance);
 
     const Eigen::Matrix3d& A=cell.basis();
-    BOOST_CHECK_CLOSE(A(0,0),a,tolerance);
-    BOOST_CHECK_SMALL(A(1,0),tolerance);
-    BOOST_CHECK_SMALL(A(2,0),tolerance);
-    BOOST_CHECK_SMALL(A(0,1),tolerance);
-    BOOST_CHECK_CLOSE(A(1,1),b,tolerance);
-    BOOST_CHECK_SMALL(A(2,1),tolerance);
-    BOOST_CHECK_SMALL(A(0,2),tolerance);
-    BOOST_CHECK_SMALL(A(1,2),tolerance);
-    BOOST_CHECK_CLOSE(A(2,2),c,tolerance);
+    NSX_CHECK_CLOSE(A(0,0),a,tolerance);
+    NSX_CHECK_SMALL(A(1,0),tolerance);
+    NSX_CHECK_SMALL(A(2,0),tolerance);
+    NSX_CHECK_SMALL(A(0,1),tolerance);
+    NSX_CHECK_CLOSE(A(1,1),b,tolerance);
+    NSX_CHECK_SMALL(A(2,1),tolerance);
+    NSX_CHECK_SMALL(A(0,2),tolerance);
+    NSX_CHECK_SMALL(A(1,2),tolerance);
+    NSX_CHECK_CLOSE(A(2,2),c,tolerance);
 
     const Eigen::Matrix3d& B=cell.reciprocalBasis();
-    BOOST_CHECK_CLOSE(B(0,0),1/a,tolerance);
-    BOOST_CHECK_SMALL(B(1,0),tolerance);
-    BOOST_CHECK_SMALL(B(2,0),tolerance);
-    BOOST_CHECK_SMALL(B(0,1),tolerance);
-    BOOST_CHECK_CLOSE(B(1,1),1/b,tolerance);
-    BOOST_CHECK_SMALL(B(2,1),tolerance);
-    BOOST_CHECK_SMALL(B(0,2),tolerance);
-    BOOST_CHECK_SMALL(B(1,2),tolerance);
-    BOOST_CHECK_CLOSE(B(2,2),1/c,tolerance);
+    NSX_CHECK_CLOSE(B(0,0),1/a,tolerance);
+    NSX_CHECK_SMALL(B(1,0),tolerance);
+    NSX_CHECK_SMALL(B(2,0),tolerance);
+    NSX_CHECK_SMALL(B(0,1),tolerance);
+    NSX_CHECK_CLOSE(B(1,1),1/b,tolerance);
+    NSX_CHECK_SMALL(B(2,1),tolerance);
+    NSX_CHECK_SMALL(B(0,2),tolerance);
+    NSX_CHECK_SMALL(B(1,2),tolerance);
+    NSX_CHECK_CLOSE(B(2,2),1/c,tolerance);
 
 
     const Eigen::Matrix3d& G=cell.metric();
-    BOOST_CHECK_CLOSE(G(0,0),a*a,tolerance);
-    BOOST_CHECK_SMALL(G(1,0),tolerance);
-    BOOST_CHECK_SMALL(G(2,0),tolerance);
-    BOOST_CHECK_SMALL(G(0,1),tolerance);
-    BOOST_CHECK_CLOSE(G(1,1),b*b,tolerance);
-    BOOST_CHECK_SMALL(G(2,1),tolerance);
-    BOOST_CHECK_SMALL(G(0,2),tolerance);
-    BOOST_CHECK_SMALL(G(1,2),tolerance);
-    BOOST_CHECK_CLOSE(G(2,2),c*c,tolerance);
+    NSX_CHECK_CLOSE(G(0,0),a*a,tolerance);
+    NSX_CHECK_SMALL(G(1,0),tolerance);
+    NSX_CHECK_SMALL(G(2,0),tolerance);
+    NSX_CHECK_SMALL(G(0,1),tolerance);
+    NSX_CHECK_CLOSE(G(1,1),b*b,tolerance);
+    NSX_CHECK_SMALL(G(2,1),tolerance);
+    NSX_CHECK_SMALL(G(0,2),tolerance);
+    NSX_CHECK_SMALL(G(1,2),tolerance);
+    NSX_CHECK_CLOSE(G(2,2),c*c,tolerance);
 
     cell.setLatticeCentring(nsx::LatticeCentring::I);
     cell.setBravaisType(nsx::BravaisType::Tetragonal);
     // Check angle calculations
     nsx::UnitCell cell4(10,10,10,90*nsx::deg,98*nsx::deg,90*nsx::deg);
-    BOOST_CHECK_CLOSE(cell4.getAngle({1,0,0},{0,0,1}),82.0*nsx::deg,tolerance);
+    NSX_CHECK_CLOSE(cell4.getAngle({1,0,0},{0,0,1}),82.0*nsx::deg,tolerance);
 
     // Check equivalence
     cell4.setSpaceGroup("P 4/m m m");
 
-    BOOST_CHECK(cell4.isEquivalent(2,0,0,0,2,0));
-    BOOST_CHECK(cell4.isEquivalent(2,3,2,3,2,-2));
-    BOOST_CHECK(!cell4.isEquivalent(2,3,2,3,2,-3));
+    NSX_CHECK_ASSERT(cell4.isEquivalent(2,0,0,0,2,0));
+    NSX_CHECK_ASSERT(cell4.isEquivalent(2,3,2,3,2,-2));
+    NSX_CHECK_ASSERT(!cell4.isEquivalent(2,3,2,3,2,-3));
 
 
     // test covariance
@@ -86,7 +82,7 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
     0.1, 0.2, 1.8;
 
     cell = nsx::UnitCell(AA);
-    BOOST_CHECK_CLOSE(cell.volume(), std::fabs(AA.determinant()), 1e-10);
+    NSX_CHECK_CLOSE(cell.volume(), std::fabs(AA.determinant()), 1e-10);
 
     // computed covariance matrix
     Eigen::Matrix<double, 6, 6> cov;
@@ -173,39 +169,39 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
 
     // because of the way UnitCell computes sigmas,
     // for ABCDEF the sigma should be almost exact
-    BOOST_CHECK_CLOSE(sigma.A, sigma_expected.A, 1e-3);
-    BOOST_CHECK_CLOSE(sigma.B, sigma_expected.B, 1e-3);
-    BOOST_CHECK_CLOSE(sigma.C, sigma_expected.C, 1e-3);
-    BOOST_CHECK_CLOSE(sigma.D, sigma_expected.D, 1e-3);
-    BOOST_CHECK_CLOSE(sigma.E, sigma_expected.E, 1e-3);
-    BOOST_CHECK_CLOSE(sigma.F, sigma_expected.F, 1e-3);
+    NSX_CHECK_CLOSE(sigma.A, sigma_expected.A, 1e-3);
+    NSX_CHECK_CLOSE(sigma.B, sigma_expected.B, 1e-3);
+    NSX_CHECK_CLOSE(sigma.C, sigma_expected.C, 1e-3);
+    NSX_CHECK_CLOSE(sigma.D, sigma_expected.D, 1e-3);
+    NSX_CHECK_CLOSE(sigma.E, sigma_expected.E, 1e-3);
+    NSX_CHECK_CLOSE(sigma.F, sigma_expected.F, 1e-3);
 
     // the sigmas of parameters a,b,c,alpha,beta,gamma are 
     // computed by first order propagation of errors, so we do
     // not expect them to be so close to the true value
-    BOOST_CHECK_CLOSE(sigma.a, sigma_expected.a, 1e-1);
-    BOOST_CHECK_CLOSE(sigma.b, sigma_expected.b, 1e-1);
-    BOOST_CHECK_CLOSE(sigma.c, sigma_expected.c, 1e-1);
-    BOOST_CHECK_CLOSE(sigma.alpha, sigma_expected.alpha, 1.0);
-    BOOST_CHECK_CLOSE(sigma.beta, sigma_expected.beta, 1.0);
-    BOOST_CHECK_CLOSE(sigma.gamma, sigma_expected.gamma, 1.0);    
+    NSX_CHECK_CLOSE(sigma.a, sigma_expected.a, 1e-1);
+    NSX_CHECK_CLOSE(sigma.b, sigma_expected.b, 1e-1);
+    NSX_CHECK_CLOSE(sigma.c, sigma_expected.c, 1e-1);
+    NSX_CHECK_CLOSE(sigma.alpha, sigma_expected.alpha, 1.0);
+    NSX_CHECK_CLOSE(sigma.beta, sigma_expected.beta, 1.0);
+    NSX_CHECK_CLOSE(sigma.gamma, sigma_expected.gamma, 1.0);    
 
     // test niggli constraints
     cell.setParams(55.03, 58.60, 66.89, 1.569, 1.57, 1.571);
     int num = cell.reduce(false, 1e-2, 5e-3);
-    BOOST_CHECK_EQUAL(num, 32);
+    NSX_CHECK_EQUAL(num, 32);
     auto new_cell = cell.applyNiggliConstraints();
     ch = new_cell.character();
 
-    BOOST_CHECK_CLOSE(ch.a, 55.03, 1e-3);
-    BOOST_CHECK_CLOSE(ch.b, 58.60, 1e-3);
-    BOOST_CHECK_CLOSE(ch.c, 66.89, 1e-3);
+    NSX_CHECK_CLOSE(ch.a, 55.03, 1e-3);
+    NSX_CHECK_CLOSE(ch.b, 58.60, 1e-3);
+    NSX_CHECK_CLOSE(ch.c, 66.89, 1e-3);
 
-    BOOST_CHECK_CLOSE(ch.alpha, M_PI/2.0, 1e-6);
-    BOOST_CHECK_CLOSE(ch.beta, M_PI/2.0, 1e-6);
-    BOOST_CHECK_CLOSE(ch.gamma, M_PI/2.0, 1e-6);
+    NSX_CHECK_CLOSE(ch.alpha, M_PI/2.0, 1e-6);
+    NSX_CHECK_CLOSE(ch.beta, M_PI/2.0, 1e-6);
+    NSX_CHECK_CLOSE(ch.gamma, M_PI/2.0, 1e-6);
 
-    BOOST_CHECK_EQUAL(new_cell.equivalent(cell, 1e-3), true);
+    NSX_CHECK_EQUAL(new_cell.equivalent(cell, 1e-3), true);
    
     const double deg = M_PI / 180.0;
     nsx::NiggliCharacter nch;
@@ -217,23 +213,23 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
     cell = nsx::UnitCell(5.557, 5.77, 16.138, 96.314*deg, 90.0*deg, 90.0*deg);
     cell.reduce(true, 1e-2, 1e-3);
     nch = cell.niggliCharacter();
-    BOOST_CHECK_EQUAL(nch.number, 35);
-    BOOST_CHECK_NO_THROW(cell = cell.applyNiggliConstraints());
+    NSX_CHECK_EQUAL(nch.number, 35);
+    NSX_CHECK_NO_THROW(cell = cell.applyNiggliConstraints());
 
     // Niggli + Gruber
     cell = nsx::UnitCell(5.557, 5.77, 16.138, 96.314*deg, 90.0*deg, 90.0*deg);
     cell.reduce(false, 1e-2, 1e-3);
     nch = cell.niggliCharacter();
-    BOOST_CHECK_EQUAL(nch.number, 35);
-    BOOST_CHECK_NO_THROW(cell = cell.applyNiggliConstraints());
+    NSX_CHECK_EQUAL(nch.number, 35);
+    NSX_CHECK_NO_THROW(cell = cell.applyNiggliConstraints());
 
     ch = cell.character();
-    BOOST_CHECK_CLOSE(ch.a, 5.76, 1.0);
-    BOOST_CHECK_CLOSE(ch.b, 5.55, 1.0);
-    BOOST_CHECK_CLOSE(ch.c, 16.12, 1.0);
-    BOOST_CHECK_CLOSE(ch.alpha, 90.0*deg, 1.0);
-    BOOST_CHECK_CLOSE(ch.beta, 96.3*deg, 1.0);
-    BOOST_CHECK_CLOSE(ch.gamma, 90.0*deg, 1.0);
+    NSX_CHECK_CLOSE(ch.a, 5.76, 1.0);
+    NSX_CHECK_CLOSE(ch.b, 5.55, 1.0);
+    NSX_CHECK_CLOSE(ch.c, 16.12, 1.0);
+    NSX_CHECK_CLOSE(ch.alpha, 90.0*deg, 1.0);
+    NSX_CHECK_CLOSE(ch.beta, 96.3*deg, 1.0);
+    NSX_CHECK_CLOSE(ch.gamma, 90.0*deg, 1.0);
 
     // simulated data
     std::vector<Eigen::RowVector3d> q;
@@ -285,7 +281,7 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
     nsx::Minimizer min;
     min.initialize(params, 3*q.size());
     min.set_f(residual);
-    BOOST_CHECK_EQUAL(min.fit(100), true);
+    NSX_CHECK_EQUAL(min.fit(100), true);
 
     std::cout << "u offsets " << u.transpose() << std::endl;
     std::cout << "cell parameters " << x.transpose() << std::endl;
@@ -293,10 +289,12 @@ BOOST_AUTO_TEST_CASE(Test_Unit_Cell)
     // new character of fitted cell
     ch = cell.fromParameters(U, u, x).character();
 
-    BOOST_CHECK_CLOSE(ch.a, 5.76, 1.0);
-    BOOST_CHECK_CLOSE(ch.b, 5.55, 1.0);
-    BOOST_CHECK_CLOSE(ch.c, 16.12, 1.0);
-    BOOST_CHECK_CLOSE(ch.alpha, 90.0*deg, 1.0);
-    BOOST_CHECK_CLOSE(ch.beta, 96.3*deg, 1.0);
-    BOOST_CHECK_CLOSE(ch.gamma, 90.0*deg, 1.0);
+    NSX_CHECK_CLOSE(ch.a, 5.76, 1.0);
+    NSX_CHECK_CLOSE(ch.b, 5.55, 1.0);
+    NSX_CHECK_CLOSE(ch.c, 16.12, 1.0);
+    NSX_CHECK_CLOSE(ch.alpha, 90.0*deg, 1.0);
+    NSX_CHECK_CLOSE(ch.beta, 96.3*deg, 1.0);
+    NSX_CHECK_CLOSE(ch.gamma, 90.0*deg, 1.0);
+
+    return 0;
 }

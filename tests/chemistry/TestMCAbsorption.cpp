@@ -1,17 +1,13 @@
-#define BOOST_TEST_MODULE "Test Monte-Carlo Absorption"
-#define BOOST_TEST_DYN_LINK
-
-#include <boost/test/unit_test.hpp>
-
 #include <Eigen/Dense>
 
 #include <nsxlib/chemistry/ChemistryTypes.h>
 #include <nsxlib/chemistry/Material.h>
 #include <nsxlib/geometry/ConvexHull.h>
 #include <nsxlib/geometry/MCAbsorption.h>
+#include <nsxlib/utils/NSXTest.h>
 #include <nsxlib/utils/Units.h>
 
-BOOST_AUTO_TEST_CASE(Test_MCAbsorption)
+int main()
 {
     // Build an isotopically pure methane material
     nsx::sptrMaterial helium(new nsx::Material("He[3]"));
@@ -59,4 +55,6 @@ BOOST_AUTO_TEST_CASE(Test_MCAbsorption)
 
     // Compute the transmission factor
     mca.run(10000,Eigen::Vector3d(0,1,0),Eigen::Matrix3d::Identity());
+
+    return 0;
 }

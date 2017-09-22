@@ -1,12 +1,7 @@
-#define BOOST_TEST_MODULE "Test GruberReductionCSV"
-#define BOOST_TEST_DYN_LINK
-
 #include <fstream>
 #include <string>
 #include <utility>
 #include <vector>
-
-#include <boost/test/unit_test.hpp>
 
 #include <Eigen/Dense>
 
@@ -17,12 +12,13 @@
 #include <nsxlib/instrument/Component.h>
 #include <nsxlib/instrument/ComponentState.h>
 #include <nsxlib/utils/CSV.h>
+#include <nsxlib/utils/NSXTest.h>
 #include <nsxlib/utils/Units.h>
 
 const double niggli_tolerance = 1e-9;
 const double gruber_tolerance = 1e-5;
 
-int run_test()
+int main()
 {
     // using vectord = vector<double>;
     std::ofstream outfile;
@@ -36,7 +32,7 @@ int run_test()
     database.open("crystallography.tsv", std::fstream::in);
     nsx::CSV csv_reader('\t', '#');
 
-    BOOST_CHECK(database.is_open());
+    NSX_CHECK_ASSERT(database.is_open());
 
     unsigned int total, correct;
 
@@ -100,7 +96,7 @@ int run_test()
            condition = gruber.reduce(gruber_P, centering, bravaisType);
         }
         catch (std::exception& e) {
-            BOOST_CHECK(false);
+            NSX_CHECK_ASSERT(false);
         }
 
         ++counts[condition];
@@ -123,14 +119,9 @@ int run_test()
             ++failures[condition];
         }
 
-        BOOST_CHECK(gruberCell.getBravaisTypeSymbol()[0] == bravais[0]);
-        BOOST_CHECK(gruberCell.getBravaisTypeSymbol()[1] == bravais[1]);
+        NSX_CHECK_ASSERT(gruberCell.getBravaisTypeSymbol()[0] == bravais[0]);
+        NSX_CHECK_ASSERT(gruberCell.getBravaisTypeSymbol()[1] == bravais[1]);
     }
 
     return 0;
-}
-
-BOOST_AUTO_TEST_CASE(Test_GruberReductionCSV)
-{
-    BOOST_CHECK(run_test() == 0);
 }
