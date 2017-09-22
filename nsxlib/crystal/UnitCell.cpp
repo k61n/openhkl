@@ -49,6 +49,9 @@ UnitCell::UnitCell(const Eigen::Matrix3d& b, bool reciprocal): UnitCell()
 }
 
 UnitCell::UnitCell():
+    _A(Eigen::Matrix3d::Identity()),
+    _B(Eigen::Matrix3d::Identity()),
+    _NP(Eigen::Matrix3d::Identity()),
     _material(),
     _centring(LatticeCentring::P),
     _bravaisType(BravaisType::Triclinic),
@@ -56,10 +59,7 @@ UnitCell::UnitCell():
     _group("P 1"),
     _name("uc"),
     _hklTolerance(0.2),
-    _niggli(),
-    _A(Eigen::Matrix3d::Identity()),
-    _B(Eigen::Matrix3d::Identity()),
-    _NP(Eigen::Matrix3d::Identity())
+    _niggli()
 {
 }
 
@@ -580,7 +580,6 @@ Eigen::Matrix3d UnitCell::niggliOrientation() const
 Eigen::VectorXd UnitCell::parameters() const
 {
     // note that we use NP to transform to the Niggli cell (in case we are currently a Gruber cell)
-    Eigen::Matrix3d B0 = _NP*_B;
     Eigen::Matrix3d A0 = _A*_NP.inverse();
     Eigen::Matrix3d G = A0.transpose()*A0;
     Eigen::VectorXd ch(6);
@@ -593,10 +592,6 @@ Eigen::VectorXd UnitCell::parameters() const
     
     // matrix of Niggli character constraints, taken from the table 9.2.5.1
     Eigen::MatrixXd C = _niggli.C;
-    // number of constraints on the 6 lattice parameters
-    const int nconstraints = C.rows();
-    // free parameters in character + euler angles
-    const int nparams = (6-nconstraints); 
 
     // used for the space of constraints
     Eigen::FullPivLU<Eigen::MatrixXd> lu(C);
@@ -678,9 +673,6 @@ void UnitCell::setParameterCovariance(const Eigen::MatrixXd& cov)
         kernel = lu.kernel();
     }
     
-    const int nparams = kernel.cols();
-    assert(nparams == params.size());
-
     // covariance matrix of the paramters A, B, C, D, E, F
     Eigen::MatrixXd ABC_cov = kernel.transpose() * cov * kernel;
     
