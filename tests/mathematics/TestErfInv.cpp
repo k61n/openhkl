@@ -1,14 +1,10 @@
-#define BOOST_TEST_MODULE "Test Inverse Error function"
-#define BOOST_TEST_DYN_LINK
-
 #include <cmath>
 
-#include <boost/test/unit_test.hpp>
-
 #include <nsxlib/mathematics/ErfInv.h>
+#include <nsxlib/utils/NSXTest.h>
 
-int run_test() {
-
+int main()
+{
     const double x_max = 5.0;
     const size_t count = 1000;
 
@@ -19,30 +15,25 @@ int run_test() {
         const double u = nsx::erf_inv(y);
         const double v = std::erf(u);
 
-        BOOST_CHECK_CLOSE(u, x, 1e-3);
-        BOOST_CHECK_CLOSE(v, y, 1e-13);
+        NSX_CHECK_CLOSE(u, x, 1e-3);
+        NSX_CHECK_CLOSE(v, y, 1e-13);
     }
 
-    BOOST_CHECK_CLOSE(nsx::getScale(0.382925), 0.5, 1e-2);
-    BOOST_CHECK_CLOSE(nsx::getScale(0.682689), 1.0, 1e-2);
-    BOOST_CHECK_CLOSE(nsx::getScale(0.866386), 1.5, 1e-2);
-    BOOST_CHECK_CLOSE(nsx::getScale(0.954500), 2.0, 1e-2);
-    BOOST_CHECK_CLOSE(nsx::getScale(0.987581), 2.5, 1e-2);
-    BOOST_CHECK_CLOSE(nsx::getScale(0.997300), 3.0, 1e-2);
-    BOOST_CHECK_CLOSE(nsx::getScale(0.999535), 3.5, 1e-2);
+    NSX_CHECK_CLOSE(nsx::getScale(0.382925), 0.5, 1e-2);
+    NSX_CHECK_CLOSE(nsx::getScale(0.682689), 1.0, 1e-2);
+    NSX_CHECK_CLOSE(nsx::getScale(0.866386), 1.5, 1e-2);
+    NSX_CHECK_CLOSE(nsx::getScale(0.954500), 2.0, 1e-2);
+    NSX_CHECK_CLOSE(nsx::getScale(0.987581), 2.5, 1e-2);
+    NSX_CHECK_CLOSE(nsx::getScale(0.997300), 3.0, 1e-2);
+    NSX_CHECK_CLOSE(nsx::getScale(0.999535), 3.5, 1e-2);
 
-    BOOST_CHECK_CLOSE(nsx::getConfidence(0.5), 0.382925, 1e-2);
-    BOOST_CHECK_CLOSE(nsx::getConfidence(1.0), 0.682689, 1e-2);
-    BOOST_CHECK_CLOSE(nsx::getConfidence(1.5), 0.866386, 1e-2);
-    BOOST_CHECK_CLOSE(nsx::getConfidence(2.0), 0.954500, 1e-2);
-    BOOST_CHECK_CLOSE(nsx::getConfidence(2.5), 0.987581, 1e-2);
-    BOOST_CHECK_CLOSE(nsx::getConfidence(3.0), 0.997300, 1e-2);
-    BOOST_CHECK_CLOSE(nsx::getConfidence(3.5), 0.999535, 1e-2);
+    NSX_CHECK_CLOSE(nsx::getConfidence(0.5), 0.382925, 1e-2);
+    NSX_CHECK_CLOSE(nsx::getConfidence(1.0), 0.682689, 1e-2);
+    NSX_CHECK_CLOSE(nsx::getConfidence(1.5), 0.866386, 1e-2);
+    NSX_CHECK_CLOSE(nsx::getConfidence(2.0), 0.954500, 1e-2);
+    NSX_CHECK_CLOSE(nsx::getConfidence(2.5), 0.987581, 1e-2);
+    NSX_CHECK_CLOSE(nsx::getConfidence(3.0), 0.997300, 1e-2);
+    NSX_CHECK_CLOSE(nsx::getConfidence(3.5), 0.999535, 1e-2);
 
     return 0;
-}
-
-BOOST_AUTO_TEST_CASE(Test_ErfInv)
-{
-    BOOST_CHECK(run_test() == 0);
 }
