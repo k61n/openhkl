@@ -1,17 +1,14 @@
-#define BOOST_TEST_MODULE "Test HDF5 writting and reading using Blosc library"
-#define BOOST_TEST_DYN_LINK
-
 #include <vector>
-
-#include <boost/test/unit_test.hpp>
 
 #include <Eigen/Dense>
 
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/utils/Units.h>
 
-BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
+int main()
 {
     nsx::DataReaderFactory factory;
     nsx::sptrDiffractometer diff;
@@ -34,17 +31,17 @@ BOOST_AUTO_TEST_CASE(Test_HDF5_IO)
         // read data back in and check that it agrees!
         dataf = factory.create("h5", "D10_hdf5_example.h5", diff);
 
-        BOOST_ASSERT(dataf != nullptr);
+        NSX_CHECK_ASSERT(dataf != nullptr);
 
         for (size_t i = 0; i < dataf->getNFrames(); ++i) {
-            BOOST_CHECK(dataf->getFrame(i) == frames[i]);
+            NSX_CHECK_ASSERT(dataf->getFrame(i) == frames[i]);
         }
         dataf->close();
     }
     catch (std::exception& e) {
-        BOOST_FAIL(std::string("saveHDF5() threw exception: ") + e.what());
+        NSX_FAIL(std::string("saveHDF5() threw exception: ") + e.what());
     }
     catch(...) {
-        BOOST_FAIL("saveHDF5() threw unknown exception");
+        NSX_FAIL("saveHDF5() threw unknown exception");
     }  
 }

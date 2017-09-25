@@ -1,11 +1,7 @@
-#define BOOST_TEST_MODULE "Test Factory"
-#define BOOST_TEST_DYN_LINK
-
-#include <boost/test/unit_test.hpp>
-
 #include <nsxlib/kernel/Factory.h>
+#include <nsxlib/utils/NSXTest.h>
 
-BOOST_AUTO_TEST_CASE(Test_Factory)
+int main()
 {
 #pragma message "test not implemented"
 }

@@ -1,21 +1,17 @@
-#define BOOST_TEST_MODULE "Test Niggli Reduction"
-#define BOOST_TEST_DYN_LINK
-
 #include <cmath>
 #include <fstream>
 #include <iostream>
-
-#include <boost/test/unit_test.hpp>
 
 #include <Eigen/Dense>
 
 #include <nsxlib/crystal/NiggliReduction.h>
 #include <nsxlib/crystal/UnitCell.h>
+#include <nsxlib/utils/NSXTest.h>
 #include <nsxlib/utils/Units.h>
 
 const double tolerance=1e-6;
 
-BOOST_AUTO_TEST_CASE(Test_Niggli_Reduction)
+int main()
 {
 
 	const unsigned int nCells = 783;
@@ -80,25 +76,26 @@ BOOST_AUTO_TEST_CASE(Test_Niggli_Reduction)
 	    Eigen::Matrix3d newg, P;
 	    niggli_reducer.reduce(newg, P);
 		std::cout<<i<<std::endl;
-		//std::cout<<uc.getReciprocalAVector().transpose()<<std::endl;
 	    uc.transform(P);
 
 	    Eigen::Vector3d calc_niggli_a = uc.basis().col(0);
-	    BOOST_CHECK_CLOSE(calc_niggli_a[0],niggli_a[0],tolerance);
-		BOOST_CHECK_CLOSE(calc_niggli_a[1],niggli_a[1],tolerance);
-		BOOST_CHECK_CLOSE(calc_niggli_a[2],niggli_a[2],tolerance);
+        NSX_CHECK_CLOSE(calc_niggli_a[0],niggli_a[0],tolerance);
+        NSX_CHECK_CLOSE(calc_niggli_a[1],niggli_a[1],tolerance);
+        NSX_CHECK_CLOSE(calc_niggli_a[2],niggli_a[2],tolerance);
 
 	    Eigen::Vector3d calc_niggli_b = uc.basis().col(1);
-	    BOOST_CHECK_CLOSE(calc_niggli_b[0],niggli_b[0],tolerance);
-		BOOST_CHECK_CLOSE(calc_niggli_b[1],niggli_b[1],tolerance);
-		BOOST_CHECK_CLOSE(calc_niggli_b[2],niggli_b[2],tolerance);
+        NSX_CHECK_CLOSE(calc_niggli_b[0],niggli_b[0],tolerance);
+        NSX_CHECK_CLOSE(calc_niggli_b[1],niggli_b[1],tolerance);
+            NSX_CHECK_CLOSE(calc_niggli_b[2],niggli_b[2],tolerance);
 
 	    Eigen::Vector3d calc_niggli_c = uc.basis().col(2);
-	    BOOST_CHECK_CLOSE(calc_niggli_c[0],niggli_c[0],tolerance);
-		BOOST_CHECK_CLOSE(calc_niggli_c[1],niggli_c[1],tolerance);
-		BOOST_CHECK_CLOSE(calc_niggli_c[2],niggli_c[2],tolerance);
+        NSX_CHECK_CLOSE(calc_niggli_c[0],niggli_c[0],tolerance);
+        NSX_CHECK_CLOSE(calc_niggli_c[1],niggli_c[1],tolerance);
+        NSX_CHECK_CLOSE(calc_niggli_c[2],niggli_c[2],tolerance);
 	}
 
 	primitiveCellsFile.close();
 	niggliCellsFile.close();
+
+	return 0;
 }

@@ -1,9 +1,3 @@
-#define BOOST_TEST_MODULE "Test Minimizer class"
-#define BOOST_TEST_DYN_LINK
-
-#include <boost/test/unit_test.hpp>
-#include <boost/filesystem.hpp>
-
 #include <vector>
 #include <string>
 
@@ -11,8 +5,9 @@
 
 #include <nsxlib/mathematics/Minimizer.h>
 #include <nsxlib/utils/FitParameters.h>
+#include <nsxlib/utils/NSXTest.h>
 
-int run_test()
+int main()
 {
     Eigen::VectorXd y, wt, x;
     int nparams = 3, nvalues = 40;
@@ -57,16 +52,11 @@ int run_test()
     nsx::Minimizer min;
     min.initialize(params, 40);
     min.set_f(residual_fn);
-    BOOST_CHECK(min.fit(100));
+    NSX_CHECK_ASSERT(min.fit(100));
 
-    BOOST_CHECK_CLOSE(x(0), 5.0, 1e-6);
-    BOOST_CHECK_CLOSE(x(1), 0.1, 1e-6);
-    BOOST_CHECK_CLOSE(x(2), 1.0, 1e-6);
+    NSX_CHECK_CLOSE(x(0), 5.0, 1e-6);
+    NSX_CHECK_CLOSE(x(1), 0.1, 1e-6);
+    NSX_CHECK_CLOSE(x(2), 1.0, 1e-6);
 
     return 0;
-}
-
-BOOST_AUTO_TEST_CASE(Test_Minimizer)
-{
-    BOOST_CHECK(run_test() == 0);
 }

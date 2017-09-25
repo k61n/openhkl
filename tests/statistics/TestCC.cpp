@@ -1,30 +1,24 @@
-#define BOOST_TEST_MODULE "Test CC"
-#define BOOST_TEST_DYN_LINK
-
-#include <map>
 #include <string>
 #include <random>
 
 #include <Eigen/Core>
 
-#include <boost/test/unit_test.hpp>
-
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/data/DataReaderFactory.h>
-
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/crystal/GruberReduction.h>
 #include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/data/DataReaderFactory.h>
+#include <nsxlib/data/DataSet.h>
 #include <nsxlib/data/MergedData.h>
 #include <nsxlib/instrument/ComponentState.h>
 #include <nsxlib/instrument/DetectorEvent.h>
+#include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/statistics/CC.h>
+#include <nsxlib/utils/NSXTest.h>
 
 using namespace nsx;
 
-BOOST_AUTO_TEST_CASE(Test_CC)
+int main()
 {
     nsx::DataReaderFactory factory;    
     nsx::sptrExperiment expt(new nsx::Experiment("test", "BioDiff2500"));
@@ -72,7 +66,7 @@ BOOST_AUTO_TEST_CASE(Test_CC)
     cell->setBravaisType(bravais_type);
     cell->setLatticeCentring(centering);
     cell->transform(P);
-    BOOST_CHECK_EQUAL(cell->getBravaisTypeSymbol(), std::string("oP"));
+    NSX_CHECK_EQUAL(cell->getBravaisTypeSymbol(), std::string("oP"));
 
     cell->setSpaceGroup(group.symbol());
 
@@ -111,7 +105,7 @@ BOOST_AUTO_TEST_CASE(Test_CC)
         J2_sum += i*i;
     }
    
-    BOOST_CHECK_EQUAL(data0.getPeaks().size(), data1.getPeaks().size());
+    NSX_CHECK_EQUAL(data0.getPeaks().size(), data1.getPeaks().size());
 
     const double N = data0.getPeaks().size();
     const double mu_J = J_sum / N;
@@ -121,7 +115,7 @@ BOOST_AUTO_TEST_CASE(Test_CC)
     const double sigma_eps = sigma_delta / std::sqrt(redundancy * 0.5);
 
     // check that redundancy is approximately correct (depends on detector coverage)
-    BOOST_CHECK_CLOSE(redundancy, n, 10.0);
+    NSX_CHECK_CLOSE(redundancy, n, 10.0);
 
     const double expected_cc_half = sigma_J*sigma_J / (sigma_J*sigma_J + sigma_eps*sigma_eps);
     const double expected_cc_true = sigma_J / std::sqrt(sigma_J*sigma_J + 0.5*sigma_eps*sigma_eps);
@@ -130,20 +124,19 @@ BOOST_AUTO_TEST_CASE(Test_CC)
     cc0.calculate(data0);
     cc1.calculate(data1);
 
-    BOOST_CHECK_EQUAL(cc0.nPeaks(), cc1.nPeaks());
+    NSX_CHECK_EQUAL(cc0.nPeaks(), cc1.nPeaks());
 
     // data0 is totally random, so CC should be very close to zero
-    BOOST_CHECK_SMALL(cc0.CChalf(), 4.0 / std::sqrt(cc0.nPeaks()));
+    NSX_CHECK_SMALL(cc0.CChalf(), 4.0 / std::sqrt(cc0.nPeaks()));
 
     // data1 should have large CC, but not identically 1.0. This is a sanity check
-    BOOST_CHECK(cc1.CChalf() < 1.0);
-    BOOST_CHECK(cc1.CCstar() < 1.0);
+    NSX_CHECK_ASSERT(cc1.CChalf() < 1.0);
+    NSX_CHECK_ASSERT(cc1.CCstar() < 1.0);
 
     // check that the CC values are close to the ones expected from theory, using the known 
     // statistic used to generate the fake data
-    BOOST_CHECK_CLOSE(cc1.CChalf(), expected_cc_half, 0.05);
-    BOOST_CHECK_CLOSE(cc1.CCstar(), expected_cc_true, 0.05);
+    NSX_CHECK_CLOSE(cc1.CChalf(), expected_cc_half, 0.05);
+    NSX_CHECK_CLOSE(cc1.CCstar(), expected_cc_true, 0.05);
 
-    std::cout << "cc0 CC half: " << cc0.CChalf() << std::endl;
-    std::cout << "cc0 npeaks: " << cc0.nPeaks() << std::endl; 
+    return 0;
 }

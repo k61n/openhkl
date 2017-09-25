@@ -1,13 +1,8 @@
-#define BOOST_TEST_MODULE "Test GruberReduction"
-#define BOOST_TEST_DYN_LINK
-
 #include <cmath>
 #include <map>
 #include <random>
 #include <utility>
 #include <vector>
-
-#include <boost/test/unit_test.hpp>
 
 #include <Eigen/Dense>
 #include <Eigen/QR>
@@ -24,13 +19,14 @@
 #include <nsxlib/instrument/Monochromator.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
+#include <nsxlib/utils/NSXTest.h>
 #include <nsxlib/utils/Units.h>
 
 const double gruber_tolerance = 1e-4;
 const double niggli_tolerance = 1e-4;
 const double tolerance = 1e-6;
 
-int run_test()
+int main()
 {
     double A, B, C, D, E, F;
 
@@ -139,8 +135,8 @@ int run_test()
 
             cell.transform(P);
 
-            BOOST_CHECK(match == condition);
-            BOOST_CHECK(cell.getBravaisTypeSymbol() == expected_bravais);
+            NSX_CHECK_ASSERT(match == condition);
+            NSX_CHECK_ASSERT(cell.getBravaisTypeSymbol() == expected_bravais);
 
             nsx::NiggliReduction niggli(G, niggli_tolerance);
             niggli.reduce(NG, NP);
@@ -148,9 +144,4 @@ int run_test()
         ++condition;
     }
     return 0;
-}
-
-BOOST_AUTO_TEST_CASE(Test_GruberBravais)
-{
-    BOOST_CHECK(run_test() == 0);
 }

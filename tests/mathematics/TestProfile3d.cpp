@@ -1,18 +1,14 @@
-#define BOOST_TEST_MODULE "Test Profile 3d class"
-#define BOOST_TEST_DYN_LINK
-
-#include <boost/test/unit_test.hpp>
-
 #include <Eigen/Dense>
 #include <random>
 #include <iostream>
 
 #include <nsxlib/mathematics/Profile3d.h>
 #include <nsxlib/mathematics/Minimizer.h>
+#include <nsxlib/utils/NSXTest.h>
 
 const double eps = 1.0;
 
-int run_test() 
+int main()
 {
     const int n = 15;
     const int N = n*n*n;   
@@ -56,17 +52,17 @@ int run_test()
     // easy test: run the fit with the original parameters
     nsx::Profile3d easyfit = reference.fit(x, y, z, I);
 
-    BOOST_CHECK(easyfit.success() == true);
+    NSX_CHECK_ASSERT(easyfit.success());
 
     const double easy_I = (easyfit.evaluate(x, y, z)-easyfit._background).sum();
 
-    BOOST_CHECK_CLOSE(reference_I, easy_I, 10);
+    NSX_CHECK_CLOSE(reference_I, easy_I, 10);
 
-    BOOST_CHECK_CLOSE(easyfit._background, reference._background, 1);
-    BOOST_CHECK_CLOSE(easyfit._A, reference._A, 5);
-    BOOST_CHECK_CLOSE(easyfit._c(0), reference._c(0), 0.5);
-    BOOST_CHECK_CLOSE(easyfit._c(1), reference._c(1), 0.5);
-    BOOST_CHECK_CLOSE(easyfit._c(2), reference._c(2), 0.5);
+    NSX_CHECK_CLOSE(easyfit._background, reference._background, 1);
+    NSX_CHECK_CLOSE(easyfit._A, reference._A, 5);
+    NSX_CHECK_CLOSE(easyfit._c(0), reference._c(0), 0.5);
+    NSX_CHECK_CLOSE(easyfit._c(1), reference._c(1), 0.5);
+    NSX_CHECK_CLOSE(easyfit._c(2), reference._c(2), 0.5);
 
     B << 
     easyfit._Dxx, easyfit._Dxy, easyfit._Dxz,
@@ -75,7 +71,7 @@ int run_test()
 
     const Eigen::Matrix3d easy_cov = B.inverse();
 
-    BOOST_CHECK_SMALL((reference_cov-easy_cov).norm() / reference_cov.norm(), 1e-1);
+    NSX_CHECK_SMALL((reference_cov-easy_cov).norm() / reference_cov.norm(), 1e-1);
 
 
     // guess initial parameters from reference data
@@ -89,26 +85,21 @@ int run_test()
     // check that it converges with few iterations
     nsx::Profile3d hardfit = guess.fit(x, y, z, I, 30);
 
-    BOOST_CHECK(hardfit.success() == true);
+    NSX_CHECK_ASSERT(hardfit.success());
 
     // check that the fit returns the same parameters
-    BOOST_CHECK_CLOSE(easyfit._background, hardfit._background, 1e-2);
-    BOOST_CHECK_CLOSE(easyfit._A, hardfit._A, 1e-2);
-    BOOST_CHECK_CLOSE(easyfit._c(0), hardfit._c(0), 1e-2);
-    BOOST_CHECK_CLOSE(easyfit._c(1), hardfit._c(1), 1e-2);
-    BOOST_CHECK_CLOSE(easyfit._c(2), hardfit._c(2), 1e-2);
+    NSX_CHECK_CLOSE(easyfit._background, hardfit._background, 1e-2);
+    NSX_CHECK_CLOSE(easyfit._A, hardfit._A, 1e-2);
+    NSX_CHECK_CLOSE(easyfit._c(0), hardfit._c(0), 1e-2);
+    NSX_CHECK_CLOSE(easyfit._c(1), hardfit._c(1), 1e-2);
+    NSX_CHECK_CLOSE(easyfit._c(2), hardfit._c(2), 1e-2);
 
-    BOOST_CHECK_CLOSE(easyfit._Dxx, hardfit._Dxx, 1e-2);
-    BOOST_CHECK_CLOSE(easyfit._Dxy, hardfit._Dxy, 1e-2);
-    BOOST_CHECK_CLOSE(easyfit._Dxz, hardfit._Dxz, 1e-2);
-    BOOST_CHECK_CLOSE(easyfit._Dyy, hardfit._Dyy, 1e-2);
-    BOOST_CHECK_CLOSE(easyfit._Dyz, hardfit._Dyz, 1e-2);
-    BOOST_CHECK_CLOSE(easyfit._Dzz, hardfit._Dzz, 1e-2);
+    NSX_CHECK_CLOSE(easyfit._Dxx, hardfit._Dxx, 1e-2);
+    NSX_CHECK_CLOSE(easyfit._Dxy, hardfit._Dxy, 1e-2);
+    NSX_CHECK_CLOSE(easyfit._Dxz, hardfit._Dxz, 1e-2);
+    NSX_CHECK_CLOSE(easyfit._Dyy, hardfit._Dyy, 1e-2);
+    NSX_CHECK_CLOSE(easyfit._Dyz, hardfit._Dyz, 1e-2);
+    NSX_CHECK_CLOSE(easyfit._Dzz, hardfit._Dzz, 1e-2);
 
     return 0;
-}
-
-BOOST_AUTO_TEST_CASE(Test_Profile3d)
-{
-    BOOST_CHECK(run_test() == 0);
 }

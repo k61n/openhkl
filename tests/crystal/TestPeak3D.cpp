@@ -1,9 +1,4 @@
-#define BOOST_TEST_MODULE "Test Peak3D"
-#define BOOST_TEST_DYN_LINK
-
 #include <vector>
-
-#include <boost/test/unit_test.hpp>
 
 #include <Eigen/Dense>
 
@@ -16,11 +11,12 @@
 #include <nsxlib/instrument/Monochromator.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
+#include <nsxlib/utils/NSXTest.h>
 #include <nsxlib/utils/Units.h>
 
 const double tolerance=1e-6;
 
-BOOST_AUTO_TEST_CASE(Test_Peak3D)
+int main()
 {
     nsx::FlatDetector d("D10-detector");
     d.setDistance(380*nsx::mm);
@@ -41,9 +37,9 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
     peak.setDetectorEvent(event);
 
     Eigen::Vector3d Q=peak.getQ();
-    BOOST_CHECK_SMALL(Q[0],tolerance);
-    BOOST_CHECK_SMALL(Q[1],tolerance);
-    BOOST_CHECK_SMALL(Q[2],tolerance);
+    NSX_CHECK_SMALL(Q[0],tolerance);
+    NSX_CHECK_SMALL(Q[1],tolerance);
+    NSX_CHECK_SMALL(Q[2],tolerance);
 
     nsx::sptrGonio g(new nsx::Gonio("Gamma"));
     g->addRotation("Gamma",Eigen::Vector3d(0,0,1),nsx::RotAxis::CW);
@@ -52,9 +48,9 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
     nsx::DetectorEvent event2(&d, 15.5,15.5, 0.0, {90.0*nsx::deg});
     peak.setDetectorEvent(event2);
     Q=peak.getQ();
-    BOOST_CHECK_CLOSE(Q[0],1,tolerance);
-    BOOST_CHECK_CLOSE(Q[1],-1,tolerance);
-    BOOST_CHECK_SMALL(Q[2],tolerance);
+    NSX_CHECK_CLOSE(Q[0],1.0,tolerance);
+    NSX_CHECK_CLOSE(Q[1],-1.0,tolerance);
+    NSX_CHECK_SMALL(Q[2],tolerance);
 
     nsx::Sample sample("sample");
     nsx::sptrGonio bl(new nsx::Gonio("Busing Levy convention"));
@@ -67,7 +63,9 @@ BOOST_AUTO_TEST_CASE(Test_Peak3D)
 
     peak.setSampleState(state);
     Q=peak.getQ();
-    BOOST_CHECK_CLOSE(Q[0],1,tolerance);
-    BOOST_CHECK_CLOSE(Q[1],1,tolerance);
-    BOOST_CHECK_SMALL(Q[2],tolerance);
+    NSX_CHECK_CLOSE(Q[0],1.0,tolerance);
+    NSX_CHECK_CLOSE(Q[1],1.0,tolerance);
+    NSX_CHECK_SMALL(Q[2],tolerance);
+
+    return 0;
 }

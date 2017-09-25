@@ -1,15 +1,11 @@
-#define BOOST_TEST_MODULE "Test CSV class"
-#define BOOST_TEST_DYN_LINK
-
+#include <sstream>
 #include <string>
 #include <vector>
 
-#include <boost/test/unit_test.hpp>
-#include <boost/filesystem.hpp>
-
 #include <nsxlib/utils/CSV.h>
+#include <nsxlib/utils/NSXTest.h>
 
-int run_test() {
+int main() {
     std::string csv_file =
         //    ",,,\n"
         //    "a, b, c, d\n"
@@ -23,12 +19,8 @@ int run_test() {
 
     while(!stream.eof()) {
         row = csv.getRow(stream);
-        BOOST_CHECK(row.size() == 4);
+        NSX_CHECK_ASSERT(row.size() == 4);
     }
-    return 0;
-}
 
-BOOST_AUTO_TEST_CASE(Test_CSV)
-{
-    BOOST_CHECK(run_test() == 0);
+    return 0;
 }

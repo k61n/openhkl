@@ -1,13 +1,8 @@
-#define BOOST_TEST_MODULE "Test Merged Peak"
-#define BOOST_TEST_DYN_LINK
-
 #include <map>
 #include <string>
 #include <iostream>
 
 #include <Eigen/Core>
-
-#include <boost/test/unit_test.hpp>
 
 #include <nsxlib/crystal/SpaceGroup.h>
 #include <nsxlib/crystal/UnitCell.h>
@@ -17,11 +12,11 @@
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/data/DataReaderFactory.h>
-
+#include <nsxlib/utils/NSXTest.h>
 
 using namespace nsx;
 
-BOOST_AUTO_TEST_CASE(Test_MergedPeak)
+int main()
 {
     nsx::DataReaderFactory factory;    
     nsx::sptrExperiment expt(new nsx::Experiment("test", "BioDiff2500"));
@@ -57,7 +52,7 @@ BOOST_AUTO_TEST_CASE(Test_MergedPeak)
     cell.setBravaisType(bravais_type);
     cell.setLatticeCentring(centering);
     cell.transform(P);
-    BOOST_CHECK_EQUAL(cell.getBravaisTypeSymbol(), std::string("oP"));
+    NSX_CHECK_EQUAL(cell.getBravaisTypeSymbol(), std::string("oP"));
 
     cell.setSpaceGroup(group.symbol());
 
@@ -65,7 +60,7 @@ BOOST_AUTO_TEST_CASE(Test_MergedPeak)
 
     auto peaks = dataf->hasPeaks(reflections, cell.reciprocalBasis());
     
-    BOOST_CHECK_EQUAL(reflections.size(), 107460);
+    NSX_CHECK_EQUAL(reflections.size(), static_cast<size_t>(107460));
 
     MergedData data1(group, true), data2(group, false);
 
@@ -75,18 +70,18 @@ BOOST_AUTO_TEST_CASE(Test_MergedPeak)
         data2.addPeak(peak);
 
         auto hkl = peak->getIntegerMillerIndices();
-        BOOST_CHECK_EQUAL(group.isExtinct(hkl(0), hkl(1), hkl(2)), false);
+        NSX_CHECK_EQUAL(group.isExtinct(hkl(0), hkl(1), hkl(2)), false);
     }
 
     auto peaks1 = data1.getPeaks();
     auto peaks2 = data2.getPeaks();
 
-    const int group_size = group.groupElements().size();
+    const size_t group_size = group.groupElements().size();
 
     // todo: we need to fix this after the change PeakCalc -> Peak3D
     #if 0
-    BOOST_CHECK_EQUAL(peaks1.size(), 14493);
-    BOOST_CHECK_EQUAL(peaks2.size(), 26897);
+    NSX_CHECK_EQUAL(peaks1.size(), 14493);
+    NSX_CHECK_EQUAL(peaks2.size(), 26897);
     #endif
 
     int count1 = 0, count2 = 0;
@@ -101,7 +96,7 @@ BOOST_AUTO_TEST_CASE(Test_MergedPeak)
 
         ++count1;
 
-        BOOST_CHECK_EQUAL(group_size*2, peak.getPeaks().size());
+        NSX_CHECK_EQUAL(group_size*2, peak.getPeaks().size());
 
         if (group_size*2 != peak.getPeaks().size()) {
             std::cout << "FAILURE:" << std::endl;
@@ -121,7 +116,7 @@ BOOST_AUTO_TEST_CASE(Test_MergedPeak)
 
         ++count2;
 
-        BOOST_CHECK_EQUAL(group_size, peak.getPeaks().size());
+        NSX_CHECK_EQUAL(group_size, peak.getPeaks().size());
 
         if (group_size != peak.getPeaks().size()) {
             std::cout << "FAILURE:" << std::endl;
@@ -131,7 +126,7 @@ BOOST_AUTO_TEST_CASE(Test_MergedPeak)
         }
     }
 
-    BOOST_CHECK_EQUAL(2*count1, count2);
+    NSX_CHECK_EQUAL(2*count1, count2);
 
     // todo: fix this after removal of PeakCalc class
     #if 0
@@ -143,7 +138,7 @@ BOOST_AUTO_TEST_CASE(Test_MergedPeak)
         m1.addPeak(p);
         m2.addPeak(q);
         auto it = peaks1.find(peak);
-        BOOST_CHECK((peaks1.find(m1) != peaks1.end()) || (peaks1.find(m2) != peaks1.end()));
+        NSX_CHECK_ASSERT((peaks1.find(m1) != peaks1.end()) || (peaks1.find(m2) != peaks1.end()));
     }
 
     for (auto&& peak: peaks1) {
@@ -151,7 +146,9 @@ BOOST_AUTO_TEST_CASE(Test_MergedPeak)
         PeakCalc p(hkl(0), hkl(1), hkl(2), 0, 0, 0);
         MergedPeak m1(group, true);
         m1.addPeak(p);
-        BOOST_CHECK(peaks2.find(m1) != peaks2.end());
+        NSX_CHECK_ASSERT(peaks2.find(m1) != peaks2.end());
     }
     #endif
+
+    return 0;
 }

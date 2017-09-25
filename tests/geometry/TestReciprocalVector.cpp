@@ -1,13 +1,10 @@
-#define BOOST_TEST_MODULE "Test Reciprocal Vector"
-#define BOOST_TEST_DYN_LINK
-
-#include <boost/test/unit_test.hpp>
-
 #include <Eigen/Dense>
 
 #include <nsxlib/geometry/ReciprocalVector.h>
+#include <nsxlib/utils/NSXTest.h>
 
-int run_test() {
+int main()
+{
 
     Eigen::RowVector3d v1(1,2,3);
 
@@ -19,12 +16,7 @@ int run_test() {
 
     x = 100;
 
-    BOOST_CHECK_EQUAL(rv1[0],100);
+    NSX_CHECK_EQUAL(rv1[0],100);
 
     return 0;
-}
-
-BOOST_AUTO_TEST_CASE(Test_ReciprocalVector)
-{
-    BOOST_CHECK(run_test() == 0);
 }

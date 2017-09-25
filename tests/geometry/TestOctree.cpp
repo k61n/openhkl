@@ -1,17 +1,13 @@
-#define BOOST_TEST_MODULE "Test NDTree"
-#define BOOST_TEST_DYN_LINK
-
 #include <cmath>
 #include <random>
 #include <vector>
-
-#include <boost/test/unit_test.hpp>
 
 #include <Eigen/Dense>
 
 #include <nsxlib/geometry/AABB.h>
 #include <nsxlib/geometry/Octree.h>
 #include <nsxlib/geometry/Ellipsoid.h>
+#include <nsxlib/utils/NSXTest.h>
 
 const double tolerance=1e-5;
 
@@ -48,12 +44,12 @@ void collision_test()
         }
     }
 
-    BOOST_CHECK_EQUAL(numChambers, tree.numChambers());
+    NSX_CHECK_EQUAL(numChambers, tree.numChambers());
 
-    BOOST_CHECK_EQUAL(test_set.size(), 19*19*19);
+    NSX_CHECK_EQUAL(test_set.size(), 19*19*19);
 
     // check that they don't intersect!
-    BOOST_CHECK_EQUAL(tree.getCollisions().size(), 0);
+    NSX_CHECK_EQUAL(tree.getCollisions().size(), 0);
 
     // add some spheres which will intersect
     center = Eigen::Vector3d(1.5, 1.5, 1.5);
@@ -61,10 +57,10 @@ void collision_test()
     auto ellipsoid = new nsx::Ellipsoid(center, vals, vects);
 
 
-    BOOST_CHECK_EQUAL(tree.getCollisions(*ellipsoid).size(), 8);
+    NSX_CHECK_EQUAL(tree.getCollisions(*ellipsoid).size(), 8);
     ellipsoids.emplace_back(ellipsoid);
     tree.addData(ellipsoid);
-    BOOST_CHECK_EQUAL(tree.getCollisions().size(), 8);
+    NSX_CHECK_EQUAL(tree.getCollisions().size(), 8);
 
     ellipsoid = nullptr;
 
@@ -109,11 +105,11 @@ void collision_test_2()
         }
     }
 
-    BOOST_CHECK_EQUAL(numChambers, tree.numChambers());   
-    BOOST_CHECK_EQUAL(test_set.size(), N*N*N);
+    NSX_CHECK_EQUAL(numChambers, tree.numChambers());   
+    NSX_CHECK_EQUAL(test_set.size(), N*N*N);
 
     // check that they don't intersect!
-    BOOST_CHECK_EQUAL(tree.getCollisions().size(), 3*N*N*(N-1));
+    NSX_CHECK_EQUAL(tree.getCollisions().size(), 3*N*N*(N-1));
 
     // add some spheres which will intersect
     center = Eigen::Vector3d(1.5, 1.5, 1.5);
@@ -121,10 +117,10 @@ void collision_test_2()
     auto ellipsoid = new nsx::Ellipsoid(center, vals, vects);
 
 
-    BOOST_CHECK_EQUAL(tree.getCollisions(*ellipsoid).size(), 8);
+    NSX_CHECK_EQUAL(tree.getCollisions(*ellipsoid).size(), 8);
     ellipsoids.emplace_back(ellipsoid);
     tree.addData(ellipsoid);
-    BOOST_CHECK_EQUAL(tree.getCollisions().size(), 3*N*N*(N-1)+8);
+    NSX_CHECK_EQUAL(tree.getCollisions().size(), 3*N*N*(N-1)+8);
 
     ellipsoid = nullptr;
 
@@ -161,11 +157,11 @@ void split_test()
     }
 
     // check that it split properly
-    BOOST_CHECK_EQUAL(tree.numChambers(), 8);
+    NSX_CHECK_EQUAL(tree.numChambers(), 8);
 
     // check that the data was inserted correctly
     for (auto&& chamber: tree) {
-        BOOST_CHECK_EQUAL(chamber.getData().size(), 1);
+        NSX_CHECK_EQUAL(chamber.getData().size(), 1);
     }
 
     // check that the collisions with chambers make sense
@@ -173,14 +169,14 @@ void split_test()
         unsigned int num_intercept = 0;
 
         for (auto&& chamber: tree) {
-            BOOST_CHECK_EQUAL(ellipsoid->collide(chamber), chamber.collide(*ellipsoid));
+            NSX_CHECK_EQUAL(ellipsoid->collide(chamber), chamber.collide(*ellipsoid));
 
             if (ellipsoid->collide(chamber)) {
                 ++num_intercept;
             }
         }
 
-        BOOST_CHECK_EQUAL(num_intercept, 1);
+        NSX_CHECK_EQUAL(num_intercept, 1);
     }
 
     // clear the list
@@ -189,7 +185,7 @@ void split_test()
     }
 }
 
-BOOST_AUTO_TEST_CASE(Test_NDTree)
+int main()
 {
     unsigned int maxStorage(10);
 
@@ -211,22 +207,22 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
                0,0,1;
         ellipsoids.push_back(nsx::Ellipsoid(v1,mat));
         // Test: the root node has no children until it is not splitted
-        BOOST_CHECK_EQUAL(tree.hasChildren(),false);
+        NSX_CHECK_EQUAL(tree.hasChildren(),false);
         tree.addData(&ellipsoids[i]);
         if (i < maxStorage) {
             // Test: the root node has some data until it is not splitted
-            BOOST_CHECK_EQUAL(tree.hasData(),true);
+            NSX_CHECK_EQUAL(tree.hasData(),true);
         }
         else {
-            BOOST_CHECK_EQUAL(tree.hasChildren(), true);
+            NSX_CHECK_EQUAL(tree.hasChildren(), true);
         }
     }
 
     // Test: the root node has some children once it has been splitted
-    BOOST_CHECK_EQUAL(tree.hasChildren(),true);
+    NSX_CHECK_EQUAL(tree.hasChildren(),true);
 
     // Test: the root node does not have any data anymore once it has been splitted
-    BOOST_CHECK_EQUAL(tree.hasData(),false);
+    NSX_CHECK_EQUAL(tree.hasData(),false);
 
     std::vector<nsx::Ellipsoid>::const_iterator it1;
 
@@ -235,7 +231,7 @@ BOOST_AUTO_TEST_CASE(Test_NDTree)
         tree.removeData(&(*it1));
     }
     // Test: the root node amd its children does not have any data anymore once all the data have been removed
-    BOOST_CHECK_EQUAL(tree.hasData(),false);
+    NSX_CHECK_EQUAL(tree.hasData(),false);
 
     collision_test();
 

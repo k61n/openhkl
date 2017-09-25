@@ -1,13 +1,9 @@
-#define BOOST_TEST_MODULE "Test Cyclops"
-#define BOOST_TEST_DYN_LINK
-
-#include <boost/test/unit_test.hpp>
-
 #include <nsxlib/instrument/Detector.h>
 #include <nsxlib/instrument/DetectorEvent.h>
 #include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/utils/NSXTest.h>
 
-BOOST_AUTO_TEST_CASE(Test_Cyclops)
+int main()
 {
     auto cyclop = nsx::Diffractometer::build("Cyclops");
     double g,nu;
@@ -18,4 +14,6 @@ BOOST_AUTO_TEST_CASE(Test_Cyclops)
             event.getGammaNu(g, nu);
         }
     }
+
+    return 0;
 }

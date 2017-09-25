@@ -1,12 +1,8 @@
-#define BOOST_TEST_MODULE "Test Axis"
-#define BOOST_TEST_DYN_LINK
-
-#include <boost/test/unit_test.hpp>
-
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
 #include <nsxlib/instrument/Axis.h>
+#include <nsxlib/utils/NSXTest.h>
 #include <nsxlib/utils/Units.h>
 
 class TestAxis: public nsx::Axis
@@ -37,19 +33,21 @@ Eigen::Transform<double,3,Eigen::Affine> TestAxis::getHomMatrix(double value) co
     return Eigen::Transform<double,3,Eigen::Affine>();
 }
 
-BOOST_AUTO_TEST_CASE(Tests_Axis)
+int main()
 {
     TestAxis axis("Omega",true);
     const std::string& label=axis.getLabel();
 
-    BOOST_CHECK_EQUAL(label,"Omega");
+    NSX_CHECK_EQUAL(label,"Omega");
     Eigen::Vector3d v;
     v << 0,0,1;
     axis.setAxis(v);
-    BOOST_CHECK_EQUAL(v,axis.getAxis());
+    NSX_CHECK_EQUAL(v,axis.getAxis());
 
-    BOOST_CHECK_EQUAL(axis.getOffset(),0.0);
+    NSX_CHECK_EQUAL(axis.getOffset(),0.0);
 
     axis.setOffset(2.0);
-    BOOST_CHECK_EQUAL(axis.getOffset(),2.0);
+    NSX_CHECK_EQUAL(axis.getOffset(),2.0);
+
+    return 0;
 }

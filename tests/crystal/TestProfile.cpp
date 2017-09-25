@@ -1,24 +1,20 @@
-#define BOOST_TEST_MODULE "Test Profile class"
-#define BOOST_TEST_DYN_LINK
-
-#include <boost/test/unit_test.hpp>
-
 #include <Eigen/Dense>
 
 #include <nsxlib/crystal/Profile.h>
+#include <nsxlib/utils/NSXTest.h>
 
 const double eps = 1.0;
 
 #define fit_and_test(y) \
 { \
     nsx::Profile p; \
-    BOOST_CHECK(p.fit(y, 100) == true); \
+    NSX_CHECK_ASSERT(p.fit(y, 100) == true); \
     for (auto i = 0; i < y.size(); ++i) { \
-        BOOST_CHECK_CLOSE(y(i), p.evaluate(double(i)), eps); \
+        NSX_CHECK_CLOSE(y(i), p.evaluate(double(i)), eps); \
     } \
 }
 
-int run_test()
+int main()
 {
     const int size = 50;
     Eigen::VectorXd lorentz_test(size);
@@ -41,11 +37,7 @@ int run_test()
     fit_and_test(lorentz_test);
     fit_and_test(gauss_test);
     fit_and_test(voigt_test);
-    BOOST_CHECK(nsx::Profile().fit(noise_test, 100) == false);
-    return 0;
-}
+    NSX_CHECK_ASSERT(nsx::Profile().fit(noise_test, 100) == false);
 
-BOOST_AUTO_TEST_CASE(Test_Profile)
-{
-    BOOST_CHECK(run_test() == 0);
+    return 0;
 }

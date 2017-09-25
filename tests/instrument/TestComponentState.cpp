@@ -1,13 +1,7 @@
-#define BOOST_TEST_MODULE "Test Component State"
-#define BOOST_TEST_DYN_LINK
-
-#include <boost/test/unit_test.hpp>
-
 #include <nsxlib/instrument/ComponentState.h>
+#include <nsxlib/utils/NSXTest.h>
 
-using namespace nsx;
-
-BOOST_AUTO_TEST_CASE(Test_Component_State)
+int main()
 {
 #pragma message "test not implemented"
 }

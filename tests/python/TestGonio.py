@@ -23,7 +23,7 @@ class TestGonio(unittest.TestCase):
         
         # Check that throws if the number of parameters is invalid
         
-        # todo : no conversion of BOOST_CHECk_THROW
+        # todo : no conversion of BOOST_CHECK_THROW
         # BOOST_CHECK_THROW(t.transform(Vector3d(0,0,0),{1,2}),std::range_error);
         #a0 = t.getAxis(0)
         #a1 = t.getAxis(1)

@@ -1,9 +1,6 @@
-#define BOOST_TEST_MODULE "Test threaded frame iterator"
-#define BOOST_TEST_DYN_LINK
+#include <nsxlib/utils/NSXTest.h>
 
-#include <boost/test/unit_test.hpp>
-
-BOOST_AUTO_TEST_CASE(Test_ThreadedFrameIterator)
+int main()
 {
 #pragma message "test not implemented"
 }

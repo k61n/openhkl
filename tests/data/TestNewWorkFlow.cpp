@@ -1,12 +1,7 @@
-#define BOOST_TEST_MODULE "Test New Work Flow"
-#define BOOST_TEST_DYN_LINK
-
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
-
-#include <boost/test/unit_test.hpp>
 
 #include <Eigen/Dense>
 
@@ -25,17 +20,11 @@
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/mathematics/ErfInv.h>
+#include <nsxlib/utils/NSXTest.h>
 #include <nsxlib/utils/Units.h>
 #include <nsxlib/utils/ProgressHandler.h>
 
-int run_test();
-
-BOOST_AUTO_TEST_CASE(Test_NewWorkFlow)
-{
-    BOOST_CHECK_EQUAL(run_test(), 0);
-}
-
-int run_test()
+int main()
 {
     nsx::DataReaderFactory factory;
 
@@ -81,12 +70,12 @@ int run_test()
     peakFinder->setHandler(progressHandler);
 
     try {
-        BOOST_CHECK(peakFinder->find(numors) == true);
+        NSX_CHECK_ASSERT(peakFinder->find(numors) == true);
     } catch(...) {
         std::cout << "ERROR: exception in PeakFinder::find()" << std::endl;
     }
 
-    BOOST_CHECK(dataf->getPeaks().size() >= 800);
+    NSX_CHECK_ASSERT(dataf->getPeaks().size() >= 800);
 
     // at this stage we have the peaks, now we index
     nsx::IndexerParameters params;
@@ -108,13 +97,13 @@ int run_test()
 
     unsigned int indexed_peaks = numIndexedPeaks();
 
-    BOOST_CHECK(indexed_peaks > 650);
-    BOOST_CHECK(indexer.autoIndex(params));
+    NSX_CHECK_ASSERT(indexed_peaks > 650);
+    NSX_CHECK_ASSERT(indexer.autoIndex(params));
 
     auto soln = indexer.getSolutions().front();
 
     // correctly indexed at least 92% of peaks
-    BOOST_CHECK(soln.second > 92.0);
+    NSX_CHECK_ASSERT(soln.second > 92.0);
 
     // set unit cell
     auto cell = soln.first;
@@ -130,7 +119,7 @@ int run_test()
     dataf->integratePeaks(dataf->getPeaks(), scale, 2.0*scale, true);
 
     indexed_peaks = numIndexedPeaks();
-    BOOST_CHECK(indexed_peaks > 600);
+    NSX_CHECK_ASSERT(indexed_peaks > 600);
 
     // get that DataSet::getEvents works properly
     for (auto peak: dataf->getPeaks()) {
@@ -142,7 +131,7 @@ int run_test()
         q.push_back(peak->getQ());
         auto events = dataf->getEvents(q);
 
-        BOOST_CHECK(events.size() >= 1);
+        NSX_CHECK_ASSERT(events.size() >= 1);
 
         if (events.size() == 0) {
             continue;
@@ -165,13 +154,13 @@ int run_test()
         Eigen::RowVector3d q0 = dataf->getQ(p0);
         Eigen::RowVector3d q1 = dataf->getQ(p1);
 
-        BOOST_CHECK_CLOSE(p0(0), p1(0), 3.0);
-        BOOST_CHECK_CLOSE(p0(1), p1(1), 3.0);
-        BOOST_CHECK_CLOSE(p0(2), p1(2), 3.0);
+        NSX_CHECK_CLOSE(p0(0), p1(0), 3.0);
+        NSX_CHECK_CLOSE(p0(1), p1(1), 3.0);
+        NSX_CHECK_CLOSE(p0(2), p1(2), 3.0);
 
-        BOOST_CHECK_CLOSE(q0(0), q1(0), 1.0);
-        BOOST_CHECK_CLOSE(q0(1), q1(1), 1.0);
-        BOOST_CHECK_CLOSE(q0(2), q1(2), 1.0);
+        NSX_CHECK_CLOSE(q0(0), q1(0), 1.0);
+        NSX_CHECK_CLOSE(q0(1), q1(1), 1.0);
+        NSX_CHECK_CLOSE(q0(2), q1(2), 1.0);
     }
 
 
@@ -189,7 +178,7 @@ int run_test()
     auto predicted_peaks = predictor.predictPeaks(dataf, false);
 
     std::cout << "predicted_peaks: " << predicted_peaks.size() << std::endl;
-    BOOST_CHECK(predicted_peaks.size() > 1600);
+    NSX_CHECK_ASSERT(predicted_peaks.size() > 1600);
 
     return 0;
 }

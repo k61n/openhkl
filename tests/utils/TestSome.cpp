@@ -1,20 +1,17 @@
-#define BOOST_TEST_MODULE "Test Some"
-#define BOOST_TEST_DYN_LINK
-
+#include <cstring>
 #include <string>
 #include <vector>
 
-#include <boost/test/unit_test.hpp>
-
+#include <nsxlib/utils/NSXTest.h>
 #include <nsxlib/utils/Some.h>
 
 const double eps = 1e-10;
 
-int run_test()
+int main()
 {
     // Test empty
     nsx::Some<> empty_a;
-    BOOST_CHECK(empty_a.empty());
+    NSX_CHECK_ASSERT(empty_a.empty());
 
     // Test constructs
 
@@ -27,14 +24,14 @@ int run_test()
     nsx::Some<> a6 = 2.71;
     nsx::Some<> a7 = std::string("world!");
 
-    BOOST_CHECK(a0.cast<bool>());
-    BOOST_CHECK_EQUAL(a1.cast<char>(),'A');
-    BOOST_CHECK_EQUAL(a2.cast<int>(),6);
-    BOOST_CHECK_CLOSE(a3.cast<double>(),3.14,eps);
-    BOOST_CHECK_EQUAL(std::strcmp(a4.cast<const char*>(),"hello,"),0);
-    BOOST_CHECK(a5.cast<std::vector<int>>()==std::vector<int>({6, 5, 4, 3, 2, 1, 0}));
-    BOOST_CHECK_CLOSE(a6.cast<double>(),2.71,eps);
-    BOOST_CHECK_EQUAL(a7.cast<std::string>().compare("world!"),0);
+    NSX_CHECK_ASSERT(a0.cast<bool>());
+    NSX_CHECK_EQUAL(a1.cast<char>(),'A');
+    NSX_CHECK_EQUAL(a2.cast<int>(),6);
+    NSX_CHECK_CLOSE(a3.cast<double>(),3.14,eps);
+    NSX_CHECK_EQUAL(std::strcmp(a4.cast<const char*>(),"hello,"),0);
+    NSX_CHECK_ASSERT(a5.cast<std::vector<int>>()==std::vector<int>({6, 5, 4, 3, 2, 1, 0}));
+    NSX_CHECK_CLOSE(a6.cast<double>(),2.71,eps);
+    NSX_CHECK_EQUAL(a7.cast<std::string>().compare("world!"),0);
 
     // Test copy
 
@@ -47,14 +44,14 @@ int run_test()
     nsx::Some<> c6{a6};
     nsx::Some<> c7{a7};
 
-    BOOST_CHECK(c0.cast<bool>());
-    BOOST_CHECK_EQUAL(c1.cast<char>(),'A');
-    BOOST_CHECK_EQUAL(c2.cast<int>(),6);
-    BOOST_CHECK_CLOSE(c3.cast<double>(),3.14,eps);
-    BOOST_CHECK_EQUAL(std::strcmp(c4.cast<const char*>(),"hello,"),0);
-    BOOST_CHECK(c5.cast<std::vector<int>>()==std::vector<int>({6, 5, 4, 3, 2, 1, 0}));
-    BOOST_CHECK_CLOSE(c6.cast<double>(),2.71,eps);
-    BOOST_CHECK_EQUAL(c7.cast<std::string>().compare("world!"),0);
+    NSX_CHECK_ASSERT(c0.cast<bool>());
+    NSX_CHECK_EQUAL(c1.cast<char>(),'A');
+    NSX_CHECK_EQUAL(c2.cast<int>(),6);
+    NSX_CHECK_CLOSE(c3.cast<double>(),3.14,eps);
+    NSX_CHECK_EQUAL(std::strcmp(c4.cast<const char*>(),"hello,"),0);
+    NSX_CHECK_ASSERT(c5.cast<std::vector<int>>()==std::vector<int>({6, 5, 4, 3, 2, 1, 0}));
+    NSX_CHECK_CLOSE(c6.cast<double>(),2.71,eps);
+    NSX_CHECK_EQUAL(c7.cast<std::string>().compare("world!"),0);
 
     // Test move
 
@@ -67,14 +64,14 @@ int run_test()
     nsx::Some<> m6{std::move(c6)};
     nsx::Some<> m7{std::move(c7)};
 
-    BOOST_CHECK(m0.cast<bool>());
-    BOOST_CHECK_EQUAL(m1.cast<char>(),'A');
-    BOOST_CHECK_EQUAL(m2.cast<int>(),6);
-    BOOST_CHECK_CLOSE(m3.cast<double>(),3.14,eps);
-    BOOST_CHECK_EQUAL(std::strcmp(m4.cast<const char*>(),"hello,"),0);
-    BOOST_CHECK(m5.cast<std::vector<int>>()==std::vector<int>({6, 5, 4, 3, 2, 1, 0}));
-    BOOST_CHECK_CLOSE(m6.cast<double>(),2.71,eps);
-    BOOST_CHECK_EQUAL(m7.cast<std::string>().compare("world!"),0);
+    NSX_CHECK_ASSERT(m0.cast<bool>());
+    NSX_CHECK_EQUAL(m1.cast<char>(),'A');
+    NSX_CHECK_EQUAL(m2.cast<int>(),6);
+    NSX_CHECK_CLOSE(m3.cast<double>(),3.14,eps);
+    NSX_CHECK_EQUAL(std::strcmp(m4.cast<const char*>(),"hello,"),0);
+    NSX_CHECK_ASSERT(m5.cast<std::vector<int>>()==std::vector<int>({6, 5, 4, 3, 2, 1, 0}));
+    NSX_CHECK_CLOSE(m6.cast<double>(),2.71,eps);
+    NSX_CHECK_EQUAL(m7.cast<std::string>().compare("world!"),0);
 
     // Test container
 
@@ -88,14 +85,14 @@ int run_test()
     a[6] = 2.71;
     a[7] = std::string("world!");
 
-    BOOST_CHECK(a[0].cast<bool>());
-    BOOST_CHECK_EQUAL(a[1].cast<char>(),'A');
-    BOOST_CHECK_EQUAL(a[2].cast<int>(),6);
-    BOOST_CHECK_CLOSE(a[3].cast<double>(),3.14,eps);
-    BOOST_CHECK_EQUAL(std::strcmp(a[4].cast<const char*>(),"hello,"),0);
-    BOOST_CHECK(a[5].cast<std::vector<int>>()==std::vector<int>({6, 5, 4, 3, 2, 1, 0}));
-    BOOST_CHECK_CLOSE(a[6].cast<double>(),2.71,eps);
-    BOOST_CHECK_EQUAL(a[7].cast<std::string>().compare("world!"),0);
+    NSX_CHECK_ASSERT(a[0].cast<bool>());
+    NSX_CHECK_EQUAL(a[1].cast<char>(),'A');
+    NSX_CHECK_EQUAL(a[2].cast<int>(),6);
+    NSX_CHECK_CLOSE(a[3].cast<double>(),3.14,eps);
+    NSX_CHECK_EQUAL(std::strcmp(a[4].cast<const char*>(),"hello,"),0);
+    NSX_CHECK_ASSERT(a[5].cast<std::vector<int>>()==std::vector<int>({6, 5, 4, 3, 2, 1, 0}));
+    NSX_CHECK_CLOSE(a[6].cast<double>(),2.71,eps);
+    NSX_CHECK_EQUAL(a[7].cast<std::string>().compare("world!"),0);
 
     a[0] = m0;
     a[1] = m1;
@@ -106,14 +103,14 @@ int run_test()
     a[6] = m6;
     a[7] = m7;
 
-    BOOST_CHECK(a[0].cast<bool>());
-    BOOST_CHECK_EQUAL(a[1].cast<char>(),'A');
-    BOOST_CHECK_EQUAL(a[2].cast<int>(),6);
-    BOOST_CHECK_CLOSE(a[3].cast<double>(),3.14,eps);
-    BOOST_CHECK_EQUAL(std::strcmp(a[4].cast<const char*>(),"hello,"),0);
-    BOOST_CHECK(a[5].cast<std::vector<int>>()==std::vector<int>({6, 5, 4, 3, 2, 1, 0}));
-    BOOST_CHECK_CLOSE(a[6].cast<double>(),2.71,eps);
-    BOOST_CHECK_EQUAL(a[7].cast<std::string>().compare("world!"),0);
+    NSX_CHECK_ASSERT(a[0].cast<bool>());
+    NSX_CHECK_EQUAL(a[1].cast<char>(),'A');
+    NSX_CHECK_EQUAL(a[2].cast<int>(),6);
+    NSX_CHECK_CLOSE(a[3].cast<double>(),3.14,eps);
+    NSX_CHECK_EQUAL(std::strcmp(a[4].cast<const char*>(),"hello,"),0);
+    NSX_CHECK_ASSERT(a[5].cast<std::vector<int>>()==std::vector<int>({6, 5, 4, 3, 2, 1, 0}));
+    NSX_CHECK_CLOSE(a[6].cast<double>(),2.71,eps);
+    NSX_CHECK_EQUAL(a[7].cast<std::string>().compare("world!"),0);
 
     a[0] = std::move(m0);
     a[1] = std::move(m1);
@@ -124,19 +121,19 @@ int run_test()
     a[6] = std::move(m6);
     a[7] = std::move(m7);
 
-    BOOST_CHECK(a[0].cast<bool>());
-    BOOST_CHECK_EQUAL(a[1].cast<char>(),'A');
-    BOOST_CHECK_EQUAL(a[2].cast<int>(),6);
-    BOOST_CHECK_CLOSE(a[3].cast<double>(),3.14,eps);
-    BOOST_CHECK_EQUAL(std::strcmp(a[4].cast<const char*>(),"hello,"),0);
-    BOOST_CHECK(a[5].cast<std::vector<int>>()==std::vector<int>({6, 5, 4, 3, 2, 1, 0}));
-    BOOST_CHECK_CLOSE(a[6].cast<double>(),2.71,eps);
-    BOOST_CHECK_EQUAL(a[7].cast<std::string>().compare("world!"),0);
+    NSX_CHECK_ASSERT(a[0].cast<bool>());
+    NSX_CHECK_EQUAL(a[1].cast<char>(),'A');
+    NSX_CHECK_EQUAL(a[2].cast<int>(),6);
+    NSX_CHECK_CLOSE(a[3].cast<double>(),3.14,eps);
+    NSX_CHECK_EQUAL(std::strcmp(a[4].cast<const char*>(),"hello,"),0);
+    NSX_CHECK_ASSERT(a[5].cast<std::vector<int>>()==std::vector<int>({6, 5, 4, 3, 2, 1, 0}));
+    NSX_CHECK_CLOSE(a[6].cast<double>(),2.71,eps);
+    NSX_CHECK_EQUAL(a[7].cast<std::string>().compare("world!"),0);
 
     // Test is
 
     auto is_double = [](const nsx::Some<>& s) -> double { return s.is<double>(); };
-    BOOST_CHECK_EQUAL(std::count_if(a.begin(), a.end(), is_double),2);
+    NSX_CHECK_EQUAL(std::count_if(a.begin(), a.end(), is_double),2);
 
     a0 = a[0];
     a1 = a[1];
@@ -147,32 +144,32 @@ int run_test()
     a6 = a[6];
     a7 = a[7];
 
-    BOOST_CHECK(!a[0].is<long>());
-    BOOST_CHECK(a[0].is<bool>());
-    BOOST_CHECK(!a[1].is<long>());
-    BOOST_CHECK(a[1].is<char>());
-    BOOST_CHECK(!a[2].is<long>());
-    BOOST_CHECK(a[2].is<int>());
-    BOOST_CHECK(!a[3].is<long>());
-    BOOST_CHECK(a[3].is<double>());
-    BOOST_CHECK(!a[4].is<long>());
-    BOOST_CHECK(a[4].is<const char*>());
-    BOOST_CHECK(!a[5].is<long>());
-    BOOST_CHECK(a[5].is<std::vector<int>>());
-    BOOST_CHECK(!a[6].is<long>());
-    BOOST_CHECK(a[6].is<double>());
-    BOOST_CHECK(!a[7].is<long>());
-    BOOST_CHECK(a[7].is<std::string>());
+    NSX_CHECK_ASSERT(!a[0].is<long>());
+    NSX_CHECK_ASSERT(a[0].is<bool>());
+    NSX_CHECK_ASSERT(!a[1].is<long>());
+    NSX_CHECK_ASSERT(a[1].is<char>());
+    NSX_CHECK_ASSERT(!a[2].is<long>());
+    NSX_CHECK_ASSERT(a[2].is<int>());
+    NSX_CHECK_ASSERT(!a[3].is<long>());
+    NSX_CHECK_ASSERT(a[3].is<double>());
+    NSX_CHECK_ASSERT(!a[4].is<long>());
+    NSX_CHECK_ASSERT(a[4].is<const char*>());
+    NSX_CHECK_ASSERT(!a[5].is<long>());
+    NSX_CHECK_ASSERT(a[5].is<std::vector<int>>());
+    NSX_CHECK_ASSERT(!a[6].is<long>());
+    NSX_CHECK_ASSERT(a[6].is<double>());
+    NSX_CHECK_ASSERT(!a[7].is<long>());
+    NSX_CHECK_ASSERT(a[7].is<std::string>());
 
     // Test swap
 
     swap(a5,a7);
-    BOOST_CHECK(a5.is<std::string>());
-    BOOST_CHECK(a7.is<std::vector<int>>());
+    NSX_CHECK_ASSERT(a5.is<std::string>());
+    NSX_CHECK_ASSERT(a7.is<std::vector<int>>());
 
     swap(a5,a7);
-    BOOST_CHECK(a5.is<std::vector<int>>());
-    BOOST_CHECK(a7.is<std::string>());
+    NSX_CHECK_ASSERT(a5.is<std::vector<int>>());
+    NSX_CHECK_ASSERT(a7.is<std::string>());
 
     // Test lvalue references
 
@@ -194,20 +191,20 @@ int run_test()
     l6 = -2.71;
     l7 += " ...";
 
-    BOOST_CHECK(!a0.cast<bool>());
-    BOOST_CHECK_EQUAL(a1.cast<char>(),'B');
-    BOOST_CHECK_EQUAL(a2.cast<int>(),8);
-    BOOST_CHECK_CLOSE(a3.cast<double>(),-3.14,eps);
-    BOOST_CHECK_EQUAL(std::strcmp(a4.cast<const char*>(),"Hello,"),0);
-    BOOST_CHECK(a5.cast<std::vector<int>>()==std::vector<int>({6, 5, -2, 3, 2, 1, 0}));
-    BOOST_CHECK_CLOSE(a6.cast<double>(),-2.71,eps);
-    BOOST_CHECK_EQUAL(a7.cast<std::string>().compare("world! ..."),0);
+    NSX_CHECK_ASSERT(!a0.cast<bool>());
+    NSX_CHECK_EQUAL(a1.cast<char>(),'B');
+    NSX_CHECK_EQUAL(a2.cast<int>(),8);
+    NSX_CHECK_CLOSE(a3.cast<double>(),-3.14,eps);
+    NSX_CHECK_EQUAL(std::strcmp(a4.cast<const char*>(),"Hello,"),0);
+    NSX_CHECK_ASSERT(a5.cast<std::vector<int>>()==std::vector<int>({6, 5, -2, 3, 2, 1, 0}));
+    NSX_CHECK_CLOSE(a6.cast<double>(),-2.71,eps);
+    NSX_CHECK_EQUAL(a7.cast<std::string>().compare("world! ..."),0);
 
     a5.cast<std::vector<int>>()[4] = -2;
     a7.cast<std::string>()[0] = 'W';
 
-    BOOST_CHECK(l5==std::vector<int>({6, 5, -2, 3, -2, 1, 0}));
-    BOOST_CHECK_EQUAL(l7.compare("World! ..."),0);
+    NSX_CHECK_ASSERT(l5==std::vector<int>({6, 5, -2, 3, -2, 1, 0}));
+    NSX_CHECK_EQUAL(l7.compare("World! ..."),0);
 
     // Test rvalue references
 
@@ -229,19 +226,19 @@ int run_test()
     r6 = 2.71828;
     r7 += " !!!";
 
-    BOOST_CHECK(r0);
-    BOOST_CHECK_EQUAL(r1,'C');
-    BOOST_CHECK_EQUAL(r2,12);
-    BOOST_CHECK_CLOSE(r3,3.14159,eps);
-    BOOST_CHECK_EQUAL(std::strcmp(r4,"HEllo,"),0);
-    BOOST_CHECK(r5==std::vector<int>({6, 5, -2, -4,-2, 1, 0}));
-    BOOST_CHECK_CLOSE(r6,2.71828,eps);
-    BOOST_CHECK_EQUAL(r7.compare("World! ... !!!"),0);
+    NSX_CHECK_ASSERT(r0);
+    NSX_CHECK_EQUAL(r1,'C');
+    NSX_CHECK_EQUAL(r2,12);
+    NSX_CHECK_CLOSE(r3,3.14159,eps);
+    NSX_CHECK_EQUAL(std::strcmp(r4,"HEllo,"),0);
+    NSX_CHECK_ASSERT(r5==std::vector<int>({6, 5, -2, -4,-2, 1, 0}));
+    NSX_CHECK_CLOSE(r6,2.71828,eps);
+    NSX_CHECK_EQUAL(r7.compare("World! ... !!!"),0);
 
     std::move(a5).cast<std::vector<int>>()[5] = -4;
     std::move(a7).cast<std::string>()[1] = 'O';
-    BOOST_CHECK(r5==std::vector<int>({6, 5, -2, -4,-2, -4, 0}));
-    BOOST_CHECK_EQUAL(r7.compare("WOrld! ... !!!"),0);
+    NSX_CHECK_ASSERT(r5==std::vector<int>({6, 5, -2, -4,-2, -4, 0}));
+    NSX_CHECK_EQUAL(r7.compare("WOrld! ... !!!"),0);
 
     // Test new value
 
@@ -254,14 +251,14 @@ int run_test()
     double           x6 = a6;
     std::string      x7 = a7;
 
-    BOOST_CHECK(x0);
-    BOOST_CHECK_EQUAL(x1,'C');
-    BOOST_CHECK_EQUAL(x2,12);
-    BOOST_CHECK_CLOSE(x3,3.14159,eps);
-    BOOST_CHECK_EQUAL(std::strcmp(x4,"HEllo,"),0);
-    BOOST_CHECK(x5==std::vector<int>({6, 5, -2, -4,-2, -4, 0}));
-    BOOST_CHECK_CLOSE(x6,2.71828,eps);
-    BOOST_CHECK_EQUAL(x7.compare("WOrld! ... !!!"),0);
+    NSX_CHECK_ASSERT(x0);
+    NSX_CHECK_EQUAL(x1,'C');
+    NSX_CHECK_EQUAL(x2,12);
+    NSX_CHECK_CLOSE(x3,3.14159,eps);
+    NSX_CHECK_EQUAL(std::strcmp(x4,"HEllo,"),0);
+    NSX_CHECK_ASSERT(x5==std::vector<int>({6, 5, -2, -4,-2, -4, 0}));
+    NSX_CHECK_CLOSE(x6,2.71828,eps);
+    NSX_CHECK_EQUAL(x7.compare("WOrld! ... !!!"),0);
 
     // Test new value through move semantics
 
@@ -274,14 +271,14 @@ int run_test()
     double           y6 = std::move(a6);
     std::string      y7 = std::move(a7);
 
-    BOOST_CHECK(y0);
-    BOOST_CHECK_EQUAL(y1,'C');
-    BOOST_CHECK_EQUAL(y2,12);
-    BOOST_CHECK_CLOSE(y3,3.14159,eps);
-    BOOST_CHECK_EQUAL(std::strcmp(y4,"HEllo,"),0);
-    BOOST_CHECK(y5==std::vector<int>({6, 5, -2, -4,-2, -4, 0}));
-    BOOST_CHECK_CLOSE(y6,2.71828,eps);
-    BOOST_CHECK_EQUAL(y7.compare("WOrld! ... !!!"),0);
+    NSX_CHECK_ASSERT(y0);
+    NSX_CHECK_EQUAL(y1,'C');
+    NSX_CHECK_EQUAL(y2,12);
+    NSX_CHECK_CLOSE(y3,3.14159,eps);
+    NSX_CHECK_EQUAL(std::strcmp(y4,"HEllo,"),0);
+    NSX_CHECK_ASSERT(y5==std::vector<int>({6, 5, -2, -4,-2, -4, 0}));
+    NSX_CHECK_CLOSE(y6,2.71828,eps);
+    NSX_CHECK_EQUAL(y7.compare("WOrld! ... !!!"),0);
 
     // Test check throw
 
@@ -293,16 +290,11 @@ int run_test()
 
     nsx::Some<> e;
 
-    BOOST_CHECK_NO_THROW(e = 4);
-    BOOST_CHECK_THROW(e=E(),std::exception);
+    NSX_CHECK_NO_THROW(e = 4);
+    NSX_CHECK_THROW(e=E(),std::exception);
 
-    BOOST_CHECK_NO_THROW(e = std::vector<int>({1, 2, 3}));
-    BOOST_CHECK_THROW(e=E(),std::exception);
+    NSX_CHECK_NO_THROW(e = std::vector<int>({1, 2, 3}));
+    NSX_CHECK_THROW(e=E(),std::exception);
 
     return 0;
-}
-
-BOOST_AUTO_TEST_CASE(Test_Some)
-{
-    BOOST_CHECK(run_test() == 0);
 }
