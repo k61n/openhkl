@@ -1,9 +1,6 @@
-#define BOOST_TEST_MODULE "Test Constant Kernel"
-#define BOOST_TEST_DYN_LINK
+#include <nsxlib/utils/NSXTest.h>
 
-#include <boost/test/unit_test.hpp>
-
-BOOST_AUTO_TEST_CASE(Test_Constant_kernel)
+int main()
 {
 #pragma message "test not implemented"
 }

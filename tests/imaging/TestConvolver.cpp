@@ -1,13 +1,9 @@
-#define BOOST_TEST_MODULE "Test Convolver"
-#define BOOST_TEST_DYN_LINK
-
 #include <cmath>
-
-#include <boost/test/unit_test.hpp>
 
 #include <nsxlib/imaging/Convolver.h>
 #include <nsxlib/imaging/DeltaKernel.h>
 #include <nsxlib/mathematics/MathematicsTypes.h>
+#include <nsxlib/utils/NSXTest.h>
 
 // Generate a image to use for testing the Fourier transform
 nsx::RealMatrix generateImage(int rows, int cols)
@@ -35,8 +31,8 @@ double computeError(int rows, int cols)
     return std::sqrt(error);
 }
 
-BOOST_AUTO_TEST_CASE(Test_Convolver)
+int main()
 {
     double error = computeError(30, 20);
-    BOOST_ASSERT(error < 1e-10);
+    NSX_CHECK_ASSERT(error < 1e-10);
 }
