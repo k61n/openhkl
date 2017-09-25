@@ -21,11 +21,31 @@ int main() {
 
     NSX_CHECK_EQUAL(1,1);
 
+    NSX_CHECK_EQ(1,1);
+
     NSX_CHECK_EQUAL(1l,1l);
 
     NSX_CHECK_EQUAL(1,2,true);
 
     NSX_CHECK_NOT_EQUAL(1,2);
+
+    NSX_CHECK_NEQ(1,2);
+
+    NSX_CHECK_GREATER_THAN(2l,1l);
+
+    NSX_CHECK_GT(2l,1l);
+
+    NSX_CHECK_GREATER_THAN_OR_EQUAL(2l,1l);
+
+    NSX_CHECK_GE(2l,1l);
+
+    NSX_CHECK_LOWER_THAN(1l,2l);
+
+    NSX_CHECK_LT(1l,2l);
+
+    NSX_CHECK_LOWER_THAN_OR_EQUAL(1l,2l);
+
+    NSX_CHECK_LE(1l,2l);
 
     // Check floatings equality/inequality within a given tolerance
 
@@ -59,13 +79,13 @@ int main() {
 
     auto& all_tests = nsx::allTests();
 
-    if (all_tests.nTests() != 16)
+    if (all_tests.nTests() != 26)
     {
         std::cout<<"Invalid number of unit tests"<<std::endl;
         std::exit(1);
     }
 
-    if (all_tests.nSuccesses() != 11)
+    if (all_tests.nSuccesses() != 21)
     {
         std::cout<<"Invalid number of successful unit tests"<<std::endl;
         std::exit(1);
