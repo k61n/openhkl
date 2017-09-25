@@ -20,12 +20,12 @@ public:
     void testCheckAssert(bool condition, bool expectedFailure, const std::string& description, const std::string& filename, int lineno);
 
     //! Check that \p observed is equal to \p predicted
-    template <typename T>
-    void testCheckEqual(T observed, T predicted, bool expectedFailure, const std::string& description, const std::string& filename, int lineno);
+    template <typename T,typename U>
+    void testCheckEqual(T observed, U predicted, bool expectedFailure, const std::string& description, const std::string& filename, int lineno);
 
     //! Check that \p observed is different from \p predicted
-    template <typename T>
-    void testCheckNotEqual(T observed, T predicted, bool expectedFailure, const std::string& description, const std::string& filename, int lineno);
+    template <typename T,typename U>
+    void testCheckNotEqual(T observed, U predicted, bool expectedFailure, const std::string& description, const std::string& filename, int lineno);
 
     //! Check that \p observed is equal to \p predicted with \p epsilon tolerance
     template <typename T>
@@ -70,8 +70,8 @@ private:
     int _n_skipped;
 };
 
-template <typename T>
-void NSXTest::testCheckEqual(T observed, T predicted, bool expectedFailure, const std::string& description, const std::string& filename, int lineno)
+template <typename T, typename U>
+void NSXTest::testCheckEqual(T observed, U predicted, bool expectedFailure, const std::string& description, const std::string& filename, int lineno)
 {
     if (observed == predicted) {
         ++_n_successes;
@@ -85,8 +85,8 @@ void NSXTest::testCheckEqual(T observed, T predicted, bool expectedFailure, cons
     }
 }
 
-template <typename T>
-void NSXTest::testCheckNotEqual(T observed, T predicted, bool expectedFailure, const std::string& description, const std::string& filename, int lineno)
+template <typename T, typename U>
+void NSXTest::testCheckNotEqual(T observed, U predicted, bool expectedFailure, const std::string& description, const std::string& filename, int lineno)
 {
     if (observed != predicted) {
         ++_n_successes;
@@ -133,7 +133,6 @@ void NSXTest::testCheckNotClose(T observed, T predicted, T epsilon, bool expecte
 template <typename T>
 void NSXTest::testCheckSmall(T observed, T epsilon, bool expectedFailure, const std::string& description, const std::string& filename, int lineno)
 {
-
     if (std::fabs(observed) < epsilon) {
         ++_n_successes;
     } else {
