@@ -8,6 +8,17 @@
 
 namespace nsx {
 
+//! \class NSXTest
+//! \brief This class implements an unit test framework.
+//! It implements standards test cases such as:
+//!
+//! - Assertion (a.k.a boolean equality)
+//! - Inequality/Equality
+//! - Values close to each other
+//! - Value close to zero
+//! - Any/specific exception throw/not throw
+//!
+//! For each of this standard cases, a macros have been defined for convenience purpose.
 class NSXTest {
 
 public:
