@@ -1,13 +1,9 @@
-#define BOOST_TEST_MODULE "Test Miller Indices"
-#define BOOST_TEST_DYN_LINK
-
-#include <boost/test/unit_test.hpp>
-
 #include <Eigen/Dense>
 
 #include <nsxlib/geometry/MillerIndices.h>
+#include <nsxlib/utils/NSXTest.h>
 
-int run_test() {
+int main() {
 
     Eigen::RowVector3i v1(1,2,3);
 
@@ -19,14 +15,9 @@ int run_test() {
 
     x = 100;
 
-    BOOST_CHECK_EQUAL(hkl1[0],100);
+    NSX_CHECK_EQUAL(hkl1[0],100);
 
     Eigen::RowVector3d hkld = static_cast<Eigen::RowVector3d>(hkl1);
 
     return 0;
-}
-
-BOOST_AUTO_TEST_CASE(Test_MillerIndices)
-{
-    BOOST_CHECK(run_test() == 0);
 }

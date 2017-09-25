@@ -137,4 +137,6 @@ int main()
     // statistic used to generate the fake data
     NSX_CHECK_CLOSE(cc1.CChalf(), expected_cc_half, 0.05);
     NSX_CHECK_CLOSE(cc1.CCstar(), expected_cc_true, 0.05);
+
+    return 0;
 }

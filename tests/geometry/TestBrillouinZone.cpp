@@ -1,15 +1,11 @@
-#define BOOST_TEST_MODULE "Test Brillouin Zone"
-#define BOOST_TEST_DYN_LINK
-
 #include <iostream>
 #include <cmath>
 #include <Eigen/Dense>
 
-#include <boost/test/unit_test.hpp>
-
 #include <nsxlib/geometry/BrillouinZone.h>
 
 #include <nsxlib/crystal/UnitCell.h>
+#include <nsxlib/utils/NSXTest.h>
 
 const double tolerance=1e-9;
 
@@ -25,40 +21,39 @@ void validate_zone(const Eigen::Matrix3d& B, int nverts, int nfaces)
     nsx::BrillouinZone zone(B, 1e-3);
     nsx::ConvexHull hull = zone.convexHull();
     
-    BOOST_CHECK_EQUAL(hull.getNVertices(), nverts);
-    BOOST_CHECK_EQUAL(zone.vertices().size(), nverts);
-    BOOST_CHECK_EQUAL(2*zone.normals().size(), nfaces);
+    NSX_CHECK_EQUAL(hull.getNVertices(), nverts);
+    NSX_CHECK_EQUAL(zone.vertices().size(), nverts);
+    NSX_CHECK_EQUAL(2*zone.normals().size(), nfaces);
 
     for (auto n: zone.normals()) {
-        BOOST_CHECK(zone.inside(0.5*n));
-        BOOST_CHECK(zone.inside(-0.5*n));
+        NSX_CHECK_ASSERT(zone.inside(0.5*n));
+        NSX_CHECK_ASSERT(zone.inside(-0.5*n));
 
-        BOOST_CHECK(hull.contains(0.49*n) == true);
-        BOOST_CHECK(hull.contains(0.51*n) == false);
+        NSX_CHECK_ASSERT(hull.contains(0.49*n) == true);
+        NSX_CHECK_ASSERT(hull.contains(0.51*n) == false);
 
-        BOOST_CHECK(zone.inside(0.51*n) == false);
-        BOOST_CHECK(zone.inside(-0.51*n) == false);
+        NSX_CHECK_ASSERT(zone.inside(0.51*n) == false);
+        NSX_CHECK_ASSERT(zone.inside(-0.51*n) == false);
     }
 
     for (auto v: zone.vertices()) {
-        BOOST_CHECK(zone.inside(v));
-        BOOST_CHECK(zone.inside(-v));
+        NSX_CHECK_ASSERT(zone.inside(v));
+        NSX_CHECK_ASSERT(zone.inside(-v));
 
-        BOOST_CHECK(zone.inside(1.01*v) == false);
-        BOOST_CHECK(zone.inside(-1.01*v) == false);
+        NSX_CHECK_ASSERT(zone.inside(1.01*v) == false);
+        NSX_CHECK_ASSERT(zone.inside(-1.01*v) == false);
     }    
 
-    BOOST_CHECK_CLOSE(hull.getVolume(), std::fabs(B.determinant()), 1e-8);
+    NSX_CHECK_CLOSE(hull.getVolume(), std::fabs(B.determinant()), 1e-8);
 }
 
-BOOST_AUTO_TEST_CASE(BrillouinZone)
+int main()
 {
     const double deg = M_PI / 180.0;
     nsx::UnitCell uc;
 
     // todo: write this test!!
     Eigen::Matrix3d B;
-
 
     // primitive triclinic aP
     uc.setParams(20, 25, 15, 95*deg, 85*deg, 93*deg);
@@ -109,5 +104,6 @@ BOOST_AUTO_TEST_CASE(BrillouinZone)
     // cF
     // cI
 
+    return 0;
 }
 

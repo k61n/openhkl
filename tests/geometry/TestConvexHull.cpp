@@ -99,5 +99,7 @@ int main()
     NSX_CHECK_EQUAL(chull.getNEdges(),newhull.getNEdges());
     NSX_CHECK_EQUAL(chull.getNFaces(),newhull.getNFaces());
     NSX_CHECK_CLOSE(chull.getVolume(),newhull.getVolume(),tolerance);
+
+    return 0;
 }
 
