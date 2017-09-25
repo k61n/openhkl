@@ -12,68 +12,128 @@ class NSXTest {
 
 public:
 
-    //! Constructor
+    //! Constructor.
     NSXTest();
 
-    //! Destructor
+    //! Copy constructor.
+    NSXTest(const NSXTest& other)=default;
+
+    //! Copy-assignment operator.
+    NSXTest& operator=(const NSXTest& other)=default;
+
+    //! Destructor.
     ~NSXTest();
 
-    //! Check that \p condition is true
+    //! Check that an assert is true.
+    //! \param [in] condition The assertion to be tested.
+    //! \param [in] expectedFailure If \p true this test will not be counted as a failure.
+    //! \param [in] description The message to be written in case of failure.
+    //! \param [in] filename The file in which the unit test was run.
+    //! \param [in] filename The line number at which the unit test was run.
     void testCheckAssert(bool condition, bool expectedFailure, const std::string& description, const std::string& filename, int lineno);
 
-    //! Check that \p observed is equal to \p predicted
+    //! Check for the equality between two integral-type values.
+    //! \param [in] observed The observed value.
+    //! \param [in] predicted The predicted value.
+    //! \param [in] expectedFailure If \p true this test will not be counted as a failure.
+    //! \param [in] description The message to be written in case of failure.
+    //! \param [in] filename The file in which the unit test was run.
+    //! \param [in] filename The line number at which the unit test was run.
     template <typename T>
     void testCheckEqual(T observed, T predicted, bool expectedFailure, const std::string& description, const std::string& filename, int lineno);
 
-    //! Check that \p observed is different from \p predicted
+    //! Check for the inequality between two integral-type values.
+    //! \param [in] observed The observed value.
+    //! \param [in] predicted The predicted value.
+    //! \param [in] expectedFailure If \p true this test will not be counted as a failure.
+    //! \param [in] description The message to be written in case of failure.
+    //! \param [in] filename The file in which the unit test was run.
+    //! \param [in] filename The line number at which the unit test was run.
     template <typename T>
     void testCheckNotEqual(T observed, T predicted, bool expectedFailure, const std::string& description, const std::string& filename, int lineno);
 
-    //! Check that \p observed is equal to \p predicted with \p epsilon tolerance
+    //! Check that two values are close to each other within a given tolerance.
+    //! \param [in] observed The observed value.
+    //! \param [in] predicted The predicted value.
+    //! \param [in] epsilon The tolerance value.
+    //! \param [in] expectedFailure If \p true this test will not be counted as a failure.
+    //! \param [in] description The message to be written in case of failure.
+    //! \param [in] filename The file in which the unit test was run.
+    //! \param [in] filename The line number at which the unit test was run.
     template <typename T>
     void testCheckClose(T observed, T predicted, T epsilon, bool expectedFailure, const std::string& description, const std::string& filename, int lineno);
 
-    //! Check that \p observed is different from \p predicted with \p epsilon tolerance
+    //! Check that two values are not close to each other within a given tolerance.
+    //! \param [in] observed The observed value.
+    //! \param [in] predicted The predicted value.
+    //! \param [in] epsilon The tolerance value. by increasing the number of registered failures
+    //! \param [in] expectedFailure If \p true this test will not be counted as a failure.
+    //! \param [in] description The message to be written in case of failure.
+    //! \param [in] filename The file in which the unit test was run.
+    //! \param [in] filename The line number at which the unit test was run.
     template <typename T>
     void testCheckNotClose(T observed, T predicted, T epsilon, bool expectedFailure, const std::string& description, const std::string& filename, int lineno);
 
-    //! Check that \p observed is close to zero with \p epsilon tolerance
+    //! Check that a given value is close to zero within a given tolerance.
+    //! \param [in] observed The observed value.
+    //! \param [in] epsilon The tolerance value.
+    //! \param [in] expectedFailure If \p true this test will not be counted as a failure.
+    //! \param [in] description The message to be written in case of failure.
+    //! \param [in] filename The file in which the unit test was run.
+    //! \param [in] filename The line number at which the unit test was run.
     template <typename T>
     void testCheckSmall(T observed, T epsilon, bool expectedFailure, const std::string& description, const std::string& filename, int lineno);
 
-    //! Check that \p observed is not close to zero with \p epsilon tolerance
+    //! Check that a given value is not close to zero within a given tolerance.
+    //! \param [in] observed The observed value.
+    //! \param [in] epsilon The tolerance value.
+    //! \param [in] expectedFailure If \p true this test will not be counted as a failure.
+    //! \param [in] description The message to be written in case of failure.
+    //! \param [in] filename The file in which the unit test was run.
+    //! \param [in] filename The line number at which the unit test was run.
     template <typename T>
     void testCheckNotSmall(T observed, T epsilon, bool expectedFailure, const std::string& description, const std::string& filename, int lineno);
 
-    //! Trigger a failure by increasing the number of registered failures
+    //! Trigger a failure.
+    //! \param [in] expectedFailure If \p true this test will not be counted as a failure.
+    //! \param [in] description The message to be written in case of failure.
+    //! \param [in] filename The file in which the unit test was run.
+    //! \param [in] filename The line number at which the unit test was run.
     void triggerFailure(bool expectedFailure, const std::string& description, const std::string& filename, int lineno);
 
-    //! Trigger a success by increasing the number of registered successes
+    //! Trigger a success.
     void triggerSuccess();
 
     //! Return the number of successes of the unit test
+    //! \return the number of successful tests
     int nSuccesses() const;
 
     //! Return the number of failures of the unit test
+    //! \return the number of failing tests
     int nFailures() const;
 
-    //! Return the number of unit tests that haave been skipped
+    //! Return the number of unit tests that have been skipped
+    //! \return the number of skipped tests
     int nSkipped() const;
 
     //! Return the number of tests of the unit test
+    //! \return the total number of tests
     int nTests() const;
 
 private:
 
-    //! Performs a floating division
-    //! Adapted from boost source code
+    //! Performs a floating division.
+    //! Adapted from boost source code.
     template <typename T>
     T safeFloatingDivision(T f1, T f2);
 
+    //! The number of failing tests.
     int _n_failures;
 
+    //! The number of successful tests.
     int _n_successes;
 
+    //! The number of skipped tests.
     int _n_skipped;
 };
 
