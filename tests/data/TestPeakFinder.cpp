@@ -1,9 +1,4 @@
-#define BOOST_TEST_MODULE "Test PeakFinder"
-#define BOOST_TEST_DYN_LINK
-
 #include <vector>
-
-#include <boost/test/unit_test.hpp>
 
 #include <Eigen/Dense>
 
@@ -12,9 +7,10 @@
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/data/MetaData.h>
 #include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/utils/NSXTest.h>
 #include <nsxlib/utils/ProgressHandler.h>
 
-BOOST_AUTO_TEST_CASE(Test_PeakFinder)
+int main()
 {
     nsx::DataList numors;
 
@@ -25,33 +21,33 @@ BOOST_AUTO_TEST_CASE(Test_PeakFinder)
     nsx::PeakFinder peakFinder;
     nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
 
-    BOOST_CHECK(meta->getKey<int>("nbang")==2);
+    NSX_CHECK_ASSERT(meta->getKey<int>("nbang")==2);
 
     dataf->open();
     numors.push_back(dataf);
     peakFinder.setHandler(handler);
 
     peakFinder.setSearchConfidence(0.997);
-    BOOST_CHECK_CLOSE(peakFinder.searchConfidence(), 0.997, 1e-10);
+    NSX_CHECK_CLOSE(peakFinder.searchConfidence(), 0.997, 1e-10);
 
     peakFinder.setIntegrationConfidence(0.997);
-    BOOST_CHECK_CLOSE(peakFinder.integrationConfidence(), 0.997, 1e-10);
+    NSX_CHECK_CLOSE(peakFinder.integrationConfidence(), 0.997, 1e-10);
 
     peakFinder.setMaxComponents(10000);
-    BOOST_CHECK(peakFinder.getMaxComponents() == 10000);
+    NSX_CHECK_ASSERT(peakFinder.getMaxComponents() == 10000);
 
     peakFinder.setMinComponents(10);
-    BOOST_CHECK(peakFinder.getMinComponents() == 10);
+    NSX_CHECK_ASSERT(peakFinder.getMinComponents() == 10);
 
     peakFinder.setThresholdValue(3.0);
-    BOOST_CHECK_CLOSE(peakFinder.getThresholdValue(), 3.0, 1e-10);
+    NSX_CHECK_CLOSE(peakFinder.getThresholdValue(), 3.0, 1e-10);
 
     bool result = peakFinder.find(numors);
-    BOOST_CHECK(result == true);
+    NSX_CHECK_ASSERT(result == true);
 
     size_t num_peaks = dataf->getPeaks().size();
 
-    BOOST_CHECK(num_peaks == 1);
+    NSX_CHECK_ASSERT(num_peaks == 1);
 
     dataf->close();
     dataf->clearPeaks();

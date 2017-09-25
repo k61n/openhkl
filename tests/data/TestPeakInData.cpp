@@ -1,13 +1,9 @@
-#define BOOST_TEST_MODULE "Test whether h,k,l peak falls into Data"
-#define BOOST_TEST_DYN_LINK
-
-#include <boost/test/unit_test.hpp>
-
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/utils/NSXTest.h>
 
-BOOST_AUTO_TEST_CASE(Test_Peak_Data)
+int main()
 {
     nsx::DataReaderFactory factory;
     nsx::sptrDiffractometer diff;
@@ -21,12 +17,12 @@ BOOST_AUTO_TEST_CASE(Test_Peak_Data)
         dataf->open();
 
         metadata = dataf->getMetadata();
-        BOOST_CHECK(metadata != nullptr);
+        NSX_CHECK_ASSERT(metadata != nullptr);
     }
     catch(std::exception& e) {
-        BOOST_FAIL(std::string("caught exception: ") + e.what());
+        NSX_FAIL(std::string("caught exception: ") + e.what());
     }
     catch (...) {
-        BOOST_FAIL("unknown exception");
+        NSX_FAIL("unknown exception");
     }
 }
