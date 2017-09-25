@@ -76,23 +76,58 @@ int main()
 	    Eigen::Matrix3d newg, P;
 	    niggli_reducer.reduce(newg, P);
 		std::cout<<i<<std::endl;
-		//std::cout<<uc.getReciprocalAVector().transpose()<<std::endl;
 	    uc.transform(P);
 
 	    Eigen::Vector3d calc_niggli_a = uc.basis().col(0);
-	    NSX_CHECK_CLOSE(calc_niggli_a[0],niggli_a[0],tolerance);
-		NSX_CHECK_CLOSE(calc_niggli_a[1],niggli_a[1],tolerance);
-		NSX_CHECK_CLOSE(calc_niggli_a[2],niggli_a[2],tolerance);
+	    if (std::fabs(niggli_a[0]) < 1.0e-9) {
+	        NSX_CHECK_SMALL(calc_niggli_a[0],tolerance);
+	    } else {
+            NSX_CHECK_CLOSE(calc_niggli_a[0],niggli_a[0],tolerance);
+        }
+        if (std::fabs(niggli_a[1]) < 1.0e-9) {
+            NSX_CHECK_SMALL(calc_niggli_a[1],tolerance);
+        } else {
+            NSX_CHECK_CLOSE(calc_niggli_a[1],niggli_a[1],tolerance);
+        }
+        if (std::fabs(niggli_a[2]) < 1.0e-9) {
+            NSX_CHECK_SMALL(calc_niggli_a[2],tolerance);
+        } else {
+            NSX_CHECK_CLOSE(calc_niggli_a[2],niggli_a[2],tolerance);
+        }
 
 	    Eigen::Vector3d calc_niggli_b = uc.basis().col(1);
-	    NSX_CHECK_CLOSE(calc_niggli_b[0],niggli_b[0],tolerance);
-		NSX_CHECK_CLOSE(calc_niggli_b[1],niggli_b[1],tolerance);
-		NSX_CHECK_CLOSE(calc_niggli_b[2],niggli_b[2],tolerance);
+        if (std::fabs(niggli_b[0]) < 1.0e-9) {
+            NSX_CHECK_SMALL(calc_niggli_b[0],tolerance);
+        } else {
+            NSX_CHECK_CLOSE(calc_niggli_b[0],niggli_b[0],tolerance);
+        }
+        if (std::fabs(niggli_b[1]) < 1.0e-9) {
+            NSX_CHECK_SMALL(calc_niggli_b[1],tolerance);
+        } else {
+            NSX_CHECK_CLOSE(calc_niggli_b[1],niggli_b[1],tolerance);
+        }
+        if (std::fabs(niggli_b[2]) < 1.0e-9) {
+            NSX_CHECK_SMALL(calc_niggli_b[2],tolerance);
+        } else {
+            NSX_CHECK_CLOSE(calc_niggli_b[2],niggli_b[2],tolerance);
+        }
 
 	    Eigen::Vector3d calc_niggli_c = uc.basis().col(2);
-	    NSX_CHECK_CLOSE(calc_niggli_c[0],niggli_c[0],tolerance);
-		NSX_CHECK_CLOSE(calc_niggli_c[1],niggli_c[1],tolerance);
-		NSX_CHECK_CLOSE(calc_niggli_c[2],niggli_c[2],tolerance);
+        if (std::fabs(niggli_c[0]) < 1.0e-9) {
+            NSX_CHECK_SMALL(calc_niggli_c[0],tolerance);
+        } else {
+            NSX_CHECK_CLOSE(calc_niggli_c[0],niggli_c[0],tolerance);
+        }
+        if (std::fabs(niggli_c[1]) < 1.0e-9) {
+            NSX_CHECK_SMALL(calc_niggli_c[1],tolerance);
+        } else {
+            NSX_CHECK_CLOSE(calc_niggli_c[1],niggli_c[1],tolerance);
+        }
+        if (std::fabs(niggli_c[2]) < 1.0e-9) {
+            NSX_CHECK_SMALL(calc_niggli_c[2],tolerance);
+        } else {
+            NSX_CHECK_CLOSE(calc_niggli_c[2],niggli_c[2],tolerance);
+        }
 	}
 
 	primitiveCellsFile.close();

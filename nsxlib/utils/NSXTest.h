@@ -103,7 +103,6 @@ void NSXTest::testCheckNotEqual(T observed, T predicted, bool expectedFailure, c
 template <typename T>
 void NSXTest::testCheckClose(T observed, T predicted, T epsilon, bool expectedFailure, const std::string& description, const std::string& filename, int lineno)
 {
-
     if (std::fabs((observed - predicted)/predicted) < 0.01*epsilon) {
         ++_n_successes;
     } else {
