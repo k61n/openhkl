@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <limits>
 #include <string>
 #include <type_traits>
 
@@ -64,6 +65,11 @@ public:
 
 private:
 
+    //! Performs a floating division
+    //! Adapted from boost source code
+    template <typename T>
+    T safeFloatingDivision(T f1, T f2);
+
     int _n_failures;
 
     int _n_successes;
@@ -104,7 +110,14 @@ void NSXTest::testCheckNotEqual(T observed, T predicted, bool expectedFailure, c
 template <typename T>
 void NSXTest::testCheckClose(T observed, T predicted, T epsilon, bool expectedFailure, const std::string& description, const std::string& filename, int lineno)
 {
-    if (std::fabs((observed - predicted)/predicted) < 0.01*epsilon) {
+    const T diff = std::fabs(observed - predicted);
+
+    const T d1 = safeFloatingDivision(diff, std::fabs(predicted));
+    const T d2 = safeFloatingDivision(diff, std::fabs(observed));
+
+    const T fraction = 0.01*epsilon;
+
+    if (d1 < fraction && d2 < fraction) {
         ++_n_successes;
     } else {
         if (expectedFailure) {
@@ -119,7 +132,14 @@ void NSXTest::testCheckClose(T observed, T predicted, T epsilon, bool expectedFa
 template <typename T>
 void NSXTest::testCheckNotClose(T observed, T predicted, T epsilon, bool expectedFailure, const std::string& description, const std::string& filename, int lineno)
 {
-    if (std::fabs((observed - predicted)/predicted) > 0.01*epsilon) {
+    const T diff = std::fabs(observed - predicted);
+
+    const T d1 = safeFloatingDivision(diff, std::fabs(predicted));
+    const T d2 = safeFloatingDivision(diff, std::fabs(observed));
+
+    const T fraction = 0.01*epsilon;
+
+    if (d1 > fraction && d2 > fraction) {
         ++_n_successes;
     } else {
         if (expectedFailure) {
@@ -160,6 +180,22 @@ void NSXTest::testCheckNotSmall(T observed, T epsilon, bool expectedFailure, con
         }
     }
 }
+
+template <typename T>
+T NSXTest::safeFloatingDivision(T f1, T f2 )
+{
+    // Avoid overflow.
+    if( (f2 < static_cast<T>(1))  && (f1 > f2*std::numeric_limits<T>::max()) )
+        return std::numeric_limits<T>::max();
+
+    // Avoid underflow.
+    if( (f1 == static_cast<T>(0)) ||
+        ((f2 > static_cast<T>(1)) && (f1 < f2*std::numeric_limits<T>::min())) )
+        return static_cast<T>(0);
+
+    return f1/f2;
+}
+
 
 NSXTest&  allTests();
 
