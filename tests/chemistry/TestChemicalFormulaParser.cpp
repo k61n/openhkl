@@ -3,12 +3,13 @@
 #include <stdexcept>
 #include <string>
 
-#include <boost/spirit/include/phoenix_stl.hpp>
-#include <boost/spirit/include/phoenix_fusion.hpp>
-
 #include <nsxlib/chemistry/ChemistryTypes.h>
 #include <nsxlib/chemistry/ChemicalFormulaParser.h>
 #include <nsxlib/utils/NSXTest.h>
+
+// This had to be included here to avoid lengthy compile error with boost::spirit
+#include <boost/spirit/include/phoenix_stl.hpp>
+#include <boost/spirit/include/phoenix_fusion.hpp>
 
 const double tolerance=1.0e-9;
 

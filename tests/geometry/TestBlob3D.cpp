@@ -1,17 +1,13 @@
-#define BOOST_TEST_MODULE "Test 3D Blob"
-#define BOOST_TEST_DYN_LINK
-
 #include <cmath>
-
-#include <boost/test/unit_test.hpp>
 
 #include <Eigen/Dense>
 
 #include <nsxlib/geometry/Blob3D.h>
+#include <nsxlib/utils/NSXTest.h>
 
 const double tolerance=1e-5;
 
-BOOST_AUTO_TEST_CASE(Test_3D_Blob)
+int main()
 {
     nsx::Blob3D blob;
     // Create a set of points for a 3D Gaussian.
@@ -33,23 +29,23 @@ BOOST_AUTO_TEST_CASE(Test_3D_Blob)
             }
         }
     }
-    BOOST_CHECK_CLOSE(tot,1.0,tolerance);
-    BOOST_CHECK_CLOSE(tot,blob.getMass(),tolerance);
+    NSX_CHECK_CLOSE(tot,1.0,tolerance);
+    NSX_CHECK_CLOSE(tot,blob.getMass(),tolerance);
     Eigen::Vector3d center,eigVal;
     Eigen::Matrix3d eigVec;
     double sigma1=0.682689492;
     blob.toEllipsoid(sigma1,center,eigVal,eigVec);
     // Check that the center is OK
-    BOOST_CHECK_CLOSE(center(0),c_x,tolerance);
-    BOOST_CHECK_CLOSE(center(1),c_y,tolerance);
-    BOOST_CHECK_CLOSE(center(2),c_z,tolerance);
+    NSX_CHECK_CLOSE(center(0),c_x,tolerance);
+    NSX_CHECK_CLOSE(center(1),c_y,tolerance);
+    NSX_CHECK_CLOSE(center(2),c_z,tolerance);
     // Check the semi_axes
-    BOOST_CHECK_CLOSE(eigVal(0),sqrt(sx2),tolerance);
-    BOOST_CHECK_CLOSE(eigVal(1),sqrt(sy2),tolerance);
-    BOOST_CHECK_CLOSE(eigVal(2),sqrt(sz2),tolerance);
+    NSX_CHECK_CLOSE(eigVal(0),sqrt(sx2),tolerance);
+    NSX_CHECK_CLOSE(eigVal(1),sqrt(sy2),tolerance);
+    NSX_CHECK_CLOSE(eigVal(2),sqrt(sz2),tolerance);
 
     // Check the eigenVectors
-    BOOST_CHECK_CLOSE(std::abs((eigVec.col(0))(0)),1.0,tolerance);
-    BOOST_CHECK_CLOSE(std::abs((eigVec.col(1))(1)),1.0,tolerance);
-    BOOST_CHECK_CLOSE(std::abs((eigVec.col(2))(2)),1.0,tolerance);
+    NSX_CHECK_CLOSE(std::abs((eigVec.col(0))(0)),1.0,tolerance);
+    NSX_CHECK_CLOSE(std::abs((eigVec.col(1))(1)),1.0,tolerance);
+    NSX_CHECK_CLOSE(std::abs((eigVec.col(2))(2)),1.0,tolerance);
 }

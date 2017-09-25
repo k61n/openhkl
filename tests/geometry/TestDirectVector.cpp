@@ -1,13 +1,10 @@
-#define BOOST_TEST_MODULE "Test Direct Vector"
-#define BOOST_TEST_DYN_LINK
-
-#include <boost/test/unit_test.hpp>
-
 #include <Eigen/Dense>
 
 #include <nsxlib/geometry/DirectVector.h>
+#include <nsxlib/utils/NSXTest.h>
 
-int run_test() {
+int main()
+{
 
     Eigen::Vector3d v1(1,2,3);
 
@@ -19,12 +16,7 @@ int run_test() {
 
     x = 100;
 
-    BOOST_CHECK_EQUAL(dv1[0],100);
+    NSX_CHECK_EQUAL(dv1[0],100);
 
     return 0;
-}
-
-BOOST_AUTO_TEST_CASE(Test_DirectVector)
-{
-    BOOST_CHECK(run_test() == 0);
 }

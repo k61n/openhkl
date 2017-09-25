@@ -1,9 +1,6 @@
-#define BOOST_TEST_MODULE "Test BlobFinder"
-#define BOOST_TEST_DYN_LINK
+#include <nsxlib/utils/NSXTest.h>
 
-#include <boost/test/unit_test.hpp>
-
-BOOST_AUTO_TEST_CASE(Test_BlobFinder)
+int main()
 {
 #pragma message "'Test_BlobFinder' is not implemented"
 }
