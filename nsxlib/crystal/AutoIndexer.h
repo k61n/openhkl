@@ -65,8 +65,6 @@ class AutoIndexer {
 
 public:
 
-    using RankedSolution = std::pair<sptrUnitCell, double>;
-
     //! Constructor
     //! @param handler the handler that will monitor the progresses
     AutoIndexer(const std::shared_ptr<ProgressHandler>& handler = nullptr);

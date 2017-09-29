@@ -24,6 +24,8 @@ using UnitCellSolution = std::pair<UnitCell,double>;
 using sptrPeak3D   = std::shared_ptr<Peak3D>;
 using sptrUnitCell = std::shared_ptr<UnitCell>;
 
+using RankedSolution = std::pair<sptrUnitCell,double>;
+
 using PeakSet    = std::set<sptrPeak3D>;
 using MergedPeakSet = std::set<MergedPeak>;
 
