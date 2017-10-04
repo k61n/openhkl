@@ -1,5 +1,7 @@
 FROM eurydice76/nsxtool:setup_trusty
 
+WORKDIR /tmp
+
 RUN GIT_SSL_NO_VERIFY=true git clone -b develop https://code.ill.fr/scientific-software/nsxtool.git
 
 WORKDIR /tmp/nsxtool/build
