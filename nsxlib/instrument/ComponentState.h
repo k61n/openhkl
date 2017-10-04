@@ -36,7 +36,7 @@ namespace nsx {
 
 // Forward declare
 class Component;
-class InstrumentState;
+struct InstrumentState;
 
 //! Maintain a state of a goniometer, following the memento pattern.
 class ComponentState {
@@ -59,7 +59,7 @@ public:
     Eigen::Vector3d transformQ(const Eigen::Vector3d& q) const;
 
 private:
-    friend class InstrumentState;
+    friend struct InstrumentState;
     //! Pointer to the Component that has created the state
     const Component* _ptrComp;
     //! Values for each axis of the Component

@@ -1,8 +1,3 @@
-#define BOOST_TEST_MODULE "TestAggregateFrameInterval"
-#define BOOST_TEST_DYN_LINK
-
-#include <boost/test/unit_test.hpp>
-
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/data/PeakFinder.h>
@@ -12,14 +7,9 @@
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/utils/ProgressHandler.h>
 
-int run_test();
+#include <nsxlib/utils/NSXTest.h>
 
-BOOST_AUTO_TEST_CASE(Test_AggregateFrameInterval)
-{
-    BOOST_CHECK_EQUAL(run_test(), 0);
-}
-
-int run_test()
+int main()
 {
     nsx::DataReaderFactory factory;
 
@@ -60,7 +50,7 @@ int run_test()
     nsx::AggregateFrameInterval interval(dataf);
     interval.addInterval(interval_all);
 
-    BOOST_CHECK_EQUAL(interval.peaks().size(),n_peaks_found);
+    NSX_CHECK_EQUAL(interval.peaks().size(),n_peaks_found);
 
     nsx::AggregateFrameInterval interval1(dataf);
 
@@ -72,7 +62,7 @@ int run_test()
     interval1.addInterval(interval_10_20);
     interval1.addInterval(interval_20_30);
 
-    BOOST_CHECK_EQUAL(interval1.peaks().size(),n_peaks_found);
+    NSX_CHECK_EQUAL(interval1.peaks().size(),n_peaks_found);
 
     return 0;
 }

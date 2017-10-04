@@ -1,7 +1,3 @@
-#define BOOST_TEST_MODULE "TestSimpleFrameInterval"
-#define BOOST_TEST_DYN_LINK
-
-#include <boost/test/unit_test.hpp>
 
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/DataSet.h>
@@ -10,15 +6,9 @@
 #include <nsxlib/imaging/KernelFactory.h>
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/utils/ProgressHandler.h>
+#include <nsxlib/utils/NSXTest.h>
 
-int run_test();
-
-BOOST_AUTO_TEST_CASE(Test_SimpleFrameInterval)
-{
-    BOOST_CHECK_EQUAL(run_test(), 0);
-}
-
-int run_test()
+int main()
 {
     nsx::DataReaderFactory factory;
 
@@ -57,10 +47,10 @@ int run_test()
 
     nsx::SimpleFrameInterval interval(dataf);
 
-    BOOST_CHECK_EQUAL(interval.peaks().size(),n_peaks_found);
+    NSX_CHECK_EQUAL(interval.peaks().size(),n_peaks_found);
 
     nsx::SimpleFrameInterval interval1(dataf,0,30);
-    BOOST_CHECK_EQUAL(interval1.peaks().size(),n_peaks_found);
+    NSX_CHECK_EQUAL(interval1.peaks().size(),n_peaks_found);
 
     return 0;
 }
