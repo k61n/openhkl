@@ -1,12 +1,11 @@
+
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/data/PeakFinder.h>
-#include <nsxlib/data/AggregateFrameInterval.h>
-#include <nsxlib/data/SimpleFrameInterval.h>
+#include <nsxlib/data/FrameInterval.h>
 #include <nsxlib/imaging/KernelFactory.h>
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/utils/ProgressHandler.h>
-
 #include <nsxlib/utils/NSXTest.h>
 
 int main()
@@ -46,22 +45,11 @@ int main()
 
     int n_peaks_found = dataf->getPeaks().size();
 
-    nsx::IFrameInterval* interval_all = new nsx::SimpleFrameInterval(dataf,0,30);
-    nsx::AggregateFrameInterval interval(dataf);
-    interval.addInterval(interval_all);
+    nsx::SimpleFrameInterval interval(dataf);
 
     NSX_CHECK_EQUAL(interval.peaks().size(),n_peaks_found);
 
-    nsx::AggregateFrameInterval interval1(dataf);
-
-    nsx::IFrameInterval* interval_00_10 = new nsx::SimpleFrameInterval(dataf, 0,10);
-    nsx::IFrameInterval* interval_10_20 = new nsx::SimpleFrameInterval(dataf,10,20);
-    nsx::IFrameInterval* interval_20_30 = new nsx::SimpleFrameInterval(dataf,20,30);
-
-    interval1.addInterval(interval_00_10);
-    interval1.addInterval(interval_10_20);
-    interval1.addInterval(interval_20_30);
-
+    nsx::SimpleFrameInterval interval1(dataf,0,30);
     NSX_CHECK_EQUAL(interval1.peaks().size(),n_peaks_found);
 
     return 0;

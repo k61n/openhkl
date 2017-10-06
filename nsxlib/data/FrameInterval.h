@@ -2,11 +2,11 @@
 
 #include "../crystal/CrystalTypes.h"
 #include "../data/DataTypes.h"
-#include "../data/IFrameInterval.h"
+
 
 namespace nsx {
 
-class SimpleFrameInterval : public IFrameInterval {
+class SimpleFrameInterval {
 
 public:
 
@@ -16,12 +16,13 @@ public:
 
     ~SimpleFrameInterval()=default;
 
-    virtual PeakSet peaks() const override;
+    virtual PeakSet peaks() const;
 
 private:
 
     const int _index_min;
     const int _index_max;
+    sptrDataSet _data;
 };
 
 } // end namespace nsx

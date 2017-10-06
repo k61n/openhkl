@@ -1,21 +1,20 @@
-#include "SimpleFrameInterval.h"
-
+#include "FrameInterval.h"
 #include "../crystal/Peak3D.h"
 #include "../data/DataSet.h"
 
 namespace nsx {
 
-SimpleFrameInterval::SimpleFrameInterval(sptrDataSet data)
-: IFrameInterval(data),
-  _index_min(0),
-  _index_max(data->getNFrames()-1)
+SimpleFrameInterval::SimpleFrameInterval(sptrDataSet data):
+    _data(data),
+    _index_min(0),
+    _index_max(data->getNFrames()-1)
 {
 }
 
-SimpleFrameInterval::SimpleFrameInterval(sptrDataSet data, size_t index_min, size_t index_max)
-: IFrameInterval(data),
-  _index_min(std::max<size_t>(index_min,0)),
-  _index_max(std::min<size_t>(index_max,data->getNFrames()-1))
+SimpleFrameInterval::SimpleFrameInterval(sptrDataSet data, size_t index_min, size_t index_max):
+    _data(data),
+    _index_min(std::max<size_t>(index_min,0)),
+    _index_max(std::min<size_t>(index_max,data->getNFrames()-1))
 {
 }
 
