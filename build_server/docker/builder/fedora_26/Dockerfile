@@ -1,4 +1,4 @@
-FROM setup_fedora_26
+FROM eurydice76/nsxtool:setup_fedora_26
 
 WORKDIR /tmp
 
