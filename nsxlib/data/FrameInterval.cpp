@@ -4,26 +4,26 @@
 
 namespace nsx {
 
-SimpleFrameInterval::SimpleFrameInterval(sptrDataSet data):
+FrameInterval::FrameInterval(sptrDataSet data):
     _data(data),
-    _index_min(0),
-    _index_max(data->getNFrames()-1)
+    _fmin(0.0),
+    _fmax(data->getNFrames()-1)
 {
 }
 
-SimpleFrameInterval::SimpleFrameInterval(sptrDataSet data, size_t index_min, size_t index_max):
+FrameInterval::FrameInterval(sptrDataSet data, double fmin, double fmax):
     _data(data),
-    _index_min(std::max<size_t>(index_min,0)),
-    _index_max(std::min<size_t>(index_max,data->getNFrames()-1))
+    _fmin(fmin),
+    _fmax(fmax)
 {
 }
 
-PeakSet SimpleFrameInterval::peaks() const
+PeakSet FrameInterval::peaks() const
 {
     PeakSet selected_peaks;
     for (auto&& p : _data->getPeaks()) {
         auto&& frame = p->getIntegrationRegion().getRegion().center()[2];
-        if (frame >= _index_min && frame <= _index_max) {
+        if (frame >= _fmin && frame <= _fmax) {
             selected_peaks.insert(p);
         }
     }

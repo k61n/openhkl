@@ -45,11 +45,11 @@ int main()
 
     int n_peaks_found = dataf->getPeaks().size();
 
-    nsx::SimpleFrameInterval interval(dataf);
+    nsx::FrameInterval interval(dataf);
 
     NSX_CHECK_EQUAL(interval.peaks().size(),n_peaks_found);
 
-    nsx::SimpleFrameInterval interval1(dataf,0,30);
+    nsx::FrameInterval interval1(dataf,0,30);
     NSX_CHECK_EQUAL(interval1.peaks().size(),n_peaks_found);
 
     return 0;
