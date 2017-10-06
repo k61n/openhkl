@@ -12,8 +12,7 @@ public:
     FrameInterval(sptrDataSet data);
     FrameInterval(sptrDataSet data, double fmin, double fmax);
     ~FrameInterval()=default;
-
-    virtual PeakSet peaks() const;
+    PeakSet peaks() const;
 
 private:
     const double _fmin;

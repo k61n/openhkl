@@ -38,6 +38,7 @@
 
 #include "../crystal/CrystalTypes.h"
 #include "../data/DataTypes.h"
+#include "../data/FrameInterval.h"
 #include "../geometry/GeometryTypes.h"
 #include "../geometry/IMask.h"
 #include "../instrument/InstrumentTypes.h"
@@ -190,6 +191,7 @@ protected:
     double _background;
     FrameIteratorCallback _iteratorCallback;
     std::shared_ptr<IDataReader> _reader;
+    std::vector<FrameInterval> _intervals;
 };
 
 } // end namespace nsx
