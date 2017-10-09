@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 FROM eurydice76/nsxtool:setup-ubuntu-xenial
+=======
+FROM eurydice76/nsxtool:setup_xenial
+>>>>>>> f964ba3e887facf634dd2227b3091785a1ad9448
 
 WORKDIR /tmp/
 

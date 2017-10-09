@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 FROM eurydice76/nsxtool:setup-ubuntu-zesty
+=======
+FROM eurydice76/nsxtool:setup_zesty
+>>>>>>> f964ba3e887facf634dd2227b3091785a1ad9448
 
 WORKDIR /tmp/
 
