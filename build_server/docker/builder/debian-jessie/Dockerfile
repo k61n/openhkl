@@ -5,7 +5,7 @@ RUN GIT_SSL_NO_VERIFY=true git clone -b develop https://code.ill.fr/scientific-s
 
 WORKDIR /tmp/nsxtool/build
 
-RUN cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DBUILD_QTAPPS=ON -DCMAKE_INSTALL_PREFIX=./ -DNSX_PYTHON3=ON ..
+RUN cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DBUILD_QTAPPS=ON -DBUILD_GSL=ON -DCMAKE_INSTALL_PREFIX=./ -DNSX_PYTHON3=ON ..
 RUN cmake --build . --config Release
 RUN cmake --build . --config Release --target install
 
