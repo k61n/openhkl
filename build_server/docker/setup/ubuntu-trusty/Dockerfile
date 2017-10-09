@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM ubuntu:trusty
 
 RUN export DEBIAN_FRONTEND=noninteractive
 
@@ -26,21 +26,9 @@ RUN apt-get update \
     && apt-get autoremove
 
 WORKDIR /tmp
-<<<<<<< HEAD
-ADD ../deps/swig-3.0.12.tar.gz .
+ADD ./deps/swig-3.0.12.tar.gz .
 WORKDIR /tmp/swig-3.0.12
 RUN ./configure --prefix=/usr/local && make && make install
 WORKDIR /tmp/
-=======
-
-ADD swig-3.0.12.tar.gz .
-
-WORKDIR /tmp/swig-3.0.12
-
-RUN ./configure --prefix=/usr/local && make && make install
-
-WORKDIR /tmp/
-
->>>>>>> f964ba3e887facf634dd2227b3091785a1ad9448
 RUN rm -rf swig-3.0.12
 

@@ -1,4 +1,4 @@
-FROM ubuntu:17.04
+FROM ubuntu:zesty
 
 RUN export DEBIAN_FRONTEND=noninteractive
 
