@@ -26,14 +26,9 @@ RUN apt-get update \
     && apt-get autoremove
 
 WORKDIR /tmp
-
-ADD swig-3.0.12.tar.gz .
-
+ADD ../deps/swig-3.0.12.tar.gz .
 WORKDIR /tmp/swig-3.0.12
-
 RUN ./configure --prefix=/usr/local && make && make install
-
 WORKDIR /tmp/
-
 RUN rm -rf swig-3.0.12
 

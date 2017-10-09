@@ -1,4 +1,4 @@
-FROM eurydice76/nsxtool:setup_trusty
+FROM eurydice76/nsxtool:setup-ubuntu-trusty
 
 WORKDIR /tmp
 

@@ -1,4 +1,4 @@
-FROM eurydice76/nsxtool:setup_zesty
+FROM eurydice76/nsxtool:setup-ubuntu-zesty
 
 WORKDIR /tmp/
 
