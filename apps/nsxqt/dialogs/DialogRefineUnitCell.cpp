@@ -46,6 +46,11 @@ DialogRefineUnitCell::DialogRefineUnitCell(nsx::sptrExperiment experiment,
 
     ui->tableWidget_Sample->setEditTriggers(QAbstractItemView::AllEditTriggers);
     ui->tableWidget_Detector->setEditTriggers(QAbstractItemView::AllEditTriggers);
+
+    // set up the QCustomPlot object
+    ui->plotWidget->addGraph();
+    ui->plotWidget->addGraph();
+    ui->plotWidget->addGraph();
     
     auto diffractometer = _experiment->getDiffractometer();
     auto detector = diffractometer->getDetector();
@@ -114,6 +119,9 @@ void DialogRefineUnitCell::updateParameters()
         // the axis offsets errors
         item2->setData(Qt::EditRole, _currentValues._sigmaDetector(i));      
     }
+
+    // update the error plot
+    updatePlot();
 }
 
 void DialogRefineUnitCell::refineParameters()
@@ -294,4 +302,30 @@ void DialogRefineUnitCell::createOffsetTables()
         item3->setChecked(false);
         ui->tableWidget_Detector->setCellWidget(i, 3, item3);
     }   
+}
+
+void DialogRefineUnitCell::updatePlot()
+{
+    QVector<double> frames;
+    QVector<double> dh;
+    QVector<double> dk;
+    QVector<double> dl;
+
+    for (auto peak: _peaks) {
+        double f = peak->getShape().center()[2];
+        Eigen::RowVector3d q = peak->getQ();
+        Eigen::RowVector3d hkl, dhkl;
+
+        if (peak->getMillerIndices(hkl)) {
+            dhkl = hkl - q*peak->getActiveUnitCell()->basis();
+            frames.push_back(f);
+            dh.push_back(dhkl(0));
+            dk.push_back(dhkl(1));
+            dl.push_back(dhkl(2));
+        }
+    }
+
+    ui->plotWidget->graph(0)->setData(frames, dh);
+    ui->plotWidget->graph(1)->setData(frames, dk);
+    ui->plotWidget->graph(2)->setData(frames, dl);
 }

@@ -146,7 +146,7 @@ void AutoIndexer::computeFFTSolutions()
                 A.col(1) = tvects[j]._vect;
                 A.col(2) = tvects[k]._vect;
                 // Build a unit cell with direct vectors
-                auto cell = std::shared_ptr<UnitCell>(new UnitCell(A,false));
+                auto cell = std::shared_ptr<UnitCell>(new UnitCell(A));
 
                 // If the unit cell volume is below the user-defined minimum volume, skip it
                 if (cell->volume() < _params.minUnitCellVolume) {

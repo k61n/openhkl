@@ -32,6 +32,7 @@ private slots:
 private:
     void createOffsetTables();
     void updateParameters();
+    void updatePlot();
 
     nsx::UBSolution _initialValues;
     nsx::UBSolution _currentValues;
