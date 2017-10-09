@@ -388,7 +388,7 @@ UnitCell UnitCell::applyNiggliConstraints() const
     // check if the new UC is close to the old one
     const double delta = (new_uc.reciprocalBasis()-_B).norm() / _B.norm();
 
-    if (delta < 1e-3) {
+    if (delta < 0.1) {
         return new_uc;
     } 
     throw std::runtime_error("ERROR: could not apply symmetry constraints to unit cell");
