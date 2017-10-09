@@ -307,25 +307,44 @@ void DialogRefineUnitCell::createOffsetTables()
 void DialogRefineUnitCell::updatePlot()
 {
     QVector<double> frames;
-    QVector<double> dh;
-    QVector<double> dk;
-    QVector<double> dl;
+    QVector<double> d[3];
+    QPen pens[3] = { QPen(QColor(255, 0, 0)), QPen(QColor(0, 255, 0)), QPen(QColor(0, 0, 255))};
+    double ymin, ymax;
+    double fmin, fmax;
+
+    fmin = 1e100;
+    fmax = -1e100;
+    ymin = 1e100;
+    ymax = -1e100;
 
     for (auto peak: _peaks) {
         double f = peak->getShape().center()[2];
         Eigen::RowVector3d q = peak->getQ();
         Eigen::RowVector3d hkl, dhkl;
+        fmin = std::min(f, fmin);
+        fmax = std::max(f, fmax);
 
         if (peak->getMillerIndices(hkl)) {
             dhkl = hkl - q*peak->getActiveUnitCell()->basis();
             frames.push_back(f);
-            dh.push_back(dhkl(0));
-            dk.push_back(dhkl(1));
-            dl.push_back(dhkl(2));
+
+            for (auto i = 0; i < 3; ++i) {
+                d[i].push_back(dhkl(i));
+                ymin = std::min(ymin, dhkl(i));
+                ymax = std::max(ymax, dhkl(i));
+            }
         }
     }
 
-    ui->plotWidget->graph(0)->setData(frames, dh);
-    ui->plotWidget->graph(1)->setData(frames, dk);
-    ui->plotWidget->graph(2)->setData(frames, dl);
+    for (auto i = 0; i < 3; ++i) {
+        ui->plotWidget->graph(i)->setData(frames, d[i]);
+        ui->plotWidget->graph(i)->setPen(pens[i]);
+        ui->plotWidget->graph(i)->setLineStyle(QCPGraph::lsNone);
+        ui->plotWidget->graph(i)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 4));
+    }
+
+    ui->plotWidget->xAxis->setLabel("frame number");
+    ui->plotWidget->yAxis->setLabel("index error");
+    ui->plotWidget->xAxis->setRange(fmin, fmax);
+    ui->plotWidget->yAxis->setRange(ymin, ymax);
 }
