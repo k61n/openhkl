@@ -25,14 +25,14 @@ ENV MAKEFLAGS=-j8
 
 # CMake > 3.0 necessary for finding Python3 properly
 WORKDIR /tmp
-ADD ../deps/cmake-3.9.4.tar.gz .
+ADD ./deps/cmake-3.9.4.tar.gz .
 WORKDIR /tmp/cmake-3.9.4
 RUN ./configure --prefix=/usr/local && make && make install
 WORKDIR /tmp/
 RUN rm -rf cmake-3.9.4
 
 # NSXTool requires boost > 1.54 for building
-ADD ../deps/boost_1_59_0.tar.gz .
+ADD ./deps/boost_1_59_0.tar.gz .
 WORKDIR /tmp/boost_1_59_0
 RUN ./bootstrap.sh --with-libraries=date_time,test,filesystem --prefix=/usr/local && ./b2 && ./b2 install
 WORKDIR /tmp/
@@ -40,7 +40,7 @@ RUN rm -rf boost_1_59_0
 
 # Swig > 3.0.10 necessary for building
 WORKDIR /tmp
-ADD ../deps/swig-3.0.12.tar.gz .
+ADD ./deps/swig-3.0.12.tar.gz .
 WORKDIR /tmp/swig-3.0.12
 RUN ./configure --prefix=/usr/local && make && make install
 WORKDIR /tmp/
