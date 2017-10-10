@@ -15,7 +15,6 @@ RUN dnf install -y git                    \
                    yaml-cpp-devel         \
                    ninja-build            \
                    swig                   \
-                   swig                   \
  && dnf clean all
 
 # NSXTool requires boost > 1.54 for building (fPIC are used to insure boost static binding to nsx dynamic library)

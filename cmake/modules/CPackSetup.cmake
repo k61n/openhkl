@@ -34,11 +34,10 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         if (DPKG_CMD)
             # automatically generate dependencies
             set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-            set(CPACK_DEBIAN_PACKAGE_RELEASE 1)
             set(CPACK_DEBIAN_PACKAGE_MAINTAINER Eric Pellegrini <pellegrini@ill.fr>)
             set(CPACK_GENERATOR "DEB")
-            execute_process(COMMAND ${DPKG_CMD} --print-architecture OUTPUT_VARIABLE CPACK_DEBIAN_PACKAGE_ARCHITECTURE OUTPUT_STRIP_TRAILING_WHITESPACE)
-            set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}_${CPACK_PACKAGE_VERSION}-${CPACK_DEBIAN_PACKAGE_RELEASE}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
+            execute_process(COMMAND arch OUTPUT_VARIABLE CPACK_DEBIAN_PACKAGE_ARCHITECTURE OUTPUT_STRIP_TRAILING_WHITESPACE)
+            set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
 
             if (DEFINED NIGHTLY_BUILD)
                 set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_FILE_NAME}-nightly")
@@ -66,23 +65,11 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
             set(CPACK_GENERATOR "RPM")
             set(CPACK_RPM_PACKAGE_ARCHITECTURE "${CMAKE_SYSTEM_PROCESSOR}")
             set(CPACK_RPM_PACKAGE_URL "http://www.code.ill.fr/scientific-software/nsxtool.git")
-        
-            # reset the release name to include the RHEL version if known
-            if ("${LINUX_DISTRO}" MATCHES "RedHatEnterprise")
-                string(REGEX REPLACE "^([0-9])\\.[0-9]+$" "\\1" TEMP ${UNIX_RELEASE})
-                set(CPACK_RPM_PACKAGE_RELEASE "1.el${TEMP}")
-            elseif ("${UNIX_DIST}" MATCHES "Fedora")
-                set(CPACK_RPM_PACKAGE_RELEASE "1.fc${UNIX_RELEASE}")
-            endif ()
-            
-            # If CPACK_SET_DESTDIR is ON then the Prefix doesn't get put in the spec file
-            if (CPACK_SET_DESTDIR)
-                message ("Adding \"Prefix:\" line to spec file manually when CPACK_SET_DESTDIR is set")
-                set(CPACK_RPM_SPEC_MORE_DEFINE "Prefix: ${CPACK_PACKAGING_INSTALL_PREFIX}")
-            endif()
+                    
+            execute_process(COMMAND arch OUTPUT_VARIABLE CPACK_RPM_PACKAGE_ARCHITECTURE OUTPUT_STRIP_TRAILING_WHITESPACE)
         
             # according to rpm.org: name-version-release.architecture.rpm
-            set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_RPM_PACKAGE_RELEASE}.${CPACK_RPM_PACKAGE_ARCHITECTURE}")
+            set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_RPM_PACKAGE_ARCHITECTURE}")
 
         else(RPMBUILD_CMD)
             message(ERROR " rpmbuild command not found")
