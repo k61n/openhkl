@@ -2,7 +2,7 @@ FROM eurydice76/nsxtool:setup-fedora-25
 
 WORKDIR /tmp
 
-RUN GIT_SSL_NO_VERIFY=true git clone -b develop https://code.ill.fr/scientific-software/nsxtool.git
+RUN GIT_SSL_NO_VERIFY=true git clone -b feature/docker-support https://code.ill.fr/scientific-software/nsxtool.git
 
 WORKDIR /tmp/nsxtool/build
 
