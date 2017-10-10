@@ -8,9 +8,6 @@ RUN apt-get update \
        git \
        g++ \
        ninja-build \
-       libboost-date-time-dev \
-       libboost-filesystem-dev \
-       libboost-test-dev\
        libeigen3-dev \
        libhdf5-dev \
        libtiff5-dev \
@@ -25,10 +22,18 @@ RUN apt-get update \
     && apt-get autoclean \
     && apt-get autoremove
 
+# Swig > 3.0.10 necessary for building
 WORKDIR /tmp
 ADD ./deps/swig-3.0.12.tar.gz .
 WORKDIR /tmp/swig-3.0.12
 RUN ./configure --prefix=/usr/local && make && make install
 WORKDIR /tmp/
 RUN rm -rf swig-3.0.12
+
+# NSXTool requires boost > 1.54 for building (fPIC are used to insure boost static binding to nsx dynamic library)
+ADD ./deps/boost_1_59_0.tar.gz .
+WORKDIR /tmp/boost_1_59_0
+RUN ./bootstrap.sh --with-libraries=date_time,test,filesystem --prefix=/usr/local && ./b2 cxxflags=-fPIC cflags=-fPIC && ./b2 install
+WORKDIR /tmp/
+RUN rm -rf boost_1_59_0
 

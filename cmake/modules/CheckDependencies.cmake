@@ -1,10 +1,10 @@
 ###### Find boost libraries  ##############
+set(Boost_USE_STATIC_LIBS ON)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME ON)
 find_package(Boost 1.54.0 COMPONENTS date_time system filesystem REQUIRED)
 if(Boost_FOUND)
     include_directories(SYSTEM "${Boost_INCLUDE_DIRS}")
-    set(Boost_USE_STATIC_LIBS OFF)
-    set(Boost_USE_MULTITHREADED ON)
-    set(Boost_USE_STATIC_RUNTIME OFF)
     message(STATUS "Found boost: " ${Boost_INCLUDE_DIRS})
     message(STATUS "Boost" ${Boost_LIBRARIES})
 elseif(NOT Boost_FOUND)

@@ -19,6 +19,8 @@ RUN yum install -y git                    \
                    which                  \
                    pcre-devel             \
                    ninja-build            \
+                   redhat-lsb-core        \
+                   rpm-build              \
  && yum clean all
 
 ENV MAKEFLAGS=-j8
@@ -31,10 +33,10 @@ RUN ./configure --prefix=/usr/local && make && make install
 WORKDIR /tmp/
 RUN rm -rf cmake-3.9.4
 
-# NSXTool requires boost > 1.54 for building
+# NSXTool requires boost > 1.54 for building (fPIC are used to insure boost static binding to nsx dynamic library)
 ADD ./deps/boost_1_59_0.tar.gz .
 WORKDIR /tmp/boost_1_59_0
-RUN ./bootstrap.sh --with-libraries=date_time,test,filesystem --prefix=/usr/local && ./b2 && ./b2 install
+RUN ./bootstrap.sh --with-libraries=date_time,test,filesystem --prefix=/usr/local && ./b2 cxxflags=-fPIC cflags=-fPIC && ./b2 install
 WORKDIR /tmp/
 RUN rm -rf boost_1_59_0
 

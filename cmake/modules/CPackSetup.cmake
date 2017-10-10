@@ -45,7 +45,7 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
             endif(DEFINED NIGHTLY_BUILD)
 
         else(DPKG_CMD)
-            message(ERROR "dpkg command not installed")
+            message(ERROR " dpkg command not found")
         endif(DPKG_CMD) 
     endif()
 
@@ -84,7 +84,9 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
             # according to rpm.org: name-version-release.architecture.rpm
             set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_RPM_PACKAGE_RELEASE}.${CPACK_RPM_PACKAGE_ARCHITECTURE}")
 
-        endif()
+        else(RPMBUILD_CMD)
+            message(ERROR " rpmbuild command not found")
+        endif(RPMBUILD_CMD)
 
     endif ()
 

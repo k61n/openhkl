@@ -17,7 +17,9 @@ RUN yum install -y git                    \
                    which                  \
                    pcre-devel             \
                    zlib-devel             \
-                   unzip
+                   unzip                  \
+                   redhat-lsb-core        \
+                   rpm-build
 
 # Recipe for getting newer g++ than the 4.4 provided by centos6
 RUN yum install -y centos-release-scl          \
@@ -50,10 +52,10 @@ RUN cmake -DBUILD_SHARED_LIBS=ON .. && make && make install
 WORKDIR /tmp/
 RUN rm -rf yaml-cpp-master && rm yaml-cpp-master.zip
 
-# NSXTool requite boost > 1.54 for building
+# NSXTool requires boost > 1.54 for building (fPIC are used to insure boost static binding to nsx dynamic library)
 ADD ./deps/boost_1_59_0.tar.gz .
 WORKDIR /tmp/boost_1_59_0
-RUN ./bootstrap.sh --with-libraries=date_time,test,filesystem --prefix=/usr/local && ./b2 && ./b2 install
+RUN ./bootstrap.sh --with-libraries=date_time,test,filesystem --prefix=/usr/local && ./b2 cxxflags=-fPIC cflags=-fPIC && ./b2 install
 WORKDIR /tmp/
 RUN rm -rf boost_1_59_0
 
