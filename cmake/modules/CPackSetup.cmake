@@ -52,6 +52,7 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     if ("${LINUX_DISTRO}" MATCHES "RedHatEnterprise" 
      OR "${LINUX_DISTRO}" MATCHES "Fedora" 
      OR "${LINUX_DISTRO}" MATCHES "SUSE LINUX"
+     OR "${LINUX_DISTRO}" MATCHES "openSUSE project"
      OR "${LINUX_DISTRO}" MATCHES "CentOS")
 
         find_program(RPMBUILD_CMD rpmbuild)

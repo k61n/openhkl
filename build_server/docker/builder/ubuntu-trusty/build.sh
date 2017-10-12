@@ -7,7 +7,7 @@ docker build --force-rm -t nsxtool .
 id=`docker run -d -t nsxtool`
 
 # cp the build artefact from the container to host
-docker cp $id:/tmp/nsxtool-1.0.0-x86_64.deb .
+docker cp $id:/tmp/nsxtool-1.0-x86_64.deb .
 
 # kill the nsxtool daemon container
 docker kill $id
