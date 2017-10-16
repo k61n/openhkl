@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # build the nsxtool image
-docker build --force-rm -t nsxtool .
+docker build --force-rm --build-arg NSX_GIT_BRANCH=$1 -t nsxtool .
 
 # run the nsxtool container
 id=`docker run -d -t nsxtool`

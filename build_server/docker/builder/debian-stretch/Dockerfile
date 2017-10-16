@@ -21,6 +21,8 @@ RUN cmake -G "Ninja" -DBUILD_PACKAGE=ON -DCMAKE_INSTALL_PREFIX=/usr .. && cmake 
 
 # Move the generated package to /tmp and remove nsxtool sources
 WORKDIR /tmp
-RUN mv nsxtool/build/nsxtool*deb . && rm -rf nsxtool
+RUN mv nsxtool/build/nsxtool*deb . \
+ && tar cvzf build-artefacts.tar.gz *.deb \
+ && rm -rf nsxtool
 
 

@@ -16,6 +16,7 @@ RUN apt-get update                             \
     libfftw3-dev                               \
     qtbase5-dev                                \
     libqt5opengl5-dev                          \
+    qt5-default                                \
     python3-dev                                \
     python3-numpy                              \
     libyaml-cpp-dev                            \
@@ -23,6 +24,7 @@ RUN apt-get update                             \
     file                                       \
     dpkg-dev                                   \
     make                                       \
+    lsb-release                                \
  && apt-get autoclean                          \
  && apt-get autoremove
 
