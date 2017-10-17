@@ -15,10 +15,12 @@ RUN apt-get update \
        libgsl-dev \
        qtbase5-dev \
        libqt5opengl5-dev \
+       qt5-default \
        python3-dev \
        python3-numpy \
        libyaml-cpp-dev \
        libpcre++-dev \
+       lsb-release \
     && apt-get autoclean \
     && apt-get autoremove
 

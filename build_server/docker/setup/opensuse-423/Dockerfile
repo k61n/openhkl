@@ -12,8 +12,10 @@ RUN zypper --non-interactive install git                 \
                                      libqt5-qtbase-devel \
                                      python3-devel       \
                                      python3-numpy       \
+                                     python3-numpy-devel \
                                      yaml-cpp-devel      \
                                      pcre-devel          \
+                                     zlib-devel          \
                                      ninja               \
                                      lsb5-core           \
                                      rpm-build           \
