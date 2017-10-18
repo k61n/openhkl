@@ -41,20 +41,16 @@
 
 namespace nsx {
 
-DetectorEvent::DetectorEvent():
-    _detector(), _x(), _y(), _t(), _values()
-{
 
-}
 
 
 DetectorEvent::DetectorEvent(const Detector* detector, double x, double y, double t, std::vector<double> values):
-    _detector(detector), _x(x), _y(y), _t(t), _values(std::move(values))
+    _detector(detector), _x(x), _y(y), _t(t)
 {
 
 }
 
-DetectorEvent::DetectorEvent(const DetectorEvent& rhs):_detector(rhs._detector),_x(rhs._x),_y(rhs._y), _t(rhs._t), _values(rhs._values)
+DetectorEvent::DetectorEvent(const DetectorEvent& rhs):_detector(rhs._detector),_x(rhs._x),_y(rhs._y), _t(rhs._t)
 {
 
 }
@@ -63,8 +59,7 @@ DetectorEvent::DetectorEvent(DetectorEvent&& other):
     _detector(other._detector),
     _x(other._x),
     _y(other._y),
-    _t(other._t),
-    _values(std::move(other._values))
+    _t(other._t)
 {
 
 }
@@ -75,7 +70,6 @@ DetectorEvent& DetectorEvent::operator=(const DetectorEvent& rhs)
     _x = rhs._x;
     _y = rhs._y;
     _t = rhs._t;
-    _values = rhs._values;
     return *this;
 }
 
@@ -83,57 +77,6 @@ DetectorEvent::~DetectorEvent()
 {
 }
 
-double DetectorEvent::get2Theta(const Eigen::Vector3d& si) const
-{
-    Eigen::Vector3d p = getPixelPosition();
-    double proj = p.dot(si);
-    return acos(proj/p.norm()/si.norm());
-}
-
-Eigen::Vector3d DetectorEvent::getKf(double wave, const Eigen::Vector3d& from) const
-{
-    // Get the event position x,y,z, taking into account the Gonio current setting
-    Eigen::Vector3d p = getPixelPosition();
-    p-=from;
-    p.normalize();
-    return (p/wave);
-}
-
-Eigen::Vector3d DetectorEvent::getQ(double wave, const Eigen::Vector3d& from) const
-{
-    if (wave<=0) {
-        throw std::runtime_error("Detector:getQ incident wavelength error, must be >0");
-    }
-    Eigen::Vector3d q = getKf(wave, from);
-    q[1]-=1.0/wave;
-    return q;
-}
-
-void DetectorEvent::getGammaNu(double& gamma, double& nu, const Eigen::Vector3d& from) const
-{
-    Eigen::Vector3d p = getPixelPosition()-from;
-    gamma=std::atan2(p[0],p[1]);
-    nu=std::asin(p[2]/p.norm());
-}
-
-Eigen::Vector3d DetectorEvent::getPixelPosition() const
-{
-    Eigen::Vector3d v = _detector->getPos(_x, _y);
-    auto gonio = _detector->getGonio();
-
-    // No gonio and no values set
-    if (gonio == nullptr) {
-        if ( _values.size()) {
-            throw std::runtime_error("Trying to assign a DetectorEvent with values to a Component with no Goniometer");
-        }
-        return v;
-    }
-    if (gonio->getNPhysicalAxes() != _values.size()) {
-        throw std::runtime_error("Trying to assign a DetectorEvent with wrong number of values");
-    }
-    gonio->transformInPlace(v, _values);
-    return v;
-}
 
   Eigen::Vector3d DetectorEvent::detectorPosition() const
   {

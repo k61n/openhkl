@@ -65,6 +65,7 @@ public:
     //! Destructor
     ~DetectorEvent();
 
+    #if 0
     /**
      *  @brief Get 2\f$ \theta \f$
      *  @param px horizontal position of the scattering event in pixels unit
@@ -97,14 +98,7 @@ public:
       */
      void getGammaNu(double& gamma, double& nu,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
 
-     /**
-      *  @brief Get the position of the scattering event.
-      *  @param px horizontal position of the scattering event in pixels unit
-      *  @param py vertical position of the scattering event in pixels units
-      *  @return spatial position of this event
-      */
-     Eigen::Vector3d getPixelPosition() const;
-
+   #endif
      //! Return the position on the detector (x, y, frame)
      Eigen::Vector3d detectorPosition() const;
 
@@ -115,8 +109,6 @@ private:
     const Detector* _detector;
     //! Position of the event on the detector
     double _x, _y, _t;
-    //! Setup of the detector Gonio
-    std::vector<double> _values;
 };
 
 } // end namespace nsx

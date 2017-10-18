@@ -41,6 +41,16 @@ public:
     //! Print information about a DirectVector to a stream
     void print(std::ostream& os) const;
 
+    double get2Theta(const Eigen::Vector3d& si) const;
+    
+    Eigen::Vector3d getKf(double wave, const Eigen::Vector3d& from) const;
+    
+    Eigen::Vector3d getQ(double wave, const Eigen::Vector3d& from) const;
+    
+    void getGammaNu(double& gamma, double& nu, const Eigen::Vector3d& from) const;
+
+    double getLorentzFactor(const Eigen::Vector3d& from) const;
+    
 private:
     Eigen::Vector3d _dvector;
 };

@@ -39,6 +39,7 @@
 #include "../crystal/CrystalTypes.h"
 #include "../data/DataTypes.h"
 #include "../data/FrameInterval.h"
+#include "../geometry/DirectVector.h"
 #include "../geometry/GeometryTypes.h"
 #include "../geometry/IMask.h"
 #include "../instrument/InstrumentTypes.h"
@@ -165,6 +166,10 @@ public:
 
     //! Get the q vector corresponding to a detector pixel
     Eigen::Vector3d getQ(const Eigen::Vector3d& pix) const;
+
+    //! Return real (lab) space position of the detector event p = (x, y, frame)
+    DirectVector getPixelPosition(const Eigen::Vector3d& p) const;
+      
 
 protected:
     bool _isOpened;

@@ -297,13 +297,6 @@ void Peak3D::scaleShape(double scale)
     _shape.scale(scale);
 }
 
-double Peak3D::getLorentzFactor() const
-{
-    double gamma,nu;
-    this->getGammaNu(gamma,nu);
-    double lorentz = 1.0/(sin(std::fabs(gamma))*cos(nu));
-    return lorentz;
-}
 
 double Peak3D::getScale() const
 {
@@ -324,58 +317,6 @@ void Peak3D::setScale(double factor)
 void Peak3D::setTransmission(double transmission)
 {
     _transmission = transmission;
-}
-
-const ComponentState& Peak3D::getSampleState()
-{
-    assert(_sampleState != nullptr);
-    return *_sampleState;
-}
-
-Eigen::RowVector3d Peak3D::getKf() const
-{
-    assert(_source != nullptr);
-    assert(_sampleState != nullptr);
-    double wavelength = _source->getSelectedMonochromator().getWavelength();
-    Eigen::Vector3d kf = _event->getKf(wavelength, _sampleState->getPosition());
-    return kf;
-}
-
-Eigen::RowVector3d Peak3D::getQ() const
-{
-    assert(_source != nullptr);
-
-    double wavelength = _source->getSelectedMonochromator().getWavelength();
-
-    // If sample state is not set, assume sample is at the origin
-    if (!_sampleState) {
-        return _event->getQ(wavelength);
-    }
-
-    // otherwise scattering point is deducted from the sample
-    Eigen::Vector3d q = _event->getQ(wavelength, _sampleState->getPosition());
-    return _sampleState->transformQ(q);
-}
-
-void Peak3D::setSampleState(const ComponentState& sstate)
-{
-    _sampleState = uptrComponentState(new ComponentState(sstate));
-}
-
-void Peak3D::setDetectorEvent(const DetectorEvent& event)
-{
-    _event = uptrDetectorEvent(new DetectorEvent(event));
-}
-
-void Peak3D::setSource(const sptrSource& source)
-{
-    _source = source;
-}
-
-void Peak3D::getGammaNu(double& gamma,double& nu) const
-{
-    assert(_sampleState != nullptr);
-    _event->getGammaNu(gamma,nu,_sampleState->getPosition());
 }
 
 bool operator<(const Peak3D& p1, const Peak3D& p2)

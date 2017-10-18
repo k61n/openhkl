@@ -788,25 +788,27 @@ double DataSet::getSampleStepSize() const
 Eigen::Vector3d DataSet::getQ(const Eigen::Vector3d& pix) const
 {
     auto source = _diffractometer->getSource();
-    auto sample = _diffractometer->getSample();
-
-    double frame = pix[2];
-
-    if (frame > getNFrames()-1) {
-        frame = getNFrames()-1;
-    }
-    if (frame < 0) {
-        frame = 0.0;
-    }
-
     double wavelength = source->getSelectedMonochromator().getWavelength();
-    auto state = getInterpolatedState(frame);
-
-    DetectorEvent event(_diffractometer->getDetector().get(), pix[0], pix[1], frame, state.detector.getValues());
-
-    // otherwise scattering point is deducted from the sample
-    Eigen::Vector3d q = event.getQ(wavelength, state.sample.getPosition());
+    auto state = getInterpolatedState(pix[2]);
+    Eigen::Vector3d q = getPixelPosition(pix).getQ(wavelength, state.sample.getPosition());
     return state.sample.transformQ(q);
+}
+
+//! Return real (lab) space position of the detector event p = (x, y, frame)
+DirectVector DataSet::getPixelPosition(const Eigen::Vector3d& p) const
+{
+    auto detector = _diffractometer->getDetector();
+    Eigen::Vector3d v = detector->getPos(p(0), p(1));
+    auto gonio = detector->getGonio();
+
+    // No gonio and no values set
+    if (gonio == nullptr) {
+        return DirectVector(v);
+    }
+
+    InstrumentState state = getInterpolatedState(p(2));
+    gonio->transformInPlace(v, state.detector.getValues());
+    return DirectVector(v);
 }
 
 } // end namespace nsx
