@@ -21,6 +21,7 @@
 #include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/Gonio.h"
+#include "../instrument/InstrumentState.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
 #include "../utils/Units.h"
@@ -180,11 +181,10 @@ bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, do
         Blob3D blob;
 
         std::vector<int> countsPerFrame(d->getNFrames(),0);
-        for (unsigned int z=0; z<d->getNFrames(); ++z)
-        {
-            ComponentState sampleState=d->getSampleState(z);
-
-            ComponentState detectorState=d->getDetectorState(z);
+        for (unsigned int z=0; z<d->getNFrames(); ++z) {
+            InstrumentState state = d->getInterpolatedState(z);
+            ComponentState sampleState = state.sample;
+            ComponentState detectorState = state.detector;
 
             //Eigen::Matrix3d omchiphi = sampleState.getParent()->getGonio()->getHomMatrix(sampleState.getValues()).rotation();
             Eigen::Matrix3d omchiphi = d->getDiffractometer()->getSample()->getGonio()->getHomMatrix(sampleState.getValues()).rotation();

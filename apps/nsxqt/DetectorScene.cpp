@@ -19,6 +19,7 @@
 #include <nsxlib/instrument/DetectorEvent.h>
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Gonio.h>
+#include <nsxlib/instrument/InstrumentState.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
 #include <nsxlib/logger/Logger.h>
@@ -461,10 +462,12 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     if (col<0 || col>ncols-1 || row<0 || row>nrows-1) {
         return;
     }
-    int intensity=_currentFrame(row,col);
+    int intensity = _currentFrame(row,col);
 
-    const auto& samplev=_currentData->getSampleState(_currentFrameIndex).getValues();
-    const auto& detectorv=_currentData->getDetectorState(_currentFrameIndex).getValues();
+    nsx::InstrumentState state = _currentData->getInterpolatedState(_currentFrameIndex);
+
+    const auto& samplev = state.sample.getValues();
+    const auto& detectorv = state.detector.getValues();
     auto sample=instr->getSample();
     auto& mono = instr->getSource()->getSelectedMonochromator();
     double wave=mono.getWavelength();

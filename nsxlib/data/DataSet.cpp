@@ -186,31 +186,6 @@ InstrumentState DataSet::getInterpolatedState(double frame) const
     return prevState.interpolate(nextState, t);
 }
 
-const ComponentState& DataSet::getDetectorState(size_t frame) const
-{
-    if (frame > (_states.size()-1)) {
-        throw std::runtime_error("Error when returning detector state: invalid frame value");
-    }
-    return _states[frame].detector;
-}
-
-const ComponentState& DataSet::getSampleState(size_t frame) const
-{
-    if (frame > (_states.size()-1)) {
-        throw std::runtime_error("Error when returning sample state: invalid frame value");
-    }
-    return _states[frame].sample;
-}
-
-const ComponentState& DataSet::getSourceState(size_t frame) const
-{
-    if (frame>(_states.size()-1)) {
-        throw std::runtime_error("Error when returning source state: invalid frame value");
-    }
-    return _states[frame].source;
-}
-
-
 const std::vector<InstrumentState>& DataSet::getInstrumentStates() const
 {
     return _states;
