@@ -18,8 +18,8 @@ int main()
     d.setNPixels(32,32);
 
     // This should be the center of the detector at rest at (0,0.764,0)
-    nsx::DetectorEvent ev(&d, 15.5, 15.5, 0.0, {});
-    Eigen::Vector3d center=ev.getPixelPosition();
+    //nsx::DetectorEvent ev(&d, 15.5, 15.5, 0.0, {});
+    Eigen::Vector3d center = d.getPos(15.5, 15.5);
     NSX_CHECK_SMALL(center[0],tolerance);
     NSX_CHECK_CLOSE(center[1],0.380,tolerance);
     NSX_CHECK_SMALL(center[2],tolerance);

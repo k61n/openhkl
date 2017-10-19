@@ -408,112 +408,6 @@ void DataSet::maskPeak(sptrPeak3D peak) const
     }
 }
 
-PeakList DataSet::hasPeaks(const std::vector<Eigen::RowVector3d>& hkls, const Eigen::Matrix3d& BU)
-{
-    std::vector<Eigen::RowVector3d> qs;
-
-    for (auto hkl: hkls) {
-        qs.emplace_back(hkl*BU);
-    }
-
-    std::vector<DetectorEvent> events = getEvents(qs);
-    PeakList peaks;
-    auto detector = getDiffractometer()->getDetector();
-
-    Eigen::Matrix3d BUI = BU.inverse();
-
-    for (auto event: events) {
-        Eigen::Vector3d p = event.detectorPosition();
-        Eigen::RowVector3d hkl = getQ(p).transpose() * BUI;
-
-        sptrPeak3D peak(new Peak3D);
-        // this sets the center of the ellipse with a dummy value for radius
-        peak->setShape(Ellipsoid(p, 1.0));
-        peaks.emplace_back(peak);
-    }
-
-    return peaks;
-}
-
-std::vector<DetectorEvent> DataSet::getEvents(const std::vector<Eigen::RowVector3d>& qs) const
-{
-    std::vector<DetectorEvent> events;
-    unsigned int scanSize = static_cast<unsigned int>(_states.size());
-
-    auto detector = getDiffractometer()->getDetector();
-    auto& mono = _diffractometer->getSource()->getSelectedMonochromator();
-
-    const Eigen::RowVector3d ki = mono.getKi().transpose();
-    std::vector<Eigen::Matrix3d> rotMatrices;
-    rotMatrices.reserve(scanSize);
-    auto gonio = _diffractometer->getSample()->getGonio();
-    double wavelength_2 = -0.5 * mono.getWavelength();
-
-    for (unsigned int s=0; s<scanSize; ++s) {
-        // todo: do we need to transpose here??
-        rotMatrices.push_back(gonio->getHomMatrix(_states[s].sample.getValues()).rotation().transpose());
-    } 
-
-    for (const Eigen::RowVector3d& q: qs) {
-        bool sign = (q*rotMatrices[0] + ki).squaredNorm() > ki.squaredNorm();
-
-        for (int i = 1; i < scanSize; ++i) {
-            const Eigen::RowVector3d kf = q*rotMatrices[i] + ki;
-            const bool new_sign = kf.squaredNorm() > ki.squaredNorm();
-
-            if (sign != new_sign) {
-                sign = new_sign;
-
-                const Eigen::RowVector3d kf0 = q*rotMatrices[i-1] + ki;
-                const Eigen::RowVector3d kf1 = q*rotMatrices[i] + ki;
-                //const Eigen::RowVector3d dkf = kf1-kf0;
-                const Eigen::RowVector3d dkf = q*(rotMatrices[i]-rotMatrices[i-1]);
-        
-                const double a = dkf.squaredNorm();
-                const double b = 2 * kf0.dot(dkf);
-                const double c = kf0.squaredNorm() - ki.squaredNorm();
-                const double discr = b*b - 4*a*c;
-        
-                double t = 0.5;
-                const int max_count = 100;
-                Eigen::RowVector3d kf;
-                
-                for (int c = 0; c < max_count; ++c) {
-                    kf = (1-t)*kf0 + t*kf1;
-                    const double f = kf.squaredNorm() - ki.squaredNorm();
-                    
-                    if (std::fabs(f) < 1e-10) {
-                        break;
-                    }
-                    const double df = 2*dkf.dot(kf);
-                    t -= f/df;
-                }
-        
-                if (c == max_count || t < 0.0 || t > 1.0) {
-                    continue;
-                }
-        
-                t += i-1;
-                const InstrumentState& state = getInterpolatedState(t);
-        
-                //const ComponentState& dis = state.detector;
-                double px,py;
-                // If hit detector, new peak
-                //const ComponentState& cs=state.sample;
-                Eigen::Vector3d from=_diffractometer->getSample()->getPosition(state.sample.getValues());
-        
-                double time;
-                bool accept=_diffractometer->getDetector()->receiveKf(px,py,kf,from,time,state.detector.getValues());
-        
-                if (accept) {
-                    events.emplace_back(detector.get(), px, py, t, state.detector.getValues());
-                }
-            }
-        }        
-    }
-    return events;
-}
-
 double DataSet::getBackgroundLevel(const sptrProgressHandler& progress)
 {
     if ( _background > 0.0 ) {
@@ -703,9 +597,12 @@ void DataSet::integratePeaks(const PeakSet& peaks, double peak_scale, double bkg
             continue;
         }
 
-        peak->getMillerIndices(hkl_old);
+        auto cell = peak->getActiveUnitCell();
+        auto q = peak->getQ();
+
+        cell->getMillerIndices(q, hkl_old);
         peak->setShape(new_shape);
-        peak->getMillerIndices(hkl_new);
+        cell->getMillerIndices(q, hkl_new);
 
         // indices disagree
         if ( (hkl_old-hkl_new).squaredNorm() > 1e-6 ) {
@@ -743,7 +640,9 @@ void DataSet::removeDuplicatePeaks()
             Eigen::RowVector3d hkl;
             Eigen::RowVector3i hkl_int;
 
-            if (!peak->getMillerIndices(*cell, hkl)) {
+            auto q = peak->getQ();
+
+            if (!cell->getMillerIndices(q, hkl)) {
                 continue;
             }
 
@@ -783,32 +682,6 @@ double DataSet::getSampleStepSize() const
     step /= (numFrames-1) * 0.05 * deg;
 
     return step;
-}
-
-Eigen::Vector3d DataSet::getQ(const Eigen::Vector3d& pix) const
-{
-    auto source = _diffractometer->getSource();
-    double wavelength = source->getSelectedMonochromator().getWavelength();
-    auto state = getInterpolatedState(pix[2]);
-    Eigen::Vector3d q = getPixelPosition(pix).getQ(wavelength, state.sample.getPosition());
-    return state.sample.transformQ(q);
-}
-
-//! Return real (lab) space position of the detector event p = (x, y, frame)
-DirectVector DataSet::getPixelPosition(const Eigen::Vector3d& p) const
-{
-    auto detector = _diffractometer->getDetector();
-    Eigen::Vector3d v = detector->getPos(p(0), p(1));
-    auto gonio = detector->getGonio();
-
-    // No gonio and no values set
-    if (gonio == nullptr) {
-        return DirectVector(v);
-    }
-
-    InstrumentState state = getInterpolatedState(p(2));
-    gonio->transformInPlace(v, state.detector.getValues());
-    return DirectVector(v);
 }
 
 } // end namespace nsx

@@ -40,6 +40,7 @@
 #include "../data/DataTypes.h"
 #include "../data/FrameInterval.h"
 #include "../geometry/DirectVector.h"
+#include "../geometry/ReciprocalVector.h"
 #include "../geometry/GeometryTypes.h"
 #include "../geometry/IMask.h"
 #include "../instrument/InstrumentTypes.h"
@@ -145,14 +146,7 @@ public:
     //!
     std::size_t getFileSize() const;//
     void saveHDF5(const std::string& filename); // const;
-
-    //! Is the peak h,k,l in Bragg condition in this dataset. Return Peak pointer if true,
-    //! otherwise nullptr.
-    PeakList hasPeaks(const std::vector<Eigen::RowVector3d>& hkls,const Eigen::Matrix3d& UB);
     
-    //! Find the detector events corresponding to the given q vectors, if possible
-    std::vector<DetectorEvent> getEvents(const std::vector<Eigen::RowVector3d>& qs) const;
-
     //! Get background
     double getBackgroundLevel(const sptrProgressHandler& progress);
 
@@ -162,14 +156,7 @@ public:
     //! Remove duplicates
     void removeDuplicatePeaks();
 
-    double getSampleStepSize() const;
-
-    //! Get the q vector corresponding to a detector pixel
-    Eigen::Vector3d getQ(const Eigen::Vector3d& pix) const;
-
-    //! Return real (lab) space position of the detector event p = (x, y, frame)
-    DirectVector getPixelPosition(const Eigen::Vector3d& p) const;
-      
+    double getSampleStepSize() const;      
 
 protected:
     bool _isOpened;

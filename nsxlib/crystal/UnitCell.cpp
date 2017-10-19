@@ -394,9 +394,9 @@ UnitCell UnitCell::applyNiggliConstraints() const
     throw std::runtime_error("ERROR: could not apply symmetry constraints to unit cell");
 }
 
-Eigen::RowVector3d UnitCell::index(const Eigen::RowVector3d& q) const
+Eigen::RowVector3d UnitCell::index(const ReciprocalVector& q) const
 {
-    return q*_A;
+    return static_cast<const Eigen::RowVector3d&>(q)*_A;
 }
 
 Eigen::RowVector3d UnitCell::fromIndex(const Eigen::RowVector3d& hkl) const
@@ -732,5 +732,37 @@ void UnitCell::setParameterCovariance(const Eigen::MatrixXd& cov)
     _characterSigmas.beta = std::sqrt(abc_cov(4,4));
     _characterSigmas.gamma = std::sqrt(abc_cov(5,5));
 }
+
+
+bool UnitCell::getMillerIndices(const ReciprocalVector& q, Eigen::RowVector3d& hkl, bool applyUCTolerance) const
+{
+    hkl = index(q);
+
+    if (applyUCTolerance) {
+        double tolerance = getHKLTolerance();
+
+        if (std::fabs(hkl[0]-std::round(hkl[0])) < tolerance &&
+                std::fabs(hkl[1]-std::round(hkl[1])) < tolerance &&
+                std::fabs(hkl[2]-std::round(hkl[2])) < tolerance) {
+            hkl[0]=std::round(hkl[0]);
+            hkl[1]=std::round(hkl[1]);
+            hkl[2]=std::round(hkl[2]);
+            return true;
+        }
+        hkl = Eigen::Vector3d::Zero();
+        return false;
+    }
+    return true;
+}
+
+Eigen::RowVector3i UnitCell::getIntegerMillerIndices(const ReciprocalVector& q) const
+{
+    Eigen::RowVector3d hkld;
+    getMillerIndices(q, hkld, true);
+    Eigen::RowVector3i hkl;
+    hkl << int(std::lround(hkld[0])), int(std::lround(hkld[1])), int(std::lround(hkld[2]));
+    return hkl;
+}
+
 
 } // end namespace nsx

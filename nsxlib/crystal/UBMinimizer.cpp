@@ -7,6 +7,7 @@
 #include "../crystal/Peak3D.h"
 #include "../crystal/UBMinimizer.h"
 #include "../crystal/UBSolution.h"
+#include "../data/DataSet.h"
 #include "../instrument/Component.h"
 #include "../instrument/ComponentState.h"
 #include "../instrument/Detector.h"
@@ -45,7 +46,11 @@ int UBMinimizer::residuals(Eigen::VectorXd &fvec)
 
     //#pragma omp parallel for
     for (unsigned int i = 0; i < npeaks; ++i)	{
-        const Eigen::RowVector3d q0 = _peaks[i].first.getQ();
+        auto&& peak = _peaks[i].first;
+        auto cell = peak.getActiveUnitCell();
+        auto q = peak.getQ();
+
+        const Eigen::RowVector3d q0 = static_cast<const Eigen::RowVector3d&>(q);
         const Eigen::RowVector3d hkl = _peaks[i].second;
 
         const Eigen::RowVector3d q1 = hkl * UB;

@@ -41,7 +41,8 @@ void LatticeIndexer::updatePeaks()
        auto peaks=idata.second->getPeaks();
        for (auto peak: peaks) {
            GLSphere* sphere=new GLSphere("");
-           Eigen::Vector3d pos=peak->getQ();
+           auto q = peak->getQ();
+           Eigen::RowVector3d pos = static_cast<const Eigen::RowVector3d&>(q);
            sphere->setPos(pos[0],pos[1],pos[2]);
            sphere->setColor(0,1,0);
            sphere->setScale(0.02*min);

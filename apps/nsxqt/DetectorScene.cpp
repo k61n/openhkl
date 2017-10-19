@@ -474,21 +474,22 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
     QString ttip;
     double gamma, nu, th2;
+    auto ev = nsx::DetectorEvent(_currentData, col, row, _currentFrameIndex);
+    auto si = nsx::ReciprocalVector({0, 1.0, 0});
+    ev.getGammaNu(gamma, nu);
+    th2 = ev.get2Theta(si);
+
     switch (_cursorMode) {
     case PIXEL:
         ttip = QString("(%1,%2) I:%3").arg(col).arg(row).arg(intensity);
         break;
-    case GAMMA:
-        nsx::DetectorEvent(det.get(), col, row, _currentFrameIndex, detectorv).getGammaNu(gamma, nu, sample->getPosition(samplev));
+    case GAMMA:           
         ttip = QString("(%1,%2) I: %3").arg(gamma/nsx::deg).arg(nu/nsx::deg).arg(intensity);
         break;
-    case THETA:
-        th2 = nsx::DetectorEvent(det.get(), col, row, _currentFrameIndex, detectorv).get2Theta(Eigen::Vector3d(0, 1.0/wave, 0));
+    case THETA:      
         ttip = QString("(%1) I: %2").arg(th2/nsx::deg).arg(intensity);
         break;
     case DSPACING:
-        // th2 = det->get2Theta(col, row, detectorv, Eigen::Vector3d(0, 1.0/wave, 0));
-        th2 = nsx::DetectorEvent(det.get(), col, row, _currentFrameIndex, detectorv).get2Theta(Eigen::Vector3d(0, 1.0/wave, 0));
         ttip = QString("(%1) I: %2").arg(wave/(2*sin(0.5*th2))).arg(intensity);
         break;
     case HKL:

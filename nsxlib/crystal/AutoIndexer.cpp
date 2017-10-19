@@ -40,6 +40,7 @@
 #include "../crystal/Peak3D.h"
 #include "../crystal/UBMinimizer.h"
 #include "../crystal/UBSolution.h"
+#include "../data/DataSet.h"
 #include "../instrument/Detector.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/Experiment.h"
@@ -53,22 +54,15 @@ namespace nsx {
 
  
 AutoIndexer::AutoIndexer(const std::shared_ptr<ProgressHandler>& handler):
-    _peaks(),
+    _datasets(),
     _solutions(),
     _handler(handler)
 {
 }
 
-bool AutoIndexer::autoIndex(const IndexerParameters& params)
+void AutoIndexer::autoIndex(const IndexerParameters& params)
 {
     _params = params;
-    // Check that a minimum number of peaks have been selected for indexing
-    if (_peaks.size() < 10) {
-        if (_handler) {
-            _handler->log("AutoIndexer: too few peaks to index!");
-        }
-        return false;
-    }
         
     // Find the Q-space directions along which the projection of the the Q-vectors shows the highest periodicity
     computeFFTSolutions();
@@ -87,13 +81,6 @@ bool AutoIndexer::autoIndex(const IndexerParameters& params)
 
     // finally, rank the solutions
     rankSolutions();
-
-    return true;
-}
-
-void AutoIndexer::addPeak(const sptrPeak3D &peak)
-{
-    _peaks.emplace_back(peak);
 }
 
 void AutoIndexer::removeBad(double quality)
@@ -111,20 +98,29 @@ const std::vector<std::pair<sptrUnitCell, double> > &AutoIndexer::getSolutions()
 void AutoIndexer::computeFFTSolutions()
 {
     _solutions.clear();
-    const int npeaks = _peaks.size();
-    
-    if (_handler) {
-        _handler->log("Searching direct lattice vectors using" + std::to_string(npeaks) + "peaks defined on numors:");
-    }
-    
+        
     // Store the q-vectors of the peaks for auto-indexing
-    std::vector<Eigen::Vector3d> qvects;
-    qvects.reserve(npeaks);
-    for (auto peak : _peaks) {
-        // Keep only the peak that have selected and that are not masked
-        if (peak->isSelected() && !peak->isMasked()) {
-            qvects.push_back(peak->getQ());
+    std::vector<Eigen::RowVector3d> qvects;
+
+    for (auto data: _datasets) {
+        for (auto peak: data->getPeaks()) {
+            // Keep only the peak that have selected and that are not masked
+            if (peak->isSelected() && !peak->isMasked()) {
+                qvects.push_back(static_cast<const Eigen::RowVector3d&>(peak->getQ()));
+            }
         }
+    }
+
+    // Check that a minimum number of peaks have been selected for indexing
+    if (qvects.size() < 10) {
+        if (_handler) {
+            _handler->log("AutoIndexer: too few peaks to index!");
+        }
+        throw std::runtime_error("Too few peaks to autoindex");
+    }
+
+    if (_handler) {
+        _handler->log("Searching direct lattice vectors using" + std::to_string(qvects.size()) + "peaks defined on numors:");
     }
     
     // Set up a FFT indexer object
@@ -200,15 +196,18 @@ void AutoIndexer::refineSolutions()
 
         // Collect all the selected peaks for which the auto-indexing has been successful (integer Miller indices)
         int success = 0;
-        for (auto peak : _peaks) {
-            Eigen::RowVector3d hkl;
-            bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
-            if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
-                hkls.emplace_back(hkl);
-                qs.emplace_back(peak->getQ());
-                ++success;
+        for (auto data: _datasets) {
+            for (auto peak: data->getPeaks()) {
+                Eigen::RowVector3d hkl;
+                auto q = peak->getQ();
+                bool indexingSuccess = cell->getMillerIndices(q,hkl,true);
+                if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
+                    hkls.emplace_back(hkl);
+                    qs.emplace_back(static_cast<const Eigen::RowVector3d&>(q));
+                    ++success;
             }
         }
+    }
 
         // The number of peaks must be at least for a proper minimization
         if (success < 10) {      
@@ -266,13 +265,16 @@ void AutoIndexer::refineSolutions()
         // Define the final score of this solution by computing the percentage of the selected peaks which have been successfully indexed
         double score = 0.0;
         double maxscore = 0.0;
-        for (auto peak : _peaks) {
-            if (peak->isSelected() && !peak->isMasked()) {
-                maxscore++;
-                Eigen::RowVector3d hkl;
-                bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
-                if (indexingSuccess) {
-                    score++;
+        for (auto data: _datasets) {
+            for (auto peak : data->getPeaks()) {
+                if (peak->isSelected() && !peak->isMasked()) {
+                    maxscore++;
+                    Eigen::RowVector3d hkl;
+                    auto q = peak->getQ();
+                    bool indexingSuccess = cell->getMillerIndices(q, hkl, true);
+                    if (indexingSuccess) {
+                        score++;
+                    }
                 }
             }
         }
@@ -299,12 +301,15 @@ void AutoIndexer::refineConstraints()
             UBMinimizer min(ub_soln);
 
             int success = 0;
-            for (auto peak : _peaks) {
-                Eigen::RowVector3d hkl;
-                bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
-                if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
-                    min.addPeak(*peak, hkl);
-                    ++success;
+            for (auto data: _datasets) {
+                for (auto peak : data->getPeaks()) {
+                    Eigen::RowVector3d hkl;
+                    auto q = peak->getQ();
+                    bool indexingSuccess = cell->getMillerIndices(q,hkl,true);
+                    if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
+                        min.addPeak(*peak, hkl);
+                        ++success;
+                    }
                 }
             }
 
@@ -328,13 +333,16 @@ void AutoIndexer::refineConstraints()
  
         double score = 0.0;
         double maxscore = 0.0;
-        for (auto peak : _peaks) {
-            if (peak->isSelected() && !peak->isMasked()) {
-                maxscore++;
-                Eigen::RowVector3d hkl;
-                bool indexingSuccess = peak->getMillerIndices(*cell,hkl,true);
-                if (indexingSuccess) {
-                    score++;
+        for (auto data: _datasets) {
+            for (auto peak : data->getPeaks()) {
+                if (peak->isSelected() && !peak->isMasked()) {
+                    maxscore++;
+                    Eigen::RowVector3d hkl;
+                    auto q = peak->getQ();
+                    bool indexingSuccess = cell->getMillerIndices(q, hkl, true);
+                    if (indexingSuccess) {
+                        score++;
+                    }
                 }
             }
         }
@@ -342,6 +350,12 @@ void AutoIndexer::refineConstraints()
         score /= 0.01*maxscore;
         soln.second = score;
     }
+}
+
+
+void AutoIndexer::addData(sptrDataSet data)
+{
+    _datasets.emplace_back(std::move(data));
 }
 
 } // end namespace nsx

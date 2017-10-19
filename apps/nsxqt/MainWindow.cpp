@@ -312,18 +312,20 @@ void MainWindow::changeData(nsx::sptrDataSet data)
 
 void MainWindow::plotPeak(nsx::sptrPeak3D peak)
 {
+    auto data = peak->data();
     auto scenePtr = _ui->_dview->getScene();
     // Ensure that frames
-    changeData(peak->getData());
+    changeData(data);
     // Get frame number to adjust the data
     size_t data_frame = size_t(std::lround(peak->getShape().aabb().center()[2]));
-    scenePtr->setData(peak->getData(), data_frame);
+    scenePtr->setData(data, data_frame);
     // Update the scrollbar
     _ui->frame->setValue(data_frame);
     auto pgi = scenePtr->findPeakGraphicsItem(peak);
 
-    if (pgi)
+    if (pgi) {
         updatePlot(pgi);
+    }
 }
 
 void MainWindow::on_actionPixel_position_triggered()

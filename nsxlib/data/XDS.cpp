@@ -50,6 +50,8 @@ static const std::vector<std::string> unmerged_records = {"H", "K", "L", "XD", "
 
 namespace nsx {
 
+#if 0
+
 XDS::XDS(const PeakList &peaks, bool merge, bool friedel, const std::string &filename, const std::string &date):
     _peaks(peaks),
     _merge(merge),
@@ -202,5 +204,7 @@ RecordList XDS::getUnmergedRecords() const
     std::sort(records.begin(), records.end());
     return records;
 }
+
+#endif
 
 } // end namespace nsx

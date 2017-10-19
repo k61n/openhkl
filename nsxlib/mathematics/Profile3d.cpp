@@ -39,7 +39,6 @@
 
 #include <iostream>
 
-// anonymous namespace for helper structures and routines
 namespace nsx {
 
 Profile3d::Profile3d(double background, double A, const Eigen::Vector3d& c, const Eigen::Matrix3d& CI):

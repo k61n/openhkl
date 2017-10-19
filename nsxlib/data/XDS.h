@@ -44,6 +44,8 @@
 
 namespace nsx {
 
+#if 0
+
 class XDS {
 
 public:
@@ -76,6 +78,8 @@ private:
 
     const std::vector<std::string> _records;
 };
+
+#endif
 
 } // end namespace nsx
 

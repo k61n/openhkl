@@ -40,6 +40,8 @@
 
 namespace nsx {
 
+#if 0
+
 class PeakRecord {
 public:
     int h, k, l;
@@ -54,6 +56,7 @@ public:
     bool operator<(const PeakRecord& other) const;
 };
 
+#endif
 } // end namespace nsx
 
 #endif // NSXLIB_PEAKRECORD_H

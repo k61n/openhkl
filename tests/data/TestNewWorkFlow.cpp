@@ -80,6 +80,7 @@ int main()
     // at this stage we have the peaks, now we index
     nsx::IndexerParameters params;
     nsx::AutoIndexer indexer(progressHandler);
+    indexer.addData(dataf);
 
     auto numIndexedPeaks = [&]() -> unsigned int
     {
@@ -90,7 +91,6 @@ int main()
                 continue;
             }
             ++indexed_peaks;
-            indexer.addPeak(peak);
         }
         return indexed_peaks;
     };
@@ -98,7 +98,7 @@ int main()
     unsigned int indexed_peaks = numIndexedPeaks();
 
     NSX_CHECK_ASSERT(indexed_peaks > 650);
-    NSX_CHECK_ASSERT(indexer.autoIndex(params));
+    NSX_CHECK_NO_THROW(indexer.autoIndex(params));
 
     auto soln = indexer.getSolutions().front();
 
@@ -128,8 +128,9 @@ int main()
         }
 
         std::vector<Eigen::RowVector3d> q;
-        q.push_back(peak->getQ());
-        auto events = dataf->getEvents(q);
+        q.push_back(static_cast<const Eigen::RowVector3d&>(peak->getQ()));
+        nsx::PeakPredictor predictor(dataf);
+        auto events = predictor.getEvents(q);
 
         NSX_CHECK_ASSERT(events.size() >= 1);
 
@@ -144,15 +145,15 @@ int main()
 
         // q could cross Ewald sphere multiple times, so find best match
         for (auto&& event: events) {
-            Eigen::Vector3d pnew = event.detectorPosition();
+            Eigen::Vector3d pnew = event.coordinates();
             if ((pnew-p0).squaredNorm() < diff) {
                 diff = (pnew-p0).squaredNorm();
                 p1 = pnew;
             }
         }
         
-        Eigen::RowVector3d q0 = dataf->getQ(p0);
-        Eigen::RowVector3d q1 = dataf->getQ(p1);
+        Eigen::RowVector3d q0 = static_cast<const Eigen::RowVector3d&>(nsx::Peak3D(dataf, nsx::Ellipsoid(p0, 1.0)).getQ());
+        Eigen::RowVector3d q1 = static_cast<const Eigen::RowVector3d&>(nsx::Peak3D(dataf, nsx::Ellipsoid(p1, 1.0)).getQ());
 
         NSX_CHECK_CLOSE(p0(0), p1(0), 3.0);
         NSX_CHECK_CLOSE(p0(1), p1(1), 3.0);
@@ -164,7 +165,7 @@ int main()
     }
 
 
-    nsx::PeakPredictor predictor;
+    nsx::PeakPredictor predictor(dataf);
     predictor._dmin = 2.1;
     predictor._dmax = 50.0;
     predictor._searchRadius = 200.0;
@@ -175,7 +176,7 @@ int main()
     predictor._minimumNeighbors = 10;
 
     predictor._handler = std::shared_ptr<nsx::ProgressHandler>(new nsx::ProgressHandler());
-    auto predicted_peaks = predictor.predictPeaks(dataf, false);
+    auto predicted_peaks = predictor.predictPeaks(false);
 
     std::cout << "predicted_peaks: " << predicted_peaks.size() << std::endl;
     NSX_CHECK_ASSERT(predicted_peaks.size() > 1600);

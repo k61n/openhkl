@@ -39,7 +39,8 @@
 #include <vector>
 
 #include "../crystal/CrystalTypes.h"
-#include "../instrument/InstrumentTypes.h"
+#include "../data/DataTypes.h"
+//#include "../instrument/InstrumentTypes.h"
 #include "../utils/UtilsTypes.h"
 
 namespace nsx {
@@ -72,11 +73,10 @@ public:
     //! Performs the auto-indexing
     //! @param params the parameter of the auto-indexing algorithm
     //! @return true if auto-indexing succeeded, false if failed
-    bool autoIndex(const IndexerParameters& params);
+    void autoIndex(const IndexerParameters& params);
 
-    //! Add a new peak for the auto-indexing procedure
-    //! @param peak the shared pointer to the peak to be added
-    void addPeak(const std::shared_ptr<Peak3D>& peak);
+    //! Add a dataset for the auto-indexing procedure
+    void addData(sptrDataSet data);
 
     //! Returns the best solutions found for the auto-indexing
     //! @return a list of the best solutions ordered by percentage of successfully auto-indexed peaks
@@ -96,7 +96,7 @@ private:
   
     IndexerParameters _params;
 
-    std::vector<std::shared_ptr<Peak3D>> _peaks;
+    DataList _datasets;
 
     std::vector<RankedSolution> _solutions;
 

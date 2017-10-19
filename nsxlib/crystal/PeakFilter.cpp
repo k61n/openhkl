@@ -25,7 +25,9 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrDataSet data, nsx::sptrPeak
 
         // try to index
         Eigen::RowVector3d hkl;
-        if (!peak->getMillerIndices(*cell, hkl)) {
+        auto data = peak->data();
+        auto q = peak->getQ();
+        if (!cell->getMillerIndices(q, hkl)) {
             return true;
         }
     }
@@ -61,7 +63,8 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrDataSet data, nsx::sptrPeak
 
     // note: merged peaks are handled separately    
 
-    const double d = 1.0 / peak->getQ().norm();
+    auto q = static_cast<const Eigen::RowVector3d&>(peak->getQ());
+    const double d = 1.0 / q.norm();
 
     if (filter._removeDmin) {
         if (d < filter._dmin) {
@@ -143,7 +146,8 @@ int PeakFilter::apply(sptrDataSet data) const
 
             merged.addPeak(peak);
 
-            Eigen::RowVector3i hkl = peak->getIntegerMillerIndices();
+            auto q = peak->getQ();
+            Eigen::RowVector3i hkl = cell->getIntegerMillerIndices(q);
             if (_removeForbidden && group.isExtinct(hkl(0), hkl(1), hkl(2))) {
                 data->removePeak(peak);
             }

@@ -42,15 +42,18 @@
 #include "../data/DataTypes.h"
 #include "../geometry/GeometryTypes.h"
 #include "../geometry/Octree.h"
+#include "../instrument/Detector.h"
 #include "../instrument/DetectorEvent.h"
 #include "../instrument/Diffractometer.h"
+#include "../instrument/Gonio.h"
+#include "../instrument/InstrumentState.h"
 #include "../instrument/Sample.h"
 #include "../instrument/Source.h"
 #include "../utils/ProgressHandler.h"
 
 namespace nsx {
 
-PeakPredictor::PeakPredictor():
+PeakPredictor::PeakPredictor(sptrDataSet data):
     _dmin(2.0),
     _dmax(50.0),
     _peakScale(3.0),
@@ -61,14 +64,14 @@ PeakPredictor::PeakPredictor():
     _minimumPeakDuration(1.0),
     _minimumNeighbors(10),
     _Isigma(2.0),
-    _handler(nullptr)
+    _handler(nullptr),
+    _data(data)
 {
 
 }
 
-PeakSet PeakPredictor::predictPeaks(sptrDataSet data, bool keepObserved)
+PeakSet PeakPredictor::predictPeaks(bool keepObserved)
 {
-
     class compare_fn {
     public:
         auto operator()(const Eigen::RowVector3i a, const Eigen::RowVector3i b) -> bool
@@ -86,11 +89,11 @@ PeakSet PeakPredictor::predictPeaks(sptrDataSet data, bool keepObserved)
 
     int predicted_peaks = 0;
 
-    auto& mono = data->getDiffractometer()->getSource()->getSelectedMonochromator();
+    auto& mono = _data->getDiffractometer()->getSource()->getSelectedMonochromator();
     const double wavelength = mono.getWavelength();
     PeakSet calculated_peaks;
 
-    auto sample = data->getDiffractometer()->getSample();
+    auto sample = _data->getDiffractometer()->getSample();
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
 
     for (unsigned int i = 0; i < ncrystals; ++i) {
@@ -112,16 +115,16 @@ PeakSet PeakPredictor::predictPeaks(sptrDataSet data, bool keepObserved)
 
         predicted_peaks += predicted_hkls.size();
 
-        PeakList peaks = data->hasPeaks(hkls_double, UB);
+        PeakList peaks = predictPeaks(hkls_double, UB);
         int current_peak = 0;
 
         _handler->setStatus("Building set of previously found peaks...");
 
-        PeakSet found_peaks = data->getPeaks();
+        PeakSet found_peaks = _data->getPeaks();
         std::set<Eigen::RowVector3i, compare_fn> found_hkls;
 
         Eigen::Vector3d lb = {0.0, 0.0, 0.0};
-        Eigen::Vector3d ub = {double(data->getNCols()), double(data->getNRows()), double(data->getNFrames())};
+        Eigen::Vector3d ub = {double(_data->getNCols()), double(_data->getNRows()), double(_data->getNFrames())};
         auto&& octree = Octree(lb, ub);
 
         octree.setMaxDepth(4);
@@ -130,7 +133,9 @@ PeakSet PeakPredictor::predictPeaks(sptrDataSet data, bool keepObserved)
         _handler->log("Building peak octree...");
 
         for (sptrPeak3D p: found_peaks) {
-            found_hkls.insert(p->getIntegerMillerIndices());
+            auto cell = p->getActiveUnitCell();
+            auto q = p->getQ();
+            found_hkls.insert(cell->getIntegerMillerIndices(q));
 
             // ignore deselected and masked peaks
             if (!p->isSelected() || p->isMasked()) {
@@ -156,11 +161,11 @@ PeakSet PeakPredictor::predictPeaks(sptrDataSet data, bool keepObserved)
         #pragma omp parallel for
         for (size_t peak_id = 0; peak_id < peaks.size(); ++peak_id) {
             Peak3D& p = *peaks[peak_id];
-            p.linkData(data);
             p.addUnitCell(cell, true);
             ++current_peak;
 
-            Eigen::RowVector3i hkl = p.getIntegerMillerIndices();
+            auto q = p.getQ();
+            Eigen::RowVector3i hkl = cell->getIntegerMillerIndices(q);
 
             // try to find this reflection in the list of peaks, skip if found
             if (std::find(found_hkls.begin(), found_hkls.end(), hkl) != found_hkls.end() ) {
@@ -176,7 +181,6 @@ PeakSet PeakPredictor::predictPeaks(sptrDataSet data, bool keepObserved)
                 continue;
             }
 
-            new_peak->linkData(data);
             new_peak->setSelected(true);
             new_peak->addUnitCell(cell, true);
             new_peak->setObserved(false);
@@ -247,11 +251,113 @@ sptrPeak3D PeakPredictor::averagePeaks(const Octree& tree, const Eigen::Vector3d
         return nullptr;
     }
 
-    sptrPeak3D peak = std::make_shared<Peak3D>(Ellipsoid(center, covariance.inverse()));
+    sptrPeak3D peak = std::make_shared<Peak3D>(_data, Ellipsoid(center, covariance.inverse()));
 
     // An averaged peak is by definition not an observed peak but a calculated peak
     peak->setObserved(false);
     return peak;
 }
+
+PeakList PeakPredictor::predictPeaks(const std::vector<Eigen::RowVector3d>& hkls, const Eigen::Matrix3d& BU)
+{
+    std::vector<Eigen::RowVector3d> qs;
+    PeakList peaks;
+
+    for (auto hkl: hkls) {
+        qs.emplace_back(hkl*BU);
+    }
+
+    std::vector<DetectorEvent> events = getEvents(qs);
+ 
+    for (auto event: events) {
+        Eigen::Vector3d p = event.coordinates();
+        sptrPeak3D peak(new Peak3D(_data));
+        // this sets the center of the ellipse with a dummy value for radius
+        peak->setShape(Ellipsoid(p, 1.0));
+        peaks.emplace_back(peak);
+    }
+    return peaks;
+}
+
+std::vector<DetectorEvent> PeakPredictor::getEvents(const std::vector<Eigen::RowVector3d>& qs) const
+{
+    std::vector<DetectorEvent> events;
+    unsigned int scanSize = _data->getNFrames();
+
+    auto diffractometer = _data->getDiffractometer();
+    auto detector = diffractometer->getDetector();
+    auto& mono = diffractometer->getSource()->getSelectedMonochromator();
+
+    const Eigen::RowVector3d ki = mono.getKi().transpose();
+    std::vector<Eigen::Matrix3d> rotMatrices;
+    rotMatrices.reserve(scanSize);
+    auto gonio = diffractometer->getSample()->getGonio();
+    double wavelength_2 = -0.5 * mono.getWavelength();
+
+    for (unsigned int s=0; s<scanSize; ++s) {
+        auto state = _data->getInterpolatedState(s);
+        rotMatrices.push_back(gonio->getHomMatrix(state.sample.getValues()).rotation().transpose());
+    } 
+
+    for (const Eigen::RowVector3d& q: qs) {
+        bool sign = (q*rotMatrices[0] + ki).squaredNorm() > ki.squaredNorm();
+
+        for (int i = 1; i < scanSize; ++i) {
+            const Eigen::RowVector3d kf = q*rotMatrices[i] + ki;
+            const bool new_sign = kf.squaredNorm() > ki.squaredNorm();
+
+            if (sign != new_sign) {
+                sign = new_sign;
+
+                const Eigen::RowVector3d kf0 = q*rotMatrices[i-1] + ki;
+                const Eigen::RowVector3d kf1 = q*rotMatrices[i] + ki;
+                //const Eigen::RowVector3d dkf = kf1-kf0;
+                const Eigen::RowVector3d dkf = q*(rotMatrices[i]-rotMatrices[i-1]);
+        
+                const double a = dkf.squaredNorm();
+                const double b = 2 * kf0.dot(dkf);
+                const double c = kf0.squaredNorm() - ki.squaredNorm();
+                const double discr = b*b - 4*a*c;
+        
+                double t = 0.5;
+                const int max_count = 100;
+                Eigen::RowVector3d kf;
+                
+                for (int c = 0; c < max_count; ++c) {
+                    kf = (1-t)*kf0 + t*kf1;
+                    const double f = kf.squaredNorm() - ki.squaredNorm();
+                    
+                    if (std::fabs(f) < 1e-10) {
+                        break;
+                    }
+                    const double df = 2*dkf.dot(kf);
+                    t -= f/df;
+                }
+        
+                if (c == max_count || t < 0.0 || t > 1.0) {
+                    continue;
+                }
+        
+                t += i-1;
+                const InstrumentState& state = _data->getInterpolatedState(t);
+        
+                //const ComponentState& dis = state.detector;
+                double px,py;
+                // If hit detector, new peak
+                //const ComponentState& cs=state.sample;
+                Eigen::Vector3d from = diffractometer->getSample()->getPosition(state.sample.getValues());
+        
+                double time;
+                bool accept = diffractometer->getDetector()->receiveKf(px,py,kf,from,time,state.detector.getValues());
+        
+                if (accept) {
+                    events.emplace_back(_data, px, py, t);
+                }
+            }
+        }        
+    }
+    return events;
+}
+
 
 } // end namespace nsx

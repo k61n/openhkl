@@ -35,6 +35,10 @@
  *
  */
 
+#include "../data/DataSet.h"
+#include "../instrument/Diffractometer.h"
+#include "../instrument/Source.h"
+#include "../instrument/InstrumentState.h"
 #include "Detector.h"
 #include "DetectorEvent.h"
 #include "Gonio.h"
@@ -42,45 +46,49 @@
 namespace nsx {
 
 
-
-
-DetectorEvent::DetectorEvent(const Detector* detector, double x, double y, double t, std::vector<double> values):
-    _detector(detector), _x(x), _y(y), _t(t)
-{
-
-}
-
-DetectorEvent::DetectorEvent(const DetectorEvent& rhs):_detector(rhs._detector),_x(rhs._x),_y(rhs._y), _t(rhs._t)
-{
-
-}
-
-DetectorEvent::DetectorEvent(DetectorEvent&& other):
-    _detector(other._detector),
-    _x(other._x),
-    _y(other._y),
-    _t(other._t)
-{
-
-}
-
-DetectorEvent& DetectorEvent::operator=(const DetectorEvent& rhs)
-{
-    _detector = rhs._detector;
-    _x = rhs._x;
-    _y = rhs._y;
-    _t = rhs._t;
-    return *this;
-}
-
-DetectorEvent::~DetectorEvent()
+DetectorEvent::DetectorEvent(sptrDataSet data, double px, double py, double frame):
+    _data(data), _px(px), _py(py), _frame(frame)
 {
 }
 
+ReciprocalVector DetectorEvent::Kf() const
+{
+    auto source = _data->getDiffractometer()->getSource();
+    double wavelength = source->getSelectedMonochromator().getWavelength();
+    auto state = _data->getInterpolatedState(_frame);
+    Eigen::Vector3d kf = static_cast<const Eigen::Vector3d&>(getPixelPosition()) - state.sample.getPosition();
+    kf.normalize();
+    kf /= wavelength;
+    return ReciprocalVector(kf);
+}
 
-  Eigen::Vector3d DetectorEvent::detectorPosition() const
-  {
-      return {_x, _y, _t};
-  }
+DirectVector DetectorEvent::getPixelPosition() const
+{
+    auto detector = _data->getDiffractometer()->getDetector();
+    Eigen::Vector3d v = detector->getPos(_px, _py);
+    auto gonio = detector->getGonio();
+
+    // No gonio and no values set
+    if (gonio == nullptr) {
+        return DirectVector(v);
+    }
+
+    InstrumentState state = _data->getInterpolatedState(_frame);
+    gonio->transformInPlace(v, state.detector.getValues());
+    return DirectVector(v);
+}
+
+void DetectorEvent::getGammaNu(double& gamma, double& nu) const
+{
+    auto kf = static_cast<const Eigen::RowVector3d&>(Kf());
+    gamma = std::atan2(kf[0], kf[1]);
+    nu = std::asin(kf[2] / kf.norm());
+}
+
+Eigen::Vector3d DetectorEvent::coordinates() const
+{
+    return {_px, _py, _frame};
+}
+
 
 } // end namespace nsx

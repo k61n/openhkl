@@ -41,6 +41,12 @@ public:
     //! Print information about a ReciprocalVector to a stream
     void print(std::ostream& os) const;
 
+    void getGammaNu(double& gamma, double& nu) const;
+    
+    double getLorentzFactor() const;
+
+    static double get2Theta(const ReciprocalVector& q, const ReciprocalVector& ki);
+
 private:
     Eigen::RowVector3d _rvector;
 };

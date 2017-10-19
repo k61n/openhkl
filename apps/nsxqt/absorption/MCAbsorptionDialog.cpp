@@ -8,9 +8,12 @@
 #include <nsxlib/crystal/Peak3D.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/geometry/MCAbsorption.h>
+#include <nsxlib/instrument/DetectorEvent.h>
+#include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Diffractometer.h>
 #include <nsxlib/instrument/Experiment.h>
 #include <nsxlib/instrument/Gonio.h>
+#include <nsxlib/instrument/InstrumentState.h>
 #include <nsxlib/instrument/Monochromator.h>
 #include <nsxlib/instrument/Sample.h>
 #include <nsxlib/instrument/Source.h>
@@ -79,9 +82,14 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
         ui->progressBar_MCStatus->setMaximum(peaks.size());
         ui->progressBar_MCStatus->setFormat(QString::fromStdString(d.second->getBasename()) + ": "+QString::number(progress)+"%");
         for (auto& p: peaks) {
-            Eigen::Transform<double,3,2> hommat=sample->getGonio()->getHomMatrix(p->getSampleState().getValues());
-            Eigen::Matrix3d rot=hommat.rotation();
-            double transmission=mca.run(ui->spinBox->value(),p->getKf(),rot);
+            auto data = p->data();
+            auto pos = p->getShape().center();
+            auto state = data->getInterpolatedState(p->getShape().center()[2]);
+            Eigen::Transform<double,3,2> hommat=sample->getGonio()->getHomMatrix(state.sample.getValues());
+            Eigen::Matrix3d rot = hommat.rotation();
+            auto event = nsx::DetectorEvent(data, pos[0], pos[1], pos[2]);
+            auto kf = event.Kf();
+            double transmission=mca.run(ui->spinBox->value(),static_cast<const Eigen::RowVector3d&>(kf),rot);
             p->setTransmission(transmission);
             ui->progressBar_MCStatus->setValue(++progress);
         }

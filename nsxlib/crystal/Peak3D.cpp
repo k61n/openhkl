@@ -56,53 +56,35 @@
 
 namespace nsx {
 
-Peak3D::Peak3D():
-    _data(),
+Peak3D::Peak3D(sptrDataSet data):
     _shape(),
     _unitCells(),
-    _sampleState(nullptr),
-    _event(nullptr),
-    _source(nullptr),
     _counts(0.0),
-    //_countsSigma(0.0),
     _scale(1.0),
     _selected(true),
     _masked(false),
     _observed(true),
     _transmission(1.0),
-    _activeUnitCellIndex(0)
+    _activeUnitCellIndex(0),
+    _data(data)
 {
   
 }
 
-Peak3D::Peak3D(const Ellipsoid &shape, sptrDataSet data):
-    Peak3D()
+Peak3D::Peak3D(sptrDataSet data, const Ellipsoid &shape):
+    Peak3D(data)
 {
-    setShape(shape);
-    linkData(data);    
+    setShape(shape);  
 }
 
-Peak3D::Peak3D(const Peak3D& other):
-    _data(other._data),
-    _shape(other._shape),
-    _projection(other._projection),
-    _projectionPeak(other._projectionPeak),
-    _projectionBkg(other._projectionBkg),
-    _unitCells(other._unitCells),
-    _sampleState(other._sampleState == nullptr ? nullptr : new ComponentState(*other._sampleState)),
-    _event(other._event == nullptr ? nullptr : new DetectorEvent(*other._event)),
-    _source(other._source),
-    _counts(other._counts),
-    //_countsSigma(other._countsSigma),
-    _scale(other._scale),
-    _selected(other._selected),
-    _masked(other._masked),
-    _observed(other._observed),
-    _transmission(other._transmission),
-    _activeUnitCellIndex(other._activeUnitCellIndex)
+#if 0
+Peak3D::Peak3D(const Peak3D& other): Peak3D(other.data)
 {
+    *this = other;
 }
+#endif
 
+#if 0
 Peak3D& Peak3D::operator=(const Peak3D& other)
 {
     // nothing to do
@@ -110,17 +92,12 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
         return *this;
     }
 
-    _data = other._data;
     _shape = other._shape;
     _projection = other._projection;
     _projectionPeak = other._projectionPeak;
     _projectionBkg = other._projectionBkg;
-    _unitCells = other._unitCells;
-    _sampleState = other._sampleState == nullptr ? nullptr : uptrComponentState(new ComponentState(*other._sampleState));
-    _event = other._event == nullptr ? nullptr : uptrDetectorEvent(new DetectorEvent(*other._event));
-    _source= other._source;
+    _unitCells = other._unitCells;       
     _counts = other._counts;
-    //_countsSigma = other._countsSigma;
     _scale = other._scale;
     _selected = other._selected;
     _observed = other._observed;
@@ -130,93 +107,12 @@ Peak3D& Peak3D::operator=(const Peak3D& other)
 
     return *this;
 }
-
-void Peak3D::linkData(const sptrDataSet& data)
-{
-    _data = wptrDataSet(data);
-    if (data != nullptr) {
-        setSource(data->getDiffractometer()->getSource());
-        // update detector event and state
-        setShape(_shape);
-    }
-}
-
-void Peak3D::unlinkData()
-{
-    _data.reset();
-}
-
-Eigen::RowVector3d Peak3D::getMillerIndices() const
-{
-    Eigen::RowVector3d hkld;
-    getMillerIndices(hkld, true);
-    return hkld;
-}
-
+#endif
 void Peak3D::setShape(const Ellipsoid& peak)
 {
     _shape = peak;
-    auto data = getData();
-
-    // no linked data?
-    if (data == nullptr) {
-        return;
-    }
-
-    Eigen::Vector3d center = peak.aabb().center();
-    const double f = std::min(center[2], double(getData()->getNFrames())-1.0001);
-    const auto& state = data->getInterpolatedState(f);
-
-    setSampleState(ComponentState(state.sample));
-
-    setDetectorEvent(DetectorEvent(
-       data->getDiffractometer()->getDetector().get(), center[0], center[1], f, state.detector.getValues()));
 }
 
-bool Peak3D::getMillerIndices(const UnitCell& uc, Eigen::RowVector3d& hkl, bool applyUCTolerance) const
-{
-    hkl = uc.index(getQ());
-
-    if (applyUCTolerance) {
-        double tolerance = uc.getHKLTolerance();
-
-        if (std::fabs(hkl[0]-std::round(hkl[0])) < tolerance &&
-                std::fabs(hkl[1]-std::round(hkl[1])) < tolerance &&
-                std::fabs(hkl[2]-std::round(hkl[2])) < tolerance) {
-            hkl[0]=std::round(hkl[0]);
-            hkl[1]=std::round(hkl[1]);
-            hkl[2]=std::round(hkl[2]);
-            return true;
-        }
-        hkl = Eigen::Vector3d::Zero();
-        return false;
-    }
-    return true;
-}
-
-bool Peak3D::getMillerIndices(int ucIndex, Eigen::RowVector3d& hkl, bool applyUCTolerance) const
-{
-    if (_unitCells.empty() || ucIndex < 0 || ucIndex >= int(_unitCells.size())) {
-        hkl = Eigen::Vector3d::Zero();
-        return false;
-    }
-    sptrUnitCell uc = _unitCells[size_t(ucIndex)];
-    return getMillerIndices(*uc, hkl, applyUCTolerance);
-}
-
-bool Peak3D::getMillerIndices(Eigen::RowVector3d& hkl, bool applyUCTolerance) const
-{
-    return getMillerIndices(_activeUnitCellIndex, hkl, applyUCTolerance);
-}
-
-Eigen::RowVector3i Peak3D::getIntegerMillerIndices() const
-{
-    Eigen::RowVector3d hkld;
-    getMillerIndices(hkld, true);
-    Eigen::RowVector3i hkl;
-    hkl << int(std::lround(hkld[0])), int(std::lround(hkld[1])), int(std::lround(hkld[2]));
-    return hkl;
-}
 
 Eigen::VectorXd Peak3D::getProjection() const
 {
@@ -266,14 +162,7 @@ sptrUnitCell Peak3D::getUnitCell(int index) const
 
 Intensity Peak3D::getRawIntensity() const
 {
-     // return _counts * getData()->getSampleStepSize();
-    return _intensity * getData()->getSampleStepSize();
-}
-
-void Peak3D::setRawIntensity(const Intensity& i)
-{  
-    // note: the scaling factor is taken to be consistent with Peak3D::getRawIntensity()
-    _intensity = i / getData()->getSampleStepSize();
+    return _intensity * _data->getSampleStepSize();
 }
 
 Intensity Peak3D::getScaledIntensity() const
@@ -283,7 +172,8 @@ Intensity Peak3D::getScaledIntensity() const
 
 Intensity Peak3D::getCorrectedIntensity() const
 {
-    const double factor = _scale / (getLorentzFactor() * _transmission);
+    auto q = getQ();
+    const double factor = _scale / (q.getLorentzFactor() * _transmission);
     return getRawIntensity() * factor;
 }
 
@@ -319,6 +209,7 @@ void Peak3D::setTransmission(double transmission)
     _transmission = transmission;
 }
 
+#if 0
 bool operator<(const Peak3D& p1, const Peak3D& p2)
 {
     Eigen::RowVector3d hkl1, hkl2;
@@ -346,6 +237,7 @@ bool operator<(const Peak3D& p1, const Peak3D& p2)
     }
     return false;
 }
+#endif
 
 bool Peak3D::isSelected() const
 {
@@ -428,6 +320,16 @@ bool Peak3D::hasUnitCells() const
 int Peak3D::getActiveUnitCellIndex() const
 {
     return _activeUnitCellIndex;
+}
+
+ReciprocalVector Peak3D::getQ() const
+{
+    auto p = _shape.center();
+    auto kf = DetectorEvent(_data, p[0], p[1], p[2]).Kf();
+    auto state = _data->getInterpolatedState(p[2]);
+    auto q = static_cast<const Eigen::RowVector3d&>(kf);
+    q[1] -= 1.0/_data->getDiffractometer()->getSource()->getSelectedMonochromator().getWavelength();
+    return ReciprocalVector(state.sample.transformQ(q));
 }
 
 } // end namespace nsx
