@@ -5,10 +5,12 @@
 #include <QWidget>
 
 #include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/data/MetaData.h>
 #include <nsxlib/geometry/Ellipsoid.h>
 #include <nsxlib/geometry/IntegrationRegion.h>
+#include <nsxlib/instrument/DetectorEvent.h>
 #include <nsxlib/utils/Units.h>
 
 #include "PeakGraphicsItem.h"
@@ -21,7 +23,7 @@ bool PeakGraphicsItem::_drawBackground = false;
 PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D p):
     PlottableGraphicsItem(nullptr,true,false),
     _peak(std::move(p))
-{
+{ 
     if (_peak) {
         Eigen::Vector3d c=_peak->getIntegrationRegion().getRegion().aabb().center();
         setPos(c[0], c[1]);
@@ -104,7 +106,8 @@ void PeakGraphicsItem::setFrame(unsigned long frame)
         setVisible(true);
         _label->setVisible(_labelVisible);
         Eigen::RowVector3d hkl;
-        bool success =_peak->getMillerIndices(hkl,true);
+        auto cell = _peak->getActiveUnitCell();
+        bool success = cell->getMillerIndices(_peak->getQ(), hkl,true);
         QString hklString;
         hklString=QString("%1,%2,%3").arg(hkl[0]).arg(hkl[1]).arg(hkl[2]);
         _label->setPlainText(hklString);
@@ -167,8 +170,8 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     if (min<0) {
         min=0;
     }
-    if (max>_peak->getData()->getNFrames()-1) {
-        max=_peak->getData()->getNFrames()-1;
+    if (max>_peak->data()->getNFrames()-1) {
+        max=_peak->data()->getNFrames()-1;
     }
 
     Eigen::VectorXd error = _peak->getIntegration().getPeakError();
@@ -186,23 +189,26 @@ void PeakGraphicsItem::plot(SXPlot* plot)
 
     // Now update text info:
     Eigen::RowVector3d hkl;
-    bool success = _peak->getMillerIndices(hkl,true);
+    auto cell = _peak->getActiveUnitCell();
+    bool success = cell->getMillerIndices(_peak->getQ(), hkl,true);
 
     QString info="(h,k,l):"+QString::number(hkl[0])+","+QString::number(hkl[1])+","+QString::number(hkl[2]);
     double gamma,nu;
-    _peak->getGammaNu(gamma,nu);
+    auto c = _peak->getShape().center();
+    nsx::DetectorEvent ev(_peak->data(), c[0], c[1], c[2]);
+    ev.getGammaNu(gamma,nu);
     gamma/=nsx::deg;
     nu/=nsx::deg;
     info+=" "+QString(QChar(0x03B3))+","+QString(QChar(0x03BD))+":"+QString::number(gamma,'f',2)+","+QString::number(nu,'f',2)+"\n";
     double intensity=_peak->getScaledIntensity().value();
     double sI=_peak->getScaledIntensity().sigma();
     info+="Intensity ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";
-    double l=_peak->getLorentzFactor();
+    double l = ev.getLorentzFactor();
     info+="Cor. int. ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity/l,'f',2)+" ("+QString::number(sI/l,'f',2)+")\n";
     info += "p value (" + QString::number(_peak->pValue(), 'f', 3) + ")\n";
 
     double scale=_peak->getScale();
-    double monitor=_peak->getData()->getMetadata()->getKey<double>("monitor");
+    double monitor=_peak->data()->getMetadata()->getKey<double>("monitor");
     info+="Monitor "+QString::number(monitor*scale)+" counts";
     QCPPlotTitle* title=dynamic_cast<QCPPlotTitle*>(p->plotLayout()->element(0,0));
     if (title != nullptr) {

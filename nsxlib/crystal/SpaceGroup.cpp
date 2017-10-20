@@ -36,6 +36,7 @@
 #include "SpaceGroup.h"
 
 #include "../crystal/Peak3D.h"
+#include "../crystal/UnitCell.h"
 #include "../utils/StringIO.h"
 
 namespace nsx {
@@ -584,5 +585,42 @@ void SpaceGroup::reduceSymbol()
     _symbol = join(tokens," ");
 
 }
+
+std::vector<PeakList> SpaceGroup::findEquivalences(const PeakList &peak_list, bool friedel) const
+{
+    std::vector<PeakList> peak_equivs;
+
+    for (auto&& peak: peak_list ) {
+        bool found_equivalence = false;
+        int h1, h2, k1, k2, l1, l2;
+        auto cell = peak->getActiveUnitCell();
+        Eigen::RowVector3i hkl = cell->getIntegerMillerIndices(peak->getQ());
+
+        h1 = hkl[0];
+        k1 = hkl[1];
+        l1 = hkl[2];
+
+        for (size_t i = 0; i < peak_equivs.size() && !found_equivalence; ++i) {
+            hkl = cell->getIntegerMillerIndices(peak_equivs[i][0]->getQ());
+            h2 = hkl[0];
+            k2 = hkl[1];
+            l2 = hkl[2];
+
+            if ( (friedel && isFriedelEquivalent(h1, k1, l1, h2, k2, l2))
+                 || (!friedel && isEquivalent(h1, k1, l1, h2, k2, l2))) {
+                found_equivalence = true;
+                peak_equivs[i].push_back(peak);
+                continue;
+            }
+        }
+
+        // didn't find an equivalence?
+        if ( !found_equivalence) {
+            peak_equivs.emplace_back(PeakList{peak});
+        }
+    }
+    return peak_equivs;
+}
+
 
 } // end namespace nsx

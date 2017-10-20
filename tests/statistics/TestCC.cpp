@@ -7,6 +7,7 @@
 #include <nsxlib/crystal/UnitCell.h>
 #include <nsxlib/crystal/GruberReduction.h>
 #include <nsxlib/crystal/Peak3D.h>
+#include <nsxlib/crystal/PeakPredictor.h>
 #include <nsxlib/data/DataReaderFactory.h>
 #include <nsxlib/data/DataSet.h>
 #include <nsxlib/data/MergedData.h>
@@ -71,11 +72,11 @@ int main()
     cell->setSpaceGroup(group.symbol());
 
     auto reflections = cell->generateReflectionsInShell(2.0, 50.0, 2.67);
-    auto peaks = dataf->hasPeaks(reflections, cell->reciprocalBasis());  
+    nsx::PeakPredictor pred(dataf);
+    auto peaks = pred.predictPeaks(reflections, cell->reciprocalBasis());  
     MergedData data0(group, true), data1(group, true);
 
     for (auto p: peaks) {
-        p->linkData(dataf);
         p->setRawIntensity(Intensity(error_dist(gen)));
         p->addUnitCell(cell, true);
         data0.addPeak(p);

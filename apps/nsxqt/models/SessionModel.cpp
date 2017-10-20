@@ -286,13 +286,11 @@ void SessionModel::showPeaksOpenGL()
     GLWidget* glw=new GLWidget();
     auto& scene=glw->getScene();
     auto datav=getSelectedNumors();
-    for (auto idata : datav)
-    {
+    for (auto idata : datav) {
        auto peaks=idata->getPeaks();
-       for (auto peak: peaks)
-       {
+       for (auto peak: peaks) {
            GLSphere* sphere=new GLSphere("");
-           Eigen::Vector3d pos=peak->getQ();
+           Eigen::RowVector3d pos = static_cast<const Eigen::RowVector3d&>(peak->getQ());
            sphere->setPos(pos[0]*100,pos[1]*100,pos[2]*100);
            sphere->setColor(0,1,0);
            scene.addActor(sphere);
@@ -472,7 +470,7 @@ void SessionModel::incorporateCalculatedPeaks()
     for(auto numor: numors) {
         nsx::debug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
 
-        auto predictor = nsx::PeakPredictor();
+        auto predictor = nsx::PeakPredictor(numor);
         predictor._dmin = dialog.dMin();
         predictor._dmax = dialog.dMax();
         predictor._searchRadius = dialog.searchRadius();
@@ -483,7 +481,7 @@ void SessionModel::incorporateCalculatedPeaks()
         predictor._minimumPeakDuration = dialog.minimumPeakDuration();
         predictor._Isigma = dialog.Isigma();
         predictor._handler = handler;
-        nsx::PeakSet predicted = predictor.predictPeaks(numor, false);
+        nsx::PeakSet predicted = predictor.predictPeaks(false);
         numor->integratePeaks(predicted, predictor._peakScale, predictor._bkgScale, false, handler);
         observed_peaks += numor->getPeaks().size();
 
@@ -513,7 +511,7 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
             if (!peak->isSelected() || peak->isMasked())
                 continue;
 
-            double d = 1.0 / peak->getQ().norm();
+            double d = 1.0 / static_cast<const Eigen::RowVector3d&>(peak->getQ()).norm();
             avg_d += d;
             ++num_peaks;
 
@@ -608,14 +606,16 @@ bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& pea
             return false;
         }
 
-        if (!(peak->getMillerIndices(*currentBasis, hkl, true)))
+        if (!(currentBasis->getMillerIndices(peak->getQ(), hkl, true)))
             continue;
 
         const long h = std::lround(hkl[0]);
         const long k = std::lround(hkl[1]);
         const long l = std::lround(hkl[2]);
 
-        double lorentz = peak->getLorentzFactor();
+        nsx::DetectorEvent ev(peak);
+
+        double lorentz = ev.getLorentzFactor();
         double trans = peak->getTransmission();
 
         double intensity = peak->getCorrectedIntensity().value();
@@ -668,7 +668,7 @@ bool SessionModel::writeStatistics(std::string filename,
             continue;
         }
         // skip misindexed peaks
-        if (!peak->getMillerIndices(*cell, HKL, true)) {
+        if (!cell->getMillerIndices(peak->getQ(), HKL, true)) {
             continue;
         }
         res.addPeak(peak);
@@ -701,11 +701,6 @@ bool SessionModel::writeStatistics(std::string filename,
                 merged.addPeak(peak);
                 merged_shell.addPeak(peak);
             }
-
-            //if (new_peak.redundancy() > 0) {
-            //    merged_peaks.push_back(new_peak);
-            //    merged_peaks_shell.push_back(new_peak);
-            //}
         }
 
         nsx::CC cc;
@@ -806,8 +801,11 @@ bool SessionModel::writeStatistics(std::string filename,
     return true;
 }
 
+
 bool SessionModel::writeXDS(std::string filename, const nsx::PeakList& peaks, bool merge, bool friedel)
 {
+    #pragma warning "todo: fix this method"
+    #if 0
     const std::string date = QDate::currentDate().toString("yyyy-MM-dd").toStdString();
     nsx::XDS xds(peaks, merge, friedel, filename, date);
     std::fstream file(filename, std::ios::out);
@@ -819,6 +817,8 @@ bool SessionModel::writeXDS(std::string filename, const nsx::PeakList& peaks, bo
     bool result = xds.write(file);
     nsx::debug() << "Done writing log file.";
     return result;
+    #endif
+    return false;
 }
 
 
@@ -837,7 +837,7 @@ void SessionModel::autoAssignUnitCell()
             for (auto i = 0; i < sample->getNCrystals(); ++i) {
                 auto cell = sample->getUnitCell(i);
 
-                if (peak->getMillerIndices(*cell, hkl, true)) {
+                if (cell->getMillerIndices(peak->getQ(), hkl, true)) {
                     peak->addUnitCell(cell, true);
                     assigned = true;
                     break;

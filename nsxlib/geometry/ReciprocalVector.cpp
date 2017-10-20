@@ -40,25 +40,9 @@ std::ostream& operator<<(std::ostream& os, const ReciprocalVector& rvector)
     return os;
 }
 
-void ReciprocalVector::getGammaNu(double& gamma, double& nu) const
-{
-    gamma=std::atan2(_rvector[0],_rvector[1]);
-    nu=std::asin(_rvector[2]/_rvector.norm());
-}
 
-double ReciprocalVector::getLorentzFactor() const
-{
-    double gamma,nu;
-    getGammaNu(gamma, nu);
-    double lorentz = 1.0/(sin(std::fabs(gamma))*cos(nu));
-    return lorentz;
-}
 
-double ReciprocalVector::get2Theta(const ReciprocalVector& q, const ReciprocalVector& ki)
-{
-    auto kf = ki._rvector + q._rvector;
-    double proj = kf.dot(ki._rvector);
-    return acos(proj/kf.norm()/ki._rvector.norm());
-}
+
+
 
 } // end namespace nsx

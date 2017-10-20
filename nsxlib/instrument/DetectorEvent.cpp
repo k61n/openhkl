@@ -35,6 +35,7 @@
  *
  */
 
+#include "../crystal/Peak3D.h"
 #include "../data/DataSet.h"
 #include "../instrument/Diffractometer.h"
 #include "../instrument/Source.h"
@@ -49,6 +50,15 @@ namespace nsx {
 DetectorEvent::DetectorEvent(sptrDataSet data, double px, double py, double frame):
     _data(data), _px(px), _py(py), _frame(frame)
 {
+}
+
+DetectorEvent::DetectorEvent(sptrPeak3D peak):
+    _data(peak->data()), _px(), _py(), _frame()
+{
+    auto c = peak->getShape().center();
+    _px = c[0];
+    _py = c[1];
+    _frame = c[2];
 }
 
 ReciprocalVector DetectorEvent::Kf() const
@@ -88,6 +98,23 @@ void DetectorEvent::getGammaNu(double& gamma, double& nu) const
 Eigen::Vector3d DetectorEvent::coordinates() const
 {
     return {_px, _py, _frame};
+}
+
+double DetectorEvent::getLorentzFactor() const
+{
+    double gamma,nu;
+    getGammaNu(gamma, nu);
+    double lorentz = 1.0/(sin(std::fabs(gamma))*cos(nu));
+    return lorentz;
+}
+
+double DetectorEvent::get2Theta(const ReciprocalVector& si) const
+{
+    auto kf = static_cast<const Eigen::RowVector3d&>(Kf());
+    auto ki = static_cast<const Eigen::RowVector3d&>(si);
+    
+    double proj = kf.dot(ki);
+    return acos(proj/kf.norm()/ki.norm());
 }
 
 

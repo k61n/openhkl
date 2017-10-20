@@ -42,6 +42,7 @@
 
 #include <Eigen/Core>
 
+#include "../crystal/CrystalTypes.h"
 #include "../data/DataTypes.h"
 #include "../geometry/DirectVector.h"
 #include "../geometry/ReciprocalVector.h"
@@ -52,8 +53,13 @@ namespace nsx {
 //! Class to register an event on a detector, recording the instrument state
 class DetectorEvent {
 public:
+    #if defined(SWIG) || defined(SWIGPYTHON)
+    DetectorEvent() = default;
+    #endif
     //! Construct a detector event
     DetectorEvent(sptrDataSet data, double px, double py, double frame);
+
+    DetectorEvent(sptrPeak3D peak);
 
     /**
      *  @brief Get 2\f$ \theta \f$
@@ -79,6 +85,8 @@ public:
     DirectVector getPixelPosition() const;
 
     Eigen::Vector3d coordinates() const;
+
+    double getLorentzFactor() const;
 
 private:
     sptrDataSet _data;

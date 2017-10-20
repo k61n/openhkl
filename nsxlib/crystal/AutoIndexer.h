@@ -75,8 +75,8 @@ public:
     //! @return true if auto-indexing succeeded, false if failed
     void autoIndex(const IndexerParameters& params);
 
-    //! Add a dataset for the auto-indexing procedure
-    void addData(sptrDataSet data);
+    //! Add a peak for the auto-indexing procedure
+    void addPeak(sptrPeak3D peak);
 
     //! Returns the best solutions found for the auto-indexing
     //! @return a list of the best solutions ordered by percentage of successfully auto-indexed peaks
@@ -96,7 +96,7 @@ private:
   
     IndexerParameters _params;
 
-    DataList _datasets;
+    std::vector<sptrPeak3D> _peaks;
 
     std::vector<RankedSolution> _solutions;
 

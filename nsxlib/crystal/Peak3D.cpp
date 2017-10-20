@@ -173,7 +173,9 @@ Intensity Peak3D::getScaledIntensity() const
 Intensity Peak3D::getCorrectedIntensity() const
 {
     auto q = getQ();
-    const double factor = _scale / (q.getLorentzFactor() * _transmission);
+    auto c = _shape.center();
+    auto ev = DetectorEvent(_data, c[0], c[1], c[2]);
+    const double factor = _scale / (ev.getLorentzFactor() * _transmission);
     return getRawIntensity() * factor;
 }
 
@@ -330,6 +332,12 @@ ReciprocalVector Peak3D::getQ() const
     auto q = static_cast<const Eigen::RowVector3d&>(kf);
     q[1] -= 1.0/_data->getDiffractometer()->getSource()->getSelectedMonochromator().getWavelength();
     return ReciprocalVector(state.sample.transformQ(q));
+}
+
+void Peak3D::setRawIntensity(const Intensity& i)
+{  
+    // note: the scaling factor is taken to be consistent with Peak3D::getRawIntensity()
+    _intensity = i / data()->getSampleStepSize();
 }
 
 } // end namespace nsx

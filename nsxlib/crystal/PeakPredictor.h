@@ -38,6 +38,7 @@
 #include "../crystal/CrystalTypes.h"
 #include "../data/DataTypes.h"
 #include "../geometry/GeometryTypes.h"
+#include "../instrument/DetectorEvent.h"
 #include "../utils/UtilsTypes.h"
 
 #include <Eigen/Core>

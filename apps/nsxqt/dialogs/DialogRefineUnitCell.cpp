@@ -151,7 +151,7 @@ void DialogRefineUnitCell::refineParameters()
     int nhits = 0;
     for (auto&& peak: _peaks) {
         Eigen::RowVector3d hkl;
-        bool indexingSuccess = peak->getMillerIndices(*_unitCell,hkl,true);
+        bool indexingSuccess = _unitCell->getMillerIndices(peak->getQ(),hkl,true);
         if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
             minimizer.addPeak(*peak,hkl);
             ++nhits;
@@ -180,7 +180,7 @@ void DialogRefineUnitCell::refineParameters()
         if(!peak->isMasked() && peak->isSelected()) {
             ++total;
             Eigen::RowVector3d hkl;
-            bool indexingSuccess = peak->getMillerIndices(*_unitCell,hkl,true);
+            bool indexingSuccess = _unitCell->getMillerIndices(peak->getQ(),hkl,true);
             if (indexingSuccess) {
                 ++count;
             }
@@ -319,13 +319,15 @@ void DialogRefineUnitCell::updatePlot()
 
     for (auto peak: _peaks) {
         double f = peak->getShape().center()[2];
-        Eigen::RowVector3d q = peak->getQ();
+        Eigen::RowVector3d q = static_cast<const Eigen::RowVector3d&>(peak->getQ());
         Eigen::RowVector3d hkl, dhkl;
         fmin = std::min(f, fmin);
         fmax = std::max(f, fmax);
 
-        if (peak->getMillerIndices(hkl)) {
-            dhkl = hkl - q*peak->getActiveUnitCell()->basis();
+        auto cell = peak->getActiveUnitCell();
+
+        if (cell->getMillerIndices(peak->getQ(), hkl)) {
+            dhkl = hkl - q*cell->basis();
             frames.push_back(f);
 
             for (auto i = 0; i < 3; ++i) {

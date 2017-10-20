@@ -50,6 +50,8 @@ FriedelDialog::~FriedelDialog()
 
 void FriedelDialog::findFriedelPairs()
 {
+    #pragma message "todo: this is dead code"
+    #if 0
     _friedelPairs.clear();
 
     size_t size = _peaks.size();
@@ -68,6 +70,7 @@ void FriedelDialog::findFriedelPairs()
 
     double percent = 2.0 * _friedelPairs.size() * 100.0 / _peaks.size();
     nsx::info() << "Found " << _friedelPairs.size() << " Friedel pairs which accounts for " << percent << " percent of the peaks.";
+    #endif
 }
 
 void FriedelDialog::on_goodPairsButton_clicked()

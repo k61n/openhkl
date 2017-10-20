@@ -76,9 +76,9 @@ void SpaceGroupDialog::evaluateSpaceGroups()
     for (auto& numor: _numors) {
         auto peaks = numor->getPeaks();
 
-        for (nsx::sptrPeak3D peak : peaks)
-        {
-            Eigen::RowVector3i hkl = peak->getIntegerMillerIndices();
+        for (nsx::sptrPeak3D peak : peaks) {
+            auto cell = peak->getActiveUnitCell();
+            Eigen::RowVector3i hkl = cell->getIntegerMillerIndices(peak->getQ());
 
             if (peak->isSelected() && !peak->isMasked()) {
                 hkls.push_back(std::array<double, 3>{{double(hkl[0]), double(hkl[1]), double(hkl[2])}});

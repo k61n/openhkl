@@ -88,7 +88,9 @@ void DialogAutoIndexing::autoIndex()
     params.niggliTolerance = ui->niggliTolerance->value();
     params.gruberTolerance = ui->gruberTolerance->value();
 
-    if (indexer.autoIndex(params) == false) {
+    try {
+        indexer.autoIndex(params);
+    } catch (...) {
         nsx::error() << "failed to auto index!";
         return;
     }

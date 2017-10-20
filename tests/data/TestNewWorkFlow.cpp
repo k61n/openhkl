@@ -80,7 +80,6 @@ int main()
     // at this stage we have the peaks, now we index
     nsx::IndexerParameters params;
     nsx::AutoIndexer indexer(progressHandler);
-    indexer.addData(dataf);
 
     auto numIndexedPeaks = [&]() -> unsigned int
     {
@@ -90,6 +89,7 @@ int main()
             if (!peak->isSelected() || peak->isMasked()) {
                 continue;
             }
+            indexer.addPeak(peak);
             ++indexed_peaks;
         }
         return indexed_peaks;

@@ -132,6 +132,8 @@ public:
 
     sptrDataSet data() const { return _data; }
 
+    void setRawIntensity(const Intensity& i);
+
     #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     #endif
