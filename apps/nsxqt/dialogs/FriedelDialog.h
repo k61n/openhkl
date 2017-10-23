@@ -35,7 +35,7 @@
 
 #include <QDialog>
 
-#include <nsxlib/crystal/CrystalTypes.h>
+#include <nsxlib/CrystalTypes.h>
 
 class Qwidget;
 

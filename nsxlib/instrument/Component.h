@@ -35,8 +35,8 @@
 
 #include <Eigen/Dense>
 
-#include "../instrument/ComponentState.h"
-#include "../instrument/InstrumentTypes.h"
+#include "ComponentState.h"
+#include "InstrumentTypes.h"
 
 namespace nsx {
 

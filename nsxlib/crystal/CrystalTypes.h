@@ -1,5 +1,4 @@
-#ifndef NSXLIB_CRYSTALTYPES_H
-#define NSXLIB_CRYSTALTYPES_H
+#pragma once
 
 #include <memory>
 #include <set>
@@ -39,5 +38,3 @@ using SpaceGroupSymmetry = std::pair<std::string,std::string>;
 using AutoIndexingSoluce = std::pair<UnitCell,double>;
 
 } // end namespace nsx
-
-#endif // NSXLIB_CRYSTALTYPES_H

@@ -1,10 +1,10 @@
 #include <Eigen/Dense>
 
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/data/XDS.h>
-#include <nsxlib/data/DataReaderFactory.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/DataReaderFactory.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/XDS.h>
 
 int main()
 {

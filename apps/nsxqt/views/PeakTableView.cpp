@@ -40,21 +40,21 @@
 #include <QMouseEvent>
 #include <QStandardItemModel>
 
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/MergedPeak.h>
-#include <nsxlib/crystal/ResolutionShell.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/data/MetaData.h>
-#include <nsxlib/logger/Logger.h>
-#include <nsxlib/utils/ProgressHandler.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/MergedPeak.h>
+#include <nsxlib/MetaData.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/ProgressHandler.h>
+#include <nsxlib/ResolutionShell.h>
 
-#include "dialogs/DialogAutoIndexing.h"
-#include "dialogs/DialogRefineUnitCell.h"
-#include "dialogs/DialogTransformationMatrix.h"
-#include "dialogs/DialogUnitCellParameters.h"
-#include "dialogs/LogFileDialog.h"
-#include "models/CollectedPeaksDelegate.h"
-#include "models/CollectedPeaksModel.h"
+#include "CollectedPeaksDelegate.h"
+#include "CollectedPeaksModel.h"
+#include "DialogAutoIndexing.h"
+#include "DialogRefineUnitCell.h"
+#include "DialogTransformationMatrix.h"
+#include "DialogUnitCellParameters.h"
+#include "LogFileDialog.h"
 #include "PeakTableView.h"
 
 PeakTableView::PeakTableView(QWidget *parent)

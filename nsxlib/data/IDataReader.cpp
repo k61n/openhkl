@@ -15,14 +15,14 @@
 
 #include "H5Cpp.h"
 
-#include "../data/IDataReader.h"
-#include "../mathematics/MathematicsTypes.h"
-#include "../instrument/Detector.h"
-#include "../instrument/Diffractometer.h"
-#include "../instrument/Gonio.h"
-#include "../instrument/Sample.h"
-#include "../instrument/Source.h"
-#include "../utils/Units.h"
+#include "Detector.h"
+#include "Diffractometer.h"
+#include "Gonio.h"
+#include "IDataReader.h"
+#include "MathematicsTypes.h"
+#include "Sample.h"
+#include "Source.h"
+#include "Units.h"
 
 namespace nsx {
 

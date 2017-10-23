@@ -1,4 +1,4 @@
-#include <nsxlib/crystal/UnitCell.h>
+#include <nsxlib/UnitCell.h>
 
 #include "DialogTransformationMatrix.h"
 #include "ui_TransformationMatrixDialog.h"

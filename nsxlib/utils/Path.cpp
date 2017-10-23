@@ -4,9 +4,8 @@
 #include <numeric>
 #include <stdexcept>
 
-#include "Path.h"
-
 #include "NSXConfig.h"
+#include "Path.h"
 #include "StringIO.h"
 
 namespace nsx {

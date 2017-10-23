@@ -29,17 +29,16 @@
  *
  */
 
-#ifndef NSXLIB_ELLIPSOID_H
-#define NSXLIB_ELLIPSOID_H
+#pragma once
 
 #include <cmath>
 
 #include <Eigen/Dense>
-#include <Eigen/Geometry>
 #include <Eigen/Eigenvalues>
+#include <Eigen/Geometry>
 
-#include "GeometryTypes.h"
 #include "AABB.h"
+#include "GeometryTypes.h"
 
 namespace nsx {
 
@@ -111,5 +110,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_ELLIPSOID_H

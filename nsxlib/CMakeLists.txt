@@ -7,13 +7,19 @@ include_directories(
 file(GLOB_RECURSE sources *.cpp *.c)
 file(GLOB_RECURSE headers *.h)
 
+foreach (path ${headers})
+    get_filename_component(name ${path} NAME)
+    configure_file(${path} ${CMAKE_BINARY_DIR}/include/${name} COPYONLY)
+    set(NSXLIB_HEADERS ${NSXLIB_HEADERS} ${CMAKE_BINARY_DIR}/include/${name})
+endforeach ()
+
 # Creating the library
 # Under Windows and Miscrosoft Visual Studio the library will be static to avoid
 # the DLL_EXPORT mess
 if(MSVC OR NSX_BUILD_STATIC)
-  add_library(nsx STATIC ${sources} ${headers})
+  add_library(nsx STATIC ${sources} ${NSXLIB_HEADERS})
 else()
-  add_library(nsx SHARED ${sources} ${headers})
+  add_library(nsx SHARED ${sources} ${NSXLIB_HEADERS})
 endif()
 
 target_link_libraries(nsx 
@@ -29,12 +35,8 @@ target_link_libraries(nsx
 
 # Install section, installing libraries
 install(TARGETS nsx DESTINATION lib)
-set(INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include/nsxlib/")
-file(GLOB_RECURSE all_headers *.h)
 install(CODE "MESSAGE(\"Installing headers...\")")
-install(FILES ${headers} DESTINATION ${INCLUDE_DIR})
-
-#message("FROM NSXLIB: GSL_LIBRARIES is ${GSL_LIBRARIES}")
+install(FILES ${headers} DESTINATION nsxlib)
 
 if(NSX_TIDY)
   add_tidy_target(nsx)

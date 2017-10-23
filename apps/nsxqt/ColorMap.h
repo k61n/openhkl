@@ -36,10 +36,10 @@
 #include <string>
 #include <vector>
 
-#include <Eigen/Core>
+#include <Eigen/Dense>
 
-#include <QImage>
 #include <QColor>
+#include <QImage>
 #include <QRect>
 
 class ColorMap {

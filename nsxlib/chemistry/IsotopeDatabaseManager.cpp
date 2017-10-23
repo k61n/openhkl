@@ -1,9 +1,9 @@
 #include <stdexcept>
 
-#include "../chemistry/IsotopeDatabaseManager.h"
-#include "../utils/Path.h"
-#include "../utils/Units.h"
-#include "../utils/YAMLType.h"
+#include "IsotopeDatabaseManager.h"
+#include "Path.h"
+#include "Units.h"
+#include "YAMLType.h"
 
 namespace nsx {
 

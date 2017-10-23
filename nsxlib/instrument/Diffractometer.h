@@ -34,7 +34,7 @@
 
 #include "yaml-cpp/yaml.h"
 
-#include "../instrument/InstrumentTypes.h"
+#include "InstrumentTypes.h"
 
 namespace nsx {
 

@@ -28,10 +28,10 @@
  *
  */
 
+#include "MergedData.h"
+#include "MergedPeak.h"
+#include "Peak3D.h"
 #include "RFactor.h"
-#include "../crystal/Peak3D.h"
-#include "../crystal/MergedPeak.h"
-#include "../data/MergedData.h"
 
 namespace nsx {
 

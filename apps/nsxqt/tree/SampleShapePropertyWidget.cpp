@@ -1,19 +1,19 @@
-#include <nsxlib/chemistry/Material.h>
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/geometry/MCAbsorption.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/instrument/Source.h>
-#include <nsxlib/logger/Logger.h>
-#include <nsxlib/utils/Units.h>
-
 #include <QMessageBox>
 
-#include "../absorption/AbsorptionDialog.h"
-#include "../models/SampleShapeItem.h"
-#include "../tree/SampleShapePropertyWidget.h"
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/Gonio.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/Material.h>
+#include <nsxlib/MCAbsorption.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/Sample.h>
+#include <nsxlib/Source.h>
+#include <nsxlib/Units.h>
+
+#include "AbsorptionDialog.h"
+#include "SampleShapeItem.h"
+#include "SampleShapePropertyWidget.h"
 
 #include "ui_SampleShapePropertyWidget.h"
 

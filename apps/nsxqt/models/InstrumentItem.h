@@ -3,9 +3,9 @@
 
 #include <QJsonObject>
 
-#include <nsxlib/instrument/InstrumentTypes.h>
+#include <nsxlib/InstrumentTypes.h>
 
-#include "models/TreeItem.h"
+#include "TreeItem.h"
 
 class DetectorItem;
 class SampleItem;

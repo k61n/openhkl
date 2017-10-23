@@ -27,8 +27,7 @@
  *
  */
 
-#ifndef NSXLIB_SYMOP_H
-#define NSXLIB_SYMOP_H
+#pragma once
 
 #include <ostream>
 
@@ -93,5 +92,3 @@ private:
 std::ostream& operator<<(std::ostream& os, const SymOp& sym);
 
 } // end namespace nsx
-
-#endif // NSXLIB_SYMOP_H

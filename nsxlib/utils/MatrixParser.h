@@ -1,9 +1,8 @@
-#ifndef NSXLIB_MATRIXPARSER_H
-#define NSXLIB_MATRIXPARSER_H
+#pragma once
 
 #include <Eigen/Dense>
 
-#include "../utils/Enums.h"
+#include "Enums.h"
 
 // The convention for 2D data in NSXTOOL is to look at the detector
 // from the sample point. In the rest position, the detector is along the beam
@@ -81,5 +80,3 @@ public:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_MATRIXPARSER_H

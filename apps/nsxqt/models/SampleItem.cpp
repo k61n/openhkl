@@ -3,14 +3,14 @@
 #include <QIcon>
 #include <QJsonArray>
 
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/Sample.h>
+#include <nsxlib/UnitCell.h>
 
-#include "models/SampleItem.h"
-#include "models/SampleShapeItem.h"
-#include "models/UnitCellItem.h"
-#include "tree/SamplePropertyWidget.h"
+#include "SampleItem.h"
+#include "SamplePropertyWidget.h"
+#include "SampleShapeItem.h"
+#include "UnitCellItem.h"
 
 SampleItem::SampleItem(nsx::sptrExperiment experiment) : InspectableTreeItem(experiment)
 {

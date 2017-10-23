@@ -1,10 +1,10 @@
 #include <QWidget>
 
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/data/MetaData.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/MetaData.h>
 
-#include "models/NumorItem.h"
-#include "tree/NumorPropertyWidget.h"
+#include "NumorItem.h"
+#include "NumorPropertyWidget.h"
 
 #include "ui_NumorPropertyWidget.h"
 

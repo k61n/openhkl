@@ -28,16 +28,15 @@
  *
  */
 
-#ifndef NSXLIB_PEAKINTEGRATOR_H
-#define NSXLIB_PEAKINTEGRATOR_H
+#pragma once
 
-#include <Eigen/Core>
+#include <Eigen/Dense>
 
-#include "../geometry/IntegrationRegion.h"
-#include "../geometry/Blob3D.h"
-#include "../geometry/GeometryTypes.h"
-#include "../crystal/Intensity.h"
-#include "../utils/Maybe.h"
+#include "Blob3D.h"
+#include "GeometryTypes.h"
+#include "IntegrationRegion.h"
+#include "Intensity.h"
+#include "Maybe.h"
 
 namespace nsx {
 
@@ -123,5 +122,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_PEAKINTEGRATOR_H

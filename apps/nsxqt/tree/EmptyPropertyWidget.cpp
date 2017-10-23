@@ -1,6 +1,6 @@
 #include "ui_EmptyPropertyWidget.h"
 
-#include "tree/EmptyPropertyWidget.h"
+#include "EmptyPropertyWidget.h"
 
 EmptyPropertyWidget::EmptyPropertyWidget(QWidget *parent) :
     QWidget(parent),

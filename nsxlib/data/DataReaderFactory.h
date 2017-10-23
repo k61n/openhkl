@@ -26,14 +26,12 @@
  *
  */
 
-#ifndef NSXLIB_DATAREADERFACTORY_H
-#define NSXLIB_DATAREADERFACTORY_H
+#pragma once
 
-#include <string>
-
-#include <map>
 #include <functional>
+#include <map>
 #include <memory>
+#include <string>
 
 namespace nsx {
 
@@ -58,5 +56,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_DATAREADERFACTORY_H

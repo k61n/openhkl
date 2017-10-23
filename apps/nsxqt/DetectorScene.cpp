@@ -7,30 +7,29 @@
 #include <QPixmap>
 #include <QToolTip>
 
-#include <nsxlib/crystal/Peak3D.h>
-
-#include <nsxlib/crystal/SpaceGroup.h>
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/geometry/AABB.h>
-#include <nsxlib/geometry/BoxMask.h>
-#include <nsxlib/geometry/EllipseMask.h>
-#include <nsxlib/instrument/Detector.h>
-#include <nsxlib/instrument/DetectorEvent.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/instrument/Source.h>
-#include <nsxlib/logger/Logger.h>
-#include <nsxlib/utils/Units.h>
+#include <nsxlib/AABB.h>
+#include <nsxlib/BoxMask.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/EllipseMask.h>
+#include <nsxlib/Detector.h>
+#include <nsxlib/DetectorEvent.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/Gonio.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/Sample.h>
+#include <nsxlib/SpaceGroup.h>
+#include <nsxlib/Source.h>
+#include <nsxlib/UnitCell.h>
+#include <nsxlib/Units.h>
 
 #include "ColorMap.h"
 #include "DetectorScene.h"
-#include "items/PeakGraphicsItem.h"
-#include "items/CutSliceGraphicsItem.h"
-#include "items/CutLineGraphicsItem.h"
-#include "items/MaskGraphicsItem.h"
-#include "items/EllipseMaskGraphicsItem.h"
+#include "CutLineGraphicsItem.h"
+#include "CutSliceGraphicsItem.h"
+#include "EllipseMaskGraphicsItem.h"
+#include "MaskGraphicsItem.h"
+#include "PeakGraphicsItem.h"
 
 // compile-time constant to determine whether to draw the peak masks
 static const bool g_drawMask = true;

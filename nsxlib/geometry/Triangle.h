@@ -27,8 +27,7 @@
  *
  */
 
-#ifndef NSXLIB_TRIANGLE_H
-#define NSXLIB_TRIANGLE_H
+#pragma once
 
 #include <Eigen/Dense>
 
@@ -64,5 +63,3 @@ struct Triangle
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_TRIANGLE_H

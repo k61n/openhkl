@@ -4,9 +4,9 @@
 #include <QPainter>
 #include <QToolTip>
 
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/instrument/Detector.h>
-#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Detector.h>
+#include <nsxlib/Diffractometer.h>
 
 #include "DetectorGraphicsView.h"
 #include "DetectorScene.h"

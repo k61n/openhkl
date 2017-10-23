@@ -1,8 +1,8 @@
 #ifndef NSXQT_GLTRACKBALL_H
 #define NSXQT_GLTRACKBALL_H
 
-#include <Eigen/Geometry>
 #include <Eigen/Dense>
+#include <Eigen/Geometry>
 
 class GLTrackball
 {

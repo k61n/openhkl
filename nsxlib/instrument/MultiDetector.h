@@ -34,7 +34,7 @@
 
 #include "yaml-cpp/yaml.h"
 
-#include "../kernel/Composite.h"
+#include "Composite.h"
 #include "Detector.h"
 
 namespace nsx {

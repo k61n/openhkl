@@ -28,14 +28,13 @@
  *
  */
 
-
 #include <iostream>
-#include <stdexcept>
 #include <random>
-
-#include "RandomMatrix.h"
+#include <stdexcept>
 
 #include <Eigen/QR>
+
+#include "RandomMatrix.h"
 
 namespace nsx {
 

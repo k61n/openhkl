@@ -1,12 +1,12 @@
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Experiment.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/UnitCell.h>
 
 #include "LatticeIndexer.h"
-#include "opengl/GLWidget.h"
-#include "opengl/GLSphere.h"
-#include "opengl/GLReciprocalLattice.h"
+#include "GLReciprocalLattice.h"
+#include "GLSphere.h"
+#include "GLWidget.h"
 
 #include "ui_LatticeIndexer.h"
 

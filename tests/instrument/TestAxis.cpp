@@ -1,9 +1,9 @@
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
-#include <nsxlib/instrument/Axis.h>
-#include <nsxlib/utils/NSXTest.h>
-#include <nsxlib/utils/Units.h>
+#include <nsxlib/Axis.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/Units.h>
 
 class TestAxis: public nsx::Axis
 {

@@ -31,9 +31,9 @@
 
 #include <Eigen/Dense>
 
-#include "../geometry/Edge.h"
-#include "../geometry/Face.h"
-#include "../geometry/Vertex.h"
+#include "Edge.h"
+#include "Face.h"
+#include "Vertex.h"
 
 namespace nsx {
 

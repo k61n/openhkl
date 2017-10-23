@@ -1,11 +1,10 @@
-#include <iostream>
 #include <cmath>
+
 #include <Eigen/Dense>
 
-#include <nsxlib/geometry/BrillouinZone.h>
-
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/BrillouinZone.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/UnitCell.h>
 
 const double tolerance=1e-9;
 
@@ -17,7 +16,6 @@ const double tolerance=1e-9;
 // validation function
 void validate_zone(const Eigen::Matrix3d& B, int nverts, int nfaces)
 {
-    std::cout << "validating zone for input matrix B = \n" << B << std::endl;
     nsx::BrillouinZone zone(B, 1e-3);
     nsx::ConvexHull hull = zone.convexHull();
     

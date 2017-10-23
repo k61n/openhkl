@@ -28,8 +28,7 @@
  *
  */
 
-#ifndef NSXLIB_CONVOLUTIONKERNEL_H
-#define NSXLIB_CONVOLUTIONKERNEL_H
+#pragma once
 
 #include <ostream>
 #include <stdexcept>
@@ -39,8 +38,8 @@
 #include <Eigen/Dense>
 
 #include "Convolver.h"
-#include "../imaging/ImagingTypes.h"
-#include "../mathematics/MathematicsTypes.h"
+#include "ImagingTypes.h"
+#include "MathematicsTypes.h"
 
 namespace nsx {
 
@@ -86,5 +85,3 @@ std::ostream& operator<<(std::ostream& os, const ConvolutionKernel& kernel);
 #endif
 
 } // end namespace nsx
-
-#endif // NSXLIB_CONVOLUTIONKERNEL_H

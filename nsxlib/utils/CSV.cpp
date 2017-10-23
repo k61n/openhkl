@@ -28,9 +28,9 @@
  *
  */
 
-#include "CSV.h"
-
 #include <cassert>
+
+#include "CSV.h"
 
 namespace nsx {
 

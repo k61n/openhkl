@@ -10,7 +10,7 @@
 #include <QStandardItemModel>
 #include <QTreeView>
 
-#include <nsxlib/data/DataTypes.h>
+#include <nsxlib/DataTypes.h>
 
 class ExperimentItem;
 class SessionModel;

@@ -34,10 +34,10 @@
 
 #include "yaml-cpp/yaml.h"
 
-#include "../chemistry/ChemistryTypes.h"
-#include "../crystal/CrystalTypes.h"
-#include "../geometry/ConvexHull.h"
-#include "../instrument/Component.h"
+#include "ChemistryTypes.h"
+#include "Component.h"
+#include "ConvexHull.h"
+#include "CrystalTypes.h"
 
 namespace nsx {
 

@@ -34,8 +34,8 @@
 
 #include "yaml-cpp/yaml.h"
 
-#include "../instrument/Component.h"
-#include "../instrument/Monochromator.h"
+#include "Component.h"
+#include "Monochromator.h"
 
 namespace nsx {
 

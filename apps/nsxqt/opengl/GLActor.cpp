@@ -1,4 +1,4 @@
-#include "opengl/GLActor.h"
+#include "GLActor.h"
 
 GLActor::GLActor(const char* name):_pos(0,0,0),_name(name)
 {

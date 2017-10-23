@@ -5,12 +5,10 @@
 
 #include <QJsonObject>
 
-#include <nsxlib/data/DataTypes.h>
-#include <nsxlib/instrument/InstrumentTypes.h>
+#include <nsxlib/DataTypes.h>
+#include <nsxlib/InstrumentTypes.h>
 
 #include "InspectableTreeItem.h"
-
-#include <nsxlib/instrument/InstrumentTypes.h>
 
 class QWidget;
 

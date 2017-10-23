@@ -1,8 +1,9 @@
 #ifndef NSXQT_CRYSTALFACEITEM_H
 #define NSXQT_CRYSTALFACEITEM_H
 
-#include <QGraphicsItem>
 #include <Eigen/Dense>
+
+#include <QGraphicsItem>
 
 class CrystalFaceItem : public QGraphicsItem
 {

@@ -7,8 +7,7 @@
 
 #include "StringIO.h"
 
-namespace nsx
-{
+namespace nsx {
 
 std::string trim(const std::string& input_string)
 {

@@ -7,20 +7,20 @@
 #include <Eigen/Dense>
 #include <Eigen/QR>
 
-#include <nsxlib/crystal/GruberReduction.h>
-#include <nsxlib/crystal/NiggliReduction.h>
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/SpaceGroup.h>
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/instrument/Component.h>
-#include <nsxlib/instrument/ComponentState.h>
-#include <nsxlib/instrument/FlatDetector.h>
-#include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/instrument/Monochromator.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/instrument/Source.h>
-#include <nsxlib/utils/NSXTest.h>
-#include <nsxlib/utils/Units.h>
+#include <nsxlib/Component.h>
+#include <nsxlib/ComponentState.h>
+#include <nsxlib/FlatDetector.h>
+#include <nsxlib/Gonio.h>
+#include <nsxlib/GruberReduction.h>
+#include <nsxlib/NiggliReduction.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/SpaceGroup.h>
+#include <nsxlib/UnitCell.h>
+#include <nsxlib/Monochromator.h>
+#include <nsxlib/Sample.h>
+#include <nsxlib/Source.h>
+#include <nsxlib/Units.h>
 
 const double gruber_tolerance = 1e-4;
 const double niggli_tolerance = 1e-4;

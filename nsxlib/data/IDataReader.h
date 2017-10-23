@@ -1,14 +1,13 @@
-#ifndef NSXLIB_IDATAREADER_H
-#define NSXLIB_IDATAREADER_H
+#pragma once
 
 #include <string>
 #include <vector>
 
 #include <Eigen/Dense>
 
-#include "../data/MetaData.h"
-#include "../instrument/InstrumentTypes.h"
-#include "../instrument/InstrumentState.h"
+#include "InstrumentState.h"
+#include "InstrumentTypes.h"
+#include "MetaData.h"
 
 namespace nsx {
 
@@ -76,5 +75,3 @@ protected:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_IDATAREADER_H

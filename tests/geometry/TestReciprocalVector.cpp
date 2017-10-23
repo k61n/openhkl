@@ -1,7 +1,7 @@
 #include <Eigen/Dense>
 
-#include <nsxlib/geometry/ReciprocalVector.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/ReciprocalVector.h>
 
 int main()
 {

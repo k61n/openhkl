@@ -5,13 +5,10 @@
  *      Author: pellegrini
  */
 
-#ifndef NSXLIB_RNG_H
-#define NSXLIB_RNG_H
+#pragma once
 
 namespace nsx {
 
 double xor128(void);
 
 } // end namespace nsx
-
-#endif // NSXLIB_RNG_H

@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "../utils/Some.h"
+#include "Some.h"
 
 namespace nsx {
 

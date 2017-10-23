@@ -1,9 +1,6 @@
-// author: Jonathan Fisher
-// j.fisher@fz-juelich.de
-
-#include "../data/BasicFrameIterator.h"
-#include "../data/DataSet.h"
-#include "../data/IFrameIterator.h"
+#include "BasicFrameIterator.h"
+#include "DataSet.h"
+#include "IFrameIterator.h"
 
 namespace nsx {
 

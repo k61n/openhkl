@@ -9,17 +9,17 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/interprocess/file_mapping.hpp>
 
-#include "../data/ILLDataReader.h"
-#include "../instrument/Component.h"
-#include "../instrument/ComponentState.h"
-#include "../instrument/Detector.h"
-#include "../instrument/Diffractometer.h"
-#include "../instrument/Gonio.h"
-#include "../instrument/Sample.h"
-#include "../instrument/Source.h"
-#include "../utils/MatrixParser.h"
-#include "../utils/Parser.h"
-#include "../utils/Units.h"
+#include "Component.h"
+#include "ComponentState.h"
+#include "Detector.h"
+#include "Diffractometer.h"
+#include "Gonio.h"
+#include "ILLDataReader.h"
+#include "MatrixParser.h"
+#include "Parser.h"
+#include "Sample.h"
+#include "Source.h"
+#include "Units.h"
 
 namespace nsx {
 

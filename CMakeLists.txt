@@ -106,12 +106,6 @@ endif()
 # Installation settings
 ###########################################################################
 
-# Install section, installing libraries
-#install(TARGETS NSXTool DESTINATION lib)
-#set(INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include/NSXTool/")
-#install(CODE "MESSAGE(\"Installing headers...\")")
-#install(FILES ${headers} DESTINATION ${INCLUDE_DIR})
-
 # Install the databases file
 install(DIRECTORY resources/databases
         DESTINATION ${APPLICATION_DATA_PATH}

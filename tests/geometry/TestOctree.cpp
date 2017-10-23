@@ -4,10 +4,10 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/geometry/AABB.h>
-#include <nsxlib/geometry/Octree.h>
-#include <nsxlib/geometry/Ellipsoid.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/AABB.h>
+#include <nsxlib/Ellipsoid.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/Octree.h>
 
 const double tolerance=1e-5;
 

@@ -33,12 +33,11 @@
  *
  */
 
-#ifndef NSXLIB_RESOLUTIONSHELL_H
-#define NSXLIB_RESOLUTIONSHELL_H
+#pragma once
 
 #include <vector>
 
-#include "../crystal/CrystalTypes.h"
+#include "CrystalTypes.h"
 
 namespace nsx {
 
@@ -58,5 +57,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_RESOLUTIONSHELL_H

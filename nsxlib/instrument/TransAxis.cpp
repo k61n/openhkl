@@ -1,6 +1,5 @@
 #include "TransAxis.h"
 
-
 namespace nsx {
 
 Axis* TransAxis::create(const YAML::Node& node)

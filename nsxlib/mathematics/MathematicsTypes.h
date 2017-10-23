@@ -1,5 +1,4 @@
-#ifndef NSXLIB_MATHEMATICSTYPES_H
-#define NSXLIB_MATHEMATICSTYPES_H
+#pragma once
 
 #include <functional>
 
@@ -12,5 +11,3 @@ using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::
 
 using FilterCallback = std::function<RealMatrix(const RealMatrix&)>;
 } // end namespace nsx
-
-#endif // NSXLIB_MATHEMATICSTYPES_H

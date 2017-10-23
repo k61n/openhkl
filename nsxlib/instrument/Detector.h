@@ -46,7 +46,7 @@
 
 #include "Component.h"
 #include "DetectorEvent.h"
-#include "../utils/Enums.h"
+#include "Enums.h"
 
 namespace nsx {
 

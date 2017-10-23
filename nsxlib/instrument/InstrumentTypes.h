@@ -1,5 +1,4 @@
-#ifndef NSXLIB_INSTRUMENTTYPES_H
-#define NSXLIB_INSTRUMENTTYPES_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -36,5 +35,3 @@ using InstrumentStateList = std::vector<InstrumentState>;
 using DetectorState = std::vector<double>;
 
 } // end namespace nsx
-
-#endif // NSXLIB_INSTRUMENTTYPES_H

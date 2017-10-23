@@ -3,10 +3,10 @@
 
 #include <Eigen/Geometry>
 
-#include "../instrument/Gonio.h"
-#include "../instrument/RotAxis.h"
-#include "../instrument/TransAxis.h"
-#include "../utils/Units.h"
+#include "Gonio.h"
+#include "RotAxis.h"
+#include "TransAxis.h"
+#include "Units.h"
 
 namespace nsx {
 

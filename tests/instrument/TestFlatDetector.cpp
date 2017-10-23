@@ -2,11 +2,11 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/instrument/DetectorEvent.h>
-#include <nsxlib/instrument/FlatDetector.h>
-#include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/utils/NSXTest.h>
-#include <nsxlib/utils/Units.h>
+#include <nsxlib/DetectorEvent.h>
+#include <nsxlib/FlatDetector.h>
+#include <nsxlib/Gonio.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/Units.h>
 
 const double tolerance=1e-3;
 

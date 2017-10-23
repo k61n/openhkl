@@ -38,9 +38,9 @@
 
 #include <Eigen/Eigenvalues>
 
-#include "../crystal/Peak3D.h"
-#include "../crystal/ResolutionShell.h"
-#include "../mathematics/GCD.h"
+#include "GCD.h"
+#include "Peak3D.h"
+#include "ResolutionShell.h"
 
 namespace nsx {
 

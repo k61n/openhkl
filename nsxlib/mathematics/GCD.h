@@ -33,8 +33,7 @@
  *
  */
 
-#ifndef NSXLIB_GCD_H
-#define NSXLIB_GCD_H
+#pragma once
 
 namespace nsx {
 
@@ -49,5 +48,3 @@ int gcd(int a, Args... args)
 }
 
 } // end namespace nsx
-
-#endif // NSXLIB_GCD_H

@@ -33,9 +33,9 @@
 
 #include "yaml-cpp/yaml.h"
 
-#include "../kernel/Factory.h"
-#include "../kernel/Singleton.h"
-#include "../instrument/Axis.h"
+#include "Axis.h"
+#include "Factory.h"
+#include "Singleton.h"
 
 namespace nsx {
 

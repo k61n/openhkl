@@ -29,7 +29,7 @@
  */
 
 #include "MergedData.h"
-#include "../crystal/MergedPeak.h"
+#include "MergedPeak.h"
 
 namespace nsx {
 

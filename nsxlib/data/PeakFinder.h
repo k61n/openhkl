@@ -1,10 +1,8 @@
+#pragma once
 
-#ifndef NSXLIB_PEAKFINDER_H
-#define NSXLIB_PEAKFINDER_H
-
-#include "../data/DataTypes.h"
-#include "../imaging/ImagingTypes.h"
-#include "../utils/UtilsTypes.h"
+#include "DataTypes.h"
+#include "ImagingTypes.h"
+#include "UtilsTypes.h"
 
 namespace nsx {
 
@@ -61,5 +59,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_PEAKFINDER_H

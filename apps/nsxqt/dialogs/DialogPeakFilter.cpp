@@ -4,15 +4,13 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/PeakFilter.h>
-#include <nsxlib/logger/Logger.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/PeakFilter.h>
 
 #include "ui_PeakFilterDialog.h"
 #include "DialogPeakFilter.h"
-
-
 
 DialogPeakFilter::DialogPeakFilter(const nsx::DataList& data, QWidget* parent):
     QDialog(parent),

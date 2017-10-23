@@ -1,6 +1,6 @@
 #include <cmath>
-#include <stdexcept>
 #include <iostream>
+#include <stdexcept>
 
 #include "NiggliReduction.h"
 

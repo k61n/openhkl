@@ -1,10 +1,10 @@
 #include <Eigen/Dense>
 
-#include "../instrument/CylindricalDetector.h"
-#include "../instrument/Gonio.h"
-#include "../instrument/RotAxis.h"
-#include "../instrument/TransAxis.h"
-#include "../utils/Units.h"
+#include "CylindricalDetector.h"
+#include "Gonio.h"
+#include "RotAxis.h"
+#include "TransAxis.h"
+#include "Units.h"
 
 namespace nsx {
 

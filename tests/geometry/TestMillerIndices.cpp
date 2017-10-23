@@ -1,7 +1,7 @@
 #include <Eigen/Dense>
 
-#include <nsxlib/geometry/MillerIndices.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/MillerIndices.h>
+#include <nsxlib/NSXTest.h>
 
 int main() {
 

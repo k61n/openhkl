@@ -31,7 +31,7 @@
 #include <string>
 #include <vector>
 
-#include "../kernel/Singleton.h"
+#include "Singleton.h"
 
 namespace nsx {
 

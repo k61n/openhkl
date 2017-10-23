@@ -33,12 +33,11 @@
  *
  */
 
-#ifndef NSXLIB_INTERPOLATOR_H
-#define NSXLIB_INTERPOLATOR_H
+#pragma once
 
 #include <vector>
 
-#include "../mathematics/Round.h"
+#include "Round.h"
 
 namespace nsx {
 
@@ -73,5 +72,3 @@ T_ interpolate(const std::vector<T_>& elements, double index) {
 }
 
 } // end namespace nsx
-
-#endif // NSXLIB_INTERPOLATOR_H

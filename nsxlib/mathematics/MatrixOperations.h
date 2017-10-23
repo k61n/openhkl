@@ -27,8 +27,7 @@
  *
  */
 
-#ifndef NSXLIB_MATRIXOPERATIONS_H
-#define NSXLIB_MATRIXOPERATIONS_H
+#pragma once
 
 #include <Eigen/Dense>
 
@@ -39,5 +38,3 @@ void removeColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove);
 void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove);
 
 } // end namespace nsx
-
-#endif // NSXLIB_MATRIXOPERATIONS_H

@@ -4,7 +4,7 @@
 #include <QJsonObject>
 #include <QList>
 
-#include <nsxlib/instrument/InstrumentTypes.h>
+#include <nsxlib/InstrumentTypes.h>
 
 #include "InspectableTreeItem.h"
 

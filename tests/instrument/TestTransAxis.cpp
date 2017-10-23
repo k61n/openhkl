@@ -1,7 +1,7 @@
 #include <Eigen/Dense>
 
-#include <nsxlib/utils/NSXTest.h>
-#include <nsxlib/instrument/TransAxis.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/TransAxis.h>
 
 const double tolerance=1e-6;
 

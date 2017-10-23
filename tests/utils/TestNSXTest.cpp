@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/NSXTest.h>
 
 class MyException : public std::exception {
 public:

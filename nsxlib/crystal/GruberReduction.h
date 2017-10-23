@@ -26,13 +26,14 @@
  *
  */
 
-#ifndef NSXLIB_GRUBBERREDUCTION_H
-#define NSXLIB_GRUBBERREDUCTION_H
+#pragma once
+
+#include <string>
+
+#include <Eigen/Dense>
 
 #include "NiggliCharacter.h"
 #include "UnitCell.h"
-#include <Eigen/Dense>
-#include <string>
 
 namespace nsx {
 
@@ -53,5 +54,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_GRUBBERREDUCTION_H

@@ -1,7 +1,7 @@
 #include <Eigen/Dense>
 
-#include <nsxlib/geometry/DirectVector.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/DirectVector.h>
+#include <nsxlib/NSXTest.h>
 
 int main()
 {

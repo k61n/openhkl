@@ -3,11 +3,13 @@
 // Forschungszentrum Jülich GmbH
 // j.fisher@fz-juelich.de
 
+#include <math.h>
+
 #include "AnnularKernel.h"
+
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
-#include <math.h> // for M_PI
 
 // M_PI is often define but not standard
 #ifndef M_PI

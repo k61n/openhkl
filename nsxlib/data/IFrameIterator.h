@@ -1,11 +1,7 @@
-// author: Jonathan Fisher
-// j.fisher@fz-juelich.de
+#pragma once
 
-#ifndef NSXLIB_IFRAMEITERATOR_H
-#define NSXLIB_IFRAMEITERATOR_H
-
-#include "../data/DataTypes.h"
-#include "../mathematics/MathematicsTypes.h"
+#include "DataTypes.h"
+#include "MathematicsTypes.h"
 
 namespace nsx {
 
@@ -23,5 +19,3 @@ protected:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_IFRAMEITERATOR_H

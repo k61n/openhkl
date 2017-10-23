@@ -9,14 +9,14 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/instrument/Detector.h>
-#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Detector.h>
+#include <nsxlib/Diffractometer.h>
 
-#include "DetectorScene.h"
 #include "CutSliceGraphicsItem.h"
-#include "plot/SimplePlot.h"
-#include "plot/SXPlot.h"
+#include "DetectorScene.h"
+#include "SimplePlot.h"
+#include "SXPlot.h"
 
 CutSliceGraphicsItem::CutSliceGraphicsItem(nsx::sptrDataSet data, bool horizontal)
 : CutterGraphicsItem(data),

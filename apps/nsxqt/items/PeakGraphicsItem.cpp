@@ -4,16 +4,16 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/data/MetaData.h>
-#include <nsxlib/geometry/Ellipsoid.h>
-#include <nsxlib/geometry/IntegrationRegion.h>
-#include <nsxlib/utils/Units.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Ellipsoid.h>
+#include <nsxlib/IntegrationRegion.h>
+#include <nsxlib/MetaData.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/Units.h>
 
 #include "PeakGraphicsItem.h"
-#include "plot/SXPlot.h"
-#include "plot/PeakPlot.h"
+#include "PeakPlot.h"
+#include "SXPlot.h"
 
 bool PeakGraphicsItem::_labelVisible = false;
 bool PeakGraphicsItem::_drawBackground = false;

@@ -36,15 +36,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "Minimizer.h"
-
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_multifit_nlinear.h>
 
+#include "Minimizer.h"
+
 namespace nsx {
-   
 
 // Helper class to wrap GSL data structures. Used only in implementation of Minimizer.
 struct MinimizerGSL {

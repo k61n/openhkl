@@ -45,10 +45,10 @@
 #include <QStandardItemModel>
 #include <QTreeView>
 
-#include <nsxlib/crystal/CrystalTypes.h>
-#include <nsxlib/data/DataTypes.h>
-#include <nsxlib/instrument/InstrumentTypes.h>
-#include <nsxlib/utils/UtilsTypes.h>
+#include <nsxlib/CrystalTypes.h>
+#include <nsxlib/DataTypes.h>
+#include <nsxlib/InstrumentTypes.h>
+#include <nsxlib/UtilsTypes.h>
 
 class ExperimentItem;
 

@@ -29,12 +29,11 @@
  *
  */
 
-#ifndef NSXLIB_BOXMASK_H
-#define NSXLIB_BOXMASK_H
+#pragma once
 
-#include "IMask.h"
 #include "AABB.h"
 #include "Ellipsoid.h"
+#include "IMask.h"
 
 namespace nsx {
 
@@ -50,5 +49,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_BOX2DMASK_H

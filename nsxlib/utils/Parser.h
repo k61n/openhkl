@@ -27,8 +27,7 @@
  *
  */
 
-#ifndef NSXLIB_PARSER_H
-#define NSXLIB_PARSER_H
+#pragma once
 
 #include <vector>
 
@@ -42,5 +41,3 @@ void readIntsFromChar(const char* begin, const char* end, std::vector<int>& v);
 void readDoublesFromChar(const char* begin, const char* end, std::vector<double>& v);
 
 } // end namespace nsx
-
-#endif // NSXLIB_PARSER_H

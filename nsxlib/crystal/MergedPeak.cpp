@@ -33,10 +33,10 @@
  *
  */
 
-#include <cmath>
-#include <stdexcept>
 #include <algorithm>
+#include <cmath>
 #include <cstdlib>
+#include <stdexcept>
 
 #include <gsl/gsl_cdf.h>
 

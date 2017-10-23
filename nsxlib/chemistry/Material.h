@@ -27,15 +27,14 @@
  *
  */
 
-#ifndef NSXLIB_MATERIAL_H
-#define NSXLIB_MATERIAL_H
+#pragma once
 
 #include <map>
 #include <ostream>
 #include <string>
 
-#include "../chemistry/ChemistryTypes.h"
-#include "../chemistry/IsotopeDatabaseManager.h"
+#include "ChemistryTypes.h"
+#include "IsotopeDatabaseManager.h"
 
 namespace nsx {
 
@@ -99,5 +98,3 @@ std::ostream& operator<<(std::ostream& os, const Material& material);
 #endif
 
 } // end namespace nsx
-
-#endif // NSXLIB_MATERIAL_H

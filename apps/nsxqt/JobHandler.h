@@ -5,12 +5,12 @@
 #ifndef NSXQT_JOBHANDLER_H
 #define NSXQT_JOBHANDLER_H
 
+#include <memory>
+
 #include <QObject>
 #include <QThread>
 
-#include <memory>
-
-#include <nsxlib/utils/UtilsTypes.h>
+#include <nsxlib/UtilsTypes.h>
 
 class WorkerThread : public QThread
 {

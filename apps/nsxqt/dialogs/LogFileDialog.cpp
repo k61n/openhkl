@@ -28,10 +28,11 @@
  *
  */
 
-#include <QFileDialog>
 #include <cassert>
 
-#include "dialogs/LogFileDialog.h"
+#include <QFileDialog>
+
+#include "LogFileDialog.h"
 #include "ui_LogFileDialog.h"
 
 
