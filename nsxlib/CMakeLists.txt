@@ -36,7 +36,7 @@ target_link_libraries(nsx
 # Install section, installing libraries
 install(TARGETS nsx DESTINATION lib)
 install(CODE "MESSAGE(\"Installing headers...\")")
-install(FILES ${headers} DESTINATION nsxlib)
+install(FILES ${NSXLIB_HEADERS} DESTINATION nsxlib)
 
 if(NSX_TIDY)
   add_tidy_target(nsx)

@@ -32,7 +32,7 @@
 #include <map>
 #include <string>
 
-#include "yaml-cpp/yaml.h"
+#include <yaml-cpp/yaml.h>
 
 #include "InstrumentTypes.h"
 

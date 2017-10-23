@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "yaml-cpp/yaml.h"
+#include <yaml-cpp/yaml.h>
 
 #include "ChemistryTypes.h"
 #include "Singleton.h"

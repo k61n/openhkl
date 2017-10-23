@@ -1,8 +1,8 @@
 #include <memory>
 
 #include "blosc.h"
-#include "blosc_filter.h"
 
+#include "BloscFilter.h"
 #include "ComponentState.h"
 #include "Detector.h"
 #include "Diffractometer.h"

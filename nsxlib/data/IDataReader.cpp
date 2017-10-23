@@ -10,11 +10,11 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/operations.hpp>
 
-#include "blosc_filter.h"
 #include "blosc.h"
 
 #include "H5Cpp.h"
 
+#include "BloscFilter.h"
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "Gonio.h"

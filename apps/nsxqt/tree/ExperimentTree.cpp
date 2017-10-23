@@ -46,7 +46,7 @@
 #include "PeakListItem.h"
 #include "PeakTableView.h"
 #include "ProgressView.h"
-#include "qcustomplot.h"
+#include "QCustomPlot.h"
 #include "SampleItem.h"
 #include "SessionModel.h"
 #include "SourceItem.h"

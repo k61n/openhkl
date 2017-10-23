@@ -6,13 +6,13 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/operations.hpp>
 
-#include "blosc_filter.h"
 #include "blosc.h"
 
 #include "H5Cpp.h"
 
 #include "AABB.h"
 #include "BasicFrameIterator.h"
+#include "BloscFilter.h"
 #include "DataSet.h"
 #include "Detector.h"
 #include "Diffractometer.h"

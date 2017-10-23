@@ -97,7 +97,7 @@
 #include "PeakListItem.h"
 #include "PeakTableView.h"
 #include "ProgressView.h"
-#include "qcustomplot.h"
+#include "QCustomPlot.h"
 #include "ResolutionCutoffDialog.h"
 #include "SampleItem.h"
 #include "SessionModel.h"

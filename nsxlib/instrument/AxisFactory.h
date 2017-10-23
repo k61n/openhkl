@@ -31,7 +31,7 @@
 
 #include <string>
 
-#include "yaml-cpp/yaml.h"
+#include <yaml-cpp/yaml.h>
 
 #include "Axis.h"
 #include "Factory.h"

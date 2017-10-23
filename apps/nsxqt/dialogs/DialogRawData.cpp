@@ -35,7 +35,7 @@
 
 #include <nsxlib/Logger.h>
 
-#include "dialogs/DialogRawData.h"
+#include "DialogRawData.h"
 #include "ui_DialogRawData.h"
 
 DialogRawData::DialogRawData(QWidget *parent):
