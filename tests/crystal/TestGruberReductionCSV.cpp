@@ -5,15 +5,15 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/crystal/GruberReduction.h>
-#include <nsxlib/crystal/NiggliReduction.h>
-#include <nsxlib/crystal/SpaceGroup.h>
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/instrument/Component.h>
-#include <nsxlib/instrument/ComponentState.h>
-#include <nsxlib/utils/CSV.h>
-#include <nsxlib/utils/NSXTest.h>
-#include <nsxlib/utils/Units.h>
+#include <nsxlib/Component.h>
+#include <nsxlib/ComponentState.h>
+#include <nsxlib/CSV.h>
+#include <nsxlib/GruberReduction.h>
+#include <nsxlib/NiggliReduction.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/SpaceGroup.h>
+#include <nsxlib/UnitCell.h>
+#include <nsxlib/Units.h>
 
 const double niggli_tolerance = 1e-9;
 const double gruber_tolerance = 1e-5;

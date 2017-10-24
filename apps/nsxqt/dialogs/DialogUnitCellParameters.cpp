@@ -1,7 +1,7 @@
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/utils/Units.h>
+#include <nsxlib/UnitCell.h>
+#include <nsxlib/Units.h>
 
-#include "dialogs/DialogUnitCellParameters.h"
+#include "DialogUnitCellParameters.h"
 #include "ui_DialogUnitCellParameters.h"
 
 DialogUnitCellParameters::DialogUnitCellParameters(nsx::sptrUnitCell unitCell, QWidget *parent) :

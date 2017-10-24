@@ -1,7 +1,7 @@
 #include <Eigen/Dense>
 
-#include <nsxlib/geometry/Basis.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/Basis.h>
+#include <nsxlib/NSXTest.h>
 
 const double tolerance=1e-5;
 

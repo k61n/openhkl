@@ -4,10 +4,10 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/crystal/NiggliReduction.h>
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/utils/NSXTest.h>
-#include <nsxlib/utils/Units.h>
+#include <nsxlib/NiggliReduction.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/UnitCell.h>
+#include <nsxlib/Units.h>
 
 const double tolerance=1e-6;
 

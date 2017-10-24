@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "../crystal/CrystalTypes.h"
+#include "CrystalTypes.h"
 
 namespace nsx {
 

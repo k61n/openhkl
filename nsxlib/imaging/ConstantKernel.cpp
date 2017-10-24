@@ -5,7 +5,6 @@
 
 #include "ConstantKernel.h"
 
-
 namespace nsx {
 
 ConvolutionKernel* ConstantKernel::create(int nrows, int ncols)

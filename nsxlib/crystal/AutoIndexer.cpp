@@ -33,21 +33,21 @@
  *
  */
 
-#include "../crystal/AutoIndexer.h"
-#include "../crystal/FFTIndexing.h"
-#include "../crystal/GruberReduction.h"
-#include "../crystal/NiggliReduction.h"
-#include "../crystal/Peak3D.h"
-#include "../crystal/UBMinimizer.h"
-#include "../crystal/UBSolution.h"
-#include "../instrument/Detector.h"
-#include "../instrument/Diffractometer.h"
-#include "../instrument/Experiment.h"
-#include "../instrument/Gonio.h"
-#include "../instrument/Sample.h"
-#include "../utils/ProgressHandler.h"
-
 #include <string>
+
+#include "AutoIndexer.h"
+#include "Detector.h"
+#include "Diffractometer.h"
+#include "Experiment.h"
+#include "FFTIndexing.h"
+#include "Gonio.h"
+#include "GruberReduction.h"
+#include "NiggliReduction.h"
+#include "Peak3D.h"
+#include "ProgressHandler.h"
+#include "Sample.h"
+#include "UBMinimizer.h"
+#include "UBSolution.h"
 
 namespace nsx {
 

@@ -1,11 +1,11 @@
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Monochromator.h>
-#include <nsxlib/instrument/InstrumentTypes.h>
-#include <nsxlib/instrument/Source.h>
-#include <nsxlib/logger/Logger.h>
-#include <nsxlib/utils/Units.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/InstrumentTypes.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/Monochromator.h>
+#include <nsxlib/Source.h>
+#include <nsxlib/Units.h>
 
-#include "models/SourceItem.h"
+#include "SourceItem.h"
 #include "SourcePropertyWidget.h"
 
 #include "ui_SourcePropertyWidget.h"

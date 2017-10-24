@@ -9,9 +9,9 @@
 #endif
 */
 
+#include <Eigen/Dense>
 
 #include <QGLWidget>
-#include <Eigen/Dense>
 
 class GLActor
 {

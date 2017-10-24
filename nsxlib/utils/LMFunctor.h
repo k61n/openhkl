@@ -27,8 +27,7 @@
  *
  */
 
-#ifndef NSXLIB_LMFUNCTOR_H
-#define NSXLIB_LMFUNCTOR_H
+#pragma once
 
 #include <Eigen/Dense>
 
@@ -89,5 +88,3 @@ int LMFunctor<_Scalar,NX,NY>::values() const {
 }
 
 } // end namespace nsx
-
-#endif // NSXLIB_LMFUNCTOR_H

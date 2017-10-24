@@ -7,14 +7,14 @@
 #include <QStandardItem>
 #include <QTreeView>
 
-#include <nsxlib/data/DataTypes.h>
-#include <nsxlib/data/PeakFinder.h>
-#include <nsxlib/imaging/KernelFactory.h>
-#include <nsxlib/imaging/Convolver.h>
-#include <nsxlib/imaging/ImagingTypes.h>
-#include <nsxlib/imaging/ConvolutionKernel.h>
-#include <nsxlib/logger/Logger.h>
-#include <nsxlib/mathematics/MathematicsTypes.h>
+#include <nsxlib/ConvolutionKernel.h>
+#include <nsxlib/Convolver.h>
+#include <nsxlib/DataTypes.h>
+#include <nsxlib/KernelFactory.h>
+#include <nsxlib/ImagingTypes.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/MathematicsTypes.h>
+#include <nsxlib/PeakFinder.h>
 
 #include "ColorMap.h"
 #include "DialogConvolve.h"

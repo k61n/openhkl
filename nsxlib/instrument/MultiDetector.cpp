@@ -3,11 +3,11 @@
 
 #include <Eigen/Dense>
 
-#include "../instrument/DetectorFactory.h"
-#include "../instrument/Gonio.h"
-#include "../instrument/MonoDetector.h"
-#include "../instrument/MultiDetector.h"
-#include "../utils/YAMLType.h"
+#include "DetectorFactory.h"
+#include "Gonio.h"
+#include "MonoDetector.h"
+#include "MultiDetector.h"
+#include "YAMLType.h"
 
 namespace nsx {
 

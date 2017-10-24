@@ -1,7 +1,7 @@
 #include <cmath>
 
-#include <nsxlib/mathematics/ErfInv.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/ErfInv.h>
+#include <nsxlib/NSXTest.h>
 
 int main()
 {

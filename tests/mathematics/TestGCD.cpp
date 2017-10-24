@@ -1,5 +1,5 @@
-#include <nsxlib/mathematics/GCD.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/GCD.h>
+#include <nsxlib/NSXTest.h>
 
 using namespace nsx;
 

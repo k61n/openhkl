@@ -1,13 +1,13 @@
 #include <string>
 #include <vector>
 
-#include <Eigen/Dense>
-
 #include <boost/algorithm/string.hpp>
 #include <boost/spirit/include/classic.hpp>
 
-#include <nsxlib/utils/AffineTransformParser.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <Eigen/Dense>
+
+#include <nsxlib/AffineTransformParser.h>
+#include <nsxlib/NSXTest.h>
 
 const double tolerance=1e-6;
 int main()

@@ -1,19 +1,18 @@
 #include <string>
 #include <vector>
 
-#include <nsxlib/crystal/Mosaic.h>
-#include <nsxlib/data/DataReaderFactory.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/geometry/ConvexHull.h>
-#include <nsxlib/geometry/Ellipsoid.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/utils/NSXTest.h>
-#include <nsxlib/utils/Units.h>
+#include <nsxlib/ConvexHull.h>
+#include <nsxlib/DataReaderFactory.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/Ellipsoid.h>
+#include <nsxlib/Mosaic.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/Sample.h>
+#include <nsxlib/Units.h>
 
 int main()
 {
-
     nsx::Sample s("test");
 
     nsx::ConvexHull hull;

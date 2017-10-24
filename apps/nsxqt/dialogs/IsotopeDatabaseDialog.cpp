@@ -1,12 +1,10 @@
-#include <boost/any.hpp>
-
 #include <QStandardItem>
 #include <QStandardItemModel>
 
-#include <nsxlib/chemistry/ChemistryTypes.h>
-#include <nsxlib/chemistry/IsotopeDatabaseManager.h>
-#include <nsxlib/mathematics/ComplexParser.h>
-#include <nsxlib/utils/Units.h>
+#include <nsxlib/ChemistryTypes.h>
+#include <nsxlib/ComplexParser.h>
+#include <nsxlib/IsotopeDatabaseManager.h>
+#include <nsxlib/Units.h>
 
 #include "IsotopeDatabaseDialog.h"
 

@@ -1,5 +1,4 @@
-#ifndef NSXLIB_ENUMS_H
-#define NSXLIB_ENUMS_H
+#pragma once
 
 namespace nsx {
 
@@ -13,5 +12,3 @@ enum class DataOrder : size_t {TopLeftColMajor=0,
                                BottomRightRowMajor=7};
 
 } // end namespace nsx
-
-#endif // NSXLIB_ENUMS_H

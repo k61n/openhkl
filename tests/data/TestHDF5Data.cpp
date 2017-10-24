@@ -1,9 +1,9 @@
 #include <Eigen/Dense>
 
-#include <nsxlib/data/DataReaderFactory.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/DataReaderFactory.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/NSXTest.h>
 
 int main()
 {

@@ -1,8 +1,8 @@
 #include <string>
 
-#include <nsxlib/utils/LatticeConstraintParser.h>
-#include <nsxlib/utils/NSXTest.h>
-#include <nsxlib/utils/UtilsTypes.h>
+#include <nsxlib/LatticeConstraintParser.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/UtilsTypes.h>
 
 int main()
 {

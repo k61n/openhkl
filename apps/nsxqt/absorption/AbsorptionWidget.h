@@ -7,7 +7,7 @@
 
 #include <QWidget>
 
-#include <nsxlib/instrument/InstrumentTypes.h>
+#include <nsxlib/InstrumentTypes.h>
 
 namespace Ui {
 class AbsorptionWidget;

@@ -2,11 +2,14 @@ if(POLICY CMP0020)
   cmake_policy(SET CMP0020 NEW)
 endif()
 
+GET_SUBDIRECTORIES(NSXQT_SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
+
 # add project root directory to include path
-include_directories(
-    ${CMAKE_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}
-)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}
+                    ${NSXQT_SUBDIRS}
+                    ${CMAKE_BINARY_DIR}/include)
+
+
 # Disable console on Windows
 if(WIN32)
   set(GUI_TYPE WIN32)
@@ -23,10 +26,10 @@ find_package(Qt5Gui REQUIRED)
 find_package(OpenGL REQUIRED)
 
 # Find recursively all the header files of NSXQt
-file(GLOB_RECURSE nsxqt_headers *.h)
+file(GLOB_RECURSE NSXQT_HEADERS *.h)
 
 # Find recursively all the cpp source files of NSXQt
-file(GLOB_RECURSE nsxqt_sources *.cpp)
+file(GLOB_RECURSE NSXQT_SOURCES *.cpp)
 
 if (${CMAKE_VERSION} VERSION_LESS 2.8.11)
   # Add the include directories for the Qt 5 Widgets module to the compile lines.
@@ -56,8 +59,8 @@ if (${CMAKE_VERSION} VERSION_LESS 2.8.11)
   # Generate the Qt moc files
   # All the sources files that are not Qt Q_OBJECT will trigger a warning
   # and won't be compiled as moc objects.
-  qt5_wrap_cpp(mocs ${nsxqt_headers})
-  list(APPEND nsxqt_sources ${mocs})
+  qt5_wrap_cpp(mocs ${NSXQT_HEADERS})
+  list(APPEND NSXQT_SOURCES ${mocs})
 else()
   # Find includes in corresponding build directories
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -72,15 +75,15 @@ else()
 endif()
 
 # Find recursively all the Qt ui files of NSXQt
-file(GLOB_RECURSE nsxqt_uis *.ui)
+file(GLOB_RECURSE NSXQT_UIS *.ui)
 
 # Build the headers files for all Qt ui files
-qt5_wrap_ui(ui_headers ${nsxqt_uis})
+qt5_wrap_ui(ui_headers ${NSXQT_UIS})
 
 # Find recursively all the Qt resources files of NSXQt
-file(GLOB_RECURSE nsxqt_rcs *.qrc)
+file(GLOB_RECURSE NSXQT_RCS *.qrc)
 # "Compile" the resources files
-qt5_add_resources(resources ${nsxqt_rcs})
+qt5_add_resources(resources ${NSXQT_RCS})
 
 # For info use 'objdump -x nsxqt | grep RPATH' to the installed executable (not the built one)
 # to check that the RPATH is correctly set
@@ -93,7 +96,7 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
 
 # Build the nsxqt executable
-add_executable(nsxqt ${GUI_TYPE} ${nsxqt_sources} ${nsxqt_headers} ${ui_headers} ${resources})
+add_executable(nsxqt ${GUI_TYPE} ${NSXQT_SOURCES} ${NSXQT_HEADERS} ${ui_headers} ${resources})
 
 # Link the nsxqt executable with the Qt5 libraries in use.
 target_link_libraries(
@@ -116,15 +119,15 @@ set(qmake_headers "")
 set(qmake_uis "")
 set(qmake_include_dirs "")
 
-foreach(source_file ${nsxqt_sources})
+foreach(source_file ${NSXQT_SOURCES})
   set(qmake_sources "${qmake_sources} ${source_file}")
 endforeach(source_file)
 
-foreach(source_file ${nsxqt_headers})
+foreach(source_file ${NSXQT_HEADERS})
   set(qmake_headers "${qmake_headers} ${source_file}")
 endforeach(source_file)
 
-foreach(source_file ${nsxqt_uis})
+foreach(source_file ${NSXQT_UIS})
   set(qmake_uis "${qmake_uis} ${source_file}")
 endforeach(source_file)
 

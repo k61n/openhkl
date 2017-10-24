@@ -33,14 +33,14 @@
  *
  */
 
-#ifndef NSXLIB_PROFILE_H
-#define NSXLIB_PROFILE_H
+#pragma once
 
 #include <functional>
+
 #include <Eigen/Dense>
 
-#include "../mathematics/Gaussian.h"
-#include "../mathematics/Lorentzian.h"
+#include "Gaussian.h"
+#include "Lorentzian.h"
 
 namespace nsx {
 
@@ -65,5 +65,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_PROFILE_H

@@ -26,8 +26,7 @@
  *
  */
 
-#ifndef NSXLIB_AABB_H
-#define NSXLIB_AABB_H
+#pragma once
 
 #include <initializer_list>
 #include <stdexcept>
@@ -38,7 +37,7 @@
 
 #include <Eigen/Dense>
 
-#include "../geometry/GeometryTypes.h"
+#include "GeometryTypes.h"
 
 namespace nsx {
 
@@ -115,5 +114,3 @@ protected:
 std::ostream& operator<<(std::ostream& os, const AABB& aabb);
 
 } // end namespace nsx
-
-#endif // NSXLIB_AABB_H

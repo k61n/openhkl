@@ -27,13 +27,12 @@
  *
  */
 
-#ifndef NSXLIB_TIFFDATAREADER_H
-#define NSXLIB_TIFFDATAREADER_H
+#pragma once
 
 #include <tiffio.h>
 
-#include "../data/IDataReader.h"
-#include "../instrument/InstrumentTypes.h"
+#include "IDataReader.h"
+#include "InstrumentTypes.h"
 
 namespace nsx {
 
@@ -61,5 +60,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_TIFFDATAREADER_H

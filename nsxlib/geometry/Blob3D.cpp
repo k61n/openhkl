@@ -4,8 +4,8 @@
 
 #include <Eigen/Eigenvalues>
 
-#include "../geometry/Blob3D.h"
-#include "../mathematics/ErfInv.h"
+#include "Blob3D.h"
+#include "ErfInv.h"
 
 static const double minimum_blob_mass = 1e-15;
 

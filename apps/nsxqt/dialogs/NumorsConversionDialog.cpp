@@ -8,12 +8,12 @@
 #include <QString>
 #include <QStringList>
 
-#include <nsxlib/data/DataReaderFactory.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/InstrumentTypes.h>
-#include <nsxlib/logger/Logger.h>
-#include <nsxlib/utils/Path.h>
+#include <nsxlib/DataReaderFactory.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/InstrumentTypes.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/Path.h>
 
 #include "NumorsConversionDialog.h"
 #include "ui_NumorsConversionDialog.h"

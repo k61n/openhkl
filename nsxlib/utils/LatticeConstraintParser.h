@@ -27,8 +27,7 @@
  *
  */
 
-#ifndef NSXLIB_LATTICECONSTRAINTPARSER_H
-#define NSXLIB_LATTICECONSTRAINTPARSER_H
+#pragma once
 
 #define BOOST_SPIRIT_USE_PHOENIX_V3
 #define BOOST_RESULT_OF_USE_DECLTYPE
@@ -40,7 +39,7 @@
 #include <boost/fusion/adapted/struct.hpp>
 #include <boost/variant.hpp>
 
-#include "../utils/UtilsTypes.h"
+#include "UtilsTypes.h"
 
 namespace nsx {
 
@@ -99,5 +98,3 @@ struct LatticeConstraintParser : boost::spirit::qi::grammar<It,ConstraintSet()> 
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_LATTICECONSTRAINTPARSER_H

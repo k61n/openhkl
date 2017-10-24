@@ -1,5 +1,4 @@
-#ifndef NSXLIB_UTILSTYPES_H
-#define NSXLIB_UTILSTYPES_H
+#pragma once
 
 #include <functional>
 #include <memory>
@@ -19,5 +18,3 @@ using FinishedCallback = std::function<void(bool)>;
 using TaskCallback = std::function<bool(void)>;
 
 } // end namespace nsx
-
-#endif // NSXLIB_UTILSTYPES_H

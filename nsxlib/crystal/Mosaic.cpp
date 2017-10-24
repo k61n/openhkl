@@ -10,20 +10,20 @@
 #include <random>
 #include <vector>
 
-#include "../crystal/Mosaic.h"
-#include "../crystal/UnitCell.h"
-#include "../data/DataSet.h"
-#include "../data/MetaData.h"
-#include "../geometry/BlobFinder.h"
-#include "../geometry/Blob3D.h"
-#include "../geometry/GeometryTypes.h"
-#include "../geometry/Triangle.h"
-#include "../instrument/Detector.h"
-#include "../instrument/Diffractometer.h"
-#include "../instrument/Gonio.h"
-#include "../instrument/Sample.h"
-#include "../instrument/Source.h"
-#include "../utils/Units.h"
+#include "Blob3D.h"
+#include "BlobFinder.h"
+#include "DataSet.h"
+#include "Detector.h"
+#include "Diffractometer.h"
+#include "GeometryTypes.h"
+#include "Gonio.h"
+#include "MetaData.h"
+#include "Mosaic.h"
+#include "Sample.h"
+#include "Source.h"
+#include "Triangle.h"
+#include "UnitCell.h"
+#include "Units.h"
 
 namespace nsx {
 

@@ -35,14 +35,13 @@
  *
  */
 
-#ifndef NSXLIB_DETECTOREVENT_H
-#define NSXLIB_DETECTOREVENT_H
+#pragma once
 
 #include <vector>
 
-#include <Eigen/Core>
+#include <Eigen/Dense>
 
-#include "../instrument/InstrumentTypes.h"
+#include "InstrumentTypes.h"
 
 namespace nsx {
 
@@ -120,5 +119,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_DETECTOREVENT_H

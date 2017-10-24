@@ -1,14 +1,10 @@
-// author: Jonathan Fisher
-// j.fisher@fz-juelich.de
+#pragma once
 
-#ifndef NSXLIB_PROGRESSHANDLER_H
-#define NSXLIB_PROGRESSHANDLER_H
-
-#include <mutex>
+#include <atomic>
 #include <functional>
+#include <mutex>
 #include <string>
 #include <vector>
-#include <atomic>
 
 namespace nsx {
 
@@ -45,5 +41,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_PROGRESSHANDLER_H

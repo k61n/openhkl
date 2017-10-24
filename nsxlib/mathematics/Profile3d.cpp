@@ -33,11 +33,9 @@
  *
  */
 
-#include "../mathematics/Profile3d.h"
-#include "../mathematics/Minimizer.h"
-#include "../utils/FitParameters.h"
-
-#include <iostream>
+#include "FitParameters.h"
+#include "Minimizer.h"
+#include "Profile3d.h"
 
 // anonymous namespace for helper structures and routines
 namespace nsx {

@@ -26,8 +26,7 @@
  *
  */
 
-#ifndef NSXLIB_COMPLEXPARSER_H
-#define NSXLIB_COMPLEXPARSER_H
+#pragma once
 
 #include <complex>
 #include <string>
@@ -89,7 +88,4 @@ std::string complexToString(const std::complex<T>& number, double tolerance=1.0e
 }
 
 } // end namespace nsx
-
-
-#endif // NSXLIB_COMPLEXPARSER_H
 

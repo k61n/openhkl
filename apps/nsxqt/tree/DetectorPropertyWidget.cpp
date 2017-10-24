@@ -1,14 +1,14 @@
+#include <nsxlib/Detector.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/Gonio.h>
+#include <nsxlib/RotAxis.h>
+#include <nsxlib/TransAxis.h>
+#include <nsxlib/Units.h>
+
+#include "DetectorItem.h"
+#include "DetectorPropertyWidget.h"
+
 #include "ui_DetectorPropertyWidget.h"
-
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Detector.h>
-#include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/instrument/RotAxis.h>
-#include <nsxlib/instrument/TransAxis.h>
-#include <nsxlib/utils/Units.h>
-
-#include "models/DetectorItem.h"
-#include "tree/DetectorPropertyWidget.h"
 
 DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *parent) :
     QWidget(parent),

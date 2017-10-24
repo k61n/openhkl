@@ -7,12 +7,12 @@
 #include <QFileInfo>
 #include <QMessageBox>
 
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/instrument/RotAxis.h>
-#include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/logger/Logger.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/Experiment.h>
+#include <nsxlib/Gonio.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/RotAxis.h>
+#include <nsxlib/Sample.h>
 
 #include "AbsorptionDialog.h"
 #include "CrystalScene.h"

@@ -33,8 +33,7 @@
  *
  */
 
-#ifndef NSXLIB_ERF_INV_H
-#define NSXLIB_ERF_INV_H
+#pragma once
 
 namespace nsx {
 
@@ -49,5 +48,3 @@ double getScale(double confidence);
 double getConfidence(double x);
 
 } // end namespace nsx
-
-#endif // NSXLIB_ERF_INV_H

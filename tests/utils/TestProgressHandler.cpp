@@ -1,8 +1,8 @@
 #include <string>
 #include <vector>
 
-#include <nsxlib/utils/NSXTest.h>
-#include <nsxlib/utils/ProgressHandler.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/ProgressHandler.h>
 
 using namespace nsx;
 

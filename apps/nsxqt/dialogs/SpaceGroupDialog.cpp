@@ -15,15 +15,15 @@
 #include <QString>
 #include <QTreeView>
 
-#include <nsxlib/crystal/CrystalTypes.h>
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/statistics/RFactor.h>
-#include <nsxlib/crystal/SpaceGroup.h>
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/logger/Logger.h>
+#include <nsxlib/CrystalTypes.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/RFactor.h>
+#include <nsxlib/Sample.h>
+#include <nsxlib/SpaceGroup.h>
+#include <nsxlib/UnitCell.h>
 
 #include "SpaceGroupDialog.h"
 #include "ui_SpaceGroupDialog.h"

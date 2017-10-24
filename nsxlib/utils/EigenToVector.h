@@ -33,10 +33,10 @@
  *
  */
 
-#ifndef NSXLIB_EIGENTOVECTOR_H
-#define NSXLIB_EIGENTOVECTOR_H
+#pragma once
 
 #include <vector>
+
 #include <Eigen/Dense>
 
 namespace nsx {
@@ -44,5 +44,3 @@ namespace nsx {
 std::vector<double> eigenToVector(const Eigen::VectorXd& ev);
 
 } // end namespace nsx
-
-#endif // NSXLIB_EIGENTOVECTOR_H

@@ -28,10 +28,10 @@
  *
  */
 
-#include "../crystal/Intensity.h"
-#include "../crystal/PeakIntegrator.h"
-#include "../data/DataSet.h"
-#include "../geometry/Ellipsoid.h"
+#include "DataSet.h"
+#include "Ellipsoid.h"
+#include "Intensity.h"
+#include "PeakIntegrator.h"
 
 namespace nsx {
 

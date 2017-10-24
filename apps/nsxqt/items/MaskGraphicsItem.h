@@ -1,13 +1,13 @@
 #ifndef NSXQT_MASKGRAPHICSITEM_H
 #define NSXQT_MASKGRAPHICSITEM_H
 
-#include <string>
 #include <memory>
+#include <string>
 
-#include <nsxlib/data/DataTypes.h>
-#include <nsxlib/geometry/GeometryTypes.h>
+#include <nsxlib/DataTypes.h>
+#include <nsxlib/GeometryTypes.h>
 
-#include "items/CutterGraphicsItem.h"
+#include "CutterGraphicsItem.h"
 
 class QGraphicsSceneMouseEvent;
 class QGraphicsSceneWheelEvent;

@@ -33,7 +33,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "../data/DataTypes.h"
+#include "DataTypes.h"
 
 namespace nsx {
 

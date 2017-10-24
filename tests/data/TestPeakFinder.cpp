@@ -2,13 +2,13 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/data/DataReaderFactory.h>
-#include <nsxlib/data/PeakFinder.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/data/MetaData.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/utils/NSXTest.h>
-#include <nsxlib/utils/ProgressHandler.h>
+#include <nsxlib/DataReaderFactory.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/MetaData.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/PeakFinder.h>
+#include <nsxlib/ProgressHandler.h>
 
 int main()
 {

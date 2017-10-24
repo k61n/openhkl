@@ -1,9 +1,9 @@
 #ifndef NSXQT_CUTSLICEGRAPHICSITEM_H
 #define NSXQT_CUTSLICEGRAPHICSITEM_H
 
-#include <nsxlib/data/DataTypes.h>
+#include <nsxlib/DataTypes.h>
 
-#include "items/CutterGraphicsItem.h"
+#include "CutterGraphicsItem.h"
 
 class QGraphicsSceneMouseEvent;
 class QGraphicsSceneWheelEvent;

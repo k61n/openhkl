@@ -26,8 +26,8 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXLIB_AFFINETRANSFORMPARSER_H
-#define NSXLIB_AFFINETRANSFORMPARSER_H
+
+#pragma once
 
 #define BOOST_SPIRIT_USE_PHOENIX_V3
 #define BOOST_RESULT_OF_USE_DECLTYPE
@@ -38,6 +38,7 @@
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/fusion/adapted/struct.hpp>
 #include <boost/variant.hpp>
+
 #include <Eigen/Dense>
 
 namespace nsx {
@@ -132,5 +133,3 @@ struct AffineTransformParser : boost::spirit::qi::grammar<It,Eigen::Transform<do
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_AFFINETRANSFORMPARSER_H

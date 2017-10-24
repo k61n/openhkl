@@ -3,8 +3,8 @@
 
 #include "InspectableTreeItem.h"
 
-#include <nsxlib/crystal/CrystalTypes.h>
-#include <nsxlib/instrument/InstrumentTypes.h>
+#include <nsxlib/CrystalTypes.h>
+#include <nsxlib/InstrumentTypes.h>
 
 class QWidget;
 

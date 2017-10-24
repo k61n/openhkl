@@ -1,16 +1,8 @@
-/*
- * KernelFactory.h
- *
- *  Created on: Nov 14, 2016
- *      Author: pellegrini
- */
-
-#ifndef NSXLIB_KERNELFACTORY_H
-#define NSXLIB_KERNELFACTORY_H
+#pragma once
 
 #include "ConvolutionKernel.h"
-#include "../kernel/Factory.h"
-#include "../kernel/Singleton.h"
+#include "Factory.h"
+#include "Singleton.h"
 
 namespace nsx {
 
@@ -24,5 +16,3 @@ public:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_KERNELFACTORY_H

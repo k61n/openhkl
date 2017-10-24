@@ -28,12 +28,11 @@
  *
  */
 
-#ifndef NSXLIB_CSV_H
-#define NSXLIB_CSV_H
+#pragma once
 
-#include <vector>
 #include <iostream>
 #include <string>
+#include <vector>
 
 namespace nsx {
 
@@ -54,5 +53,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_CSV_H

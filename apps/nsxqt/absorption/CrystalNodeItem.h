@@ -1,10 +1,11 @@
 #ifndef NSXQT_CRYSTALNODEITEM_H
 #define NSXQT_CRYSTALNODEITEM_H
 
-#include <QGraphicsItem>
-#include <QPainter>
 #include <cmath>
 #include <iostream>
+
+#include <QGraphicsItem>
+#include <QPainter>
 
 //!
 //! @class CrystalNodeItem: Class uded to define points on a crystal.

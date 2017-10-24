@@ -33,9 +33,9 @@
  *
  */
 
+#include "MergedPeak.h"
 #include "PeakRecord.h"
 #include "Peak3D.h"
-#include "MergedPeak.h"
 
 namespace nsx {
 

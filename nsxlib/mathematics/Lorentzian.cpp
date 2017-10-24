@@ -33,8 +33,9 @@
  *
  */
 
-#include "Lorentzian.h"
 #include <cmath>
+
+#include "Lorentzian.h"
 
 static const double g_pi = double(M_PI);
 

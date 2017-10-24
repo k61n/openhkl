@@ -1,5 +1,5 @@
-#include <nsxlib/utils/Maybe.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/Maybe.h>
+#include <nsxlib/NSXTest.h>
 
 const double eps = 1e-10;
 

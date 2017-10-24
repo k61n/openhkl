@@ -3,8 +3,8 @@
 
 #include "Axis.h"
 #include "AxisFactory.h"
-#include "../utils/Units.h"
-#include "../utils/YAMLType.h"
+#include "Units.h"
+#include "YAMLType.h"
 
 namespace nsx {
 

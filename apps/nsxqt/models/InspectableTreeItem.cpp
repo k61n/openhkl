@@ -1,4 +1,4 @@
-#include "models/InspectableTreeItem.h"
+#include "InspectableTreeItem.h"
 
 InspectableTreeItem::InspectableTreeItem(nsx::sptrExperiment experiment):TreeItem(experiment)
 {

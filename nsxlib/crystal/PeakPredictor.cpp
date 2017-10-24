@@ -33,20 +33,20 @@
  *
  */
 
-#include "../crystal/CrystalTypes.h"
-#include "../crystal/Peak3D.h"
-#include "../crystal/PeakPredictor.h"
-#include "../crystal/SpaceGroup.h"
-#include "../crystal/UnitCell.h"
-#include "../data/DataSet.h"
-#include "../data/DataTypes.h"
-#include "../geometry/GeometryTypes.h"
-#include "../geometry/Octree.h"
-#include "../instrument/DetectorEvent.h"
-#include "../instrument/Diffractometer.h"
-#include "../instrument/Sample.h"
-#include "../instrument/Source.h"
-#include "../utils/ProgressHandler.h"
+#include "CrystalTypes.h"
+#include "DataSet.h"
+#include "DataTypes.h"
+#include "DetectorEvent.h"
+#include "Diffractometer.h"
+#include "GeometryTypes.h"
+#include "Octree.h"
+#include "Peak3D.h"
+#include "PeakPredictor.h"
+#include "ProgressHandler.h"
+#include "Sample.h"
+#include "SpaceGroup.h"
+#include "Source.h"
+#include "UnitCell.h"
 
 namespace nsx {
 

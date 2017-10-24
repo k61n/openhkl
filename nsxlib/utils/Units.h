@@ -26,14 +26,13 @@
  *
  */
 
-#ifndef NSXLIB_UNITS_H
-#define NSXLIB_UNITS_H
+#pragma once
 
 #include <cmath>
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 
-#include "../kernel/Singleton.h"
+#include "Singleton.h"
 
 namespace nsx {
 
@@ -198,5 +197,3 @@ static const double kB = 1.3806513e-23*J/K;
 static const double R=8.3144621*J/mole/K;
 
 } // end namespace nsx
-
-#endif // NSXLIB_UNITS_H

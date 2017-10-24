@@ -1,6 +1,3 @@
-// author: Jonathan Fisher
-// j.fisher@fz-juelich.de
-
 #include <stdexcept>
 
 #include "ProgressHandler.h"

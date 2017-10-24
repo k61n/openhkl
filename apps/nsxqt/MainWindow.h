@@ -9,14 +9,14 @@
 #include <QMenu>
 #include <QProgressBar>
 
-#include <nsxlib/crystal/CrystalTypes.h>
-#include <nsxlib/data/DataTypes.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/imaging/ImagingTypes.h>
-#include <nsxlib/utils/UtilsTypes.h>
+#include <nsxlib/CrystalTypes.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/DataTypes.h>
+#include <nsxlib/ImagingTypes.h>
+#include <nsxlib/UtilsTypes.h>
 
 #include "JobHandler.h"
-#include "views/ProgressView.h"
+#include "ProgressView.h"
 
 class QListWidgetItem;
 class PlottableGraphicsItem;

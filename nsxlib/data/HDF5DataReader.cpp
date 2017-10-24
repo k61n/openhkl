@@ -1,16 +1,16 @@
 #include <memory>
 
 #include "blosc.h"
-#include "blosc_filter.h"
 
-#include "../data/HDF5DataReader.h"
-#include "../instrument/Detector.h"
-#include "../instrument/Gonio.h"
-#include "../instrument/Sample.h"
-#include "../utils/Units.h"
-#include "../utils/EigenToVector.h"
-#include "../instrument/ComponentState.h"
-#include "../instrument/Diffractometer.h"
+#include "BloscFilter.h"
+#include "ComponentState.h"
+#include "Detector.h"
+#include "Diffractometer.h"
+#include "EigenToVector.h"
+#include "Gonio.h"
+#include "HDF5DataReader.h"
+#include "Sample.h"
+#include "Units.h"
 
 namespace nsx {
 

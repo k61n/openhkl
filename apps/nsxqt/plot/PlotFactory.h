@@ -3,8 +3,8 @@
 
 #include <string>
 
-#include <nsxlib/kernel/Factory.h>
-#include <nsxlib/kernel/Singleton.h>
+#include <nsxlib/Factory.h>
+#include <nsxlib/Singleton.h>
 
 #include "SXPlot.h"
 

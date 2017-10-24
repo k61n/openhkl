@@ -1,8 +1,8 @@
 #ifndef NSXQT_DATAITEM_H
 #define NSXQT_DATAITEM_H
 
-#include <nsxlib/data/DataTypes.h>
-#include <nsxlib/instrument/InstrumentTypes.h>
+#include <nsxlib/DataTypes.h>
+#include <nsxlib/InstrumentTypes.h>
 
 #include "TreeItem.h"
 

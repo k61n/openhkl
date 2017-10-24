@@ -33,10 +33,9 @@
 #include <sstream>
 #include <vector>
 
+#include "Peak3D.h"
 #include "SpaceGroup.h"
-
-#include "../crystal/Peak3D.h"
-#include "../utils/StringIO.h"
+#include "StringIO.h"
 
 namespace nsx {
 

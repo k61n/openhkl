@@ -1,4 +1,4 @@
-#include "dialogs/ResolutionCutoffDialog.h"
+#include "ResolutionCutoffDialog.h"
 #include "ui_ResolutionCutoffDialog.h"
 
 ResolutionCutoffDialog::ResolutionCutoffDialog(QWidget *parent) :

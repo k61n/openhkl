@@ -2,8 +2,7 @@
 
 #include <QtOpenGL>
 
-#include "opengl/GLTrackball.h"
-
+#include "GLTrackball.h"
 
 /*
 #ifdef __APPLE__

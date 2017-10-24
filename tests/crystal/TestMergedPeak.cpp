@@ -1,18 +1,17 @@
 #include <map>
 #include <string>
-#include <iostream>
 
-#include <Eigen/Core>
+#include <Eigen/Dense>
 
-#include <nsxlib/crystal/SpaceGroup.h>
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/crystal/GruberReduction.h>
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/data/MergedData.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/data/DataReaderFactory.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/DataReaderFactory.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Experiment.h>
+#include <nsxlib/GruberReduction.h>
+#include <nsxlib/MergedData.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/SpaceGroup.h>
+#include <nsxlib/UnitCell.h>
 
 using namespace nsx;
 

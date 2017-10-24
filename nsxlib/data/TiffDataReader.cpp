@@ -1,8 +1,8 @@
-#include "../data/TiffDataReader.h"
-#include "../instrument/ComponentState.h"
-#include "../instrument/Detector.h"
-#include "../instrument/Diffractometer.h"
-#include "../instrument/Sample.h"
+#include "ComponentState.h"
+#include "Detector.h"
+#include "Diffractometer.h"
+#include "Sample.h"
+#include "TiffDataReader.h"
 
 namespace nsx {
 

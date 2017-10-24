@@ -10,7 +10,7 @@
 #include <QProgressDialog>
 #include <QTimer>
 
-#include <nsxlib/utils/UtilsTypes.h>
+#include <nsxlib/UtilsTypes.h>
 
 class ProgressView: public QProgressDialog {
     Q_OBJECT

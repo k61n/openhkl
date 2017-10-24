@@ -1,5 +1,4 @@
-#include <nsxlib/kernel/Factory.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/NSXTest.h>
 
 int main()
 {

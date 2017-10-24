@@ -24,8 +24,8 @@
  *
  */
 
-#include "InstrumentState.h"
 #include "Component.h"
+#include "InstrumentState.h"
 
 namespace nsx {
 

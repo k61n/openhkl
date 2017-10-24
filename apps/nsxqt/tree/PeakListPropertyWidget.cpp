@@ -1,22 +1,22 @@
-#include "ui_PeakListPropertyWidget.h"
-
 #include <memory>
 
 #include <QSortFilterProxyModel>
 
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/data/DataTypes.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/DataTypes.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/Sample.h>
 
-#include "models/CollectedPeaksModel.h"
-#include "models/ExperimentItem.h"
-#include "models/InstrumentItem.h"
-#include "models/PeakListItem.h"
-#include "models/SampleItem.h"
-#include "models/UnitCellItem.h"
+#include "CollectedPeaksModel.h"
+#include "ExperimentItem.h"
+#include "InstrumentItem.h"
+#include "PeakListItem.h"
 #include "PeakListPropertyWidget.h"
-#include "views/PeakTableView.h"
+#include "PeakTableView.h"
+#include "SampleItem.h"
+#include "UnitCellItem.h"
+
+#include "ui_PeakListPropertyWidget.h"
 
 PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *parent) :
      QWidget(parent),

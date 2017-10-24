@@ -26,8 +26,7 @@
  *
  */
 
-#ifndef NSXLIB_CHEMICALFORMULAPARSER_H
-#define NSXLIB_CHEMICALFORMULAPARSER_H
+#pragma once
 
 #define BOOST_SPIRIT_USE_PHOENIX_V3
 
@@ -41,7 +40,7 @@
 #include <boost/range/adaptors.hpp>
 #include <boost/range/numeric.hpp>
 
-#include "../chemistry/ChemistryTypes.h"
+#include "ChemistryTypes.h"
 #include "IsotopeDatabaseManager.h"
 
 namespace nsx {
@@ -277,5 +276,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_CHEMICALFORMULAPARSER_H

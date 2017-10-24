@@ -33,9 +33,7 @@
  *
  */
 
-
-#ifndef NSXLIB_LORENTZIAN_H
-#define NSXLIB_LORENTZIAN_H
+#pragma once
 
 #include <Eigen/Dense>
 
@@ -52,5 +50,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_LORENTZIAN_H

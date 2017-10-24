@@ -1,7 +1,7 @@
 #include <QIcon>
 
-#include "models/DetectorItem.h"
-#include "tree/DetectorPropertyWidget.h"
+#include "DetectorItem.h"
+#include "DetectorPropertyWidget.h"
 
 DetectorItem::DetectorItem(nsx::sptrExperiment experiment) : InspectableTreeItem(experiment)
 {

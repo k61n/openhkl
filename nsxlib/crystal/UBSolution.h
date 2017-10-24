@@ -5,6 +5,7 @@
  2017- Laurent C. Chapon,  Eric Pellegrini, Jonathan Fisher
  *
  */
+
 #pragma once
 
 #include <map>
@@ -14,10 +15,10 @@
 
 #include <Eigen/Dense>
 
-#include "../crystal/CrystalTypes.h"
-#include "../instrument/InstrumentTypes.h"
-#include "../mathematics/Minimizer.h"
-#include "../utils/LMFunctor.h"
+#include "CrystalTypes.h"
+#include "InstrumentTypes.h"
+#include "LMFunctor.h"
+#include "Minimizer.h"
 
 namespace nsx {
 

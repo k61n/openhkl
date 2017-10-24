@@ -27,14 +27,13 @@
  *
  */
 
-#ifndef NSXLIB_BASIS_H
-#define NSXLIB_BASIS_H
+#pragma once
 
 #include <iostream>
 
 #include <Eigen/Dense>
 
-#include "../geometry/GeometryTypes.h"
+#include "GeometryTypes.h"
 
 namespace nsx {
 
@@ -208,5 +207,3 @@ protected:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_BASIS_H

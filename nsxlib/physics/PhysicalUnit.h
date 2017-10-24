@@ -26,11 +26,17 @@
  *
  */
 
-#ifndef NSXLIB_PHYSICALUNIT_H
-#define NSXLIB_PHYSICALUNIT_H
+#pragma once
 
 #define BOOST_SPIRIT_USE_PHOENIX_V3
 #define BOOST_RESULT_OF_USE_DECLTYPE
+
+#include <array>
+#include <iostream>
+#include <map>
+#include <ratio>
+#include <string>
+#include <tuple>
 
 #include <boost/fusion/adapted/std_pair.hpp>
 #include <boost/fusion/adapted/std_tuple.hpp>
@@ -38,13 +44,6 @@
 #include <boost/spirit/include/qi_lit.hpp>
 #include <boost/spirit/include/qi_int.hpp>
 #include <boost/spirit/include/phoenix.hpp>
-
-#include <array>
-#include <iostream>
-#include <ratio>
-#include <map>
-#include <string>
-#include <tuple>
 
 namespace nsx {
 
@@ -201,6 +200,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_PHYSICALUNIT_H
-

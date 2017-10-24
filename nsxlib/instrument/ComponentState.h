@@ -26,11 +26,11 @@
  *
  */
 
-#ifndef NSXLIB_COMPONENTSTATE_H
-#define NSXLIB_COMPONENTSTATE_H
+#pragma once
 
 #include <vector>
-#include <Eigen/Core>
+
+#include <Eigen/Dense>
 
 namespace nsx {
 
@@ -67,5 +67,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_COMPONENTSTATE_H

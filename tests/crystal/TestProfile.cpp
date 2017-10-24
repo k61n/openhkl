@@ -1,7 +1,7 @@
 #include <Eigen/Dense>
 
-#include <nsxlib/crystal/Profile.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/Profile.h>
 
 const double eps = 1.0;
 

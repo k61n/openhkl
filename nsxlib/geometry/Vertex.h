@@ -27,14 +27,13 @@
  *
  */
 
-#ifndef NSXLIB_VERTEX_H
-#define NSXLIB_VERTEX_H
+#pragma once
 
 #include <ostream>
 
 #include <Eigen/Dense>
 
-#include "../geometry/GeometryTypes.h"
+#include "GeometryTypes.h"
 
 namespace nsx {
 
@@ -82,5 +81,3 @@ public:
 std::ostream& operator<<(std::ostream& os, const Vertex& vertex);
 
 } // end namespace nsx
-
-#endif // NSXLIB_VERTEX_H

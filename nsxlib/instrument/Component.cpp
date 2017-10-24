@@ -2,8 +2,8 @@
 
 #include "Component.h"
 #include "Gonio.h"
-#include "../utils/YAMLType.h"
-#include "../utils/Units.h"
+#include "Units.h"
+#include "YAMLType.h"
 
 namespace nsx {
 

@@ -33,8 +33,9 @@
  *
  */
 
-#include "Gaussian.h"
 #include <cmath>
+
+#include "Gaussian.h"
 
 static const double g_pi = double(M_PI);
 

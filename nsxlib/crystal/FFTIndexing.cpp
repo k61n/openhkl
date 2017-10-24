@@ -5,9 +5,8 @@
 
 #include <unsupported/Eigen/FFT>
 
-#include "../utils/Units.h"
 #include "FFTIndexing.h"
-#include <iostream>
+#include "Units.h"
 
 namespace nsx {
 

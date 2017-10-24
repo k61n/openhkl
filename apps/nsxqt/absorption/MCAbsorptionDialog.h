@@ -3,7 +3,7 @@
 
 #include <QDialog>
 
-#include <nsxlib/instrument/InstrumentTypes.h>
+#include <nsxlib/InstrumentTypes.h>
 
 class QWidget;
 

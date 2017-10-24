@@ -4,11 +4,11 @@
 #include <string>
 #include <unordered_map>
 
-#include <QTextEdit>
-#include <QMimeData>
-#include <QUrl>
 #include <QFileInfo>
 #include <QImageReader>
+#include <QMimeData>
+#include <QTextEdit>
+#include <QUrl>
 
 /*
  * A QtextEdit inherited class in which image and text can be dragged and dropped in.
