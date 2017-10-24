@@ -69,7 +69,7 @@ class TestWorkFlow(unittest.TestCase):
 
         num_peaks = len(peaks)
 
-        predictor = nsx.PeakPredictor()
+        predictor = nsx.PeakPredictor(data)
         predictor._dmin = 2.1
         predictor._dmax = 50.0
         predictor._searchRadius = 200.0
@@ -82,7 +82,7 @@ class TestWorkFlow(unittest.TestCase):
 
         predictor._handler = nsx.ProgressHandler()
 
-        predicted_peaks = predictor.predictPeaks(data, False)
+        predicted_peaks = predictor.predictPeaks(False)
         self.assertTrue(len(predicted_peaks) > 1600)
 
 
