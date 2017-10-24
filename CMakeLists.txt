@@ -33,6 +33,7 @@ option(NSX_DOCS "Build documentation" OFF)
 ###########################################################################
 # Scripts controlling build setup and dependencies
 ###########################################################################
+include(GeneratePythonDocs)
 include(GetSubdirectories)
 include(CMakeFindBinUtils)
 include(BuildType)             # build types: debug and release
