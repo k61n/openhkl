@@ -106,7 +106,7 @@ endif(BUILD_STATIC)
 
 
 # install
-install(FILES blosc.h DESTINATION include COMPONENT DEV)
+install(FILES blosc.h DESTINATION include/nsxlib COMPONENT DEV)
 install(TARGETS blosc_shared DESTINATION ${lib_dir} COMPONENT LIB)
 if(BUILD_STATIC)
     install(TARGETS blosc_static DESTINATION ${lib_dir} COMPONENT DEV)

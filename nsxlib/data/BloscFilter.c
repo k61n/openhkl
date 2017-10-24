@@ -15,8 +15,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+
 #include <hdf5.h>
-#include "blosc_filter.h"
+
+#include "BloscFilter.h"
 
 #if H5Epush_vers == 2
 /* 1.8.x */
