@@ -3,6 +3,7 @@
 
 #include <QDialog>
 
+#include "models/SessionModel.h"
 #include <nsxlib/instrument/InstrumentTypes.h>
 
 class QWidget;
@@ -16,7 +17,7 @@ class MCAbsorptionDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit MCAbsorptionDialog(nsx::sptrExperiment experiment, QWidget *parent = 0);
+    explicit MCAbsorptionDialog(std::shared_ptr<SessionModel> session, nsx::sptrExperiment experiment, QWidget *parent = 0);
     ~MCAbsorptionDialog();
 
 private slots:
@@ -25,6 +26,7 @@ private slots:
 private:
     Ui::MCAbsorptionDialog *ui;
     nsx::sptrExperiment _experiment;
+    std::shared_ptr<SessionModel> _session;
 };
 
 #endif // NSXQT_MCABSORPTIONDIALOG_H

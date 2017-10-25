@@ -94,9 +94,6 @@ public:
     //! Gets a reference to the metadata of the data
     MetaData* getMetadata() const;
 
-    //! Return the peaks
-    PeakSet& getPeaks();
-
     //! Gets the the sample states
     const InstrumentStateList& getInstrumentStates() const;
 
@@ -107,26 +104,14 @@ public:
     //! Add a new mask to the data
     void addMask(IMask* mask);
 
-    //! Add a new peak to the data
-    void addPeak(const sptrPeak3D& peak);
-
     //! Remove a mask from the data, by reference
     void removeMask(IMask* mask);
 
     //! Return the list of masks
     const std::set<IMask*>& getMasks();
 
-    //! Remove a peak from the data
-    bool removePeak(const sptrPeak3D& peak);
-
-    //! Clear the peaks collected for this data
-    void clearPeaks();
-
-    //! Mask the peaks collected in the data with the masks defined up to now
-    void maskPeaks() const;
-
     //! Mask a given peak
-    void maskPeak(sptrPeak3D peak) const;
+    void maskPeaks(PeakSet& peaks) const;
 
     //! Return the intensity at point x,y,z.
     int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);
@@ -154,7 +139,7 @@ public:
     void integratePeaks(const PeakSet& peaks, double peak_scale = 3.0, double bkg_scale = 5.0, bool update_shape = false, const sptrProgressHandler& handler = nullptr);
 
     //! Remove duplicates
-    void removeDuplicatePeaks();
+    void removeDuplicatePeaks(nsx::PeakSet& peaks);
 
     double getSampleStepSize() const;      
 
@@ -168,7 +153,7 @@ protected:
     uptrMetaData _metadata;
     std::vector<Eigen::MatrixXi> _data;
     InstrumentStateList _states;
-    PeakSet _peaks;
+
     std::size_t _fileSize;
     //! The set of masks bound to the data
     std::set<IMask*> _masks;

@@ -43,18 +43,6 @@ void CollectedPeaksModel::setPeaks(const nsx::PeakList& peaks)
     _peaks = peaks;
 }
 
-void CollectedPeaksModel::setPeaks(const nsx::DataList &data)
-{
-    _peaks.clear();
-
-    for (auto&& ptr: data) {
-        // Add peaks present in this numor to the model
-        for (auto&& peak: ptr->getPeaks()) {
-            _peaks.push_back(peak);
-        }
-    }
-}
-
 const nsx::PeakList& CollectedPeaksModel::getPeaks() const
 {
     return _peaks;

@@ -18,6 +18,7 @@ FrameInterval::FrameInterval(sptrDataSet data, double fmin, double fmax):
 {
 }
 
+#if 0
 PeakSet FrameInterval::peaks() const
 {
     PeakSet selected_peaks;
@@ -29,5 +30,6 @@ PeakSet FrameInterval::peaks() const
     }
     return selected_peaks;
 }
+#endif
 
 } // end namespace nsx

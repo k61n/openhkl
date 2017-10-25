@@ -69,13 +69,15 @@ int main()
 
     peakFinder->setHandler(progressHandler);
 
+    auto found_peaks = peakFinder->find(numors);
+
     try {
-        NSX_CHECK_ASSERT(peakFinder->find(numors) == true);
+        NSX_CHECK_ASSERT(found_peaks.size() >= 0);
     } catch(...) {
         std::cout << "ERROR: exception in PeakFinder::find()" << std::endl;
     }
 
-    NSX_CHECK_ASSERT(dataf->getPeaks().size() >= 800);
+    NSX_CHECK_ASSERT(found_peaks.size() >= 800);
 
     // at this stage we have the peaks, now we index
     nsx::IndexerParameters params;
@@ -85,7 +87,7 @@ int main()
     {
         unsigned int indexed_peaks = 0;
 
-        for (auto&& peak: dataf->getPeaks()) {
+        for (auto&& peak: found_peaks) {
             if (!peak->isSelected() || peak->isMasked()) {
                 continue;
             }
@@ -107,7 +109,7 @@ int main()
 
     // set unit cell
     auto cell = soln.first;
-    for (auto&& peak: dataf->getPeaks()) {
+    for (auto&& peak: found_peaks) {
         peak->addUnitCell(cell, true);
     }
 
@@ -116,13 +118,13 @@ int main()
 
     // reintegrate peaks
     const double scale = nsx::getScale(0.997);
-    dataf->integratePeaks(dataf->getPeaks(), scale, 2.0*scale, true);
+    dataf->integratePeaks(found_peaks, scale, 2.0*scale, true);
 
     indexed_peaks = numIndexedPeaks();
     NSX_CHECK_ASSERT(indexed_peaks > 600);
 
     // get that DataSet::getEvents works properly
-    for (auto peak: dataf->getPeaks()) {
+    for (auto peak: found_peaks) {
         if (!peak->isSelected() || peak->isMasked()) {
             continue;
         }
@@ -176,7 +178,7 @@ int main()
     predictor._minimumNeighbors = 10;
 
     predictor._handler = std::shared_ptr<nsx::ProgressHandler>(new nsx::ProgressHandler());
-    auto predicted_peaks = predictor.predictPeaks(false);
+    auto predicted_peaks = predictor.predictPeaks(false, found_peaks);
 
     std::cout << "predicted_peaks: " << predicted_peaks.size() << std::endl;
     NSX_CHECK_ASSERT(predicted_peaks.size() > 1600);

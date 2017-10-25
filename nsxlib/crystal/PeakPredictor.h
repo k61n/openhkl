@@ -53,7 +53,7 @@ public:
     PeakPredictor(sptrDataSet data);
     //! Return predicted peaks on a given data set. Parameter \p keepObserved determines whether to include
     //! predictions for peaks which are already part of the data set.
-    PeakSet predictPeaks(bool keepObserved);
+    PeakSet predictPeaks(bool keepObserved, const PeakSet& reference_peaks);
 
      //! Is the peak h,k,l in Bragg condition in this dataset. Return Peak pointer if true,
     //! otherwise nullptr.

@@ -2,6 +2,7 @@
 #ifndef NSXLIB_PEAKFINDER_H
 #define NSXLIB_PEAKFINDER_H
 
+#include "../crystal/CrystalTypes.h"
 #include "../data/DataTypes.h"
 #include "../imaging/ImagingTypes.h"
 #include "../utils/UtilsTypes.h"
@@ -15,7 +16,7 @@ public:
 
     PeakFinder();
 
-    bool find(DataList numors);
+    PeakSet find(DataList numors);
 
     void setHandler(const sptrProgressHandler& handler);
 

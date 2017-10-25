@@ -18,10 +18,11 @@
 #include "PeakListPropertyWidget.h"
 #include "views/PeakTableView.h"
 
-PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *parent) :
+PeakListPropertyWidget::PeakListPropertyWidget(std::shared_ptr<SessionModel> session, PeakListItem* caller, QWidget *parent) :
      QWidget(parent),
      _caller(caller),
-     ui(new Ui::PeakListPropertyWidget)
+     ui(new Ui::PeakListPropertyWidget),
+     _session(session)
 {
     ui->setupUi(this);
     std::map<std::string,nsx::sptrDataSet>  datamap=_caller->getExperiment()->getData();
@@ -32,7 +33,14 @@ PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *pa
     std::for_each(datamap.begin(), datamap.end(), func);
 
     CollectedPeaksModel *model = new CollectedPeaksModel(_caller->getExperiment());
-    model->setPeaks(datav);
+
+    nsx::PeakList data_peaks;
+
+    for (auto peak: _session->peaks(nullptr)) {
+        data_peaks.push_back(peak);
+    }
+
+    model->setPeaks(data_peaks);
     model->setUnitCells(_caller->getExperiment()->getDiffractometer()->getSample()->getUnitCells());
     ui->tableView->setModel(model);
 

@@ -23,8 +23,9 @@
 
 #include "ui_MCAbsorptionDialog.h"
 
-MCAbsorptionDialog::MCAbsorptionDialog(nsx::sptrExperiment experiment, QWidget *parent):
+MCAbsorptionDialog::MCAbsorptionDialog(std::shared_ptr<SessionModel> session, nsx::sptrExperiment experiment, QWidget *parent):
     QDialog(parent),
+    _session(session),
      ui(new Ui::MCAbsorptionDialog),
     _experiment(experiment)
 {
@@ -46,7 +47,6 @@ MCAbsorptionDialog::~MCAbsorptionDialog()
 
 void MCAbsorptionDialog::on_pushButton_run_pressed()
 {
-
     if (!ui->comboBox->isEnabled()) {
         return;
     }
@@ -59,7 +59,7 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
     auto material=sample->getMaterial(cellIndex);
     if (material==nullptr) {
         QMessageBox::critical(this,"NSXTOOL","No material defined for this crystal");
-            return;
+        return;
     }
 
     auto& mono = source->getSelectedMonochromator();
@@ -78,7 +78,7 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
     int progress=0;
 
     for (auto& d: data) {
-        const auto& peaks=d.second->getPeaks();
+        const auto& peaks = _session->peaks(d.second.get());
         ui->progressBar_MCStatus->setMaximum(peaks.size());
         ui->progressBar_MCStatus->setFormat(QString::fromStdString(d.second->getBasename()) + ": "+QString::number(progress)+"%");
         for (auto& p: peaks) {

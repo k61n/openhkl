@@ -70,7 +70,7 @@ PeakPredictor::PeakPredictor(sptrDataSet data):
 
 }
 
-PeakSet PeakPredictor::predictPeaks(bool keepObserved)
+PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_peaks)
 {
     class compare_fn {
     public:
@@ -97,9 +97,17 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved)
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
 
     for (unsigned int i = 0; i < ncrystals; ++i) {
+        PeakSet found_peaks;
         SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
         auto cell = sample->getUnitCell(i);
         auto UB = cell->reciprocalBasis();
+
+        for (auto&& peak: reference_peaks) {
+            if (peak->data() != _data || peak->getActiveUnitCell() != cell) {
+                continue;
+            }
+            found_peaks.insert(peak);
+        }
 
         _handler->setStatus("Calculating peak locations...");
 
@@ -120,7 +128,6 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved)
 
         _handler->setStatus("Building set of previously found peaks...");
 
-        PeakSet found_peaks = _data->getPeaks();
         std::set<Eigen::RowVector3i, compare_fn> found_hkls;
 
         Eigen::Vector3d lb = {0.0, 0.0, 0.0};

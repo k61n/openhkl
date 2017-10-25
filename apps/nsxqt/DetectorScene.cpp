@@ -93,9 +93,10 @@ void DetectorScene::setMaxIntensity(int intensity)
     loadCurrentImage(false);
 }
 
-void DetectorScene::setData(const nsx::sptrDataSet& data)
+void DetectorScene::setData(std::shared_ptr<SessionModel> session, const nsx::sptrDataSet& data)
 {
     _currentData = data;
+    _session = session;
 
     if (!_currentData) {
         return;
@@ -115,9 +116,9 @@ void DetectorScene::setData(const nsx::sptrDataSet& data)
     updatePeaks();
 }
 
-void DetectorScene::setData(const nsx::sptrDataSet& data, size_t frame)
+void DetectorScene::setData(std::shared_ptr<SessionModel> session, const nsx::sptrDataSet& data, size_t frame)
 {
-    setData(data);
+    setData(session, data);
     changeFrame(frame);
 }
 
@@ -268,6 +269,9 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if (!_currentData) {
         return;
     }
+
+    auto peaks = _session->peaks(_currentData.get());
+
     // The user released the left mouse button
     if (event->button() & Qt::LeftButton) {
         if (event->modifiers()==Qt::ControlModifier) {
@@ -332,7 +336,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                     _currentData->addMask(it->second);                    
                     _lastClickedGI = nullptr;
                 }
-                _currentData->maskPeaks();
+                _currentData->maskPeaks(peaks);
                 update();
                 updateMasks(_currentFrameIndex);
             }else if (auto p=dynamic_cast<EllipseMaskGraphicsItem*>(_lastClickedGI)) {
@@ -342,7 +346,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                     _currentData->addMask(it->second);                    
                     _lastClickedGI = nullptr;
                 }
-                _currentData->maskPeaks();
+                _currentData->maskPeaks(peaks);
                 update();
                 updateMasks(_currentFrameIndex);    
             }
@@ -408,10 +412,9 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             // If the item is a peak graphics item, remove its corresponding peak from the data,
             // update the set of peak graphics items and update the scene
             if (auto p = dynamic_cast<PeakGraphicsItem*>(item)) {
-                bool remove=_currentData->removePeak(p->getPeak());
-                if (remove) {
-                    _peakGraphicsItems.erase(p->getPeak());
-                }
+                _session->removePeak(p->getPeak());
+                _peakGraphicsItems.erase(p->getPeak());
+
             }
             // If the item is a mask graphics item, remove its corresponding mask from the data,
             // update the QList of mask graphics items and update the scene
@@ -551,11 +554,11 @@ void DetectorScene::loadCurrentImage(bool newimage)
         Eigen::MatrixXi mask(nrows, ncols);
         mask.setZero();
 
-        for (auto&& peak: _currentData->getPeaks()) {
+        for (auto&& peak: _session->peaks(_currentData.get())) {
             peak->getIntegrationRegion().updateMask(mask, _currentFrameIndex);
         }
 
-        for (auto&& peak: _currentData->getPeaks()) {
+        for (auto&& peak: _session->peaks(_currentData.get())) {
             auto&& region = peak->getIntegrationRegion();
             auto aabb = region.getBackground().aabb();
             auto&& lower = aabb.lower();
@@ -636,9 +639,9 @@ void DetectorScene::updatePeaks()
         return;
     }
     clearPeaks();
-    auto& peaks = _currentData->getPeaks();
+    auto peaks = _session->peaks(_currentData.get());
 
-    for (auto&& peak : peaks) {
+    for (auto&& peak: peaks) {
         auto aabb = peak->getIntegrationRegion().getBackground().aabb();
         const Eigen::Vector3d& l = aabb.lower();
         const Eigen::Vector3d& u = aabb.upper();

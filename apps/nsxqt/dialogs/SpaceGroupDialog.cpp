@@ -28,10 +28,10 @@
 #include "SpaceGroupDialog.h"
 #include "ui_SpaceGroupDialog.h"
 
-SpaceGroupDialog::SpaceGroupDialog(nsx::DataList numors, QWidget *parent):
+SpaceGroupDialog::SpaceGroupDialog(const nsx::PeakSet& peaks, QWidget *parent):
     QDialog(parent),
     ui(new Ui::SpaceGroupDialog),
-    _numors(numors),
+    _peaks(peaks),
     _selectedGroup("")
 {
     ui->setupUi(this);
@@ -66,37 +66,33 @@ void SpaceGroupDialog::evaluateSpaceGroups()
     nsx::PeakList peak_list;
     std::vector<nsx::PeakList> peak_equivs;
 
-    if ( _numors.size()  == 0) {
-        nsx::error() << "Need at least one numor to find space group!";
+    if ( _peaks.size()  == 0) {
+        nsx::error() << "Need at least one peak to find space group!";
         return;
     }
 
     nsx::info() << "Retrieving reflection list for space group calculation...";
+    _cells.clear();
 
-    for (auto& numor: _numors) {
-        auto peaks = numor->getPeaks();
+    for (nsx::sptrPeak3D peak : _peaks) {
+        _cells.insert(peak->getActiveUnitCell());
+        auto cell = peak->getActiveUnitCell();
+        Eigen::RowVector3i hkl = cell->getIntegerMillerIndices(peak->getQ());
 
-        for (nsx::sptrPeak3D peak : peaks) {
-            auto cell = peak->getActiveUnitCell();
-            Eigen::RowVector3i hkl = cell->getIntegerMillerIndices(peak->getQ());
-
-            if (peak->isSelected() && !peak->isMasked()) {
-                hkls.push_back(std::array<double, 3>{{double(hkl[0]), double(hkl[1]), double(hkl[2])}});
-                peak_list.push_back(peak);
-            }
+        if (peak->isSelected() && !peak->isMasked()) {
+            hkls.push_back(std::array<double, 3>{{double(hkl[0]), double(hkl[1]), double(hkl[2])}});
+            peak_list.push_back(peak);
         }
     }
 
-    if (hkls.size() == 0) {
-        nsx::error() << "Need to have indexed peaks in order to find space group!";
+    if (_cells.size() != 1) {
+        nsx::error() << "ERROR: Only one unit cell is supported at this time";
         return;
     }
 
-    // todo: how to we handle multiple samples??
-    auto sample = _numors[0]->getDiffractometer()->getSample();
 
-    if (!sample) {
-        nsx::error() << "Need to have a sample in order to find space group!";
+    if (hkls.size() == 0) {
+        nsx::error() << "Need to have indexed peaks in order to find space group!";
         return;
     }
 
@@ -104,10 +100,11 @@ void SpaceGroupDialog::evaluateSpaceGroups()
 
     nsx::info() << "Evaluating " << symbols.size() << " space groups based on " << hkls.size() << " peaks";
 
+    std::string bravais = (*_cells.begin())->getBravaisTypeSymbol();
+
     for (auto& symbol: symbols) {
 
-        nsx::SpaceGroup group = nsx::SpaceGroup(symbol);
-        std::string bravais = sample->getUnitCell(0)->getBravaisTypeSymbol();
+        nsx::SpaceGroup group = nsx::SpaceGroup(symbol);       
 
         // space group not compatible with bravais type
         // todo: what about multiple crystals??
@@ -185,9 +182,8 @@ void SpaceGroupDialog::on_tableView_doubleClicked(const QModelIndex &index)
     box->setText(QString("Setting space group to ") + _selectedGroup.c_str());
 
     // todo: how to handle multiple samples and/or multiple unit cells???
-    for (auto numor: _numors) {
-        auto sample = numor->getDiffractometer()->getSample();
-        sample->getUnitCell(0)->setSpaceGroup(_selectedGroup);
+    for (auto cell: _cells) {
+        cell->setSpaceGroup(_selectedGroup);
     }
 
     box->exec();

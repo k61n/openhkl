@@ -14,7 +14,7 @@ class PeakFilter {
 
 public:
     //! Apply the filter to the given data set. Returns the number of removed peaks
-    int apply(sptrDataSet data) const;
+    PeakSet apply(const PeakSet& peaks) const;
 
 public:
     //! Remove peaks which are not indexed (incommensurate).

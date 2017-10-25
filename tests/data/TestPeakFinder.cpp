@@ -42,14 +42,10 @@ int main()
     peakFinder.setThresholdValue(3.0);
     NSX_CHECK_CLOSE(peakFinder.getThresholdValue(), 3.0, 1e-10);
 
-    bool result = peakFinder.find(numors);
-    NSX_CHECK_ASSERT(result == true);
-
-    size_t num_peaks = dataf->getPeaks().size();
+    auto found_peaks = peakFinder.find(numors);
+    size_t num_peaks = found_peaks.size();
 
     NSX_CHECK_ASSERT(num_peaks == 1);
 
     dataf->close();
-    dataf->clearPeaks();
-    dataf = nullptr;
 }

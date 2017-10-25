@@ -32,9 +32,7 @@ class TestWorkFlow(unittest.TestCase):
 
         numors = nsx.vector_data()
         numors.push_back(data)
-        finder.find(numors)
-
-        peaks = data.getPeaks()
+        peaks = finder.find(numors)
 
         selected_peaks = []
 
@@ -82,7 +80,7 @@ class TestWorkFlow(unittest.TestCase):
 
         predictor._handler = nsx.ProgressHandler()
 
-        predicted_peaks = predictor.predictPeaks(False)
+        predicted_peaks = predictor.predictPeaks(False, peaks)
         self.assertTrue(len(predicted_peaks) > 1600)
 
 

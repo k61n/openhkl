@@ -14,10 +14,10 @@
 
 
 
-DialogPeakFilter::DialogPeakFilter(const nsx::DataList& data, QWidget* parent):
+DialogPeakFilter::DialogPeakFilter(const nsx::PeakSet& peaks, QWidget* parent):
     QDialog(parent),
     _ui(new Ui::PeakFilterDialog),
-    _data(data)
+    _peaks(peaks)
 {
     _ui->setupUi(this);
 }
@@ -48,11 +48,14 @@ void DialogPeakFilter::accept()
     filter._pvalue = _ui->spinBoxPValue->value();
     filter._mergedP = _ui->spinBoxMergedP->value();
 
-    for (auto dataset: _data) {
-        nsx::info() << "Filtering peaks in dataset " << dataset->getBasename();
-        int nremoved = filter.apply(dataset);
-        nsx::info() << "Removed " << nremoved << " peaks";
-    }
+    nsx::info() << "Filtering peaks...";
+    _peaks = filter.apply(_peaks);
+    nsx::info() << _peaks.size() << " peaks remain";
 
     QDialog::accept();
+}
+
+const nsx::PeakSet& DialogPeakFilter::filteredPeaks() const
+{
+    return _peaks;
 }

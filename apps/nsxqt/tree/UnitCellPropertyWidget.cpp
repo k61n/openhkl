@@ -11,7 +11,7 @@
 #include <nsxlib/instrument/Gonio.h>
 #include <nsxlib/utils/Units.h>
 
-#include "LatticeIndexer.h"
+//#include "LatticeIndexer.h"
 #include "models/SessionModel.h"
 #include "models/UnitCellItem.h"
 #include "tree/UnitCellPropertyWidget.h"

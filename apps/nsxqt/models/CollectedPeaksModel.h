@@ -41,7 +41,6 @@ public:
 
     void addPeak(const nsx::sptrPeak3D& peak);
 
-    void setPeaks(const nsx::DataList& data);
     void setPeaks(const nsx::PeakList& peaks);
 
     const nsx::PeakList& getPeaks() const;

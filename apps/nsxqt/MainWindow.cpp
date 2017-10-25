@@ -222,24 +222,7 @@ void MainWindow::on_actionNew_session_triggered()
 
 void MainWindow::saveSession(QString filename)
 {
-    if (filename == "") {
-        nsx::info() << "Must first save to file before selecting save";
-        return;
-    }
-
-    nsx::info() << "saving session to " << filename.toStdString();
-
-    QJsonDocument doc(_session->toJsonObject());
-
-    QFile savefile(filename);
-
-    if ( !savefile.open(QIODevice::WriteOnly)) {
-        nsx::error() << "couldn't open file for saving!";
-        return;
-    }
-
-    savefile.write(doc.toJson());
-    _session->setFilename(filename);
+    nsx::error() << "This feature is not currently implemented!";
 }
 
 void MainWindow::on_actionSave_session_triggered()
@@ -256,22 +239,7 @@ void MainWindow::on_actionSave_session_as_triggered()
 
 void MainWindow::on_actionLoad_session_triggered()
 {
-    QString homeDir = nsx::homeDirectory().c_str();
-    QString filename = QFileDialog::getOpenFileName(this, "Load session", homeDir, "Json document (*.json)", nullptr, QFileDialog::Option::DontUseNativeDialog);
-    nsx::info() << "Loading session from file '" << filename.toStdString() << "'";
-
-    QFile loadfile(filename);
-
-    if ( !loadfile.open(QIODevice::ReadOnly)) {
-        nsx::error() << "couldn't open file for loading!";
-        return;
-    }
-
-    QJsonDocument doc = QJsonDocument::fromJson(loadfile.readAll());
-    QJsonObject obj = doc.object();
-
-    _session->fromJsonObject(obj);
-    _session->setFilename(filename);
+    nsx::error() << "This feature is not currently implemented!";
 }
 
 void MainWindow::on_actionAbout_triggered()
@@ -318,7 +286,7 @@ void MainWindow::plotPeak(nsx::sptrPeak3D peak)
     changeData(data);
     // Get frame number to adjust the data
     size_t data_frame = size_t(std::lround(peak->getShape().aabb().center()[2]));
-    scenePtr->setData(data, data_frame);
+    scenePtr->setData(_session, data, data_frame);
     // Update the scrollbar
     _ui->frame->setValue(data_frame);
     auto pgi = scenePtr->findPeakGraphicsItem(peak);
@@ -546,8 +514,7 @@ void MainWindow::on_actionDraw_peak_integration_area_triggered(bool checked)
 
 void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
 {
-    nsx::DataList numors = _session->getSelectedNumors();
-    DialogPeakFilter* dlg = new DialogPeakFilter(numors, this);
+    DialogPeakFilter* dlg = new DialogPeakFilter(_session->peaks(nullptr), this);
     dlg->exec();
     _session->updatePeaks();
 }
@@ -591,7 +558,7 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
     nsx::DataList numors = _session->getSelectedNumors();
 
     for (auto&& numor: numors) {
-        numor->integratePeaks(numor->getPeaks(), peak_scale, bkg_scale, update_shape, _progressHandler);
+        numor->integratePeaks(_session->peaks(numor.get()), peak_scale, bkg_scale, update_shape, _progressHandler);
     }
 
     _session->updatePeaks();

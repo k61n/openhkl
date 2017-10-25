@@ -46,7 +46,6 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader, const sptrDiffractometer& 
     _metadata(uptrMetaData(new MetaData())),
     _data(),
     _states(),
-    _peaks(),
     _fileSize(0),
     _masks(),
     _background(0.0),
@@ -89,7 +88,6 @@ void DataSet::setIteratorCallback(FrameIteratorCallback callback)
 
 DataSet::~DataSet()
 {
-    clearPeaks();
     blosc_destroy();
 }
 
@@ -154,22 +152,6 @@ std::size_t DataSet::getNRows() const
     return _nrows;
 }
 
-PeakSet& DataSet::getPeaks()
-{
-    return _peaks;
-}
-
-void DataSet::addPeak(const sptrPeak3D& peak)
-{
-    _peaks.insert(peak);
-    maskPeak(peak);
-}
-
-void DataSet::clearPeaks()
-{
-    _peaks.clear();
-}
-
 InstrumentState DataSet::getInterpolatedState(double frame) const
 {
     if (frame>(_states.size()-1) || frame<0) {
@@ -189,17 +171,6 @@ InstrumentState DataSet::getInterpolatedState(double frame) const
 const std::vector<InstrumentState>& DataSet::getInstrumentStates() const
 {
     return _states;
-}
-
-bool DataSet::removePeak(const sptrPeak3D& peak)
-{
-    auto&& it=_peaks.find(peak);
-
-    if (it == _peaks.end()) {
-        return false;
-    }
-    _peaks.erase(it);
-    return true;
 }
 
 bool DataSet::isOpened() const
@@ -372,7 +343,6 @@ void DataSet::saveHDF5(const std::string& filename) //const
 void DataSet::addMask(IMask* mask)
 {
     _masks.insert(mask);
-    maskPeaks();
 }
 
 void DataSet::removeMask(IMask* mask)
@@ -381,7 +351,6 @@ void DataSet::removeMask(IMask* mask)
     if (p != _masks.end()) {
         _masks.erase(mask);
     }
-    maskPeaks();
 }
 
 const std::set<IMask*>& DataSet::getMasks()
@@ -389,21 +358,21 @@ const std::set<IMask*>& DataSet::getMasks()
     return _masks;
 }
 
-void DataSet::maskPeaks() const
+void DataSet::maskPeaks(PeakSet& peaks) const
 {
-    for (auto&& p : _peaks) {
-        maskPeak(p);
-    }
-}
+    for (auto peak: peaks) {
+        // peak belongs to another dataset
+        if (peak->data().get() != this) {
+            continue;
+        }
 
-void DataSet::maskPeak(sptrPeak3D peak) const
-{
-    peak->setMasked(false);
-    for (auto&& m : _masks) {
-        // If the background of the peak intercept the mask, unselected the peak
-        if (m->collide(peak->getShape())) {
-            peak->setMasked(true);
-            break;
+        peak->setMasked(false);
+        for (auto&& m : _masks) {
+            // If the background of the peak intercept the mask, unselected the peak
+            if (m->collide(peak->getShape())) {
+                peak->setMasked(true);
+                break;
+            }
         }
     }
 }
@@ -447,7 +416,7 @@ double DataSet::getBackgroundLevel(const sptrProgressHandler& progress)
 void DataSet::integratePeaks(const PeakSet& peaks, double peak_scale, double bkg_scale, bool update_shape, const sptrProgressHandler& handler)
 {
     if (handler) {
-        handler->setStatus(("Integrating " + std::to_string(getPeaks().size()) + " peaks...").c_str());
+        handler->setStatus(("Integrating " + std::to_string(peaks.size()) + " peaks...").c_str());
         handler->setProgress(0);
     }
 
@@ -612,7 +581,7 @@ void DataSet::integratePeaks(const PeakSet& peaks, double peak_scale, double bkg
     }
 }
 
-void DataSet::removeDuplicatePeaks()
+void DataSet::removeDuplicatePeaks(nsx::PeakSet& peaks)
 {
     class compare_fn {
     public:
@@ -636,7 +605,7 @@ void DataSet::removeDuplicatePeaks()
 
         std::map<Eigen::RowVector3i, sptrPeak3D, compare_fn> hkls;
 
-        for (auto&& peak: _peaks) {
+        for (auto&& peak: peaks) {
             Eigen::RowVector3d hkl;
             Eigen::RowVector3i hkl_int;
 
