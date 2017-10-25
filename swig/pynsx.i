@@ -1,5 +1,7 @@
 %module "pynsx"
 
+%include "pynsx_doc.i"
+
 %include "warnings.i"
 
 %include "typemaps.i"
