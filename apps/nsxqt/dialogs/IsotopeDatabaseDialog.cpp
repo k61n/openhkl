@@ -1,8 +1,9 @@
+#include <sstream>
+
 #include <QStandardItem>
 #include <QStandardItemModel>
 
 #include <nsxlib/ChemistryTypes.h>
-#include <nsxlib/ComplexParser.h>
 #include <nsxlib/IsotopeDatabaseManager.h>
 #include <nsxlib/Units.h>
 
@@ -57,7 +58,9 @@ IsotopeDatabaseDialog::IsotopeDatabaseDialog(QWidget *parent) : QDialog(parent),
                 case nsx::ChemicalPropertyType::Complex:
                 {
                     auto value = imgr->getProperty<std::complex<double>>(isotopeName,pName)/um->get(pUnit);
-                    item->setText(QString::fromStdString(nsx::complexToString<double>(value)));
+                    std::ostringstream os;
+                    os << value;
+                    item->setText(QString::fromStdString(os.str()));
                     break;
                 }
                 case nsx::ChemicalPropertyType::Bool:
