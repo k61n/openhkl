@@ -1,6 +1,6 @@
 %module "pynsx"
 
-@include_doxy_swig_doc@
+%include "pynsx_doc.i"
 
 %include "warnings.i"
 
