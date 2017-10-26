@@ -2,28 +2,22 @@
 #include <stdexcept>
 #include <sstream>
 
-#include "AffineTransformParser.h"
 #include "DoubleToFraction.h"
+#include "JonesSymbolParser.h"
 #include "SymOp.h"
 
 namespace nsx {
 
 SymOp::SymOp(std::string generator)
 {
-    // The parser for generator expression
-    AffineTransformParser<std::string::iterator> parser;
-
-    bool match=boost::spirit::qi::phrase_parse(generator.begin(),generator.end(),parser,boost::spirit::qi::blank, _matrix);
-    if (!match)
-        throw std::runtime_error("Invalid generator expression: "+ generator);
+    _matrix = parseJonesSymbol(generator);
 }
 
 SymOp::SymOp(const affineTransformation& symmetryOperation) : _matrix(symmetryOperation)
 {
 }
 
-SymOp::SymOp(const SymOp& other)
-: _matrix(other._matrix)
+SymOp::SymOp(const SymOp& other) : _matrix(other._matrix)
 {
 }
 
