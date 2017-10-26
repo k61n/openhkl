@@ -2,12 +2,10 @@
 #include <cmath>
 #include <cstring>
 #include <fstream>
+#include <iomanip>
 #include <sstream>
 #include <stdexcept>
 
-#include <boost/algorithm/string.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem/path.hpp>
 
 #include "Component.h"

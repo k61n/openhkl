@@ -35,9 +35,6 @@
 
 namespace nsx {
 
-// left and right trim a given path
-std::string trim(const std::string& input_path);
-
 //! Get the directory name of a given path
 std::string dirname(const std::string& input_path);
 

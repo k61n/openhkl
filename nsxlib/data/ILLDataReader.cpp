@@ -4,9 +4,6 @@
 #include <set>
 #include <stdexcept>
 
-#include <boost/algorithm/string.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/interprocess/file_mapping.hpp>
 
 #include "Component.h"
@@ -19,6 +16,7 @@
 #include "Parser.h"
 #include "Sample.h"
 #include "Source.h"
+#include "StringIO.h"
 #include "Units.h"
 
 namespace nsx {
@@ -323,7 +321,7 @@ void ILLDataReader::readControlFBlock(std::stringstream& buffer)
         for (int j = 0; j < 5; j++) {
             s2 = s1.substr(size_t(j*sizeBlock), size_t(sizeBlock));
             // Remove all white space from the string (For example H (HMin) and concatenate string
-            boost::erase_all(s2," ");
+            removed_spaces(s2);
             keys[size_t(counter++)] = s2;
         }
     }
@@ -336,7 +334,7 @@ void ILLDataReader::readControlFBlock(std::stringstream& buffer)
         for (int j = 0; j < missing; j++) {
             s2 = s1.substr(size_t(j*sizeBlock), size_t(sizeBlock));
             // Remove all white space
-            boost::erase_all(s2," ");
+            removed_spaces(s2);
             keys[size_t(counter++)] = s2;
         }
     }
@@ -371,13 +369,13 @@ void ILLDataReader::readHeader(std::stringstream& buffer)
     buffer.read(&line[0], 80);
     s1 = &line[0];
     s2 = s1.substr(0, 4);
-    boost::trim(s2);
+    trim(s2);
     _metadata.add<std::string>("Instrument", s2);
     s2 = s1.substr(4, 6);
-    boost::trim(s2);
+    trim(s2);
     _metadata.add<std::string>("User", s2);
     s2 = s1.substr(10, 4);
-    boost::trim(s2);
+    trim(s2);
     _metadata.add<std::string>("LocalContact", s2);
     s2 = s1.substr(14, 9);
     _metadata.add<std::string>("Date", s2);
@@ -388,24 +386,18 @@ void ILLDataReader::readHeader(std::stringstream& buffer)
     buffer.read(&line[0], 80);
     s1 = &line[0];
     s2 = s1.substr(0,72);
-    boost::trim(s2);
+    trim(s2);
     _metadata.add<std::string>("Title", s2);
     s2 = s1.substr(72,8);
-    boost::trim(s2);
+    trim(s2);
     _metadata.add<std::string>("ScanType", s2);
     std::string date, time;
 
     // Enter a key for the posix time
     date = _metadata.getKey<std::string>("Date");
     time = _metadata.getKey<std::string>("Time");
-    // Now do the job.
-    // In mad. the date is written in short UK notation (only 2 digits for the year) DD-MMM-YY
-    // Need to convert to ISO format. Assume that no data prior to 2000 needs to be reanalysed.
-    std::string full_date = date.substr(0,7)+std::string("20")+date.substr(7,2);
-    // Add microsecs to the time to be compliant with boost
-    std::string fulltime = time+std::string(".000");
-    boost::posix_time::ptime pos_time(boost::gregorian::from_uk_string(full_date),boost::posix_time::duration_from_string(fulltime));
-    _metadata.add<boost::posix_time::ptime>("ptime",pos_time);
+    _metadata.add<std::string>("date",date);
+    _metadata.add<std::string>("time",time);
 }
 
 void ILLDataReader::readMetadata(const char* buf)
