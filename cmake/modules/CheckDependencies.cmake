@@ -1,5 +1,5 @@
 ###### Find boost libraries  ##############
-find_package(Boost 1.54.0 COMPONENTS date_time system filesystem REQUIRED)
+find_package(Boost 1.54.0 COMPONENTS system filesystem REQUIRED)
 if(Boost_FOUND)
     include_directories(SYSTEM "${Boost_INCLUDE_DIRS}")
     set(Boost_USE_STATIC_LIBS OFF)

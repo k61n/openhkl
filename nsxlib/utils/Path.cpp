@@ -26,7 +26,7 @@ std::mutex g_argv_mutex;
 std::string dirname(const std::string& input_path)
 {
 
-    std::string output_path = trim(input_path);
+    std::string output_path = trimmed(input_path);
 
     output_path.erase(output_path.find_last_of(g_path_separator),output_path.size()-1);
 
