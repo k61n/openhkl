@@ -102,20 +102,25 @@ void PeakGraphicsItem::setFrame(unsigned long frame)
     const Eigen::Vector3d& l = aabb.lower();
     const Eigen::Vector3d& u = aabb.upper();
 
-    if (frame>=l[2] && frame<=u[2]) {
-        setVisible(true);
-        _label->setVisible(_labelVisible);
-        Eigen::RowVector3d hkl;
-        auto cell = _peak->getActiveUnitCell();
-        bool success = cell->getMillerIndices(_peak->getQ(), hkl,true);
-        QString hklString;
-        hklString=QString("%1,%2,%3").arg(hkl[0]).arg(hkl[1]).arg(hkl[2]);
-        _label->setPlainText(hklString);
-    }
-    else {
+    // out of bounds
+    if (frame < l[2] || frame > u[2]) {
         setVisible(false);
         _label->setVisible(false);
+        return;
     }
+
+    setVisible(true);
+    _label->setVisible(_labelVisible);
+    QString hklString;
+
+    if (auto cell = _peak->getActiveUnitCell()) {
+        Eigen::RowVector3d hkl;
+        cell->getMillerIndices(_peak->getQ(), hkl,true);
+        hklString = QString("%1,%2,%3").arg(hkl[0]).arg(hkl[1]).arg(hkl[2]);       
+    } else {
+        hklString = "unindexed";
+    }
+    _label->setPlainText(hklString);
 }
 
 std::string PeakGraphicsItem::getPlotType() const
@@ -189,10 +194,15 @@ void PeakGraphicsItem::plot(SXPlot* plot)
 
     // Now update text info:
     Eigen::RowVector3d hkl;
-    auto cell = _peak->getActiveUnitCell();
-    bool success = cell->getMillerIndices(_peak->getQ(), hkl,true);
+    QString info;
 
-    QString info="(h,k,l):"+QString::number(hkl[0])+","+QString::number(hkl[1])+","+QString::number(hkl[2]);
+    if (auto cell = _peak->getActiveUnitCell()) {
+        bool success = cell->getMillerIndices(_peak->getQ(), hkl,true);
+        info="(h,k,l):"+QString::number(hkl[0])+","+QString::number(hkl[1])+","+QString::number(hkl[2]);
+    } else {
+        info = "unindexed";
+    }
+
     double gamma,nu;
     auto c = _peak->getShape().center();
     nsx::DetectorEvent ev(_peak->data(), c[0], c[1], c[2]);

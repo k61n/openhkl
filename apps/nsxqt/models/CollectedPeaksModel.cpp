@@ -129,13 +129,14 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    Eigen::RowVector3d hkl;
+    Eigen::RowVector3d hkl= {0,0,0};
     double lorentzFactor, transmissionFactor, scaledIntensity, sigmaScaledIntensity;
 
     int row = index.row();
     int column = index.column();
-    auto cell = _peaks[row]->getActiveUnitCell();
-    bool success = cell->getMillerIndices(_peaks[row]->getQ(), hkl, true);
+    if (auto cell = _peaks[row]->getActiveUnitCell()) {
+        bool success = cell->getMillerIndices(_peaks[row]->getQ(), hkl, true);
+    }
     auto c = _peaks[row]->getShape().center();
     nsx::DetectorEvent ev(_peaks[row]->data(), c[0], c[1], c[2]);
     double gamma, nu;

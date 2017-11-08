@@ -156,7 +156,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(_ui->experimentTree, SIGNAL(plotData(nsx::sptrDataSet)),
             this, SLOT(changeData(nsx::sptrDataSet)));
 
-    connect(_ui->frame,&QScrollBar::valueChanged,[=](const int& value){_ui->_dview->getScene()->changeFrame(value);});
+
+    connect(_ui->frame,&QScrollBar::valueChanged,[=](const int value){_ui->_dview->getScene()->changeFrame(value);});
 
     connect(_ui->intensity,SIGNAL(valueChanged(int)),_ui->_dview->getScene(),SLOT(setMaxIntensity(int)));
     connect(_ui->selectionMode,SIGNAL(currentIndexChanged(int)),_ui->_dview->getScene(),SLOT(changeInteractionMode(int)));
@@ -268,8 +269,11 @@ void MainWindow::changeData(nsx::sptrDataSet data)
     int frameMax = int(data->getNFrames()-1);
     int frame = _ui->frame->value();
 
-    if (frame > frameMax)
+    if (frame > frameMax) {
         frame = frameMax;
+    }
+    // why do we do this? why is the signal not working properly?
+    _ui->_dview->getScene()->setData(_session, data, frame);
 
     _ui->frame->setValue(frame);
     _ui->frame->setMaximum(frameMax);

@@ -313,11 +313,9 @@ void SessionModel::findPeaks(const QModelIndex& index)
     ProgressView* progressView = new ProgressView(nullptr);
     progressView->watch(_progressHandler);
 
-    nsx::PeakSet found_peaks;
-
     // execute in a try-block because the progress handler may throw if it is aborted by GUI
     try {
-        found_peaks = _peakFinder->find(selectedNumors);
+        _peaks = _peakFinder->find(selectedNumors);
     }
     catch(std::exception& e) {
         nsx::debug() << "Caught exception during peak find: " << e.what();
@@ -328,12 +326,8 @@ void SessionModel::findPeaks(const QModelIndex& index)
     delete progressView;
     int num_peaks = 0;
 
-    for (auto numor: selectedNumors) {
-        num_peaks += peaks(numor.get()).size();
-    }
-
     updatePeaks();
-    nsx::debug() << "Peak search complete., found " << num_peaks << " peaks.";
+    nsx::debug() << "Peak search complete., found " << _peaks.size() << " peaks.";
     
     //auto job = new Job(this, task, onFinished, true);
     //connect(progressView, SIGNAL(canceled()), job, SLOT(terminate()));
