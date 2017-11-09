@@ -224,7 +224,6 @@ void PeakIntegrator::end()
     double npoints = 0;
     double I = 0;
     
-    // determine the slice that minimizes sigma(I) / I
     for (int slice = 0; slice < _region.nslices(); ++slice) {
         for (int idx = _data_start; idx <= _data_end; ++idx) {
             npoints += _shellPoints(idx-_data_start, slice);
@@ -242,23 +241,7 @@ void PeakIntegrator::end()
         }
     }
 
-    #if 0
-
-    _region.setBestSlice(best_slice);
-   
-    // update the intensity/counts based on optimal slice
-    for (int idx = _data_start; idx <= _data_end; ++idx) {
-        _pointsBkg(idx-_data_start) = _shellPoints(idx-_data_start, 0);
-        _countsBkg(idx-_data_start) = _shellIntensity(idx-_data_start, 0);
-        _countsPeak(idx-_data_start) = 0.0;
-        _pointsPeak(idx-_data_start) = 0.0;
-
-        for (int slice = 1; slice <= best_slice; ++slice) {
-            _countsPeak(idx-_data_start) += _shellIntensity(idx-_data_start, slice);
-            _pointsPeak(idx-_data_start) += _shellPoints(idx-_data_start, slice);
-        }
-    }
-    #endif
+    std::cout << "best slice is " << best_slice << " with ratio " << best_ratio << std::endl;
 
     // OLD CODE BELOW
 
