@@ -49,7 +49,7 @@ PeakIntegrator::PeakIntegrator(const IntegrationRegion& region, const DataSet& d
     _dy()
 {
 
-    auto aabb = region.getBackground().aabb();
+    auto aabb = region.aabb();
     _lower = aabb.lower();
     _upper = aabb.upper();
 
@@ -82,15 +82,18 @@ PeakIntegrator::PeakIntegrator(const IntegrationRegion& region, const DataSet& d
         _data_end = static_cast<unsigned int>(data.getNFrames()-1);
     }
 
+    const int length = _data_end-_data_start + 1;
+
     // Allocate all vectors
-    _projection = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
-    _projectionPeak = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
-    _projectionBkg = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
-    _peakError = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
-    _pointsPeak = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
-    _pointsBkg = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
-    _countsPeak = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
-    _countsBkg = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
+    Eigen::VectorXd zero = Eigen::VectorXd::Zero(length);
+    _projection = zero;
+    _projectionPeak = zero;
+    _projectionBkg = zero;
+    _peakError = zero;
+    _pointsPeak = zero;
+    _pointsBkg = zero;
+    _countsPeak = zero;
+    _countsBkg = zero;
 
     _dx = int(_end_x - _start_x)+1;
     _dy = int(_end_y - _start_y)+1;
@@ -102,9 +105,14 @@ PeakIntegrator::PeakIntegrator(const IntegrationRegion& region, const DataSet& d
     _fitP.setZero();
     _fitB.setZero();
     _fitCC = 0.0;
-    _sumX = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
-    _sumY = Eigen::VectorXd::Zero(_data_end - _data_start + 1);
+    _sumX = zero;
+    _sumY = zero;
     _bkgStd = 0.0;
+
+    _shellIntensity.resize(length, region.nslices());
+    _shellIntensity.setZero();
+    _shellPoints.resize(length, _region.nslices());
+    _shellPoints.setZero();    
 }
 
 void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen::MatrixXi& mask)
@@ -117,7 +125,6 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
     double pointsinbkg = 0;
     double intensityP = 0;
     double intensityBkg = 0;
-
 
     auto _peak_data = frame.block(_start_y, _start_x, _dy,_dx).array().cast<double>();
     auto _peak_mask = Eigen::ArrayXXd(_dy, _dx);
@@ -133,10 +140,15 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
             int intensity = frame(y, x);
 
             _point1 << x, y, idx;
-            const auto type = _region.classifyPoint(_point1);
+            const int slice = _region.classifySlice(_point1);
 
-            const bool inpeak = (type == PointType::REGION);
-            const bool inbackground = (type == PointType::BACKGROUND) && (mask(y, x) == 0);
+            const bool inpeak = (slice > 0);
+            const bool inbackground = (slice == 0) && (mask(y, x) == 0);
+
+            if (slice >= 0) {
+                _shellIntensity(idx-_data_start, slice) += intensity;
+                _shellPoints(idx-_data_start, slice) += 1;
+            }
 
             if (inpeak) {
                 _peak_mask(y-_start_y, x-_start_x) = 1.0;
@@ -190,11 +202,9 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
     for (unsigned int x = _start_x; x <= _end_x; ++x) {
         for (unsigned int y = _start_y; y <= _end_y; ++y) {
             int intensity = frame(y, x);
-
             _point1 << x, y, idx;
-            const auto type = _region.classifyPoint(_point1);
-
-            const bool inpeak = (type == PointType::REGION);
+            const int type = _region.classifySlice(_point1);
+            const bool inpeak = (type > 0);
 
             if (inpeak) {
                 _blob.addPoint(x, y, idx, intensity);
@@ -207,6 +217,33 @@ void PeakIntegrator::end()
 {
     // get average background
     const double avgBkg = getMeanBackground();
+
+    // find the shell with best sigma/I
+    int best_slice = -1;
+    double best_ratio = 1e10;
+    double npoints = 0;
+    double I = 0;
+    
+    for (int slice = 0; slice < _region.nslices(); ++slice) {
+        for (int idx = _data_start; idx <= _data_end; ++idx) {
+            npoints += _shellPoints(idx-_data_start, slice);
+            I += _shellIntensity(idx-_data_start, slice);
+        }
+        if (slice == 0) {
+            continue;
+        }
+        const double sigma = std::sqrt(I + npoints*avgBkg);
+        const double inten = I - npoints*avgBkg;
+        const double ratio = sigma / inten;
+        if (std::isfinite(ratio) && ratio < best_ratio) {
+            best_slice = slice;
+            best_ratio = ratio;
+        }
+    }
+
+    std::cout << "best slice is " << best_slice << " with ratio " << best_ratio << std::endl;
+
+    // OLD CODE BELOW
 
     // get standard deviation of background
     _bkgStd -= (_pointsBkg.sum()) * avgBkg * avgBkg;
@@ -235,8 +272,10 @@ void PeakIntegrator::end()
         for (unsigned int x = _start_x; x <= _end_x; ++x) {
             for (unsigned int y = _start_y; y <= _end_y; ++y) {
                 _point1 << x, y, idx;
+                const int type = _region.classifySlice(_point1);
+                const bool inpeak = (type > 0);                
 
-                if (_region.inRegion(_point1)) {
+                if (inpeak) {
                     const double bkg = _fitP(0) + _fitP(1)*x + _fitP(2)*y;
                     _blob.addPoint(x, y, idx, -bkg);
                 }
@@ -246,7 +285,7 @@ void PeakIntegrator::end()
 
     // testing
 
-    auto&& aabb = _region.getRegion().aabb();
+    auto&& aabb = _region.aabb();
     auto lb = aabb.lower();
     auto ub = aabb.upper();
 

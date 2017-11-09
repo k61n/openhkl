@@ -568,7 +568,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
 
         for (auto&& peak: _session->peaks(_currentData.get())) {
             auto&& region = peak->getIntegrationRegion();
-            auto aabb = region.getBackground().aabb();
+            auto aabb = region.aabb();
             auto&& lower = aabb.lower();
             auto&& upper = aabb.upper();
 
@@ -589,11 +589,12 @@ void DetectorScene::loadCurrentImage(bool newimage)
             for (auto x = xmin; x < xmax; ++x) {
                 for (auto y = ymin; y < ymax; ++y) {
                     Eigen::Vector3d p(x, y, _currentFrameIndex);
+                    int s = region.classifySlice(p);
 
-                    if (region.inRegion(p)) {
+                    if (s > 0) {
                         region_img.setPixel(x, y, peak->isSelected() ? (peak->isObserved() ? green : purple) : red);
                     }
-                    if (region.inBackground(p) && (mask(y,x) == 0)) {
+                    if (s == 0 && (mask(y,x) == 0)) {
                         region_img.setPixel(x, y, peak->isSelected() ? (peak->isObserved() ? yellow : pink) : red);
                     }
                 }
@@ -649,8 +650,8 @@ void DetectorScene::updatePeaks()
     clearPeaks();
     auto peaks = _session->peaks(_currentData.get());
 
-    for (auto&& peak: peaks) {
-        auto aabb = peak->getIntegrationRegion().getBackground().aabb();
+    for (auto&& peak : peaks) {
+        auto aabb = peak->getIntegrationRegion().aabb();
         const Eigen::Vector3d& l = aabb.lower();
         const Eigen::Vector3d& u = aabb.upper();
 

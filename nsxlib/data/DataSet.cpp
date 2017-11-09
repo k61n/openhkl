@@ -478,7 +478,7 @@ void DataSet::integratePeaks(const PeakSet& peaks, double peak_scale, double bkg
     std::cout << "std. dev:   " << peak_radius_std << std::endl;
 
     for (auto&& peak: peaks ) {
-        IntegrationRegion region(peak->getShape(), peak_scale, bkg_scale);
+        IntegrationRegion region(peak->getShape(), peak_scale, 0.5*(peak_scale+bkg_scale), bkg_scale);
         PeakIntegrator integrator(region, *this);
         peak_list.emplace_back(peak, integrator);
     }
