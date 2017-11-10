@@ -99,7 +99,7 @@ int IntegrationRegion::classifySlice(const Eigen::Vector3d p) const
     // determine which integration shell it lies in
     const double c = _bkgBegin*_bkgBegin / (_nslices * _nslices);
     int k = 0;
-    while(r2 > k*k*c && k <= _nslices) {
+    while(r2 > k*k*c && k < _nslices) {
         ++k;
     }
     return k;
@@ -111,9 +111,16 @@ int IntegrationRegion::nslices() const
     return _nslices+1;
 }
 
+//! Best integration slice
 int IntegrationRegion::bestSlice() const
 {
     return _bestSlice;
+}
+//! Set the best integration slice.
+void IntegrationRegion::setBestSlice(int n)
+{
+    assert(n > 0 && n <= _nslices);
+    _bestSlice = n;
 }
 
 } // end namespace nsx

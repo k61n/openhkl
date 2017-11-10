@@ -53,6 +53,8 @@ public:
 
     //! Best integration slice
     int bestSlice() const;
+    //! Set the best integration slice.
+    void setBestSlice(int n);
 
 private:
     Ellipsoid _shape;
