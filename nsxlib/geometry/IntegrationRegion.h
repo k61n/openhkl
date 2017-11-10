@@ -48,13 +48,20 @@ public:
     //! zero indicates it is in background, and negative indicates it is neither integration nor background.
     int classifySlice(const Eigen::Vector3d p) const;
 
+    //! Number of slices used in integration
     int nslices() const;
+
+    //! Best integration slice
+    int bestSlice() const;
+    //! Set the best integration slice.
+    void setBestSlice(int n);
 
 private:
     Ellipsoid _shape;
     double _bkgBegin;
     double _bkgEnd;
     int _nslices;
+    int _bestSlice;
 };
 
 } // end namespace nsx

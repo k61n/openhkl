@@ -591,7 +591,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
                     Eigen::Vector3d p(x, y, _currentFrameIndex);
                     int s = region.classifySlice(p);
 
-                    if (s > 0) {
+                    if (s > 0 && s <= region.bestSlice()) {
                         region_img.setPixel(x, y, peak->isSelected() ? (peak->isObserved() ? green : purple) : red);
                     }
                     if (s == 0 && (mask(y,x) == 0)) {
