@@ -31,8 +31,6 @@
 #include <string>
 #include <vector>
 
-#include "Singleton.h"
-
 namespace nsx {
 
 //! Get the directory name of a given path
