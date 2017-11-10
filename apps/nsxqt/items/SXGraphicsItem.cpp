@@ -4,7 +4,7 @@
 
 #include "DetectorScene.h"
 #include "SXGraphicsItem.h"
-#include "plot/SXPlot.h"
+#include "SXPlot.h"
 
 SXGraphicsItem::SXGraphicsItem(QGraphicsItem *parent, bool deletable, bool movable)
 : QGraphicsItem(parent),

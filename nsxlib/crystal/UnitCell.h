@@ -26,18 +26,17 @@
  *
  */
 
-#ifndef NSXLIB_UNITCELL_H
-#define NSXLIB_UNITCELL_H
+#pragma once
 
 #include <vector>
 #include <string>
 
 #include <Eigen/Dense>
 
-#include "../chemistry/ChemistryTypes.h"
-#include "../crystal/SpaceGroup.h"
-#include "../geometry/ReciprocalVector.h"
+#include "ChemistryTypes.h"
+#include "GeometryTypes.h"
 #include "NiggliCharacter.h"
+#include "SpaceGroup.h"
 
 namespace nsx {
 
@@ -270,5 +269,3 @@ private:
 std::ostream& operator<<(std::ostream&,const UnitCell&);
 
 } // end namespace nsx
-
-#endif // NSXLIB_UNITCELL_H

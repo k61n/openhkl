@@ -27,10 +27,8 @@
  *
  */
 
-#include <array>
-
-#include "../geometry/Edge.h"
-#include "../geometry/Vertex.h"
+#include "Edge.h"
+#include "Vertex.h"
 
 namespace nsx {
 

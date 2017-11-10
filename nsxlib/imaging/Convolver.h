@@ -1,20 +1,13 @@
-
-// 2d convolution via FFT
-// author: Jonathan Fisher
-// Forschungszentrum Jülich GmbH
-// j.fisher@fz-juelich.de
-
-#ifndef NSXLIB_CONVOLVER_H
-#define NSXLIB_CONVOLVER_H
+#pragma once
 
 #include <complex>
 #include <vector>
 
 #include <fftw3.h>
 
-#include <Eigen/Core>
+#include <Eigen/Dense>
 
-#include "../mathematics/MathematicsTypes.h"
+#include "MathematicsTypes.h"
 
 namespace nsx {
 
@@ -47,5 +40,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_CONVOLVER_H

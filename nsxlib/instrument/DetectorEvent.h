@@ -35,18 +35,16 @@
  *
  */
 
-#ifndef NSXLIB_DETECTOREVENT_H
-#define NSXLIB_DETECTOREVENT_H
+#pragma once
 
 #include <vector>
 
-#include <Eigen/Core>
+#include <Eigen/Dense>
 
-#include "../crystal/CrystalTypes.h"
-#include "../data/DataTypes.h"
-#include "../geometry/DirectVector.h"
-#include "../geometry/ReciprocalVector.h"
-#include "../instrument/InstrumentTypes.h"
+#include "CrystalTypes.h"
+#include "GeometryTypes.h"
+#include "InstrumentTypes.h"
+#include "DataTypes.h"
 
 namespace nsx {
 
@@ -94,5 +92,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_DETECTOREVENT_H

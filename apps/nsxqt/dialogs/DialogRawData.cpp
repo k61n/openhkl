@@ -33,10 +33,10 @@
  *
  */
 
-#include "dialogs/DialogRawData.h"
-#include "ui_DialogRawData.h"
+#include <nsxlib/Logger.h>
 
-#include <nsxlib/logger/Logger.h>
+#include "DialogRawData.h"
+#include "ui_DialogRawData.h"
 
 DialogRawData::DialogRawData(QWidget *parent):
     QDialog(parent),

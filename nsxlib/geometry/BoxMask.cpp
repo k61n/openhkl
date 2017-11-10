@@ -33,7 +33,6 @@
 #include "BoxMask.h"
 #include "Ellipsoid.h"
 
-
 namespace nsx {
 
 BoxMask::BoxMask(const AABB& aabb): _aabb(aabb)

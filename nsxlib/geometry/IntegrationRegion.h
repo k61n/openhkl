@@ -28,13 +28,12 @@
  *
  */
 
-#ifndef NSXLIB_INTEGRATIONREGION_H
-#define NSXLIB_INTEGRATIONREGION_H
+#pragma once
 
 #include <Eigen/Core>
 
-#include "../geometry/Ellipsoid.h"
-#include "../geometry/GeometryTypes.h"
+#include "Ellipsoid.h"
+#include "GeometryTypes.h"
 
 namespace nsx {
 
@@ -56,5 +55,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_INTEGRATIONREGION_H

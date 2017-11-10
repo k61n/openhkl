@@ -27,8 +27,7 @@
  *
  */
 
-#ifndef NSXLIB_PEAK3D_H
-#define NSXLIB_PEAK3D_H
+#pragma once
 
 #include <map>
 #include <memory>
@@ -36,16 +35,15 @@
 
 #include <Eigen/Dense>
 
-#include "../crystal/CrystalTypes.h"
-#include "../crystal/Intensity.h"
-#include "../crystal/PeakIntegrator.h"
-#include "../crystal/Profile.h"
-#include "../data/DataTypes.h"
-#include "../geometry/Ellipsoid.h"
-#include "../geometry/GeometryTypes.h"
-#include "../geometry/IntegrationRegion.h"
-#include "../geometry/ReciprocalVector.h"
-#include "../instrument/InstrumentTypes.h"
+#include "CrystalTypes.h"
+#include "DataTypes.h"
+#include "Ellipsoid.h"
+#include "GeometryTypes.h"
+#include "InstrumentTypes.h"
+#include "IntegrationRegion.h"
+#include "Intensity.h"
+#include "PeakIntegrator.h"
+#include "Profile.h"
 
 namespace nsx {
 
@@ -181,5 +179,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_PEAK3D_H

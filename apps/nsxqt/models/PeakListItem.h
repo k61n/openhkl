@@ -1,9 +1,7 @@
 #ifndef NSXQT_PEAKLISTITEM_H
 #define NSXQT_PEAKLISTITEM_H
 
-#include <memory>
-
-#include <nsxlib/instrument/InstrumentTypes.h>
+#include <nsxlib/InstrumentTypes.h>
 
 #include "InspectableTreeItem.h"
 #include "models/SessionModel.h"

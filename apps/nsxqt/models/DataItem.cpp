@@ -4,14 +4,14 @@
 #include <QStandardItem>
 #include <QString>
 
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/data/DataReaderFactory.h>
-#include <nsxlib/data/RawDataReader.h>
-#include <nsxlib/data/IDataReader.h>
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/logger/Logger.h>
+#include <nsxlib/DataReaderFactory.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Experiment.h>
+#include <nsxlib/IDataReader.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/RawDataReader.h>
 
-#include "models/DataItem.h"
+#include "DataItem.h"
 #include "NumorItem.h"
 
 DataItem::DataItem(nsx::sptrExperiment experiment) : TreeItem(experiment)

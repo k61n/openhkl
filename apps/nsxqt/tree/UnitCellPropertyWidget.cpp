@@ -2,19 +2,18 @@
 #include <QMessageBox>
 #include <QSortFilterProxyModel>
 
-#include <nsxlib/chemistry/ChemistryTypes.h>
-#include <nsxlib/chemistry/Material.h>
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/SpaceGroup.h>
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/utils/Units.h>
+#include <nsxlib/ChemistryTypes.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Gonio.h>
+#include <nsxlib/Material.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/SpaceGroup.h>
+#include <nsxlib/UnitCell.h>
+#include <nsxlib/Units.h>
 
-//#include "LatticeIndexer.h"
-#include "models/SessionModel.h"
-#include "models/UnitCellItem.h"
-#include "tree/UnitCellPropertyWidget.h"
+#include "SessionModel.h"
+#include "UnitCellItem.h"
+#include "UnitCellPropertyWidget.h"
 
 #include "ui_UnitCellPropertyWidget.h"
 

@@ -6,7 +6,7 @@
 
 #include <QJsonObject>
 
-#include <nsxlib/instrument/InstrumentTypes.h>
+#include <nsxlib/InstrumentTypes.h>
 
 #include "TreeItem.h"
 #include "models/SessionModel.h"

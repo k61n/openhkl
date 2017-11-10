@@ -28,8 +28,7 @@
  *
  */
 
-#ifndef NSXLIB_RANDOMMATRIX_H
-#define NSXLIB_RANDOMMATRIX_H
+#pragma once
 
 #include <Eigen/Dense>
 
@@ -39,5 +38,3 @@ namespace nsx {
 Eigen::MatrixXd randomMatrix(unsigned int n);
 
 } // end namespace nsx
-
-#endif // NSXLIB_RANDOMMATRIX_H

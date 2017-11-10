@@ -27,15 +27,14 @@
  *
  */
 
-#ifndef NSXLIB_EXPERIMENT_H
-#define NSXLIB_EXPERIMENT_H
+#pragma once
 
 #include <map>
 #include <string>
 #include <vector>
 
-#include "../data/DataTypes.h"
-#include "../instrument/InstrumentTypes.h"
+#include "DataTypes.h"
+#include "InstrumentTypes.h"
 
 namespace nsx {
 
@@ -113,5 +112,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_EXPERIMENT_H

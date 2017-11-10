@@ -1,9 +1,9 @@
 #ifndef NSXQT_NORMALIZEPEAKSITEM_H
 #define NSXQT_NORMALIZEPEAKSITEM_H
 
-#include <nsxlib/instrument/InstrumentTypes.h>
+#include <nsxlib/InstrumentTypes.h>
 
-#include "models/TreeItem.h"
+#include "TreeItem.h"
 
 class NormalizePeaksItem : public TreeItem
 {

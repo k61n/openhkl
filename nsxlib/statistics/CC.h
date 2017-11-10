@@ -33,10 +33,9 @@
  *
  */
 
-#ifndef NSXLIB_CC_H
-#define NSXLIB_CC_H
+#pragma once
 
-#include "../crystal/MergedPeak.h"
+#include "MergedPeak.h"
 
 namespace nsx {
     class MergedData;
@@ -59,5 +58,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_CC_H

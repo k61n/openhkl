@@ -1,16 +1,7 @@
-// Delta kernel
-// author: Jonathan Fisher
-// Forschungszentrum Jülich GmbH
-// j.fisher@fz-juelich.de
+#pragma once
 
-
-// Kronecker delta kernel. Used for testing only
-
-#ifndef NSXLIB_DELTAKERNEL_H
-#define NSXLIB_DELTAKERNEL_H
-
-#include "../imaging/ImagingTypes.h"
 #include "ConvolutionKernel.h"
+#include "ImagingTypes.h"
 
 namespace nsx {
 
@@ -37,5 +28,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_DELTAKERNEL_H

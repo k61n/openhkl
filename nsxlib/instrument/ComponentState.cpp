@@ -33,12 +33,13 @@
  *
  */
 
-#include "ComponentState.h"
-#include "Component.h"
-#include "Gonio.h"
-#include <cstring>
 #include <cassert>
+#include <cstring>
 #include <iostream>
+
+#include "Component.h"
+#include "ComponentState.h"
+#include "Gonio.h"
 
 namespace nsx {
 

@@ -8,13 +8,13 @@
 #include <string>
 #include <tuple>
 
-#include <Eigen/Core>
+#include <Eigen/Dense>
 
 #include <QDialog>
 
-#include <nsxlib/crystal/SpaceGroup.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/data/DataTypes.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/DataTypes.h>
+#include <nsxlib/SpaceGroup.h>
 
 class QModelIndex;
 class QWidget;

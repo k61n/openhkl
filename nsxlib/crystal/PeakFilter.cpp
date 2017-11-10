@@ -1,15 +1,15 @@
 #include <map>
 
-#include "PeakFilter.h"
+#include "DataSet.h"
+#include "Diffractometer.h"
+#include "MergedData.h"
+#include "Octree.h"
 #include "Peak3D.h"
-
-#include "../crystal/UnitCell.h"
-#include "../crystal/SpaceGroup.h"
-#include "../data/DataSet.h"
-#include "../data/MergedData.h"
-#include "../geometry/Octree.h"
-#include "../instrument/Diffractometer.h"
-#include "../instrument/Sample.h"
+#include "PeakFilter.h"
+#include "ReciprocalVector.h"
+#include "Sample.h"
+#include "SpaceGroup.h"
+#include "UnitCell.h"
 
 namespace {
 

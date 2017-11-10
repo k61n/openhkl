@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "externals/qcustomplot.h"
+#include "QCustomPlot.h"
 
 class PlottableGraphicsItem;
 

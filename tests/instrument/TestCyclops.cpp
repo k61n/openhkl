@@ -1,7 +1,7 @@
-#include <nsxlib/instrument/Detector.h>
-#include <nsxlib/instrument/DetectorEvent.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/Detector.h>
+#include <nsxlib/DetectorEvent.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/NSXTest.h>
 
 int main()
 {

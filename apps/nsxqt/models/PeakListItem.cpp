@@ -1,7 +1,7 @@
 #include <QIcon>
 
-#include "models/PeakListItem.h"
-#include "tree/PeakListPropertyWidget.h"
+#include "PeakListItem.h"
+#include "PeakListPropertyWidget.h"
 
 PeakListItem::PeakListItem(std::shared_ptr<SessionModel> session, nsx::sptrExperiment experiment) : InspectableTreeItem(experiment), _session(session)
 {

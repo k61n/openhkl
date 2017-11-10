@@ -9,11 +9,11 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/geometry/AABB.h>
+#include <nsxlib/AABB.h>
+#include <nsxlib/DataSet.h>
 
 #include "DetectorScene.h"
-#include "items/EllipseMaskGraphicsItem.h"
+#include "EllipseMaskGraphicsItem.h"
 
 EllipseMaskGraphicsItem::EllipseMaskGraphicsItem(nsx::sptrDataSet data, nsx::AABB* aabb)
 : SXGraphicsItem(nullptr,true,true),

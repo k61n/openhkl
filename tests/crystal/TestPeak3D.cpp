@@ -2,17 +2,17 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/instrument/Component.h>
-#include <nsxlib/instrument/ComponentState.h>
-#include <nsxlib/instrument/FlatDetector.h>
-#include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/instrument/InstrumentTypes.h>
-#include <nsxlib/instrument/Monochromator.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/instrument/Source.h>
-#include <nsxlib/utils/NSXTest.h>
-#include <nsxlib/utils/Units.h>
+#include <nsxlib/Component.h>
+#include <nsxlib/ComponentState.h>
+#include <nsxlib/FlatDetector.h>
+#include <nsxlib/Gonio.h>
+#include <nsxlib/InstrumentTypes.h>
+#include <nsxlib/Monochromator.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/Sample.h>
+#include <nsxlib/Source.h>
+#include <nsxlib/Units.h>
 
 const double tolerance=1e-6;
 

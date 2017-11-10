@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../crystal/CrystalTypes.h"
-#include "../crystal/UBSolution.h"
-#include "../data/DataTypes.h"
+#include "CrystalTypes.h"
+#include "UBSolution.h"
+#include "DataTypes.h"
 
 #include <map>
 

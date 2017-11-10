@@ -33,11 +33,11 @@
 #include <sstream>
 #include <vector>
 
+#include "Peak3D.h"
+#include "ReciprocalVector.h"
 #include "SpaceGroup.h"
-
-#include "../crystal/Peak3D.h"
-#include "../crystal/UnitCell.h"
-#include "../utils/StringIO.h"
+#include "StringIO.h"
+#include "UnitCell.h"
 
 namespace nsx {
 
@@ -288,7 +288,7 @@ std::vector<std::string> SpaceGroup::symbols()
 SpaceGroup::SpaceGroup(std::string symbol)
 {
     symbol = compress(symbol);
-    symbol = trim(symbol);
+    trim(symbol);
 
     _symbol = std::move(symbol);
 

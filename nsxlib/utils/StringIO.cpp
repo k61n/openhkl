@@ -7,16 +7,27 @@
 
 #include "StringIO.h"
 
-namespace nsx
-{
+namespace nsx {
 
-std::string trim(const std::string& input_string)
+std::string trimmed(const std::string& input_string)
 {
     std::string output_string(input_string);
     output_string.erase(output_string.find_last_not_of(" \n\r\t")+1);
     output_string.erase(0,output_string.find_first_not_of(" \n\r\t"));
 
     return output_string;
+}
+
+void trim(std::string& input_string)
+{
+    input_string.erase(input_string.find_last_not_of(" \n\r\t")+1);
+    input_string.erase(0,input_string.find_first_not_of(" \n\r\t"));
+}
+
+void removed_spaces(std::string& input_string) {
+    auto check_white_space = [](unsigned char const c) {return std::isspace(c);};
+    auto sit = std::remove_if(input_string.begin(), input_string.end(), check_white_space);
+    input_string.erase(sit,input_string.end());
 }
 
 std::string compress(const std::string& input_string)

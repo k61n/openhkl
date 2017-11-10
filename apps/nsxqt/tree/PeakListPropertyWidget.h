@@ -6,8 +6,7 @@
 #include <QStandardItem>
 #include <QWidget>
 
-#include "views/PeakTableView.h"
-#include "models/SessionModel.h"
+#include "PeakTableView.h"
 
 namespace Ui {
 class PeakListPropertyWidget;

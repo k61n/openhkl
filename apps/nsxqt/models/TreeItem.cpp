@@ -5,7 +5,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include "models/TreeItem.h"
+#include "TreeItem.h"
 
 TreeItem::TreeItem(nsx::sptrExperiment experiment) : QStandardItem(), _experiment(experiment)
 {

@@ -1,4 +1,4 @@
-#include "models/NormalizePeaksItem.h"
+#include "NormalizePeaksItem.h"
 
 NormalizePeaksItem::NormalizePeaksItem(nsx::sptrExperiment experiment) : TreeItem(experiment)
 {

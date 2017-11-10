@@ -1,6 +1,8 @@
-#include "CrystalFaceItem.h"
-#include <QPainter>
 #include <cmath>
+
+#include <QPainter>
+
+#include "CrystalFaceItem.h"
 
 CrystalFaceItem::CrystalFaceItem(QGraphicsItem *parent):QGraphicsItem(parent)
 {

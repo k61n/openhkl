@@ -1,10 +1,3 @@
-/*
- * KernelFactory.cpp
- *
- *  Created on: Nov 14, 2016
- *      Author: pellegrini
- */
-
 #include "AnnularKernel.h"
 #include "ConstantKernel.h"
 #include "DeltaKernel.h"

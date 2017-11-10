@@ -36,7 +36,7 @@
 
 
 #include "CC.h"
-#include "../data/MergedData.h"
+#include "MergedData.h"
 
 namespace nsx {
 

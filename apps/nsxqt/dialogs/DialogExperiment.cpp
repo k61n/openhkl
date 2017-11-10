@@ -4,7 +4,7 @@
 #include <QString>
 #include <QStringList>
 
-#include <nsxlib/utils/Path.h>
+#include <nsxlib/Path.h>
 
 #include "DialogExperiment.h"
 #include "ui_ExperimentDialog.h"

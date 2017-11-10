@@ -9,19 +9,19 @@
 #include <QMessageBox>
 #include <QStandardItemModel>
 
-#include <nsxlib/crystal/AutoIndexer.h>
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/logger/Logger.h>
-#include <nsxlib/utils/Units.h>
-#include <nsxlib/utils/ProgressHandler.h>
+#include <nsxlib/AutoIndexer.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/Experiment.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/ProgressHandler.h>
+#include <nsxlib/Sample.h>
+#include <nsxlib/UnitCell.h>
+#include <nsxlib/Units.h>
 
-#include "dialogs/DialogAutoIndexing.h"
-#include "models/CollectedPeaksModel.h"
-#include "models/CollectedPeaksDelegate.h"
+#include "DialogAutoIndexing.h"
+#include "CollectedPeaksModel.h"
+#include "CollectedPeaksDelegate.h"
 
 #include "ui_DialogAutoIndexing.h"
 

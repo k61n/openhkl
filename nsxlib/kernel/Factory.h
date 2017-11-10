@@ -26,14 +26,13 @@
  *
  */
 
-#ifndef NSXLIB_FACTORY_H
-#define NSXLIB_FACTORY_H
+#pragma once
 
 #include <algorithm>
 #include <functional>
 #include <iostream>
-#include <stdexcept>
 #include <map>
+#include <stdexcept>
 #include <vector>
 
 namespace nsx {
@@ -123,5 +122,3 @@ bool Factory<base,keytype,args...>::hasCallback(const keytype& key)
 }
 
 } // end namespace nsx
-
-#endif // NSXLIB_FACTORY_H

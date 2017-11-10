@@ -6,15 +6,16 @@
 #include <QIcon>
 #include <QString>
 
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/data/MetaData.h>
-#include <nsxlib/instrument/DetectorEvent.h>
-#include <nsxlib/logger/Logger.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/DetectorEvent.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/MetaData.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/ReciprocalVector.h>
+#include <nsxlib/UnitCell.h>
 
 #include "CollectedPeaksModel.h"
-#include "views/ProgressView.h"
+#include "ProgressView.h"
 
 CollectedPeaksModel::CollectedPeaksModel(nsx::sptrExperiment experiment, QObject *parent)
 : QAbstractTableModel(parent),

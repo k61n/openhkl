@@ -1,16 +1,9 @@
-/*
- * MCAbsorption.cpp
- *
- *  Created on: Feb 18, 2015
- *      Author: chapon
- */
-
 #include <ctime>
 #include <stdexcept>
 
-#include "../geometry/ConvexHull.h"
-#include "../geometry/MCAbsorption.h"
-#include "../geometry/Triangle.h"
+#include "ConvexHull.h"
+#include "MCAbsorption.h"
+#include "Triangle.h"
 
 namespace nsx {
 

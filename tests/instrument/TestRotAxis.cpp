@@ -1,8 +1,8 @@
 #include <Eigen/Dense>
 
-#include <nsxlib/instrument/RotAxis.h>
-#include <nsxlib/utils/NSXTest.h>
-#include <nsxlib/utils/Units.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/RotAxis.h>
+#include <nsxlib/Units.h>
 
 const double tolerance=1e-6;
 

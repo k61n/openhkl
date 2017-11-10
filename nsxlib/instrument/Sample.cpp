@@ -2,11 +2,11 @@
 
 #include <Eigen/Dense>
 
-#include "../crystal/UnitCell.h"
-#include "../instrument/Gonio.h"
-#include "../instrument/RotAxis.h"
-#include "../instrument/Sample.h"
-#include "../instrument/TransAxis.h"
+#include "Gonio.h"
+#include "RotAxis.h"
+#include "Sample.h"
+#include "TransAxis.h"
+#include "UnitCell.h"
 
 namespace nsx {
 

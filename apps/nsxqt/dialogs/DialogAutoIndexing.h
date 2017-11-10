@@ -7,8 +7,8 @@
 #include <QDialog>
 #include <QItemSelection>
 
-#include <nsxlib/crystal/CrystalTypes.h>
-#include <nsxlib/instrument/InstrumentTypes.h>
+#include <nsxlib/CrystalTypes.h>
+#include <nsxlib/InstrumentTypes.h>
 
 namespace Ui
 {

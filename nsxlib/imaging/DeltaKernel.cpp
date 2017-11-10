@@ -1,8 +1,3 @@
-// Delta kernel
-// author: Jonathan Fisher
-// Forschungszentrum Jülich GmbH
-// j.fisher@fz-juelich.de
-
 #include "DeltaKernel.h"
 
 namespace nsx {

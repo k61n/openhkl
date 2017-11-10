@@ -26,8 +26,7 @@
  *
  */
 
-#ifndef NSXLIB_MEMENTO_H
-#define NSXLIB_MEMENTO_H
+#pragma once
 
 #include <stdexcept>
 #include <unordered_map>
@@ -120,5 +119,3 @@ void CareTaker<key_type,mem_type>::remove(const key_type& key)
 
 
 } // end namespace nsx
-
-#endif // NSXLIB_MEMENTO_H

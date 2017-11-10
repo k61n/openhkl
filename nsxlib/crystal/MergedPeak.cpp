@@ -33,17 +33,18 @@
  *
  */
 
-#include <cmath>
-#include <stdexcept>
 #include <algorithm>
+#include <cmath>
 #include <cstdlib>
+#include <stdexcept>
 
 #include <gsl/gsl_cdf.h>
 
-#include "../crystal/UnitCell.h"
-#include "../data/DataSet.h"
+#include "UnitCell.h"
+#include "DataSet.h"
 #include "MergedPeak.h"
 #include "Peak3D.h"
+#include "ReciprocalVector.h"
 
 namespace nsx {
 

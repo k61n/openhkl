@@ -1,12 +1,12 @@
 #ifndef NSXQT_DIALOGREFINEUNITCELL_H
 #define NSXQT_DIALOGREFINEUNITCELL_H
 
-#include <nsxlib/crystal/CrystalTypes.h>
-#include <nsxlib/crystal/UBMinimizer.h>
-#include <nsxlib/crystal/UBSolution.h>
-#include <nsxlib/instrument/InstrumentTypes.h>
-
 #include <QDialog>
+
+#include <nsxlib/CrystalTypes.h>
+#include <nsxlib/InstrumentTypes.h>
+#include <nsxlib/UBMinimizer.h>
+#include <nsxlib/UBSolution.h>
 
 namespace Ui
 {

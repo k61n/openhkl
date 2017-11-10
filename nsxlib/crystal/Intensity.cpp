@@ -33,9 +33,10 @@
  *
  */
 
-#include "Intensity.h"
-#include <cmath>
 #include <cassert>
+#include <cmath>
+
+#include "Intensity.h"
 
 namespace nsx {
 

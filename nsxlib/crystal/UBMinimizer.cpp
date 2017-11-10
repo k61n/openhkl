@@ -4,21 +4,21 @@
 
 #include <Eigen/Dense>
 
-#include "../crystal/Peak3D.h"
-#include "../crystal/UBMinimizer.h"
-#include "../crystal/UBSolution.h"
-#include "../data/DataSet.h"
-#include "../instrument/Component.h"
-#include "../instrument/ComponentState.h"
-#include "../instrument/Detector.h"
-#include "../instrument/Gonio.h"
-#include "../instrument/Sample.h"
-#include "../instrument/Source.h"
-#include "../instrument/TransAxis.h"
-#include "../instrument/RotAxis.h"
-#include "../mathematics/MatrixOperations.h"
-#include "../mathematics/Minimizer.h"
-#include "../utils/Units.h"
+#include "Component.h"
+#include "ComponentState.h"
+#include "Detector.h"
+#include "Gonio.h"
+#include "Peak3D.h"
+#include "Sample.h"
+#include "Source.h"
+#include "TransAxis.h"
+#include "RotAxis.h"
+#include "MatrixOperations.h"
+#include "Minimizer.h"
+#include "ReciprocalVector.h"
+#include "UBMinimizer.h"
+#include "UBSolution.h"
+#include "Units.h"
 
 namespace nsx {
 

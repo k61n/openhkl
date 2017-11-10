@@ -1,15 +1,16 @@
-#include <iostream>
 #include <cmath>
 #include <iomanip>
+#include <iostream>
 #include <stdexcept>
 
-#include "../chemistry/Material.h"
-#include "../crystal/UnitCell.h"
-#include "../crystal/NiggliReduction.h"
-#include "../crystal/GruberReduction.h"
-#include "../mathematics/GCD.h"
-#include "../mathematics/Minimizer.h"
-#include "../utils/Units.h"
+#include "GCD.h"
+#include "GruberReduction.h"
+#include "Material.h"
+#include "Minimizer.h"
+#include "NiggliReduction.h"
+#include "ReciprocalVector.h"
+#include "UnitCell.h"
+#include "Units.h"
 
 namespace nsx {
 

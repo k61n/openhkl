@@ -6,8 +6,8 @@
 #include <QPainter>
 #include <QPixmap>
 
-#include "CollectedPeaksModel.h"
 #include "CollectedPeaksDelegate.h"
+#include "CollectedPeaksModel.h"
 
 CollectedPeaksDelegate::CollectedPeaksDelegate(QObject *parent) : QStyledItemDelegate(parent)
 {

@@ -26,8 +26,7 @@
  *
  */
 
-#ifndef NSXLIB_OCTREE_H
-#define NSXLIB_OCTREE_H
+#pragma once
 
 #include <cmath>
 #include <initializer_list>
@@ -47,7 +46,6 @@ constexpr int getPow (int factor)
 {
     return factor > 1 ? 2 * getPow( factor-1 ) : 2;
 }
-
 
 /*! \brief A template class to handle binary trees in D dimensions
  *
@@ -218,5 +216,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_OCTREE_H

@@ -40,18 +40,18 @@
 #include <set>
 #include <stdexcept>
 
-#include "../data/RawDataReader.h"
-#include "../instrument/Component.h"
-#include "../instrument/Detector.h"
-#include "../instrument/Diffractometer.h"
-#include "../instrument/Gonio.h"
-#include "../instrument/Monochromator.h"
-#include "../instrument/Sample.h"
-#include "../instrument/Source.h"
-#include "../instrument/ComponentState.h"
-#include "../utils/Units.h"
-#include "../utils/Parser.h"
-#include "../utils/EigenToVector.h"
+#include "Component.h"
+#include "ComponentState.h"
+#include "Detector.h"
+#include "Diffractometer.h"
+#include "EigenToVector.h"
+#include "Gonio.h"
+#include "Monochromator.h"
+#include "Parser.h"
+#include "RawDataReader.h"
+#include "Sample.h"
+#include "Source.h"
+#include "Units.h"
 
 namespace nsx {
 

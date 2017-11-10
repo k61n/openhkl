@@ -1,12 +1,12 @@
 
-#include <nsxlib/data/DataReaderFactory.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/data/PeakFinder.h>
-#include <nsxlib/data/FrameInterval.h>
-#include <nsxlib/imaging/KernelFactory.h>
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/utils/ProgressHandler.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/DataReaderFactory.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/PeakFinder.h>
+#include <nsxlib/FrameInterval.h>
+#include <nsxlib/KernelFactory.h>
+#include <nsxlib/Experiment.h>
+#include <nsxlib/ProgressHandler.h>
+#include <nsxlib/NSXTest.h>
 
 #pragma message "todo: test not implemented"
 

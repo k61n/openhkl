@@ -2,9 +2,9 @@
 #include <stdexcept>
 #include <sstream>
 
-#include "../crystal/SymOp.h"
-#include "../utils/AffineTransformParser.h"
-#include "../utils/DoubleToFraction.h"
+#include "AffineTransformParser.h"
+#include "DoubleToFraction.h"
+#include "SymOp.h"
 
 namespace nsx {
 

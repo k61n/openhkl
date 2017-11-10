@@ -1,21 +1,21 @@
-#include <string>
 #include <random>
+#include <string>
 
-#include <Eigen/Core>
+#include <Eigen/Dense>
 
-#include <nsxlib/crystal/SpaceGroup.h>
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/crystal/GruberReduction.h>
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/PeakPredictor.h>
-#include <nsxlib/data/DataReaderFactory.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/data/MergedData.h>
-#include <nsxlib/instrument/ComponentState.h>
-#include <nsxlib/instrument/DetectorEvent.h>
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/statistics/CC.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/CC.h>
+#include <nsxlib/ComponentState.h>
+#include <nsxlib/DataReaderFactory.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/DetectorEvent.h>
+#include <nsxlib/Experiment.h>
+#include <nsxlib/GruberReduction.h>
+#include <nsxlib/MergedData.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/PeakPredictor.h>
+#include <nsxlib/SpaceGroup.h>
+#include <nsxlib/UnitCell.h>
 
 using namespace nsx;
 

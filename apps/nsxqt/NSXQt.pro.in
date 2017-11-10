@@ -17,7 +17,7 @@ unix:!macx {
 
     INCLUDEPATH += ${qmake_include_dirs}
 
-    LIBS += -lnsx -lboost_date_time -lboost_system -lfftw3
+    LIBS += -lnsx -lfftw3
 }
 macx {
     CONFIG += c++11

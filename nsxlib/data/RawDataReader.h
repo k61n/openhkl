@@ -33,20 +33,17 @@
  *
  */
 
-#ifndef NSXLIB_RAWDATAREADER_H
-#define NSXLIB_RAWDATAREADER_H
+#pragma once
 
 #include <map>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include <Eigen/Core>
 #include <Eigen/Dense>
 
-#include "../data/IDataReader.h"
-#include "../instrument/Diffractometer.h"
-
+#include "Diffractometer.h"
+#include "IDataReader.h"
 
 namespace nsx {
 
@@ -114,5 +111,3 @@ Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> RawDataReader::matrixFromData(
 }
 
 } // end namespace nsx
-
-#endif // NSXLIB_RAWDATAREADER_H

@@ -30,8 +30,9 @@
 
 #pragma once
 
-#include <Eigen/Core>
 #include <vector>
+
+#include <Eigen/Dense>
 
 #include "ConvexHull.h"
 

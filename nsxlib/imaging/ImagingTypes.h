@@ -1,5 +1,4 @@
-#ifndef NSXLIB_IMAGINGTYPES_H
-#define NSXLIB_IMAGINGTYPES_H
+#pragma once
 
 #include <map>
 #include <memory>
@@ -15,5 +14,3 @@ using sptrConvolver = std::shared_ptr<Convolver>;
 using ConvolutionKernelParameters = std::map<std::string, double>;
 
 } // end namespace nsx
-
-#endif // NSXLIB_IMAGINGTYPES_H

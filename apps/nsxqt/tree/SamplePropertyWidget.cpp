@@ -1,15 +1,15 @@
 #include <sstream>
 
-#include <nsxlib/instrument/Axis.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/instrument/TransAxis.h>
-#include <nsxlib/utils/Units.h>
+#include <nsxlib/Axis.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/Gonio.h>
+#include <nsxlib/Sample.h>
+#include <nsxlib/TransAxis.h>
+#include <nsxlib/Units.h>
 
-#include "models/SampleItem.h"
-#include "models/UnitCellItem.h"
-#include "tree/SamplePropertyWidget.h"
+#include "SampleItem.h"
+#include "SamplePropertyWidget.h"
+#include "UnitCellItem.h"
 
 #include "ui_SamplePropertyWidget.h"
 

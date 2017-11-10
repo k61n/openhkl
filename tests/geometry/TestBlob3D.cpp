@@ -2,8 +2,8 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/geometry/Blob3D.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/Blob3D.h>
+#include <nsxlib/NSXTest.h>
 
 const double tolerance=1e-5;
 

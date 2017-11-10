@@ -6,11 +6,11 @@
 #include <stdexcept>
 #include <string>
 
-#include "yaml-cpp/yaml.h"
+#include <yaml-cpp/yaml.h>
 
-#include "../kernel/Singleton.h"
-#include "../chemistry/ChemistryTypes.h"
-#include "../utils/Some.h"
+#include "ChemistryTypes.h"
+#include "Singleton.h"
+#include "Some.h"
 
 namespace nsx {
 

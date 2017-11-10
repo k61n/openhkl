@@ -1,10 +1,15 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace nsx {
 
-std::string trim(const std::string& input_string);
+void removed_spaces(std::string& input_string);
+
+std::string trimmed(const std::string& input_string);
+
+void trim(std::string& input_string);
 
 std::string compress(const std::string& input_string);
 

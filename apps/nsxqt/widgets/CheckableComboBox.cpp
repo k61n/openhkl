@@ -1,8 +1,8 @@
+#include <QAbstractItemView>
 #include <QKeyEvent>
 #include <QLineEdit>
 #include <QListView>
 #include <QMouseEvent>
-#include <QAbstractItemView>
 
 #include "CheckableComboBox.h"
 #include "CheckableComboBoxModel.h"

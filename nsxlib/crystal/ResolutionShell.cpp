@@ -38,10 +38,11 @@
 
 #include <Eigen/Eigenvalues>
 
-#include "../crystal/Peak3D.h"
-#include "../crystal/ResolutionShell.h"
-#include "../data/DataSet.h"
-#include "../mathematics/GCD.h"
+#include "GCD.h"
+#include "Peak3D.h"
+#include "ReciprocalVector.h"
+#include "ResolutionShell.h"
+
 
 namespace nsx {
 

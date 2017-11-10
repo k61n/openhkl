@@ -33,10 +33,9 @@
  *
  */
 
-#ifndef NSXLIB_PEAKRECORD_H
-#define NSXLIB_PEAKRECORD_H
+#pragma once
 
-#include "../crystal/CrystalTypes.h"
+#include "CrystalTypes.h"
 
 namespace nsx {
 
@@ -58,5 +57,3 @@ public:
 
 #endif
 } // end namespace nsx
-
-#endif // NSXLIB_PEAKRECORD_H

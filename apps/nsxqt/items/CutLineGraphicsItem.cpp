@@ -12,13 +12,13 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/instrument/Detector.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Detector.h>
 
 #include "CutLineGraphicsItem.h"
 #include "DetectorScene.h"
-#include "plot/SimplePlot.h"
-#include "plot/SXPlot.h"
+#include "SimplePlot.h"
+#include "SXPlot.h"
 
 CutLineGraphicsItem::CutLineGraphicsItem(nsx::sptrDataSet data)
 : CutterGraphicsItem(data),

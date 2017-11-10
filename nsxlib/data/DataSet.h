@@ -26,25 +26,21 @@
  *
  */
 
-#ifndef NSXLIB_DATASET_H
-#define NSXLIB_DATASET_H
+#pragma once
 
-#include <mutex>
-#include <string>
-#include <set>
 #include <memory>
+#include <mutex>
+#include <set>
+#include <string>
 
 #include <Eigen/Dense>
 
-#include "../crystal/CrystalTypes.h"
-#include "../data/DataTypes.h"
-#include "../data/FrameInterval.h"
-#include "../geometry/DirectVector.h"
-#include "../geometry/ReciprocalVector.h"
-#include "../geometry/GeometryTypes.h"
-#include "../geometry/IMask.h"
-#include "../instrument/InstrumentTypes.h"
-#include "../utils/UtilsTypes.h"
+#include "CrystalTypes.h"
+#include "DataTypes.h"
+#include "GeometryTypes.h"
+#include "IMask.h"
+#include "InstrumentTypes.h"
+#include "UtilsTypes.h"
 
 namespace nsx {
 
@@ -160,9 +156,7 @@ protected:
     double _background;
     FrameIteratorCallback _iteratorCallback;
     std::shared_ptr<IDataReader> _reader;
-    std::vector<FrameInterval> _intervals;
+    
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_DATASET_H

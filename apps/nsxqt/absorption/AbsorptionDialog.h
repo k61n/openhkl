@@ -9,8 +9,8 @@
 #include <QDialog>
 #include <QString>
 
-#include <nsxlib/geometry/GeometryTypes.h>
-#include <nsxlib/instrument/InstrumentTypes.h>
+#include <nsxlib/GeometryTypes.h>
+#include <nsxlib/InstrumentTypes.h>
 
 namespace Ui {
 class AbsorptionDialog;

@@ -40,13 +40,13 @@
 #include <string>
 #include <vector>
 
-#include "yaml-cpp/yaml.h"
+#include <yaml-cpp/yaml.h>
 
 #include <Eigen/Dense>
 
 #include "Component.h"
 #include "DetectorEvent.h"
-#include "../utils/Enums.h"
+#include "Enums.h"
 
 namespace nsx {
 

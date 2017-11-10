@@ -3,8 +3,8 @@
 
 #include <QDialog>
 
+#include <nsxlib/InstrumentTypes.h>
 #include "models/SessionModel.h"
-#include <nsxlib/instrument/InstrumentTypes.h>
 
 class QWidget;
 

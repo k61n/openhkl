@@ -2,16 +2,16 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Diffractometer.h>
 
 #include "DataItem.h"
 #include "DetectorItem.h"
+#include "ExperimentItem.h"
 #include "InstrumentItem.h"
-#include "models/SessionModel.h"
-#include "models/ExperimentItem.h"
 #include "PeakListItem.h"
 #include "SampleItem.h"
+#include "SessionModel.h"
 #include "SourceItem.h"
 #include "TreeItem.h"
 

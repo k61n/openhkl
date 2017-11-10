@@ -1,15 +1,10 @@
-include_directories(
-    ${CMAKE_SOURCE_DIR}
-)
+include_directories(${CMAKE_BINARY_DIR}/include)
 
 file(GLOB_RECURSE test_sources "*.cpp")
 file(GLOB_RECURSE test_headers "*.h")
 
 foreach(source_file ${test_sources})
-  #message("test sources is ${test_sources}")
-  #message("source file is ${source_file}")
   get_filename_component(base_name ${source_file} NAME_WE)
-  #message("base name is ${base_name}")
   add_executable(${base_name} ${source_file} ${test_headers})
   target_link_libraries(${base_name} ${Boost_LIBRARIES} nsx)
 
@@ -22,7 +17,6 @@ foreach(source_file ${test_sources})
   else()
     add_test(${base_name} ${base_name})
   endif()
-  #message("Added test ${base_name}")
 
   if(NSX_TIDY)
     add_tidy_target(${base_name})

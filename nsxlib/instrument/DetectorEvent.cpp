@@ -35,14 +35,17 @@
  *
  */
 
-#include "../crystal/Peak3D.h"
-#include "../data/DataSet.h"
-#include "../instrument/Diffractometer.h"
-#include "../instrument/Source.h"
-#include "../instrument/InstrumentState.h"
+
+#include "DirectVector.h"
+#include "Peak3D.h"
+#include "DataSet.h"
+#include "Diffractometer.h"
+#include "Source.h"
+#include "InstrumentState.h"
 #include "Detector.h"
 #include "DetectorEvent.h"
 #include "Gonio.h"
+#include "ReciprocalVector.h"
 
 namespace nsx {
 

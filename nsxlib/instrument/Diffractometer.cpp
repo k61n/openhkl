@@ -3,10 +3,9 @@
 #include "Detector.h"
 #include "DetectorFactory.h"
 #include "Gonio.h"
+#include "Path.h"
 #include "Sample.h"
 #include "Source.h"
-
-#include "../utils/Path.h"
 
 namespace nsx {
 

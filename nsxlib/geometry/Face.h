@@ -27,15 +27,14 @@
  *
  */
 
-#ifndef NSXLIB_FACE_H
-#define NSXLIB_FACE_H
+#pragma once
 
 #include <array>
 #include <ostream>
 
 #include <Eigen/Dense>
 
-#include "../geometry/GeometryTypes.h"
+#include "GeometryTypes.h"
 
 namespace nsx {
 
@@ -82,5 +81,3 @@ public:
 std::ostream& operator<<(std::ostream& os, const Face& face);
 
 } // end namespace nsx
-
-#endif // NSXLIB_FACE_H

@@ -1,4 +1,4 @@
-#include "dialogs/DialogCalculatedPeaks.h"
+#include "DialogCalculatedPeaks.h"
 #include "ui_DialogCalculatedPeaks.h"
 
 DialogCalculatedPeaks::DialogCalculatedPeaks(QWidget *parent) :

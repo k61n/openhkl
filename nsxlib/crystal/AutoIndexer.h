@@ -33,15 +33,13 @@
  *
  */
 
-#ifndef NSXLIB_AUTOINDEXER_H
-#define NSXLIB_AUTOINDEXER_H
+#pragma once
 
 #include <vector>
 
-#include "../crystal/CrystalTypes.h"
-#include "../data/DataTypes.h"
-//#include "../instrument/InstrumentTypes.h"
-#include "../utils/UtilsTypes.h"
+#include "CrystalTypes.h"
+#include "InstrumentTypes.h"
+#include "UtilsTypes.h"
 
 namespace nsx {
 
@@ -104,5 +102,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_AUTOINDEXER_H

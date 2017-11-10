@@ -32,9 +32,9 @@
 #include <map>
 #include <string>
 
-#include "yaml-cpp/yaml.h"
+#include <yaml-cpp/yaml.h>
 
-#include "../instrument/InstrumentTypes.h"
+#include "InstrumentTypes.h"
 
 namespace nsx {
 

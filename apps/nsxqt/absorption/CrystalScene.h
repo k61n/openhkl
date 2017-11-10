@@ -6,7 +6,7 @@
 #include <QPixmap>
 #include <QString>
 
-#include <nsxlib/geometry/GeometryTypes.h>
+#include <nsxlib/GeometryTypes.h>
 
 class QGraphicsPixmapItem;
 class QGraphicsTextItem;

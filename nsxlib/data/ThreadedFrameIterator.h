@@ -1,14 +1,10 @@
-// author: Jonathan Fisher
-// j.fisher@fz-juelich.de
-
-#ifndef NSXLIB_THREADEDFRAMEITERATOR_H
-#define NSXLIB_THREADEDFRAMEITERATOR_H
+#pragma once
 
 #include <future>
 
-#include "../data/IFrameIterator.h"
-#include "../data/DataTypes.h"
-#include "../mathematics/MathematicsTypes.h"
+#include "DataTypes.h"
+#include "IFrameIterator.h"
+#include "MathematicsTypes.h"
 
 namespace nsx {
 
@@ -26,5 +22,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_THREADEDFRAMEITERATOR_H

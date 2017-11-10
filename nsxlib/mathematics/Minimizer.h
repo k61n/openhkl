@@ -36,12 +36,13 @@
 #pragma once
 
 #include <functional>
+
 #include <Eigen/Dense>
 
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_vector.h>
 
-#include "../utils/FitParameters.h"
+#include "FitParameters.h"
 
 
 namespace nsx {

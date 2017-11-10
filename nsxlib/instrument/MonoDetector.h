@@ -30,7 +30,7 @@
 
 #include <string>
 
-#include "yaml-cpp/yaml.h"
+#include <yaml-cpp/yaml.h>
 
 #include "Detector.h"
 

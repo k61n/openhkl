@@ -2,8 +2,8 @@
 #include <string>
 #include <vector>
 
-#include <nsxlib/utils/CSV.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/CSV.h>
+#include <nsxlib/NSXTest.h>
 
 int main() {
     std::string csv_file =

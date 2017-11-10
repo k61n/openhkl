@@ -4,22 +4,25 @@
 #include <QLayout>
 #include <QStatusBar>
 
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/instrument/Axis.h>
-#include <nsxlib/instrument/Detector.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/instrument/Gonio.h>
-#include <nsxlib/instrument/Monochromator.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/instrument/Source.h>
-#include <nsxlib/mathematics/Minimizer.h>
-#include <nsxlib/utils/Units.h>
+#include <nsxlib/Axis.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Detector.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/Experiment.h>
+#include <nsxlib/Gonio.h>
+#include <nsxlib/Minimizer.h>
+#include <nsxlib/Monochromator.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/ReciprocalVector.h>
+#include <nsxlib/Sample.h>
+#include <nsxlib/Source.h>
+#include <nsxlib/UnitCell.h>
+#include <nsxlib/Units.h>
 
 #include "DialogRefineUnitCell.h"
 #include "DoubleTableItemDelegate.h"
+
+#include "externals/QCustomPlot.h"
 
 #include "ui_DialogRefineUnitCell.h"
 

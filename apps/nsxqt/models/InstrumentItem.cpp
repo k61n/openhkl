@@ -1,10 +1,10 @@
 #include <QIcon>
 #include <QString>
 
-#include "models/DetectorItem.h"
-#include "models/InstrumentItem.h"
-#include "models/SampleItem.h"
-#include "models/SourceItem.h"
+#include "DetectorItem.h"
+#include "InstrumentItem.h"
+#include "SampleItem.h"
+#include "SourceItem.h"
 
 InstrumentItem::InstrumentItem(nsx::sptrExperiment experiment) : TreeItem(experiment)
 {

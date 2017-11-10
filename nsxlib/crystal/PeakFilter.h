@@ -4,7 +4,7 @@
 #include <string>
 
 #include "CrystalTypes.h"
-#include "../data/DataTypes.h"
+#include "DataTypes.h"
 
 namespace nsx {
 

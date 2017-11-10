@@ -31,11 +31,11 @@
 
 #include <string>
 
-#include "yaml-cpp/yaml.h"
+#include <yaml-cpp/yaml.h>
 
 #include "Detector.h"
-#include "../kernel/Factory.h"
-#include "../kernel/Singleton.h"
+#include "Factory.h"
+#include "Singleton.h"
 
 namespace nsx {
 

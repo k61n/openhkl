@@ -2,8 +2,8 @@
 #include <string>
 #include <vector>
 
-#include <nsxlib/utils/NSXTest.h>
-#include <nsxlib/utils/Some.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/Some.h>
 
 const double eps = 1e-10;
 

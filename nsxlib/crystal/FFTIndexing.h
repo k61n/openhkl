@@ -26,16 +26,15 @@
  *
  */
 
-#ifndef NSXLIB_FFTINDEXING_H
-#define NSXLIB_FFTINDEXING_H
+#pragma once
 
 #include <functional>
 #include <vector>
 
 #include <Eigen/Dense>
 
-#include "../mathematics/MathematicsTypes.h"
-#include "../utils/Units.h"
+#include "MathematicsTypes.h"
+#include "Units.h"
 
 namespace nsx {
 
@@ -57,5 +56,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_FFTINDEXING_H

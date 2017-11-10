@@ -3,8 +3,8 @@
 
 #include <QGLWidget>
 
-#include "opengl/GLTrackball.h"
-#include "opengl/GLScene.h"
+#include "GLTrackball.h"
+#include "GLScene.h"
 
 class GLWidget : public QGLWidget
 {

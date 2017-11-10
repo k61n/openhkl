@@ -37,12 +37,12 @@
 #include <iomanip>
 #include <ostream>
 
-#include "../crystal/MergedPeak.h"
-#include "../crystal/Peak3D.h"
-#include "../crystal/ResolutionShell.h"
-#include "../crystal/SpaceGroup.h"
-#include "../crystal/UnitCell.h"
-#include "../data/XDS.h"
+#include "MergedPeak.h"
+#include "Peak3D.h"
+#include "ResolutionShell.h"
+#include "SpaceGroup.h"
+#include "UnitCell.h"
+#include "XDS.h"
 
 static const std::string space = "    ";
 static const std::vector<std::string> merged_records = {"H", "K", "L", "IOBS", "SIGMA(IOBS)"};

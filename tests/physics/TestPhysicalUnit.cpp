@@ -1,8 +1,8 @@
 #include <stdexcept>
 #include <string>
 
-#include <nsxlib/physics/PhysicalUnit.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/PhysicalUnit.h>
 
 const double largeTolerance=1.0e-2;
 const double smallTolerance=1.0e-9;

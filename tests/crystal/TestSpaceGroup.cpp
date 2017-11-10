@@ -1,10 +1,10 @@
 #include <map>
 #include <string>
 
-#include <nsxlib/crystal/CrystalTypes.h>
-#include <nsxlib/crystal/SpaceGroup.h>
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/CrystalTypes.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/SpaceGroup.h>
+#include <nsxlib/UnitCell.h>
 
 int main()
 {

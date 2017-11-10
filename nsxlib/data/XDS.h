@@ -32,15 +32,15 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXLIB_XDS_H
-#define NSXLIB_XDS_H
+
+#pragma once
 
 #include <iosfwd>
 #include <string>
 #include <vector>
 
-#include "../crystal/CrystalTypes.h"
-#include "../crystal/PeakRecord.h"
+#include "CrystalTypes.h"
+#include "PeakRecord.h"
 
 namespace nsx {
 
@@ -82,5 +82,3 @@ private:
 #endif
 
 } // end namespace nsx
-
-#endif // NSXLIB_XDS_H

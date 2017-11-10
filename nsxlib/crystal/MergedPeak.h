@@ -33,14 +33,13 @@
  *
  */
 
-#ifndef NSXLIB_MERGEDPEAK_H
-#define NSXLIB_MERGEDPEAK_H
+#pragma once
 
 #include <Eigen/Dense>
 
-#include "../crystal/CrystalTypes.h"
-#include "../crystal/Intensity.h"
-#include "../crystal/SpaceGroup.h"
+#include "CrystalTypes.h"
+#include "Intensity.h"
+#include "SpaceGroup.h"
 
 namespace nsx {
 
@@ -97,7 +96,4 @@ private:
 bool operator<(const MergedPeak& p, const MergedPeak& q);
 #endif
 
-
 } // end namespace nsx
-
-#endif // NSXLIB_MERGEDPEAK_H

@@ -1,7 +1,7 @@
 #include <QApplication>
 
-#include <nsxlib/logger/Logger.h>
-#include <nsxlib/utils/ProgressHandler.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/ProgressHandler.h>
 
 #include "ProgressView.h"
 

@@ -1,11 +1,11 @@
 #include <iostream>
 #include <unordered_map>
 
-#include "../data/DataSet.h"
-#include "../data/IFrameIterator.h"
-#include "../geometry/BlobFinder.h"
-#include "../geometry/Octree.h"
-#include "../utils/ProgressHandler.h"
+#include "BlobFinder.h"
+#include "DataSet.h"
+#include "IFrameIterator.h"
+#include "Octree.h"
+#include "ProgressHandler.h"
 
 namespace nsx {
 
@@ -113,7 +113,7 @@ Blob3DUMap BlobFinder::find(unsigned int begin, unsigned int end) {
         int loop_begin = -1;
         int loop_end = -1;
 
-        std::unordered_map<int,Blob3D> local_blobs = {};
+        std::unordered_map<int,Blob3D> local_blobs = {{}};
         EquivalenceList local_equivalences;
 
         // determine begining and ending index of current thread

@@ -1,6 +1,6 @@
-#include "../instrument/Monochromator.h"
-#include "../instrument/Source.h"
-#include "../utils/Units.h"
+#include "Monochromator.h"
+#include "Source.h"
+#include "Units.h"
 
 namespace nsx {
 

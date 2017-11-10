@@ -1,10 +1,11 @@
 #ifndef NSXQT_GLSCENE_H
 #define NSXQT_GLSCENE_H
 
+#include <Eigen/Dense>
+
+#include <QGLWidget>
 #include <QHash>
 #include <QQueue>
-#include <QGLWidget>
-#include <Eigen/Dense>
 
 class GLActor;
 

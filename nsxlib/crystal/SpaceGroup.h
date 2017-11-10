@@ -27,8 +27,7 @@
  *
  */
 
-#ifndef NSXLIB_SPACEGROUP_H
-#define NSXLIB_SPACEGROUP_H
+#pragma once
 
 #include <array>
 #include <ostream>
@@ -37,8 +36,8 @@
 
 #include <Eigen/Dense>
 
-#include "../crystal/CrystalTypes.h"
-#include "../crystal/SymOp.h"
+#include "CrystalTypes.h"
+#include "SymOp.h"
 
 namespace nsx {
 
@@ -100,5 +99,3 @@ private:
 std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg);
 
 } // end namespace nsx
-
-#endif // NSXLIB_SPACEGROUP_H

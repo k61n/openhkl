@@ -7,7 +7,7 @@
 #include <QDialog>
 #include <QVBoxLayout>
 
-#include <nsxlib/data/DataTypes.h>
+#include <nsxlib/DataTypes.h>
 
 namespace Ui {
 class PeakFilterDialog;

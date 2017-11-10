@@ -2,25 +2,23 @@
 #include <cmath>
 #include <cstring>
 #include <fstream>
+#include <iomanip>
 #include <sstream>
 #include <stdexcept>
 
-#include <boost/algorithm/string.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem/path.hpp>
 
-#include "../data/I16DataReader.h"
-#include "../data/TiffDataReader.h"
-#include "../instrument/Component.h"
-#include "../instrument/ComponentState.h"
-#include "../instrument/Detector.h"
-#include "../instrument/Diffractometer.h"
-#include "../instrument/Gonio.h"
-#include "../instrument/Sample.h"
-#include "../instrument/Source.h"
-#include "../utils/Parser.h"
-#include "../utils/Units.h"
+#include "Component.h"
+#include "ComponentState.h"
+#include "Detector.h"
+#include "Diffractometer.h"
+#include "Gonio.h"
+#include "I16DataReader.h"
+#include "Sample.h"
+#include "Source.h"
+#include "Parser.h"
+#include "TiffDataReader.h"
+#include "Units.h"
 
 namespace nsx {
 

@@ -26,6 +26,7 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
+
 #pragma once
 
 #include <map>
@@ -35,11 +36,11 @@
 
 #include <Eigen/Dense>
 
-#include "../crystal/CrystalTypes.h"
-#include "../crystal/UBSolution.h"
-#include "../instrument/InstrumentTypes.h"
-#include "../mathematics/Minimizer.h"
-#include "../utils/LMFunctor.h"
+#include "CrystalTypes.h"
+#include "InstrumentTypes.h"
+#include "LMFunctor.h"
+#include "Minimizer.h"
+#include "UBSolution.h"
 
 namespace nsx {
 

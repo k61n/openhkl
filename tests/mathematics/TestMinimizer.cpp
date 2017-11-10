@@ -3,9 +3,9 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/mathematics/Minimizer.h>
-#include <nsxlib/utils/FitParameters.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/FitParameters.h>
+#include <nsxlib/Minimizer.h>
+#include <nsxlib/NSXTest.h>
 
 int main()
 {

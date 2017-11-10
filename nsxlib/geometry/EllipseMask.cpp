@@ -33,7 +33,6 @@
 #include "EllipseMask.h"
 #include "Ellipsoid.h"
 
-
 namespace nsx {
 
 EllipseMask::EllipseMask(const AABB& aabb, bool two_dim): _ellipsoid(), _2d(two_dim)

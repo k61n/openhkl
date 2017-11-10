@@ -1,5 +1,4 @@
-#ifndef NSXLIB_CRYSTALTYPES_H
-#define NSXLIB_CRYSTALTYPES_H
+#pragma once
 
 #include <memory>
 #include <set>
@@ -29,6 +28,7 @@ using RankedSolution = std::pair<sptrUnitCell,double>;
 using PeakSet    = std::set<sptrPeak3D>;
 using MergedPeakSet = std::set<MergedPeak>;
 
+using PeakSet = std::set<sptrPeak3D>;
 using PeakList     = std::vector<sptrPeak3D>;
 using RecordList   = std::vector<PeakRecord>;
 using SymOpList    = std::vector<SymOp>;
@@ -39,5 +39,3 @@ using SpaceGroupSymmetry = std::pair<std::string,std::string>;
 using AutoIndexingSoluce = std::pair<UnitCell,double>;
 
 } // end namespace nsx
-
-#endif // NSXLIB_CRYSTALTYPES_H

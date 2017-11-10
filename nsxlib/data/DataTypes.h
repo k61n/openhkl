@@ -1,5 +1,4 @@
-#ifndef NSXLIB_DATATYPES_H
-#define NSXLIB_DATATYPES_H
+#pragma once
 
 #include <functional>
 #include <map>
@@ -7,7 +6,7 @@
 #include <set>
 #include <vector>
 
-#include "../utils/Some.h"
+#include "Some.h"
 
 namespace nsx {
 
@@ -37,5 +36,3 @@ using MetaDataMap = std::map<const char*,Some<>>;
 using MetaDataKeySet = std::set<std::string>;
 
 } // end namespace nsx
-
-#endif // NSXLIB_DATATYPES_H

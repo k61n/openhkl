@@ -28,11 +28,11 @@
  *
  */
 
-#include "dialogs/FriedelDialog.h"
-#include "ui_FriedelDialog.h"
+#include <nsxlib/Logger.h>
+#include <nsxlib/Peak3D.h>
 
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/logger/Logger.h>
+#include "FriedelDialog.h"
+#include "ui_FriedelDialog.h"
 
 FriedelDialog::FriedelDialog(const std::vector<nsx::Peak3D*>& peaks, QWidget *parent) :
     QDialog(parent),
