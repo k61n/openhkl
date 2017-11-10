@@ -67,7 +67,7 @@ Detector::Detector()
 
 Detector::Detector(const Detector& other)
 : Component(other),
-  _dataorder(DataOrder::BottomLeftColMajor)
+  _dataorder(other._dataorder)
 {
 }
 
@@ -117,6 +117,7 @@ Detector& Detector::operator=(const Detector& other)
 {
     if (this != &other) {
         Component::operator=(other);
+        _dataorder = other._dataorder;
     }
     return *this;
 }
