@@ -40,6 +40,7 @@
 #include "CrystalTypes.h"
 #include "DataTypes.h"
 #include "GeometryTypes.h"
+#include "InstrumentTypes.h"
 #include "UtilsTypes.h"
 
 namespace nsx {

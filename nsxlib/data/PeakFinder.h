@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CrystalTypes.h"
 #include "DataTypes.h"
 #include "ImagingTypes.h"
 #include "UtilsTypes.h"
