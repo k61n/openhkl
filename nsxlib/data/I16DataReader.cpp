@@ -6,14 +6,13 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <boost/filesystem/path.hpp>
-
 #include "Component.h"
 #include "ComponentState.h"
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "Gonio.h"
 #include "I16DataReader.h"
+#include "Path.h"
 #include "Sample.h"
 #include "Source.h"
 #include "Parser.h"
@@ -67,7 +66,7 @@ I16DataReader::I16DataReader(const std::string& filename, const std::shared_ptr<
                 std::string secondary;
                 std::istringstream is(line.substr(eq+2,std::string::npos-eq-1));
                 is >> secondary;
-                dir = boost::filesystem::path(filename).parent_path().string()+"/"+boost::filesystem::path(secondary).parent_path().string();
+                dir = buildPath(fileDirname(filename),{secondary});
                 continue;
             } else {
                 double value;
@@ -107,11 +106,9 @@ I16DataReader::I16DataReader(const std::string& filename, const std::shared_ptr<
     for (unsigned int i=0;i<_nFrames;++i) {
         _states[i].detector = ComponentState(_diffractometer->getDetector().get(), dval);
         _states[i].sample = ComponentState(_diffractometer->getSample().get(), sval);
-        //_detectorStates.push_back(_diffractometer->getDetector()->createState(dval));
-        //_sampleStates.push_back(_diffractometer->getSample()->createState(sval));
     }
 
-    _metadata.add<int>("Numor",atoi(boost::filesystem::path(filename).stem().string().c_str()));
+    _metadata.add<int>("Numor",atoi(removeFileExtension(fileBasename(filename)).c_str()));
     _metadata.add<double>("monitor",1.0);
 }
 

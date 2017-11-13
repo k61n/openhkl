@@ -26,7 +26,6 @@ macx {
     INCLUDEPATH += ${qmake_include_dirs}
 
     LIBS += -L${CMAKE_BINARY_DIR}/nsxlib -lnsx
-    LIBS += -L/usr/local/opt/boost/lib -lboost_date_time-mt -lboost_system-mt -lboost_timer-mt -lboost_chrono-mt
     LIBS += -L/usr/local/opt/fftw/lib -lfftw3
 }
 

@@ -7,9 +7,6 @@
 
 #include <cassert>
 
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/operations.hpp>
-
 #include "blosc.h"
 
 #include "H5Cpp.h"
@@ -20,6 +17,7 @@
 #include "Gonio.h"
 #include "IDataReader.h"
 #include "MathematicsTypes.h"
+#include "Path.h"
 #include "Sample.h"
 #include "Source.h"
 #include "Units.h"
@@ -68,8 +66,7 @@ InstrumentState IDataReader::getState(size_t frame) const
 
 std::string IDataReader::getBasename() const
 {
-    boost::filesystem::path pathname(_metadata.getKey<std::string>("filename"));
-    return pathname.filename().string();
+    return fileBasename(_metadata.getKey<std::string>("filename"));
 }
 
 std::string IDataReader::getFilename() const
