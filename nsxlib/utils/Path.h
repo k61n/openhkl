@@ -33,8 +33,17 @@
 
 namespace nsx {
 
+//! Returns the file separator for the running OS
+std::string fileSeparator();
+
+//! Returns the basename of a given path
+std::string fileBasename(const std::string& input_path);
+
+//! Returns a path stripped off its file extension
+std::string removeFileExtension(const std::string& input_path);
+
 //! Get the directory name of a given path
-std::string dirname(const std::string& input_path);
+std::string fileDirname(const std::string& input_path);
 
 std::string buildPath(const std::string& root, const std::vector<std::string>& paths);
 
@@ -43,6 +52,9 @@ std::string homeDirectory();
 
 //! Returns the NSXTool application data path
 std::string applicationDataPath();
+
+//! Return true if the file exists
+bool fileExists(const std::string& filename);
 
 //! Pass argc of running process to nsxlib
 void setArgc(int argc);
