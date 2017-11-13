@@ -26,6 +26,7 @@ macx {
     INCLUDEPATH += ${qmake_include_dirs}
 
     LIBS += -L${CMAKE_BINARY_DIR}/nsxlib -lnsx
+
     LIBS += -L/usr/local/opt/fftw/lib -lfftw3
 }
 
