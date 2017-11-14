@@ -85,7 +85,7 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
             auto data = p->data();
             auto pos = p->getShape().center();
             auto state = data->getInterpolatedState(p->getShape().center()[2]);
-            Eigen::Transform<double,3,2> hommat=sample->getGonio()->getHomMatrix(state.sample.getValues());
+            Eigen::Transform<double,3,2> hommat=sample->getGonio()->getHomMatrix(state.sample);
             Eigen::Matrix3d rot = hommat.rotation();
             auto event = nsx::DetectorEvent(data, pos[0], pos[1], pos[2]);
             auto kf = event.Kf();

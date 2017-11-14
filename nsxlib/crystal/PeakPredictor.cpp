@@ -304,7 +304,7 @@ std::vector<DetectorEvent> PeakPredictor::getEvents(const std::vector<Eigen::Row
 
     for (unsigned int s=0; s<scanSize; ++s) {
         auto state = _data->getInterpolatedState(s);
-        rotMatrices.push_back(gonio->getHomMatrix(state.sample.getValues()).rotation().transpose());
+        rotMatrices.push_back(gonio->getHomMatrix(state.sample).rotation().transpose());
     } 
 
     for (const Eigen::RowVector3d& q: qs) {
@@ -353,10 +353,10 @@ std::vector<DetectorEvent> PeakPredictor::getEvents(const std::vector<Eigen::Row
                 double px,py;
                 // If hit detector, new peak
                 //const ComponentState& cs=state.sample;
-                Eigen::Vector3d from = diffractometer->getSample()->getPosition(state.sample.getValues());
+                Eigen::Vector3d from = diffractometer->getSample()->getPosition(state.sample);
         
                 double time;
-                bool accept = diffractometer->getDetector()->receiveKf(px,py,kf,from,time,state.detector.getValues());
+                bool accept = diffractometer->getDetector()->receiveKf(px,py,kf,from,time,state.detector);
         
                 if (accept) {
                     events.emplace_back(_data, px, py, t);

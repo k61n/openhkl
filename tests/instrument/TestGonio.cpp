@@ -3,6 +3,7 @@
 #include <Eigen/Dense>
 
 #include <nsxlib/Axis.h>
+#include <nsxlib/ComponentState.h>
 #include <nsxlib/Gonio.h>
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Units.h>
@@ -22,12 +23,12 @@ int main()
     t.getAxis("z")->setPhysical(true);
 
     // Transform (0,0,0)
-    Eigen::Vector3d result=t.transform(Eigen::Vector3d(0,0,0),{1,2,3});
+    Eigen::Vector3d result=t.transform(Eigen::Vector3d(0,0,0),nsx::ComponentState(nullptr, {1,2,3}));
     NSX_CHECK_CLOSE(result[0],1,tolerance);
     NSX_CHECK_CLOSE(result[1],2,tolerance);
     NSX_CHECK_CLOSE(result[2],3,tolerance);
     // Check that throws if the number of parameters is invalid
-    NSX_CHECK_THROW(t.transform(Eigen::Vector3d(0,0,0),{1,2}),std::range_error);
+    NSX_CHECK_THROW(t.transform(Eigen::Vector3d(0,0,0),nsx::ComponentState(nullptr, {1,2})),std::range_error);
     const auto a0=t.getAxis(0);
     const auto a1=t.getAxis(1);
     const auto a2=t.getAxis(2);
@@ -60,13 +61,13 @@ int main()
 
     Eigen::Vector3d result1=OM*CH*PH*Eigen::Vector3d(1,0,0);
 
-    result=g.transform(Eigen::Vector3d(1,0,0),{om,chi,phi});
+    result=g.transform(Eigen::Vector3d(1,0,0),nsx::ComponentState(nullptr, {om,chi,phi}));
     NSX_CHECK_CLOSE(result[0],result1[0],tolerance);
     NSX_CHECK_CLOSE(result[1],result1[1],tolerance);
     NSX_CHECK_CLOSE(result[2],result1[2],tolerance);
 
     // Check that this works with row vector as well,
-    Eigen::Vector3d result2=g.transform(Eigen::RowVector3d(1,0,0),{om,chi,phi});
+    Eigen::Vector3d result2=g.transform(Eigen::RowVector3d(1,0,0),nsx::ComponentState(nullptr, {om,chi,phi}));
     NSX_CHECK_CLOSE(result[0],result2[0],tolerance);
     NSX_CHECK_CLOSE(result[1],result2[1],tolerance);
     NSX_CHECK_CLOSE(result[2],result2[2],tolerance);

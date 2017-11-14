@@ -104,7 +104,7 @@ public:
     virtual double getAngularWidth() const=0;
 
     //! Reuturn whether the detector with goniometer values can collect scattering at Kf. If true, px and py would be the pixel coordinates of the event
-    bool receiveKf(double& px, double& py,const Eigen::Vector3d& kf,const Eigen::Vector3d& from, double& t, const std::vector<double>& values=std::vector<double>());
+    bool receiveKf(double& px, double& py,const Eigen::Vector3d& kf,const Eigen::Vector3d& from, double& t, const ComponentState& detectorState) const;
 
     //! Returns the number of detector
     virtual unsigned int getNDetectors() const=0;

@@ -3,6 +3,7 @@
 
 #include <Eigen/Geometry>
 
+#include "ComponentState.h"
 #include "Gonio.h"
 #include "RotAxis.h"
 #include "TransAxis.h"
@@ -166,8 +167,10 @@ unsigned int Gonio::isAxisIdValid(unsigned int id) const
     throw std::invalid_argument("Could not find any axis with id "+std::to_string(id));
 }
 
-Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const std::vector<double>& values) const
+Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const ComponentState& state) const
 {
+    auto&& values = state.getValues();
+
     if (values.size() != getNPhysicalAxes())
     {
         throw std::range_error("Trying to set Gonio "+_label+" with wrong number of parameters");
@@ -189,9 +192,9 @@ Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const std::vector<d
     return result;
 }
 
-Eigen::Transform<double,3,Eigen::Affine> Gonio::getInverseHomMatrix(const std::vector<double>& values) const
+Eigen::Transform<double,3,Eigen::Affine> Gonio::getInverseHomMatrix(const ComponentState& state) const
 {
-    return getHomMatrix(values).inverse();
+    return getHomMatrix(state).inverse();
 }
 
 std::size_t Gonio::getNAxes() const
@@ -218,27 +221,27 @@ void Gonio::resetOffsets()
     }
 }
 
-Eigen::Vector3d Gonio::transform(const Eigen::Vector3d& v,const std::vector<double>& values)
+Eigen::Vector3d Gonio::transform(const Eigen::Vector3d& v, const ComponentState& state) const
 {
-    Eigen::Transform<double,3,Eigen::Affine> result=getHomMatrix(values);
+    Eigen::Transform<double,3,Eigen::Affine> result = getHomMatrix(state);
     return (result*v.homogeneous());
 }
 
-void Gonio::transformInPlace(Eigen::Vector3d& v,const std::vector<double>& values)
+void Gonio::transformInPlace(Eigen::Vector3d& v,const ComponentState& state) const
 {
-    Eigen::Transform<double,3,Eigen::Affine> result=getHomMatrix(values);
+    Eigen::Transform<double,3,Eigen::Affine> result = getHomMatrix(state);
     v=result*v.homogeneous();
 }
 
-Eigen::Vector3d Gonio::transformInverse(const Eigen::Vector3d& v,const std::vector<double>& values)
+Eigen::Vector3d Gonio::transformInverse(const Eigen::Vector3d& v, const ComponentState& state) const
 {
-    Eigen::Transform<double,3,Eigen::Affine> result=getInverseHomMatrix(values);
+    Eigen::Transform<double,3,Eigen::Affine> result = getInverseHomMatrix(state);
     return (result*v.homogeneous());
 }
 
-void Gonio::transformInverseInPlace(Eigen::Vector3d& v,const std::vector<double>& values)
+void Gonio::transformInverseInPlace(Eigen::Vector3d& v,const ComponentState& state) const
 {
-    v=getInverseHomMatrix(values)*v.homogeneous();
+    v=getInverseHomMatrix(state)*v.homogeneous();
 }
 
 bool Gonio::hasAxis(const std::string& name) const

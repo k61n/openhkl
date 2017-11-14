@@ -83,14 +83,14 @@ Eigen::Vector3d ComponentState::getPosition() const
         return position;
     }
 
-    gonio->transformInPlace(position, _values);
+    gonio->transformInPlace(position, *this);
 
     return position;
 }
 
 Eigen::Vector3d ComponentState::transformQ(const Eigen::Vector3d &q) const
 {
-    return _ptrComp->getGonio()->getInverseHomMatrix(_values).rotation()*q;
+    return _ptrComp->getGonio()->getInverseHomMatrix(*this).rotation()*q;
 }
 
 } // End namespace nsx

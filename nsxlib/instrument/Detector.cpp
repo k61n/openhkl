@@ -122,14 +122,14 @@ Detector& Detector::operator=(const Detector& other)
     return *this;
 }
 
-bool Detector::receiveKf(double& px, double& py, const Eigen::Vector3d& kf, const Eigen::Vector3d& from, double& t, const std::vector<double>& goniovalues)
+bool Detector::receiveKf(double& px, double& py, const Eigen::Vector3d& kf, const Eigen::Vector3d& from, double& t, const ComponentState& detectorState) const
 {
     Eigen::Vector3d fromt;
     Eigen::Vector3d kft;
 
     if (_gonio) {
-        fromt = _gonio->transformInverse(from, goniovalues);
-        kft = _gonio->getInverseHomMatrix(goniovalues).rotation()*kf;
+        fromt = _gonio->transformInverse(from, detectorState);
+        kft = _gonio->getInverseHomMatrix(detectorState).rotation()*kf;
     } else {
         fromt = from;
         kft = kf;

@@ -87,7 +87,7 @@ DirectVector DetectorEvent::getPixelPosition() const
     }
 
     InstrumentState state = _data->getInterpolatedState(_frame);
-    gonio->transformInPlace(v, state.detector.getValues());
+    gonio->transformInPlace(v, state.detector);
     return DirectVector(v);
 }
 
