@@ -469,8 +469,8 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
     nsx::InstrumentState state = _currentData->getInterpolatedState(_currentFrameIndex);
 
-    const auto& samplev = state.sample.getValues();
-    const auto& detectorv = state.detector.getValues();
+    const auto& samplev = state.sample.values();
+    const auto& detectorv = state.detector.values();
     auto sample=instr->getSample();
     auto& mono = instr->getSource()->getSelectedMonochromator();
     double wave=mono.getWavelength();

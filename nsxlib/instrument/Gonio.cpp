@@ -169,25 +169,23 @@ unsigned int Gonio::isAxisIdValid(unsigned int id) const
 
 Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const ComponentState& state) const
 {
-    auto&& values = state.getValues();
+    auto&& values = state.values();
 
-    if (values.size() != getNPhysicalAxes())
-    {
+    if (values.size() != getNPhysicalAxes()) {
         throw std::range_error("Trying to set Gonio "+_label+" with wrong number of parameters");
     }
+
     Eigen::Transform<double,3,Eigen::Affine> result=Eigen::Transform<double,3,Eigen::Affine>::Identity();
     std::vector<Axis*>::const_reverse_iterator it;
-    std::vector<double>::const_reverse_iterator itv=values.rbegin();
+    int axis = values.size()-1;
 
-    for (it=_axes.rbegin();it!=_axes.rend();++it)
-    {
-        if ((*it)->isPhysical())
-        {
-            result=(*it)->getHomMatrix(*itv)*result;
-            itv++;
-        }
-        else
+    for (it=_axes.rbegin();it!=_axes.rend();++it) {
+        if ((*it)->isPhysical()) {
+            result=(*it)->getHomMatrix(values(axis))*result;
+            axis--;
+        } else {
             result=(*it)->getHomMatrix(0.0)*result;
+        }
     }
     return result;
 }

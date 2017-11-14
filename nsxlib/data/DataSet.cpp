@@ -244,7 +244,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
     RealMatrix vals(names.size(),_nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
-        const std::vector<double>& v = _states[i].detector.getValues();
+        auto&& v = _states[i].detector.values();
 
         for (unsigned int j = 0; j < names.size(); ++j) {
             vals(j,i) = v[j] / deg;
@@ -262,7 +262,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
     RealMatrix valsSamples(samplenames.size(), _nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
-        const std::vector<double>& v = _states[i].sample.getValues();
+        auto&& v = _states[i].sample.values();
 
         for (unsigned int j = 0; j < samplenames.size(); ++j) {
             valsSamples(j,i) = v[j]/deg;
@@ -280,10 +280,16 @@ void DataSet::saveHDF5(const std::string& filename) //const
     RealMatrix valsSources(sourcenames.size(),_nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
-        std::vector<double> v = _states[i].source.getValues();
+        auto v = _states[i].source.values();
 
-        while(v.size() < sourcenames.size()) {
-            v.emplace_back(0.0);
+        // pad with zeros if necessary
+        if (v.size() < sourcenames.size()) {
+            Eigen::ArrayXd w(sourcenames.size());
+            w.setZero();
+            for (auto i = 0; i < v.size(); ++i) {
+                w(i) = v(i);
+            }
+            v = w;
         }
 
         for (unsigned int j = 0; j < sourcenames.size(); ++j) {
@@ -641,10 +647,10 @@ double DataSet::getSampleStepSize() const
 
     size_t numFrames = getNFrames();
     const auto& ss = getInstrumentStates();
-    size_t numValues = ss[0].sample.getValues().size();
+    size_t numValues = ss[0].sample.values().size();
 
     for (size_t i = 0; i < numValues; ++i) {
-        double dx = ss[numFrames-1].sample.getValues()[i] - ss[0].sample.getValues()[i];
+        double dx = ss[numFrames-1].sample.values()[i] - ss[0].sample.values()[i];
         step += dx*dx;
     }
 

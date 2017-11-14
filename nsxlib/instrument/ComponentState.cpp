@@ -45,14 +45,20 @@ namespace nsx {
 
 ComponentState::ComponentState(const Component* parent, std::vector<double> values):
     _ptrComp(parent),
-    _values(std::move(values))
+    _rawValues(values.size()),
+    _offsets(values.size())
 {
     if (_ptrComp && _ptrComp->hasGonio()) {
-        assert(_values.size() == _ptrComp->getGonio()->getNPhysicalAxes());
+        assert(values.size() == _ptrComp->getGonio()->getNPhysicalAxes());
+    }
+
+    for (auto i = 0; i < values.size(); ++i) {
+        _rawValues(i) = values[i];
+        _offsets(i) = 0.0;
     }
 }
 
-ComponentState::ComponentState(const ComponentState& other) : _ptrComp(other._ptrComp), _values(other._values)
+ComponentState::ComponentState(const ComponentState& other) : _ptrComp(other._ptrComp), _rawValues(other._rawValues), _offsets(other._offsets)
 {
 }
 
@@ -64,14 +70,15 @@ ComponentState& ComponentState::operator=(const ComponentState& other)
 {
     if (this != &other) {
         _ptrComp = other._ptrComp;
-        _values = other._values;
+        _rawValues = other._rawValues;
+        _offsets = other._offsets;
     }
     return *this;
 }
 
-const std::vector<double>& ComponentState::getValues() const
+Eigen::ArrayXd ComponentState::values() const
 {
-    return _values;
+    return _rawValues + _offsets;
 }
 
 Eigen::Vector3d ComponentState::getPosition() const
@@ -91,6 +98,19 @@ Eigen::Vector3d ComponentState::getPosition() const
 Eigen::Vector3d ComponentState::transformQ(const Eigen::Vector3d &q) const
 {
     return _ptrComp->getGonio()->getInverseHomMatrix(*this).rotation()*q;
+}
+
+ComponentState ComponentState::interpolate(const ComponentState &other, double t) const
+{
+    t = std::max(t, 0.0);
+    t = std::min(t, 1.0);
+
+    ComponentState result(*this);
+
+    result._rawValues += t*(other._rawValues - _rawValues);
+    result._offsets += t*(other._offsets - _offsets);
+
+    return result;
 }
 
 } // End namespace nsx
