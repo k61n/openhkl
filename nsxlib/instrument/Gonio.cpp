@@ -211,14 +211,6 @@ std::size_t Gonio::getNPhysicalAxes() const
     return nPhysAxis;
 }
 
-void Gonio::resetOffsets()
-{
-    for (unsigned int i=0;i<_axes.size();++i)
-    {
-        _axes[i]->setOffset(0.0);
-    }
-}
-
 Eigen::Vector3d Gonio::transform(const Eigen::Vector3d& v, const ComponentState& state) const
 {
     Eigen::Transform<double,3,Eigen::Affine> result = getHomMatrix(state);

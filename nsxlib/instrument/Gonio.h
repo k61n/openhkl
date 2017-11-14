@@ -116,8 +116,6 @@ public:
     void transformInPlace(Eigen::Vector3d& v, const ComponentState& state) const;
     //! Reverse transform a vector inplace, for a values of Gonio parameters
     void transformInverseInPlace(Eigen::Vector3d& v, const ComponentState& state) const;
-    //! Reset all offsets
-    void resetOffsets();
 
 protected:
     //! Check whether axis i within the range of Axis

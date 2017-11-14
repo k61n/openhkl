@@ -13,8 +13,6 @@ namespace nsx {
 Monochromator::Monochromator()
 : _name(""),
   _wavelength(1.0),
-  _offset(0.0),
-  _offsetFixed(true),
   _fwhm(0.1),
   _width(0.01),
   _height(0.01)
@@ -24,8 +22,6 @@ Monochromator::Monochromator()
 Monochromator::Monochromator(const std::string& name)
 : _name(name),
   _wavelength(1.0),
-  _offset(0.0),
-  _offsetFixed(true),
   _fwhm(0.1),
   _width(0.01),
   _height(0.01)
@@ -35,8 +31,6 @@ Monochromator::Monochromator(const std::string& name)
 Monochromator::Monochromator(const Monochromator& other)
 : _name(other._name),
   _wavelength(other._wavelength),
-  _offset(other._offset),
-  _offsetFixed(other._offsetFixed),
   _fwhm(other._fwhm),
   _width(other._width),
   _height(other._height)
@@ -44,8 +38,6 @@ Monochromator::Monochromator(const Monochromator& other)
 }
 
 Monochromator::Monochromator(const YAML::Node& node)
-: _offset(0.0),
-  _offsetFixed(true)
 {
     _name = node["name"].as<std::string>();
 
@@ -64,23 +56,13 @@ Monochromator::Monochromator(const YAML::Node& node)
 
     auto&& fwhmNode = node["fwhm"];
     _fwhm = fwhmNode["value"].as<double>() * um->get(fwhmNode["units"].as<std::string>()) / nsx::ang;
-
-    if (node["offset"]) {
-        auto&& offsetNode = node["offset"];
-        _offset = offsetNode["value"].as<double>() * um->get(offsetNode["units"].as<std::string>()) / nsx::ang;
-    } else {
-        _offset = 0.0;
-    }
 }
 
 Monochromator& Monochromator::operator=(const Monochromator& other)
 {
-    if (this!=&other)
-    {
+    if (this!=&other) {
         _name = other._name;
-        _wavelength = other._wavelength;
-        _offset = other._offset;
-        _offsetFixed = other._offsetFixed;
+        _wavelength = other._wavelength;      
         _fwhm = other._fwhm;
         _width = other._width;
         _height = other._height;
@@ -104,7 +86,7 @@ void Monochromator::setName(const std::string& name)
 
 double Monochromator::getWavelength() const
 {
-    return _wavelength + _offset;
+    return _wavelength;
 }
 
 void Monochromator::setWavelength(double wavelength)
@@ -142,40 +124,12 @@ void Monochromator::setHeight(double height)
     _height = height;
 }
 
-double Monochromator::getOffset() const
-{
-    return _offset;
-}
-
-void Monochromator::setOffset(double offset)
-{
-    if (_offsetFixed)
-        return;
-    _offset = offset;
-}
-
-void Monochromator::setOffsetFixed(bool offsetFixed)
-{
-    _offsetFixed = offsetFixed;
-}
-
-bool Monochromator::isOffsetFixed() const
-{
-    return _offsetFixed;
-}
-
 bool Monochromator::operator==(const Monochromator& other)
 {
     if (_name != other._name)
         return false;
 
     if (_wavelength != other._wavelength)
-        return false;
-
-    if (_offset != other._offset)
-        return false;
-
-    if (_offsetFixed != other._offsetFixed)
         return false;
 
     if (_fwhm != other._fwhm)
@@ -196,4 +150,3 @@ Eigen::Vector3d Monochromator::getKi() const
 }
 
 } // end namespace nsx
-

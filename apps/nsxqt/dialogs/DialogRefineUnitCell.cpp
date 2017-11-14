@@ -242,7 +242,8 @@ void DialogRefineUnitCell::createOffsetTables()
 
         // Set the second column of the table: the axis offsets
         auto item1 = new QTableWidgetItem();
-        item1->setData(Qt::EditRole, double(axis->getOffset()));
+        // todo: fix this after offset refactor
+        //item1->setData(Qt::EditRole, double(axis->getOffset()));
         item1->setFlags(item1->flags() | Qt::ItemIsEditable);
         ui->tableWidget_Sample->setItem(i, 1, item1);
 
@@ -289,7 +290,8 @@ void DialogRefineUnitCell::createOffsetTables()
 
         // Set the second column of the table: the axis offsets
         auto item1 = new QTableWidgetItem();
-        item1->setData(Qt::EditRole, axis->getOffset());
+        // todo: fix this after offset refactor
+        //item1->setData(Qt::EditRole, axis->getOffset());
         item1->setFlags(item1->flags() | Qt::ItemIsEditable);
         ui->tableWidget_Detector->setItem(i, 1, item1);
 

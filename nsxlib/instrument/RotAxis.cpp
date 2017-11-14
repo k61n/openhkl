@@ -75,8 +75,6 @@ Eigen::Transform<double,3,Eigen::Affine> RotAxis::getHomMatrix(double angle) con
 
 Eigen::Quaterniond RotAxis::getQuat(double angle) const
 {
-	//Apply offset first (offset in the same direction).
-	angle += _offset;
 	if (_dir==RotAxis::CW)
 		angle*=-1;
 	// Create the quaternion representing this rotation

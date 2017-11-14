@@ -25,7 +25,6 @@ Axis* Axis::create(const YAML::Node& node)
 Axis::Axis()
 : _label("axis"),
   _axis(Eigen::Vector3d(0.0,0.0,1.0)),
-  _offset(0.0),
   _min(-std::numeric_limits<double>::infinity()),
   _max(std::numeric_limits<double>::infinity()),
   _physical(true),
@@ -36,7 +35,6 @@ Axis::Axis()
 Axis::Axis(const std::string& label)
 : _label(label),
   _axis(Eigen::Vector3d(0.0,0.0,1.0)),
-  _offset(0.0),
   _min(-std::numeric_limits<double>::infinity()),
   _max(std::numeric_limits<double>::infinity()),
   _physical(true),
@@ -46,7 +44,6 @@ Axis::Axis(const std::string& label)
 
 Axis::Axis(const std::string& label, const Eigen::Vector3d& axis)
 : _label(label),
-  _offset(0.0),
   _min(-std::numeric_limits<double>::infinity()),
   _max(std::numeric_limits<double>::infinity()),
   _physical(true),
@@ -58,7 +55,6 @@ Axis::Axis(const std::string& label, const Eigen::Vector3d& axis)
 Axis::Axis(const Axis& other)
 : _label(other._label),
   _axis(other._axis),
-  _offset(other._offset),
   _min(other._min),
   _max(other._max),
   _physical(other._physical),
@@ -75,15 +71,7 @@ Axis::Axis(const YAML::Node& node)
 
     _axis = axis;
 
-    UnitsManager* um = UnitsManager::Instance();
-
-    if (node["offset"]) {
-        _offset = node["offset"]["value"].as<double>();
-        double units = um->get(node["offset"]["units"].as<std::string>());
-        _offset *=units;
-    } else {
-        _offset = 0.0;
-    }
+    UnitsManager* um = UnitsManager::Instance();   
 
     if (node["min"]) {
         _min = node["min"]["value"].as<double>();
@@ -111,7 +99,6 @@ Axis& Axis::operator=(const Axis& other)
     if (this != &other) {
         _label       = other._label;
         _axis        = other._axis;
-        _offset      = other._offset;
         _min         = other._min;
         _max         = other._max;
         _physical    = other._physical;
@@ -156,16 +143,6 @@ void Axis::setId(unsigned int id)
 unsigned int Axis::getId() const
 {
     return _id;
-}
-
-void Axis::setOffset(double offset,bool override)
-{
-    _offset=offset;
-}
-
-double Axis::getOffset() const
-{
-    return _offset;
 }
 
 void Axis::setLimits(double min, double max)

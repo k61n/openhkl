@@ -61,18 +61,6 @@ public:
 	//! Set the height for this monochromator
 	void setHeight(double height);
 
-	//! Return the offset of the wavelength of this monochromator
-	double getOffset() const;
-
-	//! Set the offset of the wavelength of this monochromator
-	void setOffset(double offset);
-
-	//! Fix the offset of the wavelength of this monochromator
-	void setOffsetFixed(bool offsetFixed);
-
-	//! Return whether the offset of the wavelength of this monochromator is fixed or not
-	bool isOffsetFixed() const;
-
     bool operator==(const Monochromator& other);
 
     //! Get the incoming wave vector
@@ -83,10 +71,6 @@ private:
 	std::string _name;
 
 	double _wavelength;
-
-	double _offset;
-
-	double _offsetFixed;
 
 	double _fwhm;
 

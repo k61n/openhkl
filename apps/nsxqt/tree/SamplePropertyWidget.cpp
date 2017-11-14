@@ -61,11 +61,14 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
         item1->setData(Qt::EditRole, QString(os.str().c_str()));
         QTableWidgetItem* item2=new QTableWidgetItem();
 
+        // todo: fix this after offset refinement
+        #if 0
         if (isrot) {
             item2->setData(Qt::EditRole, double(axis->getOffset()/nsx::deg));
         } else {
             item2->setData(Qt::EditRole, double(axis->getOffset()/nsx::mm));
         }
+        #endif
         item0->setFlags(item0->flags() &~Qt::ItemIsEditable);
         item1->setFlags(item1->flags() &~Qt::ItemIsEditable);
         ui->tableWidget_Sample->setItem(i,0,item0);
@@ -84,10 +87,13 @@ void SamplePropertyWidget::cellHasChanged(int i,int j)
 {
     auto sample=_sampleItem->getExperiment()->getDiffractometer()->getSample();
     auto axis=sample->getGonio()->getAxis(i);
+    // todo: fix this after offset refactor
+    #if 0
     if (dynamic_cast<nsx::TransAxis*>(axis)) {
          axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble()*nsx::mm); // Given in mm
     } else {
          axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble()*nsx::deg); // Given in degs
     }
+    #endif 
 }
 
