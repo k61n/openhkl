@@ -41,6 +41,8 @@
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_multifit_nlinear.h>
 
+#include <Eigen/Dense>
+
 #include "Minimizer.h"
 
 namespace nsx {
@@ -90,25 +92,24 @@ void Minimizer::initialize(FitParameters& params, int values)
     cleanup();
     _params = params;
     _numValues = values;
-
     _wt.resize(_numValues);
-
     _outputEigen.resize(_numValues);
+
+    const auto nfree = _params.nfree();
+    const auto nparams = _params.nparams();
 
     for (int i = 0; i < _numValues; ++i) {
         _wt(i) = 1.0;
     }
 
-    _jacobian.resize(_numValues, params.size());
-    _covariance.resize(params.size(), params.size());
-
+    _jacobian.resize(_numValues, nfree);
+    _covariance.resize(nfree, nfree);
     _gsl->fdfParams = gsl_multifit_nlinear_default_parameters();
 
-
     // allocate initial paramter values and weights
-    _gsl->x = gsl_vector_alloc(params.size());
+    _gsl->x = gsl_vector_alloc(nfree);
     _gsl->wt = gsl_vector_alloc(_numValues);
-    _gsl->covariance = gsl_matrix_alloc(params.size(), params.size());
+    _gsl->covariance = gsl_matrix_alloc(nfree, nfree);
 
     // initialize the weights to 1
     for (int i = 0; i < _numValues; ++i) {
@@ -116,7 +117,7 @@ void Minimizer::initialize(FitParameters& params, int values)
     }
 
     
-    _gsl->workspace = gsl_multifit_nlinear_alloc(gsl_multifit_nlinear_trust, &_gsl->fdfParams, _numValues, params.size());
+    _gsl->workspace = gsl_multifit_nlinear_alloc(gsl_multifit_nlinear_trust, &_gsl->fdfParams, _numValues, nfree);
 }
 
 bool Minimizer::fit(int max_iter)
@@ -125,22 +126,24 @@ bool Minimizer::fit(int max_iter)
         return false;
     }
 
+    const auto nfree = _params.nfree();
+
     // too few data points to fit
-    if (_numValues < _params.size()) {
+    if (_numValues < nfree) {
         return false;
     }
 
     // function which computes vector of residuals
     _gsl->fdf.f = &Minimizer::gsl_f_wrapper; 
     _gsl->fdf.df = _df ? &Minimizer::gsl_df_wrapper : nullptr;
-    _gsl->fdf.p = _params.size(); // number of parameters to be fit
+    _gsl->fdf.p = nfree; // number of parameters to be fit
     _gsl->fdf.n = _numValues; // number of residuals
     _gsl->fdf.params = this; // this is the data ptr which is passed to gsl_f_wrapper
     _gsl->fdf.fvv = nullptr;  // not using geodesic acceleration
     
     if (_df) {
-        _dfInputEigen.resize(_params.size());
-        _dfOutputEigen.resize(_numValues, _params.size());
+        _dfInputEigen.resize(nfree);
+        _dfOutputEigen.resize(_numValues, nfree);
     }
 
     // initialize solver with starting point and weights
@@ -316,7 +319,7 @@ double Minimizer::meanSquaredError() const
         const double ri = gsl_vector_get(residual, i);
         mse += ri*ri;
     }
-    return mse / (size - _params.size());
+    return mse / (size - _params.nfree());
 }
 
 } // end namespace nsx
