@@ -63,6 +63,8 @@ public:
     void setConstraint(const Eigen::MatrixXd& C);
     //! Remove the constraints
     void resetConstraints();
+    //! Kernel of the constraints: this is the transformation from constrained parameters to original parameters.
+    const Eigen::MatrixXd& kernel() const;
 
 private:
     //! Vector of addresses to fit parameters. Pointers are _not_ owned.

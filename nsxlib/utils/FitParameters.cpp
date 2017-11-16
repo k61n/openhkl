@@ -99,4 +99,9 @@ size_t FitParameters::nparams() const
     return _params.size();
 }
 
+const Eigen::MatrixXd& FitParameters::kernel() const
+{
+    return _K;
+}
+
 } // end namespace nsx

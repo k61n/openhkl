@@ -115,7 +115,6 @@ void Minimizer::initialize(FitParameters& params, int values)
     for (int i = 0; i < _numValues; ++i) {
         gsl_vector_set(_gsl->wt, i, 1.0);
     }
-
     
     _gsl->workspace = gsl_multifit_nlinear_alloc(gsl_multifit_nlinear_trust, &_gsl->fdfParams, _numValues, nfree);
 }
@@ -275,7 +274,8 @@ void gslFromEigen(const Eigen::MatrixXd &in, gsl_matrix *out)
 
 Eigen::MatrixXd Minimizer::covariance()
 {
-    return _covariance;
+    const auto& K = _params.kernel();
+    return K*_covariance*K.transpose();
 }
 
 void Minimizer::setxTol(double xtol)
@@ -295,7 +295,8 @@ void Minimizer::setfTol(double ftol)
 
 Eigen::MatrixXd Minimizer::jacobian()
 {
-    return _jacobian;
+    const auto& K = _params.kernel();
+    return _jacobian*K.transpose();
 }
 
 void Minimizer::setWeights(const Eigen::VectorXd &wt)
