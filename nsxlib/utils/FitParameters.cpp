@@ -81,7 +81,7 @@ size_t FitParameters::nfree() const
 void FitParameters::setConstraint(const Eigen::MatrixXd& C)
 {
     _K = Eigen::FullPivLU<Eigen::MatrixXd>(C).kernel();
-    _P = (_K*_K.transpose()).inverse() * _K.transpose();
+    _P = (_K.transpose()*_K).inverse() * _K.transpose();
 }
 
 void FitParameters::resetConstraints()
