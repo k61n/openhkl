@@ -52,20 +52,26 @@ public:
     void refineU();
     void refineB();
 
-    void refineDetectorStates(InstrumentStateList& states, unsigned int nbatches);
-    void refineSampleState(InstrumentStateList& states, unsigned int nbatches);
-    void refineSourceState(InstrumentStateList& states, unsigned int nbatches);
+    void refineDetectorStates(InstrumentStateList& states, unsigned int axis, unsigned int nbatches);
+    void refineSampleState(InstrumentStateList& states, unsigned int axis, unsigned int nbatches);
+    void refineSourceState(InstrumentStateList& states, unsigned int axis, unsigned int nbatches);
+
+    bool refine(unsigned int max_iter = 100);
+
+    int residuals(Eigen::VectorXd& fvec);
 
 private:
     FitParameters _params;
+
+    //! Initial U matrix of cell
+    Eigen::Matrix3d _u0; 
+    //! U offsets
+    Eigen::Vector3d _uOffsets;
+    //! Cell parameters, internal format. Used internally by UBMinimizer.
+    Eigen::VectorXd _cellParameters;
     sptrUnitCell _cell;
     PeakList _peaks;
-    std::vector<ReciprocalVector> _qs;
-    bool _refineU;
-    bool _refineB;
-    bool _refineDetector;
-    bool _refineSample;
-    bool _refineSource;
+    std::vector<Eigen::RowVector3d> _hkl;
 };
 
 } // end namespace nsx

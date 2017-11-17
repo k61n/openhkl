@@ -53,21 +53,22 @@ public:
     Eigen::ArrayXd values() const;
     //void setParent(Component*);
 
+
     Eigen::Vector3d getPosition() const;
 
     Eigen::Vector3d transformQ(const Eigen::Vector3d& q) const;
 
     ComponentState interpolate(const ComponentState &other, double t) const;
 
+    //! Offsets for the value of each axis of the component.    
+    Eigen::ArrayXd _offsets;
+
 private:
     friend struct InstrumentState;
     //! Pointer to the Component that has created the state
     const Component* _ptrComp;
     //! Raw values for each axis of the component
-    Eigen::ArrayXd _rawValues;
-    //! Offsets for the value of each axis of the component.
-    Eigen::ArrayXd _offsets;
-
+    Eigen::ArrayXd _rawValues;     
 };
 
 } // end namespace nsx

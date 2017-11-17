@@ -49,7 +49,7 @@ namespace nsx {
 class FitParameters {
 
 public:
-    //! Add a parameter to be fit. The return value is the index of the parameter.
+    //! Add a parameter to be fit. The original value of the parameter is stored (see reset()). The return value is the index of the parameter.
     int addParameter(double* addr);
     //! Set values of the parameters from a GSL vector.
     void setValues(const gsl_vector* v);
@@ -66,9 +66,13 @@ public:
     //! Kernel of the constraints: this is the transformation from constrained parameters to original parameters.
     const Eigen::MatrixXd& kernel() const;
 
+    //! Reset parameter values to their original state.
+    void reset();
+
 private:
     //! Vector of addresses to fit parameters. Pointers are _not_ owned.
     std::vector<double*> _params;
+    std::vector<double> _originalValues;
     //! Linear transformation from kernel to parameters. The columns of K form a basis
     //! for the kernel of _C.
     Eigen::MatrixXd _K;

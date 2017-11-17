@@ -78,6 +78,7 @@ using Eigen::Quaterniond;
 #include "Lorentzian.h"
 #include "FitParameters.h"
 #include "Minimizer.h"
+
 #include "Round.h"
 #include "RNG.h"
 #include "Profile3d.h"
@@ -103,6 +104,7 @@ using Eigen::Quaterniond;
 #include "PeakPredictor.h"
 #include "UBSolution.h"
 #include "UBMinimizer.h"
+#include "Refiner.h"
 #include "AutoIndexer.h"
 #include "Profile.h"
 #include "Intensity.h"
@@ -397,6 +399,7 @@ namespace nsx {
 %include "PeakPredictor.h"
 %include "UBSolution.h"
 %include "UBMinimizer.h"
+%include "Refiner.h"
 %include "Basis.h"
 
 %include "Profile.h"

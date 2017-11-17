@@ -34,9 +34,7 @@
  */
 
 #include <cassert>
-
 #include <Eigen/Dense>
-
 #include "FitParameters.h"
 
 namespace nsx {
@@ -44,10 +42,10 @@ namespace nsx {
 int FitParameters::addParameter(double* addr)
 {
     _params.emplace_back(addr);
+    _originalValues.emplace_back(*addr);
     resetConstraints();
     return _params.size()-1;
 }
-
 
 void FitParameters::setValues(const gsl_vector* v)
 {
@@ -102,6 +100,13 @@ size_t FitParameters::nparams() const
 const Eigen::MatrixXd& FitParameters::kernel() const
 {
     return _K;
+}
+
+void FitParameters::reset()
+{
+    for (auto i = 0; i < _params.size(); ++i) {
+        *_params[i] = _originalValues[i];
+    }
 }
 
 } // end namespace nsx
