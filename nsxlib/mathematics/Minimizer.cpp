@@ -45,7 +45,19 @@
 
 #include "Minimizer.h"
 
+#include <iostream>
+
 namespace nsx {
+
+void callback_helper(const size_t iter, void* data, const gsl_multifit_nlinear_workspace *w)
+{
+    Minimizer* self = reinterpret_cast<Minimizer*>(data);    
+    double r = 0.0;
+    for (auto i = 0; i < w->f->size; ++i) {
+        r += gsl_vector_get(w->f, i) * gsl_vector_get(w->f, i);
+    }
+    std::cout << "iteration " << iter << "; " << r << std::endl;
+}
 
 // Helper class to wrap GSL data structures. Used only in implementation of Minimizer.
 struct MinimizerGSL {
@@ -61,9 +73,10 @@ struct MinimizerGSL {
     MinimizerGSL(): workspace(nullptr), jacobian(nullptr), covariance(nullptr), x(nullptr), wt(nullptr) {};
 };
 
+/*
 static int gsl_f_wrapper(const gsl_vector*, void*, gsl_vector*);
 static int gsl_df_wrapper(const gsl_vector*, void*, gsl_matrix*);
-
+*/
 static void eigenFromGSL(const gsl_vector* in, Eigen::VectorXd& out);
 static void eigenFromGSL(const gsl_matrix* in, Eigen::MatrixXd& out);
 static void gslFromEigen(const Eigen::VectorXd& in, gsl_vector* out);
@@ -151,7 +164,7 @@ bool Minimizer::fit(int max_iter)
     gslFromEigen(_wt, _gsl->wt);
 
     gsl_multifit_nlinear_winit(_gsl->x, _gsl->wt, &_gsl->fdf, _gsl->workspace);
-    _gsl->status = gsl_multifit_nlinear_driver(max_iter, _xtol, _gtol, _ftol, NULL /*callback*/, NULL, &_gsl->info, _gsl->workspace);
+    _gsl->status = gsl_multifit_nlinear_driver(max_iter, _xtol, _gtol, _ftol, &callback_helper, this, &_gsl->info, _gsl->workspace);
     gsl_multifit_nlinear_covar(_gsl->workspace->J, 1e-6, _gsl->covariance);
     _numIter = _gsl->workspace->niter;
 

@@ -174,6 +174,11 @@ const std::vector<InstrumentState>& DataSet::getInstrumentStates() const
     return _states;
 }
 
+std::vector<InstrumentState>& DataSet::getInstrumentStates()
+{
+    return _states;
+}
+
 bool DataSet::isOpened() const
 {
     return _isOpened;

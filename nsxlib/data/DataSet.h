@@ -91,6 +91,9 @@ public:
     MetaData* getMetadata() const;
 
     //! Gets the the sample states
+    InstrumentStateList& getInstrumentStates();
+
+    //! Gets the the sample states
     const InstrumentStateList& getInstrumentStates() const;
 
     //! Get the interpolated state of a given component

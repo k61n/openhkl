@@ -4,9 +4,8 @@
 #include <QDialog>
 
 #include <nsxlib/CrystalTypes.h>
+#include <nsxlib/DataTypes.h>
 #include <nsxlib/InstrumentTypes.h>
-#include <nsxlib/UBMinimizer.h>
-#include <nsxlib/UBSolution.h>
 
 namespace Ui
 {
@@ -27,19 +26,13 @@ public:
 
 private slots:    
     void refineParameters();
-    void resetParameters();
 
 private:
-    void createOffsetTables();
-    void updateParameters();
-    void updatePlot();
-
-    nsx::UBSolution _initialValues;
-    nsx::UBSolution _currentValues;
     Ui::DialogRefineUnitCell *ui;
     nsx::sptrExperiment _experiment;
     nsx::sptrUnitCell _unitCell;
     nsx::PeakList _peaks;
+    std::set<nsx::sptrDataSet> _data;
 };
 
 #endif // NSXQT_DIALOGREFINEUNITCELL_H

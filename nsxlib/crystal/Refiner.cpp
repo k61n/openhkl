@@ -43,63 +43,91 @@
 
 namespace nsx {
 
-Refiner::Refiner(sptrUnitCell cell, PeakList peaks):
-    _params(),
-    _cell(cell), _peaks(peaks), _hkl()
+RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks, double fmin, double fmax):
+    _fmin(fmin), _fmax(fmax)
 {
-    for (auto p: _peaks) {
-        if (p->getActiveUnitCell() != _cell ||  !p->isSelected() || p->isMasked()) {
+    for (auto p: peaks) {
+        // skip if not selected or masked
+        if (!p->isSelected() || p->isMasked()) {
+            continue;
+        }
+
+        auto bb = p->getShape().aabb();
+        auto lo = bb.lower();
+        auto hi = bb.upper();
+
+        // skip if peak out of range
+        if (lo[2] < _fmin || hi[2] >= _fmax) {
             continue;
         }
 
         Eigen::RowVector3d hkl;
         
-        if (_cell->getMillerIndices(p->getQ(), hkl)) {
+        if (uc.getMillerIndices(p->getQ(), hkl)) {
             _hkl.push_back(hkl);
+            _peaks.push_back(p);
         }
     }
-
-    UnitCell constrained = cell->applyNiggliConstraints();
+    UnitCell constrained = uc.applyNiggliConstraints();
     _u0 = constrained.niggliOrientation();
     _cellParameters = constrained.parameters();
 }
 
-void Refiner::refineU()
+Refiner::Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches): _batches()
+{
+    const double df = 1.0 / double(nbatches);
+
+    for (int i = 0; i < nbatches; ++i) {
+        RefinementBatch b(*cell, peaks, i*df, (i+1)*df);
+        _batches.emplace_back(std::move(b));
+    }
+}
+
+void RefinementBatch::refineU()
 {
     for (int i = 0; i < _uOffsets.size(); ++i) {
         _params.addParameter(&_uOffsets(i));
     }
 }
 
-void Refiner::refineB()
+void RefinementBatch::refineB()
 {
     for (int i = 0; i < _cellParameters.size(); ++i) {
         _params.addParameter(&_cellParameters(i));
     }
 }
 
-void Refiner::refineDetectorStates(InstrumentStateList& states, unsigned int axis, unsigned int nbatches)
+void RefinementBatch::refineDetectorState(InstrumentStateList& states, unsigned int axis)
 {
     for (auto i = 0; i < states.size(); ++i) {
-        _params.addParameter(&states[i].detector._offsets(i));
+        if (i < _fmin || i >= _fmax) {
+            continue;
+        }
+        _params.addParameter(&states[i].detector._offsets(axis));
     }
 }
 
-void Refiner::refineSampleState(InstrumentStateList& states, unsigned int axis, unsigned int nbatches)
+void RefinementBatch::refineSampleState(InstrumentStateList& states, unsigned int axis)
 {
     for (auto i = 0; i < states.size(); ++i) {
-        _params.addParameter(&states[i].sample._offsets(i));
+        if (i < _fmin || i >= _fmax) {
+            continue;
+        }
+        _params.addParameter(&states[i].sample._offsets(axis));
     }
 }
 
-void Refiner::refineSourceState(InstrumentStateList& states, unsigned int axis, unsigned int nbatches)
+void RefinementBatch::refineSourceState(InstrumentStateList& states, unsigned int axis)
 {
     for (auto i = 0; i < states.size(); ++i) {
-        _params.addParameter(&states[i].source._offsets(i));
+        if (i < _fmin || i >= _fmax) {
+            continue;
+        }
+        _params.addParameter(&states[i].source._offsets(axis));
     }
 }
 
-bool Refiner::refine(unsigned int max_iter)
+bool RefinementBatch::refine(unsigned int max_iter)
 {  
     Minimizer min;
 
@@ -107,20 +135,20 @@ bool Refiner::refine(unsigned int max_iter)
     min.setfTol(1e-10);
     min.setgTol(1e-10);
 
-    min.initialize(_params, _peaks.size());
+    min.initialize(_params, _peaks.size()*3);
     min.set_f([&](Eigen::VectorXd& fvec) {return residuals(fvec);});
     bool success = min.fit(max_iter);
     if (success) {
-        *_cell = _cell->fromParameters(_u0, _uOffsets, _cellParameters);        
+        _cell = _cell.fromParameters(_u0, _uOffsets, _cellParameters);        
     } else {
         _params.reset();
     }
     return success;
 }
 
-int Refiner::residuals(Eigen::VectorXd &fvec)
+int RefinementBatch::residuals(Eigen::VectorXd &fvec)
 {
-    UnitCell uc = _cell->fromParameters(_u0, _uOffsets, _cellParameters);
+    UnitCell uc = _cell.fromParameters(_u0, _uOffsets, _cellParameters);
     Eigen::Matrix3d UB = uc.reciprocalBasis();
 
     //#pragma omp parallel for
@@ -134,6 +162,51 @@ int Refiner::residuals(Eigen::VectorXd &fvec)
         fvec(3*i+2) = dq[2];
     }
     return 0;
+}
+
+void Refiner::refineDetectorState(InstrumentStateList& states, unsigned int axis)
+{
+    for (auto&& batch: _batches) {
+        batch.refineDetectorState(states, axis);
+    }
+}
+
+void Refiner::refineSampleState(InstrumentStateList& states, unsigned int axis)
+{
+    for (auto&& batch: _batches) {
+        batch.refineSampleState(states, axis);
+    }
+}
+
+void Refiner::refineSourceState(InstrumentStateList& states, unsigned int axis)
+{
+    for (auto&& batch: _batches) {
+        batch.refineSourceState(states, axis);
+    }
+}
+
+bool Refiner::refine(unsigned int max_iter)
+{  
+    for (auto&& batch: _batches) {
+        if (!batch.refine(max_iter)) {
+            return false;
+        }    
+    }
+    return true;
+}
+
+void Refiner::refineU()
+{  
+    for (auto&& batch: _batches) {
+        batch.refineU(); 
+    }
+}
+
+void Refiner::refineB()
+{  
+    for (auto&& batch: _batches) {
+        batch.refineB();
+    }
 }
 
 } // end namespace nsx

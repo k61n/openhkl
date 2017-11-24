@@ -40,38 +40,59 @@
 #include "FitParameters.h"
 #include "InstrumentTypes.h"
 #include "ReciprocalVector.h"
+#include "UnitCell.h"
 
 
 namespace nsx {
 
-//! Class for UB and offset refinement
-class Refiner {
+//! Class for batch refinement of UB and offset
+class RefinementBatch {
 public:
-    Refiner(sptrUnitCell cell, PeakList peaks);
+    RefinementBatch(const UnitCell& uc, const PeakList& peaks, double fmin, double fmax);
 
     void refineU();
     void refineB();
 
-    void refineDetectorStates(InstrumentStateList& states, unsigned int axis, unsigned int nbatches);
-    void refineSampleState(InstrumentStateList& states, unsigned int axis, unsigned int nbatches);
-    void refineSourceState(InstrumentStateList& states, unsigned int axis, unsigned int nbatches);
+    void refineDetectorState(InstrumentStateList& states, unsigned int axis);
+    void refineSampleState(InstrumentStateList& states, unsigned int axis);
+    void refineSourceState(InstrumentStateList& states, unsigned int axis);
 
     bool refine(unsigned int max_iter = 100);
-
     int residuals(Eigen::VectorXd& fvec);
 
 private:
+    const double _fmin;
+    const double _fmax;
     FitParameters _params;
-
     //! Initial U matrix of cell
     Eigen::Matrix3d _u0; 
     //! U offsets
     Eigen::Vector3d _uOffsets;
     //! Cell parameters, internal format. Used internally by UBMinimizer.
     Eigen::VectorXd _cellParameters;
-    sptrUnitCell _cell;
+    UnitCell _cell;
     PeakList _peaks;
     std::vector<Eigen::RowVector3d> _hkl;
+};
+
+//! Class for UB and offset refinement
+class Refiner {
+public:
+    Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches);
+
+    void refineU();
+    void refineB();
+
+    void refineDetectorState(InstrumentStateList& states, unsigned int axis);
+    void refineSampleState(InstrumentStateList& states, unsigned int axis);
+    void refineSourceState(InstrumentStateList& states, unsigned int axis);
+
+    bool refine(unsigned int max_iter = 100);
+
+    //int residuals(Eigen::VectorXd& fvec);
+
+private:
+    std::vector<RefinementBatch> _batches;
 };
 
 } // end namespace nsx
