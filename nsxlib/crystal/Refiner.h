@@ -42,6 +42,9 @@
 #include "ReciprocalVector.h"
 #include "UnitCell.h"
 
+#include <map>
+#include <vector>
+
 
 namespace nsx {
 
@@ -60,6 +63,12 @@ public:
     bool refine(unsigned int max_iter = 100);
     int residuals(Eigen::VectorXd& fvec);
 
+    const PeakList& peaks() const;
+    const UnitCell& cell() const;
+    UnitCell& cell();
+
+    Eigen::MatrixXd constraints() const;
+
 private:
     const double _fmin;
     const double _fmax;
@@ -73,6 +82,7 @@ private:
     UnitCell _cell;
     PeakList _peaks;
     std::vector<Eigen::RowVector3d> _hkl;
+    std::vector<std::pair<int,int>> _constraints;
 };
 
 //! Class for UB and offset refinement
@@ -90,7 +100,7 @@ public:
     bool refine(unsigned int max_iter = 100);
 
     //int residuals(Eigen::VectorXd& fvec);
-
+    const std::vector<RefinementBatch>& batches() const;
 private:
     std::vector<RefinementBatch> _batches;
 };

@@ -37,6 +37,9 @@
 #include <Eigen/Dense>
 #include "FitParameters.h"
 
+// DEBUGGING
+#include <iostream>
+
 namespace nsx {
 
 int FitParameters::addParameter(double* addr)
@@ -65,9 +68,16 @@ void FitParameters::setValues(const gsl_vector* v)
 void FitParameters::writeValues(gsl_vector* v) const
 {
     assert(v->size == nfree());
+    Eigen::VectorXd p1(nparams());
+
+    for (auto i = 0; i < _params.size(); ++i) {
+        p1(i) = *_params[i];
+    }
+
+    auto p0 = _P*p1;
 
     for (size_t i = 0; i < nfree(); ++i) {
-        gsl_vector_set(v, i, *_params[i]);
+        gsl_vector_set(v, i, p0(i));
     }
 }
 
@@ -80,6 +90,10 @@ void FitParameters::setConstraint(const Eigen::MatrixXd& C)
 {
     _K = Eigen::FullPivLU<Eigen::MatrixXd>(C).kernel();
     _P = (_K.transpose()*_K).inverse() * _K.transpose();
+
+    // DEBUGGING
+    std::cout << "constraints K:\n" << _K << "\n--------------------" << std::endl;
+    std::cout << "constraints P:\n" << _P << "\n--------------------" << std::endl;
 }
 
 void FitParameters::resetConstraints()

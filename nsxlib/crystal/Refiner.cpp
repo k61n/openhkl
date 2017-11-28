@@ -41,6 +41,8 @@
 #include "Refiner.h"
 #include "UnitCell.h"
 
+#include <limits>
+
 namespace nsx {
 
 RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks, double fmin, double fmax):
@@ -74,11 +76,23 @@ RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks, doub
 }
 
 Refiner::Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches): _batches()
-{
-    const double df = 1.0 / double(nbatches);
+{   
+    double fmin = std::numeric_limits<double>().max();
+    double fmax = std::numeric_limits<double>().lowest();
+
+    for (auto peak: peaks) {
+        const double z = peak->getShape().center()[2];
+        fmin = std::min(z, fmin);
+        fmax = std::max(z, fmax);
+    }
+
+    fmin = std::floor(fmin);
+    fmax = std::ceil(fmax);
+
+    const double df = (fmax-fmin) / double(nbatches);
 
     for (int i = 0; i < nbatches; ++i) {
-        RefinementBatch b(*cell, peaks, i*df, (i+1)*df);
+        RefinementBatch b(*cell, peaks, fmin + i*df, fmin + (i+1)*df);
         _batches.emplace_back(std::move(b));
     }
 }
@@ -99,31 +113,49 @@ void RefinementBatch::refineB()
 
 void RefinementBatch::refineDetectorState(InstrumentStateList& states, unsigned int axis)
 {
+    std::vector<int> ids;
     for (auto i = 0; i < states.size(); ++i) {
         if (i < _fmin || i >= _fmax) {
             continue;
         }
-        _params.addParameter(&states[i].detector._offsets(axis));
+        int id = _params.addParameter(&states[i].detector._offsets(axis));
+        ids.push_back(id);
+    }
+    // record the constraints
+    for (int i = 1; i < ids.size(); ++i) {
+        _constraints.push_back(std::make_pair(ids[i], ids[i-1]));
     }
 }
 
 void RefinementBatch::refineSampleState(InstrumentStateList& states, unsigned int axis)
 {
+    std::vector<int> ids;
     for (auto i = 0; i < states.size(); ++i) {
         if (i < _fmin || i >= _fmax) {
             continue;
         }
-        _params.addParameter(&states[i].sample._offsets(axis));
+        int id = _params.addParameter(&states[i].sample._offsets(axis));
+        ids.push_back(id);
+    }
+    // record the constraints
+    for (int i = 1; i < ids.size(); ++i) {
+        _constraints.push_back(std::make_pair(ids[i], ids[i-1]));
     }
 }
 
 void RefinementBatch::refineSourceState(InstrumentStateList& states, unsigned int axis)
 {
+    std::vector<int> ids;
     for (auto i = 0; i < states.size(); ++i) {
         if (i < _fmin || i >= _fmax) {
             continue;
         }
-        _params.addParameter(&states[i].source._offsets(axis));
+        int id = _params.addParameter(&states[i].source._offsets(axis));
+        ids.push_back(id);
+    }
+    // record the constraints
+    for (int i = 1; i < ids.size(); ++i) {
+        _constraints.push_back(std::make_pair(ids[i], ids[i-1]));
     }
 }
 
@@ -134,6 +166,13 @@ bool RefinementBatch::refine(unsigned int max_iter)
     min.setxTol(1e-10);
     min.setfTol(1e-10);
     min.setgTol(1e-10);
+
+    auto C = constraints();
+    // DEBUGGING
+    std::cout << "constraint matrix for (" << _fmin << ", " << _fmax << ")" << std::endl;
+    std::cout << "size: " << C.rows() << " x " << C.cols() << std::endl;
+    std::cout << C << "\n--------------------------------------------------" << std::endl;
+    _params.setConstraint(constraints());
 
     min.initialize(_params, _peaks.size()*3);
     min.set_f([&](Eigen::VectorXd& fvec) {return residuals(fvec);});
@@ -186,11 +225,17 @@ void Refiner::refineSourceState(InstrumentStateList& states, unsigned int axis)
 }
 
 bool Refiner::refine(unsigned int max_iter)
-{  
+{ 
+    if (_batches.size() == 0) {
+        return false;
+    }
+
+    UnitCell uc = _batches[0].cell();
+
     for (auto&& batch: _batches) {
         if (!batch.refine(max_iter)) {
             return false;
-        }    
+        }
     }
     return true;
 }
@@ -208,5 +253,40 @@ void Refiner::refineB()
         batch.refineB();
     }
 }
+
+const std::vector<RefinementBatch>& Refiner::batches() const
+{
+    return _batches;
+}
+
+const PeakList& RefinementBatch::peaks() const
+{
+    return _peaks;
+}
+
+const UnitCell& RefinementBatch::cell() const
+{
+    return _cell;
+}
+    
+UnitCell& RefinementBatch::cell()
+{
+    return _cell;
+}
+
+Eigen::MatrixXd RefinementBatch::constraints() const
+{
+    Eigen::MatrixXd C(_constraints.size(), _params.nparams());
+    C.setZero();
+
+    for (auto i = 0; i < _constraints.size(); ++i) {
+        auto id1 = _constraints[i].first;
+        auto id2 = _constraints[i].second;
+        C(i, id1) = 1.0;
+        C(i, id2) = -1.0;
+    }
+    return C;   
+}
+
 
 } // end namespace nsx
