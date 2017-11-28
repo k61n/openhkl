@@ -34,6 +34,7 @@
 #include <string>
 
 #include "DataTypes.h"
+#include "Variant.h"
 
 namespace nsx {
 
@@ -64,7 +65,7 @@ public:
 	template <class _type>  _type getKey(const char* key) const;
 	//! Return the value
 	//@ return : value corresponding to key
-	Some<> getKey(const std::string& key) const;
+	Variant<int,double,std::string> getKey(const std::string& key) const;
 	//! Is this key in the metadata
 	bool isKey(const std::string& key) const;
 	//!Is this key in the metadata
@@ -108,7 +109,7 @@ template <typename _type>
 	auto it2=_map.find(ptr);
 	if (it2==_map.end())
 		throw std::runtime_error("Could not find key :"+key+" in MetaData");
-	return it2->second.cast<_type>();
+	return it2->second.as<_type>();
 }
 
 template <typename _type>

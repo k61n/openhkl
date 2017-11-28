@@ -6,7 +6,7 @@
 #include <set>
 #include <vector>
 
-#include "Some.h"
+#include "Variant.h"
 
 namespace nsx {
 
@@ -31,7 +31,7 @@ using DataList = std::vector<sptrDataSet>;
 
 using FrameIteratorCallback = std::function<IFrameIterator*(DataSet&, int)>;
 
-using MetaDataMap = std::map<const char*,Some<>>;
+using MetaDataMap = std::map<const char*,Variant<int,double,std::string>>;
 using MetaDataKeySet = std::set<std::string>;
 
 } // end namespace nsx

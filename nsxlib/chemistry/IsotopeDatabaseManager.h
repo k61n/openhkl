@@ -10,7 +10,7 @@
 
 #include "ChemistryTypes.h"
 #include "Singleton.h"
-#include "Some.h"
+#include "Variant.h"
 
 namespace nsx {
 
@@ -47,7 +47,7 @@ private:
 template <typename T>
 T IsotopeDatabaseManager::getProperty(const std::string& isotope, const std::string& property) const
 {
-	return _isotopes.at(isotope).at(property).cast<T>();
+	return _isotopes.at(isotope).at(property).as<T>();
 }
 
 } // end namespace nsx
