@@ -106,12 +106,16 @@ int main()
 
     // set unit cell
     auto cell = soln.first;
+
+    // set constraints
+    auto constrained_cell = cell->applyNiggliConstraints();
+    NSX_CHECK_SMALL( (cell->reciprocalBasis()-constrained_cell.reciprocalBasis()).norm(), 1e-6);
+
     for (auto&& peak: found_peaks) {
         peak->addUnitCell(cell, true);
         peaks.push_back(peak);
     }
     
-
     // add cell to sample
     dataf->getDiffractometer()->getSample()->addUnitCell(cell);
 
@@ -131,6 +135,6 @@ int main()
         refiner.refineSampleState(states, i);
     }
   
-    NSX_CHECK_ASSERT(refiner.refine(1000));
+    NSX_CHECK_ASSERT(refiner.refine(200));
     return 0;
 }
