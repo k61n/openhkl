@@ -517,8 +517,13 @@ void MainWindow::on_actionDraw_peak_integration_area_triggered(bool checked)
 void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
 {
     DialogPeakFilter* dlg = new DialogPeakFilter(_session->peaks(nullptr), this);
-    dlg->exec();
-    _session->updatePeaks();
+    if (dlg->exec()) {
+        auto&& bad_peaks = dlg->badPeaks();
+        for (auto peak: bad_peaks) {
+            _session->removePeak(peak);
+        }
+        _session->updatePeaks();
+    }    
 }
 
 void MainWindow::on_actionIncorporate_calculated_peaks_triggered(bool checked)

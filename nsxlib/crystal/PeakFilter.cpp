@@ -100,7 +100,11 @@ PeakSet PeakFilter::apply(const PeakSet& reference_peaks) const
     for (auto peak: reference_peaks) {
         ellipsoids.emplace_back(peak->getShape());
         peaks.emplace_back(peak);
-        crystals.insert(peak->getActiveUnitCell());
+        auto cell = peak->getActiveUnitCell();
+
+        if (cell) {
+            crystals.insert(cell);
+        }
 
         Eigen::Vector3d p = peak->getShape().center();
 

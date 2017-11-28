@@ -18,12 +18,13 @@ class DialogPeakFilter : public QDialog {
 public:
     DialogPeakFilter(const nsx::PeakSet& peaks, QWidget* parent=0);
     virtual ~DialogPeakFilter();
-    const nsx::PeakSet& filteredPeaks() const;
+    const nsx::PeakSet& badPeaks() const;
 
 public slots:
     virtual void accept() override;
 
 private:
     nsx::PeakSet _peaks;
+    nsx::PeakSet _badPeaks;
     Ui::PeakFilterDialog* _ui;
 };

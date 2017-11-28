@@ -46,7 +46,7 @@
 namespace nsx {
 
 RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks, double fmin, double fmax):
-    _fmin(fmin), _fmax(fmax)
+    _fmin(fmin), _fmax(fmax), _cell(uc)
 {
     for (auto p: peaks) {
         // skip if not selected or masked
@@ -70,7 +70,7 @@ RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks, doub
             _peaks.push_back(p);
         }
     }
-    UnitCell constrained = uc.applyNiggliConstraints();
+    UnitCell constrained = _cell.applyNiggliConstraints();
     _u0 = constrained.niggliOrientation();
     _cellParameters = constrained.parameters();
 }

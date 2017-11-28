@@ -423,6 +423,10 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 if (it != _masks.end()) {
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
+                    auto peaks = _session->peaks(_currentData.get());
+                    _currentData->maskPeaks(peaks);
+                    update();
+                    updateMasks(_currentFrameIndex);    
                 }
             }
             else if (auto p = dynamic_cast<EllipseMaskGraphicsItem*>(item)) {
@@ -430,6 +434,10 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 if (it != _masks.end()) {
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
+                    auto peaks =  _session->peaks(_currentData.get());
+                    _currentData->maskPeaks(peaks);
+                    update();
+                    updateMasks(_currentFrameIndex);    
                 }
             }
             if (p == _lastClickedGI) {

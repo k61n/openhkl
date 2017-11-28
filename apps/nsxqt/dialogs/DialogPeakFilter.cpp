@@ -47,13 +47,21 @@ void DialogPeakFilter::accept()
     filter._mergedP = _ui->spinBoxMergedP->value();
 
     nsx::info() << "Filtering peaks...";
-    _peaks = filter.apply(_peaks);
-    nsx::info() << _peaks.size() << " peaks remain";
+    auto&& good_peaks = filter.apply(_peaks);
+    nsx::info() << good_peaks.size() << " peaks remain";
+
+    _badPeaks.clear();
+
+    for (auto peak: _peaks) {
+        if (good_peaks.find(peak) == good_peaks.end()) {
+            _badPeaks.insert(peak);
+        }
+    }
 
     QDialog::accept();
 }
 
-const nsx::PeakSet& DialogPeakFilter::filteredPeaks() const
+const nsx::PeakSet& DialogPeakFilter::badPeaks() const
 {
-    return _peaks;
+    return _badPeaks;
 }

@@ -92,12 +92,13 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
 
     auto& mono = _data->getDiffractometer()->getSource()->getSelectedMonochromator();
     const double wavelength = mono.getWavelength();
-    PeakSet calculated_peaks;
+    PeakSet calculated_peaks;    
 
     auto sample = _data->getDiffractometer()->getSample();
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
 
     for (unsigned int i = 0; i < ncrystals; ++i) {
+        std::set<Eigen::RowVector3i, compare_fn> found_hkls;
         PeakSet found_peaks;
         SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
         auto cell = sample->getUnitCell(i);
@@ -108,6 +109,8 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
                 continue;
             }
             found_peaks.insert(peak);
+            Eigen::RowVector3i hkl = cell->getIntegerMillerIndices(peak->getQ());
+            found_hkls.insert(hkl);
         }
 
         _handler->setStatus("Calculating peak locations...");
@@ -119,17 +122,21 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
         std::vector<Eigen::RowVector3d> hkls_double;
 
         for (auto&& hkl: predicted_hkls) {
+            Eigen::RowVector3i int_hkl(std::lround(hkl(0)), std::lround(hkl(1)), std::lround(hkl(2)));
+
+            // if we keep reference peaks, check whether this hkl is part of reference set
+            if (keepObserved && found_hkls.find(int_hkl) != found_hkls.end()) {
+                continue;
+            }
+            
             hkls_double.emplace_back(hkl.cast<double>());
         }
 
         predicted_peaks += predicted_hkls.size();
-
         PeakList peaks = predictPeaks(hkls_double, UB);
         int current_peak = 0;
 
         _handler->setStatus("Building set of previously found peaks...");
-
-        std::set<Eigen::RowVector3i, compare_fn> found_hkls;
 
         Eigen::Vector3d lb = {0.0, 0.0, 0.0};
         Eigen::Vector3d ub = {double(_data->getNCols()), double(_data->getNRows()), double(_data->getNFrames())};
@@ -141,9 +148,10 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
         _handler->log("Building peak octree...");
 
         for (sptrPeak3D p: found_peaks) {
-            auto cell = p->getActiveUnitCell();
-            auto q = p->getQ();
-            found_hkls.insert(cell->getIntegerMillerIndices(q));
+            // reflection doesn't belong to current crystal
+            if (cell != p->getActiveUnitCell()) {
+                continue;
+            }
 
             // ignore deselected and masked peaks
             if (!p->isSelected() || p->isMasked()) {
@@ -174,11 +182,6 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
 
             auto q = p.getQ();
             Eigen::RowVector3i hkl = cell->getIntegerMillerIndices(q);
-
-            // try to find this reflection in the list of peaks, skip if found
-            if (std::find(found_hkls.begin(), found_hkls.end(), hkl) != found_hkls.end() ) {
-                continue;
-            }
 
             // now we must add it, calculating shape from nearest peaks
              // K is outside the ellipsoid at PsptrPeak3D
