@@ -49,7 +49,7 @@ ci:osx:
     - /^feature/.*$/
     - /^bugfix/.*$/
   tags:
-    - mac
+    - macmini2
 
 deploy:osx:
   stage: deploy
@@ -68,7 +68,7 @@ deploy:osx:
     paths:
     - ${CI_PROJECT_DIR}/build/qmake-build/nsxtool*dmg
   tags:
-    - mac
+    - macmini2
 
 # windows pipeline
 
