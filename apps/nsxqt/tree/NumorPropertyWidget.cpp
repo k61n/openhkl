@@ -40,15 +40,15 @@ NumorPropertyWidget::NumorPropertyWidget(NumorItem* caller,QWidget *parent) :
 
         if (element.second.is<int>())
         {
-            col1->setData(Qt::EditRole,element.second.cast<int>());
+            col1->setData(Qt::EditRole,element.second.as<int>());
         }
         else if (element.second.is<double>())
         {
-            col1->setData(Qt::EditRole,element.second.cast<double>());
+            col1->setData(Qt::EditRole,element.second.as<double>());
         }
         else if (element.second.is<std::string>())
         {
-            col1->setData(Qt::EditRole,QString(QString::fromStdString(element.second.cast<std::string>())));
+            col1->setData(Qt::EditRole,QString(QString::fromStdString(element.second.as<std::string>())));
         }
         else
         {

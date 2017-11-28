@@ -51,7 +51,7 @@ bool MetaData::isKey(const std::string& key) const
 	return  (it2!=_map.end());
 }
 
-Some<> MetaData::getKey(const std::string& key) const
+Variant<int,double,std::string> MetaData::getKey(const std::string& key) const
 {
 	// Search if this key is in the set.
 	auto it=_metakeys.find(key);
