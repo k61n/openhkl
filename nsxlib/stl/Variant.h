@@ -147,8 +147,6 @@ public:
         static_assert(IsOneOf<S, Args...>::value,"");
 
         _typeid = typeid(S);
-        bool lval_ref = std::is_lvalue_reference<T&&>::value;
-        bool rval_ref = std::is_rvalue_reference<T&&>::value;
 
         new(_storage) S(std::forward<T>(value));
     }
