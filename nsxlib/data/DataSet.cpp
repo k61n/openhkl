@@ -3,9 +3,6 @@
 #include <utility>
 #include <vector>
 
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/operations.hpp>
-
 #include "blosc.h"
 
 #include "H5Cpp.h"
@@ -24,6 +21,7 @@
 #include "IntegrationRegion.h"
 #include "MathematicsTypes.h"
 #include "Monochromator.h"
+#include "Path.h"
 #include "Peak3D.h"
 #include "PeakIntegrator.h"
 #include "ProgressHandler.h"
@@ -52,7 +50,7 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader, const sptrDiffractometer& 
     _background(0.0),
     _reader(reader)
 {
-    if ( !boost::filesystem::exists(_filename.c_str())) {
+    if (!fileExists(_filename)) {
         throw std::runtime_error("IData, file: " + _filename + " does not exist");
     }
 
@@ -94,10 +92,8 @@ DataSet::~DataSet()
 
 std::string DataSet::getBasename() const
 {
-    boost::filesystem::path pathname(_filename);
-    return pathname.filename().string();
+    return removeFileExtension(fileBasename(_filename));
 }
-
 
 int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z)
 {

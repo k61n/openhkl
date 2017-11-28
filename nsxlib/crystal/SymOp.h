@@ -33,9 +33,9 @@
 
 #include <Eigen/Dense>
 
-namespace nsx {
+#include "CrystalTypes.h"
 
-typedef Eigen::Transform<double,3,Eigen::Affine> affineTransformation;
+namespace nsx {
 
 class SymOp {
 

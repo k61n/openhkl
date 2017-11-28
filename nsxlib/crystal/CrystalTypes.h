@@ -5,6 +5,8 @@
 #include <utility>
 #include <vector>
 
+#include <Eigen/Dense>
+
 namespace nsx {
 
 class MergedPeak;
@@ -17,6 +19,8 @@ class SpaceGroup;
 class SpaceGroupSymbols;
 class SymOp;
 class UnitCell;
+
+using affineTransformation=Eigen::Transform<double,3,Eigen::Affine>;
 
 using UnitCellSolution = std::pair<UnitCell,double>;
 
