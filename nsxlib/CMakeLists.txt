@@ -22,9 +22,9 @@ else()
   add_library(nsx SHARED ${NSXLIB_SOURCES} ${NSXLIB_HEADERS})
 endif()
 
-add_custom_command(TARGET nsx
-                   POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -P copy-nsxlib-headers.cmake)
+add_custom_target(copy-nsx-headers 
+                 COMMAND ${CMAKE_COMMAND} -P copy-nsxlib-headers.cmake)
+add_dependencies(nsx copy-nsx-headers)
 
 target_link_libraries(nsx 
     ${HDF5_LIBRARIES}
