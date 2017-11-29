@@ -13,6 +13,7 @@
 #include <nsxlib/MergedData.h>
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Peak3D.h>
+#include <nsxlib/PeakPredictor.h>
 #include <nsxlib/SpaceGroup.h>
 #include <nsxlib/UnitCell.h>
 
@@ -71,11 +72,11 @@ int main()
     cell->setSpaceGroup(group.symbol());
 
     auto reflections = cell->generateReflectionsInShell(2.0, 50.0, 2.67);
-    auto peaks = dataf->hasPeaks(reflections, cell->reciprocalBasis());  
+    nsx::PeakPredictor pred(dataf);
+    auto peaks = pred.predictPeaks(reflections, cell->reciprocalBasis());  
     MergedData data0(group, true), data1(group, true);
 
     for (auto p: peaks) {
-        p->linkData(dataf);
         p->setRawIntensity(Intensity(error_dist(gen)));
         p->addUnitCell(cell, true);
         data0.addPeak(p);

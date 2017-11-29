@@ -34,6 +34,7 @@
 #include <Eigen/Dense>
 
 #include "ChemistryTypes.h"
+#include "GeometryTypes.h"
 #include "NiggliCharacter.h"
 #include "SpaceGroup.h"
 
@@ -190,7 +191,7 @@ public:
     double volume() const;
 
     //! Return the index of a given q vector (not necessarily integral!!)
-    Eigen::RowVector3d index(const Eigen::RowVector3d& q) const;
+    Eigen::RowVector3d index(const ReciprocalVector& q) const;
     //! Return q vector from a given hkl
     Eigen::RowVector3d fromIndex(const Eigen::RowVector3d& hkl) const;
 
@@ -237,6 +238,10 @@ public:
     //! \brief Construct a new unit cell from a reference orientation, an orientation offset, and a set of parameters.
     UnitCell fromParameters(const Eigen::Matrix3d& U0, const Eigen::Vector3d& uOffset, const Eigen::VectorXd& parameters) const;
 
+    bool getMillerIndices(const ReciprocalVector& q, Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
+
+    Eigen::RowVector3i getIntegerMillerIndices(const ReciprocalVector& q) const;
+    
     #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     #endif

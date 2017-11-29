@@ -33,12 +33,13 @@ PeakFinder::PeakFinder()
 }
 
 
-bool PeakFinder::find(DataList numors)
+PeakSet PeakFinder::find(DataList numors)
 {
     std::size_t npeaks=0;
+    PeakSet peaks;
 
     for (auto&& numor : numors) {
-        numor->clearPeaks();
+        PeakSet numor_peaks;
 
         try {
             // compute median only if necessary
@@ -48,7 +49,7 @@ bool PeakFinder::find(DataList numors)
         }
         catch (...) {
             //qCritical() << "Error computing background level of dataset";
-            return false;
+            return peaks;
         }
 
         // Finding peaks
@@ -140,7 +141,7 @@ bool PeakFinder::find(DataList numors)
             blob.second.toEllipsoid(nsx::getConfidence(1.0), center, eigenvalues, eigenvectors);
             auto shape = Ellipsoid(center, eigenvalues, eigenvectors);
 
-            auto p = sptrPeak3D(new Peak3D(shape, numor));
+            auto p = sptrPeak3D(new Peak3D(numor, shape));
             const auto extents = p->getShape().aabb().extents();
 
             // peak too small or too large
@@ -153,7 +154,9 @@ bool PeakFinder::find(DataList numors)
                 p->setSelected(false);
             }
 
-            numor->addPeak(p);
+            numor_peaks.insert(p);
+            peaks.insert(p);
+
             npeaks++;
             ++count;
 
@@ -164,22 +167,22 @@ bool PeakFinder::find(DataList numors)
         }
 
         if (_handler) {
-            _handler->setStatus(("Integrating " + std::to_string(numor->getPeaks().size()) + " peaks...").c_str());
+            _handler->setStatus(("Integrating " + std::to_string(numor_peaks.size()) + " peaks...").c_str());
             _handler->setProgress(0);
         }
 
         const double scale = getScale(_integrationConfidence);
-        numor->integratePeaks(numor->getPeaks(), scale, 2.0*scale, false, _handler);
+        numor->integratePeaks(numor_peaks, scale, 2.0*scale, false, _handler);
         numor->close();
         //_ui->progressBar->setValue(++comp);
-        std::cout << "Found " << numor->getPeaks().size() << " peaks." << std::endl;
+        std::cout << "Found " << numor_peaks.size() << " peaks." << std::endl;
     }
 
     if (_handler) {
         _handler->setStatus("Peak finding completed.");
         _handler->setProgress(100);
     }
-    return true;
+    return peaks;
 }
 
 void PeakFinder::setHandler(const sptrProgressHandler& handler)

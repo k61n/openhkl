@@ -15,10 +15,12 @@ class AABB;
 class Basis;
 class Blob3D;
 class ConvexHull;
+class DirectVector;
 class Edge;
 class Ellipsoid;
 class Face;
 class Octree;
+class ReciprocalVector;
 class Triangle;
 class Vertex;
 

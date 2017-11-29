@@ -40,7 +40,9 @@
 
 #include "GCD.h"
 #include "Peak3D.h"
+#include "ReciprocalVector.h"
 #include "ResolutionShell.h"
+
 
 namespace nsx {
 
@@ -59,7 +61,9 @@ ResolutionShell::ResolutionShell(double dmin, double dmax, size_t num_shells):
 
 void ResolutionShell::addPeak(const sptrPeak3D& peak)
 {
-    const double d = 1.0 / peak->getQ().norm();
+    auto data = peak->data();
+    auto q = peak->getQ();
+    const double d = 1.0 / static_cast<const Eigen::RowVector3d&>(q).norm();
 
     for (size_t i = 0; i < _d.size()-1; ++i) {
         if (_d[i] <= d && d < _d[i+1]) {

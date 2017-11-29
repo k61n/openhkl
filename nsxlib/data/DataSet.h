@@ -90,16 +90,8 @@ public:
     //! Gets a reference to the metadata of the data
     MetaData* getMetadata() const;
 
-    //! Return the peaks
-    PeakSet& getPeaks();
-
-    //! Gets the the detector states.
-    const ComponentState& getDetectorState(size_t frame) const;
-
-    //! Get the sample state for frame
-    const ComponentState& getSampleState(size_t frame) const;
-
-    const ComponentState& getSourceState(size_t frame) const;
+    //! Gets the the sample states
+    InstrumentStateList& getInstrumentStates();
 
     //! Gets the the sample states
     const InstrumentStateList& getInstrumentStates() const;
@@ -111,26 +103,14 @@ public:
     //! Add a new mask to the data
     void addMask(IMask* mask);
 
-    //! Add a new peak to the data
-    void addPeak(const sptrPeak3D& peak);
-
     //! Remove a mask from the data, by reference
     void removeMask(IMask* mask);
 
     //! Return the list of masks
     const std::set<IMask*>& getMasks();
 
-    //! Remove a peak from the data
-    bool removePeak(const sptrPeak3D& peak);
-
-    //! Clear the peaks collected for this data
-    void clearPeaks();
-
-    //! Mask the peaks collected in the data with the masks defined up to now
-    void maskPeaks() const;
-
     //! Mask a given peak
-    void maskPeak(sptrPeak3D peak) const;
+    void maskPeaks(PeakSet& peaks) const;
 
     //! Return the intensity at point x,y,z.
     int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);
@@ -150,14 +130,7 @@ public:
     //!
     std::size_t getFileSize() const;//
     void saveHDF5(const std::string& filename); // const;
-
-    //! Is the peak h,k,l in Bragg condition in this dataset. Return Peak pointer if true,
-    //! otherwise nullptr.
-    PeakList hasPeaks(const std::vector<Eigen::RowVector3d>& hkls,const Eigen::Matrix3d& UB);
     
-    //! Find the detector events corresponding to the given q vectors, if possible
-    std::vector<DetectorEvent> getEvents(const std::vector<Eigen::RowVector3d>& qs) const;
-
     //! Get background
     double getBackgroundLevel(const sptrProgressHandler& progress);
 
@@ -165,12 +138,9 @@ public:
     void integratePeaks(const PeakSet& peaks, double peak_scale = 3.0, double bkg_scale = 5.0, bool update_shape = false, const sptrProgressHandler& handler = nullptr);
 
     //! Remove duplicates
-    void removeDuplicatePeaks();
+    void removeDuplicatePeaks(nsx::PeakSet& peaks);
 
-    double getSampleStepSize() const;
-
-    //! Get the q vector corresponding to a detector pixel
-    Eigen::Vector3d getQ(const Eigen::Vector3d& pix) const;
+    double getSampleStepSize() const;      
 
 protected:
     bool _isOpened;
@@ -182,13 +152,14 @@ protected:
     uptrMetaData _metadata;
     std::vector<Eigen::MatrixXi> _data;
     InstrumentStateList _states;
-    PeakSet _peaks;
+
     std::size_t _fileSize;
     //! The set of masks bound to the data
     std::set<IMask*> _masks;
     double _background;
     FrameIteratorCallback _iteratorCallback;
     std::shared_ptr<IDataReader> _reader;
+    
 };
 
 } // end namespace nsx

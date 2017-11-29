@@ -39,6 +39,8 @@
 
 namespace nsx {
 
+#if 0
+
 PeakRecord::PeakRecord(const Peak3D &other)
 {
     auto&& index = other.getIntegerMillerIndices();
@@ -106,4 +108,5 @@ bool PeakRecord::operator<(const PeakRecord &other) const
     return iobs < other.iobs;
 }
 
+#endif
 } // end namespace nsx

@@ -154,7 +154,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(_ui->experimentTree, SIGNAL(plotData(nsx::sptrDataSet)),
             this, SLOT(changeData(nsx::sptrDataSet)));
 
-    connect(_ui->frame,&QScrollBar::valueChanged,[=](const int& value){_ui->_dview->getScene()->changeFrame(value);});
+
+    connect(_ui->frame,&QScrollBar::valueChanged,[=](const int value){_ui->_dview->getScene()->changeFrame(value);});
 
     connect(_ui->intensity,SIGNAL(valueChanged(int)),_ui->_dview->getScene(),SLOT(setMaxIntensity(int)));
     connect(_ui->selectionMode,SIGNAL(currentIndexChanged(int)),_ui->_dview->getScene(),SLOT(changeInteractionMode(int)));
@@ -220,24 +221,7 @@ void MainWindow::on_actionNew_session_triggered()
 
 void MainWindow::saveSession(QString filename)
 {
-    if (filename == "") {
-        nsx::info() << "Must first save to file before selecting save";
-        return;
-    }
-
-    nsx::info() << "saving session to " << filename.toStdString();
-
-    QJsonDocument doc(_session->toJsonObject());
-
-    QFile savefile(filename);
-
-    if ( !savefile.open(QIODevice::WriteOnly)) {
-        nsx::error() << "couldn't open file for saving!";
-        return;
-    }
-
-    savefile.write(doc.toJson());
-    _session->setFilename(filename);
+    nsx::error() << "This feature is not currently implemented!";
 }
 
 void MainWindow::on_actionSave_session_triggered()
@@ -254,22 +238,7 @@ void MainWindow::on_actionSave_session_as_triggered()
 
 void MainWindow::on_actionLoad_session_triggered()
 {
-    QString homeDir = nsx::homeDirectory().c_str();
-    QString filename = QFileDialog::getOpenFileName(this, "Load session", homeDir, "Json document (*.json)", nullptr, QFileDialog::Option::DontUseNativeDialog);
-    nsx::info() << "Loading session from file '" << filename.toStdString() << "'";
-
-    QFile loadfile(filename);
-
-    if ( !loadfile.open(QIODevice::ReadOnly)) {
-        nsx::error() << "couldn't open file for loading!";
-        return;
-    }
-
-    QJsonDocument doc = QJsonDocument::fromJson(loadfile.readAll());
-    QJsonObject obj = doc.object();
-
-    _session->fromJsonObject(obj);
-    _session->setFilename(filename);
+    nsx::error() << "This feature is not currently implemented!";
 }
 
 void MainWindow::on_actionAbout_triggered()
@@ -298,8 +267,11 @@ void MainWindow::changeData(nsx::sptrDataSet data)
     int frameMax = int(data->getNFrames()-1);
     int frame = _ui->frame->value();
 
-    if (frame > frameMax)
+    if (frame > frameMax) {
         frame = frameMax;
+    }
+    // why do we do this? why is the signal not working properly?
+    _ui->_dview->getScene()->setData(_session, data, frame);
 
     _ui->frame->setValue(frame);
     _ui->frame->setMaximum(frameMax);
@@ -310,18 +282,20 @@ void MainWindow::changeData(nsx::sptrDataSet data)
 
 void MainWindow::plotPeak(nsx::sptrPeak3D peak)
 {
+    auto data = peak->data();
     auto scenePtr = _ui->_dview->getScene();
     // Ensure that frames
-    changeData(peak->getData());
+    changeData(data);
     // Get frame number to adjust the data
     size_t data_frame = size_t(std::lround(peak->getShape().aabb().center()[2]));
-    scenePtr->setData(peak->getData(), data_frame);
+    scenePtr->setData(_session, data, data_frame);
     // Update the scrollbar
     _ui->frame->setValue(data_frame);
     auto pgi = scenePtr->findPeakGraphicsItem(peak);
 
-    if (pgi)
+    if (pgi) {
         updatePlot(pgi);
+    }
 }
 
 void MainWindow::on_actionPixel_position_triggered()
@@ -542,10 +516,14 @@ void MainWindow::on_actionDraw_peak_integration_area_triggered(bool checked)
 
 void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
 {
-    nsx::DataList numors = _session->getSelectedNumors();
-    DialogPeakFilter* dlg = new DialogPeakFilter(numors, this);
-    dlg->exec();
-    _session->updatePeaks();
+    DialogPeakFilter* dlg = new DialogPeakFilter(_session->peaks(nullptr), this);
+    if (dlg->exec()) {
+        auto&& bad_peaks = dlg->badPeaks();
+        for (auto peak: bad_peaks) {
+            _session->removePeak(peak);
+        }
+        _session->updatePeaks();
+    }    
 }
 
 void MainWindow::on_actionIncorporate_calculated_peaks_triggered(bool checked)
@@ -587,7 +565,7 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
     nsx::DataList numors = _session->getSelectedNumors();
 
     for (auto&& numor: numors) {
-        numor->integratePeaks(numor->getPeaks(), peak_scale, bkg_scale, update_shape, _progressHandler);
+        numor->integratePeaks(_session->peaks(numor.get()), peak_scale, bkg_scale, update_shape, _progressHandler);
     }
 
     _session->updatePeaks();

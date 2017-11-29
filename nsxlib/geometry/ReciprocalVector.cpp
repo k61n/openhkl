@@ -40,4 +40,9 @@ std::ostream& operator<<(std::ostream& os, const ReciprocalVector& rvector)
     return os;
 }
 
+
+
+
+
+
 } // end namespace nsx

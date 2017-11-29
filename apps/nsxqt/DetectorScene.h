@@ -17,6 +17,7 @@
 #include <nsxlib/IMask.h>
 
 #include "ColorMap.h"
+#include "models/SessionModel.h"
 
 class QImage;
 class QGraphicsSceneWheelEvent;
@@ -62,8 +63,9 @@ protected:
 public slots:
     void resetScene();
     // To be called to update detector image
-    void setData(const nsx::sptrDataSet&, size_t frame);
-    void setData(const nsx::sptrDataSet&);
+    void setData(std::shared_ptr<SessionModel> session, const nsx::sptrDataSet&, size_t frame);
+    void setData(std::shared_ptr<SessionModel> session, const nsx::sptrDataSet&);
+
     void changeFrame(size_t frame = 0);
     void setMaxIntensity(int);
 
@@ -124,6 +126,8 @@ private:
     std::unique_ptr<ColorMap> _colormap;
 
     QGraphicsPixmapItem* _integrationRegion;
+
+    std::shared_ptr<SessionModel> _session;
 };
 
 #endif // NSXQT_DETECTORSCENE_H

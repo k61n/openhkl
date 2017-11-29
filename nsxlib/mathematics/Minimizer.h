@@ -89,8 +89,6 @@ public:
     Eigen::MatrixXd jacobian();
     //! Set the weights of the residuals.
     void setWeights(const Eigen::VectorXd& wt);
-    //! Return the number of iterations of the fit.
-    int numIterations();
     //! Set the function which computes the least-squares residuals.
     template <typename Fun_>
     void set_f(Fun_ functor)
@@ -130,8 +128,6 @@ private:
     Eigen::MatrixXd _covariance;
     //! Number of values in the fit, i.e. size of residual vector.
     int _numValues;   
-    //! Number of iterations used to fit.
-    int _numIter;
     //! Relative tolerance of parameters.
     double _xtol;
     //! Relative tolerance of gradient.

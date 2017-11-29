@@ -70,10 +70,13 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
         item1->setData(Qt::EditRole, QString(os.str().c_str()));
 
         QTableWidgetItem* item2=new QTableWidgetItem();
+        // todo: fix this after offset refactor
+        #if 0
         if (isRot)
             item2->setData(Qt::EditRole, double(axis->getOffset()/nsx::deg));
         else
             item2->setData(Qt::EditRole, double(axis->getOffset()/nsx::mm));
+        #endif
 
 
         // First two columns non-editable
@@ -97,10 +100,13 @@ void DetectorPropertyWidget::cellHasChanged(int i,int j)
 {
     auto detector=_detectorItem->getExperiment()->getDiffractometer()->getDetector();
     auto axis=detector->getGonio()->getAxis(i);
+    // todo: fix this after offset refactor
+    #if 0
     if (dynamic_cast<nsx::TransAxis*>(axis))
         axis->setOffset(ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble()*nsx::mm);
     else
         axis->setOffset(ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble()*nsx::deg);
+    #endif
 }
 
 

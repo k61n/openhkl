@@ -40,6 +40,7 @@
 #include "CrystalTypes.h"
 #include "DataTypes.h"
 #include "GeometryTypes.h"
+#include "InstrumentTypes.h"
 #include "UtilsTypes.h"
 
 namespace nsx {
@@ -49,15 +50,21 @@ namespace nsx {
 class PeakPredictor {
 public:
     //! Default constructor: sets paramters to reasonable default values;
-    PeakPredictor();
+    PeakPredictor(sptrDataSet data);
     //! Return predicted peaks on a given data set. Parameter \p keepObserved determines whether to include
     //! predictions for peaks which are already part of the data set.
-    PeakSet predictPeaks(sptrDataSet data, bool keepObserved);
+    PeakSet predictPeaks(bool keepObserved, const PeakSet& reference_peaks);
+
+     //! Is the peak h,k,l in Bragg condition in this dataset. Return Peak pointer if true,
+    //! otherwise nullptr.
+    PeakList predictPeaks(const std::vector<Eigen::RowVector3d>& hkls, const Eigen::Matrix3d& BU);
+    
+    std::vector<DetectorEvent> getEvents(const std::vector<Eigen::RowVector3d>& qs) const;
 
 private:
     //! Return the average shape of peaks which are nearest to \p center.
     sptrPeak3D averagePeaks(const Octree& tree, const Eigen::Vector3d& center);
-
+   
 public:
     //! Minimum d value used in prediction.
     double _dmin;
@@ -81,6 +88,7 @@ public:
     int _minimumNeighbors;
     //! Optional progress handler to monitor progress.
     sptrProgressHandler _handler;
+    sptrDataSet _data;
 };
 
 } // end namespace nsx

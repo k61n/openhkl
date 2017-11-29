@@ -6,13 +6,15 @@
 #include "Octree.h"
 #include "Peak3D.h"
 #include "PeakFilter.h"
+#include "ReciprocalVector.h"
 #include "Sample.h"
 #include "SpaceGroup.h"
 #include "UnitCell.h"
 
 namespace {
 
-bool invalid(const nsx::PeakFilter& filter, nsx::sptrDataSet data, nsx::sptrPeak3D peak)
+
+bool invalid(const nsx::PeakFilter& filter, nsx::sptrPeak3D peak)
 {
     if (filter._removeUnindexed) {
         auto cell = peak->getActiveUnitCell();
@@ -24,7 +26,8 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrDataSet data, nsx::sptrPeak
 
         // try to index
         Eigen::RowVector3d hkl;
-        if (!peak->getMillerIndices(*cell, hkl)) {
+        auto q = peak->getQ();
+        if (!cell->getMillerIndices(q, hkl)) {
             return true;
         }
     }
@@ -60,7 +63,8 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrDataSet data, nsx::sptrPeak
 
     // note: merged peaks are handled separately    
 
-    const double d = 1.0 / peak->getQ().norm();
+    auto q = static_cast<const Eigen::RowVector3d&>(peak->getQ());
+    const double d = 1.0 / q.norm();
 
     if (filter._removeDmin) {
         if (d < filter._dmin) {
@@ -82,17 +86,25 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrDataSet data, nsx::sptrPeak
 
 namespace nsx {
 
-int PeakFilter::apply(sptrDataSet data) const
+PeakSet PeakFilter::apply(const PeakSet& reference_peaks) const
 {
     std::vector<Ellipsoid> ellipsoids;
     std::vector<sptrPeak3D> peaks;
+    std::set<sptrPeak3D> bad_peaks;
+    std::set<sptrPeak3D> good_peaks;
     std::set<Octree::collision_pair> collisions;
+    std::set<sptrUnitCell> crystals;
     Eigen::Vector3d lower(1e100, 1e100, 1e100);
     Eigen::Vector3d upper(-1e100, -1e100, -1e100);
 
-    for (auto peak: data->getPeaks()) {
+    for (auto peak: reference_peaks) {
         ellipsoids.emplace_back(peak->getShape());
         peaks.emplace_back(peak);
+        auto cell = peak->getActiveUnitCell();
+
+        if (cell) {
+            crystals.insert(cell);
+        }
 
         Eigen::Vector3d p = peak->getShape().center();
 
@@ -102,11 +114,9 @@ int PeakFilter::apply(sptrDataSet data) const
         }
     }
 
-    const unsigned int npeaks = peaks.size();
-
-    for (unsigned int i = 0; i < npeaks; ++i) {
-        if (invalid(*this, data, peaks[i])) {
-            data->removePeak(peaks[i]);
+    for (auto peak: peaks) {
+        if (invalid(*this, peak)) {
+            bad_peaks.insert(peak);
         }
     }
 
@@ -114,7 +124,7 @@ int PeakFilter::apply(sptrDataSet data) const
         // build octree
         Octree tree(lower, upper);
 
-        for (unsigned int i = 0; i < npeaks; ++i) {
+        for (unsigned int i = 0; i < peaks.size(); ++i) {
             tree.addData(&ellipsoids[i]);
         }
 
@@ -124,14 +134,12 @@ int PeakFilter::apply(sptrDataSet data) const
         for (auto collision: collisions) {
             unsigned int i = collision.first - &ellipsoids[0];
             unsigned int j = collision.second - &ellipsoids[0];
-            assert(i < npeaks && j < npeaks);
-            data->removePeak(peaks[i]);
-            data->removePeak(peaks[j]);
+            bad_peaks.insert(peaks[i]);
+            bad_peaks.insert(peaks[j]);
         }
     }
 
-    for (auto i = 0; i < data->getDiffractometer()->getSample()->getNCrystals(); ++i) {
-        auto cell = data->getDiffractometer()->getSample()->getUnitCell(i);
+    for (auto cell: crystals) {     
         SpaceGroup group(cell->getSpaceGroup());
         MergedData merged(group, true);
 
@@ -142,9 +150,10 @@ int PeakFilter::apply(sptrDataSet data) const
 
             merged.addPeak(peak);
 
-            Eigen::RowVector3i hkl = peak->getIntegerMillerIndices();
+            auto q = peak->getQ();
+            Eigen::RowVector3i hkl = cell->getIntegerMillerIndices(q);
             if (_removeForbidden && group.isExtinct(hkl(0), hkl(1), hkl(2))) {
-                data->removePeak(peak);
+                bad_peaks.insert(peak);
             }
         }
 
@@ -152,13 +161,24 @@ int PeakFilter::apply(sptrDataSet data) const
             // p value too high: reject peaks
             if (_removeMergedP && merged_peak.pValue() > _mergedP) {
                 for (auto&& p: merged_peak.getPeaks()) {
-                    data->removePeak(p);
+                    bad_peaks.insert(p);
                 }
             }
         }
     }
 
-    return npeaks - data->getPeaks().size();
+    for (auto it = peaks.begin(); it != peaks.end(); ) {
+        auto jt = bad_peaks.find(*it);
+        if (jt != bad_peaks.end()) {
+            it = peaks.erase(it);
+            bad_peaks.erase(jt);
+        } else {
+            good_peaks.insert(*it);
+            ++it;
+        }        
+    }
+
+    return good_peaks;
 }
 
 } // end namespace nsx

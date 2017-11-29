@@ -80,7 +80,7 @@ public:
 	//! Get the quaternion associated with this rotation
 	//@param angle : rotation angle in radians by default
 	//@return rotation matrix
-	Eigen::Quaterniond getQuat(double angle) const;
+	Eigen::Quaterniond quaternion(double angle) const;
 	//! Print information into a stream
 	friend std::ostream& operator<<(std::ostream& os, const RotAxis&);
 

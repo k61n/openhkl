@@ -40,6 +40,7 @@ public:
 
     //! Print information about a DirectVector to a stream
     void print(std::ostream& os) const;
+   
 
 private:
     Eigen::Vector3d _dvector;

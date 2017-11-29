@@ -15,8 +15,10 @@
 #include <nsxlib/DetectorEvent.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Gonio.h>
+#include <nsxlib/InstrumentState.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/Peak3D.h>
+#include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/SpaceGroup.h>
 #include <nsxlib/Source.h>
@@ -91,9 +93,15 @@ void DetectorScene::setMaxIntensity(int intensity)
     loadCurrentImage(false);
 }
 
-void DetectorScene::setData(const nsx::sptrDataSet& data)
+void DetectorScene::setData(std::shared_ptr<SessionModel> session, const nsx::sptrDataSet& data)
+{
+    setData(session, data, 0);
+}
+
+void DetectorScene::setData(std::shared_ptr<SessionModel> session, const nsx::sptrDataSet& data, size_t frame)
 {
     _currentData = data;
+    _session = session;
 
     if (!_currentData) {
         return;
@@ -111,11 +119,6 @@ void DetectorScene::setData(const nsx::sptrDataSet& data)
     }
     loadCurrentImage();
     updatePeaks();
-}
-
-void DetectorScene::setData(const nsx::sptrDataSet& data, size_t frame)
-{
-    setData(data);
     changeFrame(frame);
 }
 
@@ -266,6 +269,9 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if (!_currentData) {
         return;
     }
+
+    auto peaks = _session->peaks(_currentData.get());
+
     // The user released the left mouse button
     if (event->button() & Qt::LeftButton) {
         if (event->modifiers()==Qt::ControlModifier) {
@@ -330,7 +336,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                     _currentData->addMask(it->second);                    
                     _lastClickedGI = nullptr;
                 }
-                _currentData->maskPeaks();
+                _currentData->maskPeaks(peaks);
                 update();
                 updateMasks(_currentFrameIndex);
             }else if (auto p=dynamic_cast<EllipseMaskGraphicsItem*>(_lastClickedGI)) {
@@ -340,7 +346,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                     _currentData->addMask(it->second);                    
                     _lastClickedGI = nullptr;
                 }
-                _currentData->maskPeaks();
+                _currentData->maskPeaks(peaks);
                 update();
                 updateMasks(_currentFrameIndex);    
             }
@@ -406,10 +412,9 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             // If the item is a peak graphics item, remove its corresponding peak from the data,
             // update the set of peak graphics items and update the scene
             if (auto p = dynamic_cast<PeakGraphicsItem*>(item)) {
-                bool remove=_currentData->removePeak(p->getPeak());
-                if (remove) {
-                    _peakGraphicsItems.erase(p->getPeak());
-                }
+                _session->removePeak(p->getPeak());
+                _peakGraphicsItems.erase(p->getPeak());
+
             }
             // If the item is a mask graphics item, remove its corresponding mask from the data,
             // update the QList of mask graphics items and update the scene
@@ -418,6 +423,10 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 if (it != _masks.end()) {
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
+                    auto peaks = _session->peaks(_currentData.get());
+                    _currentData->maskPeaks(peaks);
+                    update();
+                    updateMasks(_currentFrameIndex);    
                 }
             }
             else if (auto p = dynamic_cast<EllipseMaskGraphicsItem*>(item)) {
@@ -425,6 +434,10 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 if (it != _masks.end()) {
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
+                    auto peaks =  _session->peaks(_currentData.get());
+                    _currentData->maskPeaks(peaks);
+                    update();
+                    updateMasks(_currentFrameIndex);    
                 }
             }
             if (p == _lastClickedGI) {
@@ -460,31 +473,34 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     if (col<0 || col>ncols-1 || row<0 || row>nrows-1) {
         return;
     }
-    int intensity=_currentFrame(row,col);
+    int intensity = _currentFrame(row,col);
 
-    const auto& samplev=_currentData->getSampleState(_currentFrameIndex).getValues();
-    const auto& detectorv=_currentData->getDetectorState(_currentFrameIndex).getValues();
+    nsx::InstrumentState state = _currentData->getInterpolatedState(_currentFrameIndex);
+
+    const auto& samplev = state.sample.values();
+    const auto& detectorv = state.detector.values();
     auto sample=instr->getSample();
     auto& mono = instr->getSource()->getSelectedMonochromator();
     double wave=mono.getWavelength();
 
     QString ttip;
     double gamma, nu, th2;
+    auto ev = nsx::DetectorEvent(_currentData, col, row, _currentFrameIndex);
+    auto si = nsx::ReciprocalVector({0, 1.0, 0});
+    ev.getGammaNu(gamma, nu);
+    th2 = ev.get2Theta(si);
+
     switch (_cursorMode) {
     case PIXEL:
         ttip = QString("(%1,%2) I:%3").arg(col).arg(row).arg(intensity);
         break;
-    case GAMMA:
-        nsx::DetectorEvent(det.get(), col, row, _currentFrameIndex, detectorv).getGammaNu(gamma, nu, sample->getPosition(samplev));
+    case GAMMA:           
         ttip = QString("(%1,%2) I: %3").arg(gamma/nsx::deg).arg(nu/nsx::deg).arg(intensity);
         break;
-    case THETA:
-        th2 = nsx::DetectorEvent(det.get(), col, row, _currentFrameIndex, detectorv).get2Theta(Eigen::Vector3d(0, 1.0/wave, 0));
+    case THETA:      
         ttip = QString("(%1) I: %2").arg(th2/nsx::deg).arg(intensity);
         break;
     case DSPACING:
-        // th2 = det->get2Theta(col, row, detectorv, Eigen::Vector3d(0, 1.0/wave, 0));
-        th2 = nsx::DetectorEvent(det.get(), col, row, _currentFrameIndex, detectorv).get2Theta(Eigen::Vector3d(0, 1.0/wave, 0));
         ttip = QString("(%1) I: %2").arg(wave/(2*sin(0.5*th2))).arg(intensity);
         break;
     case HKL:
@@ -546,11 +562,11 @@ void DetectorScene::loadCurrentImage(bool newimage)
         Eigen::MatrixXi mask(nrows, ncols);
         mask.setZero();
 
-        for (auto&& peak: _currentData->getPeaks()) {
+        for (auto&& peak: _session->peaks(_currentData.get())) {
             peak->getIntegrationRegion().updateMask(mask, _currentFrameIndex);
         }
 
-        for (auto&& peak: _currentData->getPeaks()) {
+        for (auto&& peak: _session->peaks(_currentData.get())) {
             auto&& region = peak->getIntegrationRegion();
             auto aabb = region.getBackground().aabb();
             auto&& lower = aabb.lower();
@@ -631,9 +647,9 @@ void DetectorScene::updatePeaks()
         return;
     }
     clearPeaks();
-    auto& peaks = _currentData->getPeaks();
+    auto peaks = _session->peaks(_currentData.get());
 
-    for (auto&& peak : peaks) {
+    for (auto&& peak: peaks) {
         auto aabb = peak->getIntegrationRegion().getBackground().aabb();
         const Eigen::Vector3d& l = aabb.lower();
         const Eigen::Vector3d& u = aabb.upper();

@@ -6,13 +6,18 @@
 
 #include <nsxlib/Axis.h>
 #include <nsxlib/DataSet.h>
+#include <nsxlib/DataTypes.h>
 #include <nsxlib/Detector.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Gonio.h>
+#include <nsxlib/InstrumentState.h>
+#include <nsxlib/Logger.h>
 #include <nsxlib/Minimizer.h>
 #include <nsxlib/Monochromator.h>
 #include <nsxlib/Peak3D.h>
+#include <nsxlib/ReciprocalVector.h>
+#include <nsxlib/Refiner.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/Source.h>
 #include <nsxlib/UnitCell.h>
@@ -20,7 +25,7 @@
 
 #include "DialogRefineUnitCell.h"
 #include "DoubleTableItemDelegate.h"
-
+#include "externals/QCustomPlot.h"
 #include "ui_DialogRefineUnitCell.h"
 
 DialogRefineUnitCell::DialogRefineUnitCell(nsx::sptrExperiment experiment,
@@ -31,42 +36,15 @@ DialogRefineUnitCell::DialogRefineUnitCell(nsx::sptrExperiment experiment,
     ui(new Ui::DialogRefineUnitCell),
     _experiment(std::move(experiment)),
     _unitCell(std::move(unitCell)),
-    _peaks(std::move(peaks)),
-    _initialValues(nullptr, nullptr, nullptr, unitCell),
-    _currentValues(nullptr, nullptr, nullptr, unitCell)
+    _peaks(std::move(peaks))
 {
     ui->setupUi(this);
 
-    // Remove row numbers in table
-    ui->tableWidget_Sample->verticalHeader()->setVisible(false);
-    ui->tableWidget_Detector->verticalHeader()->setVisible(false);
-
-    ui->tableWidget_Sample->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->tableWidget_Detector->setSelectionMode(QAbstractItemView::SingleSelection);
-
-    ui->tableWidget_Sample->setEditTriggers(QAbstractItemView::AllEditTriggers);
-    ui->tableWidget_Detector->setEditTriggers(QAbstractItemView::AllEditTriggers);
-    
-    auto diffractometer = _experiment->getDiffractometer();
-    auto detector = diffractometer->getDetector();
-    auto sample = diffractometer->getSample();
-    auto source = diffractometer->getSource();
-
-    // get starting values of UB and offsets
-    _initialValues = nsx::UBSolution(source, sample, detector, _unitCell);
-    _currentValues = _initialValues;
-
-    // Fill up the sample and detector offsets tables
-    createOffsetTables();
-    updateParameters();
-
-    // alpha, beta, gamma are special characters
-    ui->labelalpha->setText(QString(QChar(0x03B1)));
-    ui->labelbeta->setText(QString(QChar(0x03B2)));
-    ui->labelgamma->setText(QString(QChar(0x03B3)));
-
-    connect(ui->pushButton_Refine, SIGNAL(clicked()), this, SLOT(refineParameters()));
-    connect(ui->pushButton_Reset, SIGNAL(clicked()), this, SLOT(resetParameters()));
+    // get list of datasets
+    for (auto p: _peaks) {
+        _data.insert(p->data());
+    }  
+    connect(ui->pushButtonRefine, SIGNAL(clicked()), this, SLOT(refineParameters()));
 }
 
 DialogRefineUnitCell::~DialogRefineUnitCell()
@@ -74,224 +52,31 @@ DialogRefineUnitCell::~DialogRefineUnitCell()
     delete ui;
 }
 
-void DialogRefineUnitCell::updateParameters()
-{
-    // update UC parameters
-    nsx::CellCharacter ch = _unitCell->character();
-    ui->doubleSpinBoxa->setValue(ch.a);
-    ui->doubleSpinBoxb->setValue(ch.b);
-    ui->doubleSpinBoxc->setValue(ch.c);
-    ui->doubleSpinBoxalpha->setValue(ch.alpha/nsx::deg);
-    ui->doubleSpinBoxbeta->setValue(ch.beta/nsx::deg);
-    ui->doubleSpinBoxgamma->setValue(ch.gamma/nsx::deg);
-
-    // update wavelength
-    auto& mono = _experiment->getDiffractometer()->getSource()->getSelectedMonochromator();
-    ui->doubleSpinBox_Wavelength->setValue(mono.getWavelength());
-
-    // Fill the table
-    for (int i = 0; i < _currentValues._sampleOffset.size(); ++i) {
-        // Set the first column of the table: the axis name
-        auto item1 = ui->tableWidget_Sample->item(i, 1);
-        auto item2 = ui->tableWidget_Sample->item(i, 2);
-
-        // offset values
-        item1->setData(Qt::EditRole, _currentValues._sampleOffset(i));
-
-        // the axis offsets errors
-        item2->setData(Qt::EditRole, _currentValues._sigmaSample(i));      
-    }
-    
-    // Fill the table
-    for (int i = 0; i < _currentValues._detectorOffset.size(); ++i) {
-        // Set the first column of the table: the axis name
-        auto item1 = ui->tableWidget_Detector->item(i, 1);
-        auto item2 = ui->tableWidget_Detector->item(i, 2);
-    
-        // offset values
-        item1->setData(Qt::EditRole, _currentValues._detectorOffset(i));
-    
-        // the axis offsets errors
-        item2->setData(Qt::EditRole, _currentValues._sigmaDetector(i));      
-    }
-}
-
 void DialogRefineUnitCell::refineParameters()
 {
-    nsx::UBMinimizer minimizer(_currentValues);
+    const unsigned int nbatches = ui->spinBoxBatches->value();
+    nsx::Refiner r(_unitCell, _peaks, nbatches);    
 
-    // determine which parameters to refine
-    if (ui->checkBox_Wavelength) {
-        minimizer.refineSource(true);
+    if (ui->checkBoxRefineLattice->isChecked()) {
+        r.refineB();
     }
 
-    // sample parameters
-    for (int i = 0; i < _currentValues._sampleOffset.size(); ++i) {
-        auto item3 = dynamic_cast<QCheckBox*>(ui->tableWidget_Sample->cellWidget(i, 3));
-        assert(item3 != nullptr);
-        minimizer.refineSample(i, item3->isChecked());
-    }
-
-    // detector parameters
-    for (int i = 0; i < _currentValues._detectorOffset.size(); ++i) {
-        auto item3 = dynamic_cast<QCheckBox*>(ui->tableWidget_Detector->cellWidget(i, 3));
-        assert(item3 != nullptr);
-        minimizer.refineDetector(i, item3->isChecked());
-    }
-
-    // peaks to be used in fit
-    int nhits = 0;
-    for (auto&& peak: _peaks) {
-        Eigen::RowVector3d hkl;
-        bool indexingSuccess = peak->getMillerIndices(*_unitCell,hkl,true);
-        if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
-            minimizer.addPeak(*peak,hkl);
-            ++nhits;
-        }
-    }
-
-    std::ostringstream os;
-    os<<nhits<<" peaks considered for UB-refinement";
-    ui->textEdit_Solution->setText(QString::fromStdString(os.str()));
-    os.str("");
-
-    int test = minimizer.run(100);
-    if (test != 1) {
-        ui->textEdit_Solution->setTextColor(QColor("red"));
-        ui->textEdit_Solution->setText("No solution found within convergence criteria.");
-        return; // why not change ?
-    }
-
-    _currentValues = minimizer.solution();
-    _currentValues.apply();
-    os << _currentValues;
-
-    // calculate the new quality of the fit
-    unsigned int total = 0, count = 0;
-    for (auto&& peak: _peaks) {
-        if(!peak->isMasked() && peak->isSelected()) {
-            ++total;
-            Eigen::RowVector3d hkl;
-            bool indexingSuccess = peak->getMillerIndices(*_unitCell,hkl,true);
-            if (indexingSuccess) {
-                ++count;
+    for (auto d: _data) {
+        std::vector<nsx::InstrumentState>& states = d->getInstrumentStates();
+        const int nsample = states[0].sample._offsets.size();
+        const int ndetector = states[0].detector._offsets.size();
+        
+        if (ui->checkBoxRefineSample->isChecked()) {
+            for (auto i = 0; i < nsample; ++i) {
+                r.refineSampleState(states, i);
             }
         }
     }
-    os << "Quality: " << double(count) * 100.0 / double(total);
 
-    // update textbox with output
-    ui->textEdit_Solution->append(QString::fromStdString(os.str()));
-    ui->textEdit_Solution->append(QString::fromStdString(os.str()));
-
-    // update the displayed paramters in the GUI
-    updateParameters();
-}
-
-void DialogRefineUnitCell::resetParameters()
-{
-    _initialValues._sourceOffset = 0.0;
-    _initialValues._sampleOffset.setZero();
-    _initialValues._detectorOffset.setZero();
-    _initialValues.apply();
-    _currentValues = _initialValues;
-    ui->textEdit_Solution->append("\nResetting parameters to initial values.\n");
-    updateParameters();
-}
-
-void DialogRefineUnitCell::createOffsetTables()
-{
-    //Get the sample, iterate over axis
-    auto sample = _experiment->getDiffractometer()->getSample();
-    int nAxesSample = sample->hasGonio() ? sample->getGonio()->getNAxes() : 0;
-
-    // Set the number of row corresponding to the number of offsets/axis
-    ui->tableWidget_Sample->setRowCount(nAxesSample);
-
-    // Set the number of columns (axis name, axis offet, axis offset error, refinable state)
-    ui->tableWidget_Sample->setColumnCount(4);
-
-    // Allow double to be entered with a better precision
-    ui->tableWidget_Sample->setItemDelegateForColumn(1,new DoubleTableItemDelegate(ui->tableWidget_Sample));
-
-    // Fill the table
-    for (int i = 0; i < nAxesSample; ++i) {
-        // Set the first column of the table: the axis name
-        auto axis = sample->getGonio()->getAxis(i);
-        auto item0 = new QTableWidgetItem();
-        item0->setData(Qt::EditRole, QString(axis->getLabel().c_str()));
-        item0->setFlags(item0->flags() & ~Qt::ItemIsEditable);
-
-        if (axis->isPhysical()) {
-            item0->setBackgroundColor(QColor("#FFDDDD"));
-        } else {
-            item0->setBackgroundColor(QColor("#DDFFDD"));
-        }
-        ui->tableWidget_Sample->setItem(i,0,item0);
-
-        // Set the second column of the table: the axis offsets
-        auto item1 = new QTableWidgetItem();
-        item1->setData(Qt::EditRole, double(axis->getOffset()));
-        item1->setFlags(item1->flags() | Qt::ItemIsEditable);
-        ui->tableWidget_Sample->setItem(i, 1, item1);
-
-        // Set the third column of the table: the axis offsets errors
-        auto item2 = new QTableWidgetItem();
-        item2->setData(Qt::EditRole, 0.000);
-        item2->setFlags(item2->flags() & ~Qt::ItemIsEditable);
-        ui->tableWidget_Sample->setItem(i, 2, item2);
-
-        // Set the fourth column of the table: the axis refinable state
-        auto item3 = new QCheckBox(this);
-        //item3->setChecked(!axis->hasOffsetFixed());
-        item3->setChecked(false);
-        // Connect checkbox to fixing this parameter
-        ui->tableWidget_Sample->setCellWidget(i,3,item3);
+    bool success = r.refine();
+    if (!success) {
+        nsx::info() << "Failed to refine parameters!";
+    } else {
+        nsx::info() << "Succeeded to refine parameters!";
     }
-
-    // Get the detector
-    auto detector = _experiment->getDiffractometer()->getDetector();
-    int nAxesDet = detector->hasGonio() ? detector->getGonio()->getNAxes() : 0;
-
-    // Set the number of row corresponding to the number of offsets/axis
-    ui->tableWidget_Detector->setRowCount(nAxesDet);
-
-    // Set the number of columns (axis name, axis offet, axis offset error, refinable state)
-    ui->tableWidget_Detector->setColumnCount(4);
-
-    // Allow double to be entered with a better precision
-    ui->tableWidget_Detector->setItemDelegateForColumn(1,new DoubleTableItemDelegate(ui->tableWidget_Detector));
-
-    for (int i = 0; i < nAxesDet; ++i) {
-        // Set the first column of the table: the axis name
-        auto axis = detector->getGonio()->getAxis(i);
-        auto item0 = new QTableWidgetItem();
-        item0->setData(Qt::EditRole, QString(axis->getLabel().c_str()));
-        item0->setFlags(item0->flags() & ~Qt::ItemIsEditable);
-        // Set two different colors for the first column color according to to the axis type (physical or not)
-        if (axis->isPhysical()) {
-            item0->setBackgroundColor(QColor("#FFDDDD"));
-        } else {
-            item0->setBackgroundColor(QColor("#DDFFDD"));
-        }
-        ui->tableWidget_Detector->setItem(i,0,item0);
-
-        // Set the second column of the table: the axis offsets
-        auto item1 = new QTableWidgetItem();
-        item1->setData(Qt::EditRole, axis->getOffset());
-        item1->setFlags(item1->flags() | Qt::ItemIsEditable);
-        ui->tableWidget_Detector->setItem(i, 1, item1);
-
-        // Set the third column of the table: the axis offsets errors
-        auto item2 = new QTableWidgetItem();
-        item2->setData(Qt::EditRole, 0.000);
-        item2->setFlags(item2->flags() & ~Qt::ItemIsEditable);
-        ui->tableWidget_Detector->setItem(i, 2, item2);
-
-        // Set the fourth column of the table: the axis refinable state
-        auto item3 = new QCheckBox(this);
-        //item3->setChecked(!axis->hasOffsetFixed());
-        item3->setChecked(false);
-        ui->tableWidget_Detector->setCellWidget(i, 3, item3);
-    }   
 }

@@ -62,7 +62,7 @@ const std::string& Component::getName() const
     return _name;
 }
 
-Eigen::Vector3d Component::getPosition(const std::vector<double>& goniosetup) const
+Eigen::Vector3d Component::getPosition(const ComponentState& goniosetup) const
 {
     if (_gonio.get() == nullptr) {
         return _position;

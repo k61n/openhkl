@@ -74,7 +74,6 @@ private:
     UBSolution _solution;
     std::vector<std::pair<Peak3D,Eigen::RowVector3d>> _peaks;
     bool _refineSource;
-    double _sigmaSource;
     std::vector<bool> _refineSample;
     std::vector<bool> _refineDetector;
     Eigen::VectorXd _sigmaDetector;

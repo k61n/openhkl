@@ -11,7 +11,6 @@
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
 
-#include "LatticeIndexer.h"
 #include "SessionModel.h"
 #include "UnitCellItem.h"
 #include "UnitCellPropertyWidget.h"

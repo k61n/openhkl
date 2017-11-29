@@ -36,7 +36,7 @@ namespace nsx {
 
 // Forward declare
 class Component;
-class InstrumentState;
+struct InstrumentState;
 
 //! Maintain a state of a goniometer, following the memento pattern.
 class ComponentState {
@@ -49,21 +49,26 @@ public:
     ~ComponentState();
     //! Assignment operator
     ComponentState& operator=(const ComponentState& other);
-    //! Return a pointer to the component related to this component state
-    // Component* getParent() const;
-    const std::vector<double>& getValues() const;
+    //! Return the values (= raw values + offsets) of the axes
+    Eigen::ArrayXd values() const;
     //void setParent(Component*);
+
 
     Eigen::Vector3d getPosition() const;
 
     Eigen::Vector3d transformQ(const Eigen::Vector3d& q) const;
 
+    ComponentState interpolate(const ComponentState &other, double t) const;
+
+    //! Offsets for the value of each axis of the component.    
+    Eigen::ArrayXd _offsets;
+
 private:
-    friend class InstrumentState;
+    friend struct InstrumentState;
     //! Pointer to the Component that has created the state
     const Component* _ptrComp;
-    //! Values for each axis of the Component
-    std::vector<double> _values;
+    //! Raw values for each axis of the component
+    Eigen::ArrayXd _rawValues;     
 };
 
 } // end namespace nsx

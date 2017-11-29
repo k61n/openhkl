@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CrystalTypes.h"
 #include "DataTypes.h"
 #include "ImagingTypes.h"
 #include "UtilsTypes.h"
@@ -13,7 +14,7 @@ public:
 
     PeakFinder();
 
-    bool find(DataList numors);
+    PeakSet find(DataList numors);
 
     void setHandler(const sptrProgressHandler& handler);
 

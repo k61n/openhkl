@@ -14,7 +14,7 @@ FFTIndexing::FFTIndexing(int nSubdiv,double amax) : _nSubdiv(nSubdiv), _amax(ama
 {
 }
 
-std::vector<tVector> FFTIndexing::findOnSphere(const std::vector<Eigen::Vector3d>& qvects, unsigned int nstacks, unsigned int nsolutions) const
+std::vector<tVector> FFTIndexing::findOnSphere(const std::vector<Eigen::RowVector3d>& qvects, unsigned int nstacks, unsigned int nsolutions) const
 {
     std::vector<double> projs(qvects.size());
     double qMax = 0;

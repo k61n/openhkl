@@ -15,7 +15,7 @@
 #include "SourceItem.h"
 #include "TreeItem.h"
 
-ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment) : TreeItem(experiment)
+ExperimentItem::ExperimentItem(std::shared_ptr<SessionModel> session, nsx::sptrExperiment experiment) : TreeItem(experiment), _session(session)
 {
     setText(QString::fromStdString(_experiment->getName()));
     setForeground(QBrush(QColor("blue")));
@@ -35,7 +35,7 @@ ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment) : TreeItem(experi
     appendRow(_data);
 
     // Create a peaks item and add it to the experiment item
-     _peaks = new PeakListItem(experiment);
+     _peaks = new PeakListItem(_session, experiment);
     appendRow(_peaks);
 }
 

@@ -15,6 +15,7 @@
 #include "RotAxis.h"
 #include "MatrixOperations.h"
 #include "Minimizer.h"
+#include "ReciprocalVector.h"
 #include "UBMinimizer.h"
 #include "UBSolution.h"
 #include "Units.h"
@@ -45,7 +46,11 @@ int UBMinimizer::residuals(Eigen::VectorXd &fvec)
 
     //#pragma omp parallel for
     for (unsigned int i = 0; i < npeaks; ++i)	{
-        const Eigen::RowVector3d q0 = _peaks[i].first.getQ();
+        auto&& peak = _peaks[i].first;
+        auto cell = peak.getActiveUnitCell();
+        auto q = peak.getQ();
+
+        const Eigen::RowVector3d q0 = static_cast<const Eigen::RowVector3d&>(q);
         const Eigen::RowVector3d hkl = _peaks[i].second;
 
         const Eigen::RowVector3d q1 = hkl * UB;

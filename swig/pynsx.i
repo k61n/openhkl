@@ -78,6 +78,7 @@ using Eigen::Quaterniond;
 #include "Lorentzian.h"
 #include "FitParameters.h"
 #include "Minimizer.h"
+
 #include "Round.h"
 #include "RNG.h"
 #include "Profile3d.h"
@@ -103,6 +104,7 @@ using Eigen::Quaterniond;
 #include "PeakPredictor.h"
 #include "UBSolution.h"
 #include "UBMinimizer.h"
+#include "Refiner.h"
 #include "AutoIndexer.h"
 #include "Profile.h"
 #include "Intensity.h"
@@ -118,7 +120,6 @@ using Eigen::Quaterniond;
 #include "FFTIndexing.h"
 
 #include "MergedPeak.h"
-#include "Peak2D.h"
 #include "SpaceGroup.h"
 #include "NiggliReduction.h"
 #include "GruberReduction.h"
@@ -139,6 +140,9 @@ using Eigen::Quaterniond;
 #include "Edge.h"
 #include "Blob3D.h"
 #include "IntegrationRegion.h"
+
+#include "DirectVector.h"
+#include "ReciprocalVector.h"
 
 #include "XDS.h"
 #include "DataSet.h"
@@ -394,6 +398,7 @@ namespace nsx {
 %include "PeakPredictor.h"
 %include "UBSolution.h"
 %include "UBMinimizer.h"
+%include "Refiner.h"
 %include "Basis.h"
 
 %include "Profile.h"
@@ -409,7 +414,6 @@ namespace nsx {
 %include "Mosaic.h"
 %include "FFTIndexing.h"
 %include "MergedPeak.h"
-%include "Peak2D.h"
 %include "SpaceGroup.h"
 %include "NiggliReduction.h"
 %include "GruberReduction.h"

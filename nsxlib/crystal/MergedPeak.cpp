@@ -40,8 +40,11 @@
 
 #include <gsl/gsl_cdf.h>
 
+#include "UnitCell.h"
+#include "DataSet.h"
 #include "MergedPeak.h"
 #include "Peak3D.h"
+#include "ReciprocalVector.h"
 
 namespace nsx {
 
@@ -53,7 +56,10 @@ MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel):
 bool MergedPeak::addPeak(const sptrPeak3D& peak)
 {
     auto hkl1 = _hkl.cast<double>();
-    Eigen::Vector3d hkl2 = peak->getIntegerMillerIndices().cast<double>();
+    auto data = peak->data();
+    auto cell = peak->getActiveUnitCell();
+    auto q = peak->getQ();
+    Eigen::Vector3d hkl2 = cell->getIntegerMillerIndices(q).cast<double>();
 
     
     // peak is not equivalent to one already on the list

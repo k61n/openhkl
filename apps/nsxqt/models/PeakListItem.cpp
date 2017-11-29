@@ -3,7 +3,7 @@
 #include "PeakListItem.h"
 #include "PeakListPropertyWidget.h"
 
-PeakListItem::PeakListItem(nsx::sptrExperiment experiment) : InspectableTreeItem(experiment)
+PeakListItem::PeakListItem(std::shared_ptr<SessionModel> session, nsx::sptrExperiment experiment) : InspectableTreeItem(experiment), _session(session)
 {
 
 	setText("Peaks");
@@ -21,7 +21,7 @@ PeakListItem::PeakListItem(nsx::sptrExperiment experiment) : InspectableTreeItem
 
 QWidget* PeakListItem::inspectItem()
 {
-    return new PeakListPropertyWidget(this);
+    return new PeakListPropertyWidget(_session, this);
 }
 
 

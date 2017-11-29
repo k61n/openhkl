@@ -37,7 +37,6 @@
 #include "Minimizer.h"
 #include "Profile3d.h"
 
-// anonymous namespace for helper structures and routines
 namespace nsx {
 
 Profile3d::Profile3d(double background, double A, const Eigen::Vector3d& c, const Eigen::Matrix3d& CI):

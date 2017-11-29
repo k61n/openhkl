@@ -147,7 +147,7 @@ void IDataReader::saveHDF5(const std::string& filename)
     RealMatrix vals(names.size(),_nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
-        const std::vector<double>& v = _states[i].detector.getValues();
+        auto&& v = _states[i].detector.values();
 
         for (unsigned int j = 0; j < names.size(); ++j) {
             vals(j,i) = v[j] / deg;
@@ -165,7 +165,7 @@ void IDataReader::saveHDF5(const std::string& filename)
     RealMatrix valsSamples(samplenames.size(), _nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
-        const std::vector<double>& v = _states[i].sample.getValues();
+        auto&& v = _states[i].sample.values();
 
         for (unsigned int j = 0; j < samplenames.size(); ++j) {
             valsSamples(j,i) = v[j]/deg;
@@ -183,7 +183,7 @@ void IDataReader::saveHDF5(const std::string& filename)
     RealMatrix valsSources(sourcenames.size(),_nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
-        const std::vector<double>& v=_states[i].source.getValues();
+        auto&& v = _states[i].source.values();
 
         for (unsigned int j = 0; j < sourcenames.size(); ++j) {
             valsSources(j,i) = v[j] / deg;
