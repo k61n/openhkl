@@ -28,13 +28,12 @@
  *
  */
 
-#ifndef NSXLIB_RFACTOR_H
-#define NSXLIB_RFACTOR_H
+#pragma once
 
-#include <vector>
 #include <set>
+#include <vector>
 
-#include "../crystal/CrystalTypes.h"
+#include "CrystalTypes.h"
 #include "IMergedPeakStatistic.h"
 
 namespace nsx {
@@ -58,5 +57,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_RFACTOR_H

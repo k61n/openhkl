@@ -33,14 +33,13 @@
  *
  */
 
-#ifndef NSXLIB_AUTOINDEXER_H
-#define NSXLIB_AUTOINDEXER_H
+#pragma once
 
 #include <vector>
 
-#include "../crystal/CrystalTypes.h"
-#include "../instrument/InstrumentTypes.h"
-#include "../utils/UtilsTypes.h"
+#include "CrystalTypes.h"
+#include "InstrumentTypes.h"
+#include "UtilsTypes.h"
 
 namespace nsx {
 
@@ -72,11 +71,10 @@ public:
     //! Performs the auto-indexing
     //! @param params the parameter of the auto-indexing algorithm
     //! @return true if auto-indexing succeeded, false if failed
-    bool autoIndex(const IndexerParameters& params);
+    void autoIndex(const IndexerParameters& params);
 
-    //! Add a new peak for the auto-indexing procedure
-    //! @param peak the shared pointer to the peak to be added
-    void addPeak(const std::shared_ptr<Peak3D>& peak);
+    //! Add a peak for the auto-indexing procedure
+    void addPeak(sptrPeak3D peak);
 
     //! Returns the best solutions found for the auto-indexing
     //! @return a list of the best solutions ordered by percentage of successfully auto-indexed peaks
@@ -96,7 +94,7 @@ private:
   
     IndexerParameters _params;
 
-    std::vector<std::shared_ptr<Peak3D>> _peaks;
+    std::vector<sptrPeak3D> _peaks;
 
     std::vector<RankedSolution> _solutions;
 
@@ -104,5 +102,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_AUTOINDEXER_H

@@ -5,16 +5,15 @@
  *      Author: pellegrini
  */
 
-#ifndef NSXLIB_MOSAIC_H
-#define NSXLIB_MOSAIC_H
+#pragma once
 
 #include <string>
 #include <vector>
 
-#include "../data/DataTypes.h"
-#include "../geometry/GeometryTypes.h"
-#include "../geometry/ConvexHull.h"
-#include "../instrument/InstrumentTypes.h"
+#include "ConvexHull.h"
+#include "DataTypes.h"
+#include "GeometryTypes.h"
+#include "InstrumentTypes.h"
 
 namespace nsx {
 
@@ -47,5 +46,3 @@ private:
 double ellipsoids_overlap(const Ellipsoid& ell1,const Ellipsoid& ell2);
 
 } // end namespace nsx
-
-#endif // NSXLIB_MOSAIC_H

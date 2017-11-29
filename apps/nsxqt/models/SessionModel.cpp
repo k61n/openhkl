@@ -34,9 +34,9 @@
  */
 
 #include <fstream>
+#include <map>
 #include <memory>
 #include <stdexcept>
-#include <map>
 #include <vector>
 
 #include <hdf5.h>
@@ -47,10 +47,7 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QKeyEvent>
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QJsonDocument>
-#include <QJsonValue>
+
 #include <QList>
 #include <QListIterator>
 #include <QMenu>
@@ -59,52 +56,53 @@
 #include <QString>
 #include <QVector>
 
-#include <nsxlib/crystal/MergedPeak.h>
-#include <nsxlib/crystal/PeakPredictor.h>
-#include <nsxlib/crystal/ResolutionShell.h>
-#include <nsxlib/statistics/RFactor.h>
-#include <nsxlib/crystal/SpaceGroup.h>
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/data/DataReaderFactory.h>
-#include <nsxlib/data/MergedData.h>
-#include <nsxlib/data/PeakFinder.h>
-#include <nsxlib/data/XDS.h>
-#include <nsxlib/geometry/Ellipsoid.h>
-#include <nsxlib/instrument/Detector.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/instrument/Source.h>
-#include <nsxlib/logger/Logger.h>
-#include <nsxlib/utils/ProgressHandler.h>
-#include <nsxlib/statistics/CC.h>
+#include <nsxlib/CC.h>
+#include <nsxlib/DataReaderFactory.h>
+#include <nsxlib/Detector.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/Ellipsoid.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/MergedData.h>
+#include <nsxlib/MergedPeak.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/PeakFinder.h>
+#include <nsxlib/PeakPredictor.h>
+#include <nsxlib/ProgressHandler.h>
+#include <nsxlib/ReciprocalVector.h>
+#include <nsxlib/ResolutionShell.h>
+#include <nsxlib/RFactor.h>
+#include <nsxlib/Sample.h>
+#include <nsxlib/SpaceGroup.h>
+#include <nsxlib/Source.h>
+#include <nsxlib/UnitCell.h>
+#include <nsxlib/XDS.h>
 
-#include "absorption/AbsorptionDialog.h"
-#include "absorption/MCAbsorptionDialog.h"
+#include "AbsorptionDialog.h"
+#include "DataItem.h"
+#include "DetectorItem.h"
 #include "DetectorScene.h"
-#include "dialogs/DialogCalculatedPeaks.h"
-#include "dialogs/DialogConvolve.h"
-#include "dialogs/DialogExperiment.h"
-#include "dialogs/FriedelDialog.h"
-#include "dialogs/LogFileDialog.h"
-#include "dialogs/ResolutionCutoffDialog.h"
-#include "dialogs/SpaceGroupDialog.h"
-#include "externals/qcustomplot.h"
-#include "models/DataItem.h"
-#include "models/DetectorItem.h"
-#include "models/ExperimentItem.h"
-#include "models/SessionModel.h"
-#include "models/TreeItem.h"
-#include "models/InstrumentItem.h"
-#include "models/NumorItem.h"
-#include "models/PeakListItem.h"
-#include "models/SampleItem.h"
-#include "models/SourceItem.h"
-#include "opengl/GLSphere.h"
-#include "opengl/GLWidget.h"
+#include "DialogCalculatedPeaks.h"
+#include "DialogConvolve.h"
+#include "DialogExperiment.h"
+#include "ExperimentItem.h"
+#include "FriedelDialog.h"
+#include "GLSphere.h"
+#include "GLWidget.h"
+#include "InstrumentItem.h"
+#include "LogFileDialog.h"
+#include "MCAbsorptionDialog.h"
+#include "NumorItem.h"
+#include "PeakListItem.h"
+#include "PeakTableView.h"
+#include "ProgressView.h"
+#include "QCustomPlot.h"
+#include "ResolutionCutoffDialog.h"
+#include "SampleItem.h"
+#include "SessionModel.h"
+#include "SourceItem.h"
+#include "SpaceGroupDialog.h"
+#include "TreeItem.h"
 #include "UnitCellItem.h"
-#include "views/PeakTableView.h"
-#include "views/ProgressView.h"
 
 #include "ui_MainWindow.h"
 #include "ui_ScaleDialog.h"
@@ -131,53 +129,6 @@ void SessionModel::onItemChanged(QStandardItem* item)
     }
 }
 
-void SessionModel::createNewExperiment()
-{
-    DialogExperiment* dlg;
-
-    // DialogExperiment could throw an exception if it fails to read the resource files
-    try {
-        dlg = new DialogExperiment();
-
-        // The user pressed cancel, return
-        if (!dlg->exec()) {
-            return;
-        }
-
-        // If no experiment name is provided, pop up a warning
-        if (dlg->getExperimentName().isEmpty()) {
-            nsx::error() << "Empty experiment name";
-            return;
-        }
-    }
-    catch(std::exception& e) {
-        nsx::debug() << "Runtime error: " << e.what();
-        return;
-    }
-
-    // Add the experiment
-    try {
-        addExperiment(dlg->getExperimentName().toStdString(),dlg->getInstrumentName().toStdString());
-    }
-    catch(const std::runtime_error& e) {
-        nsx::error() << e.what();
-        return;
-    }
-}
-
-nsx::sptrExperiment SessionModel::addExperiment(const std::string& experimentName, const std::string& instrumentName)
-{
-    // Create an experiment
-    nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName,instrumentName));
-
-    // Create an experiment item
-    ExperimentItem* expt = new ExperimentItem(expPtr);
-
-    appendRow(expt);
-
-    return expPtr;
-}
-
 nsx::DataList SessionModel::getSelectedNumors(ExperimentItem* item) const
 {
     nsx::DataList numors;
@@ -196,39 +147,6 @@ nsx::DataList SessionModel::getSelectedNumors(ExperimentItem* item) const
     }
 
     return numors;
-}
-
-QJsonObject SessionModel::toJsonObject()
-{
-    QJsonObject obj;
-    QJsonArray experiments;
-
-    for(int i = 0; i < rowCount(); ++i) {
-        ExperimentItem* expItem = dynamic_cast<ExperimentItem*>(item(i,0));
-        assert(expItem != nullptr);
-        experiments.push_back(expItem->toJson());
-    }
-
-    obj["experiments"] = experiments;
-
-    return obj;
-}
-
-void SessionModel::fromJsonObject(const QJsonObject &obj)
-{
-
-    QJsonArray experiments = obj["experiments"].toArray();
-
-    for (auto expr: experiments) {
-        QJsonObject exp_obj = expr.toObject();
-        std::string name = exp_obj["name"].toString().toStdString();
-        std::string instrument = exp_obj["instrument"].toObject()["name"].toString().toStdString();
-        nsx::sptrExperiment ptr = addExperiment(name, instrument);
-
-        ExperimentItem* expItem = dynamic_cast<ExperimentItem*>(item(rowCount()-1,0));
-        assert(expItem != nullptr);
-        expItem->fromJson(exp_obj);
-    }
 }
 
 void SessionModel::setFilename(QString name)
@@ -286,13 +204,11 @@ void SessionModel::showPeaksOpenGL()
     GLWidget* glw=new GLWidget();
     auto& scene=glw->getScene();
     auto datav=getSelectedNumors();
-    for (auto idata : datav)
-    {
-       auto peaks=idata->getPeaks();
-       for (auto peak: peaks)
-       {
+    for (auto idata : datav) {
+       auto numor_peaks = peaks(idata.get());
+       for (auto peak: numor_peaks) {
            GLSphere* sphere=new GLSphere("");
-           Eigen::Vector3d pos=peak->getQ();
+           Eigen::RowVector3d pos = static_cast<const Eigen::RowVector3d&>(peak->getQ());
            sphere->setPos(pos[0]*100,pos[1]*100,pos[2]*100);
            sphere->setColor(0,1,0);
            scene.addActor(sphere);
@@ -398,51 +314,26 @@ void SessionModel::findPeaks(const QModelIndex& index)
     ProgressView* progressView = new ProgressView(nullptr);
     progressView->watch(_progressHandler);
 
-    // lambda function to execute peak search in a separate thread
-    auto task = [=] () -> bool
-    {
-        bool result = false;
+    // execute in a try-block because the progress handler may throw if it is aborted by GUI
+    try {
+        _peaks = _peakFinder->find(selectedNumors);
+    }
+    catch(std::exception& e) {
+        nsx::debug() << "Caught exception during peak find: " << e.what();
+        return;
+    }
 
-        // execute in a try-block because the progress handler may throw if it is aborted by GUI
-        try {
-            result = _peakFinder->find(selectedNumors);
-        }
-        catch(std::exception& e) {
-            nsx::debug() << "Caught exception during peak find: " << e.what();
-            nsx::debug() <<" Peak search aborted.";
-            return false;
-        }
-        return result;
-    };
+    // delete the progressView
+    delete progressView;
+    int num_peaks = 0;
 
-    auto onFinished = [=] (bool succeeded) -> void
-    {
-        // delete the progressView
-        delete progressView;
-
-        int num_peaks = 0;
-
-        for (auto numor: selectedNumors) {
-            num_peaks += numor->getPeaks().size();
-        }
-
-        if ( succeeded ) {
-            //ui->_dview->getScene()->updatePeaks();
-            updatePeaks();
-
-            nsx::debug() << "Peak search complete., found "
-                     << num_peaks
-                     << " peaks.";
-        }
-        else {
-            nsx::debug() << "Peak search failed!";
-        }
-    };
-
-    auto job = new Job(this, task, onFinished, true);
+    updatePeaks();
+    nsx::debug() << "Peak search complete., found " << _peaks.size() << " peaks.";
+    
+    //auto job = new Job(this, task, onFinished, true);
     //connect(progressView, SIGNAL(canceled()), job, SLOT(terminate()));
 
-    job->exec();
+    //job->exec();
 }
 
 
@@ -472,7 +363,9 @@ void SessionModel::incorporateCalculatedPeaks()
     for(auto numor: numors) {
         nsx::debug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
 
-        auto predictor = nsx::PeakPredictor();
+        auto reference_peaks = peaks(numor.get());
+
+        auto predictor = nsx::PeakPredictor(numor);
         predictor._dmin = dialog.dMin();
         predictor._dmax = dialog.dMax();
         predictor._searchRadius = dialog.searchRadius();
@@ -483,12 +376,12 @@ void SessionModel::incorporateCalculatedPeaks()
         predictor._minimumPeakDuration = dialog.minimumPeakDuration();
         predictor._Isigma = dialog.Isigma();
         predictor._handler = handler;
-        nsx::PeakSet predicted = predictor.predictPeaks(numor, false);
+        nsx::PeakSet predicted = predictor.predictPeaks(true, reference_peaks);
         numor->integratePeaks(predicted, predictor._peakScale, predictor._bkgScale, false, handler);
-        observed_peaks += numor->getPeaks().size();
+        observed_peaks += peaks(numor.get()).size();
 
         for (auto peak: predicted) {
-            numor->addPeak(peak);
+            addPeak(peak);
         }
     }
     updatePeaks();
@@ -509,11 +402,11 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
         nsx::PeakList bad_peaks;
         auto sample = numor->getDiffractometer()->getSample();
 
-        for (auto peak: numor->getPeaks()) {
+        for (auto peak: peaks(numor.get())) {
             if (!peak->isSelected() || peak->isMasked())
                 continue;
 
-            double d = 1.0 / peak->getQ().norm();
+            double d = 1.0 / static_cast<const Eigen::RowVector3d&>(peak->getQ()).norm();
             avg_d += d;
             ++num_peaks;
 
@@ -523,7 +416,7 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
 
         // erase the bad peaks from the list
         for (auto peak: bad_peaks) {
-            numor->removePeak(peak);
+            removePeak(peak);
             ++num_removed;
         }
     }
@@ -538,15 +431,12 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
 void SessionModel::writeLog()
 {
     LogFileDialog dialog;
+    auto numors = this->getSelectedNumors();
     nsx::PeakList peaks;
 
-    auto numors = this->getSelectedNumors();
-
-    for (auto numor: numors) {
-        for (auto peak: numor->getPeaks()) {
-            if (peak->isSelected() && !peak->isMasked()) {
-                peaks.push_back(peak);
-            }
+    for (auto peak: _peaks) {
+        if (peak->isSelected() && !peak->isMasked()) {
+            peaks.push_back(peak);
         }
     }
 
@@ -608,14 +498,16 @@ bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& pea
             return false;
         }
 
-        if (!(peak->getMillerIndices(*currentBasis, hkl, true)))
+        if (!(currentBasis->getMillerIndices(peak->getQ(), hkl, true)))
             continue;
 
         const long h = std::lround(hkl[0]);
         const long k = std::lround(hkl[1]);
         const long l = std::lround(hkl[2]);
 
-        double lorentz = peak->getLorentzFactor();
+        nsx::DetectorEvent ev(peak);
+
+        double lorentz = ev.getLorentzFactor();
         double trans = peak->getTransmission();
 
         double intensity = peak->getCorrectedIntensity().value();
@@ -668,7 +560,7 @@ bool SessionModel::writeStatistics(std::string filename,
             continue;
         }
         // skip misindexed peaks
-        if (!peak->getMillerIndices(*cell, HKL, true)) {
+        if (!cell->getMillerIndices(peak->getQ(), HKL, true)) {
             continue;
         }
         res.addPeak(peak);
@@ -701,11 +593,6 @@ bool SessionModel::writeStatistics(std::string filename,
                 merged.addPeak(peak);
                 merged_shell.addPeak(peak);
             }
-
-            //if (new_peak.redundancy() > 0) {
-            //    merged_peaks.push_back(new_peak);
-            //    merged_peaks_shell.push_back(new_peak);
-            //}
         }
 
         nsx::CC cc;
@@ -806,8 +693,11 @@ bool SessionModel::writeStatistics(std::string filename,
     return true;
 }
 
+
 bool SessionModel::writeXDS(std::string filename, const nsx::PeakList& peaks, bool merge, bool friedel)
 {
+    #pragma warning "todo: fix this method"
+    #if 0
     const std::string date = QDate::currentDate().toString("yyyy-MM-dd").toStdString();
     nsx::XDS xds(peaks, merge, friedel, filename, date);
     std::fstream file(filename, std::ios::out);
@@ -819,6 +709,8 @@ bool SessionModel::writeXDS(std::string filename, const nsx::PeakList& peaks, bo
     bool result = xds.write(file);
     nsx::debug() << "Done writing log file.";
     return result;
+    #endif
+    return false;
 }
 
 
@@ -828,16 +720,16 @@ void SessionModel::autoAssignUnitCell()
 
     for (auto&& numor: numors) {
         auto sample = numor->getDiffractometer()->getSample();
-        auto peaks = numor->getPeaks();
+        nsx::PeakSet numor_peaks = peaks(numor.get());
 
-        for (auto&& peak: peaks) {
+        for (auto&& peak: numor_peaks) {
             Eigen::RowVector3d hkl;
             bool assigned = false;
 
             for (auto i = 0; i < sample->getNCrystals(); ++i) {
                 auto cell = sample->getUnitCell(i);
 
-                if (peak->getMillerIndices(*cell, hkl, true)) {
+                if (cell->getMillerIndices(peak->getQ(), hkl, true)) {
                     peak->addUnitCell(cell, true);
                     assigned = true;
                     break;
@@ -851,4 +743,33 @@ void SessionModel::autoAssignUnitCell()
         }
     }
     nsx::debug() << "Done auto assigning unit cells";
+}
+
+nsx::PeakSet SessionModel::peaks(const nsx::DataSet* data) const
+{  
+    if (data == nullptr) {
+        return _peaks;
+    }
+
+    nsx::PeakSet data_peaks;
+
+    for (auto peak: _peaks) {
+        if (peak->data().get() == data) {
+            data_peaks.insert(peak);
+        }
+    }
+    return data_peaks;
+}
+
+void SessionModel::addPeak(nsx::sptrPeak3D peak)
+{
+    _peaks.insert(peak);
+}
+
+void SessionModel::removePeak(nsx::sptrPeak3D peak)
+{
+    auto it = _peaks.find(peak);
+    if (it != _peaks.end()) {
+        _peaks.erase(it);
+    }
 }

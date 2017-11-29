@@ -34,41 +34,93 @@
  */
 
 #include <cassert>
-
+#include <Eigen/Dense>
 #include "FitParameters.h"
+
+// DEBUGGING
+#include <iostream>
 
 namespace nsx {
 
 int FitParameters::addParameter(double* addr)
 {
     _params.emplace_back(addr);
+    _originalValues.emplace_back(*addr);
+    resetConstraints();
     return _params.size()-1;
 }
 
-
 void FitParameters::setValues(const gsl_vector* v)
 {
-    const size_t size = _params.size();
-    assert(v->size == size);
+    assert(v->size == nfree());
+    Eigen::VectorXd p0(nfree());
 
-    for (size_t i = 0; i < size; ++i) {
-        *_params[i] = gsl_vector_get(v, i);
+    for (size_t i = 0; i < nfree(); ++i) {
+        p0(i) = gsl_vector_get(v, i);
+    }
+    auto p1 = _K * p0;
+
+    for (size_t i = 0; i < nparams(); ++i) {
+        *_params[i] = p1(i);
     }
 }
 
 void FitParameters::writeValues(gsl_vector* v) const
 {
-    const size_t size = _params.size();
-    assert(v->size == size);
+    assert(v->size == nfree());
+    Eigen::VectorXd p1(nparams());
 
-    for (size_t i = 0; i < size; ++i) {
-        gsl_vector_set(v, i, *_params[i]);
+    for (auto i = 0; i < _params.size(); ++i) {
+        p1(i) = *_params[i];
+    }
+
+    auto p0 = _P*p1;
+
+    for (size_t i = 0; i < nfree(); ++i) {
+        gsl_vector_set(v, i, p0(i));
     }
 }
 
-size_t FitParameters::size() const
+size_t FitParameters::nfree() const
+{
+    return _params.size() == 0 ? 0 : _K.cols();
+}
+
+void FitParameters::setConstraint(const Eigen::MatrixXd& C)
+{
+    _K = Eigen::FullPivLU<Eigen::MatrixXd>(C).kernel();
+    _P = (_K.transpose()*_K).inverse() * _K.transpose();
+
+    // DEBUGGING
+    std::cout << "constraints K:\n" << _K << "\n--------------------" << std::endl;
+    std::cout << "constraints P:\n" << _P << "\n--------------------" << std::endl;
+}
+
+void FitParameters::resetConstraints()
+{
+    const auto n = nparams();
+
+    if (n > 0) {
+        _K.setIdentity(n, n);
+        _P.setIdentity(n, n);
+    }
+}
+
+size_t FitParameters::nparams() const
 {
     return _params.size();
+}
+
+const Eigen::MatrixXd& FitParameters::kernel() const
+{
+    return _K;
+}
+
+void FitParameters::reset()
+{
+    for (auto i = 0; i < _params.size(); ++i) {
+        *_params[i] = _originalValues[i];
+    }
 }
 
 } // end namespace nsx

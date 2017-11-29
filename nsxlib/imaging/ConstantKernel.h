@@ -7,12 +7,10 @@
 // Kernel description: this kernel is constant with the value 1 / (rows*cols).
 // Convolving with this kernel has the effect of taking the average value of the frame.
 
+#pragma once
 
-#ifndef NSXLIB_CONSTANTKERNEL_H
-#define NSXLIB_CONSTANTKERNEL_H
-
-#include "../imaging/ImagingTypes.h"
 #include "ConvolutionKernel.h"
+#include "ImagingTypes.h"
 
 namespace nsx {
 
@@ -39,5 +37,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_CONSTANTKERNEL_H

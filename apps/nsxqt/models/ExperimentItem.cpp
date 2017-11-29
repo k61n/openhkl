@@ -2,20 +2,20 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/instrument/Diffractometer.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Diffractometer.h>
 
 #include "DataItem.h"
 #include "DetectorItem.h"
+#include "ExperimentItem.h"
 #include "InstrumentItem.h"
-#include "models/SessionModel.h"
-#include "models/ExperimentItem.h"
 #include "PeakListItem.h"
 #include "SampleItem.h"
+#include "SessionModel.h"
 #include "SourceItem.h"
 #include "TreeItem.h"
 
-ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment) : TreeItem(experiment)
+ExperimentItem::ExperimentItem(std::shared_ptr<SessionModel> session, nsx::sptrExperiment experiment) : TreeItem(experiment), _session(session)
 {
     setText(QString::fromStdString(_experiment->getName()));
     setForeground(QBrush(QColor("blue")));
@@ -35,7 +35,7 @@ ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment) : TreeItem(experi
     appendRow(_data);
 
     // Create a peaks item and add it to the experiment item
-     _peaks = new PeakListItem(experiment);
+     _peaks = new PeakListItem(_session, experiment);
     appendRow(_peaks);
 }
 

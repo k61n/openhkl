@@ -1,11 +1,11 @@
 #include <iostream>
 #include <unordered_map>
 
-#include "../data/DataSet.h"
-#include "../data/IFrameIterator.h"
-#include "../geometry/BlobFinder.h"
-#include "../geometry/Octree.h"
-#include "../utils/ProgressHandler.h"
+#include "BlobFinder.h"
+#include "DataSet.h"
+#include "IFrameIterator.h"
+#include "Octree.h"
+#include "ProgressHandler.h"
 
 namespace nsx {
 

@@ -35,35 +35,29 @@
  *
  */
 
-#ifndef NSXLIB_DETECTOREVENT_H
-#define NSXLIB_DETECTOREVENT_H
+#pragma once
 
 #include <vector>
 
-#include <Eigen/Core>
+#include <Eigen/Dense>
 
-#include "../instrument/InstrumentTypes.h"
+#include "CrystalTypes.h"
+#include "GeometryTypes.h"
+#include "InstrumentTypes.h"
+#include "DataTypes.h"
 
 namespace nsx {
-
-// Forward declaration of detector class
-class Detector;
 
 //! Class to register an event on a detector, recording the instrument state
 class DetectorEvent {
 public:
-    //! Default constructor (needed by Swig)
-    DetectorEvent();
-    // Constructor
-    DetectorEvent(const Detector* detector, double x, double y, double t, DetectorState values);
-    //! Copy constructor
-    DetectorEvent(const DetectorEvent& other);
-    //! Move constructor
-    DetectorEvent(DetectorEvent&& other);
-    //! Assignment operator
-    DetectorEvent& operator=(const DetectorEvent& other);
-    //! Destructor
-    ~DetectorEvent();
+    #if defined(SWIG) || defined(SWIGPYTHON)
+    DetectorEvent() = default;
+    #endif
+    //! Construct a detector event
+    DetectorEvent(sptrDataSet data, double px, double py, double frame);
+
+    DetectorEvent(sptrPeak3D peak);
 
     /**
      *  @brief Get 2\f$ \theta \f$
@@ -71,22 +65,10 @@ public:
      *  @param py vertical position of the scattering event in pixels units
      *  @param si Incident wavenumber
      */
-    double get2Theta(const Eigen::Vector3d& si = Eigen::Vector3d(0,1,0)) const;
+    double get2Theta(const ReciprocalVector& si) const;
 
-    /**
-     * Get the scattered wavenumber for an event on this detector
-     */
-    Eigen::Vector3d getKf(double wave,const Eigen::Vector3d& from = Eigen::Vector3d::Zero()) const;
-
-    /**
-     *  @brief Get the transferred wavenumber for an event on a detector
-     *  @param px horizontal position of the scattering event in pixels unit
-     *  @param py vertical position of the scattering event in pixels units
-     *  @param si incident wavenumber si=\f$ \frac{k_i}{2\pi} \f$
-     *  @param from Optional scattering point position
-     *  @return Transferred wavenumber s=\f$ \frac{k_f-k_i}{2\pi} \f$
-     */
-     Eigen::Vector3d getQ(double wave,const Eigen::Vector3d& from = Eigen::Vector3d::Zero()) const;
+    //! Return outgoing momentum (in lab coordinates) of the outgoing neutron.
+    ReciprocalVector Kf() const;
 
      /**
       *  @brief Get the scattering angles for an event on the detector
@@ -95,30 +77,18 @@ public:
       *  @param gamma reference to angle in the yx-plane (gamma=0 along y)
       *  @param nu reference to elevation angle
       */
-     void getGammaNu(double& gamma, double& nu,const Eigen::Vector3d& from=Eigen::Vector3d::Zero()) const;
+    void getGammaNu(double& gamma, double& nu) const;
 
-     /**
-      *  @brief Get the position of the scattering event.
-      *  @param px horizontal position of the scattering event in pixels unit
-      *  @param py vertical position of the scattering event in pixels units
-      *  @return spatial position of this event
-      */
-     Eigen::Vector3d getPixelPosition() const;
+    //! Return real (lab) space position of the detector event p = (x, y, frame)
+    DirectVector getPixelPosition() const;
 
-     //! Return the position on the detector (x, y, frame)
-     Eigen::Vector3d detectorPosition() const;
+    Eigen::Vector3d coordinates() const;
+
+    double getLorentzFactor() const;
 
 private:
-    //! Default constructor
-    // DetectorEvent();
-    // friend class Detector;
-    const Detector* _detector;
-    //! Position of the event on the detector
-    double _x, _y, _t;
-    //! Setup of the detector Gonio
-    std::vector<double> _values;
+    sptrDataSet _data;
+    double _px, _py, _frame;
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_DETECTOREVENT_H

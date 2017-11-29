@@ -26,11 +26,11 @@
  *
  */
 
-#ifndef NSXLIB_NIGGLICHARACTER_H
-#define NSXLIB_NIGGLICHARACTER_H
+#pragma once
+
+#include <string>
 
 #include <Eigen/Dense>
-#include <string>
 
 namespace nsx {
     
@@ -56,5 +56,3 @@ struct NiggliCharacter {
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_NIGGLICHARACTER_H

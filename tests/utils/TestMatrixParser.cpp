@@ -2,9 +2,9 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/utils/Enums.h>
-#include <nsxlib/utils/MatrixParser.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/Enums.h>
+#include <nsxlib/MatrixParser.h>
+#include <nsxlib/NSXTest.h>
 
 int main()
 {

@@ -1,7 +1,7 @@
-#include "GruberReduction.h"
-
 #include <cmath>
 #include <stdexcept>
+
+#include "GruberReduction.h"
 
 namespace nsx {
 

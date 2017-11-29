@@ -1,7 +1,7 @@
 #ifndef NSXQT_GLRECIPROCALLATTICE_H
 #define NSXQT_GLRECIPROCALLATTICE_H
 
-#include <nsxlib/crystal/CrystalTypes.h>
+#include <nsxlib/CrystalTypes.h>
 
 #include "GLActor.h"
 

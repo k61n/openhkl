@@ -4,20 +4,21 @@
 
 #include <Eigen/Dense>
 
-#include "../crystal/Peak3D.h"
-#include "../crystal/UBMinimizer.h"
-#include "../crystal/UBSolution.h"
-#include "../instrument/Component.h"
-#include "../instrument/ComponentState.h"
-#include "../instrument/Detector.h"
-#include "../instrument/Gonio.h"
-#include "../instrument/Sample.h"
-#include "../instrument/Source.h"
-#include "../instrument/TransAxis.h"
-#include "../instrument/RotAxis.h"
-#include "../mathematics/MatrixOperations.h"
-#include "../mathematics/Minimizer.h"
-#include "../utils/Units.h"
+#include "Component.h"
+#include "ComponentState.h"
+#include "Detector.h"
+#include "Gonio.h"
+#include "Peak3D.h"
+#include "Sample.h"
+#include "Source.h"
+#include "TransAxis.h"
+#include "RotAxis.h"
+#include "MatrixOperations.h"
+#include "Minimizer.h"
+#include "ReciprocalVector.h"
+#include "UBMinimizer.h"
+#include "UBSolution.h"
+#include "Units.h"
 
 namespace nsx {
 
@@ -45,7 +46,11 @@ int UBMinimizer::residuals(Eigen::VectorXd &fvec)
 
     //#pragma omp parallel for
     for (unsigned int i = 0; i < npeaks; ++i)	{
-        const Eigen::RowVector3d q0 = _peaks[i].first.getQ();
+        auto&& peak = _peaks[i].first;
+        auto cell = peak.getActiveUnitCell();
+        auto q = peak.getQ();
+
+        const Eigen::RowVector3d q0 = static_cast<const Eigen::RowVector3d&>(q);
         const Eigen::RowVector3d hkl = _peaks[i].second;
 
         const Eigen::RowVector3d q1 = hkl * UB;

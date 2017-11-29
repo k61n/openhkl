@@ -29,16 +29,13 @@
  *
  */
 
-#ifndef NSXLIB_IMASK_H
-#define NSXLIB_IMASK_H
+#pragma once
 
 #include <cmath>
 
 #include <Eigen/Dense>
-#include <Eigen/Geometry>
 #include <Eigen/Eigenvalues>
-
-
+#include <Eigen/Geometry>
 
 namespace nsx {
 
@@ -52,5 +49,3 @@ public:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_IMASK_H

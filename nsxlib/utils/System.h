@@ -25,8 +25,7 @@
  *
  */
 
-#ifndef NSXLIB_SYSTEM_H
-#define NSXLIB_SYSTEM_H
+#pragma once
 
 // Define necessary symbols for exporting symbols in dll table.
 #ifdef _WIN32
@@ -38,5 +37,3 @@
 #else
 #    define DLLExport
 #endif
-
-#endif // NSXLIB_SYSTEM_H

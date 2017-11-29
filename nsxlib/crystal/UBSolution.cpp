@@ -4,20 +4,20 @@
 
 #include <Eigen/Dense>
 
-#include "../crystal/Peak3D.h"
-#include "../crystal/UBSolution.h"
-#include "../crystal/UnitCell.h"
-#include "../instrument/Component.h"
-#include "../instrument/ComponentState.h"
-#include "../instrument/Detector.h"
-#include "../instrument/Gonio.h"
-#include "../instrument/Sample.h"
-#include "../instrument/Source.h"
-#include "../instrument/TransAxis.h"
-#include "../instrument/RotAxis.h"
-#include "../mathematics/MatrixOperations.h"
-#include "../mathematics/Minimizer.h"
-#include "../utils/Units.h"
+#include "Component.h"
+#include "ComponentState.h"
+#include "Detector.h"
+#include "Gonio.h"
+#include "MatrixOperations.h"
+#include "Minimizer.h"
+#include "Peak3D.h"
+#include "Sample.h"
+#include "Source.h"
+#include "TransAxis.h"
+#include "RotAxis.h"
+#include "UBSolution.h"
+#include "UnitCell.h"
+#include "Units.h"
 
 namespace nsx {
 
@@ -39,16 +39,16 @@ UBSolution::UBSolution(sptrSource source, sptrSample sample, sptrDetector detect
     _sigmaDetector.resize(_nDetectorAxes);
 
     for (int i = 0; i < _nSampleAxes; ++i) {
-        _sampleOffset[i] = _sample->getGonio()->getAxis(i)->getOffset();
+        _sampleOffset[i] = 0.0;
         _sigmaSample[i] = 0.0;
     }
     
     for (int i = 0; i < _nDetectorAxes; ++i) {
-        _detectorOffset[i] = _detector->getGonio()->getAxis(i)->getOffset();
+        _detectorOffset[i] = 0.0;
         _sigmaDetector[i] = 0.0;
     }
     
-    _sourceOffset = _source ? _source->getSelectedMonochromator().getOffset() : 0.0;
+    _sourceOffset = 0.0;
     _sigmaSource = 0.0;
 
     _uOffsets.setZero();
@@ -96,14 +96,18 @@ void UBSolution::apply()
 {
     if (_source) {
         auto& mono = _source->getSelectedMonochromator();
-        mono.setOffset(_sourceOffset);            
+        //mono.setOffset(_sourceOffset);         
+        // todo   
+        #pragma message "WARNING: this is not implemented"
     }
 
     if (_sample) {
         if (auto sgonio = _sample->getGonio()) {
             for (unsigned int i = 0; i < sgonio->getNAxes(); ++i) {
                 auto ax = sgonio->getAxis(i);
-                ax->setOffset(_sampleOffset[i]);
+                //ax->setOffset(_sampleOffset[i]);
+                // todo
+                #pragma message "WARNING: this is not implemented"
             }
         }
     }
@@ -112,7 +116,9 @@ void UBSolution::apply()
         if (auto dgonio = _detector->getGonio()) {
             for (unsigned int i=0;i<dgonio->getNAxes();++i) {
                 auto ax = dgonio->getAxis(i);
-                ax->setOffset(_detectorOffset[i]);
+                // ax->setOffset(_detectorOffset[i]);
+                // todo
+                #pragma message "WARNING: this is not implemented"
             }
         }
     }

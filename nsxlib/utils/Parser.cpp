@@ -1,4 +1,5 @@
 #include <boost/spirit/include/qi.hpp>
+
 #include "Parser.h"
 
 namespace nsx {

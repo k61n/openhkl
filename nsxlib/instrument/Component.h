@@ -31,12 +31,12 @@
 #include <map>
 #include <string>
 
-#include "yaml-cpp/yaml.h"
+#include <yaml-cpp/yaml.h>
 
 #include <Eigen/Dense>
 
-#include "../instrument/ComponentState.h"
-#include "../instrument/InstrumentTypes.h"
+#include "ComponentState.h"
+#include "InstrumentTypes.h"
 
 namespace nsx {
 
@@ -68,7 +68,7 @@ public:
     void setName(const std::string& name);
 
      //! Get the absolute position of the component for a set of goniometer values
-    Eigen::Vector3d getPosition(const std::vector<double>& goniosetup) const;
+    Eigen::Vector3d getPosition(const ComponentState& goniosetup) const;
     //! Get the absolute position at rest (unmodified by gonio)
     const Eigen::Vector3d& getRestPosition() const;
     //! Set the rest position

@@ -6,7 +6,7 @@
 
 #include <QString>
 
-#include <nsxlib/instrument/InstrumentTypes.h>
+#include <nsxlib/InstrumentTypes.h>
 
 #include "InspectableTreeItem.h"
 

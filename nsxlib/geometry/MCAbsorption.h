@@ -26,14 +26,14 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef NSXLIB_MCABSORPTION_H
-#define NSXLIB_MCABSORPTION_H
+
+#pragma once
 
 #include <functional>
 #include <random>
 #include <vector>
 
-#include "../geometry/GeometryTypes.h"
+#include "GeometryTypes.h"
 
 namespace nsx {
 
@@ -57,5 +57,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_MCABSORPTION_H

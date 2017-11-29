@@ -10,20 +10,21 @@
 #include <random>
 #include <vector>
 
-#include "../crystal/Mosaic.h"
-#include "../crystal/UnitCell.h"
-#include "../data/DataSet.h"
-#include "../data/MetaData.h"
-#include "../geometry/BlobFinder.h"
-#include "../geometry/Blob3D.h"
-#include "../geometry/GeometryTypes.h"
-#include "../geometry/Triangle.h"
-#include "../instrument/Detector.h"
-#include "../instrument/Diffractometer.h"
-#include "../instrument/Gonio.h"
-#include "../instrument/Sample.h"
-#include "../instrument/Source.h"
-#include "../utils/Units.h"
+#include "Blob3D.h"
+#include "BlobFinder.h"
+#include "DataSet.h"
+#include "Detector.h"
+#include "Diffractometer.h"
+#include "GeometryTypes.h"
+#include "Gonio.h"
+#include "InstrumentState.h"
+#include "MetaData.h"
+#include "Mosaic.h"
+#include "Sample.h"
+#include "Source.h"
+#include "Triangle.h"
+#include "UnitCell.h"
+#include "Units.h"
 
 namespace nsx {
 
@@ -180,14 +181,13 @@ bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, do
         Blob3D blob;
 
         std::vector<int> countsPerFrame(d->getNFrames(),0);
-        for (unsigned int z=0; z<d->getNFrames(); ++z)
-        {
-            ComponentState sampleState=d->getSampleState(z);
-
-            ComponentState detectorState=d->getDetectorState(z);
+        for (unsigned int z=0; z<d->getNFrames(); ++z) {
+            InstrumentState state = d->getInterpolatedState(z);
+            ComponentState sampleState = state.sample;
+            ComponentState detectorState = state.detector;
 
             //Eigen::Matrix3d omchiphi = sampleState.getParent()->getGonio()->getHomMatrix(sampleState.getValues()).rotation();
-            Eigen::Matrix3d omchiphi = d->getDiffractometer()->getSample()->getGonio()->getHomMatrix(sampleState.getValues()).rotation();
+            Eigen::Matrix3d omchiphi = d->getDiffractometer()->getSample()->getGonio()->getHomMatrix(sampleState).rotation();
 
             Eigen::Vector3d qvect = omchiphi*zvect;
 
@@ -306,7 +306,7 @@ bool Mosaic::run(std::vector<std::shared_ptr<DataSet>> datas, unsigned int n, do
 
                 double px,py,time;
 
-                bool test=_diffractometer->getDetector()->receiveKf(px,py,kf,to,time,detectorState.getValues());
+                bool test=_diffractometer->getDetector()->receiveKf(px,py,kf,to,time,detectorState);
                 if (test)
                 {
                     int lbin=static_cast<int>((ll-_l+3.0*sigmal)*nlambdas/sigmal/6.0);

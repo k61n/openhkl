@@ -1,16 +1,15 @@
-#include "QtStreamWrapper.h"
-
 #include <sstream>
 
 #include <QDebug>
 #include <QString>
 #include <QTextEdit>
 
-#include <nsxlib/logger/AggregateStreamWrapper.h>
-#include <nsxlib/logger/Logger.h>
-#include <nsxlib/logger/LogFileStreamWrapper.h>
+#include <nsxlib/AggregateStreamWrapper.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/LogFileStreamWrapper.h>
 
 #include "NoteBook.h"
+#include "QtStreamWrapper.h"
 
 QtStreamWrapper::QtStreamWrapper(NoteBook* notebook, std::function<std::string()> prefix, std::function<std::string()> suffix)
 : nsx::IStreamWrapper(prefix, suffix)

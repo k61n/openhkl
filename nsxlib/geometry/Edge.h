@@ -27,12 +27,11 @@
  *
  */
 
-#ifndef NSXLIB_EDGE_H
-#define NSXLIB_EDGE_H
+#pragma once
 
 #include <array>
 
-#include "../geometry/GeometryTypes.h"
+#include "GeometryTypes.h"
 
 namespace nsx {
 
@@ -72,5 +71,3 @@ public:
 std::ostream& operator<<(std::ostream& os, const Edge& edge);
 
 } // end namespace nsx
-
-#endif // NSXLIB_EDGE_H

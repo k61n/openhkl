@@ -12,7 +12,7 @@
 
 #include <QDialog>
 
-#include <nsxlib/data/DataTypes.h>
+#include <nsxlib/DataTypes.h>
 
 #include "ColorMap.h"
 

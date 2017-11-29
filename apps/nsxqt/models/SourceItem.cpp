@@ -1,11 +1,11 @@
 #include <QIcon>
 
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/instrument/Source.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/Experiment.h>
+#include <nsxlib/Source.h>
 
-#include "models/SourceItem.h"
-#include "tree/SourcePropertyWidget.h"
+#include "SourceItem.h"
+#include "SourcePropertyWidget.h"
 
 SourceItem::SourceItem(nsx::sptrExperiment experiment) : InspectableTreeItem(experiment)
 {

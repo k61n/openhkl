@@ -1,7 +1,7 @@
 #ifndef NSXQT_SAMPLESHAPEITEM_H
 #define NSXQT_SAMPLESHAPEITEM_H
 
-#include <nsxlib/instrument/InstrumentTypes.h>
+#include <nsxlib/InstrumentTypes.h>
 
 #include "InspectableTreeItem.h"
 

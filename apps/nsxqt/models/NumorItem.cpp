@@ -2,13 +2,13 @@
 
 #include <QJsonArray>
 
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/geometry/AABB.h>
-#include <nsxlib/geometry/BoxMask.h>
-#include <nsxlib/instrument/Experiment.h>
+#include <nsxlib/AABB.h>
+#include <nsxlib/BoxMask.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Experiment.h>
 
-#include "models/NumorItem.h"
-#include "tree/NumorPropertyWidget.h"
+#include "NumorItem.h"
+#include "NumorPropertyWidget.h"
 
 NumorItem::NumorItem(nsx::sptrExperiment experiment,nsx::sptrDataSet data) :
     InspectableTreeItem(experiment),

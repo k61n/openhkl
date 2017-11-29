@@ -1,9 +1,9 @@
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
-#include <nsxlib/instrument/Axis.h>
-#include <nsxlib/utils/NSXTest.h>
-#include <nsxlib/utils/Units.h>
+#include <nsxlib/Axis.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/Units.h>
 
 class TestAxis: public nsx::Axis
 {
@@ -43,11 +43,6 @@ int main()
     v << 0,0,1;
     axis.setAxis(v);
     NSX_CHECK_EQUAL(v,axis.getAxis());
-
-    NSX_CHECK_EQUAL(axis.getOffset(),0.0);
-
-    axis.setOffset(2.0);
-    NSX_CHECK_EQUAL(axis.getOffset(),2.0);
 
     return 0;
 }

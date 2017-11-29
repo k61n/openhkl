@@ -4,9 +4,9 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneHoverEvent>
 
-#include <nsxlib/data/DataSet.h>
+#include <nsxlib/DataSet.h>
 
-#include "items/CutterGraphicsItem.h"
+#include "CutterGraphicsItem.h"
 
 CutterGraphicsItem::CutterGraphicsItem(nsx::sptrDataSet data)
 : PlottableGraphicsItem(nullptr,true,true),

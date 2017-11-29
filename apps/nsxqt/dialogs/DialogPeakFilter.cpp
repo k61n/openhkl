@@ -4,20 +4,18 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/PeakFilter.h>
-#include <nsxlib/logger/Logger.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/PeakFilter.h>
 
 #include "ui_PeakFilterDialog.h"
 #include "DialogPeakFilter.h"
 
-
-
-DialogPeakFilter::DialogPeakFilter(const nsx::DataList& data, QWidget* parent):
+DialogPeakFilter::DialogPeakFilter(const nsx::PeakSet& peaks, QWidget* parent):
     QDialog(parent),
     _ui(new Ui::PeakFilterDialog),
-    _data(data)
+    _peaks(peaks)
 {
     _ui->setupUi(this);
 }
@@ -48,11 +46,22 @@ void DialogPeakFilter::accept()
     filter._pvalue = _ui->spinBoxPValue->value();
     filter._mergedP = _ui->spinBoxMergedP->value();
 
-    for (auto dataset: _data) {
-        nsx::info() << "Filtering peaks in dataset " << dataset->getBasename();
-        int nremoved = filter.apply(dataset);
-        nsx::info() << "Removed " << nremoved << " peaks";
+    nsx::info() << "Filtering peaks...";
+    auto&& good_peaks = filter.apply(_peaks);
+    nsx::info() << good_peaks.size() << " peaks remain";
+
+    _badPeaks.clear();
+
+    for (auto peak: _peaks) {
+        if (good_peaks.find(peak) == good_peaks.end()) {
+            _badPeaks.insert(peak);
+        }
     }
 
     QDialog::accept();
+}
+
+const nsx::PeakSet& DialogPeakFilter::badPeaks() const
+{
+    return _badPeaks;
 }

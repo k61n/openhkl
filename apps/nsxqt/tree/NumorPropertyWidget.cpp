@@ -1,10 +1,10 @@
 #include <QWidget>
 
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/data/MetaData.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/MetaData.h>
 
-#include "models/NumorItem.h"
-#include "tree/NumorPropertyWidget.h"
+#include "NumorItem.h"
+#include "NumorPropertyWidget.h"
 
 #include "ui_NumorPropertyWidget.h"
 
@@ -40,15 +40,15 @@ NumorPropertyWidget::NumorPropertyWidget(NumorItem* caller,QWidget *parent) :
 
         if (element.second.is<int>())
         {
-            col1->setData(Qt::EditRole,element.second.cast<int>());
+            col1->setData(Qt::EditRole,element.second.as<int>());
         }
         else if (element.second.is<double>())
         {
-            col1->setData(Qt::EditRole,element.second.cast<double>());
+            col1->setData(Qt::EditRole,element.second.as<double>());
         }
         else if (element.second.is<std::string>())
         {
-            col1->setData(Qt::EditRole,QString(QString::fromStdString(element.second.cast<std::string>())));
+            col1->setData(Qt::EditRole,QString(QString::fromStdString(element.second.as<std::string>())));
         }
         else
         {

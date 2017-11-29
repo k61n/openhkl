@@ -1,8 +1,8 @@
 #include <stdexcept>
 
-#include <nsxlib/geometry/ConvexHull.h>
-#include <nsxlib/geometry/Face.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/ConvexHull.h>
+#include <nsxlib/Face.h>
+#include <nsxlib/NSXTest.h>
 
 const double tolerance=1e-9;
 

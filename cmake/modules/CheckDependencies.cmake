@@ -2,7 +2,7 @@
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME ON)
-find_package(Boost 1.54.0 COMPONENTS date_time system filesystem REQUIRED)
+find_package(Boost 1.54.0 REQUIRED)
 if(Boost_FOUND)
     include_directories(SYSTEM "${Boost_INCLUDE_DIRS}")
     message(STATUS "Found boost: " ${Boost_INCLUDE_DIRS})

@@ -1,13 +1,13 @@
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/logger/Logger.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/Experiment.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/Sample.h>
+#include <nsxlib/UnitCell.h>
 
-#include "dialogs/DialogUnitCellParameters.h"
-#include "dialogs/DialogTransformationMatrix.h"
-#include "models/UnitCellItem.h"
-#include "tree/UnitCellPropertyWidget.h"
+#include "DialogTransformationMatrix.h"
+#include "DialogUnitCellParameters.h"
+#include "UnitCellItem.h"
+#include "UnitCellPropertyWidget.h"
 
 UnitCellItem::UnitCellItem(nsx::sptrExperiment experiment, nsx::sptrUnitCell cell):
     InspectableTreeItem(experiment),

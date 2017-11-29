@@ -1,5 +1,5 @@
-#include <nsxlib/mathematics/Gaussian.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/Gaussian.h>
+#include <nsxlib/NSXTest.h>
 
 const double eps = 1e-10;
 

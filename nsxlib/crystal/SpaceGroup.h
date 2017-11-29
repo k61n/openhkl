@@ -27,8 +27,7 @@
  *
  */
 
-#ifndef NSXLIB_SPACEGROUP_H
-#define NSXLIB_SPACEGROUP_H
+#pragma once
 
 #include <array>
 #include <ostream>
@@ -37,8 +36,8 @@
 
 #include <Eigen/Dense>
 
-#include "../crystal/CrystalTypes.h"
-#include "../crystal/SymOp.h"
+#include "CrystalTypes.h"
+#include "SymOp.h"
 
 namespace nsx {
 
@@ -76,16 +75,15 @@ public:
     //! Return the Bravais type symbol
     std::string bravaisTypeSymbol() const;
     //! Return the ID of the space group
-    int id() const;
-    //! Find equivalences in a list of peaks
-    std::vector<PeakList>
-    findEquivalences(const PeakList& peak_list, bool friedel=true) const;
+    int id() const;    
     //! Return whether two sets of indices are related by a symmetry
     bool isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2, bool friedel=false) const;
     //! Return whether two sets of indices are related by a symmetry
     bool isEquivalent(const Eigen::Vector3d& a, const Eigen::Vector3d& b, bool friedel=false) const;
     //! Return whether two sets of indices are related by a symmetry up to Friedel reflection
     bool isFriedelEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const;
+
+    std::vector<PeakList> findEquivalences(const PeakList &peak_list, bool friedel) const;
 
 private:
 
@@ -101,5 +99,3 @@ private:
 std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg);
 
 } // end namespace nsx
-
-#endif // NSXLIB_SPACEGROUP_H

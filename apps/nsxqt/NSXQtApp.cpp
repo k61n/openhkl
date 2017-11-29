@@ -1,4 +1,4 @@
-#include <nsxlib/logger/Logger.h>
+#include <nsxlib/Logger.h>
 
 #include "NSXQtApp.h"
 

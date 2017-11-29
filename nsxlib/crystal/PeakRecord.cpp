@@ -33,11 +33,13 @@
  *
  */
 
+#include "MergedPeak.h"
 #include "PeakRecord.h"
 #include "Peak3D.h"
-#include "MergedPeak.h"
 
 namespace nsx {
+
+#if 0
 
 PeakRecord::PeakRecord(const Peak3D &other)
 {
@@ -106,4 +108,5 @@ bool PeakRecord::operator<(const PeakRecord &other) const
     return iobs < other.iobs;
 }
 
+#endif
 } // end namespace nsx

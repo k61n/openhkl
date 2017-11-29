@@ -5,24 +5,25 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/crystal/AutoIndexer.h>
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/PeakPredictor.h>
-#include <nsxlib/crystal/UBSolution.h>
-#include <nsxlib/crystal/UBMinimizer.h>
-#include <nsxlib/data/DataReaderFactory.h>
-#include <nsxlib/data/PeakFinder.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/imaging/ConvolutionKernel.h>
-#include <nsxlib/imaging/KernelFactory.h>
-#include <nsxlib/instrument/DetectorEvent.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/instrument/Sample.h>
-#include <nsxlib/mathematics/ErfInv.h>
-#include <nsxlib/utils/NSXTest.h>
-#include <nsxlib/utils/Units.h>
-#include <nsxlib/utils/ProgressHandler.h>
+#include <nsxlib/AutoIndexer.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/PeakPredictor.h>
+#include <nsxlib/UBSolution.h>
+#include <nsxlib/UBMinimizer.h>
+#include <nsxlib/DataReaderFactory.h>
+#include <nsxlib/PeakFinder.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/ConvolutionKernel.h>
+#include <nsxlib/KernelFactory.h>
+#include <nsxlib/DetectorEvent.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/Experiment.h>
+#include <nsxlib/Sample.h>
+#include <nsxlib/ErfInv.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/Units.h>
+#include <nsxlib/ProgressHandler.h>
+#include <nsxlib/ReciprocalVector.h>
 
 int main()
 {
@@ -69,13 +70,15 @@ int main()
 
     peakFinder->setHandler(progressHandler);
 
+    auto found_peaks = peakFinder->find(numors);
+
     try {
-        NSX_CHECK_ASSERT(peakFinder->find(numors) == true);
+        NSX_CHECK_ASSERT(found_peaks.size() >= 0);
     } catch(...) {
         std::cout << "ERROR: exception in PeakFinder::find()" << std::endl;
     }
 
-    NSX_CHECK_ASSERT(dataf->getPeaks().size() >= 800);
+    NSX_CHECK_ASSERT(found_peaks.size() >= 800);
 
     // at this stage we have the peaks, now we index
     nsx::IndexerParameters params;
@@ -85,12 +88,12 @@ int main()
     {
         unsigned int indexed_peaks = 0;
 
-        for (auto&& peak: dataf->getPeaks()) {
+        for (auto&& peak: found_peaks) {
             if (!peak->isSelected() || peak->isMasked()) {
                 continue;
             }
-            ++indexed_peaks;
             indexer.addPeak(peak);
+            ++indexed_peaks;
         }
         return indexed_peaks;
     };
@@ -98,7 +101,7 @@ int main()
     unsigned int indexed_peaks = numIndexedPeaks();
 
     NSX_CHECK_ASSERT(indexed_peaks > 650);
-    NSX_CHECK_ASSERT(indexer.autoIndex(params));
+    NSX_CHECK_NO_THROW(indexer.autoIndex(params));
 
     auto soln = indexer.getSolutions().front();
 
@@ -107,7 +110,7 @@ int main()
 
     // set unit cell
     auto cell = soln.first;
-    for (auto&& peak: dataf->getPeaks()) {
+    for (auto&& peak: found_peaks) {
         peak->addUnitCell(cell, true);
     }
 
@@ -116,20 +119,21 @@ int main()
 
     // reintegrate peaks
     const double scale = nsx::getScale(0.997);
-    dataf->integratePeaks(dataf->getPeaks(), scale, 2.0*scale, true);
+    dataf->integratePeaks(found_peaks, scale, 2.0*scale, true);
 
     indexed_peaks = numIndexedPeaks();
     NSX_CHECK_ASSERT(indexed_peaks > 600);
 
     // get that DataSet::getEvents works properly
-    for (auto peak: dataf->getPeaks()) {
+    for (auto peak: found_peaks) {
         if (!peak->isSelected() || peak->isMasked()) {
             continue;
         }
 
         std::vector<Eigen::RowVector3d> q;
-        q.push_back(peak->getQ());
-        auto events = dataf->getEvents(q);
+        q.push_back(static_cast<const Eigen::RowVector3d&>(peak->getQ()));
+        nsx::PeakPredictor predictor(dataf);
+        auto events = predictor.getEvents(q);
 
         NSX_CHECK_ASSERT(events.size() >= 1);
 
@@ -144,15 +148,15 @@ int main()
 
         // q could cross Ewald sphere multiple times, so find best match
         for (auto&& event: events) {
-            Eigen::Vector3d pnew = event.detectorPosition();
+            Eigen::Vector3d pnew = event.coordinates();
             if ((pnew-p0).squaredNorm() < diff) {
                 diff = (pnew-p0).squaredNorm();
                 p1 = pnew;
             }
         }
         
-        Eigen::RowVector3d q0 = dataf->getQ(p0);
-        Eigen::RowVector3d q1 = dataf->getQ(p1);
+        Eigen::RowVector3d q0 = static_cast<const Eigen::RowVector3d&>(nsx::Peak3D(dataf, nsx::Ellipsoid(p0, 1.0)).getQ());
+        Eigen::RowVector3d q1 = static_cast<const Eigen::RowVector3d&>(nsx::Peak3D(dataf, nsx::Ellipsoid(p1, 1.0)).getQ());
 
         NSX_CHECK_CLOSE(p0(0), p1(0), 3.0);
         NSX_CHECK_CLOSE(p0(1), p1(1), 3.0);
@@ -164,7 +168,7 @@ int main()
     }
 
 
-    nsx::PeakPredictor predictor;
+    nsx::PeakPredictor predictor(dataf);
     predictor._dmin = 2.1;
     predictor._dmax = 50.0;
     predictor._searchRadius = 200.0;
@@ -175,7 +179,7 @@ int main()
     predictor._minimumNeighbors = 10;
 
     predictor._handler = std::shared_ptr<nsx::ProgressHandler>(new nsx::ProgressHandler());
-    auto predicted_peaks = predictor.predictPeaks(dataf, false);
+    auto predicted_peaks = predictor.predictPeaks(false, found_peaks);
 
     std::cout << "predicted_peaks: " << predicted_peaks.size() << std::endl;
     NSX_CHECK_ASSERT(predicted_peaks.size() > 1600);

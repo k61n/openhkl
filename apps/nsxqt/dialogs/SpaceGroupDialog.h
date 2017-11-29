@@ -8,13 +8,13 @@
 #include <string>
 #include <tuple>
 
-#include <Eigen/Core>
+#include <Eigen/Dense>
 
 #include <QDialog>
 
-#include <nsxlib/crystal/SpaceGroup.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/data/DataTypes.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/DataTypes.h>
+#include <nsxlib/SpaceGroup.h>
 
 class QModelIndex;
 class QWidget;
@@ -29,7 +29,7 @@ class SpaceGroupDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SpaceGroupDialog(nsx::DataList numors, QWidget *parent = 0);
+    explicit SpaceGroupDialog(const nsx::PeakSet& peaks, QWidget *parent = 0);
     ~SpaceGroupDialog();
 
     std::string getSelectedGroup();
@@ -42,8 +42,9 @@ private:
     void buildTable();
 
     Ui::SpaceGroupDialog *ui;
-    nsx::DataList _numors;
+    nsx::PeakSet _peaks;
     std::vector<std::tuple<std::string, double>> _groups;
+    std::set<nsx::sptrUnitCell> _cells;
     std::string _selectedGroup;
 };
 

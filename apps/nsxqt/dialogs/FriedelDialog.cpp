@@ -28,11 +28,11 @@
  *
  */
 
-#include "dialogs/FriedelDialog.h"
-#include "ui_FriedelDialog.h"
+#include <nsxlib/Logger.h>
+#include <nsxlib/Peak3D.h>
 
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/logger/Logger.h>
+#include "FriedelDialog.h"
+#include "ui_FriedelDialog.h"
 
 FriedelDialog::FriedelDialog(const std::vector<nsx::Peak3D*>& peaks, QWidget *parent) :
     QDialog(parent),
@@ -50,6 +50,8 @@ FriedelDialog::~FriedelDialog()
 
 void FriedelDialog::findFriedelPairs()
 {
+    #pragma message "todo: this is dead code"
+    #if 0
     _friedelPairs.clear();
 
     size_t size = _peaks.size();
@@ -68,6 +70,7 @@ void FriedelDialog::findFriedelPairs()
 
     double percent = 2.0 * _friedelPairs.size() * 100.0 / _peaks.size();
     nsx::info() << "Found " << _friedelPairs.size() << " Friedel pairs which accounts for " << percent << " percent of the peaks.";
+    #endif
 }
 
 void FriedelDialog::on_goodPairsButton_clicked()

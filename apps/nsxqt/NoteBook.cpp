@@ -1,8 +1,7 @@
 #include <QAction>
 #include <QMenu>
-#include <QPrinter>
 #include <QFileDialog>
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <QPrinter>
 
 #include "NoteBook.h"
 

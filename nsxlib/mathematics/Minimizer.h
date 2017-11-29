@@ -36,16 +36,17 @@
 #pragma once
 
 #include <functional>
+
 #include <Eigen/Dense>
 
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_vector.h>
 
-#include "../utils/FitParameters.h"
+#include "FitParameters.h"
 
 
 namespace nsx {
-class MinimizerGSL;
+struct MinimizerGSL;
 
 //! \class Minimizer
 //! \brief Class to wrap the GSL non-linear least squares minimization routines.
@@ -88,8 +89,6 @@ public:
     Eigen::MatrixXd jacobian();
     //! Set the weights of the residuals.
     void setWeights(const Eigen::VectorXd& wt);
-    //! Return the number of iterations of the fit.
-    int numIterations();
     //! Set the function which computes the least-squares residuals.
     template <typename Fun_>
     void set_f(Fun_ functor)
@@ -129,8 +128,6 @@ private:
     Eigen::MatrixXd _covariance;
     //! Number of values in the fit, i.e. size of residual vector.
     int _numValues;   
-    //! Number of iterations used to fit.
-    int _numIter;
     //! Relative tolerance of parameters.
     double _xtol;
     //! Relative tolerance of gradient.

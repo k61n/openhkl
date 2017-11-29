@@ -27,8 +27,7 @@
  *
  */
 
-#ifndef NSXLIB_CONVEXHULL_H
-#define NSXLIB_CONVEXHULL_H
+#pragma once
 
 #include <array>
 #include <cmath>
@@ -38,7 +37,7 @@
 
 #include <Eigen/Dense>
 
-#include "../geometry/GeometryTypes.h"
+#include "GeometryTypes.h"
 
 namespace nsx {
 
@@ -208,5 +207,3 @@ private:
 std::ostream& operator<<(std::ostream& os, const ConvexHull& chull);
 
 } // end namespace nsx
-
-#endif // NSXLIB_CONVEXHULL_H

@@ -40,21 +40,23 @@
 #include <QMouseEvent>
 #include <QStandardItemModel>
 
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/MergedPeak.h>
-#include <nsxlib/crystal/ResolutionShell.h>
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/data/MetaData.h>
-#include <nsxlib/logger/Logger.h>
-#include <nsxlib/utils/ProgressHandler.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/MergedPeak.h>
+#include <nsxlib/MetaData.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/ProgressHandler.h>
+#include <nsxlib/ReciprocalVector.h>
+#include <nsxlib/ResolutionShell.h>
+#include <nsxlib/UnitCell.h>
 
-#include "dialogs/DialogAutoIndexing.h"
-#include "dialogs/DialogRefineUnitCell.h"
-#include "dialogs/DialogTransformationMatrix.h"
-#include "dialogs/DialogUnitCellParameters.h"
-#include "dialogs/LogFileDialog.h"
-#include "models/CollectedPeaksDelegate.h"
-#include "models/CollectedPeaksModel.h"
+#include "CollectedPeaksDelegate.h"
+#include "CollectedPeaksModel.h"
+#include "DialogAutoIndexing.h"
+#include "DialogRefineUnitCell.h"
+#include "DialogTransformationMatrix.h"
+#include "DialogUnitCellParameters.h"
+#include "LogFileDialog.h"
 #include "PeakTableView.h"
 
 PeakTableView::PeakTableView(QWidget *parent)
@@ -163,7 +165,7 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
 
     if (indexList.size()) {
         QMenu* plotasmenu=menu->addMenu("Plot as");
-        nsx::MetaData* met=peaks[indexList[0].row()]->getData()->getMetadata();
+        nsx::MetaData* met=peaks[indexList[0].row()]->data()->getMetadata();
         const std::set<std::string>& keys=met->getAllKeys();
         for (const auto& key : keys) {
             try {
@@ -313,7 +315,7 @@ void PeakTableView::plotAs(const std::string& key)
 
     for (int i=0;i<nPoints;++i) {
         nsx::sptrPeak3D p=peaks[indexList[i].row()];
-        x[i]=p->getData()->getMetadata()->getKey<double>(key);
+        x[i]=p->data()->getMetadata()->getKey<double>(key);
         y[i]=p->getScaledIntensity().value();
         e[i]=p->getScaledIntensity().sigma();
     }
@@ -334,7 +336,7 @@ std::string PeakTableView::getPeaksRange() const
     std::set<std::string> temp;
 
     for (auto&& p : peaks) {
-        temp.insert(std::to_string(p->getData()->getMetadata()->getKey<int>("Numor")));
+        temp.insert(std::to_string(p->data()->getMetadata()->getKey<int>("Numor")));
     }
     std::string range(*(temp.begin()));
     std::string last=*(temp.rbegin());
@@ -397,7 +399,8 @@ void PeakTableView::showPeaksMatchingText(const QString& text)
     for (row=0;row<peaks.size();row++) {
         nsx::sptrPeak3D p=peaks[row];
         Eigen::RowVector3d hkl;
-        bool success = p->getMillerIndices(hkl,true);
+        auto cell = p->getActiveUnitCell();
+        bool success = cell->getMillerIndices(p->getQ(), hkl, true);
         setRowHidden(row,success);
     }
 }

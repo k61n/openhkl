@@ -6,10 +6,10 @@
 #include <QTimer>
 #include <QSplashScreen>
 
-#include <nsxlib/logger/AggregateStreamWrapper.h>
-#include <nsxlib/logger/Logger.h>
-#include <nsxlib/logger/StdStreamWrapper.h>
-#include <nsxlib/utils/Path.h>
+#include <nsxlib/AggregateStreamWrapper.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/StdStreamWrapper.h>
+#include <nsxlib/Path.h>
 
 #include "MainWindow.h"
 #include "NSXQtApp.h"

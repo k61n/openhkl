@@ -27,8 +27,7 @@
  *
  */
 
-#ifndef NSXLIB_ILLDATAREADER_H
-#define NSXLIB_ILLDATAREADER_H
+#pragma once
 
 #include <map>
 #include <sstream>
@@ -39,8 +38,8 @@
 
 #include <Eigen/Dense>
 
-#include "../data/IDataReader.h"
-#include "../instrument/InstrumentTypes.h"
+#include "IDataReader.h"
+#include "InstrumentTypes.h"
 
 namespace nsx {
 
@@ -97,5 +96,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_ILLDATAREADER_H

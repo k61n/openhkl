@@ -1,10 +1,10 @@
-#include <Eigen/Dense>
 #include <random>
-#include <iostream>
 
-#include <nsxlib/mathematics/Profile3d.h>
-#include <nsxlib/mathematics/Minimizer.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <Eigen/Dense>
+
+#include <nsxlib/Minimizer.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/Profile3d.h>
 
 const double eps = 1.0;
 
@@ -78,8 +78,6 @@ int main()
     nsx::Profile3d guess(x, y, z, I);
     
     D << guess._Dxx, guess._Dxy, guess._Dxz, guess._Dxy, guess._Dyy, guess._Dyz, guess._Dxz, guess._Dyz, guess._Dzz;
-
-    std::cout << "dcov/cov = " << (reference_cov-easy_cov).norm() / reference_cov.norm() << std::endl;
 
     // hard fit: using guessed parameters as input
     // check that it converges with few iterations

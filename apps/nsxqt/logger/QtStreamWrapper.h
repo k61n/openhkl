@@ -5,7 +5,7 @@
 
 #include <QObject>
 
-#include <nsxlib/logger/IStreamWrapper.h>
+#include <nsxlib/IStreamWrapper.h>
 
 class NoteBook;
 

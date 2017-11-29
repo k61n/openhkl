@@ -21,38 +21,39 @@
 #include <QString>
 #include <QVector>
 
-#include <nsxlib/crystal/Peak3D.h>
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/logger/Logger.h>
+#include <nsxlib/Experiment.h>
+#include <nsxlib/Logger.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/ReciprocalVector.h>
+#include <nsxlib/UnitCell.h>
 
-#include "absorption/AbsorptionDialog.h"
-#include "absorption/MCAbsorptionDialog.h"
-#include "dialogs/DialogAutoIndexing.h"
-#include "dialogs/DialogConvolve.h"
-#include "dialogs/DialogExperiment.h"
-#include "dialogs/DialogRawData.h"
-#include "dialogs/DialogTransformationMatrix.h"
-#include "dialogs/FriedelDialog.h"
-#include "dialogs/SpaceGroupDialog.h"
-#include "externals/qcustomplot.h"
+#include "AbsorptionDialog.h"
+#include "DataItem.h"
+#include "DetectorItem.h"
 #include "DetectorScene.h"
-#include "models/DataItem.h"
-#include "models/DetectorItem.h"
-#include "models/ExperimentItem.h"
-#include "models/InstrumentItem.h"
-#include "models/NumorItem.h"
-#include "models/PeakListItem.h"
-#include "models/SampleItem.h"
-#include "models/SessionModel.h"
-#include "models/SourceItem.h"
-#include "models/TreeItem.h"
-#include "models/UnitCellItem.h"
-#include "opengl/GLWidget.h"
-#include "opengl/GLSphere.h"
-#include "tree/ExperimentTree.h"
-#include "views/ProgressView.h"
-#include "views/PeakTableView.h"
+#include "DialogAutoIndexing.h"
+#include "DialogConvolve.h"
+#include "DialogExperiment.h"
+#include "DialogRawData.h"
+#include "DialogTransformationMatrix.h"
+#include "ExperimentItem.h"
+#include "ExperimentTree.h"
+#include "FriedelDialog.h"
+#include "GLSphere.h"
+#include "GLWidget.h"
+#include "InstrumentItem.h"
+#include "MCAbsorptionDialog.h"
+#include "NumorItem.h"
+#include "PeakListItem.h"
+#include "PeakTableView.h"
+#include "ProgressView.h"
+#include "QCustomPlot.h"
+#include "SampleItem.h"
+#include "SessionModel.h"
+#include "SourceItem.h"
+#include "SpaceGroupDialog.h"
+#include "TreeItem.h"
+#include "UnitCellItem.h"
 
 #include "ui_MainWindow.h"
 #include "ui_ScaleDialog.h"
@@ -125,7 +126,14 @@ void ExperimentTree::createNewExperiment()
 
     // Add the experiment
     try {
-        _session->addExperiment(dlg->getExperimentName().toStdString(),dlg->getInstrumentName().toStdString());
+        // Create an experiment
+        auto experimentName = dlg->getExperimentName().toStdString();
+        auto instrumentName = dlg->getInstrumentName().toStdString();
+        nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName,instrumentName));
+        // Create an experiment item
+        ExperimentItem* expt = new ExperimentItem(_session, expPtr);
+    
+        _session->appendRow(expt);
     }
     catch(const std::runtime_error& e) {
         nsx::error() << e.what();
@@ -222,7 +230,7 @@ void ExperimentTree::absorptionCorrection()
     auto pitem=dynamic_cast<PeakListItem*>(item);
     if (!pitem)
         return;
-    MCAbsorptionDialog* dialog = new MCAbsorptionDialog(pitem->getExperiment(), this);
+    MCAbsorptionDialog* dialog = new MCAbsorptionDialog(_session, pitem->getExperiment(), this);
     dialog->open();
 }
 
@@ -359,10 +367,10 @@ void ExperimentTree::showPeaksOpenGL()
     auto datav = _session->getSelectedNumors();
 
     for (auto idata : datav) {
-       auto peaks=idata->getPeaks();
+       auto peaks=_session->peaks(idata.get());
        for (auto peak: peaks) {
            GLSphere* sphere=new GLSphere("");
-           Eigen::Vector3d pos=peak->getQ();
+           Eigen::RowVector3d pos = static_cast<const Eigen::RowVector3d&>(peak->getQ());
            sphere->setPos(pos[0]*100,pos[1]*100,pos[2]*100);
            sphere->setColor(0,1,0);
            scene.addActor(sphere);
@@ -373,7 +381,7 @@ void ExperimentTree::showPeaksOpenGL()
 
 void ExperimentTree::findSpaceGroup()
 {
-    SpaceGroupDialog* dialog = new SpaceGroupDialog(_session->getSelectedNumors(), this);
+    SpaceGroupDialog* dialog = new SpaceGroupDialog(_session->peaks(nullptr), this);
     dialog->exec();
     // update the space group elsewhere
 }

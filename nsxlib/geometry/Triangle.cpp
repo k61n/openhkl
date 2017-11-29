@@ -1,6 +1,5 @@
 #include "Triangle.h"
 
-
 namespace nsx {
 
 Triangle::Triangle(const Eigen::Vector3d& a,const Eigen::Vector3d& b,const Eigen::Vector3d& c):_A(a),_B(b),_C(c)

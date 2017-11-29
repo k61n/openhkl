@@ -38,12 +38,10 @@
 // This make the kernel effective for peak-finding in images which have a non-homogeneous
 // background.
 
+#pragma once
 
-#ifndef NSXLIB_ANNULARKERNEL_H
-#define NSXLIB_ANNULARKERNEL_H
-
-#include "../imaging/ImagingTypes.h"
 #include "ConvolutionKernel.h"
+#include "ImagingTypes.h"
 
 namespace nsx {
 
@@ -69,5 +67,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_ANNULARKERNEL_H

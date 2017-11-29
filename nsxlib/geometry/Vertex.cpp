@@ -27,7 +27,7 @@
  *
  */
 
-#include "../geometry/Vertex.h"
+#include "Vertex.h"
 
 namespace nsx {
 

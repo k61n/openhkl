@@ -3,36 +3,35 @@
 #include <utility>
 #include <vector>
 
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/operations.hpp>
-
-#include "blosc_filter.h"
 #include "blosc.h"
 
 #include "H5Cpp.h"
 
-#include "../crystal/Peak3D.h"
-#include "../crystal/PeakIntegrator.h"
-#include "../crystal/SpaceGroup.h"
-#include "../crystal/UnitCell.h"
-#include "../data/BasicFrameIterator.h"
-#include "../data/DataSet.h"
-#include "../data/IDataReader.h"
-#include "../data/IFrameIterator.h"
-#include "../data/ThreadedFrameIterator.h"
-#include "../geometry/Ellipsoid.h"
-#include "../geometry/IntegrationRegion.h"
-#include "../geometry/AABB.h"
-#include "../instrument/Detector.h"
-#include "../instrument/Diffractometer.h"
-#include "../instrument/Gonio.h"
-#include "../instrument/Monochromator.h"
-#include "../instrument/Sample.h"
-#include "../instrument/Source.h"
-#include "../mathematics/ErfInv.h"
-#include "../mathematics/MathematicsTypes.h"
-#include "../utils/ProgressHandler.h"
-#include "../utils/Units.h"
+#include "AABB.h"
+#include "BasicFrameIterator.h"
+#include "BloscFilter.h"
+#include "DataSet.h"
+#include "Detector.h"
+#include "Diffractometer.h"
+#include "Ellipsoid.h"
+#include "ErfInv.h"
+#include "Gonio.h"
+#include "IDataReader.h"
+#include "IFrameIterator.h"
+#include "IntegrationRegion.h"
+#include "MathematicsTypes.h"
+#include "Monochromator.h"
+#include "Path.h"
+#include "Peak3D.h"
+#include "PeakIntegrator.h"
+#include "ProgressHandler.h"
+#include "ReciprocalVector.h"
+#include "Sample.h"
+#include "Source.h"
+#include "SpaceGroup.h"
+#include "ThreadedFrameIterator.h"
+#include "UnitCell.h"
+#include "Units.h"
 
 namespace nsx {
 
@@ -46,13 +45,12 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader, const sptrDiffractometer& 
     _metadata(uptrMetaData(new MetaData())),
     _data(),
     _states(),
-    _peaks(),
     _fileSize(0),
     _masks(),
     _background(0.0),
     _reader(reader)
 {
-    if ( !boost::filesystem::exists(_filename.c_str())) {
+    if (!fileExists(_filename)) {
         throw std::runtime_error("IData, file: " + _filename + " does not exist");
     }
 
@@ -89,16 +87,13 @@ void DataSet::setIteratorCallback(FrameIteratorCallback callback)
 
 DataSet::~DataSet()
 {
-    clearPeaks();
     blosc_destroy();
 }
 
 std::string DataSet::getBasename() const
 {
-    boost::filesystem::path pathname(_filename);
-    return pathname.filename().string();
+    return removeFileExtension(fileBasename(_filename));
 }
-
 
 int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z)
 {
@@ -154,22 +149,6 @@ std::size_t DataSet::getNRows() const
     return _nrows;
 }
 
-PeakSet& DataSet::getPeaks()
-{
-    return _peaks;
-}
-
-void DataSet::addPeak(const sptrPeak3D& peak)
-{
-    _peaks.insert(peak);
-    maskPeak(peak);
-}
-
-void DataSet::clearPeaks()
-{
-    _peaks.clear();
-}
-
 InstrumentState DataSet::getInterpolatedState(double frame) const
 {
     if (frame>(_states.size()-1) || frame<0) {
@@ -186,45 +165,14 @@ InstrumentState DataSet::getInterpolatedState(double frame) const
     return prevState.interpolate(nextState, t);
 }
 
-const ComponentState& DataSet::getDetectorState(size_t frame) const
-{
-    if (frame > (_states.size()-1)) {
-        throw std::runtime_error("Error when returning detector state: invalid frame value");
-    }
-    return _states[frame].detector;
-}
-
-const ComponentState& DataSet::getSampleState(size_t frame) const
-{
-    if (frame > (_states.size()-1)) {
-        throw std::runtime_error("Error when returning sample state: invalid frame value");
-    }
-    return _states[frame].sample;
-}
-
-const ComponentState& DataSet::getSourceState(size_t frame) const
-{
-    if (frame>(_states.size()-1)) {
-        throw std::runtime_error("Error when returning source state: invalid frame value");
-    }
-    return _states[frame].source;
-}
-
-
 const std::vector<InstrumentState>& DataSet::getInstrumentStates() const
 {
     return _states;
 }
 
-bool DataSet::removePeak(const sptrPeak3D& peak)
+std::vector<InstrumentState>& DataSet::getInstrumentStates()
 {
-    auto&& it=_peaks.find(peak);
-
-    if (it == _peaks.end()) {
-        return false;
-    }
-    _peaks.erase(it);
-    return true;
+    return _states;
 }
 
 bool DataSet::isOpened() const
@@ -297,7 +245,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
     RealMatrix vals(names.size(),_nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
-        const std::vector<double>& v = _states[i].detector.getValues();
+        auto&& v = _states[i].detector.values();
 
         for (unsigned int j = 0; j < names.size(); ++j) {
             vals(j,i) = v[j] / deg;
@@ -315,7 +263,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
     RealMatrix valsSamples(samplenames.size(), _nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
-        const std::vector<double>& v = _states[i].sample.getValues();
+        auto&& v = _states[i].sample.values();
 
         for (unsigned int j = 0; j < samplenames.size(); ++j) {
             valsSamples(j,i) = v[j]/deg;
@@ -333,10 +281,16 @@ void DataSet::saveHDF5(const std::string& filename) //const
     RealMatrix valsSources(sourcenames.size(),_nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
-        std::vector<double> v = _states[i].source.getValues();
+        auto v = _states[i].source.values();
 
-        while(v.size() < sourcenames.size()) {
-            v.emplace_back(0.0);
+        // pad with zeros if necessary
+        if (v.size() < sourcenames.size()) {
+            Eigen::ArrayXd w(sourcenames.size());
+            w.setZero();
+            for (auto i = 0; i < v.size(); ++i) {
+                w(i) = v(i);
+            }
+            v = w;
         }
 
         for (unsigned int j = 0; j < sourcenames.size(); ++j) {
@@ -361,7 +315,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
         std::string info;
 
         try {
-            info = item.second.cast<std::string>();
+            info = item.second.as<std::string>();
             H5::Attribute intAtt(infogroup.createAttribute(item.first, str80, metaSpace));
             intAtt.write(str80, info);
         } catch(...) {
@@ -376,13 +330,13 @@ void DataSet::saveHDF5(const std::string& filename) //const
         int value;
 
         try {
-            value = item.second.cast<int>();
+            value = item.second.as<int>();
             H5::Attribute intAtt(metadatagroup.createAttribute(item.first, H5::PredType::NATIVE_INT32, metaSpace));
             intAtt.write(H5::PredType::NATIVE_INT, &value);
         } catch(...) {
             try {
                 double dvalue;
-                dvalue = item.second.cast<double>();
+                dvalue = item.second.as<double>();
                 H5::Attribute intAtt(metadatagroup.createAttribute(item.first, H5::PredType::NATIVE_DOUBLE, metaSpace));
                 intAtt.write(H5::PredType::NATIVE_DOUBLE, &dvalue);
             } catch(...) {
@@ -397,7 +351,6 @@ void DataSet::saveHDF5(const std::string& filename) //const
 void DataSet::addMask(IMask* mask)
 {
     _masks.insert(mask);
-    maskPeaks();
 }
 
 void DataSet::removeMask(IMask* mask)
@@ -406,7 +359,6 @@ void DataSet::removeMask(IMask* mask)
     if (p != _masks.end()) {
         _masks.erase(mask);
     }
-    maskPeaks();
 }
 
 const std::set<IMask*>& DataSet::getMasks()
@@ -414,129 +366,23 @@ const std::set<IMask*>& DataSet::getMasks()
     return _masks;
 }
 
-void DataSet::maskPeaks() const
+void DataSet::maskPeaks(PeakSet& peaks) const
 {
-    for (auto&& p : _peaks) {
-        maskPeak(p);
-    }
-}
+    for (auto peak: peaks) {
+        // peak belongs to another dataset
+        if (peak->data().get() != this) {
+            continue;
+        }
 
-void DataSet::maskPeak(sptrPeak3D peak) const
-{
-    peak->setMasked(false);
-    for (auto&& m : _masks) {
-        // If the background of the peak intercept the mask, unselected the peak
-        if (m->collide(peak->getShape())) {
-            peak->setMasked(true);
-            break;
+        peak->setMasked(false);
+        for (auto&& m : _masks) {
+            // If the background of the peak intercept the mask, unselected the peak
+            if (m->collide(peak->getShape())) {
+                peak->setMasked(true);
+                break;
+            }
         }
     }
-}
-
-PeakList DataSet::hasPeaks(const std::vector<Eigen::RowVector3d>& hkls, const Eigen::Matrix3d& BU)
-{
-    std::vector<Eigen::RowVector3d> qs;
-
-    for (auto hkl: hkls) {
-        qs.emplace_back(hkl*BU);
-    }
-
-    std::vector<DetectorEvent> events = getEvents(qs);
-    PeakList peaks;
-    auto detector = getDiffractometer()->getDetector();
-
-    Eigen::Matrix3d BUI = BU.inverse();
-
-    for (auto event: events) {
-        Eigen::Vector3d p = event.detectorPosition();
-        Eigen::RowVector3d hkl = getQ(p).transpose() * BUI;
-
-        sptrPeak3D peak(new Peak3D);
-        // this sets the center of the ellipse with a dummy value for radius
-        peak->setShape(Ellipsoid(p, 1.0));
-        peaks.emplace_back(peak);
-    }
-
-    return peaks;
-}
-
-std::vector<DetectorEvent> DataSet::getEvents(const std::vector<Eigen::RowVector3d>& qs) const
-{
-    std::vector<DetectorEvent> events;
-    unsigned int scanSize = static_cast<unsigned int>(_states.size());
-
-    auto detector = getDiffractometer()->getDetector();
-    auto& mono = _diffractometer->getSource()->getSelectedMonochromator();
-
-    const Eigen::RowVector3d ki = mono.getKi().transpose();
-    std::vector<Eigen::Matrix3d> rotMatrices;
-    rotMatrices.reserve(scanSize);
-    auto gonio = _diffractometer->getSample()->getGonio();
-    double wavelength_2 = -0.5 * mono.getWavelength();
-
-    for (unsigned int s=0; s<scanSize; ++s) {
-        // todo: do we need to transpose here??
-        rotMatrices.push_back(gonio->getHomMatrix(_states[s].sample.getValues()).rotation().transpose());
-    } 
-
-    for (const Eigen::RowVector3d& q: qs) {
-        bool sign = (q*rotMatrices[0] + ki).squaredNorm() > ki.squaredNorm();
-
-        for (int i = 1; i < scanSize; ++i) {
-            const Eigen::RowVector3d kf = q*rotMatrices[i] + ki;
-            const bool new_sign = kf.squaredNorm() > ki.squaredNorm();
-
-            if (sign != new_sign) {
-                sign = new_sign;
-
-                const Eigen::RowVector3d kf0 = q*rotMatrices[i-1] + ki;
-                const Eigen::RowVector3d kf1 = q*rotMatrices[i] + ki;
-                //const Eigen::RowVector3d dkf = kf1-kf0;
-                const Eigen::RowVector3d dkf = q*(rotMatrices[i]-rotMatrices[i-1]);
-        
-                const double a = dkf.squaredNorm();
-                const double b = 2 * kf0.dot(dkf);
-                const double c = kf0.squaredNorm() - ki.squaredNorm();
-                const double discr = b*b - 4*a*c;
-        
-                double t = 0.5;
-                const int max_count = 100;
-                Eigen::RowVector3d kf;
-                
-                for (int c = 0; c < max_count; ++c) {
-                    kf = (1-t)*kf0 + t*kf1;
-                    const double f = kf.squaredNorm() - ki.squaredNorm();
-                    
-                    if (std::fabs(f) < 1e-10) {
-                        break;
-                    }
-                    const double df = 2*dkf.dot(kf);
-                    t -= f/df;
-                }
-        
-                if (c == max_count || t < 0.0 || t > 1.0) {
-                    continue;
-                }
-        
-                t += i-1;
-                const InstrumentState& state = getInterpolatedState(t);
-        
-                //const ComponentState& dis = state.detector;
-                double px,py;
-                // If hit detector, new peak
-                //const ComponentState& cs=state.sample;
-                Eigen::Vector3d from=_diffractometer->getSample()->getPosition(state.sample.getValues());
-        
-                double time;
-                bool accept=_diffractometer->getDetector()->receiveKf(px,py,kf,from,time,state.detector.getValues());
-        
-                if (accept) {
-                    events.emplace_back(detector.get(), px, py, t, state.detector.getValues());
-                }
-            }
-        }        
-    }
-    return events;
 }
 
 double DataSet::getBackgroundLevel(const sptrProgressHandler& progress)
@@ -578,7 +424,7 @@ double DataSet::getBackgroundLevel(const sptrProgressHandler& progress)
 void DataSet::integratePeaks(const PeakSet& peaks, double peak_scale, double bkg_scale, bool update_shape, const sptrProgressHandler& handler)
 {
     if (handler) {
-        handler->setStatus(("Integrating " + std::to_string(getPeaks().size()) + " peaks...").c_str());
+        handler->setStatus(("Integrating " + std::to_string(peaks.size()) + " peaks...").c_str());
         handler->setProgress(0);
     }
 
@@ -728,9 +574,12 @@ void DataSet::integratePeaks(const PeakSet& peaks, double peak_scale, double bkg
             continue;
         }
 
-        peak->getMillerIndices(hkl_old);
+        auto cell = peak->getActiveUnitCell();
+        auto q = peak->getQ();
+
+        cell->getMillerIndices(q, hkl_old);
         peak->setShape(new_shape);
-        peak->getMillerIndices(hkl_new);
+        cell->getMillerIndices(q, hkl_new);
 
         // indices disagree
         if ( (hkl_old-hkl_new).squaredNorm() > 1e-6 ) {
@@ -740,7 +589,7 @@ void DataSet::integratePeaks(const PeakSet& peaks, double peak_scale, double bkg
     }
 }
 
-void DataSet::removeDuplicatePeaks()
+void DataSet::removeDuplicatePeaks(nsx::PeakSet& peaks)
 {
     class compare_fn {
     public:
@@ -764,11 +613,13 @@ void DataSet::removeDuplicatePeaks()
 
         std::map<Eigen::RowVector3i, sptrPeak3D, compare_fn> hkls;
 
-        for (auto&& peak: _peaks) {
+        for (auto&& peak: peaks) {
             Eigen::RowVector3d hkl;
             Eigen::RowVector3i hkl_int;
 
-            if (!peak->getMillerIndices(*cell, hkl)) {
+            auto q = peak->getQ();
+
+            if (!cell->getMillerIndices(q, hkl)) {
                 continue;
             }
 
@@ -797,10 +648,10 @@ double DataSet::getSampleStepSize() const
 
     size_t numFrames = getNFrames();
     const auto& ss = getInstrumentStates();
-    size_t numValues = ss[0].sample.getValues().size();
+    size_t numValues = ss[0].sample.values().size();
 
     for (size_t i = 0; i < numValues; ++i) {
-        double dx = ss[numFrames-1].sample.getValues()[i] - ss[0].sample.getValues()[i];
+        double dx = ss[numFrames-1].sample.values()[i] - ss[0].sample.values()[i];
         step += dx*dx;
     }
 
@@ -808,30 +659,6 @@ double DataSet::getSampleStepSize() const
     step /= (numFrames-1) * 0.05 * deg;
 
     return step;
-}
-
-Eigen::Vector3d DataSet::getQ(const Eigen::Vector3d& pix) const
-{
-    auto source = _diffractometer->getSource();
-    auto sample = _diffractometer->getSample();
-
-    double frame = pix[2];
-
-    if (frame > getNFrames()-1) {
-        frame = getNFrames()-1;
-    }
-    if (frame < 0) {
-        frame = 0.0;
-    }
-
-    double wavelength = source->getSelectedMonochromator().getWavelength();
-    auto state = getInterpolatedState(frame);
-
-    DetectorEvent event(_diffractometer->getDetector().get(), pix[0], pix[1], frame, state.detector.getValues());
-
-    // otherwise scattering point is deducted from the sample
-    Eigen::Vector3d q = event.getQ(wavelength, state.sample.getPosition());
-    return state.sample.transformQ(q);
 }
 
 } // end namespace nsx

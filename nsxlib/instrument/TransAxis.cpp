@@ -1,6 +1,5 @@
 #include "TransAxis.h"
 
-
 namespace nsx {
 
 Axis* TransAxis::create(const YAML::Node& node)
@@ -48,7 +47,7 @@ TransAxis& TransAxis::operator=(const TransAxis& other)
 Eigen::Transform<double,3,Eigen::Affine> TransAxis::getHomMatrix(double value) const
 {
     Eigen::Transform<double,3,Eigen::Affine> mat = Eigen::Transform<double,3,Eigen::Affine>::Identity();
-	mat.translation()=_axis*(value+_offset);
+	mat.translation()=_axis*value;
 	return mat;
 }
 

@@ -5,9 +5,9 @@
 
 #include <QGraphicsItem>
 
-#include <nsxlib/data/DataTypes.h>
+#include <nsxlib/DataTypes.h>
 
-#include "items/CutterGraphicsItem.h"
+#include "CutterGraphicsItem.h"
 
 class QGraphicsSceneWheelEvent;
 class QWidget;

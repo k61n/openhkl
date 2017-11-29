@@ -1,8 +1,8 @@
 #include <Eigen/Dense>
 
-#include <nsxlib/geometry/AABB.h>
-#include <nsxlib/geometry/Ellipsoid.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/AABB.h>
+#include <nsxlib/Ellipsoid.h>
+#include <nsxlib/NSXTest.h>
 
 const double eps = 1e-8;
 

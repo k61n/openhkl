@@ -8,8 +8,8 @@
 #include <QVariant>
 #include <QJsonObject>
 
-#include <nsxlib/instrument/Experiment.h>
-#include <nsxlib/instrument/InstrumentTypes.h>
+#include <nsxlib/Experiment.h>
+#include <nsxlib/InstrumentTypes.h>
 
 class QWidget;
 

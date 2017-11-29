@@ -27,15 +27,14 @@
  *
  */
 
-#ifndef NSXLIB_HDF5DATAREADER_H
-#define NSXLIB_HDF5DATAREADER_H
+#pragma once
 
 #include <string>
 
 #include "H5Cpp.h"
 
-#include "../data/IDataReader.h"
-#include "../instrument/InstrumentTypes.h"
+#include "IDataReader.h"
+#include "InstrumentTypes.h"
 
 namespace nsx {
 
@@ -61,5 +60,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_HDF5DATAREADER_H

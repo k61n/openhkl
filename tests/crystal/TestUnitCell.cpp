@@ -1,10 +1,9 @@
 #include <random>
-#include <iostream>
 
-#include <nsxlib/crystal/UnitCell.h>
-#include <nsxlib/mathematics/Minimizer.h>
-#include <nsxlib/utils/NSXTest.h>
-#include <nsxlib/utils/Units.h>
+#include <nsxlib/Minimizer.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/UnitCell.h>
+#include <nsxlib/Units.h>
 
 const double tolerance=1e-6;
 
@@ -264,9 +263,6 @@ int main()
         return 0;
     };
 
-    std::cout << "u offsets " << u.transpose() << std::endl;
-    std::cout << "cell parameters " << x.transpose() << std::endl;
-
     // perturb the cell slightly
     for (auto i = 0; i < x.size(); ++i) {
         x(i) += x(i)*0.1;
@@ -282,9 +278,6 @@ int main()
     min.initialize(params, 3*q.size());
     min.set_f(residual);
     NSX_CHECK_EQUAL(min.fit(100), true);
-
-    std::cout << "u offsets " << u.transpose() << std::endl;
-    std::cout << "cell parameters " << x.transpose() << std::endl;
 
     // new character of fitted cell
     ch = cell.fromParameters(U, u, x).character();

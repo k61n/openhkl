@@ -1,9 +1,10 @@
-#include "BrillouinZone.h"
-#include "../crystal/NiggliReduction.h"
+#include <iostream>
+#include <utility>
 
 #include <Eigen/Eigenvalues>
-#include <utility>
-#include <iostream>
+
+#include "BrillouinZone.h"
+#include "NiggliReduction.h"
 
 /**
  * @brief Update a list of Q-vectors by removing the duplicates.

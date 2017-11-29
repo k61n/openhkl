@@ -6,11 +6,11 @@
 #include <stdexcept>
 #include <string>
 
-#include "yaml-cpp/yaml.h"
+#include <yaml-cpp/yaml.h>
 
-#include "../kernel/Singleton.h"
-#include "../chemistry/ChemistryTypes.h"
-#include "../utils/Some.h"
+#include "ChemistryTypes.h"
+#include "Singleton.h"
+#include "Variant.h"
 
 namespace nsx {
 
@@ -47,7 +47,7 @@ private:
 template <typename T>
 T IsotopeDatabaseManager::getProperty(const std::string& isotope, const std::string& property) const
 {
-	return _isotopes.at(isotope).at(property).cast<T>();
+	return _isotopes.at(isotope).at(property).as<T>();
 }
 
 } // end namespace nsx

@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # Add some paths to the cmake module search path.
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/macros)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/externals/c-blosc/cmake)
 
@@ -29,6 +30,8 @@ option(NSX_DOCS "Build documentation" OFF)
 ###########################################################################
 # Scripts controlling build setup and dependencies
 ###########################################################################
+include(GeneratePythonDocs)
+include(GetSubdirectories)
 include(CMakeFindBinUtils)
 include(BuildType)             # build types: debug and release
 include(CheckDependencies)     # checkexternal dependencies
@@ -59,7 +62,7 @@ elseif (WIN32)
   # take care of pesky backslashes in windows path names
   STRING(REGEX REPLACE "\\\\" "\\\\\\\\" APPLICATION_DATA_PATH ${APPLICATION_DATA_PATH})
 endif()
-configure_file(${CMAKE_SOURCE_DIR}/cmake/NSXConfig.h.in ${CMAKE_BINARY_DIR}/include/NSXConfig.h)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/NSXConfig.h.in ${CMAKE_BINARY_DIR}/include/nsxlib/NSXConfig.h)
 
 add_subdirectory(nsxlib)
 

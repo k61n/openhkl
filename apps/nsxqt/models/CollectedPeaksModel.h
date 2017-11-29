@@ -8,9 +8,9 @@
 #include <QAbstractTableModel>
 #include <QModelIndexList>
 
-#include <nsxlib/crystal/CrystalTypes.h>
-#include <nsxlib/data/DataTypes.h>
-#include <nsxlib/instrument/InstrumentTypes.h>
+#include <nsxlib/CrystalTypes.h>
+#include <nsxlib/DataTypes.h>
+#include <nsxlib/InstrumentTypes.h>
 
 class QObject;
 
@@ -41,7 +41,6 @@ public:
 
     void addPeak(const nsx::sptrPeak3D& peak);
 
-    void setPeaks(const nsx::DataList& data);
     void setPeaks(const nsx::PeakList& peaks);
 
     const nsx::PeakList& getPeaks() const;

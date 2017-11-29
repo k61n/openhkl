@@ -34,8 +34,7 @@
  *
  */
 
-#ifndef NSXLIB_SINGLETON_H
-#define NSXLIB_SINGLETON_H
+#pragma once
 
 #include <memory>
 
@@ -88,5 +87,3 @@ public:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_SINGLETON_H

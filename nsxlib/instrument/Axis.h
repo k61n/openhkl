@@ -30,7 +30,7 @@
 
 #include <string>
 
-#include "yaml-cpp/yaml.h"
+#include <yaml-cpp/yaml.h>
 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
@@ -76,10 +76,6 @@ public:
 	void setAxis(const Eigen::Vector3d& axis);
 	//! Get the normalized direction of this axis
 	const Eigen::Vector3d& getAxis() const;
-	//! Set the current offset
-	void setOffset(double offset,bool override=false);
-	//! Return the value of the offset
-	double getOffset() const;
 	//! Set the range of values accessible for this axis
 	void setLimits(double, double);
 	//! Get minimum of the range
@@ -110,8 +106,6 @@ protected:
 	std::string _label;
 	//! Axis direction, a normalized vector.
     Eigen::Vector3d _axis;
-	//! Offset so that finalvalue=offset+given value.
-	double _offset;
 	//! The minimum value allowed for the value of the axis.
 	double _min;
 	//! The maximum value allowed for the value of the axis.

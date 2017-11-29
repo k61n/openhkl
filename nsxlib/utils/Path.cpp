@@ -4,18 +4,11 @@
 #include <numeric>
 #include <stdexcept>
 
-#include "Path.h"
-
 #include "NSXConfig.h"
+#include "Path.h"
 #include "StringIO.h"
 
 namespace nsx {
-
-#ifdef _WIN32
-    static const std::string g_path_separator = "\\";
-#else
-    static const std::string g_path_separator = "/";
-#endif
 
 static int g_argc = 0;
 
@@ -24,12 +17,35 @@ static char** g_argv = nullptr;
 std::mutex g_argc_mutex;
 std::mutex g_argv_mutex;
 
-std::string dirname(const std::string& input_path)
+std::string fileSeparator()
+{
+    #ifdef _WIN32
+        return "\\";
+    #else
+        return "/";
+    #endif
+}
+
+std::string fileBasename(const std::string& input_path)
+{
+    auto pos_sep = input_path.find_last_of(fileSeparator());
+    return input_path.substr(pos_sep+1);
+}
+
+std::string removeFileExtension(const std::string& input_path)
+{
+    auto pos_sep = input_path.find_last_of(fileSeparator());
+    auto pos_dot = input_path.substr(pos_sep+1).find_last_of(".");
+
+    return input_path.substr(0,pos_sep + pos_dot + 1);
+}
+
+std::string fileDirname(const std::string& input_path)
 {
 
-    std::string output_path = trim(input_path);
+    std::string output_path = trimmed(input_path);
 
-    output_path.erase(output_path.find_last_of(g_path_separator),output_path.size()-1);
+    output_path.erase(output_path.find_last_of(fileSeparator()),output_path.size()-1);
 
     return output_path;
 }
@@ -67,7 +83,7 @@ std::string homeDirectory()
             char const *hpath = getenv("HOMEPATH");
             if (hdrive && hpath) {
                 std::string home(hdrive);
-                home += g_path_separator;
+                home += fileSeparator();
                 home += hpath;
                 return home;
             }
@@ -79,7 +95,7 @@ std::string homeDirectory()
 
 std::string buildPath(const std::string& root, const std::vector<std::string>& paths)
 {
-    auto append_path = [](std::string base, std::string p){return base+g_path_separator+p;};
+    auto append_path = [](std::string base, std::string p){return base+fileSeparator()+p;};
 
     std::string path = std::accumulate(paths.begin(),paths.end(),root,append_path);
 
@@ -93,7 +109,7 @@ std::string applicationDataPath()
         ".",
         "nsxtool",
         homeDirectory(),
-        homeDirectory() + g_path_separator + "nsxtool",
+        homeDirectory() + fileSeparator() + "nsxtool",
         g_application_data_path
     };
 
@@ -107,7 +123,7 @@ std::string applicationDataPath()
 
     // add location of executable if possible
     if (g_argc > 0 && g_argv && g_argv[0]) {
-        std::string path = dirname(g_argv[0]);
+        std::string path = fileDirname(g_argv[0]);
         possible_paths.insert(possible_paths.begin(), path);
     }
 
@@ -128,8 +144,14 @@ std::string applicationDataPath()
 
 std::string diffractometersPath()
 {
-    std::string path = applicationDataPath() + g_path_separator + "instruments";
+    std::string path = applicationDataPath() + fileSeparator() + "instruments";
     return path;
+}
+
+bool fileExists(const std::string& filename)
+{
+    std::ifstream fs(filename);
+    return fs.good();
 }
 
 } // end namespace nsx

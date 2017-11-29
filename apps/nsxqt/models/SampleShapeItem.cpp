@@ -1,5 +1,5 @@
-#include "../models/SampleShapeItem.h"
-#include "../tree/SampleShapePropertyWidget.h"
+#include "SampleShapeItem.h"
+#include "SampleShapePropertyWidget.h"
 
 SampleShapeItem::SampleShapeItem(nsx::sptrExperiment experiment):
     InspectableTreeItem(experiment)

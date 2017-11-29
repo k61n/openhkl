@@ -1,12 +1,11 @@
 #include <stdexcept>
 #include <string>
 
-#include <nsxlib/crystal/SymOp.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/SymOp.h>
 
 int main()
 {
-
     nsx::SymOp op1("x,y,z");
     NSX_CHECK_EQUAL(op1.getAxisOrder(),1);
 

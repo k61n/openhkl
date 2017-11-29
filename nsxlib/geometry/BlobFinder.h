@@ -27,8 +27,7 @@
  *
  */
 
-#ifndef NSXLIB_BLOBFINDER_H
-#define NSXLIB_BLOBFINDER_H
+#pragma once
 
 #include <algorithm>
 #include <iterator>
@@ -37,12 +36,12 @@
 #include <vector>
 #include <stdexcept>
 
-#include "../data/DataTypes.h"
-#include "../geometry/Blob3D.h"
-#include "../geometry/Ellipsoid.h"
-#include "../geometry/GeometryTypes.h"
-#include "../mathematics/MathematicsTypes.h"
-#include "../utils/UtilsTypes.h"
+#include "Blob3D.h"
+#include "DataTypes.h"
+#include "Ellipsoid.h"
+#include "GeometryTypes.h"
+#include "MathematicsTypes.h"
+#include "UtilsTypes.h"
 
 namespace nsx {
 
@@ -113,6 +112,4 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_BLOBFINDER_H
 

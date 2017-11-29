@@ -27,8 +27,7 @@
  *
  */
 
-#ifndef NSXLIB_PEAK3D_H
-#define NSXLIB_PEAK3D_H
+#pragma once
 
 #include <map>
 #include <memory>
@@ -36,15 +35,15 @@
 
 #include <Eigen/Dense>
 
-#include "../crystal/CrystalTypes.h"
-#include "../crystal/Intensity.h"
-#include "../crystal/PeakIntegrator.h"
-#include "../crystal/Profile.h"
-#include "../data/DataTypes.h"
-#include "../geometry/Ellipsoid.h"
-#include "../geometry/GeometryTypes.h"
-#include "../geometry/IntegrationRegion.h"
-#include "../instrument/InstrumentTypes.h"
+#include "CrystalTypes.h"
+#include "DataTypes.h"
+#include "Ellipsoid.h"
+#include "GeometryTypes.h"
+#include "InstrumentTypes.h"
+#include "IntegrationRegion.h"
+#include "Intensity.h"
+#include "PeakIntegrator.h"
+#include "Profile.h"
 
 namespace nsx {
 
@@ -52,49 +51,18 @@ class Peak3D {
 
 public:
 
-    Peak3D();
+    Peak3D(sptrDataSet data);
     
-    Peak3D(const Ellipsoid& shape, sptrDataSet data = nullptr);
+    Peak3D(sptrDataSet data, const Ellipsoid& shape);
 
     //! Copy constructor
-    Peak3D(const Peak3D& other);
+    Peak3D(sptrDataSet data, const Peak3D& other) = delete;
 
     //! Assignment operator
-    Peak3D& operator=(const Peak3D& other);
-
-        //! Attach the data
-    void linkData(const sptrDataSet& data);
-
-    //! Detach the data
-    void unlinkData();
+    Peak3D& operator=(const Peak3D& other) = delete;
 
     //! Set the Peak region. Peak shaped is owned after setting
     void setShape(const Ellipsoid& peak);
-
-    //! Get the Miller indices of the peak (double to allow integration of incommensurate peaks)
-    Eigen::RowVector3d getMillerIndices() const;
-
-    bool getMillerIndices(Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
-
-    bool getMillerIndices(int ucIndex, Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
-
-    bool getMillerIndices(const UnitCell& uc, Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
-
-    //! Get the integral Miller indices
-    Eigen::RowVector3i getIntegerMillerIndices() const;
-
-    //! Get kf vector in the frame of reference of the diffractometer
-    Eigen::RowVector3d getKf() const;
-
-    //! Get q vector in the frame of reference of the diffractometer
-    Eigen::RowVector3d getQ() const;
-
-    void getGammaNu(double& gamma,double& nu) const;
-
-    //! Run the integration of the peak; iterate over the data
-    //void integrate();
-
-    sptrDataSet getData() const { return _data.lock();}
 
     //! Get the projection of total data in the bounding box.
     Eigen::VectorXd getProjection() const;
@@ -112,30 +80,17 @@ public:
 
     //! Return the raw intensity of the peak.
     Intensity getRawIntensity() const;
-    //! Set the raw intensity of the peak. Warning: this should normally done by calling Peak3D::updateIntegration().
-    void setRawIntensity(const Intensity& I);
-
+  
     //!
     double getIOverSigmaI() const;
-    //! Return the lorentz factor of the peak.
-    double getLorentzFactor() const;
-    const ComponentState& getSampleState();
-    //double getSampleStepSize() const;
-
+   
     //! Return the scaling factor.
     double getScale() const;
     //! Rescale the current scaling factor by scale.
     void rescale(double factor);
     //! Set the scaling factor.
     void setScale(double factor);
-    //!
-    void setSampleState(const ComponentState& sstate);
-    //!
-
-    void setDetectorEvent(const DetectorEvent& event);
-    //!
-    void setSource(const sptrSource& source);
-
+   
     friend bool operator<(const Peak3D& p1, const Peak3D& p2);
     void setSelected(bool);
     bool isSelected() const;
@@ -170,13 +125,18 @@ public:
 
     const PeakIntegrator& getIntegration() const;
 
+    //! Return the q vector of the peak, transformed into sample coordinates.
+    ReciprocalVector getQ() const;
+
+    sptrDataSet data() const { return _data; }
+
+    void setRawIntensity(const Intensity& i);
+
     #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     #endif
 
 private:
-    //! Pointer to the data containing the peak
-    std::weak_ptr<DataSet> _data;
 
     //! Shape describing the Peak zone
     Ellipsoid _shape;
@@ -187,8 +147,6 @@ private:
 
     PeakIntegrator _integration;
 
-    //!
-    //! \brief _projection
 
     Eigen::VectorXd _projection;
     Eigen::VectorXd _projectionPeak;
@@ -201,14 +159,7 @@ private:
 
     //!
     UnitCellList _unitCells;
-    //! Pointer to the state of the Sample Component
-
-    uptrComponentState _sampleState;
-
-    //! Detector Event state
-    uptrDetectorEvent _event;
-    //!
-    sptrSource _source;
+   
 
     double _counts;
     //double _countsSigma;
@@ -224,9 +175,7 @@ private:
     double _pValue;
 
     Intensity _intensity;
-
+    sptrDataSet _data;
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_PEAK3D_H

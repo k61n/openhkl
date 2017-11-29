@@ -1,8 +1,8 @@
 #include <QMouseEvent>
 #include <QtOpenGL>
 
-#include "opengl/GLSphere.h"
-#include "opengl/GLWidget.h"
+#include "GLSphere.h"
+#include "GLWidget.h"
 
 /*
 #ifdef __APPLE__

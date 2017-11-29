@@ -1,27 +1,28 @@
-#include "ui_PeakListPropertyWidget.h"
-
 #include <memory>
 
 #include <QSortFilterProxyModel>
 
-#include <nsxlib/data/DataSet.h>
-#include <nsxlib/data/DataTypes.h>
-#include <nsxlib/instrument/Diffractometer.h>
-#include <nsxlib/instrument/Sample.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/DataTypes.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/Sample.h>
 
-#include "models/CollectedPeaksModel.h"
-#include "models/ExperimentItem.h"
-#include "models/InstrumentItem.h"
-#include "models/PeakListItem.h"
-#include "models/SampleItem.h"
-#include "models/UnitCellItem.h"
+#include "CollectedPeaksModel.h"
+#include "ExperimentItem.h"
+#include "InstrumentItem.h"
+#include "PeakListItem.h"
 #include "PeakListPropertyWidget.h"
-#include "views/PeakTableView.h"
+#include "PeakTableView.h"
+#include "SampleItem.h"
+#include "UnitCellItem.h"
 
-PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *parent) :
+#include "ui_PeakListPropertyWidget.h"
+
+PeakListPropertyWidget::PeakListPropertyWidget(std::shared_ptr<SessionModel> session, PeakListItem* caller, QWidget *parent) :
      QWidget(parent),
      _caller(caller),
-     ui(new Ui::PeakListPropertyWidget)
+     ui(new Ui::PeakListPropertyWidget),
+     _session(session)
 {
     ui->setupUi(this);
     std::map<std::string,nsx::sptrDataSet>  datamap=_caller->getExperiment()->getData();
@@ -32,7 +33,14 @@ PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *pa
     std::for_each(datamap.begin(), datamap.end(), func);
 
     CollectedPeaksModel *model = new CollectedPeaksModel(_caller->getExperiment());
-    model->setPeaks(datav);
+
+    nsx::PeakList data_peaks;
+
+    for (auto peak: _session->peaks(nullptr)) {
+        data_peaks.push_back(peak);
+    }
+
+    model->setPeaks(data_peaks);
     model->setUnitCells(_caller->getExperiment()->getDiffractometer()->getSample()->getUnitCells());
     ui->tableView->setModel(model);
 

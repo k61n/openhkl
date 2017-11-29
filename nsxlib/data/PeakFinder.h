@@ -1,10 +1,9 @@
+#pragma once
 
-#ifndef NSXLIB_PEAKFINDER_H
-#define NSXLIB_PEAKFINDER_H
-
-#include "../data/DataTypes.h"
-#include "../imaging/ImagingTypes.h"
-#include "../utils/UtilsTypes.h"
+#include "CrystalTypes.h"
+#include "DataTypes.h"
+#include "ImagingTypes.h"
+#include "UtilsTypes.h"
 
 namespace nsx {
 
@@ -15,7 +14,7 @@ public:
 
     PeakFinder();
 
-    bool find(DataList numors);
+    PeakSet find(DataList numors);
 
     void setHandler(const sptrProgressHandler& handler);
 
@@ -61,5 +60,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_PEAKFINDER_H

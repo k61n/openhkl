@@ -45,10 +45,10 @@
 #include <QStandardItemModel>
 #include <QTreeView>
 
-#include <nsxlib/crystal/CrystalTypes.h>
-#include <nsxlib/data/DataTypes.h>
-#include <nsxlib/instrument/InstrumentTypes.h>
-#include <nsxlib/utils/UtilsTypes.h>
+#include <nsxlib/CrystalTypes.h>
+#include <nsxlib/DataTypes.h>
+#include <nsxlib/InstrumentTypes.h>
+#include <nsxlib/UtilsTypes.h>
 
 class ExperimentItem;
 
@@ -58,13 +58,8 @@ public:
     explicit SessionModel();
     ~SessionModel();
 
-    nsx::sptrExperiment addExperiment(const std::string& experimentName, const std::string& instrumentName);
     nsx::DataList getSelectedNumors() const;
     nsx::DataList getSelectedNumors(ExperimentItem* item) const;
-
-    //! Convert session into JSON object
-    QJsonObject toJsonObject();
-    void fromJsonObject(const QJsonObject& obj);
 
     void setFilename(QString name);
     QString getFilename();
@@ -83,6 +78,10 @@ public:
     void fitAllPeaks();
     void autoAssignUnitCell();
 
+    nsx::PeakSet peaks(const nsx::DataSet* data) const;
+    void addPeak(nsx::sptrPeak3D peak);
+    void removePeak(nsx::sptrPeak3D peak);
+
 signals:
     void plotData(nsx::sptrDataSet);
     void inspectWidget(QWidget*);
@@ -94,7 +93,6 @@ public slots:
     void importData();
     void findPeaks(const QModelIndex& index);
 
-    void createNewExperiment();
     void absorptionCorrection();
     void showPeaksOpenGL();
     void findSpaceGroup();
@@ -111,6 +109,7 @@ private:
     nsx::sptrProgressHandler _progressHandler;
     nsx::sptrPeakFinder _peakFinder;
     std::string _colormap;
+    nsx::PeakSet _peaks;
 };
 
 #endif // NSXQT_SESSIONMODEL_H

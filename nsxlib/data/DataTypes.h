@@ -1,5 +1,4 @@
-#ifndef NSXLIB_DATATYPES_H
-#define NSXLIB_DATATYPES_H
+#pragma once
 
 #include <functional>
 #include <map>
@@ -7,7 +6,7 @@
 #include <set>
 #include <vector>
 
-#include "../utils/Some.h"
+#include "Variant.h"
 
 namespace nsx {
 
@@ -15,6 +14,7 @@ class BasicFrameIterator;
 class DataSet;
 class IDataReader;
 class IFrameIterator;
+class IFrameInterval;
 class MetaData;
 class PeakFinder;
 class ThreadedFrameIterator;
@@ -32,9 +32,7 @@ using DataList = std::vector<sptrDataSet>;
 
 using FrameIteratorCallback = std::function<IFrameIterator*(DataSet&, int)>;
 
-using MetaDataMap = std::map<const char*,Some<>>;
+using MetaDataMap = std::map<const char*,Variant<int,double,std::string>>;
 using MetaDataKeySet = std::set<std::string>;
 
 } // end namespace nsx
-
-#endif // NSXLIB_DATATYPES_H

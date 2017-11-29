@@ -34,12 +34,12 @@
  */
 
 #include <cmath>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 
-#include "../crystal/Profile.h"
-#include "../mathematics/Minimizer.h"
-#include "../utils/FitParameters.h"
+#include "FitParameters.h"
+#include "Minimizer.h"
+#include "Profile.h"
 
 static const double g_pi = double(M_PI);
 

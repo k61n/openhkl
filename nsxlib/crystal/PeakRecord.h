@@ -33,12 +33,13 @@
  *
  */
 
-#ifndef NSXLIB_PEAKRECORD_H
-#define NSXLIB_PEAKRECORD_H
+#pragma once
 
-#include "../crystal/CrystalTypes.h"
+#include "CrystalTypes.h"
 
 namespace nsx {
+
+#if 0
 
 class PeakRecord {
 public:
@@ -54,6 +55,5 @@ public:
     bool operator<(const PeakRecord& other) const;
 };
 
+#endif
 } // end namespace nsx
-
-#endif // NSXLIB_PEAKRECORD_H

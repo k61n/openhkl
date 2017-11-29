@@ -1,13 +1,12 @@
+#include <stdexcept>
 
 #include "DataReaderFactory.h"
 #include "DataSet.h"
-#include "ILLDataReader.h"
 #include "HDF5DataReader.h"
-#include "TiffDataReader.h"
 #include "I16DataReader.h"
+#include "ILLDataReader.h"
 #include "RawDataReader.h"
-
-#include <stdexcept>
+#include "TiffDataReader.h"
 
 namespace nsx {
 

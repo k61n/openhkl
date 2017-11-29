@@ -7,22 +7,20 @@
 
 #include <cassert>
 
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/operations.hpp>
-
-#include "blosc_filter.h"
 #include "blosc.h"
 
 #include "H5Cpp.h"
 
-#include "../data/IDataReader.h"
-#include "../mathematics/MathematicsTypes.h"
-#include "../instrument/Detector.h"
-#include "../instrument/Diffractometer.h"
-#include "../instrument/Gonio.h"
-#include "../instrument/Sample.h"
-#include "../instrument/Source.h"
-#include "../utils/Units.h"
+#include "BloscFilter.h"
+#include "Detector.h"
+#include "Diffractometer.h"
+#include "Gonio.h"
+#include "IDataReader.h"
+#include "MathematicsTypes.h"
+#include "Path.h"
+#include "Sample.h"
+#include "Source.h"
+#include "Units.h"
 
 namespace nsx {
 
@@ -68,8 +66,7 @@ InstrumentState IDataReader::getState(size_t frame) const
 
 std::string IDataReader::getBasename() const
 {
-    boost::filesystem::path pathname(_metadata.getKey<std::string>("filename"));
-    return pathname.filename().string();
+    return fileBasename(_metadata.getKey<std::string>("filename"));
 }
 
 std::string IDataReader::getFilename() const
@@ -150,7 +147,7 @@ void IDataReader::saveHDF5(const std::string& filename)
     RealMatrix vals(names.size(),_nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
-        const std::vector<double>& v = _states[i].detector.getValues();
+        auto&& v = _states[i].detector.values();
 
         for (unsigned int j = 0; j < names.size(); ++j) {
             vals(j,i) = v[j] / deg;
@@ -168,7 +165,7 @@ void IDataReader::saveHDF5(const std::string& filename)
     RealMatrix valsSamples(samplenames.size(), _nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
-        const std::vector<double>& v = _states[i].sample.getValues();
+        auto&& v = _states[i].sample.values();
 
         for (unsigned int j = 0; j < samplenames.size(); ++j) {
             valsSamples(j,i) = v[j]/deg;
@@ -186,7 +183,7 @@ void IDataReader::saveHDF5(const std::string& filename)
     RealMatrix valsSources(sourcenames.size(),_nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
-        const std::vector<double>& v=_states[i].source.getValues();
+        auto&& v = _states[i].source.values();
 
         for (unsigned int j = 0; j < sourcenames.size(); ++j) {
             valsSources(j,i) = v[j] / deg;
@@ -210,7 +207,7 @@ void IDataReader::saveHDF5(const std::string& filename)
         std::string info;
 
         try {
-            info = item.second.cast<std::string>();
+            info = item.second.as<std::string>();
             H5::Attribute intAtt(infogroup.createAttribute(item.first, str80, metaSpace));
             intAtt.write(str80, info);
         } catch(...) {
@@ -225,13 +222,13 @@ void IDataReader::saveHDF5(const std::string& filename)
         int value;
 
         try {
-            value = item.second.cast<int>();
+            value = item.second.as<int>();
             H5::Attribute intAtt(metadatagroup.createAttribute(item.first, H5::PredType::NATIVE_INT32, metaSpace));
             intAtt.write(H5::PredType::NATIVE_INT, &value);
         } catch(...) {
             try {
                 double dvalue;
-                dvalue = item.second.cast<double>();
+                dvalue = item.second.as<double>();
                 H5::Attribute intAtt(metadatagroup.createAttribute(item.first, H5::PredType::NATIVE_DOUBLE, metaSpace));
                 intAtt.write(H5::PredType::NATIVE_DOUBLE, &dvalue);
             } catch(...) {

@@ -33,11 +33,10 @@
  *
  */
 
-#ifndef NSXLIB_MAYBE_H
-#define NSXLIB_MAYBE_H
+#pragma once
 
-#include <type_traits>
 #include <stdexcept>
+#include <type_traits>
 
 namespace nsx {
 
@@ -170,5 +169,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_MAYBE_H

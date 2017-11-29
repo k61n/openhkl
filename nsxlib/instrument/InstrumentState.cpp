@@ -24,34 +24,18 @@
  *
  */
 
-#include "InstrumentState.h"
 #include "Component.h"
+#include "InstrumentState.h"
 
 namespace nsx {
 
 InstrumentState InstrumentState::interpolate(const InstrumentState &other, double t) const
 {
-    auto interpolate_vec = [] (const std::vector<double>& u, const std::vector<double>& v, double t) -> std::vector<double> {
-        assert(u.size() == v.size());
-        std::vector<double> w(u);
-        for (auto i = 0; i < w.size(); ++i) {
-            w[i] += t*(v[i]-u[i]);
-        }
-        return w;
-    };
-
-    t = std::max(t, 0.0);
-    t = std::min(t, 1.0);
-
-    const auto& detectorState = interpolate_vec(detector.getValues(), other.detector.getValues(), t);
-    const auto& sourceState = interpolate_vec(source.getValues(), other.source.getValues(), t);
-    const auto& sampleState = interpolate_vec(sample.getValues(), other.sample.getValues(), t);
-
     InstrumentState result(*this);
 
-    result.detector._values = detectorState;
-    result.sample._values = sampleState;
-    result.source._values = sourceState;
+    result.detector = detector.interpolate(other.detector, t);
+    result.sample = sample.interpolate(other.sample, t);
+    result.source = source.interpolate(other.source, t);
 
     return result;
 }

@@ -3,11 +3,11 @@
 
 #include <Eigen/Dense>
 
-#include "../instrument/DetectorFactory.h"
-#include "../instrument/Gonio.h"
-#include "../instrument/MonoDetector.h"
-#include "../instrument/MultiDetector.h"
-#include "../utils/YAMLType.h"
+#include "DetectorFactory.h"
+#include "Gonio.h"
+#include "MonoDetector.h"
+#include "MultiDetector.h"
+#include "YAMLType.h"
 
 namespace nsx {
 
@@ -166,17 +166,14 @@ double MultiDetector::getAngularWidth() const
 
 Eigen::Vector3d MultiDetector::getPos(double px, double py) const
 {
-
-    for (auto& detector : _components)
-    {
-        if (detector->hasPixel(px,py))
-        {
-            if (!detector->hasGonio())
+    for (auto& detector: _components) {
+        if (detector->hasPixel(px,py)) {
+            if (!detector->hasGonio()) {
                 return detector->getPos(px,py);
-            else
-                return detector->getGonio()->transform(detector->getPos(px,py));
+            } else {
+                return detector->getGonio()->transform(detector->getPos(px,py), {});
+            }
         }
-
     }
     throw std::runtime_error("Detector: invalid pixel");
 }

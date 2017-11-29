@@ -1,11 +1,11 @@
 #include <Eigen/Dense>
 
-#include <nsxlib/chemistry/ChemistryTypes.h>
-#include <nsxlib/chemistry/Material.h>
-#include <nsxlib/geometry/ConvexHull.h>
-#include <nsxlib/geometry/MCAbsorption.h>
-#include <nsxlib/utils/NSXTest.h>
-#include <nsxlib/utils/Units.h>
+#include <nsxlib/ChemistryTypes.h>
+#include <nsxlib/ConvexHull.h>
+#include <nsxlib/Material.h>
+#include <nsxlib/MCAbsorption.h>
+#include <nsxlib/NSXTest.h>
+#include <nsxlib/Units.h>
 
 int main()
 {

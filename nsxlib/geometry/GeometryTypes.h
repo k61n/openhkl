@@ -1,5 +1,4 @@
-#ifndef NSXLIB_GEOMETRYTYPES_H
-#define NSXLIB_GEOMETRYTYPES_H
+#pragma once
 
 #include <functional>
 #include <memory>
@@ -16,11 +15,13 @@ class AABB;
 class Basis;
 class Blob3D;
 class ConvexHull;
+class DirectVector;
 class Edge;
 class Ellipsoid;
 class Face;
 class Octree;
-class Triangle;
+class ReciprocalVector;
+struct Triangle;
 class Vertex;
 
 using HomVector   = Eigen::Matrix<double,4,1>;
@@ -43,5 +44,3 @@ enum class Direction {CW=1,CCW=2};
 enum class PointType {REGION = 1, BACKGROUND = 2, EXCLUDED = 3};
 
 } // end namespace nsx
-
-#endif // NSXLIB_GEOMETRYTYPES_H

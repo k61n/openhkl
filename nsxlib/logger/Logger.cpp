@@ -1,11 +1,10 @@
-#include "Logger.h"
-
 #include <chrono>
 #include <ctime>
 #include <fstream>
 
 #include "AggregateStreamWrapper.h"
 #include "LogFileStreamWrapper.h"
+#include "Logger.h"
 
 namespace nsx {
 

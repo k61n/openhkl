@@ -28,8 +28,7 @@
  *
  */
 
-#ifndef NSXLIB_ROUND_H
-#define NSXLIB_ROUND_H
+#pragma once
 
 #include <cmath>
 
@@ -48,5 +47,3 @@ inline int ifloor(double x) {
 }
 
 } // end namespace nsx
-
-#endif // NSXLIB_ROUND_H

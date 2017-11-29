@@ -6,7 +6,7 @@
 #include "ChemicalFormulaParser.h"
 #include "IsotopeDatabaseManager.h"
 #include "Material.h"
-#include "../utils/Units.h"
+#include "Units.h"
 
 namespace nsx
 {

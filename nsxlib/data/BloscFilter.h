@@ -1,5 +1,4 @@
-#ifndef FILTER_BLOSC_H
-#define FILTER_BLOSC_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -19,7 +18,5 @@ int register_blosc(char **version, char **date);
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 

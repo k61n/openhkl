@@ -21,3 +21,5 @@ set NSX_ROOT_DIR=%CI_PROJECT_DIR%\resources
 
 ninja test
 
+exit %errorlevel%
+

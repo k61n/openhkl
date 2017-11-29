@@ -1,5 +1,5 @@
-#include <nsxlib/mathematics/Lorentzian.h>
-#include <nsxlib/utils/NSXTest.h>
+#include <nsxlib/Lorentzian.h>
+#include <nsxlib/NSXTest.h>
 
 const double eps = 1e-10;
 

@@ -1,9 +1,9 @@
-#include "../geometry/AABB.h"
-#include "../geometry/ConvexHull.h"
-#include "../geometry/Edge.h"
-#include "../geometry/Face.h"
-#include "../geometry/Triangle.h"
-#include "../geometry/Vertex.h"
+#include "AABB.h"
+#include "ConvexHull.h"
+#include "Edge.h"
+#include "Face.h"
+#include "Triangle.h"
+#include "Vertex.h"
 
 namespace nsx {
 

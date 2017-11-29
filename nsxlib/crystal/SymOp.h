@@ -27,16 +27,15 @@
  *
  */
 
-#ifndef NSXLIB_SYMOP_H
-#define NSXLIB_SYMOP_H
+#pragma once
 
 #include <ostream>
 
 #include <Eigen/Dense>
 
-namespace nsx {
+#include "CrystalTypes.h"
 
-typedef Eigen::Transform<double,3,Eigen::Affine> affineTransformation;
+namespace nsx {
 
 class SymOp {
 
@@ -93,5 +92,3 @@ private:
 std::ostream& operator<<(std::ostream& os, const SymOp& sym);
 
 } // end namespace nsx
-
-#endif // NSXLIB_SYMOP_H

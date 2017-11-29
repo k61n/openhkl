@@ -1,6 +1,6 @@
-#include "NSXTest.h"
-
 #include <cstdlib>
+
+#include "NSXTest.h"
 
 namespace nsx {
 

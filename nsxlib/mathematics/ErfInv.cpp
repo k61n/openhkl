@@ -37,7 +37,7 @@
 #include <cstddef>
 #include <limits>
 
-#include "../mathematics/ErfInv.h"
+#include "ErfInv.h"
 
 namespace nsx {
 

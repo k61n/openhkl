@@ -1,11 +1,12 @@
 #pragma once
 
+#include <complex>
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "../utils/Some.h"
+#include "Variant.h"
 
 namespace nsx {
 
@@ -21,6 +22,6 @@ using isotopeContents = std::map<std::string,double>;
 
 using compoundList = std::vector<std::pair<isotopeContents,double>>;
 
-using isotopeProperties = std::map<std::string,Some<>>;
+using isotopeProperties = std::map<std::string,Variant<bool,int,double,std::complex<double>,std::string>>;
 
 } // end namespace nsx

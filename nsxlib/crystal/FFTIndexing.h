@@ -26,16 +26,15 @@
  *
  */
 
-#ifndef NSXLIB_FFTINDEXING_H
-#define NSXLIB_FFTINDEXING_H
+#pragma once
 
 #include <functional>
 #include <vector>
 
 #include <Eigen/Dense>
 
-#include "../mathematics/MathematicsTypes.h"
-#include "../utils/Units.h"
+#include "MathematicsTypes.h"
+#include "Units.h"
 
 namespace nsx {
 
@@ -48,7 +47,7 @@ struct tVector {
 class FFTIndexing {
 public:
     FFTIndexing(int nSubdiv=25,double amax=50.0);
-    std::vector<tVector> findOnSphere(const std::vector<Eigen::Vector3d>& qvects, unsigned int nstacks, unsigned int nsolutions) const;
+    std::vector<tVector> findOnSphere(const std::vector<Eigen::RowVector3d>& qvects, unsigned int nstacks, unsigned int nsolutions) const;
     virtual ~FFTIndexing() = default;
 
 private:
@@ -57,5 +56,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_FFTINDEXING_H

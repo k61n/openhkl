@@ -1,11 +1,7 @@
-#ifndef NSXTOOL_CONFIG_H_
-#define NSXTOOL_CONFIG_H_
+#pragma once
 
 #include <string>
 
 namespace nsx {
 constexpr const char* g_application_data_path = "@APPLICATION_DATA_PATH@";
 }
-
-
-#endif // NSXTOOL_CONFIG_H_

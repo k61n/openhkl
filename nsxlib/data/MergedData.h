@@ -28,14 +28,14 @@
  *
  */
 
-#ifndef NSXLIB_MERGEDDATA_H
-#define NSXLIB_MERGEDDATA_H
+#pragma once
 
-#include <Eigen/Core>
 #include <set>
 
-#include "../crystal/CrystalTypes.h"
-#include "../crystal/MergedPeak.h"
+#include <Eigen/Dense>
+
+#include "CrystalTypes.h"
+#include "MergedPeak.h"
 
 namespace nsx {
 
@@ -62,5 +62,3 @@ private:
 };
 
 } // end namespace nsx
-
-#endif // NSXLIB_MERGEDDATA_H

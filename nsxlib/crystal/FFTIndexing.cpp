@@ -5,9 +5,8 @@
 
 #include <unsupported/Eigen/FFT>
 
-#include "../utils/Units.h"
 #include "FFTIndexing.h"
-#include <iostream>
+#include "Units.h"
 
 namespace nsx {
 
@@ -15,7 +14,7 @@ FFTIndexing::FFTIndexing(int nSubdiv,double amax) : _nSubdiv(nSubdiv), _amax(ama
 {
 }
 
-std::vector<tVector> FFTIndexing::findOnSphere(const std::vector<Eigen::Vector3d>& qvects, unsigned int nstacks, unsigned int nsolutions) const
+std::vector<tVector> FFTIndexing::findOnSphere(const std::vector<Eigen::RowVector3d>& qvects, unsigned int nstacks, unsigned int nsolutions) const
 {
     std::vector<double> projs(qvects.size());
     double qMax = 0;
