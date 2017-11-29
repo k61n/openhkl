@@ -148,10 +148,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     // signals and slots
     connect(_ui->experimentTree, SIGNAL(plotData(nsx::sptrDataSet)),
-            _ui->_dview->getScene(), SLOT(setData(nsx::sptrDataSet))
-    );
-
-    connect(_ui->experimentTree, SIGNAL(plotData(nsx::sptrDataSet)),
             this, SLOT(changeData(nsx::sptrDataSet)));
 
 
