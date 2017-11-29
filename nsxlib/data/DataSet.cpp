@@ -90,11 +90,6 @@ DataSet::~DataSet()
     blosc_destroy();
 }
 
-std::string DataSet::getBasename() const
-{
-    return removeFileExtension(fileBasename(_filename));
-}
-
 int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z)
 {
     // Check that the voxel is inside the limit of the data

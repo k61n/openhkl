@@ -25,16 +25,11 @@ DataItem::DataItem(nsx::sptrExperiment experiment) : TreeItem(experiment)
 
 NumorItem *DataItem::importData(nsx::sptrDataSet data)
 {
-    // Get the basename of the current numor
-    QString filename(data->getFilename().c_str());
-    QFileInfo fileinfo(filename);
-    std::string basename = fileinfo.baseName().toStdString();
     auto exp = getExperiment();
 
     // If the experience already stores the current numor, skip it
-    if (exp->hasData(basename))
+    if (exp->hasData(data->getFilename()))
         return nullptr;
-
     try {
         exp->addData(data);
     }
@@ -48,7 +43,7 @@ NumorItem *DataItem::importData(nsx::sptrDataSet data)
     }
 
     NumorItem* item = new NumorItem(exp, data);
-    item->setText(QString::fromStdString(basename));
+    item->setText(QString::fromStdString(data->getFilename()));
     item->setCheckable(true);
     appendRow(item);
 

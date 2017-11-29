@@ -23,7 +23,7 @@ NumorPropertyWidget::NumorPropertyWidget(NumorItem* caller,QWidget *parent) :
     if (!data)
         return;
 
-    ui->label_Data->setText(QString::fromStdString(data->getBasename()));
+    ui->label_Data->setText(QString::fromStdString(data->getFilename()));
 
     auto metadata=data->getMetadata();
     const auto& map=metadata->getMap();

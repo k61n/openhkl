@@ -80,7 +80,7 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
     for (auto& d: data) {
         const auto& peaks = _session->peaks(d.second.get());
         ui->progressBar_MCStatus->setMaximum(peaks.size());
-        ui->progressBar_MCStatus->setFormat(QString::fromStdString(d.second->getBasename()) + ": "+QString::number(progress)+"%");
+        ui->progressBar_MCStatus->setFormat(QString::fromStdString(d.second->getFilename()) + ": "+QString::number(progress)+"%");
         for (auto& p: peaks) {
             auto data = p->data();
             auto pos = p->getShape().center();

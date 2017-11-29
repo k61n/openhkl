@@ -71,11 +71,6 @@ public:
     #endif
     void setIteratorCallback(FrameIteratorCallback callback);
 
-    // Getters and setters
-
-    //! Gets the data basename
-    std::string getBasename() const;
-
     //! Gets the data filename
     const std::string& getFilename() const;
 

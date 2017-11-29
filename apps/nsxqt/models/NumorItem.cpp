@@ -22,7 +22,7 @@ NumorItem::NumorItem(nsx::sptrExperiment experiment,nsx::sptrDataSet data) :
 
 NumorItem::~NumorItem()
 {
-   _experiment->removeData(_data->getBasename());
+   _experiment->removeData(_data->getFilename());
 }
 
 nsx::sptrDataSet NumorItem::getData()
