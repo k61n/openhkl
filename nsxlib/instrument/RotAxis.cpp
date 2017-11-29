@@ -62,18 +62,18 @@ RotAxis::Direction RotAxis::getRotationDirection() const
 
 Eigen::Matrix3d RotAxis::getRotationMatrix(double angle) const
 {
-	Eigen::Quaterniond temp=getQuat(angle);
+	Eigen::Quaterniond temp = quaternion(angle);
 	return temp.toRotationMatrix();
 }
 Eigen::Transform<double,3,Eigen::Affine> RotAxis::getHomMatrix(double angle) const
 {
 	Eigen::Transform<double,3,Eigen::Affine> hom=Eigen::Transform<double,3,Eigen::Affine>::Identity();
-	Eigen::Quaterniond temp=getQuat(angle);
+	Eigen::Quaterniond temp = quaternion(angle);
 	hom.linear()=temp.toRotationMatrix();
 	return hom;
 }
 
-Eigen::Quaterniond RotAxis::getQuat(double angle) const
+Eigen::Quaterniond RotAxis::quaternion(double angle) const
 {
 	if (_dir==RotAxis::CW)
 		angle*=-1;

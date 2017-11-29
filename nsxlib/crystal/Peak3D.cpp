@@ -78,37 +78,6 @@ Peak3D::Peak3D(sptrDataSet data, const Ellipsoid &shape):
     setShape(shape);  
 }
 
-#if 0
-Peak3D::Peak3D(const Peak3D& other): Peak3D(other.data)
-{
-    *this = other;
-}
-#endif
-
-#if 0
-Peak3D& Peak3D::operator=(const Peak3D& other)
-{
-    // nothing to do
-    if (this == &other) {
-        return *this;
-    }
-
-    _shape = other._shape;
-    _projection = other._projection;
-    _projectionPeak = other._projectionPeak;
-    _projectionBkg = other._projectionBkg;
-    _unitCells = other._unitCells;       
-    _counts = other._counts;
-    _scale = other._scale;
-    _selected = other._selected;
-    _observed = other._observed;
-    _masked = other._masked;
-    _transmission = other._transmission;
-    _activeUnitCellIndex = other._activeUnitCellIndex;
-
-    return *this;
-}
-#endif
 void Peak3D::setShape(const Ellipsoid& peak)
 {
     _shape = peak;
@@ -211,36 +180,6 @@ void Peak3D::setTransmission(double transmission)
 {
     _transmission = transmission;
 }
-
-#if 0
-bool operator<(const Peak3D& p1, const Peak3D& p2)
-{
-    Eigen::RowVector3d hkl1, hkl2;
-
-    p1.getMillerIndices(hkl1, true);
-    p2.getMillerIndices(hkl2, true);
-
-    if (hkl1[0]<hkl2[0]) {
-        return true;
-    }
-    if (hkl1[0]>hkl2[0]) {
-        return false;
-    }
-    if (hkl1[1]<hkl2[1]) {
-        return true;
-    }
-    if (hkl1[1]>hkl2[1]) {
-        return false;
-    }
-    if (hkl1[2]<hkl2[2]) {
-        return true;
-    }
-    if (hkl1[2]>hkl2[2]) {
-        return false;
-    }
-    return false;
-}
-#endif
 
 bool Peak3D::isSelected() const
 {

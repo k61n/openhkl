@@ -51,7 +51,6 @@ namespace nsx {
 
 void callback_helper(const size_t iter, void* data, const gsl_multifit_nlinear_workspace *w)
 {
-    Minimizer* self = reinterpret_cast<Minimizer*>(data);    
     double r = 0.0;
     for (auto i = 0; i < w->f->size; ++i) {
         r += gsl_vector_get(w->f, i) * gsl_vector_get(w->f, i);
@@ -166,7 +165,6 @@ bool Minimizer::fit(int max_iter)
     gsl_multifit_nlinear_winit(_gsl->x, _gsl->wt, &_gsl->fdf, _gsl->workspace);
     _gsl->status = gsl_multifit_nlinear_driver(max_iter, _xtol, _gtol, _ftol, &callback_helper, this, &_gsl->info, _gsl->workspace);
     gsl_multifit_nlinear_covar(_gsl->workspace->J, 1e-6, _gsl->covariance);
-    _numIter = _gsl->workspace->niter;
 
     eigenFromGSL(_gsl->workspace->J, _jacobian);
     _params.setValues(_gsl->workspace->x);
@@ -316,11 +314,6 @@ void Minimizer::setWeights(const Eigen::VectorXd &wt)
 {
     assert(_numValues == wt.size());
     _wt = wt;
-}
-
-int Minimizer::numIterations()
-{
-    return _numIter;
 }
 
 double Minimizer::meanSquaredError() const
