@@ -46,7 +46,7 @@
 
 
 namespace nsx {
-class MinimizerGSL;
+struct MinimizerGSL;
 
 //! \class Minimizer
 //! \brief Class to wrap the GSL non-linear least squares minimization routines.

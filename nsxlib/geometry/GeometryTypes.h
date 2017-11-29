@@ -21,7 +21,7 @@ class Ellipsoid;
 class Face;
 class Octree;
 class ReciprocalVector;
-class Triangle;
+struct Triangle;
 class Vertex;
 
 using HomVector   = Eigen::Matrix<double,4,1>;
