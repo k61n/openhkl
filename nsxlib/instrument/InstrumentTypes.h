@@ -12,7 +12,7 @@ class DetectorEvent;
 class Diffractometer;
 class Experiment;
 class Gonio;
-class InstrumentState;
+struct InstrumentState;
 class MonoDetector;
 class RotAxis;
 class TransAxis;
