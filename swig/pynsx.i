@@ -120,7 +120,6 @@ using Eigen::Quaterniond;
 #include "FFTIndexing.h"
 
 #include "MergedPeak.h"
-#include "Peak2D.h"
 #include "SpaceGroup.h"
 #include "NiggliReduction.h"
 #include "GruberReduction.h"
@@ -415,7 +414,6 @@ namespace nsx {
 %include "Mosaic.h"
 %include "FFTIndexing.h"
 %include "MergedPeak.h"
-%include "Peak2D.h"
 %include "SpaceGroup.h"
 %include "NiggliReduction.h"
 %include "GruberReduction.h"
