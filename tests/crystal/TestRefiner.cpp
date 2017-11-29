@@ -6,6 +6,7 @@
 #include <Eigen/Dense>
 
 #include <nsxlib/AutoIndexer.h>
+#include <nsxlib/Gonio.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/Refiner.h>
 #include <nsxlib/UBSolution.h>
@@ -118,21 +119,22 @@ int main()
     
     // add cell to sample
     dataf->getDiffractometer()->getSample()->addUnitCell(cell);
+    nsx::Refiner refiner(cell, peaks, dataf->getNFrames() / 30);
 
-    nsx::Refiner refiner(cell, peaks, dataf->getNFrames() / 10);
-
-    NSX_CHECK_ASSERT(refiner.batches().size() == 3);
+    NSX_CHECK_ASSERT(refiner.batches().size() == 1);
 
     for (auto&& batch: refiner.batches()) {
-        NSX_CHECK_ASSERT(batch.peaks().size() > 150);
+        NSX_CHECK_ASSERT(batch.peaks().size() > 200);
     }
 
     refiner.refineB();
     //refiner.refineU();
     auto&& states = dataf->getInstrumentStates();
+    auto naxes = dataf->getDiffractometer()->getSample()->getGonio()->getNAxes();
 
-    for (auto i = 0; i < states[0].sample._offsets.size(); ++i) {
-        refiner.refineSampleState(states, i);
+    // refine orientation only
+    for (auto i = 0; i < 3; ++i) {
+        refiner.refineSampleState(states, i);        
     }
   
     NSX_CHECK_ASSERT(refiner.refine(200));
