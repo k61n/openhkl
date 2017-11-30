@@ -127,12 +127,12 @@ int main()
         NSX_CHECK_ASSERT(batch.peaks().size() > 200);
     }
 
-    refiner.refineB();
+    //refiner.refineB();
     //refiner.refineU();
     auto&& states = dataf->getInstrumentStates();
     auto naxes = dataf->getDiffractometer()->getSample()->getGonio()->getNAxes();
 
-    // refine orientation only
+    // refine sample state
     for (auto i = 0; i < 3; ++i) {
         refiner.refineSampleState(states, i);        
     }
