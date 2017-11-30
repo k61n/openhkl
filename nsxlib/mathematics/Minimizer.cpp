@@ -170,7 +170,7 @@ bool Minimizer::fit(int max_iter)
     _params.setValues(_gsl->workspace->x);
     eigenFromGSL(_gsl->covariance, _covariance);
 
-    return (_gsl->status == GSL_SUCCESS);
+    return _gsl->status == GSL_SUCCESS;
 }
 
 void Minimizer::cleanup()

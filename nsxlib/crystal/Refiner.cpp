@@ -177,6 +177,7 @@ bool RefinementBatch::refine(unsigned int max_iter)
     min.initialize(_params, _peaks.size()*3);
     min.set_f([&](Eigen::VectorXd& fvec) {return residuals(fvec);});
     bool success = min.fit(max_iter);
+   
     if (success) {
         _cell = _cell.fromParameters(_u0, _uOffsets, _cellParameters);        
     } else {
