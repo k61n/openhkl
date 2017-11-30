@@ -1,10 +1,10 @@
 ###### Find boost libraries  ##############
+set(Boost_USE_STATIC_LIBS ON)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME ON)
 find_package(Boost 1.54.0 REQUIRED)
 if(Boost_FOUND)
     include_directories(SYSTEM "${Boost_INCLUDE_DIRS}")
-    set(Boost_USE_STATIC_LIBS OFF)
-    set(Boost_USE_MULTITHREADED ON)
-    set(Boost_USE_STATIC_RUNTIME OFF)
     message(STATUS "Found boost: " ${Boost_INCLUDE_DIRS})
     message(STATUS "Boost" ${Boost_LIBRARIES})
 elseif(NOT Boost_FOUND)
@@ -52,14 +52,14 @@ if(NSX_PYTHON)
   # python-dev and interpreter
   if (NSX_PYTHON3)
     set(Python_ADDITIONAL_VERSIONS 3.7 3.6 3.5 3.4)
+    find_package(PythonInterp 3)
+    find_package(PythonLibs 3)
   else()
     set(Python_ADDITIONAL_VERSIONS 2.7)
+    find_package(PythonInterp 2)
+    find_package(PythonLibs 2)
   endif()
 
-  find_package(PythonInterp REQUIRED)
-  find_package(PythonLibs REQUIRED)
-  #find_package(Python REQUIRED)
-  #find_package(NumPy REQUIRED)
 
   execute_process (
     COMMAND ${PYTHON_EXECUTABLE} -c "from __future__ import print_function; import numpy; print(numpy.get_include())"

@@ -9,8 +9,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/externals/c-blosc
 
 project(NSXTOOL_PROJECT)
 
-set(NSXTOOL_VERSION_MAJOR 1)
-set(NSXTOOL_VERSION_MINOR 0)
 
 ###########################################################################
 # Options
@@ -20,7 +18,6 @@ option(BUILD_QTAPPS "Build Qt based application." ON)
 option(BUILD_OPTIMIZED_DEBUG "Set optimization level -O1 or -Og for debug build" OFF)
 option(BUILD_COVERAGE_REPORT "Build code coverage report" OFF)
 option(BUILD_WITH_OPENMP "Build with OpenMP support" OFF)
-option(BUILD_DEBIAN "Build debian .deb packages" OFF)
 option(BUILD_GSL "Build GSL external dependency" OFF)
 option(NSX_BUILD_STATIC "Link nsxlib statically" OFF)
 option(NSX_VALGRIND "Run tests with valgrind" OFF)
@@ -52,16 +49,6 @@ endif()
 if(NSX_DOCS)
   include(Doxygen)
 endif()
-
-#Set package name here
-set(CPACK_PACKAGE_NAME "nsxtool")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Neutron Single Crystal Diffraction Data Reduction")
-set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/License.txt")
-set(CPACK_PACKAGE_VERSION "1.0.0")
-set(CPACK_PACKAGE_VERSION_MAJOR "${NSXTOOL_VERSION_MAJOR}")
-set(CPACK_PACKAGE_VERSION_MINOR "${NSXTOOL_VERSION_MINOR}")
-set(CPACK_PACKAGE_VERSION_PATCH "0")
-set(CPACK_SOURCE_IGNORE_FILES "/\\\\.git/;" )
 
 ###########################################################################
 # Now add in all the components
@@ -126,16 +113,6 @@ install(DIRECTORY resources/instruments
 # CPack settings
 ###########################################################################
 
-include(CPackCommon)
+include(CPackSetup)
 
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${BUILD_DEBIAN})
-  include(CPackLinuxSetup)
-  message(STATUS "CPACK_PACKAGE_FILE_NAME = ${CPACK_PACKAGE_FILE_NAME}")
-  if ("${UNIX_DIST}" MATCHES "Ubuntu" OR ${BUILD_DEBIAN})
-    # automatically generate dependencies
-    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-  endif()
-endif()
 
-set(CMAKE_INSTALL_RPATH "/usr/local/lib")
-include(CPack)
