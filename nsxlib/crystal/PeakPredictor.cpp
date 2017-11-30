@@ -370,5 +370,42 @@ std::vector<DetectorEvent> PeakPredictor::getEvents(const std::vector<Eigen::Row
     return events;
 }
 
+Ellipsoid PeakPredictor::toDetectorSpace(const Ellipsoid& qshape) const
+{
+    const Eigen::Vector3d q = qshape.center();
+    const Eigen::Matrix3d A = qshape.metric();
+
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(A);
+    const Eigen::Matrix3d U = solver.eigenvectors();
+    const Eigen::Vector3d l = solver.eigenvalues();
+
+    std::vector<Eigen::RowVector3d> qs;
+    qs.push_back(q);    
+    
+    for (int i = 0; i < 3; ++i) {
+        const double s = std::sqrt(1.0 / l(i));
+        qs.push_back(q+s*U.col(i));
+        qs.push_back(q-s*U.col(i));
+    }
+    auto evs = getEvents(qs);
+    // something bad happened
+    if (evs.size() != qs.size()) {
+        throw std::runtime_error("could not transform ellipse from q space to detector space");
+    }
+
+    Eigen::Matrix3d delta;
+    auto p0 = evs[0].coordinates();
+
+    for (auto i = 0; i < 3; ++i) {
+        const double s = std::sqrt(1.0 / l(i));
+        auto p1 = evs[1+2*i].coordinates();
+        auto p2 = evs[2+2*i].coordinates();
+        delta.col(i) = 0.5 * (p1+p2-2*p0) / s;
+    }
+
+    // approximate linear transformation detector space to q space
+    const Eigen::Matrix3d BI = U * delta.inverse();
+    return Ellipsoid(p0, BI.transpose()*A*BI);
+}
 
 } // end namespace nsx

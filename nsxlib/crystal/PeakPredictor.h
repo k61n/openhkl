@@ -55,15 +55,18 @@ public:
     //! predictions for peaks which are already part of the data set.
     PeakSet predictPeaks(bool keepObserved, const PeakSet& reference_peaks);
 
-     //! Is the peak h,k,l in Bragg condition in this dataset. Return Peak pointer if true,
+    //! Is the peak h,k,l in Bragg condition in this dataset. Return Peak pointer if true,
     //! otherwise nullptr.
     PeakList predictPeaks(const std::vector<Eigen::RowVector3d>& hkls, const Eigen::Matrix3d& BU);
     
+    //! Return vector of detector events corresponding to the given q values.
     std::vector<DetectorEvent> getEvents(const std::vector<Eigen::RowVector3d>& qs) const;
 
-private:
-    //! Return the average shape of peaks which are nearest to \p center.
+    //! Return the average shape of peaks which are nearest to \p center. May return null.
     sptrPeak3D averagePeaks(const Octree& tree, const Eigen::Vector3d& center);
+
+    //! Transform an ellipsoid in q space to detector space.
+    Ellipsoid toDetectorSpace(const Ellipsoid& qshape) const;
    
 public:
     //! Minimum d value used in prediction.

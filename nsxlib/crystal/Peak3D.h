@@ -69,6 +69,9 @@ public:
     Eigen::VectorXd getPeakProjection() const;
     Eigen::VectorXd getBkgProjection() const;
 
+    //! Compute the shape in q-space
+    Ellipsoid qShape() const;
+
     const Ellipsoid& getShape() const { return _shape; }
     const IntegrationRegion& getIntegrationRegion() const { return _integrationRegion; }
 
