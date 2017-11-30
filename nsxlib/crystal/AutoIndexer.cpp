@@ -40,15 +40,15 @@
 #include "Diffractometer.h"
 #include "Experiment.h"
 #include "FFTIndexing.h"
+#include "FitParameters.h"
 #include "Gonio.h"
 #include "GruberReduction.h"
+#include "Minimizer.h"
 #include "NiggliReduction.h"
 #include "Peak3D.h"
 #include "ProgressHandler.h"
 #include "ReciprocalVector.h"
 #include "Sample.h"
-#include "UBMinimizer.h"
-#include "UBSolution.h"
 #include "UnitCell.h"
 
 namespace nsx {
@@ -74,7 +74,7 @@ void AutoIndexer::autoIndex(const IndexerParameters& params)
     removeBad(_params.solutionCutoff);
 
     // refine the constrained unit cells in order to get the uncertainties
-    refineConstraints();
+    //refineConstraints();
 
     if (_handler) {
         _handler->log("Done refining solutions, building solution table.");
@@ -280,6 +280,7 @@ void AutoIndexer::refineSolutions()
     }
 }
 
+#if 0
 void AutoIndexer::refineConstraints()
 {
     //#pragma omp parallel for
@@ -347,7 +348,7 @@ void AutoIndexer::refineConstraints()
         soln.second = score;
     }
 }
-
+#endif
 
 void AutoIndexer::addPeak(sptrPeak3D peak)
 {

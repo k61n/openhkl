@@ -102,8 +102,6 @@ using Eigen::Quaterniond;
 #include "ProgressHandler.h"
 
 #include "PeakPredictor.h"
-#include "UBSolution.h"
-#include "UBMinimizer.h"
 #include "Refiner.h"
 #include "AutoIndexer.h"
 #include "Profile.h"
@@ -396,8 +394,6 @@ namespace nsx {
 %include "MatrixParser.h"
 %include "ProgressHandler.h"
 %include "PeakPredictor.h"
-%include "UBSolution.h"
-%include "UBMinimizer.h"
 %include "Refiner.h"
 %include "Basis.h"
 
