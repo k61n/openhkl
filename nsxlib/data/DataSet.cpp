@@ -488,7 +488,6 @@ void DataSet::integratePeaks(const PeakSet& peaks, double peak_scale, double bkg
         frame = getFrame(idx);
 
         mask.resize(getNRows(), getNCols());
-        mask.setZero();
 
         for (auto& tup: peak_list ) {
             auto&& integrator = tup.second;

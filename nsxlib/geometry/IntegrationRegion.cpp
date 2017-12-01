@@ -37,7 +37,8 @@ IntegrationRegion::IntegrationRegion(Ellipsoid shape, double bkg_begin, double b
     _shape(shape),
     _bkgBegin(bkg_begin),
     _bkgEnd(bkg_end),
-    _nslices(nslices)
+    _nslices(nslices),
+    _bestSlice(0)
 {
 }
 
@@ -73,10 +74,6 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
         for (auto y = ymin; y < ymax; ++y) {
             Eigen::Vector3d p(x, y, z);
             int s = classifySlice(p);
-
-            if (s < 0) {
-                continue;
-            }
 
             mask(y,x) = s;
         }

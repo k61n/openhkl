@@ -42,9 +42,10 @@ public:
     IntegrationRegion(Ellipsoid shape = {}, double bkg_begin = 1.0, double bkg_end = 3.0, int nslices = 10);
 
     void updateMask(Eigen::MatrixXi& mask, double z) const;
+
     AABB aabb() const;
 
-    //! Classify the given point. Positive indicates it is in once of the integration shells,
+    //! Classify the given point. Positive indicates it is in one of the integration shells,
     //! zero indicates it is in background, and negative indicates it is neither integration nor background.
     int classifySlice(const Eigen::Vector3d p) const;
 
@@ -53,14 +54,20 @@ public:
 
     //! Best integration slice
     int bestSlice() const;
+
     //! Set the best integration slice.
     void setBestSlice(int n);
 
 private:
+
     Ellipsoid _shape;
+
     double _bkgBegin;
+
     double _bkgEnd;
+
     int _nslices;
+
     int _bestSlice;
 };
 

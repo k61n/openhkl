@@ -560,7 +560,6 @@ void DetectorScene::loadCurrentImage(bool newimage)
         }
 
         Eigen::MatrixXi mask(nrows, ncols);
-        mask.setZero();
 
         for (auto&& peak: _session->peaks(_currentData.get())) {
             peak->getIntegrationRegion().updateMask(mask, _currentFrameIndex);
@@ -580,22 +579,22 @@ void DetectorScene::loadCurrentImage(bool newimage)
                 continue;
             }
 
-            long xmin = std::max(0l, std::lround(std::floor(lower[0])));
-            long ymin = std::max(0l, std::lround(std::floor(lower[1])));
+            long cmin = std::max(0l, std::lround(std::floor(lower[0])));
+            long rmin = std::max(0l, std::lround(std::floor(lower[1])));
 
-            long xmax = std::min(long(_currentData->getNCols()), std::lround(std::ceil(upper[0]))+1);
-            long ymax = std::min(long(_currentData->getNRows()), std::lround(std::ceil(upper[1]))+1);
+            long cmax = std::min(long(_currentData->getNCols()), std::lround(std::ceil(upper[0]))+1);
+            long rmax = std::min(long(_currentData->getNRows()), std::lround(std::ceil(upper[1]))+1);
 
-            for (auto x = xmin; x < xmax; ++x) {
-                for (auto y = ymin; y < ymax; ++y) {
-                    Eigen::Vector3d p(x, y, _currentFrameIndex);
-                    int s = region.classifySlice(p);
-
-                    if (s > 0 && s <= region.bestSlice()) {
-                        region_img.setPixel(x, y, peak->isSelected() ? (peak->isObserved() ? green : purple) : red);
+            for (auto c = cmin; c < cmax; ++c) {
+                for (auto r = rmin; r < rmax; ++r) {
+                    // The pixel is in one of the integration shell
+                    if (mask(r,c) > 0 && mask(r,c) <= region.bestSlice()) {
+                        region_img.setPixel(c, r, peak->isSelected() ? (peak->isObserved() ? green : purple) : red);
                     }
-                    if (s == 0 && (mask(y,x) == 0)) {
-                        region_img.setPixel(x, y, peak->isSelected() ? (peak->isObserved() ? yellow : pink) : red);
+
+                    // The pixel is in the background region
+                    if (mask(r,c) == 0) {
+                        region_img.setPixel(c, r, peak->isSelected() ? (peak->isObserved() ? yellow : pink) : red);
                     }
                 }
             }
