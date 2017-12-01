@@ -69,7 +69,7 @@ public:
     Eigen::VectorXd getPeakProjection() const;
     Eigen::VectorXd getBkgProjection() const;
 
-    //! Compute the shape in q-space
+    //! Compute the shape in q-space. May throw if there is no valid q-space ellipsoid.
     Ellipsoid qShape() const;
 
     const Ellipsoid& getShape() const { return _shape; }
