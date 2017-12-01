@@ -560,6 +560,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
         }
 
         Eigen::MatrixXi mask(nrows, ncols);
+        mask.setConstant(-1);
 
         for (auto&& peak: _session->peaks(_currentData.get())) {
             peak->getIntegrationRegion().updateMask(mask, _currentFrameIndex);

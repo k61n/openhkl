@@ -47,7 +47,7 @@ public:
 
     //! Classify the given point. Positive indicates it is in one of the integration shells,
     //! zero indicates it is in background, and negative indicates it is neither integration nor background.
-    int classifySlice(const Eigen::Vector3d p) const;
+    int classifySlice(const Eigen::Vector3d& p) const;
 
     //! Number of slices used in integration
     int nslices() const;

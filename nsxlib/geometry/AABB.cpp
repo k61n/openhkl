@@ -101,7 +101,7 @@ bool AABB::contains(const AABB& other) const
 
 std::ostream& AABB::printSelf(std::ostream& os) const
 {
-      os<<"AABB --> "<<"lower bound: "<<_lowerBound<<" , upper bound: "<<_upperBound;
+      os<<"AABB --> "<<"lower bound: "<<_lowerBound.transpose()<<" , upper bound: "<<_upperBound.transpose();
       return os;
 }
 

@@ -73,14 +73,12 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
     for (auto x = xmin; x < xmax; ++x) {
         for (auto y = ymin; y < ymax; ++y) {
             Eigen::Vector3d p(x, y, z);
-            int s = classifySlice(p);
-
-            mask(y,x) = s;
+            mask(y,x) = classifySlice(p);
         }
     }
 }
 
-int IntegrationRegion::classifySlice(const Eigen::Vector3d p) const
+int IntegrationRegion::classifySlice(const Eigen::Vector3d& p) const
 {
     const auto& x = p-_shape.center();
     const double r2 = x.transpose()*_shape.metric()*x;
@@ -89,17 +87,15 @@ int IntegrationRegion::classifySlice(const Eigen::Vector3d p) const
     if (r2 > _bkgEnd*_bkgEnd) {
         return -1;
     }
-    // point is inside the background shell
+    // point is outside the integration shell
     if (r2 > _bkgBegin*_bkgBegin) {
         return 0;
     }
+
     // determine which integration shell it lies in
-    const double c = _bkgBegin*_bkgBegin / (_nslices * _nslices);
-    int k = 0;
-    while(r2 > k*k*c && k < _nslices) {
-        ++k;
-    }
-    return k;
+    const int selected_slice  = 1 + static_cast<int>(std::sqrt(r2)*_nslices/_bkgBegin);
+
+    return selected_slice;
 }
 
 int IntegrationRegion::nslices() const
