@@ -298,10 +298,12 @@ Ellipsoid Peak3D::qShape() const
     Eigen::Matrix3d delta;
 
     for (int i = 0; i < 3; ++i) {
-        const double s = std::sqrt(1.0 / l(i));
-        const auto q1 = computeQ(_data, p+s*U.col(i));
-        const auto q2 = computeQ(_data, p-s*U.col(i));
-        delta.col(i) = 0.5 * (q1 + q2 - 2*q) / s;
+        const double s = 3.0 * std::sqrt(1.0 / l(i));
+        Eigen::Vector3d p1 = p+s*U.col(i);
+        Eigen::Vector3d p2 = p-s*U.col(i);
+        const auto q1 = computeQ(_data, p1);
+        const auto q2 = computeQ(_data, p2);
+        delta.col(i) = 0.5 * (q1 - q2) / s;
     }
 
     // approximate linear transformation q space to detector space

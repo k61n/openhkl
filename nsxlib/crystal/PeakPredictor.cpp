@@ -400,7 +400,7 @@ Ellipsoid PeakPredictor::toDetectorSpace(const Ellipsoid& qshape) const
         const double s = std::sqrt(1.0 / l(i));
         auto p1 = evs[1+2*i].coordinates();
         auto p2 = evs[2+2*i].coordinates();
-        delta.col(i) = 0.5 * (p1+p2-2*p0) / s;
+        delta.col(i) = 0.5 * (p1-p2) / s;
     }
 
     // approximate linear transformation detector space to q space
