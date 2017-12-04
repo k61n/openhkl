@@ -28,7 +28,7 @@ NumorItem *DataItem::importData(nsx::sptrDataSet data)
     // Get the basename of the current numor
     QString filename(data->getFilename().c_str());
     QFileInfo fileinfo(filename);
-    std::string basename = fileinfo.fileName().toStdString();
+    std::string basename = fileinfo.baseName().toStdString();
     auto exp = getExperiment();
 
     // If the experience already stores the current numor, skip it
