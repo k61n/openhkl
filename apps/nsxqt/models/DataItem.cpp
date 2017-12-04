@@ -56,7 +56,7 @@ NumorItem* DataItem::importData(const std::string &filename_str)
     // Get the basename of the current numor
     QString filename(filename_str.c_str());
     QFileInfo fileinfo(filename);
-    std::string basename = fileinfo.fileName().toStdString();
+    std::string basename = fileinfo.baseName().toStdString();
     auto exp = getExperiment();
 
     // If the experience already stores the current numor, skip it
