@@ -52,6 +52,8 @@
 #include "Source.h"
 #include "UnitCell.h"
 
+#include <map>
+
 namespace nsx {
 
 PeakPredictor::PeakPredictor(sptrDataSet data):
@@ -103,7 +105,7 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
         SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
         auto cell = sample->getUnitCell(i);
         auto UB = cell->reciprocalBasis();
-        std::vector<Ellipsoid> qshapes;
+        std::map<const Ellipsoid*, std::pair<sptrPeak3D, Ellipsoid>> qshapes;
 
         for (auto&& peak: reference_peaks) {
             if (peak->data() != _data || peak->getActiveUnitCell() != cell) {
@@ -140,8 +142,8 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
         _handler->setStatus("Building set of previously found peaks...");
 
         
-        Eigen::Vector3d lb(-1.0/_dmin, -1.0/_dmin, -1.0/_dmin);
-        Eigen::Vector3d ub(1.0/_dmin, 1.0/_dmin, 1.0/_dmin);
+        Eigen::Vector3d lb(0.0, 0.0, 0.0);
+        Eigen::Vector3d ub(_data->getNCols(), _data->getNRows(), _data->getNFrames());
         auto&& octree = Octree(lb, ub);
 
         octree.setMaxDepth(4);
@@ -176,7 +178,9 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
                 // only makes contribution if conversion is consistent
                 if (error < 0.1) {
                     //octree.addData(&q_shape);
-                    qshapes.emplace_back(q_shape);
+                    const Ellipsoid* e = &p->getShape();
+                    qshapes[e].first = p;
+                    qshapes[e].second = q_shape;
                 }
             } catch(...) {
                 // could not convert back and forth to q-space, so skip
@@ -184,7 +188,7 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
         }
 
         for (auto&& shape: qshapes) {
-            octree.addData(&shape);
+            octree.addData(shape.first);
         }
 
         _handler->log("Done building octree; number of chambers is " + std::to_string(octree.numChambers()));
@@ -204,7 +208,7 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
 
             // now we must add it, calculating shape from nearest peaks
              // K is outside the ellipsoid at PsptrPeak3D
-            sptrPeak3D new_peak = averagePeaks(octree, static_cast<const Eigen::RowVector3d&>(p.getQ()));;
+            sptrPeak3D new_peak = averagePeaks(octree, p.getShape().center(), static_cast<const Eigen::RowVector3d&>(q), qshapes);
             //sptrPeak3D new_peak = p.averagePeaks(numor);
 
             if (!new_peak) {
@@ -231,7 +235,7 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
     return calculated_peaks;
 }
 
-sptrPeak3D PeakPredictor::averagePeaks(const Octree& tree, const Eigen::RowVector3d& center)
+sptrPeak3D PeakPredictor::averagePeaks(const Octree& tree, const Eigen::Vector3d& position, const Eigen::RowVector3d& q, const std::map<const Ellipsoid*, std::pair<sptrPeak3D, Ellipsoid>>& qshapes) const
 {
     // create the shape used for the neighbor search
     Eigen::Matrix3d search_metric;
@@ -239,7 +243,7 @@ sptrPeak3D PeakPredictor::averagePeaks(const Octree& tree, const Eigen::RowVecto
     search_metric(0,0) = 1.0 / _searchRadius / _searchRadius;
     search_metric(1,1) = search_metric(0,0);
     search_metric(2,2) = 1.0 / _frameRadius / _frameRadius;
-    Ellipsoid search_shape(center, search_metric);
+    Ellipsoid search_shape(position, search_metric);
 
     // get neighbors
     auto&& neighbors = tree.getCollisions(search_shape);
@@ -251,21 +255,18 @@ sptrPeak3D PeakPredictor::averagePeaks(const Octree& tree, const Eigen::RowVecto
 
     Eigen::Matrix3d covariance;
     covariance.setZero();
-    //double total_intensity = 0.0;
+    double total_intensity = 0.0;
 
-    for(auto p: neighbors) {
-        covariance += p->inverseMetric();
-        // todo: requires some refactoring
-        //total_intensity += p->getCorrectedIntensity().getValue();
+    for(const auto& p: neighbors) {
+        const auto& qp = qshapes.at(p);
+        covariance += qp.second.inverseMetric();
+        total_intensity += qp.first->getCorrectedIntensity().value();
     }
-    // todo: weight by intensity? requires refactoring
-    //covariance /= total_intensity;
-    covariance /= neighbors.size();
+    covariance /= total_intensity;
     Ellipsoid avg_shape;
 
     try {
-        avg_shape = toDetectorSpace(Ellipsoid(center, covariance.inverse()));
-
+        avg_shape = toDetectorSpace(Ellipsoid(q, covariance.inverse()));
     } catch (...) {
         return nullptr;
     }

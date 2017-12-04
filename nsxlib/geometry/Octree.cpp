@@ -93,11 +93,11 @@ Octree::Octree(const Octree* parent, unsigned int sector):
     }
 }
 
-void Octree::addData(const Ellipsoid* ellipsoid)
+bool Octree::addData(const Ellipsoid* ellipsoid)
 {
     // Ellipsoid does not overlap with this branch
     if (!this->collide((*ellipsoid).aabb())) {
-        return;
+        return false;
     }
 
     // AABB overlap with this node
@@ -111,6 +111,7 @@ void Octree::addData(const Ellipsoid* ellipsoid)
             split();
         }
     }
+    return true;
 }
 
 bool Octree::hasChildren() const

@@ -95,12 +95,12 @@ public:
     //! destructor
     ~Octree()=default;
 
-    /*! Add a new AABB object to the deepest leaf.
-     * If the leaf has reached capacity of _MAX_STORAGE, then it will be split into
-     * 2^D sub-Octree, unless _MAX_DEPTH is reached, in which case data will simply
-     * be added to this leaf.
-     */
-    void addData(const Ellipsoid* ellipsoid);
+    //! Add a new AABB object to the deepest leaf.
+    //! If the leaf has reached capacity of _MAX_STORAGE, then it will be split into
+    //! 2^D sub-Octree, unless _MAX_DEPTH is reached, in which case data will simply
+    //! be added to this leaf.
+    //! Returns true if the ellipsoid was added and false otherwise.
+    bool addData(const Ellipsoid* ellipsoid);
 
     //! Check whether the node has some children
     bool hasChildren() const;

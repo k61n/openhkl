@@ -63,7 +63,7 @@ public:
     std::vector<DetectorEvent> getEvents(const std::vector<Eigen::RowVector3d>& qs) const;
 
     //! Return the average shape of peaks which are nearest to \p center. May return null.
-    sptrPeak3D averagePeaks(const Octree& tree, const Eigen::RowVector3d& q);
+    sptrPeak3D averagePeaks(const Octree& tree, const Eigen::Vector3d& position, const Eigen::RowVector3d& q, const std::map<const Ellipsoid*, std::pair<sptrPeak3D, Ellipsoid>>& qshapes) const;
 
     //! Transform an ellipsoid in q space to detector space.
     Ellipsoid toDetectorSpace(const Ellipsoid& qshape) const;
