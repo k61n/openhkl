@@ -285,6 +285,11 @@ ReciprocalVector Peak3D::getQ() const
     return ReciprocalVector(computeQ(_data, _shape.center()));
 }
 
+//! This method computes an ellipsoid in q-space which is approximately the transformation from
+//! detector space to q-space of its shape ellipsoid (which is computed during blob search).
+//!
+//! Suppose that the detector-space ellipsoid is given by the equation (x-x0).dot(A*(x-x0)) <= 1.
+//! Then if q = q0 + B(x-x0), then the corresponding ellipsoid 
 Ellipsoid Peak3D::qShape() const
 {
     const Eigen::Vector3d p = _shape.center();
@@ -307,8 +312,8 @@ Ellipsoid Peak3D::qShape() const
     }
 
     // approximate linear transformation q space to detector space
-    const Eigen::Matrix3d BI = U * delta.inverse();
-    return Ellipsoid(q.transpose(), BI.transpose()*A*BI);
+    const Eigen::Matrix3d B = U * delta.inverse();
+    return Ellipsoid(q.transpose(), B.transpose()*A*B);
 }
 
 } // end namespace nsx
