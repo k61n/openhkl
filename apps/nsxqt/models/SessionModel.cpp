@@ -376,7 +376,9 @@ void SessionModel::incorporateCalculatedPeaks()
         predictor._minimumPeakDuration = dialog.minimumPeakDuration();
         predictor._Isigma = dialog.Isigma();
         predictor._handler = handler;
-        nsx::PeakSet predicted = predictor.predictPeaks(true, reference_peaks);
+        // debugging
+        //nsx::PeakSet predicted = predictor.predictPeaks(true, reference_peaks);
+        nsx::PeakSet predicted = predictor.predictPeaks(false, reference_peaks);
         numor->integratePeaks(predicted, predictor._peakScale, predictor._bkgScale, false, handler);
         observed_peaks += peaks(numor.get()).size();
 
