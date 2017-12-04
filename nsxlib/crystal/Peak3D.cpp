@@ -289,7 +289,9 @@ ReciprocalVector Peak3D::getQ() const
 //! detector space to q-space of its shape ellipsoid (which is computed during blob search).
 //!
 //! Suppose that the detector-space ellipsoid is given by the equation (x-x0).dot(A*(x-x0)) <= 1.
-//! Then if q = q0 + B(x-x0), then the corresponding ellipsoid 
+//! Then if q = q0 + B(x-x0), then the corresponding ellipsoid.
+//!
+//! This method can throw if there is no valid q-shape corresponding to the detector space shape.
 Ellipsoid Peak3D::qShape() const
 {
     const Eigen::Vector3d p = _shape.center();
