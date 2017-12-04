@@ -259,8 +259,9 @@ sptrPeak3D PeakPredictor::averagePeaks(const Octree& tree, const Eigen::Vector3d
 
     for(const auto& p: neighbors) {
         const auto& qp = qshapes.at(p);
-        covariance += qp.second.inverseMetric();
-        total_intensity += qp.first->getCorrectedIntensity().value();
+        const double I = qp.first->getCorrectedIntensity().value();
+        covariance += I*qp.second.inverseMetric();
+        total_intensity += I;
     }
     covariance /= total_intensity;
     Ellipsoid avg_shape;

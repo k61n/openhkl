@@ -95,9 +95,10 @@ int main()
 
             ++good_shapes;
 
-            NSX_CHECK_CLOSE(new_shape.center()[0], old_shape.center()[0], 0.5);
-            NSX_CHECK_CLOSE(new_shape.center()[1], old_shape.center()[1], 0.5);
-            NSX_CHECK_CLOSE(new_shape.center()[2], old_shape.center()[2], 0.5);
+            auto dx = new_shape.center() - old_shape.center();
+
+            // transformation x -> q -> x should be nearly pixel-perfect
+            NSX_CHECK_SMALL(dx.norm(), 0.2);
 
             NSX_CHECK_SMALL((new_shape.metric().inverse()*old_shape.metric()-Eigen::Matrix3d::Identity()).norm(), 0.4);
 
