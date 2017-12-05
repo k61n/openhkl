@@ -397,7 +397,7 @@ UnitCell UnitCell::applyNiggliConstraints() const
 
 Eigen::RowVector3d UnitCell::index(const ReciprocalVector& q) const
 {
-    return static_cast<const Eigen::RowVector3d&>(q)*_A;
+    return q.rowVector()*_A;
 }
 
 Eigen::RowVector3d UnitCell::fromIndex(const Eigen::RowVector3d& hkl) const

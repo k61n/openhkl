@@ -267,11 +267,6 @@ using namespace nsx;
 // Eigen matrices into Numpy arrays.
 %include <eigen.i>
 
-%template(vectorMatrixXd) std::vector<Eigen::MatrixXd>;
-%template(vectorVectorXd) std::vector<Eigen::VectorXd>;
-%template(vectorVector3d) std::vector<Eigen::Vector3d>;
-%template(vectorRowVector3d) std::vector<Eigen::RowVector3d>;
-
 // Since Eigen uses templates, we have to declare exactly which types we'd
 // like to generate mappings for
 //%eigen_typemaps(Eigen::Vector3i)
@@ -302,6 +297,11 @@ using namespace nsx;
 %eigen_typemaps(Eigen::Array<double, Eigen::Dynamic, 1>)
 %eigen_typemaps(Eigen::Array<double, Eigen::Dynamic, Eigen::Dynamic>)
 
+%template(vectorMatrixXd) std::vector<Eigen::MatrixXd>;
+%template(vectorVectorXd) std::vector<Eigen::VectorXd>;
+%template(vectorVector3d) std::vector<Eigen::Vector3d>;
+%template(vectorRowVector3d) std::vector<Eigen::RowVector3d>;
+
 %include "ChemistryTypes.h"
 %include "CrystalTypes.h"
 %include "DataTypes.h"
@@ -309,6 +309,9 @@ using namespace nsx;
 %include "ImagingTypes.h"
 %include "InstrumentTypes.h"
 %include "UtilsTypes.h"
+
+%include "DirectVector.h"
+%include "ReciprocalVector.h"
 
 %include "Axis.h"
 %include "RotAxis.h"
@@ -395,6 +398,9 @@ namespace nsx {
 %include "ProgressHandler.h"
 %include "PeakPredictor.h"
 %include "Refiner.h"
+
+%template(vectorRefinementBatch) std::vector<nsx::RefinementBatch>;
+
 %include "Basis.h"
 
 %include "Profile.h"
@@ -456,6 +462,7 @@ namespace nsx {
 %include "Gonio.h"
 %include "DetectorEvent.h"
 
+%template(vectorInstrumentState) std::vector<nsx::InstrumentState>;
 %template(vectorDetectorEvent) std::vector<nsx::DetectorEvent>;
 
 %include "Axis.h"

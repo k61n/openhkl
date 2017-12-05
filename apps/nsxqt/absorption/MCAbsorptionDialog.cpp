@@ -89,7 +89,7 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
             Eigen::Matrix3d rot = hommat.rotation();
             auto event = nsx::DetectorEvent(data, pos[0], pos[1], pos[2]);
             auto kf = event.Kf();
-            double transmission=mca.run(ui->spinBox->value(),static_cast<const Eigen::RowVector3d&>(kf),rot);
+            double transmission=mca.run(ui->spinBox->value(),kf.rowVector(),rot);
             p->setTransmission(transmission);
             ui->progressBar_MCStatus->setValue(++progress);
         }

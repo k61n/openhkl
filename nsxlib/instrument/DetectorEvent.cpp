@@ -69,7 +69,7 @@ ReciprocalVector DetectorEvent::Kf() const
     auto source = _data->getDiffractometer()->getSource();
     double wavelength = source->getSelectedMonochromator().getWavelength();
     auto state = _data->getInterpolatedState(_frame);
-    Eigen::Vector3d kf = static_cast<const Eigen::Vector3d&>(getPixelPosition()) - state.sample.getPosition();
+    Eigen::Vector3d kf = getPixelPosition().vector() - state.sample.getPosition();
     kf.normalize();
     kf /= wavelength;
     return ReciprocalVector(kf);
@@ -93,7 +93,7 @@ DirectVector DetectorEvent::getPixelPosition() const
 
 void DetectorEvent::getGammaNu(double& gamma, double& nu) const
 {
-    auto kf = static_cast<const Eigen::RowVector3d&>(Kf());
+    auto kf = Kf().rowVector();
     gamma = std::atan2(kf[0], kf[1]);
     nu = std::asin(kf[2] / kf.norm());
 }
@@ -113,8 +113,8 @@ double DetectorEvent::getLorentzFactor() const
 
 double DetectorEvent::get2Theta(const ReciprocalVector& si) const
 {
-    auto kf = static_cast<const Eigen::RowVector3d&>(Kf());
-    auto ki = static_cast<const Eigen::RowVector3d&>(si);
+    auto kf = Kf().rowVector();
+    auto ki = si.rowVector();
     
     double proj = kf.dot(ki);
     return acos(proj/kf.norm()/ki.norm());

@@ -10,7 +10,7 @@ DirectVector::DirectVector(const Eigen::Vector3d& dvector) : _dvector(dvector)
 {
 }
 
-DirectVector::operator const Eigen::Vector3d& () const
+const Eigen::Vector3d& DirectVector::vector() const
 {
     return _dvector;
 }

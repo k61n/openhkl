@@ -106,7 +106,7 @@ void AutoIndexer::computeFFTSolutions()
     for (auto peak: _peaks) {
         // Keep only the peak that have selected and that are not masked
         if (peak->isSelected() && !peak->isMasked()) {
-            qvects.push_back(static_cast<const Eigen::RowVector3d&>(peak->getQ()));
+            qvects.push_back(peak->getQ().rowVector());
         }
     }
 
@@ -201,7 +201,7 @@ void AutoIndexer::refineSolutions()
             bool indexingSuccess = cell->getMillerIndices(q,hkl,true);
             if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
                 hkls.emplace_back(hkl);
-                qs.emplace_back(static_cast<const Eigen::RowVector3d&>(q));
+                qs.emplace_back(q.rowVector());
                 ++success;
             }
         }

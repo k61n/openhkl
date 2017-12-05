@@ -38,6 +38,7 @@
 #include "InstrumentState.h"
 #include "Minimizer.h"
 #include "Peak3D.h"
+#include "PeakPredictor.h"
 #include "Refiner.h"
 #include "UnitCell.h"
 
@@ -50,7 +51,7 @@ RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks, doub
 {
     for (auto p: peaks) {
         // skip if not selected or masked
-        if (!p->isSelected() || p->isMasked()) {
+        if (!p->isSelected() || p->isMasked() || !p->isObserved()) {
             continue;
         }
 
@@ -75,7 +76,7 @@ RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks, doub
     _cellParameters = constrained.parameters();
 }
 
-Refiner::Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches): _batches()
+Refiner::Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches): _batches(),  _cell(cell)
 {   
     double fmin = std::numeric_limits<double>().max();
     double fmax = std::numeric_limits<double>().lowest();
@@ -167,22 +168,19 @@ bool RefinementBatch::refine(unsigned int max_iter)
     min.setfTol(1e-10);
     min.setgTol(1e-10);
 
-    auto C = constraints();
-    // DEBUGGING
-    std::cout << "constraint matrix for (" << _fmin << ", " << _fmax << ")" << std::endl;
-    std::cout << "size: " << C.rows() << " x " << C.cols() << std::endl;
-    std::cout << C << "\n--------------------------------------------------" << std::endl;
-    _params.setConstraint(constraints());
+    if (_constraints.size() > 0) {
+        auto C = constraints();
+        // DEBUGGING
+        std::cout << "constraint matrix for (" << _fmin << ", " << _fmax << ")" << std::endl;
+        std::cout << "size: " << C.rows() << " x " << C.cols() << std::endl;
+        std::cout << C << "\n--------------------------------------------------" << std::endl;
+        _params.setConstraint(constraints());
+    }
 
     min.initialize(_params, _peaks.size()*3);
     min.set_f([&](Eigen::VectorXd& fvec) {return residuals(fvec);});
-    bool success = min.fit(max_iter);
-   
-    if (success) {
-        _cell = _cell.fromParameters(_u0, _uOffsets, _cellParameters);        
-    } else {
-        _params.reset();
-    }
+    bool success = min.fit(max_iter);   
+    _cell = _cell.fromParameters(_u0, _uOffsets, _cellParameters);        
     return success;
 }
 
@@ -193,7 +191,7 @@ int RefinementBatch::residuals(Eigen::VectorXd &fvec)
 
     //#pragma omp parallel for
     for (unsigned int i = 0; i < _peaks.size(); ++i) {
-        const Eigen::RowVector3d q0 = static_cast<const Eigen::RowVector3d&>(_peaks[i]->getQ());
+        const Eigen::RowVector3d q0 = _peaks[i]->getQ().rowVector();
         const Eigen::RowVector3d q1 = _hkl[i]*UB;
         const Eigen::RowVector3d dq = q1-q0;
 
@@ -289,5 +287,58 @@ Eigen::MatrixXd RefinementBatch::constraints() const
     return C;   
 }
 
+int Refiner::updatePredictions(PeakList& peaks) const
+{
+    PeakList pred_peaks;
+    int updated = 0;
+
+    for (auto&& peak: peaks) {
+        if (peak->isObserved()) {
+            continue;
+        }
+        if (!peak->isSelected() || peak->isMasked()) {
+            continue;
+        }
+        if (peak->getActiveUnitCell() != _cell) {
+            continue;
+        }
+                
+        // find appropriate batch
+        const RefinementBatch* b = nullptr;    
+        double z = peak->getShape().center()[2];
+        for (auto&& batch: _batches) {
+            
+
+            if (batch.contains(z)) {
+                b = &batch;
+                break;
+            }
+        }
+
+        // no appropriate batch
+        if (b == nullptr) {
+            continue;
+        }
+
+        // update the position
+        Eigen::RowVector3d hkl = b->cell().getIntegerMillerIndices(peak->getQ()).cast<double>();
+        PeakPredictor predictor(peak->data());
+        auto pred = predictor.predictPeaks({hkl}, b->cell().reciprocalBasis());
+
+        // something wrong with new prediction...
+        if (pred.size() != 1) {
+            continue;
+        }
+
+        peak->setShape(Ellipsoid(pred[0]->getShape().center(), peak->getShape().metric()));
+        ++updated;
+    }
+    return updated;
+}
+
+bool RefinementBatch::contains(double f) const
+{
+    return f >= _fmin && f < _fmax;
+}
 
 } // end namespace nsx

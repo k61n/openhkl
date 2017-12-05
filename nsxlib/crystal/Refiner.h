@@ -51,6 +51,9 @@ namespace nsx {
 //! Class for batch refinement of UB and offset
 class RefinementBatch {
 public:
+    // needed for swig
+    RefinementBatch() = default;
+
     RefinementBatch(const UnitCell& uc, const PeakList& peaks, double fmin, double fmax);
 
     void refineU();
@@ -69,9 +72,11 @@ public:
 
     Eigen::MatrixXd constraints() const;
 
+    bool contains(double f) const;
+
 private:
-    const double _fmin;
-    const double _fmax;
+    double _fmin;
+    double _fmax;
     FitParameters _params;
     //! Initial U matrix of cell
     Eigen::Matrix3d _u0; 
@@ -99,10 +104,13 @@ public:
 
     bool refine(unsigned int max_iter = 100);
 
+    int updatePredictions(PeakList& peaks) const;
+
     //int residuals(Eigen::VectorXd& fvec);
     const std::vector<RefinementBatch>& batches() const;
 private:
     std::vector<RefinementBatch> _batches;
+    sptrUnitCell _cell;
 };
 
 } // end namespace nsx

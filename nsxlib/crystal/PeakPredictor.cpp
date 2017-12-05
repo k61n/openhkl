@@ -208,7 +208,7 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
 
             // now we must add it, calculating shape from nearest peaks
              // K is outside the ellipsoid at PsptrPeak3D
-            sptrPeak3D new_peak = averagePeaks(octree, p.getShape().center(), static_cast<const Eigen::RowVector3d&>(q), qshapes);
+            sptrPeak3D new_peak = averagePeaks(octree, p.getShape().center(), q.rowVector(), qshapes);
             //sptrPeak3D new_peak = p.averagePeaks(numor);
 
             if (!new_peak) {

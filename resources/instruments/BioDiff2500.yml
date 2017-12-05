@@ -71,17 +71,17 @@ instrument:
                 - name: x-offset
                   type: translation
                   direction: [1.0,0.0,0.0]
-                  physical: false
+                  physical: true
 
                 - name: y-offset
                   type: translation
                   direction: [0.0,1.0,0.0]
-                  physical: false
+                  physical: true
 
                 - name: z-offset
                   type: translation
                   direction: [0.0,0.0,1.0]
-                  physical: false
+                  physical: true
     source:
         name: monochromatic source
         monochromator:

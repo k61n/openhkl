@@ -208,7 +208,7 @@ void SessionModel::showPeaksOpenGL()
        auto numor_peaks = peaks(idata.get());
        for (auto peak: numor_peaks) {
            GLSphere* sphere=new GLSphere("");
-           Eigen::RowVector3d pos = static_cast<const Eigen::RowVector3d&>(peak->getQ());
+           Eigen::RowVector3d pos = peak->getQ().rowVector();
            sphere->setPos(pos[0]*100,pos[1]*100,pos[2]*100);
            sphere->setColor(0,1,0);
            scene.addActor(sphere);
@@ -377,8 +377,8 @@ void SessionModel::incorporateCalculatedPeaks()
         predictor._Isigma = dialog.Isigma();
         predictor._handler = handler;
         // debugging
-        //nsx::PeakSet predicted = predictor.predictPeaks(true, reference_peaks);
-        nsx::PeakSet predicted = predictor.predictPeaks(false, reference_peaks);
+        nsx::PeakSet predicted = predictor.predictPeaks(true, reference_peaks);
+        //nsx::PeakSet predicted = predictor.predictPeaks(false, reference_peaks);
         numor->integratePeaks(predicted, predictor._peakScale, predictor._bkgScale, false, handler);
         observed_peaks += peaks(numor.get()).size();
 
@@ -408,7 +408,7 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
             if (!peak->isSelected() || peak->isMasked())
                 continue;
 
-            double d = 1.0 / static_cast<const Eigen::RowVector3d&>(peak->getQ()).norm();
+            double d = 1.0 / peak->getQ().rowVector().norm();
             avg_d += d;
             ++num_peaks;
 
