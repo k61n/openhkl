@@ -263,7 +263,7 @@ void SessionModel::findPeaks(const QModelIndex& index)
     for (int i = 0; i < nTotalNumors; ++i) {
         if (ditem->child(i)->checkState() == Qt::Checked) {
             if (auto ptr = dynamic_cast<NumorItem*>(ditem->child(i)))
-                selectedNumors.push_back(ptr->getExperiment()->getData(ptr->text().toStdString()));
+                selectedNumors.push_back(ptr->getData());
         }
     }
 

@@ -318,8 +318,7 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
     else if (auto ptr=dynamic_cast<SampleItem*>(item))
         ptr->addUnitCell();
     else if (auto ptr=dynamic_cast<NumorItem*>(item)) {
-        auto exp = ptr->getExperiment();
-        emit plotData(exp->getData(item->text().toStdString()));
+        emit plotData(ptr->getData());
     }
 }
 

@@ -23,27 +23,39 @@ DataItem::DataItem(nsx::sptrExperiment experiment) : TreeItem(experiment)
     setSelectable(false);
 }
 
-NumorItem *DataItem::importData(nsx::sptrDataSet data)
+NumorItem* DataItem::importData(nsx::sptrDataSet data)
 {
+    auto&& filename = data->getFilename();
+
+    QString filename_qstr(filename.c_str());
+    QFileInfo fileinfo(filename_qstr);
+
     auto exp = getExperiment();
 
     // If the experience already stores the current numor, skip it
-    if (exp->hasData(data->getFilename()))
+    if (exp->hasData(filename))
+    {
         return nullptr;
+    }
+
     try {
         exp->addData(data);
     }
     catch(std::exception& e) {
-        nsx::error() << "Error reading numor:" << data->getFilename().c_str() << e.what();
+        nsx::error() << "Error reading numor: " << filename << e.what();
         return nullptr;
     }
     catch(...)  {
-        nsx::error() << "Error reading numor:" << data->getFilename().c_str() << " reason not known:";
+        nsx::error() << "Error reading numor: " << filename << " reason not known:";
         return nullptr;
     }
 
+    // Get the basename of the current numor
+    auto&& basename = fileinfo.baseName().toStdString();
+
     NumorItem* item = new NumorItem(exp, data);
-    item->setText(QString::fromStdString(data->getFilename()));
+    item->setText(QString::fromStdString(basename));
+    item->setToolTip(filename_qstr);
     item->setCheckable(true);
     appendRow(item);
 
@@ -51,37 +63,40 @@ NumorItem *DataItem::importData(nsx::sptrDataSet data)
 }
 
 
-NumorItem* DataItem::importData(const std::string &filename_str)
+NumorItem* DataItem::importData(const std::string& filename)
 {
     // Get the basename of the current numor
-    QString filename(filename_str.c_str());
-    QFileInfo fileinfo(filename);
-    std::string basename = fileinfo.baseName().toStdString();
+    QString filename_qstr(filename.c_str());
+    QFileInfo fileinfo(filename_qstr);
     auto exp = getExperiment();
 
+    // Get the basename of the current numor
+    auto&& basename = fileinfo.baseName().toStdString();
+
     // If the experience already stores the current numor, skip it
-    if (exp->hasData(basename))
+    if (exp->hasData(filename)) {
         return nullptr;
+    }
 
     nsx::sptrDataSet data_ptr;
 
     try {
         std::string extension = fileinfo.completeSuffix().toStdString();
-        data_ptr = nsx::DataReaderFactory().create(extension, filename_str, exp->getDiffractometer());
+        data_ptr = nsx::DataReaderFactory().create(extension, filename, exp->getDiffractometer());
     }
     catch(std::exception& e) {
-        nsx::error() << "Error reading numor:" << filename_str << e.what();
+        nsx::error() << "Error reading numor: " << filename << e.what();
         return nullptr;
     }
     catch(...)  {
-        nsx::error() << "Error reading numor:" << filename_str << "reason not known:";
+        nsx::error() << "Error reading numor: " << filename << "reason not known:";
         return nullptr;
     }
 
     return importData(data_ptr);
 }
 
-NumorItem *DataItem::importRawData(const std::vector<std::string> &filenames,
+NumorItem* DataItem::importRawData(const std::vector<std::string> &filenames,
                                    double wavelength, double delta_chi, double delta_omega, double delta_phi,
                                    bool rowMajor, bool swapEndian, int bpp)
 {
@@ -92,7 +107,7 @@ NumorItem *DataItem::importRawData(const std::vector<std::string> &filenames,
     auto exp = getExperiment();
 
     // If the experience already stores the current numor, skip it
-    if (exp->hasData(basename))
+    if (exp->hasData(filenames[0]))
         return nullptr;
 
 

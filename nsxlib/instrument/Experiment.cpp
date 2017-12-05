@@ -100,6 +100,7 @@ void Experiment::setName(const std::string& name)
 void Experiment::addData(sptrDataSet data)
 {
     auto filename = data->getFilename();
+
     // Add the data only if it does not exist in the current data map
     if (_data.find(filename) != _data.end()) {
         return;
