@@ -23,27 +23,6 @@ double DialogCalculatedPeaks::dMax()
     return ui->dMaxSpinBox->value();
 }
 
-double DialogCalculatedPeaks::searchRadius()
-{
-    return ui->radiusSpinBox->value();
-}
-
-
-double DialogCalculatedPeaks::frameRadius() 
-{
-    return ui->frameSpinBox->value();
-}
-
-double DialogCalculatedPeaks::minimumRadius()
-{
-    return ui->minRadiusSpinBox->value();
-}
-
-double DialogCalculatedPeaks::minimumPeakDuration()
-{
-    return ui->minDurationSpinBox->value();
-}
-
 double DialogCalculatedPeaks::peakScale()
 {
     return ui->peakScaleSpinBox->value();

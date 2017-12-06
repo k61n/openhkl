@@ -367,13 +367,9 @@ void SessionModel::incorporateCalculatedPeaks()
 
         auto predictor = nsx::PeakPredictor(numor);
         predictor._dmin = dialog.dMin();
-        predictor._dmax = dialog.dMax();
-        predictor._searchRadius = dialog.searchRadius();
+        predictor._dmax = dialog.dMax();       
         predictor._peakScale = dialog.peakScale();
-        predictor._bkgScale = dialog.bkgScale();
-        predictor._frameRadius = dialog.frameRadius();
-        predictor._minimumRadius = dialog.minimumRadius();
-        predictor._minimumPeakDuration = dialog.minimumPeakDuration();
+        predictor._bkgScale = dialog.bkgScale();     
         predictor._Isigma = dialog.Isigma();
         predictor._handler = handler;
         // debugging

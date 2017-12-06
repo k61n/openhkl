@@ -76,15 +76,7 @@ public:
     //! Scale factor used for peak integration.
     double _peakScale;
     //! Scale factor used for background calculation.
-    double _bkgScale;
-    //! Radius (in detector coordinates) used to search for nearby peaks.
-    double _searchRadius;
-    //! Number of nearby detector frames to search.
-    double _frameRadius;
-    //! Minimum radius (in detector coordinates) of a calculated peak.
-    double _minimumRadius;
-    //! Minimum number of frames for a calculated peak.
-    double _minimumPeakDuration;
+    double _bkgScale;  
     //! Minimum value of \f$I / \sigma_I\f$ to use for neighbor search.
     double _Isigma;
     //! Minimum number of nearby peaks to use for shape determination.
