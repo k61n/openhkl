@@ -101,20 +101,46 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
 
     for (unsigned int i = 0; i < ncrystals; ++i) {
         std::set<Eigen::RowVector3i, compare_fn> found_hkls;
-        PeakSet found_peaks;
-        SpaceGroup group(sample->getUnitCell(i)->getSpaceGroup());
         auto cell = sample->getUnitCell(i);
-        auto UB = cell->reciprocalBasis();
-        std::map<const Ellipsoid*, std::pair<sptrPeak3D, Ellipsoid>> qshapes;
+        auto UB = cell->reciprocalBasis();        
+        std::vector<sptrPeak3D> peaks_to_use;
 
+        _handler->setStatus("Building set of previously found peaks...");
         for (auto&& peak: reference_peaks) {
             if (peak->data() != _data || peak->getActiveUnitCell() != cell) {
                 continue;
-            }
-            found_peaks.insert(peak);
+            }            
             Eigen::RowVector3i hkl = cell->getIntegerMillerIndices(peak->getQ());
             found_hkls.insert(hkl);
+
+            // ignore deselected and masked peaks
+            if (!peak->isSelected() || peak->isMasked()) {
+                continue;
+            }
+
+            Intensity inten = peak->getCorrectedIntensity();
+
+            // peak must have minimum I / sigma ratio
+            if (inten.value() / inten.sigma() < _Isigma) {
+                continue;
+            }
+
+            try {
+                auto old_shape = peak->getShape().metric();
+                auto q_shape = peak->qShape();
+                auto new_shape = toDetectorSpace(q_shape).metric();
+                double error = (new_shape-old_shape).norm() / old_shape.norm();
+
+                // only makes contribution if conversion is consistent
+                if (error < 0.1) {
+                    peaks_to_use.push_back(peak);
+                }
+            } catch(...) {
+                // could not convert back and forth to q-space, so skip
+            }    
         }
+
+        Eigen::Matrix3d qshape = averageQShape(peaks_to_use);
 
         _handler->setStatus("Calculating peak locations...");
 
@@ -130,68 +156,14 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
             // if we keep reference peaks, check whether this hkl is part of reference set
             if (keepObserved && found_hkls.find(int_hkl) != found_hkls.end()) {
                 continue;
-            }
-            
+            }            
             hkls_double.emplace_back(hkl.cast<double>());
         }
 
         predicted_peaks += predicted_hkls.size();
         PeakList peaks = predictPeaks(hkls_double, UB);
         int current_peak = 0;
-
-        _handler->setStatus("Building set of previously found peaks...");
-
-        
-        Eigen::Vector3d lb(0.0, 0.0, 0.0);
-        Eigen::Vector3d ub(_data->getNCols(), _data->getNRows(), _data->getNFrames());
-        auto&& octree = Octree(lb, ub);
-
-        octree.setMaxDepth(4);
-        octree.setMaxStorage(50);
-
-        _handler->log("Building peak octree...");
-
-        for (sptrPeak3D p: found_peaks) {
-            // reflection doesn't belong to current crystal
-            if (cell != p->getActiveUnitCell()) {
-                continue;
-            }
-
-            // ignore deselected and masked peaks
-            if (!p->isSelected() || p->isMasked()) {
-                continue;
-            }
-
-            Intensity inten = p->getCorrectedIntensity();
-
-            // peak must have minimum I / sigma ratio
-            if (inten.value() / inten.sigma() < _Isigma) {
-                continue;
-            }
-
-            try {
-                auto old_shape = p->getShape().metric();
-                auto q_shape = p->qShape();
-                auto new_shape = toDetectorSpace(q_shape).metric();
-                double error = (new_shape-old_shape).norm() / old_shape.norm();
-
-                // only makes contribution if conversion is consistent
-                if (error < 0.1) {
-                    //octree.addData(&q_shape);
-                    const Ellipsoid* e = &p->getShape();
-                    qshapes[e].first = p;
-                    qshapes[e].second = q_shape;
-                }
-            } catch(...) {
-                // could not convert back and forth to q-space, so skip
-            }            
-        }
-
-        for (auto&& shape: qshapes) {
-            octree.addData(shape.first);
-        }
-
-        _handler->log("Done building octree; number of chambers is " + std::to_string(octree.numChambers()));
+  
         _handler->setStatus("Adding calculated peaks...");
 
         int done_peaks = 0;
@@ -199,28 +171,28 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
 
         #pragma omp parallel for
         for (size_t peak_id = 0; peak_id < peaks.size(); ++peak_id) {
-            Peak3D& p = *peaks[peak_id];
-            p.addUnitCell(cell, true);
-            ++current_peak;
+            sptrPeak3D p = peaks[peak_id];
+            p->addUnitCell(cell, true);
+            p->setObserved(false);
+            p->setSelected(true);
 
-            auto q = p.getQ();
-            Eigen::RowVector3i hkl = cell->getIntegerMillerIndices(q);
+            #pragma omp atomic
+            ++current_peak;
+            auto q = p->getQ();
 
             // now we must add it, calculating shape from nearest peaks
              // K is outside the ellipsoid at PsptrPeak3D
-            sptrPeak3D new_peak = averagePeaks(octree, p.getShape().center(), q.rowVector(), qshapes);
-            //sptrPeak3D new_peak = p.averagePeaks(numor);
 
-            if (!new_peak) {
+            try {
+                Ellipsoid shape(p->getShape().center(), toDetectorSpace(Ellipsoid(q.rowVector(), qshape)).metric());
+                p->setShape(shape);           
+            } catch (...) {
                 continue;
             }
 
-            new_peak->setSelected(true);
-            new_peak->addUnitCell(cell, true);
-            new_peak->setObserved(false);
-
             #pragma omp critical
-            calculated_peaks.insert(new_peak);
+            calculated_peaks.insert(p);
+
 
             #pragma omp atomic
             ++done_peaks;
@@ -235,79 +207,22 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
     return calculated_peaks;
 }
 
-sptrPeak3D PeakPredictor::averagePeaks(const Octree& tree, const Eigen::Vector3d& position, const Eigen::RowVector3d& q, const std::map<const Ellipsoid*, std::pair<sptrPeak3D, Ellipsoid>>& qshapes) const
+Eigen::Matrix3d PeakPredictor::averageQShape(const std::vector<sptrPeak3D>& peaks)
 {
-    // create the shape used for the neighbor search
-    Eigen::Matrix3d search_metric;
-    search_metric.setZero();
-    search_metric(0,0) = 1.0 / _searchRadius / _searchRadius;
-    search_metric(1,1) = search_metric(0,0);
-    search_metric(2,2) = 1.0 / _frameRadius / _frameRadius;
-    Ellipsoid search_shape(position, search_metric);
-
-    // get neighbors
-    auto&& neighbors = tree.getCollisions(search_shape);
-
-    // too few neighbors
-    if (neighbors.size() < size_t(_minimumNeighbors)) {
-        return nullptr;
-    }
-
     Eigen::Matrix3d covariance;
     covariance.setZero();
     double total_intensity = 0.0;
 
-    for(const auto& p: neighbors) {
-        const auto& qp = qshapes.at(p);
-        const double I = qp.first->getCorrectedIntensity().value();
-        covariance += I*qp.second.inverseMetric();
+    for(const auto& p: peaks) {
+        const double I = p->getCorrectedIntensity().value();
+        covariance += I*p->qShape().inverseMetric();
         total_intensity += I;
     }
     covariance /= total_intensity;
-    Ellipsoid avg_shape;
-
-    try {
-        avg_shape = toDetectorSpace(Ellipsoid(q, covariance.inverse()));
-    } catch (...) {
-        return nullptr;
-    }
-
-    sptrPeak3D peak = std::make_shared<Peak3D>(_data, avg_shape);
-    // An averaged peak is by definition not an observed peak but a calculated peak
-    peak->setObserved(false);
-    return peak;
-#if 0
-
-    // scale factor for shape
-    Eigen::Vector3d scale;
-    Eigen::Vector3d min(_minimumRadius, _minimumRadius, _minimumPeakDuration);
-
-    for (auto i = 0; i < 3; ++i) {
-        const double ratio = covariance(i,i) / min(i) / min(i);
-        scale(i) = ratio > 1 ? 1.0 : 1.0 / std::sqrt(ratio);
-    }
-
-    for (auto i = 0; i < 3; ++i) {
-        for (auto j = 0; j < 3; ++j) {
-            covariance(i,j) *= scale(i)*scale(j);
-        }
-    }
-  
-    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(covariance);
-    auto vals = solver.eigenvalues();
-
-    // something went wrong...
-    if (vals.minCoeff() < 1e-3 || vals.maxCoeff() > 100*_minimumRadius) {
-        return nullptr;
-    }
-
-    sptrPeak3D peak = std::make_shared<Peak3D>(_data, Ellipsoid(center, covariance.inverse()));
-
-    // An averaged peak is by definition not an observed peak but a calculated peak
-    peak->setObserved(false);
-    return peak;
-    #endif
+    return covariance.inverse();
 }
+
+
 
 PeakList PeakPredictor::predictPeaks(const std::vector<Eigen::RowVector3d>& hkls, const Eigen::Matrix3d& BU)
 {
