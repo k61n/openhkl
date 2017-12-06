@@ -242,8 +242,6 @@ void PeakIntegrator::end()
         }
     }
 
-    #if 0
-
     _region.setBestSlice(best_slice);
    
     // update the intensity/counts based on optimal slice
@@ -258,7 +256,6 @@ void PeakIntegrator::end()
             _pointsPeak(idx-_data_start) += _shellPoints(idx-_data_start, slice);
         }
     }
-    #endif
 
     // OLD CODE BELOW
 
