@@ -129,7 +129,7 @@ int main()
         }
 
         std::vector<Eigen::RowVector3d> q;
-        q.push_back(static_cast<const Eigen::RowVector3d&>(peak->getQ()));
+        q.push_back(peak->getQ().rowVector());
         nsx::PeakPredictor predictor(dataf);
         auto events = predictor.getEvents(q);
 
@@ -153,8 +153,8 @@ int main()
             }
         }
         
-        Eigen::RowVector3d q0 = static_cast<const Eigen::RowVector3d&>(nsx::Peak3D(dataf, nsx::Ellipsoid(p0, 1.0)).getQ());
-        Eigen::RowVector3d q1 = static_cast<const Eigen::RowVector3d&>(nsx::Peak3D(dataf, nsx::Ellipsoid(p1, 1.0)).getQ());
+        Eigen::RowVector3d q0 = nsx::Peak3D(dataf, nsx::Ellipsoid(p0, 1.0)).getQ().rowVector();
+        Eigen::RowVector3d q1 = nsx::Peak3D(dataf, nsx::Ellipsoid(p1, 1.0)).getQ().rowVector();
 
         NSX_CHECK_CLOSE(p0(0), p1(0), 3.0);
         NSX_CHECK_CLOSE(p0(1), p1(1), 3.0);
@@ -168,12 +168,9 @@ int main()
 
     nsx::PeakPredictor predictor(dataf);
     predictor._dmin = 2.1;
-    predictor._dmax = 50.0;
-    predictor._searchRadius = 200.0;
-    predictor._frameRadius = 5.0;
+    predictor._dmax = 50.0;  
     predictor._peakScale = 1.0;
     predictor._bkgScale = 3.0;
-    predictor._minimumRadius = 5.0;
     predictor._minimumNeighbors = 10;
 
     predictor._handler = std::shared_ptr<nsx::ProgressHandler>(new nsx::ProgressHandler());

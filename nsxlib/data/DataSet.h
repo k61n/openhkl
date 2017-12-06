@@ -142,6 +142,7 @@ public:
 
     double getSampleStepSize() const;      
 
+
 protected:
     bool _isOpened;
     std::string _filename;

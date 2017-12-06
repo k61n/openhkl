@@ -10,7 +10,7 @@ int main()
 
     nsx::ReciprocalVector rv1(v1);
 
-    Eigen::RowVector3d v2 = v1 + static_cast<const Eigen::RowVector3d&>(rv1);
+    Eigen::RowVector3d v2 = v1 + rv1.rowVector();
 
     double& x = rv1[0];
 

@@ -59,6 +59,7 @@ void DialogRefineUnitCell::refineParameters()
 
     if (ui->checkBoxRefineLattice->isChecked()) {
         r.refineB();
+        nsx::info() << "Refining B matrix";
     }
 
     for (auto d: _data) {
@@ -70,13 +71,25 @@ void DialogRefineUnitCell::refineParameters()
             for (auto i = 0; i < nsample; ++i) {
                 r.refineSampleState(states, i);
             }
+            nsx::info() << "Refinining " << nsample << " sample axes";
+        }
+
+        if (ui->checkBoxRefineDetector->isChecked()) {
+            for (auto i = 0; i < ndetector; ++i) {
+                r.refineDetectorState(states, i);
+            }
+            nsx::info() << "Refinining " << ndetector << " detector axes";
         }
     }
 
     bool success = r.refine();
     if (!success) {
         nsx::info() << "Failed to refine parameters!";
-    } else {
-        nsx::info() << "Succeeded to refine parameters!";
-    }
+        return;
+    } 
+
+    nsx::info() << "Succeeded to refine parameters!";
+    nsx::info() << "updating predicted peaks...";
+    int updated = r.updatePredictions(_peaks);
+    nsx::info() << "done; updated " << updated << " peaks";
 }

@@ -8,7 +8,7 @@ ReciprocalVector::ReciprocalVector(const Eigen::RowVector3d& rvector) : _rvector
 {
 }
 
-ReciprocalVector::operator const Eigen::RowVector3d& () const
+const Eigen::RowVector3d& ReciprocalVector::rowVector() const
 {
     return _rvector;
 }

@@ -30,7 +30,7 @@ public:
     ~ReciprocalVector()=default;
 
     //! Cast operator to an Eigen row vector
-    explicit operator const Eigen::RowVector3d& () const;
+    const Eigen::RowVector3d& rowVector() const;
 
     //! Return a reference to an element of the vector
     double& operator[](unsigned int index);

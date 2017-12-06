@@ -63,7 +63,7 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrPeak3D peak)
 
     // note: merged peaks are handled separately    
 
-    auto q = static_cast<const Eigen::RowVector3d&>(peak->getQ());
+    auto q = peak->getQ().rowVector();
     const double d = 1.0 / q.norm();
 
     if (filter._removeDmin) {

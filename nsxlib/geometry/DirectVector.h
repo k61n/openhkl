@@ -29,8 +29,8 @@ public:
     //! Destructor
     ~DirectVector()=default;
 
-    //! Cast operator to an Eigen column vector
-    explicit operator const Eigen::Vector3d& () const;
+    //! Return the underlying Eigen::Vector3d stored in the DirectVector.
+    const Eigen::Vector3d& vector() const;
 
     //! Return a reference to an element of the vector
     double& operator[](unsigned int index);

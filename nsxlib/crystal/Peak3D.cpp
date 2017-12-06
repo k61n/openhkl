@@ -264,20 +264,58 @@ int Peak3D::getActiveUnitCellIndex() const
     return _activeUnitCellIndex;
 }
 
-ReciprocalVector Peak3D::getQ() const
-{
-    auto p = _shape.center();
-    auto kf = DetectorEvent(_data, p[0], p[1], p[2]).Kf();
-    auto state = _data->getInterpolatedState(p[2]);
-    auto q = static_cast<const Eigen::RowVector3d&>(kf);
-    q[1] -= 1.0/_data->getDiffractometer()->getSource()->getSelectedMonochromator().getWavelength();
-    return ReciprocalVector(state.sample.transformQ(q));
-}
-
 void Peak3D::setRawIntensity(const Intensity& i)
 {  
     // note: the scaling factor is taken to be consistent with Peak3D::getRawIntensity()
     _intensity = i / data()->getSampleStepSize();
+}
+
+static Eigen::RowVector3d computeQ(const sptrDataSet& data, const Eigen::Vector3d& p)
+{
+    auto kf = DetectorEvent(data, p[0], p[1], p[2]).Kf();
+    auto state = data->getInterpolatedState(p[2]);
+    auto q = kf.rowVector();
+    q[1] -= 1.0/data->getDiffractometer()->getSource()->getSelectedMonochromator().getWavelength();
+    return state.sample.transformQ(q);
+}
+
+ReciprocalVector Peak3D::getQ() const
+{
+    auto p = _shape.center();
+    return ReciprocalVector(computeQ(_data, _shape.center()));
+}
+
+//! This method computes an ellipsoid in q-space which is approximately the transformation from
+//! detector space to q-space of its shape ellipsoid (which is computed during blob search).
+//!
+//! Suppose that the detector-space ellipsoid is given by the equation (x-x0).dot(A*(x-x0)) <= 1.
+//! Then if q = q0 + B(x-x0), then the corresponding ellipsoid.
+//!
+//! This method can throw if there is no valid q-shape corresponding to the detector space shape.
+Ellipsoid Peak3D::qShape() const
+{
+    const Eigen::Vector3d p = _shape.center();
+    const Eigen::Matrix3d A = _shape.metric();
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(A);
+    const Eigen::Matrix3d U = solver.eigenvectors();
+    const Eigen::Vector3d l = solver.eigenvalues();
+
+    const Eigen::RowVector3d q = computeQ(_data, p);
+    
+    Eigen::Matrix3d delta;
+
+    for (int i = 0; i < 3; ++i) {
+        const double s = 3.0 * std::sqrt(1.0 / l(i));
+        Eigen::Vector3d p1 = p+s*U.col(i);
+        Eigen::Vector3d p2 = p-s*U.col(i);
+        const auto q1 = computeQ(_data, p1);
+        const auto q2 = computeQ(_data, p2);
+        delta.col(i) = 0.5 * (q1 - q2) / s;
+    }
+
+    // approximate linear transformation q space to detector space
+    const Eigen::Matrix3d B = U * delta.inverse();
+    return Ellipsoid(q.transpose(), B.transpose()*A*B);
 }
 
 } // end namespace nsx
