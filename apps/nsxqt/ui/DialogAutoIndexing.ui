@@ -128,7 +128,7 @@
        <item row="2" column="0">
         <widget class="QGroupBox" name="niggliReduction">
          <property name="title">
-          <string>Niggli cell</string>
+          <string>&amp;Niggli cell</string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -170,7 +170,7 @@
                <double>0.000100000000000</double>
               </property>
               <property name="value">
-               <double>0.001000000000000</double>
+               <double>0.000100000000000</double>
               </property>
              </widget>
             </item>
