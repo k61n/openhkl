@@ -82,10 +82,10 @@ PeakIntegrator::PeakIntegrator(const IntegrationRegion& region, const DataSet& d
         _data_end = static_cast<unsigned int>(data.getNFrames()-1);
     }
 
-    const int length = _data_end-_data_start + 1;
+    const int n_frames = _data_end-_data_start + 1;
 
     // Allocate all vectors
-    Eigen::VectorXd zero = Eigen::VectorXd::Zero(length);
+    Eigen::VectorXd zero = Eigen::VectorXd::Zero(n_frames);
     _projection = zero;
     _projectionPeak = zero;
     _projectionBkg = zero;
@@ -98,9 +98,6 @@ PeakIntegrator::PeakIntegrator(const IntegrationRegion& region, const DataSet& d
     _dx = int(_end_x - _start_x)+1;
     _dy = int(_end_y - _start_y)+1;
 
-//    _peak_mask.resize(_dy, _dx);
-//    _bkg_mask.resize(_dy, _dx);
-
     _fitA.setZero();
     _fitP.setZero();
     _fitB.setZero();
@@ -109,9 +106,9 @@ PeakIntegrator::PeakIntegrator(const IntegrationRegion& region, const DataSet& d
     _sumY = zero;
     _bkgStd = 0.0;
 
-    _shellIntensity.resize(length, region.nslices());
+    _shellIntensity.resize(n_frames, _region.nslices());
     _shellIntensity.setZero();
-    _shellPoints.resize(length, _region.nslices());
+    _shellPoints.resize(n_frames, _region.nslices());
     _shellPoints.setZero();    
 }
 
