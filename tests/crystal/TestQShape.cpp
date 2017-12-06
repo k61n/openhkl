@@ -8,8 +8,6 @@
 #include <nsxlib/AutoIndexer.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakPredictor.h>
-#include <nsxlib/UBSolution.h>
-#include <nsxlib/UBMinimizer.h>
 #include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/PeakFinder.h>
 #include <nsxlib/DataSet.h>
