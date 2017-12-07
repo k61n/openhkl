@@ -54,15 +54,39 @@ DialogRefineUnitCell::~DialogRefineUnitCell()
 
 void DialogRefineUnitCell::refineParameters()
 {
-    const unsigned int nbatches = ui->spinBoxBatches->value();
-    nsx::Refiner r(_unitCell, _peaks, nbatches);    
+    const unsigned int frames_per_batch = ui->spinBoxFramesPerBatch->value();
 
-    if (ui->checkBoxRefineLattice->isChecked()) {
-        r.refineB();
-        nsx::info() << "Refining B matrix";
-    }
+    // used to compute optimal number of batches
+    auto nbatches = [=](const nsx::PeakList& peaks) {        
+        std::numeric_limits<double> lim;
+        double fmin = lim.max();
+        double fmax = lim.min();
 
+        for (auto&& peak: peaks) {
+            auto center = peak->getShape().center();
+            fmin = std::min(fmin, center[2]);
+            fmax = std::max(fmax, center[2]);
+        }
+
+        return int((fmax-fmin)/frames_per_batch);
+    };
+      
     for (auto d: _data) {
+        nsx::PeakList d_peaks;
+
+        for (auto peak: _peaks) {
+            if (peak->data() == d) {
+                d_peaks.push_back(peak);
+            }
+        }
+
+        nsx::Refiner r(_unitCell, d_peaks, nbatches(d_peaks));    
+
+        if (ui->checkBoxRefineLattice->isChecked()) {
+            r.refineB();
+            nsx::info() << "Refining B matrix";
+        }
+
         std::vector<nsx::InstrumentState>& states = d->getInstrumentStates();
         const int nsample = states[0].sample._offsets.size();
         const int ndetector = states[0].detector._offsets.size();
@@ -80,16 +104,15 @@ void DialogRefineUnitCell::refineParameters()
             }
             nsx::info() << "Refinining " << ndetector << " detector axes";
         }
+
+        bool success = r.refine();
+
+        if (!success) {
+            nsx::info() << "Failed to refine parameters for numor " << d->getFilename();
+        }  else {
+            nsx::info() << "Successfully refined parameters for numor " << d->getFilename();
+            int updated = r.updatePredictions(d_peaks);
+            nsx::info() << "done; updated " << updated << " peak";
+        }
     }
-
-    bool success = r.refine();
-    if (!success) {
-        nsx::info() << "Failed to refine parameters!";
-        return;
-    } 
-
-    nsx::info() << "Succeeded to refine parameters!";
-    nsx::info() << "updating predicted peaks...";
-    int updated = r.updatePredictions(_peaks);
-    nsx::info() << "done; updated " << updated << " peaks";
 }

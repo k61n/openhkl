@@ -61,11 +61,11 @@
     <string>Refine detector settings</string>
    </property>
   </widget>
-  <widget class="QSpinBox" name="spinBoxBatches">
+  <widget class="QSpinBox" name="spinBoxFramesPerBatch">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>130</y>
+     <x>240</x>
+     <y>120</y>
      <width>49</width>
      <height>29</height>
     </rect>
@@ -76,18 +76,21 @@
    <property name="maximum">
     <number>10000</number>
    </property>
+   <property name="value">
+    <number>20</number>
+   </property>
   </widget>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>120</x>
+     <x>20</x>
      <y>130</y>
-     <width>63</width>
+     <width>201</width>
      <height>21</height>
     </rect>
    </property>
    <property name="text">
-    <string>batches</string>
+    <string>maximum frames per batch</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButtonRefine">
