@@ -559,13 +559,6 @@ void DetectorScene::loadCurrentImage(bool newimage)
             }
         }
 
-        Eigen::MatrixXi mask(nrows, ncols);
-        mask.setConstant(-1);
-
-        for (auto&& peak: _session->peaks(_currentData.get())) {
-            peak->getIntegrationRegion().updateMask(mask, _currentFrameIndex);
-        }
-
         for (auto&& peak: _session->peaks(_currentData.get())) {
             auto&& region = peak->getIntegrationRegion();
             auto aabb = region.aabb();
@@ -588,13 +581,14 @@ void DetectorScene::loadCurrentImage(bool newimage)
 
             for (auto c = cmin; c < cmax; ++c) {
                 for (auto r = rmin; r < rmax; ++r) {
+                    int s = region.classifySlice({c, r, _currentFrameIndex});
                     // The pixel is in one of the integration shell
-                    if (mask(r,c) > 0 && mask(r,c) <= region.bestSlice()) {
+                    if (s > 0 && s <= region.bestSlice()) {
                         region_img.setPixel(c, r, peak->isSelected() ? (peak->isObserved() ? green : purple) : red);
                     }
 
                     // The pixel is in the background region
-                    if (mask(r,c) == 0) {
+                    if (s == 0) {
                         region_img.setPixel(c, r, peak->isSelected() ? (peak->isObserved() ? yellow : pink) : red);
                     }
                 }

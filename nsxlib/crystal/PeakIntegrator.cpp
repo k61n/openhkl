@@ -140,7 +140,7 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
             const int slice = _region.classifySlice(_point1);
 
             const bool inpeak = (slice > 0);
-            const bool inbackground = (slice == 0) && (mask(y, x) == 0);
+            const bool inbackground = (slice == 0) && (mask(y, x) <= 0);
 
             if (slice >= 0) {
                 _shellIntensity(idx-_data_start, slice) += intensity;
