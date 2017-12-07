@@ -573,11 +573,11 @@ void DetectorScene::loadCurrentImage(bool newimage)
                 continue;
             }
 
-            long cmin = std::max(0l, std::lround(std::floor(lower[0])));
-            long rmin = std::max(0l, std::lround(std::floor(lower[1])));
+            int cmin = std::max(0l, std::lround(std::floor(lower[0])));
+            int rmin = std::max(0l, std::lround(std::floor(lower[1])));
 
-            long cmax = std::min(long(_currentData->getNCols()), std::lround(std::ceil(upper[0]))+1);
-            long rmax = std::min(long(_currentData->getNRows()), std::lround(std::ceil(upper[1]))+1);
+            int cmax = std::min(long(_currentData->getNCols()), std::lround(std::ceil(upper[0]))+1);
+            int rmax = std::min(long(_currentData->getNRows()), std::lround(std::ceil(upper[1]))+1);
 
             for (auto c = cmin; c < cmax; ++c) {
                 for (auto r = rmin; r < rmax; ++r) {
