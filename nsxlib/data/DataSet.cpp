@@ -90,11 +90,6 @@ DataSet::~DataSet()
     blosc_destroy();
 }
 
-std::string DataSet::getBasename() const
-{
-    return removeFileExtension(fileBasename(_filename));
-}
-
 int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z)
 {
     // Check that the voxel is inside the limit of the data
@@ -478,7 +473,7 @@ void DataSet::integratePeaks(const PeakSet& peaks, double peak_scale, double bkg
     std::cout << "std. dev:   " << peak_radius_std << std::endl;
 
     for (auto&& peak: peaks ) {
-        IntegrationRegion region(peak->getShape(), peak_scale, bkg_scale);
+        IntegrationRegion region(peak->getShape(), peak_scale, 0.5*(peak_scale+bkg_scale), bkg_scale);
         PeakIntegrator integrator(region, *this);
         peak_list.emplace_back(peak, integrator);
     }
@@ -493,7 +488,7 @@ void DataSet::integratePeaks(const PeakSet& peaks, double peak_scale, double bkg
         frame = getFrame(idx);
 
         mask.resize(getNRows(), getNCols());
-        mask.setZero();
+        mask.setConstant(-1);
 
         for (auto& tup: peak_list ) {
             auto&& integrator = tup.second;

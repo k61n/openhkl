@@ -109,6 +109,9 @@ private:
     Eigen::ArrayXd _countsPeak;
     Eigen::ArrayXd _countsBkg;
 
+    Eigen::ArrayXXd _shellIntensity;
+    Eigen::ArrayXXd _shellPoints;
+
     Eigen::Matrix3d _fitA;
     Eigen::Vector3d _fitP;
     Eigen::Vector3d _fitB;

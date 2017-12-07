@@ -27,7 +27,7 @@ PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D p):
     _peak(std::move(p))
 { 
     if (_peak) {
-        Eigen::Vector3d c=_peak->getIntegrationRegion().getRegion().aabb().center();
+        Eigen::Vector3d c=_peak->getIntegrationRegion().aabb().center();
         setPos(c[0], c[1]);
     }
     _pen.setWidth(2);
@@ -48,8 +48,7 @@ PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D p):
 
 QRectF PeakGraphicsItem::boundingRect() const
 {
-    auto bb = nsx::IntegrationRegion(_peak->getIntegrationRegion()).getBackground();
-    const auto aabb = bb.aabb();
+    auto aabb = _peak->getIntegrationRegion().aabb();
     const Eigen::Vector3d& l = aabb.lower();
     const Eigen::Vector3d& u = aabb.upper();
     qreal w=u[0]-l[0];
@@ -89,7 +88,7 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     }
     _label->setVisible(_hovered || _labelVisible);
 
-    const auto aabb = _peak->getIntegrationRegion().getRegion().aabb();
+    const auto aabb = _peak->getIntegrationRegion().aabb();
     const Eigen::Vector3d& peak_l = aabb.lower();
     const Eigen::Vector3d& peak_u = aabb.upper();
     qreal peak_w = peak_u[0]-peak_l[0];
@@ -100,7 +99,7 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
 void PeakGraphicsItem::setFrame(unsigned long frame)
 {
-    const auto aabb = _peak->getIntegrationRegion().getBackground().aabb();
+    const auto aabb = _peak->getIntegrationRegion().aabb();
     const Eigen::Vector3d& l = aabb.lower();
     const Eigen::Vector3d& u = aabb.upper();
 

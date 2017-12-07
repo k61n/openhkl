@@ -244,10 +244,6 @@ void ExperimentTree::importData()
     QStringList fileNames;
     fileNames = QFileDialog::getOpenFileNames(this,"select numors","","",nullptr,QFileDialog::Option::DontUseNativeDialog);
 
-    // No files selected, do nothing
-    if (fileNames.isEmpty())
-        return;
-
     for (int i = 0; i < fileNames.size(); ++i) {
         dataItem->importData(fileNames[i].toStdString());
     }
@@ -322,8 +318,7 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
     else if (auto ptr=dynamic_cast<SampleItem*>(item))
         ptr->addUnitCell();
     else if (auto ptr=dynamic_cast<NumorItem*>(item)) {
-        auto exp = ptr->getExperiment();
-        emit plotData(exp->getData(item->text().toStdString()));
+        emit plotData(ptr->getData());
     }
 }
 

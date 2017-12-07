@@ -80,11 +80,11 @@ const std::map<std::string,sptrDataSet>& Experiment::getData() const
 
 sptrDataSet Experiment::getData(std::string name)
 {
-    auto it=_data.find(name);
-    if (it == _data.end())
+    auto it = _data.find(name);
+    if (it == _data.end()) {
         throw std::runtime_error("The data "+name+" could not be found in the experiment "+_name);
-
-    return _data[name];
+    }
+    return it->second;
 }
 
 const std::string& Experiment::getName() const
@@ -99,12 +99,11 @@ void Experiment::setName(const std::string& name)
 
 void Experiment::addData(sptrDataSet data)
 {
+    auto filename = data->getFilename();
 
     // Add the data only if it does not exist in the current data map
-    std::string basename=data->getBasename();
-    auto it=_data.find(basename);
-    if (it != _data.end()) {
-        return ;
+    if (_data.find(filename) != _data.end()) {
+        return;
     }
     std::string diffName = data->getMetadata()->getKey<std::string>("Instrument");
 
@@ -127,7 +126,7 @@ void Experiment::addData(sptrDataSet data)
         if (std::abs(wav-mono.getWavelength())>1e-5)
             throw std::runtime_error("trying to mix data with different wavelengths");
     }
-    _data.insert(std::pair<std::string,sptrDataSet>(basename,data));
+    _data.insert(std::make_pair(filename,data));
 }
 
 bool Experiment::hasData(const std::string& name) const

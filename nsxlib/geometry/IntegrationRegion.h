@@ -39,19 +39,36 @@ namespace nsx {
 
 class IntegrationRegion {
 public:
-    IntegrationRegion() = default;
-    IntegrationRegion(const Ellipsoid& region, double scale = 1.0, double bkg_scale = 3.0);
+    IntegrationRegion(Ellipsoid shape = {}, double bkg_begin = 1.0, double bkg_end = 3.0, int nslices = 10);
 
-    const Ellipsoid& getRegion() const;
-    bool inRegion(const Eigen::Vector3d& p) const;
-    bool inBackground(const Eigen::Vector3d& p) const;
-    PointType classifyPoint(const Eigen::Vector3d& p) const;
-
-    const Ellipsoid& getBackground() const;
     void updateMask(Eigen::MatrixXi& mask, double z) const;
 
+    AABB aabb() const;
+
+    //! Classify the given point. Positive indicates it is in one of the integration shells,
+    //! zero indicates it is in background, and negative indicates it is neither integration nor background.
+    int classifySlice(const Eigen::Vector3d& p) const;
+
+    //! Number of slices used in integration
+    int nslices() const;
+
+    //! Best integration slice
+    int bestSlice() const;
+
+    //! Set the best integration slice.
+    void setBestSlice(int n);
+
 private:
-    Ellipsoid _region, _background;
+
+    Ellipsoid _shape;
+
+    double _bkgBegin;
+
+    double _bkgEnd;
+
+    int _nslices;
+
+    int _bestSlice;
 };
 
 } // end namespace nsx

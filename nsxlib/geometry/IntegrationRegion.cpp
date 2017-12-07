@@ -33,55 +33,27 @@
 
 namespace nsx {
 
-IntegrationRegion::IntegrationRegion(
-        const Ellipsoid &region, double scale, double bkg_scale):
-    _region(region),
-    _background(region)
+IntegrationRegion::IntegrationRegion(Ellipsoid shape, double bkg_begin, double bkg_end, int nslices):
+    _shape(shape),
+    _bkgBegin(bkg_begin),
+    _bkgEnd(bkg_end),
+    _nslices(nslices),
+    _bestSlice(0)
 {
-    _region.scale(scale); // todo: need erf_inv
-    _background.scale(bkg_scale); // todo: need erf_inv
 }
 
-const Ellipsoid &IntegrationRegion::getRegion() const
+AABB IntegrationRegion::aabb() const
 {
-    return _region;
-}
-
-bool IntegrationRegion::inRegion(const Eigen::Vector3d &p) const
-{
-    return _region.isInside(p);
-}
-
-bool IntegrationRegion::inBackground(const Eigen::Vector3d &p) const
-{
-    if(!_background.aabb().isInside(p)) {
-        return false;
-    }
-    // exclude if in peak
-    return !inRegion(p);
-}
-
-PointType IntegrationRegion::classifyPoint(const Eigen::Vector3d &p) const
-{
-    if (!_background.aabb().isInside(p)) {
-        return PointType::EXCLUDED;
-    }
-    if (_region.isInside(p)) {
-        return PointType::REGION;
-    }
-    return PointType::BACKGROUND;
-}
-
-const Ellipsoid& IntegrationRegion::getBackground() const
-{
-    return _background;
+    Ellipsoid bkg(_shape);
+    bkg.scale(_bkgEnd);
+    return bkg.aabb();
 }
 
 void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
 {
-    auto aabb = _background.aabb();
-    auto lower = aabb.lower();
-    auto upper = aabb.upper();
+    const auto& bounding_box = aabb();
+    auto lower = bounding_box.lower();
+    auto upper = bounding_box.upper();
 
     if (z < lower[2] || z > upper[2]) {
         return;
@@ -101,11 +73,50 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
     for (auto x = xmin; x < xmax; ++x) {
         for (auto y = ymin; y < ymax; ++y) {
             Eigen::Vector3d p(x, y, z);
-            if (inRegion(p)) {
-                mask(y, x) = 1;
+            auto s = classifySlice(p);
+            if (s >= 0) {
+                mask(y,x) = s;
             }
         }
     }
+}
+
+int IntegrationRegion::classifySlice(const Eigen::Vector3d& p) const
+{
+    const auto& x = p-_shape.center();
+    const double r2 = x.transpose()*_shape.metric()*x;
+
+    // point falls outside of background region
+    if (r2 > _bkgEnd*_bkgEnd) {
+        return -1;
+    }
+    // point is outside the integration shell
+    if (r2 > _bkgBegin*_bkgBegin) {
+        return 0;
+    }
+
+    // determine which integration shell it lies in
+    const int selected_slice  = 1 + static_cast<int>(std::sqrt(r2)*_nslices/_bkgBegin);
+
+    return selected_slice;
+}
+
+int IntegrationRegion::nslices() const
+{
+    // note: we add one here to include the background case
+    return _nslices+1;
+}
+
+//! Best integration slice
+int IntegrationRegion::bestSlice() const
+{
+    return _bestSlice;
+}
+//! Set the best integration slice.
+void IntegrationRegion::setBestSlice(int n)
+{
+    assert(n > 0 && n <= _nslices);
+    _bestSlice = n;
 }
 
 } // end namespace nsx

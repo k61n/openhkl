@@ -76,9 +76,13 @@ void SpaceGroupDialog::evaluateSpaceGroups()
     _cells.clear();
 
     for (nsx::sptrPeak3D peak : _peaks) {
-        _cells.insert(peak->getActiveUnitCell());
-        auto cell = peak->getActiveUnitCell();
-        Eigen::RowVector3i hkl = cell->getIntegerMillerIndices(peak->getQ());
+
+        auto unit_cell = peak->getActiveUnitCell();
+        if (!unit_cell) {
+            continue;
+        }
+        _cells.insert(unit_cell);
+        Eigen::RowVector3i hkl = unit_cell->getIntegerMillerIndices(peak->getQ());
 
         if (peak->isSelected() && !peak->isMasked()) {
             hkls.push_back(std::array<double, 3>{{double(hkl[0]), double(hkl[1]), double(hkl[2])}});
@@ -90,7 +94,6 @@ void SpaceGroupDialog::evaluateSpaceGroups()
         nsx::error() << "ERROR: Only one unit cell is supported at this time";
         return;
     }
-
 
     if (hkls.size() == 0) {
         nsx::error() << "Need to have indexed peaks in order to find space group!";

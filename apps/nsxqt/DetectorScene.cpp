@@ -559,16 +559,9 @@ void DetectorScene::loadCurrentImage(bool newimage)
             }
         }
 
-        Eigen::MatrixXi mask(nrows, ncols);
-        mask.setZero();
-
-        for (auto&& peak: _session->peaks(_currentData.get())) {
-            peak->getIntegrationRegion().updateMask(mask, _currentFrameIndex);
-        }
-
         for (auto&& peak: _session->peaks(_currentData.get())) {
             auto&& region = peak->getIntegrationRegion();
-            auto aabb = region.getBackground().aabb();
+            auto aabb = region.aabb();
             auto&& lower = aabb.lower();
             auto&& upper = aabb.upper();
 
@@ -580,21 +573,23 @@ void DetectorScene::loadCurrentImage(bool newimage)
                 continue;
             }
 
-            long xmin = std::max(0l, std::lround(std::floor(lower[0])));
-            long ymin = std::max(0l, std::lround(std::floor(lower[1])));
+            auto cmin = std::max(0l, std::lround(std::floor(lower[0])));
+            auto rmin = std::max(0l, std::lround(std::floor(lower[1])));
 
-            long xmax = std::min(long(_currentData->getNCols()), std::lround(std::ceil(upper[0]))+1);
-            long ymax = std::min(long(_currentData->getNRows()), std::lround(std::ceil(upper[1]))+1);
+            auto cmax = std::min(long(_currentData->getNCols()), std::lround(std::ceil(upper[0]))+1);
+            auto rmax = std::min(long(_currentData->getNRows()), std::lround(std::ceil(upper[1]))+1);
 
-            for (auto x = xmin; x < xmax; ++x) {
-                for (auto y = ymin; y < ymax; ++y) {
-                    Eigen::Vector3d p(x, y, _currentFrameIndex);
-
-                    if (region.inRegion(p)) {
-                        region_img.setPixel(x, y, peak->isSelected() ? (peak->isObserved() ? green : purple) : red);
+            for (auto c = cmin; c < cmax; ++c) {
+                for (auto r = rmin; r < rmax; ++r) {
+                    int s = region.classifySlice({double(c), double(r), double(_currentFrameIndex)});
+                    // The pixel is in one of the integration shell
+                    if (s > 0 && s <= region.bestSlice()) {
+                        region_img.setPixel(c, r, peak->isSelected() ? (peak->isObserved() ? green : purple) : red);
                     }
-                    if (region.inBackground(p) && (mask(y,x) == 0)) {
-                        region_img.setPixel(x, y, peak->isSelected() ? (peak->isObserved() ? yellow : pink) : red);
+
+                    // The pixel is in the background region
+                    if (s == 0) {
+                        region_img.setPixel(c, r, peak->isSelected() ? (peak->isObserved() ? yellow : pink) : red);
                     }
                 }
             }
@@ -649,8 +644,8 @@ void DetectorScene::updatePeaks()
     clearPeaks();
     auto peaks = _session->peaks(_currentData.get());
 
-    for (auto&& peak: peaks) {
-        auto aabb = peak->getIntegrationRegion().getBackground().aabb();
+    for (auto&& peak : peaks) {
+        auto aabb = peak->getIntegrationRegion().aabb();
         const Eigen::Vector3d& l = aabb.lower();
         const Eigen::Vector3d& u = aabb.upper();
 

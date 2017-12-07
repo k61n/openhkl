@@ -13,7 +13,6 @@ class DataItem : public TreeItem
 public:
     explicit DataItem(nsx::sptrExperiment experiment);
 
-    NumorItem *importData(nsx::sptrDataSet data);
     NumorItem* importData(const std::string& filename);
     NumorItem *importRawData(const std::vector<std::string>& filenames,
                              double wavelength, double delta_chi, double delta_omega, double delta_phi,
@@ -21,6 +20,10 @@ public:
 
     QJsonObject toJson() override;
     void fromJson(const QJsonObject& obj) override;
+
+private:
+    NumorItem *importData(nsx::sptrDataSet data);
+
 };
 
 #endif // NSXQT_DATAITEM_H
