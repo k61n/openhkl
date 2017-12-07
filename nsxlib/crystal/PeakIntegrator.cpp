@@ -216,7 +216,7 @@ void PeakIntegrator::end()
     const double avgBkg = getMeanBackground();
 
     // find the shell with best sigma/I
-    int best_slice = -1;
+    int best_slice = _region.nslices()-1;
     double best_ratio = 1e10;
     double npoints = 0;
     double I = 0;

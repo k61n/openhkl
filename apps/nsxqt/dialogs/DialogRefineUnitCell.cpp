@@ -113,6 +113,14 @@ void DialogRefineUnitCell::refineParameters()
             nsx::info() << "Successfully refined parameters for numor " << d->getFilename();
             int updated = r.updatePredictions(d_peaks);
             nsx::info() << "done; updated " << updated << " peak";
+
+            nsx::PeakSet pset;
+
+            for (auto&& p: d_peaks) {
+                pset.insert(p);
+            }
+
+            d->integratePeaks(pset, 3.0, 6.0, false, nullptr);
         }
     }
 }
