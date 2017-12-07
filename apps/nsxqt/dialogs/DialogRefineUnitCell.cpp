@@ -54,7 +54,22 @@ DialogRefineUnitCell::~DialogRefineUnitCell()
 
 void DialogRefineUnitCell::refineParameters()
 {
-    const unsigned int nbatches = ui->spinBoxBatches->value();
+    const unsigned int frames_per_batch = ui->spinBoxFramesPerBatch->value();
+
+    // used to compute optimal number of batches
+    auto nbatches = [=](const nsx::PeakList& peaks) {        
+        std::numeric_limits<double> lim;
+        double fmin = lim.max();
+        double fmax = lim.min();
+
+        for (auto&& peak: peaks) {
+            auto center = peak->getShape().center();
+            fmin = std::min(fmin, center[2]);
+            fmax = std::max(fmax, center[2]);
+        }
+
+        return int((fmax-fmin)/frames_per_batch);
+    };
       
     for (auto d: _data) {
         nsx::PeakList d_peaks;
@@ -65,7 +80,7 @@ void DialogRefineUnitCell::refineParameters()
             }
         }
 
-        nsx::Refiner r(_unitCell, d_peaks, nbatches);    
+        nsx::Refiner r(_unitCell, d_peaks, nbatches(d_peaks));    
 
         if (ui->checkBoxRefineLattice->isChecked()) {
             r.refineB();
