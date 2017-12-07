@@ -643,6 +643,12 @@ void MainWindow::on_actionFit_profiles_triggered()
             z.setZero(npoints);
             I.setZero(npoints);
 
+            // hard cutoff
+            if (npoints > 50000) {
+                peak->setSelected(false);
+                continue;
+            }
+
             for (int f = fmin; f < fmax; ++f) {
                 for (int j = xmin; j < xmax; ++j) {
                     for (int i = ymin; i < ymax; ++i) {
