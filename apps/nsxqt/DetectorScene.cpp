@@ -573,15 +573,15 @@ void DetectorScene::loadCurrentImage(bool newimage)
                 continue;
             }
 
-            int cmin = std::max(0l, std::lround(std::floor(lower[0])));
-            int rmin = std::max(0l, std::lround(std::floor(lower[1])));
+            auto cmin = std::max(0l, std::lround(std::floor(lower[0])));
+            auto rmin = std::max(0l, std::lround(std::floor(lower[1])));
 
-            int cmax = std::min(long(_currentData->getNCols()), std::lround(std::ceil(upper[0]))+1);
-            int rmax = std::min(long(_currentData->getNRows()), std::lround(std::ceil(upper[1]))+1);
+            auto cmax = std::min(long(_currentData->getNCols()), std::lround(std::ceil(upper[0]))+1);
+            auto rmax = std::min(long(_currentData->getNRows()), std::lround(std::ceil(upper[1]))+1);
 
             for (auto c = cmin; c < cmax; ++c) {
                 for (auto r = rmin; r < rmax; ++r) {
-                    int s = region.classifySlice({c, r, _currentFrameIndex});
+                    int s = region.classifySlice({double(c), double(r), double(_currentFrameIndex)});
                     // The pixel is in one of the integration shell
                     if (s > 0 && s <= region.bestSlice()) {
                         region_img.setPixel(c, r, peak->isSelected() ? (peak->isObserved() ? green : purple) : red);
