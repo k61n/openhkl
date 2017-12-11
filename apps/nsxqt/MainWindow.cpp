@@ -653,7 +653,7 @@ void MainWindow::on_actionFit_profiles_triggered()
                 for (int j = xmin; j < xmax; ++j) {
                     for (int i = ymin; i < ymax; ++i) {
 
-                        if (region.classifySlice({j, i, f}) < 0) {
+                        if (region.classifySlice({double(j), double(i), double(f)}) < 0) {
                             continue;
                         }
 
