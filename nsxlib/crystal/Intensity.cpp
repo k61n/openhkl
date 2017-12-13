@@ -64,6 +64,11 @@ double Intensity::sigma() const
     return std::sqrt(_sigma2);
 }
 
+double Intensity::variance() const
+{
+    return _sigma2;
+}
+
 Intensity Intensity::operator+(const Intensity &other) const
 {
     return Intensity(_value + other._value, _sigma2 + other._sigma2);

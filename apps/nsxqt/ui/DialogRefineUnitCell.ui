@@ -106,6 +106,19 @@
     <string>Refine</string>
    </property>
   </widget>
+  <widget class="QCheckBox" name="checkBoxRefineOrientation">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>40</y>
+     <width>91</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Refine lattice orientation</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

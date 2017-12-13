@@ -87,6 +87,11 @@ void DialogRefineUnitCell::refineParameters()
             nsx::info() << "Refining B matrix";
         }
 
+        if (ui->checkBoxRefineOrientation->isChecked()) {
+            r.refineU();
+            nsx::info() << "Refining U matrix";
+        }
+
         std::vector<nsx::InstrumentState>& states = d->getInstrumentStates();
         const int nsample = states[0].sample._offsets.size();
         const int ndetector = states[0].detector._offsets.size();
