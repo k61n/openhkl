@@ -10,6 +10,7 @@
 #include "Gonio.h"
 #include "HDF5DataReader.h"
 #include "Sample.h"
+#include "Source.h"
 #include "Units.h"
 
 namespace nsx {
@@ -126,7 +127,18 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, sptrDiffractometer d
     for (unsigned int i=0;i<_nFrames;++i) {
         _states[i].sample = ComponentState(_diffractometer->getSample().get(), eigenToVector(dm.col(i)));
     }
+
+
+    // todo: fix this!!
+    dm.resize(_diffractometer->getSource()->getGonio()->getNPhysicalAxes(), _nFrames);
+    dm.setZero();
+
+    for (auto i = 0; i < _nFrames; ++i) {
+        _states[i].source = ComponentState(_diffractometer->getSource().get(), eigenToVector(dm.col(i)));
+    }
+
     _file->close();
+
 }
 
 HDF5DataReader::~HDF5DataReader()

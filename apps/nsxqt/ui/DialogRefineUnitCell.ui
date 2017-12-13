@@ -111,12 +111,25 @@
     <rect>
      <x>330</x>
      <y>40</y>
-     <width>91</width>
+     <width>191</width>
      <height>26</height>
     </rect>
    </property>
    <property name="text">
     <string>Refine lattice orientation</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBoxRefineSource">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>70</y>
+     <width>201</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Refine source goniometer</string>
    </property>
   </widget>
  </widget>
