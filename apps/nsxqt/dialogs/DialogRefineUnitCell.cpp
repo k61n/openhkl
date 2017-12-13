@@ -87,9 +87,15 @@ void DialogRefineUnitCell::refineParameters()
             nsx::info() << "Refining B matrix";
         }
 
+        if (ui->checkBoxRefineOrientation->isChecked()) {
+            r.refineU();
+            nsx::info() << "Refining U matrix";
+        }
+
         std::vector<nsx::InstrumentState>& states = d->getInstrumentStates();
         const int nsample = states[0].sample._offsets.size();
         const int ndetector = states[0].detector._offsets.size();
+        const int nsource = states[0].source._offsets.size();
         
         if (ui->checkBoxRefineSample->isChecked()) {
             for (auto i = 0; i < nsample; ++i) {
@@ -103,6 +109,13 @@ void DialogRefineUnitCell::refineParameters()
                 r.refineDetectorState(states, i);
             }
             nsx::info() << "Refinining " << ndetector << " detector axes";
+        }
+
+        if (ui->checkBoxRefineSource->isChecked()) {
+            for (auto i = 0; i < ndetector; ++i) {
+                r.refineSourceState(states, i);
+            }
+            nsx::info() << "Refinining " << nsource << " source axes";
         }
 
         bool success = r.refine();
