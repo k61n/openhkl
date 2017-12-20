@@ -26,6 +26,7 @@
 
 #include "Component.h"
 #include "InstrumentState.h"
+#include "MatrixOperations.h"
 
 namespace nsx {
 
@@ -39,10 +40,10 @@ InstrumentState InstrumentState::interpolate(const InstrumentState &other, doubl
 
     const double s = 1-t;
 
-    result.detectorOrientation = s*detectorOrientation + t*other.detectorOrientation;
+    result.detectorOrientation = interpolateRotation(detectorOrientation, other.detectorOrientation, t);
     result.detectorOffset = s*detectorOffset + t*other.detectorOffset;
 
-    result.sampleOrientation = s*sampleOrientation + t*other.sampleOrientation;
+    result.sampleOrientation = interpolateRotation(sampleOrientation, other.sampleOrientation, t);
     result.samplePosition = s*samplePosition + t*other.samplePosition;
 
     result.ni = s*ni + t*other.ni;
