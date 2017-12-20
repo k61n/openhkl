@@ -64,7 +64,7 @@ public:
     bool operator==(const Monochromator& other);
 
     //! Get the incoming wave vector
-    Eigen::Vector3d getKi() const;
+    Eigen::RowVector3d getKi() const;
 
 private:
 

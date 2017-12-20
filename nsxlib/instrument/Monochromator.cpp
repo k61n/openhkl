@@ -144,9 +144,9 @@ bool Monochromator::operator==(const Monochromator& other)
     return true;
 }
 
-Eigen::Vector3d Monochromator::getKi() const
+Eigen::RowVector3d Monochromator::getKi() const
 {
-    return Eigen::Vector3d(0,1.0/_wavelength,0.0);
+    return {0.0, 1.0/_wavelength, 0.0};
 }
 
 } // end namespace nsx

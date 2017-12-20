@@ -1,3 +1,5 @@
+#if 0
+
 #include <limits>
 #include <stdexcept>
 
@@ -194,3 +196,5 @@ unsigned int MultiDetector::getNDetectors() const
 }
 
 } // end namespace nsx
+
+#endif

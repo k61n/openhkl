@@ -60,6 +60,9 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader, const sptrDiffractometer& 
     _metadata = uptrMetaData(new MetaData(_reader->getMetadata()));
     _nFrames = _metadata->getKey<int>("npdone");
 
+    double wav = _metadata->getKey<double>("wavelength");
+    _diffractometer->getSource()->getSelectedMonochromator().setWavelength(wav);
+
     // Getting Scan parameters for the detector
     _states.resize(_nFrames);
 

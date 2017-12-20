@@ -28,12 +28,27 @@
 
 #include "ComponentState.h"
 
+#include <Eigen/Core>
+
 namespace nsx {
 
 struct InstrumentState {
     ComponentState detector;
     ComponentState source;
     ComponentState sample;
+
+    Eigen::Matrix3d detectorOrientation;
+    Eigen::Matrix3d sampleOrientation;
+
+    Eigen::Vector3d samplePosition;
+    Eigen::Vector3d detectorOffset;
+
+    Eigen::RowVector3d ni;
+    double wavelength;
+
+    #ifndef SWIG
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    #endif
 
     InstrumentState interpolate(const InstrumentState& other, double t) const;
 };

@@ -29,6 +29,8 @@
 
 #pragma once
 
+#if 0
+
 #include <string>
 #include <vector>
 
@@ -97,3 +99,5 @@ public:
 };
 
 } // end namespace nsx
+
+#endif

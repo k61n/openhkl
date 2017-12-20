@@ -274,9 +274,9 @@ static Eigen::RowVector3d computeQ(const sptrDataSet& data, const Eigen::Vector3
 {
     auto kf = DetectorEvent(data, p[0], p[1], p[2]).Kf();
     auto state = data->getInterpolatedState(p[2]);
-    auto q = kf.rowVector();
-    q[1] -= 1.0/data->getDiffractometer()->getSource()->getSelectedMonochromator().getWavelength();
-    return state.sample.transformQ(q);
+    auto ki = state.ni.normalized() / state.wavelength;
+    auto q = kf.rowVector() - ki;
+    return q*state.sampleOrientation;
 }
 
 ReciprocalVector Peak3D::getQ() const

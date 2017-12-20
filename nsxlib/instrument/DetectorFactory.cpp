@@ -12,7 +12,7 @@ DetectorFactory::DetectorFactory()
 {
 	registerCallback("flat" ,&FlatDetector::create);
 	registerCallback("cylindrical",&CylindricalDetector::create);
-	registerCallback("multidetector",&MultiDetector::create);
+	//registerCallback("multidetector",&MultiDetector::create);
 }
 
 DetectorFactory::~DetectorFactory()

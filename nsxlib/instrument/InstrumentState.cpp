@@ -37,8 +37,18 @@ InstrumentState InstrumentState::interpolate(const InstrumentState &other, doubl
     result.sample = sample.interpolate(other.sample, t);
     result.source = source.interpolate(other.source, t);
 
+    const double s = 1-t;
+
+    result.detectorOrientation = s*detectorOrientation + t*other.detectorOrientation;
+    result.detectorOffset = s*detectorOffset + t*other.detectorOffset;
+
+    result.sampleOrientation = s*sampleOrientation + t*other.sampleOrientation;
+    result.samplePosition = s*samplePosition + t*other.samplePosition;
+
+    result.ni = s*ni + t*other.ni;
+    result.wavelength = s*wavelength + t*other.wavelength;
+
     return result;
 }
 
 } // end namespace nsx
-

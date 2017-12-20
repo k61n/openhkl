@@ -56,8 +56,6 @@ public:
 
     Eigen::Vector3d getPosition() const;
 
-    Eigen::Vector3d transformQ(const Eigen::Vector3d& q) const;
-
     ComponentState interpolate(const ComponentState &other, double t) const;
 
     //! Offsets for the value of each axis of the component.    

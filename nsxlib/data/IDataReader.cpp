@@ -61,7 +61,26 @@ InstrumentState IDataReader::getState(size_t frame) const
 {
     assert(frame < _nFrames);
 
-    return _states[frame];
+    InstrumentState state(_states[frame]);
+
+    // compute transformations
+    auto detector_gonio = _diffractometer->getDetector()->getGonio();
+    auto sample_gonio = _diffractometer->getSample()->getGonio();
+
+    auto detector_trans = detector_gonio->getHomMatrix(state.detector);
+    auto sample_trans = sample_gonio->getHomMatrix(state.sample);
+
+    state.detectorOrientation = detector_trans.rotation();
+    state.sampleOrientation = sample_trans.rotation();
+
+    state.detectorOffset = detector_trans.translation();
+    state.samplePosition = sample_trans.translation();
+
+    state.ni = _diffractometer->getSource()->getSelectedMonochromator().getKi();
+    state.ni.normalize();
+    state.wavelength = _diffractometer->getSource()->getSelectedMonochromator().getWavelength();
+
+    return state;
 }
 
 std::string IDataReader::getBasename() const
