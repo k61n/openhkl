@@ -10,9 +10,8 @@ namespace nsx {
 
 DetectorFactory::DetectorFactory()
 {
-	registerCallback("flat" ,&FlatDetector::create);
-	registerCallback("cylindrical",&CylindricalDetector::create);
-	//registerCallback("multidetector",&MultiDetector::create);
+	registerCallback("flat", &FlatDetector::create);
+	registerCallback("cylindrical", &CylindricalDetector::create);
 }
 
 DetectorFactory::~DetectorFactory()
