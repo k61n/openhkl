@@ -246,48 +246,41 @@ std::vector<DetectorEvent> PeakPredictor::getEvents(const std::vector<Eigen::Row
     std::vector<DetectorEvent> events;
     unsigned int scanSize = _data->getNFrames();
 
-    auto diffractometer = _data->getDiffractometer();
-    auto detector = diffractometer->getDetector();
-    auto& mono = diffractometer->getSource()->getSelectedMonochromator();
+    std::vector<Eigen::RowVector3d> ki;
+    ki.reserve(scanSize);
 
-    const Eigen::RowVector3d ki = mono.getKi().transpose();
     std::vector<Eigen::Matrix3d> rotMatrices;
     rotMatrices.reserve(scanSize);
-    auto gonio = diffractometer->getSample()->getGonio();
-    double wavelength_2 = -0.5 * mono.getWavelength();
 
     for (unsigned int s=0; s<scanSize; ++s) {
         auto state = _data->getInterpolatedState(s);
-        rotMatrices.push_back(gonio->getHomMatrix(state.sample).rotation().transpose());
+        rotMatrices.push_back(state.sampleOrientation.transpose());
+        ki.push_back(state.ni.normalized() / state.wavelength);
     } 
 
     for (const Eigen::RowVector3d& q: qs) {
-        bool sign = (q*rotMatrices[0] + ki).squaredNorm() > ki.squaredNorm();
+        bool sign = (q*rotMatrices[0] + ki[0]).squaredNorm() > ki[0].squaredNorm();
 
         for (int i = 1; i < scanSize; ++i) {
-            const Eigen::RowVector3d kf = q*rotMatrices[i] + ki;
-            const bool new_sign = kf.squaredNorm() > ki.squaredNorm();
+            const Eigen::RowVector3d kf = q*rotMatrices[i] + ki[i];
+            const bool new_sign = kf.squaredNorm() > ki[i].squaredNorm();
 
             if (sign != new_sign) {
                 sign = new_sign;
 
-                const Eigen::RowVector3d kf0 = q*rotMatrices[i-1] + ki;
-                const Eigen::RowVector3d kf1 = q*rotMatrices[i] + ki;
-                //const Eigen::RowVector3d dkf = kf1-kf0;
+                const Eigen::RowVector3d kf0 = q*rotMatrices[i-1] + ki[i-1];
+                const Eigen::RowVector3d kf1 = q*rotMatrices[i] + ki[i];
                 const Eigen::RowVector3d dkf = q*(rotMatrices[i]-rotMatrices[i-1]);
-        
-                const double a = dkf.squaredNorm();
-                const double b = 2 * kf0.dot(dkf);
-                const double c = kf0.squaredNorm() - ki.squaredNorm();
-                const double discr = b*b - 4*a*c;
         
                 double t = 0.5;
                 const int max_count = 100;
                 Eigen::RowVector3d kf;
+                int c;
                 
-                for (int c = 0; c < max_count; ++c) {
+                for (c = 0; c < max_count; ++c) {
                     kf = (1-t)*kf0 + t*kf1;
-                    const double f = kf.squaredNorm() - ki.squaredNorm();
+                    auto ki_interp = (1-t)*ki[i-1] + t*ki[i];
+                    const double f = kf.squaredNorm() - ki_interp.squaredNorm();
                     
                     if (std::fabs(f) < 1e-10) {
                         break;
@@ -307,10 +300,10 @@ std::vector<DetectorEvent> PeakPredictor::getEvents(const std::vector<Eigen::Row
                 double px,py;
                 // If hit detector, new peak
                 //const ComponentState& cs=state.sample;
-                Eigen::Vector3d from = diffractometer->getSample()->getPosition(state.sample);
+                Eigen::Vector3d from = _data->getDiffractometer()->getSample()->getPosition(state.sample);
         
                 double time;
-                bool accept = diffractometer->getDetector()->receiveKf(px,py,kf,from,time,state.detector);
+                bool accept = _data->getDiffractometer()->getDetector()->receiveKf(px,py,kf,from,time,state.detector);
         
                 if (accept) {
                     events.emplace_back(_data, px, py, t);
