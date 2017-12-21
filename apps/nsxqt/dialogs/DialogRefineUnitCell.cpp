@@ -88,21 +88,27 @@ void DialogRefineUnitCell::refineParameters()
         }
 
         std::vector<nsx::InstrumentState>& states = d->getInstrumentStates();
-        const int nsample = states[0].sample._offsets.size();
-        const int ndetector = states[0].detector._offsets.size();
         
-        if (ui->checkBoxRefineSample->isChecked()) {
-            for (auto i = 0; i < nsample; ++i) {
-                r.refineSampleState(states, i);
-            }
-            nsx::info() << "Refinining " << nsample << " sample axes";
+        if (ui->checkBoxRefineSamplePosition->isChecked()) {
+            r.refineSamplePosition(states); 
+            nsx::info() << "Refinining sample position";
         }
 
-        if (ui->checkBoxRefineDetector->isChecked()) {
-            for (auto i = 0; i < ndetector; ++i) {
-                r.refineDetectorState(states, i);
-            }
-            nsx::info() << "Refinining " << ndetector << " detector axes";
+        if (ui->checkBoxRefineSampleOrientation->isChecked()) {
+            nsx::info() << "Refinining sample orientation NOT IMPLEMENTED";
+        }
+
+        if (ui->checkBoxRefineDetectorOffset->isChecked()) {
+            r.refineDetectorOffset(states);
+            nsx::info() << "Refinining detector offset";
+        }
+
+        if (ui->checkBoxRefineDetectorOrientation->isChecked()) {
+            nsx::info() << "Refinining detector orientation NOT IMPLEMENTED";
+        }
+
+        if (ui->checkBoxRefineKi->isChecked()) {
+            nsx::info() << "Refining Ki NOT IMPLEMENTED";
         }
 
         bool success = r.refine();

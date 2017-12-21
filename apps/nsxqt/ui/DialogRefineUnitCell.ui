@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>624</width>
-    <height>359</height>
+    <width>707</width>
+    <height>543</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -26,16 +26,16 @@
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>40</y>
-     <width>191</width>
+     <y>50</y>
+     <width>231</width>
      <height>26</height>
     </rect>
    </property>
    <property name="text">
-    <string>Refine lattice parameters</string>
+    <string>Refine lattice parameters (B)</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="checkBoxRefineSample">
+  <widget class="QCheckBox" name="checkBoxRefineSamplePosition">
    <property name="geometry">
     <rect>
      <x>50</x>
@@ -45,27 +45,27 @@
     </rect>
    </property>
    <property name="text">
-    <string>Refine sample goniometer</string>
+    <string>Refine sample position</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="checkBoxRefineDetector">
+  <widget class="QCheckBox" name="checkBoxRefineDetectorOffset">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>100</y>
+     <x>350</x>
+     <y>50</y>
      <width>181</width>
      <height>26</height>
     </rect>
    </property>
    <property name="text">
-    <string>Refine detector settings</string>
+    <string>Refine detector offset</string>
    </property>
   </widget>
   <widget class="QSpinBox" name="spinBoxFramesPerBatch">
    <property name="geometry">
     <rect>
-     <x>240</x>
-     <y>120</y>
+     <x>270</x>
+     <y>160</y>
      <width>49</width>
      <height>29</height>
     </rect>
@@ -83,8 +83,8 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>130</y>
+     <x>60</x>
+     <y>160</y>
      <width>201</width>
      <height>21</height>
     </rect>
@@ -96,14 +96,53 @@
   <widget class="QPushButton" name="pushButtonRefine">
    <property name="geometry">
     <rect>
-     <x>70</x>
-     <y>190</y>
+     <x>80</x>
+     <y>250</y>
      <width>84</width>
      <height>28</height>
     </rect>
    </property>
    <property name="text">
     <string>Refine</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBoxRefineSampleOrientation">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>100</y>
+     <width>251</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Refine lattice/sample orientation</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBoxRefineDetectorOrientation">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>80</y>
+     <width>221</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Refine detector orientation</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBoxRefineKi">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>110</y>
+     <width>111</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Refine Ki</string>
    </property>
   </widget>
  </widget>
