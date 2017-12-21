@@ -250,7 +250,17 @@ std::vector<Eigen::Vector3d> PeakPredictor::getEvents(const std::vector<Eigen::R
     std::vector<Eigen::Matrix3d> rotMatrices;
     rotMatrices.reserve(scanSize);
 
-    for (unsigned int s=0; s<scanSize; ++s) {
+    std::vector<Eigen::Matrix3d> source_rot;
+    std::vector<Eigen::Matrix3d> sample_rot;
+    sample_rot.reserve(scanSize);
+    source_rot.reserve(scanSize);
+
+    auto diffractometer = _data->getDiffractometer();
+
+    auto sample_gonio = diffractometer->getSample()->getGonio();
+    auto source_gonio = diffractometer->getSource()->getGonio();
+    
+    for (unsigned int s = 0; s < scanSize; ++s) {
         auto state = _data->getInterpolatedState(s);
         rotMatrices.push_back(state.sampleOrientation.transpose());
         ki.push_back(state.ki().rowVector());

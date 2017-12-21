@@ -213,7 +213,7 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
 void PeakIntegrator::end()
 {
     // get average background
-    const double avgBkg = getMeanBackground();
+    const double avgBkg = getMeanBackground().value();
 
     // find the shell with best sigma/I
     int best_slice = _region.nslices()-1;
@@ -334,9 +334,10 @@ const Eigen::ArrayXd &PeakIntegrator::getPeakError() const
     return _peakError;
 }
 
-double PeakIntegrator::getMeanBackground() const
+Intensity PeakIntegrator::getMeanBackground() const
 {
-    return _countsBkg.sum() / _pointsBkg.sum();
+    const double mean = _countsBkg.sum() / _pointsBkg.sum();
+    return Intensity(mean, _bkgStd*_bkgStd);
 }
 
 const IntegrationRegion& PeakIntegrator::getRegion() const

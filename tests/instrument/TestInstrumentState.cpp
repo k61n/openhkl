@@ -61,7 +61,7 @@ int main()
         NSX_CHECK_ASSERT( (sample_position-state.samplePosition).norm() < 1e-12);
 
         auto ki = state.ki().rowVector();
-        auto ki0 = diff->getSource()->getSelectedMonochromator().getKi();
+        auto ki0 = diff->getSource()->getSelectedMonochromator().getKi().rowVector();
 
         NSX_CHECK_ASSERT( (ki-ki0).norm() < 1e-10);
     }

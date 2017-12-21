@@ -366,9 +366,10 @@ namespace nsx {
 %include "MergedData.h"
 
 %template(vector_data) std::vector<std::shared_ptr<nsx::DataSet>>;
-%template(vector_peak) std::vector<std::shared_ptr<nsx::Peak3D>>;
+
 
 %template(PeakSet) std::set<std::shared_ptr<nsx::Peak3D>>;
+%template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;
 
 %include "Material.h"

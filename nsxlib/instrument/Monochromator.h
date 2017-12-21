@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "ReciprocalVector.h"
+
 #include <string>
 
 #include <yaml-cpp/yaml.h>
@@ -64,7 +66,7 @@ public:
     bool operator==(const Monochromator& other);
 
     //! Get the incoming wave vector
-    Eigen::RowVector3d getKi() const;
+    ReciprocalVector getKi() const;
 
 private:
 
