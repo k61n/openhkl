@@ -89,4 +89,9 @@ double InstrumentState::get2Theta(const DirectVector& detector_position) const
     return acos(proj/kf.norm()/ni.norm());
 }
 
+ReciprocalVector InstrumentState::ki() const
+{
+    return ReciprocalVector(ni/ni.norm()/wavelength);
+}
+
 } // end namespace nsx

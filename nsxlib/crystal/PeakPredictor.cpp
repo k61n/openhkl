@@ -253,7 +253,7 @@ std::vector<Eigen::Vector3d> PeakPredictor::getEvents(const std::vector<Eigen::R
     for (unsigned int s=0; s<scanSize; ++s) {
         auto state = _data->getInterpolatedState(s);
         rotMatrices.push_back(state.sampleOrientation.transpose());
-        ki.push_back(state.ni.normalized() / state.wavelength);
+        ki.push_back(state.ki().rowVector());
     } 
 
     for (const Eigen::RowVector3d& q: qs) {

@@ -57,6 +57,9 @@ struct InstrumentState {
     //! Takes a direct vector in detector coordinates and computes kf in lab coordinates
     ReciprocalVector kfLab(const DirectVector& detector_position) const;
 
+    //! Return source ki
+    ReciprocalVector ki() const;
+
     //! Takes direct vector in detector coordinates and computes q in sample coordinates
     ReciprocalVector sampleQ(const DirectVector& detector_position) const;
 

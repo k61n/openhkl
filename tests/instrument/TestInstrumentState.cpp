@@ -60,7 +60,7 @@ int main()
         NSX_CHECK_ASSERT( (detector_offset-state.detectorOffset).norm() < 1e-12);
         NSX_CHECK_ASSERT( (sample_position-state.samplePosition).norm() < 1e-12);
 
-        auto ki = state.ni.normalized() / state.wavelength;
+        auto ki = state.ki().rowVector();
         auto ki0 = diff->getSource()->getSelectedMonochromator().getKi();
 
         NSX_CHECK_ASSERT( (ki-ki0).norm() < 1e-10);
