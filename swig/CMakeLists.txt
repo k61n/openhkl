@@ -11,7 +11,7 @@ else()
 endif()
 
 set_property(SOURCE pynsx.i PROPERTY CPLUSPLUS ON)
-set_property(SOURCE pynsx.i PROPERTY GENERATED ON)
+#set_property(SOURCE pynsx.i PROPERTY GENERATED ON)
 set_property(SOURCE pynsx.i PROPERTY SWIG_MODULE_NAME pynsx)
 
 swig_add_module(pynsx python pynsx.i)
