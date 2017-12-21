@@ -62,7 +62,7 @@ ReciprocalVector InstrumentState::kfLab(const DirectVector& detector_position) c
 
 ReciprocalVector InstrumentState::sampleQ(const DirectVector& detector_position) const
 {
-    auto ki = ni.normalized() / wavelength;
+    Eigen::RowVector3d ki = ni / ni.norm() / wavelength;
     auto qLab = kfLab(detector_position).rowVector() - ki;
     return ReciprocalVector(qLab*sampleOrientation);
 }

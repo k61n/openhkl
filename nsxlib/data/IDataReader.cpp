@@ -67,8 +67,8 @@ InstrumentState IDataReader::getState(size_t frame) const
     auto detector_gonio = _diffractometer->getDetector()->getGonio();
     auto sample_gonio = _diffractometer->getSample()->getGonio();
 
-    auto detector_trans = detector_gonio->getHomMatrix(state.detector);
-    auto sample_trans = sample_gonio->getHomMatrix(state.sample);
+    Eigen::Transform<double,3,Eigen::Affine> detector_trans = detector_gonio->getHomMatrix(state.detector);
+    Eigen::Transform<double,3,Eigen::Affine> sample_trans = sample_gonio->getHomMatrix(state.sample);
 
     state.detectorOrientation = detector_trans.rotation();
     state.sampleOrientation = sample_trans.rotation();
