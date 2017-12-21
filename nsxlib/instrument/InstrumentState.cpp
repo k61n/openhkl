@@ -52,4 +52,41 @@ InstrumentState InstrumentState::interpolate(const InstrumentState &other, doubl
     return result;
 }
 
+ReciprocalVector InstrumentState::kfLab(const DirectVector& detector_position) const
+{
+    Eigen::Vector3d k = detectorOrientation*(detector_position.vector() - samplePosition);
+    k.normalize();
+    k /= wavelength;
+    return ReciprocalVector(k);
+}
+
+ReciprocalVector InstrumentState::sampleQ(const DirectVector& detector_position) const
+{
+    auto ki = ni.normalized() / wavelength;
+    auto qLab = kfLab(detector_position).rowVector() - ki;
+    return ReciprocalVector(qLab*sampleOrientation);
+}
+
+void InstrumentState::getGammaNu(double& gamma, double& nu, const DirectVector& detector_position) const
+{
+    auto kf = kfLab(detector_position).rowVector();
+    gamma = std::atan2(kf[0], kf[1]);
+    nu = std::asin(kf[2] / kf.norm());
+}
+
+double InstrumentState::getLorentzFactor(const DirectVector& detector_position) const
+{
+    double gamma,nu;
+    getGammaNu(gamma, nu, detector_position);
+    double lorentz = 1.0/(sin(std::fabs(gamma))*cos(nu));
+    return lorentz;
+}
+
+double InstrumentState::get2Theta(const DirectVector& detector_position) const
+{
+    auto kf = kfLab(detector_position).rowVector();  
+    double proj = kf.dot(ni);
+    return acos(proj/kf.norm()/ni.norm());
+}
+
 } // end namespace nsx

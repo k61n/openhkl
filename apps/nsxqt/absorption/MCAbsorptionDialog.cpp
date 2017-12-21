@@ -5,7 +5,8 @@
 #include <Eigen/Dense>
 
 #include <nsxlib/DataSet.h>
-#include <nsxlib/DetectorEvent.h>
+
+#include <nsxlib/Detector.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Gonio.h>
@@ -83,12 +84,12 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
         ui->progressBar_MCStatus->setFormat(QString::fromStdString(d.second->getFilename()) + ": "+QString::number(progress)+"%");
         for (auto& p: peaks) {
             auto data = p->data();
-            auto pos = p->getShape().center();
-            auto state = data->getInterpolatedState(p->getShape().center()[2]);
+            auto coord = p->getShape().center();
+            auto state = data->getInterpolatedState(coord[2]);
             Eigen::Transform<double,3,2> hommat=sample->getGonio()->getHomMatrix(state.sample);
             Eigen::Matrix3d rot = hommat.rotation();
-            auto event = nsx::DetectorEvent(data, pos[0], pos[1], pos[2]);
-            auto kf = event.Kf();
+            auto position = data->getDiffractometer()->getDetector()->getPos(coord[0], coord[1]);
+            auto kf = state.kfLab(position);
             double transmission=mca.run(ui->spinBox->value(),kf.rowVector(),rot);
             p->setTransmission(transmission);
             ui->progressBar_MCStatus->setValue(++progress);

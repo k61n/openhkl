@@ -114,7 +114,7 @@ using Eigen::Quaterniond;
 #include "Peak3D.h"
 
 #include "PeakRecord.h"
-#include "Mosaic.h"
+
 #include "FFTIndexing.h"
 
 #include "MergedPeak.h"
@@ -165,13 +165,13 @@ using Eigen::Quaterniond;
 #include "FlatDetector.h"
 #include "Source.h"
 #include "InstrumentState.h"
-#include "MultiDetector.h"
+
 #include "Monochromator.h"
 #include "MonoDetector.h"
 #include "Diffractometer.h"
 #include "CylindricalDetector.h"
 #include "Gonio.h"
-#include "DetectorEvent.h"
+
 #include "Axis.h"
 #include "Experiment.h"
 
@@ -413,7 +413,7 @@ namespace nsx {
 %include "CC.h"
 %include "Peak3D.h"
 %include "PeakRecord.h"
-%include "Mosaic.h"
+
 %include "FFTIndexing.h"
 %include "MergedPeak.h"
 %include "SpaceGroup.h"
@@ -454,16 +454,16 @@ namespace nsx {
 %include "FlatDetector.h"
 %include "Source.h"
 %include "InstrumentState.h"
-%include "MultiDetector.h"
+
 %include "Monochromator.h"
 %include "MonoDetector.h"
 %include "Diffractometer.h"
 %include "CylindricalDetector.h"
 %include "Gonio.h"
-%include "DetectorEvent.h"
+
 
 %template(vectorInstrumentState) std::vector<nsx::InstrumentState>;
-%template(vectorDetectorEvent) std::vector<nsx::DetectorEvent>;
+
 
 %include "Axis.h"
 %include "Experiment.h"

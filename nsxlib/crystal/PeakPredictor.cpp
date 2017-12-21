@@ -37,7 +37,6 @@
 #include "DataSet.h"
 #include "DataTypes.h"
 #include "Detector.h"
-#include "DetectorEvent.h"
 #include "Diffractometer.h"
 #include "GeometryTypes.h"
 #include "Gonio.h"
@@ -229,21 +228,20 @@ PeakList PeakPredictor::predictPeaks(const std::vector<Eigen::RowVector3d>& hkls
         qs.emplace_back(hkl*BU);
     }
 
-    std::vector<DetectorEvent> events = getEvents(qs);
+    std::vector<Eigen::Vector3d> events = getEvents(qs);
  
     for (auto event: events) {
-        Eigen::Vector3d p = event.coordinates();
         sptrPeak3D peak(new Peak3D(_data));
         // this sets the center of the ellipse with a dummy value for radius
-        peak->setShape(Ellipsoid(p, 1.0));
+        peak->setShape(Ellipsoid(event, 1.0));
         peaks.emplace_back(peak);
     }
     return peaks;
 }
 
-std::vector<DetectorEvent> PeakPredictor::getEvents(const std::vector<Eigen::RowVector3d>& qs) const
+std::vector<Eigen::Vector3d> PeakPredictor::getEvents(const std::vector<Eigen::RowVector3d>& qs) const
 {
-    std::vector<DetectorEvent> events;
+    std::vector<Eigen::Vector3d> events;
     unsigned int scanSize = _data->getNFrames();
 
     std::vector<Eigen::RowVector3d> ki;
@@ -306,7 +304,7 @@ std::vector<DetectorEvent> PeakPredictor::getEvents(const std::vector<Eigen::Row
                 bool accept = _data->getDiffractometer()->getDetector()->receiveKf(px,py,kf,from,time,state.detector);
         
                 if (accept) {
-                    events.emplace_back(_data, px, py, t);
+                    events.emplace_back(px, py, t);
                 }
             }
         }        
@@ -338,12 +336,12 @@ Ellipsoid PeakPredictor::toDetectorSpace(const Ellipsoid& qshape) const
     }
 
     Eigen::Matrix3d delta;
-    auto p0 = evs[0].coordinates();
+    auto p0 = evs[0];
 
     for (auto i = 0; i < 3; ++i) {
         const double s = std::sqrt(1.0 / l(i));
-        auto p1 = evs[1+2*i].coordinates();
-        auto p2 = evs[2+2*i].coordinates();
+        auto p1 = evs[1+2*i];
+        auto p2 = evs[2+2*i];
         delta.col(i) = 0.5 * (p1-p2) / s;
     }
 

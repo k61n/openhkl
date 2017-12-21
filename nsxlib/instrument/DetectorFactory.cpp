@@ -4,7 +4,6 @@
 #include "CylindricalDetector.h"
 #include "DetectorFactory.h"
 #include "FlatDetector.h"
-#include "MultiDetector.h"
 
 namespace nsx {
 

@@ -85,7 +85,7 @@ void FlatDetector::setAngularHeight(double angle)
     _height=2.0*_distance*tan(angle);
 }
 
-Eigen::Vector3d FlatDetector::getPos(double px, double py) const
+DirectVector FlatDetector::getPos(double px, double py) const
 {
     if (_nCols==0 || _nRows==0)
         throw std::runtime_error("Detector: number of rows or cols must >0");
@@ -105,7 +105,7 @@ Eigen::Vector3d FlatDetector::getPos(double px, double py) const
     result[0]=0.5*_width*((2*x+1.0)/_nCols-1);
     result[1]=_distance;
     result[2]=0.5*_height*((2*y+1.0)/_nRows-1);
-    return result;
+    return DirectVector(result);
 }
 
 bool FlatDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d& f, double& px, double& py, double& t) const

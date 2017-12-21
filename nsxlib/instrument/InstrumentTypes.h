@@ -8,7 +8,6 @@ namespace nsx {
 class Component;
 class ComponentState;
 class Detector;
-class DetectorEvent;
 class Diffractometer;
 class Experiment;
 class Gonio;
@@ -28,8 +27,6 @@ using sptrSample         = std::shared_ptr<Sample>;
 using sptrSource         = std::shared_ptr<Source>;
 
 using uptrComponentState = std::unique_ptr<ComponentState>;
-using uptrDetectorEvent  = std::unique_ptr<DetectorEvent>;
-
 using InstrumentStateList = std::vector<InstrumentState>;
 
 using DetectorState = std::vector<double>;

@@ -5,8 +5,10 @@
 #include <QWidget>
 
 #include <nsxlib/DataSet.h>
-#include <nsxlib/DetectorEvent.h>
+#include <nsxlib/Detector.h>
+#include <nsxlib/Diffractometer.h>
 #include <nsxlib/Ellipsoid.h>
+#include <nsxlib/InstrumentState.h>
 #include <nsxlib/IntegrationRegion.h>
 #include <nsxlib/MetaData.h>
 #include <nsxlib/Peak3D.h>
@@ -206,15 +208,16 @@ void PeakGraphicsItem::plot(SXPlot* plot)
 
     double gamma,nu;
     auto c = _peak->getShape().center();
-    nsx::DetectorEvent ev(_peak->data(), c[0], c[1], c[2]);
-    ev.getGammaNu(gamma,nu);
+    auto state = _peak->data()->getInterpolatedState(c[2]);
+    auto position = _peak->data()->getDiffractometer()->getDetector()->getPos(c[0], c[1]);
+    state.getGammaNu(gamma, nu, position);
     gamma/=nsx::deg;
     nu/=nsx::deg;
     info+=" "+QString(QChar(0x03B3))+","+QString(QChar(0x03BD))+":"+QString::number(gamma,'f',2)+","+QString::number(nu,'f',2)+"\n";
     double intensity=_peak->getScaledIntensity().value();
     double sI=_peak->getScaledIntensity().sigma();
     info+="Intensity ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";
-    double l = ev.getLorentzFactor();
+    double l = state.getLorentzFactor(position);
     info+="Cor. int. ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity/l,'f',2)+" ("+QString::number(sI/l,'f',2)+")\n";
     info += "p value (" + QString::number(_peak->pValue(), 'f', 3) + ")\n";
 

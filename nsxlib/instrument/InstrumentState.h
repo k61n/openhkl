@@ -27,6 +27,8 @@
 #pragma once
 
 #include "ComponentState.h"
+#include "DirectVector.h"
+#include "ReciprocalVector.h"
 
 #include <Eigen/Core>
 
@@ -51,6 +53,20 @@ struct InstrumentState {
     #endif
 
     InstrumentState interpolate(const InstrumentState& other, double t) const;
+
+    //! Takes a direct vector in detector coordinates and computes kf in lab coordinates
+    ReciprocalVector kfLab(const DirectVector& detector_position) const;
+
+    //! Takes direct vector in detector coordinates and computes q in sample coordinates
+    ReciprocalVector sampleQ(const DirectVector& detector_position) const;
+
+
+    void getGammaNu(double& gamma, double& nu, const DirectVector& detector_position) const;
+
+
+    double getLorentzFactor(const DirectVector& detector_position) const;
+
+    double get2Theta(const DirectVector& detector_position) const;
 };
 
 } // end namespace nsx

@@ -17,7 +17,7 @@
 #include <nsxlib/InstrumentState.h>
 #include <nsxlib/ConvolutionKernel.h>
 #include <nsxlib/KernelFactory.h>
-#include <nsxlib/DetectorEvent.h>
+
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Sample.h>
