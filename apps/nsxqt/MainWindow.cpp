@@ -33,6 +33,7 @@
 #include <nsxlib/Path.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFinder.h>
+#include <nsxlib/Profile3d.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/Source.h>
@@ -576,4 +577,119 @@ void MainWindow::on_actionFit_peak_profiles_triggered()
 void MainWindow::on_actionAuto_assign_unit_cell_triggered()
 {
     _session->autoAssignUnitCell();
+}
+
+void MainWindow::on_actionFit_profiles_triggered()
+{
+    nsx::info() << "fit profiles triggered";
+
+    auto numors = _session->getSelectedNumors();
+
+    for (auto d: numors) {
+
+        auto peaks = _session->peaks(nullptr);
+        auto num_peaks = peaks.size();
+        auto current_peak = 0;
+
+        std::vector<Eigen::MatrixXd> frames;
+        frames.reserve(d->getNFrames());
+
+        for (auto f = 0; f < d->getNFrames(); ++f) {
+            frames.emplace_back(d->getFrame(f).cast<double>());
+        }
+
+        nsx::PeakSet pset;
+
+
+        for (auto peak: peaks) {
+
+            ++current_peak;
+
+            if (peak->data() != d) {
+                continue;
+            }
+
+            double done = double(current_peak) * 100.0 / double(num_peaks);
+            if (current_peak%200 == 0) {
+                nsx::info() << "done: " << done;
+                QApplication::processEvents();
+            }
+
+            auto&& region = peak->getIntegrationRegion();
+            auto bb = region.aabb();
+            auto lower = bb.lower();
+            auto upper = bb.upper();
+
+            int fmin = std::max(0, int(lower[2]));
+            int fmax = std::min(int(peak->data()->getNFrames())-1, int(upper[2]));
+
+            int xmin = std::max(0, int(lower[0]));
+            int ymin = std::max(0, int(lower[1]));
+
+            int xmax = std::min(int(d->getNCols())-1, int(upper[0]));
+            int ymax = std::min(int(d->getNRows())-1, int(upper[1]));
+
+            int npoints = (fmax-fmin)*(xmax-xmin)*(ymax-ymin);
+            int point = 0;
+
+            if (npoints <= 0) {
+                peak->setSelected(false);
+                continue;
+            }
+
+            Eigen::ArrayXd x, y, z, I;
+            x.setZero(npoints);
+            y.setZero(npoints);
+            z.setZero(npoints);
+            I.setZero(npoints);
+
+            // hard cutoff
+            if (npoints > 50000) {
+                peak->setSelected(false);
+                continue;
+            }
+
+            for (int f = fmin; f < fmax; ++f) {
+                for (int j = xmin; j < xmax; ++j) {
+                    for (int i = ymin; i < ymax; ++i) {
+
+                        if (region.classifySlice({double(j), double(i), double(f)}) < 0) {
+                            continue;
+                        }
+
+                        x(point) = j;
+                        y(point) = i;
+                        z(point) = f;
+                        I(point) = frames[f](i, j);
+                        ++point;
+                    }
+                }
+            }
+
+            // too few points to get a fit
+            if (point < 20) {
+                peak->setSelected(false);
+                continue;
+            }
+
+            nsx::Profile3d prof(x.head(point), y.head(point), z.head(point), I.head(point));
+            nsx::Profile3d fit = prof.fit(x.head(point), y.head(point), z.head(point), I.head(point), 50);
+
+            if (!fit.success() || fit.pearson() < 0.5) {
+                peak->setSelected(false);
+                continue;
+            }
+
+            Eigen::Matrix3d D;
+            D << prof._Dxx, prof._Dxy, prof._Dxz,
+                prof._Dxy, prof._Dyy, prof._Dyz,
+                prof._Dxz, prof._Dyz, prof._Dzz;
+
+            peak->setShape(nsx::Ellipsoid(prof._c, D));
+            pset.insert(peak);
+        }
+        d->integratePeaks(pset, 3.0, 6.0, false, nullptr);
+    }
+
+    _session->updatePeaks();
 }

@@ -19,6 +19,9 @@ public:
     //! Return the standard deviation of the Intensity.
     double sigma() const;
 
+    //! Return the variance of the Intensity
+    double variance() const;
+
     //! Returns the sum of two Intensity whose value and variance are summed.
     Intensity operator+(const Intensity& other) const;
     //! Returns the difference between two Intensity whose value are subtracted and variance summed.

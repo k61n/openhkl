@@ -250,42 +250,45 @@ std::vector<DetectorEvent> PeakPredictor::getEvents(const std::vector<Eigen::Row
     auto detector = diffractometer->getDetector();
     auto& mono = diffractometer->getSource()->getSelectedMonochromator();
 
-    const Eigen::RowVector3d ki = mono.getKi().transpose();
-    std::vector<Eigen::Matrix3d> rotMatrices;
-    rotMatrices.reserve(scanSize);
-    auto gonio = diffractometer->getSample()->getGonio();
-    double wavelength_2 = -0.5 * mono.getWavelength();
+    const Eigen::RowVector3d ki0 = mono.getKi().rowVector();
 
-    for (unsigned int s=0; s<scanSize; ++s) {
+    std::vector<Eigen::Matrix3d> source_rot;
+    std::vector<Eigen::Matrix3d> sample_rot;
+    sample_rot.reserve(scanSize);
+    source_rot.reserve(scanSize);
+
+    auto sample_gonio = diffractometer->getSample()->getGonio();
+    auto source_gonio = diffractometer->getSource()->getGonio();
+    
+    for (unsigned int s = 0; s < scanSize; ++s) {
         auto state = _data->getInterpolatedState(s);
-        rotMatrices.push_back(gonio->getHomMatrix(state.sample).rotation().transpose());
+        sample_rot.push_back(sample_gonio->getHomMatrix(state.sample).rotation().transpose());
+        source_rot.push_back(source_gonio->getHomMatrix(state.source).rotation().transpose());
     } 
 
     for (const Eigen::RowVector3d& q: qs) {
-        bool sign = (q*rotMatrices[0] + ki).squaredNorm() > ki.squaredNorm();
+        const auto ki = ki0 * source_rot[0];
+        bool sign = (q*sample_rot[0] + ki).squaredNorm() > ki.squaredNorm();
 
         for (int i = 1; i < scanSize; ++i) {
-            const Eigen::RowVector3d kf = q*rotMatrices[i] + ki;
+            const auto ki = ki0*source_rot[i];
+            const Eigen::RowVector3d kf = q*sample_rot[i] + ki;
             const bool new_sign = kf.squaredNorm() > ki.squaredNorm();
 
             if (sign != new_sign) {
                 sign = new_sign;
 
-                const Eigen::RowVector3d kf0 = q*rotMatrices[i-1] + ki;
-                const Eigen::RowVector3d kf1 = q*rotMatrices[i] + ki;
-                //const Eigen::RowVector3d dkf = kf1-kf0;
-                const Eigen::RowVector3d dkf = q*(rotMatrices[i]-rotMatrices[i-1]);
-        
-                const double a = dkf.squaredNorm();
-                const double b = 2 * kf0.dot(dkf);
-                const double c = kf0.squaredNorm() - ki.squaredNorm();
-                const double discr = b*b - 4*a*c;
-        
+                const Eigen::RowVector3d kf0 = q*sample_rot[i-1] + ki;
+                const Eigen::RowVector3d kf1 = q*sample_rot[i] + ki;
+                const Eigen::RowVector3d dkf = q*(sample_rot[i]-sample_rot[i-1]);
+                
                 double t = 0.5;
                 const int max_count = 100;
                 Eigen::RowVector3d kf;
+
+                int c;
                 
-                for (int c = 0; c < max_count; ++c) {
+                for (c = 0; c < max_count; ++c) {
                     kf = (1-t)*kf0 + t*kf1;
                     const double f = kf.squaredNorm() - ki.squaredNorm();
                     

@@ -90,6 +90,7 @@ private slots:
     void on_actionReintegrate_peaks_triggered();
     void on_actionFit_peak_profiles_triggered();
     void on_actionAuto_assign_unit_cell_triggered();
+    void on_actionFit_profiles_triggered();
 
 public slots:
     void changeData(nsx::sptrDataSet);

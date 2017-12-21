@@ -486,9 +486,9 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     QString ttip;
     double gamma, nu, th2;
     auto ev = nsx::DetectorEvent(_currentData, col, row, _currentFrameIndex);
-    auto si = nsx::ReciprocalVector({0, 1.0, 0});
+    auto ki = _currentData->getDiffractometer()->getSource()->getSelectedMonochromator().getKi();
     ev.getGammaNu(gamma, nu);
-    th2 = ev.get2Theta(si);
+    th2 = ev.get2Theta(ki);
 
     switch (_cursorMode) {
     case PIXEL:
