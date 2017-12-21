@@ -12,7 +12,7 @@
 #include <nsxlib/DataSet.h>
 #include <nsxlib/EllipseMask.h>
 #include <nsxlib/Detector.h>
-#include <nsxlib/DetectorEvent.h>
+
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Gonio.h>
 #include <nsxlib/InstrumentState.h>
@@ -485,10 +485,11 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
     QString ttip;
     double gamma, nu, th2;
-    auto ev = nsx::DetectorEvent(_currentData, col, row, _currentFrameIndex);
-    auto ki = _currentData->getDiffractometer()->getSource()->getSelectedMonochromator().getKi();
-    ev.getGammaNu(gamma, nu);
-    th2 = ev.get2Theta(ki);
+
+    auto pos = _currentData->getDiffractometer()->getDetector()->getPos(col, row);
+
+    state.getGammaNu(gamma, nu, pos);
+    th2 = state.get2Theta(pos);
 
     switch (_cursorMode) {
     case PIXEL:

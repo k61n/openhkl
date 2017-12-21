@@ -15,7 +15,7 @@
 #include <nsxlib/ConvolutionKernel.h>
 #include <nsxlib/InstrumentState.h>
 #include <nsxlib/KernelFactory.h>
-#include <nsxlib/DetectorEvent.h>
+
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Sample.h>
@@ -117,7 +117,7 @@ int main()
     
     // add cell to sample
     dataf->getDiffractometer()->getSample()->addUnitCell(cell);
-    nsx::Refiner refiner(cell, peaks, dataf->getNFrames() / 30);
+    nsx::Refiner refiner(cell, peaks, 1);
 
     NSX_CHECK_ASSERT(refiner.batches().size() == 1);
 
@@ -125,16 +125,11 @@ int main()
         NSX_CHECK_ASSERT(batch.peaks().size() > 200);
     }
 
-    //refiner.refineB();
+    refiner.refineB();
     //refiner.refineU();
     auto&& states = dataf->getInstrumentStates();
-    auto naxes = dataf->getDiffractometer()->getSample()->getGonio()->getNAxes();
+    refiner.refineSamplePosition(states);
 
-    // refine sample state
-    for (auto i = 0; i < 3; ++i) {
-        refiner.refineSampleState(states, i);        
-    }
-  
     NSX_CHECK_ASSERT(refiner.refine(200));
     return 0;
 }

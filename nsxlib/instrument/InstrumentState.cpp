@@ -26,6 +26,7 @@
 
 #include "Component.h"
 #include "InstrumentState.h"
+#include "MatrixOperations.h"
 
 namespace nsx {
 
@@ -37,8 +38,60 @@ InstrumentState InstrumentState::interpolate(const InstrumentState &other, doubl
     result.sample = sample.interpolate(other.sample, t);
     result.source = source.interpolate(other.source, t);
 
+    const double s = 1-t;
+
+    result.detectorOrientation = interpolateRotation(detectorOrientation, other.detectorOrientation, t);
+    result.detectorOffset = s*detectorOffset + t*other.detectorOffset;
+
+    result.sampleOrientation = interpolateRotation(sampleOrientation, other.sampleOrientation, t);
+    result.samplePosition = s*samplePosition + t*other.samplePosition;
+
+    result.ni = s*ni + t*other.ni;
+    result.wavelength = s*wavelength + t*other.wavelength;
+
     return result;
 }
 
-} // end namespace nsx
+ReciprocalVector InstrumentState::kfLab(const DirectVector& detector_position) const
+{
+    Eigen::Vector3d k = detectorOrientation*(detector_position.vector() - samplePosition);
+    k.normalize();
+    k /= wavelength;
+    return ReciprocalVector(k);
+}
 
+ReciprocalVector InstrumentState::sampleQ(const DirectVector& detector_position) const
+{
+    Eigen::RowVector3d ki = ni / ni.norm() / wavelength;
+    auto qLab = kfLab(detector_position).rowVector() - ki;
+    return ReciprocalVector(qLab*sampleOrientation);
+}
+
+void InstrumentState::getGammaNu(double& gamma, double& nu, const DirectVector& detector_position) const
+{
+    auto kf = kfLab(detector_position).rowVector();
+    gamma = std::atan2(kf[0], kf[1]);
+    nu = std::asin(kf[2] / kf.norm());
+}
+
+double InstrumentState::getLorentzFactor(const DirectVector& detector_position) const
+{
+    double gamma,nu;
+    getGammaNu(gamma, nu, detector_position);
+    double lorentz = 1.0/(sin(std::fabs(gamma))*cos(nu));
+    return lorentz;
+}
+
+double InstrumentState::get2Theta(const DirectVector& detector_position) const
+{
+    auto kf = kfLab(detector_position).rowVector();  
+    double proj = kf.dot(ni);
+    return acos(proj/kf.norm()/ni.norm());
+}
+
+ReciprocalVector InstrumentState::ki() const
+{
+    return ReciprocalVector(ni/ni.norm()/wavelength);
+}
+
+} // end namespace nsx

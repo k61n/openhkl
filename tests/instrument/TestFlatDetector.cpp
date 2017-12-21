@@ -2,7 +2,7 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/DetectorEvent.h>
+
 #include <nsxlib/FlatDetector.h>
 #include <nsxlib/Gonio.h>
 #include <nsxlib/NSXTest.h>

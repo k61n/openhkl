@@ -1,4 +1,5 @@
 #include "MatrixOperations.h"
+#include <unsupported/Eigen/MatrixFunctions>
 
 namespace nsx {
 
@@ -22,6 +23,15 @@ void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove)
         matrix.block(rowToRemove,0,numRows-rowToRemove,numCols) = matrix.block(rowToRemove+1,0,numRows-rowToRemove,numCols);
 
     matrix.conservativeResize(numRows,numCols);
+}
+
+Eigen::Matrix3d interpolateRotation(const Eigen::Matrix3d& U0, const Eigen::Matrix3d& U1, const double t)
+{
+    // TODO: profile, optimize?
+    // maybe get rid of Eigen unsupported
+    const Eigen::Matrix3d U0U1 = U0.transpose()*U1;
+    const Eigen::Matrix3d A = U0U1.log();
+    return U0 * (t*A).exp();
 }
 
 } // end namespace nsx

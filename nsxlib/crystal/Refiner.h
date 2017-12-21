@@ -59,9 +59,13 @@ public:
     void refineU();
     void refineB();
 
-    void refineDetectorState(InstrumentStateList& states, unsigned int axis);
-    void refineSampleState(InstrumentStateList& states, unsigned int axis);
-    void refineSourceState(InstrumentStateList& states, unsigned int axis);
+    void refineDetectorOffset(InstrumentStateList& states);
+    //void refineDetectorOrientation(InstrumentStateList& states);
+
+    void refineSamplePosition(InstrumentStateList& states);
+    //void refineSampleOrientation(InstrumentStateList& states);
+
+    //void refineSourceKi(InstrumentStateList& states);
 
     bool refine(unsigned int max_iter = 100);
     int residuals(Eigen::VectorXd& fvec);
@@ -98,9 +102,13 @@ public:
     void refineU();
     void refineB();
 
-    void refineDetectorState(InstrumentStateList& states, unsigned int axis);
-    void refineSampleState(InstrumentStateList& states, unsigned int axis);
-    void refineSourceState(InstrumentStateList& states, unsigned int axis);
+    void refineDetectorOffset(InstrumentStateList& states);
+    //void refineDetectorOrientation(InstrumentStateList& states);
+
+    void refineSamplePosition(InstrumentStateList& states);
+    //void refineSampleOrientation(InstrumentStateList& states);
+
+    //void refineKi(InstrumentStateList& states);
 
     bool refine(unsigned int max_iter = 100);
 

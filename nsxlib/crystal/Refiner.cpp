@@ -112,51 +112,39 @@ void RefinementBatch::refineB()
     }
 }
 
-void RefinementBatch::refineDetectorState(InstrumentStateList& states, unsigned int axis)
+void RefinementBatch::refineDetectorOffset(InstrumentStateList& states)
 {
-    std::vector<int> ids;
-    for (auto i = 0; i < states.size(); ++i) {
-        if (i < _fmin || i >= _fmax) {
-            continue;
+    for (int axis = 0; axis < 3; ++axis) {
+        std::vector<int> ids;
+        for (auto i = 0; i < states.size(); ++i) {
+            if (i < _fmin || i >= _fmax) {
+                continue;
+            }
+            int id = _params.addParameter(&states[i].detectorOffset(axis));
+            ids.push_back(id);
         }
-        int id = _params.addParameter(&states[i].detector._offsets(axis));
-        ids.push_back(id);
-    }
-    // record the constraints
-    for (int i = 1; i < ids.size(); ++i) {
-        _constraints.push_back(std::make_pair(ids[i], ids[i-1]));
+        // record the constraints
+        for (int i = 1; i < ids.size(); ++i) {
+            _constraints.push_back(std::make_pair(ids[i], ids[i-1]));
+        }
     }
 }
 
-void RefinementBatch::refineSampleState(InstrumentStateList& states, unsigned int axis)
+void RefinementBatch::refineSamplePosition(InstrumentStateList& states)
 {
-    std::vector<int> ids;
-    for (auto i = 0; i < states.size(); ++i) {
-        if (i < _fmin || i >= _fmax) {
-            continue;
+    for (int axis = 0; axis < 3; ++axis) {
+        std::vector<int> ids;
+        for (auto i = 0; i < states.size(); ++i) {
+            if (i < _fmin || i >= _fmax) {
+                continue;
+            }
+            int id = _params.addParameter(&states[i].samplePosition(axis));
+            ids.push_back(id);
         }
-        int id = _params.addParameter(&states[i].sample._offsets(axis));
-        ids.push_back(id);
-    }
-    // record the constraints
-    for (int i = 1; i < ids.size(); ++i) {
-        _constraints.push_back(std::make_pair(ids[i], ids[i-1]));
-    }
-}
-
-void RefinementBatch::refineSourceState(InstrumentStateList& states, unsigned int axis)
-{
-    std::vector<int> ids;
-    for (auto i = 0; i < states.size(); ++i) {
-        if (i < _fmin || i >= _fmax) {
-            continue;
+        // record the constraints
+        for (int i = 1; i < ids.size(); ++i) {
+            _constraints.push_back(std::make_pair(ids[i], ids[i-1]));
         }
-        int id = _params.addParameter(&states[i].source._offsets(axis));
-        ids.push_back(id);
-    }
-    // record the constraints
-    for (int i = 1; i < ids.size(); ++i) {
-        _constraints.push_back(std::make_pair(ids[i], ids[i-1]));
     }
 }
 
@@ -202,24 +190,17 @@ int RefinementBatch::residuals(Eigen::VectorXd &fvec)
     return 0;
 }
 
-void Refiner::refineDetectorState(InstrumentStateList& states, unsigned int axis)
+void Refiner::refineDetectorOffset(InstrumentStateList& states)
 {
     for (auto&& batch: _batches) {
-        batch.refineDetectorState(states, axis);
+        batch.refineDetectorOffset(states);
     }
 }
 
-void Refiner::refineSampleState(InstrumentStateList& states, unsigned int axis)
+void Refiner::refineSamplePosition(InstrumentStateList& states)
 {
     for (auto&& batch: _batches) {
-        batch.refineSampleState(states, axis);
-    }
-}
-
-void Refiner::refineSourceState(InstrumentStateList& states, unsigned int axis)
-{
-    for (auto&& batch: _batches) {
-        batch.refineSourceState(states, axis);
+        batch.refineSamplePosition(states);
     }
 }
 

@@ -146,7 +146,7 @@ bool Monochromator::operator==(const Monochromator& other)
 
 ReciprocalVector Monochromator::getKi() const
 {
-    return ReciprocalVector(Eigen::Vector3d(0,1.0/_wavelength,0.0));
+    return ReciprocalVector({0.0, 1.0/_wavelength, 0.0});
 }
 
 } // end namespace nsx

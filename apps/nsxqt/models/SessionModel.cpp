@@ -61,6 +61,7 @@
 #include <nsxlib/Detector.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Ellipsoid.h>
+#include <nsxlib/InstrumentState.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/MergedData.h>
 #include <nsxlib/MergedPeak.h>
@@ -503,9 +504,11 @@ bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& pea
         const long k = std::lround(hkl[1]);
         const long l = std::lround(hkl[2]);
 
-        nsx::DetectorEvent ev(peak);
+        auto center = peak->getShape().center();
+        auto state = peak->data()->getInterpolatedState(center[2]);
+        auto pos = peak->data()->getDiffractometer()->getDetector()->getPos(center[0], center[1]);
 
-        double lorentz = ev.getLorentzFactor();
+        double lorentz = state.getLorentzFactor(pos);
         double trans = peak->getTransmission();
 
         double intensity = peak->getCorrectedIntensity().value();

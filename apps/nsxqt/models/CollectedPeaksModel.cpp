@@ -7,7 +7,10 @@
 #include <QString>
 
 #include <nsxlib/DataSet.h>
-#include <nsxlib/DetectorEvent.h>
+
+#include <nsxlib/Detector.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/InstrumentState.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/MetaData.h>
 #include <nsxlib/Peak3D.h>
@@ -16,6 +19,15 @@
 
 #include "CollectedPeaksModel.h"
 #include "ProgressView.h"
+
+static void peakFactors(double& gamma, double& nu, double& lorentz, nsx::sptrPeak3D peak)
+{
+    auto coord = peak->getShape().center();
+    auto state = peak->data()->getInterpolatedState(coord[2]);
+    auto position = peak->data()->getDiffractometer()->getDetector()->getPos(coord[0], coord[1]);
+    lorentz = state.getLorentzFactor(position);
+    state.getGammaNu(gamma, nu, position);
+}
 
 CollectedPeaksModel::CollectedPeaksModel(nsx::sptrExperiment experiment, QObject *parent)
 : QAbstractTableModel(parent),
@@ -139,10 +151,8 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         bool success = cell->getMillerIndices(_peaks[row]->getQ(), hkl, true);
     }
     auto c = _peaks[row]->getShape().center();
-    nsx::DetectorEvent ev(_peaks[row]->data(), c[0], c[1], c[2]);
     double gamma, nu;
-    ev.getGammaNu(gamma, nu);
-    lorentzFactor = ev.getLorentzFactor();
+    peakFactors(gamma, nu, lorentzFactor, _peaks[row]);
     transmissionFactor = _peaks[row]->getTransmission();
     scaledIntensity = _peaks[row]->getCorrectedIntensity().value();
     sigmaScaledIntensity = _peaks[row]->getCorrectedIntensity().sigma();
@@ -269,11 +279,10 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         break;
     case Column::lorentzFactor:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto c1 = p1->getShape().center();
-            auto c2 = p2->getShape().center();
-            auto ev1 = nsx::DetectorEvent(p1->data(), c1[0], c1[1], c1[2]);
-            auto ev2 = nsx::DetectorEvent(p2->data(), c2[0], c2[1], c2[2]);
-            return ev1.getLorentzFactor()>ev2.getLorentzFactor();
+            double g, n, lor1, lor2;
+            peakFactors(g, n, lor1, p1);
+            peakFactors(g, n, lor2, p2);
+            return lor1 > lor2;
         };
         break;
     case Column::numor:

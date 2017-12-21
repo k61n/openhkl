@@ -7,7 +7,7 @@
 #include <nsxlib/ComponentState.h>
 #include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
-#include <nsxlib/DetectorEvent.h>
+
 #include <nsxlib/Experiment.h>
 #include <nsxlib/GruberReduction.h>
 #include <nsxlib/MergedData.h>

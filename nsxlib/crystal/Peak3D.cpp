@@ -41,7 +41,6 @@
 #include "ComponentState.h"
 #include "DataSet.h"
 #include "Detector.h"
-#include "DetectorEvent.h"
 #include "Diffractometer.h"
 #include "GeometryTypes.h"
 #include "Gonio.h"
@@ -142,10 +141,10 @@ Intensity Peak3D::getScaledIntensity() const
 
 Intensity Peak3D::getCorrectedIntensity() const
 {
-    auto q = getQ();
     auto c = _shape.center();
-    auto ev = DetectorEvent(_data, c[0], c[1], c[2]);
-    const double factor = _scale / (ev.getLorentzFactor() * _transmission);
+    auto state = _data->getInterpolatedState(c[2]);
+    auto pos = DirectVector(_data->getDiffractometer()->getDetector()->getPos(c[0], c[1]));
+    const double factor = _scale / (state.getLorentzFactor(pos) * _transmission);
     return getRawIntensity() * factor;
 }
 
@@ -270,19 +269,13 @@ void Peak3D::setRawIntensity(const Intensity& i)
     _intensity = i / data()->getSampleStepSize();
 }
 
-static Eigen::RowVector3d computeQ(const sptrDataSet& data, const Eigen::Vector3d& p)
-{
-    auto kf = DetectorEvent(data, p[0], p[1], p[2]).Kf();
-    auto state = data->getInterpolatedState(p[2]);
-    auto ki = data->getDiffractometer()->getSource()->getSelectedMonochromator().getKi().rowVector();
-    auto q = kf.rowVector() - state.source.transformQ(ki).transpose();
-    return state.sample.transformQ(q);
-}
-
 ReciprocalVector Peak3D::getQ() const
 {
-    auto p = _shape.center();
-    return ReciprocalVector(computeQ(_data, _shape.center()));
+    auto pixel_coords = _shape.center();
+    auto state = _data->getInterpolatedState(pixel_coords[2]);
+    auto detector = _data->getDiffractometer()->getDetector();
+    auto detector_position = DirectVector(detector->getPos(pixel_coords[0], pixel_coords[1]));
+    return state.sampleQ(detector_position);
 }
 
 //! This method computes an ellipsoid in q-space which is approximately the transformation from
@@ -299,8 +292,8 @@ Ellipsoid Peak3D::qShape() const
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(A);
     const Eigen::Matrix3d U = solver.eigenvectors();
     const Eigen::Vector3d l = solver.eigenvalues();
-
-    const Eigen::RowVector3d q = computeQ(_data, p);
+    const Eigen::RowVector3d q = getQ().rowVector();
+    auto detector = _data->getDiffractometer()->getDetector();
     
     Eigen::Matrix3d delta;
 
@@ -308,8 +301,12 @@ Ellipsoid Peak3D::qShape() const
         const double s = 3.0 * std::sqrt(1.0 / l(i));
         Eigen::Vector3d p1 = p+s*U.col(i);
         Eigen::Vector3d p2 = p-s*U.col(i);
-        const auto q1 = computeQ(_data, p1);
-        const auto q2 = computeQ(_data, p2);
+
+        auto state1 = _data->getInterpolatedState(p1[2]);
+        auto state2 = _data->getInterpolatedState(p2[2]);
+
+        const auto q1 = state1.sampleQ(DirectVector(detector->getPos(p1[0], p1[1]))).rowVector();
+        const auto q2 = state2.sampleQ(DirectVector(detector->getPos(p2[0], p2[1]))).rowVector();
         delta.col(i) = 0.5 * (q1 - q2) / s;
     }
 

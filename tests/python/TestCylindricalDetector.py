@@ -22,7 +22,7 @@ class TestCylindricalDetector(unittest.TestCase):
         #ev1 = nsx.DetectorEvent(d,319.5,127.5, 0.0, [])
         # This should be the center of the detector at rest at (0,0.764,0)
         #vec3d = np.array([0,0,0], dtype=float)
-        center = d.getPos(319.5, 127.5)
+        center = d.getPos(319.5, 127.5).vector()
         #center = ev1.getPixelPosition()
 
         self.assertLess(center[0,0],tolerance)

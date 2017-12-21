@@ -13,7 +13,7 @@
 #include <nsxlib/DataSet.h>
 #include <nsxlib/ConvolutionKernel.h>
 #include <nsxlib/KernelFactory.h>
-#include <nsxlib/DetectorEvent.h>
+
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Sample.h>
@@ -146,7 +146,7 @@ int main()
 
         // q could cross Ewald sphere multiple times, so find best match
         for (auto&& event: events) {
-            Eigen::Vector3d pnew = event.coordinates();
+            Eigen::Vector3d pnew = event;
             if ((pnew-p0).squaredNorm() < diff) {
                 diff = (pnew-p0).squaredNorm();
                 p1 = pnew;

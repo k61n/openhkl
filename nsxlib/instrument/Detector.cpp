@@ -39,7 +39,6 @@
 #include <stdexcept>
 
 #include "Detector.h"
-#include "DetectorEvent.h"
 #include "DetectorFactory.h"
 #include "Gonio.h"
 

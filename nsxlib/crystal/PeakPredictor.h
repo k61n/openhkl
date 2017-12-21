@@ -60,7 +60,7 @@ public:
     PeakList predictPeaks(const std::vector<Eigen::RowVector3d>& hkls, const Eigen::Matrix3d& BU);
     
     //! Return vector of detector events corresponding to the given q values.
-    std::vector<DetectorEvent> getEvents(const std::vector<Eigen::RowVector3d>& qs) const;
+    std::vector<Eigen::Vector3d> getEvents(const std::vector<Eigen::RowVector3d>& qs) const;
 
     //! Transform an ellipsoid in q space to detector space.
     Ellipsoid toDetectorSpace(const Ellipsoid& qshape) const;
