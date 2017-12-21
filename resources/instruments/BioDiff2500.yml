@@ -5,7 +5,7 @@ instrument:
         type: cylindrical
         name: banana
         sample_distance:
-            value: 199.0
+            value: 199.5
             units: mm
         angular_width:
             value: 360.0
@@ -71,17 +71,17 @@ instrument:
                 - name: x-offset
                   type: translation
                   direction: [1.0,0.0,0.0]
-                  physical: true
+                  physical: false
 
                 - name: y-offset
                   type: translation
                   direction: [0.0,1.0,0.0]
-                  physical: true
+                  physical: false
 
                 - name: z-offset
                   type: translation
                   direction: [0.0,0.0,1.0]
-                  physical: true
+                  physical: false
     source:
         name: monochromatic source
         monochromator:
