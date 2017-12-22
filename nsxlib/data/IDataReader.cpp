@@ -27,7 +27,8 @@ namespace nsx {
 IDataReader::IDataReader(const std::string& filename, const sptrDiffractometer& diffractometer)
     : _diffractometer(std::move(diffractometer)),
   _nFrames(0),
-  _states(),
+  _detectorStates(),
+  _sampleStates(),
   _fileSize(0),
   _isOpened(false)
 {
@@ -61,14 +62,14 @@ InstrumentState IDataReader::getState(size_t frame) const
 {
     assert(frame < _nFrames);
 
-    InstrumentState state(_states[frame]);
+    InstrumentState state;
 
     // compute transformations
     auto detector_gonio = _diffractometer->getDetector()->getGonio();
     auto sample_gonio = _diffractometer->getSample()->getGonio();
 
-    Eigen::Transform<double,3,Eigen::Affine> detector_trans = detector_gonio->getHomMatrix(state.detector);
-    Eigen::Transform<double,3,Eigen::Affine> sample_trans = sample_gonio->getHomMatrix(state.sample);
+    Eigen::Transform<double,3,Eigen::Affine> detector_trans = detector_gonio->getHomMatrix(_detectorStates[frame]);
+    Eigen::Transform<double,3,Eigen::Affine> sample_trans = sample_gonio->getHomMatrix(_sampleStates[frame]);
 
     state.detectorOrientation = detector_trans.rotation();
     state.sampleOrientation = sample_trans.rotation();
@@ -105,7 +106,7 @@ std::size_t IDataReader::getFileSize() const
     return _fileSize;
 }
 
-
+#if 0
 void IDataReader::saveHDF5(const std::string& filename)
 {
     blosc_init();
@@ -165,8 +166,8 @@ void IDataReader::saveHDF5(const std::string& filename)
     H5::DataSpace scanSpace(1,nf);
     RealMatrix vals(names.size(),_nFrames);
 
-    for (unsigned int i = 0; i < _states.size(); ++i) {
-        auto&& v = _states[i].detector.values();
+    for (unsigned int i = 0; i < _detectorStates.size(); ++i) {
+        auto&& v = _detectorStates[i].values();
 
         for (unsigned int j = 0; j < names.size(); ++j) {
             vals(j,i) = v[j] / deg;
@@ -183,8 +184,8 @@ void IDataReader::saveHDF5(const std::string& filename)
     std::vector<std::string> samplenames=_diffractometer->getSample()->getGonio()->getPhysicalAxesNames();
     RealMatrix valsSamples(samplenames.size(), _nFrames);
 
-    for (unsigned int i = 0; i < _states.size(); ++i) {
-        auto&& v = _states[i].sample.values();
+    for (unsigned int i = 0; i < _sampleStates.size(); ++i) {
+        auto&& v = _sampleStates[i].values();
 
         for (unsigned int j = 0; j < samplenames.size(); ++j) {
             valsSamples(j,i) = v[j]/deg;
@@ -202,7 +203,7 @@ void IDataReader::saveHDF5(const std::string& filename)
     RealMatrix valsSources(sourcenames.size(),_nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
-        auto&& v = _states[i].source.values();
+        auto&& v = _sourceStates[i].values();
 
         for (unsigned int j = 0; j < sourcenames.size(); ++j) {
             valsSources(j,i) = v[j] / deg;
@@ -256,6 +257,17 @@ void IDataReader::saveHDF5(const std::string& filename)
         }
     }
     file.close();
+}
+#endif 
+
+const std::vector<ComponentState>& IDataReader::sampleStates() const
+{
+    return _sampleStates;
+}
+
+const std::vector<ComponentState>& IDataReader::detectorStates() const
+{
+    return _detectorStates;
 }
 
 } // end namespace nsx

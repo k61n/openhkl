@@ -34,10 +34,6 @@ InstrumentState InstrumentState::interpolate(const InstrumentState &other, doubl
 {
     InstrumentState result(*this);
 
-    result.detector = detector.interpolate(other.detector, t);
-    result.sample = sample.interpolate(other.sample, t);
-    result.source = source.interpolate(other.source, t);
-
     const double s = 1-t;
 
     result.detectorOrientation = interpolateRotation(detectorOrientation, other.detectorOrientation, t);

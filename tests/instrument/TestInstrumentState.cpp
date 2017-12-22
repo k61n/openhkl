@@ -13,8 +13,10 @@
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Detector.h>
 #include <nsxlib/Gonio.h>
-#include <nsxlib/Sample.h>
+#include <nsxlib/IDataReader.h>
 #include <nsxlib/InstrumentState.h>
+#include <nsxlib/Sample.h>
+
 #include <nsxlib/ConvolutionKernel.h>
 #include <nsxlib/KernelFactory.h>
 
@@ -28,7 +30,14 @@
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/ReciprocalVector.h>
 
-int main()
+namespace nsx {
+class UnitTest_DataSet {
+public:
+    static int run();
+};
+}
+
+int nsx::UnitTest_DataSet::run()
 {
     nsx::DataReaderFactory factory;
 
@@ -41,12 +50,21 @@ int main()
     auto detector_gonio = dataf->getDiffractometer()->getDetector()->getGonio();
     auto sample_gonio = dataf->getDiffractometer()->getSample()->getGonio();
 
+    auto detectorStates = dataf->_reader->detectorStates();
+    auto sampleStates = dataf->_reader->sampleStates();
+
     for (int i = 0; i < 100*(dataf->getNFrames()-1); ++i) {
         double frame = double(i) / 100.0;
         auto state = dataf->getInterpolatedState(frame);
 
-        auto detector_trans = detector_gonio->getHomMatrix(state.detector);
-        auto sample_trans = sample_gonio->getHomMatrix(state.sample);
+        auto lframe = std::lround(std::floor(frame));
+
+        auto detectorState = detectorStates[lframe].interpolate(detectorStates[lframe+1], frame-lframe);
+        auto sampleState = sampleStates[lframe].interpolate(sampleStates[lframe+1], frame-lframe);
+       
+        
+        auto detector_trans = detector_gonio->getHomMatrix(detectorState);
+        auto sample_trans = sample_gonio->getHomMatrix(sampleState);
 
         auto sample_U = sample_trans.rotation();
         auto detector_U = detector_trans.rotation();
@@ -68,4 +86,9 @@ int main()
  
 
     return 0;
+}
+
+int main() 
+{
+    return nsx::UnitTest_DataSet::run();
 }

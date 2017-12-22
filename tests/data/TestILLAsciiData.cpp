@@ -6,6 +6,7 @@
 #include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Diffractometer.h>
+#include <nsxlib/IDataReader.h>
 #include <nsxlib/InstrumentState.h>
 #include <nsxlib/MetaData.h>
 #include <nsxlib/NSXTest.h>
@@ -13,7 +14,14 @@
 
 const double tolerance=1e-2;
 
-int main()
+namespace nsx {
+
+class UnitTest_DataSet {
+public:
+    static int run();
+};
+
+int UnitTest_DataSet::run()
 {
     nsx::DataReaderFactory factory;
     nsx::sptrDiffractometer diff;
@@ -45,24 +53,21 @@ int main()
     // Check the value of the monitor
     NSX_CHECK_CLOSE(meta->getKey<double>("monitor"),20000,tolerance);
 
-    auto&& states = dataf->getInstrumentStates();
+    auto sampleStates = dataf->_reader->sampleStates();
+    auto detectorStates = dataf->_reader->detectorStates();
 
-    NSX_CHECK_CLOSE(states[3].detector.values()[0],0.54347000E+05/1000.0*nsx::deg,tolerance);
-    NSX_CHECK_CLOSE(states[2].sample.values()[0],0.26572000E+05/1000.0*nsx::deg,tolerance);
-    NSX_CHECK_CLOSE(states[2].sample.values()[1],0.48923233E+02*nsx::deg,tolerance);
-    NSX_CHECK_CLOSE(states[2].sample.values()[2],-0.48583171E+02*nsx::deg,tolerance);
-
-    auto&& st = dataf->getInterpolatedState(0.0);
-    NSX_CHECK_CLOSE(st.detector.values()[0],states[0].detector.values()[0],tolerance);
-    NSX_CHECK_CLOSE(st.sample.values()[0],states[0].sample.values()[0],tolerance);
-
-    st = dataf->getInterpolatedState(0.5);
-    NSX_CHECK_CLOSE(st.detector.values()[0],states[0].detector.values()[0]+0.5*(states[1].detector.values()[0]-states[0].detector.values()[0]),tolerance);
-    NSX_CHECK_CLOSE(st.sample.values()[0],states[0].sample.values()[0]+0.5*(states[1].sample.values()[0]-states[0].sample.values()[0]),tolerance);
-
-    st = dataf->getInterpolatedState(2.3);
-    NSX_CHECK_CLOSE(st.detector.values()[0],states[2].detector.values()[0]+0.3*(states[3].detector.values()[0]-states[2].detector.values()[0]),tolerance);
-    NSX_CHECK_CLOSE(st.sample.values()[0],states[2].sample.values()[0]+0.3*(states[3].sample.values()[0]-states[2].sample.values()[0]),tolerance);
+    
+    NSX_CHECK_CLOSE(detectorStates[3].values()[0],0.54347000E+05/1000.0*nsx::deg,tolerance);
+    NSX_CHECK_CLOSE(sampleStates[2].values()[0],0.26572000E+05/1000.0*nsx::deg,tolerance);
+    NSX_CHECK_CLOSE(sampleStates[2].values()[1],0.48923233E+02*nsx::deg,tolerance);
+    NSX_CHECK_CLOSE(sampleStates[2].values()[2],-0.48583171E+02*nsx::deg,tolerance);
 
     meta = nullptr;
+}
+
+} // end namespace nsx
+
+int main() 
+{
+    nsx::UnitTest_DataSet::run();
 }

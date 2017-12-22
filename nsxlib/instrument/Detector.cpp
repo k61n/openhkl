@@ -121,19 +121,9 @@ Detector& Detector::operator=(const Detector& other)
     return *this;
 }
 
-bool Detector::receiveKf(double& px, double& py, const Eigen::Vector3d& kf, const Eigen::Vector3d& from, double& t, const ComponentState& detectorState) const
+bool Detector::receiveKf(double& px, double& py, const Eigen::Vector3d& kf, const Eigen::Vector3d& from, double& t) const
 {
-    Eigen::Vector3d fromt;
-    Eigen::Vector3d kft;
-
-    if (_gonio) {
-        fromt = _gonio->transformInverse(from, detectorState);
-        kft = _gonio->getInverseHomMatrix(detectorState).rotation()*kf;
-    } else {
-        fromt = from;
-        kft = kf;
-    }
-    return hasKf(kft, fromt, px, py, t);
+  return hasKf(kf, from, px, py, t);
 }
 
 } // end namespace nsx

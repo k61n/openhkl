@@ -93,7 +93,8 @@ I16DataReader::I16DataReader(const std::string& filename, const std::shared_ptr<
     }
     _nFrames=data_count;
 
-    _states.resize(_nFrames);
+    _detectorStates.resize(_nFrames);
+    _sampleStates.resize(_nFrames);
 
     std::vector<double> dval(1);
     dval[0]=_metadata.getKey<double>("delta");
@@ -104,8 +105,8 @@ I16DataReader::I16DataReader(const std::string& filename, const std::shared_ptr<
 
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _states[i].detector = ComponentState(_diffractometer->getDetector().get(), dval);
-        _states[i].sample = ComponentState(_diffractometer->getSample().get(), sval);
+        _detectorStates[i] = ComponentState(_diffractometer->getDetector().get(), dval);
+        _sampleStates[i] = ComponentState(_diffractometer->getSample().get(), sval);
     }
 
     _metadata.add<int>("Numor",atoi(removeFileExtension(fileBasename(filename)).c_str()));

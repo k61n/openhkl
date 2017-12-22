@@ -45,6 +45,7 @@
 namespace nsx {
 
 class DataSet {
+    friend class UnitTest_DataSet;
 
 public:
 
@@ -135,7 +136,8 @@ public:
     //! Remove duplicates
     void removeDuplicatePeaks(nsx::PeakSet& peaks);
 
-    double getSampleStepSize() const;      
+    // todo: replace this with Jacobian of (x,y,f) -> q
+    //double getSampleStepSize() const;      
 
 
 protected:
