@@ -87,10 +87,12 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, sptrDiffractometer d
 
     // Use natural units internally (rad)
     dm*=deg;
-    _states.resize(_nFrames);
+
+    _sampleStates.resize(_nFrames);
+    _detectorStates.resize(_nFrames);
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _states[i].detector = ComponentState(_diffractometer->getDetector().get(), eigenToVector(dm.col(i)));
+        _detectorStates[i] = ComponentState(_diffractometer->getDetector().get(), eigenToVector(dm.col(i)));
         //_states[i].detector = _diffractometer->getDetector()->createStateFromEigen(dm.col(i));
         //_detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
     }
@@ -125,7 +127,7 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, sptrDiffractometer d
     dm*=deg;
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _states[i].sample = ComponentState(_diffractometer->getSample().get(), eigenToVector(dm.col(i)));
+        _sampleStates[i] = ComponentState(_diffractometer->getSample().get(), eigenToVector(dm.col(i)));
     }
 
 
@@ -133,9 +135,11 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, sptrDiffractometer d
     dm.resize(_diffractometer->getSource()->getGonio()->getNPhysicalAxes(), _nFrames);
     dm.setZero();
 
+    #if 0
     for (auto i = 0; i < _nFrames; ++i) {
-        _states[i].source = ComponentState(_diffractometer->getSource().get(), eigenToVector(dm.col(i)));
+        _sourceStates[i] = ComponentState(_diffractometer->getSource().get(), eigenToVector(dm.col(i)));
     }
+    #endif
 
     _file->close();
 

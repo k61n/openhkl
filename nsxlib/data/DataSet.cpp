@@ -242,8 +242,10 @@ void DataSet::saveHDF5(const std::string& filename) //const
     H5::DataSpace scanSpace(1,nf);
     RealMatrix vals(names.size(),_nFrames);
 
-    for (unsigned int i = 0; i < _states.size(); ++i) {
-        auto&& v = _states[i].detector.values();
+    const auto& detectorStates = _reader->detectorStates();
+
+    for (unsigned int i = 0; i < detectorStates.size(); ++i) {
+        auto&& v = detectorStates[i].values();
 
         for (unsigned int j = 0; j < names.size(); ++j) {
             vals(j,i) = v[j] / deg;
@@ -260,8 +262,10 @@ void DataSet::saveHDF5(const std::string& filename) //const
     std::vector<std::string> samplenames=_diffractometer->getSample()->getGonio()->getPhysicalAxesNames();
     RealMatrix valsSamples(samplenames.size(), _nFrames);
 
-    for (unsigned int i = 0; i < _states.size(); ++i) {
-        auto&& v = _states[i].sample.values();
+    const auto& sampleStates = _reader->sampleStates();
+
+    for (unsigned int i = 0; i < sampleStates.size(); ++i) {
+        auto&& v = sampleStates[i].values();
 
         for (unsigned int j = 0; j < samplenames.size(); ++j) {
             valsSamples(j,i) = v[j]/deg;
@@ -273,6 +277,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
         sampleScan.write(&valsSamples(j,0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
     }
 
+    #if 0
     // Write source states
     H5::Group sourceGroup(scanGroup.createGroup("Source"));
     std::vector<std::string> sourcenames = _diffractometer->getSource()->getGonio()->getPhysicalAxesNames();
@@ -300,6 +305,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
         H5::DataSet sourceScan(sourceGroup.createDataSet(sourcenames[j], H5::PredType::NATIVE_DOUBLE, scanSpace));
         sourceScan.write(&valsSources(j,0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
     }
+    #endif
 
     const auto& map=_metadata->getMap();
 
@@ -638,6 +644,7 @@ void DataSet::removeDuplicatePeaks(nsx::PeakSet& peaks)
     }
 }
 
+#if 0
 double DataSet::getSampleStepSize() const
 {
     // TODO(jonathan): we should NOT assume that gonio axis 0 is the one being rotated
@@ -658,5 +665,6 @@ double DataSet::getSampleStepSize() const
 
     return step;
 }
+#endif
 
 } // end namespace nsx

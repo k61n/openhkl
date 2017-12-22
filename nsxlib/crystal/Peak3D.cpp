@@ -131,7 +131,8 @@ sptrUnitCell Peak3D::getUnitCell(int index) const
 
 Intensity Peak3D::getRawIntensity() const
 {
-    return _intensity * _data->getSampleStepSize();
+    // todo: investigate whether we should scale? Probably not necessary if we use Jacobian instead of Lorentz factor
+    return _intensity;// * _data->getSampleStepSize();
 }
 
 Intensity Peak3D::getScaledIntensity() const
@@ -266,7 +267,7 @@ int Peak3D::getActiveUnitCellIndex() const
 void Peak3D::setRawIntensity(const Intensity& i)
 {  
     // note: the scaling factor is taken to be consistent with Peak3D::getRawIntensity()
-    _intensity = i / data()->getSampleStepSize();
+    _intensity = i; // / data()->getSampleStepSize();
 }
 
 ReciprocalVector Peak3D::getQ() const

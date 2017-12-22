@@ -29,6 +29,9 @@ public:
 
     InstrumentState getState(size_t frame) const;
 
+    const std::vector<ComponentState>& sampleStates() const;
+    const std::vector<ComponentState>& detectorStates() const;
+
     const MetaData& getMetadata() const;
 
     size_t getNFrames() const;
@@ -52,7 +55,7 @@ public:
     std::size_t getFileSize() const;//
 
     //! Save the file in HDF5 format
-    void saveHDF5(const std::string& filename);
+    //void saveHDF5(const std::string& filename);
 
 protected:
 
@@ -66,7 +69,8 @@ protected:
 
     std::size_t _nCols;
 
-    InstrumentStateList _states;
+    //InstrumentStateList _states;
+    std::vector<ComponentState> _sampleStates, _detectorStates;
 
     std::size_t _fileSize;
 

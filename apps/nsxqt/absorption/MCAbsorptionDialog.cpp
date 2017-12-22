@@ -86,11 +86,10 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
             auto data = p->data();
             auto coord = p->getShape().center();
             auto state = data->getInterpolatedState(coord[2]);
-            Eigen::Transform<double,3,2> hommat=sample->getGonio()->getHomMatrix(state.sample);
-            Eigen::Matrix3d rot = hommat.rotation();
             auto position = data->getDiffractometer()->getDetector()->getPos(coord[0], coord[1]);
             auto kf = state.kfLab(position);
-            double transmission=mca.run(ui->spinBox->value(),kf.rowVector(),rot);
+            // todo: check coordinate systems here, may not be consistent
+            double transmission=mca.run(ui->spinBox->value(),kf.rowVector(),state.sampleOrientation);
             p->setTransmission(transmission);
             ui->progressBar_MCStatus->setValue(++progress);
         }

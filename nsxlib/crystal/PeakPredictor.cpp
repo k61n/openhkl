@@ -239,7 +239,7 @@ PeakList PeakPredictor::predictPeaks(const std::vector<Eigen::RowVector3d>& hkls
     return peaks;
 }
 
-std::vector<Eigen::Vector3d> PeakPredictor::getEvents(const std::vector<Eigen::RowVector3d>& qs) const
+std::vector<Eigen::Vector3d> PeakPredictor::getEvents(const std::vector<Eigen::RowVector3d>& sample_qs) const
 {
     std::vector<Eigen::Vector3d> events;
     unsigned int scanSize = _data->getNFrames();
@@ -247,38 +247,29 @@ std::vector<Eigen::Vector3d> PeakPredictor::getEvents(const std::vector<Eigen::R
     std::vector<Eigen::RowVector3d> ki;
     ki.reserve(scanSize);
 
-    std::vector<Eigen::Matrix3d> rotMatrices;
-    rotMatrices.reserve(scanSize);
-
-    std::vector<Eigen::Matrix3d> source_rot;
-    std::vector<Eigen::Matrix3d> sample_rot;
-    sample_rot.reserve(scanSize);
-    source_rot.reserve(scanSize);
-
+    std::vector<Eigen::Matrix3d> sample_to_lab;
+    sample_to_lab.reserve(scanSize);
     auto diffractometer = _data->getDiffractometer();
-
-    auto sample_gonio = diffractometer->getSample()->getGonio();
-    auto source_gonio = diffractometer->getSource()->getGonio();
     
     for (unsigned int s = 0; s < scanSize; ++s) {
         auto state = _data->getInterpolatedState(s);
-        rotMatrices.push_back(state.sampleOrientation.transpose());
+        sample_to_lab.push_back(state.sampleOrientation.transpose());
         ki.push_back(state.ki().rowVector());
     } 
 
-    for (const Eigen::RowVector3d& q: qs) {
-        bool sign = (q*rotMatrices[0] + ki[0]).squaredNorm() > ki[0].squaredNorm();
+    for (const Eigen::RowVector3d& sample_q: sample_qs) {
+        bool sign = (sample_q*sample_to_lab[0] + ki[0]).squaredNorm() > ki[0].squaredNorm();
 
         for (int i = 1; i < scanSize; ++i) {
-            const Eigen::RowVector3d kf = q*rotMatrices[i] + ki[i];
+            const Eigen::RowVector3d kf = sample_q*sample_to_lab[i] + ki[i];
             const bool new_sign = kf.squaredNorm() > ki[i].squaredNorm();
 
             if (sign != new_sign) {
                 sign = new_sign;
 
-                const Eigen::RowVector3d kf0 = q*rotMatrices[i-1] + ki[i-1];
-                const Eigen::RowVector3d kf1 = q*rotMatrices[i] + ki[i];
-                const Eigen::RowVector3d dkf = q*(rotMatrices[i]-rotMatrices[i-1]);
+                const Eigen::RowVector3d kf0 = sample_q*sample_to_lab[i-1] + ki[i-1];
+                const Eigen::RowVector3d kf1 = sample_q*sample_to_lab[i] + ki[i];
+                const Eigen::RowVector3d dkf = sample_q*(sample_to_lab[i]-sample_to_lab[i-1]);
         
                 double t = 0.5;
                 const int max_count = 100;
@@ -303,15 +294,17 @@ std::vector<Eigen::Vector3d> PeakPredictor::getEvents(const std::vector<Eigen::R
         
                 t += i-1;
                 const InstrumentState& state = _data->getInterpolatedState(t);
-        
+
+                // transform back to detector
+  
+  
                 //const ComponentState& dis = state.detector;
                 double px,py;
                 // If hit detector, new peak
                 //const ComponentState& cs=state.sample;
-                Eigen::Vector3d from = _data->getDiffractometer()->getSample()->getPosition(state.sample);
         
                 double time;
-                bool accept = _data->getDiffractometer()->getDetector()->receiveKf(px,py,kf,from,time,state.detector);
+                bool accept = _data->getDiffractometer()->getDetector()->receiveKf(px,py,kf*state.detectorOrientation,state.samplePosition,time);
         
                 if (accept) {
                     events.emplace_back(px, py, t);

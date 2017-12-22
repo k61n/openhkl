@@ -35,9 +35,6 @@
 namespace nsx {
 
 struct InstrumentState {
-    ComponentState detector;
-    ComponentState source;
-    ComponentState sample;
 
     Eigen::Matrix3d detectorOrientation;
     Eigen::Matrix3d sampleOrientation;

@@ -97,10 +97,11 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const st
     Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm
             = Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor>::Zero(long(axesS.size()), long(_nFrames));
 
-    _states.resize(_nFrames);
+    _sampleStates.resize(_nFrames);
+    _detectorStates.resize(_nFrames);
 
     for (unsigned int i = 0; i < _nFrames; ++i) {
-        _states[i].detector = ComponentState(_diffractometer->getDetector().get(), eigenToVector((dm.col(i))));
+        _detectorStates[i] = ComponentState(_diffractometer->getDetector().get(), eigenToVector((dm.col(i))));
         //_detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
     }
 
@@ -131,7 +132,7 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const st
     dm*=deg;
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _states[i].sample = ComponentState(_diffractometer->getSample().get(), eigenToVector(dm.col(i)));
+        _sampleStates[i] = ComponentState(_diffractometer->getSample().get(), eigenToVector(dm.col(i)));
     }
 }
 

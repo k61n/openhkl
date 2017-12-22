@@ -41,9 +41,11 @@ TiffDataReader::TiffDataReader(const std::string& filename, const std::shared_pt
 
     _nFrames=1;
 
-    _states.resize(_nFrames);
-    _states[0].detector = ComponentState(_diffractometer->getDetector().get(), {});
-    _states[0].sample = ComponentState(_diffractometer->getSample().get(), {});
+    _sampleStates.resize(_nFrames);
+    _detectorStates.resize(_nFrames);
+
+    _detectorStates[0] = ComponentState(_diffractometer->getDetector().get(), {});
+    _sampleStates[0] = ComponentState(_diffractometer->getSample().get(), {});
 
     _metadata.add<std::string>("Instrument",diffractometer->getType());
 }
