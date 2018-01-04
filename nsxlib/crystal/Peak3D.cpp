@@ -113,7 +113,7 @@ void Peak3D::addUnitCell(sptrUnitCell uc, bool activate)
     }
 }
 
-sptrUnitCell Peak3D::getActiveUnitCell() const
+sptrUnitCell Peak3D::activeUnitCell() const
 {
     if (_activeUnitCellIndex < 0 || _activeUnitCellIndex >= int(_unitCells.size())) {
         return nullptr;
@@ -121,7 +121,7 @@ sptrUnitCell Peak3D::getActiveUnitCell() const
     return _unitCells[size_t(_activeUnitCellIndex)];
 }
 
-sptrUnitCell Peak3D::getUnitCell(int index) const
+sptrUnitCell Peak3D::unitCell(int index) const
 {
     if (index < 0 || index >= int(_unitCells.size())) {
         return nullptr;
@@ -259,7 +259,7 @@ bool Peak3D::hasUnitCells() const
     return !_unitCells.empty();
 }
 
-int Peak3D::getActiveUnitCellIndex() const
+int Peak3D::activeUnitCellIndex() const
 {
     return _activeUnitCellIndex;
 }

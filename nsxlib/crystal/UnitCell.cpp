@@ -196,7 +196,7 @@ std::vector<Eigen::RowVector3d> UnitCell::generateReflectionsInShell(double dmin
     const int num_hkl = 2*hkl_max+1;
     hkls.reserve(num_hkl*num_hkl*num_hkl);
 
-    SpaceGroup group(getSpaceGroup());
+    SpaceGroup group(spaceGroup());
 
     for (int h = -hkl_max; h <= hkl_max; ++h) {
         for (int k = -hkl_max; k <= hkl_max; ++k) {
@@ -276,7 +276,7 @@ void UnitCell::setSpaceGroup(const std::string& symbol)
     _group = SpaceGroup(symbol);
 }
 
-std::string UnitCell::getSpaceGroup() const
+std::string UnitCell::spaceGroup() const
 {
     return _group.symbol();
 }
@@ -765,5 +765,20 @@ Eigen::RowVector3i UnitCell::getIntegerMillerIndices(const ReciprocalVector& q) 
     return hkl;
 }
 
+std::vector<std::string> UnitCell::compatibleSpaceGroups() const
+{
+    std::vector<std::string> compatible_space_groups;
+
+    auto cell_bravais_type = getBravaisTypeSymbol();
+
+    for (auto&& symbol : SpaceGroup::symbols()) {
+        SpaceGroup sg(symbol);
+        if (sg.bravaisTypeSymbol().compare(cell_bravais_type) == 0) {
+            compatible_space_groups.push_back(symbol);
+        }
+    }
+
+    return compatible_space_groups;
+}
 
 } // end namespace nsx

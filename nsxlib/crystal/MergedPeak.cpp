@@ -57,7 +57,7 @@ bool MergedPeak::addPeak(const sptrPeak3D& peak)
 {
     auto hkl1 = _hkl.cast<double>();
     auto data = peak->data();
-    auto cell = peak->getActiveUnitCell();
+    auto cell = peak->activeUnitCell();
     auto q = peak->getQ();
     Eigen::Vector3d hkl2 = cell->getIntegerMillerIndices(q).cast<double>();
 

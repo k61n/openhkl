@@ -147,7 +147,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
 
     int row = index.row();
     int column = index.column();
-    if (auto cell = _peaks[row]->getActiveUnitCell()) {
+    if (auto cell = _peaks[row]->activeUnitCell()) {
         bool success = cell->getMillerIndices(_peaks[row]->getQ(), hkl, true);
     }
     auto c = _peaks[row]->getShape().center();
@@ -183,7 +183,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         case Column::selected:
             return _peaks[row]->isSelected();
         case Column::unitCell:
-            if (auto unitCell = _peaks[row]->getActiveUnitCell()) {
+            if (auto unitCell = _peaks[row]->activeUnitCell()) {
                 return QString::fromStdString(unitCell->getName());
             }
             else {
@@ -227,8 +227,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
     case Column::h:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             Eigen::RowVector3d hkl1,hkl2;
-            auto cell1 = p1->getActiveUnitCell();
-            auto cell2 = p2->getActiveUnitCell();
+            auto cell1 = p1->activeUnitCell();
+            auto cell2 = p2->activeUnitCell();
             cell1->getMillerIndices(p1->getQ(), hkl1, true);
             cell2->getMillerIndices(p2->getQ(), hkl2, true);
             return (hkl1[0]<hkl2[0]);
@@ -237,8 +237,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
     case Column::k:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             Eigen::RowVector3d hkl1,hkl2;
-            auto cell1 = p1->getActiveUnitCell();
-            auto cell2 = p2->getActiveUnitCell();
+            auto cell1 = p1->activeUnitCell();
+            auto cell2 = p2->activeUnitCell();
             cell1->getMillerIndices(p1->getQ(), hkl1, true);
             cell2->getMillerIndices(p2->getQ(), hkl2, true);
             return (hkl1[1]<hkl2[1]);
@@ -247,8 +247,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
     case Column::l:
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             Eigen::RowVector3d hkl1,hkl2;
-            auto cell1 = p1->getActiveUnitCell();
-            auto cell2 = p2->getActiveUnitCell();
+            auto cell1 = p1->activeUnitCell();
+            auto cell2 = p2->activeUnitCell();
             cell1->getMillerIndices(p1->getQ(), hkl1, true);
             cell2->getMillerIndices(p2->getQ(), hkl2, true);
             return (hkl1[2]<hkl2[2]);
@@ -299,8 +299,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         break;
     case Column::unitCell:
         compareFn = [&](nsx::sptrPeak3D p1, const nsx::sptrPeak3D p2) {
-            auto uc1 = p1->getActiveUnitCell();
-            auto uc2 = p2->getActiveUnitCell();
+            auto uc1 = p1->activeUnitCell();
+            auto uc2 = p2->activeUnitCell();
             std::string uc1Name = uc1 ? uc1->getName() : "";
             std::string uc2Name = uc2 ? uc2->getName() : "";
             return (uc2Name<uc1Name);
@@ -356,7 +356,7 @@ void CollectedPeaksModel::setUnitCells(const nsx::UnitCellList &cells)
 void CollectedPeaksModel::sortEquivalents()
 {
     // todo: investigate this method. Likely incorrect if there are multiple unit cells.
-    auto ptrcell=_peaks[0]->getActiveUnitCell();
+    auto ptrcell=_peaks[0]->activeUnitCell();
 
     // If no unit cell defined for the peak collection, return.
     if (ptrcell == nullptr) {
@@ -421,7 +421,7 @@ void CollectedPeaksModel::writeShelX(const std::string& filename, QModelIndexLis
             continue;
         }
         auto peak = _peaks[index.row()];
-        auto basis = peak->getActiveUnitCell();
+        auto basis = peak->activeUnitCell();
 
         if (basis == nullptr) {
             nsx::error()<<"No unit cell defined for peak " << index.row()+1 << ". It will not be written to ShelX file";
@@ -489,7 +489,7 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, QModelIndex
 
     for (const auto &index : indices) {
         auto peak = _peaks[index.row()];
-        auto basis = peak->getActiveUnitCell();
+        auto basis = peak->activeUnitCell();
         if (!basis) {
             nsx::error()<<"No unit cell defined for peak " << index.row()+1 << ". It will not be written to FullProf file";
             continue;

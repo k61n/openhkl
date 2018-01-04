@@ -163,7 +163,7 @@ public:
     //! Set space group from its symbol.
     void setSpaceGroup(const std::string& symbol);
     //! Return the space group symbol of the unit cell.
-    std::string getSpaceGroup() const;
+    std::string spaceGroup() const;
 
     // todo: should move name to GUI??
     //! Set name of the unit cell
@@ -242,6 +242,8 @@ public:
 
     Eigen::RowVector3i getIntegerMillerIndices(const ReciprocalVector& q) const;
     
+    std::vector<std::string> compatibleSpaceGroups() const;
+
     #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     #endif

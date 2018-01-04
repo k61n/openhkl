@@ -125,7 +125,7 @@ void SessionModel::onItemChanged(QStandardItem* item)
         // The first item of the Sample item branch is the SampleShapeItem, skip it
         int idx = p->index().row()- 1;
         auto expt = p->getExperiment();
-        auto uc = expt->getDiffractometer()->getSample()->getUnitCell(idx);
+        auto uc = expt->getDiffractometer()->getSample()->unitCell(idx);
         uc->setName(p->text().toStdString());
     }
 }
@@ -478,7 +478,7 @@ bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& pea
         return false;
     }
 
-    auto basis = peaks[0]->getActiveUnitCell();
+    auto basis = peaks[0]->activeUnitCell();
 
     if (!basis) {
         nsx::error() << "No unit cell defined the peaks. No index can be defined.";
@@ -490,7 +490,7 @@ bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& pea
             continue;
 
         Eigen::RowVector3d hkl;
-        auto currentBasis = peak->getActiveUnitCell();
+        auto currentBasis = peak->activeUnitCell();
 
         if (currentBasis != basis) {
             nsx::error() << "Not all the peaks have the same unit cell. Multi crystal not implement yet";
@@ -546,13 +546,13 @@ bool SessionModel::writeStatistics(std::string filename,
         return false;
     }
 
-    auto cell = peaks[0]->getActiveUnitCell();
-    auto grp = nsx::SpaceGroup(cell->getSpaceGroup());
+    auto cell = peaks[0]->activeUnitCell();
+    auto grp = nsx::SpaceGroup(cell->spaceGroup());
 
     nsx::MergedData merged(grp, friedel);
 
     for (auto&& peak: peaks) {
-        if (cell != peak->getActiveUnitCell()) {
+        if (cell != peak->activeUnitCell()) {
             nsx::error() << "Only one unit cell is supported at this time!!";
             return false;
         }
@@ -728,7 +728,7 @@ void SessionModel::autoAssignUnitCell()
             bool assigned = false;
 
             for (auto i = 0; i < sample->getNCrystals(); ++i) {
-                auto cell = sample->getUnitCell(i);
+                auto cell = sample->unitCell(i);
 
                 if (cell->getMillerIndices(peak->getQ(), hkl, true)) {
                     peak->addUnitCell(cell, true);

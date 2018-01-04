@@ -43,8 +43,8 @@ private:
 
     Ui::SpaceGroupDialog *ui;
     nsx::PeakSet _peaks;
-    std::vector<std::tuple<std::string, double>> _groups;
-    std::set<nsx::sptrUnitCell> _cells;
+    std::vector<std::pair<std::string, double>> _groups;
+    nsx::sptrUnitCell _cell;
     std::string _selectedGroup;
 };
 

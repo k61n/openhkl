@@ -116,7 +116,7 @@ void PeakGraphicsItem::setFrame(unsigned long frame)
     _label->setVisible(_labelVisible);
     QString hklString;
 
-    if (auto cell = _peak->getActiveUnitCell()) {
+    if (auto cell = _peak->activeUnitCell()) {
         Eigen::RowVector3d hkl;
         cell->getMillerIndices(_peak->getQ(), hkl,true);
         hklString = QString("%1,%2,%3").arg(hkl[0]).arg(hkl[1]).arg(hkl[2]);       
@@ -199,7 +199,7 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     Eigen::RowVector3d hkl;
     QString info;
 
-    if (auto cell = _peak->getActiveUnitCell()) {
+    if (auto cell = _peak->activeUnitCell()) {
         bool success = cell->getMillerIndices(_peak->getQ(), hkl,true);
         info="(h,k,l):"+QString::number(hkl[0])+","+QString::number(hkl[1])+","+QString::number(hkl[2]);
     } else {

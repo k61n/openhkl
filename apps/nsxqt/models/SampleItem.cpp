@@ -47,7 +47,7 @@ QJsonObject SampleItem::toJson()
     auto sample = _experiment->getDiffractometer()->getSample();
 
     for (unsigned int i = 0; i < sample->getNCrystals(); ++i) {
-        auto cell = sample->getUnitCell(i);
+        auto cell = sample->unitCell(i);
         Eigen::Matrix3d A = cell->basis();
         QJsonArray params;
 
@@ -87,7 +87,7 @@ void SampleItem::fromJson(const QJsonObject &obj)
     }
 }
 
-QList<UnitCellItem*> SampleItem::getUnitCellItems()
+QList<UnitCellItem*> SampleItem::unitCellItems()
 {
     QList<UnitCellItem*> unitCellItems;
 

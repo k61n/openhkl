@@ -360,17 +360,17 @@ char SpaceGroup::bravaisType() const
     return 'a';
 }
 
-double SpaceGroup::fractionExtinct(std::vector<std::array<double, 3> > hkl)
+double SpaceGroup::fractionExtinct(const std::vector<Eigen::RowVector3d>& hkls) const
 {
     unsigned int extinct = 0;
-    unsigned int total = hkl.size();
+    unsigned int total = hkls.size();
 
-    for (auto&& i: hkl) {
-        if (isExtinct(i[0],i[1], i[2])) {
+    for (auto&& hkl : hkls) {
+        if (isExtinct(hkl[0],hkl[1], hkl[2])) {
             ++extinct;
         }
     }
-    return double(extinct) / double(total);
+    return static_cast<double>(extinct) / static_cast<double>(total);
 }
 
 std::string SpaceGroup::bravaisTypeSymbol() const
@@ -593,7 +593,7 @@ std::vector<PeakList> SpaceGroup::findEquivalences(const PeakList &peak_list, bo
     for (auto&& peak: peak_list ) {
         bool found_equivalence = false;
         int h1, h2, k1, k2, l1, l2;
-        auto cell = peak->getActiveUnitCell();
+        auto cell = peak->activeUnitCell();
         Eigen::RowVector3i hkl = cell->getIntegerMillerIndices(peak->getQ());
 
         h1 = hkl[0];

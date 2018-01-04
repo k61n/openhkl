@@ -14,7 +14,7 @@ public:
     UnitCellItem(nsx::sptrExperiment experiment, nsx::sptrUnitCell);
     ~UnitCellItem();
     QWidget* inspectItem();
-    nsx::sptrUnitCell getUnitCell();
+    nsx::sptrUnitCell unitCell();
 
     void info() const;
 

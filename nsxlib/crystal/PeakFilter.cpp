@@ -17,7 +17,7 @@ namespace {
 bool invalid(const nsx::PeakFilter& filter, nsx::sptrPeak3D peak)
 {
     if (filter._removeUnindexed) {
-        auto cell = peak->getActiveUnitCell();
+        auto cell = peak->activeUnitCell();
 
         // no unit cell assigned:
         if (!cell) {
@@ -100,7 +100,7 @@ PeakSet PeakFilter::apply(const PeakSet& reference_peaks) const
     for (auto peak: reference_peaks) {
         ellipsoids.emplace_back(peak->getShape());
         peaks.emplace_back(peak);
-        auto cell = peak->getActiveUnitCell();
+        auto cell = peak->activeUnitCell();
 
         if (cell) {
             crystals.insert(cell);
@@ -140,11 +140,11 @@ PeakSet PeakFilter::apply(const PeakSet& reference_peaks) const
     }
 
     for (auto cell: crystals) {     
-        SpaceGroup group(cell->getSpaceGroup());
+        SpaceGroup group(cell->spaceGroup());
         MergedData merged(group, true);
 
         for (auto peak: peaks) {
-            if (peak->getActiveUnitCell() != cell) {
+            if (peak->activeUnitCell() != cell) {
                 continue;
             }
 

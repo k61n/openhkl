@@ -19,7 +19,7 @@ public:
     QJsonObject toJson() override;
     void fromJson(const QJsonObject& obj) override;
 
-    QList<UnitCellItem*> getUnitCellItems();
+    QList<UnitCellItem*> unitCellItems();
 
     void addUnitCell();
 

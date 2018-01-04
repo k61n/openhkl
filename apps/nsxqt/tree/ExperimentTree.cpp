@@ -92,11 +92,11 @@ void ExperimentTree::setHKLTolerance()
         return;
 
     bool ok;
-    double tolerance = QInputDialog::getDouble(this,tr("HKL integer tolerance"),tr("value:"),ucitem->getUnitCell()->getHKLTolerance(),0.0,1.0,2,&ok);
+    double tolerance = QInputDialog::getDouble(this,tr("HKL integer tolerance"),tr("value:"),ucitem->unitCell()->getHKLTolerance(),0.0,1.0,2,&ok);
     if (!ok)
         return;
 
-    ucitem->getUnitCell()->setHKLTolerance(tolerance);
+    ucitem->unitCell()->setHKLTolerance(tolerance);
 
     onSingleClick(currentIndex());
 }

@@ -103,9 +103,9 @@ public:
     double getTransmission() const;
 
     void addUnitCell(sptrUnitCell uc, bool activate=true);
-    int getActiveUnitCellIndex() const;
-    sptrUnitCell getActiveUnitCell() const;
-    sptrUnitCell getUnitCell(int index) const;
+    int activeUnitCellIndex() const;
+    sptrUnitCell activeUnitCell() const;
+    sptrUnitCell unitCell(int index) const;
 
     friend bool operator<(const Peak3D& p1, const Peak3D& p2);
 
