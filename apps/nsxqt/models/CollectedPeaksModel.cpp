@@ -428,7 +428,7 @@ void CollectedPeaksModel::writeShelX(const std::string& filename, QModelIndexLis
             continue;
         }
 
-        if (peak->isSelected() && !peak->isMasked()) {
+        if (peak->isSelected()) {
             Eigen::RowVector3d hkl;
             bool success = basis->getMillerIndices(peak->getQ(), hkl, true);
 
@@ -494,7 +494,7 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, QModelIndex
             nsx::error()<<"No unit cell defined for peak " << index.row()+1 << ". It will not be written to FullProf file";
             continue;
         }
-        if (peak->isSelected() && !peak->isMasked()) {
+        if (peak->isSelected()) {
             Eigen::RowVector3d hkl;
             bool success = basis->getMillerIndices(peak->getQ(), hkl,true);
             if (!success) {

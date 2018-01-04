@@ -98,7 +98,6 @@ public:
     void setSelected(bool);
     bool isSelected() const;
     void setMasked(bool masked);
-    bool isMasked() const;
     void setTransmission(double transmission);
     double getTransmission() const;
 

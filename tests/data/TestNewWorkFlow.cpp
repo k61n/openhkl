@@ -87,7 +87,7 @@ int main()
         unsigned int indexed_peaks = 0;
 
         for (auto&& peak: found_peaks) {
-            if (!peak->isSelected() || peak->isMasked()) {
+            if (!peak->isSelected()) {
                 continue;
             }
             indexer.addPeak(peak);
@@ -124,7 +124,7 @@ int main()
 
     // get that DataSet::getEvents works properly
     for (auto peak: found_peaks) {
-        if (!peak->isSelected() || peak->isMasked()) {
+        if (!peak->isSelected()) {
             continue;
         }
 

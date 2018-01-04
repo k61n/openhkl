@@ -402,8 +402,10 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
         auto sample = numor->getDiffractometer()->getSample();
 
         for (auto peak: peaks(numor.get())) {
-            if (!peak->isSelected() || peak->isMasked())
+
+            if (!peak->isSelected()) {
                 continue;
+            }
 
             double d = 1.0 / peak->getQ().rowVector().norm();
             avg_d += d;
@@ -434,7 +436,7 @@ void SessionModel::writeLog()
     nsx::PeakList peaks;
 
     for (auto peak: _peaks) {
-        if (peak->isSelected() && !peak->isMasked()) {
+        if (peak->isSelected()) {
             peaks.push_back(peak);
         }
     }
@@ -486,8 +488,9 @@ bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& pea
     }
 
     for (auto peak: peaks) {
-        if (peak->isMasked() || !peak->isSelected())
+        if (!peak->isSelected()) {
             continue;
+        }
 
         Eigen::RowVector3d hkl;
         auto currentBasis = peak->activeUnitCell();
@@ -552,13 +555,14 @@ bool SessionModel::writeStatistics(std::string filename,
     nsx::MergedData merged(grp, friedel);
 
     for (auto&& peak: peaks) {
+        // skip bad/masked peaks
+        if (!peak->isSelected()) {
+            continue;
+        }
+
         if (cell != peak->activeUnitCell()) {
             nsx::error() << "Only one unit cell is supported at this time!!";
             return false;
-        }
-        // skip bad/masked peaks
-        if (peak->isMasked() || !peak->isSelected()) {
-            continue;
         }
         // skip misindexed peaks
         if (!cell->getMillerIndices(peak->getQ(), HKL, true)) {

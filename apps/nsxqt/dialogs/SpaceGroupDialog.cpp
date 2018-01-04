@@ -73,7 +73,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
 
     for (nsx::sptrPeak3D peak : _peaks) {
 
-        if (peak->isSelected() && !peak->isMasked()) {
+        if (!peak->isSelected()) {
             continue;
         }
 

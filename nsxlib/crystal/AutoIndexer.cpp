@@ -105,7 +105,7 @@ void AutoIndexer::computeFFTSolutions()
 
     for (auto peak: _peaks) {
         // Keep only the peak that have selected and that are not masked
-        if (peak->isSelected() && !peak->isMasked()) {
+        if (peak->isSelected()) {
             qvects.push_back(peak->getQ().rowVector());
         }
     }
@@ -199,7 +199,7 @@ void AutoIndexer::refineSolutions()
             Eigen::RowVector3d hkl;
             auto q = peak->getQ();
             bool indexingSuccess = cell->getMillerIndices(q,hkl,true);
-            if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
+            if (indexingSuccess && peak->isSelected()) {
                 hkls.emplace_back(hkl);
                 qs.emplace_back(q.rowVector());
                 ++success;
@@ -263,7 +263,7 @@ void AutoIndexer::refineSolutions()
         double score = 0.0;
         double maxscore = 0.0;
         for (auto peak: _peaks) {
-            if (peak->isSelected() && !peak->isMasked()) {
+            if (peak->isSelected()) {
                 maxscore++;
                 Eigen::RowVector3d hkl;
                 auto q = peak->getQ();
@@ -303,7 +303,7 @@ void AutoIndexer::refineConstraints()
                 Eigen::RowVector3d hkl;
                 auto q = peak->getQ();
                 bool indexingSuccess = cell->getMillerIndices(q,hkl,true);
-                if (indexingSuccess && peak->isSelected() && !peak->isMasked()) {
+                if (indexingSuccess && peak->isSelected()) {
                     min.addPeak(*peak, hkl);
                     ++success;
                 }
@@ -332,7 +332,7 @@ void AutoIndexer::refineConstraints()
         double maxscore = 0.0;
 
         for (auto peak: _peaks) {
-            if (peak->isSelected() && !peak->isMasked()) {
+            if (peak->isSelected()) {
                 maxscore++;
                 Eigen::RowVector3d hkl;
                 auto q = peak->getQ();

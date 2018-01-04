@@ -456,10 +456,11 @@ void DataSet::integratePeaks(const PeakSet& peaks, double peak_scale, double bkg
 
 
     for(auto&& p: peaks) {
-        if (p->isMasked() || !p->isSelected()) {
-            continue;
 
+        if (!p->isSelected()) {
+            continue;
         }
+
         double radius = peakRadius(p->getShape().metric());
         avg_peak_shape += p->getShape().metric();
         avg_peak_radius += radius;

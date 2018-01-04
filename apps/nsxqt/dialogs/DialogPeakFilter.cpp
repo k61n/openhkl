@@ -30,7 +30,6 @@ void DialogPeakFilter::accept()
     nsx::PeakFilter filter;
 
     filter._removeUnindexed = _ui->checkUnindexed->isChecked();
-    filter._removeMasked = _ui->checkMasked->isChecked();
     filter._removeUnselected = _ui->checkUnselected->isChecked();
     filter._removeIsigma = _ui->checkIsigma->isChecked();
     filter._removePValue = _ui->checkPValue->isChecked();

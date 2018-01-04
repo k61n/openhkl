@@ -87,7 +87,7 @@ void FriedelDialog::on_goodPairsButton_clicked()
         nsx::Peak3D* b = _friedelPairs[i].second;
 
         // skip if masked
-        if (a->isMasked() || b->isMasked())
+        if (!a->isSelected() || !b->isSelected())
             continue;
 
         double int_a = a->getScaledIntensity().value();
