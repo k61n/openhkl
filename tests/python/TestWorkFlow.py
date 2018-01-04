@@ -37,7 +37,7 @@ class TestWorkFlow(unittest.TestCase):
         selected_peaks = []
 
         for peak in peaks:
-            if peak.isSelected() and not peak.isMasked():
+            if peak.isSelected():
                 selected_peaks.append(peak)
 
         self.assertTrue(len(peaks) > 800)

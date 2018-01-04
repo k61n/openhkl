@@ -82,7 +82,7 @@ int main()
         unsigned int indexed_peaks = 0;
 
         for (auto&& peak: found_peaks) {
-            if (!peak->isSelected() || peak->isMasked()) {
+            if (!peak->isSelected()) {
                 continue;
             }
             indexer.addPeak(peak);

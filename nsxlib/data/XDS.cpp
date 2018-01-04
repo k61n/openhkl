@@ -182,8 +182,9 @@ RecordList XDS::getMergedRecords() const
 
         for (auto peak: equiv) {
             // skip bad/masked peaks
-            if (peak->isMasked() || !peak->isSelected())
+            if (!peak->isSelected()) {
                 continue;
+            }
 
             new_peak.addPeak(peak);
         }

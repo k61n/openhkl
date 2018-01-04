@@ -32,12 +32,6 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrPeak3D peak)
         }
     }
    
-    if (filter._removeMasked) {
-        if (peak->isMasked()) {
-            return true;
-        }
-    }
-
     if (filter._removeUnselected) {
         if (!peak->isSelected()) {
             return true;

@@ -196,11 +196,6 @@ void Peak3D::setMasked(bool masked)
     _masked = masked;
 }
 
-bool Peak3D::isMasked() const
-{
-    return _masked;
-}
-
 bool Peak3D::isIndexed() const
 {
     return (!_unitCells.empty());

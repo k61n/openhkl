@@ -19,8 +19,6 @@ public:
 public:
     //! Remove peaks which are not indexed (incommensurate).
     bool _removeUnindexed;
-    //! Remove peaks which are masked.
-    bool _removeMasked;
     //! Remove peaks which are not selected.
     bool _removeUnselected;
     //! Remove peaks based on cutoff for \f$I/\sigma_I\f$.

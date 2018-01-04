@@ -51,7 +51,7 @@ RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks, doub
 {
     for (auto p: peaks) {
         // skip if not selected or masked
-        if (!p->isSelected() || p->isMasked() || !p->isObserved()) {
+        if (!p->isSelected() || !p->isObserved()) {
             continue;
         }
 
@@ -274,12 +274,11 @@ int Refiner::updatePredictions(PeakList& peaks) const
     int updated = 0;
 
     for (auto&& peak: peaks) {
-        if (peak->isObserved()) {
+
+        if (!peak->isSelected() || peak->isObserved()) {
             continue;
         }
-        if (!peak->isSelected() || peak->isMasked()) {
-            continue;
-        }
+
         if (peak->activeUnitCell() != _cell) {
             continue;
         }

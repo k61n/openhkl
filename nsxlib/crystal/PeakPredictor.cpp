@@ -102,16 +102,17 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
 
         _handler->setStatus("Building set of previously found peaks...");
         for (auto&& peak: reference_peaks) {
+
+            // ignore deselected and masked peaks
+            if (!peak->isSelected()) {
+                continue;
+            }
+
             if (peak->data() != _data || peak->activeUnitCell() != cell) {
                 continue;
             }            
             Eigen::RowVector3i hkl = cell->getIntegerMillerIndices(peak->getQ());
             found_hkls.insert(hkl);
-
-            // ignore deselected and masked peaks
-            if (!peak->isSelected() || peak->isMasked()) {
-                continue;
-            }
 
             Intensity inten = peak->getCorrectedIntensity();
 
