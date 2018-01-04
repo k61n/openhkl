@@ -12,8 +12,9 @@ ci:trusty:
     - ./build_server/debian/run_tests.sh
   allow_failure: false
   only:
-    - /^feature/.*$/
     - /^bugfix/.*$/
+    - /^feature/.*$/
+    - /^refactoring/.*$/
   tags:
     - ubuntu14.04
 
@@ -46,8 +47,9 @@ ci:osx:
     - ./build_server/osx/run_tests.sh
   allow_failure: false
   only:
-    - /^feature/.*$/
     - /^bugfix/.*$/
+    - /^feature/.*$/
+    - /^refactoring/.*$/
   tags:
     - macmini2
 
@@ -79,8 +81,9 @@ ci:windows:
     - cmd /k .\build_server\windows\run_tests.bat
   allow_failure: false
   only:
-    - /^feature/.*$/
     - /^bugfix/.*$/
+    - /^feature/.*$/
+    - /^refactoring/.*$/
   tags:
     - windows
 
