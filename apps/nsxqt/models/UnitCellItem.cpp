@@ -32,7 +32,7 @@ QWidget* UnitCellItem::inspectItem()
     return new UnitCellPropertyWidget(this);
 }
 
-nsx::sptrUnitCell UnitCellItem::getUnitCell()
+nsx::sptrUnitCell UnitCellItem::unitCell()
 {
     return _cell;
 }

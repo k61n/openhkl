@@ -578,7 +578,7 @@ void DataSet::integratePeaks(const PeakSet& peaks, double peak_scale, double bkg
             continue;
         }
 
-        auto cell = peak->getActiveUnitCell();
+        auto cell = peak->activeUnitCell();
         auto q = peak->getQ();
 
         cell->getMillerIndices(q, hkl_old);
@@ -613,7 +613,7 @@ void DataSet::removeDuplicatePeaks(nsx::PeakSet& peaks)
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
 
     for (unsigned int i = 0; i < ncrystals; ++i) {
-        auto cell = sample->getUnitCell(i);
+        auto cell = sample->unitCell(i);
 
         std::map<Eigen::RowVector3i, sptrPeak3D, compare_fn> hkls;
 

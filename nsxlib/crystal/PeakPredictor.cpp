@@ -96,13 +96,13 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
 
     for (unsigned int i = 0; i < ncrystals; ++i) {
         std::set<Eigen::RowVector3i, compare_fn> found_hkls;
-        auto cell = sample->getUnitCell(i);
+        auto cell = sample->unitCell(i);
         auto UB = cell->reciprocalBasis();        
         std::vector<sptrPeak3D> peaks_to_use;
 
         _handler->setStatus("Building set of previously found peaks...");
         for (auto&& peak: reference_peaks) {
-            if (peak->data() != _data || peak->getActiveUnitCell() != cell) {
+            if (peak->data() != _data || peak->activeUnitCell() != cell) {
                 continue;
             }            
             Eigen::RowVector3i hkl = cell->getIntegerMillerIndices(peak->getQ());
@@ -139,8 +139,7 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
 
         _handler->setStatus("Calculating peak locations...");
 
-        //auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInSphere(1.5);
-        auto predicted_hkls = sample->getUnitCell(i)->generateReflectionsInShell(_dmin, _dmax, wavelength);
+        auto predicted_hkls = sample->unitCell(i)->generateReflectionsInShell(_dmin, _dmax, wavelength);
 
         // todo: clean up DataSet interface for predicted peaks
         std::vector<Eigen::RowVector3d> hkls_double;

@@ -155,11 +155,11 @@ RecordList XDS::getMergedRecords() const
         return records;
     }
 
-    auto cell = _peaks[0]->getActiveUnitCell();
-    auto grp = SpaceGroup(cell->getSpaceGroup());
+    auto cell = _peaks[0]->activeUnitCell();
+    auto grp = SpaceGroup(cell->spaceGroup());
 
     for (auto&& peak: _peaks) {
-        if (cell != peak->getActiveUnitCell()) {
+        if (cell != peak->activeUnitCell()) {
             // qCritical() << "Only one unit cell is supported at this time!!";
             // todo(jonathan): better handling of this case!
             continue;

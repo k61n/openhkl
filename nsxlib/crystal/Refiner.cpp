@@ -280,7 +280,7 @@ int Refiner::updatePredictions(PeakList& peaks) const
         if (!peak->isSelected() || peak->isMasked()) {
             continue;
         }
-        if (peak->getActiveUnitCell() != _cell) {
+        if (peak->activeUnitCell() != _cell) {
             continue;
         }
                 

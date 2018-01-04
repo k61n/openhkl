@@ -71,7 +71,7 @@ public:
     //! Return the type of cell (triclinic, monoclinic ...)
     char bravaisType() const;
     //! Return the percentage of extinct reflections
-    double fractionExtinct(std::vector<std::array<double, 3>> hkl);
+    double fractionExtinct(const std::vector<Eigen::RowVector3d>& hkls) const;
     //! Return the Bravais type symbol
     std::string bravaisTypeSymbol() const;
     //! Return the ID of the space group

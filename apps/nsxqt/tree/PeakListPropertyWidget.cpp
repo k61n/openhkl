@@ -41,7 +41,7 @@ PeakListPropertyWidget::PeakListPropertyWidget(std::shared_ptr<SessionModel> ses
     }
 
     model->setPeaks(data_peaks);
-    model->setUnitCells(_caller->getExperiment()->getDiffractometer()->getSample()->getUnitCells());
+    model->setUnitCells(_caller->getExperiment()->getDiffractometer()->getSample()->unitCells());
     ui->tableView->setModel(model);
 
     //Connect search box

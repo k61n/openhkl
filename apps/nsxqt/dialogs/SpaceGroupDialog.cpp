@@ -33,6 +33,7 @@ SpaceGroupDialog::SpaceGroupDialog(const nsx::PeakSet& peaks, QWidget *parent):
     QDialog(parent),
     ui(new Ui::SpaceGroupDialog),
     _peaks(peaks),
+    _cell(nullptr),
     _selectedGroup("")
 {
     ui->setupUi(this);
@@ -44,8 +45,6 @@ SpaceGroupDialog::SpaceGroupDialog(const nsx::PeakSet& peaks, QWidget *parent):
 
     evaluateSpaceGroups();
     buildTable();
-
-    //ui->treeView->setModel(_peakFindModel);
 }
 
 SpaceGroupDialog::~SpaceGroupDialog()
@@ -63,9 +62,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
 {
     auto&& symbols = nsx::SpaceGroup::symbols();
 
-    std::vector<std::array<double, 3>> hkls;
-    nsx::PeakList peak_list;
-    std::vector<nsx::PeakList> peak_equivs;
+    std::vector<Eigen::RowVector3d> hkls;
 
     if ( _peaks.size()  == 0) {
         nsx::error() << "Need at least one peak to find space group!";
@@ -73,26 +70,27 @@ void SpaceGroupDialog::evaluateSpaceGroups()
     }
 
     nsx::info() << "Retrieving reflection list for space group calculation...";
-    _cells.clear();
 
     for (nsx::sptrPeak3D peak : _peaks) {
 
-        auto unit_cell = peak->getActiveUnitCell();
-        if (!unit_cell) {
+        if (peak->isSelected() && !peak->isMasked()) {
             continue;
         }
-        _cells.insert(unit_cell);
-        Eigen::RowVector3i hkl = unit_cell->getIntegerMillerIndices(peak->getQ());
 
-        if (peak->isSelected() && !peak->isMasked()) {
-            hkls.push_back(std::array<double, 3>{{double(hkl[0]), double(hkl[1]), double(hkl[2])}});
-            peak_list.push_back(peak);
+        auto current_peak_cell = peak->activeUnitCell();
+        if (!current_peak_cell) {
+            continue;
         }
-    }
 
-    if (_cells.size() != 1) {
-        nsx::error() << "ERROR: Only one unit cell is supported at this time";
-        return;
+        if (!_cell) {
+            _cell = current_peak_cell;
+        } else {
+            if (_cell != current_peak_cell) {
+                nsx::error() << "ERROR: Only one unit cell is supported at this time";
+                return;
+            }
+        }
+        hkls.push_back(_cell->getIntegerMillerIndices(peak->getQ()).cast<double>());
     }
 
     if (hkls.size() == 0) {
@@ -104,37 +102,29 @@ void SpaceGroupDialog::evaluateSpaceGroups()
 
     nsx::info() << "Evaluating " << symbols.size() << " space groups based on " << hkls.size() << " peaks";
 
-    std::string bravais = (*_cells.begin())->getBravaisTypeSymbol();
+    auto compatible_space_groups = _cell->compatibleSpaceGroups();
 
-    for (auto& symbol: symbols) {
+    for (auto& symbol: compatible_space_groups) {
 
         nsx::SpaceGroup group = nsx::SpaceGroup(symbol);       
 
-        // space group not compatible with bravais type
-        // todo: what about multiple crystals??
-        if (group.bravaisTypeSymbol() != bravais)
-            continue;
-
-        std::tuple<std::string, double> entry;
-
-        std::get<0>(entry) = symbol;
-        std::get<1>(entry) = 100.0*(1-group.fractionExtinct(hkls));
+        std::pair<std::string, double> entry = std::make_pair(symbol,100.0*(1-group.fractionExtinct(hkls)));
 
         // group is compatible with observed reflections, so add it to list
         _groups.push_back(entry);
     }
 
-    auto compare_fn = [](const std::tuple<std::string, double>& a, const std::tuple<std::string, double>& b) -> bool
+    auto compare_fn = [](const std::pair<std::string, double>& a, const std::pair<std::string, double>& b) -> bool
     {
-        double quality_a = std::get<1>(a);
-        double quality_b = std::get<1>(b);
+        double quality_a = a.second;
+        double quality_b = b.second;
 
         // sort first by quality
         if (quality_a != quality_b)
             return quality_a > quality_b;
 
         // otherwise we sort by properties of the groups
-        nsx::SpaceGroup grp_a(std::get<0>(a)), grp_b(std::get<0>(b));
+        nsx::SpaceGroup grp_a(a.first), grp_b(b.first);
 
         // sort by group ID
         return grp_a.id() < grp_b.id();
@@ -185,10 +175,7 @@ void SpaceGroupDialog::on_tableView_doubleClicked(const QModelIndex &index)
     QMessageBox* box = new QMessageBox(this);
     box->setText(QString("Setting space group to ") + _selectedGroup.c_str());
 
-    // todo: how to handle multiple samples and/or multiple unit cells???
-    for (auto cell: _cells) {
-        cell->setSpaceGroup(_selectedGroup);
-    }
+    _cell->setSpaceGroup(_selectedGroup);
 
     box->exec();
 }

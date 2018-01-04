@@ -399,7 +399,7 @@ void PeakTableView::showPeaksMatchingText(const QString& text)
     for (row=0;row<peaks.size();row++) {
         nsx::sptrPeak3D p=peaks[row];
         Eigen::RowVector3d hkl;
-        auto cell = p->getActiveUnitCell();
+        auto cell = p->activeUnitCell();
         bool success = cell->getMillerIndices(p->getQ(), hkl, true);
         setRowHidden(row,success);
     }
@@ -494,9 +494,9 @@ void PeakTableView::openRefiningParametersDialog()
         return;
     }
 
-    nsx::sptrUnitCell uc(peaks[0]->getActiveUnitCell());
+    nsx::sptrUnitCell uc(peaks[0]->activeUnitCell());
     for (auto&& peak : peaks) {
-        if (peak->getActiveUnitCell() != uc) {
+        if (peak->activeUnitCell() != uc) {
             uc = nullptr;
             break;
         }

@@ -39,7 +39,7 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
 
     connect(sessionModel,SIGNAL(updateCellParameters(nsx::sptrUnitCell)),this,SLOT(updateCellParameters(nsx::sptrUnitCell)));
 
-    auto cell = _unitCellItem->getUnitCell();
+    auto cell = _unitCellItem->unitCell();
 
     ui->spinBox_Z->setValue(cell->getZ());
     auto material=cell->getMaterial();
@@ -53,7 +53,7 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
     for (const auto& symbol : symbols)
         ui->comboBox->addItem(QString::fromStdString(symbol));
 
-    ui->comboBox->setCurrentText(cell->getSpaceGroup().c_str());
+    ui->comboBox->setCurrentText(cell->spaceGroup().c_str());
 
     ui->hklTolerance->setValue(cell->getHKLTolerance());
 
@@ -88,7 +88,7 @@ void UnitCellPropertyWidget::setLatticeParams()
 
     try
     {
-        _unitCellItem->getUnitCell()->setParams(a,b,c,alpha*nsx::deg,beta*nsx::deg,gamma*nsx::deg);
+        _unitCellItem->unitCell()->setParams(a,b,c,alpha*nsx::deg,beta*nsx::deg,gamma*nsx::deg);
     }catch(...)
     {
 
@@ -100,12 +100,12 @@ void UnitCellPropertyWidget::setLatticeParams()
 
 void UnitCellPropertyWidget::setMassDensity() const
 {
-    auto material=_unitCellItem->getUnitCell()->getMaterial();
+    auto material=_unitCellItem->unitCell()->getMaterial();
     if (material)
     {
         double mm=material->molarMass();
         mm*=ui->spinBox_Z->value()/nsx::avogadro;
-        double volume=_unitCellItem->getUnitCell()->volume()*nsx::ang3;
+        double volume=_unitCellItem->unitCell()->volume()*nsx::ang3;
         material->setMassDensity(mm/volume);
     }
 }
@@ -131,7 +131,7 @@ void UnitCellPropertyWidget::setChemicalFormula(const QString &formula)
     try
     {
         nsx::sptrMaterial material(new nsx::Material(formula.toStdString()));
-        _unitCellItem->getUnitCell()->setMaterial(material);
+        _unitCellItem->unitCell()->setMaterial(material);
     }
     catch(std::exception& e)
     {
@@ -142,7 +142,7 @@ void UnitCellPropertyWidget::setChemicalFormula(const QString &formula)
 
 void UnitCellPropertyWidget::on_spinBox_Z_valueChanged(int arg1)
 {
-        _unitCellItem->getUnitCell()->setZ(arg1);
+        _unitCellItem->unitCell()->setZ(arg1);
         setMassDensity();
 }
 
@@ -163,5 +163,5 @@ void UnitCellPropertyWidget::onCompleterActivated(const QString& text)
 
 void UnitCellPropertyWidget::setHKLTolerance(double tolerance)
 {
-    _unitCellItem->getUnitCell()->setHKLTolerance(tolerance);
+    _unitCellItem->unitCell()->setHKLTolerance(tolerance);
 }
