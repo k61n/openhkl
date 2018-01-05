@@ -144,8 +144,6 @@ private:
     Ellipsoid _shape;
     //! Region used to integrate the peak
     IntegrationRegion _integrationRegion;
-    //! Shape describing the background zone (must fully contain peak)
-    // Ellipsoid3D _bkg;
 
     PeakIntegrator _integration;
 
@@ -164,11 +162,9 @@ private:
    
 
     double _counts;
-    //double _countsSigma;
     double _scale;
     bool _selected;
     bool _masked;
-   // bool _calculated;
     bool _observed;
     double _transmission;
     int _activeUnitCellIndex;

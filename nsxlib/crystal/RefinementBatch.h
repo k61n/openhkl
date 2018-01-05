@@ -36,20 +36,25 @@
 
 #pragma once
 
+#include <map>
 #include <vector>
 
 #include "CrystalTypes.h"
+#include "FitParameters.h"
 #include "InstrumentTypes.h"
-#include "RefinementBatch.h"
+#include "ReciprocalVector.h"
+#include "UnitCell.h"
 
 namespace nsx {
 
-//! Class for UB and offset refinement
-class Refiner {
+//! Class for batch refinement of UB and offset
+class RefinementBatch {
 
 public:
+    // needed for swig
+    RefinementBatch() = default;
 
-    Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches);
+    RefinementBatch(const UnitCell& uc, const PeakList& peaks, double fmin, double fmax);
 
     void refineU();
 
@@ -61,15 +66,42 @@ public:
 
     bool refine(unsigned int max_iter = 100);
 
-    int updatePredictions(PeakList& peaks) const;
+    int residuals(Eigen::VectorXd& fvec);
 
-    const std::vector<RefinementBatch>& batches() const;
+    const PeakList& peaks() const;
+
+    const UnitCell& cell() const;
+
+    UnitCell& cell();
+
+    Eigen::MatrixXd constraints() const;
+
+    bool contains(double f) const;
 
 private:
 
-    std::vector<RefinementBatch> _batches;
+    double _fmin;
 
-    sptrUnitCell _cell;
+    double _fmax;
+
+    FitParameters _params;
+
+    //! Initial U matrix of cell
+    Eigen::Matrix3d _u0; 
+
+    //! U offsets
+    Eigen::Vector3d _uOffsets;
+
+    //! Cell parameters, internal format. Used internally by UBMinimizer.
+    Eigen::VectorXd _cellParameters;
+
+    UnitCell _cell;
+
+    PeakList _peaks;
+
+    std::vector<Eigen::RowVector3d> _hkls;
+
+    std::vector<std::pair<int,int>> _constraints;
 };
 
 } // end namespace nsx
