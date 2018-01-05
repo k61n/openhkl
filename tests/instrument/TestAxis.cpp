@@ -31,7 +31,7 @@ TestAxis* TestAxis::clone() const
 
 Eigen::Transform<double,3,Eigen::Affine> TestAxis::getHomMatrix(double value) const
 {
-    nsx::NSX_UNUSED(value);
+    NSX_UNUSED(value);
 
     return Eigen::Transform<double,3,Eigen::Affine>();
 }
