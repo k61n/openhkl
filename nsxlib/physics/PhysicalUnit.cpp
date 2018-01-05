@@ -219,7 +219,7 @@ double PhysicalUnit::convert(double oprefix, double oscale, const dimension& odi
             bool proportional=true;
             for (auto it2=p.first.begin();it2!=p.first.end();++it1,++it2)
             {
-                if ((*it1)!=0 ^ (*it2)!=0)
+                if (((*it1)!=0) ^ ((*it2)!=0))
                 {
                     proportional=false;
                     break;

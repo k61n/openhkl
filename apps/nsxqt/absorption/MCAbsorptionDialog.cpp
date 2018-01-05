@@ -26,9 +26,9 @@
 
 MCAbsorptionDialog::MCAbsorptionDialog(std::shared_ptr<SessionModel> session, nsx::sptrExperiment experiment, QWidget *parent):
     QDialog(parent),
-    _session(session),
-     ui(new Ui::MCAbsorptionDialog),
-    _experiment(experiment)
+    ui(new Ui::MCAbsorptionDialog),
+    _experiment(experiment),
+    _session(session)
 {
     ui->setupUi(this);
     auto ncrystals=_experiment->getDiffractometer()->getSample()->getNCrystals();

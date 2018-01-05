@@ -13,9 +13,9 @@ int main() {
 
     // Check assertion
 
-    NSX_CHECK_ASSERT(true);
+    NSX_CHECK_ASSERT(true==true);
 
-    NSX_CHECK_ASSERT(false,true);
+    NSX_CHECK_ASSERT(false==true,true);
 
     // Check integer equality/inequality
 

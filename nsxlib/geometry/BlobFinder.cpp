@@ -1,6 +1,7 @@
 #include <iostream>
 #include <unordered_map>
 
+#include "Macros.h"
 #include "BlobFinder.h"
 #include "DataSet.h"
 #include "IFrameIterator.h"
@@ -101,7 +102,8 @@ void BlobFinder::eliminateBlobs(std::unordered_map<int, Blob3D>& blobs) const
      * merge collisions
      *
      */
-Blob3DUMap BlobFinder::find(unsigned int begin, unsigned int end) {
+Blob3DUMap BlobFinder::find() {
+
     // find all blobs, possibly with multiple labels
     std::unordered_map<int,Blob3D> blobs;
 
@@ -118,7 +120,7 @@ Blob3DUMap BlobFinder::find(unsigned int begin, unsigned int end) {
 
         // determine begining and ending index of current thread
         #pragma omp for
-        for (int i = 0; i < _data->getNFrames(); ++i) {
+        for (size_t i = 0; i < _data->getNFrames(); ++i) {
             if ( loop_begin == -1) {
                 loop_begin = i;
             }
@@ -144,7 +146,7 @@ Blob3DUMap BlobFinder::find(unsigned int begin, unsigned int end) {
     }
 
     // serial section below
-    int num_blobs;
+    size_t num_blobs;
 
     do {
         EquivalenceList equivalences;
@@ -226,7 +228,7 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
 
     // Iterate on all pixels in the image
     // #pragma omp for schedule(dynamic, DYNAMIC_CHUNK)
-    for (int idx = begin; idx < end; ++idx) {
+    for (size_t idx = begin; idx < end; ++idx) {
 
         #pragma omp atomic
         ++_nframes;

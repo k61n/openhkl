@@ -156,7 +156,6 @@ int main()
     Eigen::Matrix4d I = Eigen::Matrix4d::Identity();
 
     Eigen::Matrix4d R = Q.inverse();
-    Eigen::Matrix4d S = QI.inverse();
 
     const double eps = 1e-10;
 

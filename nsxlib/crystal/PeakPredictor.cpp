@@ -60,13 +60,14 @@ PeakPredictor::PeakPredictor(sptrDataSet data):
     _dmax(50.0),
     _peakScale(3.0),
     _bkgScale(6.0),    
-    _minimumNeighbors(10),
     _Isigma(2.0),
+    _minimumNeighbors(10),
     _handler(nullptr),
     _data(data)
 {
 
 }
+
 
 PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_peaks)
 {
@@ -260,7 +261,7 @@ std::vector<Eigen::Vector3d> PeakPredictor::getEvents(const std::vector<Eigen::R
     for (const Eigen::RowVector3d& sample_q: sample_qs) {
         bool sign = (sample_q*sample_to_lab[0] + ki[0]).squaredNorm() > ki[0].squaredNorm();
 
-        for (int i = 1; i < scanSize; ++i) {
+        for (size_t i = 1; i < scanSize; ++i) {
             const Eigen::RowVector3d kf = sample_q*sample_to_lab[i] + ki[i];
             const bool new_sign = kf.squaredNorm() > ki[i].squaredNorm();
 

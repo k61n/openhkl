@@ -49,11 +49,6 @@ Profile3d::Profile3d(double background, double A, const Eigen::Vector3d& c, cons
 
 void Profile3d::evaluateInPlace(Eigen::VectorXd& result, const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const
 {
-    const int n = result.size();
-    assert(n == x.size());
-    assert(n == y.size());
-    assert(n == z.size());
-
     // get shifted coordinates
     auto dx = x - _c(0);
     auto dy = y - _c(1);
@@ -67,12 +62,6 @@ void Profile3d::evaluateInPlace(Eigen::VectorXd& result, const Eigen::ArrayXd& x
 // note: the ordering of the columns of J corresponds to the order in which parameters are added to FitParameters in Profile3d::fit().
 void Profile3d::jacobianInPlace(Eigen::MatrixXd& J, const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const
 {
-    const int n = J.rows();
-    assert(n == x.size());
-    assert(n == y.size());
-    assert(n == z.size());   
-
-
     // get shifted coordinates
     auto dx = x - _c(0);
     auto dy = y - _c(1);

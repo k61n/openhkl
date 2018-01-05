@@ -8,7 +8,6 @@ int main()
     Eigen::Vector3d v1(1,2,3);
     nsx::DirectVector dv1(v1);
 
-    Eigen::Vector3d v2 = v1 + dv1.vector();
     double& x = dv1[0];
     x = 100;
 

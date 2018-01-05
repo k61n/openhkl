@@ -68,12 +68,12 @@ sptrUnitCell Sample::addUnitCell(sptrUnitCell cell)
     return cell;
 }
 
-sptrUnitCell Sample::unitCell(int i)
+sptrUnitCell Sample::unitCell(int index)
 {
-    if (i >= _cells.size()) {
-        throw std::runtime_error("Unit Cell not valid, asked for index " + std::to_string(i) + " of " + std::to_string(_cells.size()));
+    if (index<0 || static_cast<size_t>(index) >= _cells.size()) {
+        throw std::runtime_error("Unit Cell not valid, asked for index " + std::to_string(index) + " of " + std::to_string(_cells.size()));
     }
-    return _cells[i];
+    return _cells[index];
 }
 
 const UnitCellList& Sample::unitCells() const
@@ -96,17 +96,17 @@ void Sample::removeUnitCell(sptrUnitCell cell)
     }
 }
 
-void Sample::removeUnitCell(int i)
+void Sample::removeUnitCell(int index)
 {
-    if (i < 0 || i >= _cells.size()) {
+    if (index < 0 || static_cast<size_t>(index) >= _cells.size()) {
         return;
     }
-    _cells.erase(_cells.begin()+i);
+    _cells.erase(_cells.begin()+index);
 }
 
 unsigned int Sample::getZ(int index) const
 {
-    if (index < 0 || index >= _cells.size()) {
+    if (index < 0 || static_cast<size_t>(index) >= _cells.size()) {
         throw std::runtime_error("Invalid unit cell index.");
     }
     return _cells[index]->getZ();
@@ -114,7 +114,7 @@ unsigned int Sample::getZ(int index) const
 
 void Sample::setZ(int Z, int index)
 {
-    if (index < 0 || index >= _cells.size()) {
+    if (index < 0 || static_cast<size_t>(index) >= _cells.size()) {
         throw std::runtime_error("Invalid unit cell index.");
     }
 
@@ -126,7 +126,7 @@ void Sample::setZ(int Z, int index)
 
 sptrMaterial Sample::getMaterial(int index) const
 {
-    if (index < 0 || index >= _cells.size()) {
+    if (index < 0 || static_cast<size_t>(index) >= _cells.size()) {
         throw std::runtime_error("Invalid unit cell index.");
     }
     return _cells[index]->getMaterial();
@@ -134,7 +134,7 @@ sptrMaterial Sample::getMaterial(int index) const
 
 void Sample::setMaterial(sptrMaterial material, int index)
 {
-    if (index < 0 || index >= _cells.size()) {
+    if (index < 0 || static_cast<size_t>(index) >= _cells.size()) {
         throw std::runtime_error("Invalid unit cell index.");
     }
     _cells[index]->setMaterial(material);

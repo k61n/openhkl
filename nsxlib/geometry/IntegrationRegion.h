@@ -50,7 +50,7 @@ public:
     int classifySlice(const Eigen::Vector3d& p) const;
 
     //! Number of slices used in integration
-    int nslices() const;
+    size_t nslices() const;
 
     //! Best integration slice
     int bestSlice() const;

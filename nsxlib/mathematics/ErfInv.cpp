@@ -56,10 +56,9 @@ double erf_inv(double y)
 
     // get initial approximation
     double x = erf_inv_approx(y);
-    size_t i = 0;
 
     // improve by taking several steps of newton's method
-    for(auto i = 0; i < count; ++i) {
+    for(size_t i = 0; i < count; ++i) {
         const double num = y - std::erf(x);
         const double den_inv = fact * std::exp(x*x);
         const double dx = num * den_inv;

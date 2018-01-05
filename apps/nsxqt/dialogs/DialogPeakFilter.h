@@ -24,7 +24,7 @@ public slots:
     virtual void accept() override;
 
 private:
+Ui::PeakFilterDialog* _ui;
     nsx::PeakSet _peaks;
     nsx::PeakSet _badPeaks;
-    Ui::PeakFilterDialog* _ui;
 };

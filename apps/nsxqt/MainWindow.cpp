@@ -218,6 +218,8 @@ void MainWindow::on_actionNew_session_triggered()
 
 void MainWindow::saveSession(QString filename)
 {
+    Q_UNUSED(filename)
+
     nsx::error() << "This feature is not currently implemented!";
 }
 
@@ -513,6 +515,8 @@ void MainWindow::on_actionDraw_peak_integration_area_triggered(bool checked)
 
 void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
 {
+    Q_UNUSED(checked)
+
     DialogPeakFilter* dlg = new DialogPeakFilter(_session->peaks(nullptr), this);
     if (dlg->exec()) {
         auto&& bad_peaks = dlg->badPeaks();
@@ -594,7 +598,7 @@ void MainWindow::on_actionFit_profiles_triggered()
         std::vector<Eigen::MatrixXd> frames;
         frames.reserve(d->getNFrames());
 
-        for (auto f = 0; f < d->getNFrames(); ++f) {
+        for (size_t f = 0; f < d->getNFrames(); ++f) {
             frames.emplace_back(d->getFrame(f).cast<double>());
         }
 

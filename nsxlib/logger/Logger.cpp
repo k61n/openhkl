@@ -30,7 +30,7 @@ auto current_time() -> std::string
     current_time.erase(current_time.size()-1);
 
     return current_time;
-};
+}
 
 std::string currentTime()
 {
@@ -46,7 +46,7 @@ auto debug_log() -> Logger
     wrapper->addWrapper(new LogFileStreamWrapper("nsx_debug.txt",initialize,finalize));
 
     return Logger(wrapper);
-};
+}
 
 auto info_log() -> Logger
 {
@@ -57,7 +57,7 @@ auto info_log() -> Logger
     wrapper->addWrapper(new LogFileStreamWrapper("nsx_info.txt",initialize,finalize));
 
     return Logger(wrapper);
-};
+}
 
 auto error_log() -> Logger
 {
@@ -68,7 +68,7 @@ auto error_log() -> Logger
     wrapper->addWrapper(new LogFileStreamWrapper("nsx_error.txt",initialize,finalize));
 
     return Logger(wrapper);
-};
+}
 
 static std::function<Logger()> g_debug = debug_log;
 static std::function<Logger()> g_info = info_log;

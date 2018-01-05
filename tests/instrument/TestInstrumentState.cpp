@@ -53,7 +53,7 @@ int nsx::UnitTest_DataSet::run()
     auto detectorStates = dataf->_reader->detectorStates();
     auto sampleStates = dataf->_reader->sampleStates();
 
-    for (int i = 0; i < 100*(dataf->getNFrames()-1); ++i) {
+    for (size_t i = 0; i < 100*(dataf->getNFrames()-1); ++i) {
         double frame = double(i) / 100.0;
         auto state = dataf->getInterpolatedState(frame);
 

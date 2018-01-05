@@ -70,7 +70,7 @@ void FitParameters::writeValues(gsl_vector* v) const
     assert(v->size == nfree());
     Eigen::VectorXd p1(nparams());
 
-    for (auto i = 0; i < _params.size(); ++i) {
+    for (size_t i = 0; i < _params.size(); ++i) {
         p1(i) = *_params[i];
     }
 
@@ -118,7 +118,7 @@ const Eigen::MatrixXd& FitParameters::kernel() const
 
 void FitParameters::reset()
 {
-    for (auto i = 0; i < _params.size(); ++i) {
+    for (size_t i = 0; i < _params.size(); ++i) {
         *_params[i] = _originalValues[i];
     }
 }

@@ -43,19 +43,19 @@ std::string compress(const std::string& input_string)
     return output_string;
 }
 
-std::string join(const std::vector<std::string>& tokens, const char* delimiter)
+std::string join(const std::vector<std::string>& tokens, std::string delimiter)
 {
     if (tokens.empty())
         return "";
 
     std::ostringstream ss;
-    std::copy(tokens.begin(), tokens.end()-1, std::ostream_iterator<std::string>(ss, " "));
+    std::copy(tokens.begin(), tokens.end()-1, std::ostream_iterator<std::string>(ss,delimiter.c_str()));
     ss << tokens.back();
 
     return ss.str();
 }
 
-std::vector<std::string> split(std::string input_string, const char* delimiter)
+std::vector<std::string> split(std::string input_string, std::string delimiter)
 {
     std::vector<std::string> tokens;
 
@@ -63,10 +63,10 @@ std::vector<std::string> split(std::string input_string, const char* delimiter)
     input_string.erase(std::remove_if(input_string.begin(),input_string.end(),remove_spaces),input_string.end());
     auto text_cstr = const_cast<char*>(input_string.c_str());
 
-    char* match = strtok(text_cstr,delimiter);
+    char* match = strtok(text_cstr,delimiter.c_str());
     while (match) {
         tokens.push_back(match);
-        match = strtok(nullptr,delimiter);
+        match = strtok(nullptr,delimiter.c_str());
     }
 
     return tokens;

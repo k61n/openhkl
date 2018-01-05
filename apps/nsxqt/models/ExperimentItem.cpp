@@ -54,9 +54,6 @@ QJsonObject ExperimentItem::toJson()
 
 void ExperimentItem::fromJson(const QJsonObject &obj)
 {
-    SessionModel* session = dynamic_cast<SessionModel*>(model());
-    assert(session != nullptr);
-
     _instr->fromJson(obj["instrument"].toObject());
     _data->fromJson(obj["data"].toObject());
     _peaks->fromJson(obj["peaks"].toObject());

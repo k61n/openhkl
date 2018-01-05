@@ -158,9 +158,6 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     const Eigen::VectorXd& signal=_peak->getPeakProjection();
     const Eigen::VectorXd& bkg=_peak->getBkgProjection();
 
-    //const Eigen::VectorXd& totalSigma=_peak->getProjectionSigma();
-    const double totalSigma = _peak->getRawIntensity().sigma();
-
     // Transform to QDouble
     QVector<double> qx(int(total.size()));
     QVector<double> qtotal(int(total.size()));
@@ -200,7 +197,7 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     QString info;
 
     if (auto cell = _peak->activeUnitCell()) {
-        bool success = cell->getMillerIndices(_peak->getQ(), hkl,true);
+        cell->getMillerIndices(_peak->getQ(), hkl,true);
         info="(h,k,l):"+QString::number(hkl[0])+","+QString::number(hkl[1])+","+QString::number(hkl[2]);
     } else {
         info = "unindexed";

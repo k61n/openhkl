@@ -13,8 +13,8 @@ void trim(std::string& input_string);
 
 std::string compress(const std::string& input_string);
 
-std::string join(const std::vector<std::string>& tokens, const char* delimiter);
+std::string join(const std::vector<std::string>& tokens, std::string delimiter = " ");
 
-std::vector<std::string> split(std::string input_string, const char* delimiter);
+std::vector<std::string> split(std::string input_string, std::string delimiter = " ");
 
 } // end namespace nsx

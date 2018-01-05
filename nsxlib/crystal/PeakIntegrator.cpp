@@ -53,34 +53,22 @@ PeakIntegrator::PeakIntegrator(const IntegrationRegion& region, const DataSet& d
     _lower = aabb.lower();
     _upper = aabb.upper();
 
-    _data_start = std::lround((std::ceil(_lower[2])));
-    _data_end = std::lround((std::floor(_upper[2])));
+    const int data_start = std::round((std::ceil(_lower[2])));
+    const int data_end = std::round((std::floor(_upper[2])));
 
-    _start_x = std::lround((std::floor(_lower[0])));
-    _end_x = std::lround((std::ceil(_upper[0])));
+    const int start_x = std::round((std::floor(_lower[0])));
+    const int end_x = std::round((std::ceil(_upper[0])));
 
-    _start_y = std::lround((std::floor(_lower[1])));
-    _end_y = std::lround((std::ceil(_upper[1])));
+    const int start_y = std::round((std::floor(_lower[1])));
+    const int end_y = std::round((std::ceil(_upper[1])));
 
-    if (_start_x < 0) {
-        _start_x=0;
-    }
-    if (_start_y < 0) {
-        _start_y=0;
-    }
-    if (_data_start < 0) {
-        _data_start=0;
-    }
+    _start_x = (start_x > 0 ? start_x : 0);
+    _start_y = (start_y > 0 ? start_y : 0);
+    _data_start = (data_start > 0 ? data_start : 0);
 
-    if (_end_x > data.getNCols()-1) {
-        _end_x = static_cast<unsigned int>(data.getNCols()-1);
-    }
-    if (_end_y > data.getNRows()-1) {
-        _end_y =  static_cast<unsigned int>(data.getNRows()-1);
-    }
-    if (_data_end > data.getNFrames()-1) {
-        _data_end = static_cast<unsigned int>(data.getNFrames()-1);
-    }
+    _end_x = (end_x > static_cast<int>(data.getNCols()-1) ? data.getNCols()-1 : end_x);
+    _end_y = (end_y > static_cast<int>(data.getNRows()-1) ? data.getNRows()-1 : end_y);
+    _data_end = (data_end > static_cast<int>(data.getNFrames()-1) ? data.getNFrames()-1 : data_end);
 
     const int n_frames = _data_end-_data_start + 1;
 
@@ -193,8 +181,6 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
     _countsPeak[idx-_data_start] = intensityP;
     _countsBkg[idx-_data_start] = intensityBkg;
 
-    const double avgBkg = intensityBkg / pointsinbkg;
-
     // update blob
     for (unsigned int x = _start_x; x <= _end_x; ++x) {
         for (unsigned int y = _start_y; y <= _end_y; ++y) {
@@ -216,14 +202,14 @@ void PeakIntegrator::end()
     const double avgBkg = getMeanBackground().value();
 
     // find the shell with best sigma/I
-    int best_slice = _region.nslices()-1;
+    size_t best_slice = _region.nslices()-1;
     double best_ratio = 1e10;
     double npoints = 0;
     double I = 0;
     
     // determine the slice that minimizes sigma(I) / I
-    for (int slice = 0; slice < _region.nslices(); ++slice) {
-        for (int idx = _data_start; idx <= _data_end; ++idx) {
+    for (size_t slice = 0; slice < _region.nslices(); ++slice) {
+        for (size_t idx = _data_start; idx <= _data_end; ++idx) {
             npoints += _shellPoints(idx-_data_start, slice);
             I += _shellIntensity(idx-_data_start, slice);
         }
@@ -242,13 +228,13 @@ void PeakIntegrator::end()
     _region.setBestSlice(best_slice);
    
     // update the intensity/counts based on optimal slice
-    for (int idx = _data_start; idx <= _data_end; ++idx) {
+    for (size_t idx = _data_start; idx <= _data_end; ++idx) {
         _pointsBkg(idx-_data_start) = _shellPoints(idx-_data_start, 0);
         _countsBkg(idx-_data_start) = _shellIntensity(idx-_data_start, 0);
         _countsPeak(idx-_data_start) = 0.0;
         _pointsPeak(idx-_data_start) = 0.0;
 
-        for (int slice = 1; slice <= best_slice; ++slice) {
+        for (size_t slice = 1; slice <= best_slice; ++slice) {
             _countsPeak(idx-_data_start) += _shellIntensity(idx-_data_start, slice);
             _pointsPeak(idx-_data_start) += _shellPoints(idx-_data_start, slice);
         }
@@ -266,9 +252,6 @@ void PeakIntegrator::end()
 
     // get the fitted background
     _fitP = _fitA.inverse()*_fitB;
-    // get the norm-sqared residual
-    volatile double avg_residual = (_fitCC - _fitP.dot(_fitB)) / _pointsBkg.sum();
-
 
     Eigen::ArrayXd bkg_1 = avgBkg*(_pointsPeak+_pointsBkg);
     Eigen::ArrayXd bkg_2 = _fitP(0)*(_pointsPeak+_pointsBkg) + _fitP(1)*_sumX + _fitP(2)*_sumY;

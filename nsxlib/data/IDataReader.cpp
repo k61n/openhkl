@@ -25,10 +25,10 @@
 namespace nsx {
 
 IDataReader::IDataReader(const std::string& filename, const sptrDiffractometer& diffractometer)
-    : _diffractometer(std::move(diffractometer)),
+: _diffractometer(std::move(diffractometer)),
   _nFrames(0),
-  _detectorStates(),
   _sampleStates(),
+  _detectorStates(),
   _fileSize(0),
   _isOpened(false)
 {

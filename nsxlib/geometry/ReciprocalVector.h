@@ -33,10 +33,10 @@ public:
     const Eigen::RowVector3d& rowVector() const;
 
     //! Return a reference to an element of the vector
-    double& operator[](unsigned int index);
+    double& operator[](int index);
 
     //! Return a reference to an element of the vector
-    double& operator()(unsigned int index);
+    double& operator()(int index);
 
     //! Print information about a ReciprocalVector to a stream
     void print(std::ostream& os) const;

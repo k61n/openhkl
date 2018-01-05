@@ -171,7 +171,7 @@ Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const ComponentStat
 {
     auto&& values = state.values();
 
-    if (values.size() != getNPhysicalAxes()) {
+    if (static_cast<size_t>(values.size()) != getNPhysicalAxes()) {
         throw std::range_error("Trying to set Gonio "+_label+" with wrong number of parameters");
     }
 

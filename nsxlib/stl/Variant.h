@@ -6,6 +6,8 @@
 #include <typeindex>
 #include <typeinfo>
 
+#include "Macros.h"
+
 namespace nsx {
 
 //! Template meta-class for fetching the type of the first template argument of a Variant
@@ -72,6 +74,8 @@ struct DestructStorage<T, S...> {
 template<>
 struct DestructStorage<> {
     DestructStorage(const std::type_index& type, void* ptr) {
+        NSX_UNUSED(type)
+        NSX_UNUSED(ptr)
     }
 };
 
@@ -91,6 +95,9 @@ template<typename T, typename... S> struct CopyStorage<T, S...> {
 //! Template meta-class to copy the storage of a Variant
 template<> struct CopyStorage<> {
     CopyStorage(void* dst_ptr, const std::type_index& type, const void* src_ptr) {
+        NSX_UNUSED(dst_ptr)
+        NSX_UNUSED(type)
+        NSX_UNUSED(src_ptr)
         throw std::runtime_error("CopyStorage: could not match type");
     }
 };
@@ -104,7 +111,6 @@ template<typename T, typename... S> struct MoveStorage<T, S...> {
         if (type == typeid(T)) {
             const T* t_ptr = reinterpret_cast<const T*>(src_ptr);
             new(dst_ptr) T(std::move(*t_ptr));
-            //t_ptr->~T();
 
         } else {
             MoveStorage<S...>(dst_ptr, type, src_ptr);
@@ -115,6 +121,9 @@ template<typename T, typename... S> struct MoveStorage<T, S...> {
 //! Template meta-class to move the storage of a Variant
 template<> struct MoveStorage<> {
     MoveStorage(void* dst_ptr, const std::type_index& type, const void* src_ptr) {
+        NSX_UNUSED(dst_ptr)
+        NSX_UNUSED(type)
+        NSX_UNUSED(src_ptr)
         throw std::runtime_error("MoveStorage: could not match type");
     }
 };

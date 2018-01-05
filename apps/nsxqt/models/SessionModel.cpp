@@ -326,15 +326,9 @@ void SessionModel::findPeaks(const QModelIndex& index)
 
     // delete the progressView
     delete progressView;
-    int num_peaks = 0;
 
     updatePeaks();
     nsx::debug() << "Peak search complete., found " << _peaks.size() << " peaks.";
-    
-    //auto job = new Job(this, task, onFinished, true);
-    //connect(progressView, SIGNAL(canceled()), job, SLOT(terminate()));
-
-    //job->exec();
 }
 
 
@@ -356,9 +350,6 @@ void SessionModel::incorporateCalculatedPeaks()
 
     int current_numor = 0;
 
-
-    int last_done = 0;
-//    int predicted_peaks = 0;
     int observed_peaks = 0;
 
     for(auto numor: numors) {
@@ -508,11 +499,7 @@ bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& pea
         const long l = std::lround(hkl[2]);
 
         auto center = peak->getShape().center();
-        auto state = peak->data()->getInterpolatedState(center[2]);
         auto pos = peak->data()->getDiffractometer()->getDetector()->getPos(center[0], center[1]);
-
-        double lorentz = state.getLorentzFactor(pos);
-        double trans = peak->getTransmission();
 
         double intensity = peak->getCorrectedIntensity().value();
         double sigma = peak->getCorrectedIntensity().sigma();
@@ -534,8 +521,6 @@ bool SessionModel::writeStatistics(std::string filename,
     std::fstream file(filename, std::ios::out);
     nsx::ResolutionShell res = {dmin, dmax, num_shells};
     std::vector<char> buf(1024, 0); // buffer for snprintf
-    //std::vector<nsx::MergedPeak> merged_peaks;
-    //std::vector<nsx::MergedPeak> merged_peaks_shell;
 
     Eigen::RowVector3d HKL(0.0, 0.0, 0.0);
 
@@ -639,21 +624,6 @@ bool SessionModel::writeStatistics(std::string filename,
 
     file << &buf[0] << std::endl << std::endl;
 
-    auto compare_fn = [](const nsx::MergedPeak& p, const nsx::MergedPeak& q) -> bool
-    {
-        const auto a = p.getIndex();
-        const auto b = q.getIndex();
-
-        if (a(0) != b(0))
-            return a(0) < b(0);
-        else if (a(1) != b(1))
-            return a(1) < b(1);
-        else
-            return a(2) < b(2);
-    };
-
-    //std::sort(merged_peaks.begin(), merged_peaks.end(), compare_fn);
-
     file << "   h    k    l            I        sigma    nobs       chi2             p  "
          << std::endl;
 
@@ -670,10 +640,7 @@ bool SessionModel::writeStatistics(std::string filename,
 
         const double intensity = peak.getIntensity().value();
         const double sigma = peak.getIntensity().sigma();
-        const double d = 0.0; //peak.d();
         const int nobs = peak.redundancy();
-        //const double std = peak.std();
-        //const double rel_std = std / intensity;
 
         const double chi2 = peak.chi2();
         const double p = peak.pValue();
@@ -731,7 +698,7 @@ void SessionModel::autoAssignUnitCell()
             Eigen::RowVector3d hkl;
             bool assigned = false;
 
-            for (auto i = 0; i < sample->getNCrystals(); ++i) {
+            for (size_t i = 0; i < sample->getNCrystals(); ++i) {
                 auto cell = sample->unitCell(i);
 
                 if (cell->getMillerIndices(peak->getQ(), hkl, true)) {

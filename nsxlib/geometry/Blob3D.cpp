@@ -11,14 +11,23 @@ static const double minimum_blob_mass = 1e-15;
 
 namespace nsx {
 
-Blob3D::Blob3D():_m0(0),_npoints(0),_minValue(std::numeric_limits<double>::max()),_maxValue(std::numeric_limits<double>::min()),
-_m1(Eigen::Vector3d::Zero()), _m2(Eigen::Matrix3d::Zero())
+Blob3D::Blob3D()
+ :_m0(0),
+  _m1(Eigen::Vector3d::Zero()),
+  _m2(Eigen::Matrix3d::Zero()),
+  _npoints(0),
+  _minValue(std::numeric_limits<double>::max()),
+  _maxValue(std::numeric_limits<double>::min())
 {
 }
 
 Blob3D::Blob3D(const Blob3D& b)
-:	_m0(b._m0), _m1(b._m1), _m2(b._m2),
-    _npoints(b._npoints), _minValue(b._minValue), _maxValue(b._maxValue)
+: _m0(b._m0),
+  _m1(b._m1),
+  _m2(b._m2),
+  _npoints(b._npoints),
+  _minValue(b._minValue),
+  _maxValue(b._maxValue)
 {
 }
 

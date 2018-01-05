@@ -73,12 +73,12 @@ public:
     std::shared_ptr<UnitCell> addUnitCell(std::shared_ptr<UnitCell> cell = nullptr);
 
     //! Get the UnitCell of Crystal number i in the list
-    sptrUnitCell unitCell(int i);
+    sptrUnitCell unitCell(int index);
     const UnitCellList& unitCells() const;
     //! Return number of crystals
     std::size_t getNCrystals() const;
     //!
-    void removeUnitCell(int i);
+    void removeUnitCell(int index);
     void removeUnitCell(sptrUnitCell cell);
 
     //! Gets the Z number of a given unit cell

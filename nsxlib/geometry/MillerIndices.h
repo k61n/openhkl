@@ -36,10 +36,10 @@ public:
     operator Eigen::RowVector3d () const;
 
     //! Return a reference to an element of the vector
-    int& operator[](unsigned int index);
+    int& operator[](int index);
 
     //! Return a reference to an element of the vector
-    int& operator()(unsigned int index);
+    int& operator()(int index);
 
     //! Print information about a MillerIndices to a stream
     void print(std::ostream& os) const;

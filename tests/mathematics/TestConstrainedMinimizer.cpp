@@ -10,7 +10,6 @@
 int main()
 {
     Eigen::VectorXd y, wt, x;
-    int nparams = 3;
     const int num_points = 400;
     y.resize(num_points, 1);
     wt.resize(num_points, 1);
@@ -34,9 +33,7 @@ int main()
         double lambda = x(1);
         double b = x(2);
 
-        size_t i;
-
-        for (i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++) {
             /* Model Yi = A * exp(-lambda * i) + b */
             double t = i;
             double Yi = A * exp (-lambda * t) + b;

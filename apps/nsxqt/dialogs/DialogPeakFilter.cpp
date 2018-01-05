@@ -15,7 +15,8 @@
 DialogPeakFilter::DialogPeakFilter(const nsx::PeakSet& peaks, QWidget* parent):
     QDialog(parent),
     _ui(new Ui::PeakFilterDialog),
-    _peaks(peaks)
+    _peaks(peaks),
+    _badPeaks()
 {
     _ui->setupUi(this);
 }

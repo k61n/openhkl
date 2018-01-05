@@ -17,7 +17,7 @@ int main()
     nsx::DataReaderFactory factory;
     nsx::sptrDiffractometer diff;
     nsx::sptrDataSet dataf;
-    nsx::MetaData* meta;
+    nsx::MetaData* meta(nullptr);
     Eigen::MatrixXi v;
 
     try {

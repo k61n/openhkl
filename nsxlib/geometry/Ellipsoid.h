@@ -103,9 +103,9 @@ public:
 
 private:
     void updateAABB();
+    Eigen::Vector3d _center;
     Eigen::Matrix3d _metric;
     Eigen::Matrix3d _inverseMetric;
-    Eigen::Vector3d _center;
     AABB _aabb;
 };
 
