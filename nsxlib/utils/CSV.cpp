@@ -58,7 +58,7 @@ std::vector<std::string> CSV::getRow(std::istream &stream)
 std::string CSV::getToken(std::istream &stream, char &delim)
 {
     std::string tok("");
-    char curr, prev, eof, n1, n2;
+    char curr, eof, n1, n2;
     bool in_string(false);
     bool done(false);
     eof = std::char_traits<char>::eof();
@@ -104,7 +104,6 @@ std::string CSV::getToken(std::istream &stream, char &delim)
                         tok += _quotchar;
                         tok += _quotchar;
                         tok += _quotchar;
-                        prev = curr;
                         continue;
                     } else {
                         in_string = false;
@@ -116,7 +115,6 @@ std::string CSV::getToken(std::istream &stream, char &delim)
         }
 
         tok += curr;
-        prev = curr;
     }
 
     if (stream.eof())

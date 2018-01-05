@@ -101,7 +101,7 @@ int IntegrationRegion::classifySlice(const Eigen::Vector3d& p) const
     return selected_slice;
 }
 
-int IntegrationRegion::nslices() const
+size_t IntegrationRegion::nslices() const
 {
     // note: we add one here to include the background case
     return _nslices+1;

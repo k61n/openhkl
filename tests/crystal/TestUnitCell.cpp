@@ -254,7 +254,7 @@ int main()
     {
         nsx::UnitCell uc = cell.fromParameters(U, u, x);
 
-        for (auto i = 0; i < q.size(); ++i) {
+        for (size_t i = 0; i < q.size(); ++i) {
             auto dq = q[i] - hkl[i]*uc.reciprocalBasis();
             f(3*i+0) = dq(0);
             f(3*i+1) = dq(1);
@@ -264,7 +264,7 @@ int main()
     };
 
     // perturb the cell slightly
-    for (auto i = 0; i < x.size(); ++i) {
+    for (int i = 0; i < x.size(); ++i) {
         x(i) += x(i)*0.1;
         params.addParameter(&x(i));
     }

@@ -25,9 +25,6 @@ int main()
 
     outfile.open("output.tsv", std::fstream::out);
 
-    std::vector<int> failures(45, 0);
-    std::vector<int> counts(45, 0);
-
     std::ifstream database;
     database.open("crystallography.tsv", std::fstream::in);
     nsx::CSV csv_reader('\t', '#');
@@ -90,16 +87,12 @@ int main()
         nsx::BravaisType bravaisType;
         nsx::GruberReduction gruber(gruberCell.metric(), gruber_tolerance);
 
-        int condition;
-
         try {
-           condition = gruber.reduce(gruber_P, centering, bravaisType);
+           gruber.reduce(gruber_P, centering, bravaisType);
         }
         catch (std::exception& e) {
             NSX_CHECK_ASSERT(false);
         }
-
-        ++counts[condition];
 
         gruberCell.setBravaisType(bravaisType);
         gruberCell.setLatticeCentring(centering);
@@ -114,9 +107,6 @@ int main()
                     << row[5] << '\t'
                     << row[6] << '\t'
                     << row[7] << '\n';
-        }
-        else {
-            ++failures[condition];
         }
 
         NSX_CHECK_ASSERT(gruberCell.getBravaisTypeSymbol()[0] == bravais[0]);

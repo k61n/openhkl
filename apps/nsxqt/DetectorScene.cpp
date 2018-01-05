@@ -54,9 +54,10 @@ DetectorScene::DetectorScene(QObject *parent)
   _masks(),
   _lastClickedGI(nullptr),
   _logarithmic(false),
+  _drawIntegrationRegion(false),
   _colormap(new ColorMap()),
   _integrationRegion(nullptr),
-  _drawIntegrationRegion(false)
+  _session(nullptr)
 {
 }
 
@@ -129,7 +130,6 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         return;
     }
     createToolTipText(event);
-    auto button = event->button();
 
     // The left button was pressed
     if (event->buttons() & Qt::LeftButton) {

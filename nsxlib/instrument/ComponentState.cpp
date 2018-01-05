@@ -52,7 +52,7 @@ ComponentState::ComponentState(const Component* parent, std::vector<double> valu
         assert(values.size() == _ptrComp->getGonio()->getNPhysicalAxes());
     }
 
-    for (auto i = 0; i < values.size(); ++i) {
+    for (size_t i = 0; i < values.size(); ++i) {
         _rawValues(i) = values[i];
         _offsets(i) = 0.0;
     }

@@ -21,9 +21,9 @@ Ellipsoid::Ellipsoid(const Ellipsoid& other)
 Ellipsoid& Ellipsoid::operator=(const Ellipsoid& other)
 {
     if (this != &other) {
+        _center = other._center;
         _metric = other._metric;
         _inverseMetric = other._inverseMetric;
-        _center = other._center;
         _aabb = other._aabb;
     }
     return *this;
@@ -114,8 +114,6 @@ bool Ellipsoid::collide(const Ellipsoid& other) const
     Eigen::ComplexEigenSolver<Eigen::Matrix4d> solver(AI*B);
     const auto& roots = solver.eigenvalues();
     
-    int count = 0;
-    double sol[4];
     const double eps = 1e-5;
 
     // if there exists a real negative root then the ellipsoids are separated    

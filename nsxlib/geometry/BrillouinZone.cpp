@@ -16,7 +16,6 @@
 void remove_duplicates(std::vector<Eigen::RowVector3d>& q_vectors, bool reflect, double eps)
 {
     const double eps2 = eps*eps;
-    const int n = q_vectors.size();
     std::vector<Eigen::RowVector3d> unique_q_vectors;
 
     for (const auto v: q_vectors) {
@@ -85,11 +84,11 @@ void BrillouinZone::clean_qs()
     const auto n = _qs.size();
 
     // only include those vertices which are on the interior of a face
-    for (auto i = 0; i < n; ++i) {
+    for (size_t i = 0; i < n; ++i) {
         Eigen::RowVector3d qi = 0.5*_qs[i];
         // check if it intersects more than one plane: superfluous if so
         unsigned int intersections = 0;
-        for (auto j = 0; j < n; ++j) {
+        for (size_t j = 0; j < n; ++j) {
             Eigen::RowVector3d qj = _qs[j];
             // check whether the point qi lies on either of the Bragg planes given by +- qj
             if (std::fabs(std::fabs(qj.dot(qi) / qj.dot(qj))-0.5) < _eps) {
@@ -179,13 +178,13 @@ void BrillouinZone::compute_vertices()
     // Each q is the normal of a plane (see https://en.wikipedia.org/wiki/File:Brillouin_zone.svg)
     // and by definition of BZ passes through q/2.
     // Hence the equation of the plane is q.(x-q/2) = 0 ==> q.x = 0.5*q^2
-    for (auto i = 0; i < n; ++i) {
+    for (size_t i = 0; i < n; ++i) {
         A.row(0) = normals[i];
         b(0) = 0.5*A.row(0).squaredNorm();
-        for (auto j = i+1; j < n; ++j) {
+        for (size_t j = i+1; j < n; ++j) {
             A.row(1) = normals[j];
             b(1) = 0.5*A.row(1).squaredNorm();
-            for (auto k = j+1; k < n; ++k) {            
+            for (size_t k = j+1; k < n; ++k) {
                 A.row(2) = normals[k];
                 b(2) = 0.5*A.row(2).squaredNorm();
 

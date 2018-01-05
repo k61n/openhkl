@@ -69,8 +69,9 @@ protected:
 
     std::size_t _nCols;
 
-    //InstrumentStateList _states;
-    std::vector<ComponentState> _sampleStates, _detectorStates;
+    std::vector<ComponentState> _sampleStates;
+
+    std::vector<ComponentState> _detectorStates;
 
     std::size_t _fileSize;
 

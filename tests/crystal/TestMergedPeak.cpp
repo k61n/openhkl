@@ -49,7 +49,7 @@ int main()
     BravaisType bravais_type;
     LatticeCentring centering;
 
-    int match = gruber.reduce(P, centering, bravais_type);
+    gruber.reduce(P, centering, bravais_type);
     cell.setBravaisType(bravais_type);
     cell.setLatticeCentring(centering);
     cell.transform(P);

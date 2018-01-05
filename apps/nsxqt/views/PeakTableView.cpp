@@ -95,7 +95,7 @@ void PeakTableView::plotSelectedPeak(const QModelIndex& index)
     if (peaks.empty()) {
         return;
     }
-    if (idx < 0 || idx >= peaks.size()) {
+    if (idx < 0 || static_cast<size_t>(idx) >= peaks.size()) {
         return;
     }
 
@@ -120,14 +120,14 @@ void PeakTableView::keyPressEvent(QKeyEvent *event)
 
     // take last element
     QModelIndex last=selected.last();
-    unsigned int index=last.row();
+    int index=last.row();
     if (event->key() == Qt::Key_Up) {
         --index;
-        if (index >= 0 && index < peaks.size())
+        if (index >= 0 && static_cast<size_t>(index) < peaks.size())
             emit plotPeak(peaks[index]);
     } else if (event->key() == Qt::Key_Down) {
         ++index;
-        if (index >= 0 && index < peaks.size())
+        if (index >= 0 && static_cast<size_t>(index) < peaks.size())
             emit plotPeak(peaks[index]);
     }
     QTableView::keyPressEvent(event);

@@ -5988,7 +5988,7 @@ ColorMap ColorMap::getColorMap(const std::string& name)
     if (name == "nipy_spectral") return ColorMap(g_nipy_spectral_rgb);
     if (name == "CMRmap") return ColorMap(g_CMRmap_rgb);
     return getColorMap(getColorMapNames().front());
-};
+}
 
 std::vector<std::string> ColorMap::getColorMapNames()
 {
@@ -6017,5 +6017,5 @@ std::vector<std::string> ColorMap::getColorMapNames()
     names.push_back("nipy_spectral");
     names.push_back("CMRmap");
     return names;
-};
+}
 

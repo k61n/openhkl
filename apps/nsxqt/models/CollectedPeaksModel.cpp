@@ -148,9 +148,8 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
     int row = index.row();
     int column = index.column();
     if (auto cell = _peaks[row]->activeUnitCell()) {
-        bool success = cell->getMillerIndices(_peaks[row]->getQ(), hkl, true);
+        cell->getMillerIndices(_peaks[row]->getQ(), hkl, true);
     }
-    auto c = _peaks[row]->getShape().center();
     double gamma, nu;
     peakFactors(gamma, nu, lorentzFactor, _peaks[row]);
     transmissionFactor = _peaks[row]->getTransmission();
@@ -345,7 +344,7 @@ bool CollectedPeaksModel::setData(const QModelIndex& index, const QVariant& valu
 
 bool CollectedPeaksModel::indexIsValid(const QModelIndex& index) const
 {
-    return index.isValid() && (index.row() < _peaks.size());
+    return index.isValid() && (index.row() < static_cast<int>(_peaks.size()));
 }
 
 void CollectedPeaksModel::setUnitCells(const nsx::UnitCellList &cells)

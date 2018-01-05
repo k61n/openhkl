@@ -3,6 +3,7 @@
 
 #include <nsxlib/Axis.h>
 #include <nsxlib/NSXTest.h>
+#include <nsxlib/Macros.h>
 #include <nsxlib/Units.h>
 
 class TestAxis: public nsx::Axis
@@ -30,6 +31,8 @@ TestAxis* TestAxis::clone() const
 
 Eigen::Transform<double,3,Eigen::Affine> TestAxis::getHomMatrix(double value) const
 {
+    NSX_UNUSED(value);
+
     return Eigen::Transform<double,3,Eigen::Affine>();
 }
 

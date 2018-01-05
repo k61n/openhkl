@@ -56,7 +56,7 @@ public:
 
     BlobFinder(sptrDataSet data);
 
-    Blob3DUMap find(unsigned int begin, unsigned int end);
+    Blob3DUMap find();
 
     void findBlobs(std::unordered_map<int,Blob3D>& blobs, EquivalenceList& equivalences, unsigned int begin, unsigned int end);
 

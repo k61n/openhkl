@@ -184,7 +184,8 @@ private:
     unsigned int _depth;
 
     const Octree* _parent;
-    long _idx = -1;
+
+    unsigned int _idx = 0;
 };
 
 class OctreeIterator

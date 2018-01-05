@@ -127,7 +127,7 @@ private:
     //! Variance-covariance matrix of the fit parameters.
     Eigen::MatrixXd _covariance;
     //! Number of values in the fit, i.e. size of residual vector.
-    int _numValues;   
+    size_t _numValues;
     //! Relative tolerance of parameters.
     double _xtol;
     //! Relative tolerance of gradient.

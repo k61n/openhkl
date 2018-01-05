@@ -35,14 +35,14 @@
  */
 
 
+#include <limits>
+
 #include "InstrumentState.h"
 #include "Minimizer.h"
 #include "Peak3D.h"
 #include "PeakPredictor.h"
 #include "Refiner.h"
 #include "UnitCell.h"
-
-#include <limits>
 
 namespace nsx {
 
@@ -116,7 +116,7 @@ void RefinementBatch::refineDetectorOffset(InstrumentStateList& states)
 {
     for (int axis = 0; axis < 3; ++axis) {
         std::vector<int> ids;
-        for (auto i = 0; i < states.size(); ++i) {
+        for (size_t i = 0; i < states.size(); ++i) {
             if (i < _fmin || i >= _fmax) {
                 continue;
             }
@@ -124,7 +124,7 @@ void RefinementBatch::refineDetectorOffset(InstrumentStateList& states)
             ids.push_back(id);
         }
         // record the constraints
-        for (int i = 1; i < ids.size(); ++i) {
+        for (size_t i = 1; i < ids.size(); ++i) {
             _constraints.push_back(std::make_pair(ids[i], ids[i-1]));
         }
     }
@@ -134,7 +134,7 @@ void RefinementBatch::refineSamplePosition(InstrumentStateList& states)
 {
     for (int axis = 0; axis < 3; ++axis) {
         std::vector<int> ids;
-        for (auto i = 0; i < states.size(); ++i) {
+        for (size_t i = 0; i < states.size(); ++i) {
             if (i < _fmin || i >= _fmax) {
                 continue;
             }
@@ -142,7 +142,7 @@ void RefinementBatch::refineSamplePosition(InstrumentStateList& states)
             ids.push_back(id);
         }
         // record the constraints
-        for (int i = 1; i < ids.size(); ++i) {
+        for (size_t i = 1; i < ids.size(); ++i) {
             _constraints.push_back(std::make_pair(ids[i], ids[i-1]));
         }
     }
@@ -158,10 +158,6 @@ bool RefinementBatch::refine(unsigned int max_iter)
 
     if (_constraints.size() > 0) {
         auto C = constraints();
-        // DEBUGGING
-        std::cout << "constraint matrix for (" << _fmin << ", " << _fmax << ")" << std::endl;
-        std::cout << "size: " << C.rows() << " x " << C.cols() << std::endl;
-        std::cout << C << "\n--------------------------------------------------" << std::endl;
         _params.setConstraint(constraints());
     }
 
@@ -259,7 +255,7 @@ Eigen::MatrixXd RefinementBatch::constraints() const
     Eigen::MatrixXd C(_constraints.size(), _params.nparams());
     C.setZero();
 
-    for (auto i = 0; i < _constraints.size(); ++i) {
+    for (size_t i = 0; i < _constraints.size(); ++i) {
         auto id1 = _constraints[i].first;
         auto id2 = _constraints[i].second;
         C(i, id1) = 1.0;

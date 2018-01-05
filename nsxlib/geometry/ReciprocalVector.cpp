@@ -13,7 +13,7 @@ const Eigen::RowVector3d& ReciprocalVector::rowVector() const
     return _rvector;
 }
 
-double& ReciprocalVector::operator[](unsigned int index)
+double& ReciprocalVector::operator[](int index)
 {
     if (index < 0 || index > 2) {
         throw std::runtime_error("Invalid index for a 3D vector");
@@ -21,7 +21,7 @@ double& ReciprocalVector::operator[](unsigned int index)
     return _rvector[index];
 }
 
-double& ReciprocalVector::operator()(unsigned int index)
+double& ReciprocalVector::operator()(int index)
 {
     if (index < 0 || index > 2) {
         throw std::runtime_error("Invalid index for a 3D vector");

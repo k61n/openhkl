@@ -506,7 +506,6 @@ void DataSet::integratePeaks(const PeakSet& peaks, double peak_scale, double bkg
         }
 
         for (auto& tup: peak_list ) {
-            auto&& peak = tup.first;
             auto&& integrator = tup.second;
             integrator.step(frame, idx, mask);
         }

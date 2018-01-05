@@ -84,16 +84,14 @@ private:
     Eigen::Vector3d _lower;
     Eigen::Vector3d _upper;
 
-    // Eigen::ArrayXXd _peak_mask, _bkg_mask, _peak_data;
+    size_t _data_start;
+    size_t _data_end;
 
-    long _data_start;
-    long _data_end;
+    size_t _start_x;
+    size_t _end_x;
 
-    long _start_x;
-    long _end_x;
-
-    long _start_y;
-    long _end_y;
+    size_t _start_y;
+    size_t _end_y;
 
     Eigen::Vector3d _point1;
 

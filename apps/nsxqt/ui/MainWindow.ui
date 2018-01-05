@@ -192,7 +192,7 @@ QTreeView {
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget1">
        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0">
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0">

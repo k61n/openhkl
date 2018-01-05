@@ -43,19 +43,20 @@
 
 #include <Eigen/Dense>
 
+#include "Macros.h"
 #include "Minimizer.h"
-
-#include <iostream>
 
 namespace nsx {
 
 void callback_helper(const size_t iter, void* data, const gsl_multifit_nlinear_workspace *w)
 {
+    NSX_UNUSED(iter)
+    NSX_UNUSED(data)
+
     double r = 0.0;
-    for (auto i = 0; i < w->f->size; ++i) {
+    for (size_t i = 0; i < w->f->size; ++i) {
         r += gsl_vector_get(w->f, i) * gsl_vector_get(w->f, i);
     }
-    std::cout << "iteration " << iter << "; " << r << std::endl;
 }
 
 // Helper class to wrap GSL data structures. Used only in implementation of Minimizer.
@@ -72,11 +73,6 @@ struct MinimizerGSL {
     MinimizerGSL(): workspace(nullptr), jacobian(nullptr), covariance(nullptr), x(nullptr), wt(nullptr) {};
 };
 
-/*
-static int gsl_f_wrapper(const gsl_vector*, void*, gsl_vector*);
-static int gsl_df_wrapper(const gsl_vector*, void*, gsl_matrix*);
-*/
-static void eigenFromGSL(const gsl_vector* in, Eigen::VectorXd& out);
 static void eigenFromGSL(const gsl_matrix* in, Eigen::MatrixXd& out);
 static void gslFromEigen(const Eigen::VectorXd& in, gsl_vector* out);
 static void gslFromEigen(const Eigen::MatrixXd& in, gsl_matrix* out);
@@ -108,9 +104,8 @@ void Minimizer::initialize(FitParameters& params, int values)
     _outputEigen.resize(_numValues);
 
     const auto nfree = _params.nfree();
-    const auto nparams = _params.nparams();
 
-    for (int i = 0; i < _numValues; ++i) {
+    for (size_t i = 0; i < _numValues; ++i) {
         _wt(i) = 1.0;
     }
 
@@ -124,7 +119,7 @@ void Minimizer::initialize(FitParameters& params, int values)
     _gsl->covariance = gsl_matrix_alloc(nfree, nfree);
 
     // initialize the weights to 1
-    for (int i = 0; i < _numValues; ++i) {
+    for (size_t i = 0; i < _numValues; ++i) {
         gsl_vector_set(_gsl->wt, i, 1.0);
     }
     
@@ -244,14 +239,6 @@ int Minimizer::gsl_df_wrapper(const gsl_vector* input, void* data, gsl_matrix* o
     gslFromEigen(self->_dfOutputEigen, output);
 
     return result;
-}
-
-void eigenFromGSL(const gsl_vector *in, Eigen::VectorXd &out)
-{
-    assert(int(in->size) == out.size());
-
-    for (unsigned i = 0; i < in->size; ++i)
-        out(i) = gsl_vector_get(in, i);
 }
 
 void eigenFromGSL(const gsl_matrix *in, Eigen::MatrixXd &out)

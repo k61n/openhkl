@@ -106,7 +106,7 @@ PeakSet PeakFinder::find(DataList numors)
                 }
             }
 
-            blobs = blob_finder.find(0, numor->getNFrames());
+            blobs = blob_finder.find();
 
             if ( _handler ) {
                 _handler->log("Found " + std::to_string(blobs.size()) + " blobs");

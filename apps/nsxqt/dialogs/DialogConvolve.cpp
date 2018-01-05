@@ -171,6 +171,8 @@ void DialogConvolve::on_previewButton_clicked()
 
 void DialogConvolve::on_filterComboBox_currentIndexChanged(int index)
 {
+    Q_UNUSED(index)
+
     nsx::sptrConvolutionKernel kernel;
 
     if (QString::compare(ui->filterComboBox->currentText(),"none") == 0)

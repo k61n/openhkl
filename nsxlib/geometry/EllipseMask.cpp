@@ -47,7 +47,6 @@ bool EllipseMask::collide(const Ellipsoid& e)
 {
     Ellipsoid f(e);
     double shift = _ellipsoid.center()[2] - e.center()[2];
-    auto center = _ellipsoid.center();
     f.translate({0.0, 0.0, shift});
     return _ellipsoid.collide(f);
 }

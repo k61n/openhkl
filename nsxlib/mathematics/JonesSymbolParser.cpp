@@ -36,7 +36,7 @@ Eigen::Transform<double,3,Eigen::Affine> parseJonesSymbol(const std::string& jon
     auto check_white_space = [](unsigned char const c) {return std::isspace(c);};
 
     // The symbols size must be 3. Hence this loop loops over the xyz axis.
-    for (auto i=0; i<symbols.size(); ++i) {
+    for (size_t i=0; i<symbols.size(); ++i) {
 
         // Remove any space fro the current symbol
         auto symbol = symbols[i];

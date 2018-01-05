@@ -75,9 +75,12 @@ Octree::Octree(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub)
 }
 
 Octree::Octree(const Octree* parent, unsigned int sector):
-    AABB(), _depth(parent->_depth+1), _parent(parent), _idx(sector),
+    AABB(),
     _MAX_DEPTH(parent->_MAX_DEPTH),
-    _MAX_STORAGE(parent->_MAX_STORAGE)
+    _MAX_STORAGE(parent->_MAX_STORAGE),
+    _depth(parent->_depth+1),
+    _parent(parent),
+    _idx(sector)
 {
     nullifyChildren();
 
@@ -131,8 +134,8 @@ std::set<Octree::collision_pair> Octree::getCollisions() const
     // loop over chambers of the ndtree
     for (auto&& chamber: *this) {
         // loop over ellipsoids in the chamber
-        for (auto i = 0; i < chamber._data.size(); ++i) {
-            for (auto j = i+1; j < chamber._data.size(); ++j) {
+        for (size_t i = 0; i < chamber._data.size(); ++i) {
+            for (size_t j = i+1; j < chamber._data.size(); ++j) {
                 auto&& a = chamber._data[i];
                 auto&& b = chamber._data[j];
 
@@ -232,7 +235,7 @@ void Octree::printSelf(std::ostream& os) const
         os << "... and has " << _data.size() << " data" <<  std::endl;
     } else {
         os << " has children :" << std::endl;
-        for (int i = 0; i < _MULTIPLICITY; ++i) {
+        for (size_t i = 0; i < _MULTIPLICITY; ++i) {
             _children[i].printSelf(os);
         }
     }

@@ -69,7 +69,7 @@ int main()
     auto found_peaks = peakFinder->find(numors);
 
     try {
-        NSX_CHECK_ASSERT(found_peaks.size() >= 0);
+        NSX_CHECK_ASSERT(static_cast<int>(found_peaks.size()) >= 0);
     } catch(...) {
         std::cout << "ERROR: exception in PeakFinder::find()" << std::endl;
     }

@@ -26,7 +26,7 @@ int UnitTest_DataSet::run()
     nsx::DataReaderFactory factory;
     nsx::sptrDiffractometer diff;
     nsx::sptrDataSet dataf;
-    nsx::MetaData* meta;
+    nsx::MetaData* meta(nullptr);
     Eigen::MatrixXi v;
 
     try {
@@ -63,6 +63,8 @@ int UnitTest_DataSet::run()
     NSX_CHECK_CLOSE(sampleStates[2].values()[2],-0.48583171E+02*nsx::deg,tolerance);
 
     meta = nullptr;
+
+    return 0;
 }
 
 } // end namespace nsx

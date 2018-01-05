@@ -52,9 +52,9 @@ void print_usage()
 
 void swap_endian(vector<char>& data)
 {
-    int size = data.size() / 2;
+    size_t size = data.size() / 2;
 
-    for (int i = 0; i < size; ++i) {
+    for (size_t i = 0; i < size; ++i) {
         char c = data[2*i];
         data[2*i] = data[2*i+1];
         data[2*i+1] = c;
@@ -82,7 +82,7 @@ int write_tiff(const string filename, int width, int height, int bpp, char* buff
     TIFFSetField(file, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
 
 
-    for (unsigned int i = 0; i < height; ++i)
+    for (int i = 0; i < height; ++i)
         TIFFWriteScanline(file, &buffer[i*width*bpp], i);
 
     TIFFClose(file);
