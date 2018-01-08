@@ -54,7 +54,6 @@ Refiner::Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches)
     auto sort_peaks_by_frame = [](sptrPeak3D p1, sptrPeak3D p2) -> bool {
         auto&& c1 = p1->getShape().center();
         auto&& c2 = p1->getShape().center();
-
         return c1[2] < c2[2];
     };
 
@@ -69,13 +68,11 @@ Refiner::Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches)
 
     size_t batch_size = sorted_peaks.size() / static_cast<size_t>(nbatches);
 
-    std::cout<<"BATCH SIZE ================ "<<batch_size<<std::endl;
-
     for (size_t i=0; i<sorted_peaks.size(); i+=batch_size) {
-        auto last = std::min(peaks.size(),i+batch_size);
+        auto last = std::min(sorted_peaks.size(),i+batch_size);
         PeakList peaks_subset(sorted_peaks.begin()+i,sorted_peaks.begin()+last);
 
-        RefinementBatch b(*cell, peaks);
+        RefinementBatch b(*cell, sorted_peaks);
         _batches.emplace_back(std::move(b));
     }
 }
