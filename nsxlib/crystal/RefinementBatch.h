@@ -54,7 +54,7 @@ public:
     // needed for swig
     RefinementBatch() = default;
 
-    RefinementBatch(const UnitCell& uc, const PeakList& peaks, double fmin, double fmax);
+    RefinementBatch(const UnitCell& uc, const PeakList& peaksmax);
 
     void refineU();
 

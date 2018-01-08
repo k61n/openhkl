@@ -37,7 +37,6 @@
 
 #include <algorithm>
 #include <iterator>
-#include <limits>
 
 #include "InstrumentState.h"
 #include "Peak3D.h"
@@ -50,14 +49,7 @@ namespace nsx {
 Refiner::Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches)
 : _batches(), _cell(cell)
 {
-    PeakList sorted_peaks;
-
-    auto filter_peaks = [cell](sptrPeak3D p) -> bool {
-        Eigen::RowVector3d hkl;
-        return p->isSelected() && p->isObserved() && cell->getMillerIndices(p->getQ(), hkl);
-    };
-
-    auto it = std::copy_if (peaks.begin(), peaks.end(), std::back_inserter(sorted_peaks),filter_peaks);
+    PeakList sorted_peaks(peaks);
 
     auto sort_peaks_by_frame = [](sptrPeak3D p1, sptrPeak3D p2) -> bool {
         auto&& c1 = p1->getShape().center();
@@ -68,22 +60,22 @@ Refiner::Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches)
 
     std::sort(sorted_peaks.begin(),sorted_peaks.end(),sort_peaks_by_frame);
 
+    auto filter_peaks = [cell](sptrPeak3D p) -> bool {
+        Eigen::RowVector3d hkl;
+        return p->isSelected() && p->isObserved() && cell->getMillerIndices(p->getQ(), hkl);
+    };
+
+    sorted_peaks.erase(std::remove_if(sorted_peaks.begin(),sorted_peaks.end(),filter_peaks),sorted_peaks.end());
+
     size_t batch_size = sorted_peaks.size() / static_cast<size_t>(nbatches);
+
+    std::cout<<"BATCH SIZE ================ "<<batch_size<<std::endl;
 
     for (size_t i=0; i<sorted_peaks.size(); i+=batch_size) {
         auto last = std::min(peaks.size(),i+batch_size);
         PeakList peaks_subset(sorted_peaks.begin()+i,sorted_peaks.begin()+last);
 
-        double fmin = std::numeric_limits<double>().max();
-        double fmax = std::numeric_limits<double>().lowest();
-
-        for (auto peak : peaks_subset) {
-            const double z = peak->getShape().center()[2];
-            fmin = std::min(z, fmin);
-            fmax = std::max(z, fmax);
-        }
-
-        RefinementBatch b(*cell, peaks, fmin, fmax);
+        RefinementBatch b(*cell, peaks);
         _batches.emplace_back(std::move(b));
     }
 }

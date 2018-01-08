@@ -34,6 +34,9 @@
  *
  */
 
+#include <algorithm>
+#include <limits>
+
 #include "InstrumentState.h"
 #include "Minimizer.h"
 #include "Peak3D.h"
@@ -42,12 +45,19 @@
 
 namespace nsx {
 
-RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks, double fmin, double fmax)
-: _fmin(fmin),
-  _fmax(fmax),
-  _peaks(peaks),
-  _cell(uc)
+RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks)
+: _fmin(std::numeric_limits<double>().max()),
+  _fmax(std::numeric_limits<double>().lowest()),
+  _cell(uc),
+  _peaks(peaks)
 {
+    for (auto peak : peaks) {
+        const double z = peak->getShape().center()[2];
+        _fmin = std::min(z, _fmin);
+        _fmax = std::max(z, _fmax);
+    }
+
+
     _hkls.reserve(peaks.size());
     for (auto p : peaks) {
         Eigen::RowVector3d hkl;
