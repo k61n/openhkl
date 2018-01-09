@@ -144,8 +144,8 @@ Intensity Peak3D::getCorrectedIntensity() const
 {
     auto c = _shape.center();
     auto state = _data->getInterpolatedState(c[2]);
-    auto pos = DirectVector(_data->getDiffractometer()->getDetector()->getPos(c[0], c[1]));
-    const double factor = _scale / (state.getLorentzFactor(pos) * _transmission);
+    auto pos = DirectVector(_data->getDiffractometer()->getDetector()->pixelPosition(c[0], c[1]));
+    const double factor = _scale / (state.lorentzFactor(pos) * _transmission);
     return getRawIntensity() * factor;
 }
 
@@ -270,7 +270,7 @@ ReciprocalVector Peak3D::getQ() const
     auto pixel_coords = _shape.center();
     auto state = _data->getInterpolatedState(pixel_coords[2]);
     auto detector = _data->getDiffractometer()->getDetector();
-    auto detector_position = DirectVector(detector->getPos(pixel_coords[0], pixel_coords[1]));
+    auto detector_position = DirectVector(detector->pixelPosition(pixel_coords[0], pixel_coords[1]));
     return state.sampleQ(detector_position);
 }
 
@@ -301,8 +301,8 @@ Ellipsoid Peak3D::qShape() const
         auto state1 = _data->getInterpolatedState(p1[2]);
         auto state2 = _data->getInterpolatedState(p2[2]);
 
-        const auto q1 = state1.sampleQ(DirectVector(detector->getPos(p1[0], p1[1]))).rowVector();
-        const auto q2 = state2.sampleQ(DirectVector(detector->getPos(p2[0], p2[1]))).rowVector();
+        const auto q1 = state1.sampleQ(DirectVector(detector->pixelPosition(p1[0], p1[1]))).rowVector();
+        const auto q2 = state2.sampleQ(DirectVector(detector->pixelPosition(p2[0], p2[1]))).rowVector();
         delta.col(i) = 0.5 * (q1 - q2) / s;
     }
 

@@ -60,13 +60,13 @@ struct InstrumentState {
     //! Takes direct vector in detector coordinates and computes q in sample coordinates
     ReciprocalVector sampleQ(const DirectVector& detector_position) const;
 
+    double gamma(const DirectVector& detector_position) const;
 
-    void getGammaNu(double& gamma, double& nu, const DirectVector& detector_position) const;
+    double nu(const DirectVector& detector_position) const;
 
+    double lorentzFactor(const DirectVector& detector_position) const;
 
-    double getLorentzFactor(const DirectVector& detector_position) const;
-
-    double get2Theta(const DirectVector& detector_position) const;
+    double twoTheta(const DirectVector& detector_position) const;
 };
 
 } // end namespace nsx

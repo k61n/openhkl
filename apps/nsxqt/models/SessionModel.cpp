@@ -499,7 +499,7 @@ bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& pea
         const long l = std::lround(hkl[2]);
 
         auto center = peak->getShape().center();
-        auto pos = peak->data()->getDiffractometer()->getDetector()->getPos(center[0], center[1]);
+        auto pos = peak->data()->getDiffractometer()->getDetector()->pixelPosition(center[0], center[1]);
 
         double intensity = peak->getCorrectedIntensity().value();
         double sigma = peak->getCorrectedIntensity().sigma();

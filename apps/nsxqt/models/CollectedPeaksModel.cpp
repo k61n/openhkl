@@ -20,13 +20,25 @@
 #include "CollectedPeaksModel.h"
 #include "ProgressView.h"
 
-static void peakFactors(double& gamma, double& nu, double& lorentz, nsx::sptrPeak3D peak)
+struct PeakFactors {
+
+    double gamma;
+    double nu;
+    double lorentz;
+};
+
+static PeakFactors peakFactors(nsx::sptrPeak3D peak)
 {
     auto coord = peak->getShape().center();
     auto state = peak->data()->getInterpolatedState(coord[2]);
-    auto position = peak->data()->getDiffractometer()->getDetector()->getPos(coord[0], coord[1]);
-    lorentz = state.getLorentzFactor(position);
-    state.getGammaNu(gamma, nu, position);
+    auto position = peak->data()->getDiffractometer()->getDetector()->pixelPosition(coord[0], coord[1]);
+
+    PeakFactors peak_factors;
+    peak_factors.gamma = state.gamma(position);
+    peak_factors.nu = state.nu(position);
+    peak_factors.lorentz = state.lorentzFactor(position);
+
+    return peak_factors;
 }
 
 CollectedPeaksModel::CollectedPeaksModel(nsx::sptrExperiment experiment, QObject *parent)
@@ -150,8 +162,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
     if (auto cell = _peaks[row]->activeUnitCell()) {
         cell->getMillerIndices(_peaks[row]->getQ(), hkl, true);
     }
-    double gamma, nu;
-    peakFactors(gamma, nu, lorentzFactor, _peaks[row]);
+    PeakFactors pf = peakFactors(_peaks[row]);
     transmissionFactor = _peaks[row]->getTransmission();
     scaledIntensity = _peaks[row]->getCorrectedIntensity().value();
     sigmaScaledIntensity = _peaks[row]->getCorrectedIntensity().sigma();
@@ -176,7 +187,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         case Column::transmission:
             return transmissionFactor;
         case Column::lorentzFactor:
-            return lorentzFactor;
+            return pf.lorentz;
         case Column::numor:
             return _peaks[row]->data()->getMetadata()->getKey<int>("Numor");
         case Column::selected:
@@ -278,10 +289,9 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         break;
     case Column::lorentzFactor:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            double g, n, lor1, lor2;
-            peakFactors(g, n, lor1, p1);
-            peakFactors(g, n, lor2, p2);
-            return lor1 > lor2;
+            auto pf1 = peakFactors(p1);
+            auto pf2 = peakFactors(p2);
+            return pf1.lorentz > pf2.lorentz;
         };
         break;
     case Column::numor:

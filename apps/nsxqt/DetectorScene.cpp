@@ -484,12 +484,12 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     double wave=mono.getWavelength();
 
     QString ttip;
-    double gamma, nu, th2;
 
-    auto pos = _currentData->getDiffractometer()->getDetector()->getPos(col, row);
+    auto pos = _currentData->getDiffractometer()->getDetector()->pixelPosition(col, row);
 
-    state.getGammaNu(gamma, nu, pos);
-    th2 = state.get2Theta(pos);
+    double gamma = state.gamma(pos);
+    double nu = state.nu(pos);
+    double th2 = state.twoTheta(pos);
 
     switch (_cursorMode) {
     case PIXEL:
