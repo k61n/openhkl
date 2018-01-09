@@ -33,6 +33,7 @@
 #include <yaml-cpp/yaml.h>
 
 #include "Detector.h"
+#include "GeometryTypes.h"
 
 namespace nsx {
 
@@ -117,7 +118,7 @@ public:
     //! Set sample to detector distance
     void setDistance(double d);
     //! Set the rest position of the detector (along y in Busing Levy convention)
-    void setRestPosition(const Eigen::Vector3d& p);
+    void setRestPosition(const DirectVector& p);
 
     //! Returns the number of detector
     unsigned int getNDetectors() const;

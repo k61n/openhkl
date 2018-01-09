@@ -30,10 +30,9 @@ Component::Component(const YAML::Node& node)
 
     if (node["position"]) {
         double units = um->get(node["offset"]["units"].as<std::string>());
-        _position = node["position"]["value"].as<Eigen::Vector3d>();
-        _position *= units;
+        _position = DirectVector(units*node["position"]["value"].as<Eigen::Vector3d>());
     } else {
-        _position = Eigen::Vector3d::Zero();
+        _position = DirectVector(Eigen::Vector3d::Zero());
     }
 
 }
@@ -62,15 +61,15 @@ const std::string& Component::getName() const
     return _name;
 }
 
-Eigen::Vector3d Component::getPosition(const ComponentState& goniosetup) const
+DirectVector Component::getPosition(const ComponentState& goniosetup) const
 {
     if (_gonio.get() == nullptr) {
         return _position;
     }
-    return _gonio->transform(_position, goniosetup);
+    return DirectVector(_gonio->transform(_position, goniosetup));
 }
 
-const Eigen::Vector3d& Component::getRestPosition() const
+const DirectVector& Component::getRestPosition() const
 {
     return _position;
 }
@@ -85,7 +84,7 @@ void Component::setName(const std::string& name)
     _name = name;
 }
 
-void Component::setRestPosition(const Eigen::Vector3d& v)
+void Component::setRestPosition(const DirectVector& v)
 {
     _position = v;
 }

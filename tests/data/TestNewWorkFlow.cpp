@@ -6,22 +6,22 @@
 #include <Eigen/Dense>
 
 #include <nsxlib/AutoIndexer.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/PeakPredictor.h>
-#include <nsxlib/DataReaderFactory.h>
-#include <nsxlib/PeakFinder.h>
-#include <nsxlib/DataSet.h>
 #include <nsxlib/ConvolutionKernel.h>
-#include <nsxlib/KernelFactory.h>
-
+#include <nsxlib/DataReaderFactory.h>
+#include <nsxlib/DataSet.h>
 #include <nsxlib/Diffractometer.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/Sample.h>
+#include <nsxlib/DirectVector.h>
 #include <nsxlib/ErfInv.h>
+#include <nsxlib/Experiment.h>
+#include <nsxlib/KernelFactory.h>
 #include <nsxlib/NSXTest.h>
-#include <nsxlib/Units.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/PeakFinder.h>
+#include <nsxlib/PeakPredictor.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/ReciprocalVector.h>
+#include <nsxlib/Sample.h>
+#include <nsxlib/Units.h>
 
 int main()
 {
@@ -128,10 +128,10 @@ int main()
             continue;
         }
 
-        std::vector<Eigen::RowVector3d> q;
-        q.push_back(peak->getQ().rowVector());
+        std::vector<nsx::ReciprocalVector> q_vectors;
+        q_vectors.push_back(peak->getQ());
         nsx::PeakPredictor predictor(dataf);
-        auto events = predictor.getEvents(q);
+        auto events = predictor.getEvents(q_vectors);
 
         NSX_CHECK_ASSERT(events.size() >= 1);
 
@@ -146,7 +146,7 @@ int main()
 
         // q could cross Ewald sphere multiple times, so find best match
         for (auto&& event: events) {
-            Eigen::Vector3d pnew = event;
+            const Eigen::Vector3d& pnew = event.vector();
             if ((pnew-p0).squaredNorm() < diff) {
                 diff = (pnew-p0).squaredNorm();
                 p1 = pnew;

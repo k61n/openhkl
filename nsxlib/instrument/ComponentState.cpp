@@ -39,6 +39,7 @@
 
 #include "Component.h"
 #include "ComponentState.h"
+#include "DirectVector.h"
 #include "Gonio.h"
 
 namespace nsx {
@@ -81,7 +82,7 @@ Eigen::ArrayXd ComponentState::values() const
     return _rawValues + _offsets;
 }
 
-Eigen::Vector3d ComponentState::getPosition() const
+DirectVector ComponentState::getPosition() const
 {
     auto gonio = _ptrComp->getGonio();
     auto position = _ptrComp->getRestPosition();

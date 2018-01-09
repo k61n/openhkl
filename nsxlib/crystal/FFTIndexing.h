@@ -33,21 +33,22 @@
 
 #include <Eigen/Dense>
 
+#include "GeometryTypes.h"
 #include "MathematicsTypes.h"
 #include "Units.h"
 
 namespace nsx {
 
 struct tVector {
-    tVector(const Eigen::Vector3d& v,double quality):_vect(v),_quality(quality) {}
-    Eigen::Vector3d _vect;
+    tVector(const Eigen::RowVector3d& v,double quality):_vect(v),_quality(quality) {}
+    Eigen::RowVector3d _vect;
     double _quality;
 };
 
 class FFTIndexing {
 public:
     FFTIndexing(int nSubdiv=25,double amax=50.0);
-    std::vector<tVector> findOnSphere(const std::vector<Eigen::RowVector3d>& qvects, unsigned int nstacks, unsigned int nsolutions) const;
+    std::vector<tVector> findOnSphere(const std::vector<ReciprocalVector>& qvects, unsigned int nstacks, unsigned int nsolutions) const;
     virtual ~FFTIndexing() = default;
 
 private:

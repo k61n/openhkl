@@ -62,7 +62,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
 {
     auto&& symbols = nsx::SpaceGroup::symbols();
 
-    std::vector<Eigen::RowVector3d> hkls;
+    std::vector<nsx::ReciprocalVector> hkls;
 
     if ( _peaks.size()  == 0) {
         nsx::error() << "Need at least one peak to find space group!";
@@ -90,7 +90,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
                 return;
             }
         }
-        hkls.push_back(_cell->getIntegerMillerIndices(peak->getQ()).cast<double>());
+        hkls.emplace_back(_cell->getIntegerMillerIndices(peak->getQ()).cast<double>());
     }
 
     if (hkls.size() == 0) {

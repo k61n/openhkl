@@ -36,6 +36,7 @@
 #include <Eigen/Dense>
 
 #include "ComponentState.h"
+#include "DirectVector.h"
 #include "InstrumentTypes.h"
 
 namespace nsx {
@@ -68,11 +69,11 @@ public:
     void setName(const std::string& name);
 
      //! Get the absolute position of the component for a set of goniometer values
-    Eigen::Vector3d getPosition(const ComponentState& goniosetup) const;
+    DirectVector getPosition(const ComponentState& goniosetup) const;
     //! Get the absolute position at rest (unmodified by gonio)
-    const Eigen::Vector3d& getRestPosition() const;
+    const DirectVector& getRestPosition() const;
     //! Set the rest position
-    virtual void setRestPosition(const Eigen::Vector3d& pos);
+    virtual void setRestPosition(const DirectVector& pos);
 
     //! Return the goniometer attached to this component
     sptrGonio getGonio() const;
@@ -89,7 +90,7 @@ public:
     //! Pointer to the goniometer attached to the component
     sptrGonio _gonio;
     //! The position of the component at rest, i.e. not modified by the Gonio.
-    Eigen::Vector3d _position;
+    DirectVector _position;
 };
 
 } // end namespace nsx

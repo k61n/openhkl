@@ -2,6 +2,7 @@
 
 #include "CylindricalDetector.h"
 #include "Gonio.h"
+#include "ReciprocalVector.h"
 #include "RotAxis.h"
 #include "TransAxis.h"
 #include "Units.h"
@@ -110,7 +111,7 @@ DirectVector CylindricalDetector::pixelPosition(double px, double py) const
     return DirectVector(result);
 }
 
-bool CylindricalDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d& f, double& px, double& py, double& t) const
+bool CylindricalDetector::hasKf(const ReciprocalVector& kf,const ReciprocalVector& f, double& px, double& py, double& t) const
 {
 
     // Need to solve equation of the typr (from_xy + f_xy*t)^2=R^2
@@ -128,7 +129,7 @@ bool CylindricalDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d&
     if (t<=0)
         return false;
 
-    auto v=f+kf*t;
+    Eigen::RowVector3d v = f.rowVector() + kf.rowVector()*t;
 
     double phi=atan2(v[0],v[1])+0.5*_angularWidth;
     if (phi<0 || phi>=_angularWidth)

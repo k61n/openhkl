@@ -32,8 +32,14 @@ public:
     //! Cast operator to an Eigen row vector
     const Eigen::RowVector3d& rowVector() const;
 
+    //! Return the value of an element of the vector
+    double operator[](int index) const;
+
     //! Return a reference to an element of the vector
     double& operator[](int index);
+
+    //! Return the value of an element of the vector
+    double operator()(int index) const;
 
     //! Return a reference to an element of the vector
     double& operator()(int index);

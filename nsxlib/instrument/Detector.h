@@ -47,6 +47,7 @@
 #include "Component.h"
 #include "DirectVector.h"
 #include "Enums.h"
+#include "GeometryTypes.h"
 
 namespace nsx {
 
@@ -104,7 +105,7 @@ public:
     virtual double getAngularWidth() const=0;
 
     //! Reuturn whether the detector with goniometer values can collect scattering at Kf. If true, px and py would be the pixel coordinates of the event
-    bool receiveKf(double& px, double& py,const Eigen::Vector3d& kf,const Eigen::Vector3d& from, double& t) const;
+    bool receiveKf(double& px, double& py,const ReciprocalVector& kf, const ReciprocalVector& from, double& t) const;
 
     //! Returns the number of detector
     virtual unsigned int getNDetectors() const=0;
@@ -113,7 +114,7 @@ public:
     virtual DirectVector pixelPosition(double x, double y) const=0;
 
     //! Determine whether detector at rest can receive a scattering event with direction given by Kf. px and py are detector position if true.
-    virtual bool hasKf(const Eigen::Vector3d& kf, const Eigen::Vector3d& from, double& px, double& py, double& t) const =0;
+    virtual bool hasKf(const ReciprocalVector& kf, const ReciprocalVector& from, double& px, double& py, double& t) const =0;
 
     //!
     DataOrder getDataOrder() const {return _dataorder;}

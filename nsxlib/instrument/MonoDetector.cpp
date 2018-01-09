@@ -2,6 +2,7 @@
 
 #include <Eigen/Dense>
 
+#include "DirectVector.h"
 #include "MonoDetector.h"
 #include "Units.h"
 
@@ -211,14 +212,14 @@ double MonoDetector::getDistance() const
 
 void MonoDetector::setDistance(double d)
 {
-    _distance=d;
-    _position=Eigen::Vector3d(0,d,0);
+    _distance = d;
+    _position = DirectVector(Eigen::Vector3d(0,d,0));
 }
 
-void MonoDetector::setRestPosition(const Eigen::Vector3d& pos)
+void MonoDetector::setRestPosition(const DirectVector& pos)
 {
-    _position=pos;
-    _distance=pos.norm();
+    _position = pos;
+    _distance = pos.vector().norm();
 }
 
 unsigned int MonoDetector::getNDetectors() const

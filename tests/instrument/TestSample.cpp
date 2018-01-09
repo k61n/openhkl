@@ -2,6 +2,7 @@
 
 #include <nsxlib/Axis.h>
 #include <nsxlib/ComponentState.h>
+#include <nsxlib/DirectVector.h>
 #include <nsxlib/Gonio.h>
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Sample.h>
@@ -18,17 +19,17 @@ int main()
     g->addRotation("phi",Eigen::Vector3d(0,0,1),nsx::RotAxis::CW);
 
     s1.setGonio(g);
-    s1.setRestPosition(Eigen::Vector3d(0,0,0));
+    s1.setRestPosition(nsx::DirectVector(Eigen::Vector3d(0,0,0)));
     nsx::ComponentState state(&s1, {90.0*nsx::deg,90.0*nsx::deg,0*nsx::deg});
 
     // Rotation should not affect the center of the sample since rest position is 0,0,0
-    Eigen::Vector3d center=state.getPosition();
+    nsx::DirectVector center = state.getPosition();
     NSX_CHECK_SMALL(center[0],tolerance);
     NSX_CHECK_SMALL(center[1],tolerance);
     NSX_CHECK_SMALL(center[2],tolerance);
 
     // Sample is off-centered, check that the same state change center
-    s1.setRestPosition(Eigen::Vector3d(1.0,0.0,0.0));
+    s1.setRestPosition(nsx::DirectVector(Eigen::Vector3d(1.0,0.0,0.0)));
     center=state.getPosition();
     NSX_CHECK_SMALL(center[0],tolerance);
     NSX_CHECK_SMALL(center[1],tolerance);

@@ -360,7 +360,7 @@ char SpaceGroup::bravaisType() const
     return 'a';
 }
 
-double SpaceGroup::fractionExtinct(const std::vector<Eigen::RowVector3d>& hkls) const
+double SpaceGroup::fractionExtinct(const std::vector<ReciprocalVector>& hkls) const
 {
     unsigned int extinct = 0;
     unsigned int total = hkls.size();
@@ -484,17 +484,20 @@ std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg)
 
 bool SpaceGroup::isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2, bool friedel) const
 {
-    return isEquivalent(Eigen::Vector3d(h1, k1, l1), Eigen::Vector3d(h2, k2, l2), friedel);
+    return isEquivalent(ReciprocalVector(Eigen::RowVector3d(h1, k1, l1)), ReciprocalVector(Eigen::RowVector3d(h2, k2, l2)), friedel);
 }
 
-bool SpaceGroup::isEquivalent(const Eigen::Vector3d& a, const Eigen::Vector3d& b, bool friedel) const
+bool SpaceGroup::isEquivalent(const ReciprocalVector& a, const ReciprocalVector& b, bool friedel) const
 {
     const auto& elements = groupElements();
     const double eps = 1e-6;
 
+    const Eigen::RowVector3d& q_vector_a = a.rowVector();
+    const Eigen::RowVector3d& q_vector_b = b.rowVector();
+
     // note: since rotation preserves the norm, we can reject early:
-    const double norm_a = a.squaredNorm();
-    const double norm_b = b.squaredNorm();
+    const double norm_a = q_vector_a.squaredNorm();
+    const double norm_b = q_vector_b.squaredNorm();
 
     if (std::abs(norm_a-norm_b) > eps) {
         return false;
@@ -502,14 +505,14 @@ bool SpaceGroup::isEquivalent(const Eigen::Vector3d& a, const Eigen::Vector3d& b
 
     for (auto&& element : elements) {
         // todo(jonathan): check that this edit is correct!
-        const auto rotation = element.getRotationPart();
-        const auto rotated = rotation * a;
+        const Eigen::Matrix3d rotation = element.getRotationPart().transpose();
+        const Eigen::RowVector3d rotated = q_vector_a*rotation;
 
-        if (std::max((rotated-b).maxCoeff(), (b-rotated).maxCoeff()) < eps) {
+        if (std::max((rotated-q_vector_a).maxCoeff(), (q_vector_a-rotated).maxCoeff()) < eps) {
             return true;
         }
 
-        if (friedel && std::max((rotated+b).maxCoeff(), (-b-rotated).maxCoeff()) < eps) {
+        if (friedel && std::max((rotated+q_vector_a).maxCoeff(), (-q_vector_a-rotated).maxCoeff()) < eps) {
             return true;
         }
     }
