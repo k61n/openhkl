@@ -121,9 +121,9 @@ Detector& Detector::operator=(const Detector& other)
     return *this;
 }
 
-bool Detector::receiveKf(double& px, double& py, const ReciprocalVector& kf, const ReciprocalVector& from, double& t) const
+bool Detector::receiveKf(double& px, double& py, const DirectVector& direction, const DirectVector& from, double& t) const
 {
-  return hasKf(kf, from, px, py, t);
+  return hasKf(direction, from, px, py, t);
 }
 
 } // end namespace nsx

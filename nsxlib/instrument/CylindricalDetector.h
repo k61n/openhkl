@@ -71,7 +71,7 @@ public:
 	DirectVector pixelPosition(double px,double py) const override;
 
 	//! Determine whether detector at rest can receive a scattering event with direction given by Kf. px and py are detector position if true.
-	virtual bool hasKf(const ReciprocalVector& kf,const ReciprocalVector& from, double& px, double& py, double& t) const;
+	virtual bool hasKf(const DirectVector& direction,const DirectVector& from, double& px, double& py, double& t) const;
 
 };
 

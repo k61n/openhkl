@@ -308,7 +308,7 @@ std::vector<DirectVector> PeakPredictor::getEvents(const std::vector<ReciprocalV
         
                 double time;
                 auto detector = _data->getDiffractometer()->getDetector();
-                bool accept = detector->receiveKf(px, py,ReciprocalVector(kf*state.detectorOrientation), ReciprocalVector(state.samplePosition),time);
+                bool accept = detector->receiveKf(px, py,DirectVector((kf*state.detectorOrientation).transpose()), DirectVector(state.samplePosition),time);
 
                 if (accept) {
                     events.emplace_back(Eigen::Vector3d(px, py, t));
