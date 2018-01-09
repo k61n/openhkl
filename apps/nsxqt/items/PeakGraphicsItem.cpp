@@ -203,18 +203,18 @@ void PeakGraphicsItem::plot(SXPlot* plot)
         info = "unindexed";
     }
 
-    double gamma,nu;
     auto c = _peak->getShape().center();
     auto state = _peak->data()->getInterpolatedState(c[2]);
-    auto position = _peak->data()->getDiffractometer()->getDetector()->getPos(c[0], c[1]);
-    state.getGammaNu(gamma, nu, position);
-    gamma/=nsx::deg;
-    nu/=nsx::deg;
-    info+=" "+QString(QChar(0x03B3))+","+QString(QChar(0x03BD))+":"+QString::number(gamma,'f',2)+","+QString::number(nu,'f',2)+"\n";
+    auto position = _peak->data()->getDiffractometer()->getDetector()->pixelPosition(c[0], c[1]);
+    double g = state.gamma(position);
+    double n = state.nu(position);
+    g/=nsx::deg;
+    n/=nsx::deg;
+    info+=" "+QString(QChar(0x03B3))+","+QString(QChar(0x03BD))+":"+QString::number(g,'f',2)+","+QString::number(n,'f',2)+"\n";
     double intensity=_peak->getScaledIntensity().value();
     double sI=_peak->getScaledIntensity().sigma();
     info+="Intensity ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";
-    double l = state.getLorentzFactor(position);
+    double l = state.lorentzFactor(position);
     info+="Cor. int. ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity/l,'f',2)+" ("+QString::number(sI/l,'f',2)+")\n";
     info += "p value (" + QString::number(_peak->pValue(), 'f', 3) + ")\n";
 

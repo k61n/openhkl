@@ -63,22 +63,29 @@ ReciprocalVector InstrumentState::sampleQ(const DirectVector& detector_position)
     return ReciprocalVector(qLab*sampleOrientation);
 }
 
-void InstrumentState::getGammaNu(double& gamma, double& nu, const DirectVector& detector_position) const
+double InstrumentState::gamma(const DirectVector& detector_position) const
 {
-    auto kf = kfLab(detector_position).rowVector();
-    gamma = std::atan2(kf[0], kf[1]);
-    nu = std::asin(kf[2] / kf.norm());
+    Eigen::RowVector3d kf = kfLab(detector_position).rowVector();
+    double gamma = std::atan2(kf[0], kf[1]);
+    return gamma;
 }
 
-double InstrumentState::getLorentzFactor(const DirectVector& detector_position) const
+double InstrumentState::nu(const DirectVector& detector_position) const
 {
-    double gamma,nu;
-    getGammaNu(gamma, nu, detector_position);
-    double lorentz = 1.0/(sin(std::fabs(gamma))*cos(nu));
+    Eigen::RowVector3d kf = kfLab(detector_position).rowVector();
+    double nu = std::asin(kf[2] / kf.norm());
+    return nu;
+}
+
+double InstrumentState::lorentzFactor(const DirectVector& detector_position) const
+{
+    double g = gamma(detector_position);
+    double n = nu(detector_position);
+    double lorentz = 1.0/(sin(std::fabs(g))*cos(n));
     return lorentz;
 }
 
-double InstrumentState::get2Theta(const DirectVector& detector_position) const
+double InstrumentState::twoTheta(const DirectVector& detector_position) const
 {
     auto kf = kfLab(detector_position).rowVector();  
     double proj = kf.dot(ni);

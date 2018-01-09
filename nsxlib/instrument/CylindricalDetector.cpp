@@ -85,7 +85,7 @@ void CylindricalDetector::setAngularWidth(double angle)
     _width=_angularWidth*_distance;
 }
 
-DirectVector CylindricalDetector::getPos(double px, double py) const
+DirectVector CylindricalDetector::pixelPosition(double px, double py) const
 {
     if (_nCols==0 || _nRows==0)
         throw std::runtime_error("Detector: number of rows or cols must >0");

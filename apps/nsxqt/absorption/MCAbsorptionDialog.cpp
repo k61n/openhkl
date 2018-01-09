@@ -86,7 +86,7 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
             auto data = p->data();
             auto coord = p->getShape().center();
             auto state = data->getInterpolatedState(coord[2]);
-            auto position = data->getDiffractometer()->getDetector()->getPos(coord[0], coord[1]);
+            auto position = data->getDiffractometer()->getDetector()->pixelPosition(coord[0], coord[1]);
             auto kf = state.kfLab(position);
             // todo: check coordinate systems here, may not be consistent
             double transmission=mca.run(ui->spinBox->value(),kf.rowVector(),state.sampleOrientation);

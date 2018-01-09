@@ -110,7 +110,7 @@ public:
     virtual unsigned int getNDetectors() const=0;
 
     //! Returns the position of a given pixel in detector space. This takes into account the detector motions in detector space.
-    virtual DirectVector getPos(double x, double y) const=0;
+    virtual DirectVector pixelPosition(double x, double y) const=0;
 
     //! Determine whether detector at rest can receive a scattering event with direction given by Kf. px and py are detector position if true.
     virtual bool hasKf(const Eigen::Vector3d& kf, const Eigen::Vector3d& from, double& px, double& py, double& t) const =0;

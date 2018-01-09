@@ -85,7 +85,7 @@ void FlatDetector::setAngularHeight(double angle)
     _height=2.0*_distance*tan(angle);
 }
 
-DirectVector FlatDetector::getPos(double px, double py) const
+DirectVector FlatDetector::pixelPosition(double px, double py) const
 {
     if (_nCols==0 || _nRows==0)
         throw std::runtime_error("Detector: number of rows or cols must >0");
