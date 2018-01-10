@@ -6,6 +6,10 @@
 
 namespace nsx {
 
+DirectVector::DirectVector(double x, double y, double z) : _dvector(x,y,z)
+{
+}
+
 DirectVector::DirectVector(const Eigen::Vector3d& dvector) : _dvector(dvector)
 {
 }

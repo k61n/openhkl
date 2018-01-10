@@ -20,6 +20,9 @@ public:
     //! Copy constructor
     MillerIndices(const MillerIndices& other)=default;
 
+    //! Constructor from its 3 components
+    explicit MillerIndices(int h, int k, int l);
+
     //! Construct a MillerIndices from an Eigen row vector of integer
     explicit MillerIndices(const Eigen::RowVector3i& hkl);
 

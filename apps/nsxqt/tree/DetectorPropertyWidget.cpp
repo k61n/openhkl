@@ -116,5 +116,5 @@ void DetectorPropertyWidget::on_doubleSpinBox_Distance_valueChanged(double arg1)
 {
      auto detector=_detectorItem->getExperiment()->getDiffractometer()->getDetector();
      if (arg1>0)
-        detector->setRestPosition(nsx::DirectVector(Eigen::Vector3d(0,arg1,0)));
+        detector->setRestPosition(nsx::DirectVector(0,arg1,0));
 }

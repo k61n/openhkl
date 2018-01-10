@@ -311,7 +311,7 @@ std::vector<DirectVector> PeakPredictor::getEvents(const std::vector<ReciprocalV
                 bool accept = detector->receiveKf(px, py,DirectVector((kf*state.detectorOrientation).transpose()), DirectVector(state.samplePosition),time);
 
                 if (accept) {
-                    events.emplace_back(Eigen::Vector3d(px, py, t));
+                    events.emplace_back(px, py, t);
                 }
             }
         }        

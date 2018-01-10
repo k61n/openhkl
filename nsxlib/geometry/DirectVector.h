@@ -20,6 +20,9 @@ public:
     //! Copy constructor
     DirectVector(const DirectVector& other)=default;
 
+    //! Constructor from its 3 components
+    explicit DirectVector(double x, double y, double z);
+
     //! Construct a DirectVector from an Eigen column vector
     explicit DirectVector(const Eigen::Vector3d& dvector);
 

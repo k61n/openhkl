@@ -4,6 +4,10 @@
 
 namespace nsx {
 
+MillerIndices::MillerIndices(int h, int k, int l) : _hkl(h,k,l)
+{
+}
+
 MillerIndices::MillerIndices(const Eigen::RowVector3i& hkl) : _hkl(hkl)
 {
 }

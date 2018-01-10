@@ -7,11 +7,11 @@
 
 namespace nsx {
 
-Component::Component() : _name(""), _gonio(), _position(Eigen::Vector3d::Zero())
+Component::Component() : _name(""), _gonio(), _position(0.0,0.0,0.0)
 {
 }
 
-Component::Component(const std::string& name) : _name(name), _gonio(), _position(Eigen::Vector3d::Zero())
+Component::Component(const std::string& name) : _name(name), _gonio(), _position(0.0,0.0,0.0)
 {
 }
 
@@ -32,7 +32,7 @@ Component::Component(const YAML::Node& node)
         double units = um->get(node["offset"]["units"].as<std::string>());
         _position = DirectVector(units*node["position"]["value"].as<Eigen::Vector3d>());
     } else {
-        _position = DirectVector(Eigen::Vector3d::Zero());
+        _position = DirectVector(0.0,0.0,0.0);
     }
 
 }

@@ -213,7 +213,7 @@ double MonoDetector::getDistance() const
 void MonoDetector::setDistance(double d)
 {
     _distance = d;
-    _position = DirectVector(Eigen::Vector3d(0,d,0));
+    _position = DirectVector(0.0,d,0.0);
 }
 
 void MonoDetector::setRestPosition(const DirectVector& pos)

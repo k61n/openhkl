@@ -20,6 +20,9 @@ public:
     //! Copy constructor
     ReciprocalVector(const ReciprocalVector& other)=default;
 
+    //! Constructor from its 3 components
+    explicit ReciprocalVector(double x, double y, double z);
+
     //! Construct a ReciprocalVector from an Eigen row vector
     explicit ReciprocalVector(const Eigen::RowVector3d& rvector);
 
