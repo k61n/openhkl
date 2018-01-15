@@ -53,27 +53,27 @@ Refiner::Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches)
 
     auto sort_peaks_by_frame = [](sptrPeak3D p1, sptrPeak3D p2) -> bool {
         auto&& c1 = p1->getShape().center();
-        auto&& c2 = p1->getShape().center();
+        auto&& c2 = p2->getShape().center();
         return c1[2] < c2[2];
     };
 
     std::sort(sorted_peaks.begin(),sorted_peaks.end(),sort_peaks_by_frame);
+    std::cout << "sorted peaks " << sorted_peaks.size() << " of " << peaks.size() << std::endl;
 
-    auto filter_peaks = [cell](sptrPeak3D p) -> bool {
-        Eigen::RowVector3d hkl;
-        return p->isSelected() && p->isObserved() && cell->getMillerIndices(p->getQ(), hkl);
-    };
+    double batch_size = sorted_peaks.size() / double(nbatches);
+    size_t current_batch = 0;
 
-    sorted_peaks.erase(std::remove_if(sorted_peaks.begin(),sorted_peaks.end(),filter_peaks),sorted_peaks.end());
+    PeakList peaks_subset;
 
-    size_t batch_size = sorted_peaks.size() / static_cast<size_t>(nbatches);
+    for (size_t i = 0; i < sorted_peaks.size(); ++i) {
+        peaks_subset.push_back(sorted_peaks[i]);
 
-    for (size_t i=0; i<sorted_peaks.size(); i+=batch_size) {
-        auto last = std::min(sorted_peaks.size(),i+batch_size);
-        PeakList peaks_subset(sorted_peaks.begin()+i,sorted_peaks.begin()+last);
-
-        RefinementBatch b(*cell, sorted_peaks);
-        _batches.emplace_back(std::move(b));
+        if (i + 1.1 >= (current_batch+1)*batch_size) {
+            RefinementBatch b(*cell, peaks_subset);
+            _batches.emplace_back(std::move(b));
+            peaks_subset.clear();
+            ++current_batch;
+        }
     }
 }
 
@@ -91,13 +91,18 @@ void Refiner::refineSamplePosition(InstrumentStateList& states)
     }
 }
 
+void Refiner::refineSampleOrientation(InstrumentStateList& states)
+{
+    for (auto&& batch: _batches) {
+        batch.refineSampleOrientation(states);
+    }
+}
+
 bool Refiner::refine(unsigned int max_iter)
 { 
     if (_batches.size() == 0) {
         return false;
     }
-
-    UnitCell uc = _batches[0].cell();
 
     for (auto&& batch: _batches) {
         if (!batch.refine(max_iter)) {
@@ -159,9 +164,9 @@ int Refiner::updatePredictions(PeakList& peaks) const
         }
 
         // update the position
-        Eigen::RowVector3d hkl = b->cell().getIntegerMillerIndices(peak->getQ()).cast<double>();
+        Eigen::RowVector3d hkl = b->cell()->getIntegerMillerIndices(peak->getQ()).cast<double>();
         PeakPredictor predictor(peak->data());
-        auto pred = predictor.predictPeaks({hkl}, b->cell().reciprocalBasis());
+        auto pred = predictor.predictPeaks({hkl}, b->cell()->reciprocalBasis());
 
         // something wrong with new prediction...
         if (pred.size() != 1) {
@@ -173,5 +178,14 @@ int Refiner::updatePredictions(PeakList& peaks) const
     }
     return updated;
 }
+
+void Refiner::refineKi(InstrumentStateList& states)
+{
+    for (auto&& batch: _batches) {
+        batch.refineKi(states); 
+    }
+}
+
+
 
 } // end namespace nsx

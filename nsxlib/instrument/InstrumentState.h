@@ -37,7 +37,14 @@ namespace nsx {
 struct InstrumentState {
 
     Eigen::Matrix3d detectorOrientation;
-    Eigen::Matrix3d sampleOrientation;
+
+    // compute the sample orientation from fixed orientation and offset
+    Eigen::Matrix3d sampleOrientation() const;
+
+    // fixed orientation (e.g. read from data)
+    Eigen::Matrix3d fixedSampleOrientation;
+    // offset to orientation
+    Eigen::Vector3d sampleOrientationOffset;
 
     Eigen::Vector3d samplePosition;
     Eigen::Vector3d detectorOffset;

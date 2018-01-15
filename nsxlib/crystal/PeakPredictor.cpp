@@ -253,7 +253,7 @@ std::vector<DirectVector> PeakPredictor::getEvents(const std::vector<ReciprocalV
     
     for (unsigned int s = 0; s < scanSize; ++s) {
         auto state = _data->getInterpolatedState(s);
-        sample_to_lab.push_back(state.sampleOrientation.transpose());
+        sample_to_lab.push_back(state.sampleOrientation().transpose());
         ki.push_back(state.ki().rowVector());
     } 
 

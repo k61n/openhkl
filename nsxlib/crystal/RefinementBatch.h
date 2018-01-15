@@ -64,19 +64,21 @@ public:
 
     void refineSamplePosition(InstrumentStateList& states);
 
+    void refineSampleOrientation(InstrumentStateList& states);
+
     bool refine(unsigned int max_iter = 100);
 
     int residuals(Eigen::VectorXd& fvec);
 
     const PeakList& peaks() const;
 
-    const UnitCell& cell() const;
-
-    UnitCell& cell();
+    sptrUnitCell cell() const;
 
     Eigen::MatrixXd constraints() const;
 
     bool contains(double f) const;
+
+    void refineKi(InstrumentStateList& states);
 
 private:
 
@@ -95,7 +97,7 @@ private:
     //! Cell parameters, internal format. Used internally by UBMinimizer.
     Eigen::VectorXd _cellParameters;
 
-    UnitCell _cell;
+    sptrUnitCell _cell;
 
     PeakList _peaks;
 

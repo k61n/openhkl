@@ -1,5 +1,15 @@
 %module "pynsx"
 
+%include "exception.i"
+
+%exception {
+  try {
+    $action
+  } catch (const std::exception& e) {
+    SWIG_exception(SWIG_RuntimeError, e.what());
+  }
+}
+
 %include "pynsx_doc.i"
 
 %include "warnings.i"
@@ -102,6 +112,7 @@ using Eigen::Quaterniond;
 #include "ProgressHandler.h"
 
 #include "PeakPredictor.h"
+#include "RefinementBatch.h"
 #include "Refiner.h"
 #include "AutoIndexer.h"
 #include "Profile.h"
@@ -398,6 +409,7 @@ namespace nsx {
 %include "MatrixParser.h"
 %include "ProgressHandler.h"
 %include "PeakPredictor.h"
+%include "RefinementBatch.h"
 %include "Refiner.h"
 
 %template(vectorRefinementBatch) std::vector<nsx::RefinementBatch>;

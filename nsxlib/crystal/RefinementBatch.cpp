@@ -43,30 +43,35 @@
 #include "Refiner.h"
 #include "UnitCell.h"
 
+const static double g_eps = 1e-5;
+
 namespace nsx {
 
 RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks)
 : _fmin(std::numeric_limits<double>().max()),
   _fmax(std::numeric_limits<double>().lowest()),
-  _cell(uc),
+  _cell(new UnitCell(uc)),
   _peaks(peaks)
 {
     for (auto peak : peaks) {
         const double z = peak->getShape().center()[2];
-        _fmin = std::min(z, _fmin);
-        _fmax = std::max(z, _fmax);
+        _fmin = std::min(z, std::floor(_fmin));
+        _fmax = std::max(z, std::ceil(_fmax));
     }
 
+    // take care of floating point error
+    _fmin -= g_eps;
+    _fmax += g_eps;
 
     _hkls.reserve(peaks.size());
     for (auto p : peaks) {
         Eigen::RowVector3d hkl;
-        uc.getMillerIndices(p->getQ(),hkl);
+        _cell->getMillerIndices(p->getQ(),hkl);
         _hkls.push_back(hkl);
 
     }
 
-    UnitCell constrained = _cell.applyNiggliConstraints();
+    UnitCell constrained = _cell->applyNiggliConstraints();
     _u0 = constrained.niggliOrientation();
     _cellParameters = constrained.parameters();
 }
@@ -90,7 +95,7 @@ void RefinementBatch::refineDetectorOffset(InstrumentStateList& states)
     for (int axis = 0; axis < 3; ++axis) {
         std::vector<int> ids;
         for (size_t i = 0; i < states.size(); ++i) {
-            if (i < _fmin || i >= _fmax) {
+            if (!contains(i)) {
                 continue;
             }
             int id = _params.addParameter(&states[i].detectorOffset(axis));
@@ -108,10 +113,28 @@ void RefinementBatch::refineSamplePosition(InstrumentStateList& states)
     for (int axis = 0; axis < 3; ++axis) {
         std::vector<int> ids;
         for (size_t i = 0; i < states.size(); ++i) {
-            if (i < _fmin || i >= _fmax) {
+            if (!contains(i)) {
                 continue;
             }
             int id = _params.addParameter(&states[i].samplePosition(axis));
+            ids.push_back(id);
+        }
+        // record the constraints
+        for (size_t i = 1; i < ids.size(); ++i) {
+            _constraints.push_back(std::make_pair(ids[i], ids[i-1]));
+        }
+    }
+}
+
+void RefinementBatch::refineSampleOrientation(InstrumentStateList& states)
+{
+    for (int axis = 0; axis < 3; ++axis) {
+        std::vector<int> ids;
+        for (size_t i = 0; i < states.size(); ++i) {
+            if (!contains(i)) {
+                continue;
+            }
+            int id = _params.addParameter(&states[i].sampleOrientationOffset(axis));
             ids.push_back(id);
         }
         // record the constraints
@@ -137,13 +160,13 @@ bool RefinementBatch::refine(unsigned int max_iter)
     min.initialize(_params, _peaks.size()*3);
     min.set_f([&](Eigen::VectorXd& fvec) {return residuals(fvec);});
     bool success = min.fit(max_iter);   
-    _cell = _cell.fromParameters(_u0, _uOffsets, _cellParameters);        
+    *_cell = _cell->fromParameters(_u0, _uOffsets, _cellParameters);        
     return success;
 }
 
 int RefinementBatch::residuals(Eigen::VectorXd &fvec)
 {
-    UnitCell uc = _cell.fromParameters(_u0, _uOffsets, _cellParameters);
+    UnitCell uc = _cell->fromParameters(_u0, _uOffsets, _cellParameters);
     Eigen::Matrix3d UB = uc.reciprocalBasis();
 
     //#pragma omp parallel for
@@ -164,16 +187,11 @@ const PeakList& RefinementBatch::peaks() const
     return _peaks;
 }
 
-const UnitCell& RefinementBatch::cell() const
+sptrUnitCell RefinementBatch::cell() const
 {
     return _cell;
 }
     
-UnitCell& RefinementBatch::cell()
-{
-    return _cell;
-}
-
 Eigen::MatrixXd RefinementBatch::constraints() const
 {
     Eigen::MatrixXd C(_constraints.size(), _params.nparams());
@@ -190,7 +208,28 @@ Eigen::MatrixXd RefinementBatch::constraints() const
 
 bool RefinementBatch::contains(double f) const
 {
-    return f >= _fmin && f < _fmax;
+    return (f > _fmin) && (f < _fmax);
+}
+
+void RefinementBatch::refineKi(InstrumentStateList& states)
+{
+    std::vector<int> x_ids;
+    std::vector<int> z_ids;
+
+    for (size_t i = 0; i < states.size(); ++i) {
+        if (!contains(i)) {
+            continue;
+        }
+        // note: do _not_ refine y component since it is not functionally dependent
+        x_ids.push_back(_params.addParameter(&states[i].ni(0)));
+        z_ids.push_back(_params.addParameter(&states[i].ni(2)));    
+    }
+
+    // record the constraints
+    for (size_t i = 1; i < x_ids.size(); ++i) {
+        _constraints.push_back(std::make_pair(x_ids[i], x_ids[i-1]));
+        _constraints.push_back(std::make_pair(z_ids[i], z_ids[i-1]));
+    }
 }
 
 } // end namespace nsx
