@@ -35,10 +35,10 @@
  */
 
 
-#include <limits>
+#include <algorithm>
+#include <iterator>
 
 #include "InstrumentState.h"
-#include "Minimizer.h"
 #include "Peak3D.h"
 #include "PeakPredictor.h"
 #include "Refiner.h"
@@ -46,144 +46,35 @@
 
 namespace nsx {
 
-RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks, double fmin, double fmax):
-    _fmin(fmin), _fmax(fmax), _cell(uc)
+Refiner::Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches)
+: _batches(), _cell(cell)
 {
-    for (auto p: peaks) {
-        // skip if not selected or masked
-        if (!p->isSelected() || !p->isObserved()) {
-            continue;
-        }
+    PeakList sorted_peaks(peaks);
 
-        auto bb = p->getShape().aabb();
-        auto lo = bb.lower();
-        auto hi = bb.upper();
+    auto sort_peaks_by_frame = [](sptrPeak3D p1, sptrPeak3D p2) -> bool {
+        auto&& c1 = p1->getShape().center();
+        auto&& c2 = p1->getShape().center();
+        return c1[2] < c2[2];
+    };
 
-        // skip if peak out of range
-        if (lo[2] < _fmin || hi[2] >= _fmax) {
-            continue;
-        }
+    std::sort(sorted_peaks.begin(),sorted_peaks.end(),sort_peaks_by_frame);
 
+    auto filter_peaks = [cell](sptrPeak3D p) -> bool {
         Eigen::RowVector3d hkl;
-        
-        if (uc.getMillerIndices(p->getQ(), hkl)) {
-            _hkl.push_back(hkl);
-            _peaks.push_back(p);
-        }
-    }
-    UnitCell constrained = _cell.applyNiggliConstraints();
-    _u0 = constrained.niggliOrientation();
-    _cellParameters = constrained.parameters();
-}
+        return p->isSelected() && p->isObserved() && cell->getMillerIndices(p->getQ(), hkl);
+    };
 
-Refiner::Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches): _batches(),  _cell(cell)
-{   
-    double fmin = std::numeric_limits<double>().max();
-    double fmax = std::numeric_limits<double>().lowest();
+    sorted_peaks.erase(std::remove_if(sorted_peaks.begin(),sorted_peaks.end(),filter_peaks),sorted_peaks.end());
 
-    for (auto peak: peaks) {
-        const double z = peak->getShape().center()[2];
-        fmin = std::min(z, fmin);
-        fmax = std::max(z, fmax);
-    }
+    size_t batch_size = sorted_peaks.size() / static_cast<size_t>(nbatches);
 
-    fmin = std::floor(fmin);
-    fmax = std::ceil(fmax);
+    for (size_t i=0; i<sorted_peaks.size(); i+=batch_size) {
+        auto last = std::min(sorted_peaks.size(),i+batch_size);
+        PeakList peaks_subset(sorted_peaks.begin()+i,sorted_peaks.begin()+last);
 
-    const double df = (fmax-fmin) / double(nbatches);
-
-    for (int i = 0; i < nbatches; ++i) {
-        RefinementBatch b(*cell, peaks, fmin + i*df, fmin + (i+1)*df);
+        RefinementBatch b(*cell, sorted_peaks);
         _batches.emplace_back(std::move(b));
     }
-}
-
-void RefinementBatch::refineU()
-{
-    for (int i = 0; i < _uOffsets.size(); ++i) {
-        _params.addParameter(&_uOffsets(i));
-    }
-}
-
-void RefinementBatch::refineB()
-{
-    for (int i = 0; i < _cellParameters.size(); ++i) {
-        _params.addParameter(&_cellParameters(i));
-    }
-}
-
-void RefinementBatch::refineDetectorOffset(InstrumentStateList& states)
-{
-    for (int axis = 0; axis < 3; ++axis) {
-        std::vector<int> ids;
-        for (size_t i = 0; i < states.size(); ++i) {
-            if (i < _fmin || i >= _fmax) {
-                continue;
-            }
-            int id = _params.addParameter(&states[i].detectorOffset(axis));
-            ids.push_back(id);
-        }
-        // record the constraints
-        for (size_t i = 1; i < ids.size(); ++i) {
-            _constraints.push_back(std::make_pair(ids[i], ids[i-1]));
-        }
-    }
-}
-
-void RefinementBatch::refineSamplePosition(InstrumentStateList& states)
-{
-    for (int axis = 0; axis < 3; ++axis) {
-        std::vector<int> ids;
-        for (size_t i = 0; i < states.size(); ++i) {
-            if (i < _fmin || i >= _fmax) {
-                continue;
-            }
-            int id = _params.addParameter(&states[i].samplePosition(axis));
-            ids.push_back(id);
-        }
-        // record the constraints
-        for (size_t i = 1; i < ids.size(); ++i) {
-            _constraints.push_back(std::make_pair(ids[i], ids[i-1]));
-        }
-    }
-}
-
-bool RefinementBatch::refine(unsigned int max_iter)
-{  
-    Minimizer min;
-
-    min.setxTol(1e-10);
-    min.setfTol(1e-10);
-    min.setgTol(1e-10);
-
-    if (_constraints.size() > 0) {
-        auto C = constraints();
-        _params.setConstraint(constraints());
-    }
-
-    min.initialize(_params, _peaks.size()*3);
-    min.set_f([&](Eigen::VectorXd& fvec) {return residuals(fvec);});
-    bool success = min.fit(max_iter);   
-    _cell = _cell.fromParameters(_u0, _uOffsets, _cellParameters);        
-    return success;
-}
-
-int RefinementBatch::residuals(Eigen::VectorXd &fvec)
-{
-    UnitCell uc = _cell.fromParameters(_u0, _uOffsets, _cellParameters);
-    Eigen::Matrix3d UB = uc.reciprocalBasis();
-
-    //#pragma omp parallel for
-    for (unsigned int i = 0; i < _peaks.size(); ++i) {
-        const Eigen::RowVector3d q0 = _peaks[i]->getQ().rowVector();
-        const Eigen::RowVector3d q1 = _hkl[i]*UB;
-        const Eigen::RowVector3d dq = q1-q0;
-
-        fvec(3*i)   = dq[0];
-        fvec(3*i+1) = dq[1];
-        fvec(3*i+2) = dq[2];
-    }
-    return 0;
 }
 
 void Refiner::refineDetectorOffset(InstrumentStateList& states)
@@ -235,35 +126,6 @@ const std::vector<RefinementBatch>& Refiner::batches() const
     return _batches;
 }
 
-const PeakList& RefinementBatch::peaks() const
-{
-    return _peaks;
-}
-
-const UnitCell& RefinementBatch::cell() const
-{
-    return _cell;
-}
-    
-UnitCell& RefinementBatch::cell()
-{
-    return _cell;
-}
-
-Eigen::MatrixXd RefinementBatch::constraints() const
-{
-    Eigen::MatrixXd C(_constraints.size(), _params.nparams());
-    C.setZero();
-
-    for (size_t i = 0; i < _constraints.size(); ++i) {
-        auto id1 = _constraints[i].first;
-        auto id2 = _constraints[i].second;
-        C(i, id1) = 1.0;
-        C(i, id2) = -1.0;
-    }
-    return C;   
-}
-
 int Refiner::updatePredictions(PeakList& peaks) const
 {
     PeakList pred_peaks;
@@ -310,11 +172,6 @@ int Refiner::updatePredictions(PeakList& peaks) const
         ++updated;
     }
     return updated;
-}
-
-bool RefinementBatch::contains(double f) const
-{
-    return f >= _fmin && f < _fmax;
 }
 
 } // end namespace nsx
