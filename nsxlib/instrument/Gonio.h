@@ -40,6 +40,7 @@
 #include <Eigen/Geometry>
 
 #include "Axis.h"
+#include "GeometryTypes.h"
 #include "InstrumentTypes.h"
 #include "RotAxis.h"
 
@@ -109,13 +110,13 @@ public:
     //! Return the inverse of the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
     Eigen::Transform<double,3,Eigen::Affine> getInverseHomMatrix(const ComponentState& state) const;
     //! Transform a point in 3D space, given a vector of parameters
-    Eigen::Vector3d transform(const Eigen::Vector3d& v, const ComponentState& state) const;
+    DirectVector transform(const DirectVector& v, const ComponentState& state) const;
     //! Reverse transform a point in 3D space, given a vector of parameters
-    Eigen::Vector3d transformInverse(const Eigen::Vector3d& v, const ComponentState& state) const;
+    DirectVector transformInverse(const DirectVector& v, const ComponentState& state) const;
     //! Transform a vector inplace, for a values of Gonio parameters
-    void transformInPlace(Eigen::Vector3d& v, const ComponentState& state) const;
+    void transformInPlace(DirectVector& v, const ComponentState& state) const;
     //! Reverse transform a vector inplace, for a values of Gonio parameters
-    void transformInverseInPlace(Eigen::Vector3d& v, const ComponentState& state) const;
+    void transformInverseInPlace(DirectVector& v, const ComponentState& state) const;
 
 protected:
     //! Check whether axis i within the range of Axis

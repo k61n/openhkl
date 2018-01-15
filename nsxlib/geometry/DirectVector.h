@@ -20,6 +20,9 @@ public:
     //! Copy constructor
     DirectVector(const DirectVector& other)=default;
 
+    //! Constructor from its 3 components
+    explicit DirectVector(double x, double y, double z);
+
     //! Construct a DirectVector from an Eigen column vector
     explicit DirectVector(const Eigen::Vector3d& dvector);
 
@@ -35,8 +38,14 @@ public:
     //! Return a reference to an element of the vector
     double& operator[](int index);
 
+    //! Return the value of an element of the vector
+    double operator[](int index) const;
+
     //! Return a reference to an element of the vector
     double& operator()(int index);
+
+    //! Return the value of an element of the vector
+    double operator()(int index) const;
 
     //! Print information about a DirectVector to a stream
     void print(std::ostream& os) const;

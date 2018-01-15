@@ -32,6 +32,8 @@
 
 #include <Eigen/Dense>
 
+#include "GeometryTypes.h"
+
 namespace nsx {
 
 // Forward declare
@@ -51,10 +53,8 @@ public:
     ComponentState& operator=(const ComponentState& other);
     //! Return the values (= raw values + offsets) of the axes
     Eigen::ArrayXd values() const;
-    //void setParent(Component*);
 
-
-    Eigen::Vector3d getPosition() const;
+    DirectVector getPosition() const;
 
     ComponentState interpolate(const ComponentState &other, double t) const;
 

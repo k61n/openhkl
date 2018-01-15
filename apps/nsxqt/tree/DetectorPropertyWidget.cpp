@@ -1,4 +1,5 @@
 #include <nsxlib/Detector.h>
+#include <nsxlib/DirectVector.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Gonio.h>
 #include <nsxlib/RotAxis.h>
@@ -25,7 +26,7 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
     ui->lineEdit_WPixels->setText(QString::number(detector->getNCols()));
     ui->lineEdit_HPixels->setText(QString::number(detector->getNRows()));
 
-    Eigen::Vector3d restpos=detector->getRestPosition();
+    nsx::DirectVector restpos = detector->getRestPosition();
     // rest position of the detector is along y
     ui->doubleSpinBox_Distance->setValue(restpos[1]);
 
@@ -115,5 +116,5 @@ void DetectorPropertyWidget::on_doubleSpinBox_Distance_valueChanged(double arg1)
 {
      auto detector=_detectorItem->getExperiment()->getDiffractometer()->getDetector();
      if (arg1>0)
-        detector->setRestPosition(Eigen::Vector3d(0,arg1,0));
+        detector->setRestPosition(nsx::DirectVector(0,arg1,0));
 }

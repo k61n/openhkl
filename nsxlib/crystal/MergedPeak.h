@@ -85,7 +85,7 @@ private:
     void determineRepresentativeHKL();
     void update();
     
-    Eigen::Vector3i _hkl;
+    Eigen::RowVector3i _hkl;
     Intensity _intensitySum;
     std::vector<sptrPeak3D> _peaks;
     SpaceGroup _grp;

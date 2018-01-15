@@ -30,6 +30,7 @@
 
 #include <yaml-cpp/yaml.h>
 
+#include "GeometryTypes.h"
 #include "MonoDetector.h"
 
 namespace nsx {
@@ -70,7 +71,7 @@ public:
 	DirectVector pixelPosition(double px,double py) const override;
 
 	//! Determine whether detector at rest can receive a scattering event with direction given by Kf. px and py are detector position if true.
-	virtual bool hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d& from, double& px, double& py, double& t) const;
+	virtual bool hasKf(const DirectVector& kf,const DirectVector& from, double& px, double& py, double& t) const;
 
 };
 

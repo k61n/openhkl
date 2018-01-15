@@ -1,6 +1,7 @@
 #include <Eigen/Dense>
 
 #include "CylindricalDetector.h"
+#include "DirectVector.h"
 #include "Gonio.h"
 #include "RotAxis.h"
 #include "TransAxis.h"
@@ -110,13 +111,13 @@ DirectVector CylindricalDetector::pixelPosition(double px, double py) const
     return DirectVector(result);
 }
 
-bool CylindricalDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d& f, double& px, double& py, double& t) const
+bool CylindricalDetector::hasKf(const DirectVector& direction,const DirectVector& from, double& px, double& py, double& t) const
 {
 
     // Need to solve equation of the typr (from_xy + f_xy*t)^2=R^2
-    double b=2*(f[0]*kf[0]+f[1]*kf[1]);
-    double a=(kf[0]*kf[0]+kf[1]*kf[1]);
-    double c= f[0]*f[0]+f[1]*f[1]-_distance*_distance;
+    double b=2*(from[0]*direction[0]+from[1]*direction[1]);
+    double a=(direction[0]*direction[0]+direction[1]*direction[1]);
+    double c= from[0]*from[0]+from[1]*from[1]-_distance*_distance;
 
     double Delta=b*b-4*a*c;
     if (Delta<0)
@@ -128,7 +129,7 @@ bool CylindricalDetector::hasKf(const Eigen::Vector3d& kf,const Eigen::Vector3d&
     if (t<=0)
         return false;
 
-    auto v=f+kf*t;
+    Eigen::RowVector3d v = from.vector() + direction.vector()*t;
 
     double phi=atan2(v[0],v[1])+0.5*_angularWidth;
     if (phi<0 || phi>=_angularWidth)

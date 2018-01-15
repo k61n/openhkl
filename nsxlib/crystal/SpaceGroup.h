@@ -37,6 +37,7 @@
 #include <Eigen/Dense>
 
 #include "CrystalTypes.h"
+#include "GeometryTypes.h"
 #include "SymOp.h"
 
 namespace nsx {
@@ -71,7 +72,7 @@ public:
     //! Return the type of cell (triclinic, monoclinic ...)
     char bravaisType() const;
     //! Return the percentage of extinct reflections
-    double fractionExtinct(const std::vector<Eigen::RowVector3d>& hkls) const;
+    double fractionExtinct(const std::vector<ReciprocalVector>& hkls) const;
     //! Return the Bravais type symbol
     std::string bravaisTypeSymbol() const;
     //! Return the ID of the space group
@@ -79,7 +80,7 @@ public:
     //! Return whether two sets of indices are related by a symmetry
     bool isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2, bool friedel=false) const;
     //! Return whether two sets of indices are related by a symmetry
-    bool isEquivalent(const Eigen::Vector3d& a, const Eigen::Vector3d& b, bool friedel=false) const;
+    bool isEquivalent(const ReciprocalVector& a, const ReciprocalVector& b, bool friedel=false) const;
     //! Return whether two sets of indices are related by a symmetry up to Friedel reflection
     bool isFriedelEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const;
 

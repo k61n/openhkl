@@ -55,11 +55,11 @@ MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel):
 
 bool MergedPeak::addPeak(const sptrPeak3D& peak)
 {
-    auto hkl1 = _hkl.cast<double>();
+    ReciprocalVector hkl1(_hkl.cast<double>());
     auto data = peak->data();
     auto cell = peak->activeUnitCell();
     auto q = peak->getQ();
-    Eigen::Vector3d hkl2 = cell->getIntegerMillerIndices(q).cast<double>();
+    ReciprocalVector hkl2(cell->getIntegerMillerIndices(q).cast<double>());
 
     
     // peak is not equivalent to one already on the list
@@ -101,18 +101,19 @@ size_t MergedPeak::redundancy() const
 //! E.g. the representative of (2,1,2),(1,-3,5),(-2,4,3),(4,0,5),(7,8-2),(2,6,-1) will be (7,8-2)
 void MergedPeak::determineRepresentativeHKL()
 {
-    Eigen::Vector3d best_hkl = _hkl.cast<double>();
-    std::vector<Eigen::Vector3d> equivs;
+    Eigen::RowVector3d best_hkl = _hkl.cast<double>();
+    std::vector<Eigen::RowVector3d> equivs;
 
     for (auto&& g: _grp.groupElements()) {
-        equivs.emplace_back(g.getRotationPart()*best_hkl);
+        const Eigen::Matrix3d rotation = g.getRotationPart().transpose();
+        equivs.emplace_back(best_hkl*rotation);
 
         if (_friedel) {
-            equivs.emplace_back(-g.getRotationPart()*best_hkl);
+            equivs.emplace_back(-best_hkl*rotation);
         }
     }
 
-    auto compare_fn = [=](const Eigen::Vector3d& a, const Eigen::Vector3d& b) -> bool {
+    auto compare_fn = [=](const Eigen::RowVector3d& a, const Eigen::RowVector3d& b) -> bool {
         const double eps = 1e-5;
         for (auto i = 0; i < 3; ++i) {
             if (std::abs(a(i)-b(i)) > eps) {

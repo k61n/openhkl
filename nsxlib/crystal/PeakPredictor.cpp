@@ -37,6 +37,7 @@
 #include "DataSet.h"
 #include "DataTypes.h"
 #include "Detector.h"
+#include "DirectVector.h"
 #include "Diffractometer.h"
 #include "GeometryTypes.h"
 #include "Gonio.h"
@@ -65,9 +66,7 @@ PeakPredictor::PeakPredictor(sptrDataSet data):
     _handler(nullptr),
     _data(data)
 {
-
 }
-
 
 PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_peaks)
 {
@@ -222,27 +221,27 @@ Eigen::Matrix3d PeakPredictor::averageQShape(const std::vector<sptrPeak3D>& peak
 
 PeakList PeakPredictor::predictPeaks(const std::vector<Eigen::RowVector3d>& hkls, const Eigen::Matrix3d& BU)
 {
-    std::vector<Eigen::RowVector3d> qs;
+    std::vector<ReciprocalVector> qs;
     PeakList peaks;
 
     for (auto hkl: hkls) {
         qs.emplace_back(hkl*BU);
     }
 
-    std::vector<Eigen::Vector3d> events = getEvents(qs);
+    std::vector<DirectVector> events = getEvents(qs);
  
     for (auto event: events) {
         sptrPeak3D peak(new Peak3D(_data));
         // this sets the center of the ellipse with a dummy value for radius
-        peak->setShape(Ellipsoid(event, 1.0));
+        peak->setShape(Ellipsoid(event.vector(), 1.0));
         peaks.emplace_back(peak);
     }
     return peaks;
 }
 
-std::vector<Eigen::Vector3d> PeakPredictor::getEvents(const std::vector<Eigen::RowVector3d>& sample_qs) const
+std::vector<DirectVector> PeakPredictor::getEvents(const std::vector<ReciprocalVector>& sample_qs) const
 {
-    std::vector<Eigen::Vector3d> events;
+    std::vector<DirectVector> events;
     unsigned int scanSize = _data->getNFrames();
 
     std::vector<Eigen::RowVector3d> ki;
@@ -258,19 +257,22 @@ std::vector<Eigen::Vector3d> PeakPredictor::getEvents(const std::vector<Eigen::R
         ki.push_back(state.ki().rowVector());
     } 
 
-    for (const Eigen::RowVector3d& sample_q: sample_qs) {
-        bool sign = (sample_q*sample_to_lab[0] + ki[0]).squaredNorm() > ki[0].squaredNorm();
+    for (const ReciprocalVector& sample_q : sample_qs) {
+
+        const Eigen::RowVector3d& q_vect = sample_q.rowVector();
+
+        bool sign = (q_vect*sample_to_lab[0] + ki[0]).squaredNorm() > ki[0].squaredNorm();
 
         for (size_t i = 1; i < scanSize; ++i) {
-            const Eigen::RowVector3d kf = sample_q*sample_to_lab[i] + ki[i];
+            const Eigen::RowVector3d kf = q_vect*sample_to_lab[i] + ki[i];
             const bool new_sign = kf.squaredNorm() > ki[i].squaredNorm();
 
             if (sign != new_sign) {
                 sign = new_sign;
 
-                const Eigen::RowVector3d kf0 = sample_q*sample_to_lab[i-1] + ki[i-1];
-                const Eigen::RowVector3d kf1 = sample_q*sample_to_lab[i] + ki[i];
-                const Eigen::RowVector3d dkf = sample_q*(sample_to_lab[i]-sample_to_lab[i-1]);
+                const Eigen::RowVector3d kf0 = q_vect*sample_to_lab[i-1] + ki[i-1];
+                const Eigen::RowVector3d kf1 = q_vect*sample_to_lab[i] + ki[i];
+                const Eigen::RowVector3d dkf = q_vect*(sample_to_lab[i]-sample_to_lab[i-1]);
         
                 double t = 0.5;
                 const int max_count = 100;
@@ -305,8 +307,9 @@ std::vector<Eigen::Vector3d> PeakPredictor::getEvents(const std::vector<Eigen::R
                 //const ComponentState& cs=state.sample;
         
                 double time;
-                bool accept = _data->getDiffractometer()->getDetector()->receiveKf(px,py,kf*state.detectorOrientation,state.samplePosition,time);
-        
+                auto detector = _data->getDiffractometer()->getDetector();
+                bool accept = detector->receiveKf(px, py,DirectVector((kf*state.detectorOrientation).transpose()), DirectVector(state.samplePosition),time);
+
                 if (accept) {
                     events.emplace_back(px, py, t);
                 }
@@ -325,13 +328,13 @@ Ellipsoid PeakPredictor::toDetectorSpace(const Ellipsoid& qshape) const
     const Eigen::Matrix3d U = solver.eigenvectors();
     const Eigen::Vector3d l = solver.eigenvalues();
 
-    std::vector<Eigen::RowVector3d> qs;
-    qs.push_back(q);    
+    std::vector<ReciprocalVector> qs;
+    qs.push_back(ReciprocalVector(q));
     
     for (int i = 0; i < 3; ++i) {
         const double s = std::sqrt(1.0 / l(i));
-        qs.push_back(q+s*U.col(i));
-        qs.push_back(q-s*U.col(i));
+        qs.push_back(ReciprocalVector(q+s*U.col(i)));
+        qs.push_back(ReciprocalVector(q-s*U.col(i)));
     }
     auto evs = getEvents(qs);
     // something bad happened
@@ -340,17 +343,18 @@ Ellipsoid PeakPredictor::toDetectorSpace(const Ellipsoid& qshape) const
     }
 
     Eigen::Matrix3d delta;
-    auto p0 = evs[0];
+    const Eigen::Vector3d& p0 = evs[0].vector();
 
     for (auto i = 0; i < 3; ++i) {
         const double s = std::sqrt(1.0 / l(i));
-        auto p1 = evs[1+2*i];
-        auto p2 = evs[2+2*i];
+        const Eigen::Vector3d& p1 = evs[1+2*i].vector();
+        const Eigen::Vector3d& p2 = evs[2+2*i].vector();
         delta.col(i) = 0.5 * (p1-p2) / s;
     }
 
     // approximate linear transformation detector space to q space
     const Eigen::Matrix3d BI = U * delta.inverse();
+
     return Ellipsoid(p0, BI.transpose()*A*BI);
 }
 

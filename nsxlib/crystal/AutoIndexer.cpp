@@ -101,12 +101,12 @@ void AutoIndexer::computeFFTSolutions()
     _solutions.clear();
         
     // Store the q-vectors of the peaks for auto-indexing
-    std::vector<Eigen::RowVector3d> qvects;
+    std::vector<ReciprocalVector> qvects;
 
     for (auto peak: _peaks) {
         // Keep only the peak that have selected and that are not masked
         if (peak->isSelected()) {
-            qvects.push_back(peak->getQ().rowVector());
+            qvects.push_back(peak->getQ());
         }
     }
 

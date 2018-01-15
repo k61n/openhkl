@@ -20,6 +20,9 @@ public:
     //! Copy constructor
     MillerIndices(const MillerIndices& other)=default;
 
+    //! Constructor from its 3 components
+    explicit MillerIndices(int h, int k, int l);
+
     //! Construct a MillerIndices from an Eigen row vector of integer
     explicit MillerIndices(const Eigen::RowVector3i& hkl);
 
@@ -35,8 +38,14 @@ public:
     //! Cast operator to an Eigen row vector of double
     operator Eigen::RowVector3d () const;
 
+    //! Return the value of an element of the vector
+    int operator[](int index) const;
+
     //! Return a reference to an element of the vector
     int& operator[](int index);
+
+    //! Return the value of an element of the vector
+    int operator()(int index) const;
 
     //! Return a reference to an element of the vector
     int& operator()(int index);

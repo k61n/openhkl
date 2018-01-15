@@ -6,6 +6,7 @@
 #include <unsupported/Eigen/FFT>
 
 #include "FFTIndexing.h"
+#include "ReciprocalVector.h"
 #include "Units.h"
 
 namespace nsx {
@@ -14,13 +15,13 @@ FFTIndexing::FFTIndexing(int nSubdiv,double amax) : _nSubdiv(nSubdiv), _amax(ama
 {
 }
 
-std::vector<tVector> FFTIndexing::findOnSphere(const std::vector<Eigen::RowVector3d>& qvects, unsigned int nstacks, unsigned int nsolutions) const
+std::vector<tVector> FFTIndexing::findOnSphere(const std::vector<ReciprocalVector>& qvects, unsigned int nstacks, unsigned int nsolutions) const
 {
     std::vector<double> projs(qvects.size());
     double qMax = 0;
 
     for (const auto& v : qvects) {
-        double norm = v.squaredNorm();
+        double norm = v.rowVector().squaredNorm();
         if (norm > qMax) {
             qMax = norm;
         }
@@ -55,11 +56,12 @@ std::vector<tVector> FFTIndexing::findOnSphere(const std::vector<Eigen::RowVecto
             double phi = ph * twopi/ double(nslices);
             double sp = sin(phi);
             double cp = cos(phi);
-            const Eigen::Vector3d N(stheta*cp, stheta*sp, ctheta);
+            const Eigen::RowVector3d q_direction(stheta*cp, stheta*sp, ctheta);
             std::fill(hist.begin(), hist.end(), 0);
 
             for (const auto& vect: qvects) {
-                double proj = vect.dot(N);
+                const Eigen::RowVector3d& q_vector = vect.rowVector();
+                double proj = q_vector.dot(q_direction);
                 size_t index = size_t((std::floor((proj+qMax)*dqInv)));
                 if (index == nPoints)
                     --index;
@@ -89,7 +91,7 @@ std::vector<tVector> FFTIndexing::findOnSphere(const std::vector<Eigen::RowVecto
             }
 
             if (pos_max > 2)
-                result.push_back(tVector(N*(pos_max)*_nSubdiv*_amax/double(nPoints), value));
+                result.push_back(tVector(q_direction*(pos_max)*_nSubdiv*_amax/double(nPoints), value));
         }
     }
 
