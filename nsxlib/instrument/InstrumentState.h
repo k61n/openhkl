@@ -35,6 +35,7 @@
 namespace nsx {
 
 struct InstrumentState {
+    InstrumentState();
 
     Eigen::Matrix3d detectorOrientation;
 

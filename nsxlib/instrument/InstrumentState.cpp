@@ -30,6 +30,17 @@
 
 namespace nsx {
 
+InstrumentState::InstrumentState()
+{
+    detectorOrientation.setIdentity();
+    fixedSampleOrientation.setIdentity();
+    sampleOrientationOffset.setZero();
+    samplePosition.setZero();
+    detectorOffset.setZero();
+    ni = {0.0, 1.0, 0.0};
+    wavelength = 1.0;
+}
+
 InstrumentState InstrumentState::interpolate(const InstrumentState &other, double t) const
 {
     InstrumentState result(*this);
