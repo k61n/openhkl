@@ -126,7 +126,8 @@ void DialogRefineUnitCell::refineParameters()
                 pset.insert(p);
             }
 
-            d->integratePeaks(pset, 3.0, 6.0, false, nullptr);
+            // todo: fix bkg_begin and bkg_end
+            d->integratePeaks(pset, 3.0, 6.0, nullptr);
         }
     }
 }

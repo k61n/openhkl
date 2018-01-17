@@ -561,12 +561,12 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
 
     const double peak_scale = dialog->peakScale();
     const double bkg_scale = dialog->backgroundScale();
-    const bool update_shape = dialog->updateShape();
 
     nsx::DataList numors = _session->getSelectedNumors();
 
     for (auto&& numor: numors) {
-        numor->integratePeaks(_session->peaks(numor.get()), peak_scale, bkg_scale, update_shape, _progressHandler);
+        // todo: bkg_begin and bkg_end
+        numor->integratePeaks(_session->peaks(numor.get()), peak_scale, bkg_scale, _progressHandler);
     }
 
     _session->updatePeaks();
@@ -692,7 +692,8 @@ void MainWindow::on_actionFit_profiles_triggered()
             peak->setShape(nsx::Ellipsoid(prof._c, D));
             pset.insert(peak);
         }
-        d->integratePeaks(pset, 3.0, 6.0, false, nullptr);
+        // todo: change bkg_begin and bkg_end
+        d->integratePeaks(pset, 3.0, 6.0, nullptr);
     }
 
     _session->updatePeaks();

@@ -117,7 +117,8 @@ int main()
 
     // reintegrate peaks
     const double scale = nsx::getScale(0.997);
-    dataf->integratePeaks(found_peaks, scale, 2.0*scale, true);
+    // todo: bkg_begin and bkg_end
+    dataf->integratePeaks(found_peaks, scale, 2.0*scale);
 
     indexed_peaks = numIndexedPeaks();
     NSX_CHECK_ASSERT(indexed_peaks > 600);

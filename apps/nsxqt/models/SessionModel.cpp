@@ -365,7 +365,8 @@ void SessionModel::incorporateCalculatedPeaks()
         // debugging
         nsx::PeakSet predicted = predictor.predictPeaks(true, reference_peaks);
         //nsx::PeakSet predicted = predictor.predictPeaks(false, reference_peaks);
-        numor->integratePeaks(predicted, dialog.peakScale(), dialog.bkgScale(), false, handler);
+        // todo: bkg_begin and bkg_end
+        numor->integratePeaks(predicted, dialog.peakScale(), dialog.bkgScale(), handler);
         observed_peaks += peaks(numor.get()).size();
 
         for (auto peak: predicted) {
