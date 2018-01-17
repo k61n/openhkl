@@ -432,6 +432,8 @@ void DataSet::integratePeaks(const PeakSet& peaks, double peak_scale, double bkg
         handler->setProgress(0);
     }
 
+    std::cout << "DataSet::integratePeaks testing" << std::endl;
+
     using IntegrationRegion = IntegrationRegion;
     using PeakIntegrator = PeakIntegrator;
     using integrated_peak = std::pair<sptrPeak3D, PeakIntegrator>;

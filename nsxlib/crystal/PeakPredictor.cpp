@@ -58,9 +58,7 @@ namespace nsx {
 
 PeakPredictor::PeakPredictor(sptrDataSet data):
     _dmin(2.0),
-    _dmax(50.0),
-    _peakScale(3.0),
-    _bkgScale(6.0),    
+    _dmax(50.0),   
     _Isigma(2.0),
     _minimumNeighbors(10),
     _handler(nullptr),

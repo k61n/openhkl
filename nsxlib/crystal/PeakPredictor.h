@@ -73,10 +73,6 @@ public:
     double _dmin;
     //! Maximum d value used in prediction.
     double _dmax;
-    //! Scale factor used for peak integration.
-    double _peakScale;
-    //! Scale factor used for background calculation.
-    double _bkgScale;  
     //! Minimum value of \f$I / \sigma_I\f$ to use for neighbor search.
     double _Isigma;
     //! Minimum number of nearby peaks to use for shape determination.

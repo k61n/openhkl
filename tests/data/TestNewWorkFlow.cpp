@@ -169,8 +169,6 @@ int main()
     nsx::PeakPredictor predictor(dataf);
     predictor._dmin = 2.1;
     predictor._dmax = 50.0;  
-    predictor._peakScale = 1.0;
-    predictor._bkgScale = 3.0;
     predictor._minimumNeighbors = 10;
 
     predictor._handler = std::shared_ptr<nsx::ProgressHandler>(new nsx::ProgressHandler());
