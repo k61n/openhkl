@@ -141,20 +141,19 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
         auto predicted_hkls = sample->unitCell(i)->generateReflectionsInShell(_dmin, _dmax, wavelength);
 
         // todo: clean up DataSet interface for predicted peaks
-        std::vector<Eigen::RowVector3d> hkls_double;
+        std::vector<MillerIndex> hkls_keep;
 
-        for (auto&& hkl: predicted_hkls) {
-            Eigen::RowVector3i int_hkl(std::lround(hkl(0)), std::lround(hkl(1)), std::lround(hkl(2)));
-
+        for (auto&& idx: predicted_hkls) {
+            Eigen::RowVector3i int_hkl(idx.h, idx.k, idx.l);
             // if we keep reference peaks, check whether this hkl is part of reference set
             if (keepObserved && found_hkls.find(int_hkl) != found_hkls.end()) {
                 continue;
             }            
-            hkls_double.emplace_back(hkl.cast<double>());
+            hkls_keep.emplace_back(idx);
         }
 
         predicted_peaks += predicted_hkls.size();
-        PeakList peaks = predictPeaks(hkls_double, UB);
+        PeakList peaks = predictPeaks(hkls_keep, UB);
         int current_peak = 0;
   
         _handler->setStatus("Adding calculated peaks...");
@@ -227,13 +226,13 @@ Eigen::Matrix3d PeakPredictor::averageQShape(const std::vector<sptrPeak3D>& peak
 
 
 
-PeakList PeakPredictor::predictPeaks(const std::vector<Eigen::RowVector3d>& hkls, const Eigen::Matrix3d& BU)
+PeakList PeakPredictor::predictPeaks(const std::vector<MillerIndex>& hkls, const Eigen::Matrix3d& BU)
 {
     std::vector<ReciprocalVector> qs;
     PeakList peaks;
 
-    for (auto hkl: hkls) {
-        qs.emplace_back(hkl*BU);
+    for (auto idx: hkls) {
+        qs.emplace_back(Eigen::RowVector3d(idx.h, idx.k, idx.l)*BU);
     }
 
     std::vector<DirectVector> events = getEvents(qs);

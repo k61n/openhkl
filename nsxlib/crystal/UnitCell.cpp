@@ -186,10 +186,10 @@ std::ostream& operator<<(std::ostream& os,const UnitCell& uc)
 }
 
 // todo: check this again
-std::vector<Eigen::RowVector3d> UnitCell::generateReflectionsInShell(double dmin, double dmax, double wavelength) const
+std::vector<MillerIndex> UnitCell::generateReflectionsInShell(double dmin, double dmax, double wavelength) const
 {
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> eigen_solver;
-    std::vector<Eigen::RowVector3d> hkls;
+    std::vector<MillerIndex> hkls;
     eigen_solver.compute(reciprocalMetric());
     double b_min = std::sqrt(eigen_solver.eigenvalues().minCoeff());
     const int hkl_max = std::ceil(2.0 / (wavelength * b_min)); // maximum allowed by Bragg law
@@ -226,7 +226,7 @@ std::vector<Eigen::RowVector3d> UnitCell::generateReflectionsInShell(double dmin
                 if (group.isExtinct(h, k, l)) {
                     continue;
                 }
-                hkls.emplace_back(hkl);
+                hkls.emplace_back(h, k, l);
             }
         }
     }

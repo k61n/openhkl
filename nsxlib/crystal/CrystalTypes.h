@@ -9,6 +9,7 @@
 
 namespace nsx {
 
+struct MillerIndex;
 class MergedPeak;
 class Peak3D;
 class PeakIntegrator;

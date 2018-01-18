@@ -313,6 +313,8 @@ using namespace nsx;
 %template(vectorVector3d) std::vector<Eigen::Vector3d>;
 %template(vectorRowVector3d) std::vector<Eigen::RowVector3d>;
 
+%template(MillerIndexList) std::vector<nsx::MillerIndex>;
+
 %include "ChemistryTypes.h"
 %include "CrystalTypes.h"
 %include "DataTypes.h"

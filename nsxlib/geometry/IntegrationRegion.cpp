@@ -75,6 +75,11 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
             Eigen::Vector3d p(x, y, z);
             auto s = classifySlice(p);
             if (s >= 0) {
+                // region was previously excluded:
+                if (mask(y,x) < 0) {
+                    mask(y,x) = 0;
+                }
+                // update the mask
                 mask(y,x) += s;
             }
         }

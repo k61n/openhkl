@@ -40,14 +40,13 @@
 
 namespace nsx {
 
-    /*
+    
     struct MillerIndex {
-        // todo: think about this....
-        const Eigen::RowVector3d hkl; // rounded
-        const Eigen::RowVector3d delta_hkl; // error from raw hkl
-        //bool commensurate(double tolerance) const;
-        //Eigen::RowVector3d getIntegralIndex(double tolerance) const;
-    };*/
+        int h, k, l;
+
+        MillerIndex() = default;
+        MillerIndex(int h_, int k_, int l_): h(h_), k(k_), l(l_) {}
+    };
 
     //! \brief Structure to encapsulate lattice cell character.
     struct CellCharacter {
@@ -122,7 +121,7 @@ public:
     std::string getBravaisTypeSymbol() const;
     
     //! Get a list of reflections with d value in the range [dmin, dmax]
-    std::vector<Eigen::RowVector3d> generateReflectionsInShell(double dmin, double dmax, double wavelength) const;
+    std::vector<MillerIndex> generateReflectionsInShell(double dmin, double dmax, double wavelength) const;
 
     //! Return the angle in radians between two reflections hkl1 and hkl2
     double getAngle(const Eigen::RowVector3d& hkl1, const Eigen::RowVector3d& hkl2) const;

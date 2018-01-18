@@ -166,7 +166,7 @@ int Refiner::updatePredictions(PeakList& peaks) const
         // update the position
         Eigen::RowVector3d hkl = b->cell()->getIntegerMillerIndices(peak->getQ()).cast<double>();
         PeakPredictor predictor(peak->data());
-        auto pred = predictor.predictPeaks({hkl}, b->cell()->reciprocalBasis());
+        auto pred = predictor.predictPeaks({MillerIndex(hkl(0), hkl(1), hkl(2))}, b->cell()->reciprocalBasis());
 
         // something wrong with new prediction...
         if (pred.size() != 1) {
