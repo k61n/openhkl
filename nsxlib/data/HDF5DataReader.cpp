@@ -35,7 +35,8 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, sptrDiffractometer d
         detectorGroup =_file->openGroup("/Data/Scan/Detector");
         sampleGroup =_file->openGroup("/Data/Scan/Sample");
     } catch (H5::Exception& e) {
-        throw std::runtime_error(e.getCDetailMsg());
+        std::string what = e.getDetailMsg();
+        throw std::runtime_error(what);
     }
     
     // Read the info group and store in metadata    

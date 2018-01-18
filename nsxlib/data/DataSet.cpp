@@ -150,7 +150,7 @@ std::size_t DataSet::getNRows() const
 InstrumentState DataSet::getInterpolatedState(double frame) const
 {
     if (frame>(_states.size()-1) || frame<0) {
-        throw std::runtime_error("Error when interpolating state: invalid frame value");
+        throw std::runtime_error("Error when interpolating state: invalid frame value: " + std::to_string(frame));
     }
 
     const std::size_t idx = std::size_t(std::lround(std::floor(frame)));

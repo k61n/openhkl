@@ -373,11 +373,12 @@ namespace nsx {
 %include "ILLDataReader.h"
 %include "HDF5DataReader.h"
 %include "DataSet.h"
-%include "PeakFinder.h"
+
 %include "MergedData.h"
 
-%template(vector_data) std::vector<std::shared_ptr<nsx::DataSet>>;
+%template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
 
+%include "PeakFinder.h"
 
 %template(PeakSet) std::set<std::shared_ptr<nsx::Peak3D>>;
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
@@ -412,7 +413,7 @@ namespace nsx {
 %include "RefinementBatch.h"
 %include "Refiner.h"
 
-%template(vectorRefinementBatch) std::vector<nsx::RefinementBatch>;
+%template(RefinementBatchList) std::vector<nsx::RefinementBatch>;
 
 %include "Basis.h"
 
@@ -475,7 +476,7 @@ namespace nsx {
 %include "Gonio.h"
 
 
-%template(vectorInstrumentState) std::vector<nsx::InstrumentState>;
+%template(InstrumentStateList) std::vector<nsx::InstrumentState>;
 
 
 %include "Axis.h"
