@@ -30,7 +30,7 @@ class TestWorkFlow(unittest.TestCase):
         finder.setThresholdValue(15.0)
         finder.setKernel(kernel)
 
-        numors = nsx.vector_data()
+        numors = nsx.DataList()
         numors.push_back(data)
         peaks = finder.find(numors)
 

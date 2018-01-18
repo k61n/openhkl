@@ -75,7 +75,7 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
             Eigen::Vector3d p(x, y, z);
             auto s = classifySlice(p);
             if (s >= 0) {
-                mask(y,x) = s;
+                mask(y,x) += s;
             }
         }
     }

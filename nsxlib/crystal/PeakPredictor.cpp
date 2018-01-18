@@ -208,9 +208,19 @@ Eigen::Matrix3d PeakPredictor::averageQShape(const std::vector<sptrPeak3D>& peak
 
     for(const auto& p: peaks) {
         const double I = p->getCorrectedIntensity().value();
-        covariance += I*p->qShape().inverseMetric();
-        total_intensity += I;
+        try {
+            covariance += I*p->qShape().inverseMetric();
+            total_intensity += I;
+        } catch (...) {
+            // couldn't get q shape...
+        }
     }
+
+    // sanity check
+    if (total_intensity < 1.0) {
+        throw std::runtime_error("Could not find Q shape: too few valid peaks");
+    }
+
     covariance /= total_intensity;
     return covariance.inverse();
 }
