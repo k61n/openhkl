@@ -42,6 +42,7 @@
 #include "GeometryTypes.h"
 #include "Gonio.h"
 #include "InstrumentState.h"
+#include "MillerIndex.h"
 #include "Octree.h"
 #include "Peak3D.h"
 #include "PeakPredictor.h"
@@ -68,21 +69,6 @@ PeakPredictor::PeakPredictor(sptrDataSet data):
 
 PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_peaks)
 {
-    class compare_fn {
-    public:
-        auto operator()(const Eigen::RowVector3i a, const Eigen::RowVector3i b) const -> bool
-        {
-            if (a(0) != b(0))
-                return a(0) < b(0);
-
-            if (a(1) != b(1))
-                return a(1) < b(1);
-
-            return a(2) < b(2);
-        }
-    };
-
-
     int predicted_peaks = 0;
 
     auto& mono = _data->getDiffractometer()->getSource()->getSelectedMonochromator();
@@ -93,7 +79,7 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
 
     for (unsigned int i = 0; i < ncrystals; ++i) {
-        std::set<Eigen::RowVector3i, compare_fn> found_hkls;
+        std::set<MillerIndex> found_hkls;
         auto cell = sample->unitCell(i);
         auto UB = cell->reciprocalBasis();        
         std::vector<sptrPeak3D> peaks_to_use;
@@ -109,8 +95,8 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
             if (peak->data() != _data || peak->activeUnitCell() != cell) {
                 continue;
             }            
-            Eigen::RowVector3i hkl = cell->getIntegerMillerIndices(peak->getQ());
-            found_hkls.insert(hkl);
+            
+            found_hkls.insert(cell->getIntegerMillerIndices(peak->getQ()));
 
             Intensity inten = peak->getCorrectedIntensity();
 
@@ -144,9 +130,8 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
         std::vector<MillerIndex> hkls_keep;
 
         for (auto&& idx: predicted_hkls) {
-            Eigen::RowVector3i int_hkl(idx.h, idx.k, idx.l);
             // if we keep reference peaks, check whether this hkl is part of reference set
-            if (keepObserved && found_hkls.find(int_hkl) != found_hkls.end()) {
+            if (keepObserved && found_hkls.find(idx) != found_hkls.end()) {
                 continue;
             }            
             hkls_keep.emplace_back(idx);
@@ -232,7 +217,7 @@ PeakList PeakPredictor::predictPeaks(const std::vector<MillerIndex>& hkls, const
     PeakList peaks;
 
     for (auto idx: hkls) {
-        qs.emplace_back(Eigen::RowVector3d(idx.h, idx.k, idx.l)*BU);
+        qs.emplace_back(idx.rowVector().cast<double>()*BU);
     }
 
     std::vector<DirectVector> events = getEvents(qs);

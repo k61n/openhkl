@@ -10,34 +10,30 @@ namespace nsx {
 //!
 //! This class allows to enforce dimensional and C++-type consistency when
 //! dealing with vectors in algorithms dedicated to crystallographic data.
-class MillerIndices
+class MillerIndex
 {
 public:
 
     //! Default constructor
-    MillerIndices()=default;
+    MillerIndex()=default;
 
     //! Copy constructor
-    MillerIndices(const MillerIndices& other)=default;
+    MillerIndex(const MillerIndex& other)=default;
 
     //! Constructor from its 3 components
-    explicit MillerIndices(int h, int k, int l);
+    MillerIndex(int h, int k, int l);
 
-    //! Construct a MillerIndices from an Eigen row vector of integer
-    explicit MillerIndices(const Eigen::RowVector3i& hkl);
+    //! Construct a MillerIndex from an Eigen row vector of integer
+    explicit MillerIndex(const Eigen::RowVector3i& hkl);
 
     //! Assignment operator
-    MillerIndices& operator=(const MillerIndices& other)=default;
+    MillerIndex& operator=(const MillerIndex& other)=default;
 
     //! Destructor
-    ~MillerIndices()=default;
+    ~MillerIndex()=default;
 
-    //! Cast operator to an Eigen row vector of integer
-    explicit operator const Eigen::RowVector3i& () const;
-
-    //! Cast operator to an Eigen row vector of double
-    operator Eigen::RowVector3d () const;
-
+    const Eigen::RowVector3i& rowVector() const;
+  
     //! Return the value of an element of the vector
     int operator[](int index) const;
 
@@ -50,14 +46,16 @@ public:
     //! Return a reference to an element of the vector
     int& operator()(int index);
 
-    //! Print information about a MillerIndices to a stream
+    //! Print information about a MillerIndex to a stream
     void print(std::ostream& os) const;
+
+    bool operator<(const MillerIndex& other) const;
 
 private:
     Eigen::RowVector3i _hkl;
 };
 
-//! Overload operator<< with MillerIndices type
-std::ostream& operator<<(std::ostream& os, const MillerIndices& hkl);
+//! Overload operator<< with MillerIndex type
+std::ostream& operator<<(std::ostream& os, const MillerIndex& hkl);
 
 } // end namespace nsx

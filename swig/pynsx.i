@@ -257,6 +257,8 @@ using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 #include "PeakFinder.h"
 #include "MergedData.h"
 
+#include "MillerIndex.h"
+
 #include "CC.h"
 #include "RFactor.h"
 
@@ -313,6 +315,7 @@ using namespace nsx;
 %template(vectorVector3d) std::vector<Eigen::Vector3d>;
 %template(vectorRowVector3d) std::vector<Eigen::RowVector3d>;
 
+%include "MillerIndex.h"
 %template(MillerIndexList) std::vector<nsx::MillerIndex>;
 
 %include "ChemistryTypes.h"
@@ -324,7 +327,10 @@ using namespace nsx;
 %include "UtilsTypes.h"
 
 %include "DirectVector.h"
+%template(DirectVectorList) std::vector<nsx::DirectVector>;
+
 %include "ReciprocalVector.h"
+%template(ReciprocalVectorList) std::vector<nsx::ReciprocalVector>;
 
 %include "Axis.h"
 %include "RotAxis.h"

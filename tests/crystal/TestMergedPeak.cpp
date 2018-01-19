@@ -8,6 +8,7 @@
 #include <nsxlib/Experiment.h>
 #include <nsxlib/GruberReduction.h>
 #include <nsxlib/MergedData.h>
+#include <nsxlib/MillerIndex.h>
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/SpaceGroup.h>

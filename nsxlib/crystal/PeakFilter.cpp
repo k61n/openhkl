@@ -3,6 +3,7 @@
 #include "DataSet.h"
 #include "Diffractometer.h"
 #include "MergedData.h"
+#include "MillerIndex.h"
 #include "Octree.h"
 #include "Peak3D.h"
 #include "PeakFilter.h"
@@ -145,8 +146,8 @@ PeakSet PeakFilter::apply(const PeakSet& reference_peaks) const
             merged.addPeak(peak);
 
             auto q = peak->getQ();
-            Eigen::RowVector3i hkl = cell->getIntegerMillerIndices(q);
-            if (_removeForbidden && group.isExtinct(hkl(0), hkl(1), hkl(2))) {
+            auto hkl = cell->getIntegerMillerIndices(q);
+            if (_removeForbidden && group.isExtinct(hkl)) {
                 bad_peaks.insert(peak);
             }
         }

@@ -40,14 +40,6 @@
 
 namespace nsx {
 
-    
-    struct MillerIndex {
-        int h, k, l;
-
-        MillerIndex() = default;
-        MillerIndex(int h_, int k_, int l_): h(h_), k(k_), l(l_) {}
-    };
-
     //! \brief Structure to encapsulate lattice cell character.
     struct CellCharacter {
         //! Lattice character \f$A = \mathbf{a} \cdot \mathbf{a}\f$
@@ -239,7 +231,7 @@ public:
 
     bool getMillerIndices(const ReciprocalVector& q, Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
 
-    Eigen::RowVector3i getIntegerMillerIndices(const ReciprocalVector& q) const;
+    MillerIndex getIntegerMillerIndices(const ReciprocalVector& q) const;
     
     std::vector<std::string> compatibleSpaceGroups() const;
 

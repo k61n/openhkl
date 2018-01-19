@@ -82,4 +82,12 @@ const std::vector<double>& ResolutionShell::getD() const
     return _d;
 }
 
+const PeakList& ResolutionShell::shell(size_t i) const
+{
+    if (i >= _shells.size()) {
+        throw std::runtime_error("ResolutionShell::shell index out of bounds");
+    }
+    return _shells[i];
+}
+
 } // end namespace nsx

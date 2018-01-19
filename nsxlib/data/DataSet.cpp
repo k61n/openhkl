@@ -427,11 +427,6 @@ double DataSet::getBackgroundLevel(const sptrProgressHandler& progress)
 
 void DataSet::integratePeaks(const PeakSet& peaks, double bkg_begin, double bkg_end, const sptrProgressHandler& handler)
 {
-    if (handler) {
-        handler->setStatus(("Integrating " + std::to_string(peaks.size()) + " peaks...").c_str());
-        handler->setProgress(0);
-    }
-
     using IntegrationRegion = IntegrationRegion;
     using PeakIntegrator = PeakIntegrator;
     using integrated_peak = std::pair<sptrPeak3D, PeakIntegrator>;
@@ -441,10 +436,19 @@ void DataSet::integratePeaks(const PeakSet& peaks, double bkg_begin, double bkg_
     peak_list.reserve(num_peaks);
 
     for (auto&& peak: peaks ) {
+        // skip if peak does not belong to this dataset
+        if (peak->data().get() != this) {
+            continue;
+        }
         // todo: n slices probably should not be hard-coded
         IntegrationRegion region(peak->getShape(), bkg_begin, bkg_end, int(bkg_begin*5));
         PeakIntegrator integrator(region, *this);
         peak_list.emplace_back(peak, integrator);
+    }
+
+    if (handler) {
+        handler->setStatus(("Integrating " + std::to_string(peak_list.size()) + " peaks...").c_str());
+        handler->setProgress(0);
     }
 
     size_t idx = 0;

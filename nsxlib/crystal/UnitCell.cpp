@@ -6,6 +6,7 @@
 #include "GCD.h"
 #include "GruberReduction.h"
 #include "Material.h"
+#include "MillerIndex.h"
 #include "Minimizer.h"
 #include "NiggliReduction.h"
 #include "ReciprocalVector.h"
@@ -201,8 +202,8 @@ std::vector<MillerIndex> UnitCell::generateReflectionsInShell(double dmin, doubl
     for (int h = -hkl_max; h <= hkl_max; ++h) {
         for (int k = -hkl_max; k <= hkl_max; ++k) {
             for (int l = -hkl_max; l <= hkl_max; ++l) {
-                Eigen::RowVector3d hkl(h,k,l);
-                Eigen::RowVector3d q = hkl*_B;
+                MillerIndex hkl(h, k, l);
+                Eigen::RowVector3d q = hkl.rowVector().cast<double>()*_B;
                 const double d = 1.0 / q.norm();
 
                 const double sin_theta = wavelength / (2.0 * d);
@@ -223,10 +224,10 @@ std::vector<MillerIndex> UnitCell::generateReflectionsInShell(double dmin, doubl
                 }
 
                 // skip those HKL which are forbidden by the space group
-                if (group.isExtinct(h, k, l)) {
+                if (group.isExtinct(hkl)) {
                     continue;
                 }
-                hkls.emplace_back(h, k, l);
+                hkls.emplace_back(hkl);
             }
         }
     }
@@ -756,13 +757,11 @@ bool UnitCell::getMillerIndices(const ReciprocalVector& q, Eigen::RowVector3d& h
     return true;
 }
 
-Eigen::RowVector3i UnitCell::getIntegerMillerIndices(const ReciprocalVector& q) const
+MillerIndex UnitCell::getIntegerMillerIndices(const ReciprocalVector& q) const
 {
     Eigen::RowVector3d hkld;
     getMillerIndices(q, hkld, true);
-    Eigen::RowVector3i hkl;
-    hkl << int(std::lround(hkld[0])), int(std::lround(hkld[1])), int(std::lround(hkld[2]));
-    return hkl;
+    return MillerIndex(int(std::lround(hkld[0])), int(std::lround(hkld[1])), int(std::lround(hkld[2])));
 }
 
 std::vector<std::string> UnitCell::compatibleSpaceGroups() const

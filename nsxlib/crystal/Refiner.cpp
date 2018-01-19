@@ -39,6 +39,7 @@
 #include <iterator>
 
 #include "InstrumentState.h"
+#include "MillerIndex.h"
 #include "Peak3D.h"
 #include "PeakPredictor.h"
 #include "Refiner.h"
@@ -164,9 +165,9 @@ int Refiner::updatePredictions(PeakList& peaks) const
         }
 
         // update the position
-        Eigen::RowVector3d hkl = b->cell()->getIntegerMillerIndices(peak->getQ()).cast<double>();
+        auto hkl = b->cell()->getIntegerMillerIndices(peak->getQ());
         PeakPredictor predictor(peak->data());
-        auto pred = predictor.predictPeaks({MillerIndex(hkl(0), hkl(1), hkl(2))}, b->cell()->reciprocalBasis());
+        auto pred = predictor.predictPeaks({hkl}, b->cell()->reciprocalBasis());
 
         // something wrong with new prediction...
         if (pred.size() != 1) {

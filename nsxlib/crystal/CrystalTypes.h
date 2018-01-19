@@ -21,6 +21,8 @@ class SpaceGroupSymbols;
 class SymOp;
 class UnitCell;
 
+using MillerIndexList = std::vector<MillerIndex>;
+
 using affineTransformation=Eigen::Transform<double,3,Eigen::Affine>;
 
 using UnitCellSolution = std::pair<UnitCell,double>;

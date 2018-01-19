@@ -47,6 +47,7 @@ public:
     ResolutionShell(double dmin, double dmax, size_t num_shells);
     void addPeak(const sptrPeak3D& peak);
     const std::vector<PeakList>& getShells() const;
+    const PeakList& shell(size_t i) const;
     const std::vector<double>& getD() const;
 
 private:

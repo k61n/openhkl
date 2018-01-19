@@ -43,6 +43,7 @@
 #include "UnitCell.h"
 #include "DataSet.h"
 #include "MergedPeak.h"
+#include "MillerIndex.h"
 #include "Peak3D.h"
 #include "ReciprocalVector.h"
 
@@ -59,7 +60,7 @@ bool MergedPeak::addPeak(const sptrPeak3D& peak)
     auto data = peak->data();
     auto cell = peak->activeUnitCell();
     auto q = peak->getQ();
-    ReciprocalVector hkl2(cell->getIntegerMillerIndices(q).cast<double>());
+    ReciprocalVector hkl2(cell->getIntegerMillerIndices(q).rowVector().cast<double>());
 
     
     // peak is not equivalent to one already on the list
