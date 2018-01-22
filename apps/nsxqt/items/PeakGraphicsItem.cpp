@@ -175,8 +175,8 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     if (min<0) {
         min=0;
     }
-    if (max>_peak->data()->getNFrames()-1) {
-        max=_peak->data()->getNFrames()-1;
+    if (max>_peak->data()->nFrames()-1) {
+        max=_peak->data()->nFrames()-1;
     }
 
     Eigen::VectorXd error = _peak->getIntegration().getPeakError();
@@ -204,8 +204,8 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     }
 
     auto c = _peak->getShape().center();
-    auto state = _peak->data()->getInterpolatedState(c[2]);
-    auto position = _peak->data()->getDiffractometer()->getDetector()->pixelPosition(c[0], c[1]);
+    auto state = _peak->data()->interpolatedState(c[2]);
+    auto position = _peak->data()->diffractometer()->getDetector()->pixelPosition(c[0], c[1]);
     double g = state.gamma(position);
     double n = state.nu(position);
     g/=nsx::deg;
@@ -219,7 +219,7 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     info += "p value (" + QString::number(_peak->pValue(), 'f', 3) + ")\n";
 
     double scale=_peak->getScale();
-    double monitor=_peak->data()->getMetadata()->getKey<double>("monitor");
+    double monitor=_peak->data()->metadata()->getKey<double>("monitor");
     info+="Monitor "+QString::number(monitor*scale)+" counts";
     QCPPlotTitle* title=dynamic_cast<QCPPlotTitle*>(p->plotLayout()->element(0,0));
     if (title != nullptr) {

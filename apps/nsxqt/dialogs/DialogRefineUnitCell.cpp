@@ -87,7 +87,7 @@ void DialogRefineUnitCell::refineParameters()
             nsx::info() << "Refining B matrix";
         }
 
-        std::vector<nsx::InstrumentState>& states = d->getInstrumentStates();
+        std::vector<nsx::InstrumentState>& states = d->instrumentStates();
         
         if (ui->checkBoxRefineSamplePosition->isChecked()) {
             r.refineSamplePosition(states); 
@@ -114,9 +114,9 @@ void DialogRefineUnitCell::refineParameters()
         bool success = r.refine();
 
         if (!success) {
-            nsx::info() << "Failed to refine parameters for numor " << d->getFilename();
+            nsx::info() << "Failed to refine parameters for numor " << d->filename();
         }  else {
-            nsx::info() << "Successfully refined parameters for numor " << d->getFilename();
+            nsx::info() << "Successfully refined parameters for numor " << d->filename();
             int updated = r.updatePredictions(d_peaks);
             nsx::info() << "done; updated " << updated << " peak";
 

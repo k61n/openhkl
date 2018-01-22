@@ -120,7 +120,7 @@ Blob3DUMap BlobFinder::find() {
 
         // determine begining and ending index of current thread
         #pragma omp for
-        for (size_t i = 0; i < _data->getNFrames(); ++i) {
+        for (size_t i = 0; i < _data->nFrames(); ++i) {
             if ( loop_begin == -1) {
                 loop_begin = i;
             }
@@ -201,8 +201,8 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
 
     // determine the number of rows and columns
     // auto frame_it = _data->getIterator(begin);
-    _nrows = _data->getNRows();
-    _ncols = _data->getNCols();
+    _nrows = _data->nRows();
+    _ncols = _data->nCols();
 
     // Store labels of current and previous frames.
     std::vector<int> labels(_nrows*_ncols,0);
@@ -236,7 +236,7 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
         RealMatrix frame_data;
 
         #pragma omp critical
-        frame_data = _data->getFrame(idx).cast<double>();
+        frame_data = _data->frame(idx).cast<double>();
 
         auto filtered_frame = callback ? callback(frame_data) : frame_data;
 
@@ -329,7 +329,7 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
             }
         }
 
-        progress = static_cast<double>(_nframes) / static_cast<double>(_data->getNFrames()) * 100.0;
+        progress = static_cast<double>(_nframes) / static_cast<double>(_data->nFrames()) * 100.0;
 
         if ( _progressHandler )
             _progressHandler->setProgress(progress);

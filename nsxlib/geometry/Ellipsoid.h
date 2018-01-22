@@ -42,6 +42,12 @@
 
 namespace nsx {
 
+struct EllipsoidParameters {
+    Eigen::Vector3d center;
+    Eigen::Vector3d radii;
+    Eigen::Matrix3d axes;
+};
+
 class Ellipsoid {
 
 public:
@@ -87,7 +93,9 @@ public:
     Eigen::Matrix4d homogeneousMatrixInverse() const;
 
     //! Return semiaxes of the ellipsoid
-    Eigen::Vector3d eigenvalues() const;
+    Eigen::Vector3d radii() const;
+
+    EllipsoidParameters parameters() const;
 
     const Eigen::Vector3d& center() const;
 

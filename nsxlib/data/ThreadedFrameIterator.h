@@ -12,7 +12,7 @@ class ThreadedFrameIterator: public IFrameIterator {
 public:
     ThreadedFrameIterator(DataSet& data, unsigned int idx);
     ~ThreadedFrameIterator() = default;
-    RealMatrix& getFrame() override;
+    RealMatrix& frame() override;
     void advance() override;
 
 private:

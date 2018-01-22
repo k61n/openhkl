@@ -40,7 +40,7 @@ int main()
     exp.addData(data);
     NSX_CHECK_EQUAL(exp.getDataNames().size(),1);
 
-    NSX_CHECK_EQUAL(exp.getData("D10_ascii_example")->getFilename(),"D10_ascii_example");
+    NSX_CHECK_EQUAL(exp.getData("D10_ascii_example")->filename(),"D10_ascii_example");
 
     // Remove the data from the experiment
     exp.removeData("D10_ascii_example");
