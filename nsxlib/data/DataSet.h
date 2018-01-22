@@ -68,32 +68,32 @@ public:
 
     // iterators
     #ifndef SWIG
-    uptrIFrameIterator getIterator(int idx);
+    uptrIFrameIterator iterator(int idx);
     #endif
     void setIteratorCallback(FrameIteratorCallback callback);
 
     //! Gets the data filename
-    const std::string& getFilename() const;
+    const std::string& filename() const;
 
     //! Gets a shared pointer to the diffractometer used to collect the data
-    sptrDiffractometer getDiffractometer() const;
+    sptrDiffractometer diffractometer() const;
 
     //! Return the number of frames
-    std::size_t getNFrames() const;
-    std::size_t getNRows() const;
-    std::size_t getNCols() const;
+    std::size_t nFrames() const;
+    std::size_t nRows() const;
+    std::size_t nCols() const;
 
     //! Gets a reference to the metadata of the data
-    MetaData* getMetadata() const;
+    MetaData* metadata() const;
 
     //! Gets the the sample states
-    InstrumentStateList& getInstrumentStates();
+    InstrumentStateList& instrumentStates();
 
     //! Gets the the sample states
-    const InstrumentStateList& getInstrumentStates() const;
+    const InstrumentStateList& instrumentStates() const;
 
     //! Get the interpolated state of a given component
-    InstrumentState getInterpolatedState(double frame) const;
+    InstrumentState interpolatedState(double frame) const;
     //ComponentState getInterpolatedState(std::shared_ptr<Component> component, double frame) const;
 
     //! Add a new mask to the data
@@ -103,7 +103,7 @@ public:
     void removeMask(IMask* mask);
 
     //! Return the list of masks
-    const std::set<IMask*>& getMasks();
+    const std::set<IMask*>& masks();
 
     //! Mask a given peak
     void maskPeaks(PeakSet& peaks) const;
@@ -112,7 +112,7 @@ public:
     int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);
 
     //! Read a single frame
-    Eigen::MatrixXi getFrame(std::size_t idx);
+    Eigen::MatrixXi frame(std::size_t idx);
 
     //! Get the file handle.
     void open();
@@ -124,11 +124,11 @@ public:
     bool isOpened() const;
 
     //!
-    std::size_t getFileSize() const;//
+    std::size_t fileSize() const;//
     void saveHDF5(const std::string& filename); // const;
     
     //! Get background
-    double getBackgroundLevel(const sptrProgressHandler& progress);
+    double backgroundLevel(const sptrProgressHandler& progress);
 
     //! Integrate intensities of all peaks
     void integratePeaks(const PeakSet& peaks, double bkg_begin = 5.0, double bkg_end = 10.0, const sptrProgressHandler& handler = nullptr);

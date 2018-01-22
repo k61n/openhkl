@@ -11,10 +11,10 @@ ThreadedFrameIterator::ThreadedFrameIterator(DataSet& data, unsigned int idx)
 {
     // unused variable
     //std::launch policy = std::launch::async;
-    unsigned int nframes = _data.getNFrames();
+    unsigned int nframes = _data.nFrames();
 
     if (_index < nframes) {
-        _currentFrame = _data.getFrame(_index).cast<double>();
+        _currentFrame = _data.frame(_index).cast<double>();
     }
 
     if ( _index+1 < nframes ) {
@@ -22,15 +22,15 @@ ThreadedFrameIterator::ThreadedFrameIterator(DataSet& data, unsigned int idx)
     }
 }
 
-RealMatrix &ThreadedFrameIterator::getFrame()
+RealMatrix &ThreadedFrameIterator::frame()
 {
-    assert(_index < _data.getNFrames() );
+    assert(_index < _data.nFrames() );
     return _currentFrame;
 }
 
 void ThreadedFrameIterator::advance()
 {
-    unsigned int nframes = _data.getNFrames();
+    unsigned int nframes = _data.nFrames();
     ++_index;
 
     if (_index < nframes) {
@@ -45,7 +45,7 @@ void ThreadedFrameIterator::advance()
 std::shared_future<RealMatrix> ThreadedFrameIterator::getFrameAsync(int idx)
 {
     auto get_fn = [=] () -> RealMatrix {
-        return _data.getFrame(idx).cast<double>();
+        return _data.frame(idx).cast<double>();
     };
     std::launch policy = std::launch::async;
     return std::shared_future<RealMatrix>(std::async(policy, get_fn));

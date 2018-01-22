@@ -44,7 +44,7 @@ PeakSet PeakFinder::find(DataList numors)
         try {
             // compute median only if necessary
             if (_thresholdType == 0) {
-                _median = static_cast<int>(numor->getBackgroundLevel(_handler))+1;
+                _median = static_cast<int>(numor->backgroundLevel(_handler))+1;
             }
         }
         catch (...) {
@@ -127,10 +127,10 @@ PeakSet PeakFinder::find(DataList numors)
         }
 
         int count = 0;
-        auto dect = numor->getDiffractometer()->getDetector();
+        auto dect = numor->diffractometer()->getDetector();
 
         AABB dAABB(Eigen::Vector3d(0,0,0),
-                   Eigen::Vector3d(dect->getNCols(), dect->getNRows(), numor->getNFrames()-1)
+                   Eigen::Vector3d(dect->getNCols(), dect->getNRows(), numor->nFrames()-1)
                     );
 
         for (auto& blob : blobs) {

@@ -15,7 +15,7 @@ class TestWorkFlow(unittest.TestCase):
         reader = nsx.HDF5DataReader("gal3.hdf", diff)
         data = nsx.DataSet(reader, diff)
 
-        kernel = nsx.AnnularKernel(data.getNRows(), data.getNCols())
+        kernel = nsx.AnnularKernel(data.nRows(), data.nCols())
         kernel_image = kernel.getKernel()
         convolver = nsx.Convolver()
         convolver.setKernel(kernel_image)

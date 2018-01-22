@@ -21,8 +21,8 @@ int main()
         dataf = factory.create("", "D10_ascii_example", diff);
         dataf->open();
 
-        for (size_t i = 0; i < dataf->getNFrames(); ++i) {
-            frames.push_back(dataf->getFrame(i));
+        for (size_t i = 0; i < dataf->nFrames(); ++i) {
+            frames.push_back(dataf->frame(i));
         }
 
         dataf->saveHDF5("D10_hdf5_example.h5");
@@ -33,8 +33,8 @@ int main()
 
         NSX_CHECK_ASSERT(dataf != nullptr);
 
-        for (size_t i = 0; i < dataf->getNFrames(); ++i) {
-            NSX_CHECK_ASSERT(dataf->getFrame(i) == frames[i]);
+        for (size_t i = 0; i < dataf->nFrames(); ++i) {
+            NSX_CHECK_ASSERT(dataf->frame(i) == frames[i]);
         }
         dataf->close();
     }

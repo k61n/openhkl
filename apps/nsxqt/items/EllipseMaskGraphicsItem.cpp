@@ -110,7 +110,7 @@ void EllipseMaskGraphicsItem::updateAABB()
     QPointF tl=sceneBoundingRect().topLeft();
     QPointF br=sceneBoundingRect().bottomRight();
     _aabb->setLower({tl.x(),tl.y(),0});
-    _aabb->setUpper({br.x(),br.y(),static_cast<double>(_data->getNFrames())});
+    _aabb->setUpper({br.x(),br.y(),static_cast<double>(_data->nFrames())});
 }
 
 void EllipseMaskGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)

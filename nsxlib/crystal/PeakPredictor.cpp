@@ -71,11 +71,11 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
 {
     int predicted_peaks = 0;
 
-    auto& mono = _data->getDiffractometer()->getSource()->getSelectedMonochromator();
+    auto& mono = _data->diffractometer()->getSource()->getSelectedMonochromator();
     const double wavelength = mono.getWavelength();
     PeakSet calculated_peaks;    
 
-    auto sample = _data->getDiffractometer()->getSample();
+    auto sample = _data->diffractometer()->getSample();
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
 
     for (unsigned int i = 0; i < ncrystals; ++i) {
@@ -234,17 +234,17 @@ PeakList PeakPredictor::predictPeaks(const std::vector<MillerIndex>& hkls, const
 std::vector<DirectVector> PeakPredictor::getEvents(const std::vector<ReciprocalVector>& sample_qs) const
 {
     std::vector<DirectVector> events;
-    unsigned int scanSize = _data->getNFrames();
+    unsigned int scanSize = _data->nFrames();
 
     std::vector<Eigen::RowVector3d> ki;
     ki.reserve(scanSize);
 
     std::vector<Eigen::Matrix3d> sample_to_lab;
     sample_to_lab.reserve(scanSize);
-    auto diffractometer = _data->getDiffractometer();
+    auto diffractometer = _data->diffractometer();
     
     for (unsigned int s = 0; s < scanSize; ++s) {
-        auto state = _data->getInterpolatedState(s);
+        auto state = _data->interpolatedState(s);
         sample_to_lab.push_back(state.sampleOrientation().transpose());
         ki.push_back(state.ki().rowVector());
     } 
@@ -288,7 +288,7 @@ std::vector<DirectVector> PeakPredictor::getEvents(const std::vector<ReciprocalV
                 }
         
                 t += i-1;
-                const InstrumentState& state = _data->getInterpolatedState(t);
+                const InstrumentState& state = _data->interpolatedState(t);
 
                 // transform back to detector
   
@@ -299,7 +299,7 @@ std::vector<DirectVector> PeakPredictor::getEvents(const std::vector<ReciprocalV
                 //const ComponentState& cs=state.sample;
         
                 double time;
-                auto detector = _data->getDiffractometer()->getDetector();
+                auto detector = _data->diffractometer()->getDetector();
                 bool accept = detector->receiveKf(px, py,DirectVector((kf*state.detectorOrientation).transpose()), DirectVector(state.samplePosition),time);
 
                 if (accept) {

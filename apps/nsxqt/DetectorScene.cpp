@@ -109,7 +109,7 @@ void DetectorScene::setData(std::shared_ptr<SessionModel> session, const nsx::sp
     }
 
     _currentData->open();
-    auto det = _currentData->getDiffractometer()->getDetector();
+    auto det = _currentData->diffractometer()->getDetector();
     _zoomStack.clear();
     _zoomStack.push_back(QRect(0,0,int(det->getNCols()),int(det->getNRows())));
 
@@ -461,7 +461,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     if (!_currentData) {
         return;
     }
-    auto instr=_currentData->getDiffractometer();
+    auto instr=_currentData->diffractometer();
     auto det=instr->getDetector();
 
     int nrows = int(det->getNRows());
@@ -475,7 +475,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     }
     int intensity = _currentFrame(row,col);
 
-    nsx::InstrumentState state = _currentData->getInterpolatedState(_currentFrameIndex);
+    nsx::InstrumentState state = _currentData->interpolatedState(_currentFrameIndex);
 
     //const auto& samplev = state.sample.values();
     //const auto& detectorv = state.detector.values();
@@ -485,7 +485,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
     QString ttip;
 
-    auto pos = _currentData->getDiffractometer()->getDetector()->pixelPosition(col, row);
+    auto pos = _currentData->diffractometer()->getDetector()->pixelPosition(col, row);
 
     double gamma = state.gamma(pos);
     double nu = state.nu(pos);
@@ -532,13 +532,13 @@ void DetectorScene::loadCurrentImage(bool newimage)
     // Full image size, front of the stack
     QRect& full = _zoomStack.front();
 
-    auto det = _currentData->getDiffractometer()->getDetector();
+    auto det = _currentData->diffractometer()->getDetector();
 
-    if (_currentFrameIndex >= _currentData->getNFrames()) {
-        _currentFrameIndex = _currentData->getNFrames()-1;
+    if (_currentFrameIndex >= _currentData->nFrames()) {
+        _currentFrameIndex = _currentData->nFrames()-1;
     }
     if (newimage) {
-        _currentFrame =_currentData->getFrame(_currentFrameIndex);
+        _currentFrame =_currentData->frame(_currentFrameIndex);
     }
     if (_image == nullptr) {
         _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
@@ -549,8 +549,8 @@ void DetectorScene::loadCurrentImage(bool newimage)
 
     // update the integration region pixmap
     if (_drawIntegrationRegion && g_drawMask) {
-        const int ncols = _currentData->getNCols();
-        const int nrows = _currentData->getNRows();
+        const int ncols = _currentData->nCols();
+        const int nrows = _currentData->nRows();
 
         QImage region_img(ncols, nrows, QImage::Format_ARGB32);
 
@@ -577,8 +577,8 @@ void DetectorScene::loadCurrentImage(bool newimage)
             auto cmin = std::max(0l, std::lround(std::floor(lower[0])));
             auto rmin = std::max(0l, std::lround(std::floor(lower[1])));
 
-            auto cmax = std::min(long(_currentData->getNCols()), std::lround(std::ceil(upper[0]))+1);
-            auto rmax = std::min(long(_currentData->getNRows()), std::lround(std::ceil(upper[1]))+1);
+            auto cmax = std::min(long(_currentData->nCols()), std::lround(std::ceil(upper[0]))+1);
+            auto rmax = std::min(long(_currentData->nRows()), std::lround(std::ceil(upper[1]))+1);
 
             for (auto c = cmin; c < cmax; ++c) {
                 for (auto r = rmin; r < rmax; ++r) {

@@ -165,7 +165,7 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
 
     if (indexList.size()) {
         QMenu* plotasmenu=menu->addMenu("Plot as");
-        nsx::MetaData* met=peaks[indexList[0].row()]->data()->getMetadata();
+        nsx::MetaData* met=peaks[indexList[0].row()]->data()->metadata();
         const std::set<std::string>& keys=met->getAllKeys();
         for (const auto& key : keys) {
             try {
@@ -315,7 +315,7 @@ void PeakTableView::plotAs(const std::string& key)
 
     for (int i=0;i<nPoints;++i) {
         nsx::sptrPeak3D p=peaks[indexList[i].row()];
-        x[i]=p->data()->getMetadata()->getKey<double>(key);
+        x[i]=p->data()->metadata()->getKey<double>(key);
         y[i]=p->getScaledIntensity().value();
         e[i]=p->getScaledIntensity().sigma();
     }
@@ -336,7 +336,7 @@ std::string PeakTableView::getPeaksRange() const
     std::set<std::string> temp;
 
     for (auto&& p : peaks) {
-        temp.insert(std::to_string(p->data()->getMetadata()->getKey<int>("Numor")));
+        temp.insert(std::to_string(p->data()->metadata()->getKey<int>("Numor")));
     }
     std::string range(*(temp.begin()));
     std::string last=*(temp.rbegin());

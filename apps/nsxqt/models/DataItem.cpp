@@ -25,7 +25,7 @@ DataItem::DataItem(nsx::sptrExperiment experiment) : TreeItem(experiment)
 
 NumorItem* DataItem::importData(nsx::sptrDataSet data)
 {
-    auto&& filename = data->getFilename();
+    auto&& filename = data->filename();
 
     QString filename_qstr(filename.c_str());
     QFileInfo fileinfo(filename_qstr);

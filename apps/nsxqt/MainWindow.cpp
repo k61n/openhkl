@@ -263,7 +263,7 @@ void MainWindow::changeData(nsx::sptrDataSet data)
     _ui->frameFrame->setEnabled(true);
     _ui->intensityFrame->setEnabled(true);
 
-    int frameMax = int(data->getNFrames()-1);
+    int frameMax = int(data->nFrames()-1);
     int frame = _ui->frame->value();
 
     if (frame > frameMax) {
@@ -596,10 +596,10 @@ void MainWindow::on_actionFit_profiles_triggered()
         auto current_peak = 0;
 
         std::vector<Eigen::MatrixXd> frames;
-        frames.reserve(d->getNFrames());
+        frames.reserve(d->nFrames());
 
-        for (size_t f = 0; f < d->getNFrames(); ++f) {
-            frames.emplace_back(d->getFrame(f).cast<double>());
+        for (size_t f = 0; f < d->nFrames(); ++f) {
+            frames.emplace_back(d->frame(f).cast<double>());
         }
 
         nsx::PeakSet pset;
@@ -625,13 +625,13 @@ void MainWindow::on_actionFit_profiles_triggered()
             auto upper = bb.upper();
 
             int fmin = std::max(0, int(lower[2]));
-            int fmax = std::min(int(peak->data()->getNFrames())-1, int(upper[2]));
+            int fmax = std::min(int(peak->data()->nFrames())-1, int(upper[2]));
 
             int xmin = std::max(0, int(lower[0]));
             int ymin = std::max(0, int(lower[1]));
 
-            int xmax = std::min(int(d->getNCols())-1, int(upper[0]));
-            int ymax = std::min(int(d->getNRows())-1, int(upper[1]));
+            int xmax = std::min(int(d->nCols())-1, int(upper[0]));
+            int ymax = std::min(int(d->nRows())-1, int(upper[1]));
 
             int npoints = (fmax-fmin)*(xmax-xmin)*(ymax-ymin);
             int point = 0;

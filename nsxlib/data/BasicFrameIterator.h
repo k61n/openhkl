@@ -10,7 +10,7 @@ class BasicFrameIterator: public IFrameIterator {
 public:
     BasicFrameIterator(DataSet& data, unsigned int idx);
     ~BasicFrameIterator() = default;
-    RealMatrix& getFrame() override;
+    RealMatrix& frame() override;
     void advance() override;
 private:
     RealMatrix _currentFrame;

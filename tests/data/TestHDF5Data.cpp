@@ -13,7 +13,7 @@ int main()
     auto dataf = factory.create("hdf", "H5_example.hdf", diff);
 
     dataf->open();
-    Eigen::MatrixXi v = dataf->getFrame(0);
+    Eigen::MatrixXi v = dataf->frame(0);
 
     // Check the total number of count in the frame 0
     NSX_CHECK_EQUAL(v.sum(), 1282584565);

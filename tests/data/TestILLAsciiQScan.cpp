@@ -23,12 +23,12 @@ int main()
     try {
         diff = nsx::Diffractometer::build("D9");
         dataf = factory.create("", "D9_QSCAN", diff);
-        meta=dataf->getMetadata();
+        meta=dataf->metadata();
 
         NSX_CHECK_ASSERT(meta->getKey<int>("nbang")==4);
 
         dataf->open();
-        v = dataf->getFrame(0);
+        v = dataf->frame(0);
     }
     catch (std::exception& e) {
         NSX_FAIL(std::string("caught exception: ") + e.what());
