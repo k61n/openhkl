@@ -171,8 +171,9 @@ PeakSet PeakFinder::find(DataList numors)
             _handler->setProgress(0);
         }
 
-        const double scale = getScale(_integrationConfidence);
-        numor->integratePeaks(numor_peaks, scale, 2.0*scale, false, _handler);
+        // todo: user input bkg_begin and bkg_end directly
+        const double bkg_begin = getScale(_integrationConfidence)+3;
+        numor->integratePeaks(numor_peaks, bkg_begin, bkg_begin+3, _handler);
         numor->close();
         //_ui->progressBar->setValue(++comp);
         std::cout << "Found " << numor_peaks.size() << " peaks." << std::endl;

@@ -69,7 +69,7 @@ int nsx::UnitTest_DataSet::run()
         auto sample_U = sample_trans.rotation();
         auto detector_U = detector_trans.rotation();
 
-        NSX_CHECK_ASSERT( (sample_U-state.sampleOrientation).norm() < 2e-5);
+        NSX_CHECK_ASSERT( (sample_U-state.fixedSampleOrientation).norm() < 2e-5);
         NSX_CHECK_ASSERT( (detector_U-state.detectorOrientation).norm() < 2e-5);
 
         auto detector_offset = detector_trans.translation();

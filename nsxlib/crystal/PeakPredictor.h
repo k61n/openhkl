@@ -57,7 +57,7 @@ public:
 
     //! Is the peak h,k,l in Bragg condition in this dataset. Return Peak pointer if true,
     //! otherwise nullptr.
-    PeakList predictPeaks(const std::vector<Eigen::RowVector3d>& hkls, const Eigen::Matrix3d& BU);
+    PeakList predictPeaks(const std::vector<MillerIndex>& hkls, const Eigen::Matrix3d& BU);
     
     //! Return vector of detector events corresponding to the given q values.
     std::vector<DirectVector> getEvents(const std::vector<ReciprocalVector>& qs) const;
@@ -73,10 +73,6 @@ public:
     double _dmin;
     //! Maximum d value used in prediction.
     double _dmax;
-    //! Scale factor used for peak integration.
-    double _peakScale;
-    //! Scale factor used for background calculation.
-    double _bkgScale;  
     //! Minimum value of \f$I / \sigma_I\f$ to use for neighbor search.
     double _Isigma;
     //! Minimum number of nearby peaks to use for shape determination.

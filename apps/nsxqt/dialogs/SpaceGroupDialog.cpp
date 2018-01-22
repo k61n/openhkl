@@ -19,6 +19,7 @@
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Logger.h>
+#include <nsxlib/MillerIndex.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/RFactor.h>
@@ -62,7 +63,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
 {
     auto&& symbols = nsx::SpaceGroup::symbols();
 
-    std::vector<nsx::ReciprocalVector> hkls;
+    nsx::MillerIndexList hkls;
 
     if ( _peaks.size()  == 0) {
         nsx::error() << "Need at least one peak to find space group!";
@@ -90,7 +91,8 @@ void SpaceGroupDialog::evaluateSpaceGroups()
                 return;
             }
         }
-        hkls.emplace_back(_cell->getIntegerMillerIndices(peak->getQ()).cast<double>());
+        auto indx = _cell->getIntegerMillerIndices(peak->getQ());
+        hkls.emplace_back(indx[0], indx[1], indx[2]);
     }
 
     if (hkls.size() == 0) {

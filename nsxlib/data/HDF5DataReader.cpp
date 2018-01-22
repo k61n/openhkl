@@ -26,10 +26,20 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, sptrDiffractometer d
       _space(nullptr),
       _memspace(nullptr)
 {
-    _file = std::unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
+    H5::Group infoGroup, experimentGroup, detectorGroup, sampleGroup;
 
-    // Read the info group and store in metadata
-    H5::Group infoGroup(_file->openGroup("/Info"));
+    try {
+        _file = std::unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
+        infoGroup = _file->openGroup("/Info");
+        experimentGroup = _file->openGroup("/Experiment");
+        detectorGroup =_file->openGroup("/Data/Scan/Detector");
+        sampleGroup =_file->openGroup("/Data/Scan/Sample");
+    } catch (H5::Exception& e) {
+        std::string what = e.getDetailMsg();
+        throw std::runtime_error(what);
+    }
+    
+    // Read the info group and store in metadata    
     int ninfo=infoGroup.getNumAttrs();
     for (int i=0;i<ninfo;++i) {
         H5::Attribute attr=infoGroup.openAttribute(i);
@@ -40,7 +50,6 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, sptrDiffractometer d
     }
 
     // Read the experiment group and store all int and double attributes in metadata
-    H5::Group experimentGroup(_file->openGroup("/Experiment"));
     int nexps=experimentGroup.getNumAttrs();
     for (int i=0;i<nexps;++i) {
         H5::Attribute attr=experimentGroup.openAttribute(i);
@@ -60,7 +69,6 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, sptrDiffractometer d
     _nFrames=_metadata.getKey<int>("npdone");
 
     // Getting Scan parameters for the detector
-    H5::Group detectorGroup(_file->openGroup("/Data/Scan/Detector"));
     std::vector<std::string> axesS=_diffractometer->getDetector()->getGonio()->getPhysicalAxesNames();
 
     Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm(axesS.size(),_nFrames);
@@ -98,7 +106,6 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, sptrDiffractometer d
     }
 
     // Getting Scan parameters for the sample
-    H5::Group sampleGroup(_file->openGroup("/Data/Scan/Sample"));
     axesS=_diffractometer->getSample()->getGonio()->getPhysicalAxesNames();
 
     dm.resize(axesS.size(),_nFrames);

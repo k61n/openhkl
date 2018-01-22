@@ -42,6 +42,7 @@
 #include "GeometryTypes.h"
 #include "Gonio.h"
 #include "InstrumentState.h"
+#include "MillerIndex.h"
 #include "Octree.h"
 #include "Peak3D.h"
 #include "PeakPredictor.h"
@@ -58,9 +59,7 @@ namespace nsx {
 
 PeakPredictor::PeakPredictor(sptrDataSet data):
     _dmin(2.0),
-    _dmax(50.0),
-    _peakScale(3.0),
-    _bkgScale(6.0),    
+    _dmax(50.0),   
     _Isigma(2.0),
     _minimumNeighbors(10),
     _handler(nullptr),
@@ -70,21 +69,6 @@ PeakPredictor::PeakPredictor(sptrDataSet data):
 
 PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_peaks)
 {
-    class compare_fn {
-    public:
-        auto operator()(const Eigen::RowVector3i a, const Eigen::RowVector3i b) const -> bool
-        {
-            if (a(0) != b(0))
-                return a(0) < b(0);
-
-            if (a(1) != b(1))
-                return a(1) < b(1);
-
-            return a(2) < b(2);
-        }
-    };
-
-
     int predicted_peaks = 0;
 
     auto& mono = _data->getDiffractometer()->getSource()->getSelectedMonochromator();
@@ -95,7 +79,7 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
 
     for (unsigned int i = 0; i < ncrystals; ++i) {
-        std::set<Eigen::RowVector3i, compare_fn> found_hkls;
+        std::set<MillerIndex> found_hkls;
         auto cell = sample->unitCell(i);
         auto UB = cell->reciprocalBasis();        
         std::vector<sptrPeak3D> peaks_to_use;
@@ -111,8 +95,8 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
             if (peak->data() != _data || peak->activeUnitCell() != cell) {
                 continue;
             }            
-            Eigen::RowVector3i hkl = cell->getIntegerMillerIndices(peak->getQ());
-            found_hkls.insert(hkl);
+            
+            found_hkls.insert(cell->getIntegerMillerIndices(peak->getQ()));
 
             Intensity inten = peak->getCorrectedIntensity();
 
@@ -143,20 +127,18 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
         auto predicted_hkls = sample->unitCell(i)->generateReflectionsInShell(_dmin, _dmax, wavelength);
 
         // todo: clean up DataSet interface for predicted peaks
-        std::vector<Eigen::RowVector3d> hkls_double;
+        std::vector<MillerIndex> hkls_keep;
 
-        for (auto&& hkl: predicted_hkls) {
-            Eigen::RowVector3i int_hkl(std::lround(hkl(0)), std::lround(hkl(1)), std::lround(hkl(2)));
-
+        for (auto&& idx: predicted_hkls) {
             // if we keep reference peaks, check whether this hkl is part of reference set
-            if (keepObserved && found_hkls.find(int_hkl) != found_hkls.end()) {
+            if (keepObserved && found_hkls.find(idx) != found_hkls.end()) {
                 continue;
             }            
-            hkls_double.emplace_back(hkl.cast<double>());
+            hkls_keep.emplace_back(idx);
         }
 
         predicted_peaks += predicted_hkls.size();
-        PeakList peaks = predictPeaks(hkls_double, UB);
+        PeakList peaks = predictPeaks(hkls_keep, UB);
         int current_peak = 0;
   
         _handler->setStatus("Adding calculated peaks...");
@@ -210,22 +192,32 @@ Eigen::Matrix3d PeakPredictor::averageQShape(const std::vector<sptrPeak3D>& peak
 
     for(const auto& p: peaks) {
         const double I = p->getCorrectedIntensity().value();
-        covariance += I*p->qShape().inverseMetric();
-        total_intensity += I;
+        try {
+            covariance += I*p->qShape().inverseMetric();
+            total_intensity += I;
+        } catch (...) {
+            // couldn't get q shape...
+        }
     }
+
+    // sanity check
+    if (total_intensity < 1.0) {
+        throw std::runtime_error("Could not find Q shape: too few valid peaks");
+    }
+
     covariance /= total_intensity;
     return covariance.inverse();
 }
 
 
 
-PeakList PeakPredictor::predictPeaks(const std::vector<Eigen::RowVector3d>& hkls, const Eigen::Matrix3d& BU)
+PeakList PeakPredictor::predictPeaks(const std::vector<MillerIndex>& hkls, const Eigen::Matrix3d& BU)
 {
     std::vector<ReciprocalVector> qs;
     PeakList peaks;
 
-    for (auto hkl: hkls) {
-        qs.emplace_back(hkl*BU);
+    for (auto idx: hkls) {
+        qs.emplace_back(idx.rowVector().cast<double>()*BU);
     }
 
     std::vector<DirectVector> events = getEvents(qs);
@@ -253,7 +245,7 @@ std::vector<DirectVector> PeakPredictor::getEvents(const std::vector<ReciprocalV
     
     for (unsigned int s = 0; s < scanSize; ++s) {
         auto state = _data->getInterpolatedState(s);
-        sample_to_lab.push_back(state.sampleOrientation.transpose());
+        sample_to_lab.push_back(state.sampleOrientation().transpose());
         ki.push_back(state.ki().rowVector());
     } 
 

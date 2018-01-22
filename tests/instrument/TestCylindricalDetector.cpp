@@ -29,13 +29,7 @@ int main()
 
     // Create a fake instrument state
     nsx::InstrumentState state1;
-    state1.wavelength = 1.0;
-    state1.ni = Eigen::Vector3d(0.0,1.0,0.0);
-    state1.detectorOffset = Eigen::Vector3d::Zero();
-    state1.detectorOrientation = Eigen::Matrix3d::Identity();
-    state1.sampleOrientation = Eigen::Matrix3d::Identity();
-    state1.samplePosition = Eigen::Vector3d::Zero();
-
+    
     // Should be center of the detector so gamma,nu=0 at rest
     double gamma = state1.gamma(pixel_position);
     NSX_CHECK_SMALL(gamma,tolerance);
@@ -48,14 +42,10 @@ int main()
 
     // Rotate the detector by 90 deg clockwise
     nsx::InstrumentState state2;
-    state2.wavelength = 1.0;
-    state2.ni = Eigen::Vector3d(0.0,1.0,0.0);
-    state2.detectorOffset = Eigen::Vector3d::Zero();
     state2.detectorOrientation <<  0, 1, 0,
                                   -1, 0, 0,
                                    0, 0, 1;
-    state2.sampleOrientation = Eigen::Matrix3d::Identity();
-    state2.samplePosition = Eigen::Vector3d::Zero();
+    
 
     gamma = state2.gamma(pixel_position);
     NSX_CHECK_CLOSE(gamma,90*nsx::deg,tolerance);

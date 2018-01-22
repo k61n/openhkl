@@ -16,7 +16,7 @@ int main()
     nsx::Ellipsoid ell(center,radii,axes);
 
     nsx::IntegrationRegion region(ell,1.0,2.0,4);
-    region.setBestSlice(6);
+    region.setBestSlice(4);
 
     // Test that those points are neither in any integration slice neither in background
     NSX_CHECK_EQUAL(region.classifySlice(Eigen::Vector3d( 12,  54, 25)),-1);

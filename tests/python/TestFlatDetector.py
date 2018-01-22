@@ -24,12 +24,6 @@ class TestFlatDetector(unittest.TestCase):
         self.assertLess(center[2][0],tolerance)
 
         state1 = nsx.InstrumentState()
-        state1.wavelength = 1.0;
-        state1.ni = np.array([[0.0,1.0,0.0]],dtype=np.float)
-        state1.detectorOffset = np.zeros((3,1),dtype=np.float)
-        state1.detectorOrientation = np.identity(3, dtype=np.float)
-        state1.sampleOrientation = np.identity(3, dtype=np.float)
-        state1.samplePosition = np.zeros((3,1),dtype=np.float)
 
         gamma = state1.gamma(pixel_position)
         self.assertLess(gamma,tolerance)
@@ -42,12 +36,7 @@ class TestFlatDetector(unittest.TestCase):
         
         # put detetctor at 90deg, event should point along x
         state2 = nsx.InstrumentState()
-        state2.wavelength = 1.0;
-        state2.ni = np.array([[0.0,1.0,0.0]],dtype=np.float)
-        state2.detectorOffset = np.zeros((3,1),dtype=np.float)
         state2.detectorOrientation = np.array([[0,1,0],[-1,0,0],[0,0,1]], dtype=np.float)
-        state2.sampleOrientation = np.identity(3, dtype=np.float)
-        state2.samplePosition = np.zeros((3,1),dtype=np.float)
 
         gamma = state2.gamma(pixel_position)
         self.assertAlmostEqual(gamma,np.deg2rad(90),delta=tolerance)

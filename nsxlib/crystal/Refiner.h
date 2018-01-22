@@ -44,6 +44,7 @@
 
 namespace nsx {
 
+
 //! Class for UB and offset refinement
 class Refiner {
 
@@ -58,6 +59,10 @@ public:
     void refineDetectorOffset(InstrumentStateList& states);
 
     void refineSamplePosition(InstrumentStateList& states);
+
+    void refineSampleOrientation(InstrumentStateList& states);
+
+    void refineKi(InstrumentStateList& states);
 
     bool refine(unsigned int max_iter = 100);
 

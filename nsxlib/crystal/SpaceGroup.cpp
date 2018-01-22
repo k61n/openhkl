@@ -34,6 +34,7 @@
 #include <vector>
 
 #include "Peak3D.h"
+#include "MillerIndex.h"
 #include "ReciprocalVector.h"
 #include "SpaceGroup.h"
 #include "StringIO.h"
@@ -360,13 +361,13 @@ char SpaceGroup::bravaisType() const
     return 'a';
 }
 
-double SpaceGroup::fractionExtinct(const std::vector<ReciprocalVector>& hkls) const
+double SpaceGroup::fractionExtinct(const MillerIndexList& hkls) const
 {
     unsigned int extinct = 0;
     unsigned int total = hkls.size();
 
     for (auto&& hkl : hkls) {
-        if (isExtinct(hkl[0],hkl[1], hkl[2])) {
+        if (isExtinct(hkl)) {
             ++extinct;
         }
     }
@@ -444,21 +445,23 @@ void SpaceGroup::generateGroupElements()
     }
 }
 
-bool SpaceGroup::isExtinct(double h, double k, double l) const
+bool SpaceGroup::isExtinct(const MillerIndex& hkl) const
 {
     // todo(jonathan): improve this routine? need a journal reference
     // check that this produces results consistent with
     // http://www.ccp14.ac.uk/ccp/web-mirrors/powdcell/a_v/v_1/powder/details/extinct.htm
-    Eigen::Vector3d hkl(h,k,l);
+    
+    Eigen::Vector3d hkld = hkl.rowVector().transpose().cast<double>();
+
     for (auto&& element : _groupElements) {
         if (element.hasTranslation()) {
             Eigen::Vector3d t = element.getTranslationPart();
-            double scalar = t.dot(hkl);
+            double scalar = t.dot(hkld);
             std::complex<double> prefactor = 1.0+std::exp(std::complex<double>(0,2*M_PI)*scalar);
             if (std::abs(prefactor)<1e-3) {
                 //if (std::abs(std::remainder(scalar,1.0))>1e-3)
-                Eigen::Vector3d rhkl = element.getRotationPart()*hkl;
-                if (std::abs(rhkl(0)-hkl(0))<1e-3 && std::abs(rhkl(1)-hkl(1))<1e-3 && std::abs(rhkl(2)-hkl(2))<1e-3) {
+                Eigen::Vector3d rhkl = element.getRotationPart()*hkld;
+                if (std::abs(rhkl(0)-hkld(0))<1e-3 && std::abs(rhkl(1)-hkld(1))<1e-3 && std::abs(rhkl(2)-hkld(2))<1e-3) {
                     return true;
                 }
             }
@@ -597,17 +600,16 @@ std::vector<PeakList> SpaceGroup::findEquivalences(const PeakList &peak_list, bo
         bool found_equivalence = false;
         int h1, h2, k1, k2, l1, l2;
         auto cell = peak->activeUnitCell();
-        Eigen::RowVector3i hkl = cell->getIntegerMillerIndices(peak->getQ());
-
-        h1 = hkl[0];
-        k1 = hkl[1];
-        l1 = hkl[2];
+        auto hkl1 = cell->getIntegerMillerIndices(peak->getQ());
+        h1 = hkl1(0);
+        k1 = hkl1(1);
+        l1 = hkl1(2);
 
         for (size_t i = 0; i < peak_equivs.size() && !found_equivalence; ++i) {
-            hkl = cell->getIntegerMillerIndices(peak_equivs[i][0]->getQ());
-            h2 = hkl[0];
-            k2 = hkl[1];
-            l2 = hkl[2];
+            auto hkl2 = cell->getIntegerMillerIndices(peak_equivs[i][0]->getQ());
+            h2 = hkl2(0);
+            k2 = hkl2(1);
+            l2 = hkl2(2);
 
             if ( (friedel && isFriedelEquivalent(h1, k1, l1, h2, k2, l2))
                  || (!friedel && isEquivalent(h1, k1, l1, h2, k2, l2))) {

@@ -150,7 +150,7 @@ std::size_t DataSet::getNRows() const
 InstrumentState DataSet::getInterpolatedState(double frame) const
 {
     if (frame>(_states.size()-1) || frame<0) {
-        throw std::runtime_error("Error when interpolating state: invalid frame value");
+        throw std::runtime_error("Error when interpolating state: invalid frame value: " + std::to_string(frame));
     }
 
     const std::size_t idx = std::size_t(std::lround(std::floor(frame)));
@@ -425,67 +425,30 @@ double DataSet::getBackgroundLevel(const sptrProgressHandler& progress)
     return _background;
 }
 
-void DataSet::integratePeaks(const PeakSet& peaks, double peak_scale, double bkg_scale, bool update_shape, const sptrProgressHandler& handler)
+void DataSet::integratePeaks(const PeakSet& peaks, double bkg_begin, double bkg_end, const sptrProgressHandler& handler)
 {
-    if (handler) {
-        handler->setStatus(("Integrating " + std::to_string(peaks.size()) + " peaks...").c_str());
-        handler->setProgress(0);
-    }
-
     using IntegrationRegion = IntegrationRegion;
     using PeakIntegrator = PeakIntegrator;
     using integrated_peak = std::pair<sptrPeak3D, PeakIntegrator>;
 
     std::vector<integrated_peak> peak_list;
-
     const size_t num_peaks = peaks.size();
-
     peak_list.reserve(num_peaks);
 
-
-    auto peakRadius = [](const Eigen::Matrix3d& shape) -> double {
-        return std::pow(shape.determinant(), -1.0/6.0);
-    };
-
-
-//    // testing: get average peak shape
-    Eigen::Matrix3d avg_peak_shape = Eigen::Matrix3d::Zero();
-    unsigned int num_good_peaks = 0;
-    double avg_peak_radius = 0.0;
-    double peak_radius_std = 0.0;
-
-
-    for(auto&& p: peaks) {
-
-        if (!p->isSelected()) {
+    for (auto&& peak: peaks ) {
+        // skip if peak does not belong to this dataset
+        if (peak->data().get() != this) {
             continue;
         }
-
-        double radius = peakRadius(p->getShape().metric());
-        avg_peak_shape += p->getShape().metric();
-        avg_peak_radius += radius;
-        peak_radius_std += radius*radius;
-        ++num_good_peaks;
-    }
-
-    // too few neighbors to get average shape
-    if (num_good_peaks < 1) {
-        return;
-    }
-
-    avg_peak_shape /= num_good_peaks;
-    avg_peak_radius /= num_good_peaks;
-
-    const double var = (peak_radius_std - avg_peak_radius*avg_peak_radius) / (num_good_peaks-1);
-    peak_radius_std = std::sqrt(var);
-
-    std::cout << "avg radius: " << avg_peak_radius << std::endl;
-    std::cout << "std. dev:   " << peak_radius_std << std::endl;
-
-    for (auto&& peak: peaks ) {
-        IntegrationRegion region(peak->getShape(), peak_scale, 0.5*(peak_scale+bkg_scale), bkg_scale);
+        // todo: n slices probably should not be hard-coded
+        IntegrationRegion region(peak->getShape(), bkg_begin, bkg_end, int(bkg_begin*5));
         PeakIntegrator integrator(region, *this);
         peak_list.emplace_back(peak, integrator);
+    }
+
+    if (handler) {
+        handler->setStatus(("Integrating " + std::to_string(peak_list.size()) + " peaks...").c_str());
+        handler->setProgress(0);
     }
 
     size_t idx = 0;
@@ -518,78 +481,11 @@ void DataSet::integratePeaks(const PeakSet& peaks, double peak_scale, double bkg
         }
     }
 
-    // testing: don't update shape?!
-    // update_shape = false;
-    const double confidence = getConfidence(1.0); // todo: should not be hard coded
-
     for (auto&& tup: peak_list) {
         auto&& peak = tup.first;
         auto&& integrator = tup.second;
         integrator.end();
-        peak->updateIntegration(integrator);
-
-        if (!update_shape) {
-            continue;
-        }
-
-        // update the peak shape
-        auto&& maybe_shape = integrator.getBlobShape(confidence);
-
-        // could not get shape (peak too weak?)
-        if (maybe_shape.isNothing()) {
-            peak->setSelected(false);
-            continue;
-        }
-
-        auto&& new_shape = maybe_shape.get();
-        auto&& old_shape = peak->getShape();
-        Eigen::RowVector3d hkl_old, hkl_new;
-
-        const double radius = peakRadius(new_shape.metric());
-        const double volume = 4.0*M_PI/3.0 * radius*radius*radius;
-
-        if (volume < 1.0) {
-            peak->setSelected(false);
-            continue;
-        }
-
-        if (std::fabs(radius-avg_peak_radius) > 3.5*peak_radius_std) {
-            peak->setSelected(false);
-            continue;
-        }
-
-        auto aabb = new_shape.aabb();
-        auto lb = aabb.lower();
-        auto ub = aabb.upper();
-
-        // not enough mass to determine ellipse
-        if (std::isnan((ub-lb).squaredNorm())) {
-            peak->setSelected(false);
-            continue;
-        }
-
-        // outside of frame
-        if (lb[0] < 0.0 || lb[1] < 0.0 || lb[2] < 0.0) {
-            peak->setSelected(false);
-            continue;
-        }
-        if (ub[0] > _ncols-1 || ub[1] > _nrows-1 || ub[2] > _nFrames-1) {
-            peak->setSelected(false);
-            continue;
-        }
-
-        auto cell = peak->activeUnitCell();
-        auto q = peak->getQ();
-
-        cell->getMillerIndices(q, hkl_old);
-        peak->setShape(new_shape);
-        cell->getMillerIndices(q, hkl_new);
-
-        // indices disagree
-        if ( (hkl_old-hkl_new).squaredNorm() > 1e-6 ) {
-            peak->setShape(old_shape);
-            peak->setSelected(false);
-        }
+        peak->updateIntegration(integrator);      
     }
 }
 

@@ -9,6 +9,7 @@
 
 namespace nsx {
 
+class MillerIndex;
 class MergedPeak;
 class Peak3D;
 class PeakIntegrator;
@@ -19,6 +20,8 @@ class SpaceGroup;
 class SpaceGroupSymbols;
 class SymOp;
 class UnitCell;
+
+using MillerIndexList = std::vector<MillerIndex>;
 
 using affineTransformation=Eigen::Transform<double,3,Eigen::Affine>;
 

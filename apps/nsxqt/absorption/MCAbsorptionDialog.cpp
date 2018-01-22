@@ -89,7 +89,7 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
             auto position = data->getDiffractometer()->getDetector()->pixelPosition(coord[0], coord[1]);
             auto kf = state.kfLab(position);
             // todo: check coordinate systems here, may not be consistent
-            double transmission=mca.run(ui->spinBox->value(),kf.rowVector(),state.sampleOrientation);
+            double transmission=mca.run(ui->spinBox->value(),kf.rowVector(),state.sampleOrientation());
             p->setTransmission(transmission);
             ui->progressBar_MCStatus->setValue(++progress);
         }

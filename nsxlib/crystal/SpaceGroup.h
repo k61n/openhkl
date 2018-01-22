@@ -64,7 +64,7 @@ public:
     //! Get a vector containing the Symmetry operations for this space group
     const SymOpList& groupElements() const;
     //! Determine whether a h,k,l reflection is forbidden
-    bool isExtinct(double h, double k, double l) const;
+    bool isExtinct(const MillerIndex& hkl) const;
     //! Return true if centrosymmetric
     bool isCentrosymmetric() const;
     //! Print to a stream
@@ -72,7 +72,7 @@ public:
     //! Return the type of cell (triclinic, monoclinic ...)
     char bravaisType() const;
     //! Return the percentage of extinct reflections
-    double fractionExtinct(const std::vector<ReciprocalVector>& hkls) const;
+    double fractionExtinct(const MillerIndexList& hkls) const;
     //! Return the Bravais type symbol
     std::string bravaisTypeSymbol() const;
     //! Return the ID of the space group

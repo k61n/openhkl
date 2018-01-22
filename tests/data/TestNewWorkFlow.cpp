@@ -117,7 +117,8 @@ int main()
 
     // reintegrate peaks
     const double scale = nsx::getScale(0.997);
-    dataf->integratePeaks(found_peaks, scale, 2.0*scale, true);
+    // todo: bkg_begin and bkg_end
+    dataf->integratePeaks(found_peaks, scale, 2.0*scale);
 
     indexed_peaks = numIndexedPeaks();
     NSX_CHECK_ASSERT(indexed_peaks > 600);
@@ -169,8 +170,6 @@ int main()
     nsx::PeakPredictor predictor(dataf);
     predictor._dmin = 2.1;
     predictor._dmax = 50.0;  
-    predictor._peakScale = 1.0;
-    predictor._bkgScale = 3.0;
     predictor._minimumNeighbors = 10;
 
     predictor._handler = std::shared_ptr<nsx::ProgressHandler>(new nsx::ProgressHandler());
