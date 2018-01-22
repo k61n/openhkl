@@ -192,16 +192,16 @@ sptrUnitCell RefinementBatch::cell() const
     return _cell;
 }
     
-Eigen::MatrixXd RefinementBatch::constraints() const
+Eigen::SparseMatrix<double> RefinementBatch::constraints() const
 {
-    Eigen::MatrixXd C(_constraints.size(), _params.nparams());
+    Eigen::SparseMatrix<double> C(_constraints.size(), _params.nparams());
     C.setZero();
 
     for (size_t i = 0; i < _constraints.size(); ++i) {
         auto id1 = _constraints[i].first;
         auto id2 = _constraints[i].second;
-        C(i, id1) = 1.0;
-        C(i, id2) = -1.0;
+        C.coeffRef(i, id1) = 1.0;
+        C.coeffRef(i, id2) = -1.0;
     }
     return C;   
 }

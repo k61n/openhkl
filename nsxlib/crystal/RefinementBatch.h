@@ -39,6 +39,8 @@
 #include <map>
 #include <vector>
 
+#include <Eigen/SparseCore>
+
 #include "CrystalTypes.h"
 #include "FitParameters.h"
 #include "InstrumentTypes.h"
@@ -74,7 +76,7 @@ public:
 
     sptrUnitCell cell() const;
 
-    Eigen::MatrixXd constraints() const;
+    Eigen::SparseMatrix<double> constraints() const;
 
     bool contains(double f) const;
 
