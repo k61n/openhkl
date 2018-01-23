@@ -89,8 +89,11 @@ size_t FitParameters::nfree() const
     return _params.size() == 0 ? 0 : _K.cols();
 }
 
-void FitParameters::setConstraint(const Eigen::SparseMatrix<double>& C)
+void FitParameters::setConstraint(const Eigen::SparseMatrix<double>& C_input)
 {
+    Eigen::SparseMatrix<double> C(C_input);
+    C.makeCompressed();
+
     // solver will factorize C as CU = QR with U a permutation, Q orthogonal, and R triangluar
     using SolverType = Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::COLAMDOrdering<int>>;
     SolverType solver1, solver2;
@@ -125,9 +128,7 @@ void FitParameters::setConstraint(const Eigen::SparseMatrix<double>& C)
     K.block(r, 0, n-r, n-r).setIdentity();
 
     // undo the permutation from QR pivoting
-    _K = U * K;
-    // projection matrix
-    _P = (_K.transpose()*_K).inverse() * _K.transpose();
+    setKernel(U*K);
 }
 
 void FitParameters::resetConstraints()
@@ -155,6 +156,12 @@ void FitParameters::reset()
     for (size_t i = 0; i < _params.size(); ++i) {
         *_params[i] = _originalValues[i];
     }
+}
+
+void FitParameters::setKernel(const Eigen::MatrixXd& ker)
+{
+    _K = ker;
+    _P = (_K.transpose()*_K).inverse()*_K.transpose();
 }
 
 } // end namespace nsx

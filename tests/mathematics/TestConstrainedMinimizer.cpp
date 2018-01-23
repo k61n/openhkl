@@ -68,7 +68,6 @@ int main()
         constraint.coeffRef(i+2, i+2) = 1.0;
     }
 
-    constraint.makeCompressed();
     params.setConstraint(constraint);
 
     nsx::Minimizer min;

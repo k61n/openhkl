@@ -66,6 +66,8 @@ public:
     void resetConstraints();
     //! Kernel of the constraints: this is the transformation from constrained parameters to original parameters.
     const Eigen::MatrixXd& kernel() const;
+    //! Set the kernel of the constraints.
+    void setKernel(const Eigen::MatrixXd& ker);
 
     //! Reset parameter values to their original state.
     void reset();

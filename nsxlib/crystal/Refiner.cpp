@@ -187,6 +187,4 @@ void Refiner::refineKi(InstrumentStateList& states)
     }
 }
 
-
-
 } // end namespace nsx

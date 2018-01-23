@@ -102,9 +102,7 @@ void RefinementBatch::refineDetectorOffset(InstrumentStateList& states)
             ids.push_back(id);
         }
         // record the constraints
-        for (size_t i = 1; i < ids.size(); ++i) {
-            _constraints.push_back(std::make_pair(ids[i], ids[i-1]));
-        }
+        _constraints.push_back(ids);
     }
 }
 
@@ -120,9 +118,7 @@ void RefinementBatch::refineSamplePosition(InstrumentStateList& states)
             ids.push_back(id);
         }
         // record the constraints
-        for (size_t i = 1; i < ids.size(); ++i) {
-            _constraints.push_back(std::make_pair(ids[i], ids[i-1]));
-        }
+        _constraints.push_back(ids);
     }
 }
 
@@ -138,9 +134,7 @@ void RefinementBatch::refineSampleOrientation(InstrumentStateList& states)
             ids.push_back(id);
         }
         // record the constraints
-        for (size_t i = 1; i < ids.size(); ++i) {
-            _constraints.push_back(std::make_pair(ids[i], ids[i-1]));
-        }
+        _constraints.push_back(ids);
     }
 }
 
@@ -153,8 +147,7 @@ bool RefinementBatch::refine(unsigned int max_iter)
     min.setgTol(1e-10);
 
     if (_constraints.size() > 0) {
-        auto C = constraints();
-        _params.setConstraint(constraints());
+        _params.setKernel(constraintKernel());
     }
 
     min.initialize(_params, _peaks.size()*3);
@@ -192,19 +185,49 @@ sptrUnitCell RefinementBatch::cell() const
     return _cell;
 }
     
-Eigen::SparseMatrix<double> RefinementBatch::constraints() const
+Eigen::MatrixXd RefinementBatch::constraintKernel() const
 {
-    Eigen::SparseMatrix<double> C(_constraints.size(), _params.nparams());
-    C.setZero();
+    const int nparams = _params.nparams();
+    std::vector<bool> is_free(nparams, true);
+    std::vector<std::vector<double>> columns;
 
-    for (size_t i = 0; i < _constraints.size(); ++i) {
-        auto id1 = _constraints[i].first;
-        auto id2 = _constraints[i].second;
-        C.coeffRef(i, id1) = 1.0;
-        C.coeffRef(i, id2) = -1.0;
+    // columns corresponding to the constrained parameters
+    for (auto&& constraint: _constraints) {
+        std::vector<double> column(nparams, 0.0);
+
+        for (auto idx: constraint) {
+            column[idx] = 1.0;
+            is_free[idx] = false;
+        }
+
+        columns.push_back(column);
     }
-    return C;   
+
+    // columns corresponding to the free parameters
+    for (auto idx = 0; idx < nparams; ++idx) {
+        if (!is_free[idx]) {
+            continue;
+        }
+        std::vector<double> column(nparams, 0.0);
+        column[idx] = 1.0;
+        columns.push_back(column);
+    }
+
+    // pack columns into a matrix
+    Eigen::MatrixXd K(nparams, columns.size());
+
+    for (size_t j = 0;  j < columns.size(); ++j) {
+        for (auto i = 0; i < nparams; ++i) {
+            K(i, j) = columns[j][i];
+        }
+    }
+
+    // debugging
+    std::cout << "kernel:\n" << K << std::endl;
+
+    return K;
 }
+
 
 bool RefinementBatch::contains(double f) const
 {
@@ -226,10 +249,8 @@ void RefinementBatch::refineKi(InstrumentStateList& states)
     }
 
     // record the constraints
-    for (size_t i = 1; i < x_ids.size(); ++i) {
-        _constraints.push_back(std::make_pair(x_ids[i], x_ids[i-1]));
-        _constraints.push_back(std::make_pair(z_ids[i], z_ids[i-1]));
-    }
+    _constraints.push_back(x_ids);
+    _constraints.push_back(z_ids);
 }
 
 } // end namespace nsx

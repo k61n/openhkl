@@ -76,7 +76,7 @@ public:
 
     sptrUnitCell cell() const;
 
-    Eigen::SparseMatrix<double> constraints() const;
+    Eigen::MatrixXd constraintKernel() const;
 
     bool contains(double f) const;
 
@@ -105,7 +105,7 @@ private:
 
     std::vector<Eigen::RowVector3d> _hkls;
 
-    std::vector<std::pair<int,int>> _constraints;
+    std::vector<std::vector<int>> _constraints;
 };
 
 } // end namespace nsx
