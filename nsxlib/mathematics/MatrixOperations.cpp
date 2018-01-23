@@ -34,5 +34,10 @@ Eigen::Matrix3d interpolateRotation(const Eigen::Matrix3d& U0, const Eigen::Matr
     return U0 * (t*A).exp();
 }
 
+Eigen::Quaterniond rotationToQuaternion(const Eigen::Matrix3d& R)
+{
+    
+}
+
 } // end namespace nsx
 

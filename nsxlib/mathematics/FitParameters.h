@@ -79,8 +79,12 @@ private:
     //! Linear transformation from kernel to parameters. The columns of K form a basis
     //! for the kernel of _C.
     Eigen::MatrixXd _K;
+
     //! Projection from unconstrained parameter space to constrained parameter space.
     Eigen::MatrixXd _P;
+
+    //! Need to update constraints
+    bool _constrained;
 
 };
 

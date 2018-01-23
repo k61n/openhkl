@@ -49,7 +49,7 @@ int FitParameters::addParameter(double* addr)
 {
     _params.emplace_back(addr);
     _originalValues.emplace_back(*addr);
-    resetConstraints();
+    _constrained = false;
     return _params.size()-1;
 }
 
@@ -61,7 +61,8 @@ void FitParameters::setValues(const gsl_vector* v)
     for (size_t i = 0; i < nfree(); ++i) {
         p0(i) = gsl_vector_get(v, i);
     }
-    auto p1 = _K * p0;
+
+    const auto& p1 = _constrained ? _K*p0 : p0;
 
     for (size_t i = 0; i < nparams(); ++i) {
         *_params[i] = p1(i);
@@ -77,7 +78,7 @@ void FitParameters::writeValues(gsl_vector* v) const
         p1(i) = *_params[i];
     }
 
-    auto p0 = _P*p1;
+    const auto& p0 = _constrained ? _P*p1 : p1;
 
     for (size_t i = 0; i < nfree(); ++i) {
         gsl_vector_set(v, i, p0(i));
@@ -86,6 +87,9 @@ void FitParameters::writeValues(gsl_vector* v) const
 
 size_t FitParameters::nfree() const
 {
+    if (!_constrained) {
+        return _params.size();
+    }
     return _params.size() == 0 ? 0 : _K.cols();
 }
 
@@ -129,16 +133,13 @@ void FitParameters::setConstraint(const Eigen::SparseMatrix<double>& C_input)
 
     // undo the permutation from QR pivoting
     setKernel(U*K);
+
+    _constrained = true;
 }
 
 void FitParameters::resetConstraints()
 {
-    const auto n = nparams();
-
-    if (n > 0) {
-        _K.setIdentity(n, n);
-        _P.setIdentity(n, n);
-    }
+    _constrained = false;
 }
 
 size_t FitParameters::nparams() const
@@ -148,7 +149,10 @@ size_t FitParameters::nparams() const
 
 const Eigen::MatrixXd& FitParameters::kernel() const
 {
-    return _K;
+    if (_constrained) {
+        return _K;
+    }
+    throw std::runtime_error("FitParameters::kernel(): no constraints have been set");
 }
 
 void FitParameters::reset()
