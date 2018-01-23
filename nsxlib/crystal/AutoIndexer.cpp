@@ -126,7 +126,7 @@ void AutoIndexer::computeFFTSolutions()
     FFTIndexing indexing(_params.subdiv, _params.maxdim);
     
     // Find the best vectors via FFT
-    std::vector<tVector> tvects = indexing.findOnSphere(qvects, _params.nStacks, _params.nSolutions);
+    std::vector<tVector> tvects = indexing.findOnSphere(qvects, _params.nVertices, _params.nSolutions);
     qvects.clear();
     
     for (int i = 0; i < _params.nSolutions; ++i) {

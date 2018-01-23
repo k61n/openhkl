@@ -47,7 +47,7 @@ namespace nsx {
 struct IndexerParameters {
     double maxdim = 200.0;
     int nSolutions = 10;
-    int nStacks = 30;
+    int nVertices = 10000;
     int subdiv = 5;
     double HKLTolerance = 0.2;
     double niggliTolerance = 1e-3;
