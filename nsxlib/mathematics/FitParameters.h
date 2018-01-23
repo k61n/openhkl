@@ -41,6 +41,7 @@
 #include <gsl/gsl_vector.h>
 
 #include <Eigen/Core>
+#include <Eigen/SparseCore>
 
 namespace nsx {
 
@@ -60,11 +61,13 @@ public:
     //! Return the number of free parameters
     size_t nfree() const;
     //! Set the constraint matrix
-    void setConstraint(const Eigen::MatrixXd& C);
+    void setConstraint(const Eigen::SparseMatrix<double>& C);
     //! Remove the constraints
     void resetConstraints();
     //! Kernel of the constraints: this is the transformation from constrained parameters to original parameters.
     const Eigen::MatrixXd& kernel() const;
+    //! Set the kernel of the constraints.
+    void setKernel(const Eigen::MatrixXd& ker);
 
     //! Reset parameter values to their original state.
     void reset();
@@ -76,8 +79,12 @@ private:
     //! Linear transformation from kernel to parameters. The columns of K form a basis
     //! for the kernel of _C.
     Eigen::MatrixXd _K;
+
     //! Projection from unconstrained parameter space to constrained parameter space.
     Eigen::MatrixXd _P;
+
+    //! Need to update constraints
+    bool _constrained;
 
 };
 

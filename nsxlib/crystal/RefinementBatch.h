@@ -39,6 +39,8 @@
 #include <map>
 #include <vector>
 
+#include <Eigen/SparseCore>
+
 #include "CrystalTypes.h"
 #include "FitParameters.h"
 #include "InstrumentTypes.h"
@@ -74,7 +76,7 @@ public:
 
     sptrUnitCell cell() const;
 
-    Eigen::MatrixXd constraints() const;
+    Eigen::MatrixXd constraintKernel() const;
 
     bool contains(double f) const;
 
@@ -103,7 +105,7 @@ private:
 
     std::vector<Eigen::RowVector3d> _hkls;
 
-    std::vector<std::pair<int,int>> _constraints;
+    std::vector<std::vector<int>> _constraints;
 };
 
 } // end namespace nsx
