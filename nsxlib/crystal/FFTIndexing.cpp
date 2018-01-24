@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cmath>
 #include <complex>
+#include <random>
 #include <vector>
 
 #include <unsupported/Eigen/FFT>
@@ -15,7 +16,7 @@ FFTIndexing::FFTIndexing(int nSubdiv,double amax) : _nSubdiv(nSubdiv), _amax(ama
 {
 }
 
-std::vector<tVector> FFTIndexing::findOnSphere(const std::vector<ReciprocalVector>& qvects, unsigned int nstacks, unsigned int nsolutions) const
+std::vector<tVector> FFTIndexing::findOnSphere(const std::vector<ReciprocalVector>& qvects, unsigned int n_vertices, unsigned int nsolutions) const
 {
     std::vector<double> projs(qvects.size());
     double qMax = 0;
@@ -37,62 +38,71 @@ std::vector<tVector> FFTIndexing::findOnSphere(const std::vector<ReciprocalVecto
     size_t nPointsHalf = nPoints / 2;
     double dq = 2*qMax / nPoints;
     double dqInv = 1.0 / dq;
-    double twopi = 2.0*M_PI;
-    double fact1 = 0.5*M_PI / nstacks;
-    double fact2 = twopi * nstacks;
 
     std::vector<double> hist(nPoints, 0); // reciprocal space histogram
     Eigen::FFT<double> fft;              // FFT engine
     std::vector<tVector> result;
-    result.reserve(nstacks*nstacks);
+    result.reserve(n_vertices);
 
-    for (unsigned int th = 0; th <= nstacks; ++th) {
-        double theta = th*fact1;
-        double ctheta = cos(theta);
-        double stheta = sin(theta);
-        int nslices = int(std::lround(fact2*stheta + 1));
 
-        for (int ph = 0; ph < nslices; ++ph) {
-            double phi = ph * twopi/ double(nslices);
-            double sp = sin(phi);
-            double cp = cos(phi);
-            const Eigen::RowVector3d q_direction(stheta*cp, stheta*sp, ctheta);
-            std::fill(hist.begin(), hist.end(), 0);
+    // Generate the q direction on Q unit sphere using Fibonacci sphere algorithm
+    // See https://stackoverflow.com/questions/9600801/evenly-distributing-n-points-on-a-sphere
+    std::default_random_engine generator;
+    std::uniform_real_distribution<double> distribution(0.0,1.0);
 
-            for (const auto& vect: qvects) {
-                const Eigen::RowVector3d& q_vector = vect.rowVector();
-                double proj = q_vector.dot(q_direction);
-                size_t index = size_t((std::floor((proj+qMax)*dqInv)));
-                if (index == nPoints)
-                    --index;
+    const double rnd(distribution(generator));
 
-                hist[index] += 1.0;
-            }
+    const double offset = 2.0/n_vertices;
 
-            std::vector<std::complex<double>> spectrum;
+    const double increment = M_PI * (3. - sqrt(5.));
 
-            fft.fwd(spectrum, hist); // Fourier transform the histogram
-            double FZero = std::abs(spectrum[0]); // zero mode
-            size_t pos_max = 0; // position of maximum mode, other than zero mode
-            double value = 0; // value of maxmimum mode
+    for (size_t i = 0; i < n_vertices; ++i) {
 
-            for (size_t i = size_t(_nSubdiv/2); i < nPointsHalf; ++i) {
-                double current = std::abs(spectrum[i]);
+        const double y = ((i * offset) - 1) + (offset / 2);
+        const double r = sqrt(1 - y*y);
 
-                if (current < 0.7*FZero)
-                    continue;
+        const double phi = fmod(i + rnd,n_vertices) * increment;
 
-                if (current > value) {
-                    value = current;
-                    pos_max = i;
-                }
-                else
-                    break;
-            }
+        const double x = cos(phi) * r;
+        const double z = sin(phi) * r;
 
-            if (pos_max > 2)
-                result.push_back(tVector(q_direction*(pos_max)*_nSubdiv*_amax/double(nPoints), value));
+
+        const Eigen::RowVector3d q_direction(x, y, z);
+        std::fill(hist.begin(), hist.end(), 0);
+
+        for (const auto& vect: qvects) {
+            const Eigen::RowVector3d& q_vector = vect.rowVector();
+            double proj = q_vector.dot(q_direction);
+            size_t index = size_t((std::floor((proj+qMax)*dqInv)));
+            if (index == nPoints)
+                --index;
+
+            hist[index] += 1.0;
         }
+
+        std::vector<std::complex<double>> spectrum;
+
+        fft.fwd(spectrum, hist); // Fourier transform the histogram
+        double FZero = std::abs(spectrum[0]); // zero mode
+        size_t pos_max = 0; // position of maximum mode, other than zero mode
+        double value = 0; // value of maxmimum mode
+
+        for (size_t i = size_t(_nSubdiv/2); i < nPointsHalf; ++i) {
+            double current = std::abs(spectrum[i]);
+
+            if (current < 0.7*FZero)
+                continue;
+
+            if (current > value) {
+                value = current;
+                pos_max = i;
+            }
+            else
+                break;
+        }
+
+        if (pos_max > 2)
+            result.push_back(tVector(q_direction*(pos_max)*_nSubdiv*_amax/double(nPoints), value));
     }
 
     std::sort(result.begin(), result.end(),

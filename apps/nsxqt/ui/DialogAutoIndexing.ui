@@ -80,7 +80,7 @@
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="QSpinBox" name="nStacks">
+        <widget class="QSpinBox" name="nVertices">
          <property name="buttonSymbols">
           <enum>QAbstractSpinBox::NoButtons</enum>
          </property>
@@ -88,14 +88,14 @@
           <number>1000</number>
          </property>
          <property name="value">
-          <number>30</number>
+          <number>1000</number>
          </property>
         </widget>
        </item>
        <item row="5" column="0">
         <widget class="QLabel" name="label_5">
          <property name="text">
-          <string>Number of stacks</string>
+          <string>Number of Q vertices</string>
          </property>
         </widget>
        </item>
