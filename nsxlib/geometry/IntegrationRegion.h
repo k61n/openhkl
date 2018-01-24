@@ -41,6 +41,9 @@ class IntegrationRegion {
 public:
     IntegrationRegion(Ellipsoid shape = {}, double bkg_begin = 1.0, double bkg_end = 3.0, int nslices = 10);
 
+    // needed for swig??
+    IntegrationRegion(const IntegrationRegion& other) = default;
+
     void updateMask(Eigen::MatrixXi& mask, double z) const;
 
     AABB aabb() const;

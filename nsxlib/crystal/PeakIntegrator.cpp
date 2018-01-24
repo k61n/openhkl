@@ -351,4 +351,14 @@ Eigen::ArrayXd PeakIntegrator::pointsBkg() const
     return points;
 }
 
+Eigen::ArrayXd PeakIntegrator::shellIntensity() const
+{
+    return _shellIntensity;
+}
+
+Eigen::ArrayXd PeakIntegrator::shellPoints() const
+{
+    return _shellPoints;
+}
+
 } // end namespace nsx

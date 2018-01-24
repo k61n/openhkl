@@ -74,6 +74,9 @@ public:
     Eigen::ArrayXd pointsPeak() const;
     Eigen::ArrayXd pointsBkg() const;
 
+    Eigen::ArrayXd shellIntensity() const;
+    Eigen::ArrayXd shellPoints() const;
+
     #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     #endif

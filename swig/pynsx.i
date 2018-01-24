@@ -118,6 +118,7 @@ using Eigen::Quaterniond;
 #include "Profile.h"
 #include "Intensity.h"
 #include "PeakIntegrator.h"
+#include "IntegrationRegion.h"
 #include "UnitCell.h"
 #include "ResolutionShell.h"
 #include "RFactor.h"
@@ -148,7 +149,7 @@ using Eigen::Quaterniond;
 #include "AABB.h"
 #include "Edge.h"
 #include "Blob3D.h"
-#include "IntegrationRegion.h"
+
 
 #include "DirectVector.h"
 #include "ReciprocalVector.h"
@@ -365,6 +366,7 @@ namespace nsx {
 
 %include "FFTIndexing.h"
 
+%include "IntegrationRegion.h"
 %include "Intensity.h"
 %include "Peak3D.h"
 
@@ -427,12 +429,16 @@ namespace nsx {
 
 %include "Profile.h"
 %include "Intensity.h"
+
+%include "IntegrationRegion.h"
 %include "PeakIntegrator.h"
+
 %include "UnitCell.h"
 %include "ResolutionShell.h"
 %include "RFactor.h"
 %include "CC.h"
 %include "CC.h"
+
 %include "Peak3D.h"
 %include "PeakRecord.h"
 
@@ -453,7 +459,7 @@ namespace nsx {
 %include "AABB.h"
 %include "Edge.h"
 %include "Blob3D.h"
-%include "IntegrationRegion.h"
+
 %include "BrillouinZone.h"
 
 %include "XDS.h"
