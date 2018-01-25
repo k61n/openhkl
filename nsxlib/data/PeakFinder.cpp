@@ -33,13 +33,13 @@ PeakFinder::PeakFinder()
 }
 
 
-PeakSet PeakFinder::find(DataList numors)
+PeakList PeakFinder::find(DataList numors)
 {
     std::size_t npeaks=0;
-    PeakSet peaks;
+    PeakList peaks;
 
     for (auto&& numor : numors) {
-        PeakSet numor_peaks;
+        PeakList numor_peaks;
 
         try {
             // compute median only if necessary
@@ -154,8 +154,8 @@ PeakSet PeakFinder::find(DataList numors)
                 p->setSelected(false);
             }
 
-            numor_peaks.insert(p);
-            peaks.insert(p);
+            numor_peaks.add(p);
+            peaks.add(p);
 
             npeaks++;
             ++count;

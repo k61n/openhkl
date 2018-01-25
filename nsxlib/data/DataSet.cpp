@@ -370,7 +370,7 @@ const std::set<IMask*>& DataSet::masks()
     return _masks;
 }
 
-void DataSet::maskPeaks(PeakSet& peaks) const
+void DataSet::maskPeaks(PeakList& peaks) const
 {
     for (auto peak: peaks) {
         // peak belongs to another dataset
@@ -425,7 +425,7 @@ double DataSet::backgroundLevel(const sptrProgressHandler& progress)
     return _background;
 }
 
-void DataSet::integratePeaks(const PeakSet& peaks, double bkg_begin, double bkg_end, const sptrProgressHandler& handler)
+void DataSet::integratePeaks(const PeakList& peaks, double bkg_begin, double bkg_end, const sptrProgressHandler& handler)
 {
     using IntegrationRegion = IntegrationRegion;
     using PeakIntegrator = PeakIntegrator;
@@ -489,7 +489,7 @@ void DataSet::integratePeaks(const PeakSet& peaks, double bkg_begin, double bkg_
     }
 }
 
-void DataSet::removeDuplicatePeaks(nsx::PeakSet& peaks)
+void DataSet::removeDuplicatePeaks(nsx::PeakList& peaks)
 {
     class compare_fn {
     public:

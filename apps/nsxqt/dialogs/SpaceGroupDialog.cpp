@@ -30,7 +30,7 @@
 #include "SpaceGroupDialog.h"
 #include "ui_SpaceGroupDialog.h"
 
-SpaceGroupDialog::SpaceGroupDialog(const nsx::PeakSet& peaks, QWidget *parent):
+SpaceGroupDialog::SpaceGroupDialog(const nsx::PeakList& peaks, QWidget *parent):
     QDialog(parent),
     ui(new Ui::SpaceGroupDialog),
     _peaks(peaks),

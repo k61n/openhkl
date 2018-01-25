@@ -33,6 +33,7 @@
 #include <nsxlib/Path.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFinder.h>
+#include <nsxlib/PeakList.h>
 #include <nsxlib/Profile3d.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/Sample.h>
@@ -602,8 +603,7 @@ void MainWindow::on_actionFit_profiles_triggered()
             frames.emplace_back(d->frame(f).cast<double>());
         }
 
-        nsx::PeakSet pset;
-
+        nsx::PeakList pset;
 
         for (auto peak: peaks) {
 
@@ -690,7 +690,7 @@ void MainWindow::on_actionFit_profiles_triggered()
                 prof._Dxz, prof._Dyz, prof._Dzz;
 
             peak->setShape(nsx::Ellipsoid(prof._c, D));
-            pset.insert(peak);
+            pset.add(peak);
         }
         // todo: change bkg_begin and bkg_end
         d->integratePeaks(pset, 3.0, 6.0, nullptr);

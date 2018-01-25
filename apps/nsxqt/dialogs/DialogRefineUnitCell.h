@@ -6,6 +6,7 @@
 #include <nsxlib/CrystalTypes.h>
 #include <nsxlib/DataTypes.h>
 #include <nsxlib/InstrumentTypes.h>
+#include <nsxlib/PeakList.h>
 
 namespace Ui
 {

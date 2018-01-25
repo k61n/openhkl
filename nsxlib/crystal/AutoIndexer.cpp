@@ -46,6 +46,7 @@
 #include "Minimizer.h"
 #include "NiggliReduction.h"
 #include "Peak3D.h"
+#include "PeakFilter.h"
 #include "ProgressHandler.h"
 #include "ReciprocalVector.h"
 #include "Sample.h"
@@ -102,6 +103,9 @@ void AutoIndexer::computeFFTSolutions()
         
     // Store the q-vectors of the peaks for auto-indexing
     std::vector<ReciprocalVector> qvects;
+
+//    PeakFilter peak_filter(_peaks);
+//    PeakList filter
 
     for (auto peak: _peaks) {
         // Keep only the peak that have selected and that are not masked

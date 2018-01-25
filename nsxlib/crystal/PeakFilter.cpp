@@ -81,12 +81,13 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrPeak3D peak)
 
 namespace nsx {
 
-PeakSet PeakFilter::apply(const PeakSet& reference_peaks) const
+PeakList PeakFilter::apply(const PeakList& reference_peaks) const
 {
+    PeakList peaks;
+    PeakList bad_peaks;
+    PeakList good_peaks;
+
     std::vector<Ellipsoid> ellipsoids;
-    std::vector<sptrPeak3D> peaks;
-    std::set<sptrPeak3D> bad_peaks;
-    std::set<sptrPeak3D> good_peaks;
     std::set<Octree::collision_pair> collisions;
     std::set<sptrUnitCell> crystals;
     Eigen::Vector3d lower(1e100, 1e100, 1e100);
@@ -94,7 +95,7 @@ PeakSet PeakFilter::apply(const PeakSet& reference_peaks) const
 
     for (auto peak: reference_peaks) {
         ellipsoids.emplace_back(peak->getShape());
-        peaks.emplace_back(peak);
+        peaks.add(peak);
         auto cell = peak->activeUnitCell();
 
         if (cell) {
@@ -111,7 +112,7 @@ PeakSet PeakFilter::apply(const PeakSet& reference_peaks) const
 
     for (auto peak: peaks) {
         if (invalid(*this, peak)) {
-            bad_peaks.insert(peak);
+            bad_peaks.add(peak);
         }
     }
 
@@ -129,8 +130,8 @@ PeakSet PeakFilter::apply(const PeakSet& reference_peaks) const
         for (auto collision: collisions) {
             unsigned int i = collision.first - &ellipsoids[0];
             unsigned int j = collision.second - &ellipsoids[0];
-            bad_peaks.insert(peaks[i]);
-            bad_peaks.insert(peaks[j]);
+            bad_peaks.add(peaks[i]);
+            bad_peaks.add(peaks[j]);
         }
     }
 
@@ -148,7 +149,7 @@ PeakSet PeakFilter::apply(const PeakSet& reference_peaks) const
             auto q = peak->getQ();
             auto hkl = cell->getIntegerMillerIndices(q);
             if (_removeForbidden && group.isExtinct(hkl)) {
-                bad_peaks.insert(peak);
+                bad_peaks.add(peak);
             }
         }
 
@@ -156,19 +157,19 @@ PeakSet PeakFilter::apply(const PeakSet& reference_peaks) const
             // p value too high: reject peaks
             if (_removeMergedP && merged_peak.pValue() > _mergedP) {
                 for (auto&& p: merged_peak.getPeaks()) {
-                    bad_peaks.insert(p);
+                    bad_peaks.add(p);
                 }
             }
         }
     }
 
     for (auto it = peaks.begin(); it != peaks.end(); ) {
-        auto jt = bad_peaks.find(*it);
+        auto jt = std::find(bad_peaks.begin(),bad_peaks.end(),*it);
         if (jt != bad_peaks.end()) {
-            it = peaks.erase(it);
-            bad_peaks.erase(jt);
+            it = peaks.remove(*it);
+            bad_peaks.remove(*jt);
         } else {
-            good_peaks.insert(*it);
+            good_peaks.add(*it);
             ++it;
         }        
     }

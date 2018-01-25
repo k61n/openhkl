@@ -51,6 +51,8 @@ public:
 
     PeakList(PeakList&& other)=default;
 
+    ~PeakList()=default;
+
     PeakList& operator=(const PeakList& other)=default;
 
     PeakList& operator=(PeakList&& other)=default;
@@ -67,7 +69,7 @@ public:
 
     void add(sptrPeak3D peak);
 
-    void remove(sptrPeak3D peak);
+    peak_list_iterator remove(sptrPeak3D peak);
 
     size_t size() const;
 

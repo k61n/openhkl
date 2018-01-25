@@ -120,10 +120,10 @@ void DialogRefineUnitCell::refineParameters()
             int updated = r.updatePredictions(d_peaks);
             nsx::info() << "done; updated " << updated << " peak";
 
-            nsx::PeakSet pset;
+            nsx::PeakList pset;
 
             for (auto&& p: d_peaks) {
-                pset.insert(p);
+                pset.add(p);
             }
 
             // todo: fix bkg_begin and bkg_end

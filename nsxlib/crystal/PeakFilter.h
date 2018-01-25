@@ -3,8 +3,8 @@
 #include <map>
 #include <string>
 
-#include "CrystalTypes.h"
 #include "DataTypes.h"
+#include "PeakList.h"
 
 namespace nsx {
 
@@ -14,7 +14,7 @@ class PeakFilter {
 
 public:
     //! Apply the filter to the given data set. Returns the number of removed peaks
-    PeakSet apply(const PeakSet& peaks) const;
+    PeakList apply(const PeakList& peaks) const;
 
 public:
     //! Remove peaks which are not indexed (incommensurate).

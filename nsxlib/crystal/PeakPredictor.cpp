@@ -67,13 +67,13 @@ PeakPredictor::PeakPredictor(sptrDataSet data):
 {
 }
 
-PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_peaks)
+PeakList PeakPredictor::predictPeaks(bool keepObserved, const PeakList& reference_peaks)
 {
     int predicted_peaks = 0;
 
     auto& mono = _data->diffractometer()->getSource()->getSelectedMonochromator();
     const double wavelength = mono.getWavelength();
-    PeakSet calculated_peaks;    
+    PeakList calculated_peaks;
 
     auto sample = _data->diffractometer()->getSample();
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
@@ -82,7 +82,7 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
         std::set<MillerIndex> found_hkls;
         auto cell = sample->unitCell(i);
         auto UB = cell->reciprocalBasis();        
-        std::vector<sptrPeak3D> peaks_to_use;
+        PeakList peaks_to_use;
 
         _handler->setStatus("Building set of previously found peaks...");
         for (auto&& peak: reference_peaks) {
@@ -113,7 +113,7 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
 
                 // only makes contribution if conversion is consistent
                 if (error < 0.1) {
-                    peaks_to_use.push_back(peak);
+                    peaks_to_use.add(peak);
                 }
             } catch(...) {
                 // could not convert back and forth to q-space, so skip
@@ -168,7 +168,7 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
             }
 
             #pragma omp critical
-            calculated_peaks.insert(p);
+            calculated_peaks.add(p);
 
 
             #pragma omp atomic
@@ -184,7 +184,7 @@ PeakSet PeakPredictor::predictPeaks(bool keepObserved, const PeakSet& reference_
     return calculated_peaks;
 }
 
-Eigen::Matrix3d PeakPredictor::averageQShape(const std::vector<sptrPeak3D>& peaks)
+Eigen::Matrix3d PeakPredictor::averageQShape(const PeakList& peaks)
 {
     Eigen::Matrix3d covariance;
     covariance.setZero();

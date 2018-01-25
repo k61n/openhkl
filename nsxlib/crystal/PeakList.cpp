@@ -86,14 +86,11 @@ void PeakList::add(sptrPeak3D peak)
     _peaks.push_back(peak);
 }
 
-void PeakList::remove(sptrPeak3D peak)
+PeakList::peak_list_iterator PeakList::remove(sptrPeak3D peak)
 {
     auto it = std::find(_peaks.begin(),_peaks.end(),peak);
-    if (it == _peaks.end()) {
-        return;
-    }
 
-    _peaks.erase(it);
+    return _peaks.erase(it);
 }
 
 } // end namespace nsx

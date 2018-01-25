@@ -363,8 +363,7 @@ void SessionModel::incorporateCalculatedPeaks()
         predictor._Isigma = dialog.Isigma();
         predictor._handler = handler;
         // debugging
-        nsx::PeakSet predicted = predictor.predictPeaks(true, reference_peaks);
-        //nsx::PeakSet predicted = predictor.predictPeaks(false, reference_peaks);
+        nsx::PeakList predicted = predictor.predictPeaks(true, reference_peaks);
         // todo: bkg_begin and bkg_end
         numor->integratePeaks(predicted, dialog.peakScale(), dialog.bkgScale(), handler);
         observed_peaks += peaks(numor.get()).size();
@@ -691,7 +690,7 @@ void SessionModel::autoAssignUnitCell()
 
     for (auto&& numor: numors) {
         auto sample = numor->diffractometer()->getSample();
-        nsx::PeakSet numor_peaks = peaks(numor.get());
+        nsx::PeakList numor_peaks = peaks(numor.get());
 
         for (auto&& peak: numor_peaks) {
             Eigen::RowVector3d hkl;
@@ -716,17 +715,17 @@ void SessionModel::autoAssignUnitCell()
     nsx::debug() << "Done auto assigning unit cells";
 }
 
-nsx::PeakSet SessionModel::peaks(const nsx::DataSet* data) const
+nsx::PeakList SessionModel::peaks(const nsx::DataSet* data) const
 {  
     if (data == nullptr) {
         return _peaks;
     }
 
-    nsx::PeakSet data_peaks;
+    nsx::PeakList data_peaks;
 
     for (auto peak: _peaks) {
         if (peak->data().get() == data) {
-            data_peaks.insert(peak);
+            data_peaks.add(peak);
         }
     }
     return data_peaks;
@@ -734,13 +733,10 @@ nsx::PeakSet SessionModel::peaks(const nsx::DataSet* data) const
 
 void SessionModel::addPeak(nsx::sptrPeak3D peak)
 {
-    _peaks.insert(peak);
+    _peaks.add(peak);
 }
 
 void SessionModel::removePeak(nsx::sptrPeak3D peak)
 {
-    auto it = _peaks.find(peak);
-    if (it != _peaks.end()) {
-        _peaks.erase(it);
-    }
+    _peaks.remove(peak);
 }

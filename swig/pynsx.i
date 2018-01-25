@@ -235,6 +235,7 @@ using sptrMaterial = std::shared_ptr<nsx::Material>;
 
 #include "FFTIndexing.h"
 #include "Peak3D.h"
+#include "PeakList.h"
 #include "SpaceGroup.h"
 #include "UnitCell.h"
 #include "GruberReduction.h"
@@ -367,6 +368,7 @@ namespace nsx {
 
 %include "Intensity.h"
 %include "Peak3D.h"
+%include "PeakList.h"
 
 %include "ConstantKernel.h"
 %include "KernelFactory.h"
@@ -388,8 +390,6 @@ namespace nsx {
 
 %include "PeakFinder.h"
 
-%template(PeakSet) std::set<std::shared_ptr<nsx::Peak3D>>;
-%template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;
 
 %include "Material.h"

@@ -32,7 +32,6 @@ using sptrUnitCell = std::shared_ptr<UnitCell>;
 
 using RankedSolution = std::pair<sptrUnitCell,double>;
 
-using PeakSet    = std::set<sptrPeak3D>;
 using MergedPeakSet = std::set<MergedPeak>;
 
 using RecordList   = std::vector<PeakRecord>;

@@ -12,7 +12,7 @@
 #include "ui_PeakFilterDialog.h"
 #include "DialogPeakFilter.h"
 
-DialogPeakFilter::DialogPeakFilter(const nsx::PeakSet& peaks, QWidget* parent):
+DialogPeakFilter::DialogPeakFilter(const nsx::PeakList& peaks, QWidget* parent):
     QDialog(parent),
     _ui(new Ui::PeakFilterDialog),
     _peaks(peaks),
@@ -53,15 +53,16 @@ void DialogPeakFilter::accept()
     _badPeaks.clear();
 
     for (auto peak: _peaks) {
-        if (good_peaks.find(peak) == good_peaks.end()) {
-            _badPeaks.insert(peak);
+        auto it = std::find(good_peaks.begin(),good_peaks.end(),peak);
+        if (it == good_peaks.end()) {
+            _badPeaks.add(peak);
         }
     }
 
     QDialog::accept();
 }
 
-const nsx::PeakSet& DialogPeakFilter::badPeaks() const
+const nsx::PeakList& DialogPeakFilter::badPeaks() const
 {
     return _badPeaks;
 }

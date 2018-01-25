@@ -1,8 +1,8 @@
 #pragma once
 
-#include "CrystalTypes.h"
 #include "DataTypes.h"
 #include "ImagingTypes.h"
+#include "PeakList.h"
 #include "UtilsTypes.h"
 
 namespace nsx {
@@ -14,7 +14,7 @@ public:
 
     PeakFinder();
 
-    PeakSet find(DataList numors);
+    PeakList find(DataList numors);
 
     void setHandler(const sptrProgressHandler& handler);
 
