@@ -82,6 +82,8 @@ PeakIntegrator::PeakIntegrator(const IntegrationRegion& region, const DataSet& d
 
     _shellIntensity.resize(n_frames, _region.nslices());
     _shellIntensity.setZero();
+    _shellIntensitySquared.resize(n_frames, _region.nslices());
+    _shellIntensitySquared.setZero();
     _shellPoints.resize(n_frames, _region.nslices());
     _shellPoints.setZero();    
 }
@@ -113,6 +115,7 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
 
             if (slice >= 0) {
                 _shellIntensity(idx-_data_start, slice) += intensity;
+                _shellIntensitySquared(idx-_data_start, slice) += intensity*intensity;
                 _shellPoints(idx-_data_start, slice) += 1;
             }
         }
@@ -217,14 +220,20 @@ const Eigen::ArrayXd PeakIntegrator::getPeakError() const
 
 Intensity PeakIntegrator::getMeanBackground() const
 {   
-    auto&& counts = countsBkg();
-    auto&& points = pointsBkg();
-    const double nbkg = points.sum();
-    const double mean = counts.sum() / nbkg;
-    auto&& deviation = counts-mean*points;
-    const double variance = (deviation*deviation).sum() / (nbkg-1);
+    double intensity = 0.0;
+    double squaredIntensity = 0.0;
+    double N = 0.0;
 
-    return Intensity(mean, variance);
+    for (size_t idx = _data_start; idx <= _data_end; ++idx) {
+        N += _shellPoints(idx-_data_start, 0);
+        intensity += _shellIntensity(idx-_data_start, 0);
+        squaredIntensity += _shellIntensitySquared(idx-_data_start, 0);
+    }
+    
+    intensity /= N;
+    double variance = (squaredIntensity - N*intensity*intensity) / (N-1);
+
+    return Intensity(intensity, variance);
 }
 
 const IntegrationRegion& PeakIntegrator::getRegion() const
@@ -315,14 +324,7 @@ Eigen::ArrayXd PeakIntegrator::countsPeak() const
 
 Eigen::ArrayXd PeakIntegrator::countsBkg() const
 {
-    auto best_slice = _region.bestSlice();
-    Eigen::ArrayXd counts(_data_end-_data_start+1);
-    counts.setZero();
 
-    for (size_t idx = _data_start; idx <= _data_end; ++idx) {
-        counts(idx-_data_start) += _shellIntensity(idx-_data_start, 0);
-    }
-    return counts;
 }
 
 Eigen::ArrayXd PeakIntegrator::pointsPeak() const

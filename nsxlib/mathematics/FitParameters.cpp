@@ -166,6 +166,7 @@ void FitParameters::setKernel(const Eigen::MatrixXd& ker)
 {
     _K = ker;
     _P = (_K.transpose()*_K).inverse()*_K.transpose();
+    _constrained = true;
 }
 
 } // end namespace nsx

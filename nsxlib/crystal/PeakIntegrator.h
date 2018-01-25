@@ -105,6 +105,7 @@ private:
     Eigen::ArrayXd _projectionBkg;
 
     Eigen::ArrayXXd _shellIntensity;
+    Eigen::ArrayXXd _shellIntensitySquared;
     Eigen::ArrayXXd _shellPoints;
 };
 
