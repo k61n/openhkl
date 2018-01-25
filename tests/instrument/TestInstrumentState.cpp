@@ -47,15 +47,15 @@ int nsx::UnitTest_DataSet::run()
 
     expt->addData(dataf);
 
-    auto detector_gonio = dataf->getDiffractometer()->getDetector()->getGonio();
-    auto sample_gonio = dataf->getDiffractometer()->getSample()->getGonio();
+    auto detector_gonio = dataf->diffractometer()->getDetector()->getGonio();
+    auto sample_gonio = dataf->diffractometer()->getSample()->getGonio();
 
     auto detectorStates = dataf->_reader->detectorStates();
     auto sampleStates = dataf->_reader->sampleStates();
 
-    for (size_t i = 0; i < 100*(dataf->getNFrames()-1); ++i) {
+    for (size_t i = 0; i < 100*(dataf->nFrames()-1); ++i) {
         double frame = double(i) / 100.0;
-        auto state = dataf->getInterpolatedState(frame);
+        auto state = dataf->interpolatedState(frame);
 
         auto lframe = std::lround(std::floor(frame));
 

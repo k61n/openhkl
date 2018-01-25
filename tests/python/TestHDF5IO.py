@@ -12,8 +12,8 @@ class TestHDF5IO(unittest.TestCase):
         
         frames = []
         i = 0
-        for i in range(0,dataf.getNFrames()): 
-            frames.append(dataf.getFrame(i))
+        for i in range(0,dataf.nFrames()): 
+            frames.append(dataf.frame(i))
         
         dataf.saveHDF5("D10_hdf5_example.h5")
         dataf.close()
@@ -21,8 +21,8 @@ class TestHDF5IO(unittest.TestCase):
         # read data back in and check that it agrees!
         dataf = factory.create("h5","D10_hdf5_example.h5", diff)
         
-        for j in range(0,dataf.getNFrames()):
-            self.assertTrue((dataf.getFrame(j) == frames[j]).all())
+        for j in range(0,dataf.nFrames()):
+            self.assertTrue((dataf.frame(j) == frames[j]).all())
        
         dataf.close()
 

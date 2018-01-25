@@ -6,10 +6,10 @@ namespace nsx {
 
 BasicFrameIterator::BasicFrameIterator(DataSet& data, unsigned int idx): IFrameIterator(data, idx)
 {
-    _currentFrame = _data.getFrame(_index).cast<double>();
+    _currentFrame = _data.frame(_index).cast<double>();
 }
 
-RealMatrix& BasicFrameIterator::getFrame()
+RealMatrix& BasicFrameIterator::frame()
 {
     return _currentFrame;
 }
@@ -17,8 +17,8 @@ RealMatrix& BasicFrameIterator::getFrame()
 void BasicFrameIterator::advance()
 {
     ++_index;
-    if (_index != _data.getNFrames()) {
-        _currentFrame = _data.getFrame(_index).cast<double>();
+    if (_index != _data.nFrames()) {
+        _currentFrame = _data.frame(_index).cast<double>();
     }
 }
 

@@ -202,7 +202,7 @@ Eigen::Matrix4d Ellipsoid::homogeneousMatrixInverse() const
     return Q;
 }
 
-Eigen::Vector3d Ellipsoid::eigenvalues() const
+Eigen::Vector3d Ellipsoid::radii() const
 {
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(_metric);
     Eigen::Vector3d vals = solver.eigenvalues();
@@ -211,6 +211,19 @@ Eigen::Vector3d Ellipsoid::eigenvalues() const
         vals(i) = 1.0 / std::sqrt(vals(i));
     }
     return vals;
+}
+
+EllipsoidParameters Ellipsoid::parameters() const
+{
+    EllipsoidParameters parameters;
+
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(_metric);
+
+    parameters.center = _center;
+    parameters.radii = solver.eigenvalues().array().rsqrt();
+    parameters.axes = solver.eigenvectors();
+
+    return parameters;
 }
 
 const Eigen::Matrix3d& Ellipsoid::inverseMetric() const

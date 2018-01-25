@@ -71,7 +71,7 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader, const sptrDiffractometer& 
     }
 }
 
-uptrIFrameIterator DataSet::getIterator(int idx)
+uptrIFrameIterator DataSet::iterator(int idx)
 {
     // use default frame iterator if one hasn't been set
     if ( !_iteratorCallback) {
@@ -99,10 +99,10 @@ int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z)
     if (z>=_nFrames || y>=_ncols || x>=_nrows) {
         return 0;
     }
-    return getFrame(z)(x,y);
+    return frame(z)(x,y);
 }
 
-Eigen::MatrixXi DataSet::getFrame(std::size_t idx)
+Eigen::MatrixXi DataSet::frame(std::size_t idx)
 {
     return _reader->getData(idx);
 }
@@ -117,37 +117,37 @@ void DataSet::close()
     _reader->close();
 }
 
-const std::string& DataSet::getFilename() const
+const std::string& DataSet::filename() const
 {
     return _filename;
 }
 
-sptrDiffractometer DataSet::getDiffractometer() const
+sptrDiffractometer DataSet::diffractometer() const
 {
     return _diffractometer;
 }
 
-MetaData*  DataSet::getMetadata() const
+MetaData*  DataSet::metadata() const
 {
     return _metadata.get();
 }
 
-std::size_t DataSet::getNFrames() const
+std::size_t DataSet::nFrames() const
 {
     return _nFrames;
 }
 
-std::size_t DataSet::getNCols() const
+std::size_t DataSet::nCols() const
 {
     return _ncols;
 }
 
-std::size_t DataSet::getNRows() const
+std::size_t DataSet::nRows() const
 {
     return _nrows;
 }
 
-InstrumentState DataSet::getInterpolatedState(double frame) const
+InstrumentState DataSet::interpolatedState(double frame) const
 {
     if (frame>(_states.size()-1) || frame<0) {
         throw std::runtime_error("Error when interpolating state: invalid frame value: " + std::to_string(frame));
@@ -163,12 +163,12 @@ InstrumentState DataSet::getInterpolatedState(double frame) const
     return prevState.interpolate(nextState, t);
 }
 
-const std::vector<InstrumentState>& DataSet::getInstrumentStates() const
+const std::vector<InstrumentState>& DataSet::instrumentStates() const
 {
     return _states;
 }
 
-std::vector<InstrumentState>& DataSet::getInstrumentStates()
+std::vector<InstrumentState>& DataSet::instrumentStates()
 {
     return _states;
 }
@@ -178,7 +178,7 @@ bool DataSet::isOpened() const
     return _isOpened;
 }
 
-std::size_t DataSet::getFileSize() const
+std::size_t DataSet::fileSize() const
 {
     return _fileSize;
 }
@@ -227,8 +227,8 @@ void DataSet::saveHDF5(const std::string& filename) //const
     for(offset[0]=0; offset[0] < _nFrames; offset[0] += count[0]) {
         space.selectHyperslab(H5S_SELECT_SET, count, offset, nullptr, nullptr);
         // HDF5 requires row-major storage, so copy frame into a row-major matrix
-        IntMatrix frame(getFrame(offset[0]));
-        dset.write(frame.data(), H5::PredType::NATIVE_INT32, memspace, space);
+        IntMatrix current_frame(frame(offset[0]));
+        dset.write(current_frame.data(), H5::PredType::NATIVE_INT32, memspace, space);
     }
 
     // Saving the scans parameters (detector, sample and source)
@@ -365,7 +365,7 @@ void DataSet::removeMask(IMask* mask)
     }
 }
 
-const std::set<IMask*>& DataSet::getMasks()
+const std::set<IMask*>& DataSet::masks()
 {
     return _masks;
 }
@@ -389,7 +389,7 @@ void DataSet::maskPeaks(PeakSet& peaks) const
     }
 }
 
-double DataSet::getBackgroundLevel(const sptrProgressHandler& progress)
+double DataSet::backgroundLevel(const sptrProgressHandler& progress)
 {
     if ( _background > 0.0 ) {
         return _background;
@@ -406,10 +406,10 @@ double DataSet::getBackgroundLevel(const sptrProgressHandler& progress)
         progress->setProgress(0);
     }
 
-    for (auto it = getIterator(0); it->index() != _nFrames; it->advance()) {
+    for (auto it = iterator(0); it->index() != _nFrames; it->advance()) {
         // cast matrix to double (instead of int) -- necessary due to integer overflow!
         // _background += factor * it->cast<double>().sum();
-        bg += factor * it->getFrame().sum();
+        bg += factor * it->frame().sum();
 
         if (progress) {
             double done = 100.0 * it->index() / static_cast<double>(_nFrames);
@@ -455,12 +455,12 @@ void DataSet::integratePeaks(const PeakSet& peaks, double bkg_begin, double bkg_
     int num_frames_done = 0;
 
     #pragma omp parallel for
-    for ( idx = 0; idx < getNFrames(); ++idx ) {
-        Eigen::MatrixXi frame, mask;
+    for ( idx = 0; idx < nFrames(); ++idx ) {
+        Eigen::MatrixXi current_frame, mask;
         #pragma omp critical
-        frame = getFrame(idx);
+        current_frame = frame(idx);
 
-        mask.resize(getNRows(), getNCols());
+        mask.resize(nRows(),nCols());
         mask.setConstant(-1);
 
         for (auto& tup: peak_list ) {
@@ -470,13 +470,13 @@ void DataSet::integratePeaks(const PeakSet& peaks, double bkg_begin, double bkg_
 
         for (auto& tup: peak_list ) {
             auto&& integrator = tup.second;
-            integrator.step(frame, idx, mask);
+            integrator.step(current_frame, idx, mask);
         }
 
         if (handler) {
             #pragma omp atomic
             ++num_frames_done;
-            double progress = num_frames_done * 100.0 / getNFrames();
+            double progress = num_frames_done * 100.0 / nFrames();
             handler->setProgress(progress);
         }
     }
@@ -505,7 +505,7 @@ void DataSet::removeDuplicatePeaks(nsx::PeakSet& peaks)
         }
     };
 
-    auto sample = getDiffractometer()->getSample();
+    auto sample = diffractometer()->getSample();
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
 
     for (unsigned int i = 0; i < ncrystals; ++i) {
@@ -547,8 +547,8 @@ double DataSet::getSampleStepSize() const
     // when we compute 'step' below
     double step = 0.0;
 
-    size_t numFrames = getNFrames();
-    const auto& ss = getInstrumentStates();
+    size_t numFrames = nFrames();
+    const auto& ss = instrumentStates();
     size_t numValues = ss[0].sample.values().size();
 
     for (size_t i = 0; i < numValues; ++i) {

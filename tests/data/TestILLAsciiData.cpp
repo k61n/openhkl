@@ -32,13 +32,13 @@ int UnitTest_DataSet::run()
     try {
         diff = nsx::Diffractometer::build("D10");
         dataf = factory.create("", "D10_ascii_example", diff);
-        meta=dataf->getMetadata();
+        meta=dataf->metadata();
 
         NSX_CHECK_ASSERT(meta != nullptr);
         NSX_CHECK_ASSERT(meta->getKey<int>("nbang")==2);
 
         dataf->open();
-        v = dataf->getFrame(0);
+        v = dataf->frame(0);
     }
     catch(std::exception& e) {
         NSX_FAIL(std::string("caught exception: ") + e.what());

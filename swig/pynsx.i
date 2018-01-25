@@ -366,6 +366,7 @@ namespace nsx {
 
 %include "FFTIndexing.h"
 
+%include "PeakIntegrator.h"
 %include "IntegrationRegion.h"
 %include "Intensity.h"
 %include "Peak3D.h"

@@ -30,8 +30,8 @@ struct PeakFactors {
 static PeakFactors peakFactors(nsx::sptrPeak3D peak)
 {
     auto coord = peak->getShape().center();
-    auto state = peak->data()->getInterpolatedState(coord[2]);
-    auto position = peak->data()->getDiffractometer()->getDetector()->pixelPosition(coord[0], coord[1]);
+    auto state = peak->data()->interpolatedState(coord[2]);
+    auto position = peak->data()->diffractometer()->getDetector()->pixelPosition(coord[0], coord[1]);
 
     PeakFactors peak_factors;
     peak_factors.gamma = state.gamma(position);
@@ -189,7 +189,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         case Column::lorentzFactor:
             return pf.lorentz;
         case Column::numor:
-            return _peaks[row]->data()->getMetadata()->getKey<int>("Numor");
+            return _peaks[row]->data()->metadata()->getKey<int>("Numor");
         case Column::selected:
             return _peaks[row]->isSelected();
         case Column::unitCell:
@@ -296,8 +296,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         break;
     case Column::numor:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            int numor1=p1->data()->getMetadata()->getKey<int>("Numor");
-            int numor2=p2->data()->getMetadata()->getKey<int>("Numor");
+            int numor1=p1->data()->metadata()->getKey<int>("Numor");
+            int numor2=p2->data()->metadata()->getKey<int>("Numor");
             return (numor1>numor2);
         };
         break;
@@ -399,7 +399,7 @@ void CollectedPeaksModel::setUnitCell(const nsx::sptrUnitCell& unitCell, QModelI
 void CollectedPeaksModel::normalizeToMonitor(double factor)
 {
     for (auto&& peak : _peaks) {
-        peak->setScale(factor/peak->data()->getMetadata()->getKey<double>("monitor"));
+        peak->setScale(factor/peak->data()->metadata()->getKey<double>("monitor"));
     }
 }
 
@@ -493,7 +493,7 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, QModelIndex
 
     file << "TITLE File written by ...\n";
     file << "(3i4,2F14.4,i5,4f8.2)\n";
-    double wave=_peaks[0]->data()->getMetadata()->getKey<double>("wavelength");
+    double wave=_peaks[0]->data()->metadata()->getKey<double>("wavelength");
     file << std::fixed << std::setw(8) << std::setprecision(3) << wave << " 0 0" << std::endl;
 
     for (const auto &index : indices) {

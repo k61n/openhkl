@@ -53,7 +53,7 @@ int main()
     nsx::sptrConvolutionKernel kernel;
     std::string kernelName = "annular";
     auto kernelFactory = nsx::KernelFactory::Instance();
-    kernel.reset(kernelFactory->create(kernelName, int(dataf->getNRows()), int(dataf->getNCols())));
+    kernel.reset(kernelFactory->create(kernelName, int(dataf->nRows()), int(dataf->nCols())));
 
     auto k = kernel->getKernel();
 
@@ -116,7 +116,7 @@ int main()
     }
     
     // add cell to sample
-    dataf->getDiffractometer()->getSample()->addUnitCell(cell);
+    dataf->diffractometer()->getSample()->addUnitCell(cell);
     nsx::Refiner refiner(cell, peaks, 1);
 
     NSX_CHECK_ASSERT(refiner.batches().size() == 1);
@@ -127,7 +127,7 @@ int main()
 
     refiner.refineB();
     //refiner.refineU();
-    auto&& states = dataf->getInstrumentStates();
+    auto&& states = dataf->instrumentStates();
     refiner.refineSamplePosition(states);
 
     NSX_CHECK_ASSERT(refiner.refine(200));

@@ -65,9 +65,9 @@ PeakIntegrator::PeakIntegrator(const IntegrationRegion& region, const DataSet& d
     _start_y = (start_y > 0 ? start_y : 0);
     _data_start = (data_start > 0 ? data_start : 0);
 
-    _end_x = (end_x > static_cast<int>(data.getNCols()-1) ? data.getNCols()-1 : end_x);
-    _end_y = (end_y > static_cast<int>(data.getNRows()-1) ? data.getNRows()-1 : end_y);
-    _data_end = (data_end > static_cast<int>(data.getNFrames()-1) ? data.getNFrames()-1 : data_end);
+    _end_x = (end_x > static_cast<int>(data.nCols()-1) ? data.nCols()-1 : end_x);
+    _end_y = (end_y > static_cast<int>(data.nRows()-1) ? data.nRows()-1 : end_y);
+    _data_end = (data_end > static_cast<int>(data.nFrames()-1) ? data.nFrames()-1 : data_end);
 
     const int n_frames = _data_end-_data_start + 1;
 

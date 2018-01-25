@@ -22,7 +22,7 @@ NumorItem::NumorItem(nsx::sptrExperiment experiment,nsx::sptrDataSet data) :
 
 NumorItem::~NumorItem()
 {
-   _experiment->removeData(_data->getFilename());
+   _experiment->removeData(_data->filename());
 }
 
 nsx::sptrDataSet NumorItem::getData()
@@ -36,7 +36,7 @@ QJsonObject NumorItem::toJson()
     QJsonArray masks;
     // todo(jonathan): reimplement this!
 #if 0
-    obj["filename"] = QString(getData()->getFilename().c_str());
+    obj["filename"] = QString(getData()->filename().c_str());
 
     for (auto&& mask: getData()->getMasks()) {
         const Eigen::Vector3d lower(mask->lower());
@@ -60,7 +60,7 @@ QJsonObject NumorItem::toJson()
 
 void NumorItem::fromJson(const QJsonObject &obj)
 {
-  assert(obj["filename"].toString() == getData()->getFilename().c_str());
+  assert(obj["filename"].toString() == getData()->filename().c_str());
   QJsonArray masks = obj["masks"].toArray();
 
     for (auto&& mask: masks) {

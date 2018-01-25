@@ -1,5 +1,4 @@
 #include <fstream>
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -49,7 +48,7 @@ int main()
     nsx::sptrConvolutionKernel kernel;
     std::string kernelName = "annular";
     auto kernelFactory = nsx::KernelFactory::Instance();
-    kernel.reset(kernelFactory->create(kernelName, int(dataf->getNRows()), int(dataf->getNCols())));
+    kernel.reset(kernelFactory->create(kernelName, int(dataf->nRows()), int(dataf->nCols())));
 
     auto k = kernel->getKernel();
 
@@ -100,17 +99,10 @@ int main()
 
             NSX_CHECK_SMALL((new_shape.metric().inverse()*old_shape.metric()-Eigen::Matrix3d::Identity()).norm(), 0.4);
 
-            std::cout << "q\n" << qshape.metric() << "\n";
-            std::cout << "new\n" << new_shape.metric() << "\n--------------------------\n";
-            std::cout << old_shape.metric() << std::endl;
-            std::cout << "compared to identity\n";
-            std::cout << new_shape.metric().inverse()*old_shape.metric()-Eigen::Matrix3d::Identity() << "\n=====================================" << std::endl;
         } catch (...) {
             
         }
     }
-
-    std::cout << "good_shapes " << good_shapes << std::endl;
 
     return 0;
 }

@@ -143,8 +143,8 @@ Intensity Peak3D::getScaledIntensity() const
 Intensity Peak3D::getCorrectedIntensity() const
 {
     auto c = _shape.center();
-    auto state = _data->getInterpolatedState(c[2]);
-    auto pos = DirectVector(_data->getDiffractometer()->getDetector()->pixelPosition(c[0], c[1]));
+    auto state = _data->interpolatedState(c[2]);
+    auto pos = DirectVector(_data->diffractometer()->getDetector()->pixelPosition(c[0], c[1]));
     const double factor = _scale / (state.lorentzFactor(pos) * _transmission);
     return getRawIntensity() * factor;
 }
@@ -268,8 +268,8 @@ void Peak3D::setRawIntensity(const Intensity& i)
 ReciprocalVector Peak3D::getQ() const
 {
     auto pixel_coords = _shape.center();
-    auto state = _data->getInterpolatedState(pixel_coords[2]);
-    auto detector = _data->getDiffractometer()->getDetector();
+    auto state = _data->interpolatedState(pixel_coords[2]);
+    auto detector = _data->diffractometer()->getDetector();
     auto detector_position = DirectVector(detector->pixelPosition(pixel_coords[0], pixel_coords[1]));
     return state.sampleQ(detector_position);
 }
@@ -289,7 +289,7 @@ Ellipsoid Peak3D::qShape() const
     const Eigen::Matrix3d U = solver.eigenvectors();
     const Eigen::Vector3d l = solver.eigenvalues();
     const Eigen::RowVector3d q = getQ().rowVector();
-    auto detector = _data->getDiffractometer()->getDetector();
+    auto detector = _data->diffractometer()->getDetector();
     
     Eigen::Matrix3d delta;
 
@@ -298,8 +298,8 @@ Ellipsoid Peak3D::qShape() const
         Eigen::Vector3d p1 = p+s*U.col(i);
         Eigen::Vector3d p2 = p-s*U.col(i);
 
-        auto state1 = _data->getInterpolatedState(p1[2]);
-        auto state2 = _data->getInterpolatedState(p2[2]);
+        auto state1 = _data->interpolatedState(p1[2]);
+        auto state2 = _data->interpolatedState(p2[2]);
 
         const auto q1 = state1.sampleQ(DirectVector(detector->pixelPosition(p1[0], p1[1]))).rowVector();
         const auto q2 = state2.sampleQ(DirectVector(detector->pixelPosition(p2[0], p2[1]))).rowVector();

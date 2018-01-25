@@ -281,7 +281,7 @@ void SessionModel::findPeaks(const QModelIndex& index)
         // attempt to read first frame of first numor by default
         try {
             selectedNumors[0]->open();
-            frame = selectedNumors[0]->getFrame(0);
+            frame = selectedNumors[0]->frame(0);
         }
         catch(std::exception& e) {
             nsx::debug() << "Peak search failed: cannot load frame: " << e.what();
@@ -389,7 +389,7 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
 
     for(auto numor: numors) {
         nsx::PeakList bad_peaks;
-        auto sample = numor->getDiffractometer()->getSample();
+        auto sample = numor->diffractometer()->getSample();
 
         for (auto peak: peaks(numor.get())) {
 
@@ -498,7 +498,7 @@ bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& pea
         const long l = std::lround(hkl[2]);
 
         auto center = peak->getShape().center();
-        auto pos = peak->data()->getDiffractometer()->getDetector()->pixelPosition(center[0], center[1]);
+        auto pos = peak->data()->diffractometer()->getDetector()->pixelPosition(center[0], center[1]);
 
         double intensity = peak->getCorrectedIntensity().value();
         double sigma = peak->getCorrectedIntensity().sigma();
@@ -690,7 +690,7 @@ void SessionModel::autoAssignUnitCell()
     auto numors = getSelectedNumors();
 
     for (auto&& numor: numors) {
-        auto sample = numor->getDiffractometer()->getSample();
+        auto sample = numor->diffractometer()->getSample();
         nsx::PeakSet numor_peaks = peaks(numor.get());
 
         for (auto&& peak: numor_peaks) {

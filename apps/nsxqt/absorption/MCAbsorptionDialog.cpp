@@ -81,12 +81,12 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
     for (auto& d: data) {
         const auto& peaks = _session->peaks(d.second.get());
         ui->progressBar_MCStatus->setMaximum(peaks.size());
-        ui->progressBar_MCStatus->setFormat(QString::fromStdString(d.second->getFilename()) + ": "+QString::number(progress)+"%");
+        ui->progressBar_MCStatus->setFormat(QString::fromStdString(d.second->filename()) + ": "+QString::number(progress)+"%");
         for (auto& p: peaks) {
             auto data = p->data();
             auto coord = p->getShape().center();
-            auto state = data->getInterpolatedState(coord[2]);
-            auto position = data->getDiffractometer()->getDetector()->pixelPosition(coord[0], coord[1]);
+            auto state = data->interpolatedState(coord[2]);
+            auto position = data->diffractometer()->getDetector()->pixelPosition(coord[0], coord[1]);
             auto kf = state.kfLab(position);
             // todo: check coordinate systems here, may not be consistent
             double transmission=mca.run(ui->spinBox->value(),kf.rowVector(),state.sampleOrientation());
