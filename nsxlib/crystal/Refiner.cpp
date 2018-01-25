@@ -59,7 +59,6 @@ Refiner::Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches)
     };
 
     std::sort(sorted_peaks.begin(),sorted_peaks.end(),sort_peaks_by_frame);
-    std::cout << "sorted peaks " << sorted_peaks.size() << " of " << peaks.size() << std::endl;
 
     double batch_size = sorted_peaks.size() / double(nbatches);
     size_t current_batch = 0;
@@ -67,7 +66,7 @@ Refiner::Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches)
     PeakList peaks_subset;
 
     for (size_t i = 0; i < sorted_peaks.size(); ++i) {
-        peaks_subset.push_back(sorted_peaks[i]);
+        peaks_subset.add(sorted_peaks[i]);
 
         if (i + 1.1 >= (current_batch+1)*batch_size) {
             RefinementBatch b(*cell, peaks_subset);

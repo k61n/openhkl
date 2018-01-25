@@ -76,7 +76,7 @@ void DialogRefineUnitCell::refineParameters()
 
         for (auto peak: _peaks) {
             if (peak->data() == d) {
-                d_peaks.push_back(peak);
+                d_peaks.add(peak);
             }
         }
 

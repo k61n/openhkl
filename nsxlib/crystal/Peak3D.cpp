@@ -46,6 +46,7 @@
 #include "Gonio.h"
 #include "IFrameIterator.h"
 #include "InstrumentState.h"
+#include "MillerIndex.h"
 #include "Peak3D.h"
 #include "PeakIntegrator.h"
 #include "ReciprocalVector.h"

@@ -38,6 +38,7 @@
 
 #include "CrystalTypes.h"
 #include "GeometryTypes.h"
+#include "PeakList.h"
 #include "SymOp.h"
 
 namespace nsx {

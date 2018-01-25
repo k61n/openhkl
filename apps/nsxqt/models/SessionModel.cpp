@@ -402,7 +402,7 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
             ++num_peaks;
 
             if ( dmin > d && d > dmax)
-                bad_peaks.push_back(peak);
+                bad_peaks.add(peak);
         }
 
         // erase the bad peaks from the list
@@ -427,7 +427,7 @@ void SessionModel::writeLog()
 
     for (auto peak: _peaks) {
         if (peak->isSelected()) {
-            peaks.push_back(peak);
+            peaks.add(peak);
         }
     }
 

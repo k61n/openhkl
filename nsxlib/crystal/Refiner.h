@@ -38,8 +38,8 @@
 
 #include <vector>
 
-#include "CrystalTypes.h"
 #include "InstrumentTypes.h"
+#include "PeakList.h"
 #include "RefinementBatch.h"
 
 namespace nsx {

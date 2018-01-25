@@ -41,6 +41,7 @@
 #include "DataTypes.h"
 #include "GeometryTypes.h"
 #include "InstrumentTypes.h"
+#include "PeakList.h"
 #include "UtilsTypes.h"
 
 namespace nsx {

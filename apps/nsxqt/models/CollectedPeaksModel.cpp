@@ -60,7 +60,7 @@ void CollectedPeaksModel::addPeak(const nsx::sptrPeak3D& peak)
     if (it!=_peaks.end()) {
         return;
     }
-    _peaks.push_back(peak);
+    _peaks.add(peak);
 }
 
 void CollectedPeaksModel::setPeaks(const nsx::PeakList& peaks)
@@ -78,7 +78,7 @@ nsx::PeakList CollectedPeaksModel::getPeaks(const QModelIndexList &indices) cons
     nsx::PeakList peaks;
     peaks.reserve(indices.count());
     for (auto&& index: indices) {
-        peaks.push_back(_peaks[index.row()]);
+        peaks.add(_peaks[index.row()]);
     }
     return peaks;
 }

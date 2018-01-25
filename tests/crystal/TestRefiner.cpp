@@ -112,7 +112,7 @@ int main()
 
     for (auto&& peak: found_peaks) {
         peak->addUnitCell(cell, true);
-        peaks.push_back(peak);
+        peaks.add(peak);
     }
     
     // add cell to sample

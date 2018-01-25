@@ -37,7 +37,7 @@ PeakListPropertyWidget::PeakListPropertyWidget(std::shared_ptr<SessionModel> ses
     nsx::PeakList data_peaks;
 
     for (auto peak: _session->peaks(nullptr)) {
-        data_peaks.push_back(peak);
+        data_peaks.add(peak);
     }
 
     model->setPeaks(data_peaks);

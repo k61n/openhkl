@@ -226,7 +226,7 @@ PeakList PeakPredictor::predictPeaks(const std::vector<MillerIndex>& hkls, const
         sptrPeak3D peak(new Peak3D(_data));
         // this sets the center of the ellipse with a dummy value for radius
         peak->setShape(Ellipsoid(event.vector(), 1.0));
-        peaks.emplace_back(peak);
+        peaks.add(peak);
     }
     return peaks;
 }
