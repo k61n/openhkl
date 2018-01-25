@@ -7,7 +7,6 @@
 #include <QString>
 
 #include <nsxlib/DataSet.h>
-
 #include <nsxlib/Detector.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/InstrumentState.h>
@@ -60,7 +59,7 @@ void CollectedPeaksModel::addPeak(const nsx::sptrPeak3D& peak)
     if (it!=_peaks.end()) {
         return;
     }
-    _peaks.add(peak);
+    _peaks.push_back(peak);
 }
 
 void CollectedPeaksModel::setPeaks(const nsx::PeakList& peaks)
@@ -78,7 +77,7 @@ nsx::PeakList CollectedPeaksModel::getPeaks(const QModelIndexList &indices) cons
     nsx::PeakList peaks;
     peaks.reserve(indices.count());
     for (auto&& index: indices) {
-        peaks.add(_peaks[index.row()]);
+        peaks.push_back(_peaks[index.row()]);
     }
     return peaks;
 }

@@ -353,7 +353,7 @@ void AutoIndexer::refineConstraints()
 
 void AutoIndexer::addPeak(sptrPeak3D peak)
 {
-    _peaks.add(peak);
+    _peaks.push_back(peak);
 }
 
 } // end namespace nsx

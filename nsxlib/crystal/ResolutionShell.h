@@ -37,7 +37,7 @@
 
 #include <vector>
 
-#include "PeakList.h"
+#include "CrystalTypes.h"
 
 namespace nsx {
 

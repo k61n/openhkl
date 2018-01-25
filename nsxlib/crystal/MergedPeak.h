@@ -39,7 +39,6 @@
 
 #include "CrystalTypes.h"
 #include "Intensity.h"
-#include "PeakList.h"
 #include "SpaceGroup.h"
 
 namespace nsx {

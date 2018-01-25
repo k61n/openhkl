@@ -401,7 +401,7 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
             ++num_peaks;
 
             if ( dmin > d && d > dmax)
-                bad_peaks.add(peak);
+                bad_peaks.push_back(peak);
         }
 
         // erase the bad peaks from the list
@@ -426,7 +426,7 @@ void SessionModel::writeLog()
 
     for (auto peak: _peaks) {
         if (peak->isSelected()) {
-            peaks.add(peak);
+            peaks.push_back(peak);
         }
     }
 
@@ -725,7 +725,7 @@ nsx::PeakList SessionModel::peaks(const nsx::DataSet* data) const
 
     for (auto peak: _peaks) {
         if (peak->data().get() == data) {
-            data_peaks.add(peak);
+            data_peaks.push_back(peak);
         }
     }
     return data_peaks;
@@ -733,10 +733,13 @@ nsx::PeakList SessionModel::peaks(const nsx::DataSet* data) const
 
 void SessionModel::addPeak(nsx::sptrPeak3D peak)
 {
-    _peaks.add(peak);
+    _peaks.push_back(peak);
 }
 
 void SessionModel::removePeak(nsx::sptrPeak3D peak)
 {
-    _peaks.remove(peak);
+    auto it = std::find(_peaks.begin(),_peaks.end(),peak);
+    if (it != _peaks.end()) {
+        _peaks.erase(it);
+    }
 }

@@ -67,7 +67,7 @@ void ResolutionShell::addPeak(const sptrPeak3D& peak)
 
     for (size_t i = 0; i < _d.size()-1; ++i) {
         if (_d[i] <= d && d < _d[i+1]) {
-            _shells[i].add(peak);
+            _shells[i].push_back(peak);
         }
     }
 }

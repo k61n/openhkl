@@ -113,7 +113,7 @@ PeakList PeakPredictor::predictPeaks(bool keepObserved, const PeakList& referenc
 
                 // only makes contribution if conversion is consistent
                 if (error < 0.1) {
-                    peaks_to_use.add(peak);
+                    peaks_to_use.push_back(peak);
                 }
             } catch(...) {
                 // could not convert back and forth to q-space, so skip
@@ -168,7 +168,7 @@ PeakList PeakPredictor::predictPeaks(bool keepObserved, const PeakList& referenc
             }
 
             #pragma omp critical
-            calculated_peaks.add(p);
+            calculated_peaks.push_back(p);
 
 
             #pragma omp atomic
@@ -226,7 +226,7 @@ PeakList PeakPredictor::predictPeaks(const std::vector<MillerIndex>& hkls, const
         sptrPeak3D peak(new Peak3D(_data));
         // this sets the center of the ellipse with a dummy value for radius
         peak->setShape(Ellipsoid(event.vector(), 1.0));
-        peaks.add(peak);
+        peaks.push_back(peak);
     }
     return peaks;
 }

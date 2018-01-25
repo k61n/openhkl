@@ -21,6 +21,7 @@
 #include <nsxlib/Basis.h>
 #include <nsxlib/BlobFinder.h>
 #include <nsxlib/ComponentState.h>
+#include <nsxlib/CrystalTypes.h>
 #include <nsxlib/Detector.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Ellipsoid.h>
@@ -33,7 +34,6 @@
 #include <nsxlib/Path.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFinder.h>
-#include <nsxlib/PeakList.h>
 #include <nsxlib/Profile3d.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/Sample.h>
@@ -603,7 +603,7 @@ void MainWindow::on_actionFit_profiles_triggered()
             frames.emplace_back(d->frame(f).cast<double>());
         }
 
-        nsx::PeakList pset;
+        nsx::PeakList peak_list;
 
         for (auto peak: peaks) {
 
@@ -690,10 +690,10 @@ void MainWindow::on_actionFit_profiles_triggered()
                 prof._Dxz, prof._Dyz, prof._Dzz;
 
             peak->setShape(nsx::Ellipsoid(prof._c, D));
-            pset.add(peak);
+            peak_list.push_back(peak);
         }
         // todo: change bkg_begin and bkg_end
-        d->integratePeaks(pset, 3.0, 6.0, nullptr);
+        d->integratePeaks(peak_list, 3.0, 6.0, nullptr);
     }
 
     _session->updatePeaks();

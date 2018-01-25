@@ -3,8 +3,8 @@
 #include <map>
 #include <string>
 
+#include "CrystalTypes.h"
 #include "DataTypes.h"
-#include "PeakList.h"
 
 namespace nsx {
 

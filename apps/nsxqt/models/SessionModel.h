@@ -45,9 +45,9 @@
 #include <QStandardItemModel>
 #include <QTreeView>
 
+#include <nsxlib/CrystalTypes.h>
 #include <nsxlib/DataTypes.h>
 #include <nsxlib/InstrumentTypes.h>
-#include <nsxlib/PeakList.h>
 #include <nsxlib/UtilsTypes.h>
 
 class ExperimentItem;

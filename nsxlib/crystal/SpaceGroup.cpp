@@ -614,7 +614,7 @@ std::vector<PeakList> SpaceGroup::findEquivalences(const PeakList &peak_list, bo
             if ( (friedel && isFriedelEquivalent(h1, k1, l1, h2, k2, l2))
                  || (!friedel && isEquivalent(h1, k1, l1, h2, k2, l2))) {
                 found_equivalence = true;
-                peak_equivs[i].add(peak);
+                peak_equivs[i].push_back(peak);
                 continue;
             }
         }

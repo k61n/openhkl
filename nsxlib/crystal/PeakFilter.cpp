@@ -97,7 +97,7 @@ PeakList PeakFilter::apply(const PeakList& reference_peaks) const
 
     for (auto peak: reference_peaks) {
         ellipsoids.emplace_back(peak->getShape());
-        peaks.add(peak);
+        peaks.push_back(peak);
         auto cell = peak->activeUnitCell();
 
         if (cell) {
@@ -114,7 +114,7 @@ PeakList PeakFilter::apply(const PeakList& reference_peaks) const
 
     for (auto peak: peaks) {
         if (invalid(*this, peak)) {
-            bad_peaks.add(peak);
+            bad_peaks.push_back(peak);
         }
     }
 
@@ -132,8 +132,8 @@ PeakList PeakFilter::apply(const PeakList& reference_peaks) const
         for (auto collision: collisions) {
             unsigned int i = collision.first - &ellipsoids[0];
             unsigned int j = collision.second - &ellipsoids[0];
-            bad_peaks.add(peaks[i]);
-            bad_peaks.add(peaks[j]);
+            bad_peaks.push_back(peaks[i]);
+            bad_peaks.push_back(peaks[j]);
         }
     }
 
@@ -151,7 +151,7 @@ PeakList PeakFilter::apply(const PeakList& reference_peaks) const
             auto q = peak->getQ();
             auto hkl = cell->getIntegerMillerIndices(q);
             if (_removeForbidden && group.isExtinct(hkl)) {
-                bad_peaks.add(peak);
+                bad_peaks.push_back(peak);
             }
         }
 
@@ -159,7 +159,7 @@ PeakList PeakFilter::apply(const PeakList& reference_peaks) const
             // p value too high: reject peaks
             if (_removeMergedP && merged_peak.pValue() > _mergedP) {
                 for (auto&& p: merged_peak.getPeaks()) {
-                    bad_peaks.add(p);
+                    bad_peaks.push_back(p);
                 }
             }
         }
@@ -168,10 +168,10 @@ PeakList PeakFilter::apply(const PeakList& reference_peaks) const
     for (auto it = peaks.begin(); it != peaks.end(); ) {
         auto jt = std::find(bad_peaks.begin(),bad_peaks.end(),*it);
         if (jt != bad_peaks.end()) {
-            it = peaks.remove(*it);
-            bad_peaks.remove(*jt);
+            it = peaks.erase(it);
+            bad_peaks.erase(jt);
         } else {
-            good_peaks.add(*it);
+            good_peaks.push_back(*it);
             ++it;
         }        
     }

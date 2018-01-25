@@ -154,8 +154,8 @@ PeakList PeakFinder::find(DataList numors)
                 p->setSelected(false);
             }
 
-            numor_peaks.add(p);
-            peaks.add(p);
+            numor_peaks.push_back(p);
+            peaks.push_back(p);
 
             npeaks++;
             ++count;

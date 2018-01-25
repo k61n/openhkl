@@ -39,7 +39,6 @@
 
 #include "CrystalTypes.h"
 #include "InstrumentTypes.h"
-#include "PeakList.h"
 #include "UtilsTypes.h"
 
 namespace nsx {

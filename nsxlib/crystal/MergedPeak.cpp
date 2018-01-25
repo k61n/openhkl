@@ -69,7 +69,7 @@ bool MergedPeak::addPeak(const sptrPeak3D& peak)
     }
 
     // add peak to list
-    _peaks.add(peak);
+    _peaks.push_back(peak);
 
     // if this was the first peak, we have to update _hkl
     if (_peaks.size() == 1) {

@@ -55,7 +55,7 @@ void DialogPeakFilter::accept()
     for (auto peak: _peaks) {
         auto it = std::find(good_peaks.begin(),good_peaks.end(),peak);
         if (it == good_peaks.end()) {
-            _badPeaks.add(peak);
+            _badPeaks.push_back(peak);
         }
     }
 

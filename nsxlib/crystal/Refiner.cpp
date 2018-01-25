@@ -66,7 +66,7 @@ Refiner::Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches)
     PeakList peaks_subset;
 
     for (size_t i = 0; i < sorted_peaks.size(); ++i) {
-        peaks_subset.add(sorted_peaks[i]);
+        peaks_subset.push_back(sorted_peaks[i]);
 
         if (i + 1.1 >= (current_batch+1)*batch_size) {
             RefinementBatch b(*cell, peaks_subset);
