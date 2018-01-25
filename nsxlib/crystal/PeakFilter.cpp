@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <iterator>
 #include <map>
 
 #include "DataSet.h"
@@ -175,6 +177,16 @@ PeakList PeakFilter::apply(const PeakList& reference_peaks) const
     }
 
     return good_peaks;
+}
+
+PeakList PeakFilter::selected(const PeakList& peaks) const
+{
+
+    PeakList filtered_peaks;
+
+    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[](sptrPeak3D peak){return peak->isSelected();});
+
+    return filtered_peaks;
 }
 
 } // end namespace nsx

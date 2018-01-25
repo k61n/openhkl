@@ -46,32 +46,32 @@ size_t PeakList::size() const
     return _peaks.size();
 }
 
-PeakList::peak_list_iterator PeakList::begin()
+PeakList::iterator PeakList::begin()
 {
     return _peaks.begin();
 }
 
-PeakList::peak_list_const_iterator PeakList::begin() const
+PeakList::const_iterator PeakList::begin() const
 {
     return _peaks.cbegin();
 }
 
-PeakList::peak_list_iterator PeakList::end()
+PeakList::iterator PeakList::end()
 {
     return _peaks.end();
 }
 
-PeakList::peak_list_const_iterator PeakList::end() const
+PeakList::const_iterator PeakList::end() const
 {
     return _peaks.cend();
 }
 
-PeakList::peak_list_const_iterator PeakList::cbegin() const
+PeakList::const_iterator PeakList::cbegin() const
 {
     return _peaks.cbegin();
 }
 
-PeakList::peak_list_const_iterator PeakList::cend() const
+PeakList::const_iterator PeakList::cend() const
 {
     return _peaks.cend();
 }
@@ -86,7 +86,17 @@ void PeakList::add(sptrPeak3D peak)
     _peaks.push_back(peak);
 }
 
-PeakList::peak_list_iterator PeakList::remove(sptrPeak3D peak)
+void PeakList::push_back(sptrPeak3D peak)
+{
+    auto it = std::find(_peaks.begin(),_peaks.end(),peak);
+    if (it != _peaks.end()) {
+        return;
+    }
+
+    _peaks.push_back(peak);
+}
+
+PeakList::iterator PeakList::remove(sptrPeak3D peak)
 {
     auto it = std::find(_peaks.begin(),_peaks.end(),peak);
 

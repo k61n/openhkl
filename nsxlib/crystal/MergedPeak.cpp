@@ -69,7 +69,7 @@ bool MergedPeak::addPeak(const sptrPeak3D& peak)
     }
 
     // add peak to list
-    _peaks.emplace_back(peak);
+    _peaks.add(peak);
 
     // if this was the first peak, we have to update _hkl
     if (_peaks.size() == 1) {
@@ -131,7 +131,7 @@ void MergedPeak::determineRepresentativeHKL()
     }
 }
 
-const std::vector<sptrPeak3D>& MergedPeak::getPeaks() const
+const PeakList& MergedPeak::getPeaks() const
 {
     return _peaks;
 }

@@ -39,6 +39,7 @@
 
 #include "CrystalTypes.h"
 #include "InstrumentTypes.h"
+#include "PeakList.h"
 #include "UtilsTypes.h"
 
 namespace nsx {
@@ -94,7 +95,7 @@ private:
   
     IndexerParameters _params;
 
-    std::vector<sptrPeak3D> _peaks;
+    PeakList _peaks;
 
     std::vector<RankedSolution> _solutions;
 

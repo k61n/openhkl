@@ -39,6 +39,7 @@
 
 #include "CrystalTypes.h"
 #include "Intensity.h"
+#include "PeakList.h"
 #include "SpaceGroup.h"
 
 namespace nsx {
@@ -74,7 +75,7 @@ public:
     double pValue() const;
 
     //! Return vector of peaks used to compute the merged peak.
-    const std::vector<sptrPeak3D>& getPeaks() const;
+    const PeakList& getPeaks() const;
 
     //! split the merged peak randomly into two, for calculation of CC
     std::pair<MergedPeak, MergedPeak> split() const;
@@ -87,7 +88,7 @@ private:
     
     Eigen::RowVector3i _hkl;
     Intensity _intensitySum;
-    std::vector<sptrPeak3D> _peaks;
+    PeakList _peaks;
     SpaceGroup _grp;
     bool _friedel;
 };

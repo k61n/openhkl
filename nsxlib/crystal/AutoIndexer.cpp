@@ -104,14 +104,11 @@ void AutoIndexer::computeFFTSolutions()
     // Store the q-vectors of the peaks for auto-indexing
     std::vector<ReciprocalVector> qvects;
 
-//    PeakFilter peak_filter(_peaks);
-//    PeakList filter
+    PeakFilter peak_filter;
+    auto filtered_peaks = peak_filter.selected(_peaks);
 
-    for (auto peak: _peaks) {
-        // Keep only the peak that have selected and that are not masked
-        if (peak->isSelected()) {
-            qvects.push_back(peak->getQ());
-        }
+    for (auto peak : filtered_peaks) {
+        qvects.push_back(peak->getQ());
     }
 
     // Check that a minimum number of peaks have been selected for indexing
@@ -356,7 +353,7 @@ void AutoIndexer::refineConstraints()
 
 void AutoIndexer::addPeak(sptrPeak3D peak)
 {
-    _peaks.emplace_back(peak);
+    _peaks.add(peak);
 }
 
 } // end namespace nsx

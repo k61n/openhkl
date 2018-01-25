@@ -40,8 +40,9 @@ class PeakList {
 public:
 
     using peak_list = std::vector<sptrPeak3D>;
-    using peak_list_iterator = peak_list::iterator;
-    using peak_list_const_iterator = peak_list::const_iterator;
+    using iterator = peak_list::iterator;
+    using const_iterator = peak_list::const_iterator;
+    using value_type = sptrPeak3D;
 
     PeakList()=default;
 
@@ -69,21 +70,23 @@ public:
 
     void add(sptrPeak3D peak);
 
-    peak_list_iterator remove(sptrPeak3D peak);
+    void push_back(sptrPeak3D peak);
+
+    iterator remove(sptrPeak3D peak);
 
     size_t size() const;
 
-    peak_list_iterator begin();
+    iterator begin();
 
-    peak_list_const_iterator begin() const;
+    const_iterator begin() const;
 
-    peak_list_iterator end();
+    iterator end();
 
-    peak_list_const_iterator end() const;
+    const_iterator end() const;
 
-    peak_list_const_iterator cbegin() const;
+    const_iterator cbegin() const;
 
-    peak_list_const_iterator cend() const;
+    const_iterator cend() const;
 
 private:
 
