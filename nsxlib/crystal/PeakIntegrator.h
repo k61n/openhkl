@@ -70,7 +70,6 @@ public:
     double pValue() const;
 
     Eigen::ArrayXd countsPeak() const;
-    Eigen::ArrayXd countsBkg() const;
     Eigen::ArrayXd pointsPeak() const;
     Eigen::ArrayXd pointsBkg() const;
 

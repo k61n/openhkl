@@ -322,11 +322,6 @@ Eigen::ArrayXd PeakIntegrator::countsPeak() const
     return counts;
 }
 
-Eigen::ArrayXd PeakIntegrator::countsBkg() const
-{
-
-}
-
 Eigen::ArrayXd PeakIntegrator::pointsPeak() const
 {
     auto best_slice = _region.bestSlice();
