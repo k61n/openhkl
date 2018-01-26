@@ -48,7 +48,7 @@ struct tVector {
 class FFTIndexing {
 public:
     FFTIndexing(int nSubdiv=25,double amax=50.0);
-    std::vector<tVector> findOnSphere(const std::vector<ReciprocalVector>& qvects, unsigned int nstacks, unsigned int nsolutions) const;
+    std::vector<tVector> findOnSphere(const std::vector<ReciprocalVector>& qvects, unsigned int n_vertices, unsigned int nsolutions) const;
     virtual ~FFTIndexing() = default;
 
 private:
