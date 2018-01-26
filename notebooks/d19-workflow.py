@@ -330,14 +330,14 @@ compute_statistics(good_peaks, nsx.SpaceGroup("P 21"), True)
 refinements = []
 
 for data in numors:
-    print("Refining parameters for dataset", data.getFilename())
+    print("Refining parameters for dataset", data.filename())
     nbatches = 2
-    states = data.getInstrumentStates()
+    states = data.instrumentStates()
     
     data_peaks = []
     
     for peak in good_peaks:
-        if peak.data().getFilename() == data.getFilename():
+        if peak.data().filename() == data.filename():
             data_peaks.append(peak)
                 
     refiner = nsx.Refiner(uc, data_peaks, nbatches)
@@ -360,7 +360,7 @@ for data in numors:
 def predict_peaks(reference_peaks, data, dmin, dmax, B, batches):    
     pred = nsx.PeakPredictor(data)
     qshape = pred.averageQShape(reference_peaks)
-    wavelength = data.getDiffractometer().getSource().getSelectedMonochromator().getWavelength()    
+    wavelength = data.diffractometer().getSource().getSelectedMonochromator().getWavelength()    
     hkls = uc.generateReflectionsInShell(dmin, dmax, wavelength)       
     prediction = pred.predictPeaks(hkls, B)
     
@@ -444,7 +444,7 @@ qs = []
 for p in predicted:
     inten = p.correctedIntensity()
     
-    state = p.data().getInterpolatedState(p.getShape().center()[2,0])
+    state = p.data().interpolatedState(p.getShape().center()[2,0])
     lor = state.lorentzFactor(nsx.DirectVector(p.getShape().center()))
     lors.append(lors)
     qs.append(np.linalg.norm(p.getQ().rowVector()))
