@@ -44,7 +44,7 @@ public slots:
     void findFriedelPairs();
     void peakFitDialog();
     void incorporateCalculatedPeaks();
-    void setHKLTolerance();
+    void setIndexingTolerance();
 
 private:
 

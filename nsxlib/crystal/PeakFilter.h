@@ -13,10 +13,30 @@ namespace nsx {
 class PeakFilter {
 
 public:
-    //! Apply the filter to the given data set. Returns the number of removed peaks
+    //! Apply the filter to the given data set.
     PeakList apply(const PeakList& peaks) const;
 
-    PeakList selected(const PeakList& peaks) const;
+    PeakList selected(const PeakList& peaks, bool flag) const;
+
+    PeakList indexed(const PeakList& peaks, sptrUnitCell cell, double tolerance, bool flag) const;
+
+    PeakList dataset(const PeakList& peaks, sptrDataSet dataset) const;
+
+    PeakList unitCell(const PeakList& peaks, sptrUnitCell unit_cell) const;
+
+    PeakList highSignalToNoise(const PeakList& peaks, double threshold, bool flag) const;
+
+    PeakList lowIntensity(const PeakList& peaks, double threshold, bool flag) const;
+
+    PeakList predicted(const PeakList& peaks, bool flag) const;
+
+    PeakList dRange(const PeakList& peaks, double dmin, double dmax, bool flag) const;
+
+    PeakList selectedPeaks(const PeakList& peaks, const PeakList& other_peaks, bool flag) const;
+
+    PeakList selection(const PeakList& peaks, const std::vector<int>& indexes) const;
+
+    PeakList hasUnitCell(const PeakList& peaks, bool flag) const;
 
 public:
     //! Remove peaks which are not indexed (incommensurate).

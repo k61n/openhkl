@@ -56,34 +56,27 @@ MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel):
 
 bool MergedPeak::addPeak(const sptrPeak3D& peak)
 {
-    ReciprocalVector hkl1(_hkl.cast<double>());
-    auto data = peak->data();
     auto cell = peak->activeUnitCell();
-    auto q = peak->getQ();
-    ReciprocalVector hkl2(cell->getIntegerMillerIndices(q).rowVector().cast<double>());
 
-    
-    // peak is not equivalent to one already on the list
-    if (!_peaks.empty() && !_grp.isEquivalent(hkl1, hkl2, _friedel)) {
-        return false;
+    if (_peaks.empty()) {
+        _hkl = MillerIndex(peak,cell);
+        determineRepresentativeHKL();
+    } else {
+        MillerIndex hkl(peak,cell);
+        if (!_grp.isEquivalent(_hkl, hkl, _friedel)) {
+            return false;
+        }
     }
 
     // add peak to list
     _peaks.push_back(peak);
 
-    // if this was the first peak, we have to update _hkl
-    if (_peaks.size() == 1) {
-        for (auto i = 0; i < 3; ++i) {
-            _hkl(i) = hkl2(i);
-        }
-        determineRepresentativeHKL();
-    }
+    _intensitySum += peak->correctedIntensity();
 
-    _intensitySum += peak->getCorrectedIntensity();
     return true;
 }
 
-Eigen::RowVector3i MergedPeak::getIndex() const
+MillerIndex MergedPeak::getIndex() const
 {
     return _hkl;
 }
@@ -102,7 +95,7 @@ size_t MergedPeak::redundancy() const
 //! E.g. the representative of (2,1,2),(1,-3,5),(-2,4,3),(4,0,5),(7,8-2),(2,6,-1) will be (7,8-2)
 void MergedPeak::determineRepresentativeHKL()
 {
-    Eigen::RowVector3d best_hkl = _hkl.cast<double>();
+    Eigen::RowVector3d best_hkl = _hkl.rowVector().cast<double>();
     std::vector<Eigen::RowVector3d> equivs;
 
     for (auto&& g: _grp.groupElements()) {
@@ -114,7 +107,7 @@ void MergedPeak::determineRepresentativeHKL()
         }
     }
 
-    auto compare_fn = [=](const Eigen::RowVector3d& a, const Eigen::RowVector3d& b) -> bool {
+    auto compare_fn = [=](const Eigen::RowVector3d     & a, const Eigen::RowVector3d& b) -> bool {
         const double eps = 1e-5;
         for (auto i = 0; i < 3; ++i) {
             if (std::abs(a(i)-b(i)) > eps) {
@@ -201,7 +194,7 @@ double MergedPeak::chi2() const
     double chi_sq = 0.0;
 
     for (auto&& peak: _peaks) {
-        auto&& I = peak->getCorrectedIntensity();
+        auto&& I = peak->correctedIntensity();
         const double x = (I.value() - I_merge) / sigma_merge;
         chi_sq += x*x/N;
     }

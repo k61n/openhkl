@@ -84,7 +84,7 @@ void ExperimentTree::setSession(std::shared_ptr<SessionModel> session)
     setModel(_session.get());
 }
 
-void ExperimentTree::setHKLTolerance()
+void ExperimentTree::setIndexingTolerance()
 {
     QStandardItem* item=_session->itemFromIndex(currentIndex());
     auto ucitem=dynamic_cast<UnitCellItem*>(item);
@@ -92,11 +92,11 @@ void ExperimentTree::setHKLTolerance()
         return;
 
     bool ok;
-    double tolerance = QInputDialog::getDouble(this,tr("HKL integer tolerance"),tr("value:"),ucitem->unitCell()->getHKLTolerance(),0.0,1.0,2,&ok);
+    double tolerance = QInputDialog::getDouble(this,tr("HKL integer tolerance"),tr("value:"),ucitem->unitCell()->indexingTolerance(),0.0,1.0,2,&ok);
     if (!ok)
         return;
 
-    ucitem->unitCell()->setHKLTolerance(tolerance);
+    ucitem->unitCell()->setIndexingTolerance(tolerance);
 
     onSingleClick(currentIndex());
 }
@@ -204,7 +204,7 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             auto transformationMatrixLambda = [=]{ucitem->openTransformationMatrixDialog();};
             connect(transformationMatrix, &QAction::triggered, this, transformationMatrixLambda);
 
-            connect(setTolerance, SIGNAL(triggered()),this, SLOT(setHKLTolerance()));
+            connect(setTolerance, SIGNAL(triggered()),this, SLOT(setIndexingTolerance()));
 
         }
         else if (NumorItem* nitem = dynamic_cast<NumorItem*>(item))

@@ -45,6 +45,7 @@
 #include "MillerIndex.h"
 #include "Octree.h"
 #include "Peak3D.h"
+#include "PeakFilter.h"
 #include "PeakPredictor.h"
 #include "ProgressHandler.h"
 #include "ReciprocalVector.h"
@@ -69,6 +70,11 @@ PeakPredictor::PeakPredictor(sptrDataSet data):
 
 PeakList PeakPredictor::predictPeaks(bool keepObserved, const PeakList& reference_peaks)
 {
+    PeakFilter peak_filter;
+    PeakList selected_peaks;
+    selected_peaks = peak_filter.selected(reference_peaks,true);
+    selected_peaks = peak_filter.highSignalToNoise(selected_peaks,_Isigma,true);
+
     int predicted_peaks = 0;
 
     auto& mono = _data->diffractometer()->getSource()->getSelectedMonochromator();
@@ -79,31 +85,23 @@ PeakList PeakPredictor::predictPeaks(bool keepObserved, const PeakList& referenc
     unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
 
     for (unsigned int i = 0; i < ncrystals; ++i) {
-        std::set<MillerIndex> found_hkls;
+
         auto cell = sample->unitCell(i);
+
+        PeakList filtered_peaks;
+        filtered_peaks = peak_filter.unitCell(selected_peaks,cell);
+        filtered_peaks = peak_filter.dataset(filtered_peaks,_data);
+        filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance(),true);
+
         auto UB = cell->reciprocalBasis();        
+        std::set<MillerIndex> found_hkls;
+
         PeakList peaks_to_use;
 
         _handler->setStatus("Building set of previously found peaks...");
-        for (auto&& peak: reference_peaks) {
-
-            // ignore deselected and masked peaks
-            if (!peak->isSelected()) {
-                continue;
-            }
-
-            if (peak->data() != _data || peak->activeUnitCell() != cell) {
-                continue;
-            }            
+        for (auto&& peak: filtered_peaks) {
             
-            found_hkls.insert(cell->getIntegerMillerIndices(peak->getQ()));
-
-            Intensity inten = peak->getCorrectedIntensity();
-
-            // peak must have minimum I / sigma ratio
-            if (inten.value() / inten.sigma() < _Isigma) {
-                continue;
-            }
+            found_hkls.insert(MillerIndex(peak,cell));
 
             try {
                 auto old_shape = peak->getShape().metric();
@@ -148,9 +146,10 @@ PeakList PeakPredictor::predictPeaks(bool keepObserved, const PeakList& referenc
 
         #pragma omp parallel for
         for (size_t peak_id = 0; peak_id < peaks.size(); ++peak_id) {
+
             sptrPeak3D p = peaks[peak_id];
             p->addUnitCell(cell, true);
-            p->setObserved(false);
+            p->setPredicted(true);
             p->setSelected(true);
 
             #pragma omp atomic
@@ -191,7 +190,7 @@ Eigen::Matrix3d PeakPredictor::averageQShape(const PeakList& peaks)
     double total_intensity = 0.0;
 
     for(const auto& p: peaks) {
-        const double I = p->getCorrectedIntensity().value();
+        const double I = p->correctedIntensity().value();
         try {
             covariance += I*p->qShape().inverseMetric();
             total_intensity += I;

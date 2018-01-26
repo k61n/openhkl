@@ -36,7 +36,7 @@ private slots:
     void setMassDensity() const;
     void on_lineEdit_ChemicalFormula_editingFinished();
     void onCompleterActivated(const QString&);
-    void setHKLTolerance(double);
+    void setIndexingTolerance(double);
 
 private:
     UnitCellItem* _unitCellItem;

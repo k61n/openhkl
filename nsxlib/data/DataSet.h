@@ -133,9 +133,6 @@ public:
     //! Integrate intensities of all peaks
     void integratePeaks(const PeakList& peaks, double bkg_begin = 5.0, double bkg_end = 10.0, const sptrProgressHandler& handler = nullptr);
 
-    //! Remove duplicates
-    void removeDuplicatePeaks(nsx::PeakList& peaks);
-
     // todo: replace this with Jacobian of (x,y,f) -> q
     //double getSampleStepSize() const;      
 

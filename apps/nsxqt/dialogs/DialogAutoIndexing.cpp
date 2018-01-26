@@ -82,7 +82,7 @@ void DialogAutoIndexing::autoIndex()
     params.maxdim = ui->maxCellDim->value();
     params.nSolutions = ui->maxNumSolutions->value();
     params.nStacks = ui->nStacks->value();
-    params.HKLTolerance = selectedUnitCell->getHKLTolerance();
+    params.indexingTolerance = selectedUnitCell->indexingTolerance();
 
     params.niggliReduction = ui->niggliReduction->isChecked();
     params.niggliTolerance = ui->niggliTolerance->value();

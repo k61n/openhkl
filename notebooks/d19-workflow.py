@@ -11,7 +11,7 @@ def plot_I_vs_q(peak_list):
     
     for peak in peak_list:
         q = np.linalg.norm(peak.getQ().rowVector())
-        I = peak.getCorrectedIntensity().value()
+        I = peak.correctedIntensity().value()
         qs.append(q)
         Is.append(I)
     
@@ -25,8 +25,8 @@ def plot_Isigma_vs_q(peak_list):
     
     for peak in peak_list:
         q = np.linalg.norm(peak.getQ().rowVector())
-        I = peak.getCorrectedIntensity().value()
-        sigma = peak.getCorrectedIntensity().sigma()
+        I = peak.correctedIntensity().value()
+        sigma = peak.correctedIntensity().sigma()
         qs.append(q)
         Is.append(I/sigma)
     
@@ -43,8 +43,8 @@ def plot_dq_vs_frame(peak_list):
         obs_q = peak.getQ().rowVector()
         uc = peak.activeUnitCell()
         bu = uc.reciprocalBasis()
-        hkl = uc.getIntegerMillerIndices(peak.getQ())
-        pred_q = hkl.dot(bu)
+        hkl = nsx.MillerIndex(peak,uc)
+        pred_q = hkl.rowVector().dot(bu)
         assert(pred_q.shape == obs_q.shape)
         dq = np.linalg.norm(pred_q-obs_q)
         
@@ -64,8 +64,8 @@ def plot_dx_vs_frame(peak_list, outlier=20):
         obs_x = peak.getShape().center()
         uc = peak.activeUnitCell()
         bu = uc.reciprocalBasis()
-        hkl = uc.getIntegerMillerIndices(peak.getQ())
-        pred_q = hkl.dot(bu)
+        hkl = nsx.MillerIndex(peak,uc)
+        pred_q = hkl.rowVector().dot(bu)
         
         predictor = nsx.PeakPredictor(peak.data())
         ellipsoid = nsx.Ellipsoid(pred_q.transpose(), 100.0*np.identity(3)) 
@@ -185,7 +185,7 @@ data_files = glob.glob(data_dir + "*.h5")
 
 numors = []
 
-for f in data_files:
+for f in data_files[:5]:
     reader = nsx.HDF5DataReader(f,diff)
 
     # Discard the data with a low number of frames (unlikely to be "production" data)
@@ -201,11 +201,11 @@ for f in data_files:
     numors.append(data)
 
 plt.figure(figsize=(20,10))
-plt.imshow(np.log(1+numors[0].getFrame(100)))
+plt.imshow(np.log(1+numors[0].frame(100)))
 plt.show()
 
-nrows = numors[0].getNRows()
-ncols = numors[0].getNCols()
+nrows = numors[0].nRows()
+ncols = numors[0].nCols()
 
 kernel = nsx.AnnularKernel(nrows, ncols)
 kernel_image = kernel.getKernel()
@@ -227,7 +227,7 @@ peaks = finder.find(numors)
 
 for peak in peaks:
        
-    inten = peak.getCorrectedIntensity()
+    inten = peak.correctedIntensity()
     
     if not peak.isSelected():
         continue
@@ -241,8 +241,8 @@ plot_I_vs_q(peaks)
 good_peaks = []
 
 for peak in peaks:
-    I = peak.getCorrectedIntensity().value()
-    sigma = peak.getCorrectedIntensity().sigma()
+    I = peak.correctedIntensity().value()
+    sigma = peak.correctedIntensity().sigma()
     
     # keep only selected peaks
     if not peak.isSelected():
@@ -306,7 +306,7 @@ compatible_space_groups = uc.compatibleSpaceGroups()
 hkls = nsx.MillerIndexList()
 
 for peak in good_peaks:
-    hkls.push_back(uc.getIntegerMillerIndices(peak.getQ()))
+    hkls.push_back(nsx.MillerIndex(peak,uc))
 
 space_groups = []
 for idx,symbol in enumerate(compatible_space_groups):
@@ -442,7 +442,7 @@ lors = []
 qs = []
 
 for p in predicted:
-    inten = p.getCorrectedIntensity()
+    inten = p.correctedIntensity()
     
     state = p.data().getInterpolatedState(p.getShape().center()[2,0])
     lor = state.lorentzFactor(nsx.DirectVector(p.getShape().center()))

@@ -57,6 +57,8 @@ public:
 
     const Eigen::RowVector3d& error() const;
 
+    bool indexed(double tolerance) const;
+
 private:
 
     Eigen::RowVector3i _hkl;

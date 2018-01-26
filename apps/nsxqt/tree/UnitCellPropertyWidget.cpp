@@ -53,9 +53,9 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
     for (const auto& symbol : symbols)
         ui->comboBox->addItem(QString::fromStdString(symbol));
 
-    ui->comboBox->setCurrentText(cell->spaceGroup().c_str());
+    ui->comboBox->setCurrentText(cell->spaceGroup().symbol().c_str());
 
-    ui->hklTolerance->setValue(cell->getHKLTolerance());
+    ui->indexingTolerance->setValue(cell->indexingTolerance());
 
     QSortFilterProxyModel* proxyModel = new QSortFilterProxyModel(this);
     proxyModel->setSourceModel(ui->comboBox->model());
@@ -68,7 +68,7 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
     connect(ui->comboBox->lineEdit(), SIGNAL(textChanged(QString)), proxyModel, SLOT(setFilterFixedString(QString)));
     connect(completer, SIGNAL(activated(const QString &)), this, SLOT(onCompleterActivated(const QString &)));
 
-    connect(ui->hklTolerance,SIGNAL(valueChanged(double)),this,SLOT(setHKLTolerance(double)));
+    connect(ui->indexingTolerance,SIGNAL(valueChanged(double)),this,SLOT(setIndexingTolerance(double)));
 
 }
 
@@ -161,7 +161,7 @@ void UnitCellPropertyWidget::onCompleterActivated(const QString& text)
     ui->comboBox->activated(ui->comboBox->currentIndex());
 }
 
-void UnitCellPropertyWidget::setHKLTolerance(double tolerance)
+void UnitCellPropertyWidget::setIndexingTolerance(double tolerance)
 {
-    _unitCellItem->unitCell()->setHKLTolerance(tolerance);
+    _unitCellItem->unitCell()->setIndexingTolerance(tolerance);
 }

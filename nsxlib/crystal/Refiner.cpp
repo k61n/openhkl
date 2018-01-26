@@ -38,9 +38,11 @@
 #include <algorithm>
 #include <iterator>
 
+#include "CrystalTypes.h"
 #include "InstrumentState.h"
 #include "MillerIndex.h"
 #include "Peak3D.h"
+#include "PeakFilter.h"
 #include "PeakPredictor.h"
 #include "Refiner.h"
 #include "UnitCell.h"
@@ -133,25 +135,23 @@ const std::vector<RefinementBatch>& Refiner::batches() const
 
 int Refiner::updatePredictions(PeakList& peaks) const
 {
+    PeakFilter peak_filter;
+    PeakList filtered_peaks;
+    filtered_peaks = peak_filter.selected(peaks,true);
+    filtered_peaks = peak_filter.predicted(filtered_peaks,true);
+    filtered_peaks = peak_filter.unitCell(filtered_peaks,_cell);
+    filtered_peaks = peak_filter.indexed(filtered_peaks,_cell,_cell->indexingTolerance(),true);
+
     PeakList pred_peaks;
     int updated = 0;
 
-    for (auto&& peak: peaks) {
-
-        if (!peak->isSelected() || peak->isObserved()) {
-            continue;
-        }
-
-        if (peak->activeUnitCell() != _cell) {
-            continue;
-        }
+    for (auto&& peak: filtered_peaks) {
                 
         // find appropriate batch
         const RefinementBatch* b = nullptr;    
         double z = peak->getShape().center()[2];
         for (auto&& batch: _batches) {
             
-
             if (batch.contains(z)) {
                 b = &batch;
                 break;
@@ -164,9 +164,8 @@ int Refiner::updatePredictions(PeakList& peaks) const
         }
 
         // update the position
-        auto hkl = b->cell()->getIntegerMillerIndices(peak->getQ());
         PeakPredictor predictor(peak->data());
-        auto pred = predictor.predictPeaks({hkl}, b->cell()->reciprocalBasis());
+        auto pred = predictor.predictPeaks({MillerIndex(peak,_cell)}, b->cell()->reciprocalBasis());
 
         // something wrong with new prediction...
         if (pred.size() != 1) {

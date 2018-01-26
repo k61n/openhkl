@@ -49,7 +49,7 @@ struct IndexerParameters {
     int nSolutions = 10;
     int nStacks = 30;
     int subdiv = 5;
-    double HKLTolerance = 0.2;
+    double indexingTolerance = 0.2;
     double niggliTolerance = 1e-3;
     double gruberTolerance = 4e-2;
     bool niggliReduction = false;

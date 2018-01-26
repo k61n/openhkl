@@ -60,7 +60,7 @@ UnitCell::UnitCell():
     _Z(1),
     _group("P 1"),
     _name("uc"),
-    _hklTolerance(0.2),
+    _indexingTolerance(0.2),
     _niggli()
 {
 }
@@ -242,16 +242,6 @@ double UnitCell::getAngle(const Eigen::RowVector3d& hkl1, const Eigen::RowVector
     return acos(q1.dot(q2)/q1.norm()/q2.norm());
 }
 
-bool UnitCell::isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const
-{
-    return _group.isEquivalent(h1, k1, l1, h2, k2, l2);
-}
-
-bool UnitCell::isFriedelEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const
-{
-    return _group.isFriedelEquivalent(h1, k1, l1, h2, k2, l2);
-}
-
 unsigned int UnitCell::getZ() const
 {
     return _Z;
@@ -277,9 +267,9 @@ void UnitCell::setSpaceGroup(const std::string& symbol)
     _group = SpaceGroup(symbol);
 }
 
-std::string UnitCell::spaceGroup() const
+const SpaceGroup& UnitCell::spaceGroup() const
 {
-    return _group.symbol();
+    return _group;
 }
 
 void UnitCell::setName(const std::string& name)
@@ -294,16 +284,16 @@ const std::string& UnitCell::getName() const
     return _name;
 }
 
-void UnitCell::setHKLTolerance(double tolerance)
+void UnitCell::setIndexingTolerance(double tolerance)
 {
     if (tolerance <= 0.0 || tolerance >= 1.0)
         throw std::runtime_error("Class UnitCell: invalid integer HKL tolerance.");
-    _hklTolerance = tolerance;
+    _indexingTolerance = tolerance;
 }
 
-double UnitCell::getHKLTolerance() const
+double UnitCell::indexingTolerance() const
 {
-    return _hklTolerance;
+    return _indexingTolerance;
 }
 
 void UnitCell::setNiggli(const NiggliCharacter& niggli)
@@ -733,35 +723,6 @@ void UnitCell::setParameterCovariance(const Eigen::MatrixXd& cov)
     _characterSigmas.alpha = std::sqrt(abc_cov(3,3));
     _characterSigmas.beta = std::sqrt(abc_cov(4,4));
     _characterSigmas.gamma = std::sqrt(abc_cov(5,5));
-}
-
-
-bool UnitCell::getMillerIndices(const ReciprocalVector& q, Eigen::RowVector3d& hkl, bool applyUCTolerance) const
-{
-    hkl = index(q);
-
-    if (applyUCTolerance) {
-        double tolerance = getHKLTolerance();
-
-        if (std::fabs(hkl[0]-std::round(hkl[0])) < tolerance &&
-                std::fabs(hkl[1]-std::round(hkl[1])) < tolerance &&
-                std::fabs(hkl[2]-std::round(hkl[2])) < tolerance) {
-            hkl[0]=std::round(hkl[0]);
-            hkl[1]=std::round(hkl[1]);
-            hkl[2]=std::round(hkl[2]);
-            return true;
-        }
-        hkl = Eigen::Vector3d::Zero();
-        return false;
-    }
-    return true;
-}
-
-MillerIndex UnitCell::getIntegerMillerIndices(const ReciprocalVector& q) const
-{
-    Eigen::RowVector3d hkld;
-    getMillerIndices(q, hkld, true);
-    return MillerIndex(int(std::lround(hkld[0])), int(std::lround(hkld[1])), int(std::lround(hkld[2])));
 }
 
 std::vector<std::string> UnitCell::compatibleSpaceGroups() const
