@@ -23,7 +23,7 @@
 #include "ColorMap.h"
 #include "DialogConvolve.h"
 
-#include "ui_ConvolveDialog.h"
+#include "ui_DialogConvolve.h"
 
 DialogConvolve::DialogConvolve(const nsx::DataList& data,
                                nsx::sptrPeakFinder peakFinder,
