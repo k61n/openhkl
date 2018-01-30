@@ -19,7 +19,7 @@ public:
 
     virtual ~DeltaKernel();
 
-    const char* getName() override;
+    const char* name() override;
 
 private:
 

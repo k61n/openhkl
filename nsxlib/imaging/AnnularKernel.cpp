@@ -50,7 +50,7 @@ AnnularKernel::~AnnularKernel()
 {
 }
 
-const char* AnnularKernel::getName()
+const char* AnnularKernel::name()
 {
     return "Annular";
 }

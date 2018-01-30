@@ -16,7 +16,7 @@
   <property name="modal">
    <bool>false</bool>
   </property>
-  <widget class="QGraphicsView" name="graphicsView">
+  <widget class="QGraphicsView" name="preview">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -31,11 +31,22 @@
     <rect>
      <x>750</x>
      <y>0</y>
-     <width>481</width>
-     <height>481</height>
+     <width>485</width>
+     <height>503</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
+    <item row="7" column="3">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QComboBox" name="filterComboBox">
+        <property name="insertPolicy">
+         <enum>QComboBox::InsertAlphabetically</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
     <item row="6" column="3">
      <widget class="QSpinBox" name="maxCompBox">
       <property name="maximum">
@@ -56,7 +67,7 @@
     <item row="6" column="0" colspan="2">
      <widget class="QLabel" name="maxCompLabel">
       <property name="text">
-       <string>Max. componenents</string>
+       <string>Max. components</string>
       </property>
      </widget>
     </item>
@@ -90,13 +101,6 @@
       </item>
      </widget>
     </item>
-    <item row="8" column="0" colspan="2">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Filter parameters</string>
-      </property>
-     </widget>
-    </item>
     <item row="5" column="0" colspan="2">
      <widget class="QLabel" name="minCompLabel">
       <property name="text">
@@ -114,7 +118,10 @@
     <item row="7" column="0" colspan="2">
      <widget class="QLabel" name="filterLabel">
       <property name="text">
-       <string>Filter type</string>
+       <string>Convolution type</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
       </property>
      </widget>
     </item>
@@ -135,13 +142,6 @@
       </property>
      </widget>
     </item>
-    <item row="11" column="1">
-     <widget class="QPushButton" name="previewButton">
-      <property name="text">
-       <string>Generate Preview</string>
-      </property>
-     </widget>
-    </item>
     <item row="12" column="3">
      <widget class="QDialogButtonBox" name="buttonBox">
       <property name="orientation">
@@ -149,13 +149,6 @@
       </property>
       <property name="standardButtons">
        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-      </property>
-     </widget>
-    </item>
-    <item row="11" column="3">
-     <widget class="QCheckBox" name="thresholdCheckBox">
-      <property name="text">
-       <string>apply threshold to preview</string>
       </property>
      </widget>
     </item>
@@ -169,16 +162,6 @@
       </property>
       <property name="value">
        <double>3.000000000000000</double>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="3">
-     <widget class="QTreeView" name="treeView"/>
-    </item>
-    <item row="7" column="3">
-     <widget class="QComboBox" name="filterComboBox">
-      <property name="insertPolicy">
-       <enum>QComboBox::InsertAlphabetically</enum>
       </property>
      </widget>
     </item>
@@ -202,6 +185,43 @@
      <widget class="QLabel" name="confidenceLabel_2">
       <property name="text">
        <string>Peak search confidence</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="3">
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="frameIndex"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Frame</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="applyThreshold">
+        <property name="text">
+         <string>apply threshold to preview</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="9" column="0">
+     <widget class="QListWidget" name="dataList"/>
+    </item>
+    <item row="8" column="3">
+     <widget class="QTreeView" name="treeView"/>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>Convolution parameters</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
       </property>
      </widget>
     </item>

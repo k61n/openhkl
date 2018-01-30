@@ -55,11 +55,9 @@ int main()
     auto kernelFactory = nsx::KernelFactory::Instance();
     kernel.reset(kernelFactory->create(kernelName, int(dataf->nRows()), int(dataf->nCols())));
 
-    auto k = kernel->getKernel();
-
     // propagate changes to peak finder
-    auto convolver = peakFinder->getConvolver();
-    convolver->setKernel(kernel->getKernel());
+    auto convolver = peakFinder->convolver();
+    convolver->setKernel(kernel->kernel());
     peakFinder->setMinComponents(30);
     peakFinder->setMaxComponents(10000);
     peakFinder->setKernel(kernel);

@@ -39,6 +39,7 @@
 #include "DataTypes.h"
 #include "GeometryTypes.h"
 #include "IMask.h"
+#include "ImagingTypes.h"
 #include "InstrumentTypes.h"
 #include "UtilsTypes.h"
 
@@ -113,6 +114,9 @@ public:
 
     //! Read a single frame
     Eigen::MatrixXi frame(std::size_t idx);
+
+    //! Return a convolved frame
+    Eigen::MatrixXi convolvedFrame(std::size_t idx, sptrConvolutionKernel kernel);
 
     //! Get the file handle.
     void open();

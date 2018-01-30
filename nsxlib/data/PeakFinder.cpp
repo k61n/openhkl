@@ -81,7 +81,7 @@ PeakList PeakFinder::find(DataList numors)
                 }
 
                 // update the convolver with the kernel
-                _convolver->setKernel(_kernel->getKernel());
+                _convolver->setKernel(_kernel->matrix());
 
                 // this is the filter function to be applied to each frame
                 auto callback = [&] (const RealMatrix& input) -> RealMatrix {
@@ -92,8 +92,8 @@ PeakList PeakFinder::find(DataList numors)
                 };
 
                 if (_handler) {
-                    _handler->log("kernel " + std::string(_kernel->getName()) + " selected");
-                    for (auto& it: _kernel->getParameters()) {
+                    _handler->log("kernel " + std::string(_kernel->name()) + " selected");
+                    for (auto& it: _kernel->parameters()) {
                         _handler->log(it.first + " " + std::to_string(it.second));
                     }
                 }
@@ -261,12 +261,12 @@ void PeakFinder::setKernel(sptrConvolutionKernel kernel)
     _kernel = kernel;
 }
 
-sptrConvolver PeakFinder::getConvolver()
+sptrConvolver PeakFinder::convolver()
 {
     return _convolver;
 }
 
-sptrConvolutionKernel PeakFinder::getKernel()
+sptrConvolutionKernel PeakFinder::kernel()
 {
     return _kernel;
 }
