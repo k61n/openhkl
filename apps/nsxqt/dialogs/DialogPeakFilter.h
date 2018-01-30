@@ -7,6 +7,7 @@
 #include <QDialog>
 #include <QVBoxLayout>
 
+#include <nsxlib/CrystalTypes.h>
 #include <nsxlib/DataTypes.h>
 
 namespace Ui {
@@ -16,15 +17,15 @@ class PeakFilterDialog;
 class DialogPeakFilter : public QDialog {
 
 public:
-    DialogPeakFilter(const nsx::PeakSet& peaks, QWidget* parent=0);
+    DialogPeakFilter(const nsx::PeakList& peaks, QWidget* parent=0);
     virtual ~DialogPeakFilter();
-    const nsx::PeakSet& badPeaks() const;
+    const nsx::PeakList& badPeaks() const;
 
 public slots:
     virtual void accept() override;
 
 private:
-Ui::PeakFilterDialog* _ui;
-    nsx::PeakSet _peaks;
-    nsx::PeakSet _badPeaks;
+    Ui::PeakFilterDialog* _ui;
+    nsx::PeakList _peaks;
+    nsx::PeakList _badPeaks;
 };

@@ -104,7 +104,7 @@ public:
 
     //! Set the reciprocal basis
     void setReciprocalBasis(const Eigen::Matrix3d& B);
-    
+
     //! Set lattice centering type
     void setLatticeCentring(LatticeCentring centring);
     //! Set Bravais type
@@ -117,11 +117,6 @@ public:
 
     //! Return the angle in radians between two reflections hkl1 and hkl2
     double getAngle(const Eigen::RowVector3d& hkl1, const Eigen::RowVector3d& hkl2) const;
-
-    //! Determine whether two reflections \f$(h_1,k_1,l_1)\f$ and \f$(h_2,k_2,l_2)\f$ are equivalent.
-    bool isEquivalent(double h1,double k1, double l1, double h2, double k2, double l2) const;
-    //! Determine whether two reflections (h1,k1,l1) and (h2,k2,l2) are equivalent up to Friedel reflection.
-    bool isFriedelEquivalent(double h1,double k1, double l1, double h2, double k2, double l2) const;
 
     //! Set the Niggli character of the cell
     void setNiggli(const NiggliCharacter& niggli);
@@ -154,7 +149,7 @@ public:
     //! Set space group from its symbol.
     void setSpaceGroup(const std::string& symbol);
     //! Return the space group symbol of the unit cell.
-    std::string spaceGroup() const;
+    const SpaceGroup& spaceGroup() const;
 
     // todo: should move name to GUI??
     //! Set name of the unit cell
@@ -164,9 +159,9 @@ public:
 
     // move to GUI??
     //! Set the integer tolerance for this unit cell
-    void setHKLTolerance(double tolerance);
+    void setIndexingTolerance(double tolerance);
     //! Get the integer tolerance for this unit cell
-    double getHKLTolerance() const;
+    double indexingTolerance() const;
 
     //! Return the real-space basis
     const Eigen::Matrix3d& basis() const;
@@ -228,10 +223,6 @@ public:
 
     //! \brief Construct a new unit cell from a reference orientation, an orientation offset, and a set of parameters.
     UnitCell fromParameters(const Eigen::Matrix3d& U0, const Eigen::Vector3d& uOffset, const Eigen::VectorXd& parameters) const;
-
-    bool getMillerIndices(const ReciprocalVector& q, Eigen::RowVector3d& hkl, bool applyUCTolerance=true) const;
-
-    MillerIndex getIntegerMillerIndices(const ReciprocalVector& q) const;
     
     std::vector<std::string> compatibleSpaceGroups() const;
 
@@ -253,7 +244,7 @@ private:
     unsigned int _Z;
     SpaceGroup _group;
     std::string _name;
-    double _hklTolerance;
+    double _indexingTolerance;
     NiggliCharacter _niggli;
     CellCharacter _characterSigmas;
 };

@@ -37,6 +37,7 @@
 #include <Eigen/Dense>
 
 #include "CrystalTypes.h"
+#include "MillerIndex.h"
 #include "GeometryTypes.h"
 #include "SymOp.h"
 
@@ -78,11 +79,9 @@ public:
     //! Return the ID of the space group
     int id() const;    
     //! Return whether two sets of indices are related by a symmetry
-    bool isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2, bool friedel=false) const;
-    //! Return whether two sets of indices are related by a symmetry
-    bool isEquivalent(const ReciprocalVector& a, const ReciprocalVector& b, bool friedel=false) const;
+    bool isEquivalent(const MillerIndex& miller_index1, const MillerIndex& miller_index2, bool friedel=false) const;
     //! Return whether two sets of indices are related by a symmetry up to Friedel reflection
-    bool isFriedelEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const;
+    bool isFriedelEquivalent(const MillerIndex& miller_index1, const MillerIndex& miller_index2) const;
 
     std::vector<PeakList> findEquivalences(const PeakList &peak_list, bool friedel) const;
 

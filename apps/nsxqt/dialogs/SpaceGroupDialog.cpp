@@ -21,6 +21,7 @@
 #include <nsxlib/Logger.h>
 #include <nsxlib/MillerIndex.h>
 #include <nsxlib/Peak3D.h>
+#include <nsxlib/PeakFilter.h>
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/RFactor.h>
 #include <nsxlib/Sample.h>
@@ -30,11 +31,9 @@
 #include "SpaceGroupDialog.h"
 #include "ui_SpaceGroupDialog.h"
 
-SpaceGroupDialog::SpaceGroupDialog(const nsx::PeakSet& peaks, QWidget *parent):
+SpaceGroupDialog::SpaceGroupDialog(const nsx::PeakList& peaks, QWidget *parent):
     QDialog(parent),
     ui(new Ui::SpaceGroupDialog),
-    _peaks(peaks),
-    _cell(nullptr),
     _selectedGroup("")
 {
     ui->setupUi(this);
@@ -44,7 +43,32 @@ SpaceGroupDialog::SpaceGroupDialog(const nsx::PeakSet& peaks, QWidget *parent):
     // Selection of a cellin the table select the whole line.
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
+    nsx::PeakFilter peak_filter;
+    _peaks = peak_filter.selected(peaks,true);
+    for (auto peak : _peaks) {
+        auto current_peak_cell = peak->activeUnitCell();
+        if (!current_peak_cell) {
+            continue;
+        }
+
+        if (!_cell) {
+            _cell = current_peak_cell;
+        } else {
+            if (_cell != current_peak_cell) {
+                nsx::error() << "ERROR: Only one unit cell is supported at this time";
+                return;
+            }
+        }
+    }
+
+    _peaks = peak_filter.indexed(_peaks, _cell, _cell->indexingTolerance(),true);
+
+    if ( _peaks.size()  == 0) {
+        nsx::error() << "Need at least one peak to find space group!";
+    }
+
     evaluateSpaceGroups();
+
     buildTable();
 }
 
@@ -65,39 +89,10 @@ void SpaceGroupDialog::evaluateSpaceGroups()
 
     nsx::MillerIndexList hkls;
 
-    if ( _peaks.size()  == 0) {
-        nsx::error() << "Need at least one peak to find space group!";
-        return;
-    }
-
     nsx::info() << "Retrieving reflection list for space group calculation...";
 
-    for (nsx::sptrPeak3D peak : _peaks) {
-
-        if (!peak->isSelected()) {
-            continue;
-        }
-
-        auto current_peak_cell = peak->activeUnitCell();
-        if (!current_peak_cell) {
-            continue;
-        }
-
-        if (!_cell) {
-            _cell = current_peak_cell;
-        } else {
-            if (_cell != current_peak_cell) {
-                nsx::error() << "ERROR: Only one unit cell is supported at this time";
-                return;
-            }
-        }
-        auto indx = _cell->getIntegerMillerIndices(peak->getQ());
-        hkls.emplace_back(indx[0], indx[1], indx[2]);
-    }
-
-    if (hkls.size() == 0) {
-        nsx::error() << "Need to have indexed peaks in order to find space group!";
-        return;
+    for (auto peak : _peaks) {
+        hkls.emplace_back(nsx::MillerIndex(peak,_cell).rowVector());
     }
 
     _groups.clear();

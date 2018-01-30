@@ -14,7 +14,7 @@ public:
 
     PeakFinder();
 
-    PeakSet find(DataList numors);
+    PeakList find(DataList numors);
 
     void setHandler(const sptrProgressHandler& handler);
 

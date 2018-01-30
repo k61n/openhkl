@@ -33,8 +33,9 @@
 #include <sstream>
 #include <vector>
 
+#include "CrystalTypes.h"
 #include "Peak3D.h"
-#include "MillerIndex.h"
+#include "PeakFilter.h"
 #include "ReciprocalVector.h"
 #include "SpaceGroup.h"
 #include "StringIO.h"
@@ -485,57 +486,56 @@ std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg)
     return os;
 }
 
-bool SpaceGroup::isEquivalent(double h1, double k1, double l1, double h2, double k2, double l2, bool friedel) const
-{
-    return isEquivalent(ReciprocalVector(Eigen::RowVector3d(h1, k1, l1)), ReciprocalVector(Eigen::RowVector3d(h2, k2, l2)), friedel);
-}
-
-bool SpaceGroup::isEquivalent(const ReciprocalVector& a, const ReciprocalVector& b, bool friedel) const
+bool SpaceGroup::isEquivalent(const MillerIndex& hkl1, const MillerIndex& hkl2, bool friedel) const
 {
     const auto& elements = groupElements();
     const double eps = 1e-6;
 
-    const Eigen::RowVector3d& q_vector_a = a.rowVector();
-    const Eigen::RowVector3d& q_vector_b = b.rowVector();
+    const Eigen::RowVector3d& hkl1d = hkl1.rowVector().cast<double>();
+    const Eigen::RowVector3d& hkl2d = hkl2.rowVector().cast<double>();
 
     // note: since rotation preserves the norm, we can reject early:
-    const double norm_a = q_vector_a.squaredNorm();
-    const double norm_b = q_vector_b.squaredNorm();
+    const double norm_1 = hkl1d.squaredNorm();
+    const double norm_2 = hkl2d.squaredNorm();
 
-    if (std::abs(norm_a-norm_b) > eps) {
+    if (std::abs(norm_1-norm_2) > eps) {
         return false;
     }
 
     for (auto&& element : elements) {
         // todo(jonathan): check that this edit is correct!
         const Eigen::Matrix3d rotation = element.getRotationPart().transpose();
-        const Eigen::RowVector3d rotated = q_vector_a*rotation;
+        const Eigen::RowVector3d rotated = hkl1d*rotation;
 
-        if (std::max((rotated-q_vector_a).maxCoeff(), (q_vector_a-rotated).maxCoeff()) < eps) {
+        if (std::max((rotated-hkl1d).maxCoeff(), (hkl1d-rotated).maxCoeff()) < eps) {
             return true;
         }
 
-        if (friedel && std::max((rotated+q_vector_a).maxCoeff(), (-q_vector_a-rotated).maxCoeff()) < eps) {
+        if (friedel && std::max((rotated+hkl1d).maxCoeff(), (-hkl1d-rotated).maxCoeff()) < eps) {
             return true;
         }
     }
     return false;
 }
 
-bool SpaceGroup::isFriedelEquivalent(double h1, double k1, double l1, double h2, double k2, double l2) const
+bool SpaceGroup::isFriedelEquivalent(const MillerIndex& hkl1, const MillerIndex& hkl2) const
 {
     const auto& elements = _groupElements;
-    Eigen::Vector3d rotated;
+    Eigen::RowVector3d rotated;
+
+    const Eigen::RowVector3d& hkl1d = hkl1.rowVector().cast<double>();
+    const Eigen::RowVector3d& hkl2d = hkl2.rowVector().cast<double>();
+
     for (const auto& element : elements) {
         // todo(jonathan): check that this edit is correct!
         //rotated = element.getMatrix()*Eigen::Vector3d(h1,k1,l1);
-        rotated = element.getRotationPart()*Eigen::Vector3d(h1,k1,l1);
+        rotated = hkl1d * element.getRotationPart().transpose();
 
-        if (std::abs(rotated[0]-h2)<1e-6 && std::abs(rotated[1]-k2)<1e-6 && std::abs(rotated[2]-l2)<1e-6) {
+        if (std::abs(rotated[0]-hkl2d[0])<1e-6 && std::abs(rotated[1]-hkl2d[1])<1e-6 && std::abs(rotated[2]-hkl2d[2])<1e-6) {
             return true;
         }
         // compare against Friedel reflection
-        if (std::abs(rotated[0]+h2)<1e-6 && std::abs(rotated[1]+k2)<1e-6 && std::abs(rotated[2]+l2)<1e-6) {
+        if (std::abs(rotated[0]+hkl2d[0])<1e-6 && std::abs(rotated[1]+hkl2d[1])<1e-6 && std::abs(rotated[2]+hkl2d[2])<1e-6) {
             return true;
         }
     }
@@ -592,27 +592,26 @@ void SpaceGroup::reduceSymbol()
 
 }
 
-std::vector<PeakList> SpaceGroup::findEquivalences(const PeakList &peak_list, bool friedel) const
+std::vector<PeakList> SpaceGroup::findEquivalences(const PeakList& peaks, bool friedel) const
 {
+
     std::vector<PeakList> peak_equivs;
 
-    for (auto&& peak: peak_list ) {
+
+    for (auto peak : peaks) {
         bool found_equivalence = false;
-        int h1, h2, k1, k2, l1, l2;
         auto cell = peak->activeUnitCell();
-        auto hkl1 = cell->getIntegerMillerIndices(peak->getQ());
-        h1 = hkl1(0);
-        k1 = hkl1(1);
-        l1 = hkl1(2);
+
+        PeakFilter peak_filter;
+        PeakList same_cell_peaks = peak_filter.unitCell(peaks,cell);
+
+        MillerIndex miller_index1(peak,cell);
 
         for (size_t i = 0; i < peak_equivs.size() && !found_equivalence; ++i) {
-            auto hkl2 = cell->getIntegerMillerIndices(peak_equivs[i][0]->getQ());
-            h2 = hkl2(0);
-            k2 = hkl2(1);
-            l2 = hkl2(2);
+            MillerIndex miller_index2(peak_equivs[i][0],cell);
 
-            if ( (friedel && isFriedelEquivalent(h1, k1, l1, h2, k2, l2))
-                 || (!friedel && isEquivalent(h1, k1, l1, h2, k2, l2))) {
+            if ( (friedel && isFriedelEquivalent(miller_index1,miller_index2))
+                 || (!friedel && isEquivalent(miller_index1,miller_index2))) {
                 found_equivalence = true;
                 peak_equivs[i].push_back(peak);
                 continue;
@@ -621,7 +620,7 @@ std::vector<PeakList> SpaceGroup::findEquivalences(const PeakList &peak_list, bo
 
         // didn't find an equivalence?
         if ( !found_equivalence) {
-            peak_equivs.emplace_back(PeakList{peak});
+            peak_equivs.emplace_back(PeakList({peak}));
         }
     }
     return peak_equivs;

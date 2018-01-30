@@ -49,7 +49,7 @@ struct IndexerParameters {
     int nSolutions = 10;
     int nVertices = 10000;
     int subdiv = 5;
-    double HKLTolerance = 0.2;
+    double indexingTolerance = 0.2;
     double niggliTolerance = 1e-3;
     double gruberTolerance = 4e-2;
     bool niggliReduction = false;
@@ -94,7 +94,7 @@ private:
   
     IndexerParameters _params;
 
-    std::vector<sptrPeak3D> _peaks;
+    PeakList _peaks;
 
     std::vector<RankedSolution> _solutions;
 

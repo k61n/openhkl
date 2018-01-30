@@ -79,14 +79,11 @@ public:
     Intensity getScaledIntensity() const;
 
     //! Return the intensity, after scaling, transmission, and Lorentz factor corrections
-    Intensity getCorrectedIntensity() const;
+    Intensity correctedIntensity() const;
 
     //! Return the raw intensity of the peak.
     Intensity getRawIntensity() const;
-  
-    //!
-    double getIOverSigmaI() const;
-   
+
     //! Return the scaling factor.
     double getScale() const;
     //! Rescale the current scaling factor by scale.
@@ -110,8 +107,8 @@ public:
 
     bool isIndexed() const;
 
-    void setObserved(bool observed);
-    bool isObserved() const;
+    void setPredicted(bool predicted);
+    bool isPredicted() const;
 
     bool hasUnitCells() const;
     void scaleShape(double scale);
@@ -165,7 +162,7 @@ private:
     double _scale;
     bool _selected;
     bool _masked;
-    bool _observed;
+    bool _predicted;
     double _transmission;
     int _activeUnitCellIndex;
 

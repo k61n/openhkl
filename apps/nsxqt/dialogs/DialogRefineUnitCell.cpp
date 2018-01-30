@@ -120,14 +120,14 @@ void DialogRefineUnitCell::refineParameters()
             int updated = r.updatePredictions(d_peaks);
             nsx::info() << "done; updated " << updated << " peak";
 
-            nsx::PeakSet pset;
+            nsx::PeakList peak_list;
 
             for (auto&& p: d_peaks) {
-                pset.insert(p);
+                peak_list.push_back(p);
             }
 
             // todo: fix bkg_begin and bkg_end
-            d->integratePeaks(pset, 3.0, 6.0, nullptr);
+            d->integratePeaks(peak_list, 3.0, 6.0, nullptr);
         }
     }
 }

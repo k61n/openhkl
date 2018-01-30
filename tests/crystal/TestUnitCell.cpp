@@ -1,5 +1,6 @@
 #include <random>
 
+#include <nsxlib/MillerIndex.h>
 #include <nsxlib/Minimizer.h>
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/UnitCell.h>
@@ -68,10 +69,11 @@ int main()
     // Check equivalence
     cell4.setSpaceGroup("P 4/m m m");
 
-    NSX_CHECK_ASSERT(cell4.isEquivalent(2,0,0,0,2,0));
-    NSX_CHECK_ASSERT(cell4.isEquivalent(2,3,2,3,2,-2));
-    NSX_CHECK_ASSERT(!cell4.isEquivalent(2,3,2,3,2,-3));
+    auto space_group = cell4.spaceGroup();
 
+    NSX_CHECK_ASSERT(space_group.isEquivalent(nsx::MillerIndex(2,0,0),nsx::MillerIndex(0,2,0)));
+    NSX_CHECK_ASSERT(space_group.isEquivalent(nsx::MillerIndex(2,3,2),nsx::MillerIndex(3,2,-2)));
+    NSX_CHECK_ASSERT(!space_group.isEquivalent(nsx::MillerIndex(2,3,2),nsx::MillerIndex(3,2,-3)));
 
     // test covariance
     Eigen::Matrix3d AA;

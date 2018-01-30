@@ -205,12 +205,12 @@
      <item>
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>HKL integer tolerance</string>
+        <string>Indexing tolerance</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="hklTolerance">
+      <widget class="QDoubleSpinBox" name="indexingTolerance">
        <property name="maximum">
         <double>1.000000000000000</double>
        </property>
@@ -225,9 +225,6 @@
     </layout>
    </item>
   </layout>
-  <zorder>label_3</zorder>
-  <zorder>label_4</zorder>
-  <zorder>hklTolerance</zorder>
  </widget>
  <tabstops>
   <tabstop>doubleSpinBoxa</tabstop>

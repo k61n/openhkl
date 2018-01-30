@@ -53,7 +53,7 @@ public:
     PeakPredictor(sptrDataSet data);
     //! Return predicted peaks on a given data set. Parameter \p keepObserved determines whether to include
     //! predictions for peaks which are already part of the data set.
-    PeakSet predictPeaks(bool keepObserved, const PeakSet& reference_peaks);
+    PeakList predictPeaks(bool keepObserved, const PeakList& reference_peaks);
 
     //! Is the peak h,k,l in Bragg condition in this dataset. Return Peak pointer if true,
     //! otherwise nullptr.
@@ -66,7 +66,7 @@ public:
     Ellipsoid toDetectorSpace(const Ellipsoid& qshape) const;
 
     //! Return the average shape in q-space of a set of peaks
-    static Eigen::Matrix3d averageQShape(const std::vector<sptrPeak3D>& peaks);
+    static Eigen::Matrix3d averageQShape(const PeakList& peaks);
    
 public:
     //! Minimum d value used in prediction.

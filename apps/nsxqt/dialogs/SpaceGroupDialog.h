@@ -12,6 +12,7 @@
 
 #include <QDialog>
 
+#include <nsxlib/DataTypes.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/DataTypes.h>
 #include <nsxlib/SpaceGroup.h>
@@ -29,7 +30,7 @@ class SpaceGroupDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SpaceGroupDialog(const nsx::PeakSet& peaks, QWidget *parent = 0);
+    explicit SpaceGroupDialog(const nsx::PeakList& peaks, QWidget *parent = 0);
     ~SpaceGroupDialog();
 
     std::string getSelectedGroup();
@@ -42,7 +43,7 @@ private:
     void buildTable();
 
     Ui::SpaceGroupDialog *ui;
-    nsx::PeakSet _peaks;
+    nsx::PeakList _peaks;
     std::vector<std::pair<std::string, double>> _groups;
     nsx::sptrUnitCell _cell;
     std::string _selectedGroup;
