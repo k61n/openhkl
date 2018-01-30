@@ -57,7 +57,7 @@ int main()
 
     // propagate changes to peak finder
     auto convolver = peakFinder->convolver();
-    convolver->setKernel(kernel->kernel());
+    convolver->setKernel(kernel->matrix());
     peakFinder->setMinComponents(30);
     peakFinder->setMaxComponents(10000);
     peakFinder->setKernel(kernel);

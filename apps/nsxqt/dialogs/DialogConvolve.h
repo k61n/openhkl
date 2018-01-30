@@ -33,13 +33,12 @@ public:
     ~DialogConvolve();
 
     void setPreviewFrame(const Eigen::MatrixXi& frame);
-    void buildTree();
     void setColorMap(const std::string& name);
     int exec() override;
 
 private slots:
 
-    void parameterChanged(QStandardItem* item);
+    void changeConvolutionParameters(QStandardItem* item);
 
     void changeThresholdType(int index);
 
@@ -60,6 +59,8 @@ private slots:
     void changeSelectedFrame(int selected_frame);
 
 private:
+
+    void buildConvolutionParametersList();
 
     void updatePreview();
 

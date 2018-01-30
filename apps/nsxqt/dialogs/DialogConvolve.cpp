@@ -44,6 +44,8 @@ DialogConvolve::DialogConvolve(const nsx::DataList& data,
         ui->dataList->addItem(fileinfo.baseName());
     }
 
+    ui->dataList->setCurrentRow(0);
+
     ui->frameIndex->setMinimum(0);
     ui->frameIndex->setMaximum(_data[0]->nFrames());
 
@@ -67,6 +69,8 @@ DialogConvolve::DialogConvolve(const nsx::DataList& data,
     ui->filterComboBox->model()->setParent(proxy);
     ui->filterComboBox->setModel(proxy);
     ui->filterComboBox->model()->sort(0);
+
+    changeConvolutionFilter(0);
 
     connect(ui->thresholdComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(changeThresholdType(int)));
 
@@ -99,9 +103,13 @@ void DialogConvolve::changeSelectedData(int selected_data)
     auto data = _data[selected_data];
 
     ui->frameIndex->setMaximum(data->nFrames());
+
+    ui->frameIndex->setValue(0);
+
+    updatePreview();
 }
 
-void DialogConvolve::buildTree()
+void DialogConvolve::buildConvolutionParametersList()
 {
     // reset tree
     QTreeView* treeView = ui->treeView;
@@ -109,8 +117,9 @@ void DialogConvolve::buildTree()
     treeView->header()->hide();
 
     // no peakfinder set?!
-    if (!_peakFinder)
+    if (!_peakFinder) {
         return;
+    }
 
     // get the selected kernel (if any)
     auto kernel = _peakFinder->kernel();
@@ -123,7 +132,7 @@ void DialogConvolve::buildTree()
         std::map<std::string, double> parameters = kernel->parameters();
 
         // iterate through parameters to build the tree
-        for (auto it: parameters) {
+        for (auto it : parameters) {
             QStandardItem* name = new QStandardItem();
             name->setText(it.first.c_str());
             name->setEditable(false);
@@ -140,7 +149,7 @@ void DialogConvolve::buildTree()
 
     treeView->setModel(model);
 
-    connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(parameterChanged(QStandardItem*)));
+    connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(changeConvolutionParameters(QStandardItem*)));
 }
 
 void DialogConvolve::setColorMap(const std::string &name)
@@ -156,9 +165,18 @@ int DialogConvolve::exec()
 
 void DialogConvolve::changeSelectedFrame(int selected_frame)
 {
+    Q_UNUSED(selected_frame)
+
+    updatePreview();
+}
+
+void DialogConvolve::updatePreview()
+{
     int selected_data = ui->dataList->currentRow();
 
     auto data = _data[selected_data];
+
+    int selected_frame = ui->frameIndex->value();
 
     auto frame = data->frame(selected_frame);
 
@@ -208,7 +226,6 @@ void DialogConvolve::changeConvolutionFilter(int selected_filter)
     if (QString::compare(ui->filterComboBox->currentText(),"none") == 0)
         kernel.reset();
     else {
-
         int selected_data = ui->dataList->currentRow();
         auto data = _data[selected_data];
         int nrows = data->nRows();
@@ -231,41 +248,55 @@ void DialogConvolve::changeConvolutionFilter(int selected_filter)
     ui->maxCompBox->setValue(_peakFinder->getMaxComponents());
 
     // update dialog with list of parameters
-    buildTree();
+    buildConvolutionParametersList();
+
+    updatePreview();
 }
 
 
 void DialogConvolve::changeThresholdValue(double value)
 {
     _peakFinder->setThresholdValue(value);
+
+    updatePreview();
 }
 
 void DialogConvolve::changeBlobConfidenceValue(double value)
 {
     _peakFinder->setSearchConfidence(value);
+
+    updatePreview();
 }
 
 void DialogConvolve::changeIntegrationConfidenceValue(double value)
 {
     _peakFinder->setIntegrationConfidence(value);
+
+    updatePreview();
 }
 
 void DialogConvolve::changeBlobMinSize(int size)
 {
     _peakFinder->setMinComponents(size);
+
+    updatePreview();
 }
 
 void DialogConvolve::changeBlobMaxSize(int size)
 {
     _peakFinder->setMaxComponents(size);
+
+    updatePreview();
 }
 
 void DialogConvolve::changeThresholdType(int index)
 {
     _peakFinder->setThresholdType(index);
+
+    updatePreview();
 }
 
-void DialogConvolve::parameterChanged(QStandardItem *item)
+void DialogConvolve::changeConvolutionParameters(QStandardItem *item)
 {
     // nothing to do
     if (!item || !_peakFinder)
@@ -280,9 +311,12 @@ void DialogConvolve::parameterChanged(QStandardItem *item)
     auto& parameters = kernel->parameters();
 
     // extract name and value
-    auto name = item->data(Qt::UserRole).toString().toStdString();
-    auto value = item->data(Qt::EditRole).toDouble();
+    auto&& name = item->data(Qt::UserRole).toString().toStdString();
+
+    auto&& value = item->data(Qt::EditRole).toDouble();
 
     // update
     parameters[name] = value;
+
+    updatePreview();
 }
