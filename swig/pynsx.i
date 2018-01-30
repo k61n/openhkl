@@ -368,6 +368,8 @@ namespace nsx {
 %include "Intensity.h"
 %include "Peak3D.h"
 
+%template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
+
 %include "ConstantKernel.h"
 %include "KernelFactory.h"
 %include "ConvolutionKernel.h"
@@ -388,8 +390,6 @@ namespace nsx {
 
 %include "PeakFinder.h"
 
-%template(PeakSet) std::set<std::shared_ptr<nsx::Peak3D>>;
-%template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;
 
 %include "Material.h"

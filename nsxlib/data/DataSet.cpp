@@ -10,6 +10,7 @@
 #include "AABB.h"
 #include "BasicFrameIterator.h"
 #include "BloscFilter.h"
+#include "CrystalTypes.h"
 #include "DataSet.h"
 #include "Detector.h"
 #include "Diffractometer.h"
@@ -23,6 +24,7 @@
 #include "Monochromator.h"
 #include "Path.h"
 #include "Peak3D.h"
+#include "PeakFilter.h"
 #include "PeakIntegrator.h"
 #include "ProgressHandler.h"
 #include "ReciprocalVector.h"
@@ -370,7 +372,7 @@ const std::set<IMask*>& DataSet::masks()
     return _masks;
 }
 
-void DataSet::maskPeaks(PeakSet& peaks) const
+void DataSet::maskPeaks(PeakList& peaks) const
 {
     for (auto peak: peaks) {
         // peak belongs to another dataset
@@ -425,7 +427,7 @@ double DataSet::backgroundLevel(const sptrProgressHandler& progress)
     return _background;
 }
 
-void DataSet::integratePeaks(const PeakSet& peaks, double bkg_begin, double bkg_end, const sptrProgressHandler& handler)
+void DataSet::integratePeaks(const PeakList& peaks, double bkg_begin, double bkg_end, const sptrProgressHandler& handler)
 {
     using IntegrationRegion = IntegrationRegion;
     using PeakIntegrator = PeakIntegrator;
@@ -486,57 +488,6 @@ void DataSet::integratePeaks(const PeakSet& peaks, double bkg_begin, double bkg_
         auto&& integrator = tup.second;
         integrator.end();
         peak->updateIntegration(integrator);      
-    }
-}
-
-void DataSet::removeDuplicatePeaks(nsx::PeakSet& peaks)
-{
-    class compare_fn {
-    public:
-        auto operator()(const Eigen::RowVector3i& a, const Eigen::RowVector3i& b) const -> bool
-        {
-            if (a(0) != b(0))
-                return a(0) < b(0);
-
-            if (a(1) != b(1))
-                return a(1) < b(1);
-
-            return a(2) < b(2);
-        }
-    };
-
-    auto sample = diffractometer()->getSample();
-    unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
-
-    for (unsigned int i = 0; i < ncrystals; ++i) {
-        auto cell = sample->unitCell(i);
-
-        std::map<Eigen::RowVector3i, sptrPeak3D, compare_fn> hkls;
-
-        for (auto&& peak: peaks) {
-            Eigen::RowVector3d hkl;
-            Eigen::RowVector3i hkl_int;
-
-            auto q = peak->getQ();
-
-            if (!cell->getMillerIndices(q, hkl)) {
-                continue;
-            }
-
-            for (auto i = 0; i < 3; ++i) {
-                hkl_int(i) = std::lround(hkl(i));
-            }
-
-            auto it = hkls.find(hkl_int);
-
-            if (it == hkls.end()) {
-                hkls[hkl_int] = peak;
-            }
-            else {
-                it->second->setSelected(false);
-                peak->setSelected(false);
-            }
-        }
     }
 }
 

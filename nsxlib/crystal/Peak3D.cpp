@@ -46,6 +46,7 @@
 #include "Gonio.h"
 #include "IFrameIterator.h"
 #include "InstrumentState.h"
+#include "MillerIndex.h"
 #include "Peak3D.h"
 #include "PeakIntegrator.h"
 #include "ReciprocalVector.h"
@@ -63,7 +64,7 @@ Peak3D::Peak3D(sptrDataSet data):
     _scale(1.0),
     _selected(true),
     _masked(false),
-    _observed(true),
+    _predicted(true),
     _transmission(1.0),
     _activeUnitCellIndex(0),
     _data(data)
@@ -140,7 +141,7 @@ Intensity Peak3D::getScaledIntensity() const
     return getRawIntensity() * _scale;
 }
 
-Intensity Peak3D::getCorrectedIntensity() const
+Intensity Peak3D::correctedIntensity() const
 {
     auto c = _shape.center();
     auto state = _data->interpolatedState(c[2]);
@@ -201,20 +202,14 @@ bool Peak3D::isIndexed() const
     return (!_unitCells.empty());
 }
 
-void Peak3D::setObserved(bool observed)
+void Peak3D::setPredicted(bool predicted)
 {
-    _observed = observed;
+    _predicted = predicted;
 }
 
-bool Peak3D::isObserved() const
+bool Peak3D::isPredicted() const
 {
-    return _observed;
-}
-
-double Peak3D::getIOverSigmaI() const
-{
-    //return _counts/_countsSigma;
-    return _intensity.value() / _intensity.sigma();
+    return _predicted;
 }
 
 void Peak3D::updateIntegration(const PeakIntegrator& integrator)

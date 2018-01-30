@@ -78,7 +78,7 @@ public:
     void fitAllPeaks();
     void autoAssignUnitCell();
 
-    nsx::PeakSet peaks(const nsx::DataSet* data) const;
+    nsx::PeakList peaks(const nsx::DataSet* data) const;
     void addPeak(nsx::sptrPeak3D peak);
     void removePeak(nsx::sptrPeak3D peak);
 
@@ -109,7 +109,7 @@ private:
     nsx::sptrProgressHandler _progressHandler;
     nsx::sptrPeakFinder _peakFinder;
     std::string _colormap;
-    nsx::PeakSet _peaks;
+    nsx::PeakList _peaks;
 };
 
 #endif // NSXQT_SESSIONMODEL_H

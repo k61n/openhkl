@@ -38,7 +38,9 @@
 #include <limits>
 
 #include "InstrumentState.h"
+#include "MillerIndex.h"
 #include "Minimizer.h"
+#include "PeakFilter.h"
 #include "Peak3D.h"
 #include "Refiner.h"
 #include "UnitCell.h"
@@ -63,12 +65,15 @@ RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks)
     _fmin -= g_eps;
     _fmax += g_eps;
 
-    _hkls.reserve(peaks.size());
-    for (auto p : peaks) {
-        Eigen::RowVector3d hkl;
-        _cell->getMillerIndices(p->getQ(),hkl);
-        _hkls.push_back(hkl);
+    PeakFilter peak_filter;
+    PeakList filtered_peaks;
+    filtered_peaks = peak_filter.selected(peaks,true);
+    filtered_peaks = peak_filter.indexed(filtered_peaks,_cell,_cell->indexingTolerance(),true);
 
+    _hkls.reserve(filtered_peaks.size());
+    for (auto peak : peaks) {
+        MillerIndex hkl(peak,_cell);
+        _hkls.push_back(hkl.rowVector().cast<double>());
     }
 
     UnitCell constrained = _cell->applyNiggliConstraints();

@@ -11,6 +11,7 @@
 #include <nsxlib/InstrumentState.h>
 #include <nsxlib/IntegrationRegion.h>
 #include <nsxlib/MetaData.h>
+#include <nsxlib/MillerIndex.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/UnitCell.h>
@@ -117,11 +118,14 @@ void PeakGraphicsItem::setFrame(unsigned long frame)
     QString hklString;
 
     if (auto cell = _peak->activeUnitCell()) {
-        Eigen::RowVector3d hkl;
-        cell->getMillerIndices(_peak->getQ(), hkl,true);
-        hklString = QString("%1,%2,%3").arg(hkl[0]).arg(hkl[1]).arg(hkl[2]);       
+        nsx::MillerIndex miller_index(_peak,cell);
+        if (miller_index.indexed(cell->indexingTolerance())) {
+            hklString = QString("%1,%2,%3").arg(miller_index[0]).arg(miller_index[1]).arg(miller_index[2]);
+        } else {
+            hklString = "unindexed";
+        }
     } else {
-        hklString = "unindexed";
+        hklString = "no unit cell";
     }
     _label->setPlainText(hklString);
 }
@@ -197,10 +201,14 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     QString info;
 
     if (auto cell = _peak->activeUnitCell()) {
-        cell->getMillerIndices(_peak->getQ(), hkl,true);
-        info="(h,k,l):"+QString::number(hkl[0])+","+QString::number(hkl[1])+","+QString::number(hkl[2]);
+        nsx::MillerIndex miller_index(_peak,cell);
+        if (miller_index.indexed(cell->indexingTolerance())) {
+            info="(h,k,l):"+QString::number(miller_index[0])+","+QString::number(miller_index[1])+","+QString::number(miller_index[2]);
+        } else {
+            info = "unindexed";
+        }
     } else {
-        info = "unindexed";
+        info = "no unit cell";
     }
 
     auto c = _peak->getShape().center();

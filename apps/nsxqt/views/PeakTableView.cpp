@@ -44,6 +44,7 @@
 #include <nsxlib/Logger.h>
 #include <nsxlib/MergedPeak.h>
 #include <nsxlib/MetaData.h>
+#include <nsxlib/MillerIndex.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/ReciprocalVector.h>
@@ -397,11 +398,10 @@ void PeakTableView::showPeaksMatchingText(const QString& text)
 
     unsigned int row=0;
     for (row=0;row<peaks.size();row++) {
-        nsx::sptrPeak3D p=peaks[row];
-        Eigen::RowVector3d hkl;
-        auto cell = p->activeUnitCell();
-        bool success = cell->getMillerIndices(p->getQ(), hkl, true);
-        setRowHidden(row,success);
+        nsx::sptrPeak3D peak = peaks[row];
+        auto cell = peak->activeUnitCell();
+        nsx::MillerIndex hkl(peak,cell);
+        setRowHidden(row,hkl.indexed(cell->indexingTolerance()));
     }
 }
 

@@ -585,12 +585,12 @@ void DetectorScene::loadCurrentImage(bool newimage)
                     int s = region.classifySlice({double(c), double(r), double(_currentFrameIndex)});
                     // The pixel is in one of the integration shell
                     if (s > 0 && s <= region.bestSlice()) {
-                        region_img.setPixel(c, r, peak->isSelected() ? (peak->isObserved() ? green : purple) : red);
+                        region_img.setPixel(c, r, peak->isSelected() ? (peak->isPredicted() ? purple : green) : red);
                     }
 
                     // The pixel is in the background region
                     if (s == 0) {
-                        region_img.setPixel(c, r, peak->isSelected() ? (peak->isObserved() ? yellow : pink) : red);
+                        region_img.setPixel(c, r, peak->isSelected() ? (peak->isPredicted() ? pink : yellow) : red);
                     }
                 }
             }

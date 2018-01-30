@@ -7,6 +7,7 @@
 
 #include <nsxlib/AutoIndexer.h>
 #include <nsxlib/ConvolutionKernel.h>
+#include <nsxlib/CrystalTypes.h>
 #include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Diffractometer.h>
@@ -16,6 +17,7 @@
 #include <nsxlib/KernelFactory.h>
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Peak3D.h>
+#include <nsxlib/PeakFilter.h>
 #include <nsxlib/PeakFinder.h>
 #include <nsxlib/PeakPredictor.h>
 #include <nsxlib/ProgressHandler.h>
@@ -82,14 +84,15 @@ int main()
     nsx::IndexerParameters params;
     nsx::AutoIndexer indexer(progressHandler);
 
+    nsx::PeakFilter peak_filter;
+    nsx::PeakList selected_peaks;
+    selected_peaks = peak_filter.selected(found_peaks,true);
+
     auto numIndexedPeaks = [&]() -> unsigned int
     {
         unsigned int indexed_peaks = 0;
 
-        for (auto&& peak: found_peaks) {
-            if (!peak->isSelected()) {
-                continue;
-            }
+        for (auto&& peak: selected_peaks) {
             indexer.addPeak(peak);
             ++indexed_peaks;
         }
@@ -124,10 +127,7 @@ int main()
     NSX_CHECK_ASSERT(indexed_peaks > 600);
 
     // get that DataSet::getEvents works properly
-    for (auto peak: found_peaks) {
-        if (!peak->isSelected()) {
-            continue;
-        }
+    for (auto peak: selected_peaks) {
 
         std::vector<nsx::ReciprocalVector> q_vectors;
         q_vectors.push_back(peak->getQ());

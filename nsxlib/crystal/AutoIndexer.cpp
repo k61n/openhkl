@@ -43,9 +43,11 @@
 #include "FitParameters.h"
 #include "Gonio.h"
 #include "GruberReduction.h"
+#include "MillerIndex.h"
 #include "Minimizer.h"
 #include "NiggliReduction.h"
 #include "Peak3D.h"
+#include "PeakFilter.h"
 #include "ProgressHandler.h"
 #include "ReciprocalVector.h"
 #include "Sample.h"
@@ -103,11 +105,11 @@ void AutoIndexer::computeFFTSolutions()
     // Store the q-vectors of the peaks for auto-indexing
     std::vector<ReciprocalVector> qvects;
 
-    for (auto peak: _peaks) {
-        // Keep only the peak that have selected and that are not masked
-        if (peak->isSelected()) {
-            qvects.push_back(peak->getQ());
-        }
+    PeakFilter peak_filter;
+    auto filtered_peaks = peak_filter.selected(_peaks,true);
+
+    for (auto peak : filtered_peaks) {
+        qvects.push_back(peak->getQ());
     }
 
     // Check that a minimum number of peaks have been selected for indexing
@@ -188,22 +190,21 @@ void AutoIndexer::refineSolutions()
     //#pragma omp parallel for
     for (auto&& soln: _solutions) {
         auto cell = soln.first;
-        cell->setHKLTolerance(_params.HKLTolerance);
+        cell->setIndexingTolerance(_params.indexingTolerance);
         Eigen::Matrix3d B = cell->reciprocalBasis();
         std::vector<Eigen::RowVector3d> hkls;
         std::vector<Eigen::RowVector3d> qs;
 
-        // Collect all the selected peaks for which the auto-indexing has been successful (integer Miller indices)
-        int success = 0;
-        for (auto peak: _peaks) {
-            Eigen::RowVector3d hkl;
-            auto q = peak->getQ();
-            bool indexingSuccess = cell->getMillerIndices(q,hkl,true);
-            if (indexingSuccess && peak->isSelected()) {
-                hkls.emplace_back(hkl);
-                qs.emplace_back(q.rowVector());
-                ++success;
-            }
+        PeakFilter peak_filter;
+        PeakList filtered_peaks;
+        filtered_peaks = peak_filter.selected(_peaks,true);
+        filtered_peaks = peak_filter.indexed(filtered_peaks, cell, cell->indexingTolerance(),true);
+
+        int success = filtered_peaks.size();
+        for (auto peak: filtered_peaks) {
+            MillerIndex hkld(peak,cell);
+            hkls.emplace_back(hkld.rowVector().cast<double>());
+            qs.emplace_back(peak->getQ().rowVector());
         }
 
         // The number of peaks must be at least for a proper minimization
@@ -249,7 +250,7 @@ void AutoIndexer::refineSolutions()
         // Update the cell with the fitter one and reduce it
         try {
             cell->setReciprocalBasis(B);
-            cell->setHKLTolerance(_params.HKLTolerance);
+            cell->setIndexingTolerance(_params.indexingTolerance);
             cell->reduce(_params.niggliReduction, _params.niggliTolerance, _params.gruberTolerance);
             *cell = cell->applyNiggliConstraints();
         } catch(std::exception& e) {
@@ -260,99 +261,22 @@ void AutoIndexer::refineSolutions()
         }
 
         // Define the final score of this solution by computing the percentage of the selected peaks which have been successfully indexed
-        double score = 0.0;
-        double maxscore = 0.0;
-        for (auto peak: _peaks) {
-            if (peak->isSelected()) {
-                maxscore++;
-                Eigen::RowVector3d hkl;
-                auto q = peak->getQ();
-                bool indexingSuccess = cell->getMillerIndices(q, hkl, true);
-                if (indexingSuccess) {
-                    score++;
-                }
-            }
-        }
+
+        PeakList refiltered_peaks;
+        refiltered_peaks = peak_filter.indexed(filtered_peaks, cell, cell->indexingTolerance(),true);
+
+        double score = static_cast<double>(refiltered_peaks.size());
+        double maxscore = static_cast<double>(filtered_peaks.size());
 
         // Percentage of indexing
         score /= 0.01*maxscore;
         soln.second = score;
     }
 }
-
-#if 0
-void AutoIndexer::refineConstraints()
-{
-    //#pragma omp parallel for
-    for (auto&& soln: _solutions) {
-        auto cell = soln.first;
-
-        if (soln.second <= 0.0) {
-            continue;
-        }
-
-        // UBSolution constructor can throw if constraints are not met
-        try {
-            // The UB minimization will be performed with fixed instruments offset (no pointer for Detector, Sample and Source provided)
-            UBSolution ub_soln(nullptr, nullptr, nullptr, cell);
-            UBMinimizer min(ub_soln);
-
-            int success = 0;
-
-            for (auto peak: _peaks) {
-                Eigen::RowVector3d hkl;
-                auto q = peak->getQ();
-                bool indexingSuccess = cell->getMillerIndices(q,hkl,true);
-                if (indexingSuccess && peak->isSelected()) {
-                    min.addPeak(*peak, hkl);
-                    ++success;
-                }
-            }
-
-
-            // The number of peaks must be at least for a proper minimization
-            if (success < 10) {      
-                continue;
-            }
-
-            // fails to fit
-            if (!min.run(100)) {
-                continue;
-            }
-
-            ub_soln = min.solution();
-            ub_soln.apply();
-        } catch(...) {
-            // force the solution to be excluded from the final list
-            soln.second = -1.0;
-            continue;
-        }
- 
-        double score = 0.0;
-        double maxscore = 0.0;
-
-        for (auto peak: _peaks) {
-            if (peak->isSelected()) {
-                maxscore++;
-                Eigen::RowVector3d hkl;
-                auto q = peak->getQ();
-                bool indexingSuccess = cell->getMillerIndices(q, hkl, true);
-                if (indexingSuccess) {
-                    score++;
-                }
-            }
-        }
-
-        // Percentage of indexing
-        score /= 0.01*maxscore;
-        soln.second = score;
-    }
-}
-#endif
 
 void AutoIndexer::addPeak(sptrPeak3D peak)
 {
-    _peaks.emplace_back(peak);
+    _peaks.push_back(peak);
 }
 
 } // end namespace nsx

@@ -4,6 +4,8 @@
 
 #include <Eigen/Dense>
 
+#include "CrystalTypes.h"
+
 namespace nsx {
 
 //! \brief Class to define the Miller indices (a.k.a hkl vector)
@@ -20,8 +22,10 @@ public:
     //! Copy constructor
     MillerIndex(const MillerIndex& other)=default;
 
-    //! Constructor from its 3 components
+    //! Constructor from its 3 components and the error on hkl
     MillerIndex(int h, int k, int l);
+
+    MillerIndex(sptrPeak3D peak, sptrUnitCell unit_cell);
 
     //! Construct a MillerIndex from an Eigen row vector of integer
     explicit MillerIndex(const Eigen::RowVector3i& hkl);
@@ -51,8 +55,15 @@ public:
 
     bool operator<(const MillerIndex& other) const;
 
+    const Eigen::RowVector3d& error() const;
+
+    bool indexed(double tolerance) const;
+
 private:
+
     Eigen::RowVector3i _hkl;
+
+    Eigen::RowVector3d _error;
 };
 
 //! Overload operator<< with MillerIndex type

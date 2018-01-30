@@ -106,7 +106,7 @@ public:
     const std::set<IMask*>& masks();
 
     //! Mask a given peak
-    void maskPeaks(PeakSet& peaks) const;
+    void maskPeaks(PeakList& peaks) const;
 
     //! Return the intensity at point x,y,z.
     int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);
@@ -125,16 +125,13 @@ public:
 
     //!
     std::size_t fileSize() const;//
-    void saveHDF5(const std::string& filename); // const;
+    void saveHDF5(const std::string& filename);
     
     //! Get background
     double backgroundLevel(const sptrProgressHandler& progress);
 
     //! Integrate intensities of all peaks
-    void integratePeaks(const PeakSet& peaks, double bkg_begin = 5.0, double bkg_end = 10.0, const sptrProgressHandler& handler = nullptr);
-
-    //! Remove duplicates
-    void removeDuplicatePeaks(nsx::PeakSet& peaks);
+    void integratePeaks(const PeakList& peaks, double bkg_begin = 5.0, double bkg_end = 10.0, const sptrProgressHandler& handler = nullptr);
 
     // todo: replace this with Jacobian of (x,y,f) -> q
     //double getSampleStepSize() const;      

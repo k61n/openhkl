@@ -2,18 +2,21 @@
 #include <fstream>
 #include <iomanip>
 #include <limits>
+#include <vector>
 
 #include <QIcon>
 #include <QString>
 
+#include <nsxlib/CrystalTypes.h>
 #include <nsxlib/DataSet.h>
-
 #include <nsxlib/Detector.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/InstrumentState.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/MetaData.h>
+#include <nsxlib/MillerIndex.h>
 #include <nsxlib/Peak3D.h>
+#include <nsxlib/PeakFilter.h>
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/UnitCell.h>
 
@@ -154,18 +157,21 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    Eigen::RowVector3d hkl= {0,0,0};
+    Eigen::RowVector3i hkl= {0,0,0};
     double lorentzFactor, transmissionFactor, scaledIntensity, sigmaScaledIntensity;
 
     int row = index.row();
     int column = index.column();
     if (auto cell = _peaks[row]->activeUnitCell()) {
-        cell->getMillerIndices(_peaks[row]->getQ(), hkl, true);
+        nsx::MillerIndex miller_index(_peaks[row],cell);
+        if (miller_index.indexed(cell->indexingTolerance())) {
+            hkl = miller_index.rowVector();
+        }
     }
     PeakFactors pf = peakFactors(_peaks[row]);
     transmissionFactor = _peaks[row]->getTransmission();
-    scaledIntensity = _peaks[row]->getCorrectedIntensity().value();
-    sigmaScaledIntensity = _peaks[row]->getCorrectedIntensity().sigma();
+    scaledIntensity = _peaks[row]->correctedIntensity().value();
+    sigmaScaledIntensity = _peaks[row]->correctedIntensity().sigma();
 
     switch (role) {
 
@@ -236,50 +242,47 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
     switch (column) {
     case Column::h:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            Eigen::RowVector3d hkl1,hkl2;
             auto cell1 = p1->activeUnitCell();
             auto cell2 = p2->activeUnitCell();
-            cell1->getMillerIndices(p1->getQ(), hkl1, true);
-            cell2->getMillerIndices(p2->getQ(), hkl2, true);
-            return (hkl1[0]<hkl2[0]);
+            nsx::MillerIndex miller_index1(p1,cell1);
+            nsx::MillerIndex miller_index2(p2,cell2);
+            return (miller_index1[0]<miller_index2[0]);
         };
         break;
     case Column::k:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            Eigen::RowVector3d hkl1,hkl2;
             auto cell1 = p1->activeUnitCell();
             auto cell2 = p2->activeUnitCell();
-            cell1->getMillerIndices(p1->getQ(), hkl1, true);
-            cell2->getMillerIndices(p2->getQ(), hkl2, true);
-            return (hkl1[1]<hkl2[1]);
+            nsx::MillerIndex miller_index1(p1,cell1);
+            nsx::MillerIndex miller_index2(p2,cell2);
+            return (miller_index1[1]<miller_index2[1]);
         };
         break;
     case Column::l:
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            Eigen::RowVector3d hkl1,hkl2;
             auto cell1 = p1->activeUnitCell();
             auto cell2 = p2->activeUnitCell();
-            cell1->getMillerIndices(p1->getQ(), hkl1, true);
-            cell2->getMillerIndices(p2->getQ(), hkl2, true);
-            return (hkl1[2]<hkl2[2]);
+            nsx::MillerIndex miller_index1(p1,cell1);
+            nsx::MillerIndex miller_index2(p2,cell2);
+            return (miller_index1[2]<miller_index2[2]);
         };
         break;
     case  Column::intensity:
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            return (p1->getCorrectedIntensity().value())
-                    > (p2->getCorrectedIntensity().value());
+            return (p1->correctedIntensity().value())
+                    > (p2->correctedIntensity().value());
         };
         break;
     case Column::sigmaIntensity:
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            return (p1->getCorrectedIntensity().sigma())
-                    > (p2->getCorrectedIntensity().sigma());
+            return (p1->correctedIntensity().sigma())
+                    > (p2->correctedIntensity().sigma());
         };
         break;
     case Column::i_over_sigmai:
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            return (p1->getCorrectedIntensity().value()/p1->getCorrectedIntensity().sigma())
-                    > (p2->getCorrectedIntensity().value()/p2->getCorrectedIntensity().sigma());
+            return (p1->correctedIntensity().value()/p1->correctedIntensity().sigma())
+                    > (p2->correctedIntensity().value()/p2->correctedIntensity().sigma());
         };
         break;
     case Column::transmission:
@@ -365,19 +368,18 @@ void CollectedPeaksModel::setUnitCells(const nsx::UnitCellList &cells)
 void CollectedPeaksModel::sortEquivalents()
 {
     // todo: investigate this method. Likely incorrect if there are multiple unit cells.
-    auto ptrcell=_peaks[0]->activeUnitCell();
+    auto cell=_peaks[0]->activeUnitCell();
 
     // If no unit cell defined for the peak collection, return.
-    if (ptrcell == nullptr) {
+    if (cell == nullptr) {
         nsx::error() << "No unit cell defined for the peaks";
         return;
     }
 
     std::sort(_peaks.begin(), _peaks.end(), [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-        Eigen::RowVector3d hkl1,hkl2;
-        ptrcell->getMillerIndices(p1->getQ(), hkl1, true);
-        ptrcell->getMillerIndices(p2->getQ(), hkl2, true);
-        return ptrcell->isEquivalent(hkl1[0],hkl1[1],hkl1[2],hkl2[0],hkl2[1],hkl2[2]);
+        nsx::MillerIndex miller_index1(p1,cell);
+        nsx::MillerIndex miller_index2(p2,cell);
+        return cell->spaceGroup().isEquivalent(miller_index1,miller_index2);
     });
 }
 
@@ -409,14 +411,25 @@ void CollectedPeaksModel::writeShelX(const std::string& filename, QModelIndexLis
         nsx::error()<<"Empty filename";
         return;
     }
+
     if (_peaks.empty()) {
         nsx::error()<<"No peaks in the table";
         return;
     }
+
     if (indices.isEmpty()) {
         for (int i=0;i<rowCount();++i) {
             indices << index(i,0);
         }
+    }
+
+    std::vector<int> rows;
+    rows.reserve(indices.size());
+    for (auto index : indices) {
+        if (!index.isValid()) {
+            continue;
+        }
+        rows.push_back(index.row());
     }
 
     std::fstream file(filename,std::ios::out);
@@ -425,44 +438,38 @@ void CollectedPeaksModel::writeShelX(const std::string& filename, QModelIndexLis
         return;
     }
 
-    for (auto&& index  : indices) {
-        if (!index.isValid()) {
+    nsx::PeakFilter peak_filter;
+    nsx::PeakList filtered_peaks;
+    filtered_peaks = peak_filter.selection(_peaks,rows);
+    filtered_peaks = peak_filter.selected(filtered_peaks,true);
+    filtered_peaks = peak_filter.hasUnitCell(filtered_peaks,true);
+
+    for (auto peak : filtered_peaks) {
+
+        auto cell = peak->activeUnitCell();
+
+        nsx::MillerIndex miller_index(peak,cell);
+        if (!miller_index.indexed(cell->indexingTolerance())) {
             continue;
         }
-        auto peak = _peaks[index.row()];
-        auto basis = peak->activeUnitCell();
 
-        if (basis == nullptr) {
-            nsx::error()<<"No unit cell defined for peak " << index.row()+1 << ". It will not be written to ShelX file";
-            continue;
-        }
+        file << std::fixed;
+        file << std::setprecision(0);
+        file << std::setw(4);
+        file << miller_index[0];
 
-        if (peak->isSelected()) {
-            Eigen::RowVector3d hkl;
-            bool success = basis->getMillerIndices(peak->getQ(), hkl, true);
+        file << std::fixed;
+        file << std::setprecision(0);
+        file << std::setw(4);
+        file << miller_index[1];
 
-            if (!success) {
-                continue;
-            }
+        file << std::fixed;
+        file << std::setprecision(0);
+        file << std::setw(4);
+        file << miller_index[2];
 
-            file << std::fixed;
-            file << std::setprecision(0);
-            file << std::setw(4);
-            file << hkl[0];
-
-            file << std::fixed;
-            file << std::setprecision(0);
-            file << std::setw(4);
-            file <<  hkl[1];
-
-            file << std::fixed;
-            file << std::setprecision(0);
-            file << std::setw(4);
-            file << hkl[2];
-
-            file << std::fixed << std::setw(8) << std::setprecision(2) << peak->getCorrectedIntensity().value();
-            file << std::fixed << std::setw(8) << std::setprecision(2) << peak->getCorrectedIntensity().sigma() <<std::endl;
-        }
+        file << std::fixed << std::setw(8) << std::setprecision(2) << peak->correctedIntensity().value();
+        file << std::fixed << std::setw(8) << std::setprecision(2) << peak->correctedIntensity().sigma() <<std::endl;
     }
     if (file.is_open()) {
         file.close();
@@ -475,15 +482,22 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, QModelIndex
         nsx::error()<<"Empty filename";
         return;
     }
-    if (_peaks.empty()) {
-        nsx::error()<<"No peaks in the table";
-        return;
-    }
+
     if (indices.isEmpty()) {
         for (int i=0;i<rowCount();++i) {
             indices << index(i,0);
         }
     }
+
+    std::vector<int> rows;
+    rows.reserve(indices.size());
+    for (auto index : indices) {
+        if (!index.isValid()) {
+            continue;
+        }
+        rows.push_back(index.row());
+    }
+
     std::fstream file(filename,std::ios::out);
 
     if (!file.is_open()) {
@@ -491,31 +505,32 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, QModelIndex
         return;
     }
 
+    nsx::PeakFilter peak_filter;
+    nsx::PeakList filtered_peaks;
+    filtered_peaks = peak_filter.selection(_peaks,rows);
+    filtered_peaks = peak_filter.selected(filtered_peaks,true);
+    filtered_peaks = peak_filter.hasUnitCell(filtered_peaks,true);
+
     file << "TITLE File written by ...\n";
     file << "(3i4,2F14.4,i5,4f8.2)\n";
     double wave=_peaks[0]->data()->metadata()->getKey<double>("wavelength");
     file << std::fixed << std::setw(8) << std::setprecision(3) << wave << " 0 0" << std::endl;
 
-    for (const auto &index : indices) {
-        auto peak = _peaks[index.row()];
-        auto basis = peak->activeUnitCell();
-        if (!basis) {
-            nsx::error()<<"No unit cell defined for peak " << index.row()+1 << ". It will not be written to FullProf file";
+    for (auto peak : filtered_peaks) {
+
+        auto cell = peak->activeUnitCell();
+
+        nsx::MillerIndex miller_index(peak,cell);
+        if (!miller_index.indexed(cell->indexingTolerance())) {
             continue;
         }
-        if (peak->isSelected()) {
-            Eigen::RowVector3d hkl;
-            bool success = basis->getMillerIndices(peak->getQ(), hkl,true);
-            if (!success) {
-                continue;
-            }
-            file << std::setprecision(0);
-            file << std::setw(4);
-            file << hkl[0] << std::setw(4) <<  hkl[1] << std::setw(4) << hkl[2];
-            file << std::fixed << std::setw(14) << std::setprecision(4) << peak->getCorrectedIntensity().value();
-            file << std::fixed << std::setw(14) << std::setprecision(4) << peak->getCorrectedIntensity().sigma();
-            file << std::setprecision(0) << std::setw(5) << 1  << std::endl;
-        }
+
+        file << std::setprecision(0);
+        file << std::setw(4);
+        file << miller_index[0] << std::setw(4) <<  miller_index[1] << std::setw(4) << miller_index[2];
+        file << std::fixed << std::setw(14) << std::setprecision(4) << peak->correctedIntensity().value();
+        file << std::fixed << std::setw(14) << std::setprecision(4) << peak->correctedIntensity().sigma();
+        file << std::setprecision(0) << std::setw(5) << 1  << std::endl;
     }
     if (file.is_open()) {
         file.close();
