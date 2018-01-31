@@ -366,6 +366,7 @@ namespace nsx {
 %include "Peak3D.h"
 
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
+%template(PeakShell) std::vector<std::vector<std::shared_ptr<nsx::Peak3D>>>;
 
 %include "ConstantKernel.h"
 %include "KernelFactory.h"
