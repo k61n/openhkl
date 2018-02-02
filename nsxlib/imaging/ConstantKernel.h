@@ -26,7 +26,7 @@ public:
 
     ConstantKernel(int nrows, int ncols, const ConvolutionKernelParameters& params);
 
-    const char* getName() override;
+    const char* name() override;
 
     virtual ~ConstantKernel();
 

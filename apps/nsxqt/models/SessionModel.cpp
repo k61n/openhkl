@@ -276,22 +276,6 @@ void SessionModel::findPeaks(const QModelIndex& index)
         return;
     }
 
-    // run peak find
-    auto frame = ui->_dview->getScene()->getCurrentFrame();
-
-    // check if now frame was loaded, or is otherwise invalid
-    if ( frame.rows() == 0 || frame.cols() == 0) {
-        // attempt to read first frame of first numor by default
-        try {
-            selectedNumors[0]->open();
-            frame = selectedNumors[0]->frame(0);
-        }
-        catch(std::exception& e) {
-            nsx::debug() << "Peak search failed: cannot load frame: " << e.what();
-            return;
-        }
-    }
-
     // reset progress handler
     _progressHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler);
 
@@ -300,7 +284,7 @@ void SessionModel::findPeaks(const QModelIndex& index)
         _peakFinder = nsx::sptrPeakFinder(new nsx::PeakFinder);
     _peakFinder->setHandler(_progressHandler);
 
-    DialogConvolve* dialog = new DialogConvolve(frame, _peakFinder, nullptr);
+    DialogConvolve* dialog = new DialogConvolve(selectedNumors, _peakFinder, nullptr);
     dialog->setColorMap(_colormap);
 
     // dialog will automatically be deleted before we return from this method

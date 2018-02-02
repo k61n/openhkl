@@ -50,7 +50,7 @@ AnnularKernel::~AnnularKernel()
 {
 }
 
-const char* AnnularKernel::getName()
+const char* AnnularKernel::name()
 {
     return "Annular";
 }
@@ -71,7 +71,7 @@ void AnnularKernel::update()
 
     // sanity checks
     if (rows < 0 || cols < 0 || r1 < 0 || r2 < r1 || r3 < r2) {
-        throw std::runtime_error("Annularupdate() called with invalid parameters");
+        throw std::runtime_error("Annular kernel called with invalid parameters");
     }
 
     for (int i = 0; i < rows; ++i) {

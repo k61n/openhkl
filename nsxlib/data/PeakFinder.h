@@ -37,9 +37,9 @@ public:
     int getMaxComponents();
 
     void setConvolver(sptrConvolver convolver);
-    sptrConvolver getConvolver();
+    sptrConvolver convolver();
 
-    sptrConvolutionKernel getKernel();
+    sptrConvolutionKernel kernel();
 
     void setKernel(sptrConvolutionKernel kernel);
 

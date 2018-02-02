@@ -22,7 +22,7 @@ DeltaKernel::~DeltaKernel()
 {
 }
 
-const char* DeltaKernel::getName()
+const char* DeltaKernel::name()
 {
     return "Delta";
 }

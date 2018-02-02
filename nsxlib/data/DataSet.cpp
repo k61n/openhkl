@@ -11,6 +11,8 @@
 #include "BasicFrameIterator.h"
 #include "BloscFilter.h"
 #include "CrystalTypes.h"
+#include "ConvolutionKernel.h"
+#include "Convolver.h"
 #include "DataSet.h"
 #include "Detector.h"
 #include "Diffractometer.h"
@@ -107,6 +109,41 @@ int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z)
 Eigen::MatrixXi DataSet::frame(std::size_t idx)
 {
     return _reader->getData(idx);
+}
+
+Eigen::MatrixXi DataSet::convolvedFrame(std::size_t idx, sptrConvolutionKernel kernel)
+{
+    Eigen::MatrixXi autoscaled_data;
+
+    Eigen::MatrixXi frame_data = _reader->getData(idx);
+
+    int nrows = int(frame_data.rows());
+    int ncols = int(frame_data.cols());
+
+    int maxData = frame_data.maxCoeff();
+
+    nsx::RealMatrix result;
+
+    if (kernel) {
+
+        // set up convolver
+        Convolver convolver;
+        convolver.setKernel(kernel->matrix());
+
+        // compute the convolution
+        result = convolver.apply(frame_data.cast<double>());
+    }
+    else {
+        result = frame_data.cast<double>();
+    }
+
+    double minVal = result.minCoeff();
+    double maxVal = result.maxCoeff();
+    result.array() -= minVal;
+    result.array() *= static_cast<double>(maxData)/(maxVal-minVal);
+    autoscaled_data = result.cast<int>();
+
+    return autoscaled_data;
 }
 
 void DataSet::open()

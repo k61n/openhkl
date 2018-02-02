@@ -24,7 +24,7 @@ double computeError(int rows, int cols)
     nsx::Convolver convolver;
     nsx::DeltaKernel kernel(rows,cols);
 
-    convolver.setKernel(kernel.getKernel());
+    convolver.setKernel(kernel.matrix());
     nsx::RealMatrix transformed = convolver.apply(original);
     nsx::RealMatrix difference =  original-transformed;
     double error = (difference * difference.transpose()).sum() / rows / cols;

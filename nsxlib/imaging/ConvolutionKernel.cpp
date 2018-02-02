@@ -61,18 +61,18 @@ ConvolutionKernel::~ConvolutionKernel()
 {
 }
 
-ConvolutionKernelParameters& ConvolutionKernel::getParameters()
+ConvolutionKernelParameters& ConvolutionKernel::parameters()
 {
     _hasChanged = true;
     return _params;
 }
 
-const ConvolutionKernelParameters& ConvolutionKernel::getParameters() const
+const ConvolutionKernelParameters& ConvolutionKernel::parameters() const
 {
     return _params;
 }
 
-const RealMatrix& ConvolutionKernel::getKernel()
+const RealMatrix& ConvolutionKernel::matrix()
 {
     if ( _hasChanged ) {
         update();

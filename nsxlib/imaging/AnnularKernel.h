@@ -3,7 +3,6 @@
 // Forschungszentrum Jülich GmbH
 // j.fisher@fz-juelich.de
 
-
 // Kernel description: the kernel is non-zero in a circular and annular region, as follows
 
 // [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -59,7 +58,7 @@ public:
 
     virtual ~AnnularKernel();
 
-    const char* getName() override;
+    const char* name() override;
 
 private:
 

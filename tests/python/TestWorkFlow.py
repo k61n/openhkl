@@ -16,7 +16,7 @@ class TestWorkFlow(unittest.TestCase):
         data = nsx.DataSet(reader, diff)
 
         kernel = nsx.AnnularKernel(data.nRows(), data.nCols())
-        kernel_image = kernel.getKernel()
+        kernel_image = kernel.matrix()
         convolver = nsx.Convolver()
         convolver.setKernel(kernel_image)
 
