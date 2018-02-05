@@ -24,66 +24,64 @@ set(CPACK_SOURCE_IGNORE_FILES "/\\\\.git/;" )
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/License.txt")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Neutron Single Crystal Diffraction Data Reduction")
 
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${BUILD_DEBIAN})
+  include(CheckLinuxDistro)
 
-    include(CheckLinuxDistro)
+  # define which binary generators to use
+  if ("${LINUX_DISTRO}" MATCHES "Ubuntu" OR "${LINUX_DISTRO}" MATCHES "Debian")
+    find_program(DPKG_CMD dpkg)
+    if (DPKG_CMD)
+      # automatically generate dependencies
+      set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+      set(CPACK_DEBIAN_PACKAGE_MAINTAINER Eric Pellegrini <pellegrini@ill.fr>)
+      set(CPACK_GENERATOR "DEB")
+      execute_process(COMMAND ${DPKG_CMD} --print-architecture OUTPUT_VARIABLE CPACK_DEBIAN_PACKAGE_ARCHITECTURE OUTPUT_STRIP_TRAILING_WHITESPACE)
+      set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
 
-    # define which binary generators to use
-    if ("${LINUX_DISTRO}" MATCHES "Ubuntu" OR "${LINUX_DISTRO}" MATCHES "Debian")
-        find_program(DPKG_CMD dpkg)
-        if (DPKG_CMD)
-            # automatically generate dependencies
-            set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-            set(CPACK_DEBIAN_PACKAGE_MAINTAINER Eric Pellegrini <pellegrini@ill.fr>)
-            set(CPACK_GENERATOR "DEB")
-            execute_process(COMMAND arch OUTPUT_VARIABLE CPACK_DEBIAN_PACKAGE_ARCHITECTURE OUTPUT_STRIP_TRAILING_WHITESPACE)
-            set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
+      if (DEFINED NIGHTLY_BUILD)
+        set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_FILE_NAME}-nightly")
+      endif(DEFINED NIGHTLY_BUILD)
 
-            if (DEFINED NIGHTLY_BUILD)
-                set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_FILE_NAME}-nightly")
-            endif(DEFINED NIGHTLY_BUILD)
+    else(DPKG_CMD)
+      message(ERROR " dpkg command not found")
+    endif(DPKG_CMD) 
+  endif()
 
-        else(DPKG_CMD)
-            message(ERROR " dpkg command not found")
-        endif(DPKG_CMD) 
-    endif()
+  #RedHatEnterpriseClient RedHatEnterpriseWorkstation
+  if ("${LINUX_DISTRO}" MATCHES "RedHatEnterprise" 
+      OR "${LINUX_DISTRO}" MATCHES "Fedora" 
+      OR "${LINUX_DISTRO}" MATCHES "Scientific"
+      OR "${LINUX_DISTRO}" MATCHES "SUSE LINUX"
+      OR "${LINUX_DISTRO}" MATCHES "openSUSE project"
+      OR "${LINUX_DISTRO}" MATCHES "CentOS")
 
-    #RedHatEnterpriseClient RedHatEnterpriseWorkstation
-    if ("${LINUX_DISTRO}" MATCHES "RedHatEnterprise" 
-     OR "${LINUX_DISTRO}" MATCHES "Fedora" 
-     OR "${LINUX_DISTRO}" MATCHES "Scientific"
-     OR "${LINUX_DISTRO}" MATCHES "SUSE LINUX"
-     OR "${LINUX_DISTRO}" MATCHES "openSUSE project"
-     OR "${LINUX_DISTRO}" MATCHES "CentOS")
+    find_program(RPMBUILD_CMD rpmbuild)
 
-        find_program(RPMBUILD_CMD rpmbuild)
+    if (RPMBUILD_CMD)
+      
+      set(CPACK_RPM_PACKAGE_LICENSE GPLv3+)
+      set(CPACK_RPM_PACKAGE_RELEASE 1)
+      set(CPACK_RPM_PACKAGE_GROUP Applications/Science)
+      
+      set(CPACK_GENERATOR "RPM")
+      set(CPACK_RPM_PACKAGE_ARCHITECTURE "${CMAKE_SYSTEM_PROCESSOR}")
+      set(CPACK_RPM_PACKAGE_URL "http://www.code.ill.fr/scientific-software/nsxtool.git")
+      
+      execute_process(COMMAND arch OUTPUT_VARIABLE CPACK_RPM_PACKAGE_ARCHITECTURE OUTPUT_STRIP_TRAILING_WHITESPACE)
+      
+      # according to rpm.org: name-version-release.architecture.rpm
+      set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_RPM_PACKAGE_ARCHITECTURE}")
 
-        if (RPMBUILD_CMD)
-            
-            set(CPACK_RPM_PACKAGE_LICENSE GPLv3+)
-            set(CPACK_RPM_PACKAGE_RELEASE 1)
-            set(CPACK_RPM_PACKAGE_GROUP Applications/Science)
-        
-            set(CPACK_GENERATOR "RPM")
-            set(CPACK_RPM_PACKAGE_ARCHITECTURE "${CMAKE_SYSTEM_PROCESSOR}")
-            set(CPACK_RPM_PACKAGE_URL "http://www.code.ill.fr/scientific-software/nsxtool.git")
-                    
-            execute_process(COMMAND arch OUTPUT_VARIABLE CPACK_RPM_PACKAGE_ARCHITECTURE OUTPUT_STRIP_TRAILING_WHITESPACE)
-        
-            # according to rpm.org: name-version-release.architecture.rpm
-            set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_RPM_PACKAGE_ARCHITECTURE}")
+    else(RPMBUILD_CMD)
+      message(ERROR " rpmbuild command not found")
+    endif(RPMBUILD_CMD)
 
-        else(RPMBUILD_CMD)
-            message(ERROR " rpmbuild command not found")
-        endif(RPMBUILD_CMD)
+  endif ()
+else()
 
-    endif ()
+  message(STATUS "Windows installers not available yet")
 
-else(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-
-    message(STATUS "Windows installers not available yet")
-
-endif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+endif()
 
 message(STATUS "CPACK_PACKAGE_FILE_NAME = ${CPACK_PACKAGE_FILE_NAME}")
 
