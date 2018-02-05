@@ -24,7 +24,7 @@ set(CPACK_SOURCE_IGNORE_FILES "/\\\\.git/;" )
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/License.txt")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Neutron Single Crystal Diffraction Data Reduction")
 
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${BUILD_DEBIAN})
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   include(CheckLinuxDistro)
 
   # define which binary generators to use
