@@ -87,7 +87,7 @@ endif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 
 message(STATUS "CPACK_PACKAGE_FILE_NAME = ${CPACK_PACKAGE_FILE_NAME}")
 
-set(CMAKE_INSTALL_RPATH "/usr/local/lib")
+set(CMAKE_INSTALL_RPATH lib)
 
 include(CPack)
 

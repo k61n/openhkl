@@ -19,7 +19,6 @@ swig_add_module(pynsx python pynsx.i)
 swig_link_libraries(pynsx nsx)
 
 file(GLOB swig_libraries ${CMAKE_CURRENT_BINARY_DIR}/*.so ${CMAKE_CURRENT_BINARY_DIR}/*.dll ${CMAKE_CURRENT_BINARY_DIR}/*.py)
-install(FILES ${swig_libraries} DESTINATION lib)
-
+install(FILES ${swig_libraries} DESTINATION ${PYTHON_SITE})
 
 

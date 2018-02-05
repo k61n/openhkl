@@ -69,14 +69,20 @@ if(NSX_PYTHON)
         OUTPUT_STRIP_TRAILING_WHITESPACE      
     )
 
-    ## process the output from the execution of the command
-    if (NOT NUMPY_FIND_RESULT)
-        set (NUMPY_INCLUDES ${NUMPY_FIND_OUTPUT})
-        message(STATUS "numpy includes ${NUMPY_INCLUDES}")
-        include_directories(SYSTEM ${NUMPY_INCLUDES})
-    else()
-        message(FATAL_ERROR "Could NOT find numpy headers")
-    endif()
+  ## process the output from the execution of the command
+  if (NOT NUMPY_FIND_RESULT)
+    set (NUMPY_INCLUDES ${NUMPY_FIND_OUTPUT})
+    message(STATUS "numpy includes ${NUMPY_INCLUDES}")
+    include_directories(SYSTEM ${NUMPY_INCLUDES})
+  else()
+    message(FATAL_ERROR "Could NOT find numpy headers")
+  endif()
+  
+  # Python packages dir
+  execute_process(COMMAND ${PYTHON_EXECUTABLE} -c
+    "from __future__ import print_function; from distutils import sysconfig as sc; print(sc.get_python_lib(prefix='', plat_specific=True))"
+    OUTPUT_VARIABLE PYTHON_SITE
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
 
   # swig
   find_package(SWIG REQUIRED)
