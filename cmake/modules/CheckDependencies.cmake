@@ -80,9 +80,16 @@ if(NSX_PYTHON)
   
   # Python packages dir
   execute_process(COMMAND ${PYTHON_EXECUTABLE} -c
-    "from __future__ import print_function; from distutils import sysconfig as sc; print(sc.get_python_lib(prefix='', plat_specific=True))"
+    "from __future__ import print_function; from distutils import sysconfig as sc; print(sc.get_python_lib(prefix='${CMAKE_INSTALL_PREFIX}', plat_specific=True))"
+    RESULT_VARIABLE PYTHON_SITE_RESULT
     OUTPUT_VARIABLE PYTHON_SITE
     OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+  if (NOT PYTHON_SITE_RESULT)
+    message(STATUS "python package destination is ${PYTHON_SITE}")
+  else()
+    message(FATAL_ERROR "could NOT determine python package directory")
+  endif()
 
   # swig
   find_package(SWIG REQUIRED)
