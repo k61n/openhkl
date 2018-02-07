@@ -1,8 +1,4 @@
-// author: Jonathan Fisher
-// j.fisher@fz-juelich.de
-
-#ifndef NSXQT_DIALOGCONVOLVE_H
-#define NSXQT_DIALOGCONVOLVE_H
+#pragma once
 
 #include <map>
 #include <memory>
@@ -31,34 +27,49 @@ class DialogConvolve : public QDialog
     Q_OBJECT
 
 public:
-    explicit DialogConvolve(const Eigen::MatrixXi& currentFrame,
+    explicit DialogConvolve(const nsx::DataList& data,
                             nsx::sptrPeakFinder peakFinder=nullptr,
                             QWidget *parent = 0);
     ~DialogConvolve();
 
     void setPreviewFrame(const Eigen::MatrixXi& frame);
-    void buildTree();
     void setColorMap(const std::string& name);
     int exec() override;
 
 private slots:
-    void on_previewButton_clicked();
-    void on_filterComboBox_currentIndexChanged(int index);
-    void on_thresholdSpinBox_valueChanged(double arg1);
-    void on_blobConfidenceSpinBox_valueChanged(double arg1);
-    void on_integrationConfidenceSpinBox_valueChanged(double arg1);
-    void on_minCompBox_valueChanged(int arg1);
-    void on_maxCompBox_valueChanged(int arg1);
-    void on_thresholdComboBox_currentIndexChanged(int index);
-    void parameterChanged(QStandardItem* item);
+
+    void changeConvolutionParameters(QStandardItem* item);
+
+    void changeThresholdType(int index);
+
+    void changeBlobMinSize(int size);
+
+    void changeBlobMaxSize(int size);
+
+    void changeIntegrationConfidenceValue(double confidence);
+
+    void changeBlobConfidenceValue(double confidence);
+
+    void changeThresholdValue(double threshold);
+
+    void changeConvolutionFilter(int filter);
+
+    void changeSelectedData(int selected_data);
+
+    void changeSelectedFrame(int selected_frame);
+
+private:
+
+    void buildConvolutionParametersList();
+
+    void updatePreview();
 
 private:
     Ui::DialogConvolve *ui;
     QGraphicsScene* _scene;
     QGraphicsPixmapItem* _pxmapPreview;
-    Eigen::MatrixXi _frame;
+    nsx::DataList _data;
 
     nsx::sptrPeakFinder _peakFinder;
     std::unique_ptr<ColorMap> _colormap;
 };
-#endif // NSXQT_DIALOGCONVOLVE_H

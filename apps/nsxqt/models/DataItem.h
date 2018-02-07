@@ -1,5 +1,4 @@
-#ifndef NSXQT_DATAITEM_H
-#define NSXQT_DATAITEM_H
+#pragma once
 
 #include <nsxlib/DataTypes.h>
 #include <nsxlib/InstrumentTypes.h>
@@ -25,5 +24,3 @@ private:
     NumorItem *importData(nsx::sptrDataSet data);
 
 };
-
-#endif // NSXQT_DATAITEM_H

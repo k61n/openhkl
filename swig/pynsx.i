@@ -316,9 +316,6 @@ using namespace nsx;
 %template(vectorVector3d) std::vector<Eigen::Vector3d>;
 %template(vectorRowVector3d) std::vector<Eigen::RowVector3d>;
 
-%include "MillerIndex.h"
-%template(MillerIndexList) std::vector<nsx::MillerIndex>;
-
 %include "ChemistryTypes.h"
 %include "CrystalTypes.h"
 %include "DataTypes.h"
@@ -372,6 +369,7 @@ namespace nsx {
 %include "Peak3D.h"
 
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
+%template(PeakShell) std::vector<std::vector<std::shared_ptr<nsx::Peak3D>>>;
 
 %include "ConstantKernel.h"
 %include "KernelFactory.h"
@@ -442,6 +440,9 @@ namespace nsx {
 
 %include "Peak3D.h"
 %include "PeakRecord.h"
+
+%include "MillerIndex.h"
+%template(MillerIndexList) std::vector<nsx::MillerIndex>;
 
 %include "FFTIndexing.h"
 %include "MergedPeak.h"

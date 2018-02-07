@@ -11,15 +11,10 @@ else()
 endif()
 
 set_property(SOURCE pynsx.i PROPERTY CPLUSPLUS ON)
-#set_property(SOURCE pynsx.i PROPERTY GENERATED ON)
 set_property(SOURCE pynsx.i PROPERTY SWIG_MODULE_NAME pynsx)
 
 swig_add_module(pynsx python pynsx.i)
-
 swig_link_libraries(pynsx nsx)
 
-file(GLOB swig_libraries ${CMAKE_CURRENT_BINARY_DIR}/*.so ${CMAKE_CURRENT_BINARY_DIR}/*.dll ${CMAKE_CURRENT_BINARY_DIR}/*.py)
-install(FILES ${swig_libraries} DESTINATION lib)
-
-
-
+install(TARGETS ${SWIG_MODULE_pynsx_REAL_NAME} DESTINATION ${PYTHON_SITE})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pynsx.py DESTINATION ${PYTHON_SITE})

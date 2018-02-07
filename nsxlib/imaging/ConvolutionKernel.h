@@ -54,11 +54,11 @@ public:
     ConvolutionKernel(int nrows, int ncols, const ConvolutionKernelParameters& parameters);
 
     // used to get/set parameters
-    ConvolutionKernelParameters& getParameters();
-    const ConvolutionKernelParameters& getParameters() const;
+    ConvolutionKernelParameters& parameters();
+    const ConvolutionKernelParameters& parameters() const;
 
-    const RealMatrix& getKernel();
-    virtual const char* getName() = 0;
+    const RealMatrix& matrix();
+    virtual const char* name() = 0;
 
     void print(std::ostream& os) const;
 

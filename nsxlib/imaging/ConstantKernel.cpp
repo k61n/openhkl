@@ -25,7 +25,7 @@ ConstantKernel::~ConstantKernel()
 {
 }
 
-const char* ConstantKernel::getName()
+const char* ConstantKernel::name()
 {
     return "Constant";
 }
