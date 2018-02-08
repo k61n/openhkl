@@ -85,13 +85,13 @@ def filter_peaks(peaks,parameters):
 
     filtered_peaks = peaks
 
-    filtered_peaks = peak_filter.selected(filtered_peaks,True)
+    filtered_peaks = peak_filter.selected(filtered_peaks)
 
-    filtered_peaks = peak_filter.minSigma(filtered_peaks,peak_filters_node["min_sigma"],True)
+    filtered_peaks = peak_filter.minSigma(filtered_peaks,peak_filters_node["min_sigma"])
 
-    filtered_peaks = peak_filter.highSignalToNoise(filtered_peaks,peak_filters_node["i_over_sigma"],True)
+    filtered_peaks = peak_filter.highSignalToNoise(filtered_peaks,peak_filters_node["i_over_sigma"])
 
-    filtered_peaks = peak_filter.dRange(filtered_peaks,peak_filters_node["d_min"],peak_filters_node["d_max"],True)
+    filtered_peaks = peak_filter.dRange(filtered_peaks,peak_filters_node["d_min"],peak_filters_node["d_max"])
 
     return filtered_peaks
 
@@ -144,6 +144,36 @@ def find_space_group(peaks, unit_cell):
         print("idx: {0:3d} --- symbol = {1:10s}  --- % non-extincted peaks = {2:6.2f}".format(*(space_groups[-1])))
 
     return space_groups   
+
+def refine_offsets(data, peaks, unit_cell, parameters):
+
+    refiner_node = parameters["offset_refiner"]
+
+    refinements = []
+
+    for dataset in data:
+
+        print("Refining parameters for dataset", dataset.filename())
+
+        states = dataset.instrumentStates()
+                
+        peak_filter = nsx.PeakFilter()
+        peaks_per_dataset = peak_filter.dataset(peaks,dataset)
+                    
+        refiner = nsx.Refiner(unit_cell, peaks_per_dataset, refiner_node["n_batches"])
+        
+        if (len(peaks_per_dataset) < refined_node["min_peaks_per_dataset"]):
+            print("Too few peaks; skipping")
+        
+        refiner.refineB()
+        
+        success = refiner.refine(refiner_node["n_iterations"])
+        
+        refinements.append([dataset, refiner, success])
+
+        print("refinement successful:", success)
+
+    return refinements
 
 def plot_I_vs_q(peak_list):
     qs = []

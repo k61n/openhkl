@@ -72,8 +72,8 @@ PeakList PeakPredictor::predictPeaks(bool keepObserved, const PeakList& referenc
 {
     PeakFilter peak_filter;
     PeakList selected_peaks;
-    selected_peaks = peak_filter.selected(reference_peaks,true);
-    selected_peaks = peak_filter.highSignalToNoise(selected_peaks,_Isigma,true);
+    selected_peaks = peak_filter.selected(reference_peaks);
+    selected_peaks = peak_filter.highSignalToNoise(selected_peaks,_Isigma);
 
     int predicted_peaks = 0;
 
@@ -91,7 +91,7 @@ PeakList PeakPredictor::predictPeaks(bool keepObserved, const PeakList& referenc
         PeakList filtered_peaks;
         filtered_peaks = peak_filter.unitCell(selected_peaks,cell);
         filtered_peaks = peak_filter.dataset(filtered_peaks,_data);
-        filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance(),true);
+        filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance());
 
         auto UB = cell->reciprocalBasis();        
         std::set<MillerIndex> found_hkls;
