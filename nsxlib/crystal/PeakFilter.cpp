@@ -231,6 +231,24 @@ PeakList PeakFilter::unitCell(const PeakList& peaks, sptrUnitCell unit_cell) con
     return filtered_peaks;
 }
 
+PeakList PeakFilter::minSigma(const PeakList& peaks, double threshold, bool flag) const
+{
+    PeakList filtered_peaks;
+
+    for (auto peak : peaks) {
+
+        auto corrected_intensity = peak->correctedIntensity();
+
+        double sigma = corrected_intensity.sigma();
+
+        if (flag == (sigma > threshold)) {
+            filtered_peaks.push_back(peak);
+        }
+    }
+
+    return filtered_peaks;
+}
+
 PeakList PeakFilter::highSignalToNoise(const PeakList& peaks, double threshold, bool flag) const
 {
     PeakList filtered_peaks;

@@ -24,6 +24,8 @@ public:
 
     PeakList unitCell(const PeakList& peaks, sptrUnitCell unit_cell) const;
 
+    PeakList minSigma(const PeakList& peaks, double threshold, bool flag) const;
+
     PeakList highSignalToNoise(const PeakList& peaks, double threshold, bool flag) const;
 
     PeakList lowIntensity(const PeakList& peaks, double threshold, bool flag) const;
