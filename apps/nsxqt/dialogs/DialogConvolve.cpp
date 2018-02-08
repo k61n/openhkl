@@ -72,6 +72,8 @@ DialogConvolve::DialogConvolve(const nsx::DataList& data,
 
     changeConvolutionFilter(0);
 
+    connect(ui->applyThreshold,SIGNAL(stateChanged(int)),this,SLOT(clipPreview(int)));
+
     connect(ui->thresholdComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(changeThresholdType(int)));
 
     connect(ui->filterComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(changeConvolutionFilter(int)));
@@ -180,41 +182,46 @@ void DialogConvolve::updatePreview()
 
     auto frame = data->frame(selected_frame);
 
+    int max_data = frame.maxCoeff();
+
     int nrows = data->nRows();
 
     int ncols = data->nCols();
 
     auto kernel = _peakFinder->kernel();
 
-    Eigen::MatrixXi clamped_result = data->convolvedFrame(selected_frame,kernel);
+    Eigen::MatrixXi convolved_frame = data->convolvedFrame(selected_frame,kernel);
 
-//    // apply threshold in preview
-//    if (ui->thresholdCheckBox->isChecked()) {
-//        double avgData = std::ceil(frame.sum() / double(nrows*ncols));
-//        double threshold = _peakFinder->getThresholdValue();
-//        bool relativeThreshold = _peakFinder->getThresholdType() == 0;
-//        threshold = relativeThreshold ? threshold*avgData : threshold;
-//
-//        for (int i = 0; i < nrows; ++i)
-//            for (int j = 0; j < ncols; ++j)
-//                result(i, j) = result(i, j) < threshold ? 0 : maxData-1;
-//    }
+    // apply threshold in preview
+    if (ui->applyThreshold->isChecked()) {
+        double avgData = std::ceil(convolved_frame.sum() / double(nrows*ncols));
+        double threshold = _peakFinder->getThresholdValue();
+        bool relativeThreshold = _peakFinder->getThresholdType() == 0;
+        threshold = relativeThreshold ? threshold*avgData : threshold;
+
+        for (int i = 0; i < nrows; ++i)
+            for (int j = 0; j < ncols; ++j)
+                convolved_frame(i, j) = convolved_frame(i, j) < threshold ? 0 : max_data-1;
+    }
 
     // clamp the result for the preview window
-//    double minVal = result.minCoeff();
-//    double maxVal = result.maxCoeff();
-//    result.array() -= minVal;
-//    result.array() *= static_cast<double>(maxData)/(maxVal-minVal);
-//    clamped_result = result.cast<int>();
+    double minVal = convolved_frame.minCoeff();
+    double maxVal = convolved_frame.maxCoeff();
+    convolved_frame.array() -= minVal;
+    convolved_frame.array() *= static_cast<double>(max_data)/(maxVal-minVal);
 
     QRect rect(0, 0, ncols, nrows);
 
-    QImage image = _colormap->matToImage(clamped_result.cast<double>(), rect, clamped_result.maxCoeff());
+    QImage image = _colormap->matToImage(convolved_frame.cast<double>(), rect, convolved_frame.maxCoeff());
 
     if (!_pxmapPreview)
         _pxmapPreview = _scene->addPixmap(QPixmap::fromImage(image));
     else
         _pxmapPreview->setPixmap(QPixmap::fromImage(image));
+}
+
+void DialogConvolve::clipPreview(int state) {
+    updatePreview();
 }
 
 void DialogConvolve::changeConvolutionFilter(int selected_filter)
