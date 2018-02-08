@@ -45,4 +45,12 @@ peak_finder:
     absolute_threshold: 1
 
     threshold_value: 0.4
+
+offset_refiner:
+
+    n_batches: 2
+
+    min_peaks_per_dataset: 20
+
+    n_iterations: 200
     

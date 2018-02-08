@@ -24,15 +24,22 @@ if __name__ == "__main__":
     # Filter peaks
     filtered_peaks = filter_peaks(peaks,parameters)
 
+    # Find unit cells
     unit_cells = find_unit_cells(filtered_peaks)        
 
-    # take best unit cell
-    unit_cell = unit_cells[0][0]
+    # select unit cell
+    selected_unit_cell_id = int(input("Please enter selected unit cell id: "))
+    unit_cell = unit_cells[selected_unit_cell_id][0]
 
     for peak in filtered_peaks:
         peak.addUnitCell(unit_cell, True)
 
     space_groups = find_space_group(filtered_peaks,unit_cell)
+    selected_space_group_id = int(input("Please enter selected space group id: "))
+    space_group = space_groups[0][1]
+    unit_cell.setSpaceGroup(space_group)
+
+    refinements = refine_offsets(data,filtered_peaks,unit_cell,parameters)
 
 #    peak_list = nsx.PeakList()
 
@@ -44,38 +51,7 @@ if __name__ == "__main__":
         
 #    compute_statistics(filtered_peaks, nsx.SpaceGroup("P 21"), True)
 
-    #################
-    # Refinement
-    #################
-    refinements = []
 
-    for data in numors:
-        print("Refining parameters for dataset", data.filename())
-        nbatches = 2
-        states = data.instrumentStates()
-        
-        data_peaks = []
-        
-        for peak in good_peaks:
-            if peak.data().filename() == data.filename():
-                data_peaks.append(peak)
-                    
-        refiner = nsx.Refiner(uc, data_peaks, nbatches)
-        
-        if (len(data_peaks) < 20):
-            print("Too few peaks; skipping")
-        
-        #refiner.refineSamplePosition(states)
-        #refiner.refineKi(states)
-        #refiner.refineSampleOrientation(states)
-        
-        #refiner.refineU()
-        refiner.refineB()
-        
-        success = refiner.refine(200)
-        
-        refinements.append([data, refiner, success])
-        print("refinement successful:", success)
 
     def predict_peaks(reference_peaks, data, dmin, dmax, B, batches):    
         pred = nsx.PeakPredictor(data)

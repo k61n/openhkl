@@ -44,7 +44,7 @@ SpaceGroupDialog::SpaceGroupDialog(const nsx::PeakList& peaks, QWidget *parent):
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     nsx::PeakFilter peak_filter;
-    _peaks = peak_filter.selected(peaks,true);
+    _peaks = peak_filter.selected(peaks);
     for (auto peak : _peaks) {
         auto current_peak_cell = peak->activeUnitCell();
         if (!current_peak_cell) {
@@ -61,7 +61,7 @@ SpaceGroupDialog::SpaceGroupDialog(const nsx::PeakList& peaks, QWidget *parent):
         }
     }
 
-    _peaks = peak_filter.indexed(_peaks, _cell, _cell->indexingTolerance(),true);
+    _peaks = peak_filter.indexed(_peaks, _cell, _cell->indexingTolerance());
 
     if ( _peaks.size()  == 0) {
         nsx::error() << "Need at least one peak to find space group!";

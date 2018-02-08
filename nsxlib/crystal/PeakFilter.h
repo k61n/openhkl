@@ -16,29 +16,31 @@ public:
     //! Apply the filter to the given data set.
     PeakList apply(const PeakList& peaks) const;
 
-    PeakList selected(const PeakList& peaks, bool flag) const;
+    PeakList complementary(const PeakList& peaks, const PeakList& other_peaks) const;
 
-    PeakList indexed(const PeakList& peaks, sptrUnitCell cell, double tolerance, bool flag) const;
+    PeakList selected(const PeakList& peaks) const;
+
+    PeakList indexed(const PeakList& peaks, sptrUnitCell cell, double tolerance) const;
 
     PeakList dataset(const PeakList& peaks, sptrDataSet dataset) const;
 
     PeakList unitCell(const PeakList& peaks, sptrUnitCell unit_cell) const;
 
-    PeakList minSigma(const PeakList& peaks, double threshold, bool flag) const;
+    PeakList minSigma(const PeakList& peaks, double threshold) const;
 
-    PeakList highSignalToNoise(const PeakList& peaks, double threshold, bool flag) const;
+    PeakList highSignalToNoise(const PeakList& peaks, double threshold) const;
 
-    PeakList lowIntensity(const PeakList& peaks, double threshold, bool flag) const;
+    PeakList lowIntensity(const PeakList& peaks, double threshold) const;
 
-    PeakList predicted(const PeakList& peaks, bool flag) const;
+    PeakList predicted(const PeakList& peaks) const;
 
-    PeakList dRange(const PeakList& peaks, double dmin, double dmax, bool flag) const;
+    PeakList dRange(const PeakList& peaks, double dmin, double dmax) const;
 
-    PeakList selectedPeaks(const PeakList& peaks, const PeakList& other_peaks, bool flag) const;
+    PeakList selectedPeaks(const PeakList& peaks, const PeakList& other_peaks) const;
 
     PeakList selection(const PeakList& peaks, const std::vector<int>& indexes) const;
 
-    PeakList hasUnitCell(const PeakList& peaks, bool flag) const;
+    PeakList hasUnitCell(const PeakList& peaks) const;
 
 public:
     //! Remove peaks which are not indexed (incommensurate).

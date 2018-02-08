@@ -379,16 +379,13 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
 
         nsx::PeakFilter peak_filter;
         nsx::PeakList selected_peaks;
-        selected_peaks = peak_filter.selected(peaks(numor.get()),true);
+        selected_peaks = peak_filter.selected(peaks(numor.get()));
 
-        nsx::PeakList bad_peaks;
-        bad_peaks = peak_filter.dRange(selected_peaks,dmin,dmax,false);
-        n_bad_peaks += bad_peaks.size();
-
-        nsx::PeakList good_peaks;
-        good_peaks = peak_filter.selectedPeaks(selected_peaks,bad_peaks,false);
-
+        auto good_peaks = peak_filter.dRange(selected_peaks,dmin,dmax);
         n_good_peaks += good_peaks.size();
+
+        auto bad_peaks = peak_filter.complementary(selected_peaks,good_peaks);
+        n_bad_peaks += bad_peaks.size();
 
         for (auto peak : good_peaks) {
             double d = 1.0 / peak->getQ().rowVector().norm();
@@ -415,7 +412,7 @@ void SessionModel::writeLog()
 
     nsx::PeakFilter peak_filter;
     nsx::PeakList selected_peaks;
-    selected_peaks = peak_filter.selected(_peaks,true);
+    selected_peaks = peak_filter.selected(_peaks);
 
     if (!selected_peaks.size()) {
         nsx::error() << "No peaks in the table";
@@ -458,8 +455,8 @@ bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& pea
 
     nsx::PeakFilter peak_filter;
     nsx::PeakList filtered_peaks;
-    filtered_peaks = peak_filter.selected(peaks,true);
-    filtered_peaks = peak_filter.hasUnitCell(filtered_peaks,true);
+    filtered_peaks = peak_filter.selected(peaks);
+    filtered_peaks = peak_filter.hasUnitCell(filtered_peaks);
 
     if (filtered_peaks.empty()) {
         return false;
@@ -468,7 +465,7 @@ bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& pea
     auto cell = filtered_peaks[0]->activeUnitCell();
 
     filtered_peaks = peak_filter.unitCell(filtered_peaks,cell);
-    filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance(),true);
+    filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance());
 
     for (auto peak : filtered_peaks) {
 
@@ -512,8 +509,8 @@ bool SessionModel::writeStatistics(std::string filename,
 
     nsx::PeakFilter peak_filter;
     nsx::PeakList filtered_peaks;
-    filtered_peaks = peak_filter.selected(peaks,true);
-    filtered_peaks = peak_filter.hasUnitCell(filtered_peaks,true);
+    filtered_peaks = peak_filter.selected(peaks);
+    filtered_peaks = peak_filter.hasUnitCell(filtered_peaks);
 
     if (filtered_peaks.empty()) {
         return false;
@@ -522,7 +519,7 @@ bool SessionModel::writeStatistics(std::string filename,
     auto cell = filtered_peaks[0]->activeUnitCell();
 
     filtered_peaks = peak_filter.unitCell(filtered_peaks,cell);
-    filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance(),true);
+    filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance());
 
     auto grp = nsx::SpaceGroup(cell->spaceGroup());
 
@@ -671,7 +668,7 @@ void SessionModel::autoAssignUnitCell()
 
         nsx::PeakFilter peak_filter;
         nsx::PeakList filtered_peaks;
-        filtered_peaks = peak_filter.selected(numor_peaks,true);
+        filtered_peaks = peak_filter.selected(numor_peaks);
 
         for (auto peak : filtered_peaks) {
             Eigen::RowVector3d hkl;
