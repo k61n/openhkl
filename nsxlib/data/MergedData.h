@@ -54,6 +54,12 @@ public:
     bool addPeak(const sptrPeak3D& peak);
     //! Retern the set of merged peaks.
     const MergedPeakSet& getPeaks() const;
+
+    //! Return redundancy = #observations / #symmetry-inequvialent peaks.
+    double redundancy() const;
+
+    //! Return total number of observations (including redundant ones)
+    size_t totalSize() const;
     
 private:
     SpaceGroup _group;

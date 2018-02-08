@@ -95,7 +95,8 @@ void DialogRefineUnitCell::refineParameters()
         }
 
         if (ui->checkBoxRefineSampleOrientation->isChecked()) {
-            nsx::info() << "Refinining sample orientation NOT IMPLEMENTED";
+            nsx::info() << "Refinining sample orientation";
+            r.refineSampleOrientation(states);
         }
 
         if (ui->checkBoxRefineDetectorOffset->isChecked()) {
@@ -108,7 +109,8 @@ void DialogRefineUnitCell::refineParameters()
         }
 
         if (ui->checkBoxRefineKi->isChecked()) {
-            nsx::info() << "Refining Ki NOT IMPLEMENTED";
+            nsx::info() << "Refining Ki";
+            r.refineKi(states);
         }
 
         bool success = r.refine();
