@@ -38,6 +38,8 @@ public:
 
 private slots:
 
+    void clipPreview(int state);
+
     void changeConvolutionParameters(QStandardItem* item);
 
     void changeThresholdType(int index);
