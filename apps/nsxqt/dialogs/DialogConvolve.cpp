@@ -57,10 +57,10 @@ DialogConvolve::DialogConvolve(const nsx::DataList& data,
     ui->preview->scale(1, -1);
 
     ui->filterComboBox->clear();
-    nsx::KernelFactory* kernelFactory=nsx::KernelFactory::Instance();
+    nsx::KernelFactory kernel_factory;
 
-    for (const auto& k : kernelFactory->list())
-        ui->filterComboBox->addItem(QString::fromStdString(k));
+    for (auto& k : kernel_factory.callbacks())
+        ui->filterComboBox->addItem(QString::fromStdString(k.first));
 
     ui->filterComboBox->addItem("none");
 
@@ -232,8 +232,8 @@ void DialogConvolve::changeConvolutionFilter(int selected_filter)
         int ncols = data->nCols();
 
         std::string kernelName = ui->filterComboBox->currentText().toStdString();
-        auto kernelFactory = nsx::KernelFactory::Instance();
-        kernel.reset(kernelFactory->create(kernelName, nrows, ncols));
+        nsx::KernelFactory kernel_factory;
+        auto kernel = kernel_factory.create(kernelName, nrows, ncols);
     }
 
     // propagate changes to peak finder

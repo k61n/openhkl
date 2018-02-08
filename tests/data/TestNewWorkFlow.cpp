@@ -50,10 +50,9 @@ int main()
     nsx::DataList numors;
     numors.push_back(dataf);
 
-    nsx::sptrConvolutionKernel kernel;
     std::string kernelName = "annular";
-    auto kernelFactory = nsx::KernelFactory::Instance();
-    kernel.reset(kernelFactory->create(kernelName, int(dataf->nRows()), int(dataf->nCols())));
+    nsx::KernelFactory kernel_factory;
+    auto kernel = kernel_factory.create(kernelName, int(dataf->nRows()), int(dataf->nCols()));
 
     // propagate changes to peak finder
     auto convolver = peakFinder->convolver();
