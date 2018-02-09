@@ -441,7 +441,7 @@ void CollectedPeaksModel::writeShelX(const std::string& filename, QModelIndexLis
     nsx::PeakFilter peak_filter;
     nsx::PeakList filtered_peaks;
     filtered_peaks = peak_filter.selection(_peaks,rows);
-    filtered_peaks = peak_filter.selected(filtered_peaks);
+    filtered_peaks = peak_filter.selected(filtered_peaks,true);
     filtered_peaks = peak_filter.hasUnitCell(filtered_peaks);
 
     for (auto peak : filtered_peaks) {
@@ -508,7 +508,7 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, QModelIndex
     nsx::PeakFilter peak_filter;
     nsx::PeakList filtered_peaks;
     filtered_peaks = peak_filter.selection(_peaks,rows);
-    filtered_peaks = peak_filter.selected(filtered_peaks);
+    filtered_peaks = peak_filter.selected(filtered_peaks,true);
     filtered_peaks = peak_filter.hasUnitCell(filtered_peaks);
 
     file << "TITLE File written by ...\n";

@@ -18,7 +18,7 @@ public:
 
     PeakList complementary(const PeakList& peaks, const PeakList& other_peaks) const;
 
-    PeakList selected(const PeakList& peaks) const;
+    PeakList selected(const PeakList& peaks, bool selection_flag) const;
 
     PeakList indexed(const PeakList& peaks, sptrUnitCell cell, double tolerance) const;
 
@@ -28,19 +28,23 @@ public:
 
     PeakList minSigma(const PeakList& peaks, double threshold) const;
 
-    PeakList highSignalToNoise(const PeakList& peaks, double threshold) const;
+    PeakList signalToNoise(const PeakList& peaks, double threshold) const;
 
     PeakList lowIntensity(const PeakList& peaks, double threshold) const;
 
     PeakList predicted(const PeakList& peaks) const;
 
-    PeakList dRange(const PeakList& peaks, double dmin, double dmax) const;
+    PeakList dMin(const PeakList& peaks, double dmin) const;
+
+    PeakList dMax(const PeakList& peaks, double dmax) const;
 
     PeakList selectedPeaks(const PeakList& peaks, const PeakList& other_peaks) const;
 
     PeakList selection(const PeakList& peaks, const std::vector<int>& indexes) const;
 
     PeakList hasUnitCell(const PeakList& peaks) const;
+
+    PeakList significance(const PeakList& peaks, double p_value_threshold) const;
 
 public:
     //! Remove peaks which are not indexed (incommensurate).

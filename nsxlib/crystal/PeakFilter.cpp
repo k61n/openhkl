@@ -196,11 +196,11 @@ PeakList PeakFilter::complementary(const PeakList& peaks, const PeakList& other_
 }
 
 
-PeakList PeakFilter::selected(const PeakList& peaks) const
+PeakList PeakFilter::selected(const PeakList& peaks, bool selection_flag) const
 {
     PeakList filtered_peaks;
 
-    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[](sptrPeak3D peak){return peak->isSelected();});
+    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[selection_flag](sptrPeak3D peak){return selection_flag == peak->isSelected();});
 
     return filtered_peaks;
 }
@@ -263,7 +263,7 @@ PeakList PeakFilter::minSigma(const PeakList& peaks, double threshold) const
     return filtered_peaks;
 }
 
-PeakList PeakFilter::highSignalToNoise(const PeakList& peaks, double threshold) const
+PeakList PeakFilter::signalToNoise(const PeakList& peaks, double threshold) const
 {
     PeakList filtered_peaks;
 
@@ -318,7 +318,7 @@ PeakList PeakFilter::predicted(const PeakList& peaks) const
     return filtered_peaks;
 }
 
-PeakList PeakFilter::dRange(const PeakList& peaks, double dmin, double dmax) const
+PeakList PeakFilter::dMin(const PeakList& peaks, double dmin) const
 {
     PeakList filtered_peaks;
 
@@ -328,7 +328,41 @@ PeakList PeakFilter::dRange(const PeakList& peaks, double dmin, double dmax) con
 
         double d = 1.0/q.rowVector().norm();
 
-        if ((d > dmin) && (d < dmax)) {
+        if (d >= dmin) {
+            filtered_peaks.push_back(peak);
+        }
+    }
+
+    return filtered_peaks;
+}
+
+PeakList PeakFilter::dMax(const PeakList& peaks, double dmax) const
+{
+    PeakList filtered_peaks;
+
+    for (auto peak : peaks) {
+
+        auto q = peak->getQ();
+
+        double d = 1.0/q.rowVector().norm();
+
+        if (d <= dmax) {
+            filtered_peaks.push_back(peak);
+        }
+    }
+
+    return filtered_peaks;
+}
+
+PeakList PeakFilter::significance(const PeakList& peaks, double p_value_threshold) const
+{
+    PeakList filtered_peaks;
+
+    for (auto peak : peaks) {
+
+        const double p_value = peak->pValue();
+
+        if (p_value <= p_value_threshold) {
             filtered_peaks.push_back(peak);
         }
     }
