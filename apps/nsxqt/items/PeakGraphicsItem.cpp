@@ -98,6 +98,17 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     qreal peak_h = peak_u[1]-peak_l[1];
 
     _label->setPos(peak_w/2,peak_h/2);
+    
+    Eigen::Vector3d dx = _frameCenter - _peak->getShape().center();
+
+    painter->setBrush(QBrush(QColor(127, 255, 127, 127)));
+    painter->drawEllipse(dx(0)-2, dx(1)-2, 4, 4);
+
+    #if 0
+    dx = _predictedCenter - _peak->getShape().center();
+    painter->setBrush(QBrush(QColor(127, 127, 255, 255)));
+    painter->drawEllipse(dx(0)-2, dx(1)-2, 4, 4);
+    #endif
 }
 
 void PeakGraphicsItem::setFrame(unsigned long frame)
@@ -128,6 +139,8 @@ void PeakGraphicsItem::setFrame(unsigned long frame)
         hklString = "no unit cell";
     }
     _label->setPlainText(hklString);
+    _frameCenter = _peak->getShape().intersectionCenter({0,0,1}, {0, 0, frame});
+    _predictedCenter = _peak->predictCenter(frame);
 }
 
 std::string PeakGraphicsItem::getPlotType() const

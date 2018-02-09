@@ -41,6 +41,9 @@ private:
     //! (h,k,l) index visible in GraphicsScene
     static bool _labelVisible;
     static bool _drawBackground;
+
+    Eigen::Vector3d _frameCenter;
+    Eigen::Vector3d _predictedCenter;
 };
 
 #endif // NSXQT_PEAKGRAPHICSITEM_H

@@ -305,6 +305,17 @@ Ellipsoid Peak3D::qShape() const
     return Ellipsoid(q().rowVector().transpose(), B.transpose()*A*B);
 }
 
+
+ReciprocalVector Peak3D::qPredicted() const
+{
+    auto uc = activeUnitCell();
+    if (!uc) {
+        return {};
+    }
+    auto index = MillerIndex(q(), *uc);
+    return ReciprocalVector(uc->fromIndex(index.rowVector().cast<double>()));
+}
+
 Eigen::Vector3d Peak3D::predictCenter(double frame) const
 {
     const Eigen::Vector3d no_event = {0, 0, -1};
@@ -315,11 +326,20 @@ Eigen::Vector3d Peak3D::predictCenter(double frame) const
     }
 
     auto index = MillerIndex(q(), *uc);
-    auto q_pred = uc->fromIndex(index.rowVector().cast<double>());
     auto state = _data->interpolatedState(frame);
-    auto kf = q_pred*state.sampleOrientation().transpose() + state.ki().rowVector();
+    Eigen::RowVector3d q_hkl = uc->fromIndex(index.rowVector().cast<double>());
+    Eigen::RowVector3d ki = state.ki().rowVector();
+    Eigen::RowVector3d kf = q_hkl*state.sampleOrientation().transpose() + ki;
 
-    return _data->diffractometer()->getDetector()->constructEvent(DirectVector(state.samplePosition), ReciprocalVector(kf*state.detectorOrientation));
+    const double alpha = ki.norm() / kf.norm();
+    
+
+    Eigen::RowVector3d kf1 = alpha*kf;
+    Eigen::RowVector3d kf2 = -alpha*kf;
+
+    Eigen::RowVector3d pred_kf = (kf1-kf).norm() < (kf2-kf).norm() ? kf1 : kf2;
+
+    return _data->diffractometer()->getDetector()->constructEvent(DirectVector(state.samplePosition), ReciprocalVector(pred_kf*state.detectorOrientation));
 }
 
 } // end namespace nsx

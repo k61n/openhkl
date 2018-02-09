@@ -126,6 +126,8 @@ public:
 
     //! Return the q vector of the peak, transformed into sample coordinates.
     ReciprocalVector q() const;
+    //! Return the predicted q vector of the peak, based on Miller index.
+    ReciprocalVector qPredicted() const;
 
     sptrDataSet data() const { return _data; }
 
