@@ -83,7 +83,7 @@ int main()
 
     nsx::PeakFilter peak_filter;
     nsx::PeakList selected_peaks;
-    selected_peaks = peak_filter.selected(found_peaks);
+    selected_peaks = peak_filter.selected(found_peaks,true);
 
     auto numIndexedPeaks = [&]() -> unsigned int
     {

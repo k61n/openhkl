@@ -72,8 +72,8 @@ PeakList PeakPredictor::predictPeaks(bool keepObserved, const PeakList& referenc
 {
     PeakFilter peak_filter;
     PeakList selected_peaks;
-    selected_peaks = peak_filter.selected(reference_peaks);
-    selected_peaks = peak_filter.highSignalToNoise(selected_peaks,_Isigma);
+    selected_peaks = peak_filter.selected(reference_peaks,true);
+    selected_peaks = peak_filter.signalToNoise(selected_peaks,_Isigma);
 
     int predicted_peaks = 0;
 

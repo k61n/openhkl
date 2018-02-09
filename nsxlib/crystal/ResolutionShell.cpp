@@ -34,7 +34,7 @@
  */
 
 #include <cmath>
-#include <set>
+#include <limits>
 
 #include <Eigen/Eigenvalues>
 
@@ -43,51 +43,59 @@
 #include "ReciprocalVector.h"
 #include "ResolutionShell.h"
 
-
 namespace nsx {
 
-ResolutionShell::ResolutionShell(double dmin, double dmax, size_t num_shells):
-    _numShells(std::max(num_shells, size_t(1))),
-    _shells(std::max(_numShells, size_t(1))),
-    _d(_numShells+1, 0.0)
+ResolutionShell::ResolutionShell(double dmin, double dmax, size_t num_shells)
+: _shells(std::max(num_shells, size_t(1)))
 {
-    const double dv = (std::pow(dmin, -3) - std::pow(dmax, -3)) / double(_numShells);
-    _d[0] = dmin;
+    size_t n_shells = _shells.size();
 
-    for (size_t i = 0; i < _numShells; ++i) {
-        _d[i+1] = std::pow(std::pow(_d[i], -3) - dv, -1.0/3.0);
+    const double q3max = std::pow(dmin, -3);
+    const double dq3 = (std::pow(dmin, -3) - std::pow(dmax, -3)) / double(n_shells);
+
+    _shells[0].dmin = dmin;
+
+    for (size_t i = 0; i < n_shells-1; ++i) {
+        _shells[i].dmax = std::pow(q3max - (i+1)*dq3,-1.0/3.0);
+        _shells[i+1].dmin = _shells[i].dmax;
     }
+
+    _shells[n_shells-1].dmax = dmax;
 }
 
 void ResolutionShell::addPeak(const sptrPeak3D& peak)
 {
-    auto data = peak->data();
     auto q = peak->getQ();
     const double d = 1.0 / q.rowVector().norm();
 
-    for (size_t i = 0; i < _d.size()-1; ++i) {
-        if (_d[i] <= d && d < _d[i+1]) {
-            _shells[i].push_back(peak);
+    double dmin;
+    double dmax;
+    for (size_t i = 0; i < _shells.size(); ++i) {
+        dmin = _shells[i].dmin;
+        dmax = _shells[i].dmax;
+        if (dmin <= d && d <= dmax) {
+            _shells[i].peaks.push_back(peak);
+            return;
         }
     }
 }
 
-const std::vector<PeakList>& ResolutionShell::getShells() const
+const ResolutionShell::resolution_shells& ResolutionShell::shells() const
 {
     return _shells;
 }
 
-const std::vector<double>& ResolutionShell::getD() const
-{
-    return _d;
-}
-
-const PeakList& ResolutionShell::shell(size_t i) const
+const DShell& ResolutionShell::shell(size_t i) const
 {
     if (i >= _shells.size()) {
         throw std::runtime_error("ResolutionShell::shell index out of bounds");
     }
     return _shells[i];
+}
+
+size_t ResolutionShell::nShells() const
+{
+    return _shells.size();
 }
 
 } // end namespace nsx

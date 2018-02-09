@@ -445,6 +445,7 @@ namespace nsx {
 %include "PeakIntegrator.h"
 %include "UnitCell.h"
 %include "ResolutionShell.h"
+
 %include "RFactor.h"
 %include "CC.h"
 %include "CC.h"
