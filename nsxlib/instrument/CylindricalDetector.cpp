@@ -3,6 +3,7 @@
 #include "CylindricalDetector.h"
 #include "DirectVector.h"
 #include "Gonio.h"
+#include "ReciprocalVector.h"
 #include "RotAxis.h"
 #include "TransAxis.h"
 #include "Units.h"
@@ -111,8 +112,12 @@ DirectVector CylindricalDetector::pixelPosition(double px, double py) const
     return DirectVector(result);
 }
 
-bool CylindricalDetector::hasKf(const DirectVector& direction,const DirectVector& from, double& px, double& py, double& t) const
+Eigen::Vector3d CylindricalDetector::constructEvent(const DirectVector& from, const ReciprocalVector& kf) const
 {
+    const Eigen::Vector3d no_event = {0, 0, -1};
+    double px, py, t;
+
+    const Eigen::Vector3d direction = kf.rowVector().transpose();
 
     // Need to solve equation of the typr (from_xy + f_xy*t)^2=R^2
     double b=2*(from[0]*direction[0]+from[1]*direction[1]);
@@ -121,29 +126,29 @@ bool CylindricalDetector::hasKf(const DirectVector& direction,const DirectVector
 
     double Delta=b*b-4*a*c;
     if (Delta<0)
-        return false;
+        return no_event;
 
     Delta=sqrt(Delta);
 
     t=0.5*(-b+Delta)/a;
     if (t<=0)
-        return false;
+        return no_event;
 
-    Eigen::RowVector3d v = from.vector() + direction.vector()*t;
+    Eigen::RowVector3d v = from.vector() + direction*t;
 
     double phi=atan2(v[0],v[1])+0.5*_angularWidth;
     if (phi<0 || phi>=_angularWidth)
-        return false;
+        return no_event;
 
     double d=v[2]/_height+0.5;
 
     if (d<0 || d>1.0)
-        return false;
+        return no_event;
 
     px=phi/_angularWidth*(_nCols-1);
     py=d*(_nRows-1);
 
-    return true;
+    return {px, py, t};
 }
 
 } // end namespace nsx

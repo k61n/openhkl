@@ -128,7 +128,7 @@ int main()
     for (auto peak: selected_peaks) {
 
         std::vector<nsx::ReciprocalVector> q_vectors;
-        q_vectors.push_back(peak->getQ());
+        q_vectors.push_back(peak->q());
         nsx::PeakPredictor predictor(dataf);
         auto events = predictor.getEvents(q_vectors);
 
@@ -152,8 +152,8 @@ int main()
             }
         }
         
-        Eigen::RowVector3d q0 = nsx::Peak3D(dataf, nsx::Ellipsoid(p0, 1.0)).getQ().rowVector();
-        Eigen::RowVector3d q1 = nsx::Peak3D(dataf, nsx::Ellipsoid(p1, 1.0)).getQ().rowVector();
+        Eigen::RowVector3d q0 = nsx::Peak3D(dataf, nsx::Ellipsoid(p0, 1.0)).q().rowVector();
+        Eigen::RowVector3d q1 = nsx::Peak3D(dataf, nsx::Ellipsoid(p1, 1.0)).q().rowVector();
 
         NSX_CHECK_CLOSE(p0(0), p1(0), 3.0);
         NSX_CHECK_CLOSE(p0(1), p1(1), 3.0);

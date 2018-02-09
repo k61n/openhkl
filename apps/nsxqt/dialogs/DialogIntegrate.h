@@ -18,13 +18,12 @@ public:
     DialogIntegrate(QWidget *parent = 0);
     ~DialogIntegrate();
 
-    double peakScale() const { return _peakScale; }
-    double backgroundScale() const { return _bkgScale; }
-    bool updateShape() const { return true; }
+    double peakScale() const;
+    double backgroundScale() const;
+    double dMin() const;
+    double dMax() const;
 
 private:
-    double _peakScale;
-    double _bkgScale;
     Ui::DialogIntegrate* _ui;
 
 };

@@ -72,7 +72,7 @@ RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks)
 
     _hkls.reserve(filtered_peaks.size());
     for (auto peak : peaks) {
-        MillerIndex hkl(peak,_cell);
+        MillerIndex hkl(peak->q(), *_cell);
         _hkls.push_back(hkl.rowVector().cast<double>());
     }
 
@@ -169,7 +169,7 @@ int RefinementBatch::residuals(Eigen::VectorXd &fvec)
 
     //#pragma omp parallel for
     for (unsigned int i = 0; i < _peaks.size(); ++i) {
-        const Eigen::RowVector3d q0 = _peaks[i]->getQ().rowVector();
+        const Eigen::RowVector3d q0 = _peaks[i]->q().rowVector();
         const Eigen::RowVector3d q1 = _hkls[i]*UB;
         const Eigen::RowVector3d dq = q1-q0;
 

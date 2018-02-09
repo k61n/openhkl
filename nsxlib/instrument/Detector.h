@@ -104,17 +104,15 @@ public:
     //! Return the angular width of the detector (radians)
     virtual double getAngularWidth() const=0;
 
-    //! Reuturn whether the detector with goniometer values can collect scattering at Kf. If true, px and py would be the pixel coordinates of the event
-    bool receiveKf(double& px, double& py,const DirectVector& direction, const DirectVector& from, double& t) const;
+    //! Return the detector event (pixel x, pixel y, time of flight) associated with a given kf. 
+    //! Returns with _negative_ tof if no such event is possible.
+    virtual Eigen::Vector3d constructEvent(const DirectVector& from, const ReciprocalVector& kf) const = 0;
 
     //! Returns the number of detector
     virtual unsigned int getNDetectors() const=0;
 
     //! Returns the position of a given pixel in detector space. This takes into account the detector motions in detector space.
     virtual DirectVector pixelPosition(double x, double y) const=0;
-
-    //! Determine whether detector at rest can receive a scattering event with direction given by Kf. px and py are detector position if true.
-    virtual bool hasKf(const DirectVector& kf, const DirectVector& from, double& px, double& py, double& t) const =0;
 
     //!
     DataOrder getDataOrder() const {return _dataorder;}

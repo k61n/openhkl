@@ -212,7 +212,7 @@ void SessionModel::showPeaksOpenGL()
        auto numor_peaks = peaks(idata.get());
        for (auto peak: numor_peaks) {
            GLSphere* sphere=new GLSphere("");
-           Eigen::RowVector3d pos = peak->getQ().rowVector();
+           Eigen::RowVector3d pos = peak->q().rowVector();
            sphere->setPos(pos[0]*100,pos[1]*100,pos[2]*100);
            sphere->setColor(0,1,0);
            scene.addActor(sphere);
@@ -391,7 +391,7 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
         n_good_peaks += good_peaks.size();
 
         for (auto peak : good_peaks) {
-            double d = 1.0 / peak->getQ().rowVector().norm();
+            double d = 1.0 / peak->q().rowVector().norm();
             avg_d += d;
         }
 
@@ -472,7 +472,7 @@ bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& pea
 
     for (auto peak : filtered_peaks) {
 
-        nsx::MillerIndex hkl(peak,cell);
+        nsx::MillerIndex hkl(peak->q(), *cell);
 
         auto center = peak->getShape().center();
         auto pos = peak->data()->diffractometer()->getDetector()->pixelPosition(center[0], center[1]);
@@ -536,7 +536,7 @@ bool SessionModel::writeStatistics(std::string filename,
     const auto& shell = resolution_shells.getShells();
     const auto& d = resolution_shells.getD();
  
-    file << "          dmax       dmin       nobs redundancy     r_meas    r_merge      r_pim    CChalf    CC*" << std::endl;
+    file << "          dmax       dmin       nobs nmerge   redundancy     r_meas    r_merge      r_pim    CChalf    CC*" << std::endl;
 
     // note: we print the shells in reverse order
     for (int i = num_shells-1; i >= 0; --i) {
@@ -550,16 +550,15 @@ bool SessionModel::writeStatistics(std::string filename,
             merged_data.addPeak(peak);
         }
 
-        double redundancy = merged_shell.redundancy();
-
         nsx::CC cc;
         cc.calculate(merged_shell);
         nsx::RFactor rfactor;
         rfactor.calculate(merged_shell);
 
         std::snprintf(&buf[0], buf.size(),
-                "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f",
-                d_upper, d_lower, int(shell[i].size()), redundancy,
+                "    %10.2f %10.2f %10d %10d %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f",
+                d_upper, d_lower, 
+                merged_shell.totalSize(), merged_shell.getPeaks().size(), merged_shell.redundancy(),
                 rfactor.Rmeas(), rfactor.Rmerge(), rfactor.Rpim(), cc.CChalf(), cc.CCstar());
 
         file << &buf[0] << std::endl;
@@ -662,7 +661,7 @@ void SessionModel::autoAssignUnitCell()
 
             for (size_t i = 0; i < sample->getNCrystals(); ++i) {
                 auto cell = sample->unitCell(i);
-                nsx::MillerIndex hkl(peak,cell);
+                nsx::MillerIndex hkl(peak->q(), *cell);
                 if (hkl.indexed(cell->indexingTolerance())) {
                     peak->addUnitCell(cell, true);
                     assigned = true;

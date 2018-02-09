@@ -163,7 +163,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
     int row = index.row();
     int column = index.column();
     if (auto cell = _peaks[row]->activeUnitCell()) {
-        nsx::MillerIndex miller_index(_peaks[row],cell);
+        nsx::MillerIndex miller_index(_peaks[row]->q(), *cell);
         if (miller_index.indexed(cell->indexingTolerance())) {
             hkl = miller_index.rowVector();
         }
@@ -244,8 +244,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             auto cell1 = p1->activeUnitCell();
             auto cell2 = p2->activeUnitCell();
-            nsx::MillerIndex miller_index1(p1,cell1);
-            nsx::MillerIndex miller_index2(p2,cell2);
+            nsx::MillerIndex miller_index1(p1->q(), *cell1);
+            nsx::MillerIndex miller_index2(p2->q(), *cell2);
             return (miller_index1[0]<miller_index2[0]);
         };
         break;
@@ -253,8 +253,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             auto cell1 = p1->activeUnitCell();
             auto cell2 = p2->activeUnitCell();
-            nsx::MillerIndex miller_index1(p1,cell1);
-            nsx::MillerIndex miller_index2(p2,cell2);
+            nsx::MillerIndex miller_index1(p1->q(), *cell1);
+            nsx::MillerIndex miller_index2(p2->q(), *cell2);
             return (miller_index1[1]<miller_index2[1]);
         };
         break;
@@ -262,8 +262,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             auto cell1 = p1->activeUnitCell();
             auto cell2 = p2->activeUnitCell();
-            nsx::MillerIndex miller_index1(p1,cell1);
-            nsx::MillerIndex miller_index2(p2,cell2);
+            nsx::MillerIndex miller_index1(p1->q(), *cell1);
+            nsx::MillerIndex miller_index2(p2->q(), *cell2);
             return (miller_index1[2]<miller_index2[2]);
         };
         break;
@@ -377,8 +377,8 @@ void CollectedPeaksModel::sortEquivalents()
     }
 
     std::sort(_peaks.begin(), _peaks.end(), [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-        nsx::MillerIndex miller_index1(p1,cell);
-        nsx::MillerIndex miller_index2(p2,cell);
+        nsx::MillerIndex miller_index1(p1->q(), *cell);
+        nsx::MillerIndex miller_index2(p2->q(), *cell);
         return cell->spaceGroup().isEquivalent(miller_index1,miller_index2);
     });
 }
@@ -448,7 +448,7 @@ void CollectedPeaksModel::writeShelX(const std::string& filename, QModelIndexLis
 
         auto cell = peak->activeUnitCell();
 
-        nsx::MillerIndex miller_index(peak,cell);
+        nsx::MillerIndex miller_index(peak->q(), *cell);
         if (!miller_index.indexed(cell->indexingTolerance())) {
             continue;
         }
@@ -520,7 +520,7 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, QModelIndex
 
         auto cell = peak->activeUnitCell();
 
-        nsx::MillerIndex miller_index(peak,cell);
+        nsx::MillerIndex miller_index(peak->q(), *cell);
         if (!miller_index.indexed(cell->indexingTolerance())) {
             continue;
         }

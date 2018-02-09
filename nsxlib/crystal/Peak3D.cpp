@@ -260,7 +260,7 @@ void Peak3D::setRawIntensity(const Intensity& i)
     _intensity = i; // / data()->getSampleStepSize();
 }
 
-ReciprocalVector Peak3D::getQ() const
+ReciprocalVector Peak3D::q() const
 {
     auto pixel_coords = _shape.center();
     auto state = _data->interpolatedState(pixel_coords[2]);
@@ -283,7 +283,6 @@ Ellipsoid Peak3D::qShape() const
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(A);
     const Eigen::Matrix3d U = solver.eigenvectors();
     const Eigen::Vector3d l = solver.eigenvalues();
-    const Eigen::RowVector3d q = getQ().rowVector();
     auto detector = _data->diffractometer()->getDetector();
     
     Eigen::Matrix3d delta;
@@ -303,7 +302,24 @@ Ellipsoid Peak3D::qShape() const
 
     // approximate linear transformation q space to detector space
     const Eigen::Matrix3d B = U * delta.inverse();
-    return Ellipsoid(q.transpose(), B.transpose()*A*B);
+    return Ellipsoid(q().rowVector().transpose(), B.transpose()*A*B);
+}
+
+Eigen::Vector3d Peak3D::predictCenter(double frame) const
+{
+    const Eigen::Vector3d no_event = {0, 0, -1};
+    auto uc = activeUnitCell();
+
+    if (!uc) {
+        return no_event;
+    }
+
+    auto index = MillerIndex(q(), *uc);
+    auto q_pred = uc->fromIndex(index.rowVector().cast<double>());
+    auto state = _data->interpolatedState(frame);
+    auto kf = q_pred*state.sampleOrientation().transpose() + state.ki().rowVector();
+
+    return _data->diffractometer()->getDetector()->constructEvent(DirectVector(state.samplePosition), ReciprocalVector(kf*state.detectorOrientation));
 }
 
 } // end namespace nsx

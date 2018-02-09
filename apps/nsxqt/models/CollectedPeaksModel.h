@@ -48,7 +48,7 @@ public:
 
     bool indexIsValid(const QModelIndex& index) const;
 
-    void sort(int column, Qt::SortOrder order);
+    void sort(int column, Qt::SortOrder order) override;
 
     void normalizeToMonitor(double factor);
 

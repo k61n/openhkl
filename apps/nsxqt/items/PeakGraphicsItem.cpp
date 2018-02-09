@@ -118,7 +118,7 @@ void PeakGraphicsItem::setFrame(unsigned long frame)
     QString hklString;
 
     if (auto cell = _peak->activeUnitCell()) {
-        nsx::MillerIndex miller_index(_peak,cell);
+        nsx::MillerIndex miller_index(_peak->q(), *cell);
         if (miller_index.indexed(cell->indexingTolerance())) {
             hklString = QString("%1,%2,%3").arg(miller_index[0]).arg(miller_index[1]).arg(miller_index[2]);
         } else {
@@ -201,7 +201,7 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     QString info;
 
     if (auto cell = _peak->activeUnitCell()) {
-        nsx::MillerIndex miller_index(_peak,cell);
+        nsx::MillerIndex miller_index(_peak->q(), *cell);
         if (miller_index.indexed(cell->indexingTolerance())) {
             info="(h,k,l):"+QString::number(miller_index[0])+","+QString::number(miller_index[1])+","+QString::number(miller_index[2]);
         } else {

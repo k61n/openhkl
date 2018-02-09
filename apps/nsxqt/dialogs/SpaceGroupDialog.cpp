@@ -92,7 +92,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
     nsx::info() << "Retrieving reflection list for space group calculation...";
 
     for (auto peak : _peaks) {
-        hkls.emplace_back(nsx::MillerIndex(peak,_cell).rowVector());
+        hkls.emplace_back(nsx::MillerIndex(peak->q(), *_cell).rowVector());
     }
 
     _groups.clear();

@@ -15,12 +15,6 @@ DialogIntegrate::DialogIntegrate(QWidget *parent):
 
     // resolve method overload
     auto valueChanged = static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged);
-
-    _peakScale = _ui->shapeScale->value();
-    _bkgScale = _ui->bkgScale->value();
-
-    connect(_ui->shapeScale, valueChanged, [=](double v) {this->_peakScale = v;});
-    connect(_ui->bkgScale, valueChanged, [=](double v) {this->_bkgScale = v;});
 }
 
 DialogIntegrate::~DialogIntegrate()
@@ -28,3 +22,22 @@ DialogIntegrate::~DialogIntegrate()
     delete _ui;
 }
 
+double DialogIntegrate::peakScale() const
+{
+    return _ui->peakScale->value();
+}
+
+double DialogIntegrate::backgroundScale() const
+{
+    return _ui->bkgScale->value();
+}
+
+double DialogIntegrate::dMin() const
+{
+    return _ui->dMin->value();
+}
+
+double DialogIntegrate::dMax() const
+{
+    return _ui->dMax->value();
+}

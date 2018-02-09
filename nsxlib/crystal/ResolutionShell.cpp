@@ -62,7 +62,7 @@ ResolutionShell::ResolutionShell(double dmin, double dmax, size_t num_shells):
 void ResolutionShell::addPeak(const sptrPeak3D& peak)
 {
     auto data = peak->data();
-    auto q = peak->getQ();
+    auto q = peak->q();
     const double d = 1.0 / q.rowVector().norm();
 
     for (size_t i = 0; i < _d.size()-1; ++i) {

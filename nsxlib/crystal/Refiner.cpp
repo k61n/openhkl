@@ -165,7 +165,7 @@ int Refiner::updatePredictions(PeakList& peaks) const
 
         // update the position
         PeakPredictor predictor(peak->data());
-        auto pred = predictor.predictPeaks({MillerIndex(peak,_cell)}, b->cell()->reciprocalBasis());
+        auto pred = predictor.predictPeaks({MillerIndex(peak->q(),*_cell)}, b->cell()->reciprocalBasis());
 
         // something wrong with new prediction...
         if (pred.size() != 1) {

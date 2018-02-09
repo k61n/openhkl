@@ -101,7 +101,7 @@ PeakList PeakPredictor::predictPeaks(bool keepObserved, const PeakList& referenc
         _handler->setStatus("Building set of previously found peaks...");
         for (auto&& peak: filtered_peaks) {
             
-            found_hkls.insert(MillerIndex(peak,cell));
+            found_hkls.insert(MillerIndex(peak->q(), *cell));
 
             try {
                 auto old_shape = peak->getShape().metric();
@@ -154,7 +154,7 @@ PeakList PeakPredictor::predictPeaks(bool keepObserved, const PeakList& referenc
 
             #pragma omp atomic
             ++current_peak;
-            auto q = p->getQ();
+            auto q = p->q();
 
             // now we must add it, calculating shape from nearest peaks
              // K is outside the ellipsoid at PsptrPeak3D
@@ -288,21 +288,12 @@ std::vector<DirectVector> PeakPredictor::getEvents(const std::vector<ReciprocalV
         
                 t += i-1;
                 const InstrumentState& state = _data->interpolatedState(t);
-
-                // transform back to detector
-  
-  
-                //const ComponentState& dis = state.detector;
-                double px,py;
-                // If hit detector, new peak
-                //const ComponentState& cs=state.sample;
-        
-                double time;
                 auto detector = _data->diffractometer()->getDetector();
-                bool accept = detector->receiveKf(px, py,DirectVector((kf*state.detectorOrientation).transpose()), DirectVector(state.samplePosition),time);
+                auto event = detector->constructEvent(DirectVector(state.samplePosition), ReciprocalVector((kf*state.detectorOrientation)));
+                bool accept = event(2) > 0;
 
                 if (accept) {
-                    events.emplace_back(px, py, t);
+                    events.emplace_back(event(0), event(1), t);
                 }
             }
         }        

@@ -47,7 +47,7 @@ class TestWorkFlow(unittest.TestCase):
 
         for peak in selected_peaks:
             indexer.addPeak(peak)
-            peak.getQ()
+            peak.q()
 
         params = nsx.IndexerParameters()
         handler = nsx.ProgressHandler()
@@ -63,7 +63,7 @@ class TestWorkFlow(unittest.TestCase):
 
         for peak in peaks:
             peak.addUnitCell(uc, True)
-            peak.getQ()
+            peak.q()
 
         num_peaks = len(peaks)
 

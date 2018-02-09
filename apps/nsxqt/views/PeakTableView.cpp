@@ -400,7 +400,7 @@ void PeakTableView::showPeaksMatchingText(const QString& text)
     for (row=0;row<peaks.size();row++) {
         nsx::sptrPeak3D peak = peaks[row];
         auto cell = peak->activeUnitCell();
-        nsx::MillerIndex hkl(peak,cell);
+        nsx::MillerIndex hkl(peak->q(), *cell);
         setRowHidden(row,hkl.indexed(cell->indexingTolerance()));
     }
 }

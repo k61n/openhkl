@@ -56,23 +56,21 @@ MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel):
 
 bool MergedPeak::addPeak(const sptrPeak3D& peak)
 {
-    auto cell = peak->activeUnitCell();
+    const auto& cell = *peak->activeUnitCell();
+    const auto& q = peak->q();
 
     if (_peaks.empty()) {
-        _hkl = MillerIndex(peak,cell);
+        _hkl = MillerIndex(q, cell);
         determineRepresentativeHKL();
     } else {
-        MillerIndex hkl(peak,cell);
+        MillerIndex hkl(q, cell);
         if (!_grp.isEquivalent(_hkl, hkl, _friedel)) {
             return false;
         }
     }
-
     // add peak to list
     _peaks.push_back(peak);
-
     _intensitySum += peak->correctedIntensity();
-
     return true;
 }
 

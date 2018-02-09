@@ -33,6 +33,7 @@
 #include <nsxlib/NiggliReduction.h>
 #include <nsxlib/Path.h>
 #include <nsxlib/Peak3D.h>
+#include <nsxlib/PeakFilter.h>
 #include <nsxlib/PeakFinder.h>
 #include <nsxlib/Profile3d.h>
 #include <nsxlib/ProgressHandler.h>
@@ -562,16 +563,20 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
 
     const double peak_scale = dialog->peakScale();
     const double bkg_scale = dialog->backgroundScale();
+    const double dmin = dialog->dMin();
+    const double dmax = dialog->dMax();
 
     nsx::DataList numors = _session->getSelectedNumors();
 
     for (auto&& numor: numors) {
         // todo: bkg_begin and bkg_end
-        numor->integratePeaks(_session->peaks(numor.get()), peak_scale, bkg_scale, _progressHandler);
+        const auto& peaks = nsx::PeakFilter().dRange(_session->peaks(numor.get()), dmin, dmax, true);
+        nsx::info() << "Integrating " << peaks.size() << " peaks";
+        numor->integratePeaks(peaks, peak_scale, bkg_scale, _progressHandler);
     }
 
     _session->updatePeaks();
-    nsx::info() << "Done reintegrating peaks intensities";
+    nsx::info() << "Done reintegrating peaks";
 }
 
 void MainWindow::on_actionFit_peak_profiles_triggered()

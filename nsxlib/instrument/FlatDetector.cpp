@@ -109,26 +109,28 @@ DirectVector FlatDetector::pixelPosition(double px, double py) const
     return DirectVector(result);
 }
 
-bool FlatDetector::hasKf(const DirectVector& direction,const DirectVector& from, double& px, double& py, double& t) const
+
+Eigen::Vector3d FlatDetector::constructEvent(const DirectVector& from, const ReciprocalVector& kf) const
 {
+    const Eigen::Vector3d no_event = {0, 0, -1};
+    const Eigen::Vector3d direction = kf.rowVector().transpose();
+    double px, py, t;
+
     double x=_distance-from[1];
-    if (std::fabs(direction[1])<1e-10 || std::fabs(x)<1e-10)
-    {
-        px=0;
-        py=0;
-        return false;
+    if (std::fabs(direction[1])<1e-10 || std::fabs(x)<1e-10) {
+        return no_event;
     }
 
     t = x/direction[1];
-    Eigen::Vector3d v = from.vector()+direction.vector()*t;
+    Eigen::Vector3d v = from.vector()+direction*t;
 
     px=0.5*(_nCols*(2*v[0]/_width+1)-1);
     py=0.5*(_nRows*(2*v[2]/_height+1)-1);
 
-    if (px<0 || px > _nCols|| py<0 || py> _nRows)
-        return false;
-
-    return true;
+    if (px<0 || px > _nCols|| py<0 || py> _nRows) {
+        return no_event;
+    }
+     
+    return {px, py, t};
 }
 } // end namespace nsx
-

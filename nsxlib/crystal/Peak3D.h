@@ -125,11 +125,14 @@ public:
     const PeakIntegrator& getIntegration() const;
 
     //! Return the q vector of the peak, transformed into sample coordinates.
-    ReciprocalVector getQ() const;
+    ReciprocalVector q() const;
 
     sptrDataSet data() const { return _data; }
 
     void setRawIntensity(const Intensity& i);
+
+    //! Return peak center at the given frame
+    Eigen::Vector3d predictCenter(double frame) const;
 
     #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW

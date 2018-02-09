@@ -605,10 +605,10 @@ std::vector<PeakList> SpaceGroup::findEquivalences(const PeakList& peaks, bool f
         PeakFilter peak_filter;
         PeakList same_cell_peaks = peak_filter.unitCell(peaks,cell);
 
-        MillerIndex miller_index1(peak,cell);
+        MillerIndex miller_index1(peak->q(), *cell);
 
         for (size_t i = 0; i < peak_equivs.size() && !found_equivalence; ++i) {
-            MillerIndex miller_index2(peak_equivs[i][0],cell);
+            MillerIndex miller_index2(peak_equivs[i][0]->q(), *cell);
 
             if ( (friedel && isFriedelEquivalent(miller_index1,miller_index2))
                  || (!friedel && isEquivalent(miller_index1,miller_index2))) {
