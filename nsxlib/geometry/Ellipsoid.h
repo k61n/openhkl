@@ -102,6 +102,9 @@ public:
     const Eigen::Matrix3d& metric() const;
     const Eigen::Matrix3d& inverseMetric() const;
 
+    //! Return center of 2d ellipsoid formed by intercting with plane with normal n and point p.
+    Eigen::Vector3d intersectionCenter(const Eigen::Vector3d& n, const Eigen::Vector3d& p) const;
+
     const AABB& aabb() const;
 
 #ifndef SWIG

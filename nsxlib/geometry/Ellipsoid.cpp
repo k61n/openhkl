@@ -300,5 +300,12 @@ bool Ellipsoid::collideFace(const Eigen::Vector3d& o, const Eigen::Vector3d& a, 
     return false;
 }
 
+Eigen::Vector3d Ellipsoid::intersectionCenter(const Eigen::Vector3d& n, const Eigen::Vector3d& p) const
+{
+    const auto& AI = _inverseMetric;
+    const auto AIn = AI*n;
+    const double lambda = (p.dot(n)-_center.dot(n)) / n.dot(AIn);
+    return _center + lambda*AIn;
+}
 
 } // end namespace nsx
