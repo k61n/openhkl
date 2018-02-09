@@ -69,5 +69,28 @@ int main()
     NSX_CHECK_CLOSE(q[1],-1.0,tolerance);
     NSX_CHECK_SMALL(q[2], tolerance);
 
+    for (int i = d.getMinRow()+1; i < d.getMaxRow()-1; i++) {
+        for (int j = d.getMinCol()+1; j < d.getMaxCol()-1; j++) {
+            NSX_CHECK_EQ(d.hasPixel(j, i), true);
+
+            auto position = d.pixelPosition(j, i);
+
+            Eigen::Vector3d from(-1,-1,-1);
+            from *= nsx::cm;
+            Eigen::Vector3d kf = position.vector() - from;
+
+            Eigen::Vector3d event = d.constructEvent(nsx::DirectVector(from), nsx::ReciprocalVector(kf.transpose()));
+
+            // detector has event
+            NSX_CHECK_EQ(event(2) > 0.0, true);
+            // time of flight is correct
+            NSX_CHECK_CLOSE(event(2), 1.0, 1e-5);
+            // correct x coord
+            NSX_CHECK_CLOSE(event(0), j, 1e-5);
+            // correct x coord
+            NSX_CHECK_CLOSE(event(1), i, 1e-5);
+        }
+    }
+
     return 0;
 }
