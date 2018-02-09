@@ -28,24 +28,38 @@ std::string fileSeparator()
 
 std::string fileBasename(const std::string& input_path)
 {
-    auto pos_sep = input_path.find_last_of(fileSeparator());
-    return input_path.substr(pos_sep+1);
+    std::string output_path = trim(input_path);
+
+    auto pos = output_path.find_last_of(fileSeparator());
+
+    if (pos != std::string::npos) {
+        output_path.erase(0,pos+1);
+    }
+    return output_path;
 }
 
 std::string removeFileExtension(const std::string& input_path)
 {
-    auto pos_sep = input_path.find_last_of(fileSeparator());
-    auto pos_dot = input_path.substr(pos_sep+1).find_last_of(".");
+    std::string output_path = trim(input_path);
 
-    return input_path.substr(0,pos_sep + pos_dot + 1);
+    auto pos = output_path.find_last_of(".");
+    if (pos != std::string::npos) {
+        output_path.erase(pos);
+    }
+
+    return output_path;
 }
+
 
 std::string fileDirname(const std::string& input_path)
 {
+    std::string output_path = trim(input_path);
 
-    std::string output_path = trimmed(input_path);
+    auto pos = output_path.find_last_of(fileSeparator());
 
-    output_path.erase(output_path.find_last_of(fileSeparator()),output_path.size()-1);
+    if (pos != std::string::npos) {
+        output_path.erase(pos,output_path.size()-1);
+    }
 
     return output_path;
 }

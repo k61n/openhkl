@@ -5,11 +5,9 @@
 
 namespace nsx {
 
-void removed_spaces(std::string& input_string);
+std::string clear_spaces(const std::string& input_string);
 
-std::string trimmed(const std::string& input_string);
-
-void trim(std::string& input_string);
+std::string trim(const std::string& input_string);
 
 std::string compress(const std::string& input_string);
 

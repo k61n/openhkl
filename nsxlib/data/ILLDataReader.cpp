@@ -323,9 +323,7 @@ void ILLDataReader::readControlFBlock(std::stringstream& buffer)
         s1 = &line[0];
 
         for (int j = 0; j < 5; j++) {
-            s2 = s1.substr(size_t(j*sizeBlock), size_t(sizeBlock));
-            // Remove all white space from the string (For example H (HMin) and concatenate string
-            removed_spaces(s2);
+            s2 = clear_spaces(s1.substr(size_t(j*sizeBlock), size_t(sizeBlock)));
             keys[size_t(counter++)] = s2;
         }
     }
@@ -336,9 +334,7 @@ void ILLDataReader::readControlFBlock(std::stringstream& buffer)
         buffer.read(&line[0], 80);
         s1 = &line[0];
         for (int j = 0; j < missing; j++) {
-            s2 = s1.substr(size_t(j*sizeBlock), size_t(sizeBlock));
-            // Remove all white space
-            removed_spaces(s2);
+            s2 = clear_spaces(s1.substr(size_t(j*sizeBlock), size_t(sizeBlock)));
             keys[size_t(counter++)] = s2;
         }
     }
