@@ -289,8 +289,7 @@ std::vector<std::string> SpaceGroup::symbols()
 
 SpaceGroup::SpaceGroup(std::string symbol)
 {
-    symbol = compress(symbol);
-    trim(symbol);
+    symbol = compress(trim(symbol));
 
     _symbol = std::move(symbol);
 
@@ -303,7 +302,7 @@ SpaceGroup::SpaceGroup(std::string symbol)
         throw std::runtime_error("Unknown space group: " + _symbol);
     }
 
-    _generators = it->second;
+    _generators = trim(it->second);
 
     generateGroupElements();
 }
