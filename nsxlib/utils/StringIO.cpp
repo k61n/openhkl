@@ -1,6 +1,4 @@
 #include <algorithm>
-#include <cctype>
-#include <cstring>
 #include <iterator>
 #include <sstream>
 #include <vector>
@@ -65,16 +63,19 @@ std::string join(const std::vector<std::string>& tokens, std::string delimiter)
     return ss.str();
 }
 
-std::vector<std::string> split(std::string input_string, std::string delimiter)
+std::vector<std::string> split(const std::string& input_string, const std::string& delimiter)
 {
     std::vector<std::string> tokens;
 
-    auto text_cstr = const_cast<char*>(input_string.c_str());
+    size_t pos(0);
 
-    char* match = strtok(text_cstr,delimiter.c_str());
-    while (match) {
-        tokens.push_back(trim(match));
-        match = strtok(nullptr,delimiter.c_str());
+    auto sub_str = input_string.substr(0);
+
+    while(pos != std::string::npos) {
+        pos = sub_str.find(delimiter);
+        auto token = trim(sub_str.substr(0,pos));
+        tokens.push_back(token);
+        sub_str.erase(0,pos+delimiter.size());
     }
 
     return tokens;

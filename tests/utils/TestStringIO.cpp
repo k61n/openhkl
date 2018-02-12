@@ -33,5 +33,6 @@ int main()
     NSX_CHECK_NOT_EQUAL(nsx::split("hello how are you ?"," "),std::vector<std::string>({"hello","how","are","you"}));
     NSX_CHECK_EQUAL(nsx::split("hello how are you ?"," "),std::vector<std::string>({"hello","how","are","you","?"}));
 
+    NSX_CHECK_EQUAL(nsx::split("hello ; how    ; are; you ;?",";"),std::vector<std::string>({"hello","how","are","you","?"}));
     NSX_CHECK_NOT_EQUAL(nsx::split("hello ; how    ; are; you ;?"," "),std::vector<std::string>({"hello","how","are","you","?"}));
 }

@@ -302,7 +302,7 @@ SpaceGroup::SpaceGroup(std::string symbol)
         throw std::runtime_error("Unknown space group: " + _symbol);
     }
 
-    _generators = it->second;
+    _generators = trim(it->second);
 
     generateGroupElements();
 }
