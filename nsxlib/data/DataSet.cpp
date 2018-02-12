@@ -15,6 +15,7 @@
 #include "Convolver.h"
 #include "DataSet.h"
 #include "Detector.h"
+#include "DetectorEvent.h"
 #include "Diffractometer.h"
 #include "Ellipsoid.h"
 #include "ErfInv.h"
@@ -550,5 +551,75 @@ double DataSet::getSampleStepSize() const
     return step;
 }
 #endif
+
+std::vector<DetectorEvent> DataSet::getEvents(const std::vector<ReciprocalVector>& sample_qs) const
+{
+    std::vector<DetectorEvent> events;
+    unsigned int scanSize = nFrames();
+
+    std::vector<Eigen::RowVector3d> ki;
+    ki.reserve(scanSize);
+
+    std::vector<Eigen::Matrix3d> sample_to_lab;
+    sample_to_lab.reserve(scanSize);
+    
+    for (unsigned int s = 0; s < scanSize; ++s) {
+        auto state = interpolatedState(s);
+        sample_to_lab.push_back(state.sampleOrientation().transpose());
+        ki.push_back(state.ki().rowVector());
+    } 
+
+    for (const ReciprocalVector& sample_q : sample_qs) {
+        const Eigen::RowVector3d& q_vect = sample_q.rowVector();
+
+        bool sign = (q_vect*sample_to_lab[0] + ki[0]).squaredNorm() > ki[0].squaredNorm();
+
+        for (size_t i = 1; i < scanSize; ++i) {
+            const Eigen::RowVector3d kf = q_vect*sample_to_lab[i] + ki[i];
+            const bool new_sign = kf.squaredNorm() > ki[i].squaredNorm();
+
+            if (sign != new_sign) {
+                sign = new_sign;
+
+                const Eigen::RowVector3d kf0 = q_vect*sample_to_lab[i-1] + ki[i-1];
+                const Eigen::RowVector3d kf1 = q_vect*sample_to_lab[i] + ki[i];
+                const Eigen::RowVector3d dkf = q_vect*(sample_to_lab[i]-sample_to_lab[i-1]);
+        
+                double t = 0.5;
+                const int max_count = 100;
+                Eigen::RowVector3d kf;
+                int c;
+                
+                for (c = 0; c < max_count; ++c) {
+                    kf = (1-t)*kf0 + t*kf1;
+                    auto ki_interp = (1-t)*ki[i-1] + t*ki[i];
+                    const double f = kf.squaredNorm() - ki_interp.squaredNorm();
+                    
+                    if (std::fabs(f) < 1e-10) {
+                        break;
+                    }
+                    const double df = 2*dkf.dot(kf);
+                    t -= f/df;
+                }
+        
+                if (c == max_count || t < 0.0 || t > 1.0) {
+                    continue;
+                }
+        
+                t += i-1;
+                const InstrumentState& state = interpolatedState(t);
+                auto detector = _diffractometer->getDetector();
+                auto event = detector->constructEvent(DirectVector(state.samplePosition), ReciprocalVector((kf*state.detectorOrientation)));
+                bool accept = event._tof > 0;
+
+                if (accept) {
+                    event._frame = t;
+                    events.emplace_back(event);
+                }
+            }
+        }        
+    }
+    return events;
+}
 
 } // end namespace nsx

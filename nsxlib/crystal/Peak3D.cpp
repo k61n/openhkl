@@ -316,9 +316,9 @@ ReciprocalVector Peak3D::qPredicted() const
     return ReciprocalVector(uc->fromIndex(index.rowVector().cast<double>()));
 }
 
-Eigen::Vector3d Peak3D::predictCenter(double frame) const
+DetectorEvent Peak3D::predictCenter(double frame) const
 {
-    const Eigen::Vector3d no_event = {0, 0, -1};
+    const DetectorEvent no_event = {0, 0, -1, -1};
     auto uc = activeUnitCell();
 
     if (!uc) {

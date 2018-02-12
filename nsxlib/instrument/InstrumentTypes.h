@@ -8,6 +8,7 @@ namespace nsx {
 class Component;
 class ComponentState;
 class Detector;
+class DetectorEvent;
 class Diffractometer;
 class Experiment;
 class Gonio;

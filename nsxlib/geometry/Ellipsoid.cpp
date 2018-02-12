@@ -1,8 +1,11 @@
 #include <array>
 
 #include "AABB.h"
+#include "DataSet.h"
+#include "DetectorEvent.h"
 #include "Ellipsoid.h"
 #include "GeometryTypes.h"
+#include "ReciprocalVector.h"
 
 namespace nsx {
 
@@ -306,6 +309,51 @@ Eigen::Vector3d Ellipsoid::intersectionCenter(const Eigen::Vector3d& n, const Ei
     const auto AIn = AI*n;
     const double lambda = (p.dot(n)-_center.dot(n)) / n.dot(AIn);
     return _center + lambda*AIn;
+}
+
+
+Ellipsoid Ellipsoid::toDetectorSpace(sptrDataSet data) const
+{
+    const Eigen::Vector3d q = _center;
+    const Eigen::Matrix3d A = _metric;
+
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(A);
+    const Eigen::Matrix3d U = solver.eigenvectors();
+    const Eigen::Vector3d l = solver.eigenvalues();
+
+    std::vector<ReciprocalVector> qs;
+    qs.push_back(ReciprocalVector(q));
+    
+    for (int i = 0; i < 3; ++i) {
+        const double s = std::sqrt(1.0 / l(i));
+        qs.push_back(ReciprocalVector(q+s*U.col(i)));
+        qs.push_back(ReciprocalVector(q-s*U.col(i)));
+    }
+    auto evs = data->getEvents(qs);
+    // something bad happened
+    if (evs.size() != qs.size()) {
+        throw std::runtime_error("could not transform ellipse from q space to detector space");
+    }
+
+    Eigen::Matrix3d delta;
+
+    auto toVector = [](const DetectorEvent& ev) {
+        return Eigen::Vector3d(ev._px, ev._py, ev._frame);
+    };
+
+    const Eigen::Vector3d p0 = toVector(evs[0]);
+
+    for (auto i = 0; i < 3; ++i) {
+        const double s = std::sqrt(1.0 / l(i));
+        const Eigen::Vector3d& p1 = toVector(evs[1+2*i]);
+        const Eigen::Vector3d& p2 = toVector(evs[2+2*i]);
+        delta.col(i) = 0.5 * (p1-p2) / s;
+    }
+
+    // approximate linear transformation detector space to q space
+    const Eigen::Matrix3d BI = U * delta.inverse();
+
+    return Ellipsoid(p0, BI.transpose()*A*BI);
 }
 
 } // end namespace nsx

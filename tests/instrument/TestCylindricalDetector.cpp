@@ -78,16 +78,16 @@ int main()
             from *= nsx::cm;
             Eigen::Vector3d kf = position.vector() - from;
 
-            Eigen::Vector3d event = d.constructEvent(nsx::DirectVector(from), nsx::ReciprocalVector(kf.transpose()));
+            nsx::DetectorEvent event = d.constructEvent(nsx::DirectVector(from), nsx::ReciprocalVector(kf.transpose()));
 
             // detector has event
-            NSX_CHECK_EQ(event(2) > 0.0, true);
+            NSX_CHECK_EQ(event._tof > 0.0, true);
             // time of flight is correct
-            NSX_CHECK_CLOSE(event(2), 1.0, 1e-5);
+            NSX_CHECK_CLOSE(event._tof, 1.0, 1e-5);
             // correct x coord
-            NSX_CHECK_CLOSE(event(0), j, 1e-5);
+            NSX_CHECK_CLOSE(event._px, j, 1e-5);
             // correct x coord
-            NSX_CHECK_CLOSE(event(1), i, 1e-5);
+            NSX_CHECK_CLOSE(event._py, i, 1e-5);
         }
     }
 

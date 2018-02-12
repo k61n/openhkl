@@ -15,6 +15,7 @@
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakPredictor.h>
+#include <nsxlib/ShapeLibrary.h>
 #include <nsxlib/SpaceGroup.h>
 #include <nsxlib/UnitCell.h>
 
@@ -72,9 +73,9 @@ int main()
 
     cell->setSpaceGroup(group.symbol());
 
-    auto reflections = cell->generateReflectionsInShell(2.0, 50.0, 2.67);
-    nsx::PeakPredictor pred(dataf);
-    auto peaks = pred.predictPeaks(reflections, cell->reciprocalBasis());  
+    nsx::PeakPredictor pred(cell, nsx::ShapeLibrary(), 2.0, 5.0, 0);
+    auto peaks = pred.predict(dataf);  
+
     MergedData data0(group, true), data1(group, true);
 
     for (auto p: peaks) {

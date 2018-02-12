@@ -134,7 +134,7 @@ public:
     void setRawIntensity(const Intensity& i);
 
     //! Return peak center at the given frame
-    Eigen::Vector3d predictCenter(double frame) const;
+    DetectorEvent predictCenter(double frame) const;
 
     #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW

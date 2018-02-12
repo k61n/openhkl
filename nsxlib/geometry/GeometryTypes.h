@@ -21,6 +21,7 @@ class Ellipsoid;
 class Face;
 class Octree;
 class ReciprocalVector;
+class ShapeLibrary;
 struct Triangle;
 class Vertex;
 

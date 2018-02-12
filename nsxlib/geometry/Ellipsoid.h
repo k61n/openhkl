@@ -39,6 +39,7 @@
 
 #include "AABB.h"
 #include "GeometryTypes.h"
+#include "DataTypes.h"
 
 namespace nsx {
 
@@ -106,6 +107,9 @@ public:
     Eigen::Vector3d intersectionCenter(const Eigen::Vector3d& n, const Eigen::Vector3d& p) const;
 
     const AABB& aabb() const;
+
+    //! Transform the ellipsoid to detector space, assuming it is currently in q-space.
+    Ellipsoid toDetectorSpace(sptrDataSet data) const;
 
 #ifndef SWIG
     // Macro to ensure that Ellipsoid can be dynamically allocated.

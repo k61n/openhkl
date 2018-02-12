@@ -41,6 +41,7 @@
 #include "DataTypes.h"
 #include "GeometryTypes.h"
 #include "InstrumentTypes.h"
+#include "ShapeLibrary.h"
 #include "UtilsTypes.h"
 
 namespace nsx {
@@ -49,37 +50,28 @@ namespace nsx {
 //! \brief Class to predict peak shapes based on observed peaks.
 class PeakPredictor {
 public:
-    //! Default constructor: sets paramters to reasonable default values;
-    PeakPredictor(sptrDataSet data);
     //! Return predicted peaks on a given data set. Parameter \p keepObserved determines whether to include
     //! predictions for peaks which are already part of the data set.
-    PeakList predictPeaks(bool keepObserved, const PeakList& reference_peaks);
+    PeakPredictor(sptrUnitCell cell, const ShapeLibrary& library, double dmin, double dmax, int dhkl);
 
     //! Is the peak h,k,l in Bragg condition in this dataset. Return Peak pointer if true,
     //! otherwise nullptr.
-    PeakList predictPeaks(const std::vector<MillerIndex>& hkls, const Eigen::Matrix3d& BU);
-    
-    //! Return vector of detector events corresponding to the given q values.
-    std::vector<DirectVector> getEvents(const std::vector<ReciprocalVector>& qs) const;
+    PeakList predict(sptrDataSet data) const;        
 
-    //! Transform an ellipsoid in q space to detector space.
-    Ellipsoid toDetectorSpace(const Ellipsoid& qshape) const;
-
-    //! Return the average shape in q-space of a set of peaks
-    static Eigen::Matrix3d averageQShape(const PeakList& peaks);
+    //! Helper method
+    PeakList predictPeaks(sptrDataSet data, const std::vector<MillerIndex>& hkls, const Eigen::Matrix3d& BU) const;
    
 public:
+    //! Unit cell
+    sptrUnitCell _cell;
+    //! Shape library
+    ShapeLibrary _library;
+    //! Range of nearby lattice sites
+    int _dhkl;
     //! Minimum d value used in prediction.
     double _dmin;
     //! Maximum d value used in prediction.
     double _dmax;
-    //! Minimum value of \f$I / \sigma_I\f$ to use for neighbor search.
-    double _Isigma;
-    //! Minimum number of nearby peaks to use for shape determination.
-    int _minimumNeighbors;
-    //! Optional progress handler to monitor progress.
-    sptrProgressHandler _handler;
-    sptrDataSet _data;
 };
 
 } // end namespace nsx

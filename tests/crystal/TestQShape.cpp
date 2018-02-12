@@ -74,13 +74,12 @@ int main()
     NSX_CHECK_ASSERT(found_peaks.size() >= 800);
 
     int good_shapes = 0;
-    nsx::PeakPredictor pred(dataf);
 
     for (auto peak: found_peaks) {
         try {
             auto qshape = peak->qShape();
             nsx::Ellipsoid new_shape;
-            new_shape = pred.toDetectorSpace(qshape);
+            new_shape = qshape.toDetectorSpace(dataf);
             auto old_shape = peak->getShape();
 
             // note: some blobs are invalid, so we skip them

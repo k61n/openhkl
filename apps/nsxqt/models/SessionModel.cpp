@@ -76,6 +76,7 @@
 #include <nsxlib/ResolutionShell.h>
 #include <nsxlib/RFactor.h>
 #include <nsxlib/Sample.h>
+#include <nsxlib/ShapeLibrary.h>
 #include <nsxlib/SpaceGroup.h>
 #include <nsxlib/Source.h>
 #include <nsxlib/UnitCell.h>
@@ -336,22 +337,33 @@ void SessionModel::incorporateCalculatedPeaks()
     progressView.watch(handler);
 
     int current_numor = 0;
-
     int observed_peaks = 0;
+
+    nsx::ShapeLibrary library;
+
+    // TODO: get the crystal from the dialog!!
+
+    for (auto numor: numors) {
+        for (auto peak: peaks(numor.get())) {
+            if (!peak->isSelected()) {
+                continue;
+            }
+            nsx::MillerIndex hkl(peak->q(), *peak->activeUnitCell());
+            auto q_shape = peak->qShape();
+            library.addShape(hkl, q_shape.inverseMetric());
+        }
+    }
 
     for(auto numor: numors) {
         nsx::debug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
 
-        auto reference_peaks = peaks(numor.get());
+        nsx::sptrUnitCell uc; // TODO: GET UNIT CELL FROM DIALOG
+        int dhkl = 4; // TODO: GET DHKL FROM DIALOG
 
-        auto predictor = nsx::PeakPredictor(numor);
-        predictor._dmin = dialog.dMin();
-        predictor._dmax = dialog.dMax();          
-        predictor._Isigma = dialog.Isigma();
-        predictor._handler = handler;
-        // debugging
-        nsx::PeakList predicted = predictor.predictPeaks(true, reference_peaks);
+        auto predictor = nsx::PeakPredictor(uc, library, dialog.dMin(), dialog.dMax(), dhkl);
+        auto predicted = predictor.predict(numor);
         // todo: bkg_begin and bkg_end
+        nsx::info() << "Integrating predicted peaks...";
         numor->integratePeaks(predicted, dialog.peakScale(), dialog.bkgScale(), handler);
         observed_peaks += peaks(numor.get()).size();
 

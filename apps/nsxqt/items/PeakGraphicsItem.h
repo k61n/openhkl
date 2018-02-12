@@ -6,6 +6,7 @@
 #include <string>
 
 #include <nsxlib/CrystalTypes.h>
+#include <nsxlib/DetectorEvent.h>
 #include <nsxlib/GeometryTypes.h>
 
 #include "PlottableGraphicsItem.h"
@@ -43,7 +44,7 @@ private:
     static bool _drawBackground;
 
     Eigen::Vector3d _frameCenter;
-    Eigen::Vector3d _predictedCenter;
+    nsx::DetectorEvent _predictedCenter;
 };
 
 #endif // NSXQT_PEAKGRAPHICSITEM_H

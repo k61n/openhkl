@@ -138,7 +138,10 @@ public:
     void integratePeaks(const PeakList& peaks, double bkg_begin = 5.0, double bkg_end = 10.0, const sptrProgressHandler& handler = nullptr);
 
     // todo: replace this with Jacobian of (x,y,f) -> q
-    //double getSampleStepSize() const;      
+    //double getSampleStepSize() const;    
+
+    //! Return detector events corresponding to the list of q values.  
+    std::vector<DetectorEvent> getEvents(const std::vector<ReciprocalVector>& sample_qs) const;
 
 
 protected:

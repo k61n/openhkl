@@ -45,6 +45,7 @@
 #include <Eigen/Dense>
 
 #include "Component.h"
+#include "DetectorEvent.h"
 #include "DirectVector.h"
 #include "Enums.h"
 #include "GeometryTypes.h"
@@ -106,7 +107,7 @@ public:
 
     //! Return the detector event (pixel x, pixel y, time of flight) associated with a given kf. 
     //! Returns with _negative_ tof if no such event is possible.
-    virtual Eigen::Vector3d constructEvent(const DirectVector& from, const ReciprocalVector& kf) const = 0;
+    virtual DetectorEvent constructEvent(const DirectVector& from, const ReciprocalVector& kf) const = 0;
 
     //! Returns the number of detector
     virtual unsigned int getNDetectors() const=0;

@@ -112,10 +112,10 @@ DirectVector CylindricalDetector::pixelPosition(double px, double py) const
     return DirectVector(result);
 }
 
-Eigen::Vector3d CylindricalDetector::constructEvent(const DirectVector& from, const ReciprocalVector& kf) const
+DetectorEvent CylindricalDetector::constructEvent(const DirectVector& from, const ReciprocalVector& kf) const
 {
-    const Eigen::Vector3d no_event = {0, 0, -1};
-    double px, py, t;
+    const DetectorEvent no_event = {0, 0, -1, -1};
+    double px, py, tof;
 
     const Eigen::Vector3d direction = kf.rowVector().transpose();
 
@@ -130,11 +130,11 @@ Eigen::Vector3d CylindricalDetector::constructEvent(const DirectVector& from, co
 
     Delta=sqrt(Delta);
 
-    t=0.5*(-b+Delta)/a;
-    if (t<=0)
+    tof=0.5*(-b+Delta)/a;
+    if (tof <= 0)
         return no_event;
 
-    Eigen::RowVector3d v = from.vector() + direction*t;
+    Eigen::RowVector3d v = from.vector() + direction*tof;
 
     double phi=atan2(v[0],v[1])+0.5*_angularWidth;
     if (phi<0 || phi>=_angularWidth)
@@ -148,7 +148,7 @@ Eigen::Vector3d CylindricalDetector::constructEvent(const DirectVector& from, co
     px=phi/_angularWidth*(_nCols-1);
     py=d*(_nRows-1);
 
-    return {px, py, t};
+    return {px, py, 0.0, tof};
 }
 
 } // end namespace nsx

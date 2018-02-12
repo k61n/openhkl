@@ -28,7 +28,7 @@ void ShapeLibrary::setDefaultShape(const Eigen::Matrix3d& cov)
     _defaultShape = cov;
 }
 
-Eigen::Matrix3d ShapeLibrary::predict(const MillerIndex& hkl, int dhkl)
+Eigen::Matrix3d ShapeLibrary::predict(const MillerIndex& hkl, int dhkl) const
 {
     Eigen::Matrix3d shape;
     shape.setZero();

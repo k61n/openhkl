@@ -27,7 +27,8 @@ bool PeakGraphicsItem::_drawBackground = false;
 
 PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D p):
     PlottableGraphicsItem(nullptr,true,false),
-    _peak(std::move(p))
+    _peak(std::move(p)),
+    _predictedCenter(0.0, 0.0, -1.0, -1.0)
 { 
     if (_peak) {
         Eigen::Vector3d c=_peak->getIntegrationRegion().aabb().center();
@@ -139,7 +140,7 @@ void PeakGraphicsItem::setFrame(unsigned long frame)
         hklString = "no unit cell";
     }
     _label->setPlainText(hklString);
-    _frameCenter = _peak->getShape().intersectionCenter({0,0,1}, {0, 0, frame});
+    _frameCenter = _peak->getShape().intersectionCenter({0,0,1.0}, {0, 0, double(frame)});
     _predictedCenter = _peak->predictCenter(frame);
 }
 

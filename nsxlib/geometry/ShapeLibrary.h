@@ -28,7 +28,7 @@ public:
     //! Predict the shape for a given hkl. If an entry for the specified hkl exists, we simply retrieve it.
     //! If not, then take the average shape of peaks with Miller indices in the range hkl +- dhkl. 
     //! If no neighbors can be found, the default shape is used.
-    Eigen::Matrix3d predict(const MillerIndex& hkl, int dhkl);
+    Eigen::Matrix3d predict(const MillerIndex& hkl, int dhkl) const;
 
 private:
     std::map<MillerIndex, std::vector<Eigen::Matrix3d>> _shapes;

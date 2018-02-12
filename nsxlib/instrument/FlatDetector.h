@@ -71,7 +71,7 @@ public:
 	DirectVector pixelPosition(double px,double py) const override;
 
 	//! Determine whether detector at rest can receive a scattering event with direction given by Kf. px and py are detector position if true.
-	virtual Eigen::Vector3d constructEvent(const DirectVector& from, const ReciprocalVector& kf) const override;
+	virtual DetectorEvent constructEvent(const DirectVector& from, const ReciprocalVector& kf) const override;
 
 };
 
