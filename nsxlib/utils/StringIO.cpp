@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cctype>
 #include <iterator>
 #include <sstream>
 #include <vector>
