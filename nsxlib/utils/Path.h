@@ -57,9 +57,6 @@ std::string applicationDataPath();
 //! Return true if the file exists
 bool fileExists(const std::string& filename);
 
-//! Pass argc of running process to nsxlib
-void setArgc(int argc);
-
 //! Set argv of running process to nsxlib
 void setArgv(const char* argv);
 
