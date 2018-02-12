@@ -3,6 +3,7 @@
 #include <mutex>
 #include <numeric>
 #include <stdexcept>
+#include <string>
 
 #include "NSXConfig.h"
 #include "Path.h"
@@ -10,12 +11,9 @@
 
 namespace nsx {
 
-static int g_argc = 0;
+static std::string g_nsx_path("");
 
-static char** g_argv = nullptr;
-
-std::mutex g_argc_mutex;
-std::mutex g_argv_mutex;
+std::mutex g_nsx_path_mutex;
 
 std::string fileSeparator()
 {
@@ -38,16 +36,21 @@ std::string fileBasename(const std::string& input_path)
     return output_path;
 }
 
-std::string removeFileExtension(const std::string& input_path)
+std::pair<std::string,std::string> splitFileExtension(const std::string& input_path)
 {
-    std::string output_path = trim(input_path);
+    std::pair<std::string,std::string> output;
 
-    auto pos = output_path.find_last_of(".");
+    output.first = trim(input_path);
+
+    auto pos = output.first.find_last_of(".");
     if (pos != std::string::npos) {
-        output_path.erase(pos);
+        output.second = output.first.substr(pos);
+        output.first.erase(pos);
+    } else {
+        output.second = "";
     }
 
-    return output_path;
+    return output;
 }
 
 
@@ -64,16 +67,10 @@ std::string fileDirname(const std::string& input_path)
     return output_path;
 }
 
-void setArgc(int argc)
+void setArgv(const char* nsx_path)
 {
-    std::lock_guard<std::mutex> guard(g_argc_mutex);
-    g_argc = argc;
-}
-
-void setArgv(char **argv)
-{
-    std::lock_guard<std::mutex> guard(g_argv_mutex);
-    g_argv = argv;
+    std::lock_guard<std::mutex> guard(g_nsx_path_mutex);
+    g_nsx_path = nsx_path;
 }
 
 std::string homeDirectory()
@@ -107,13 +104,15 @@ std::string homeDirectory()
     throw std::runtime_error("The home directory could not be defined");
 }
 
-std::string buildPath(const std::string& root, const std::vector<std::string>& paths)
+std::string buildPath(const std::vector<std::string>& paths, const std::string& root)
 {
-    auto append_path = [](std::string base, std::string p){return base+fileSeparator()+p;};
+    std::string path = join(paths,fileSeparator());
 
-    std::string path = std::accumulate(paths.begin(),paths.end(),root,append_path);
-
-    return path;
+    if (root.empty()) {
+        return path;
+    } else {
+        return root + fileSeparator() + path;
+    }
 }
 
 std::string applicationDataPath()
@@ -135,17 +134,16 @@ std::string applicationDataPath()
         possible_paths.insert(possible_paths.begin(), nsx_root_dir);
     }
 
-    // add location of executable if possible
-    if (g_argc > 0 && g_argv && g_argv[0]) {
-        std::string path = fileDirname(g_argv[0]);
+    // add base path of nsx library if possible
+    if (!g_nsx_path.empty()) {
+        std::string path = buildPath({g_nsx_path,"share","nsxtool"},"");
         possible_paths.insert(possible_paths.begin(), path);
     }
 
     std::vector<std::string> d19_relative_path = {"instruments","D19.yml"};
 
     for (auto&& path : possible_paths) {
-        std::string d19_file = buildPath(path,d19_relative_path);
-
+        std::string d19_file = buildPath(d19_relative_path,path);
         std::ifstream file(d19_file, std::ios_base::in);
         if (file.good()) {
             file.close();

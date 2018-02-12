@@ -289,8 +289,7 @@ std::vector<std::string> SpaceGroup::symbols()
 
 SpaceGroup::SpaceGroup(std::string symbol)
 {
-    symbol = compress(symbol);
-    trim(symbol);
+    symbol = compress(trim(symbol));
 
     _symbol = std::move(symbol);
 

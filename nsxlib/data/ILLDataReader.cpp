@@ -368,14 +368,11 @@ void ILLDataReader::readHeader(std::stringstream& buffer)
     goToLine(buffer, 6, 0);
     buffer.read(&line[0], 80);
     s1 = &line[0];
-    s2 = s1.substr(0, 4);
-    trim(s2);
+    s2 = trim(s1.substr(0, 4));
     _metadata.add<std::string>("Instrument", s2);
-    s2 = s1.substr(4, 6);
-    trim(s2);
+    s2 = trim(s1.substr(4, 6));
     _metadata.add<std::string>("User", s2);
-    s2 = s1.substr(10, 4);
-    trim(s2);
+    s2 = trim(s1.substr(10, 4));
     _metadata.add<std::string>("LocalContact", s2);
     s2 = s1.substr(14, 9);
     _metadata.add<std::string>("Date", s2);
@@ -385,11 +382,9 @@ void ILLDataReader::readHeader(std::stringstream& buffer)
     goToLine(buffer, 10, 0);
     buffer.read(&line[0], 80);
     s1 = &line[0];
-    s2 = s1.substr(0,72);
-    trim(s2);
+    s2 = trim(s1.substr(0,72));
     _metadata.add<std::string>("Title", s2);
-    s2 = s1.substr(72,8);
-    trim(s2);
+    s2 = trim(s1.substr(72,8));
     _metadata.add<std::string>("ScanType", s2);
     std::string date, time;
 
