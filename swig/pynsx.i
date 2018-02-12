@@ -259,6 +259,7 @@ using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 #include "MergedData.h"
 
 #include "MillerIndex.h"
+#include "ShapeLibrary.h"
 
 #include "CC.h"
 #include "RFactor.h"
@@ -443,6 +444,8 @@ namespace nsx {
 
 %include "MillerIndex.h"
 %template(MillerIndexList) std::vector<nsx::MillerIndex>;
+
+%include "ShapeLibrary.h"
 
 %include "FFTIndexing.h"
 %include "MergedPeak.h"
