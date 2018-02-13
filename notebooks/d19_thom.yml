@@ -4,6 +4,12 @@ experiment:
 
     instrument: D19
 
+crystal:
+
+    selected_best_unit_cell: True
+
+    space_group: P 21
+
 data:
 
     datasets: "*.h5"
@@ -67,5 +73,6 @@ statistics:
 
     include_friedel: True
 
+    shelx_output_file: peak_list.hkl
 
     
