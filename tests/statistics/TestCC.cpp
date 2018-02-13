@@ -73,7 +73,7 @@ int main()
 
     cell->setSpaceGroup(group.symbol());
 
-    nsx::PeakPredictor pred(cell, nsx::ShapeLibrary(), 2.0, 5.0, 0);
+    nsx::PeakPredictor pred(cell, nsx::ShapeLibrary(), 2.5, 40.0, 0);
     auto peaks = pred.predict(dataf);  
 
     MergedData data0(group, true), data1(group, true);
@@ -118,7 +118,8 @@ int main()
     const double sigma_eps = sigma_delta / std::sqrt(redundancy * 0.5);
 
     // check that redundancy is approximately correct (depends on detector coverage)
-    NSX_CHECK_CLOSE(redundancy, n, 10.0);
+    NSX_CHECK_CLOSE(redundancy, n, 15.0);
+    std::cout << num_raw_peaks << "; " << N << "; " << n << std::endl;
 
     const double expected_cc_half = sigma_J*sigma_J / (sigma_J*sigma_J + sigma_eps*sigma_eps);
     const double expected_cc_true = sigma_J / std::sqrt(sigma_J*sigma_J + 0.5*sigma_eps*sigma_eps);

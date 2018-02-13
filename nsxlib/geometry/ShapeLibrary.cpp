@@ -1,4 +1,6 @@
 
+#include "Ellipsoid.h"
+#include "Peak3D.h"
 #include "ShapeLibrary.h"
 
 namespace nsx {
@@ -6,6 +8,7 @@ namespace nsx {
 ShapeLibrary::ShapeLibrary(): _shapes(), _defaultShape()
 {
     _defaultShape.setIdentity();
+    _defaultShape /= 100;
 }
 
 ShapeLibrary::~ShapeLibrary()
@@ -63,6 +66,45 @@ Eigen::Matrix3d ShapeLibrary::predict(const MillerIndex& hkl, int dhkl) const
         return _defaultShape;
     }
     return shape / num_neighbors;
+}
+
+bool ShapeLibrary::addPeak(sptrPeak3D peak)
+{
+    Ellipsoid q_shape;
+    auto uc = peak->activeUnitCell();
+    auto data = peak->data();
+
+    if (!uc || !data) {
+        return false;
+    }   
+
+    try {
+        q_shape = peak->qShape();        
+    } catch(...) {
+        return false;
+    }
+
+    MillerIndex hkl(peak->q(), *uc);
+    addShape(hkl, q_shape.inverseMetric());
+
+    return true;
+}
+
+Eigen::Matrix3d ShapeLibrary::meanShape() const
+{
+    Eigen::Matrix3d mean;
+    mean.setZero();
+    
+    for (const auto& entry: _shapes) {
+        Eigen::Matrix3d mean_hkl;
+        mean_hkl.setZero();
+
+        for (const auto& shape: entry.second) {
+            mean_hkl += shape;
+        }
+        mean += mean_hkl / entry.second.size();
+    }
+    return mean / _shapes.size();
 }
 
 } // end namespace nsx

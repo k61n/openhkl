@@ -80,6 +80,8 @@ void DialogRefineUnitCell::refineParameters()
             }
         }
 
+        nsx::info() << d_peaks.size() << " available for refinement.";
+
         nsx::Refiner r(_unitCell, d_peaks, nbatches(d_peaks));    
 
         if (ui->checkBoxRefineLattice->isChecked()) {

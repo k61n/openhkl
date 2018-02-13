@@ -103,7 +103,7 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     Eigen::Vector3d dx = _frameCenter - _peak->getShape().center();
 
     painter->setBrush(QBrush(QColor(127, 255, 127, 127)));
-    painter->drawEllipse(dx(0)-2, dx(1)-2, 4, 4);
+    //painter->drawEllipse(dx(0)-2, dx(1)-2, 4, 4);
 
     #if 0
     dx = _predictedCenter - _peak->getShape().center();

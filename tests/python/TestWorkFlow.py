@@ -67,21 +67,24 @@ class TestWorkFlow(unittest.TestCase):
 
         num_peaks = len(peaks)
 
-        predictor = nsx.PeakPredictor(data)
-        predictor._dmin = 2.1
-        predictor._dmax = 50.0
-        predictor._searchRadius = 200.0
-        predictor._frameRadius = 5.0
-        predictor._peakScale = 1.0
-        predictor._bkgScale = 3.0
-        predictor._minimumRadius = 5.0
-        predictor._minimumPeakDuration = 3.0
-        predictor._minimumNeighbors = 10
+        library = nsx.ShapeLibrary()
 
-        predictor._handler = nsx.ProgressHandler()
+        library_size = 0
 
-        predicted_peaks = predictor.predictPeaks(False, peaks)
-        self.assertTrue(len(predicted_peaks) > 1600)
+        for peak in peaks:
+            if not peak.isSelected():
+                continue
+            if library.addPeak(peak):
+                library_size +=1
+
+        print(library_size)
+
+        library.setDefaultShape(library.meanShape())
+        predictor = nsx.PeakPredictor(uc, library, 2.1, 50.0, 0)
+       
+        predicted_peaks = predictor.predict(data)
+        print(len(predicted_peaks))
+        #self.assertTrue(len(predicted_peaks) > 1600)
 
 
 if __name__ == '__main__':

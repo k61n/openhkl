@@ -156,6 +156,12 @@ void PeakIntegrator::end()
         }
     }
 
+    // peak too weak? use default value
+    // TODO: this should not be hard-coded
+    if (best_slice < _region.nslices()/2) {
+        best_slice = _region.nslices()/2;
+    }
+
     _region.setBestSlice(best_slice);
    
     #if 0

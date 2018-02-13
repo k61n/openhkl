@@ -324,13 +324,23 @@ void SessionModel::incorporateCalculatedPeaks()
 {
     nsx::debug() << "Incorporating missing peaks into current data set...";
 
-    DialogCalculatedPeaks dialog;
+    std::set<nsx::sptrUnitCell> cells;
+
+    nsx::DataList numors = getSelectedNumors();
+
+    for (auto numor: numors) {
+        auto sample = numor->diffractometer()->getSample();
+
+        for (auto uc: sample->unitCells()) {
+            cells.insert(uc);
+        }
+    }
+
+    DialogCalculatedPeaks dialog(cells);
 
     if (!dialog.exec()) {
         return;
     }
-
-    nsx::DataList numors = getSelectedNumors();
 
     nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
     ProgressView progressView(nullptr);
@@ -342,31 +352,47 @@ void SessionModel::incorporateCalculatedPeaks()
     nsx::ShapeLibrary library;
 
     // TODO: get the crystal from the dialog!!
+    auto cell = dialog.cell();
 
     for (auto numor: numors) {
         for (auto peak: peaks(numor.get())) {
-            if (!peak->isSelected()) {
+            if (!peak->isSelected() || peak->activeUnitCell() != cell) {
                 continue;
             }
-            nsx::MillerIndex hkl(peak->q(), *peak->activeUnitCell());
-            auto q_shape = peak->qShape();
-            library.addShape(hkl, q_shape.inverseMetric());
+            library.addPeak(peak);
         }
     }
+
+    library.setDefaultShape(library.meanShape());
+
+    int dhkl = std::lround(std::pow(dialog.minimumNeighbors()/8.0, 1.0/3.0));
+
+    nsx::info() << "setting dhkl = " << dhkl;
 
     for(auto numor: numors) {
         nsx::debug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
 
-        nsx::sptrUnitCell uc; // TODO: GET UNIT CELL FROM DIALOG
-        int dhkl = 4; // TODO: GET DHKL FROM DIALOG
+        nsx::PeakList old_peaks;
 
-        auto predictor = nsx::PeakPredictor(uc, library, dialog.dMin(), dialog.dMax(), dhkl);
+        for (auto peak: peaks(numor.get())) {
+            if (peak->activeUnitCell() == cell) {
+                old_peaks.push_back(peak);
+            }
+        }
+
+        auto predictor = nsx::PeakPredictor(cell, library, dialog.dMin(), dialog.dMax(), dhkl);
         auto predicted = predictor.predict(numor);
         // todo: bkg_begin and bkg_end
         nsx::info() << "Integrating predicted peaks...";
         numor->integratePeaks(predicted, dialog.peakScale(), dialog.bkgScale(), handler);
         observed_peaks += peaks(numor.get()).size();
 
+        nsx::info() << "Removing old peaks...";
+        for (auto peak: old_peaks) {
+            removePeak(peak);
+        }
+
+        nsx::info() << "Adding new peaks...";
         for (auto peak: predicted) {
             addPeak(peak);
         }

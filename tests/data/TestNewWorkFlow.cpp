@@ -127,9 +127,7 @@ int main()
     indexed_peaks = numIndexedPeaks();
     NSX_CHECK_ASSERT(indexed_peaks > 600);
 
-    Eigen::Matrix3d q_cov;
     int n_selected = 0;
-    q_cov.setZero();
 
     // get that DataSet::getEvents works properly
     for (auto peak: selected_peaks) {
@@ -169,15 +167,16 @@ int main()
         NSX_CHECK_CLOSE(q0(1), q1(1), 1.0);
         NSX_CHECK_CLOSE(q0(2), q1(2), 1.0);
 
-        auto q_shape = peak->qShape();
-        nsx::MillerIndex hkl(peak->q(), *cell);
-        library.addShape(hkl, q_shape.inverseMetric());
-        q_cov += q_shape.inverseMetric();
-        n_selected += 1;
+        if (library.addPeak(peak)) {
+            ++n_selected;
+        } else {
+            peak->setSelected(false);
+        }
     }
 
-    q_cov /= n_selected;
-    library.setDefaultShape(q_cov);
+    NSX_CHECK_ASSERT(n_selected > 620);
+
+    library.setDefaultShape(library.meanShape());
 
     nsx::PeakPredictor predictor(cell, library, 2.1, 50.0, 4);
     auto predicted_peaks = predictor.predict(dataf);

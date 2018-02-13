@@ -278,6 +278,10 @@ ReciprocalVector Peak3D::q() const
 //! This method can throw if there is no valid q-shape corresponding to the detector space shape.
 Ellipsoid Peak3D::qShape() const
 {
+    if (!_data) {
+        throw std::runtime_error("Attempted to compute q-shape of peak not attached to data");
+    }
+
     const Eigen::Vector3d p = _shape.center();
     const Eigen::Matrix3d A = _shape.metric();
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(A);
