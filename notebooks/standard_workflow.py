@@ -38,7 +38,6 @@ if __name__ == "__main__":
         selected_unit_cell_id = 0
     else:
         selected_unit_cell_id = int(input("Please enter selected unit cell id: "))
-        unit_cell = unit_cells[selected_unit_cell_id][0]
     print("Selected unit cell: {:d}".format(selected_unit_cell_id))
     unit_cell = unit_cells[selected_unit_cell_id][0]
     for peak in filtered_peaks:
@@ -62,9 +61,14 @@ if __name__ == "__main__":
     space_group_name = space_groups[selected_space_group_id][1]
     unit_cell.setSpaceGroup(space_group_name)
 
+    # Find space groups and set the selected one to the unit cell
+    space_groups = pynsx_workflow.find_space_group(filtered_peaks,unit_cell)
+    selected_space_group_id = int(input("Please enter selected space group id: "))
+    space_group_name = space_groups[0][1]
+    unit_cell.setSpaceGroup(space_group_name)
+
     # Refine offsets
     refinements = pynsx_workflow.refine_offsets(data,filtered_peaks,unit_cell,**parameters["offset_refiner"])
-
 
     # Predict peaks for the whole data
     predicted_peaks = []
