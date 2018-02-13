@@ -16,7 +16,6 @@ if __name__ == "__main__":
         
         parameters = yaml.load(fin)
 
-
     # Setup the experiment
     experiment = pynsx_workflow.setup_experiment(**parameters["experiment"])
 
@@ -34,19 +33,34 @@ if __name__ == "__main__":
 
 
     # Find unit cells and set the selected one to the peaks
-    unit_cells = pynsx_workflow.find_unit_cells(filtered_peaks)        
-    selected_unit_cell_id = int(input("Please enter selected unit cell id: "))
+    unit_cells = pynsx_workflow.find_unit_cells(filtered_peaks)
+    if parameters["crystal"]["selected_best_unit_cell"]:        
+        selected_unit_cell_id = 0
+    else:
+        selected_unit_cell_id = int(input("Please enter selected unit cell id: "))
+        unit_cell = unit_cells[selected_unit_cell_id][0]
+    print("Selected unit cell: {:d}".format(selected_unit_cell_id))
     unit_cell = unit_cells[selected_unit_cell_id][0]
     for peak in filtered_peaks:
         peak.addUnitCell(unit_cell, True)
 
-
     # Find space groups and set the selected one to the unit cell
     space_groups = pynsx_workflow.find_space_group(filtered_peaks,unit_cell)
-    selected_space_group_id = int(input("Please enter selected space group id: "))
-    space_group_name = space_groups[0][1]
-    unit_cell.setSpaceGroup(space_group_name)
+    if "space_group" in parameters["crystal"]:
+        selected_space_group_id = None
+        for idx,(_,sg,_) in enumerate(space_groups):
+             if sg==parameters["crystal"]["space_group"]:
+                 selected_space_group_id = idx
+                 break
+        if selected_space_group_id is None:
+            print("Invalid space group")
+        
+    else:                
+        selected_space_group_id = int(input("Please enter selected space group id: "))
 
+    print("Selected space group id: {:d}".format(selected_space_group_id))
+    space_group_name = space_groups[selected_space_group_id][1]
+    unit_cell.setSpaceGroup(space_group_name)
 
     # Refine offsets
     refinements = pynsx_workflow.refine_offsets(data,filtered_peaks,unit_cell,**parameters["offset_refiner"])
@@ -82,3 +96,4 @@ if __name__ == "__main__":
     print("Statistics per resolution shell:")
     stats = pynsx_workflow.compute_statistics(resolution_shells,space_group_name,**parameters["statistics"])
 
+    pynsx_workflow.write_shelx_file(parameters["statistics"].get("shelx_output_file","peak_list.hkl"), unit_cell, filtered_peaks)
