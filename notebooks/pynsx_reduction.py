@@ -61,12 +61,6 @@ if __name__ == "__main__":
     space_group_name = space_groups[selected_space_group_id][1]
     unit_cell.setSpaceGroup(space_group_name)
 
-    # Find space groups and set the selected one to the unit cell
-    space_groups = pynsx_workflow.find_space_group(filtered_peaks,unit_cell)
-    selected_space_group_id = int(input("Please enter selected space group id: "))
-    space_group_name = space_groups[0][1]
-    unit_cell.setSpaceGroup(space_group_name)
-
     # Refine offsets
     refinements = pynsx_workflow.refine_offsets(data,filtered_peaks,unit_cell,**parameters["offset_refiner"])
 
@@ -87,17 +81,12 @@ if __name__ == "__main__":
     predicted_peaks = pynsx_workflow.filter_peaks(predicted_peaks,**parameters["peak_filters"])
     print("Total number of filtered peaks: {:d}\n".format(len(predicted_peaks)))
 
-
     # Compute global statistics
-    resolution_shells = pynsx_workflow.set_resolution_shells(predicted_peaks,1)
-    print("Overall statistics:")
-    stats = pynsx_workflow.compute_statistics(resolution_shells,space_group_name,**parameters["statistics"])
-    print("\n")
-
+    resolution_shells = pynsx_workflow.set_resolution_shells(predicted_peaks, n_resolution_shells=1)
+    pynsx_workflow.write_statistics(experiment.getName()+"_overall_stat.txt",resolution_shells,space_group_name,**parameters["statistics"])
 
     # Compute the statistics per resolution shell
-    resolution_shells = pynsx_workflow.set_resolution_shells(predicted_peaks,**parameters["resolution_shells"])
-    print("Statistics per resolution shell:")
-    stats = pynsx_workflow.compute_statistics(resolution_shells,space_group_name,**parameters["statistics"])
+    resolution_shells = pynsx_workflow.set_resolution_shells(predicted_peaks,**parameters["statistics"])
+    pynsx_workflow.write_statistics(experiment.getName()+"_stat_per_shell.txt",resolution_shells,space_group_name,**parameters["statistics"])
 
-    pynsx_workflow.write_shelx_file(parameters["statistics"].get("shelx_output_file","peak_list.hkl"), unit_cell, filtered_peaks)
+    pynsx_workflow.write_shelx_file(experiment.getName()+"_peak_list.hkl", unit_cell, filtered_peaks)

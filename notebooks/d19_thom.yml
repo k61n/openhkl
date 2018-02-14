@@ -65,14 +65,10 @@ peak_integrator:
 
     background_max_radius: 10.0
 
-resolution_shells:
+statistics:
 
     n_resolution_shells: 10
 
-statistics:
-
     include_friedel: True
-
-    shelx_output_file: peak_list.hkl
 
     

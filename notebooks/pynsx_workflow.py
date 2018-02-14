@@ -12,12 +12,14 @@ def setup_experiment(name, instrument):
 
     return experiment
 
-def read_data(experiment, datasets, min_number_frames=1):
+def read_data(experiment, datasets, **kwargs):
 
     diff = experiment.getDiffractometer()
 
     data = []
 
+    min_number_frames = kwargs.get("min_number_frames",1)
+    
     files = glob.glob(datasets)
 
     for f in files:
@@ -41,12 +43,21 @@ def read_data(experiment, datasets, min_number_frames=1):
 
     return data
 
-def find_peaks(data, kernel="annular", kernel_parameters=None, blob_min_size=30, blob_max_size=10000, integration_confidence=0.98, search_confidence=0.67, absolute_threshold=True, threshold_value=0.4):
+def find_peaks(data, **kwargs):
+
+    kernel_name = kwargs.get("kernel_name","annular")
+    kernel_parameters = kwargs.get("kernel_parameters",None)
+    blob_min_size = kwargs.get("blob_min_size",30)
+    blob_max_size = kwargs.get("blob_max_size",10000)
+    integration_confidence = kwargs.get("integration_confidence",0.98)
+    search_confidence = kwargs.get("search_confidence",0.67)
+    absolute_threshold = kwargs.get("absolute_threshold",True)
+    threshold_value = kwargs.get("threshold_value",0.4)
 
     nrows = data[0].nRows()
     ncols = data[0].nCols()
 
-    kernel = nsx.KernelFactory().create(kernel,nrows,ncols)
+    kernel = nsx.KernelFactory().create(kernel_name,nrows,ncols)
 
     kernel_parameters = kernel.parameters()
     if kernel_parameters:
@@ -73,29 +84,29 @@ def find_peaks(data, kernel="annular", kernel_parameters=None, blob_min_size=30,
 
     return peaks
 
-def filter_peaks(peaks,**parameters):
+def filter_peaks(peaks,**kwargs):
 
     peak_filter = nsx.PeakFilter()
 
     filtered_peaks = peaks
 
-    if "selected" in parameters:
-        filtered_peaks = peak_filter.selected(filtered_peaks,parameters["selected"])
+    if "selected" in kwargs:
+        filtered_peaks = peak_filter.selected(filtered_peaks,kwargs["selected"])
 
-    if "min_sigma" in parameters:
-        filtered_peaks = peak_filter.minSigma(filtered_peaks,parameters["min_sigma"])
+    if "min_sigma" in kwargs:
+        filtered_peaks = peak_filter.minSigma(filtered_peaks,kwargs["min_sigma"])
 
-    if "signal_to_noise" in parameters:
-        filtered_peaks = peak_filter.signalToNoise(filtered_peaks,parameters["signal_to_noise"])
+    if "signal_to_noise" in kwargs:
+        filtered_peaks = peak_filter.signalToNoise(filtered_peaks,kwargs["signal_to_noise"])
 
-    if "d_min" in parameters:
-        filtered_peaks = peak_filter.dMin(filtered_peaks,parameters["d_min"])
+    if "d_min" in kwargs:
+        filtered_peaks = peak_filter.dMin(filtered_peaks,kwargs["d_min"])
 
-    if "d_max" in parameters:
-        filtered_peaks = peak_filter.dMax(filtered_peaks,parameters["d_max"])
+    if "d_max" in kwargs:
+        filtered_peaks = peak_filter.dMax(filtered_peaks,kwargs["d_max"])
 
-    if "significance" in parameters:
-        filtered_peaks = peak_filter.significance(filtered_peaks,parameters["significance"])
+    if "significance" in kwargs:
+        filtered_peaks = peak_filter.significance(filtered_peaks,kwargs["significance"])
 
     return filtered_peaks
 
@@ -149,7 +160,11 @@ def find_space_group(peaks, unit_cell):
 
     return space_groups   
 
-def refine_offsets(data, peaks, unit_cell, n_iterations=200, n_batches=20, min_peaks_per_dataset=20):
+def refine_offsets(data, peaks, unit_cell, **kwargs):
+
+    n_iterations = kwargs.get("n_iterations",200)
+    n_batches = kwargs.get("n_batches",20)
+    min_peaks_per_dataset = kwargs.get("min_peaks_per_dataset",20)
 
     refinements = []
 
@@ -222,49 +237,78 @@ def predict_peaks(peaks, dataset, unit_cell, batches):
     
     return predicted_peaks
 
-def integrate_peaks(data, peaks, peak_max_radius=5.5, background_max_radius=10.0):
+def integrate_peaks(data, peaks, **kwargs):
+
+    peak_max_radius = kwargs.get("peak_max_radius",5.5)
+    background_max_radius = kwargs.get("background_max_radius",10.0)
 
     for dataset in data:
         dataset.integratePeaks(peaks, peak_max_radius, background_max_radius, nsx.ProgressHandler())
 
-def compute_statistics(resolution_shells, space_group_name, include_friedel=True):
+def write_statistics(filename, resolution_shells, space_group_name, **kwargs):
+
+    include_friedel = kwargs.get("include_friedel",True)
 
     space_group = nsx.SpaceGroup(space_group_name)
 
-    stats = []
+    with open(filename,"w") as fout:
 
-    print("{:8s} {:8s} {:8s} {:8s} {:8s} {:8s} {:8s} {:8s}".format("dmin","dmax","n_peaks","Rmeas","Rmerge","Rpim","CChalf","CCtrue"))
-
-    for i in range(resolution_shells.nShells()):
+        stats = []
     
-        d_shell = resolution_shells.shell(i)
+        fout.write("{:8s} {:8s} {:8s} {:8s} {:8s} {:8s} {:8s} {:8s}\n".format("dmin","dmax","n_peaks","Rmeas","Rmerge","Rpim","CChalf","CCtrue"))
+        
+        for i in range(resolution_shells.nShells()):
+        
+            d_shell = resolution_shells.shell(i)
+    
+            merged = nsx.MergedData(space_group, include_friedel)
+    
+            for peak in d_shell.peaks:
+                merged.addPeak(peak)
+                
+            r = nsx.RFactor()
+            cc = nsx.CC()
+        
+            r.calculate(merged)
+            cc.calculate(merged)
+        
+            shell_stats = {}
+            shell_stats['CChalf'] = cc.CChalf()
+            shell_stats['CCtrue'] = cc.CCstar()
+            shell_stats['Rmeas'] = r.Rmeas()
+            shell_stats['Rmerge'] = r.Rmerge()
+            shell_stats['Rpim'] = r.Rpim()
+        
+            fmt = "{:<8.3f} {:<8.3f} {:<8d} {:<8.3f} {:<8.3f} {:<8.3f} {:<8.3f} {:<8.3f}\n"
+            fout.write(fmt.format(d_shell.dmin, d_shell.dmax, len(d_shell.peaks), shell_stats["Rmeas"], shell_stats["Rmerge"], shell_stats["Rpim"], shell_stats["CChalf"], shell_stats["CCtrue"]))
 
-        merged = nsx.MergedData(space_group, include_friedel)
-
-        for peak in d_shell.peaks:
-            merged.addPeak(peak)
+def write_shelx_file(filename, unit_cell, peaks):
+    
+    peak_filter = nsx.PeakFilter()
+    
+    filtered_peaks = peaks
+    
+    filtered_peaks = peak_filter.unitCell(filtered_peaks,unit_cell)
+    filtered_peaks = peak_filter.indexed(filtered_peaks,unit_cell,unit_cell.indexingTolerance())
+    
+    peak_fmt = "{:4d}{:4d}{:4d}{:8.2f}{:8.2f}\n"
+    
+    with open(filename,"w") as fout:
+    
+        for peak in filtered_peaks:
+                        
+            miller_index = nsx.MillerIndex(peak,unit_cell)
             
-        r = nsx.RFactor()
-        cc = nsx.CC()
+            hkl = miller_index.rowVector()
+            
+            intensity = peak.correctedIntensity()
+            
+            fout.write(peak_fmt.format(hkl[0][0],hkl[0][1],hkl[0][2],intensity.value(),intensity.sigma()))
     
-        r.calculate(merged)
-        cc.calculate(merged)
-    
-        shell_stats = {}
-        shell_stats['CChalf'] = cc.CChalf()
-        shell_stats['CCtrue'] = cc.CCstar()
-        shell_stats['Rmeas'] = r.Rmeas()
-        shell_stats['Rmerge'] = r.Rmerge()
-        shell_stats['Rpim'] = r.Rpim()
-    
-        fmt = "{:<8.3f} {:<8.3f} {:<8d} {:<8.3f} {:<8.3f} {:<8.3f} {:<8.3f} {:<8.3f}"
-        print(fmt.format(d_shell.dmin, d_shell.dmax, len(d_shell.peaks), shell_stats["Rmeas"], shell_stats["Rmerge"], shell_stats["Rpim"], shell_stats["CChalf"], shell_stats["CCtrue"]))
+                        
+def set_resolution_shells(peaks, **kwargs):
 
-        stats.append((d_shell.dmin,d_shell.dmax,shell_stats))
-
-    return stats
-
-def set_resolution_shells(peaks, n_resolution_shells=10):
+    n_resolution_shells = kwargs.get("n_resolution_shells",10)
 
     d_values = [1/np.linalg.norm(p.getQ().rowVector()) for p in peaks]
 
