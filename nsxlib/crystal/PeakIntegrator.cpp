@@ -125,7 +125,7 @@ void PeakIntegrator::step(const Eigen::MatrixXi& frame, size_t idx, const Eigen:
 void PeakIntegrator::end()
 {
     // get average background
-    auto background = getMeanBackground();
+    auto background = meanBackground();
     const double avgBkg = background.value();
     const double stdBkg = background.sigma();
     const double scale = stdBkg*stdBkg / avgBkg;
@@ -212,7 +212,7 @@ const Eigen::ArrayXd& PeakIntegrator::getProjection() const
 
 const Eigen::ArrayXd PeakIntegrator::getPeakError() const
 {
-    auto background = getMeanBackground();
+    auto background = meanBackground();
 
     const double mean_bkg = background.value();
     const double std_bkg = background.sigma();
@@ -224,7 +224,7 @@ const Eigen::ArrayXd PeakIntegrator::getPeakError() const
     return error2.sqrt();
 }
 
-Intensity PeakIntegrator::getMeanBackground() const
+Intensity PeakIntegrator::meanBackground() const
 {   
     double intensity = 0.0;
     double squaredIntensity = 0.0;
@@ -249,7 +249,7 @@ const IntegrationRegion& PeakIntegrator::getRegion() const
 
 Intensity PeakIntegrator::getPeakIntensity() const
 {
-    auto background = getMeanBackground();
+    auto background = meanBackground();
 
     const double mean_bkg = background.value();
     const double std_bkg = background.sigma();
@@ -362,6 +362,24 @@ Eigen::ArrayXd PeakIntegrator::shellIntensity() const
 Eigen::ArrayXd PeakIntegrator::shellPoints() const
 {
     return _shellPoints;
+}
+
+double PeakIntegrator::medianBackground() const
+{
+    std::vector<double> bkg_sample;
+    
+    for (size_t idx = _data_start; idx <= _data_end; ++idx) {
+        bkg_sample.push_back(_shellIntensity(idx-_data_start, 0));
+    }    
+    std::sort(bkg_sample.begin(), bkg_sample.end());
+    size_t n = bkg_sample.size()/2;
+
+    // even size
+    if (2*n == bkg_sample.size()) {
+        return 0.5 * (bkg_sample[n-1]+bkg_sample[n]);
+    }
+    // odd size
+    return bkg_sample[n];
 }
 
 } // end namespace nsx

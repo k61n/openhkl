@@ -61,7 +61,8 @@ public:
     const Eigen::ArrayXd& getProjection() const;
     const Eigen::ArrayXd getPeakError() const;
 
-    Intensity getMeanBackground() const;
+    Intensity meanBackground() const;
+    double medianBackground() const;
 
     const IntegrationRegion& getRegion() const;
 
