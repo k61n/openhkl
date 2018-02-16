@@ -591,7 +591,10 @@ void MainWindow::on_actionAuto_assign_unit_cell_triggered()
 
 void MainWindow::on_actionFit_profiles_triggered()
 {
+    nsx::info() << "This functionality is currently disabled in the GUI!";
+    #if 0
     nsx::info() << "fit profiles triggered";
+
 
     auto numors = _session->getSelectedNumors();
 
@@ -624,8 +627,7 @@ void MainWindow::on_actionFit_profiles_triggered()
                 QApplication::processEvents();
             }
 
-            auto&& region = peak->getIntegrationRegion();
-            auto bb = region.aabb();
+            auto bb = peak->getShape().aabb();
             auto lower = bb.lower();
             auto upper = bb.upper();
 
@@ -702,4 +704,5 @@ void MainWindow::on_actionFit_profiles_triggered()
     }
 
     _session->updatePeaks();
+    #endif 
 }

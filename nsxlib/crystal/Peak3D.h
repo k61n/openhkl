@@ -65,15 +65,13 @@ public:
     void setShape(const Ellipsoid& peak);
 
     //! Get the projection of total data in the bounding box.
-    Eigen::VectorXd getProjection() const;
-    Eigen::VectorXd getPeakProjection() const;
-    Eigen::VectorXd getBkgProjection() const;
+    const std::vector<Intensity>& rockingCurve() const;
 
     //! Compute the shape in q-space. May throw if there is no valid q-space ellipsoid.
     Ellipsoid qShape() const;
 
     const Ellipsoid& getShape() const { return _shape; }
-    const IntegrationRegion& getIntegrationRegion() const { return _integrationRegion; }
+    //const IntegrationRegion& getIntegrationRegion() const { return _integrationRegion; }
 
     //! Return the scaled intensity of the peak.
     Intensity getScaledIntensity() const;
@@ -122,7 +120,7 @@ public:
     //! Return fitted peak profile
     const Profile& getProfile() const;
 
-    const PeakIntegrator& getIntegration() const;
+    //const PeakIntegrator& getIntegration() const;
 
     //! Return the q vector of the peak, transformed into sample coordinates.
     ReciprocalVector q() const;
@@ -141,29 +139,20 @@ public:
     #endif
 
 private:
-
     //! Shape describing the Peak zone
     Ellipsoid _shape;
-    //! Region used to integrate the peak
-    IntegrationRegion _integrationRegion;
 
-    PeakIntegrator _integration;
+    //! Peak profile along frame (rotation) axis
+    std::vector<Intensity> _rockingCurve;
 
+    //! Raw intensity (count), background corrected
+    Intensity _rawIntensity;
 
-    Eigen::VectorXd _projection;
-    Eigen::VectorXd _projectionPeak;
-    Eigen::VectorXd _projectionBkg;
+    //! Mean background estimate
+    Intensity _meanBackground;
 
-    Eigen::VectorXd _pointsPeak;
-    Eigen::VectorXd _pointsBkg;
-    Eigen::VectorXd _countsPeak;
-    Eigen::VectorXd _countsBkg;
-
-    //!
     UnitCellList _unitCells;
    
-
-    double _counts;
     double _scale;
     bool _selected;
     bool _masked;
@@ -172,9 +161,10 @@ private:
     int _activeUnitCellIndex;
 
     Profile _profile;
+
+    //! Raw p value
     double _pValue;
 
-    Intensity _intensity;
     sptrDataSet _data;
 };
 

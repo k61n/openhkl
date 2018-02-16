@@ -31,7 +31,7 @@ PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D p):
     _predictedCenter(0.0, 0.0, -1.0, -1.0)
 { 
     if (_peak) {
-        Eigen::Vector3d c=_peak->getIntegrationRegion().aabb().center();
+        Eigen::Vector3d c=_peak->getShape().center();
         setPos(c[0], c[1]);
     }
     _pen.setWidth(2);
@@ -52,7 +52,7 @@ PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D p):
 
 QRectF PeakGraphicsItem::boundingRect() const
 {
-    auto aabb = _peak->getIntegrationRegion().aabb();
+    auto aabb = _peak->getShape().aabb();
     const Eigen::Vector3d& l = aabb.lower();
     const Eigen::Vector3d& u = aabb.upper();
     qreal w=u[0]-l[0];
@@ -92,7 +92,7 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     }
     _label->setVisible(_hovered || _labelVisible);
 
-    const auto aabb = _peak->getIntegrationRegion().aabb();
+    const auto aabb = _peak->getShape().aabb();
     const Eigen::Vector3d& peak_l = aabb.lower();
     const Eigen::Vector3d& peak_u = aabb.upper();
     qreal peak_w = peak_u[0]-peak_l[0];
@@ -114,7 +114,7 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
 void PeakGraphicsItem::setFrame(unsigned long frame)
 {
-    const auto aabb = _peak->getIntegrationRegion().aabb();
+    const auto aabb = _peak->getShape().aabb();
     const Eigen::Vector3d& l = aabb.lower();
     const Eigen::Vector3d& u = aabb.upper();
 
@@ -172,43 +172,23 @@ void PeakGraphicsItem::plot(SXPlot* plot)
         return;
     }
 
-    const Eigen::VectorXd& total=_peak->getProjection();
-    const Eigen::VectorXd& signal=_peak->getPeakProjection();
-    const Eigen::VectorXd& bkg=_peak->getBkgProjection();
+    const auto& rockingCurve =_peak->rockingCurve();
+    const int N = int(rockingCurve.size());
 
     // Transform to QDouble
-    QVector<double> qx(int(total.size()));
-    QVector<double> qtotal(int(total.size()));
-    QVector<double> qtotalE(int(total.size()));
-    QVector<double> qpeak(int(total.size()));
-    QVector<double> qbkg(int(total.size()));
+    QVector<double> q_frames(N);
+    QVector<double> q_intensity(N);
+    QVector<double> q_error(N);
 
     //Copy the data
-    nsx::Ellipsoid background = _peak->getShape();
-    const auto aabb = background.aabb();
-    background.scale(3.0);
-    double min=std::floor(aabb.lower()[2]);
-    double max=std::ceil(aabb.upper()[2]);
-
-    if (min<0) {
-        min=0;
+    double center = std::round(_peak->getShape().center()(2));
+    
+    for (int i = 0; i < N; ++i) {
+        q_frames[i]= center - i/2.0;
+        q_intensity[i] = rockingCurve[i].value();
+        q_error[i] = rockingCurve[i].sigma();
     }
-    if (max>_peak->data()->nFrames()-1) {
-        max=_peak->data()->nFrames()-1;
-    }
-
-    Eigen::VectorXd error = _peak->getIntegration().getPeakError();
-
-    for (int i = 0; i < total.size(); ++i) {
-        qx[i]= min + static_cast<double>(i)*(max-min)/(total.size()-1);
-        qtotal[i]=total[i];
-        qtotalE[i]=error[i];
-        qpeak[i]=signal[i];
-        qbkg[i]=bkg[i];
-    }
-    p->graph(0)->setDataValueError(qx, qtotal, qtotalE);
-    p->graph(1)->setData(qx,qpeak);
-    p->graph(2)->setData(qx,qbkg);
+    p->graph(0)->setDataValueError(q_frames, q_intensity, q_error);
 
     // Now update text info:
     Eigen::RowVector3d hkl;

@@ -30,30 +30,38 @@
 
 #include "Ellipsoid.h"
 #include "IntegrationRegion.h"
+#include "Peak3D.h"
 
 namespace nsx {
 
-IntegrationRegion::IntegrationRegion(Ellipsoid shape, double bkg_begin, double bkg_end, int nslices):
-    _shape(shape),
-    _bkgBegin(bkg_begin),
-    _bkgEnd(bkg_end),
-    _nslices(nslices),
-    _bestSlice(0)
+IntegrationRegion::IntegrationRegion()
 {
+    throw std::runtime_error("The default constructor of IntegrationRegion should no be called.");
 }
 
-AABB IntegrationRegion::aabb() const
+IntegrationRegion::IntegrationRegion(sptrPeak3D peak, double peak_end, double bkg_begin, double bkg_end):
+    _shape(peak->getShape()),
+    _peakEnd(peak_end),
+    _bkgBegin(bkg_begin),
+    _bkgEnd(bkg_end),
+    _peakData(peak),
+    _bkgData(peak),
+    _aabb()
 {
     Ellipsoid bkg(_shape);
     bkg.scale(_bkgEnd);
-    return bkg.aabb();
+    _aabb = bkg.aabb(); 
+}
+
+const AABB& IntegrationRegion::aabb() const
+{
+    return _aabb;
 }
 
 void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
 {
-    const auto& bounding_box = aabb();
-    auto lower = bounding_box.lower();
-    auto upper = bounding_box.upper();
+    auto lower = _aabb.lower();
+    auto upper = _aabb.upper();
 
     if (z < lower[2] || z > upper[2]) {
         return;
@@ -71,57 +79,110 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
     ymax = std::min(ymax, long(mask.rows()));
 
     for (auto x = xmin; x < xmax; ++x) {
-        for (auto y = ymin; y < ymax; ++y) {
-            Eigen::Vector3d p(x, y, z);
-            auto s = classifySlice(p);
-            if (s >= 0) {
-                // region was previously excluded:
-                if (mask(y,x) < 0) {
-                    mask(y,x) = 0;
-                }
-                // update the mask
-                mask(y,x) += s;
+        for (auto y = ymin; y < ymax; ++y) {    
+            // once forbidden, always forbidden...
+            if (mask(y,x) == int(EventType::FORBIDDEN)) {
+                continue;
+            }
+
+            DetectorEvent ev(x, y, z);
+            auto s = classify(ev);
+            
+            if (s == EventType::FORBIDDEN) {
+                mask(y, x) = int(s);
+                continue;
+            }
+
+            if (s == EventType::PEAK) {
+                mask(y, x) = int(s);
+                continue;
+            }
+
+            if (s == EventType::BACKGROUND && mask(y,x) == int(EventType::EXCLUDED)) {
+                mask(y, x) = int(s);
+                continue;
             }
         }
     }
 }
 
-int IntegrationRegion::classifySlice(const Eigen::Vector3d& p) const
+IntegrationRegion::EventType IntegrationRegion::classify(const DetectorEvent& ev) const
 {
-    const auto& x = p-_shape.center();
-    const double r2 = x.transpose()*_shape.metric()*x;
+    Eigen::Vector3d p(ev._px, ev._py, ev._frame);
+    p -= _shape.center();
+    const double rr = p.dot(_shape.metric()*p);
 
-    // point falls outside of background region
-    if (r2 > _bkgEnd*_bkgEnd) {
-        return -1;
+    if (rr < _peakEnd*_peakEnd) {
+        return EventType::PEAK;
     }
-    // point is outside the integration shell
-    if (r2 > _bkgBegin*_bkgBegin) {
-        return 0;
+    if (rr > _bkgEnd*_bkgEnd) {
+        return EventType::EXCLUDED;
+    }
+    if (rr > _bkgBegin*_bkgBegin) {
+        return EventType::BACKGROUND;
+    }
+    return EventType::FORBIDDEN;
+}
+
+bool IntegrationRegion::advanceFrame(const Eigen::MatrixXi& image, const Eigen::MatrixXi& mask, double frame)
+{
+    auto lower = _aabb.lower();
+    auto upper = _aabb.upper();
+
+    if (frame < lower[2]) {
+        return false;
     }
 
-    // determine which integration shell it lies in
-    const int selected_slice  = 1 + static_cast<int>(std::sqrt(r2)*_nslices/_bkgBegin);
+    if (frame > upper[2]) {
+        return true;
+    }
 
-    return selected_slice;
+    long xmin = std::lround(std::floor(lower[0]));
+    long ymin = std::lround(std::floor(lower[1]));
+    long xmax = std::lround(std::ceil(upper[0])+1);
+    long ymax = std::lround(std::ceil(upper[1])+1);
+
+    xmin = std::max(0l, xmin);
+    ymin = std::max(0l, ymin);
+
+    xmax = std::min(xmax, long(image.cols()));
+    ymax = std::min(ymax, long(image.rows()));
+
+    for (auto x = xmin; x < xmax; ++x) {
+        for (auto y = ymin; y < ymax; ++y) {
+
+            if (mask(y, x) == int(EventType::FORBIDDEN)) {
+                continue;
+            }
+
+            DetectorEvent ev(x, y, frame);
+            auto s = classify(ev);
+
+            if (s == EventType::PEAK) {
+                _peakData.addEvent(ev, image(y,x));
+            }
+
+            if (s == EventType::BACKGROUND) {
+                _bkgData.addEvent(ev, image(y,x));
+            }
+        }
+    }
+    return false;
 }
 
-size_t IntegrationRegion::nslices() const
+void IntegrationRegion::reset()
 {
-    // note: we add one here to include the background case
-    return _nslices+1;
+    _peakData.reset();
+    _bkgData.reset();
 }
 
-//! Best integration slice
-int IntegrationRegion::bestSlice() const
+const PeakData& IntegrationRegion::peakData() const
 {
-    return _bestSlice;
+    return _peakData;
 }
-//! Set the best integration slice.
-void IntegrationRegion::setBestSlice(int n)
+const PeakData& IntegrationRegion::bkgData() const
 {
-    assert(n > 0 && n <= _nslices);
-    _bestSlice = n;
+    return _bkgData;
 }
 
 } // end namespace nsx

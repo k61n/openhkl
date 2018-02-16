@@ -516,6 +516,7 @@ void DetectorScene::changeInteractionMode(int mode)
     _mode = static_cast<MODE>(mode);
 }
 
+// TODO: fix this whole method, it should be using IntegrationRegion::updateMask()
 void DetectorScene::loadCurrentImage(bool newimage)
 {
     const unsigned int red =     (128u << 24) | (255u << 16);
@@ -561,7 +562,8 @@ void DetectorScene::loadCurrentImage(bool newimage)
         }
 
         for (auto&& peak: _session->peaks(_currentData.get())) {
-            auto&& region = peak->getIntegrationRegion();
+            // TODO: fix this
+            auto&& region = nsx::IntegrationRegion(peak, 3.0, 4.0, 5.0);
             auto aabb = region.aabb();
             auto&& lower = aabb.lower();
             auto&& upper = aabb.upper();
@@ -582,15 +584,16 @@ void DetectorScene::loadCurrentImage(bool newimage)
 
             for (auto c = cmin; c < cmax; ++c) {
                 for (auto r = rmin; r < rmax; ++r) {
-                    int s = region.classifySlice({double(c), double(r), double(_currentFrameIndex)});
+                    using EventType = nsx::IntegrationRegion::EventType;
+                    auto s = region.classify({double(c), double(r), double(_currentFrameIndex)});
                     // The pixel is in one of the integration shell
-                    if (s > 0 && s <= region.bestSlice()) {
-                        region_img.setPixel(c, r, peak->isSelected() ? (peak->isPredicted() ? purple : green) : red);
+                    if (s == EventType::PEAK) {
+                        region_img.setPixel(c, r, peak->isSelected() ? green : red);
                     }
 
                     // The pixel is in the background region
-                    if (s == 0) {
-                        region_img.setPixel(c, r, peak->isSelected() ? (peak->isPredicted() ? pink : yellow) : red);
+                    if (s == EventType::BACKGROUND) {
+                        region_img.setPixel(c, r, peak->isSelected() ? yellow : red);
                     }
                 }
             }
@@ -646,7 +649,7 @@ void DetectorScene::updatePeaks()
     auto peaks = _session->peaks(_currentData.get());
 
     for (auto&& peak : peaks) {
-        auto aabb = peak->getIntegrationRegion().aabb();
+        auto aabb = peak->getShape().aabb();
         const Eigen::Vector3d& l = aabb.lower();
         const Eigen::Vector3d& u = aabb.upper();
 

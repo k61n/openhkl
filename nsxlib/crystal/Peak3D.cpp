@@ -60,14 +60,14 @@ namespace nsx {
 Peak3D::Peak3D(sptrDataSet data):
     _shape(),
     _unitCells(),
-    _counts(0.0),
     _scale(1.0),
     _selected(true),
     _masked(false),
     _predicted(true),
     _transmission(1.0),
     _activeUnitCellIndex(0),
-    _data(data)
+    _data(data),
+    _rockingCurve()
 {
   
 }
@@ -83,22 +83,10 @@ void Peak3D::setShape(const Ellipsoid& peak)
     _shape = peak;
 }
 
-
-Eigen::VectorXd Peak3D::getProjection() const
+const std::vector<Intensity>& Peak3D::rockingCurve() const
 {
-    return _scale*_projection;
+    return _rockingCurve;
 }
-
-Eigen::VectorXd Peak3D::getPeakProjection() const
-{
-    return _scale*_projectionPeak;
-}
-
-Eigen::VectorXd Peak3D::getBkgProjection() const
-{
-    return _scale*_projectionBkg;
-}
-
 
 void Peak3D::addUnitCell(sptrUnitCell uc, bool activate)
 {
@@ -133,7 +121,7 @@ sptrUnitCell Peak3D::unitCell(int index) const
 Intensity Peak3D::getRawIntensity() const
 {
     // todo: investigate whether we should scale? Probably not necessary if we use Jacobian instead of Lorentz factor
-    return _intensity;// * _data->getSampleStepSize();
+    return _rawIntensity;// * _data->getSampleStepSize();
 }
 
 Intensity Peak3D::getScaledIntensity() const
@@ -214,20 +202,11 @@ bool Peak3D::isPredicted() const
 
 void Peak3D::updateIntegration(const PeakIntegrator& integrator)
 {
-    _integrationRegion = integrator.getRegion();
-    _projectionPeak = integrator.getProjectionPeak();
-    _projectionBkg = integrator.getProjectionBackground();
-    _projection = integrator.getProjection();
-    _counts = _projectionPeak.sum();
-    //_countsSigma = std::sqrt(std::abs(_counts));
-    _pValue = integrator.pValue();
-    _intensity = integrator.getPeakIntensity();
-
-    // fit peak profile
-    //_profile.fit(_projectionPeak, 100);
-
-    _integration = integrator;
+    _rockingCurve = integrator.rockingCurve();
+    _meanBackground = integrator.meanBackground();
+    _rawIntensity = integrator.peakIntensity();
 }
+
 
 double Peak3D::pValue() const
 {
@@ -239,10 +218,12 @@ const Profile& Peak3D::getProfile() const
     return _profile;
 }
 
+#if 0
 const PeakIntegrator &Peak3D::getIntegration() const
 {
     return _integration;
 }
+#endif
 
 bool Peak3D::hasUnitCells() const
 {
@@ -257,7 +238,7 @@ int Peak3D::activeUnitCellIndex() const
 void Peak3D::setRawIntensity(const Intensity& i)
 {  
     // note: the scaling factor is taken to be consistent with Peak3D::getRawIntensity()
-    _intensity = i; // / data()->getSampleStepSize();
+    _rawIntensity = i; // / data()->getSampleStepSize();
 }
 
 ReciprocalVector Peak3D::q() const

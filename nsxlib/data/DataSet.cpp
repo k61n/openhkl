@@ -115,11 +115,8 @@ Eigen::MatrixXi DataSet::frame(std::size_t idx)
 Eigen::MatrixXi DataSet::convolvedFrame(std::size_t idx, sptrConvolutionKernel kernel)
 {
     Eigen::MatrixXi autoscaled_data;
-
     Eigen::MatrixXi frame_data = _reader->getData(idx);
-
-    int nrows = int(frame_data.rows());
-    int ncols = int(frame_data.cols());
+   
 
     int maxData = frame_data.maxCoeff();
 
@@ -467,11 +464,10 @@ double DataSet::backgroundLevel(const sptrProgressHandler& progress)
 
 void DataSet::integratePeaks(const PeakList& peaks, double bkg_begin, double bkg_end, const sptrProgressHandler& handler)
 {
-    using IntegrationRegion = IntegrationRegion;
-    using PeakIntegrator = PeakIntegrator;
-    using integrated_peak = std::pair<sptrPeak3D, PeakIntegrator>;
+    // TODO: make this an argument!
+    double peak_end = bkg_begin;
 
-    std::vector<integrated_peak> peak_list;
+    std::vector<sptrPeak3D> peak_list;
     const size_t num_peaks = peaks.size();
     peak_list.reserve(num_peaks);
 
@@ -480,10 +476,7 @@ void DataSet::integratePeaks(const PeakList& peaks, double bkg_begin, double bkg
         if (peak->data().get() != this) {
             continue;
         }
-        // todo: n slices probably should not be hard-coded
-        IntegrationRegion region(peak->getShape(), bkg_begin, bkg_end, int(bkg_begin*5));
-        PeakIntegrator integrator(region, *this);
-        peak_list.emplace_back(peak, integrator);
+        peak_list.emplace_back(peak);
     }
 
     if (handler) {
@@ -494,38 +487,49 @@ void DataSet::integratePeaks(const PeakList& peaks, double bkg_begin, double bkg
     size_t idx = 0;
     int num_frames_done = 0;
 
-    #pragma omp parallel for
-    for ( idx = 0; idx < nFrames(); ++idx ) {
+    std::map<sptrPeak3D, IntegrationRegion> regions;
+
+    for (auto peak: peak_list) {
+        regions.emplace(std::make_pair(peak, IntegrationRegion(peak, peak_end, bkg_begin, bkg_end)));
+    }
+
+    for (idx = 0; idx < nFrames(); ++idx ) {
         Eigen::MatrixXi current_frame, mask;
-        #pragma omp critical
         current_frame = frame(idx);
 
-        mask.resize(nRows(),nCols());
-        mask.setConstant(-1);
+        mask.resize(nRows(), nCols());
+        mask.setConstant(int(IntegrationRegion::EventType::EXCLUDED));
 
-        for (auto& tup: peak_list ) {
-            auto&& integrator = tup.second;
-            integrator.getRegion().updateMask(mask, idx);
+        for (auto peak: peak_list) {
+            regions[peak].updateMask(mask, idx);
         }
 
-        for (auto& tup: peak_list ) {
-            auto&& integrator = tup.second;
-            integrator.step(current_frame, idx, mask);
+        for (auto& peak: peak_list) {
+            bool result = regions[peak].advanceFrame(current_frame, mask, idx);
+
+            // not done reading peak data
+            if (!result) {
+                continue;
+            }
+
+            // done reading data, so compute and update
+            PeakIntegrator integrator;
+            try {
+                integrator.compute(regions[peak]);
+                peak->updateIntegration(integrator);
+            } catch(...) {
+                // integration failed...
+                peak->setSelected(false);
+            }
+            // free memory (important!!)
+            regions[peak].reset();
         }
 
         if (handler) {
-            #pragma omp atomic
             ++num_frames_done;
             double progress = num_frames_done * 100.0 / nFrames();
             handler->setProgress(progress);
         }
-    }
-
-    for (auto&& tup: peak_list) {
-        auto&& peak = tup.first;
-        auto&& integrator = tup.second;
-        integrator.end();
-        peak->updateIntegration(integrator);      
     }
 }
 

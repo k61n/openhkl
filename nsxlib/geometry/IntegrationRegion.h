@@ -34,44 +34,38 @@
 
 #include "Ellipsoid.h"
 #include "GeometryTypes.h"
+#include "PeakData.h"
 
 namespace nsx {
 
 class IntegrationRegion {
 public:
-    IntegrationRegion(Ellipsoid shape = {}, double bkg_begin = 1.0, double bkg_end = 3.0, int nslices = 10);
+    enum class EventType: int {BACKGROUND = 1, PEAK = 2, FORBIDDEN = 0, EXCLUDED = -1};
 
-    // needed for swig??
-    IntegrationRegion(const IntegrationRegion& other) = default;
+    IntegrationRegion();
 
-    void updateMask(Eigen::MatrixXi& mask, double z) const;
+    IntegrationRegion(sptrPeak3D peak, double peak_end, double bkg_begin, double bkg_end);
 
-    AABB aabb() const;
+    void updateMask(Eigen::MatrixXi& mask, double frame) const;
 
-    //! Classify the given point. Positive indicates it is in one of the integration shells,
-    //! zero indicates it is in background, and negative indicates it is neither integration nor background.
-    int classifySlice(const Eigen::Vector3d& p) const;
+    const AABB& aabb() const;
 
-    //! Number of slices used in integration
-    size_t nslices() const;
+    EventType classify(const DetectorEvent& ev) const;
 
-    //! Best integration slice
-    int bestSlice() const;
+    bool advanceFrame(const Eigen::MatrixXi& image, const Eigen::MatrixXi& mask, double frame);
 
-    //! Set the best integration slice.
-    void setBestSlice(int n);
+    void reset();
 
+    const PeakData& peakData() const;
+    const PeakData& bkgData() const;
 private:
-
     Ellipsoid _shape;
-
+    double _peakEnd;
     double _bkgBegin;
-
     double _bkgEnd;
-
-    int _nslices;
-
-    int _bestSlice;
+    PeakData _peakData;
+    PeakData _bkgData;
+    AABB _aabb;
 };
 
 } // end namespace nsx

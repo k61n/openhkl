@@ -28,36 +28,10 @@
  *
  */
 
-#pragma once
-
-#include <Eigen/Dense>
-
-#include "Blob3D.h"
-#include "GeometryTypes.h"
-#include "IntegrationRegion.h"
-#include "Intensity.h"
-#include "Maybe.h"
+#include "IntegrationStrategy.h"
 
 namespace nsx {
 
-class DataSet;
-
-//! \class PeakIntegrator
-//! \breif This is a helper class to handle per-frame integration of a peak.
-class PeakIntegrator {
-public:
-    void compute(const IntegrationRegion& region);
-
-    Intensity meanBackground() const;
-    Intensity peakIntensity() const;
-
-    const std::vector<Intensity>& rockingCurve() const;
-
-private:
-    Intensity _peakIntensity;
-    Intensity _meanBackground;
-    std::vector<Intensity> _rockingCurve;
-    std::vector<double> _frames;
-};
+    
 
 } // end namespace nsx
