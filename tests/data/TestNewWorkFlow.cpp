@@ -120,9 +120,7 @@ int main()
     dataf->diffractometer()->getSample()->addUnitCell(cell);
 
     // reintegrate peaks
-    const double scale = nsx::getScale(0.997);
-    // todo: bkg_begin and bkg_end
-    dataf->integratePeaks(found_peaks, scale, 2.0*scale);
+    dataf->integratePeaks(found_peaks, 3.0, 4.0, 5.0);
 
     indexed_peaks = numIndexedPeaks();
     NSX_CHECK_ASSERT(indexed_peaks > 600);

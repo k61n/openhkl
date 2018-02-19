@@ -131,7 +131,7 @@ void DialogRefineUnitCell::refineParameters()
             }
 
             // todo: fix bkg_begin and bkg_end
-            d->integratePeaks(peak_list, 3.0, 6.0, nullptr);
+            d->integratePeaks(peak_list, 3.0, 4.0, 6.0, nullptr);
         }
     }
 }

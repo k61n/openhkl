@@ -11,6 +11,7 @@
 #include "Experiment.h"
 #include "GeometryTypes.h"
 #include "IFrameIterator.h"
+#include "Logger.h"
 #include "MathematicsTypes.h"
 #include "Peak3D.h"
 #include "PeakFinder.h"
@@ -142,16 +143,19 @@ PeakList PeakFinder::find(DataList numors)
             auto shape = Ellipsoid(center, eigenvalues, eigenvectors);
 
             auto p = sptrPeak3D(new Peak3D(numor, shape));
+            p->setSelected(true);
             const auto extents = p->getShape().aabb().extents();
 
             // peak too small or too large
             if (extents.maxCoeff() > 1e5 || extents.minCoeff() < 1e-5) {
                 p->setSelected(false);
+                nsx::info() << "Peak too small or large";
             }
 
             // peak's bounding box not completely contained in detector image
             if (!dAABB.contains(p->getShape().aabb())) {
                 p->setSelected(false);
+                nsx::info() << "Peak not contained in detector region";
             }
 
             numor_peaks.push_back(p);
@@ -172,8 +176,8 @@ PeakList PeakFinder::find(DataList numors)
         }
 
         // todo: user input bkg_begin and bkg_end directly
-        const double bkg_begin = getScale(_integrationConfidence)+3;
-        numor->integratePeaks(numor_peaks, bkg_begin, bkg_begin+3, _handler);
+        const double peak_end = getScale(_integrationConfidence)+3;
+        numor->integratePeaks(numor_peaks, peak_end, peak_end+1, peak_end+2, _handler);
         numor->close();
         //_ui->progressBar->setValue(++comp);
         std::cout << "Found " << numor_peaks.size() << " peaks." << std::endl;

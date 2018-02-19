@@ -112,13 +112,13 @@ IntegrationRegion::EventType IntegrationRegion::classify(const DetectorEvent& ev
     p -= _shape.center();
     const double rr = p.dot(_shape.metric()*p);
 
-    if (rr < _peakEnd*_peakEnd) {
+    if (rr <= _peakEnd*_peakEnd) {
         return EventType::PEAK;
     }
     if (rr > _bkgEnd*_bkgEnd) {
         return EventType::EXCLUDED;
     }
-    if (rr > _bkgBegin*_bkgBegin) {
+    if (rr >= _bkgBegin*_bkgBegin) {
         return EventType::BACKGROUND;
     }
     return EventType::FORBIDDEN;
@@ -151,9 +151,11 @@ bool IntegrationRegion::advanceFrame(const Eigen::MatrixXi& image, const Eigen::
     for (auto x = xmin; x < xmax; ++x) {
         for (auto y = ymin; y < ymax; ++y) {
 
+            #if 0
             if (mask(y, x) == int(EventType::FORBIDDEN)) {
                 continue;
             }
+            #endif
 
             DetectorEvent ev(x, y, frame);
             auto s = classify(ev);

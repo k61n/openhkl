@@ -135,7 +135,7 @@ public:
     double backgroundLevel(const sptrProgressHandler& progress);
 
     //! Integrate intensities of all peaks
-    void integratePeaks(const PeakList& peaks, double bkg_begin = 5.0, double bkg_end = 10.0, const sptrProgressHandler& handler = nullptr);
+    void integratePeaks(const PeakList& peaks, double peak_end, double bkg_begin, double bkg_end, const sptrProgressHandler& handler = nullptr);
 
     // todo: replace this with Jacobian of (x,y,f) -> q
     //double getSampleStepSize() const;    

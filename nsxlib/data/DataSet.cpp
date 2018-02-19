@@ -23,6 +23,7 @@
 #include "IDataReader.h"
 #include "IFrameIterator.h"
 #include "IntegrationRegion.h"
+#include "Logger.h"
 #include "MathematicsTypes.h"
 #include "Monochromator.h"
 #include "Path.h"
@@ -462,11 +463,8 @@ double DataSet::backgroundLevel(const sptrProgressHandler& progress)
     return _background;
 }
 
-void DataSet::integratePeaks(const PeakList& peaks, double bkg_begin, double bkg_end, const sptrProgressHandler& handler)
+void DataSet::integratePeaks(const PeakList& peaks, double peak_end, double bkg_begin, double bkg_end, const sptrProgressHandler& handler)
 {
-    // TODO: make this an argument!
-    double peak_end = bkg_begin;
-
     std::vector<sptrPeak3D> peak_list;
     const size_t num_peaks = peaks.size();
     peak_list.reserve(num_peaks);
@@ -479,8 +477,11 @@ void DataSet::integratePeaks(const PeakList& peaks, double bkg_begin, double bkg
         peak_list.emplace_back(peak);
     }
 
+    std::string status = "Integrating " + std::to_string(peak_list.size()) + " peaks...";
+    nsx::info() << status;
+
     if (handler) {
-        handler->setStatus(("Integrating " + std::to_string(peak_list.size()) + " peaks...").c_str());
+        handler->setStatus(status.c_str());
         handler->setProgress(0);
     }
 
@@ -488,9 +489,11 @@ void DataSet::integratePeaks(const PeakList& peaks, double bkg_begin, double bkg
     int num_frames_done = 0;
 
     std::map<sptrPeak3D, IntegrationRegion> regions;
+    std::map<sptrPeak3D, bool> integrated;
 
     for (auto peak: peak_list) {
         regions.emplace(std::make_pair(peak, IntegrationRegion(peak, peak_end, bkg_begin, bkg_end)));
+        integrated.emplace(std::make_pair(peak, false));
     }
 
     for (idx = 0; idx < nFrames(); ++idx ) {
@@ -507,22 +510,21 @@ void DataSet::integratePeaks(const PeakList& peaks, double bkg_begin, double bkg
         for (auto& peak: peak_list) {
             bool result = regions[peak].advanceFrame(current_frame, mask, idx);
 
-            // not done reading peak data
-            if (!result) {
-                continue;
-            }
-
-            // done reading data, so compute and update
-            PeakIntegrator integrator;
-            try {
-                integrator.compute(regions[peak]);
-                peak->updateIntegration(integrator);
-            } catch(...) {
-                // integration failed...
-                peak->setSelected(false);
-            }
-            // free memory (important!!)
-            regions[peak].reset();
+            // done reading peak data
+            if (result && !integrated[peak]) {                
+                try {
+                    PeakIntegrator integrator;
+                    integrator.compute(regions[peak]);
+                    peak->updateIntegration(integrator);
+                } catch(std::exception& e) {
+                    // integration failed...
+                    nsx::info() << "integration failed: " << e.what();
+                    peak->setSelected(false);
+                }
+                // free memory (important!!)
+                regions[peak].reset();
+                integrated[peak] = true;
+            }                
         }
 
         if (handler) {
