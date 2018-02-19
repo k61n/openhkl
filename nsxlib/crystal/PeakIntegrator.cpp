@@ -35,6 +35,55 @@
 
 namespace nsx {
 
+static double profile(const Ellipsoid& shape, const DetectorEvent& ev)
+{
+    Eigen::Vector3d x = {ev._px, ev._py, ev._frame};
+    x -= shape.center();
+    return std::exp(-0.5*x.dot(shape.metric()*x));
+}
+
+static void updateFit(Intensity& I, Intensity& B, const IntegrationRegion& region)
+{
+    Eigen::Matrix2d A;
+    A.setZero();
+    Eigen::Vector2d b(0,0);
+    double sum_p = 0.0;
+    const auto& shape = region.shape();
+
+    auto updateA = [&](const PeakData& data)
+    {
+        const auto& events = data.events();
+        const auto& counts = data.counts();
+
+        for (size_t i = 0; i < events.size(); ++i) {
+            const double p = profile(shape, events[i]);
+            const double M = counts[i];
+            const double var = B.value() + I.value()*p;
+
+            sum_p += p;
+
+            A(0,0) += 1/var;
+            A(0,1) += p/var;
+            A(1,0) += p/var;
+            A(1,1) += p*p/var;
+
+            b(0) += M/var;
+            b(1) += M*p/var;
+        }
+    };
+    
+    updateA(region.peakData());
+    updateA(region.bkgData());
+
+    const Eigen::Vector2d& x = A.fullPivLu().solve(b);
+
+    const double new_B = x(0);
+    const double new_I = x(1)*sum_p;
+
+    B = Intensity(new_B);
+    I = Intensity(new_I);
+}
+
 Intensity PeakIntegrator::meanBackground() const
 {
     return _meanBackground;
@@ -105,6 +154,25 @@ void PeakIntegrator::compute(const IntegrationRegion& region)
 
     size_t nframes = size_t(f_max-f_min)+1;
     _rockingCurve.resize(nframes);
+
+    // fitted intensity and background
+    _fitBackground = _meanBackground;
+    _fitIntensity = 0.0;
+
+    // todo: stopping criterion
+    for (auto i = 0; i < 3; ++i) {
+        updateFit(_fitIntensity, _fitBackground, region);
+    }
+}
+
+Intensity PeakIntegrator::fitBackground() const
+{
+    return _fitBackground;
+}
+
+Intensity PeakIntegrator::fitIntensity() const
+{
+    return _fitIntensity;
 }
 
 } // end namespace nsx

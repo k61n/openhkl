@@ -182,9 +182,25 @@ const PeakData& IntegrationRegion::peakData() const
 {
     return _peakData;
 }
+
 const PeakData& IntegrationRegion::bkgData() const
 {
     return _bkgData;
+}
+
+PeakData& IntegrationRegion::peakData()
+{
+    return _peakData;
+}
+
+PeakData& IntegrationRegion::bkgData()
+{
+    return _bkgData;
+}
+
+const Ellipsoid& IntegrationRegion::shape() const
+{
+    return _shape;
 }
 
 } // end namespace nsx

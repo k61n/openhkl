@@ -37,6 +37,7 @@
 
 #include "CrystalTypes.h"
 #include "DataTypes.h"
+#include "FitProfile.h"
 #include "GeometryTypes.h"
 #include "IMask.h"
 #include "ImagingTypes.h"
@@ -137,11 +138,17 @@ public:
     //! Integrate intensities of all peaks
     void integratePeaks(const PeakList& peaks, double peak_end, double bkg_begin, double bkg_end, const sptrProgressHandler& handler = nullptr);
 
+    //! Construct an empirical intensity profile based on the given peaks. The peaks are assumed to be _strong_.
+    FitProfile fitProfile(const PeakList& strong_peaks, double peak_end, double bkg_begin, double bkg_end, size_t nx, size_t ny, size_t nz, size_t subdivide, const sptrProgressHandler& handler = nullptr);
+
     // todo: replace this with Jacobian of (x,y,f) -> q
     //double getSampleStepSize() const;    
 
     //! Return detector events corresponding to the list of q values.  
     std::vector<DetectorEvent> getEvents(const std::vector<ReciprocalVector>& sample_qs) const;
+
+    //! Return the sample-space q vector corresponding to a detector event
+    ReciprocalVector computeQ(const DetectorEvent& ev) const;
 
 
 protected:

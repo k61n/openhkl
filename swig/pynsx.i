@@ -156,6 +156,7 @@ using Eigen::Quaterniond;
 
 #include "XDS.h"
 #include "DataSet.h"
+#include "FitProfile.h"
 #include "MetaData.h"
 #include "ILLDataReader.h"
 #include "IDataReader.h"
@@ -384,7 +385,9 @@ namespace nsx {
 %include "DataReaderFactory.h"
 %include "ILLDataReader.h"
 %include "HDF5DataReader.h"
+%include "FitProfile.h"
 %include "DataSet.h"
+
 
 %include "MergedData.h"
 
@@ -468,6 +471,7 @@ namespace nsx {
 %include "BrillouinZone.h"
 
 %include "XDS.h"
+%include "FitProfile.h"
 %include "DataSet.h"
 %include "MetaData.h"
 %include "ILLDataReader.h"

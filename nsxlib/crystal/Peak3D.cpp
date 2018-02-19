@@ -203,8 +203,13 @@ bool Peak3D::isPredicted() const
 void Peak3D::updateIntegration(const PeakIntegrator& integrator)
 {
     _rockingCurve = integrator.rockingCurve();
-    _meanBackground = integrator.meanBackground();
-    _rawIntensity = integrator.peakIntensity();
+    // testing
+    //_meanBackground = integrator.meanBackground();
+    //_rawIntensity = integrator.peakIntensity();
+    _meanBackground = integrator.fitBackground();
+    _rawIntensity = integrator.fitIntensity();
+    // testing!!
+    //_shape = integrator.fitShape();
 }
 
 

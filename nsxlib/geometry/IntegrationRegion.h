@@ -58,6 +58,11 @@ public:
 
     const PeakData& peakData() const;
     const PeakData& bkgData() const;
+
+    PeakData& peakData();
+    PeakData& bkgData();
+
+    const Ellipsoid& shape() const;
 private:
     Ellipsoid _shape;
     double _peakEnd;

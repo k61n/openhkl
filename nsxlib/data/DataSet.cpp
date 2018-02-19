@@ -463,6 +463,97 @@ double DataSet::backgroundLevel(const sptrProgressHandler& progress)
     return _background;
 }
 
+FitProfile DataSet::fitProfile(const PeakList& strong_peaks, double peak_end, double bkg_begin, double bkg_end, size_t nx, size_t ny, size_t nz, size_t subdivide, const sptrProgressHandler& handler)
+{
+    std::vector<sptrPeak3D> good_peaks;
+    Eigen::Matrix3d covariance;
+
+    covariance.setZero();
+
+    for (auto&& peak: strong_peaks) {
+        // skip if peak does not belong to this dataset
+        if (peak->data().get() != this || !peak->isSelected() || !peak->isIndexed()) {
+            continue;
+        }
+
+        try {
+            const auto& shape = peak->qShape();
+            covariance += shape.inverseMetric();
+        } catch(std::exception& e) {
+            continue;
+        }
+
+        good_peaks.emplace_back(peak);
+    }
+    // average covariance matrix in Q space
+    covariance /= good_peaks.size();
+
+    Ellipsoid q_shape(Eigen::Vector3d(0,0,0), covariance.inverse());
+    q_shape.scale(peak_end);
+    FitProfile fit_profile(q_shape.aabb(), nx, ny, nz);
+
+    std::string status = "Fitting profile to " + std::to_string(good_peaks.size()) + " peaks...";
+    nsx::info() << status;
+
+    if (handler) {
+        handler->setStatus(status.c_str());
+        handler->setProgress(0);
+    }
+
+    size_t idx = 0;
+    int num_frames_done = 0;
+
+    std::map<sptrPeak3D, IntegrationRegion> regions;
+    std::map<sptrPeak3D, bool> done;
+
+    for (auto peak: good_peaks) {
+        regions.emplace(std::make_pair(peak, IntegrationRegion(peak, peak_end, bkg_begin, bkg_end)));
+        done.emplace(std::make_pair(peak, false));
+    }
+
+    for (idx = 0; idx < nFrames(); ++idx ) {
+        Eigen::MatrixXi current_frame, mask;
+        current_frame = frame(idx);
+
+        mask.resize(nRows(), nCols());
+        mask.setConstant(int(IntegrationRegion::EventType::EXCLUDED));
+
+        for (auto peak: good_peaks) {
+            regions[peak].updateMask(mask, idx);
+        }
+
+        for (auto& peak: good_peaks) {
+            bool result = regions[peak].advanceFrame(current_frame, mask, idx);
+
+            // done reading peak data
+            if (result && !done[peak]) {                
+                auto& peak_data = regions[peak].peakData();
+                const auto& q_pred = peak->qPredicted();
+                peak_data.computeQs();
+                size_t N = peak_data.qs().size();
+
+                // debugging
+                std::cout << N << std::endl;
+
+                for (size_t i = 0; i < N; ++i) {
+                    auto q = ReciprocalVector(computeQ(peak_data.events()[i]).rowVector() - q_pred.rowVector());
+                    fit_profile.addSubdividedValue(q.rowVector(), peak_data.counts()[i] / peak->getRawIntensity().value() / good_peaks.size(), subdivide);
+                }
+                // free memory (important!!)
+                regions[peak].reset();
+                done[peak] = true;
+            }                
+        }
+
+        if (handler) {
+            ++num_frames_done;
+            double progress = num_frames_done * 100.0 / nFrames();
+            handler->setProgress(progress);
+        }
+    }
+    return fit_profile;
+}
+
 void DataSet::integratePeaks(const PeakList& peaks, double peak_end, double bkg_begin, double bkg_end, const sptrProgressHandler& handler)
 {
     std::vector<sptrPeak3D> peak_list;
@@ -626,6 +717,14 @@ std::vector<DetectorEvent> DataSet::getEvents(const std::vector<ReciprocalVector
         }        
     }
     return events;
+}
+
+ReciprocalVector DataSet::computeQ(const DetectorEvent& ev) const
+{
+    const auto& state = interpolatedState(ev._frame);
+    auto detector = diffractometer()->getDetector();
+    const auto& detector_position = DirectVector(detector->pixelPosition(ev._px, ev._py));
+    return state.sampleQ(detector_position);
 }
 
 } // end namespace nsx

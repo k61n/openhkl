@@ -51,11 +51,16 @@ public:
     Intensity meanBackground() const;
     Intensity peakIntensity() const;
 
+    Intensity fitBackground() const;
+    Intensity fitIntensity() const;
+
     const std::vector<Intensity>& rockingCurve() const;
 
 private:
     Intensity _peakIntensity;
     Intensity _meanBackground;
+    Intensity _fitIntensity;
+    Intensity _fitBackground;
     std::vector<Intensity> _rockingCurve;
     std::vector<double> _frames;
 };

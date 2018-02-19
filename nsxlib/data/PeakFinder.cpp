@@ -176,7 +176,7 @@ PeakList PeakFinder::find(DataList numors)
         }
 
         // todo: user input bkg_begin and bkg_end directly
-        const double peak_end = getScale(_integrationConfidence)+3;
+        const double peak_end = getScale(_integrationConfidence);
         numor->integratePeaks(numor_peaks, peak_end, peak_end+1, peak_end+2, _handler);
         numor->close();
         //_ui->progressBar->setValue(++comp);
