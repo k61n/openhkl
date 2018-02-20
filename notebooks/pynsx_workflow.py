@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 
 import yaml
@@ -34,7 +36,7 @@ if __name__ == "__main__":
 
     # Find unit cells and set the selected one to the peaks
     unit_cells = pynsx_utils.find_unit_cells(filtered_peaks)
-    if parameters["crystal"]["selected_best_unit_cell"]:        
+    if parameters["auto_indexing"]["select_best_unit_cell"]:        
         selected_unit_cell_id = 0
     else:
         selected_unit_cell_id = int(input("Please enter selected unit cell id: "))
@@ -45,17 +47,21 @@ if __name__ == "__main__":
 
     # Find space groups and set the selected one to the unit cell
     space_groups = pynsx_utils.find_space_group(filtered_peaks,unit_cell)
-    if "space_group" in parameters["crystal"]:
+    if "space_group" in parameters["space_group_definition"]:
         selected_space_group_id = None
         for idx,(_,sg,_) in enumerate(space_groups):
-             if sg==parameters["crystal"]["space_group"]:
+             if sg==parameters["space_group_definition"]["space_group"]:
                  selected_space_group_id = idx
                  break
         if selected_space_group_id is None:
             print("Invalid space group")
         
     else:                
-        selected_space_group_id = int(input("Please enter selected space group id: "))
+        if parameters["space_group_definition"].get("select_best_space_group",False):
+            selected_space_group_id = 0
+        else:
+            selected_space_group_id = int(input("Please enter selected space group id: "))
+
 
     print("Selected space group id: {:d}".format(selected_space_group_id))
     space_group_name = space_groups[selected_space_group_id][1]
