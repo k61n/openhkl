@@ -30,49 +30,36 @@
 
 #pragma once
 
-#include <Eigen/Core>
+#include <Eigen/Dense>
 
-#include "Ellipsoid.h"
+#include "Blob3D.h"
 #include "GeometryTypes.h"
-#include "PeakData.h"
+#include "IntegrationRegion.h"
+#include "Intensity.h"
+#include "Maybe.h"
 
 namespace nsx {
 
-class IntegrationRegion {
+class DataSet;
+
+//! \class PeakIntegrator
+//! \breif This is a helper class to handle per-frame integration of a peak.
+class IPeakIntegrator {
 public:
-    enum class EventType: int {BACKGROUND = 1, PEAK = 2, FORBIDDEN = 0, EXCLUDED = -1};
+    IPeakIntegrator();
+    virtual ~IPeakIntegrator();
+    virtual bool compute(sptrPeak3D peak, const IntegrationRegion& region) = 0;
 
-    IntegrationRegion();
+    void integrate(PeakList& peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end);
 
-    IntegrationRegion(IntegrationRegion&& other) = default;
+    Intensity meanBackground() const;
+    Intensity integratedIntensity() const;
+    const std::vector<Intensity>& rockingCurve() const;
 
-    IntegrationRegion(sptrPeak3D peak, double peak_end, double bkg_begin, double bkg_end);
-
-    void updateMask(Eigen::MatrixXi& mask, double frame) const;
-
-    const AABB& aabb() const;
-
-    EventType classify(const DetectorEvent& ev) const;
-
-    bool advanceFrame(const Eigen::MatrixXi& image, const Eigen::MatrixXi& mask, double frame);
-
-    void reset();
-
-    const PeakData& peakData() const;
-    const PeakData& bkgData() const;
-
-    PeakData& peakData();
-    PeakData& bkgData();
-
-    const Ellipsoid& shape() const;
-private:
-    Ellipsoid _shape;
-    double _peakEnd;
-    double _bkgBegin;
-    double _bkgEnd;
-    PeakData _peakData;
-    PeakData _bkgData;
-    AABB _aabb;
+protected:
+    Intensity _integratedIntensity;
+    Intensity _meanBackground;
+    std::vector<Intensity> _rockingCurve;
 };
 
 } // end namespace nsx

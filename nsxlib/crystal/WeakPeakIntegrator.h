@@ -30,49 +30,20 @@
 
 #pragma once
 
-#include <Eigen/Core>
+#include <Eigen/Dense>
 
-#include "Ellipsoid.h"
 #include "GeometryTypes.h"
-#include "PeakData.h"
+#include "IPeakIntegrator.h"
 
 namespace nsx {
 
-class IntegrationRegion {
+class DataSet;
+
+
+class WeakPeakIntegrator: public IPeakIntegrator {
 public:
-    enum class EventType: int {BACKGROUND = 1, PEAK = 2, FORBIDDEN = 0, EXCLUDED = -1};
-
-    IntegrationRegion();
-
-    IntegrationRegion(IntegrationRegion&& other) = default;
-
-    IntegrationRegion(sptrPeak3D peak, double peak_end, double bkg_begin, double bkg_end);
-
-    void updateMask(Eigen::MatrixXi& mask, double frame) const;
-
-    const AABB& aabb() const;
-
-    EventType classify(const DetectorEvent& ev) const;
-
-    bool advanceFrame(const Eigen::MatrixXi& image, const Eigen::MatrixXi& mask, double frame);
-
-    void reset();
-
-    const PeakData& peakData() const;
-    const PeakData& bkgData() const;
-
-    PeakData& peakData();
-    PeakData& bkgData();
-
-    const Ellipsoid& shape() const;
-private:
-    Ellipsoid _shape;
-    double _peakEnd;
-    double _bkgBegin;
-    double _bkgEnd;
-    PeakData _peakData;
-    PeakData _bkgData;
-    AABB _aabb;
+    WeakPeakIntegrator();
+    bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
 };
 
 } // end namespace nsx

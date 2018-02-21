@@ -25,6 +25,7 @@
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/ShapeLibrary.h>
+#include <nsxlib/StrongPeakIntegrator.h>
 #include <nsxlib/Units.h>
 
 int main()
@@ -120,7 +121,9 @@ int main()
     dataf->diffractometer()->getSample()->addUnitCell(cell);
 
     // reintegrate peaks
-    dataf->integratePeaks(found_peaks, 3.0, 4.0, 5.0);
+    nsx::StrongPeakIntegrator integrator;
+    integrator.integrate(found_peaks, dataf, 3.0, 4.0, 5.0);
+    //dataf->integratePeaks(found_peaks, integrator, 3.0, 4.0, 5.0);
 
     indexed_peaks = numIndexedPeaks();
     NSX_CHECK_ASSERT(indexed_peaks > 600);

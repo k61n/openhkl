@@ -50,8 +50,9 @@ public:
     ~ColorMap();
 
     inline QRgb color(double v, double vmax) {
-        double t = std::max(v/vmax*255.0, 0.0);
-        int i = std::min(255, int(t+0.5));
+        int i = int(v/vmax*255.0);
+        i = std::max(0, i);
+        i = std::min(255, i);
         return qRgb(_rgb[3*i+0], _rgb[3*i+1], _rgb[3*i+2]);
     }
 

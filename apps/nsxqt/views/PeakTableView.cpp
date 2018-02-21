@@ -54,6 +54,7 @@
 #include "CollectedPeaksDelegate.h"
 #include "CollectedPeaksModel.h"
 #include "DialogAutoIndexing.h"
+#include "DialogProfileFit.h"
 #include "DialogRefineUnitCell.h"
 #include "DialogTransformationMatrix.h"
 #include "DialogUnitCellParameters.h"
@@ -202,6 +203,9 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
     auto refineParameters=new QAction("Refine unit cell and instrument parameters",menu);
     menu->addAction(refineParameters);
 
+    auto fitProfile = new QAction("Fit average peak profile", menu);
+    menu->addAction(fitProfile);
+
     connect(normalize,SIGNAL(triggered()),this,SLOT(normalizeToMonitor()));
     connect(writeFullProf,SIGNAL(triggered()),this,SLOT(writeFullProf()));
     connect(writeShelX,SIGNAL(triggered()),this,SLOT(writeShelX()));
@@ -215,6 +219,7 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
 
     connect(autoIndexing,SIGNAL(triggered()),this,SLOT(openAutoIndexingDialog()));
     connect(refineParameters,SIGNAL(triggered()),this,SLOT(openRefiningParametersDialog()));
+    connect(fitProfile, SIGNAL(triggered()), this, SLOT(openProfileFitDialog()));
 }
 
 void PeakTableView::normalizeToMonitor()
@@ -508,4 +513,46 @@ void PeakTableView::openRefiningParametersDialog()
     }
     DialogRefineUnitCell* dialog= new DialogRefineUnitCell(experiment,uc,peaks,this);
     dialog->exec();
+}
+
+void PeakTableView::openProfileFitDialog()
+{
+    auto peakModel = dynamic_cast<CollectedPeaksModel*>(model());
+    auto experiment = peakModel->getExperiment();
+    nsx::PeakList peaks = peakModel->getPeaks(selectionModel()->selectedRows());
+
+    int nPeaks = peaks.size();
+    // Check that a minimum number of peaks have been selected for indexing
+    if (nPeaks < 1) {
+        QMessageBox::warning(this, tr("NSXTool"),tr("Need to selected peaks to fit profile!"));
+        return;
+    }
+
+    nsx::sptrUnitCell uc(peaks[0]->activeUnitCell());
+    for (auto&& peak : peaks) {
+        if (peak->activeUnitCell() != uc) {
+            uc = nullptr;
+            break;
+        }
+    }
+
+    if (uc == nullptr) {
+        QMessageBox::warning(this, tr("NSXTool"),tr("The selected peaks must have the same active unit cell for profile fitting"));
+        return;
+    }
+    DialogProfileFit* dialog = new DialogProfileFit(experiment, uc, peaks, this);
+
+    // rejected
+    if (dialog->exec() == QDialog::Rejected) {
+        return;
+    }
+
+    nsx::info() << "Update profiles of " << peaks.size() << " peaks";
+
+    // update selected peaks
+    auto profile = nsx::sptrFitProfile(new nsx::FitProfile(dialog->profile()));
+
+    for (auto peak: peaks) {
+        peak->setProfile(profile);
+    }
 }

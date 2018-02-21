@@ -117,7 +117,9 @@ using Eigen::Quaterniond;
 #include "AutoIndexer.h"
 #include "Profile.h"
 #include "Intensity.h"
-#include "PeakIntegrator.h"
+#include "IPeakIntegrator.h"
+#include "WeakPeakIntegrator.h"
+#include "StrongPeakIntegrator.h"
 #include "IntegrationRegion.h"
 #include "UnitCell.h"
 #include "ResolutionShell.h"
@@ -240,7 +242,7 @@ using sptrMaterial = std::shared_ptr<nsx::Material>;
 #include "SpaceGroup.h"
 #include "UnitCell.h"
 #include "GruberReduction.h"
-#include "PeakIntegrator.h"
+
 #include "Profile.h"
 #include "Intensity.h"
 
@@ -365,7 +367,9 @@ namespace nsx {
 
 %include "FFTIndexing.h"
 
-%include "PeakIntegrator.h"
+%include "IPeakIntegrator.h"
+%include "WeakPeakIntegrator.h"
+%include "StrongPeakIntegrator.h"
 %include "IntegrationRegion.h"
 %include "Intensity.h"
 %include "Peak3D.h"
@@ -434,7 +438,7 @@ namespace nsx {
 %include "Intensity.h"
 
 %include "IntegrationRegion.h"
-%include "PeakIntegrator.h"
+
 
 %include "UnitCell.h"
 %include "ResolutionShell.h"

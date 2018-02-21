@@ -1,5 +1,6 @@
 #pragma once
 
+#include <deque>
 #include <Eigen/Dense>
 
 #include "CrystalTypes.h"
@@ -14,9 +15,11 @@ class PeakData {
 public:
     PeakData(sptrPeak3D peak = nullptr);
 
-    const std::vector<DetectorEvent>& events() const;
-    const std::vector<double>& counts() const;
-    const std::vector<ReciprocalVector> qs() const;
+    PeakData(PeakData&& other) = default;
+
+    const std::deque<DetectorEvent>& events() const;
+    const std::deque<double>& counts() const;
+    const std::deque<ReciprocalVector> qs() const;
 
     //! Compute the q values for each of the observed events.
     void computeQs();
@@ -29,9 +32,9 @@ public:
 
 private:
     sptrPeak3D _peak;
-    std::vector<DetectorEvent> _events;
-    std::vector<double> _counts;
-    std::vector<ReciprocalVector> _qs;
+    std::deque<DetectorEvent> _events;
+    std::deque<double> _counts;
+    std::deque<ReciprocalVector> _qs;
 };
 
 } // end namespace nsx

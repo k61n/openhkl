@@ -24,6 +24,7 @@ class ReciprocalVector;
 class ShapeLibrary;
 struct Triangle;
 class Vertex;
+class FitProfile;
 
 using HomVector   = Eigen::Matrix<double,4,1>;
 using HomMatrix   = Eigen::Matrix<double,4,4>;
@@ -32,6 +33,8 @@ using covMat = Eigen::Matrix<double,9,9>;
 
 using sptrBasis     = std::shared_ptr<Basis>;
 using sptrEllipsoid = std::shared_ptr<Ellipsoid>;
+
+using sptrFitProfile = std::shared_ptr<FitProfile>;
 
 using TrianglesList = std::vector<Triangle>;
 

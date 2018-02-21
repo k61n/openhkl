@@ -46,9 +46,9 @@
 #include "Gonio.h"
 #include "IFrameIterator.h"
 #include "InstrumentState.h"
+#include "IPeakIntegrator.h"
 #include "MillerIndex.h"
 #include "Peak3D.h"
-#include "PeakIntegrator.h"
 #include "ReciprocalVector.h"
 #include "Sample.h"
 #include "Source.h"
@@ -200,35 +200,22 @@ bool Peak3D::isPredicted() const
     return _predicted;
 }
 
-void Peak3D::updateIntegration(const PeakIntegrator& integrator)
+void Peak3D::updateIntegration(const IPeakIntegrator& integrator)
 {
     _rockingCurve = integrator.rockingCurve();
     // testing
     //_meanBackground = integrator.meanBackground();
     //_rawIntensity = integrator.peakIntensity();
-    _meanBackground = integrator.fitBackground();
-    _rawIntensity = integrator.fitIntensity();
+    _meanBackground = integrator.meanBackground();
+    _rawIntensity = integrator.integratedIntensity();
     // testing!!
     //_shape = integrator.fitShape();
 }
-
 
 double Peak3D::pValue() const
 {
     return _pValue;
 }
-
-const Profile& Peak3D::getProfile() const
-{
-    return _profile;
-}
-
-#if 0
-const PeakIntegrator &Peak3D::getIntegration() const
-{
-    return _integration;
-}
-#endif
 
 bool Peak3D::hasUnitCells() const
 {
@@ -330,6 +317,17 @@ DetectorEvent Peak3D::predictCenter(double frame) const
     Eigen::RowVector3d pred_kf = (kf1-kf).norm() < (kf2-kf).norm() ? kf1 : kf2;
 
     return _data->diffractometer()->getDetector()->constructEvent(DirectVector(state.samplePosition), ReciprocalVector(pred_kf*state.detectorOrientation));
+}
+
+
+void Peak3D::setProfile(sptrFitProfile profile)
+{
+    _profile = profile;
+}
+
+sptrFitProfile Peak3D::profile() const
+{
+    return _profile;
 }
 
 } // end namespace nsx

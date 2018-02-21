@@ -42,8 +42,8 @@
 #include "InstrumentTypes.h"
 #include "IntegrationRegion.h"
 #include "Intensity.h"
-#include "PeakIntegrator.h"
-#include "Profile.h"
+#include "IPeakIntegrator.h"
+
 
 namespace nsx {
 
@@ -112,13 +112,15 @@ public:
     void scaleShape(double scale);
 
     //! update the integration
-    void updateIntegration(const PeakIntegrator& integrator);
+    void updateIntegration(const IPeakIntegrator& integrator);
 
     //! compute P value that there is actually an observed peak, assuming Poisson statistics
     double pValue() const;
 
+    //! Set the fitted peak profile
+    void setProfile(sptrFitProfile profile);
     //! Return fitted peak profile
-    const Profile& getProfile() const;
+    sptrFitProfile profile() const;
 
     //const PeakIntegrator& getIntegration() const;
 
@@ -160,7 +162,7 @@ private:
     double _transmission;
     int _activeUnitCellIndex;
 
-    Profile _profile;
+    sptrFitProfile _profile;
 
     //! Raw p value
     double _pValue;

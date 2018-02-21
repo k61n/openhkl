@@ -29,7 +29,7 @@
 #include "Path.h"
 #include "Peak3D.h"
 #include "PeakFilter.h"
-#include "PeakIntegrator.h"
+#include "IPeakIntegrator.h"
 #include "ProgressHandler.h"
 #include "ReciprocalVector.h"
 #include "Sample.h"
@@ -476,6 +476,13 @@ FitProfile DataSet::fitProfile(const PeakList& strong_peaks, double peak_end, do
             continue;
         }
 
+        auto inten = peak->getRawIntensity();
+
+        // not a valid integration!
+        if (inten.value() <= 0.1*inten.sigma()) {
+            continue;
+        }
+
         try {
             const auto& shape = peak->qShape();
             covariance += shape.inverseMetric();
@@ -523,26 +530,33 @@ FitProfile DataSet::fitProfile(const PeakList& strong_peaks, double peak_end, do
         }
 
         for (auto& peak: good_peaks) {
+            // already finished with this peak
+            if (done[peak]) {
+                continue;
+            }
             bool result = regions[peak].advanceFrame(current_frame, mask, idx);
 
-            // done reading peak data
-            if (result && !done[peak]) {                
-                auto& peak_data = regions[peak].peakData();
-                const auto& q_pred = peak->qPredicted();
-                peak_data.computeQs();
-                size_t N = peak_data.qs().size();
+            // not finished reading the peak
+            if (!result) {
+                continue;
+            }
+               
+            auto& peak_data = regions[peak].peakData();
+            const auto& q_pred = peak->qPredicted();
+            peak_data.computeQs();
+            size_t N = peak_data.qs().size();
 
-                // debugging
-                std::cout << N << std::endl;
+            // debugging
+            //std::cout << N << std::endl;
 
-                for (size_t i = 0; i < N; ++i) {
-                    auto q = ReciprocalVector(computeQ(peak_data.events()[i]).rowVector() - q_pred.rowVector());
-                    fit_profile.addSubdividedValue(q.rowVector(), peak_data.counts()[i] / peak->getRawIntensity().value() / good_peaks.size(), subdivide);
-                }
-                // free memory (important!!)
-                regions[peak].reset();
-                done[peak] = true;
-            }                
+            for (size_t i = 0; i < N; ++i) {
+                auto q = ReciprocalVector(computeQ(peak_data.events()[i]).rowVector() - q_pred.rowVector());
+                fit_profile.addSubdividedValue(q.rowVector(), peak_data.counts()[i] / peak->getRawIntensity().value() / good_peaks.size(), subdivide);
+            }
+
+            // free memory (important!!)
+            regions[peak].reset();
+            done[peak] = true;
         }
 
         if (handler) {
@@ -551,10 +565,12 @@ FitProfile DataSet::fitProfile(const PeakList& strong_peaks, double peak_end, do
             handler->setProgress(progress);
         }
     }
+    fit_profile.normalize();
     return fit_profile;
 }
 
-void DataSet::integratePeaks(const PeakList& peaks, double peak_end, double bkg_begin, double bkg_end, const sptrProgressHandler& handler)
+#if 0
+void DataSet::integratePeaks(const PeakList& peaks, IPeakIntegrator& integrator, double peak_end, double bkg_begin, double bkg_end, const sptrProgressHandler& handler)
 {
     std::vector<sptrPeak3D> peak_list;
     const size_t num_peaks = peaks.size();
@@ -604,8 +620,7 @@ void DataSet::integratePeaks(const PeakList& peaks, double peak_end, double bkg_
             // done reading peak data
             if (result && !integrated[peak]) {                
                 try {
-                    PeakIntegrator integrator;
-                    integrator.compute(regions[peak]);
+                    integrator.compute(peak, regions[peak]);
                     peak->updateIntegration(integrator);
                 } catch(std::exception& e) {
                     // integration failed...
@@ -625,6 +640,7 @@ void DataSet::integratePeaks(const PeakList& peaks, double peak_end, double bkg_
         }
     }
 }
+#endif
 
 #if 0
 double DataSet::getSampleStepSize() const

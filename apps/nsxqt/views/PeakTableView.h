@@ -91,6 +91,7 @@ public slots:
 
     void openAutoIndexingDialog();
     void openRefiningParametersDialog();
+    void openProfileFitDialog();
 
 private:
 

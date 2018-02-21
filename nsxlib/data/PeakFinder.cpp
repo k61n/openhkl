@@ -17,6 +17,7 @@
 #include "PeakFinder.h"
 #include "ProgressHandler.h"
 #include "Sample.h"
+#include "StrongPeakIntegrator.h"
 
 namespace nsx {
 
@@ -177,7 +178,8 @@ PeakList PeakFinder::find(DataList numors)
 
         // todo: user input bkg_begin and bkg_end directly
         const double peak_end = getScale(_integrationConfidence);
-        numor->integratePeaks(numor_peaks, peak_end, peak_end+1, peak_end+2, _handler);
+        StrongPeakIntegrator integrator;
+        integrator.integrate(numor_peaks, numor, peak_end, peak_end+1, peak_end+2); // TODO:, _handler);
         numor->close();
         //_ui->progressBar->setValue(++comp);
         std::cout << "Found " << numor_peaks.size() << " peaks." << std::endl;

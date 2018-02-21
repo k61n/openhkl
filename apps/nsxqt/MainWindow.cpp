@@ -42,6 +42,7 @@
 #include <nsxlib/SpaceGroup.h>
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
+#include <nsxlib/WeakPeakIntegrator.h>
 
 #include "AbsorptionWidget.h"
 #include "CollectedPeaksModel.h"
@@ -552,6 +553,8 @@ void MainWindow::on_actionWrite_log_file_triggered()
 
 void MainWindow::on_actionReintegrate_peaks_triggered()
 {
+    // TODO: weak peaks vs. strong peaks??
+
     nsx::info() << "Reintegrating peaks...";
 
     auto dialog = new DialogIntegrate();
@@ -570,9 +573,11 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
 
     for (auto&& numor: numors) {
         // todo: bkg_begin and bkg_end
-        const auto& peaks = nsx::PeakFilter().dRange(_session->peaks(numor.get()), dmin, dmax, true);
+        auto&& peaks = nsx::PeakFilter().dRange(_session->peaks(numor.get()), dmin, dmax, true);
         nsx::info() << "Integrating " << peaks.size() << " peaks";
-        numor->integratePeaks(peaks, peak_scale, 0.5*(peak_scale+bkg_scale), bkg_scale, _progressHandler);
+        nsx::WeakPeakIntegrator integrator;
+        // todo: progress handler!!
+        integrator.integrate(peaks, numor, peak_scale, 0.5*(peak_scale+bkg_scale), bkg_scale); //, _progressHandler);
     }
 
     _session->updatePeaks();

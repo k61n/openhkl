@@ -12,7 +12,7 @@ namespace nsx {
 class FitProfile {
 public:
     FitProfile() = default;
-    FitProfile(const AABB& aabb, size_t nx, size_t ny, size_t nz);
+    FitProfile(const AABB& aabb, int nx, int ny, int nz);
 
     double at(size_t i, size_t j, size_t k) const;
 
@@ -24,12 +24,18 @@ public:
 
     const Eigen::Vector3d& dx() const;
 
+    const Eigen::Vector3i& shape() const;
+
     size_t count() const;
+
+    double predict(const Eigen::Vector3d& x) const;
+
+    void normalize();
 
 private:
     AABB _aabb;
     Eigen::Vector3d _dx;
-    size_t _n[3];
+    Eigen::Vector3i _shape;
     size_t _count;
     std::vector<double> _profile;
 };

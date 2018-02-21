@@ -31,36 +31,34 @@
 #include "DataSet.h"
 #include "Ellipsoid.h"
 #include "Intensity.h"
-#include "PeakIntegrator.h"
+#include "Peak3D.h"
+#include "WeakPeakIntegrator.h"
 
 namespace nsx {
 
-static double profile(const Ellipsoid& shape, const DetectorEvent& ev)
+WeakPeakIntegrator::WeakPeakIntegrator(): IPeakIntegrator()
 {
-    Eigen::Vector3d x = {ev._px, ev._py, ev._frame};
-    x -= shape.center();
-    return std::exp(-0.5*x.dot(shape.metric()*x));
+
 }
 
-static void updateFit(Intensity& I, Intensity& B, const IntegrationRegion& region)
+// note that this assumes the profile has been normalized so that \sum_i p_i = 1
+static void updateFit(Intensity& I, Intensity& B, const Eigen::RowVector3d& q_pred, const FitProfile& profile, const IntegrationRegion& region)
 {
     Eigen::Matrix2d A;
     A.setZero();
     Eigen::Vector2d b(0,0);
-    double sum_p = 0.0;
     const auto& shape = region.shape();
 
     auto updateA = [&](const PeakData& data)
     {
         const auto& events = data.events();
         const auto& counts = data.counts();
+        const auto& qs = data.qs();
 
         for (size_t i = 0; i < events.size(); ++i) {
-            const double p = profile(shape, events[i]);
+            const double p = profile.predict(qs[i].rowVector() - q_pred);
             const double M = counts[i];
             const double var = B.value() + I.value()*p;
-
-            sum_p += p;
 
             A(0,0) += 1/var;
             A(0,1) += p/var;
@@ -73,51 +71,43 @@ static void updateFit(Intensity& I, Intensity& B, const IntegrationRegion& regio
     };
     
     updateA(region.peakData());
-    updateA(region.bkgData());
+    //updateA(region.bkgData());
 
-    const Eigen::Vector2d& x = A.fullPivLu().solve(b);
+    Eigen::Matrix2d AI = A.inverse();
+
+    const Eigen::Vector2d& x = AI*b;
 
     const double new_B = x(0);
-    const double new_I = x(1)*sum_p;
+    const double new_I = x(1);
 
-    B = Intensity(new_B);
-    I = Intensity(new_I);
+    // check this calculation!
+    Eigen::Matrix2d cov = AI;
+
+    // Note: this error estimate assumes the variances are correct (i.e., gain and baseline accounted for)
+    B = Intensity(new_B, cov(0,0));
+    I = Intensity(new_I, cov(1,1));
 }
 
-Intensity PeakIntegrator::meanBackground() const
+bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 {
-    return _meanBackground;
-}
+    if (!peak || !peak->profile()) {
+        return false;
+    }
 
-Intensity PeakIntegrator::peakIntensity() const
-{
-    return _peakIntensity;
-}
-
-const std::vector<Intensity>& PeakIntegrator::rockingCurve() const
-{
-    return _rockingCurve;
-}
-
-void PeakIntegrator::compute(const IntegrationRegion& region)
-{
     double sum_bkg = 0.0;
     double sum_bkg2 = 0.0;
-    double sum_peak = 0.0;
 
-    const auto& peakEvents = region.peakData().events();
-    const auto& peakCounts = region.peakData().counts();
     const auto& bkgEvents = region.bkgData().events();
     const auto& bkgCounts = region.bkgData().counts();
 
     // TODO: should this be hard-coded??
-    if (peakEvents.size() < 5) {
-        throw std::runtime_error("PeakIntegrator::compute(): too few data points in peak");
+    if (region.peakData().events().size() < 5) {
+        throw std::runtime_error("WeakPeakIntegrator::compute(): too few data points in peak");
     }
 
     // TODO: should this be hard-coded??
     if (bkgEvents.size() < 5) {
-        throw std::runtime_error("PeakIntegrator::compute(): too few data points in background");
+        throw std::runtime_error("WeakPeakIntegrator::compute(): too few data points in background");
     }
 
     // compute mean background and error
@@ -131,48 +121,18 @@ void PeakIntegrator::compute(const IntegrationRegion& region)
     const double var_bkg = (sum_bkg2 - Nbkg*mean_bkg) / (Nbkg-1);
 
     _meanBackground = Intensity(mean_bkg, var_bkg);
+    _integratedIntensity = Intensity(0.0, 0.0);
 
-    // compute total peak intensity
-    for (auto count: peakCounts) {
-        sum_peak += count;
-    }
-    sum_peak -= peakCounts.size()*mean_bkg;
-
-    // TODO: ERROR ESTIMATE!!
-    _peakIntensity = Intensity(sum_peak, std::sqrt(sum_peak));
-
-    // compute rocking curve
-    double f_min = int(peakEvents[0]._frame);
-    double f_max = f_min;
-
-    size_t Npeak = peakEvents.size();
-
-    for (size_t i = 0; i < Npeak; ++i) {
-        f_min = std::min(peakEvents[i]._frame, f_min);
-        f_max = std::max(peakEvents[i]._frame, f_max);
-    }
-
-    size_t nframes = size_t(f_max-f_min)+1;
-    _rockingCurve.resize(nframes);
-
-    // fitted intensity and background
-    _fitBackground = _meanBackground;
-    _fitIntensity = 0.0;
+    const Eigen::RowVector3d q_pred = peak->qPredicted().rowVector();
 
     // todo: stopping criterion
     for (auto i = 0; i < 3; ++i) {
-        updateFit(_fitIntensity, _fitBackground, region);
+        updateFit(_integratedIntensity, _meanBackground, q_pred, *peak->profile(), region);
     }
-}
 
-Intensity PeakIntegrator::fitBackground() const
-{
-    return _fitBackground;
-}
+    // TODO: rocking curve!
 
-Intensity PeakIntegrator::fitIntensity() const
-{
-    return _fitIntensity;
+    return true;
 }
 
 } // end namespace nsx

@@ -62,6 +62,8 @@
 #include <nsxlib/Detector.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Ellipsoid.h>
+#include <nsxlib/FitProfile.h>
+#include <nsxlib/GeometryTypes.h>
 #include <nsxlib/InstrumentState.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/MergedData.h>
@@ -354,12 +356,23 @@ void SessionModel::incorporateCalculatedPeaks()
     // TODO: get the crystal from the dialog!!
     auto cell = dialog.cell();
 
+    // TODO: fix this
+    nsx::sptrFitProfile profile = nullptr;
+
     for (auto numor: numors) {
         for (auto peak: peaks(numor.get())) {
             if (!peak->isSelected() || peak->activeUnitCell() != cell) {
                 continue;
             }
             library.addPeak(peak);
+
+            // TODO: fix this, we should support more than one profile. Or get it from the lattice, etc.
+            if (profile == nullptr) {
+                profile = peak->profile();
+            }
+            if (profile && profile != peak->profile()) {
+                throw std::runtime_error("incorporateCalculatedPeaks(): only one peak profile is supported at the moment!");
+            }            
         }
     }
 
@@ -383,8 +396,8 @@ void SessionModel::incorporateCalculatedPeaks()
         auto predictor = nsx::PeakPredictor(cell, library, dialog.dMin(), dialog.dMax(), dhkl);
         auto predicted = predictor.predict(numor);
         // todo: bkg_begin and bkg_end
-        nsx::info() << "Integrating predicted peaks...";
-        numor->integratePeaks(predicted, dialog.peakScale(), 0.5*(dialog.peakScale()+dialog.bkgScale()), dialog.bkgScale(), handler);
+        //nsx::info() << "Integrating predicted peaks...";
+        //numor->integratePeaks(predicted, dialog.peakScale(), 0.5*(dialog.peakScale()+dialog.bkgScale()), dialog.bkgScale(), handler);
         observed_peaks += peaks(numor.get()).size();
 
         nsx::info() << "Removing old peaks...";
@@ -394,6 +407,7 @@ void SessionModel::incorporateCalculatedPeaks()
 
         nsx::info() << "Adding new peaks...";
         for (auto peak: predicted) {
+            peak->setProfile(profile);
             addPeak(peak);
         }
     }

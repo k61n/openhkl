@@ -129,9 +129,6 @@ void DialogRefineUnitCell::refineParameters()
             for (auto&& p: d_peaks) {
                 peak_list.push_back(p);
             }
-
-            // todo: fix bkg_begin and bkg_end
-            d->integratePeaks(peak_list, 3.0, 4.0, 6.0, nullptr);
         }
     }
 }
