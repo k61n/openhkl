@@ -129,13 +129,14 @@ void RefinementBatch::refineSamplePosition(InstrumentStateList& states)
 
 void RefinementBatch::refineSampleOrientation(InstrumentStateList& states)
 {
+    // refine the imaginary parts of the quaternion
     for (int axis = 0; axis < 3; ++axis) {
         std::vector<int> ids;
         for (size_t i = 0; i < states.size(); ++i) {
             if (!contains(i)) {
                 continue;
             }
-            int id = _params.addParameter(&states[i].sampleOrientationOffset(axis));
+            int id = _params.addParameter(&states[i].qSampleOrientation.coeffs()[axis]);
             ids.push_back(id);
         }
         // record the constraints

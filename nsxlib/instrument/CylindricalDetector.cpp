@@ -98,7 +98,7 @@ DirectVector CylindricalDetector::pixelPosition(double px, double py) const
     if (_distance==0)
         throw std::runtime_error("Detector: distance must be >0");
 
-    // The coordinates are defined relatively to the detector origin
+    // The coordinates are defined relative to the detector origin
     double x=px-_minCol;
     double y=py-_minRow;
 

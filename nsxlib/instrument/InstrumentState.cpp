@@ -33,8 +33,7 @@ namespace nsx {
 InstrumentState::InstrumentState()
 {
     detectorOrientation.setIdentity();
-    fixedSampleOrientation.setIdentity();
-    sampleOrientationOffset.setZero();
+    qSampleOrientation = Eigen::Quaterniond(1, 0, 0, 0);
     samplePosition.setZero();
     detectorOffset.setZero();
     ni = {0.0, 1.0, 0.0};
@@ -50,8 +49,7 @@ InstrumentState InstrumentState::interpolate(const InstrumentState &other, doubl
     result.detectorOrientation = interpolateRotation(detectorOrientation, other.detectorOrientation, t);
     result.detectorOffset = s*detectorOffset + t*other.detectorOffset;
 
-    result.fixedSampleOrientation = interpolateRotation(sampleOrientation(), other.sampleOrientation(), t);
-    result.sampleOrientationOffset.setZero();
+    result.qSampleOrientation = qSampleOrientation.normalized().slerp(t, other.qSampleOrientation.normalized());
     result.samplePosition = s*samplePosition + t*other.samplePosition;
 
     result.ni = s*(ni / ni.norm()) + t*(other.ni / other.ni.norm());
@@ -111,10 +109,22 @@ ReciprocalVector InstrumentState::ki() const
 
 Eigen::Matrix3d InstrumentState::sampleOrientation() const
 {
-    const Eigen::Vector3d& v = sampleOrientationOffset;
-    Eigen::Quaterniond q(1.0, v(0), v(1), v(2));
+    return qSampleOrientation.normalized().toRotationMatrix();
+}
+
+Eigen::Vector3d InstrumentState::rotationAxis(const InstrumentState& next) const
+{
+    Eigen::Quaterniond q = next.qSampleOrientation * qSampleOrientation.inverse();
+    return q.vec().normalized();
+}
+
+double InstrumentState::stepSize(const InstrumentState& next) const
+{
+    Eigen::Quaterniond q = next.qSampleOrientation * qSampleOrientation.inverse();
     q.normalize();
-    return q.toRotationMatrix() * fixedSampleOrientation;
+    const double cos_theta2 = q.w();
+    const double sin_theta2 = q.vec().norm();
+    return 2.0*std::atan2(sin_theta2, cos_theta2);
 }
 
 } // end namespace nsx

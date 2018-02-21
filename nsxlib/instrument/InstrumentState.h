@@ -43,9 +43,10 @@ struct InstrumentState {
     Eigen::Matrix3d sampleOrientation() const;
 
     // fixed orientation (e.g. read from data)
-    Eigen::Matrix3d fixedSampleOrientation;
+    //Eigen::Matrix3d fixedSampleOrientation;
     // offset to orientation
-    Eigen::Vector3d sampleOrientationOffset;
+    //Eigen::Vector3d sampleOrientationOffset;
+    Eigen::Quaterniond qSampleOrientation;
 
     Eigen::Vector3d samplePosition;
     Eigen::Vector3d detectorOffset;
@@ -75,6 +76,11 @@ struct InstrumentState {
     double lorentzFactor(const DirectVector& detector_position) const;
 
     double twoTheta(const DirectVector& detector_position) const;
+
+    //! Return the axis of the rotation transforming this state into next state.
+    Eigen::Vector3d rotationAxis(const InstrumentState& next) const;
+    //! Return the step size (in radians) between this state and next state.
+    double stepSize(const InstrumentState& next) const;
 };
 
 } // end namespace nsx

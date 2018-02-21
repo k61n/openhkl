@@ -125,9 +125,17 @@ bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
 
     const Eigen::RowVector3d q_pred = peak->qPredicted().rowVector();
 
+    const double tolerance = 1e-5;
+
     // todo: stopping criterion
-    for (auto i = 0; i < 3; ++i) {
+    for (auto i = 0; i < 20; ++i) {
+        const double I0 = _integratedIntensity.value();
         updateFit(_integratedIntensity, _meanBackground, q_pred, *peak->profile(), region);
+        const double I1 = _integratedIntensity.value();
+
+        if (I1 < 0.0 || (I1 < (1+tolerance)*I0 && I0 < (1+tolerance)*I1)) {
+            break;
+        }
     }
 
     // TODO: rocking curve!
