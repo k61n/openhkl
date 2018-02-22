@@ -7,8 +7,7 @@ namespace nsx {
 
 ShapeLibrary::ShapeLibrary(): _shapes(), _defaultShape()
 {
-    _defaultShape.setIdentity();
-    _defaultShape /= 100;
+
 }
 
 ShapeLibrary::~ShapeLibrary()
@@ -21,21 +20,21 @@ bool ShapeLibrary::hasShape(const MillerIndex& hkl) const
     return _shapes.find(hkl) != _shapes.end();
 }
 
-void ShapeLibrary::addShape(const MillerIndex& hkl, const Eigen::Matrix3d& cov)
-{
-    _shapes[hkl].push_back(cov);
+void ShapeLibrary::addShape(const MillerIndex& hkl, const FitProfile& profile)
+{   
+    _shapes[hkl].push_back(profile);
+    _shapes[hkl].back().normalize();
 }
 
-void ShapeLibrary::setDefaultShape(const Eigen::Matrix3d& cov)
+void ShapeLibrary::setDefaultShape(const FitProfile& profile)
 {
-    _defaultShape = cov;
+    _defaultShape = profile;
 }
 
-Eigen::Matrix3d ShapeLibrary::predict(const MillerIndex& hkl, int dhkl) const
+FitProfile ShapeLibrary::predict(const MillerIndex& hkl, int dhkl) const
 {
-    Eigen::Matrix3d shape;
-    shape.setZero();
-    unsigned int num_neighbors = 0;
+    FitProfile mean_shape;
+    bool found = false;
 
     // if found, don't need to find neighbors
     if (_shapes.find(hkl) != _shapes.end()) {
@@ -50,61 +49,48 @@ Eigen::Matrix3d ShapeLibrary::predict(const MillerIndex& hkl, int dhkl) const
                 if (it == _shapes.end()) {
                     continue;
                 }
+                found = true;
                 const auto& entry = it->second;
-                Eigen::Matrix3d shape_hkl;
-                shape_hkl.setZero();
 
                 for (const auto& shape: entry) {
-                    shape_hkl += shape;
+                    mean_shape += shape;
                 }
-                shape += shape_hkl / entry.size();
-                ++num_neighbors;
             }
         }
     }
-    if (num_neighbors == 0) {
+    if (!found) {
         return _defaultShape;
     }
-    return shape / num_neighbors;
+    mean_shape.normalize();
+    return mean_shape;
 }
 
 bool ShapeLibrary::addPeak(sptrPeak3D peak)
 {
-    Ellipsoid q_shape;
+    auto profile = peak->profile();
     auto uc = peak->activeUnitCell();
-    auto data = peak->data();
 
-    if (!uc || !data) {
-        return false;
-    }   
-
-    try {
-        q_shape = peak->qShape();        
-    } catch(...) {
+    if (!uc || !profile) {
         return false;
     }
 
     MillerIndex hkl(peak->q(), *uc);
-    addShape(hkl, q_shape.inverseMetric());
+    addShape(hkl, *profile);
 
     return true;
 }
 
-Eigen::Matrix3d ShapeLibrary::meanShape() const
+FitProfile ShapeLibrary::meanShape() const
 {
-    Eigen::Matrix3d mean;
-    mean.setZero();
-    
+    FitProfile mean;
+   
     for (const auto& entry: _shapes) {
-        Eigen::Matrix3d mean_hkl;
-        mean_hkl.setZero();
-
         for (const auto& shape: entry.second) {
-            mean_hkl += shape;
+            mean += shape;
         }
-        mean += mean_hkl / entry.second.size();
     }
-    return mean / _shapes.size();
+    mean.normalize();
+    return mean;
 }
 
 } // end namespace nsx

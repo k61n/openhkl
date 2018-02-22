@@ -1,7 +1,7 @@
+#include "Ellipsoid.h"
 #include "FitProfile.h"
 
 namespace nsx {
-
 
 FitProfile::FitProfile(const AABB& aabb, int nx, int ny, int nz):
     _aabb(aabb), _shape(nx, ny, nz), _count(0), _profile(nx*ny*nz, 0.0),
@@ -126,6 +126,67 @@ void FitProfile::normalize()
     for (auto& value: _profile) {
         value /= sum;
     }
+}
+
+FitProfile& FitProfile::operator+=(const FitProfile& other)
+{
+    // special case: current profile is empty
+    if (_profile.empty()) {
+        *this = other;
+        return *this;
+    }
+
+    if (_shape != other._shape) {
+        throw std::runtime_error("FitProfile: cannot add profiles of different dimensions");
+    }
+    
+    double dx = _aabb.extents().squaredNorm();
+    auto dlb = _aabb.lower() - other._aabb.lower();
+    auto dub = _aabb.upper() - other._aabb.upper();
+
+    if (dlb.squaredNorm() > 1e-6*dx || dub.squaredNorm() > 1e-6*dx) {
+        throw std::runtime_error("FitProfile: cannot add profiles with different bounding boxes");
+    }
+
+    assert(_profile.size() == other._profile.size());
+
+    for (size_t i = 0; i < _profile.size(); ++i) {
+        _profile[i] += other._profile[i];
+    }
+
+    return *this;
+}
+
+Ellipsoid FitProfile::ellipsoid() const
+{
+    const Eigen::Vector3d lower = _dx / 2.0 + _aabb.lower();
+    double mass = 0;
+    Eigen::Matrix3d cov;
+    Eigen::Vector3d com;
+
+    for (int i = 0; i < _shape[0]; ++i) {
+        for (int j = 0; j < _shape[1]; ++j) {
+            for (int k = 0; k < _shape[2]; ++k) {
+                const int idx = i+_shape[0]*(j+_shape[1]*k);
+                Eigen::Vector3d x = lower;
+                x(0) += i*_dx(0);
+                x(1) += j*_dx(1);
+                x(2) += k*_dx(2);
+
+                const double dm = _profile[idx];
+
+                com += dm*x;
+                cov += dm*x*x.transpose();
+                mass += dm;
+            }
+        }
+    }
+
+    com /= mass;
+    cov /= mass;
+    cov -= com * com.transpose();
+
+    return Ellipsoid(com, cov.inverse());
 }
 
 } // end namespace nsx

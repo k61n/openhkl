@@ -32,13 +32,13 @@
 
 #include <Eigen/Dense>
 
-#include "IPeakIntegrator.h"
+#include "MeanBackgroundIntegrator.h"
 
 namespace nsx {
 
 class DataSet;
 
-class StrongPeakIntegrator: public IPeakIntegrator {
+class StrongPeakIntegrator: public MeanBackgroundIntegrator {
 public:
     StrongPeakIntegrator();
     bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;

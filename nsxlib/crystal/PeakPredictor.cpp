@@ -88,8 +88,9 @@ PeakList PeakPredictor::predict(sptrDataSet data) const
 
         // now we must add it, calculating shape from nearest peaks
         try {
-            Eigen::Matrix3d q_cov = _library.predict(hkl, _dhkl);
-            Ellipsoid q_shape(q.rowVector(), q_cov.inverse());
+            FitProfile profile = _library.predict(hkl, _dhkl);
+            Ellipsoid profile_shape = profile.ellipsoid();
+            Ellipsoid q_shape(q.rowVector(), profile_shape.metric());
             Ellipsoid shape(p->getShape().center(), q_shape.toDetectorSpace(data).metric());
             p->setShape(shape);           
         } catch (...) {

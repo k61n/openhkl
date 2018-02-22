@@ -32,6 +32,11 @@ public:
 
     void normalize();
 
+    FitProfile& operator+=(const FitProfile& other);
+
+    //! Compute the ellipsoid corresponding to the center of mass and inertia tensor.
+    Ellipsoid ellipsoid() const;
+
 private:
     AABB _aabb;
     Eigen::Vector3d _dx;

@@ -36,6 +36,8 @@ using sptrEllipsoid = std::shared_ptr<Ellipsoid>;
 
 using sptrFitProfile = std::shared_ptr<FitProfile>;
 
+using sptrShapeLibrary = std::shared_ptr<ShapeLibrary>;
+
 using TrianglesList = std::vector<Triangle>;
 
 using EquivalencePair = std::pair<int,int>;

@@ -122,7 +122,7 @@ void DialogRefineUnitCell::refineParameters()
         }  else {
             nsx::info() << "Successfully refined parameters for numor " << d->filename();
             int updated = r.updatePredictions(d_peaks);
-            nsx::info() << "done; updated " << updated << " peak";
+            nsx::info() << "done; updated " << updated << " peaks";
 
             nsx::PeakList peak_list;
 

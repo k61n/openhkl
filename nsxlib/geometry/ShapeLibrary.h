@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 
+#include "FitProfile.h"
 #include "MillerIndex.h"
 
 namespace nsx {
@@ -20,25 +21,25 @@ public:
 
     //! Add a shape to the library. Note that if an entry exists, this
     //! Method _adds_ the shape to the existing list, and does _not_ replace it.
-    void addShape(const MillerIndex& hkl, const Eigen::Matrix3d& cov);
+    void addShape(const MillerIndex& hkl, const FitProfile& profile);
 
     //! Add the shape of the given peak. May return false if the peak's q-shape cannot be computed.
     bool addPeak(sptrPeak3D peak);
 
     //! Set the default shape
-    void setDefaultShape(const Eigen::Matrix3d& cov);
+    void setDefaultShape(const FitProfile& profile);
 
     //! Predict the shape for a given hkl. If an entry for the specified hkl exists, we simply retrieve it.
     //! If not, then take the average shape of peaks with Miller indices in the range hkl +- dhkl. 
     //! If no neighbors can be found, the default shape is used.
-    Eigen::Matrix3d predict(const MillerIndex& hkl, int dhkl) const;
+    FitProfile predict(const MillerIndex& hkl, int dhkl) const;
 
     //! Return the average of all shapes
-    Eigen::Matrix3d meanShape() const;
+    FitProfile meanShape() const;
 
 private:
-    std::map<MillerIndex, std::vector<Eigen::Matrix3d>> _shapes;
-    Eigen::Matrix3d _defaultShape;
+    std::map<MillerIndex, std::vector<FitProfile>> _shapes;
+    FitProfile _defaultShape;
 };
 
 } // end namespace nsx

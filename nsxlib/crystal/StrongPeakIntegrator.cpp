@@ -31,56 +31,36 @@
 #include "DataSet.h"
 #include "Ellipsoid.h"
 #include "Intensity.h"
+#include "MeanBackgroundIntegrator.h"
 #include "StrongPeakIntegrator.h"
 
 namespace nsx {
 
-StrongPeakIntegrator::StrongPeakIntegrator(): IPeakIntegrator()
+StrongPeakIntegrator::StrongPeakIntegrator(): MeanBackgroundIntegrator()
 {
 
 }
 
 bool StrongPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 {
-    double sum_bkg = 0.0;
-    double sum_bkg2 = 0.0;
-    double sum_peak = 0.0;
+    MeanBackgroundIntegrator::compute(peak, region);
 
     const auto& peakEvents = region.peakData().events();
     const auto& peakCounts = region.peakData().counts();
-    const auto& bkgEvents = region.bkgData().events();
-    const auto& bkgCounts = region.bkgData().counts();
 
-    // TODO: should this be hard-coded??
-    if (peakEvents.size() < 5) {
-        throw std::runtime_error("StrongPeakIntegrator::compute(): too few data points in peak");
-    }
-
-    // TODO: should this be hard-coded??
-    if (bkgEvents.size() < 5) {
-        throw std::runtime_error("StrongPeakIntegrator::compute(): too few data points in background");
-    }
-
-    // compute mean background and error
-    for (auto count: bkgCounts) {
-        sum_bkg += count;
-        sum_bkg2 += count*count;
-    }
-
-    const double Nbkg = bkgCounts.size();
-    const double mean_bkg = sum_bkg / Nbkg;
-    const double var_bkg = (sum_bkg2 - Nbkg*mean_bkg) / (Nbkg-1);
-
-    _meanBackground = Intensity(mean_bkg, var_bkg);
+    double sum_peak = 0.0;
+    const double npeak = peakCounts.size();
+    const double mean_bkg = _meanBackground.value();
 
     // compute total peak intensity
     for (auto count: peakCounts) {
         sum_peak += count;
     }
-    sum_peak -= peakCounts.size()*mean_bkg;
+    sum_peak -= npeak*mean_bkg;
 
     // TODO: ERROR ESTIMATE!!
-    _integratedIntensity = Intensity(sum_peak, sum_peak);
+    // This INCORRECTLY assumes Poisson statistics (no gain or baseline)
+    _integratedIntensity = Intensity(sum_peak, sum_peak + npeak*npeak*mean_bkg);
 
     // compute rocking curve
     double f_min = int(peakEvents[0]._frame);
