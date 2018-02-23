@@ -138,9 +138,9 @@ int Refiner::updatePredictions(PeakList& peaks) const
     PeakFilter peak_filter;
     PeakList filtered_peaks;
     filtered_peaks = peak_filter.selected(peaks,true);
-    filtered_peaks = peak_filter.predicted(filtered_peaks,true);
+    filtered_peaks = peak_filter.predicted(filtered_peaks);
     filtered_peaks = peak_filter.unitCell(filtered_peaks,_cell);
-    filtered_peaks = peak_filter.indexed(filtered_peaks,_cell,_cell->indexingTolerance(),true);
+    filtered_peaks = peak_filter.indexed(filtered_peaks,_cell,_cell->indexingTolerance());
 
     PeakList pred_peaks;
     int updated = 0;

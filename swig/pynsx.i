@@ -33,6 +33,7 @@
 %shared_ptr(nsx::Material)
 %shared_ptr(nsx::Diffractometer)
 %shared_ptr(nsx::ConvolutionKernel)
+%shared_ptr(nsx::ConstantKernel)
 %shared_ptr(nsx::DeltaKernel)
 %shared_ptr(nsx::AnnularKernel)
 %shared_ptr(nsx::Convolver)
@@ -123,6 +124,7 @@ using Eigen::Quaterniond;
 #include "RFactor.h"
 #include "CC.h"
 #include "Peak3D.h"
+#include "PeakFilter.h"
 
 #include "PeakRecord.h"
 
@@ -183,6 +185,12 @@ using Eigen::Quaterniond;
 #include "CylindricalDetector.h"
 #include "Gonio.h"
 
+#include "ConvolutionKernel.h"
+#include "DeltaKernel.h"
+#include "AnnularKernel.h"
+#include "ConstantKernel.h"
+#include "KernelFactory.h"
+
 #include "Axis.h"
 #include "Experiment.h"
 
@@ -191,12 +199,7 @@ using Eigen::Quaterniond;
 #include "RotAxis.h"
 #include "PhysicalUnit.h"
 #include "ConstantKernel.h"
-#include "KernelFactory.h"
 #include "Convolver.h"
-
-#include "DeltaKernel.h"
-#include "AnnularKernel.h"
-#include "ConvolutionKernel.h"
 
 #include "Composite.h"
 
@@ -248,6 +251,12 @@ using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 
 #include "Singleton.h"
 
+#include "ConvolutionKernel.h"
+#include "KernelFactory.h"
+#include "DeltaKernel.h"
+#include "AnnularKernel.h"
+#include "ConstantKernel.h"
+
 #include "MetaData.h"
 #include "IDataReader.h"
 #include "DataReaderFactory.h"
@@ -275,6 +284,7 @@ using namespace nsx;
 
 %include <typemaps.i>
 %include <std_vector.i>
+%include <std_map.i>
 
 // eigen.i is found in ../swig/ and contains specific definitions to convert
 // Eigen matrices into Numpy arrays.
@@ -357,6 +367,7 @@ using namespace nsx;
 
 namespace nsx {
    class DataReaderFactory; 
+   class KernelFactory; 
    struct tVector;
 }
 
@@ -368,9 +379,15 @@ namespace nsx {
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
 %template(PeakShell) std::vector<std::vector<std::shared_ptr<nsx::Peak3D>>>;
 
-%include "ConstantKernel.h"
-%include "KernelFactory.h"
+%include "PeakFilter.h"
+
+%include "ImagingTypes.h"
 %include "ConvolutionKernel.h"
+
+%template(mapConvolutionKernelParameters) std::map<std::string,double>;
+
+%include "KernelFactory.h"
+%include "ConstantKernel.h"
 %include "DeltaKernel.h"
 %include "AnnularKernel.h"
 %include "Convolver.h"
@@ -428,6 +445,7 @@ namespace nsx {
 %include "PeakIntegrator.h"
 %include "UnitCell.h"
 %include "ResolutionShell.h"
+
 %include "RFactor.h"
 %include "CC.h"
 %include "CC.h"
@@ -468,6 +486,13 @@ namespace nsx {
 %include "TiffDataReader.h"
 %include "BloscFilter.h"
 %include "DataReaderFactory.h"
+
+%include "ConvolutionKernel.h"
+%include "ConstantKernel.h"
+%include "DeltaKernel.h"
+%include "AnnularKernel.h"
+%include "Convolver.h"
+%include "KernelFactory.h"
 
 %include "Detector.h"
 %include "DetectorFactory.h"

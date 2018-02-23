@@ -61,7 +61,7 @@ SpaceGroupDialog::SpaceGroupDialog(const nsx::PeakList& peaks, QWidget *parent):
         }
     }
 
-    _peaks = peak_filter.indexed(_peaks, _cell, _cell->indexingTolerance(),true);
+    _peaks = peak_filter.indexed(_peaks, _cell, _cell->indexingTolerance());
 
     if ( _peaks.size()  == 0) {
         nsx::error() << "Need at least one peak to find space group!";

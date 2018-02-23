@@ -381,14 +381,12 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
         nsx::PeakList selected_peaks;
         selected_peaks = peak_filter.selected(peaks(numor.get()),true);
 
-        nsx::PeakList bad_peaks;
-        bad_peaks = peak_filter.dRange(selected_peaks,dmin,dmax,false);
-        n_bad_peaks += bad_peaks.size();
-
-        nsx::PeakList good_peaks;
-        good_peaks = peak_filter.selectedPeaks(selected_peaks,bad_peaks,false);
-
+        auto good_peaks = peak_filter.dMin(selected_peaks,dmin);
+        good_peaks = peak_filter.dMax(good_peaks,dmax);
         n_good_peaks += good_peaks.size();
+
+        auto bad_peaks = peak_filter.complementary(selected_peaks,good_peaks);
+        n_bad_peaks += bad_peaks.size();
 
         for (auto peak : good_peaks) {
             double d = 1.0 / peak->getQ().rowVector().norm();
@@ -459,7 +457,7 @@ bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& pea
     nsx::PeakFilter peak_filter;
     nsx::PeakList filtered_peaks;
     filtered_peaks = peak_filter.selected(peaks,true);
-    filtered_peaks = peak_filter.hasUnitCell(filtered_peaks,true);
+    filtered_peaks = peak_filter.hasUnitCell(filtered_peaks);
 
     if (filtered_peaks.empty()) {
         return false;
@@ -468,7 +466,7 @@ bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& pea
     auto cell = filtered_peaks[0]->activeUnitCell();
 
     filtered_peaks = peak_filter.unitCell(filtered_peaks,cell);
-    filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance(),true);
+    filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance());
 
     for (auto peak : filtered_peaks) {
 
@@ -513,7 +511,7 @@ bool SessionModel::writeStatistics(std::string filename,
     nsx::PeakFilter peak_filter;
     nsx::PeakList filtered_peaks;
     filtered_peaks = peak_filter.selected(peaks,true);
-    filtered_peaks = peak_filter.hasUnitCell(filtered_peaks,true);
+    filtered_peaks = peak_filter.hasUnitCell(filtered_peaks);
 
     if (filtered_peaks.empty()) {
         return false;
@@ -522,7 +520,7 @@ bool SessionModel::writeStatistics(std::string filename,
     auto cell = filtered_peaks[0]->activeUnitCell();
 
     filtered_peaks = peak_filter.unitCell(filtered_peaks,cell);
-    filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance(),true);
+    filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance());
 
     auto grp = nsx::SpaceGroup(cell->spaceGroup());
 
@@ -533,26 +531,26 @@ bool SessionModel::writeStatistics(std::string filename,
         res.addPeak(peak);
     }
 
-    auto&& ds = res.getD();
-    auto&& shells = res.getShells();
+    auto&& d_shells = res.shells();
 
     std::vector<nsx::PeakList> all_equivs;
 
     file << "          dmax       dmin       nobs redundancy     r_meas    r_merge      r_pim    CChalf    CC*" << std::endl;
 
     // note: we print the shells in reverse order
-    for (int i = num_shells-1; i >= 0; --i) {
-        const double d_lower = ds[i];
-        const double d_upper = ds[i+1];
+    for (auto d_shell : d_shells) {
+        const double d_lower = d_shell.dmin;
+        const double d_upper = d_shell.dmax;
+        auto& peaks = d_shell.peaks;
 
         nsx::MergedData merged_shell(grp, friedel);
 
-        auto peak_equivs = grp.findEquivalences(shells[i], friedel);
+        auto peak_equivs = grp.findEquivalences(peaks, friedel);
         
         for (auto&& equiv : peak_equivs)
             all_equivs.push_back(equiv);
 
-        double redundancy = double(shells[i].size()) / double(peak_equivs.size());
+        double redundancy = double(peaks.size()) / double(peak_equivs.size());
 
         for (auto equiv: peak_equivs) {
 
@@ -569,12 +567,12 @@ bool SessionModel::writeStatistics(std::string filename,
 
         std::snprintf(&buf[0], buf.size(),
                 "    %10.2f %10.2f %10d %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f",
-                d_upper, d_lower, int(shells[i].size()), redundancy,
+                d_upper, d_lower, int(peaks.size()), redundancy,
                 rfactor.Rmeas(), rfactor.Rmerge(), rfactor.Rpim(), cc.CChalf(), cc.CCstar());
 
         file << &buf[0] << std::endl;
 
-        nsx::debug() << "Finished logging shell " << i+1;
+        nsx::debug() << "Finished logging shell [" << d_lower << "," << d_upper << "]";
     }
 
     file << "--------------------------------------------------------------------------------" << std::endl;

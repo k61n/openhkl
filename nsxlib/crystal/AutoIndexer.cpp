@@ -198,7 +198,7 @@ void AutoIndexer::refineSolutions()
         PeakFilter peak_filter;
         PeakList filtered_peaks;
         filtered_peaks = peak_filter.selected(_peaks,true);
-        filtered_peaks = peak_filter.indexed(filtered_peaks, cell, cell->indexingTolerance(),true);
+        filtered_peaks = peak_filter.indexed(filtered_peaks, cell, cell->indexingTolerance());
 
         int success = filtered_peaks.size();
         for (auto peak: filtered_peaks) {
@@ -263,7 +263,7 @@ void AutoIndexer::refineSolutions()
         // Define the final score of this solution by computing the percentage of the selected peaks which have been successfully indexed
 
         PeakList refiltered_peaks;
-        refiltered_peaks = peak_filter.indexed(filtered_peaks, cell, cell->indexingTolerance(),true);
+        refiltered_peaks = peak_filter.indexed(filtered_peaks, cell, cell->indexingTolerance());
 
         double score = static_cast<double>(refiltered_peaks.size());
         double maxscore = static_cast<double>(filtered_peaks.size());
