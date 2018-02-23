@@ -194,7 +194,7 @@ void DialogConvolve::updatePreview()
 
     // apply threshold in preview
     if (ui->applyThreshold->isChecked()) {
-        double avgData = std::ceil(convolved_frame.sum() / double(nrows*ncols));
+        double avgData = std::ceil(frame.sum() / double(nrows*ncols));
         double threshold = _peakFinder->getThresholdValue();
         bool relativeThreshold = _peakFinder->getThresholdType() == 0;
         threshold = relativeThreshold ? threshold*avgData : threshold;
