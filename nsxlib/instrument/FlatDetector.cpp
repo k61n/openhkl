@@ -133,4 +133,25 @@ DetectorEvent FlatDetector::constructEvent(const DirectVector& from, const Recip
      
     return {px, py, 0.0, tof};
 }
+
+Eigen::Matrix3d FlatDetector::jacobian(double px, double py) const
+{
+    Eigen::Matrix3d J;
+    J.setZero();
+
+    if (_nCols==0 || _nRows==0)
+        throw std::runtime_error("Detector: number of rows or cols must >0");
+
+    if (_height==0 || _width==0)
+        throw std::runtime_error("Detector: width or height must be >0");
+
+    if (_distance==0)
+        throw std::runtime_error("Detector: distance must be >0");
+
+    J(0,0) = _width / _nCols;
+    J(2,1) = _height / _nRows;
+
+    return J;
+}
+
 } // end namespace nsx

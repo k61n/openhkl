@@ -32,9 +32,9 @@ bool MeanBackgroundIntegrator::compute(sptrPeak3D peak, const IntegrationRegion&
 
     const double Nbkg = bkgCounts.size();
     const double mean_bkg = sum_bkg / Nbkg;
-    const double var_bkg = (sum_bkg2 - Nbkg*mean_bkg) / (Nbkg-1);
+    const double var_bkg = (sum_bkg2 - Nbkg*mean_bkg*mean_bkg) / (Nbkg-1);
 
-    _meanBackground = Intensity(mean_bkg, var_bkg / Nbkg);
+    _meanBackground = Intensity(mean_bkg, var_bkg);
 
     return true;
 }

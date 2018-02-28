@@ -28,7 +28,7 @@ bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
         throw std::runtime_error("ShapeIntegrator: Peak must have unit cell and data attached");        
     }
 
-    MillerIndex hkl(peak, *uc);
+    MillerIndex hkl(peak->qPredicted(), *uc);
 
     StrongPeakIntegrator::compute(peak, region);
 
@@ -42,12 +42,12 @@ bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 
     for (size_t i = 0; i < qs.size(); ++i) {
         const double dI = counts[i]-mean_bkg;
-        if (dI > 1e-3*I_peak) {
-            profile.addData(qs[i], dI);
+        if (dI > 1e-4*I_peak) {
+            profile.addValue(qs[i].rowVector(), dI);
         }
     }
     profile.normalize();
-    library->addShape(hkl, profile);
+    _library->addShape(hkl, profile);
     return true;
 }
 

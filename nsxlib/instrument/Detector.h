@@ -118,6 +118,11 @@ public:
     //!
     DataOrder getDataOrder() const {return _dataorder;}
 
+    //! Return the Jacobian matrix of the transformation (px,py) -> (x,y,z) from pixel coordinates to lab coordinates.
+    //! The first and second columns are the derivatives of (x,y,z) with respect to px and py.
+    //! The third column is identically zero and is kept only for convenience.
+    virtual Eigen::Matrix3d jacobian(double x, double y) const = 0;
+
 private:
     DataOrder _dataorder;
 };

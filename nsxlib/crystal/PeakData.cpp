@@ -13,9 +13,11 @@ namespace nsx {
 
 PeakData::PeakData(sptrPeak3D peak): 
     _peak(peak),
+    _frame(peak),
     _events(), 
     _counts(), 
-    _qs()
+    _qs(),
+    _coords()
 {
 
 }
@@ -30,7 +32,7 @@ const std::deque<double>& PeakData::counts() const
     return _counts;
 }
     
-const std::deque<ReciprocalVector> PeakData::qs() const
+const std::deque<ReciprocalVector>& PeakData::qs() const
 {
     return _qs;
 }
@@ -52,6 +54,19 @@ void PeakData::computeQs()
     }
 }
 
+void PeakData::computeStandard()
+{
+    if (_peak == nullptr) {
+        throw std::runtime_error("PeakData::computeStandard() cannot be called if _peak is nullptr");
+    }
+
+    _coords.resize(_events.size());
+
+    for (size_t i = 0; i < _events.size(); ++i) {
+        _coords[i] = _frame.transform(_events[i]);
+    }
+}
+
 void PeakData::addEvent(const DetectorEvent& ev, double count)
 {
     _events.push_back(ev);
@@ -63,10 +78,12 @@ void PeakData::reset()
     std::deque<DetectorEvent> e;
     std::deque<double> c;
     std::deque<ReciprocalVector> q;
+    std::deque<Eigen::Vector3d> crds;
 
     std::swap(_events, e);
     std::swap(_counts, c);
     std::swap(_qs, q);
+    std::swap(_coords, crds);
 }
 
 } // end namespace nsx

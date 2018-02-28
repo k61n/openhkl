@@ -41,6 +41,7 @@ class DataSet;
 class StrongPeakIntegrator: public MeanBackgroundIntegrator {
 public:
     StrongPeakIntegrator();
+    ~StrongPeakIntegrator();
     bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
 };
 

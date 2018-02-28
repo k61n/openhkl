@@ -151,5 +151,35 @@ DetectorEvent CylindricalDetector::constructEvent(const DirectVector& from, cons
     return {px, py, 0.0, tof};
 }
 
+Eigen::Matrix3d CylindricalDetector::jacobian(double px, double py) const
+{
+    Eigen::Matrix3d J;
+    J.setZero();
+ 
+    if (_nCols==0 || _nRows==0)
+        throw std::runtime_error("Detector: number of rows or cols must >0");
+
+    if (_height==0 || _width==0)
+        throw std::runtime_error("Detector: width or height must be >0");
+
+    if (_distance==0)
+        throw std::runtime_error("Detector: distance must be >0");
+
+    // The coordinates are defined relative to the detector origin
+    double x = px-_minCol;
+    double y = py-_minRow;
+    double gamma = (x/(_nCols-1.0)-0.5)*_angularWidth;
+    double dgamma = 1.0/(_nCols-1.0)*_angularWidth;
+
+    // derivative with respect to px
+    J(0,0) = _distance*cos(gamma)*dgamma;
+    J(1,0) = -_distance*sin(gamma)*dgamma;
+
+    // derivative with resepct to py
+    J(2,1) = 1.0/(_nRows-1.0)*_height;
+
+    return J;
+}
+
 } // end namespace nsx
 

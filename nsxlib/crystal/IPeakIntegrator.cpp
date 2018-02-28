@@ -113,8 +113,10 @@ void IPeakIntegrator::integrate(PeakList& peaks, sptrDataSet data, double peak_e
 
             // done reading peak data
             if (result && !integrated[peak]) {
-                regions[peak].peakData().computeQs();              
+                regions[peak].peakData().computeQs();         
+                regions[peak].peakData().computeStandard();              
                 regions[peak].bkgData().computeQs();              
+                regions[peak].bkgData().computeStandard();              
                 try {
                     if (compute(peak, regions[peak])) {
                         peak->updateIntegration(*this);

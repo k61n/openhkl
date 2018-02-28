@@ -41,6 +41,7 @@
 #include "GeometryTypes.h"
 #include "IMask.h"
 #include "ImagingTypes.h"
+#include "InterpolatedState.h"
 #include "IPeakIntegrator.h"
 #include "InstrumentTypes.h"
 #include "UtilsTypes.h"
@@ -96,7 +97,7 @@ public:
     const InstrumentStateList& instrumentStates() const;
 
     //! Get the interpolated state of a given component
-    InstrumentState interpolatedState(double frame) const;
+    InterpolatedState interpolatedState(double frame) const;
     //ComponentState getInterpolatedState(std::shared_ptr<Component> component, double frame) const;
 
     //! Add a new mask to the data

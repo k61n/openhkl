@@ -43,7 +43,8 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrPeak3D peak)
 
     if (filter._removeIsigma) {
         nsx::Intensity i = peak->correctedIntensity();
-        if (i.value() / i.sigma() < filter._Isigma) {
+        // note: we use negated condition so that nan/inf automatically get rejected
+        if (!(i.value() > filter._Isigma * i.sigma())) {
             return true;
         }
     }

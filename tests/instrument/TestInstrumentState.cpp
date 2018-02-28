@@ -81,8 +81,8 @@ int nsx::UnitTest_DataSet::run()
         auto st0 = dataf->instrumentStates()[lframe];
         auto st1 = dataf->instrumentStates()[lframe+1];
 
-        const Eigen::Vector3d axis = st0.rotationAxis(st1);
-        const double dt = st0.stepSize(st1);
+        const Eigen::Vector3d axis = state.axis;
+        const double dt = state.stepSize;
 
         NSX_CHECK_ASSERT(std::fabs(axis(0)) < 1e-10);
         NSX_CHECK_ASSERT(std::fabs(axis(1)) < 1e-10);

@@ -156,6 +156,8 @@ using Eigen::Quaterniond;
 #include "DirectVector.h"
 #include "ReciprocalVector.h"
 
+#include "DetectorEvent.h"
+
 #include "XDS.h"
 #include "DataSet.h"
 #include "FitProfile.h"
@@ -353,6 +355,7 @@ using namespace nsx;
 %template(indexer_solutions) std::vector<std::pair<std::shared_ptr<nsx::UnitCell>,double>>;
 
 %include "Detector.h"
+%include "DetectorEvent.h"
 %include "MonoDetector.h"
 %include "CylindricalDetector.h"
 %include "FlatDetector.h"

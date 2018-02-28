@@ -121,6 +121,9 @@ void DialogRefineUnitCell::refineParameters()
             nsx::info() << "Failed to refine parameters for numor " << d->filename();
         }  else {
             nsx::info() << "Successfully refined parameters for numor " << d->filename();
+
+            // TODO: decide how to handle this situation....
+            #if 0
             int updated = r.updatePredictions(d_peaks);
             nsx::info() << "done; updated " << updated << " peaks";
 
@@ -129,6 +132,7 @@ void DialogRefineUnitCell::refineParameters()
             for (auto&& p: d_peaks) {
                 peak_list.push_back(p);
             }
+            #endif
         }
     }
 }

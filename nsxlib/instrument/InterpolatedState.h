@@ -28,53 +28,24 @@
 
 #include "ComponentState.h"
 #include "DirectVector.h"
+#include "InstrumentState.h"
 #include "ReciprocalVector.h"
 
 #include <Eigen/Core>
 
 namespace nsx {
 
-struct InstrumentState {
-    InstrumentState();
-    virtual ~InstrumentState() {}
+struct InterpolatedState: public InstrumentState {
+    InterpolatedState() = default;
+    InterpolatedState(const InstrumentState& s1, const InstrumentState& s2, double t);
 
-    Eigen::Matrix3d detectorOrientation;
-
-    // compute the sample orientation from fixed orientation and offset
-    Eigen::Matrix3d sampleOrientation() const;
-
-    // fixed orientation (e.g. read from data)
-    //Eigen::Matrix3d fixedSampleOrientation;
-    // offset to orientation
-    //Eigen::Vector3d sampleOrientationOffset;
-    Eigen::Quaterniond qSampleOrientation;
-
-    Eigen::Vector3d samplePosition;
-    Eigen::Vector3d detectorOffset;
-
-    Eigen::RowVector3d ni;
-    double wavelength;
+    Eigen::Quaterniond transformation;
+    Eigen::Vector3d axis;
+    double stepSize;
 
     #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     #endif
-
-    //! Takes a direct vector in detector coordinates and computes kf in lab coordinates
-    ReciprocalVector kfLab(const DirectVector& detector_position) const;
-
-    //! Return source ki
-    ReciprocalVector ki() const;
-
-    //! Takes direct vector in detector coordinates and computes q in sample coordinates
-    ReciprocalVector sampleQ(const DirectVector& detector_position) const;
-
-    double gamma(const DirectVector& detector_position) const;
-
-    double nu(const DirectVector& detector_position) const;
-
-    double lorentzFactor(const DirectVector& detector_position) const;
-
-    double twoTheta(const DirectVector& detector_position) const;
 };
 
 } // end namespace nsx

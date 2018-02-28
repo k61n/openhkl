@@ -73,6 +73,8 @@ public:
 	//! Determine whether detector at rest can receive a scattering event with direction given by Kf. px and py are detector position if true.
 	virtual DetectorEvent constructEvent(const DirectVector& from, const ReciprocalVector& kf) const override;
 
+	Eigen::Matrix3d jacobian(double x, double y) const override;
+
 };
 
 } // end namespace nsx

@@ -185,7 +185,7 @@ std::size_t DataSet::nRows() const
     return _nrows;
 }
 
-InstrumentState DataSet::interpolatedState(double frame) const
+InterpolatedState DataSet::interpolatedState(double frame) const
 {
     if (frame>(_states.size()-1) || frame<0) {
         throw std::runtime_error("Error when interpolating state: invalid frame value: " + std::to_string(frame));
@@ -198,7 +198,7 @@ InstrumentState DataSet::interpolatedState(double frame) const
     const auto& nextState = _states[next];
     const auto& prevState = _states[idx];
 
-    return prevState.interpolate(nextState, t);
+    return InterpolatedState(prevState, nextState, t);
 }
 
 const std::vector<InstrumentState>& DataSet::instrumentStates() const

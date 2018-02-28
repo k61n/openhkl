@@ -90,6 +90,8 @@ public:
   //! Print
   void printSelf(std::ostream& os) const;
  
+  //! Get covariance matrix of the blob
+  Eigen::Matrix3d covariance() const;
 
 private:
   //! Zeroth moment (total mass)

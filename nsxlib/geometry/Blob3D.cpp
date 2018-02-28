@@ -152,5 +152,13 @@ std::ostream& operator<<(std::ostream& os, const Blob3D& b)
     return os;
 }
 
+Eigen::Matrix3d Blob3D::covariance() const
+{
+    Eigen::Vector3d com = _m1 / _m0;
+    Eigen::Matrix3d cov = _m2 / _m0 - com * com.transpose();
+    return cov;
+
+}
+
 } // end namespace nsx
 
