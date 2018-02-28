@@ -15,15 +15,11 @@ ShapeLibrary::~ShapeLibrary()
 
 }
 
-bool ShapeLibrary::hasShape(const MillerIndex& hkl) const
-{
-    return _shapes.find(hkl) != _shapes.end();
-}
 
-void ShapeLibrary::addShape(const MillerIndex& hkl, const FitProfile& profile)
+void ShapeLibrary::addShape(const DetectorEvent& ev, const FitProfile& profile)
 {   
-    _shapes[hkl].push_back(profile);
-    _shapes[hkl].back().normalize();
+    _shapes.emplace_back(std::make_pair(ev, profile));
+    _shapes.back().second.normalize();
 }
 
 void ShapeLibrary::setDefaultShape(const FitProfile& profile)
@@ -31,53 +27,38 @@ void ShapeLibrary::setDefaultShape(const FitProfile& profile)
     _defaultShape = profile;
 }
 
-FitProfile ShapeLibrary::predict(const MillerIndex& hkl, int dhkl) const
+FitProfile ShapeLibrary::average(const DetectorEvent& ev, double radius, double nframes) const
 {
     FitProfile mean_shape;
     bool found = false;
 
-    // if found, don't need to find neighbors
-    if (_shapes.find(hkl) != _shapes.end()) {
-        dhkl = 0;
-    }
-    // iterate through neighbors, take average
-    for (int h = hkl(0)-dhkl; h <= hkl(0)+dhkl; ++h) {
-        for (int k = hkl(1)-dhkl; k <= hkl(1)+dhkl; ++k) {
-            for (int l = hkl(2)-dhkl; l <= hkl(2)+dhkl; ++l) {
-                auto it = _shapes.find(MillerIndex(h, k, l));
-                // not found, skip to next neighbor
-                if (it == _shapes.end()) {
-                    continue;
-                }
-                found = true;
-                const auto& entry = it->second;
+    // iterate through shapes
+    for (const auto& shape: _shapes) {  
 
-                for (const auto& shape: entry) {
-                    mean_shape += shape;
-                }
-            }
+        const auto& event = shape.first;
+        const auto& profile = shape.second;
+
+        double dx = ev._px - event._px;
+        double dy = ev._py - event._py;
+
+        // too far away on detector
+        if (dx*dx + dy*dy > radius*radius) {
+            continue;
         }
+
+        // frames differ too much
+        if (std::fabs(ev._frame - event._frame) > nframes) {
+            continue;
+        }
+
+        found = true;
+        mean_shape += profile;
     }
     if (!found) {
-        return _defaultShape;
+        throw std::runtime_error("ShapeLibrary::average() could not find shape within the specified conditions");
     }
     mean_shape.normalize();
     return mean_shape;
-}
-
-bool ShapeLibrary::addPeak(sptrPeak3D peak)
-{
-    auto profile = peak->profile();
-    auto uc = peak->activeUnitCell();
-
-    if (!uc || !profile) {
-        return false;
-    }
-
-    MillerIndex hkl(peak->q(), *uc);
-    addShape(hkl, *profile);
-
-    return true;
 }
 
 FitProfile ShapeLibrary::meanShape() const
@@ -85,9 +66,7 @@ FitProfile ShapeLibrary::meanShape() const
     FitProfile mean;
    
     for (const auto& entry: _shapes) {
-        for (const auto& shape: entry.second) {
-            mean += shape;
-        }
+        mean += entry.second;
     }
     mean.normalize();
     return mean;

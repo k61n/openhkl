@@ -351,36 +351,8 @@ void SessionModel::incorporateCalculatedPeaks()
     int current_numor = 0;
     int observed_peaks = 0;
 
-    nsx::ShapeLibrary library;
-
     // TODO: get the crystal from the dialog!!
     auto cell = dialog.cell();
-
-    // TODO: fix this
-    nsx::sptrFitProfile profile = nullptr;
-
-    for (auto numor: numors) {
-        for (auto peak: peaks(numor.get())) {
-            if (!peak->isSelected() || peak->activeUnitCell() != cell) {
-                continue;
-            }
-            library.addPeak(peak);
-
-            // TODO: fix this, we should support more than one profile. Or get it from the lattice, etc.
-            if (profile == nullptr) {
-                profile = peak->profile();
-            }
-            if (profile && profile != peak->profile()) {
-                throw std::runtime_error("incorporateCalculatedPeaks(): only one peak profile is supported at the moment!");
-            }            
-        }
-    }
-
-    library.setDefaultShape(library.meanShape());
-
-    int dhkl = std::lround(std::pow(dialog.minimumNeighbors()/8.0, 1.0/3.0));
-
-    nsx::info() << "setting dhkl = " << dhkl;
 
     for(auto numor: numors) {
         nsx::debug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
@@ -393,7 +365,7 @@ void SessionModel::incorporateCalculatedPeaks()
             }
         }
 
-        auto predictor = nsx::PeakPredictor(cell, library, dialog.dMin(), dialog.dMax(), dhkl);
+        auto predictor = nsx::PeakPredictor(cell, dialog.dMin(), dialog.dMax(), dialog.sigmaD(), dialog.sigmaM());
         auto predicted = predictor.predict(numor);
         // todo: bkg_begin and bkg_end
         //nsx::info() << "Integrating predicted peaks...";
@@ -407,7 +379,6 @@ void SessionModel::incorporateCalculatedPeaks()
 
         nsx::info() << "Adding new peaks...";
         for (auto peak: predicted) {
-            peak->setProfile(profile);
             addPeak(peak);
         }
     }
@@ -757,4 +728,9 @@ void SessionModel::removePeak(nsx::sptrPeak3D peak)
     if (it != _peaks.end()) {
         _peaks.erase(it);
     }
+}
+
+nsx::sptrShapeLibrary SessionModel::library() const
+{
+    return _library;
 }

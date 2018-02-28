@@ -4,6 +4,7 @@
 #include "MillerIndex.h"
 #include "Peak3D.h"
 #include "ShapeIntegrator.h"
+#include "StandardFrame.h"
 
 namespace nsx {
 
@@ -28,27 +29,34 @@ bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
         throw std::runtime_error("ShapeIntegrator: Peak must have unit cell and data attached");        
     }
 
-    MillerIndex hkl(peak->qPredicted(), *uc);
-
     StrongPeakIntegrator::compute(peak, region);
 
     const double mean_bkg = _meanBackground.value();
     const double I_peak = _integratedIntensity.value();
 
-    const auto& qs = region.peakData().qs();
+    const auto& events = region.peakData().events();
     const auto& counts = region.peakData().counts();
 
     FitProfile profile(_aabb, _nx, _ny, _nz);
+    StandardFrame frame(peak);
 
-    for (size_t i = 0; i < qs.size(); ++i) {
+    for (size_t i = 0; i < events.size(); ++i) {
         const double dI = counts[i]-mean_bkg;
         if (dI > 1e-4*I_peak) {
-            profile.addValue(qs[i].rowVector(), dI);
+            profile.addValue(frame.transform(events[i]), dI);
         }
     }
-    profile.normalize();
-    _library->addShape(hkl, profile);
+    if (profile.normalize()) {
+        auto c = peak->getShape().center();
+        DetectorEvent ev(c[0], c[1], c[2]);
+        _library->addShape(ev, profile);
+    }
     return true;
+}
+
+sptrShapeLibrary ShapeIntegrator::library() const
+{
+    return _library;
 }
 
 } // end namespace nsx

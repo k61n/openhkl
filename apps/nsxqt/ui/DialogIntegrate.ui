@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>356</width>
-    <height>185</height>
+    <height>312</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,14 +22,81 @@
      <x>0</x>
      <y>10</y>
      <width>351</width>
-     <height>170</height>
+     <height>256</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
+    <item row="2" column="1">
+     <widget class="QDoubleSpinBox" name="dMin">
+      <property name="decimals">
+       <number>3</number>
+      </property>
+      <property name="maximum">
+       <double>1000.000000000000000</double>
+      </property>
+      <property name="singleStep">
+       <double>0.001000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_5">
+      <property name="text">
+       <string>search radius</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QDoubleSpinBox" name="peakScale">
+      <property name="singleStep">
+       <double>0.010000000000000</double>
+      </property>
+      <property name="value">
+       <double>3.000000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QDoubleSpinBox" name="dMax">
+      <property name="decimals">
+       <number>3</number>
+      </property>
+      <property name="maximum">
+       <double>1000.000000000000000</double>
+      </property>
+      <property name="singleStep">
+       <double>0.001000000000000</double>
+      </property>
+      <property name="value">
+       <double>1000.000000000000000</double>
+      </property>
+     </widget>
+    </item>
     <item row="1" column="0">
      <widget class="QLabel" name="label">
       <property name="text">
        <string>Peak background scale</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QPushButton" name="cancelButton">
+      <property name="text">
+       <string>Cancel</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>minimum d</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Peak shape scale</string>
       </property>
      </widget>
     </item>
@@ -50,60 +117,14 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="1">
-     <widget class="QDoubleSpinBox" name="peakScale">
-      <property name="singleStep">
-       <double>0.010000000000000</double>
-      </property>
-      <property name="value">
-       <double>3.000000000000000</double>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_2">
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_6">
       <property name="text">
-       <string>Peak shape scale</string>
+       <string>number of frames</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="1">
-     <widget class="QDoubleSpinBox" name="dMax">
-      <property name="decimals">
-       <number>3</number>
-      </property>
-      <property name="maximum">
-       <double>1000.000000000000000</double>
-      </property>
-      <property name="singleStep">
-       <double>0.001000000000000</double>
-      </property>
-      <property name="value">
-       <double>1000.000000000000000</double>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>minimum d</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QDoubleSpinBox" name="dMin">
-      <property name="decimals">
-       <number>3</number>
-      </property>
-      <property name="maximum">
-       <double>1000.000000000000000</double>
-      </property>
-      <property name="singleStep">
-       <double>0.001000000000000</double>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
+    <item row="7" column="0">
      <widget class="QPushButton" name="okButton">
       <property name="text">
        <string>Ok</string>
@@ -111,11 +132,10 @@
      </widget>
     </item>
     <item row="4" column="1">
-     <widget class="QPushButton" name="cancelButton">
-      <property name="text">
-       <string>Cancel</string>
-      </property>
-     </widget>
+     <widget class="QDoubleSpinBox" name="radius"/>
+    </item>
+    <item row="5" column="1">
+     <widget class="QDoubleSpinBox" name="nframes"/>
     </item>
    </layout>
   </widget>

@@ -6,6 +6,7 @@
 #include <nsxlib/FitProfile.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFilter.h>
+#include <nsxlib/ShapeIntegrator.h>
 #include <nsxlib/Logger.h>
 
 #include "DialogProfileFit.h"
@@ -79,19 +80,25 @@ void DialogProfileFit::calculate()
     auto nz = ui->nz->value();  
     auto subdivide = ui->subdivide->value();
 
+    auto sigmaM = ui->sigmaM->value();
+    auto sigmaD = ui->sigmaD->value();
+
     // update the frame slider if necessary
     if (ui->frame->maximum() != nz) {
         ui->frame->setMaximum(nz-1);
     }
 
-    // TODO: support I/sigma and d cutoffs
+    Eigen::Vector3d sigma(sigmaD, sigmaD, sigmaM);
+    nsx::AABB aabb(-scale*sigma, scale*sigma);
 
-    // TODO: add progress handler
+    nsx::ShapeIntegrator integrator(aabb, nx, ny, nz);
+    
     nsx::info() << "Fitting profiles...";
-    _profile = data->fitProfile(fit_peaks, scale, scale+1, scale+2, nx, ny, nz, subdivide);
+    integrator.integrate(fit_peaks, data, scale, scale+1, scale+2);
     nsx::info() << "Done fitting profiles";
 
     // update maximum value, used for drawing
+    _profile = integrator.library()->meanShape();
     _maximum = 0;
 
     for (auto i = 0; i < nx; ++i) {

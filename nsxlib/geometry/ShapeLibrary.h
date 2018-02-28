@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 
+#include "DetectorEvent.h"
 #include "FitProfile.h"
 #include "MillerIndex.h"
 
@@ -16,29 +17,22 @@ public:
     ShapeLibrary();
     ~ShapeLibrary();
 
-    //! Return true if there is a shape corresponding to given hkl.
-    bool hasShape(const MillerIndex& hkl) const;
-
-    //! Add a shape to the library. Note that if an entry exists, this
-    //! Method _adds_ the shape to the existing list, and does _not_ replace it.
-    void addShape(const MillerIndex& hkl, const FitProfile& profile);
-
-    //! Add the shape of the given peak. May return false if the peak's q-shape cannot be computed.
-    bool addPeak(sptrPeak3D peak);
+    //! Add a shape to the library.
+    void addShape(const DetectorEvent& ev, const FitProfile& profile);
 
     //! Set the default shape
     void setDefaultShape(const FitProfile& profile);
 
-    //! Predict the shape for a given hkl. If an entry for the specified hkl exists, we simply retrieve it.
-    //! If not, then take the average shape of peaks with Miller indices in the range hkl +- dhkl. 
-    //! If no neighbors can be found, the default shape is used.
-    FitProfile predict(const MillerIndex& hkl, int dhkl) const;
+    //! Get average shapes within the given region of the detector:
+    //! Find entries in library such that the pixel coordinates differ from event by at most
+    //! _radius_ and such that the difference in frame numbers is at most _nframes_.
+    FitProfile average(const DetectorEvent& ev, double radius, double nframes) const;
 
     //! Return the average of all shapes
     FitProfile meanShape() const;
 
 private:
-    std::map<MillerIndex, std::vector<FitProfile>> _shapes;
+    std::vector<std::pair<DetectorEvent, FitProfile>> _shapes;
     FitProfile _defaultShape;
 };
 

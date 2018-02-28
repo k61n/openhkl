@@ -41,3 +41,13 @@ double DialogIntegrate::dMax() const
 {
     return _ui->dMax->value();
 }
+
+double DialogIntegrate::radius() const
+{
+    return _ui->radius->value();
+}
+
+double DialogIntegrate::nframes() const
+{
+    return _ui->nframes->value();
+}

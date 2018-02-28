@@ -16,6 +16,8 @@ public:
     ShapeIntegrator(const AABB& aabb, int nx, int ny, int nz);
     bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
 
+    sptrShapeLibrary library() const;
+
 private:
     sptrShapeLibrary _library;
     AABB _aabb;

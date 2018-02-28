@@ -115,7 +115,7 @@ double FitProfile::predict(const Eigen::Vector3d& x) const
     return _profile[idx[0]+_shape[0]*(idx[1]+_shape[1]*idx[2])];
 }
 
-void FitProfile::normalize()
+bool FitProfile::normalize()
 {
     double sum = 0.0;
 
@@ -123,9 +123,14 @@ void FitProfile::normalize()
         sum += value;
     }
 
+    if (sum == 0.0 || std::isnan(sum)) {
+        return false;
+    }
+
     for (auto& value: _profile) {
         value /= sum;
     }
+    return true;
 }
 
 FitProfile& FitProfile::operator+=(const FitProfile& other)
@@ -153,6 +158,8 @@ FitProfile& FitProfile::operator+=(const FitProfile& other)
     for (size_t i = 0; i < _profile.size(); ++i) {
         _profile[i] += other._profile[i];
     }
+
+    _count += other._count;
 
     return *this;
 }
@@ -187,6 +194,11 @@ Ellipsoid FitProfile::ellipsoid() const
     cov -= com * com.transpose();
 
     return Ellipsoid(com, cov.inverse());
+}
+
+const AABB& FitProfile::aabb() const
+{
+    return _aabb;
 }
 
 } // end namespace nsx

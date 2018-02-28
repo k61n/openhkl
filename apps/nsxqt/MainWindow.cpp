@@ -554,6 +554,11 @@ void MainWindow::on_actionWrite_log_file_triggered()
 void MainWindow::on_actionReintegrate_peaks_triggered()
 {
     // TODO: weak peaks vs. strong peaks??
+    auto library = _session->library();
+
+    if (!library) {
+        throw std::runtime_error("Error: cannot integrate weak peaks without a shape library!");
+    }
 
     nsx::info() << "Reintegrating peaks...";
 
@@ -568,6 +573,8 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
     const double bkg_scale = dialog->backgroundScale();
     const double dmin = dialog->dMin();
     const double dmax = dialog->dMax();
+    const double radius = dialog->radius();
+    const double nframes = dialog->nframes();
 
     nsx::DataList numors = _session->getSelectedNumors();
 
@@ -575,7 +582,7 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
         // todo: bkg_begin and bkg_end
         auto&& peaks = nsx::PeakFilter().dRange(_session->peaks(numor.get()), dmin, dmax, true);
         nsx::info() << "Integrating " << peaks.size() << " peaks";
-        nsx::WeakPeakIntegrator integrator;
+        nsx::WeakPeakIntegrator integrator(library, radius, nframes);
         // todo: progress handler!!
         integrator.integrate(peaks, numor, peak_scale, 0.5*(peak_scale+bkg_scale), bkg_scale); //, _progressHandler);
     }

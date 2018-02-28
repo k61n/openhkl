@@ -73,7 +73,7 @@ int main()
 
     cell->setSpaceGroup(group.symbol());
 
-    nsx::PeakPredictor pred(cell, nsx::ShapeLibrary(), 2.5, 40.0, 0);
+    nsx::PeakPredictor pred(cell, 2.5, 40.0, 0.1, 0.1);
     auto peaks = pred.predict(dataf);  
 
     MergedData data0(group, true), data1(group, true);

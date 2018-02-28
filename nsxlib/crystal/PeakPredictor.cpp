@@ -53,6 +53,7 @@
 #include "Sample.h"
 #include "ShapeLibrary.h"
 #include "SpaceGroup.h"
+#include "StandardFrame.h"
 #include "Source.h"
 #include "UnitCell.h"
 
@@ -60,8 +61,8 @@
 
 namespace nsx {
 
-PeakPredictor::PeakPredictor(sptrUnitCell cell, const ShapeLibrary& library, double dmin, double dmax, int dhkl):
-    _cell(cell), _library(library), _dmin(dmin), _dmax(dmax), _dhkl(dhkl)
+PeakPredictor::PeakPredictor(sptrUnitCell cell, double dmin, double dmax, double sigmaD, double sigmaM):
+    _cell(cell), _dmin(dmin), _dmax(dmax), _sigmaD(sigmaD), _sigmaM(sigmaM)
 {
 }
 
@@ -82,20 +83,6 @@ PeakList PeakPredictor::predict(sptrDataSet data) const
         p->addUnitCell(_cell, true);
         p->setPredicted(true);
         p->setSelected(true);
-      
-        auto q = p->q();
-        MillerIndex hkl(q, *_cell);
-
-        // now we must add it, calculating shape from nearest peaks
-        try {
-            FitProfile profile = _library.predict(hkl, _dhkl);
-            Ellipsoid profile_shape = profile.ellipsoid();
-            Ellipsoid q_shape(q.rowVector(), profile_shape.metric());
-            Ellipsoid shape(p->getShape().center(), q_shape.toDetectorSpace(data).metric());
-            p->setShape(shape);           
-        } catch (...) {
-            continue;
-        }
         calculated_peaks.push_back(p);
     }    
     return calculated_peaks;
@@ -115,8 +102,13 @@ PeakList PeakPredictor::predictPeaks(sptrDataSet data, const std::vector<MillerI
     for (auto event: events) {
         sptrPeak3D peak(new Peak3D(data));
         Eigen::Vector3d center = {event._px, event._py, event._frame};
-        // this sets the center of the ellipse with a dummy value for radius
+
+        // dummy shape
         peak->setShape(Ellipsoid(center, 1.0));
+
+        // use standard coordinates + divergence and mosaicity to guess the shape
+        StandardFrame frame(peak);
+        peak->setShape(frame.detectorShape(_sigmaD, _sigmaM));
         peaks.push_back(peak);
     }
     return peaks;

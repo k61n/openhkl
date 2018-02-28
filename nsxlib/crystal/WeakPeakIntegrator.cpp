@@ -32,11 +32,13 @@
 #include "Ellipsoid.h"
 #include "Intensity.h"
 #include "Peak3D.h"
+#include "StandardFrame.h"
 #include "WeakPeakIntegrator.h"
 
 namespace nsx {
 
-WeakPeakIntegrator::WeakPeakIntegrator(): IPeakIntegrator()
+WeakPeakIntegrator::WeakPeakIntegrator(sptrShapeLibrary library, double radius, double nframes):
+    IPeakIntegrator(), _library(library), _radius(radius), _nframes(nframes)
 {
 
 }
@@ -90,7 +92,7 @@ static void updateFit(Intensity& I, Intensity& B, const Eigen::RowVector3d& q_pr
 
 bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 {
-    if (!peak || !peak->profile()) {
+    if (!peak || !_library) {
         return false;
     }
 

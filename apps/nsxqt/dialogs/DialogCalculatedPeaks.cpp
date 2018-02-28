@@ -45,6 +45,18 @@ double DialogCalculatedPeaks::Isigma()
     return ui->sigmaSpinBox->value();
 }
 
+double DialogCalculatedPeaks::sigmaD()
+{
+    return ui->sigmaD->value();
+}
+
+
+double DialogCalculatedPeaks::sigmaM()
+{
+    return ui->sigmaM->value();
+}
+
+
 int DialogCalculatedPeaks::minimumNeighbors()
 {
     return ui->neighborSpinBox->value();

@@ -22,6 +22,8 @@ public:
     double backgroundScale() const;
     double dMin() const;
     double dMax() const;
+    double radius() const;
+    double nframes() const;
 
 private:
     Ui::DialogIntegrate* _ui;

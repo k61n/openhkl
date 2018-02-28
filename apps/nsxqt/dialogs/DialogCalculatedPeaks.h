@@ -23,6 +23,8 @@ public:
     double peakScale();
     double bkgScale();
     double Isigma();
+    double sigmaD();
+    double sigmaM();
 
     int minimumNeighbors();
 

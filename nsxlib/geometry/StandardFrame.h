@@ -17,6 +17,21 @@ public:
 
     Eigen::Vector3d transform(const DetectorEvent& ev) const;
 
+    //! Compute the Jacobian of the transformation from detector (x, y, frame) -> (alpha, beta, gamma).
+    Eigen::Matrix3d jacobian() const;
+
+    //! Estimate the beam divergence from the peak's shape in detector space
+    double estimateDivergence() const;
+
+    //! Estimage the crystal mosaicity from the peak's shape in detector space
+    double estimateMosaicity() const;
+
+    //! Compute the detector shape corresponding to given beam divergence and mosaicity.
+    Ellipsoid detectorShape(double sigmaD, double sigmaM) const;
+
+    //! Transform the detector shape into standard coordinates
+    Ellipsoid standardShape() const;
+
 private:
     //! Reference peak about which the coordinate system is based
     sptrPeak3D _peak;

@@ -30,12 +30,16 @@ public:
 
     double predict(const Eigen::Vector3d& x) const;
 
-    void normalize();
+    //! Normalize the profile so that the sum is equal to one. Returns false if it cannot be normalized.
+    bool normalize();
 
     FitProfile& operator+=(const FitProfile& other);
 
     //! Compute the ellipsoid corresponding to the center of mass and inertia tensor.
     Ellipsoid ellipsoid() const;
+
+    //! Return the bounding box of the profile
+    const AABB& aabb() const;
 
 private:
     AABB _aabb;
