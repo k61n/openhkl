@@ -381,9 +381,9 @@ void SessionModel::incorporateCalculatedPeaks()
         for (auto peak: predicted) {
             addPeak(peak);
         }
+        nsx::debug() << "Added " << predicted.size() << " predicted peaks.";
     }
     updatePeaks();
-    nsx::debug() << "Done incorporating missing peaks.";
 }
 
 void SessionModel::applyResolutionCutoff(double dmin, double dmax)

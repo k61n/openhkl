@@ -114,6 +114,4 @@ PeakList PeakPredictor::predictPeaks(sptrDataSet data, const std::vector<MillerI
     return peaks;
 }
 
-
-
 } // end namespace nsx
