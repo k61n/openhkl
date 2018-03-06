@@ -66,6 +66,7 @@ signals:
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
     void plotPeak(nsx::sptrPeak3D);
     void autoIndexed();
+    void updateShapeLibrary(nsx::sptrShapeLibrary);
 
 public slots:
     //! Write the current list to FullProf

@@ -91,6 +91,9 @@ void DialogProfileFit::calculate()
     Eigen::Vector3d sigma(sigmaD, sigmaD, sigmaM);
     nsx::AABB aabb(-scale*sigma, scale*sigma);
 
+    // free memory of old library
+    _library.reset();
+
     nsx::ShapeIntegrator integrator(aabb, nx, ny, nz);
     
     nsx::info() << "Fitting profiles...";
@@ -108,6 +111,8 @@ void DialogProfileFit::calculate()
             }
         }
     }
+
+    _library = integrator.library();
 
     // draw the updated frame
     drawFrame(ui->frame->value());
@@ -145,4 +150,10 @@ void DialogProfileFit::drawFrame(int value)
 const nsx::FitProfile& DialogProfileFit::profile()
 {
     return _profile;
+}
+
+
+nsx::sptrShapeLibrary DialogProfileFit::library() const
+{
+    return _library;
 }

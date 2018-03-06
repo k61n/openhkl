@@ -678,7 +678,7 @@ std::vector<DetectorEvent> DataSet::getEvents(const std::vector<ReciprocalVector
     
     for (unsigned int s = 0; s < scanSize; ++s) {
         auto state = interpolatedState(s);
-        sample_to_lab.push_back(state.sampleOrientation().transpose());
+        sample_to_lab.push_back(state.sampleOrientationMatrix().transpose());
         ki.push_back(state.ki().rowVector());
     } 
 

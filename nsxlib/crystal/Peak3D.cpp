@@ -306,7 +306,7 @@ DetectorEvent Peak3D::predictCenter(double frame) const
     auto state = _data->interpolatedState(frame);
     Eigen::RowVector3d q_hkl = uc->fromIndex(index.rowVector().cast<double>());
     Eigen::RowVector3d ki = state.ki().rowVector();
-    Eigen::RowVector3d kf = q_hkl*state.sampleOrientation().transpose() + ki;
+    Eigen::RowVector3d kf = q_hkl*state.sampleOrientationMatrix().transpose() + ki;
 
     const double alpha = ki.norm() / kf.norm();
     
@@ -317,17 +317,6 @@ DetectorEvent Peak3D::predictCenter(double frame) const
     Eigen::RowVector3d pred_kf = (kf1-kf).norm() < (kf2-kf).norm() ? kf1 : kf2;
 
     return _data->diffractometer()->getDetector()->constructEvent(DirectVector(state.samplePosition), ReciprocalVector(pred_kf*state.detectorOrientation));
-}
-
-
-void Peak3D::setProfile(sptrFitProfile profile)
-{
-    _profile = profile;
-}
-
-sptrFitProfile Peak3D::profile() const
-{
-    return _profile;
 }
 
 } // end namespace nsx

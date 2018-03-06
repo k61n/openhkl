@@ -33,7 +33,8 @@ namespace nsx {
 InstrumentState::InstrumentState()
 {
     detectorOrientation.setIdentity();
-    qSampleOrientation = Eigen::Quaterniond(1, 0, 0, 0);
+    sampleOrientation = Eigen::Quaterniond(1, 0, 0, 0);
+    sampleOrientationOffset = Eigen::Quaterniond(1, 0, 0, 0);
     samplePosition.setZero();
     detectorOffset.setZero();
     ni = {0.0, 1.0, 0.0};
@@ -52,7 +53,7 @@ ReciprocalVector InstrumentState::sampleQ(const DirectVector& detector_position)
 {
     Eigen::RowVector3d ki = ni / ni.norm() / wavelength;
     auto qLab = kfLab(detector_position).rowVector() - ki;
-    return ReciprocalVector(qLab*sampleOrientation());
+    return ReciprocalVector(qLab*sampleOrientationMatrix());
 }
 
 double InstrumentState::gamma(const DirectVector& detector_position) const
@@ -89,9 +90,9 @@ ReciprocalVector InstrumentState::ki() const
     return ReciprocalVector(ni/ni.norm()/wavelength);
 }
 
-Eigen::Matrix3d InstrumentState::sampleOrientation() const
+Eigen::Matrix3d InstrumentState::sampleOrientationMatrix() const
 {
-    return qSampleOrientation.normalized().toRotationMatrix();
+    return (sampleOrientationOffset*sampleOrientation).normalized().toRotationMatrix();
 }
 
 

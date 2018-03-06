@@ -182,6 +182,7 @@ using Eigen::Quaterniond;
 #include "FlatDetector.h"
 #include "Source.h"
 #include "InstrumentState.h"
+#include "InterpolatedState.h"
 
 #include "Monochromator.h"
 #include "MonoDetector.h"
@@ -393,6 +394,8 @@ namespace nsx {
 %include "ILLDataReader.h"
 %include "HDF5DataReader.h"
 %include "FitProfile.h"
+%include "InstrumentState.h"
+%include "InterpolatedState.h"
 %include "DataSet.h"
 
 
@@ -498,6 +501,7 @@ namespace nsx {
 %include "FlatDetector.h"
 %include "Source.h"
 %include "InstrumentState.h"
+%include "InterpolatedState.h"
 
 %include "Monochromator.h"
 %include "MonoDetector.h"

@@ -46,6 +46,7 @@ PeakListPropertyWidget::PeakListPropertyWidget(std::shared_ptr<SessionModel> ses
 
     //Connect search box
     connect(ui->lineEdit,SIGNAL(textChanged(QString)),ui->tableView,SLOT(showPeaksMatchingText(QString)));
+    connect(ui->tableView, SIGNAL(updateShapeLibrary(nsx::sptrShapeLibrary)), _session.get(), SLOT(updateShapeLibrary(nsx::sptrShapeLibrary)));
 }
 
 PeakListPropertyWidget::~PeakListPropertyWidget()

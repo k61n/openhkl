@@ -136,7 +136,7 @@ void RefinementBatch::refineSampleOrientation(InstrumentStateList& states)
             if (!contains(i)) {
                 continue;
             }
-            int id = _params.addParameter(&states[i].qSampleOrientation.coeffs()[axis]);
+            int id = _params.addParameter(&states[i].sampleOrientationOffset.coeffs()[axis]);
             ids.push_back(id);
         }
         // record the constraints

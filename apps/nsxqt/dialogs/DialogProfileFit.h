@@ -26,6 +26,7 @@ public:
     ~DialogProfileFit();
 
     const nsx::FitProfile& profile();
+    nsx::sptrShapeLibrary library() const;
 
 private slots:    
     void calculate();
@@ -41,4 +42,5 @@ private:
     nsx::FitProfile _profile;
     double _maximum;
     ColorMap _cmap;
+    nsx::sptrShapeLibrary _library;
 };

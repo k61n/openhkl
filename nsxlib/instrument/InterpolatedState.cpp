@@ -41,13 +41,21 @@ InterpolatedState::InterpolatedState(const InstrumentState& s1, const Instrument
     detectorOrientation = interpolateRotation(s1.detectorOrientation, s2.detectorOrientation, t);
     detectorOffset = s*s1.detectorOffset + t*s2.detectorOffset;
 
-    qSampleOrientation = s1.qSampleOrientation.normalized().slerp(t, s2.qSampleOrientation.normalized());
+    Eigen::Quaterniond q1 = s1.sampleOrientationOffset*s1.sampleOrientation;
+    Eigen::Quaterniond q2 = s2.sampleOrientationOffset*s2.sampleOrientation;
+
+    q1.normalize();
+    q2.normalize();
+
+    sampleOrientation = q1.slerp(t, q2);
+    sampleOrientationOffset = Eigen::Quaterniond(1, 0, 0, 0);
+
     samplePosition = s*s1.samplePosition + t*s2.samplePosition;
 
     ni = s*(s1.ni / s1.ni.norm()) + t*(s2.ni / s2.ni.norm());
     wavelength = s*s1.wavelength + t*s2.wavelength;
 
-    Eigen::Quaterniond q = s2.qSampleOrientation * s1.qSampleOrientation.inverse();
+    Eigen::Quaterniond q = q2 * q1.inverse();
     axis = q.vec().normalized();
     q.normalize();
     const double cos_theta2 = q.w();

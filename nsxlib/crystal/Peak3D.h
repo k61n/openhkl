@@ -117,11 +117,6 @@ public:
     //! compute P value that there is actually an observed peak, assuming Poisson statistics
     double pValue() const;
 
-    //! Set the fitted peak profile
-    void setProfile(sptrFitProfile profile);
-    //! Return fitted peak profile
-    sptrFitProfile profile() const;
-
     //const PeakIntegrator& getIntegration() const;
 
     //! Return the q vector of the peak, transformed into sample coordinates.
@@ -161,8 +156,6 @@ private:
     bool _predicted;
     double _transmission;
     int _activeUnitCellIndex;
-
-    sptrFitProfile _profile;
 
     //! Raw p value
     double _pValue;

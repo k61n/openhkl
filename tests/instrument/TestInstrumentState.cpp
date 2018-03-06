@@ -88,7 +88,7 @@ int nsx::UnitTest_DataSet::run()
         NSX_CHECK_ASSERT(std::fabs(axis(1)) < 1e-10);
         NSX_CHECK_ASSERT(std::fabs(axis(2)+1) < 1e-10);        
 
-        Eigen::Matrix3d R = st1.sampleOrientation() * st0.sampleOrientation().inverse();
+        Eigen::Matrix3d R = st1.sampleOrientationMatrix() * st0.sampleOrientationMatrix().inverse();
         Eigen::Quaterniond q;
         q.w() = std::cos(dt/2);
         q.vec() = axis;

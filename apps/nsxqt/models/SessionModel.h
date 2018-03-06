@@ -93,6 +93,8 @@ signals:
 
 public slots:
 
+    void updateShapeLibrary(nsx::sptrShapeLibrary);
+
     void importData();
     void findPeaks(const QModelIndex& index);
 

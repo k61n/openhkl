@@ -32,6 +32,7 @@
 #include "Ellipsoid.h"
 #include "Intensity.h"
 #include "Peak3D.h"
+#include "ShapeLibrary.h"
 #include "StandardFrame.h"
 #include "WeakPeakIntegrator.h"
 
@@ -44,39 +45,32 @@ WeakPeakIntegrator::WeakPeakIntegrator(sptrShapeLibrary library, double radius, 
 }
 
 // note that this assumes the profile has been normalized so that \sum_i p_i = 1
-static void updateFit(Intensity& I, Intensity& B, const Eigen::RowVector3d& q_pred, const FitProfile& profile, const IntegrationRegion& region)
+static void updateFit(Intensity& I, Intensity& B, const StandardFrame& frame, const FitProfile& profile, const IntegrationRegion& region)
 {
     Eigen::Matrix2d A;
     A.setZero();
     Eigen::Vector2d b(0,0);
     const auto& shape = region.shape();
 
-    auto updateA = [&](const PeakData& data)
-    {
-        const auto& events = data.events();
-        const auto& counts = data.counts();
-        const auto& qs = data.qs();
+    const auto& events = region.peakData().events();
+    const auto& counts = region.peakData().counts();
 
-        for (size_t i = 0; i < events.size(); ++i) {
-            const double p = profile.predict(qs[i].rowVector() - q_pred);
-            const double M = counts[i];
-            const double var = B.value() + I.value()*p;
+    for (size_t i = 0; i < events.size(); ++i) {
+        const Eigen::Vector3d s = frame.transform(events[i]);
+        const double p = profile.predict(s);
+        const double M = counts[i];
+        const double var = B.value() + I.value()*p;
 
-            A(0,0) += 1/var;
-            A(0,1) += p/var;
-            A(1,0) += p/var;
-            A(1,1) += p*p/var;
+        A(0,0) += 1/var;
+        A(0,1) += p/var;
+        A(1,0) += p/var;
+        A(1,1) += p*p/var;
 
-            b(0) += M/var;
-            b(1) += M*p/var;
-        }
-    };
-    
-    updateA(region.peakData());
-    //updateA(region.bkgData());
+        b(0) += M/var;
+        b(1) += M*p/var;
+    }  
 
     Eigen::Matrix2d AI = A.inverse();
-
     const Eigen::Vector2d& x = AI*b;
 
     const double new_B = x(0);
@@ -125,14 +119,15 @@ bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     _meanBackground = Intensity(mean_bkg, var_bkg);
     _integratedIntensity = Intensity(0.0, 0.0);
 
-    const Eigen::RowVector3d q_pred = peak->qPredicted().rowVector();
 
     const double tolerance = 1e-5;
+    auto profile = _library->average(DetectorEvent(peak->getShape().center()), _radius, _nframes);
+    StandardFrame frame(peak);
 
     // todo: stopping criterion
     for (auto i = 0; i < 20; ++i) {
         const double I0 = _integratedIntensity.value();
-        updateFit(_integratedIntensity, _meanBackground, q_pred, *peak->profile(), region);
+        updateFit(_integratedIntensity, _meanBackground, frame, profile, region);
         const double I1 = _integratedIntensity.value();
 
         if (I1 < 0.0 || (I1 < (1+tolerance)*I0 && I0 < (1+tolerance)*I1)) {

@@ -734,3 +734,8 @@ nsx::sptrShapeLibrary SessionModel::library() const
 {
     return _library;
 }
+
+void SessionModel::updateShapeLibrary(nsx::sptrShapeLibrary lib)
+{
+    _library = lib;
+}

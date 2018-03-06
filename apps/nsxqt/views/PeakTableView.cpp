@@ -547,12 +547,6 @@ void PeakTableView::openProfileFitDialog()
         return;
     }
 
+    emit(updateShapeLibrary(dialog->library()));
     nsx::info() << "Update profiles of " << peaks.size() << " peaks";
-
-    // update selected peaks
-    auto profile = nsx::sptrFitProfile(new nsx::FitProfile(dialog->profile()));
-
-    for (auto peak: peaks) {
-        peak->setProfile(profile);
-    }
 }

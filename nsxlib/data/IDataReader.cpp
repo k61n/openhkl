@@ -72,7 +72,7 @@ InstrumentState IDataReader::getState(size_t frame) const
     Eigen::Transform<double,3,Eigen::Affine> sample_trans = sample_gonio->getHomMatrix(_sampleStates[frame]);
 
     state.detectorOrientation = detector_trans.rotation();
-    state.qSampleOrientation = Eigen::Quaterniond(sample_trans.rotation());
+    state.sampleOrientation = Eigen::Quaterniond(sample_trans.rotation());
 
     state.detectorOffset = detector_trans.translation();
     state.samplePosition = sample_trans.translation();

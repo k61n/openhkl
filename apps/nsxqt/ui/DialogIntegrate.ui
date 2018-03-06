@@ -132,10 +132,33 @@
      </widget>
     </item>
     <item row="4" column="1">
-     <widget class="QDoubleSpinBox" name="radius"/>
+     <widget class="QDoubleSpinBox" name="radius">
+      <property name="decimals">
+       <number>5</number>
+      </property>
+      <property name="maximum">
+       <double>10000.000000000000000</double>
+      </property>
+      <property name="singleStep">
+       <double>1.000000000000000</double>
+      </property>
+      <property name="value">
+       <double>100.000000000000000</double>
+      </property>
+     </widget>
     </item>
     <item row="5" column="1">
-     <widget class="QDoubleSpinBox" name="nframes"/>
+     <widget class="QDoubleSpinBox" name="nframes">
+      <property name="decimals">
+       <number>4</number>
+      </property>
+      <property name="maximum">
+       <double>1000.000000000000000</double>
+      </property>
+      <property name="value">
+       <double>2.000000000000000</double>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

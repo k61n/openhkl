@@ -19,7 +19,7 @@ StandardFrame::StandardFrame(sptrPeak3D peak)
     _ki = _state.ki().rowVector();
     // take care to make sure that q is transformed to lab coordinate system
     // question: better to use observed q or predicted q??
-    _kf = _ki + peak->q().rowVector() * _state.sampleOrientation().transpose();
+    _kf = _ki + peak->q().rowVector() * _state.sampleOrientationMatrix().transpose();
 
     _e1 = _kf.cross(_ki);
     _e2 = _kf.cross(_e1);

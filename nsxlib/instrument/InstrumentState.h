@@ -41,13 +41,12 @@ struct InstrumentState {
     Eigen::Matrix3d detectorOrientation;
 
     // compute the sample orientation from fixed orientation and offset
-    Eigen::Matrix3d sampleOrientation() const;
+    Eigen::Matrix3d sampleOrientationMatrix() const;
 
     // fixed orientation (e.g. read from data)
-    //Eigen::Matrix3d fixedSampleOrientation;
+    Eigen::Quaterniond sampleOrientation;
     // offset to orientation
-    //Eigen::Vector3d sampleOrientationOffset;
-    Eigen::Quaterniond qSampleOrientation;
+    Eigen::Quaterniond sampleOrientationOffset;
 
     Eigen::Vector3d samplePosition;
     Eigen::Vector3d detectorOffset;
