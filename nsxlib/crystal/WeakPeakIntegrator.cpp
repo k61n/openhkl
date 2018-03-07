@@ -32,8 +32,8 @@
 #include "Ellipsoid.h"
 #include "Intensity.h"
 #include "Peak3D.h"
+#include "PeakCoordinateSystem.h"
 #include "ShapeLibrary.h"
-#include "StandardFrame.h"
 #include "WeakPeakIntegrator.h"
 
 namespace nsx {
@@ -45,7 +45,7 @@ WeakPeakIntegrator::WeakPeakIntegrator(sptrShapeLibrary library, double radius, 
 }
 
 // note that this assumes the profile has been normalized so that \sum_i p_i = 1
-static void updateFit(Intensity& I, Intensity& B, const StandardFrame& frame, const FitProfile& profile, const IntegrationRegion& region)
+static void updateFit(Intensity& I, Intensity& B, const PeakCoordinateSystem& frame, const FitProfile& profile, const IntegrationRegion& region)
 {
     Eigen::Matrix2d A;
     A.setZero();
@@ -122,7 +122,7 @@ bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
 
     const double tolerance = 1e-5;
     auto profile = _library->average(DetectorEvent(peak->getShape().center()), _radius, _nframes);
-    StandardFrame frame(peak);
+    PeakCoordinateSystem frame(peak);
 
     // todo: stopping criterion
     for (auto i = 0; i < 20; ++i) {

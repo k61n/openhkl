@@ -8,12 +8,12 @@
 
 namespace nsx {
 
-//! \class StandardFrame
+//! \class PeakCoordinateSystem
 //!
 //! This class implements the coordinate system described in Kabsch 1988 and Kabsch 2010.
-class StandardFrame {
+class PeakCoordinateSystem {
 public:
-    StandardFrame(sptrPeak3D peak);
+    PeakCoordinateSystem(sptrPeak3D peak);
 
     Eigen::Vector3d transform(const DetectorEvent& ev) const;
 

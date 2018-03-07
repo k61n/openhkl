@@ -15,7 +15,7 @@
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Peak3D.h>
-#include <nsxlib/StandardFrame.h>
+#include <nsxlib/PeakCoordinateSystem.h>
 
 
 void run_test(const char* filename, const char* instrument)
@@ -31,15 +31,13 @@ void run_test(const char* filename, const char* instrument)
 
     expt->addData(dataf);
 
-    //const int nrows = dataf->nRows();
-    //const int ncols = dataf->nCols();
+    const int nrows = dataf->nRows();
+    const int ncols = dataf->nCols();
 
-    const int nrows = detector->getNRows();
-    const int ncols = detector->getNCols();
-    //const int nframes = dataf->nFrames();
-    const int nframes = 30;
 
-    const std::array<double, 4> fractions = {0.2, 0.4, 0.6, 0.8};
+    const int nframes = dataf->nFrames();
+
+    const std::array<double, 9> fractions = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9};
 
     // different places to check the coordinate calculation
     std::vector<Eigen::Vector3d> coords;
@@ -56,7 +54,7 @@ void run_test(const char* filename, const char* instrument)
 
     for (auto coord: coords) {
         peak->setShape(nsx::Ellipsoid(coord, 2.0));
-        nsx::StandardFrame frame(peak);
+        nsx::PeakCoordinateSystem frame(peak);
 
         auto J = frame.jacobian();
 

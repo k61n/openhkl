@@ -49,7 +49,7 @@ StrongPeakIntegrator::~StrongPeakIntegrator()
 bool StrongPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 {
     MeanBackgroundIntegrator::compute(peak, region);
-    StandardFrame frame(peak);
+    PeakCoordinateSystem frame(peak);
 
     const auto& peakEvents = region.peakData().events();
     const auto& peakCounts = region.peakData().counts();

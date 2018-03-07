@@ -13,7 +13,7 @@ namespace nsx {
 
 PeakData::PeakData(sptrPeak3D peak): 
     _peak(peak),
-    _frame(peak),
+    _system(peak),
     _events(), 
     _counts(), 
     _qs(),
@@ -63,7 +63,7 @@ void PeakData::computeStandard()
     _coords.resize(_events.size());
 
     for (size_t i = 0; i < _events.size(); ++i) {
-        _coords[i] = _frame.transform(_events[i]);
+        _coords[i] = _system.transform(_events[i]);
     }
 }
 

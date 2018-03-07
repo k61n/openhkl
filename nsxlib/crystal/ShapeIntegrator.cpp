@@ -4,7 +4,7 @@
 #include "MillerIndex.h"
 #include "Peak3D.h"
 #include "ShapeIntegrator.h"
-#include "StandardFrame.h"
+#include "PeakCoordinateSystem.h"
 
 namespace nsx {
 
@@ -38,7 +38,7 @@ bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
     const auto& counts = region.peakData().counts();
 
     FitProfile profile(_aabb, _nx, _ny, _nz);
-    StandardFrame frame(peak);
+    PeakCoordinateSystem frame(peak);
 
     for (size_t i = 0; i < events.size(); ++i) {
         const double dI = counts[i]-mean_bkg;

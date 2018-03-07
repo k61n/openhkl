@@ -2,14 +2,15 @@
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "Peak3D.h"
-#include "StandardFrame.h"
+#include "PeakCoordinateSystem.h"
+
 
 namespace nsx {
 
-StandardFrame::StandardFrame(sptrPeak3D peak)
+PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak)
 {
     if (!peak) {
-        throw std::runtime_error("StandardFrame: cannot constuct with null Peak3D");
+        throw std::runtime_error("PeakCoordinateSystem: cannot constuct with null Peak3D");
     }
 
     _peak = peak;
@@ -35,7 +36,7 @@ StandardFrame::StandardFrame(sptrPeak3D peak)
     _e2 *= 180.0 / M_PI / _kf.norm();
 }
 
-Eigen::Vector3d StandardFrame::transform(const DetectorEvent& ev) const
+Eigen::Vector3d PeakCoordinateSystem::transform(const DetectorEvent& ev) const
 {
     auto det = _peak->data()->diffractometer()->getDetector();
     auto position = det->pixelPosition(ev._px, ev._py);
@@ -48,7 +49,7 @@ Eigen::Vector3d StandardFrame::transform(const DetectorEvent& ev) const
     return Eigen::Vector3d(eps1, eps2, eps3);
 }
 
-Eigen::Matrix3d StandardFrame::jacobian() const
+Eigen::Matrix3d PeakCoordinateSystem::jacobian() const
 {
     const Eigen::Vector3d center = _peak->getShape().center();
     DetectorEvent ev(center[0], center[1], center[2]);
@@ -81,7 +82,7 @@ Eigen::Matrix3d StandardFrame::jacobian() const
     return J;    
 }
 
-Ellipsoid StandardFrame::detectorShape(double sigmaD, double sigmaM) const
+Ellipsoid PeakCoordinateSystem::detectorShape(double sigmaD, double sigmaM) const
 {
     Eigen::Matrix3d J = jacobian();
     Eigen::Vector3d center = _peak->getShape().center();
@@ -99,21 +100,21 @@ Ellipsoid StandardFrame::detectorShape(double sigmaD, double sigmaM) const
     return Ellipsoid(center, detector_metric);
 }
 
-Ellipsoid StandardFrame::standardShape() const
+Ellipsoid PeakCoordinateSystem::standardShape() const
 {
     Eigen::Matrix3d J = jacobian();
     Eigen::Matrix3d cov = J * _peak->getShape().inverseMetric() * J.transpose();
     return Ellipsoid(_peak->q().rowVector(), cov.inverse());
 }
 
-double StandardFrame::estimateDivergence() const
+double PeakCoordinateSystem::estimateDivergence() const
 {
     auto shape = standardShape();
     auto C = shape.inverseMetric();
     return std::sqrt(0.5 * (C(0,0) + C(1,1)));
 }
 
-double StandardFrame::estimateMosaicity() const
+double PeakCoordinateSystem::estimateMosaicity() const
 {
     auto shape = standardShape();
     auto C = shape.inverseMetric();

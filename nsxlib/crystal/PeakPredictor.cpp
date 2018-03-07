@@ -53,7 +53,7 @@
 #include "Sample.h"
 #include "ShapeLibrary.h"
 #include "SpaceGroup.h"
-#include "StandardFrame.h"
+#include "PeakCoordinateSystem.h"
 #include "Source.h"
 #include "UnitCell.h"
 
@@ -107,7 +107,7 @@ PeakList PeakPredictor::predictPeaks(sptrDataSet data, const std::vector<MillerI
         peak->setShape(Ellipsoid(center, 1.0));
 
         // use standard coordinates + divergence and mosaicity to guess the shape
-        StandardFrame frame(peak);
+        PeakCoordinateSystem frame(peak);
         peak->setShape(frame.detectorShape(_sigmaD, _sigmaM));
         peaks.push_back(peak);
     }

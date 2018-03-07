@@ -8,7 +8,7 @@
 #include "GeometryTypes.h"
 #include "InstrumentTypes.h"
 #include "ReciprocalVector.h"
-#include "StandardFrame.h"
+#include "PeakCoordinateSystem.h"
 
 namespace nsx {
 
@@ -36,7 +36,7 @@ public:
 
 private:
     sptrPeak3D _peak;
-    StandardFrame _frame;
+    PeakCoordinateSystem _system;
     std::deque<DetectorEvent> _events;
     std::deque<double> _counts;
     std::deque<ReciprocalVector> _qs;
