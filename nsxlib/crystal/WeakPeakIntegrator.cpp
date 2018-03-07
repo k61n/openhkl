@@ -126,13 +126,25 @@ bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
 
     // todo: stopping criterion
     for (auto i = 0; i < 20; ++i) {
+        Intensity old_intensity = _integratedIntensity;
         const double I0 = _integratedIntensity.value();
         updateFit(_integratedIntensity, _meanBackground, frame, profile, region);
         const double I1 = _integratedIntensity.value();
 
+        if (std::isnan(I1) || std::isnan(_meanBackground.value())) {
+            _integratedIntensity = old_intensity;
+            break;
+        }
+
         if (I1 < 0.0 || (I1 < (1+tolerance)*I0 && I0 < (1+tolerance)*I1)) {
             break;
         }
+    }
+
+    double sigma = _integratedIntensity.sigma();
+
+    if (std::isnan(sigma) || sigma <= 0.0) {
+        return false;
     }
 
     // TODO: rocking curve!

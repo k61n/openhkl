@@ -64,7 +64,7 @@ Eigen::Matrix3d StandardFrame::jacobian() const
     Eigen::Vector3d dp = p - _state.samplePosition;
     double r = dp.norm();
 
-    Eigen::RowVector3d drdx = 0.5 * dp.transpose() * dpdx;
+    Eigen::RowVector3d drdx = 1/r * dp.transpose() * dpdx;
 
     // Jacobian of (px, py) -> kf
     Eigen::Matrix3d dkdx = ki * (dpdx / r - dp * drdx / r / r);
