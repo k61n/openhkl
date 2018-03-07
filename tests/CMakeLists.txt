@@ -38,6 +38,7 @@ configure_file(data/D9_ascii_example D9_ascii_example COPYONLY)
 configure_file(data/D9_QSCAN D9_QSCAN COPYONLY)
 
 configure_file(data/gal3.hdf gal3.hdf COPYONLY)
+configure_file(data/d19_test.hdf d19_test.hdf COPYONLY)
 configure_file(data/H5_example.hdf H5_example.hdf COPYONLY)
 configure_file(data/blank.hdf blank.hdf COPYONLY)
 

@@ -13,13 +13,15 @@ StandardFrame::StandardFrame(sptrPeak3D peak)
     }
 
     _peak = peak;
-    _frame = peak->getShape().center()[2];
+    auto detector = peak->data()->diffractometer()->getDetector();
+    Eigen::Vector3d center = peak->getShape().center();
+    _frame = center[2];
     _state = peak->data()->interpolatedState(_frame);
 
     _ki = _state.ki().rowVector();
     // take care to make sure that q is transformed to lab coordinate system
     // question: better to use observed q or predicted q??
-    _kf = _ki + peak->q().rowVector() * _state.sampleOrientationMatrix().transpose();
+    _kf = _state.kfLab(detector->pixelPosition(center[0], center[1])).rowVector();
 
     _e1 = _kf.cross(_ki);
     _e2 = _kf.cross(_e1);
@@ -67,8 +69,8 @@ Eigen::Matrix3d StandardFrame::jacobian() const
     Eigen::RowVector3d drdx = 1/r * dp.transpose() * dpdx;
 
     // Jacobian of (px, py) -> kf
-    Eigen::Matrix3d dkdx = ki * (dpdx / r - dp * drdx / r / r);
-
+    Eigen::Matrix3d dkdx = ki * _state.detectorOrientation * (dpdx / r - dp * drdx / r / r);
+   
     // Jacobian of epsilon coordinates
     Eigen::Matrix3d J;
 
