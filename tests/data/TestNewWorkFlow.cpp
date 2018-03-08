@@ -24,7 +24,6 @@
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/Sample.h>
-#include <nsxlib/ShapeIntegrator.h>
 #include <nsxlib/ShapeLibrary.h>
 #include <nsxlib/StrongPeakIntegrator.h>
 #include <nsxlib/Units.h>

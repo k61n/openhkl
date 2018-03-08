@@ -6,7 +6,7 @@
 #include <nsxlib/FitProfile.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFilter.h>
-#include <nsxlib/ShapeIntegrator.h>
+#include <nsxlib/ShapeLibrary.h>
 #include <nsxlib/Logger.h>
 
 #include "DialogProfileFit.h"
@@ -94,6 +94,7 @@ void DialogProfileFit::calculate()
     // free memory of old library
     _library.reset();
 
+    #if 0
     nsx::ShapeIntegrator integrator(aabb, nx, ny, nz);
     
     nsx::info() << "Fitting profiles...";
@@ -113,6 +114,13 @@ void DialogProfileFit::calculate()
     }
 
     _library = integrator.library();
+    #endif 
+
+    for (auto peak: fit_peaks) {
+        _library->addPeak(peak);
+    }
+
+    _library->updateFit(500, 1e-3);
 
     // draw the updated frame
     drawFrame(ui->frame->value());

@@ -38,14 +38,13 @@
 
 namespace nsx {
 
-WeakPeakIntegrator::WeakPeakIntegrator(sptrShapeLibrary library, double radius, double nframes):
-    IPeakIntegrator(), _library(library), _radius(radius), _nframes(nframes)
+WeakPeakIntegrator::WeakPeakIntegrator()
 {
 
 }
 
 // note that this assumes the profile has been normalized so that \sum_i p_i = 1
-static void updateFit(Intensity& I, Intensity& B, const PeakCoordinateSystem& frame, const FitProfile& profile, const IntegrationRegion& region)
+static void updateFit(Intensity& I, Intensity& B, const std::vector<double>& profile, const IntegrationRegion& region)
 {
     Eigen::Matrix2d A;
     A.setZero();
@@ -56,8 +55,7 @@ static void updateFit(Intensity& I, Intensity& B, const PeakCoordinateSystem& fr
     const auto& counts = region.peakData().counts();
 
     for (size_t i = 0; i < events.size(); ++i) {
-        const Eigen::Vector3d s = frame.transform(events[i]);
-        const double p = profile.predict(s);
+        const double p = profile[i];
         const double M = counts[i];
         const double var = B.value() + I.value()*p;
 
@@ -86,7 +84,7 @@ static void updateFit(Intensity& I, Intensity& B, const PeakCoordinateSystem& fr
 
 bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 {
-    if (!peak || !_library) {
+    if (!peak) {
         return false;
     }
 
@@ -95,9 +93,10 @@ bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
 
     const auto& bkgEvents = region.bkgData().events();
     const auto& bkgCounts = region.bkgData().counts();
+    const auto& peakEvents = region.peakData().events();
 
     // TODO: should this be hard-coded??
-    if (region.peakData().events().size() < 5) {
+    if (peakEvents.size() < 5) {
         throw std::runtime_error("WeakPeakIntegrator::compute(): too few data points in peak");
     }
 
@@ -119,16 +118,33 @@ bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     _meanBackground = Intensity(mean_bkg, var_bkg);
     _integratedIntensity = Intensity(0.0, 0.0);
 
-
+    std::vector<double> profile(peakEvents.size());
     const double tolerance = 1e-5;
-    auto profile = _library->average(DetectorEvent(peak->getShape().center()), _radius, _nframes);
-    PeakCoordinateSystem frame(peak);
 
+    const Eigen::Vector3d& center = peak->getShape().center();
+    const Eigen::Matrix3d& inv_cov = peak->getShape().metric();
+
+    double profile_sum = 0.0;
+
+    // evaluate the model Gaussian
+    for (int i = 0; i < peakEvents.size(); ++i) {
+        const DetectorEvent& ev = peakEvents[i];
+        Eigen::Vector3d p(ev._px, ev._py, ev._frame);
+        p -= center;
+
+        profile[i] = std::exp(-0.5*p.transpose().dot(inv_cov*p));
+        profile_sum += profile[i];
+    }
+
+    for (auto& p: profile) {
+        p /= profile_sum;
+    }
+    
     // todo: stopping criterion
     for (auto i = 0; i < 20; ++i) {
         Intensity old_intensity = _integratedIntensity;
         const double I0 = _integratedIntensity.value();
-        updateFit(_integratedIntensity, _meanBackground, frame, profile, region);
+        updateFit(_integratedIntensity, _meanBackground, profile, region);
         const double I1 = _integratedIntensity.value();
 
         if (std::isnan(I1) || std::isnan(_meanBackground.value())) {

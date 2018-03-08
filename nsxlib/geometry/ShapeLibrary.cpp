@@ -1,13 +1,50 @@
 
+#include "DataSet.h"
+#include "Detector.h"
+#include "Diffractometer.h"
 #include "Ellipsoid.h"
 #include "Peak3D.h"
 #include "ShapeLibrary.h"
 
+
+
 namespace nsx {
 
-ShapeLibrary::ShapeLibrary(): _shapes(), _defaultShape()
-{
+struct FitData {
+    Eigen::Matrix3d Rs, Rd, A, Jp, Jd;
 
+    FitData(sptrPeak3D peak)
+    {
+        auto detector = peak->data()->diffractometer()->getDetector();
+        Eigen::Vector3d center = peak->getShape().center();
+        auto state = peak->data()->interpolatedState(center[2]);
+
+        Rs = state.sampleOrientationMatrix().transpose();
+        Rd = state.detectorOrientation;
+
+        auto p = detector->pixelPosition(center[0], center[1]);
+        Eigen::Vector3d p0 = state.samplePosition;
+        Eigen::Vector3d dp = p.vector()-p0;
+
+        Eigen::Vector3d kf = state.kfLab(p).rowVector();
+        Eigen::Vector3d ki = state.ki().rowVector();
+
+        A = kf * ki.transpose() / ki.squaredNorm() - Eigen::Matrix3d::Identity();
+        double r = dp.norm();
+
+        Jp = Rd*(-1/r * Eigen::Matrix3d::Identity() + 1/r/r/r * dp * dp.transpose());
+        Jp *= ki.norm();
+    }
+};
+
+
+ShapeLibrary::ShapeLibrary(): _strongPeaks()
+{
+    _covBeam.setZero();
+    _covMosaicity.setZero();
+    _covDetector.setZero();
+    _covShape.setZero();
+    _covBase.setZero();
 }
 
 ShapeLibrary::~ShapeLibrary()
@@ -15,61 +52,24 @@ ShapeLibrary::~ShapeLibrary()
 
 }
 
-
-void ShapeLibrary::addShape(const DetectorEvent& ev, const FitProfile& profile)
-{   
-    _shapes.emplace_back(std::make_pair(ev, profile));
-    _shapes.back().second.normalize();
+void ShapeLibrary::addPeak(sptrPeak3D peak)
+{
+    _strongPeaks.push_back(peak);
 }
 
-void ShapeLibrary::setDefaultShape(const FitProfile& profile)
+void ShapeLibrary::updateFit(int num_iterations, double epsilon)
 {
-    _defaultShape = profile;
+
 }
 
-FitProfile ShapeLibrary::average(const DetectorEvent& ev, double radius, double nframes) const
+Eigen::Matrix3d ShapeLibrary::predictCovariance(sptrPeak3D peak)
 {
-    FitProfile mean_shape;
-    bool found = false;
+    FitData f(peak);
 
-    // iterate through shapes
-    for (const auto& shape: _shapes) {  
+    Eigen::Matrix3d RA = f.Rs*f.A;
+    Eigen::Matrix3d RJ = f.Rs*f.Jp;
 
-        const auto& event = shape.first;
-        const auto& profile = shape.second;
-
-        double dx = ev._px - event._px;
-        double dy = ev._py - event._py;
-
-        // too far away on detector
-        if (dx*dx + dy*dy > radius*radius) {
-            continue;
-        }
-
-        // frames differ too much
-        if (std::fabs(ev._frame - event._frame) > nframes) {
-            continue;
-        }
-
-        found = true;
-        mean_shape += profile;
-    }
-    if (!found) {
-        throw std::runtime_error("ShapeLibrary::average() could not find shape within the specified conditions");
-    }
-    mean_shape.normalize();
-    return mean_shape;
-}
-
-FitProfile ShapeLibrary::meanShape() const
-{
-    FitProfile mean;
-   
-    for (const auto& entry: _shapes) {
-        mean += entry.second;
-    }
-    mean.normalize();
-    return mean;
+    return f.Rs*_covBase*f.Rs.transpose() + _covMosaicity + RA * _covBeam * RA.transpose() + RJ * _covShape * RJ.transpose();
 }
 
 } // end namespace nsx

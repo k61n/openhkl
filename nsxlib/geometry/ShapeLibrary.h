@@ -4,8 +4,8 @@
 #include <map>
 #include <vector>
 
+#include "CrystalTypes.h"
 #include "DetectorEvent.h"
-#include "FitProfile.h"
 #include "MillerIndex.h"
 
 namespace nsx {
@@ -17,23 +17,22 @@ public:
     ShapeLibrary();
     ~ShapeLibrary();
 
-    //! Add a shape to the library.
-    void addShape(const DetectorEvent& ev, const FitProfile& profile);
+    //! Add a refernce peak to the library
+    void addPeak(sptrPeak3D peak);
 
-    //! Set the default shape
-    void setDefaultShape(const FitProfile& profile);
+    //! Update the fitted covariances
+    void updateFit(int num_iterations, double epsilon);
 
-    //! Get average shapes within the given region of the detector:
-    //! Find entries in library such that the pixel coordinates differ from event by at most
-    //! _radius_ and such that the difference in frame numbers is at most _nframes_.
-    FitProfile average(const DetectorEvent& ev, double radius, double nframes) const;
-
-    //! Return the average of all shapes
-    FitProfile meanShape() const;
+    //! Predict the (detector space) covariance of a given peak
+    Eigen::Matrix3d predictCovariance(sptrPeak3D peak);
 
 private:
-    std::vector<std::pair<DetectorEvent, FitProfile>> _shapes;
-    FitProfile _defaultShape;
+    std::vector<sptrPeak3D> _strongPeaks;
+    Eigen::Matrix3d _covBeam;
+    Eigen::Matrix3d _covMosaicity;
+    Eigen::Matrix3d _covDetector;
+    Eigen::Matrix3d _covShape;
+    Eigen::Matrix3d _covBase;
 };
 
 } // end namespace nsx
