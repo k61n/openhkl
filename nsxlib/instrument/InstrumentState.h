@@ -28,14 +28,17 @@
 
 #include "ComponentState.h"
 #include "DirectVector.h"
+#include "InstrumentTypes.h"
 #include "ReciprocalVector.h"
 
 #include <Eigen/Core>
 
 namespace nsx {
 
-struct InstrumentState {
-    InstrumentState();
+class InstrumentState {
+public:
+    // default value needed for SWIG (note: nullptr does _not_ work)
+    InstrumentState(sptrDiffractometer diffractomer = sptrDiffractometer());
     virtual ~InstrumentState() {}
 
     Eigen::Matrix3d detectorOrientation;
@@ -74,6 +77,15 @@ struct InstrumentState {
     double lorentzFactor(const DirectVector& detector_position) const;
 
     double twoTheta(const DirectVector& detector_position) const;
+
+    //! Compute the jacobian of the transformation (x,y) -> k_lab
+    Eigen::Matrix3d jacobianK(const DetectorEvent& ev) const;   
+
+    //! Return the diffractometer of the state
+    sptrDiffractometer diffractometer() const;
+
+protected:
+    sptrDiffractometer _diffractometer;
 };
 
 } // end namespace nsx

@@ -35,9 +35,14 @@
 
 namespace nsx {
 
-struct InterpolatedState: public InstrumentState {
-    InterpolatedState() = default;
+class InterpolatedState: public InstrumentState {
+public:
+    // default value needed for SWIG (note: nullptr does _not_ work)
+    InterpolatedState(sptrDiffractometer = sptrDiffractometer());
     InterpolatedState(const InstrumentState& s1, const InstrumentState& s2, double t);
+
+    //! Compute the jacobian of the transformation (x,y,frame) -> q_sample
+    Eigen::Matrix3d jacobianQ(const DetectorEvent& ev) const;
 
     Eigen::Quaterniond transformation;
     Eigen::Vector3d axis;

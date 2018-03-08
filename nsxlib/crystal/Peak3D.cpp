@@ -246,7 +246,7 @@ ReciprocalVector Peak3D::q() const
 //! detector space to q-space of its shape ellipsoid (which is computed during blob search).
 //!
 //! Suppose that the detector-space ellipsoid is given by the equation (x-x0).dot(A*(x-x0)) <= 1.
-//! Then if q = q0 + B(x-x0), then the corresponding ellipsoid.
+//! Then if q = q0 + J(x-x0), then the corresponding ellipsoid.
 //!
 //! This method can throw if there is no valid q-shape corresponding to the detector space shape.
 Ellipsoid Peak3D::qShape() const
@@ -255,31 +255,18 @@ Ellipsoid Peak3D::qShape() const
         throw std::runtime_error("Attempted to compute q-shape of peak not attached to data");
     }
 
-    const Eigen::Vector3d p = _shape.center();
-    const Eigen::Matrix3d A = _shape.metric();
-    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(A);
-    const Eigen::Matrix3d U = solver.eigenvectors();
-    const Eigen::Vector3d l = solver.eigenvalues();
-    auto detector = _data->diffractometer()->getDetector();
-    
-    Eigen::Matrix3d delta;
+    const DetectorEvent event(_shape.center());    
+    auto state = _data->interpolatedState(event._frame);    
+    Eigen::Vector3d q0 = q().rowVector();    
 
-    for (int i = 0; i < 3; ++i) {
-        const double s = 3.0 * std::sqrt(1.0 / l(i));
-        Eigen::Vector3d p1 = p+s*U.col(i);
-        Eigen::Vector3d p2 = p-s*U.col(i);
+    // Jacobian of map from detector coords to sample q space
+    Eigen::Matrix3d J = state.jacobianQ(event);
+    const Eigen::Matrix3d JI = J.inverse();
 
-        auto state1 = _data->interpolatedState(p1[2]);
-        auto state2 = _data->interpolatedState(p2[2]);
+    // inverse covariance matrix in sample q space
+    const Eigen::Matrix3d q_inv_cov = JI * _shape.metric() * JI.transpose();
 
-        const auto q1 = state1.sampleQ(DirectVector(detector->pixelPosition(p1[0], p1[1]))).rowVector();
-        const auto q2 = state2.sampleQ(DirectVector(detector->pixelPosition(p2[0], p2[1]))).rowVector();
-        delta.col(i) = 0.5 * (q1 - q2) / s;
-    }
-
-    // approximate linear transformation q space to detector space
-    const Eigen::Matrix3d B = U * delta.inverse();
-    return Ellipsoid(q().rowVector().transpose(), B.transpose()*A*B);
+    return Ellipsoid(q0, q_inv_cov);
 }
 
 

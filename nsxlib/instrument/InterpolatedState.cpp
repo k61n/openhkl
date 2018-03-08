@@ -25,17 +25,28 @@
  */
 
 #include "Component.h"
+#include "Detector.h"
+#include "Diffractometer.h"
 #include "InterpolatedState.h"
 #include "MatrixOperations.h"
 
 namespace nsx {
 
+InterpolatedState::InterpolatedState(sptrDiffractometer diffractometer): InstrumentState(diffractometer)
+{
+    
+}
+
 InterpolatedState::InterpolatedState(const InstrumentState& s1, const InstrumentState& s2, double t): 
-    InstrumentState(),
+    InstrumentState(s1.diffractometer()),
     axis(),
     transformation(),
     stepSize()
 {
+    if (s1.diffractometer() != s2.diffractometer()) {
+        throw std::runtime_error("Cannot interpolate states between different diffractometers");
+    }
+
     const double s = 1-t;
 
     detectorOrientation = interpolateRotation(s1.detectorOrientation, s2.detectorOrientation, t);
@@ -63,5 +74,15 @@ InterpolatedState::InterpolatedState(const InstrumentState& s1, const Instrument
     stepSize = 2.0*std::atan2(sin_theta2, cos_theta2);
 }
 
+Eigen::Matrix3d InterpolatedState::jacobianQ(const DetectorEvent& ev) const
+{
+    auto position = _diffractometer->getDetector()->pixelPosition(ev._px, ev._py);
+    Eigen::Vector3d q0 = sampleQ(position).rowVector();
+    // Jacobian of map from detector coords to sample q space
+    Eigen::Matrix3d J = sampleOrientationMatrix().transpose() * jacobianK(ev); 
+    // take into account the rotation
+    J.col(2) = stepSize * axis.cross(q0);
+    return J;
+}
 
 } // end namespace nsx

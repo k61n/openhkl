@@ -28,7 +28,7 @@ int main()
     NSX_CHECK_SMALL(center[2],tolerance);
 
     // Create a fake instrument state
-    nsx::InstrumentState state1;
+    nsx::InstrumentState state1(nullptr);
     
     // Should be center of the detector so gamma,nu=0 at rest
     double gamma = state1.gamma(pixel_position);
@@ -41,7 +41,7 @@ int main()
     NSX_CHECK_SMALL(th2,tolerance);
 
     // Rotate the detector by 90 deg clockwise
-    nsx::InstrumentState state2;
+    nsx::InstrumentState state2(nullptr);
     state2.detectorOrientation <<  0, 1, 0,
                                   -1, 0, 0,
                                    0, 0, 1;

@@ -25,12 +25,16 @@
  */
 
 #include "Component.h"
+#include "Detector.h"
+#include "DetectorEvent.h"
+#include "Diffractometer.h"
 #include "InstrumentState.h"
 #include "MatrixOperations.h"
 
 namespace nsx {
 
-InstrumentState::InstrumentState()
+InstrumentState::InstrumentState(sptrDiffractometer diffractometer):
+    _diffractometer(diffractometer)
 {
     detectorOrientation.setIdentity();
     sampleOrientation = Eigen::Quaterniond(1, 0, 0, 0);
@@ -96,5 +100,33 @@ Eigen::Matrix3d InstrumentState::sampleOrientationMatrix() const
 }
 
 
+Eigen::Matrix3d InstrumentState::jacobianK(const DetectorEvent& ev) const
+{
+    auto detector = _diffractometer->getDetector();
+
+    // Jacobian from (px, py, frame) to lab coordinates on detector
+    Eigen::Matrix3d dpdx = detector->jacobian(ev._px, ev._py);
+
+    const double nki = ki().rowVector().norm();
+
+    // postion in lab space on the detector
+    Eigen::Vector3d p = detector->pixelPosition(ev._px, ev._py).vector();
+
+    // Jacobian of position -> kf
+    Eigen::Vector3d dp = p - samplePosition;
+    double r = dp.norm();
+
+    Eigen::RowVector3d drdx = 1/r * dp.transpose() * dpdx;
+
+    // Jacobian of (px, py) -> kf
+    Eigen::Matrix3d dkdx = nki * detectorOrientation * (dpdx / r - dp * drdx / r / r);
+
+    return dkdx;   
+}
+
+sptrDiffractometer InstrumentState::diffractometer() const
+{
+    return _diffractometer;
+}
 
 } // end namespace nsx

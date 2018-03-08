@@ -70,10 +70,10 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader, const sptrDiffractometer& 
     _diffractometer->getSource()->getSelectedMonochromator().setWavelength(wav);
 
     // Getting Scan parameters for the detector
-    _states.resize(_nFrames);
+    _states.reserve(_nFrames);
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _states[i] = _reader->getState(i);
+        _states.push_back(_reader->getState(i));
     }
 }
 

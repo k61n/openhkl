@@ -35,6 +35,8 @@ public:
 private:
     //! Reference peak about which the coordinate system is based
     sptrPeak3D _peak;
+    //! DetectorEvent corresponding to peak center
+    DetectorEvent _event;
     //! State of the instrument at the time peak was observed.
     InterpolatedState _state;
     //! Incoming momentum.
@@ -47,8 +49,8 @@ private:
     Eigen::Vector3d _e2;
     //! Zeta factor (see p135 of Kabsch 2010).
     double _zeta;
-    //! Frame corresponding to peak center
-    double _frame;
+
+
 };
 
 } // end namespace nsx

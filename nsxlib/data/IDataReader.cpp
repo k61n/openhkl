@@ -62,7 +62,7 @@ InstrumentState IDataReader::getState(size_t frame) const
 {
     assert(frame < _nFrames);
 
-    InstrumentState state;
+    InstrumentState state(_diffractometer);
 
     // compute transformations
     auto detector_gonio = _diffractometer->getDetector()->getGonio();

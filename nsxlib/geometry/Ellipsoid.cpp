@@ -2,7 +2,9 @@
 
 #include "AABB.h"
 #include "DataSet.h"
+#include "Detector.h"
 #include "DetectorEvent.h"
+#include "Diffractometer.h"
 #include "Ellipsoid.h"
 #include "GeometryTypes.h"
 #include "ReciprocalVector.h"
@@ -314,46 +316,31 @@ Eigen::Vector3d Ellipsoid::intersectionCenter(const Eigen::Vector3d& n, const Ei
 
 Ellipsoid Ellipsoid::toDetectorSpace(sptrDataSet data) const
 {
-    const Eigen::Vector3d q = _center;
-    const Eigen::Matrix3d A = _metric;
+    auto events = data->getEvents({ReciprocalVector(_center)});
 
-    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(A);
-    const Eigen::Matrix3d U = solver.eigenvectors();
-    const Eigen::Vector3d l = solver.eigenvalues();
-
-    std::vector<ReciprocalVector> qs;
-    qs.push_back(ReciprocalVector(q));
-    
-    for (int i = 0; i < 3; ++i) {
-        const double s = std::sqrt(1.0 / l(i));
-        qs.push_back(ReciprocalVector(q+s*U.col(i)));
-        qs.push_back(ReciprocalVector(q-s*U.col(i)));
-    }
-    auto evs = data->getEvents(qs);
     // something bad happened
-    if (evs.size() != qs.size()) {
+    if (events.size() != 1) {
         throw std::runtime_error("could not transform ellipse from q space to detector space");
     }
 
-    Eigen::Matrix3d delta;
+    const auto& event = events[0];
+    auto position = data->diffractometer()->getDetector()->pixelPosition(event._px, event._py);
+    auto state = data->interpolatedState(event._frame);    
+    Eigen::Vector3d q0 = _center;
+   
+    // Jacobian of map from detector coords to sample q space
+    Eigen::Matrix3d J = state.jacobianQ(event);
 
-    auto toVector = [](const DetectorEvent& ev) {
-        return Eigen::Vector3d(ev._px, ev._py, ev._frame);
-    };
+    const Eigen::Matrix3d JI = J.inverse();
 
-    const Eigen::Vector3d p0 = toVector(evs[0]);
+    const Eigen::Matrix3d q_cov = _inverseMetric;
+    // compute covariance matrix in detector space
+    const Eigen::Matrix3d det_cov = JI.transpose() * q_cov * JI;
 
-    for (auto i = 0; i < 3; ++i) {
-        const double s = std::sqrt(1.0 / l(i));
-        const Eigen::Vector3d& p1 = toVector(evs[1+2*i]);
-        const Eigen::Vector3d& p2 = toVector(evs[2+2*i]);
-        delta.col(i) = 0.5 * (p1-p2) / s;
-    }
+    const Eigen::Matrix3d det_inv_cov = J * _metric * J.transpose();
 
-    // approximate linear transformation detector space to q space
-    const Eigen::Matrix3d BI = U * delta.inverse();
-
-    return Ellipsoid(p0, BI.transpose()*A*BI);
+    Eigen::Vector3d p(event._px, event._py, event._frame);
+    return Ellipsoid(p, det_inv_cov);
 }
 
 } // end namespace nsx

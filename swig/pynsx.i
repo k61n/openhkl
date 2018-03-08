@@ -59,6 +59,7 @@
 %{
 #pragma GCC diagnostic ignored "-Wpedantic"
 #define SWIG_FILE_WITH_INIT
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 
 #include <Python.h>
 #include <numpy/arrayobject.h>
@@ -253,6 +254,8 @@ using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 
 #include "Diffractometer.h"
 
+using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
+
 #include "Singleton.h"
 
 #include "MetaData.h"
@@ -355,14 +358,17 @@ using namespace nsx;
 %template(scored_uc) std::pair<std::shared_ptr<nsx::UnitCell>, double>;
 %template(indexer_solutions) std::vector<std::pair<std::shared_ptr<nsx::UnitCell>,double>>;
 
+%include "InstrumentTypes.h"
 %include "Detector.h"
 %include "DetectorEvent.h"
 %include "MonoDetector.h"
 %include "CylindricalDetector.h"
 %include "FlatDetector.h"
-%include "Sample.h"
 %include "Diffractometer.h"
+%include "Sample.h"
 %include "Singleton.h"
+%include "InstrumentState.h"
+%include "InterpolatedState.h"
 
 namespace nsx {
    class DataReaderFactory; 
@@ -394,8 +400,6 @@ namespace nsx {
 %include "ILLDataReader.h"
 %include "HDF5DataReader.h"
 %include "FitProfile.h"
-%include "InstrumentState.h"
-%include "InterpolatedState.h"
 %include "DataSet.h"
 
 

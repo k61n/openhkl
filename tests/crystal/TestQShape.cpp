@@ -76,30 +76,33 @@ int main()
     int good_shapes = 0;
 
     for (auto peak: found_peaks) {
+        auto qshape = peak->qShape();
+        nsx::Ellipsoid new_shape;
         try {
-            auto qshape = peak->qShape();
-            nsx::Ellipsoid new_shape;
             new_shape = qshape.toDetectorSpace(dataf);
-            auto old_shape = peak->getShape();
-
-            // note: some blobs are invalid, so we skip them
-            if (!(old_shape.metric().norm() < 1e3)) {
-                continue;
-            }
-
-            ++good_shapes;
-
-            auto dx = new_shape.center() - old_shape.center();
-
-            // transformation x -> q -> x should be nearly pixel-perfect
-            NSX_CHECK_SMALL(dx.norm(), 0.2);
-
-            NSX_CHECK_SMALL((new_shape.metric().inverse()*old_shape.metric()-Eigen::Matrix3d::Identity()).norm(), 0.4);
-
-        } catch (...) {
-            
+        } catch(...) {
+            continue;
         }
+        auto old_shape = peak->getShape();
+
+        // note: some blobs are invalid, so we skip them
+        if (!(old_shape.metric().norm() < 1e3)) {
+            continue;
+        }
+
+        ++good_shapes;
+
+        auto dx = new_shape.center() - old_shape.center();
+    
+        // transformation x -> q -> x should be nearly pixel-perfect
+        NSX_CHECK_SMALL(dx.norm(), 0.2);
+
+        double error = (new_shape.metric()-old_shape.metric()).norm();
+        NSX_CHECK_SMALL(error, 2e-2);
+       
     }
+
+    NSX_CHECK_ASSERT(good_shapes > 600);
 
     return 0;
 }

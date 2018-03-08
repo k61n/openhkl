@@ -4,34 +4,37 @@
 #include "Peak3D.h"
 #include "PeakCoordinateSystem.h"
 
-
 namespace nsx {
 
-PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak)
+PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak): 
+    _peak([peak]() {
+        if (!peak) {
+            throw std::runtime_error("PeakCoordinateSystem: cannot constuct with null Peak3D");
+        }
+        return peak;
+    }()),
+
+    _event(peak->getShape().center()),
+
+    _state(peak->data()->interpolatedState(_event._frame)),
+
+    _ki(_state.ki().rowVector()),
+
+    _kf([&]() {
+        // take care to make sure that q is transformed to lab coordinate system
+        // question: better to use observed q or predicted q??
+        auto detector = peak->data()->diffractometer()->getDetector();
+        auto pos = detector->pixelPosition(_event._px, _event._py);
+        return _state.kfLab(pos).rowVector();
+    }()),
+    
+    _e1(_kf.cross(_ki)),
+    _e2(_kf.cross(_e1))
 {
-    if (!peak) {
-        throw std::runtime_error("PeakCoordinateSystem: cannot constuct with null Peak3D");
-    }
-
-    _peak = peak;
-    auto detector = peak->data()->diffractometer()->getDetector();
-    Eigen::Vector3d center = peak->getShape().center();
-    _frame = center[2];
-    _state = peak->data()->interpolatedState(_frame);
-
-    _ki = _state.ki().rowVector();
-    // take care to make sure that q is transformed to lab coordinate system
-    // question: better to use observed q or predicted q??
-    _kf = _state.kfLab(detector->pixelPosition(center[0], center[1])).rowVector();
-
-    _e1 = _kf.cross(_ki);
-    _e2 = _kf.cross(_e1);
-
     _e1.normalize();
     _e2.normalize();
-  
-    Eigen::Vector3d axis = _state.axis;
-    _zeta = _e1.dot(axis) * 180.0 / M_PI * _state.stepSize;
+
+    _zeta = _e1.dot(_state.axis) * 180.0 / M_PI * _state.stepSize;
     _e1 *= 180.0 / M_PI / _kf.norm();
     _e2 *= 180.0 / M_PI / _kf.norm();
 }
@@ -44,34 +47,15 @@ Eigen::Vector3d PeakCoordinateSystem::transform(const DetectorEvent& ev) const
 
     const double eps1 = _e1.dot(dk);
     const double eps2 = _e2.dot(dk);
-    const double eps3 = _zeta * (ev._frame - _frame);
+    const double eps3 = _zeta * (ev._frame - _event._frame);
 
     return Eigen::Vector3d(eps1, eps2, eps3);
 }
 
 Eigen::Matrix3d PeakCoordinateSystem::jacobian() const
 {
-    const Eigen::Vector3d center = _peak->getShape().center();
-    DetectorEvent ev(center[0], center[1], center[2]);
-    auto detector = _peak->data()->diffractometer()->getDetector();
+    Eigen::Matrix3d dkdx = _state.jacobianK(_event);
 
-    // Jacobian from (px, py, frame) to lab coordinates on detector
-    Eigen::Matrix3d dpdx = detector->jacobian(center[0], center[1]);
-
-    const double ki = _state.ki().rowVector().norm();
-
-    // postion in lab space on the detector
-    Eigen::Vector3d p = detector->pixelPosition(center[0], center[1]).vector();
-
-    // Jacobian of position -> kf
-    Eigen::Vector3d dp = p - _state.samplePosition;
-    double r = dp.norm();
-
-    Eigen::RowVector3d drdx = 1/r * dp.transpose() * dpdx;
-
-    // Jacobian of (px, py) -> kf
-    Eigen::Matrix3d dkdx = ki * _state.detectorOrientation * (dpdx / r - dp * drdx / r / r);
-   
     // Jacobian of epsilon coordinates
     Eigen::Matrix3d J;
 
