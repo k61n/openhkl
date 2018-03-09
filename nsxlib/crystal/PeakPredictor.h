@@ -52,7 +52,7 @@ class PeakPredictor {
 public:
     //! Return predicted peaks on a given data set. Parameter \p keepObserved determines whether to include
     //! predictions for peaks which are already part of the data set.
-    PeakPredictor(sptrUnitCell cell, double dmin, double dmax, double sigmaD, double sigmaM);
+    PeakPredictor(sptrUnitCell cell, double dmin, double dmax, sptrShapeLibrary library);
 
     //! Is the peak h,k,l in Bragg condition in this dataset. Return Peak pointer if true,
     //! otherwise nullptr.
@@ -68,10 +68,8 @@ public:
     double _dmin;
     //! Maximum d value used in prediction.
     double _dmax;
-    //! Estimated beam divergence
-    double _sigmaD;
-    //! Estimated mosaicity
-    double _sigmaM;
+    //! Library used for shape prediction
+    sptrShapeLibrary _library;
 };
 
 } // end namespace nsx

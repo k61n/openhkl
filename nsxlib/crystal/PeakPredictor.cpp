@@ -61,13 +61,17 @@
 
 namespace nsx {
 
-PeakPredictor::PeakPredictor(sptrUnitCell cell, double dmin, double dmax, double sigmaD, double sigmaM):
-    _cell(cell), _dmin(dmin), _dmax(dmax), _sigmaD(sigmaD), _sigmaM(sigmaM)
+PeakPredictor::PeakPredictor(sptrUnitCell cell, double dmin, double dmax, sptrShapeLibrary library):
+    _cell(cell), _dmin(dmin), _dmax(dmax), _library(library)
 {
 }
 
 PeakList PeakPredictor::predict(sptrDataSet data) const
-{ 
+{
+    if (!_library) {
+        throw std::runtime_error("PeakPredictor cannot predict without a shape library");
+    }
+
     auto& mono = data->diffractometer()->getSource()->getSelectedMonochromator();
     const double wavelength = mono.getWavelength();
     PeakList calculated_peaks;     
@@ -106,9 +110,8 @@ PeakList PeakPredictor::predictPeaks(sptrDataSet data, const std::vector<MillerI
         // dummy shape
         peak->setShape(Ellipsoid(center, 1.0));
 
-        // use standard coordinates + divergence and mosaicity to guess the shape
-        PeakCoordinateSystem frame(peak);
-        peak->setShape(frame.detectorShape(_sigmaD, _sigmaM));
+        Eigen::Matrix3d cov = _library->predictCovariance(peak);
+        peak->setShape(Ellipsoid(center, cov.inverse()));
         peaks.push_back(peak);
     }
     return peaks;

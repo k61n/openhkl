@@ -32,11 +32,6 @@ DialogProfileFit::DialogProfileFit(nsx::sptrExperiment experiment,
 
     connect(ui->calculate, SIGNAL(released()), this, SLOT(calculate()));
 
-    // TODO: support multiple datasets for a single crystal
-    if (_data.size() != 1) {
-        throw std::runtime_error("DialogProfileFit: currently we only support one dataset at a time!!");
-    }
-
     // setup slider
     ui->frame->setMaximum(0);
     ui->frame->setMaximum(0);
@@ -92,7 +87,7 @@ void DialogProfileFit::calculate()
     nsx::AABB aabb(-scale*sigma, scale*sigma);
 
     // free memory of old library
-    _library.reset();
+    _library = nsx::sptrShapeLibrary(new nsx::ShapeLibrary);
 
     #if 0
     nsx::ShapeIntegrator integrator(aabb, nx, ny, nz);
@@ -120,7 +115,9 @@ void DialogProfileFit::calculate()
         _library->addPeak(peak);
     }
 
-    _library->updateFit(500, 1e-3);
+    _library->updateFit(500);
+
+    nsx::info() << "done fitting library; mean pearson coefficient is " << _library->meanPearson();
 
     // draw the updated frame
     drawFrame(ui->frame->value());
@@ -128,6 +125,8 @@ void DialogProfileFit::calculate()
 
 void DialogProfileFit::drawFrame(int value)
 {
+    #if 0
+
     if (value < 0 || value >= _profile.shape()[2]) {
         throw std::runtime_error("DialogProfileFit::drawFrame(): invalid frame value");
     }
@@ -153,6 +152,8 @@ void DialogProfileFit::drawFrame(int value)
     scene->setSceneRect(QRectF(0, 0, shape[0], shape[1]));
     scene->addPixmap(QPixmap::fromImage(img));
     ui->graphicsView->fitInView(0, 0, shape[0], shape[1]);
+
+    #endif
 }
 
 const nsx::FitProfile& DialogProfileFit::profile()

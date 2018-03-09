@@ -365,7 +365,7 @@ void SessionModel::incorporateCalculatedPeaks()
             }
         }
 
-        auto predictor = nsx::PeakPredictor(cell, dialog.dMin(), dialog.dMax(), dialog.sigmaD(), dialog.sigmaM());
+        auto predictor = nsx::PeakPredictor(cell, dialog.dMin(), dialog.dMax(), _library);
         auto predicted = predictor.predict(numor);
         // todo: bkg_begin and bkg_end
         //nsx::info() << "Integrating predicted peaks...";
