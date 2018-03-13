@@ -264,8 +264,7 @@ Ellipsoid Peak3D::qShape() const
     const Eigen::Matrix3d JI = J.inverse();
 
     // inverse covariance matrix in sample q space
-    const Eigen::Matrix3d q_inv_cov = JI * _shape.metric() * JI.transpose();
-
+    const Eigen::Matrix3d q_inv_cov = JI.transpose() * _shape.metric() * JI;
     return Ellipsoid(q0, q_inv_cov);
 }
 

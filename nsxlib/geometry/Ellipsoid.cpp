@@ -325,19 +325,11 @@ Ellipsoid Ellipsoid::toDetectorSpace(sptrDataSet data) const
 
     const auto& event = events[0];
     auto position = data->diffractometer()->getDetector()->pixelPosition(event._px, event._py);
-    auto state = data->interpolatedState(event._frame);    
-    Eigen::Vector3d q0 = _center;
+    auto state = data->interpolatedState(event._frame);  
    
     // Jacobian of map from detector coords to sample q space
     Eigen::Matrix3d J = state.jacobianQ(event);
-
-    const Eigen::Matrix3d JI = J.inverse();
-
-    const Eigen::Matrix3d q_cov = _inverseMetric;
-    // compute covariance matrix in detector space
-    const Eigen::Matrix3d det_cov = JI.transpose() * q_cov * JI;
-
-    const Eigen::Matrix3d det_inv_cov = J * _metric * J.transpose();
+    const Eigen::Matrix3d det_inv_cov = J.transpose() * _metric * J;
 
     Eigen::Vector3d p(event._px, event._py, event._frame);
     return Ellipsoid(p, det_inv_cov);

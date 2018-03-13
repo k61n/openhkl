@@ -66,7 +66,8 @@ InterpolatedState::InterpolatedState(const InstrumentState& s1, const Instrument
     ni = s*(s1.ni / s1.ni.norm()) + t*(s2.ni / s2.ni.norm());
     wavelength = s*s1.wavelength + t*s2.wavelength;
 
-    Eigen::Quaterniond q = q2 * q1.inverse();
+    //Eigen::Quaterniond q = q2 * q1.inverse();
+    Eigen::Quaterniond q = q1.inverse() * q2;
     axis = q.vec().normalized();
     q.normalize();
     const double cos_theta2 = q.w();
@@ -81,7 +82,8 @@ Eigen::Matrix3d InterpolatedState::jacobianQ(const DetectorEvent& ev) const
     // Jacobian of map from detector coords to sample q space
     Eigen::Matrix3d J = sampleOrientationMatrix().transpose() * jacobianK(ev); 
     // take into account the rotation
-    J.col(2) = stepSize * axis.cross(q0);
+    // negative sign is due to treating q as a column vector instead of a row vector
+    J.col(2) = -stepSize * axis.cross(q0);
     return J;
 }
 

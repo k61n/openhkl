@@ -36,11 +36,9 @@ public:
 
 private:
     std::vector<sptrPeak3D> _strongPeaks;
-    Eigen::Matrix3d _covBeam;
-    Eigen::Matrix3d _covMosaicity;
     Eigen::Matrix3d _covDetector;
-    Eigen::Matrix3d _covShape;
-    Eigen::Matrix3d _covBase;
+    Eigen::Matrix3d _covMosaicity;
+    Eigen::Matrix<double, 6, 6> _covScatter;    
 };
 
 } // end namespace nsx

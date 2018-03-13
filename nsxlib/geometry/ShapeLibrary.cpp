@@ -14,6 +14,7 @@ namespace nsx {
 
 struct FitData {
     Eigen::Matrix3d Rs, Rd, Jk, Jp, Jd;
+    Eigen::Vector3d q;
 
     FitData(sptrPeak3D peak)
     {
@@ -39,17 +40,17 @@ struct FitData {
 
         DetectorEvent event(center);
         Jd = state.jacobianQ(event);
+
+        q = kf-ki;
     }
 };
 
 
 ShapeLibrary::ShapeLibrary(): _strongPeaks()
 {
-    _covBeam.setZero();
-    _covBase.setZero();
     _covDetector.setZero();
     _covMosaicity.setZero();
-    _covShape.setZero();    
+    _covScatter.setZero();    
 }
 
 ShapeLibrary::~ShapeLibrary()
@@ -90,11 +91,14 @@ void ShapeLibrary::updateFit(int num_iterations)
 
     for (auto i = 0; i < 3; ++i) {
         for (auto j = i; j < 3; ++j) {
-            params.addParameter(&_covBase(i,j));
-            params.addParameter(&_covBeam(i,j));
             params.addParameter(&_covDetector(i,j));
             params.addParameter(&_covMosaicity(i,j));
-            params.addParameter(&_covShape(i,j));
+        }
+    }
+
+    for (auto i = 0; i < 6; ++i) {
+        for (auto j = i; j < 6; ++j) {
+            params.addParameter(&_covScatter(i,j));
         }
     }
 
@@ -133,27 +137,29 @@ Eigen::Matrix3d ShapeLibrary::predictCovariance(sptrPeak3D peak) const
 
 Eigen::Matrix3d ShapeLibrary::predictCovariance(const FitData& f) const
 {
-    Eigen::Matrix3d CB = 0.5 * (_covBase + _covBase.transpose());
-    Eigen::Matrix3d CK = 0.5 * (_covBeam + _covBeam.transpose());
     Eigen::Matrix3d CD = 0.5 * (_covDetector + _covDetector.transpose());
     Eigen::Matrix3d CM = 0.5 * (_covMosaicity + _covMosaicity.transpose());
-    Eigen::Matrix3d CS = 0.5 * (_covShape + _covShape.transpose());
+    Eigen::Matrix<double, 6, 6> CS = 0.5 * (_covScatter + _covScatter.transpose());
 
-    Eigen::Matrix3d JR = f.Jp * f.Rs.transpose();
+    const auto& q = f.q;
+    const double q2 = q.squaredNorm();
+    const auto& R = f.Rs;
+    const Eigen::Matrix3d P = q2*Eigen::Matrix3d::Identity() - q*q.transpose();
+    const Eigen::Matrix3d RPR = R*P*R;
 
-    Eigen::Matrix3d lab_cov = CB;    
-    lab_cov += f.Jk * CK * f.Jk.transpose();
-    lab_cov += JR * CS * JR.transpose();
-    //lab_cov += f.Jp * CS * f.Jp.transpose();
-    Eigen::Matrix3d sample_cov = f.Rs * lab_cov * f.Rs.transpose();
-    sample_cov += CM;
-    
-    Eigen::Matrix3d Jd_inv = f.Jd.inverse();
+    Eigen::Matrix<double, 3, 6> delta;
+    delta.block(0,0,3,3) = R * f.Jk;
+    delta.block(0,3,3,3) = R * f.Jp;
 
-    Eigen::Matrix3d detector_cov = Jd_inv * sample_cov * Jd_inv.transpose();
+    const Eigen::Matrix3d mos = q2 * RPR * CM * RPR;
+    const Eigen::Matrix3d scatter = delta * CS * delta.transpose();
+
+    const Eigen::Matrix3d JDI = f.Jd.inverse();
+
+    Eigen::Matrix3d detector_cov = JDI * (mos + scatter) * JDI.transpose();
     detector_cov += CD;
 
-    return detector_cov;
+    return CD + JDI*(mos+scatter)*JDI.transpose();
 }
 
 double ShapeLibrary::meanPearson() const
