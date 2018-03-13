@@ -1,7 +1,5 @@
-// author: Jonathan Fisher
-// j.fisher@fz-juelich.de
-
 #include <array>
+#include <stdexcept>
 #include <tuple>
 
 #include <Eigen/Core>
@@ -28,12 +26,14 @@
 #include <nsxlib/SpaceGroup.h>
 #include <nsxlib/UnitCell.h>
 
-#include "SpaceGroupDialog.h"
-#include "ui_SpaceGroupDialog.h"
+#include "DialogSpaceGroup.h"
+#include "ui_DialogSpaceGroup.h"
 
-SpaceGroupDialog::SpaceGroupDialog(const nsx::PeakList& peaks, QWidget *parent):
+DialogSpaceGroup::DialogSpaceGroup(const nsx::PeakList& peaks, QWidget *parent):
     QDialog(parent),
-    ui(new Ui::SpaceGroupDialog),
+    ui(new Ui::DialogSpaceGroup),
+    _groups(),
+    _cell(nullptr),
     _selectedGroup("")
 {
     ui->setupUi(this);
@@ -55,16 +55,19 @@ SpaceGroupDialog::SpaceGroupDialog(const nsx::PeakList& peaks, QWidget *parent):
             _cell = current_peak_cell;
         } else {
             if (_cell != current_peak_cell) {
-                nsx::error() << "ERROR: Only one unit cell is supported at this time";
-                return;
+                throw std::runtime_error("Only one unit cell is supported at this time");
             }
         }
+    }
+
+    if (!_cell) {
+        throw std::runtime_error("No unit cell defined for the selected peaks");
     }
 
     _peaks = peak_filter.indexed(_peaks, _cell, _cell->indexingTolerance());
 
     if ( _peaks.size()  == 0) {
-        nsx::error() << "Need at least one peak to find space group!";
+        throw std::runtime_error("Need at least one peak to find space group!");
     }
 
     evaluateSpaceGroups();
@@ -72,18 +75,18 @@ SpaceGroupDialog::SpaceGroupDialog(const nsx::PeakList& peaks, QWidget *parent):
     buildTable();
 }
 
-SpaceGroupDialog::~SpaceGroupDialog()
+DialogSpaceGroup::~DialogSpaceGroup()
 {
     delete ui;
 }
 
-std::string SpaceGroupDialog::getSelectedGroup()
+std::string DialogSpaceGroup::getSelectedGroup()
 {
     return _selectedGroup;
 }
 
 
-void SpaceGroupDialog::evaluateSpaceGroups()
+void DialogSpaceGroup::evaluateSpaceGroups()
 {
     auto&& symbols = nsx::SpaceGroup::symbols();
 
@@ -132,7 +135,7 @@ void SpaceGroupDialog::evaluateSpaceGroups()
     nsx::info() << "Done evaluating space groups.";
 }
 
-void SpaceGroupDialog::buildTable()
+void DialogSpaceGroup::buildTable()
 {
     QStandardItemModel* model = new QStandardItemModel(_groups.size(), 2, this);
 
@@ -166,7 +169,7 @@ void SpaceGroupDialog::buildTable()
    ui->tableView->setModel(model);
 }
 
-void SpaceGroupDialog::on_tableView_doubleClicked(const QModelIndex &index)
+void DialogSpaceGroup::on_tableView_doubleClicked(const QModelIndex &index)
 {
     _selectedGroup = std::get<0>(_groups[index.row()]);
     QMessageBox* box = new QMessageBox(this);
