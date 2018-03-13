@@ -1,8 +1,4 @@
-// author: Jonathan Fisher
-// j.fisher@fz-juelich.de
-
-#ifndef NSXQT_SPACEGROUPDIALOG_H
-#define NSXQT_SPACEGROUPDIALOG_H
+#pragma once
 
 #include <memory>
 #include <string>
@@ -22,16 +18,16 @@ class QWidget;
 
 namespace Ui
 {
-class SpaceGroupDialog;
+class DialogSpaceGroup;
 }
 
-class SpaceGroupDialog : public QDialog
+class DialogSpaceGroup : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit SpaceGroupDialog(const nsx::PeakList& peaks, QWidget *parent = 0);
-    ~SpaceGroupDialog();
+    explicit DialogSpaceGroup(const nsx::PeakList& peaks, QWidget *parent = 0);
+    ~DialogSpaceGroup();
 
     std::string getSelectedGroup();
 
@@ -42,11 +38,9 @@ private:
     void evaluateSpaceGroups();
     void buildTable();
 
-    Ui::SpaceGroupDialog *ui;
+    Ui::DialogSpaceGroup *ui;
     nsx::PeakList _peaks;
     std::vector<std::pair<std::string, double>> _groups;
     nsx::sptrUnitCell _cell;
     std::string _selectedGroup;
 };
-
-#endif // NSXQT_SPACEGROUPDIALOG_H

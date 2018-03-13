@@ -35,6 +35,7 @@
 #include "DialogConvolve.h"
 #include "DialogExperiment.h"
 #include "DialogRawData.h"
+#include "DialogSpaceGroup.h"
 #include "DialogTransformationMatrix.h"
 #include "ExperimentItem.h"
 #include "ExperimentTree.h"
@@ -51,7 +52,6 @@
 #include "SampleItem.h"
 #include "SessionModel.h"
 #include "SourceItem.h"
-#include "SpaceGroupDialog.h"
 #include "TreeItem.h"
 #include "UnitCellItem.h"
 
@@ -376,9 +376,12 @@ void ExperimentTree::showPeaksOpenGL()
 
 void ExperimentTree::findSpaceGroup()
 {
-    SpaceGroupDialog* dialog = new SpaceGroupDialog(_session->peaks(nullptr), this);
-    dialog->exec();
-    // update the space group elsewhere
+    try {
+        DialogSpaceGroup* dialog = new DialogSpaceGroup(_session->peaks(nullptr), this);
+        dialog->exec();
+    } catch(std::runtime_error& e) {
+        nsx::error() << e.what();
+    }
 }
 
 void ExperimentTree::computeRFactors()

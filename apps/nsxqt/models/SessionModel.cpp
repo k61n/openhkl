@@ -104,7 +104,6 @@
 #include "SampleItem.h"
 #include "SessionModel.h"
 #include "SourceItem.h"
-#include "SpaceGroupDialog.h"
 #include "TreeItem.h"
 #include "UnitCellItem.h"
 
