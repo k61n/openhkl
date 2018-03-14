@@ -46,7 +46,7 @@ struct FitData {
 };
 
 
-ShapeLibrary::ShapeLibrary(): _strongPeaks()
+ShapeLibrary::ShapeLibrary(): _profiles()
 {
     _covDetector.setZero();
     _covMosaicity.setZero();
@@ -58,7 +58,7 @@ ShapeLibrary::~ShapeLibrary()
 
 }
 
-bool ShapeLibrary::addPeak(sptrPeak3D peak)
+bool ShapeLibrary::addPeak(sptrPeak3D peak, const FitProfile& profile)
 {
     Eigen::Matrix3d A = peak->getShape().inverseMetric();
     Eigen::Matrix3d cov = 0.5 * (A + A.transpose());
@@ -70,8 +70,9 @@ bool ShapeLibrary::addPeak(sptrPeak3D peak)
     if (!(w.minCoeff() > 1e-2)) {
         return false;
     }
-    
-    _strongPeaks.push_back(peak);
+
+    _profiles[peak] = profile;
+    _profiles[peak].normalize();
     return true;
 }
 
@@ -79,9 +80,10 @@ void ShapeLibrary::updateFit(int num_iterations)
 {
     std::vector<std::pair<Eigen::Matrix3d, FitData>> fit_data;
     std::vector<std::pair<int, int>> fit_constraints;
-    fit_data.reserve(_strongPeaks.size());
+    fit_data.reserve(_profiles.size());
 
-    for (auto peak: _strongPeaks) {
+    for (const auto& pair: _profiles) {
+        auto peak = pair.first;
         auto cov = peak->getShape().inverseMetric();
         FitData data(peak);
         fit_data.push_back({0.5*(cov+cov.transpose()), data});
@@ -166,12 +168,87 @@ double ShapeLibrary::meanPearson() const
 {
     double sum_pearson = 0;
 
-    for (auto peak: _strongPeaks) {
+    for (const auto& pair: _profiles) {
+        auto peak = pair.first;
         Eigen::Matrix3d obs_cov = peak->getShape().inverseMetric();
         Eigen::Matrix3d pred_cov = predictCovariance(peak);
         sum_pearson += (obs_cov.transpose()*pred_cov).trace() / obs_cov.norm() / pred_cov.norm();
     }
-    return sum_pearson / _strongPeaks.size();
+    return sum_pearson / _profiles.size();
+}
+
+FitProfile ShapeLibrary::meanProfile(const DetectorEvent& ev, double radius, double nframes) const
+{
+    FitProfile mean;
+    int neighbors = 0;
+    const Eigen::Vector3d c0(ev._px, ev._py, ev._frame);
+
+    for (const auto& pair: _profiles) {
+        auto peak = pair.first;
+        const auto& profile = pair.second;
+
+        const Eigen::Vector3d dc = peak->getShape().center() - c0;
+
+        
+        double r = std::sqrt(dc(0)*dc(0)+dc(1)*dc(1));
+        double df = std::fabs(dc(2));
+
+        // too far away on detector or too great a rotation
+        if (r > radius || df > nframes) {
+            continue;
+        }
+
+        double weight = (1-r/radius) * (1-df/nframes);
+        mean.addProfile(profile, weight*weight);
+        neighbors++;
+    }
+
+    if (neighbors == 0) {
+        throw std::runtime_error("Error, no neighboring profiles found.");
+    }
+
+    mean.normalize();
+    return mean;
+}
+
+Eigen::Matrix3d ShapeLibrary::meanCovariance(sptrPeak3D reference_peak, double radius, double nframes) const
+{
+    Eigen::Matrix3d cov;
+    cov.setZero();
+    int neighbors = 0;
+
+    PeakCoordinateSystem reference_coord(reference_peak);
+
+    for (const auto& pair: _profiles) {
+        auto peak = pair.first;    
+
+        Eigen::Vector3d dc = reference_peak->getShape().center() - peak->getShape().center();    
+
+        // too far away on detector
+        if (dc(0)*dc(0) + dc(1)*dc(1) > radius*radius) {
+            continue;
+        }
+
+        // too far away in frame number
+        if (std::fabs(dc(2)) > nframes) {
+            continue;
+        }
+
+        PeakCoordinateSystem coord(peak);
+        Eigen::Matrix3d J = coord.jacobian();
+
+        cov += J * peak->getShape().inverseMetric() * J.transpose();
+        neighbors++;
+    }
+
+    if (neighbors == 0) {
+        throw std::runtime_error("Error, no neighboring profiles found.");
+    }
+
+    cov /= neighbors;
+
+    Eigen::Matrix3d JI = reference_coord.jacobian().inverse();
+    return JI * cov * JI.transpose();
 }
 
 } // end namespace nsx

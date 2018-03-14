@@ -25,6 +25,8 @@ public:
     double Isigma();
     double sigmaD();
     double sigmaM();
+    double radius();
+    double nframes();
 
     int minimumNeighbors();
 

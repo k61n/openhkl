@@ -23,9 +23,13 @@ PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak):
     _kf([&]() {
         // take care to make sure that q is transformed to lab coordinate system
         // question: better to use observed q or predicted q??
+        #if 0
         auto detector = peak->data()->diffractometer()->getDetector();
         auto pos = detector->pixelPosition(_event._px, _event._py);
         return _state.kfLab(pos).rowVector();
+        #endif
+        Eigen::RowVector3d q = peak->qPredicted().rowVector() * _state.sampleOrientationMatrix().transpose();
+        return q + _ki;
     }()),
     
     _e1(_kf.cross(_ki)),

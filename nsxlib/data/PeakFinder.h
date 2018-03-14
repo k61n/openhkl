@@ -24,11 +24,15 @@ public:
     void setThresholdType(int type);
     int getThresholdType();
 
-    void setIntegrationConfidence(double confidence);
-    double integrationConfidence() const;
+    void setIntegrationScale(double scale);
+    double integrationScale() const;
 
-    void setSearchConfidence(double confidence);
-    double searchConfidence() const;
+    void setBackgroundScale(double scale);
+    double backgroundScale() const;
+
+
+    void setSearchScale(double scale);
+    double searchScale() const;
 
     void setMinComponents(int minComp);
     int getMinComponents();
@@ -51,8 +55,9 @@ private:
     double _thresholdValue;
     int _thresholdType;
 
-    double _searchConfidence;
-    double _integrationConfidence;
+    double _searchScale;
+    double _integrationScale;
+    double _backgroundScale;
     double _median;
 
     int _minComp;

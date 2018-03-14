@@ -38,12 +38,14 @@
 
 namespace nsx {
 
-WeakPeakIntegrator::WeakPeakIntegrator()
+WeakPeakIntegrator::WeakPeakIntegrator(sptrShapeLibrary library, double radius, double nframes):
+    _library(library),
+    _radius(radius),
+    _nframes(nframes)
 {
 
 }
 
-// note that this assumes the profile has been normalized so that \sum_i p_i = 1
 static void updateFit(Intensity& I, Intensity& B, const std::vector<double>& profile, const IntegrationRegion& region)
 {
     Eigen::Matrix2d A;
@@ -84,6 +86,10 @@ static void updateFit(Intensity& I, Intensity& B, const std::vector<double>& pro
 
 bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 {
+    if (!_library) {
+        return false;
+    }
+
     if (!peak) {
         return false;
     }
@@ -121,23 +127,22 @@ bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     std::vector<double> profile(peakEvents.size());
     const double tolerance = 1e-5;
 
-    const Eigen::Vector3d& center = peak->getShape().center();
-    const Eigen::Matrix3d& inv_cov = peak->getShape().metric();
+    FitProfile model_profile;
+    DetectorEvent event(peak->getShape().center());
 
-    double profile_sum = 0.0;
-
-    // evaluate the model Gaussian
-    for (int i = 0; i < peakEvents.size(); ++i) {
-        const DetectorEvent& ev = peakEvents[i];
-        Eigen::Vector3d p(ev._px, ev._py, ev._frame);
-        p -= center;
-
-        profile[i] = std::exp(-0.5*p.transpose().dot(inv_cov*p));
-        profile_sum += profile[i];
+    try {
+        // throws if there are no neighboring peaks within the bounds
+        model_profile = _library->meanProfile(event, _radius, _nframes);
+    } catch(...) {
+        return false;
     }
 
-    for (auto& p: profile) {
-        p /= profile_sum;
+    PeakCoordinateSystem coord(peak);
+
+    // evaluate the model profile at the given events
+    for (int i = 0; i < peakEvents.size(); ++i) {
+        Eigen::Vector3d x = coord.transform(peakEvents[i]);
+        profile[i] = model_profile.predict(x);
     }
     
     // todo: stopping criterion

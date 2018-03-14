@@ -11,8 +11,9 @@ namespace nsx {
 
 class FitProfile {
 public:
-    FitProfile() = default;
+    FitProfile();
     FitProfile(const AABB& aabb, int nx, int ny, int nz);
+    FitProfile(const AABB& aabb, const Eigen::Vector3i& shape);
 
     double at(size_t i, size_t j, size_t k) const;
 
@@ -24,8 +25,6 @@ public:
 
     const Eigen::Vector3d& dx() const;
 
-    const Eigen::Vector3i& shape() const;
-
     size_t count() const;
 
     double predict(const Eigen::Vector3d& x) const;
@@ -33,13 +32,17 @@ public:
     //! Normalize the profile so that the sum is equal to one. Returns false if it cannot be normalized.
     bool normalize();
 
-    FitProfile& operator+=(const FitProfile& other);
+    //! Add the given profile to this one, with the specified weight
+    void addProfile(const FitProfile& other, double weight);
 
     //! Compute the ellipsoid corresponding to the center of mass and inertia tensor.
     Ellipsoid ellipsoid() const;
 
     //! Return the bounding box of the profile
     const AABB& aabb() const;
+
+    //! Return the shape of the underlying data
+    const Eigen::Vector3i& shape() const;
 
 private:
     AABB _aabb;

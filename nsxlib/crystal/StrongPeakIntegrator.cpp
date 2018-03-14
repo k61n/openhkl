@@ -77,11 +77,45 @@ bool StrongPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& reg
     double f_max = f_min;
 
     size_t Npeak = peakEvents.size();
+    Blob3D blob;
 
     for (size_t i = 0; i < Npeak; ++i) {
-        f_min = std::min(peakEvents[i]._frame, f_min);
-        f_max = std::max(peakEvents[i]._frame, f_max);
+        const auto& ev = peakEvents[i];
+        f_min = std::min(ev._frame, f_min);
+        f_max = std::max(ev._frame, f_max);
+
+        double di = (peakCounts[i]-mean_bkg) / std_bkg;
+
+        if (di > 1.0) {
+            blob.addPoint(ev._px, ev._py, ev._frame, peakCounts[i]-mean_bkg);
+        }
     }
+
+    Eigen::Vector3d center = blob.center();
+    Eigen::Matrix3d cov = blob.covariance();
+
+    // center of mass is consistent
+    if (!((center-peak->getShape().center()).norm() < 100)) {
+        return false;
+    }
+
+    Eigen::Matrix3d A0 = peak->getShape().metric();
+    Eigen::Matrix3d A1 = cov.inverse();
+
+    // check that the covariance is consistent
+    if (!((A1-A0).norm() / A0.norm() < 2.0)) {
+        return false;
+    }
+
+    // shape is not too small or too large
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(cov);
+    auto w = solver.eigenvalues();
+
+    if (w.minCoeff() < 0.1 || w.maxCoeff() > 100) {
+        return false;
+    }
+
+    peak->setShape(Ellipsoid(center, A1));
 
     size_t nframes = size_t(f_max-f_min)+1;
     _rockingCurve.resize(nframes);

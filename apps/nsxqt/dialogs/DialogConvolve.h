@@ -46,9 +46,9 @@ private slots:
 
     void changeBlobMaxSize(int size);
 
-    void changeIntegrationConfidenceValue(double confidence);
-
-    void changeBlobConfidenceValue(double confidence);
+    void changeSearchScale(double scale);
+    void changeIntegrationScale(double scale);
+    void changeBackgroundScale(double scale);
 
     void changeThresholdValue(double threshold);
 

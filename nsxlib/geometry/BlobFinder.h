@@ -73,7 +73,7 @@ public:
 
     void setThreshold(double threshold);
 
-    void setConfidence(double confidence);
+    void setScale(double scale);
 
     void setMedian(double median);
 
@@ -95,7 +95,7 @@ public:
 
 private:
     double _threshold;
-    double _confidence;
+    double _scale;
     double _median;
 
     int _minComp;

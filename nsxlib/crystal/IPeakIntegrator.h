@@ -57,8 +57,8 @@ public:
     const std::vector<Intensity>& rockingCurve() const;
 
 protected:
-    Intensity _integratedIntensity;
     Intensity _meanBackground;
+    Intensity _integratedIntensity;    
     std::vector<Intensity> _rockingCurve;
 };
 

@@ -351,9 +351,9 @@ void BlobFinder::setThreshold(double threshold)
     _threshold = threshold;
 }
 
-void BlobFinder::setConfidence(double confidence)
+void BlobFinder::setScale(double scale)
 {
-    _confidence = confidence;
+    _scale = scale;
 }
 
 void BlobFinder::setMedian(double median)
@@ -407,7 +407,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, Equivalen
 
         try {
             // toEllipsoid throws exception if mass is too small
-            it->second.toEllipsoid(_confidence,center,extents,axis);
+            it->second.toEllipsoid(_scale,center,extents,axis);
         } catch(...) {
             it = blobs.erase(it);
             continue;

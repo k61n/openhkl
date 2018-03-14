@@ -56,8 +56,9 @@ int main()
     peakFinder->setMinComponents(30);
     peakFinder->setMaxComponents(10000);
     peakFinder->setKernel(kernel);
-    peakFinder->setSearchConfidence(0.98);
-    peakFinder->setIntegrationConfidence(0.997);
+    peakFinder->setSearchScale(1.0);
+    peakFinder->setIntegrationScale(3.0);
+    peakFinder->setBackgroundScale(6.0);
     peakFinder->setThresholdType(1); // absolute
     peakFinder->setThresholdValue(15.0);
 
@@ -76,6 +77,10 @@ int main()
     int good_shapes = 0;
 
     for (auto peak: found_peaks) {
+        if (!peak->isSelected()) {
+            continue;
+        }
+
         auto qshape = peak->qShape();
         nsx::Ellipsoid new_shape;
         try {
@@ -94,8 +99,8 @@ int main()
 
         auto dx = new_shape.center() - old_shape.center();
     
-        // transformation x -> q -> x should be nearly pixel-perfect
-        NSX_CHECK_SMALL(dx.norm(), 0.2);
+        // transformation x -> q -> x should have sub-pixel accuracy
+        NSX_CHECK_SMALL(dx.norm(), 0.01);
 
         double error = (new_shape.metric()-old_shape.metric()).norm();
         NSX_CHECK_SMALL(error, 2e-2);

@@ -56,6 +56,15 @@ double DialogCalculatedPeaks::sigmaM()
     return ui->sigmaM->value();
 }
 
+double DialogCalculatedPeaks::radius()
+{
+    return ui->radius->value();
+}
+
+double DialogCalculatedPeaks::nframes()
+{
+    return ui->nframes->value();
+}
 
 int DialogCalculatedPeaks::minimumNeighbors()
 {

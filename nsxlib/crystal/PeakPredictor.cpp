@@ -66,7 +66,7 @@ PeakPredictor::PeakPredictor(sptrUnitCell cell, double dmin, double dmax, sptrSh
 {
 }
 
-PeakList PeakPredictor::predict(sptrDataSet data) const
+PeakList PeakPredictor::predict(sptrDataSet data, double radius, double nframes) const
 {
     if (!_library) {
         throw std::runtime_error("PeakPredictor cannot predict without a shape library");
@@ -80,13 +80,22 @@ PeakList PeakPredictor::predict(sptrDataSet data) const
     auto predicted_hkls = _cell->generateReflectionsInShell(_dmin, _dmax, wavelength); 
     PeakList peaks = predictPeaks(data, predicted_hkls, _cell->reciprocalBasis());
 
-    nsx::info() << "Adding calculated peaks...";
+    nsx::info() << "Computing shapes of " << peaks.size() << " calculated peaks...";
 
     for (size_t peak_id = 0; peak_id < peaks.size(); ++peak_id) {
         sptrPeak3D p = peaks[peak_id];
         p->addUnitCell(_cell, true);
         p->setPredicted(true);
         p->setSelected(true);
+
+        try {
+            // can throw if there are no neighboring peaks
+            Eigen::Matrix3d cov = _library->meanCovariance(p, radius, nframes);
+            Eigen::Vector3d center = p->getShape().center();
+            p->setShape(Ellipsoid(center, cov.inverse()));
+        } catch (...) {
+            continue;
+        }
         calculated_peaks.push_back(p);
     }    
     return calculated_peaks;
@@ -109,9 +118,6 @@ PeakList PeakPredictor::predictPeaks(sptrDataSet data, const std::vector<MillerI
 
         // dummy shape
         peak->setShape(Ellipsoid(center, 1.0));
-
-        Eigen::Matrix3d cov = _library->predictCovariance(peak);
-        peak->setShape(Ellipsoid(center, cov.inverse()));
         peaks.push_back(peak);
     }
     return peaks;

@@ -56,7 +56,7 @@ public:
 
     //! Is the peak h,k,l in Bragg condition in this dataset. Return Peak pointer if true,
     //! otherwise nullptr.
-    PeakList predict(sptrDataSet data) const;        
+    PeakList predict(sptrDataSet data, double radius, double nframes) const;        
 
     //! Helper method
     PeakList predictPeaks(sptrDataSet data, const std::vector<MillerIndex>& hkls, const Eigen::Matrix3d& BU) const;

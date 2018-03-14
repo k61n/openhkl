@@ -27,11 +27,14 @@ int main()
     numors.push_back(dataf);
     peakFinder.setHandler(handler);
 
-    peakFinder.setSearchConfidence(0.997);
-    NSX_CHECK_CLOSE(peakFinder.searchConfidence(), 0.997, 1e-10);
+    peakFinder.setSearchScale(1.0);
+    NSX_CHECK_CLOSE(peakFinder.searchScale(), 1.0, 1e-10);
 
-    peakFinder.setIntegrationConfidence(0.997);
-    NSX_CHECK_CLOSE(peakFinder.integrationConfidence(), 0.997, 1e-10);
+    peakFinder.setIntegrationScale(3.0);
+    NSX_CHECK_CLOSE(peakFinder.integrationScale(), 3.0, 1e-10);
+
+    peakFinder.setBackgroundScale(6.0);
+    NSX_CHECK_CLOSE(peakFinder.backgroundScale(), 6.0, 1e-10);
 
     peakFinder.setMaxComponents(10000);
     NSX_CHECK_ASSERT(peakFinder.getMaxComponents() == 10000);

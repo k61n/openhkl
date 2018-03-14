@@ -6,6 +6,7 @@
 #include <nsxlib/FitProfile.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFilter.h>
+#include <nsxlib/ShapeIntegrator.h>
 #include <nsxlib/ShapeLibrary.h>
 #include <nsxlib/Logger.h>
 
@@ -31,12 +32,19 @@ DialogProfileFit::DialogProfileFit(nsx::sptrExperiment experiment,
     }  
 
     connect(ui->calculate, SIGNAL(released()), this, SLOT(calculate()));
+    connect(ui->build, SIGNAL(released()), this, SLOT(build()));
 
     // setup slider
-    ui->frame->setMaximum(0);
-    ui->frame->setMaximum(0);
+    ui->drawFrame->setMaximum(0);
+    ui->drawFrame->setMaximum(0);
 
-    connect(ui->frame, SIGNAL(sliderMoved(int)), this, SLOT(drawFrame(int)));
+    ui->x->setMaximum(10000);
+    ui->y->setMaximum(10000);
+    ui->frame->setMaximum(10000);
+    ui->radius->setMaximum(10000);
+    ui->nframes->setMaximum(10000);
+
+    connect(ui->drawFrame, SIGNAL(sliderMoved(int)), this, SLOT(drawFrame(int)));
 }
 
 DialogProfileFit::~DialogProfileFit()
@@ -44,7 +52,7 @@ DialogProfileFit::~DialogProfileFit()
     delete ui;
 }
 
-void DialogProfileFit::calculate()
+void DialogProfileFit::build()
 {
     nsx::PeakList fit_peaks;
 
@@ -79,8 +87,8 @@ void DialogProfileFit::calculate()
     auto sigmaD = ui->sigmaD->value();
 
     // update the frame slider if necessary
-    if (ui->frame->maximum() != nz) {
-        ui->frame->setMaximum(nz-1);
+    if (ui->drawFrame->maximum() != nz) {
+        ui->drawFrame->setMaximum(nz-1);
     }
 
     Eigen::Vector3d sigma(sigmaD, sigmaD, sigmaM);
@@ -88,16 +96,29 @@ void DialogProfileFit::calculate()
 
     // free memory of old library
     _library = nsx::sptrShapeLibrary(new nsx::ShapeLibrary);
-
-    #if 0
-    nsx::ShapeIntegrator integrator(aabb, nx, ny, nz);
-    
+    nsx::ShapeIntegrator integrator(aabb, nx, ny, nz);    
     nsx::info() << "Fitting profiles...";
     integrator.integrate(fit_peaks, data, scale, scale+1, scale+2);
     nsx::info() << "Done fitting profiles";
+    _library = integrator.library();
 
+    calculate();
+}
+
+void DialogProfileFit::calculate()
+{
+    if (!_library) {
+        nsx::info() << "Error: must build shape library before calculating a mean profile";
+        return;
+    }
+
+    auto nx = ui->nx->value();
+    auto ny = ui->ny->value();
+    auto nz = ui->nz->value();  
+
+    nsx::DetectorEvent ev(ui->x->value(), ui->y->value(), ui->frame->value());
     // update maximum value, used for drawing
-    _profile = integrator.library()->meanShape();
+    _profile = _library->meanProfile(ev, ui->radius->value(), ui->nframes->value());
     _maximum = 0;
 
     for (auto i = 0; i < nx; ++i) {
@@ -108,25 +129,17 @@ void DialogProfileFit::calculate()
         }
     }
 
-    _library = integrator.library();
-    #endif 
+    nsx::Ellipsoid e = _profile.ellipsoid();
 
-    for (auto peak: fit_peaks) {
-        _library->addPeak(peak);
-    }
-
-    _library->updateFit(500);
-
-    nsx::info() << "done fitting library; mean pearson coefficient is " << _library->meanPearson();
+    nsx::info() << "Mean profile has inertia tensor";
+    nsx::info() << e.inverseMetric();
 
     // draw the updated frame
-    drawFrame(ui->frame->value());
+    drawFrame(ui->drawFrame->value());
 }
 
 void DialogProfileFit::drawFrame(int value)
 {
-    #if 0
-
     if (value < 0 || value >= _profile.shape()[2]) {
         throw std::runtime_error("DialogProfileFit::drawFrame(): invalid frame value");
     }
@@ -143,7 +156,7 @@ void DialogProfileFit::drawFrame(int value)
 
     for (auto i = 0; i < shape[0]; ++i) {
         for (auto j = 0; j < shape[1]; ++j) {
-            const double value = _profile(i, j, ui->frame->value());
+            const double value = _profile.at(i, j, ui->drawFrame->value());
             auto color = _cmap.color(value, _maximum);
             img.setPixel(i, j, color);
         }
@@ -152,8 +165,6 @@ void DialogProfileFit::drawFrame(int value)
     scene->setSceneRect(QRectF(0, 0, shape[0], shape[1]));
     scene->addPixmap(QPixmap::fromImage(img));
     ui->graphicsView->fitInView(0, 0, shape[0], shape[1]);
-
-    #endif
 }
 
 const nsx::FitProfile& DialogProfileFit::profile()

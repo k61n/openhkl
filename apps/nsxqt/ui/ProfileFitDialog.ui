@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>701</width>
-    <height>430</height>
+    <height>652</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>370</x>
      <y>10</y>
      <width>321</width>
-     <height>371</height>
+     <height>521</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
@@ -199,6 +199,76 @@
       </property>
      </widget>
     </item>
+    <item row="12" column="0">
+     <widget class="QLabel" name="label_13">
+      <property name="text">
+       <string>frame</string>
+      </property>
+     </widget>
+    </item>
+    <item row="11" column="0">
+     <widget class="QLabel" name="label_12">
+      <property name="text">
+       <string>y</string>
+      </property>
+     </widget>
+    </item>
+    <item row="13" column="0">
+     <widget class="QLabel" name="label_14">
+      <property name="text">
+       <string>radius</string>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="0">
+     <widget class="QLabel" name="label_11">
+      <property name="text">
+       <string>x</string>
+      </property>
+     </widget>
+    </item>
+    <item row="14" column="0">
+     <widget class="QLabel" name="label_15">
+      <property name="text">
+       <string>n frames</string>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="1">
+     <widget class="QDoubleSpinBox" name="x">
+      <property name="singleStep">
+       <double>0.010000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item row="11" column="1">
+     <widget class="QDoubleSpinBox" name="y">
+      <property name="singleStep">
+       <double>0.010000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item row="12" column="1">
+     <widget class="QDoubleSpinBox" name="frame">
+      <property name="singleStep">
+       <double>0.010000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item row="13" column="1">
+     <widget class="QDoubleSpinBox" name="radius">
+      <property name="singleStep">
+       <double>0.010000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item row="14" column="1">
+     <widget class="QDoubleSpinBox" name="nframes">
+      <property name="singleStep">
+       <double>0.010000000000000</double>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QWidget" name="gridLayoutWidget">
@@ -215,16 +285,23 @@
      <widget class="QGraphicsView" name="graphicsView"/>
     </item>
     <item row="2" column="0">
-     <widget class="QSlider" name="frame">
+     <widget class="QSlider" name="drawFrame">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
     </item>
-    <item row="3" column="0">
+    <item row="4" column="0">
      <widget class="QPushButton" name="calculate">
       <property name="text">
        <string>Calculate Mean Profile</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QPushButton" name="build">
+      <property name="text">
+       <string>Build Shape Library</string>
       </property>
      </widget>
     </item>
@@ -233,8 +310,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>380</y>
+     <x>220</x>
+     <y>580</y>
      <width>349</width>
      <height>28</height>
     </rect>

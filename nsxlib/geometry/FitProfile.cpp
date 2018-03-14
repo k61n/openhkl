@@ -3,6 +3,18 @@
 
 namespace nsx {
 
+FitProfile::FitProfile(const AABB& aabb, const Eigen::Vector3i& shape): FitProfile(aabb, shape(0), shape(1), shape(2))
+{
+
+}
+
+FitProfile::FitProfile(): _shape(0, 0, 0), _profile()
+{
+    auto zero = Eigen::Vector3d(0,0,0);
+    _aabb.setLower(zero);
+    _aabb.setUpper(zero);
+}
+
 FitProfile::FitProfile(const AABB& aabb, int nx, int ny, int nz):
     _aabb(aabb), _shape(nx, ny, nz), _count(0), _profile(nx*ny*nz, 0.0),
     _dx()
@@ -133,12 +145,15 @@ bool FitProfile::normalize()
     return true;
 }
 
-FitProfile& FitProfile::operator+=(const FitProfile& other)
+void FitProfile::addProfile(const FitProfile& other, double weight)
 {
     // special case: current profile is empty
     if (_profile.empty()) {
         *this = other;
-        return *this;
+        for (auto& p: _profile) {
+            p *= weight;
+        }
+        return;
     }
 
     if (_shape != other._shape) {
@@ -156,12 +171,9 @@ FitProfile& FitProfile::operator+=(const FitProfile& other)
     assert(_profile.size() == other._profile.size());
 
     for (size_t i = 0; i < _profile.size(); ++i) {
-        _profile[i] += other._profile[i];
+        _profile[i] += weight*other._profile[i];
     }
-
     _count += other._count;
-
-    return *this;
 }
 
 Ellipsoid FitProfile::ellipsoid() const

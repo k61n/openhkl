@@ -26,23 +26,6 @@
    </item>
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout_2">
-     <item row="6" column="2">
-      <widget class="QSpinBox" name="neighborSpinBox">
-       <property name="maximum">
-        <number>100000</number>
-       </property>
-       <property name="value">
-        <number>20</number>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>d max (angstrom)</string>
-       </property>
-      </widget>
-     </item>
      <item row="11" column="2">
       <widget class="QDoubleSpinBox" name="bkgScaleSpinBox">
        <property name="singleStep">
@@ -50,6 +33,16 @@
        </property>
        <property name="value">
         <double>6.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="2">
+      <widget class="QSpinBox" name="neighborSpinBox">
+       <property name="maximum">
+        <number>100000</number>
+       </property>
+       <property name="value">
+        <number>20</number>
        </property>
       </widget>
      </item>
@@ -80,30 +73,30 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="2">
-      <widget class="QDoubleSpinBox" name="dMinSpinBox">
-       <property name="maximum">
-        <double>1000.000000000000000</double>
+     <item row="3" column="2">
+      <widget class="QDoubleSpinBox" name="sigmaM">
+       <property name="decimals">
+        <number>3</number>
        </property>
        <property name="singleStep">
-        <double>0.010000000000000</double>
+        <double>0.001000000000000</double>
        </property>
        <property name="value">
-        <double>1.500000000000000</double>
+        <double>0.050000000000000</double>
        </property>
       </widget>
      </item>
-     <item row="6" column="0">
-      <widget class="QLabel" name="label_5">
+     <item row="10" column="0">
+      <widget class="QLabel" name="label_8">
        <property name="text">
-        <string>minimum neighbors</string>
+        <string>Scale factor for integration</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label">
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>d min (angstrom)</string>
+        <string>d max (angstrom)</string>
        </property>
       </widget>
      </item>
@@ -121,16 +114,6 @@
        </property>
        <property name="value">
         <double>3.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QComboBox" name="comboBoxUC"/>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>sigmaD</string>
        </property>
       </widget>
      </item>
@@ -167,23 +150,74 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="2">
-      <widget class="QDoubleSpinBox" name="sigmaM">
-       <property name="decimals">
-        <number>3</number>
-       </property>
-       <property name="singleStep">
-        <double>0.001000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.050000000000000</double>
+     <item row="0" column="2">
+      <widget class="QComboBox" name="comboBoxUC"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>sigmaD</string>
        </property>
       </widget>
      </item>
-     <item row="10" column="0">
-      <widget class="QLabel" name="label_8">
+     <item row="4" column="2">
+      <widget class="QDoubleSpinBox" name="dMinSpinBox">
+       <property name="maximum">
+        <double>1000.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.010000000000000</double>
+       </property>
+       <property name="value">
+        <double>1.500000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>Scale factor for integration</string>
+        <string>minimum neighbors</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>d min (angstrom)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Search radius</string>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="0">
+      <widget class="QLabel" name="label_11">
+       <property name="text">
+        <string>Number of frames</string>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="2">
+      <widget class="QDoubleSpinBox" name="radius">
+       <property name="maximum">
+        <double>10000.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>200.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="2">
+      <widget class="QDoubleSpinBox" name="nframes">
+       <property name="maximum">
+        <double>10000.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>5.000000000000000</double>
        </property>
       </widget>
      </item>

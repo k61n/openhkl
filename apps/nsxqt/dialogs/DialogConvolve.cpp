@@ -82,9 +82,9 @@ DialogConvolve::DialogConvolve(const nsx::DataList& data,
 
     connect(ui->thresholdSpinBox,SIGNAL(valueChanged(double)),this,SLOT(changeThresholdValue(double)));
 
-    connect(ui->blobConfidenceSpinBox,SIGNAL(valueChanged(double)),this,SLOT(changeBlobConfidenceValue(double)));
-
-    connect(ui->integrationConfidenceSpinBox,SIGNAL(valueChanged(double)),this,SLOT(changeIntegrationConfidenceValue(double)));
+    connect(ui->integrationScale,SIGNAL(valueChanged(double)),this,SLOT(changeIntegrationScale(double)));
+    connect(ui->searchScale,SIGNAL(valueChanged(double)),this,SLOT(changeSearchScale(double)));
+    connect(ui->backgroundScale,SIGNAL(valueChanged(double)),this,SLOT(changeBackgroundScale(double)));
 
     connect(ui->dataList,SIGNAL(currentRowChanged(int)),this,SLOT(changeSelectedData(int)));
 
@@ -242,8 +242,9 @@ void DialogConvolve::changeConvolutionFilter(int selected_filter)
     // need to update widgets with appropriate values
     ui->thresholdSpinBox->setValue(_peakFinder->getThresholdValue());
     ui->thresholdComboBox->setCurrentIndex(_peakFinder->getThresholdType());
-    ui->integrationConfidenceSpinBox->setValue(_peakFinder->integrationConfidence());
-    ui->blobConfidenceSpinBox->setValue(_peakFinder->searchConfidence());
+    ui->integrationScale->setValue(_peakFinder->integrationScale());
+    ui->searchScale->setValue(_peakFinder->searchScale());
+    ui->backgroundScale->setValue(_peakFinder->backgroundScale());
     ui->minCompBox->setValue(_peakFinder->getMinComponents());
     ui->maxCompBox->setValue(_peakFinder->getMaxComponents());
 
@@ -261,17 +262,21 @@ void DialogConvolve::changeThresholdValue(double value)
     updatePreview();
 }
 
-void DialogConvolve::changeBlobConfidenceValue(double value)
+void DialogConvolve::changeSearchScale(double scale)
 {
-    _peakFinder->setSearchConfidence(value);
-
+    _peakFinder->setSearchScale(scale);
     updatePreview();
 }
 
-void DialogConvolve::changeIntegrationConfidenceValue(double value)
+void DialogConvolve::changeIntegrationScale(double scale)
 {
-    _peakFinder->setIntegrationConfidence(value);
+    _peakFinder->setIntegrationScale(scale);
+    updatePreview();
+}
 
+void DialogConvolve::changeBackgroundScale(double scale)
+{
+    _peakFinder->setBackgroundScale(scale);
     updatePreview();
 }
 

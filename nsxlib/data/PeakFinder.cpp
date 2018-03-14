@@ -26,8 +26,9 @@ PeakFinder::PeakFinder()
     // default values
     _thresholdValue = 3.0;
     _thresholdType = 0;
-    _integrationConfidence = nsx::getConfidence(3.0);
-    _searchConfidence = nsx::getConfidence(1.0);
+    _integrationScale = 4.0;
+    _backgroundScale = 6.0;
+    _searchScale = nsx::getConfidence(1.0);
     _median = 0;
     _minComp = 30;
     _maxComp = 10000;
@@ -64,7 +65,7 @@ PeakList PeakFinder::find(DataList numors)
             blob_finder.setThreshold(_thresholdValue);
             blob_finder.setMinComp(_minComp);
             blob_finder.setMaxComp(_maxComp);
-            blob_finder.setConfidence(_searchConfidence);
+            blob_finder.setScale(_searchScale);
             blob_finder.setRelative(_thresholdType == 0);
 
             if ( _handler ) {
@@ -72,7 +73,7 @@ PeakList PeakFinder::find(DataList numors)
                 _handler->log("threshold value is " + std::to_string(_thresholdValue));
                 _handler->log("min comp is " + std::to_string(_minComp));
                 _handler->log("max comp is " + std::to_string(_maxComp));
-                _handler->log("search confidence is " + std::to_string(_searchConfidence));
+                _handler->log("search scale is " + std::to_string(_searchScale));
                 _handler->log("relative threshold is " + std::to_string(_thresholdType == 0));
             }
 
@@ -140,7 +141,7 @@ PeakList PeakFinder::find(DataList numors)
             Eigen::Vector3d center, eigenvalues;
             Eigen::Matrix3d eigenvectors;
 
-            blob.second.toEllipsoid(nsx::getConfidence(1.0), center, eigenvalues, eigenvectors);
+            blob.second.toEllipsoid(1.0, center, eigenvalues, eigenvectors);
             auto shape = Ellipsoid(center, eigenvalues, eigenvectors);
 
             auto p = sptrPeak3D(new Peak3D(numor, shape));
@@ -177,9 +178,8 @@ PeakList PeakFinder::find(DataList numors)
         }
 
         // todo: user input bkg_begin and bkg_end directly
-        const double peak_end = getScale(_integrationConfidence);
         StrongPeakIntegrator integrator;
-        integrator.integrate(numor_peaks, numor, peak_end, peak_end+1, peak_end+2); // TODO:, _handler);
+        integrator.integrate(numor_peaks, numor, _integrationScale, 0.5*(_integrationScale+_backgroundScale), _backgroundScale); // TODO:, _handler);
         numor->close();
         //_ui->progressBar->setValue(++comp);
         std::cout << "Found " << numor_peaks.size() << " peaks." << std::endl;
@@ -217,24 +217,34 @@ int PeakFinder::getThresholdType()
     return _thresholdType;
 }
 
-void PeakFinder::setSearchConfidence(double confidence)
+void PeakFinder::setSearchScale(double scale)
 {
-    _searchConfidence = confidence;
+    _searchScale = scale;
 }
 
-double PeakFinder::searchConfidence() const
+double PeakFinder::searchScale() const
 {
-    return _searchConfidence;
+    return _searchScale;
 }
 
-void PeakFinder::setIntegrationConfidence(double confidence)
+void PeakFinder::setIntegrationScale(double scale)
 {
-    _integrationConfidence = confidence;
+    _integrationScale = scale;
 }
 
-double PeakFinder::integrationConfidence() const
+double PeakFinder::integrationScale() const
 {
-    return _integrationConfidence;
+    return _integrationScale;
+}
+
+void PeakFinder::setBackgroundScale(double scale)
+{
+    _backgroundScale = scale;
+}
+
+double PeakFinder::backgroundScale() const
+{
+    return _backgroundScale;
 }
 
 void PeakFinder::setMinComponents(int minComp)

@@ -667,70 +667,66 @@ double DataSet::getSampleStepSize() const
 
 std::vector<DetectorEvent> DataSet::getEvents(const std::vector<ReciprocalVector>& sample_qs) const
 {
-    std::vector<DetectorEvent> events;
-    unsigned int scanSize = nFrames();
+    std::vector<DetectorEvent> events;  
 
-    std::vector<Eigen::RowVector3d> ki;
-    ki.reserve(scanSize);
+    // return true if inside Ewald sphere, false otherwise
+    auto compute_sign = [](const Eigen::RowVector3d& q, const InterpolatedState& state) -> bool
+    {
+        const Eigen::RowVector3d ki = state.ki().rowVector();
+        const Eigen::RowVector3d kf = ki + q*state.sampleOrientationMatrix().transpose();
+        return kf.squaredNorm() < ki.squaredNorm();
+    };
 
-    std::vector<Eigen::Matrix3d> sample_to_lab;
-    sample_to_lab.reserve(scanSize);
-    
-    for (unsigned int s = 0; s < scanSize; ++s) {
-        auto state = interpolatedState(s);
-        sample_to_lab.push_back(state.sampleOrientationMatrix().transpose());
-        ki.push_back(state.ki().rowVector());
-    } 
-
+    // lfor each sample q, determine the rotation that makes it intersect the Ewald sphere
     for (const ReciprocalVector& sample_q : sample_qs) {
         const Eigen::RowVector3d& q_vect = sample_q.rowVector();
 
-        bool sign = (q_vect*sample_to_lab[0] + ki[0]).squaredNorm() > ki[0].squaredNorm();
+        double f0 = 0.0;
+        double f1 = nFrames()-1;
 
-        for (size_t i = 1; i < scanSize; ++i) {
-            const Eigen::RowVector3d kf = q_vect*sample_to_lab[i] + ki[i];
-            const bool new_sign = kf.squaredNorm() > ki[i].squaredNorm();
+        auto state0 = interpolatedState(f0);
+        auto state1 = interpolatedState(f1);
 
-            if (sign != new_sign) {
-                sign = new_sign;
+        bool s0 = compute_sign(q_vect, state0);
+        bool s1 = compute_sign(q_vect, state1);
 
-                const Eigen::RowVector3d kf0 = q_vect*sample_to_lab[i-1] + ki[i-1];
-                const Eigen::RowVector3d kf1 = q_vect*sample_to_lab[i] + ki[i];
-                const Eigen::RowVector3d dkf = q_vect*(sample_to_lab[i]-sample_to_lab[i-1]);
-        
-                double t = 0.5;
-                const int max_count = 100;
-                Eigen::RowVector3d kf;
-                int c;
-                
-                for (c = 0; c < max_count; ++c) {
-                    kf = (1-t)*kf0 + t*kf1;
-                    auto ki_interp = (1-t)*ki[i-1] + t*ki[i];
-                    const double f = kf.squaredNorm() - ki_interp.squaredNorm();
-                    
-                    if (std::fabs(f) < 1e-10) {
-                        break;
-                    }
-                    const double df = 2*dkf.dot(kf);
-                    t -= f/df;
-                }
-        
-                if (c == max_count || t < 0.0 || t > 1.0) {
-                    continue;
-                }
-        
-                t += i-1;
-                const InstrumentState& state = interpolatedState(t);
-                auto detector = _diffractometer->getDetector();
-                auto event = detector->constructEvent(DirectVector(state.samplePosition), ReciprocalVector((kf*state.detectorOrientation)));
-                bool accept = event._tof > 0;
+        // does not cross Ewald sphere, or crosses more than once
+        if (s0 == s1) {
+            continue;
+        }
 
-                if (accept) {
-                    event._frame = t;
-                    events.emplace_back(event);
-                }
+        // now use bisection method to compute intersection to good accuracy
+        while (f1-f0 > 0.001) {
+            double f = 0.5*(f0+f1);
+            auto state = interpolatedState(f);
+            auto sign = compute_sign(q_vect, state);
+
+            // branch right
+            if (sign == s0) {
+                s0 = sign;
+                state0 = state;
+                f0 = f;
+            } 
+            // branch left
+            else {
+                s1 = sign;
+                state1 = state;
+                f1 = f;
             }
-        }        
+        }
+
+        // now f stores the frame value at the intersection
+        const double f = 0.5*(f0+f1);
+        const auto state = interpolatedState(f);
+        Eigen::RowVector3d kf = state.ki().rowVector() + q_vect*state.sampleOrientationMatrix().transpose();
+        auto detector = _diffractometer->getDetector();
+        auto event = detector->constructEvent(DirectVector(state.samplePosition), ReciprocalVector((kf*state.detectorOrientation)));
+        bool accept = event._tof > 0;
+
+        if (accept) {
+            event._frame = f;
+            events.emplace_back(event);
+        }       
     }
     return events;
 }

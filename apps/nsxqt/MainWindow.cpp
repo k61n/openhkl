@@ -582,7 +582,7 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
         // todo: bkg_begin and bkg_end
         auto&& peaks = nsx::PeakFilter().dRange(_session->peaks(numor.get()), dmin, dmax, true);
         nsx::info() << "Integrating " << peaks.size() << " peaks";
-        nsx::WeakPeakIntegrator integrator;
+        nsx::WeakPeakIntegrator integrator(library, radius, nframes);
         // todo: progress handler!!
         integrator.integrate(peaks, numor, peak_scale, 0.5*(peak_scale+bkg_scale), bkg_scale); //, _progressHandler);
     }

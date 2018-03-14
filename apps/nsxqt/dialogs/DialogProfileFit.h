@@ -30,6 +30,7 @@ public:
 
 private slots:    
     void calculate();
+    void build();
     void drawFrame(int value);
 
 
