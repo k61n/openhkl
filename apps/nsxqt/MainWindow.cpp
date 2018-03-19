@@ -49,7 +49,6 @@
 #include "CutSliceGraphicsItem.h"
 #include "CutterGraphicsItem.h"
 #include "DetectorScene.h"
-#include "DialogConvolve.h"
 #include "DialogExperiment.h"
 #include "DialogIntegrate.h"
 #include "DialogPeakFilter.h"

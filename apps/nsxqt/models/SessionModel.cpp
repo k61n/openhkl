@@ -86,8 +86,8 @@
 #include "DetectorItem.h"
 #include "DetectorScene.h"
 #include "DialogCalculatedPeaks.h"
-#include "DialogConvolve.h"
 #include "DialogExperiment.h"
+#include "DialogPeakFind.h"
 #include "ExperimentItem.h"
 #include "FriedelDialog.h"
 #include "GLSphere.h"
@@ -283,11 +283,11 @@ void SessionModel::findPeaks(const QModelIndex& index)
         _peakFinder = nsx::sptrPeakFinder(new nsx::PeakFinder);
     _peakFinder->setHandler(_progressHandler);
 
-    DialogConvolve* dialog = new DialogConvolve(selectedNumors, _peakFinder, nullptr);
+    DialogPeakFind* dialog = new DialogPeakFind(selectedNumors, _peakFinder, nullptr);
     dialog->setColorMap(_colormap);
 
     // dialog will automatically be deleted before we return from this method
-    std::unique_ptr<DialogConvolve> dialog_ptr(dialog);
+    std::unique_ptr<DialogPeakFind> dialog_ptr(dialog);
 
     if (!dialog->exec())
         return;

@@ -18,19 +18,19 @@ class QStandardItem;
 class QWidget;
 
 namespace Ui {
-class DialogConvolve;
+class DialogPeakFind;
 }
 
 
-class DialogConvolve : public QDialog
+class DialogPeakFind : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DialogConvolve(const nsx::DataList& data,
+    explicit DialogPeakFind(const nsx::DataList& data,
                             nsx::sptrPeakFinder peakFinder=nullptr,
                             QWidget *parent = 0);
-    ~DialogConvolve();
+    ~DialogPeakFind();
 
     void setPreviewFrame(const Eigen::MatrixXi& frame);
     void setColorMap(const std::string& name);
@@ -67,7 +67,7 @@ private:
     void updatePreview();
 
 private:
-    Ui::DialogConvolve *ui;
+    Ui::DialogPeakFind *ui;
     QGraphicsScene* _scene;
     QGraphicsPixmapItem* _pxmapPreview;
     nsx::DataList _data;

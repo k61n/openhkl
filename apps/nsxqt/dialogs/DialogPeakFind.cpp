@@ -21,15 +21,15 @@
 #include <nsxlib/PeakFinder.h>
 
 #include "ColorMap.h"
-#include "DialogConvolve.h"
+#include "DialogPeakFind.h"
 
-#include "ui_DialogConvolve.h"
+#include "ui_DialogPeakFind.h"
 
-DialogConvolve::DialogConvolve(const nsx::DataList& data,
+DialogPeakFind::DialogPeakFind(const nsx::DataList& data,
                                nsx::sptrPeakFinder peakFinder,
                                QWidget *parent):
     QDialog(parent),
-    ui(new Ui::DialogConvolve),
+    ui(new Ui::DialogPeakFind),
     _data(data),
     _pxmapPreview(nullptr),
     _colormap(new ColorMap)
@@ -45,6 +45,9 @@ DialogConvolve::DialogConvolve(const nsx::DataList& data,
     }
 
     ui->dataList->setCurrentRow(0);
+
+    ui->frameSlider->setMinimum(0);
+    ui->frameSlider->setMaximum(_data[0]->nFrames());
 
     ui->frameIndex->setMinimum(0);
     ui->frameIndex->setMaximum(_data[0]->nFrames());
@@ -90,28 +93,34 @@ DialogConvolve::DialogConvolve(const nsx::DataList& data,
 
     connect(ui->dataList,SIGNAL(currentRowChanged(int)),this,SLOT(changeSelectedData(int)));
 
+    connect(ui->frameSlider,SIGNAL(valueChanged(int)),this,SLOT(changeSelectedFrame(int)));
+
     connect(ui->frameIndex,SIGNAL(valueChanged(int)),this,SLOT(changeSelectedFrame(int)));
 }
 
-DialogConvolve::~DialogConvolve()
+DialogPeakFind::~DialogPeakFind()
 {
     delete ui;
     // this should be handled by Qt. check with valgrind?
     // delete _peakFindModel;
 }
 
-void DialogConvolve::changeSelectedData(int selected_data)
+void DialogPeakFind::changeSelectedData(int selected_data)
 {
     auto data = _data[selected_data];
 
+    ui->frameIndex->setMinimum(0);
     ui->frameIndex->setMaximum(data->nFrames());
-
     ui->frameIndex->setValue(0);
+
+    ui->frameSlider->setMinimum(0);
+    ui->frameSlider->setMaximum(data->nFrames());
+    ui->frameSlider->setValue(0);
 
     updatePreview();
 }
 
-void DialogConvolve::buildConvolutionParametersList()
+void DialogPeakFind::buildConvolutionParametersList()
 {
     // reset tree
     QTreeView* treeView = ui->treeView;
@@ -154,31 +163,34 @@ void DialogConvolve::buildConvolutionParametersList()
     connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(changeConvolutionParameters(QStandardItem*)));
 }
 
-void DialogConvolve::setColorMap(const std::string &name)
+void DialogPeakFind::setColorMap(const std::string &name)
 {
     _colormap = std::unique_ptr<ColorMap>(new ColorMap(name));
 }
 
-int DialogConvolve::exec()
+int DialogPeakFind::exec()
 {
 //    on_previewButton_clicked();
     return QDialog::exec();
 }
 
-void DialogConvolve::changeSelectedFrame(int selected_frame)
+void DialogPeakFind::changeSelectedFrame(int selected_frame)
 {
     Q_UNUSED(selected_frame)
+
+    ui->frameIndex->setValue(selected_frame);
+    ui->frameSlider->setValue(selected_frame);
 
     updatePreview();
 }
 
-void DialogConvolve::updatePreview()
+void DialogPeakFind::updatePreview()
 {
     int selected_data = ui->dataList->currentRow();
 
     auto data = _data[selected_data];
 
-    int selected_frame = ui->frameIndex->value();
+    int selected_frame = ui->frameSlider->value();
 
     auto frame = data->frame(selected_frame);
 
@@ -220,17 +232,19 @@ void DialogConvolve::updatePreview()
         _pxmapPreview->setPixmap(QPixmap::fromImage(image));
 }
 
-void DialogConvolve::clipPreview(int state) {
+void DialogPeakFind::clipPreview(int state) {
     updatePreview();
 }
 
-void DialogConvolve::changeConvolutionFilter(int selected_filter)
+void DialogPeakFind::changeConvolutionFilter(int selected_filter)
 {
     Q_UNUSED(selected_filter)
 
     nsx::sptrConvolutionKernel kernel;
 
-    if (QString::compare(ui->filterComboBox->currentText(),"none") == 0)
+    std::string kernel_name = ui->filterComboBox->currentText().toStdString();
+
+    if (kernel_name.compare("none") == 0)
         kernel.reset();
     else {
         int selected_data = ui->dataList->currentRow();
@@ -238,9 +252,8 @@ void DialogConvolve::changeConvolutionFilter(int selected_filter)
         int nrows = data->nRows();
         int ncols = data->nCols();
 
-        std::string kernelName = ui->filterComboBox->currentText().toStdString();
         nsx::KernelFactory kernel_factory;
-        auto kernel = kernel_factory.create(kernelName, nrows, ncols);
+        kernel = kernel_factory.create(kernel_name, nrows, ncols);
     }
 
     // propagate changes to peak finder
@@ -261,49 +274,49 @@ void DialogConvolve::changeConvolutionFilter(int selected_filter)
 }
 
 
-void DialogConvolve::changeThresholdValue(double value)
+void DialogPeakFind::changeThresholdValue(double value)
 {
     _peakFinder->setThresholdValue(value);
 
     updatePreview();
 }
 
-void DialogConvolve::changeBlobConfidenceValue(double value)
+void DialogPeakFind::changeBlobConfidenceValue(double value)
 {
     _peakFinder->setSearchConfidence(value);
 
     updatePreview();
 }
 
-void DialogConvolve::changeIntegrationConfidenceValue(double value)
+void DialogPeakFind::changeIntegrationConfidenceValue(double value)
 {
     _peakFinder->setIntegrationConfidence(value);
 
     updatePreview();
 }
 
-void DialogConvolve::changeBlobMinSize(int size)
+void DialogPeakFind::changeBlobMinSize(int size)
 {
     _peakFinder->setMinComponents(size);
 
     updatePreview();
 }
 
-void DialogConvolve::changeBlobMaxSize(int size)
+void DialogPeakFind::changeBlobMaxSize(int size)
 {
     _peakFinder->setMaxComponents(size);
 
     updatePreview();
 }
 
-void DialogConvolve::changeThresholdType(int index)
+void DialogPeakFind::changeThresholdType(int index)
 {
     _peakFinder->setThresholdType(index);
 
     updatePreview();
 }
 
-void DialogConvolve::changeConvolutionParameters(QStandardItem *item)
+void DialogPeakFind::changeConvolutionParameters(QStandardItem *item)
 {
     // nothing to do
     if (!item || !_peakFinder)

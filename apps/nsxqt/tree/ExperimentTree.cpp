@@ -32,7 +32,6 @@
 #include "DetectorItem.h"
 #include "DetectorScene.h"
 #include "DialogAutoIndexing.h"
-#include "DialogConvolve.h"
 #include "DialogExperiment.h"
 #include "DialogRawData.h"
 #include "DialogSpaceGroup.h"
