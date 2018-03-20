@@ -18,16 +18,16 @@ nsx::RealMatrix generateImage(int rows, int cols)
     return image;
 }
 
-double computeError(int rows, int cols)
+double computeError(int nrows, int ncols)
 {
-    nsx::RealMatrix original = generateImage(rows,cols);
+    nsx::RealMatrix original = generateImage(nrows,ncols);
     nsx::Convolver convolver;
-    nsx::DeltaKernel kernel(rows,cols);
+    nsx::DeltaKernel kernel;
 
-    convolver.setKernel(kernel.matrix());
+    convolver.setKernel(kernel.matrix(nrows,ncols));
     nsx::RealMatrix transformed = convolver.apply(original);
     nsx::RealMatrix difference =  original-transformed;
-    double error = (difference * difference.transpose()).sum() / rows / cols;
+    double error = (difference * difference.transpose()).sum() / nrows / ncols;
     return std::sqrt(error);
 }
 

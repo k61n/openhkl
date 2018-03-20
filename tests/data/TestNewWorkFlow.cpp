@@ -50,13 +50,12 @@ int main()
     nsx::DataList numors;
     numors.push_back(dataf);
 
-    std::string kernelName = "annular";
     nsx::KernelFactory kernel_factory;
-    auto kernel = kernel_factory.create(kernelName, int(dataf->nRows()), int(dataf->nCols()));
+    auto kernel = kernel_factory.create("annular", {});
 
     // propagate changes to peak finder
     auto convolver = peakFinder->convolver();
-    convolver->setKernel(kernel->matrix());
+    convolver->setKernel(kernel->matrix(dataf->nRows(),dataf->nCols()));
     peakFinder->setMinComponents(30);
     peakFinder->setMaxComponents(10000);
     peakFinder->setKernel(kernel);

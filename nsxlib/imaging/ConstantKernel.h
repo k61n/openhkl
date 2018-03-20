@@ -10,7 +10,6 @@
 #pragma once
 
 #include "ConvolutionKernel.h"
-#include "ImagingTypes.h"
 
 namespace nsx {
 
@@ -18,21 +17,17 @@ class ConstantKernel : public ConvolutionKernel {
 
 public:
 
-    static ConvolutionKernel* create(int nrows, int ncols);
+    ConstantKernel()=default;
 
-public:
+    ConstantKernel(const std::map<std::string,double>& parameters);
 
-    ConstantKernel(int nrows, int ncols);
-
-    ConstantKernel(int nrows, int ncols, const ConvolutionKernelParameters& params);
-
-    const char* name() override;
+    const char* name() const override;
 
     virtual ~ConstantKernel();
 
 private:
 
-    void update() override;
+    RealMatrix _matrix(int nrows, int ncols) const override;
 
 };
 

@@ -128,7 +128,7 @@ Eigen::MatrixXi DataSet::convolvedFrame(std::size_t idx, sptrConvolutionKernel k
 
         // set up convolver
         Convolver convolver;
-        convolver.setKernel(kernel->matrix());
+        convolver.setKernel(kernel->matrix(nrows,ncols));
 
         // compute the convolution
         result = convolver.apply(frame_data.cast<double>());

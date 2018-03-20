@@ -47,41 +47,31 @@ class ConvolutionKernel {
 
 public:
 
-    ConvolutionKernel(int nrows, int ncols);
+    ConvolutionKernel()=default;
 
-    ConvolutionKernel(const ConvolutionKernel& rhs);
+    ConvolutionKernel(const ConvolutionKernel& other)=default;
 
-    ConvolutionKernel(int nrows, int ncols, const ConvolutionKernelParameters& parameters);
-
-    // used to get/set parameters
-    ConvolutionKernelParameters& parameters();
-    const ConvolutionKernelParameters& parameters() const;
-
-    const RealMatrix& matrix();
-    virtual const char* name() = 0;
-
-    void print(std::ostream& os) const;
-
-    ConvolutionKernel& operator=(const ConvolutionKernel& rhs);
+    ConvolutionKernel& operator=(const ConvolutionKernel& other)=default;
 
     virtual ~ConvolutionKernel()=0;
 
+    // Non-const getter for kernel parameter
+    ConvolutionKernelParameters& parameters();
+
+    // Const getter for kernel parameter
+    const ConvolutionKernelParameters& parameters() const;
+
+    RealMatrix matrix(int nrows, int ncols) const;
+
+    virtual const char* name() const = 0;
 
 protected:
-    // update the kernel using current parameters
-    virtual void update() {};
 
-    int _nrows;
-
-    int _ncols;
+    virtual RealMatrix _matrix(int nrows, int cols) const=0;
 
     RealMatrix _kernel;
-    bool _hasChanged; // used to record if parameters have changed since last update
-    ConvolutionKernelParameters _params;
-};
 
-#ifndef SWIG
-std::ostream& operator<<(std::ostream& os, const ConvolutionKernel& kernel);
-#endif
+    std::map<std::string,double> _parameters;
+};
 
 } // end namespace nsx

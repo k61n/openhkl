@@ -249,11 +249,9 @@ void DialogPeakFind::changeConvolutionFilter(int selected_filter)
     else {
         int selected_data = ui->dataList->currentRow();
         auto data = _data[selected_data];
-        int nrows = data->nRows();
-        int ncols = data->nCols();
 
         nsx::KernelFactory kernel_factory;
-        kernel = kernel_factory.create(kernel_name, nrows, ncols);
+        kernel = kernel_factory.create(kernel_name,{});
     }
 
     // propagate changes to peak finder

@@ -1,19 +1,20 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 
-#include "ImagingTypes.h"
+#include "ConvolutionKernel.h"
 
 namespace nsx {
 
 class KernelFactory {
 
 public:
-    using callback = std::function<sptrConvolutionKernel(int,int)>;
+    using callback = std::function<sptrConvolutionKernel(const std::map<std::string,double>&)>;
 
     KernelFactory();
 
-    sptrConvolutionKernel create(const std::string& kernel_name, int nrows, int ncols) const;
+    std::shared_ptr<ConvolutionKernel> create(const std::string& kernel_type, const std::map<std::string,double>& parameters) const;
 
     //! return the keys of the object currently registered in the factory
     const std::map<std::string,callback>& callbacks() const;

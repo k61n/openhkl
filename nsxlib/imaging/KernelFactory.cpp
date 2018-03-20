@@ -7,9 +7,9 @@
 namespace nsx {
 
 template <typename T>
-sptrConvolutionKernel create_kernel(int nrows, int ncols)
+sptrConvolutionKernel create_kernel(const std::map<std::string,double>& parameters)
 {
-    return std::make_shared<T>(nrows,ncols);
+    return std::make_shared<T>(parameters);
 }
 
 KernelFactory::KernelFactory(): _callbacks()
@@ -19,16 +19,16 @@ KernelFactory::KernelFactory(): _callbacks()
     _callbacks["delta"] = &create_kernel<DeltaKernel>;
 }
 
-sptrConvolutionKernel KernelFactory::create(const std::string& kernel_name, int nrows, int ncols) const
+std::shared_ptr<ConvolutionKernel> KernelFactory::create(const std::string& kernel_type, const std::map<std::string,double>& parameters) const
 {
-    const auto it = _callbacks.find(kernel_name);
+    const auto it = _callbacks.find(kernel_type);
 
     // could not find key
     if (it == _callbacks.end()) {
         throw std::runtime_error("could not find given extension in map of callbacks");
     }
 
-    return (it->second)(nrows,ncols);
+    return (it->second)(parameters);
 }
 
 const std::map<std::string,KernelFactory::callback>& KernelFactory::callbacks() const

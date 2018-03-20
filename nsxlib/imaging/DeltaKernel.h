@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ConvolutionKernel.h"
-#include "ImagingTypes.h"
 
 namespace nsx {
 
@@ -9,21 +8,17 @@ class DeltaKernel : public ConvolutionKernel {
 
 public:
 
-    static ConvolutionKernel* create(int nrows, int ncols);
+    DeltaKernel()=default;
 
-public:
-
-    DeltaKernel(int nrows, int ncols);
-
-    DeltaKernel(int nrows, int ncols, const ConvolutionKernelParameters& params);
+    DeltaKernel(const std::map<std::string,double>& parameters);
 
     virtual ~DeltaKernel();
 
-    const char* name() override;
+    const char* name() const override;
 
 private:
 
-    void update() override;
+    RealMatrix _matrix(int nrows, int ncols) const override;
 
 };
 

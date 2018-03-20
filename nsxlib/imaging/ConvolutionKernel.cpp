@@ -36,69 +36,28 @@
 
 namespace nsx {
 
-ConvolutionKernel::ConvolutionKernel(int nrows, int ncols) : _nrows(nrows), _ncols(ncols), _kernel(), _hasChanged(true), _params()
-{
-    _kernel.resize(nrows,ncols);
-}
-
-ConvolutionKernel::ConvolutionKernel(const ConvolutionKernel &rhs)
-{
-    _nrows = rhs._nrows;
-    _ncols = rhs._ncols;
-    _kernel = rhs._kernel;
-    _hasChanged = rhs._hasChanged;
-    _params = rhs._params;
-}
-
-ConvolutionKernel::ConvolutionKernel(int nrows, int ncols, const ConvolutionKernelParameters &parameters) : _nrows(nrows), _ncols(ncols)
-{
-    _kernel.resize(nrows,ncols);
-    _params = parameters;
-    _hasChanged = true;
-}
-
 ConvolutionKernel::~ConvolutionKernel()
 {
 }
 
-ConvolutionKernelParameters& ConvolutionKernel::parameters()
+std::map<std::string,double>& ConvolutionKernel::parameters()
 {
-    _hasChanged = true;
-    return _params;
+    return _parameters;
 }
 
-const ConvolutionKernelParameters& ConvolutionKernel::parameters() const
+const std::map<std::string,double>& ConvolutionKernel::parameters() const
 {
-    return _params;
+    return _parameters;
 }
 
-const RealMatrix& ConvolutionKernel::matrix()
+RealMatrix ConvolutionKernel::matrix(int nrows, int ncols) const
 {
-    if ( _hasChanged ) {
-        update();
-        _hasChanged = false;
+    // sanity checks
+    if (nrows < 0 || ncols < 0) {
+        throw std::runtime_error("Invalid dimensions for kernel matrix");
     }
-    return _kernel;
-}
 
-void ConvolutionKernel::print(std::ostream& os) const
-{
-    os << "Kernel Matrix (" << _kernel.rows() << "," << _kernel.cols() << "):" << std::endl;
-    os << _kernel << std::endl;
-}
-
-ConvolutionKernel& ConvolutionKernel::operator=(const ConvolutionKernel& rhs)
-{
-    _kernel = rhs._kernel;
-    _hasChanged = rhs._hasChanged;
-    _params = rhs._params;
-    return *this;
-}
-
-std::ostream& operator<<(std::ostream& os, const ConvolutionKernel& kernel)
-{
-    kernel.print(os);
-    return os;
+    return _matrix(nrows,ncols);
 }
 
 } // end namespace nsx

@@ -11,38 +11,30 @@
 #define _USE_MATH_DEFINES
 #endif
 
-// M_PI is often define but not standard
+// M_PI is often defined but not standard
 #ifndef M_PI
 #define M_PI 3.141592653589793238462643383279502884
 #endif
 
 namespace nsx {
 
-ConvolutionKernel* AnnularKernel::create(int nrows, int ncols)
-{
-	return new AnnularKernel(nrows,ncols);
-}
-
-AnnularKernel::AnnularKernel(int nrows, int ncols) : ConvolutionKernel(nrows,ncols)
+AnnularKernel::AnnularKernel()
+: ConvolutionKernel()
 {
     // default values
-    _params["r1"] = 5;
-    _params["r2"] = 10;
-    _params["r3"] = 15;
+    _parameters["r1"] = 5;
+    _parameters["r2"] = 10;
+    _parameters["r3"] = 15;
 }
 
-AnnularKernel::AnnularKernel(int nrows, int ncols, const ConvolutionKernelParameters &params)
-: ConvolutionKernel(nrows,ncols,params)
+AnnularKernel::AnnularKernel(const std::map<std::string,double>& parameters)
+: AnnularKernel()
 {
-    // load default values if necessary
-    if ( _params["r1"] <= 0) {
-        _params["r1"] = 3;
-    }
-    if ( _params["r2"] <= 0) {
-        _params["r2"] = 6;
-    }
-    if ( _params["r3"] <= 0) {
-        _params["r3"] = 10;
+    for (auto p : parameters) {
+        auto it = _parameters.find(p.first);
+        if (it != _parameters.end()) {
+            it->second = p.second;
+        }
     }
 }
 
@@ -50,35 +42,32 @@ AnnularKernel::~AnnularKernel()
 {
 }
 
-const char* AnnularKernel::name()
+const char* AnnularKernel::name() const
 {
     return "Annular";
 }
 
-void AnnularKernel::update()
+RealMatrix AnnularKernel::_matrix(int nrows, int ncols) const
 {
-    int rows, cols, r1, r2, r3;
+    int r1, r2, r3;
 
-    // get necessary parameters
-    rows = _kernel.rows();
-    cols = _kernel.cols();
-    r1 = static_cast<int>(_params["r1"]);
-    r2 = static_cast<int>(_params["r2"]);
-    r3 = static_cast<int>(_params["r3"]);
+    r1 = static_cast<int>(_parameters.at("r1"));
+    r2 = static_cast<int>(_parameters.at("r2"));
+    r3 = static_cast<int>(_parameters.at("r3"));
 
-    RealMatrix inner = RealMatrix::Zero(rows, cols);
-    RealMatrix outer = RealMatrix::Zero(rows, cols);
+    RealMatrix inner = RealMatrix::Zero(nrows, ncols);
+    RealMatrix outer = RealMatrix::Zero(nrows, ncols);
 
     // sanity checks
-    if (rows < 0 || cols < 0 || r1 < 0 || r2 < r1 || r3 < r2) {
+    if (r1 < 0 || r2 < r1 || r3 < r2) {
         throw std::runtime_error("Annular kernel called with invalid parameters");
     }
 
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
+    for (int i = 0; i < nrows; ++i) {
+        for (int j = 0; j < ncols; ++j) {
             // shift so that (0,0) = (rows, cols) = (rows, 0) = (0, cols) is the center of the kernel
-            double x = j > cols/2 ? cols-j : j;
-            double y = i > rows/2 ? rows-i : i;
+            double x = j > ncols/2 ? ncols-j : j;
+            double y = i > nrows/2 ? nrows-i : i;
 
             double dist2 = x*x + y*y;
 
@@ -96,7 +85,10 @@ void AnnularKernel::update()
 
     inner /= inner.sum();
     outer /= outer.sum();
-    _kernel = inner - outer;
+
+    RealMatrix kernel = inner - outer;
+
+    return kernel;
 }
 
 } // end namespace nsx

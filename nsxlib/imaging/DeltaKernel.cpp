@@ -2,47 +2,26 @@
 
 namespace nsx {
 
-ConvolutionKernel* DeltaKernel::create(int nrows, int ncols)
+DeltaKernel::DeltaKernel(const std::map<std::string,double>& parameters)
+: DeltaKernel()
 {
-	return new DeltaKernel(nrows,ncols);
-}
-
-DeltaKernel::DeltaKernel(int nrows, int ncols) : ConvolutionKernel(nrows,ncols)
-{
-    update();
-}
-
-DeltaKernel::DeltaKernel(int nrows, int ncols, const ConvolutionKernelParameters &params)
-: ConvolutionKernel(nrows,ncols,params)
-{
-    update();
 }
 
 DeltaKernel::~DeltaKernel()
 {
 }
 
-const char* DeltaKernel::name()
+const char* DeltaKernel::name() const
 {
     return "Delta";
 }
 
-void DeltaKernel::update()
+RealMatrix DeltaKernel::_matrix(int nrows, int ncols) const
 {
-    int rows, cols;
+    RealMatrix kernel = RealMatrix::Zero(nrows, ncols);
+    kernel(0,0) = 1.0;
 
-    // get necessary parameters
-    rows = _kernel.rows();
-    cols = _kernel.cols();
-
-    // sanity checks
-    if ( rows < 0 || cols < 0 ) {
-        throw std::runtime_error("Deltaupdate() called with invalid parameters");
-    }
-
-    // set kernel equal to kronecker delta
-    _kernel = RealMatrix::Zero(rows, cols);
-    _kernel(0,0) = 1.0;
+    return kernel;
 }
 
 } // end namespace nsx

@@ -52,6 +52,11 @@ PeakList PeakFinder::find(DataList numors)
             return peaks;
         }
 
+        auto dectector = numor->diffractometer()->getDetector();
+        int nrows = dectector->getNRows();
+        int ncols = dectector->getNCols();
+        int nframes = numor->nFrames();
+
         // Finding peaks
         Blob3DUMap blobs;
 
@@ -81,7 +86,7 @@ PeakList PeakFinder::find(DataList numors)
                 }
 
                 // update the convolver with the kernel
-                _convolver->setKernel(_kernel->matrix());
+                _convolver->setKernel(_kernel->matrix(nrows,ncols));
 
                 // this is the filter function to be applied to each frame
                 auto callback = [&] (const RealMatrix& input) -> RealMatrix {
@@ -127,10 +132,9 @@ PeakList PeakFinder::find(DataList numors)
         }
 
         int count = 0;
-        auto dect = numor->diffractometer()->getDetector();
 
         AABB dAABB(Eigen::Vector3d(0,0,0),
-                   Eigen::Vector3d(dect->getNCols(), dect->getNRows(), numor->nFrames()-1)
+                   Eigen::Vector3d(ncols, nrows, nframes-1)
                     );
 
         for (auto& blob : blobs) {

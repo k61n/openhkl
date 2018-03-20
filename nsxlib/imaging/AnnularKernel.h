@@ -40,7 +40,6 @@
 #pragma once
 
 #include "ConvolutionKernel.h"
-#include "ImagingTypes.h"
 
 namespace nsx {
 
@@ -48,21 +47,17 @@ class AnnularKernel : public ConvolutionKernel {
 
 public:
 
-    static ConvolutionKernel* create(int nrows, int ncols);
+    AnnularKernel();
 
-public:
-
-    AnnularKernel(int nrows, int ncols);
-
-    AnnularKernel(int nrows, int ncols, const ConvolutionKernelParameters& params);
+    AnnularKernel(const std::map<std::string,double>& parameters);
 
     virtual ~AnnularKernel();
 
-    const char* name() override;
+    const char* name() const override;
 
 private:
 
-    void update() override;
+    RealMatrix _matrix(int nrows, int ncols) const override;
 };
 
 } // end namespace nsx

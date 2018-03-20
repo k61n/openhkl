@@ -319,6 +319,7 @@ using namespace nsx;
 %eigen_typemaps(Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic>)
 %eigen_typemaps(Eigen::Array<double, Eigen::Dynamic, 1>)
 %eigen_typemaps(Eigen::Array<double, Eigen::Dynamic, Eigen::Dynamic>)
+%eigen_typemaps(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>)
 
 %template(vectorMatrixXd) std::vector<Eigen::MatrixXd>;
 %template(vectorVectorXd) std::vector<Eigen::VectorXd>;
@@ -331,6 +332,7 @@ using namespace nsx;
 %include "GeometryTypes.h"
 %include "ImagingTypes.h"
 %include "InstrumentTypes.h"
+%include "MathematicsTypes.h"
 %include "UtilsTypes.h"
 
 %include "DirectVector.h"
