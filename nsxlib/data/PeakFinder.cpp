@@ -58,7 +58,7 @@ PeakList PeakFinder::find(DataList numors)
         int nframes = numor->nFrames();
 
         // Finding peaks
-        Blob3DUMap blobs;
+        std::map<int,Blob3D> blobs;
 
         try {
             BlobFinder blob_finder(numor);

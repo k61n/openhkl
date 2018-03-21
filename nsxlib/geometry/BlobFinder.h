@@ -56,17 +56,9 @@ public:
 
     BlobFinder(sptrDataSet data);
 
-    Blob3DUMap find();
+    std::map<int,Blob3D> find();
 
-    void findBlobs(std::unordered_map<int,Blob3D>& blobs, EquivalenceList& equivalences, unsigned int begin, unsigned int end);
-
-    static void registerEquivalence(int a, int b, EquivalenceList& equivalences);
-
-    static bool sortEquivalences(const std::pair<int,int>& pa, const std::pair<int,int>& pb);
-
-    static std::map<int,int> removeDuplicates(EquivalenceList& equivalences);
-
-    static void reassignEquivalences(std::map<int,int>& equivalences);
+    void findBlobs(std::map<int,Blob3D>& blobs, EquivalenceList& equivalences, unsigned int begin, unsigned int end);
 
     //! sets progress handler callback function
     void setProgressHandler(sptrProgressHandler handler);
@@ -83,15 +75,15 @@ public:
 
     void setRelative(bool isRelative);
 
-    void findCollisions(std::unordered_map<int,Blob3D>& blobs, EquivalenceList& equivalences) const;
+    void findCollisions(std::map<int,Blob3D>& blobs, EquivalenceList& equivalences) const;
 
     //! Sets the filter, which allows for more sophisticated blob-finding
     void setFilter(FilterCallback callback);
 
-    void mergeBlobs(std::unordered_map<int,Blob3D>& blobs, EquivalenceList& equivalences) const;
+    void mergeBlobs(std::map<int,Blob3D>& blobs, EquivalenceList& equivalences) const;
 
 
-    void eliminateBlobs(std::unordered_map<int,Blob3D>& blobs) const;
+    void eliminateBlobs(std::map<int,Blob3D>& blobs) const;
 
 private:
     double _threshold;
