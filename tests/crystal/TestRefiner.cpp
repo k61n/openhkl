@@ -51,15 +51,10 @@ int main()
     nsx::DataList numors;
     numors.push_back(dataf);
 
-    nsx::KernelFactory kernel_factory;
-    auto kernel = kernel_factory.create("annular", {});
-
     // propagate changes to peak finder
-    auto convolver = peakFinder->convolver();
-    convolver->setKernel(kernel->matrix(dataf->nRows(),dataf->nCols()));
     peakFinder->setMinComponents(30);
     peakFinder->setMaxComponents(10000);
-    peakFinder->setKernel(kernel);
+    peakFinder->setKernel("annular",{});
     peakFinder->setSearchConfidence(0.98);
     peakFinder->setIntegrationConfidence(0.997);
     peakFinder->setThresholdType(1); // absolute

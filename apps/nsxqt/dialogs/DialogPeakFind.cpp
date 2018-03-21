@@ -137,25 +137,22 @@ void DialogPeakFind::buildConvolutionParametersList()
 
     QStandardItemModel* model = new QStandardItemModel(this);
 
-    // no kernel selected: do nothing
-    if (kernel) {
-        // get parameters
-        std::map<std::string, double> parameters = kernel->parameters();
+    // get parameters
+    std::map<std::string, double> parameters = kernel->parameters();
 
-        // iterate through parameters to build the tree
-        for (auto it : parameters) {
-            QStandardItem* name = new QStandardItem();
-            name->setText(it.first.c_str());
-            name->setEditable(false);
+    // iterate through parameters to build the tree
+    for (auto it : parameters) {
+        QStandardItem* name = new QStandardItem();
+        name->setText(it.first.c_str());
+        name->setEditable(false);
 
-            QStandardItem* value = new QStandardItem();
+        QStandardItem* value = new QStandardItem();
 
-            name->setText(it.first.c_str());
-            value->setData(QVariant(it.second), Qt::EditRole|Qt::DisplayRole);
-            value->setData(QVariant(it.first.c_str()), Qt::UserRole);
+        name->setText(it.first.c_str());
+        value->setData(QVariant(it.second), Qt::EditRole|Qt::DisplayRole);
+        value->setData(QVariant(it.first.c_str()), Qt::UserRole);
 
-            model->appendRow(QList<QStandardItem*>() << name << value);
-        }
+        model->appendRow(QList<QStandardItem*>() << name << value);
     }
 
     treeView->setModel(model);
@@ -249,13 +246,10 @@ void DialogPeakFind::changeConvolutionFilter(int selected_filter)
     else {
         int selected_data = ui->dataList->currentRow();
         auto data = _data[selected_data];
-
-        nsx::KernelFactory kernel_factory;
-        kernel = kernel_factory.create(kernel_name,{});
     }
 
     // propagate changes to peak finder
-    _peakFinder->setKernel(kernel);
+    _peakFinder->setKernel(kernel_name,{});
 
     // need to update widgets with appropriate values
     ui->thresholdSpinBox->setValue(_peakFinder->getThresholdValue());

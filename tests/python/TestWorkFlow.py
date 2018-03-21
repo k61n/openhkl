@@ -15,20 +15,14 @@ class TestWorkFlow(unittest.TestCase):
         reader = nsx.HDF5DataReader("gal3.hdf", diff)
         data = nsx.DataSet(reader, diff)
 
-        kernel = nsx.AnnularKernel()
-        kernel_image = kernel.matrix(data.nRows(), data.nCols())
-        convolver = nsx.Convolver()
-        convolver.setKernel(kernel_image)
-
         finder = nsx.PeakFinder()
-        finder.setConvolver(convolver)
         finder.setMinComponents(30)
         finder.setMaxComponents(10000)
         finder.setSearchConfidence(0.98)
         finder.setIntegrationConfidence(0.997)
         finder.setThresholdType(1)
         finder.setThresholdValue(15.0)
-        finder.setKernel(kernel)
+        finder.setKernel("annular",{})
 
         numors = nsx.DataList()
         numors.push_back(data)

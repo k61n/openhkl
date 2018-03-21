@@ -1,7 +1,10 @@
 #pragma once
 
+#include "Blob3D.h"
+#include "Convolver.h"
 #include "CrystalTypes.h"
 #include "DataTypes.h"
+#include "GeometryTypes.h"
 #include "ImagingTypes.h"
 #include "UtilsTypes.h"
 
@@ -36,16 +39,26 @@ public:
     void setMaxComponents(int maxComp);
     int getMaxComponents();
 
-    void setConvolver(sptrConvolver convolver);
-    sptrConvolver convolver();
+    sptrConvolutionKernel kernel() const;
+    void setKernel(const std::string& kernel_type, const std::map<std::string,double>& parameters);
 
-    sptrConvolutionKernel kernel();
+private:
 
-    void setKernel(sptrConvolutionKernel kernel);
+    void eliminateBlobs(std::map<int, Blob3D>& blobs) const;
+
+    void findPrimaryBlobs(sptrDataSet data, std::map<int,Blob3D>& blobs,EquivalenceList& equivalences, size_t begin, size_t end);
+
+    void findCollisions(sptrDataSet data, std::map<int,Blob3D>& blobs, EquivalenceList& equivalences) const;
+
+    void mergeCollidingBlobs(sptrDataSet data, std::map<int,Blob3D>& blobs) const;
+
+    void mergeEquivalentBlobs(std::map<int,Blob3D>& blobs, EquivalenceList& equivalences) const;
 
 private:
     sptrProgressHandler _handler;
-    sptrConvolver _convolver;
+
+    Convolver _convolver;
+
     sptrConvolutionKernel _kernel;
 
     double _thresholdValue;
@@ -54,6 +67,8 @@ private:
     double _searchConfidence;
     double _integrationConfidence;
     double _median;
+
+    int _current_label;
 
     int _minComp;
     int _maxComp;
