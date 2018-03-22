@@ -16,13 +16,13 @@ class TestWorkFlow(unittest.TestCase):
         data = nsx.DataSet(reader, diff)
 
         finder = nsx.PeakFinder()
-        finder.setMinComponents(30)
-        finder.setMaxComponents(10000)
+        finder.setMinSize(30)
+        finder.setMaxSize(10000)
+        finder.setMaxFrames(10)
         finder.setSearchConfidence(0.98)
         finder.setIntegrationConfidence(0.997)
-        finder.setThresholdType(1)
-        finder.setThresholdValue(15.0)
         finder.setKernel("annular",{})
+        finder.setThreshold("absolute",{"intensity":15.0})
 
         numors = nsx.DataList()
         numors.push_back(data)

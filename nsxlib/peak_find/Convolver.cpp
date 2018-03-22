@@ -71,7 +71,7 @@ void Convolver::setKernel(const RealMatrix &kernel)
     std::memcpy(_realData, kernel.data(), _rows*_cols*sizeof(double));
     fftw_execute(_forwardPlan);
 
-    // store transformed kernel as vector of comlexes (convenient for convolution)
+    // store transformed kernel as vector of complexes (convenient for convolution)
     for (int i = 0; i < _rows*_halfCols; ++i) {
         _transformedKernel[i] = std::complex<double>(_transformedData[i][0], _transformedData[i][1]);
     }

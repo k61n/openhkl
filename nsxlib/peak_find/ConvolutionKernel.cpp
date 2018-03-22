@@ -50,6 +50,16 @@ const std::map<std::string,double>& ConvolutionKernel::parameters() const
     return _parameters;
 }
 
+void ConvolutionKernel::setParameters(const std::map<std::string,double>& parameters)
+{
+    for (auto p : parameters) {
+        auto it = _parameters.find(p.first);
+        if (it != _parameters.end()) {
+            it->second = p.second;
+        }
+    }
+}
+
 RealMatrix ConvolutionKernel::matrix(int nrows, int ncols) const
 {
     // sanity checks

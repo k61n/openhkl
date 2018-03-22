@@ -17,6 +17,7 @@ KernelFactory::KernelFactory(): _callbacks()
     _callbacks["annular"] = &create_kernel<AnnularKernel>;
     _callbacks["constant"] = &create_kernel<ConstantKernel>;
     _callbacks["delta"] = &create_kernel<DeltaKernel>;
+    _callbacks["none"] = &create_kernel<DeltaKernel>;
 }
 
 std::shared_ptr<ConvolutionKernel> KernelFactory::create(const std::string& kernel_type, const std::map<std::string,double>& parameters) const
@@ -25,7 +26,7 @@ std::shared_ptr<ConvolutionKernel> KernelFactory::create(const std::string& kern
 
     // could not find key
     if (it == _callbacks.end()) {
-        throw std::runtime_error("could not find given extension in map of callbacks");
+        throw std::runtime_error(kernel_type + " is not registered as a valid convolution kernel");
     }
 
     return (it->second)(parameters);

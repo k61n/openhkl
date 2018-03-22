@@ -30,12 +30,7 @@ AnnularKernel::AnnularKernel()
 AnnularKernel::AnnularKernel(const std::map<std::string,double>& parameters)
 : AnnularKernel()
 {
-    for (auto p : parameters) {
-        auto it = _parameters.find(p.first);
-        if (it != _parameters.end()) {
-            it->second = p.second;
-        }
-    }
+    setParameters(parameters);
 }
 
 AnnularKernel::~AnnularKernel()
@@ -44,7 +39,7 @@ AnnularKernel::~AnnularKernel()
 
 const char* AnnularKernel::name() const
 {
-    return "Annular";
+    return "annular";
 }
 
 RealMatrix AnnularKernel::_matrix(int nrows, int ncols) const

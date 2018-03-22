@@ -40,21 +40,21 @@ private slots:
 
     void clipPreview(int state);
 
-    void changeConvolutionParameters(QStandardItem* item);
+    void changeThreshold(QString thresold);
+    void changeThresholdParameters(int row, int col);
 
-    void changeThresholdType(int index);
+    void changeKernel(QString kernel);
+    void changeKernelParameters(int row, int col);
 
-    void changeBlobMinSize(int size);
+    void changeMinSize(int size);
 
-    void changeBlobMaxSize(int size);
+    void changeMaxSize(int size);
+
+    void changeMaxFrames(int size);
 
     void changeIntegrationConfidenceValue(double confidence);
 
-    void changeBlobConfidenceValue(double confidence);
-
-    void changeThresholdValue(double threshold);
-
-    void changeConvolutionFilter(int filter);
+    void changeSearchConfidenceValue(double confidence);
 
     void changeSelectedData(int selected_data);
 
@@ -62,7 +62,13 @@ private slots:
 
 private:
 
-    void buildConvolutionParametersList();
+    void buildKernelParametersList();
+
+    void buildThresholdParametersList();
+
+    std::map<std::string,double> getKernelParameters() const;
+
+    std::map<std::string,double> getThresholdParameters() const;
 
     void updatePreview();
 

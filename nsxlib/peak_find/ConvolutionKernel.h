@@ -61,6 +61,8 @@ public:
     // Const getter for kernel parameter
     const ConvolutionKernelParameters& parameters() const;
 
+    void setParameters(const std::map<std::string,double>& parameters);
+
     RealMatrix matrix(int nrows, int ncols) const;
 
     virtual const char* name() const = 0;

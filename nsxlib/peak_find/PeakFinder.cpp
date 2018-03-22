@@ -17,6 +17,8 @@
 #include "Peak3D.h"
 #include "PeakFinder.h"
 #include "ProgressHandler.h"
+#include "Threshold.h"
+#include "ThresholdFactory.h"
 #include "Sample.h"
 
 using EquivalencePair = std::pair<int,int>;
@@ -72,23 +74,34 @@ namespace {
 namespace nsx {
 
 PeakFinder::PeakFinder()
-: _convolver()
+: _handler(nullptr),
+  _convolver(),
+  _searchConfidence(nsx::getConfidence(1.0)),
+  _integrationConfidence(nsx::getConfidence(3.0)),
+  _current_label(0),
+  _minSize(30),
+  _maxSize(10000),
+  _maxFrames(10)
 {
-    // default values
-    _thresholdValue = 3.0;
-    _thresholdType = 0;
-    _integrationConfidence = nsx::getConfidence(3.0);
-    _searchConfidence = nsx::getConfidence(1.0);
-    _median = 0;
-    _minComp = 30;
-    _maxComp = 10000;
-
     KernelFactory kernel_factory;
-
     _kernel = kernel_factory.create("annular",{});
+
+    ThresholdFactory threshold_factory;
+    _threshold = threshold_factory.create("absolute",{});
 }
 
-
+/*
+ * blob finding stages:
+ *
+ * initialize
+ * iterate through frames
+ *    add to collection if new label
+ *    register equivalences
+ * merge equivalent blobs
+ * register collisions
+ * merge colliding blobs
+ *
+ */
 PeakList PeakFinder::find(DataList numors)
 {
     std::size_t npeaks=0;
@@ -97,21 +110,13 @@ PeakList PeakFinder::find(DataList numors)
     for (auto&& numor : numors) {
         PeakList numor_peaks;
 
-        try {
-            // compute median only if necessary
-            if (_thresholdType == 0) {
-                _median = static_cast<int>(numor->backgroundLevel(_handler))+1;
-            }
-        }
-        catch (...) {
-            //qCritical() << "Error computing background level of dataset";
-            return peaks;
-        }
-
         auto dectector = numor->diffractometer()->getDetector();
         int nrows = dectector->getNRows();
         int ncols = dectector->getNCols();
         int nframes = numor->nFrames();
+
+        // update the convolver with the kernel
+        _convolver.setKernel(_kernel->matrix(nrows,ncols));
 
         // The blobs found for this numor
         std::map<int,Blob3D> blobs;
@@ -119,45 +124,17 @@ PeakList PeakFinder::find(DataList numors)
         try {
 
             if ( _handler ) {
-                _handler->log("Median value is: " + std::to_string(_median));
-                _handler->log("threshold value is " + std::to_string(_thresholdValue));
-                _handler->log("min comp is " + std::to_string(_minComp));
-                _handler->log("max comp is " + std::to_string(_maxComp));
+                _handler->log("min comp is " + std::to_string(_minSize));
+                _handler->log("max comp is " + std::to_string(_maxSize));
                 _handler->log("search confidence is " + std::to_string(_searchConfidence));
-                _handler->log("relative threshold is " + std::to_string(_thresholdType == 0));
             }
 
-            // set image filter, if selected
-            if ( _kernel ) {
-                // update the convolver with the kernel
-                _convolver.setKernel(_kernel->matrix(nrows,ncols));
-
-                if (_handler) {
-                    _handler->log("kernel " + std::string(_kernel->name()) + " selected");
-                    for (auto& it: _kernel->parameters()) {
-                        _handler->log(it.first + " " + std::to_string(it.second));
-                    }
+            if (_handler) {
+                _handler->log("kernel " + std::string(_kernel->name()) + " selected");
+                for (auto& it: _kernel->parameters()) {
+                    _handler->log(it.first + " " + std::to_string(it.second));
                 }
             }
-            else {
-                if ( _handler ) {
-                    _handler->log("no convolution filter selected");
-                }
-            }
-
-
-            /*
-             * blob finding stages:
-             *
-             * initialize
-             * iterate through frames
-             *    add to collection if new label
-             *    register equivalences
-             * merge equivalent blobs
-             * register collisions
-             * merge colliding blobs
-             *
-             */
 
             _current_label = 0;
 
@@ -201,38 +178,6 @@ PeakList PeakFinder::find(DataList numors)
                 _handler->log("Found " + std::to_string(blobs.size()) + " blobs");
                 _handler->setProgress(100);
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         }
         // Warning if error
         catch(std::exception& e) {
@@ -270,6 +215,10 @@ PeakList PeakFinder::find(DataList numors)
                 p->setSelected(false);
             }
 
+            if (extents(2) > _maxFrames) {
+                p->setSelected(false);
+            }
+
             // peak's bounding box not completely contained in detector image
             if (!dAABB.contains(p->getShape().aabb())) {
                 p->setSelected(false);
@@ -296,8 +245,9 @@ PeakList PeakFinder::find(DataList numors)
         const double bkg_begin = getScale(_integrationConfidence)+3;
         numor->integratePeaks(numor_peaks, bkg_begin, bkg_begin+3, _handler);
         numor->close();
-        //_ui->progressBar->setValue(++comp);
-        std::cout << "Found " << numor_peaks.size() << " peaks." << std::endl;
+        if (_handler) {
+            _handler->log("Found " + std::to_string(numor_peaks.size()) + " peaks.");
+        }
     }
 
     if (_handler) {
@@ -310,26 +260,6 @@ PeakList PeakFinder::find(DataList numors)
 void PeakFinder::setHandler(const sptrProgressHandler& handler)
 {
     _handler = handler;
-}
-
-void PeakFinder::setThresholdValue(double threshold)
-{
-    _thresholdValue = threshold;
-}
-
-double PeakFinder::getThresholdValue()
-{
-    return _thresholdValue;
-}
-
-void PeakFinder::setThresholdType(int type)
-{
-    _thresholdType = type;
-}
-
-int PeakFinder::getThresholdType()
-{
-    return _thresholdType;
 }
 
 void PeakFinder::setSearchConfidence(double confidence)
@@ -352,24 +282,34 @@ double PeakFinder::integrationConfidence() const
     return _integrationConfidence;
 }
 
-void PeakFinder::setMinComponents(int minComp)
+void PeakFinder::setMaxFrames(int maxFrames)
 {
-    _minComp = minComp;
+    _maxFrames = maxFrames;
 }
 
-int PeakFinder::getMinComponents()
+int PeakFinder::maxFrames() const
 {
-    return _minComp;
+    return _maxFrames;
 }
 
-void PeakFinder::setMaxComponents(int maxComp)
+void PeakFinder::setMinSize(int size)
 {
-    _maxComp = maxComp;
+    _minSize = size;
 }
 
-int PeakFinder::getMaxComponents()
+int PeakFinder::minSize() const
 {
-    return _maxComp;
+    return _minSize;
+}
+
+void PeakFinder::setMaxSize(int size)
+{
+    _maxSize = size;
+}
+
+int PeakFinder::maxSize() const
+{
+    return _maxSize;
 }
 
 sptrConvolutionKernel PeakFinder::kernel() const
@@ -381,6 +321,17 @@ void PeakFinder::setKernel(const std::string& kernel_type, const std::map<std::s
 {
     KernelFactory kernel_factory;
     _kernel = kernel_factory.create(kernel_type,parameters);
+}
+
+sptrThreshold PeakFinder::threshold() const
+{
+    return _threshold;
+}
+
+void PeakFinder::setThreshold(const std::string& threshold_type, const std::map<std::string,double>& parameters)
+{
+    ThresholdFactory threshold_factory;
+    _threshold = threshold_factory.create(threshold_type,parameters);
 }
 
 void PeakFinder::eliminateBlobs(std::map<int, Blob3D>& blobs) const
@@ -399,7 +350,7 @@ void PeakFinder::eliminateBlobs(std::map<int, Blob3D>& blobs) const
         ++dummy;
 
         Blob3D& p=it->second;
-        if (p.getComponents() < _minComp || p.getComponents() > _maxComp) {
+        if (p.getComponents() < _minSize || p.getComponents() > _maxSize) {
             it = blobs.erase(it);
         } else {
             it++;
@@ -492,7 +443,7 @@ void PeakFinder::findPrimaryBlobs(sptrDataSet data, std::map<int,Blob3D>& blobs,
     // int representing the 8 possible nearest neighbor operations.
     int code;
 
-    int nframes;
+    int nframes(0);
 
     // Iterate on all pixels in the image
     // #pragma omp for schedule(dynamic, DYNAMIC_CHUNK)
@@ -508,21 +459,21 @@ void PeakFinder::findPrimaryBlobs(sptrDataSet data, std::map<int,Blob3D>& blobs,
 
         auto filtered_frame = convolve_frame(frame_data);
 
+        double threshold_value = _threshold->value(data,idx);
+
         // Go the the beginning of data
         index2D=0;
         for (unsigned int row = 0; row < nrows; ++row) {
             for (unsigned int col = 0; col < ncols; ++col) {
-                auto value = frame_data(row, col);
-                //auto filterd_value = filtered_frame(row, col);
-
                 // Discard pixel if value < threshold
-                if (filtered_frame(row, col) < _thresholdValue) {
+                if (filtered_frame(row, col) < threshold_value) {
                     labels[index2D]=labels2[index2D]=0;
                     index2D++;
                     continue;
                 }
 
-                newlabel=false;
+                newlabel = false;
+
                 // Get labels of adjacent pixels
                 left= (col == 0 ? 0 : labels[index2D-1]);
                 top=  (row == 0 ? 0 : labels[index2D-ncols]) ;
@@ -585,8 +536,9 @@ void PeakFinder::findPrimaryBlobs(sptrDataSet data, std::map<int,Blob3D>& blobs,
                 }
                 // If none of the neighbors have labels, create new one
 
-                labels[index2D]=labels2[index2D]=label;
+                labels[index2D] = labels2[index2D] = label;
                 index2D++;
+                auto value = frame_data(row, col);
                 // Create a new blob if necessary
                 if (newlabel) {
                     blobs.insert(std::make_pair(label,Blob3D(col,row,idx,value)));
@@ -793,7 +745,6 @@ void PeakFinder::mergeEquivalentBlobs(std::map<int,Blob3D>& blobs, EquivalenceLi
     // finalize update handler
     if ( _handler ) {
         _handler->log("After merging, " + std::to_string(blobs.size()) + " blobs remain.");
-        _handler->setProgress(100);
     }
 }
 

@@ -33,14 +33,14 @@ int main()
     peakFinder.setIntegrationConfidence(0.997);
     NSX_CHECK_CLOSE(peakFinder.integrationConfidence(), 0.997, 1e-10);
 
-    peakFinder.setMaxComponents(10000);
-    NSX_CHECK_ASSERT(peakFinder.getMaxComponents() == 10000);
+    peakFinder.setMaxSize(10000);
+    NSX_CHECK_ASSERT(peakFinder.maxSize() == 10000);
 
-    peakFinder.setMinComponents(10);
-    NSX_CHECK_ASSERT(peakFinder.getMinComponents() == 10);
+    peakFinder.setMinSize(10);
+    NSX_CHECK_ASSERT(peakFinder.minSize() == 10);
 
-    peakFinder.setThresholdValue(3.0);
-    NSX_CHECK_CLOSE(peakFinder.getThresholdValue(), 3.0, 1e-10);
+    peakFinder.setMaxFrames(10);
+    NSX_CHECK_ASSERT(peakFinder.maxFrames() == 10);
 
     auto found_peaks = peakFinder.find(numors);
     size_t num_peaks = found_peaks.size();

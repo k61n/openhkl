@@ -6,6 +6,7 @@
 #include "DataTypes.h"
 #include "GeometryTypes.h"
 #include "ImagingTypes.h"
+#include "PeakFindTypes.h"
 #include "UtilsTypes.h"
 
 namespace nsx {
@@ -21,26 +22,26 @@ public:
 
     void setHandler(const sptrProgressHandler& handler);
 
-    void setThresholdValue(double threshold);
-    double getThresholdValue();
-
-    void setThresholdType(int type);
-    int getThresholdType();
-
     void setIntegrationConfidence(double confidence);
     double integrationConfidence() const;
 
     void setSearchConfidence(double confidence);
     double searchConfidence() const;
 
-    void setMinComponents(int minComp);
-    int getMinComponents();
+    void setMinSize(int minComp);
+    int minSize() const;
 
-    void setMaxComponents(int maxComp);
-    int getMaxComponents();
+    void setMaxSize(int maxComp);
+    int maxSize() const;
+
+    void setMaxFrames(int maxComp);
+    int maxFrames() const;
 
     sptrConvolutionKernel kernel() const;
     void setKernel(const std::string& kernel_type, const std::map<std::string,double>& parameters);
+
+    sptrThreshold threshold() const;
+    void setThreshold(const std::string& threshold_type, const std::map<std::string,double>& parameters);
 
 private:
 
@@ -61,17 +62,17 @@ private:
 
     sptrConvolutionKernel _kernel;
 
-    double _thresholdValue;
-    int _thresholdType;
+    sptrThreshold _threshold;
 
     double _searchConfidence;
     double _integrationConfidence;
-    double _median;
 
     int _current_label;
 
-    int _minComp;
-    int _maxComp;
+    int _minSize;
+    int _maxSize;
+
+    int _maxFrames;
 };
 
 } // end namespace nsx

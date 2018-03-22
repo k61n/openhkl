@@ -17,7 +17,7 @@ class ConstantKernel : public ConvolutionKernel {
 
 public:
 
-    ConstantKernel()=default;
+    ConstantKernel();
 
     ConstantKernel(const std::map<std::string,double>& parameters);
 

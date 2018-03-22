@@ -13,7 +13,7 @@ DeltaKernel::~DeltaKernel()
 
 const char* DeltaKernel::name() const
 {
-    return "Delta";
+    return "delta";
 }
 
 RealMatrix DeltaKernel::_matrix(int nrows, int ncols) const
