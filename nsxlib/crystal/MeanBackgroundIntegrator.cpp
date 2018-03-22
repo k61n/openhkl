@@ -20,19 +20,44 @@ bool MeanBackgroundIntegrator::compute(sptrPeak3D peak, const IntegrationRegion&
     const auto& bkgCounts = region.bkgData().counts();
 
     // TODO: should this be hard-coded??
-    if (bkgEvents.size() < 5) {
+    if (bkgEvents.size() < 20) {
         throw std::runtime_error("MeanBackgroundIntegrator::compute(): too few data points in background");
     }
 
-    // compute mean background and error
+    // compute initial mean background and error
     for (auto count: bkgCounts) {
         sum_bkg += count;
         sum_bkg2 += count*count;
     }
 
-    const double Nbkg = bkgCounts.size();
-    const double mean_bkg = sum_bkg / Nbkg;
-    const double var_bkg = (sum_bkg2 - Nbkg*mean_bkg*mean_bkg) / (Nbkg-1);
+    double nbkg = bkgCounts.size();
+    double mean_bkg = sum_bkg / nbkg;
+    double var_bkg = (sum_bkg2 - nbkg*mean_bkg*mean_bkg) / (nbkg-1);
+    double sigma_bkg = std::sqrt(var_bkg);
+
+    // reject outliers
+    for (auto i = 0; i < 20; ++i) {
+        sum_bkg = 0;
+        sum_bkg2 = 0;
+        nbkg = 0;
+
+        for (auto count: bkgCounts) {
+            if (count < mean_bkg+3*sigma_bkg) {
+                sum_bkg += count;
+                sum_bkg2 += count*count;
+                nbkg += 1;
+            }
+        }
+
+        double old_mean = mean_bkg;
+        mean_bkg = sum_bkg / nbkg;
+        var_bkg = (sum_bkg2 - nbkg*mean_bkg*mean_bkg) / (nbkg-1);
+        sigma_bkg = std::sqrt(var_bkg);
+
+        if (std::fabs((old_mean-mean_bkg)/mean_bkg) < 1e-5) {
+            break;
+        }
+    }
 
     _meanBackground = Intensity(mean_bkg, var_bkg);
 

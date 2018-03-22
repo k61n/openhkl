@@ -41,11 +41,15 @@ public:
     //! Return the average peak covariance near the given detector event
     Eigen::Matrix3d meanCovariance(sptrPeak3D reference_peak, double radius, double nframes) const;
 
+    //! Find neighbors of a given peak
+    PeakList findNeighbors(const DetectorEvent& ev, double radius, double nframes) const;
+
 private:
     std::map<sptrPeak3D, FitProfile> _profiles;
-    Eigen::Matrix3d _covDetector;
-    Eigen::Matrix3d _covMosaicity;
-    Eigen::Matrix<double, 6, 6> _covScatter;    
+    double _sigmaD;
+    double _sigmaE;
+    double _sigmaM;
+    double _sigmaA;  
 };
 
 } // end namespace nsx

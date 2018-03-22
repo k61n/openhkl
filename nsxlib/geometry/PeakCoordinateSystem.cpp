@@ -14,7 +14,17 @@ PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak):
         return peak;
     }()),
 
-    _event(peak->getShape().center()),
+    _event([&]() {
+        #if 0
+        auto q = peak->qPredicted();
+        auto events = peak->data()->getEvents({q});
+        if (events.size() != 1) {
+            throw std::runtime_error("PeakCoordinateSystem: cannot predict peak center");
+        }
+        return events[0];
+        #endif
+        return peak->getShape().center();
+    }()),
 
     _state(peak->data()->interpolatedState(_event._frame)),
 
@@ -28,7 +38,8 @@ PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak):
         auto pos = detector->pixelPosition(_event._px, _event._py);
         return _state.kfLab(pos).rowVector();
         #endif
-        Eigen::RowVector3d q = peak->qPredicted().rowVector() * _state.sampleOrientationMatrix().transpose();
+        //Eigen::RowVector3d q = peak->qPredicted().rowVector() * _state.sampleOrientationMatrix().transpose();
+        Eigen::RowVector3d q = peak->q().rowVector() * _state.sampleOrientationMatrix().transpose();
         return q + _ki;
     }()),
     
@@ -49,9 +60,20 @@ Eigen::Vector3d PeakCoordinateSystem::transform(const DetectorEvent& ev) const
     auto position = det->pixelPosition(ev._px, ev._py);
     const Eigen::RowVector3d dk = _state.kfLab(position).rowVector() - _kf;
 
+    // Kabsh coordinate system
+    #if 1
     const double eps1 = _e1.dot(dk);
     const double eps2 = _e2.dot(dk);
     const double eps3 = _zeta * (ev._frame - _event._frame);
+    #else
+
+    // new coordinate system?
+    const Eigen::RowVector3d dq = _state.axis.cross(_kf-_ki) * _state.stepSize;
+    const Eigen::RowVector3d dk2 = dk + (ev._frame-_event._frame)*dq;
+    const double eps1 = _e1.dot(dk2);
+    const double eps2 = _e2.dot(dk2); 
+    const double eps3 = _kf.dot(dq) / _kf.norm() / (_kf-_ki).norm() * (ev._frame-_event._frame);
+    #endif
 
     return Eigen::Vector3d(eps1, eps2, eps3);
 }
@@ -63,9 +85,28 @@ Eigen::Matrix3d PeakCoordinateSystem::jacobian() const
     // Jacobian of epsilon coordinates
     Eigen::Matrix3d J;
 
+    // Kabsch coordinate system
+    #if 1
     J.row(0) = _e1.transpose() * dkdx;
     J.row(1) = _e2.transpose() * dkdx;
     J.row(2) = Eigen::RowVector3d(0, 0, _zeta);
+    #else
+
+    // new coordinate system?
+    J.setZero();
+
+    const Eigen::RowVector3d dq = _state.axis.cross(_kf-_ki) * _state.stepSize;
+
+    J.row(0) = _e1.transpose() * dkdx;
+    J(0,2) +=  _e1.dot(dq);
+
+    J.row(1) = _e2.transpose() * dkdx;
+    J(1,2) +=  _e2.dot(dq);
+
+    J(2,2) = _kf.dot(dq) / _kf.norm() / (_kf-_ki).norm();
+
+    #endif
+
 
     return J;    
 }

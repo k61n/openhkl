@@ -46,17 +46,14 @@ WeakPeakIntegrator::WeakPeakIntegrator(sptrShapeLibrary library, double radius, 
 
 }
 
-static void updateFit(Intensity& I, Intensity& B, const std::vector<double>& profile, const IntegrationRegion& region)
+static void updateFit(Intensity& I, Intensity& B, const std::vector<double>& profile, const std::vector<double>& counts)
 {
     Eigen::Matrix2d A;
     A.setZero();
     Eigen::Vector2d b(0,0);
-    const auto& shape = region.shape();
+    const size_t n = std::min(profile.size(), counts.size());
 
-    const auto& events = region.peakData().events();
-    const auto& counts = region.peakData().counts();
-
-    for (size_t i = 0; i < events.size(); ++i) {
+    for (size_t i = 0; i < n; ++i) {
         const double p = profile[i];
         const double M = counts[i];
         const double var = B.value() + I.value()*p;
@@ -100,6 +97,7 @@ bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     const auto& bkgEvents = region.bkgData().events();
     const auto& bkgCounts = region.bkgData().counts();
     const auto& peakEvents = region.peakData().events();
+    const auto& peakCounts = region.peakData().counts();
 
     // TODO: should this be hard-coded??
     if (peakEvents.size() < 5) {
@@ -124,7 +122,13 @@ bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     _meanBackground = Intensity(mean_bkg, var_bkg);
     _integratedIntensity = Intensity(0.0, 0.0);
 
-    std::vector<double> profile(peakEvents.size());
+    std::vector<double> profile;
+    std::vector<double> counts;
+    
+    profile.reserve(peakEvents.size());
+    counts.reserve(peakEvents.size());
+    
+
     const double tolerance = 1e-5;
 
     FitProfile model_profile;
@@ -137,19 +141,24 @@ bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
         return false;
     }
 
-    PeakCoordinateSystem coord(peak);
+     PeakCoordinateSystem coord(peak);
 
     // evaluate the model profile at the given events
     for (int i = 0; i < peakEvents.size(); ++i) {
         Eigen::Vector3d x = coord.transform(peakEvents[i]);
-        profile[i] = model_profile.predict(x);
+        const double predict = model_profile.predict(x);
+
+        if (predict > 0.0) {
+            profile.push_back(predict);
+            counts.push_back(peakCounts[i]);
+        }
     }
     
     // todo: stopping criterion
     for (auto i = 0; i < 20; ++i) {
         Intensity old_intensity = _integratedIntensity;
         const double I0 = _integratedIntensity.value();
-        updateFit(_integratedIntensity, _meanBackground, profile, region);
+        updateFit(_integratedIntensity, _meanBackground, profile, counts);
         const double I1 = _integratedIntensity.value();
 
         if (std::isnan(I1) || std::isnan(_meanBackground.value())) {

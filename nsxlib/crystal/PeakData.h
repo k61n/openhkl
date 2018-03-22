@@ -15,7 +15,6 @@ namespace nsx {
 class PeakData {
 public:
     PeakData(sptrPeak3D peak = nullptr);
-
     PeakData(PeakData&& other) = default;
 
     const std::deque<DetectorEvent>& events() const;
