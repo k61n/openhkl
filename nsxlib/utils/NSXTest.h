@@ -430,15 +430,15 @@ NSXTest&  allTests();
 #define NSX_CHECK_NEQ(...) EXPAND(NSX_CHECK_NOT_EQUAL(__VA_ARGS__))
 
 // nsx unit test check for strict > inequality
-#define NSX_CHECK_GREATER_THAN_1(observed,predicted) nsx::allTests().testCheckGreaterThan(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), false, #observed" == " #predicted, __FILE__, __LINE__)
-#define NSX_CHECK_GREATER_THAN_2(observed,predicted,expectedFailure) nsx::allTests().testCheckGreaterThan(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), expectedFailure, #observed" == " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_GREATER_THAN_1(observed,predicted) nsx::allTests().testCheckGreaterThan(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), false, #observed" > " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_GREATER_THAN_2(observed,predicted,expectedFailure) nsx::allTests().testCheckGreaterThan(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), expectedFailure, #observed" > " #predicted, __FILE__, __LINE__)
 #define NSX_CHECK_GREATER_THAN_X(...) EXPAND(GET_4TH_ARG(__VA_ARGS__, NSX_CHECK_GREATER_THAN_2, NSX_CHECK_GREATER_THAN_1,))
 #define NSX_CHECK_GREATER_THAN(...) EXPAND(NSX_CHECK_GREATER_THAN_X(__VA_ARGS__)(__VA_ARGS__))
 #define NSX_CHECK_GT(...) EXPAND(NSX_CHECK_GREATER_THAN(__VA_ARGS__))
 
 // nsx unit test check for >= inequality
-#define NSX_CHECK_GREATER_THAN_OR_EQUAL_1(observed,predicted) nsx::allTests().testCheckGreaterThanOrEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), false, #observed" == " #predicted, __FILE__, __LINE__)
-#define NSX_CHECK_GREATER_THAN_OR_EQUAL_2(observed,predicted,expectedFailure) nsx::allTests().testCheckGreaterThanPrEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), expectedFailure, #observed" == " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_GREATER_THAN_OR_EQUAL_1(observed,predicted) nsx::allTests().testCheckGreaterThanOrEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), false, #observed " >= " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_GREATER_THAN_OR_EQUAL_2(observed,predicted,expectedFailure) nsx::allTests().testCheckGreaterThanPrEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), expectedFailure, #observed" >= " #predicted, __FILE__, __LINE__)
 #define NSX_CHECK_GREATER_THAN_OR_EQUAL_X(...) EXPAND(GET_4TH_ARG(__VA_ARGS__, NSX_CHECK_GREATER_THAN_OR_EQUAL_2, NSX_CHECK_GREATER_THAN_OR_EQUAL_1,))
 #define NSX_CHECK_GREATER_THAN_OR_EQUAL(...) EXPAND(NSX_CHECK_GREATER_THAN_OR_EQUAL_X(__VA_ARGS__)(__VA_ARGS__))
 #define NSX_CHECK_GE(...) EXPAND(NSX_CHECK_GREATER_THAN_OR_EQUAL(__VA_ARGS__))

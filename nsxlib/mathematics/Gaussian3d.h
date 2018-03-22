@@ -41,14 +41,12 @@
 namespace nsx {
 
 //! Class for 3d peak profile fitting
-class Profile3d {
+class Gaussian3d {
 public: 
     //! Create a profile with given initial parameters
-    Profile3d(double background, double A, const Eigen::Vector3d& c, const Eigen::Matrix3d& CI);
-    //! Create a profile with an initial guess calculated (not fit) from the given data.
-    Profile3d(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z, const Eigen::ArrayXd& I);
+    Gaussian3d(double background, double max, const Eigen::Vector3d& center, const Eigen::Matrix3d& covariance);
     //! Fit using the provided data points
-    Profile3d fit(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z, const Eigen::ArrayXd& I, int maxiter=100) const;
+    bool fit(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z, const Eigen::ArrayXd& I, int maxiter=100);
 
     //! Value of the profile at the given point (including background)
     double evaluate(Eigen::Vector3d p) const;
@@ -57,10 +55,16 @@ public:
     Eigen::ArrayXd evaluate(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const;
 
     //! Pearson correlation coefficient of the fit
-    double pearson() const;
+    double pearson(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z, const Eigen::ArrayXd& I) const;
 
     //! Return whether this profile is the result of a successful fit
     bool success() const;
+
+    Eigen::Matrix3d covariance() const;
+
+    #ifndef SWIG
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    #endif
 
 private:
     //! Evaluate profile in place, assuming result has already been allocated
@@ -68,22 +72,16 @@ private:
     //! Evaluate the Jacobian in place, assuming J has already been allocated
     void jacobianInPlace(Eigen::MatrixXd& J, const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const;
 
-    //! Pearson correlation coefficient
-    double _pearson;
     //! Flag to determine whether this profile is the result of a successful fit
     bool _success;
-    //! Center of mass
-    Eigen::Vector3d _center;
-    //! Covariance matrix
-    Eigen::Matrix3d _covariance;
 
 public:
     //! Background value
     double _background;
-    //! Amplitude
-    double _A;
+    //! Maximum
+    double _max;
     //! center of mass
-    Eigen::Vector3d _c;
+    Eigen::Vector3d _center;
     //! Components of inverse covariance matrix. 
     double _Dxx, _Dxy, _Dxz, _Dyy, _Dyz, _Dzz;
 

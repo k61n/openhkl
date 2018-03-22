@@ -35,37 +35,42 @@
 
 #include "FitParameters.h"
 #include "Minimizer.h"
-#include "Profile3d.h"
+#include "Gaussian3d.h"
 
 namespace nsx {
 
-Profile3d::Profile3d(double background, double A, const Eigen::Vector3d& c, const Eigen::Matrix3d& CI):
-    _background(background), _A(A), _c(c),
-    _Dxx(CI(0,0)),_Dxy(CI(0,1)),_Dxz(CI(0,2)),_Dyy(CI(1,1)),_Dyz(CI(1,2)),_Dzz(CI(2,2))
+Gaussian3d::Gaussian3d(double background, double max, const Eigen::Vector3d& center, const Eigen::Matrix3d& covariance):
+    _background(background), _max(max), _center(center)
 {
-
+    Eigen::Matrix3d D = covariance.inverse();
+    _Dxx = D(0,0);
+    _Dxy = D(0,1);
+    _Dxz = D(0,2);
+    _Dyy = D(1,1);
+    _Dyz = D(1,2);
+    _Dzz = D(2,2);
 }
 
 
-void Profile3d::evaluateInPlace(Eigen::VectorXd& result, const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const
+void Gaussian3d::evaluateInPlace(Eigen::VectorXd& result, const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const
 {
     // get shifted coordinates
-    auto dx = x - _c(0);
-    auto dy = y - _c(1);
-    auto dz = z - _c(2);
+    auto dx = x - _center(0);
+    auto dy = y - _center(1);
+    auto dz = z - _center(2);
 
     // evaluate the argument of the exponential
     auto arg = -0.5*(_Dxx*dx*dx + _Dyy*dy*dy + _Dzz*dz*dz + 2*_Dxy*dx*dy + 2*_Dxz*dx*dz + 2*_Dyz*dy*dz);
-    result.array() = _background + _A * arg.exp();
+    result.array() = _background + _max * arg.exp();
 }
 
-// note: the ordering of the columns of J corresponds to the order in which parameters are added to FitParameters in Profile3d::fit().
-void Profile3d::jacobianInPlace(Eigen::MatrixXd& J, const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const
+// note: the ordering of the columns of J corresponds to the order in which parameters are added to FitParameters in Gaussian3d::fit().
+void Gaussian3d::jacobianInPlace(Eigen::MatrixXd& J, const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const
 {
     // get shifted coordinates
-    auto dx = x - _c(0);
-    auto dy = y - _c(1);
-    auto dz = z - _c(2);
+    auto dx = x - _center(0);
+    auto dy = y - _center(1);
+    auto dz = z - _center(2);
 
     auto dxdx = dx*dx;
     auto dxdy = dx*dy;
@@ -86,31 +91,31 @@ void Profile3d::jacobianInPlace(Eigen::MatrixXd& J, const Eigen::ArrayXd& x, con
     J.col(1).array() = e;
 
     // derivative wrt x0
-    J.col(2).array() = _A*e * (_Dxx*dx + _Dxy*dy + _Dxz*dz);
+    J.col(2).array() = _max*e * (_Dxx*dx + _Dxy*dy + _Dxz*dz);
 
     // derivative wrt y0
-    J.col(3).array() = _A*e * (_Dyy*dy + _Dxy*dx + _Dyz*dz);
+    J.col(3).array() = _max*e * (_Dyy*dy + _Dxy*dx + _Dyz*dz);
 
     // derivative wrt z0
-    J.col(4).array() = _A*e * (_Dzz*dz + _Dxz*dx + _Dyz*dy);
+    J.col(4).array() = _max*e * (_Dzz*dz + _Dxz*dx + _Dyz*dy);
 
     // derivative wrt dxx
-    J.col(5).array() = -0.5*_A*e*dxdx;
+    J.col(5).array() = -0.5*_max*e*dxdx;
 
     // derivative wrt dxy
-    J.col(6).array() = -_A*e*dxdy;
+    J.col(6).array() = -_max*e*dxdy;
 
     // derivative wrt dxz
-    J.col(7).array() = -_A*e*dxdz;
+    J.col(7).array() = -_max*e*dxdz;
 
     // derivative wrt dyy
-    J.col(8).array() = -0.5*_A*e*dydy;
+    J.col(8).array() = -0.5*_max*e*dydy;
 
     // derivative wrt dyz
-    J.col(9).array() = -_A*e*dydz;
+    J.col(9).array() = -_max*e*dydz;
 
     // derivative wrt dzz
-    J.col(10).array() = -0.5*_A*e*dzdz;        
+    J.col(10).array() = -0.5*_max*e*dzdz;        
 }
 
 double pearson_helper(const Eigen::ArrayXd& pred, const Eigen::ArrayXd& obs)
@@ -127,64 +132,7 @@ double pearson_helper(const Eigen::ArrayXd& pred, const Eigen::ArrayXd& obs)
     return cov / (std_pred*std_obs);
 }
 
-
-Profile3d::Profile3d(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z, const Eigen::ArrayXd& I)
-{
-    const int nvalues = I.size();
-
-    assert(x.size() == nvalues);
-    assert(y.size() == nvalues);
-    assert(z.size() == nvalues);
-
-    _background = I.mean();
-    const double avg_bkg = I.mean();
-    const double std_bkg = (I-_background).sum() / (I.size()-1);
-
-    Eigen::ArrayXd strong_I = (I-avg_bkg);
-
-    for (int i = 0; i < nvalues; ++i) {
-        if (strong_I(i) < std_bkg) {
-             strong_I(i) = 0.0;
-        }
-    }
-
-    _A = strong_I.maxCoeff();
-    // estimate total mass of the profile
-    const double mass = (strong_I).sum();
-
-    // normalized mass distribution
-    auto rho = strong_I / mass;
-
-    // compute center of mass using distribution rho
-    _c(0) = (x*rho).sum();
-    _c(1) = (y*rho).sum();
-    _c(2) = (z*rho).sum();
-
-    // shifted coordinates
-    auto dx = x-_c(0);
-    auto dy = y-_c(1);
-    auto dz = z-_c(2);
-    
-    // covariance matrix
-    double c00 = (dx*dx*rho).sum();
-    double c01 = (dx*dy*rho).sum();
-    double c02 = (dx*dz*rho).sum();
-    double c11 = (dy*dy*rho).sum();
-    double c12 = (dy*dz*rho).sum();
-    double c22 = (dz*dz*rho).sum();
-
-    Eigen::Matrix3d C;
-    C << c00, c01, c02, c01, c11, c12, c02, c12, c22;
-    Eigen::Matrix3d CI = C.inverse();
-    _Dxx = CI(0,0);
-    _Dxy = CI(0,1);
-    _Dxz = CI(0,2);
-    _Dyy = CI(1,1);
-    _Dyz = CI(1,2);
-    _Dzz = CI(2,2);
-}
-
-Eigen::ArrayXd Profile3d::evaluate(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const
+Eigen::ArrayXd Gaussian3d::evaluate(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z) const
 {
     const int n = x.size();
     assert(y.size() == n);
@@ -195,33 +143,32 @@ Eigen::ArrayXd Profile3d::evaluate(const Eigen::ArrayXd& x, const Eigen::ArrayXd
     return result.array();
 }
 
-Profile3d Profile3d::fit(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z, const Eigen::ArrayXd& I, int maxiter) const
+bool Gaussian3d::fit(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z, const Eigen::ArrayXd& I, int maxiter)
 {
     const int nvalues = I.size();
     assert(x.size() == nvalues);
     assert(y.size() == nvalues);
     assert(z.size() == nvalues);
 
-    Profile3d result(*this);
     FitParameters params;
     // note: the order in which we add parameters matters, because we have to get the 
     // correct indicies in the Jacobian calculation!
-    params.addParameter(&result._background);
-    params.addParameter(&result._A);
-    params.addParameter(&result._c(0));
-    params.addParameter(&result._c(1));
-    params.addParameter(&result._c(2));
-    params.addParameter(&result._Dxx);
-    params.addParameter(&result._Dxy);
-    params.addParameter(&result._Dxz);
-    params.addParameter(&result._Dyy);
-    params.addParameter(&result._Dyz);
-    params.addParameter(&result._Dzz);
+    params.addParameter(&_background);
+    params.addParameter(&_max);
+    params.addParameter(&_center(0));
+    params.addParameter(&_center(1));
+    params.addParameter(&_center(2));
+    params.addParameter(&_Dxx);
+    params.addParameter(&_Dxy);
+    params.addParameter(&_Dxz);
+    params.addParameter(&_Dyy);
+    params.addParameter(&_Dyz);
+    params.addParameter(&_Dzz);
     
     auto f = [&](Eigen::VectorXd& residual) -> int
     {
         // compute profile with given parameters
-        result.evaluateInPlace(residual, x, y, z);
+        evaluateInPlace(residual, x, y, z);
         // subtract observed intensity to get residuals
         residual -= I.matrix();
         return 0;
@@ -229,7 +176,7 @@ Profile3d Profile3d::fit(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const
 
     auto df = [&](Eigen::MatrixXd& J) -> int
     {
-        result.jacobianInPlace(J, x, y, z);
+        jacobianInPlace(J, x, y, z);
         return 0;
     };
  
@@ -241,24 +188,18 @@ Profile3d Profile3d::fit(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const
 
     bool success = min.fit(maxiter);
 
-    Eigen::ArrayXd result_profile = result.evaluate(x, y, z);
-    result._success = success;
-    result._pearson = pearson_helper(result_profile, I);
+    Eigen::ArrayXd result_profile = evaluate(x, y, z);
+    _success = success;
 
-    return result;
+    return success;
 }
 
-bool Profile3d::success() const
+bool Gaussian3d::success() const
 {
     return _success;
 }
 
-double Profile3d::pearson() const
-{
-    return _pearson;
-}
-
-double Profile3d::evaluate(Eigen::Vector3d p) const
+double Gaussian3d::evaluate(Eigen::Vector3d p) const
 {
     Eigen::ArrayXd x(1), y(1), z(1);
     Eigen::VectorXd result(1);
@@ -267,6 +208,26 @@ double Profile3d::evaluate(Eigen::Vector3d p) const
     z(0) = p(2);
     evaluateInPlace(result, x, y, z);
     return result(0);
+}
+
+Eigen::Matrix3d Gaussian3d::covariance() const
+{
+    Eigen::Matrix3d D;
+    D(0,0) = _Dxx;
+    D(1,1) = _Dyy;
+    D(2,2) = _Dzz;
+
+    D(0,1) = D(1,0) = _Dxy;
+    D(0,2) = D(2,0) = _Dxz;
+    D(1,2) = D(2,1) = _Dyz;
+
+    return D.inverse();
+}
+
+double Gaussian3d::pearson(const Eigen::ArrayXd& x, const Eigen::ArrayXd& y, const Eigen::ArrayXd& z, const Eigen::ArrayXd& I) const
+{
+    Eigen::ArrayXd I_pred = evaluate(x, y, z);
+    return pearson_helper(I_pred, I);
 }
 
 } // end namespace nsx
