@@ -35,7 +35,7 @@
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFilter.h>
 #include <nsxlib/PeakFinder.h>
-#include <nsxlib/Profile3d.h>
+#include <nsxlib/Gaussian3d.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/Source.h>

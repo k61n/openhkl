@@ -102,6 +102,10 @@ void DialogProfileFit::build()
     nsx::info() << "Done fitting profiles";
     _library = integrator.library();
 
+    nsx::info() << "Updating peak shape model...";
+    _library->updateFit(1000);
+    nsx::info() << "Done, mean pearson is " << _library->meanPearson();
+
     calculate();
 }
 
