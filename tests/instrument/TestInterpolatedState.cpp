@@ -63,7 +63,7 @@ void run_test(const char* filename, const char* instrument)
     }
    
     for (auto coord: coords) {
-        const double dt = 1e-6;
+        const double dt = 1e-3;
         auto detector = dataf->diffractometer()->getDetector();
 
         auto state = dataf->interpolatedState(coord[2]);
@@ -94,7 +94,7 @@ void run_test(const char* filename, const char* instrument)
         NSX_CHECK_SMALL((dq3 - Jq*Eigen::Vector3d(0,0,dt)).norm() / dq3.norm(), 1e-3);
 
         // test numerical vs. analytic Jacobian
-        NSX_CHECK_SMALL((NJ-Jq).norm() / Jq.norm(), 1e-6);
+        NSX_CHECK_SMALL((NJ-Jq).norm() / Jq.norm(), 1e-5);
     }
 }
 

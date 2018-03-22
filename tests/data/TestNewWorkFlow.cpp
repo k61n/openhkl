@@ -64,7 +64,7 @@ int main()
     peakFinder->setMinComponents(30);
     peakFinder->setMaxComponents(10000);
     peakFinder->setKernel(kernel);
-    peakFinder->setSearchScale(1.0);
+    peakFinder->setSearchScale(1.5);
     peakFinder->setIntegrationScale(4.0);
     peakFinder->setBackgroundScale(6.0);
     peakFinder->setThresholdType(1); // absolute
