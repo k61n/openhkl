@@ -35,6 +35,8 @@
 #include <Eigen/Dense>
 
 #include "ConvexHull.h"
+#include "DataTypes.h"
+#include "GeometryTypes.h"
 
 namespace nsx {
 
@@ -63,6 +65,10 @@ public:
     double innerRadius() const;
     //! Return radius of smallest sphere containing the zone.
     double outerRadius() const;
+
+    //! Return the convex hull, transformed to detector coordinates.
+    //! May throw if the vertices cannot be transformed (e.g. peak on edge of image).
+    ConvexHull detectorConvexHull(const ReciprocalVector& q0, sptrDataSet data) const;
 
 private:
 
