@@ -1,4 +1,4 @@
-%module "pynsx"
+%module(directors="1") "pynsx"
 
 %include "exception.i"
 
@@ -10,6 +10,8 @@
   }
 }
 
+%feature("director") IPeakIntegrator;
+
 %include "pynsx_doc.i"
 
 %include "warnings.i"
@@ -20,6 +22,7 @@
 %include "std_shared_ptr.i"
 %include "std_string.i"
 %include "std_vector.i"
+%include "std_deque.i"
 %include "std_set.i"
 %include "std_pair.i"
 
@@ -92,7 +95,7 @@ using Eigen::Quaterniond;
 
 #include "Round.h"
 #include "RNG.h"
-#include "Profile3d.h"
+#include "Gaussian3d.h"
 
 #include "EigenToVector.h"
 #include "System.h"
@@ -122,6 +125,7 @@ using Eigen::Quaterniond;
 #include "WeakPeakIntegrator.h"
 #include "StrongPeakIntegrator.h"
 #include "IntegrationRegion.h"
+#include "PeakData.h"
 #include "UnitCell.h"
 #include "ResolutionShell.h"
 #include "RFactor.h"
@@ -339,6 +343,7 @@ using namespace nsx;
 
 %include "ReciprocalVector.h"
 %template(ReciprocalVectorList) std::vector<nsx::ReciprocalVector>;
+%template(ReciprocalVectorQueue) std::deque<nsx::ReciprocalVector>;
 
 %include "Axis.h"
 %include "RotAxis.h"
@@ -361,6 +366,8 @@ using namespace nsx;
 %include "InstrumentTypes.h"
 %include "Detector.h"
 %include "DetectorEvent.h"
+%template(DetectorEventQueue) std::deque<nsx::DetectorEvent>;
+%template(DoubleQueue) std::deque<double>;
 %include "MonoDetector.h"
 %include "CylindricalDetector.h"
 %include "FlatDetector.h"
@@ -377,10 +384,13 @@ namespace nsx {
 
 %include "FFTIndexing.h"
 
+%include "PeakData.h"
+%include "IntegrationRegion.h"
 %include "IPeakIntegrator.h"
 %include "WeakPeakIntegrator.h"
 %include "StrongPeakIntegrator.h"
 %include "IntegrationRegion.h"
+%include "PeakData.h"
 %include "Intensity.h"
 %include "Peak3D.h"
 
@@ -422,7 +432,7 @@ namespace nsx {
 %include "FitParameters.h"
 %include "Minimizer.h"
 %include "RNG.h"
-%include "Profile3d.h"
+%include "Gaussian3d.h"
 
 %include "EigenToVector.h"
 %include "System.h"
@@ -448,6 +458,7 @@ namespace nsx {
 %include "Intensity.h"
 
 %include "IntegrationRegion.h"
+%include "PeakData.h"
 
 
 %include "UnitCell.h"
