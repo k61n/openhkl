@@ -129,7 +129,7 @@ Eigen::MatrixXi DataSet::convolvedFrame(std::size_t idx, const std::string& kern
     nsx::RealMatrix result;
 
     // compute the convolution
-    result = convolver->apply(frame_data.cast<double>());
+    result = convolver->convolve(frame_data.cast<double>());
 
     double minVal = result.minCoeff();
     double maxVal = result.maxCoeff();

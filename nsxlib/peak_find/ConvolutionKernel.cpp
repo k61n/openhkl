@@ -86,7 +86,7 @@ void ConvolutionKernel::updateKernel(int nrows, int ncols)
 {
     reset();
 
-    _kernel.resize(nrows,ncols);
+    _kernel = _matrix(nrows,ncols);
 
     // Used by FFTW; check documentation for details
     _halfCols = (ncols>>1) + 1;
@@ -111,7 +111,7 @@ void ConvolutionKernel::updateKernel(int nrows, int ncols)
     }
 }
 
-RealMatrix ConvolutionKernel::apply(const RealMatrix& image)
+RealMatrix ConvolutionKernel::convolve(const RealMatrix& image)
 {
     int nrows = image.rows();
     int ncols = image.cols();

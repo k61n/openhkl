@@ -13,7 +13,6 @@
 #include <QTreeView>
 
 #include <nsxlib/ConvolutionKernel.h>
-#include <nsxlib/Convolver.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/DataTypes.h>
 #include <nsxlib/KernelFactory.h>
@@ -108,7 +107,7 @@ DialogPeakFind::DialogPeakFind(const nsx::DataList& data,
     for (auto& k : kernel_factory.callbacks()) {
         ui->kernelComboBox->addItem(QString::fromStdString(k.first));
     }
-    ui->kernelComboBox->setCurrentText(_peakFinder->kernel()->name());
+    ui->kernelComboBox->setCurrentText(_peakFinder->convolver()->name());
 
     changeKernel(ui->kernelComboBox->currentText());
 
@@ -326,7 +325,7 @@ void DialogPeakFind::buildThresholdParametersList()
 void DialogPeakFind::changeKernel(QString kernel)
 {
     // Set the new kernel with default parameters to the peak finder
-    _peakFinder->setKernel(kernel.toStdString(),{});
+    _peakFinder->setConvolver(kernel.toStdString(),{});
 
     // Update dialog with the selected kernel parameters
     buildKernelParametersList();
@@ -347,7 +346,7 @@ void DialogPeakFind::changeKernelParameters(int row, int col)
     auto parameters = getKernelParameters();
 
     // Propagate changes to peak finder
-    _peakFinder->setKernel(kernel_type,parameters);
+    _peakFinder->setConvolver(kernel_type,parameters);
 
     // Update the preview
     updatePreview();
@@ -369,7 +368,7 @@ std::map<std::string,double> DialogPeakFind::getKernelParameters() const
 void DialogPeakFind::buildKernelParametersList()
 {
     // Get the selected kernel
-    auto kernel = _peakFinder->kernel();
+    auto kernel = _peakFinder->convolver();
 
     // Get its corresponding parameters
     const std::map<std::string, double>& parameters = kernel->parameters();

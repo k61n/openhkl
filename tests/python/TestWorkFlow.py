@@ -21,7 +21,7 @@ class TestWorkFlow(unittest.TestCase):
         finder.setMaxFrames(10)
         finder.setSearchConfidence(0.98)
         finder.setIntegrationConfidence(0.997)
-        finder.setKernel("annular",{})
+        finder.setConvolver("annular",{})
         finder.setThreshold("absolute",{"intensity":15.0})
 
         numors = nsx.DataList()

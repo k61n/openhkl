@@ -55,7 +55,7 @@ int main()
     peakFinder->setMinSize(30);
     peakFinder->setMaxSize(10000);
     peakFinder->setMaxFrames(10);
-    peakFinder->setKernel("annular",{});
+    peakFinder->setConvolver("annular",{});
     peakFinder->setThreshold("absolute",{{"intensity",15.0}});
     peakFinder->setSearchConfidence(0.98);
     peakFinder->setIntegrationConfidence(0.997);

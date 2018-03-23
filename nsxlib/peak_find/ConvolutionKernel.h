@@ -70,7 +70,7 @@ public:
     RealMatrix matrix(int nrows, int ncols) const;
 
     //! Convolve an image
-    RealMatrix apply(const RealMatrix& image);
+    RealMatrix convolve(const RealMatrix& image);
 
     virtual const char* name() const = 0;
 

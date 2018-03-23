@@ -37,8 +37,8 @@ public:
     void setMaxFrames(int maxComp);
     int maxFrames() const;
 
-    sptrConvolutionKernel kernel() const;
-    void setKernel(const std::string& kernel_type, const std::map<std::string,double>& parameters);
+    sptrConvolutionKernel convolver() const;
+    void setConvolver(const std::string& kernel_type, const std::map<std::string,double>& parameters);
 
     sptrThreshold threshold() const;
     void setThreshold(const std::string& threshold_type, const std::map<std::string,double>& parameters);
@@ -58,9 +58,7 @@ private:
 private:
     sptrProgressHandler _handler;
 
-    Convolver _convolver;
-
-    sptrConvolutionKernel _kernel;
+    sptrConvolutionKernel _convolver;
 
     sptrThreshold _threshold;
 

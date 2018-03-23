@@ -2,7 +2,6 @@
 #include <vector>
 
 #include "AABB.h"
-#include "Convolver.h"
 #include "ConvolutionKernel.h"
 #include "DataSet.h"
 #include "Detector.h"
@@ -75,7 +74,6 @@ namespace nsx {
 
 PeakFinder::PeakFinder()
 : _handler(nullptr),
-  _convolver(),
   _searchConfidence(nsx::getConfidence(1.0)),
   _integrationConfidence(nsx::getConfidence(3.0)),
   _current_label(0),
@@ -84,7 +82,7 @@ PeakFinder::PeakFinder()
   _maxFrames(10)
 {
     KernelFactory kernel_factory;
-    _kernel = kernel_factory.create("annular",{});
+    _convolver = kernel_factory.create("annular",{});
 
     ThresholdFactory threshold_factory;
     _threshold = threshold_factory.create("absolute",{});
@@ -115,9 +113,6 @@ PeakList PeakFinder::find(DataList numors)
         int ncols = dectector->getNCols();
         int nframes = numor->nFrames();
 
-        // update the convolver with the kernel
-        _convolver.setKernel(_kernel->matrix(nrows,ncols));
-
         // The blobs found for this numor
         std::map<int,Blob3D> blobs;
 
@@ -130,8 +125,8 @@ PeakList PeakFinder::find(DataList numors)
             }
 
             if (_handler) {
-                _handler->log("kernel " + std::string(_kernel->name()) + " selected");
-                for (auto& it: _kernel->parameters()) {
+                _handler->log("kernel " + std::string(_convolver->name()) + " selected");
+                for (auto& it: _convolver->parameters()) {
                     _handler->log(it.first + " " + std::to_string(it.second));
                 }
             }
@@ -312,15 +307,15 @@ int PeakFinder::maxSize() const
     return _maxSize;
 }
 
-sptrConvolutionKernel PeakFinder::kernel() const
+sptrConvolutionKernel PeakFinder::convolver() const
 {
-    return _kernel;
+    return _convolver;
 }
 
-void PeakFinder::setKernel(const std::string& kernel_type, const std::map<std::string,double>& parameters)
+void PeakFinder::setConvolver(const std::string& kernel_type, const std::map<std::string,double>& parameters)
 {
     KernelFactory kernel_factory;
-    _kernel = kernel_factory.create(kernel_type,parameters);
+    _convolver = kernel_factory.create(kernel_type,parameters);
 }
 
 sptrThreshold PeakFinder::threshold() const
@@ -408,14 +403,11 @@ void PeakFinder::findPrimaryBlobs(sptrDataSet data, std::map<int,Blob3D>& blobs,
     // used to pass to progress handler
     double progress = 0.0;
 
-    // update the convolver with the kernel
-    _convolver.setKernel(_kernel->matrix(nrows,ncols));
-
     // this is the filter function to be applied to each frame
     auto convolve_frame = [&] (const RealMatrix& input) -> RealMatrix {
         RealMatrix output;
         #pragma omp critical
-        output = _convolver.apply(input);
+        output = _convolver->convolve(input);
         return output;
     };
 
