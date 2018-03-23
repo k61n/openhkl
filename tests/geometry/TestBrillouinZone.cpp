@@ -13,6 +13,8 @@ const double tolerance=1e-9;
 // https://en.wikipedia.org/wiki/Brillouin_zone
 
 
+NSX_INIT_TEST
+
 // validation function
 void validate_zone(const Eigen::Matrix3d& B, int nverts, int nfaces)
 {

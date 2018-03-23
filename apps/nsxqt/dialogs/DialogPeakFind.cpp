@@ -31,6 +31,9 @@ class DoubleDelegate : public QItemDelegate
 public:
     QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem & option,const QModelIndex & index) const
     {
+        Q_UNUSED(option)
+        Q_UNUSED(index)
+
         QLineEdit* lineEdit = new QLineEdit(parent);
         // Set validator
         QDoubleValidator *validator = new QDoubleValidator(lineEdit);
@@ -42,8 +45,8 @@ public:
 DialogPeakFind::DialogPeakFind(const nsx::DataList& data,nsx::sptrPeakFinder peakFinder,QWidget *parent)
 : QDialog(parent),
   ui(new Ui::DialogPeakFind),
-  _data(data),
   _pxmapPreview(nullptr),
+  _data(data),
   _colormap(new ColorMap)
 {
     ui->setupUi(this);
@@ -78,7 +81,6 @@ DialogPeakFind::DialogPeakFind(const nsx::DataList& data,nsx::sptrPeakFinder pea
     ui->thresholdParameters->verticalHeader()->hide();
     DoubleDelegate* threshold_table_delegate = new DoubleDelegate();
     ui->thresholdParameters->setItemDelegateForColumn(1,threshold_table_delegate);
-
     // Set the threshold combo box and table
     ui->threshold->clear();
     nsx::ThresholdFactory threshold_factory;
@@ -87,7 +89,8 @@ DialogPeakFind::DialogPeakFind(const nsx::DataList& data,nsx::sptrPeakFinder pea
     }
     ui->threshold->setCurrentText(_peakFinder->threshold()->name());
 
-    changeThreshold(ui->threshold->currentText());
+    // update dialog with list of parameters
+    buildThresholdParametersList();
 
     // Set the filter combo box and table
     ui->convolverParameters->setColumnCount(2);
@@ -105,7 +108,10 @@ DialogPeakFind::DialogPeakFind(const nsx::DataList& data,nsx::sptrPeakFinder pea
     }
     ui->convolver->setCurrentText(_peakFinder->convolver()->name());
 
-    changeConvolver(ui->convolver->currentText());
+    // Update dialog with the selected convolver parameters
+    buildConvolverParametersList();
+
+    updatePreview();
 
     connect(ui->threshold,SIGNAL(currentIndexChanged(QString)),this,SLOT(changeThreshold(QString)));
     connect(ui->thresholdParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeThresholdParameters(int,int)));
@@ -205,6 +211,7 @@ void DialogPeakFind::updatePreview()
     double maxVal = convolved_frame.maxCoeff();
     convolved_frame.array() -= minVal;
     convolved_frame.array() *= static_cast<double>(max_data)/(maxVal-minVal);
+
     QRect rect(0, 0, ncols, nrows);
     QImage image = _colormap->matToImage(convolved_frame.cast<double>(), rect, convolved_frame.maxCoeff());
 
@@ -215,7 +222,17 @@ void DialogPeakFind::updatePreview()
     }
 }
 
+void DialogPeakFind::showEvent(QShowEvent* event)
+{
+    Q_UNUSED(event)
+
+    ui->preview->fitInView(_scene->sceneRect());
+}
+
+
 void DialogPeakFind::clipPreview(int state) {
+    Q_UNUSED(state)
+
     updatePreview();
 }
 
@@ -377,9 +394,6 @@ void DialogPeakFind::buildConvolverParametersList()
         int current_row = ui->convolverParameters->rowCount();
 
         ui->convolverParameters->insertRow(current_row);
-
-        int currow = ui->convolverParameters->rowCount();
-        int curcol = ui->convolverParameters->columnCount();
 
         QTableWidgetItem* pname = new QTableWidgetItem();
         pname->setText(QString::fromStdString(p.first));

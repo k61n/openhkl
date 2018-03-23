@@ -10,6 +10,8 @@
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/ProgressHandler.h>
 
+NSX_INIT_TEST
+
 int main()
 {
     nsx::DataList numors;

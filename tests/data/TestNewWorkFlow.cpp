@@ -23,6 +23,8 @@
 #include <nsxlib/Sample.h>
 #include <nsxlib/Units.h>
 
+NSX_INIT_TEST
+
 int main()
 {
     nsx::DataReaderFactory factory;

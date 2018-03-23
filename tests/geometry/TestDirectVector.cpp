@@ -3,6 +3,8 @@
 #include <nsxlib/DirectVector.h>
 #include <nsxlib/NSXTest.h>
 
+NSX_INIT_TEST
+
 int main()
 {
     Eigen::Vector3d v1(1,2,3);

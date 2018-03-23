@@ -4,6 +4,8 @@
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/ProgressHandler.h>
 
+NSX_INIT_TEST
+
 using namespace nsx;
 
 int main()

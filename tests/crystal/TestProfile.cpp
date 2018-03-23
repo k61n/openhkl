@@ -14,6 +14,8 @@ const double eps = 1.0;
     } \
 }
 
+NSX_INIT_TEST
+
 int main()
 {
     const int size = 50;

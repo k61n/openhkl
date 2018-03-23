@@ -4,12 +4,16 @@
 
 #include <nsxlib/NSXTest.h>
 
+NSX_INIT_TEST
+
 class MyException : public std::exception {
 public:
     using std::exception::exception;
 };
 
 int main() {
+
+    NSX_INIT_TEST
 
     // Check assertion
 
@@ -76,8 +80,6 @@ int main() {
     NSX_CHECK_NO_THROW(true);
 
     NSX_FAIL(true, "I want you to fail !");
-
-    auto& all_tests = nsx::allTests();
 
     if (all_tests.nTests() != 26)
     {

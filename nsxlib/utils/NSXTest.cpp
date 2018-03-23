@@ -4,13 +4,6 @@
 
 namespace nsx {
 
-static NSXTest all_tests;
-
-NSXTest& allTests()
-{
-    return all_tests;
-}
-
 NSXTest::NSXTest() : _n_failures(0), _n_successes(0), _n_skipped(0)
 {
 }

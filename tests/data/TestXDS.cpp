@@ -6,6 +6,8 @@
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/XDS.h>
 
+NSX_INIT_TEST
+
 int main()
 {
     nsx::DataReaderFactory factory;

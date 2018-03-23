@@ -2,6 +2,8 @@
 #include <nsxlib/MathematicsTypes.h>
 #include <nsxlib/NSXTest.h>
 
+NSX_INIT_TEST
+
 // Generate a image to use for testing the Fourier transform
 nsx::RealMatrix generateImage(int rows, int cols)
 {

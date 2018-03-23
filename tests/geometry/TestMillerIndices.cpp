@@ -3,6 +3,8 @@
 #include <nsxlib/MillerIndex.h>
 #include <nsxlib/NSXTest.h>
 
+NSX_INIT_TEST
+
 int main() {
 
     Eigen::RowVector3i v1(1,2,3);

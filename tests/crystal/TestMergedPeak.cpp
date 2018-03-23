@@ -16,7 +16,7 @@
 
 using namespace nsx;
 
-#pragma message "This test is not complete"
+NSX_INIT_TEST
 
 int main()
 {

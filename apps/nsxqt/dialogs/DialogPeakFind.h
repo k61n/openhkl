@@ -7,20 +7,18 @@
 #include <Eigen/Dense>
 
 #include <QDialog>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsScene>
+#include <QStandardItem>
+#include <QShowEvent>
 
 #include <nsxlib/DataTypes.h>
 
 #include "ColorMap.h"
 
-class QGraphicsPixmapItem;
-class QGraphicsScene;
-class QStandardItem;
-class QWidget;
-
 namespace Ui {
 class DialogPeakFind;
 }
-
 
 class DialogPeakFind : public QDialog
 {
@@ -36,6 +34,8 @@ public:
     void setColorMap(const std::string& name);
 
     int exec() override;
+
+    void showEvent(QShowEvent*);
 
 private slots:
 

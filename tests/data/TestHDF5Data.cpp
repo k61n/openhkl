@@ -5,6 +5,8 @@
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/NSXTest.h>
 
+NSX_INIT_TEST
+
 int main()
 {
     nsx::DataReaderFactory factory;

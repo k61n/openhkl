@@ -17,6 +17,8 @@
 #include <nsxlib/Sample.h>
 #include <nsxlib/Source.h>
 
+NSX_INIT_TEST
+
 namespace nsx {
 class UnitTest_DataSet {
 public:

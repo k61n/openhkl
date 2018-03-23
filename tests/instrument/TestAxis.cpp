@@ -6,6 +6,8 @@
 #include <nsxlib/Macros.h>
 #include <nsxlib/Units.h>
 
+NSX_INIT_TEST
+
 class TestAxis: public nsx::Axis
 {
 public:

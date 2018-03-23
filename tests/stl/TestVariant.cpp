@@ -3,6 +3,8 @@
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Variant.h>
 
+NSX_INIT_TEST
+
 int main() {
 
     // Default constructor

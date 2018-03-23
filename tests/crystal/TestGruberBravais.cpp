@@ -26,6 +26,8 @@ const double gruber_tolerance = 1e-4;
 const double niggli_tolerance = 1e-4;
 const double tolerance = 1e-6;
 
+NSX_INIT_TEST
+
 int main()
 {
     double A, B, C, D, E, F;

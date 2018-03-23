@@ -4,6 +4,8 @@
 #include <nsxlib/Path.h>
 #include <nsxlib/StringIO.h>
 
+NSX_INIT_TEST
+
 int main(int argc, char** argv)
 {
     // Test nsx::fileSeparator
