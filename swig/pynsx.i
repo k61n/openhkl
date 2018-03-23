@@ -147,8 +147,6 @@ using Eigen::Quaterniond;
 #include "ConvexHull.h"
 #include "BrillouinZone.h"
 
-#include "BlobFinder.h"
-
 #include "AABB.h"
 #include "Edge.h"
 #include "Blob3D.h"
@@ -479,7 +477,6 @@ namespace nsx {
 %include "Face.h"
 %include "MCAbsorption.h"
 %include "ConvexHull.h"
-%include "BlobFinder.h"
 %include "AABB.h"
 %include "Edge.h"
 %include "Blob3D.h"
