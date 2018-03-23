@@ -31,8 +31,7 @@
 class DoubleDelegate : public QItemDelegate
 {
 public:
-    QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem & option,
-                      const QModelIndex & index) const
+    QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem & option,const QModelIndex & index) const
     {
         QLineEdit* lineEdit = new QLineEdit(parent);
         // Set validator
@@ -42,14 +41,12 @@ public:
     }
 };
 
-DialogPeakFind::DialogPeakFind(const nsx::DataList& data,
-                               nsx::sptrPeakFinder peakFinder,
-                               QWidget *parent):
-    QDialog(parent),
-    ui(new Ui::DialogPeakFind),
-    _data(data),
-    _pxmapPreview(nullptr),
-    _colormap(new ColorMap)
+DialogPeakFind::DialogPeakFind(const nsx::DataList& data,nsx::sptrPeakFinder peakFinder,QWidget *parent)
+: QDialog(parent),
+  ui(new Ui::DialogPeakFind),
+  _data(data),
+  _pxmapPreview(nullptr),
+  _colormap(new ColorMap)
 {
     ui->setupUi(this);
 
@@ -69,9 +66,10 @@ DialogPeakFind::DialogPeakFind(const nsx::DataList& data,
     ui->frameIndex->setMinimum(0);
     ui->frameIndex->setMaximum(_data[0]->nFrames());
 
-    _peakFinder = peakFinder;
     _scene = new QGraphicsScene(this);
     ui->preview->setScene(_scene);
+
+    _peakFinder = peakFinder;
 
     // flip image vertically to conform with DetectorScene
     ui->preview->scale(1, -1);
@@ -84,39 +82,39 @@ DialogPeakFind::DialogPeakFind(const nsx::DataList& data,
     ui->thresholdParameters->setItemDelegateForColumn(1,threshold_table_delegate);
 
     // Set the threshold combo box and table
-    ui->thresholdComboBox->clear();
+    ui->threshold->clear();
     nsx::ThresholdFactory threshold_factory;
     for (auto& k : threshold_factory.callbacks()) {
-        ui->thresholdComboBox->addItem(QString::fromStdString(k.first));
+        ui->threshold->addItem(QString::fromStdString(k.first));
     }
-    ui->thresholdComboBox->setCurrentText(_peakFinder->threshold()->name());
+    ui->threshold->setCurrentText(_peakFinder->threshold()->name());
 
-    changeThreshold(ui->thresholdComboBox->currentText());
+    changeThreshold(ui->threshold->currentText());
 
     // Set the filter combo box and table
-    ui->kernelParameters->setColumnCount(2);
-    ui->kernelParameters->horizontalHeader()->hide();
-    ui->kernelParameters->verticalHeader()->hide();
+    ui->convolverParameters->setColumnCount(2);
+    ui->convolverParameters->horizontalHeader()->hide();
+    ui->convolverParameters->verticalHeader()->hide();
 
     // Set the delegate that will force a numeric input for the convolution kernel parameters value column
-    DoubleDelegate* kernel_table_delegate = new DoubleDelegate();
-    ui->kernelParameters->setItemDelegateForColumn(1,kernel_table_delegate);
+    DoubleDelegate* convolver_table_delegate = new DoubleDelegate();
+    ui->convolverParameters->setItemDelegateForColumn(1,convolver_table_delegate);
 
-    ui->kernelComboBox->clear();
+    ui->convolver->clear();
     nsx::KernelFactory kernel_factory;
     for (auto& k : kernel_factory.callbacks()) {
-        ui->kernelComboBox->addItem(QString::fromStdString(k.first));
+        ui->convolver->addItem(QString::fromStdString(k.first));
     }
-    ui->kernelComboBox->setCurrentText(_peakFinder->convolver()->name());
+    ui->convolver->setCurrentText(_peakFinder->convolver()->name());
 
-    changeKernel(ui->kernelComboBox->currentText());
+    changeConvolver(ui->convolver->currentText());
 
-    connect(ui->thresholdComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(changeThreshold(QString)));
+    connect(ui->threshold,SIGNAL(currentIndexChanged(QString)),this,SLOT(changeThreshold(QString)));
     connect(ui->thresholdParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeThresholdParameters(int,int)));
     connect(ui->applyThreshold,SIGNAL(stateChanged(int)),this,SLOT(clipPreview(int)));
 
-    connect(ui->kernelComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(changeKernel(QString)));
-    connect(ui->kernelParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeKernelParameters(int,int)));
+    connect(ui->convolver,SIGNAL(currentIndexChanged(QString)),this,SLOT(changeConvolver(QString)));
+    connect(ui->convolverParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeConvolverParameters(int,int)));
 
     connect(ui->minSize,SIGNAL(valueChanged(int)),this,SLOT(changeMinSize(int)));
     connect(ui->maxSize,SIGNAL(valueChanged(int)),this,SLOT(changeMaxSize(int)));
@@ -184,17 +182,17 @@ void DialogPeakFind::updatePreview()
 
     int ncols = data->nCols();
 
-    nsx::KernelFactory kernel_factory;
-    std::string kernel_type = ui->kernelComboBox->currentText().toStdString();
-    auto kernel_parameters = getKernelParameters();
+    nsx::KernelFactory convolver_factory;
+    std::string convolver_type = ui->convolver->currentText().toStdString();
+    auto convolver_parameters = convolverParameters();
 
-    Eigen::MatrixXi convolved_frame = data->convolvedFrame(selected_frame,kernel_type, kernel_parameters);
+    Eigen::MatrixXi convolved_frame = data->convolvedFrame(selected_frame,convolver_type, convolver_parameters);
 
     // apply threshold in preview
     if (ui->applyThreshold->isChecked()) {
         nsx::ThresholdFactory threshold_factory;
-        std::string threshold_type = ui->thresholdComboBox->currentText().toStdString();
-        auto threshold_parameters = getThresholdParameters();
+        std::string threshold_type = ui->threshold->currentText().toStdString();
+        auto threshold_parameters = thresholdParameters();
         auto threshold = threshold_factory.create(threshold_type,threshold_parameters);
         double threshold_value = threshold->value(data,selected_frame);
 
@@ -249,9 +247,9 @@ void DialogPeakFind::changeMaxFrames(int size)
     _peakFinder->setMaxFrames(size);
 }
 
-void DialogPeakFind::changeThreshold(QString threshold)
+void DialogPeakFind::changeThreshold(QString threshold_type)
 {
-    _peakFinder->setThreshold(threshold.toStdString(),{});
+    _peakFinder->setThreshold(threshold_type.toStdString(),{});
 
     // update dialog with list of parameters
     buildThresholdParametersList();
@@ -265,10 +263,10 @@ void DialogPeakFind::changeThresholdParameters(int row, int col)
     Q_UNUSED(col)
 
     // Get the current threshold type
-    std::string threshold_type = ui->thresholdComboBox->currentText().toStdString();
+    std::string threshold_type = ui->threshold->currentText().toStdString();
 
     // Get the updated parameters
-    auto parameters = getThresholdParameters();
+    auto parameters = thresholdParameters();
 
     // propagate changes to peak finder
     _peakFinder->setThreshold(threshold_type,parameters);
@@ -277,7 +275,7 @@ void DialogPeakFind::changeThresholdParameters(int row, int col)
     updatePreview();
 }
 
-std::map<std::string,double> DialogPeakFind::getThresholdParameters() const
+std::map<std::string,double> DialogPeakFind::thresholdParameters() const
 {
     std::map<std::string,double> parameters;
 
@@ -322,80 +320,80 @@ void DialogPeakFind::buildThresholdParametersList()
     connect(ui->thresholdParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeThresholdParameters(int,int)));
 }
 
-void DialogPeakFind::changeKernel(QString kernel)
+void DialogPeakFind::changeConvolver(QString convolver_type)
 {
-    // Set the new kernel with default parameters to the peak finder
-    _peakFinder->setConvolver(kernel.toStdString(),{});
+    // Set the new convolver with default parameters to the peak finder
+    _peakFinder->setConvolver(convolver_type.toStdString(),{});
 
-    // Update dialog with the selected kernel parameters
-    buildKernelParametersList();
+    // Update dialog with the selected convolver parameters
+    buildConvolverParametersList();
 
     // Update the preview
     updatePreview();
 }
 
-void DialogPeakFind::changeKernelParameters(int row, int col)
+void DialogPeakFind::changeConvolverParameters(int row, int col)
 {
     Q_UNUSED(row)
     Q_UNUSED(col)
 
-    // Get the current kernel type
-    std::string kernel_type = ui->kernelComboBox->currentText().toStdString();
+    // Get the current convolver type
+    std::string convolver_type = ui->convolver->currentText().toStdString();
 
     // Get the corresponding parameters
-    auto parameters = getKernelParameters();
+    auto parameters = convolverParameters();
 
     // Propagate changes to peak finder
-    _peakFinder->setConvolver(kernel_type,parameters);
+    _peakFinder->setConvolver(convolver_type,parameters);
 
     // Update the preview
     updatePreview();
 }
 
-std::map<std::string,double> DialogPeakFind::getKernelParameters() const
+std::map<std::string,double> DialogPeakFind::convolverParameters() const
 {
     std::map<std::string,double> parameters;
 
-    for (int i = 0; i < ui->kernelParameters->rowCount(); ++i) {
-        std::string pname = ui->kernelParameters->item(i,0)->text().toStdString();
-        double pvalue = ui->kernelParameters->item(i,1)->text().toDouble();
+    for (int i = 0; i < ui->convolverParameters->rowCount(); ++i) {
+        std::string pname = ui->convolverParameters->item(i,0)->text().toStdString();
+        double pvalue = ui->convolverParameters->item(i,1)->text().toDouble();
         parameters.insert(std::make_pair(pname,pvalue));
     }
 
     return parameters;
 }
 
-void DialogPeakFind::buildKernelParametersList()
+void DialogPeakFind::buildConvolverParametersList()
 {
-    // Get the selected kernel
-    auto kernel = _peakFinder->convolver();
+    // Get the selected convolver
+    auto convolver = _peakFinder->convolver();
 
     // Get its corresponding parameters
-    const std::map<std::string, double>& parameters = kernel->parameters();
+    const std::map<std::string, double>& parameters = convolver->parameters();
 
-    disconnect(ui->kernelParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeKernelParameters(int,int)));
+    disconnect(ui->convolverParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeConvolverParameters(int,int)));
 
-    ui->kernelParameters->setRowCount(0);
+    ui->convolverParameters->setRowCount(0);
 
     // Iterate through parameters to build the tree
     for (auto p : parameters) {
-        int current_row = ui->kernelParameters->rowCount();
+        int current_row = ui->convolverParameters->rowCount();
 
-        ui->kernelParameters->insertRow(current_row);
+        ui->convolverParameters->insertRow(current_row);
 
-        int currow = ui->kernelParameters->rowCount();
-        int curcol = ui->kernelParameters->columnCount();
+        int currow = ui->convolverParameters->rowCount();
+        int curcol = ui->convolverParameters->columnCount();
 
         QTableWidgetItem* pname = new QTableWidgetItem();
         pname->setText(QString::fromStdString(p.first));
-        ui->kernelParameters->setItem(current_row,0,pname);
+        ui->convolverParameters->setItem(current_row,0,pname);
 
         pname->setFlags(pname->flags() ^ Qt::ItemIsEditable);
 
         QTableWidgetItem* pvalue = new QTableWidgetItem();
         pvalue->setText(QString::number(p.second));
-        ui->kernelParameters->setItem(current_row,1,pvalue);
+        ui->convolverParameters->setItem(current_row,1,pvalue);
     }
 
-    connect(ui->kernelParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeKernelParameters(int,int)));
+    connect(ui->convolverParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeConvolverParameters(int,int)));
 }

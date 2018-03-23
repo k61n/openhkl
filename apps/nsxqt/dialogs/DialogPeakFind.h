@@ -27,48 +27,45 @@ class DialogPeakFind : public QDialog
     Q_OBJECT
 
 public:
-    explicit DialogPeakFind(const nsx::DataList& data,
-                            nsx::sptrPeakFinder peakFinder=nullptr,
-                            QWidget *parent = 0);
+    explicit DialogPeakFind(const nsx::DataList& data,nsx::sptrPeakFinder peakFinder=nullptr,QWidget *parent = 0);
+
     ~DialogPeakFind();
 
     void setPreviewFrame(const Eigen::MatrixXi& frame);
+
     void setColorMap(const std::string& name);
+
     int exec() override;
 
 private slots:
 
     void clipPreview(int state);
 
-    void changeThreshold(QString thresold);
+    void changeThreshold(QString thresold_type);
     void changeThresholdParameters(int row, int col);
 
-    void changeKernel(QString kernel);
-    void changeKernelParameters(int row, int col);
+    void changeConvolver(QString convolver_type);
+    void changeConvolverParameters(int row, int col);
 
     void changeMinSize(int size);
-
     void changeMaxSize(int size);
-
     void changeMaxFrames(int size);
 
     void changeIntegrationConfidenceValue(double confidence);
-
     void changeSearchConfidenceValue(double confidence);
 
     void changeSelectedData(int selected_data);
-
     void changeSelectedFrame(int selected_frame);
 
 private:
 
-    void buildKernelParametersList();
+    void buildConvolverParametersList();
 
     void buildThresholdParametersList();
 
-    std::map<std::string,double> getKernelParameters() const;
+    std::map<std::string,double> convolverParameters() const;
 
-    std::map<std::string,double> getThresholdParameters() const;
+    std::map<std::string,double> thresholdParameters() const;
 
     void updatePreview();
 
