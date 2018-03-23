@@ -30,10 +30,12 @@
 
 #pragma once
 
+#include <complex>
 #include <ostream>
 #include <stdexcept>
 #include <string>
 #include <map>
+#include <vector>
 
 #include <Eigen/Dense>
 
@@ -47,13 +49,15 @@ class ConvolutionKernel {
 
 public:
 
-    ConvolutionKernel()=default;
+    ConvolutionKernel();
 
     ConvolutionKernel(const ConvolutionKernel& other)=default;
 
     ConvolutionKernel& operator=(const ConvolutionKernel& other)=default;
 
     virtual ~ConvolutionKernel()=0;
+
+    void reset();
 
     // Non-const getter for kernel parameter
     ConvolutionKernelParameters& parameters();
@@ -65,7 +69,14 @@ public:
 
     RealMatrix matrix(int nrows, int ncols) const;
 
+    //! Convolve an image
+    RealMatrix apply(const RealMatrix& image);
+
     virtual const char* name() const = 0;
+
+protected:
+
+    void updateKernel(int nrows, int ncols);
 
 protected:
 
@@ -74,6 +85,19 @@ protected:
     RealMatrix _kernel;
 
     std::map<std::string,double> _parameters;
+
+    int _halfCols;
+
+    // used directly with FFTW3
+    fftw_plan _forwardPlan;
+
+    fftw_plan _backwardPlan;
+
+    double* _realData;
+
+    fftw_complex* _transformedData;
+
+    std::vector<std::complex<double>> _transformedKernel;
 };
 
 } // end namespace nsx

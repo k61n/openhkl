@@ -28,16 +28,116 @@
  *
  */
 
+#include <cstring>
 #include <iostream>
 #include <stdexcept>
 #include <utility>
+
+#include <fftw3.h>
 
 #include "ConvolutionKernel.h"
 
 namespace nsx {
 
+ConvolutionKernel::ConvolutionKernel()
+: _kernel(),
+  _halfCols(0),
+  _forwardPlan(nullptr),
+  _backwardPlan(nullptr),
+  _realData(nullptr),
+  _transformedData(nullptr),
+  _transformedKernel()
+{
+}
+
 ConvolutionKernel::~ConvolutionKernel()
 {
+    reset();
+}
+
+void ConvolutionKernel::reset()
+{
+    if (_forwardPlan) {
+        fftw_destroy_plan(_forwardPlan);
+    }
+    if (_backwardPlan) {
+        fftw_destroy_plan(_backwardPlan);
+    }
+
+    if (_realData) {
+        fftw_free(_realData);
+    }
+    if (_transformedData) {
+        fftw_free(_transformedData);
+    }
+
+    _halfCols = 0;
+
+    _forwardPlan = _backwardPlan = nullptr;
+
+    _realData = nullptr;
+
+    _transformedData = nullptr;
+
+    _transformedKernel.resize(0);
+}
+
+void ConvolutionKernel::updateKernel(int nrows, int ncols)
+{
+    reset();
+
+    _kernel.resize(nrows,ncols);
+
+    // Used by FFTW; check documentation for details
+    _halfCols = (ncols>>1) + 1;
+
+    // Use fftw_malloc instead of fftw_alloc_* to support older version of fftw3
+    _realData = (double*)fftw_malloc(nrows * ncols * sizeof(double));
+    _transformedData = (fftw_complex*)fftw_malloc(nrows * _halfCols * sizeof(fftw_complex));
+
+    _transformedKernel.resize(nrows*_halfCols);
+
+    // Create plans
+    _forwardPlan = fftw_plan_dft_r2c_2d(nrows, ncols, _realData, _transformedData, FFTW_MEASURE);
+    _backwardPlan = fftw_plan_dft_c2r_2d(nrows, ncols, _transformedData, _realData, FFTW_MEASURE);
+
+    // Precompute the transformation of the kernel
+    std::memcpy(_realData, _kernel.data(), nrows*ncols*sizeof(double));
+    fftw_execute(_forwardPlan);
+
+    // store transformed kernel as vector of complexes (convenient for convolution)
+    for (int i = 0; i < nrows*_halfCols; ++i) {
+        _transformedKernel[i] = std::complex<double>(_transformedData[i][0], _transformedData[i][1]);
+    }
+}
+
+RealMatrix ConvolutionKernel::apply(const RealMatrix& image)
+{
+    int nrows = image.rows();
+    int ncols = image.cols();
+
+    updateKernel(nrows,ncols);
+
+    // factor needed to get correct inverse transform
+    double factor = 1.0 / ((double)(nrows*ncols));
+
+    // precompute the transformation of the kernel
+    std::memcpy(_realData, image.data(), nrows*ncols*sizeof(double));
+    fftw_execute(_forwardPlan);
+
+    // multiply fourier modes component-by-component
+    for (int i = 0; i < nrows*_halfCols; ++i) {
+        auto result = factor * _transformedKernel[i] * std::complex<double>(_transformedData[i][0], _transformedData[i][1]);
+        _transformedData[i][0] = result.real();
+        _transformedData[i][1] = result.imag();
+    }
+
+    // Perform inverse transform: _realData now stores the convolution
+    fftw_execute(_backwardPlan);
+
+    RealMatrix result(nrows, ncols);
+    memcpy(result.data(), _realData, nrows*ncols*sizeof(double));
+    return result;
 }
 
 std::map<std::string,double>& ConvolutionKernel::parameters()
