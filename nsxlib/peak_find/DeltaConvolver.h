@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Convolver.h"
+#include "AtomicConvolver.h"
 
 namespace nsx {
 
-class DeltaConvolver : public Convolver {
+class DeltaConvolver : public AtomicConvolver {
 
 public:
 

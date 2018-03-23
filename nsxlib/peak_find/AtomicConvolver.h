@@ -30,42 +30,69 @@
 
 #pragma once
 
+#include <complex>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 #include <map>
+#include <vector>
 
+#include <fftw3.h>
+
+#include <Eigen/Dense>
+
+#include "Convolver.h"
 #include "MathematicsTypes.h"
 
 namespace nsx {
 
-class Convolver {
+class AtomicConvolver : public Convolver {
 
 public:
 
-    Convolver();
+    AtomicConvolver();
 
-    Convolver(const Convolver& other)=default;
+    AtomicConvolver(const AtomicConvolver& other)=default;
 
-    Convolver& operator=(const Convolver& other)=default;
+    AtomicConvolver& operator=(const AtomicConvolver& other)=default;
 
-    virtual ~Convolver()=0;
+    virtual ~AtomicConvolver()=0;
 
-    // Non-const getter for kernel parameter
-    std::map<std::string,double>& parameters();
-
-    // Const getter for kernel parameter
-    const std::map<std::string,double>& parameters() const;
-
-    void setParameters(const std::map<std::string,double>& parameters);
-
-    //! Convolve an image
-    virtual RealMatrix convolve(const RealMatrix& image)=0;
+    RealMatrix matrix(int nrows, int ncols) const;
 
     virtual const char* name() const = 0;
 
+    //! Convolve an image
+    virtual RealMatrix convolve(const RealMatrix& image) override;
+
 protected:
 
-    std::map<std::string,double> _parameters;
+    void updateKernel(int nrows, int ncols);
+
+    virtual RealMatrix _matrix(int nrows, int cols) const=0;
+
+private:
+
+    void reset();
+
+protected:
+
+    int _n_rows;
+
+    int _n_cols;
+
+    int _halfCols;
+
+    // used directly with FFTW3
+    fftw_plan _forwardPlan;
+
+    fftw_plan _backwardPlan;
+
+    double* _realData;
+
+    fftw_complex* _transformedData;
+
+    std::vector<std::complex<double>> _transformedKernel;
 };
 
 } // end namespace nsx

@@ -1,8 +1,9 @@
 #include "AnnularConvolver.h"
-#include "Convolver.h"
 #include "ConvolverFactory.h"
+#include "EnhancedAnnularConvolver.h"
 #include "ConstantConvolver.h"
 #include "DeltaConvolver.h"
+#include "RadialConvolver.h"
 
 namespace nsx {
 
@@ -17,7 +18,9 @@ ConvolverFactory::ConvolverFactory(): _callbacks()
     _callbacks["annular"] = &create_convolver<AnnularConvolver>;
     _callbacks["constant"] = &create_convolver<ConstantConvolver>;
     _callbacks["delta"] = &create_convolver<DeltaConvolver>;
+    _callbacks["enhanced_annular"] = &create_convolver<EnhancedAnnularConvolver>;
     _callbacks["none"] = &create_convolver<DeltaConvolver>;
+    _callbacks["radial"] = &create_convolver<RadialConvolver>;
 }
 
 sptrConvolver ConvolverFactory::create(const std::string& convolver_type, const std::map<std::string,double>& parameters) const

@@ -34,23 +34,25 @@
 
 #pragma once
 
-#include "Convolver.h"
+#include "AtomicConvolver.h"
 
 namespace nsx {
 
-class AnnularConvolver : public Convolver {
+class RadialConvolver : public AtomicConvolver {
 
 public:
 
-    AnnularConvolver();
+    RadialConvolver();
 
-    AnnularConvolver(const std::map<std::string,double>& parameters);
+    RadialConvolver(const std::map<std::string,double>& parameters);
 
-    virtual ~AnnularConvolver();
+    virtual ~RadialConvolver();
 
     const char* name() const override;
 
-    RealMatrix convolve(const RealMatrix& image) override;
+private:
+
+    RealMatrix _matrix(int nrows, int ncols) const override;
 };
 
 } // end namespace nsx

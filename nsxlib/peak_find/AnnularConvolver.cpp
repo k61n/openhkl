@@ -1,15 +1,5 @@
-#include <math.h>
-
 #include "AnnularConvolver.h"
-
-#ifndef _USE_MATH_DEFINES
-#define _USE_MATH_DEFINES
-#endif
-
-// M_PI is often defined but not standard
-#ifndef M_PI
-#define M_PI 3.141592653589793238462643383279502884
-#endif
+#include "RadialConvolver.h"
 
 namespace nsx {
 
@@ -37,48 +27,17 @@ const char* AnnularConvolver::name() const
     return "annular";
 }
 
-RealMatrix AnnularConvolver::_matrix(int nrows, int ncols) const
+RealMatrix AnnularConvolver::convolve(const RealMatrix& image)
 {
-    int r1, r2, r3;
+    RadialConvolver radial_convolver_peak({{"r_in",0.0},{"r_out",_parameters.at("r1")}});
+    RealMatrix conv_peak = radial_convolver_peak.convolve(image);
 
-    r1 = static_cast<int>(_parameters.at("r1"));
-    r2 = static_cast<int>(_parameters.at("r2"));
-    r3 = static_cast<int>(_parameters.at("r3"));
+    RadialConvolver radial_convolver_bkg({{"r_in",_parameters.at("r2")},{"r_out",_parameters.at("r3")}});
+    RealMatrix conv_bkg = radial_convolver_bkg.convolve(image);
 
-    RealMatrix inner = RealMatrix::Zero(nrows, ncols);
-    RealMatrix outer = RealMatrix::Zero(nrows, ncols);
+    RealMatrix result = conv_peak - conv_bkg;
 
-    // sanity checks
-    if (r1 < 0 || r2 < r1 || r3 < r2) {
-        throw std::runtime_error("Annular kernel called with invalid parameters");
-    }
-
-    for (int i = 0; i < nrows; ++i) {
-        for (int j = 0; j < ncols; ++j) {
-            // shift so that (0,0) = (rows, cols) = (rows, 0) = (0, cols) is the center of the kernel
-            double x = j > ncols/2 ? ncols-j : j;
-            double y = i > nrows/2 ? nrows-i : i;
-
-            double dist2 = x*x + y*y;
-
-            if (dist2 > r3*r3) {
-                continue;
-            }
-            else if (dist2 <= r1*r1) {
-                inner(i, j) = 1.0;
-            }
-            else if (dist2 > r2*r2) {
-                outer(i, j) = 1.0;
-            }
-        }
-    }
-
-    inner /= inner.sum();
-    outer /= outer.sum();
-
-    RealMatrix kernel = inner - outer;
-
-    return kernel;
+    return result;
 }
 
 } // end namespace nsx

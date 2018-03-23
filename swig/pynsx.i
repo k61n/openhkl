@@ -33,9 +33,12 @@
 %shared_ptr(nsx::Material)
 %shared_ptr(nsx::Diffractometer)
 %shared_ptr(nsx::Convolver)
+%shared_ptr(nsx::AtomicConvolver)
 %shared_ptr(nsx::ConstantConvolver)
 %shared_ptr(nsx::DeltaConvolver)
 %shared_ptr(nsx::AnnularConvolver)
+%shared_ptr(nsx::EnhancedAnnularConvolver)
+%shared_ptr(nsx::RadialConvolver)
 %shared_ptr(nsx::DataSet)
 %shared_ptr(nsx::Source)
 %shared_ptr(nsx::Sample)
@@ -185,10 +188,13 @@ using Eigen::Quaterniond;
 #include "Gonio.h"
 
 #include "Convolver.h"
+#include "AtomicConvolver.h"
 #include "DeltaConvolver.h"
 #include "AnnularConvolver.h"
+#include "EnhancedAnnularConvolver.h"
 #include "ConstantConvolver.h"
 #include "ConvolverFactory.h"
+#include "RadialConvolver.h"
 
 #include "Axis.h"
 #include "Experiment.h"
@@ -251,10 +257,13 @@ using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 #include "Singleton.h"
 
 #include "Convolver.h"
+#include "AtomicConvolver.h"
 #include "ConvolverFactory.h"
 #include "DeltaConvolver.h"
 #include "AnnularConvolver.h"
+#include "EnhancedAnnularConvolver.h"
 #include "ConstantConvolver.h"
+#include "RadialConvolver.h"
 
 #include "MetaData.h"
 #include "IDataReader.h"
@@ -389,7 +398,10 @@ namespace nsx {
 %include "ConstantConvolver.h"
 %include "DeltaConvolver.h"
 %include "AnnularConvolver.h"
+%include "EnhancedAnnularConvolver.h"
+%include "RadialConvolver.h"
 %include "Convolver.h"
+%include "AtomicConvolver.h"
 
 %include "MetaData.h"
 %include "IDataReader.h"
@@ -487,9 +499,12 @@ namespace nsx {
 %include "DataReaderFactory.h"
 
 %include "Convolver.h"
+%include "AtomicConvolver.h"
 %include "ConstantConvolver.h"
 %include "DeltaConvolver.h"
 %include "AnnularConvolver.h"
+%include "EnhancedAnnularConvolver.h"
+%include "RadialConvolver.h"
 %include "ConvolverFactory.h"
 
 %include "Detector.h"

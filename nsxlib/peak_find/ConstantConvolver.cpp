@@ -3,6 +3,7 @@
 namespace nsx {
 
 ConstantConvolver::ConstantConvolver()
+: AtomicConvolver()
 {
     _parameters["box_size"] = 3;
 }

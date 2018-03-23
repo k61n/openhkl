@@ -38,15 +38,15 @@
 
 namespace nsx {
 
-class AnnularConvolver : public Convolver {
+class EnhancedAnnularConvolver : public Convolver {
 
 public:
 
-    AnnularConvolver();
+    EnhancedAnnularConvolver();
 
-    AnnularConvolver(const std::map<std::string,double>& parameters);
+    EnhancedAnnularConvolver(const std::map<std::string,double>& parameters);
 
-    virtual ~AnnularConvolver();
+    virtual ~EnhancedAnnularConvolver();
 
     const char* name() const override;
 

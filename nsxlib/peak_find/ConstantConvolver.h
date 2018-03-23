@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "Convolver.h"
+#include "AtomicConvolver.h"
 
 namespace nsx {
 
-class ConstantConvolver : public Convolver {
+class ConstantConvolver : public AtomicConvolver {
 
 public:
 
