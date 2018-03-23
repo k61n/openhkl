@@ -13,10 +13,7 @@ AbsoluteThreshold::AbsoluteThreshold()
 AbsoluteThreshold::AbsoluteThreshold(const std::map<std::string,double>& parameters)
 : AbsoluteThreshold()
 {
-    auto it = parameters.find("intensity");
-    if (it != parameters.end()) {
-        _parameters["intensity"] = it->second;
-    }
+    setParameters(parameters);
 }
 
 double AbsoluteThreshold::value(sptrDataSet dataset, int frame) const

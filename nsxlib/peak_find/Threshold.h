@@ -22,6 +22,7 @@ public:
 
     //! Non-const getter for threshold parameters
     std::map<std::string,double>& parameters();
+    void setParameters(const std::map<std::string,double>& parameters);
 
     virtual const char* name() const=0;
 
