@@ -185,16 +185,18 @@ void DialogPeakFind::updatePreview()
 
     int ncols = data->nCols();
 
-    auto kernel = _peakFinder->kernel();
+    nsx::KernelFactory kernel_factory;
+    std::string kernel_type = ui->kernelComboBox->currentText().toStdString();
+    auto kernel_parameters = getKernelParameters();
 
-    Eigen::MatrixXi convolved_frame = data->convolvedFrame(selected_frame,kernel);
+    Eigen::MatrixXi convolved_frame = data->convolvedFrame(selected_frame,kernel_type, kernel_parameters);
 
     // apply threshold in preview
     if (ui->applyThreshold->isChecked()) {
         nsx::ThresholdFactory threshold_factory;
         std::string threshold_type = ui->thresholdComboBox->currentText().toStdString();
-        auto parameters = getThresholdParameters();
-        auto threshold = threshold_factory.create(threshold_type,parameters);
+        auto threshold_parameters = getThresholdParameters();
+        auto threshold = threshold_factory.create(threshold_type,threshold_parameters);
         double threshold_value = threshold->value(data,selected_frame);
 
         for (int i = 0; i < nrows; ++i) {
