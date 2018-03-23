@@ -1,11 +1,6 @@
-// Annular kernel
-// author: Jonathan Fisher
-// Forschungszentrum Jülich GmbH
-// j.fisher@fz-juelich.de
-
 #include <math.h>
 
-#include "AnnularKernel.h"
+#include "AnnularConvolver.h"
 
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
@@ -18,8 +13,8 @@
 
 namespace nsx {
 
-AnnularKernel::AnnularKernel()
-: ConvolutionKernel()
+AnnularConvolver::AnnularConvolver()
+: Convolver()
 {
     // default values
     _parameters["r1"] = 5;
@@ -27,22 +22,22 @@ AnnularKernel::AnnularKernel()
     _parameters["r3"] = 15;
 }
 
-AnnularKernel::AnnularKernel(const std::map<std::string,double>& parameters)
-: AnnularKernel()
+AnnularConvolver::AnnularConvolver(const std::map<std::string,double>& parameters)
+: AnnularConvolver()
 {
     setParameters(parameters);
 }
 
-AnnularKernel::~AnnularKernel()
+AnnularConvolver::~AnnularConvolver()
 {
 }
 
-const char* AnnularKernel::name() const
+const char* AnnularConvolver::name() const
 {
     return "annular";
 }
 
-RealMatrix AnnularKernel::_matrix(int nrows, int ncols) const
+RealMatrix AnnularConvolver::_matrix(int nrows, int ncols) const
 {
     int r1, r2, r3;
 

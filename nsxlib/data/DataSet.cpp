@@ -10,8 +10,8 @@
 #include "AABB.h"
 #include "BasicFrameIterator.h"
 #include "BloscFilter.h"
+#include "ConvolverFactory.h"
 #include "CrystalTypes.h"
-#include "ConvolutionKernel.h"
 #include "DataSet.h"
 #include "Detector.h"
 #include "Diffractometer.h"
@@ -21,7 +21,6 @@
 #include "IDataReader.h"
 #include "IFrameIterator.h"
 #include "IntegrationRegion.h"
-#include "KernelFactory.h"
 #include "MathematicsTypes.h"
 #include "Monochromator.h"
 #include "Path.h"
@@ -111,11 +110,11 @@ Eigen::MatrixXi DataSet::frame(std::size_t idx)
     return _reader->getData(idx);
 }
 
-Eigen::MatrixXi DataSet::convolvedFrame(std::size_t idx, const std::string& kernel_type, const std::map<std::string,double>& parameters)
+Eigen::MatrixXi DataSet::convolvedFrame(std::size_t idx, const std::string& convolver_type, const std::map<std::string,double>& parameters)
 {
-    KernelFactory kernel_factory;
+    ConvolverFactory convolver_factory;
 
-    auto convolver = kernel_factory.create(kernel_type,parameters);
+    auto convolver = convolver_factory.create(convolver_type,parameters);
 
     Eigen::MatrixXi autoscaled_data;
 

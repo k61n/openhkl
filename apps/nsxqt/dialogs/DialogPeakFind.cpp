@@ -12,11 +12,9 @@
 #include <QStandardItem>
 #include <QTreeView>
 
-#include <nsxlib/ConvolutionKernel.h>
+#include <nsxlib/ConvolverFactory.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/DataTypes.h>
-#include <nsxlib/KernelFactory.h>
-#include <nsxlib/ImagingTypes.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/MathematicsTypes.h>
 #include <nsxlib/PeakFinder.h>
@@ -101,8 +99,8 @@ DialogPeakFind::DialogPeakFind(const nsx::DataList& data,nsx::sptrPeakFinder pea
     ui->convolverParameters->setItemDelegateForColumn(1,convolver_table_delegate);
 
     ui->convolver->clear();
-    nsx::KernelFactory kernel_factory;
-    for (auto& k : kernel_factory.callbacks()) {
+    nsx::ConvolverFactory convolver_factory;
+    for (auto& k : convolver_factory.callbacks()) {
         ui->convolver->addItem(QString::fromStdString(k.first));
     }
     ui->convolver->setCurrentText(_peakFinder->convolver()->name());
@@ -182,7 +180,6 @@ void DialogPeakFind::updatePreview()
 
     int ncols = data->nCols();
 
-    nsx::KernelFactory convolver_factory;
     std::string convolver_type = ui->convolver->currentText().toStdString();
     auto convolver_parameters = convolverParameters();
 

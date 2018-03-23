@@ -37,33 +37,33 @@
 #include <map>
 #include <vector>
 
+#include <fftw3.h>
+
 #include <Eigen/Dense>
 
-#include "Convolver.h"
-#include "ImagingTypes.h"
 #include "MathematicsTypes.h"
 
 namespace nsx {
 
-class ConvolutionKernel {
+class Convolver {
 
 public:
 
-    ConvolutionKernel();
+    Convolver();
 
-    ConvolutionKernel(const ConvolutionKernel& other)=default;
+    Convolver(const Convolver& other)=default;
 
-    ConvolutionKernel& operator=(const ConvolutionKernel& other)=default;
+    Convolver& operator=(const Convolver& other)=default;
 
-    virtual ~ConvolutionKernel()=0;
+    virtual ~Convolver()=0;
 
     void reset();
 
     // Non-const getter for kernel parameter
-    ConvolutionKernelParameters& parameters();
+    std::map<std::string,double>& parameters();
 
     // Const getter for kernel parameter
-    const ConvolutionKernelParameters& parameters() const;
+    const std::map<std::string,double>& parameters() const;
 
     void setParameters(const std::map<std::string,double>& parameters);
 

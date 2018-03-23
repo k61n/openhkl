@@ -33,13 +33,11 @@
 #include <stdexcept>
 #include <utility>
 
-#include <fftw3.h>
-
-#include "ConvolutionKernel.h"
+#include "Convolver.h"
 
 namespace nsx {
 
-ConvolutionKernel::ConvolutionKernel()
+Convolver::Convolver()
 : _kernel(),
   _halfCols(0),
   _forwardPlan(nullptr),
@@ -50,12 +48,12 @@ ConvolutionKernel::ConvolutionKernel()
 {
 }
 
-ConvolutionKernel::~ConvolutionKernel()
+Convolver::~Convolver()
 {
     reset();
 }
 
-void ConvolutionKernel::reset()
+void Convolver::reset()
 {
     if (_forwardPlan) {
         fftw_destroy_plan(_forwardPlan);
@@ -82,7 +80,7 @@ void ConvolutionKernel::reset()
     _transformedKernel.resize(0);
 }
 
-void ConvolutionKernel::updateKernel(int nrows, int ncols)
+void Convolver::updateKernel(int nrows, int ncols)
 {
     reset();
 
@@ -111,7 +109,7 @@ void ConvolutionKernel::updateKernel(int nrows, int ncols)
     }
 }
 
-RealMatrix ConvolutionKernel::convolve(const RealMatrix& image)
+RealMatrix Convolver::convolve(const RealMatrix& image)
 {
     int nrows = image.rows();
     int ncols = image.cols();
@@ -140,17 +138,17 @@ RealMatrix ConvolutionKernel::convolve(const RealMatrix& image)
     return result;
 }
 
-std::map<std::string,double>& ConvolutionKernel::parameters()
+std::map<std::string,double>& Convolver::parameters()
 {
     return _parameters;
 }
 
-const std::map<std::string,double>& ConvolutionKernel::parameters() const
+const std::map<std::string,double>& Convolver::parameters() const
 {
     return _parameters;
 }
 
-void ConvolutionKernel::setParameters(const std::map<std::string,double>& parameters)
+void Convolver::setParameters(const std::map<std::string,double>& parameters)
 {
     for (auto p : parameters) {
         auto it = _parameters.find(p.first);
@@ -160,7 +158,7 @@ void ConvolutionKernel::setParameters(const std::map<std::string,double>& parame
     }
 }
 
-RealMatrix ConvolutionKernel::matrix(int nrows, int ncols) const
+RealMatrix Convolver::matrix(int nrows, int ncols) const
 {
     // sanity checks
     if (nrows < 0 || ncols < 0) {

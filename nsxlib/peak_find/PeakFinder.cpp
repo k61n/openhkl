@@ -2,14 +2,13 @@
 #include <vector>
 
 #include "AABB.h"
-#include "ConvolutionKernel.h"
+#include "ConvolverFactory.h"
 #include "DataSet.h"
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "ErfInv.h"
 #include "Experiment.h"
 #include "GeometryTypes.h"
-#include "KernelFactory.h"
 #include "IFrameIterator.h"
 #include "MathematicsTypes.h"
 #include "Octree.h"
@@ -81,8 +80,8 @@ PeakFinder::PeakFinder()
   _maxSize(10000),
   _maxFrames(10)
 {
-    KernelFactory kernel_factory;
-    _convolver = kernel_factory.create("annular",{});
+    ConvolverFactory convolver_factory;
+    _convolver = convolver_factory.create("annular",{});
 
     ThresholdFactory threshold_factory;
     _threshold = threshold_factory.create("absolute",{});
@@ -307,15 +306,15 @@ int PeakFinder::maxSize() const
     return _maxSize;
 }
 
-sptrConvolutionKernel PeakFinder::convolver() const
+sptrConvolver PeakFinder::convolver() const
 {
     return _convolver;
 }
 
-void PeakFinder::setConvolver(const std::string& kernel_type, const std::map<std::string,double>& parameters)
+void PeakFinder::setConvolver(const std::string& convolver_type, const std::map<std::string,double>& parameters)
 {
-    KernelFactory kernel_factory;
-    _convolver = kernel_factory.create(kernel_type,parameters);
+    ConvolverFactory convolver_factory;
+    _convolver = convolver_factory.create(convolver_type,parameters);
 }
 
 sptrThreshold PeakFinder::threshold() const

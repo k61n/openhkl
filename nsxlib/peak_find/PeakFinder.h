@@ -5,7 +5,6 @@
 #include "CrystalTypes.h"
 #include "DataTypes.h"
 #include "GeometryTypes.h"
-#include "ImagingTypes.h"
 #include "PeakFindTypes.h"
 #include "UtilsTypes.h"
 
@@ -37,8 +36,8 @@ public:
     void setMaxFrames(int maxComp);
     int maxFrames() const;
 
-    sptrConvolutionKernel convolver() const;
-    void setConvolver(const std::string& kernel_type, const std::map<std::string,double>& parameters);
+    sptrConvolver convolver() const;
+    void setConvolver(const std::string& convolver_type, const std::map<std::string,double>& parameters);
 
     sptrThreshold threshold() const;
     void setThreshold(const std::string& threshold_type, const std::map<std::string,double>& parameters);
@@ -58,7 +57,7 @@ private:
 private:
     sptrProgressHandler _handler;
 
-    sptrConvolutionKernel _convolver;
+    sptrConvolver _convolver;
 
     sptrThreshold _threshold;
 

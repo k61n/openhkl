@@ -39,7 +39,6 @@
 #include "DataTypes.h"
 #include "GeometryTypes.h"
 #include "IMask.h"
-#include "ImagingTypes.h"
 #include "InstrumentTypes.h"
 #include "UtilsTypes.h"
 
@@ -95,7 +94,6 @@ public:
 
     //! Get the interpolated state of a given component
     InstrumentState interpolatedState(double frame) const;
-    //ComponentState getInterpolatedState(std::shared_ptr<Component> component, double frame) const;
 
     //! Add a new mask to the data
     void addMask(IMask* mask);
@@ -116,7 +114,7 @@ public:
     Eigen::MatrixXi frame(std::size_t idx);
 
     //! Return a convolved frame
-    Eigen::MatrixXi convolvedFrame(std::size_t idx, const std::string& kernel_type, const std::map<std::string,double>& parameters);
+    Eigen::MatrixXi convolvedFrame(std::size_t idx, const std::string& convolver_type, const std::map<std::string,double>& parameters);
 
     //! Get the file handle.
     void open();

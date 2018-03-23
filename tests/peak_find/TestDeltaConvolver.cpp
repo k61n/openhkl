@@ -1,4 +1,4 @@
-#include <nsxlib/DeltaKernel.h>
+#include <nsxlib/DeltaConvolver.h>
 #include <nsxlib/MathematicsTypes.h>
 #include <nsxlib/NSXTest.h>
 
@@ -18,7 +18,7 @@ nsx::RealMatrix generateImage(int rows, int cols)
 double computeError(int nrows, int ncols)
 {
     nsx::RealMatrix original = generateImage(nrows,ncols);
-    nsx::DeltaKernel convolver;
+    nsx::DeltaConvolver convolver;
 
     nsx::RealMatrix transformed = convolver.convolve(original);
     nsx::RealMatrix difference =  original-transformed;

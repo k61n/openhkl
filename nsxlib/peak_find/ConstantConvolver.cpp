@@ -1,29 +1,28 @@
-#include <iostream>
-#include "ConstantKernel.h"
+#include "ConstantConvolver.h"
 
 namespace nsx {
 
-ConstantKernel::ConstantKernel()
+ConstantConvolver::ConstantConvolver()
 {
     _parameters["box_size"] = 3;
 }
 
-ConstantKernel::ConstantKernel(const std::map<std::string,double>& parameters)
-: ConstantKernel()
+ConstantConvolver::ConstantConvolver(const std::map<std::string,double>& parameters)
+: ConstantConvolver()
 {
     setParameters(parameters);
 }
 
-ConstantKernel::~ConstantKernel()
+ConstantConvolver::~ConstantConvolver()
 {
 }
 
-const char* ConstantKernel::name() const
+const char* ConstantConvolver::name() const
 {
     return "constant";
 }
 
-RealMatrix ConstantKernel::_matrix(int nrows, int ncols) const
+RealMatrix ConstantConvolver::_matrix(int nrows, int ncols) const
 {
     const int box_size = static_cast<int>(_parameters.at("box_size"));
 

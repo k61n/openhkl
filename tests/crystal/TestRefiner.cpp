@@ -6,7 +6,6 @@
 #include <Eigen/Dense>
 
 #include <nsxlib/AutoIndexer.h>
-#include <nsxlib/ConvolutionKernel.h>
 #include <nsxlib/CrystalTypes.h>
 #include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
@@ -15,7 +14,6 @@
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Gonio.h>
 #include <nsxlib/InstrumentState.h>
-#include <nsxlib/KernelFactory.h>
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFilter.h>

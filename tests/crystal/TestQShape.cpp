@@ -5,22 +5,19 @@
 #include <Eigen/Dense>
 
 #include <nsxlib/AutoIndexer.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/PeakPredictor.h>
 #include <nsxlib/DataReaderFactory.h>
-#include <nsxlib/PeakFinder.h>
 #include <nsxlib/DataSet.h>
-#include <nsxlib/ConvolutionKernel.h>
-#include <nsxlib/KernelFactory.h>
-
 #include <nsxlib/Diffractometer.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/Sample.h>
 #include <nsxlib/ErfInv.h>
+#include <nsxlib/Experiment.h>
 #include <nsxlib/NSXTest.h>
-#include <nsxlib/Units.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/PeakFinder.h>
+#include <nsxlib/PeakPredictor.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/ReciprocalVector.h>
+#include <nsxlib/Sample.h>
+#include <nsxlib/Units.h>
 
 int main()
 {
