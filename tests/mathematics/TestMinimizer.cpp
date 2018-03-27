@@ -7,6 +7,8 @@
 #include <nsxlib/Minimizer.h>
 #include <nsxlib/NSXTest.h>
 
+NSX_INIT_TEST
+
 int main()
 {
     Eigen::VectorXd y, wt, x;

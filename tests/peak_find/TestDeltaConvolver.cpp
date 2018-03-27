@@ -1,9 +1,8 @@
-#include <cmath>
-
-#include <nsxlib/Convolver.h>
-#include <nsxlib/DeltaKernel.h>
+#include <nsxlib/DeltaConvolver.h>
 #include <nsxlib/MathematicsTypes.h>
 #include <nsxlib/NSXTest.h>
+
+NSX_INIT_TEST
 
 // Generate a image to use for testing the Fourier transform
 nsx::RealMatrix generateImage(int rows, int cols)
@@ -18,16 +17,14 @@ nsx::RealMatrix generateImage(int rows, int cols)
     return image;
 }
 
-double computeError(int rows, int cols)
+double computeError(int nrows, int ncols)
 {
-    nsx::RealMatrix original = generateImage(rows,cols);
-    nsx::Convolver convolver;
-    nsx::DeltaKernel kernel(rows,cols);
+    nsx::RealMatrix original = generateImage(nrows,ncols);
+    nsx::DeltaConvolver convolver;
 
-    convolver.setKernel(kernel.matrix());
-    nsx::RealMatrix transformed = convolver.apply(original);
+    nsx::RealMatrix transformed = convolver.convolve(original);
     nsx::RealMatrix difference =  original-transformed;
-    double error = (difference * difference.transpose()).sum() / rows / cols;
+    double error = (difference * difference.transpose()).sum() / nrows / ncols;
     return std::sqrt(error);
 }
 
@@ -36,3 +33,4 @@ int main()
     double error = computeError(30, 20);
     NSX_CHECK_ASSERT(error < 1e-10);
 }
+

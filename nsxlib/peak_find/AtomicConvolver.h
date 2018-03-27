@@ -30,58 +30,69 @@
 
 #pragma once
 
+#include <complex>
 #include <ostream>
 #include <stdexcept>
 #include <string>
 #include <map>
+#include <vector>
+
+#include <fftw3.h>
 
 #include <Eigen/Dense>
 
 #include "Convolver.h"
-#include "ImagingTypes.h"
 #include "MathematicsTypes.h"
 
 namespace nsx {
 
-class ConvolutionKernel {
+class AtomicConvolver : public Convolver {
 
 public:
 
-    ConvolutionKernel(int nrows, int ncols);
+    AtomicConvolver();
 
-    ConvolutionKernel(const ConvolutionKernel& rhs);
+    AtomicConvolver(const AtomicConvolver& other)=default;
 
-    ConvolutionKernel(int nrows, int ncols, const ConvolutionKernelParameters& parameters);
+    AtomicConvolver& operator=(const AtomicConvolver& other)=default;
 
-    // used to get/set parameters
-    ConvolutionKernelParameters& parameters();
-    const ConvolutionKernelParameters& parameters() const;
+    virtual ~AtomicConvolver()=0;
 
-    const RealMatrix& matrix();
-    virtual const char* name() = 0;
+    RealMatrix matrix(int nrows, int ncols) const;
 
-    void print(std::ostream& os) const;
+    virtual const char* name() const = 0;
 
-    ConvolutionKernel& operator=(const ConvolutionKernel& rhs);
-
-    virtual ~ConvolutionKernel()=0;
-
+    //! Convolve an image
+    virtual RealMatrix convolve(const RealMatrix& image) override;
 
 protected:
-    // update the kernel using current parameters
-    virtual void update() {};
 
-    int _nrows;
+    void updateKernel(int nrows, int ncols);
 
-    int _ncols;
+    virtual RealMatrix _matrix(int nrows, int cols) const=0;
 
-    RealMatrix _kernel;
-    bool _hasChanged; // used to record if parameters have changed since last update
-    ConvolutionKernelParameters _params;
+private:
+
+    void reset();
+
+protected:
+
+    int _n_rows;
+
+    int _n_cols;
+
+    int _halfCols;
+
+    // used directly with FFTW3
+    fftw_plan _forwardPlan;
+
+    fftw_plan _backwardPlan;
+
+    double* _realData;
+
+    fftw_complex* _transformedData;
+
+    std::vector<std::complex<double>> _transformedKernel;
 };
-
-#ifndef SWIG
-std::ostream& operator<<(std::ostream& os, const ConvolutionKernel& kernel);
-#endif
 
 } // end namespace nsx

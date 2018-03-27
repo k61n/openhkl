@@ -32,11 +32,13 @@
 %shared_ptr(nsx::Peak3D)
 %shared_ptr(nsx::Material)
 %shared_ptr(nsx::Diffractometer)
-%shared_ptr(nsx::ConvolutionKernel)
-%shared_ptr(nsx::ConstantKernel)
-%shared_ptr(nsx::DeltaKernel)
-%shared_ptr(nsx::AnnularKernel)
 %shared_ptr(nsx::Convolver)
+%shared_ptr(nsx::AtomicConvolver)
+%shared_ptr(nsx::ConstantConvolver)
+%shared_ptr(nsx::DeltaConvolver)
+%shared_ptr(nsx::AnnularConvolver)
+%shared_ptr(nsx::EnhancedAnnularConvolver)
+%shared_ptr(nsx::RadialConvolver)
 %shared_ptr(nsx::DataSet)
 %shared_ptr(nsx::Source)
 %shared_ptr(nsx::Sample)
@@ -145,8 +147,6 @@ using Eigen::Quaterniond;
 #include "ConvexHull.h"
 #include "BrillouinZone.h"
 
-#include "BlobFinder.h"
-
 #include "AABB.h"
 #include "Edge.h"
 #include "Blob3D.h"
@@ -185,11 +185,14 @@ using Eigen::Quaterniond;
 #include "CylindricalDetector.h"
 #include "Gonio.h"
 
-#include "ConvolutionKernel.h"
-#include "DeltaKernel.h"
-#include "AnnularKernel.h"
-#include "ConstantKernel.h"
-#include "KernelFactory.h"
+#include "Convolver.h"
+#include "AtomicConvolver.h"
+#include "DeltaConvolver.h"
+#include "AnnularConvolver.h"
+#include "EnhancedAnnularConvolver.h"
+#include "ConstantConvolver.h"
+#include "ConvolverFactory.h"
+#include "RadialConvolver.h"
 
 #include "Axis.h"
 #include "Experiment.h"
@@ -198,7 +201,7 @@ using Eigen::Quaterniond;
 #include "AxisFactory.h"
 #include "RotAxis.h"
 #include "PhysicalUnit.h"
-#include "ConstantKernel.h"
+#include "ConstantConvolver.h"
 #include "Convolver.h"
 
 #include "Composite.h"
@@ -251,11 +254,14 @@ using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 
 #include "Singleton.h"
 
-#include "ConvolutionKernel.h"
-#include "KernelFactory.h"
-#include "DeltaKernel.h"
-#include "AnnularKernel.h"
-#include "ConstantKernel.h"
+#include "Convolver.h"
+#include "AtomicConvolver.h"
+#include "ConvolverFactory.h"
+#include "DeltaConvolver.h"
+#include "AnnularConvolver.h"
+#include "EnhancedAnnularConvolver.h"
+#include "ConstantConvolver.h"
+#include "RadialConvolver.h"
 
 #include "MetaData.h"
 #include "IDataReader.h"
@@ -319,6 +325,7 @@ using namespace nsx;
 %eigen_typemaps(Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic>)
 %eigen_typemaps(Eigen::Array<double, Eigen::Dynamic, 1>)
 %eigen_typemaps(Eigen::Array<double, Eigen::Dynamic, Eigen::Dynamic>)
+%eigen_typemaps(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>)
 
 %template(vectorMatrixXd) std::vector<Eigen::MatrixXd>;
 %template(vectorVectorXd) std::vector<Eigen::VectorXd>;
@@ -329,8 +336,8 @@ using namespace nsx;
 %include "CrystalTypes.h"
 %include "DataTypes.h"
 %include "GeometryTypes.h"
-%include "ImagingTypes.h"
 %include "InstrumentTypes.h"
+%include "MathematicsTypes.h"
 %include "UtilsTypes.h"
 
 %include "DirectVector.h"
@@ -367,7 +374,7 @@ using namespace nsx;
 
 namespace nsx {
    class DataReaderFactory; 
-   class KernelFactory; 
+   class ConvolverFactory; 
    struct tVector;
 }
 
@@ -381,16 +388,18 @@ namespace nsx {
 
 %include "PeakFilter.h"
 
-%include "ImagingTypes.h"
-%include "ConvolutionKernel.h"
-
-%template(mapConvolutionKernelParameters) std::map<std::string,double>;
-
-%include "KernelFactory.h"
-%include "ConstantKernel.h"
-%include "DeltaKernel.h"
-%include "AnnularKernel.h"
 %include "Convolver.h"
+
+%template(mapConvolverParameters) std::map<std::string,double>;
+
+%include "ConvolverFactory.h"
+%include "ConstantConvolver.h"
+%include "DeltaConvolver.h"
+%include "AnnularConvolver.h"
+%include "EnhancedAnnularConvolver.h"
+%include "RadialConvolver.h"
+%include "Convolver.h"
+%include "AtomicConvolver.h"
 
 %include "MetaData.h"
 %include "IDataReader.h"
@@ -468,7 +477,6 @@ namespace nsx {
 %include "Face.h"
 %include "MCAbsorption.h"
 %include "ConvexHull.h"
-%include "BlobFinder.h"
 %include "AABB.h"
 %include "Edge.h"
 %include "Blob3D.h"
@@ -487,12 +495,14 @@ namespace nsx {
 %include "BloscFilter.h"
 %include "DataReaderFactory.h"
 
-%include "ConvolutionKernel.h"
-%include "ConstantKernel.h"
-%include "DeltaKernel.h"
-%include "AnnularKernel.h"
 %include "Convolver.h"
-%include "KernelFactory.h"
+%include "AtomicConvolver.h"
+%include "ConstantConvolver.h"
+%include "DeltaConvolver.h"
+%include "AnnularConvolver.h"
+%include "EnhancedAnnularConvolver.h"
+%include "RadialConvolver.h"
+%include "ConvolverFactory.h"
 
 %include "Detector.h"
 %include "DetectorFactory.h"

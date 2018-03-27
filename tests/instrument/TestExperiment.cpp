@@ -5,6 +5,8 @@
 #include <nsxlib/Experiment.h>
 #include <nsxlib/NSXTest.h>
 
+NSX_INIT_TEST
+
 int main()
 {
     nsx::Experiment exp("my-exp","D10");

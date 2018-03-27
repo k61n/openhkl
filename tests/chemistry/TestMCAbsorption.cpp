@@ -7,6 +7,8 @@
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Units.h>
 
+NSX_INIT_TEST
+
 int main()
 {
     // Build an isotopically pure methane material

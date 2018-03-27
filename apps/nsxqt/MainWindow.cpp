@@ -19,7 +19,6 @@
 #include <nsxlib/AABB.h>
 #include <nsxlib/AggregateStreamWrapper.h>
 #include <nsxlib/Basis.h>
-#include <nsxlib/BlobFinder.h>
 #include <nsxlib/ComponentState.h>
 #include <nsxlib/CrystalTypes.h>
 #include <nsxlib/Detector.h>
@@ -49,7 +48,6 @@
 #include "CutSliceGraphicsItem.h"
 #include "CutterGraphicsItem.h"
 #include "DetectorScene.h"
-#include "DialogConvolve.h"
 #include "DialogExperiment.h"
 #include "DialogIntegrate.h"
 #include "DialogPeakFilter.h"

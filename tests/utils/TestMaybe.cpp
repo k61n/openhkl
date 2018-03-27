@@ -1,6 +1,8 @@
 #include <nsxlib/Maybe.h>
 #include <nsxlib/NSXTest.h>
 
+NSX_INIT_TEST
+
 const double eps = 1e-10;
 
 int main()

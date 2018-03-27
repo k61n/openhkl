@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DialogConvolve</class>
- <widget class="QDialog" name="DialogConvolve">
+ <class>DialogPeakFind</class>
+ <widget class="QDialog" name="DialogPeakFind">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>1308</width>
-    <height>537</height>
+    <height>551</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,13 +22,13 @@
   <property name="modal">
    <bool>false</bool>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,1">
+   <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout">
      <item row="7" column="3">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QComboBox" name="filterComboBox">
+        <widget class="QComboBox" name="convolver">
          <property name="insertPolicy">
           <enum>QComboBox::InsertAlphabetically</enum>
          </property>
@@ -36,8 +36,8 @@
        </item>
       </layout>
      </item>
-     <item row="6" column="3">
-      <widget class="QSpinBox" name="maxCompBox">
+     <item row="5" column="3">
+      <widget class="QSpinBox" name="maxSize">
        <property name="maximum">
         <number>2000000000</number>
        </property>
@@ -46,22 +46,22 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0" colspan="2">
+     <item row="0" column="0" colspan="2">
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>Threshold type</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="0" colspan="2">
+     <item row="5" column="0" colspan="2">
       <widget class="QLabel" name="maxCompLabel">
        <property name="text">
-        <string>Max. components</string>
+        <string>Max. size</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="3">
-      <widget class="QDoubleSpinBox" name="integrationConfidenceSpinBox">
+     <item row="3" column="3">
+      <widget class="QDoubleSpinBox" name="integrationConfidence">
        <property name="decimals">
         <number>4</number>
        </property>
@@ -76,28 +76,17 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="3">
-      <widget class="QComboBox" name="thresholdComboBox">
-       <item>
-        <property name="text">
-         <string>Relative to background</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Absolute</string>
-        </property>
-       </item>
-      </widget>
+     <item row="0" column="3">
+      <widget class="QComboBox" name="threshold"/>
      </item>
-     <item row="5" column="0" colspan="2">
+     <item row="4" column="0" colspan="2">
       <widget class="QLabel" name="minCompLabel">
        <property name="text">
-        <string>Min. components</string>
+        <string>Min. size</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="0" colspan="2">
+     <item row="3" column="0" colspan="2">
       <widget class="QLabel" name="confidenceLabel">
        <property name="text">
         <string>Integration confidence</string>
@@ -114,15 +103,8 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0" colspan="2">
-      <widget class="QLabel" name="thresholdLabel">
-       <property name="text">
-        <string>Threshold value</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="3">
-      <widget class="QSpinBox" name="minCompBox">
+     <item row="4" column="3">
+      <widget class="QSpinBox" name="minSize">
        <property name="maximum">
         <number>2000000000</number>
        </property>
@@ -131,7 +113,7 @@
        </property>
       </widget>
      </item>
-     <item row="12" column="3">
+     <item row="11" column="3">
       <widget class="QDialogButtonBox" name="buttonBox">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -141,21 +123,8 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="3">
-      <widget class="QDoubleSpinBox" name="thresholdSpinBox">
-       <property name="maximum">
-        <double>1000000.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-       <property name="value">
-        <double>3.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="3">
-      <widget class="QDoubleSpinBox" name="blobConfidenceSpinBox">
+     <item row="2" column="3">
+      <widget class="QDoubleSpinBox" name="searchConfidence">
        <property name="decimals">
         <number>4</number>
        </property>
@@ -170,22 +139,15 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="3">
-      <widget class="QTreeView" name="treeView"/>
+     <item row="9" column="3">
+      <widget class="QListWidget" name="dataList"/>
      </item>
-     <item row="3" column="0" colspan="2">
+     <item row="2" column="0" colspan="2">
       <widget class="QLabel" name="confidenceLabel_2">
        <property name="text">
         <string>Peak search confidence</string>
        </property>
       </widget>
-     </item>
-     <item row="10" column="3">
-      <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="0">
-        <widget class="QSpinBox" name="frameIndex"/>
-       </item>
-      </layout>
      </item>
      <item row="8" column="0">
       <widget class="QLabel" name="label_3">
@@ -196,9 +158,6 @@
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
        </property>
       </widget>
-     </item>
-     <item row="9" column="3">
-      <widget class="QListWidget" name="dataList"/>
      </item>
      <item row="9" column="0">
       <widget class="QLabel" name="label_4">
@@ -211,30 +170,100 @@
       </widget>
      </item>
      <item row="10" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Frame</string>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="0">
       <widget class="QCheckBox" name="applyThreshold">
        <property name="text">
         <string>apply threshold to preview</string>
        </property>
       </widget>
      </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Threshold parameters</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QTableWidget" name="thresholdParameters"/>
+     </item>
+     <item row="8" column="3">
+      <widget class="QTableWidget" name="convolverParameters"/>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Max. number of frames</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="3">
+      <widget class="QSpinBox" name="maxFrames">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100000</number>
+       </property>
+       <property name="value">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
-   <item>
-    <widget class="QGraphicsView" name="preview">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
+   <item row="0" column="1">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QGraphicsView" name="preview">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Frame</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="frameIndex">
+         <property name="readOnly">
+          <bool>false</bool>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::UpDownArrows</enum>
+         </property>
+         <property name="singleStep">
+          <number>1</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="frameSlider">
+         <property name="tracking">
+          <bool>true</bool>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tickPosition">
+          <enum>QSlider::NoTicks</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -243,7 +272,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>DialogConvolve</receiver>
+   <receiver>DialogPeakFind</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -259,7 +288,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>DialogConvolve</receiver>
+   <receiver>DialogPeakFind</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

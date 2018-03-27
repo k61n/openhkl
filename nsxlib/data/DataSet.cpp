@@ -10,9 +10,8 @@
 #include "AABB.h"
 #include "BasicFrameIterator.h"
 #include "BloscFilter.h"
+#include "ConvolverFactory.h"
 #include "CrystalTypes.h"
-#include "ConvolutionKernel.h"
-#include "Convolver.h"
 #include "DataSet.h"
 #include "Detector.h"
 #include "Diffractometer.h"
@@ -111,8 +110,12 @@ Eigen::MatrixXi DataSet::frame(std::size_t idx)
     return _reader->getData(idx);
 }
 
-Eigen::MatrixXi DataSet::convolvedFrame(std::size_t idx, sptrConvolutionKernel kernel)
+Eigen::MatrixXi DataSet::convolvedFrame(std::size_t idx, const std::string& convolver_type, const std::map<std::string,double>& parameters)
 {
+    ConvolverFactory convolver_factory;
+
+    auto convolver = convolver_factory.create(convolver_type,parameters);
+
     Eigen::MatrixXi autoscaled_data;
 
     Eigen::MatrixXi frame_data = _reader->getData(idx);
@@ -124,18 +127,8 @@ Eigen::MatrixXi DataSet::convolvedFrame(std::size_t idx, sptrConvolutionKernel k
 
     nsx::RealMatrix result;
 
-    if (kernel) {
-
-        // set up convolver
-        Convolver convolver;
-        convolver.setKernel(kernel->matrix());
-
-        // compute the convolution
-        result = convolver.apply(frame_data.cast<double>());
-    }
-    else {
-        result = frame_data.cast<double>();
-    }
+    // compute the convolution
+    result = convolver->convolve(frame_data.cast<double>());
 
     double minVal = result.minCoeff();
     double maxVal = result.maxCoeff();

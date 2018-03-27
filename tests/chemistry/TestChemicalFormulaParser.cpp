@@ -13,9 +13,10 @@
 
 const double tolerance=1.0e-9;
 
+NSX_INIT_TEST
+
 int main()
 {
-
     using boost::spirit::qi::blank;
     using boost::spirit::qi::phrase_parse;
 

@@ -5,22 +5,21 @@
 #include <Eigen/Dense>
 
 #include <nsxlib/AutoIndexer.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/PeakPredictor.h>
 #include <nsxlib/DataReaderFactory.h>
-#include <nsxlib/PeakFinder.h>
 #include <nsxlib/DataSet.h>
-#include <nsxlib/ConvolutionKernel.h>
-#include <nsxlib/KernelFactory.h>
-
 #include <nsxlib/Diffractometer.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/Sample.h>
 #include <nsxlib/ErfInv.h>
+#include <nsxlib/Experiment.h>
 #include <nsxlib/NSXTest.h>
-#include <nsxlib/Units.h>
+#include <nsxlib/Peak3D.h>
+#include <nsxlib/PeakFinder.h>
+#include <nsxlib/PeakPredictor.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/ReciprocalVector.h>
+#include <nsxlib/Sample.h>
+#include <nsxlib/Units.h>
+
+NSX_INIT_TEST
 
 int main()
 {
@@ -45,20 +44,14 @@ int main()
     nsx::DataList numors;
     numors.push_back(dataf);
 
-    std::string kernelName = "annular";
-    nsx::KernelFactory kernel_factory;
-    auto kernel = kernel_factory.create(kernelName, int(dataf->nRows()), int(dataf->nCols()));
-
     // propagate changes to peak finder
-    auto convolver = peakFinder->convolver();
-    convolver->setKernel(kernel->matrix());
-    peakFinder->setMinComponents(30);
-    peakFinder->setMaxComponents(10000);
-    peakFinder->setKernel(kernel);
+    peakFinder->setMinSize(30);
+    peakFinder->setMaxSize(10000);
+    peakFinder->setMaxFrames(10);
+    peakFinder->setConvolver("annular",{});
+    peakFinder->setThreshold("absolute",{{"intensity",15.0}});
     peakFinder->setSearchConfidence(0.98);
     peakFinder->setIntegrationConfidence(0.997);
-    peakFinder->setThresholdType(1); // absolute
-    peakFinder->setThresholdValue(15.0);
 
     peakFinder->setHandler(progressHandler);
 

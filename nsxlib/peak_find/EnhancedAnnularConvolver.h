@@ -1,9 +1,4 @@
-// Annular kernel
-// author: Jonathan Fisher
-// Forschungszentrum Jülich GmbH
-// j.fisher@fz-juelich.de
-
-// Kernel description: the kernel is non-zero in a circular and annular region, as follows
+// Convolver description: the kernel is non-zero in a circular and annular region, as follows
 
 // [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 // [0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0]
@@ -39,30 +34,23 @@
 
 #pragma once
 
-#include "ConvolutionKernel.h"
-#include "ImagingTypes.h"
+#include "Convolver.h"
 
 namespace nsx {
 
-class AnnularKernel : public ConvolutionKernel {
+class EnhancedAnnularConvolver : public Convolver {
 
 public:
 
-    static ConvolutionKernel* create(int nrows, int ncols);
+    EnhancedAnnularConvolver();
 
-public:
+    EnhancedAnnularConvolver(const std::map<std::string,double>& parameters);
 
-    AnnularKernel(int nrows, int ncols);
+    virtual ~EnhancedAnnularConvolver();
 
-    AnnularKernel(int nrows, int ncols, const ConvolutionKernelParameters& params);
+    const char* name() const override;
 
-    virtual ~AnnularKernel();
-
-    const char* name() override;
-
-private:
-
-    void update() override;
+    RealMatrix convolve(const RealMatrix& image) override;
 };
 
 } // end namespace nsx

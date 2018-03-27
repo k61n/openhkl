@@ -3,6 +3,8 @@
 #include <nsxlib/ErfInv.h>
 #include <nsxlib/NSXTest.h>
 
+NSX_INIT_TEST
+
 int main()
 {
     const double x_max = 5.0;

@@ -11,6 +11,8 @@
 
 const double tolerance=1e-3;
 
+NSX_INIT_TEST
+
 int main()
 {
     nsx::FlatDetector d("D10-detector");

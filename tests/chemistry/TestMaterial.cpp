@@ -6,6 +6,8 @@
 
 const double tolerance=1.0e-9;
 
+NSX_INIT_TEST
+
 int main()
 {
     NSX_CHECK_THROW(nsx::Material junk("X"),std::runtime_error);

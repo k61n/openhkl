@@ -7,6 +7,8 @@
 const double largeTolerance=1.0e-2;
 const double smallTolerance=1.0e-9;
 
+NSX_INIT_TEST
+
 int main()
 {
     // unit conversion tested according value got from

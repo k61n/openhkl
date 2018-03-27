@@ -11,6 +11,8 @@
 
 const double tolerance=1e-5;
 
+NSX_INIT_TEST
+
 void collision_test()
 {
     nsx::Octree tree({0,0,0},{100,100,100});

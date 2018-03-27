@@ -4,6 +4,8 @@
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/StringIO.h>
 
+NSX_INIT_TEST
+
 int main()
 {
     std::string str_to_trim("   blabla    ");

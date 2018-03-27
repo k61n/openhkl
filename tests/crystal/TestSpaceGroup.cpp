@@ -7,6 +7,8 @@
 #include <nsxlib/SpaceGroup.h>
 #include <nsxlib/UnitCell.h>
 
+NSX_INIT_TEST
+
 int main()
 {
     std::map<std::string,unsigned int> nElementsPerSpaceGroup=

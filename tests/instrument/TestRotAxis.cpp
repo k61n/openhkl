@@ -6,6 +6,8 @@
 
 const double tolerance=1e-6;
 
+NSX_INIT_TEST
+
 int main()
 {
     //Empty Rotation axis initialize to (0,0,1)
