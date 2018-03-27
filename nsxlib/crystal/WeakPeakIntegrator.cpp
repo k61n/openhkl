@@ -91,44 +91,24 @@ bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
         return false;
     }
 
-    double sum_bkg = 0.0;
-    double sum_bkg2 = 0.0;
-
-    const auto& bkgEvents = region.bkgData().events();
-    const auto& bkgCounts = region.bkgData().counts();
-    const auto& peakEvents = region.peakData().events();
-    const auto& peakCounts = region.peakData().counts();
+    const auto& events = region.data().events();
+    const auto& counts = region.data().counts();
 
     // TODO: should this be hard-coded??
-    if (peakEvents.size() < 5) {
+    if (events.size() < 29) {
         throw std::runtime_error("WeakPeakIntegrator::compute(): too few data points in peak");
     }
 
-    // TODO: should this be hard-coded??
-    if (bkgEvents.size() < 5) {
-        throw std::runtime_error("WeakPeakIntegrator::compute(): too few data points in background");
-    }
-
-    // compute mean background and error
-    for (auto count: bkgCounts) {
-        sum_bkg += count;
-        sum_bkg2 += count*count;
-    }
-
-    const double Nbkg = bkgCounts.size();
-    const double mean_bkg = sum_bkg / Nbkg;
-    const double var_bkg = (sum_bkg2 - Nbkg*mean_bkg) / (Nbkg-1);
-
-    _meanBackground = Intensity(mean_bkg, var_bkg);
+    // dummy value for initial guess
+    _meanBackground = Intensity(1.0, 1.0);
     _integratedIntensity = Intensity(0.0, 0.0);
 
     std::vector<double> profile;
-    std::vector<double> counts;
+    std::vector<double> obs_counts;
     
-    profile.reserve(peakEvents.size());
-    counts.reserve(peakEvents.size());
+    profile.reserve(events.size());
+    obs_counts.reserve(events.size());
     
-
     const double tolerance = 1e-5;
 
     FitProfile model_profile;
@@ -141,16 +121,16 @@ bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
         return false;
     }
 
-     PeakCoordinateSystem coord(peak);
+    PeakCoordinateSystem coord(peak);
 
     // evaluate the model profile at the given events
-    for (int i = 0; i < peakEvents.size(); ++i) {
-        Eigen::Vector3d x = coord.transform(peakEvents[i]);
+    for (int i = 0; i < events.size(); ++i) {
+        Eigen::Vector3d x = coord.transform(events[i]);
         const double predict = model_profile.predict(x);
 
         if (predict > 0.0) {
             profile.push_back(predict);
-            counts.push_back(peakCounts[i]);
+            obs_counts.push_back(counts[i]);
         }
     }
     
@@ -158,7 +138,7 @@ bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     for (auto i = 0; i < 20; ++i) {
         Intensity old_intensity = _integratedIntensity;
         const double I0 = _integratedIntensity.value();
-        updateFit(_integratedIntensity, _meanBackground, profile, counts);
+        updateFit(_integratedIntensity, _meanBackground, profile, obs_counts);
         const double I1 = _integratedIntensity.value();
 
         if (std::isnan(I1) || std::isnan(_meanBackground.value())) {

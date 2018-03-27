@@ -51,44 +51,59 @@ bool StrongPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& reg
     MeanBackgroundIntegrator::compute(peak, region);
     PeakCoordinateSystem frame(peak);
 
-    const auto& peakEvents = region.peakData().events();
-    const auto& peakCounts = region.peakData().counts();
+    const auto& events = region.data().events();
+    const auto& counts = region.data().counts();
 
     double sum_peak = 0.0;
-
-    const double npeak = peakEvents.size();
-    const double nbkg = region.bkgData().events().size();
-
     const double mean_bkg = _meanBackground.value();
     const double std_bkg = _meanBackground.sigma();
+    size_t npeak = 0.0;
+    size_t nbkg = 0.0;
+    Blob3D blob;
 
     // compute total peak intensity
-    for (auto count: peakCounts) {
-        sum_peak += count;
+    for (auto i = 0; i < counts.size(); ++i) {
+        const auto& ev = events[i];
+        auto ev_type = region.classify(ev);
+
+        if (ev_type == IntegrationRegion::EventType::BACKGROUND) {
+            nbkg++;
+            continue;
+        }
+
+        if (ev_type == IntegrationRegion::EventType::PEAK) {
+            sum_peak += counts[i];
+            npeak++;
+
+            // update blob if pixel is strong
+            if (counts[i] > mean_bkg+3*std_bkg) {
+                blob.addPoint(ev._px, ev._py, ev._frame, counts[i]-mean_bkg);
+            }
+        }
     }
-    sum_peak -= npeak*mean_bkg;
+
+    sum_peak -= npeak*_meanBackground.value();
 
     // TODO: ERROR ESTIMATE!!
     // This INCORRECTLY assumes Poisson statistics (no gain or baseline)
     _integratedIntensity = Intensity(sum_peak, sum_peak + npeak*npeak*std_bkg*std_bkg / nbkg);
 
-    // compute rocking curve
-    double f_min = int(peakEvents[0]._frame);
+    // TODO: compute rocking curve
+    double f_min = int(events[0]._frame);
     double f_max = f_min;
 
-    size_t Npeak = peakEvents.size();
-    Blob3D blob;
 
-    for (size_t i = 0; i < Npeak; ++i) {
-        const auto& ev = peakEvents[i];
+    for (size_t i = 0; i < counts.size(); ++i) {
+        const auto& ev = events[i];
         f_min = std::min(ev._frame, f_min);
         f_max = std::max(ev._frame, f_max);
+    }
 
-        double di = (peakCounts[i]-mean_bkg) / std_bkg;
+    bool update_shape = false;
 
-        if (di > 1.0) {
-            blob.addPoint(ev._px, ev._py, ev._frame, peakCounts[i]-mean_bkg);
-        }
+
+    if (!update_shape) {
+        return true;
     }
 
     Eigen::Vector3d center = blob.center();

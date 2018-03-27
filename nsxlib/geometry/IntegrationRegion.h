@@ -59,13 +59,8 @@ public:
 
     void reset();
 
-    const PeakData& peakData() const;
-    const PeakData& bkgData() const;
     const PeakData& data() const;
     PeakData& data();
-
-    PeakData& peakData();
-    PeakData& bkgData();
 
     const Ellipsoid& shape() const;
 
@@ -75,8 +70,6 @@ private:
     double _peakEnd;
     double _bkgBegin;
     double _bkgEnd;
-    PeakData _peakData;
-    PeakData _bkgData;
     PeakData _data;
     ConvexHull _hull;
 };

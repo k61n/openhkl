@@ -46,8 +46,6 @@ IntegrationRegion::IntegrationRegion(sptrPeak3D peak, double peak_end, double bk
     _peakEnd(peak_end),
     _bkgBegin(bkg_begin),
     _bkgEnd(bkg_end),
-    _peakData(peak),
-    _bkgData(peak),
     _data(peak)
 {
     auto uc = peak->activeUnitCell();
@@ -177,33 +175,12 @@ bool IntegrationRegion::advanceFrame(const Eigen::MatrixXi& image, const Eigen::
 
     for (auto x = xmin; x < xmax; ++x) {
         for (auto y = ymin; y < ymax; ++y) {
-
-            #if 0
-            if (mask(y, x) == int(EventType::FORBIDDEN)) {
-                continue;
-            }
-            #endif
-
             DetectorEvent ev(x, y, frame);
             Eigen::Vector3d p(x, y, frame);
-
-            // check if point is in Brillouin zone
+            // check if point is in Brillouin zone (or AABB if no UC available)
             if (_hull.contains(p)) {
                 _data.addEvent(ev, image(y,x));
-            } else {
-                // not in Brillouin zone, skip pixel
-                continue;
-            }
-            
-            auto s = classify(ev);
-
-            if (s == EventType::PEAK) {
-                _peakData.addEvent(ev, image(y,x));
-            }
-
-            if (s == EventType::BACKGROUND) {
-                _bkgData.addEvent(ev, image(y,x));
-            }
+            }          
         }
     }
     return false;
@@ -211,13 +188,7 @@ bool IntegrationRegion::advanceFrame(const Eigen::MatrixXi& image, const Eigen::
 
 void IntegrationRegion::reset()
 {
-    _peakData.reset();
-    _bkgData.reset();
-}
-
-const PeakData& IntegrationRegion::peakData() const
-{
-    return _peakData;
+    _data.reset();
 }
 
 const PeakData& IntegrationRegion::data() const
@@ -228,21 +199,6 @@ const PeakData& IntegrationRegion::data() const
 PeakData& IntegrationRegion::data()
 {
     return _data;
-}
-
-const PeakData& IntegrationRegion::bkgData() const
-{
-    return _bkgData;
-}
-
-PeakData& IntegrationRegion::peakData()
-{
-    return _peakData;
-}
-
-PeakData& IntegrationRegion::bkgData()
-{
-    return _bkgData;
 }
 
 const Ellipsoid& IntegrationRegion::shape() const

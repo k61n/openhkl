@@ -34,14 +34,15 @@ bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
     const double mean_bkg = _meanBackground.value();
     const double I_peak = _integratedIntensity.value();
 
-    const auto& events = region.peakData().events();
-    const auto& counts = region.peakData().counts();
+    const auto& events = region.data().events();
+    const auto& counts = region.data().counts();
 
     FitProfile profile(_aabb, _nx, _ny, _nz);
     PeakCoordinateSystem frame(peak);
 
     for (size_t i = 0; i < events.size(); ++i) {
         const double dI = counts[i]-mean_bkg;
+        
         if (dI > 1e-4*I_peak) {
             profile.addValue(frame.transform(events[i]), dI);
         }
