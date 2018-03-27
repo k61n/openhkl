@@ -26,8 +26,9 @@ class TestPeakFinder(unittest.TestCase):
         # numors.push_back(dataf)
         # peakFinder.setHandler(handler)
 
-        peakFinder.setIntegrationConfidence(0.997)        
-        peakFinder.setSearchConfidence(0.97)        
+        peakFinder.setIntegrationScale(3.0)
+        peakFinder.setBackgroundScale(3.0)
+        peakFinder.setSearchScale(3.0)        
         # todo : error in "second" argument of the function
         # self.assertAlmostEqual([(peakFinder.confidence()),0.997,1e-10])
         

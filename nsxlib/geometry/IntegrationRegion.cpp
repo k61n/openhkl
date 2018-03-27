@@ -28,9 +28,11 @@
  *
  */
 
+#include "BrillouinZone.h"
 #include "Ellipsoid.h"
 #include "IntegrationRegion.h"
 #include "Peak3D.h"
+#include "UnitCell.h"
 
 namespace nsx {
 
@@ -46,22 +48,46 @@ IntegrationRegion::IntegrationRegion(sptrPeak3D peak, double peak_end, double bk
     _bkgEnd(bkg_end),
     _peakData(peak),
     _bkgData(peak),
-    _aabb()
+    _data(peak)
 {
-    Ellipsoid bkg(_shape);
-    bkg.scale(_bkgEnd);
-    _aabb = bkg.aabb(); 
+    auto uc = peak->activeUnitCell();
+
+    // try to find Brillouin zone if peak has been indexed
+    if (uc && peak->isIndexed()) {
+        BrillouinZone zone(uc->reciprocalBasis());
+        _hull = zone.detectorConvexHull(peak->q(), peak->data());
+    }
+    // otherwise, just use bounding box of the integration ellipsoid
+    else {
+        Ellipsoid bkg(_shape);
+        bkg.scale(_bkgEnd);
+        auto aabb = bkg.aabb();
+
+        Eigen::Vector3d lo = aabb.lower();
+        Eigen::Vector3d dx = aabb.upper() - aabb.lower();
+
+        _hull.addVertex(lo);
+        _hull.addVertex(lo+Eigen::Vector3d(0, 0, dx[2]));
+        _hull.addVertex(lo+Eigen::Vector3d(0, dx[1], 0));
+        _hull.addVertex(lo+Eigen::Vector3d(0, dx[1], dx[2]));
+        _hull.addVertex(lo+Eigen::Vector3d(dx[0], 0, 0));
+        _hull.addVertex(lo+Eigen::Vector3d(dx[0], 0, dx[2]));
+        _hull.addVertex(lo+Eigen::Vector3d(dx[0], dx[1], 0));
+        _hull.addVertex(lo+Eigen::Vector3d(dx[0], dx[1], dx[2]));
+    }
+    _hull.updateHull();
 }
 
-const AABB& IntegrationRegion::aabb() const
+const AABB IntegrationRegion::aabb() const
 {
-    return _aabb;
+    return _hull.aabb();
 }
 
 void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
 {
-    auto lower = _aabb.lower();
-    auto upper = _aabb.upper();
+    auto aabb = _hull.aabb();
+    auto lower = aabb.lower();
+    auto upper = aabb.upper();
 
     if (z < lower[2] || z > upper[2]) {
         return;
@@ -126,8 +152,9 @@ IntegrationRegion::EventType IntegrationRegion::classify(const DetectorEvent& ev
 
 bool IntegrationRegion::advanceFrame(const Eigen::MatrixXi& image, const Eigen::MatrixXi& mask, double frame)
 {
-    auto lower = _aabb.lower();
-    auto upper = _aabb.upper();
+    const auto aabb = _hull.aabb();
+    auto lower = aabb.lower();
+    auto upper = aabb.upper();
 
     if (frame < lower[2]) {
         return false;
@@ -158,6 +185,16 @@ bool IntegrationRegion::advanceFrame(const Eigen::MatrixXi& image, const Eigen::
             #endif
 
             DetectorEvent ev(x, y, frame);
+            Eigen::Vector3d p(x, y, frame);
+
+            // check if point is in Brillouin zone
+            if (_hull.contains(p)) {
+                _data.addEvent(ev, image(y,x));
+            } else {
+                // not in Brillouin zone, skip pixel
+                continue;
+            }
+            
             auto s = classify(ev);
 
             if (s == EventType::PEAK) {
@@ -183,6 +220,16 @@ const PeakData& IntegrationRegion::peakData() const
     return _peakData;
 }
 
+const PeakData& IntegrationRegion::data() const
+{
+    return _data;
+}
+
+PeakData& IntegrationRegion::data()
+{
+    return _data;
+}
+
 const PeakData& IntegrationRegion::bkgData() const
 {
     return _bkgData;
@@ -201,6 +248,11 @@ PeakData& IntegrationRegion::bkgData()
 const Ellipsoid& IntegrationRegion::shape() const
 {
     return _shape;
+}
+
+const ConvexHull& IntegrationRegion::hull() const
+{
+
 }
 
 } // end namespace nsx

@@ -35,9 +35,9 @@ class TestBlob3D(unittest.TestCase):
         eigVal = np.zeros(shape=(3,1), dtype=float)
         eigVec = np.zeros(shape=(3,3), dtype=float)
 
-        sigma1 = 0.682689492
+        scale = 1.0
     
-        blob.toEllipsoid(sigma1,center,eigVal,eigVec)
+        blob.toEllipsoid(scale,center,eigVal,eigVec)
 
         # check if center is ok 
         self.assertAlmostEqual(center[0,0],c_x)

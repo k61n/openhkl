@@ -77,7 +77,9 @@ public:
 
     //! Copy Convex Hull
     ConvexHull(const ConvexHull&);
+    //! Assignment
     ConvexHull& operator=(const ConvexHull&);
+  
     //! Reset, eliminate all vertices, edges and faces
     void reset();
 
@@ -142,6 +144,9 @@ public:
     //! Return whether a vertex is contained in the hull
     bool contains(const Eigen::Vector3d& v) const;
 
+    //! Get AABB of the convex hull
+    AABB aabb() const;
+
 private:
 
     //! Initializes the hull. The initialization consists in defines two triangles with opposite orientations that will
@@ -188,8 +193,6 @@ private:
     //! Cleans the edges, faces and vertices of the hull that are not visible anymore
     void cleanUp();
 
-    //! Get AABB of the convex hull
-    AABB getAABB() const;
 
 private:
 

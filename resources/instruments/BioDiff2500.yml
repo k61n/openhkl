@@ -5,7 +5,7 @@ instrument:
         type: cylindrical
         name: banana
         sample_distance:
-            value: 199.5
+            value: 198.94
             units: mm
         angular_width:
             value: 360.0

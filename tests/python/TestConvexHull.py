@@ -106,6 +106,7 @@ class TestConvexexHull(unittest.TestCase):
 
         # Check that the copy construction is OK
         newHull = nsx.ConvexHull(chull) 
+        print("n vertices", chull.getNVertices())
         self.assertAlmostEqual(chull.getNVertices(),newHull.getNVertices())
         self.assertAlmostEqual(chull.getNEdges(),newHull.getNEdges())
         self.assertAlmostEqual(chull.getNFaces(),newHull.getNFaces())

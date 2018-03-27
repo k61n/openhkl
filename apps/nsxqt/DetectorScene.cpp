@@ -563,39 +563,44 @@ void DetectorScene::loadCurrentImage(bool newimage)
 
         for (auto&& peak: _session->peaks(_currentData.get())) {
             // TODO: fix this
-            auto&& region = nsx::IntegrationRegion(peak, 3.0, 4.0, 5.0);
-            auto aabb = region.aabb();
-            auto&& lower = aabb.lower();
-            auto&& upper = aabb.upper();
+            try {
+                auto&& region = nsx::IntegrationRegion(peak, 3.0, 4.0, 5.0);
+                auto aabb = region.aabb();
+                auto&& lower = aabb.lower();
+                auto&& upper = aabb.upper();
 
-            if (_currentFrameIndex < std::floor(lower[2])) {
-                continue;
-            }
+                if (_currentFrameIndex < std::floor(lower[2])) {
+                    continue;
+                }
 
-            if (_currentFrameIndex > std::ceil(upper[2])) {
-                continue;
-            }
+                if (_currentFrameIndex > std::ceil(upper[2])) {
+                    continue;
+                }
 
-            auto cmin = std::max(0l, std::lround(std::floor(lower[0])));
-            auto rmin = std::max(0l, std::lround(std::floor(lower[1])));
+                auto cmin = std::max(0l, std::lround(std::floor(lower[0])));
+                auto rmin = std::max(0l, std::lround(std::floor(lower[1])));
 
-            auto cmax = std::min(long(_currentData->nCols()), std::lround(std::ceil(upper[0]))+1);
-            auto rmax = std::min(long(_currentData->nRows()), std::lround(std::ceil(upper[1]))+1);
+                auto cmax = std::min(long(_currentData->nCols()), std::lround(std::ceil(upper[0]))+1);
+                auto rmax = std::min(long(_currentData->nRows()), std::lround(std::ceil(upper[1]))+1);
 
-            for (auto c = cmin; c < cmax; ++c) {
-                for (auto r = rmin; r < rmax; ++r) {
-                    using EventType = nsx::IntegrationRegion::EventType;
-                    auto s = region.classify({double(c), double(r), double(_currentFrameIndex)});
-                    // The pixel is in one of the integration shell
-                    if (s == EventType::PEAK) {
-                        region_img.setPixel(c, r, peak->isSelected() ? green : red);
-                    }
+                for (auto c = cmin; c < cmax; ++c) {
+                    for (auto r = rmin; r < rmax; ++r) {
+                        using EventType = nsx::IntegrationRegion::EventType;
+                        auto s = region.classify({double(c), double(r), double(_currentFrameIndex)});
+                        // The pixel is in one of the integration shell
+                        if (s == EventType::PEAK) {
+                            region_img.setPixel(c, r, peak->isSelected() ? green : red);
+                        }
 
-                    // The pixel is in the background region
-                    if (s == EventType::BACKGROUND) {
-                        region_img.setPixel(c, r, peak->isSelected() ? yellow : red);
+                        // The pixel is in the background region
+                        if (s == EventType::BACKGROUND) {
+                            region_img.setPixel(c, r, peak->isSelected() ? yellow : red);
+                        }
                     }
                 }
+            } catch(...) {
+                // problems drawing peak??
+                continue;
             }
         }
 

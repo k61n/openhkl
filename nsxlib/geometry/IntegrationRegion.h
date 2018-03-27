@@ -32,6 +32,7 @@
 
 #include <Eigen/Core>
 
+#include "ConvexHull.h"
 #include "Ellipsoid.h"
 #include "GeometryTypes.h"
 #include "PeakData.h"
@@ -50,7 +51,7 @@ public:
 
     void updateMask(Eigen::MatrixXi& mask, double frame) const;
 
-    const AABB& aabb() const;
+    const AABB aabb() const;
 
     EventType classify(const DetectorEvent& ev) const;
 
@@ -60,11 +61,15 @@ public:
 
     const PeakData& peakData() const;
     const PeakData& bkgData() const;
+    const PeakData& data() const;
+    PeakData& data();
 
     PeakData& peakData();
     PeakData& bkgData();
 
     const Ellipsoid& shape() const;
+
+    const ConvexHull& hull() const;
 private:
     Ellipsoid _shape;
     double _peakEnd;
@@ -72,7 +77,8 @@ private:
     double _bkgEnd;
     PeakData _peakData;
     PeakData _bkgData;
-    AABB _aabb;
+    PeakData _data;
+    ConvexHull _hull;
 };
 
 } // end namespace nsx

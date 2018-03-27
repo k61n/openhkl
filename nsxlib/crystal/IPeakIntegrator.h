@@ -30,9 +30,13 @@
 
 #pragma once
 
+#include <map>
+#include <vector>
+
 #include <Eigen/Dense>
 
 #include "Blob3D.h"
+#include "BrillouinZone.h"
 #include "GeometryTypes.h"
 #include "IntegrationRegion.h"
 #include "Intensity.h"
@@ -50,7 +54,7 @@ public:
     virtual ~IPeakIntegrator();
     virtual bool compute(sptrPeak3D peak, const IntegrationRegion& region) = 0;
 
-    void integrate(PeakList& peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end);
+    void integrate(PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end);
 
     Intensity meanBackground() const;
     Intensity integratedIntensity() const;

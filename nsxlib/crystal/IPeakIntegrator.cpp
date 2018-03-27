@@ -28,13 +28,16 @@
  *
  */
 
+#include "BrillouinZone.h"
 #include "DataSet.h"
 #include "Intensity.h"
 #include "IPeakIntegrator.h"
 #include "Logger.h"
 #include "Peak3D.h"
 #include "ProgressHandler.h"
+#include "UnitCell.h"
 #include "UtilsTypes.h"
+
 
 namespace nsx {
 
@@ -63,22 +66,15 @@ const std::vector<Intensity>& IPeakIntegrator::rockingCurve() const
     return _rockingCurve;
 }
 
-void IPeakIntegrator::integrate(PeakList& peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end)
+void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end)
 {
     sptrProgressHandler handler = nullptr;
-    std::vector<sptrPeak3D> peak_list;
-    const size_t num_peaks = peaks.size();
-    peak_list.reserve(num_peaks);
 
-    for (auto&& peak: peaks ) {
-        // skip if peak does not belong to this dataset
-        if (peak->data() != data) {
-            continue;
-        }
-        peak_list.emplace_back(peak);
-    }
+    // integrate only those peaks that belong to the specified dataset
+    auto it = std::remove_if(peaks.begin(), peaks.end(), [&](const sptrPeak3D& peak) { return peak->data() != data;});
+    peaks.erase(it, peaks.end());
 
-    std::string status = "Integrating " + std::to_string(peak_list.size()) + " peaks...";
+    std::string status = "Integrating " + std::to_string(peaks.size()) + " peaks...";
     nsx::info() << status;
 
     if (handler) {
@@ -92,23 +88,34 @@ void IPeakIntegrator::integrate(PeakList& peaks, sptrDataSet data, double peak_e
     std::map<sptrPeak3D, IntegrationRegion> regions;
     std::map<sptrPeak3D, bool> integrated;
 
-    for (auto peak: peak_list) {
-        regions.emplace(std::make_pair(peak, IntegrationRegion(peak, peak_end, bkg_begin, bkg_end)));
-        integrated.emplace(std::make_pair(peak, false));
+    for (auto peak: peaks) {
+        try {
+            // IntegrationRegion constructor may throw (e.g. peak on boundary of image)
+            regions.emplace(std::make_pair(peak, IntegrationRegion(peak, peak_end, bkg_begin, bkg_end)));
+            integrated.emplace(std::make_pair(peak, false));
+        } catch (...) {
+            peak->setSelected(false);
+        }
     }
+
+    // only integrate the peaks with valid integration regions
+    it = std::remove_if(peaks.begin(), peaks.end(), [&](const sptrPeak3D& p) { return regions.find(p) == regions.end(); });
+    peaks.erase(it, peaks.end());
 
     for (idx = 0; idx < data->nFrames(); ++idx ) {
         Eigen::MatrixXi current_frame, mask;
         current_frame = data->frame(idx);
 
         mask.resize(data->nRows(), data->nCols());
-        mask.setConstant(int(IntegrationRegion::EventType::EXCLUDED));
+        mask.setConstant(int(IntegrationRegion::EventType::EXCLUDED));        
 
-        for (auto peak: peak_list) {
+        for (auto peak: peaks) {
+            assert(peak != nullptr);
+            assert(regions.find(peak) != regions.end());
             regions[peak].updateMask(mask, idx);
         }
 
-        for (auto& peak: peak_list) {
+        for (auto peak: peaks) {
             bool result = regions[peak].advanceFrame(current_frame, mask, idx);
 
             // done reading peak data
@@ -116,7 +123,9 @@ void IPeakIntegrator::integrate(PeakList& peaks, sptrDataSet data, double peak_e
                 regions[peak].peakData().computeQs();         
                 regions[peak].peakData().computeStandard();              
                 regions[peak].bkgData().computeQs();              
-                regions[peak].bkgData().computeStandard();              
+                regions[peak].bkgData().computeStandard();    
+                regions[peak].data().computeQs();              
+                regions[peak].data().computeStandard();            
                 try {
                     if (compute(peak, regions[peak])) {
                         peak->updateIntegration(*this);

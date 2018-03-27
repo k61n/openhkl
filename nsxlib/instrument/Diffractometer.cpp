@@ -19,8 +19,9 @@ sptrDiffractometer Diffractometer::build(const std::string& name)
     try {
         instrumentDefinition = YAML::LoadFile(diffractometerFile);
     }
-    catch (const std::exception& error) {
-        throw std::runtime_error("Error when opening instrument definition file");
+    catch (std::exception& e) {
+        std::string msg = "Error when opening instrument definition file: ";
+        throw std::runtime_error(msg+e.what());
     }
 
     if (!instrumentDefinition["instrument"]) {
@@ -31,10 +32,9 @@ sptrDiffractometer Diffractometer::build(const std::string& name)
 
     try {
         diffractometer = std::make_shared<Diffractometer>(Diffractometer(instrumentDefinition["instrument"]));
-    }
-    catch (...)
-    {
-        throw std::runtime_error("Error when reading instrument definition file");
+    } catch (std::exception& e) {
+        std::string msg = "Error when reading instrument definition file: ";
+        throw std::runtime_error(msg+e.what());
     }
 
     return diffractometer;
