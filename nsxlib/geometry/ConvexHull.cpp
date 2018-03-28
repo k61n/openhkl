@@ -38,6 +38,7 @@ void ConvexHull::reset()
     _vertices.clear();
     _edges.clear();
     _faces.clear();
+    _planes.clear();
     _initialized=false;
 }
 
@@ -51,24 +52,13 @@ bool ConvexHull::isCoplanar(Vertex* v0, Vertex* v1, Vertex* v2)
     return (norm<1.0e-9);
 }
 
-ConvexHull::ConvexHull() : _initialized(false), _vertices(), _edges(), _faces()
+ConvexHull::ConvexHull() : _initialized(false), _vertices(), _edges(), _faces(), _planes()
 {
 }
 
 ConvexHull::~ConvexHull()
 {
-    for (auto v : _vertices)
-        delete v;
-
-    for (auto e : _edges)
-        delete e;
-
-    for (auto f : _faces)
-        delete f;
-
-    _vertices.clear();
-    _edges.clear();
-    _faces.clear();
+    reset();
 }
 
 Vertex* ConvexHull::addVertex(const Eigen::Vector3d& coords)
@@ -230,9 +220,7 @@ Face* ConvexHull::buildFace(Vertex* v0, Vertex* v1, Vertex* v2, Face* fold)
 
 void ConvexHull::updateHull()
 {
-
-    if (!_initialized)
-    {
+    if (!_initialized) {
         initalizeHull();
         _initialized=true;
     }
@@ -240,63 +228,69 @@ void ConvexHull::updateHull()
     if (_vertices.size()<4)
         throw std::runtime_error("Not enough vertices to build a convex hull.");
 
-    auto it=_vertices.begin();
-    while(it!=_vertices.end())
-    {
-        if (!((*it)->_mark))
-        {
+    // note: omitted it++ is intentional
+    for (auto it = _vertices.begin(); it != _vertices.end(); ) {
+        if (!((*it)->_mark)) {
             processVertex(*it);
             ++it;
             cleanUp();
             it=_vertices.begin();
-        }
-        else
+        } else {
             ++it;
+        }
+    }
+
+    // build cache of bounding planes
+    _planes.clear();
+
+    for (auto face: _faces) {
+        // note: vertices are stored right-handed as viewed from _outside_ the hull
+        Eigen::Vector3d u = face->_vertices[1]->_coords - face->_vertices[0]->_coords;
+        Eigen::Vector3d v = face->_vertices[2]->_coords - face->_vertices[0]->_coords;
+        Eigen::Vector3d n = u.cross(v);
+        double d = n.dot(face->_vertices[0]->_coords);
+        _planes.emplace_back(n, d);
     }
 }
 
 void ConvexHull::processVertex(Vertex* v)
 {
-    v->_mark=true;
+    v->_mark = true;
     // Mark the faces that are visible from vertex v
-    bool visible=false;
-    for (auto& f : _faces)
-    {
-        if (f->volumeSign(v)<0)
-        {
-            f->_visible=true;
-            visible=true;
+    bool visible = false;
+    for (auto& f : _faces) {
+        if (f->volumeSign(v)<0) {
+            f->_visible = true;
+            visible = true;
         }
     }
 
     // If no faces are visible from vertex v, then v is inside the hull
-    if (!visible)
-    {
-        v->_onHull=false;
+    if (!visible) {
+        v->_onHull = false;
         return;
     }
 
     bool visible1, visible2;
 
-    auto it=_edges.begin();
-    while (it!=_edges.end())
-    {
-        auto e=*it;
-        if (e->_adjFace[0])
-            visible1=e->_adjFace[0]->_visible;
-        else
-            visible1=false;
-
-        if (e->_adjFace[1])
-            visible2=e->_adjFace[1]->_visible;
-        else
-            visible2=false;
-
-        if (visible1 && visible2)
-            e->_delete=true;
-        else if (visible1 || visible2)
-            e->_newFace=buildConeFace(e,v);
-
+    // note: omitted it++ is intentional
+    for (auto it = _edges.begin(); it != _edges.end();) {
+        auto e = *it;
+        if (e->_adjFace[0]) {
+            visible1 = e->_adjFace[0]->_visible;
+        } else {
+            visible1 = false;
+        }
+        if (e->_adjFace[1]) {
+            visible2 = e->_adjFace[1]->_visible;
+        } else {
+            visible2 = false;
+        }
+        if (visible1 && visible2) {
+            e->_delete = true;
+        } else if (visible1 || visible2) {
+            e->_newFace = buildConeFace(e,v);
+        }
         ++it;
     }
 }
@@ -620,11 +614,15 @@ std::ostream& operator<<(std::ostream& os, const ConvexHull& chull)
     return os;
 }
 
+// Note: this function is absolutely performance critical. 
+// Make changes with caution, and remember to profile!
 bool ConvexHull::contains(const Eigen::Vector3d& v) const {
-    Vertex point(v);
-    // check that it is in the convex hull
-    for (auto&& face : _faces) {
-        if (face->volumeSign(&point) < 0) {
+    for (const auto& pair: _planes) {
+        double dot = 0.0;
+        for (size_t i = 0; i < 3; ++i) {
+            dot += v(i)*pair.first(i);
+        }
+        if (dot > pair.second) {
             return false;
         }
     }

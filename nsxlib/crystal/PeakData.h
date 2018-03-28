@@ -19,10 +19,6 @@ public:
 
     const std::deque<DetectorEvent>& events() const;
     const std::deque<double>& counts() const;
-    const std::deque<ReciprocalVector>& qs() const;
-
-    //! Compute the q values for each of the observed events.
-    void computeQs();
 
     //! Compute the standard coordinates for each of the observed events.
     void computeStandard();
@@ -38,7 +34,6 @@ private:
     PeakCoordinateSystem _system;
     std::deque<DetectorEvent> _events;
     std::deque<double> _counts;
-    std::deque<ReciprocalVector> _qs;
     std::deque<Eigen::Vector3d> _coords;
 };
 

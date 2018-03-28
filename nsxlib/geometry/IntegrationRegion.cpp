@@ -29,6 +29,8 @@
  */
 
 #include "BrillouinZone.h"
+#include "Detector.h"
+#include "Diffractometer.h"
 #include "Ellipsoid.h"
 #include "IntegrationRegion.h"
 #include "Peak3D.h"
@@ -162,16 +164,11 @@ bool IntegrationRegion::advanceFrame(const Eigen::MatrixXi& image, const Eigen::
         return true;
     }
 
-    long xmin = std::lround(std::floor(lower[0]));
-    long ymin = std::lround(std::floor(lower[1]));
-    long xmax = std::lround(std::ceil(upper[0])+1);
-    long ymax = std::lround(std::ceil(upper[1])+1);
+    long xmin = std::max(0L, std::lround(lower[0]));
+    long ymin = std::max(0L, std::lround(lower[1]));
 
-    xmin = std::max(0l, xmin);
-    ymin = std::max(0l, ymin);
-
-    xmax = std::min(xmax, long(image.cols()));
-    ymax = std::min(ymax, long(image.rows()));
+    long xmax = std::min(long(image.cols()), std::lround(upper[0]));
+    long ymax = std::min(long(image.rows()), std::lround(upper[0]));
 
     for (auto x = xmin; x < xmax; ++x) {
         for (auto y = ymin; y < ymax; ++y) {
@@ -208,7 +205,7 @@ const Ellipsoid& IntegrationRegion::shape() const
 
 const ConvexHull& IntegrationRegion::hull() const
 {
-
+    return _hull;
 }
 
 } // end namespace nsx

@@ -119,8 +119,7 @@ void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_en
             bool result = regions[peak].advanceFrame(current_frame, mask, idx);
 
             // done reading peak data
-            if (result && !integrated[peak]) {
-                regions[peak].data().computeQs();              
+            if (result && !integrated[peak]) {           
                 regions[peak].data().computeStandard();            
                 try {
                     if (compute(peak, regions[peak])) {

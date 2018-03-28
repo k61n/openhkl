@@ -204,6 +204,8 @@ private:
     std::list<Edge*> _edges;
     //! The list of the faces of the hull. This is the std implementation of the double-linked chain.
     std::list<Face*> _faces;
+    //! Cached bounding planes of the hull.
+    std::vector<std::pair<Eigen::Vector3d, double>> _planes;
 
 };
 
