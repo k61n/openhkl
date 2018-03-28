@@ -6,46 +6,20 @@
 
 namespace nsx {
 
-PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak): 
-    _peak([peak]() {
-        if (!peak) {
-            throw std::runtime_error("PeakCoordinateSystem: cannot constuct with null Peak3D");
-        }
-        return peak;
-    }()),
-
-    _event([&]() {
-        #if 0
-        auto q = peak->qPredicted();
-        auto events = peak->data()->getEvents({q});
-        if (events.size() != 1) {
-            throw std::runtime_error("PeakCoordinateSystem: cannot predict peak center");
-        }
-        return events[0];
-        #endif
-        return peak->getShape().center();
-    }()),
-
-    _state(peak->data()->interpolatedState(_event._frame)),
-
-    _ki(_state.ki().rowVector()),
-
-    _kf([&]() {
-        // take care to make sure that q is transformed to lab coordinate system
-        // question: better to use observed q or predicted q??
-        #if 0
-        auto detector = peak->data()->diffractometer()->getDetector();
-        auto pos = detector->pixelPosition(_event._px, _event._py);
-        return _state.kfLab(pos).rowVector();
-        #endif
-        //Eigen::RowVector3d q = peak->qPredicted().rowVector() * _state.sampleOrientationMatrix().transpose();
-        Eigen::RowVector3d q = peak->q().rowVector() * _state.sampleOrientationMatrix().transpose();
-        return q + _ki;
-    }()),
-    
-    _e1(_kf.cross(_ki)),
-    _e2(_kf.cross(_e1))
+PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak): _peak(peak)
 {
+    if (!_peak) {
+        throw std::runtime_error("Cannot construct PeakCoordinateSystem from null Peak3d");
+    }
+
+    _event = DetectorEvent(peak->getShape().center());
+    _state = peak->data()->interpolatedState(_event._frame);
+    _ki = _state.ki().rowVector();
+    _kf = peak->q().rowVector()*_state.sampleOrientationMatrix().transpose() + _ki;
+    
+    _e1 = _kf.cross(_ki);
+    _e2 = _kf.cross(_e1);
+
     _e1.normalize();
     _e2.normalize();
 
