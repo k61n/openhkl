@@ -72,6 +72,7 @@ void run_test(const char* filename, const char* instrument)
         auto detector = peak->data()->diffractometer()->getDetector();
 
         NSX_CHECK_SMALL(e0.norm(), 1e-8);
+        std::cout << e0.transpose() << std::endl;
         NSX_CHECK_SMALL((e1-y1).norm() / e1.norm(), 1e-1);
         NSX_CHECK_SMALL((e2-y2).norm() / e2.norm(), 1e-1);
         NSX_CHECK_SMALL((e3-y3).norm() / e3.norm(), 1e-1);
