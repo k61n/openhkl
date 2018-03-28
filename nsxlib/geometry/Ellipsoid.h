@@ -111,6 +111,9 @@ public:
     //! Transform the ellipsoid to detector space, assuming it is currently in q-space.
     Ellipsoid toDetectorSpace(sptrDataSet data) const;
 
+    //! Return the value (x-center)*metric*(x-center)
+    double r2(const Eigen::Vector3d x) const;
+
 #ifndef SWIG
     // Macro to ensure that Ellipsoid can be dynamically allocated.
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
