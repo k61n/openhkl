@@ -83,19 +83,19 @@ void run_test(const char* filename, const char* instrument)
 
         peak->setShape(detector_shape);
 
-        NSX_CHECK_CLOSE(frame.estimateDivergence(), sigmaD, 1e-7);
-        NSX_CHECK_CLOSE(frame.estimateMosaicity(), sigmaM, 1e-7);
+        NSX_CHECK_CLOSE(frame.estimateDivergence(), sigmaD, 1e-6);
+        NSX_CHECK_CLOSE(frame.estimateMosaicity(), sigmaM, 1e-6);
 
         auto standard_shape = frame.standardShape();
         Eigen::Matrix3d cov = standard_shape.inverseMetric();
 
-        NSX_CHECK_CLOSE(cov(0,0), sigmaD*sigmaD, 1e-5);
-        NSX_CHECK_CLOSE(cov(1,1), sigmaD*sigmaD, 1e-5);
-        NSX_CHECK_CLOSE(cov(2,2), sigmaM*sigmaM, 1e-5);
+        NSX_CHECK_CLOSE(cov(0,0), sigmaD*sigmaD, 1e-4);
+        NSX_CHECK_CLOSE(cov(1,1), sigmaD*sigmaD, 1e-4);
+        NSX_CHECK_CLOSE(cov(2,2), sigmaM*sigmaM, 1e-4);
 
-        NSX_CHECK_SMALL(cov(0,1), 1e-10);
-        NSX_CHECK_SMALL(cov(0,2), 1e-10);
-        NSX_CHECK_SMALL(cov(1,2), 1e-10);
+        NSX_CHECK_SMALL(cov(0,1), 1e-8);
+        NSX_CHECK_SMALL(cov(0,2), 1e-8);
+        NSX_CHECK_SMALL(cov(1,2), 1e-8);
     }
 }
 

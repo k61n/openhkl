@@ -113,7 +113,7 @@ int main()
     std::cout << hard_fit.covariance() << std::endl;
 
     double pearson = hard_fit.pearson(x, y, z, I);
-    NSX_CHECK_GREATER_THAN(pearson, 0.79);
+    NSX_CHECK_GREATER_THAN(pearson, 0.7);
     std::cout << pearson << std::endl;
 
     return 0;
