@@ -11,6 +11,10 @@
 }
 
 %feature("director") IPeakIntegrator;
+%feature("director") MeanBackgroundIntegrator;
+%feature("director") StrongPeakIntegrator;
+%feature("director") WeakPeakIntegrator;
+%feature("director") ShapeIntegrator;
 
 %include "pynsx_doc.i"
 
@@ -58,6 +62,7 @@
 %shared_ptr(nsx::FlatDetector)
 %shared_ptr(nsx::CylindricalDetector)
 %shared_ptr(nsx::Gonio)
+%shared_ptr(nsx::ShapeLibrary)
 
 %{
 #pragma GCC diagnostic ignored "-Wpedantic"
@@ -122,8 +127,10 @@ using Eigen::Quaterniond;
 #include "Profile.h"
 #include "Intensity.h"
 #include "IPeakIntegrator.h"
+#include "MeanBackgroundIntegrator.h"
 #include "WeakPeakIntegrator.h"
 #include "StrongPeakIntegrator.h"
+#include "ShapeIntegrator.h"
 #include "IntegrationRegion.h"
 #include "PeakData.h"
 #include "UnitCell.h"
@@ -272,7 +279,9 @@ using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 #include "MergedData.h"
 
 #include "MillerIndex.h"
+#include "IntegratedProfile.h"
 #include "ShapeLibrary.h"
+using sptrShapeLibrary = std::shared_ptr<nsx::ShapeLibrary>;
 
 #include "CC.h"
 #include "RFactor.h"
@@ -384,11 +393,19 @@ namespace nsx {
 
 %include "FFTIndexing.h"
 
+
 %include "PeakData.h"
 %include "IntegrationRegion.h"
+%include "Intensity.h"
+%template(IntensityList) std::vector<nsx::Intensity>;
+%include "FitProfile.h"
+%include "IntegratedProfile.h"
 %include "IPeakIntegrator.h"
+%include "MeanBackgroundIntegrator.h"
 %include "WeakPeakIntegrator.h"
 %include "StrongPeakIntegrator.h"
+%include "ShapeLibrary.h"
+%include "ShapeIntegrator.h"
 %include "IntegrationRegion.h"
 %include "PeakData.h"
 %include "Intensity.h"
@@ -473,6 +490,7 @@ namespace nsx {
 %include "MillerIndex.h"
 %template(MillerIndexList) std::vector<nsx::MillerIndex>;
 
+%include "IntegratedProfile.h"
 %include "ShapeLibrary.h"
 
 %include "FFTIndexing.h"

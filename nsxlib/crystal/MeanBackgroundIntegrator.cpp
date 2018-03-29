@@ -64,7 +64,8 @@ bool MeanBackgroundIntegrator::compute(sptrPeak3D peak, const IntegrationRegion&
         }
     }
 
-    _meanBackground = Intensity(mean_bkg, var_bkg);
+    // note: the variance is the variance of the _estimate of the mean background_
+    _meanBackground = Intensity(mean_bkg, var_bkg / nbkg);
 
     return true;
 }

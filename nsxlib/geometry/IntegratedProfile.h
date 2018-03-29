@@ -22,16 +22,26 @@ public:
     //! of the peak.
     void add(double r2, const Intensity& I);
 
-    //! Return the vector of bins
+    //! Add another profile to this one. Must have same sigma_max and number of bins.
+    //! Throws if these conditions are violated.
+    void add(const IntegratedProfile& other);
+
+    //! Return the vector of bin values
     const std::vector<Intensity> bins() const;
 
     //! Return the index of the bin with smallest sigma/I
     size_t optimalBin() const;
 
+    //! Rescale the profile: I -> s*I
+    void rescale(double s);
+
+    //! Divide the profile by a given intensity, with propagation of errors
+    void divide(const Intensity& I);
+
 private:
     std::vector<Intensity> _profile;
     std::vector<double> _endpoints;
-    double _dr3;
+    double _sigmaMax;
 };
 
 } // end namespace nsx

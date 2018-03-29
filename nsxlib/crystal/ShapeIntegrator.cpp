@@ -1,5 +1,6 @@
 #include "DataSet.h"
 #include "Ellipsoid.h"
+#include "IntegratedProfile.h"
 #include "Intensity.h"
 #include "MillerIndex.h"
 #include "Peak3D.h"
@@ -18,8 +19,6 @@ ShapeIntegrator::ShapeIntegrator(const AABB& aabb, int nx, int ny, int nz): Stro
 
 }
 
-
-
 bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 {
     auto uc = peak->activeUnitCell();
@@ -32,25 +31,33 @@ bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
     StrongPeakIntegrator::compute(peak, region);
 
     const double mean_bkg = _meanBackground.value();
+    const double std_bkg = _meanBackground.sigma();
     const double I_peak = _integratedIntensity.value();
 
     const auto& events = region.data().events();
     const auto& counts = region.data().counts();
 
     FitProfile profile(_aabb, _nx, _ny, _nz);
+    // todo: don't use default constructor!
+    IntegratedProfile integrated_profile;
     PeakCoordinateSystem frame(peak);
 
+    Ellipsoid e = peak->getShape();
+
     for (size_t i = 0; i < events.size(); ++i) {
+        const auto& ev = events[i];
+        Eigen::Vector3d x(ev._px, ev._py, ev._frame);      
         const double dI = counts[i]-mean_bkg;
+        // todo: variance here assumes Poisson (no gain or baseline)
+        integrated_profile.add(e.r2(x), Intensity(dI, counts[i]+std_bkg*std_bkg));
         
         if (dI > 1e-4*I_peak) {
-            profile.addValue(frame.transform(events[i]), dI);
+            profile.addValue(frame.transform(ev), dI);
         }
     }
     if (profile.normalize()) {
-        auto c = peak->getShape().center();
-        DetectorEvent ev(c[0], c[1], c[2]);
-        _library->addPeak(peak, profile);
+        integrated_profile.divide(_integratedIntensity);
+        _library->addPeak(peak, std::move(profile), std::move(integrated_profile));
     }
     return true;
 }

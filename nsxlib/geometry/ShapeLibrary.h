@@ -7,6 +7,7 @@
 #include "CrystalTypes.h"
 #include "DetectorEvent.h"
 #include "FitProfile.h"
+#include "IntegratedProfile.h"
 #include "MillerIndex.h"
 
 namespace nsx {
@@ -21,7 +22,7 @@ public:
     ~ShapeLibrary();
 
     //! Add a refernce peak to the library
-    bool addPeak(sptrPeak3D peak, const FitProfile& profile);
+    bool addPeak(sptrPeak3D peak, FitProfile&& profile, IntegratedProfile&& integrated_profile);
 
     //! Update the fitted covariances
     void updateFit(int num_iterations);
@@ -38,6 +39,9 @@ public:
     //! Return the average peak profile near the given detector event
     FitProfile meanProfile(const DetectorEvent& ev, double radius, double nframes) const;
 
+    //! Return the average peak profile near the given detector event
+    IntegratedProfile meanIntegratedProfile(const DetectorEvent& ev, double radius, double nframes) const;
+
     //! Return the average peak covariance near the given detector event
     Eigen::Matrix3d meanCovariance(sptrPeak3D reference_peak, double radius, double nframes) const;
 
@@ -45,7 +49,7 @@ public:
     PeakList findNeighbors(const DetectorEvent& ev, double radius, double nframes) const;
 
 private:
-    std::map<sptrPeak3D, FitProfile> _profiles;
+    std::map<sptrPeak3D, std::pair<FitProfile, IntegratedProfile>> _profiles;
     double _sigmaD;
     double _sigmaE;
     double _sigmaM;

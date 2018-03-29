@@ -55,11 +55,10 @@ ShapeLibrary::~ShapeLibrary()
 
 }
 
-bool ShapeLibrary::addPeak(sptrPeak3D peak, const FitProfile& profile)
+bool ShapeLibrary::addPeak(sptrPeak3D peak, FitProfile&& profile, IntegratedProfile&& integrated_profile)
 {
     Eigen::Matrix3d A = peak->getShape().inverseMetric();
     Eigen::Matrix3d cov = 0.5 * (A + A.transpose());
-
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(cov);
     Eigen::VectorXd w = solver.eigenvalues();
 
@@ -67,9 +66,8 @@ bool ShapeLibrary::addPeak(sptrPeak3D peak, const FitProfile& profile)
     if (!(w.minCoeff() > 1e-2)) {
         return false;
     }
-
-    _profiles[peak] = profile;
-    _profiles[peak].normalize();
+    _profiles[peak].first = std::move(profile);
+    _profiles[peak].second = std::move(integrated_profile);
     return true;
 }
 
@@ -166,19 +164,27 @@ FitProfile ShapeLibrary::meanProfile(const DetectorEvent& ev, double radius, dou
 {
     FitProfile mean;
     PeakList neighbors = findNeighbors(ev, radius, nframes);
-    const Eigen::Vector3d c0(ev._px, ev._py, ev._frame);
 
     for (auto peak: neighbors) {
         //double weight = (1-r/radius) * (1-df/nframes);
         // mean.addProfile(profile, weight*weight);
-        mean.addProfile(_profiles.find(peak)->second, 1.0);
+        mean.addProfile(_profiles.find(peak)->second.first, 1.0);
     }
-
-    if (neighbors.size() == 0) {
-        throw std::runtime_error("Error, no neighboring profiles found.");
-    }
-
     mean.normalize();
+    return mean;
+}
+
+IntegratedProfile ShapeLibrary::meanIntegratedProfile(const DetectorEvent& ev, double radius, double nframes) const
+{
+    IntegratedProfile mean;
+    PeakList neighbors = findNeighbors(ev, radius, nframes);
+
+    for (auto peak: neighbors) {
+        //double weight = (1-r/radius) * (1-df/nframes);
+        // mean.addProfile(profile, weight*weight);
+        mean.add(_profiles.find(peak)->second.second);
+    }
+    mean.rescale(1.0 / neighbors.size());
     return mean;
 }
 
@@ -199,6 +205,9 @@ PeakList ShapeLibrary::findNeighbors(const DetectorEvent& ev, double radius, dou
             continue;
         }
         neighbors.push_back(peak);
+    }
+    if (neighbors.size() == 0) {
+        throw std::runtime_error("Error, no neighboring profiles found.");
     }
     return neighbors;
 }

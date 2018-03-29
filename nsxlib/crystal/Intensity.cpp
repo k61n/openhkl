@@ -79,11 +79,15 @@ Intensity Intensity::operator-(const Intensity &other) const
     return Intensity(_value - other._value, _sigma2 + other._sigma2);
 }
 
+Intensity& Intensity::operator*=(double s)
+{
+    _value *= s;
+    _sigma2 *= s*s;
+    return *this;
+}
+
 Intensity Intensity::operator*(double scale) const
 {
-    if (scale < 0.0 || std::isnan(scale)) {
-        return Intensity(0.0, 0.0);
-    }
     return Intensity(scale*_value, scale*scale*_sigma2);
 }
 
@@ -98,6 +102,12 @@ Intensity& Intensity::operator+=(const Intensity& other)
     _value += other._value;
     _sigma2 += other._sigma2;
     return *this;
+}
+
+Intensity Intensity::operator/(const Intensity& other) const
+{
+    const double d = 1.0 / other._value;
+    return Intensity(_value*d, d*d*(_sigma2 + _value*other._sigma2));
 }
 
 } // end namespace nsx
