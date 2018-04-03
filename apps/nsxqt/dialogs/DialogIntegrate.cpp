@@ -13,6 +13,13 @@ DialogIntegrate::DialogIntegrate(QWidget *parent):
     connect(_ui->okButton, &QPushButton::clicked, [=] {this->done(QDialog::Accepted);});
     connect(_ui->cancelButton, &QPushButton::clicked, [=] {this->done(QDialog::Rejected);});
 
+    _ui->method->addItem("background subtraction");
+    _ui->method->addItem("3d gaussian fit");
+    _ui->method->addItem("3d profilt fit (Kabsch)");
+    _ui->method->addItem("3d profilt fit (detector)");
+    _ui->method->addItem("I/sigma");
+
+
     // resolve method overload
     auto valueChanged = static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged);
 }

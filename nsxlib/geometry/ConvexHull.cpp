@@ -242,14 +242,26 @@ void ConvexHull::updateHull()
 
     // build cache of bounding planes
     _planes.clear();
+    // inner and outer radius
+    _innerR2 = std::numeric_limits<double>::max();
+    _outerR2 = std::numeric_limits<double>::min();
 
     for (auto face: _faces) {
         // note: vertices are stored right-handed as viewed from _outside_ the hull
         Eigen::Vector3d u = face->_vertices[1]->_coords - face->_vertices[0]->_coords;
         Eigen::Vector3d v = face->_vertices[2]->_coords - face->_vertices[0]->_coords;
         Eigen::Vector3d n = u.cross(v);
+        n.normalize();
         double d = n.dot(face->_vertices[0]->_coords);
         _planes.emplace_back(n, d);
+
+        // update inner radius
+        _innerR2 = std::min(_innerR2, d*d);
+
+        // update outer radius
+        for (auto i = 0; i < 3; ++i) {
+            _outerR2 = std::max(_outerR2, face->_vertices[i]->_coords.squaredNorm());
+        }
     }
 }
 
@@ -617,6 +629,17 @@ std::ostream& operator<<(std::ostream& os, const ConvexHull& chull)
 // Note: this function is absolutely performance critical. 
 // Make changes with caution, and remember to profile!
 bool ConvexHull::contains(const Eigen::Vector3d& v) const {
+
+    const double r2 = v.squaredNorm();
+
+    if (r2 > _outerR2) {
+        return false;
+    }
+
+    if (r2 <= _innerR2) {
+        return true;
+    }
+
     for (const auto& pair: _planes) {
         double dot = 0.0;
         for (size_t i = 0; i < 3; ++i) {

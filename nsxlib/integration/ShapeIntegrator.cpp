@@ -39,7 +39,7 @@ bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 
     FitProfile profile(_aabb, _nx, _ny, _nz);
     // todo: don't use default constructor!
-    IntegratedProfile integrated_profile;
+    IntegratedProfile integrated_profile(_meanBackground);
     PeakCoordinateSystem frame(peak);
 
     Ellipsoid e = peak->getShape();

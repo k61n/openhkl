@@ -150,7 +150,7 @@ IntegrationRegion::EventType IntegrationRegion::classify(const DetectorEvent& ev
     return EventType::FORBIDDEN;
 }
 
-bool IntegrationRegion::advanceFrame(const Eigen::MatrixXi& image, const Eigen::MatrixXi& mask, double frame)
+bool IntegrationRegion::advanceFrame(const Eigen::MatrixXd& image, const Eigen::MatrixXi& mask, double frame)
 {
     const auto aabb = _hull.aabb();
     auto lower = aabb.lower();

@@ -103,8 +103,9 @@ void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_en
     peaks.erase(it, peaks.end());
 
     for (idx = 0; idx < data->nFrames(); ++idx ) {
-        Eigen::MatrixXi current_frame, mask;
-        current_frame = data->frame(idx);
+        Eigen::MatrixXd current_frame;
+        Eigen::MatrixXi mask;
+        current_frame = data->transformedFrame(idx);
 
         mask.resize(data->nRows(), data->nCols());
         mask.setConstant(int(IntegrationRegion::EventType::EXCLUDED));        

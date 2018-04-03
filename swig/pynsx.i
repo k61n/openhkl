@@ -138,6 +138,7 @@ using Eigen::Quaterniond;
 #include "RFactor.h"
 #include "CC.h"
 #include "Peak3D.h"
+using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
 #include "PeakRecord.h"
 
@@ -404,6 +405,7 @@ namespace nsx {
 %include "MeanBackgroundIntegrator.h"
 %include "WeakPeakIntegrator.h"
 %include "StrongPeakIntegrator.h"
+%include "Peak3D.h"
 %include "ShapeLibrary.h"
 %include "ShapeIntegrator.h"
 %include "IntegrationRegion.h"

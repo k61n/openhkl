@@ -123,8 +123,17 @@ public:
     //! The third column is identically zero and is kept only for convenience.
     virtual Eigen::Matrix3d jacobian(double x, double y) const = 0;
 
+    //! Return the detector baseline. Measured count = gain * (neutron count) + baseline
+    double baseline() const;
+    //! Return the detector gain. Measured count = gain * (neutron count) + baseline
+    double gain() const;
+
 private:
     DataOrder _dataorder;
+    //! Value for detector baseline. Default is 0.0
+    double _baseline;
+    //! Value fo detector gain. Default is 1.0
+    double _gain;
 };
 
 } // end namespace nsx

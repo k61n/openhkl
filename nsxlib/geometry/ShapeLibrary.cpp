@@ -12,6 +12,20 @@
 
 namespace nsx {
 
+static Eigen::Matrix3d from_cholesky(const std::array<double, 6>& components)
+{
+    Eigen::Matrix3d L;
+    L.setZero();
+    L(0,0) = components[0];
+    L(1,1) = components[1];
+    L(2,2) = components[2];
+    L(1,0) = components[3];
+    L(2,0) = components[4];
+    L(2,1) = components[5];
+
+    return L*L.transpose();
+}
+
 struct FitData {
     Eigen::Matrix3d Rs, Rd, Jk, Jp, Jd;
     Eigen::Vector3d kf, ki, q;
@@ -46,13 +60,46 @@ struct FitData {
 };
 
 
-ShapeLibrary::ShapeLibrary(): _profiles(), _sigmaD(1e-3), _sigmaE(1e-3), _sigmaM(1e-3), _sigmaA(1e-3)
-{   
+ShapeLibrary::ShapeLibrary(): 
+    _profiles(),
+    _choleskyD(),
+    _choleskyM(),
+    _choleskyS()
+{
+    _choleskyD.fill(1e-6);
+    _choleskyM.fill(1e-6);
+    _choleskyS.fill(1e-6);
 }
 
 ShapeLibrary::~ShapeLibrary()
 {
 
+}
+
+static void covariance_helper(Eigen::Matrix3d& result, const FitData& f, const Eigen::Matrix3d& sigmaD, const Eigen::Matrix3d& sigmaM, const Eigen::Matrix3d& sigmaS)
+{
+    static constexpr double deg2 = (M_PI/180)*(M_PI/180);
+    Eigen::Matrix3d E;
+    E.setIdentity();
+
+    Eigen::Matrix3d cov;
+    cov.setZero();
+
+    Eigen::Matrix3d Jd = f.Jd.inverse();
+    Eigen::Matrix3d Jk = f.Rs * f.Jk;
+    Eigen::Matrix3d Jp = f.Rs * f.Jp;
+    Eigen::Vector3d qs = f.Rs*f.q;
+
+    Eigen::Matrix3d P = f.q.squaredNorm() * Eigen::Matrix3d::Identity() - qs*qs.transpose();
+
+    // mosaicity
+    cov += P * sigmaM * P.transpose();
+    // beam divergence
+    cov += f.ki.squaredNorm() * Jk * sigmaD * Jk.transpose();
+    // shape
+    cov += Jp * sigmaS * Jp.transpose();
+
+    result = Jd * cov * Jd.transpose();
 }
 
 bool ShapeLibrary::addPeak(sptrPeak3D peak, FitProfile&& profile, IntegratedProfile&& integrated_profile)
@@ -86,19 +133,24 @@ void ShapeLibrary::updateFit(int num_iterations)
 
     nsx::FitParameters params;
 
-    params.addParameter(&_sigmaD);
-    params.addParameter(&_sigmaE);
-    params.addParameter(&_sigmaM);
-    params.addParameter(&_sigmaA);
+    for (auto i = 0; i < 6; ++i) {
+        params.addParameter(&_choleskyD[i]);
+        params.addParameter(&_choleskyM[i]);
+        params.addParameter(&_choleskyS[i]);
+    }
 
     auto residual = [&](Eigen::VectorXd& r) -> int {
         int k = 0;
-
+        Eigen::Matrix3d pred_cov;
+        Eigen::Matrix3d sigmaM = from_cholesky(_choleskyM);
+        Eigen::Matrix3d sigmaD = from_cholesky(_choleskyD);
+        Eigen::Matrix3d sigmaS = from_cholesky(_choleskyS);
+        
         for (const auto& tup: fit_data) {
             const auto& cov = tup.first;
             const auto& data = tup.second;
 
-            Eigen::Matrix3d pred_cov = predictCovariance(data);
+            covariance_helper(pred_cov, data, sigmaD, sigmaM, sigmaS);
             Eigen::Matrix3d delta = cov - pred_cov;
 
             for (int i = 0; i < 3; ++i) {
@@ -125,26 +177,12 @@ Eigen::Matrix3d ShapeLibrary::predictCovariance(sptrPeak3D peak) const
 
 Eigen::Matrix3d ShapeLibrary::predictCovariance(const FitData& f) const
 {
-    static constexpr double deg2 = (M_PI/180)*(M_PI/180);
-    Eigen::Matrix3d E;
-    E.setIdentity();
-
-    Eigen::Matrix3d cov;
-    cov.setZero();
-
-    Eigen::Matrix3d JR = f.Jd.inverse() * f.Rs;
-
-    // beam divergence
-    cov += _sigmaD * _sigmaD * (f.kf.squaredNorm()*E - f.kf * f.kf.transpose());
-    // energy/lambda
-    cov += _sigmaE * _sigmaE * f.kf * f.kf.transpose();
-    // mosaicity
-    cov += _sigmaM * _sigmaM * (f.q.squaredNorm()*E - f.q * f.q.transpose());
-    // ?????
-    cov += _sigmaA * _sigmaA * f.q * f.q.transpose();
-
-    cov *= deg2;
-    return JR * cov * JR.transpose();
+    Eigen::Matrix3d result;
+    Eigen::Matrix3d sigmaM = from_cholesky(_choleskyM);
+    Eigen::Matrix3d sigmaD = from_cholesky(_choleskyD);
+    Eigen::Matrix3d sigmaS = from_cholesky(_choleskyS);
+    covariance_helper(result, f, sigmaD, sigmaM, sigmaS);
+    return result;
 }
 
 double ShapeLibrary::meanPearson() const

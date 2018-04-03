@@ -50,10 +50,15 @@ public:
 
 private:
     std::map<sptrPeak3D, std::pair<FitProfile, IntegratedProfile>> _profiles;
-    double _sigmaD;
-    double _sigmaE;
-    double _sigmaM;
-    double _sigmaA;  
+
+    //! Components of the Cholesky factor of beam divergence covariance matrix
+    std::array<double, 6> _choleskyD;
+
+    //! Components of the Cholesky factor of mosaicity covariance matrix
+    std::array<double, 6> _choleskyM;
+
+    //! Components of the Cholesky factor of shape covariance matrix
+    std::array<double, 6> _choleskyS;
 };
 
 } // end namespace nsx

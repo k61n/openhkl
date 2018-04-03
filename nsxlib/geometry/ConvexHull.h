@@ -193,7 +193,6 @@ private:
     //! Cleans the edges, faces and vertices of the hull that are not visible anymore
     void cleanUp();
 
-
 private:
 
     //! A boolean that indicates whether or not the two seed-triangles of the hull have been already created
@@ -206,6 +205,8 @@ private:
     std::list<Face*> _faces;
     //! Cached bounding planes of the hull.
     std::vector<std::pair<Eigen::Vector3d, double>> _planes;
+    //! Cached inner and outer (squared) raddi
+    double _innerR2, _outerR2;
 
 };
 

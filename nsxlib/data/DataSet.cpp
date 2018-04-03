@@ -537,4 +537,13 @@ ReciprocalVector DataSet::computeQ(const DetectorEvent& ev) const
     return state.sampleQ(detector_position);
 }
 
+Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx)
+{
+    auto detector = _diffractometer->getDetector();
+    Eigen::ArrayXXd new_frame = frame(idx).cast<double>();
+    new_frame -= detector->baseline();
+    new_frame /= detector->gain();
+    return new_frame;
+}
+
 } // end namespace nsx

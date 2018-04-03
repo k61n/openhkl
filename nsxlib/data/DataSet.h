@@ -118,6 +118,9 @@ public:
     //! Read a single frame
     Eigen::MatrixXi frame(std::size_t idx);
 
+    //! Return frame after transforming to account for detector gain and baseline
+    Eigen::MatrixXd transformedFrame(std::size_t idx);
+
     //! Return a convolved frame
     Eigen::MatrixXi convolvedFrame(std::size_t idx, sptrConvolutionKernel kernel);
 

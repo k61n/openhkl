@@ -4,7 +4,8 @@
 
 namespace nsx {
 
-IntegratedProfile::IntegratedProfile(double sigma_max, size_t num): _profile(num, 0.0), _endpoints(num+1), _sigmaMax(sigma_max)
+IntegratedProfile::IntegratedProfile(const Intensity& mean_background, double sigma_max, size_t num):
+    _profile(num, 0.0), _npoints(num, 0), _endpoints(num+1), _sigmaMax(sigma_max), _meanBkg(mean_background)
 {
     const double dr3 = sigma_max*sigma_max*sigma_max / num;
 
@@ -23,13 +24,19 @@ void IntegratedProfile::add(double r2, const Intensity& I)
     for (size_t i = 0; i < _profile.size(); ++i) {
         if (r2 <= _endpoints[i+1]) {
             _profile[i] += I;
+            _npoints[i] += 1;
         }
     }
 }
 
-const std::vector<Intensity> IntegratedProfile::bins() const
+const std::vector<Intensity>& IntegratedProfile::bins() const
 {
     return _profile;
+}
+
+const std::vector<int>& IntegratedProfile::npoints() const
+{
+    return _npoints;
 }
 
 size_t IntegratedProfile::optimalBin() const
@@ -59,6 +66,7 @@ void IntegratedProfile::add(const IntegratedProfile& other)
 
     for (size_t i = 0; i < _profile.size(); ++i) {
         _profile[i] += other._profile[i];
+        _npoints[i] += other._npoints[i];
     }
 }
 

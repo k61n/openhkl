@@ -55,7 +55,7 @@ public:
 
     EventType classify(const DetectorEvent& ev) const;
 
-    bool advanceFrame(const Eigen::MatrixXi& image, const Eigen::MatrixXi& mask, double frame);
+    bool advanceFrame(const Eigen::MatrixXd& image, const Eigen::MatrixXi& mask, double frame);
 
     void reset();
 
