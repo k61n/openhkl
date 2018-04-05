@@ -56,16 +56,22 @@ static void updateFit(Intensity& I, Intensity& B, const std::vector<double>& dp,
     assert(dp.size() == dM.size() && dp.size() == dn.size());
 
     for (size_t i = 0; i < n; ++i) {
+        // avoid case where dn[i] = 0
+        if (dn[i] == 0) {
+            continue;
+        }
+
         const double p = dp[i];
+        const double n = dn[i];
         const double M = dM[i];
         const double var = B.value()*dn[i] + I.value()*dp[i];
 
-        A(0,0) += 1/var;
-        A(0,1) += p/var;
-        A(1,0) += p/var;
+        A(0,0) += n*n/var;
+        A(0,1) += n*p/var;
+        A(1,0) += n*p/var;
         A(1,1) += p*p/var;
 
-        b(0) += M/var;
+        b(0) += M*n/var;
         b(1) += M*p/var;
     }  
 
@@ -95,8 +101,6 @@ bool Profile1DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
 
     // first get mean background
     StrongPeakIntegrator::compute(peak, region);
-    const double mean_bkg = _meanBackground.value();
-    const double var_bkg = _meanBackground.variance();
 
     const auto& events = region.data().events();
     const auto& counts = region.data().counts();
@@ -120,7 +124,7 @@ bool Profile1DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
     }
 
     // construct the observed profile
-    for (int i = 0; i < events.size(); ++i) {
+    for (size_t i = 0; i < events.size(); ++i) {
         Eigen::Vector3d dx(events[i]._px, events[i]._py, events[i]._frame);
         dx -= c;
         const double r2 = dx.transpose()*A*dx;
@@ -130,19 +134,18 @@ bool Profile1DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
     std::vector<int> dn;
     std::vector<double> dm;
     std::vector<double> dp;
-    double p0 = mean_profile[0].value();
+    
+    dn.push_back(profile.npoints()[0]);
+    dm.push_back(profile.counts()[0]);
+    dp.push_back(mean_profile[0].value());
 
     // compute differences and rebin if necessary so that dn > 0
     for (size_t i = 1; i < mean_profile.size(); ++i) {
         const auto& counts = profile.counts();
         const auto& npoints = profile.npoints();
-
-        if (npoints[i] > npoints[i-1]) {
-            dn.push_back(npoints[i]-npoints[i-1]);
-            dm.push_back(counts[i]-counts[i-1]);
-            dp.push_back(mean_profile[i].value()-p0);
-            p0 = mean_profile[i].value();
-        }
+        dn.push_back(npoints[i]-npoints[i-1]);
+        dm.push_back(counts[i]-counts[i-1]);
+        dp.push_back(mean_profile[i].value()-mean_profile[i-1].value());
     }
 
     Intensity I = 1e-6;

@@ -4,6 +4,10 @@
 #ifndef NSXQT_DIALOGINTEGRATE_H
 #define NSXQT_DIALOGINTEGRATE_H
 
+
+#include <string>
+#include <vector>
+
 #include <QDialog>
 
 namespace Ui {
@@ -18,6 +22,8 @@ public:
     DialogIntegrate(QWidget *parent = 0);
     ~DialogIntegrate();
 
+    void setIntegrators(const std::vector<std::string>& names);
+
     double peakScale() const;
     double backgroundScale() const;
     double dMin() const;
@@ -25,8 +31,9 @@ public:
     double radius() const;
     double nframes() const;
 
-private:
-    Ui::DialogIntegrate* _ui;
+    std::string integrator() const;
 
+private:
+    Ui::DialogIntegrate* _ui;   
 };
 #endif // NSXQT_DIALOGINTEGRATE_H

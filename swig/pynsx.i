@@ -409,6 +409,7 @@ namespace nsx {
 %include "ISigmaIntegrator.h"
 %include "StrongPeakIntegrator.h"
 %include "Peak3D.h"
+%include "IntegratedProfile.h"
 %include "ShapeLibrary.h"
 %include "ShapeIntegrator.h"
 %include "IntegrationRegion.h"

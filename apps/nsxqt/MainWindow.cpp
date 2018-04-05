@@ -45,6 +45,7 @@
 #include <nsxlib/WeakPeakIntegrator.h>
 #include <nsxlib/ISigmaIntegrator.h>
 #include <nsxlib/Profile1DIntegrator.h>
+#include <nsxlib/GaussianIntegrator.h>
 
 #include "AbsorptionWidget.h"
 #include "CollectedPeaksModel.h"
@@ -566,6 +567,21 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
 
     auto dialog = new DialogIntegrate();
 
+    std::map<std::string, std::function<nsx::IPeakIntegrator*()>> integrator_map;
+    std::vector<std::string> integrator_names;
+    
+    integrator_map["Strong peak integrator"] = [&]() {return new nsx::StrongPeakIntegrator;};
+    integrator_map["Weak peak integrator"] = [&]() {return new nsx::WeakPeakIntegrator(library, dialog->radius(), dialog->nframes(), false);};
+    integrator_map["I/Sigma integrator"] = [&]() {return new nsx::ISigmaIntegrator(library, dialog->radius(), dialog->nframes());};
+    integrator_map["1d Profile integrator"] = [&]() {return new nsx::Profile1DIntegrator(library, dialog->radius(), dialog->nframes());};
+    integrator_map["Gaussian integrator"] = [&]() {return new nsx::GaussianIntegrator;};
+
+    for (const auto& pair: integrator_map) {
+        integrator_names.push_back(pair.first);
+    }
+
+    dialog->setIntegrators(integrator_names);
+
     if (!dialog->exec()) {
         nsx::info() << "Peak integration canceled.";
         return;
@@ -575,8 +591,7 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
     const double bkg_scale = dialog->backgroundScale();
     const double dmin = dialog->dMin();
     const double dmax = dialog->dMax();
-    const double radius = dialog->radius();
-    const double nframes = dialog->nframes();
+
     nsx::DataList numors = _session->getSelectedNumors();
 
     nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
@@ -587,13 +602,9 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
         // todo: bkg_begin and bkg_end
         auto&& peaks = nsx::PeakFilter().dRange(_session->peaks(numor.get()), dmin, dmax, true);
         nsx::info() << "Integrating " << peaks.size() << " peaks";
-        //nsx::WeakPeakIntegrator integrator(library, radius, nframes);
-        //nsx::ISigmaIntegrator integrator(library, radius, nframes);
-        //nsx::Profile1DIntegrator integrator(library, radius, nframes);
-        nsx::StrongPeakIntegrator integrator;
-        integrator.setHandler(handler);
-        // todo: progress handler!!
-        integrator.integrate(peaks, numor, peak_scale, 0.5*(peak_scale+bkg_scale), bkg_scale); //, _progressHandler);
+        std::unique_ptr<nsx::IPeakIntegrator> integrator(integrator_map[dialog->integrator()]());
+        integrator->setHandler(handler);
+        integrator->integrate(peaks, numor, peak_scale, 0.5*(peak_scale+bkg_scale), bkg_scale); //, _progressHandler);
     }
 
     _session->updatePeaks();

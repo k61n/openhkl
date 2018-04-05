@@ -34,8 +34,6 @@
 
 #include "GeometryTypes.h"
 #include "IPeakIntegrator.h"
-#include "MeanBackgroundIntegrator.h"
-#include "StrongPeakIntegrator.h"
 #include "ShapeLibrary.h"
 
 namespace nsx {
@@ -43,10 +41,12 @@ namespace nsx {
 class DataSet;
 
 
-class GaussianIntegrator: public StrongPeakIntegrator {
+class GaussianIntegrator: public IPeakIntegrator {
 public:
     GaussianIntegrator();
     bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
+
+    std::vector<double> profile(sptrPeak3D peak, const IntegrationRegion& region);
 };
 
 } // end namespace nsx

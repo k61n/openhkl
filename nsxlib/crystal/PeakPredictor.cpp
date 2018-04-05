@@ -90,8 +90,8 @@ PeakList PeakPredictor::predict(sptrDataSet data, double radius, double nframes)
 
         try {
             // can throw if there are no neighboring peaks
-            //Eigen::Matrix3d cov = _library->meanCovariance(p, radius, nframes);
-            Eigen::Matrix3d cov = _library->predictCovariance(p);
+            Eigen::Matrix3d cov = _library->meanCovariance(p, radius, nframes);
+            //Eigen::Matrix3d cov = _library->predictCovariance(p);
             Eigen::Vector3d center = p->getShape().center();
             p->setShape(Ellipsoid(center, cov.inverse()));
         } catch (...) {

@@ -4,6 +4,12 @@
 #include "DialogIntegrate.h"
 #include "ui_DialogIntegrate.h"
 
+#include <nsxlib/StrongPeakIntegrator.h>
+#include <nsxlib/GaussianIntegrator.h>
+#include <nsxlib/WeakPeakIntegrator.h>
+#include <nsxlib/ISigmaIntegrator.h>
+#include <nsxlib/Profile1DIntegrator.h>
+
 DialogIntegrate::DialogIntegrate(QWidget *parent):
     QDialog(parent),
     _ui(new Ui::DialogIntegrate)
@@ -18,11 +24,29 @@ DialogIntegrate::DialogIntegrate(QWidget *parent):
     _ui->method->addItem("3d profilt fit (Kabsch)");
     _ui->method->addItem("3d profilt fit (detector)");
     _ui->method->addItem("I/sigma");
-
+    _ui->method->addItem("1d profile fit");
 
     // resolve method overload
     auto valueChanged = static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged);
 }
+
+std::string DialogIntegrate::integrator() const
+{
+    const auto id = _ui->method->currentIndex();
+    return _ui->method->itemText(id).toStdString();
+}
+
+void DialogIntegrate::setIntegrators(const std::vector<std::string>& names)
+{
+    while(_ui->method->count()) {
+        _ui->method->removeItem(0);
+    }
+
+    for (const auto& name: names) {
+        _ui->method->addItem(name.c_str());
+    }
+}
+
 
 DialogIntegrate::~DialogIntegrate()
 {

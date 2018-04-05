@@ -120,6 +120,10 @@ bool ShapeLibrary::addPeak(sptrPeak3D peak, FitProfile&& profile, IntegratedProf
 
 void ShapeLibrary::updateFit(int num_iterations)
 {
+    // todo: reenable this when done testing!
+    return;
+
+
     std::vector<std::pair<Eigen::Matrix3d, FitData>> fit_data;
     std::vector<std::pair<int, int>> fit_constraints;
     fit_data.reserve(_profiles.size());
@@ -261,6 +265,17 @@ Eigen::Matrix3d ShapeLibrary::meanCovariance(sptrPeak3D reference_peak, double r
     Eigen::Matrix3d cov;
     cov.setZero();
     PeakList neighbors = findNeighbors(DetectorEvent(reference_peak->getShape().center()), radius, nframes);
+
+
+    // testing (try using detector space??)
+    #if 0
+    for (auto peak: neighbors) {
+        cov += peak->getShape().inverseMetric();
+    }
+    cov /= neighbors.size();
+    return cov;
+    #endif
+
     PeakCoordinateSystem reference_coord(reference_peak);
 
     for (auto peak: neighbors) {
