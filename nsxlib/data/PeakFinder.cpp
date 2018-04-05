@@ -179,6 +179,7 @@ PeakList PeakFinder::find(DataList numors)
 
         // todo: user input bkg_begin and bkg_end directly
         StrongPeakIntegrator integrator;
+        integrator.setHandler(_handler);
         integrator.integrate(numor_peaks, numor, _integrationScale, 0.5*(_integrationScale+_backgroundScale), _backgroundScale); // TODO:, _handler);
         numor->close();
         //_ui->progressBar->setValue(++comp);

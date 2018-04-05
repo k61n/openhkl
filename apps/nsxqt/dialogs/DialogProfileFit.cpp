@@ -10,6 +10,8 @@
 #include <nsxlib/ShapeLibrary.h>
 #include <nsxlib/Logger.h>
 
+#include "ProgressView.h"
+
 #include "DialogProfileFit.h"
 #include "ui_ProfileFitDialog.h"
 
@@ -91,12 +93,28 @@ void DialogProfileFit::build()
         ui->drawFrame->setMaximum(nz-1);
     }
 
-    Eigen::Vector3d sigma(sigmaD, sigmaD, sigmaM);
-    nsx::AABB aabb(-scale*sigma, scale*sigma);
+    // todo: add to dialog
+    bool detector_space = true;
+    nsx::AABB aabb;
+
+    if (detector_space) {
+        Eigen::Vector3d dx(nx, ny, nz);
+        dx *= -0.5;
+        aabb.setLower(-dx);
+        aabb.setUpper(dx);
+    } else {
+        Eigen::Vector3d sigma(sigmaD, sigmaD, sigmaM);
+        aabb.setLower(-scale*sigma);
+        aabb.setUpper(scale*sigma);
+    }
 
     // free memory of old library
+    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
+    ProgressView view(this);
+    view.watch(handler);
     _library = nsx::sptrShapeLibrary(new nsx::ShapeLibrary);
-    nsx::ShapeIntegrator integrator(aabb, nx, ny, nz);    
+    nsx::ShapeIntegrator integrator(aabb, nx, ny, nz, detector_space);    
+    integrator.setHandler(handler);
     nsx::info() << "Fitting profiles...";
     integrator.integrate(fit_peaks, data, scale, scale+1, scale+2);
     nsx::info() << "Done fitting profiles";
@@ -137,6 +155,9 @@ void DialogProfileFit::calculate()
 
     nsx::info() << "Mean profile has inertia tensor";
     nsx::info() << e.inverseMetric();
+
+    // for debugging purposes
+    std::vector<nsx::Intensity> profile1d = _library->meanIntegratedProfile(ev, ui->radius->value(), ui->nframes->value());
 
     // draw the updated frame
     drawFrame(ui->drawFrame->value());

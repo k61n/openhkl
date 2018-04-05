@@ -30,26 +30,45 @@
 
 #pragma once
 
+#include <map>
+#include <vector>
+
 #include <Eigen/Dense>
 
+#include "Blob3D.h"
+#include "BrillouinZone.h"
 #include "GeometryTypes.h"
-#include "IPeakIntegrator.h"
-#include "ShapeLibrary.h"
+#include "IntegrationRegion.h"
+#include "Intensity.h"
+#include "Maybe.h"
+#include "ProgressHandler.h"
+#include "UtilsTypes.h"
 
 namespace nsx {
 
 class DataSet;
 
-
-class WeakPeakIntegrator: public IPeakIntegrator {
+//! \class PeakIntegrator
+//! \breif This is a helper class to handle per-frame integration of a peak.
+class IPeakIntegrator {
 public:
-    WeakPeakIntegrator(sptrShapeLibrary library, double radius, double nframes, bool detector_space);
-    bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
-private:
-    sptrShapeLibrary _library;
-    double _radius;
-    double _nframes;
-    bool _detectorSpace;
+    IPeakIntegrator();
+    virtual ~IPeakIntegrator();
+    virtual bool compute(sptrPeak3D peak, const IntegrationRegion& region) = 0;
+
+    void integrate(PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end);
+
+    Intensity meanBackground() const;
+    Intensity integratedIntensity() const;
+    const std::vector<Intensity>& rockingCurve() const;
+
+    void setHandler(sptrProgressHandler handler);
+
+protected:
+    Intensity _meanBackground;
+    Intensity _integratedIntensity;    
+    std::vector<Intensity> _rockingCurve;
+    sptrProgressHandler _handler;
 };
 
 } // end namespace nsx

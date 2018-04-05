@@ -41,7 +41,7 @@
 
 namespace nsx {
 
-IPeakIntegrator::IPeakIntegrator(): _meanBackground(), _integratedIntensity(), _rockingCurve()
+IPeakIntegrator::IPeakIntegrator(): _meanBackground(), _integratedIntensity(), _rockingCurve(), _handler(nullptr)
 {
 
 }
@@ -68,8 +68,6 @@ const std::vector<Intensity>& IPeakIntegrator::rockingCurve() const
 
 void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end)
 {
-    sptrProgressHandler handler = nullptr;
-
     // integrate only those peaks that belong to the specified dataset
     auto it = std::remove_if(peaks.begin(), peaks.end(), [&](const sptrPeak3D& peak) { return peak->data() != data;});
     peaks.erase(it, peaks.end());
@@ -77,9 +75,9 @@ void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_en
     std::string status = "Integrating " + std::to_string(peaks.size()) + " peaks...";
     nsx::info() << status;
 
-    if (handler) {
-        handler->setStatus(status.c_str());
-        handler->setProgress(0);
+    if (_handler) {
+        _handler->setStatus(status.c_str());
+        _handler->setProgress(0);
     }
 
     size_t idx = 0;
@@ -139,12 +137,17 @@ void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_en
             }                
         }
 
-        if (handler) {
+        if (_handler) {
             ++num_frames_done;
             double progress = num_frames_done * 100.0 / data->nFrames();
-            handler->setProgress(progress);
+            _handler->setProgress(progress);
         }
     }
+}
+
+void IPeakIntegrator::setHandler(sptrProgressHandler handler)
+{
+    _handler = handler;
 }
 
 } // end namespace nsx

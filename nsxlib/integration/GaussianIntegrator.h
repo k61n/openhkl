@@ -30,40 +30,23 @@
 
 #pragma once
 
-#include <map>
-#include <vector>
-
 #include <Eigen/Dense>
 
-#include "Blob3D.h"
-#include "BrillouinZone.h"
 #include "GeometryTypes.h"
-#include "IntegrationRegion.h"
-#include "Intensity.h"
-#include "Maybe.h"
+#include "IPeakIntegrator.h"
+#include "MeanBackgroundIntegrator.h"
+#include "StrongPeakIntegrator.h"
+#include "ShapeLibrary.h"
 
 namespace nsx {
 
 class DataSet;
 
-//! \class PeakIntegrator
-//! \breif This is a helper class to handle per-frame integration of a peak.
-class IPeakIntegrator {
+
+class GaussianIntegrator: public StrongPeakIntegrator {
 public:
-    IPeakIntegrator();
-    virtual ~IPeakIntegrator();
-    virtual bool compute(sptrPeak3D peak, const IntegrationRegion& region) = 0;
-
-    void integrate(PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end);
-
-    Intensity meanBackground() const;
-    Intensity integratedIntensity() const;
-    const std::vector<Intensity>& rockingCurve() const;
-
-protected:
-    Intensity _meanBackground;
-    Intensity _integratedIntensity;    
-    std::vector<Intensity> _rockingCurve;
+    GaussianIntegrator();
+    bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
 };
 
 } // end namespace nsx

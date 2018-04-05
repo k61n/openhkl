@@ -28,28 +28,45 @@
  *
  */
 
-#pragma once
-
-#include <Eigen/Dense>
-
-#include "GeometryTypes.h"
-#include "IPeakIntegrator.h"
+#include "DataSet.h"
+#include "Ellipsoid.h"
+#include "Intensity.h"
+#include "Peak3D.h"
+#include "PeakCoordinateSystem.h"
 #include "ShapeLibrary.h"
+#include "GaussianIntegrator.h"
 
 namespace nsx {
 
-class DataSet;
+GaussianIntegrator::GaussianIntegrator():
+    StrongPeakIntegrator()
+{
 
+}
 
-class WeakPeakIntegrator: public IPeakIntegrator {
-public:
-    WeakPeakIntegrator(sptrShapeLibrary library, double radius, double nframes, bool detector_space);
-    bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
-private:
-    sptrShapeLibrary _library;
-    double _radius;
-    double _nframes;
-    bool _detectorSpace;
-};
+bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
+{
+    if (!peak) {
+        return false;
+    }
+
+    // first get mean background
+    StrongPeakIntegrator::compute(peak, region);
+    
+    Eigen::Vector3d c = peak->getShape().center();
+    Eigen::Matrix3d A = peak->getShape().metric();
+
+    // todo....
+
+    double sigma = _integratedIntensity.sigma();
+
+    if (std::isnan(sigma) || sigma <= 0.0) {
+        return false;
+    }
+
+    // TODO: rocking curve!
+
+    return true;
+}
 
 } // end namespace nsx

@@ -43,6 +43,8 @@
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
 #include <nsxlib/WeakPeakIntegrator.h>
+#include <nsxlib/ISigmaIntegrator.h>
+#include <nsxlib/Profile1DIntegrator.h>
 
 #include "AbsorptionWidget.h"
 #include "CollectedPeaksModel.h"
@@ -575,14 +577,21 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
     const double dmax = dialog->dMax();
     const double radius = dialog->radius();
     const double nframes = dialog->nframes();
-
     nsx::DataList numors = _session->getSelectedNumors();
+
+    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
+    ProgressView view(this);
+    view.watch(handler);
 
     for (auto&& numor: numors) {
         // todo: bkg_begin and bkg_end
         auto&& peaks = nsx::PeakFilter().dRange(_session->peaks(numor.get()), dmin, dmax, true);
         nsx::info() << "Integrating " << peaks.size() << " peaks";
-        nsx::WeakPeakIntegrator integrator(library, radius, nframes);
+        //nsx::WeakPeakIntegrator integrator(library, radius, nframes);
+        //nsx::ISigmaIntegrator integrator(library, radius, nframes);
+        //nsx::Profile1DIntegrator integrator(library, radius, nframes);
+        nsx::StrongPeakIntegrator integrator;
+        integrator.setHandler(handler);
         // todo: progress handler!!
         integrator.integrate(peaks, numor, peak_scale, 0.5*(peak_scale+bkg_scale), bkg_scale); //, _progressHandler);
     }

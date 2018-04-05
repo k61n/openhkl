@@ -14,6 +14,7 @@
 %feature("director") MeanBackgroundIntegrator;
 %feature("director") StrongPeakIntegrator;
 %feature("director") WeakPeakIntegrator;
+%feature("director") ISigmaIntegrator;
 %feature("director") ShapeIntegrator;
 
 %include "pynsx_doc.i"
@@ -129,6 +130,7 @@ using Eigen::Quaterniond;
 #include "IPeakIntegrator.h"
 #include "MeanBackgroundIntegrator.h"
 #include "WeakPeakIntegrator.h"
+#include "ISigmaIntegrator.h"
 #include "StrongPeakIntegrator.h"
 #include "ShapeIntegrator.h"
 #include "IntegrationRegion.h"
@@ -404,6 +406,7 @@ namespace nsx {
 %include "IPeakIntegrator.h"
 %include "MeanBackgroundIntegrator.h"
 %include "WeakPeakIntegrator.h"
+%include "ISigmaIntegrator.h"
 %include "StrongPeakIntegrator.h"
 %include "Peak3D.h"
 %include "ShapeLibrary.h"

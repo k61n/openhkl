@@ -34,6 +34,8 @@
 
 #include "GeometryTypes.h"
 #include "IPeakIntegrator.h"
+#include "MeanBackgroundIntegrator.h"
+#include "StrongPeakIntegrator.h"
 #include "ShapeLibrary.h"
 
 namespace nsx {
@@ -41,15 +43,14 @@ namespace nsx {
 class DataSet;
 
 
-class WeakPeakIntegrator: public IPeakIntegrator {
+class ISigmaIntegrator: public StrongPeakIntegrator {
 public:
-    WeakPeakIntegrator(sptrShapeLibrary library, double radius, double nframes, bool detector_space);
+    ISigmaIntegrator(sptrShapeLibrary library, double radius, double nframes);
     bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
 private:
     sptrShapeLibrary _library;
     double _radius;
     double _nframes;
-    bool _detectorSpace;
 };
 
 } // end namespace nsx

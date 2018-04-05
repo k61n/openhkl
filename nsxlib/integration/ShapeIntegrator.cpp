@@ -9,12 +9,13 @@
 
 namespace nsx {
 
-ShapeIntegrator::ShapeIntegrator(const AABB& aabb, int nx, int ny, int nz): StrongPeakIntegrator(), 
+ShapeIntegrator::ShapeIntegrator(const AABB& aabb, int nx, int ny, int nz, bool detector_space): StrongPeakIntegrator(), 
     _library(new ShapeLibrary), 
     _aabb(aabb),
     _nx(nx),
     _ny(ny),
-    _nz(nz)
+    _nz(nz),
+    _detectorSpace(detector_space)
 {
 
 }
@@ -46,17 +47,19 @@ bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 
     for (size_t i = 0; i < events.size(); ++i) {
         const auto& ev = events[i];
-        Eigen::Vector3d x(ev._px, ev._py, ev._frame);      
+        Eigen::Vector3d x(ev._px, ev._py, ev._frame);              
         const double dI = counts[i]-mean_bkg;
         // todo: variance here assumes Poisson (no gain or baseline)
-        integrated_profile.add(e.r2(x), Intensity(dI, counts[i]+std_bkg*std_bkg));
+        integrated_profile.addPoint(e.r2(x), counts[i]);
         
-        if (dI > 1e-4*I_peak) {
+        if (_detectorSpace) {
+            x -= peak->getShape().center();
+            profile.addValue(x, dI);
+        } else {
             profile.addValue(frame.transform(ev), dI);
         }
     }
     if (profile.normalize()) {
-        integrated_profile.divide(_integratedIntensity);
         _library->addPeak(peak, std::move(profile), std::move(integrated_profile));
     }
     return true;

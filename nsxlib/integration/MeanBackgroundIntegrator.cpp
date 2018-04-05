@@ -46,7 +46,7 @@ bool MeanBackgroundIntegrator::compute(sptrPeak3D peak, const IntegrationRegion&
         nbkg = 0;
 
         for (auto i = 0; i < counts.size(); ++i) {
-            if (counts[i] < mean_bkg+3*sigma_bkg && region.classify(events[i]) == IntegrationRegion::EventType::BACKGROUND) {
+            if (std::fabs(counts[i]-mean_bkg) > 3*sigma_bkg || region.classify(events[i]) != IntegrationRegion::EventType::BACKGROUND) {
                 continue;
             }
             sum_bkg += counts[i];
@@ -59,7 +59,7 @@ bool MeanBackgroundIntegrator::compute(sptrPeak3D peak, const IntegrationRegion&
         var_bkg = (sum_bkg2 - nbkg*mean_bkg*mean_bkg) / (nbkg-1);
         sigma_bkg = std::sqrt(var_bkg);
 
-        if (std::fabs((old_mean-mean_bkg)/mean_bkg) < 1e-5) {
+        if (std::fabs((old_mean-mean_bkg)/mean_bkg) < 1e-9) {
             break;
         }
     }

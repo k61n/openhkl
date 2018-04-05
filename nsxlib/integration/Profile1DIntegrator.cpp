@@ -34,30 +34,31 @@
 #include "Peak3D.h"
 #include "PeakCoordinateSystem.h"
 #include "ShapeLibrary.h"
-#include "WeakPeakIntegrator.h"
+#include "Profile1DIntegrator.h"
 
 namespace nsx {
 
-WeakPeakIntegrator::WeakPeakIntegrator(sptrShapeLibrary library, double radius, double nframes, bool detector_space):
+Profile1DIntegrator::Profile1DIntegrator(sptrShapeLibrary library, double radius, double nframes):
+    StrongPeakIntegrator(),
     _library(library),
     _radius(radius),
-    _nframes(nframes),
-    _detectorSpace(detector_space)
+    _nframes(nframes)
 {
 
 }
 
-static void updateFit(Intensity& I, Intensity& B, const std::vector<double>& profile, const std::vector<double>& counts)
+static void updateFit(Intensity& I, Intensity& B, const std::vector<double>& dp, const std::vector<double>& dM, const std::vector<int>& dn)
 {
     Eigen::Matrix2d A;
     A.setZero();
     Eigen::Vector2d b(0,0);
-    const size_t n = std::min(profile.size(), counts.size());
+    const size_t n = dp.size();
+    assert(dp.size() == dM.size() && dp.size() == dn.size());
 
     for (size_t i = 0; i < n; ++i) {
-        const double p = profile[i];
-        const double M = counts[i];
-        const double var = B.value() + I.value()*p;
+        const double p = dp[i];
+        const double M = dM[i];
+        const double var = B.value()*dn[i] + I.value()*dp[i];
 
         A(0,0) += 1/var;
         A(0,1) += p/var;
@@ -82,7 +83,7 @@ static void updateFit(Intensity& I, Intensity& B, const std::vector<double>& pro
     I = Intensity(new_I, cov(1,1));
 }
 
-bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
+bool Profile1DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 {
     if (!_library) {
         return false;
@@ -92,74 +93,63 @@ bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
         return false;
     }
 
+    // first get mean background
+    StrongPeakIntegrator::compute(peak, region);
+    const double mean_bkg = _meanBackground.value();
+    const double var_bkg = _meanBackground.variance();
+
     const auto& events = region.data().events();
     const auto& counts = region.data().counts();
 
     // TODO: should this be hard-coded??
     if (events.size() < 29) {
-        throw std::runtime_error("WeakPeakIntegrator::compute(): too few data points in peak");
+        throw std::runtime_error("Profile1DIntegrator::compute(): too few data points in peak");
     }
 
-    // dummy value for initial guess
-    _meanBackground = Intensity(1.0, 1.0);
-    _integratedIntensity = Intensity(0.0, 0.0);
+    std::vector<Intensity> mean_profile;
+    IntegratedProfile profile;
 
-    std::vector<double> profile;
-    std::vector<double> obs_counts;
-    
-    profile.reserve(events.size());
-    obs_counts.reserve(events.size());
-    
-    const double tolerance = 1e-5;
-
-    FitProfile model_profile;
-    DetectorEvent event(peak->getShape().center());
+    Eigen::Vector3d c = peak->getShape().center();
+    Eigen::Matrix3d A = peak->getShape().metric();
 
     try {
         // throws if there are no neighboring peaks within the bounds
-        model_profile = _library->meanProfile(event, _radius, _nframes);
+        mean_profile = _library->meanIntegratedProfile(DetectorEvent(c), _radius, _nframes);
     } catch(...) {
         return false;
     }
 
-    PeakCoordinateSystem coord(peak);
-
-    // evaluate the model profile at the given events
+    // construct the observed profile
     for (int i = 0; i < events.size(); ++i) {
-        Eigen::Vector3d x;
-        if (_detectorSpace) {
-            x(0) = events[i]._px;
-            x(1) = events[i]._py;
-            x(2) = events[i]._frame;
+        Eigen::Vector3d dx(events[i]._px, events[i]._py, events[i]._frame);
+        dx -= c;
+        const double r2 = dx.transpose()*A*dx;
+        profile.addPoint(r2, counts[i]);
+    }
 
-            x -= peak->getShape().center();
-        } else {
-            x = coord.transform(events[i]);
-        }
+    std::vector<int> dn;
+    std::vector<double> dm;
+    std::vector<double> dp;
+    double p0 = mean_profile[0].value();
 
-        const double predict = model_profile.predict(x);
+    // compute differences and rebin if necessary so that dn > 0
+    for (size_t i = 1; i < mean_profile.size(); ++i) {
+        const auto& counts = profile.counts();
+        const auto& npoints = profile.npoints();
 
-        if (predict > 0.0) {
-            profile.push_back(predict);
-            obs_counts.push_back(counts[i]);
+        if (npoints[i] > npoints[i-1]) {
+            dn.push_back(npoints[i]-npoints[i-1]);
+            dm.push_back(counts[i]-counts[i-1]);
+            dp.push_back(mean_profile[i].value()-p0);
+            p0 = mean_profile[i].value();
         }
     }
-    
-    // todo: stopping criterion
-    for (auto i = 0; i < 20; ++i) {
-        Intensity old_intensity = _integratedIntensity;
-        const double I0 = _integratedIntensity.value();
-        updateFit(_integratedIntensity, _meanBackground, profile, obs_counts);
-        const double I1 = _integratedIntensity.value();
 
-        if (std::isnan(I1) || std::isnan(_meanBackground.value())) {
-            _integratedIntensity = old_intensity;
-            break;
-        }
+    Intensity I = 1e-6;
+    Intensity B = _meanBackground.value();
 
-        if (I1 < 0.0 || (I1 < (1+tolerance)*I0 && I0 < (1+tolerance)*I1)) {
-            break;
-        }
+    for (auto i = 0; i < 10 && I.value() > 0; ++i) {
+        updateFit(I, B, dp, dm, dn);
     }
 
     double sigma = _integratedIntensity.sigma();

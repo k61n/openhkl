@@ -212,18 +212,24 @@ FitProfile ShapeLibrary::meanProfile(const DetectorEvent& ev, double radius, dou
     return mean;
 }
 
-IntegratedProfile ShapeLibrary::meanIntegratedProfile(const DetectorEvent& ev, double radius, double nframes) const
+std::vector<Intensity> ShapeLibrary::meanIntegratedProfile(const DetectorEvent& ev, double radius, double nframes) const
 {
-    IntegratedProfile mean;
     PeakList neighbors = findNeighbors(ev, radius, nframes);
+    std::vector<Intensity> mean_profile;
+    const double inv_N = 1.0 / neighbors.size();
 
     for (auto peak: neighbors) {
-        //double weight = (1-r/radius) * (1-df/nframes);
-        // mean.addProfile(profile, weight*weight);
-        mean.add(_profiles.find(peak)->second.second);
+        const auto& profile = _profiles.find(peak)->second.second.profile();
+
+        if (mean_profile.size() == 0) {
+            mean_profile.resize(profile.size());
+        }
+
+        for (size_t i = 0; i < mean_profile.size(); ++i) {
+            mean_profile[i] += profile[i] * inv_N;
+        }
     }
-    mean.rescale(1.0 / neighbors.size());
-    return mean;
+    return mean_profile;
 }
 
 PeakList ShapeLibrary::findNeighbors(const DetectorEvent& ev, double radius, double nframes) const

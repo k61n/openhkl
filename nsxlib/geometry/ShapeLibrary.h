@@ -40,7 +40,7 @@ public:
     FitProfile meanProfile(const DetectorEvent& ev, double radius, double nframes) const;
 
     //! Return the average peak profile near the given detector event
-    IntegratedProfile meanIntegratedProfile(const DetectorEvent& ev, double radius, double nframes) const;
+    std::vector<Intensity> meanIntegratedProfile(const DetectorEvent& ev, double radius, double nframes) const;
 
     //! Return the average peak covariance near the given detector event
     Eigen::Matrix3d meanCovariance(sptrPeak3D reference_peak, double radius, double nframes) const;
