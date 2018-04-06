@@ -30,50 +30,52 @@
 
 #include "DataSet.h"
 #include "Ellipsoid.h"
+#include "FitParameters.h"
 #include "Intensity.h"
+#include "Minimizer.h"
 #include "Peak3D.h"
 #include "GaussianIntegrator.h"
 
+#include <Eigen/Cholesky>
+
+
 namespace nsx {
 
-GaussianIntegrator::GaussianIntegrator(): IPeakIntegrator()
+GaussianIntegrator::GaussianIntegrator(bool fit_center, bool fit_cov): IPeakIntegrator(), _fitCenter(fit_center), _fitCov(fit_cov)
 {
 
 }
 
-static void updateFit(Intensity& I, Intensity& B, const std::vector<double>& profile, const std::vector<double>& counts)
+static Eigen::Matrix3d from_cholesky(const Eigen::VectorXd a)
 {
-    Eigen::Matrix2d A;
-    A.setZero();
-    Eigen::Vector2d b(0,0);
-    const size_t n = std::min(profile.size(), counts.size());
+    // Reconstruct Cholesky L factor
+    Eigen::Matrix3d L;
+    L.setZero();
+    L(0,0) = a(0); L(1,1) = a(1); L(2,2) = a(2);
+    L(1,0) = a(3); L(2,0) = a(4); L(2,1) = a(5);
+    // build A using Cholesky decomposition
+    return L*L.transpose();
+}
+
+
+static void residuals(
+    Eigen::VectorXd& res,  
+    double B, double I, 
+    const Eigen::Vector3d x0, const Eigen::VectorXd& a, 
+    const std::vector<Eigen::Vector3d>& x, const std::vector<double>& M)
+{
+    const size_t n = x.size();
+    assert(n == M.size());
+    assert(n == res.size());
+
+    const Eigen::Matrix3d A = from_cholesky(a);
+    const double factor = std::sqrt(A.determinant() / 8 / M_PI / M_PI / M_PI);
 
     for (size_t i = 0; i < n; ++i) {
-        const double p = profile[i];
-        const double M = counts[i];
-        const double var = B.value() + I.value()*p;
-
-        A(0,0) += 1/var;
-        A(0,1) += p/var;
-        A(1,0) += p/var;
-        A(1,1) += p*p/var;
-
-        b(0) += M/var;
-        b(1) += M*p/var;
-    }  
-
-    Eigen::Matrix2d AI = A.inverse();
-    const Eigen::Vector2d& x = AI*b;
-
-    const double new_B = x(0);
-    const double new_I = x(1);
-
-    // check this calculation!
-    Eigen::Matrix2d cov = AI;
-
-    // Note: this error estimate assumes the variances are correct (i.e., gain and baseline accounted for)
-    B = Intensity(new_B, cov(0,0));
-    I = Intensity(new_I, cov(1,1));
+        Eigen::Vector3d dx = x[i] - x0;
+        const double xAx = dx.dot(A*dx);
+        res[i] = B+I*std::exp(-0.5*xAx)*factor - M[i];
+    }
 }
 
 bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
@@ -82,43 +84,73 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
         return false;
     }
 
-    const auto& obs_counts = region.data().counts();
-    std::vector<double> counts(obs_counts.size());
-
-    for (size_t i = 0; i < counts.size(); ++i) {
-        counts[i] = obs_counts[i];
-    }
-
-    const auto& profile = this->profile(peak, region);
-    const double tolerance = 1e-6;
-
-    // first give dummy values
-    _integratedIntensity = Intensity(1e-2);
-    _meanBackground = Intensity(1.0);
-
-    // todo: stopping criterion
-    for (size_t i = 0; i < 20; ++i) {
-        Intensity old_intensity = _integratedIntensity;
-        const double I0 = _integratedIntensity.value();
-        updateFit(_integratedIntensity, _meanBackground, profile, counts);
-        const double I1 = _integratedIntensity.value();
-
-        if (std::isnan(I1) || std::isnan(_meanBackground.value())) {
-            _integratedIntensity = old_intensity;
-            break;
-        }
-
-        if (I1 < 0.0 || (I1 < (1+tolerance)*I0 && I0 < (1+tolerance)*I1)) {
-            break;
-        }
-    }
+    const size_t N = region.data().events().size();
     
+    std::vector<double> counts(N);
+    std::vector<Eigen::Vector3d> x(N);
+    Eigen::VectorXd wts(N);
 
-    double sigma = _integratedIntensity.sigma();
+    for (size_t i = 0; i < N; ++i) {
+        counts[i] = region.data().counts()[i];
+        const auto& ev = region.data().events()[i];
+        x[i] = {ev._px, ev._py, ev._frame};
+        wts[i] = counts[i] <= 0.0 ? 0.0 : 1.0/counts[i];
+    }
 
-    if (std::isnan(sigma) || sigma <= 0.0) {
+    const auto& shape = peak->getShape();
+    Eigen::Vector3d x0 = shape.center();
+
+    // We only fit independent components of the Cholesky factor
+    Eigen::Matrix3d L = Eigen::LLT<Eigen::Matrix3d>(shape.metric()).matrixL();
+    Eigen::VectorXd a(6);
+    a(0) = L(0,0); a(1) = L(1,1); a(2) = L(2,2);
+    a(3) = L(1,0); a(4) = L(2,0); a(5) = L(2,1);
+   
+    Minimizer min;
+    FitParameters params;
+
+    double B = 0.0;
+    double I = peak->getRawIntensity().value();
+
+    params.addParameter(&B);
+    params.addParameter(&I);
+
+    if (_fitCenter) {
+        for (size_t i = 0; i < 3; ++i) {
+            params.addParameter(&x0(i));
+        }
+    }
+
+    if (_fitCov) {
+        for (size_t i = 0; i < 6; ++i) {
+            params.addParameter(&a(i));
+        }
+    }
+
+    auto f = [&](Eigen::VectorXd& r) -> int {
+        residuals(r, B, I, x0, a, x, counts);
+        return 0;
+    };
+
+    params.resetConstraints();
+
+    min.initialize(params, N);
+    min.set_f(f);
+
+    min.setWeights(wts);
+
+    bool success = min.fit(100);
+
+    if (!success) {
         return false;
     }
+
+    const auto& covar = min.covariance();
+    _meanBackground = {B, covar(0,0)};
+    _integratedIntensity = {I, covar(1,1)};
+
+    // update peak shape
+    peak->setShape({x0, from_cholesky(a)});
 
     // TODO: rocking curve!
 

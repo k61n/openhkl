@@ -574,7 +574,7 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
     integrator_map["Weak peak integrator"] = [&]() {return new nsx::WeakPeakIntegrator(library, dialog->radius(), dialog->nframes(), false);};
     integrator_map["I/Sigma integrator"] = [&]() {return new nsx::ISigmaIntegrator(library, dialog->radius(), dialog->nframes());};
     integrator_map["1d Profile integrator"] = [&]() {return new nsx::Profile1DIntegrator(library, dialog->radius(), dialog->nframes());};
-    integrator_map["Gaussian integrator"] = [&]() {return new nsx::GaussianIntegrator;};
+    integrator_map["Gaussian integrator"] = [&]() {return new nsx::GaussianIntegrator(dialog->fitCenter(), dialog->fitCov());};
 
     for (const auto& pair: integrator_map) {
         integrator_names.push_back(pair.first);

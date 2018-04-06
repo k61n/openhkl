@@ -25,9 +25,6 @@ DialogIntegrate::DialogIntegrate(QWidget *parent):
     _ui->method->addItem("3d profilt fit (detector)");
     _ui->method->addItem("I/sigma");
     _ui->method->addItem("1d profile fit");
-
-    // resolve method overload
-    auto valueChanged = static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged);
 }
 
 std::string DialogIntegrate::integrator() const
@@ -81,4 +78,14 @@ double DialogIntegrate::radius() const
 double DialogIntegrate::nframes() const
 {
     return _ui->nframes->value();
+}
+
+bool DialogIntegrate::fitCenter() const
+{
+    return _ui->fitCenter->isChecked();
+}
+
+bool DialogIntegrate::fitCov() const
+{
+    return _ui->fitCov->isChecked();
 }

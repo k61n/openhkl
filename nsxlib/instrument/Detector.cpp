@@ -102,7 +102,7 @@ Detector::Detector(const YAML::Node& node)
     if (node["baseline"]) {
         _baseline = node["baseline"].as<double>();
     } else {
-        _gain = 0.0;
+        _baseline = 0.0;
     }
 
     std::string dataOrder=node["data_ordering"].as<std::string>();

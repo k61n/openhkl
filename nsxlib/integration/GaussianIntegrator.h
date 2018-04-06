@@ -43,10 +43,14 @@ class DataSet;
 
 class GaussianIntegrator: public IPeakIntegrator {
 public:
-    GaussianIntegrator();
+    GaussianIntegrator(bool fit_center, bool fit_cov);
     bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
 
     std::vector<double> profile(sptrPeak3D peak, const IntegrationRegion& region);
+
+private:
+    bool _fitCenter;
+    bool _fitCov;
 };
 
 } // end namespace nsx

@@ -31,6 +31,9 @@ public:
     double radius() const;
     double nframes() const;
 
+    bool fitCenter() const;
+    bool fitCov() const;
+
     std::string integrator() const;
 
 private:
