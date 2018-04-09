@@ -73,11 +73,8 @@ void DialogProfileFit::build()
         if (inten.value() <= ui->Isigma->value() * inten.sigma()) {
             continue;
         }
-
         fit_peaks.push_back(peak);
     }
-
-    auto data = *_data.begin();
 
     auto scale = ui->scale->value();
     auto nx = ui->nx->value();
@@ -115,9 +112,14 @@ void DialogProfileFit::build()
     _library = nsx::sptrShapeLibrary(new nsx::ShapeLibrary);
     nsx::ShapeIntegrator integrator(aabb, nx, ny, nz, detector_space);    
     integrator.setHandler(handler);
-    nsx::info() << "Fitting profiles...";
-    integrator.integrate(fit_peaks, data, scale, scale+1, scale+2);
+
+    for (auto data: _data) {
+        nsx::info() << "Fitting profiles in dataset " << data->filename();
+        integrator.integrate(fit_peaks, data, scale, scale+1, scale+2);
+    }
     nsx::info() << "Done fitting profiles";
+
+
     _library = integrator.library();
 
     nsx::info() << "Updating peak shape model...";

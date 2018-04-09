@@ -52,6 +52,7 @@ IntegrationRegion::IntegrationRegion(sptrPeak3D peak, double peak_end, double bk
 {
     auto uc = peak->activeUnitCell();
 
+    #if 0
     // try to find Brillouin zone if peak has been indexed
     if (uc && peak->isIndexed()) {
         BrillouinZone zone(uc->reciprocalBasis());
@@ -76,6 +77,24 @@ IntegrationRegion::IntegrationRegion(sptrPeak3D peak, double peak_end, double bk
         _hull.addVertex(lo+Eigen::Vector3d(dx[0], dx[1], dx[2]));
     }
     _hull.updateHull();
+    #else
+    Ellipsoid bkg(_shape);
+    bkg.scale(_bkgEnd);
+    auto aabb = bkg.aabb();
+
+    Eigen::Vector3d lo = aabb.lower();
+    Eigen::Vector3d dx = aabb.upper() - aabb.lower();
+
+    _hull.addVertex(lo);
+    _hull.addVertex(lo+Eigen::Vector3d(0, 0, dx[2]));
+    _hull.addVertex(lo+Eigen::Vector3d(0, dx[1], 0));
+    _hull.addVertex(lo+Eigen::Vector3d(0, dx[1], dx[2]));
+    _hull.addVertex(lo+Eigen::Vector3d(dx[0], 0, 0));
+    _hull.addVertex(lo+Eigen::Vector3d(dx[0], 0, dx[2]));
+    _hull.addVertex(lo+Eigen::Vector3d(dx[0], dx[1], 0));
+    _hull.addVertex(lo+Eigen::Vector3d(dx[0], dx[1], dx[2]));
+    _hull.updateHull();
+    #endif
 }
 
 const AABB IntegrationRegion::aabb() const
@@ -174,10 +193,17 @@ bool IntegrationRegion::advanceFrame(const Eigen::MatrixXd& image, const Eigen::
         for (auto y = ymin; y < ymax; ++y) {
             DetectorEvent ev(x, y, frame);
             Eigen::Vector3d p(x, y, frame);
+
+            auto event_type = classify(ev);
+
+            if (event_type == EventType::PEAK || event_type == EventType::BACKGROUND) {
+                _data.addEvent(ev, image(y, x));
+            }
+
             // check if point is in Brillouin zone (or AABB if no UC available)
-            if (_hull.contains(p)) {
-                _data.addEvent(ev, image(y,x));
-            }          
+            //if (_hull.contains(p)) {
+            //    _data.addEvent(ev, image(y,x));
+            //}          
         }
     }
     return false;

@@ -31,10 +31,11 @@
 #include "DataSet.h"
 #include "Ellipsoid.h"
 #include "FitParameters.h"
+#include "GaussianIntegrator.h"
 #include "Intensity.h"
+#include "Logger.h"
 #include "Minimizer.h"
 #include "Peak3D.h"
-#include "GaussianIntegrator.h"
 
 #include <Eigen/Cholesky>
 
@@ -139,9 +140,24 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
 
     min.setWeights(wts);
 
-    bool success = min.fit(100);
+    try {
+        bool success = min.fit(100);
+        if (!success) {
+            return false;
+        }
+    } catch (std::exception& e) {
+        nsx::error() << "Gaussian fit failed: " << e.what();
+        return false;
+    }
 
-    if (!success) {
+    // consistency check: center should still be in dataset!
+    if (x0(0) < 0 || x0(0) >= peak->data()->nCols()) {
+        return false;
+    }
+    if (x0(1) < 0 || x0(1) >= peak->data()->nRows()) {
+        return false;
+    }
+    if (x0(2) < 0 || x0(2) >= peak->data()->nFrames()) {
         return false;
     }
 
@@ -153,7 +169,6 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     peak->setShape({x0, from_cholesky(a)});
 
     // TODO: rocking curve!
-
     return true;
 }
 

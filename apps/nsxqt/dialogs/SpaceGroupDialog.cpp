@@ -61,6 +61,10 @@ SpaceGroupDialog::SpaceGroupDialog(const nsx::PeakList& peaks, QWidget *parent):
         }
     }
 
+    if (!_cell) {
+        throw std::runtime_error("Cannot find spacegroup without a valid unit cell");
+    }
+
     _peaks = peak_filter.indexed(_peaks, _cell, _cell->indexingTolerance(),true);
 
     if ( _peaks.size()  == 0) {
