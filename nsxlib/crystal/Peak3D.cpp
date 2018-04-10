@@ -200,7 +200,7 @@ bool Peak3D::isPredicted() const
     return _predicted;
 }
 
-void Peak3D::updateIntegration(const IPeakIntegrator& integrator)
+void Peak3D::updateIntegration(const IPeakIntegrator& integrator, double peakEnd, double bkgBegin, double bkgEnd)
 {
     _rockingCurve = integrator.rockingCurve();
     // testing
@@ -210,6 +210,9 @@ void Peak3D::updateIntegration(const IPeakIntegrator& integrator)
     _rawIntensity = integrator.integratedIntensity();
     // testing!!
     //_shape = integrator.fitShape();
+    _peakEnd = peakEnd;
+    _bkgBegin = bkgBegin;
+    _bkgEnd = bkgEnd;
 }
 
 double Peak3D::pValue() const
@@ -303,6 +306,25 @@ DetectorEvent Peak3D::predictCenter(double frame) const
     Eigen::RowVector3d pred_kf = (kf1-kf).norm() < (kf2-kf).norm() ? kf1 : kf2;
 
     return _data->diffractometer()->getDetector()->constructEvent(DirectVector(state.samplePosition), ReciprocalVector(pred_kf*state.detectorOrientation));
+}
+
+    
+Intensity Peak3D::meanBackground() const {
+    return _meanBackground;
+}
+
+double Peak3D::peakEnd() const {
+    return _peakEnd;
+}
+
+double Peak3D::bkgBegin() const
+{
+    return _bkgBegin;
+}
+
+double Peak3D::bkgEnd() const
+{
+    return _bkgEnd;
 }
 
 } // end namespace nsx

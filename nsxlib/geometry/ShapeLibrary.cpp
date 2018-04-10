@@ -212,6 +212,7 @@ FitProfile ShapeLibrary::meanProfile(const DetectorEvent& ev, double radius, dou
         // mean.addProfile(profile, weight*weight);
         mean.addProfile(_profiles.find(peak)->second.first, 1.0);
     }
+
     mean.normalize();
     return mean;
 }
@@ -260,15 +261,18 @@ PeakList ShapeLibrary::findNeighbors(const DetectorEvent& ev, double radius, dou
     return neighbors;
 }
 
-Eigen::Matrix3d ShapeLibrary::meanCovariance(sptrPeak3D reference_peak, double radius, double nframes) const
+Eigen::Matrix3d ShapeLibrary::meanCovariance(sptrPeak3D reference_peak, double radius, double nframes, size_t min_neighbors) const
 {
     Eigen::Matrix3d cov;
     cov.setZero();
     PeakList neighbors = findNeighbors(DetectorEvent(reference_peak->getShape().center()), radius, nframes);
 
+    if (neighbors.size() < min_neighbors) {
+        throw std::runtime_error("ShapeLibrary::meanCovariance(): peak has too few neighbors");
+    }
 
     // testing (try using detector space??)
-    #if 0
+    #if 1
     for (auto peak: neighbors) {
         cov += peak->getShape().inverseMetric();
     }

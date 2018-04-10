@@ -43,7 +43,7 @@ public:
     std::vector<Intensity> meanIntegratedProfile(const DetectorEvent& ev, double radius, double nframes) const;
 
     //! Return the average peak covariance near the given detector event
-    Eigen::Matrix3d meanCovariance(sptrPeak3D reference_peak, double radius, double nframes) const;
+    Eigen::Matrix3d meanCovariance(sptrPeak3D reference_peak, double radius, double nframes, size_t min_neighbors) const;
 
     //! Find neighbors of a given peak
     PeakList findNeighbors(const DetectorEvent& ev, double radius, double nframes) const;

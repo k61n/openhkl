@@ -41,7 +41,7 @@ namespace nsx {
 
 class IntegrationRegion {
 public:
-    enum class EventType: int {BACKGROUND = 1, PEAK = 2, FORBIDDEN = 0, EXCLUDED = -1};
+    enum class EventType: int {BACKGROUND = 1, PEAK = 2, FORBIDDEN = -1, EXCLUDED = 0};
 
     IntegrationRegion();
 

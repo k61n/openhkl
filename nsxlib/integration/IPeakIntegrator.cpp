@@ -122,7 +122,7 @@ void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_en
                 regions[peak].data().computeStandard();            
                 try {
                     if (compute(peak, regions[peak])) {
-                        peak->updateIntegration(*this);
+                        peak->updateIntegration(*this, peak_end, bkg_begin, bkg_end);
                     } else {
                         peak->setSelected(false);
                     }

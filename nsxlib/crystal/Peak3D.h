@@ -81,6 +81,14 @@ public:
 
     //! Return the raw intensity of the peak.
     Intensity getRawIntensity() const;
+    //! Return mean background of the peak
+    Intensity meanBackground() const;
+    //! Return shape scale used to define peak region
+    double peakEnd() const;
+    //! Return shape scale used to define beginning of background region
+    double bkgBegin() const;
+    //! Return shape scale used to define end of background region
+    double bkgEnd() const;
 
     //! Return the scaling factor.
     double getScale() const;
@@ -112,7 +120,7 @@ public:
     void scaleShape(double scale);
 
     //! update the integration
-    void updateIntegration(const IPeakIntegrator& integrator);
+    void updateIntegration(const IPeakIntegrator& integrator, double peakEnd, double bkgBegin, double bkgEnd);
 
     //! compute P value that there is actually an observed peak, assuming Poisson statistics
     double pValue() const;
@@ -144,9 +152,14 @@ private:
 
     //! Raw intensity (count), background corrected
     Intensity _rawIntensity;
-
     //! Mean background estimate
     Intensity _meanBackground;
+    //! Shape scale factor for peak
+    double _peakEnd;
+    //! Shape scale factor for start of background
+    double _bkgBegin;
+    //! Shape scale factor for end of background
+    double _bkgEnd;
 
     UnitCellList _unitCells;
    

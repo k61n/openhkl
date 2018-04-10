@@ -125,28 +125,31 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
 
     for (auto x = xmin; x < xmax; ++x) {
         for (auto y = ymin; y < ymax; ++y) {    
+            EventType val = EventType(mask(y,x));
             // once forbidden, always forbidden...
-            if (mask(y,x) == int(EventType::FORBIDDEN)) {
+            if (val == EventType::FORBIDDEN) {
                 continue;
             }
 
             DetectorEvent ev(x, y, z);
-            auto s = classify(ev);
+            auto ev_type = classify(ev);
             
-            if (s == EventType::FORBIDDEN) {
-                mask(y, x) = int(s);
-                continue;
+            switch (ev_type) {
+            case EventType::FORBIDDEN:
+                val = EventType::FORBIDDEN;
+                break;
+            case EventType::PEAK:
+                val = EventType::PEAK;
+                break;
+            case EventType::BACKGROUND:
+                if (val == EventType::EXCLUDED) {
+                    val = EventType::BACKGROUND;
+                }
+                break;
+            default:
+                break;           
             }
-
-            if (s == EventType::PEAK) {
-                mask(y, x) = int(s);
-                continue;
-            }
-
-            if (s == EventType::BACKGROUND && mask(y,x) == int(EventType::EXCLUDED)) {
-                mask(y, x) = int(s);
-                continue;
-            }
+            mask(y,x) = int(val);
         }
     }
 }
@@ -191,12 +194,19 @@ bool IntegrationRegion::advanceFrame(const Eigen::MatrixXd& image, const Eigen::
 
     for (auto x = xmin; x < xmax; ++x) {
         for (auto y = ymin; y < ymax; ++y) {
+            EventType mask_type = EventType(mask(y,x));
+            if (mask_type == EventType::FORBIDDEN) {
+                continue;
+            }
             DetectorEvent ev(x, y, frame);
             Eigen::Vector3d p(x, y, frame);
-
             auto event_type = classify(ev);
 
-            if (event_type == EventType::PEAK || event_type == EventType::BACKGROUND) {
+            if (event_type == EventType::PEAK) {
+                _data.addEvent(ev, image(y, x));
+            }
+
+            if (event_type == EventType::BACKGROUND && mask_type == EventType::BACKGROUND) {
                 _data.addEvent(ev, image(y, x));
             }
 

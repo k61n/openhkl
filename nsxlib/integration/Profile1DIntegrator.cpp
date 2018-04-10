@@ -161,6 +161,9 @@ bool Profile1DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
         return false;
     }
 
+    _integratedIntensity = I;
+    _meanBackground = B;
+
     // TODO: rocking curve!
 
     return true;
