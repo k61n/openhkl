@@ -85,16 +85,6 @@ file(GLOB_RECURSE NSXQT_RCS *.qrc)
 # "Compile" the resources files
 qt5_add_resources(resources ${NSXQT_RCS})
 
-# For info use 'objdump -x nsxqt | grep RPATH' to the installed executable (not the built one)
-# to check that the RPATH is correctly set
-
-# Use, i.e. don't skip the full RPATH for the build tree
-set(CMAKE_SKIP_BUILD_RPATH  FALSE)
-# When building, don't use the install RPATH already (but later on when installing)
-set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-# Set the install RPATH
-set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
-
 # Build the nsxqt executable
 add_executable(nsxqt ${GUI_TYPE} ${NSXQT_SOURCES} ${NSXQT_HEADERS} ${ui_headers} ${resources})
 
