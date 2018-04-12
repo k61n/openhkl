@@ -67,7 +67,10 @@ Peak3D::Peak3D(sptrDataSet data):
     _transmission(1.0),
     _activeUnitCellIndex(0),
     _data(data),
-    _rockingCurve()
+    _rockingCurve(),
+    _peakEnd(4.0),
+    _bkgBegin(5.0),
+    _bkgEnd(6.0)
 {
   
 }

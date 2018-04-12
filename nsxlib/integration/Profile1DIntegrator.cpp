@@ -39,7 +39,7 @@
 namespace nsx {
 
 Profile1DIntegrator::Profile1DIntegrator(sptrShapeLibrary library, double radius, double nframes):
-    StrongPeakIntegrator(),
+    IPeakIntegrator(),
     _library(library),
     _radius(radius),
     _nframes(nframes)
@@ -99,9 +99,6 @@ bool Profile1DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
         return false;
     }
 
-    // first get mean background
-    StrongPeakIntegrator::compute(peak, region);
-
     const auto& events = region.data().events();
     const auto& counts = region.data().counts();
 
@@ -149,7 +146,7 @@ bool Profile1DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
     }
 
     Intensity I = 1e-6;
-    Intensity B = _meanBackground.value();
+    Intensity B = 1.0;
 
     for (auto i = 0; i < 10 && I.value() > 0; ++i) {
         updateFit(I, B, dp, dm, dn);

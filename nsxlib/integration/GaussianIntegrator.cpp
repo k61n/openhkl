@@ -63,7 +63,7 @@ static void residuals(
     Eigen::VectorXd& res,  
     double B, double I, 
     const Eigen::Vector3d x0, const Eigen::VectorXd& a, 
-    const std::vector<Eigen::Vector3d>& x, const std::vector<double>& M)
+    const std::vector<Eigen::Vector3d>& x, const std::vector<double>& M, double* pearson)
 {
     const size_t n = x.size();
     assert(n == M.size());
@@ -72,10 +72,32 @@ static void residuals(
     const Eigen::Matrix3d A = from_cholesky(a);
     const double factor = std::sqrt(A.determinant() / 8 / M_PI / M_PI / M_PI);
 
+    double u = 0, v = 0, uu = 0, vv = 0, uv = 0;    
+
     for (size_t i = 0; i < n; ++i) {
         Eigen::Vector3d dx = x[i] - x0;
         const double xAx = dx.dot(A*dx);
-        res[i] = B+I*std::exp(-0.5*xAx)*factor - M[i];
+        const double M_pred = B + I*std::exp(-0.5*xAx);
+        const double M_obs = M[i];
+        res[i] = M_pred - M_obs;
+
+        if (pearson) {
+            u += M_pred;
+            uu += M_pred*M_pred;
+            v += M_obs;
+            vv += M_obs*M_obs;
+            uv += M_pred*M_obs;
+        }
+    }
+
+    // pearson correlation
+    if (pearson) {
+        u /= n;
+        v /= n;
+        uu -= n*u*u;
+        vv -= n*v*v;
+        uv -= n*u*v;
+        *pearson = uv / std::sqrt(uu*vv);
     }
 }
 
@@ -129,7 +151,7 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     }
 
     auto f = [&](Eigen::VectorXd& r) -> int {
-        residuals(r, B, I, x0, a, x, counts);
+        residuals(r, B, I, x0, a, x, counts, nullptr);
         return 0;
     };
 
@@ -165,11 +187,19 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     _meanBackground = {B, covar(0,0)};
     _integratedIntensity = {I, covar(1,1)};
 
-    // update peak shape
-    peak->setShape({x0, from_cholesky(a)});
+    // get pearson coefficient of fit
+    double pearson;
+    Eigen::VectorXd r(N);
+    residuals(r, B, I, x0, a, x, counts, &pearson);
 
-    // TODO: rocking curve!
-    return true;
+    if (pearson > 0.75) {
+        // update peak shape
+        peak->setShape({x0, from_cholesky(a)});
+        // TODO: rocking curve!
+        return true;
+    } else {
+        return false;
+    }
 }
 
 std::vector<double> GaussianIntegrator::profile(sptrPeak3D peak, const IntegrationRegion& region)

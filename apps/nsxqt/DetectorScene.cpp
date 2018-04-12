@@ -558,22 +558,22 @@ void DetectorScene::loadCurrentImage(bool newimage)
         Eigen::MatrixXi mask(nrows, ncols);
         mask.setConstant(int(EventType::EXCLUDED));
 
-        for (auto&& peak: _session->peaks(_currentData.get())) {
+        //for (auto&& peak: _session->peaks(_currentData.get())) {
+        auto peaks = _session->peaks(_currentData.get());
+        for (size_t i = 0; i < peaks.size(); ++i) {
+            auto peak = peaks[i];
             // IntegrationRegion constructor can throw if the region is invalid
             try {
                 if (peak->isSelected()) {
-                    auto&& region = nsx::IntegrationRegion(peak, peak->peakEnd(), peak->bkgBegin(), peak->bkgEnd());
+                    auto region = nsx::IntegrationRegion(peak, peak->peakEnd(), peak->bkgBegin(), peak->bkgEnd());
                     region.updateMask(mask, _currentFrameIndex);
+                    // debugging
+                    //nsx::info() << peak->getShape().center().transpose() << "; " << mask.cast<double>().mean();
                 }
             } catch (...) {
                 peak->setSelected(false);
             }
         }
-
-        nsx::info() << "TESTING: ";
-        nsx::info() << mask.maxCoeff();
-        nsx::info() << mask.minCoeff();
-        nsx::info() << mask.mean();
 
         QImage region_img(ncols, nrows, QImage::Format_ARGB32);
 
