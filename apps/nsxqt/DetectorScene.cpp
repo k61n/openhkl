@@ -162,6 +162,9 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         auto point = lastPos.toPoint();
         QTransform trans;
         QGraphicsItem* gItem = itemAt(point, trans);
+        if (!gItem) {
+            return;
+        }
         auto p = dynamic_cast<PlottableGraphicsItem*>(gItem);
         if (p != nullptr) {
             emit updatePlot(p);

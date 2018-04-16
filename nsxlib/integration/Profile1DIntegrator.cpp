@@ -108,7 +108,7 @@ bool Profile1DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
     }
 
     std::vector<Intensity> mean_profile;
-    IntegratedProfile profile;
+    IntegratedProfile profile(0.0, region.peakEnd());
 
     Eigen::Vector3d c = peak->getShape().center();
     Eigen::Matrix3d A = peak->getShape().metric();
@@ -152,7 +152,7 @@ bool Profile1DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
         updateFit(I, B, dp, dm, dn);
     }
 
-    double sigma = _integratedIntensity.sigma();
+    double sigma = I.sigma();
 
     if (std::isnan(sigma) || sigma <= 0.0) {
         return false;

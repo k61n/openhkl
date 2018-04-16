@@ -74,8 +74,7 @@ namespace nsx {
 
 PeakFinder::PeakFinder()
 : _handler(nullptr),
-  _searchConfidence(nsx::getConfidence(1.0)),
-  _integrationConfidence(nsx::getConfidence(3.0)),
+  _peakScale(1.0),  
   _current_label(0),
   _minSize(30),
   _maxSize(10000),
@@ -121,7 +120,7 @@ PeakList PeakFinder::find(DataList numors)
             if ( _handler ) {
                 _handler->log("min comp is " + std::to_string(_minSize));
                 _handler->log("max comp is " + std::to_string(_maxSize));
-                _handler->log("search confidence is " + std::to_string(_searchConfidence));
+                _handler->log("search scalee is " + std::to_string(_peakScale));
             }
 
             if (_handler) {
@@ -252,26 +251,6 @@ PeakList PeakFinder::find(DataList numors)
 void PeakFinder::setHandler(const sptrProgressHandler& handler)
 {
     _handler = handler;
-}
-
-void PeakFinder::setSearchConfidence(double confidence)
-{
-    _searchConfidence = confidence;
-}
-
-double PeakFinder::searchConfidence() const
-{
-    return _searchConfidence;
-}
-
-void PeakFinder::setIntegrationConfidence(double confidence)
-{
-    _integrationConfidence = confidence;
-}
-
-double PeakFinder::integrationConfidence() const
-{
-    return _integrationConfidence;
 }
 
 void PeakFinder::setMaxFrames(int maxFrames)
@@ -580,7 +559,7 @@ void PeakFinder::findCollisions(sptrDataSet data, std::map<int,Blob3D>& blobs, E
 
         try {
             // toEllipsoid throws exception if mass is too small
-            it->second.toEllipsoid(_searchConfidence,center,extents,axis);
+            it->second.toEllipsoid(_peakScale,center,extents,axis);
         } catch(...) {
             it = blobs.erase(it);
             continue;

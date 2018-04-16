@@ -112,30 +112,17 @@ Eigen::MatrixXi DataSet::frame(std::size_t idx)
     return _reader->getData(idx);
 }
 
-Eigen::MatrixXi DataSet::convolvedFrame(std::size_t idx, const std::string& convolver_type, const std::map<std::string,double>& parameters)
+Eigen::MatrixXd DataSet::convolvedFrame(std::size_t idx, const std::string& convolver_type, const std::map<std::string,double>& parameters)
 {
     ConvolverFactory convolver_factory;
-
     auto convolver = convolver_factory.create(convolver_type,parameters);
 
-    Eigen::MatrixXi autoscaled_data;
-    Eigen::MatrixXi frame_data = _reader->getData(idx);
-   
-
+    Eigen::MatrixXi frame_data = _reader->getData(idx); 
     int maxData = frame_data.maxCoeff();
 
-    nsx::RealMatrix result;
-
     // compute the convolution
-    result = convolver->convolve(frame_data.cast<double>());
-
-    double minVal = result.minCoeff();
-    double maxVal = result.maxCoeff();
-    result.array() -= minVal;
-    result.array() *= static_cast<double>(maxData)/(maxVal-minVal);
-    autoscaled_data = result.cast<int>();
-
-    return autoscaled_data;
+    auto result = convolver->convolve(frame_data.cast<double>());
+    return result;
 }
 
 void DataSet::open()

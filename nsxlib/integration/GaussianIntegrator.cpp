@@ -183,6 +183,13 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
         return false;
     }
 
+    // consistency check: covariance matrix should be positive definite
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(from_cholesky(a));
+    
+    if (solver.eigenvalues().minCoeff() <= 0) {
+        return false;
+    }
+
     const auto& covar = min.covariance();
     _meanBackground = {B, covar(0,0)};
     _integratedIntensity = {I, covar(1,1)};

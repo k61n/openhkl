@@ -80,6 +80,7 @@
 #include <nsxlib/Sample.h>
 #include <nsxlib/ShapeLibrary.h>
 #include <nsxlib/SpaceGroup.h>
+#include <nsxlib/StrongPeakIntegrator.h>
 #include <nsxlib/Source.h>
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/XDS.h>
@@ -292,8 +293,9 @@ void SessionModel::findPeaks(const QModelIndex& index)
     // dialog will automatically be deleted before we return from this method
     std::unique_ptr<DialogPeakFind> dialog_ptr(dialog);
 
-    if (!dialog->exec())
+    if (!dialog->exec()) {
         return;
+    }
 
     ui->_dview->getScene()->clearPeaks();
 
@@ -311,6 +313,12 @@ void SessionModel::findPeaks(const QModelIndex& index)
     catch(std::exception& e) {
         nsx::debug() << "Caught exception during peak find: " << e.what();
         return;
+    }
+
+    // integrate peaks
+    for (auto numor: selectedNumors) {
+        nsx::StrongPeakIntegrator integrator;
+        integrator.integrate(_peaks, numor, dialog->peakScale(), dialog->bkgBegin(), dialog->bkgEnd());
     }
 
     // delete the progressView

@@ -26,16 +26,15 @@ class DialogPeakFind : public QDialog
 
 public:
     explicit DialogPeakFind(const nsx::DataList& data,nsx::sptrPeakFinder peakFinder=nullptr,QWidget *parent = 0);
-
     ~DialogPeakFind();
 
     void setPreviewFrame(const Eigen::MatrixXi& frame);
-
     void setColorMap(const std::string& name);
-
     int exec() override;
-
     void showEvent(QShowEvent*);
+    double peakScale() const;
+    double bkgBegin() const;
+    double bkgEnd() const;
 
 private slots:
 
@@ -50,9 +49,6 @@ private slots:
     void changeMinSize(int size);
     void changeMaxSize(int size);
     void changeMaxFrames(int size);
-
-    void changeIntegrationConfidenceValue(double confidence);
-    void changeSearchConfidenceValue(double confidence);
 
     void changeSelectedData(int selected_data);
     void changeSelectedFrame(int selected_frame);
