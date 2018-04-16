@@ -76,7 +76,6 @@ void DialogProfileFit::build()
         fit_peaks.push_back(peak);
     }
 
-    auto scale = ui->scale->value();
     auto nx = ui->nx->value();
     auto ny = ui->ny->value();
     auto nz = ui->nz->value();  
@@ -94,6 +93,8 @@ void DialogProfileFit::build()
     bool detector_space = true;
     nsx::AABB aabb;
 
+    auto peakScale = ui->peakScale->value();
+
     if (detector_space) {
         Eigen::Vector3d dx(nx, ny, nz);
         dx *= -0.5;
@@ -101,8 +102,8 @@ void DialogProfileFit::build()
         aabb.setUpper(dx);
     } else {
         Eigen::Vector3d sigma(sigmaD, sigmaD, sigmaM);
-        aabb.setLower(-scale*sigma);
-        aabb.setUpper(scale*sigma);
+        aabb.setLower(-peakScale*sigma);
+        aabb.setUpper(peakScale*sigma);
     }
 
     // free memory of old library
@@ -114,8 +115,10 @@ void DialogProfileFit::build()
     integrator.setHandler(handler);
 
     for (auto data: _data) {
+        auto bkgBegin = ui->bkgBegin->value();
+        auto bkgEnd = ui->bkgEnd->value();
         nsx::info() << "Fitting profiles in dataset " << data->filename();
-        integrator.integrate(fit_peaks, data, scale, scale+1, scale+2);
+        integrator.integrate(fit_peaks, data, peakScale, bkgBegin, bkgEnd);
     }
     nsx::info() << "Done fitting profiles";
 

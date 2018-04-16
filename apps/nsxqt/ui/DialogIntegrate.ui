@@ -22,14 +22,82 @@
      <x>0</x>
      <y>10</y>
      <width>402</width>
-     <height>328</height>
+     <height>362</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="8" column="0">
-     <widget class="QLabel" name="label_6">
+    <item row="7" column="0">
+     <widget class="QLabel" name="label_4">
       <property name="text">
-       <string>number of frames</string>
+       <string>maximum d</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>minimum d</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Peak background scale</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_7">
+      <property name="text">
+       <string>Method</string>
+      </property>
+     </widget>
+    </item>
+    <item row="11" column="0">
+     <widget class="QPushButton" name="okButton">
+      <property name="text">
+       <string>Ok</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="1">
+     <widget class="QDoubleSpinBox" name="nframes">
+      <property name="decimals">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <double>1000.000000000000000</double>
+      </property>
+      <property name="value">
+       <double>5.000000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="label_5">
+      <property name="text">
+       <string>search radius</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QDoubleSpinBox" name="dMin">
+      <property name="decimals">
+       <number>3</number>
+      </property>
+      <property name="maximum">
+       <double>1000.000000000000000</double>
+      </property>
+      <property name="singleStep">
+       <double>0.001000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item row="11" column="1">
+     <widget class="QPushButton" name="cancelButton">
+      <property name="text">
+       <string>Cancel</string>
       </property>
      </widget>
     </item>
@@ -39,55 +107,35 @@
        <double>0.010000000000000</double>
       </property>
       <property name="value">
-       <double>4.000000000000000</double>
+       <double>3.000000000000000</double>
       </property>
      </widget>
     </item>
-    <item row="10" column="0">
-     <widget class="QPushButton" name="okButton">
+    <item row="9" column="0">
+     <widget class="QLabel" name="label_6">
       <property name="text">
-       <string>Ok</string>
+       <string>number of frames</string>
       </property>
      </widget>
     </item>
-    <item row="5" column="0">
-     <widget class="QLabel" name="label_3">
+    <item row="0" column="1">
+     <widget class="QComboBox" name="method"/>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_2">
       <property name="text">
-       <string>minimum d</string>
+       <string>Peak shape scale</string>
       </property>
      </widget>
     </item>
-    <item row="6" column="1">
-     <widget class="QDoubleSpinBox" name="dMax">
-      <property name="decimals">
-       <number>1</number>
-      </property>
-      <property name="maximum">
-       <double>1000.000000000000000</double>
-      </property>
-      <property name="singleStep">
-       <double>0.001000000000000</double>
-      </property>
-      <property name="value">
-       <double>1000.000000000000000</double>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="0">
-     <widget class="QLabel" name="label_4">
+    <item row="2" column="1">
+     <widget class="QCheckBox" name="fitCov">
       <property name="text">
-       <string>maximum d</string>
+       <string>fit covariance (Gaussian only)</string>
       </property>
      </widget>
     </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Peak background scale</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="1">
+    <item row="8" column="1">
      <widget class="QDoubleSpinBox" name="radius">
       <property name="decimals">
        <number>1</number>
@@ -103,73 +151,6 @@
       </property>
      </widget>
     </item>
-    <item row="10" column="1">
-     <widget class="QPushButton" name="cancelButton">
-      <property name="text">
-       <string>Cancel</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="0">
-     <widget class="QLabel" name="label_5">
-      <property name="text">
-       <string>search radius</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1">
-     <widget class="QDoubleSpinBox" name="bkgScale">
-      <property name="singleStep">
-       <double>0.010000000000000</double>
-      </property>
-      <property name="value">
-       <double>6.000000000000000</double>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="1">
-     <widget class="QDoubleSpinBox" name="dMin">
-      <property name="decimals">
-       <number>3</number>
-      </property>
-      <property name="maximum">
-       <double>1000.000000000000000</double>
-      </property>
-      <property name="singleStep">
-       <double>0.001000000000000</double>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="1">
-     <widget class="QDoubleSpinBox" name="nframes">
-      <property name="decimals">
-       <number>1</number>
-      </property>
-      <property name="maximum">
-       <double>1000.000000000000000</double>
-      </property>
-      <property name="value">
-       <double>5.000000000000000</double>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>Peak shape scale</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QComboBox" name="method"/>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_7">
-      <property name="text">
-       <string>Method</string>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="1">
      <widget class="QCheckBox" name="fitCenter">
       <property name="text">
@@ -177,10 +158,46 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="1">
-     <widget class="QCheckBox" name="fitCov">
+    <item row="7" column="1">
+     <widget class="QDoubleSpinBox" name="dMax">
+      <property name="decimals">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <double>1000.000000000000000</double>
+      </property>
+      <property name="singleStep">
+       <double>0.001000000000000</double>
+      </property>
+      <property name="value">
+       <double>1000.000000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QDoubleSpinBox" name="bkgEnd">
+      <property name="singleStep">
+       <double>0.010000000000000</double>
+      </property>
+      <property name="value">
+       <double>4.500000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_8">
       <property name="text">
-       <string>fit covariance (Gaussian only)</string>
+       <string>Background begin</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QDoubleSpinBox" name="bkgBegin">
+      <property name="singleStep">
+       <double>0.010000000000000</double>
+      </property>
+      <property name="value">
+       <double>4.000000000000000</double>
       </property>
      </widget>
     </item>

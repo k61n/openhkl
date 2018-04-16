@@ -586,7 +586,8 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
     }
 
     const double peak_scale = dialog->peakScale();
-    const double bkg_scale = dialog->backgroundScale();
+    const double bkgBegin = dialog->bkgBegin();
+    const double bkgEnd = dialog->bkgEnd();
     const double dmin = dialog->dMin();
     const double dmax = dialog->dMax();
 
@@ -603,7 +604,7 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
         nsx::info() << "Integrating " << peaks.size() << " peaks";
         std::unique_ptr<nsx::IPeakIntegrator> integrator(integrator_map[dialog->integrator()]());
         integrator->setHandler(handler);
-        integrator->integrate(peaks, numor, peak_scale, 0.5*(peak_scale+bkg_scale), bkg_scale); //, _progressHandler);
+        integrator->integrate(peaks, numor, peak_scale, bkgBegin, bkgEnd);
     }
 
     _session->updatePeaks();

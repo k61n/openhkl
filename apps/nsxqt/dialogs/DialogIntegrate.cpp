@@ -55,9 +55,14 @@ double DialogIntegrate::peakScale() const
     return _ui->peakScale->value();
 }
 
-double DialogIntegrate::backgroundScale() const
+double DialogIntegrate::bkgBegin() const
 {
-    return _ui->bkgScale->value();
+    return _ui->bkgBegin->value();
+}
+
+double DialogIntegrate::bkgEnd() const
+{
+    return _ui->bkgEnd->value();
 }
 
 double DialogIntegrate::dMin() const

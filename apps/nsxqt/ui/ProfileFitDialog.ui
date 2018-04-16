@@ -19,12 +19,22 @@
      <x>370</x>
      <y>10</y>
      <width>321</width>
-     <height>521</height>
+     <height>591</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
+    <item row="10" column="1">
+     <widget class="QDoubleSpinBox" name="bkgEnd">
+      <property name="singleStep">
+       <double>0.100000000000000</double>
+      </property>
+      <property name="value">
+       <double>4.500000000000000</double>
+      </property>
+     </widget>
+    </item>
     <item row="8" column="1">
-     <widget class="QDoubleSpinBox" name="scale">
+     <widget class="QDoubleSpinBox" name="peakScale">
       <property name="singleStep">
        <double>0.100000000000000</double>
       </property>
@@ -36,7 +46,7 @@
     <item row="8" column="0">
      <widget class="QLabel" name="label_7">
       <property name="text">
-       <string>scale</string>
+       <string>peak scale</string>
       </property>
      </widget>
     </item>
@@ -145,14 +155,14 @@
       </property>
      </widget>
     </item>
-    <item row="9" column="1">
+    <item row="11" column="1">
      <widget class="QSpinBox" name="subdivide">
       <property name="minimum">
        <number>1</number>
       </property>
      </widget>
     </item>
-    <item row="9" column="0">
+    <item row="11" column="0">
      <widget class="QLabel" name="label_8">
       <property name="text">
        <string>subdivide</string>
@@ -199,73 +209,97 @@
       </property>
      </widget>
     </item>
-    <item row="12" column="0">
+    <item row="14" column="0">
      <widget class="QLabel" name="label_13">
       <property name="text">
        <string>frame</string>
       </property>
      </widget>
     </item>
-    <item row="11" column="0">
+    <item row="13" column="0">
      <widget class="QLabel" name="label_12">
       <property name="text">
        <string>y</string>
       </property>
      </widget>
     </item>
-    <item row="13" column="0">
+    <item row="15" column="0">
      <widget class="QLabel" name="label_14">
       <property name="text">
        <string>radius</string>
       </property>
      </widget>
     </item>
-    <item row="10" column="0">
+    <item row="12" column="0">
      <widget class="QLabel" name="label_11">
       <property name="text">
        <string>x</string>
       </property>
      </widget>
     </item>
-    <item row="14" column="0">
+    <item row="16" column="0">
      <widget class="QLabel" name="label_15">
       <property name="text">
        <string>n frames</string>
       </property>
      </widget>
     </item>
-    <item row="10" column="1">
+    <item row="12" column="1">
      <widget class="QDoubleSpinBox" name="x">
       <property name="singleStep">
        <double>0.010000000000000</double>
       </property>
      </widget>
     </item>
-    <item row="11" column="1">
+    <item row="13" column="1">
      <widget class="QDoubleSpinBox" name="y">
       <property name="singleStep">
        <double>0.010000000000000</double>
       </property>
      </widget>
     </item>
-    <item row="12" column="1">
+    <item row="14" column="1">
      <widget class="QDoubleSpinBox" name="frame">
       <property name="singleStep">
        <double>0.010000000000000</double>
       </property>
      </widget>
     </item>
-    <item row="13" column="1">
+    <item row="15" column="1">
      <widget class="QDoubleSpinBox" name="radius">
       <property name="singleStep">
        <double>0.010000000000000</double>
       </property>
      </widget>
     </item>
-    <item row="14" column="1">
+    <item row="16" column="1">
      <widget class="QDoubleSpinBox" name="nframes">
       <property name="singleStep">
        <double>0.010000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="1">
+     <widget class="QDoubleSpinBox" name="bkgBegin">
+      <property name="singleStep">
+       <double>0.100000000000000</double>
+      </property>
+      <property name="value">
+       <double>4.000000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="0">
+     <widget class="QLabel" name="label_16">
+      <property name="text">
+       <string>background begin</string>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="0">
+     <widget class="QLabel" name="label_17">
+      <property name="text">
+       <string>background end</string>
       </property>
      </widget>
     </item>
@@ -310,10 +344,10 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>580</y>
-     <width>349</width>
-     <height>28</height>
+     <x>80</x>
+     <y>480</y>
+     <width>192</width>
+     <height>27</height>
     </rect>
    </property>
    <property name="orientation">

@@ -38,7 +38,7 @@ namespace nsx {
 
 // Forward declare
 class Component;
-struct InstrumentState;
+class InstrumentState;
 
 //! Maintain a state of a goniometer, following the memento pattern.
 class ComponentState {
@@ -59,7 +59,7 @@ public:
     ComponentState interpolate(const ComponentState &other, double t) const;
 
 private:
-    friend struct InstrumentState;
+    friend class InstrumentState;
     //! Pointer to the Component that has created the state
     const Component* _ptrComp;
     //! Raw values for each axis of the component

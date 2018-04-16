@@ -25,7 +25,8 @@ public:
     void setIntegrators(const std::vector<std::string>& names);
 
     double peakScale() const;
-    double backgroundScale() const;
+    double bkgBegin() const;
+    double bkgEnd() const;
     double dMin() const;
     double dMax() const;
     double radius() const;

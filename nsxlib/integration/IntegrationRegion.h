@@ -65,6 +65,9 @@ public:
     const Ellipsoid& shape() const;
 
     const ConvexHull& hull() const;
+
+    double peakEnd() const { return _peakEnd; }
+
 private:
     Ellipsoid _shape;
     double _peakEnd;
