@@ -40,10 +40,13 @@
 %shared_ptr(nsx::Peak3D)
 %shared_ptr(nsx::Material)
 %shared_ptr(nsx::Diffractometer)
-%shared_ptr(nsx::ConvolutionKernel)
-%shared_ptr(nsx::DeltaKernel)
-%shared_ptr(nsx::AnnularKernel)
 %shared_ptr(nsx::Convolver)
+%shared_ptr(nsx::AtomicConvolver)
+%shared_ptr(nsx::ConstantConvolver)
+%shared_ptr(nsx::DeltaConvolver)
+%shared_ptr(nsx::AnnularConvolver)
+%shared_ptr(nsx::EnhancedAnnularConvolver)
+%shared_ptr(nsx::RadialConvolver)
 %shared_ptr(nsx::DataSet)
 %shared_ptr(nsx::Source)
 %shared_ptr(nsx::Sample)
@@ -161,8 +164,6 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "ConvexHull.h"
 #include "BrillouinZone.h"
 
-#include "BlobFinder.h"
-
 #include "AABB.h"
 #include "Edge.h"
 #include "Blob3D.h"
@@ -205,6 +206,15 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "CylindricalDetector.h"
 #include "Gonio.h"
 
+#include "Convolver.h"
+#include "AtomicConvolver.h"
+#include "DeltaConvolver.h"
+#include "AnnularConvolver.h"
+#include "EnhancedAnnularConvolver.h"
+#include "ConstantConvolver.h"
+#include "ConvolverFactory.h"
+#include "RadialConvolver.h"
+
 #include "Axis.h"
 #include "Experiment.h"
 
@@ -212,13 +222,8 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "AxisFactory.h"
 #include "RotAxis.h"
 #include "PhysicalUnit.h"
-#include "ConstantKernel.h"
-#include "KernelFactory.h"
+#include "ConstantConvolver.h"
 #include "Convolver.h"
-
-#include "DeltaKernel.h"
-#include "AnnularKernel.h"
-#include "ConvolutionKernel.h"
 
 #include "Composite.h"
 
@@ -272,6 +277,15 @@ using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 
 #include "Singleton.h"
 
+#include "Convolver.h"
+#include "AtomicConvolver.h"
+#include "ConvolverFactory.h"
+#include "DeltaConvolver.h"
+#include "AnnularConvolver.h"
+#include "EnhancedAnnularConvolver.h"
+#include "ConstantConvolver.h"
+#include "RadialConvolver.h"
+
 #include "MetaData.h"
 #include "IDataReader.h"
 #include "DataReaderFactory.h"
@@ -280,6 +294,8 @@ using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 #include "DataSet.h"
 #include "PeakFinder.h"
 #include "MergedData.h"
+
+#include "PeakFilter.h"
 
 #include "MillerIndex.h"
 #include "IntegratedProfile.h"
@@ -302,6 +318,7 @@ using namespace nsx;
 
 %include <typemaps.i>
 %include <std_vector.i>
+%include <std_map.i>
 
 // eigen.i is found in ../swig/ and contains specific definitions to convert
 // Eigen matrices into Numpy arrays.
@@ -336,6 +353,7 @@ using namespace nsx;
 %eigen_typemaps(Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic>)
 %eigen_typemaps(Eigen::Array<double, Eigen::Dynamic, 1>)
 %eigen_typemaps(Eigen::Array<double, Eigen::Dynamic, Eigen::Dynamic>)
+%eigen_typemaps(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>)
 
 %template(vectorMatrixXd) std::vector<Eigen::MatrixXd>;
 %template(vectorVectorXd) std::vector<Eigen::VectorXd>;
@@ -346,8 +364,8 @@ using namespace nsx;
 %include "CrystalTypes.h"
 %include "DataTypes.h"
 %include "GeometryTypes.h"
-%include "ImagingTypes.h"
 %include "InstrumentTypes.h"
+%include "MathematicsTypes.h"
 %include "UtilsTypes.h"
 
 %include "DirectVector.h"
@@ -391,6 +409,7 @@ using namespace nsx;
 
 namespace nsx {
    class DataReaderFactory; 
+   class ConvolverFactory; 
    struct tVector;
 }
 
@@ -420,12 +439,20 @@ namespace nsx {
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
 %template(PeakShell) std::vector<std::vector<std::shared_ptr<nsx::Peak3D>>>;
 
-%include "ConstantKernel.h"
-%include "KernelFactory.h"
-%include "ConvolutionKernel.h"
-%include "DeltaKernel.h"
-%include "AnnularKernel.h"
+%include "PeakFilter.h"
+
 %include "Convolver.h"
+
+%template(mapConvolverParameters) std::map<std::string,double>;
+
+%include "ConvolverFactory.h"
+%include "ConstantConvolver.h"
+%include "DeltaConvolver.h"
+%include "AnnularConvolver.h"
+%include "EnhancedAnnularConvolver.h"
+%include "RadialConvolver.h"
+%include "Convolver.h"
+%include "AtomicConvolver.h"
 
 %include "MetaData.h"
 %include "IDataReader.h"
@@ -486,6 +513,7 @@ namespace nsx {
 
 %include "UnitCell.h"
 %include "ResolutionShell.h"
+
 %include "RFactor.h"
 %include "CC.h"
 %include "CC.h"
@@ -512,7 +540,6 @@ namespace nsx {
 %include "Face.h"
 %include "MCAbsorption.h"
 %include "ConvexHull.h"
-%include "BlobFinder.h"
 %include "AABB.h"
 %include "Edge.h"
 %include "Blob3D.h"
@@ -531,6 +558,15 @@ namespace nsx {
 %include "TiffDataReader.h"
 %include "BloscFilter.h"
 %include "DataReaderFactory.h"
+
+%include "Convolver.h"
+%include "AtomicConvolver.h"
+%include "ConstantConvolver.h"
+%include "DeltaConvolver.h"
+%include "AnnularConvolver.h"
+%include "EnhancedAnnularConvolver.h"
+%include "RadialConvolver.h"
+%include "ConvolverFactory.h"
 
 %include "Detector.h"
 %include "DetectorFactory.h"

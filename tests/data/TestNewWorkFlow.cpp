@@ -6,7 +6,6 @@
 #include <Eigen/Dense>
 
 #include <nsxlib/AutoIndexer.h>
-#include <nsxlib/ConvolutionKernel.h>
 #include <nsxlib/CrystalTypes.h>
 #include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
@@ -15,7 +14,6 @@
 #include <nsxlib/DirectVector.h>
 #include <nsxlib/ErfInv.h>
 #include <nsxlib/Experiment.h>
-#include <nsxlib/KernelFactory.h>
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFilter.h>
@@ -27,6 +25,8 @@
 #include <nsxlib/ShapeLibrary.h>
 #include <nsxlib/StrongPeakIntegrator.h>
 #include <nsxlib/Units.h>
+
+NSX_INIT_TEST
 
 int main()
 {
@@ -53,22 +53,14 @@ int main()
     nsx::DataList numors;
     numors.push_back(dataf);
 
-    nsx::sptrConvolutionKernel kernel;
-    std::string kernelName = "annular";
-    auto kernelFactory = nsx::KernelFactory::Instance();
-    kernel.reset(kernelFactory->create(kernelName, int(dataf->nRows()), int(dataf->nCols())));
-
     // propagate changes to peak finder
-    auto convolver = peakFinder->convolver();
-    convolver->setKernel(kernel->matrix());
-    peakFinder->setMinComponents(30);
-    peakFinder->setMaxComponents(10000);
-    peakFinder->setKernel(kernel);
-    peakFinder->setSearchScale(1.5);
-    peakFinder->setIntegrationScale(4.0);
-    peakFinder->setBackgroundScale(6.0);
-    peakFinder->setThresholdType(1); // absolute
-    peakFinder->setThresholdValue(15.0);
+    peakFinder->setMinSize(30);
+    peakFinder->setMaxSize(10000);
+    peakFinder->setMaxFrames(10);
+    peakFinder->setConvolver("annular",{});
+    peakFinder->setThreshold("absolute",{{"intensity",15.0}});
+    peakFinder->setSearchConfidence(0.98);
+    peakFinder->setIntegrationConfidence(0.997);
 
     peakFinder->setHandler(progressHandler);
 
@@ -82,6 +74,10 @@ int main()
 
     NSX_CHECK_ASSERT(found_peaks.size() >= 800);
 
+    nsx::StrongPeakIntegrator integrator;
+    integrator.setHandler(progressHandler);
+    integrator.integrate(found_peaks, dataf, 2.7, 3.5, 4.0);
+
     // at this stage we have the peaks, now we index
     nsx::IndexerParameters params;
     nsx::AutoIndexer indexer(progressHandler);
@@ -89,9 +85,6 @@ int main()
     nsx::PeakFilter peak_filter;
     nsx::PeakList selected_peaks;
     selected_peaks = peak_filter.selected(found_peaks,true);
-    selected_peaks = peak_filter.dRange(selected_peaks, 2.0, 100.0, true);
-
-    NSX_CHECK_ASSERT(selected_peaks.size() >= 600);
 
     auto numIndexedPeaks = [&]() -> unsigned int
     {
@@ -106,10 +99,9 @@ int main()
 
     unsigned int indexed_peaks = numIndexedPeaks();
 
-    NSX_CHECK_ASSERT(indexed_peaks > 600);
+    NSX_CHECK_ASSERT(indexed_peaks > 650);
     NSX_CHECK_NO_THROW(indexer.autoIndex(params));
-
-    NSX_CHECK_ASSERT(indexer.getSolutions().empty() == false);
+    NSX_CHECK_ASSERT(indexer.getSolutions().size() > 1);
 
     auto soln = indexer.getSolutions().front();
 
@@ -124,9 +116,8 @@ int main()
 
     // add cell to sample
     dataf->diffractometer()->getSample()->addUnitCell(cell);
-
+ 
     // reintegrate peaks
-    nsx::StrongPeakIntegrator integrator;
     integrator.integrate(found_peaks, dataf, 3.0, 4.0, 5.0);
 
     // compute shape library

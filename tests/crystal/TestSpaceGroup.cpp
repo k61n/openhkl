@@ -7,6 +7,8 @@
 #include <nsxlib/SpaceGroup.h>
 #include <nsxlib/UnitCell.h>
 
+NSX_INIT_TEST
+
 int main()
 {
     std::map<std::string,unsigned int> nElementsPerSpaceGroup=
@@ -247,7 +249,7 @@ int main()
 
     nsx::SpaceGroup sg_pnma("P n m a");
     // Check that string generator strings are OK s
-    NSX_CHECK_ASSERT(sg_pnma.generators().compare(" -x+1/2,-y,z+1/2; -x,y+1/2,-z; -x,-y,-z")==0);
+    NSX_CHECK_EQUAL(sg_pnma.generators().compare("-x+1/2,-y,z+1/2; -x,y+1/2,-z; -x,-y,-z"),0);
 
     for (const auto& p : nElementsPerSpaceGroup)
     {

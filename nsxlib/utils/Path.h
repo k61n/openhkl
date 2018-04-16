@@ -29,6 +29,7 @@
 #pragma once
 
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace nsx {
@@ -40,12 +41,12 @@ std::string fileSeparator();
 std::string fileBasename(const std::string& input_path);
 
 //! Returns a path stripped off its file extension
-std::string removeFileExtension(const std::string& input_path);
+std::pair<std::string,std::string> splitFileExtension(const std::string& input_path);
 
 //! Get the directory name of a given path
 std::string fileDirname(const std::string& input_path);
 
-std::string buildPath(const std::string& root, const std::vector<std::string>& paths);
+std::string buildPath(const std::vector<std::string>& paths, const std::string& root);
 
 //! Returns the home directory
 std::string homeDirectory();
@@ -56,11 +57,8 @@ std::string applicationDataPath();
 //! Return true if the file exists
 bool fileExists(const std::string& filename);
 
-//! Pass argc of running process to nsxlib
-void setArgc(int argc);
-
 //! Set argv of running process to nsxlib
-void setArgv(char** argv);
+void setArgv(const char* argv);
 
 std::string diffractometersPath();
 

@@ -3,6 +3,8 @@
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/ReciprocalVector.h>
 
+NSX_INIT_TEST
+
 int main()
 {
 

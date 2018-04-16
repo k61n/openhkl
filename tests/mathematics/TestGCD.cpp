@@ -3,6 +3,8 @@
 
 using namespace nsx;
 
+NSX_INIT_TEST
+
 int main()
 {
     NSX_CHECK_ASSERT(nsx::gcd(3, 6) == 3);

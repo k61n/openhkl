@@ -6,6 +6,8 @@
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Gaussian3d.h>
 
+NSX_INIT_TEST
+
 const double eps = 1.0;
 
 int main()

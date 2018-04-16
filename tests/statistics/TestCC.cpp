@@ -19,6 +19,8 @@
 #include <nsxlib/SpaceGroup.h>
 #include <nsxlib/UnitCell.h>
 
+NSX_INIT_TEST
+
 using namespace nsx;
 
 int main()

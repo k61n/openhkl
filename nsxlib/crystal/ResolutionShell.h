@@ -41,20 +41,30 @@
 
 namespace nsx {
 
+struct DShell {
+    double dmin;
+    double dmax;
+    PeakList peaks;
+};
+
 class ResolutionShell {
 
 public:
+
+    using resolution_shells = std::vector<DShell>;
+
     ResolutionShell(double dmin, double dmax, size_t num_shells);
+
     void addPeak(const sptrPeak3D& peak);
-    const std::vector<PeakList>& getShells() const;
-    const PeakList& shell(size_t i) const;
-    const std::vector<double>& getD() const;
+
+    const resolution_shells& shells() const;
+
+    const DShell& shell(size_t i) const;
+
+    size_t nShells() const;
 
 private:
-    size_t _numShells;
-    std::vector<PeakList> _shells;
-    std::vector<double> _d;
-
+    resolution_shells _shells;
 };
 
 } // end namespace nsx

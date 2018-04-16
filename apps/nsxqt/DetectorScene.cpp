@@ -669,7 +669,7 @@ void DetectorScene::clearPeaks()
 
     for (auto& peak : _peakGraphicsItems) {
         removeItem(peak.second);
-//        delete peak.second;
+        delete peak.second;
     }
     _peakGraphicsItems.clear();
 }

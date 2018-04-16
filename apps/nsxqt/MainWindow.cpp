@@ -19,7 +19,6 @@
 #include <nsxlib/AABB.h>
 #include <nsxlib/AggregateStreamWrapper.h>
 #include <nsxlib/Basis.h>
-#include <nsxlib/BlobFinder.h>
 #include <nsxlib/ComponentState.h>
 #include <nsxlib/CrystalTypes.h>
 #include <nsxlib/Detector.h>
@@ -54,7 +53,6 @@
 #include "CutSliceGraphicsItem.h"
 #include "CutterGraphicsItem.h"
 #include "DetectorScene.h"
-#include "DialogConvolve.h"
 #include "DialogExperiment.h"
 #include "DialogIntegrate.h"
 #include "DialogPeakFilter.h"
@@ -600,7 +598,8 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
 
     for (auto&& numor: numors) {
         // todo: bkg_begin and bkg_end
-        auto&& peaks = nsx::PeakFilter().dRange(_session->peaks(numor.get()), dmin, dmax, true);
+        auto peaks = nsx::PeakFilter().dMin(_session->peaks(numor.get()), dmin);
+        peaks = nsx::PeakFilter().dMax(peaks, dmax);
         nsx::info() << "Integrating " << peaks.size() << " peaks";
         std::unique_ptr<nsx::IPeakIntegrator> integrator(integrator_map[dialog->integrator()]());
         integrator->setHandler(handler);

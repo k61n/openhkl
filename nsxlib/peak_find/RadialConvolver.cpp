@@ -1,0 +1,60 @@
+#include "RadialConvolver.h"
+
+namespace nsx {
+
+RadialConvolver::RadialConvolver()
+: AtomicConvolver()
+{
+    // default values
+    _parameters["r_in"] = 5;
+    _parameters["r_out"] = 10;
+}
+
+RadialConvolver::RadialConvolver(const std::map<std::string,double>& parameters)
+: RadialConvolver()
+{
+    setParameters(parameters);
+}
+
+RadialConvolver::~RadialConvolver()
+{
+}
+
+const char* RadialConvolver::name() const
+{
+    return "radial";
+}
+
+RealMatrix RadialConvolver::_matrix(int nrows, int ncols) const
+{
+    const double r_in = _parameters.at("r_in");
+    const double r_out = _parameters.at("r_out");
+
+    // sanity checks
+    if (r_in < 0 || r_out < r_in) {
+        throw std::runtime_error("Radial convolver called with invalid parameters");
+    }
+
+    RealMatrix kernel = RealMatrix::Zero(nrows, ncols);
+
+    for (int i = 0; i < nrows; ++i) {
+        for (int j = 0; j < ncols; ++j) {
+            // shift so that (0,0) = (rows, cols) = (rows, 0) = (0, cols) is the center of the kernel
+            double x = j > ncols/2 ? ncols-j : j;
+            double y = i > nrows/2 ? nrows-i : i;
+
+            double dist2 = x*x + y*y;
+
+            if (dist2 >= r_in*r_in && dist2 < r_out*r_out) {
+                kernel(i, j) = 1.0;
+            }
+        }
+    }
+
+    kernel /= kernel.sum();
+
+    return kernel;
+}
+
+} // end namespace nsx
+

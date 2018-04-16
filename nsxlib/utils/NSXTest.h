@@ -367,33 +367,30 @@ T NSXTest::safeFloatingDivision(T f1, T f2 )
     return f1/f2;
 }
 
-
-NSXTest&  allTests();
-
 } // end namespace nsx
 
 #define NSX_CHECK_THROW(expression,error)                                                \
     try {                                                                                         \
         expression;                                                                               \
-        nsx::allTests().triggerFailure(false, #expression " is not throwing " #error, __FILE__,__LINE__); \
+        all_tests.triggerFailure(false, #expression " is not throwing " #error, __FILE__,__LINE__); \
     } catch (const error& exception) {                                                            \
-        nsx::allTests().triggerSuccess();                                                          \
+        all_tests.triggerSuccess();                                                          \
     }
 
 #define NSX_CHECK_THROW_ANY(expression)                                          \
     try {                                                                                 \
         expression;                                                                       \
-        nsx::allTests().triggerFailure(false, #expression " is not throwing", __FILE__,__LINE__); \
+        all_tests.triggerFailure(false, #expression " is not throwing", __FILE__,__LINE__); \
     } catch (...) {                                                                       \
-        nsx::allTests().triggerSuccess();                                                  \
+        all_tests.triggerSuccess();                                                  \
     }
 
 #define NSX_CHECK_NO_THROW(expression)                                       \
     try {                                                                             \
         expression;                                                                   \
-        nsx::allTests().triggerSuccess();                                              \
+        all_tests.triggerSuccess();                                              \
     } catch (...) {                                                                   \
-        nsx::allTests().triggerFailure(false, #expression " is throwing", __FILE__,__LINE__); \
+        all_tests.triggerFailure(false, #expression " is throwing", __FILE__,__LINE__); \
     }
 
 // Hack for solving a bug with the way Visual Studio expand the variadic macro
@@ -410,79 +407,81 @@ NSXTest&  allTests();
 #define GET_5TH_ARG(arg1, arg2, arg3, arg4, arg5, ...) arg5
 
 // nsx unit test check for assertion
-#define NSX_CHECK_ASSERT_1(condition) nsx::allTests().testCheckAssert(condition, false, #condition, __FILE__, __LINE__)
-#define NSX_CHECK_ASSERT_2(condition,expectedFailure) nsx::allTests().testCheckAssert(condition, expectedFailure, #condition, __FILE__, __LINE__)
+#define NSX_CHECK_ASSERT_1(condition) all_tests.testCheckAssert(condition, false, #condition, __FILE__, __LINE__)
+#define NSX_CHECK_ASSERT_2(condition,expectedFailure) all_tests.testCheckAssert(condition, expectedFailure, #condition, __FILE__, __LINE__)
 #define NSX_CHECK_ASSERT_X(...) EXPAND(GET_3RD_ARG(__VA_ARGS__,NSX_CHECK_ASSERT_2, NSX_CHECK_ASSERT_1,))
 #define NSX_CHECK_ASSERT(...) EXPAND(NSX_CHECK_ASSERT_X(__VA_ARGS__)(__VA_ARGS__))
 
 // nsx unit test check for integral type equality
-#define NSX_CHECK_EQUAL_1(observed,predicted) nsx::allTests().testCheckEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), false, #observed" == " #predicted, __FILE__, __LINE__)
-#define NSX_CHECK_EQUAL_2(observed,predicted,expectedFailure) nsx::allTests().testCheckEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), expectedFailure, #observed" == " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_EQUAL_1(observed,predicted) all_tests.testCheckEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), false, #observed" == " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_EQUAL_2(observed,predicted,expectedFailure) all_tests.testCheckEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), expectedFailure, #observed" == " #predicted, __FILE__, __LINE__)
 #define NSX_CHECK_EQUAL_X(...) EXPAND(GET_4TH_ARG(__VA_ARGS__, NSX_CHECK_EQUAL_2, NSX_CHECK_EQUAL_1,))
 #define NSX_CHECK_EQUAL(...) EXPAND(NSX_CHECK_EQUAL_X(__VA_ARGS__)(__VA_ARGS__))
 #define NSX_CHECK_EQ(...) EXPAND(NSX_CHECK_EQUAL(__VA_ARGS__))
 
 // nsx unit test check for integral type inequality
-#define NSX_CHECK_NOT_EQUAL_1(observed,predicted) nsx::allTests().testCheckNotEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), false, #observed" != " #predicted, __FILE__, __LINE__)
-#define NSX_CHECK_NOT_EQUAL_2(observed,predicted,expectedFailure) nsx::allTests().testCheckNotEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), expectedFailure, #observed" != " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_NOT_EQUAL_1(observed,predicted) all_tests.testCheckNotEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), false, #observed" != " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_NOT_EQUAL_2(observed,predicted,expectedFailure) all_tests.testCheckNotEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), expectedFailure, #observed" != " #predicted, __FILE__, __LINE__)
 #define NSX_CHECK_NOT_EQUAL_X(...) EXPAND(GET_4TH_ARG(__VA_ARGS__,NSX_CHECK_NOT_EQUAL_2, NSX_CHECK_NOT_EQUAL_1,))
 #define NSX_CHECK_NOT_EQUAL(...) EXPAND(NSX_CHECK_NOT_EQUAL_X(__VA_ARGS__)(__VA_ARGS__))
 #define NSX_CHECK_NEQ(...) EXPAND(NSX_CHECK_NOT_EQUAL(__VA_ARGS__))
 
 // nsx unit test check for strict > inequality
-#define NSX_CHECK_GREATER_THAN_1(observed,predicted) nsx::allTests().testCheckGreaterThan(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), false, #observed" > " #predicted, __FILE__, __LINE__)
-#define NSX_CHECK_GREATER_THAN_2(observed,predicted,expectedFailure) nsx::allTests().testCheckGreaterThan(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), expectedFailure, #observed" > " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_GREATER_THAN_1(observed,predicted) all_tests.testCheckGreaterThan(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), false, #observed" == " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_GREATER_THAN_2(observed,predicted,expectedFailure) all_tests.testCheckGreaterThan(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), expectedFailure, #observed" == " #predicted, __FILE__, __LINE__)
 #define NSX_CHECK_GREATER_THAN_X(...) EXPAND(GET_4TH_ARG(__VA_ARGS__, NSX_CHECK_GREATER_THAN_2, NSX_CHECK_GREATER_THAN_1,))
 #define NSX_CHECK_GREATER_THAN(...) EXPAND(NSX_CHECK_GREATER_THAN_X(__VA_ARGS__)(__VA_ARGS__))
 #define NSX_CHECK_GT(...) EXPAND(NSX_CHECK_GREATER_THAN(__VA_ARGS__))
 
 // nsx unit test check for >= inequality
-#define NSX_CHECK_GREATER_THAN_OR_EQUAL_1(observed,predicted) nsx::allTests().testCheckGreaterThanOrEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), false, #observed " >= " #predicted, __FILE__, __LINE__)
-#define NSX_CHECK_GREATER_THAN_OR_EQUAL_2(observed,predicted,expectedFailure) nsx::allTests().testCheckGreaterThanPrEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), expectedFailure, #observed" >= " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_GREATER_THAN_OR_EQUAL_1(observed,predicted) all_tests.testCheckGreaterThanOrEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), false, #observed" == " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_GREATER_THAN_OR_EQUAL_2(observed,predicted,expectedFailure) all_tests.testCheckGreaterThanPrEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), expectedFailure, #observed" == " #predicted, __FILE__, __LINE__)
 #define NSX_CHECK_GREATER_THAN_OR_EQUAL_X(...) EXPAND(GET_4TH_ARG(__VA_ARGS__, NSX_CHECK_GREATER_THAN_OR_EQUAL_2, NSX_CHECK_GREATER_THAN_OR_EQUAL_1,))
 #define NSX_CHECK_GREATER_THAN_OR_EQUAL(...) EXPAND(NSX_CHECK_GREATER_THAN_OR_EQUAL_X(__VA_ARGS__)(__VA_ARGS__))
 #define NSX_CHECK_GE(...) EXPAND(NSX_CHECK_GREATER_THAN_OR_EQUAL(__VA_ARGS__))
 
 // nsx unit test check for strict < inequality
-#define NSX_CHECK_LOWER_THAN_1(observed,predicted) nsx::allTests().testCheckLowerThan(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), false, #observed" == " #predicted, __FILE__, __LINE__)
-#define NSX_CHECK_LOWER_THAN_2(observed,predicted,expectedFailure) nsx::allTests().testCheckLowerThan(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), expectedFailure, #observed" == " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_LOWER_THAN_1(observed,predicted) all_tests.testCheckLowerThan(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), false, #observed" == " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_LOWER_THAN_2(observed,predicted,expectedFailure) all_tests.testCheckLowerThan(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), expectedFailure, #observed" == " #predicted, __FILE__, __LINE__)
 #define NSX_CHECK_LOWER_THAN_X(...) EXPAND(GET_4TH_ARG(__VA_ARGS__, NSX_CHECK_LOWER_THAN_2, NSX_CHECK_LOWER_THAN_1,))
 #define NSX_CHECK_LOWER_THAN(...) EXPAND(NSX_CHECK_LOWER_THAN_X(__VA_ARGS__)(__VA_ARGS__))
 #define NSX_CHECK_LT(...) EXPAND(NSX_CHECK_LOWER_THAN(__VA_ARGS__))
 
 // nsx unit test check for <= inequality
-#define NSX_CHECK_LOWER_THAN_OR_EQUAL_1(observed,predicted) nsx::allTests().testCheckLowerThanOrEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), false, #observed" == " #predicted, __FILE__, __LINE__)
-#define NSX_CHECK_LOWER_THAN_OR_EQUAL_2(observed,predicted,expectedFailure) nsx::allTests().testCheckLowerThanPrEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), expectedFailure, #observed" == " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_LOWER_THAN_OR_EQUAL_1(observed,predicted) all_tests.testCheckLowerThanOrEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), false, #observed" == " #predicted, __FILE__, __LINE__)
+#define NSX_CHECK_LOWER_THAN_OR_EQUAL_2(observed,predicted,expectedFailure) all_tests.testCheckLowerThanPrEqual(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), expectedFailure, #observed" == " #predicted, __FILE__, __LINE__)
 #define NSX_CHECK_LOWER_THAN_OR_EQUAL_X(...) EXPAND(GET_4TH_ARG(__VA_ARGS__, NSX_CHECK_LOWER_THAN_OR_EQUAL_2, NSX_CHECK_LOWER_THAN_OR_EQUAL_1,))
 #define NSX_CHECK_LOWER_THAN_OR_EQUAL(...) EXPAND(NSX_CHECK_LOWER_THAN_OR_EQUAL_X(__VA_ARGS__)(__VA_ARGS__))
 #define NSX_CHECK_LE(...) EXPAND(NSX_CHECK_LOWER_THAN_OR_EQUAL(__VA_ARGS__))
 
 // nsx unit test check for floating type equality
-#define NSX_CHECK_CLOSE_1(observed,predicted,epsilon) nsx::allTests().testCheckClose(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), static_cast< std::remove_reference<decltype(observed)>::type >(epsilon), false, "|("#observed" - " #predicted")/"#predicted"| < "#epsilon"%", __FILE__, __LINE__)
-#define NSX_CHECK_CLOSE_2(observed,predicted,epsilon,expectedFailure) nsx::allTests().testCheckClose(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), static_cast< std::remove_reference<decltype(observed)>::type >(epsilon), expectedFailure, "|("#observed" - " #predicted")/"#predicted"| < "#epsilon"%", __FILE__, __LINE__)
+#define NSX_CHECK_CLOSE_1(observed,predicted,epsilon) all_tests.testCheckClose(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), static_cast< std::remove_reference<decltype(observed)>::type >(epsilon), false, "|("#observed" - " #predicted")/"#predicted"| < "#epsilon"%", __FILE__, __LINE__)
+#define NSX_CHECK_CLOSE_2(observed,predicted,epsilon,expectedFailure) all_tests.testCheckClose(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), static_cast< std::remove_reference<decltype(observed)>::type >(epsilon), expectedFailure, "|("#observed" - " #predicted")/"#predicted"| < "#epsilon"%", __FILE__, __LINE__)
 #define NSX_CHECK_CLOSE_X(...) EXPAND(GET_5TH_ARG(__VA_ARGS__,NSX_CHECK_CLOSE_2, NSX_CHECK_CLOSE_1,))
 #define NSX_CHECK_CLOSE(...) EXPAND(NSX_CHECK_CLOSE_X(__VA_ARGS__)(__VA_ARGS__))
 
 // nsx unit test check for floating type inequality
-#define NSX_CHECK_NOT_CLOSE_1(observed,predicted,epsilon) nsx::allTests().testCheckNotClose(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), static_cast< std::remove_reference<decltype(observed)>::type >(epsilon), false, "|("#observed" - " #predicted")/"#predicted"| > "#epsilon"%", __FILE__, __LINE__)
-#define NSX_CHECK_NOT_CLOSE_2(observed,predicted,epsilon,expectedFailure) nsx::allTests().testCheckNotClose(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), static_cast< std::remove_reference<decltype(observed)>::type >(epsilon), expectedFailure, "|("#observed" - " #predicted")/"#predicted"| > "#epsilon"%", __FILE__, __LINE__)
+#define NSX_CHECK_NOT_CLOSE_1(observed,predicted,epsilon) all_tests.testCheckNotClose(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), static_cast< std::remove_reference<decltype(observed)>::type >(epsilon), false, "|("#observed" - " #predicted")/"#predicted"| > "#epsilon"%", __FILE__, __LINE__)
+#define NSX_CHECK_NOT_CLOSE_2(observed,predicted,epsilon,expectedFailure) all_tests.testCheckNotClose(observed, static_cast< std::remove_reference<decltype(observed)>::type >(predicted), static_cast< std::remove_reference<decltype(observed)>::type >(epsilon), expectedFailure, "|("#observed" - " #predicted")/"#predicted"| > "#epsilon"%", __FILE__, __LINE__)
 #define NSX_CHECK_NOT_CLOSE_X(...) EXPAND(GET_5TH_ARG(__VA_ARGS__,NSX_CHECK_NOT_CLOSE_2, NSX_CHECK_NOT_CLOSE_1,))
 #define NSX_CHECK_NOT_CLOSE(...) EXPAND(NSX_CHECK_NOT_CLOSE_X(__VA_ARGS__)(__VA_ARGS__))
 
 // nsx unit test check for floating type equality
-#define NSX_CHECK_SMALL_1(observed,epsilon) nsx::allTests().testCheckSmall(observed, static_cast< std::remove_reference<decltype(observed)>::type >(epsilon), false, "|"#observed"| < "#epsilon"%", __FILE__, __LINE__)
-#define NSX_CHECK_SMALL_2(observed,epsilon,expectedFailure) nsx::allTests().testCheckSmall(observed, static_cast< std::remove_reference<decltype(observed)>::type >(epsilon), expectedFailure, "|"#observed"| < "#epsilon"%", __FILE__, __LINE__)
+#define NSX_CHECK_SMALL_1(observed,epsilon) all_tests.testCheckSmall(observed, static_cast< std::remove_reference<decltype(observed)>::type >(epsilon), false, "|"#observed"| < "#epsilon"%", __FILE__, __LINE__)
+#define NSX_CHECK_SMALL_2(observed,epsilon,expectedFailure) all_tests.testCheckSmall(observed, static_cast< std::remove_reference<decltype(observed)>::type >(epsilon), expectedFailure, "|"#observed"| < "#epsilon"%", __FILE__, __LINE__)
 #define NSX_CHECK_SMALL_X(...) EXPAND(GET_4TH_ARG(__VA_ARGS__,NSX_CHECK_SMALL_2, NSX_CHECK_SMALL_1,))
 #define NSX_CHECK_SMALL(...) EXPAND(NSX_CHECK_SMALL_X(__VA_ARGS__)(__VA_ARGS__))
 
 // nsx unit test check for floating type inequality
-#define NSX_CHECK_NOT_SMALL_1(observed,epsilon) nsx::allTests().testCheckNotSmall(observed, static_cast< std::remove_reference<decltype(observed)>::type >(epsilon), false, "|"#observed"| > "#epsilon"%", __FILE__, __LINE__)
-#define NSX_CHECK_NOT_SMALL_2(observed,epsilon,expectedFailure) nsx::allTests().testCheckNotSmall(observed, static_cast< std::remove_reference<decltype(observed)>::type >(epsilon), expectedFailure, "|"#observed"| > "#epsilon"%", __FILE__, __LINE__)
+#define NSX_CHECK_NOT_SMALL_1(observed,epsilon) all_tests.testCheckNotSmall(observed, static_cast< std::remove_reference<decltype(observed)>::type >(epsilon), false, "|"#observed"| > "#epsilon"%", __FILE__, __LINE__)
+#define NSX_CHECK_NOT_SMALL_2(observed,epsilon,expectedFailure) all_tests.testCheckNotSmall(observed, static_cast< std::remove_reference<decltype(observed)>::type >(epsilon), expectedFailure, "|"#observed"| > "#epsilon"%", __FILE__, __LINE__)
 #define NSX_CHECK_NOT_SMALL_X(...) EXPAND(GET_4TH_ARG(__VA_ARGS__,NSX_CHECK_NOT_SMALL_2, NSX_CHECK_NOT_SMALL_1,))
 #define NSX_CHECK_NOT_SMALL(...) EXPAND(NSX_CHECK_NOT_SMALL_X(__VA_ARGS__)(__VA_ARGS__))
 
 // nsx failure trigger
-#define NSX_FAIL_1(description) nsx::allTests().triggerFailure(false, description,__FILE__,__LINE__)
-#define NSX_FAIL_2(expectedFailure, description) nsx::allTests().triggerFailure(expectedFailure, description,__FILE__,__LINE__)
+#define NSX_FAIL_1(description) all_tests.triggerFailure(false, description,__FILE__,__LINE__)
+#define NSX_FAIL_2(expectedFailure, description) all_tests.triggerFailure(expectedFailure, description,__FILE__,__LINE__)
 #define NSX_FAIL_X(...) EXPAND(GET_3RD_ARG(__VA_ARGS__,NSX_FAIL_2, NSX_FAIL_1,))
 #define NSX_FAIL(...) EXPAND(NSX_FAIL_X(__VA_ARGS__)(__VA_ARGS__))
+
+#define NSX_INIT_TEST nsx::NSXTest all_tests;

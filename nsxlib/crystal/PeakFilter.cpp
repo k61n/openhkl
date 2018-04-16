@@ -145,7 +145,7 @@ PeakList PeakFilter::apply(const PeakList& reference_peaks) const
         PeakFilter peak_filter;
         PeakList filtered_peaks;
         filtered_peaks = peak_filter.unitCell(peaks,cell);
-        filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance(),true);
+        filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance());
 
         for (auto peak : filtered_peaks) {
 
@@ -182,23 +182,37 @@ PeakList PeakFilter::apply(const PeakList& reference_peaks) const
     return good_peaks;
 }
 
-PeakList PeakFilter::selected(const PeakList& peaks, bool flag) const
+PeakList PeakFilter::complementary(const PeakList& peaks, const PeakList& other_peaks) const
 {
-
     PeakList filtered_peaks;
 
-    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[flag](sptrPeak3D peak){return peak->isSelected() == flag;});
+    for (auto peak : peaks) {
+        auto it = std::find(other_peaks.begin(), other_peaks.end(), peak);
+        if (it == other_peaks.end()) {
+            filtered_peaks.push_back(peak);
+        }
+    }
 
     return filtered_peaks;
 }
 
-PeakList PeakFilter::indexed(const PeakList& peaks, sptrUnitCell cell, double tolerance, bool flag) const
+
+PeakList PeakFilter::selected(const PeakList& peaks, bool selection_flag) const
+{
+    PeakList filtered_peaks;
+
+    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[selection_flag](sptrPeak3D peak){return selection_flag == peak->isSelected();});
+
+    return filtered_peaks;
+}
+
+PeakList PeakFilter::indexed(const PeakList& peaks, sptrUnitCell cell, double tolerance) const
 {
     PeakList filtered_peaks;
 
     for (auto peak : peaks) {
         MillerIndex miller_index(peak->q(), *cell);
-        if (flag == miller_index.indexed(tolerance)) {
+        if (miller_index.indexed(tolerance)) {
             filtered_peaks.push_back(peak);
         }
     }
@@ -232,7 +246,25 @@ PeakList PeakFilter::unitCell(const PeakList& peaks, sptrUnitCell unit_cell) con
     return filtered_peaks;
 }
 
-PeakList PeakFilter::highSignalToNoise(const PeakList& peaks, double threshold, bool flag) const
+PeakList PeakFilter::minSigma(const PeakList& peaks, double threshold) const
+{
+    PeakList filtered_peaks;
+
+    for (auto peak : peaks) {
+
+        auto corrected_intensity = peak->correctedIntensity();
+
+        double sigma = corrected_intensity.sigma();
+
+        if (sigma > threshold) {
+            filtered_peaks.push_back(peak);
+        }
+    }
+
+    return filtered_peaks;
+}
+
+PeakList PeakFilter::signalToNoise(const PeakList& peaks, double threshold) const
 {
     PeakList filtered_peaks;
 
@@ -249,7 +281,7 @@ PeakList PeakFilter::highSignalToNoise(const PeakList& peaks, double threshold, 
 
         double i_over_sigma = intensity / sigma;
 
-        if (flag == (i_over_sigma > threshold)) {
+        if (i_over_sigma > threshold) {
             filtered_peaks.push_back(peak);
         }
     }
@@ -257,7 +289,7 @@ PeakList PeakFilter::highSignalToNoise(const PeakList& peaks, double threshold, 
     return filtered_peaks;
 }
 
-PeakList PeakFilter::lowIntensity(const PeakList& peaks, double threshold, bool flag) const
+PeakList PeakFilter::lowIntensity(const PeakList& peaks, double threshold) const
 {
     PeakList filtered_peaks;
 
@@ -265,7 +297,7 @@ PeakList PeakFilter::lowIntensity(const PeakList& peaks, double threshold, bool 
 
         auto intensity = peak->correctedIntensity();
 
-        if (flag == (intensity.value() < threshold)) {
+        if (intensity.value() < threshold) {
             filtered_peaks.push_back(peak);
         }
     }
@@ -273,13 +305,13 @@ PeakList PeakFilter::lowIntensity(const PeakList& peaks, double threshold, bool 
     return filtered_peaks;
 }
 
-PeakList PeakFilter::predicted(const PeakList& peaks, bool flag) const
+PeakList PeakFilter::predicted(const PeakList& peaks) const
 {
     PeakList filtered_peaks;
 
     for (auto peak : peaks) {
 
-        if (peak->isPredicted() == flag) {
+        if (peak->isPredicted()) {
             filtered_peaks.push_back(peak);
         }
     }
@@ -287,7 +319,7 @@ PeakList PeakFilter::predicted(const PeakList& peaks, bool flag) const
     return filtered_peaks;
 }
 
-PeakList PeakFilter::dRange(const PeakList& peaks, double dmin, double dmax, bool flag) const
+PeakList PeakFilter::dMin(const PeakList& peaks, double dmin) const
 {
     PeakList filtered_peaks;
 
@@ -297,7 +329,7 @@ PeakList PeakFilter::dRange(const PeakList& peaks, double dmin, double dmax, boo
 
         double d = 1.0/q.rowVector().norm();
 
-        if (flag == ((d > dmin) && d < dmax)) {
+        if (d >= dmin) {
             filtered_peaks.push_back(peak);
         }
     }
@@ -305,7 +337,41 @@ PeakList PeakFilter::dRange(const PeakList& peaks, double dmin, double dmax, boo
     return filtered_peaks;
 }
 
-PeakList PeakFilter::selectedPeaks(const PeakList& peaks, const PeakList& other_peaks, bool flag) const
+PeakList PeakFilter::dMax(const PeakList& peaks, double dmax) const
+{
+    PeakList filtered_peaks;
+
+    for (auto peak : peaks) {
+
+        auto q = peak->q();
+
+        double d = 1.0/q.rowVector().norm();
+
+        if (d <= dmax) {
+            filtered_peaks.push_back(peak);
+        }
+    }
+
+    return filtered_peaks;
+}
+
+PeakList PeakFilter::significance(const PeakList& peaks, double p_value_threshold) const
+{
+    PeakList filtered_peaks;
+
+    for (auto peak : peaks) {
+
+        const double p_value = peak->pValue();
+
+        if (p_value <= p_value_threshold) {
+            filtered_peaks.push_back(peak);
+        }
+    }
+
+    return filtered_peaks;
+}
+
+PeakList PeakFilter::selectedPeaks(const PeakList& peaks, const PeakList& other_peaks) const
 {
     PeakList filtered_peaks;
 
@@ -313,7 +379,7 @@ PeakList PeakFilter::selectedPeaks(const PeakList& peaks, const PeakList& other_
 
     for (auto peak : peaks) {
         auto it = other_peaks_set.find(peak);
-        if (flag == (it != other_peaks_set.end())) {
+        if (it != other_peaks_set.end()) {
             filtered_peaks.push_back(peak);
         }
     }
@@ -335,13 +401,13 @@ PeakList PeakFilter::selection(const PeakList& peaks, const std::vector<int>& in
     return filtered_peaks;
 }
 
-PeakList PeakFilter::hasUnitCell(const PeakList& peaks, bool flag) const
+PeakList PeakFilter::hasUnitCell(const PeakList& peaks) const
 {
     PeakList filtered_peaks;
 
     for (auto peak : peaks) {
         auto cell = peak->activeUnitCell();
-        if (flag == (cell != nullptr)) {
+        if (cell != nullptr) {
             filtered_peaks.push_back(peak);
         }
     }

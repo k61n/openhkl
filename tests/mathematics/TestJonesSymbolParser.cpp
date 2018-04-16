@@ -10,6 +10,8 @@
 
 const double tolerance=1e-6;
 
+NSX_INIT_TEST
+
 int main()
 {
     Eigen::Transform<double,3,Eigen::Affine> matrix;

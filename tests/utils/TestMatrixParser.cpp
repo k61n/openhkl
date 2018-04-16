@@ -6,6 +6,8 @@
 #include <nsxlib/MatrixParser.h>
 #include <nsxlib/NSXTest.h>
 
+NSX_INIT_TEST
+
 int main()
 {
     Eigen::MatrixXi m;

@@ -16,10 +16,6 @@
 #include <nsxlib/IDataReader.h>
 #include <nsxlib/InstrumentState.h>
 #include <nsxlib/Sample.h>
-
-#include <nsxlib/ConvolutionKernel.h>
-#include <nsxlib/KernelFactory.h>
-
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Sample.h>
@@ -29,6 +25,8 @@
 #include <nsxlib/Units.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/ReciprocalVector.h>
+
+NSX_INIT_TEST
 
 namespace nsx {
 class UnitTest_DataSet {

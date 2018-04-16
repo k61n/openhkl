@@ -3,6 +3,8 @@
 
 const double eps = 1e-10;
 
+NSX_INIT_TEST
+
 int main()
 {
     nsx::Lorentzian l1(2.0, 3.0, 1.0);

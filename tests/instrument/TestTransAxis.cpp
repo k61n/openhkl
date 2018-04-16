@@ -5,6 +5,8 @@
 
 const double tolerance=1e-6;
 
+NSX_INIT_TEST
+
 int main()
 {
     nsx::TransAxis t("x",Eigen::Vector3d(1,0,0));

@@ -5,6 +5,8 @@
 
 const double tolerance=1e-5;
 
+NSX_INIT_TEST
+
 int main()
 {
     nsx::sptrBasis bprime(new nsx::Basis(Eigen::Vector3d(2,0,0),Eigen::Vector3d(0,2,0),Eigen::Vector3d(0,0,1)));

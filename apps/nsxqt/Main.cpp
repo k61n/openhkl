@@ -9,16 +9,12 @@
 #include <nsxlib/AggregateStreamWrapper.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/StdStreamWrapper.h>
-#include <nsxlib/Path.h>
 
 #include "MainWindow.h"
 #include "NSXQtApp.h"
 
 int main(int argc, char* argv[])
 {
-    nsx::setArgc(argc);
-    nsx::setArgv(argv);
-
     NSXQtApp a(argc, argv);
 
     // Ensure . is used rather than , for float and double boxes

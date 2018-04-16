@@ -68,7 +68,7 @@ RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks)
     PeakFilter peak_filter;
     PeakList filtered_peaks;
     filtered_peaks = peak_filter.selected(peaks,true);
-    filtered_peaks = peak_filter.indexed(filtered_peaks,_cell,_cell->indexingTolerance(),true);
+    filtered_peaks = peak_filter.indexed(filtered_peaks,_cell,_cell->indexingTolerance());
 
     _hkls.reserve(filtered_peaks.size());
     for (auto peak : peaks) {

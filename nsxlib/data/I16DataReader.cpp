@@ -66,7 +66,7 @@ I16DataReader::I16DataReader(const std::string& filename, const std::shared_ptr<
                 std::string secondary;
                 std::istringstream is(line.substr(eq+2,std::string::npos-eq-1));
                 is >> secondary;
-                dir = buildPath(fileDirname(filename),{secondary});
+                dir = buildPath({secondary},fileDirname(filename));
                 continue;
             } else {
                 double value;
@@ -109,7 +109,8 @@ I16DataReader::I16DataReader(const std::string& filename, const std::shared_ptr<
         _sampleStates[i] = ComponentState(_diffractometer->getSample().get(), sval);
     }
 
-    _metadata.add<int>("Numor",atoi(removeFileExtension(fileBasename(filename)).c_str()));
+    auto ext_splitted_filename = splitFileExtension(filename);
+    _metadata.add<int>("Numor",atoi(fileBasename(ext_splitted_filename.first).c_str()));
     _metadata.add<double>("monitor",1.0);
 }
 

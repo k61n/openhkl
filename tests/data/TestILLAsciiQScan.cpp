@@ -12,6 +12,8 @@
 
 const double tolerance=1e-2;
 
+NSX_INIT_TEST
+
 int main()
 {
     nsx::DataReaderFactory factory;

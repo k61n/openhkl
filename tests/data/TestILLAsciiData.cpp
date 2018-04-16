@@ -16,6 +16,8 @@ const double tolerance=1e-2;
 
 namespace nsx {
 
+NSX_INIT_TEST
+
 class UnitTest_DataSet {
 public:
     static int run();

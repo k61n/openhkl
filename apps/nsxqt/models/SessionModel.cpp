@@ -89,8 +89,8 @@
 #include "DetectorItem.h"
 #include "DetectorScene.h"
 #include "DialogCalculatedPeaks.h"
-#include "DialogConvolve.h"
 #include "DialogExperiment.h"
+#include "DialogPeakFind.h"
 #include "ExperimentItem.h"
 #include "FriedelDialog.h"
 #include "GLSphere.h"
@@ -107,7 +107,6 @@
 #include "SampleItem.h"
 #include "SessionModel.h"
 #include "SourceItem.h"
-#include "SpaceGroupDialog.h"
 #include "TreeItem.h"
 #include "UnitCellItem.h"
 
@@ -287,11 +286,11 @@ void SessionModel::findPeaks(const QModelIndex& index)
         _peakFinder = nsx::sptrPeakFinder(new nsx::PeakFinder);
     _peakFinder->setHandler(_progressHandler);
 
-    DialogConvolve* dialog = new DialogConvolve(selectedNumors, _peakFinder, nullptr);
+    DialogPeakFind* dialog = new DialogPeakFind(selectedNumors, _peakFinder, nullptr);
     dialog->setColorMap(_colormap);
 
     // dialog will automatically be deleted before we return from this method
-    std::unique_ptr<DialogConvolve> dialog_ptr(dialog);
+    std::unique_ptr<DialogPeakFind> dialog_ptr(dialog);
 
     if (!dialog->exec())
         return;
@@ -404,14 +403,12 @@ void SessionModel::applyResolutionCutoff(double dmin, double dmax)
         nsx::PeakList selected_peaks;
         selected_peaks = peak_filter.selected(peaks(numor.get()),true);
 
-        nsx::PeakList bad_peaks;
-        bad_peaks = peak_filter.dRange(selected_peaks,dmin,dmax,false);
-        n_bad_peaks += bad_peaks.size();
-
-        nsx::PeakList good_peaks;
-        good_peaks = peak_filter.selectedPeaks(selected_peaks,bad_peaks,false);
-
+        auto good_peaks = peak_filter.dMin(selected_peaks,dmin);
+        good_peaks = peak_filter.dMax(good_peaks,dmax);
         n_good_peaks += good_peaks.size();
+
+        auto bad_peaks = peak_filter.complementary(selected_peaks,good_peaks);
+        n_bad_peaks += bad_peaks.size();
 
         for (auto peak : good_peaks) {
             double d = 1.0 / peak->q().rowVector().norm();
@@ -482,7 +479,7 @@ bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& pea
     nsx::PeakFilter peak_filter;
     nsx::PeakList filtered_peaks;
     filtered_peaks = peak_filter.selected(peaks,true);
-    filtered_peaks = peak_filter.hasUnitCell(filtered_peaks,true);
+    filtered_peaks = peak_filter.hasUnitCell(filtered_peaks);
 
     if (filtered_peaks.empty()) {
         return false;
@@ -491,7 +488,7 @@ bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& pea
     auto cell = filtered_peaks[0]->activeUnitCell();
 
     filtered_peaks = peak_filter.unitCell(filtered_peaks,cell);
-    filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance(),true);
+    filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance());
 
     for (auto peak : filtered_peaks) {
 
@@ -536,7 +533,7 @@ bool SessionModel::writeStatistics(std::string filename,
     nsx::PeakFilter peak_filter;
     nsx::PeakList filtered_peaks;
     filtered_peaks = peak_filter.selected(peaks,true);
-    filtered_peaks = peak_filter.hasUnitCell(filtered_peaks,true);
+    filtered_peaks = peak_filter.hasUnitCell(filtered_peaks);
 
     if (filtered_peaks.empty()) {
         return false;
@@ -545,7 +542,7 @@ bool SessionModel::writeStatistics(std::string filename,
     auto cell = filtered_peaks[0]->activeUnitCell();
 
     filtered_peaks = peak_filter.unitCell(filtered_peaks,cell);
-    filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance(),true);
+    filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance());
 
     auto grp = nsx::SpaceGroup(cell->spaceGroup());
 
@@ -556,19 +553,18 @@ bool SessionModel::writeStatistics(std::string filename,
         resolution_shells.addPeak(peak);
     }
 
-    const auto& shell = resolution_shells.getShells();
-    const auto& d = resolution_shells.getD();
+    const auto& shells = resolution_shells.shells();
  
     file << "          dmax       dmin       nobs nmerge   redundancy     r_meas    r_merge      r_pim    CChalf    CC*" << std::endl;
 
     // note: we print the shells in reverse order
     for (int i = num_shells-1; i >= 0; --i) {
-        const double d_lower = d[i];
-        const double d_upper = d[i+1];
+        const double d_lower = shells[i].dmin;
+        const double d_upper = shells[i].dmax;
 
         nsx::MergedData merged_shell(grp, friedel);
 
-        for (auto peak: shell[i]) {
+        for (auto&& peak: shells[i].peaks) {
             merged_shell.addPeak(peak);
             merged_data.addPeak(peak);
         }
@@ -586,7 +582,7 @@ bool SessionModel::writeStatistics(std::string filename,
 
         file << &buf[0] << std::endl;
 
-        nsx::debug() << "Finished logging shell " << i+1;
+        nsx::debug() << "Finished logging shell [" << d_lower << "," << d_upper << "]";
     }
 
     file << "--------------------------------------------------------------------------------" << std::endl;

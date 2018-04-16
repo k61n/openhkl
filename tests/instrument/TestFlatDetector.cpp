@@ -9,6 +9,8 @@
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Units.h>
 
+NSX_INIT_TEST
+
 const double tolerance=1e-3;
 
 int main()

@@ -17,10 +17,6 @@
 #include <nsxlib/InstrumentState.h>
 #include <nsxlib/InterpolatedState.h>
 #include <nsxlib/Sample.h>
-
-#include <nsxlib/ConvolutionKernel.h>
-#include <nsxlib/KernelFactory.h>
-
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Sample.h>
@@ -30,6 +26,8 @@
 #include <nsxlib/Units.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/ReciprocalVector.h>
+
+NSX_INIT_TEST
 
 void run_test(const char* filename, const char* instrument)
 {

@@ -12,7 +12,6 @@
 #include <nsxlib/CrystalTypes.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/DataTypes.h>
-#include <nsxlib/ImagingTypes.h>
 #include <nsxlib/UtilsTypes.h>
 
 #include "JobHandler.h"
@@ -106,7 +105,6 @@ private:
 
     nsx::sptrProgressHandler _progressHandler;
     nsx::sptrPeakFinder _peakFinder;
-    nsx::sptrConvolver _convolver;
 
     std::shared_ptr<SessionModel> _session;
 };

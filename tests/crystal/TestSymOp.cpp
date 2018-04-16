@@ -4,6 +4,8 @@
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/SymOp.h>
 
+NSX_INIT_TEST
+
 int main()
 {
     nsx::SymOp op1("x,y,z");

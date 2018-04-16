@@ -6,6 +6,8 @@
 
 const double eps = 1e-8;
 
+NSX_INIT_TEST
+
 int main()
 {
     Eigen::Vector3d center(10,10,10);

@@ -7,6 +7,8 @@
 
 const double tolerance=1e-5;
 
+NSX_INIT_TEST
+
 int main()
 {
     nsx::Blob3D blob;

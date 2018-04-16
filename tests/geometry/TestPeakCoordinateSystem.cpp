@@ -17,6 +17,7 @@
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakCoordinateSystem.h>
 
+NSX_INIT_TEST
 
 void run_test(const char* filename, const char* instrument)
 {

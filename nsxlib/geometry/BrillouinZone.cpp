@@ -5,6 +5,7 @@
 
 #include "BrillouinZone.h"
 #include "DataSet.h"
+#include "DetectorEvent.h"
 #include "NiggliReduction.h"
 #include "ReciprocalVector.h"
 

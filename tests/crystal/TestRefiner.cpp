@@ -6,7 +6,6 @@
 #include <Eigen/Dense>
 
 #include <nsxlib/AutoIndexer.h>
-#include <nsxlib/ConvolutionKernel.h>
 #include <nsxlib/CrystalTypes.h>
 #include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
@@ -15,7 +14,6 @@
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Gonio.h>
 #include <nsxlib/InstrumentState.h>
-#include <nsxlib/KernelFactory.h>
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFilter.h>
@@ -25,6 +23,8 @@
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/Units.h>
+
+NSX_INIT_TEST
 
 int main()
 {
@@ -51,22 +51,14 @@ int main()
     nsx::DataList numors;
     numors.push_back(dataf);
 
-    nsx::sptrConvolutionKernel kernel;
-    std::string kernelName = "annular";
-    auto kernelFactory = nsx::KernelFactory::Instance();
-    kernel.reset(kernelFactory->create(kernelName, int(dataf->nRows()), int(dataf->nCols())));
-
     // propagate changes to peak finder
-    auto convolver = peakFinder->convolver();
-    convolver->setKernel(kernel->matrix());
-    peakFinder->setMinComponents(30);
-    peakFinder->setMaxComponents(10000);
-    peakFinder->setKernel(kernel);
-    peakFinder->setSearchScale(1.5);
-    peakFinder->setIntegrationScale(4.0);
-    peakFinder->setBackgroundScale(6.0);
-    peakFinder->setThresholdType(1); // absolute
-    peakFinder->setThresholdValue(15.0);
+    peakFinder->setMinSize(30);
+    peakFinder->setMaxSize(10000);
+    peakFinder->setMaxFrames(10);
+    peakFinder->setConvolver("annular",{});
+    peakFinder->setThreshold("absolute",{{"intensity",15.0}});
+    peakFinder->setSearchConfidence(0.98);
+    peakFinder->setIntegrationConfidence(0.997);
 
     peakFinder->setHandler(progressHandler);
 
@@ -80,7 +72,8 @@ int main()
     nsx::PeakFilter peak_filter;
     nsx::PeakList selected_peaks;
     selected_peaks = peak_filter.selected(found_peaks,true);
-    selected_peaks = peak_filter.dRange(selected_peaks, 2.0, 100.0, true);
+    selected_peaks = peak_filter.dMin(selected_peaks, 2.0);
+    selected_peaks = peak_filter.dMax(selected_peaks, 100.0);
     
     NSX_CHECK_ASSERT(selected_peaks.size() >= 600);
 

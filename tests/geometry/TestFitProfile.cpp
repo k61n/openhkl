@@ -6,6 +6,8 @@
 #include <nsxlib/FitProfile.h>
 #include <nsxlib/NSXTest.h>
 
+NSX_INIT_TEST
+
 int main()
 {
     nsx::AABB bb;

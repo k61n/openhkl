@@ -7,6 +7,8 @@
 
 const double tolerance=1e-9;
 
+NSX_INIT_TEST
+
 //! Check that the Hull satisfies the convexity condition. This consists in
 //! checking that the signed volume between every face and every point is positive.
 //! This shows that each point is inside every face and therefore the hull is convex.

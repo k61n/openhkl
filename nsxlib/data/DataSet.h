@@ -40,10 +40,8 @@
 #include "FitProfile.h"
 #include "GeometryTypes.h"
 #include "IMask.h"
-#include "ImagingTypes.h"
-#include "InterpolatedState.h"
-#include "IPeakIntegrator.h"
 #include "InstrumentTypes.h"
+#include "InterpolatedState.h"
 #include "UtilsTypes.h"
 
 namespace nsx {
@@ -122,7 +120,7 @@ public:
     Eigen::MatrixXd transformedFrame(std::size_t idx);
 
     //! Return a convolved frame
-    Eigen::MatrixXi convolvedFrame(std::size_t idx, sptrConvolutionKernel kernel);
+    Eigen::MatrixXi convolvedFrame(std::size_t idx, const std::string& convolver_type, const std::map<std::string,double>& parameters);
 
     //! Get the file handle.
     void open();

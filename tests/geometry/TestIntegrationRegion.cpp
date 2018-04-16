@@ -4,6 +4,8 @@
 #include <nsxlib/IntegrationRegion.h>
 #include <nsxlib/NSXTest.h>
 
+NSX_INIT_TEST
+
 int main()
 {
     // TODO: fix this test!!

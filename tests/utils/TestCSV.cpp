@@ -5,6 +5,8 @@
 #include <nsxlib/CSV.h>
 #include <nsxlib/NSXTest.h>
 
+NSX_INIT_TEST
+
 int main() {
     std::string csv_file =
         //    ",,,\n"

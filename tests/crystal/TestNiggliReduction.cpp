@@ -11,9 +11,10 @@
 
 const double tolerance=1e-6;
 
+NSX_INIT_TEST
+
 int main()
 {
-
 	const unsigned int nCells = 783;
 
 	std::ifstream primitiveCellsFile("lattices.dat");

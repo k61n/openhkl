@@ -63,6 +63,24 @@ elseif (WIN32)
 endif()
 configure_file(${CMAKE_SOURCE_DIR}/cmake/NSXConfig.h.in ${CMAKE_BINARY_DIR}/include/nsxlib/NSXConfig.h)
 
+###########################################################################
+# RPATH manipulation
+###########################################################################
+
+# For info use 'objdump -x nsxqt | grep RPATH' to the installed executable (not the built one)
+# to check that the RPATH is correctly set
+
+# Update the RPATH with the path of some dependencies
+list(APPEND CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib ${GSL_LIBRARIES})
+
+# Use, i.e. don't skip the full RPATH for the build tree
+set(CMAKE_SKIP_BUILD_RPATH  FALSE)
+# When building, don't use the install RPATH already (but later on when installing)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+# Disable the RPATH stripping during installation
+# See here for more explanations: https://stackoverflow.com/questions/32469953/why-is-cmake-designed-so-that-it-removes-runtime-path-when-installing
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 add_subdirectory(nsxlib)
 
 if (BUILD_QTAPPS)
@@ -97,13 +115,13 @@ endif()
 
 # Install the databases file
 install(DIRECTORY resources/databases
-        DESTINATION ${APPLICATION_DATA_PATH}
+        DESTINATION share/nsxtool
         FILE_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
         DIRECTORY_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
         PATTERN ".svn" EXCLUDE)
 
 install(DIRECTORY resources/instruments
-        DESTINATION ${APPLICATION_DATA_PATH}
+        DESTINATION share/nsxtool
         FILE_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
         DIRECTORY_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
         PATTERN ".svn" EXCLUDE)
