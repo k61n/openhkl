@@ -15,6 +15,7 @@
 
 int main(int argc, char* argv[])
 {
+    QGuiApplication::setAttribute(Qt::AA_DisableHighDpiScaling);
     NSXQtApp a(argc, argv);
 
     // Ensure . is used rather than , for float and double boxes

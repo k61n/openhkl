@@ -178,7 +178,12 @@ void DialogPeakFind::updatePreview()
 
     auto data = _data[selected_data];
 
+    ui->frameSlider->setMaximum(data->nFrames()-1);
     int selected_frame = ui->frameSlider->value();
+
+    if (selected_frame >= data->nFrames()) {
+        selected_frame = data->nFrames()-1;
+    }
 
     auto frame = data->frame(selected_frame);
 
