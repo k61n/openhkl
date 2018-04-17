@@ -114,7 +114,9 @@ DialogPeakFind::DialogPeakFind(const nsx::DataList& data,nsx::sptrPeakFinder pea
 
     updatePreview();
 
-    connect(ui->searchScale, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [&] { _peakFinder->setPeakScale(ui->searchScale->value()); });
+    // note: need cast due to overloads of this method
+    auto valueChanged = static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged);
+    connect(ui->searchScale, valueChanged, this, [&] { _peakFinder->setPeakScale(ui->searchScale->value()); });
 
     connect(ui->threshold,SIGNAL(currentIndexChanged(QString)),this,SLOT(changeThreshold(QString)));
     connect(ui->thresholdParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeThresholdParameters(int,int)));
