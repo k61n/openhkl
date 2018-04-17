@@ -11,8 +11,8 @@ class TestPeakFinder(unittest.TestCase):
         peakFinder = nsx.PeakFinder()
         ph = nsx.ProgressHandler()
 
-        peakFinder.setIntegrationConfidence(0.997)        
-        peakFinder.setSearchConfidence(0.97)        
+        #peakFinder.setIntegrationConfidence(0.997)        
+        #peakFinder.setSearchConfidence(0.97)        
         
         peakFinder.setMaxSize(10000)
         self.assertTrue(peakFinder.maxSize() == 10000)
