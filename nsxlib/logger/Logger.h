@@ -1,17 +1,21 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 #include <sstream>
 
 #include "IStreamWrapper.h"
 
 namespace nsx {
 
-class AggregateStreamWrapper;
-
 class Logger {
 public:
+    // Note: necessary to delete this for MSVC
+	Logger() = delete;
     Logger(IStreamWrapper* wrapper);
+    // Note: necessary to delete this for MSVC build
+	Logger(const Logger& other) = delete;
+	Logger(Logger&& other) = default;
 
     ~Logger();
 
@@ -19,9 +23,7 @@ public:
     Logger& operator<<(T&& x);
 
 private:
-
-    IStreamWrapper* _wrapper;
-
+    std::unique_ptr<IStreamWrapper> _wrapper;
     std::string _msg;
 };
 
