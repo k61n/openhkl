@@ -38,7 +38,8 @@
 
 namespace nsx {
 
-StrongPeakIntegrator::StrongPeakIntegrator(): MeanBackgroundIntegrator()
+StrongPeakIntegrator::StrongPeakIntegrator(bool fit_center, bool fit_covariance): MeanBackgroundIntegrator(),
+    _fitCenter(fit_center), _fitCovariance(fit_covariance)
 {
 }
 
@@ -56,10 +57,15 @@ bool StrongPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& reg
 
     double sum_peak = 0.0;
     const double mean_bkg = _meanBackground.value();
+    // note that this is the std of the _estimate_ of the background
+    // should be approximately mean_bkg / num_bkg for Poisson statistics
     const double std_bkg = _meanBackground.sigma();
     size_t npeak = 0.0;
     size_t nbkg = 0.0;
     Blob3D blob;
+
+    // background sigma, assuming Poisson statistics
+    const double sigma = std::sqrt(mean_bkg);
 
     // compute total peak intensity
     for (auto i = 0; i < counts.size(); ++i) {
@@ -75,8 +81,8 @@ bool StrongPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& reg
             sum_peak += counts[i];
             npeak++;
 
-            // update blob if pixel is strong
-            if (counts[i] > mean_bkg+3*std_bkg) {
+            // update blob if pixel is strong (Poisson statistics)
+            if (counts[i] > mean_bkg+sigma) {
                 blob.addPoint(ev._px, ev._py, ev._frame, counts[i]-mean_bkg);
             }
         }
@@ -99,15 +105,8 @@ bool StrongPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& reg
         f_max = std::max(ev._frame, f_max);
     }
 
-    bool update_shape = false;
-
-
-    if (!update_shape) {
-        return true;
-    }
-
-    Eigen::Vector3d center = blob.center();
-    Eigen::Matrix3d cov = blob.covariance();
+    Eigen::Vector3d center = _fitCenter ? blob.center() : peak->getShape().center();
+    Eigen::Matrix3d cov = _fitCovariance ? blob.covariance() : peak->getShape().inverseMetric();
 
     // center of mass is consistent
     if (!((center-peak->getShape().center()).norm() < 100)) {
@@ -116,9 +115,10 @@ bool StrongPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& reg
 
     Eigen::Matrix3d A0 = peak->getShape().metric();
     Eigen::Matrix3d A1 = cov.inverse();
+    const double dA = (A1-A0).norm() / A0.norm();
 
     // check that the covariance is consistent
-    if (!((A1-A0).norm() / A0.norm() < 2.0)) {
+    if (!(dA < 2.0)) {
         return false;
     }
 

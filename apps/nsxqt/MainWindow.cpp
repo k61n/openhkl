@@ -568,7 +568,7 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
     std::map<std::string, std::function<nsx::IPeakIntegrator*()>> integrator_map;
     std::vector<std::string> integrator_names;
     
-    integrator_map["Strong peak integrator"] = [&]() {return new nsx::StrongPeakIntegrator;};
+    integrator_map["Strong peak integrator"] = [&]() {return new nsx::StrongPeakIntegrator(dialog->fitCenter(), dialog->fitCov());};
     integrator_map["Weak peak integrator"] = [&]() {return new nsx::WeakPeakIntegrator(library, dialog->radius(), dialog->nframes(), false);};
     integrator_map["I/Sigma integrator"] = [&]() {return new nsx::ISigmaIntegrator(library, dialog->radius(), dialog->nframes());};
     integrator_map["1d Profile integrator"] = [&]() {return new nsx::Profile1DIntegrator(library, dialog->radius(), dialog->nframes());};
