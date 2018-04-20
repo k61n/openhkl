@@ -9,7 +9,7 @@
 
 namespace nsx {
 
-ShapeIntegrator::ShapeIntegrator(const AABB& aabb, int nx, int ny, int nz, bool detector_space): StrongPeakIntegrator(), 
+ShapeIntegrator::ShapeIntegrator(const AABB& aabb, int nx, int ny, int nz, bool detector_space): StrongPeakIntegrator(false, false), 
     _library(new ShapeLibrary), 
     _aabb(aabb),
     _nx(nx),

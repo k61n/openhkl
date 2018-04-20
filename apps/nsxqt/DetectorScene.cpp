@@ -157,7 +157,6 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
     // No button was pressed, just a mouse move
     else if (event->button() == Qt::NoButton) {
-          //      jmf: testing follows
         auto lastPos = event->lastScenePos();
         auto point = lastPos.toPoint();
         QTransform trans;

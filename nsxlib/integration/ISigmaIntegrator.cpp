@@ -39,7 +39,7 @@
 namespace nsx {
 
 ISigmaIntegrator::ISigmaIntegrator(sptrShapeLibrary library, double radius, double nframes):
-    StrongPeakIntegrator(),
+    StrongPeakIntegrator(false, false),
     _library(library),
     _radius(radius),
     _nframes(nframes)

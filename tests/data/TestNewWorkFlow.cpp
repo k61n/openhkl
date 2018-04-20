@@ -73,7 +73,7 @@ int main()
 
     NSX_CHECK_ASSERT(found_peaks.size() >= 800);
 
-    nsx::StrongPeakIntegrator integrator;
+    nsx::StrongPeakIntegrator integrator(false, false);
     integrator.setHandler(progressHandler);
     integrator.integrate(found_peaks, dataf, 2.7, 3.5, 4.0);
 

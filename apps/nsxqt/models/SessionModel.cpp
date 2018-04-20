@@ -317,7 +317,7 @@ void SessionModel::findPeaks(const QModelIndex& index)
 
     // integrate peaks
     for (auto numor: selectedNumors) {
-        nsx::StrongPeakIntegrator integrator;
+        nsx::StrongPeakIntegrator integrator(true, true);
         integrator.integrate(_peaks, numor, dialog->peakScale(), dialog->bkgBegin(), dialog->bkgEnd());
     }
 

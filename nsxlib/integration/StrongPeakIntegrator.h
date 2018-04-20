@@ -40,9 +40,12 @@ class DataSet;
 
 class StrongPeakIntegrator: public MeanBackgroundIntegrator {
 public:
-    StrongPeakIntegrator();
+    StrongPeakIntegrator(bool fit_center, bool fit_covariance);
     ~StrongPeakIntegrator();
     bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
+private:
+    bool _fitCenter;
+    bool _fitCovariance;
 };
 
 } // end namespace nsx
