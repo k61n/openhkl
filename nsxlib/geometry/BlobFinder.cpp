@@ -64,7 +64,7 @@ void BlobFinder::eliminateBlobs(std::unordered_map<int, Blob3D>& blobs) const
 
     // dummies use to help progress handler
     int dummy = 0;
-    int magic = 0.2 * std::distance(blobs.begin(), blobs.end());
+    int magic = int(0.2 * std::distance(blobs.begin(), blobs.end()));
 
     for (auto it = blobs.begin(); it != blobs.end();) {
         ++dummy;
@@ -77,10 +77,10 @@ void BlobFinder::eliminateBlobs(std::unordered_map<int, Blob3D>& blobs) const
         }
         // update progress handler
         if ( (dummy&magic) == 0 && _progressHandler) {
-            double total_dist = std::distance(blobs.begin(), blobs.end());
-            double current_dist = std::distance(blobs.begin(), it);
-            double progress = 100.0 * current_dist / total_dist;
-            _progressHandler->setProgress(50 + 0.5*progress);
+            auto total_dist = std::distance(blobs.begin(), blobs.end());
+            auto current_dist = std::distance(blobs.begin(), it);
+            double progress = 100.0 * current_dist / double(total_dist);
+            _progressHandler->setProgress(int(50 + 0.5*progress));
         }
     }
 
@@ -321,18 +321,19 @@ void BlobFinder::findBlobs(std::unordered_map<int,Blob3D>& blobs,
                 index2D++;
                 // Create a new blob if necessary
                 if (newlabel) {
-                    blobs.insert(Blob3DUMap::value_type(label,Blob3D(col,row,idx,value)));
+                    blobs.insert(Blob3DUMap::value_type(label,Blob3D(col,row,double(idx),value)));
                 } else {
                     auto it = blobs.find(label);
-                    it->second.addPoint(col,row,idx,value);
+                    it->second.addPoint(col,row,double(idx),value);
                 }
             }
         }
 
         progress = static_cast<double>(_nframes) / static_cast<double>(_data->nFrames()) * 100.0;
 
-        if ( _progressHandler )
-            _progressHandler->setProgress(progress);
+        if ( _progressHandler ) {
+            _progressHandler->setProgress(int(progress));
+        }
     }
 
     if (_progressHandler) {
@@ -396,7 +397,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, Equivalen
 
     // dummies used to help progress handler
     int dummy = 0;
-    int magic =0.2 * std::distance(blobs.begin(), blobs.end());
+    int magic = int(0.2 * std::distance(blobs.begin(), blobs.end()));
 
     if (magic < 1) {
         magic = 1;
@@ -426,10 +427,10 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, Equivalen
 
         // update progress handler
         if ( (dummy % magic) == 0 && _progressHandler) {
-            double total_dist = std::distance(blobs.begin(), blobs.end());
-            double current_dist = std::distance(blobs.begin(), it);
-            double progress = 100.0 * current_dist / total_dist;
-            _progressHandler->setProgress(0.5*progress);
+            auto total_dist = std::distance(blobs.begin(), blobs.end());
+            auto current_dist = std::distance(blobs.begin(), it);
+            double progress = 100.0 * current_dist / double(total_dist);
+            _progressHandler->setProgress(int(0.5*progress));
             _progressHandler->log("blob loop: " + std::to_string(progress));
         }
     }
@@ -469,7 +470,7 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, Equivalen
 
     // dummies used to help progress handler
     dummy = 0;
-    magic = 0.02 * std::distance(collisions.begin(), collisions.end());
+    magic = int(0.02 * std::distance(collisions.begin(), collisions.end()));
 
     if (magic < 1) {
         magic = 1;
@@ -483,10 +484,10 @@ void BlobFinder::findCollisions(std::unordered_map<int,Blob3D>& blobs, Equivalen
 
         // update progress handler
         if ( (dummy % magic) == 0 && _progressHandler) {
-            const double total_dist = std::distance(collisions.begin(), collisions.end());
-            const double current_dist = std::distance(collisions.begin(), it);
-            const double progress = 100.0 * current_dist / total_dist;
-            _progressHandler->setProgress(50 + 0.5*progress);
+            auto total_dist = std::distance(collisions.begin(), collisions.end());
+            auto current_dist = std::distance(collisions.begin(), it);
+            const double progress = 100.0 * current_dist / double(total_dist);
+            _progressHandler->setProgress(int(50 + 0.5*progress));
         }
         ++dummy;
     }
@@ -536,7 +537,7 @@ void BlobFinder::mergeBlobs(std::unordered_map<int,Blob3D>& blobs, EquivalenceLi
 
     // dummy for calling progress updater
     int dummy = 0;
-    int magic = 0.02 * std::distance(blobs.begin(), blobs.end());
+    int magic = int(0.02 * std::distance(blobs.begin(), blobs.end()));
     if ( magic == 0 ) {
         magic = 1;
     }
@@ -560,9 +561,9 @@ void BlobFinder::mergeBlobs(std::unordered_map<int,Blob3D>& blobs, EquivalenceLi
 
         // update progress handler
         if ( (dummy%magic) == 0 && _progressHandler) {
-            double total_dist = std::distance(blobs.begin(), blobs.end());
-            double current_dist = std::distance(blobs.begin(), it);
-            int progress = static_cast<int>( 100.0 * current_dist / total_dist);
+            auto total_dist = std::distance(blobs.begin(), blobs.end());
+            auto current_dist = std::distance(blobs.begin(), it);
+            int progress = static_cast<int>( 100.0 * current_dist / double(total_dist));
             _progressHandler->setProgress(progress);
         }
     }

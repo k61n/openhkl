@@ -13,7 +13,6 @@ class MillerIndex;
 class MergedPeak;
 class Peak3D;
 class PeakIntegrator;
-class PeakRecord;
 class PeakValidator;
 class Profile;
 class SpaceGroup;
@@ -36,7 +35,6 @@ using PeakList = std::vector<sptrPeak3D>;
 
 using MergedPeakSet = std::set<MergedPeak>;
 
-using RecordList   = std::vector<PeakRecord>;
 using SymOpList    = std::vector<SymOp>;
 using UnitCellList = std::vector<sptrUnitCell>;
 
