@@ -476,6 +476,7 @@ void SessionModel::writeLog()
 bool SessionModel::writeXDS(std::string filename, const nsx::PeakList& peaks, bool merge, bool friedel)
 {
     nsx::error() << "writeXDS method not implemented";
+    return false;
 }
 
 bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& peaks)
