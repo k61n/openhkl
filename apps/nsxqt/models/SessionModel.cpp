@@ -83,7 +83,6 @@
 #include <nsxlib/StrongPeakIntegrator.h>
 #include <nsxlib/Source.h>
 #include <nsxlib/UnitCell.h>
-#include <nsxlib/XDS.h>
 
 #include "AbsorptionDialog.h"
 #include "DataItem.h"
@@ -474,6 +473,11 @@ void SessionModel::writeLog()
     }
 }
 
+bool SessionModel::writeXDS(std::string filename, const nsx::PeakList& peaks, bool merge, bool friedel)
+{
+    nsx::error() << "writeXDS method not implemented";
+}
+
 bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& peaks)
 {
     std::fstream file(filename, std::ios::out);
@@ -648,27 +652,6 @@ bool SessionModel::writeStatistics(std::string filename,
     file.close();
     return true;
 }
-
-
-bool SessionModel::writeXDS(std::string filename, const nsx::PeakList& peaks, bool merge, bool friedel)
-{
-    #pragma warning "todo: fix this method"
-    #if 0
-    const std::string date = QDate::currentDate().toString("yyyy-MM-dd").toStdString();
-    nsx::XDS xds(peaks, merge, friedel, filename, date);
-    std::fstream file(filename, std::ios::out);
-
-    if (!file.is_open()) {
-        nsx::error() << "Could not open " << filename << " for writing.";
-        return false;
-    }
-    bool result = xds.write(file);
-    nsx::debug() << "Done writing log file.";
-    return result;
-    #endif
-    return false;
-}
-
 
 void SessionModel::autoAssignUnitCell()
 {

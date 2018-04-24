@@ -145,8 +145,6 @@ using Eigen::Quaterniond;
 #include "Peak3D.h"
 using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
-#include "PeakRecord.h"
-
 #include "FFTIndexing.h"
 
 #include "MergedPeak.h"
@@ -174,7 +172,6 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
 #include "DetectorEvent.h"
 
-#include "XDS.h"
 #include "DataSet.h"
 #include "FitProfile.h"
 #include "MetaData.h"
@@ -519,7 +516,6 @@ namespace nsx {
 %include "CC.h"
 
 %include "Peak3D.h"
-%include "PeakRecord.h"
 
 %include "MillerIndex.h"
 %template(MillerIndexList) std::vector<nsx::MillerIndex>;
@@ -546,7 +542,6 @@ namespace nsx {
 
 %include "BrillouinZone.h"
 
-%include "XDS.h"
 %include "FitProfile.h"
 %include "DataSet.h"
 %include "MetaData.h"
