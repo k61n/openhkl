@@ -2,8 +2,11 @@ FROM ubuntu:zesty
 
 RUN export DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
+# Necessary due to the fact that a non-LTS is not supported after 9 months
+# See https://smyl.es/how-to-fix-ubuntudebian-apt-get-404-not-found-package-repository-errors-saucy-raring-quantal-oneiric-natty/
+RUN sed -i -e 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
        cmake \
        git \
        g++ \
