@@ -39,6 +39,7 @@
 
 #include "AABB.h"
 #include "GeometryTypes.h"
+#include "DataTypes.h"
 
 namespace nsx {
 
@@ -102,7 +103,16 @@ public:
     const Eigen::Matrix3d& metric() const;
     const Eigen::Matrix3d& inverseMetric() const;
 
+    //! Return center of 2d ellipsoid formed by intercting with plane with normal n and point p.
+    Eigen::Vector3d intersectionCenter(const Eigen::Vector3d& n, const Eigen::Vector3d& p) const;
+
     const AABB& aabb() const;
+
+    //! Transform the ellipsoid to detector space, assuming it is currently in q-space.
+    Ellipsoid toDetectorSpace(sptrDataSet data) const;
+
+    //! Return the value (x-center)*metric*(x-center)
+    double r2(const Eigen::Vector3d x) const;
 
 #ifndef SWIG
     // Macro to ensure that Ellipsoid can be dynamically allocated.

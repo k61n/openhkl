@@ -59,4 +59,20 @@ const MergedPeakSet& MergedData::getPeaks() const
     return _peaks;
 }
 
+
+size_t MergedData::totalSize() const
+{
+    size_t total = 0;
+
+    for (const auto& peak: _peaks) {
+        total += peak.redundancy();
+    }
+    return total;
+}
+
+double MergedData::redundancy() const
+{
+    return double(totalSize()) / double(_peaks.size());
+}
+
 } // end namespace nsx

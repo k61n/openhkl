@@ -57,8 +57,7 @@ int main()
     peakFinder->setMaxFrames(10);
     peakFinder->setConvolver("annular",{});
     peakFinder->setThreshold("absolute",{{"intensity",15.0}});
-    peakFinder->setSearchConfidence(0.98);
-    peakFinder->setIntegrationConfidence(0.997);
+    peakFinder->setPeakScale(1.0);
 
     peakFinder->setHandler(progressHandler);
 
@@ -72,6 +71,10 @@ int main()
     nsx::PeakFilter peak_filter;
     nsx::PeakList selected_peaks;
     selected_peaks = peak_filter.selected(found_peaks,true);
+    selected_peaks = peak_filter.dMin(selected_peaks, 2.0);
+    selected_peaks = peak_filter.dMax(selected_peaks, 100.0);
+    
+    NSX_CHECK_ASSERT(selected_peaks.size() >= 600);
 
     auto numIndexedPeaks = [&]() -> unsigned int
     {
@@ -86,13 +89,15 @@ int main()
 
     unsigned int indexed_peaks = numIndexedPeaks();
 
-    NSX_CHECK_ASSERT(indexed_peaks > 650);
+    NSX_CHECK_ASSERT(indexed_peaks > 600);
     NSX_CHECK_NO_THROW(indexer.autoIndex(params));
+
+    NSX_CHECK_ASSERT(indexer.getSolutions().empty() == false);
 
     auto soln = indexer.getSolutions().front();
 
-    // correctly indexed at least 92% of peaks
-    NSX_CHECK_ASSERT(soln.second > 92.0);
+    // correctly indexed at least 98% of peaks
+    NSX_CHECK_ASSERT(soln.second > 98.0);
 
     nsx::PeakList peaks;
 

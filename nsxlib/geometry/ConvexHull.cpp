@@ -7,145 +7,22 @@
 
 namespace nsx {
 
-ConvexHull::ConvexHull(const ConvexHull& other) : _initialized(other._initialized)
+ConvexHull::ConvexHull(const ConvexHull& other): ConvexHull()
 {
-    for (auto v : other._vertices)
-        _vertices.push_back(new Vertex(v->_coords));
-
-    for (unsigned int i=0;i<other._edges.size();++i)
-        _edges.push_back(new Edge());
-
-    for (unsigned int i=0;i<other._faces.size();++i)
-        _faces.push_back(new Face());
-
-    auto eit(_edges.begin());
-    auto oeit(other._edges.begin());
-    for (unsigned int i=0;i<_edges.size();++i,++eit,++oeit)
-    {
-        for (int j=0;j<2;++j)
-        {
-            auto pv = (*oeit)->_endPts[j];
-            auto vit = std::find(other._vertices.begin(),other._vertices.end(),pv);
-            if (vit != other._vertices.end())
-            {
-                int dis = std::distance(other._vertices.begin(),vit);
-                auto it = _vertices.begin();
-                std::advance(it,dis);
-                (*eit)->_endPts[j] = *it;
-            }
-
-            Face* pf = (*oeit)->_adjFace[j];
-            auto fit = std::find(other._faces.begin(),other._faces.end(),pf);
-            if (fit != other._faces.end())
-            {
-                int dis = std::distance(other._faces.begin(),fit);
-                auto it = _faces.begin();
-                std::advance(it,dis);
-                (*eit)->_adjFace[j] = *it;
-            }
-        }
-    }
-
-    auto fit(_faces.begin());
-    auto ofit(other._faces.begin());
-
-    for (unsigned int i=0;i<_faces.size();++i,++fit,++ofit)
-    {
-        for (int j=0;j<3;++j)
-        {
-            auto pv = (*ofit)->_vertices[j];
-            auto vit = std::find(other._vertices.begin(),other._vertices.end(),pv);
-            if (vit != other._vertices.end())
-            {
-                int dis = std::distance(other._vertices.begin(),vit);
-                auto it = _vertices.begin();
-                std::advance(it,dis);
-                (*fit)->_vertices[j] = *it;
-            }
-
-            auto pe = (*ofit)->_edges[j];
-            auto eit = std::find(other._edges.begin(),other._edges.end(),pe);
-            if (eit != other._edges.end())
-            {
-                int dis = std::distance(other._edges.begin(),eit);
-                auto it = _edges.begin();
-                std::advance(it,dis);
-                (*fit)->_edges[j] = *it;
-            }
-        }
-    }
+    *this = other;
 }
 
 ConvexHull& ConvexHull::operator=(const ConvexHull& other)
 {
-    if (this!=&other)
-    {
-        for (auto v : other._vertices)
-            _vertices.push_back(new Vertex(v->_coords));
+    reset();
+    _initialized = false;
+    
+    for (auto v: other._vertices) {
+        addVertex(v->_coords);
+    }
 
-        for (unsigned int i=0;i<other._edges.size();++i)
-            _edges.push_back(new Edge());
-
-        for (unsigned int i=0;i<other._faces.size();++i)
-            _faces.push_back(new Face());
-
-        auto eit(_edges.begin());
-        auto oeit(other._edges.begin());
-
-        for (unsigned int i=0;i<_edges.size();++i,++eit,++oeit)
-        {
-            for (int j=0;j<2;++j)
-            {
-                auto pv = (*oeit)->_endPts[j];
-                auto vit = std::find(other._vertices.begin(),other._vertices.end(),pv);
-                if (vit != other._vertices.end())
-                {
-                    int dis = std::distance(other._vertices.begin(),vit);
-                    auto it = _vertices.begin();
-                    std::advance(it,dis);
-                    (*eit)->_endPts[j] = *it;
-                }
-
-                auto pf = (*oeit)->_adjFace[j];
-                auto fit = std::find(other._faces.begin(),other._faces.end(),pf);
-                if (fit != other._faces.end())
-                {
-                    int dis = std::distance(other._faces.begin(),fit);
-                    auto it = _faces.begin();
-                    std::advance(it,dis);
-                    (*eit)->_adjFace[j] = *it;
-                }
-            }
-        }
-
-        auto fit(_faces.begin());
-        auto ofit(other._faces.begin());
-
-        for (unsigned int i=0;i<_faces.size();++i,++fit,++ofit)
-        {
-            for (int j=0;j<3;++j)
-            {
-                auto pv = (*ofit)->_vertices[j];
-                auto vit = std::find(other._vertices.begin(),other._vertices.end(),pv);
-                if (vit != other._vertices.end())
-                {
-                    int dis = std::distance(other._vertices.begin(),vit);
-                    auto it = _vertices.begin();
-                    std::advance(it,dis);
-                    (*fit)->_vertices[j] = *it;
-                }
-
-                auto pe = (*ofit)->_edges[j];
-                auto eit = std::find(other._edges.begin(),other._edges.end(),pe);
-                if (eit != other._edges.end())
-                {
-                    int dis = std::distance(other._edges.begin(),eit);
-                    auto it = _edges.begin();
-                    std::advance(it,dis);
-                    (*fit)->_edges[j] = *it;
-                }
-            }
-        }
+    if (other._initialized) {
+        updateHull();
     }
     return *this;
 }
@@ -155,14 +32,14 @@ void ConvexHull::reset()
     for (auto v : _vertices)
         delete v;
     for (auto e : _edges)
-            delete e;
+        delete e;
     for (auto f : _faces)
         delete f;
     _vertices.clear();
     _edges.clear();
     _faces.clear();
+    _planes.clear();
     _initialized=false;
-
 }
 
 bool ConvexHull::isCoplanar(Vertex* v0, Vertex* v1, Vertex* v2)
@@ -175,31 +52,19 @@ bool ConvexHull::isCoplanar(Vertex* v0, Vertex* v1, Vertex* v2)
     return (norm<1.0e-9);
 }
 
-ConvexHull::ConvexHull() : _initialized(false), _vertices(), _edges(), _faces()
+ConvexHull::ConvexHull() : _initialized(false), _vertices(), _edges(), _faces(), _planes()
 {
 }
 
 ConvexHull::~ConvexHull()
 {
-    for (auto v : _vertices)
-        delete v;
-
-    for (auto e : _edges)
-        delete e;
-
-    for (auto f : _faces)
-        delete f;
-
-    _vertices.clear();
-    _edges.clear();
-    _faces.clear();
+    reset();
 }
 
 Vertex* ConvexHull::addVertex(const Eigen::Vector3d& coords)
 {
 
-    for (const auto& v : _vertices)
-    {
+    for (const auto& v : _vertices) {
         if (std::abs(coords[0]-v->_coords[0])<1.0e-6 && std::abs(coords[1]-v->_coords[1])<1.0e-6 && std::abs(coords[2]-v->_coords[2])<1.0e-6)
             throw std::runtime_error("Duplicate vertex (within 1.0e6 tolerance).");
     }
@@ -355,9 +220,7 @@ Face* ConvexHull::buildFace(Vertex* v0, Vertex* v1, Vertex* v2, Face* fold)
 
 void ConvexHull::updateHull()
 {
-
-    if (!_initialized)
-    {
+    if (!_initialized) {
         initalizeHull();
         _initialized=true;
     }
@@ -365,63 +228,81 @@ void ConvexHull::updateHull()
     if (_vertices.size()<4)
         throw std::runtime_error("Not enough vertices to build a convex hull.");
 
-    auto it=_vertices.begin();
-    while(it!=_vertices.end())
-    {
-        if (!((*it)->_mark))
-        {
+    // note: omitted it++ is intentional
+    for (auto it = _vertices.begin(); it != _vertices.end(); ) {
+        if (!((*it)->_mark)) {
             processVertex(*it);
             ++it;
             cleanUp();
             it=_vertices.begin();
-        }
-        else
+        } else {
             ++it;
+        }
+    }
+
+    // build cache of bounding planes
+    _planes.clear();
+    // inner and outer radius
+    _innerR2 = std::numeric_limits<double>::max();
+    _outerR2 = std::numeric_limits<double>::min();
+
+    for (auto face: _faces) {
+        // note: vertices are stored right-handed as viewed from _outside_ the hull
+        Eigen::Vector3d u = face->_vertices[1]->_coords - face->_vertices[0]->_coords;
+        Eigen::Vector3d v = face->_vertices[2]->_coords - face->_vertices[0]->_coords;
+        Eigen::Vector3d n = u.cross(v);
+        n.normalize();
+        double d = n.dot(face->_vertices[0]->_coords);
+        _planes.emplace_back(n, d);
+
+        // update inner radius
+        _innerR2 = std::min(_innerR2, d*d);
+
+        // update outer radius
+        for (auto i = 0; i < 3; ++i) {
+            _outerR2 = std::max(_outerR2, face->_vertices[i]->_coords.squaredNorm());
+        }
     }
 }
 
 void ConvexHull::processVertex(Vertex* v)
 {
-    v->_mark=true;
+    v->_mark = true;
     // Mark the faces that are visible from vertex v
-    bool visible=false;
-    for (auto& f : _faces)
-    {
-        if (f->volumeSign(v)<0)
-        {
-            f->_visible=true;
-            visible=true;
+    bool visible = false;
+    for (auto& f : _faces) {
+        if (f->volumeSign(v)<0) {
+            f->_visible = true;
+            visible = true;
         }
     }
 
     // If no faces are visible from vertex v, then v is inside the hull
-    if (!visible)
-    {
-        v->_onHull=false;
+    if (!visible) {
+        v->_onHull = false;
         return;
     }
 
     bool visible1, visible2;
 
-    auto it=_edges.begin();
-    while (it!=_edges.end())
-    {
-        auto e=*it;
-        if (e->_adjFace[0])
-            visible1=e->_adjFace[0]->_visible;
-        else
-            visible1=false;
-
-        if (e->_adjFace[1])
-            visible2=e->_adjFace[1]->_visible;
-        else
-            visible2=false;
-
-        if (visible1 && visible2)
-            e->_delete=true;
-        else if (visible1 || visible2)
-            e->_newFace=buildConeFace(e,v);
-
+    // note: omitted it++ is intentional
+    for (auto it = _edges.begin(); it != _edges.end();) {
+        auto e = *it;
+        if (e->_adjFace[0]) {
+            visible1 = e->_adjFace[0]->_visible;
+        } else {
+            visible1 = false;
+        }
+        if (e->_adjFace[1]) {
+            visible2 = e->_adjFace[1]->_visible;
+        } else {
+            visible2 = false;
+        }
+        if (visible1 && visible2) {
+            e->_delete = true;
+        } else if (visible1 || visible2) {
+            e->_newFace = buildConeFace(e,v);
+        }
         ++it;
     }
 }
@@ -601,19 +482,23 @@ void ConvexHull::cleanUp()
     cleanVertices();
 }
 
-AABB ConvexHull::getAABB() const
+AABB ConvexHull::aabb() const
 {
-    Eigen::Vector3d lower, upper;
-    lower.setZero();
-    upper.setZero();
+    if (_vertices.empty()) {
+        return {};
+    }
 
-    for (auto&& v: getVertices()) {
+    Eigen::Vector3d lower, upper;
+    lower = _vertices.front()->_coords;
+    upper = lower;
+
+    for (const auto& v: _vertices) {
         for (auto i = 0; i < 3; ++i) {
-            if ( (*v)._coords(i) < lower(i)) {
-                lower(i) = (*v)._coords(i);
+            if ( v->_coords(i) < lower(i)) {
+                lower(i) = v->_coords(i);
             }
-            if ( (*v)._coords(i) > upper(i)) {
-                upper(i) = (*v)._coords(i);
+            if ( v->_coords(i) > upper(i)) {
+                upper(i) = v->_coords(i);
             }
         }
     }
@@ -741,11 +626,26 @@ std::ostream& operator<<(std::ostream& os, const ConvexHull& chull)
     return os;
 }
 
+// Note: this function is absolutely performance critical. 
+// Make changes with caution, and remember to profile!
 bool ConvexHull::contains(const Eigen::Vector3d& v) const {
-    Vertex point(v);
-    // check that it is in the convex hull
-    for (auto&& face : _faces) {
-        if (face->volumeSign(&point) < 0) {
+
+    const double r2 = v.squaredNorm();
+
+    if (r2 > _outerR2) {
+        return false;
+    }
+
+    if (r2 <= _innerR2) {
+        return true;
+    }
+
+    for (const auto& pair: _planes) {
+        double dot = 0.0;
+        for (size_t i = 0; i < 3; ++i) {
+            dot += v(i)*pair.first(i);
+        }
+        if (dot > pair.second) {
             return false;
         }
     }

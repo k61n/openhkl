@@ -17,18 +17,15 @@ MillerIndex::MillerIndex(const Eigen::RowVector3i& hkl) : _hkl(hkl), _error(Eige
 {
 }
 
-MillerIndex::MillerIndex(sptrPeak3D peak, sptrUnitCell unit_cell)
+MillerIndex::MillerIndex(const ReciprocalVector& q, const UnitCell& unit_cell)
 {
-    auto&& q = peak->getQ();
-
-    const Eigen::RowVector3d hkld = q.rowVector() * unit_cell->basis();
+    const Eigen::RowVector3d hkld = q.rowVector() * unit_cell.basis();
 
     auto h = std::lround(hkld[0]);
     auto k = std::lround(hkld[1]);
     auto l = std::lround(hkld[2]);
 
     _hkl = Eigen::RowVector3i(h,k,l);
-
     _error = hkld - _hkl.cast<double>();
 }
 
@@ -43,7 +40,6 @@ int MillerIndex::operator[](int index) const
     if (index < 0 || index > 2) {
         throw std::runtime_error("Invalid index for a 3D vector");
     }
-
     return _hkl[index];
 }
 
@@ -52,7 +48,6 @@ int& MillerIndex::operator[](int index)
     if (index < 0 || index > 2) {
         throw std::runtime_error("Invalid index for a 3D vector");
     }
-
     return _hkl[index];
 }
 

@@ -1,4 +1,4 @@
-%module "pynsx"
+%module(directors="1") "pynsx"
 
 %include "exception.i"
 
@@ -10,6 +10,13 @@
   }
 }
 
+%feature("director") IPeakIntegrator;
+%feature("director") MeanBackgroundIntegrator;
+%feature("director") StrongPeakIntegrator;
+%feature("director") WeakPeakIntegrator;
+%feature("director") ISigmaIntegrator;
+%feature("director") ShapeIntegrator;
+
 %include "pynsx_doc.i"
 
 %include "warnings.i"
@@ -20,6 +27,7 @@
 %include "std_shared_ptr.i"
 %include "std_string.i"
 %include "std_vector.i"
+%include "std_deque.i"
 %include "std_set.i"
 %include "std_pair.i"
 
@@ -58,10 +66,12 @@
 %shared_ptr(nsx::FlatDetector)
 %shared_ptr(nsx::CylindricalDetector)
 %shared_ptr(nsx::Gonio)
+%shared_ptr(nsx::ShapeLibrary)
 
 %{
 #pragma GCC diagnostic ignored "-Wpedantic"
 #define SWIG_FILE_WITH_INIT
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 
 #include <Python.h>
 #include <numpy/arrayobject.h>
@@ -94,7 +104,7 @@ using Eigen::Quaterniond;
 
 #include "Round.h"
 #include "RNG.h"
-#include "Profile3d.h"
+#include "Gaussian3d.h"
 
 #include "EigenToVector.h"
 #include "System.h"
@@ -120,15 +130,20 @@ using Eigen::Quaterniond;
 #include "AutoIndexer.h"
 #include "Profile.h"
 #include "Intensity.h"
-#include "PeakIntegrator.h"
+#include "IPeakIntegrator.h"
+#include "MeanBackgroundIntegrator.h"
+#include "WeakPeakIntegrator.h"
+#include "ISigmaIntegrator.h"
+#include "StrongPeakIntegrator.h"
+#include "ShapeIntegrator.h"
+#include "IntegrationRegion.h"
+#include "PeakData.h"
 #include "UnitCell.h"
 #include "ResolutionShell.h"
 #include "RFactor.h"
 #include "CC.h"
 #include "Peak3D.h"
-#include "PeakFilter.h"
-
-#include "PeakRecord.h"
+using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
 #include "FFTIndexing.h"
 
@@ -150,13 +165,15 @@ using Eigen::Quaterniond;
 #include "AABB.h"
 #include "Edge.h"
 #include "Blob3D.h"
-#include "IntegrationRegion.h"
+
 
 #include "DirectVector.h"
 #include "ReciprocalVector.h"
 
-#include "XDS.h"
+#include "DetectorEvent.h"
+
 #include "DataSet.h"
+#include "FitProfile.h"
 #include "MetaData.h"
 #include "ILLDataReader.h"
 #include "IDataReader.h"
@@ -178,6 +195,7 @@ using Eigen::Quaterniond;
 #include "FlatDetector.h"
 #include "Source.h"
 #include "InstrumentState.h"
+#include "InterpolatedState.h"
 
 #include "Monochromator.h"
 #include "MonoDetector.h"
@@ -244,13 +262,15 @@ using sptrMaterial = std::shared_ptr<nsx::Material>;
 #include "SpaceGroup.h"
 #include "UnitCell.h"
 #include "GruberReduction.h"
-#include "PeakIntegrator.h"
+
 #include "Profile.h"
 #include "Intensity.h"
 
 using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 
 #include "Diffractometer.h"
+
+using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 
 #include "Singleton.h"
 
@@ -272,7 +292,12 @@ using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 #include "PeakFinder.h"
 #include "MergedData.h"
 
+#include "PeakFilter.h"
+
 #include "MillerIndex.h"
+#include "IntegratedProfile.h"
+#include "ShapeLibrary.h"
+using sptrShapeLibrary = std::shared_ptr<nsx::ShapeLibrary>;
 
 #include "CC.h"
 #include "RFactor.h"
@@ -345,6 +370,7 @@ using namespace nsx;
 
 %include "ReciprocalVector.h"
 %template(ReciprocalVectorList) std::vector<nsx::ReciprocalVector>;
+%template(ReciprocalVectorQueue) std::deque<nsx::ReciprocalVector>;
 
 %include "Axis.h"
 %include "RotAxis.h"
@@ -364,13 +390,19 @@ using namespace nsx;
 %template(scored_uc) std::pair<std::shared_ptr<nsx::UnitCell>, double>;
 %template(indexer_solutions) std::vector<std::pair<std::shared_ptr<nsx::UnitCell>,double>>;
 
+%include "InstrumentTypes.h"
 %include "Detector.h"
+%include "DetectorEvent.h"
+%template(DetectorEventQueue) std::deque<nsx::DetectorEvent>;
+%template(DoubleQueue) std::deque<double>;
 %include "MonoDetector.h"
 %include "CylindricalDetector.h"
 %include "FlatDetector.h"
-%include "Sample.h"
 %include "Diffractometer.h"
+%include "Sample.h"
 %include "Singleton.h"
+%include "InstrumentState.h"
+%include "InterpolatedState.h"
 
 namespace nsx {
    class DataReaderFactory; 
@@ -380,6 +412,24 @@ namespace nsx {
 
 %include "FFTIndexing.h"
 
+
+%include "PeakData.h"
+%include "IntegrationRegion.h"
+%include "Intensity.h"
+%template(IntensityList) std::vector<nsx::Intensity>;
+%include "FitProfile.h"
+%include "IntegratedProfile.h"
+%include "IPeakIntegrator.h"
+%include "MeanBackgroundIntegrator.h"
+%include "WeakPeakIntegrator.h"
+%include "ISigmaIntegrator.h"
+%include "StrongPeakIntegrator.h"
+%include "Peak3D.h"
+%include "IntegratedProfile.h"
+%include "ShapeLibrary.h"
+%include "ShapeIntegrator.h"
+%include "IntegrationRegion.h"
+%include "PeakData.h"
 %include "Intensity.h"
 %include "Peak3D.h"
 
@@ -406,7 +456,9 @@ namespace nsx {
 %include "DataReaderFactory.h"
 %include "ILLDataReader.h"
 %include "HDF5DataReader.h"
+%include "FitProfile.h"
 %include "DataSet.h"
+
 
 %include "MergedData.h"
 
@@ -427,7 +479,7 @@ namespace nsx {
 %include "FitParameters.h"
 %include "Minimizer.h"
 %include "RNG.h"
-%include "Profile3d.h"
+%include "Gaussian3d.h"
 
 %include "EigenToVector.h"
 %include "System.h"
@@ -451,18 +503,25 @@ namespace nsx {
 
 %include "Profile.h"
 %include "Intensity.h"
-%include "PeakIntegrator.h"
+
+%include "IntegrationRegion.h"
+%include "PeakData.h"
+
+
 %include "UnitCell.h"
 %include "ResolutionShell.h"
 
 %include "RFactor.h"
 %include "CC.h"
 %include "CC.h"
+
 %include "Peak3D.h"
-%include "PeakRecord.h"
 
 %include "MillerIndex.h"
 %template(MillerIndexList) std::vector<nsx::MillerIndex>;
+
+%include "IntegratedProfile.h"
+%include "ShapeLibrary.h"
 
 %include "FFTIndexing.h"
 %include "MergedPeak.h"
@@ -480,10 +539,10 @@ namespace nsx {
 %include "AABB.h"
 %include "Edge.h"
 %include "Blob3D.h"
-%include "IntegrationRegion.h"
+
 %include "BrillouinZone.h"
 
-%include "XDS.h"
+%include "FitProfile.h"
 %include "DataSet.h"
 %include "MetaData.h"
 %include "ILLDataReader.h"
@@ -512,6 +571,7 @@ namespace nsx {
 %include "FlatDetector.h"
 %include "Source.h"
 %include "InstrumentState.h"
+%include "InterpolatedState.h"
 
 %include "Monochromator.h"
 %include "MonoDetector.h"

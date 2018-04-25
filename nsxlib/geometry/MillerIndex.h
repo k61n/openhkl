@@ -5,6 +5,7 @@
 #include <Eigen/Dense>
 
 #include "CrystalTypes.h"
+#include "ReciprocalVector.h"
 
 namespace nsx {
 
@@ -25,7 +26,7 @@ public:
     //! Constructor from its 3 components and the error on hkl
     MillerIndex(int h, int k, int l);
 
-    MillerIndex(sptrPeak3D peak, sptrUnitCell unit_cell);
+    MillerIndex(const ReciprocalVector& q, const UnitCell& unit_cell);
 
     //! Construct a MillerIndex from an Eigen row vector of integer
     explicit MillerIndex(const Eigen::RowVector3i& hkl);
@@ -40,16 +41,12 @@ public:
   
     //! Return the value of an element of the vector
     int operator[](int index) const;
-
     //! Return a reference to an element of the vector
     int& operator[](int index);
-
     //! Return the value of an element of the vector
     int operator()(int index) const;
-
     //! Return a reference to an element of the vector
     int& operator()(int index);
-
     //! Print information about a MillerIndex to a stream
     void print(std::ostream& os) const;
 
@@ -60,9 +57,7 @@ public:
     bool indexed(double tolerance) const;
 
 private:
-
     Eigen::RowVector3i _hkl;
-
     Eigen::RowVector3d _error;
 };
 

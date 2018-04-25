@@ -8,9 +8,9 @@
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Units.h>
 
-const double tolerance=1e-3;
-
 NSX_INIT_TEST
+
+const double tolerance=1e-3;
 
 int main()
 {
@@ -30,7 +30,7 @@ int main()
     NSX_CHECK_SMALL(center[2],tolerance);
 
     // Create a fake instrument state
-    nsx::InstrumentState state1;
+    nsx::InstrumentState state1(nullptr);
     
     // Should be center of the detector so gamma,nu=0 at rest
     double gamma = state1.gamma(pixel_position);
@@ -43,7 +43,7 @@ int main()
     NSX_CHECK_SMALL(th2,tolerance);
 
     // Rotate the detector by 90 deg clockwise
-    nsx::InstrumentState state2;
+    nsx::InstrumentState state2(nullptr);
     state2.detectorOrientation <<  0, 1, 0,
                                   -1, 0, 0,
                                    0, 0, 1;
@@ -69,6 +69,29 @@ int main()
     NSX_CHECK_CLOSE(q[0], 1.0,tolerance);
     NSX_CHECK_CLOSE(q[1],-1.0,tolerance);
     NSX_CHECK_SMALL(q[2],tolerance);
+
+    for (int i = d.getMinRow()+3; i < d.getMaxRow()-3; i += 2) {
+        for (int j = d.getMinCol()+3; j < d.getMaxCol()-3; j += 2) {
+            NSX_CHECK_EQ(d.hasPixel(j, i), true);
+
+            auto position = d.pixelPosition(j, i);
+
+            Eigen::Vector3d from(-1,-1,-1);
+            from *= nsx::cm;
+            Eigen::Vector3d kf = position.vector() - from;
+
+            nsx::DetectorEvent event = d.constructEvent(nsx::DirectVector(from), nsx::ReciprocalVector(kf.transpose()));
+
+            // detector has event
+            NSX_CHECK_EQ(event._tof > 0.0, true);
+            // time of flight is correct
+            NSX_CHECK_CLOSE(event._tof, 1.0, 1e-5);
+            // correct x coord
+            NSX_CHECK_CLOSE(event._px, j, 1e-5);
+            // correct x coord
+            NSX_CHECK_CLOSE(event._py, i, 1e-5);
+        }
+    }
 
     return 0;
 }

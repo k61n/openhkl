@@ -21,11 +21,7 @@ public:
 
     void setHandler(const sptrProgressHandler& handler);
 
-    void setIntegrationConfidence(double confidence);
-    double integrationConfidence() const;
-
-    void setSearchConfidence(double confidence);
-    double searchConfidence() const;
+    void setPeakScale(double scale) { _peakScale = scale; }
 
     void setMinSize(int minComp);
     int minSize() const;
@@ -56,13 +52,10 @@ private:
 
 private:
     sptrProgressHandler _handler;
-
     sptrConvolver _convolver;
-
     sptrThreshold _threshold;
 
-    double _searchConfidence;
-    double _integrationConfidence;
+    double _peakScale;
 
     int _current_label;
 

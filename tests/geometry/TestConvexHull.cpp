@@ -1,5 +1,6 @@
 #include <stdexcept>
 
+#include <nsxlib/AABB.h>
 #include <nsxlib/ConvexHull.h>
 #include <nsxlib/Face.h>
 #include <nsxlib/NSXTest.h>
@@ -101,6 +102,31 @@ int main()
     NSX_CHECK_EQUAL(chull.getNEdges(),newhull.getNEdges());
     NSX_CHECK_EQUAL(chull.getNFaces(),newhull.getNFaces());
     NSX_CHECK_CLOSE(chull.getVolume(),newhull.getVolume(),tolerance);
+
+    nsx::ConvexHull box;
+    box.addVertex(Eigen::Vector3d(0,0,0));
+    box.addVertex(Eigen::Vector3d(0,0,1));
+    box.addVertex(Eigen::Vector3d(0,1,0));
+    box.addVertex(Eigen::Vector3d(0,1,1));
+    box.addVertex(Eigen::Vector3d(1,0,0));
+    box.addVertex(Eigen::Vector3d(1,0,1));
+    box.addVertex(Eigen::Vector3d(1,1,0));
+    box.addVertex(Eigen::Vector3d(1,1,1));
+    box.updateHull();
+
+    nsx::AABB bb = box.aabb();
+
+    NSX_CHECK_LOWER_THAN((bb.lower()-Eigen::Vector3d(0,0,0)).norm(), 1e-9);
+    NSX_CHECK_LOWER_THAN((bb.upper()-Eigen::Vector3d(1,1,1)).norm(), 1e-9);
+
+    Eigen::Vector3d p = {0.5,0.5,0.5};
+    NSX_CHECK_EQUAL(bb.isInside(p), box.contains(p));
+    p = {-0.5, 0.5, 0.5};
+    NSX_CHECK_EQUAL(bb.isInside(p), box.contains(p));
+    p = {0.5, -0.5, 0.5};
+    NSX_CHECK_EQUAL(bb.isInside(p), box.contains(p));
+    p = {0.5, 0.5, -0.5};
+    NSX_CHECK_EQUAL(bb.isInside(p), box.contains(p));
 
     return 0;
 }

@@ -42,6 +42,7 @@
 #include "GeometryTypes.h"
 #include "Gonio.h"
 #include "InstrumentState.h"
+#include "Logger.h"
 #include "MillerIndex.h"
 #include "Octree.h"
 #include "Peak3D.h"
@@ -50,7 +51,9 @@
 #include "ProgressHandler.h"
 #include "ReciprocalVector.h"
 #include "Sample.h"
+#include "ShapeLibrary.h"
 #include "SpaceGroup.h"
+#include "PeakCoordinateSystem.h"
 #include "Source.h"
 #include "UnitCell.h"
 
@@ -58,159 +61,50 @@
 
 namespace nsx {
 
-PeakPredictor::PeakPredictor(sptrDataSet data):
-    _dmin(2.0),
-    _dmax(50.0),   
-    _Isigma(2.0),
-    _minimumNeighbors(10),
-    _handler(nullptr),
-    _data(data)
+PeakPredictor::PeakPredictor(sptrUnitCell cell, double dmin, double dmax, sptrShapeLibrary library):
+    _cell(cell), _dmin(dmin), _dmax(dmax), _library(library)
 {
 }
 
-PeakList PeakPredictor::predictPeaks(bool keepObserved, const PeakList& reference_peaks)
+PeakList PeakPredictor::predict(sptrDataSet data, double radius, double nframes) const
 {
-    PeakFilter peak_filter;
-    PeakList selected_peaks;
-    selected_peaks = peak_filter.selected(reference_peaks,true);
-    selected_peaks = peak_filter.signalToNoise(selected_peaks,_Isigma);
-
-    int predicted_peaks = 0;
-
-    auto& mono = _data->diffractometer()->getSource()->getSelectedMonochromator();
-    const double wavelength = mono.getWavelength();
-    PeakList calculated_peaks;
-
-    auto sample = _data->diffractometer()->getSample();
-    unsigned int ncrystals = static_cast<unsigned int>(sample->getNCrystals());
-
-    for (unsigned int i = 0; i < ncrystals; ++i) {
-
-        auto cell = sample->unitCell(i);
-
-        PeakList filtered_peaks;
-        filtered_peaks = peak_filter.unitCell(selected_peaks,cell);
-        filtered_peaks = peak_filter.dataset(filtered_peaks,_data);
-        filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance());
-
-        auto UB = cell->reciprocalBasis();        
-        std::set<MillerIndex> found_hkls;
-
-        PeakList peaks_to_use;
-
-        _handler->setStatus("Building set of previously found peaks...");
-        for (auto&& peak: filtered_peaks) {
-            
-            found_hkls.insert(MillerIndex(peak,cell));
-
-            try {
-                auto old_shape = peak->getShape().metric();
-                auto q_shape = peak->qShape();
-                auto new_shape = toDetectorSpace(q_shape).metric();
-                double error = (new_shape-old_shape).norm() / old_shape.norm();
-
-                // only makes contribution if conversion is consistent
-                if (error < 0.1) {
-                    peaks_to_use.push_back(peak);
-                }
-            } catch(...) {
-                // could not convert back and forth to q-space, so skip
-            }    
-        }
-
-        Eigen::Matrix3d qshape = averageQShape(peaks_to_use);
-
-        _handler->setStatus("Calculating peak locations...");
-
-        auto predicted_hkls = sample->unitCell(i)->generateReflectionsInShell(_dmin, _dmax, wavelength);
-
-        // todo: clean up DataSet interface for predicted peaks
-        std::vector<MillerIndex> hkls_keep;
-
-        for (auto&& idx: predicted_hkls) {
-            // if we keep reference peaks, check whether this hkl is part of reference set
-            if (keepObserved && found_hkls.find(idx) != found_hkls.end()) {
-                continue;
-            }            
-            hkls_keep.emplace_back(idx);
-        }
-
-        predicted_peaks += predicted_hkls.size();
-        PeakList peaks = predictPeaks(hkls_keep, UB);
-        int current_peak = 0;
-  
-        _handler->setStatus("Adding calculated peaks...");
-
-        int done_peaks = 0;
-        int last_done = -1;
-
-        #pragma omp parallel for
-        for (size_t peak_id = 0; peak_id < peaks.size(); ++peak_id) {
-
-            sptrPeak3D p = peaks[peak_id];
-            p->addUnitCell(cell, true);
-            p->setPredicted(true);
-            p->setSelected(true);
-
-            #pragma omp atomic
-            ++current_peak;
-            auto q = p->getQ();
-
-            // now we must add it, calculating shape from nearest peaks
-             // K is outside the ellipsoid at PsptrPeak3D
-
-            try {
-                Ellipsoid shape(p->getShape().center(), toDetectorSpace(Ellipsoid(q.rowVector(), qshape)).metric());
-                p->setShape(shape);           
-            } catch (...) {
-                continue;
-            }
-
-            #pragma omp critical
-            calculated_peaks.push_back(p);
-
-
-            #pragma omp atomic
-            ++done_peaks;
-            int done = int(std::lround(done_peaks * 100.0 / peaks.size()));
-
-            if ( done != last_done) {
-                _handler->setProgress(done);
-                last_done = done;
-            }
-        }
+    if (!_library) {
+        throw std::runtime_error("PeakPredictor cannot predict without a shape library");
     }
+
+    auto& mono = data->diffractometer()->getSource()->getSelectedMonochromator();
+    const double wavelength = mono.getWavelength();
+    PeakList calculated_peaks;     
+    std::set<MillerIndex> found_hkls;
+
+    auto predicted_hkls = _cell->generateReflectionsInShell(_dmin, _dmax, wavelength); 
+    PeakList peaks = predictPeaks(data, predicted_hkls, _cell->reciprocalBasis());
+
+    nsx::info() << "Computing shapes of " << peaks.size() << " calculated peaks...";
+
+    for (size_t peak_id = 0; peak_id < peaks.size(); ++peak_id) {
+        sptrPeak3D p = peaks[peak_id];
+        p->addUnitCell(_cell, true);
+        p->setPredicted(true);
+        p->setSelected(true);
+
+        try {
+            // can throw if there are too few neighboring peaks
+            // todo: number of neighboring peaks should not be hard-coded
+            Eigen::Matrix3d cov = _library->meanCovariance(p, radius, nframes, 20);
+            //Eigen::Matrix3d cov = _library->predictCovariance(p);
+            Eigen::Vector3d center = p->getShape().center();
+            p->setShape(Ellipsoid(center, cov.inverse()));
+        } catch (std::exception& e) {
+            nsx::info() << e.what();
+            continue;
+        }
+        calculated_peaks.push_back(p);
+    }    
     return calculated_peaks;
 }
 
-Eigen::Matrix3d PeakPredictor::averageQShape(const PeakList& peaks)
-{
-    Eigen::Matrix3d covariance;
-    covariance.setZero();
-    double total_intensity = 0.0;
-
-    for(const auto& p: peaks) {
-        const double I = p->correctedIntensity().value();
-        try {
-            covariance += I*p->qShape().inverseMetric();
-            total_intensity += I;
-        } catch (...) {
-            // couldn't get q shape...
-        }
-    }
-
-    // sanity check
-    if (total_intensity < 1.0) {
-        throw std::runtime_error("Could not find Q shape: too few valid peaks");
-    }
-
-    covariance /= total_intensity;
-    return covariance.inverse();
-}
-
-
-
-PeakList PeakPredictor::predictPeaks(const std::vector<MillerIndex>& hkls, const Eigen::Matrix3d& BU)
+PeakList PeakPredictor::predictPeaks(sptrDataSet data, const std::vector<MillerIndex>& hkls, const Eigen::Matrix3d& BU) const
 {
     std::vector<ReciprocalVector> qs;
     PeakList peaks;
@@ -219,134 +113,17 @@ PeakList PeakPredictor::predictPeaks(const std::vector<MillerIndex>& hkls, const
         qs.emplace_back(idx.rowVector().cast<double>()*BU);
     }
 
-    std::vector<DirectVector> events = getEvents(qs);
+    auto events = data->getEvents(qs);
  
     for (auto event: events) {
-        sptrPeak3D peak(new Peak3D(_data));
-        // this sets the center of the ellipse with a dummy value for radius
-        peak->setShape(Ellipsoid(event.vector(), 1.0));
+        sptrPeak3D peak(new Peak3D(data));
+        Eigen::Vector3d center = {event._px, event._py, event._frame};
+
+        // dummy shape
+        peak->setShape(Ellipsoid(center, 1.0));
         peaks.push_back(peak);
     }
     return peaks;
-}
-
-std::vector<DirectVector> PeakPredictor::getEvents(const std::vector<ReciprocalVector>& sample_qs) const
-{
-    std::vector<DirectVector> events;
-    unsigned int scanSize = _data->nFrames();
-
-    std::vector<Eigen::RowVector3d> ki;
-    ki.reserve(scanSize);
-
-    std::vector<Eigen::Matrix3d> sample_to_lab;
-    sample_to_lab.reserve(scanSize);
-    auto diffractometer = _data->diffractometer();
-    
-    for (unsigned int s = 0; s < scanSize; ++s) {
-        auto state = _data->interpolatedState(s);
-        sample_to_lab.push_back(state.sampleOrientation().transpose());
-        ki.push_back(state.ki().rowVector());
-    } 
-
-    for (const ReciprocalVector& sample_q : sample_qs) {
-
-        const Eigen::RowVector3d& q_vect = sample_q.rowVector();
-
-        bool sign = (q_vect*sample_to_lab[0] + ki[0]).squaredNorm() > ki[0].squaredNorm();
-
-        for (size_t i = 1; i < scanSize; ++i) {
-            const Eigen::RowVector3d kf = q_vect*sample_to_lab[i] + ki[i];
-            const bool new_sign = kf.squaredNorm() > ki[i].squaredNorm();
-
-            if (sign != new_sign) {
-                sign = new_sign;
-
-                const Eigen::RowVector3d kf0 = q_vect*sample_to_lab[i-1] + ki[i-1];
-                const Eigen::RowVector3d kf1 = q_vect*sample_to_lab[i] + ki[i];
-                const Eigen::RowVector3d dkf = q_vect*(sample_to_lab[i]-sample_to_lab[i-1]);
-        
-                double t = 0.5;
-                const int max_count = 100;
-                Eigen::RowVector3d kf;
-                int c;
-                
-                for (c = 0; c < max_count; ++c) {
-                    kf = (1-t)*kf0 + t*kf1;
-                    auto ki_interp = (1-t)*ki[i-1] + t*ki[i];
-                    const double f = kf.squaredNorm() - ki_interp.squaredNorm();
-                    
-                    if (std::fabs(f) < 1e-10) {
-                        break;
-                    }
-                    const double df = 2*dkf.dot(kf);
-                    t -= f/df;
-                }
-        
-                if (c == max_count || t < 0.0 || t > 1.0) {
-                    continue;
-                }
-        
-                t += i-1;
-                const InstrumentState& state = _data->interpolatedState(t);
-
-                // transform back to detector
-  
-  
-                //const ComponentState& dis = state.detector;
-                double px,py;
-                // If hit detector, new peak
-                //const ComponentState& cs=state.sample;
-        
-                double time;
-                auto detector = _data->diffractometer()->getDetector();
-                bool accept = detector->receiveKf(px, py,DirectVector((kf*state.detectorOrientation).transpose()), DirectVector(state.samplePosition),time);
-
-                if (accept) {
-                    events.emplace_back(px, py, t);
-                }
-            }
-        }        
-    }
-    return events;
-}
-
-Ellipsoid PeakPredictor::toDetectorSpace(const Ellipsoid& qshape) const
-{
-    const Eigen::Vector3d q = qshape.center();
-    const Eigen::Matrix3d A = qshape.metric();
-
-    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(A);
-    const Eigen::Matrix3d U = solver.eigenvectors();
-    const Eigen::Vector3d l = solver.eigenvalues();
-
-    std::vector<ReciprocalVector> qs;
-    qs.push_back(ReciprocalVector(q));
-    
-    for (int i = 0; i < 3; ++i) {
-        const double s = std::sqrt(1.0 / l(i));
-        qs.push_back(ReciprocalVector(q+s*U.col(i)));
-        qs.push_back(ReciprocalVector(q-s*U.col(i)));
-    }
-    auto evs = getEvents(qs);
-    // something bad happened
-    if (evs.size() != qs.size()) {
-        throw std::runtime_error("could not transform ellipse from q space to detector space");
-    }
-
-    Eigen::Matrix3d delta;
-    const Eigen::Vector3d& p0 = evs[0].vector();
-
-    for (auto i = 0; i < 3; ++i) {
-        const double s = std::sqrt(1.0 / l(i));
-        const Eigen::Vector3d& p1 = evs[1+2*i].vector();
-        const Eigen::Vector3d& p2 = evs[2+2*i].vector();
-        delta.col(i) = 0.5 * (p1-p2) / s;
-    }
-
-    // approximate linear transformation detector space to q space
-    const Eigen::Matrix3d BI = U * delta.inverse();
-
-    return Ellipsoid(p0, BI.transpose()*A*BI);
 }
 
 } // end namespace nsx

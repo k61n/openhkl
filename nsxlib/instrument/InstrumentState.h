@@ -28,24 +28,28 @@
 
 #include "ComponentState.h"
 #include "DirectVector.h"
+#include "InstrumentTypes.h"
 #include "ReciprocalVector.h"
 
 #include <Eigen/Core>
 
 namespace nsx {
 
-struct InstrumentState {
-    InstrumentState();
+class InstrumentState {
+public:
+    // default value needed for SWIG (note: nullptr does _not_ work)
+    InstrumentState(sptrDiffractometer diffractomer = sptrDiffractometer());
+    virtual ~InstrumentState() {}
 
     Eigen::Matrix3d detectorOrientation;
 
     // compute the sample orientation from fixed orientation and offset
-    Eigen::Matrix3d sampleOrientation() const;
+    Eigen::Matrix3d sampleOrientationMatrix() const;
 
     // fixed orientation (e.g. read from data)
-    Eigen::Matrix3d fixedSampleOrientation;
+    Eigen::Quaterniond sampleOrientation;
     // offset to orientation
-    Eigen::Vector3d sampleOrientationOffset;
+    Eigen::Quaterniond sampleOrientationOffset;
 
     Eigen::Vector3d samplePosition;
     Eigen::Vector3d detectorOffset;
@@ -56,8 +60,6 @@ struct InstrumentState {
     #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     #endif
-
-    InstrumentState interpolate(const InstrumentState& other, double t) const;
 
     //! Takes a direct vector in detector coordinates and computes kf in lab coordinates
     ReciprocalVector kfLab(const DirectVector& detector_position) const;
@@ -75,6 +77,15 @@ struct InstrumentState {
     double lorentzFactor(const DirectVector& detector_position) const;
 
     double twoTheta(const DirectVector& detector_position) const;
+
+    //! Compute the jacobian of the transformation (x,y) -> k_lab
+    Eigen::Matrix3d jacobianK(const DetectorEvent& ev) const;   
+
+    //! Return the diffractometer of the state
+    sptrDiffractometer diffractometer() const;
+
+protected:
+    sptrDiffractometer _diffractometer;
 };
 
 } // end namespace nsx

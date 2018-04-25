@@ -33,6 +33,10 @@ public:
 
     //! Increment an Intensity with another Intensity by summing up their respective value and variance.
     Intensity& operator+=(const Intensity& other);
+    //! Rescale the intensity
+    Intensity& operator*=(double s);
+    //! Divide the intensity, taking error into account
+    Intensity operator/(const Intensity& other) const;
 
 private:
     double _value;

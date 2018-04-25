@@ -77,7 +77,9 @@ public:
 
     //! Copy Convex Hull
     ConvexHull(const ConvexHull&);
+    //! Assignment
     ConvexHull& operator=(const ConvexHull&);
+  
     //! Reset, eliminate all vertices, edges and faces
     void reset();
 
@@ -142,6 +144,9 @@ public:
     //! Return whether a vertex is contained in the hull
     bool contains(const Eigen::Vector3d& v) const;
 
+    //! Get AABB of the convex hull
+    AABB aabb() const;
+
 private:
 
     //! Initializes the hull. The initialization consists in defines two triangles with opposite orientations that will
@@ -188,9 +193,6 @@ private:
     //! Cleans the edges, faces and vertices of the hull that are not visible anymore
     void cleanUp();
 
-    //! Get AABB of the convex hull
-    AABB getAABB() const;
-
 private:
 
     //! A boolean that indicates whether or not the two seed-triangles of the hull have been already created
@@ -201,6 +203,10 @@ private:
     std::list<Edge*> _edges;
     //! The list of the faces of the hull. This is the std implementation of the double-linked chain.
     std::list<Face*> _faces;
+    //! Cached bounding planes of the hull.
+    std::vector<std::pair<Eigen::Vector3d, double>> _planes;
+    //! Cached inner and outer (squared) raddi
+    double _innerR2, _outerR2;
 
 };
 

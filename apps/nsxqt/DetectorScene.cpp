@@ -16,6 +16,7 @@
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Gonio.h>
 #include <nsxlib/InstrumentState.h>
+#include <nsxlib/IntegrationRegion.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/ReciprocalVector.h>
@@ -156,11 +157,13 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
     // No button was pressed, just a mouse move
     else if (event->button() == Qt::NoButton) {
-          //      jmf: testing follows
         auto lastPos = event->lastScenePos();
         auto point = lastPos.toPoint();
         QTransform trans;
         QGraphicsItem* gItem = itemAt(point, trans);
+        if (!gItem) {
+            return;
+        }
         auto p = dynamic_cast<PlottableGraphicsItem*>(gItem);
         if (p != nullptr) {
             emit updatePlot(p);
@@ -516,6 +519,7 @@ void DetectorScene::changeInteractionMode(int mode)
     _mode = static_cast<MODE>(mode);
 }
 
+// TODO: fix this whole method, it should be using IntegrationRegion::updateMask()
 void DetectorScene::loadCurrentImage(bool newimage)
 {
     const unsigned int red =     (128u << 24) | (255u << 16);
@@ -524,6 +528,8 @@ void DetectorScene::loadCurrentImage(bool newimage)
     const unsigned int purple =  (128u << 24) | (153u << 16) | ( 51u << 8) | (255u);
     const unsigned int pink   =  (128u << 24) | (255u << 16) | (153u << 8) | (204u);
     const unsigned int transparent = 0;
+
+    using EventType = nsx::IntegrationRegion::EventType;
 
     if (_currentData == nullptr) {
         return;
@@ -551,48 +557,40 @@ void DetectorScene::loadCurrentImage(bool newimage)
     if (_drawIntegrationRegion && g_drawMask) {
         const int ncols = _currentData->nCols();
         const int nrows = _currentData->nRows();
+        Eigen::MatrixXi mask(nrows, ncols);
+        mask.setConstant(int(EventType::EXCLUDED));
+
+        //for (auto&& peak: _session->peaks(_currentData.get())) {
+        auto peaks = _session->peaks(_currentData.get());
+        for (size_t i = 0; i < peaks.size(); ++i) {
+            auto peak = peaks[i];
+            // IntegrationRegion constructor can throw if the region is invalid
+            try {
+                if (peak->isSelected()) {
+                    auto region = nsx::IntegrationRegion(peak, peak->peakEnd(), peak->bkgBegin(), peak->bkgEnd());
+                    region.updateMask(mask, _currentFrameIndex);
+                    // debugging
+                    //nsx::info() << peak->getShape().center().transpose() << "; " << mask.cast<double>().mean();
+                }
+            } catch (...) {
+                peak->setSelected(false);
+            }
+        }
 
         QImage region_img(ncols, nrows, QImage::Format_ARGB32);
 
         for (auto c = 0; c < ncols; ++c) {
             for (auto r = 0; r < nrows; ++r) {
-                region_img.setPixel(c, r, transparent);
-            }
-        }
+                EventType ev = EventType(mask(r, c));
+                unsigned int color;
 
-        for (auto&& peak: _session->peaks(_currentData.get())) {
-            auto&& region = peak->getIntegrationRegion();
-            auto aabb = region.aabb();
-            auto&& lower = aabb.lower();
-            auto&& upper = aabb.upper();
-
-            if (_currentFrameIndex < std::floor(lower[2])) {
-                continue;
-            }
-
-            if (_currentFrameIndex > std::ceil(upper[2])) {
-                continue;
-            }
-
-            auto cmin = std::max(0l, std::lround(std::floor(lower[0])));
-            auto rmin = std::max(0l, std::lround(std::floor(lower[1])));
-
-            auto cmax = std::min(long(_currentData->nCols()), std::lround(std::ceil(upper[0]))+1);
-            auto rmax = std::min(long(_currentData->nRows()), std::lround(std::ceil(upper[1]))+1);
-
-            for (auto c = cmin; c < cmax; ++c) {
-                for (auto r = rmin; r < rmax; ++r) {
-                    int s = region.classifySlice({double(c), double(r), double(_currentFrameIndex)});
-                    // The pixel is in one of the integration shell
-                    if (s > 0 && s <= region.bestSlice()) {
-                        region_img.setPixel(c, r, peak->isSelected() ? (peak->isPredicted() ? purple : green) : red);
-                    }
-
-                    // The pixel is in the background region
-                    if (s == 0) {
-                        region_img.setPixel(c, r, peak->isSelected() ? (peak->isPredicted() ? pink : yellow) : red);
-                    }
-                }
+                switch(ev) {
+                case EventType::PEAK: color = green; break;
+                case EventType::BACKGROUND: color = yellow; break;
+                default: color = transparent; break;
+                }            
+                // todo: what about unselected peaks?
+                region_img.setPixel(c, r, color);
             }
         }
 
@@ -646,7 +644,7 @@ void DetectorScene::updatePeaks()
     auto peaks = _session->peaks(_currentData.get());
 
     for (auto&& peak : peaks) {
-        auto aabb = peak->getIntegrationRegion().aabb();
+        auto aabb = peak->getShape().aabb();
         const Eigen::Vector3d& l = aabb.lower();
         const Eigen::Vector3d& u = aabb.upper();
 

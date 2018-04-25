@@ -46,9 +46,9 @@
 #include "Gonio.h"
 #include "IFrameIterator.h"
 #include "InstrumentState.h"
+#include "IPeakIntegrator.h"
 #include "MillerIndex.h"
 #include "Peak3D.h"
-#include "PeakIntegrator.h"
 #include "ReciprocalVector.h"
 #include "Sample.h"
 #include "Source.h"
@@ -60,14 +60,17 @@ namespace nsx {
 Peak3D::Peak3D(sptrDataSet data):
     _shape(),
     _unitCells(),
-    _counts(0.0),
     _scale(1.0),
     _selected(true),
     _masked(false),
     _predicted(true),
     _transmission(1.0),
     _activeUnitCellIndex(0),
-    _data(data)
+    _data(data),
+    _rockingCurve(),
+    _peakEnd(4.0),
+    _bkgBegin(5.0),
+    _bkgEnd(6.0)
 {
   
 }
@@ -83,22 +86,10 @@ void Peak3D::setShape(const Ellipsoid& peak)
     _shape = peak;
 }
 
-
-Eigen::VectorXd Peak3D::getProjection() const
+const std::vector<Intensity>& Peak3D::rockingCurve() const
 {
-    return _scale*_projection;
+    return _rockingCurve;
 }
-
-Eigen::VectorXd Peak3D::getPeakProjection() const
-{
-    return _scale*_projectionPeak;
-}
-
-Eigen::VectorXd Peak3D::getBkgProjection() const
-{
-    return _scale*_projectionBkg;
-}
-
 
 void Peak3D::addUnitCell(sptrUnitCell uc, bool activate)
 {
@@ -133,7 +124,7 @@ sptrUnitCell Peak3D::unitCell(int index) const
 Intensity Peak3D::getRawIntensity() const
 {
     // todo: investigate whether we should scale? Probably not necessary if we use Jacobian instead of Lorentz factor
-    return _intensity;// * _data->getSampleStepSize();
+    return _rawIntensity;// * _data->getSampleStepSize();
 }
 
 Intensity Peak3D::getScaledIntensity() const
@@ -212,36 +203,24 @@ bool Peak3D::isPredicted() const
     return _predicted;
 }
 
-void Peak3D::updateIntegration(const PeakIntegrator& integrator)
+void Peak3D::updateIntegration(const IPeakIntegrator& integrator, double peakEnd, double bkgBegin, double bkgEnd)
 {
-    _integrationRegion = integrator.getRegion();
-    _projectionPeak = integrator.getProjectionPeak();
-    _projectionBkg = integrator.getProjectionBackground();
-    _projection = integrator.getProjection();
-    _counts = _projectionPeak.sum();
-    //_countsSigma = std::sqrt(std::abs(_counts));
-    _pValue = integrator.pValue();
-    _intensity = integrator.getPeakIntensity();
-
-    // fit peak profile
-    //_profile.fit(_projectionPeak, 100);
-
-    _integration = integrator;
+    _rockingCurve = integrator.rockingCurve();
+    // testing
+    //_meanBackground = integrator.meanBackground();
+    //_rawIntensity = integrator.peakIntensity();
+    _meanBackground = integrator.meanBackground();
+    _rawIntensity = integrator.integratedIntensity();
+    // testing!!
+    //_shape = integrator.fitShape();
+    _peakEnd = peakEnd;
+    _bkgBegin = bkgBegin;
+    _bkgEnd = bkgEnd;
 }
 
 double Peak3D::pValue() const
 {
     return _pValue;
-}
-
-const Profile& Peak3D::getProfile() const
-{
-    return _profile;
-}
-
-const PeakIntegrator &Peak3D::getIntegration() const
-{
-    return _integration;
 }
 
 bool Peak3D::hasUnitCells() const
@@ -257,10 +236,10 @@ int Peak3D::activeUnitCellIndex() const
 void Peak3D::setRawIntensity(const Intensity& i)
 {  
     // note: the scaling factor is taken to be consistent with Peak3D::getRawIntensity()
-    _intensity = i; // / data()->getSampleStepSize();
+    _rawIntensity = i; // / data()->getSampleStepSize();
 }
 
-ReciprocalVector Peak3D::getQ() const
+ReciprocalVector Peak3D::q() const
 {
     auto pixel_coords = _shape.center();
     auto state = _data->interpolatedState(pixel_coords[2]);
@@ -273,37 +252,82 @@ ReciprocalVector Peak3D::getQ() const
 //! detector space to q-space of its shape ellipsoid (which is computed during blob search).
 //!
 //! Suppose that the detector-space ellipsoid is given by the equation (x-x0).dot(A*(x-x0)) <= 1.
-//! Then if q = q0 + B(x-x0), then the corresponding ellipsoid.
+//! Then if q = q0 + J(x-x0), then the corresponding ellipsoid.
 //!
 //! This method can throw if there is no valid q-shape corresponding to the detector space shape.
 Ellipsoid Peak3D::qShape() const
 {
-    const Eigen::Vector3d p = _shape.center();
-    const Eigen::Matrix3d A = _shape.metric();
-    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(A);
-    const Eigen::Matrix3d U = solver.eigenvectors();
-    const Eigen::Vector3d l = solver.eigenvalues();
-    const Eigen::RowVector3d q = getQ().rowVector();
-    auto detector = _data->diffractometer()->getDetector();
-    
-    Eigen::Matrix3d delta;
-
-    for (int i = 0; i < 3; ++i) {
-        const double s = 3.0 * std::sqrt(1.0 / l(i));
-        Eigen::Vector3d p1 = p+s*U.col(i);
-        Eigen::Vector3d p2 = p-s*U.col(i);
-
-        auto state1 = _data->interpolatedState(p1[2]);
-        auto state2 = _data->interpolatedState(p2[2]);
-
-        const auto q1 = state1.sampleQ(DirectVector(detector->pixelPosition(p1[0], p1[1]))).rowVector();
-        const auto q2 = state2.sampleQ(DirectVector(detector->pixelPosition(p2[0], p2[1]))).rowVector();
-        delta.col(i) = 0.5 * (q1 - q2) / s;
+    if (!_data) {
+        throw std::runtime_error("Attempted to compute q-shape of peak not attached to data");
     }
 
-    // approximate linear transformation q space to detector space
-    const Eigen::Matrix3d B = U * delta.inverse();
-    return Ellipsoid(q.transpose(), B.transpose()*A*B);
+    const DetectorEvent event(_shape.center());    
+    auto state = _data->interpolatedState(event._frame);    
+    Eigen::Vector3d q0 = q().rowVector();    
+
+    // Jacobian of map from detector coords to sample q space
+    Eigen::Matrix3d J = state.jacobianQ(event);
+    const Eigen::Matrix3d JI = J.inverse();
+
+    // inverse covariance matrix in sample q space
+    const Eigen::Matrix3d q_inv_cov = JI.transpose() * _shape.metric() * JI;
+    return Ellipsoid(q0, q_inv_cov);
+}
+
+
+ReciprocalVector Peak3D::qPredicted() const
+{
+    auto uc = activeUnitCell();
+    if (!uc) {
+        return {};
+    }
+    auto index = MillerIndex(q(), *uc);
+    return ReciprocalVector(uc->fromIndex(index.rowVector().cast<double>()));
+}
+
+DetectorEvent Peak3D::predictCenter(double frame) const
+{
+    const DetectorEvent no_event = {0, 0, -1, -1};
+    auto uc = activeUnitCell();
+
+    if (!uc) {
+        return no_event;
+    }
+
+    auto index = MillerIndex(q(), *uc);
+    auto state = _data->interpolatedState(frame);
+    Eigen::RowVector3d q_hkl = uc->fromIndex(index.rowVector().cast<double>());
+    Eigen::RowVector3d ki = state.ki().rowVector();
+    Eigen::RowVector3d kf = q_hkl*state.sampleOrientationMatrix().transpose() + ki;
+
+    const double alpha = ki.norm() / kf.norm();
+    
+
+    Eigen::RowVector3d kf1 = alpha*kf;
+    Eigen::RowVector3d kf2 = -alpha*kf;
+
+    Eigen::RowVector3d pred_kf = (kf1-kf).norm() < (kf2-kf).norm() ? kf1 : kf2;
+
+    return _data->diffractometer()->getDetector()->constructEvent(DirectVector(state.samplePosition), ReciprocalVector(pred_kf*state.detectorOrientation));
+}
+
+    
+Intensity Peak3D::meanBackground() const {
+    return _meanBackground;
+}
+
+double Peak3D::peakEnd() const {
+    return _peakEnd;
+}
+
+double Peak3D::bkgBegin() const
+{
+    return _bkgBegin;
+}
+
+double Peak3D::bkgEnd() const
+{
+    return _bkgEnd;
 }
 
 } // end namespace nsx

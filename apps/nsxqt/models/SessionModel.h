@@ -47,6 +47,7 @@
 
 #include <nsxlib/CrystalTypes.h>
 #include <nsxlib/DataTypes.h>
+#include <nsxlib/GeometryTypes.h>
 #include <nsxlib/InstrumentTypes.h>
 #include <nsxlib/UtilsTypes.h>
 
@@ -82,6 +83,8 @@ public:
     void addPeak(nsx::sptrPeak3D peak);
     void removePeak(nsx::sptrPeak3D peak);
 
+    nsx::sptrShapeLibrary library() const;
+
 signals:
     void plotData(nsx::sptrDataSet);
     void inspectWidget(QWidget*);
@@ -89,6 +92,8 @@ signals:
     void updateCellParameters(nsx::sptrUnitCell);
 
 public slots:
+
+    void updateShapeLibrary(nsx::sptrShapeLibrary);
 
     void importData();
     void findPeaks(const QModelIndex& index);
@@ -110,6 +115,7 @@ private:
     nsx::sptrPeakFinder _peakFinder;
     std::string _colormap;
     nsx::PeakList _peaks;
+    nsx::sptrShapeLibrary _library;
 };
 
 #endif // NSXQT_SESSIONMODEL_H

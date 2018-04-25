@@ -168,7 +168,7 @@ private:
     unsigned int _MAX_STORAGE = 5;
 
     //! Multiplicity of the tree branch (D=2 ->4), (D=3 ->8)
-    const unsigned int _MULTIPLICITY = std::pow(2,3);
+    const unsigned int _MULTIPLICITY = unsigned(std::pow(2,3));
 
     //! vector of powers 2^D
     std::vector<unsigned int> _POWERS = createPowers();

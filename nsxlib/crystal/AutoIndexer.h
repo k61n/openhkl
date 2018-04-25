@@ -48,7 +48,7 @@ struct IndexerParameters {
     double maxdim = 200.0;
     int nSolutions = 10;
     int nVertices = 10000;
-    int subdiv = 5;
+    int subdiv = 30;
     double indexingTolerance = 0.2;
     double niggliTolerance = 1e-3;
     double gruberTolerance = 4e-2;

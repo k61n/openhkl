@@ -81,15 +81,17 @@ public:
   double getMaximumMass() const;
 
   //! Return the center of Mass
-  Eigen::Vector3d getCenterOfMass() const;
+  Eigen::Vector3d center() const;
 
   //! Get the ellipsoid parameters
-  void toEllipsoid(double confidence, Eigen::Vector3d& center,
+  void toEllipsoid(double scale, Eigen::Vector3d& center,
                    Eigen::Vector3d& eigenvalues,Eigen::Matrix3d& eigenvectors) const;
 
   //! Print
   void printSelf(std::ostream& os) const;
  
+  //! Get covariance matrix of the blob
+  Eigen::Matrix3d covariance() const;
 
 private:
   //! Zeroth moment (total mass)

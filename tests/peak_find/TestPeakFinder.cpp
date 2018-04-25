@@ -29,11 +29,7 @@ int main()
     numors.push_back(dataf);
     peakFinder.setHandler(handler);
 
-    peakFinder.setSearchConfidence(0.997);
-    NSX_CHECK_CLOSE(peakFinder.searchConfidence(), 0.997, 1e-10);
-
-    peakFinder.setIntegrationConfidence(0.997);
-    NSX_CHECK_CLOSE(peakFinder.integrationConfidence(), 0.997, 1e-10);
+    peakFinder.setPeakScale(1.0);
 
     peakFinder.setMaxSize(10000);
     NSX_CHECK_ASSERT(peakFinder.maxSize() == 10000);

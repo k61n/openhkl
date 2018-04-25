@@ -11,6 +11,7 @@
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QTreeView>
+#include <QtGlobal>
 
 #include <nsxlib/ConvolverFactory.h>
 #include <nsxlib/DataSet.h>
@@ -113,6 +114,10 @@ DialogPeakFind::DialogPeakFind(const nsx::DataList& data,nsx::sptrPeakFinder pea
 
     updatePreview();
 
+    // note: need cast due to overloads of this method
+    auto valueChanged = static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged);
+    connect(ui->searchScale, valueChanged, this, [&] { _peakFinder->setPeakScale(ui->searchScale->value()); });
+
     connect(ui->threshold,SIGNAL(currentIndexChanged(QString)),this,SLOT(changeThreshold(QString)));
     connect(ui->thresholdParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeThresholdParameters(int,int)));
     connect(ui->applyThreshold,SIGNAL(stateChanged(int)),this,SLOT(clipPreview(int)));
@@ -123,9 +128,6 @@ DialogPeakFind::DialogPeakFind(const nsx::DataList& data,nsx::sptrPeakFinder pea
     connect(ui->minSize,SIGNAL(valueChanged(int)),this,SLOT(changeMinSize(int)));
     connect(ui->maxSize,SIGNAL(valueChanged(int)),this,SLOT(changeMaxSize(int)));
     connect(ui->maxFrames,SIGNAL(valueChanged(int)),this,SLOT(changeMaxFrames(int)));
-
-    connect(ui->searchConfidence,SIGNAL(valueChanged(double)),this,SLOT(changeSearchConfidenceValue(double)));
-    connect(ui->integrationConfidence,SIGNAL(valueChanged(double)),this,SLOT(changeIntegrationConfidenceValue(double)));
 
     connect(ui->dataList,SIGNAL(currentRowChanged(int)),this,SLOT(changeSelectedData(int)));
     connect(ui->frameSlider,SIGNAL(valueChanged(int)),this,SLOT(changeSelectedFrame(int)));
@@ -176,20 +178,22 @@ void DialogPeakFind::updatePreview()
 
     auto data = _data[selected_data];
 
+    ui->frameSlider->setMaximum(data->nFrames()-1);
     int selected_frame = ui->frameSlider->value();
+
+    if (selected_frame >= data->nFrames()) {
+        selected_frame = data->nFrames()-1;
+    }
 
     auto frame = data->frame(selected_frame);
 
-    int max_data = frame.maxCoeff();
-
     int nrows = data->nRows();
-
     int ncols = data->nCols();
 
     std::string convolver_type = ui->convolver->currentText().toStdString();
     auto convolver_parameters = convolverParameters();
 
-    Eigen::MatrixXi convolved_frame = data->convolvedFrame(selected_frame,convolver_type, convolver_parameters);
+    Eigen::MatrixXd convolved_frame = data->convolvedFrame(selected_frame,convolver_type, convolver_parameters);
 
     // apply threshold in preview
     if (ui->applyThreshold->isChecked()) {
@@ -201,7 +205,7 @@ void DialogPeakFind::updatePreview()
 
         for (int i = 0; i < nrows; ++i) {
             for (int j = 0; j < ncols; ++j) {
-                convolved_frame(i, j) = convolved_frame(i, j) < threshold_value ? 0 : max_data-1;
+                convolved_frame(i, j) = convolved_frame(i, j) < threshold_value ? 0 : 1;
             }
         }
     }
@@ -209,8 +213,13 @@ void DialogPeakFind::updatePreview()
     // clamp the result for the preview window
     double minVal = convolved_frame.minCoeff();
     double maxVal = convolved_frame.maxCoeff();
+
+    // avoid division by zero
+    if (maxVal-minVal <= 0.0) {
+        maxVal = minVal + 1.0;
+    }
     convolved_frame.array() -= minVal;
-    convolved_frame.array() *= static_cast<double>(max_data)/(maxVal-minVal);
+    convolved_frame.array() /= maxVal-minVal;
 
     QRect rect(0, 0, ncols, nrows);
     QImage image = _colormap->matToImage(convolved_frame.cast<double>(), rect, convolved_frame.maxCoeff());
@@ -234,16 +243,6 @@ void DialogPeakFind::clipPreview(int state) {
     Q_UNUSED(state)
 
     updatePreview();
-}
-
-void DialogPeakFind::changeSearchConfidenceValue(double value)
-{
-    _peakFinder->setSearchConfidence(value);
-}
-
-void DialogPeakFind::changeIntegrationConfidenceValue(double value)
-{
-    _peakFinder->setIntegrationConfidence(value);
 }
 
 void DialogPeakFind::changeMinSize(int size)
@@ -407,4 +406,19 @@ void DialogPeakFind::buildConvolverParametersList()
     }
 
     connect(ui->convolverParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeConvolverParameters(int,int)));
+}
+
+double DialogPeakFind::peakScale() const
+{
+    return ui->peakScale->value();
+}
+
+double DialogPeakFind::bkgBegin() const
+{
+return ui->bkgBegin->value();
+}
+
+double DialogPeakFind::bkgEnd() const
+{
+return ui->bkgEnd->value();
 }

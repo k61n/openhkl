@@ -19,8 +19,8 @@ class TestWorkFlow(unittest.TestCase):
         finder.setMinSize(30)
         finder.setMaxSize(10000)
         finder.setMaxFrames(10)
-        finder.setSearchConfidence(0.98)
-        finder.setIntegrationConfidence(0.997)
+        #finder.setSearchConfidence(0.98)
+        #finder.setIntegrationConfidence(0.997)
         finder.setConvolver("annular",{})
         finder.setThreshold("absolute",{"intensity":15.0})
 
@@ -40,14 +40,23 @@ class TestWorkFlow(unittest.TestCase):
         indexer = nsx.AutoIndexer(nsx.ProgressHandler())
 
         for peak in selected_peaks:
+            
+            d = 1.0 / np.linalg.norm(peak.q().rowVector())
+
+            if (d < 2.0):
+                continue
+
             indexer.addPeak(peak)
-            peak.getQ()
+            peak.q()
 
         params = nsx.IndexerParameters()
         handler = nsx.ProgressHandler()
         indexer.autoIndex(params)
 
         soln = indexer.getSolutions()[0]
+
+        print(soln[0])
+        print(soln[1])
 
         self.assertTrue(soln[1] > 92.0)
 
@@ -57,25 +66,32 @@ class TestWorkFlow(unittest.TestCase):
 
         for peak in peaks:
             peak.addUnitCell(uc, True)
-            peak.getQ()
+            peak.q()
 
         num_peaks = len(peaks)
 
-        predictor = nsx.PeakPredictor(data)
-        predictor._dmin = 2.1
-        predictor._dmax = 50.0
-        predictor._searchRadius = 200.0
-        predictor._frameRadius = 5.0
-        predictor._peakScale = 1.0
-        predictor._bkgScale = 3.0
-        predictor._minimumRadius = 5.0
-        predictor._minimumPeakDuration = 3.0
-        predictor._minimumNeighbors = 10
+        return
 
-        predictor._handler = nsx.ProgressHandler()
+        #todo: fix up the library test
 
-        predicted_peaks = predictor.predictPeaks(False, peaks)
-        self.assertTrue(len(predicted_peaks) > 1600)
+        library = nsx.ShapeLibrary()
+
+        library_size = 0
+
+        for peak in peaks:
+            if not peak.isSelected():
+                continue
+            if library.addPeak(peak):
+                library_size +=1
+
+        print(library_size)
+
+        library.setDefaultShape(library.meanShape())
+        predictor = nsx.PeakPredictor(uc, library, 2.1, 50.0, 0)
+       
+        predicted_peaks = predictor.predict(data)
+        print(len(predicted_peaks))
+        #self.assertTrue(len(predicted_peaks) > 1600)
 
 
 if __name__ == '__main__':

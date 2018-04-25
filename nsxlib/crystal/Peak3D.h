@@ -42,8 +42,8 @@
 #include "InstrumentTypes.h"
 #include "IntegrationRegion.h"
 #include "Intensity.h"
-#include "PeakIntegrator.h"
-#include "Profile.h"
+#include "IPeakIntegrator.h"
+
 
 namespace nsx {
 
@@ -65,15 +65,13 @@ public:
     void setShape(const Ellipsoid& peak);
 
     //! Get the projection of total data in the bounding box.
-    Eigen::VectorXd getProjection() const;
-    Eigen::VectorXd getPeakProjection() const;
-    Eigen::VectorXd getBkgProjection() const;
+    const std::vector<Intensity>& rockingCurve() const;
 
     //! Compute the shape in q-space. May throw if there is no valid q-space ellipsoid.
     Ellipsoid qShape() const;
 
     const Ellipsoid& getShape() const { return _shape; }
-    const IntegrationRegion& getIntegrationRegion() const { return _integrationRegion; }
+    //const IntegrationRegion& getIntegrationRegion() const { return _integrationRegion; }
 
     //! Return the scaled intensity of the peak.
     Intensity getScaledIntensity() const;
@@ -83,6 +81,14 @@ public:
 
     //! Return the raw intensity of the peak.
     Intensity getRawIntensity() const;
+    //! Return mean background of the peak
+    Intensity meanBackground() const;
+    //! Return shape scale used to define peak region
+    double peakEnd() const;
+    //! Return shape scale used to define beginning of background region
+    double bkgBegin() const;
+    //! Return shape scale used to define end of background region
+    double bkgEnd() const;
 
     //! Return the scaling factor.
     double getScale() const;
@@ -114,51 +120,49 @@ public:
     void scaleShape(double scale);
 
     //! update the integration
-    void updateIntegration(const PeakIntegrator& integrator);
+    void updateIntegration(const IPeakIntegrator& integrator, double peakEnd, double bkgBegin, double bkgEnd);
 
     //! compute P value that there is actually an observed peak, assuming Poisson statistics
     double pValue() const;
 
-    //! Return fitted peak profile
-    const Profile& getProfile() const;
-
-    const PeakIntegrator& getIntegration() const;
+    //const PeakIntegrator& getIntegration() const;
 
     //! Return the q vector of the peak, transformed into sample coordinates.
-    ReciprocalVector getQ() const;
+    ReciprocalVector q() const;
+    //! Return the predicted q vector of the peak, based on Miller index.
+    ReciprocalVector qPredicted() const;
 
     sptrDataSet data() const { return _data; }
 
     void setRawIntensity(const Intensity& i);
+
+    //! Return peak center at the given frame
+    DetectorEvent predictCenter(double frame) const;
 
     #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     #endif
 
 private:
-
     //! Shape describing the Peak zone
     Ellipsoid _shape;
-    //! Region used to integrate the peak
-    IntegrationRegion _integrationRegion;
 
-    PeakIntegrator _integration;
+    //! Peak profile along frame (rotation) axis
+    std::vector<Intensity> _rockingCurve;
 
+    //! Raw intensity (count), background corrected
+    Intensity _rawIntensity;
+    //! Mean background estimate
+    Intensity _meanBackground;
+    //! Shape scale factor for peak
+    double _peakEnd;
+    //! Shape scale factor for start of background
+    double _bkgBegin;
+    //! Shape scale factor for end of background
+    double _bkgEnd;
 
-    Eigen::VectorXd _projection;
-    Eigen::VectorXd _projectionPeak;
-    Eigen::VectorXd _projectionBkg;
-
-    Eigen::VectorXd _pointsPeak;
-    Eigen::VectorXd _pointsBkg;
-    Eigen::VectorXd _countsPeak;
-    Eigen::VectorXd _countsBkg;
-
-    //!
     UnitCellList _unitCells;
    
-
-    double _counts;
     double _scale;
     bool _selected;
     bool _masked;
@@ -166,10 +170,9 @@ private:
     double _transmission;
     int _activeUnitCellIndex;
 
-    Profile _profile;
+    //! Raw p value
     double _pValue;
 
-    Intensity _intensity;
     sptrDataSet _data;
 };
 

@@ -25,39 +25,24 @@
  */
 
 #include "Component.h"
+#include "Detector.h"
+#include "DetectorEvent.h"
+#include "Diffractometer.h"
 #include "InstrumentState.h"
 #include "MatrixOperations.h"
 
 namespace nsx {
 
-InstrumentState::InstrumentState()
+InstrumentState::InstrumentState(sptrDiffractometer diffractometer):
+    _diffractometer(diffractometer)
 {
     detectorOrientation.setIdentity();
-    fixedSampleOrientation.setIdentity();
-    sampleOrientationOffset.setZero();
+    sampleOrientation = Eigen::Quaterniond(1, 0, 0, 0);
+    sampleOrientationOffset = Eigen::Quaterniond(1, 0, 0, 0);
     samplePosition.setZero();
     detectorOffset.setZero();
     ni = {0.0, 1.0, 0.0};
     wavelength = 1.0;
-}
-
-InstrumentState InstrumentState::interpolate(const InstrumentState &other, double t) const
-{
-    InstrumentState result(*this);
-
-    const double s = 1-t;
-
-    result.detectorOrientation = interpolateRotation(detectorOrientation, other.detectorOrientation, t);
-    result.detectorOffset = s*detectorOffset + t*other.detectorOffset;
-
-    result.fixedSampleOrientation = interpolateRotation(sampleOrientation(), other.sampleOrientation(), t);
-    result.sampleOrientationOffset.setZero();
-    result.samplePosition = s*samplePosition + t*other.samplePosition;
-
-    result.ni = s*(ni / ni.norm()) + t*(other.ni / other.ni.norm());
-    result.wavelength = s*wavelength + t*other.wavelength;
-
-    return result;
 }
 
 ReciprocalVector InstrumentState::kfLab(const DirectVector& detector_position) const
@@ -72,7 +57,7 @@ ReciprocalVector InstrumentState::sampleQ(const DirectVector& detector_position)
 {
     Eigen::RowVector3d ki = ni / ni.norm() / wavelength;
     auto qLab = kfLab(detector_position).rowVector() - ki;
-    return ReciprocalVector(qLab*sampleOrientation());
+    return ReciprocalVector(qLab*sampleOrientationMatrix());
 }
 
 double InstrumentState::gamma(const DirectVector& detector_position) const
@@ -109,12 +94,39 @@ ReciprocalVector InstrumentState::ki() const
     return ReciprocalVector(ni/ni.norm()/wavelength);
 }
 
-Eigen::Matrix3d InstrumentState::sampleOrientation() const
+Eigen::Matrix3d InstrumentState::sampleOrientationMatrix() const
 {
-    const Eigen::Vector3d& v = sampleOrientationOffset;
-    Eigen::Quaterniond q(1.0, v(0), v(1), v(2));
-    q.normalize();
-    return q.toRotationMatrix() * fixedSampleOrientation;
+    return (sampleOrientationOffset*sampleOrientation).normalized().toRotationMatrix();
+}
+
+
+Eigen::Matrix3d InstrumentState::jacobianK(const DetectorEvent& ev) const
+{
+    auto detector = _diffractometer->getDetector();
+
+    // Jacobian from (px, py, frame) to lab coordinates on detector
+    Eigen::Matrix3d dpdx = detector->jacobian(ev._px, ev._py);
+
+    const double nki = ki().rowVector().norm();
+
+    // postion in lab space on the detector
+    Eigen::Vector3d p = detector->pixelPosition(ev._px, ev._py).vector();
+
+    // Jacobian of position -> kf
+    Eigen::Vector3d dp = p - samplePosition;
+    double r = dp.norm();
+
+    Eigen::RowVector3d drdx = 1/r * dp.transpose() * dpdx;
+
+    // Jacobian of (px, py) -> kf
+    Eigen::Matrix3d dkdx = nki * detectorOrientation * (dpdx / r - dp * drdx / r / r);
+
+    return dkdx;   
+}
+
+sptrDiffractometer InstrumentState::diffractometer() const
+{
+    return _diffractometer;
 }
 
 } // end namespace nsx

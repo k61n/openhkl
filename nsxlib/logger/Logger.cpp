@@ -1,6 +1,7 @@
 #include <chrono>
 #include <ctime>
 #include <fstream>
+#include <iostream>
 
 #include "AggregateStreamWrapper.h"
 #include "LogFileStreamWrapper.h"
@@ -16,19 +17,20 @@ Logger::Logger(IStreamWrapper* wrapper)
 }
 
 Logger::~Logger(){
-    _wrapper->print(_msg);
-    _wrapper->printSuffix();
-    delete _wrapper;
+	// Explicitly check if wrapper is non-null because the Logger object
+    // could have been moved
+	if (_wrapper) {
+		_wrapper->print(_msg);
+		_wrapper->printSuffix();
+	}
 }
 
 auto current_time() -> std::string
 {
     auto now = std::chrono::system_clock::now();
-
     std::time_t tt = std::chrono::system_clock::to_time_t (now);
     std::string current_time = std::ctime(&tt);
     current_time.erase(current_time.size()-1);
-
     return current_time;
 }
 
@@ -41,10 +43,8 @@ auto debug_log() -> Logger
 {
     auto initialize = []() -> std::string {return "[DEBUG] " + current_time();};
     auto finalize = []() -> std::string {return "\n";};
-
     AggregateStreamWrapper* wrapper = new AggregateStreamWrapper();
     wrapper->addWrapper(new LogFileStreamWrapper("nsx_debug.txt",initialize,finalize));
-
     return Logger(wrapper);
 }
 
@@ -52,10 +52,8 @@ auto info_log() -> Logger
 {
     auto initialize = []() -> std::string {return "[INFO]  " + current_time();};
     auto finalize = []() -> std::string {return "\n";};
-
     AggregateStreamWrapper* wrapper = new AggregateStreamWrapper();
     wrapper->addWrapper(new LogFileStreamWrapper("nsx_info.txt",initialize,finalize));
-
     return Logger(wrapper);
 }
 
@@ -63,10 +61,8 @@ auto error_log() -> Logger
 {
     auto initialize = []() -> std::string {return "[ERROR] " + current_time();};
     auto finalize = []() -> std::string {return "\n";};
-
     AggregateStreamWrapper* wrapper = new AggregateStreamWrapper();
     wrapper->addWrapper(new LogFileStreamWrapper("nsx_error.txt",initialize,finalize));
-
     return Logger(wrapper);
 }
 

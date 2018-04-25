@@ -149,10 +149,14 @@ size_t FitParameters::nparams() const
 
 const Eigen::MatrixXd& FitParameters::kernel() const
 {
+    static Eigen::MatrixXd id;
+
     if (_constrained) {
         return _K;
     }
-    throw std::runtime_error("FitParameters::kernel(): no constraints have been set");
+
+    id.setIdentity(_params.size(), _params.size());
+    return id;
 }
 
 void FitParameters::reset()
@@ -166,6 +170,7 @@ void FitParameters::setKernel(const Eigen::MatrixXd& ker)
 {
     _K = ker;
     _P = (_K.transpose()*_K).inverse()*_K.transpose();
+    _constrained = true;
 }
 
 } // end namespace nsx

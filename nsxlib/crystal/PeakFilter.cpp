@@ -29,7 +29,7 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrPeak3D peak)
         }
 
         // try to index
-        nsx::MillerIndex hkl(peak,cell);
+        nsx::MillerIndex hkl(peak->q(), *cell);
         if (!hkl.indexed(cell->indexingTolerance())) {
             return true;
         }
@@ -43,7 +43,8 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrPeak3D peak)
 
     if (filter._removeIsigma) {
         nsx::Intensity i = peak->correctedIntensity();
-        if (i.value() / i.sigma() < filter._Isigma) {
+        // note: we use negated condition so that nan/inf automatically get rejected
+        if (!(i.value() > filter._Isigma * i.sigma())) {
             return true;
         }
     }
@@ -60,7 +61,7 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrPeak3D peak)
 
     // note: merged peaks are handled separately    
 
-    auto q = peak->getQ().rowVector();
+    auto q = peak->q().rowVector();
     const double d = 1.0 / q.norm();
 
     if (filter._removeDmin) {
@@ -150,7 +151,7 @@ PeakList PeakFilter::apply(const PeakList& reference_peaks) const
 
             merged.addPeak(peak);
 
-            MillerIndex hkl(peak,cell);
+            MillerIndex hkl(peak->q(), *cell);
 
             if (_removeForbidden && group.isExtinct(hkl)) {
                 bad_peaks.push_back(peak);
@@ -210,7 +211,7 @@ PeakList PeakFilter::indexed(const PeakList& peaks, sptrUnitCell cell, double to
     PeakList filtered_peaks;
 
     for (auto peak : peaks) {
-        MillerIndex miller_index(peak,cell);
+        MillerIndex miller_index(peak->q(), *cell);
         if (miller_index.indexed(tolerance)) {
             filtered_peaks.push_back(peak);
         }
@@ -324,7 +325,7 @@ PeakList PeakFilter::dMin(const PeakList& peaks, double dmin) const
 
     for (auto peak : peaks) {
 
-        auto q = peak->getQ();
+        auto q = peak->q();
 
         double d = 1.0/q.rowVector().norm();
 
@@ -342,7 +343,7 @@ PeakList PeakFilter::dMax(const PeakList& peaks, double dmax) const
 
     for (auto peak : peaks) {
 
-        auto q = peak->getQ();
+        auto q = peak->q();
 
         double d = 1.0/q.rowVector().norm();
 

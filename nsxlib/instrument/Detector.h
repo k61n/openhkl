@@ -45,6 +45,7 @@
 #include <Eigen/Dense>
 
 #include "Component.h"
+#include "DetectorEvent.h"
 #include "DirectVector.h"
 #include "Enums.h"
 #include "GeometryTypes.h"
@@ -104,8 +105,9 @@ public:
     //! Return the angular width of the detector (radians)
     virtual double getAngularWidth() const=0;
 
-    //! Reuturn whether the detector with goniometer values can collect scattering at Kf. If true, px and py would be the pixel coordinates of the event
-    bool receiveKf(double& px, double& py,const DirectVector& direction, const DirectVector& from, double& t) const;
+    //! Return the detector event (pixel x, pixel y, time of flight) associated with a given kf. 
+    //! Returns with _negative_ tof if no such event is possible.
+    virtual DetectorEvent constructEvent(const DirectVector& from, const ReciprocalVector& kf) const = 0;
 
     //! Returns the number of detector
     virtual unsigned int getNDetectors() const=0;
@@ -113,14 +115,25 @@ public:
     //! Returns the position of a given pixel in detector space. This takes into account the detector motions in detector space.
     virtual DirectVector pixelPosition(double x, double y) const=0;
 
-    //! Determine whether detector at rest can receive a scattering event with direction given by Kf. px and py are detector position if true.
-    virtual bool hasKf(const DirectVector& kf, const DirectVector& from, double& px, double& py, double& t) const =0;
-
     //!
     DataOrder getDataOrder() const {return _dataorder;}
 
+    //! Return the Jacobian matrix of the transformation (px,py) -> (x,y,z) from pixel coordinates to lab coordinates.
+    //! The first and second columns are the derivatives of (x,y,z) with respect to px and py.
+    //! The third column is identically zero and is kept only for convenience.
+    virtual Eigen::Matrix3d jacobian(double x, double y) const = 0;
+
+    //! Return the detector baseline. Measured count = gain * (neutron count) + baseline
+    double baseline() const;
+    //! Return the detector gain. Measured count = gain * (neutron count) + baseline
+    double gain() const;
+
 private:
     DataOrder _dataorder;
+    //! Value for detector baseline. Default is 0.0
+    double _baseline;
+    //! Value fo detector gain. Default is 1.0
+    double _gain;
 };
 
 } // end namespace nsx

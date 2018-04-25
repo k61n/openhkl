@@ -50,7 +50,7 @@ public:
 	//! Constructs a CylindricalDetector from a property tree node
 	CylindricalDetector(const YAML::Node& node);
 	//! Return a pointer to a copy of a CylindricalDetector
-	Detector* clone() const;
+	Detector* clone() const override;
 	//! Destructor
 	virtual ~CylindricalDetector();
 
@@ -58,21 +58,22 @@ public:
 	CylindricalDetector& operator=(const CylindricalDetector& other);
 
 	//! Set the height of the detector (meters)
-	void setHeight(double height);
+	void setHeight(double height) override;
 	//! Set the width of the detector (meters)
-	void setWidth(double width);
+	void setWidth(double width) override;
 
 	//! Set the angular height of the detector (radians)
-	void setAngularHeight(double angle);
+	void setAngularHeight(double angle) override;
 	//! Set the angular width of the detector (radians)
-	void setAngularWidth(double angle);
+	void setAngularWidth(double angle) override;
 
 	//! Returns the position of a given pixel in detector space. This takes into account the detector motions in detector space.
 	DirectVector pixelPosition(double px,double py) const override;
 
 	//! Determine whether detector at rest can receive a scattering event with direction given by Kf. px and py are detector position if true.
-	virtual bool hasKf(const DirectVector& direction,const DirectVector& from, double& px, double& py, double& t) const;
+	virtual DetectorEvent constructEvent(const DirectVector& from, const ReciprocalVector& kf) const override;
 
+	Eigen::Matrix3d jacobian(double px, double py) const override;
 };
 
 } // end namespace nsx

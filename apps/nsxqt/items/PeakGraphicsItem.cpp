@@ -27,10 +27,11 @@ bool PeakGraphicsItem::_drawBackground = false;
 
 PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D p):
     PlottableGraphicsItem(nullptr,true,false),
-    _peak(std::move(p))
+    _peak(std::move(p)),
+    _predictedCenter(0.0, 0.0, -1.0, -1.0)
 { 
     if (_peak) {
-        Eigen::Vector3d c=_peak->getIntegrationRegion().aabb().center();
+        Eigen::Vector3d c=_peak->getShape().center();
         setPos(c[0], c[1]);
     }
     _pen.setWidth(2);
@@ -51,7 +52,7 @@ PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D p):
 
 QRectF PeakGraphicsItem::boundingRect() const
 {
-    auto aabb = _peak->getIntegrationRegion().aabb();
+    auto aabb = _peak->getShape().aabb();
     const Eigen::Vector3d& l = aabb.lower();
     const Eigen::Vector3d& u = aabb.upper();
     qreal w=u[0]-l[0];
@@ -91,18 +92,29 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     }
     _label->setVisible(_hovered || _labelVisible);
 
-    const auto aabb = _peak->getIntegrationRegion().aabb();
+    const auto aabb = _peak->getShape().aabb();
     const Eigen::Vector3d& peak_l = aabb.lower();
     const Eigen::Vector3d& peak_u = aabb.upper();
     qreal peak_w = peak_u[0]-peak_l[0];
     qreal peak_h = peak_u[1]-peak_l[1];
 
     _label->setPos(peak_w/2,peak_h/2);
+    
+    Eigen::Vector3d dx = _frameCenter - _peak->getShape().center();
+
+    painter->setBrush(QBrush(QColor(127, 255, 127, 127)));
+    //painter->drawEllipse(dx(0)-2, dx(1)-2, 4, 4);
+
+    #if 0
+    dx = _predictedCenter - _peak->getShape().center();
+    painter->setBrush(QBrush(QColor(127, 127, 255, 255)));
+    painter->drawEllipse(dx(0)-2, dx(1)-2, 4, 4);
+    #endif
 }
 
 void PeakGraphicsItem::setFrame(unsigned long frame)
 {
-    const auto aabb = _peak->getIntegrationRegion().aabb();
+    const auto aabb = _peak->getShape().aabb();
     const Eigen::Vector3d& l = aabb.lower();
     const Eigen::Vector3d& u = aabb.upper();
 
@@ -118,7 +130,7 @@ void PeakGraphicsItem::setFrame(unsigned long frame)
     QString hklString;
 
     if (auto cell = _peak->activeUnitCell()) {
-        nsx::MillerIndex miller_index(_peak,cell);
+        nsx::MillerIndex miller_index(_peak->q(), *cell);
         if (miller_index.indexed(cell->indexingTolerance())) {
             hklString = QString("%1,%2,%3").arg(miller_index[0]).arg(miller_index[1]).arg(miller_index[2]);
         } else {
@@ -128,6 +140,8 @@ void PeakGraphicsItem::setFrame(unsigned long frame)
         hklString = "no unit cell";
     }
     _label->setPlainText(hklString);
+    _frameCenter = _peak->getShape().intersectionCenter({0,0,1.0}, {0, 0, double(frame)});
+    _predictedCenter = _peak->predictCenter(frame);
 }
 
 std::string PeakGraphicsItem::getPlotType() const
@@ -158,50 +172,30 @@ void PeakGraphicsItem::plot(SXPlot* plot)
         return;
     }
 
-    const Eigen::VectorXd& total=_peak->getProjection();
-    const Eigen::VectorXd& signal=_peak->getPeakProjection();
-    const Eigen::VectorXd& bkg=_peak->getBkgProjection();
+    const auto& rockingCurve =_peak->rockingCurve();
+    const int N = int(rockingCurve.size());
 
     // Transform to QDouble
-    QVector<double> qx(int(total.size()));
-    QVector<double> qtotal(int(total.size()));
-    QVector<double> qtotalE(int(total.size()));
-    QVector<double> qpeak(int(total.size()));
-    QVector<double> qbkg(int(total.size()));
+    QVector<double> q_frames(N);
+    QVector<double> q_intensity(N);
+    QVector<double> q_error(N);
 
     //Copy the data
-    nsx::Ellipsoid background = _peak->getShape();
-    const auto aabb = background.aabb();
-    background.scale(3.0);
-    double min=std::floor(aabb.lower()[2]);
-    double max=std::ceil(aabb.upper()[2]);
-
-    if (min<0) {
-        min=0;
+    double center = std::round(_peak->getShape().center()(2));
+    
+    for (int i = 0; i < N; ++i) {
+        q_frames[i]= center - i/2.0;
+        q_intensity[i] = rockingCurve[i].value();
+        q_error[i] = rockingCurve[i].sigma();
     }
-    if (max>_peak->data()->nFrames()-1) {
-        max=_peak->data()->nFrames()-1;
-    }
-
-    Eigen::VectorXd error = _peak->getIntegration().getPeakError();
-
-    for (int i = 0; i < total.size(); ++i) {
-        qx[i]= min + static_cast<double>(i)*(max-min)/(total.size()-1);
-        qtotal[i]=total[i];
-        qtotalE[i]=error[i];
-        qpeak[i]=signal[i];
-        qbkg[i]=bkg[i];
-    }
-    p->graph(0)->setDataValueError(qx, qtotal, qtotalE);
-    p->graph(1)->setData(qx,qpeak);
-    p->graph(2)->setData(qx,qbkg);
+    p->graph(0)->setDataValueError(q_frames, q_intensity, q_error);
 
     // Now update text info:
     Eigen::RowVector3d hkl;
     QString info;
 
     if (auto cell = _peak->activeUnitCell()) {
-        nsx::MillerIndex miller_index(_peak,cell);
+        nsx::MillerIndex miller_index(_peak->q(), *cell);
         if (miller_index.indexed(cell->indexingTolerance())) {
             info="(h,k,l):"+QString::number(miller_index[0])+","+QString::number(miller_index[1])+","+QString::number(miller_index[2]);
         } else {

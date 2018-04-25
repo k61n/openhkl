@@ -37,9 +37,11 @@
 
 #include "CrystalTypes.h"
 #include "DataTypes.h"
+#include "FitProfile.h"
 #include "GeometryTypes.h"
 #include "IMask.h"
 #include "InstrumentTypes.h"
+#include "InterpolatedState.h"
 #include "UtilsTypes.h"
 
 namespace nsx {
@@ -93,7 +95,8 @@ public:
     const InstrumentStateList& instrumentStates() const;
 
     //! Get the interpolated state of a given component
-    InstrumentState interpolatedState(double frame) const;
+    InterpolatedState interpolatedState(double frame) const;
+    //ComponentState getInterpolatedState(std::shared_ptr<Component> component, double frame) const;
 
     //! Add a new mask to the data
     void addMask(IMask* mask);
@@ -113,8 +116,11 @@ public:
     //! Read a single frame
     Eigen::MatrixXi frame(std::size_t idx);
 
+    //! Return frame after transforming to account for detector gain and baseline
+    Eigen::MatrixXd transformedFrame(std::size_t idx);
+
     //! Return a convolved frame
-    Eigen::MatrixXi convolvedFrame(std::size_t idx, const std::string& convolver_type, const std::map<std::string,double>& parameters);
+    Eigen::MatrixXd convolvedFrame(std::size_t idx, const std::string& convolver_type, const std::map<std::string,double>& parameters);
 
     //! Get the file handle.
     void open();
@@ -132,8 +138,12 @@ public:
     //! Get background
     double backgroundLevel(const sptrProgressHandler& progress);
 
-    //! Integrate intensities of all peaks
-    void integratePeaks(const PeakList& peaks, double bkg_begin = 5.0, double bkg_end = 10.0, const sptrProgressHandler& handler = nullptr);
+    //! Return detector events corresponding to the list of q values.  
+    std::vector<DetectorEvent> getEvents(const std::vector<ReciprocalVector>& sample_qs) const;
+
+    //! Return the sample-space q vector corresponding to a detector event
+    ReciprocalVector computeQ(const DetectorEvent& ev) const;
+
 
 protected:
     bool _isOpened;

@@ -50,8 +50,7 @@ int main()
     peakFinder->setMaxFrames(10);
     peakFinder->setConvolver("annular",{});
     peakFinder->setThreshold("absolute",{{"intensity",15.0}});
-    peakFinder->setSearchConfidence(0.98);
-    peakFinder->setIntegrationConfidence(0.997);
+    peakFinder->setPeakScale(1.0);
 
     peakFinder->setHandler(progressHandler);
 
@@ -66,33 +65,39 @@ int main()
     NSX_CHECK_ASSERT(found_peaks.size() >= 800);
 
     int good_shapes = 0;
-    nsx::PeakPredictor pred(dataf);
 
     for (auto peak: found_peaks) {
-        try {
-            auto qshape = peak->qShape();
-            nsx::Ellipsoid new_shape;
-            new_shape = pred.toDetectorSpace(qshape);
-            auto old_shape = peak->getShape();
-
-            // note: some blobs are invalid, so we skip them
-            if (!(old_shape.metric().norm() < 1e3)) {
-                continue;
-            }
-
-            ++good_shapes;
-
-            auto dx = new_shape.center() - old_shape.center();
-
-            // transformation x -> q -> x should be nearly pixel-perfect
-            NSX_CHECK_SMALL(dx.norm(), 0.2);
-
-            NSX_CHECK_SMALL((new_shape.metric().inverse()*old_shape.metric()-Eigen::Matrix3d::Identity()).norm(), 0.4);
-
-        } catch (...) {
-            
+        if (!peak->isSelected()) {
+            continue;
         }
+
+        auto qshape = peak->qShape();
+        nsx::Ellipsoid new_shape;
+        try {
+            new_shape = qshape.toDetectorSpace(dataf);
+        } catch(...) {
+            continue;
+        }
+        auto old_shape = peak->getShape();
+
+        // note: some blobs are invalid, so we skip them
+        if (!(old_shape.metric().norm() < 1e3)) {
+            continue;
+        }
+
+        ++good_shapes;
+
+        auto dx = new_shape.center() - old_shape.center();
+    
+        // transformation x -> q -> x should have sub-pixel accuracy
+        NSX_CHECK_SMALL(dx.norm(), 0.01);
+
+        double error = (new_shape.metric()-old_shape.metric()).norm();
+        NSX_CHECK_SMALL(error, 2e-2);
+       
     }
+
+    NSX_CHECK_ASSERT(good_shapes > 600);
 
     return 0;
 }

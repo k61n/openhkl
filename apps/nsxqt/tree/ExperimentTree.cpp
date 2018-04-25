@@ -364,7 +364,7 @@ void ExperimentTree::showPeaksOpenGL()
        auto peaks=_session->peaks(idata.get());
        for (auto peak: peaks) {
            GLSphere* sphere=new GLSphere("");
-           Eigen::RowVector3d pos = peak->getQ().rowVector();
+           Eigen::RowVector3d pos = peak->q().rowVector();
            sphere->setPos(pos[0]*100,pos[1]*100,pos[2]*100);
            sphere->setColor(0,1,0);
            scene.addActor(sphere);

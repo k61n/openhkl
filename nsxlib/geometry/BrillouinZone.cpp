@@ -4,7 +4,10 @@
 #include <Eigen/Eigenvalues>
 
 #include "BrillouinZone.h"
+#include "DataSet.h"
+#include "DetectorEvent.h"
 #include "NiggliReduction.h"
+#include "ReciprocalVector.h"
 
 /**
  * @brief Update a list of Q-vectors by removing the duplicates.
@@ -258,6 +261,31 @@ double BrillouinZone::outerRadius() const
     assert(_vertices.size() != 0.0);
     assert(_r2 > 0.0);
     return std::sqrt(_r2);
+}
+
+ConvexHull BrillouinZone::detectorConvexHull(const ReciprocalVector& q0, sptrDataSet data) const
+{
+    std::vector<ReciprocalVector> qs;
+    qs.reserve(_vertices.size());
+
+    for (const auto& v: _vertices) {
+        qs.push_back(ReciprocalVector(q0.rowVector()+v));
+    }
+
+    auto events = data->getEvents(qs);
+
+    if (events.size() != qs.size()) {
+        throw std::runtime_error("BrillouinZone: could not transform to detector space");
+    }
+
+    ConvexHull hull;
+
+    for (auto ev: events) {
+        hull.addVertex({ev._px, ev._py, ev._frame});
+    }
+
+    hull.updateHull();
+    return hull;
 }
 
 }

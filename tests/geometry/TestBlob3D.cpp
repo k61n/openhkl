@@ -35,8 +35,8 @@ int main()
     NSX_CHECK_CLOSE(tot,blob.getMass(),tolerance);
     Eigen::Vector3d center,eigVal;
     Eigen::Matrix3d eigVec;
-    double sigma1=0.682689492;
-    blob.toEllipsoid(sigma1,center,eigVal,eigVec);
+    double scale = 1.0;
+    blob.toEllipsoid(scale,center,eigVal,eigVec);
     // Check that the center is OK
     NSX_CHECK_CLOSE(center(0),c_x,tolerance);
     NSX_CHECK_CLOSE(center(1),c_y,tolerance);

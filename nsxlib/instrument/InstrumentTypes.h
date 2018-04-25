@@ -8,10 +8,11 @@ namespace nsx {
 class Component;
 class ComponentState;
 class Detector;
+class DetectorEvent;
 class Diffractometer;
 class Experiment;
 class Gonio;
-struct InstrumentState;
+class InstrumentState;
 class MonoDetector;
 class RotAxis;
 class TransAxis;

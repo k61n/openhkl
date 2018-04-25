@@ -109,7 +109,7 @@ void AutoIndexer::computeFFTSolutions()
     auto filtered_peaks = peak_filter.selected(_peaks,true);
 
     for (auto peak : filtered_peaks) {
-        qvects.push_back(peak->getQ());
+        qvects.push_back(peak->q());
     }
 
     // Check that a minimum number of peaks have been selected for indexing
@@ -202,9 +202,9 @@ void AutoIndexer::refineSolutions()
 
         int success = filtered_peaks.size();
         for (auto peak: filtered_peaks) {
-            MillerIndex hkld(peak,cell);
+            MillerIndex hkld(peak->q(), *cell);
             hkls.emplace_back(hkld.rowVector().cast<double>());
-            qs.emplace_back(peak->getQ().rowVector());
+            qs.emplace_back(peak->q().rowVector());
         }
 
         // The number of peaks must be at least for a proper minimization

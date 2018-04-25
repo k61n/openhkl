@@ -14,6 +14,7 @@
 #include "CrystalTypes.h"
 #include "DataSet.h"
 #include "Detector.h"
+#include "DetectorEvent.h"
 #include "Diffractometer.h"
 #include "Ellipsoid.h"
 #include "ErfInv.h"
@@ -21,12 +22,13 @@
 #include "IDataReader.h"
 #include "IFrameIterator.h"
 #include "IntegrationRegion.h"
+#include "Logger.h"
 #include "MathematicsTypes.h"
 #include "Monochromator.h"
 #include "Path.h"
 #include "Peak3D.h"
 #include "PeakFilter.h"
-#include "PeakIntegrator.h"
+#include "IPeakIntegrator.h"
 #include "ProgressHandler.h"
 #include "ReciprocalVector.h"
 #include "Sample.h"
@@ -67,10 +69,10 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader, const sptrDiffractometer& 
     _diffractometer->getSource()->getSelectedMonochromator().setWavelength(wav);
 
     // Getting Scan parameters for the detector
-    _states.resize(_nFrames);
+    _states.reserve(_nFrames);
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _states[i] = _reader->getState(i);
+        _states.push_back(_reader->getState(i));
     }
 }
 
@@ -110,33 +112,17 @@ Eigen::MatrixXi DataSet::frame(std::size_t idx)
     return _reader->getData(idx);
 }
 
-Eigen::MatrixXi DataSet::convolvedFrame(std::size_t idx, const std::string& convolver_type, const std::map<std::string,double>& parameters)
+Eigen::MatrixXd DataSet::convolvedFrame(std::size_t idx, const std::string& convolver_type, const std::map<std::string,double>& parameters)
 {
     ConvolverFactory convolver_factory;
-
     auto convolver = convolver_factory.create(convolver_type,parameters);
 
-    Eigen::MatrixXi autoscaled_data;
-
-    Eigen::MatrixXi frame_data = _reader->getData(idx);
-
-    int nrows = int(frame_data.rows());
-    int ncols = int(frame_data.cols());
-
+    Eigen::MatrixXi frame_data = _reader->getData(idx); 
     int maxData = frame_data.maxCoeff();
 
-    nsx::RealMatrix result;
-
     // compute the convolution
-    result = convolver->convolve(frame_data.cast<double>());
-
-    double minVal = result.minCoeff();
-    double maxVal = result.maxCoeff();
-    result.array() -= minVal;
-    result.array() *= static_cast<double>(maxData)/(maxVal-minVal);
-    autoscaled_data = result.cast<int>();
-
-    return autoscaled_data;
+    auto result = convolver->convolve(frame_data.cast<double>());
+    return result;
 }
 
 void DataSet::open()
@@ -179,7 +165,7 @@ std::size_t DataSet::nRows() const
     return _nrows;
 }
 
-InstrumentState DataSet::interpolatedState(double frame) const
+InterpolatedState DataSet::interpolatedState(double frame) const
 {
     if (frame>(_states.size()-1) || frame<0) {
         throw std::runtime_error("Error when interpolating state: invalid frame value: " + std::to_string(frame));
@@ -192,7 +178,7 @@ InstrumentState DataSet::interpolatedState(double frame) const
     const auto& nextState = _states[next];
     const auto& prevState = _states[idx];
 
-    return prevState.interpolate(nextState, t);
+    return InterpolatedState(prevState, nextState, t);
 }
 
 const std::vector<InstrumentState>& DataSet::instrumentStates() const
@@ -457,91 +443,87 @@ double DataSet::backgroundLevel(const sptrProgressHandler& progress)
     return _background;
 }
 
-void DataSet::integratePeaks(const PeakList& peaks, double bkg_begin, double bkg_end, const sptrProgressHandler& handler)
+std::vector<DetectorEvent> DataSet::getEvents(const std::vector<ReciprocalVector>& sample_qs) const
 {
-    using IntegrationRegion = IntegrationRegion;
-    using PeakIntegrator = PeakIntegrator;
-    using integrated_peak = std::pair<sptrPeak3D, PeakIntegrator>;
+    std::vector<DetectorEvent> events;  
 
-    std::vector<integrated_peak> peak_list;
-    const size_t num_peaks = peaks.size();
-    peak_list.reserve(num_peaks);
+    // return true if inside Ewald sphere, false otherwise
+    auto compute_sign = [](const Eigen::RowVector3d& q, const InterpolatedState& state) -> bool
+    {
+        const Eigen::RowVector3d ki = state.ki().rowVector();
+        const Eigen::RowVector3d kf = ki + q*state.sampleOrientationMatrix().transpose();
+        return kf.squaredNorm() < ki.squaredNorm();
+    };
 
-    for (auto&& peak: peaks ) {
-        // skip if peak does not belong to this dataset
-        if (peak->data().get() != this) {
+    // lfor each sample q, determine the rotation that makes it intersect the Ewald sphere
+    for (const ReciprocalVector& sample_q : sample_qs) {
+        const Eigen::RowVector3d& q_vect = sample_q.rowVector();
+
+        double f0 = 0.0;
+        double f1 = nFrames()-1;
+
+        auto state0 = interpolatedState(f0);
+        auto state1 = interpolatedState(f1);
+
+        bool s0 = compute_sign(q_vect, state0);
+        bool s1 = compute_sign(q_vect, state1);
+
+        // does not cross Ewald sphere, or crosses more than once
+        if (s0 == s1) {
             continue;
         }
-        // todo: n slices probably should not be hard-coded
-        IntegrationRegion region(peak->getShape(), bkg_begin, bkg_end, int(bkg_begin*5));
-        PeakIntegrator integrator(region, *this);
-        peak_list.emplace_back(peak, integrator);
-    }
 
-    if (handler) {
-        handler->setStatus(("Integrating " + std::to_string(peak_list.size()) + " peaks...").c_str());
-        handler->setProgress(0);
-    }
+        // now use bisection method to compute intersection to good accuracy
+        while (f1-f0 > 0.001) {
+            double f = 0.5*(f0+f1);
+            auto state = interpolatedState(f);
+            auto sign = compute_sign(q_vect, state);
 
-    size_t idx = 0;
-    int num_frames_done = 0;
-
-    #pragma omp parallel for
-    for ( idx = 0; idx < nFrames(); ++idx ) {
-        Eigen::MatrixXi current_frame, mask;
-        #pragma omp critical
-        current_frame = frame(idx);
-
-        mask.resize(nRows(),nCols());
-        mask.setConstant(-1);
-
-        for (auto& tup: peak_list ) {
-            auto&& integrator = tup.second;
-            integrator.getRegion().updateMask(mask, idx);
+            // branch right
+            if (sign == s0) {
+                s0 = sign;
+                state0 = state;
+                f0 = f;
+            } 
+            // branch left
+            else {
+                s1 = sign;
+                state1 = state;
+                f1 = f;
+            }
         }
 
-        for (auto& tup: peak_list ) {
-            auto&& integrator = tup.second;
-            integrator.step(current_frame, idx, mask);
-        }
+        // now f stores the frame value at the intersection
+        const double f = 0.5*(f0+f1);
+        const auto state = interpolatedState(f);
+        Eigen::RowVector3d kf = state.ki().rowVector() + q_vect*state.sampleOrientationMatrix().transpose();
+        auto detector = _diffractometer->getDetector();
+        auto event = detector->constructEvent(DirectVector(state.samplePosition), ReciprocalVector((kf*state.detectorOrientation)));
+        bool accept = event._tof > 0;
 
-        if (handler) {
-            #pragma omp atomic
-            ++num_frames_done;
-            double progress = num_frames_done * 100.0 / nFrames();
-            handler->setProgress(progress);
-        }
+        if (accept) {
+            event._frame = f;
+            events.emplace_back(event);
+        }       
     }
-
-    for (auto&& tup: peak_list) {
-        auto&& peak = tup.first;
-        auto&& integrator = tup.second;
-        integrator.end();
-        peak->updateIntegration(integrator);      
-    }
+    return events;
 }
 
-#if 0
-double DataSet::getSampleStepSize() const
+ReciprocalVector DataSet::computeQ(const DetectorEvent& ev) const
 {
-    // TODO(jonathan): we should NOT assume that gonio axis 0 is the one being rotated
-    // when we compute 'step' below
-    double step = 0.0;
-
-    size_t numFrames = nFrames();
-    const auto& ss = instrumentStates();
-    size_t numValues = ss[0].sample.values().size();
-
-    for (size_t i = 0; i < numValues; ++i) {
-        double dx = ss[numFrames-1].sample.values()[i] - ss[0].sample.values()[i];
-        step += dx*dx;
-    }
-
-    step = std::sqrt(step);
-    step /= (numFrames-1) * 0.05 * deg;
-
-    return step;
+    const auto& state = interpolatedState(ev._frame);
+    auto detector = diffractometer()->getDetector();
+    const auto& detector_position = DirectVector(detector->pixelPosition(ev._px, ev._py));
+    return state.sampleQ(detector_position);
 }
-#endif
+
+Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx)
+{
+    auto detector = _diffractometer->getDetector();
+    Eigen::ArrayXXd new_frame = frame(idx).cast<double>();
+    new_frame -= detector->baseline();
+    new_frame /= detector->gain();
+    return new_frame;
+}
 
 } // end namespace nsx

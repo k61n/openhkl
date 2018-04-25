@@ -39,6 +39,8 @@
 #include <iterator>
 
 #include "CrystalTypes.h"
+#include "DataSet.h"
+#include "DetectorEvent.h"
 #include "InstrumentState.h"
 #include "MillerIndex.h"
 #include "Peak3D.h"
@@ -164,15 +166,16 @@ int Refiner::updatePredictions(PeakList& peaks) const
         }
 
         // update the position
-        PeakPredictor predictor(peak->data());
-        auto pred = predictor.predictPeaks({MillerIndex(peak,_cell)}, b->cell()->reciprocalBasis());
+        MillerIndex hkl(peak->q(), *_cell);
+        ReciprocalVector q_pred(hkl.rowVector().cast<double>()*_cell->reciprocalBasis());
+        auto events = peak->data()->getEvents({q_pred});
 
         // something wrong with new prediction...
-        if (pred.size() != 1) {
+        if (events.size() != 1) {
             continue;
         }
-
-        peak->setShape(Ellipsoid(pred[0]->getShape().center(), peak->getShape().metric()));
+        
+        peak->setShape(Ellipsoid({events[0]._px, events[0]._py, events[0]._frame}, peak->getShape().metric()));
         ++updated;
     }
     return updated;

@@ -32,14 +32,19 @@
 #include <nsxlib/NiggliReduction.h>
 #include <nsxlib/Path.h>
 #include <nsxlib/Peak3D.h>
+#include <nsxlib/PeakFilter.h>
 #include <nsxlib/PeakFinder.h>
-#include <nsxlib/Profile3d.h>
+#include <nsxlib/Gaussian3d.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/Source.h>
 #include <nsxlib/SpaceGroup.h>
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
+#include <nsxlib/WeakPeakIntegrator.h>
+#include <nsxlib/ISigmaIntegrator.h>
+#include <nsxlib/Profile1DIntegrator.h>
+#include <nsxlib/GaussianIntegrator.h>
 
 #include "AbsorptionWidget.h"
 #include "CollectedPeaksModel.h"
@@ -549,9 +554,31 @@ void MainWindow::on_actionWrite_log_file_triggered()
 
 void MainWindow::on_actionReintegrate_peaks_triggered()
 {
+    // TODO: weak peaks vs. strong peaks??
+    auto library = _session->library();
+
+    if (!library) {
+        throw std::runtime_error("Error: cannot integrate weak peaks without a shape library!");
+    }
+
     nsx::info() << "Reintegrating peaks...";
 
     auto dialog = new DialogIntegrate();
+
+    std::map<std::string, std::function<nsx::IPeakIntegrator*()>> integrator_map;
+    std::vector<std::string> integrator_names;
+    
+    integrator_map["Strong peak integrator"] = [&]() {return new nsx::StrongPeakIntegrator(dialog->fitCenter(), dialog->fitCov());};
+    integrator_map["Weak peak integrator"] = [&]() {return new nsx::WeakPeakIntegrator(library, dialog->radius(), dialog->nframes(), false);};
+    integrator_map["I/Sigma integrator"] = [&]() {return new nsx::ISigmaIntegrator(library, dialog->radius(), dialog->nframes());};
+    integrator_map["1d Profile integrator"] = [&]() {return new nsx::Profile1DIntegrator(library, dialog->radius(), dialog->nframes());};
+    integrator_map["Gaussian integrator"] = [&]() {return new nsx::GaussianIntegrator(dialog->fitCenter(), dialog->fitCov());};
+
+    for (const auto& pair: integrator_map) {
+        integrator_names.push_back(pair.first);
+    }
+
+    dialog->setIntegrators(integrator_names);
 
     if (!dialog->exec()) {
         nsx::info() << "Peak integration canceled.";
@@ -559,17 +586,29 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
     }
 
     const double peak_scale = dialog->peakScale();
-    const double bkg_scale = dialog->backgroundScale();
+    const double bkgBegin = dialog->bkgBegin();
+    const double bkgEnd = dialog->bkgEnd();
+    const double dmin = dialog->dMin();
+    const double dmax = dialog->dMax();
 
     nsx::DataList numors = _session->getSelectedNumors();
 
+    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
+    ProgressView view(this);
+    view.watch(handler);
+
     for (auto&& numor: numors) {
         // todo: bkg_begin and bkg_end
-        numor->integratePeaks(_session->peaks(numor.get()), peak_scale, bkg_scale, _progressHandler);
+        auto peaks = nsx::PeakFilter().dMin(_session->peaks(numor.get()), dmin);
+        peaks = nsx::PeakFilter().dMax(peaks, dmax);
+        nsx::info() << "Integrating " << peaks.size() << " peaks";
+        std::unique_ptr<nsx::IPeakIntegrator> integrator(integrator_map[dialog->integrator()]());
+        integrator->setHandler(handler);
+        integrator->integrate(peaks, numor, peak_scale, bkgBegin, bkgEnd);
     }
 
     _session->updatePeaks();
-    nsx::info() << "Done reintegrating peaks intensities";
+    nsx::info() << "Done reintegrating peaks";
 }
 
 void MainWindow::on_actionFit_peak_profiles_triggered()
@@ -584,7 +623,10 @@ void MainWindow::on_actionAuto_assign_unit_cell_triggered()
 
 void MainWindow::on_actionFit_profiles_triggered()
 {
+    nsx::info() << "This functionality is currently disabled in the GUI!";
+    #if 0
     nsx::info() << "fit profiles triggered";
+
 
     auto numors = _session->getSelectedNumors();
 
@@ -617,8 +659,7 @@ void MainWindow::on_actionFit_profiles_triggered()
                 QApplication::processEvents();
             }
 
-            auto&& region = peak->getIntegrationRegion();
-            auto bb = region.aabb();
+            auto bb = peak->getShape().aabb();
             auto lower = bb.lower();
             auto upper = bb.upper();
 
@@ -695,4 +736,5 @@ void MainWindow::on_actionFit_profiles_triggered()
     }
 
     _session->updatePeaks();
+    #endif 
 }

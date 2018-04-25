@@ -48,6 +48,16 @@
 
 namespace nsx {
 
+
+static void error_handler (const char * reason, const char * file, int line, int gsl_errno)
+{
+    std::string msg = file;
+    msg += "(" + std::to_string(line) + "): ";
+    msg += reason;
+    msg += " (" + std::to_string(gsl_errno) + ")";
+    throw std::runtime_error(msg);
+}
+
 void callback_helper(const size_t iter, void* data, const gsl_multifit_nlinear_workspace *w)
 {
     NSX_UNUSED(iter)
@@ -98,6 +108,7 @@ Minimizer::~Minimizer()
 void Minimizer::initialize(FitParameters& params, int values)
 {
     cleanup();
+    gsl_set_error_handler(&error_handler);
     _params = params;
     _numValues = values;
     _wt.resize(_numValues);
@@ -159,7 +170,7 @@ bool Minimizer::fit(int max_iter)
 
     gsl_multifit_nlinear_winit(_gsl->x, _gsl->wt, &_gsl->fdf, _gsl->workspace);
     _gsl->status = gsl_multifit_nlinear_driver(max_iter, _xtol, _gtol, _ftol, &callback_helper, this, &_gsl->info, _gsl->workspace);
-    gsl_multifit_nlinear_covar(_gsl->workspace->J, 1e-6, _gsl->covariance);
+    gsl_multifit_nlinear_covar(_gsl->workspace->J, 1e-10, _gsl->covariance);
 
     eigenFromGSL(_gsl->workspace->J, _jacobian);
     _params.setValues(_gsl->workspace->x);

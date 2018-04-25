@@ -80,6 +80,8 @@ void DialogRefineUnitCell::refineParameters()
             }
         }
 
+        nsx::info() << d_peaks.size() << " available for refinement.";
+
         nsx::Refiner r(_unitCell, d_peaks, nbatches(d_peaks));    
 
         if (ui->checkBoxRefineLattice->isChecked()) {
@@ -95,7 +97,8 @@ void DialogRefineUnitCell::refineParameters()
         }
 
         if (ui->checkBoxRefineSampleOrientation->isChecked()) {
-            nsx::info() << "Refinining sample orientation NOT IMPLEMENTED";
+            nsx::info() << "Refinining sample orientation";
+            r.refineSampleOrientation(states);
         }
 
         if (ui->checkBoxRefineDetectorOffset->isChecked()) {
@@ -108,7 +111,8 @@ void DialogRefineUnitCell::refineParameters()
         }
 
         if (ui->checkBoxRefineKi->isChecked()) {
-            nsx::info() << "Refining Ki NOT IMPLEMENTED";
+            nsx::info() << "Refining Ki";
+            r.refineKi(states);
         }
 
         bool success = r.refine();
@@ -117,17 +121,18 @@ void DialogRefineUnitCell::refineParameters()
             nsx::info() << "Failed to refine parameters for numor " << d->filename();
         }  else {
             nsx::info() << "Successfully refined parameters for numor " << d->filename();
+
+            // TODO: decide how to handle this situation....
+            #if 0
             int updated = r.updatePredictions(d_peaks);
-            nsx::info() << "done; updated " << updated << " peak";
+            nsx::info() << "done; updated " << updated << " peaks";
 
             nsx::PeakList peak_list;
 
             for (auto&& p: d_peaks) {
                 peak_list.push_back(p);
             }
-
-            // todo: fix bkg_begin and bkg_end
-            d->integratePeaks(peak_list, 3.0, 6.0, nullptr);
+            #endif
         }
     }
 }

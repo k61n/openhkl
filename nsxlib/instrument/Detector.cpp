@@ -60,19 +60,25 @@ Detector* Detector::create(const YAML::Node& node)
 
 Detector::Detector()
 : Component("detector"),
-  _dataorder(DataOrder::BottomLeftColMajor)
+  _dataorder(DataOrder::BottomLeftColMajor),
+  _baseline(0.0),
+  _gain(1.0)
 {
 }
 
 Detector::Detector(const Detector& other)
 : Component(other),
-  _dataorder(other._dataorder)
+  _dataorder(other._dataorder),
+  _baseline(other._baseline),
+  _gain(other._gain)
 {
 }
 
 Detector::Detector(const std::string& name)
 : Component(name),
-  _dataorder(DataOrder::BottomLeftColMajor)
+  _dataorder(DataOrder::BottomLeftColMajor),
+  _baseline(0.0),
+  _gain(1.0)
 {
 }
 
@@ -83,6 +89,20 @@ Detector::Detector(const YAML::Node& node)
     if (!node["data_ordering"]) {
         _dataorder = DataOrder::BottomRightColMajor;
         return;
+    }
+
+    // detector gain
+    if (node["gain"]) {
+        _gain = node["gain"].as<double>();
+    } else {
+        _gain = 1.0;
+    }
+
+    // detector baseline
+    if (node["baseline"]) {
+        _baseline = node["baseline"].as<double>();
+    } else {
+        _baseline = 0.0;
     }
 
     std::string dataOrder=node["data_ordering"].as<std::string>();
@@ -117,13 +137,20 @@ Detector& Detector::operator=(const Detector& other)
     if (this != &other) {
         Component::operator=(other);
         _dataorder = other._dataorder;
+        _gain = other._gain;
+        _baseline = other._baseline;
     }
     return *this;
 }
 
-bool Detector::receiveKf(double& px, double& py, const DirectVector& direction, const DirectVector& from, double& t) const
+double Detector::baseline() const
 {
-  return hasKf(direction, from, px, py, t);
+    return _baseline;
+}
+
+double Detector::gain() const
+{
+    return _gain;
 }
 
 } // end namespace nsx
