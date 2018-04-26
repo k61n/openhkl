@@ -74,14 +74,6 @@ double InstrumentState::nu(const DirectVector& detector_position) const
     return nu;
 }
 
-double InstrumentState::lorentzFactor(const DirectVector& detector_position) const
-{
-    double g = gamma(detector_position);
-    double n = nu(detector_position);
-    double lorentz = 1.0/(sin(std::fabs(g))*cos(n));
-    return lorentz;
-}
-
 double InstrumentState::twoTheta(const DirectVector& detector_position) const
 {
     auto kf = kfLab(detector_position).rowVector();  

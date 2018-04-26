@@ -74,8 +74,6 @@ public:
 
     double nu(const DirectVector& detector_position) const;
 
-    double lorentzFactor(const DirectVector& detector_position) const;
-
     double twoTheta(const DirectVector& detector_position) const;
 
     //! Compute the jacobian of the transformation (x,y) -> k_lab

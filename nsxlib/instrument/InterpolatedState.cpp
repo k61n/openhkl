@@ -28,6 +28,7 @@
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "InterpolatedState.h"
+#include "Logger.h"
 #include "MatrixOperations.h"
 
 namespace nsx {
@@ -85,6 +86,16 @@ Eigen::Matrix3d InterpolatedState::jacobianQ(const DetectorEvent& ev) const
     // negative sign is due to treating q as a column vector instead of a row vector
     J.col(2) = -stepSize * axis.cross(q0);
     return J;
+}
+
+double InterpolatedState::lorentzFactor(const DirectVector& detector_position) const
+{
+    const Eigen::Vector3d ki = ni / ni.norm() / wavelength;
+    const Eigen::Vector3d kf = kfLab(detector_position).rowVector();
+    const Eigen::Vector3d q = kf-ki;
+    const Eigen::Vector3d qdot = axis.cross(q) * stepSize;
+    const double lorentz = std::fabs(kf.norm() / qdot.dot(kf));
+    return lorentz;
 }
 
 } // end namespace nsx

@@ -137,7 +137,10 @@ Intensity Peak3D::correctedIntensity() const
     auto c = _shape.center();
     auto state = _data->interpolatedState(c[2]);
     auto pos = DirectVector(_data->diffractometer()->getDetector()->pixelPosition(c[0], c[1]));
-    const double factor = _scale / (state.lorentzFactor(pos) * _transmission);
+    const double lorentz = state.lorentzFactor(pos);
+    const double jac = std::fabs(state.jacobianQ(DetectorEvent(c)).determinant());
+    //const double factor = _scale / (lorentz * _transmission);
+    const double factor = _scale * jac / _transmission;
     return getRawIntensity() * factor;
 }
 

@@ -44,6 +44,8 @@ public:
     //! Compute the jacobian of the transformation (x,y,frame) -> q_sample
     Eigen::Matrix3d jacobianQ(const DetectorEvent& ev) const;
 
+    double lorentzFactor(const DirectVector& detector_position) const;
+
     Eigen::Quaterniond transformation;
     Eigen::Vector3d axis;
     double stepSize;

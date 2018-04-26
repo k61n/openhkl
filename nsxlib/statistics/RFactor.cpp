@@ -68,7 +68,7 @@ void RFactor::calculate(const MergedData& data)
         }
     }
 
-    if (I_total < 1e-3) {
+    if (I_total <= 0.0) {
         // something wrong! too few peaks?
         _Rmerge = 0.0;
         _Rmeas = 0.0;
