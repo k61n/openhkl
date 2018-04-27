@@ -53,7 +53,7 @@ struct FitData {
         Jp *= ki.norm();
 
         DetectorEvent event(center);
-        Jd = state.jacobianQ(event);
+        Jd = state.jacobianQ(event._px, event._py);
 
         q = kf-ki;
     }

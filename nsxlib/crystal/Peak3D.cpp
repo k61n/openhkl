@@ -123,8 +123,7 @@ sptrUnitCell Peak3D::unitCell(int index) const
 
 Intensity Peak3D::getRawIntensity() const
 {
-    // todo: investigate whether we should scale? Probably not necessary if we use Jacobian instead of Lorentz factor
-    return _rawIntensity;// * _data->getSampleStepSize();
+    return _rawIntensity;
 }
 
 Intensity Peak3D::getScaledIntensity() const
@@ -136,12 +135,9 @@ Intensity Peak3D::correctedIntensity() const
 {
     auto c = _shape.center();
     auto state = _data->interpolatedState(c[2]);
-    auto pos = DirectVector(_data->diffractometer()->getDetector()->pixelPosition(c[0], c[1]));
-    const double lorentz = state.lorentzFactor(pos);
-    const double jac = std::fabs(state.jacobianQ(DetectorEvent(c)).determinant());
-    //const double factor = _scale / (lorentz * _transmission);
-    const double factor = _scale * jac / _transmission;
-    return getRawIntensity() * factor;
+    const double lorentz = state.lorentzFactor(c[0], c[1]);
+    const double factor = _scale / lorentz / _transmission;
+    return getRawIntensity() * factor * state.stepSize;
 }
 
 double Peak3D::getTransmission() const
@@ -264,12 +260,12 @@ Ellipsoid Peak3D::qShape() const
         throw std::runtime_error("Attempted to compute q-shape of peak not attached to data");
     }
 
-    const DetectorEvent event(_shape.center());    
-    auto state = _data->interpolatedState(event._frame);    
+    Eigen::Vector3d p = _shape.center();
+    auto state = _data->interpolatedState(p[2]);    
     Eigen::Vector3d q0 = q().rowVector();    
 
     // Jacobian of map from detector coords to sample q space
-    Eigen::Matrix3d J = state.jacobianQ(event);
+    Eigen::Matrix3d J = state.jacobianQ(p[0], p[1]);
     const Eigen::Matrix3d JI = J.inverse();
 
     // inverse covariance matrix in sample q space

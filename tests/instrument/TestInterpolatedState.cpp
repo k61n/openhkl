@@ -65,7 +65,7 @@ void run_test(const char* filename, const char* instrument)
         auto detector = dataf->diffractometer()->getDetector();
 
         auto state = dataf->interpolatedState(coord[2]);
-        Eigen::Matrix3d Jq = state.jacobianQ(nsx::DetectorEvent(coord));
+        Eigen::Matrix3d Jq = state.jacobianQ(coord[0], coord[1]);
 
         auto pos0 = detector->pixelPosition(coord[0], coord[1]);
         Eigen::Vector3d q0 = state.sampleQ(pos0).rowVector();

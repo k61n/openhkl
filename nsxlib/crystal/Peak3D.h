@@ -134,6 +134,7 @@ public:
 
     sptrDataSet data() const { return _data; }
 
+    //! Raw intensity count (from image), with no corrections
     void setRawIntensity(const Intensity& i);
 
     //! Return peak center at the given frame

@@ -328,7 +328,7 @@ Ellipsoid Ellipsoid::toDetectorSpace(sptrDataSet data) const
     auto state = data->interpolatedState(event._frame);  
    
     // Jacobian of map from detector coords to sample q space
-    Eigen::Matrix3d J = state.jacobianQ(event);
+    Eigen::Matrix3d J = state.jacobianQ(event._px, event._py);
     const Eigen::Matrix3d det_inv_cov = J.transpose() * _metric * J;
 
     Eigen::Vector3d p(event._px, event._py, event._frame);
