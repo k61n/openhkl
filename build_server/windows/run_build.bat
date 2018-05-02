@@ -11,7 +11,7 @@ set PATH=C:\opt\local_x64\bin;%PATH%
 
 call "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat" amd64
 
-cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=C:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\cmake -DYAML_ROOT_DIR=C:\opt\local_x64 -DTIFF_ROOT=C:\opt\local_x64 -DZLIB_ROOT=C:\opt\local_x64 -DNSX_PYTHON=OFF -DCMAKE_INSTALL_PREFIX=.
+cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=%QTDIR%\lib\cmake -DYAML_ROOT_DIR=C:\opt\local_x64 -DTIFF_ROOT=C:\opt\local_x64 -DZLIB_ROOT=C:\opt\local_x64 -DNSX_PYTHON=OFF -DCMAKE_INSTALL_PREFIX=.
 cmake --build . --config Release
 cmake --build . --config Release --target install
 
