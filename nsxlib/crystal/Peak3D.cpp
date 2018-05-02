@@ -81,9 +81,18 @@ Peak3D::Peak3D(sptrDataSet data, const Ellipsoid &shape):
     setShape(shape);  
 }
 
-void Peak3D::setShape(const Ellipsoid& peak)
+void Peak3D::setShape(const Ellipsoid& shape)
 {
-    _shape = peak;
+    // shape should be consistent with data
+    if (_data) {
+        Eigen::Vector3d c = shape.center();
+        if (c[2] < 0.0 || c[2] > _data->nFrames()-1
+          || c[0] < 0.0 || c[0] >_data->nCols()-1 
+          || c[1] < 0.0 || c[1] > _data->nRows()-1) {
+            throw std::runtime_error("Peak3D::setShape(): peak center out of bounds");
+        }
+    }
+    _shape = shape;
 }
 
 const std::vector<Intensity>& Peak3D::rockingCurve() const
@@ -137,7 +146,7 @@ Intensity Peak3D::correctedIntensity() const
     auto state = _data->interpolatedState(c[2]);
     const double lorentz = state.lorentzFactor(c[0], c[1]);
     const double factor = _scale / lorentz / _transmission;
-    return getRawIntensity() * factor * state.stepSize;
+    return getRawIntensity() * factor / state.stepSize;
 }
 
 double Peak3D::getTransmission() const

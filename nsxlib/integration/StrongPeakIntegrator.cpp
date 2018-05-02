@@ -92,7 +92,7 @@ bool StrongPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& reg
 
     // TODO: ERROR ESTIMATE!!
     // This INCORRECTLY assumes Poisson statistics (no gain or baseline)
-    _integratedIntensity = Intensity(sum_peak, sum_peak + npeak*npeak*std_bkg*std_bkg);
+    _integratedIntensity = Intensity(sum_peak, sum_peak + npeak*mean_bkg + npeak*npeak*std_bkg*std_bkg);
 
     // TODO: compute rocking curve
     double f_min = int(events[0]._frame);

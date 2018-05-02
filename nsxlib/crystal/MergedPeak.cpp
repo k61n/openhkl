@@ -42,6 +42,7 @@
 
 #include "UnitCell.h"
 #include "DataSet.h"
+#include "Logger.h"
 #include "MergedPeak.h"
 #include "MillerIndex.h"
 #include "Peak3D.h"
@@ -196,6 +197,18 @@ double MergedPeak::chi2() const
         const double x = (I.value() - I_merge) / sigma_merge;
         chi_sq += x*x/N;
     }
+
+    // debugging
+    if (!(chi_sq < 10000)) {
+        nsx::info() << "bad merge!";
+        for (auto peak: _peaks) {
+            auto c = peak->getShape().center();
+            auto state = peak->data()->interpolatedState(c[2]);
+            nsx::info() << peak->data()->filename() << ":";
+            nsx::info() << c << "; I = " << peak->getRawIntensity().value() << "; " << peak->correctedIntensity().value() << "; dt = " << state.stepSize;
+        }
+    }
+
     return chi_sq;
 }
 

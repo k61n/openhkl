@@ -93,7 +93,20 @@ double InterpolatedState::lorentzFactor(double px, double py) const
     auto position = _diffractometer->getDetector()->pixelPosition(px, py);
     Eigen::Vector3d q0 = sampleQ(position).rowVector();
     Eigen::Vector3d kf = sampleOrientationMatrix().transpose() * kfLab(position).rowVector().transpose();
-    return kf.norm() / std::fabs(kf.dot(axis.cross(q0)));
+
+    const double lorentz = kf.norm() / std::fabs(kf.dot(axis.cross(q0)));
+
+    #if 0
+    // testing only
+    double g = gamma(position);
+    double n = nu(position);
+    double old_lorentz = 1.0/(sin(std::fabs(g))*cos(n));
+    
+    nsx::info() << lorentz / old_lorentz;
+
+    #endif
+
+    return lorentz;
 }
 
 } // end namespace nsx
