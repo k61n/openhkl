@@ -9,6 +9,8 @@ set HDF5_ROOT=C:\opt\local_x64
 
 set PATH=C:\opt\local_x64\bin;%PATH%
 
+set
+
 call "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat" amd64
 
 set
