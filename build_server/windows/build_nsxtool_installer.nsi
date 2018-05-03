@@ -7,7 +7,7 @@
 Name NSXTool ${VERSION}"
 
 ; The name of the installer file to write
-OutFile "${TARGET_DIR}\nxtool-${VERSION}-${ARCH}.exe"
+OutFile "${TARGET_DIR}\nsxtool-${VERSION}-${ARCH}.exe"
 
 RequestExecutionLevel admin #NOTE: You still need to check user rights with UserInfo!
 
