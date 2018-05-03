@@ -5,7 +5,7 @@ include_directories(${NSXLIB_SUBDIRS}
 
 # note: *.c needed for blosc files in data directory
 file(GLOB_RECURSE NSXLIB_SOURCES *.cpp *.c)
-file(GLOB_RECURSE NSXLIB_HEADERS ${CMAKE_BINARY_DIR}/include/nsxlib/*.h)
+file(GLOB_RECURSE NSXLIB_HEADERS *.h)
 
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/copy-nsxlib-headers.cmake "
   foreach (path ${NSXLIB_HEADERS})
@@ -40,7 +40,7 @@ target_link_libraries(nsx
 # Install section, installing libraries
 install(TARGETS nsx DESTINATION lib)
 install(CODE "MESSAGE(\"Installing headers...\")")
-install(FILES ${NSXLIB_HEADERS} DESTINATION include/nsxlib)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/include/nsxlib/ DESTINATION include/nsxlib FILES_MATCHING PATTERN "*.h")
 
 if(NSX_TIDY)
   add_tidy_target(nsx)
