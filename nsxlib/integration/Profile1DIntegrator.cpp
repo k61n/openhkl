@@ -55,6 +55,9 @@ static void updateFit(Intensity& I, Intensity& B, const std::vector<double>& dp,
     const size_t n = dp.size();
     assert(dp.size() == dM.size() && dp.size() == dn.size());
 
+    Eigen::Matrix2d b_cov;
+    b_cov.setZero();
+
     for (size_t i = 0; i < n; ++i) {
         // avoid case where dn[i] = 0
         if (dn[i] == 0) {
@@ -73,6 +76,11 @@ static void updateFit(Intensity& I, Intensity& B, const std::vector<double>& dp,
 
         b(0) += M*n/var;
         b(1) += M*p/var;
+
+        b_cov(0,0) += n*n/var;
+        b_cov(1,0) += p*n/var;
+        b_cov(0,1) += p*n/var;
+        b_cov(1,1) += p*p/var;
     }  
 
     Eigen::Matrix2d AI = A.inverse();
@@ -81,8 +89,8 @@ static void updateFit(Intensity& I, Intensity& B, const std::vector<double>& dp,
     const double new_B = x(0);
     const double new_I = x(1);
 
-    // check this calculation!
-    Eigen::Matrix2d cov = AI;
+    Eigen::Matrix2d cov = AI * b_cov * AI.transpose();
+
 
     // Note: this error estimate assumes the variances are correct (i.e., gain and baseline accounted for)
     B = Intensity(new_B, cov(0,0));
