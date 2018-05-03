@@ -5,7 +5,7 @@ include_directories(${NSXLIB_SUBDIRS}
 
 # note: *.c needed for blosc files in data directory
 file(GLOB_RECURSE NSXLIB_SOURCES *.cpp *.c)
-file(GLOB_RECURSE NSXLIB_HEADERS *.h)
+file(GLOB_RECURSE NSXLIB_HEADERS ${CMAKE_BINARY_DIR}/include/nsxlib/*.h)
 
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/copy-nsxlib-headers.cmake "
   foreach (path ${NSXLIB_HEADERS})
