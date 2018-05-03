@@ -198,6 +198,7 @@ double MergedPeak::chi2() const
         chi_sq += x*x/N;
     }
 
+    #if 0
     // debugging
     if (!(chi_sq < 10000)) {
         nsx::info() << "bad merge!";
@@ -208,6 +209,7 @@ double MergedPeak::chi2() const
             nsx::info() << c << "; I = " << peak->getRawIntensity().value() << "; " << peak->correctedIntensity().value() << "; dt = " << state.stepSize;
         }
     }
+    #endif
 
     return chi_sq;
 }
