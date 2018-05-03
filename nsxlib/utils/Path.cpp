@@ -117,14 +117,23 @@ std::string buildPath(const std::vector<std::string>& paths, const std::string& 
 
 std::string applicationDataPath()
 {
-    std::vector<std::string> possible_paths = {
-        "",
-        ".",
-        "nsxtool",
-        homeDirectory(),
-        homeDirectory() + fileSeparator() + "nsxtool",
-        g_application_data_path
-    };
+    std::vector<std::string> possible_paths = {g_application_data_path};
+    #ifdef _WIN32
+    // check for environment variable APPDATA
+    const char* appdata_dir = getenv("APPDATA");
+    // if defined, it takes highest precedence
+    if (appdata_dir) {
+        std::string path = buildPath({appdata_dir,"nsxtool"},"");
+        possible_paths.push_back(path);
+    }
+    // check for environment variable PROGRAMDATA
+    const char* programdata_dir = getenv("PROGRAMDATA");
+    // if defined, it takes highest precedence
+    if (programdata_dir) {
+        std::string path = buildPath({programdata_dir,"nsxtool"},"");
+        possible_paths.push_back(path);
+    }
+    #endif
 
     // check for environment variable NSX_ROOT_DIR
     const char* nsx_root_dir = getenv("NSX_ROOT_DIR");
@@ -137,7 +146,7 @@ std::string applicationDataPath()
     // add base path of nsx library if possible
     if (!g_nsx_path.empty()) {
         std::string path = buildPath({g_nsx_path,"share","nsxtool"},"");
-        possible_paths.insert(possible_paths.begin(), path);
+        possible_paths.push_back(path);
     }
 
     std::vector<std::string> d19_relative_path = {"instruments","D19.yml"};
