@@ -18,6 +18,7 @@ set PATH=C:\opt\local_x64\bin;%PATH%
 cd %CI_PROJECT_DIR%\build
 
 set NSX_ROOT_DIR=%CI_PROJECT_DIR%\resources
+set CTEST_OUTPUT_ON_FAILURE=1
 
 ninja test
 
