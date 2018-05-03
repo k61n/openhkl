@@ -49,7 +49,7 @@ NSXTool release ${VERSION}.\
 !insertmacro MUI_PAGE_WELCOME
 
 ; Insert a "License" page in the installer
-!insertmacro MUI_PAGE_LICENSE "..\..\..\License.txt"
+!insertmacro MUI_PAGE_LICENSE "..\..\License.txt"
 
 ; Insert a page to browse for the installation directory
 !insertmacro MUI_PAGE_DIRECTORY
