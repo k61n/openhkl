@@ -100,6 +100,9 @@ deploy:windows:
     - /^release/.*$/
     - /^hotfix/.*$/
     - develop
+  artifacts:
+    paths:
+    - .\\build\\nsxtool*.exe
   tags:
     - windows
 

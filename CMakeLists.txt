@@ -57,7 +57,7 @@ endif()
 if (UNIX)
   set(APPLICATION_DATA_PATH ${CMAKE_INSTALL_PREFIX}/share/nsxtool)
 elseif (WIN32)
-  set(APPLICATION_DATA_PATH "$ENV{APPDATA}\\nsxtool")
+  set(APPLICATION_DATA_PATH ${CMAKE_INSTALL_PREFIX}\\share\\nsxtool)
   # take care of pesky backslashes in windows path names
   STRING(REGEX REPLACE "\\\\" "\\\\\\\\" APPLICATION_DATA_PATH ${APPLICATION_DATA_PATH})
 endif()
