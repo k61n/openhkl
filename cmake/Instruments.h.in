@@ -1,5 +1,10 @@
 #include <map>
 #include <string>
 
-std::map<std::string,std::string> g_instruments = {
+static std::map<std::string,std::string> g_instruments_resources = {
 };
+
+const std::map<std::string,std::string>& instrumentsResources()
+{
+    return g_instruments_resources;
+}
