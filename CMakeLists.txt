@@ -54,31 +54,30 @@ endif()
 # Setup resources manager helper program
 ###########################################################################
 
-add_executable(make_resources ${CMAKE_SOURCE_DIR}/scripts/make_resources.cpp)
+add_executable(make_resource ${CMAKE_SOURCE_DIR}/scripts/make_resource.cpp)
+add_executable(make_resources_map ${CMAKE_SOURCE_DIR}/scripts/make_resources_map.cpp)
 
-file(GLOB DATABASES_RES ${CMAKE_SOURCE_DIR}/resources/databases/*.yml)
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/generate_databases_resources.cmake 
- "configure_file(${CMAKE_SOURCE_DIR}/cmake/Databases.h.in ${CMAKE_BINARY_DIR}/include/nsxlib/Databases.h)
-  foreach (res_file ${DATABASES_RES})
-    get_filename_component(res_name \${res_file} NAME_WE)
-    execute_process(COMMAND \${CMAKE_BINARY_DIR}/make_resources \${res_file} \${res_name} \${CMAKE_BINARY_DIR}/include/nsxlib/Databases.h)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/resources_map.h.in ${CMAKE_BINARY_DIR}/include/nsxlib/ResourcesMap.h)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/resources_map.cpp.in ${CMAKE_BINARY_DIR}/src/nsxlib/ResourcesMap.cpp)
+
+file(GLOB_RECURSE NSX_RESOURCES ${CMAKE_SOURCE_DIR}/resources/*.yml)
+file(WRITE ${CMAKE_BINARY_DIR}/generate-nsx-resources.cmake 
+ "foreach (res_file ${NSX_RESOURCES})
+    get_filename_component(NSX_RESOURCE_NAME \${res_file} NAME_WE)
+
+    configure_file(${CMAKE_SOURCE_DIR}/cmake/resource_template.h.in ${CMAKE_BINARY_DIR}/include/nsxlib/Resource\${NSX_RESOURCE_NAME}.h)
+    configure_file(${CMAKE_SOURCE_DIR}/cmake/resource_template.cpp.in ${CMAKE_BINARY_DIR}/src/nsxlib/Resource\${NSX_RESOURCE_NAME}.cpp)
+    execute_process(COMMAND ${CMAKE_BINARY_DIR}/make_resource \${res_file} ${CMAKE_BINARY_DIR}/src/nsxlib/Resource\${NSX_RESOURCE_NAME}.cpp)
+
+    get_filename_component(NSX_RESOURCE_DIR \${res_file} DIRECTORY)
+    get_filename_component(NSX_RESOURCE_TYPE \${NSX_RESOURCE_DIR} NAME)
+    execute_process(COMMAND ${CMAKE_BINARY_DIR}/make_resources_map \${NSX_RESOURCE_TYPE} \${NSX_RESOURCE_NAME} ${CMAKE_BINARY_DIR}/src/nsxlib/ResourcesMap.cpp)
   endforeach ()"
 )
 
-add_custom_target(generate_databases_resources COMMAND ${CMAKE_COMMAND} -P generate_databases_resources.cmake)
-add_dependencies(generate_databases_resources make_resources)
-
-file(GLOB INSTRUMENTS_RES ${CMAKE_SOURCE_DIR}/resources/instruments/*.yml)
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/generate_instruments_resources.cmake 
- "configure_file(${CMAKE_SOURCE_DIR}/cmake/Instruments.h.in ${CMAKE_BINARY_DIR}/include/nsxlib/Instruments.h)
-  foreach (res_file ${INSTRUMENTS_RES})
-    get_filename_component(res_name \${res_file} NAME_WE)
-    execute_process(COMMAND \${CMAKE_BINARY_DIR}/make_resources \${res_file} \${res_name} \${CMAKE_BINARY_DIR}/include/nsxlib/Instruments.h)
-  endforeach ()"
-)
-
-add_custom_target(generate_instruments_resources COMMAND ${CMAKE_COMMAND} -P generate_instruments_resources.cmake)
-add_dependencies(generate_instruments_resources make_resources)
+add_custom_target(generate-nsx-resources COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/generate-nsx-resources.cmake)
+add_dependencies(generate-nsx-resources make_resource)
+add_dependencies(generate-nsx-resources make_resources_map)
   
 ###########################################################################
 # Now add in all the components
