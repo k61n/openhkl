@@ -40,8 +40,8 @@ InterpolatedState::InterpolatedState(sptrDiffractometer diffractometer): Instrum
 
 InterpolatedState::InterpolatedState(const InstrumentState& s1, const InstrumentState& s2, double t): 
     InstrumentState(s1.diffractometer()),
-    axis(),
     transformation(),
+    axis(),
     stepSize()
 {
     if (s1.diffractometer() != s2.diffractometer()) {
@@ -93,19 +93,7 @@ double InterpolatedState::lorentzFactor(double px, double py) const
     auto position = _diffractometer->getDetector()->pixelPosition(px, py);
     Eigen::Vector3d q0 = sampleQ(position).rowVector();
     Eigen::Vector3d kf = sampleOrientationMatrix().transpose() * kfLab(position).rowVector().transpose();
-
     const double lorentz = kf.norm() / std::fabs(kf.dot(axis.cross(q0)));
-
-    #if 0
-    // testing only
-    double g = gamma(position);
-    double n = nu(position);
-    double old_lorentz = 1.0/(sin(std::fabs(g))*cos(n));
-    
-    nsx::info() << lorentz / old_lorentz;
-
-    #endif
-
     return lorentz;
 }
 

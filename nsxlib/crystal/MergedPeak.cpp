@@ -155,10 +155,8 @@ std::pair<MergedPeak, MergedPeak> MergedPeak::split() const
             p2.addPeak(p);
         }
     }
-
     return std::make_pair(p1, p2);
 }
-
 
 bool operator<(const MergedPeak& p, const MergedPeak& q)
 {
@@ -197,19 +195,6 @@ double MergedPeak::chi2() const
         const double x = (I.value() - I_merge) / sigma_merge;
         chi_sq += x*x/N;
     }
-
-    #if 0
-    // debugging
-    if (!(chi_sq < 10000)) {
-        nsx::info() << "bad merge!";
-        for (auto peak: _peaks) {
-            auto c = peak->getShape().center();
-            auto state = peak->data()->interpolatedState(c[2]);
-            nsx::info() << peak->data()->filename() << ":";
-            nsx::info() << c << "; I = " << peak->getRawIntensity().value() << "; " << peak->correctedIntensity().value() << "; dt = " << state.stepSize;
-        }
-    }
-    #endif
 
     return chi_sq;
 }

@@ -117,22 +117,6 @@ NiggliCharacter GruberReduction::classify()
 
         const double score = std::max(max, min);
 
-        #if 0
-        if (i == 6) {
-
-            std::cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << std::endl;
-            std::cout << "i" << std::endl;
-            std::cout << n.C << std::endl;
-            std::cout << "-----------------------------------------" << std::endl;
-            std::cout << x << std::endl;
-            std::cout << "-----------------------------------------" << std::endl;
-            std::cout << d << std::endl;
-            std::cout << "-----------------------------------------" << std::endl;
-            std::cout << score << std::endl;
-            std::cout << "-----------------------------------------" << std::endl;
-        }
-        #endif
-
         // satisfied the conditions within tolerance
         if (score < _epsilon) {
             return n;
