@@ -29,6 +29,7 @@ option(NSX_DOCS "Build documentation" OFF)
 ###########################################################################
 # Scripts controlling build setup and dependencies
 ###########################################################################
+
 include(GeneratePythonDocs)
 include(GetSubdirectories)
 include(CMakeFindBinUtils)
@@ -49,6 +50,36 @@ if(NSX_DOCS)
   include(Doxygen)
 endif()
 
+###########################################################################
+# Setup resources manager helper program
+###########################################################################
+
+add_executable(make_resources ${CMAKE_SOURCE_DIR}/scripts/make_resources.cpp)
+
+file(GLOB DATABASES_RES ${CMAKE_SOURCE_DIR}/resources/databases/*.yml)
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/generate_databases_resources.cmake 
+ "configure_file(${CMAKE_SOURCE_DIR}/cmake/Databases.h.in ${CMAKE_BINARY_DIR}/include/nsxlib/Databases.h)
+  foreach (res_file ${DATABASES_RES})
+    get_filename_component(res_name \${res_file} NAME_WE)
+    execute_process(COMMAND \${CMAKE_BINARY_DIR}/make_resources \${res_file} \${res_name} \${CMAKE_BINARY_DIR}/include/nsxlib/Databases.h)
+  endforeach ()"
+)
+
+add_custom_target(generate_databases_resources COMMAND ${CMAKE_COMMAND} -P generate_databases_resources.cmake)
+add_dependencies(generate_databases_resources make_resources)
+
+file(GLOB INSTRUMENTS_RES ${CMAKE_SOURCE_DIR}/resources/instruments/*.yml)
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/generate_instruments_resources.cmake 
+ "configure_file(${CMAKE_SOURCE_DIR}/cmake/Instruments.h.in ${CMAKE_BINARY_DIR}/include/nsxlib/Instruments.h)
+  foreach (res_file ${INSTRUMENTS_RES})
+    get_filename_component(res_name \${res_file} NAME_WE)
+    execute_process(COMMAND \${CMAKE_BINARY_DIR}/make_resources \${res_file} \${res_name} \${CMAKE_BINARY_DIR}/include/nsxlib/Instruments.h)
+  endforeach ()"
+)
+
+add_custom_target(generate_instruments_resources COMMAND ${CMAKE_COMMAND} -P generate_instruments_resources.cmake)
+add_dependencies(generate_instruments_resources make_resources)
+  
 ###########################################################################
 # Now add in all the components
 ###########################################################################
