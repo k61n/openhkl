@@ -54,7 +54,7 @@ Eigen::Vector3d PeakCoordinateSystem::transform(const DetectorEvent& ev) const
 
 Eigen::Matrix3d PeakCoordinateSystem::jacobian() const
 {
-    Eigen::Matrix3d dkdx = _state.jacobianK(_event);
+    Eigen::Matrix3d dkdx = _state.jacobianK(_event._px, _event._py);
 
     // Jacobian of epsilon coordinates
     Eigen::Matrix3d J;

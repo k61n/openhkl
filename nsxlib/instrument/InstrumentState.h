@@ -74,12 +74,10 @@ public:
 
     double nu(const DirectVector& detector_position) const;
 
-    double lorentzFactor(const DirectVector& detector_position) const;
-
     double twoTheta(const DirectVector& detector_position) const;
 
     //! Compute the jacobian of the transformation (x,y) -> k_lab
-    Eigen::Matrix3d jacobianK(const DetectorEvent& ev) const;   
+    Eigen::Matrix3d jacobianK(double px, double py) const;
 
     //! Return the diffractometer of the state
     sptrDiffractometer diffractometer() const;

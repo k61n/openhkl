@@ -28,6 +28,7 @@
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "InterpolatedState.h"
+#include "Logger.h"
 #include "MatrixOperations.h"
 
 namespace nsx {
@@ -39,8 +40,8 @@ InterpolatedState::InterpolatedState(sptrDiffractometer diffractometer): Instrum
 
 InterpolatedState::InterpolatedState(const InstrumentState& s1, const InstrumentState& s2, double t): 
     InstrumentState(s1.diffractometer()),
-    axis(),
     transformation(),
+    axis(),
     stepSize()
 {
     if (s1.diffractometer() != s2.diffractometer()) {
@@ -75,16 +76,25 @@ InterpolatedState::InterpolatedState(const InstrumentState& s1, const Instrument
     stepSize = 2.0*std::atan2(sin_theta2, cos_theta2);
 }
 
-Eigen::Matrix3d InterpolatedState::jacobianQ(const DetectorEvent& ev) const
+Eigen::Matrix3d InterpolatedState::jacobianQ(double px, double py) const
 {
-    auto position = _diffractometer->getDetector()->pixelPosition(ev._px, ev._py);
+    auto position = _diffractometer->getDetector()->pixelPosition(px, py);
     Eigen::Vector3d q0 = sampleQ(position).rowVector();
     // Jacobian of map from detector coords to sample q space
-    Eigen::Matrix3d J = sampleOrientationMatrix().transpose() * jacobianK(ev); 
+    Eigen::Matrix3d J = sampleOrientationMatrix().transpose() * jacobianK(px, py); 
     // take into account the rotation
     // negative sign is due to treating q as a column vector instead of a row vector
     J.col(2) = -stepSize * axis.cross(q0);
     return J;
+}
+
+double InterpolatedState::lorentzFactor(double px, double py) const
+{
+    auto position = _diffractometer->getDetector()->pixelPosition(px, py);
+    Eigen::Vector3d q0 = sampleQ(position).rowVector();
+    Eigen::Vector3d kf = sampleOrientationMatrix().transpose() * kfLab(position).rowVector().transpose();
+    const double lorentz = kf.norm() / std::fabs(kf.dot(axis.cross(q0)));
+    return lorentz;
 }
 
 } // end namespace nsx

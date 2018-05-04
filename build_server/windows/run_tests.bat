@@ -11,7 +11,7 @@ TYPE %BUILD_DIR%\tests\crystallography.tsv | C:\Python27\python.exe -c "import s
 
 MOVE /Y %BUILD_DIR%\tests\crystallography.tsv_dos %BUILD_DIR%\tests\crystallography.tsv
 
-ninja test
+ctest --output-on-failure -V
 
 exit %errorlevel%
 

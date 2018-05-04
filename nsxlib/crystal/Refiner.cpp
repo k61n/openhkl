@@ -175,8 +175,13 @@ int Refiner::updatePredictions(PeakList& peaks) const
             continue;
         }
         
-        peak->setShape(Ellipsoid({events[0]._px, events[0]._py, events[0]._frame}, peak->getShape().metric()));
-        ++updated;
+        try {
+            peak->setShape(Ellipsoid({events[0]._px, events[0]._py, events[0]._frame}, peak->getShape().metric()));
+            ++updated;
+        } catch(...) {
+            peak->setSelected(false);
+        }
+        
     }
     return updated;
 }

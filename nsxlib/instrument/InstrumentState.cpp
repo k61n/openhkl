@@ -74,14 +74,6 @@ double InstrumentState::nu(const DirectVector& detector_position) const
     return nu;
 }
 
-double InstrumentState::lorentzFactor(const DirectVector& detector_position) const
-{
-    double g = gamma(detector_position);
-    double n = nu(detector_position);
-    double lorentz = 1.0/(sin(std::fabs(g))*cos(n));
-    return lorentz;
-}
-
 double InstrumentState::twoTheta(const DirectVector& detector_position) const
 {
     auto kf = kfLab(detector_position).rowVector();  
@@ -100,17 +92,17 @@ Eigen::Matrix3d InstrumentState::sampleOrientationMatrix() const
 }
 
 
-Eigen::Matrix3d InstrumentState::jacobianK(const DetectorEvent& ev) const
+Eigen::Matrix3d InstrumentState::jacobianK(double px, double py) const
 {
     auto detector = _diffractometer->getDetector();
 
     // Jacobian from (px, py, frame) to lab coordinates on detector
-    Eigen::Matrix3d dpdx = detector->jacobian(ev._px, ev._py);
+    Eigen::Matrix3d dpdx = detector->jacobian(px, py);
 
     const double nki = ki().rowVector().norm();
 
     // postion in lab space on the detector
-    Eigen::Vector3d p = detector->pixelPosition(ev._px, ev._py).vector();
+    Eigen::Vector3d p = detector->pixelPosition(px, py).vector();
 
     // Jacobian of position -> kf
     Eigen::Vector3d dp = p - samplePosition;

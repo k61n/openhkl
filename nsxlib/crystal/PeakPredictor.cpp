@@ -120,8 +120,12 @@ PeakList PeakPredictor::predictPeaks(sptrDataSet data, const std::vector<MillerI
         Eigen::Vector3d center = {event._px, event._py, event._frame};
 
         // dummy shape
-        peak->setShape(Ellipsoid(center, 1.0));
-        peaks.push_back(peak);
+        try {
+            peak->setShape(Ellipsoid(center, 1.0));
+            peaks.push_back(peak);
+        } catch(...) {
+            // invalid shape, nothing to do
+        }
     }
     return peaks;
 }

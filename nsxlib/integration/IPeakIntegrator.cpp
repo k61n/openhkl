@@ -116,6 +116,8 @@ void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_en
 
         for (auto peak: peaks) {
             bool result = regions[peak].advanceFrame(current_frame, mask, idx);
+            // this allows for partials at end of data
+            result |= idx == data->nFrames()-1;
 
             // done reading peak data
             if (result && !integrated[peak]) {           

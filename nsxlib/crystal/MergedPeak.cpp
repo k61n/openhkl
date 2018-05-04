@@ -42,6 +42,7 @@
 
 #include "UnitCell.h"
 #include "DataSet.h"
+#include "Logger.h"
 #include "MergedPeak.h"
 #include "MillerIndex.h"
 #include "Peak3D.h"
@@ -154,10 +155,8 @@ std::pair<MergedPeak, MergedPeak> MergedPeak::split() const
             p2.addPeak(p);
         }
     }
-
     return std::make_pair(p1, p2);
 }
-
 
 bool operator<(const MergedPeak& p, const MergedPeak& q)
 {
@@ -196,6 +195,7 @@ double MergedPeak::chi2() const
         const double x = (I.value() - I_merge) / sigma_merge;
         chi_sq += x*x/N;
     }
+
     return chi_sq;
 }
 

@@ -39,7 +39,7 @@ static PeakFactors peakFactors(nsx::sptrPeak3D peak)
     PeakFactors peak_factors;
     peak_factors.gamma = state.gamma(position);
     peak_factors.nu = state.nu(position);
-    peak_factors.lorentz = state.lorentzFactor(position);
+    peak_factors.lorentz = state.lorentzFactor(coord[0], coord[1]);
 
     return peak_factors;
 }

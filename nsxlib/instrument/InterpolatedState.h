@@ -42,9 +42,12 @@ public:
     InterpolatedState(const InstrumentState& s1, const InstrumentState& s2, double t);
 
     //! Compute the jacobian of the transformation (x,y,frame) -> q_sample
-    Eigen::Matrix3d jacobianQ(const DetectorEvent& ev) const;
+    Eigen::Matrix3d jacobianQ(double px, double py) const;
+
+    double lorentzFactor(double px, double py) const;
 
     Eigen::Quaterniond transformation;
+    //! The axis of crystal rotation, in _sample space_.
     Eigen::Vector3d axis;
     double stepSize;
 

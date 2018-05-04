@@ -238,12 +238,12 @@ void AutoIndexer::refineSolutions()
         Minimizer minimizer;
         minimizer.initialize(params, 3*success);
         minimizer.set_f(residuals);  
-        minimizer.setxTol(1e-10);
-        minimizer.setfTol(1e-10);
-        minimizer.setgTol(1e-10);
+        minimizer.setxTol(1e-15);
+        minimizer.setfTol(1e-15);
+        minimizer.setgTol(1e-15);
 
         // fails to fit
-        if (!minimizer.fit(100)) {
+        if (!minimizer.fit(500)) {
             continue;
         }
 

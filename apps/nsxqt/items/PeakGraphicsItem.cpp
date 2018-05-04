@@ -216,7 +216,7 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     double intensity=_peak->getScaledIntensity().value();
     double sI=_peak->getScaledIntensity().sigma();
     info+="Intensity ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";
-    double l = state.lorentzFactor(position);
+    double l = state.lorentzFactor(c[0], c[1]);
     info+="Cor. int. ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity/l,'f',2)+" ("+QString::number(sI/l,'f',2)+")\n";
     info += "p value (" + QString::number(_peak->pValue(), 'f', 3) + ")\n";
 
