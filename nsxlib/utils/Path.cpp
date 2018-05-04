@@ -1,3 +1,9 @@
+#if defined(_WIN32)
+#include <direct.h>
+#else
+#include <sys/stat.h>
+#endif
+
 #include <cstdlib>
 #include <fstream>
 #include <mutex>
@@ -65,6 +71,26 @@ std::string fileDirname(const std::string& input_path)
     }
 
     return output_path;
+}
+
+void makeDirectory(const std::string& path, int mode)
+{
+
+    auto components = split(path,fileSeparator());
+
+    std::vector<std::string> intermediate_paths;
+    intermediate_paths.reserve(components.size());
+
+    for (auto comp : components) {
+        intermediate_paths.push_back(comp);
+        auto inner_path = join(intermediate_paths,fileSeparator());
+        #if defined(_WIN32)
+            _mkdir(inner_path.c_str());
+        #else
+            mkdir(inner_path.c_str(),mode);
+        #endif
+    }
+
 }
 
 void setArgv(const char* nsx_path)
