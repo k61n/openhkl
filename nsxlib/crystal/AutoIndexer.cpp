@@ -243,7 +243,7 @@ void AutoIndexer::refineSolutions()
         minimizer.setgTol(1e-15);
 
         // fails to fit
-        if (!minimizer.fit(100)) {
+        if (!minimizer.fit(500)) {
             continue;
         }
 
