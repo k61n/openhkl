@@ -60,9 +60,6 @@ std::string applicationDataPath();
 //! Return true if the file exists
 bool fileExists(const std::string& filename);
 
-//! Set argv of running process to nsxlib
-void setArgv(const char* argv);
-
 std::string diffractometersPath();
 
 } // end namespace nsx

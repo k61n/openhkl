@@ -57,16 +57,16 @@ endif()
 add_executable(make_resource ${CMAKE_SOURCE_DIR}/scripts/make_resource.cpp)
 add_executable(make_resources_map ${CMAKE_SOURCE_DIR}/scripts/make_resources_map.cpp)
 
-configure_file(${CMAKE_SOURCE_DIR}/cmake/resources_map.h.in ${CMAKE_BINARY_DIR}/include/nsxlib/ResourcesMap.h)
-configure_file(${CMAKE_SOURCE_DIR}/cmake/resources_map.cpp.in ${CMAKE_BINARY_DIR}/src/nsxlib/ResourcesMap.cpp)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/ResourcesMap.h.in ${CMAKE_BINARY_DIR}/include/nsxlib/ResourcesMap.h)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/ResourcesMap.cpp.in ${CMAKE_BINARY_DIR}/src/nsxlib/ResourcesMap.cpp)
 
 file(GLOB_RECURSE NSX_RESOURCES ${CMAKE_SOURCE_DIR}/resources/*.yml)
 file(WRITE ${CMAKE_BINARY_DIR}/generate-nsx-resources.cmake 
  "foreach (res_file ${NSX_RESOURCES})
     get_filename_component(NSX_RESOURCE_NAME \${res_file} NAME_WE)
 
-    configure_file(${CMAKE_SOURCE_DIR}/cmake/resource_template.h.in ${CMAKE_BINARY_DIR}/include/nsxlib/Resource\${NSX_RESOURCE_NAME}.h)
-    configure_file(${CMAKE_SOURCE_DIR}/cmake/resource_template.cpp.in ${CMAKE_BINARY_DIR}/src/nsxlib/Resource\${NSX_RESOURCE_NAME}.cpp)
+    configure_file(${CMAKE_SOURCE_DIR}/cmake/Resource.h.in ${CMAKE_BINARY_DIR}/include/nsxlib/Resource\${NSX_RESOURCE_NAME}.h)
+    configure_file(${CMAKE_SOURCE_DIR}/cmake/Resource.cpp.in ${CMAKE_BINARY_DIR}/src/nsxlib/Resource\${NSX_RESOURCE_NAME}.cpp)
     execute_process(COMMAND ${CMAKE_BINARY_DIR}/make_resource \${res_file} ${CMAKE_BINARY_DIR}/src/nsxlib/Resource\${NSX_RESOURCE_NAME}.cpp)
 
     get_filename_component(NSX_RESOURCE_DIR \${res_file} DIRECTORY)
@@ -79,20 +79,6 @@ add_custom_target(generate-nsx-resources COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BIN
 add_dependencies(generate-nsx-resources make_resource)
 add_dependencies(generate-nsx-resources make_resources_map)
   
-###########################################################################
-# Now add in all the components
-###########################################################################
-
-# Build the config.h on the fly
-if (UNIX)
-  set(APPLICATION_DATA_PATH ${CMAKE_INSTALL_PREFIX}/share/nsxtool)
-elseif (WIN32)
-  set(APPLICATION_DATA_PATH ${CMAKE_INSTALL_PREFIX}\\share\\nsxtool)
-  # take care of pesky backslashes in windows path names
-  STRING(REGEX REPLACE "\\\\" "\\\\\\\\" APPLICATION_DATA_PATH ${APPLICATION_DATA_PATH})
-endif()
-configure_file(${CMAKE_SOURCE_DIR}/cmake/NSXConfig.h.in ${CMAKE_BINARY_DIR}/include/nsxlib/NSXConfig.h)
-
 ###########################################################################
 # RPATH manipulation
 ###########################################################################
