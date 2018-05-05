@@ -11,15 +11,10 @@
 #include <stdexcept>
 #include <string>
 
-#include "NSXConfig.h"
 #include "Path.h"
 #include "StringIO.h"
 
 namespace nsx {
-
-static std::string g_nsx_path("");
-
-std::mutex g_nsx_path_mutex;
 
 std::string fileSeparator()
 {
@@ -91,12 +86,6 @@ void makeDirectory(const std::string& path, int mode)
         #endif
     }
 
-}
-
-void setArgv(const char* nsx_path)
-{
-    std::lock_guard<std::mutex> guard(g_nsx_path_mutex);
-    g_nsx_path = nsx_path;
 }
 
 std::string homeDirectory()

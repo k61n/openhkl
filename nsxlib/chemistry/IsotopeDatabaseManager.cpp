@@ -15,7 +15,7 @@ std::map<std::string,ChemicalPropertyType> IsotopeDatabaseManager::PropertyTypes
 
 IsotopeDatabaseManager::IsotopeDatabaseManager()
 {
-    std::string databaseFile = buildPath({"databases","isotopes.yml"},applicationDataPath());
+    std::string databaseFile = buildPath({"databases","Isotopes.yml"},applicationDataPath());
 
     // No file existence checking, the YAML database is part of the distribution
     YAML::Node database = YAML::LoadFile(databaseFile);
