@@ -36,6 +36,7 @@
 #include <string>
 
 #include "AutoIndexer.h"
+#include "DataSet.h"
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "Experiment.h"
@@ -194,6 +195,7 @@ void AutoIndexer::refineSolutions()
         Eigen::Matrix3d B = cell->reciprocalBasis();
         std::vector<Eigen::RowVector3d> hkls;
         std::vector<Eigen::RowVector3d> qs;
+        std::vector<Eigen::Matrix3d> As;
 
         PeakFilter peak_filter;
         PeakList filtered_peaks;
@@ -205,6 +207,14 @@ void AutoIndexer::refineSolutions()
             MillerIndex hkld(peak->q(), *cell);
             hkls.emplace_back(hkld.rowVector().cast<double>());
             qs.emplace_back(peak->q().rowVector());
+
+            Eigen::Vector3d c = peak->getShape().center();
+            Eigen::Matrix3d M = peak->getShape().metric();
+            auto state = peak->data()->interpolatedState(c[2]);
+            Eigen::Matrix3d J = state.jacobianQ(c[0], c[1]);
+            Eigen::Matrix3d JI = J.inverse();
+
+            As.emplace_back(JI.transpose() * M * JI);
         }
 
         // The number of peaks must be at least for a proper minimization

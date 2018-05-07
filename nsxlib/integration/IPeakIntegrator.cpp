@@ -115,12 +115,29 @@ void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_en
         }
 
         for (auto peak: peaks) {
+
             bool result = regions[peak].advanceFrame(current_frame, mask, idx);
             // this allows for partials at end of data
             result |= idx == data->nFrames()-1;
 
             // done reading peak data
-            if (result && !integrated[peak]) {           
+            if (result && !integrated[peak]) {      
+                // debugging
+                auto uc = peak->activeUnitCell();
+
+                if (uc) {
+                    MillerIndex hkl(peak->q(), *peak->activeUnitCell());
+
+                    const Peak3D& p = *peak;
+
+                    if (hkl[0] == -7 && hkl[1] == 10 && hkl[2] == -32) {
+                        std::cout << "test peak found" << std::endl;
+                        std::cout << "..." << std::endl;
+                        std::cout << p.getShape().metric() << std::endl;
+                        volatile double x = 999.0;
+                    }
+                }
+
                 regions[peak].data().computeStandard();            
                 try {
                     if (compute(peak, regions[peak])) {

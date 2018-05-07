@@ -192,7 +192,7 @@ bool IntegrationRegion::advanceFrame(const Eigen::MatrixXd& image, const Eigen::
     long ymin = std::max(0L, std::lround(lower[1]));
 
     long xmax = std::min(long(image.cols()), std::lround(upper[0]));
-    long ymax = std::min(long(image.rows()), std::lround(upper[0]));
+    long ymax = std::min(long(image.rows()), std::lround(upper[1]));
 
     for (auto x = xmin; x < xmax; ++x) {
         for (auto y = ymin; y < ymax; ++y) {
