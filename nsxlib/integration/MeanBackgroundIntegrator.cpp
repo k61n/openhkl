@@ -21,17 +21,6 @@ bool MeanBackgroundIntegrator::compute(sptrPeak3D peak, const IntegrationRegion&
     const auto& events = region.data().events();
     const auto& counts = region.data().counts();
 
-    // debugging
-    auto c = peak->getShape().center();
-
-    double y = 470.0 + (880-470.0) / 400.0 * (c[0]-400.0);
-
-    if (c[1] > y && c[0] > 400) {
-        std::cout << "debug peak" << std::endl;
-        std::cout << "coords " << c.transpose() << std::endl;
-        std::cout << "events " << events.size() << std::endl;
-    }
-
     // TODO: should this be hard-coded??
     if (events.size() < 20) {
         throw std::runtime_error("MeanBackgroundIntegrator::compute(): too few data points");

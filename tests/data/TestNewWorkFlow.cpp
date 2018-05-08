@@ -90,6 +90,12 @@ int main()
         unsigned int indexed_peaks = 0;
 
         for (auto&& peak: selected_peaks) {
+            double d = 1.0 / peak->q().rowVector().norm();
+
+            if (d < 2.0) {
+                continue;
+            }
+
             indexer.addPeak(peak);
             ++indexed_peaks;
         }
