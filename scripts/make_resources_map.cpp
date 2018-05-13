@@ -31,7 +31,7 @@ int main(int argc, char** argv)
     fin.close();
 
     auto pos = contents.rfind("};");
-    contents.insert(pos,"{{\""+resource_type+"\",\""+resource_name+"\"},&resource_"+resource_name+"},\n");
+    contents.insert(pos,"{{\""+resource_type+"\",\""+resource_name+"\"},&resource_"+resource_type+"_"+resource_name+"},\n");
 
     pos = contents.rfind("namespace nsx {");
     contents.insert(pos-1,"#include \"Resource"+resource_name+".h\"\n");

@@ -17,7 +17,7 @@ std::string load_file(std::ifstream& fin)
 int main(int argc, char** argv)
 {
     if (argc < 3) {
-        std::cerr<<"USAGE: "<<argv[0]<<"{res file} {res cpp}\n\nSet the {res header}.cpp file using the contents of {res file}file\n";
+        std::cerr<<"USAGE: "<<argv[0]<<"{res file} {res cpp}\n\nSet the {res cpp}.cpp file using the contents of {res file}file\n";
         return 1;
     }
 

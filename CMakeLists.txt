@@ -49,35 +49,6 @@ endif()
 if(NSX_DOCS)
   include(Doxygen)
 endif()
-
-###########################################################################
-# Setup resources manager helper program
-###########################################################################
-
-add_executable(make_resource ${CMAKE_SOURCE_DIR}/scripts/make_resource.cpp)
-add_executable(make_resources_map ${CMAKE_SOURCE_DIR}/scripts/make_resources_map.cpp)
-
-configure_file(${CMAKE_SOURCE_DIR}/cmake/ResourcesMap.h.in ${CMAKE_BINARY_DIR}/include/nsxlib/ResourcesMap.h)
-configure_file(${CMAKE_SOURCE_DIR}/cmake/ResourcesMap.cpp.in ${CMAKE_BINARY_DIR}/src/nsxlib/ResourcesMap.cpp)
-
-file(GLOB_RECURSE NSX_RESOURCES ${CMAKE_SOURCE_DIR}/resources/*.yml)
-file(WRITE ${CMAKE_BINARY_DIR}/generate-nsx-resources.cmake 
- "foreach (res_file ${NSX_RESOURCES})
-    get_filename_component(NSX_RESOURCE_NAME \${res_file} NAME_WE)
-
-    configure_file(${CMAKE_SOURCE_DIR}/cmake/Resource.h.in ${CMAKE_BINARY_DIR}/include/nsxlib/Resource\${NSX_RESOURCE_NAME}.h)
-    configure_file(${CMAKE_SOURCE_DIR}/cmake/Resource.cpp.in ${CMAKE_BINARY_DIR}/src/nsxlib/Resource\${NSX_RESOURCE_NAME}.cpp)
-    execute_process(COMMAND ${CMAKE_BINARY_DIR}/make_resource \${res_file} ${CMAKE_BINARY_DIR}/src/nsxlib/Resource\${NSX_RESOURCE_NAME}.cpp)
-
-    get_filename_component(NSX_RESOURCE_DIR \${res_file} DIRECTORY)
-    get_filename_component(NSX_RESOURCE_TYPE \${NSX_RESOURCE_DIR} NAME)
-    execute_process(COMMAND ${CMAKE_BINARY_DIR}/make_resources_map \${NSX_RESOURCE_TYPE} \${NSX_RESOURCE_NAME} ${CMAKE_BINARY_DIR}/src/nsxlib/ResourcesMap.cpp)
-  endforeach ()"
-)
-
-add_custom_target(generate-nsx-resources COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/generate-nsx-resources.cmake)
-add_dependencies(generate-nsx-resources make_resource)
-add_dependencies(generate-nsx-resources make_resources_map)
   
 ###########################################################################
 # RPATH manipulation
