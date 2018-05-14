@@ -109,8 +109,20 @@ void AutoIndexer::computeFFTSolutions()
     PeakFilter peak_filter;
     auto filtered_peaks = peak_filter.selected(_peaks,true);
 
-    for (auto peak : filtered_peaks) {
-        qvects.push_back(peak->q());
+    for (auto i = 0; i < filtered_peaks.size(); ++i) {
+        auto& peak = filtered_peaks[i];
+        auto q = peak->q().rowVector();
+        qvects.push_back(ReciprocalVector(q));
+        //qvects.push_back(ReciprocalVector(-q));
+
+        #if 0
+        for (auto j = i+1; j < filtered_peaks.size(); ++j) {
+            auto p = filtered_peaks[j]->q().rowVector();
+            qvects.push_back(ReciprocalVector(q-p));
+            qvects.push_back(ReciprocalVector(q+p));
+            qvects.push_back(ReciprocalVector(p-q));
+        }
+        #endif
     }
 
     // Check that a minimum number of peaks have been selected for indexing
@@ -195,7 +207,7 @@ void AutoIndexer::refineSolutions()
         Eigen::Matrix3d B = cell->reciprocalBasis();
         std::vector<Eigen::RowVector3d> hkls;
         std::vector<Eigen::RowVector3d> qs;
-        std::vector<Eigen::Matrix3d> As;
+        std::vector<Eigen::Matrix3d> wt;
 
         PeakFilter peak_filter;
         PeakList filtered_peaks;
@@ -214,7 +226,19 @@ void AutoIndexer::refineSolutions()
             Eigen::Matrix3d J = state.jacobianQ(c[0], c[1]);
             Eigen::Matrix3d JI = J.inverse();
 
-            As.emplace_back(JI.transpose() * M * JI);
+            Eigen::Matrix3d A = JI.transpose() * M * JI;
+
+            Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(A);
+            Eigen::Matrix3d U = solver.eigenvectors();
+
+            Eigen::Matrix3d D;
+            D.setZero();
+
+            for (auto i = 0; i < 3; ++i) {
+                D(i,i) = std::sqrt(solver.eigenvalues()[i]);
+            }
+
+            wt.emplace_back(U.transpose() * D * U);
         }
 
         // The number of peaks must be at least for a proper minimization
@@ -223,12 +247,13 @@ void AutoIndexer::refineSolutions()
         }
 
         // Lambda to compute residuals
-        auto residuals = [&B, &hkls, &qs] (Eigen::VectorXd& f) -> int
+        auto residuals = [&B, &hkls, &qs, &wt] (Eigen::VectorXd& f) -> int
         {
             int n = f.size() / 3;
 
             for (int i = 0; i < n; ++i) {
-                auto dq = qs[i]-hkls[i]*B;
+                //auto dq = wt[i]*(qs[i]-hkls[i]*B).transpose();
+                auto dq = qs[i] - hkls[i]*B;
                 f(3*i+0) = dq(0);
                 f(3*i+1) = dq(1);
                 f(3*i+2) = dq(2);

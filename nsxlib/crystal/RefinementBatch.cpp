@@ -37,6 +37,7 @@
 #include <algorithm>
 #include <limits>
 
+#include "DataSet.h"
 #include "InstrumentState.h"
 #include "MillerIndex.h"
 #include "Minimizer.h"
@@ -74,6 +75,21 @@ RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks)
     for (auto peak : peaks) {
         MillerIndex hkl(peak->q(), *_cell);
         _hkls.push_back(hkl.rowVector().cast<double>());
+
+        Eigen::Vector3d c = peak->getShape().center();
+        Eigen::Matrix3d M = peak->getShape().metric();
+        auto state = peak->data()->interpolatedState(c[2]);
+        Eigen::Matrix3d J = state.jacobianQ(c[0], c[1]);
+        Eigen::Matrix3d JI = J.inverse();
+        Eigen::Matrix3d A = JI.transpose() * M * JI;
+        Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(A);
+        Eigen::Matrix3d U = solver.eigenvectors();
+        Eigen::Matrix3d D;
+        D.setZero();
+        for (auto i = 0; i < 3; ++i) {
+            D(i,i) = std::sqrt(solver.eigenvalues()[i]);
+        }
+        _wts.emplace_back(U.transpose() * D * U);
     }
 
     UnitCell constrained = _cell->applyNiggliConstraints();
@@ -172,11 +188,18 @@ int RefinementBatch::residuals(Eigen::VectorXd &fvec)
     for (unsigned int i = 0; i < _peaks.size(); ++i) {
         const Eigen::RowVector3d q0 = _peaks[i]->q().rowVector();
         const Eigen::RowVector3d q1 = _hkls[i]*UB;
-        const Eigen::RowVector3d dq = q1-q0;
+        const Eigen::RowVector3d dq = _wts[i]*(q1-q0).transpose();
 
-        fvec(3*i)   = dq[0];
-        fvec(3*i+1) = dq[1];
-        fvec(3*i+2) = dq[2];
+        if (dq.squaredNorm() < 10.0) {
+            fvec(3*i)   = dq[0];
+            fvec(3*i+1) = dq[1];
+            fvec(3*i+2) = dq[2];
+        }
+        else {
+            fvec(3*i) = 0.0;
+            fvec(3*i+1) = 0.0;
+            fvec(3*i+2) = 0.0;
+        }
     }
     return 0;
 }

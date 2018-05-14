@@ -55,21 +55,14 @@ class RefinementBatch {
 public:
     // needed for swig
     RefinementBatch() = default;
-
     RefinementBatch(const UnitCell& uc, const PeakList& peaksmax);
 
     void refineU();
-
     void refineB();
-
     void refineDetectorOffset(InstrumentStateList& states);
-
     void refineSamplePosition(InstrumentStateList& states);
-
     void refineSampleOrientation(InstrumentStateList& states);
-
     bool refine(unsigned int max_iter = 100);
-
     int residuals(Eigen::VectorXd& fvec);
 
     const PeakList& peaks() const;
@@ -106,6 +99,8 @@ private:
     std::vector<Eigen::RowVector3d> _hkls;
 
     std::vector<std::vector<int>> _constraints;
+
+    std::vector<Eigen::Matrix3d> _wts;
 };
 
 } // end namespace nsx
