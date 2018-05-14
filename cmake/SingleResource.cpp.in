@@ -1,6 +1,6 @@
 // This is a cmake auto-generated file
 
-#include "Resource@NSX_RESOURCE_NAME@.h"
+#include "SingleResource@NSX_RESOURCE_NAME@.h"
 
 namespace nsx {
 

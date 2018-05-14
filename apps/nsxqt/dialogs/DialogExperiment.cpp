@@ -5,7 +5,7 @@
 #include <QStringList>
 
 #include <nsxlib/Path.h>
-#include <nsxlib/ResourcesMap.h>
+#include <nsxlib/Resources.h>
 
 #include "DialogExperiment.h"
 #include "ui_ExperimentDialog.h"
@@ -17,11 +17,10 @@ DialogExperiment::DialogExperiment(QWidget *parent) : QDialog(parent), ui(new Ui
     // The instrument names will be inserted alphabetically
     ui->instrument->setInsertPolicy(QComboBox::InsertAlphabetically);
 
-    for (auto resource : nsx::getResources()) {
-        auto res = resource.first;
-        if (res.first.compare("instruments")) {
-            ui->instrument->addItem(QString::fromStdString(res.second));
-        }
+    auto resources_name = nsx::getResourcesName("instruments");
+
+    for (auto res_name : resources_name) {
+        ui->instrument->addItem(QString::fromStdString(res_name));
     }
 }
 

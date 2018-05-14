@@ -4,13 +4,13 @@ GET_SUBDIRECTORIES(NSXLIB_SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
 # Setup resources manager helper program
 ###########################################################################
 
-add_executable(make_resource ${CMAKE_SOURCE_DIR}/scripts/make_resource.cpp)
-add_executable(make_resources_map ${CMAKE_SOURCE_DIR}/scripts/make_resources_map.cpp)
+add_executable(make_single_resource ${CMAKE_SOURCE_DIR}/scripts/make_single_resource.cpp)
+add_executable(update_resources ${CMAKE_SOURCE_DIR}/scripts/update_resources.cpp)
 
-configure_file(${CMAKE_SOURCE_DIR}/cmake/ResourcesMap.h.in ${CMAKE_CURRENT_BINARY_DIR}/resources/ResourcesMap.h)
-configure_file(${CMAKE_SOURCE_DIR}/cmake/ResourcesMap.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/tmp/ResourcesMap.cpp)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/Resources.h.in ${CMAKE_CURRENT_BINARY_DIR}/resources/Resources.h)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/Resources.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/tmp/Resources.cpp)
 
-set(NSXLIB_RESOURCES_CPP ${CMAKE_CURRENT_BINARY_DIR}/resources/ResourcesMap.cpp)
+set(NSXLIB_RESOURCES_CPP ${CMAKE_CURRENT_BINARY_DIR}/resources/Resources.cpp)
 
 file(GLOB_RECURSE NSX_RESOURCES ${CMAKE_SOURCE_DIR}/resources/*.yml)
 foreach (NSX_RESOURCE ${NSX_RESOURCES})
@@ -18,31 +18,31 @@ foreach (NSX_RESOURCE ${NSX_RESOURCES})
     get_filename_component(NSX_RESOURCE_DIR ${NSX_RESOURCE} DIRECTORY)
     get_filename_component(NSX_RESOURCE_TYPE ${NSX_RESOURCE_DIR} NAME)
 
-    configure_file(${CMAKE_SOURCE_DIR}/cmake/Resource.h.in   ${CMAKE_CURRENT_BINARY_DIR}/resources/Resource${NSX_RESOURCE_NAME}.h)
-    configure_file(${CMAKE_SOURCE_DIR}/cmake/Resource.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/tmp/Resource${NSX_RESOURCE_NAME}.cpp)
-    list(APPEND NSXLIB_RESOURCES_CPP ${CMAKE_CURRENT_BINARY_DIR}/resources/Resource${NSX_RESOURCE_NAME}.cpp)
+    configure_file(${CMAKE_SOURCE_DIR}/cmake/SingleResource.h.in   ${CMAKE_CURRENT_BINARY_DIR}/resources/SingleResource${NSX_RESOURCE_NAME}.h)
+    configure_file(${CMAKE_SOURCE_DIR}/cmake/SingleResource.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/tmp/SingleResource${NSX_RESOURCE_NAME}.cpp)
+    list(APPEND NSXLIB_RESOURCES_CPP ${CMAKE_CURRENT_BINARY_DIR}/resources/SingleResource${NSX_RESOURCE_NAME}.cpp)
     add_custom_command(
-        OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/resources/Resource${NSX_RESOURCE_NAME}.cpp
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/tmp/Resource${NSX_RESOURCE_NAME}.cpp ${CMAKE_CURRENT_BINARY_DIR}/resources/Resource${NSX_RESOURCE_NAME}.cpp
-        COMMAND ${CMAKE_CURRENT_BINARY_DIR}/make_resource ${NSX_RESOURCE} ${CMAKE_CURRENT_BINARY_DIR}/resources/Resource${NSX_RESOURCE_NAME}.cpp
-        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/make_resource ${CMAKE_SOURCE_DIR}/cmake/Resource.h.in
-        COMMENT "Generating ${CMAKE_CURRENT_BINARY_DIR}/resources/Resource${NSX_RESOURCE_NAME}.cpp resource"
+        OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/resources/SingleResource${NSX_RESOURCE_NAME}.cpp
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/tmp/SingleResource${NSX_RESOURCE_NAME}.cpp ${CMAKE_CURRENT_BINARY_DIR}/resources/SingleResource${NSX_RESOURCE_NAME}.cpp
+        COMMAND ${CMAKE_CURRENT_BINARY_DIR}/make_single_resource ${NSX_RESOURCE} ${CMAKE_CURRENT_BINARY_DIR}/resources/SingleResource${NSX_RESOURCE_NAME}.cpp
+        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/make_single_resource ${CMAKE_SOURCE_DIR}/cmake/SingleResource.h.in
+        COMMENT "Generating ${CMAKE_CURRENT_BINARY_DIR}/resources/SingleResource${NSX_RESOURCE_NAME}.cpp resource"
     )
 endforeach()
 
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/generate-nsx-resources.cmake 
- "execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/tmp/ResourcesMap.cpp ${CMAKE_CURRENT_BINARY_DIR}/resources/ResourcesMap.cpp)
+ "execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/tmp/Resources.cpp ${CMAKE_CURRENT_BINARY_DIR}/resources/Resources.cpp)
   foreach (NSX_RESOURCE ${NSX_RESOURCES})
     get_filename_component(NSX_RESOURCE_NAME \${NSX_RESOURCE} NAME_WE)
     get_filename_component(NSX_RESOURCE_DIR \${NSX_RESOURCE} DIRECTORY)
     get_filename_component(NSX_RESOURCE_TYPE \${NSX_RESOURCE_DIR} NAME)
 
-    execute_process(COMMAND ${CMAKE_CURRENT_BINARY_DIR}/make_resources_map \${NSX_RESOURCE_TYPE} \${NSX_RESOURCE_NAME} ${CMAKE_CURRENT_BINARY_DIR}/resources/ResourcesMap.cpp)
+    execute_process(COMMAND ${CMAKE_CURRENT_BINARY_DIR}/update_resources \${NSX_RESOURCE_TYPE} \${NSX_RESOURCE_NAME} ${CMAKE_CURRENT_BINARY_DIR}/resources/Resources.cpp)
   endforeach ()"
 )
 
 add_custom_target(generate-nsx-resources COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/generate-nsx-resources.cmake)
-add_dependencies(generate-nsx-resources make_resources_map)
+add_dependencies(generate-nsx-resources update_resources)
 
 set_source_files_properties(${NSXLIB_RESOURCES_CPP} PROPERTIES GENERATED TRUE)
 

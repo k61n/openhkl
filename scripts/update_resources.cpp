@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     contents.insert(pos,"{{\""+resource_type+"\",\""+resource_name+"\"},&resource_"+resource_type+"_"+resource_name+"},\n");
 
     pos = contents.rfind("namespace nsx {");
-    contents.insert(pos-1,"#include \"Resource"+resource_name+".h\"\n");
+    contents.insert(pos-1,"#include \"SingleResource"+resource_name+".h\"\n");
 
     std::ofstream fout(resources_map_cpp_filename.c_str());
     fout << contents;

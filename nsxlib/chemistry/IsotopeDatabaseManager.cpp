@@ -2,6 +2,7 @@
 
 #include "IsotopeDatabaseManager.h"
 #include "Path.h"
+#include "Resources.h"
 #include "Units.h"
 #include "YAMLType.h"
 
@@ -15,19 +16,16 @@ std::map<std::string,ChemicalPropertyType> IsotopeDatabaseManager::PropertyTypes
 
 IsotopeDatabaseManager::IsotopeDatabaseManager()
 {
-    std::string databaseFile = buildPath({"databases","Isotopes.yml"},applicationDataPath());
+    YAML::Node isotopes_database = findResource({"databases","Isotopes"});
 
-    // No file existence checking, the YAML database is part of the distribution
-    YAML::Node database = YAML::LoadFile(databaseFile);
-
-    for (const auto& propertyNode : database["Properties"]) {
+    for (const auto& propertyNode : isotopes_database["Properties"]) {
     	std::pair<std::string,std::string> prop = std::make_pair(propertyNode.second["type"].as<std::string>(),propertyNode.second["unit"].as<std::string>());
     	_properties.insert(std::make_pair(propertyNode.first.as<std::string>(),prop));
     }
 
     UnitsManager* um=UnitsManager::Instance();
 
-    for (const auto& isotopeNode : database["Isotopes"]) {
+    for (const auto& isotopeNode : isotopes_database["Isotopes"]) {
     	isotopeProperties props;
         for (const auto& propertyNode : isotopeNode.second) {
 

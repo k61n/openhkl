@@ -4,7 +4,7 @@
 #include "DetectorFactory.h"
 #include "Gonio.h"
 #include "Path.h"
-#include "ResourcesMap.h"
+#include "Resources.h"
 #include "Sample.h"
 #include "Source.h"
 

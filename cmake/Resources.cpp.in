@@ -5,7 +5,7 @@
 #include <stdexcept>
 
 #include "Path.h"
-#include "ResourcesMap.h"
+#include "Resources.h"
 
 
 namespace nsx {
@@ -13,7 +13,7 @@ namespace nsx {
 std::map<std::pair<std::string,std::string>,resource_function> resources_map = {
 };
 
-const std::map<std::pair<std::string,std::string>,resource_function>& resourcesMap()
+const std::map<std::pair<std::string,std::string>,resource_function>& getResources()
 {
     return resources_map;
 }
@@ -23,7 +23,7 @@ YAML::Node findResource(const std::pair<std::string,std::string>& resource)
     auto it = resources_map.find(resource);
 
     if (it == resources_map.end()) {
-        throw std::runtime_error("Unknown resource: "+resource.first+"/"+resource.second);
+        throw std::runtime_error("Unknown resource: "+resource.first+" - "+resource.second);
     }
 
     auto user_resource_dir = buildPath({applicationDataPath(),resource.first});
@@ -38,15 +38,17 @@ YAML::Node findResource(const std::pair<std::string,std::string>& resource)
     return YAML::LoadFile(user_resource_path);
 }
 
-std::map<std::string,std::string> resourcesTypes()
+std::vector<std::string> getResourcesName(const std::string& resource_type)
 {
-    std::map<std::string,std::string> resources_types;
+    std::vector<std::string> resources_name;
     
     for (auto p : resources_map) {
-        resources_types.insert(std::make_pair(p.first.first,p.first.second));
+        if (p.first.first.compare(resource_type)==0) {
+            resources_name.push_back(p.first.second);
+        }
     }
 
-    return resources_types;
+    return resources_name;
 }
 
 } // end namespace nsx

@@ -6,6 +6,7 @@
 #include <map>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include <yaml-cpp/yaml.h>
 
@@ -13,10 +14,10 @@ namespace nsx {
 
 using resource_function=std::function<const std::string&()>;
 
-const std::map<std::pair<std::string,std::string>,resource_function>& resourcesMap();
+const std::map<std::pair<std::string,std::string>,resource_function>& getResources();
 
 YAML::Node findResource(const std::pair<std::string,std::string>& resource);
 
-std::map<std::string,std::string> resourcesTypes();
+std::vector<std::string> getResourcesName(const std::string& resource_type);
 
 } // end namespace nsx
