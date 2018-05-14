@@ -46,8 +46,8 @@ std::pair<std::string,std::string> splitFileExtension(const std::string& input_p
 //! Get the directory name of a given path
 std::string fileDirname(const std::string& input_path);
 
-//! Create a directory. The directory can be nested
-void makeDirectory(const std::string& path, int mode=0700);
+//! Create a directory. The directory can be nested (0x1C0 is 0700)
+void makeDirectory(const std::string& path, int mode=0x1C0);
 
 std::string buildPath(const std::vector<std::string>& paths, const std::string& root="");
 
