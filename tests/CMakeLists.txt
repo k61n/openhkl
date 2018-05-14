@@ -1,4 +1,4 @@
-include_directories(${CMAKE_BINARY_DIR}/include)
+include_directories(${CMAKE_BINARY_DIR}/nsxlib/include)
 
 file(GLOB_RECURSE test_sources "*.cpp")
 file(GLOB_RECURSE test_headers "*.h")
