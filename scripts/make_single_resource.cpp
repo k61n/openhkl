@@ -1,15 +1,19 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 
-std::string load_file(std::ifstream& fin)
+std::vector<std::string> load_file(std::ifstream& fin)
 {
-    std::string contents;
-    fin.seekg(0, std::ios::end);
-    contents.reserve(fin.tellg());
-    fin.seekg(0, std::ios::beg);
-    contents.assign((std::istreambuf_iterator<char>(fin)),std::istreambuf_iterator<char>());
-    fin.close();
+    std::vector<std::string> contents;
+    while(fin.good()) {
+        std::string line;
+        getline(fin,line);
+        if (fin.eof()) {
+            break;
+        }
+        contents.push_back(line);
+    }
 
     return contents;
 }
@@ -36,11 +40,20 @@ int main(int argc, char** argv)
     // Read the current contents of the resources cpp file and insert the YAML contents
     std::ifstream resources_cpp_in(resource_cpp_filename.c_str());
     auto cpp_contents = load_file(resources_cpp_in);
-    auto pos = cpp_contents.find("data(");
-    cpp_contents.insert(pos+5,"R\"(" + yaml_contents + ")\"");
     resources_cpp_in.close();
+    for (size_t i=0; i<cpp_contents.size(); ++i) {
+        auto pos = cpp_contents[i].find("static std::string data =");
+        if (pos != std::string::npos) {
+            for (auto it=yaml_contents.rbegin(); it!=yaml_contents.rend();it++) {
+                cpp_contents.insert(cpp_contents.begin()+i+1,"\t\""+*it+"\"");
+            }
+            break;
+        }
+    }
 
     std::ofstream resources_cpp_out(resource_cpp_filename.c_str());
-    resources_cpp_out << cpp_contents;
+    for (auto line : cpp_contents) {
+        resources_cpp_out << line << std::endl;
+    }
     resources_cpp_out.close();
 }
