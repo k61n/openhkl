@@ -31,7 +31,9 @@ YAML::Node findResource(const std::pair<std::string,std::string>& resource)
     if (!fileExists(user_resource_path)) {
         makeDirectory(user_resource_dir);
         std::ofstream fout(user_resource_path);
-        fout << it->second();
+        for (auto line : it->second()) {
+            fout << line << std::endl;
+        }
         fout.close();
     }
 

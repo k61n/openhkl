@@ -42,10 +42,10 @@ int main(int argc, char** argv)
     auto cpp_contents = load_file(resources_cpp_in);
     resources_cpp_in.close();
     for (size_t i=0; i<cpp_contents.size(); ++i) {
-        auto pos = cpp_contents[i].find("static std::string data =");
+        auto pos = cpp_contents[i].find("static std::vector<std::string> data = {");
         if (pos != std::string::npos) {
             for (auto it=yaml_contents.rbegin(); it!=yaml_contents.rend();it++) {
-                cpp_contents.insert(cpp_contents.begin()+i+1,"\t\""+*it+"\"");
+                cpp_contents.insert(cpp_contents.begin()+i+1,"\t{\""+*it+"\"},");
             }
             break;
         }
