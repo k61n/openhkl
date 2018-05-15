@@ -129,13 +129,10 @@ struct IndexerParameters {
     auto fit_uc = solutions.front().first;
 
     Eigen::Matrix3d fit_A = fit_uc->basis();
-
-    // orientation issue
-    if (fit_A.determinant()*A.determinant() < 0) {
-        fit_A *= -1;
-    }
-
-    NSX_CHECK_ASSERT((A-fit_A).norm() < 1e-6);
+    Eigen::Matrix3d E = fit_A.inverse()*A;
+    
+    // square because of the orientation issue
+    NSX_CHECK_ASSERT((E*E-Eigen::Matrix3d::Identity()).norm() < 1e-10);
 
     std::cout << A << "\n-----------------------------" << std::endl;
     std::cout << fit_A << std::endl;
