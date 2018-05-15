@@ -135,7 +135,7 @@ struct IndexerParameters {
         fit_A *= -1;
     }
 
-    NSX_CHECK_ASSERT((A-fit_A).norm() < 1e-12);
+    NSX_CHECK_ASSERT((A-fit_A).norm() < 1e-8);
 
     std::cout << A << "\n-----------------------------" << std::endl;
     std::cout << fit_A << std::endl;
