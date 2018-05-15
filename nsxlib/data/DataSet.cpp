@@ -474,7 +474,7 @@ std::vector<DetectorEvent> DataSet::getEvents(const std::vector<ReciprocalVector
         }
 
         // now use bisection method to compute intersection to good accuracy
-        while (f1-f0 > 0.001) {
+        while (f1-f0 > 1e-10) {
             double f = 0.5*(f0+f1);
             auto state = interpolatedState(f);
             auto sign = compute_sign(q_vect, state);
