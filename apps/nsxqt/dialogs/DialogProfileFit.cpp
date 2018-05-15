@@ -5,6 +5,7 @@
 #include <nsxlib/DataSet.h>
 #include <nsxlib/FitProfile.h>
 #include <nsxlib/Peak3D.h>
+#include <nsxlib/PeakCoordinateSystem.h>
 #include <nsxlib/PeakFilter.h>
 #include <nsxlib/ShapeIntegrator.h>
 #include <nsxlib/ShapeLibrary.h>
@@ -45,6 +46,25 @@ DialogProfileFit::DialogProfileFit(nsx::sptrExperiment experiment,
     ui->frame->setMaximum(10000);
     ui->radius->setMaximum(10000);
     ui->nframes->setMaximum(10000);
+
+
+    // calculate reasonable values of sigmaD and sigmaM
+    Eigen::Matrix3d cov;
+    cov.setZero();
+
+    for (auto peak: peaks) {
+        nsx::PeakCoordinateSystem coord(peak);
+        auto shape = peak->getShape();
+        auto state = peak->data()->interpolatedState(shape.center()[2]);
+        Eigen::Matrix3d J = coord.jacobian();
+        cov += J*shape.inverseMetric()*J.transpose();
+    }
+
+    cov /= peaks.size();
+
+    // check this
+    ui->sigmaD->setValue(std::sqrt(0.5*(cov(0,0)+cov(1,1))));
+    ui->sigmaM->setValue(std::sqrt(cov(2,2)));
 
     connect(ui->drawFrame, SIGNAL(sliderMoved(int)), this, SLOT(drawFrame(int)));
 }
@@ -89,13 +109,13 @@ void DialogProfileFit::build()
         ui->drawFrame->setMaximum(nz-1);
     }
 
-    // todo: add to dialog
-    bool detector_space = true;
     nsx::AABB aabb;
+
+    bool detector_coords = ui->detectorCoords->isChecked();
 
     auto peakScale = ui->peakScale->value();
 
-    if (detector_space) {
+    if (detector_coords) {
         Eigen::Vector3d dx(nx, ny, nz);
         dx *= -0.5;
         aabb.setLower(-dx);
@@ -110,8 +130,8 @@ void DialogProfileFit::build()
     nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
     ProgressView view(this);
     view.watch(handler);
-    _library = nsx::sptrShapeLibrary(new nsx::ShapeLibrary);
-    nsx::ShapeIntegrator integrator(aabb, nx, ny, nz, detector_space);    
+    _library = nsx::sptrShapeLibrary(new nsx::ShapeLibrary(detector_coords));
+    nsx::ShapeIntegrator integrator(_library, aabb, nx, ny, nz);    
     integrator.setHandler(handler);
 
     for (auto data: _data) {

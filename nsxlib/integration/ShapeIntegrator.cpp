@@ -9,13 +9,12 @@
 
 namespace nsx {
 
-ShapeIntegrator::ShapeIntegrator(const AABB& aabb, int nx, int ny, int nz, bool detector_space): StrongPeakIntegrator(false, false), 
-    _library(new ShapeLibrary), 
+ShapeIntegrator::ShapeIntegrator(sptrShapeLibrary lib, const AABB& aabb, int nx, int ny, int nz): StrongPeakIntegrator(false, false), 
+    _library(lib), 
     _aabb(aabb),
     _nx(nx),
     _ny(ny),
-    _nz(nz),
-    _detectorSpace(detector_space)
+    _nz(nz)
 {
 
 }
@@ -52,7 +51,7 @@ bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
         // todo: variance here assumes Poisson (no gain or baseline)
         integrated_profile.addPoint(e.r2(x), counts[i]);
         
-        if (_detectorSpace) {
+        if (_library->detectorCoords()) {
             x -= peak->getShape().center();
             profile.addValue(x, dI);
         } else {

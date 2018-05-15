@@ -19,10 +19,13 @@ struct FitData;
 //!
 class ShapeLibrary {
 public:
-    ShapeLibrary();
+    ShapeLibrary(bool detector_coords);
     ~ShapeLibrary();
 
-    //! Add a refernce peak to the library
+    //! Return whether the library is stored in detector coords or Kabsch coords
+    bool detectorCoords() const;
+
+    //! Add a reference peak to the library
     bool addPeak(sptrPeak3D peak, FitProfile&& profile, IntegratedProfile&& integrated_profile);
 
     //! Update the fitted covariances
@@ -60,6 +63,9 @@ private:
 
     //! Components of the Cholesky factor of shape covariance matrix
     std::array<double, 6> _choleskyS;
+
+    //! Set true if the profiles are stored in detector space coordinates or false for Kabsch coords
+    bool _detectorCoords;
 };
 
 } // end namespace nsx
