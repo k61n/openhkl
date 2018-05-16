@@ -77,7 +77,7 @@ void AutoIndexer::autoIndex(const IndexerParameters& params)
     removeBad(_params.solutionCutoff);
 
     // refine the constrained unit cells in order to get the uncertainties
-    //refineConstraints();
+    // refineConstraints();
 
     if (_handler) {
         _handler->log("Done refining solutions, building solution table.");

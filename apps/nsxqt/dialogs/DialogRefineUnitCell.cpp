@@ -127,6 +127,11 @@ void DialogRefineUnitCell::refineParameters()
         }  else {
             nsx::info() << "Successfully refined parameters for numor " << d->filename();
 
+            if (ui->checkBoxRefineLattice->isChecked() && nbatches(d_peaks) == 1) {
+                nsx::info() << ">>> updating unit cell";
+                *_unitCell = *r.batches().front().cell();
+            }
+
             // TODO: decide how to handle this situation....
             #if 0
             int updated = r.updatePredictions(d_peaks);
