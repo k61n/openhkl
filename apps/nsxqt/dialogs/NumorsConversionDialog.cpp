@@ -14,6 +14,7 @@
 #include <nsxlib/InstrumentTypes.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/Path.h>
+#include <nsxlib/Resources.h>
 
 #include "NumorsConversionDialog.h"
 #include "ui_NumorsConversionDialog.h"
@@ -27,14 +28,10 @@ NumorsConversionDialog::NumorsConversionDialog(QWidget *parent)
     // The instrument names will be inserted alphabetically
     ui->comboBox_diffractometers->setInsertPolicy(QComboBox::InsertAlphabetically);
 
-    QDir diffractometersDirectory(QString::fromStdString(nsx::applicationDataPath()));
-    diffractometersDirectory.cd("instruments");
+    auto resources_name = nsx::getResourcesName("instruments");
 
-    QStringList diffractometerFiles = diffractometersDirectory.entryList({"*.yml"}, QDir::Files, QDir::Name);
-
-    // Add the available instruments to the combo box
-    for (auto&& diffractometer : diffractometerFiles) {
-        ui->comboBox_diffractometers->addItem(QFileInfo(diffractometer).baseName());
+    for (auto res_name : resources_name) {
+        ui->comboBox_diffractometers->addItem(QString::fromStdString(res_name));
     }
 
     QDirModel* model=new QDirModel();

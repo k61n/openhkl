@@ -1,7 +1,0 @@
-#pragma once
-
-#include <string>
-
-namespace nsx {
-constexpr const char* g_application_data_path = "@APPLICATION_DATA_PATH@";
-}

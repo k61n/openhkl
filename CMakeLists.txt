@@ -29,6 +29,7 @@ option(NSX_DOCS "Build documentation" OFF)
 ###########################################################################
 # Scripts controlling build setup and dependencies
 ###########################################################################
+
 include(GeneratePythonDocs)
 include(GetSubdirectories)
 include(CMakeFindBinUtils)
@@ -48,21 +49,7 @@ endif()
 if(NSX_DOCS)
   include(Doxygen)
 endif()
-
-###########################################################################
-# Now add in all the components
-###########################################################################
-
-# Build the config.h on the fly
-if (UNIX)
-  set(APPLICATION_DATA_PATH ${CMAKE_INSTALL_PREFIX}/share/nsxtool)
-elseif (WIN32)
-  set(APPLICATION_DATA_PATH ${CMAKE_INSTALL_PREFIX}\\share\\nsxtool)
-  # take care of pesky backslashes in windows path names
-  STRING(REGEX REPLACE "\\\\" "\\\\\\\\" APPLICATION_DATA_PATH ${APPLICATION_DATA_PATH})
-endif()
-configure_file(${CMAKE_SOURCE_DIR}/cmake/NSXConfig.h.in ${CMAKE_BINARY_DIR}/include/nsxlib/NSXConfig.h)
-
+  
 ###########################################################################
 # RPATH manipulation
 ###########################################################################

@@ -5,6 +5,7 @@
 #include <QStringList>
 
 #include <nsxlib/Path.h>
+#include <nsxlib/Resources.h>
 
 #include "DialogExperiment.h"
 #include "ui_ExperimentDialog.h"
@@ -16,13 +17,11 @@ DialogExperiment::DialogExperiment(QWidget *parent) : QDialog(parent), ui(new Ui
     // The instrument names will be inserted alphabetically
     ui->instrument->setInsertPolicy(QComboBox::InsertAlphabetically);
 
-    QDir diffractometersDirectory(QString::fromStdString(nsx::applicationDataPath()));
-    diffractometersDirectory.cd("instruments");
+    auto resources_name = nsx::getResourcesName("instruments");
 
-    QStringList diffractometerFiles = diffractometersDirectory.entryList({"*.yml"}, QDir::Files, QDir::Name);
-
-    for (auto&& diffractometer : diffractometerFiles)
-        ui->instrument->addItem(QFileInfo(diffractometer).baseName());
+    for (auto res_name : resources_name) {
+        ui->instrument->addItem(QString::fromStdString(res_name));
+    }
 }
 
 DialogExperiment::~DialogExperiment()

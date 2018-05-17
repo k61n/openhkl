@@ -1,7 +1,7 @@
 set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${CMAKE_BINARY_DIR}/include/nsxlib)
+include_directories(${CMAKE_BINARY_DIR}/nsxlib/include/nsxlib)
 include_directories(${PYTHON_INCLUDE_DIRS})
 
 if (NSX_DOCS)

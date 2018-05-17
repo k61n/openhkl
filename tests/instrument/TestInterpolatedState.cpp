@@ -31,8 +31,6 @@ NSX_INIT_TEST
 
 void run_test(const char* filename, const char* instrument)
 {
-    std::cout << "Running test of " << filename << ", " << instrument << std::endl;
-
     nsx::DataReaderFactory factory;
 
     nsx::sptrExperiment expt(new nsx::Experiment("test", instrument));
@@ -84,8 +82,6 @@ void run_test(const char* filename, const char* instrument)
         NJ.col(0) = dq1 / dt;
         NJ.col(1) = dq2 / dt;
         NJ.col(2) = dq3 / dt;
-
-        const double K = 50;
 
         NSX_CHECK_SMALL((dq1 - Jq*Eigen::Vector3d(dt,0,0)).norm() / dq1.norm(), 1e-3);
         NSX_CHECK_SMALL((dq2 - Jq*Eigen::Vector3d(0,dt,0)).norm() / dq2.norm(), 1e-3);
