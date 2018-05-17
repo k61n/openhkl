@@ -18,7 +18,7 @@ instrument:
         nrows: 900
         ncols: 2500
         data_ordering: TopLeftRowMajor
-        gain: 9.0
+        gain: 7.0
         baseline: 227.0
         goniometer:
             name: gamma-arm

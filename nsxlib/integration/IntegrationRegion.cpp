@@ -104,6 +104,13 @@ const AABB IntegrationRegion::aabb() const
     return _hull.aabb();
 }
 
+const AABB IntegrationRegion::peakBB() const
+{
+    Ellipsoid peakShape = _shape;
+    peakShape.scale(_peakEnd);
+    return peakShape.aabb();
+}
+
 void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
 {
     auto aabb = _hull.aabb();

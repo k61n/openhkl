@@ -181,10 +181,9 @@ double MergedPeak::chi2() const
 {
     const double I_merge = getIntensity().value();
     const double sigma_merge = getIntensity().sigma();
-    const double N = redundancy();
 
     // if there is no redundancy, we cannot compute chi2
-    if (N < 1.99) {
+    if (redundancy() < 1.99) {
         return 0.0;
     }
 
@@ -192,8 +191,9 @@ double MergedPeak::chi2() const
 
     for (auto&& peak: _peaks) {
         auto&& I = peak->correctedIntensity();
-        const double x = (I.value() - I_merge) / sigma_merge;
-        chi_sq += x*x/N;
+        const double std = I.sigma();
+        const double x = (I.value() - I_merge) / (std*std);
+        chi_sq += x*x;
     }
 
     return chi_sq;
