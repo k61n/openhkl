@@ -95,7 +95,7 @@ public:
     //! Get a pointer to axis with label, throw range_error if not found
     Axis* getAxis(const std::string& label);
     //! Return the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
-    Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(const ComponentState& values) const;
+    Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(const std::vector<double>& values) const;
     //! Return the number of axes attached to this goniometer
     std::size_t getNAxes() const;
     //! Return the number of physical axis defined in the gonio
@@ -108,15 +108,15 @@ public:
     //! Add a translation axis to this goniometer
     Axis* addTranslation(const std::string& label,const Eigen::Vector3d& axis);
     //! Return the inverse of the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
-    Eigen::Transform<double,3,Eigen::Affine> getInverseHomMatrix(const ComponentState& state) const;
+    Eigen::Transform<double,3,Eigen::Affine> getInverseHomMatrix(const std::vector<double>& state) const;
     //! Transform a point in 3D space, given a vector of parameters
-    DirectVector transform(const DirectVector& v, const ComponentState& state) const;
+    DirectVector transform(const DirectVector& v, const std::vector<double>& state) const;
     //! Reverse transform a point in 3D space, given a vector of parameters
-    DirectVector transformInverse(const DirectVector& v, const ComponentState& state) const;
+    DirectVector transformInverse(const DirectVector& v, const std::vector<double>& state) const;
     //! Transform a vector inplace, for a values of Gonio parameters
-    void transformInPlace(DirectVector& v, const ComponentState& state) const;
+    void transformInPlace(DirectVector& v, const std::vector<double>& state) const;
     //! Reverse transform a vector inplace, for a values of Gonio parameters
-    void transformInverseInPlace(DirectVector& v, const ComponentState& state) const;
+    void transformInverseInPlace(DirectVector& v, const std::vector<double>& state) const;
 
 protected:
     //! Check whether axis i within the range of Axis

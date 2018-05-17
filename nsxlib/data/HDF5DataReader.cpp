@@ -3,7 +3,6 @@
 #include "blosc.h"
 
 #include "BloscFilter.h"
-#include "ComponentState.h"
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "EigenToVector.h"
@@ -100,9 +99,7 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, sptrDiffractometer d
     _detectorStates.resize(_nFrames);
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _detectorStates[i] = ComponentState(_diffractometer->getDetector().get(), eigenToVector(dm.col(i)));
-        //_states[i].detector = _diffractometer->getDetector()->createStateFromEigen(dm.col(i));
-        //_detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
+        _detectorStates[i] = eigenToVector(dm.col(i));
     }
 
     // Getting Scan parameters for the sample
@@ -134,19 +131,13 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, sptrDiffractometer d
     dm*=deg;
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _sampleStates[i] = ComponentState(_diffractometer->getSample().get(), eigenToVector(dm.col(i)));
+        _sampleStates[i] = eigenToVector(dm.col(i));
     }
 
 
     // todo: fix this!!
     dm.resize(_diffractometer->getSource()->getGonio()->getNPhysicalAxes(), _nFrames);
     dm.setZero();
-
-    #if 0
-    for (auto i = 0; i < _nFrames; ++i) {
-        _sourceStates[i] = ComponentState(_diffractometer->getSource().get(), eigenToVector(dm.col(i)));
-    }
-    #endif
 
     _file->close();
 

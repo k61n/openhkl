@@ -1,4 +1,3 @@
-#include "ComponentState.h"
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "Macros.h"
@@ -45,8 +44,8 @@ TiffDataReader::TiffDataReader(const std::string& filename, const std::shared_pt
     _sampleStates.resize(_nFrames);
     _detectorStates.resize(_nFrames);
 
-    _detectorStates[0] = ComponentState(_diffractometer->getDetector().get(), {});
-    _sampleStates[0] = ComponentState(_diffractometer->getSample().get(), {});
+    _detectorStates[0] = {};
+    _sampleStates[0] = {};
 
     _metadata.add<std::string>("Instrument",diffractometer->getType());
 }

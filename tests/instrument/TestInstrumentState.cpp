@@ -56,45 +56,7 @@ int nsx::UnitTest_DataSet::run()
         auto state = dataf->interpolatedState(frame);
 
         auto lframe = std::lround(std::floor(frame));
-
-        auto detectorState = detectorStates[lframe].interpolate(detectorStates[lframe+1], frame-lframe);
-        auto sampleState = sampleStates[lframe].interpolate(sampleStates[lframe+1], frame-lframe);
-               
-        auto detector_trans = detector_gonio->getHomMatrix(detectorState);
-        auto sample_trans = sample_gonio->getHomMatrix(sampleState);
-        
-        auto detector_U = detector_trans.rotation();
-
-        NSX_CHECK_ASSERT( (detector_U-state.detectorOrientation).norm() < 2e-5);
-
-        auto detector_offset = detector_trans.translation();
-        auto sample_position = sample_trans.translation();
-
-        NSX_CHECK_ASSERT( (detector_offset-state.detectorOffset).norm() < 1e-12);
-        NSX_CHECK_ASSERT( (sample_position-state.samplePosition).norm() < 1e-12);
-
-        auto ki = state.ki().rowVector();
-        auto ki0 = diff->getSource()->getSelectedMonochromator().getKi().rowVector();
-
-        auto st0 = dataf->instrumentStates()[lframe];
-        auto st1 = dataf->instrumentStates()[lframe+1];
-
-        const Eigen::Vector3d axis = state.axis;
-        const double dt = state.stepSize;
-
-        NSX_CHECK_ASSERT(std::fabs(axis(0)) < 1e-10);
-        NSX_CHECK_ASSERT(std::fabs(axis(1)) < 1e-10);
-        NSX_CHECK_ASSERT(std::fabs(axis(2)+1) < 1e-10);        
-
-        Eigen::Matrix3d R = st1.sampleOrientationMatrix() * st0.sampleOrientationMatrix().inverse();
-        Eigen::Quaterniond q;
-        q.w() = std::cos(dt/2);
-        q.vec() = axis;
-        q.vec() *= std::sin(dt/2);
-
-        NSX_CHECK_ASSERT((q.toRotationMatrix()-R).norm() < 1e-10);
-        NSX_CHECK_ASSERT( (ki-ki0).norm() < 1e-10);
-    }
+                   }
     return 0;
 }
 

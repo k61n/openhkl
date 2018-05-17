@@ -7,7 +7,6 @@
 #include <stdexcept>
 
 #include "Component.h"
-#include "ComponentState.h"
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "Gonio.h"
@@ -105,8 +104,8 @@ I16DataReader::I16DataReader(const std::string& filename, const std::shared_ptr<
 
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _detectorStates[i] = ComponentState(_diffractometer->getDetector().get(), dval);
-        _sampleStates[i] = ComponentState(_diffractometer->getSample().get(), sval);
+        _detectorStates[i] = dval;
+        _sampleStates[i] = sval;
     }
 
     auto ext_splitted_filename = splitFileExtension(filename);

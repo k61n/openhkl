@@ -61,7 +61,7 @@ const std::string& Component::getName() const
     return _name;
 }
 
-DirectVector Component::getPosition(const ComponentState& goniosetup) const
+DirectVector Component::getPosition(const std::vector<double>& goniosetup) const
 {
     if (_gonio.get() == nullptr) {
         return _position;
@@ -94,7 +94,7 @@ bool Component::hasGonio() const
     return _gonio != nullptr;
 }
 
-ComponentState Component::createState(const std::map<std::string,double>& values)
+std::vector<double> Component::createState(const std::map<std::string,double>& values)
 {
     std::vector<double> values_vec;
 
@@ -109,7 +109,7 @@ ComponentState Component::createState(const std::map<std::string,double>& values
             values_vec[comp++] = (it != values.end()) ? it->second : 0.0;
         }
     }
-    return ComponentState(this, values_vec);
+    return values_vec;
 }
 
 } // end namespace nsx

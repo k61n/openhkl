@@ -191,7 +191,6 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "DetectorFactory.h"
 #include "TransAxis.h"
 #include "Sample.h"
-#include "ComponentState.h"
 #include "FlatDetector.h"
 #include "Source.h"
 #include "InstrumentState.h"
@@ -235,7 +234,6 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "TransAxis.h"
 #include "Gonio.h"
   
-#include "ComponentState.h"
 #include "Component.h"
 #include "Monochromator.h"
 
@@ -376,7 +374,6 @@ using namespace nsx;
 %include "RotAxis.h"
 %include "TransAxis.h"
 %include "Gonio.h"
-%include "ComponentState.h"
 %include "Component.h"
 %include "Monochromator.h"
 %include "Source.h"
@@ -567,7 +564,6 @@ namespace nsx {
 %include "DetectorFactory.h"
 %include "TransAxis.h"
 %include "Sample.h"
-%include "ComponentState.h"
 %include "FlatDetector.h"
 %include "Source.h"
 %include "InstrumentState.h"
