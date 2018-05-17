@@ -57,7 +57,7 @@ int main()
 
     const Eigen::Matrix3d B = A.inverse().transpose();
     const Eigen::Vector3d q0 = Eigen::RowVector3d(-6, 12, -38)*B;
-    nsx::Ellipsoid shape(Eigen::Vector3d(434, 802, 10), 5);
+    nsx::Ellipsoid shape(Eigen::Vector3d(434, 802, 10), 2);
     auto peak = std::make_shared<nsx::Peak3D>(dataf, shape);
     peak->setSelected(true);
 
