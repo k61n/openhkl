@@ -96,7 +96,6 @@ public:
 
     //! Get the interpolated state of a given component
     InterpolatedState interpolatedState(double frame) const;
-    //ComponentState getInterpolatedState(std::shared_ptr<Component> component, double frame) const;
 
     //! Add a new mask to the data
     void addMask(IMask* mask);

@@ -8,7 +8,6 @@
 #include <Eigen/QR>
 
 #include <nsxlib/Component.h>
-#include <nsxlib/ComponentState.h>
 #include <nsxlib/FlatDetector.h>
 #include <nsxlib/Gonio.h>
 #include <nsxlib/GruberReduction.h>

@@ -6,7 +6,6 @@
 #include <Eigen/Dense>
 
 #include <nsxlib/Component.h>
-#include <nsxlib/ComponentState.h>
 #include <nsxlib/CSV.h>
 #include <nsxlib/GruberReduction.h>
 #include <nsxlib/NiggliReduction.h>

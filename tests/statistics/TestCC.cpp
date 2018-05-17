@@ -4,7 +4,6 @@
 #include <Eigen/Dense>
 
 #include <nsxlib/CC.h>
-#include <nsxlib/ComponentState.h>
 #include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
 

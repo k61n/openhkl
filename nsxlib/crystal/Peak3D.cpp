@@ -38,7 +38,6 @@
 #include <stdexcept>
 
 #include "Blob3D.h"
-#include "ComponentState.h"
 #include "DataSet.h"
 #include "Detector.h"
 #include "Diffractometer.h"

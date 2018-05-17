@@ -7,7 +7,6 @@
 #include <boost/interprocess/file_mapping.hpp>
 
 #include "Component.h"
-#include "ComponentState.h"
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "Gonio.h"
@@ -166,8 +165,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
             for (const auto& v: detAxisIdsToNames) {
                 detValues.push_back(gonioValues[v][f]);
             }
-            _detectorStates[f] = ComponentState(_diffractometer->getDetector().get(), detValues);
-            //_detectorStates.push_back(_diffractometer->getDetector()->createState(detValues));
+            _detectorStates[f] = detValues;
         }
     }
 
@@ -184,33 +182,12 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
             for (const auto& v: sampleAxisIdsToNames) {
                 sampleValues.push_back(gonioValues[v][f]);
             }
-            _sampleStates[f] = ComponentState(_diffractometer->getSample().get(), sampleValues);
-            //_sampleStates.push_back(_diffractometer->getSample()->createState(sampleValues));
+            _sampleStates[f] = sampleValues;
         }
     }
-
-    // do we need to read source states??
-    #if 0
-    //_sourceStates.reserve(_nFrames);
-    auto source = _diffractometer->getSource();
-    // If a source is set for this instrument, loop over the frames and gather for each physical axis
-    // of the source the corresponding values defined previously. The gathered values being further pushed as
-    // a new source state
-    if (source) {
-        auto sourceAxisIdsToNames = source->getGonio()->getPhysicalAxesIds();
-        for (std::size_t f = 0; f < _nFrames; ++f) {
-            std::vector<double> sourceValues;
-            sourceValues.reserve(sourceAxisIdsToNames.size());
-            for (const auto& v: sourceAxisIdsToNames) {
-                sourceValues.push_back(gonioValues[v][f]);
-            }
-            _sourceStates[f] = ComponentState( _diffractometer->getSource().get(), sourceValues);
-            //_sourceStates.push_back(_diffractometer->getSource()->createState(sourceValues));
-        }
-    }
-    #endif
 
     _fileSize = _map.get_size();
+
     close();
 }
 

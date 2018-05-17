@@ -263,7 +263,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
     const auto& detectorStates = _reader->detectorStates();
 
     for (unsigned int i = 0; i < detectorStates.size(); ++i) {
-        auto&& v = detectorStates[i].values();
+        auto&& v = detectorStates[i];
 
         for (unsigned int j = 0; j < names.size(); ++j) {
             vals(j,i) = v[j] / deg;
@@ -283,7 +283,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
     const auto& sampleStates = _reader->sampleStates();
 
     for (unsigned int i = 0; i < sampleStates.size(); ++i) {
-        auto&& v = sampleStates[i].values();
+        auto&& v = sampleStates[i];
 
         for (unsigned int j = 0; j < samplenames.size(); ++j) {
             valsSamples(j,i) = v[j]/deg;
