@@ -40,23 +40,16 @@ const char* EnhancedAnnularConvolver::name() const
 
 RealMatrix EnhancedAnnularConvolver::convolve(const RealMatrix& image)
 {
-    int nrows = image.rows();
-    int ncols = image.cols();
-
     RadialConvolver radial_convolver_peak({{"r_in",0.0},{"r_out",_parameters.at("r1")}});
     RealMatrix conv_peak = radial_convolver_peak.convolve(image);
 
     RadialConvolver radial_convolver_bkg({{"r_in",_parameters.at("r2")},{"r_out",_parameters.at("r3")}});
-    RealMatrix conv_bkg = radial_convolver_bkg.convolve(image);
+    RealMatrix bkg = radial_convolver_bkg.convolve(image);
 
-    RealMatrix image2 = image.cwiseProduct(image);
-    RealMatrix conv_bkg2 = radial_convolver_bkg.convolve(image2);
+    RealMatrix diff2 = (image - bkg).cwiseProduct(image-bkg);
+    RealMatrix std = radial_convolver_bkg.convolve(diff2).array().sqrt();
 
-    RealMatrix diff = (conv_bkg2 - conv_bkg);
-    RealMatrix diff2 = diff.cwiseProduct(diff);
-    double std = std::sqrt(diff2.sum()/nrows/ncols);
-
-    RealMatrix result = (conv_peak - conv_bkg)/std;
+    RealMatrix result = (conv_peak - bkg).array() / std.array();
 
     return result;
 }

@@ -103,7 +103,13 @@ endif()
 
 # code coverage report
 if(BUILD_COVERAGE_REPORT)
-  set(ignore_dirs "'/usr/*'")
+  list(APPEND ignore_dirs "'/usr/include/*'")
+  list(APPEND ignore_dirs "'/usr/lib/*'")
+  list(APPEND ignore_dirs "'${CMAKE_BINARY_DIR}/*'")
+  list(APPEND ignore_dirs "'${CMAKE_SOURCE_DIR}/externals/*'")
+
+  message("coverage ignore dirs = ${ignore_dirs}")
+
   #list(APPEND ignore_dirs "'*/tests/*'")
   add_coverage_target(coverage "${ignore_dirs}")
 endif()
