@@ -2,6 +2,7 @@
 
 #include <nsxlib/DataTypes.h>
 #include <nsxlib/InstrumentTypes.h>
+#include <nsxlib/PeakFinder.h>
 
 #include "TreeItem.h"
 
@@ -10,7 +11,7 @@ class NumorItem;
 class DataItem : public TreeItem
 {
 public:
-    explicit DataItem(nsx::sptrExperiment experiment);
+    explicit DataItem();
 
     NumorItem* importData(const std::string& filename);
     NumorItem *importRawData(const std::vector<std::string>& filenames,
@@ -20,7 +21,10 @@ public:
     QJsonObject toJson() override;
     void fromJson(const QJsonObject& obj) override;
 
+    void findPeaks();
+    nsx::DataList selectedData();
+
 private:
     NumorItem *importData(nsx::sptrDataSet data);
-
+    nsx::sptrPeakFinder _peakFinder;
 };

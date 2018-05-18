@@ -1,14 +1,17 @@
 #include <QIcon>
 #include <QString>
 
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/Source.h>
+
 #include "DetectorItem.h"
 #include "InstrumentItem.h"
 #include "SampleItem.h"
 #include "SourceItem.h"
 
-InstrumentItem::InstrumentItem(nsx::sptrExperiment experiment) : TreeItem(experiment)
+InstrumentItem::InstrumentItem(const char* name, const char* source_name) : TreeItem()
 {
-    setText(QString::fromStdString(_experiment->getDiffractometerType()));
+    setText(name);
 
     QIcon icon(":/resources/instrumentIcon.png");
     setIcon(icon);
@@ -21,15 +24,15 @@ InstrumentItem::InstrumentItem(nsx::sptrExperiment experiment) : TreeItem(experi
     setSelectable(false);
 
     // Create a detector item and add it to the instrument item
-    _detector = new DetectorItem(experiment);
+    _detector = new DetectorItem();
     appendRow(_detector);
 
     // Create a sample item and add it to the instrument item
-    _sample = new SampleItem(experiment);
+    _sample = new SampleItem();
     appendRow(_sample);
 
     // Create a source item and add it to the instrument leaf
-    _source = new SourceItem(experiment);
+    _source = new SourceItem(source_name);
     appendRow(_source);
 }
 

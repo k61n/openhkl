@@ -18,8 +18,8 @@ class TreeItem : public QStandardItem
 
 public:
 
-    explicit TreeItem(nsx::sptrExperiment experiment);
-    nsx::sptrExperiment getExperiment();
+    explicit TreeItem();
+    //nsx::sptrExperiment getExperiment();
     virtual ~TreeItem();
 
     virtual void setData(const QVariant & value, int role=Qt::UserRole + 1) override;
@@ -27,8 +27,7 @@ public:
     virtual QJsonObject toJson();
     virtual void fromJson(const QJsonObject& obj);
 
-protected:
-    nsx::sptrExperiment _experiment;
+    nsx::sptrExperiment experiment();
 
 };
 

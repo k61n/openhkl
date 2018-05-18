@@ -415,7 +415,10 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             // If the item is a peak graphics item, remove its corresponding peak from the data,
             // update the set of peak graphics items and update the scene
             if (auto p = dynamic_cast<PeakGraphicsItem*>(item)) {
+                // todo
+                #if 0
                 _session->removePeak(p->getPeak());
+                #endif
                 _peakGraphicsItems.erase(p->getPeak());
 
             }

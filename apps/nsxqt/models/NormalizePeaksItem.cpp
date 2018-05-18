@@ -1,6 +1,6 @@
 #include "NormalizePeaksItem.h"
 
-NormalizePeaksItem::NormalizePeaksItem(nsx::sptrExperiment experiment) : TreeItem(experiment)
+NormalizePeaksItem::NormalizePeaksItem() : TreeItem()
 {
     setText("Normalize peaks");
     setEditable(false);

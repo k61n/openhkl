@@ -34,7 +34,7 @@ typedef Eigen::Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> rowMatr
 
 //! Master Scene containing the pixmap of the detector counts
 //! and overlayed graphics items (peaks, data cutters, masks ...)
-class DetectorScene : public QGraphicsScene
+class DetectorScene: public QGraphicsScene
 {
     Q_OBJECT
 

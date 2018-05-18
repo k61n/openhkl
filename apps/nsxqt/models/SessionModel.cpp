@@ -103,6 +103,7 @@
 #include "PeakTableView.h"
 #include "ProgressView.h"
 #include "QCustomPlot.h"
+#include "PeaksItem.h"
 #include "ResolutionCutoffDialog.h"
 #include "SampleItem.h"
 #include "SessionModel.h"
@@ -126,10 +127,10 @@ SessionModel::~SessionModel()
 
 void SessionModel::onItemChanged(QStandardItem* item)
 {
-    if (auto p=dynamic_cast<UnitCellItem*>(item)) {
+    if (auto p = dynamic_cast<UnitCellItem*>(item)) {
         // The first item of the Sample item branch is the SampleShapeItem, skip it
         int idx = p->index().row()- 1;
-        auto expt = p->getExperiment();
+        auto expt = p->experiment();
         auto uc = expt->getDiffractometer()->getSample()->unitCell(idx);
         uc->setName(p->text().toStdString());
     }
@@ -246,197 +247,11 @@ void SessionModel::peakFitDialog()
     nsx::error() << "this feature has been deprecated";
 }
 
-void SessionModel::findPeaks(const QModelIndex& index)
-{
-    MainWindow* main = dynamic_cast<MainWindow*>(QApplication::activeWindow());
-    auto ui = main->getUI();
-    QStandardItem* item = itemFromIndex(index);
-    TreeItem* titem = dynamic_cast<TreeItem*>(item);
-
-    if (!titem)
-        return;
-
-    auto expt = titem->getExperiment();
-
-    if (!expt)
-        return;
-
-    QStandardItem* ditem = itemFromIndex(index);
-    nsx::DataList selectedNumors;
-    int nTotalNumors = rowCount(ditem->index());
-    selectedNumors.reserve(size_t(nTotalNumors));
-
-    for (int i = 0; i < nTotalNumors; ++i) {
-        if (ditem->child(i)->checkState() == Qt::Checked) {
-            if (auto ptr = dynamic_cast<NumorItem*>(ditem->child(i)))
-                selectedNumors.push_back(ptr->getData());
-        }
-    }
-
-    if (selectedNumors.empty()) {
-        nsx::error()<<"No numors selected for finding peaks";
-        return;
-    }
-
-    // reset progress handler
-    _progressHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler);
-
-    // set up peak finder
-    if ( !_peakFinder)
-        _peakFinder = nsx::sptrPeakFinder(new nsx::PeakFinder);
-    _peakFinder->setHandler(_progressHandler);
-
-    DialogPeakFind* dialog = new DialogPeakFind(selectedNumors, _peakFinder, nullptr);
-    dialog->setColorMap(_colormap);
-
-    // dialog will automatically be deleted before we return from this method
-    std::unique_ptr<DialogPeakFind> dialog_ptr(dialog);
-
-    if (!dialog->exec()) {
-        return;
-    }
-
-    ui->_dview->getScene()->clearPeaks();
-
-    size_t max = selectedNumors.size();
-    nsx::info() << "Peak find algorithm: Searching peaks in " << max << " files";
-
-    // create a pop-up window that will show the progress
-    ProgressView* progressView = new ProgressView(nullptr);
-    progressView->watch(_progressHandler);
-
-    // execute in a try-block because the progress handler may throw if it is aborted by GUI
-    try {
-        _peaks = _peakFinder->find(selectedNumors);
-    }
-    catch(std::exception& e) {
-        nsx::debug() << "Caught exception during peak find: " << e.what();
-        return;
-    }
-
-    // integrate peaks
-    for (auto numor: selectedNumors) {
-        nsx::StrongPeakIntegrator integrator(true, true);
-        integrator.integrate(_peaks, numor, dialog->peakScale(), dialog->bkgBegin(), dialog->bkgEnd());
-    }
-
-    // delete the progressView
-    delete progressView;
-
-    updatePeaks();
-    nsx::debug() << "Peak search complete., found " << _peaks.size() << " peaks.";
-}
-
-
-void SessionModel::incorporateCalculatedPeaks()
-{
-    nsx::debug() << "Incorporating missing peaks into current data set...";
-
-    std::set<nsx::sptrUnitCell> cells;
-
-    nsx::DataList numors = getSelectedNumors();
-
-    for (auto numor: numors) {
-        auto sample = numor->diffractometer()->getSample();
-
-        for (auto uc: sample->unitCells()) {
-            cells.insert(uc);
-        }
-    }
-
-    DialogCalculatedPeaks dialog(cells);
-
-    if (!dialog.exec()) {
-        return;
-    }
-
-    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
-    ProgressView progressView(nullptr);
-    progressView.watch(handler);
-
-    int current_numor = 0;
-    int observed_peaks = 0;
-
-    // TODO: get the crystal from the dialog!!
-    auto cell = dialog.cell();
-
-    for(auto numor: numors) {
-        nsx::debug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
-
-        nsx::PeakList old_peaks;
-
-        for (auto peak: peaks(numor.get())) {
-            if (peak->activeUnitCell() == cell) {
-                old_peaks.push_back(peak);
-            }
-        }
-
-        auto predictor = nsx::PeakPredictor(cell, dialog.dMin(), dialog.dMax(), _library);
-        auto predicted = predictor.predict(numor, dialog.radius(), dialog.nframes());
-        // todo: bkg_begin and bkg_end
-        //nsx::info() << "Integrating predicted peaks...";
-        //numor->integratePeaks(predicted, dialog.peakScale(), 0.5*(dialog.peakScale()+dialog.bkgScale()), dialog.bkgScale(), handler);
-        observed_peaks += peaks(numor.get()).size();
-
-        nsx::info() << "Removing old peaks...";
-        for (auto peak: old_peaks) {
-            removePeak(peak);
-        }
-
-        nsx::info() << "Adding new peaks...";
-        for (auto peak: predicted) {
-            addPeak(peak);
-        }
-        nsx::debug() << "Added " << predicted.size() << " predicted peaks.";
-    }
-    updatePeaks();
-}
-
-void SessionModel::applyResolutionCutoff(double dmin, double dmax)
-{
-    double avg_d = 0;
-
-    nsx::debug() << "Applying resolution cutoff...";
-
-    nsx::DataList numors = getSelectedNumors();
-
-    int n_good_peaks(0);
-    int n_bad_peaks(0);
-
-    for(auto numor: numors) {
-        auto sample = numor->diffractometer()->getSample();
-
-        nsx::PeakFilter peak_filter;
-        nsx::PeakList selected_peaks;
-        selected_peaks = peak_filter.selected(peaks(numor.get()),true);
-
-        auto good_peaks = peak_filter.dMin(selected_peaks,dmin);
-        good_peaks = peak_filter.dMax(good_peaks,dmax);
-        n_good_peaks += good_peaks.size();
-
-        auto bad_peaks = peak_filter.complementary(selected_peaks,good_peaks);
-        n_bad_peaks += bad_peaks.size();
-
-        for (auto peak : good_peaks) {
-            double d = 1.0 / peak->q().rowVector().norm();
-            avg_d += d;
-        }
-
-        // erase the bad peaks from the list
-        for (auto peak : bad_peaks) {
-            removePeak(peak);
-        }
-    }
-
-    avg_d /= n_good_peaks;
-
-    nsx::debug() << "Done applying resolution cutoff. Removed " << n_bad_peaks << " peaks.";
-    nsx::debug() << "Average value of d for good peaks is " << avg_d;
-}
-
 
 void SessionModel::writeLog()
 {
+    // todo: fix this
+    #if 0
     LogFileDialog dialog;
     auto numors = this->getSelectedNumors();
 
@@ -471,6 +286,7 @@ void SessionModel::writeLog()
                              dialog.dmin(), dialog.dmax(), dialog.numShells(), friedel))
             nsx::error() << "Could not write statistics log to " << dialog.statisticsFilename().c_str();
     }
+    #endif
 }
 
 bool SessionModel::writeXDS(std::string filename, const nsx::PeakList& peaks, bool merge, bool friedel)
@@ -724,39 +540,17 @@ void SessionModel::autoAssignUnitCell()
 
 nsx::PeakList SessionModel::peaks(const nsx::DataSet* data) const
 {  
-    if (data == nullptr) {
-        return _peaks;
-    }
+    nsx::PeakList list;
 
-    nsx::PeakList data_peaks;
+    for (auto i = 0; i < rowCount(); ++i) {
+        auto& exp_item = dynamic_cast<ExperimentItem&>(*item(i));
+        auto&& peaks = exp_item.peaks()->selectedPeaks();
 
-    for (auto peak: _peaks) {
-        if (peak->data().get() == data) {
-            data_peaks.push_back(peak);
+        for (auto peak: peaks) {
+            if (data == nullptr || peak->data().get() == data) {
+                list.push_back(peak);
+            }
         }
     }
-    return data_peaks;
-}
-
-void SessionModel::addPeak(nsx::sptrPeak3D peak)
-{
-    _peaks.push_back(peak);
-}
-
-void SessionModel::removePeak(nsx::sptrPeak3D peak)
-{
-    auto it = std::find(_peaks.begin(),_peaks.end(),peak);
-    if (it != _peaks.end()) {
-        _peaks.erase(it);
-    }
-}
-
-nsx::sptrShapeLibrary SessionModel::library() const
-{
-    return _library;
-}
-
-void SessionModel::updateShapeLibrary(nsx::sptrShapeLibrary lib)
-{
-    _library = lib;
+    return list;
 }

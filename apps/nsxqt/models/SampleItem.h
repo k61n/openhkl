@@ -13,7 +13,7 @@ class UnitCellItem;
 class SampleItem : public InspectableTreeItem
 {
 public:
-    explicit SampleItem(nsx::sptrExperiment experiment);
+    explicit SampleItem();
     void setData(const QVariant& value, int role = Qt::UserRole + 1) override;
     QWidget* inspectItem() override;
     QJsonObject toJson() override;

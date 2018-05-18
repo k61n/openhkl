@@ -16,7 +16,7 @@ class DetectorItem : public InspectableTreeItem
 {
 public:
 
-    explicit DetectorItem(nsx::sptrExperiment experiment);
+    explicit DetectorItem();
     QWidget* inspectItem() override;
 
     QJsonObject toJson() override;

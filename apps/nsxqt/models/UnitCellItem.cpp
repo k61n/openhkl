@@ -9,8 +9,8 @@
 #include "UnitCellItem.h"
 #include "UnitCellPropertyWidget.h"
 
-UnitCellItem::UnitCellItem(nsx::sptrExperiment experiment, nsx::sptrUnitCell cell):
-    InspectableTreeItem(experiment),
+UnitCellItem::UnitCellItem(nsx::sptrUnitCell cell):
+    InspectableTreeItem(),
     _cell(cell)
 {
     QIcon icon(":/resources/unitCellIcon.png");
@@ -24,7 +24,7 @@ UnitCellItem::UnitCellItem(nsx::sptrExperiment experiment, nsx::sptrUnitCell cel
 
 UnitCellItem::~UnitCellItem()
 {
-    _experiment->getDiffractometer()->getSample()->removeUnitCell(_cell);
+    experiment()->getDiffractometer()->getSample()->removeUnitCell(_cell);
 }
 
 QWidget* UnitCellItem::inspectItem()

@@ -5,7 +5,9 @@
 #include <memory>
 
 #include <QJsonObject>
+#include <QStandardItemModel>
 
+#include <nsxlib/Experiment.h>
 #include <nsxlib/InstrumentTypes.h>
 
 #include "TreeItem.h"
@@ -13,22 +15,28 @@
 
 class DataItem;
 class InstrumentItem;
-class PeakListItem;
+class PeaksItem;
 
-class ExperimentItem : public TreeItem
+class ExperimentItem: public TreeItem
 {
 public:
-    explicit ExperimentItem(std::shared_ptr<SessionModel> session, nsx::sptrExperiment experiment);
+    explicit ExperimentItem(nsx::sptrExperiment experiment);
     virtual ~ExperimentItem() = default;
-    QJsonObject toJson() override;
-    void fromJson(const QJsonObject& obj) override;
+    QJsonObject toJson();
+    void fromJson(const QJsonObject& obj);
     InstrumentItem* getInstrumentItem();
 
+    nsx::sptrExperiment experiment() { return _experiment; }
+
+    PeaksItem* peaks() { return _peaks; }
+    DataItem* dataItem() { return _data; }
+    
 private:
+    nsx::sptrExperiment _experiment;
     InstrumentItem* _instr;
     DataItem* _data;
-    PeakListItem* _peaks;
-    std::shared_ptr<SessionModel> _session;
+    PeaksItem* _peaks;
+    nsx::sptrShapeLibrary _shapeLibrary;
 };
 
 #endif // NSXQT_EXPERIMENTITEM_H

@@ -16,7 +16,7 @@ class NumorItem : public InspectableTreeItem
 {
 public:
 
-    explicit NumorItem(nsx::sptrExperiment experiment, nsx::sptrDataSet data);
+    explicit NumorItem(nsx::sptrDataSet data);
     ~NumorItem();
     QWidget* inspectItem() override;
     nsx::sptrDataSet getData();

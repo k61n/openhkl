@@ -130,8 +130,7 @@ void ExperimentTree::createNewExperiment()
         auto instrumentName = dlg->getInstrumentName().toStdString();
         nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName,instrumentName));
         // Create an experiment item
-        ExperimentItem* expt = new ExperimentItem(_session, expPtr);
-    
+        ExperimentItem* expt = new ExperimentItem(expPtr);    
         _session->appendRow(expt);
     }
     catch(const std::runtime_error& e) {
@@ -152,7 +151,7 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
     }
     else {
         QStandardItem* item = _session->itemFromIndex(index);
-        if (dynamic_cast<DataItem*>(item))
+        if (auto ditem = dynamic_cast<DataItem*>(item))
         {
             QMenu* menu = new QMenu(this);
             QAction* import = menu->addAction("Import data");
@@ -161,7 +160,7 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             menu->popup(viewport()->mapToGlobal(point));
             connect(import, SIGNAL(triggered()), this, SLOT(importData()));
             connect(rawImport, SIGNAL(triggered()), this, SLOT(importRawData()));
-            connect(findpeaks, &QAction::triggered, [=](){findPeaks(index);});
+            connect(findpeaks, &QAction::triggered, [=](){ditem->findPeaks();});
         }
         else if (dynamic_cast<PeakListItem*>(item))
         {
@@ -229,7 +228,7 @@ void ExperimentTree::absorptionCorrection()
     auto pitem=dynamic_cast<PeakListItem*>(item);
     if (!pitem)
         return;
-    MCAbsorptionDialog* dialog = new MCAbsorptionDialog(_session, pitem->getExperiment(), this);
+    MCAbsorptionDialog* dialog = new MCAbsorptionDialog(_session, pitem->experiment(), this);
     dialog->open();
 }
 
@@ -256,7 +255,7 @@ void ExperimentTree::importRawData()
     if (!dataItem)
         return;
 
-    auto exmt = dataItem->getExperiment();
+    auto exmt = dataItem->experiment();
 
     if (!exmt)
         return;
@@ -289,13 +288,6 @@ void ExperimentTree::importRawData()
         filenames.push_back(file.toStdString());
 
     dataItem->importRawData(filenames, wavelength, delta_chi, delta_omega, delta_phi, row_major, swap_endian, bpp);
-}
-
-
-
-void ExperimentTree::findPeaks(const QModelIndex& index)
-{
-    _session->findPeaks(index);
 }
 
 void ExperimentTree::onDoubleClick(const QModelIndex& index)
@@ -398,9 +390,4 @@ void ExperimentTree::findFriedelPairs()
 void ExperimentTree::peakFitDialog()
 {
     _session->peakFitDialog();
-}
-
-void ExperimentTree::incorporateCalculatedPeaks()
-{
-    _session->incorporateCalculatedPeaks();
 }

@@ -524,7 +524,10 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
     if (dlg->exec()) {
         auto&& bad_peaks = dlg->badPeaks();
         for (auto peak: bad_peaks) {
+            // todo: update this
+            #if 0
             _session->removePeak(peak);
+            #endif
         }
         _session->updatePeaks();
     }    
@@ -536,16 +539,6 @@ void MainWindow::on_actionIncorporate_calculated_peaks_triggered(bool checked)
     emit incorporateCalculatedPeaks();
 }
 
-void MainWindow::on_actionApply_resolution_cutoff_triggered()
-{
-    ResolutionCutoffDialog dialog;
-
-    if (!dialog.exec())
-        return;
-
-    _session->applyResolutionCutoff(dialog.dMin(), dialog.dMax());
-}
-
 void MainWindow::on_actionWrite_log_file_triggered()
 {
     _session->writeLog();
@@ -553,6 +546,8 @@ void MainWindow::on_actionWrite_log_file_triggered()
 
 void MainWindow::on_actionReintegrate_peaks_triggered()
 {
+    // todo: move this to PeakListItem
+    #if 0
     // TODO: weak peaks vs. strong peaks??
     auto library = _session->library();
 
@@ -608,6 +603,7 @@ void MainWindow::on_actionReintegrate_peaks_triggered()
 
     _session->updatePeaks();
     nsx::info() << "Done reintegrating peaks";
+    #endif
 }
 
 void MainWindow::on_actionFit_peak_profiles_triggered()

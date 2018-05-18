@@ -80,12 +80,8 @@ public:
     void autoAssignUnitCell();
 
     nsx::PeakList peaks(const nsx::DataSet* data) const;
-    void addPeak(nsx::sptrPeak3D peak);
-    void removePeak(nsx::sptrPeak3D peak);
 
-    nsx::sptrShapeLibrary library() const;
-
-signals:
+ signals:
     void plotData(nsx::sptrDataSet);
     void inspectWidget(QWidget*);
     void updatePeaks();
@@ -93,10 +89,7 @@ signals:
 
 public slots:
 
-    void updateShapeLibrary(nsx::sptrShapeLibrary);
-
     void importData();
-    void findPeaks(const QModelIndex& index);
 
     void absorptionCorrection();
     void showPeaksOpenGL();
@@ -104,18 +97,15 @@ public slots:
     void computeRFactors();
     void findFriedelPairs();
     void peakFitDialog();
-    void incorporateCalculatedPeaks();
-    void applyResolutionCutoff(double dmin, double dmax);
+    
+
     void onItemChanged(QStandardItem* item);
 
 private:
     //! Filename for the save/load feature
     QString _filename;
     nsx::sptrProgressHandler _progressHandler;
-    nsx::sptrPeakFinder _peakFinder;
     std::string _colormap;
-    nsx::PeakList _peaks;
-    nsx::sptrShapeLibrary _library;
 };
 
 #endif // NSXQT_SESSIONMODEL_H

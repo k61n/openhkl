@@ -34,7 +34,7 @@ public slots:
     void onDoubleClick(const QModelIndex& index);
     void importData();
     void importRawData();
-    void findPeaks(const QModelIndex& index);
+
     void createNewExperiment();
     void onSingleClick(const QModelIndex& index);
     void absorptionCorrection();
@@ -43,7 +43,7 @@ public slots:
     void computeRFactors();
     void findFriedelPairs();
     void peakFitDialog();
-    void incorporateCalculatedPeaks();
+
     void setIndexingTolerance();
 
 private:

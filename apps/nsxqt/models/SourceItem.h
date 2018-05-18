@@ -8,7 +8,7 @@
 class SourceItem : public InspectableTreeItem
 {
 public:
-    explicit SourceItem(nsx::sptrExperiment experiment);
+    explicit SourceItem(const char* name);
     QWidget* inspectItem();
 };
 

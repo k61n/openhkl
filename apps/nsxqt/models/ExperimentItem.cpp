@@ -4,20 +4,21 @@
 
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Diffractometer.h>
+#include <nsxlib/Source.h>
 
 #include "DataItem.h"
 #include "DetectorItem.h"
 #include "ExperimentItem.h"
 #include "InstrumentItem.h"
-#include "PeakListItem.h"
+#include "PeaksItem.h"
 #include "SampleItem.h"
 #include "SessionModel.h"
 #include "SourceItem.h"
 #include "TreeItem.h"
 
-ExperimentItem::ExperimentItem(std::shared_ptr<SessionModel> session, nsx::sptrExperiment experiment) : TreeItem(experiment), _session(session)
+ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment): TreeItem(), _experiment(experiment)
 {
-    setText(QString::fromStdString(_experiment->getName()));
+    setText(QString::fromStdString(experiment->getName()));
     setForeground(QBrush(QColor("blue")));
     QIcon icon(":/resources/experimentIcon.png");
     setIcon(icon);
@@ -25,29 +26,29 @@ ExperimentItem::ExperimentItem(std::shared_ptr<SessionModel> session, nsx::sptrE
     setDropEnabled(true);
     setEditable(true);
 
-    _instr = new InstrumentItem(experiment);
+    auto diff = experiment->getDiffractometer();
+    _instr = new InstrumentItem(diff->getName().c_str(), diff->getSource()->getName().c_str());
 
     // Add the instrument item to the experiment item
     appendRow(_instr);
 
     // Create a data item and add it to the experiment item
-    _data = new DataItem(experiment);
+    _data = new DataItem;
     appendRow(_data);
 
     // Create a peaks item and add it to the experiment item
-     _peaks = new PeakListItem(_session, experiment);
+    _peaks = new PeaksItem;
     appendRow(_peaks);
 }
 
 QJsonObject ExperimentItem::toJson()
 {
-    auto exp_ptr = getExperiment();
+    auto exp_ptr = experiment();
     QJsonObject experiment;
 
     experiment["name"] = QString(exp_ptr->getName().c_str());
     experiment["instrument"] = _instr->toJson();
     experiment["data"] = _data->toJson();
-    experiment["peaks"] = _peaks->toJson();
 
     return experiment;
 }
@@ -56,7 +57,6 @@ void ExperimentItem::fromJson(const QJsonObject &obj)
 {
     _instr->fromJson(obj["instrument"].toObject());
     _data->fromJson(obj["data"].toObject());
-    _peaks->fromJson(obj["peaks"].toObject());
 }
 
 InstrumentItem* ExperimentItem::getInstrumentItem()
