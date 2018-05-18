@@ -1,4 +1,4 @@
-include_directories(${CMAKE_BINARY_DIR}/include)
+include_directories(${CMAKE_BINARY_DIR}/nsxlib/include)
 
 file(GLOB_RECURSE test_sources "*.cpp")
 file(GLOB_RECURSE test_headers "*.h")
@@ -26,7 +26,7 @@ endforeach(source_file)
 
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 
-configure_file(../resources/databases/isotopes.yml isotopes.yml COPYONLY)
+configure_file(../resources/databases/Isotopes.yml isotopes.yml COPYONLY)
 
 configure_file(crystal/lattices.dat lattices.dat COPYONLY)
 configure_file(crystal/niggli_lattices.dat niggli_lattices.dat COPYONLY)

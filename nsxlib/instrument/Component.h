@@ -35,7 +35,6 @@
 
 #include <Eigen/Dense>
 
-#include "ComponentState.h"
 #include "DirectVector.h"
 #include "InstrumentTypes.h"
 
@@ -69,7 +68,7 @@ public:
     void setName(const std::string& name);
 
      //! Get the absolute position of the component for a set of goniometer values
-    DirectVector getPosition(const ComponentState& goniosetup) const;
+    DirectVector getPosition(const std::vector<double>& goniosetup) const;
     //! Get the absolute position at rest (unmodified by gonio)
     const DirectVector& getRestPosition() const;
     //! Set the rest position
@@ -82,7 +81,7 @@ public:
     //! Attach a modifier to the component.
     void setGonio(sptrGonio gonio);
 
-    ComponentState createState(const std::map<std::string,double>& values);
+    std::vector<double> createState(const std::map<std::string,double>& values);
 
  protected:
     //! Name of the component

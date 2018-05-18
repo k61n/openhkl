@@ -19,7 +19,6 @@
 #include <nsxlib/AABB.h>
 #include <nsxlib/AggregateStreamWrapper.h>
 #include <nsxlib/Basis.h>
-#include <nsxlib/ComponentState.h>
 #include <nsxlib/CrystalTypes.h>
 #include <nsxlib/Detector.h>
 #include <nsxlib/Diffractometer.h>

@@ -41,7 +41,6 @@
 #include <stdexcept>
 
 #include "Component.h"
-#include "ComponentState.h"
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "EigenToVector.h"
@@ -101,8 +100,7 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const st
     _detectorStates.resize(_nFrames);
 
     for (unsigned int i = 0; i < _nFrames; ++i) {
-        _detectorStates[i] = ComponentState(_diffractometer->getDetector().get(), eigenToVector((dm.col(i))));
-        //_detectorStates.push_back(_diffractometer->getDetector()->createStateFromEigen(dm.col(i)));
+        _detectorStates[i] = eigenToVector((dm.col(i)));
     }
 
     // Getting Scan parameters for the sample
@@ -132,7 +130,7 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const st
     dm*=deg;
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _sampleStates[i] = ComponentState(_diffractometer->getSample().get(), eigenToVector(dm.col(i)));
+        _sampleStates[i] = eigenToVector(dm.col(i));
     }
 }
 

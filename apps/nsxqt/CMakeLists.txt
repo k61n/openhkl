@@ -7,7 +7,7 @@ GET_SUBDIRECTORIES(NSXQT_SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
 # add project root directory to include path
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}
                     ${NSXQT_SUBDIRS}
-                    ${CMAKE_BINARY_DIR}/include)
+                    ${CMAKE_BINARY_DIR}/nsxlib/include)
 
 
 # Disable console on Windows

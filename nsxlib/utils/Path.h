@@ -46,7 +46,10 @@ std::pair<std::string,std::string> splitFileExtension(const std::string& input_p
 //! Get the directory name of a given path
 std::string fileDirname(const std::string& input_path);
 
-std::string buildPath(const std::vector<std::string>& paths, const std::string& root);
+//! Create a directory. The directory can be nested (0x1C0 is 0700)
+void makeDirectory(const std::string& path, int mode=0x1C0);
+
+std::string buildPath(const std::vector<std::string>& paths, const std::string& root="");
 
 //! Returns the home directory
 std::string homeDirectory();
@@ -56,9 +59,6 @@ std::string applicationDataPath();
 
 //! Return true if the file exists
 bool fileExists(const std::string& filename);
-
-//! Set argv of running process to nsxlib
-void setArgv(const char* argv);
 
 std::string diffractometersPath();
 

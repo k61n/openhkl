@@ -4,6 +4,7 @@
 #include "DetectorFactory.h"
 #include "Gonio.h"
 #include "Path.h"
+#include "Resources.h"
 #include "Sample.h"
 #include "Source.h"
 
@@ -12,17 +13,7 @@ namespace nsx {
 sptrDiffractometer Diffractometer::build(const std::string& name)
 {
 
-    std::string diffractometerFile = buildPath({"instruments",name+".yml"},applicationDataPath());
-
-    YAML::Node instrumentDefinition;
-
-    try {
-        instrumentDefinition = YAML::LoadFile(diffractometerFile);
-    }
-    catch (std::exception& e) {
-        std::string msg = "Error when opening instrument definition file: ";
-        throw std::runtime_error(msg+e.what());
-    }
+    YAML::Node instrumentDefinition = findResource({"instruments",name});
 
     if (!instrumentDefinition["instrument"]) {
         throw std::runtime_error("Invalid instrument definition: missing 'instrument root node'");

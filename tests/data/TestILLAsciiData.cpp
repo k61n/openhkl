@@ -59,10 +59,10 @@ int UnitTest_DataSet::run()
     auto detectorStates = dataf->_reader->detectorStates();
 
     
-    NSX_CHECK_CLOSE(detectorStates[3].values()[0],0.54347000E+05/1000.0*nsx::deg,tolerance);
-    NSX_CHECK_CLOSE(sampleStates[2].values()[0],0.26572000E+05/1000.0*nsx::deg,tolerance);
-    NSX_CHECK_CLOSE(sampleStates[2].values()[1],0.48923233E+02*nsx::deg,tolerance);
-    NSX_CHECK_CLOSE(sampleStates[2].values()[2],-0.48583171E+02*nsx::deg,tolerance);
+    NSX_CHECK_CLOSE(detectorStates[3][0],0.54347000E+05/1000.0*nsx::deg,tolerance);
+    NSX_CHECK_CLOSE(sampleStates[2][0],0.26572000E+05/1000.0*nsx::deg,tolerance);
+    NSX_CHECK_CLOSE(sampleStates[2][1],0.48923233E+02*nsx::deg,tolerance);
+    NSX_CHECK_CLOSE(sampleStates[2][2],-0.48583171E+02*nsx::deg,tolerance);
 
     meta = nullptr;
 

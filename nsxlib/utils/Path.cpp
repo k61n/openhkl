@@ -1,3 +1,9 @@
+#if defined(_WIN32)
+#include <direct.h>
+#else
+#include <sys/stat.h>
+#endif
+
 #include <cstdlib>
 #include <fstream>
 #include <mutex>
@@ -5,15 +11,10 @@
 #include <stdexcept>
 #include <string>
 
-#include "NSXConfig.h"
 #include "Path.h"
 #include "StringIO.h"
 
 namespace nsx {
-
-static std::string g_nsx_path("");
-
-std::mutex g_nsx_path_mutex;
 
 std::string fileSeparator()
 {
@@ -67,10 +68,24 @@ std::string fileDirname(const std::string& input_path)
     return output_path;
 }
 
-void setArgv(const char* nsx_path)
+void makeDirectory(const std::string& path, int mode)
 {
-    std::lock_guard<std::mutex> guard(g_nsx_path_mutex);
-    g_nsx_path = nsx_path;
+
+    auto components = split(path,fileSeparator());
+
+    std::vector<std::string> intermediate_paths;
+    intermediate_paths.reserve(components.size());
+
+    for (auto comp : components) {
+        intermediate_paths.push_back(comp);
+        auto inner_path = join(intermediate_paths,fileSeparator());
+        #if defined(_WIN32)
+            _mkdir(inner_path.c_str());
+        #else
+            mkdir(inner_path.c_str(),mode);
+        #endif
+    }
+
 }
 
 std::string homeDirectory()
@@ -117,50 +132,20 @@ std::string buildPath(const std::vector<std::string>& paths, const std::string& 
 
 std::string applicationDataPath()
 {
-    std::vector<std::string> possible_paths = {g_application_data_path};
+    std::string appdata_path;
     #ifdef _WIN32
     // check for environment variable APPDATA
     const char* appdata_dir = getenv("APPDATA");
     // if defined, it takes highest precedence
     if (appdata_dir) {
-        std::string path = buildPath({appdata_dir,"nsxtool"},"");
-        possible_paths.push_back(path);
-    }
-    // check for environment variable PROGRAMDATA
-    const char* programdata_dir = getenv("PROGRAMDATA");
-    // if defined, it takes highest precedence
-    if (programdata_dir) {
-        std::string path = buildPath({programdata_dir,"nsxtool"},"");
-        possible_paths.push_back(path);
+        appdata_path = buildPath({appdata_dir,"nsxtool","resources"},"");
+        return appdata_path;
     }
     #endif
 
-    // check for environment variable NSX_ROOT_DIR
-    const char* nsx_root_dir = getenv("NSX_ROOT_DIR");
+    appdata_path = buildPath({homeDirectory(),".nsxtool","resources"},"");
 
-    // if defined, it takes highest precedence
-    if (nsx_root_dir) {
-        possible_paths.insert(possible_paths.begin(), nsx_root_dir);
-    }
-
-    // add base path of nsx library if possible
-    if (!g_nsx_path.empty()) {
-        std::string path = buildPath({g_nsx_path,"share","nsxtool"},"");
-        possible_paths.push_back(path);
-    }
-
-    std::vector<std::string> d19_relative_path = {"instruments","D19.yml"};
-
-    for (auto&& path : possible_paths) {
-        std::string d19_file = buildPath(d19_relative_path,path);
-        std::ifstream file(d19_file, std::ios_base::in);
-        if (file.good()) {
-            file.close();
-            return path;
-        }
-    }
-
-    throw std::runtime_error("The application data directory could not be defined");
+    return appdata_path;
 }
 
 std::string diffractometersPath()

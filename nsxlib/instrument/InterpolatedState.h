@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include "ComponentState.h"
 #include "DirectVector.h"
 #include "InstrumentState.h"
 #include "ReciprocalVector.h"
