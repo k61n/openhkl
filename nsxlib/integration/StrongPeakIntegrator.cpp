@@ -109,7 +109,11 @@ bool StrongPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& reg
     Eigen::Matrix3d cov = _fitCovariance ? blob.covariance() : peak->getShape().inverseMetric();
 
     // center of mass is consistent
-    if (!((center-peak->getShape().center()).norm() < 100)) {
+    if (std::isnan(center.norm())) {
+        return false;
+    }
+
+    if (!peak->getShape().isInside(center)) {
         return false;
     }
 

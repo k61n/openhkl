@@ -41,8 +41,7 @@ namespace nsx {
 WeakPeakIntegrator::WeakPeakIntegrator(sptrShapeLibrary library, double radius, double nframes, bool detector_space):
     _library(library),
     _radius(radius),
-    _nframes(nframes),
-    _detectorSpace(detector_space)
+    _nframes(nframes)
 {
 
 }
@@ -127,11 +126,10 @@ bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     // evaluate the model profile at the given events
     for (int i = 0; i < events.size(); ++i) {
         Eigen::Vector3d x;
-        if (_detectorSpace) {
+        if (_library->detectorCoords()) {
             x(0) = events[i]._px;
             x(1) = events[i]._py;
             x(2) = events[i]._frame;
-
             x -= peak->getShape().center();
         } else {
             x = coord.transform(events[i]);
@@ -139,10 +137,10 @@ bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
 
         const double predict = model_profile.predict(x);
 
-        if (predict > 0.0) {
+        //if (predict > 0.0001) {
             profile.push_back(predict);
             obs_counts.push_back(counts[i]);
-        }
+        //}
     }
     
     // todo: stopping criterion

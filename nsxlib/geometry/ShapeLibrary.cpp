@@ -60,11 +60,12 @@ struct FitData {
 };
 
 
-ShapeLibrary::ShapeLibrary(): 
+ShapeLibrary::ShapeLibrary(bool detector_coords): 
     _profiles(),
     _choleskyD(),
     _choleskyM(),
-    _choleskyS()
+    _choleskyS(),
+    _detectorCoords(detector_coords)
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
@@ -280,6 +281,15 @@ Eigen::Matrix3d ShapeLibrary::meanCovariance(sptrPeak3D reference_peak, double r
     return cov;
     #endif
 
+    // testing (try using detector space??)
+    #if 0
+    for (auto peak: neighbors) {
+        cov += peak->getShape().inverseMetric();
+    }
+    cov /= neighbors.size();
+    return cov;
+    #endif
+
     PeakCoordinateSystem reference_coord(reference_peak);
 
     for (auto peak: neighbors) {
@@ -295,6 +305,11 @@ Eigen::Matrix3d ShapeLibrary::meanCovariance(sptrPeak3D reference_peak, double r
     cov /= neighbors.size();
     Eigen::Matrix3d JI = reference_coord.jacobian().inverse();
     return JI * cov * JI.transpose();
+}
+
+bool ShapeLibrary::detectorCoords() const
+{
+    return _detectorCoords;
 }
 
 } // end namespace nsx

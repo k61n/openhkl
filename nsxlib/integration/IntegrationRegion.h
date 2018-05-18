@@ -52,6 +52,7 @@ public:
     void updateMask(Eigen::MatrixXi& mask, double frame) const;
 
     const AABB aabb() const;
+    const AABB peakBB() const;
 
     EventType classify(const DetectorEvent& ev) const;
 

@@ -68,7 +68,12 @@ void DialogRefineUnitCell::refineParameters()
             fmax = std::max(fmax, center[2]);
         }
 
-        return int((fmax-fmin)/frames_per_batch);
+        int batches = int((fmax-fmin)/frames_per_batch);
+        if (batches > 0) {
+            return batches;
+        } else {
+            return 1;
+        }
     };
       
     for (auto d: _data) {
@@ -121,6 +126,11 @@ void DialogRefineUnitCell::refineParameters()
             nsx::info() << "Failed to refine parameters for numor " << d->filename();
         }  else {
             nsx::info() << "Successfully refined parameters for numor " << d->filename();
+
+            if (ui->checkBoxRefineLattice->isChecked() && nbatches(d_peaks) == 1) {
+                nsx::info() << ">>> updating unit cell";
+                *_unitCell = *r.batches().front().cell();
+            }
 
             // TODO: decide how to handle this situation....
             #if 0

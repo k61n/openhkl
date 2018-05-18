@@ -42,7 +42,9 @@ class MergedData;
 
 class RFactor: public IMergedPeakStatistic {
 public:
-    RFactor(): _Rmerge(0.0), _Rmeas(0.0), _Rpim(0.0) {}
+    RFactor(): 
+        _Rmerge(0.0), _Rmeas(0.0), _Rpim(0.0),
+        _expectedRmerge(0.0), _expectedRmeas(0.0), _expectedRpim(0.0) {}
     ~RFactor() {}
 
     void calculate(const MergedData& data);
@@ -51,9 +53,14 @@ public:
     double Rmeas() {return _Rmeas;}
     double Rpim() {return _Rpim;}
 
+    double expectedRmerge() {return _expectedRmerge;}
+    double expectedRmeas() {return _expectedRmeas;}
+    double expectedRpim() {return _expectedRpim;}
+
 
 private:
     double _Rmerge, _Rmeas, _Rpim;
+    double _expectedRmerge, _expectedRmeas, _expectedRpim;
 };
 
 } // end namespace nsx

@@ -93,6 +93,21 @@ void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_en
             integrated.emplace(std::make_pair(peak, false));
         } catch (...) {
             peak->setSelected(false);
+            continue;
+        }
+
+        // ignore partials
+        auto bb = regions[peak].peakBB();
+        auto data = peak->data();
+        auto lo = bb.lower();
+        auto hi = bb.upper();
+
+        if (lo[0] < 0 || lo[1] < 0 || lo[2] < 0) {
+            peak->setSelected(false);
+        }
+
+        if (hi[0] >= data->nCols() || hi[1] >= data->nRows() || hi[2] >= data->nFrames()) {
+            peak->setSelected(false);
         }
     }
 
@@ -115,12 +130,13 @@ void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_en
         }
 
         for (auto peak: peaks) {
+
             bool result = regions[peak].advanceFrame(current_frame, mask, idx);
             // this allows for partials at end of data
             result |= idx == data->nFrames()-1;
 
             // done reading peak data
-            if (result && !integrated[peak]) {           
+            if (result && !integrated[peak]) {      
                 regions[peak].data().computeStandard();            
                 try {
                     if (compute(peak, regions[peak])) {

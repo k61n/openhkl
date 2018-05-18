@@ -588,10 +588,18 @@ bool SessionModel::writeStatistics(std::string filename,
         rfactor.calculate(merged_shell);
 
         std::snprintf(&buf[0], buf.size(),
-                "    %10.2f %10.2f %10d %10d %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f",
+                " %10.2f %10.2f" // dmax, dmin
+                " %10zd %10zd %10.3f" // nobs, nmerge, redundancy
+                " %10.3f %10.3f" // Rmeas, expected Rmeas
+                " %10.3f %10.3f" // Rmerge, expected Rmerge
+                " %10.3f %10.3f" // Rpim, expected Rpim
+                " %10.3f %10.3f", // CC half, CC*
                 d_upper, d_lower, 
                 merged_shell.totalSize(), merged_shell.getPeaks().size(), merged_shell.redundancy(),
-                rfactor.Rmeas(), rfactor.Rmerge(), rfactor.Rpim(), cc.CChalf(), cc.CCstar());
+                rfactor.Rmeas(), rfactor.expectedRmeas(),
+                rfactor.Rmerge(), rfactor.expectedRmerge(),
+                rfactor.Rpim(), rfactor.expectedRpim(),
+                cc.CChalf(), cc.CCstar());
 
         file << &buf[0] << std::endl;
 
@@ -619,6 +627,9 @@ bool SessionModel::writeStatistics(std::string filename,
     unsigned int total_peaks = 0;
     unsigned int bad_peaks = 0;
 
+    // for debugging
+    bool write_unmerged = true;
+
     for (auto&& peak : merged_data.getPeaks()) {
 
         const auto hkl = peak.getIndex();
@@ -638,9 +649,31 @@ bool SessionModel::writeStatistics(std::string filename,
                       h, k, l, intensity, sigma, nobs, chi2, p);
 
         file << &buf[0];
-
         file << std::endl;
+        
         ++total_peaks;
+
+        if (!write_unmerged) {
+            continue;
+        }
+
+        for (auto unmerged: peak.getPeaks()) {
+            auto c = unmerged->getShape().center();
+            auto numor = unmerged->data()->filename();
+            auto I = unmerged->correctedIntensity();
+
+            std::snprintf(&buf[0], buf.size(), 
+                "    "
+                " %10.3f %10.3f %10.3f " // x, y, frame
+                " %10.3f %10.3f" // I, sigma
+                " %s", // filename
+                c[0], c[1], c[2], 
+                I.value(), I.sigma(),
+                numor.c_str());
+
+            file << &buf[0];
+            file << std::endl;
+        }
     }
 
 

@@ -18,6 +18,8 @@ instrument:
         row_min: 0
         col_min: 0
         data_ordering: TopRightColMajor
+        gain: 0.86
+        baseline: 0.0
         goniometer:
             name: gamma-arm
             axis:

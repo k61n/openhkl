@@ -3,6 +3,7 @@
 #include "Ellipsoid.h"
 #include "Intensity.h"
 #include "MeanBackgroundIntegrator.h"
+#include "Peak3D.h"
 
 namespace nsx {
 
@@ -39,7 +40,7 @@ bool MeanBackgroundIntegrator::compute(sptrPeak3D peak, const IntegrationRegion&
     double var_bkg = (sum_bkg2 - nbkg*mean_bkg*mean_bkg) / (nbkg-1);
     double sigma_bkg = std::sqrt(var_bkg);
 
-    // reject outliers
+    // update mean, rejecting outliers
     for (auto i = 0; i < 20; ++i) {
         sum_bkg = 0;
         sum_bkg2 = 0;
@@ -63,9 +64,9 @@ bool MeanBackgroundIntegrator::compute(sptrPeak3D peak, const IntegrationRegion&
             break;
         }
     }
-
-    // note: the variance is the variance of the _estimate of the mean background_
-    _meanBackground = Intensity(mean_bkg, var_bkg / nbkg);
+    // note 1: assuming Poisson
+    // note 2: the variance is the variance of the _estimated_ mean
+    _meanBackground = Intensity(mean_bkg, mean_bkg / nbkg);
 
     return true;
 }

@@ -128,6 +128,6 @@ int main()
     auto&& states = dataf->instrumentStates();
     refiner.refineSamplePosition(states);
 
-    NSX_CHECK_ASSERT(refiner.refine(200));
+    NSX_CHECK_ASSERT(refiner.refine(500));
     return 0;
 }

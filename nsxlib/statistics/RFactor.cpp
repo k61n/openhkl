@@ -33,6 +33,9 @@
 #include "Peak3D.h"
 #include "RFactor.h"
 
+
+static const double g_sqrt2pi = std::sqrt(2.0 / M_PI);
+
 namespace nsx {
 
 void RFactor::calculate(const MergedData& data)
@@ -42,6 +45,10 @@ void RFactor::calculate(const MergedData& data)
     _Rmerge = 0;
     _Rmeas = 0;
     _Rpim = 0;
+    
+    _expectedRmerge = 0;
+    _expectedRmeas = 0;
+    _expectedRpim = 0;
 
     double I_total = 0.0;
 
@@ -61,10 +68,17 @@ void RFactor::calculate(const MergedData& data)
         I_total += std::fabs(Iave) * peak.redundancy();
 
         for (auto&& p: peak.getPeaks()) {
-            double diff = std::fabs(p->correctedIntensity().value() - Iave);
+            auto I = p->correctedIntensity();
+
+            double diff = std::fabs(I.value() - Iave);
+
             _Rmerge += diff;
             _Rmeas += Fmeas*diff;
             _Rpim += Fpim*diff;
+
+            _expectedRmerge += I.sigma();
+            _expectedRmeas += I.sigma() * Fmeas;
+            _expectedRpim += I.sigma() * Fpim;
         }
     }
 
@@ -73,11 +87,19 @@ void RFactor::calculate(const MergedData& data)
         _Rmerge = 0.0;
         _Rmeas = 0.0;
         _Rpim = 0.0;
+
+        _expectedRmerge = 0;
+        _expectedRmeas = 0;
+        _expectedRpim = 0;
     }
     else {
         _Rmerge /= I_total;
         _Rmeas /= I_total;
         _Rpim /= I_total;
+
+        _expectedRmerge *= g_sqrt2pi / I_total;
+        _expectedRmeas *= g_sqrt2pi / I_total;
+        _expectedRpim *= g_sqrt2pi / I_total;
     }
 }
 

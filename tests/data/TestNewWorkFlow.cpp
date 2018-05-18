@@ -90,6 +90,12 @@ int main()
         unsigned int indexed_peaks = 0;
 
         for (auto&& peak: selected_peaks) {
+            double d = 1.0 / peak->q().rowVector().norm();
+
+            if (d < 2.0) {
+                continue;
+            }
+
             indexer.addPeak(peak);
             ++indexed_peaks;
         }
@@ -98,7 +104,7 @@ int main()
 
     unsigned int indexed_peaks = numIndexedPeaks();
 
-    NSX_CHECK_ASSERT(indexed_peaks > 650);
+    NSX_CHECK_ASSERT(indexed_peaks > 600);
     NSX_CHECK_NO_THROW(indexer.autoIndex(params));
     NSX_CHECK_ASSERT(indexer.getSolutions().size() > 1);
 
@@ -124,6 +130,7 @@ int main()
     //dataf->integratePeaks(found_peaks, integrator, 3.0, 4.0, 5.0);
 
     indexed_peaks = numIndexedPeaks();
+    std::cout << indexed_peaks << std::endl;
     NSX_CHECK_ASSERT(indexed_peaks > 600);
 
     int n_selected = 0;

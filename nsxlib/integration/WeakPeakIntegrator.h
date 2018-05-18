@@ -49,7 +49,6 @@ private:
     sptrShapeLibrary _library;
     double _radius;
     double _nframes;
-    bool _detectorSpace;
 };
 
 } // end namespace nsx

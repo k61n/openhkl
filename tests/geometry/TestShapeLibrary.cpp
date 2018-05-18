@@ -10,7 +10,7 @@ using Eigen::Matrix3d;
 
 int main()
 {
-    ShapeLibrary library;
+    ShapeLibrary library(true);
 
     // TODO: fix this test for the new version of shape library!!
 
