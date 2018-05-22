@@ -23,4 +23,4 @@ make -j4
 
 /usr/local/opt/qt5/bin/macdeployqt nsxtool.app/
 
-${CI_PROJECT_DIR}/build_server/osx/tools/create-dmg/create-dmg --background ${CI_PROJECT_DIR}/build_server/osx/resources/background.jpg --volname nsxtool --window-pos 200 120 --window-size 800 400 --icon nsxtool.app 200 190 --hide-extension nsxtool.app --app-drop-link 600 185 nsxtool.dmg .
+${CI_PROJECT_DIR}/build_server/osx/tools/create-dmg/create-dmg --background ${CI_PROJECT_DIR}/build_server/osx/resources/background.jpg --volicon ${CI_PROJECT_DIR}/build_server/osx/resources/nsxtool.icns --volname nsxtool --window-pos 200 120 --window-size 800 400 --icon ${CI_PROJECT_DIR}/build_server/osx/resources/nsxtool.ico 200 190 --hide-extension nsxtool.app --app-drop-link 600 185 nsxtool.dmg .
