@@ -78,13 +78,14 @@ MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent),
   _ui(new Ui::MainWindow),
   //_experiments(),
-  _currentData(nullptr),
-  _session(new SessionModel)
+  _currentData(nullptr)
 {
+
     _ui->setupUi(this);
 
     // make experiment tree aware of the session
-    _ui->experimentTree->setSession(_session);
+    _session = new SessionModel;
+    _ui->experimentTree->setModel(_session);
 
     // Set Date to the application window title
     QDateTime datetime=QDateTime::currentDateTime();
@@ -172,7 +173,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(peakFitDialog()), _ui->experimentTree, SLOT(peakFitDialog()));
     connect(this, SIGNAL(incorporateCalculatedPeaks()), _ui->experimentTree, SLOT(incorporateCalculatedPeaks()));
 
-    connect(_session.get(), SIGNAL(updatePeaks()), _ui->_dview->getScene(), SLOT(updatePeaks()));
+    connect(_session, SIGNAL(updatePeaks()), _ui->_dview->getScene(), SLOT(updatePeaks()));
 
     _ui->loggerDockWidget->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
     _ui->plotterDockWidget->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
@@ -533,203 +534,12 @@ void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
     }    
 }
 
-void MainWindow::on_actionIncorporate_calculated_peaks_triggered(bool checked)
-{
-    Q_UNUSED(checked)
-    emit incorporateCalculatedPeaks();
-}
-
 void MainWindow::on_actionWrite_log_file_triggered()
 {
     _session->writeLog();
 }
 
-void MainWindow::on_actionReintegrate_peaks_triggered()
-{
-    // todo: move this to PeakListItem
-    #if 0
-    // TODO: weak peaks vs. strong peaks??
-    auto library = _session->library();
-
-    if (!library) {
-        throw std::runtime_error("Error: cannot integrate weak peaks without a shape library!");
-    }
-
-    nsx::info() << "Reintegrating peaks...";
-
-    auto dialog = new DialogIntegrate();
-
-    std::map<std::string, std::function<nsx::IPeakIntegrator*()>> integrator_map;
-    std::vector<std::string> integrator_names;
-    
-    integrator_map["Strong peak integrator"] = [&]() {return new nsx::StrongPeakIntegrator(dialog->fitCenter(), dialog->fitCov());};
-    integrator_map["Weak peak integrator"] = [&]() {return new nsx::WeakPeakIntegrator(library, dialog->radius(), dialog->nframes(), false);};
-    integrator_map["I/Sigma integrator"] = [&]() {return new nsx::ISigmaIntegrator(library, dialog->radius(), dialog->nframes());};
-    integrator_map["1d Profile integrator"] = [&]() {return new nsx::Profile1DIntegrator(library, dialog->radius(), dialog->nframes());};
-    integrator_map["Gaussian integrator"] = [&]() {return new nsx::GaussianIntegrator(dialog->fitCenter(), dialog->fitCov());};
-
-    for (const auto& pair: integrator_map) {
-        integrator_names.push_back(pair.first);
-    }
-
-    dialog->setIntegrators(integrator_names);
-
-    if (!dialog->exec()) {
-        nsx::info() << "Peak integration canceled.";
-        return;
-    }
-
-    const double peak_scale = dialog->peakScale();
-    const double bkgBegin = dialog->bkgBegin();
-    const double bkgEnd = dialog->bkgEnd();
-    const double dmin = dialog->dMin();
-    const double dmax = dialog->dMax();
-
-    nsx::DataList numors = _session->getSelectedNumors();
-
-    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
-    ProgressView view(this);
-    view.watch(handler);
-
-    for (auto&& numor: numors) {
-        // todo: bkg_begin and bkg_end
-        auto peaks = nsx::PeakFilter().dMin(_session->peaks(numor.get()), dmin);
-        peaks = nsx::PeakFilter().dMax(peaks, dmax);
-        nsx::info() << "Integrating " << peaks.size() << " peaks";
-        std::unique_ptr<nsx::IPeakIntegrator> integrator(integrator_map[dialog->integrator()]());
-        integrator->setHandler(handler);
-        integrator->integrate(peaks, numor, peak_scale, bkgBegin, bkgEnd);
-    }
-
-    _session->updatePeaks();
-    nsx::info() << "Done reintegrating peaks";
-    #endif
-}
-
-void MainWindow::on_actionFit_peak_profiles_triggered()
-{
-    _session->peakFitDialog();
-}
-
 void MainWindow::on_actionAuto_assign_unit_cell_triggered()
 {
     _session->autoAssignUnitCell();
-}
-
-void MainWindow::on_actionFit_profiles_triggered()
-{
-    nsx::info() << "This functionality is currently disabled in the GUI!";
-    #if 0
-    nsx::info() << "fit profiles triggered";
-
-
-    auto numors = _session->getSelectedNumors();
-
-    for (auto d: numors) {
-
-        auto peaks = _session->peaks(nullptr);
-        auto num_peaks = peaks.size();
-        auto current_peak = 0;
-
-        std::vector<Eigen::MatrixXd> frames;
-        frames.reserve(d->nFrames());
-
-        for (size_t f = 0; f < d->nFrames(); ++f) {
-            frames.emplace_back(d->frame(f).cast<double>());
-        }
-
-        nsx::PeakList peak_list;
-
-        for (auto peak: peaks) {
-
-            ++current_peak;
-
-            if (peak->data() != d) {
-                continue;
-            }
-
-            double done = double(current_peak) * 100.0 / double(num_peaks);
-            if (current_peak%200 == 0) {
-                nsx::info() << "done: " << done;
-                QApplication::processEvents();
-            }
-
-            auto bb = peak->getShape().aabb();
-            auto lower = bb.lower();
-            auto upper = bb.upper();
-
-            int fmin = std::max(0, int(lower[2]));
-            int fmax = std::min(int(peak->data()->nFrames())-1, int(upper[2]));
-
-            int xmin = std::max(0, int(lower[0]));
-            int ymin = std::max(0, int(lower[1]));
-
-            int xmax = std::min(int(d->nCols())-1, int(upper[0]));
-            int ymax = std::min(int(d->nRows())-1, int(upper[1]));
-
-            int npoints = (fmax-fmin)*(xmax-xmin)*(ymax-ymin);
-            int point = 0;
-
-            if (npoints <= 0) {
-                peak->setSelected(false);
-                continue;
-            }
-
-            Eigen::ArrayXd x, y, z, I;
-            x.setZero(npoints);
-            y.setZero(npoints);
-            z.setZero(npoints);
-            I.setZero(npoints);
-
-            // hard cutoff
-            if (npoints > 50000) {
-                peak->setSelected(false);
-                continue;
-            }
-
-            for (int f = fmin; f < fmax; ++f) {
-                for (int j = xmin; j < xmax; ++j) {
-                    for (int i = ymin; i < ymax; ++i) {
-
-                        if (region.classifySlice({double(j), double(i), double(f)}) < 0) {
-                            continue;
-                        }
-
-                        x(point) = j;
-                        y(point) = i;
-                        z(point) = f;
-                        I(point) = frames[f](i, j);
-                        ++point;
-                    }
-                }
-            }
-
-            // too few points to get a fit
-            if (point < 20) {
-                peak->setSelected(false);
-                continue;
-            }
-
-            nsx::Profile3d prof(x.head(point), y.head(point), z.head(point), I.head(point));
-            nsx::Profile3d fit = prof.fit(x.head(point), y.head(point), z.head(point), I.head(point), 50);
-
-            if (!fit.success() || fit.pearson() < 0.5) {
-                peak->setSelected(false);
-                continue;
-            }
-
-            Eigen::Matrix3d D;
-            D << prof._Dxx, prof._Dxy, prof._Dxz,
-                prof._Dxy, prof._Dyy, prof._Dyz,
-                prof._Dxz, prof._Dyz, prof._Dzz;
-
-            peak->setShape(nsx::Ellipsoid(prof._c, D));
-            peak_list.push_back(peak);
-        }
-        // todo: change bkg_begin and bkg_end
-        d->integratePeaks(peak_list, 3.0, 6.0, nullptr);
-    }
-
-    _session->updatePeaks();
-    #endif 
 }

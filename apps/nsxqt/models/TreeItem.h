@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 
+#include <QMenu>
 #include <QStandardItem>
 #include <QVariant>
 #include <QJsonObject>
@@ -13,11 +14,9 @@
 
 class QWidget;
 
-class TreeItem : public QStandardItem
+class TreeItem: public QStandardItem
 {
-
 public:
-
     explicit TreeItem();
     //nsx::sptrExperiment getExperiment();
     virtual ~TreeItem();
@@ -28,7 +27,6 @@ public:
     virtual void fromJson(const QJsonObject& obj);
 
     nsx::sptrExperiment experiment();
-
 };
 
 #endif // NSXQT_TREEITEM_H

@@ -1382,13 +1382,9 @@ border-radius: 4px;
      <property name="title">
       <string>Peaks</string>
      </property>
-     <addaction name="actionRemove_bad_peaks"/>
-     <addaction name="actionIncorporate_calculated_peaks"/>
-     <addaction name="actionApply_resolution_cutoff"/>
-     <addaction name="actionReintegrate_peaks"/>
-     <addaction name="actionFit_peak_profiles"/>
+     <addaction name="actionRemove_bad_peaks"/>     
+     <addaction name="actionReintegrate_peaks"/>     
      <addaction name="actionAuto_assign_unit_cell"/>
-     <addaction name="actionFit_profiles"/>
     </widget>
     <addaction name="actionFind_space_group"/>
     <addaction name="menuPeaks"/>
@@ -1844,39 +1840,14 @@ QDockWidget::title {
     <string>Property</string>
    </property>
   </action>
-  <action name="actionApply_resolution_cutoff">
-   <property name="text">
-    <string>Apply resolution cutoff</string>
-   </property>
-  </action>
   <action name="actionWrite_log_file">
    <property name="text">
     <string>Write log file</string>
    </property>
   </action>
-  <action name="actionRescale_integration_area">
-   <property name="text">
-    <string>Rescale integration area</string>
-   </property>
-  </action>
-  <action name="actionReintegrate_peaks">
-   <property name="text">
-    <string>Reintegrate peaks</string>
-   </property>
-  </action>
-  <action name="actionFit_peak_profiles">
-   <property name="text">
-    <string>Fit peak profiles</string>
-   </property>
-  </action>
   <action name="actionAuto_assign_unit_cell">
    <property name="text">
     <string>Auto assign unit cell</string>
-   </property>
-  </action>
-  <action name="actionFit_profiles">
-   <property name="text">
-    <string>Fit profiles</string>
    </property>
   </action>
  </widget>

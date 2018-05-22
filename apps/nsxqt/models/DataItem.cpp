@@ -1,4 +1,5 @@
 #include <QIcon>
+#include <QFileDialog>
 #include <QFileInfo>
 #include <QJsonArray>
 #include <QStandardItem>
@@ -31,79 +32,40 @@ DataItem::DataItem() : TreeItem()
     setSelectable(false);
 }
 
-NumorItem* DataItem::importData(nsx::sptrDataSet data)
+void DataItem::importData()
 {
-    auto&& filename = data->filename();
+    QStringList filenames;
+    filenames = QFileDialog::getOpenFileNames(nullptr,"select numors","","",nullptr,QFileDialog::Option::DontUseNativeDialog);
 
-    QString filename_qstr(filename.c_str());
-    QFileInfo fileinfo(filename_qstr);
+    for (auto i = 0; i < filenames.size(); ++i) {
+        auto&& filename = filenames[i];
+        QFileInfo fileinfo(filename);
+        auto exp = experiment();
 
-    auto exp = experiment();
-
-    // If the experience already stores the current numor, skip it
-    if (exp->hasData(filename))
-    {
-        return nullptr;
-    }
-
-    try {
-        exp->addData(data);
-    }
-    catch(std::exception& e) {
-        nsx::error() << "Error reading numor: " << filename << e.what();
-        return nullptr;
-    }
-    catch(...)  {
-        nsx::error() << "Error reading numor: " << filename << " reason not known:";
-        return nullptr;
-    }
-
-    // Get the basename of the current numor
-    auto&& basename = fileinfo.baseName().toStdString();
-
-    NumorItem* item = new NumorItem(data);
-    item->setText(QString::fromStdString(basename));
-    item->setToolTip(filename_qstr);
-    item->setCheckable(true);
-    appendRow(item);
-
-    return item;
-}
+        // If the experience already stores the current numor, skip it
+        if (exp->hasData(filename.toStdString())) {
+            return; // nullptr;
+        }
 
 
-NumorItem* DataItem::importData(const std::string& filename)
-{
-    // Get the basename of the current numor
-    QString filename_qstr(filename.c_str());
-    QFileInfo fileinfo(filename_qstr);
-    auto exp = experiment();
+        nsx::sptrDataSet data_ptr;
 
-    // Get the basename of the current numor
-    auto&& basename = fileinfo.baseName().toStdString();
-
-    // If the experience already stores the current numor, skip it
-    if (exp->hasData(filename)) {
-        return nullptr;
-    }
-
-    nsx::sptrDataSet data_ptr;
-
-    try {
         std::string extension = fileinfo.completeSuffix().toStdString();
-        data_ptr = nsx::DataReaderFactory().create(extension, filename, exp->getDiffractometer());
-    }
-    catch(std::exception& e) {
-        nsx::error() << "Error reading numor: " << filename << e.what();
-        return nullptr;
-    }
-    catch(...)  {
-        nsx::error() << "Error reading numor: " << filename << "reason not known:";
-        return nullptr;
-    }
+        data_ptr = nsx::DataReaderFactory().create(extension, filename.toStdString(), exp->getDiffractometer());
+        exp->addData(data_ptr);      
 
-    return importData(data_ptr);
+        // Get the basename of the current numor
+        auto&& basename = fileinfo.baseName();
+
+        NumorItem* item = new NumorItem(data_ptr);
+        item->setText(basename);
+        item->setToolTip(filename);
+        item->setCheckable(true);
+        appendRow(item);
+    }
 }
 
+#if 0
 NumorItem* DataItem::importRawData(const std::vector<std::string> &filenames,
                                    double wavelength, double delta_chi, double delta_omega, double delta_phi,
                                    bool rowMajor, bool swapEndian, int bpp)
@@ -141,6 +103,7 @@ NumorItem* DataItem::importRawData(const std::vector<std::string> &filenames,
 
     return importData(data);
 }
+#endif
 
 QJsonObject DataItem::toJson()
 {
@@ -160,6 +123,7 @@ QJsonObject DataItem::toJson()
 
 void DataItem::fromJson(const QJsonObject &obj)
 {
+    #if 0
     QJsonArray numors = obj["numors"].toArray();
 
     for (auto&& numor: numors) {
@@ -167,6 +131,7 @@ void DataItem::fromJson(const QJsonObject &obj)
         NumorItem* item = importData(filename.toStdString());
         item->fromJson(numor.toObject());
     }
+    #endif
 }
 
 void DataItem::findPeaks()

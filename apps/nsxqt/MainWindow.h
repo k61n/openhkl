@@ -82,13 +82,11 @@ private slots:
 
     void on_actionDraw_peak_integration_area_triggered(bool checked);
     void on_actionRemove_bad_peaks_triggered(bool checked);
-    void on_actionIncorporate_calculated_peaks_triggered(bool checked);
+    
 
     void on_actionWrite_log_file_triggered();
-    void on_actionReintegrate_peaks_triggered();
-    void on_actionFit_peak_profiles_triggered();
     void on_actionAuto_assign_unit_cell_triggered();
-    void on_actionFit_profiles_triggered();
+    
 
 public slots:
     void changeData(nsx::sptrDataSet);
@@ -105,7 +103,7 @@ private:
     nsx::sptrProgressHandler _progressHandler;
     nsx::sptrPeakFinder _peakFinder;
 
-    std::shared_ptr<SessionModel> _session;
+    SessionModel* _session;
 };
 
 #endif // MAINWINDOW_H

@@ -200,12 +200,6 @@ void SessionModel::absorptionCorrection()
     // NOT IMPLEMENTED
 }
 
-void SessionModel::importData()
-{
-    // NOT IMPLEMENTED
-}
-
-
 void SessionModel::showPeaksOpenGL()
 {
     GLWidget* glw=new GLWidget();
@@ -222,11 +216,6 @@ void SessionModel::showPeaksOpenGL()
        }
     }
     glw->show();
-}
-
-void SessionModel::findSpaceGroup()
-{
-    // NOT IMPLEMENTED
 }
 
 void SessionModel::computeRFactors()
@@ -553,4 +542,43 @@ nsx::PeakList SessionModel::peaks(const nsx::DataSet* data) const
         }
     }
     return list;
+}
+
+void SessionModel::createNewExperiment()
+{
+    std::unique_ptr<DialogExperiment> dlg;
+
+    // DialogExperiment could throw an exception if it fails to read the resource files
+    try {
+        dlg = std::unique_ptr<DialogExperiment>(new DialogExperiment());
+
+        // The user pressed cancel, return
+        if (!dlg->exec())
+            return;
+
+        // If no experiment name is provided, pop up a warning
+        if (dlg->getExperimentName().isEmpty()) {
+            nsx::error() << "Empty experiment name";
+            return;
+        }
+    }
+    catch(std::exception& e) {
+        nsx::error() << e.what();
+        return;
+    }
+
+    // Add the experiment
+    try {
+        // Create an experiment
+        auto experimentName = dlg->getExperimentName().toStdString();
+        auto instrumentName = dlg->getInstrumentName().toStdString();
+        nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName,instrumentName));
+        // Create an experiment item
+        ExperimentItem* expt = new ExperimentItem(expPtr);    
+        appendRow(expt);
+    }
+    catch(const std::runtime_error& e) {
+        nsx::error() << e.what();
+        return;
+    }
 }

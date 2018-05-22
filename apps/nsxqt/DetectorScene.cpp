@@ -95,12 +95,12 @@ void DetectorScene::setMaxIntensity(int intensity)
     loadCurrentImage(false);
 }
 
-void DetectorScene::setData(std::shared_ptr<SessionModel> session, const nsx::sptrDataSet& data)
+void DetectorScene::setData(SessionModel* session, const nsx::sptrDataSet& data)
 {
     setData(session, data, 0);
 }
 
-void DetectorScene::setData(std::shared_ptr<SessionModel> session, const nsx::sptrDataSet& data, size_t frame)
+void DetectorScene::setData(SessionModel* session, const nsx::sptrDataSet& data, size_t frame)
 {
     _currentData = data;
     _session = session;

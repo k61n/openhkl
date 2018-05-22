@@ -13,8 +13,8 @@ class DataItem : public TreeItem
 public:
     explicit DataItem();
 
-    NumorItem* importData(const std::string& filename);
-    NumorItem *importRawData(const std::vector<std::string>& filenames,
+    void importData();
+    void importRawData(const std::vector<std::string>& filenames,
                              double wavelength, double delta_chi, double delta_omega, double delta_phi,
                              bool rowMajor, bool swapEndian, int bpp);
 
@@ -25,6 +25,6 @@ public:
     nsx::DataList selectedData();
 
 private:
-    NumorItem *importData(nsx::sptrDataSet data);
+    
     nsx::sptrPeakFinder _peakFinder;
 };

@@ -51,9 +51,13 @@
 #include <nsxlib/InstrumentTypes.h>
 #include <nsxlib/UtilsTypes.h>
 
+#include "DataItem.h"
+#include "ExperimentItem.h"
+#include "PeaksItem.h"
+
 class ExperimentItem;
 
-class SessionModel : public QStandardItemModel {
+class SessionModel: public QStandardItemModel {
     Q_OBJECT
 public:
     explicit SessionModel();
@@ -88,12 +92,11 @@ public:
     void updateCellParameters(nsx::sptrUnitCell);
 
 public slots:
-
-    void importData();
+    void createNewExperiment();
 
     void absorptionCorrection();
     void showPeaksOpenGL();
-    void findSpaceGroup();
+
     void computeRFactors();
     void findFriedelPairs();
     void peakFitDialog();

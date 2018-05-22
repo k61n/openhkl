@@ -63,8 +63,8 @@ protected:
 public slots:
     void resetScene();
     // To be called to update detector image
-    void setData(std::shared_ptr<SessionModel> session, const nsx::sptrDataSet&, size_t frame);
-    void setData(std::shared_ptr<SessionModel> session, const nsx::sptrDataSet&);
+    void setData(SessionModel* session, const nsx::sptrDataSet&, size_t frame);
+    void setData(SessionModel* session, const nsx::sptrDataSet&);
 
     void changeFrame(size_t frame = 0);
     void setMaxIntensity(int);
@@ -127,7 +127,7 @@ private:
 
     QGraphicsPixmapItem* _integrationRegion;
 
-    std::shared_ptr<SessionModel> _session;
+    SessionModel* _session;
 };
 
 #endif // NSXQT_DETECTORSCENE_H

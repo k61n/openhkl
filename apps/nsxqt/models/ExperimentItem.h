@@ -30,7 +30,9 @@ public:
 
     PeaksItem* peaks() { return _peaks; }
     DataItem* dataItem() { return _data; }
-    
+
+    nsx::sptrShapeLibrary library() { return _shapeLibrary; }
+
 private:
     nsx::sptrExperiment _experiment;
     InstrumentItem* _instr;

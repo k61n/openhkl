@@ -77,15 +77,9 @@ ExperimentTree::~ExperimentTree()
 {
 }
 
-void ExperimentTree::setSession(std::shared_ptr<SessionModel> session)
-{
-    _session = session;
-    setModel(_session.get());
-}
-
 void ExperimentTree::setIndexingTolerance()
 {
-    QStandardItem* item=_session->itemFromIndex(currentIndex());
+    QStandardItem* item=dynamic_cast<SessionModel*>(model())->itemFromIndex(currentIndex());
     auto ucitem=dynamic_cast<UnitCellItem*>(item);
     if (!ucitem)
         return;
@@ -100,74 +94,36 @@ void ExperimentTree::setIndexingTolerance()
     onSingleClick(currentIndex());
 }
 
-void ExperimentTree::createNewExperiment()
-{
-    std::unique_ptr<DialogExperiment> dlg;
 
-    // DialogExperiment could throw an exception if it fails to read the resource files
-    try {
-        dlg = std::unique_ptr<DialogExperiment>(new DialogExperiment());
-
-        // The user pressed cancel, return
-        if (!dlg->exec())
-            return;
-
-        // If no experiment name is provided, pop up a warning
-        if (dlg->getExperimentName().isEmpty()) {
-            nsx::error() << "Empty experiment name";
-            return;
-        }
-    }
-    catch(std::exception& e) {
-        nsx::error() << e.what();
-        return;
-    }
-
-    // Add the experiment
-    try {
-        // Create an experiment
-        auto experimentName = dlg->getExperimentName().toStdString();
-        auto instrumentName = dlg->getInstrumentName().toStdString();
-        nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName,instrumentName));
-        // Create an experiment item
-        ExperimentItem* expt = new ExperimentItem(expPtr);    
-        _session->appendRow(expt);
-    }
-    catch(const std::runtime_error& e) {
-        nsx::error() << e.what();
-        return;
-    }
-}
 
 void ExperimentTree::onCustomMenuRequested(const QPoint& point)
 {
     QModelIndex index = indexAt(point);
+    QMenu* menu = new QMenu(this);
+    SessionModel* session = dynamic_cast<SessionModel*>(model());
+    auto triggered = &QAction::triggered;
 
     if (index == rootIndex()) {
-        QMenu* menu = new QMenu(this);
         QAction* newexp = menu->addAction("Add new experiment");
         menu->popup(viewport()->mapToGlobal(point));
-        connect(newexp, SIGNAL(triggered()), this, SLOT(createNewExperiment()));
-    }
-    else {
-        QStandardItem* item = _session->itemFromIndex(index);
-        if (auto ditem = dynamic_cast<DataItem*>(item))
-        {
-            QMenu* menu = new QMenu(this);
+        connect(newexp, triggered, [=]() {session->createNewExperiment();});
+    } else {
+        QStandardItem* item = session->itemFromIndex(index);
+        
+        if (auto ditem = dynamic_cast<DataItem*>(item)) {            
             QAction* import = menu->addAction("Import data");
             QAction* rawImport = menu->addAction("Import raw data...");
             QAction* findpeaks = menu->addAction("Peak finder");
-            menu->popup(viewport()->mapToGlobal(point));
-            connect(import, SIGNAL(triggered()), this, SLOT(importData()));
-            connect(rawImport, SIGNAL(triggered()), this, SLOT(importRawData()));
+            connect(import, &QAction::triggered, [=](){ditem->importData();});
+            // todo: fix this!!
+            //connect(rawImport, &QAction::triggered, [=](){ditem->importRawData();});
             connect(findpeaks, &QAction::triggered, [=](){ditem->findPeaks();});
+            menu->popup(viewport()->mapToGlobal(point));
         }
-        else if (dynamic_cast<PeakListItem*>(item))
-        {
-            QMenu* menu = new QMenu(this);
+        else if (auto pitem = dynamic_cast<PeaksItem*>(item)) {
             QAction* abs = menu->addAction("Correct for Absorption");
             QAction* scene3d = menu->addAction("Show 3D view");
-            menu->popup(viewport()->mapToGlobal(point));
+            
             // Call the slot
             connect(abs, SIGNAL(triggered()), this, SLOT(absorptionCorrection()));
             connect(scene3d, SIGNAL(triggered()), this, SLOT(showPeaksOpenGL()));
@@ -205,98 +161,41 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(setTolerance, SIGNAL(triggered()),this, SLOT(setIndexingTolerance()));
 
         }
-        else if (NumorItem* nitem = dynamic_cast<NumorItem*>(item))
-            {
-            QMenu* menu = new QMenu(this);
-            QAction* export_hdf = menu->addAction("Export to HDF5...");
-            menu->popup(viewport()->mapToGlobal(point));
+        else if (NumorItem* nitem = dynamic_cast<NumorItem*>(item)) {
+            QAction* export_hdf = menu->addAction("Export to HDF5...");            
 
             auto export_fn = [=] {
                 QString filename = QFileDialog::getSaveFileName(this, "Save File", "", "HDF5 (*.hdf *.hdf5)", nullptr, QFileDialog::Option::DontUseNativeDialog);
                 nitem->exportHDF5(filename.toStdString());
             };
-
             connect(export_hdf, &QAction::triggered, this, export_fn);
         }
     }
+    menu->popup(viewport()->mapToGlobal(point));
 }
 
 void ExperimentTree::absorptionCorrection()
 {
     // Get the current item and check that is actually a Data item. Otherwise, return.
-    QStandardItem* item=_session->itemFromIndex(currentIndex());
+    QStandardItem* item=dynamic_cast<SessionModel*>(model())->itemFromIndex(currentIndex());
     auto pitem=dynamic_cast<PeakListItem*>(item);
     if (!pitem)
         return;
-    MCAbsorptionDialog* dialog = new MCAbsorptionDialog(_session, pitem->experiment(), this);
+    MCAbsorptionDialog* dialog = new MCAbsorptionDialog(dynamic_cast<SessionModel*>(model()), pitem->experiment(), this);
     dialog->open();
-}
-
-void ExperimentTree::importData()
-{
-    // Get the current item and check that is actually a Data item. Otherwise, return.
-    DataItem* dataItem = dynamic_cast<DataItem*>(_session->itemFromIndex(currentIndex()));
-    if (!dataItem)
-        return;
-
-    QStringList fileNames;
-    fileNames = QFileDialog::getOpenFileNames(this,"select numors","","",nullptr,QFileDialog::Option::DontUseNativeDialog);
-
-    for (int i = 0; i < fileNames.size(); ++i) {
-        dataItem->importData(fileNames[i].toStdString());
-    }
-}
-
-void ExperimentTree::importRawData()
-{
-    // Get the current item and check that is actually a Data item. Otherwise, return.
-    DataItem* dataItem = dynamic_cast<DataItem*>(_session->itemFromIndex(currentIndex()));
-
-    if (!dataItem)
-        return;
-
-    auto exmt = dataItem->experiment();
-
-    if (!exmt)
-        return;
-
-    QStringList files;
-    files = QFileDialog::getOpenFileNames(this,"import raw data","","",nullptr,QFileDialog::Option::DontUseNativeDialog);
-
-
-    files.sort();
-
-    if (files.isEmpty())
-        return;
-
-    DialogRawData dialog(this);
-
-    if (!dialog.exec())
-        return;
-
-    const double wavelength = dialog.wavelength();
-    const double delta_phi = dialog.deltaPhi();
-    const double delta_omega = dialog.deltaOmega();
-    const double delta_chi = dialog.deltaChi();
-    const bool swap_endian = dialog.swapEndian();
-    const int bpp = dialog.bpp();
-    const bool row_major = dialog.rowMajor();
-
-    std::vector<std::string> filenames;
-
-    for (auto&& file: files)
-        filenames.push_back(file.toStdString());
-
-    dataItem->importRawData(filenames, wavelength, delta_chi, delta_omega, delta_phi, row_major, swap_endian, bpp);
 }
 
 void ExperimentTree::onDoubleClick(const QModelIndex& index)
 {
     // Get the current item and check that is actually a Numor item. Otherwise, return.
-    QStandardItem* item=_session->itemFromIndex(index);
+    QStandardItem* item=dynamic_cast<SessionModel*>(model())->itemFromIndex(index);
     if (auto ptr=dynamic_cast<DataItem*>(item)) {
-        if (ptr->model()->rowCount(ptr->index())==0)
+        if (ptr->model()->rowCount(ptr->index())==0) {
+            // todo: fix this
+            #if 0
             importData();
+            #endif
+        }
         else {
             for (auto i=0;i<ptr->model()->rowCount(ptr->index());++i) {
                 if (ptr->child(i)->checkState() == Qt::Unchecked)
@@ -321,12 +220,12 @@ void ExperimentTree::keyPressEvent(QKeyEvent *event)
         QListIterator<QModelIndex> it(selIndexes);
         it.toBack();
         while (it.hasPrevious()) {
-            QStandardItem* item = _session->itemFromIndex(it.previous());
+            QStandardItem* item = dynamic_cast<SessionModel*>(model())->itemFromIndex(it.previous());
             if (!item->parent()) {
-                _session->removeRow(item->row());
+                model()->removeRow(item->row());
                 emit resetScene();
             } else {
-                _session->removeRow(item->row(),item->parent()->index());
+                model()->removeRow(item->row(),item->parent()->index());
                 emit resetScene();
             }
         }
@@ -337,7 +236,7 @@ void ExperimentTree::keyPressEvent(QKeyEvent *event)
 void ExperimentTree::onSingleClick(const QModelIndex &index)
 {
     // Inspect this item if it is inspectable
-    InspectableTreeItem* item = dynamic_cast<InspectableTreeItem*>(_session->itemFromIndex(index));
+    InspectableTreeItem* item = dynamic_cast<InspectableTreeItem*>(dynamic_cast<SessionModel*>(model())->itemFromIndex(index));
     if (item) {
         emit inspectWidget(item->inspectItem());
     } else {
@@ -350,10 +249,10 @@ void ExperimentTree::showPeaksOpenGL()
 {
     GLWidget* glw = new GLWidget();
     auto& scene = glw->getScene();
-    auto datav = _session->getSelectedNumors();
+    auto datav = dynamic_cast<SessionModel*>(model())->getSelectedNumors();
 
     for (auto idata : datav) {
-       auto peaks=_session->peaks(idata.get());
+       auto peaks=dynamic_cast<SessionModel*>(model())->peaks(idata.get());
        for (auto peak: peaks) {
            GLSphere* sphere=new GLSphere("");
            Eigen::RowVector3d pos = peak->q().rowVector();
@@ -363,31 +262,4 @@ void ExperimentTree::showPeaksOpenGL()
        }
     }
     glw->show();
-}
-
-void ExperimentTree::findSpaceGroup()
-{
-    try {
-        DialogSpaceGroup* dialog = new DialogSpaceGroup(_session->peaks(nullptr), this);
-        dialog->exec();
-    } catch(std::runtime_error& e) {
-        nsx::error() << e.what();
-    }
-}
-
-void ExperimentTree::computeRFactors()
-{
-    _session->computeRFactors();
-}
-
-void ExperimentTree::findFriedelPairs()
-{
-    nsx::error() << "findFriedelParis() is not yet implemented!";
-    return;
-
-}
-
-void ExperimentTree::peakFitDialog()
-{
-    _session->peakFitDialog();
 }

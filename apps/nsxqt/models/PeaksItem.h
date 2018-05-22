@@ -12,4 +12,6 @@ public:
     explicit PeaksItem();
     PeakListItem* createPeaksItem(const char* name);
     nsx::PeakList selectedPeaks();
+    void integratePeaks();
+    void findSpaceGroup();
 };

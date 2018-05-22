@@ -21,8 +21,6 @@ public:
     explicit ExperimentTree(QWidget *parent = 0);
     ~ExperimentTree();
 
-    void setSession(std::shared_ptr<SessionModel> session);
-
 signals:
     void plotData(nsx::sptrDataSet);
     void inspectWidget(QWidget*);
@@ -32,23 +30,13 @@ public slots:
     void keyPressEvent(QKeyEvent* event);
     void onCustomMenuRequested(const QPoint& point);
     void onDoubleClick(const QModelIndex& index);
-    void importData();
-    void importRawData();
 
-    void createNewExperiment();
     void onSingleClick(const QModelIndex& index);
     void absorptionCorrection();
     void showPeaksOpenGL();
-    void findSpaceGroup();
-    void computeRFactors();
-    void findFriedelPairs();
-    void peakFitDialog();
-
+   
     void setIndexingTolerance();
 
-private:
-
-    std::shared_ptr<SessionModel> _session;
 };
 
 #endif // NSXQT_EXPERIMENTTREE_H

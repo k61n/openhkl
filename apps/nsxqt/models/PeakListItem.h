@@ -16,6 +16,7 @@ public:
     explicit PeakListItem();
     QWidget* inspectItem();
     nsx::PeakList& peaks() { return _peaks; }
+
 private:
     nsx::PeakList _peaks;
 };
