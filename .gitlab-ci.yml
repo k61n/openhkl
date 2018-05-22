@@ -79,6 +79,7 @@ deploy:osx:
 ci:windows:
   stage: ci
   script:
+    - echo "windows ci"
   allow_failure: false
   only:
     - /^bugfix/.*$/
