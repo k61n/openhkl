@@ -28,6 +28,8 @@ macx {
     LIBS += -L${CMAKE_BINARY_DIR}/nsxlib -lnsx
 
     LIBS += -L/usr/local/opt/fftw/lib -lfftw3
+    
+    ICON = ${CMAKE_SOURCE_DIR}/build_server/osx/resources/nsxtool.icns
 }
 
 TARGET = nsxtool
