@@ -1,6 +1,7 @@
 #include <QIcon>
 #include <QFileInfo>
 #include <QJsonArray>
+#include <QMessageBox>
 #include <QStandardItem>
 #include <QString>
 
@@ -20,11 +21,18 @@
 
 #include "DataItem.h"
 #include "DialogIntegrate.h"
+#include "DialogPeakFilter.h"
+#include "DialogProfileFit.h"
 #include "DialogSpaceGroup.h"
+#include "GLSphere.h"
+#include "GLWidget.h"
 #include "ExperimentItem.h"
+#include "LibraryItem.h"
+#include "MCAbsorptionDialog.h"
 #include "PeaksItem.h"
 #include "PeakListItem.h"
 #include "ProgressView.h"
+#include "SessionModel.h"
 #include "NumorItem.h"
 
 PeaksItem::PeaksItem(): TreeItem()
@@ -40,7 +48,7 @@ PeakListItem* PeaksItem::createPeaksItem(const char* name)
 {
     auto item = new PeakListItem;
     item->setText(name);
-    appendRow(item);   void integratePeaks(); 
+    appendRow(item);
     return item;
 }
 
@@ -66,7 +74,7 @@ void PeaksItem::integratePeaks()
 {
     ExperimentItem& exp_item = dynamic_cast<ExperimentItem&>(*parent());
     auto selected_peaks = selectedPeaks();
-    auto library = exp_item.library();
+    auto library = exp_item.libraryItem()->library();
 
     if (!library) {
         throw std::runtime_error("Error: cannot integrate weak peaks without a shape library!");
@@ -127,4 +135,81 @@ void PeaksItem::findSpaceGroup()
 {
     DialogSpaceGroup dialog(selectedPeaks());
     dialog.exec();
+}
+
+void PeaksItem::showPeaksOpenGL()
+{
+    GLWidget* glw = new GLWidget();
+    auto& scene = glw->getScene();
+    auto peaks = selectedPeaks();
+
+    for (auto peak: peaks) {
+        GLSphere* sphere=new GLSphere("");
+        Eigen::RowVector3d pos = peak->q().rowVector();
+        sphere->setPos(pos[0]*100,pos[1]*100,pos[2]*100);
+        sphere->setColor(0,1,0);
+        scene.addActor(sphere);
+    }
+
+    glw->show();
+}
+
+void PeaksItem::absorptionCorrection()
+{
+    // todo: check that this is correct!
+    MCAbsorptionDialog* dialog = new MCAbsorptionDialog(dynamic_cast<SessionModel*>(model()), experiment());
+    dialog->open();
+}
+
+void PeaksItem::buildShapeLibrary()
+{
+    nsx::PeakList peaks = selectedPeaks();
+    SessionModel& session = dynamic_cast<SessionModel&>(*model());
+    ExperimentItem& exp_item = dynamic_cast<ExperimentItem&>(*parent());
+
+    int nPeaks = peaks.size();
+    // Check that a minimum number of peaks have been selected for indexing
+    if (peaks.size() == 0) {
+        QMessageBox::warning(nullptr, "NSXTool","Need to selected peaks to fit profile!");
+        return;
+    }
+
+    nsx::sptrUnitCell uc(peaks[0]->activeUnitCell());
+    for (auto&& peak : peaks) {
+        if (peak->activeUnitCell() != uc) {
+            uc = nullptr;
+            break;
+        }
+    }
+
+    if (uc == nullptr) {
+        QMessageBox::warning(nullptr, "NSXTool", "The selected peaks must have the same active unit cell for profile fitting");
+        return;
+    }
+    DialogProfileFit* dialog = new DialogProfileFit(experiment(), uc, peaks);
+
+    // rejected
+    if (dialog->exec() == QDialog::Rejected) {
+        return;
+    }
+
+    *exp_item.libraryItem()->library() = *dialog->library();
+    nsx::info() << "Update profiles of " << peaks.size() << " peaks";
+}
+
+void PeaksItem::filterPeaks()
+{
+    DialogPeakFilter* dlg = new DialogPeakFilter(selectedPeaks());
+
+    if (dlg->exec()) {
+        auto&& bad_peaks = dlg->badPeaks();
+        for (auto peak: bad_peaks) {
+            peak->setSelected(false);
+            // todo: update this
+            #if 0
+            _session->removePeak(peak);
+            #endif
+        }
+    }    
+    // todo: update peaks
 }

@@ -14,6 +14,7 @@
 #include "models/SessionModel.h"
 
 class DataItem;
+class LibraryItem;
 class InstrumentItem;
 class PeaksItem;
 
@@ -30,15 +31,14 @@ public:
 
     PeaksItem* peaks() { return _peaks; }
     DataItem* dataItem() { return _data; }
-
-    nsx::sptrShapeLibrary library() { return _shapeLibrary; }
+    LibraryItem* libraryItem() { return _library; }
 
 private:
     nsx::sptrExperiment _experiment;
     InstrumentItem* _instr;
     DataItem* _data;
     PeaksItem* _peaks;
-    nsx::sptrShapeLibrary _shapeLibrary;
+    LibraryItem* _library;
 };
 
 #endif // NSXQT_EXPERIMENTITEM_H

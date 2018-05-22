@@ -10,6 +10,7 @@
 #include "DetectorItem.h"
 #include "ExperimentItem.h"
 #include "InstrumentItem.h"
+#include "LibraryItem.h"
 #include "PeaksItem.h"
 #include "SampleItem.h"
 #include "SessionModel.h"
@@ -39,6 +40,10 @@ ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment): TreeItem(), _exp
     // Create a peaks item and add it to the experiment item
     _peaks = new PeaksItem;
     appendRow(_peaks);
+
+    // Create the reference peak library
+    _library = new LibraryItem;
+    appendRow(_library);
 }
 
 QJsonObject ExperimentItem::toJson()

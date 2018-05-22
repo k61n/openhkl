@@ -15,7 +15,7 @@
 class ExperimentItem;
 class SessionModel;
 
-class ExperimentTree : public QTreeView {
+class ExperimentTree: public QTreeView {
     Q_OBJECT
 public:
     explicit ExperimentTree(QWidget *parent = 0);
@@ -32,11 +32,6 @@ public slots:
     void onDoubleClick(const QModelIndex& index);
 
     void onSingleClick(const QModelIndex& index);
-    void absorptionCorrection();
-    void showPeaksOpenGL();
-   
-    void setIndexingTolerance();
-
 };
 
 #endif // NSXQT_EXPERIMENTTREE_H

@@ -161,18 +161,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(_ui->intensity,SIGNAL(valueChanged(int)),_ui->_dview->getScene(),SLOT(setMaxIntensity(int)));
     connect(_ui->selectionMode,SIGNAL(currentIndexChanged(int)),_ui->_dview->getScene(),SLOT(changeInteractionMode(int)));
     connect(_ui->_dview->getScene(),SIGNAL(updatePlot(PlottableGraphicsItem*)),this,SLOT(updatePlot(PlottableGraphicsItem*)));
-    connect(_ui->action_open,SIGNAL(triggered()),_ui->experimentTree,SLOT(createNewExperiment()));
+    connect(_ui->action_open,SIGNAL(triggered()), _session, SLOT(createNewExperiment()));
 
-    connect(_ui->experimentTree, SIGNAL(resetScene()),
-            _ui->_dview->getScene(), SLOT(resetScene()));
-
-    connect(this, SIGNAL(findSpaceGroup(void)), _ui->experimentTree, SLOT(findSpaceGroup()));
-    connect(this, SIGNAL(computeRFactors(void)), _ui->experimentTree, SLOT(computeRFactors()));
-    connect(this,SIGNAL(findFriedelPairs(void)), _ui->experimentTree, SLOT(findFriedelPairs()));
-    // connect(this, SIGNAL(integrateCalculatedPeaks()), _ui->experimentTree, SLOT(integrateCalculatedPeaks()));
-    connect(this, SIGNAL(peakFitDialog()), _ui->experimentTree, SLOT(peakFitDialog()));
-    connect(this, SIGNAL(incorporateCalculatedPeaks()), _ui->experimentTree, SLOT(incorporateCalculatedPeaks()));
-
+    connect(_ui->experimentTree, SIGNAL(resetScene()), _ui->_dview->getScene(), SLOT(resetScene()));
+   
     connect(_session, SIGNAL(updatePeaks()), _ui->_dview->getScene(), SLOT(updatePeaks()));
 
     _ui->loggerDockWidget->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
@@ -213,35 +205,6 @@ MainWindow::~MainWindow()
 {
     qInstallMessageHandler(0);
     delete _ui;
-}
-
-void MainWindow::on_actionNew_session_triggered()
-{
-  nsx::error() << "save session: not implemented yet";
-}
-
-void MainWindow::saveSession(QString filename)
-{
-    Q_UNUSED(filename)
-
-    nsx::error() << "This feature is not currently implemented!";
-}
-
-void MainWindow::on_actionSave_session_triggered()
-{
-    saveSession(_session->getFilename());
-}
-
-void MainWindow::on_actionSave_session_as_triggered()
-{
-    QString homeDir = nsx::homeDirectory().c_str();
-    QString filename = QFileDialog::getSaveFileName(this, "Save session as..", homeDir, "Json document (*.json)", nullptr, QFileDialog::Option::DontUseNativeDialog);
-    saveSession(filename);
-}
-
-void MainWindow::on_actionLoad_session_triggered()
-{
-    nsx::error() << "This feature is not currently implemented!";
 }
 
 void MainWindow::on_actionAbout_triggered()
@@ -481,32 +444,6 @@ void MainWindow::on_checkBox_AspectRatio_toggled(bool checked)
     _ui->_dview->fixDetectorAspectRatio(checked);
 }
 
-void MainWindow::on_actionFind_space_group_triggered()
-{
-    emit findSpaceGroup();
-}
-
-void MainWindow::on_actionFind_Friedel_pairs_triggered()
-{
-    emit findFriedelPairs();
-}
-
-
-void MainWindow::on_actionCompute_R_factors_triggered()
-{
-    emit computeRFactors();
-    // emit findFriedelPairs();
-}
-
-void MainWindow::on_actionIntegrate_calculated_peaks_triggered()
-{
-}
-
-void MainWindow::on_actionPeak_fit_dialog_triggered()
-{
-    emit peakFitDialog();
-}
-
 void MainWindow::on_actionLogarithmic_Scale_triggered(bool checked)
 {
     _ui->_dview->getScene()->setLogarithmic(checked);
@@ -515,23 +452,6 @@ void MainWindow::on_actionLogarithmic_Scale_triggered(bool checked)
 void MainWindow::on_actionDraw_peak_integration_area_triggered(bool checked)
 {
     _ui->_dview->getScene()->drawIntegrationRegion(checked);
-}
-
-void MainWindow::on_actionRemove_bad_peaks_triggered(bool checked)
-{
-    Q_UNUSED(checked)
-
-    DialogPeakFilter* dlg = new DialogPeakFilter(_session->peaks(nullptr), this);
-    if (dlg->exec()) {
-        auto&& bad_peaks = dlg->badPeaks();
-        for (auto peak: bad_peaks) {
-            // todo: update this
-            #if 0
-            _session->removePeak(peak);
-            #endif
-        }
-        _session->updatePeaks();
-    }    
 }
 
 void MainWindow::on_actionWrite_log_file_triggered()

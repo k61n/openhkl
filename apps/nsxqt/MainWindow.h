@@ -41,19 +41,8 @@ public:
 
 signals:
     void plotDetectorData(nsx::DataSet*,int frame);
-    void findSpaceGroup();
-    void computeRFactors();
-    void findFriedelPairs();
-    //void integrateCalculatedPeaks();
-    void peakFitDialog();
-    void incorporateCalculatedPeaks();
 
 private slots:
-    void on_actionNew_session_triggered();
-    void on_actionSave_session_triggered();
-    void on_actionSave_session_as_triggered();
-    void on_actionLoad_session_triggered();
-
     void on_actionAbout_triggered();
 
     void on_actionPixel_position_triggered();
@@ -72,18 +61,10 @@ private slots:
     void on_actionH_k_l_triggered();
     void on_checkBox_AspectRatio_toggled(bool checked);
 
-    void on_actionFind_space_group_triggered();
-    void on_actionFind_Friedel_pairs_triggered();
-    void on_actionCompute_R_factors_triggered();
-    void on_actionIntegrate_calculated_peaks_triggered();
-    void on_actionPeak_fit_dialog_triggered();
-
     void on_actionLogarithmic_Scale_triggered(bool checked);
 
     void on_actionDraw_peak_integration_area_triggered(bool checked);
-    void on_actionRemove_bad_peaks_triggered(bool checked);
-    
-
+  
     void on_actionWrite_log_file_triggered();
     void on_actionAuto_assign_unit_cell_triggered();
     
@@ -93,7 +74,6 @@ public slots:
     void plotPeak(nsx::sptrPeak3D);
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
     void setInspectorWidget(QWidget*);
-    void saveSession(QString filename);
 
 private:
     Ui::MainWindow* _ui;

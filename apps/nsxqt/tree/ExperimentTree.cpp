@@ -42,6 +42,7 @@
 #include "GLSphere.h"
 #include "GLWidget.h"
 #include "InstrumentItem.h"
+#include "LibraryItem.h"
 #include "MCAbsorptionDialog.h"
 #include "NumorItem.h"
 #include "PeakListItem.h"
@@ -77,25 +78,6 @@ ExperimentTree::~ExperimentTree()
 {
 }
 
-void ExperimentTree::setIndexingTolerance()
-{
-    QStandardItem* item=dynamic_cast<SessionModel*>(model())->itemFromIndex(currentIndex());
-    auto ucitem=dynamic_cast<UnitCellItem*>(item);
-    if (!ucitem)
-        return;
-
-    bool ok;
-    double tolerance = QInputDialog::getDouble(this,tr("HKL integer tolerance"),tr("value:"),ucitem->unitCell()->indexingTolerance(),0.0,1.0,2,&ok);
-    if (!ok)
-        return;
-
-    ucitem->unitCell()->setIndexingTolerance(tolerance);
-
-    onSingleClick(currentIndex());
-}
-
-
-
 void ExperimentTree::onCustomMenuRequested(const QPoint& point)
 {
     QModelIndex index = indexAt(point);
@@ -123,23 +105,20 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
         else if (auto pitem = dynamic_cast<PeaksItem*>(item)) {
             QAction* abs = menu->addAction("Correct for Absorption");
             QAction* scene3d = menu->addAction("Show 3D view");
-            
-            // Call the slot
-            connect(abs, SIGNAL(triggered()), this, SLOT(absorptionCorrection()));
-            connect(scene3d, SIGNAL(triggered()), this, SLOT(showPeaksOpenGL()));
+            QAction* library = menu->addAction("Build shape library");
+            QAction* filter = menu->addAction("Filter peaks");
+            connect(abs, triggered, [=]{pitem->absorptionCorrection();});
+            connect(scene3d, triggered, [=]{pitem->showPeaksOpenGL();});
+            connect(library, triggered, [=]{pitem->buildShapeLibrary();});
+            connect(filter, triggered, [=](){pitem->filterPeaks();});
         }
-        else if (SampleItem* sitem=dynamic_cast<SampleItem*>(item))
-        {
+        else if (SampleItem* sitem = dynamic_cast<SampleItem*>(item)) {
             QMenu* menu = new QMenu(this);
             QAction* addUnitCell = menu->addAction("Add unit cell");
             menu->popup(viewport()->mapToGlobal(point));
-
-            auto addUnitCellLambda = [=] {sitem->addUnitCell();};
-            connect(addUnitCell, &QAction::triggered, this, addUnitCellLambda);
-
+            connect(addUnitCell, &QAction::triggered, [=](){sitem->addUnitCell();});
         }
-        else if (UnitCellItem* ucitem=dynamic_cast<UnitCellItem*>(item))
-        {
+        else if (UnitCellItem* ucitem = dynamic_cast<UnitCellItem*>(item)) {
             QMenu* menu = new QMenu(this);
             QAction* info = menu->addAction("Info");
             menu->addSeparator();
@@ -149,14 +128,9 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             QAction* transformationMatrix=menu->addAction("Transformation matrix");
             menu->popup(viewport()->mapToGlobal(point));
 
-            auto infoLambda = [=]{ucitem->info();};
-            connect(info, &QAction::triggered, this, infoLambda);
-
-            auto cellParametersLambda = [=]{ucitem->openChangeUnitCellDialog();};
-            connect(cellParameters, &QAction::triggered, this, cellParametersLambda);
-
-            auto transformationMatrixLambda = [=]{ucitem->openTransformationMatrixDialog();};
-            connect(transformationMatrix, &QAction::triggered, this, transformationMatrixLambda);
+            connect(info, &QAction::triggered,[=]{ucitem->info();});
+            connect(cellParameters, &QAction::triggered, [=]{ucitem->openChangeUnitCellDialog();});
+            connect(transformationMatrix, &QAction::triggered, [=]{ucitem->openTransformationMatrixDialog();});
 
             connect(setTolerance, SIGNAL(triggered()),this, SLOT(setIndexingTolerance()));
 
@@ -169,20 +143,12 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
                 nitem->exportHDF5(filename.toStdString());
             };
             connect(export_hdf, &QAction::triggered, this, export_fn);
+        } else if (LibraryItem* lib_item = dynamic_cast<LibraryItem*>(item)) {
+            QAction* predict = menu->addAction("Predict peaks");
+            connect(predict, triggered, [=](){lib_item->incorporateCalculatedPeaks();});
         }
     }
     menu->popup(viewport()->mapToGlobal(point));
-}
-
-void ExperimentTree::absorptionCorrection()
-{
-    // Get the current item and check that is actually a Data item. Otherwise, return.
-    QStandardItem* item=dynamic_cast<SessionModel*>(model())->itemFromIndex(currentIndex());
-    auto pitem=dynamic_cast<PeakListItem*>(item);
-    if (!pitem)
-        return;
-    MCAbsorptionDialog* dialog = new MCAbsorptionDialog(dynamic_cast<SessionModel*>(model()), pitem->experiment(), this);
-    dialog->open();
 }
 
 void ExperimentTree::onDoubleClick(const QModelIndex& index)
@@ -191,23 +157,17 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
     QStandardItem* item=dynamic_cast<SessionModel*>(model())->itemFromIndex(index);
     if (auto ptr=dynamic_cast<DataItem*>(item)) {
         if (ptr->model()->rowCount(ptr->index())==0) {
-            // todo: fix this
-            #if 0
-            importData();
-            #endif
-        }
-        else {
-            for (auto i=0;i<ptr->model()->rowCount(ptr->index());++i) {
-                if (ptr->child(i)->checkState() == Qt::Unchecked)
-                    ptr->child(i)->setCheckState(Qt::Checked);
-                else
-                    ptr->child(i)->setCheckState(Qt::Unchecked);
+            ptr->importData();
+        } else {
+            for (auto i = 0; i < ptr->model()->rowCount(ptr->index());++i) {
+                auto ci = ptr->child(i);                
+                Qt::CheckState new_state = ci->checkState() == Qt::Unchecked ? Qt::Checked : Qt::Unchecked;
+                ci->setCheckState(new_state);
             }
         }
-    }
-    else if (auto ptr=dynamic_cast<SampleItem*>(item))
+    } else if (auto ptr=dynamic_cast<SampleItem*>(item)) {
         ptr->addUnitCell();
-    else if (auto ptr=dynamic_cast<NumorItem*>(item)) {
+    } else if (auto ptr=dynamic_cast<NumorItem*>(item)) {
         emit plotData(ptr->getData());
     }
 }
@@ -243,23 +203,4 @@ void ExperimentTree::onSingleClick(const QModelIndex &index)
         QWidget* widget = new QWidget();
         emit inspectWidget(widget);
     }
-}
-
-void ExperimentTree::showPeaksOpenGL()
-{
-    GLWidget* glw = new GLWidget();
-    auto& scene = glw->getScene();
-    auto datav = dynamic_cast<SessionModel*>(model())->getSelectedNumors();
-
-    for (auto idata : datav) {
-       auto peaks=dynamic_cast<SessionModel*>(model())->peaks(idata.get());
-       for (auto peak: peaks) {
-           GLSphere* sphere=new GLSphere("");
-           Eigen::RowVector3d pos = peak->q().rowVector();
-           sphere->setPos(pos[0]*100,pos[1]*100,pos[2]*100);
-           sphere->setColor(0,1,0);
-           scene.addActor(sphere);
-       }
-    }
-    glw->show();
 }

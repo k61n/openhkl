@@ -527,6 +527,7 @@ void SessionModel::autoAssignUnitCell()
     nsx::debug() << "Done auto assigning unit cells";
 }
 
+#if 1
 nsx::PeakList SessionModel::peaks(const nsx::DataSet* data) const
 {  
     nsx::PeakList list;
@@ -543,6 +544,7 @@ nsx::PeakList SessionModel::peaks(const nsx::DataSet* data) const
     }
     return list;
 }
+#endif
 
 void SessionModel::createNewExperiment()
 {

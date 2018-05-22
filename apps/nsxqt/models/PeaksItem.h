@@ -14,4 +14,8 @@ public:
     nsx::PeakList selectedPeaks();
     void integratePeaks();
     void findSpaceGroup();
+    void showPeaksOpenGL();
+    void absorptionCorrection();
+    void buildShapeLibrary();
+    void filterPeaks();
 };
