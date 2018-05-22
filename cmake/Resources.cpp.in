@@ -69,7 +69,7 @@ YAML::Node findResource(const std::pair<std::string,std::string>& resource)
     default_yaml = YAML::Load(ss);
 
     if (fileExists(user_resource_path)) {
-        auto fin = std::ifstream(user_resource_path);
+        std::ifstream fin(user_resource_path);
         YAML::Node user_yaml = YAML::Load(fin);
         fin.close();
         
