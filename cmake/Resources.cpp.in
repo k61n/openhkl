@@ -18,6 +18,38 @@ const std::map<std::pair<std::string,std::string>,resource_function>& getResourc
     return resources_map;
 }
 
+void mergeResources(YAML::Node& node1, YAML::Node& node2) {
+
+    if (node1.Type() != node2.Type()) {
+        throw std::runtime_error("Can not merge node of different type");
+    }
+
+    if (node1.IsMap()) {
+        for (auto it = node2.begin();it!=node2.end();++it) {
+            std::string key = it->first.as<std::string>();
+            YAML::Node temp_node1=node1[key];
+            YAML::Node temp_node2=it->second;
+            if (temp_node1) {
+                mergeResources(temp_node1,temp_node2);
+            } else {
+                node1[key] = temp_node2;
+            }
+        }
+    } else if (node1.IsSequence()) {
+        for (size_t i = 0; i < node2.size();++i) {
+            YAML::Node temp_node1=node1[i];
+            YAML::Node temp_node2=node2[i];
+            if (temp_node1) {
+                mergeResources(temp_node1,temp_node2);
+            } else {
+                node1.push_back(temp_node2);
+            }
+        }
+    } else if (node1.IsScalar()) {
+        node1 = node2;
+    }
+}
+
 YAML::Node findResource(const std::pair<std::string,std::string>& resource)
 {
     auto it = resources_map.find(resource);
@@ -28,16 +60,28 @@ YAML::Node findResource(const std::pair<std::string,std::string>& resource)
 
     auto user_resource_dir = buildPath({applicationDataPath(),resource.first});
     auto user_resource_path = buildPath({user_resource_dir,resource.second+".yml"});
-    if (!fileExists(user_resource_path)) {
+
+    YAML::Node default_yaml;
+    std::stringstream ss;
+    for (auto line : it->second()) {
+        ss << line << std::endl;
+    }
+    default_yaml = YAML::Load(ss);
+
+    if (fileExists(user_resource_path)) {
+        auto fin = std::ifstream(user_resource_path);
+        YAML::Node user_yaml = YAML::Load(fin);
+        fin.close();
+        
+        mergeResources(default_yaml,user_yaml);
+    } else {
         makeDirectory(user_resource_dir);
         std::ofstream fout(user_resource_path);
-        for (auto line : it->second()) {
-            fout << line << std::endl;
-        }
+        fout << default_yaml;
         fout.close();
     }
-
-    return YAML::LoadFile(user_resource_path);
+    
+    return default_yaml;
 }
 
 std::vector<std::string> getResourcesName(const std::string& resource_type)
