@@ -45,6 +45,7 @@ ci:osx:
     - echo "osx ci"
     - ./build_server/osx/run_build.sh
     - ./build_server/osx/run_tests.sh
+    - ./build_server/osx/run_deploy.sh
   allow_failure: false
   only:
     - /^bugfix/.*$/
