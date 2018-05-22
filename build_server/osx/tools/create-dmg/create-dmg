@@ -176,7 +176,7 @@ if ! test -z "$APPLICATION_LINK"; then
 fi
 
 if ! test -z "$VOLUME_ICON_FILE"; then
-  echo "Copying volume icon file '$VOLUME_ICON_FILE'..."
+  echo "Copying volume icon file '$VOLUME_ICON_FILE' to '$MOUNT_DIR/.VolumeIcon.icns'..."
   cp "$VOLUME_ICON_FILE" "$MOUNT_DIR/.VolumeIcon.icns"
   SetFile -c icnC "$MOUNT_DIR/.VolumeIcon.icns"
 fi
