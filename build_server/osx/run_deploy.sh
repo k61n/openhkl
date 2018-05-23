@@ -23,6 +23,12 @@ make -j4
 
 /usr/local/opt/qt5/bin/macdeployqt nsxtool.app/
 
+# Remove unnecessary files
+rm -f *.cpp
+rm -f *.h
+rm -f *.o
+rm Makefile
+
 ${CI_PROJECT_DIR}/build_server/osx/tools/create-dmg/create-dmg \
 --background "${CI_PROJECT_DIR}/build_server/osx/resources/background.jpg" \
 --volicon "${CI_PROJECT_DIR}/build_server/osx/resources/nsxtool.icns" \
