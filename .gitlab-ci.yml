@@ -8,6 +8,8 @@ ci:trusty:
   stage: ci
   script:
     - echo "ubuntu ci"
+    - ./build_server/debian/run_build.sh
+    - ./build_server/debian/run_tests.sh
   allow_failure: false
   only:
     - /^bugfix/.*$/
@@ -43,7 +45,6 @@ ci:osx:
     - echo "osx ci"
     - ./build_server/osx/run_build.sh
     - ./build_server/osx/run_tests.sh
-    - ./build_server/osx/run_deploy.sh
   allow_failure: false
   only:
     - /^bugfix/.*$/
@@ -80,6 +81,8 @@ ci:windows:
   stage: ci
   script:
     - echo "windows ci"
+    - cmd /k .\\build_server\\windows\\run_build.bat
+    - cmd /k .\\build_server\\windows\\run_tests.bat
   allow_failure: false
   only:
     - /^bugfix/.*$/
