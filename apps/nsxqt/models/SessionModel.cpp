@@ -194,141 +194,6 @@ nsx::DataList SessionModel::getSelectedNumors() const
     return numors;
 }
 
-
-void SessionModel::absorptionCorrection()
-{
-    // NOT IMPLEMENTED
-}
-
-void SessionModel::showPeaksOpenGL()
-{
-    GLWidget* glw=new GLWidget();
-    auto& scene=glw->getScene();
-    auto datav=getSelectedNumors();
-    for (auto idata : datav) {
-       auto numor_peaks = peaks(idata.get());
-       for (auto peak: numor_peaks) {
-           GLSphere* sphere=new GLSphere("");
-           Eigen::RowVector3d pos = peak->q().rowVector();
-           sphere->setPos(pos[0]*100,pos[1]*100,pos[2]*100);
-           sphere->setColor(0,1,0);
-           scene.addActor(sphere);
-       }
-    }
-    glw->show();
-}
-
-void SessionModel::computeRFactors()
-{
-    // todo: reimplement this method
-    nsx::debug() << "not currently implemented!";
-}
-
-void SessionModel::findFriedelPairs()
-{
-    nsx::debug() << "findFriedelParis() is not yet implemented!";
-    return;
-}
-
-void SessionModel::peakFitDialog()
-{
-    nsx::debug() << "peakFitDialog() triggered";
-    nsx::error() << "this feature has been deprecated";
-}
-
-
-void SessionModel::writeLog()
-{
-    // todo: fix this
-    #if 0
-    LogFileDialog dialog;
-    auto numors = this->getSelectedNumors();
-
-    nsx::PeakFilter peak_filter;
-    nsx::PeakList selected_peaks;
-    selected_peaks = peak_filter.selected(_peaks,true);
-
-    if (!selected_peaks.size()) {
-        nsx::error() << "No peaks in the table";
-        return;
-    }
-
-    // return if user cancels dialog
-    if (!dialog.exec())
-        return;
-
-    bool friedel = dialog.friedel();
-
-    if (dialog.writeUnmerged()) {
-        if (!writeXDS(dialog.unmergedFilename(), selected_peaks, false, friedel))
-            nsx::error() << "Could not write unmerged data to " << dialog.unmergedFilename().c_str();
-    }
-
-    if (dialog.writeMerged()) {
-        if (!writeXDS(dialog.mergedFilename(), selected_peaks, true, friedel))
-            nsx::error() << "Could not write unmerged data to " << dialog.mergedFilename().c_str();
-    }
-
-    if (dialog.writeStatistics()) {
-        if (!writeStatistics(dialog.statisticsFilename(),
-                selected_peaks,
-                             dialog.dmin(), dialog.dmax(), dialog.numShells(), friedel))
-            nsx::error() << "Could not write statistics log to " << dialog.statisticsFilename().c_str();
-    }
-    #endif
-}
-
-bool SessionModel::writeXDS(std::string filename, const nsx::PeakList& peaks, bool merge, bool friedel)
-{
-    nsx::error() << "writeXDS method not implemented";
-    return false;
-}
-
-bool SessionModel::writeNewShellX(std::string filename, const nsx::PeakList& peaks)
-{
-    std::fstream file(filename, std::ios::out);
-    std::vector<char> buf(1024, 0); // buffer for snprintf
-
-    if (!file.is_open()) {
-        nsx::error() << "Error writing to this file, please check write permisions";
-        return false;
-    }
-
-    nsx::PeakFilter peak_filter;
-    nsx::PeakList filtered_peaks;
-    filtered_peaks = peak_filter.selected(peaks,true);
-    filtered_peaks = peak_filter.hasUnitCell(filtered_peaks);
-
-    if (filtered_peaks.empty()) {
-        return false;
-    }
-
-    auto cell = filtered_peaks[0]->activeUnitCell();
-
-    filtered_peaks = peak_filter.unitCell(filtered_peaks,cell);
-    filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance());
-
-    for (auto peak : filtered_peaks) {
-
-        nsx::MillerIndex hkl(peak->q(), *cell);
-
-        auto center = peak->getShape().center();
-        auto pos = peak->data()->diffractometer()->getDetector()->pixelPosition(center[0], center[1]);
-
-        auto corrected_intensity = peak->correctedIntensity();
-        double intensity = corrected_intensity.value();
-        double sigma = corrected_intensity.sigma();
-
-        std::snprintf(&buf[0], buf.size(), "  %4d %4d %4d %15.2f %10.2f", hkl[0], hkl[1], hkl[2], intensity, sigma);
-        file << &buf[0] << std::endl;
-    }
-
-    if (file.is_open())
-        file.close();
-
-    return true;
-}
-
 bool SessionModel::writeStatistics(std::string filename,
                                     const nsx::PeakList& peaks,
                                     double dmin, double dmax, unsigned int num_shells, bool friedel)
@@ -492,41 +357,6 @@ bool SessionModel::writeStatistics(std::string filename,
     return true;
 }
 
-void SessionModel::autoAssignUnitCell()
-{
-    auto numors = getSelectedNumors();
-
-    for (auto&& numor: numors) {
-        auto sample = numor->diffractometer()->getSample();
-        nsx::PeakList numor_peaks = peaks(numor.get());
-
-        nsx::PeakFilter peak_filter;
-        nsx::PeakList filtered_peaks;
-        filtered_peaks = peak_filter.selected(numor_peaks,true);
-
-        for (auto peak : filtered_peaks) {
-            Eigen::RowVector3d hkl;
-            bool assigned = false;
-
-            for (size_t i = 0; i < sample->getNCrystals(); ++i) {
-                auto cell = sample->unitCell(i);
-                nsx::MillerIndex hkl(peak->q(), *cell);
-                if (hkl.indexed(cell->indexingTolerance())) {
-                    peak->addUnitCell(cell, true);
-                    assigned = true;
-                    break;
-                }
-            }
-
-            // could not assign unit cell
-            if (assigned == false) {
-                peak->setSelected(false);
-            }
-        }
-    }
-    nsx::debug() << "Done auto assigning unit cells";
-}
-
 #if 1
 nsx::PeakList SessionModel::peaks(const nsx::DataSet* data) const
 {  
@@ -534,7 +364,7 @@ nsx::PeakList SessionModel::peaks(const nsx::DataSet* data) const
 
     for (auto i = 0; i < rowCount(); ++i) {
         auto& exp_item = dynamic_cast<ExperimentItem&>(*item(i));
-        auto&& peaks = exp_item.peaks()->selectedPeaks();
+        auto&& peaks = exp_item.peaks().selectedPeaks();
 
         for (auto peak: peaks) {
             if (data == nullptr || peak->data().get() == data) {

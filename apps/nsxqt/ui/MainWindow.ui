@@ -1370,12 +1370,6 @@ border-radius: 4px;
     </property>
     <addaction name="actionAbout"/>
    </widget>
-   <widget class="QMenu" name="menuAnalysis">
-    <property name="title">
-     <string>Analysis</string>
-    </property>
-    <addaction name="actionWrite_log_file"/>
-   </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Options"/>
    <addaction name="menuAnalysis"/>

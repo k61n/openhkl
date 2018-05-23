@@ -4,6 +4,7 @@
 #include <nsxlib/Sample.h>
 #include <nsxlib/UnitCell.h>
 
+#include "DialogSpaceGroup.h"
 #include "DialogTransformationMatrix.h"
 #include "DialogUnitCellParameters.h"
 #include "UnitCellItem.h"
@@ -52,4 +53,9 @@ void UnitCellItem::openTransformationMatrixDialog()
 {
     DialogTransformationmatrix* dialog=new DialogTransformationmatrix(_cell);
     dialog->exec();
+}
+
+void UnitCellItem::determineSpaceGroup()
+{
+
 }

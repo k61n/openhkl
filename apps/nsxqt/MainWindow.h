@@ -64,10 +64,7 @@ private slots:
     void on_actionLogarithmic_Scale_triggered(bool checked);
 
     void on_actionDraw_peak_integration_area_triggered(bool checked);
-  
-    void on_actionWrite_log_file_triggered();
-    void on_actionAuto_assign_unit_cell_triggered();
-    
+     
 
 public slots:
     void changeData(nsx::sptrDataSet);

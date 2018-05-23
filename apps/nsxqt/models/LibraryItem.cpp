@@ -28,7 +28,7 @@ void LibraryItem::incorporateCalculatedPeaks()
     nsx::debug() << "Incorporating missing peaks into current data set...";
 
     auto& expt_item = dynamic_cast<ExperimentItem&>(*parent());
-    auto& data_item = *expt_item.dataItem();
+    auto& data_item = expt_item.dataItem();
 
     std::set<nsx::sptrUnitCell> cells;
 
@@ -72,7 +72,7 @@ void LibraryItem::incorporateCalculatedPeaks()
 
         nsx::debug() << "Added " << predicted.size() << " predicted peaks.";
     }
-    auto peaks_item = expt_item.peaks()->createPeaksItem("Predicted peaks");
+    auto peaks_item = expt_item.peaks().createPeaksItem("Predicted peaks");
     std::swap(peaks_item->peaks(), predicted_peaks);
     //updatePeaks();
 }

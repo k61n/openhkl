@@ -12,7 +12,9 @@
 #include <nsxlib/Experiment.h>
 #include <nsxlib/InstrumentTypes.h>
 
+
 class QWidget;
+class ExperimentItem;
 
 class TreeItem: public QStandardItem
 {
@@ -27,6 +29,8 @@ public:
     virtual void fromJson(const QJsonObject& obj);
 
     nsx::sptrExperiment experiment();
+
+    ExperimentItem& experimentItem();
 };
 
 #endif // NSXQT_TREEITEM_H

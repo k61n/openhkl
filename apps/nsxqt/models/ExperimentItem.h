@@ -29,9 +29,9 @@ public:
 
     nsx::sptrExperiment experiment() { return _experiment; }
 
-    PeaksItem* peaks() { return _peaks; }
-    DataItem* dataItem() { return _data; }
-    LibraryItem* libraryItem() { return _library; }
+    PeaksItem& peaks() { return *_peaks; }
+    DataItem& dataItem() { return *_data; }
+    LibraryItem& libraryItem() { return *_library; }
 
 private:
     nsx::sptrExperiment _experiment;

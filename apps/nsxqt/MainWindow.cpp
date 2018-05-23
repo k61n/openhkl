@@ -453,13 +453,3 @@ void MainWindow::on_actionDraw_peak_integration_area_triggered(bool checked)
 {
     _ui->_dview->getScene()->drawIntegrationRegion(checked);
 }
-
-void MainWindow::on_actionWrite_log_file_triggered()
-{
-    _session->writeLog();
-}
-
-void MainWindow::on_actionAuto_assign_unit_cell_triggered()
-{
-    _session->autoAssignUnitCell();
-}

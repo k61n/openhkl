@@ -63,6 +63,11 @@ nsx::sptrExperiment TreeItem::getExperiment()
 
 nsx::sptrExperiment TreeItem::experiment()
 {
+    return experimentItem().experiment();
+}
+
+ExperimentItem& TreeItem::experimentItem()
+{
     ExperimentItem* exp_item = nullptr;
     QStandardItem* p = parent();
 
@@ -78,5 +83,5 @@ nsx::sptrExperiment TreeItem::experiment()
         throw std::runtime_error("TreeItem::importData(): no experiment in tree!");
     }
 
-    return exp_item->experiment();
+    return *exp_item;
 }

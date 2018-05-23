@@ -20,4 +20,5 @@ public:
     void filterPeaks();
     void autoindex();
     void refine();
+    void autoAssignUnitCell();
 };

@@ -95,7 +95,7 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
         if (auto ditem = dynamic_cast<DataItem*>(item)) {            
             QAction* import = menu->addAction("Import data");
             QAction* rawImport = menu->addAction("Import raw data...");
-            QAction* findpeaks = menu->addAction("Peak finder");
+            QAction* findpeaks = menu->addAction("Find peaks in data");
             connect(import, &QAction::triggered, [=](){ditem->importData();});
             // todo: fix this!!
             //connect(rawImport, &QAction::triggered, [=](){ditem->importRawData();});
@@ -132,13 +132,14 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             menu->addSeparator();
             QAction* cellParameters=menu->addAction("Change unit cell parameters");
             QAction* transformationMatrix=menu->addAction("Transformation matrix");
+            QAction* group = menu->addAction("Choose space group");
             menu->popup(viewport()->mapToGlobal(point));
 
             connect(info, &QAction::triggered,[=]{ucitem->info();});
             connect(cellParameters, &QAction::triggered, [=]{ucitem->openChangeUnitCellDialog();});
             connect(transformationMatrix, &QAction::triggered, [=]{ucitem->openTransformationMatrixDialog();});
-
             connect(setTolerance, SIGNAL(triggered()),this, SLOT(setIndexingTolerance()));
+            connect(group, triggered, [=](){ucitem->determineSpaceGroup();});
 
         }
         else if (NumorItem* nitem = dynamic_cast<NumorItem*>(item)) {

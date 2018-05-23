@@ -72,8 +72,6 @@ public:
     void setColorMap(const std::string& name);
     std::string getColorMap() const;
 
-    void writeLog();
-    bool writeNewShellX(std::string filename, const nsx::PeakList& peaks);
     bool writeStatistics(std::string filename,
                          const nsx::PeakList &peaks,
                          double dmin, double dmax, unsigned int num_shells, bool friedel);
@@ -81,7 +79,6 @@ public:
     bool writeXDS(std::string filename, const nsx::PeakList& peaks, bool merge, bool friedel);
 
     void fitAllPeaks();
-    void autoAssignUnitCell();
 
     nsx::PeakList peaks(const nsx::DataSet* data) const;
 
@@ -92,16 +89,7 @@ public:
     void updateCellParameters(nsx::sptrUnitCell);
 
 public slots:
-    void createNewExperiment();
-
-    void absorptionCorrection();
-    void showPeaksOpenGL();
-
-    void computeRFactors();
-    void findFriedelPairs();
-    void peakFitDialog();
-    
-
+    void createNewExperiment();  
     void onItemChanged(QStandardItem* item);
 
 private:

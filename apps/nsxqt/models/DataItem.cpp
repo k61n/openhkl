@@ -194,9 +194,8 @@ void DataItem::findPeaks()
     //updatePeaks();
     nsx::debug() << "Peak search complete., found " << peaks.size() << " peaks.";
 
-    auto exp_item = dynamic_cast<ExperimentItem&>(*parent());
-    auto peak_item = exp_item.peaks()->createPeaksItem("Found peaks");
-    std::swap(peak_item->peaks(), peaks);
+    auto& peak_item = *experimentItem().peaks().createPeaksItem("Found peaks");
+    std::swap(peak_item.peaks(), peaks);
 }
 
 nsx::DataList DataItem::selectedData()

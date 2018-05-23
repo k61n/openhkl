@@ -21,6 +21,8 @@ public:
     void openTransformationMatrixDialog();
     void openChangeUnitCellDialog();
 
+    void determineSpaceGroup();
+
 private:
     nsx::sptrUnitCell _cell;
 };
