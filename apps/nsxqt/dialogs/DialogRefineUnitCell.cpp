@@ -77,17 +77,22 @@ void DialogRefineUnitCell::refineParameters()
     };
       
     for (auto d: _data) {
-        nsx::PeakList d_peaks;
+        nsx::PeakList reference_peaks, predicted_peaks;
 
         for (auto peak: _peaks) {
-            if (peak->data() == d) {
-                d_peaks.push_back(peak);
+            if (peak->data() != d) {
+                continue;
+            }
+            if (peak->isPredicted()) {
+                predicted_peaks.push_back(peak);
+            } else {
+                reference_peaks.push_back(peak);
             }
         }
 
-        nsx::info() << d_peaks.size() << " available for refinement.";
+        nsx::info() << reference_peaks.size() << " available for refinement.";
 
-        nsx::Refiner r(_unitCell, d_peaks, nbatches(d_peaks));    
+        nsx::Refiner r(_unitCell, reference_peaks, nbatches(reference_peaks));    
 
         if (ui->checkBoxRefineLattice->isChecked()) {
             r.refineB();
@@ -127,22 +132,8 @@ void DialogRefineUnitCell::refineParameters()
         }  else {
             nsx::info() << "Successfully refined parameters for numor " << d->filename();
 
-            if (ui->checkBoxRefineLattice->isChecked() && nbatches(d_peaks) == 1) {
-                nsx::info() << ">>> updating unit cell";
-                *_unitCell = *r.batches().front().cell();
-            }
-
-            // TODO: decide how to handle this situation....
-            #if 0
-            int updated = r.updatePredictions(d_peaks);
-            nsx::info() << "done; updated " << updated << " peaks";
-
-            nsx::PeakList peak_list;
-
-            for (auto&& p: d_peaks) {
-                peak_list.push_back(p);
-            }
-            #endif
+            int updated = r.updatePredictions(predicted_peaks);
+            nsx::info() << "done; updated " << updated << " predicted peaks";
         }
     }
 }

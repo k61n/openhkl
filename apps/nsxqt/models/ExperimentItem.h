@@ -33,6 +33,11 @@ public:
     DataItem& dataItem() { return *_data; }
     LibraryItem& libraryItem() { return *_library; }
 
+    void writeLogFile();
+    bool writeStatistics(std::string filename,
+                         const nsx::PeakList &peaks,
+                         double dmin, double dmax, unsigned int num_shells, bool friedel);
+
 private:
     nsx::sptrExperiment _experiment;
     InstrumentItem* _instr;

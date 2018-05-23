@@ -72,9 +72,7 @@ public:
     void setColorMap(const std::string& name);
     std::string getColorMap() const;
 
-    bool writeStatistics(std::string filename,
-                         const nsx::PeakList &peaks,
-                         double dmin, double dmax, unsigned int num_shells, bool friedel);
+  
 
     bool writeXDS(std::string filename, const nsx::PeakList& peaks, bool merge, bool friedel);
 

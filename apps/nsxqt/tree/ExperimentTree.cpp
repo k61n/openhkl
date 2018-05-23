@@ -87,12 +87,15 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
 
     if (index == rootIndex()) {
         QAction* newexp = menu->addAction("Add new experiment");
-        menu->popup(viewport()->mapToGlobal(point));
         connect(newexp, triggered, [=]() {session->createNewExperiment();});
     } else {
         QStandardItem* item = session->itemFromIndex(index);
         
-        if (auto ditem = dynamic_cast<DataItem*>(item)) {            
+        if (auto exp_item = dynamic_cast<ExperimentItem*>(item)) {
+            QAction* log = menu->addAction("Write detailed log file");
+            connect(log, triggered, [=](){exp_item->writeLogFile();});
+        }
+        else if (auto ditem = dynamic_cast<DataItem*>(item)) {            
             QAction* import = menu->addAction("Import data");
             QAction* rawImport = menu->addAction("Import raw data...");
             QAction* findpeaks = menu->addAction("Find peaks in data");
@@ -100,7 +103,6 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             // todo: fix this!!
             //connect(rawImport, &QAction::triggered, [=](){ditem->importRawData();});
             connect(findpeaks, &QAction::triggered, [=](){ditem->findPeaks();});
-            menu->popup(viewport()->mapToGlobal(point));
         }
         else if (auto pitem = dynamic_cast<PeaksItem*>(item)) {
             QAction* filter = menu->addAction("Filter peaks");
@@ -119,13 +121,10 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(refine, triggered, [=](){pitem->refine();});
         }
         else if (SampleItem* sitem = dynamic_cast<SampleItem*>(item)) {
-            QMenu* menu = new QMenu(this);
-            QAction* addUnitCell = menu->addAction("Add unit cell");
-            menu->popup(viewport()->mapToGlobal(point));
+            QAction* addUnitCell = menu->addAction("Add unit cell");    
             connect(addUnitCell, &QAction::triggered, [=](){sitem->addUnitCell();});
         }
         else if (UnitCellItem* ucitem = dynamic_cast<UnitCellItem*>(item)) {
-            QMenu* menu = new QMenu(this);
             QAction* info = menu->addAction("Info");
             menu->addSeparator();
             QAction* setTolerance = menu->addAction("Set HKL tolerance");
@@ -133,7 +132,6 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             QAction* cellParameters=menu->addAction("Change unit cell parameters");
             QAction* transformationMatrix=menu->addAction("Transformation matrix");
             QAction* group = menu->addAction("Choose space group");
-            menu->popup(viewport()->mapToGlobal(point));
 
             connect(info, &QAction::triggered,[=]{ucitem->info();});
             connect(cellParameters, &QAction::triggered, [=]{ucitem->openChangeUnitCellDialog();});

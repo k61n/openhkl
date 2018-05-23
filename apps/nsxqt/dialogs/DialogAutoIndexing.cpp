@@ -14,6 +14,7 @@
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Logger.h>
+#include <nsxlib/Peak3D.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/UnitCell.h>
@@ -154,4 +155,8 @@ void DialogAutoIndexing::selectSolution(int index)
     QString selectedUnitCellName = ui->unitCells->currentText();
     QMessageBox::information(this, tr("NSXTool"),tr("Solution %1 set to %2 unit cell").arg(solutionNumber,selectedUnitCellName));
     emit cellUpdated(_unitCells[ui->unitCells->currentIndex()]);
+
+    for (auto peak: _peaks) {
+        peak->addUnitCell(_unitCells[ui->unitCells->currentIndex()]);
+    }
 }
