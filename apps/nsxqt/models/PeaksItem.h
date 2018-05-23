@@ -18,4 +18,6 @@ public:
     void absorptionCorrection();
     void buildShapeLibrary();
     void filterPeaks();
+    void autoindex();
+    void refine();
 };

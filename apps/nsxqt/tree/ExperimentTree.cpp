@@ -103,14 +103,20 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             menu->popup(viewport()->mapToGlobal(point));
         }
         else if (auto pitem = dynamic_cast<PeaksItem*>(item)) {
-            QAction* abs = menu->addAction("Correct for Absorption");
-            QAction* scene3d = menu->addAction("Show 3D view");
-            QAction* library = menu->addAction("Build shape library");
             QAction* filter = menu->addAction("Filter peaks");
+            QAction* autoidx = menu->addAction("Autoindex peaks");
+            QAction* refine = menu->addAction("Refine lattice and instrument parameters");
+            QAction* library = menu->addAction("Build shape library");
+            QAction* integrate = menu->addAction("Integrate peaks");
+            QAction* abs = menu->addAction("Correct for Absorption");
+            QAction* scene3d = menu->addAction("Show 3D view");                      
             connect(abs, triggered, [=]{pitem->absorptionCorrection();});
             connect(scene3d, triggered, [=]{pitem->showPeaksOpenGL();});
             connect(library, triggered, [=]{pitem->buildShapeLibrary();});
             connect(filter, triggered, [=](){pitem->filterPeaks();});
+            connect(integrate, triggered, [=](){pitem->integratePeaks();});
+            connect(autoidx, triggered, [=](){pitem->autoindex();});
+            connect(refine, triggered, [=](){pitem->refine();});
         }
         else if (SampleItem* sitem = dynamic_cast<SampleItem*>(item)) {
             QMenu* menu = new QMenu(this);

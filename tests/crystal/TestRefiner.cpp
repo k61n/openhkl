@@ -128,6 +128,8 @@ int main()
     auto&& states = dataf->instrumentStates();
     refiner.refineSamplePosition(states);
 
+    std::cout << "peaks to refine: " << peaks.size() << std::endl;
+
     NSX_CHECK_ASSERT(refiner.refine(500));
     return 0;
 }

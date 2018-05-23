@@ -20,9 +20,11 @@
 #include <nsxlib/WeakPeakIntegrator.h>
 
 #include "DataItem.h"
+#include "DialogAutoIndexing.h"
 #include "DialogIntegrate.h"
 #include "DialogPeakFilter.h"
 #include "DialogProfileFit.h"
+#include "DialogRefineUnitCell.h"
 #include "DialogSpaceGroup.h"
 #include "GLSphere.h"
 #include "GLWidget.h"
@@ -212,4 +214,37 @@ void PeaksItem::filterPeaks()
         }
     }    
     // todo: update peaks
+}
+
+void PeaksItem::autoindex()
+{
+    DialogAutoIndexing dlg(experiment(), selectedPeaks());
+    dlg.exec();
+}
+
+void PeaksItem::refine()
+{
+    nsx::PeakList peaks = selectedPeaks();
+    int nPeaks = peaks.size();
+    // Check that a minimum number of peaks have been selected for indexing
+    if (nPeaks < 10) {
+        QMessageBox::warning(nullptr, "NSXTool", "Need at least 10 peaks for refining");
+        return;
+    }
+
+    nsx::sptrUnitCell uc(peaks[0]->activeUnitCell());
+    for (auto&& peak : peaks) {
+        if (peak->activeUnitCell() != uc) {
+            uc = nullptr;
+            break;
+        }
+    }
+
+    if (uc == nullptr) {
+        QMessageBox::warning(nullptr, "NSXTool", "The selected peaks must have the same active unit cell for refining");
+        return;
+    }
+
+    DialogRefineUnitCell* dialog = new DialogRefineUnitCell(experiment(),uc,peaks,nullptr);
+    dialog->exec();
 }
