@@ -251,7 +251,7 @@ void DialogStatistics::updateStatisticsTab()
 
     bool include_friedel = ui->friedel->isChecked();
 
-    nsx::ResolutionShell resolution_shells = {dmin, dmax, n_shells};
+    nsx::ResolutionShell resolution_shells(dmin, dmax, n_shells);
     for (auto peak : _peaks) {
         resolution_shells.addPeak(peak);
     }
