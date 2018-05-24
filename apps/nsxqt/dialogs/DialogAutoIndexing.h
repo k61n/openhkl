@@ -27,26 +27,19 @@ public:
     void buildSolutionsTable();
 
 public slots:
-
     void autoIndex();
 
 private slots:
-
     void selectSolution(int);
 
 signals:
-
     void cellUpdated(nsx::sptrUnitCell);
 
 private:
     Ui::DialogAutoIndexing *ui;
-
     nsx::sptrExperiment _experiment;
-
     nsx::PeakList _peaks;
-
     nsx::UnitCellList _unitCells;
-
     std::vector<std::pair<nsx::sptrUnitCell,double>> _solutions;
 };
 

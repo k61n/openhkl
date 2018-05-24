@@ -3,7 +3,7 @@
 #include "DetectorItem.h"
 #include "DetectorPropertyWidget.h"
 
-DetectorItem::DetectorItem(nsx::sptrExperiment experiment) : InspectableTreeItem(experiment)
+DetectorItem::DetectorItem() : InspectableTreeItem()
 {
     setText("Detector");
     QIcon icon(":/resources/detectorIcon.png");

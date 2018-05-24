@@ -103,13 +103,13 @@ void Peak3D::addUnitCell(sptrUnitCell uc, bool activate)
 {
     auto it = std::find(_unitCells.begin(),_unitCells.end(), uc);
 
-    if (it != _unitCells.end()) {
-        return;
+    if (it == _unitCells.end()) {
+        _unitCells.emplace_back(std::move(uc));
+        it = --_unitCells.end();
     }
-    _unitCells.emplace_back(std::move(uc));
-
+    
     if (activate) {
-        _activeUnitCellIndex = int(_unitCells.size())-1;
+        _activeUnitCellIndex = int(it-_unitCells.begin());
     }
 }
 

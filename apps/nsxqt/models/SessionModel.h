@@ -51,9 +51,13 @@
 #include <nsxlib/InstrumentTypes.h>
 #include <nsxlib/UtilsTypes.h>
 
+#include "DataItem.h"
+#include "ExperimentItem.h"
+#include "PeaksItem.h"
+
 class ExperimentItem;
 
-class SessionModel : public QStandardItemModel {
+class SessionModel: public QStandardItemModel {
     Q_OBJECT
 public:
     explicit SessionModel();
@@ -68,54 +72,29 @@ public:
     void setColorMap(const std::string& name);
     std::string getColorMap() const;
 
-    void writeLog();
-    bool writeNewShellX(std::string filename, const nsx::PeakList& peaks);
-    bool writeStatistics(std::string filename,
-                         const nsx::PeakList &peaks,
-                         double dmin, double dmax, unsigned int num_shells, bool friedel);
+  
 
     bool writeXDS(std::string filename, const nsx::PeakList& peaks, bool merge, bool friedel);
 
     void fitAllPeaks();
-    void autoAssignUnitCell();
 
     nsx::PeakList peaks(const nsx::DataSet* data) const;
-    void addPeak(nsx::sptrPeak3D peak);
-    void removePeak(nsx::sptrPeak3D peak);
 
-    nsx::sptrShapeLibrary library() const;
-
-signals:
+ signals:
     void plotData(nsx::sptrDataSet);
     void inspectWidget(QWidget*);
     void updatePeaks();
     void updateCellParameters(nsx::sptrUnitCell);
 
 public slots:
-
-    void updateShapeLibrary(nsx::sptrShapeLibrary);
-
-    void importData();
-    void findPeaks(const QModelIndex& index);
-
-    void absorptionCorrection();
-    void showPeaksOpenGL();
-    void findSpaceGroup();
-    void computeRFactors();
-    void findFriedelPairs();
-    void peakFitDialog();
-    void incorporateCalculatedPeaks();
-    void applyResolutionCutoff(double dmin, double dmax);
+    void createNewExperiment();  
     void onItemChanged(QStandardItem* item);
 
 private:
     //! Filename for the save/load feature
     QString _filename;
     nsx::sptrProgressHandler _progressHandler;
-    nsx::sptrPeakFinder _peakFinder;
     std::string _colormap;
-    nsx::PeakList _peaks;
-    nsx::sptrShapeLibrary _library;
 };
 
 #endif // NSXQT_SESSIONMODEL_H

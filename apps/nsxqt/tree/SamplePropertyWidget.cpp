@@ -19,7 +19,7 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
     ui(new Ui::SamplePropertyWidget)
 {
     ui->setupUi(this);
-    auto sample=_sampleItem->getExperiment()->getDiffractometer()->getSample();
+    auto sample=_sampleItem->experiment()->getDiffractometer()->getSample();
     auto gonio=sample->getGonio();
 
     ui->tableWidget_Sample->setEditTriggers(QAbstractItemView::DoubleClicked);
@@ -85,7 +85,7 @@ SamplePropertyWidget::~SamplePropertyWidget()
 
 void SamplePropertyWidget::cellHasChanged(int i,int j)
 {
-    auto sample=_sampleItem->getExperiment()->getDiffractometer()->getSample();
+    auto sample=_sampleItem->experiment()->getDiffractometer()->getSample();
     auto axis=sample->getGonio()->getAxis(i);
     // todo: fix this after offset refactor
     #if 0

@@ -12,12 +12,12 @@ namespace Ui {
 class MCAbsorptionDialog;
 }
 
-class MCAbsorptionDialog : public QDialog
+class MCAbsorptionDialog: public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit MCAbsorptionDialog(std::shared_ptr<SessionModel> session, nsx::sptrExperiment experiment, QWidget *parent = 0);
+    explicit MCAbsorptionDialog(SessionModel* session, nsx::sptrExperiment experiment, QWidget *parent = 0);
     ~MCAbsorptionDialog();
 
 private slots:
@@ -26,7 +26,7 @@ private slots:
 private:
     Ui::MCAbsorptionDialog *ui;
     nsx::sptrExperiment _experiment;
-    std::shared_ptr<SessionModel> _session;
+    SessionModel* _session;
 };
 
 #endif // NSXQT_MCABSORPTIONDIALOG_H

@@ -24,7 +24,7 @@
 
 #include "ui_MCAbsorptionDialog.h"
 
-MCAbsorptionDialog::MCAbsorptionDialog(std::shared_ptr<SessionModel> session, nsx::sptrExperiment experiment, QWidget *parent):
+MCAbsorptionDialog::MCAbsorptionDialog(SessionModel* session, nsx::sptrExperiment experiment, QWidget *parent):
     QDialog(parent),
     ui(new Ui::MCAbsorptionDialog),
     _experiment(experiment),

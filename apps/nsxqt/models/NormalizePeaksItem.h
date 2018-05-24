@@ -8,7 +8,7 @@
 class NormalizePeaksItem : public TreeItem
 {
 public:
-    NormalizePeaksItem(nsx::sptrExperiment experiment);
+    NormalizePeaksItem();
 };
 
 #endif // NSXQT_NORMALIZEPEAKSITEM_H

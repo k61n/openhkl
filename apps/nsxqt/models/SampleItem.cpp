@@ -12,7 +12,7 @@
 #include "SampleShapeItem.h"
 #include "UnitCellItem.h"
 
-SampleItem::SampleItem(nsx::sptrExperiment experiment) : InspectableTreeItem(experiment)
+SampleItem::SampleItem() : InspectableTreeItem()
 {
     setText("Sample");
     QIcon icon(":/resources/gonioIcon.png");
@@ -22,7 +22,7 @@ SampleItem::SampleItem(nsx::sptrExperiment experiment) : InspectableTreeItem(exp
     setSelectable(false);
     setDragEnabled(false);
     setDropEnabled(false);
-    SampleShapeItem* shape=new SampleShapeItem(_experiment);
+    SampleShapeItem* shape = new SampleShapeItem;
     shape->setEnabled(false);
     appendRow(shape);
 
@@ -30,8 +30,10 @@ SampleItem::SampleItem(nsx::sptrExperiment experiment) : InspectableTreeItem(exp
 
 void SampleItem::setData(const QVariant &value, int role)
 {
+    if (parent()) {
+        experiment()->getDiffractometer()->getSample()->setName(text().toStdString());
+    }
     QStandardItem::setData(value,role);
-    _experiment->getDiffractometer()->getSample()->setName(text().toStdString());
 }
 
 QWidget* SampleItem::inspectItem()
@@ -44,7 +46,7 @@ QJsonObject SampleItem::toJson()
     QJsonObject obj;
     QJsonArray cells;
 
-    auto sample = _experiment->getDiffractometer()->getSample();
+    auto sample = experiment()->getDiffractometer()->getSample();
 
     for (unsigned int i = 0; i < sample->getNCrystals(); ++i) {
         auto cell = sample->unitCell(i);
@@ -65,7 +67,7 @@ QJsonObject SampleItem::toJson()
 
 void SampleItem::fromJson(const QJsonObject &obj)
 {
-    auto sample = _experiment->getDiffractometer()->getSample();
+    auto sample = experiment()->getDiffractometer()->getSample();
     QJsonArray shapes = obj["shapes"].toArray();
 
     for(QJsonValueRef shape: shapes) {
@@ -83,7 +85,7 @@ void SampleItem::fromJson(const QJsonObject &obj)
         A.col(2) = v[2];
         cell->setBasis(A);
 
-        appendRow(new UnitCellItem(_experiment, cell));
+        appendRow(new UnitCellItem(cell));
     }
 }
 
@@ -107,8 +109,8 @@ QList<UnitCellItem*> SampleItem::unitCellItems()
 
 void SampleItem::addUnitCell()
 {
-    auto sample=_experiment->getDiffractometer()->getSample();
-    auto cell=sample->addUnitCell();
-    appendRow(new UnitCellItem(_experiment,cell));
+    auto sample = experiment()->getDiffractometer()->getSample();
+    auto cell = sample->addUnitCell();
+    appendRow(new UnitCellItem(cell));
     child(0)->setEnabled(true);
 }

@@ -11,7 +11,7 @@
 class InspectableTreeItem : public TreeItem
 {
 public:
-    InspectableTreeItem(nsx::sptrExperiment experiment);
+    InspectableTreeItem();
     ~InspectableTreeItem();
     //! Tree items can expose a QWidget that show their internal properties.
     virtual QWidget* inspectItem() = 0;
