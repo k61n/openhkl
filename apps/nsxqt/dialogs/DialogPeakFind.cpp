@@ -52,9 +52,6 @@ DialogPeakFind::DialogPeakFind(const nsx::DataList& data,nsx::sptrPeakFinder pea
 {
     ui->setupUi(this);
 
-    // disable resizing
-    this->setFixedSize(this->size());
-
     for (auto d : _data) {
         QFileInfo fileinfo(QString::fromStdString(d->filename()));
         ui->dataList->addItem(fileinfo.baseName());
@@ -238,6 +235,14 @@ void DialogPeakFind::showEvent(QShowEvent* event)
     ui->preview->fitInView(_scene->sceneRect());
 }
 
+void DialogPeakFind::resizeEvent(QResizeEvent* event)
+{
+    Q_UNUSED(event)
+
+    ui->preview->fitInView(_scene->sceneRect());
+
+    QDialog::resizeEvent(event);
+}
 
 void DialogPeakFind::clipPreview(int state) {
     Q_UNUSED(state)

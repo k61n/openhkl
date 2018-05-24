@@ -9,8 +9,9 @@
 #include <QDialog>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
-#include <QStandardItem>
+#include <QResizeEvent>
 #include <QShowEvent>
+#include <QStandardItem>
 
 #include <nsxlib/DataTypes.h>
 
@@ -31,7 +32,8 @@ public:
     void setPreviewFrame(const Eigen::MatrixXi& frame);
     void setColorMap(const std::string& name);
     int exec() override;
-    void showEvent(QShowEvent*);
+    void showEvent(QShowEvent*) override;
+    void resizeEvent(QResizeEvent*) override;
     double peakScale() const;
     double bkgBegin() const;
     double bkgEnd() const;
