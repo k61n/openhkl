@@ -34,7 +34,7 @@ int main()
     nsx::DataReaderFactory factory;
 
     nsx::sptrExperiment expt(new nsx::Experiment("test", "BioDiff2500"));
-    auto diff = expt->getDiffractometer();
+    auto diff = expt->diffractometer();
     nsx::sptrDataSet data(factory.create("hdf", "gal3.hdf", diff));
     expt->addData(data);
 

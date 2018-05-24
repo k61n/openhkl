@@ -20,7 +20,7 @@ class TreeItem: public QStandardItem
 {
 public:
     explicit TreeItem();
-    //nsx::sptrExperiment getExperiment();
+
     virtual ~TreeItem();
 
     virtual void setData(const QVariant & value, int role=Qt::UserRole + 1) override;

@@ -26,7 +26,7 @@ UnitCellItem::UnitCellItem(nsx::sptrUnitCell cell):
 
 UnitCellItem::~UnitCellItem()
 {
-    experiment()->getDiffractometer()->getSample()->removeUnitCell(_cell);
+    experiment()->diffractometer()->getSample()->removeUnitCell(_cell);
 }
 
 QWidget* UnitCellItem::inspectItem()

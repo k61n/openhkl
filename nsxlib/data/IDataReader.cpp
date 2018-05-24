@@ -54,7 +54,7 @@ const MetaData& IDataReader::getMetadata() const {
     return _metadata;
 }
 
-const Diffractometer& IDataReader::getDiffractometer() const {
+const Diffractometer& IDataReader::diffractometer() const {
     return *_diffractometer;
 }
 

@@ -40,7 +40,7 @@ public:
 
     size_t getNRows() const;
 
-    const Diffractometer& getDiffractometer() const;
+    const Diffractometer& diffractometer() const;
 
     //! Gets the data basename
     std::string getBasename() const;

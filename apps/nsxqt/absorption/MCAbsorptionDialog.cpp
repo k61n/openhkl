@@ -31,7 +31,7 @@ MCAbsorptionDialog::MCAbsorptionDialog(SessionModel* session, nsx::sptrExperimen
     _session(session)
 {
     ui->setupUi(this);
-    auto ncrystals=_experiment->getDiffractometer()->getSample()->getNCrystals();
+    auto ncrystals=_experiment->diffractometer()->getSample()->getNCrystals();
     if (ncrystals>0) {
         ui->comboBox->setEnabled(true);
         for (unsigned int i=0;i<ncrystals;++i) {
@@ -52,8 +52,8 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
         return;
     }
     // Get the source
-    auto source=_experiment->getDiffractometer()->getSource();
-    auto sample=_experiment->getDiffractometer()->getSample();
+    auto source=_experiment->diffractometer()->getSource();
+    auto sample=_experiment->diffractometer()->getSample();
 
     // Get the material
     unsigned int cellIndex=static_cast<unsigned int>(ui->comboBox->currentIndex());

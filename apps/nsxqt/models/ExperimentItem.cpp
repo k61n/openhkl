@@ -38,8 +38,8 @@ ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment): TreeItem(), _exp
     setDropEnabled(true);
     setEditable(true);
 
-    auto diff = experiment->getDiffractometer();
-    _instr = new InstrumentItem(diff->getName().c_str(), diff->getSource()->getName().c_str());
+    auto diff = experiment->diffractometer();
+    _instr = new InstrumentItem(diff->name().c_str(), diff->getSource()->getName().c_str());
 
     // Add the instrument item to the experiment item
     appendRow(_instr);

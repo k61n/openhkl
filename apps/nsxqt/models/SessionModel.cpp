@@ -124,7 +124,7 @@ void SessionModel::onItemChanged(QStandardItem* item)
         // The first item of the Sample item branch is the SampleShapeItem, skip it
         int idx = p->index().row()- 1;
         auto expt = p->experiment();
-        auto uc = expt->getDiffractometer()->getSample()->unitCell(idx);
+        auto uc = expt->diffractometer()->getSample()->unitCell(idx);
         uc->setName(p->text().toStdString());
     }
 }

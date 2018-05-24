@@ -21,6 +21,7 @@
 #include <QString>
 #include <QVector>
 
+#include <nsxlib/Diffractometer.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/Peak3D.h>
@@ -97,11 +98,16 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
         }
         else if (auto ditem = dynamic_cast<DataItem*>(item)) {            
             QAction* import = menu->addAction("Import data");
-            QAction* rawImport = menu->addAction("Import raw data...");
             QAction* findpeaks = menu->addAction("Find peaks in data");
+
+            auto diffractomer_name = ditem->experiment()->diffractometer()->name();
+
+            if (diffractomer_name.compare("D19")==0) {
+                QAction* convert_d19_ascii_peaks = menu->addAction("Convert D19 legacy to HDf5");
+                connect(convert_d19_ascii_peaks, &QAction::triggered, [=](){ditem->findPeaks();});
+            }
+
             connect(import, &QAction::triggered, [=](){ditem->importData();});
-            // todo: fix this!!
-            //connect(rawImport, &QAction::triggered, [=](){ditem->importRawData();});
             connect(findpeaks, &QAction::triggered, [=](){ditem->findPeaks();});
         }
         else if (auto pitem = dynamic_cast<PeaksItem*>(item)) {

@@ -7,7 +7,7 @@ class TestWorkFlow(unittest.TestCase):
     
     def test(self):
         expt = nsx.Experiment('test', 'BioDiff2500')
-        diff = expt.getDiffractometer()
+        diff = expt.diffractometer()
         data = nsx.DataReaderFactory().create("hdf", "gal3.hdf", diff)
         expt.addData(data)
         source = diff.getSource()

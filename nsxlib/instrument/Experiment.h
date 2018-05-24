@@ -68,7 +68,7 @@ public:
     const std::string& getDiffractometerType() const;
 
     //! Gets a shared pointer to the diffractometer related to the experiment
-    sptrDiffractometer getDiffractometer() const;
+    sptrDiffractometer diffractometer() const;
 
     //! Get a reference to the data
     const std::map<std::string,sptrDataSet>& getData() const;

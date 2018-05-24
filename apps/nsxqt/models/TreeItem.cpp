@@ -54,13 +54,6 @@ void TreeItem::fromJson(const QJsonObject &obj)
     QJsonArray data = obj["data"].toArray();
 }
 
-#if 0
-nsx::sptrExperiment TreeItem::getExperiment()
-{
-    return _experiment;
-}
-#endif
-
 nsx::sptrExperiment TreeItem::experiment()
 {
     return experimentItem().experiment();

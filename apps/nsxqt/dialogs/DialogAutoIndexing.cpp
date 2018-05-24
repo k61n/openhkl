@@ -34,7 +34,7 @@ DialogAutoIndexing::DialogAutoIndexing(nsx::sptrExperiment experiment, nsx::Peak
 {
     ui->setupUi(this);
     setModal(true);
-    _unitCells = _experiment->getDiffractometer()->getSample()->unitCells();
+    _unitCells = _experiment->diffractometer()->getSample()->unitCells();
 
     for (auto uc : _unitCells) {
         ui->unitCells->addItem(QString::fromStdString(uc->getName()));

@@ -31,7 +31,7 @@ SampleItem::SampleItem() : InspectableTreeItem()
 void SampleItem::setData(const QVariant &value, int role)
 {
     if (parent()) {
-        experiment()->getDiffractometer()->getSample()->setName(text().toStdString());
+        experiment()->diffractometer()->getSample()->setName(text().toStdString());
     }
     QStandardItem::setData(value,role);
 }
@@ -46,7 +46,7 @@ QJsonObject SampleItem::toJson()
     QJsonObject obj;
     QJsonArray cells;
 
-    auto sample = experiment()->getDiffractometer()->getSample();
+    auto sample = experiment()->diffractometer()->getSample();
 
     for (unsigned int i = 0; i < sample->getNCrystals(); ++i) {
         auto cell = sample->unitCell(i);
@@ -67,7 +67,7 @@ QJsonObject SampleItem::toJson()
 
 void SampleItem::fromJson(const QJsonObject &obj)
 {
-    auto sample = experiment()->getDiffractometer()->getSample();
+    auto sample = experiment()->diffractometer()->getSample();
     QJsonArray shapes = obj["shapes"].toArray();
 
     for(QJsonValueRef shape: shapes) {
@@ -109,7 +109,7 @@ QList<UnitCellItem*> SampleItem::unitCellItems()
 
 void SampleItem::addUnitCell()
 {
-    auto sample = experiment()->getDiffractometer()->getSample();
+    auto sample = experiment()->diffractometer()->getSample();
     auto cell = sample->addUnitCell();
     appendRow(new UnitCellItem(cell));
     child(0)->setEnabled(true);

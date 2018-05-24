@@ -51,7 +51,7 @@ void DataItem::importData()
         nsx::sptrDataSet data_ptr;
 
         std::string extension = fileinfo.completeSuffix().toStdString();
-        data_ptr = nsx::DataReaderFactory().create(extension, filename.toStdString(), exp->getDiffractometer());
+        data_ptr = nsx::DataReaderFactory().create(extension, filename.toStdString(), exp->diffractometer());
         exp->addData(data_ptr);      
 
         // Get the basename of the current numor
@@ -85,7 +85,7 @@ NumorItem* DataItem::importRawData(const std::vector<std::string> &filenames,
     std::shared_ptr<nsx::IDataReader> reader;
 
     try {
-        auto diff = exp->getDiffractometer();
+        auto diff = exp->diffractometer();
         reader = std::shared_ptr<nsx::IDataReader>(new nsx::RawDataReader(filenames, diff,
                                               wavelength, delta_chi, delta_omega, delta_phi,
                                               rowMajor, swapEndian, bpp));
