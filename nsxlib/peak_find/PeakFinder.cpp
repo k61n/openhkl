@@ -218,6 +218,7 @@ PeakList PeakFinder::find(DataList numors)
                 p->setSelected(false);
             }
 
+            p->setPredicted(false);
             numor_peaks.push_back(p);
             peaks.push_back(p);
 

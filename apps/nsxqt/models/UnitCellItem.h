@@ -11,7 +11,7 @@ class QWidget;
 class UnitCellItem : public InspectableTreeItem
 {
 public:
-    UnitCellItem(nsx::sptrExperiment experiment, nsx::sptrUnitCell);
+    UnitCellItem(nsx::sptrUnitCell);
     ~UnitCellItem();
     QWidget* inspectItem();
     nsx::sptrUnitCell unitCell();
@@ -20,6 +20,8 @@ public:
 
     void openTransformationMatrixDialog();
     void openChangeUnitCellDialog();
+
+    void determineSpaceGroup();
 
 private:
     nsx::sptrUnitCell _cell;

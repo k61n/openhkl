@@ -18,35 +18,37 @@
 
 #include "ui_PeakListPropertyWidget.h"
 
-PeakListPropertyWidget::PeakListPropertyWidget(std::shared_ptr<SessionModel> session, PeakListItem* caller, QWidget *parent) :
+PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *parent) :
      QWidget(parent),
      _caller(caller),
-     ui(new Ui::PeakListPropertyWidget),
-     _session(session)
+     ui(new Ui::PeakListPropertyWidget)
 {
     ui->setupUi(this);
-    std::map<std::string,nsx::sptrDataSet>  datamap=_caller->getExperiment()->getData();
+    std::map<std::string,nsx::sptrDataSet>  datamap=_caller->experiment()->getData();
     nsx::DataList datav;
 
     auto func = [&](std::pair<std::string,nsx::sptrDataSet> value){datav.push_back(value.second);};
 
     std::for_each(datamap.begin(), datamap.end(), func);
 
-    CollectedPeaksModel *model = new CollectedPeaksModel(_caller->getExperiment());
+    CollectedPeaksModel *model = new CollectedPeaksModel(_caller->experiment());
 
     nsx::PeakList data_peaks;
 
-    for (auto peak: _session->peaks(nullptr)) {
+    for (auto peak: _caller->peaks()) {
         data_peaks.push_back(peak);
     }
 
     model->setPeaks(data_peaks);
-    model->setUnitCells(_caller->getExperiment()->getDiffractometer()->getSample()->unitCells());
+    model->setUnitCells(_caller->experiment()->getDiffractometer()->getSample()->unitCells());
     ui->tableView->setModel(model);
 
     //Connect search box
     connect(ui->lineEdit,SIGNAL(textChanged(QString)),ui->tableView,SLOT(showPeaksMatchingText(QString)));
-    connect(ui->tableView, SIGNAL(updateShapeLibrary(nsx::sptrShapeLibrary)), _session.get(), SLOT(updateShapeLibrary(nsx::sptrShapeLibrary)));
+
+
+    // todo: fix shape library!!
+    // connect(ui->tableView, SIGNAL(updateShapeLibrary(nsx::sptrShapeLibrary)), _session.get(), SLOT(updateShapeLibrary(nsx::sptrShapeLibrary)));
 }
 
 PeakListPropertyWidget::~PeakListPropertyWidget()

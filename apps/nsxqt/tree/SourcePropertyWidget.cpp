@@ -16,7 +16,7 @@ SourcePropertyWidget::SourcePropertyWidget(SourceItem* caller,QWidget *parent) :
     _caller(caller)
 {
     ui->setupUi(this);
-    nsx::sptrSource source=_caller->getExperiment()->getDiffractometer()->getSource();
+    nsx::sptrSource source=_caller->experiment()->getDiffractometer()->getSource();
     auto monos = source->getMonochromators();
     for (auto&& m : monos) {
         ui->comboBox_Monochromators->addItem(QString::fromStdString(m.getName()));
@@ -42,25 +42,25 @@ SourcePropertyWidget::~SourcePropertyWidget()
 
 void SourcePropertyWidget::on_doubleSpinBox_Wavelength_valueChanged(double arg1)
 {
-     auto& mono=_caller->getExperiment()->getDiffractometer()->getSource()->getSelectedMonochromator();
+     auto& mono=_caller->experiment()->getDiffractometer()->getSource()->getSelectedMonochromator();
      mono.setWavelength(arg1);
 }
 
 void SourcePropertyWidget::on_doubleSpinBox_Width_valueChanged(double arg1)
 {
-    auto& mono=_caller->getExperiment()->getDiffractometer()->getSource()->getSelectedMonochromator();
+    auto& mono=_caller->experiment()->getDiffractometer()->getSource()->getSelectedMonochromator();
     mono.setWidth(arg1*nsx::mm);
 }
 
 void SourcePropertyWidget::on_doubleSpinBox_Height_valueChanged(double arg1)
 {
-    auto& mono=_caller->getExperiment()->getDiffractometer()->getSource()->getSelectedMonochromator();
+    auto& mono=_caller->experiment()->getDiffractometer()->getSource()->getSelectedMonochromator();
     mono.setHeight(arg1*nsx::mm);
 }
 
 void SourcePropertyWidget::on_comboBox_Monochromators_currentIndexChanged(int index)
 {
-    auto source=_caller->getExperiment()->getDiffractometer()->getSource();
+    auto source=_caller->experiment()->getDiffractometer()->getSource();
     source->setSelectedMonochromator(index);
     auto& mono=source->getSelectedMonochromator();
     ui->doubleSpinBox_Wavelength->setValue(mono.getWavelength());

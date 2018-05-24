@@ -1,7 +1,11 @@
 #ifndef NSXQT_PEAKLISTITEM_H
 #define NSXQT_PEAKLISTITEM_H
 
+#include <vector>
+
+#include <nsxlib/CrystalTypes.h>
 #include <nsxlib/InstrumentTypes.h>
+#include <nsxlib/Peak3D.h>
 
 #include "InspectableTreeItem.h"
 #include "models/SessionModel.h"
@@ -9,12 +13,14 @@
 class PeakListItem : public InspectableTreeItem
 {
 public:
-
-    explicit PeakListItem(std::shared_ptr<SessionModel> session, nsx::sptrExperiment experiment);
+    explicit PeakListItem();
     QWidget* inspectItem();
+    nsx::PeakList& peaks() { return _peaks; }
+
+    void removePeak(nsx::sptrPeak3D peak);
 
 private:
-    std::shared_ptr<SessionModel> _session;
+    nsx::PeakList _peaks;
 };
 
 #endif // NSXQT_PEAKLISTITEM_H

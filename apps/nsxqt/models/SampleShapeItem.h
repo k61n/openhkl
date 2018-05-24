@@ -8,7 +8,7 @@
 class SampleShapeItem : public InspectableTreeItem
 {
 public:
-    SampleShapeItem(nsx::sptrExperiment experiment);
+    SampleShapeItem();
     ~SampleShapeItem()=default;
     QWidget* inspectItem();
 };

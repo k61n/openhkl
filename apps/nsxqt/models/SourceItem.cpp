@@ -7,9 +7,9 @@
 #include "SourceItem.h"
 #include "SourcePropertyWidget.h"
 
-SourceItem::SourceItem(nsx::sptrExperiment experiment) : InspectableTreeItem(experiment)
+SourceItem::SourceItem(const char* name) : InspectableTreeItem()
 {
-    setText(QString::fromStdString(_experiment->getDiffractometer()->getSource()->getName()));
+    setText(name);
 
     QIcon icon(":/resources/sourceIcon.png");
     setIcon(icon);

@@ -7,11 +7,12 @@
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Experiment.h>
 
+#include "ExperimentItem.h"
 #include "NumorItem.h"
 #include "NumorPropertyWidget.h"
 
-NumorItem::NumorItem(nsx::sptrExperiment experiment,nsx::sptrDataSet data) :
-    InspectableTreeItem(experiment),
+NumorItem::NumorItem(nsx::sptrDataSet data):
+    InspectableTreeItem(),
     _data(data)
 {
     setText("Numor");
@@ -22,7 +23,7 @@ NumorItem::NumorItem(nsx::sptrExperiment experiment,nsx::sptrDataSet data) :
 
 NumorItem::~NumorItem()
 {
-   _experiment->removeData(_data->filename());
+    experiment()->removeData(_data->filename());
 }
 
 nsx::sptrDataSet NumorItem::getData()

@@ -1,8 +1,8 @@
 #include "SampleShapeItem.h"
 #include "SampleShapePropertyWidget.h"
 
-SampleShapeItem::SampleShapeItem(nsx::sptrExperiment experiment):
-    InspectableTreeItem(experiment)
+SampleShapeItem::SampleShapeItem():
+    InspectableTreeItem()
 {
     QIcon icon(":/resources/sampleIcon.png");
     setIcon(icon);
