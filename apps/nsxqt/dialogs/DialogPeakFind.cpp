@@ -109,6 +109,8 @@ DialogPeakFind::DialogPeakFind(const nsx::DataList& data,nsx::sptrPeakFinder pea
     connect(ui->dataList,SIGNAL(currentRowChanged(int)),this,SLOT(changeSelectedData(int)));
     connect(ui->frameSlider,SIGNAL(valueChanged(int)),this,SLOT(changeSelectedFrame(int)));
     connect(ui->frameIndex,SIGNAL(valueChanged(int)),this,SLOT(changeSelectedFrame(int)));
+
+    connect(ui->startPeaksSearch,SIGNAL(clicked()),this,SLOT(accept()));
 }
 
 DialogPeakFind::~DialogPeakFind()
@@ -134,11 +136,6 @@ void DialogPeakFind::changeSelectedData(int selected_data)
 void DialogPeakFind::setColorMap(const std::string &name)
 {
     _colormap = std::unique_ptr<ColorMap>(new ColorMap(name));
-}
-
-int DialogPeakFind::exec()
-{
-    return QDialog::exec();
 }
 
 void DialogPeakFind::changeSelectedFrame(int selected_frame)

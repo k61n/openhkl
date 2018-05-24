@@ -152,17 +152,12 @@ void DataItem::findPeaks()
     }
     _peakFinder->setHandler(progressHandler);
 
-    DialogPeakFind* dialog = new DialogPeakFind(selectedNumors, _peakFinder, nullptr);
-    //dialog->setColorMap(_colormap);
-
     // dialog will automatically be deleted before we return from this method
-    std::unique_ptr<DialogPeakFind> dialog_ptr(dialog);
+    std::unique_ptr<DialogPeakFind> dialog_ptr(new DialogPeakFind(selectedNumors, _peakFinder, nullptr));
 
-    if (!dialog->exec()) {
+    if (!dialog_ptr->exec()) {
         return;
     }
-
-    //ui->_dview->getScene()->clearPeaks();
 
     size_t max = selectedNumors.size();
     nsx::info() << "Peak find algorithm: Searching peaks in " << max << " files";
@@ -185,7 +180,7 @@ void DataItem::findPeaks()
     // integrate peaks
     for (auto numor: selectedNumors) {
         nsx::StrongPeakIntegrator integrator(true, true);
-        integrator.integrate(peaks, numor, dialog->peakScale(), dialog->bkgBegin(), dialog->bkgEnd());
+        integrator.integrate(peaks, numor, dialog_ptr->peakScale(), dialog_ptr->bkgBegin(), dialog_ptr->bkgEnd());
     }
 
     // delete the progressView

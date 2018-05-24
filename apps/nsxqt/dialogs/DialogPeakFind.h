@@ -31,7 +31,6 @@ public:
 
     void setPreviewFrame(const Eigen::MatrixXi& frame);
     void setColorMap(const std::string& name);
-    int exec() override;
     void showEvent(QShowEvent*) override;
     void resizeEvent(QResizeEvent*) override;
     double peakScale() const;
