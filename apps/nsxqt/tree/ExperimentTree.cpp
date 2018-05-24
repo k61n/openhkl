@@ -92,8 +92,8 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
         QStandardItem* item = session->itemFromIndex(index);
         
         if (auto exp_item = dynamic_cast<ExperimentItem*>(item)) {
-            QAction* log = menu->addAction("Write detailed log file");
-            connect(log, triggered, [=](){exp_item->writeLogFile();});
+            QAction* log = menu->addAction("Write detailed log files");
+            connect(log, triggered, [=](){exp_item->writeLogFiles();});
         }
         else if (auto ditem = dynamic_cast<DataItem*>(item)) {            
             QAction* import = menu->addAction("Import data");

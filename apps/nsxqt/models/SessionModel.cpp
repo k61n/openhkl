@@ -194,7 +194,6 @@ nsx::DataList SessionModel::getSelectedNumors() const
     return numors;
 }
 
-#if 1
 nsx::PeakList SessionModel::peaks(const nsx::DataSet* data) const
 {  
     nsx::PeakList list;
@@ -211,7 +210,6 @@ nsx::PeakList SessionModel::peaks(const nsx::DataSet* data) const
     }
     return list;
 }
-#endif
 
 void SessionModel::createNewExperiment()
 {
