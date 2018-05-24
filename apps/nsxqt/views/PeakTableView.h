@@ -96,10 +96,6 @@ public slots:
 
 private:
 
-    static bool writeNewShelX(std::string filename, const nsx::PeakList& peaks);
-    static bool writeStatistics(std::string filename, const nsx::PeakList& peaks,
-                                double dmin, double dmax, int shells, bool friedel);
-
     void sortByHKL(bool up);
     void sortByIntensity(bool up);
     void sortByNumor(bool up);

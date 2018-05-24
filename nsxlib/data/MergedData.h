@@ -61,6 +61,9 @@ public:
     //! Return total number of observations (including redundant ones)
     size_t totalSize() const;
     
+    //! Clear the merged data
+    void clear();
+
 private:
     SpaceGroup _group;
     bool _friedel;

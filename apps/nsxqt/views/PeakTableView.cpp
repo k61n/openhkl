@@ -58,7 +58,6 @@
 #include "DialogRefineUnitCell.h"
 #include "DialogTransformationMatrix.h"
 #include "DialogUnitCellParameters.h"
-#include "LogFileDialog.h"
 #include "PeakTableView.h"
 
 PeakTableView::PeakTableView(QWidget *parent)

@@ -69,12 +69,6 @@ public:
     std::string getColorMap() const;
 
     void writeLog();
-    bool writeNewShellX(std::string filename, const nsx::PeakList& peaks);
-    bool writeStatistics(std::string filename,
-                         const nsx::PeakList &peaks,
-                         double dmin, double dmax, unsigned int num_shells, bool friedel);
-
-    bool writeXDS(std::string filename, const nsx::PeakList& peaks, bool merge, bool friedel);
 
     void fitAllPeaks();
     void autoAssignUnitCell();
