@@ -42,8 +42,7 @@ private slots:
 
     void clipPreview(int state);
 
-    void changeThreshold(QString thresold_type);
-    void changeThresholdParameters(int row, int col);
+    void changeThreshold();
 
     void changeConvolver(QString convolver_type);
     void changeConvolverParameters(int row, int col);
@@ -59,11 +58,7 @@ private:
 
     void buildConvolverParametersList();
 
-    void buildThresholdParametersList();
-
     std::map<std::string,double> convolverParameters() const;
-
-    std::map<std::string,double> thresholdParameters() const;
 
     void updatePreview();
 

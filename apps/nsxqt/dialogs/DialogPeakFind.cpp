@@ -19,8 +19,6 @@
 #include <nsxlib/Logger.h>
 #include <nsxlib/MathematicsTypes.h>
 #include <nsxlib/PeakFinder.h>
-#include <nsxlib/Threshold.h>
-#include <nsxlib/ThresholdFactory.h>
 
 #include "ColorMap.h"
 #include "DialogPeakFind.h"
@@ -73,23 +71,6 @@ DialogPeakFind::DialogPeakFind(const nsx::DataList& data,nsx::sptrPeakFinder pea
     // flip image vertically to conform with DetectorScene
     ui->preview->scale(1, -1);
 
-    // Set the delegate that will force a numeric input for the threshold parameters value column
-    ui->thresholdParameters->setColumnCount(2);
-    ui->thresholdParameters->horizontalHeader()->hide();
-    ui->thresholdParameters->verticalHeader()->hide();
-    DoubleDelegate* threshold_table_delegate = new DoubleDelegate();
-    ui->thresholdParameters->setItemDelegateForColumn(1,threshold_table_delegate);
-    // Set the threshold combo box and table
-    ui->threshold->clear();
-    nsx::ThresholdFactory threshold_factory;
-    for (auto& k : threshold_factory.callbacks()) {
-        ui->threshold->addItem(QString::fromStdString(k.first));
-    }
-    ui->threshold->setCurrentText(_peakFinder->threshold()->name());
-
-    // update dialog with list of parameters
-    buildThresholdParametersList();
-
     // Set the filter combo box and table
     ui->convolverParameters->setColumnCount(2);
     ui->convolverParameters->horizontalHeader()->hide();
@@ -115,8 +96,7 @@ DialogPeakFind::DialogPeakFind(const nsx::DataList& data,nsx::sptrPeakFinder pea
     auto valueChanged = static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged);
     connect(ui->searchScale, valueChanged, this, [&] { _peakFinder->setPeakScale(ui->searchScale->value()); });
 
-    connect(ui->threshold,SIGNAL(currentIndexChanged(QString)),this,SLOT(changeThreshold(QString)));
-    connect(ui->thresholdParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeThresholdParameters(int,int)));
+    connect(ui->threshold,SIGNAL(valueChanged(double)),this,SLOT(changeThreshold()));
     connect(ui->applyThreshold,SIGNAL(stateChanged(int)),this,SLOT(clipPreview(int)));
 
     connect(ui->convolver,SIGNAL(currentIndexChanged(QString)),this,SLOT(changeConvolver(QString)));
@@ -194,11 +174,7 @@ void DialogPeakFind::updatePreview()
 
     // apply threshold in preview
     if (ui->applyThreshold->isChecked()) {
-        nsx::ThresholdFactory threshold_factory;
-        std::string threshold_type = ui->threshold->currentText().toStdString();
-        auto threshold_parameters = thresholdParameters();
-        auto threshold = threshold_factory.create(threshold_type,threshold_parameters);
-        double threshold_value = threshold->value(data,selected_frame);
+        double threshold_value = ui->threshold->value();
 
         for (int i = 0; i < nrows; ++i) {
             for (int j = 0; j < ncols; ++j) {
@@ -265,77 +241,9 @@ void DialogPeakFind::changeMaxFrames(int size)
     _peakFinder->setMaxFrames(size);
 }
 
-void DialogPeakFind::changeThreshold(QString threshold_type)
+void DialogPeakFind::changeThreshold()
 {
-    _peakFinder->setThreshold(threshold_type.toStdString(),{});
-
-    // update dialog with list of parameters
-    buildThresholdParametersList();
-
     updatePreview();
-}
-
-void DialogPeakFind::changeThresholdParameters(int row, int col)
-{
-    Q_UNUSED(row)
-    Q_UNUSED(col)
-
-    // Get the current threshold type
-    std::string threshold_type = ui->threshold->currentText().toStdString();
-
-    // Get the updated parameters
-    auto parameters = thresholdParameters();
-
-    // propagate changes to peak finder
-    _peakFinder->setThreshold(threshold_type,parameters);
-
-    // update the preview
-    updatePreview();
-}
-
-std::map<std::string,double> DialogPeakFind::thresholdParameters() const
-{
-    std::map<std::string,double> parameters;
-
-    for (int i = 0; i < ui->thresholdParameters->rowCount(); ++i) {
-        std::string pname = ui->thresholdParameters->item(i,0)->text().toStdString();
-        double pvalue = ui->thresholdParameters->item(i,1)->text().toDouble();
-        parameters.insert(std::make_pair(pname,pvalue));
-    }
-
-    return parameters;
-}
-
-void DialogPeakFind::buildThresholdParametersList()
-{
-    // get the selected threshold
-    auto threshold = _peakFinder->threshold();
-
-    // get parameters
-    const std::map<std::string, double>& parameters = threshold->parameters();
-
-    disconnect(ui->thresholdParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeThresholdParameters(int,int)));
-
-    ui->thresholdParameters->setRowCount(0);
-
-    // iterate through parameters to build the tree
-    for (auto p : parameters) {
-        int current_row = ui->thresholdParameters->rowCount();
-
-        ui->thresholdParameters->insertRow(current_row);
-
-        QTableWidgetItem* pname = new QTableWidgetItem();
-        pname->setText(QString::fromStdString(p.first));
-        ui->thresholdParameters->setItem(current_row,0,pname);
-
-        pname->setFlags(pname->flags() ^ Qt::ItemIsEditable);
-
-        QTableWidgetItem* pvalue = new QTableWidgetItem();
-        pvalue->setText(QString::number(p.second));
-        ui->thresholdParameters->setItem(current_row,1,pvalue);
-    }
-
-    connect(ui->thresholdParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeThresholdParameters(int,int)));
 }
 
 void DialogPeakFind::changeConvolver(QString convolver_type)

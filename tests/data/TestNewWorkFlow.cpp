@@ -58,7 +58,7 @@ int main()
     peakFinder->setMaxSize(10000);
     peakFinder->setMaxFrames(10);
     peakFinder->setConvolver("annular",{});
-    peakFinder->setThreshold("absolute",{{"intensity",15.0}});
+    peakFinder->setThreshold(15.0);
     peakFinder->setPeakScale(1.0);
 
     peakFinder->setHandler(progressHandler);
