@@ -84,7 +84,6 @@
 #include <nsxlib/Source.h>
 #include <nsxlib/UnitCell.h>
 
-#include "AbsorptionDialog.h"
 #include "DataItem.h"
 #include "DetectorItem.h"
 #include "DetectorScene.h"
