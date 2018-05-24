@@ -207,10 +207,12 @@ void PeaksItem::filterPeaks()
         auto&& bad_peaks = dlg->badPeaks();
         for (auto peak: bad_peaks) {
             peak->setSelected(false);
-            // todo: update this
-            #if 0
-            _session->removePeak(peak);
-            #endif
+
+            for (auto i = 0; i < rowCount(); ++i) {
+                if (auto item = dynamic_cast<PeakListItem*>(child(i))) {
+                    item->removePeak(peak);
+                }
+            }
         }
     }    
     // todo: update peaks

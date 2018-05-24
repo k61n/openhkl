@@ -106,7 +106,8 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
         }
         else if (auto pitem = dynamic_cast<PeaksItem*>(item)) {
             QAction* filter = menu->addAction("Filter peaks");
-            QAction* autoidx = menu->addAction("Autoindex peaks");
+            QAction* autoidx = menu->addAction("FFT-autoindex peaks");
+            QAction* assign = menu->addAction("Autoindex existing lattice");
             QAction* refine = menu->addAction("Refine lattice and instrument parameters");
             QAction* library = menu->addAction("Build shape library");
             QAction* integrate = menu->addAction("Integrate peaks");
@@ -119,6 +120,7 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(integrate, triggered, [=](){pitem->integratePeaks();});
             connect(autoidx, triggered, [=](){pitem->autoindex();});
             connect(refine, triggered, [=](){pitem->refine();});
+            connect(assign, triggered, [=](){pitem->autoAssignUnitCell();});
         }
         else if (SampleItem* sitem = dynamic_cast<SampleItem*>(item)) {
             QAction* addUnitCell = menu->addAction("Add unit cell");    

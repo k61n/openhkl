@@ -17,6 +17,8 @@ public:
     QWidget* inspectItem();
     nsx::PeakList& peaks() { return _peaks; }
 
+    void removePeak(nsx::sptrPeak3D peak);
+
 private:
     nsx::PeakList _peaks;
 };
