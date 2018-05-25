@@ -317,7 +317,8 @@ void UnitCell::setNiggli(const NiggliCharacter& niggli)
 //! unitary, which is a non-linear constraint on its components).
 //!
 //! Given this parameterization and initial basis matrices A0, B0 = A0^{-1}, we perform a least-squares minimization to
-//! find A, B = A^{-1} such that the L2 matrix norms |A-A0|^2 and |B-B0|^2 are minimized.
+//! find A, B = A^{-1} such that the L2 matrix norm |B-B0|^2 is minimized. The reason for choosing |B-B0|^2
+//! as the objective function is so that the resulting predicted q values will be as close as possible.
 UnitCell UnitCell::applyNiggliConstraints() const
 {
     // no constraints for these cases to early return
@@ -347,8 +348,7 @@ UnitCell UnitCell::applyNiggliConstraints() const
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
-                residuals(2*(3*i+j)+0) = (B(i,j) - _B(i, j)) / b;
-                residuals(2*(3*i+j)+1) = (A(i,j) - _A(i, j)) / a;
+                residuals(3*i+j) = (B(i,j) - _B(i, j)) / b;                
             }
         } 
         return 0;
@@ -365,16 +365,16 @@ UnitCell UnitCell::applyNiggliConstraints() const
         params.addParameter(&p(i));
     }
 
-    min.initialize(params, 9+9);
+    min.initialize(params, 9);
     min.set_f(functor);
 
-    min.setxTol(1e-6);
-    min.setfTol(1e-6);
-    min.setgTol(1e-6);
+    min.setxTol(1e-15);
+    min.setfTol(1e-15);
+    min.setgTol(1e-15);
 
     // note: if the UC already satisfies the constraints, the minimizer will fail with GSL_ENOPROG
     // so we don't check the return value of Minimizer::fit
-    min.fit(100);
+    min.fit(1000);
     nsx::UnitCell new_uc = fromParameters(U, uOffset, p);
 
     // check if the new UC is close to the old one
