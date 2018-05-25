@@ -62,7 +62,6 @@
 #include "NoteBook.h"
 #include "PeakGraphicsItem.h"
 #include "PlottableGraphicsItem.h"
-#include "ResolutionCutoffDialog.h"
 #include "PeakListPropertyWidget.h"
 #include "PeakTableView.h"
 #include "PlotFactory.h"
