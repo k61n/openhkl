@@ -1,5 +1,4 @@
-#ifndef NSXQT_GLACTOR_H
-#define NSXQT_GLACTOR_H
+#pragma once
 
 /*
 #ifdef __APPLE__
@@ -33,5 +32,3 @@ protected:
     double _scale[3];
     QString _name;
 };
-
-#endif // NSXQT_GLACTOR_H

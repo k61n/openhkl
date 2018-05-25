@@ -1,5 +1,4 @@
-#ifndef NSXQT_NSXQTAPP_H
-#define NSXQT_NSXQTAPP_H
+#pragma once
 
 #include <QApplication>
 
@@ -11,5 +10,3 @@ public:
 private:
     bool notify(QObject* receiver, QEvent* event);
 };
-
-#endif // NSXQT_NSXQTAPP_H

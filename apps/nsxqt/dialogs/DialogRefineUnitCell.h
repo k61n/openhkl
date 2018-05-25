@@ -1,5 +1,4 @@
-#ifndef NSXQT_DIALOGREFINEUNITCELL_H
-#define NSXQT_DIALOGREFINEUNITCELL_H
+#pragma once
 
 #include <QDialog>
 
@@ -34,5 +33,3 @@ private:
     nsx::PeakList _peaks;
     std::set<nsx::sptrDataSet> _data;
 };
-
-#endif // NSXQT_DIALOGREFINEUNITCELL_H

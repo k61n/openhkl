@@ -1,5 +1,4 @@
-#ifndef NSXQT_CUTSLICEGRAPHICSITEM_H
-#define NSXQT_CUTSLICEGRAPHICSITEM_H
+#pragma once
 
 #include <nsxlib/DataTypes.h>
 
@@ -47,5 +46,3 @@ private:
     //! Horizontal or vertical integration
     bool _horizontal;
 };
-
-#endif // NSXQT_CUTSLICEGRAPHICSITEM_H

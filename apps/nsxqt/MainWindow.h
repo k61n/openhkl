@@ -1,5 +1,4 @@
-#ifndef NSXQT_MAINWINDOW_H
-#define NSXQT_MAINWINDOW_H
+#pragma once
 
 #include <map>
 #include <memory>
@@ -81,5 +80,3 @@ private:
 
     SessionModel* _session;
 };
-
-#endif // MAINWINDOW_H

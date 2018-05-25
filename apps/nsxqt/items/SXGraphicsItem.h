@@ -1,5 +1,4 @@
-#ifndef NSXQT_SXGRAPHICSITEM_H
-#define NSXQT_SXGRAPHICSITEM_H
+#pragma once
 
 #include <QGraphicsItem>
 #include <QPen>
@@ -66,5 +65,3 @@ protected:
     QGraphicsTextItem* _label;
 
 };
-
-#endif // NSXQT_SXGRAPHICSITEM_H

@@ -1,5 +1,4 @@
-#ifndef NSXQT_TREEITEM_H
-#define NSXQT_TREEITEM_H
+#pragma once
 
 #include <memory>
 #include <string>
@@ -32,5 +31,3 @@ public:
 
     ExperimentItem& experimentItem();
 };
-
-#endif // NSXQT_TREEITEM_H

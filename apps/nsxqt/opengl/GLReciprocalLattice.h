@@ -1,5 +1,4 @@
-#ifndef NSXQT_GLRECIPROCALLATTICE_H
-#define NSXQT_GLRECIPROCALLATTICE_H
+#pragma once
 
 #include <nsxlib/CrystalTypes.h>
 
@@ -24,5 +23,3 @@ private:
     bool _periodicCell;
     void GLCode();
 };
-
-#endif // NSXQT_GLRECIPROCALLATTICE_H

@@ -33,8 +33,7 @@
  *
  */
 
-#ifndef NSXQT_SESSIONMODEL_H
-#define NSXQT_SESSIONMODEL_H
+#pragma once
 
 #include <memory>
 #include <string>
@@ -96,5 +95,3 @@ private:
     nsx::sptrProgressHandler _progressHandler;
     std::string _colormap;
 };
-
-#endif // NSXQT_SESSIONMODEL_H

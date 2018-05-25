@@ -1,5 +1,4 @@
-#ifndef NSXQT_GLSCENE_H
-#define NSXQT_GLSCENE_H
+#pragma once
 
 #include <Eigen/Dense>
 
@@ -27,5 +26,3 @@ private:
     QQueue<int> _numbers;
     Eigen::Vector3d _bbmin,_bbmax;
 };
-
-#endif // NSXQT_GLSCENE_H

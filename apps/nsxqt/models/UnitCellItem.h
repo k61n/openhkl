@@ -1,5 +1,4 @@
-#ifndef NSXQT_UNITCELLITEM_H
-#define NSXQT_UNITCELLITEM_H
+#pragma once
 
 #include "InspectableTreeItem.h"
 
@@ -26,5 +25,3 @@ public:
 private:
     nsx::sptrUnitCell _cell;
 };
-
-#endif // NSXQT_UNITCELLITEM_H

@@ -1,5 +1,4 @@
-#ifndef NSXQT_DIALOGAUTOINDEXING_H
-#define NSXQT_DIALOGAUTOINDEXING_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -42,5 +41,3 @@ private:
     nsx::UnitCellList _unitCells;
     std::vector<std::pair<nsx::sptrUnitCell,double>> _solutions;
 };
-
-#endif // NSXQT_DIALOGAUTOINDEXING_H

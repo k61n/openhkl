@@ -1,5 +1,4 @@
-#ifndef NSXQT_GLWIDGET_H
-#define NSXQT_GLWIDGET_H
+#pragma once
 
 #include <QGLWidget>
 
@@ -32,5 +31,3 @@ private:
     GLScene _scene;
     GLuint _list;
 };
-
-#endif // NSXQT_GLWIDGET_H

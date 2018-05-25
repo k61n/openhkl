@@ -1,5 +1,4 @@
-#ifndef NSXQT_SAMPLEITEM_H
-#define NSXQT_SAMPLEITEM_H
+#pragma once
 
 #include <QJsonObject>
 #include <QList>
@@ -25,5 +24,3 @@ public:
 
     void openIsotopesDatabase();
 };
-
-#endif // NSXQT_SAMPLEITEM_H

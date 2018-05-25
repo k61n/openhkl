@@ -1,5 +1,4 @@
-#ifndef NSXQT_MCABSORPTIONDIALOG_H
-#define NSXQT_MCABSORPTIONDIALOG_H
+#pragma once
 
 #include <QDialog>
 
@@ -28,5 +27,3 @@ private:
     nsx::sptrExperiment _experiment;
     SessionModel* _session;
 };
-
-#endif // NSXQT_MCABSORPTIONDIALOG_H

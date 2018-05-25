@@ -1,5 +1,4 @@
-#ifndef NSXQT_PEAKLISTITEM_H
-#define NSXQT_PEAKLISTITEM_H
+#pragma once
 
 #include <vector>
 
@@ -22,5 +21,3 @@ public:
 private:
     nsx::PeakList _peaks;
 };
-
-#endif // NSXQT_PEAKLISTITEM_H

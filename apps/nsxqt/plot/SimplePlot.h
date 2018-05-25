@@ -1,5 +1,4 @@
-#ifndef NSXQT_SIMPLEPLOT_H
-#define NSXQT_SIMPLEPLOT_H
+#pragma once
 
 #include <string>
 
@@ -20,5 +19,3 @@ public:
     std::string getType() const;
 
 };
-
-#endif // NSXQT_SIMPLEPLOT_H
