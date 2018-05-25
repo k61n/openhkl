@@ -124,6 +124,7 @@ using Eigen::Quaterniond;
 #include "MatrixParser.h"
 #include "ProgressHandler.h"
 
+#include "PeakCoordinateSystem.h"
 #include "PeakPredictor.h"
 #include "RefinementBatch.h"
 #include "Refiner.h"
@@ -391,6 +392,7 @@ using namespace nsx;
 %include "Detector.h"
 %include "DetectorEvent.h"
 %template(DetectorEventQueue) std::deque<nsx::DetectorEvent>;
+%template(DetectorEventList) std::vector<nsx::DetectorEvent>;
 %template(DoubleQueue) std::deque<double>;
 %include "MonoDetector.h"
 %include "CylindricalDetector.h"
@@ -490,6 +492,8 @@ namespace nsx {
 %include "Parser.h"
 %include "MatrixParser.h"
 %include "ProgressHandler.h"
+
+%include "PeakCoordinateSystem.h"
 %include "PeakPredictor.h"
 %include "RefinementBatch.h"
 %include "Refiner.h"
@@ -526,6 +530,7 @@ namespace nsx {
 %include "NiggliReduction.h"
 %include "GruberReduction.h"
 %include "SymOp.h"
+%template(SymOpList) std::vector<nsx::SymOp>;
 
 %include "Vertex.h"
 %include "Triangle.h"

@@ -40,9 +40,8 @@ namespace nsx {
 class SymOp {
 
 public:
-#ifndef SWIG
-	SymOp()=delete;
-#endif
+	// needed for swig
+	SymOp()=default;
 
 	SymOp(std::string generator);
 
