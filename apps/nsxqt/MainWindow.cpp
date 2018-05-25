@@ -56,7 +56,7 @@
 #include "DialogIntegrate.h"
 #include "DialogPeakFilter.h"
 #include "ExperimentTree.h"
-#include "IsotopeDatabaseDialog.h"
+#include "DialogIsotopesDatabase.h"
 #include "JobHandler.h"
 #include "MainWindow.h"
 #include "NoteBook.h"
@@ -397,7 +397,7 @@ void MainWindow::on_actionBehind_Detector_triggered()
 void MainWindow::on_action_display_isotopes_database_triggered()
 {
     // Opens the dialog that will diplay the isotopes database
-    IsotopeDatabaseDialog* dlg=new IsotopeDatabaseDialog();
+    DialogIsotopesDatabase* dlg=new DialogIsotopesDatabase();
     dlg->exec();
 }
 

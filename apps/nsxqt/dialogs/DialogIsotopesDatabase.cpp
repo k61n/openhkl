@@ -7,11 +7,13 @@
 #include <nsxlib/IsotopeDatabaseManager.h>
 #include <nsxlib/Units.h>
 
-#include "IsotopeDatabaseDialog.h"
+#include "DialogIsotopesDatabase.h"
 
-#include "ui_IsotopeDatabaseDialog.h"
+#include "ui_DialogIsotopesDatabase.h"
 
-IsotopeDatabaseDialog::IsotopeDatabaseDialog(QWidget *parent) : QDialog(parent), ui(new Ui::IsotopeDatabaseDialog)
+DialogIsotopesDatabase::DialogIsotopesDatabase(QWidget *parent)
+: QDialog(parent), 
+  ui(new Ui::DialogIsotopesDatabase)
 {
     ui->setupUi(this);
 
@@ -85,7 +87,7 @@ IsotopeDatabaseDialog::IsotopeDatabaseDialog(QWidget *parent) : QDialog(parent),
     ui->isotopeDatabaseView->show();
 }
 
-IsotopeDatabaseDialog::~IsotopeDatabaseDialog()
+DialogIsotopesDatabase::~DialogIsotopesDatabase()
 {
     delete ui;
 }

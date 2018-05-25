@@ -34,6 +34,7 @@
 #include "DetectorScene.h"
 #include "DialogAutoIndexing.h"
 #include "DialogExperiment.h"
+#include "DialogIsotopesDatabase.h"
 #include "DialogRawData.h"
 #include "DialogSpaceGroup.h"
 #include "DialogTransformationMatrix.h"
@@ -124,6 +125,8 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
         else if (SampleItem* sitem = dynamic_cast<SampleItem*>(item)) {
             QAction* addUnitCell = menu->addAction("Add unit cell");    
             connect(addUnitCell, &QAction::triggered, [=](){sitem->addUnitCell();});
+            QAction* openIsotopesDatabase = menu->addAction("Open isotopes database");
+            connect(openIsotopesDatabase, &QAction::triggered, [=](){sitem->openIsotopesDatabase();});
         }
         else if (UnitCellItem* ucitem = dynamic_cast<UnitCellItem*>(item)) {
             QAction* info = menu->addAction("Info");

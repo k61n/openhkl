@@ -1346,26 +1346,13 @@ border-radius: 4px;
     <addaction name="menuPeak"/>
     <addaction name="menuColor_map"/>
    </widget>
-   <widget class="QMenu" name="menuChemistry">
-    <property name="title">
-     <string>Che&amp;mistry</string>
-    </property>
-    <addaction name="action_display_isotopes_database"/>
-   </widget>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>File</string>
-    </property>
-   </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
     </property>
     <addaction name="actionAbout"/>
    </widget>
-   <addaction name="menuFile"/>
    <addaction name="menu_Options"/>
-   <addaction name="menuChemistry"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>

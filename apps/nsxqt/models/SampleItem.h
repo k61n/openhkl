@@ -23,6 +23,7 @@ public:
 
     void addUnitCell();
 
+    void openIsotopesDatabase();
 };
 
 #endif // NSXQT_SAMPLEITEM_H

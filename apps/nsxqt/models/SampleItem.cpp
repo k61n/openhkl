@@ -7,6 +7,7 @@
 #include <nsxlib/Sample.h>
 #include <nsxlib/UnitCell.h>
 
+#include "DialogIsotopesDatabase.h"
 #include "SampleItem.h"
 #include "SamplePropertyWidget.h"
 #include "SampleShapeItem.h"
@@ -113,4 +114,14 @@ void SampleItem::addUnitCell()
     auto cell = sample->addUnitCell();
     appendRow(new UnitCellItem(cell));
     child(0)->setEnabled(true);
+}
+
+void SampleItem::openIsotopesDatabase()
+{
+    // dialog will automatically be deleted before we return from this method
+    std::unique_ptr<DialogIsotopesDatabase> dialog_ptr(new DialogIsotopesDatabase());
+
+    if (!dialog_ptr->exec()) {
+        return;
+    }
 }
