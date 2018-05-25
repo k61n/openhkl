@@ -19,6 +19,7 @@
 #include "DialogPeakFind.h"
 #include "ExperimentItem.h"
 #include "NumorItem.h"
+#include "NumorsConversionDialog.h"
 #include "PeaksItem.h"
 #include "PeakListItem.h"
 #include "ProgressView.h"
@@ -203,4 +204,14 @@ nsx::DataList DataItem::selectedData()
         }
     }
     return selectedNumors;
+}
+
+void DataItem::convertToHDF5()
+{
+    // dialog will automatically be deleted before we return from this method
+    std::unique_ptr<NumorsConversionDialog> dialog_ptr(new NumorsConversionDialog(experiment()));
+
+    if (!dialog_ptr->exec()) {
+        return;
+    }
 }

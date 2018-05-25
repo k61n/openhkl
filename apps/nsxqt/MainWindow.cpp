@@ -60,7 +60,6 @@
 #include "JobHandler.h"
 #include "MainWindow.h"
 #include "NoteBook.h"
-#include "NumorsConversionDialog.h"
 #include "PeakGraphicsItem.h"
 #include "PlottableGraphicsItem.h"
 #include "ResolutionCutoffDialog.h"
@@ -431,12 +430,6 @@ void MainWindow::setInspectorWidget(QWidget* w)
         CollectedPeaksModel* peakModel = dynamic_cast<CollectedPeaksModel*>(widget->getPeakTableView()->model());
         connect(peakModel,SIGNAL(unitCellUpdated()),_ui->_dview->getScene(),SLOT(updatePeaks()));
     }
-}
-
-void MainWindow::on_actionConvert_to_HDF5_triggered()
-{
-    NumorsConversionDialog* dlg=new NumorsConversionDialog();
-    dlg->exec();
 }
 
 void MainWindow::on_checkBox_AspectRatio_toggled(bool checked)

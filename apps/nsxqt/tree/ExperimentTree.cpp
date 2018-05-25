@@ -97,16 +97,10 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(log, triggered, [=](){exp_item->writeLogFiles();});
         }
         else if (auto ditem = dynamic_cast<DataItem*>(item)) {            
+            QAction* convert_to_hdf5 = menu->addAction("Convert to HDF5");
             QAction* import = menu->addAction("Import data");
             QAction* findpeaks = menu->addAction("Find peaks in data");
-
-            auto diffractomer_name = ditem->experiment()->diffractometer()->name();
-
-            if (diffractomer_name.compare("D19")==0) {
-                QAction* convert_d19_ascii_peaks = menu->addAction("Convert D19 legacy to HDf5");
-                connect(convert_d19_ascii_peaks, &QAction::triggered, [=](){ditem->findPeaks();});
-            }
-
+            connect(convert_to_hdf5, &QAction::triggered, [=](){ditem->convertToHDF5();});
             connect(import, &QAction::triggered, [=](){ditem->importData();});
             connect(findpeaks, &QAction::triggered, [=](){ditem->findPeaks();});
         }

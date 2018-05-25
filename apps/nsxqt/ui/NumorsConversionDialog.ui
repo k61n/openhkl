@@ -10,42 +10,42 @@
     <height>400</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>1</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>ASCII to HDF5 numors converter</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QTreeView" name="treeView_inputFiles">
-     <property name="selectionMode">
-      <enum>QAbstractItemView::ExtendedSelection</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Diffractometer:</string>
+      <widget class="QListWidget" name="numors">
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="sortingEnabled">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="comboBox_diffractometers"/>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+      <widget class="QPushButton" name="browseInputNumors">
+       <property name="text">
+        <string>Browse numors</string>
        </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
+       <property name="autoDefault">
+        <bool>false</bool>
        </property>
-      </spacer>
+      </widget>
      </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
@@ -54,22 +54,25 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit_outputDirectory">
+      <widget class="QLineEdit" name="outputDirectory">
        <property name="readOnly">
         <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_browse">
+      <widget class="QPushButton" name="browseOutputDirectory">
        <property name="text">
         <string>Browse</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
     </layout>
    </item>
-   <item row="2" column="0">
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QProgressBar" name="progressBar_conversion">
@@ -102,8 +105,55 @@
        </property>
       </widget>
      </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QPushButton" name="pushButton_convert">
+      <widget class="QPushButton" name="convert">
+       <property name="styleSheet">
+        <string notr="true">QPushButton:hover{
+        background: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 :   1, stop :   0.0 #ffd9aa,
+                stop :   0.5 #ffbb6e, stop :   0.55 #feae42, stop :   1.0 #fedb74);
+}
+
+QPushButton {
+        border: 1px solid #6593cf;
+        border-radius: 2px;
+        padding: 5px 15px 2px 5px;
+        background: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 :   1, stop :   0.0 #f5f9ff,
+                stop :   0.5 #c7dfff, stop :   0.55 #afd2ff, stop :   1.0 #c0dbff);
+        color: #006aff;
+        font: bold large &quot;Arial&quot;;
+        height: 30px;
+}
+
+
+
+
+QPushButton:pressed {
+        background: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 :   1, stop :   0.0 #c0dbff,
+        stop :   0.5 #cfd26f, stop :   0.55 #c7df6f, stop :   1.0 #f5f9ff);
+        padding-top: 2px;
+        padding-left: 3px;
+
+}
+
+
+QPushButton:on {
+        background: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 :   1, stop :   0.0 #5AA72D,
+        stop :   0.5 #B3E296, stop :   0.55 #B3E296, stop :   1.0 #f5f9ff);
+        padding-top: 2px;
+        padding-left: 3px;
+}
+
+QPushButton:disabled {
+        background: transparent #e5e9ee;
+        padding-top: 2px;        
+        padding-left: 3px;
+        color: black;
+}</string>
+       </property>
        <property name="text">
         <string>Convert</string>
        </property>

@@ -1,10 +1,8 @@
 #include <QDir>
-#include <QDirModel>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
-#include <QModelIndex>
-#include <QModelIndexList>
+#include <QListWidgetItem>
 #include <QString>
 #include <QStringList>
 
@@ -16,33 +14,22 @@
 #include <nsxlib/Path.h>
 #include <nsxlib/Resources.h>
 
+#include "DataItem.h"
 #include "NumorsConversionDialog.h"
 #include "ui_NumorsConversionDialog.h"
 
-NumorsConversionDialog::NumorsConversionDialog(QWidget *parent)
+NumorsConversionDialog::NumorsConversionDialog(nsx::sptrExperiment experiment, QWidget *parent)
 : QDialog(parent),
-  ui(new Ui::NumorsConversionDialog)
+  ui(new Ui::NumorsConversionDialog),
+  _experiment(experiment)
 {
     ui->setupUi(this);
 
-    // The instrument names will be inserted alphabetically
-    ui->comboBox_diffractometers->setInsertPolicy(QComboBox::InsertAlphabetically);
+    ui->outputDirectory->setText(QDir::currentPath());
 
-    auto resources_name = nsx::getResourcesName("instruments");
-
-    for (auto res_name : resources_name) {
-        ui->comboBox_diffractometers->addItem(QString::fromStdString(res_name));
-    }
-
-    QDirModel* model=new QDirModel();
-    ui->treeView_inputFiles->setModel(model);
-
-    ui->treeView_inputFiles->setRootIndex(model->index(QDir::homePath()));
-    ui->treeView_inputFiles->setColumnHidden( 1, true );
-    ui->treeView_inputFiles->setColumnHidden( 2, true );
-    ui->treeView_inputFiles->setColumnHidden( 3, true );
-
-    ui->treeView_inputFiles->setWindowTitle(QObject::tr("Dir View:")+QDir::homePath());
+    connect(ui->browseInputNumors,SIGNAL(clicked()),this,SLOT(browseInputNumors()));
+    connect(ui->browseOutputDirectory,SIGNAL(clicked()),this,SLOT(browseOutputDirectory()));
+    connect(ui->convert,SIGNAL(clicked()),this,SLOT(convert()));
 }
 
 NumorsConversionDialog::~NumorsConversionDialog()
@@ -50,68 +37,89 @@ NumorsConversionDialog::~NumorsConversionDialog()
     delete ui;
 }
 
-void NumorsConversionDialog::on_pushButton_convert_clicked()
+void NumorsConversionDialog::browseInputNumors()
 {
+    QStringList numors = QFileDialog::getOpenFileNames(this, tr("Open ILL ASCII numors"), ".");
 
-    QString outputDirectory=ui->lineEdit_outputDirectory->text();
-    if (outputDirectory.isEmpty())
-    {
-        QMessageBox::warning(this,"Output directory",QString::fromStdString("Please enter an output directory."));
+    if (numors.isEmpty()) {
         return;
     }
 
-    nsx::DataReaderFactory dataFactory;
-    std::string diffractometerName=ui->comboBox_diffractometers->currentText().toStdString();
-    auto diffractometer = nsx::Diffractometer::build(diffractometerName);
+    for (size_t i = 0; i < ui->numors->count(); ++i) {
+        numors.append(ui->numors->item(i)->text());
+    }
 
-    auto model = dynamic_cast<QDirModel*>(ui->treeView_inputFiles->model());
-    QModelIndexList indexes = ui->treeView_inputFiles->selectionModel()->selectedIndexes();
+    numors.removeDuplicates();
 
-    ui->progressBar_conversion->setMaximum(indexes.size());
+    ui->numors->clear();
+    ui->numors->addItems(numors);
+}
+
+void NumorsConversionDialog::convert()
+{
+    if (ui->numors->count() == 0) {
+        QMessageBox::warning(this,"Output directory","No numors selected for conversion");
+        return;
+    }
+
+    QString outputDirectory = ui->outputDirectory->text();
+    if (outputDirectory.isEmpty())
+    {
+        QMessageBox::warning(this,"Output directory","Please enter an output directory.");
+        return;
+    }
+
+    ui->progressBar_conversion->setMaximum(ui->numors->count());
     ui->progressBar_conversion->setValue(0);
 
-    int comp(0);
-    for (auto& idx : indexes) {
-        QFileInfo fileInfo = model->fileInfo(idx);
-        int row = -1;
-        if (idx.row()!=row && idx.column()==0) {
-            row = idx.row();
-            std::string filename=fileInfo.absoluteFilePath().toStdString();
-            std::string extension=fileInfo.completeSuffix().toStdString();
-            std::shared_ptr<nsx::DataSet> data;
-            try {
-                data = dataFactory.create(extension,filename,diffractometer);
-            }
-            catch(std::exception& e) {
-                nsx::error() << "opening file " << filename.c_str() << e.what();
-                ui->progressBar_conversion->setValue(++comp);
-                if (data) {
-                    data.reset();
-                }
-                continue;
-            }
-            // todo: implement progress handler here
-            QString basename=fileInfo.baseName();
-            QString outputFilename = QDir(ui->lineEdit_outputDirectory->text()).filePath(basename+".h5");
+    auto diffractometer = nsx::Diffractometer::build(_experiment->diffractometer()->name());
 
-            try {
-                data->saveHDF5(outputFilename.toStdString());
-            } catch(...) {
-                nsx::error() << "The filename " << filename.c_str() << " could not be saved. Maybe a permission problem.";
-                ui->progressBar_conversion->setValue(++comp);
+    nsx::DataReaderFactory dataFactory;
+
+    int comp(0);
+    while(ui->numors->count()) {
+
+        auto item = ui->numors->item(0);
+        auto numor = item->text().toStdString();
+
+        QFileInfo fileinfo(QString::fromStdString(numor));
+        QString basename = fileinfo.baseName();
+        auto extension = fileinfo.suffix().toStdString();
+        auto outputFilename = QDir(outputDirectory).filePath(basename+".h5").toStdString();
+
+        std::shared_ptr<nsx::DataSet> data;
+        try {
+            data = dataFactory.create(extension,numor,diffractometer);
+        } catch(std::exception& e) {
+            nsx::error() << "opening file " << numor << e.what();
+            ui->progressBar_conversion->setValue(++comp);
+            if (data) {
                 data.reset();
-                continue;
             }
-            data.reset();
+            delete item;
+            continue;
         }
+
+        try {
+            data->saveHDF5(outputFilename);
+        } catch(...) {
+            nsx::error() << "The filename " << outputFilename << " could not be saved. Maybe a permission problem.";
+            ui->progressBar_conversion->setValue(++comp);
+            data.reset();
+            delete item;
+            continue;
+        }
+        data.reset();
+        delete item;
+        ui->numors->repaint();
         ui->progressBar_conversion->setValue(++comp);
     }
 }
 
-void NumorsConversionDialog::on_pushButton_browse_clicked()
+void NumorsConversionDialog::browseOutputDirectory()
 {
-    QString outputDirectory=QFileDialog::getExistingDirectory (this, "Enter output directory", QDir::homePath());
+    QString outputDirectory = QFileDialog::getExistingDirectory (this, "Enter output directory", ".", QFileDialog::ShowDirsOnly);
     if (!outputDirectory.isEmpty()) {
-        ui->lineEdit_outputDirectory->setText(outputDirectory);
+        ui->outputDirectory->setText(outputDirectory);
     }
 }

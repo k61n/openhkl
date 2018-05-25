@@ -1352,13 +1352,6 @@ border-radius: 4px;
     </property>
     <addaction name="action_display_isotopes_database"/>
    </widget>
-   <widget class="QMenu" name="menuUtils">
-    <property name="title">
-     <string>&amp;Utils</string>
-    </property>
-    <addaction name="actionConvert_to_HDF5"/>
-    <addaction name="separator"/>
-   </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
@@ -1373,7 +1366,6 @@ border-radius: 4px;
    <addaction name="menuFile"/>
    <addaction name="menu_Options"/>
    <addaction name="menuChemistry"/>
-   <addaction name="menuUtils"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
