@@ -15,12 +15,12 @@
 #include <nsxlib/Resources.h>
 
 #include "DataItem.h"
-#include "NumorsConversionDialog.h"
-#include "ui_NumorsConversionDialog.h"
+#include "DialogHDF5Converter.h"
+#include "ui_DialogHDF5Converter.h"
 
-NumorsConversionDialog::NumorsConversionDialog(nsx::sptrExperiment experiment, QWidget *parent)
+DialogHDF5Converter::DialogHDF5Converter(nsx::sptrExperiment experiment, QWidget *parent)
 : QDialog(parent),
-  ui(new Ui::NumorsConversionDialog),
+  ui(new Ui::DialogHDF5Converter),
   _experiment(experiment)
 {
     ui->setupUi(this);
@@ -32,12 +32,12 @@ NumorsConversionDialog::NumorsConversionDialog(nsx::sptrExperiment experiment, Q
     connect(ui->convert,SIGNAL(clicked()),this,SLOT(convert()));
 }
 
-NumorsConversionDialog::~NumorsConversionDialog()
+DialogHDF5Converter::~DialogHDF5Converter()
 {
     delete ui;
 }
 
-void NumorsConversionDialog::browseInputNumors()
+void DialogHDF5Converter::browseInputNumors()
 {
     QStringList numors = QFileDialog::getOpenFileNames(this, tr("Open ILL ASCII numors"), ".");
 
@@ -55,7 +55,7 @@ void NumorsConversionDialog::browseInputNumors()
     ui->numors->addItems(numors);
 }
 
-void NumorsConversionDialog::convert()
+void DialogHDF5Converter::convert()
 {
     if (ui->numors->count() == 0) {
         QMessageBox::warning(this,"Output directory","No numors selected for conversion");
@@ -116,7 +116,7 @@ void NumorsConversionDialog::convert()
     }
 }
 
-void NumorsConversionDialog::browseOutputDirectory()
+void DialogHDF5Converter::browseOutputDirectory()
 {
     QString outputDirectory = QFileDialog::getExistingDirectory (this, "Enter output directory", ".", QFileDialog::ShowDirsOnly);
     if (!outputDirectory.isEmpty()) {

@@ -16,10 +16,10 @@
 #include <nsxlib/RawDataReader.h>
 
 #include "DataItem.h"
+#include "DialogHDF5Converter.h"
 #include "DialogPeakFind.h"
 #include "ExperimentItem.h"
 #include "NumorItem.h"
-#include "NumorsConversionDialog.h"
 #include "PeaksItem.h"
 #include "PeakListItem.h"
 #include "ProgressView.h"
@@ -209,7 +209,7 @@ nsx::DataList DataItem::selectedData()
 void DataItem::convertToHDF5()
 {
     // dialog will automatically be deleted before we return from this method
-    std::unique_ptr<NumorsConversionDialog> dialog_ptr(new NumorsConversionDialog(experiment()));
+    std::unique_ptr<DialogHDF5Converter> dialog_ptr(new DialogHDF5Converter(experiment()));
 
     if (!dialog_ptr->exec()) {
         return;

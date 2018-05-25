@@ -5,16 +5,16 @@
 #include <nsxlib/InstrumentTypes.h>
 
 namespace Ui {
-class NumorsConversionDialog;
+class DialogHDF5Converter;
 }
 
-class NumorsConversionDialog : public QDialog
+class DialogHDF5Converter : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit NumorsConversionDialog(nsx::sptrExperiment experiment, QWidget* parent = 0);
-    ~NumorsConversionDialog();
+    explicit DialogHDF5Converter(nsx::sptrExperiment experiment, QWidget* parent = 0);
+    ~DialogHDF5Converter();
 
 private slots:
 
@@ -23,7 +23,7 @@ private slots:
     void convert();
 
 private:
-    Ui::NumorsConversionDialog *ui;
+    Ui::DialogHDF5Converter *ui;
 
     nsx::sptrExperiment _experiment;
 };

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>NumorsConversionDialog</class>
- <widget class="QDialog" name="NumorsConversionDialog">
+ <class>DialogHDF5Converter</class>
+ <widget class="QDialog" name="DialogHDF5Converter">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>ASCII to HDF5 numors converter</string>
+   <string>HDF5 converter</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
