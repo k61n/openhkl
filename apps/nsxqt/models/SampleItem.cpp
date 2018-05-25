@@ -29,14 +29,6 @@ SampleItem::SampleItem() : InspectableTreeItem()
 
 }
 
-void SampleItem::setData(const QVariant &value, int role)
-{
-    if (parent()) {
-        experiment()->diffractometer()->getSample()->setName(text().toStdString());
-    }
-    QStandardItem::setData(value,role);
-}
-
 QWidget* SampleItem::inspectItem()
 {
     return new SamplePropertyWidget(this);
@@ -101,8 +93,9 @@ QList<UnitCellItem*> SampleItem::unitCellItems()
         QModelIndex idx = model()->index(i,0,sampleItemIdx);
         QStandardItem* item = model()->itemFromIndex(idx);
         UnitCellItem* ucItem = dynamic_cast<UnitCellItem*>(item);
-        if (ucItem)
+        if (ucItem) {
             unitCellItems << ucItem;
+        }
     }
 
     return unitCellItems;
@@ -125,3 +118,15 @@ void SampleItem::openIsotopesDatabase()
         return;
     }
 }
+
+void SampleItem::setData(const QVariant& value, int role)
+{
+    switch (role)
+    {
+    case Qt::UserRole:
+
+        break;
+    }
+    QStandardItem::setData(value,role);
+}
+

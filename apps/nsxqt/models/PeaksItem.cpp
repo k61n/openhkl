@@ -69,9 +69,9 @@ nsx::PeakList PeaksItem::selectedPeaks()
 
 void PeaksItem::integratePeaks()
 {
-    ExperimentItem& exp_item = dynamic_cast<ExperimentItem&>(*parent());
+    ExperimentItem* exp_item = dynamic_cast<ExperimentItem*>(parent());
     auto&& selected_peaks = selectedPeaks();
-    auto& library = exp_item.libraryItem().library();
+    auto& library = exp_item->libraryItem()->library();
 
     if (!library) {
         throw std::runtime_error("Error: cannot integrate weak peaks without a shape library!");
@@ -108,7 +108,7 @@ void PeaksItem::integratePeaks()
     const double dmax = dialog->dMax();
 
     //nsx::DataList numors = _session->getSelectedNumors();
-    auto&& numors = exp_item.dataItem().selectedData();
+    auto&& numors = exp_item->dataItem()->selectedData();
 
     nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
     ProgressView view(nullptr);
@@ -161,7 +161,7 @@ void PeaksItem::absorptionCorrection()
 void PeaksItem::buildShapeLibrary()
 {
     nsx::PeakList peaks = selectedPeaks();
-    ExperimentItem& exp_item = dynamic_cast<ExperimentItem&>(*parent());
+    ExperimentItem* exp_item = dynamic_cast<ExperimentItem*>(parent());
 
     // Check that a minimum number of peaks have been selected for indexing
     if (peaks.size() == 0) {
@@ -188,7 +188,7 @@ void PeaksItem::buildShapeLibrary()
         return;
     }
 
-    *exp_item.libraryItem().library() = *dialog->library();
+    *(exp_item->libraryItem()->library()) = *dialog->library();
     nsx::info() << "Update profiles of " << peaks.size() << " peaks";
 }
 
@@ -213,7 +213,7 @@ void PeaksItem::filterPeaks()
 
 void PeaksItem::autoindex()
 {
-    DialogAutoIndexing dlg(experiment(), selectedPeaks());
+    DialogAutoIndexing dlg(experimentItem(), selectedPeaks());
     dlg.exec();
 }
 

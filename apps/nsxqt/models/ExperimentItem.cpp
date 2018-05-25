@@ -75,7 +75,7 @@ void ExperimentItem::fromJson(const QJsonObject &obj)
     _data->fromJson(obj["data"].toObject());
 }
 
-InstrumentItem* ExperimentItem::getInstrumentItem()
+InstrumentItem* ExperimentItem::instrumentItem()
 {
     return _instr;
 }
@@ -106,17 +106,17 @@ void ExperimentItem::writeLogFiles()
     }
 }
 
-PeaksItem& ExperimentItem::peaksItem()
+PeaksItem* ExperimentItem::peaksItem()
 {
-    return *_peaks;
+    return _peaks;
 }
 
-DataItem& ExperimentItem::dataItem()
+DataItem* ExperimentItem::dataItem()
 {
-    return *_data;
+    return _data;
 }
 
-LibraryItem& ExperimentItem::libraryItem()
+LibraryItem* ExperimentItem::libraryItem()
 {
-    return *_library;
+    return _library;
 }

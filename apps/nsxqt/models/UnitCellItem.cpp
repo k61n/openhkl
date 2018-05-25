@@ -27,7 +27,7 @@ UnitCellItem::UnitCellItem(nsx::sptrUnitCell cell):
 
 UnitCellItem::~UnitCellItem()
 {
-    experiment()->diffractometer()->getSample()->removeUnitCell(_cell);
+    experimentItem()->experiment()->diffractometer()->getSample()->removeUnitCell(_cell);
 }
 
 QWidget* UnitCellItem::inspectItem()
@@ -59,7 +59,7 @@ void UnitCellItem::openTransformationMatrixDialog()
 
 void UnitCellItem::determineSpaceGroup()
 {
-    auto selected_peaks = experimentItem().peaksItem().selectedPeaks();
+    auto selected_peaks = experimentItem()->peaksItem()->selectedPeaks();
     // todo
     DialogSpaceGroup dlg(selected_peaks);
 

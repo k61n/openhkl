@@ -192,8 +192,8 @@ nsx::PeakList SessionModel::peaks(const nsx::DataSet* data) const
     nsx::PeakList list;
 
     for (auto i = 0; i < rowCount(); ++i) {
-        auto& exp_item = dynamic_cast<ExperimentItem&>(*item(i));
-        auto&& peaks = exp_item.peaksItem().selectedPeaks();
+        auto exp_item = dynamic_cast<ExperimentItem*>(item(i));
+        auto&& peaks = exp_item->peaksItem()->selectedPeaks();
 
         for (auto peak: peaks) {
             if (data == nullptr || peak->data().get() == data) {

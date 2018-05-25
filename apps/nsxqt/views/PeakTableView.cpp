@@ -462,17 +462,6 @@ QItemSelectionModel::SelectionFlags PeakTableView::selectionCommand(const QModel
     return QTableView::selectionCommand(index,event);
 }
 
-void PeakTableView::openAutoIndexingDialog()
-{
-    auto peakModel = dynamic_cast<CollectedPeaksModel*>(model());
-    auto experiment = peakModel->getExperiment();
-    nsx::PeakList peaks = peakModel->getPeaks(selectionModel()->selectedRows());
-    auto dialog = new DialogAutoIndexing(experiment,peaks);
-    connect(dialog,SIGNAL(cellUpdated(nsx::sptrUnitCell)),this,SLOT(updateUnitCell(nsx::sptrUnitCell)));
-    dialog->exec();
-    selectionModel()->clear();
-}
-
 void PeakTableView::updateUnitCell(const nsx::sptrUnitCell& unitCell)
 {
     QModelIndexList selectedPeaks = selectionModel()->selectedRows();

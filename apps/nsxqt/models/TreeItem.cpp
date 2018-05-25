@@ -18,15 +18,6 @@ TreeItem::~TreeItem()
 
 void TreeItem::setData(const QVariant &value, int role)
 {
-    #if 0
-    if (role == Qt::EditRole)
-    {
-        QString newExptName = value.toString().trimmed();
-        if (newExptName.isEmpty())
-            return;
-        _experiment->setName(newExptName.toStdString());
-    }
-    #endif
     QStandardItem::setData(value,role);
 }
 
@@ -56,10 +47,10 @@ void TreeItem::fromJson(const QJsonObject &obj)
 
 nsx::sptrExperiment TreeItem::experiment()
 {
-    return experimentItem().experiment();
+    return experimentItem()->experiment();
 }
 
-ExperimentItem& TreeItem::experimentItem()
+ExperimentItem* TreeItem::experimentItem()
 {
     ExperimentItem* exp_item = nullptr;
     QStandardItem* p = parent();
@@ -76,7 +67,7 @@ ExperimentItem& TreeItem::experimentItem()
         throw std::runtime_error("TreeItem::importData(): no experiment in tree!");
     }
 
-    return *exp_item;
+    return exp_item;
 }
 
 SessionModel* TreeItem::model() const

@@ -23,15 +23,16 @@ public:
     virtual ~ExperimentItem() = default;
     QJsonObject toJson();
     void fromJson(const QJsonObject& obj);
-    InstrumentItem* getInstrumentItem();
 
     nsx::sptrExperiment experiment() { return _experiment; }
 
-    PeaksItem& peaksItem();
+    InstrumentItem* instrumentItem();
 
-    DataItem& dataItem();
+    PeaksItem* peaksItem();
 
-    LibraryItem& libraryItem();
+    DataItem* dataItem();
+
+    LibraryItem* libraryItem();
 
     void writeLogFiles();
 

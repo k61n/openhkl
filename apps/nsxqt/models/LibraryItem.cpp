@@ -30,12 +30,12 @@ void LibraryItem::incorporateCalculatedPeaks()
 {
     nsx::debug() << "Incorporating missing peaks into current data set...";
 
-    auto& expt_item = dynamic_cast<ExperimentItem&>(*parent());
-    auto& data_item = expt_item.dataItem();
+    auto expt_item = dynamic_cast<ExperimentItem*>(parent());
+    auto data_item = expt_item->dataItem();
 
     std::set<nsx::sptrUnitCell> cells;
 
-    nsx::DataList numors = data_item.selectedData();
+    nsx::DataList numors = data_item->selectedData();
 
     for (auto numor: numors) {
         auto sample = numor->diffractometer()->getSample();
@@ -76,7 +76,8 @@ void LibraryItem::incorporateCalculatedPeaks()
         nsx::debug() << "Added " << predicted.size() << " predicted peaks.";
     }
 
-    model()->setData(experimentItem().peaksItem().index(),QVariant::fromValue(predicted_peaks),Qt::UserRole);
+    auto peaks_item = experimentItem()->peaksItem();
+    model()->setData(peaks_item->index(),QVariant::fromValue(predicted_peaks),Qt::UserRole);
 }
 
 void LibraryItem::setData(const QVariant& value, int role)

@@ -20,25 +20,36 @@
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
 
-#include "DialogAutoIndexing.h"
-#include "CollectedPeaksModel.h"
 #include "CollectedPeaksDelegate.h"
+#include "CollectedPeaksModel.h"
+#include "DialogAutoIndexing.h"
+#include "ExperimentItem.h"
+#include "InstrumentItem.h"
+#include "MetaTypes.h"
+#include "SampleItem.h"
 
 #include "ui_DialogAutoIndexing.h"
 
-DialogAutoIndexing::DialogAutoIndexing(nsx::sptrExperiment experiment, nsx::PeakList peaks, QWidget *parent):
+DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, nsx::PeakList peaks, QWidget *parent):
     QDialog(parent),
     ui(new Ui::DialogAutoIndexing),
-    _experiment(experiment),
+    _experiment_item(experiment_item),
     _peaks(peaks)
 {
     ui->setupUi(this);
     setModal(true);
-    _unitCells = _experiment->diffractometer()->getSample()->unitCells();
+    _unitCells = _experiment_item->experiment()->diffractometer()->getSample()->unitCells();
 
-    for (auto uc : _unitCells) {
-        ui->unitCells->addItem(QString::fromStdString(uc->getName()));
+    if (_unitCells.empty()) {
+        nsx::sptrUnitCell new_unit_cell(std::make_shared<nsx::UnitCell>(nsx::UnitCell()));
+        new_unit_cell->setName("new unit cell");
+        _unitCells.push_back(new_unit_cell);
     }
+
+    for (auto unit_cell : _unitCells) {
+        ui->unitCells->addItem(QString::fromStdString(unit_cell->getName()));
+    }
+
     connect(ui->index,SIGNAL(clicked()),this,SLOT(autoIndex()));
 
     // Accept solution and set Unit-Cell
@@ -62,10 +73,6 @@ void DialogAutoIndexing::autoIndex()
     });
 
     nsx::AutoIndexer indexer(handler);
-
-    if (_unitCells.empty()) {
-        throw std::runtime_error("cannot auto index: no unit cell");
-    }
 
     nsx::sptrUnitCell selectedUnitCell = _unitCells[ui->unitCells->currentIndex()];
 
@@ -154,9 +161,10 @@ void DialogAutoIndexing::selectSolution(int index)
     QString solutionNumber = QString::number(index+1);
     QString selectedUnitCellName = ui->unitCells->currentText();
     QMessageBox::information(this, tr("NSXTool"),tr("Solution %1 set to %2 unit cell").arg(solutionNumber,selectedUnitCellName));
-    emit cellUpdated(_unitCells[ui->unitCells->currentIndex()]);
 
-    for (auto peak: _peaks) {
-        peak->addUnitCell(_unitCells[ui->unitCells->currentIndex()]);
-    }
+    auto sample_item = _experiment_item->instrumentItem()->sampleItem();
+
+    _experiment_item->model()->setData(sample_item->index(),QVariant::fromValue(_unitCells),Qt::UserRole);
+
+//    emit cellUpdated(_unitCells[ui->unitCells->currentIndex()]);
 }

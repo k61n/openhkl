@@ -20,9 +20,9 @@ public:
 
 public:
 
-    DetectorItem* getDetectorItem();
-    SampleItem* getSampleItem();
-    SourceItem* getSourceItem();
+    DetectorItem* detectorItem();
+    SampleItem* sampleItem();
+    SourceItem* sourceItem();
 
 private:
     DetectorItem* _detector;

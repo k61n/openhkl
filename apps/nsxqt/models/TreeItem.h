@@ -1,8 +1,8 @@
 #pragma once
 
+#include <QJsonObject>
 #include <QStandardItem>
 #include <QVariant>
-#include <QJsonObject>
 
 #include <nsxlib/Experiment.h>
 #include <nsxlib/InstrumentTypes.h>
@@ -28,5 +28,5 @@ public:
 
     nsx::sptrExperiment experiment();
 
-    ExperimentItem& experimentItem();
+    ExperimentItem* experimentItem();
 };

@@ -88,7 +88,6 @@ public slots:
 
     void updateUnitCell(const nsx::sptrUnitCell& unitCell);
 
-    void openAutoIndexingDialog();
     void openRefiningParametersDialog();
     void openProfileFitDialog();
 

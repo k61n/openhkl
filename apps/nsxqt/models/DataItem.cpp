@@ -189,7 +189,8 @@ void DataItem::findPeaks()
     delete progressView;
 
     nsx::debug() << "Peak search complete., found " << peaks.size() << " peaks.";
-    model()->setData(experimentItem().peaksItem().index(),QVariant::fromValue(peaks),Qt::UserRole);
+    auto peaks_item = experimentItem()->peaksItem();
+    model()->setData(peaks_item->index(),QVariant::fromValue(peaks),Qt::UserRole);
 }
 
 nsx::DataList DataItem::selectedData()
