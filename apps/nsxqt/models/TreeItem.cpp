@@ -78,3 +78,8 @@ ExperimentItem& TreeItem::experimentItem()
 
     return *exp_item;
 }
+
+SessionModel* TreeItem::model() const
+{
+    return dynamic_cast<SessionModel*>(QStandardItem::model());
+}

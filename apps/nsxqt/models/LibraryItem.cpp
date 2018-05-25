@@ -1,11 +1,3 @@
-#include "DataItem.h"
-#include "DialogCalculatedPeaks.h"
-#include "ExperimentItem.h"
-#include "LibraryItem.h"
-#include "PeakListItem.h"
-#include "PeaksItem.h"
-#include "ProgressView.h"
-
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Logger.h>
@@ -14,7 +6,18 @@
 #include <nsxlib/Sample.h>
 #include <nsxlib/ShapeLibrary.h>
 
-LibraryItem::LibraryItem(): TreeItem(), _library(new nsx::ShapeLibrary(false))
+#include "DataItem.h"
+#include "DialogCalculatedPeaks.h"
+#include "ExperimentItem.h"
+#include "LibraryItem.h"
+#include "MetaTypes.h"
+#include "PeakListItem.h"
+#include "PeaksItem.h"
+#include "ProgressView.h"
+
+LibraryItem::LibraryItem()
+: TreeItem(),
+  _library(new nsx::ShapeLibrary(false))
 {
     setText("Reference peak library");
     QIcon icon(":/resources/peakListIcon.png");
@@ -72,7 +75,22 @@ void LibraryItem::incorporateCalculatedPeaks()
 
         nsx::debug() << "Added " << predicted.size() << " predicted peaks.";
     }
-    auto peaks_item = expt_item.peaks().createPeaksItem("Predicted peaks");
-    std::swap(peaks_item->peaks(), predicted_peaks);
-    //updatePeaks();
+
+    model()->setData(experimentItem().peaksItem().index(),QVariant::fromValue(predicted_peaks),Qt::UserRole);
+}
+
+void LibraryItem::setData(const QVariant& value, int role)
+{
+    switch (role)
+    {
+    case Qt::UserRole:
+
+        auto item = new PeakListItem(value.value<nsx::PeakList>());
+        item->setText("Predicted peaks");
+        appendRow(item);
+
+        break;
+
+    }
+    QStandardItem::setData(value,role);
 }

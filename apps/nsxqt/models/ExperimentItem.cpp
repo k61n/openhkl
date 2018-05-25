@@ -45,15 +45,15 @@ ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment): TreeItem(), _exp
     appendRow(_instr);
 
     // Create a data item and add it to the experiment item
-    _data = new DataItem;
+    _data = new DataItem();
     appendRow(_data);
 
     // Create a peaks item and add it to the experiment item
-    _peaks = new PeaksItem;
+    _peaks = new PeaksItem();
     appendRow(_peaks);
 
     // Create the reference peak library
-    _library = new LibraryItem;
+    _library = new LibraryItem();
     appendRow(_library);
 }
 
@@ -104,4 +104,19 @@ void ExperimentItem::writeLogFiles()
     if (!dlg.exec()) {
         return;
     }
+}
+
+PeaksItem& ExperimentItem::peaksItem()
+{
+    return *_peaks;
+}
+
+DataItem& ExperimentItem::dataItem()
+{
+    return *_data;
+}
+
+LibraryItem& ExperimentItem::libraryItem()
+{
+    return *_library;
 }

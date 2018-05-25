@@ -19,6 +19,7 @@
 #include "DialogHDF5Converter.h"
 #include "DialogPeakFind.h"
 #include "ExperimentItem.h"
+#include "MetaTypes.h"
 #include "NumorItem.h"
 #include "PeaksItem.h"
 #include "PeakListItem.h"
@@ -187,11 +188,8 @@ void DataItem::findPeaks()
     // delete the progressView
     delete progressView;
 
-    //updatePeaks();
     nsx::debug() << "Peak search complete., found " << peaks.size() << " peaks.";
-
-    auto& peak_item = *experimentItem().peaks().createPeaksItem("Found peaks");
-    std::swap(peak_item.peaks(), peaks);
+    model()->setData(experimentItem().peaksItem().index(),QVariant::fromValue(peaks),Qt::UserRole);
 }
 
 nsx::DataList DataItem::selectedData()
@@ -199,8 +197,9 @@ nsx::DataList DataItem::selectedData()
     nsx::DataList selectedNumors;
     for (int i = 0; i < rowCount(); ++i) {
         if (child(i)->checkState() == Qt::Checked) {
-            if (auto ptr = dynamic_cast<NumorItem*>(child(i)))
+            if (auto ptr = dynamic_cast<NumorItem*>(child(i))) {
                 selectedNumors.push_back(ptr->getData());
+            }
         }
     }
     return selectedNumors;

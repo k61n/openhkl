@@ -10,7 +10,6 @@
 #include <nsxlib/InstrumentTypes.h>
 
 #include "TreeItem.h"
-#include "models/SessionModel.h"
 
 class DataItem;
 class LibraryItem;
@@ -28,9 +27,11 @@ public:
 
     nsx::sptrExperiment experiment() { return _experiment; }
 
-    PeaksItem& peaks() { return *_peaks; }
-    DataItem& dataItem() { return *_data; }
-    LibraryItem& libraryItem() { return *_library; }
+    PeaksItem& peaksItem();
+
+    DataItem& dataItem();
+
+    LibraryItem& libraryItem();
 
     void writeLogFiles();
 

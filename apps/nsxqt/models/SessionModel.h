@@ -50,10 +50,6 @@
 #include <nsxlib/InstrumentTypes.h>
 #include <nsxlib/UtilsTypes.h>
 
-#include "DataItem.h"
-#include "ExperimentItem.h"
-#include "PeaksItem.h"
-
 class ExperimentItem;
 
 class SessionModel: public QStandardItemModel {
@@ -61,6 +57,8 @@ class SessionModel: public QStandardItemModel {
 public:
     explicit SessionModel();
     ~SessionModel();
+
+    virtual bool setData(const QModelIndex &index, const QVariant &value, int role) override;
 
     nsx::DataList getSelectedNumors() const;
     nsx::DataList getSelectedNumors(ExperimentItem* item) const;

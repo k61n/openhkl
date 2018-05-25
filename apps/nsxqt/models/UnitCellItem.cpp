@@ -8,6 +8,7 @@
 #include "DialogTransformationMatrix.h"
 #include "DialogUnitCellParameters.h"
 #include "ExperimentItem.h"
+#include "PeaksItem.h"
 #include "UnitCellItem.h"
 #include "UnitCellPropertyWidget.h"
 
@@ -58,7 +59,7 @@ void UnitCellItem::openTransformationMatrixDialog()
 
 void UnitCellItem::determineSpaceGroup()
 {
-    auto selected_peaks = experimentItem().peaks().selectedPeaks();
+    auto selected_peaks = experimentItem().peaksItem().selectedPeaks();
     // todo
     DialogSpaceGroup dlg(selected_peaks);
 

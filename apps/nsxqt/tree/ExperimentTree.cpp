@@ -46,6 +46,7 @@
 #include "LibraryItem.h"
 #include "MCAbsorptionDialog.h"
 #include "NumorItem.h"
+#include "PeaksItem.h"
 #include "PeakListItem.h"
 #include "PeakTableView.h"
 #include "ProgressView.h"

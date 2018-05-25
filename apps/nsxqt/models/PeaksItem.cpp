@@ -33,6 +33,7 @@
 #include "ExperimentItem.h"
 #include "LibraryItem.h"
 #include "MCAbsorptionDialog.h"
+#include "MetaTypes.h"
 #include "PeaksItem.h"
 #include "PeakListItem.h"
 #include "ProgressView.h"
@@ -46,14 +47,6 @@ PeaksItem::PeaksItem(): TreeItem()
     setIcon(icon);
     setEditable(false);
     setSelectable(false);
-}
-
-PeakListItem* PeaksItem::createPeaksItem(const char* name)
-{
-    auto item = new PeakListItem;
-    item->setText(name);
-    appendRow(item);
-    return item;
 }
 
 nsx::PeakList PeaksItem::selectedPeaks()
@@ -280,4 +273,20 @@ void PeaksItem::autoAssignUnitCell()
         }
     }
     nsx::debug() << "Done auto assigning unit cells";
+}
+
+void PeaksItem::setData(const QVariant& value, int role)
+{
+    switch (role)
+    {
+    case Qt::UserRole:
+
+        auto item = new PeakListItem(value.value<nsx::PeakList>());
+        item->setText("Found peaks");
+        appendRow(item);
+
+        break;
+
+    }
+    QStandardItem::setData(value,role);
 }

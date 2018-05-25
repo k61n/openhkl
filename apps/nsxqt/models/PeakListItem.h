@@ -12,7 +12,7 @@
 class PeakListItem : public InspectableTreeItem
 {
 public:
-    explicit PeakListItem();
+    explicit PeakListItem(const nsx::PeakList& peaks);
     QWidget* inspectItem();
     nsx::PeakList& peaks() { return _peaks; }
 

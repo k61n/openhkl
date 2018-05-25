@@ -193,7 +193,7 @@ nsx::PeakList SessionModel::peaks(const nsx::DataSet* data) const
 
     for (auto i = 0; i < rowCount(); ++i) {
         auto& exp_item = dynamic_cast<ExperimentItem&>(*item(i));
-        auto&& peaks = exp_item.peaks().selectedPeaks();
+        auto&& peaks = exp_item.peaksItem().selectedPeaks();
 
         for (auto peak: peaks) {
             if (data == nullptr || peak->data().get() == data) {
@@ -241,4 +241,9 @@ void SessionModel::createNewExperiment()
         nsx::error() << e.what();
         return;
     }
+}
+
+bool SessionModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    return QStandardItemModel::setData(index, value, role);
 }

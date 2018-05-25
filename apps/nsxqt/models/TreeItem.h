@@ -1,9 +1,5 @@
 #pragma once
 
-#include <memory>
-#include <string>
-
-#include <QMenu>
 #include <QStandardItem>
 #include <QVariant>
 #include <QJsonObject>
@@ -11,6 +7,7 @@
 #include <nsxlib/Experiment.h>
 #include <nsxlib/InstrumentTypes.h>
 
+#include "SessionModel.h"
 
 class QWidget;
 class ExperimentItem;
@@ -22,7 +19,9 @@ public:
 
     virtual ~TreeItem();
 
-    virtual void setData(const QVariant & value, int role=Qt::UserRole + 1) override;
+    virtual void setData(const QVariant& value, int role=Qt::UserRole + 1) override;
+
+    virtual SessionModel* model() const;
 
     virtual QJsonObject toJson();
     virtual void fromJson(const QJsonObject& obj);

@@ -8,10 +8,15 @@
 class PeakListItem;
 
 class PeaksItem: public TreeItem {
+
 public:
+
     explicit PeaksItem();
-    PeakListItem* createPeaksItem(const char* name);
+
     nsx::PeakList selectedPeaks();
+
+    virtual void setData(const QVariant &value, int role) override;
+
     void integratePeaks();
     void findSpaceGroup();
     void showPeaksOpenGL();
@@ -21,4 +26,6 @@ public:
     void autoindex();
     void refine();
     void autoAssignUnitCell();
+
+
 };
