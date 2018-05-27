@@ -8,6 +8,7 @@
 #include "DialogTransformationMatrix.h"
 #include "DialogUnitCellParameters.h"
 #include "ExperimentItem.h"
+#include "MetaTypes.h"
 #include "PeaksItem.h"
 #include "UnitCellItem.h"
 #include "UnitCellPropertyWidget.h"
@@ -28,6 +29,25 @@ UnitCellItem::UnitCellItem(nsx::sptrUnitCell cell):
 UnitCellItem::~UnitCellItem()
 {
     experimentItem()->experiment()->diffractometer()->getSample()->removeUnitCell(_cell);
+}
+
+void UnitCellItem::setData(const QVariant& value, int role)
+{
+    switch(role) {
+    case(Qt::UserRole):
+        _cell = value.value<nsx::sptrUnitCell>();
+    }
+
+    InspectableTreeItem::setData(value,role);
+}
+
+QVariant UnitCellItem::data(int role) const
+{
+    switch(role) {
+    case(Qt::UserRole):
+        return QVariant::fromValue(_cell);
+    }
+    return QVariant::Invalid;
 }
 
 QWidget* UnitCellItem::inspectItem()

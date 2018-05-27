@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <memory>
 
 #include <QIcon>
@@ -8,6 +9,7 @@
 #include <nsxlib/UnitCell.h>
 
 #include "DialogIsotopesDatabase.h"
+#include "MetaTypes.h"
 #include "SampleItem.h"
 #include "SamplePropertyWidget.h"
 #include "SampleShapeItem.h"
@@ -124,6 +126,21 @@ void SampleItem::setData(const QVariant& value, int role)
     switch (role)
     {
     case Qt::UserRole:
+        auto updated_cell = value.value<nsx::sptrUnitCell>();
+        bool new_unit_cell(true);
+        for (size_t i=1; i< rowCount();++i) {
+            auto unit_cell_item = model()->itemFromIndex(index());
+            QVariant variant = unit_cell_item->data(Qt::UserRole);
+            auto unit_cell = variant.value<nsx::sptrUnitCell>();
+            if (updated_cell == unit_cell) {
+                model()->setData(unit_cell_item->index(),QVariant::fromValue(updated_cell),Qt::UserRole);
+                new_unit_cell = false;
+                break;
+            }
+        }
+        if (new_unit_cell) {
+            appendRow(new UnitCellItem(updated_cell));
+        }
 
         break;
     }

@@ -26,4 +26,8 @@ public:
     void addUnitCell();
 
     void openIsotopesDatabase();
+
+private:
+
+    std::vector<nsx::sptrUnitCell> _unitCells;
 };

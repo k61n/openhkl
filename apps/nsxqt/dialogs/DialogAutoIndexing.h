@@ -31,6 +31,9 @@ public slots:
     void autoIndex();
 
 private slots:
+
+    void addUnitCell();
+
     void selectSolution(int);
 
 signals:
