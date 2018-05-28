@@ -103,14 +103,6 @@ QList<UnitCellItem*> SampleItem::unitCellItems()
     return unitCellItems;
 }
 
-void SampleItem::addUnitCell()
-{
-    auto sample = experiment()->diffractometer()->getSample();
-    auto cell = sample->addUnitCell();
-    appendRow(new UnitCellItem(cell));
-    child(0)->setEnabled(true);
-}
-
 void SampleItem::openIsotopesDatabase()
 {
     // dialog will automatically be deleted before we return from this method
@@ -126,18 +118,21 @@ void SampleItem::setData(const QVariant& value, int role)
     switch (role)
     {
     case Qt::UserRole:
+        // Fetch the unit cell that been either updated either created
         auto updated_cell = value.value<nsx::sptrUnitCell>();
         bool new_unit_cell(true);
         for (size_t i=1; i< rowCount();++i) {
             auto unit_cell_item = model()->itemFromIndex(index());
             QVariant variant = unit_cell_item->data(Qt::UserRole);
             auto unit_cell = variant.value<nsx::sptrUnitCell>();
+            // Case of un updated cell
             if (updated_cell == unit_cell) {
                 model()->setData(unit_cell_item->index(),QVariant::fromValue(updated_cell),Qt::UserRole);
                 new_unit_cell = false;
                 break;
             }
         }
+        // Case of a new unit cell
         if (new_unit_cell) {
             appendRow(new UnitCellItem(updated_cell));
         }

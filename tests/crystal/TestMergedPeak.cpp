@@ -54,7 +54,7 @@ int main()
     cell.setBravaisType(bravais_type);
     cell.setLatticeCentring(centering);
     cell.transform(P);
-    NSX_CHECK_EQUAL(cell.getBravaisTypeSymbol(), std::string("oP"));
+    NSX_CHECK_EQUAL(cell.bravaisTypeSymbol(), std::string("oP"));
 
     cell.setSpaceGroup(group.symbol());
 

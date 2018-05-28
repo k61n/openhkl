@@ -41,7 +41,7 @@ DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, nsx::Pea
     _unitCells = _experiment_item->experiment()->diffractometer()->getSample()->unitCells();
 
     for (auto unit_cell : _unitCells) {
-        ui->unitCells->addItem(QString::fromStdString(unit_cell->getName()));
+        ui->unitCells->addItem(QString::fromStdString(unit_cell->name()));
     }
 
     connect(ui->addUnitCell,SIGNAL(clicked()),this,SLOT(addUnitCell()));
@@ -62,7 +62,7 @@ void DialogAutoIndexing::addUnitCell()
     nsx::sptrUnitCell new_unit_cell(std::make_shared<nsx::UnitCell>(nsx::UnitCell()));
     new_unit_cell->setName("new unit cell");
     _unitCells.push_back(new_unit_cell);
-    ui->unitCells->addItem(QString::fromStdString(new_unit_cell->getName()));
+    ui->unitCells->addItem(QString::fromStdString(new_unit_cell->name()));
 }
 
 void DialogAutoIndexing::autoIndex()
@@ -78,6 +78,7 @@ void DialogAutoIndexing::autoIndex()
 
     if (_unitCells.empty()) {
         nsx::error() << "No unit cell selected";
+        return;
     }
 
     nsx::AutoIndexer indexer(handler);
@@ -111,7 +112,7 @@ void DialogAutoIndexing::autoIndex()
     _solutions = indexer.getSolutions();
 
     for (auto&& sol: _solutions) {
-        sol.first->setName(selectedUnitCell->getName());
+        sol.first->setName(selectedUnitCell->name());
     }
 
     buildSolutionsTable();
@@ -147,7 +148,7 @@ void DialogAutoIndexing::buildSolutionsTable()
         QStandardItem* col5=new QStandardItem(QString::number(ch.beta/deg,'f',3)+"("+ QString::number(sigma.beta/deg*1000,'f',0)+")");
         QStandardItem* col6=new QStandardItem(QString::number(ch.gamma/deg,'f',3)+ "("+ QString::number(sigma.gamma/deg*1000,'f',0)+")");
         QStandardItem* col7=new QStandardItem(QString::number(cell->volume(),'f',3));
-        QStandardItem* col8=new QStandardItem(QString::fromStdString(cell->getBravaisTypeSymbol()));
+        QStandardItem* col8=new QStandardItem(QString::fromStdString(cell->bravaisTypeSymbol()));
         QStandardItem* col9=new QStandardItem(QString::number(quality,'f',2)+"%");
         model->setItem(i,0,col1);
         model->setItem(i,1,col2);
@@ -167,7 +168,7 @@ void DialogAutoIndexing::selectSolution(int index)
     auto unit_cell = _unitCells[ui->unitCells->currentIndex()];
     *unit_cell = *_solutions[index].first;
     QString solution = QString::number(index+1);
-    QString unit_cell_name = QString::fromStdString(unit_cell->getName());
+    QString unit_cell_name = QString::fromStdString(unit_cell->name());
     QMessageBox::information(this, tr("NSXTool"),tr("Solution %1 set to %2 unit cell").arg(solution,unit_cell_name));
 
     auto sample_item = _experiment_item->instrumentItem()->sampleItem();

@@ -197,8 +197,6 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
 
     menu->addSeparator();
 
-    auto autoIndexing=new QAction("Auto-indexing",menu);
-    menu->addAction(autoIndexing);
     auto refineParameters=new QAction("Refine unit cell and instrument parameters",menu);
     menu->addAction(refineParameters);
 
@@ -216,7 +214,6 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
     connect(selectUnindexedPeaks,SIGNAL(triggered()),this,SLOT(selectUnindexedPeaks()));
     connect(togglePeaksSelection,SIGNAL(triggered()),this,SLOT(togglePeaksSelection()));
 
-    connect(autoIndexing,SIGNAL(triggered()),this,SLOT(openAutoIndexingDialog()));
     connect(refineParameters,SIGNAL(triggered()),this,SLOT(openRefiningParametersDialog()));
     connect(fitProfile, SIGNAL(triggered()), this, SLOT(openProfileFitDialog()));
 }

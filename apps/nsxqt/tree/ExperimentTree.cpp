@@ -52,6 +52,7 @@
 #include "ProgressView.h"
 #include "QCustomPlot.h"
 #include "SampleItem.h"
+
 #include "SessionModel.h"
 #include "SourceItem.h"
 #include "TreeItem.h"
@@ -124,8 +125,6 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(assign, triggered, [=](){pitem->autoAssignUnitCell();});
         }
         else if (SampleItem* sitem = dynamic_cast<SampleItem*>(item)) {
-            QAction* addUnitCell = menu->addAction("Add unit cell");    
-            connect(addUnitCell, &QAction::triggered, [=](){sitem->addUnitCell();});
             QAction* openIsotopesDatabase = menu->addAction("Open isotopes database");
             connect(openIsotopesDatabase, &QAction::triggered, [=](){sitem->openIsotopesDatabase();});
         }
@@ -175,8 +174,6 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
                 ci->setCheckState(new_state);
             }
         }
-    } else if (auto ptr=dynamic_cast<SampleItem*>(item)) {
-        ptr->addUnitCell();
     } else if (auto ptr=dynamic_cast<NumorItem*>(item)) {
         emit plotData(ptr->getData());
     }

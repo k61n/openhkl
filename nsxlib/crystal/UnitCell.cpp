@@ -133,14 +133,14 @@ void UnitCell::setBravaisType(BravaisType bravais)
     _bravaisType = bravais;
 }
 
-std::string UnitCell::getBravaisTypeSymbol() const
+std::string UnitCell::bravaisTypeSymbol() const
 {
     std::ostringstream os;
     os << static_cast<char>(_bravaisType) << static_cast<char>(_centring);
     return os.str();
 }
 
-double UnitCell::getD(int h, int k, int l)
+double UnitCell::d(int h, int k, int l)
 {
     auto q = fromIndex(Eigen::RowVector3d(h,k,l));
     return gcd(h, k, l) / q.norm();
@@ -235,14 +235,14 @@ std::vector<MillerIndex> UnitCell::generateReflectionsInShell(double dmin, doubl
 }
 
 
-double UnitCell::getAngle(const Eigen::RowVector3d& hkl1, const Eigen::RowVector3d& hkl2) const
+double UnitCell::angle(const Eigen::RowVector3d& hkl1, const Eigen::RowVector3d& hkl2) const
 {
     auto q1=hkl1*_B;
     auto q2=hkl2*_B;    
-    return acos(q1.dot(q2)/q1.norm()/q2.norm());
+    return std::acos(q1.dot(q2)/q1.norm()/q2.norm());
 }
 
-unsigned int UnitCell::getZ() const
+unsigned int UnitCell::z() const
 {
     return _Z;
 }
@@ -252,7 +252,7 @@ void UnitCell::setZ(unsigned int Z)
     _Z = Z;
 }
 
-sptrMaterial UnitCell::getMaterial() const
+sptrMaterial UnitCell::material() const
 {
     return _material;
 }
@@ -279,7 +279,7 @@ void UnitCell::setName(const std::string& name)
     _name = name;
 }
 
-const std::string& UnitCell::getName() const
+const std::string& UnitCell::name() const
 {
     return _name;
 }
@@ -729,7 +729,7 @@ std::vector<std::string> UnitCell::compatibleSpaceGroups() const
 {
     std::vector<std::string> compatible_space_groups;
 
-    auto cell_bravais_type = getBravaisTypeSymbol();
+    auto cell_bravais_type = bravaisTypeSymbol();
 
     for (auto&& symbol : SpaceGroup::symbols()) {
         SpaceGroup sg(symbol);

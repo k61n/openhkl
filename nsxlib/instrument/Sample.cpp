@@ -109,7 +109,7 @@ unsigned int Sample::getZ(int index) const
     if (index < 0 || static_cast<size_t>(index) >= _cells.size()) {
         throw std::runtime_error("Invalid unit cell index.");
     }
-    return _cells[index]->getZ();
+    return _cells[index]->z();
 }
 
 void Sample::setZ(int Z, int index)
@@ -129,7 +129,7 @@ sptrMaterial Sample::getMaterial(int index) const
     if (index < 0 || static_cast<size_t>(index) >= _cells.size()) {
         throw std::runtime_error("Invalid unit cell index.");
     }
-    return _cells[index]->getMaterial();
+    return _cells[index]->material();
 }
 
 void Sample::setMaterial(sptrMaterial material, int index)

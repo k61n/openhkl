@@ -13,12 +13,14 @@
 #include "UnitCellItem.h"
 #include "UnitCellPropertyWidget.h"
 
+#include <QDebug>
+
 UnitCellItem::UnitCellItem(nsx::sptrUnitCell cell):
     InspectableTreeItem(),
     _cell(cell)
 {
     QIcon icon(":/resources/unitCellIcon.png");
-    setText(QString::fromStdString(_cell->getName()));
+    setText(QString::fromStdString(_cell->name()));
     setIcon(icon);
     setEditable(true);
     setDragEnabled(false);
@@ -36,6 +38,7 @@ void UnitCellItem::setData(const QVariant& value, int role)
     switch(role) {
     case(Qt::UserRole):
         _cell = value.value<nsx::sptrUnitCell>();
+        break;
     }
 
     InspectableTreeItem::setData(value,role);
@@ -44,6 +47,10 @@ void UnitCellItem::setData(const QVariant& value, int role)
 QVariant UnitCellItem::data(int role) const
 {
     switch(role) {
+    case(Qt::DecorationRole):
+        return QIcon(":/resources/unitCellIcon.png");
+    case(Qt::DisplayRole):
+        return QString::fromStdString(_cell->name());
     case(Qt::UserRole):
         return QVariant::fromValue(_cell);
     }

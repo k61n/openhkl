@@ -23,8 +23,6 @@ public:
 
     QList<UnitCellItem*> unitCellItems();
 
-    void addUnitCell();
-
     void openIsotopesDatabase();
 
 private:

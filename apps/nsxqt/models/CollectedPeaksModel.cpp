@@ -200,7 +200,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
             return _peaks[row]->isSelected();
         case Column::unitCell:
             if (auto unitCell = _peaks[row]->activeUnitCell()) {
-                return QString::fromStdString(unitCell->getName());
+                return QString::fromStdString(unitCell->name());
             }
             else {
                 return QString("not set");
@@ -226,7 +226,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         if (column == Column::unitCell) {
             QStringList cellNames;
             for (auto&& cell : _cells) {
-                cellNames.append(QString::fromStdString(cell->getName()));
+                cellNames.append(QString::fromStdString(cell->name()));
             }
             return cellNames;
         }
@@ -313,8 +313,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         compareFn = [&](nsx::sptrPeak3D p1, const nsx::sptrPeak3D p2) {
             auto uc1 = p1->activeUnitCell();
             auto uc2 = p2->activeUnitCell();
-            std::string uc1Name = uc1 ? uc1->getName() : "";
-            std::string uc2Name = uc2 ? uc2->getName() : "";
+            std::string uc1Name = uc1 ? uc1->name() : "";
+            std::string uc2Name = uc2 ? uc2->name() : "";
             return (uc2Name<uc1Name);
         };
         break;

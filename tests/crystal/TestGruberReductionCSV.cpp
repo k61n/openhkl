@@ -98,7 +98,7 @@ int main()
         gruberCell.setBravaisType(bravaisType);
         gruberCell.setLatticeCentring(centering);
 
-        if ( gruberCell.getBravaisTypeSymbol() == bravais) {
+        if ( gruberCell.bravaisTypeSymbol() == bravais) {
             ++correct;
             outfile << row[0] << '\t'
                     << row[1] << '\t'
@@ -110,8 +110,8 @@ int main()
                     << row[7] << '\n';
         }
 
-        NSX_CHECK_ASSERT(gruberCell.getBravaisTypeSymbol()[0] == bravais[0]);
-        NSX_CHECK_ASSERT(gruberCell.getBravaisTypeSymbol()[1] == bravais[1]);
+        NSX_CHECK_ASSERT(gruberCell.bravaisTypeSymbol()[0] == bravais[0]);
+        NSX_CHECK_ASSERT(gruberCell.bravaisTypeSymbol()[1] == bravais[1]);
     }
 
     return 0;

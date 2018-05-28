@@ -82,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->setupUi(this);
 
     // make experiment tree aware of the session
-    _session = new SessionModel;
+    _session = new SessionModel();
     _ui->experimentTree->setModel(_session);
 
     // Set Date to the application window title
