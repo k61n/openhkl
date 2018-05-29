@@ -16,7 +16,7 @@ FFTIndexing::FFTIndexing(int nSubdiv,double amax) : _nSubdiv(nSubdiv), _amax(ama
 {
 }
 
-std::vector<tVector> FFTIndexing::findOnSphere(const std::vector<ReciprocalVector>& qvects, unsigned int n_vertices, unsigned int nsolutions) const
+std::vector<FFTIndexing::tVector> FFTIndexing::findOnSphere(const std::vector<ReciprocalVector>& qvects, unsigned int n_vertices, unsigned int nsolutions) const
 {
     std::vector<double> projs(qvects.size());
     double qMax = 0;
@@ -107,7 +107,7 @@ std::vector<tVector> FFTIndexing::findOnSphere(const std::vector<ReciprocalVecto
 
     std::sort(result.begin(), result.end(),
               [](const tVector& t1, const tVector& t2)->bool
-                { return (t1._quality > t2._quality); });
+                { return (t1.second > t2.second); });
 
     if (nsolutions < result.size())
         result.erase(result.begin() + nsolutions, result.end());

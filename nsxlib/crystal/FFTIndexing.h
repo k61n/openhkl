@@ -29,6 +29,7 @@
 #pragma once
 
 #include <functional>
+#include <utility>
 #include <vector>
 
 #include <Eigen/Dense>
@@ -39,14 +40,12 @@
 
 namespace nsx {
 
-struct tVector {
-    tVector(const Eigen::RowVector3d& v,double quality):_vect(v),_quality(quality) {}
-    Eigen::RowVector3d _vect;
-    double _quality;
-};
-
+//! \class FFTIndexing
+//! \brief Class used for Fast-Fourier transform autoindexing.
 class FFTIndexing {
 public:
+    //! Type to store vector together with quality.
+    using tVector = std::pair<Eigen::RowVector3d, double>;
     FFTIndexing(int nSubdiv=25,double amax=50.0);
     std::vector<tVector> findOnSphere(const std::vector<ReciprocalVector>& qvects, unsigned int n_vertices, unsigned int nsolutions) const;
     virtual ~FFTIndexing() = default;

@@ -43,7 +43,8 @@
 
 namespace nsx {
 
-// note: cannot use nested classes in swig
+//! \class IndexerParameters
+//! \brief Struct to store parameters used by autoindexer.
 struct IndexerParameters {
     double maxdim = 200.0;
     int nSolutions = 10;
@@ -59,11 +60,10 @@ struct IndexerParameters {
 };
 
 //! \class AutoIndexer
-//! Class to automatically index a set of peaks
+//! \brief Class to automatically index a set of peaks
 class AutoIndexer {
 
 public:
-
     //! Constructor
     //! @param handler the handler that will monitor the progresses
     AutoIndexer(const std::shared_ptr<ProgressHandler>& handler = nullptr);
