@@ -80,11 +80,6 @@ void ResolutionShell::addPeak(const sptrPeak3D& peak)
     }
 }
 
-const ResolutionShell::resolution_shells& ResolutionShell::shells() const
-{
-    return _shells;
-}
-
 const DShell& ResolutionShell::shell(size_t i) const
 {
     if (i >= _shells.size()) {

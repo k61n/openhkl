@@ -109,7 +109,7 @@ void AutoIndexer::computeFFTSolutions()
     PeakFilter peak_filter;
     auto filtered_peaks = peak_filter.selected(_peaks,true);
 
-    for (auto i = 0; i < filtered_peaks.size(); ++i) {
+    for (size_t i = 0; i < filtered_peaks.size(); ++i) {
         auto& peak = filtered_peaks[i];
         auto q = peak->q().rowVector();
         qvects.push_back(ReciprocalVector(q));

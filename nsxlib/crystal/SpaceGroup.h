@@ -43,15 +43,15 @@
 
 namespace nsx {
 
+//! \class SpaceGroup
+//! \brief Class to enumerate and construct the 3d spacegroups.
 class SpaceGroup {
-
+private:
+    //! Return the list of spacegroup symmetry generators associated to each spacegroup
+    static const std::vector<SpaceGroupSymmetry> symmetry_table;
 public:
-
-    static std::vector<SpaceGroupSymmetry> symmetry_table;
-
+    //! Return the list of spacegroup symbols
     static std::vector<std::string> symbols();
-
-public:
     //! Construct a space group from its IT symbol. Lookup in the IUCR table
     SpaceGroup(std::string symbol);
     //! Copy

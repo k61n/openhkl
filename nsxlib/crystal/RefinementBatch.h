@@ -49,30 +49,36 @@
 
 namespace nsx {
 
-//! Class for batch refinement of UB and offset
+//! \class RefinementBatch
+//! \brief Helper class to represent a batch of consecutive detector images.
 class RefinementBatch {
 
 public:
-    // needed for swig
+    //! Default constructor. Should not be used but needed for swig
     RefinementBatch() = default;
+    //! Construct batch with initial unit cell and list of peaks.
     RefinementBatch(const UnitCell& uc, const PeakList& peaksmax);
-
-    void refineU();
+    //! Set the lattice B matrix to be refined.
     void refineB();
+    //! Set detector offsets in the given list of instrument states to be refined.
     void refineDetectorOffset(InstrumentStateList& states);
+    //! Set the sample position in the given list of instrument states to be refined.
     void refineSamplePosition(InstrumentStateList& states);
+    //! Set the sample orientation in the given list of instrument states to be refined.
     void refineSampleOrientation(InstrumentStateList& states);
+    //! Perform the refinement with the maximum number of iterations as given.
     bool refine(unsigned int max_iter = 100);
+    //! Compute the residual vector for the current set of parameters.
     int residuals(Eigen::VectorXd& fvec);
-
+    //! Return the list of peaks used for refinement.
     const PeakList& peaks() const;
-
+    //! Return the refined unit cell.
     sptrUnitCell cell() const;
-
+    //! Return the matrix of parameter constraints.
     Eigen::MatrixXd constraintKernel() const;
-
+    //! Determine if a given frame number is part of this batch.
     bool contains(double f) const;
-
+    //! Set the source ki in the given list of instrument states to be refined.
     void refineKi(InstrumentStateList& states);
 
 private:

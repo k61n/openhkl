@@ -32,15 +32,15 @@
 
 namespace nsx {
 
-/** Implementation of primitive unit-cell reduction using the method described in :
- *	"Numerically stable algorithms for the computation of reduced Unit cells"
- *	by R.W. Grosse-Kunstleve et al. , Acta Cryst., A60, 1-6, (2004).
- *	This is the similar with Krivy & Gruber's algorithm but with the additional
- *	tolerance (epsilon).
- */
 
-class NiggliReduction
-{
+//! \class NiggliReduction
+//! \brief Class to handle reduction of a general unit cell to a Niggli cell.
+//! Implementation of primitive unit-cell reduction using the method described in :
+//! "Numerically stable algorithms for the computation of reduced Unit cells"
+//! by R.W. Grosse-Kunstleve et al. , Acta Cryst., A60, 1-6, (2004).
+//! This is the similar with Krivy & Gruber's algorithm but with the additional
+//! tolerance (epsilon).
+class NiggliReduction {
 public:
     //! Niggli reduction of the metric tensor g, with relative error epsilon
     //! The relative error is multiplied internally by the average unit dimension of g

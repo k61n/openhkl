@@ -37,6 +37,8 @@
 
 namespace nsx {
 
+//! \class SymOp
+//! \brief Class to represent a symmetry operation of a spacegroup.
 class SymOp {
 
 public:

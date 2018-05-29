@@ -153,12 +153,6 @@ double Peak3D::getTransmission() const
     return _transmission;
 }
 
-void Peak3D::scaleShape(double scale)
-{
-    _shape.scale(scale);
-}
-
-
 double Peak3D::getScale() const
 {
     return _scale;

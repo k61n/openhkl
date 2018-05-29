@@ -40,6 +40,7 @@
 
 namespace nsx {
 
+    //! \class CellCharacter
     //! \brief Structure to encapsulate lattice cell character.
     struct CellCharacter {
         //! Lattice character \f$A = \mathbf{a} \cdot \mathbf{a}\f$
@@ -75,6 +76,7 @@ namespace nsx {
         CellCharacter(double A, double B, double C, double D, double E, double F);
     };
 
+//! \class UnitCell
 //! \brief Class to define a crystallographic unit-cell.
 //!
 //! Provide functionalities to transform vectors of the direct lattice or reciprocal

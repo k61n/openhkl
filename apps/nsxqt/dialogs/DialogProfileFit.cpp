@@ -98,8 +98,7 @@ void DialogProfileFit::build()
 
     auto nx = ui->nx->value();
     auto ny = ui->ny->value();
-    auto nz = ui->nz->value();  
-    auto subdivide = ui->subdivide->value();
+    auto nz = ui->nz->value();
 
     auto sigmaM = ui->sigmaM->value();
     auto sigmaD = ui->sigmaD->value();

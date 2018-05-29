@@ -44,36 +44,32 @@
 
 namespace nsx {
 
-
-//! Class for UB and offset refinement
+//! \class Refiner
+//! \brief Class used to refine lattice and instrument parameters.
 class Refiner {
-
 public:
-
+    //! Construct an instance to refine the given cell based on the given peak list, using
+    //! the given number of frame batches. The peaks must belong to the same dataset.
     Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches);
-
-    void refineU();
-
+    //! Set the lattice B matrix to be refined.
     void refineB();
-
+    //! Set detector offsets in the given list of instrument states to be refined.
     void refineDetectorOffset(InstrumentStateList& states);
-
+    //! Set the sample position in the given list of instrument states to be refined.
     void refineSamplePosition(InstrumentStateList& states);
-
+    //! Set the sample orientation in the given list of instrument states to be refined.
     void refineSampleOrientation(InstrumentStateList& states);
-
+    //! Set the source ki in the given list of instrument states to be refined.
     void refineKi(InstrumentStateList& states);
-
+    //! Perform the refinement with the maximum number of iterations as given.
     bool refine(unsigned int max_iter = 100);
-
+    //! Update the centers of predicted peaks, after refinement.
     int updatePredictions(PeakList& peaks) const;
-
+    //! Return the individual peak/frame batches used during refinement.
     const std::vector<RefinementBatch>& batches() const;
 
 private:
-
     std::vector<RefinementBatch> _batches;
-
     sptrUnitCell _cell;
 };
 

@@ -135,18 +135,18 @@ bool ExperimentItem::writeStatistics(std::string filename,
         resolution_shells.addPeak(peak);
     }
 
-    const auto& shells = resolution_shells.shells();
+    //const auto& shells = resolution_shells.shells();
  
     file << "          dmax       dmin       nobs nmerge   redundancy     r_meas    r_merge      r_pim    CChalf    CC*" << std::endl;
 
     // note: we print the shells in reverse order
     for (int i = num_shells-1; i >= 0; --i) {
-        const double d_lower = shells[i].dmin;
-        const double d_upper = shells[i].dmax;
+        const double d_lower = resolution_shells.shell(i).dmin;
+        const double d_upper = resolution_shells.shell(i).dmax;
 
         nsx::MergedData merged_shell(grp, friedel);
 
-        for (auto&& peak: shells[i].peaks) {
+        for (auto&& peak: resolution_shells.shell(i).peaks) {
             merged_shell.addPeak(peak);
             merged_data.addPeak(peak);
         }

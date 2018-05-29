@@ -371,22 +371,6 @@ PeakList PeakFilter::significance(const PeakList& peaks, double p_value_threshol
     return filtered_peaks;
 }
 
-PeakList PeakFilter::selectedPeaks(const PeakList& peaks, const PeakList& other_peaks) const
-{
-    PeakList filtered_peaks;
-
-    std::set<sptrPeak3D> other_peaks_set(other_peaks.begin(), other_peaks.end());
-
-    for (auto peak : peaks) {
-        auto it = other_peaks_set.find(peak);
-        if (it != other_peaks_set.end()) {
-            filtered_peaks.push_back(peak);
-        }
-    }
-
-    return filtered_peaks;
-}
-
 PeakList PeakFilter::selection(const PeakList& peaks, const std::vector<int>& indexes) const
 {
     PeakList filtered_peaks;

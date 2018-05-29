@@ -158,7 +158,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
     }
 
     Eigen::RowVector3i hkl= {0,0,0};
-    double lorentzFactor, transmissionFactor, scaledIntensity, sigmaScaledIntensity;
+    double transmissionFactor, scaledIntensity, sigmaScaledIntensity;
 
     int row = index.row();
     int column = index.column();
