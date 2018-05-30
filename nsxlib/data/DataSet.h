@@ -48,101 +48,60 @@ namespace nsx {
 
 class DataSet {
     friend class UnitTest_DataSet;
-
 public:
-
-    // Constructors and destructor
-
-    /*! Construct a IData Object from a file on disk, and pointer to a diffractometer.
-     */
+    //! Construct using the given data reader (allowing multiple formats) and diffractometer
     DataSet(std::shared_ptr<IDataReader> reader, const sptrDiffractometer& diffractometer);
-
-
-    //! Copy constructor
-    //DataSet(const DataSet& other) = default;
-
     //! Destructor
     virtual ~DataSet();
-
-    // Operators
     //! Assignment operator
     DataSet& operator=(const DataSet& other);
-
-    // iterators
-    #ifndef SWIG
-    uptrIFrameIterator iterator(int idx);
-    #endif
-    void setIteratorCallback(FrameIteratorCallback callback);
-
     //! Gets the data filename
     const std::string& filename() const;
-
     //! Gets a shared pointer to the diffractometer used to collect the data
     sptrDiffractometer diffractometer() const;
-
     //! Return the number of frames
     std::size_t nFrames() const;
+    //! Return the number of rows in each detector image
     std::size_t nRows() const;
+    //! Return the number of columns in each detector image
     std::size_t nCols() const;
-
     //! Gets a reference to the metadata of the data
     MetaData* metadata() const;
-
     //! Gets the the sample states
     InstrumentStateList& instrumentStates();
-
     //! Gets the the sample states
     const InstrumentStateList& instrumentStates() const;
-
     //! Get the interpolated state of a given component
     InterpolatedState interpolatedState(double frame) const;
-
     //! Add a new mask to the data
     void addMask(IMask* mask);
-
     //! Remove a mask from the data, by reference
     void removeMask(IMask* mask);
-
     //! Return the list of masks
     const std::set<IMask*>& masks();
-
     //! Mask a given peak
     void maskPeaks(PeakList& peaks) const;
-
     //! Return the intensity at point x,y,z.
     int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);
-
     //! Read a single frame
     Eigen::MatrixXi frame(std::size_t idx);
-
     //! Return frame after transforming to account for detector gain and baseline
     Eigen::MatrixXd transformedFrame(std::size_t idx);
-
     //! Return a convolved frame
     Eigen::MatrixXd convolvedFrame(std::size_t idx, const std::string& convolver_type, const std::map<std::string,double>& parameters);
-
     //! Get the file handle.
     void open();
-
     //! Close file and release handle
     void close();
-
     //! True if file is open
     bool isOpened() const;
-
-    //!
-    std::size_t fileSize() const;//
+    //! Return total size of file
+    std::size_t fileSize() const;
     void saveHDF5(const std::string& filename);
-    
-    //! Get background
-    double backgroundLevel(const sptrProgressHandler& progress);
-
     //! Return detector events corresponding to the list of q values.  
     std::vector<DetectorEvent> getEvents(const std::vector<ReciprocalVector>& sample_qs) const;
-
     //! Return the sample-space q vector corresponding to a detector event
     ReciprocalVector computeQ(const DetectorEvent& ev) const;
-
 
 protected:
     bool _isOpened;
@@ -154,14 +113,12 @@ protected:
     uptrMetaData _metadata;
     std::vector<Eigen::MatrixXi> _data;
     InstrumentStateList _states;
-
     std::size_t _fileSize;
     //! The set of masks bound to the data
     std::set<IMask*> _masks;
     double _background;
     FrameIteratorCallback _iteratorCallback;
     std::shared_ptr<IDataReader> _reader;
-    
 };
 
 } // end namespace nsx

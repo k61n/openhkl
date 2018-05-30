@@ -8,7 +8,6 @@
 #include "H5Cpp.h"
 
 #include "AABB.h"
-#include "BasicFrameIterator.h"
 #include "BloscFilter.h"
 #include "ConvolverFactory.h"
 #include "CrystalTypes.h"
@@ -34,7 +33,6 @@
 #include "Sample.h"
 #include "Source.h"
 #include "SpaceGroup.h"
-#include "ThreadedFrameIterator.h"
 #include "UnitCell.h"
 #include "Units.h"
 
@@ -74,23 +72,6 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader, const sptrDiffractometer& 
     for (unsigned int i=0;i<_nFrames;++i) {
         _states.push_back(_reader->getState(i));
     }
-}
-
-uptrIFrameIterator DataSet::iterator(int idx)
-{
-    // use default frame iterator if one hasn't been set
-    if ( !_iteratorCallback) {
-        _iteratorCallback = [] (DataSet& data, int index) {
-            return new BasicFrameIterator(data, static_cast<unsigned int>(index));
-            //return new ThreadedFrameIterator(data, index);
-        };
-    }
-    return uptrIFrameIterator(_iteratorCallback(*this, idx));
-}
-
-void DataSet::setIteratorCallback(FrameIteratorCallback callback)
-{
-    _iteratorCallback = std::move(callback);
 }
 
 DataSet::~DataSet()
@@ -405,42 +386,6 @@ void DataSet::maskPeaks(PeakList& peaks) const
             }
         }
     }
-}
-
-double DataSet::backgroundLevel(const sptrProgressHandler& progress)
-{
-    if ( _background > 0.0 ) {
-        return _background;
-    }
-
-    // we calculate background in local variable bg for thread safety reasons--
-    // this method is called from a thread which could be aborted, so we do not want
-    // to write to _background until the calculation has been completed
-    double bg = 0.0;
-    double factor = 1.0 / (_nFrames * _nrows * _ncols);
-
-    if ( progress) {
-        progress->setStatus("Computing background level...");
-        progress->setProgress(0);
-    }
-
-    for (auto it = iterator(0); it->index() != _nFrames; it->advance()) {
-        // cast matrix to double (instead of int) -- necessary due to integer overflow!
-        // _background += factor * it->cast<double>().sum();
-        bg += factor * it->frame().sum();
-
-        if (progress) {
-            double done = 100.0 * it->index() / static_cast<double>(_nFrames);
-            progress->setProgress(int(done));
-        }
-    }
-
-    if ( progress ) {
-        progress->setProgress(100);
-    }
-
-    _background = bg;
-    return _background;
 }
 
 std::vector<DetectorEvent> DataSet::getEvents(const std::vector<ReciprocalVector>& sample_qs) const
