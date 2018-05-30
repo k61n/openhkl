@@ -128,7 +128,6 @@ using Eigen::Quaterniond;
 #include "RefinementBatch.h"
 #include "Refiner.h"
 #include "AutoIndexer.h"
-#include "Profile.h"
 #include "Intensity.h"
 #include "IPeakIntegrator.h"
 #include "MeanBackgroundIntegrator.h"
@@ -261,7 +260,6 @@ using sptrMaterial = std::shared_ptr<nsx::Material>;
 #include "UnitCell.h"
 #include "GruberReduction.h"
 
-#include "Profile.h"
 #include "Intensity.h"
 
 using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
@@ -498,7 +496,6 @@ namespace nsx {
 
 %include "Basis.h"
 
-%include "Profile.h"
 %include "Intensity.h"
 
 %include "IntegrationRegion.h"
