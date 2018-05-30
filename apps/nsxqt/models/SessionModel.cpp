@@ -62,7 +62,6 @@
 #include <nsxlib/Detector.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Ellipsoid.h>
-#include <nsxlib/FitProfile.h>
 #include <nsxlib/GeometryTypes.h>
 #include <nsxlib/InstrumentState.h>
 #include <nsxlib/Logger.h>
@@ -75,10 +74,7 @@
 #include <nsxlib/PeakPredictor.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/ReciprocalVector.h>
-#include <nsxlib/ResolutionShell.h>
-#include <nsxlib/RFactor.h>
 #include <nsxlib/Sample.h>
-#include <nsxlib/ShapeLibrary.h>
 #include <nsxlib/SpaceGroup.h>
 #include <nsxlib/StrongPeakIntegrator.h>
 #include <nsxlib/Source.h>
@@ -92,7 +88,6 @@
 #include "DialogExperiment.h"
 #include "DialogPeakFind.h"
 #include "ExperimentItem.h"
-#include "FriedelDialog.h"
 #include "GLSphere.h"
 #include "GLWidget.h"
 #include "InstrumentItem.h"

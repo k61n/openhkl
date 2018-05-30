@@ -375,7 +375,7 @@ PeakList PeakFilter::selection(const PeakList& peaks, const std::vector<int>& in
 {
     PeakList filtered_peaks;
 
-    for (auto idx : indexes) {
+    for (int idx: indexes) {
         if (idx <0 || idx >= peaks.size()) {
             continue;
         }

@@ -34,11 +34,11 @@
 #include "Peak3D.h"
 #include "PeakCoordinateSystem.h"
 #include "ShapeLibrary.h"
-#include "WeakPeakIntegrator.h"
+#include "Profile3DIntegrator.h"
 
 namespace nsx {
 
-WeakPeakIntegrator::WeakPeakIntegrator(sptrShapeLibrary library, double radius, double nframes, bool detector_space):
+Profile3DIntegrator::Profile3DIntegrator(sptrShapeLibrary library, double radius, double nframes, bool detector_space):
     _library(library),
     _radius(radius),
     _nframes(nframes)
@@ -81,7 +81,7 @@ static void updateFit(Intensity& I, Intensity& B, const std::vector<double>& pro
     I = Intensity(new_I, cov(1,1));
 }
 
-bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
+bool Profile3DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 {
     if (!_library) {
         return false;
@@ -96,7 +96,7 @@ bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
 
     // TODO: should this be hard-coded??
     if (events.size() < 29) {
-        throw std::runtime_error("WeakPeakIntegrator::compute(): too few data points in peak");
+        throw std::runtime_error("Profile3DIntegrator::compute(): too few data points in peak");
     }
 
     // dummy value for initial guess
@@ -111,7 +111,7 @@ bool WeakPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     
     const double tolerance = 1e-5;
 
-    FitProfile model_profile;
+    Profile3D model_profile;
     DetectorEvent event(peak->getShape().center());
 
     try {

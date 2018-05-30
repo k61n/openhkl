@@ -99,7 +99,7 @@ static void covariance_helper(Eigen::Matrix3d& result, const FitData& f, const E
     result = Jd * cov * Jd.transpose();
 }
 
-bool ShapeLibrary::addPeak(sptrPeak3D peak, FitProfile&& profile, IntegratedProfile&& integrated_profile)
+bool ShapeLibrary::addPeak(sptrPeak3D peak, Profile3D&& profile, IntegratedProfile&& integrated_profile)
 {
     Eigen::Matrix3d A = peak->getShape().inverseMetric();
     Eigen::Matrix3d cov = 0.5 * (A + A.transpose());
@@ -199,9 +199,9 @@ double ShapeLibrary::meanPearson() const
     return sum_pearson / _profiles.size();
 }
 
-FitProfile ShapeLibrary::meanProfile(const DetectorEvent& ev, double radius, double nframes) const
+Profile3D ShapeLibrary::meanProfile(const DetectorEvent& ev, double radius, double nframes) const
 {
-    FitProfile mean;
+    Profile3D mean;
     PeakList neighbors = findNeighbors(ev, radius, nframes);
 
     for (auto peak: neighbors) {

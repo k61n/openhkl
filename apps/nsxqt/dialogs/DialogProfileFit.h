@@ -4,8 +4,8 @@
 
 #include <nsxlib/CrystalTypes.h>
 #include <nsxlib/DataTypes.h>
-#include <nsxlib/FitProfile.h>
 #include <nsxlib/InstrumentTypes.h>
+#include <nsxlib/Profile3D.h>
 
 #include "ColorMap.h"
 
@@ -25,7 +25,7 @@ public:
                                   QWidget *parent = 0);
     ~DialogProfileFit();
 
-    const nsx::FitProfile& profile();
+    const nsx::Profile3D& profile();
     nsx::sptrShapeLibrary library() const;
 
 private slots:    
@@ -40,7 +40,7 @@ private:
     nsx::sptrUnitCell _unitCell;
     nsx::PeakList _peaks;
     std::set<nsx::sptrDataSet> _data;
-    nsx::FitProfile _profile;
+    nsx::Profile3D _profile;
     double _maximum;
     ColorMap _cmap;
     nsx::sptrShapeLibrary _library;

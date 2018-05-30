@@ -1,4 +1,4 @@
-#include "IntegratedProfile.h"
+#include "Profile1D.h"
 
 #include <cmath>
 

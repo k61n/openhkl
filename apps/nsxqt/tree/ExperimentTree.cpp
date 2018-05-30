@@ -38,7 +38,6 @@
 #include "DialogTransformationMatrix.h"
 #include "ExperimentItem.h"
 #include "ExperimentTree.h"
-#include "FriedelDialog.h"
 #include "GLSphere.h"
 #include "GLWidget.h"
 #include "InstrumentItem.h"

@@ -37,40 +37,36 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
     ui->tableWidget_Detector->setColumnCount(3);
     ui->tableWidget_Detector->verticalHeader()->setVisible(false);
 
-    for (unsigned int i=0;i<gonio->getNAxes();++i)
-    {
+    for (unsigned int i = 0; i < gonio->getNAxes(); ++i) {
         auto axis=gonio->getAxis(i);
         QTableWidgetItem* item0=new QTableWidgetItem();
         item0->setData(Qt::EditRole, QString(axis->getLabel().c_str()));
-        if (axis->isPhysical())
+        if (axis->isPhysical()) {
             item0->setBackgroundColor(QColor("#FFDDDD"));
-        else
+        } else {
             item0->setBackgroundColor(QColor("#DDFFDD"));
-        QTableWidgetItem* item1=new QTableWidgetItem();
-
+        }
+        QTableWidgetItem* item1 = new QTableWidgetItem();
         std::ostringstream os;
 
-        bool isRot=false;
-        if (nsx::RotAxis* rot=dynamic_cast<nsx::RotAxis*>(axis))
-        {
+        if (nsx::RotAxis* rot=dynamic_cast<nsx::RotAxis*>(axis)) {
             os << "R(";
             os << rot->getAxis().transpose();
             os << ")";
-            if (rot->getRotationDirection())
+            if (rot->getRotationDirection()) {
                 os << "CW";
-            else
+            } else {
                 os << "CCW";
-            isRot=true;
-        }
-        else if(dynamic_cast<nsx::TransAxis*>(axis))
-        {
+            }
+            //isRot = true;
+        } else if(dynamic_cast<nsx::TransAxis*>(axis)) {
             os << "T(";
             os << axis->getAxis().transpose();
             os << ")";
         }
         item1->setData(Qt::EditRole, QString(os.str().c_str()));
 
-        QTableWidgetItem* item2=new QTableWidgetItem();
+        QTableWidgetItem* item2 = new QTableWidgetItem();
         // todo: fix this after offset refactor
         #if 0
         if (isRot)
@@ -97,10 +93,9 @@ DetectorPropertyWidget::~DetectorPropertyWidget()
     delete ui;
 }
 
-void DetectorPropertyWidget::cellHasChanged(int i,int j)
+void DetectorPropertyWidget::cellHasChanged(int i, int j)
 {
     auto detector=_detectorItem->experiment()->getDiffractometer()->getDetector();
-    auto axis=detector->getGonio()->getAxis(i);
     // todo: fix this after offset refactor
     #if 0
     if (dynamic_cast<nsx::TransAxis*>(axis))
@@ -109,8 +104,6 @@ void DetectorPropertyWidget::cellHasChanged(int i,int j)
         axis->setOffset(ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble()*nsx::deg);
     #endif
 }
-
-
 
 void DetectorPropertyWidget::on_doubleSpinBox_Distance_valueChanged(double arg1)
 {

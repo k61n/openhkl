@@ -40,10 +40,10 @@ namespace nsx {
 
 class DataSet;
 
-
-class WeakPeakIntegrator: public IPeakIntegrator {
+//! \brief Peak integrator using 3d profile fitting.
+class Profile3DIntegrator: public IPeakIntegrator {
 public:
-    WeakPeakIntegrator(sptrShapeLibrary library, double radius, double nframes, bool detector_space);
+    Profile3DIntegrator(sptrShapeLibrary library, double radius, double nframes, bool detector_space);
     bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
 private:
     sptrShapeLibrary _library;

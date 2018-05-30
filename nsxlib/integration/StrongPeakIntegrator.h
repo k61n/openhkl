@@ -38,6 +38,7 @@ namespace nsx {
 
 class DataSet;
 
+//! \brief Peak integration using naive background estimation and subtraction.
 class StrongPeakIntegrator: public MeanBackgroundIntegrator {
 public:
     StrongPeakIntegrator(bool fit_center, bool fit_covariance);

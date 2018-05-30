@@ -48,8 +48,8 @@ namespace nsx {
 
 class DataSet;
 
-//! \class PeakIntegrator
-//! \breif This is a helper class to handle per-frame integration of a peak.
+//! \class IPeakIntegrator
+//! \brief This is a helper class to handle per-frame integration of a peak.
 class IPeakIntegrator {
 public:
     IPeakIntegrator();

@@ -39,10 +39,6 @@
 #include <nsxlib/SpaceGroup.h>
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
-#include <nsxlib/WeakPeakIntegrator.h>
-#include <nsxlib/ISigmaIntegrator.h>
-#include <nsxlib/Profile1DIntegrator.h>
-#include <nsxlib/GaussianIntegrator.h>
 
 #include "AbsorptionWidget.h"
 #include "CollectedPeaksModel.h"

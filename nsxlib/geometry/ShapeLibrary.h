@@ -7,8 +7,8 @@
 
 #include "CrystalTypes.h"
 #include "DetectorEvent.h"
-#include "FitProfile.h"
-#include "IntegratedProfile.h"
+#include "Profile3D.h"
+#include "Profile1D.h"
 #include "MillerIndex.h"
 
 namespace nsx {
@@ -29,7 +29,7 @@ public:
     //! Return whether the library is stored in detector coords or Kabsch coords
     bool detectorCoords() const;
     //! Add a reference peak to the library
-    bool addPeak(sptrPeak3D peak, FitProfile&& profile, IntegratedProfile&& integrated_profile);
+    bool addPeak(sptrPeak3D peak, Profile3D&& profile, IntegratedProfile&& integrated_profile);
     //! Update the fitted covariances
     void updateFit(int num_iterations);
     //! Predict the (detector space) covariance of a given peak
@@ -37,7 +37,7 @@ public:
     //! Return mean Pearson coefficient to measure quality of fit
     double meanPearson() const;
     //! Return the average peak profile near the given detector event
-    FitProfile meanProfile(const DetectorEvent& ev, double radius, double nframes) const;
+    Profile3D meanProfile(const DetectorEvent& ev, double radius, double nframes) const;
     //! Return the average peak profile near the given detector event
     std::vector<Intensity> meanIntegratedProfile(const DetectorEvent& ev, double radius, double nframes) const;
     //! Return the average peak covariance near the given detector event
@@ -49,7 +49,7 @@ private:
     //! Predict the (detector space) covariance given the fit data
     Eigen::Matrix3d predictCovariance(const FitData& data) const;
     //! List of reference peak profiles
-    std::map<sptrPeak3D, std::pair<FitProfile, IntegratedProfile>> _profiles;
+    std::map<sptrPeak3D, std::pair<Profile3D, IntegratedProfile>> _profiles;
     //! Components of the Cholesky factor of beam divergence covariance matrix
     std::array<double, 6> _choleskyD;
     //! Components of the Cholesky factor of mosaicity covariance matrix

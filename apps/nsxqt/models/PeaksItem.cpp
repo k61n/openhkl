@@ -15,10 +15,10 @@
 #include <nsxlib/MeanBackgroundIntegrator.h>
 #include <nsxlib/PeakFilter.h>
 #include <nsxlib/Profile1DIntegrator.h>
+#include <nsxlib/Profile3DIntegrator.h>
 #include <nsxlib/RawDataReader.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/StrongPeakIntegrator.h>
-#include <nsxlib/WeakPeakIntegrator.h>
 #include <nsxlib/UnitCell.h>
 
 #include "DataItem.h"
@@ -92,7 +92,7 @@ void PeaksItem::integratePeaks()
     std::vector<std::string> integrator_names;
     
     integrator_map["Pixel sum integrator"] = [&]() {return new nsx::StrongPeakIntegrator(dialog->fitCenter(), dialog->fitCov());};
-    integrator_map["3d profile integrator"] = [&]() {return new nsx::WeakPeakIntegrator(library, dialog->radius(), dialog->nframes(), false);};
+    integrator_map["3d profile integrator"] = [&]() {return new nsx::Profile3DIntegrator(library, dialog->radius(), dialog->nframes(), false);};
     integrator_map["I/Sigma integrator"] = [&]() {return new nsx::ISigmaIntegrator(library, dialog->radius(), dialog->nframes());};
     integrator_map["1d Profile integrator"] = [&]() {return new nsx::Profile1DIntegrator(library, dialog->radius(), dialog->nframes());};
     integrator_map["Gaussian integrator"] = [&]() {return new nsx::GaussianIntegrator(dialog->fitCenter(), dialog->fitCov());};

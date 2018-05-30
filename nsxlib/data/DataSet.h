@@ -37,7 +37,6 @@
 
 #include "CrystalTypes.h"
 #include "DataTypes.h"
-#include "FitProfile.h"
 #include "GeometryTypes.h"
 #include "IMask.h"
 #include "InstrumentTypes.h"

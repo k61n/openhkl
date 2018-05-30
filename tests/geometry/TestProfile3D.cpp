@@ -3,8 +3,8 @@
 #include <Eigen/Dense>
 
 #include <nsxlib/AABB.h>
-#include <nsxlib/FitProfile.h>
 #include <nsxlib/NSXTest.h>
+#include <nsxlib/Profile3D.h>
 
 NSX_INIT_TEST
 
@@ -14,7 +14,7 @@ int main()
     bb.setLower(Eigen::Vector3d(0,0,0));
     bb.setUpper(Eigen::Vector3d(1,2,3));
 
-    nsx::FitProfile profile(bb, 10, 10, 10);
+    nsx::Profile3D profile(bb, 10, 10, 10);
    
     NSX_CHECK_ASSERT(profile.addValue({0., 0., 0.}, 1.0) == true);
     NSX_CHECK_ASSERT(profile.addValue({1., 2., 3.}, 1.0) == false);
