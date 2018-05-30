@@ -61,7 +61,7 @@ public:
     Diffractometer& operator=(const Diffractometer& other);
 
     //! Get the name of this diffractometer
-    const std::string& getName() const;
+    const std::string& name() const;
 
     //! Get the detector of this diffractometer
     sptrDetector getDetector();

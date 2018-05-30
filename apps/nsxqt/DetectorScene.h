@@ -1,5 +1,4 @@
-#ifndef NSXQT_DETECTORSCENE_H
-#define NSXQT_DETECTORSCENE_H
+#pragma once
 
 #include <map>
 #include <vector>
@@ -129,5 +128,3 @@ private:
 
     SessionModel* _session;
 };
-
-#endif // NSXQT_DETECTORSCENE_H

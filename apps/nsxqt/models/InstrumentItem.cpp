@@ -54,17 +54,17 @@ void InstrumentItem::fromJson(const QJsonObject &obj)
     _sample->fromJson(obj["sample"].toObject());
 }
 
-DetectorItem* InstrumentItem::getDetectorItem()
+DetectorItem* InstrumentItem::detectorItem()
 {
     return _detector;
 }
 
-SampleItem* InstrumentItem::getSampleItem()
+SampleItem* InstrumentItem::sampleItem()
 {
     return _sample;
 }
 
-SourceItem* InstrumentItem::getSourceItem()
+SourceItem* InstrumentItem::sourceItem()
 {
     return _source;
 }

@@ -1,5 +1,4 @@
-#ifndef NSXQT_DIALOGTRANSFORMATIONMATRIX_H
-#define NSXQT_DIALOGTRANSFORMATIONMATRIX_H
+#pragma once
 
 #include <Eigen/Dense>
 
@@ -31,5 +30,3 @@ private:
     Ui::DialogTransformationmatrix *ui;
     nsx::sptrUnitCell _unitCell;
 };
-
-#endif // NSXQT_DIALOGTRANSFORMATIONMATRIX_H

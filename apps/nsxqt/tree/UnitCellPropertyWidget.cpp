@@ -41,8 +41,8 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* caller,QWidget *par
 
     auto cell = _unitCellItem->unitCell();
 
-    ui->spinBox_Z->setValue(cell->getZ());
-    auto material=cell->getMaterial();
+    ui->spinBox_Z->setValue(cell->z());
+    auto material=cell->material();
     if (material)
         ui->lineEdit_ChemicalFormula->setText(material->formula().c_str());
 
@@ -100,7 +100,7 @@ void UnitCellPropertyWidget::setLatticeParams()
 
 void UnitCellPropertyWidget::setMassDensity() const
 {
-    auto material=_unitCellItem->unitCell()->getMaterial();
+    auto material=_unitCellItem->unitCell()->material();
     if (material)
     {
         double mm=material->molarMass();

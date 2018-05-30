@@ -1,5 +1,4 @@
-#ifndef NSXQT_CUTLINEGRAPHICSITEM_H
-#define NSXQT_CUTLINEGRAPHICSITEM_H
+#pragma once
 
 #include <string>
 
@@ -39,5 +38,3 @@ private:
     int _nPoints;
 
 };
-
-#endif // NSXQT_CUTLINEGRAPHICSITEM_H

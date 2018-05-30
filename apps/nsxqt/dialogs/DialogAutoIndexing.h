@@ -1,5 +1,4 @@
-#ifndef NSXQT_DIALOGAUTOINDEXING_H
-#define NSXQT_DIALOGAUTOINDEXING_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -15,13 +14,15 @@ namespace Ui
 class DialogAutoIndexing;
 }
 
+class ExperimentItem;
+
 class DialogAutoIndexing : public QDialog
 {
     Q_OBJECT
 
 public:
 
-    explicit DialogAutoIndexing(nsx::sptrExperiment experiment, const nsx::PeakList peaks, QWidget *parent=0);
+    explicit DialogAutoIndexing(ExperimentItem* experiment_item, const nsx::PeakList peaks, QWidget *parent=0);
     ~DialogAutoIndexing();
 
     void buildSolutionsTable();
@@ -30,6 +31,9 @@ public slots:
     void autoIndex();
 
 private slots:
+
+    void addUnitCell();
+
     void selectSolution(int);
 
 signals:
@@ -37,10 +41,8 @@ signals:
 
 private:
     Ui::DialogAutoIndexing *ui;
-    nsx::sptrExperiment _experiment;
+    ExperimentItem* _experiment_item;
     nsx::PeakList _peaks;
     nsx::UnitCellList _unitCells;
     std::vector<std::pair<nsx::sptrUnitCell,double>> _solutions;
 };
-
-#endif // NSXQT_DIALOGAUTOINDEXING_H

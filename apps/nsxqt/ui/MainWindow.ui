@@ -23,7 +23,7 @@
    <string>Integration Software Beta version (March 2015)</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../NSXQt.qrc">
+   <iconset>
     <normaloff>:/resources/NSXToolIcon.png</normaloff>:/resources/NSXToolIcon.png</iconset>
   </property>
   <property name="windowOpacity">
@@ -1296,7 +1296,7 @@ border-radius: 4px;
      <x>0</x>
      <y>0</y>
      <width>1000</width>
-     <height>24</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_Options">
@@ -1346,63 +1346,14 @@ border-radius: 4px;
     <addaction name="menuPeak"/>
     <addaction name="menuColor_map"/>
    </widget>
-   <widget class="QMenu" name="menuChemistry">
-    <property name="title">
-     <string>Che&amp;mistry</string>
-    </property>
-    <addaction name="action_display_isotopes_database"/>
-   </widget>
-   <widget class="QMenu" name="menuUtils">
-    <property name="title">
-     <string>&amp;Utils</string>
-    </property>
-    <addaction name="actionConvert_to_HDF5"/>
-    <addaction name="separator"/>
-   </widget>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>File</string>
-    </property>
-   </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
     </property>
     <addaction name="actionAbout"/>
    </widget>
-   <addaction name="menuFile"/>
    <addaction name="menu_Options"/>
-   <addaction name="menuAnalysis"/>
-   <addaction name="menuChemistry"/>
-   <addaction name="menuUtils"/>
    <addaction name="menuHelp"/>
-  </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="baseSize">
-    <size>
-     <width>80</width>
-     <height>80</height>
-    </size>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>40</width>
-     <height>40</height>
-    </size>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="action_open"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="loggerDockWidget">
@@ -1605,7 +1556,7 @@ QDockWidget::title {
   </widget>
   <action name="action_open">
    <property name="icon">
-    <iconset resource="../NSXQt.qrc">
+    <iconset>
      <normaloff>:/resources/addExperimentIcon.png</normaloff>:/resources/addExperimentIcon.png</iconset>
    </property>
    <property name="text">
@@ -1766,7 +1717,7 @@ QDockWidget::title {
    <property name="text">
     <string>Draw peak integration area</string>
    </property>
-  </action> 
+  </action>
   <action name="actionAbout">
    <property name="text">
     <string>About...</string>
@@ -1787,7 +1738,7 @@ QDockWidget::title {
   </action>
   <action name="actionWrite_log_file">
    <property name="text">
-    <string>Write log file</string>
+    <string>Statistics</string>
    </property>
   </action>
   <action name="actionAuto_assign_unit_cell">
@@ -1820,9 +1771,7 @@ QDockWidget::title {
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../NSXQt.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>frame</sender>

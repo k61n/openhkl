@@ -21,6 +21,7 @@
 #include <QString>
 #include <QVector>
 
+#include <nsxlib/Diffractometer.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/Peak3D.h>
@@ -33,23 +34,25 @@
 #include "DetectorScene.h"
 #include "DialogAutoIndexing.h"
 #include "DialogExperiment.h"
+#include "DialogIsotopesDatabase.h"
 #include "DialogRawData.h"
 #include "DialogSpaceGroup.h"
 #include "DialogTransformationMatrix.h"
 #include "ExperimentItem.h"
 #include "ExperimentTree.h"
-#include "FriedelDialog.h"
 #include "GLSphere.h"
 #include "GLWidget.h"
 #include "InstrumentItem.h"
 #include "LibraryItem.h"
 #include "MCAbsorptionDialog.h"
 #include "NumorItem.h"
+#include "PeaksItem.h"
 #include "PeakListItem.h"
 #include "PeakTableView.h"
 #include "ProgressView.h"
 #include "QCustomPlot.h"
 #include "SampleItem.h"
+
 #include "SessionModel.h"
 #include "SourceItem.h"
 #include "TreeItem.h"
@@ -92,16 +95,15 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
         QStandardItem* item = session->itemFromIndex(index);
         
         if (auto exp_item = dynamic_cast<ExperimentItem*>(item)) {
-            QAction* log = menu->addAction("Write detailed log file");
-            connect(log, triggered, [=](){exp_item->writeLogFile();});
+            QAction* log = menu->addAction("Write detailed log files");
+            connect(log, triggered, [=](){exp_item->writeLogFiles();});
         }
         else if (auto ditem = dynamic_cast<DataItem*>(item)) {            
+            QAction* convert_to_hdf5 = menu->addAction("Convert to HDF5");
             QAction* import = menu->addAction("Import data");
-            QAction* rawImport = menu->addAction("Import raw data...");
             QAction* findpeaks = menu->addAction("Find peaks in data");
+            connect(convert_to_hdf5, &QAction::triggered, [=](){ditem->convertToHDF5();});
             connect(import, &QAction::triggered, [=](){ditem->importData();});
-            // todo: fix this!!
-            //connect(rawImport, &QAction::triggered, [=](){ditem->importRawData();});
             connect(findpeaks, &QAction::triggered, [=](){ditem->findPeaks();});
         }
         else if (auto pitem = dynamic_cast<PeaksItem*>(item)) {
@@ -123,8 +125,8 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(assign, triggered, [=](){pitem->autoAssignUnitCell();});
         }
         else if (SampleItem* sitem = dynamic_cast<SampleItem*>(item)) {
-            QAction* addUnitCell = menu->addAction("Add unit cell");    
-            connect(addUnitCell, &QAction::triggered, [=](){sitem->addUnitCell();});
+            QAction* openIsotopesDatabase = menu->addAction("Open isotopes database");
+            connect(openIsotopesDatabase, &QAction::triggered, [=](){sitem->openIsotopesDatabase();});
         }
         else if (UnitCellItem* ucitem = dynamic_cast<UnitCellItem*>(item)) {
             QAction* info = menu->addAction("Info");
@@ -172,8 +174,6 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
                 ci->setCheckState(new_state);
             }
         }
-    } else if (auto ptr=dynamic_cast<SampleItem*>(item)) {
-        ptr->addUnitCell();
     } else if (auto ptr=dynamic_cast<NumorItem*>(item)) {
         emit plotData(ptr->getData());
     }

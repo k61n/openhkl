@@ -28,9 +28,7 @@
  *
  */
 
-
-#ifndef NSXQT_COLORMAP_H
-#define NSXQT_COLORMAP_H
+#pragma once
 
 #include <cmath>
 #include <string>
@@ -71,6 +69,3 @@ private:
     std::vector<double> _rgb;
     std::vector<double> _log_rgb;
 };
-
-
-#endif // NSXQT_COLORMAP_H

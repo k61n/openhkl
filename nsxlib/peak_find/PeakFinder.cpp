@@ -15,8 +15,6 @@
 #include "Peak3D.h"
 #include "PeakFinder.h"
 #include "ProgressHandler.h"
-#include "Threshold.h"
-#include "ThresholdFactory.h"
 #include "Sample.h"
 #include "StrongPeakIntegrator.h"
 
@@ -78,13 +76,11 @@ PeakFinder::PeakFinder()
   _current_label(0),
   _minSize(30),
   _maxSize(10000),
-  _maxFrames(10)
+  _maxFrames(10),
+  _threshold(3.0)
 {
     ConvolverFactory convolver_factory;
     _convolver = convolver_factory.create("annular",{});
-
-    ThresholdFactory threshold_factory;
-    _threshold = threshold_factory.create("absolute",{});
 }
 
 /*
@@ -295,15 +291,9 @@ void PeakFinder::setConvolver(const std::string& convolver_type, const std::map<
     _convolver = convolver_factory.create(convolver_type,parameters);
 }
 
-sptrThreshold PeakFinder::threshold() const
+void PeakFinder::setThreshold(double value)
 {
-    return _threshold;
-}
-
-void PeakFinder::setThreshold(const std::string& threshold_type, const std::map<std::string,double>& parameters)
-{
-    ThresholdFactory threshold_factory;
-    _threshold = threshold_factory.create(threshold_type,parameters);
+    _threshold = value;
 }
 
 void PeakFinder::eliminateBlobs(std::map<int, Blob3D>& blobs) const
@@ -428,14 +418,12 @@ void PeakFinder::findPrimaryBlobs(sptrDataSet data, std::map<int,Blob3D>& blobs,
 
         auto filtered_frame = convolve_frame(frame_data);
 
-        double threshold_value = _threshold->value(data,idx);
-
         // Go the the beginning of data
         index2D=0;
         for (unsigned int row = 0; row < nrows; ++row) {
             for (unsigned int col = 0; col < ncols; ++col) {
                 // Discard pixel if value < threshold
-                if (filtered_frame(row, col) < threshold_value) {
+                if (filtered_frame(row, col) < _threshold) {
                     labels[index2D]=labels2[index2D]=0;
                     index2D++;
                     continue;

@@ -82,7 +82,7 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const st
     auto& mono = _diffractometer->getSource()->getSelectedMonochromator();
     mono.setWavelength(_wavelength);
 
-    _metadata.add<std::string>("Instrument", _diffractometer->getName());
+    _metadata.add<std::string>("Instrument", _diffractometer->name());
     _metadata.add<double>("wavelength", _wavelength);
     _metadata.add<int>("npdone", int(_filenames.size()));
     _metadata.add<double>("monitor", 0.0);

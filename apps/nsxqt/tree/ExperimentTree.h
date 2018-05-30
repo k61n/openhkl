@@ -1,5 +1,4 @@
-#ifndef NSXQT_EXPERIMENTTREE_H
-#define NSXQT_EXPERIMENTTREE_H
+#pragma once
 
 #include <memory>
 #include <string>
@@ -33,5 +32,3 @@ public slots:
 
     void onSingleClick(const QModelIndex& index);
 };
-
-#endif // NSXQT_EXPERIMENTTREE_H

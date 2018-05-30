@@ -1,5 +1,4 @@
-#ifndef NSXQT_ABSORPTIONDIALOG_H
-#define NSXQT_ABSORPTIONDIALOG_H
+#pragma once
 
 #include <memory>
 #include <string>
@@ -52,5 +51,3 @@ private:
     //! Pointer to the QGraphicsScene
     CrystalScene* _cscene;
 };
-
-#endif // NSXQT_ABSORPTIONDIALOG_H

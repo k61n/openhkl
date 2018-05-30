@@ -1,5 +1,4 @@
-#ifndef NSXQT_GLSPHERE_H
-#define NSXQT_GLSPHERE_H
+#pragma once
 
 #include "GLActor.h"
 
@@ -11,5 +10,3 @@ public:
 private:
     virtual void GLCode();
 };
-
-#endif // NSXQT_GLSPHERE_H

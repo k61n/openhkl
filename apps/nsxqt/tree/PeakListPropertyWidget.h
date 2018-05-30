@@ -1,6 +1,4 @@
-#ifndef NSXQT_PEAKLISTPROPERTYWIDGET_H
-#define NSXQT_PEAKLISTPROPERTYWIDGET_H
-
+#pragma once
 
 #include <memory>
 #include <QStandardItem>
@@ -26,5 +24,3 @@ private:
     PeakListItem* _caller;
     Ui::PeakListPropertyWidget *ui;
 };
-
-#endif // NSXQT_PEAKLISTPROPERTYWIDGET_H

@@ -50,9 +50,6 @@ ci:osx:
     - /^bugfix/.*$/
     - /^feature/.*$/
     - /^refactoring/.*$/
-  artifacts:
-    paths:
-    - ${CI_PROJECT_DIR}/build/qmake-build/nsxtool*dmg
   tags:
     - macmini2
 

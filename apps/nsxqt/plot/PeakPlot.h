@@ -1,5 +1,4 @@
-#ifndef NSXQT_PEAKPLOT_H
-#define NSXQT_PEAKPLOT_H
+#pragma once
 
 #include <string>
 
@@ -20,5 +19,3 @@ public:
 
 
 };
-
-#endif // NSXQT_PEAKPLOT_H

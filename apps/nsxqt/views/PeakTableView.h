@@ -28,9 +28,7 @@
  *
  */
 
-
-#ifndef NSXQT_PEAKTABLEVIEW_H
-#define NSXQT_PEAKTABLEVIEW_H
+#pragma once
 
 #include <memory>
 #include <string>
@@ -90,15 +88,10 @@ public slots:
 
     void updateUnitCell(const nsx::sptrUnitCell& unitCell);
 
-    void openAutoIndexingDialog();
     void openRefiningParametersDialog();
     void openProfileFitDialog();
 
 private:
-
-    static bool writeNewShelX(std::string filename, const nsx::PeakList& peaks);
-    static bool writeStatistics(std::string filename, const nsx::PeakList& peaks,
-                                double dmin, double dmax, int shells, bool friedel);
 
     void sortByHKL(bool up);
     void sortByIntensity(bool up);
@@ -119,5 +112,3 @@ private:
     bool _friedel;
 
 };
-
-#endif // NSXQT_PEAKTABLEVIEW_H

@@ -1,5 +1,4 @@
-#ifndef NSXQT_SAMPLESHAPEITEM_H
-#define NSXQT_SAMPLESHAPEITEM_H
+#pragma once
 
 #include <nsxlib/InstrumentTypes.h>
 
@@ -12,5 +11,3 @@ public:
     ~SampleShapeItem()=default;
     QWidget* inspectItem();
 };
-
-#endif // NSXQT_SAMPLESHAPEITEM_H

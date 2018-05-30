@@ -16,8 +16,10 @@
 #include <nsxlib/RawDataReader.h>
 
 #include "DataItem.h"
+#include "DialogHDF5Converter.h"
 #include "DialogPeakFind.h"
 #include "ExperimentItem.h"
+#include "MetaTypes.h"
 #include "NumorItem.h"
 #include "PeaksItem.h"
 #include "PeakListItem.h"
@@ -51,7 +53,7 @@ void DataItem::importData()
         nsx::sptrDataSet data_ptr;
 
         std::string extension = fileinfo.completeSuffix().toStdString();
-        data_ptr = nsx::DataReaderFactory().create(extension, filename.toStdString(), exp->getDiffractometer());
+        data_ptr = nsx::DataReaderFactory().create(extension, filename.toStdString(), exp->diffractometer());
         exp->addData(data_ptr);      
 
         // Get the basename of the current numor
@@ -85,7 +87,7 @@ NumorItem* DataItem::importRawData(const std::vector<std::string> &filenames,
     std::shared_ptr<nsx::IDataReader> reader;
 
     try {
-        auto diff = exp->getDiffractometer();
+        auto diff = exp->diffractometer();
         reader = std::shared_ptr<nsx::IDataReader>(new nsx::RawDataReader(filenames, diff,
                                               wavelength, delta_chi, delta_omega, delta_phi,
                                               rowMajor, swapEndian, bpp));
@@ -152,17 +154,12 @@ void DataItem::findPeaks()
     }
     _peakFinder->setHandler(progressHandler);
 
-    DialogPeakFind* dialog = new DialogPeakFind(selectedNumors, _peakFinder, nullptr);
-    //dialog->setColorMap(_colormap);
-
     // dialog will automatically be deleted before we return from this method
-    std::unique_ptr<DialogPeakFind> dialog_ptr(dialog);
+    std::unique_ptr<DialogPeakFind> dialog_ptr(new DialogPeakFind(selectedNumors, _peakFinder, nullptr));
 
-    if (!dialog->exec()) {
+    if (!dialog_ptr->exec()) {
         return;
     }
-
-    //ui->_dview->getScene()->clearPeaks();
 
     size_t max = selectedNumors.size();
     nsx::info() << "Peak find algorithm: Searching peaks in " << max << " files";
@@ -185,17 +182,15 @@ void DataItem::findPeaks()
     // integrate peaks
     for (auto numor: selectedNumors) {
         nsx::StrongPeakIntegrator integrator(true, true);
-        integrator.integrate(peaks, numor, dialog->peakScale(), dialog->bkgBegin(), dialog->bkgEnd());
+        integrator.integrate(peaks, numor, dialog_ptr->peakScale(), dialog_ptr->bkgBegin(), dialog_ptr->bkgEnd());
     }
 
     // delete the progressView
     delete progressView;
 
-    //updatePeaks();
     nsx::debug() << "Peak search complete., found " << peaks.size() << " peaks.";
-
-    auto& peak_item = *experimentItem().peaks().createPeaksItem("Found peaks");
-    std::swap(peak_item.peaks(), peaks);
+    auto peaks_item = experimentItem()->peaksItem();
+    model()->setData(peaks_item->index(),QVariant::fromValue(peaks),Qt::UserRole);
 }
 
 nsx::DataList DataItem::selectedData()
@@ -203,9 +198,20 @@ nsx::DataList DataItem::selectedData()
     nsx::DataList selectedNumors;
     for (int i = 0; i < rowCount(); ++i) {
         if (child(i)->checkState() == Qt::Checked) {
-            if (auto ptr = dynamic_cast<NumorItem*>(child(i)))
+            if (auto ptr = dynamic_cast<NumorItem*>(child(i))) {
                 selectedNumors.push_back(ptr->getData());
+            }
         }
     }
     return selectedNumors;
+}
+
+void DataItem::convertToHDF5()
+{
+    // dialog will automatically be deleted before we return from this method
+    std::unique_ptr<DialogHDF5Converter> dialog_ptr(new DialogHDF5Converter(experiment()));
+
+    if (!dialog_ptr->exec()) {
+        return;
+    }
 }

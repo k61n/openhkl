@@ -1,5 +1,4 @@
-#ifndef NSXQT_CHECKABLECOMBOBOX_H
-#define NSXQT_CHECKABLECOMBOBOX_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -48,5 +47,3 @@ private:
     bool _containerMousePress;
 
 };
-
-#endif // NSXQT_CHECKABLECOMBOBOX_H

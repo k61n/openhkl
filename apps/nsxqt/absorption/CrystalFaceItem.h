@@ -1,5 +1,4 @@
-#ifndef NSXQT_CRYSTALFACEITEM_H
-#define NSXQT_CRYSTALFACEITEM_H
+#pragma once
 
 #include <Eigen/Dense>
 
@@ -18,5 +17,3 @@ private:
     double nz;
     QPointF* _points;
 };
-
-#endif // NSXQT_CRYSTALFACEITEM_H

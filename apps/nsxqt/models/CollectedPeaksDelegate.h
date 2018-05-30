@@ -1,5 +1,4 @@
-#ifndef NSXQT_COLLECTEDPEAKSDELEGATE_H
-#define NSXQT_COLLECTEDPEAKSDELEGATE_H
+#pragma once
 
 #include <QIcon>
 #include <QStyledItemDelegate>
@@ -23,5 +22,3 @@ private:
     QIcon _icon;
 
 };
-
-#endif // NSXQT_COLLECTEDPEAKSDELEGATE_H

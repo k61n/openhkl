@@ -1,5 +1,4 @@
-#ifndef NSXQT_CRYSTALNODEITEM_H
-#define NSXQT_CRYSTALNODEITEM_H
+#pragma once
 
 #include <cmath>
 #include <iostream>
@@ -42,5 +41,3 @@ public slots:
     private:
       double _p1x,_p1y,_p1z,_angle;
 };
-
-#endif // NSXQT_CRYSTALNODEITEM_H

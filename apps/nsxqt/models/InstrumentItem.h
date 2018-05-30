@@ -1,5 +1,4 @@
-#ifndef NSXQT_INSTRUMENTITEM_H
-#define NSXQT_INSTRUMENTITEM_H
+#pragma once
 
 #include <QJsonObject>
 
@@ -21,14 +20,12 @@ public:
 
 public:
 
-    DetectorItem* getDetectorItem();
-    SampleItem* getSampleItem();
-    SourceItem* getSourceItem();
+    DetectorItem* detectorItem();
+    SampleItem* sampleItem();
+    SourceItem* sourceItem();
 
 private:
     DetectorItem* _detector;
     SampleItem* _sample;
     SourceItem* _source;
 };
-
-#endif // NSXQT_INSTRUMENTITEM_H

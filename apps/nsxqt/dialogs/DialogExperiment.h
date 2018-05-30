@@ -1,5 +1,4 @@
-#ifndef NSXQT_DIALOGEXPERIMENT_H
-#define NSXQT_DIALOGEXPERIMENT_H
+#pragma once
 
 #include <QDialog>
 
@@ -24,5 +23,3 @@ public:
 private:
     Ui::DialogExperiment *ui;
 };
-
-#endif // NSXQT_DIALOGEXPERIMENT_H

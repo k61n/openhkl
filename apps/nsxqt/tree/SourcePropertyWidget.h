@@ -1,5 +1,4 @@
-#ifndef NSXQT_SOURCEPROPERTYWIDGET_H
-#define NSXQT_SOURCEPROPERTYWIDGET_H
+#pragma once
 
 #include <QWidget>
 
@@ -30,5 +29,3 @@ private:
     Ui::SourcePropertyWidget *ui;
     SourceItem* _caller;
 };
-
-#endif // NSXQT_SOURCEPROPERTYWIDGET_H

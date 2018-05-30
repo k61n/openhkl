@@ -58,7 +58,6 @@
 #include "DialogRefineUnitCell.h"
 #include "DialogTransformationMatrix.h"
 #include "DialogUnitCellParameters.h"
-#include "LogFileDialog.h"
 #include "PeakTableView.h"
 
 PeakTableView::PeakTableView(QWidget *parent)
@@ -198,8 +197,6 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
 
     menu->addSeparator();
 
-    auto autoIndexing=new QAction("Auto-indexing",menu);
-    menu->addAction(autoIndexing);
     auto refineParameters=new QAction("Refine unit cell and instrument parameters",menu);
     menu->addAction(refineParameters);
 
@@ -217,7 +214,6 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
     connect(selectUnindexedPeaks,SIGNAL(triggered()),this,SLOT(selectUnindexedPeaks()));
     connect(togglePeaksSelection,SIGNAL(triggered()),this,SLOT(togglePeaksSelection()));
 
-    connect(autoIndexing,SIGNAL(triggered()),this,SLOT(openAutoIndexingDialog()));
     connect(refineParameters,SIGNAL(triggered()),this,SLOT(openRefiningParametersDialog()));
     connect(fitProfile, SIGNAL(triggered()), this, SLOT(openProfileFitDialog()));
 }
@@ -461,17 +457,6 @@ QItemSelectionModel::SelectionFlags PeakTableView::selectionCommand(const QModel
         return QItemSelectionModel::NoUpdate;
     }
     return QTableView::selectionCommand(index,event);
-}
-
-void PeakTableView::openAutoIndexingDialog()
-{
-    auto peakModel = dynamic_cast<CollectedPeaksModel*>(model());
-    auto experiment = peakModel->getExperiment();
-    nsx::PeakList peaks = peakModel->getPeaks(selectionModel()->selectedRows());
-    auto dialog = new DialogAutoIndexing(experiment,peaks);
-    connect(dialog,SIGNAL(cellUpdated(nsx::sptrUnitCell)),this,SLOT(updateUnitCell(nsx::sptrUnitCell)));
-    dialog->exec();
-    selectionModel()->clear();
 }
 
 void PeakTableView::updateUnitCell(const nsx::sptrUnitCell& unitCell)
