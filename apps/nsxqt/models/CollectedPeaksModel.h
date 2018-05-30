@@ -1,5 +1,4 @@
-#ifndef NSXQT_COLLECTEDPEAKSMODEL_H
-#define NSXQT_COLLECTEDPEAKSMODEL_H
+#pragma once
 
 #include <memory>
 #include <string>
@@ -77,5 +76,3 @@ private:
     nsx::PeakList _peaks;
     nsx::UnitCellList _cells;
 };
-
-#endif // NSXQT_COLLECTEDPEAKSMODEL_H

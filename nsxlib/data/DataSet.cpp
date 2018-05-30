@@ -43,7 +43,7 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader):
     _nFrames(0),
     _nrows(0),
     _ncols(0),
-    _diffractometer(reader->getDiffractometer()),
+    _diffractometer(reader->diffractometer()),
     _metadata(uptrMetaData(new MetaData())),
     _data(),
     _states(),

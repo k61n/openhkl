@@ -1,5 +1,4 @@
-#ifndef NSXQT_UNITCELLITEM_H
-#define NSXQT_UNITCELLITEM_H
+#pragma once
 
 #include "InspectableTreeItem.h"
 
@@ -13,6 +12,10 @@ class UnitCellItem : public InspectableTreeItem
 public:
     UnitCellItem(nsx::sptrUnitCell);
     ~UnitCellItem();
+
+    virtual QVariant data(int role) const override;
+    virtual void setData(const QVariant &value, int role) override;
+
     QWidget* inspectItem();
     nsx::sptrUnitCell unitCell();
 
@@ -26,5 +29,3 @@ public:
 private:
     nsx::sptrUnitCell _cell;
 };
-
-#endif // NSXQT_UNITCELLITEM_H

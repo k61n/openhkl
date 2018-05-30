@@ -1,5 +1,4 @@
-#ifndef NSXQT_EXPERIMENTITEM_H
-#define NSXQT_EXPERIMENTITEM_H
+#pragma once
 
 #include <string>
 #include <memory>
@@ -11,7 +10,6 @@
 #include <nsxlib/InstrumentTypes.h>
 
 #include "TreeItem.h"
-#include "models/SessionModel.h"
 
 class DataItem;
 class LibraryItem;
@@ -23,18 +21,18 @@ class ExperimentItem: public TreeItem
 public:
     explicit ExperimentItem(nsx::sptrExperiment experiment);
     virtual ~ExperimentItem() = default;    
-    InstrumentItem* getInstrumentItem();
 
     nsx::sptrExperiment experiment() { return _experiment; }
 
-    PeaksItem& peaks() { return *_peaks; }
-    DataItem& dataItem() { return *_data; }
-    LibraryItem& libraryItem() { return *_library; }
+    InstrumentItem* instrumentItem();
 
-    void writeLogFile();
-    bool writeStatistics(std::string filename,
-                         const nsx::PeakList &peaks,
-                         double dmin, double dmax, unsigned int num_shells, bool friedel);
+    PeaksItem* peaksItem();
+
+    DataItem* dataItem();
+
+    LibraryItem* libraryItem();
+
+    void writeLogFiles();
 
 private:
     nsx::sptrExperiment _experiment;
@@ -43,5 +41,3 @@ private:
     PeaksItem* _peaks;
     LibraryItem* _library;
 };
-
-#endif // NSXQT_EXPERIMENTITEM_H

@@ -1,5 +1,4 @@
-#ifndef NSXQT_CHECKABLECOMBOBOXMODEL_H
-#define NSXQT_CHECKABLECOMBOBOXMODEL_H
+#pragma once
 
 #include <QStandardItemModel>
 
@@ -19,5 +18,3 @@ signals:
 public slots:
 
 };
-
-#endif // NSXQT_CHECKABLECOMBOBOXMODEL_H

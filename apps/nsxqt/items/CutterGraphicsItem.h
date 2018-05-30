@@ -1,5 +1,4 @@
-#ifndef NSXQT_CUTTERGRAPHICSITEM_H
-#define NSXQT_CUTTERGRAPHICSITEM_H
+#pragma once
 
 #include <QPen>
 #include <QPointF>
@@ -60,5 +59,3 @@ protected:
 
 
 };
-
-#endif // NSXQT_CUTTERGRAPHICSITEM_H

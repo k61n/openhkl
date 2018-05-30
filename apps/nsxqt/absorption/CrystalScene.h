@@ -1,5 +1,4 @@
-#ifndef NSXQT_CRYSTALSCENE_H
-#define NSXQT_CRYSTALSCENE_H
+#pragma once
 
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
@@ -79,5 +78,3 @@ private:
     QPixmap _pix;
     QGraphicsTextItem* _text;
 };
-
-#endif // NSXQT_CRYSTALSCENE_H

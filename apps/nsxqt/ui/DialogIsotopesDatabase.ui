@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>IsotopeDatabaseDialog</class>
- <widget class="QDialog" name="IsotopeDatabaseDialog">
+ <class>DialogIsotopesDatabase</class>
+ <widget class="QDialog" name="DialogIsotopesDatabase">
   <property name="geometry">
    <rect>
     <x>0</x>

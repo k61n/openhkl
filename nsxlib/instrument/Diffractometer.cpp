@@ -97,7 +97,7 @@ void Diffractometer::setSource(sptrSource source)
     _source=source;
 }
 
-const std::string& Diffractometer::getName() const
+const std::string& Diffractometer::name() const
 {
     return _name;
 }

@@ -36,17 +36,17 @@ InstrumentItem::InstrumentItem(const char* name, const char* source_name) : Tree
     appendRow(_source);
 }
 
-DetectorItem* InstrumentItem::getDetectorItem()
+DetectorItem* InstrumentItem::detectorItem()
 {
     return _detector;
 }
 
-SampleItem* InstrumentItem::getSampleItem()
+SampleItem* InstrumentItem::sampleItem()
 {
     return _sample;
 }
 
-SourceItem* InstrumentItem::getSourceItem()
+SourceItem* InstrumentItem::sourceItem()
 {
     return _source;
 }

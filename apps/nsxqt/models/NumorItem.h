@@ -1,5 +1,4 @@
-#ifndef NSXQT_NUMORITEM_H
-#define NSXQT_NUMORITEM_H
+#pragma once
 
 #include <string>
 
@@ -25,5 +24,3 @@ public:
 private:
     nsx::sptrDataSet _data;
 };
-
-#endif // NSXQT_NUMORITEM_H

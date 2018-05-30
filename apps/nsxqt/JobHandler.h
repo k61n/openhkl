@@ -1,9 +1,4 @@
-// author: Jonathan Fisher
-// j.fisher@fz-juelich.de
-
-
-#ifndef NSXQT_JOBHANDLER_H
-#define NSXQT_JOBHANDLER_H
+#pragma once
 
 #include <memory>
 
@@ -53,5 +48,3 @@ private:
     WorkerThread* _workerThread;
     bool _synchronous;
 };
-
-#endif // NSXQT_JOBHANDLER_H

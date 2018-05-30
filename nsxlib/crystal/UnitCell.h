@@ -107,11 +107,11 @@ public:
     //! Set Bravais type
     void setBravaisType(BravaisType bravais);
     //! Get Bravais type symbol
-    std::string getBravaisTypeSymbol() const;
+    std::string bravaisTypeSymbol() const;    
     //! Get a list of reflections with d value in the range [dmin, dmax]
     std::vector<MillerIndex> generateReflectionsInShell(double dmin, double dmax, double wavelength) const;
     //! Return the angle in radians between two reflections hkl1 and hkl2
-    double getAngle(const Eigen::RowVector3d& hkl1, const Eigen::RowVector3d& hkl2) const;
+    double angle(const Eigen::RowVector3d& hkl1, const Eigen::RowVector3d& hkl2) const;
     //! Set the Niggli character of the cell
     void setNiggli(const NiggliCharacter& niggli);
     //! Get the Niggli character of the cell
@@ -123,25 +123,25 @@ public:
     //! Apply constraint from the Niggli character
     UnitCell applyNiggliConstraints() const;
     //! Return d of the Bragg condition for the given reflection
-    double getD(int h, int k, int l);
+    double d(int h, int k, int l);
     //! Print into a stream
     void printSelf(std::ostream& os) const;
     //! Gets the Z value for the unit cell
-    unsigned int getZ() const;
+    unsigned int z() const;
     //! Sets the Z value for the unit cell
     void setZ(unsigned int Z);
     //! Gets the Material for the unit cell
-    sptrMaterial getMaterial() const;
+    sptrMaterial material() const;
     //! Sets the Material for the unit cell
     void setMaterial(const sptrMaterial& material);
     //! Set space group from its symbol.
     void setSpaceGroup(const std::string& symbol);
     //! Return the space group symbol of the unit cell.
     const SpaceGroup& spaceGroup() const;
-    //! Set name of the unit cell. TODO: should this be moved to GUI?
+    //! Set name of the unit cell
     void setName(const std::string& name);
     //! Get name of the unit cell
-    const std::string& getName() const;
+    const std::string& name() const;
     //! Set the integer tolerance for this unit cell
     void setIndexingTolerance(double tolerance);
     //! Get the integer tolerance for this unit cell

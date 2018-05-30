@@ -40,7 +40,7 @@ public:
     //! Return number of rows in each detector image
     size_t getNRows() const;
     //! Return pointer to diffractometer associated with the data
-    sptrDiffractometer getDiffractometer() const;
+    sptrDiffractometer diffractometer() const;
     //! Gets the data basename
     std::string getBasename() const;
     //! Gets the data filename

@@ -1,5 +1,4 @@
-#ifndef NSXQT_RULERITEM_H
-#define NSXQT_RULERITEM_H
+#pragma once
 
 #include <QGraphicsItem>
 
@@ -51,5 +50,3 @@ private:
     double _conversion;
     bool _displaydistance;
 };
-
-#endif // NSXQT_RULERITEM_H

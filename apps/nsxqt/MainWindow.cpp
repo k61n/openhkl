@@ -51,14 +51,12 @@
 #include "DialogIntegrate.h"
 #include "DialogPeakFilter.h"
 #include "ExperimentTree.h"
-#include "IsotopeDatabaseDialog.h"
+#include "DialogIsotopesDatabase.h"
 #include "JobHandler.h"
 #include "MainWindow.h"
 #include "NoteBook.h"
-#include "NumorsConversionDialog.h"
 #include "PeakGraphicsItem.h"
 #include "PlottableGraphicsItem.h"
-#include "ResolutionCutoffDialog.h"
 #include "PeakListPropertyWidget.h"
 #include "PeakTableView.h"
 #include "PlotFactory.h"
@@ -79,7 +77,7 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->setupUi(this);
 
     // make experiment tree aware of the session
-    _session = new SessionModel;
+    _session = new SessionModel();
     _ui->experimentTree->setModel(_session);
 
     // Set Date to the application window title
@@ -394,7 +392,7 @@ void MainWindow::on_actionBehind_Detector_triggered()
 void MainWindow::on_action_display_isotopes_database_triggered()
 {
     // Opens the dialog that will diplay the isotopes database
-    IsotopeDatabaseDialog* dlg=new IsotopeDatabaseDialog();
+    DialogIsotopesDatabase* dlg=new DialogIsotopesDatabase();
     dlg->exec();
 }
 
@@ -426,12 +424,6 @@ void MainWindow::setInspectorWidget(QWidget* w)
         CollectedPeaksModel* peakModel = dynamic_cast<CollectedPeaksModel*>(widget->getPeakTableView()->model());
         connect(peakModel,SIGNAL(unitCellUpdated()),_ui->_dview->getScene(),SLOT(updatePeaks()));
     }
-}
-
-void MainWindow::on_actionConvert_to_HDF5_triggered()
-{
-    NumorsConversionDialog* dlg=new NumorsConversionDialog();
-    dlg->exec();
 }
 
 void MainWindow::on_checkBox_AspectRatio_toggled(bool checked)

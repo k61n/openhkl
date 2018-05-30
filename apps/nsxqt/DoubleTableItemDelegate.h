@@ -1,5 +1,4 @@
-#ifndef NSXQT_DOUBLETABLEITEMDELEGATE_H
-#define NSXQT_DOUBLETABLEITEMDELEGATE_H
+#pragma once
 
 #include <QStyledItemDelegate>
 
@@ -14,5 +13,3 @@ public:
     QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 };
-
-#endif // NSXQT_DOUBLETABLEITEMDELEGATE_H

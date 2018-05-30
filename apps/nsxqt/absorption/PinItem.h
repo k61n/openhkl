@@ -1,5 +1,4 @@
-#ifndef NSXQT_PINITEM_H
-#define NSXQT_PINITEM_H
+#pragma once
 
 #include <QGraphicsItem>
 
@@ -32,5 +31,3 @@ private:
     double _currentangle;
     bool _calibrated;
 };
-
-#endif // NSXQT_PINITEM_H

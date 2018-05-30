@@ -75,4 +75,9 @@ double MergedData::redundancy() const
     return double(totalSize()) / double(_peaks.size());
 }
 
+void MergedData::clear()
+{
+    _peaks.clear();
+}
+
 } // end namespace nsx

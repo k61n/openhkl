@@ -21,6 +21,8 @@ public:
     void findPeaks();
     nsx::DataList selectedData();
 
+    void convertToHDF5();
+
 private:
     
     nsx::sptrPeakFinder _peakFinder;

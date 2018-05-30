@@ -18,7 +18,7 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
 {
     ui->setupUi(this);
 
-    auto detector=_detectorItem->experiment()->getDiffractometer()->getDetector();
+    auto detector=_detectorItem->experiment()->diffractometer()->getDetector();
     auto gonio=detector->getGonio();
 
     ui->lineEdit_H->setText(QString::number(detector->getHeight())+" m");
@@ -66,15 +66,7 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
         }
         item1->setData(Qt::EditRole, QString(os.str().c_str()));
 
-        QTableWidgetItem* item2 = new QTableWidgetItem();
-        // todo: fix this after offset refactor
-        #if 0
-        if (isRot)
-            item2->setData(Qt::EditRole, double(axis->getOffset()/nsx::deg));
-        else
-            item2->setData(Qt::EditRole, double(axis->getOffset()/nsx::mm));
-        #endif
-
+        QTableWidgetItem* item2=new QTableWidgetItem();
 
         // First two columns non-editable
         item0->setFlags(item0->flags() & ~Qt::ItemIsEditable);
@@ -95,19 +87,14 @@ DetectorPropertyWidget::~DetectorPropertyWidget()
 
 void DetectorPropertyWidget::cellHasChanged(int i, int j)
 {
-    auto detector=_detectorItem->experiment()->getDiffractometer()->getDetector();
+    auto detector=_detectorItem->experiment()->diffractometer()->getDetector();
+    auto axis=detector->getGonio()->getAxis(i);
     // todo: fix this after offset refactor
-    #if 0
-    if (dynamic_cast<nsx::TransAxis*>(axis))
-        axis->setOffset(ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble()*nsx::mm);
-    else
-        axis->setOffset(ui->tableWidget_Detector->item(i,j)->data(Qt::EditRole).toDouble()*nsx::deg);
-    #endif
 }
 
 void DetectorPropertyWidget::on_doubleSpinBox_Distance_valueChanged(double arg1)
 {
-     auto detector=_detectorItem->experiment()->getDiffractometer()->getDetector();
+     auto detector=_detectorItem->experiment()->diffractometer()->getDetector();
      if (arg1>0)
         detector->setRestPosition(nsx::DirectVector(0,arg1,0));
 }

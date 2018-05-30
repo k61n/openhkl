@@ -9,8 +9,9 @@
 #include <QDialog>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
-#include <QStandardItem>
+#include <QResizeEvent>
 #include <QShowEvent>
+#include <QStandardItem>
 
 #include <nsxlib/DataTypes.h>
 
@@ -30,8 +31,8 @@ public:
 
     void setPreviewFrame(const Eigen::MatrixXi& frame);
     void setColorMap(const std::string& name);
-    int exec() override;
-    void showEvent(QShowEvent*);
+    void showEvent(QShowEvent*) override;
+    void resizeEvent(QResizeEvent*) override;
     double peakScale() const;
     double bkgBegin() const;
     double bkgEnd() const;
@@ -40,8 +41,7 @@ private slots:
 
     void clipPreview(int state);
 
-    void changeThreshold(QString thresold_type);
-    void changeThresholdParameters(int row, int col);
+    void changeThreshold();
 
     void changeConvolver(QString convolver_type);
     void changeConvolverParameters(int row, int col);
@@ -57,11 +57,7 @@ private:
 
     void buildConvolverParametersList();
 
-    void buildThresholdParametersList();
-
     std::map<std::string,double> convolverParameters() const;
-
-    std::map<std::string,double> thresholdParameters() const;
 
     void updatePreview();
 

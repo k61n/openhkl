@@ -1,5 +1,4 @@
-#ifndef NSXQT_DIALOGCALCULATEDPEAKS_H
-#define NSXQT_DIALOGCALCULATEDPEAKS_H
+#pragma once
 
 #include <QDialog>
 #include <set>
@@ -37,5 +36,3 @@ private:
     Ui::DialogCalculatedPeaks *ui;
     std::set<nsx::sptrUnitCell> _cells;
 };
-
-#endif // NSXQT_DIALOGCALCULATEDPEAKS_H

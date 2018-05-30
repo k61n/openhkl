@@ -1,5 +1,4 @@
-#ifndef NSXQT_UNITCELLPROPERTYWIDGET_H
-#define NSXQT_UNITCELLPROPERTYWIDGET_H
+#pragma once
 
 #include <memory>
 
@@ -42,5 +41,3 @@ private:
     UnitCellItem* _unitCellItem;
     Ui::UnitCellPropertyWidget *ui;
 };
-
-#endif // NSXQT_UNITCELLPROPERTYWIDGET_H

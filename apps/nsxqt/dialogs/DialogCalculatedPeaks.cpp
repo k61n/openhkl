@@ -11,7 +11,7 @@ DialogCalculatedPeaks::DialogCalculatedPeaks(const std::set<nsx::sptrUnitCell>& 
     ui->setupUi(this);
 
     for (auto cell: _cells) {
-        ui->comboBoxUC->addItem(cell->getName().c_str());
+        ui->comboBoxUC->addItem(cell->name().c_str());
     }
 }
 
@@ -74,7 +74,7 @@ int DialogCalculatedPeaks::minimumNeighbors()
 nsx::sptrUnitCell DialogCalculatedPeaks::cell()
 {
     for (auto cell: _cells) {
-        if (ui->comboBoxUC->currentText() == cell->getName().c_str()) {
+        if (ui->comboBoxUC->currentText() == cell->name().c_str()) {
             return cell;
         }
     }

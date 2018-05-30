@@ -1,5 +1,4 @@
-#ifndef NSXQT_EMPTYPROPERTYWIDGET_H
-#define NSXQT_EMPTYPROPERTYWIDGET_H
+#pragma once
 
 #include <QWidget>
 
@@ -18,5 +17,3 @@ public:
 private:
     Ui::EmptyPropertyWidget *ui;
 };
-
-#endif // NSXQT_EMPTYPROPERTYWIDGET_H
