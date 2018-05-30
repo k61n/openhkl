@@ -46,11 +46,12 @@
 
 namespace nsx {
 
+//! \brief Class used to manage loading detector images and metadata from disk.
 class DataSet {
     friend class UnitTest_DataSet;
 public:
-    //! Construct using the given data reader (allowing multiple formats) and diffractometer
-    DataSet(std::shared_ptr<IDataReader> reader, const sptrDiffractometer& diffractometer);
+    //! Construct using the given data reader (allowing multiple formats)
+    DataSet(std::shared_ptr<IDataReader> reader);
     //! Destructor
     virtual ~DataSet();
     //! Assignment operator
@@ -103,7 +104,7 @@ public:
     //! Return the sample-space q vector corresponding to a detector event
     ReciprocalVector computeQ(const DetectorEvent& ev) const;
 
-protected:
+private:
     bool _isOpened;
     std::string _filename;
     std::size_t _nFrames;

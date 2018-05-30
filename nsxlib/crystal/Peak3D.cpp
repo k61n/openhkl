@@ -37,13 +37,10 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "Blob3D.h"
 #include "DataSet.h"
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "GeometryTypes.h"
-#include "Gonio.h"
-#include "IFrameIterator.h"
 #include "InstrumentState.h"
 #include "IPeakIntegrator.h"
 #include "MillerIndex.h"

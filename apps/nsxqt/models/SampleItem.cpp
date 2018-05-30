@@ -41,54 +41,6 @@ QWidget* SampleItem::inspectItem()
     return new SamplePropertyWidget(this);
 }
 
-QJsonObject SampleItem::toJson()
-{
-    QJsonObject obj;
-    QJsonArray cells;
-
-    auto sample = experiment()->getDiffractometer()->getSample();
-
-    for (unsigned int i = 0; i < sample->getNCrystals(); ++i) {
-        auto cell = sample->unitCell(i);
-        Eigen::Matrix3d A = cell->basis();
-        QJsonArray params;
-
-        for (int j = 0; j < 3; ++j)
-            for (int k = 0; k < 3; ++k)
-                params.push_back(A(k, j));
-
-        cells.push_back(params);
-    }
-
-    obj["shapes"] = cells;
-
-    return obj;
-}
-
-void SampleItem::fromJson(const QJsonObject &obj)
-{
-    auto sample = experiment()->getDiffractometer()->getSample();
-    QJsonArray shapes = obj["shapes"].toArray();
-
-    for(QJsonValueRef shape: shapes) {
-        Eigen::Vector3d v[3];
-        QJsonArray params = shape.toArray();
-
-        for (int i = 0; i < 3; ++i)
-            for (int j = 0; j < 3; ++j)
-                v[i][j] = params[i*3+j].toDouble();
-
-        auto cell = sample->addUnitCell();
-        Eigen::Matrix3d A;
-        A.col(0) = v[0];
-        A.col(1) = v[1];
-        A.col(2) = v[2];
-        cell->setBasis(A);
-
-        appendRow(new UnitCellItem(cell));
-    }
-}
-
 QList<UnitCellItem*> SampleItem::unitCellItems()
 {
     QList<UnitCellItem*> unitCellItems;

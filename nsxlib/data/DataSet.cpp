@@ -19,7 +19,6 @@
 #include "ErfInv.h"
 #include "Gonio.h"
 #include "IDataReader.h"
-#include "IFrameIterator.h"
 #include "IntegrationRegion.h"
 #include "Logger.h"
 #include "MathematicsTypes.h"
@@ -38,13 +37,13 @@
 
 namespace nsx {
 
-DataSet::DataSet(std::shared_ptr<IDataReader> reader, const sptrDiffractometer& diffractometer):
+DataSet::DataSet(std::shared_ptr<IDataReader> reader):
     _isOpened(false),
     _filename(reader->getFilename()),
     _nFrames(0),
     _nrows(0),
     _ncols(0),
-    _diffractometer(diffractometer),
+    _diffractometer(reader->getDiffractometer()),
     _metadata(uptrMetaData(new MetaData())),
     _data(),
     _states(),
@@ -97,13 +96,8 @@ Eigen::MatrixXd DataSet::convolvedFrame(std::size_t idx, const std::string& conv
 {
     ConvolverFactory convolver_factory;
     auto convolver = convolver_factory.create(convolver_type,parameters);
-
     Eigen::MatrixXi frame_data = _reader->getData(idx); 
-    int maxData = frame_data.maxCoeff();
-
-    // compute the convolution
-    auto result = convolver->convolve(frame_data.cast<double>());
-    return result;
+    return convolver->convolve(frame_data.cast<double>());
 }
 
 void DataSet::open()

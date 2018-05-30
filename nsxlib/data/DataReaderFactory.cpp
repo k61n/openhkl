@@ -14,7 +14,7 @@ template <typename T>
 std::shared_ptr<DataSet> create_reader(const std::string& filename, const std::shared_ptr<Diffractometer>& diff)
 {
     auto reader = std::shared_ptr<IDataReader>(new T(filename, diff));
-    return std::shared_ptr<DataSet>(new DataSet(reader, diff));
+    return std::shared_ptr<DataSet>(new DataSet(reader));
 }
 
 DataReaderFactory::DataReaderFactory(): _callbacks()

@@ -18,8 +18,6 @@ public:
 
     explicit DetectorItem();
     QWidget* inspectItem() override;
-
-    QJsonObject toJson() override;
 };
 
 #endif // NSXQT_DETECTORITEM_H

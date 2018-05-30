@@ -20,9 +20,6 @@ public:
     ~NumorItem();
     QWidget* inspectItem() override;
     nsx::sptrDataSet getData();
-
-    QJsonObject toJson() override;
-    void fromJson(const QJsonObject& obj) override;
     void exportHDF5(const std::string& filename) const;
 
 private:

@@ -74,11 +74,6 @@ Vertex* ConvexHull::addVertex(const Eigen::Vector3d& coords)
     return _vertices.back();
 }
 
-Vertex* ConvexHull::addVertex(double x, double y, double z)
-{
-    return addVertex(Eigen::Vector3d(x,y,z));
-}
-
 bool ConvexHull::removeVertex(const Eigen::Vector3d& coords, double tolerance)
 {
     for (auto it=_vertices.begin();it!=_vertices.end();++it)
@@ -88,11 +83,6 @@ bool ConvexHull::removeVertex(const Eigen::Vector3d& coords, double tolerance)
         return true;
     }
     return false;
-}
-
-bool ConvexHull::removeVertex(double x, double y, double z, double tolerance)
-{
-    return removeVertex(Eigen::Vector3d(x,y,z),tolerance);
 }
 
 Face* ConvexHull::buildNullFace()

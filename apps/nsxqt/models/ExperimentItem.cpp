@@ -57,24 +57,6 @@ ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment): TreeItem(), _exp
     appendRow(_library);
 }
 
-QJsonObject ExperimentItem::toJson()
-{
-    auto exp_ptr = experiment();
-    QJsonObject experiment;
-
-    experiment["name"] = QString(exp_ptr->getName().c_str());
-    experiment["instrument"] = _instr->toJson();
-    experiment["data"] = _data->toJson();
-
-    return experiment;
-}
-
-void ExperimentItem::fromJson(const QJsonObject &obj)
-{
-    _instr->fromJson(obj["instrument"].toObject());
-    _data->fromJson(obj["data"].toObject());
-}
-
 InstrumentItem* ExperimentItem::getInstrumentItem()
 {
     return _instr;

@@ -24,7 +24,6 @@
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Ellipsoid.h>
 #include <nsxlib/GruberReduction.h>
-#include <nsxlib/IFrameIterator.h>
 #include <nsxlib/LogFileStreamWrapper.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/MathematicsTypes.h>

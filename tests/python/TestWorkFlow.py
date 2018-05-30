@@ -13,7 +13,7 @@ class TestWorkFlow(unittest.TestCase):
         source = diff.getSource()
 
         reader = nsx.HDF5DataReader("gal3.hdf", diff)
-        data = nsx.DataSet(reader, diff)
+        data = nsx.DataSet(reader)
 
         finder = nsx.PeakFinder()
         finder.setMinSize(30)

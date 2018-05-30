@@ -26,6 +26,7 @@ static Eigen::Matrix3d from_cholesky(const std::array<double, 6>& components)
     return L*L.transpose();
 }
 
+//! \brief Helper struct used internally by the shape library.
 struct FitData {
     Eigen::Matrix3d Rs, Rd, Jk, Jp, Jd;
     Eigen::Vector3d kf, ki, q;
@@ -70,11 +71,6 @@ ShapeLibrary::ShapeLibrary(bool detector_coords):
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
     _choleskyS.fill(1e-6);
-}
-
-ShapeLibrary::~ShapeLibrary()
-{
-
 }
 
 static void covariance_helper(Eigen::Matrix3d& result, const FitData& f, const Eigen::Matrix3d& sigmaD, const Eigen::Matrix3d& sigmaM, const Eigen::Matrix3d& sigmaS)
