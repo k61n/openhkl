@@ -150,7 +150,7 @@ void CrystalScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
          {
              double x,y,z;
              temp2->getCoordinates(x,y,z);
-            _hull->removeVertex(x*aspectratio,y*aspectratio,z*aspectratio,1e-3);
+            _hull->removeVertex(Eigen::Vector3d(x*aspectratio,y*aspectratio,z*aspectratio),1e-3);
              removeItem(temp);
          }
      }
@@ -262,7 +262,7 @@ void CrystalScene::triangulate()
         {
             double x,y,z;
             temp->getCoordinates(x,y,z);
-           _hull->addVertex(x*aspectratio,y*aspectratio,z*aspectratio);
+           _hull->addVertex(Eigen::Vector3d(x*aspectratio,y*aspectratio,z*aspectratio));
         }
     }
 

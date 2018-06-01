@@ -57,24 +57,6 @@ ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment): TreeItem(), _exp
     appendRow(_library);
 }
 
-QJsonObject ExperimentItem::toJson()
-{
-    auto exp_ptr = experiment();
-    QJsonObject experiment;
-
-    experiment["name"] = QString(exp_ptr->getName().c_str());
-    experiment["instrument"] = _instr->toJson();
-    experiment["data"] = _data->toJson();
-
-    return experiment;
-}
-
-void ExperimentItem::fromJson(const QJsonObject &obj)
-{
-    _instr->fromJson(obj["instrument"].toObject());
-    _data->fromJson(obj["data"].toObject());
-}
-
 InstrumentItem* ExperimentItem::instrumentItem()
 {
     return _instr;
@@ -99,7 +81,7 @@ void ExperimentItem::writeLogFiles()
     filtered_peaks = peak_filter.unitCell(filtered_peaks,cell);
     filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance());
 
-    DialogStatistics dlg(peaks,cell->spaceGroup());
+    DialogStatistics dlg(filtered_peaks,cell->spaceGroup());
 
     if (!dlg.exec()) {
         return;

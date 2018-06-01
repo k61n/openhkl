@@ -37,10 +37,7 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
         else
             item0->setBackgroundColor(QColor("#DDFFDD"));
         QTableWidgetItem* item1=new QTableWidgetItem();
-
         std::ostringstream os;
-
-        bool isrot=false;
 
         if (nsx::RotAxis* rot=dynamic_cast<nsx::RotAxis*>(axis)) {
             os << "R(";
@@ -51,7 +48,7 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
             } else {
                 os << "CCW";
             }
-            isrot=true;
+            //isrot=true;
         }
         else if(dynamic_cast<nsx::TransAxis*>(axis)) {
             os << "T(";

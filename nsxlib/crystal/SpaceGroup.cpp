@@ -43,8 +43,7 @@
 
 namespace nsx {
 
-std::vector<SpaceGroupSymmetry> SpaceGroup::symmetry_table =
-{
+const std::vector<SpaceGroupSymmetry> SpaceGroup::symmetry_table = {
     {"P 1"," x,y,z"},
     {"P -1"," -x,-y,-z"},
     {"P 2"," -x,y,-z"},
@@ -282,17 +281,14 @@ std::vector<std::string> SpaceGroup::symbols()
     std::vector<std::string> symbols;
     symbols.reserve(symmetry_table.size());
     auto get_symbol = [](const SpaceGroupSymmetry& s) -> std::string {return s.first;};
-    std::transform(symmetry_table.begin(),symmetry_table.end(),std::back_inserter(symbols),get_symbol);
-
+    std::transform(symmetry_table.begin(), symmetry_table.end(), std::back_inserter(symbols),get_symbol);
     return symbols;
 }
 
 SpaceGroup::SpaceGroup(std::string symbol)
 {
     symbol = compress(trim(symbol));
-
     _symbol = std::move(symbol);
-
     reduceSymbol();
 
     auto find_symbol = [this](const std::pair<std::string,std::string>& s){return s.first.compare(this->_symbol)==0;};
@@ -303,7 +299,6 @@ SpaceGroup::SpaceGroup(std::string symbol)
     }
 
     _generators = trim(it->second);
-
     generateGroupElements();
 }
 

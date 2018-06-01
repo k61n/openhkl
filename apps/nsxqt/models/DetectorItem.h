@@ -17,6 +17,4 @@ public:
 
     explicit DetectorItem();
     QWidget* inspectItem() override;
-
-    QJsonObject toJson() override;
 };

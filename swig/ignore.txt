@@ -1,0 +1,8 @@
+nsx::CopyStorage< T, S... >
+nsx::DestructStorage< T, S... >
+nsx::MoveStorage< T, S... >
+nsx::FirstArg< T, Args... >
+nsx::Variant::is_subset< T, OtherArgs... >
+nsx::IsOneOf< T, S, Args... >
+nsx::IsOneOf< T, T, Args... >
+nsx::MaxSizeOf< T, Args... >

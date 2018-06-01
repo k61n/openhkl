@@ -36,24 +36,6 @@ InstrumentItem::InstrumentItem(const char* name, const char* source_name) : Tree
     appendRow(_source);
 }
 
-QJsonObject InstrumentItem::toJson()
-{
-    QJsonObject obj;
-
-    obj["name"] = text();
-    //obj["detector"] = _detector->toJson();
-    obj["sample"] = _sample->toJson();
-    //obj["source"] = _source->toJson();
-
-    return obj;
-}
-
-void InstrumentItem::fromJson(const QJsonObject &obj)
-{
-    setText(obj["name"].toString());
-    _sample->fromJson(obj["sample"].toObject());
-}
-
 DetectorItem* InstrumentItem::detectorItem()
 {
     return _detector;

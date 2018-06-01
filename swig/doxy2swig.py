@@ -8,10 +8,12 @@ the resulting output.
 
 Usage:
 
-  doxy2swig.py input.xml output.i
+  doxy2swig.py input.xml output.i [ignore-file]
 
 input.xml is your doxygen generated XML file and output.i is where the
 output will be written (the file will be clobbered).
+
+ignore-file is an optional file containing a list of classnames to ignore.
 
 """
 
@@ -24,6 +26,10 @@ output will be written (the file will be clobbered).
 # update 01.03.2016:
 # This version has been modified by Jonathan Fisher (j.fisher@fz-juelich.de)
 # to be forwards-compatible with Python 3
+#
+# update 29.05.2018:
+#   Add optional list of classes to ignore. We do this because of swig's confustion about
+#   docstrings for templates.
 
 from __future__ import print_function
 from xml.dom import minidom
@@ -55,7 +61,7 @@ class Doxy2SWIG:
 
     """
 
-    def __init__(self, src):
+    def __init__(self, src, ignore):
         """Initialize the instance given a source object (file or
         filename).
 
@@ -79,6 +85,7 @@ class Doxy2SWIG:
                         'collaborationgraph', 'reimplements',
                         'reimplementedby', 'derivedcompoundref',
                         'basecompoundref')
+        self.ignorenames = ignore
         #self.generics = []
 
     def generate(self):
@@ -122,7 +129,8 @@ class Doxy2SWIG:
         name = node.tagName
         ignores = self.ignores
         if name in ignores:
-            return
+            return  
+
         attr = "do_%s" % name
         if hasattr(self, attr):
             handlerMethod = getattr(self, attr)
@@ -199,8 +207,13 @@ class Doxy2SWIG:
             names = ('compoundname', 'briefdescription',
                      'detaileddescription', 'includes')
             first = self.get_specific_nodes(node, names)
+            ### 2018.05.29 begin edit
+            if 'compoundname' in first:
+                name = first['compoundname'].firstChild.data
+                if name in self.ignorenames:
+                    return
+            ### end edit
             for n in names:
-                #if first.has_key(n):
                 if n in first:
                     self.parse(first[n])
             self.add_text(['";','\n'])
@@ -317,7 +330,7 @@ class Doxy2SWIG:
             if not os.path.exists(fname):
                 fname = os.path.join(self.my_dir,  fname)
             print("parsing file: %s"%fname)
-            p = Doxy2SWIG(fname)
+            p = Doxy2SWIG(fname, self.ignorenames)
             p.generate()
             self.pieces.extend(self.clean_pieces(p.pieces))
 
@@ -366,14 +379,26 @@ class Doxy2SWIG:
         return ret
 
 
-def main(input, output):
-    p = Doxy2SWIG(input)
+def main(input, output, ignore):
+    p = Doxy2SWIG(input, ignore)
     p.generate()
     p.write(output)
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
+    nargs = len(sys.argv)
+    if nargs != 3 and nargs != 4:
         print(__doc__)
         sys.exit(1)
-    main(sys.argv[1], sys.argv[2])
+
+
+
+    if nargs == 4:
+        with open(sys.argv[3], 'r') as ignore_file:
+            ignores = set([ line.strip('\n').strip('\r') for line in ignore_file ])
+            print("ignored names:")
+            print(ignores)
+    else:
+        ignores = set()
+
+    main(sys.argv[1], sys.argv[2], ignores)

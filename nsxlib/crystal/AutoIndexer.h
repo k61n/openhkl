@@ -43,27 +43,38 @@
 
 namespace nsx {
 
-// note: cannot use nested classes in swig
+//! \class IndexerParameters
+//! \brief Struct to store parameters used by autoindexer.
 struct IndexerParameters {
+    //! Expected maximum dimension of the unit cell, in angstroms
     double maxdim = 200.0;
+    //! Number of candidate lattice vectors to use to search for a unit cell
     int nSolutions = 10;
+    //! Number of points on the unit sphere to sample when looking for lattice directions
     int nVertices = 10000;
+    //! Parameter used to control the number of histogram bins to use during FFT
     int subdiv = 30;
+    //! Tolerance used to determine if a peak is indexed by the unit cell
     double indexingTolerance = 0.2;
+    //! Tolerance to use when reducing to a Niggli cell
     double niggliTolerance = 1e-3;
+    //! Tolerance to use during Gruber reduction
     double gruberTolerance = 4e-2;
+    //! Use _only_ Niggli reduction (i.e., no subsequent Gruber reduction) if set true
     bool niggliReduction = false;
+    //! Lower bound of expected unit cell volume, used to reject candidate unit cells
     double minUnitCellVolume = 20.0;
+    //! Tolerance value used to decide of two unit cells are equivalent
     double unitCellEquivalenceTolerance = 0.05;
+    //! Indexing quality cutoff (value indicates percentage of peaks indexed by cell)
     double solutionCutoff = 10.0;
 };
 
 //! \class AutoIndexer
-//! Class to automatically index a set of peaks
+//! \brief Class to automatically index a set of peaks
 class AutoIndexer {
 
 public:
-
     //! Constructor
     //! @param handler the handler that will monitor the progresses
     AutoIndexer(const std::shared_ptr<ProgressHandler>& handler = nullptr);

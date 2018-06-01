@@ -245,7 +245,7 @@ int main()
         {"I a -3 d",   96},
     };
 
-    NSX_CHECK_EQUAL(nsx::SpaceGroup::symmetry_table.size(), static_cast<size_t>(230));
+    NSX_CHECK_EQUAL(nsx::SpaceGroup::symbols().size(), static_cast<size_t>(230));
 
     nsx::SpaceGroup sg_pnma("P n m a");
     // Check that string generator strings are OK s

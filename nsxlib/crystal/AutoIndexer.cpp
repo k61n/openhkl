@@ -109,7 +109,7 @@ void AutoIndexer::computeFFTSolutions()
     PeakFilter peak_filter;
     auto filtered_peaks = peak_filter.selected(_peaks,true);
 
-    for (auto i = 0; i < filtered_peaks.size(); ++i) {
+    for (size_t i = 0; i < filtered_peaks.size(); ++i) {
         auto& peak = filtered_peaks[i];
         auto q = peak->q().rowVector();
         qvects.push_back(ReciprocalVector(q));
@@ -141,20 +141,17 @@ void AutoIndexer::computeFFTSolutions()
     FFTIndexing indexing(_params.subdiv, _params.maxdim);
     
     // Find the best vectors via FFT
-    std::vector<tVector> tvects = indexing.findOnSphere(qvects, _params.nVertices, _params.nSolutions);
+    auto&& tvects = indexing.findOnSphere(qvects, _params.nVertices, _params.nSolutions);
     qvects.clear();
     
     for (int i = 0; i < _params.nSolutions; ++i) {
-
         for (int j = i+1; j < _params.nSolutions; ++j) {
-
             for (int k = j+1; k < _params.nSolutions; ++k) {
-
                 // Build up a unit cell out of the current directions triplet
                 Eigen::Matrix3d A;
-                A.col(0) = tvects[i]._vect;
-                A.col(1) = tvects[j]._vect;
-                A.col(2) = tvects[k]._vect;
+                A.col(0) = tvects[i].first;
+                A.col(1) = tvects[j].first;
+                A.col(2) = tvects[k].first;
                 // Build a unit cell with direct vectors
                 auto cell = std::shared_ptr<UnitCell>(new UnitCell(A));
 
@@ -176,7 +173,6 @@ void AutoIndexer::computeFFTSolutions()
                 if (equivalent) {
                     continue;
                 }
-
                 // Add this solution to the list of solution with a scored to be defined futher
                 _solutions.push_back(std::make_pair(cell, -1.0));
             }

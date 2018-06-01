@@ -4,7 +4,6 @@
 #include "Macros.h"
 #include "BlobFinder.h"
 #include "DataSet.h"
-#include "IFrameIterator.h"
 #include "Octree.h"
 #include "ProgressHandler.h"
 

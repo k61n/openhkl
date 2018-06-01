@@ -1,26 +1,26 @@
 #include "Ellipsoid.h"
-#include "FitProfile.h"
+#include "Profile3D.h"
 
 namespace nsx {
 
-FitProfile::FitProfile(const AABB& aabb, const Eigen::Vector3i& shape): FitProfile(aabb, shape(0), shape(1), shape(2))
+Profile3D::Profile3D(const AABB& aabb, const Eigen::Vector3i& shape): Profile3D(aabb, shape(0), shape(1), shape(2))
 {
 
 }
 
-FitProfile::FitProfile(): _shape(0, 0, 0), _profile()
+Profile3D::Profile3D(): _shape(0, 0, 0), _profile()
 {
     auto zero = Eigen::Vector3d(0,0,0);
     _aabb.setLower(zero);
     _aabb.setUpper(zero);
 }
 
-FitProfile::FitProfile(const AABB& aabb, int nx, int ny, int nz):
+Profile3D::Profile3D(const AABB& aabb, int nx, int ny, int nz):
     _aabb(aabb), _shape(nx, ny, nz), _count(0), _profile(nx*ny*nz, 0.0),
     _dx()
 {
     if (nx < 1 || ny < 1 || nz < 1) {
-        throw std::runtime_error("FitProfile: size must be positive!");
+        throw std::runtime_error("Profile3D: size must be positive!");
     }
 
     _dx = aabb.upper() - aabb.lower();
@@ -29,15 +29,15 @@ FitProfile::FitProfile(const AABB& aabb, int nx, int ny, int nz):
     }
 }
 
-double FitProfile::at(size_t i, size_t j, size_t k) const
+double Profile3D::at(size_t i, size_t j, size_t k) const
 {
     if (i >= _shape[0] || j >= _shape[1] || k >= _shape[2]) {
-        throw std::runtime_error("FitProfile::at() index out of bounds");
+        throw std::runtime_error("Profile3D::at() index out of bounds");
     }
     return _profile[i+_shape[0]*(j+_shape[1]*k)];
 }
 
-double& FitProfile::operator()(size_t i, size_t j, size_t k)
+double& Profile3D::operator()(size_t i, size_t j, size_t k)
 {
     assert(i < _shape[0]);
     assert(j < _shape[1]);
@@ -45,7 +45,7 @@ double& FitProfile::operator()(size_t i, size_t j, size_t k)
     return _profile[i+_shape[0]*(j+_shape[1]*k)];
 }
 
-const double& FitProfile::operator()(size_t i, size_t j, size_t k) const
+const double& Profile3D::operator()(size_t i, size_t j, size_t k) const
 {
     assert(i < _shape[0]);
     assert(j < _shape[1]);
@@ -53,7 +53,7 @@ const double& FitProfile::operator()(size_t i, size_t j, size_t k) const
     return _profile[i+_shape[0]*(j+_shape[1]*k)];
 }
 
-bool FitProfile::addValue(const Eigen::Vector3d& x, double y)
+bool Profile3D::addValue(const Eigen::Vector3d& x, double y)
 {
     const auto& ub = _aabb.upper();
     const auto& lb = _aabb.lower();
@@ -71,17 +71,17 @@ bool FitProfile::addValue(const Eigen::Vector3d& x, double y)
     return true;
 }
 
-const Eigen::Vector3d& FitProfile::dx() const
+const Eigen::Vector3d& Profile3D::dx() const
 {
     return _dx;
 }
 
-size_t FitProfile::count() const
+size_t Profile3D::count() const
 {
     return _count;
 }
 
-size_t FitProfile::addSubdividedValue(const Eigen::Vector3d& x, double y, size_t subdivide)
+size_t Profile3D::addSubdividedValue(const Eigen::Vector3d& x, double y, size_t subdivide)
 {
     size_t n = 0;
     const Eigen::Vector3d lower = x-_dx/2.0+_dx/2.0/subdivide;
@@ -106,12 +106,12 @@ size_t FitProfile::addSubdividedValue(const Eigen::Vector3d& x, double y, size_t
     return n;
 }
 
-const Eigen::Vector3i& FitProfile::shape() const
+const Eigen::Vector3i& Profile3D::shape() const
 {
     return _shape;
 }
 
-double FitProfile::predict(const Eigen::Vector3d& x) const
+double Profile3D::predict(const Eigen::Vector3d& x) const
 {
     const auto& ub = _aabb.upper();
     const auto& lb = _aabb.lower();
@@ -127,7 +127,7 @@ double FitProfile::predict(const Eigen::Vector3d& x) const
     return _profile[idx[0]+_shape[0]*(idx[1]+_shape[1]*idx[2])];
 }
 
-bool FitProfile::normalize()
+bool Profile3D::normalize()
 {
     double sum = 0.0;
 
@@ -145,7 +145,7 @@ bool FitProfile::normalize()
     return true;
 }
 
-void FitProfile::addProfile(const FitProfile& other, double weight)
+void Profile3D::addProfile(const Profile3D& other, double weight)
 {
     // special case: current profile is empty
     if (_profile.empty()) {
@@ -157,7 +157,7 @@ void FitProfile::addProfile(const FitProfile& other, double weight)
     }
 
     if (_shape != other._shape) {
-        throw std::runtime_error("FitProfile: cannot add profiles of different dimensions");
+        throw std::runtime_error("Profile3D: cannot add profiles of different dimensions");
     }
     
     double dx = _aabb.extents().squaredNorm();
@@ -165,7 +165,7 @@ void FitProfile::addProfile(const FitProfile& other, double weight)
     auto dub = _aabb.upper() - other._aabb.upper();
 
     if (dlb.squaredNorm() > 1e-6*dx || dub.squaredNorm() > 1e-6*dx) {
-        throw std::runtime_error("FitProfile: cannot add profiles with different bounding boxes");
+        throw std::runtime_error("Profile3D: cannot add profiles with different bounding boxes");
     }
 
     assert(_profile.size() == other._profile.size());
@@ -176,7 +176,7 @@ void FitProfile::addProfile(const FitProfile& other, double weight)
     _count += other._count;
 }
 
-Ellipsoid FitProfile::ellipsoid() const
+Ellipsoid Profile3D::ellipsoid() const
 {
     const Eigen::Vector3d lower = _dx / 2.0 + _aabb.lower();
     double mass = 0;
@@ -208,7 +208,7 @@ Ellipsoid FitProfile::ellipsoid() const
     return Ellipsoid(com, cov.inverse());
 }
 
-const AABB& FitProfile::aabb() const
+const AABB& Profile3D::aabb() const
 {
     return _aabb;
 }

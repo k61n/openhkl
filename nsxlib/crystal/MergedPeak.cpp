@@ -180,7 +180,6 @@ bool operator<(const MergedPeak& p, const MergedPeak& q)
 double MergedPeak::chi2() const
 {
     const double I_merge = getIntensity().value();
-    const double sigma_merge = getIntensity().sigma();
 
     // if there is no redundancy, we cannot compute chi2
     if (redundancy() < 1.99) {

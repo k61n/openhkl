@@ -107,35 +107,6 @@ NumorItem* DataItem::importRawData(const std::vector<std::string> &filenames,
 }
 #endif
 
-QJsonObject DataItem::toJson()
-{
-    QJsonObject obj;
-    QJsonArray numors;
-
-    for(int i = 0; i < rowCount(); ++i) {
-        NumorItem* item = dynamic_cast<NumorItem*>(this->child(i));
-        assert(item != nullptr);
-        numors.push_back(item->toJson());
-    }
-
-    obj["numors"] = numors;
-
-    return obj;
-}
-
-void DataItem::fromJson(const QJsonObject &obj)
-{
-    #if 0
-    QJsonArray numors = obj["numors"].toArray();
-
-    for (auto&& numor: numors) {
-        QString filename = numor.toObject()["filename"].toString();
-        NumorItem* item = importData(filename.toStdString());
-        item->fromJson(numor.toObject());
-    }
-    #endif
-}
-
 void DataItem::findPeaks()
 {
     nsx::DataList selectedNumors = selectedData();

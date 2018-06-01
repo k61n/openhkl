@@ -21,30 +21,6 @@ void TreeItem::setData(const QVariant &value, int role)
     QStandardItem::setData(value,role);
 }
 
-QJsonObject TreeItem::toJson()
-{
-    QJsonObject obj;
-    QJsonArray children;
-
-    obj["name"] = text();
-
-    for (int i = 0; i < rowCount(); ++i) {
-        TreeItem* tree_item = dynamic_cast<TreeItem*>(this->child(i));
-        assert(tree_item != nullptr);
-        children.push_back(tree_item->toJson());
-    }
-
-    obj["data"] = children;
-
-    return obj;
-}
-
-void TreeItem::fromJson(const QJsonObject &obj)
-{
-    QString name = obj["name"].toString();
-    QJsonArray data = obj["data"].toArray();
-}
-
 nsx::sptrExperiment TreeItem::experiment()
 {
     return experimentItem()->experiment();

@@ -98,18 +98,9 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     qreal peak_w = peak_u[0]-peak_l[0];
     qreal peak_h = peak_u[1]-peak_l[1];
 
-    _label->setPos(peak_w/2,peak_h/2);
+    _label->setPos(peak_w/2,peak_h/2);  
     
-    Eigen::Vector3d dx = _frameCenter - _peak->getShape().center();
-
     painter->setBrush(QBrush(QColor(127, 255, 127, 127)));
-    //painter->drawEllipse(dx(0)-2, dx(1)-2, 4, 4);
-
-    #if 0
-    dx = _predictedCenter - _peak->getShape().center();
-    painter->setBrush(QBrush(QColor(127, 127, 255, 255)));
-    painter->drawEllipse(dx(0)-2, dx(1)-2, 4, 4);
-    #endif
 }
 
 void PeakGraphicsItem::setFrame(unsigned long frame)
@@ -216,8 +207,7 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     double intensity=_peak->getScaledIntensity().value();
     auto corr_int = _peak->correctedIntensity();
     double sI=_peak->getScaledIntensity().sigma();
-    info+="Intensity ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";
-    double l = state.lorentzFactor(c[0], c[1]);
+    info+="Intensity ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";  
     info+="Cor. int. ("+QString(QChar(0x03C3))+"I): "+QString::number(corr_int.value(),'f',2)+" ("+QString::number(corr_int.sigma(),'f',2)+")\n";
     info += "p value (" + QString::number(_peak->pValue(), 'f', 3) + ")\n";
 

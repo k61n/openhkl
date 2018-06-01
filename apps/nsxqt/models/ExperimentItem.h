@@ -20,9 +20,7 @@ class ExperimentItem: public TreeItem
 {
 public:
     explicit ExperimentItem(nsx::sptrExperiment experiment);
-    virtual ~ExperimentItem() = default;
-    QJsonObject toJson();
-    void fromJson(const QJsonObject& obj);
+    virtual ~ExperimentItem() = default;    
 
     nsx::sptrExperiment experiment() { return _experiment; }
 

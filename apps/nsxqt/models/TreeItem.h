@@ -23,9 +23,6 @@ public:
 
     virtual SessionModel* model() const;
 
-    virtual QJsonObject toJson();
-    virtual void fromJson(const QJsonObject& obj);
-
     nsx::sptrExperiment experiment();
 
     ExperimentItem* experimentItem();

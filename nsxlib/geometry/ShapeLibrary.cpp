@@ -26,6 +26,7 @@ static Eigen::Matrix3d from_cholesky(const std::array<double, 6>& components)
     return L*L.transpose();
 }
 
+//! \brief Helper struct used internally by the shape library.
 struct FitData {
     Eigen::Matrix3d Rs, Rd, Jk, Jp, Jd;
     Eigen::Vector3d kf, ki, q;
@@ -72,11 +73,6 @@ ShapeLibrary::ShapeLibrary(bool detector_coords):
     _choleskyS.fill(1e-6);
 }
 
-ShapeLibrary::~ShapeLibrary()
-{
-
-}
-
 static void covariance_helper(Eigen::Matrix3d& result, const FitData& f, const Eigen::Matrix3d& sigmaD, const Eigen::Matrix3d& sigmaM, const Eigen::Matrix3d& sigmaS)
 {
     static constexpr double deg2 = (M_PI/180)*(M_PI/180);
@@ -103,7 +99,7 @@ static void covariance_helper(Eigen::Matrix3d& result, const FitData& f, const E
     result = Jd * cov * Jd.transpose();
 }
 
-bool ShapeLibrary::addPeak(sptrPeak3D peak, FitProfile&& profile, IntegratedProfile&& integrated_profile)
+bool ShapeLibrary::addPeak(sptrPeak3D peak, Profile3D&& profile, IntegratedProfile&& integrated_profile)
 {
     Eigen::Matrix3d A = peak->getShape().inverseMetric();
     Eigen::Matrix3d cov = 0.5 * (A + A.transpose());
@@ -203,9 +199,9 @@ double ShapeLibrary::meanPearson() const
     return sum_pearson / _profiles.size();
 }
 
-FitProfile ShapeLibrary::meanProfile(const DetectorEvent& ev, double radius, double nframes) const
+Profile3D ShapeLibrary::meanProfile(const DetectorEvent& ev, double radius, double nframes) const
 {
-    FitProfile mean;
+    Profile3D mean;
     PeakList neighbors = findNeighbors(ev, radius, nframes);
 
     for (auto peak: neighbors) {

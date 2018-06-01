@@ -9,7 +9,6 @@
 #include "ErfInv.h"
 #include "Experiment.h"
 #include "GeometryTypes.h"
-#include "IFrameIterator.h"
 #include "MathematicsTypes.h"
 #include "Octree.h"
 #include "Peak3D.h"

@@ -1,9 +1,9 @@
 #include "DataSet.h"
 #include "Ellipsoid.h"
-#include "IntegratedProfile.h"
 #include "Intensity.h"
 #include "MillerIndex.h"
 #include "Peak3D.h"
+#include "Profile1D.h"
 #include "ShapeIntegrator.h"
 #include "PeakCoordinateSystem.h"
 
@@ -31,13 +31,10 @@ bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
     StrongPeakIntegrator::compute(peak, region);
 
     const double mean_bkg = _meanBackground.value();
-    const double std_bkg = _meanBackground.sigma();
-    const double I_peak = _integratedIntensity.value();
-
     const auto& events = region.data().events();
     const auto& counts = region.data().counts();
 
-    FitProfile profile(_aabb, _nx, _ny, _nz);
+    Profile3D profile(_aabb, _nx, _ny, _nz);
     // todo: don't use default constructor!
     IntegratedProfile integrated_profile(_meanBackground, region.peakEnd());
     PeakCoordinateSystem frame(peak);

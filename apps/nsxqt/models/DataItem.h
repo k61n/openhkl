@@ -18,9 +18,6 @@ public:
                              double wavelength, double delta_chi, double delta_omega, double delta_phi,
                              bool rowMajor, bool swapEndian, int bpp);
 
-    QJsonObject toJson() override;
-    void fromJson(const QJsonObject& obj) override;
-
     void findPeaks();
     nsx::DataList selectedData();
 

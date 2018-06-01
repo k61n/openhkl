@@ -262,16 +262,14 @@ void DialogStatistics::updateStatisticsTab()
 
     // Write per-shell statistics
 
-    const auto& shells = resolution_shells.shells();
-
     for (int i = n_shells-1; i >= 0; --i) {
 
-        const double d_lower = shells[i].dmin;
-        const double d_upper = shells[i].dmax;
+        const double d_lower = resolution_shells.shell(i).dmin;
+        const double d_upper = resolution_shells.shell(i).dmax;
 
         nsx::MergedData merged_data_per_shell(_spaceGroup, include_friedel);
 
-        for (auto&& peak: shells[i].peaks) {
+        for (auto&& peak: resolution_shells.shell(i).peaks) {
             merged_data_per_shell.addPeak(peak);
         }
 
