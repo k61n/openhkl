@@ -240,6 +240,7 @@ void DialogPeakFind::changeMaxFrames(int size)
 
 void DialogPeakFind::changeThreshold()
 {
+    _peakFinder->setThreshold(ui->threshold->value());
     updatePreview();
 }
 
