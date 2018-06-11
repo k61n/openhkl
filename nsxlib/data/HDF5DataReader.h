@@ -44,8 +44,8 @@ class HDF5DataReader: public HDF5MetaDataReader
 public:
     static IDataReader* create(const std::string& filename, sptrDiffractometer diffractometer);
 
+    // Note that we need this constructor explicitly defined for SWIG.
     HDF5DataReader(const std::string& filename, sptrDiffractometer instrument);
-    virtual ~HDF5DataReader();
 
     Eigen::MatrixXi getData(size_t frame) override;
 };

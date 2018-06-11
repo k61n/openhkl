@@ -14,21 +14,15 @@
 
 namespace nsx {
 
+HDF5DataReader::HDF5DataReader(const std::string& filename, sptrDiffractometer instrument):
+    HDF5MetaDataReader(filename, instrument)
+{
+    
+}
+
 IDataReader* HDF5DataReader::create(const std::string& filename, sptrDiffractometer diffractometer)
 {
     return new HDF5DataReader(filename, diffractometer);
-}
-
-HDF5DataReader::HDF5DataReader(const std::string& filename, sptrDiffractometer diffractometer)
-    :HDF5MetaDataReader(filename, diffractometer)
-{
-}
-
-HDF5DataReader::~HDF5DataReader()
-{
-    if (_isOpened) {
-        close();
-    }
 }
 
 Eigen::MatrixXi HDF5DataReader::getData(size_t frame)
