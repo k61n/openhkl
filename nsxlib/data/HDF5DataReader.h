@@ -33,12 +33,12 @@
 
 #include "H5Cpp.h"
 
-#include "IDataReader.h"
+#include "HDF5MetaDataReader.h"
 #include "InstrumentTypes.h"
 
 namespace nsx {
 
-class HDF5DataReader: public IDataReader
+class HDF5DataReader: public HDF5MetaDataReader
 {
 
 public:
@@ -48,15 +48,6 @@ public:
     virtual ~HDF5DataReader();
 
     Eigen::MatrixXi getData(size_t frame) override;
-
-    void open() override;
-    void close() override;
-
-private:
-    std::unique_ptr<H5::H5File> _file;
-    std::unique_ptr<H5::DataSet> _dataset;
-    std::unique_ptr<H5::DataSpace> _space;
-    std::unique_ptr<H5::DataSpace> _memspace;
 };
 
 } // end namespace nsx
