@@ -22,7 +22,7 @@
   <property name="windowTitle">
    <string>Auto-indexer dialog</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="gridLayout" rowstretch="0,0">
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1">
      <item>
@@ -31,23 +31,6 @@
         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
        </property>
        <item row="1" column="0">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Selected unit cell</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QComboBox" name="unitCells">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-           <horstretch>1</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
         <widget class="QGroupBox" name="niggliReduction">
          <property name="title">
           <string>&amp;Niggli cell</string>
@@ -101,7 +84,7 @@
          </layout>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="2" column="0">
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>Gruber tolerance</string>
@@ -111,7 +94,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="2" column="1">
         <widget class="QDoubleSpinBox" name="gruberTolerance">
          <property name="buttonSymbols">
           <enum>QAbstractSpinBox::NoButtons</enum>
@@ -130,7 +113,7 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
+       <item row="3" column="0">
         <widget class="QLabel" name="label_3">
          <property name="text">
           <string>Maximum cell dimension</string>
@@ -140,7 +123,7 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="3" column="1">
         <widget class="QDoubleSpinBox" name="maxCellDim">
          <property name="buttonSymbols">
           <enum>QAbstractSpinBox::NoButtons</enum>
@@ -156,14 +139,14 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
+       <item row="4" column="0">
         <widget class="QLabel" name="label_5">
          <property name="text">
           <string>Number of Q vertices</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
+       <item row="4" column="1">
         <widget class="QSpinBox" name="nVertices">
          <property name="buttonSymbols">
           <enum>QAbstractSpinBox::NoButtons</enum>
@@ -176,7 +159,7 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="0">
+       <item row="5" column="0">
         <widget class="QLabel" name="label_4">
          <property name="text">
           <string>Number of solutions</string>
@@ -186,7 +169,7 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="1">
+       <item row="5" column="1">
         <widget class="QSpinBox" name="maxNumSolutions">
          <property name="buttonSymbols">
           <enum>QAbstractSpinBox::NoButtons</enum>
@@ -202,37 +185,77 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0" colspan="2">
-        <widget class="QPushButton" name="addUnitCell">
-         <property name="text">
-          <string>Add unit cell</string>
+       <item row="7" column="0" colspan="2">
+        <widget class="QPushButton" name="index">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="autoDefault">
-          <bool>false</bool>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+        border: 1px solid #000000;
+        border-radius: 20px;
+        padding: 5px 15px 2px 5px;
+        background: #eeeeee;
+        color: #000000;
+        font: bold large &quot;Arial&quot;;
+        height: 30px;
+}
+
+QPushButton:pressed {
+        background: #dddddd;
+        padding-top: 2px;
+        padding-left: 3px;
+
+}
+</string>
+         </property>
+         <property name="text">
+          <string>Index</string>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Indexing tolerance</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QDoubleSpinBox" name="indexingTolerance">
+         <property name="decimals">
+          <number>3</number>
+         </property>
+         <property name="maximum">
+          <double>1.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.001000000000000</double>
+         </property>
+         <property name="value">
+          <double>0.200000000000000</double>
          </property>
         </widget>
        </item>
       </layout>
      </item>
      <item>
-      <widget class="QTableView" name="solutions"/>
-     </item>
-    </layout>
-   </item>
-   <item row="1" column="0">
-    <widget class="QPushButton" name="index">
-     <property name="styleSheet">
-      <string notr="true">QPushButton:hover{
-        background: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 :   1, stop :   0.0 #ffd9aa,
-                stop :   0.5 #ffbb6e, stop :   0.55 #feae42, stop :   1.0 #fedb74);
-}
-
-QPushButton {
+      <widget class="QTableView" name="solutions">
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
         border: 1px solid #6593cf;
         border-radius: 2px;
         padding: 5px 15px 2px 5px;
-        background: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 :   1, stop :   0.0 #f5f9ff,
-                stop :   0.5 #c7dfff, stop :   0.55 #afd2ff, stop :   1.0 #c0dbff);
+        background: #ffeeee;
         color: #006aff;
         font: bold large &quot;Arial&quot;;
         height: 30px;
@@ -263,11 +286,55 @@ QPushButton:disabled {
         padding-left: 3px;
         color: black;
 }</string>
-     </property>
-     <property name="text">
-      <string>Index</string>
-     </property>
-    </widget>
+       </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::SingleSelection</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0">
+     <item>
+      <widget class="QDialogButtonBox" name="cancelOK">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+        border: 1px solid #000000;
+        border-radius: 2px;
+        padding: 5px 15px 2px 5px;
+        background: #eeeeee;
+        color: #000000;
+        font: bold large &quot;Arial&quot;;
+        height: 30px;
+}
+
+QPushButton:pressed {
+        background: #dddddd;
+        padding-top: 2px;
+        padding-left: 3px;
+
+}
+</string>
+       </property>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+       <property name="centerButtons">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

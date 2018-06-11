@@ -31,12 +31,14 @@
 #include "GLSphere.h"
 #include "GLWidget.h"
 #include "ExperimentItem.h"
+#include "InstrumentItem.h"
 #include "LibraryItem.h"
 #include "MCAbsorptionDialog.h"
 #include "MetaTypes.h"
 #include "PeaksItem.h"
 #include "PeakListItem.h"
 #include "ProgressView.h"
+#include "SampleItem.h"
 #include "SessionModel.h"
 #include "NumorItem.h"
 
@@ -213,8 +215,30 @@ void PeaksItem::filterPeaks()
 
 void PeaksItem::autoindex()
 {
-    DialogAutoIndexing dlg(experimentItem(), selectedPeaks());
-    dlg.exec();
+
+    nsx::PeakList peaks = selectedPeaks();
+
+    DialogAutoIndexing dlg(experimentItem(), peaks);
+
+    int return_code = dlg.exec();
+
+    if (return_code == QDialog::Rejected) {
+        return;
+    }
+
+    auto uc = dlg.unitCell();
+
+    if (!uc) {
+        return;
+    }
+
+    for (auto peak : peaks) {
+        peak->addUnitCell(uc);
+    }
+
+    auto experiment_item = experimentItem();
+    auto sample_item = experiment_item->instrumentItem()->sampleItem();
+    experiment_item->model()->setData(sample_item->index(),QVariant::fromValue(uc),Qt::UserRole);
 }
 
 void PeaksItem::refine()
