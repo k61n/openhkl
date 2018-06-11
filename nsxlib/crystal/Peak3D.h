@@ -47,38 +47,31 @@
 
 namespace nsx {
 
+//! \class Peak3D
+//! \brief Data type used to store integrated peaks, including their shape and location.
 class Peak3D {
 
 public:
-
+    //! Create peak belonging to data without setting a position, shape, or intensity
     Peak3D(sptrDataSet data);
-    
+    //! Create peak belonging to data with given shape
     Peak3D(sptrDataSet data, const Ellipsoid& shape);
-
-    //! Copy constructor
+    //! Copy constructor deleted
     Peak3D(sptrDataSet data, const Peak3D& other) = delete;
-
-    //! Assignment operator
+    //! Assignment operator deleted
     Peak3D& operator=(const Peak3D& other) = delete;
-
     //! Set the Peak region. Peak shaped is owned after setting
     void setShape(const Ellipsoid& peak);
-
     //! Get the projection of total data in the bounding box.
     const std::vector<Intensity>& rockingCurve() const;
-
     //! Compute the shape in q-space. May throw if there is no valid q-space ellipsoid.
     Ellipsoid qShape() const;
-
-    const Ellipsoid& getShape() const { return _shape; }
-    //const IntegrationRegion& getIntegrationRegion() const { return _integrationRegion; }
-
+    //! Return the shape of the peak as an ellipsoid in detector coordinates
+    const Ellipsoid& getShape() const { return _shape; }    
     //! Return the scaled intensity of the peak.
     Intensity getScaledIntensity() const;
-
     //! Return the intensity, after scaling, transmission, and Lorentz factor corrections
     Intensity correctedIntensity() const;
-
     //! Return the raw intensity of the peak.
     Intensity getRawIntensity() const;
     //! Return mean background of the peak
@@ -89,54 +82,52 @@ public:
     double bkgBegin() const;
     //! Return shape scale used to define end of background region
     double bkgEnd() const;
-
     //! Return the scaling factor.
     double getScale() const;
     //! Rescale the current scaling factor by scale.
     void rescale(double factor);
     //! Set the scaling factor.
     void setScale(double factor);
-   
+    //! Comparison operator used to sort peaks
     friend bool operator<(const Peak3D& p1, const Peak3D& p2);
+    //! Selected the peak for fitting or integration
     void setSelected(bool);
+    //! Return true if peak is selected
     bool isSelected() const;
+    //! Apply mask to peak
     void setMasked(bool masked);
+    //! Set the transmission factor
     void setTransmission(double transmission);
+    //! Return the transmission factor
     double getTransmission() const;
-
+    //! Add a unit cell to the peak, optionally make it the active cell
     void addUnitCell(sptrUnitCell uc, bool activate=true);
+    //! Return the index of the active unit cell
     int activeUnitCellIndex() const;
+    //! Return the active unit cell
     sptrUnitCell activeUnitCell() const;
+    //! Return the unit cell specified by the given index
     sptrUnitCell unitCell(int index) const;
-
-    friend bool operator<(const Peak3D& p1, const Peak3D& p2);
-
+    //! Return true if peak has been indexed by a unit cell
     bool isIndexed() const;
-
+    //! Set whether the peak is observed or predicted
     void setPredicted(bool predicted);
+    //! Return if the peak is predicted
     bool isPredicted() const;
-
+    //! Return true if there is at least one unit cell assigned to the peak
     bool hasUnitCells() const;
-    void scaleShape(double scale);
-
-    //! update the integration
+    //! Update the integration of the peak
     void updateIntegration(const IPeakIntegrator& integrator, double peakEnd, double bkgBegin, double bkgEnd);
-
-    //! compute P value that there is actually an observed peak, assuming Poisson statistics
+    //! Compute P value that there is actually an observed peak, assuming Poisson statistics
     double pValue() const;
-
-    //const PeakIntegrator& getIntegration() const;
-
     //! Return the q vector of the peak, transformed into sample coordinates.
     ReciprocalVector q() const;
     //! Return the predicted q vector of the peak, based on Miller index.
     ReciprocalVector qPredicted() const;
-
+    //! Return the data set to which this peak belongs
     sptrDataSet data() const { return _data; }
-
-    //! Raw intensity count (from image), with no corrections
+    //! Set raw intensity count (from image), with no corrections
     void setRawIntensity(const Intensity& i);
-
     //! Return peak center at the given frame
     DetectorEvent predictCenter(double frame) const;
 
@@ -147,10 +138,6 @@ public:
 private:
     //! Shape describing the Peak zone
     Ellipsoid _shape;
-
-    //! Peak profile along frame (rotation) axis
-    std::vector<Intensity> _rockingCurve;
-
     //! Raw intensity (count), background corrected
     Intensity _rawIntensity;
     //! Mean background estimate
@@ -175,6 +162,8 @@ private:
     double _pValue;
 
     sptrDataSet _data;
+    //! Peak profile along frame (rotation) axis
+    std::vector<Intensity> _rockingCurve;
 };
 
 } // end namespace nsx

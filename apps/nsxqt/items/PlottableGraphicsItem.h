@@ -1,5 +1,4 @@
-#ifndef NSXQT_PLOTTABLEGRAPHICSITEM_H
-#define NSXQT_PLOTTABLEGRAPHICSITEM_H
+#pragma once
 
 #include <QGraphicsItem>
 #include <QPen>
@@ -34,5 +33,3 @@ public:
     bool isPlottable(SXPlot* plot) const;
 
 };
-
-#endif // NSXQT_PLOTTABLEGRAPHICSITEM_H

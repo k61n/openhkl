@@ -1,5 +1,4 @@
-#ifndef NSXQT_SAMPLEPROPERTYWIDGET_H
-#define NSXQT_SAMPLEPROPERTYWIDGET_H
+#pragma once
 
 #include <QWidget>
 
@@ -24,5 +23,3 @@ private:
     SampleItem* _sampleItem;
     Ui::SamplePropertyWidget *ui;
 };
-
-#endif // NSXQT_SAMPLEPROPERTYWIDGET_H

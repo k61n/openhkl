@@ -1,5 +1,4 @@
-#ifndef NSXQT_DETECTORITEM_H
-#define NSXQT_DETECTORITEM_H
+#pragma once
 
 #include <memory>
 #include <string>
@@ -18,8 +17,4 @@ public:
 
     explicit DetectorItem();
     QWidget* inspectItem() override;
-
-    QJsonObject toJson() override;
 };
-
-#endif // NSXQT_DETECTORITEM_H

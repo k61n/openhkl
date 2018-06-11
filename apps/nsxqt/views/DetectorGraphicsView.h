@@ -1,5 +1,4 @@
-#ifndef NSXQT_DETECTORGRAPHICSVIEW_H
-#define NSXQT_DETECTORGRAPHICSVIEW_H
+#pragma once
 
 #include <QGraphicsView>
 
@@ -21,5 +20,3 @@ private:
     void copyViewToClipboard();
     DetectorScene* _scene;
 };
-
-#endif // NSXQT_DETECTORGRAPHICSVIEW_H

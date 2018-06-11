@@ -1,5 +1,4 @@
-#ifndef NSXQT_ABSORPTIONWIDGET_H
-#define NSXQT_ABSORPTIONWIDGET_H
+#pragma once
 
 #include <string>
 #include <utility>
@@ -40,5 +39,3 @@ private slots:
     void on_pushButton_clicked();
 
 };
-
-#endif // NSXQT_ABSORPTIONWIDGET_H

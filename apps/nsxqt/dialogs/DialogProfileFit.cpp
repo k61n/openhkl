@@ -3,10 +3,10 @@
 #include <QStatusBar>
 
 #include <nsxlib/DataSet.h>
-#include <nsxlib/FitProfile.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakCoordinateSystem.h>
 #include <nsxlib/PeakFilter.h>
+#include <nsxlib/Profile3D.h>
 #include <nsxlib/ShapeIntegrator.h>
 #include <nsxlib/ShapeLibrary.h>
 #include <nsxlib/Logger.h>
@@ -98,8 +98,7 @@ void DialogProfileFit::build()
 
     auto nx = ui->nx->value();
     auto ny = ui->ny->value();
-    auto nz = ui->nz->value();  
-    auto subdivide = ui->subdivide->value();
+    auto nz = ui->nz->value();
 
     auto sigmaM = ui->sigmaM->value();
     auto sigmaD = ui->sigmaD->value();
@@ -217,7 +216,7 @@ void DialogProfileFit::drawFrame(int value)
     ui->graphicsView->fitInView(0, 0, shape[0], shape[1]);
 }
 
-const nsx::FitProfile& DialogProfileFit::profile()
+const nsx::Profile3D& DialogProfileFit::profile()
 {
     return _profile;
 }

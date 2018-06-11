@@ -19,7 +19,7 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
     ui(new Ui::SamplePropertyWidget)
 {
     ui->setupUi(this);
-    auto sample=_sampleItem->experiment()->getDiffractometer()->getSample();
+    auto sample=_sampleItem->experiment()->diffractometer()->getSample();
     auto gonio=sample->getGonio();
 
     ui->tableWidget_Sample->setEditTriggers(QAbstractItemView::DoubleClicked);
@@ -37,10 +37,7 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
         else
             item0->setBackgroundColor(QColor("#DDFFDD"));
         QTableWidgetItem* item1=new QTableWidgetItem();
-
         std::ostringstream os;
-
-        bool isrot=false;
 
         if (nsx::RotAxis* rot=dynamic_cast<nsx::RotAxis*>(axis)) {
             os << "R(";
@@ -51,7 +48,7 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
             } else {
                 os << "CCW";
             }
-            isrot=true;
+            //isrot=true;
         }
         else if(dynamic_cast<nsx::TransAxis*>(axis)) {
             os << "T(";
@@ -61,14 +58,6 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
         item1->setData(Qt::EditRole, QString(os.str().c_str()));
         QTableWidgetItem* item2=new QTableWidgetItem();
 
-        // todo: fix this after offset refinement
-        #if 0
-        if (isrot) {
-            item2->setData(Qt::EditRole, double(axis->getOffset()/nsx::deg));
-        } else {
-            item2->setData(Qt::EditRole, double(axis->getOffset()/nsx::mm));
-        }
-        #endif
         item0->setFlags(item0->flags() &~Qt::ItemIsEditable);
         item1->setFlags(item1->flags() &~Qt::ItemIsEditable);
         ui->tableWidget_Sample->setItem(i,0,item0);
@@ -85,15 +74,7 @@ SamplePropertyWidget::~SamplePropertyWidget()
 
 void SamplePropertyWidget::cellHasChanged(int i,int j)
 {
-    auto sample=_sampleItem->experiment()->getDiffractometer()->getSample();
+    auto sample=_sampleItem->experiment()->diffractometer()->getSample();
     auto axis=sample->getGonio()->getAxis(i);
-    // todo: fix this after offset refactor
-    #if 0
-    if (dynamic_cast<nsx::TransAxis*>(axis)) {
-         axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble()*nsx::mm); // Given in mm
-    } else {
-         axis->setOffset(ui->tableWidget_Sample->item(i,j)->data(Qt::EditRole).toDouble()*nsx::deg); // Given in degs
-    }
-    #endif 
 }
 

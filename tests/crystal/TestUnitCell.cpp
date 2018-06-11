@@ -66,7 +66,7 @@ int main()
     cell.setBravaisType(nsx::BravaisType::Tetragonal);
     // Check angle calculations
     nsx::UnitCell cell4(10,10,10,90*nsx::deg,98*nsx::deg,90*nsx::deg);
-    NSX_CHECK_CLOSE(cell4.getAngle({1,0,0},{0,0,1}),82.0*nsx::deg,tolerance);
+    NSX_CHECK_CLOSE(cell4.angle({1,0,0},{0,0,1}),82.0*nsx::deg,tolerance);
 
     // Check equivalence
     cell4.setSpaceGroup("P 4/m m m");

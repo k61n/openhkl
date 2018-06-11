@@ -1,5 +1,4 @@
-#ifndef NSXQT_SOURCEITEM_H
-#define NSXQT_SOURCEITEM_H
+#pragma once
 
 #include <nsxlib/InstrumentTypes.h>
 
@@ -11,5 +10,3 @@ public:
     explicit SourceItem(const char* name);
     QWidget* inspectItem();
 };
-
-#endif // NSXQT_SOURCEITEM_H

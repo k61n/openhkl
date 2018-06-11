@@ -1,17 +1,13 @@
-#ifndef NSXQT_TREEITEM_H
-#define NSXQT_TREEITEM_H
+#pragma once
 
-#include <memory>
-#include <string>
-
-#include <QMenu>
+#include <QJsonObject>
 #include <QStandardItem>
 #include <QVariant>
-#include <QJsonObject>
 
 #include <nsxlib/Experiment.h>
 #include <nsxlib/InstrumentTypes.h>
 
+#include "SessionModel.h"
 
 class QWidget;
 class ExperimentItem;
@@ -20,17 +16,14 @@ class TreeItem: public QStandardItem
 {
 public:
     explicit TreeItem();
-    //nsx::sptrExperiment getExperiment();
+
     virtual ~TreeItem();
 
-    virtual void setData(const QVariant & value, int role=Qt::UserRole + 1) override;
+    virtual void setData(const QVariant& value, int role=Qt::UserRole + 1) override;
 
-    virtual QJsonObject toJson();
-    virtual void fromJson(const QJsonObject& obj);
+    virtual SessionModel* model() const;
 
     nsx::sptrExperiment experiment();
 
-    ExperimentItem& experimentItem();
+    ExperimentItem* experimentItem();
 };
-
-#endif // NSXQT_TREEITEM_H

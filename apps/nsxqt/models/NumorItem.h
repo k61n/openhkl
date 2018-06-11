@@ -1,5 +1,4 @@
-#ifndef NSXQT_NUMORITEM_H
-#define NSXQT_NUMORITEM_H
+#pragma once
 
 #include <string>
 
@@ -20,13 +19,8 @@ public:
     ~NumorItem();
     QWidget* inspectItem() override;
     nsx::sptrDataSet getData();
-
-    QJsonObject toJson() override;
-    void fromJson(const QJsonObject& obj) override;
     void exportHDF5(const std::string& filename) const;
 
 private:
     nsx::sptrDataSet _data;
 };
-
-#endif // NSXQT_NUMORITEM_H

@@ -1,5 +1,4 @@
-#ifndef NSXQT_INSPECTABLETREEITEM_H
-#define NSXQT_INSPECTABLETREEITEM_H
+#pragma once
 
 #include <nsxlib/InstrumentTypes.h>
 
@@ -16,5 +15,3 @@ public:
     //! Tree items can expose a QWidget that show their internal properties.
     virtual QWidget* inspectItem() = 0;
 };
-
-#endif // NSXQT_INSPECTABLETREEITEM_H

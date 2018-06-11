@@ -1,5 +1,4 @@
-#ifndef NSXQT_INSTRUMENTITEM_H
-#define NSXQT_INSTRUMENTITEM_H
+#pragma once
 
 #include <QJsonObject>
 
@@ -16,19 +15,13 @@ class InstrumentItem : public TreeItem
 public:
     explicit InstrumentItem(const char* name, const char* source_name);
 
-    QJsonObject toJson() override;
-    void fromJson(const QJsonObject& obj) override;
-
 public:
-
-    DetectorItem* getDetectorItem();
-    SampleItem* getSampleItem();
-    SourceItem* getSourceItem();
+    DetectorItem* detectorItem();
+    SampleItem* sampleItem();
+    SourceItem* sourceItem();
 
 private:
     DetectorItem* _detector;
     SampleItem* _sample;
     SourceItem* _source;
 };
-
-#endif // NSXQT_INSTRUMENTITEM_H

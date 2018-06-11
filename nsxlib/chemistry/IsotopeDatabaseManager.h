@@ -14,6 +14,8 @@
 
 namespace nsx {
 
+//! \class IsotopDatabaseManager
+//! \brief Class to manage the YAML-based isotope database.
 class IsotopeDatabaseManager : public Singleton<IsotopeDatabaseManager,Constructor,Destructor> {
 
 public:

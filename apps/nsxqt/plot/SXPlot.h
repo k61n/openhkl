@@ -1,5 +1,4 @@
-#ifndef NSXQT_SXPLOT_H
-#define NSXQT_SXPLOT_H
+#pragma once
 
 #include <string>
 
@@ -40,5 +39,3 @@ private:
     void copyViewToClipboard();
 
 };
-
-#endif // NSXQT_SXPLOT_H

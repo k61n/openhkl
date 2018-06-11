@@ -44,7 +44,8 @@
 
 namespace nsx {
 
-//! Class to handle calculation of merged data
+//! \class MergedPeak
+//! \brief Class to handle calculation of merged data
 class MergedPeak {
 public:
 

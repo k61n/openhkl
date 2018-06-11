@@ -13,7 +13,7 @@
 %feature("director") IPeakIntegrator;
 %feature("director") MeanBackgroundIntegrator;
 %feature("director") StrongPeakIntegrator;
-%feature("director") WeakPeakIntegrator;
+%feature("director") Profile3DIntegrator;
 %feature("director") ISigmaIntegrator;
 %feature("director") ShapeIntegrator;
 
@@ -129,11 +129,10 @@ using Eigen::Quaterniond;
 #include "RefinementBatch.h"
 #include "Refiner.h"
 #include "AutoIndexer.h"
-#include "Profile.h"
 #include "Intensity.h"
 #include "IPeakIntegrator.h"
 #include "MeanBackgroundIntegrator.h"
-#include "WeakPeakIntegrator.h"
+#include "Profile3DIntegrator.h"
 #include "ISigmaIntegrator.h"
 #include "StrongPeakIntegrator.h"
 #include "ShapeIntegrator.h"
@@ -174,16 +173,13 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "DetectorEvent.h"
 
 #include "DataSet.h"
-#include "FitProfile.h"
+#include "Profile3D.h"
 #include "MetaData.h"
 #include "ILLDataReader.h"
 #include "IDataReader.h"
 #include "HDF5DataReader.h"
 #include "I16DataReader.h"
-#include "BasicFrameIterator.h"
 #include "RawDataReader.h"
-#include "ThreadedFrameIterator.h"
-#include "IFrameIterator.h"
 #include "TiffDataReader.h"
 #include "BloscFilter.h"
 #include "PeakFinder.h"
@@ -262,7 +258,6 @@ using sptrMaterial = std::shared_ptr<nsx::Material>;
 #include "UnitCell.h"
 #include "GruberReduction.h"
 
-#include "Profile.h"
 #include "Intensity.h"
 
 using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
@@ -294,7 +289,7 @@ using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 #include "PeakFilter.h"
 
 #include "MillerIndex.h"
-#include "IntegratedProfile.h"
+#include "Profile1D.h"
 #include "ShapeLibrary.h"
 using sptrShapeLibrary = std::shared_ptr<nsx::ShapeLibrary>;
 
@@ -416,15 +411,15 @@ namespace nsx {
 %include "IntegrationRegion.h"
 %include "Intensity.h"
 %template(IntensityList) std::vector<nsx::Intensity>;
-%include "FitProfile.h"
-%include "IntegratedProfile.h"
+%include "Profile3D.h"
+%include "Profile1D.h"
 %include "IPeakIntegrator.h"
 %include "MeanBackgroundIntegrator.h"
-%include "WeakPeakIntegrator.h"
+%include "Profile3DIntegrator.h"
 %include "ISigmaIntegrator.h"
 %include "StrongPeakIntegrator.h"
 %include "Peak3D.h"
-%include "IntegratedProfile.h"
+%include "Profile1D.h"
 %include "ShapeLibrary.h"
 %include "ShapeIntegrator.h"
 %include "IntegrationRegion.h"
@@ -455,7 +450,7 @@ namespace nsx {
 %include "DataReaderFactory.h"
 %include "ILLDataReader.h"
 %include "HDF5DataReader.h"
-%include "FitProfile.h"
+%include "Profile3D.h"
 %include "DataSet.h"
 
 
@@ -502,7 +497,6 @@ namespace nsx {
 
 %include "Basis.h"
 
-%include "Profile.h"
 %include "Intensity.h"
 
 %include "IntegrationRegion.h"
@@ -521,7 +515,7 @@ namespace nsx {
 %include "MillerIndex.h"
 %template(MillerIndexList) std::vector<nsx::MillerIndex>;
 
-%include "IntegratedProfile.h"
+%include "Profile1D.h"
 %include "ShapeLibrary.h"
 
 %include "FFTIndexing.h"
@@ -544,7 +538,7 @@ namespace nsx {
 
 %include "BrillouinZone.h"
 
-%include "FitProfile.h"
+%include "Profile3D.h"
 %include "DataSet.h"
 %include "MetaData.h"
 %include "ILLDataReader.h"

@@ -1,5 +1,4 @@
-#ifndef NSXQT_CALIBRATIONDISTANCEDIALOG_H
-#define NSXQT_CALIBRATIONDISTANCEDIALOG_H
+#pragma once
 
 #include <QDialog>
 
@@ -25,5 +24,3 @@ private slots:
 private:
     Ui::CalibrateDistanceDialog *ui;
 };
-
-#endif // NSXQT_CALIBRATIONDISTANCEDIALOG_H

@@ -1,5 +1,4 @@
-#ifndef NSXQT_SAMPLEITEM_H
-#define NSXQT_SAMPLEITEM_H
+#pragma once
 
 #include <QJsonObject>
 #include <QList>
@@ -14,15 +13,13 @@ class SampleItem : public InspectableTreeItem
 {
 public:
     explicit SampleItem();
+
     void setData(const QVariant& value, int role = Qt::UserRole + 1) override;
-    QWidget* inspectItem() override;
-    QJsonObject toJson() override;
-    void fromJson(const QJsonObject& obj) override;
-
     QList<UnitCellItem*> unitCellItems();
+    void addUnitCell(); 
+    QWidget* inspectItem() override;
+    void openIsotopesDatabase();
 
-    void addUnitCell();
-
+private:
+    std::vector<nsx::sptrUnitCell> _unitCells;
 };
-
-#endif // NSXQT_SAMPLEITEM_H

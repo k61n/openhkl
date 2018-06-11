@@ -18,6 +18,8 @@ const std::map<std::pair<std::string,std::string>,resource_function>& getResourc
 
 YAML::Node findResource(const std::pair<std::string,std::string>& resource);
 
+void mergeResources(YAML::Node& node1, YAML::Node& node2);
+
 std::vector<std::string> getResourcesName(const std::string& resource_type);
 
 } // end namespace nsx

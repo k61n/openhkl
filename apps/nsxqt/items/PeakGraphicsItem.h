@@ -1,5 +1,4 @@
-#ifndef NSXQT_PEAKGRAPHICSITEM_H
-#define NSXQT_PEAKGRAPHICSITEM_H
+#pragma once
 
 #include <QPointF>
 
@@ -46,5 +45,3 @@ private:
     Eigen::Vector3d _frameCenter;
     nsx::DetectorEvent _predictedCenter;
 };
-
-#endif // NSXQT_PEAKGRAPHICSITEM_H

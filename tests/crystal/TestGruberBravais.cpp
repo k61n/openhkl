@@ -137,7 +137,7 @@ int main()
             cell.transform(P);
 
             NSX_CHECK_ASSERT(match == condition);
-            NSX_CHECK_ASSERT(cell.getBravaisTypeSymbol() == expected_bravais);
+            NSX_CHECK_ASSERT(cell.bravaisTypeSymbol() == expected_bravais);
 
             nsx::NiggliReduction niggli(G, niggli_tolerance);
             niggli.reduce(NG, NP);

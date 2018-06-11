@@ -1,9 +1,4 @@
-// author: Jonathan Fisher
-// j.fisher@fz-juelich.de
-
-#ifndef NSXQT_DIALOGINTEGRATE_H
-#define NSXQT_DIALOGINTEGRATE_H
-
+#pragma once
 
 #include <string>
 #include <vector>
@@ -40,4 +35,3 @@ public:
 private:
     Ui::DialogIntegrate* _ui;   
 };
-#endif // NSXQT_DIALOGINTEGRATE_H

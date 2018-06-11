@@ -8,7 +8,6 @@
 #include "H5Cpp.h"
 
 #include "AABB.h"
-#include "BasicFrameIterator.h"
 #include "BloscFilter.h"
 #include "ConvolverFactory.h"
 #include "CrystalTypes.h"
@@ -20,7 +19,6 @@
 #include "ErfInv.h"
 #include "Gonio.h"
 #include "IDataReader.h"
-#include "IFrameIterator.h"
 #include "IntegrationRegion.h"
 #include "Logger.h"
 #include "MathematicsTypes.h"
@@ -34,19 +32,18 @@
 #include "Sample.h"
 #include "Source.h"
 #include "SpaceGroup.h"
-#include "ThreadedFrameIterator.h"
 #include "UnitCell.h"
 #include "Units.h"
 
 namespace nsx {
 
-DataSet::DataSet(std::shared_ptr<IDataReader> reader, const sptrDiffractometer& diffractometer):
+DataSet::DataSet(std::shared_ptr<IDataReader> reader):
     _isOpened(false),
     _filename(reader->getFilename()),
     _nFrames(0),
     _nrows(0),
     _ncols(0),
-    _diffractometer(diffractometer),
+    _diffractometer(reader->diffractometer()),
     _metadata(uptrMetaData(new MetaData())),
     _data(),
     _states(),
@@ -76,23 +73,6 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader, const sptrDiffractometer& 
     }
 }
 
-uptrIFrameIterator DataSet::iterator(int idx)
-{
-    // use default frame iterator if one hasn't been set
-    if ( !_iteratorCallback) {
-        _iteratorCallback = [] (DataSet& data, int index) {
-            return new BasicFrameIterator(data, static_cast<unsigned int>(index));
-            //return new ThreadedFrameIterator(data, index);
-        };
-    }
-    return uptrIFrameIterator(_iteratorCallback(*this, idx));
-}
-
-void DataSet::setIteratorCallback(FrameIteratorCallback callback)
-{
-    _iteratorCallback = std::move(callback);
-}
-
 DataSet::~DataSet()
 {
     blosc_destroy();
@@ -116,13 +96,8 @@ Eigen::MatrixXd DataSet::convolvedFrame(std::size_t idx, const std::string& conv
 {
     ConvolverFactory convolver_factory;
     auto convolver = convolver_factory.create(convolver_type,parameters);
-
     Eigen::MatrixXi frame_data = _reader->getData(idx); 
-    int maxData = frame_data.maxCoeff();
-
-    // compute the convolution
-    auto result = convolver->convolve(frame_data.cast<double>());
-    return result;
+    return convolver->convolve(frame_data.cast<double>());
 }
 
 void DataSet::open()
@@ -405,42 +380,6 @@ void DataSet::maskPeaks(PeakList& peaks) const
             }
         }
     }
-}
-
-double DataSet::backgroundLevel(const sptrProgressHandler& progress)
-{
-    if ( _background > 0.0 ) {
-        return _background;
-    }
-
-    // we calculate background in local variable bg for thread safety reasons--
-    // this method is called from a thread which could be aborted, so we do not want
-    // to write to _background until the calculation has been completed
-    double bg = 0.0;
-    double factor = 1.0 / (_nFrames * _nrows * _ncols);
-
-    if ( progress) {
-        progress->setStatus("Computing background level...");
-        progress->setProgress(0);
-    }
-
-    for (auto it = iterator(0); it->index() != _nFrames; it->advance()) {
-        // cast matrix to double (instead of int) -- necessary due to integer overflow!
-        // _background += factor * it->cast<double>().sum();
-        bg += factor * it->frame().sum();
-
-        if (progress) {
-            double done = 100.0 * it->index() / static_cast<double>(_nFrames);
-            progress->setProgress(int(done));
-        }
-    }
-
-    if ( progress ) {
-        progress->setProgress(100);
-    }
-
-    _background = bg;
-    return _background;
 }
 
 std::vector<DetectorEvent> DataSet::getEvents(const std::vector<ReciprocalVector>& sample_qs) const

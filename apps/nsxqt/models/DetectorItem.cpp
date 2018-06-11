@@ -18,10 +18,3 @@ QWidget* DetectorItem::inspectItem()
 {
     return new DetectorPropertyWidget(this);
 }
-
-QJsonObject DetectorItem::toJson()
-{
-    QJsonObject obj;
-
-    return obj;
-}

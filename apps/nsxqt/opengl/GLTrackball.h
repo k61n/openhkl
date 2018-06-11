@@ -1,5 +1,4 @@
-#ifndef NSXQT_GLTRACKBALL_H
-#define NSXQT_GLTRACKBALL_H
+#pragma once
 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
@@ -44,6 +43,3 @@ private:
     //! Current size of the viewport
     double _w, _h;
 };
-
-
-#endif // NSXQT_GLTRACKBALL_H

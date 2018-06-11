@@ -35,8 +35,7 @@ public:
     sptrConvolver convolver() const;
     void setConvolver(const std::string& convolver_type, const std::map<std::string,double>& parameters);
 
-    sptrThreshold threshold() const;
-    void setThreshold(const std::string& threshold_type, const std::map<std::string,double>& parameters);
+    void setThreshold(double value);
 
 private:
 
@@ -53,7 +52,8 @@ private:
 private:
     sptrProgressHandler _handler;
     sptrConvolver _convolver;
-    sptrThreshold _threshold;
+
+    double _threshold;
 
     double _peakScale;
 

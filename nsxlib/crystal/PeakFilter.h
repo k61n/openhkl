@@ -11,39 +11,36 @@ namespace nsx {
 //! \class PeakFilter
 //! \brief Class to remove "bad" peaks based on various critera.
 class PeakFilter {
-
 public:
     //! Apply the filter to the given data set.
     PeakList apply(const PeakList& peaks) const;
-
+    //! Filter peaks that are complementary to the given peaks
     PeakList complementary(const PeakList& peaks, const PeakList& other_peaks) const;
-
+    //! Filter only selected peaks
     PeakList selected(const PeakList& peaks, bool selection_flag) const;
-
+    //! Filter only peaks indexed by the given cell
     PeakList indexed(const PeakList& peaks, sptrUnitCell cell, double tolerance) const;
-
+    //! Filter peaks associated to the given dataset
     PeakList dataset(const PeakList& peaks, sptrDataSet dataset) const;
-
+    //! Filter peaks associated with the given unit cell
     PeakList unitCell(const PeakList& peaks, sptrUnitCell unit_cell) const;
-
+    //! Filter peaks with sigma above threshold
     PeakList minSigma(const PeakList& peaks, double threshold) const;
-
+    //! Filter peaks with I/sigma above threshold
     PeakList signalToNoise(const PeakList& peaks, double threshold) const;
-
+    //! Filter peaks with I below threshold
     PeakList lowIntensity(const PeakList& peaks, double threshold) const;
-
+    //! Filter those peaks which are predicted
     PeakList predicted(const PeakList& peaks) const;
-
+    //! Filter peaks by minimum d
     PeakList dMin(const PeakList& peaks, double dmin) const;
-
+    //! Filter peaks by maximum d
     PeakList dMax(const PeakList& peaks, double dmax) const;
-
-    PeakList selectedPeaks(const PeakList& peaks, const PeakList& other_peaks) const;
-
+    //! Return peaks with given indices
     PeakList selection(const PeakList& peaks, const std::vector<int>& indexes) const;
-
+    //! Filter peaks which have a unit cell
     PeakList hasUnitCell(const PeakList& peaks) const;
-
+    //! Filter peaks by raw p value
     PeakList significance(const PeakList& peaks, double p_value_threshold) const;
 
 public:

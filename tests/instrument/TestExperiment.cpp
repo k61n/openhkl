@@ -23,7 +23,7 @@ int main()
 
     // Add some data
     try {
-        data = nsx::sptrDataSet(nsx::DataReaderFactory().create("", "D10_ascii_example", exp.getDiffractometer()));
+        data = nsx::sptrDataSet(nsx::DataReaderFactory().create("", "D10_ascii_example", exp.diffractometer()));
     }
     catch(std::exception& e) {
         NSX_FAIL(std::string("caught exception: ") + e.what());

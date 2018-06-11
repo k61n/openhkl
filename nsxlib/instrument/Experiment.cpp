@@ -51,7 +51,7 @@ Experiment& Experiment::operator=(const Experiment& other)
     return *this;
 }
 
-sptrDiffractometer Experiment::getDiffractometer() const
+sptrDiffractometer Experiment::diffractometer() const
 {
     return _diffractometer;
 }
@@ -107,7 +107,7 @@ void Experiment::addData(sptrDataSet data)
     }
     std::string diffName = data->metadata()->getKey<std::string>("Instrument");
 
-    if (!(diffName.compare(_diffractometer->getName())==0)) {
+    if (!(diffName.compare(_diffractometer->name())==0)) {
         throw std::runtime_error("Mismatch between the diffractometers assigned to the experiment and the data");
     }
     double wav=data->metadata()->getKey<double>("wavelength");

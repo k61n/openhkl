@@ -1,5 +1,4 @@
-#ifndef NSXQT_DIALOGUNITCELLPARAMETERS_H
-#define NSXQT_DIALOGUNITCELLPARAMETERS_H
+#pragma once
 
 #include <QDialog>
 
@@ -28,5 +27,3 @@ private:
     Ui::DialogUnitCellParameters *ui;
     nsx::sptrUnitCell _unitCell;
 };
-
-#endif // NSXQT_DIALOGUNITCELLPARAMETERS_H

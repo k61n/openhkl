@@ -1,5 +1,4 @@
-#ifndef NSXQT_DETECTORPROPERTYWIDGET_H
-#define NSXQT_DETECTORPROPERTYWIDGET_H
+#pragma once
 
 #include <QWidget>
 
@@ -25,5 +24,3 @@ private:
     DetectorItem* _detectorItem;
     Ui::DetectorPropertyWidget *ui;
 };
-
-#endif // NSXQT_DETECTORPROPERTYWIDGET_H

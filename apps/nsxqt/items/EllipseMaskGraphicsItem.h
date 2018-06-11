@@ -1,5 +1,4 @@
-#ifndef NSXQT_EllipseMaskGraphicsItem_H
-#define NSXQT_EllipseMaskGraphicsItem_H
+#pragma once
 
 #include <memory>
 #include <string>
@@ -62,5 +61,3 @@ private:
     void updateAABB();
 
 };
-
-#endif // NSXQT_EllipseMaskGraphicsItem_H

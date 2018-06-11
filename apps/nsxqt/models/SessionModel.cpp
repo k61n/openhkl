@@ -62,7 +62,6 @@
 #include <nsxlib/Detector.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Ellipsoid.h>
-#include <nsxlib/FitProfile.h>
 #include <nsxlib/GeometryTypes.h>
 #include <nsxlib/InstrumentState.h>
 #include <nsxlib/Logger.h>
@@ -75,36 +74,26 @@
 #include <nsxlib/PeakPredictor.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/ReciprocalVector.h>
-#include <nsxlib/ResolutionShell.h>
-#include <nsxlib/RFactor.h>
 #include <nsxlib/Sample.h>
-#include <nsxlib/ShapeLibrary.h>
 #include <nsxlib/SpaceGroup.h>
 #include <nsxlib/StrongPeakIntegrator.h>
 #include <nsxlib/Source.h>
 #include <nsxlib/UnitCell.h>
 
-#include "AbsorptionDialog.h"
 #include "DataItem.h"
 #include "DetectorItem.h"
 #include "DetectorScene.h"
-#include "DialogCalculatedPeaks.h"
 #include "DialogExperiment.h"
-#include "DialogPeakFind.h"
 #include "ExperimentItem.h"
-#include "FriedelDialog.h"
 #include "GLSphere.h"
 #include "GLWidget.h"
 #include "InstrumentItem.h"
-#include "LogFileDialog.h"
-#include "MCAbsorptionDialog.h"
 #include "NumorItem.h"
 #include "PeakListItem.h"
 #include "PeakTableView.h"
 #include "ProgressView.h"
 #include "QCustomPlot.h"
 #include "PeaksItem.h"
-#include "ResolutionCutoffDialog.h"
 #include "SampleItem.h"
 #include "SessionModel.h"
 #include "SourceItem.h"
@@ -131,7 +120,7 @@ void SessionModel::onItemChanged(QStandardItem* item)
         // The first item of the Sample item branch is the SampleShapeItem, skip it
         int idx = p->index().row()- 1;
         auto expt = p->experiment();
-        auto uc = expt->getDiffractometer()->getSample()->unitCell(idx);
+        auto uc = expt->diffractometer()->getSample()->unitCell(idx);
         uc->setName(p->text().toStdString());
     }
 }
@@ -194,14 +183,13 @@ nsx::DataList SessionModel::getSelectedNumors() const
     return numors;
 }
 
-#if 1
 nsx::PeakList SessionModel::peaks(const nsx::DataSet* data) const
 {  
     nsx::PeakList list;
 
     for (auto i = 0; i < rowCount(); ++i) {
-        auto& exp_item = dynamic_cast<ExperimentItem&>(*item(i));
-        auto&& peaks = exp_item.peaks().selectedPeaks();
+        auto exp_item = dynamic_cast<ExperimentItem*>(item(i));
+        auto&& peaks = exp_item->peaksItem()->selectedPeaks();
 
         for (auto peak: peaks) {
             if (data == nullptr || peak->data().get() == data) {
@@ -211,7 +199,6 @@ nsx::PeakList SessionModel::peaks(const nsx::DataSet* data) const
     }
     return list;
 }
-#endif
 
 void SessionModel::createNewExperiment()
 {
@@ -250,4 +237,9 @@ void SessionModel::createNewExperiment()
         nsx::error() << e.what();
         return;
     }
+}
+
+bool SessionModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    return QStandardItemModel::setData(index, value, role);
 }

@@ -97,13 +97,6 @@ RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks)
     _cellParameters = constrained.parameters();
 }
 
-void RefinementBatch::refineU()
-{
-    for (int i = 0; i < _uOffsets.size(); ++i) {
-        _params.addParameter(&_uOffsets(i));
-    }
-}
-
 void RefinementBatch::refineB()
 {
     for (int i = 0; i < _cellParameters.size(); ++i) {

@@ -25,7 +25,7 @@ int main()
 {
     nsx::DataReaderFactory factory;
     nsx::sptrExperiment expt(new nsx::Experiment("test", "BioDiff2500"));
-    auto diff = expt->getDiffractometer();
+    auto diff = expt->diffractometer();
     nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", diff));
     expt->addData(dataf);
 
@@ -49,7 +49,7 @@ int main()
     peakFinder->setMaxSize(10000);
     peakFinder->setMaxFrames(10);
     peakFinder->setConvolver("annular",{});
-    peakFinder->setThreshold("absolute",{{"intensity",15.0}});
+    peakFinder->setThreshold(15.0);
     peakFinder->setPeakScale(1.0);
 
     peakFinder->setHandler(progressHandler);

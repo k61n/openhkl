@@ -1,8 +1,4 @@
-// author: Jonathan Fisher
-// j.fisher@fz-juelich.de
-
-#ifndef NSXQT_PROGRESSVIEW_H
-#define NSXQT_PROGRESSVIEW_H
+#pragma once
 
 #include <memory>
 
@@ -29,7 +25,3 @@ private:
     nsx::sptrProgressHandler _handler;
     QTimer* _timer;
 };
-
-
-
-#endif // NSXQT_PROGRESSVIEW_H

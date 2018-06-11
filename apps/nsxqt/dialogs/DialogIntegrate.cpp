@@ -4,12 +4,6 @@
 #include "DialogIntegrate.h"
 #include "ui_DialogIntegrate.h"
 
-#include <nsxlib/StrongPeakIntegrator.h>
-#include <nsxlib/GaussianIntegrator.h>
-#include <nsxlib/WeakPeakIntegrator.h>
-#include <nsxlib/ISigmaIntegrator.h>
-#include <nsxlib/Profile1DIntegrator.h>
-
 DialogIntegrate::DialogIntegrate(QWidget *parent):
     QDialog(parent),
     _ui(new Ui::DialogIntegrate)

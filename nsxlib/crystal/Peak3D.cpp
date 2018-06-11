@@ -37,13 +37,10 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "Blob3D.h"
 #include "DataSet.h"
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "GeometryTypes.h"
-#include "Gonio.h"
-#include "IFrameIterator.h"
 #include "InstrumentState.h"
 #include "IPeakIntegrator.h"
 #include "MillerIndex.h"
@@ -152,12 +149,6 @@ double Peak3D::getTransmission() const
 {
     return _transmission;
 }
-
-void Peak3D::scaleShape(double scale)
-{
-    _shape.scale(scale);
-}
-
 
 double Peak3D::getScale() const
 {

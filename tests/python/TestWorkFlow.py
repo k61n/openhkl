@@ -7,13 +7,13 @@ class TestWorkFlow(unittest.TestCase):
     
     def test(self):
         expt = nsx.Experiment('test', 'BioDiff2500')
-        diff = expt.getDiffractometer()
+        diff = expt.diffractometer()
         data = nsx.DataReaderFactory().create("hdf", "gal3.hdf", diff)
         expt.addData(data)
         source = diff.getSource()
 
         reader = nsx.HDF5DataReader("gal3.hdf", diff)
-        data = nsx.DataSet(reader, diff)
+        data = nsx.DataSet(reader)
 
         finder = nsx.PeakFinder()
         finder.setMinSize(30)
@@ -22,7 +22,7 @@ class TestWorkFlow(unittest.TestCase):
         #finder.setSearchConfidence(0.98)
         #finder.setIntegrationConfidence(0.997)
         finder.setConvolver("annular",{})
-        finder.setThreshold("absolute",{"intensity":15.0})
+        finder.setThreshold(15.0)
 
         numors = nsx.DataList()
         numors.push_back(data)
