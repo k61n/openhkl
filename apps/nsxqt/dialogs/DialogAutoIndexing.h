@@ -4,7 +4,6 @@
 #include <vector>
 
 #include <QDialog>
-#include <QItemSelection>
 
 #include <nsxlib/CrystalTypes.h>
 #include <nsxlib/InstrumentTypes.h>
@@ -26,11 +25,14 @@ public:
     ~DialogAutoIndexing();
     void buildSolutionsTable();
 
+    nsx::sptrUnitCell unitCell();
+
 public slots:
     void autoIndex();
 
 private slots:
-    void addUnitCell();
+    //void addUnitCell();
+
     void selectSolution(int);
 
 signals:
@@ -40,6 +42,7 @@ private:
     Ui::DialogAutoIndexing *ui;
     ExperimentItem* _experiment_item;
     nsx::PeakList _peaks;
-    nsx::UnitCellList _unitCells;
     std::vector<std::pair<nsx::sptrUnitCell,double>> _solutions;
+
+    nsx::sptrUnitCell _unitCell;
 };

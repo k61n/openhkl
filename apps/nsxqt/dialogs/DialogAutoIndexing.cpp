@@ -34,15 +34,16 @@ DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, nsx::Pea
     QDialog(parent),
     ui(new Ui::DialogAutoIndexing),
     _experiment_item(experiment_item),
-    _peaks(peaks)
+    _peaks(peaks),
+    _unitCell(nullptr)
 {
     ui->setupUi(this);
     setModal(true);
-    _unitCells = _experiment_item->experiment()->diffractometer()->getSample()->unitCells();
+    //_unitCells = _experiment_item->experiment()->diffractometer()->getSample()->unitCells();
 
-    for (auto unit_cell : _unitCells) {
-        ui->unitCells->addItem(QString::fromStdString(unit_cell->name()));
-    }
+    //for (auto unit_cell : _unitCells) {
+    //    ui->unitCells->addItem(QString::fromStdString(unit_cell->name()));
+    //}
 
     //connect(ui->addUnitCell,SIGNAL(clicked()),this,SLOT(addUnitCell()));
 
@@ -73,19 +74,13 @@ DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, nsx::Pea
     ui->subdiv->setMinimum(0);
     ui->subdiv->setMaximum(999999);
     ui->subdiv->setValue(params.subdiv);
+    connect(ui->cancelOK,SIGNAL(rejected()),this,SLOT(reject()));
+    connect(ui->cancelOK,SIGNAL(accepted()),this,SLOT(accept()));
 }
 
 DialogAutoIndexing::~DialogAutoIndexing()
 {
     delete ui;
-}
-
-void DialogAutoIndexing::addUnitCell()
-{
-    nsx::sptrUnitCell new_unit_cell(std::make_shared<nsx::UnitCell>(nsx::UnitCell()));
-    new_unit_cell->setName("new unit cell");
-    _unitCells.push_back(new_unit_cell);
-    ui->unitCells->addItem(QString::fromStdString(new_unit_cell->name()));
 }
 
 void DialogAutoIndexing::autoIndex()
@@ -99,14 +94,7 @@ void DialogAutoIndexing::autoIndex()
        }
     });
 
-    if (_unitCells.empty()) {
-        nsx::error() << "No unit cell selected";
-        return;
-    }
-
     nsx::AutoIndexer indexer(handler);
-
-    nsx::sptrUnitCell selectedUnitCell = _unitCells[ui->unitCells->currentIndex()];
 
     // Clear the current solution list
     _solutions.clear();
@@ -120,7 +108,8 @@ void DialogAutoIndexing::autoIndex()
     params.subdiv = ui->subdiv->value();;
     params.maxdim = ui->maxCellDim->value();
     params.nSolutions = ui->nSolutions->value();
-    params.indexingTolerance = selectedUnitCell->indexingTolerance();
+    // todo: restore this functionality in dialog?
+    params.indexingTolerance = 0.2;
     params.nVertices = ui->nVertices->value();
     params.niggliReduction = ui->niggliReduction->isChecked();
     params.niggliTolerance = ui->niggliTolerance->value();
@@ -136,7 +125,7 @@ void DialogAutoIndexing::autoIndex()
     _solutions = indexer.getSolutions();
 
     for (auto&& sol: _solutions) {
-        sol.first->setName(selectedUnitCell->name());
+        sol.first->setName("new unit cell");
     }
 
     buildSolutionsTable();
@@ -145,7 +134,7 @@ void DialogAutoIndexing::autoIndex()
 void DialogAutoIndexing::buildSolutionsTable()
 {
     // Create table with 9 columns
-    QStandardItemModel* model=new QStandardItemModel(_solutions.size(),9,this);
+    QStandardItemModel* model = new QStandardItemModel(_solutions.size(),9,this);
     model->setHorizontalHeaderItem(0,new QStandardItem("a"));
     model->setHorizontalHeaderItem(1,new QStandardItem("b"));
     model->setHorizontalHeaderItem(2,new QStandardItem("c"));
@@ -153,7 +142,7 @@ void DialogAutoIndexing::buildSolutionsTable()
     model->setHorizontalHeaderItem(4,new QStandardItem(QString((QChar) 0x03B2)));
     model->setHorizontalHeaderItem(5,new QStandardItem(QString((QChar) 0x03B3)));
     model->setHorizontalHeaderItem(6,new QStandardItem("Volume"));
-    model->setHorizontalHeaderItem(7,new QStandardItem("Bravais Type"));
+    model->setHorizontalHeaderItem(7,new QStandardItem("Bravais type"));
     model->setHorizontalHeaderItem(8,new QStandardItem("Quality"));
 
     using nsx::deg;
@@ -162,18 +151,20 @@ void DialogAutoIndexing::buildSolutionsTable()
     for (unsigned int i=0;i<_solutions.size();++i) {
         auto& cell=_solutions[i].first;
         double quality=_solutions[i].second;
+
         nsx::CellCharacter ch = cell->character();
         nsx::CellCharacter sigma = cell->characterSigmas();
 
-        QStandardItem* col1=new QStandardItem(QString::number(ch.a,'f',3) + "("+ QString::number(sigma.a*1000,'f',0)+")");
-        QStandardItem* col2=new QStandardItem(QString::number(ch.b,'f',3) + "("+ QString::number(sigma.b*1000,'f',0)+")");
-        QStandardItem* col3=new QStandardItem(QString::number(ch.c,'f',3) + "("+ QString::number(sigma.c*1000,'f',0)+")");
-        QStandardItem* col4=new QStandardItem(QString::number(ch.alpha/deg,'f',3)+ "("+ QString::number(sigma.alpha/deg*1000,'f',0)+")");
-        QStandardItem* col5=new QStandardItem(QString::number(ch.beta/deg,'f',3)+"("+ QString::number(sigma.beta/deg*1000,'f',0)+")");
-        QStandardItem* col6=new QStandardItem(QString::number(ch.gamma/deg,'f',3)+ "("+ QString::number(sigma.gamma/deg*1000,'f',0)+")");
-        QStandardItem* col7=new QStandardItem(QString::number(cell->volume(),'f',3));
-        QStandardItem* col8=new QStandardItem(QString::fromStdString(cell->bravaisTypeSymbol()));
-        QStandardItem* col9=new QStandardItem(QString::number(quality,'f',2)+"%");
+        QStandardItem* col1 = new QStandardItem(QString::number(ch.a,'f',3) + "("+ QString::number(sigma.a*1000,'f',0)+")");
+        QStandardItem* col2 = new QStandardItem(QString::number(ch.b,'f',3) + "("+ QString::number(sigma.b*1000,'f',0)+")");
+        QStandardItem* col3 = new QStandardItem(QString::number(ch.c,'f',3) + "("+ QString::number(sigma.c*1000,'f',0)+")");
+        QStandardItem* col4 = new QStandardItem(QString::number(ch.alpha/deg,'f',3)+ "("+ QString::number(sigma.alpha/deg*1000,'f',0)+")");
+        QStandardItem* col5 = new QStandardItem(QString::number(ch.beta/deg,'f',3)+"("+ QString::number(sigma.beta/deg*1000,'f',0)+")");
+        QStandardItem* col6 = new QStandardItem(QString::number(ch.gamma/deg,'f',3)+ "("+ QString::number(sigma.gamma/deg*1000,'f',0)+")");
+        QStandardItem* col7 = new QStandardItem(QString::number(cell->volume(),'f',3));
+        QStandardItem* col8 = new QStandardItem(QString::fromStdString(cell->bravaisTypeSymbol()));
+        QStandardItem* col9 = new QStandardItem(QString::number(quality,'f',2)+"%");
+
         model->setItem(i,0,col1);
         model->setItem(i,1,col2);
         model->setItem(i,2,col3);
@@ -189,13 +180,13 @@ void DialogAutoIndexing::buildSolutionsTable()
 
 void DialogAutoIndexing::selectSolution(int index)
 {
-    auto unit_cell = _unitCells[ui->unitCells->currentIndex()];
-    *unit_cell = *_solutions[index].first;
-    QString solution = QString::number(index+1);
-    QString unit_cell_name = QString::fromStdString(unit_cell->name());
-    QMessageBox::information(this, tr("NSXTool"),tr("Solution %1 set to %2 unit cell").arg(solution,unit_cell_name));
+    _unitCell = _solutions[index].first;
+    _unitCell->setName("new unit cell");
 
-    auto sample_item = _experiment_item->instrumentItem()->sampleItem();
+    QMessageBox::information(this, tr("NSXTool"),tr("Solution %1 set").arg(QString::number(index+1)));
+}
 
-    _experiment_item->model()->setData(sample_item->index(),QVariant::fromValue(unit_cell),Qt::UserRole);
+nsx::sptrUnitCell DialogAutoIndexing::unitCell()
+{
+    return _unitCell;
 }
