@@ -28,7 +28,12 @@ FakeDataReader::FakeDataReader(const std::string& filename, sptrDiffractometer d
 
 Eigen::MatrixXi FakeDataReader::getData(size_t frame)
 {
-    return {};
+    return _frames[frame];
+}
+
+void FakeDataReader::setData(size_t frame, const Eigen::MatrixXi& data)
+{
+    _frames[frame] = data;
 }
 
 } // end namespace nsx
