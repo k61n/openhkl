@@ -38,7 +38,7 @@ void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
     if (!dialog->exec())
     {
         auto sample=_caller->experiment()->diffractometer()->sample();
-        auto& hull=sample->getShape();
+        auto& hull=sample->shape();
         if (hull.checkEulerConditions())
         {
             ui->lineEdit_MovieFilename->setText(QString::fromStdString(dialog->getMovieFilename()));
@@ -61,7 +61,7 @@ void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
 void SampleShapePropertyWidget::setHullProperties()
 {
     auto sample=_caller->experiment()->diffractometer()->sample();
-    auto& hull=sample->getShape();
+    auto& hull=sample->shape();
 
     ui->lineEdit_Volume->setText(QString::number(hull.getVolume()/nsx::mm3)+" mm^3");
     ui->lineEdit_Faces->setText(QString::number(hull.getNFaces()));

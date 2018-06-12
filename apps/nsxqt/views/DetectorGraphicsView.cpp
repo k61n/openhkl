@@ -67,8 +67,8 @@ void DetectorGraphicsView::fixDetectorAspectRatio(bool value)
 {
     if (value) {
         int h=this->height();
-        double dw=_scene->getData()->diffractometer()->detector()->getWidth();
-        double dh=_scene->getData()->diffractometer()->detector()->getHeight();
+        double dw=_scene->getData()->diffractometer()->detector()->width();
+        double dh=_scene->getData()->diffractometer()->detector()->height();
         resize(int(h*dw/dh),h);
     } else {
         fitInView(_scene->sceneRect());

@@ -78,45 +78,43 @@ public:
     //! Assignment operator
     virtual Detector& operator=(const Detector& other);
 
-    //! Return the number of pixels of the detector.
-    virtual unsigned int getNPixels() const=0;
     //! Return the number of columns of the detector.
-    virtual unsigned int getNCols() const=0;
+    virtual unsigned int nCols() const=0;
     //! Return the number of rows of the detector.
-    virtual unsigned int getNRows() const=0;
+    virtual unsigned int nRows() const=0;
     //!  Get the minimum row index
-    virtual int getMinRow() const=0;
+    virtual int minRow() const=0;
     //!  Get the maximum row index
-    virtual int getMaxRow() const=0;
+    virtual int maxRow() const=0;
     //!  Get the minimum col index
-    virtual int getMinCol() const=0;
+    virtual int minCol() const=0;
     //!  Get the maximum col index
-    virtual int getMaxCol() const=0;
+    virtual int maxCol() const=0;
     //! Return true whether a given pixel falls inside the detector
     virtual bool hasPixel(double px, double py) const=0;
 
     //! Return the height of the detector (meters)
-    virtual double getHeight() const=0;
+    virtual double height() const=0;
     //! Return the width of the detector (meters)
-    virtual double getWidth() const=0;
+    virtual double width() const=0;
 
     //! Return the angular height of the detector (radians)
-    virtual double getAngularHeight() const=0;
+    virtual double angularHeight() const=0;
     //! Return the angular width of the detector (radians)
-    virtual double getAngularWidth() const=0;
+    virtual double angularWidth() const=0;
 
     //! Return the detector event (pixel x, pixel y, time of flight) associated with a given kf. 
     //! Returns with _negative_ tof if no such event is possible.
     virtual DetectorEvent constructEvent(const DirectVector& from, const ReciprocalVector& kf) const = 0;
 
     //! Returns the number of detector
-    virtual unsigned int getNDetectors() const=0;
+    virtual unsigned int nDetectors() const=0;
 
     //! Returns the position of a given pixel in detector space. This takes into account the detector motions in detector space.
     virtual DirectVector pixelPosition(double x, double y) const=0;
 
     //!
-    DataOrder getDataOrder() const {return _dataorder;}
+    DataOrder dataOrder() const {return _dataorder;}
 
     //! Return the Jacobian matrix of the transformation (px,py) -> (x,y,z) from pixel coordinates to lab coordinates.
     //! The first and second columns are the derivatives of (x,y,z) with respect to px and py.

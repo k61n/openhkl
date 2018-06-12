@@ -92,12 +92,7 @@ MonoDetector& MonoDetector::operator=(const MonoDetector& other)
     return *this;
 }
 
-unsigned int MonoDetector::getNPixels() const
-{
-    return _nCols*_nRows;
-}
-
-unsigned int MonoDetector::getNCols() const
+unsigned int MonoDetector::nCols() const
 {
     return _nCols;
 }
@@ -110,7 +105,7 @@ void MonoDetector::setNCols(unsigned int cols)
 }
 
 
-unsigned int MonoDetector::getNRows() const
+unsigned int MonoDetector::nRows() const
 {
     return _nRows;
 }
@@ -128,22 +123,22 @@ void MonoDetector::setOrigin(double px, double py)
     _minRow=py;
 }
 
-int MonoDetector::getMinRow() const
+int MonoDetector::minRow() const
 {
     return _minRow;
 }
 
-int MonoDetector::getMaxRow() const
+int MonoDetector::maxRow() const
 {
     return _minRow+_nRows;
 }
 
-int MonoDetector::getMinCol() const
+int MonoDetector::minCol() const
 {
     return _minCol;
 }
 
-int MonoDetector::getMaxCol() const
+int MonoDetector::maxCol() const
 {
     return _minCol+_nCols;
 }
@@ -163,22 +158,22 @@ bool MonoDetector::hasPixel(double px, double py) const
     return (dx>=0 && dx<static_cast<double>(_nCols) && dy>=0 && dy<static_cast<double>(_nRows));
 }
 
-double MonoDetector::getPixelHeigth() const
+double MonoDetector::pixelHeigth() const
 {
     return _height/_nRows;
 }
 
-double MonoDetector::getPixelWidth() const
+double MonoDetector::pixelWidth() const
 {
     return _width/_nCols;
 }
 
-double MonoDetector::getHeight() const
+double MonoDetector::height() const
 {
     return _height;
 }
 
-double MonoDetector::getWidth() const
+double MonoDetector::width() const
 {
     return _width;
 }
@@ -189,12 +184,12 @@ void MonoDetector::setDimensions(double width, double height)
     setHeight(height);
 }
 
-double MonoDetector::getAngularHeight() const
+double MonoDetector::angularHeight() const
 {
     return _angularHeight;
 }
 
-double MonoDetector::getAngularWidth() const
+double MonoDetector::angularWidth() const
 {
     return _angularWidth;
 }
@@ -205,7 +200,7 @@ void MonoDetector::setAngularDimensions(double w, double h)
     setAngularHeight(h);
 }
 
-double MonoDetector::getDistance() const
+double MonoDetector::distance() const
 {
     return _distance;
 }
@@ -222,7 +217,7 @@ void MonoDetector::setRestPosition(const DirectVector& pos)
     _distance = pos.vector().norm();
 }
 
-unsigned int MonoDetector::getNDetectors() const
+unsigned int MonoDetector::nDetectors() const
 {
     return 1;
 }

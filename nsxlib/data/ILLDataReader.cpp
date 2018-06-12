@@ -246,7 +246,7 @@ Eigen::MatrixXi ILLDataReader::getData(size_t frame)
     assert(_nCols >= 1);
 
     MatrixParser parser;
-    parser(_diffractometer->detector()->getDataOrder(),_mapAddress+begin,_dataLength,v);
+    parser(_diffractometer->detector()->dataOrder(),_mapAddress+begin,_dataLength,v);
 
     return v;
 }

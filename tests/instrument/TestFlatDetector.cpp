@@ -71,8 +71,10 @@ int main()
     NSX_CHECK_CLOSE(q[1],-1.0,tolerance);
     NSX_CHECK_SMALL(q[2], tolerance);
 
-    for (int i = d.getMinRow()+1; i < d.getMaxRow()-1; i++) {
-        for (int j = d.getMinCol()+1; j < d.getMaxCol()-1; j++) {
+    for (int i = d.minRow()+1; i < d.maxRow()-1; i++) {
+
+        for (int j = d.minCol()+1; j < d.maxCol()-1; j++) {
+
             NSX_CHECK_EQ(d.hasPixel(j, i), true);
 
             auto position = d.pixelPosition(j, i);

@@ -23,7 +23,7 @@ AbsorptionDialog::AbsorptionDialog(nsx::sptrExperiment experiment, QWidget *pare
     QDialog(parent),
     ui(new Ui::AbsorptionDialog),
     _experiment(experiment),
-    _cscene(new CrystalScene(&experiment->diffractometer()->sample()->getShape()))
+    _cscene(new CrystalScene(&experiment->diffractometer()->sample()->shape()))
 {
     ui->setupUi(this);
 

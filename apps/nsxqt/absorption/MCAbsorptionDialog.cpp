@@ -31,7 +31,7 @@ MCAbsorptionDialog::MCAbsorptionDialog(SessionModel* session, nsx::sptrExperimen
     _session(session)
 {
     ui->setupUi(this);
-    auto ncrystals=_experiment->diffractometer()->sample()->getNCrystals();
+    auto ncrystals=_experiment->diffractometer()->sample()->nCrystals();
     if (ncrystals>0) {
         ui->comboBox->setEnabled(true);
         for (unsigned int i=0;i<ncrystals;++i) {
@@ -57,22 +57,22 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
 
     // Get the material
     unsigned int cellIndex=static_cast<unsigned int>(ui->comboBox->currentIndex());
-    auto material=sample->getMaterial(cellIndex);
+    auto material=sample->material(cellIndex);
     if (material==nullptr) {
         QMessageBox::critical(this,"NSXTOOL","No material defined for this crystal");
         return;
     }
 
-    auto& mono = source->getSelectedMonochromator();
+    auto& mono = source->selectedMonochromator();
 
-    nsx::MCAbsorption mca(mono.getWidth(),mono.getHeight(),-1.0);
-    auto& hull=sample->getShape();
+    nsx::MCAbsorption mca(mono.width(),mono.height(),-1.0);
+    auto& hull=sample->shape();
     if (!hull.checkEulerConditions()) {
         QMessageBox::critical(this,"NSXTOOL","The sample shape (hull) is ill-defined");
         return;
     }
 
-    mca.setSample(&hull,material->muIncoherent(),material->muAbsorption(mono.getWavelength()*nsx::ang));
+    mca.setSample(&hull,material->muIncoherent(),material->muAbsorption(mono.wavelength()*nsx::ang));
     const auto& data=_experiment->getData();
     ui->progressBar_MCStatus->setValue(0);
     ui->progressBar_MCStatus->setTextVisible(true);

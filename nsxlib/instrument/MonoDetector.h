@@ -61,67 +61,65 @@ public:
     //! Assignment operator
     virtual MonoDetector& operator=(const MonoDetector& other);
 
-    //! Return the number of pixels of the detector
-    unsigned int getNPixels() const;
     //! Return the number of columns of the detector
-    unsigned int getNCols() const;
+    unsigned int nCols() const;
     //! Set the number of columns of the detector
     void setNCols(unsigned int cols);
     //! Return the number of rows of the detector
-    unsigned int getNRows() const;
+    unsigned int nRows() const;
     //! Set the number of rows
     void setNRows(unsigned int rows);
     //! Set the pixel origin of the detector
     void setOrigin(double px, double py);
     //!  Get the minimum row index
-    int getMinRow() const;
+    int minRow() const;
     //!  Get the maximum row index
-    int getMaxRow() const;
+    int maxRow() const;
     //!  Get the minimum col index
-    int getMinCol() const;
+    int minCol() const;
     //!  Get the maximum col index
-    int getMaxCol() const;
+    int maxCol() const;
     //! Set the number of pixels of the detector
     void setNPixels(unsigned int cols,unsigned int rows);
     //! Return true whether a given pixel falls inside the detector
     bool hasPixel(double px, double py) const;
 
     //! Return the height of a detector pixel
-    double getPixelHeigth() const;
+    double pixelHeigth() const;
     //! Return the width of a detector pixel
-    double getPixelWidth() const;
+    double pixelWidth() const;
 
     //! Return the width of the detector (meters)
-    double getHeight() const;
+    double height() const;
     //! Set the height of the detector (meters)
     virtual void setHeight(double height)=0;
     //! Return the width of the detector (meters)
-    double getWidth() const;
+    double width() const;
     //! Set the width of the detector (meters)
     virtual void setWidth(double width)=0;
     //! Set the dimensions of the detector (meters).
     void setDimensions(double width, double height);
 
     //! Return the height in angular units of the detector (radians)
-    double getAngularHeight() const;
+    double angularHeight() const;
     //! Set the height in angular units of the detector (radians)
     virtual void setAngularHeight(double angle)=0;
     //! Return the width in angular units of the detector (radians)
-    double getAngularWidth() const;
+    double angularWidth() const;
     //! Set the height in angular units of the detector (radians)
     virtual void setAngularWidth(double angle)=0;
     //! Set the angular dimensions of the detector (radians)
     void setAngularDimensions(double wAngle, double hAngle);
 
     //! Return the sample to detector distance (meters)
-    double getDistance() const;
+    double distance() const;
     //! Set sample to detector distance
     void setDistance(double d);
     //! Set the rest position of the detector (along y in Busing Levy convention)
     void setRestPosition(const DirectVector& p);
 
     //! Returns the number of detector
-    unsigned int getNDetectors() const;
+    unsigned int nDetectors() const;
 
 protected:
     unsigned int _nRows, _nCols;

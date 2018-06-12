@@ -103,8 +103,8 @@ PeakList PeakFinder::find(DataList numors)
         PeakList numor_peaks;
 
         auto dectector = numor->diffractometer()->detector();
-        int nrows = dectector->getNRows();
-        int ncols = dectector->getNCols();
+        int nrows = dectector->nRows();
+        int ncols = dectector->nCols();
         int nframes = numor->nFrames();
 
         // The blobs found for this numor
@@ -363,8 +363,8 @@ void PeakFinder::findPrimaryBlobs(sptrDataSet data, std::map<int,Blob3D>& blobs,
     }
 
     auto dectector = data->diffractometer()->detector();
-    int nrows = dectector->getNRows();
-    int ncols = dectector->getNCols();
+    int nrows = dectector->nRows();
+    int ncols = dectector->nCols();
 
     // used to pass to progress handler
     double progress = 0.0;
@@ -575,8 +575,8 @@ void PeakFinder::findCollisions(sptrDataSet data, std::map<int,Blob3D>& blobs, E
     }
 
     auto dectector = data->diffractometer()->detector();
-    int nrows = dectector->getNRows();
-    int ncols = dectector->getNCols();
+    int nrows = dectector->nRows();
+    int ncols = dectector->nCols();
     int nframes = data->nFrames();
 
     Octree oct(Eigen::Vector3d(0.0,0.0,0.0),Eigen::Vector3d(double(ncols),double(nrows),double(nframes)));

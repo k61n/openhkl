@@ -112,7 +112,7 @@ void DetectorScene::setData(SessionModel* session, const nsx::sptrDataSet& data,
     _currentData->open();
     auto det = _currentData->diffractometer()->detector();
     _zoomStack.clear();
-    _zoomStack.push_back(QRect(0,0,int(det->getNCols()),int(det->getNRows())));
+    _zoomStack.push_back(QRect(0,0,int(det->nCols()),int(det->nRows())));
 
     if (_lastClickedGI != nullptr) {
         removeItem(_lastClickedGI);
@@ -470,8 +470,8 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     auto instr=_currentData->diffractometer();
     auto det=instr->detector();
 
-    int nrows = int(det->getNRows());
-    int ncols = int(det->getNCols());
+    int nrows = int(det->nRows());
+    int ncols = int(det->nCols());
 
     int col = static_cast<int>(event->lastScenePos().x());
     int row = static_cast<int>(event->lastScenePos().y());
@@ -486,8 +486,8 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     //const auto& samplev = state.sample.values();
     //const auto& detectorv = state.detector.values();
     auto sample=instr->sample();
-    auto& mono = instr->source()->getSelectedMonochromator();
-    double wave=mono.getWavelength();
+    auto& mono = instr->source()->selectedMonochromator();
+    double wave=mono.wavelength();
 
     QString ttip;
 

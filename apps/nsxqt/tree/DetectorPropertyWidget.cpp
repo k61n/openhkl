@@ -21,10 +21,10 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
     auto detector=_detectorItem->experiment()->diffractometer()->detector();
     auto gonio=detector->getGonio();
 
-    ui->lineEdit_H->setText(QString::number(detector->getHeight())+" m");
-    ui->lineEdit_W->setText(QString::number(detector->getWidth())+" m");
-    ui->lineEdit_WPixels->setText(QString::number(detector->getNCols()));
-    ui->lineEdit_HPixels->setText(QString::number(detector->getNRows()));
+    ui->lineEdit_H->setText(QString::number(detector->height())+" m");
+    ui->lineEdit_W->setText(QString::number(detector->width())+" m");
+    ui->lineEdit_WPixels->setText(QString::number(detector->nCols()));
+    ui->lineEdit_HPixels->setText(QString::number(detector->nRows()));
 
     nsx::DirectVector restpos = detector->getRestPosition();
     // rest position of the detector is along y

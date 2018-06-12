@@ -54,7 +54,7 @@ void Sample::setShape(const ConvexHull& shape)
     _sampleShape = shape;
 }
 
-ConvexHull& Sample::getShape()
+ConvexHull& Sample::shape()
 {
     return _sampleShape;
 }
@@ -81,7 +81,7 @@ const UnitCellList& Sample::unitCells() const
     return _cells;
 }
 
-std::size_t Sample::getNCrystals() const
+std::size_t Sample::nCrystals() const
 {
     return _cells.size();
 }
@@ -104,7 +104,7 @@ void Sample::removeUnitCell(int index)
     _cells.erase(_cells.begin()+index);
 }
 
-unsigned int Sample::getZ(int index) const
+unsigned int Sample::z(int index) const
 {
     if (index < 0 || static_cast<size_t>(index) >= _cells.size()) {
         throw std::runtime_error("Invalid unit cell index.");
@@ -124,7 +124,7 @@ void Sample::setZ(int Z, int index)
     _cells[index]->setZ(Z);
 }
 
-sptrMaterial Sample::getMaterial(int index) const
+sptrMaterial Sample::material(int index) const
 {
     if (index < 0 || static_cast<size_t>(index) >= _cells.size()) {
         throw std::runtime_error("Invalid unit cell index.");

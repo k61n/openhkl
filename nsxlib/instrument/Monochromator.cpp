@@ -74,7 +74,7 @@ Monochromator::~Monochromator()
 {
 }
 
-const std::string& Monochromator::getName() const
+const std::string& Monochromator::name() const
 {
     return _name;
 }
@@ -84,7 +84,7 @@ void Monochromator::setName(const std::string& name)
     _name = name;
 }
 
-double Monochromator::getWavelength() const
+double Monochromator::wavelength() const
 {
     return _wavelength;
 }
@@ -94,17 +94,17 @@ void Monochromator::setWavelength(double wavelength)
     _wavelength = wavelength;
 }
 
-double Monochromator::getFWHM() const
+double Monochromator::fullWidthHalfMaximum() const
 {
     return _fwhm;
 }
 
-void Monochromator::setFWHM(double fwhm)
+void Monochromator::setFullWidthHalfMaximum(double fwhm)
 {
     _fwhm = fwhm;
 }
 
-double Monochromator::getWidth() const
+double Monochromator::width() const
 {
     return _width;
 }
@@ -114,7 +114,7 @@ void Monochromator::setWidth(double width)
     _width = width;
 }
 
-double Monochromator::getHeight() const
+double Monochromator::height() const
 {
     return _height;
 }
@@ -144,7 +144,7 @@ bool Monochromator::operator==(const Monochromator& other)
     return true;
 }
 
-ReciprocalVector Monochromator::getKi() const
+ReciprocalVector Monochromator::ki() const
 {
     return ReciprocalVector(0.0, 1.0/_wavelength, 0.0);
 }

@@ -56,14 +56,14 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader):
         throw std::runtime_error("IData, file: " + _filename + " does not exist");
     }
 
-    _nrows = _diffractometer->detector()->getNRows();
-    _ncols = _diffractometer->detector()->getNCols();
+    _nrows = _diffractometer->detector()->nRows();
+    _ncols = _diffractometer->detector()->nCols();
 
     _metadata = uptrMetaData(new MetaData(_reader->getMetadata()));
     _nFrames = _metadata->getKey<int>("npdone");
 
     double wav = _metadata->getKey<double>("wavelength");
-    _diffractometer->source()->getSelectedMonochromator().setWavelength(wav);
+    _diffractometer->source()->selectedMonochromator().setWavelength(wav);
 
     // Getting Scan parameters for the detector
     _states.reserve(_nFrames);

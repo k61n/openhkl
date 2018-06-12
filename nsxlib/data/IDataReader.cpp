@@ -34,8 +34,8 @@ IDataReader::IDataReader(const std::string& filename, const sptrDiffractometer& 
 {
     _metadata.add<std::string>("filename",filename);
 
-    _nRows = _diffractometer->detector()->getNRows();
-    _nCols = _diffractometer->detector()->getNCols();
+    _nRows = _diffractometer->detector()->nRows();
+    _nCols = _diffractometer->detector()->nCols();
 }
 
 size_t IDataReader::getNFrames() const {
@@ -77,9 +77,9 @@ InstrumentState IDataReader::getState(size_t frame) const
     state.detectorOffset = detector_trans.translation();
     state.samplePosition = sample_trans.translation();
 
-    state.ni = _diffractometer->source()->getSelectedMonochromator().getKi().rowVector();
+    state.ni = _diffractometer->source()->selectedMonochromator().ki().rowVector();
     state.ni.normalize();
-    state.wavelength = _diffractometer->source()->getSelectedMonochromator().getWavelength();
+    state.wavelength = _diffractometer->source()->selectedMonochromator().wavelength();
 
     return state;
 }

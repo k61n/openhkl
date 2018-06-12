@@ -67,7 +67,7 @@ public:
     void setShape(const ConvexHull& shape);
 
     //! Return the sample shape, described as a convex hull
-    ConvexHull& getShape();
+    ConvexHull& shape();
 
     //! Create a new crystal with Empty UnitCell, and return it
     std::shared_ptr<UnitCell> addUnitCell(std::shared_ptr<UnitCell> cell = nullptr);
@@ -76,18 +76,18 @@ public:
     sptrUnitCell unitCell(int index);
     const UnitCellList& unitCells() const;
     //! Return number of crystals
-    std::size_t getNCrystals() const;
+    std::size_t nCrystals() const;
     //!
     void removeUnitCell(int index);
     void removeUnitCell(sptrUnitCell cell);
 
     //! Gets the Z number of a given unit cell
-    unsigned int getZ(int index) const;
+    unsigned int z(int index) const;
     //! Sets the Z number of a given unit cell
     void setZ(int Z, int index);
 
     //! Gets the Material of one of the unit cells of this Sample
-    sptrMaterial getMaterial(int index) const;
+    sptrMaterial material(int index) const;
     //! Sets the Material of one of the unit cells of this Sample
     void setMaterial(sptrMaterial material, int index);
 

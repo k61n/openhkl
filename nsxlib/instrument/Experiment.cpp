@@ -113,17 +113,17 @@ void Experiment::addData(sptrDataSet data)
     double wav=data->metadata()->getKey<double>("wavelength");
 
     // ensure that there is at least one monochromator!
-    if ( _diffractometer->source()->getNMonochromators() == 0 ) {
+    if ( _diffractometer->source()->nMonochromators() == 0 ) {
         Monochromator mono("mono");
         _diffractometer->source()->addMonochromator(mono);
     }
 
-    auto& mono = _diffractometer->source()->getSelectedMonochromator();
+    auto& mono = _diffractometer->source()->selectedMonochromator();
 
     if (_data.empty()) {
         mono.setWavelength(wav);
     } else {
-        if (std::abs(wav-mono.getWavelength())>1e-5)
+        if (std::abs(wav-mono.wavelength())>1e-5)
             throw std::runtime_error("trying to mix data with different wavelengths");
     }
     _data.insert(std::make_pair(filename,data));

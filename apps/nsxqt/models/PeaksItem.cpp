@@ -281,7 +281,7 @@ void PeaksItem::autoAssignUnitCell()
         Eigen::RowVector3d hkl;
         bool assigned = false;
 
-        for (size_t i = 0; i < sample->getNCrystals(); ++i) {
+        for (size_t i = 0; i < sample->nCrystals(); ++i) {
             auto cell = sample->unitCell(i);
             nsx::MillerIndex hkl(peak->q(), *cell);
             if (hkl.indexed(cell->indexingTolerance())) {
