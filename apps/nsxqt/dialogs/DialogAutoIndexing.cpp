@@ -39,12 +39,41 @@ DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, nsx::Pea
 {
     ui->setupUi(this);
     setModal(true);
+    //_unitCells = _experiment_item->experiment()->diffractometer()->getSample()->unitCells();
+
+    //for (auto unit_cell : _unitCells) {
+    //    ui->unitCells->addItem(QString::fromStdString(unit_cell->name()));
+    //}
+
+    //connect(ui->addUnitCell,SIGNAL(clicked()),this,SLOT(addUnitCell()));
 
     connect(ui->index,SIGNAL(clicked()),this,SLOT(autoIndex()));
 
     // Accept solution and set Unit-Cell
     connect(ui->solutions->verticalHeader(),SIGNAL(sectionDoubleClicked(int)),this,SLOT(selectSolution(int)));
 
+    // get set of default values to populate controls
+    nsx::IndexerParameters params;
+
+    ui->gruberTolerance->setMinimum(0);
+    ui->gruberTolerance->setMaximum(100);
+    ui->gruberTolerance->setValue(params.gruberTolerance);
+
+    ui->maxCellDim->setMinimum(0);
+    ui->maxCellDim->setMaximum(9999);
+    ui->maxCellDim->setValue(params.maxdim);
+
+    ui->nSolutions->setMinimum(3);
+    ui->nSolutions->setMaximum(9999);
+    ui->nSolutions->setValue(params.nSolutions);
+
+    ui->nVertices->setMinimum(100);
+    ui->nVertices->setMaximum(999999);
+    ui->nVertices->setValue(params.nVertices);
+
+    ui->subdiv->setMinimum(0);
+    ui->subdiv->setMaximum(999999);
+    ui->subdiv->setValue(params.subdiv);
     connect(ui->cancelOK,SIGNAL(rejected()),this,SLOT(reject()));
     connect(ui->cancelOK,SIGNAL(accepted()),this,SLOT(accept()));
 }
@@ -76,14 +105,16 @@ void DialogAutoIndexing::autoIndex()
 
     nsx::IndexerParameters params;
 
-    params.subdiv = 5;
+    params.subdiv = ui->subdiv->value();;
     params.maxdim = ui->maxCellDim->value();
-    params.nSolutions = ui->maxNumSolutions->value();
-    params.indexingTolerance = ui->indexingTolerance->value();
+    params.nSolutions = ui->nSolutions->value();
+    // todo: restore this functionality in dialog?
+    params.indexingTolerance = 0.2;
     params.nVertices = ui->nVertices->value();
     params.niggliReduction = ui->niggliReduction->isChecked();
     params.niggliTolerance = ui->niggliTolerance->value();
     params.gruberTolerance = ui->gruberTolerance->value();
+    params.maxdim = ui->maxCellDim->value();
 
     try {
         indexer.autoIndex(params);

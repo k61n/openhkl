@@ -52,6 +52,7 @@
 %shared_ptr(nsx::Sample)
 %shared_ptr(nsx::IDataReader)
 %shared_ptr(nsx::HDF5DataReader)
+%shared_ptr(nsx::HDF5MetaDataReader)
 %shared_ptr(nsx::ILLDataReader)
 %shared_ptr(nsx::I16DataReader)
 %shared_ptr(nsx::RawDataReader)
@@ -124,6 +125,7 @@ using Eigen::Quaterniond;
 #include "MatrixParser.h"
 #include "ProgressHandler.h"
 
+#include "PeakCoordinateSystem.h"
 #include "PeakPredictor.h"
 #include "RefinementBatch.h"
 #include "Refiner.h"
@@ -177,6 +179,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "ILLDataReader.h"
 #include "IDataReader.h"
 #include "HDF5DataReader.h"
+#include "HDF5MetaDataReader.h"
 #include "I16DataReader.h"
 #include "RawDataReader.h"
 #include "TiffDataReader.h"
@@ -386,6 +389,7 @@ using namespace nsx;
 %include "Detector.h"
 %include "DetectorEvent.h"
 %template(DetectorEventQueue) std::deque<nsx::DetectorEvent>;
+%template(DetectorEventList) std::vector<nsx::DetectorEvent>;
 %template(DoubleQueue) std::deque<double>;
 %include "MonoDetector.h"
 %include "CylindricalDetector.h"
@@ -447,6 +451,7 @@ namespace nsx {
 %include "IDataReader.h"
 %include "DataReaderFactory.h"
 %include "ILLDataReader.h"
+%include "HDF5MetaDataReader.h"
 %include "HDF5DataReader.h"
 %include "Profile3D.h"
 %include "DataSet.h"
@@ -485,6 +490,8 @@ namespace nsx {
 %include "Parser.h"
 %include "MatrixParser.h"
 %include "ProgressHandler.h"
+
+%include "PeakCoordinateSystem.h"
 %include "PeakPredictor.h"
 %include "RefinementBatch.h"
 %include "Refiner.h"
@@ -520,6 +527,7 @@ namespace nsx {
 %include "NiggliReduction.h"
 %include "GruberReduction.h"
 %include "SymOp.h"
+%template(SymOpList) std::vector<nsx::SymOp>;
 
 %include "Vertex.h"
 %include "Triangle.h"
@@ -538,6 +546,7 @@ namespace nsx {
 %include "MetaData.h"
 %include "ILLDataReader.h"
 %include "IDataReader.h"
+%include "HDF5MetaDataReader.h"
 %include "HDF5DataReader.h"
 %include "I16DataReader.h"
 %include "RawDataReader.h"

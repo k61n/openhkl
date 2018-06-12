@@ -23,7 +23,6 @@ public:
 
     explicit DialogAutoIndexing(ExperimentItem* experiment_item, const nsx::PeakList peaks, QWidget *parent=0);
     ~DialogAutoIndexing();
-
     void buildSolutionsTable();
 
     nsx::sptrUnitCell unitCell();
@@ -32,6 +31,7 @@ public slots:
     void autoIndex();
 
 private slots:
+    //void addUnitCell();
 
     void selectSolution(int);
 

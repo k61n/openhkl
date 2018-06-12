@@ -13,12 +13,6 @@
     <height>602</height>
    </rect>
   </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-    <horstretch>1</horstretch>
-    <verstretch>1</verstretch>
-   </sizepolicy>
-  </property>
   <property name="windowTitle">
    <string>Auto-indexer dialog</string>
   </property>
@@ -152,7 +146,7 @@
           <enum>QAbstractSpinBox::NoButtons</enum>
          </property>
          <property name="maximum">
-          <number>1000</number>
+          <number>100000</number>
          </property>
          <property name="value">
           <number>1000</number>
@@ -169,8 +163,32 @@
          </property>
         </widget>
        </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Number of subdivisions</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Minimum cell volume</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <widget class="QSpinBox" name="subdiv">
+         <property name="maximum">
+          <number>999999</number>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <widget class="QDoubleSpinBox" name="cellVolume"/>
+       </item>
        <item row="5" column="1">
-        <widget class="QSpinBox" name="maxNumSolutions">
+        <widget class="QSpinBox" name="nSolutions">
          <property name="buttonSymbols">
           <enum>QAbstractSpinBox::NoButtons</enum>
          </property>
@@ -185,64 +203,10 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="0" colspan="2">
+       <item row="9" column="1">
         <widget class="QPushButton" name="index">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">QPushButton {
-        border: 1px solid #000000;
-        border-radius: 20px;
-        padding: 5px 15px 2px 5px;
-        background: #eeeeee;
-        color: #000000;
-        font: bold large &quot;Arial&quot;;
-        height: 30px;
-}
-
-QPushButton:pressed {
-        background: #dddddd;
-        padding-top: 2px;
-        padding-left: 3px;
-
-}
-</string>
-         </property>
          <property name="text">
-          <string>Index</string>
-         </property>
-         <property name="flat">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Indexing tolerance</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QDoubleSpinBox" name="indexingTolerance">
-         <property name="decimals">
-          <number>3</number>
-         </property>
-         <property name="maximum">
-          <double>1.000000000000000</double>
-         </property>
-         <property name="singleStep">
-          <double>0.001000000000000</double>
-         </property>
-         <property name="value">
-          <double>0.200000000000000</double>
+          <string>Autoindex</string>
          </property>
         </widget>
        </item>

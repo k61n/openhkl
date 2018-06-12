@@ -49,6 +49,10 @@ endif()
 if(NSX_DOCS)
   include(Doxygen)
 endif()
+
+
+# Enable unit testing with ctest. This must be called before any calls to add_subdirectory
+enable_testing()
   
 ###########################################################################
 # RPATH manipulation
@@ -77,8 +81,6 @@ endif()
 # additional tools
 add_subdirectory(tools)
 
-# Enable unit testing with ctest. This must be called before any calls to add_subdirectory
-enable_testing()
 # Directory with all the unit-tests.
 add_subdirectory(tests)
 

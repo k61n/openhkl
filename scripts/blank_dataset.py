@@ -1,8 +1,8 @@
 import h5py
 import numpy
 
-scan = 360.0
-delta = 0.5
+scan = 50.0
+delta = 0.3
 N = int(scan / delta)
 
 with h5py.File("blank.hdf", "w") as f:

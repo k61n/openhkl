@@ -42,10 +42,9 @@ namespace nsx {
 class SymOp {
 
 public:
-#ifndef SWIG
-	SymOp()=delete;
-#endif
-	//! Construct symmetry operation by parsing a generator
+	// needed for swig
+	SymOp()=default;
+
 	SymOp(std::string generator);
 	//! Construct symmetry operation from an Eigen affine transformatiion
 	SymOp(const affineTransformation& symmetryOperation);
