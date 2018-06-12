@@ -69,12 +69,12 @@ void Experiment::addData(sptrDataSet data)
     if (_data.find(filename) != _data.end()) {
         return;
     }
-    std::string diffName = data->metadata()->getKey<std::string>("Instrument");
+    std::string diffName = data->metadata()->key<std::string>("Instrument");
 
     if (!(diffName.compare(_diffractometer->name())==0)) {
         throw std::runtime_error("Mismatch between the diffractometers assigned to the experiment and the data");
     }
-    double wav=data->metadata()->getKey<double>("wavelength");
+    double wav=data->metadata()->key<double>("wavelength");
 
     // ensure that there is at least one monochromator!
     if ( _diffractometer->source()->nMonochromators() == 0 ) {

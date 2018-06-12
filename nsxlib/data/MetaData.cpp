@@ -26,7 +26,7 @@ MetaData& MetaData::operator=(const MetaData& rhs)
 	return *this;
 }
 
-const MetaDataKeySet& MetaData::getAllKeys() const
+const MetaDataKeySet& MetaData::keys() const
 {
 	return _metakeys;
 }
@@ -51,7 +51,7 @@ bool MetaData::isKey(const std::string& key) const
 	return  (it2!=_map.end());
 }
 
-Variant<int,double,std::string> MetaData::getKey(const std::string& key) const
+Variant<int,double,std::string> MetaData::key(const std::string& key) const
 {
 	// Search if this key is in the set.
 	auto it=_metakeys.find(key);
@@ -67,7 +67,7 @@ Variant<int,double,std::string> MetaData::getKey(const std::string& key) const
 		throw std::runtime_error("Could not locate key "+key+ " in the set of available keys");
 }
 
-const MetaDataMap& MetaData::getMap() const
+const MetaDataMap& MetaData::map() const
 {
 	return _map;
 }

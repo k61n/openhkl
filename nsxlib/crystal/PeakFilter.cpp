@@ -158,10 +158,10 @@ PeakList PeakFilter::apply(const PeakList& reference_peaks) const
             }
         }
 
-        for (auto&& merged_peak: merged.getPeaks()) {
+        for (auto&& merged_peak: merged.peaks()) {
             // p value too high: reject peaks
             if (_removeMergedP && merged_peak.pValue() > _mergedP) {
-                for (auto&& p: merged_peak.getPeaks()) {
+                for (auto&& p: merged_peak.peaks()) {
                     bad_peaks.push_back(p);
                 }
             }

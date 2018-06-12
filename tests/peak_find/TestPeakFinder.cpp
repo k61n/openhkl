@@ -23,7 +23,7 @@ int main()
     nsx::PeakFinder peakFinder;
     nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
 
-    NSX_CHECK_ASSERT(meta->getKey<int>("nbang")==2);
+    NSX_CHECK_ASSERT(meta->key<int>("nbang")==2);
 
     dataf->open();
     numors.push_back(dataf);

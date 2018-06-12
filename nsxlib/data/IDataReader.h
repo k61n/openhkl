@@ -24,31 +24,31 @@ public:
     //! Close file and release handle
     virtual void close() = 0;
     //! Return the a detector image
-    virtual Eigen::MatrixXi getData(size_t frame)=0;
+    virtual Eigen::MatrixXi data(size_t frame)=0;
     //! Return the instrument state as read from the metadata
-    InstrumentState getState(size_t frame) const;
+    InstrumentState state(size_t frame) const;
     //! Return the list of sample states associated to the detector images
     const std::vector<std::vector<double>>& sampleStates() const;
     //! Return the list of detector states associated to the detecot images
     const std::vector<std::vector<double>>& detectorStates() const;
     //! Return the metadata in the file
-    const MetaData& getMetadata() const;
+    const MetaData& metadata() const;
     //! Return number of detector images
-    size_t getNFrames() const;
+    size_t nFrames() const;
     //! Return number of columns in each detector image
-    size_t getNCols() const;
+    size_t nCols() const;
     //! Return number of rows in each detector image
-    size_t getNRows() const;
+    size_t nRows() const;
     //! Return pointer to diffractometer associated with the data
     sptrDiffractometer diffractometer() const;
     //! Gets the data basename
-    std::string getBasename() const;
+    std::string basename() const;
     //! Gets the data filename
-    std::string getFilename() const;
+    std::string filename() const;
     //! True if file is open
     bool isOpened() const;
     //! Returns the size of the file in disk
-    std::size_t getFileSize() const;//
+    std::size_t fileSize() const;//
 
 protected:
     //! Stores the metadata

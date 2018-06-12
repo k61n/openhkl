@@ -113,7 +113,7 @@ PeakList PeakPredictor::predictPeaks(sptrDataSet data, const std::vector<MillerI
         qs.emplace_back(idx.rowVector().cast<double>()*BU);
     }
 
-    auto events = data->getEvents(qs);
+    auto events = data->events(qs);
  
     for (auto event: events) {
         sptrPeak3D peak(new Peak3D(data));

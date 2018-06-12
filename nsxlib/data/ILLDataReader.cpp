@@ -46,9 +46,9 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
     readMetadata(&buffer[0]);
 
     // Extract some variables from the metadata
-    _nFrames = size_t(_metadata.getKey<int>("npdone"));
-    _dataPoints = size_t(_metadata.getKey<int>("nbdata"));
-    _nAngles = size_t(_metadata.getKey<int>("nbang"));
+    _nFrames = size_t(_metadata.key<int>("npdone"));
+    _dataPoints = size_t(_metadata.key<int>("nbdata"));
+    _nAngles = size_t(_metadata.key<int>("nbang"));
 
     // Skip 8 or 9 lines to the beginning of data blocks
     _skipChar = 81*(8+(_nAngles<=2 ? 0 : 2));
@@ -85,7 +85,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
 
     for (std::size_t i = 0; i < _nAngles; ++i) {
         std::string idesc = std::string("icdesc") + std::to_string(i+1);
-        unsigned int id = static_cast<unsigned int>(_metadata.getKey<int>(idesc));
+        unsigned int id = static_cast<unsigned int>(_metadata.key<int>(idesc));
         scannedAxisId.push_back(id);
     }
 
@@ -144,7 +144,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
         else {
             // If the axis name is defined in the metadata, the contant will be the corresponding value
             // other wise it will be 0
-            double val = _metadata.isKey(p.second) ? _metadata.getKey<double>(p.second) : 0.0;
+            double val = _metadata.isKey(p.second) ? _metadata.key<double>(p.second) : 0.0;
             // Data are given in deg for angles
             std::vector<double> values(_nFrames,val*deg);
             gonioValues.insert(std::pair<unsigned int,std::vector<double>>(p.first,values));
@@ -211,7 +211,7 @@ void ILLDataReader::open()
     if (_isOpened)
         return;
     try {
-        boost::interprocess::file_mapping filemap(_metadata.getKey<std::string>("filename").c_str(), boost::interprocess::read_only);
+        boost::interprocess::file_mapping filemap(_metadata.key<std::string>("filename").c_str(), boost::interprocess::read_only);
         boost::interprocess::mapped_region reg(filemap,boost::interprocess::read_only);
         _map.swap(reg);
         _mapAddress=reinterpret_cast<char*>(_map.get_address());
@@ -230,7 +230,7 @@ void ILLDataReader::close()
     _isOpened = false;
 }
 
-Eigen::MatrixXi ILLDataReader::getData(size_t frame)
+Eigen::MatrixXi ILLDataReader::data(size_t frame)
 {
     assert(frame < _nFrames);
 
@@ -381,8 +381,8 @@ void ILLDataReader::readHeader(std::stringstream& buffer)
     std::string date, time;
 
     // Enter a key for the posix time
-    date = _metadata.getKey<std::string>("Date");
-    time = _metadata.getKey<std::string>("Time");
+    date = _metadata.key<std::string>("Date");
+    time = _metadata.key<std::string>("Time");
     _metadata.add<std::string>("date",date);
     _metadata.add<std::string>("time",time);
 }

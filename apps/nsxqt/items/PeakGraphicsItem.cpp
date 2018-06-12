@@ -212,7 +212,7 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     info += "p value (" + QString::number(_peak->pValue(), 'f', 3) + ")\n";
 
     double scale=_peak->scale();
-    double monitor=_peak->data()->metadata()->getKey<double>("monitor");
+    double monitor=_peak->data()->metadata()->key<double>("monitor");
     info+="Monitor "+QString::number(monitor*scale)+" counts";
     QCPPlotTitle* title=dynamic_cast<QCPPlotTitle*>(p->plotLayout()->element(0,0));
     if (title != nullptr) {

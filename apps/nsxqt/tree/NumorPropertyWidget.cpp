@@ -26,7 +26,7 @@ NumorPropertyWidget::NumorPropertyWidget(NumorItem* caller,QWidget *parent) :
     ui->label_Data->setText(QString::fromStdString(data->filename()));
 
     auto metadata=data->metadata();
-    const auto& map=metadata->getMap();
+    const auto& map=metadata->map();
 
     ui->tableWidget->setColumnCount(2);
     ui->tableWidget->setRowCount(map.size());

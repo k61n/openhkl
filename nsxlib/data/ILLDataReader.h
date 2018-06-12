@@ -66,7 +66,7 @@ public:
 
     void close() override;
     //! Read a single frame
-    Eigen::MatrixXi getData(size_t frame) override;
+    Eigen::MatrixXi data(size_t frame) override;
 
 private:
 

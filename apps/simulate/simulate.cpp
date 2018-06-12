@@ -195,7 +195,7 @@ int main(int argc, char* argv[])
         qs.push_back(nsx::ReciprocalVector(q));
     }
 
-    auto events = data->getEvents(qs);
+    auto events = data->events(qs);
 
     const double sigmaD = 0.3;
     const double sigmaM = 0.2;

@@ -72,7 +72,7 @@ public:
     //! Close the file(s)
     void close() override;
     //! Read a single frame
-    Eigen::MatrixXi getData(size_t frame) override;
+    Eigen::MatrixXi data(size_t frame) override;
     //! Swap enddianness of the data
     void swapEndian();
     //! Set the bytes-per-pixel of the data

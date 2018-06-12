@@ -161,7 +161,7 @@ int Refiner::updatePredictions(PeakList& peaks) const
         // update the position
         MillerIndex hkl(peak->q(), *_cell);
         ReciprocalVector q_pred(hkl.rowVector().cast<double>()*_cell->reciprocalBasis());
-        auto events = peak->data()->getEvents({q_pred});
+        auto events = peak->data()->events({q_pred});
 
         // something wrong with new prediction...
         if (events.size() != 1) {

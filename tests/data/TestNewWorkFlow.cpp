@@ -135,12 +135,11 @@ int main()
 
     int n_selected = 0;
 
-    // get that DataSet::getEvents works properly
     for (auto peak: selected_peaks) {
 
         std::vector<nsx::ReciprocalVector> q_vectors;
         q_vectors.push_back(peak->q());
-        auto events = dataf->getEvents(q_vectors);
+        auto events = dataf->events(q_vectors);
 
         //NSX_CHECK_ASSERT(events.size() >= 1);
 

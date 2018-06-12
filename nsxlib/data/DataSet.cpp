@@ -39,7 +39,7 @@ namespace nsx {
 
 DataSet::DataSet(std::shared_ptr<IDataReader> reader):
     _isOpened(false),
-    _filename(reader->getFilename()),
+    _filename(reader->filename()),
     _nFrames(0),
     _nrows(0),
     _ncols(0),
@@ -59,17 +59,17 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader):
     _nrows = _diffractometer->detector()->nRows();
     _ncols = _diffractometer->detector()->nCols();
 
-    _metadata = uptrMetaData(new MetaData(_reader->getMetadata()));
-    _nFrames = _metadata->getKey<int>("npdone");
+    _metadata = uptrMetaData(new MetaData(_reader->metadata()));
+    _nFrames = _metadata->key<int>("npdone");
 
-    double wav = _metadata->getKey<double>("wavelength");
+    double wav = _metadata->key<double>("wavelength");
     _diffractometer->source()->selectedMonochromator().setWavelength(wav);
 
     // Getting Scan parameters for the detector
     _states.reserve(_nFrames);
 
     for (unsigned int i=0;i<_nFrames;++i) {
-        _states.push_back(_reader->getState(i));
+        _states.push_back(_reader->state(i));
     }
 }
 
@@ -89,14 +89,14 @@ int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z)
 
 Eigen::MatrixXi DataSet::frame(std::size_t idx)
 {
-    return _reader->getData(idx);
+    return _reader->data(idx);
 }
 
 Eigen::MatrixXd DataSet::convolvedFrame(std::size_t idx, const std::string& convolver_type, const std::map<std::string,double>& parameters)
 {
     ConvolverFactory convolver_factory;
     auto convolver = convolver_factory.create(convolver_type,parameters);
-    Eigen::MatrixXi frame_data = _reader->getData(idx); 
+    Eigen::MatrixXi frame_data = _reader->data(idx);
     return convolver->convolve(frame_data.cast<double>());
 }
 
@@ -300,7 +300,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
     }
     #endif
 
-    const auto& map=_metadata->getMap();
+    const auto& map=_metadata->map();
 
     // Write all string metadata into the "Info" group
     H5::Group infogroup(file.createGroup("/Info"));
@@ -382,7 +382,7 @@ void DataSet::maskPeaks(PeakList& peaks) const
     }
 }
 
-std::vector<DetectorEvent> DataSet::getEvents(const std::vector<ReciprocalVector>& sample_qs) const
+std::vector<DetectorEvent> DataSet::events(const std::vector<ReciprocalVector>& sample_qs) const
 {
     std::vector<DetectorEvent> events;  
 

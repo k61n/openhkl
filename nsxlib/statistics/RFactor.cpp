@@ -40,7 +40,7 @@ namespace nsx {
 
 void RFactor::calculate(const MergedData& data)
 {
-    auto&& peaks = data.getPeaks();
+    auto&& peaks = data.peaks();
 
     _Rmerge = 0;
     _Rmeas = 0;
@@ -61,13 +61,13 @@ void RFactor::calculate(const MergedData& data)
             continue;
         }  
 
-        const double Iave = peak.getIntensity().value();
+        const double Iave = peak.intensity().value();
         const double Fmeas = std::sqrt(n / (n-1));
         const double Fpim = std::sqrt(1 / (n-1));
 
         I_total += std::fabs(Iave) * peak.redundancy();
 
-        for (auto&& p: peak.getPeaks()) {
+        for (auto&& p: peak.peaks()) {
             auto I = p->correctedIntensity();
 
             double diff = std::fabs(I.value() - Iave);

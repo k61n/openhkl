@@ -195,7 +195,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         case Column::lorentzFactor:
             return pf.lorentz;
         case Column::numor:
-            return _peaks[row]->data()->metadata()->getKey<int>("Numor");
+            return _peaks[row]->data()->metadata()->key<int>("Numor");
         case Column::selected:
             return _peaks[row]->isSelected();
         case Column::unitCell:
@@ -299,8 +299,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         break;
     case Column::numor:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            int numor1=p1->data()->metadata()->getKey<int>("Numor");
-            int numor2=p2->data()->metadata()->getKey<int>("Numor");
+            int numor1=p1->data()->metadata()->key<int>("Numor");
+            int numor2=p2->data()->metadata()->key<int>("Numor");
             return (numor1>numor2);
         };
         break;
@@ -401,7 +401,7 @@ void CollectedPeaksModel::setUnitCell(const nsx::sptrUnitCell& unitCell, QModelI
 void CollectedPeaksModel::normalizeToMonitor(double factor)
 {
     for (auto&& peak : _peaks) {
-        peak->setScale(factor/peak->data()->metadata()->getKey<double>("monitor"));
+        peak->setScale(factor/peak->data()->metadata()->key<double>("monitor"));
     }
 }
 
@@ -513,7 +513,7 @@ void CollectedPeaksModel::writeFullProf(const std::string& filename, QModelIndex
 
     file << "TITLE File written by ...\n";
     file << "(3i4,2F14.4,i5,4f8.2)\n";
-    double wave=_peaks[0]->data()->metadata()->getKey<double>("wavelength");
+    double wave=_peaks[0]->data()->metadata()->key<double>("wavelength");
     file << std::fixed << std::setw(8) << std::setprecision(3) << wave << " 0 0" << std::endl;
 
     for (auto peak : filtered_peaks) {

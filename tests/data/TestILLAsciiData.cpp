@@ -37,7 +37,7 @@ int UnitTest_DataSet::run()
         meta=dataf->metadata();
 
         NSX_CHECK_ASSERT(meta != nullptr);
-        NSX_CHECK_ASSERT(meta->getKey<int>("nbang")==2);
+        NSX_CHECK_ASSERT(meta->key<int>("nbang")==2);
 
         dataf->open();
         v = dataf->frame(0);
@@ -53,7 +53,7 @@ int UnitTest_DataSet::run()
     NSX_CHECK_EQUAL(v.sum(),65);
 
     // Check the value of the monitor
-    NSX_CHECK_CLOSE(meta->getKey<double>("monitor"),20000,tolerance);
+    NSX_CHECK_CLOSE(meta->key<double>("monitor"),20000,tolerance);
 
     auto sampleStates = dataf->_reader->sampleStates();
     auto detectorStates = dataf->_reader->detectorStates();

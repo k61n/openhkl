@@ -38,19 +38,19 @@ IDataReader::IDataReader(const std::string& filename, const sptrDiffractometer& 
     _nCols = _diffractometer->detector()->nCols();
 }
 
-size_t IDataReader::getNFrames() const {
+size_t IDataReader::nFrames() const {
     return _nFrames;
 }
 
-size_t IDataReader::getNCols() const {
+size_t IDataReader::nCols() const {
     return _nCols;
 }
 
-size_t IDataReader::getNRows() const {
+size_t IDataReader::nRows() const {
     return _nRows;
 }
 
-const MetaData& IDataReader::getMetadata() const {
+const MetaData& IDataReader::metadata() const {
     return _metadata;
 }
 
@@ -58,7 +58,7 @@ sptrDiffractometer IDataReader::diffractometer() const {
     return _diffractometer;
 }
 
-InstrumentState IDataReader::getState(size_t frame) const
+InstrumentState IDataReader::state(size_t frame) const
 {
     assert(frame < _nFrames);
 
@@ -84,14 +84,14 @@ InstrumentState IDataReader::getState(size_t frame) const
     return state;
 }
 
-std::string IDataReader::getBasename() const
+std::string IDataReader::basename() const
 {
-    return fileBasename(_metadata.getKey<std::string>("filename"));
+    return fileBasename(_metadata.key<std::string>("filename"));
 }
 
-std::string IDataReader::getFilename() const
+std::string IDataReader::filename() const
 {
-    return _metadata.getKey<std::string>("filename");
+    return _metadata.key<std::string>("filename");
 }
 
 
@@ -101,7 +101,7 @@ bool IDataReader::isOpened() const
 }
 
 
-std::size_t IDataReader::getFileSize() const
+std::size_t IDataReader::fileSize() const
 {
     return _fileSize;
 }

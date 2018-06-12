@@ -60,7 +60,7 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, sptrDiffract
         }
     }
 
-    _nFrames=_metadata.getKey<int>("npdone");
+    _nFrames=_metadata.key<int>("npdone");
 
     // Getting Scan parameters for the detector
     std::vector<std::string> axesS=_diffractometer->detector()->gonio()->physicalAxesNames();
@@ -152,7 +152,7 @@ void HDF5MetaDataReader::open()
     }
 
     try {
-        _file = std::unique_ptr<H5::H5File>(new H5::H5File(_metadata.getKey<std::string>("filename").c_str(), H5F_ACC_RDONLY));
+        _file = std::unique_ptr<H5::H5File>(new H5::H5File(_metadata.key<std::string>("filename").c_str(), H5F_ACC_RDONLY));
     } catch(...) {
         if (_file) {
             _file.reset();

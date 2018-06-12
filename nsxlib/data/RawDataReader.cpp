@@ -157,7 +157,7 @@ void RawDataReader::setBpp(unsigned int bpp) {
     _length = _bpp*_nRows*_nCols;
 }
 
-Eigen::MatrixXi RawDataReader::getData(std::size_t frame) {
+Eigen::MatrixXi RawDataReader::data(std::size_t frame) {
 
     std::string filename = _filenames.at(frame);
 

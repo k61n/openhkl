@@ -316,7 +316,7 @@ Eigen::Vector3d Ellipsoid::intersectionCenter(const Eigen::Vector3d& n, const Ei
 
 Ellipsoid Ellipsoid::toDetectorSpace(sptrDataSet data) const
 {
-    auto events = data->getEvents({ReciprocalVector(_center)});
+    auto events = data->events({ReciprocalVector(_center)});
 
     // something bad happened
     if (events.size() != 1) {

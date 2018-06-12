@@ -49,7 +49,7 @@ public:
 
     void close() override;
 
-    Eigen::MatrixXi getData(std::size_t frame) override;
+    Eigen::MatrixXi data(std::size_t frame) override;
 
 private:
 
