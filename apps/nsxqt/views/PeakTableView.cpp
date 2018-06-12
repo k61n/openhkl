@@ -318,8 +318,8 @@ void PeakTableView::plotAs(const std::string& key)
     for (int i=0;i<nPoints;++i) {
         nsx::sptrPeak3D p=peaks[indexList[i].row()];
         x[i]=p->data()->metadata()->getKey<double>(key);
-        y[i]=p->getScaledIntensity().value();
-        e[i]=p->getScaledIntensity().sigma();
+        y[i]=p->scaledIntensity().value();
+        e[i]=p->scaledIntensity().sigma();
     }
     emit plotData(x,y,e);
 }

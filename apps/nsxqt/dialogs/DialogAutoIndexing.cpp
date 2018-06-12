@@ -122,7 +122,7 @@ void DialogAutoIndexing::autoIndex()
         nsx::error() << "failed to auto index!";
         return;
     }
-    _solutions = indexer.getSolutions();
+    _solutions = indexer.solutions();
 
     for (auto&& sol: _solutions) {
         sol.first->setName("new unit cell");

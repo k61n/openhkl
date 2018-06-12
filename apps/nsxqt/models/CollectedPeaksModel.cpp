@@ -32,7 +32,7 @@ struct PeakFactors {
 
 static PeakFactors peakFactors(nsx::sptrPeak3D peak)
 {
-    auto coord = peak->getShape().center();
+    auto coord = peak->shape().center();
     auto state = peak->data()->interpolatedState(coord[2]);
     auto position = peak->data()->diffractometer()->detector()->pixelPosition(coord[0], coord[1]);
 
@@ -169,7 +169,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         }
     }
     PeakFactors pf = peakFactors(_peaks[row]);
-    transmissionFactor = _peaks[row]->getTransmission();
+    transmissionFactor = _peaks[row]->transmission();
     scaledIntensity = _peaks[row]->correctedIntensity().value();
     sigmaScaledIntensity = _peaks[row]->correctedIntensity().sigma();
 
@@ -287,7 +287,7 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         break;
     case Column::transmission:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            return p1->getTransmission()>p2->getTransmission();
+            return p1->transmission()>p2->transmission();
         };
         break;
     case Column::lorentzFactor:

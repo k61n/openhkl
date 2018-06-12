@@ -93,7 +93,7 @@ PeakList PeakPredictor::predict(sptrDataSet data, double radius, double nframes)
             // todo: number of neighboring peaks should not be hard-coded
             Eigen::Matrix3d cov = _library->meanCovariance(p, radius, nframes, 20);
             //Eigen::Matrix3d cov = _library->predictCovariance(p);
-            Eigen::Vector3d center = p->getShape().center();
+            Eigen::Vector3d center = p->shape().center();
             p->setShape(Ellipsoid(center, cov.inverse()));
         } catch (std::exception& e) {
             nsx::info() << e.what();

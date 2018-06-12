@@ -78,7 +78,7 @@ int main()
         } catch(...) {
             continue;
         }
-        auto old_shape = peak->getShape();
+        auto old_shape = peak->shape();
 
         // note: some blobs are invalid, so we skip them
         if (!(old_shape.metric().norm() < 1e3)) {

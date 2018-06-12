@@ -112,7 +112,7 @@ bool Profile3DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
     const double tolerance = 1e-5;
 
     Profile3D model_profile;
-    DetectorEvent event(peak->getShape().center());
+    DetectorEvent event(peak->shape().center());
 
     try {
         // throws if there are no neighboring peaks within the bounds
@@ -130,7 +130,7 @@ bool Profile3DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
             x(0) = events[i]._px;
             x(1) = events[i]._py;
             x(2) = events[i]._frame;
-            x -= peak->getShape().center();
+            x -= peak->shape().center();
         } else {
             x = coord.transform(events[i]);
         }

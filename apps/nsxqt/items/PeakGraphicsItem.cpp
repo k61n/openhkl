@@ -31,7 +31,7 @@ PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D p):
     _predictedCenter(0.0, 0.0, -1.0, -1.0)
 { 
     if (_peak) {
-        Eigen::Vector3d c=_peak->getShape().center();
+        Eigen::Vector3d c=_peak->shape().center();
         setPos(c[0], c[1]);
     }
     _pen.setWidth(2);
@@ -52,7 +52,7 @@ PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D p):
 
 QRectF PeakGraphicsItem::boundingRect() const
 {
-    auto aabb = _peak->getShape().aabb();
+    auto aabb = _peak->shape().aabb();
     const Eigen::Vector3d& l = aabb.lower();
     const Eigen::Vector3d& u = aabb.upper();
     qreal w=u[0]-l[0];
@@ -92,7 +92,7 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     }
     _label->setVisible(_hovered || _labelVisible);
 
-    const auto aabb = _peak->getShape().aabb();
+    const auto aabb = _peak->shape().aabb();
     const Eigen::Vector3d& peak_l = aabb.lower();
     const Eigen::Vector3d& peak_u = aabb.upper();
     qreal peak_w = peak_u[0]-peak_l[0];
@@ -105,7 +105,7 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
 void PeakGraphicsItem::setFrame(unsigned long frame)
 {
-    const auto aabb = _peak->getShape().aabb();
+    const auto aabb = _peak->shape().aabb();
     const Eigen::Vector3d& l = aabb.lower();
     const Eigen::Vector3d& u = aabb.upper();
 
@@ -131,7 +131,7 @@ void PeakGraphicsItem::setFrame(unsigned long frame)
         hklString = "no unit cell";
     }
     _label->setPlainText(hklString);
-    _frameCenter = _peak->getShape().intersectionCenter({0,0,1.0}, {0, 0, double(frame)});
+    _frameCenter = _peak->shape().intersectionCenter({0,0,1.0}, {0, 0, double(frame)});
     _predictedCenter = _peak->predictCenter(frame);
 }
 
@@ -172,7 +172,7 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     QVector<double> q_error(N);
 
     //Copy the data
-    double center = std::round(_peak->getShape().center()(2));
+    double center = std::round(_peak->shape().center()(2));
     
     for (int i = 0; i < N; ++i) {
         q_frames[i]= center - i/2.0;
@@ -196,7 +196,7 @@ void PeakGraphicsItem::plot(SXPlot* plot)
         info = "no unit cell";
     }
 
-    auto c = _peak->getShape().center();
+    auto c = _peak->shape().center();
     auto state = _peak->data()->interpolatedState(c[2]);
     auto position = _peak->data()->diffractometer()->detector()->pixelPosition(c[0], c[1]);
     double g = state.gamma(position);
@@ -204,14 +204,14 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     g/=nsx::deg;
     n/=nsx::deg;
     info+=" "+QString(QChar(0x03B3))+","+QString(QChar(0x03BD))+":"+QString::number(g,'f',2)+","+QString::number(n,'f',2)+"\n";
-    double intensity=_peak->getScaledIntensity().value();
+    double intensity=_peak->scaledIntensity().value();
     auto corr_int = _peak->correctedIntensity();
-    double sI=_peak->getScaledIntensity().sigma();
+    double sI=_peak->scaledIntensity().sigma();
     info+="Intensity ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";  
     info+="Cor. int. ("+QString(QChar(0x03C3))+"I): "+QString::number(corr_int.value(),'f',2)+" ("+QString::number(corr_int.sigma(),'f',2)+")\n";
     info += "p value (" + QString::number(_peak->pValue(), 'f', 3) + ")\n";
 
-    double scale=_peak->getScale();
+    double scale=_peak->scale();
     double monitor=_peak->data()->metadata()->getKey<double>("monitor");
     info+="Monitor "+QString::number(monitor*scale)+" counts";
     QCPPlotTitle* title=dynamic_cast<QCPPlotTitle*>(p->plotLayout()->element(0,0));

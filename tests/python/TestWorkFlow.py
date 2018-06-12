@@ -53,7 +53,7 @@ class TestWorkFlow(unittest.TestCase):
         handler = nsx.ProgressHandler()
         indexer.autoIndex(params)
 
-        soln = indexer.getSolutions()[0]
+        soln = indexer.solutions()[0]
 
         print(soln[0])
         print(soln[1])

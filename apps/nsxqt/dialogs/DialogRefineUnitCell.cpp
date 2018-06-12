@@ -63,7 +63,7 @@ void DialogRefineUnitCell::refineParameters()
         double fmax = lim.min();
 
         for (auto&& peak: peaks) {
-            auto center = peak->getShape().center();
+            auto center = peak->shape().center();
             fmin = std::min(fmin, center[2]);
             fmax = std::max(fmax, center[2]);
         }

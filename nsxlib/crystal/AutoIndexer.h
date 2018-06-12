@@ -89,7 +89,7 @@ public:
 
     //! Returns the best solutions found for the auto-indexing
     //! @return a list of the best solutions ordered by percentage of successfully auto-indexed peaks
-    const std::vector<RankedSolution>& getSolutions() const;
+    const std::vector<RankedSolution>& solutions() const;
 
 private:
 

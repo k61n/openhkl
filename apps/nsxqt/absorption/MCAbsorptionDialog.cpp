@@ -84,7 +84,7 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
         ui->progressBar_MCStatus->setFormat(QString::fromStdString(d.second->filename()) + ": "+QString::number(progress)+"%");
         for (auto& p: peaks) {
             auto data = p->data();
-            auto coord = p->getShape().center();
+            auto coord = p->shape().center();
             auto state = data->interpolatedState(coord[2]);
             auto position = data->diffractometer()->detector()->pixelPosition(coord[0], coord[1]);
             auto kf = state.kfLab(position);

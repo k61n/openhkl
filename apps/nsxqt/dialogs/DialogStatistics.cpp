@@ -382,7 +382,7 @@ void DialogStatistics::updateUnmergedPeaksTab()
             const int k = hkl[1];
             const int l = hkl[2];
 
-            auto c = unmerged_peak->getShape().center();
+            auto c = unmerged_peak->shape().center();
             auto numor = unmerged_peak->data()->filename();
             auto I = unmerged_peak->correctedIntensity();
 

@@ -647,7 +647,7 @@ void DetectorScene::updatePeaks()
     auto peaks = _session->peaks(_currentData.get());
 
     for (auto&& peak : peaks) {
-        auto aabb = peak->getShape().aabb();
+        auto aabb = peak->shape().aabb();
         const Eigen::Vector3d& l = aabb.lower();
         const Eigen::Vector3d& u = aabb.upper();
 

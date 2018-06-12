@@ -197,7 +197,7 @@ PeakList PeakFinder::find(DataList numors)
             auto shape = Ellipsoid(center, eigenvalues, eigenvectors);
 
             auto p = sptrPeak3D(new Peak3D(numor, shape));
-            const auto extents = p->getShape().aabb().extents();
+            const auto extents = p->shape().aabb().extents();
 
             // peak too small or too large
             if (extents.maxCoeff() > 1e5 || extents.minCoeff() < 1e-5) {
@@ -209,7 +209,7 @@ PeakList PeakFinder::find(DataList numors)
             }
 
             // peak's bounding box not completely contained in detector image
-            if (!dAABB.contains(p->getShape().aabb())) {
+            if (!dAABB.contains(p->shape().aabb())) {
                 p->setSelected(false);
             }
 

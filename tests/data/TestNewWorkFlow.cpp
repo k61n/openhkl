@@ -106,9 +106,9 @@ int main()
 
     NSX_CHECK_ASSERT(indexed_peaks > 600);
     NSX_CHECK_NO_THROW(indexer.autoIndex(params));
-    NSX_CHECK_ASSERT(indexer.getSolutions().size() > 1);
+    NSX_CHECK_ASSERT(indexer.solutions().size() > 1);
 
-    auto soln = indexer.getSolutions().front();
+    auto soln = indexer.solutions().front();
 
     // correctly indexed at least 92% of peaks
     NSX_CHECK_ASSERT(soln.second > 92.0);
@@ -150,7 +150,7 @@ int main()
 
         ++n_selected;
 
-        Eigen::Vector3d p0 = peak->getShape().center();
+        Eigen::Vector3d p0 = peak->shape().center();
         Eigen::Vector3d p1;
 
         double diff = 1e200;

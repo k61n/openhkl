@@ -97,7 +97,7 @@ PeakList PeakFilter::apply(const PeakList& reference_peaks) const
     Eigen::Vector3d upper(-1e100, -1e100, -1e100);
 
     for (auto peak: reference_peaks) {
-        ellipsoids.emplace_back(peak->getShape());
+        ellipsoids.emplace_back(peak->shape());
         peaks.push_back(peak);
         auto cell = peak->activeUnitCell();
 
@@ -105,7 +105,7 @@ PeakList PeakFilter::apply(const PeakList& reference_peaks) const
             crystals.insert(cell);
         }
 
-        Eigen::Vector3d p = peak->getShape().center();
+        Eigen::Vector3d p = peak->shape().center();
 
         for (int i = 0; i < 3; ++i) {
             lower(i) = std::min(lower(i), p(i));

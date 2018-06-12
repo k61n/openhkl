@@ -91,6 +91,11 @@ void Peak3D::setShape(const Ellipsoid& shape)
     _shape = shape;
 }
 
+const Ellipsoid& Peak3D::shape() const
+{
+    return _shape;
+}
+
 const std::vector<Intensity>& Peak3D::rockingCurve() const
 {
     return _rockingCurve;
@@ -126,14 +131,14 @@ sptrUnitCell Peak3D::unitCell(int index) const
     return _unitCells[size_t(index)];
 }
 
-Intensity Peak3D::getRawIntensity() const
+Intensity Peak3D::rawIntensity() const
 {
     return _rawIntensity;
 }
 
-Intensity Peak3D::getScaledIntensity() const
+Intensity Peak3D::scaledIntensity() const
 {
-    return getRawIntensity() * _scale;
+    return rawIntensity() * _scale;
 }
 
 Intensity Peak3D::correctedIntensity() const
@@ -142,15 +147,15 @@ Intensity Peak3D::correctedIntensity() const
     auto state = _data->interpolatedState(c[2]);
     const double lorentz = state.lorentzFactor(c[0], c[1]);
     const double factor = _scale / lorentz / _transmission;
-    return getRawIntensity() * factor / state.stepSize;
+    return rawIntensity() * factor / state.stepSize;
 }
 
-double Peak3D::getTransmission() const
+double Peak3D::transmission() const
 {
     return _transmission;
 }
 
-double Peak3D::getScale() const
+double Peak3D::scale() const
 {
     return _scale;
 }

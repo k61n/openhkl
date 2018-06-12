@@ -57,7 +57,7 @@ RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks)
   _peaks(peaks)
 {
     for (auto peak : peaks) {
-        const double z = peak->getShape().center()[2];
+        const double z = peak->shape().center()[2];
         _fmin = std::min(z, std::floor(_fmin));
         _fmax = std::max(z, std::ceil(_fmax));
     }
@@ -76,8 +76,8 @@ RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks)
         MillerIndex hkl(peak->q(), *_cell);
         _hkls.push_back(hkl.rowVector().cast<double>());
 
-        Eigen::Vector3d c = peak->getShape().center();
-        Eigen::Matrix3d M = peak->getShape().metric();
+        Eigen::Vector3d c = peak->shape().center();
+        Eigen::Matrix3d M = peak->shape().metric();
         auto state = peak->data()->interpolatedState(c[2]);
         Eigen::Matrix3d J = state.jacobianQ(c[0], c[1]);
         Eigen::Matrix3d JI = J.inverse();
