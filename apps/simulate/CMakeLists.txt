@@ -15,3 +15,6 @@ target_link_libraries(simulate nsx ${HDF5_LIBRARIES})
 if(NSX_TIDY)
   add_tidy_target(simulate)
 endif()
+
+# test that simulation runs correctly
+add_test(NAME simulate COMMAND simulate ${CMAKE_SOURCE_DIR}/tests/data/blank.hdf simulated.hdf)

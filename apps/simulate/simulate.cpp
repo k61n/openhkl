@@ -13,6 +13,7 @@
 #include <nsxlib/UnitCell.h>
 
 
+//! Correct the generated image by adding baseline, gain, and optional Poisson noise
 void correct_image(Eigen::ArrayXXd& data, double gain, double baseline, bool noise)
 {
     static std::random_device rd;
@@ -38,6 +39,7 @@ void correct_image(Eigen::ArrayXXd& data, double gain, double baseline, bool noi
     data *= gain;
 }
 
+//! Generate simulated frames
 std::vector<Eigen::ArrayXXd> generate_frames(
     nsx::PeakList& peaks, 
     int nrows, int ncols, 
@@ -148,12 +150,17 @@ double background()
 
 int main(int argc, char* argv[])
 {
+    if (argc != 3) {
+        std::cout << "Usage: simulate infile outfile" << std::endl;
+        return 0;
+    }
+
     const double pi2 = M_PI / 2.0;
     const double wavelength = 2.67;
     const double dmin = 1.5;
     const double dmax = 50.0;
-    const char* infile = "/home/jonathan/git/nsxtool/tests/data/blank.hdf";
-    const char* outfile = "/home/jonathan/git/nsxtool/tests/data/simulated.hdf";
+    const char* infile = argv[1];
+    const char* outfile = argv[2];
     const char* group_name = "P 21 21 21";
     auto group = nsx::SpaceGroup(group_name);
 
@@ -215,8 +222,8 @@ int main(int argc, char* argv[])
     std::cout << "simulated frames " << simulated_frames.size() << std::endl;
     
     for (size_t i = 0; i < simulated_frames.size(); ++i) {
-        simulated_frames[i] += 40.0;
-        correct_image(simulated_frames[i], 8.0, 227.0, true);       
+        simulated_frames[i] += 20.0;
+        correct_image(simulated_frames[i], 8.0, 200.0, true);       
         std::cout << simulated_frames[i].sum() << std::endl;
         reader->setData(i, simulated_frames[i].cast<int>());
     }
