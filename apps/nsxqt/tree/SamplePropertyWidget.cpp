@@ -19,7 +19,7 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
     ui(new Ui::SamplePropertyWidget)
 {
     ui->setupUi(this);
-    auto sample=_sampleItem->experiment()->diffractometer()->getSample();
+    auto sample=_sampleItem->experiment()->diffractometer()->sample();
     auto gonio=sample->getGonio();
 
     ui->tableWidget_Sample->setEditTriggers(QAbstractItemView::DoubleClicked);
@@ -74,7 +74,7 @@ SamplePropertyWidget::~SamplePropertyWidget()
 
 void SamplePropertyWidget::cellHasChanged(int i,int j)
 {
-    auto sample=_sampleItem->experiment()->diffractometer()->getSample();
+    auto sample=_sampleItem->experiment()->diffractometer()->sample();
     auto axis=sample->getGonio()->getAxis(i);
 }
 

@@ -55,7 +55,7 @@ void AbsorptionWidget::readInfoFile(const std::string &filename)
         // First read instrument name and validate with diffractometer name
         std::string _instrumentName, date;
         file >> _instrumentName >> date;
-        if (_instrumentName.compare(_experiment->diffractometer()->getType())!=0) {
+        if (_instrumentName.compare(_experiment->diffractometer()->name())!=0) {
             QMessageBox::critical(this, tr("NSXTool"),
                                   tr("Instrument name in video file does not match the diffractometer name"));
         }
@@ -69,7 +69,7 @@ void AbsorptionWidget::readInfoFile(const std::string &filename)
         getline(file,line);
         // Cout number of axes, validate with goniometer definition
         std::size_t numberAngles=std::count(line.begin(),line.end(),':');
-        auto sample = _experiment->diffractometer()->getSample();
+        auto sample = _experiment->diffractometer()->sample();
         std::size_t sampleAngles=sample->hasGonio() ? sample->getGonio()->getNPhysicalAxes() : 0;
         if (numberAngles==0 || (numberAngles!=sampleAngles)) {
             QMessageBox::critical(this, tr("NSXTool"),
@@ -82,7 +82,7 @@ void AbsorptionWidget::readInfoFile(const std::string &filename)
             std::string name;
             double value;
             is >> name >> value;
-            if (!_experiment->diffractometer()->getSample()->getGonio()->hasPhysicalAxis(name)) {
+            if (!_experiment->diffractometer()->sample()->getGonio()->hasPhysicalAxis(name)) {
                 QMessageBox::critical(this, tr("NSXTool"),
                                       tr("Physical axes in video file do not match instrument definition"));
             }

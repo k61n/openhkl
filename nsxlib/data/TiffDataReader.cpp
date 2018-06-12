@@ -47,7 +47,7 @@ TiffDataReader::TiffDataReader(const std::string& filename, const std::shared_pt
     _detectorStates[0] = {};
     _sampleStates[0] = {};
 
-    _metadata.add<std::string>("Instrument",diffractometer->getType());
+    _metadata.add<std::string>("Instrument",diffractometer->name());
 }
 
 void TiffDataReader::open()

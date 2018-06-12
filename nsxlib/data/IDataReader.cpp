@@ -34,8 +34,8 @@ IDataReader::IDataReader(const std::string& filename, const sptrDiffractometer& 
 {
     _metadata.add<std::string>("filename",filename);
 
-    _nRows = _diffractometer->getDetector()->getNRows();
-    _nCols = _diffractometer->getDetector()->getNCols();
+    _nRows = _diffractometer->detector()->getNRows();
+    _nCols = _diffractometer->detector()->getNCols();
 }
 
 size_t IDataReader::getNFrames() const {
@@ -65,8 +65,8 @@ InstrumentState IDataReader::getState(size_t frame) const
     InstrumentState state(_diffractometer);
 
     // compute transformations
-    auto detector_gonio = _diffractometer->getDetector()->getGonio();
-    auto sample_gonio = _diffractometer->getSample()->getGonio();
+    auto detector_gonio = _diffractometer->detector()->getGonio();
+    auto sample_gonio = _diffractometer->sample()->getGonio();
 
     Eigen::Transform<double,3,Eigen::Affine> detector_trans = detector_gonio->getHomMatrix(_detectorStates[frame]);
     Eigen::Transform<double,3,Eigen::Affine> sample_trans = sample_gonio->getHomMatrix(_sampleStates[frame]);
@@ -77,9 +77,9 @@ InstrumentState IDataReader::getState(size_t frame) const
     state.detectorOffset = detector_trans.translation();
     state.samplePosition = sample_trans.translation();
 
-    state.ni = _diffractometer->getSource()->getSelectedMonochromator().getKi().rowVector();
+    state.ni = _diffractometer->source()->getSelectedMonochromator().getKi().rowVector();
     state.ni.normalize();
-    state.wavelength = _diffractometer->getSource()->getSelectedMonochromator().getWavelength();
+    state.wavelength = _diffractometer->source()->getSelectedMonochromator().getWavelength();
 
     return state;
 }

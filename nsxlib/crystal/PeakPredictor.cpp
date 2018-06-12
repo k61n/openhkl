@@ -72,7 +72,7 @@ PeakList PeakPredictor::predict(sptrDataSet data, double radius, double nframes)
         throw std::runtime_error("PeakPredictor cannot predict without a shape library");
     }
 
-    auto& mono = data->diffractometer()->getSource()->getSelectedMonochromator();
+    auto& mono = data->diffractometer()->source()->getSelectedMonochromator();
     const double wavelength = mono.getWavelength();
     PeakList calculated_peaks;     
     std::set<MillerIndex> found_hkls;

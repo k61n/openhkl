@@ -33,7 +33,7 @@ struct FitData {
 
     FitData(sptrPeak3D peak)
     {
-        auto detector = peak->data()->diffractometer()->getDetector();
+        auto detector = peak->data()->diffractometer()->detector();
         Eigen::Vector3d center = peak->getShape().center();
         auto state = peak->data()->interpolatedState(center[2]);
 

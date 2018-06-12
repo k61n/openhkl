@@ -64,16 +64,13 @@ public:
     const std::string& name() const;
 
     //! Get the detector of this diffractometer
-    sptrDetector getDetector();
+    sptrDetector detector();
 
     //! Get the sample of this diffractometer
-    sptrSample getSample();
+    sptrSample sample();
 
     //! Get the source of this diffractometer
-    sptrSource getSource();
-
-    //! Get the type of the diffractometer
-    virtual std::string getType() const {return "";}
+    sptrSource source();
 
     //! Set the detector of this diffractometer
     void setDetector(sptrDetector detector);
@@ -86,8 +83,6 @@ public:
 
     //! Set the source of this diffractometer
     void setSource(sptrSource source);
-
-    std::map<unsigned int,std::string> getPhysicalAxesNames() const;
 
 protected:
 

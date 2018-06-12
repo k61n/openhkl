@@ -102,7 +102,7 @@ PeakList PeakFinder::find(DataList numors)
     for (auto&& numor : numors) {
         PeakList numor_peaks;
 
-        auto dectector = numor->diffractometer()->getDetector();
+        auto dectector = numor->diffractometer()->detector();
         int nrows = dectector->getNRows();
         int ncols = dectector->getNCols();
         int nframes = numor->nFrames();
@@ -362,7 +362,7 @@ void PeakFinder::findPrimaryBlobs(sptrDataSet data, std::map<int,Blob3D>& blobs,
         _handler->setProgress(0);
     }
 
-    auto dectector = data->diffractometer()->getDetector();
+    auto dectector = data->diffractometer()->detector();
     int nrows = dectector->getNRows();
     int ncols = dectector->getNCols();
 
@@ -574,7 +574,7 @@ void PeakFinder::findCollisions(sptrDataSet data, std::map<int,Blob3D>& blobs, E
         }
     }
 
-    auto dectector = data->diffractometer()->getDetector();
+    auto dectector = data->diffractometer()->detector();
     int nrows = dectector->getNRows();
     int ncols = dectector->getNCols();
     int nframes = data->nFrames();

@@ -30,7 +30,7 @@ PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak): _peak(peak)
 
 Eigen::Vector3d PeakCoordinateSystem::transform(const DetectorEvent& ev) const
 {
-    auto det = _peak->data()->diffractometer()->getDetector();
+    auto det = _peak->data()->diffractometer()->detector();
     auto position = det->pixelPosition(ev._px, ev._py);
     const Eigen::RowVector3d dk = _state.kfLab(position).rowVector() - _kf;
 

@@ -56,14 +56,14 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader):
         throw std::runtime_error("IData, file: " + _filename + " does not exist");
     }
 
-    _nrows = _diffractometer->getDetector()->getNRows();
-    _ncols = _diffractometer->getDetector()->getNCols();
+    _nrows = _diffractometer->detector()->getNRows();
+    _ncols = _diffractometer->detector()->getNCols();
 
     _metadata = uptrMetaData(new MetaData(_reader->getMetadata()));
     _nFrames = _metadata->getKey<int>("npdone");
 
     double wav = _metadata->getKey<double>("wavelength");
-    _diffractometer->getSource()->getSelectedMonochromator().setWavelength(wav);
+    _diffractometer->source()->getSelectedMonochromator().setWavelength(wav);
 
     // Getting Scan parameters for the detector
     _states.reserve(_nFrames);
@@ -230,7 +230,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
     // Write detector states
     H5::Group detectorGroup(scanGroup.createGroup("Detector"));
 
-    std::vector<std::string> names=_diffractometer->getDetector()->getGonio()->getPhysicalAxesNames();
+    std::vector<std::string> names=_diffractometer->detector()->getGonio()->getPhysicalAxesNames();
     hsize_t nf[1]={_nFrames};
     H5::DataSpace scanSpace(1,nf);
     RealMatrix vals(names.size(),_nFrames);
@@ -252,7 +252,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
 
     // Write sample states
     H5::Group sampleGroup(scanGroup.createGroup("Sample"));
-    std::vector<std::string> samplenames=_diffractometer->getSample()->getGonio()->getPhysicalAxesNames();
+    std::vector<std::string> samplenames=_diffractometer->sample()->getGonio()->getPhysicalAxesNames();
     RealMatrix valsSamples(samplenames.size(), _nFrames);
 
     const auto& sampleStates = _reader->sampleStates();
@@ -273,7 +273,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
     #if 0
     // Write source states
     H5::Group sourceGroup(scanGroup.createGroup("Source"));
-    std::vector<std::string> sourcenames = _diffractometer->getSource()->getGonio()->getPhysicalAxesNames();
+    std::vector<std::string> sourcenames = _diffractometer->source()->getGonio()->getPhysicalAxesNames();
     RealMatrix valsSources(sourcenames.size(),_nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {
@@ -436,7 +436,7 @@ std::vector<DetectorEvent> DataSet::getEvents(const std::vector<ReciprocalVector
         const double f = 0.5*(f0+f1);
         const auto state = interpolatedState(f);
         Eigen::RowVector3d kf = state.ki().rowVector() + q_vect*state.sampleOrientationMatrix().transpose();
-        auto detector = _diffractometer->getDetector();
+        auto detector = _diffractometer->detector();
         auto event = detector->constructEvent(DirectVector(state.samplePosition), ReciprocalVector((kf*state.detectorOrientation)));
         bool accept = event._tof > 0;
 
@@ -451,14 +451,14 @@ std::vector<DetectorEvent> DataSet::getEvents(const std::vector<ReciprocalVector
 ReciprocalVector DataSet::computeQ(const DetectorEvent& ev) const
 {
     const auto& state = interpolatedState(ev._frame);
-    auto detector = diffractometer()->getDetector();
+    auto detector = diffractometer()->detector();
     const auto& detector_position = DirectVector(detector->pixelPosition(ev._px, ev._py));
     return state.sampleQ(detector_position);
 }
 
 Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx)
 {
-    auto detector = _diffractometer->getDetector();
+    auto detector = _diffractometer->detector();
     Eigen::ArrayXXd new_frame = frame(idx).cast<double>();
     new_frame -= detector->baseline();
     new_frame /= detector->gain();

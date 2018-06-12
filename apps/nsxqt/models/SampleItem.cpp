@@ -73,7 +73,7 @@ void SampleItem::setData(const QVariant& value, int role)
     case Qt::UserRole:
         // Fetch the unit cell that been either updated either created
         auto uc = value.value<nsx::sptrUnitCell>();
-        experimentItem()->experiment()->diffractometer()->getSample()->addUnitCell(uc);
+        experimentItem()->experiment()->diffractometer()->sample()->addUnitCell(uc);
         appendRow(new UnitCellItem(uc));
         break;
     }

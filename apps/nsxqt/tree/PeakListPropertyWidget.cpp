@@ -40,7 +40,7 @@ PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *pa
     }
 
     model->setPeaks(data_peaks);
-    model->setUnitCells(_caller->experiment()->diffractometer()->getSample()->unitCells());
+    model->setUnitCells(_caller->experiment()->diffractometer()->sample()->unitCells());
     ui->tableView->setModel(model);
 
     //Connect search box

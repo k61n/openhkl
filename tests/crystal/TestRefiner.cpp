@@ -114,7 +114,7 @@ int main()
     }
     
     // add cell to sample
-    dataf->diffractometer()->getSample()->addUnitCell(cell);
+    dataf->diffractometer()->sample()->addUnitCell(cell);
     nsx::Refiner refiner(cell, peaks, 1);
 
     NSX_CHECK_ASSERT(refiner.batches().size() == 1);

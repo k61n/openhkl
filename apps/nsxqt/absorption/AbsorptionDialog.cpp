@@ -23,7 +23,7 @@ AbsorptionDialog::AbsorptionDialog(nsx::sptrExperiment experiment, QWidget *pare
     QDialog(parent),
     ui(new Ui::AbsorptionDialog),
     _experiment(experiment),
-    _cscene(new CrystalScene(&experiment->diffractometer()->getSample()->getShape()))
+    _cscene(new CrystalScene(&experiment->diffractometer()->sample()->getShape()))
 {
     ui->setupUi(this);
 
@@ -92,7 +92,7 @@ void AbsorptionDialog::readInfoFile(const std::string &filename)
         // Read line with goniometer angles
         getline(file,line);
         // Cout number of axes, validate with goniometer definition
-        auto sample = _experiment->diffractometer()->getSample();
+        auto sample = _experiment->diffractometer()->sample();
         std::size_t numberAngles = std::count(line.begin(),line.end(),':');
         std::size_t sampleAngles = sample->hasGonio() ? sample->getGonio()->getNPhysicalAxes() : 0;
         if (numberAngles==0 || (numberAngles!=sampleAngles)) {
@@ -106,7 +106,7 @@ void AbsorptionDialog::readInfoFile(const std::string &filename)
             std::string name;
             double value;
             is >> name >> value;
-            if (!_experiment->diffractometer()->getSample()->getGonio()->hasPhysicalAxis(name)) {
+            if (!_experiment->diffractometer()->sample()->getGonio()->hasPhysicalAxis(name)) {
                 QMessageBox::critical(this, tr("NSXTool"),
                                       tr("Physical axes in video file do not match instrument definition"));
             }

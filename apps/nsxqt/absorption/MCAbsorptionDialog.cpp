@@ -31,7 +31,7 @@ MCAbsorptionDialog::MCAbsorptionDialog(SessionModel* session, nsx::sptrExperimen
     _session(session)
 {
     ui->setupUi(this);
-    auto ncrystals=_experiment->diffractometer()->getSample()->getNCrystals();
+    auto ncrystals=_experiment->diffractometer()->sample()->getNCrystals();
     if (ncrystals>0) {
         ui->comboBox->setEnabled(true);
         for (unsigned int i=0;i<ncrystals;++i) {
@@ -52,8 +52,8 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
         return;
     }
     // Get the source
-    auto source=_experiment->diffractometer()->getSource();
-    auto sample=_experiment->diffractometer()->getSample();
+    auto source=_experiment->diffractometer()->source();
+    auto sample=_experiment->diffractometer()->sample();
 
     // Get the material
     unsigned int cellIndex=static_cast<unsigned int>(ui->comboBox->currentIndex());
@@ -86,7 +86,7 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
             auto data = p->data();
             auto coord = p->getShape().center();
             auto state = data->interpolatedState(coord[2]);
-            auto position = data->diffractometer()->getDetector()->pixelPosition(coord[0], coord[1]);
+            auto position = data->diffractometer()->detector()->pixelPosition(coord[0], coord[1]);
             auto kf = state.kfLab(position);
             // todo: check coordinate systems here, may not be consistent
             double transmission=mca.run(ui->spinBox->value(),kf.rowVector(),state.sampleOrientationMatrix());

@@ -18,7 +18,7 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
 {
     ui->setupUi(this);
 
-    auto detector=_detectorItem->experiment()->diffractometer()->getDetector();
+    auto detector=_detectorItem->experiment()->diffractometer()->detector();
     auto gonio=detector->getGonio();
 
     ui->lineEdit_H->setText(QString::number(detector->getHeight())+" m");
@@ -87,14 +87,14 @@ DetectorPropertyWidget::~DetectorPropertyWidget()
 
 void DetectorPropertyWidget::cellHasChanged(int i, int j)
 {
-    auto detector=_detectorItem->experiment()->diffractometer()->getDetector();
+    auto detector=_detectorItem->experiment()->diffractometer()->detector();
     auto axis=detector->getGonio()->getAxis(i);
     // todo: fix this after offset refactor
 }
 
 void DetectorPropertyWidget::on_doubleSpinBox_Distance_valueChanged(double arg1)
 {
-     auto detector=_detectorItem->experiment()->diffractometer()->getDetector();
+     auto detector=_detectorItem->experiment()->diffractometer()->detector();
      if (arg1>0)
         detector->setRestPosition(nsx::DirectVector(0,arg1,0));
 }

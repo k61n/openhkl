@@ -35,7 +35,7 @@ void run_test(const char* filename, const char* instrument)
 
     nsx::sptrExperiment expt(new nsx::Experiment("test", instrument));
     auto diff = expt->diffractometer();
-    auto detector = diff->getDetector();
+    auto detector = diff->detector();
     nsx::sptrDataSet dataf(factory.create("hdf", filename, diff));
 
     expt->addData(dataf);
@@ -60,7 +60,7 @@ void run_test(const char* filename, const char* instrument)
    
     for (auto coord: coords) {
         const double dt = 1e-3;
-        auto detector = dataf->diffractometer()->getDetector();
+        auto detector = dataf->diffractometer()->detector();
 
         auto state = dataf->interpolatedState(coord[2]);
         Eigen::Matrix3d Jq = state.jacobianQ(coord[0], coord[1]);

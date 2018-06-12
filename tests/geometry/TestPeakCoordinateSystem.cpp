@@ -27,7 +27,7 @@ void run_test(const char* filename, const char* instrument)
 
     nsx::sptrExperiment expt(new nsx::Experiment("test", instrument));
     auto diff = expt->diffractometer();
-    auto detector = diff->getDetector();
+    auto detector = diff->detector();
     nsx::sptrDataSet dataf(factory.create("hdf", filename, diff));
 
     expt->addData(dataf);
@@ -70,7 +70,7 @@ void run_test(const char* filename, const char* instrument)
         Eigen::Vector3d y2 = J*Eigen::Vector3d(0, dt, 0);
         Eigen::Vector3d y3 = J*Eigen::Vector3d(0, 0, dt);
 
-        auto detector = peak->data()->diffractometer()->getDetector();
+        auto detector = peak->data()->diffractometer()->detector();
 
         NSX_CHECK_SMALL(e0.norm(), 1e-8);
         std::cout << e0.transpose() << std::endl;

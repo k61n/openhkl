@@ -10,7 +10,7 @@ class TestWorkFlow(unittest.TestCase):
         diff = expt.diffractometer()
         data = nsx.DataReaderFactory().create("hdf", "gal3.hdf", diff)
         expt.addData(data)
-        source = diff.getSource()
+        source = diff.source()
 
         reader = nsx.HDF5DataReader("gal3.hdf", diff)
         data = nsx.DataSet(reader)
@@ -61,7 +61,7 @@ class TestWorkFlow(unittest.TestCase):
         self.assertTrue(soln[1] > 92.0)
 
         uc = nsx.UnitCell(soln[0])
-        sample = diff.getSample()
+        sample = diff.sample()
         sample.addUnitCell(uc)
 
         for peak in peaks:

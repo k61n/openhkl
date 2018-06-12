@@ -102,40 +102,19 @@ const std::string& Diffractometer::name() const
     return _name;
 }
 
-sptrDetector Diffractometer::getDetector()
+sptrDetector Diffractometer::detector()
 {
     return _detector;
 }
 
-sptrSample Diffractometer::getSample()
+sptrSample Diffractometer::sample()
 {
     return _sample;
 }
 
-sptrSource Diffractometer::getSource()
+sptrSource Diffractometer::source()
 {
     return _source;
-}
-
-std::map<unsigned int,std::string> Diffractometer::getPhysicalAxesNames() const
-{
-    std::map<unsigned int,std::string> names;
-
-    if (_detector && _detector->hasGonio())	{
-        auto axisIdsToNames = _detector->getGonio()->getPhysicalAxisIdToNames();
-        names.insert(axisIdsToNames.begin(),axisIdsToNames.end());
-    }
-
-    if (_sample && _sample->hasGonio())	{
-        auto axisIdsToNames = _sample->getGonio()->getPhysicalAxisIdToNames();
-        names.insert(axisIdsToNames.begin(),axisIdsToNames.end());
-    }
-
-    if (_source && _source->hasGonio())	{
-        auto axisIdsToNames = _source->getGonio()->getPhysicalAxisIdToNames();
-        names.insert(axisIdsToNames.begin(),axisIdsToNames.end());
-    }
-    return names;
 }
 
 } // end namespace nsx

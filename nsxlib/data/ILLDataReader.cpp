@@ -89,16 +89,34 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
         scannedAxisId.push_back(id);
     }
 
+    auto detector = _diffractometer->detector();
+    auto sample = _diffractometer->sample();
+    auto source = _diffractometer->source();
+
     // This map relates the ids of the physical axis registered in the instrument definition file with their name
-    std::map<unsigned int,std::string> instrPhysAxisIds(_diffractometer->getPhysicalAxesNames());
+    std::map<unsigned int,std::string> instrPhysAxisIds;
+    if (detector && detector->hasGonio()) {
+        auto axisIdsToNames = detector->getGonio()->getPhysicalAxisIdToNames();
+        instrPhysAxisIds.insert(axisIdsToNames.begin(),axisIdsToNames.end());
+    }
+
+    if (sample && sample->hasGonio()) {
+        auto axisIdsToNames = sample->getGonio()->getPhysicalAxisIdToNames();
+        instrPhysAxisIds.insert(axisIdsToNames.begin(),axisIdsToNames.end());
+    }
+
+    if (source && source->hasGonio()) {
+        auto axisIdsToNames = source->getGonio()->getPhysicalAxisIdToNames();
+        instrPhysAxisIds.insert(axisIdsToNames.begin(),axisIdsToNames.end());
+    }
+
 
     // Check that every scanned axis has been defined in the instrumnet file. Otherwise, throws.
     for (const auto& id: scannedAxisId) {
         auto it = instrPhysAxisIds.find(id);
-        if (it == instrPhysAxisIds.end())
-            throw std::runtime_error(
-                    "The axis with MAD id " + std::to_string(id) +
-                    " could not be found in the instrument definition file.");
+        if (it == instrPhysAxisIds.end()) {
+            throw std::runtime_error("The axis with id " + std::to_string(id) + " is not defined in instrument configuration file.");
+        }
     }
 
     // This map will store the values over the framess of each physical axis of the goniometers bound to the instrument (detector + sample + source)
@@ -152,8 +170,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
 
     _sampleStates.resize(_nFrames);
     _detectorStates.resize(_nFrames);
-    //_detectorStates.reserve(_nFrames);
-    auto detector = _diffractometer->getDetector();
+
     // If a detector is set for this instrument, loop over the frames and gather for each physical axis
     // of the detector the corresponding values defined previously. The gathered values being further pushed as
     // a new detector state
@@ -169,8 +186,6 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
         }
     }
 
-    //_sampleStates.reserve(_nFrames);
-    auto sample = _diffractometer->getSample();
     // If a sample is set for this instrument, loop over the frames and gather for each physical axis
     // of the sample the corresponding values defined previously. The gathered values being further pushed as
     // a new sample state
@@ -231,7 +246,7 @@ Eigen::MatrixXi ILLDataReader::getData(size_t frame)
     assert(_nCols >= 1);
 
     MatrixParser parser;
-    parser(_diffractometer->getDetector()->getDataOrder(),_mapAddress+begin,_dataLength,v);
+    parser(_diffractometer->detector()->getDataOrder(),_mapAddress+begin,_dataLength,v);
 
     return v;
 }
