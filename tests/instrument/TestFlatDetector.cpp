@@ -17,8 +17,10 @@ int main()
 {
     nsx::FlatDetector d("D10-detector");
     d.setDistance(380*nsx::mm);
-    d.setDimensions(80*nsx::mm,80*nsx::mm);
-    d.setNPixels(32,32);
+    d.setWidth(80*nsx::mm);
+    d.setHeight(80*nsx::mm);
+    d.setNCols(32);
+    d.setNRows(32);
 
     // This should be the center of the detector at rest at (0,0.764,0)
     nsx::DirectVector pixel_position = d.pixelPosition(15.5, 15.5);

@@ -70,7 +70,7 @@ void AbsorptionWidget::readInfoFile(const std::string &filename)
         // Cout number of axes, validate with goniometer definition
         std::size_t numberAngles=std::count(line.begin(),line.end(),':');
         auto sample = _experiment->diffractometer()->sample();
-        std::size_t sampleAngles=sample->hasGonio() ? sample->getGonio()->getNPhysicalAxes() : 0;
+        std::size_t sampleAngles=sample->hasGonio() ? sample->gonio()->nPhysicalAxes() : 0;
         if (numberAngles==0 || (numberAngles!=sampleAngles)) {
             QMessageBox::critical(this, tr("NSXTool"),
                                   tr("Number of goniometer axes in video file do not match instrument definition"));
@@ -82,7 +82,7 @@ void AbsorptionWidget::readInfoFile(const std::string &filename)
             std::string name;
             double value;
             is >> name >> value;
-            if (!_experiment->diffractometer()->sample()->getGonio()->hasPhysicalAxis(name)) {
+            if (!_experiment->diffractometer()->sample()->gonio()->hasPhysicalAxis(name)) {
                 QMessageBox::critical(this, tr("NSXTool"),
                                       tr("Physical axes in video file do not match instrument definition"));
             }

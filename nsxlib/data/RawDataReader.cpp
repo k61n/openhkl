@@ -92,7 +92,7 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const st
 
     _nFrames = _filenames.size();
 
-    std::vector<std::string> axesS = _diffractometer->detector()->getGonio()->getPhysicalAxesNames();
+    std::vector<std::string> axesS = _diffractometer->detector()->gonio()->physicalAxesNames();
     Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm
             = Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor>::Zero(long(axesS.size()), long(_nFrames));
 
@@ -104,7 +104,7 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const st
     }
 
     // Getting Scan parameters for the sample
-    axesS = _diffractometer->sample()->getGonio()->getPhysicalAxesNames();
+    axesS = _diffractometer->sample()->gonio()->physicalAxesNames();
     dm.resize(long(axesS.size()), long(_nFrames));
 
     int omega, phi, chi;

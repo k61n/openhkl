@@ -7,15 +7,10 @@
 
 namespace nsx {
 
-Component::Component() : _name(""), _gonio(), _position(0.0,0.0,0.0)
-{
-}
 
-Component::Component(const std::string& name) : _name(name), _gonio(), _position(0.0,0.0,0.0)
-{
-}
-
-Component::Component(const Component& other) : _name(other._name), _gonio(other._gonio), _position(other._position)
+Component::Component(const std::string& name)
+: _name(name),
+  _gonio()
 {
 }
 
@@ -25,53 +20,20 @@ Component::Component(const YAML::Node& node)
     _name = node["name"].as<std::string>();
 
     _gonio = node["goniometer"] ? std::make_shared<Gonio>(Gonio(node["goniometer"])) : nullptr;
-
-    UnitsManager* um = UnitsManager::Instance();
-
-    if (node["position"]) {
-        double units = um->get(node["offset"]["units"].as<std::string>());
-        _position = DirectVector(units*node["position"]["value"].as<Eigen::Vector3d>());
-    } else {
-        _position = DirectVector(0.0,0.0,0.0);
-    }
-
 }
 
 Component::~Component()
 {
 }
 
-Component& Component::operator=(const Component& other)
-{
-    if (this != &other) {
-        _name = other._name;
-        _gonio = other._gonio;
-        _position = other._position;
-    }
-    return *this;
-}
-
-sptrGonio Component::getGonio() const
+sptrGonio Component::gonio() const
 {
     return _gonio;
 }
 
-const std::string& Component::getName() const
+const std::string& Component::name() const
 {
     return _name;
-}
-
-DirectVector Component::getPosition(const std::vector<double>& goniosetup) const
-{
-    if (_gonio.get() == nullptr) {
-        return _position;
-    }
-    return DirectVector(_gonio->transform(_position, goniosetup));
-}
-
-const DirectVector& Component::getRestPosition() const
-{
-    return _position;
 }
 
 void Component::setGonio(sptrGonio gonio)
@@ -84,32 +46,9 @@ void Component::setName(const std::string& name)
     _name = name;
 }
 
-void Component::setRestPosition(const DirectVector& v)
-{
-    _position = v;
-}
-
 bool Component::hasGonio() const
 {
     return _gonio != nullptr;
-}
-
-std::vector<double> Component::createState(const std::map<std::string,double>& values)
-{
-    std::vector<double> values_vec;
-
-    if (hasGonio()) {
-        values_vec.resize(_gonio->getNPhysicalAxes(), 0);
-        std::size_t comp = 0;
-        for (auto&& a: _gonio->getAxes()) {
-            if (!a->isPhysical()) {
-                continue;
-            }
-            auto it = values.find(a->getLabel());
-            values_vec[comp++] = (it != values.end()) ? it->second : 0.0;
-        }
-    }
-    return values_vec;
 }
 
 } // end namespace nsx

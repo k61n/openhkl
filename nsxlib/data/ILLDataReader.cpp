@@ -96,17 +96,17 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
     // This map relates the ids of the physical axis registered in the instrument definition file with their name
     std::map<unsigned int,std::string> instrPhysAxisIds;
     if (detector && detector->hasGonio()) {
-        auto axisIdsToNames = detector->getGonio()->getPhysicalAxisIdToNames();
+        auto axisIdsToNames = detector->gonio()->physicalAxisIdToNames();
         instrPhysAxisIds.insert(axisIdsToNames.begin(),axisIdsToNames.end());
     }
 
     if (sample && sample->hasGonio()) {
-        auto axisIdsToNames = sample->getGonio()->getPhysicalAxisIdToNames();
+        auto axisIdsToNames = sample->gonio()->physicalAxisIdToNames();
         instrPhysAxisIds.insert(axisIdsToNames.begin(),axisIdsToNames.end());
     }
 
     if (source && source->hasGonio()) {
-        auto axisIdsToNames = source->getGonio()->getPhysicalAxisIdToNames();
+        auto axisIdsToNames = source->gonio()->physicalAxisIdToNames();
         instrPhysAxisIds.insert(axisIdsToNames.begin(),axisIdsToNames.end());
     }
 
@@ -175,7 +175,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
     // of the detector the corresponding values defined previously. The gathered values being further pushed as
     // a new detector state
     if (detector) {
-        auto detAxisIdsToNames = detector->getGonio()->getPhysicalAxesIds();
+        auto detAxisIdsToNames = detector->gonio()->physicalAxesIds();
         for (std::size_t f = 0; f < _nFrames; ++f) {
             std::vector<double> detValues;
             detValues.reserve(detAxisIdsToNames.size());
@@ -190,7 +190,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
     // of the sample the corresponding values defined previously. The gathered values being further pushed as
     // a new sample state
     if (sample) {
-        auto sampleAxisIdsToNames = sample->getGonio()->getPhysicalAxesIds();
+        auto sampleAxisIdsToNames = sample->gonio()->physicalAxesIds();
         for (std::size_t f = 0; f < _nFrames; ++f) {
             std::vector<double> sampleValues;
             sampleValues.reserve(sampleAxisIdsToNames.size());

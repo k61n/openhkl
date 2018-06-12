@@ -30,7 +30,7 @@
 
 ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment): TreeItem(), _experiment(experiment)
 {
-    setText(QString::fromStdString(experiment->getName()));
+    setText(QString::fromStdString(experiment->name()));
     setForeground(QBrush(QColor("blue")));
     QIcon icon(":/resources/experimentIcon.png");
     setIcon(icon);
@@ -39,7 +39,7 @@ ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment): TreeItem(), _exp
     setEditable(true);
 
     auto diff = experiment->diffractometer();
-    _instr = new InstrumentItem(diff->name().c_str(), diff->source()->getName().c_str());
+    _instr = new InstrumentItem(diff->name().c_str(), diff->source()->name().c_str());
 
     // Add the instrument item to the experiment item
     appendRow(_instr);

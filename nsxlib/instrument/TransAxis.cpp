@@ -44,7 +44,7 @@ TransAxis& TransAxis::operator=(const TransAxis& other)
 	return *this;
 }
 
-Eigen::Transform<double,3,Eigen::Affine> TransAxis::getHomMatrix(double value) const
+Eigen::Transform<double,3,Eigen::Affine> TransAxis::homMatrix(double value) const
 {
     Eigen::Transform<double,3,Eigen::Affine> mat = Eigen::Transform<double,3,Eigen::Affine>::Identity();
 	mat.translation()=_axis*value;

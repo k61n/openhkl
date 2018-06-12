@@ -12,8 +12,10 @@ class TestFlatDetector(unittest.TestCase):
         d = nsx.FlatDetector("D10-detector")
         mm = 1e-3
         d.setDistance(380*mm)
-        d.setDimensions(80*mm,80*mm)
-        d.setNPixels(32,32)        
+        d.setHeight(80*mm)
+        d.setWidth(80*mm)
+        d.setNCols(32)        
+        d.setNRows(32)        
 
         # this should be the center of the detector at rest at (0,0.764,0)
         pixel_position = d.pixelPosition(15.5,15.5)

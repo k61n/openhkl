@@ -15,8 +15,10 @@ class TestPeak3D(unittest.TestCase):
         d = nsx.FlatDetector("D10-detector")
         mm = 1.0e-3 
         d.setDistance(380*mm)
-        d.setDimensions(80*mm,80*mm)
-        d.setNPixels(32,32)        
+        d.setHeight(80*mm)
+        d.setWidth(80*mm)
+        d.setNCols(32)        
+        d.setNRows(32)        
 
         #event = nsx.DetectorEvent(d,15.5, 15.5, 0.0, [])
 

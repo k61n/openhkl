@@ -12,14 +12,11 @@ int main()
     nsx::Experiment exp("my-exp","D10");
     nsx::sptrDataSet data;
 
-    NSX_CHECK_EQUAL(exp.getName(),"my-exp");
+    NSX_CHECK_EQUAL(exp.name(),"my-exp");
 
     // Change the name of the experiment
     exp.setName("toto");
-    NSX_CHECK_EQUAL(exp.getName(),"toto");
-
-    // The data must be empty at experiment creation
-    NSX_CHECK_EQUAL(exp.getDataNames().size(),0);
+    NSX_CHECK_EQUAL(exp.name(),"toto");
 
     // Add some data
     try {
@@ -33,21 +30,16 @@ int main()
     }
 
     exp.addData(data);
-    NSX_CHECK_EQUAL(exp.getDataNames().size(),1);
-    NSX_CHECK_EQUAL(exp.getDataNames()[0],"D10_ascii_example");
 
     // Check that adding the same data is now taken into account
     exp.addData(data);
     exp.addData(data);
     exp.addData(data);
-    NSX_CHECK_EQUAL(exp.getDataNames().size(),1);
 
-    NSX_CHECK_EQUAL(exp.getData("D10_ascii_example")->filename(),"D10_ascii_example");
+    NSX_CHECK_EQUAL(exp.data("D10_ascii_example")->filename(),"D10_ascii_example");
 
     // Remove the data from the experiment
     exp.removeData("D10_ascii_example");
-    // The data must be empty again after data deletion
-    NSX_CHECK_EQUAL(exp.getDataNames().size(),0);
 
     return 0;
 }

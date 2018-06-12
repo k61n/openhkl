@@ -30,21 +30,21 @@
 
 #include <yaml-cpp/yaml.h>
 
+#include "Detector.h"
 #include "GeometryTypes.h"
-#include "MonoDetector.h"
 
 namespace nsx {
 
-class CylindricalDetector : public MonoDetector {
+class CylindricalDetector : public Detector {
 public:
 
 	//! Static constructor of a CylindricalDetector from a property tree node
 	static Detector* create(const YAML::Node& node);
 
 	//! Construct a CylindricalDetector
-	CylindricalDetector();
+	CylindricalDetector()=default;
 	//! Construct a CylindricalDetector from another one
-	CylindricalDetector(const CylindricalDetector& other);
+	CylindricalDetector(const CylindricalDetector& other)=default;
 	//! Constructs a CylindricalDetector with a given name
 	CylindricalDetector(const std::string& name);
 	//! Constructs a CylindricalDetector from a property tree node
@@ -55,7 +55,7 @@ public:
 	virtual ~CylindricalDetector();
 
 	//! Assignment operator
-	CylindricalDetector& operator=(const CylindricalDetector& other);
+	CylindricalDetector& operator=(const CylindricalDetector& other)=default;
 
 	//! Set the height of the detector (meters)
 	void setHeight(double height) override;

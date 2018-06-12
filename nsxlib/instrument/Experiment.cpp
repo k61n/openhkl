@@ -11,14 +11,6 @@
 
 namespace nsx {
 
-Experiment::Experiment(const Experiment& other)
-: _name(other._name),
-  _diffractometerName(other._diffractometerName),
-  _diffractometer(other._diffractometer),
-  _data(other._data)
-{
-}
-
 Experiment::Experiment(const std::string& name, const std::string& diffractometerName)
 : _name(name),
   _diffractometerName(diffractometerName),
@@ -39,46 +31,18 @@ Experiment::~Experiment()
 {
 }
 
-Experiment& Experiment::operator=(const Experiment& other)
-{
-    if (this != &other)
-    {
-        _name = other._name;
-        _diffractometerName = other._diffractometerName;
-        _diffractometer = other._diffractometer;
-        _data = other._data;
-    }
-    return *this;
-}
-
 sptrDiffractometer Experiment::diffractometer() const
 {
     return _diffractometer;
 }
 
-const std::string& Experiment::getDiffractometerType() const
-{
-    return _diffractometerName;
-}
-
-std::vector<std::string> Experiment::getDataNames() const
-{
-    std::vector<std::string> v;
-    v.reserve(_data.size());
-    std::for_each(_data.begin(),_data.end(),[&v]
-                                             (const std::map<std::string,sptrDataSet>::value_type& p)
-                                             {v.push_back(p.first);});
-
-    return v;
-}
-
-const std::map<std::string,sptrDataSet>& Experiment::getData() const
+const std::map<std::string,sptrDataSet>& Experiment::data() const
 {
     return _data;
 }
 
 
-sptrDataSet Experiment::getData(std::string name)
+sptrDataSet Experiment::data(std::string name)
 {
     auto it = _data.find(name);
     if (it == _data.end()) {
@@ -87,7 +51,7 @@ sptrDataSet Experiment::getData(std::string name)
     return it->second;
 }
 
-const std::string& Experiment::getName() const
+const std::string& Experiment::name() const
 {
     return _name;
 }

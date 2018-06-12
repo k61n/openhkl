@@ -55,17 +55,17 @@ void RotAxis::setRotationDirection(Direction dir)
 {
 	_dir=dir;
 }
-RotAxis::Direction RotAxis::getRotationDirection() const
+RotAxis::Direction RotAxis::rotationDirection() const
 {
 	return _dir;
 }
 
-Eigen::Matrix3d RotAxis::getRotationMatrix(double angle) const
+Eigen::Matrix3d RotAxis::rotationMatrix(double angle) const
 {
 	Eigen::Quaterniond temp = quaternion(angle);
 	return temp.toRotationMatrix();
 }
-Eigen::Transform<double,3,Eigen::Affine> RotAxis::getHomMatrix(double angle) const
+Eigen::Transform<double,3,Eigen::Affine> RotAxis::homMatrix(double angle) const
 {
 	Eigen::Transform<double,3,Eigen::Affine> hom=Eigen::Transform<double,3,Eigen::Affine>::Identity();
 	Eigen::Quaterniond temp = quaternion(angle);

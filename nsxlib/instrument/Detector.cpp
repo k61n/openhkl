@@ -41,6 +41,7 @@
 #include "Detector.h"
 #include "DetectorFactory.h"
 #include "Gonio.h"
+#include "Units.h"
 
 namespace nsx {
 
@@ -62,15 +63,17 @@ Detector::Detector()
 : Component("detector"),
   _dataorder(DataOrder::BottomLeftColMajor),
   _baseline(0.0),
-  _gain(1.0)
-{
-}
+  _gain(1.0),
+  _height(0.0),
+  _width(0.0),
+  _angularHeight(0.0),
+  _angularWidth(0.0),
+  _nRows(0),
+  _nCols(0),
+  _minRow(0.0),
+  _minCol(0.0),
+  _distance(0)
 
-Detector::Detector(const Detector& other)
-: Component(other),
-  _dataorder(other._dataorder),
-  _baseline(other._baseline),
-  _gain(other._gain)
 {
 }
 
@@ -78,7 +81,17 @@ Detector::Detector(const std::string& name)
 : Component(name),
   _dataorder(DataOrder::BottomLeftColMajor),
   _baseline(0.0),
-  _gain(1.0)
+  _gain(1.0),
+  _height(0.0),
+  _width(0.0),
+  _angularHeight(0.0),
+  _angularWidth(0.0),
+  _nRows(0),
+  _nCols(0),
+  _minRow(0.0),
+  _minCol(0.0),
+  _distance(0)
+
 {
 }
 
@@ -126,21 +139,34 @@ Detector::Detector(const YAML::Node& node)
     } else {
         throw std::runtime_error("Detector class: Data ordering mode not valid, can not build detector");
     }
+
+    UnitsManager* um=UnitsManager::Instance();
+
+    // Set the detector to sample distance from the property tree node
+    auto&& distanceNode = node["sample_distance"];
+    double units=um->get(distanceNode["units"].as<std::string>());
+    double distance=distanceNode["value"].as<double>();
+    distance *= units;
+    setDistance(distance);
+
+    // Set the detector number of pixels from the property tree node
+    unsigned int nCols = node["ncols"].as<unsigned int>();
+    setNCols(nCols);
+
+    unsigned int nRows = node["nrows"].as<unsigned int>();
+    setNRows(nRows);
+
+    _minCol = node["origin_x"] ? node["origin_x"].as<double>() : 0.0;
+    _minRow = node["origin_y"] ? node["origin_y"].as<double>() : 0.0;
 }
 
 Detector::~Detector()
 {
 }
 
-Detector& Detector::operator=(const Detector& other)
+DataOrder Detector::dataOrder() const
 {
-    if (this != &other) {
-        Component::operator=(other);
-        _dataorder = other._dataorder;
-        _gain = other._gain;
-        _baseline = other._baseline;
-    }
-    return *this;
+    return _dataorder;
 }
 
 double Detector::baseline() const
@@ -152,6 +178,104 @@ double Detector::gain() const
 {
     return _gain;
 }
+
+double Detector::height() const
+{
+    return _height;
+}
+
+double Detector::width() const
+{
+    return _width;
+}
+
+int Detector::minRow() const
+{
+    return _minRow;
+}
+
+int Detector::maxRow() const
+{
+    return _minRow+_nRows;
+}
+
+int Detector::minCol() const
+{
+    return _minCol;
+}
+
+int Detector::maxCol() const
+{
+    return _minCol+_nCols;
+}
+
+double Detector::angularHeight() const
+{
+    return _angularHeight;
+}
+
+double Detector::angularWidth() const
+{
+    return _angularWidth;
+}
+
+double Detector::distance() const
+{
+    return _distance;
+}
+
+void Detector::setDistance(double d)
+{
+    _distance = d;
+    _position = DirectVector(0.0,d,0.0);
+}
+
+bool Detector::hasPixel(double px, double py) const
+{
+
+    double dx = px-_minCol;
+    double dy = py-_minRow;
+
+    return (dx>=0 && dx<static_cast<double>(_nCols) && dy>=0 && dy<static_cast<double>(_nRows));
+}
+
+unsigned int Detector::nCols() const
+{
+    return _nCols;
+}
+
+void Detector::setNCols(unsigned int cols)
+{
+    if (cols==0) {
+        throw std::range_error("Detector "+Component::_name+" number of pixels (row,col) must be >0");
+    }
+    _nCols=cols;
+}
+
+
+unsigned int Detector::nRows() const
+{
+    return _nRows;
+}
+
+void Detector::setNRows(unsigned int rows)
+{
+    if (rows==0) {
+        throw std::range_error("Detector "+Component::_name+" number of pixels (row,col) must be >0");
+    }
+    _nRows=rows;
+}
+
+double Detector::pixelHeigth() const
+{
+    return _height/_nRows;
+}
+
+double Detector::pixelWidth() const
+{
+    return _width/_nCols;
+}
+
 
 } // end namespace nsx
 

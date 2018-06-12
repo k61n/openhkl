@@ -20,30 +20,31 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
 {
     ui->setupUi(this);
     auto sample=_sampleItem->experiment()->diffractometer()->sample();
-    auto gonio=sample->getGonio();
+    auto gonio=sample->gonio();
 
     ui->tableWidget_Sample->setEditTriggers(QAbstractItemView::DoubleClicked);
-    ui->tableWidget_Sample->setRowCount(gonio->getNAxes());
+    ui->tableWidget_Sample->setRowCount(gonio->nAxes());
 
     ui->tableWidget_Sample->setColumnCount(3);
     ui->tableWidget_Sample->verticalHeader()->setVisible(false);
 
-    for (unsigned int i=0;i<gonio->getNAxes();++i) {
-        auto axis=gonio->getAxis(i);
+    for (unsigned int i=0;i<gonio->nAxes();++i) {
+        auto axis=gonio->axis(i);
         QTableWidgetItem* item0=new QTableWidgetItem();
-        item0->setData(Qt::EditRole, QString(axis->getLabel().c_str()));
-        if (axis->isPhysical())
+        item0->setData(Qt::EditRole, QString(axis->label().c_str()));
+        if (axis->physical()) {
             item0->setBackgroundColor(QColor("#FFDDDD"));
-        else
+        } else {
             item0->setBackgroundColor(QColor("#DDFFDD"));
+        }
         QTableWidgetItem* item1=new QTableWidgetItem();
         std::ostringstream os;
 
         if (nsx::RotAxis* rot=dynamic_cast<nsx::RotAxis*>(axis)) {
             os << "R(";
-            os << rot->getAxis().transpose();
+            os << rot->axis().transpose();
             os << ")";
-            if (rot->getRotationDirection()) {
+            if (rot->rotationDirection()) {
                 os << "CW";
             } else {
                 os << "CCW";
@@ -52,7 +53,7 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
         }
         else if(dynamic_cast<nsx::TransAxis*>(axis)) {
             os << "T(";
-            os << axis->getAxis().transpose();
+            os << axis->axis().transpose();
             os << ")";
         }
         item1->setData(Qt::EditRole, QString(os.str().c_str()));
@@ -75,6 +76,6 @@ SamplePropertyWidget::~SamplePropertyWidget()
 void SamplePropertyWidget::cellHasChanged(int i,int j)
 {
     auto sample=_sampleItem->experiment()->diffractometer()->sample();
-    auto axis=sample->getGonio()->getAxis(i);
+    auto axis=sample->gonio()->axis(i);
 }
 

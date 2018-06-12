@@ -57,7 +57,7 @@ namespace nsx {
  *
  *
  */
-class Detector: public Component {
+class Detector : public Component {
 public:
     //! Static constructor of a Detector from a property tree node
     static Detector* create(const YAML::Node& node);
@@ -65,7 +65,7 @@ public:
     //! Construct a Detector
     Detector();
     //! Construct a Detector from another Detector
-    Detector(const Detector& other);
+    Detector(const Detector& other)=default;
     //! Construct a Detector with a given name
     Detector(const std::string& name);
     //! Constructs a sample from a property tree node
@@ -76,45 +76,67 @@ public:
     virtual ~Detector()=0;
 
     //! Assignment operator
-    virtual Detector& operator=(const Detector& other);
+    Detector& operator=(const Detector& other)=default;
 
-    //! Return the number of columns of the detector.
-    virtual unsigned int nCols() const=0;
-    //! Return the number of rows of the detector.
-    virtual unsigned int nRows() const=0;
+    //! Return the sample to detector distance (meters)
+    double distance() const;
+    //! Set sample to detector distance
+    void setDistance(double d);
+
+    //! Return the number of columns of the detector
+    unsigned int nCols() const;
+    //! Set the number of columns of the detector
+    void setNCols(unsigned int cols);
+    //! Return the number of rows of the detector
+    unsigned int nRows() const;
+    //! Set the number of rows
+    void setNRows(unsigned int rows);
+
     //!  Get the minimum row index
-    virtual int minRow() const=0;
+    int minRow() const;
     //!  Get the maximum row index
-    virtual int maxRow() const=0;
+    int maxRow() const;
     //!  Get the minimum col index
-    virtual int minCol() const=0;
+    int minCol() const;
     //!  Get the maximum col index
-    virtual int maxCol() const=0;
-    //! Return true whether a given pixel falls inside the detector
-    virtual bool hasPixel(double px, double py) const=0;
+    int maxCol() const;
+
+    //! Return true whether a given pixel is inside the detector
+    bool hasPixel(double px, double py) const;
 
     //! Return the height of the detector (meters)
-    virtual double height() const=0;
-    //! Return the width of the detector (meters)
-    virtual double width() const=0;
+    double height() const;
+    //! Set the height of the detector (meters)
+    virtual void setHeight(double height)=0;
 
-    //! Return the angular height of the detector (radians)
-    virtual double angularHeight() const=0;
-    //! Return the angular width of the detector (radians)
-    virtual double angularWidth() const=0;
+    //! Return the width of the detector (meters)
+    double width() const;
+    //! Set the width of the detector (meters)
+    virtual void setWidth(double width)=0;
+
+    //! Return the height in angular units of the detector (radians)
+    double angularHeight() const;
+    //! Set the height in angular units of the detector (radians)
+    virtual void setAngularHeight(double angle)=0;
+
+    //! Return the width in angular units of the detector (radians)
+    double angularWidth() const;
+    //! Set the height in angular units of the detector (radians)
+    virtual void setAngularWidth(double angle)=0;
 
     //! Return the detector event (pixel x, pixel y, time of flight) associated with a given kf. 
     //! Returns with _negative_ tof if no such event is possible.
     virtual DetectorEvent constructEvent(const DirectVector& from, const ReciprocalVector& kf) const = 0;
 
-    //! Returns the number of detector
-    virtual unsigned int nDetectors() const=0;
-
     //! Returns the position of a given pixel in detector space. This takes into account the detector motions in detector space.
     virtual DirectVector pixelPosition(double x, double y) const=0;
 
-    //!
-    DataOrder dataOrder() const {return _dataorder;}
+    double pixelHeigth() const;
+
+    double pixelWidth() const;
+
+    //! Returns how data are mapped to detector
+    DataOrder dataOrder() const;
 
     //! Return the Jacobian matrix of the transformation (px,py) -> (x,y,z) from pixel coordinates to lab coordinates.
     //! The first and second columns are the derivatives of (x,y,z) with respect to px and py.
@@ -126,12 +148,31 @@ public:
     //! Return the detector gain. Measured count = gain * (neutron count) + baseline
     double gain() const;
 
+protected:
+
+    //! Detector height
+    double _height;
+    //! Detector width
+    double _width;
+    //! Detector angular height
+    double _angularHeight;
+    //! Detector angular width
+    double _angularWidth;
+    unsigned int _nRows;
+    unsigned int _nCols;
+    double _minRow;
+    double _minCol;
+    double _distance;
+
 private:
+
     DataOrder _dataorder;
-    //! Value for detector baseline. Default is 0.0
+    //! Detector baseline. Default is 0.0
     double _baseline;
-    //! Value fo detector gain. Default is 1.0
+    //! Detector gain. Default is 1.0
     double _gain;
+
+
 };
 
 } // end namespace nsx

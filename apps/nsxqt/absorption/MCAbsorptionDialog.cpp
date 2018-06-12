@@ -73,7 +73,7 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
     }
 
     mca.setSample(&hull,material->muIncoherent(),material->muAbsorption(mono.wavelength()*nsx::ang));
-    const auto& data=_experiment->getData();
+    const auto& data=_experiment->data();
     ui->progressBar_MCStatus->setValue(0);
     ui->progressBar_MCStatus->setTextVisible(true);
     int progress=0;

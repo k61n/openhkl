@@ -19,7 +19,8 @@ int main()
     d.setDistance(764*nsx::mm);
     d.setAngularWidth(120.0*nsx::deg);
     d.setHeight(40.0*nsx::cm);
-    d.setNPixels(640,256);
+    d.setNCols(640);
+    d.setNRows(256);
 
     nsx::DirectVector pixel_position = d.pixelPosition(319.5, 127.5);
 

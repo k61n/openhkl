@@ -230,7 +230,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
     // Write detector states
     H5::Group detectorGroup(scanGroup.createGroup("Detector"));
 
-    std::vector<std::string> names=_diffractometer->detector()->getGonio()->getPhysicalAxesNames();
+    std::vector<std::string> names=_diffractometer->detector()->gonio()->physicalAxesNames();
     hsize_t nf[1]={_nFrames};
     H5::DataSpace scanSpace(1,nf);
     RealMatrix vals(names.size(),_nFrames);
@@ -252,7 +252,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
 
     // Write sample states
     H5::Group sampleGroup(scanGroup.createGroup("Sample"));
-    std::vector<std::string> samplenames=_diffractometer->sample()->getGonio()->getPhysicalAxesNames();
+    std::vector<std::string> samplenames=_diffractometer->sample()->gonio()->physicalAxesNames();
     RealMatrix valsSamples(samplenames.size(), _nFrames);
 
     const auto& sampleStates = _reader->sampleStates();
@@ -273,7 +273,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
     #if 0
     // Write source states
     H5::Group sourceGroup(scanGroup.createGroup("Source"));
-    std::vector<std::string> sourcenames = _diffractometer->source()->getGonio()->getPhysicalAxesNames();
+    std::vector<std::string> sourcenames = _diffractometer->source()->gonio()->getPhysicalAxesNames();
     RealMatrix valsSources(sourcenames.size(),_nFrames);
 
     for (unsigned int i = 0; i < _states.size(); ++i) {

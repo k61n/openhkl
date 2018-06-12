@@ -63,7 +63,7 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, sptrDiffract
     _nFrames=_metadata.getKey<int>("npdone");
 
     // Getting Scan parameters for the detector
-    std::vector<std::string> axesS=_diffractometer->detector()->getGonio()->getPhysicalAxesNames();
+    std::vector<std::string> axesS=_diffractometer->detector()->gonio()->physicalAxesNames();
 
     Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm(axesS.size(),_nFrames);
     for (unsigned int i=0;i<axesS.size();++i) {
@@ -98,7 +98,7 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, sptrDiffract
     }
 
     // Getting Scan parameters for the sample
-    axesS=_diffractometer->sample()->getGonio()->getPhysicalAxesNames();
+    axesS=_diffractometer->sample()->gonio()->physicalAxesNames();
 
     dm.resize(axesS.size(),_nFrames);
     for (unsigned int i=0;i<axesS.size();++i) {
@@ -131,7 +131,7 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, sptrDiffract
 
 
     // todo: fix this!!
-    dm.resize(_diffractometer->source()->getGonio()->getNPhysicalAxes(), _nFrames);
+    dm.resize(_diffractometer->source()->gonio()->nPhysicalAxes(), _nFrames);
     dm.setZero();
 
     _file->close();
