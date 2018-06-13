@@ -15,37 +15,6 @@ CollectedPeaksDelegate::CollectedPeaksDelegate(QObject *parent) : QStyledItemDel
     _icon.addPixmap(QPixmap(":/resources/peakDeselectedIcon.png"),QIcon::Disabled,QIcon::On);
 }
 
-
-QWidget* CollectedPeaksDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-    if (index.column() == CollectedPeaksModel::Column::unitCell) {
-        auto editor = new QComboBox(parent);
-        QStringList cellNames = index.model()->data(index,Qt::UserRole).toStringList();
-        for (const auto& name : cellNames) {
-            editor->addItem(name);
-        }
-        return editor;
-    }
-    return QStyledItemDelegate::createEditor(parent,option,index);
-}
-
-void CollectedPeaksDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
-{
-    int column = index.column();
-
-    if (column == CollectedPeaksModel::Column::unitCell) {
-        auto cb = dynamic_cast<QComboBox*>(editor);
-        if (cb->count()==0) {
-            return;
-        }
-        int unitCellIndex = cb->currentIndex();
-        model->setData(index,unitCellIndex);
-    }
-    else {
-        QStyledItemDelegate::setModelData(editor,model,index);
-    }
-}
-
 void CollectedPeaksDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     int column = index.column();

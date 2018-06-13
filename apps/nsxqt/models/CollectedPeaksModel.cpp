@@ -109,9 +109,6 @@ Qt::ItemFlags CollectedPeaksModel::flags(const QModelIndex &index) const
     if (column == Column::selected) {
         return QAbstractTableModel::flags(index) | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
     }
-    if (column == Column::unitCell) {
-        return QAbstractTableModel::flags(index) | Qt::ItemIsEditable;
-    }
     return QAbstractTableModel::flags(index);
 }
 
@@ -221,15 +218,6 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
     case Qt::CheckStateRole:
         if (column == Column::selected) {
             return _peaks[row]->selected();
-        }
-        break;
-    case Qt::UserRole:
-        if (column == Column::unitCell) {
-            QStringList cellNames;
-            for (auto&& cell : _cells) {
-                cellNames.append(QString::fromStdString(cell->name()));
-            }
-            return cellNames;
         }
         break;
     }
@@ -342,16 +330,6 @@ bool CollectedPeaksModel::setData(const QModelIndex& index, const QVariant& valu
         if (column == Column::selected)
             _peaks[row]->setSelected(state);
     }
-    else if (role == Qt::EditRole) {
-        if (column == Column::unitCell) {
-            if (_cells.empty()) {
-                return false;
-            }
-            int unitCellIndex = value.toInt();
-            auto unitCell = _cells[unitCellIndex];
-            _peaks[row]->setUnitCell(unitCell);
-        }
-    }
     emit dataChanged(index,index);
     emit updateFrame();
     return true;
@@ -360,11 +338,6 @@ bool CollectedPeaksModel::setData(const QModelIndex& index, const QVariant& valu
 bool CollectedPeaksModel::indexIsValid(const QModelIndex& index) const
 {
     return index.isValid() && (index.row() < static_cast<int>(_peaks.size()));
-}
-
-void CollectedPeaksModel::setUnitCells(const nsx::UnitCellList &cells)
-{
-    _cells = cells;
 }
 
 void CollectedPeaksModel::sortEquivalents()
@@ -404,138 +377,6 @@ void CollectedPeaksModel::normalizeToMonitor(double factor)
 {
     for (auto&& peak : _peaks) {
         peak->setScale(factor/peak->data()->metadata()->key<double>("monitor"));
-    }
-}
-
-void CollectedPeaksModel::writeShelX(const std::string& filename, QModelIndexList indices)
-{
-    if (filename.empty()) {
-        nsx::error()<<"Empty filename";
-        return;
-    }
-
-    if (_peaks.empty()) {
-        nsx::error()<<"No peaks in the table";
-        return;
-    }
-
-    if (indices.isEmpty()) {
-        for (int i=0;i<rowCount();++i) {
-            indices << index(i,0);
-        }
-    }
-
-    std::vector<int> rows;
-    rows.reserve(indices.size());
-    for (auto index : indices) {
-        if (!index.isValid()) {
-            continue;
-        }
-        rows.push_back(index.row());
-    }
-
-    std::fstream file(filename,std::ios::out);
-    if (!file.is_open()) {
-        nsx::error()<<"Error writing to this file, please check write permisions";
-        return;
-    }
-
-    nsx::PeakFilter peak_filter;
-    nsx::PeakList filtered_peaks;
-    filtered_peaks = peak_filter.selection(_peaks,rows);
-    filtered_peaks = peak_filter.selected(filtered_peaks,true);
-    filtered_peaks = peak_filter.hasUnitCell(filtered_peaks);
-
-    for (auto peak : filtered_peaks) {
-
-        auto cell = peak->unitCell();
-
-        nsx::MillerIndex miller_index(peak->q(), *cell);
-        if (!miller_index.indexed(cell->indexingTolerance())) {
-            continue;
-        }
-
-        file << std::fixed;
-        file << std::setprecision(0);
-        file << std::setw(4);
-        file << miller_index[0];
-
-        file << std::fixed;
-        file << std::setprecision(0);
-        file << std::setw(4);
-        file << miller_index[1];
-
-        file << std::fixed;
-        file << std::setprecision(0);
-        file << std::setw(4);
-        file << miller_index[2];
-
-        file << std::fixed << std::setw(8) << std::setprecision(2) << peak->correctedIntensity().value();
-        file << std::fixed << std::setw(8) << std::setprecision(2) << peak->correctedIntensity().sigma() <<std::endl;
-    }
-    if (file.is_open()) {
-        file.close();
-    }
-}
-
-void CollectedPeaksModel::writeFullProf(const std::string& filename, QModelIndexList indices)
-{
-    if (filename.empty()) {
-        nsx::error()<<"Empty filename";
-        return;
-    }
-
-    if (indices.isEmpty()) {
-        for (int i=0;i<rowCount();++i) {
-            indices << index(i,0);
-        }
-    }
-
-    std::vector<int> rows;
-    rows.reserve(indices.size());
-    for (auto index : indices) {
-        if (!index.isValid()) {
-            continue;
-        }
-        rows.push_back(index.row());
-    }
-
-    std::fstream file(filename,std::ios::out);
-
-    if (!file.is_open()) {
-        nsx::error()<<"Error writing to this file, please check write permisions";
-        return;
-    }
-
-    nsx::PeakFilter peak_filter;
-    nsx::PeakList filtered_peaks;
-    filtered_peaks = peak_filter.selection(_peaks,rows);
-    filtered_peaks = peak_filter.selected(filtered_peaks,true);
-    filtered_peaks = peak_filter.hasUnitCell(filtered_peaks);
-
-    file << "TITLE File written by ...\n";
-    file << "(3i4,2F14.4,i5,4f8.2)\n";
-    double wave=_peaks[0]->data()->metadata()->key<double>("wavelength");
-    file << std::fixed << std::setw(8) << std::setprecision(3) << wave << " 0 0" << std::endl;
-
-    for (auto peak : filtered_peaks) {
-
-        auto cell = peak->unitCell();
-
-        nsx::MillerIndex miller_index(peak->q(), *cell);
-        if (!miller_index.indexed(cell->indexingTolerance())) {
-            continue;
-        }
-
-        file << std::setprecision(0);
-        file << std::setw(4);
-        file << miller_index[0] << std::setw(4) <<  miller_index[1] << std::setw(4) << miller_index[2];
-        file << std::fixed << std::setw(14) << std::setprecision(4) << peak->correctedIntensity().value();
-        file << std::fixed << std::setw(14) << std::setprecision(4) << peak->correctedIntensity().sigma();
-        file << std::setprecision(0) << std::setw(5) << 1  << std::endl;
-    }
-    if (file.is_open()) {
-        file.close();
     }
 }
 
