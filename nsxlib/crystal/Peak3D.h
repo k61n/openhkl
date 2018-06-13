@@ -93,7 +93,7 @@ public:
     //! Selected the peak for fitting or integration
     void setSelected(bool);
     //! Return true if peak is selected
-    bool isSelected() const;
+    bool selected() const;
     //! Apply mask to peak
     void setMasked(bool masked);
     //! Set the transmission factor
@@ -109,7 +109,7 @@ public:
     //! Return the unit cell specified by the given index
     sptrUnitCell unitCell(int index) const;
     //! Return true if peak has been indexed by a unit cell
-    bool isIndexed() const;
+    bool indexed() const;
     //! Set whether the peak is observed or predicted
     void setPredicted(bool predicted);
     //! Return if the peak is predicted

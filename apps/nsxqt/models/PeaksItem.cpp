@@ -274,7 +274,7 @@ void PeaksItem::autoAssignUnitCell()
     auto sample = experiment()->diffractometer()->sample();
 
     for (auto peak: peaks) {
-        if (!peak->isSelected()) {
+        if (!peak->selected()) {
             continue;
         }
 

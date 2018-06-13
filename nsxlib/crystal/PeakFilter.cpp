@@ -36,7 +36,7 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrPeak3D peak)
     }
    
     if (filter._removeUnselected) {
-        if (!peak->isSelected()) {
+        if (!peak->selected()) {
             return true;
         }
     }
@@ -201,7 +201,7 @@ PeakList PeakFilter::selected(const PeakList& peaks, bool selection_flag) const
 {
     PeakList filtered_peaks;
 
-    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[selection_flag](sptrPeak3D peak){return selection_flag == peak->isSelected();});
+    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[selection_flag](sptrPeak3D peak){return selection_flag == peak->selected();});
 
     return filtered_peaks;
 }

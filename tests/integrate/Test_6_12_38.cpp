@@ -72,7 +72,7 @@ int main()
     nsx::StrongPeakIntegrator integrator(false, false);
     integrator.integrate(peaks, dataf, 2.7, 3.0, 4.0);
 
-    NSX_CHECK_ASSERT(peak->isSelected() == true);
+    NSX_CHECK_ASSERT(peak->selected() == true);
 
     return 0;
 }

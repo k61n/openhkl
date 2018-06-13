@@ -197,7 +197,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         case Column::numor:
             return _peaks[row]->data()->metadata()->key<int>("Numor");
         case Column::selected:
-            return _peaks[row]->isSelected();
+            return _peaks[row]->selected();
         case Column::unitCell:
             if (auto unitCell = _peaks[row]->activeUnitCell()) {
                 return QString::fromStdString(unitCell->name());
@@ -219,7 +219,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         break;
     case Qt::CheckStateRole:
         if (column == Column::selected) {
-            return _peaks[row]->isSelected();
+            return _peaks[row]->selected();
         }
         break;
     case Qt::UserRole:
@@ -306,7 +306,7 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         break;
     case Column::selected:
         compareFn = [&](nsx::sptrPeak3D p1, const nsx::sptrPeak3D p2) {
-            return (p2->isSelected()<p1->isSelected());
+            return (p2->selected()<p1->selected());
         };
         break;
     case Column::unitCell:
@@ -556,7 +556,7 @@ QModelIndexList CollectedPeaksModel::getValidPeaks()
 
     for (int i=0; i<rowCount(); ++i) {
         auto peak = _peaks[i];
-        if (peak->isSelected()) {
+        if (peak->selected()) {
             list.append(index(i,0));
         }
     }

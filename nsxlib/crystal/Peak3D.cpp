@@ -176,7 +176,7 @@ void Peak3D::setTransmission(double transmission)
     _transmission = transmission;
 }
 
-bool Peak3D::isSelected() const
+bool Peak3D::selected() const
 {
     return (!_masked && _selected);
 }
@@ -191,7 +191,7 @@ void Peak3D::setMasked(bool masked)
     _masked = masked;
 }
 
-bool Peak3D::isIndexed() const
+bool Peak3D::indexed() const
 {
     return (!_unitCells.empty());
 }

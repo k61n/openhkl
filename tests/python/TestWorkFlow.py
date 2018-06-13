@@ -31,7 +31,7 @@ class TestWorkFlow(unittest.TestCase):
         selected_peaks = []
 
         for peak in peaks:
-            if peak.isSelected():
+            if peak.selected():
                 selected_peaks.append(peak)
 
         self.assertTrue(len(peaks) > 800)
@@ -54,9 +54,6 @@ class TestWorkFlow(unittest.TestCase):
         indexer.autoIndex(params)
 
         soln = indexer.solutions()[0]
-
-        print(soln[0])
-        print(soln[1])
 
         self.assertTrue(soln[1] > 92.0)
 
@@ -84,13 +81,10 @@ class TestWorkFlow(unittest.TestCase):
             if library.addPeak(peak):
                 library_size +=1
 
-        print(library_size)
-
         library.setDefaultShape(library.meanShape())
         predictor = nsx.PeakPredictor(uc, library, 2.1, 50.0, 0)
        
         predicted_peaks = predictor.predict(data)
-        print(len(predicted_peaks))
         #self.assertTrue(len(predicted_peaks) > 1600)
 
 

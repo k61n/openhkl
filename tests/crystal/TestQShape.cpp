@@ -67,7 +67,7 @@ int main()
     int good_shapes = 0;
 
     for (auto peak: found_peaks) {
-        if (!peak->isSelected()) {
+        if (!peak->selected()) {
             continue;
         }
 

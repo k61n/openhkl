@@ -79,7 +79,7 @@ void DialogProfileFit::build()
     nsx::PeakList fit_peaks;
 
     for (auto peak: _peaks) {
-        if (!peak->isSelected()) {
+        if (!peak->selected()) {
             continue;
         }
         double d = 1.0 / peak->q().rowVector().norm();
