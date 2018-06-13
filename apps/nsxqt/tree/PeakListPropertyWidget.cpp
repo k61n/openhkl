@@ -40,12 +40,10 @@ PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *pa
     }
 
     model->setPeaks(data_peaks);
-    model->setUnitCells(_caller->experiment()->diffractometer()->sample()->unitCells());
     ui->tableView->setModel(model);
 
     //Connect search box
     connect(ui->lineEdit,SIGNAL(textChanged(QString)),ui->tableView,SLOT(showPeaksMatchingText(QString)));
-
 
     // todo: fix shape library!!
     // connect(ui->tableView, SIGNAL(updateShapeLibrary(nsx::sptrShapeLibrary)), _session.get(), SLOT(updateShapeLibrary(nsx::sptrShapeLibrary)));

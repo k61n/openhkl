@@ -109,9 +109,6 @@ Qt::ItemFlags CollectedPeaksModel::flags(const QModelIndex &index) const
     if (column == Column::selected) {
         return QAbstractTableModel::flags(index) | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
     }
-    if (column == Column::unitCell) {
-        return QAbstractTableModel::flags(index) | Qt::ItemIsEditable;
-    }
     return QAbstractTableModel::flags(index);
 }
 
@@ -162,7 +159,8 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
 
     int row = index.row();
     int column = index.column();
-    if (auto cell = _peaks[row]->activeUnitCell()) {
+    auto cell = _peaks[row]->unitCell();
+    if (cell) {
         nsx::MillerIndex miller_index(_peaks[row]->q(), *cell);
         if (miller_index.indexed(cell->indexingTolerance())) {
             hkl = miller_index.rowVector();
@@ -199,7 +197,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         case Column::selected:
             return _peaks[row]->selected();
         case Column::unitCell:
-            if (auto unitCell = _peaks[row]->activeUnitCell()) {
+            if (auto unitCell = _peaks[row]->unitCell()) {
                 return QString::fromStdString(unitCell->name());
             }
             else {
@@ -222,15 +220,6 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
             return _peaks[row]->selected();
         }
         break;
-    case Qt::UserRole:
-        if (column == Column::unitCell) {
-            QStringList cellNames;
-            for (auto&& cell : _cells) {
-                cellNames.append(QString::fromStdString(cell->name()));
-            }
-            return cellNames;
-        }
-        break;
     }
     return QVariant::Invalid;
 }
@@ -242,8 +231,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
     switch (column) {
     case Column::h:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto cell1 = p1->activeUnitCell();
-            auto cell2 = p2->activeUnitCell();
+            auto cell1 = p1->unitCell();
+            auto cell2 = p2->unitCell();
             nsx::MillerIndex miller_index1(p1->q(), *cell1);
             nsx::MillerIndex miller_index2(p2->q(), *cell2);
             return (miller_index1[0]<miller_index2[0]);
@@ -251,8 +240,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         break;
     case Column::k:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto cell1 = p1->activeUnitCell();
-            auto cell2 = p2->activeUnitCell();
+            auto cell1 = p1->unitCell();
+            auto cell2 = p2->unitCell();
             nsx::MillerIndex miller_index1(p1->q(), *cell1);
             nsx::MillerIndex miller_index2(p2->q(), *cell2);
             return (miller_index1[1]<miller_index2[1]);
@@ -260,8 +249,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         break;
     case Column::l:
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto cell1 = p1->activeUnitCell();
-            auto cell2 = p2->activeUnitCell();
+            auto cell1 = p1->unitCell();
+            auto cell2 = p2->unitCell();
             nsx::MillerIndex miller_index1(p1->q(), *cell1);
             nsx::MillerIndex miller_index2(p2->q(), *cell2);
             return (miller_index1[2]<miller_index2[2]);
@@ -311,8 +300,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         break;
     case Column::unitCell:
         compareFn = [&](nsx::sptrPeak3D p1, const nsx::sptrPeak3D p2) {
-            auto uc1 = p1->activeUnitCell();
-            auto uc2 = p2->activeUnitCell();
+            auto uc1 = p1->unitCell();
+            auto uc2 = p2->unitCell();
             std::string uc1Name = uc1 ? uc1->name() : "";
             std::string uc2Name = uc2 ? uc2->name() : "";
             return (uc2Name<uc1Name);
@@ -341,15 +330,6 @@ bool CollectedPeaksModel::setData(const QModelIndex& index, const QVariant& valu
         if (column == Column::selected)
             _peaks[row]->setSelected(state);
     }
-    else if (role == Qt::EditRole) {
-        if (column == Column::unitCell) {
-            if (_cells.empty())
-                return false;
-            int unitCellIndex = value.toInt();
-            auto unitCell = _cells[unitCellIndex];
-            _peaks[row]->addUnitCell(unitCell,true);
-        }
-    }
     emit dataChanged(index,index);
     emit updateFrame();
     return true;
@@ -360,18 +340,13 @@ bool CollectedPeaksModel::indexIsValid(const QModelIndex& index) const
     return index.isValid() && (index.row() < static_cast<int>(_peaks.size()));
 }
 
-void CollectedPeaksModel::setUnitCells(const nsx::UnitCellList &cells)
-{
-    _cells = cells;
-}
-
 void CollectedPeaksModel::sortEquivalents()
 {
     // todo: investigate this method. Likely incorrect if there are multiple unit cells.
-    auto cell=_peaks[0]->activeUnitCell();
+    auto cell=_peaks[0]->unitCell();
 
     // If no unit cell defined for the peak collection, return.
-    if (cell == nullptr) {
+    if (!cell) {
         nsx::error() << "No unit cell defined for the peaks";
         return;
     }
@@ -392,7 +367,7 @@ void CollectedPeaksModel::setUnitCell(const nsx::sptrUnitCell& unitCell, QModelI
     }
     for (auto&& index : selectedPeaks) {
         auto peak = _peaks[index.row()];
-        peak->addUnitCell(unitCell,true);
+        peak->setUnitCell(unitCell);
     }
     emit layoutChanged();
     emit unitCellUpdated();
@@ -405,145 +380,13 @@ void CollectedPeaksModel::normalizeToMonitor(double factor)
     }
 }
 
-void CollectedPeaksModel::writeShelX(const std::string& filename, QModelIndexList indices)
-{
-    if (filename.empty()) {
-        nsx::error()<<"Empty filename";
-        return;
-    }
-
-    if (_peaks.empty()) {
-        nsx::error()<<"No peaks in the table";
-        return;
-    }
-
-    if (indices.isEmpty()) {
-        for (int i=0;i<rowCount();++i) {
-            indices << index(i,0);
-        }
-    }
-
-    std::vector<int> rows;
-    rows.reserve(indices.size());
-    for (auto index : indices) {
-        if (!index.isValid()) {
-            continue;
-        }
-        rows.push_back(index.row());
-    }
-
-    std::fstream file(filename,std::ios::out);
-    if (!file.is_open()) {
-        nsx::error()<<"Error writing to this file, please check write permisions";
-        return;
-    }
-
-    nsx::PeakFilter peak_filter;
-    nsx::PeakList filtered_peaks;
-    filtered_peaks = peak_filter.selection(_peaks,rows);
-    filtered_peaks = peak_filter.selected(filtered_peaks,true);
-    filtered_peaks = peak_filter.hasUnitCell(filtered_peaks);
-
-    for (auto peak : filtered_peaks) {
-
-        auto cell = peak->activeUnitCell();
-
-        nsx::MillerIndex miller_index(peak->q(), *cell);
-        if (!miller_index.indexed(cell->indexingTolerance())) {
-            continue;
-        }
-
-        file << std::fixed;
-        file << std::setprecision(0);
-        file << std::setw(4);
-        file << miller_index[0];
-
-        file << std::fixed;
-        file << std::setprecision(0);
-        file << std::setw(4);
-        file << miller_index[1];
-
-        file << std::fixed;
-        file << std::setprecision(0);
-        file << std::setw(4);
-        file << miller_index[2];
-
-        file << std::fixed << std::setw(8) << std::setprecision(2) << peak->correctedIntensity().value();
-        file << std::fixed << std::setw(8) << std::setprecision(2) << peak->correctedIntensity().sigma() <<std::endl;
-    }
-    if (file.is_open()) {
-        file.close();
-    }
-}
-
-void CollectedPeaksModel::writeFullProf(const std::string& filename, QModelIndexList indices)
-{
-    if (filename.empty()) {
-        nsx::error()<<"Empty filename";
-        return;
-    }
-
-    if (indices.isEmpty()) {
-        for (int i=0;i<rowCount();++i) {
-            indices << index(i,0);
-        }
-    }
-
-    std::vector<int> rows;
-    rows.reserve(indices.size());
-    for (auto index : indices) {
-        if (!index.isValid()) {
-            continue;
-        }
-        rows.push_back(index.row());
-    }
-
-    std::fstream file(filename,std::ios::out);
-
-    if (!file.is_open()) {
-        nsx::error()<<"Error writing to this file, please check write permisions";
-        return;
-    }
-
-    nsx::PeakFilter peak_filter;
-    nsx::PeakList filtered_peaks;
-    filtered_peaks = peak_filter.selection(_peaks,rows);
-    filtered_peaks = peak_filter.selected(filtered_peaks,true);
-    filtered_peaks = peak_filter.hasUnitCell(filtered_peaks);
-
-    file << "TITLE File written by ...\n";
-    file << "(3i4,2F14.4,i5,4f8.2)\n";
-    double wave=_peaks[0]->data()->metadata()->key<double>("wavelength");
-    file << std::fixed << std::setw(8) << std::setprecision(3) << wave << " 0 0" << std::endl;
-
-    for (auto peak : filtered_peaks) {
-
-        auto cell = peak->activeUnitCell();
-
-        nsx::MillerIndex miller_index(peak->q(), *cell);
-        if (!miller_index.indexed(cell->indexingTolerance())) {
-            continue;
-        }
-
-        file << std::setprecision(0);
-        file << std::setw(4);
-        file << miller_index[0] << std::setw(4) <<  miller_index[1] << std::setw(4) << miller_index[2];
-        file << std::fixed << std::setw(14) << std::setprecision(4) << peak->correctedIntensity().value();
-        file << std::fixed << std::setw(14) << std::setprecision(4) << peak->correctedIntensity().sigma();
-        file << std::setprecision(0) << std::setw(5) << 1  << std::endl;
-    }
-    if (file.is_open()) {
-        file.close();
-    }
-}
-
 QModelIndexList CollectedPeaksModel::getUnindexedPeaks()
 {
     QModelIndexList list;
 
     for (int i=0; i<rowCount(); ++i) {
         auto peak = _peaks[i];
-        if (!peak->hasUnitCells()) {
+        if (!peak->unitCell()) {
             list.append(index(i,0));
         }
     }

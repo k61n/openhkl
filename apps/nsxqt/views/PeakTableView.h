@@ -67,10 +67,6 @@ signals:
     void updateShapeLibrary(nsx::sptrShapeLibrary);
 
 public slots:
-    //! Write the current list to FullProf
-    void writeFullProf();
-    //! Write the currrent list to ShelX
-    void writeShelX();
     //! Normalize to monitor.
     void normalizeToMonitor();
     //! Plot as function of parameter. Needs to be a numeric type
@@ -87,9 +83,6 @@ public slots:
     void togglePeaksSelection();
 
     void updateUnitCell(const nsx::sptrUnitCell& unitCell);
-
-    void openRefiningParametersDialog();
-    void openProfileFitDialog();
 
 private:
 

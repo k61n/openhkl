@@ -62,7 +62,7 @@ class TestWorkFlow(unittest.TestCase):
         sample.addUnitCell(uc)
 
         for peak in peaks:
-            peak.addUnitCell(uc, True)
+            peak.setUnitCell(uc)
             peak.q()
 
         num_peaks = len(peaks)

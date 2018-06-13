@@ -83,7 +83,7 @@ int main()
 
     for (auto p: peaks) {
         p->setRawIntensity(Intensity(error_dist(gen)));
-        p->addUnitCell(cell, true);
+        p->setUnitCell(cell);
         data0.addPeak(p);
     }
 

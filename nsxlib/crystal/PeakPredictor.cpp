@@ -84,7 +84,7 @@ PeakList PeakPredictor::predict(sptrDataSet data, double radius, double nframes)
 
     for (size_t peak_id = 0; peak_id < peaks.size(); ++peak_id) {
         sptrPeak3D p = peaks[peak_id];
-        p->addUnitCell(_cell, true);
+        p->setUnitCell(_cell);
         p->setPredicted(true);
         p->setSelected(true);
 

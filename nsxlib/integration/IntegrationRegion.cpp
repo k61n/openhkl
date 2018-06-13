@@ -50,7 +50,7 @@ IntegrationRegion::IntegrationRegion(sptrPeak3D peak, double peak_end, double bk
     _bkgEnd(bkg_end),
     _data(peak)
 {
-    auto uc = peak->activeUnitCell();
+    auto uc = peak->unitCell();
 
     #if 0
     // this code is disabled because it was discovered to be too slow

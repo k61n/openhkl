@@ -116,7 +116,7 @@ int main()
     // set unit cell
     auto cell = soln.first;
     for (auto&& peak: found_peaks) {
-        peak->addUnitCell(cell, true);
+        peak->setUnitCell(cell);
     }
 
     // add cell to sample

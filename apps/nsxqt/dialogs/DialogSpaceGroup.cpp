@@ -46,7 +46,7 @@ DialogSpaceGroup::DialogSpaceGroup(const nsx::PeakList& peaks, QWidget *parent):
     nsx::PeakFilter peak_filter;
     _peaks = peak_filter.selected(peaks,true);
     for (auto peak : _peaks) {
-        auto current_peak_cell = peak->activeUnitCell();
+        auto current_peak_cell = peak->unitCell();
         if (!current_peak_cell) {
             continue;
         }
