@@ -1,0 +1,534 @@
+          
+\documentclass{report}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage[nottoc,numbib]{tocbibind}
+
+
+% convenience commands
+\newcommand{\CChalf}{CC_{1/2}}
+\newcommand{\CCtrue}{CC_{\mathrm{true}}}
+\newcommand{\CCstar}{CC\ast}
+\newcommand{\cov}{\mathrm{cov}}
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\nsxtool}{{\tt{nsxtool}}}
+
+\newcommand{\calP}{\mathcal{P}}
+\newcommand{\calB}{\mathcal{B}}
+
+\newcommand{\ba}{\mathbf{a}}
+\newcommand{\bb}{\mathbf{b}}
+\newcommand{\bc}{\mathbf{c}}
+\newcommand{\be}{\mathbf{e}}
+\newcommand{\bn}{\mathbf{n}}
+\newcommand{\bp}{\mathbf{p}}
+\newcommand{\bq}{\mathbf{q}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bz}{\mathbf{z}}
+
+\newcommand{\tr}{\mathrm{tr}}
+
+\newcommand{\Aff}{\mathrm{Aff}}
+
+\newcommand{\Ifit}{{I_{\mathrm{fit}}}}
+\newcommand{\Isum}{{I_{\mathrm{sum}}}}
+\newcommand{\Iwt}{{I_{\mathrm{wt}}}}
+
+% for placeholder text
+% \usepackage{lipsum}
+
+\title{NSXTool Internal Documentation}
+\author{Jonathan Fisher}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+
+\chapter{Overview}
+
+We mention a few predecessors: RETREAT \cite{retreat-manual}, XDS \cite{xds-2010}, HKL2000 \cite{otwinowski-1997, denzo-scalepack, hkl2000-manual}
+
+\chapter{Lattice determination}
+
+We use \cite{crystal-lattices} as one of our primary references.
+
+\section{Peak search}
+
+\section{Autoindexing}
+
+We use an autoindexing method based on 1d Fourier-transform, see \cite{fft1, fft2}.
+
+\section{Computing the reduced unit cell}
+
+See references \cite{gruber-1973}, \cite{krivy-gruber-1976}, \cite{unit-cell-2003}. The one implemented in NSXTool is the lattermost.
+
+\section{Computation of the first Brillouin zone}
+
+Let $B$ be matrix whose rows form a basis for the reciprocal space lattice. Thus the reciprocal lattice consists
+of the set
+\[ \{ (h k \ell) B \ | \ h,k,\ell \in \mathbf{Z} \}. \]
+
+The Bragg plane $B_\bq$ corresponding to $\bq$ is the plane which bisects $\bq$ at right angles, i.e. the plane
+\[ \{ \bq' \ | \ \bq \cdot \bq' = -\frac{1}{2} \bq^2\} \]
+
+Note that the Bragg plane separates the reciprocal lattice into two subsets, we denote by $H_\bq$ that subset
+which contains the origin, i.e.
+\[ H_\bq = \{ \bq' \ | \ \bq \cdot \bq' \leq \frac{1}{2} \bq^2 \}. \]
+
+
+For convenience, let us define a \emph{zone} to be an convex intersection of the half-spaces $H_\bq$.
+The \emph{Brillouin zone} is the smallest zone, which equivalently is the intersection
+\[ Z_B :=\bigcap_{\bq \in \Lambda^\ast} H_\bq. \]
+
+The goal of this section is to describe an algorithm to compute $Z_B$, without any assumptions on $B$.
+
+\subsection{Step 1: Compute an initial zone.}
+Let $\bb_1, \bb_2, \bb_3$ denote the rows of $B$, which form a basis of the dual lattice.
+We let the initial zone $Z_0$ be the parallelpiped centered at the origin bounded by the planes
+$H_{\pm \bq_i}$.
+
+\subsection{Step 2: Compute a bounding sphere.}
+The initial zone $Z_0$ contains the Brillouin zone. To find a bounding radius, compute the 6 vertices $\bq_i$ of $Z_0$,
+and take $R = \max_i |\bq_i|$. Since the Brillouin zone is contained in $Z_0$, and $Z_0$ is contained in the ball of radius $R$,
+we know that the Brillouin zone is contained in the ball of radius $R$. Therefore we have reduced the problem to checking
+Bragg planes for $\bq$ satisfying $|\bq| \leq R$, of which there are finitely many.
+
+To simplify the problem further, take $\bq = (h,k,\ell)^t B$. Then
+\[ |\bq|^2| = |(h,k,\ell)^t B|^2 = (h,k,\ell)^t B B^t (h,k,\ell) \geq \lambda (h^2 + k^2 + \ell^2),\]
+where $\lambda$ is the smallest eigenvalue of the symmetric matrix $B B^t$. Therefore
+\[ |(h,k,\ell)| \leq \frac{R}{\sqrt\lambda}, \]
+so we obtain an effective bound on the (finitely-many) values of $h,k,\ell$ which must be checked.
+
+\subsection{Step 3: Find the finitely-many bounding planes of $Z_B$.}
+Now we iterate.
+\begin{enumerate}
+  \item Set $i = 0$, and let $Z_0$ be as above.
+  \item For each $(h, k, \ell)$ satisfying $|(h,k,\ell)| < R/\sqrt\lambda$
+    \begin{enumerate}
+      \item Set $\bq = (h,k,\ell)^t B$.
+      \item If $\bq/2 \in Z_i$, then
+        \begin{enumerate}
+          \item Set $Z_{i+1} = Z_i \cap H_\bq$.
+          \item Set $i := i+1$.
+          \item (Optional) remove extraneous bounding planes from $Z_{i+1}$.
+        \end{enumerate}
+    \end{enumerate}
+  \item Stop.
+\end{enumerate}
+
+
+
+
+\section{Space Groups}
+
+We fix a real-space lattice $\Lambda$ which is spanned by real-space vectors $\ba_1, \ba_2, \ba_3$, i.e.
+\[ \Lambda = \{ n_1 \ba_1 + n_2 \ba_2 + n_3 \ba_3 \ | \ n_1, n_2, n_3 \in \mathbf{Z} \} \]
+we denote by $\Lambda^\ast$ the dual lattice, defined by
+\[ \Lambda^\ast = \{q \in \mathbf{R}^3 \ | \ \forall x \in \mathbf{Z}, q \cdot x \in \mathbf{Z} \} \]
+
+Let $\Aff$ denote the group of affine translations of Euclidean space. As a set it is equal to $O(3) \times \mathbf{R}^3$,
+which acts on $\mathbf{R}^3$ via $(A, b) \cdot x = Ax + b$. From this definition, we see that the group law is
+\[ (A_1, b_1) \cdot (A_2, b_2) = (A_1 A_2, A_1 b_2 + b_1). \]
+
+A \emph{space group} is a discrete cocompact subgroup of $\Aff$. It is a classic theorem that there are exactly 230 space groups.
+The \emph{translational subgroup} of a spacegroup $G$ is the subgroup ${1} \times \mathbf{R}^3 \cap G$, i.e. the subgroup consisting of
+affine transformations with trivial rotational part.
+
+If $f(x)$ is a function which is invariant under $G$, then it
+is in particular invariant under the translational subgroup, and therefore we can express it as a Fourier series
+\[ f(x) = \sum_q f_q e^{2\pi i q \cdot x}. \]
+Now consider the action of $g = (A,b)$:
+\begin{align*}
+  f(x)
+  &= f(g\cdot x) \\
+  &= f(Ax + b) \\
+  &= \sum_q f_q e^{2\pi i q \cdot (Ax + b)} \\
+  &= \sum_q f_q e^{2\pi i ((A^t q) \cdot x + q \cdot b)} \\
+  &= \sum_q f_q e^{2 \pi i q \cdot b} e^{2\pi i (A^t q) \cdot x}
+\end{align*}
+which shows that $f_{A^t q} = f_{q} e^{2 \pi i q \cdot b}$ whenever $(A,b) \in G$.
+
+
+For space group determination see e.g. \cite{evans-2011}, \cite{kabsch-2010}.
+
+
+\chapter{Shape Prediction}
+
+We make a simplifying assumption, that for a \emph{perfect plane wave} $k_i$, the observed scattering function has the form
+\[ \sum_{hkl} I_{hkl} f(\bq - \bq_{hkl}), \]
+i.e. that the peak shape is independent of its intensity and Miller index, specified by a single function $f(\bq)$.
+
+Now suppose that the incoming plane wave actually has momentum $k_i + \delta k_i$, with $\delta k_i$ sampled from a probability distribution $p(\delta k_i)$. Let $\bu$ be the unit vector pointing from the sample origin to a given detector pixel. Then the outgoing momentum associated with this pixel is
+\begin{align*}
+  |k_i + \delta k_i| \bu &= \bu \sqrt{k_i^2  + 2 k_i \cdot \delta k_i + (\delta k_i)^2 } \\
+  &\approx \bu\sqrt{k_i^2  + 2 k_i \cdot \delta k_i} \\
+  &= \bu|k_i|\sqrt{1+ 2\frac{k_i \cdot \delta k_i}{k_i^2}} \\
+  &\approx \bu|k_i| \left(1 +  \frac{k_i \cdot \delta k_i}{k_i^2}\right) \\
+  &= k_f + \delta k_f,
+\end{align*}
+where $k_f = \bu|k_i|$ and $\delta k_f = \bu(k_i \cdot \delta k_i) / |k_i|$. Therefore, we have
+\[ \delta\bq = \delta k_f - \delta k_i = \bu(k_i \cdot \delta k_i) / |k_i| - \delta k_i =: A \delta k_i, \]
+where $A$ is the matrix $A = |k_i|^{-1} \bu k_i^t - Id = |k_i|^{-2} k_f k_i^t - Id$. Note that $A k_i = \bq$ and therefore
+$\bq + \delta \bq = A(k_i + \delta k_i)$.
+
+Therefore, the observed intensity at detector position $(x,y)$ should be proportional to
+\begin{align*}
+  &= \int f(\bq - \bq_{hkl} + \delta \bq) p(\delta k_i) d(\delta k_i) \\
+  &= \int f(\bq - \bq_{hkl} + RA \delta k_i) p(\delta k_i) d(\delta k_i) \\
+\end{align*}
+
+where $R$ is the rotation matrix taking lab coordinates to sample-fixed coordinates.
+\textbf{Assuming that $A$ is invertible (why? $\det A = -\frac{1}{2}\bq^2$)}, we have $\delta k_i = A^{-1} \delta \bq$ and $d(\delta k_i) = |\det A|^{-1} d(\delta \bq)$. Let $\Sigma_M$ denote the variance-covariance matrix of the profile shape $f$ and let $\Sigma_D$ denote the variance-covariance matrix of the beam divergence $\delta k_i$. Then from the above formula we see that the \emph{observed} profile shape will have (in sample-fixed q-space) a variance-covariance matrix given by
+\[ \Sigma_M + R A \Sigma_D A^t R^t, \]
+where $R$ is the rotation matrix from lab space to sample space and $A = |k_i|^{-2} k_f k_i^t - Id$.
+Note that the matrix $A$ depends only on $k_f$, i.e. on the detector pixel location, and the matrix $R$ depends on the sample orientation, i.e. the frame number.
+
+
+
+
+Now make a simplifying assumption, $\Sigma_M = \sigma_M^2 Id$ and $\Sigma_D = \sigma_D^2 Id$. For a set of observations $(\Sigma_i, R_i, A_i)$, we form the loss function
+\[ L(\sigma_M^2, \sigma_D^2) = \sum_i |\sigma_M^2 + \sigma_D^2 (R_i A_i)(R_iA_i)^t - \Sigma_i|^2 \]
+
+Setting $\nabla L = 0$ we obtain the 2x2 system of linear equations...
+
+
+
+\[ \begin{bmatrix}
+  3N & \sum_i \tr( (R_iA_i)(R_i A_i)^t) \\
+  \sum_i \tr((R_iA_i)^t(R_i A_i)) & \sum_i \tr(((R_i A_i)^t(R_iA_i))^2)
+\end{bmatrix}
+\begin{bmatrix} \sigma_M^2 \\ \sigma_D^2 \end{bmatrix}
+=  \begin{bmatrix} \sum_i \tr(\Sigma_i) \\ \sum_i \tr((R_i A_i)^t \Sigma_i (R_i A_i)) \end{bmatrix}  \]
+which is easily solved. One can also solve for the the full covariance matrices $\Sigma_M, \Sigma_D$ via gradient descent, since the gradient is easily computed analytically.. \textbf{Note: tested this out in Python, and it seems to work pretty well. So the assumptions may be justified!}
+
+Now, if we work in lab-based q-space, under the simplifying assumptions above, we find a covariance matrix
+\[ \Sigma = \sigma_M^2 Id + \sigma_D^2 A_i A_i^t \]
+
+Now let
+\begin{align*}
+  \be_1 &= (k_f \times k_i) / |k_f \times k_i| \\
+  \be_2 &= (k_f \times e_1) / |k_f \times e_1| \\
+  \be_3 &= (k_f + k_i) / |k_f + k_i|
+\end{align*}
+
+\section{Kabsch's Coordinate System}
+
+In \cite{kabsch-1988} Kabsch introduced a per-peak coordinate system intented to undo effects from detector geometry.
+See also \cite{kabsch-2010} for an updated description of the coordinates and integration technique.
+The basis introduced by Kabsch is the following:
+\begin{align*}
+  \be_1 &= (\bq \times k_i) / |\bq \times k_i| \\
+  \be_2 &= (\bq \times \be_1) / |\bq \times \be_1| \\
+  \be_3 &= (k_f + k_i) / |k_f + k_i|
+\end{align*}
+with corresponding coordinates
+\begin{align*}
+  \epsilon_1 &= \be_1 \cdot (k_f'-k_f) / |k_f| \\
+  \epsilon_2 &= \be_2 \cdot (k_f'-k_f) / |k_f| \\
+  \epsilon_3 &= \be_3 \cdot (R_{\phi'-\phi}\bq-\bq) / |\bq|
+\end{align*}
+
+The coordinates $\epsilon_1, \epsilon_2$ correspond to the angular distribution (in radians) of the peak, as if it were measured on the Ewald sphere. Hence this corresponds to beam divergence and we may model the intensity distribution as $\exp(-(\epsilon_1^2 + \epsilon_2^2)/2 \sigma_D^2)$.
+
+To understand the last coordinate, consider the following. Take a peak with center $\bq$ and consider a nearby point $\bq'$. We project $\bq'$ back to the Ewald sphere by rotating along the axis $\be_1$ (which is the normal of the plane containing $k_f$ and $k_i$). The velocity of $q$ when it crosses the Ewald sphere by rotating along this axis is $\be_1 \times \bq$. It is easy to verify that
+\[ \be_1 \times \bq = |q| \be_3 \]
+and therefore the coordinate $\epsilon_3$ may be interpreted as (approximately) and angular distance from the Ewald sphere.
+
+To better understand $\be_3$, consider the following: we want to find the axis $\ba$ such that $\bq$ passes through the Ewald sphere as fast as possible. Hence, we want to maximize $(\ba \times \bq) \cdot k_f$ subject to the constraint $\ba \cdot \ba = 1$.
+Now $(\ba \times \bq) \cdots k_f) = \ba \cdot (\ba \times k_f) = \ba \cdot (k_f \times k_i)$, so by the method of Langrange multipliers we must solve $k_f \times k_i = \lambda \ba$, which tells us immediately that the axis is in the direction of $\be_1$.
+
+
+\chapter{Integration}
+
+\section{Pixel sum method}
+Consider a peak centered at $q_0$ in (sampled-fixed) reciprocal space. The background-subtracted intensity distribution in a neighborhood of $q_0$ has a covariance matrix $\Sigma$, which is either computed (for strong peaks) or predicted (for weak peaks). The integration routine takes three parameters $r_1, r_2, r_2$ and produces
+two sets $\calB$ and $\calP$ of background and peak events, respectively, as follows:
+\begin{align*}
+  \calP &= \{ i \ | \ (q_i-q_0)^t \Sigma^{-1} (q_i-q_0) < r_1^2 \} \\
+  \calB &= \{ i \ | \ r_2^2 < (q_i-q_0)^t \Sigma^{-1} (q_i-q_0) < r_3^2 \}
+\end{align*}
+The local background is estimated as
+\begin{align*}
+  \mu_B &= \frac{1}{|\calB|} \sum_{i \in \calB} M_i \\
+  \sigma^2_B &= \frac{1}{|\calB|-1} \sum_{i \in \calB} (M_i - \mu_B)^2
+\end{align*}
+Note that in the case of Poisson statistics, we should have $\mu_B \approx \sigma^2_B$. By recording the pairs $(\mu_B, \sigma^2_B)$ from strong peaks, we can estimate the deviation from Poisson statistics and use this to improve error estimates (more later).
+
+The integrated peak intensity is then estimated as
+\begin{align*}
+  I &= \sum_{i \in \calP} (M_i - \mu_B) \\
+  \sigma^2_I &= I + \frac{|\calP|^2}{|\calB|} \overline{B}
+\end{align*}
+
+It should be noted that for weak peaks, the error is dominated by the error in the background estimate, and therefore we will obtain unsatisfactorily low values of $I/\sigma_I$.
+
+\section{Fitted Intensity}
+As shown in \cite{diamond-1969}, the integration error for weak peaks is dominated by background subtraction
+and it is typically better to find the integrated intensity by fitting to a profile learned from strong peaks.
+
+3D profile fitting is used by XDS \cite{xds-2010} and is described in some detail in \cite{kabsch-1988, kabsch-2010}.
+
+As in the previous section, using a covariance matrix and a parameters $r_1 < r_2 < r_3$ we produce sets $\calP$ and $\calB$ of peak and background points. Assume that for each $i \in \calP$, we have a predicted profile height $P_i$ satisfying $\sum_i P_i = 1$.
+
+We model the observed intensities $M_i$ as
+\[ M_i \approx B + I P_i, \]
+where $B, I$ and the mean background and integrated intensity, yet to be fit. To find optimal values of $B,I$ we minimize the chi-squared loss
+\[ \chi^2 = \sum_{i \in \calP} \frac{(B+IP_i - M_i)^2}{\sigma^2_i}. \]
+For a fixed set of variances, minimizing $\chi^2$ reduces to the 2x2 linear system below:
+\[ \begin{bmatrix}
+  \sum 1/\sigma^2_i & \sum P_i / \sigma^2_i \\
+  \sum P_i/\sigma_i^2 & \sum P_i^2 / \sigma^2_i
+\end{bmatrix}
+\begin{bmatrix} B \\ I \end{bmatrix}
+ = \begin{bmatrix} \sum M_i/\sigma^2_i \\ \sum M_i P_i / \sigma^2_i \end{bmatrix} \]
+ Write this equation as $Ax = b$. It is easy to compute that the covariance matrix of $b$ is exactly the coefficient matrix
+ $A$, and therefore the variance-covariance matrix of the solution vector $x = (B, I)$ is given by $A^{-1}$.
+
+ \section{Error Estimate} The solution given above depends on the pixel uncertainties $\sigma_i^2$. As suggested by Kabsch 2010, we solve this iteratively. To begin, we set all $\sigma^2_i$ equal to some fixed value, say 1. This allows us to solve for $B$ and $I$. We then put the solved values into the error model
+\[ \sigma_i^2 = B + I P_i \]
+and iterate until either $I$ becomes negative, or $(B, I)$ do not change within some given convergence criterion.
+
+\section{$I/\sigma$ Integration}
+
+This is the integration technique used by RETREAT \cite{retreat-manual}. The method is described in detail in \cite{wilkinson-1988}.
+In the article \cite{prince-1997} there is a detailed comparison between this method and profile fitting.
+
+For a given peak with mean background $\mu_b$, center $x_0$, and covariance matrix $\Sigma$, define
+\begin{align}
+  X_s &= \{ x \ | \ (x-x_0)^t\Sigma^{-1}(x-x_0) \leq s^2\} \\
+  I_s &= \sum_{X_\sigma} I_x
+\end{align}
+Then the error of $I_\sigma$ can be estimated (assuming Poisson statistics) as
+\begin{equation}
+  \sigma^2(I_s) = I_s + n_s(1+\frac{n_s}{n_b}) \overline{B}
+\end{equation}
+where $n_s = |X_s|$ is the number of points contributing to $I_\sigma$ and $n_b$ is the number of points used for background estimation.
+
+\textbf{Important Remark:} The function $I_\sigma$ is, to a good approximation, \emph{independent of the coordinate system x}.
+It is an \emph{intrinsic} property of the intensity distribution, independent of the coordinates used to express the distribution.
+We therefore do not have to worry about changes of coordinates, as in Kabsch's paper.
+
+
+Now, suppose that we take some value $t$ to be the cutoff for strong peak integration. We can define the integrated peak profile
+\begin{equation}
+  p_s := I_s / I_t
+\end{equation}
+The uncertainty in $p_s$:
+\begin{equation}
+  \sigma^2(p_s) = \frac{\sigma^2(I_s)}{I_t^2} - 2 \frac{I_s}{I_t^3} \cov(I_s, I_t) + \frac{I_s^2}{I_t^4} \sigma^2(I_t)
+\end{equation}
+Assuming $s < $, we have
+\begin{equation}
+  \cov(I_s, I_t) = I_s + n_s(1+n_t/n_b)\overline{B}
+\end{equation}
+and therefore we have everything we need to estimate $p_s$ and $\sigma^2(p_s)$. Finally, if we have $N$ independent strong
+peaks with measured profiles $p^i_s, \sigma^2(p^i_s)$, then (assuming the peaks are non-overlapping) we can estimate the
+true profile as
+\begin{align}
+  \hat{p}_s &= N^{-1} \sum_i p^i_s \\
+ \sigma^2(\hat{p}_s) &= N^{-2} \sum_i \sigma^2(p^i_s)
+\end{align}
+
+
+\textbf{Assumptions:} We now assume that the intensity distributions for all peaks are approximately equal, or at least
+slowly varying as a function of detector position and sample orientation. Therefore, we model the function $I_\sigma$ as
+\begin{equation}
+  I_\sigma = I_0 p(\sigma),
+\end{equation}
+where $I_0$ is the ``true'' integrated intensity and $p(\sigma)$ is a function independent of the particular peak. Given a collection of $N$ strong peaks, we can estimate $p(\sigma)$ as
+\begin{align}
+  p_\sigma &= \frac{1}{N} \sum_i \frac{I^i_\sigma}{I^i_0} \\
+  \sigma^2(p_\sigma) &= \frac{1}{N^2} \sum_i \sigma^2\left(\frac{I^i_\sigma}{I^i_0}\right)
+\end{align}
+\textbf{Remark} When calculating $\sigma^2(I_\sigma / I_0)$ be very careful, because $I_\sigma$ and $I_0$ are definitely correlated!!
+Assuming $s < t$, and the sets of peak points and backgruond points are disjoint, \emph{and Poisson statistics}, we have
+\begin{equation}
+  \cov(I_s, I_t) = I_s + n_s(1+n_t/n_b) \bar{B}
+\end{equation}
+Now, suppose that we estimate the true intensity as $I = I_t$ for some $t$. Then for $s < t$ we have
+\begin{equation}
+  \sigma^2(p_s) = \frac{\sigma^2(I_s)}{I_t^2} + \frac{I_s^2}{I_t^4} \sigma^2(I_t) - 2 \frac{I_s}{I_t^3} \cov(I_s, I_t)
+\end{equation}
+
+\textbf{Integration Method:} Now suppose we have a good estimate of $p_\sigma, \sigma^2(p_\sigma)$ and we have computed $I_\sigma$ for some
+weak peak (note: this assumes we can accurately predict the covariance matrix; see below). From the model intensity distribution,
+we have $I_\sigma \approx I_o p_\sigma$, and therefore $I_0 \approx I_\sigma / p_\sigma$. We have
+\begin{equation}
+  \sigma^2(I_\sigma / p_\sigma) \approx \frac{\sigma^2(I_\sigma)}{p_\sigma^2} + \frac{I^2_\sigma}{p_\sigma^4} \sigma^2(p_\sigma)
+\end{equation}
+Therefore, the relative error $\sigma^2(I_\sigma / p_\sigma) / (I_\sigma/p_\sigma)^2$ is
+\begin{equation}
+  \frac{\sigma^2(I_\sigma / p_\sigma)}{(I_\sigma/p_\sigma)^2}
+  \approx \frac{\sigma^2(I_\sigma)}{I_\sigma^2} +  \frac{\sigma^2(p_\sigma)}{p_\sigma^2}
+\end{equation}
+
+The fitted intensity is then defined to be
+\begin{align}
+  I_{\textrm{fit}} &= I_{s'} / p_{s'} \\
+  s' &= \underset{s}{\mathrm{argmin}} \left(\frac{\sigma^2(I_s)}{I_s^2} +  \frac{\sigma^2(p_s)}{p_s^2}\right)
+\end{align}
+
+
+\section{Boosting}
+In the previous sections, we have described two methods of integration, producing estimates $\Ifit$ and $\Isum$, and also
+how to estimate their errors. Provided our error estimate is reasonable, we can combine these estimates into an even stronger
+estimate $\Iwt$, which is a weighted linear combination of $\Ifit$ and $\Isum$:
+\[ \Iwt = a\Ifit + b\Isum, \]
+subject to $a + b = 1$. We wish to minimize $\sigma^2_\Iwt$, which is equal to
+\[  \sigma^2_{\mathrm{wt}} = a^2 \sigma^2_{\mathrm{fit}} + b^2 \sigma^2_{\mathrm{sum}} + 2ab \cov(\Ifit,\Isum). \]
+This is easily minimized using the method of Lagrange multipliers. The solution is $(a,b) = x/(x_1+x_2)$,
+where $x = \Sigma^{-1} \begin{bmatrix} 1 \\ 1 \end{bmatrix}$ and $\Sigma$ is the variance-covariance matrix of $\Ifit$ and $\Isum$.
+
+Now, from the previous sections, both $\Ifit$ and $\Isum$ have an explicit, linear dependence on the measured intensities $M_i$.
+Assuming that $M_i$ and $M_j$ are independent for $i \neq j$, and that $\calP$ and $\calB$
+are disjoint sets, we can now easily and explicitly compute the covariance $\cov(\Ifit, \Isum)$.
+
+
+\section{Peak Shape Model}
+%---------------------------------------------------------------------------------------------------
+Motivated by the Monte-Carlo technique of EVAL-14 and EVAL-15, we consider a probabilistic
+approach to estimate the covariance matrix of the intensity distribution for a given peak.
+
+For a given detector event recorded at $(x,y,\theta)$, we have a corresponding reciprocal vector
+\[ q(x, y, \theta) = R_\theta (k_f(x, y) - k_i). \]
+Note that by mapping to sample-fixed momentum space, we automatically undo distortion effects
+due to detector geometry. Expressed in these coordinates, the distribution of $q$ values is a
+function of beam divergence (and wavelength uncertainty), mosaicity, and the shape of the crystal.
+Since the recorded peak is essentially a convolution of these effects, we can express the covariance
+matrix of the intensity distribution in sample-fixed momentum space as
+\begin{equation}
+  \Sigma = P \Sigma_M P^t + |k|^2 J_k \Sigma_D J_k^t + J_p \Sigma_S J_p^t
+\end{equation}
+where
+\begin{itemize}
+  \item $P$ is the projection matrix $|q|^2 1_{3\times 3}-qq^t$
+  \item $J_k = \partial q / \partial k$ is the derivative of $q$ with respect to incoming momentum $k$
+  \item $J_p = \partial q / \partial p$ is the derivative of $q$ with respect to sample position $p$
+  \item $\Sigma_M$ is a 3x3 covariance matrix representing the mosaicity of the crystal
+  \item $\Sigma_D$ is a 3x3 covariance matrix representing beam divergence and wavelength distribution
+  \item $\Sigma_S$ is a 3x3 covariance matrix representing the shape of the crystal in the beam
+\end{itemize}
+
+Remarks
+\begin{itemize}
+  \item This model assumes that there is no covariance between beam divergence, scattering point, and
+    mosaicity. This seems reasonable for typical experiments but could be violated by some extreme cases.
+  \item $P_q, J_k, J_p$ are all determined by experiment setup and geometry; can be computed analytically.
+  \item For isotropic mosaicity, can take $\Sigma_M = \sigma_M^2 1_{3\times 3}$ 
+  \item Similarly, can set off-diagonal components of $\Sigma_D$ to zero if it is known there is no correlation.
+  \item $\Sigma_S$ represents the shape \emph{in the beam for a fixed orientation of the sample}, and therefore
+    will typically need to be updated every few frames (unless e.g. the crystal is small and approximately spherical).
+
+  \item Without imposing any constraints, the model has 3x6=18 free parameters, and each strong peak covariance matrix gives
+    a 6-component observation (due to symmetry), so even with just a few peaks the problem is massively overdetermined,
+    which \emph{should} result in very stable fits.
+
+  \item Because this model is \emph{physical}, once we have determined the parameters it makes sense to \emph{extrapolate},
+    not just \emph{interpolate}. So it should be helpful for predicting weak peaks at high q.
+\end{itemize}
+
+
+
+\chapter{Measures of Data Quality}
+
+\section{$R$ factors}
+
+For the definition of $R_{merge}$ see \cite{karplus-diederichs-2012}. For $R$ factors in general there is the paper \cite{evans-2011}.
+
+\section{The correlation coefficients $\CChalf$ and $\CCstar$}
+The statistic $\CChalf$ as introduced in ~\cite{karplus-diederichs-2012}.
+The statistic $\CChalf$ is defined as follows. Randomly divide the unmerged dataset into two subsets. For each symmetry-equivalence class $[hkl]$,
+we have a merged intensity $x_{hkl}$ from the first set and $y_{hkl}$ from the second set. $\CChalf$ is defined as the Pearson correlation coefficient
+of the joint measurements $(x_{hkl}, y_{hkl})$.
+\begin{equation}
+  \CChalf := \rho(x, y) = \frac{\cov(x, y)}{\sigma_x \sigma_y},
+\end{equation}
+where $\rho$ denotes the Pearson correlation coefficient. Note that this depends on the choice of division of the unmerged datasets into two subsets,
+so it is itself a random variable. (However, under some assumptions, one can check that its variance should be small.)
+
+Let $J_{hkl}$ denote the true intensity (we use $J$ instead of $I$ to distinguish this from our measured and/or merged intensities).
+Then define random variables $\xi := x - J$ and $\eta := y - J$. We make the following assumption: $\xi$ and $\eta$ are independent
+with mean zero, that $\sigma_\xi = \sigma_\eta$, and that $\xi,\eta$ are uncorrelated with $J$.
+
+Since $\xi,\eta$ are uncorrelated with $J$,
+\begin{align*}
+  \sigma^2_x &= \sigma^2_J + \sigma^2_\xi \\
+  \sigma^2_y &= \sigma^2_J + \sigma^2_\eta = \sigma^2_J + \sigma^2_\xi
+\end{align*}
+
+Then
+\begin{align*}
+  \rho(x,y)
+  &= \frac{\cov(x, y)}{\sigma_x \sigma_y} \\
+  &= \frac{\cov(J + \xi, J + \eta)}{\sigma_x \sigma_y} \\
+  &= \frac{\sigma^2_J + \cov(\xi, J) + \cov(\eta, J) + \cov(\xi, \eta)}{\sigma_x \sigma_y} \\
+  &= \frac{\sigma^2_J}{\sigma^2_J + \sigma^2_\xi} 
+\end{align*}
+Thus we have
+\begin{equation}
+  \label{cc-half-simplified}
+  \CChalf = \sigma^2_J / \left(\sigma^2_J + \sigma^2_\xi \right)
+\end{equation}
+This expression will be useful in the following section.
+
+\section{$\CCtrue$}
+Let $x, y, \xi, \eta, J$ be as in the previous section. Define
+\[ I = \frac{x+y}{2} \]
+denote the merged intensities of the entire dataset.
+Then $\CCtrue$ is defined to be the Pearson correlation coefficient of $I$ and the true intensities $J$:
+\begin{equation}
+  \label{cc-true-definition}
+  \CCtrue = \rho(I, J) = \frac{\cov(I, J)}{\sigma_I \sigma_J}
+\end{equation}
+Since in most cases we do not know the true intensities, this definition is not directly useful.
+
+Making the same assumptions about measurement error as in the previous section, we have
+\begin{align*}
+  \sigma^2_z &= \frac{1}{4} \sigma^2_x + \frac{1}{4}\sigma^2_y  + \frac{1}{2} \cov(x, y) \\
+  &= \sigma_J^2 + \frac{1}{2} \sigma_\xi^2
+\end{align*}
+and furthermore,
+\[ \cov(I, J) = \cov(J + \frac{\xi+\eta}{2}, J) = \sigma^2_J. \]
+Therefore,
+\[ \CCtrue = \frac{\sigma_J}{\sqrt{\sigma^2_J + \frac{1}{2}\sigma^2_\epsilon}}. \]
+From equation ~\ref{cc-half-simplified}, we can express $\sigma^2_\xi$ as $\sigma^2_J(1/\CChalf-1)$. Putting this into the above
+expression for $\CCtrue$, we have
+\begin{align*}
+  \CCtrue &= \frac{\sigma_J}{\sqrt{\sigma_J^2 + \frac{1}{2}\sigma^2_\xi}}
+  = \frac{\sigma_J}{\sqrt{\sigma_J^2 + \frac{1}{2}\sigma^2_J(1/\CChalf-1)}} \\
+  &= \frac{1}{\sqrt{\frac{1}{2}-\frac{1}{2 \CChalf}}}
+  = \sqrt{\frac{2 \CChalf}{1+\CChalf}},
+\end{align*}
+which amazingly is a function of $\CChalf$ only. We therefore define
+\begin{equation}
+  \label{cc-star-definition}
+  \CCstar := \sqrt{\frac{2 \CChalf}{1+\CChalf}},
+\end{equation}
+to be an estimate of $\CCtrue$, which can be calculated directly from the data. The statistic was introduced in \cite{karplus-diederichs-2012}.
+
+
+\chapter{Other topics}
+
+\section{Absorption correction}
+
+TODO
+
+\section{Monte-Carlo profile prediction}
+
+See papers \cite{eval-14}, \cite{eval-15}. We have implemented a preliminary version of this algorithm,
+however it is definitely in need of testing and improvement.
+
+\nocite{*}
+%\otherchapter{Bibliography}{X}
+\bibliographystyle{alpha}
+
+ 
+\bibliography{references}
+
+
+\end{document}
