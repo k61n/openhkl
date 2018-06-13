@@ -19,11 +19,6 @@ int main()
     nsx::Ellipsoid e(center,semi_axes,eigV);
     nsx::Ellipsoid f(center,semi_axes,eigV);
     
-    auto pa = e.parameters();
-    std::cout<<pa.center.transpose()<<std::endl;
-    std::cout<<pa.radii.transpose()<<std::endl;
-    std::cout<<pa.axes<<std::endl;
-
     auto p = e.aabb().center();
 
     NSX_CHECK_CLOSE(p(0), center(0), eps);

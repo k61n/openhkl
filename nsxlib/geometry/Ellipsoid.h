@@ -43,12 +43,6 @@
 
 namespace nsx {
 
-struct EllipsoidParameters {
-    Eigen::Vector3d center;
-    Eigen::Vector3d radii;
-    Eigen::Matrix3d axes;
-};
-
 class Ellipsoid {
 
 public:
@@ -74,43 +68,34 @@ public:
     bool collideSegment(const Eigen::Vector3d& a, const Eigen::Vector3d& b) const;
     //! Return true if ellipsoid collides with face o (o+a) (o+a+b) (o+n) with normal n
     bool collideFace(const Eigen::Vector3d& o, const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& n) const;
-
+    //! Determine if given point is inside the ellipsoid
     bool isInside(const Eigen::Vector3d& point) const;
-
     //! Rotate the ellipsoid.
     void rotate(const Eigen::Matrix3d& U);
     //! Scale isotropically the ellipsoid.
     void scale(double value);
     //! Translate the ellipsoid
-    void translate(const Eigen::Vector3d& t);
-    
+    void translate(const Eigen::Vector3d& t);   
     //! Return the volume of the ellipsoid
     double volume() const;
-
     //! Return the homogenous matrix Q defining the ellipsoid
     Eigen::Matrix4d homogeneousMatrix() const;
-
     //! Return the inverse of the homogenous matrix Q defining the ellipsoid
     Eigen::Matrix4d homogeneousMatrixInverse() const;
-
     //! Return semiaxes of the ellipsoid
     Eigen::Vector3d radii() const;
-
-    EllipsoidParameters parameters() const;
-
+    //! Return the ellipsoid center
     const Eigen::Vector3d& center() const;
-
+    //! Return the ellipsoid metric (inverse covariance matrix)
     const Eigen::Matrix3d& metric() const;
+    //! Return the ellipsoid inverse metric (covariance matrix)
     const Eigen::Matrix3d& inverseMetric() const;
-
     //! Return center of 2d ellipsoid formed by intercting with plane with normal n and point p.
     Eigen::Vector3d intersectionCenter(const Eigen::Vector3d& n, const Eigen::Vector3d& p) const;
-
+    //! Return the axis aligned bounding box of the ellipsoid
     const AABB& aabb() const;
-
     //! Transform the ellipsoid to detector space, assuming it is currently in q-space.
     Ellipsoid toDetectorSpace(sptrDataSet data) const;
-
     //! Return the value (x-center)*metric*(x-center)
     double r2(const Eigen::Vector3d x) const;
 

@@ -218,19 +218,6 @@ Eigen::Vector3d Ellipsoid::radii() const
     return vals;
 }
 
-EllipsoidParameters Ellipsoid::parameters() const
-{
-    EllipsoidParameters parameters;
-
-    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(_metric);
-
-    parameters.center = _center;
-    parameters.radii = solver.eigenvalues().array().rsqrt();
-    parameters.axes = solver.eigenvectors();
-
-    return parameters;
-}
-
 const Eigen::Matrix3d& Ellipsoid::inverseMetric() const
 {
     return _inverseMetric;
