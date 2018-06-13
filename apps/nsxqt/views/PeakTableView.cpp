@@ -400,7 +400,10 @@ void PeakTableView::showPeaksMatchingText(const QString& text)
     unsigned int row=0;
     for (row=0;row<peaks.size();row++) {
         nsx::sptrPeak3D peak = peaks[row];
-        auto cell = peak->activeUnitCell();
+        auto cell = peak->unitCell();
+        if (!cell) {
+            continue;
+        }
         nsx::MillerIndex hkl(peak->q(), *cell);
         setRowHidden(row,hkl.indexed(cell->indexingTolerance()));
     }
@@ -484,9 +487,9 @@ void PeakTableView::openRefiningParametersDialog()
         return;
     }
 
-    nsx::sptrUnitCell uc(peaks[0]->activeUnitCell());
+    nsx::sptrUnitCell uc(peaks[0]->unitCell());
     for (auto&& peak : peaks) {
-        if (peak->activeUnitCell() != uc) {
+        if (peak->unitCell() != uc) {
             uc = nullptr;
             break;
         }
@@ -513,9 +516,9 @@ void PeakTableView::openProfileFitDialog()
         return;
     }
 
-    nsx::sptrUnitCell uc(peaks[0]->activeUnitCell());
+    nsx::sptrUnitCell uc(peaks[0]->unitCell());
     for (auto&& peak : peaks) {
-        if (peak->activeUnitCell() != uc) {
+        if (peak->unitCell() != uc) {
             uc = nullptr;
             break;
         }

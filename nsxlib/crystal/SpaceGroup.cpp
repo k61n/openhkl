@@ -594,7 +594,7 @@ std::vector<PeakList> SpaceGroup::findEquivalences(const PeakList& peaks, bool f
 
     for (auto peak : peaks) {
         bool found_equivalence = false;
-        auto cell = peak->activeUnitCell();
+        auto cell = peak->unitCell();
 
         PeakFilter peak_filter;
         PeakList same_cell_peaks = peak_filter.unitCell(peaks,cell);

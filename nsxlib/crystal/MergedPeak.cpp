@@ -57,7 +57,7 @@ MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel):
 
 bool MergedPeak::addPeak(const sptrPeak3D& peak)
 {
-    const auto& cell = *peak->activeUnitCell();
+    const auto& cell = *peak->unitCell();
     const auto& q = peak->q();
 
     if (_peaks.empty()) {

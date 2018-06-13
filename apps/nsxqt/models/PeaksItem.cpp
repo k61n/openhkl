@@ -171,9 +171,9 @@ void PeaksItem::buildShapeLibrary()
         return;
     }
 
-    nsx::sptrUnitCell uc(peaks[0]->activeUnitCell());
+    nsx::sptrUnitCell uc(peaks[0]->unitCell());
     for (auto&& peak : peaks) {
-        if (peak->activeUnitCell() != uc) {
+        if (peak->unitCell() != uc) {
             uc = nullptr;
             break;
         }
@@ -233,7 +233,7 @@ void PeaksItem::autoindex()
     }
 
     for (auto peak : peaks) {
-        peak->addUnitCell(uc);
+        peak->setUnitCell(uc);
     }
 
     auto experiment_item = experimentItem();
@@ -251,9 +251,9 @@ void PeaksItem::refine()
         return;
     }
 
-    nsx::sptrUnitCell uc(peaks[0]->activeUnitCell());
+    nsx::sptrUnitCell uc(peaks[0]->unitCell());
     for (auto&& peak : peaks) {
-        if (peak->activeUnitCell() != uc) {
+        if (peak->unitCell() != uc) {
             uc = nullptr;
             break;
         }
@@ -285,7 +285,7 @@ void PeaksItem::autoAssignUnitCell()
             auto cell = sample->unitCell(i);
             nsx::MillerIndex hkl(peak->q(), *cell);
             if (hkl.indexed(cell->indexingTolerance())) {
-                peak->addUnitCell(cell, true);
+                peak->setUnitCell(cell);
                 assigned = true;
                 break;
             }

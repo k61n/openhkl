@@ -21,7 +21,7 @@ ShapeIntegrator::ShapeIntegrator(sptrShapeLibrary lib, const AABB& aabb, int nx,
 
 bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 {
-    auto uc = peak->activeUnitCell();
+    auto uc = peak->unitCell();
     auto data = peak->data();
 
     if (!uc || !data) {
