@@ -1,4 +1,4 @@
-          
+%--------------------------------------------------------------------------------------------------
 \documentclass{report}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
@@ -41,6 +41,7 @@
 % for placeholder text
 % \usepackage{lipsum}
 
+%--------------------------------------------------------------------------------------------------
 \title{NSXTool Internal Documentation}
 \author{Jonathan Fisher}
 
@@ -50,25 +51,94 @@
 \tableofcontents
 
 \chapter{Overview}
+%--------------------------------------------------------------------------------------------------
+We mention a few predecessors, for the sake of listing references: RETREAT \cite{retreat-manual}, 
+XDS \cite{xds-2010}, HKL2000 \cite{otwinowski-1997, denzo-scalepack, hkl2000-manual}.
 
-We mention a few predecessors: RETREAT \cite{retreat-manual}, XDS \cite{xds-2010}, HKL2000 \cite{otwinowski-1997, denzo-scalepack, hkl2000-manual}
+The NSXTool project was initially started as a replacement for RETREAT but many features were added
+in order to add support for BioDiff.
+
+The basic workflow of NSXTool is as follows
+\begin{enumerate}
+  \item Load data, apply masks
+  \item Peak search \ref{peak-search}
+  \item Determine lattice \ref{autoindex} \ref{unit-cell}
+  \item Determine spacegroup \ref{spacegroup}
+  \item Predict peaks \ref{peak-prediction}
+  \item Integrate peaks \ref{integration}
+  \item Computed merged statistics \ref{merged-statistics}
+\end{enumerate}
 
 \chapter{Lattice determination}
-
+%--------------------------------------------------------------------------------------------------
 We use \cite{crystal-lattices} as one of our primary references.
 
-\section{Peak search}
+\section{Peak search} \label{peak-search}
+%--------------------------------------------------------------------------------------------------
+The initial peak search is essentially a pure image processing step, with no crystallographic
+input. The technique is roughly as follows
+\begin{enumerate}
+  \item Apply an image filter to subtract local background
+  \item Apply a threshold to the resulting image
+  \item Find connected components (``blobs") of the resulting thresholded image
+  \item Merge blobs that overlap, according to some cutoff
+\end{enumerate}
 
-\section{Autoindexing}
+In the first step, we apply a filter which consists of a central circular region with positive weight,
+and an outer annular region with negative weight. The weights are chosen so that the convolution
+computes the local average of the circular region subtracted by the average of the annular region,
+effectively giving a local background subtraction. The radii of the circle and annulus may be
+specified by the user.
 
+To find connected components, we use a standard blob-search algorithm, as described e.g. on the
+wikipedia page (do we have a better reference for this?) In the last step, we compute inertia
+ellipsoids for each blob, and merge those blobs whose ellipsoids overlap, after a user-defined
+scaling factor has been applied. The merging process is repeated until there are no longer any
+overlapping ellipsoids.
+
+The collision detection problem for ellipsoids is sped up by storing them in an octree. The
+ellipsoid overlap detection is implemented using the criterion described in \cite{ellipsoid-collision}.
+
+
+\section{Autoindexing} \label{autoindex}
+%--------------------------------------------------------------------------------------------------
 We use an autoindexing method based on 1d Fourier-transform, see \cite{fft1, fft2}.
 
-\section{Computing the reduced unit cell}
+The algorithm works as follows. We are given some set of $\bq$ vectors which lie approximately on
+a lattice, yet to be determined. To find candidate lattice directions, we take a random sample of
+directions. For each direction, we perform the orthogonal projection of each $\bq$ vector to the
+infinite line specified by the direction. We then take a finite number of bins along this line
+(the way the binning is performed can be controlled by user-defined parameters), and then take
+FFT of the resulting histogram. The histogram will be strongly periodic when the direction corresponds
+to a lattice direction, so we identify lattice vectors by taking the strongest Fourier modes of
+the histograms. 
 
-See references \cite{gruber-1973}, \cite{krivy-gruber-1976}, \cite{unit-cell-2003}. The one implemented in NSXTool is the lattermost.
+The FFT method produces a finite set of potential lattice vectors. To find a basis, we enumerate over
+triples of these basis vectors and rank them according to
+\begin{enumerate}
+  \item The percentage of peaks that can be indexed (with integer indices)
+  \item The volume of the resulting unit cell
+\end{enumerate}
+
+This provides a ranked list of candidate unit cells, from which the user may choose.
+
+We remark that when indexing fails, try one of the following:
+\begin{itemize}
+  \item Reduce the number of input peaks, e.g. by taking just the very strong peaks
+  \item Change the parameters of the FFT method so that the bin sizes change
+\end{itemize}
+In all cases that we have encountered, we were able to correctly index the peaks, but sometimes 
+trial and error is required to determine the best FFT parameters.
+
+
+\section{Computing the reduced unit cell} \label{unit-cell}
+%--------------------------------------------------------------------------------------------------
+Once we have a lattice basis, we compute the Niggli cell following \cite{gruber-1973, krivy-gruber-1976}
+and then transform the Niggli cell to a reduced standard form following \cite{unit-cell-2003}. The cell
+is given an index from 1 to 44 corresponding to the 44 cases in the International Tables \cite{gruber-table}.
 
 \section{Computation of the first Brillouin zone}
-
+%--------------------------------------------------------------------------------------------------
 Let $B$ be matrix whose rows form a basis for the reciprocal space lattice. Thus the reciprocal lattice consists
 of the set
 \[ \{ (h k \ell) B \ | \ h,k,\ell \in \mathbf{Z} \}. \]
@@ -88,11 +158,13 @@ The \emph{Brillouin zone} is the smallest zone, which equivalently is the inters
 The goal of this section is to describe an algorithm to compute $Z_B$, without any assumptions on $B$.
 
 \subsection{Step 1: Compute an initial zone.}
+%--------------------------------------------------------------------------------------------------
 Let $\bb_1, \bb_2, \bb_3$ denote the rows of $B$, which form a basis of the dual lattice.
 We let the initial zone $Z_0$ be the parallelpiped centered at the origin bounded by the planes
 $H_{\pm \bq_i}$.
 
 \subsection{Step 2: Compute a bounding sphere.}
+%--------------------------------------------------------------------------------------------------
 The initial zone $Z_0$ contains the Brillouin zone. To find a bounding radius, compute the 6 vertices $\bq_i$ of $Z_0$,
 and take $R = \max_i |\bq_i|$. Since the Brillouin zone is contained in $Z_0$, and $Z_0$ is contained in the ball of radius $R$,
 we know that the Brillouin zone is contained in the ball of radius $R$. Therefore we have reduced the problem to checking
@@ -105,6 +177,7 @@ where $\lambda$ is the smallest eigenvalue of the symmetric matrix $B B^t$. Ther
 so we obtain an effective bound on the (finitely-many) values of $h,k,\ell$ which must be checked.
 
 \subsection{Step 3: Find the finitely-many bounding planes of $Z_B$.}
+%--------------------------------------------------------------------------------------------------
 Now we iterate.
 \begin{enumerate}
   \item Set $i = 0$, and let $Z_0$ be as above.
@@ -122,10 +195,8 @@ Now we iterate.
 \end{enumerate}
 
 
-
-
-\section{Space Groups}
-
+\section{Space Groups} \label{spacegroup}
+%--------------------------------------------------------------------------------------------------
 We fix a real-space lattice $\Lambda$ which is spanned by real-space vectors $\ba_1, \ba_2, \ba_3$, i.e.
 \[ \Lambda = \{ n_1 \ba_1 + n_2 \ba_2 + n_3 \ba_3 \ | \ n_1, n_2, n_3 \in \mathbf{Z} \} \]
 we denote by $\Lambda^\ast$ the dual lattice, defined by
@@ -157,8 +228,8 @@ which shows that $f_{A^t q} = f_{q} e^{2 \pi i q \cdot b}$ whenever $(A,b) \in G
 For space group determination see e.g. \cite{evans-2011}, \cite{kabsch-2010}.
 
 
-\chapter{Shape Prediction}
-
+\chapter{Shape Prediction} \label{peak-prediction}
+%--------------------------------------------------------------------------------------------------
 We make a simplifying assumption, that for a \emph{perfect plane wave} $k_i$, the observed scattering function has the form
 \[ \sum_{hkl} I_{hkl} f(\bq - \bq_{hkl}), \]
 i.e. that the peak shape is independent of its intensity and Miller index, specified by a single function $f(\bq)$.
@@ -217,6 +288,7 @@ Now let
 \end{align*}
 
 \section{Kabsch's Coordinate System}
+%--------------------------------------------------------------------------------------------------
 
 In \cite{kabsch-1988} Kabsch introduced a per-peak coordinate system intented to undo effects from detector geometry.
 See also \cite{kabsch-2010} for an updated description of the coordinates and integration technique.
@@ -243,9 +315,10 @@ To better understand $\be_3$, consider the following: we want to find the axis $
 Now $(\ba \times \bq) \cdots k_f) = \ba \cdot (\ba \times k_f) = \ba \cdot (k_f \times k_i)$, so by the method of Langrange multipliers we must solve $k_f \times k_i = \lambda \ba$, which tells us immediately that the axis is in the direction of $\be_1$.
 
 
-\chapter{Integration}
-
+\chapter{Integration} \label{integration}
+%--------------------------------------------------------------------------------------------------
 \section{Pixel sum method}
+%--------------------------------------------------------------------------------------------------
 Consider a peak centered at $q_0$ in (sampled-fixed) reciprocal space. The background-subtracted intensity distribution in a neighborhood of $q_0$ has a covariance matrix $\Sigma$, which is either computed (for strong peaks) or predicted (for weak peaks). The integration routine takes three parameters $r_1, r_2, r_2$ and produces
 two sets $\calB$ and $\calP$ of background and peak events, respectively, as follows:
 \begin{align*}
@@ -268,6 +341,7 @@ The integrated peak intensity is then estimated as
 It should be noted that for weak peaks, the error is dominated by the error in the background estimate, and therefore we will obtain unsatisfactorily low values of $I/\sigma_I$.
 
 \section{Fitted Intensity}
+%--------------------------------------------------------------------------------------------------
 As shown in \cite{diamond-1969}, the integration error for weak peaks is dominated by background subtraction
 and it is typically better to find the integrated intensity by fitting to a profile learned from strong peaks.
 
@@ -294,7 +368,7 @@ For a fixed set of variances, minimizing $\chi^2$ reduces to the 2x2 linear syst
 and iterate until either $I$ becomes negative, or $(B, I)$ do not change within some given convergence criterion.
 
 \section{$I/\sigma$ Integration}
-
+%--------------------------------------------------------------------------------------------------
 This is the integration technique used by RETREAT \cite{retreat-manual}. The method is described in detail in \cite{wilkinson-1988}.
 In the article \cite{prince-1997} there is a detailed comparison between this method and profile fitting.
 
@@ -374,7 +448,8 @@ The fitted intensity is then defined to be
 \end{align}
 
 
-\section{Boosting}
+\section{Combining estimates}
+%--------------------------------------------------------------------------------------------------
 In the previous sections, we have described two methods of integration, producing estimates $\Ifit$ and $\Isum$, and also
 how to estimate their errors. Provided our error estimate is reasonable, we can combine these estimates into an even stronger
 estimate $\Iwt$, which is a weighted linear combination of $\Ifit$ and $\Isum$:
@@ -434,9 +509,10 @@ Remarks
 
 
 
-\chapter{Measures of Data Quality}
-
+\chapter{Measures of Data Quality} \label{merged-statistics}
+%--------------------------------------------------------------------------------------------------
 \section{$R$ factors}
+%--------------------------------------------------------------------------------------------------
 
 For the definition of $R_{merge}$ see \cite{karplus-diederichs-2012}. For $R$ factors in general there is the paper \cite{evans-2011}.
 
@@ -513,22 +589,18 @@ to be an estimate of $\CCtrue$, which can be calculated directly from the data. 
 
 
 \chapter{Other topics}
-
+%--------------------------------------------------------------------------------------------------
 \section{Absorption correction}
-
+%--------------------------------------------------------------------------------------------------
 TODO
 
 \section{Monte-Carlo profile prediction}
-
+%--------------------------------------------------------------------------------------------------
 See papers \cite{eval-14}, \cite{eval-15}. We have implemented a preliminary version of this algorithm,
 however it is definitely in need of testing and improvement.
 
 \nocite{*}
 %\otherchapter{Bibliography}{X}
 \bibliographystyle{alpha}
-
- 
 \bibliography{references}
-
-
 \end{document}
