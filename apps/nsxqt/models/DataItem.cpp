@@ -18,6 +18,7 @@
 #include "DataItem.h"
 #include "DialogHDF5Converter.h"
 #include "DialogPeakFind.h"
+#include "DialogRawData.h"
 #include "ExperimentItem.h"
 #include "MetaTypes.h"
 #include "NumorItem.h"
@@ -67,45 +68,69 @@ void DataItem::importData()
     }
 }
 
-#if 0
-NumorItem* DataItem::importRawData(const std::vector<std::string> &filenames,
-                                   double wavelength, double delta_chi, double delta_omega, double delta_phi,
-                                   bool rowMajor, bool swapEndian, int bpp)
+void DataItem::importRawData()
 {
+    QStringList qfilenames;
+    qfilenames = QFileDialog::getOpenFileNames(nullptr,"select raw data","","",nullptr,QFileDialog::Option::DontUseNativeDialog);
+
+    if (qfilenames.empty()) {
+        return;
+    }
+
+    std::vector<std::string> filenames;
+
+    for (auto& filename: qfilenames) {
+        filenames.push_back(filename.toStdString());
+    }
+
+    DialogRawData dialog;
+
+    if (!dialog.exec()) {
+        return;
+    }
+   
     // Get the basename of the current numor
-    QString filename(filenames[0].c_str());
-    QFileInfo fileinfo(filename);
+    QFileInfo fileinfo(qfilenames[0]);
     std::string basename = fileinfo.fileName().toStdString();
     auto exp = experiment();
 
     // If the experience already stores the current numor, skip it
-    if (exp->hasData(filenames[0]))
-        return nullptr;
-
+    if (exp->hasData(filenames[0])) {
+        return;
+    }
 
     std::shared_ptr<nsx::DataSet> data;
     std::shared_ptr<nsx::IDataReader> reader;
 
+    auto wavelength = dialog.wavelength();
+    auto delta_chi = dialog.deltaChi();
+    auto delta_omega = dialog.deltaOmega();
+    auto delta_phi = dialog.deltaPhi();
+    auto rowMajor = dialog.rowMajor();
+    auto swapEndian = dialog.swapEndian();
+    auto bpp = dialog.bpp();
+
     try {
         auto diff = exp->diffractometer();
-        reader = std::shared_ptr<nsx::IDataReader>(new nsx::RawDataReader(filenames, diff,
-                                              wavelength, delta_chi, delta_omega, delta_phi,
-                                              rowMajor, swapEndian, bpp));
-        data = nsx::sptrDataSet(new nsx::DataSet(reader, diff));
-
+        reader.reset(new nsx::RawDataReader(filenames, diff, wavelength, delta_chi, delta_omega, delta_phi, rowMajor, swapEndian, bpp));
+        data = std::make_shared<nsx::DataSet>(reader);
     }
     catch(std::exception& e) {
         nsx::error() << "reading numor:" << filenames[0].c_str() << e.what();
-        return nullptr;
+        return;
     }
     catch(...)  {
         nsx::error() << "reading numor:" << filenames[0].c_str() << " reason not known:";
-        return nullptr;
+        return;
     }
 
-    return importData(data);
+    // Get the basename of the current numor
+    NumorItem* item = new NumorItem(data);
+    item->setText(basename.c_str());
+    item->setToolTip(qfilenames[0]);
+    item->setCheckable(true);
+    appendRow(item);
 }
-#endif
 
 void DataItem::findPeaks()
 {
