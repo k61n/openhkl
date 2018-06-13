@@ -15,19 +15,11 @@ Detector* CylindricalDetector::create(const YAML::Node& node)
     return new CylindricalDetector(node);
 }
 
-CylindricalDetector::CylindricalDetector() : MonoDetector()
+CylindricalDetector::CylindricalDetector(const std::string& name) : Detector(name)
 {
 }
 
-CylindricalDetector::CylindricalDetector(const CylindricalDetector& other) : MonoDetector(other)
-{
-}
-
-CylindricalDetector::CylindricalDetector(const std::string& name) : MonoDetector(name)
-{
-}
-
-CylindricalDetector::CylindricalDetector(const YAML::Node& node) : MonoDetector(node)
+CylindricalDetector::CylindricalDetector(const YAML::Node& node) : Detector(node)
 {
     UnitsManager* um=UnitsManager::Instance();
 
@@ -48,13 +40,6 @@ CylindricalDetector::CylindricalDetector(const YAML::Node& node) : MonoDetector(
 
 CylindricalDetector::~CylindricalDetector()
 {
-}
-
-CylindricalDetector& CylindricalDetector::operator=(const CylindricalDetector& other)
-{
-    if (this != &other)
-        MonoDetector::operator=(other);
-    return *this;
 }
 
 Detector* CylindricalDetector::clone() const

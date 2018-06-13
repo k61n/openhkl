@@ -20,9 +20,9 @@ int main()
     t.addTranslation("y",Eigen::Vector3d(0,1,0));
     t.addTranslation("z",Eigen::Vector3d(0,0,1));
 
-    t.getAxis("x")->setPhysical(true);
-    t.getAxis("y")->setPhysical(true);
-    t.getAxis("z")->setPhysical(true);
+    t.axis("x")->setPhysical(true);
+    t.axis("y")->setPhysical(true);
+    t.axis("z")->setPhysical(true);
 
     // Transform (0,0,0)
     nsx::DirectVector result = t.transform(nsx::DirectVector(0.0,0.0,0.0),{1,2,3});
@@ -31,12 +31,12 @@ int main()
     NSX_CHECK_CLOSE(result[2],3,tolerance);
     // Check that throws if the number of parameters is invalid
     NSX_CHECK_THROW(t.transform(nsx::DirectVector(0.0,0.0,0.0),{1,2}),std::range_error);
-    const auto a0=t.getAxis(0);
-    const auto a1=t.getAxis(1);
-    const auto a2=t.getAxis(2);
-    NSX_CHECK_EQUAL(a0->getLabel(),"x");
-    NSX_CHECK_EQUAL(a1->getLabel(),"y");
-    NSX_CHECK_EQUAL(a2->getLabel(),"z");
+    const auto a0 = t.axis(0);
+    const auto a1 = t.axis(1);
+    const auto a2 = t.axis(2);
+    NSX_CHECK_EQUAL(a0->label(),"x");
+    NSX_CHECK_EQUAL(a1->label(),"y");
+    NSX_CHECK_EQUAL(a2->label(),"z");
 
     // Simple goniometer as in Busing Levy
     nsx::Gonio g("Busing Levy convention");

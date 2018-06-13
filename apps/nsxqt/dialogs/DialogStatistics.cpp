@@ -204,7 +204,7 @@ void DialogStatistics::saveToFullProf(QTableView* table) {
     file << "TITLE File written by ...\n";
     file << "(3i4,2F14.4,i5,4f8.2)\n";
 
-    double wave = _peaks[0]->data()->metadata()->getKey<double>("wavelength");
+    double wave = _peaks[0]->data()->metadata()->key<double>("wavelength");
 
     std::vector<char> buf(1024, 0); // buffer for snprintf
     std::snprintf(&buf[0], buf.size(),"%8.3f",wave);
@@ -282,7 +282,7 @@ void DialogStatistics::updateStatisticsTab()
         row.append(new QStandardItem(QString::number(d_upper)));
         row.append(new QStandardItem(QString::number(d_lower)));
         row.append(new QStandardItem(QString::number(merged_data_per_shell.totalSize())));
-        row.append(new QStandardItem(QString::number(merged_data_per_shell.getPeaks().size())));
+        row.append(new QStandardItem(QString::number(merged_data_per_shell.peaks().size())));
         row.append(new QStandardItem(QString::number(merged_data_per_shell.redundancy())));
         row.append(new QStandardItem(QString::number(rfactor.Rmeas())));
         row.append(new QStandardItem(QString::number(rfactor.expectedRmeas())));
@@ -308,7 +308,7 @@ void DialogStatistics::updateStatisticsTab()
     row.append(new QStandardItem(QString::number(dmax)));
     row.append(new QStandardItem(QString::number(dmin)));
     row.append(new QStandardItem(QString::number(_merged_data.totalSize())));
-    row.append(new QStandardItem(QString::number(_merged_data.getPeaks().size())));
+    row.append(new QStandardItem(QString::number(_merged_data.peaks().size())));
     row.append(new QStandardItem(QString::number(_merged_data.redundancy())));
     row.append(new QStandardItem(QString::number(rfactor.Rmeas())));
     row.append(new QStandardItem(QString::number(rfactor.expectedRmeas())));
@@ -332,15 +332,15 @@ void DialogStatistics::updateMergedPeaksTab()
     auto model = dynamic_cast<QStandardItemModel*>(ui->mergedPeaks->model());
     model->removeRows(0,model->rowCount());
 
-    for (auto&& peak : _merged_data.getPeaks()) {
+    for (auto&& peak : _merged_data.peaks()) {
 
-        const auto hkl = peak.getIndex();
+        const auto hkl = peak.index();
 
         const int h = hkl[0];
         const int k = hkl[1];
         const int l = hkl[2];
 
-        auto I = peak.getIntensity();
+        auto I = peak.intensity();
 
         const double intensity = I.value();
         const double sigma = I.sigma();
@@ -369,9 +369,9 @@ void DialogStatistics::updateUnmergedPeaksTab()
     auto model = dynamic_cast<QStandardItemModel*>(ui->unmergedPeaks->model());
     model->removeRows(0,model->rowCount());
 
-    for (auto&& peak : _merged_data.getPeaks()) {
+    for (auto&& peak : _merged_data.peaks()) {
 
-        for (auto unmerged_peak : peak.getPeaks()) {
+        for (auto unmerged_peak : peak.peaks()) {
 
             const auto& cell = *(unmerged_peak->activeUnitCell());
             const auto& q = unmerged_peak->q();
@@ -382,7 +382,7 @@ void DialogStatistics::updateUnmergedPeaksTab()
             const int k = hkl[1];
             const int l = hkl[2];
 
-            auto c = unmerged_peak->getShape().center();
+            auto c = unmerged_peak->shape().center();
             auto numor = unmerged_peak->data()->filename();
             auto I = unmerged_peak->correctedIntensity();
 

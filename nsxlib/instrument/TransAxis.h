@@ -59,7 +59,7 @@ public:
 
 	//! Assignment operator
 	TransAxis& operator=(const TransAxis& other);
-	Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(double value) const;
+	Eigen::Transform<double,3,Eigen::Affine> homMatrix(double value) const;
 
 };
 

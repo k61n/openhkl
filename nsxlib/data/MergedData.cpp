@@ -54,7 +54,7 @@ bool MergedData::addPeak(const sptrPeak3D& peak)
     return true;
 }
 
-const MergedPeakSet& MergedData::getPeaks() const
+const MergedPeakSet& MergedData::peaks() const
 {
     return _peaks;
 }

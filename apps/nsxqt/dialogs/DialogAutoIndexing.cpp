@@ -39,7 +39,7 @@ DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, nsx::Pea
 {
     ui->setupUi(this);
     setModal(true);
-    //_unitCells = _experiment_item->experiment()->diffractometer()->getSample()->unitCells();
+    //_unitCells = _experiment_item->experiment()->diffractometer()->sample()->unitCells();
 
     //for (auto unit_cell : _unitCells) {
     //    ui->unitCells->addItem(QString::fromStdString(unit_cell->name()));
@@ -122,7 +122,7 @@ void DialogAutoIndexing::autoIndex()
         nsx::error() << "failed to auto index!";
         return;
     }
-    _solutions = indexer.getSolutions();
+    _solutions = indexer.solutions();
 
     for (auto&& sol: _solutions) {
         sol.first->setName("new unit cell");

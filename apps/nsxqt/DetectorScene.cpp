@@ -110,9 +110,9 @@ void DetectorScene::setData(SessionModel* session, const nsx::sptrDataSet& data,
     }
 
     _currentData->open();
-    auto det = _currentData->diffractometer()->getDetector();
+    auto det = _currentData->diffractometer()->detector();
     _zoomStack.clear();
-    _zoomStack.push_back(QRect(0,0,int(det->getNCols()),int(det->getNRows())));
+    _zoomStack.push_back(QRect(0,0,int(det->nCols()),int(det->nRows())));
 
     if (_lastClickedGI != nullptr) {
         removeItem(_lastClickedGI);
@@ -468,10 +468,10 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
         return;
     }
     auto instr=_currentData->diffractometer();
-    auto det=instr->getDetector();
+    auto det=instr->detector();
 
-    int nrows = int(det->getNRows());
-    int ncols = int(det->getNCols());
+    int nrows = int(det->nRows());
+    int ncols = int(det->nCols());
 
     int col = static_cast<int>(event->lastScenePos().x());
     int row = static_cast<int>(event->lastScenePos().y());
@@ -485,13 +485,13 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
     //const auto& samplev = state.sample.values();
     //const auto& detectorv = state.detector.values();
-    auto sample=instr->getSample();
-    auto& mono = instr->getSource()->getSelectedMonochromator();
-    double wave=mono.getWavelength();
+    auto sample=instr->sample();
+    auto& mono = instr->source()->selectedMonochromator();
+    double wave=mono.wavelength();
 
     QString ttip;
 
-    auto pos = _currentData->diffractometer()->getDetector()->pixelPosition(col, row);
+    auto pos = _currentData->diffractometer()->detector()->pixelPosition(col, row);
 
     double gamma = state.gamma(pos);
     double nu = state.nu(pos);
@@ -541,7 +541,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
     // Full image size, front of the stack
     QRect& full = _zoomStack.front();
 
-    auto det = _currentData->diffractometer()->getDetector();
+    auto det = _currentData->diffractometer()->detector();
 
     if (_currentFrameIndex >= _currentData->nFrames()) {
         _currentFrameIndex = _currentData->nFrames()-1;
@@ -569,7 +569,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
             auto peak = peaks[i];
             // IntegrationRegion constructor can throw if the region is invalid
             try {
-                if (peak->isSelected()) {
+                if (peak->selected()) {
                     auto region = nsx::IntegrationRegion(peak, peak->peakEnd(), peak->bkgBegin(), peak->bkgEnd());
                     region.updateMask(mask, _currentFrameIndex);
                     // debugging
@@ -647,7 +647,7 @@ void DetectorScene::updatePeaks()
     auto peaks = _session->peaks(_currentData.get());
 
     for (auto&& peak : peaks) {
-        auto aabb = peak->getShape().aabb();
+        auto aabb = peak->shape().aabb();
         const Eigen::Vector3d& l = aabb.lower();
         const Eigen::Vector3d& u = aabb.upper();
 

@@ -67,13 +67,13 @@ public:
     //! Compute the shape in q-space. May throw if there is no valid q-space ellipsoid.
     Ellipsoid qShape() const;
     //! Return the shape of the peak as an ellipsoid in detector coordinates
-    const Ellipsoid& getShape() const { return _shape; }    
+    const Ellipsoid& shape() const;
     //! Return the scaled intensity of the peak.
-    Intensity getScaledIntensity() const;
+    Intensity scaledIntensity() const;
     //! Return the intensity, after scaling, transmission, and Lorentz factor corrections
     Intensity correctedIntensity() const;
     //! Return the raw intensity of the peak.
-    Intensity getRawIntensity() const;
+    Intensity rawIntensity() const;
     //! Return mean background of the peak
     Intensity meanBackground() const;
     //! Return shape scale used to define peak region
@@ -83,7 +83,7 @@ public:
     //! Return shape scale used to define end of background region
     double bkgEnd() const;
     //! Return the scaling factor.
-    double getScale() const;
+    double scale() const;
     //! Rescale the current scaling factor by scale.
     void rescale(double factor);
     //! Set the scaling factor.
@@ -93,13 +93,13 @@ public:
     //! Selected the peak for fitting or integration
     void setSelected(bool);
     //! Return true if peak is selected
-    bool isSelected() const;
+    bool selected() const;
     //! Apply mask to peak
     void setMasked(bool masked);
     //! Set the transmission factor
     void setTransmission(double transmission);
     //! Return the transmission factor
-    double getTransmission() const;
+    double transmission() const;
     //! Add a unit cell to the peak, optionally make it the active cell
     void addUnitCell(sptrUnitCell uc, bool activate=true);
     //! Return the index of the active unit cell
@@ -109,7 +109,7 @@ public:
     //! Return the unit cell specified by the given index
     sptrUnitCell unitCell(int index) const;
     //! Return true if peak has been indexed by a unit cell
-    bool isIndexed() const;
+    bool indexed() const;
     //! Set whether the peak is observed or predicted
     void setPredicted(bool predicted);
     //! Return if the peak is predicted

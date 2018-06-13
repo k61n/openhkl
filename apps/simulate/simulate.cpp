@@ -67,8 +67,8 @@ std::vector<Eigen::ArrayXXd> generate_frames(
     }
 
     for (auto peak: peaks) {
-        auto aabb = peak->getShape().aabb();
-        auto shape = peak->getShape();
+        auto aabb = peak->shape().aabb();
+        auto shape = peak->shape();
         auto center = shape.center();
         auto inv_cov = shape.metric();
         auto extents = aabb.extents();
@@ -110,7 +110,7 @@ std::vector<Eigen::ArrayXXd> generate_frames(
 
         std::vector<Eigen::ArrayXXd> peak_images;
         double sum = 0.0;
-        Eigen::Matrix3d M = peak->getShape().metric();
+        Eigen::Matrix3d M = peak->shape().metric();
 
 
         for (auto k = zmin; k < zmax; ++k) {
@@ -195,7 +195,7 @@ int main(int argc, char* argv[])
         qs.push_back(nsx::ReciprocalVector(q));
     }
 
-    auto events = data->getEvents(qs);
+    auto events = data->events(qs);
 
     const double sigmaD = 0.3;
     const double sigmaM = 0.2;

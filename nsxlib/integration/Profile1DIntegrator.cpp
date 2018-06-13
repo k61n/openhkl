@@ -118,8 +118,8 @@ bool Profile1DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
     std::vector<Intensity> mean_profile;
     IntegratedProfile profile(0.0, region.peakEnd());
 
-    Eigen::Vector3d c = peak->getShape().center();
-    Eigen::Matrix3d A = peak->getShape().metric();
+    Eigen::Vector3d c = peak->shape().center();
+    Eigen::Matrix3d A = peak->shape().metric();
 
     try {
         // throws if there are no neighboring peaks within the bounds

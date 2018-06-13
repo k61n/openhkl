@@ -102,9 +102,9 @@ PeakList PeakFinder::find(DataList numors)
     for (auto&& numor : numors) {
         PeakList numor_peaks;
 
-        auto dectector = numor->diffractometer()->getDetector();
-        int nrows = dectector->getNRows();
-        int ncols = dectector->getNCols();
+        auto dectector = numor->diffractometer()->detector();
+        int nrows = dectector->nRows();
+        int ncols = dectector->nCols();
         int nframes = numor->nFrames();
 
         // The blobs found for this numor
@@ -197,7 +197,7 @@ PeakList PeakFinder::find(DataList numors)
             auto shape = Ellipsoid(center, eigenvalues, eigenvectors);
 
             auto p = sptrPeak3D(new Peak3D(numor, shape));
-            const auto extents = p->getShape().aabb().extents();
+            const auto extents = p->shape().aabb().extents();
 
             // peak too small or too large
             if (extents.maxCoeff() > 1e5 || extents.minCoeff() < 1e-5) {
@@ -209,7 +209,7 @@ PeakList PeakFinder::find(DataList numors)
             }
 
             // peak's bounding box not completely contained in detector image
-            if (!dAABB.contains(p->getShape().aabb())) {
+            if (!dAABB.contains(p->shape().aabb())) {
                 p->setSelected(false);
             }
 
@@ -362,9 +362,9 @@ void PeakFinder::findPrimaryBlobs(sptrDataSet data, std::map<int,Blob3D>& blobs,
         _handler->setProgress(0);
     }
 
-    auto dectector = data->diffractometer()->getDetector();
-    int nrows = dectector->getNRows();
-    int ncols = dectector->getNCols();
+    auto dectector = data->diffractometer()->detector();
+    int nrows = dectector->nRows();
+    int ncols = dectector->nCols();
 
     // used to pass to progress handler
     double progress = 0.0;
@@ -574,9 +574,9 @@ void PeakFinder::findCollisions(sptrDataSet data, std::map<int,Blob3D>& blobs, E
         }
     }
 
-    auto dectector = data->diffractometer()->getDetector();
-    int nrows = dectector->getNRows();
-    int ncols = dectector->getNCols();
+    auto dectector = data->diffractometer()->detector();
+    int nrows = dectector->nRows();
+    int ncols = dectector->nCols();
     int nframes = data->nFrames();
 
     Octree oct(Eigen::Vector3d(0.0,0.0,0.0),Eigen::Vector3d(double(ncols),double(nrows),double(nframes)));

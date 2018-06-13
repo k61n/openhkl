@@ -72,8 +72,8 @@ PeakList PeakPredictor::predict(sptrDataSet data, double radius, double nframes)
         throw std::runtime_error("PeakPredictor cannot predict without a shape library");
     }
 
-    auto& mono = data->diffractometer()->getSource()->getSelectedMonochromator();
-    const double wavelength = mono.getWavelength();
+    auto& mono = data->diffractometer()->source()->selectedMonochromator();
+    const double wavelength = mono.wavelength();
     PeakList calculated_peaks;     
     std::set<MillerIndex> found_hkls;
 
@@ -93,7 +93,7 @@ PeakList PeakPredictor::predict(sptrDataSet data, double radius, double nframes)
             // todo: number of neighboring peaks should not be hard-coded
             Eigen::Matrix3d cov = _library->meanCovariance(p, radius, nframes, 20);
             //Eigen::Matrix3d cov = _library->predictCovariance(p);
-            Eigen::Vector3d center = p->getShape().center();
+            Eigen::Vector3d center = p->shape().center();
             p->setShape(Ellipsoid(center, cov.inverse()));
         } catch (std::exception& e) {
             nsx::info() << e.what();
@@ -113,7 +113,7 @@ PeakList PeakPredictor::predictPeaks(sptrDataSet data, const std::vector<MillerI
         qs.emplace_back(idx.rowVector().cast<double>()*BU);
     }
 
-    auto events = data->getEvents(qs);
+    auto events = data->events(qs);
  
     for (auto event: events) {
         sptrPeak3D peak(new Peak3D(data));

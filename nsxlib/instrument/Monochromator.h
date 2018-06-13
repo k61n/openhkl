@@ -34,31 +34,31 @@ public:
 	Monochromator& operator=(const Monochromator& other);
 
 	//! Return the name for this monochromator
-	const std::string& getName() const;
+	const std::string& name() const;
 
 	//! Set the name for this monochromator
 	void setName(const std::string& name);
 
 	//! Return the wavelength for this monochromator
-	double getWavelength() const;
+	double wavelength() const;
 
 	//! Set the wavelength for this monochromator
 	void setWavelength(double wavelength);
 
 	//! Return the full width at half maximum of the wavelength for this monochromator
-	double getFWHM() const;
+	double fullWidthHalfMaximum() const;
 
 	//! Set the full width at half maximum of the wavelength for this monochromator
-	void setFWHM(double fwhm);
+	void setFullWidthHalfMaximum(double fwhm);
 
 	//! Return the width for this monochromator
-	double getWidth() const;
+	double width() const;
 
 	//! Set the width for this monochromator
 	void setWidth(double width);
 
 	//! Return height for this monochromator
-	double getHeight() const;
+	double height() const;
 
 	//! Set the height for this monochromator
 	void setHeight(double height);
@@ -66,7 +66,7 @@ public:
     bool operator==(const Monochromator& other);
 
     //! Get the incoming wave vector
-    ReciprocalVector getKi() const;
+    ReciprocalVector ki() const;
 
 private:
 

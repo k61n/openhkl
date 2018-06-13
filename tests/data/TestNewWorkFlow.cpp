@@ -106,9 +106,9 @@ int main()
 
     NSX_CHECK_ASSERT(indexed_peaks > 600);
     NSX_CHECK_NO_THROW(indexer.autoIndex(params));
-    NSX_CHECK_ASSERT(indexer.getSolutions().size() > 1);
+    NSX_CHECK_ASSERT(indexer.solutions().size() > 1);
 
-    auto soln = indexer.getSolutions().front();
+    auto soln = indexer.solutions().front();
 
     // correctly indexed at least 92% of peaks
     NSX_CHECK_ASSERT(soln.second > 92.0);
@@ -120,7 +120,7 @@ int main()
     }
 
     // add cell to sample
-    dataf->diffractometer()->getSample()->addUnitCell(cell);
+    dataf->diffractometer()->sample()->addUnitCell(cell);
  
     // reintegrate peaks
     integrator.integrate(found_peaks, dataf, 3.0, 4.0, 5.0);
@@ -135,12 +135,11 @@ int main()
 
     int n_selected = 0;
 
-    // get that DataSet::getEvents works properly
     for (auto peak: selected_peaks) {
 
         std::vector<nsx::ReciprocalVector> q_vectors;
         q_vectors.push_back(peak->q());
-        auto events = dataf->getEvents(q_vectors);
+        auto events = dataf->events(q_vectors);
 
         //NSX_CHECK_ASSERT(events.size() >= 1);
 
@@ -150,7 +149,7 @@ int main()
 
         ++n_selected;
 
-        Eigen::Vector3d p0 = peak->getShape().center();
+        Eigen::Vector3d p0 = peak->shape().center();
         Eigen::Vector3d p1;
 
         double diff = 1e200;

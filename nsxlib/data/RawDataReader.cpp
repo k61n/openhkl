@@ -73,13 +73,13 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const st
   _wavelength(wavelength)
 {
     // ensure that there is at least one monochromator!
-    if ( _diffractometer->getSource()->getNMonochromators() == 0 ) {
+    if ( _diffractometer->source()->nMonochromators() == 0 ) {
         Monochromator mono("mono");
-        _diffractometer->getSource()->addMonochromator(mono);
+        _diffractometer->source()->addMonochromator(mono);
     }
 
     _length = _bpp * _nRows * _nCols;
-    auto& mono = _diffractometer->getSource()->getSelectedMonochromator();
+    auto& mono = _diffractometer->source()->selectedMonochromator();
     mono.setWavelength(_wavelength);
 
     _metadata.add<std::string>("Instrument", _diffractometer->name());
@@ -92,7 +92,7 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const st
 
     _nFrames = _filenames.size();
 
-    std::vector<std::string> axesS = _diffractometer->getDetector()->getGonio()->getPhysicalAxesNames();
+    std::vector<std::string> axesS = _diffractometer->detector()->gonio()->physicalAxesNames();
     Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm
             = Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor>::Zero(long(axesS.size()), long(_nFrames));
 
@@ -104,7 +104,7 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const st
     }
 
     // Getting Scan parameters for the sample
-    axesS = _diffractometer->getSample()->getGonio()->getPhysicalAxesNames();
+    axesS = _diffractometer->sample()->gonio()->physicalAxesNames();
     dm.resize(long(axesS.size()), long(_nFrames));
 
     int omega, phi, chi;
@@ -157,7 +157,7 @@ void RawDataReader::setBpp(unsigned int bpp) {
     _length = _bpp*_nRows*_nCols;
 }
 
-Eigen::MatrixXi RawDataReader::getData(std::size_t frame) {
+Eigen::MatrixXi RawDataReader::data(std::size_t frame) {
 
     std::string filename = _filenames.at(frame);
 

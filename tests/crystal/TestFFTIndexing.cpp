@@ -86,7 +86,7 @@ struct IndexerParameters {
         qs.emplace_back(index.rowVector().cast<double>()*BU);
     }
 
-    auto events = data->getEvents(qs);
+    auto events = data->events(qs);
 
     std::vector<nsx::sptrPeak3D> peaks;
 
@@ -121,7 +121,7 @@ struct IndexerParameters {
    
     NSX_CHECK_NO_THROW(indexer.autoIndex(params));
 
-    auto solutions = indexer.getSolutions();
+    auto solutions = indexer.solutions();
 
     NSX_CHECK_ASSERT(solutions.size() > 1);
     NSX_CHECK_ASSERT(solutions.front().second > 99.9);

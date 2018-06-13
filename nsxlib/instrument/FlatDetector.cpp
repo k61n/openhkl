@@ -14,19 +14,11 @@ Detector* FlatDetector::create(const YAML::Node& node)
     return new FlatDetector(node);
 }
 
-FlatDetector::FlatDetector() : MonoDetector()
+FlatDetector::FlatDetector(const std::string& name) : Detector(name)
 {
 }
 
-FlatDetector::FlatDetector(const FlatDetector& other) : MonoDetector(other)
-{
-}
-
-FlatDetector::FlatDetector(const std::string& name) : MonoDetector(name)
-{
-}
-
-FlatDetector::FlatDetector(const YAML::Node& node) : MonoDetector(node)
+FlatDetector::FlatDetector(const YAML::Node& node) : Detector(node)
 {
     UnitsManager* um=UnitsManager::Instance();
 
@@ -47,14 +39,6 @@ FlatDetector::FlatDetector(const YAML::Node& node) : MonoDetector(node)
 
 FlatDetector::~FlatDetector()
 {
-}
-
-FlatDetector& FlatDetector::operator=(const FlatDetector& other)
-{
-    if (this != &other)
-        MonoDetector::operator=(other);
-
-    return *this;
 }
 
 Detector* FlatDetector::clone() const

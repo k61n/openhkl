@@ -36,7 +36,7 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrPeak3D peak)
     }
    
     if (filter._removeUnselected) {
-        if (!peak->isSelected()) {
+        if (!peak->selected()) {
             return true;
         }
     }
@@ -97,7 +97,7 @@ PeakList PeakFilter::apply(const PeakList& reference_peaks) const
     Eigen::Vector3d upper(-1e100, -1e100, -1e100);
 
     for (auto peak: reference_peaks) {
-        ellipsoids.emplace_back(peak->getShape());
+        ellipsoids.emplace_back(peak->shape());
         peaks.push_back(peak);
         auto cell = peak->activeUnitCell();
 
@@ -105,7 +105,7 @@ PeakList PeakFilter::apply(const PeakList& reference_peaks) const
             crystals.insert(cell);
         }
 
-        Eigen::Vector3d p = peak->getShape().center();
+        Eigen::Vector3d p = peak->shape().center();
 
         for (int i = 0; i < 3; ++i) {
             lower(i) = std::min(lower(i), p(i));
@@ -158,10 +158,10 @@ PeakList PeakFilter::apply(const PeakList& reference_peaks) const
             }
         }
 
-        for (auto&& merged_peak: merged.getPeaks()) {
+        for (auto&& merged_peak: merged.peaks()) {
             // p value too high: reject peaks
             if (_removeMergedP && merged_peak.pValue() > _mergedP) {
-                for (auto&& p: merged_peak.getPeaks()) {
+                for (auto&& p: merged_peak.peaks()) {
                     bad_peaks.push_back(p);
                 }
             }
@@ -201,7 +201,7 @@ PeakList PeakFilter::selected(const PeakList& peaks, bool selection_flag) const
 {
     PeakList filtered_peaks;
 
-    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[selection_flag](sptrPeak3D peak){return selection_flag == peak->isSelected();});
+    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[selection_flag](sptrPeak3D peak){return selection_flag == peak->selected();});
 
     return filtered_peaks;
 }

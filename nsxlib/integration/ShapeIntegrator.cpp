@@ -39,7 +39,7 @@ bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
     IntegratedProfile integrated_profile(_meanBackground, region.peakEnd());
     PeakCoordinateSystem frame(peak);
 
-    Ellipsoid e = peak->getShape();
+    Ellipsoid e = peak->shape();
 
     for (size_t i = 0; i < events.size(); ++i) {
         const auto& ev = events[i];
@@ -49,7 +49,7 @@ bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
         integrated_profile.addPoint(e.r2(x), counts[i]);
         
         if (_library->detectorCoords()) {
-            x -= peak->getShape().center();
+            x -= peak->shape().center();
             profile.addValue(x, dI);
         } else {
             profile.addValue(frame.transform(ev), dI);

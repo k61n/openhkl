@@ -30,21 +30,21 @@
 
 #include <yaml-cpp/yaml.h>
 
+#include "Detector.h"
 #include "GeometryTypes.h"
-#include "MonoDetector.h"
 
 namespace nsx {
 
-class FlatDetector : public MonoDetector {
+class FlatDetector : public Detector {
 public:
 
 	//! Static constructor of a FlatDetector from a property tree node
 	static Detector* create(const YAML::Node& node);
 
 	//! Construct a FlatDetector
-	FlatDetector();
+	FlatDetector()=default;
 	//! Construct a FlatDetector from another one
-	FlatDetector(const FlatDetector& other);
+	FlatDetector(const FlatDetector& other)=default;
 	//! Construct a FlatDetector with a given name
 	FlatDetector(const std::string& name);
 	//! Constructs a FlatDetector from a property tree node
@@ -55,25 +55,25 @@ public:
 	virtual ~FlatDetector();
 
 	//! Assignment operator
-	FlatDetector& operator=(const FlatDetector& other);
+	FlatDetector& operator=(const FlatDetector& other)=default;
 
 	//! Set the height of the detector (meters)
-	void setHeight(double height) override;
+	virtual void setHeight(double height) override;
 	//! Set the width of the detector (meters)
-	void setWidth(double width) override;
+	virtual void setWidth(double width) override;
 
 	//! Set the angular height of the detector (radians)
-	void setAngularHeight(double angle) override;
+	virtual void setAngularHeight(double angle) override;
 	//! Set the angular width of the detector (radians)
-	void setAngularWidth(double angle) override;
+	virtual void setAngularWidth(double angle) override;
 
 	//! Returns the position of a given pixel in detector space. This takes into account the detector motions in detector space.
-	DirectVector pixelPosition(double px,double py) const override;
+	virtual DirectVector pixelPosition(double px,double py) const override;
 
 	//! Determine whether detector at rest can receive a scattering event with direction given by Kf. px and py are detector position if true.
 	virtual DetectorEvent constructEvent(const DirectVector& from, const ReciprocalVector& kf) const override;
 
-	Eigen::Matrix3d jacobian(double x, double y) const override;
+	virtual Eigen::Matrix3d jacobian(double x, double y) const override;
 
 };
 

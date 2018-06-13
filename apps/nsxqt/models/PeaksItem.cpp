@@ -271,17 +271,17 @@ void PeaksItem::refine()
 void PeaksItem::autoAssignUnitCell()
 {
     auto&& peaks = selectedPeaks();
-    auto sample = experiment()->diffractometer()->getSample();
+    auto sample = experiment()->diffractometer()->sample();
 
     for (auto peak: peaks) {
-        if (!peak->isSelected()) {
+        if (!peak->selected()) {
             continue;
         }
 
         Eigen::RowVector3d hkl;
         bool assigned = false;
 
-        for (size_t i = 0; i < sample->getNCrystals(); ++i) {
+        for (size_t i = 0; i < sample->nCrystals(); ++i) {
             auto cell = sample->unitCell(i);
             nsx::MillerIndex hkl(peak->q(), *cell);
             if (hkl.indexed(cell->indexingTolerance())) {

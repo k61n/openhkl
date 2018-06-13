@@ -67,7 +67,7 @@ int main()
     int good_shapes = 0;
 
     for (auto peak: found_peaks) {
-        if (!peak->isSelected()) {
+        if (!peak->selected()) {
             continue;
         }
 
@@ -78,7 +78,7 @@ int main()
         } catch(...) {
             continue;
         }
-        auto old_shape = peak->getShape();
+        auto old_shape = peak->shape();
 
         // note: some blobs are invalid, so we skip them
         if (!(old_shape.metric().norm() < 1e3)) {

@@ -62,16 +62,16 @@ public:
 	Source& operator=(const Source& other);
 
 	//! Returns the monochromators registered for this Source
-	const std::vector<Monochromator>& getMonochromators() const;
+	const std::vector<Monochromator>& monochromators() const;
 
 	//! Returns the number of monochromators associated with this source
-	int getNMonochromators() const;
+	int nMonochromators() const;
 
 	//! Select a monochromator for this source
     void setSelectedMonochromator(size_t i);
 
 	//! Return a pointer to the selected monochromator
-    Monochromator& getSelectedMonochromator();
+    Monochromator& selectedMonochromator();
 
 	//! Add a new monochromator to this source
 	void addMonochromator(Monochromator mono);

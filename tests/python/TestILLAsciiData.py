@@ -18,7 +18,7 @@ class TestILLAscii(unittest.TestCase):
         self.assertAlmostEqual(v.sum(),65)
         # check the value of monitor 
 
-        monitor = meta.getKey("monitor")        
+        monitor = meta.key("monitor")        
         #self.assertAlmostEqual(meta.getKey("monitor"),20000)
 
         # todo : check if the following line is correct 

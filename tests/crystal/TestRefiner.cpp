@@ -92,9 +92,9 @@ int main()
     NSX_CHECK_ASSERT(indexed_peaks > 600);
     NSX_CHECK_NO_THROW(indexer.autoIndex(params));
 
-    NSX_CHECK_ASSERT(indexer.getSolutions().empty() == false);
+    NSX_CHECK_ASSERT(indexer.solutions().empty() == false);
 
-    auto soln = indexer.getSolutions().front();
+    auto soln = indexer.solutions().front();
 
     // correctly indexed at least 98% of peaks
     NSX_CHECK_ASSERT(soln.second > 98.0);
@@ -114,7 +114,7 @@ int main()
     }
     
     // add cell to sample
-    dataf->diffractometer()->getSample()->addUnitCell(cell);
+    dataf->diffractometer()->sample()->addUnitCell(cell);
     nsx::Refiner refiner(cell, peaks, 1);
 
     NSX_CHECK_ASSERT(refiner.batches().size() == 1);

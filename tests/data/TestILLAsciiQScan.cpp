@@ -26,7 +26,7 @@ int main()
         dataf = factory.create("", "D9_QSCAN", diff);
         meta=dataf->metadata();
 
-        NSX_CHECK_ASSERT(meta->getKey<int>("nbang")==4);
+        NSX_CHECK_ASSERT(meta->key<int>("nbang")==4);
 
         dataf->open();
         v = dataf->frame(0);
@@ -42,7 +42,7 @@ int main()
     NSX_CHECK_EQUAL(v.sum(),5.90800000e+03);
 
     // Check the value of the monitor
-    NSX_CHECK_CLOSE(meta->getKey<double>("monitor"),3.74130000e+04,tolerance);
+    NSX_CHECK_CLOSE(meta->key<double>("monitor"),3.74130000e+04,tolerance);
 
     dataf->close();
 }

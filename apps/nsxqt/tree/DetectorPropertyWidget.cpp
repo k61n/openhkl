@@ -18,30 +18,29 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
 {
     ui->setupUi(this);
 
-    auto detector=_detectorItem->experiment()->diffractometer()->getDetector();
-    auto gonio=detector->getGonio();
+    auto detector = _detectorItem->experiment()->diffractometer()->detector();
+    auto gonio = detector->gonio();
 
-    ui->lineEdit_H->setText(QString::number(detector->getHeight())+" m");
-    ui->lineEdit_W->setText(QString::number(detector->getWidth())+" m");
-    ui->lineEdit_WPixels->setText(QString::number(detector->getNCols()));
-    ui->lineEdit_HPixels->setText(QString::number(detector->getNRows()));
+    ui->lineEdit_H->setText(QString::number(detector->height())+" m");
+    ui->lineEdit_W->setText(QString::number(detector->width())+" m");
+    ui->lineEdit_WPixels->setText(QString::number(detector->nCols()));
+    ui->lineEdit_HPixels->setText(QString::number(detector->nRows()));
 
-    nsx::DirectVector restpos = detector->getRestPosition();
     // rest position of the detector is along y
-    ui->doubleSpinBox_Distance->setValue(restpos[1]);
+    ui->doubleSpinBox_Distance->setValue(detector->distance());
 
     //
     ui->tableWidget_Detector->setEditTriggers(QAbstractItemView::DoubleClicked);
-    ui->tableWidget_Detector->setRowCount(gonio->getNAxes());
+    ui->tableWidget_Detector->setRowCount(gonio->nAxes());
 
     ui->tableWidget_Detector->setColumnCount(3);
     ui->tableWidget_Detector->verticalHeader()->setVisible(false);
 
-    for (unsigned int i = 0; i < gonio->getNAxes(); ++i) {
-        auto axis=gonio->getAxis(i);
+    for (unsigned int i = 0; i < gonio->nAxes(); ++i) {
+        auto axis=gonio->axis(i);
         QTableWidgetItem* item0=new QTableWidgetItem();
-        item0->setData(Qt::EditRole, QString(axis->getLabel().c_str()));
-        if (axis->isPhysical()) {
+        item0->setData(Qt::EditRole, QString(axis->label().c_str()));
+        if (axis->physical()) {
             item0->setBackgroundColor(QColor("#FFDDDD"));
         } else {
             item0->setBackgroundColor(QColor("#DDFFDD"));
@@ -51,9 +50,9 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
 
         if (nsx::RotAxis* rot=dynamic_cast<nsx::RotAxis*>(axis)) {
             os << "R(";
-            os << rot->getAxis().transpose();
+            os << rot->axis().transpose();
             os << ")";
-            if (rot->getRotationDirection()) {
+            if (rot->rotationDirection()) {
                 os << "CW";
             } else {
                 os << "CCW";
@@ -61,7 +60,7 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
             //isRot = true;
         } else if(dynamic_cast<nsx::TransAxis*>(axis)) {
             os << "T(";
-            os << axis->getAxis().transpose();
+            os << axis->axis().transpose();
             os << ")";
         }
         item1->setData(Qt::EditRole, QString(os.str().c_str()));
@@ -87,14 +86,16 @@ DetectorPropertyWidget::~DetectorPropertyWidget()
 
 void DetectorPropertyWidget::cellHasChanged(int i, int j)
 {
-    auto detector=_detectorItem->experiment()->diffractometer()->getDetector();
-    auto axis=detector->getGonio()->getAxis(i);
+    auto detector=_detectorItem->experiment()->diffractometer()->detector();
+    auto axis=detector->gonio()->axis(i);
     // todo: fix this after offset refactor
 }
 
 void DetectorPropertyWidget::on_doubleSpinBox_Distance_valueChanged(double arg1)
 {
-     auto detector=_detectorItem->experiment()->diffractometer()->getDetector();
-     if (arg1>0)
-        detector->setRestPosition(nsx::DirectVector(0,arg1,0));
+     auto detector=_detectorItem->experiment()->diffractometer()->detector();
+     if (arg1 < 0) {
+         return;
+     }
+    detector->setDistance(arg1);
 }

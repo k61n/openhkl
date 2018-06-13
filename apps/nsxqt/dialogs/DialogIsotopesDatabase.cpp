@@ -48,18 +48,18 @@ DialogIsotopesDatabase::DialogIsotopesDatabase(QWidget *parent)
                 switch (nsx::IsotopeDatabaseManager::PropertyTypes.at(pType)) {
                 case nsx::ChemicalPropertyType::Int:
                 {
-                    item->setText(QString::number(imgr->getProperty<int>(isotopeName,pName)));
+                    item->setText(QString::number(imgr->property<int>(isotopeName,pName)));
                     break;
                 }
                 case nsx::ChemicalPropertyType::Double:
                 {
-                    auto value = imgr->getProperty<double>(isotopeName,pName)/um->get(pUnit);
+                    auto value = imgr->property<double>(isotopeName,pName)/um->get(pUnit);
                     item->setText(QString::number(value));
                     break;
                 }
                 case nsx::ChemicalPropertyType::Complex:
                 {
-                    auto value = imgr->getProperty<std::complex<double>>(isotopeName,pName)/um->get(pUnit);
+                    auto value = imgr->property<std::complex<double>>(isotopeName,pName)/um->get(pUnit);
                     std::ostringstream os;
                     os << value;
                     item->setText(QString::fromStdString(os.str()));
@@ -67,11 +67,11 @@ DialogIsotopesDatabase::DialogIsotopesDatabase(QWidget *parent)
                 }
                 case nsx::ChemicalPropertyType::Bool:
                 {
-                    item->setText(QString::number(imgr->getProperty<bool>(isotopeName,pName)));
+                    item->setText(QString::number(imgr->property<bool>(isotopeName,pName)));
                     break;
                 }
                 default:
-                    item->setText(QString::fromStdString(imgr->getProperty<std::string>(isotopeName,pName)));
+                    item->setText(QString::fromStdString(imgr->property<std::string>(isotopeName,pName)));
                 }
             } else
                 item->setText("NaN");

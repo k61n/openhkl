@@ -68,12 +68,12 @@ Source& Source::operator=(const Source& other)
     return *this;
 }
 
-const std::vector<Monochromator>& Source::getMonochromators() const
+const std::vector<Monochromator>& Source::monochromators() const
 {
     return _monochromators;
 }
 
-int Source::getNMonochromators() const
+int Source::nMonochromators() const
 {
     return _monochromators.size();
 }
@@ -86,7 +86,7 @@ void Source::setSelectedMonochromator(size_t i)
         throw std::runtime_error("setSelectedMonochromator(): index i is out of range");
 }
 
-Monochromator& Source::getSelectedMonochromator()
+Monochromator& Source::selectedMonochromator()
 {
     if (_selectedMonochromator<_monochromators.size())
         return _monochromators[_selectedMonochromator];

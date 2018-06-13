@@ -46,7 +46,7 @@ public:
     Experiment()=delete;
 
     //! Copy constructor
-    Experiment(const Experiment& other);
+    Experiment(const Experiment& other)=default;
 
     //! Construct an empty experiment from a given name and diffractometer
     Experiment(const std::string& name, const std::string& diffractometerName);
@@ -57,47 +57,31 @@ public:
     //! Destructor
     virtual ~Experiment();
 
-    // Operators
-
     //! Assignment operator
-    Experiment& operator=(const Experiment& other);
-
-    // Getters and setters
-
-    //! Gets the type of the diffractomer used in the experiment
-    const std::string& getDiffractometerType() const;
+    Experiment& operator=(const Experiment& other)=default;
 
     //! Gets a shared pointer to the diffractometer related to the experiment
     sptrDiffractometer diffractometer() const;
 
     //! Get a reference to the data
-    const std::map<std::string,sptrDataSet>& getData() const;
-
+    const std::map<std::string,sptrDataSet>& data() const;
     //! Gets the pointer to a given data stored in the experiment
-    sptrDataSet getData(std::string name);
+    sptrDataSet data(std::string name);
 
-    //! Gets the names of the data stored in the experiment
-    std::vector<std::string> getDataNames() const;
-
-    //! Gets the name of the experiment
-
-    const std::string& getName() const;
+    const std::string& name() const;
     //std::string getName() const;
-
     //! Sets the name of the experiment
     void setName(const std::string& name);
 
-    // Other methods
-
     //! Add some data to the experiment
     void addData(sptrDataSet data);
-
     //! Check whether the experiment has a data
     bool hasData(const std::string& name) const;
-
     //! Remove a data from the experiment
     void removeData(const std::string& name);
+
 private:
+
     //! The name of this experiment
     std::string _name;
 

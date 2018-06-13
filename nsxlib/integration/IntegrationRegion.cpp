@@ -44,7 +44,7 @@ IntegrationRegion::IntegrationRegion()
 }
 
 IntegrationRegion::IntegrationRegion(sptrPeak3D peak, double peak_end, double bkg_begin, double bkg_end):
-    _shape(peak->getShape()),
+    _shape(peak->shape()),
     _peakEnd(peak_end),
     _bkgBegin(bkg_begin),
     _bkgEnd(bkg_end),
@@ -56,7 +56,7 @@ IntegrationRegion::IntegrationRegion(sptrPeak3D peak, double peak_end, double bk
     // this code is disabled because it was discovered to be too slow
     // we should a faster way of implementing the test for the Brillouin zone
     // try to find Brillouin zone if peak has been indexed
-    if (uc && peak->isIndexed()) {
+    if (uc && peak->indexed()) {
         BrillouinZone zone(uc->reciprocalBasis());
         _hull = zone.detectorConvexHull(peak->q(), peak->data());
     }

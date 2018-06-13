@@ -57,8 +57,8 @@ Refiner::Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches)
     PeakList sorted_peaks(peaks);
 
     auto sort_peaks_by_frame = [](sptrPeak3D p1, sptrPeak3D p2) -> bool {
-        auto&& c1 = p1->getShape().center();
-        auto&& c2 = p2->getShape().center();
+        auto&& c1 = p1->shape().center();
+        auto&& c2 = p2->shape().center();
         return c1[2] < c2[2];
     };
 
@@ -144,7 +144,7 @@ int Refiner::updatePredictions(PeakList& peaks) const
                 
         // find appropriate batch
         const RefinementBatch* b = nullptr;    
-        double z = peak->getShape().center()[2];
+        double z = peak->shape().center()[2];
         for (auto&& batch: _batches) {
             
             if (batch.contains(z)) {
@@ -161,7 +161,7 @@ int Refiner::updatePredictions(PeakList& peaks) const
         // update the position
         MillerIndex hkl(peak->q(), *_cell);
         ReciprocalVector q_pred(hkl.rowVector().cast<double>()*_cell->reciprocalBasis());
-        auto events = peak->data()->getEvents({q_pred});
+        auto events = peak->data()->events({q_pred});
 
         // something wrong with new prediction...
         if (events.size() != 1) {
@@ -169,7 +169,7 @@ int Refiner::updatePredictions(PeakList& peaks) const
         }
         
         try {
-            peak->setShape(Ellipsoid({events[0]._px, events[0]._py, events[0]._frame}, peak->getShape().metric()));
+            peak->setShape(Ellipsoid({events[0]._px, events[0]._py, events[0]._frame}, peak->shape().metric()));
             ++updated;
         } catch(...) {
             peak->setSelected(false);

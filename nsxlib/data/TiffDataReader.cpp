@@ -47,7 +47,7 @@ TiffDataReader::TiffDataReader(const std::string& filename, const std::shared_pt
     _detectorStates[0] = {};
     _sampleStates[0] = {};
 
-    _metadata.add<std::string>("Instrument",diffractometer->getType());
+    _metadata.add<std::string>("Instrument",diffractometer->name());
 }
 
 void TiffDataReader::open()
@@ -56,7 +56,7 @@ void TiffDataReader::open()
         return;
     try
     {
-        _file=TIFFOpen(_metadata.getKey<std::string>("filename").c_str(),"r");
+        _file=TIFFOpen(_metadata.key<std::string>("filename").c_str(),"r");
     }catch(...)
     {
         throw;
@@ -72,7 +72,7 @@ void TiffDataReader::close()
 }
 
 
-Eigen::MatrixXi TiffDataReader::getData(std::size_t frame)
+Eigen::MatrixXi TiffDataReader::data(std::size_t frame)
 {
     NSX_UNUSED(frame)
 

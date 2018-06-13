@@ -19,7 +19,8 @@ int main()
     d.setDistance(764*nsx::mm);
     d.setAngularWidth(120.0*nsx::deg);
     d.setHeight(40.0*nsx::cm);
-    d.setNPixels(640,256);
+    d.setNCols(640);
+    d.setNRows(256);
 
     nsx::DirectVector pixel_position = d.pixelPosition(319.5, 127.5);
 
@@ -70,8 +71,8 @@ int main()
     NSX_CHECK_CLOSE(q[1],-1.0,tolerance);
     NSX_CHECK_SMALL(q[2],tolerance);
 
-    for (int i = d.getMinRow()+3; i < d.getMaxRow()-3; i += 2) {
-        for (int j = d.getMinCol()+3; j < d.getMaxCol()-3; j += 2) {
+    for (int i = d.minRow()+3; i < d.maxRow()-3; i += 2) {
+        for (int j = d.minCol()+3; j < d.maxCol()-3; j += 2) {
             NSX_CHECK_EQ(d.hasPixel(j, i), true);
 
             auto position = d.pixelPosition(j, i);

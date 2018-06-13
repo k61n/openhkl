@@ -63,7 +63,6 @@
 %shared_ptr(nsx::UnitCell)
 %shared_ptr(nsx::Component)
 %shared_ptr(nsx::Detector)
-%shared_ptr(nsx::MonoDetector)
 %shared_ptr(nsx::FlatDetector)
 %shared_ptr(nsx::CylindricalDetector)
 %shared_ptr(nsx::Gonio)
@@ -196,7 +195,6 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "InterpolatedState.h"
 
 #include "Monochromator.h"
-#include "MonoDetector.h"
 #include "Diffractometer.h"
 #include "CylindricalDetector.h"
 #include "Gonio.h"
@@ -237,7 +235,6 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "Monochromator.h"
 
 #include "Detector.h"
-#include "MonoDetector.h"
 #include "CylindricalDetector.h"
 #include "FlatDetector.h"
  
@@ -391,7 +388,6 @@ using namespace nsx;
 %template(DetectorEventQueue) std::deque<nsx::DetectorEvent>;
 %template(DetectorEventList) std::vector<nsx::DetectorEvent>;
 %template(DoubleQueue) std::deque<double>;
-%include "MonoDetector.h"
 %include "CylindricalDetector.h"
 %include "FlatDetector.h"
 %include "Diffractometer.h"
@@ -573,7 +569,6 @@ namespace nsx {
 %include "InterpolatedState.h"
 
 %include "Monochromator.h"
-%include "MonoDetector.h"
 %include "Diffractometer.h"
 %include "CylindricalDetector.h"
 %include "Gonio.h"

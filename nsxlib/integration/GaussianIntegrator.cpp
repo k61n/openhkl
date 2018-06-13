@@ -120,7 +120,7 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
         wts[i] = counts[i] <= 0.0 ? 0.0 : 1.0/counts[i];
     }
 
-    const auto& shape = peak->getShape();
+    const auto& shape = peak->shape();
     Eigen::Vector3d x0 = shape.center();
 
     // We only fit independent components of the Cholesky factor
@@ -133,7 +133,7 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     FitParameters params;
 
     double B = 0.0;
-    double I = peak->getRawIntensity().value();
+    double I = peak->rawIntensity().value();
 
     params.addParameter(&B);
     params.addParameter(&I);
@@ -212,8 +212,8 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
 std::vector<double> GaussianIntegrator::profile(sptrPeak3D peak, const IntegrationRegion& region)
 {
     const auto& events = region.data().events();
-    const Eigen::Matrix3d A = peak->getShape().metric();
-    const Eigen::Vector3d x0 = peak->getShape().center();
+    const Eigen::Matrix3d A = peak->shape().metric();
+    const Eigen::Vector3d x0 = peak->shape().center();
     const double factor = std::sqrt(A.determinant() / 8.0 / M_PI / M_PI / M_PI);
     std::vector<double> result(events.size(), 0.0);
 

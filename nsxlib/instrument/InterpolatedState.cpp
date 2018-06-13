@@ -78,7 +78,7 @@ InterpolatedState::InterpolatedState(const InstrumentState& s1, const Instrument
 
 Eigen::Matrix3d InterpolatedState::jacobianQ(double px, double py) const
 {
-    auto position = _diffractometer->getDetector()->pixelPosition(px, py);
+    auto position = _diffractometer->detector()->pixelPosition(px, py);
     Eigen::Vector3d q0 = sampleQ(position).rowVector();
     // Jacobian of map from detector coords to sample q space
     Eigen::Matrix3d J = sampleOrientationMatrix().transpose() * jacobianK(px, py); 
@@ -90,7 +90,7 @@ Eigen::Matrix3d InterpolatedState::jacobianQ(double px, double py) const
 
 double InterpolatedState::lorentzFactor(double px, double py) const
 {
-    auto position = _diffractometer->getDetector()->pixelPosition(px, py);
+    auto position = _diffractometer->detector()->pixelPosition(px, py);
     Eigen::Vector3d q0 = sampleQ(position).rowVector();
     Eigen::Vector3d kf = sampleOrientationMatrix().transpose() * kfLab(position).rowVector().transpose();
     const double lorentz = kf.norm() / std::fabs(kf.dot(axis.cross(q0)));

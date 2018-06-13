@@ -70,9 +70,9 @@ struct BuildElementFromNaturalIsotopes
 	    IsotopeDatabaseManager* imgr=IsotopeDatabaseManager::Instance();
 		const auto& isotopeDatabase=imgr->isotopes();
 		for (const auto& isotope : isotopeDatabase) {
-			std::string symbolName = imgr->getProperty<std::string>(isotope.first,"symbol");
+			std::string symbolName = imgr->property<std::string>(isotope.first,"symbol");
 			if (symbolName == elementSymbol) {
-				output.insert(std::make_pair(isotope.first,imgr->getProperty<double>(isotope.first,"natural_abundance")));
+				output.insert(std::make_pair(isotope.first,imgr->property<double>(isotope.first,"natural_abundance")));
 			}
 		}
 		return true;
@@ -112,7 +112,7 @@ struct BuildElementFromIsotopeMixture {
 			if (p.second < 0.0 || p.second > 1.0) {
 				return false;
 			}
-			std::string isotopeSymbol = imgr->getProperty<std::string>(p.first,"symbol");
+			std::string isotopeSymbol = imgr->property<std::string>(p.first,"symbol");
 			if (isotopeSymbol.compare(elementSymbol)!=0) {
 				return false;
 			}
@@ -239,7 +239,7 @@ struct ChemicalFormulaParser : boost::spirit::qi::grammar<Iterator,isotopeConten
 		const auto& isotopeDatabase=imgr->isotopes();
 		for (const auto& isotope : isotopeDatabase) {
 			_isotopeToken.add(isotope.first,isotope.first);
-			auto symbol = imgr->getProperty<std::string>(isotope.first,"symbol");
+			auto symbol = imgr->property<std::string>(isotope.first,"symbol");
 			_elementToken.add(symbol,symbol);
 		}
 		//Add Deuterium and tritium symbols for H[2]

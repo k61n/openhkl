@@ -56,67 +56,67 @@ Gonio::~Gonio()
         delete ax;
 }
 
-const std::vector<Axis*>& Gonio::getAxes() const
+const std::vector<Axis*>& Gonio::axes() const
 {
     return _axes;
 }
 
-std::vector<unsigned int> Gonio::getPhysicalAxesIds() const
+std::vector<unsigned int> Gonio::physicalAxesIds() const
 {
     std::vector<unsigned int> ids;
-    ids.reserve(getNPhysicalAxes());
+    ids.reserve(nPhysicalAxes());
     for (auto a : _axes) {
-        if (a->isPhysical())
-            ids.push_back(a->getId());
+        if (a->physical())
+            ids.push_back(a->id());
     }
     return ids;
 }
 
-std::vector<std::string> Gonio::getPhysicalAxesNames() const
+std::vector<std::string> Gonio::physicalAxesNames() const
 {
     std::vector<std::string> names;
-    names.reserve(getNPhysicalAxes());
+    names.reserve(nPhysicalAxes());
     for (auto a : _axes)
     {
-        if (a->isPhysical())
-            names.push_back(a->getLabel());
+        if (a->physical())
+            names.push_back(a->label());
     }
     return names;
 }
 
-std::map<unsigned int,std::string> Gonio::getPhysicalAxisIdToNames() const
+std::map<unsigned int,std::string> Gonio::physicalAxisIdToNames() const
 {
     std::map<unsigned int,std::string> idToNames;
     for (auto a : _axes)
     {
-        if (a->isPhysical())
-            idToNames.insert(std::map<unsigned int,std::string>::value_type(a->getId(),a->getLabel()));
+        if (a->physical())
+            idToNames.insert(std::map<unsigned int,std::string>::value_type(a->id(),a->label()));
     }
     return idToNames;
 }
 
-std::vector<std::string> Gonio::getAxesNames() const
+std::vector<std::string> Gonio::axesNames() const
 {
     std::vector<std::string> names;
-    names.reserve(getNAxes());
+    names.reserve(nAxes());
     for (auto a : _axes)
-            names.push_back(a->getLabel());
+            names.push_back(a->label());
     return names;
 }
 
-Axis* Gonio::getAxis(unsigned int i)
+Axis* Gonio::axis(unsigned int i)
 {
     isAxisValid(i);
     return _axes[i];
 }
 
-Axis* Gonio::getAxisFromId(unsigned int id)
+Axis* Gonio::axisFromId(unsigned int id)
 {
     unsigned int i=isAxisIdValid(id);
     return _axes[i];
 }
 
-Axis* Gonio::getAxis(const std::string& label)
+Axis* Gonio::axis(const std::string& label)
 {
     unsigned int i=isAxisValid(label);
     return _axes[i];
@@ -149,7 +149,7 @@ unsigned int Gonio::isAxisValid(const std::string& label) const
 {
     for (unsigned int i=0;i<_axes.size();++i)
     {
-        if (_axes[i]->getLabel().compare(label)==0)
+        if (_axes[i]->label().compare(label)==0)
             return i;
     }
     //! If not found
@@ -160,16 +160,16 @@ unsigned int Gonio::isAxisIdValid(unsigned int id) const
 {
     for (unsigned int i=0;i<_axes.size();++i)
     {
-        if (_axes[i]->getId()==id)
+        if (_axes[i]->id()==id)
             return i;
     }
     //! If not found
     throw std::invalid_argument("Could not find any axis with id "+std::to_string(id));
 }
 
-Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const std::vector<double>& state) const
+Eigen::Transform<double,3,Eigen::Affine> Gonio::homMatrix(const std::vector<double>& state) const
 {
-    if (static_cast<size_t>(state.size()) != getNPhysicalAxes()) {
+    if (static_cast<size_t>(state.size()) != nPhysicalAxes()) {
         throw std::range_error("Trying to set Gonio "+_label+" with wrong number of parameters");
     }
 
@@ -178,32 +178,27 @@ Eigen::Transform<double,3,Eigen::Affine> Gonio::getHomMatrix(const std::vector<d
     int axis = state.size()-1;
 
     for (it=_axes.rbegin();it!=_axes.rend();++it) {
-        if ((*it)->isPhysical()) {
-            result=(*it)->getHomMatrix(state[axis])*result;
+        if ((*it)->physical()) {
+            result=(*it)->homMatrix(state[axis])*result;
             axis--;
         } else {
-            result=(*it)->getHomMatrix(0.0)*result;
+            result=(*it)->homMatrix(0.0)*result;
         }
     }
     return result;
 }
 
-Eigen::Transform<double,3,Eigen::Affine> Gonio::getInverseHomMatrix(const std::vector<double>& state) const
-{
-    return getHomMatrix(state).inverse();
-}
-
-std::size_t Gonio::getNAxes() const
+std::size_t Gonio::nAxes() const
 {
     return _axes.size();
 }
 
-std::size_t Gonio::getNPhysicalAxes() const
+std::size_t Gonio::nPhysicalAxes() const
 {
     std::size_t nPhysAxis = 0;
     for (auto a : _axes)
     {
-        if (a->isPhysical())
+        if (a->physical())
             nPhysAxis++;
     }
     return nPhysAxis;
@@ -211,36 +206,16 @@ std::size_t Gonio::getNPhysicalAxes() const
 
 DirectVector Gonio::transform(const DirectVector& v, const std::vector<double>& state) const
 {
-    Eigen::Transform<double,3,Eigen::Affine> result = getHomMatrix(state);
+    Eigen::Transform<double,3,Eigen::Affine> result = homMatrix(state);
     const Eigen::Vector3d& d_vector = v.vector();
     return DirectVector((result*d_vector.homogeneous()));
-}
-
-void Gonio::transformInPlace(DirectVector& v,const std::vector<double>& state) const
-{
-    Eigen::Transform<double,3,Eigen::Affine> result = getHomMatrix(state);
-    const Eigen::Vector3d& d_vector = v.vector();
-    v = DirectVector(result*d_vector.homogeneous());
-}
-
-DirectVector Gonio::transformInverse(const DirectVector& v, const std::vector<double>& state) const
-{
-    Eigen::Transform<double,3,Eigen::Affine> result = getInverseHomMatrix(state);
-    const Eigen::Vector3d& d_vector = v.vector();
-    return DirectVector(result*d_vector.homogeneous());
-}
-
-void Gonio::transformInverseInPlace(DirectVector& v,const std::vector<double>& state) const
-{
-    const Eigen::Vector3d& d_vector = v.vector();
-    v = DirectVector(getInverseHomMatrix(state)*d_vector.homogeneous());
 }
 
 bool Gonio::hasAxis(const std::string& name) const
 {
     for (const auto& axis : _axes)
     {
-        if (name.compare(axis->getLabel())==0)
+        if (name.compare(axis->label())==0)
             return true;
     }
     return false;
@@ -250,7 +225,7 @@ bool Gonio::hasPhysicalAxis(const std::string& name) const
 {
     for (const auto& axis : _axes)
     {
-        if (name.compare(axis->getLabel())==0 && axis->isPhysical())
+        if (name.compare(axis->label())==0 && axis->physical())
             return true;
     }
     return false;

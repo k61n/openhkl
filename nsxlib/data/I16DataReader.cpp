@@ -96,11 +96,11 @@ I16DataReader::I16DataReader(const std::string& filename, const std::shared_ptr<
     _sampleStates.resize(_nFrames);
 
     std::vector<double> dval(1);
-    dval[0]=_metadata.getKey<double>("delta");
+    dval[0]=_metadata.key<double>("delta");
     std::vector<double> sval(3);
-    sval[0]=_metadata.getKey<double>("eta");
-    sval[1]=_metadata.getKey<double>("chi");
-    sval[2]=_metadata.getKey<double>("phi");
+    sval[0]=_metadata.key<double>("eta");
+    sval[1]=_metadata.key<double>("chi");
+    sval[2]=_metadata.key<double>("phi");
 
 
     for (unsigned int i=0;i<_nFrames;++i) {
@@ -121,7 +121,7 @@ void I16DataReader::close()
 {
 }
 
-Eigen::MatrixXi I16DataReader::getData(size_t frame)
+Eigen::MatrixXi I16DataReader::data(size_t frame)
 {
     assert(frame<_nFrames);
 

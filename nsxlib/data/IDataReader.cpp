@@ -34,23 +34,23 @@ IDataReader::IDataReader(const std::string& filename, const sptrDiffractometer& 
 {
     _metadata.add<std::string>("filename",filename);
 
-    _nRows = _diffractometer->getDetector()->getNRows();
-    _nCols = _diffractometer->getDetector()->getNCols();
+    _nRows = _diffractometer->detector()->nRows();
+    _nCols = _diffractometer->detector()->nCols();
 }
 
-size_t IDataReader::getNFrames() const {
+size_t IDataReader::nFrames() const {
     return _nFrames;
 }
 
-size_t IDataReader::getNCols() const {
+size_t IDataReader::nCols() const {
     return _nCols;
 }
 
-size_t IDataReader::getNRows() const {
+size_t IDataReader::nRows() const {
     return _nRows;
 }
 
-const MetaData& IDataReader::getMetadata() const {
+const MetaData& IDataReader::metadata() const {
     return _metadata;
 }
 
@@ -58,18 +58,18 @@ sptrDiffractometer IDataReader::diffractometer() const {
     return _diffractometer;
 }
 
-InstrumentState IDataReader::getState(size_t frame) const
+InstrumentState IDataReader::state(size_t frame) const
 {
     assert(frame < _nFrames);
 
     InstrumentState state(_diffractometer);
 
     // compute transformations
-    auto detector_gonio = _diffractometer->getDetector()->getGonio();
-    auto sample_gonio = _diffractometer->getSample()->getGonio();
+    auto detector_gonio = _diffractometer->detector()->gonio();
+    auto sample_gonio = _diffractometer->sample()->gonio();
 
-    Eigen::Transform<double,3,Eigen::Affine> detector_trans = detector_gonio->getHomMatrix(_detectorStates[frame]);
-    Eigen::Transform<double,3,Eigen::Affine> sample_trans = sample_gonio->getHomMatrix(_sampleStates[frame]);
+    Eigen::Transform<double,3,Eigen::Affine> detector_trans = detector_gonio->homMatrix(_detectorStates[frame]);
+    Eigen::Transform<double,3,Eigen::Affine> sample_trans = sample_gonio->homMatrix(_sampleStates[frame]);
 
     state.detectorOrientation = detector_trans.rotation();
     state.sampleOrientation = Eigen::Quaterniond(sample_trans.rotation());
@@ -77,21 +77,21 @@ InstrumentState IDataReader::getState(size_t frame) const
     state.detectorOffset = detector_trans.translation();
     state.samplePosition = sample_trans.translation();
 
-    state.ni = _diffractometer->getSource()->getSelectedMonochromator().getKi().rowVector();
+    state.ni = _diffractometer->source()->selectedMonochromator().ki().rowVector();
     state.ni.normalize();
-    state.wavelength = _diffractometer->getSource()->getSelectedMonochromator().getWavelength();
+    state.wavelength = _diffractometer->source()->selectedMonochromator().wavelength();
 
     return state;
 }
 
-std::string IDataReader::getBasename() const
+std::string IDataReader::basename() const
 {
-    return fileBasename(_metadata.getKey<std::string>("filename"));
+    return fileBasename(_metadata.key<std::string>("filename"));
 }
 
-std::string IDataReader::getFilename() const
+std::string IDataReader::filename() const
 {
-    return _metadata.getKey<std::string>("filename");
+    return _metadata.key<std::string>("filename");
 }
 
 
@@ -101,7 +101,7 @@ bool IDataReader::isOpened() const
 }
 
 
-std::size_t IDataReader::getFileSize() const
+std::size_t IDataReader::fileSize() const
 {
     return _fileSize;
 }

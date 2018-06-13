@@ -31,7 +31,7 @@ public:
     unsigned int nIsotopes() const;
 
     template <typename T>
-    T getProperty(const std::string& isotope, const std::string& property) const;
+    T property(const std::string& isotope, const std::string& property) const;
 
     bool hasProperty(const std::string& isotope, const std::string& property) const;
 
@@ -47,7 +47,7 @@ private:
 };
 
 template <typename T>
-T IsotopeDatabaseManager::getProperty(const std::string& isotope, const std::string& property) const
+T IsotopeDatabaseManager::property(const std::string& isotope, const std::string& property) const
 {
 	return _isotopes.at(isotope).at(property).as<T>();
 }

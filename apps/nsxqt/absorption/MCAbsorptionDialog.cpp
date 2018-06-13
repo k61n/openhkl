@@ -31,7 +31,7 @@ MCAbsorptionDialog::MCAbsorptionDialog(SessionModel* session, nsx::sptrExperimen
     _session(session)
 {
     ui->setupUi(this);
-    auto ncrystals=_experiment->diffractometer()->getSample()->getNCrystals();
+    auto ncrystals=_experiment->diffractometer()->sample()->nCrystals();
     if (ncrystals>0) {
         ui->comboBox->setEnabled(true);
         for (unsigned int i=0;i<ncrystals;++i) {
@@ -52,28 +52,28 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
         return;
     }
     // Get the source
-    auto source=_experiment->diffractometer()->getSource();
-    auto sample=_experiment->diffractometer()->getSample();
+    auto source=_experiment->diffractometer()->source();
+    auto sample=_experiment->diffractometer()->sample();
 
     // Get the material
     unsigned int cellIndex=static_cast<unsigned int>(ui->comboBox->currentIndex());
-    auto material=sample->getMaterial(cellIndex);
+    auto material=sample->material(cellIndex);
     if (material==nullptr) {
         QMessageBox::critical(this,"NSXTOOL","No material defined for this crystal");
         return;
     }
 
-    auto& mono = source->getSelectedMonochromator();
+    auto& mono = source->selectedMonochromator();
 
-    nsx::MCAbsorption mca(mono.getWidth(),mono.getHeight(),-1.0);
-    auto& hull=sample->getShape();
+    nsx::MCAbsorption mca(mono.width(),mono.height(),-1.0);
+    auto& hull=sample->shape();
     if (!hull.checkEulerConditions()) {
         QMessageBox::critical(this,"NSXTOOL","The sample shape (hull) is ill-defined");
         return;
     }
 
-    mca.setSample(&hull,material->muIncoherent(),material->muAbsorption(mono.getWavelength()*nsx::ang));
-    const auto& data=_experiment->getData();
+    mca.setSample(&hull,material->muIncoherent(),material->muAbsorption(mono.wavelength()*nsx::ang));
+    const auto& data=_experiment->data();
     ui->progressBar_MCStatus->setValue(0);
     ui->progressBar_MCStatus->setTextVisible(true);
     int progress=0;
@@ -84,9 +84,9 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
         ui->progressBar_MCStatus->setFormat(QString::fromStdString(d.second->filename()) + ": "+QString::number(progress)+"%");
         for (auto& p: peaks) {
             auto data = p->data();
-            auto coord = p->getShape().center();
+            auto coord = p->shape().center();
             auto state = data->interpolatedState(coord[2]);
-            auto position = data->diffractometer()->getDetector()->pixelPosition(coord[0], coord[1]);
+            auto position = data->diffractometer()->detector()->pixelPosition(coord[0], coord[1]);
             auto kf = state.kfLab(position);
             // todo: check coordinate systems here, may not be consistent
             double transmission=mca.run(ui->spinBox->value(),kf.rowVector(),state.sampleOrientationMatrix());

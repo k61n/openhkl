@@ -91,6 +91,11 @@ void Peak3D::setShape(const Ellipsoid& shape)
     _shape = shape;
 }
 
+const Ellipsoid& Peak3D::shape() const
+{
+    return _shape;
+}
+
 const std::vector<Intensity>& Peak3D::rockingCurve() const
 {
     return _rockingCurve;
@@ -126,14 +131,14 @@ sptrUnitCell Peak3D::unitCell(int index) const
     return _unitCells[size_t(index)];
 }
 
-Intensity Peak3D::getRawIntensity() const
+Intensity Peak3D::rawIntensity() const
 {
     return _rawIntensity;
 }
 
-Intensity Peak3D::getScaledIntensity() const
+Intensity Peak3D::scaledIntensity() const
 {
-    return getRawIntensity() * _scale;
+    return rawIntensity() * _scale;
 }
 
 Intensity Peak3D::correctedIntensity() const
@@ -142,15 +147,15 @@ Intensity Peak3D::correctedIntensity() const
     auto state = _data->interpolatedState(c[2]);
     const double lorentz = state.lorentzFactor(c[0], c[1]);
     const double factor = _scale / lorentz / _transmission;
-    return getRawIntensity() * factor / state.stepSize;
+    return rawIntensity() * factor / state.stepSize;
 }
 
-double Peak3D::getTransmission() const
+double Peak3D::transmission() const
 {
     return _transmission;
 }
 
-double Peak3D::getScale() const
+double Peak3D::scale() const
 {
     return _scale;
 }
@@ -171,7 +176,7 @@ void Peak3D::setTransmission(double transmission)
     _transmission = transmission;
 }
 
-bool Peak3D::isSelected() const
+bool Peak3D::selected() const
 {
     return (!_masked && _selected);
 }
@@ -186,7 +191,7 @@ void Peak3D::setMasked(bool masked)
     _masked = masked;
 }
 
-bool Peak3D::isIndexed() const
+bool Peak3D::indexed() const
 {
     return (!_unitCells.empty());
 }
@@ -241,7 +246,7 @@ ReciprocalVector Peak3D::q() const
 {
     auto pixel_coords = _shape.center();
     auto state = _data->interpolatedState(pixel_coords[2]);
-    auto detector = _data->diffractometer()->getDetector();
+    auto detector = _data->diffractometer()->detector();
     auto detector_position = DirectVector(detector->pixelPosition(pixel_coords[0], pixel_coords[1]));
     return state.sampleQ(detector_position);
 }
@@ -306,7 +311,7 @@ DetectorEvent Peak3D::predictCenter(double frame) const
 
     Eigen::RowVector3d pred_kf = (kf1-kf).norm() < (kf2-kf).norm() ? kf1 : kf2;
 
-    return _data->diffractometer()->getDetector()->constructEvent(DirectVector(state.samplePosition), ReciprocalVector(pred_kf*state.detectorOrientation));
+    return _data->diffractometer()->detector()->constructEvent(DirectVector(state.samplePosition), ReciprocalVector(pred_kf*state.detectorOrientation));
 }
 
     

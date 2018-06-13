@@ -272,7 +272,7 @@ ConvexHull BrillouinZone::detectorConvexHull(const ReciprocalVector& q0, sptrDat
         qs.push_back(ReciprocalVector(q0.rowVector()+v));
     }
 
-    auto events = data->getEvents(qs);
+    auto events = data->events(qs);
 
     if (events.size() != qs.size()) {
         throw std::runtime_error("BrillouinZone: could not transform to detector space");

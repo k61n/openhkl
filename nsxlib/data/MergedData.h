@@ -53,7 +53,7 @@ public:
     //! the space group symmetry.
     bool addPeak(const sptrPeak3D& peak);
     //! Retern the set of merged peaks.
-    const MergedPeakSet& getPeaks() const;
+    const MergedPeakSet& peaks() const;
 
     //! Return redundancy = #observations / #symmetry-inequvialent peaks.
     double redundancy() const;

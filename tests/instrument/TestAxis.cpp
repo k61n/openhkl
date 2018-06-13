@@ -14,7 +14,7 @@ public:
     TestAxis(const std::string& label, bool physical);
     ~TestAxis();
     TestAxis* clone() const;
-    Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(double value) const;
+    Eigen::Transform<double,3,Eigen::Affine> homMatrix(double value) const;
 };
 
 TestAxis::TestAxis(const std::string& label, bool physical) : Axis(label)
@@ -31,7 +31,7 @@ TestAxis* TestAxis::clone() const
     return new TestAxis(*this);
 }
 
-Eigen::Transform<double,3,Eigen::Affine> TestAxis::getHomMatrix(double value) const
+Eigen::Transform<double,3,Eigen::Affine> TestAxis::homMatrix(double value) const
 {
     NSX_UNUSED(value);
 
@@ -41,13 +41,13 @@ Eigen::Transform<double,3,Eigen::Affine> TestAxis::getHomMatrix(double value) co
 int main()
 {
     TestAxis axis("Omega",true);
-    const std::string& label=axis.getLabel();
+    const std::string& label = axis.label();
 
     NSX_CHECK_EQUAL(label,"Omega");
     Eigen::Vector3d v;
     v << 0,0,1;
     axis.setAxis(v);
-    NSX_CHECK_EQUAL(v,axis.getAxis());
+    NSX_CHECK_EQUAL(v,axis.axis());
 
     return 0;
 }

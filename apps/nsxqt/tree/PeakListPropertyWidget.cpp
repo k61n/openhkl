@@ -24,7 +24,7 @@ PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *pa
      ui(new Ui::PeakListPropertyWidget)
 {
     ui->setupUi(this);
-    std::map<std::string,nsx::sptrDataSet>  datamap=_caller->experiment()->getData();
+    std::map<std::string,nsx::sptrDataSet>  datamap=_caller->experiment()->data();
     nsx::DataList datav;
 
     auto func = [&](std::pair<std::string,nsx::sptrDataSet> value){datav.push_back(value.second);};
@@ -40,7 +40,7 @@ PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *pa
     }
 
     model->setPeaks(data_peaks);
-    model->setUnitCells(_caller->experiment()->diffractometer()->getSample()->unitCells());
+    model->setUnitCells(_caller->experiment()->diffractometer()->sample()->unitCells());
     ui->tableView->setModel(model);
 
     //Connect search box

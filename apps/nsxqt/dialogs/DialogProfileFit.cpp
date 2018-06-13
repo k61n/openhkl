@@ -54,7 +54,7 @@ DialogProfileFit::DialogProfileFit(nsx::sptrExperiment experiment,
 
     for (auto peak: peaks) {
         nsx::PeakCoordinateSystem coord(peak);
-        auto shape = peak->getShape();
+        auto shape = peak->shape();
         auto state = peak->data()->interpolatedState(shape.center()[2]);
         Eigen::Matrix3d J = coord.jacobian();
         cov += J*shape.inverseMetric()*J.transpose();
@@ -79,7 +79,7 @@ void DialogProfileFit::build()
     nsx::PeakList fit_peaks;
 
     for (auto peak: _peaks) {
-        if (!peak->isSelected()) {
+        if (!peak->selected()) {
             continue;
         }
         double d = 1.0 / peak->q().rowVector().norm();

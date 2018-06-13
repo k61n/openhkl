@@ -75,31 +75,31 @@ public:
 
     // Getters and setters
     //! Gets the axes of this goniometer
-    const std::vector<Axis*>& getAxes() const;
+    const std::vector<Axis*>& axes() const;
     //! Gets the names of the axes of this goniometer
-    std::vector<std::string> getAxesNames() const;
+    std::vector<std::string> axesNames() const;
     //! Gets the ids of the physical axes of this goniometer
-    std::vector<unsigned int> getPhysicalAxesIds() const;
+    std::vector<unsigned int> physicalAxesIds() const;
     //! Gets the names of the physical axes of this goniometer
-    std::vector<std::string> getPhysicalAxesNames() const;
+    std::vector<std::string> physicalAxesNames() const;
     //! Gets the names of the physical axes of this goniometer
-    std::map<unsigned int,std::string> getPhysicalAxisIdToNames() const;
+    std::map<unsigned int,std::string> physicalAxisIdToNames() const;
     //! Has physical axis with this name
     bool hasPhysicalAxis(const std::string&) const;
     //! Has axis with this name
     bool hasAxis(const std::string&) const;
     //! Get a pointer to axis i, throw range_error if not found
-    Axis*  getAxis(unsigned int i);
+    Axis* axis(unsigned int i);
     //! Get a pointer to axis with id id, throw range_error if not found
-    Axis* getAxisFromId(unsigned int id);
+    Axis* axisFromId(unsigned int id);
     //! Get a pointer to axis with label, throw range_error if not found
-    Axis* getAxis(const std::string& label);
+    Axis* axis(const std::string& label);
     //! Return the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
-    Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(const std::vector<double>& values) const;
+    Eigen::Transform<double,3,Eigen::Affine> homMatrix(const std::vector<double>& values) const;
     //! Return the number of axes attached to this goniometer
-    std::size_t getNAxes() const;
+    std::size_t nAxes() const;
     //! Return the number of physical axis defined in the gonio
-    std::size_t getNPhysicalAxes() const;
+    std::size_t nPhysicalAxes() const;
 
     //! Add an Axis to this Goniometer.
     void addAxis(Axis* axis);
@@ -107,16 +107,9 @@ public:
     Axis* addRotation(const std::string& label,const Eigen::Vector3d& axis, RotAxis::Direction dir=RotAxis::Direction::CCW);
     //! Add a translation axis to this goniometer
     Axis* addTranslation(const std::string& label,const Eigen::Vector3d& axis);
-    //! Return the inverse of the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
-    Eigen::Transform<double,3,Eigen::Affine> getInverseHomMatrix(const std::vector<double>& state) const;
+
     //! Transform a point in 3D space, given a vector of parameters
     DirectVector transform(const DirectVector& v, const std::vector<double>& state) const;
-    //! Reverse transform a point in 3D space, given a vector of parameters
-    DirectVector transformInverse(const DirectVector& v, const std::vector<double>& state) const;
-    //! Transform a vector inplace, for a values of Gonio parameters
-    void transformInPlace(DirectVector& v, const std::vector<double>& state) const;
-    //! Reverse transform a vector inplace, for a values of Gonio parameters
-    void transformInverseInPlace(DirectVector& v, const std::vector<double>& state) const;
 
 protected:
     //! Check whether axis i within the range of Axis

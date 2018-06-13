@@ -38,7 +38,7 @@ void LibraryItem::incorporateCalculatedPeaks()
     nsx::DataList numors = data_item->selectedData();
 
     for (auto numor: numors) {
-        auto sample = numor->diffractometer()->getSample();
+        auto sample = numor->diffractometer()->sample();
 
         for (auto uc: sample->unitCells()) {
             cells.insert(uc);

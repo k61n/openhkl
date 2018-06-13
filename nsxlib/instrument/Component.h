@@ -47,9 +47,9 @@ class Component {
 public:
 
     //! Default constructor
-    Component();
+    Component()=default;
     // Copy constructor
-    Component(const Component& other);
+    Component(const Component& other)=default;
     //! Constructs a component with a given name
     Component(const std::string& name);
     //! Construct a component from a property tree node
@@ -60,28 +60,19 @@ public:
     virtual ~Component()=0;
 
     //! Assignment operator
-    virtual Component& operator=(const Component& other);
+    virtual Component& operator=(const Component& other)=default;
 
     //! Returns the name of the component.
-    const std::string& getName() const;
+    const std::string& name() const;
     //! Set the name of the component
     void setName(const std::string& name);
 
-     //! Get the absolute position of the component for a set of goniometer values
-    DirectVector getPosition(const std::vector<double>& goniosetup) const;
-    //! Get the absolute position at rest (unmodified by gonio)
-    const DirectVector& getRestPosition() const;
-    //! Set the rest position
-    virtual void setRestPosition(const DirectVector& pos);
-
     //! Return the goniometer attached to this component
-    sptrGonio getGonio() const;
+    sptrGonio gonio() const;
     //! Return true if a geometric modifier is attached
     bool hasGonio() const;
     //! Attach a modifier to the component.
     void setGonio(sptrGonio gonio);
-
-    std::vector<double> createState(const std::map<std::string,double>& values);
 
  protected:
     //! Name of the component

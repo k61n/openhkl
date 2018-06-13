@@ -70,13 +70,13 @@ public:
 	//! Get rotation direction.
 	void setRotationDirection(Direction);
 	// ! Return 0 for CCW and 1 for CW
-	Direction getRotationDirection() const;
+	Direction rotationDirection() const;
 	//! Get the rotation matrix associated with this rotation
 	//@param angle : rotation angle in radians by default, use Units to convert
 	//@return rotation matrix
-	Eigen::Matrix3d getRotationMatrix(double angle) const;
+	Eigen::Matrix3d rotationMatrix(double angle) const;
 	//! Return the 4x4 Homogeous matrix corresponding to this transformation.
-	Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(double angle) const;
+	Eigen::Transform<double,3,Eigen::Affine> homMatrix(double angle) const;
 	//! Get the quaternion associated with this rotation
 	//@param angle : rotation angle in radians by default
 	//@return rotation matrix

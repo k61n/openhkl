@@ -47,7 +47,7 @@ public:
     // Note that we need this constructor explicitly defined for SWIG.
     HDF5DataReader(const std::string& filename, sptrDiffractometer instrument);
 
-    Eigen::MatrixXi getData(size_t frame) override;
+    Eigen::MatrixXi data(size_t frame) override;
 };
 
 } // end namespace nsx

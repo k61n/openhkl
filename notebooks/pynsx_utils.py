@@ -198,7 +198,7 @@ def predict_peaks(peaks, dataset, unit_cell, batches):
 
     qshape = pred.averageQShape(peaks)
 
-    wavelength = dataset.diffractometer().getSource().getSelectedMonochromator().getWavelength()    
+    wavelength = dataset.diffractometer().source().getSelectedMonochromator().getWavelength()    
 
     d_values = [1/np.linalg.norm(p.getQ().rowVector()) for p in peaks]
 

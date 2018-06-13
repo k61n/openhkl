@@ -16,7 +16,7 @@ class FakeDataReader: public HDF5MetaDataReader
 public:
     FakeDataReader(const std::string& filename, sptrDiffractometer instrument);
     
-    Eigen::MatrixXi getData(size_t frame) override;
+    Eigen::MatrixXi data(size_t frame) override;
     void setData(size_t frame, const Eigen::MatrixXi& data);
 
 private:

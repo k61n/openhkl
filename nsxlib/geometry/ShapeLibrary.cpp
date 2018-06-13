@@ -33,8 +33,8 @@ struct FitData {
 
     FitData(sptrPeak3D peak)
     {
-        auto detector = peak->data()->diffractometer()->getDetector();
-        Eigen::Vector3d center = peak->getShape().center();
+        auto detector = peak->data()->diffractometer()->detector();
+        Eigen::Vector3d center = peak->shape().center();
         auto state = peak->data()->interpolatedState(center[2]);
 
         Rs = state.sampleOrientationMatrix().transpose();
@@ -101,7 +101,7 @@ static void covariance_helper(Eigen::Matrix3d& result, const FitData& f, const E
 
 bool ShapeLibrary::addPeak(sptrPeak3D peak, Profile3D&& profile, IntegratedProfile&& integrated_profile)
 {
-    Eigen::Matrix3d A = peak->getShape().inverseMetric();
+    Eigen::Matrix3d A = peak->shape().inverseMetric();
     Eigen::Matrix3d cov = 0.5 * (A + A.transpose());
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(cov);
     Eigen::VectorXd w = solver.eigenvalues();
@@ -127,7 +127,7 @@ void ShapeLibrary::updateFit(int num_iterations)
 
     for (const auto& pair: _profiles) {
         auto peak = pair.first;
-        Eigen::Matrix3d cov = peak->getShape().inverseMetric();
+        Eigen::Matrix3d cov = peak->shape().inverseMetric();
         FitData data(peak);
         fit_data.push_back({0.5*(cov+cov.transpose()), data});
     }
@@ -192,7 +192,7 @@ double ShapeLibrary::meanPearson() const
 
     for (const auto& pair: _profiles) {
         auto peak = pair.first;
-        Eigen::Matrix3d obs_cov = peak->getShape().inverseMetric();
+        Eigen::Matrix3d obs_cov = peak->shape().inverseMetric();
         Eigen::Matrix3d pred_cov = predictCovariance(peak);
         sum_pearson += (obs_cov.transpose()*pred_cov).trace() / obs_cov.norm() / pred_cov.norm();
     }
@@ -241,7 +241,7 @@ PeakList ShapeLibrary::findNeighbors(const DetectorEvent& ev, double radius, dou
     
     for (const auto& pair: _profiles) {
         auto peak = pair.first;    
-        Eigen::Vector3d dc = center - peak->getShape().center();    
+        Eigen::Vector3d dc = center - peak->shape().center();
         // too far away on detector
         if (dc(0)*dc(0) + dc(1)*dc(1) > radius*radius) {
             continue;
@@ -262,7 +262,7 @@ Eigen::Matrix3d ShapeLibrary::meanCovariance(sptrPeak3D reference_peak, double r
 {
     Eigen::Matrix3d cov;
     cov.setZero();
-    PeakList neighbors = findNeighbors(DetectorEvent(reference_peak->getShape().center()), radius, nframes);
+    PeakList neighbors = findNeighbors(DetectorEvent(reference_peak->shape().center()), radius, nframes);
 
     if (neighbors.size() < min_neighbors) {
         throw std::runtime_error("ShapeLibrary::meanCovariance(): peak has too few neighbors");
@@ -271,7 +271,7 @@ Eigen::Matrix3d ShapeLibrary::meanCovariance(sptrPeak3D reference_peak, double r
     // testing (try using detector space??)
     #if 1
     for (auto peak: neighbors) {
-        cov += peak->getShape().inverseMetric();
+        cov += peak->shape().inverseMetric();
     }
     cov /= neighbors.size();
     return cov;
@@ -280,7 +280,7 @@ Eigen::Matrix3d ShapeLibrary::meanCovariance(sptrPeak3D reference_peak, double r
     // testing (try using detector space??)
     #if 0
     for (auto peak: neighbors) {
-        cov += peak->getShape().inverseMetric();
+        cov += peak->shape().inverseMetric();
     }
     cov /= neighbors.size();
     return cov;
@@ -291,7 +291,7 @@ Eigen::Matrix3d ShapeLibrary::meanCovariance(sptrPeak3D reference_peak, double r
     for (auto peak: neighbors) {
         PeakCoordinateSystem coord(peak);
         Eigen::Matrix3d J = coord.jacobian();
-        cov += J * peak->getShape().inverseMetric() * J.transpose();
+        cov += J * peak->shape().inverseMetric() * J.transpose();
     }
 
     if (neighbors.size() == 0) {

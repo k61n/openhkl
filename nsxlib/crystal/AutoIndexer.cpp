@@ -94,7 +94,7 @@ void AutoIndexer::removeBad(double quality)
     _solutions.erase(remove, _solutions.end());
 }
 
-const std::vector<std::pair<sptrUnitCell, double> > &AutoIndexer::getSolutions() const
+const std::vector<std::pair<sptrUnitCell, double> > &AutoIndexer::solutions() const
 {
     return _solutions;
 }
@@ -216,8 +216,8 @@ void AutoIndexer::refineSolutions()
             hkls.emplace_back(hkld.rowVector().cast<double>());
             qs.emplace_back(peak->q().rowVector());
 
-            Eigen::Vector3d c = peak->getShape().center();
-            Eigen::Matrix3d M = peak->getShape().metric();
+            Eigen::Vector3d c = peak->shape().center();
+            Eigen::Matrix3d M = peak->shape().metric();
             auto state = peak->data()->interpolatedState(c[2]);
             Eigen::Matrix3d J = state.jacobianQ(c[0], c[1]);
             Eigen::Matrix3d JI = J.inverse();

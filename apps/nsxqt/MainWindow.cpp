@@ -246,7 +246,7 @@ void MainWindow::plotPeak(nsx::sptrPeak3D peak)
     // Ensure that frames
     changeData(data);
     // Get frame number to adjust the data
-    size_t data_frame = size_t(std::lround(peak->getShape().aabb().center()[2]));
+    size_t data_frame = size_t(std::lround(peak->shape().aabb().center()[2]));
     scenePtr->setData(_session, data, data_frame);
     // Update the scrollbar
     _ui->frame->setValue(data_frame);

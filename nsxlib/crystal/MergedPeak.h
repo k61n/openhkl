@@ -61,10 +61,10 @@ public:
     bool addPeak(const sptrPeak3D& peak);
 
     //! Return a representative Miller index of the peak.
-    MillerIndex getIndex() const;
+    MillerIndex index() const;
 
     //! Return the merged intensity of the peak.
-    Intensity getIntensity() const;
+    Intensity intensity() const;
 
     //! Return the redundancy (number of symmetry-equivalent observations) of the merged peak.
     size_t redundancy() const;
@@ -76,7 +76,7 @@ public:
     double pValue() const;
 
     //! Return vector of peaks used to compute the merged peak.
-    const PeakList& getPeaks() const;
+    const PeakList& peaks() const;
 
     //! split the merged peak randomly into two, for calculation of CC
     std::pair<MergedPeak, MergedPeak> split() const;

@@ -26,7 +26,7 @@ FakeDataReader::FakeDataReader(const std::string& filename, sptrDiffractometer d
 }
 
 
-Eigen::MatrixXi FakeDataReader::getData(size_t frame)
+Eigen::MatrixXi FakeDataReader::data(size_t frame)
 {
     return _frames[frame];
 }

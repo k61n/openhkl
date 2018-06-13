@@ -70,46 +70,30 @@ public:
 	//! Give a label to this axis
 	void setLabel(const std::string& label);
 	//! Return the axis label
-	const std::string& getLabel() const;
+	const std::string& label() const;
 	//! Give the direction of the axis.
 	//! Axis is normalized
 	void setAxis(const Eigen::Vector3d& axis);
 	//! Get the normalized direction of this axis
-	const Eigen::Vector3d& getAxis() const;
-	//! Set the range of values accessible for this axis
-	void setLimits(double, double);
-	//! Get minimum of the range
-	double getHighLimit() const;
-	//! Set the  max value of the range
-	void setHighLimit(double);
-	//! Get maximum of the range
-	double getLowLimit() const;
-	//! Set the min value of the range
-	void setLowLimit(double);
+	const Eigen::Vector3d& axis() const;
 	//! Get the instrument id of the axis
-	unsigned int getId() const;
+	unsigned int id() const;
 	//! Set the instrument id of the axis
 	void setId(unsigned int id);
 	//! Get the homogeneous (4x4) matrix corresponding to the value
-	virtual Eigen::Transform<double,3,Eigen::Affine> getHomMatrix(double value) const=0;
+	virtual Eigen::Transform<double,3,Eigen::Affine> homMatrix(double value) const=0;
 	//! Transform vector
     Eigen::Vector3d transform(const Eigen::Vector3d& v, double value);
 	//! Set the axis to physical (true) or virtual (true)
 	void setPhysical(bool physical);
 	//! Return whether or not the axis is physical or not
-	bool isPhysical() const;
+	bool physical() const;
 
 protected:
-	//! Check whether a value is within the authorized limits of this axis, throw otherwise.
-	void checkRange(double value);
 	//! Label of the axis.
 	std::string _label;
 	//! Axis direction, a normalized vector.
     Eigen::Vector3d _axis;
-	//! The minimum value allowed for the value of the axis.
-	double _min;
-	//! The maximum value allowed for the value of the axis.
-	double _max;
 	//! Defines whether the axis is physical or not. A physical axis is related to metadata.
 	bool _physical;
 	//! The instrument id (e.g. MAD number for instrument related to ILL ASCII Data).

@@ -75,12 +75,12 @@ bool MergedPeak::addPeak(const sptrPeak3D& peak)
     return true;
 }
 
-MillerIndex MergedPeak::getIndex() const
+MillerIndex MergedPeak::index() const
 {
     return _hkl;
 }
 
-Intensity MergedPeak::getIntensity() const
+Intensity MergedPeak::intensity() const
 {
     return _intensitySum / _peaks.size();
 }
@@ -123,7 +123,7 @@ void MergedPeak::determineRepresentativeHKL()
     }
 }
 
-const PeakList& MergedPeak::getPeaks() const
+const PeakList& MergedPeak::peaks() const
 {
     return _peaks;
 }
@@ -160,8 +160,8 @@ std::pair<MergedPeak, MergedPeak> MergedPeak::split() const
 
 bool operator<(const MergedPeak& p, const MergedPeak& q)
 {
-    const auto& a = p.getIndex();
-    const auto& b = q.getIndex();
+    const auto& a = p.index();
+    const auto& b = q.index();
 
     if (a(0) != b(0)) {
         return a(0) < b(0);
@@ -179,7 +179,7 @@ bool operator<(const MergedPeak& p, const MergedPeak& q)
 //! which is approximately a chi-squared statistic with \f$N-1\f$ degrees of freedom.
 double MergedPeak::chi2() const
 {
-    const double I_merge = getIntensity().value();
+    const double I_merge = intensity().value();
 
     // if there is no redundancy, we cannot compute chi2
     if (redundancy() < 1.99) {

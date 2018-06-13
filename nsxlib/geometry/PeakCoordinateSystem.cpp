@@ -12,7 +12,7 @@ PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak): _peak(peak)
         throw std::runtime_error("Cannot construct PeakCoordinateSystem from null Peak3d");
     }
 
-    _event = DetectorEvent(peak->getShape().center());
+    _event = DetectorEvent(peak->shape().center());
     _state = peak->data()->interpolatedState(_event._frame);
     _ki = _state.ki().rowVector();
     _kf = peak->q().rowVector()*_state.sampleOrientationMatrix().transpose() + _ki;
@@ -30,7 +30,7 @@ PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak): _peak(peak)
 
 Eigen::Vector3d PeakCoordinateSystem::transform(const DetectorEvent& ev) const
 {
-    auto det = _peak->data()->diffractometer()->getDetector();
+    auto det = _peak->data()->diffractometer()->detector();
     auto position = det->pixelPosition(ev._px, ev._py);
     const Eigen::RowVector3d dk = _state.kfLab(position).rowVector() - _kf;
 
@@ -88,7 +88,7 @@ Eigen::Matrix3d PeakCoordinateSystem::jacobian() const
 Ellipsoid PeakCoordinateSystem::detectorShape(double sigmaD, double sigmaM) const
 {
     Eigen::Matrix3d J = jacobian();
-    Eigen::Vector3d center = _peak->getShape().center();
+    Eigen::Vector3d center = _peak->shape().center();
 
     Eigen::Matrix3d metric;
     metric.setZero();
@@ -106,7 +106,7 @@ Ellipsoid PeakCoordinateSystem::detectorShape(double sigmaD, double sigmaM) cons
 Ellipsoid PeakCoordinateSystem::standardShape() const
 {
     Eigen::Matrix3d J = jacobian();
-    Eigen::Matrix3d cov = J * _peak->getShape().inverseMetric() * J.transpose();
+    Eigen::Matrix3d cov = J * _peak->shape().inverseMetric() * J.transpose();
     return Ellipsoid(_peak->q().rowVector(), cov.inverse());
 }
 

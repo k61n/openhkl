@@ -105,19 +105,19 @@ bool StrongPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& reg
         f_max = std::max(ev._frame, f_max);
     }
 
-    Eigen::Vector3d center = _fitCenter ? blob.center() : peak->getShape().center();
-    Eigen::Matrix3d cov = _fitCovariance ? blob.covariance() : peak->getShape().inverseMetric();
+    Eigen::Vector3d center = _fitCenter ? blob.center() : peak->shape().center();
+    Eigen::Matrix3d cov = _fitCovariance ? blob.covariance() : peak->shape().inverseMetric();
 
     // center of mass is consistent
     if (std::isnan(center.norm())) {
         return false;
     }
 
-    if (!peak->getShape().isInside(center)) {
+    if (!peak->shape().isInside(center)) {
         return false;
     }
 
-    Eigen::Matrix3d A0 = peak->getShape().metric();
+    Eigen::Matrix3d A0 = peak->shape().metric();
     Eigen::Matrix3d A1 = cov.inverse();
     const double dA = (A1-A0).norm() / A0.norm();
 

@@ -25,7 +25,7 @@ IDataReader* HDF5DataReader::create(const std::string& filename, sptrDiffractome
     return new HDF5DataReader(filename, diffractometer);
 }
 
-Eigen::MatrixXi HDF5DataReader::getData(size_t frame)
+Eigen::MatrixXi HDF5DataReader::data(size_t frame)
 {
     if (!_isOpened) {
         open();

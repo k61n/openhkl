@@ -45,8 +45,8 @@ int nsx::UnitTest_DataSet::run()
 
     expt->addData(dataf);
 
-    auto detector_gonio = dataf->diffractometer()->getDetector()->getGonio();
-    auto sample_gonio = dataf->diffractometer()->getSample()->getGonio();
+    auto detector_gonio = dataf->diffractometer()->detector()->gonio();
+    auto sample_gonio = dataf->diffractometer()->sample()->gonio();
 
     auto detectorStates = dataf->_reader->detectorStates();
     auto sampleStates = dataf->_reader->sampleStates();
