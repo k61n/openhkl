@@ -283,24 +283,6 @@ Eigen::Matrix3d ShapeLibrary::meanCovariance(sptrPeak3D reference_peak, double r
         throw std::runtime_error("ShapeLibrary::meanCovariance(): peak has too few neighbors");
     }
 
-    // testing (try using detector space??)
-    #if 1
-    for (auto peak: neighbors) {
-        cov += peak->shape().inverseMetric();
-    }
-    cov /= neighbors.size();
-    return cov;
-    #endif
-
-    // testing (try using detector space??)
-    #if 0
-    for (auto peak: neighbors) {
-        cov += peak->shape().inverseMetric();
-    }
-    cov /= neighbors.size();
-    return cov;
-    #endif
-
     PeakCoordinateSystem reference_coord(reference_peak);
 
     for (auto peak: neighbors) {
