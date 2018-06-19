@@ -21,7 +21,12 @@ cd qmake-build
 /usr/local/opt/qt5/bin/qmake ${CI_PROJECT_DIR}/build/apps/NSXQt/NSXQt.pro CONFIG+=release
 make -j4
 
+# Prepare nsxtool.app for being a dmg
 /usr/local/opt/qt5/bin/macdeployqt nsxtool.app/
+
+# Add pynsx and its corresponding python to the dmg
+chmod 755 ${CI_PROJECT_DIR}/build_server/osx/setup_pynsx.sh
+${CI_PROJECT_DIR}/build_server/osx/setup_pynsx.sh
 
 # Remove unnecessary files
 rm -f *.cpp
