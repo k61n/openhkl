@@ -77,21 +77,7 @@ void LibraryItem::incorporateCalculatedPeaks()
     }
 
     auto peaks_item = experimentItem()->peaksItem();
-    model()->setData(peaks_item->index(),QVariant::fromValue(predicted_peaks),Qt::UserRole);
-}
-
-void LibraryItem::setData(const QVariant& value, int role)
-{
-    switch (role)
-    {
-    case Qt::UserRole:
-
-        auto item = new PeakListItem(value.value<nsx::PeakList>());
-        item->setText("Predicted peaks");
-        appendRow(item);
-
-        break;
-
-    }
-    QStandardItem::setData(value,role);
+    auto item = new PeakListItem(predicted_peaks);
+    item->setText("Predicted peaks");
+    peaks_item->appendRow(item);
 }
