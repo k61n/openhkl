@@ -204,8 +204,15 @@ nsx::DataList DataItem::selectedData()
 
 void DataItem::convertToHDF5()
 {
+    nsx::DataList selectedNumors = selectedData();
+
+    if (selectedNumors.empty()) {
+        nsx::error()<<"No numors selected for HDF5 conversion";
+        return;
+    }
+
     // dialog will automatically be deleted before we return from this method
-    std::unique_ptr<DialogHDF5Converter> dialog_ptr(new DialogHDF5Converter(experiment()));
+    std::unique_ptr<DialogHDF5Converter> dialog_ptr(new DialogHDF5Converter(selectedNumors));
 
     if (!dialog_ptr->exec()) {
         return;
