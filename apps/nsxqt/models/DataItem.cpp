@@ -186,7 +186,11 @@ void DataItem::findPeaks()
 
     nsx::debug() << "Peak search complete., found " << peaks.size() << " peaks.";
     auto peaks_item = experimentItem()->peaksItem();
-    model()->setData(peaks_item->index(),QVariant::fromValue(peaks),Qt::UserRole);
+
+    auto item = new PeakListItem(peaks);
+    item->setText("Found peaks");
+    peaks_item->appendRow(item);
+    //model()->setData(peaks_item->index(),QVariant::fromValue(peaks),Qt::UserRole);
 }
 
 nsx::DataList DataItem::selectedData()
