@@ -18,7 +18,6 @@
 
 #include <nsxlib/AABB.h>
 #include <nsxlib/AggregateStreamWrapper.h>
-#include <nsxlib/Basis.h>
 #include <nsxlib/CrystalTypes.h>
 #include <nsxlib/Detector.h>
 #include <nsxlib/Diffractometer.h>
@@ -32,7 +31,7 @@
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFilter.h>
 #include <nsxlib/PeakFinder.h>
-#include <nsxlib/Gaussian3d.h>
+
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/Source.h>

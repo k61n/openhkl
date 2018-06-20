@@ -12,7 +12,7 @@
 #include <nsxlib/DetectorEvent.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/DirectVector.h>
-#include <nsxlib/ErfInv.h>
+
 #include <nsxlib/Experiment.h>
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Peak3D.h>

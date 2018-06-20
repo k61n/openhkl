@@ -59,7 +59,7 @@
 %shared_ptr(nsx::TiffDataReader)
 %shared_ptr(nsx::Experiment)
 %shared_ptr(nsx::ProgressHandler)
-%shared_ptr(nsx::Basis)
+
 %shared_ptr(nsx::UnitCell)
 %shared_ptr(nsx::Component)
 %shared_ptr(nsx::Detector)
@@ -94,17 +94,8 @@ using Eigen::Quaterniond;
 #include "Material.h"
 #include "IsotopeDatabaseManager.h"
 
-#include "ErfInv.h"
-#include "Gaussian.h"
-#include "GCD.h"
-#include "Interpolator.h"
-#include "Lorentzian.h"
 #include "FitParameters.h"
 #include "Minimizer.h"
-
-#include "Round.h"
-#include "RNG.h"
-#include "Gaussian3d.h"
 
 #include "EigenToVector.h"
 #include "System.h"
@@ -152,7 +143,6 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "Vertex.h"
 #include "Triangle.h"
 
-#include "Basis.h"
 #include "Ellipsoid.h"
 #include "Face.h"
 #include "MCAbsorption.h"
@@ -217,9 +207,6 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "ConstantConvolver.h"
 #include "Convolver.h"
 
-#include "Composite.h"
-
-#include "Memento.h"
 #include "Singleton.h"
 #include "Factory.h"
 
@@ -245,7 +232,6 @@ using sptrMaterial = std::shared_ptr<nsx::Material>;
  
 #include "Sample.h"
 
-#include "Basis.h"
 #include "AABB.h"
 #include "Ellipsoid.h"
 #include "Blob3D.h"
@@ -463,17 +449,8 @@ namespace nsx {
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;
 
 %include "Material.h"
-
-%include "ErfInv.h"
-%include "Gaussian.h"
-%include "GCD.h"
-%include "Interpolator.h"
-%include "Lorentzian.h"
-%include "Round.h"
 %include "FitParameters.h"
 %include "Minimizer.h"
-%include "RNG.h"
-%include "Gaussian3d.h"
 
 %include "EigenToVector.h"
 %include "System.h"
@@ -493,8 +470,6 @@ namespace nsx {
 %include "Refiner.h"
 
 %template(RefinementBatchList) std::vector<nsx::RefinementBatch>;
-
-%include "Basis.h"
 
 %include "Intensity.h"
 
@@ -585,7 +560,6 @@ namespace nsx {
 
 %include "AutoIndexer.h"
 
-%include "Memento.h"
 %include "Singleton.h"
 
 %newobject new_double;

@@ -13,7 +13,6 @@
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/DirectVector.h>
 #include <nsxlib/Ellipsoid.h>
-#include <nsxlib/ErfInv.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Peak3D.h>

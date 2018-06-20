@@ -12,7 +12,6 @@
 namespace nsx {
 
 class AABB;
-class Basis;
 class Blob3D;
 class ConvexHull;
 class DirectVector;
@@ -31,7 +30,6 @@ using HomMatrix   = Eigen::Matrix<double,4,4>;
 
 using covMat = Eigen::Matrix<double,9,9>;
 
-using sptrBasis     = std::shared_ptr<Basis>;
 using sptrEllipsoid = std::shared_ptr<Ellipsoid>;
 
 using sptrProfile3D = std::shared_ptr<Profile3D>;

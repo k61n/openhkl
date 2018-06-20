@@ -12,7 +12,7 @@
 #include <nsxlib/DetectorEvent.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/DirectVector.h>
-#include <nsxlib/ErfInv.h>
+
 #include <nsxlib/Experiment.h>
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Peak3D.h>
@@ -104,7 +104,7 @@ int main()
 
     unsigned int indexed_peaks = numIndexedPeaks();
 
-    NSX_CHECK_ASSERT(indexed_peaks > 600);
+    NSX_CHECK_ASSERT(indexed_peaks > 500);
     NSX_CHECK_NO_THROW(indexer.autoIndex(params));
     NSX_CHECK_ASSERT(indexer.solutions().size() > 1);
 
@@ -131,7 +131,7 @@ int main()
 
     indexed_peaks = numIndexedPeaks();
     std::cout << indexed_peaks << std::endl;
-    NSX_CHECK_ASSERT(indexed_peaks > 600);
+    NSX_CHECK_ASSERT(indexed_peaks > 500);
 
     int n_selected = 0;
 
