@@ -76,7 +76,7 @@
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/SpaceGroup.h>
-#include <nsxlib/StrongPeakIntegrator.h>
+#include <nsxlib/PixelSumIntegrator.h>
 #include <nsxlib/Source.h>
 #include <nsxlib/UnitCell.h>
 

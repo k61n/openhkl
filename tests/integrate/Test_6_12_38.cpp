@@ -24,7 +24,7 @@
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/ShapeLibrary.h>
-#include <nsxlib/StrongPeakIntegrator.h>
+#include <nsxlib/PixelSumIntegrator.h>
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
 
@@ -69,7 +69,7 @@ int main()
     
     nsx::PeakList peaks;
     peaks.push_back(peak);
-    nsx::StrongPeakIntegrator integrator(false, false);
+    nsx::PixelSumIntegrator integrator(false, false);
     integrator.integrate(peaks, dataf, 2.7, 3.0, 4.0);
 
     NSX_CHECK_ASSERT(peak->selected() == true);

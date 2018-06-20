@@ -23,7 +23,7 @@
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/ShapeLibrary.h>
-#include <nsxlib/StrongPeakIntegrator.h>
+#include <nsxlib/PixelSumIntegrator.h>
 #include <nsxlib/Units.h>
 
 NSX_INIT_TEST
@@ -73,7 +73,7 @@ int main()
 
     NSX_CHECK_ASSERT(found_peaks.size() >= 800);
 
-    nsx::StrongPeakIntegrator integrator(false, false);
+    nsx::PixelSumIntegrator integrator(false, false);
     integrator.setHandler(progressHandler);
     integrator.integrate(found_peaks, dataf, 2.7, 3.5, 4.0);
 

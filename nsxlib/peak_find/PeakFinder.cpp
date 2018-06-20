@@ -15,7 +15,7 @@
 #include "PeakFinder.h"
 #include "ProgressHandler.h"
 #include "Sample.h"
-#include "StrongPeakIntegrator.h"
+#include "PixelSumIntegrator.h"
 
 using EquivalencePair = std::pair<int,int>;
 using EquivalenceList = std::vector<EquivalencePair>;

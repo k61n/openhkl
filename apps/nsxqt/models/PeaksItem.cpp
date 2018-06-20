@@ -18,7 +18,7 @@
 #include <nsxlib/Profile3DIntegrator.h>
 #include <nsxlib/RawDataReader.h>
 #include <nsxlib/Sample.h>
-#include <nsxlib/StrongPeakIntegrator.h>
+#include <nsxlib/PixelSumIntegrator.h>
 #include <nsxlib/UnitCell.h>
 
 #include "DataItem.h"
@@ -86,7 +86,7 @@ void PeaksItem::integratePeaks()
     std::map<std::string, std::function<nsx::IPeakIntegrator*()>> integrator_map;
     std::vector<std::string> integrator_names;
     
-    integrator_map["Pixel sum integrator"] = [&]() {return new nsx::StrongPeakIntegrator(dialog->fitCenter(), dialog->fitCov());};
+    integrator_map["Pixel sum integrator"] = [&]() {return new nsx::PixelSumIntegrator(dialog->fitCenter(), dialog->fitCov());};
     integrator_map["3d profile integrator"] = [&]() {return new nsx::Profile3DIntegrator(library, dialog->radius(), dialog->nframes(), false);};
     integrator_map["I/Sigma integrator"] = [&]() {return new nsx::ISigmaIntegrator(library, dialog->radius(), dialog->nframes());};
     integrator_map["1d Profile integrator"] = [&]() {return new nsx::Profile1DIntegrator(library, dialog->radius(), dialog->nframes());};
@@ -272,6 +272,12 @@ void PeaksItem::autoAssignUnitCell()
 {
     auto&& peaks = selectedPeaks();
     auto sample = experiment()->diffractometer()->sample();
+
+    //! nothing to do!
+    if (sample->nCrystals() < 1) {
+        nsx::info() << "There are no unit cells to assign";
+        return;
+    }
 
     for (auto peak: peaks) {
         if (!peak->selected()) {

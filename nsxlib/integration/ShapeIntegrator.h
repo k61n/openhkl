@@ -4,15 +4,17 @@
 
 #include "CrystalTypes.h"
 #include "GeometryTypes.h"
-#include "StrongPeakIntegrator.h"
+#include "PixelSumIntegrator.h"
 #include "ShapeLibrary.h"
 
 namespace nsx {
 
 class DataSet;
 
-class ShapeIntegrator: public StrongPeakIntegrator {
+//! \brief Peak integrator class used to build a shape library for profile fitting.
+class ShapeIntegrator: public PixelSumIntegrator {
 public:
+    //! Construct the integrator with the given shape library, bounding box, and box shape.
     ShapeIntegrator(sptrShapeLibrary lib, const AABB& aabb, int nx, int ny, int nz);
     bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
 

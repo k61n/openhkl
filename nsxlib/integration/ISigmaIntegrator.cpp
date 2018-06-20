@@ -39,7 +39,7 @@
 namespace nsx {
 
 ISigmaIntegrator::ISigmaIntegrator(sptrShapeLibrary library, double radius, double nframes):
-    StrongPeakIntegrator(false, false),
+    PixelSumIntegrator(false, false),
     _library(library),
     _radius(radius),
     _nframes(nframes)
@@ -58,7 +58,7 @@ bool ISigmaIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
     }
 
     // first get mean background
-    StrongPeakIntegrator::compute(peak, region);
+    PixelSumIntegrator::compute(peak, region);
     const double mean_bkg = _meanBackground.value();
     const double var_bkg = _meanBackground.variance();
 

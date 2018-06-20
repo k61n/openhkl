@@ -12,7 +12,7 @@
 
 %feature("director") IPeakIntegrator;
 %feature("director") MeanBackgroundIntegrator;
-%feature("director") StrongPeakIntegrator;
+%feature("director") PixelSumIntegrator;
 %feature("director") Profile3DIntegrator;
 %feature("director") ISigmaIntegrator;
 %feature("director") ShapeIntegrator;
@@ -134,7 +134,7 @@ using Eigen::Quaterniond;
 #include "MeanBackgroundIntegrator.h"
 #include "Profile3DIntegrator.h"
 #include "ISigmaIntegrator.h"
-#include "StrongPeakIntegrator.h"
+#include "PixelSumIntegrator.h"
 #include "ShapeIntegrator.h"
 #include "IntegrationRegion.h"
 #include "PeakData.h"
@@ -207,6 +207,8 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "ConstantConvolver.h"
 #include "ConvolverFactory.h"
 #include "RadialConvolver.h"
+
+#include "mosaic.h"
 
 #include "Axis.h"
 #include "Experiment.h"
@@ -415,7 +417,7 @@ namespace nsx {
 %include "MeanBackgroundIntegrator.h"
 %include "Profile3DIntegrator.h"
 %include "ISigmaIntegrator.h"
-%include "StrongPeakIntegrator.h"
+%include "PixelSumIntegrator.h"
 %include "Peak3D.h"
 %include "Profile1D.h"
 %include "ShapeLibrary.h"
@@ -442,6 +444,8 @@ namespace nsx {
 %include "RadialConvolver.h"
 %include "Convolver.h"
 %include "AtomicConvolver.h"
+
+%include "mosaic.h"
 
 %include "MetaData.h"
 %include "IDataReader.h"

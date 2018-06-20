@@ -9,6 +9,7 @@ namespace nsx {
 
 class DataSet;
 
+//! \brief Compute the mean background near a peak.
 class MeanBackgroundIntegrator: public IPeakIntegrator {
 public:
     MeanBackgroundIntegrator();

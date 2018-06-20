@@ -23,7 +23,7 @@
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/ShapeLibrary.h>
-#include <nsxlib/StrongPeakIntegrator.h>
+#include <nsxlib/PixelSumIntegrator.h>
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
 

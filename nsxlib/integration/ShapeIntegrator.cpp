@@ -9,7 +9,7 @@
 
 namespace nsx {
 
-ShapeIntegrator::ShapeIntegrator(sptrShapeLibrary lib, const AABB& aabb, int nx, int ny, int nz): StrongPeakIntegrator(false, false), 
+ShapeIntegrator::ShapeIntegrator(sptrShapeLibrary lib, const AABB& aabb, int nx, int ny, int nz): PixelSumIntegrator(false, false), 
     _library(lib), 
     _aabb(aabb),
     _nx(nx),
@@ -28,7 +28,7 @@ bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
         throw std::runtime_error("ShapeIntegrator: Peak must have unit cell and data attached");        
     }
 
-    StrongPeakIntegrator::compute(peak, region);
+    PixelSumIntegrator::compute(peak, region);
 
     const double mean_bkg = _meanBackground.value();
     const auto& events = region.data().events();
