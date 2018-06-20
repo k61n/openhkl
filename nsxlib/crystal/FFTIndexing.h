@@ -35,7 +35,6 @@
 #include <Eigen/Dense>
 
 #include "GeometryTypes.h"
-#include "MathematicsTypes.h"
 #include "Units.h"
 
 namespace nsx {

@@ -16,7 +16,6 @@
 #include "DetectorEvent.h"
 #include "Diffractometer.h"
 #include "Ellipsoid.h"
-#include "ErfInv.h"
 #include "Gonio.h"
 #include "IDataReader.h"
 #include "IntegrationRegion.h"

@@ -38,7 +38,6 @@
 
 #include <Eigen/Eigenvalues>
 
-#include "GCD.h"
 #include "Peak3D.h"
 #include "ReciprocalVector.h"
 #include "ResolutionShell.h"

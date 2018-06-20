@@ -6,7 +6,6 @@
 #include "DataSet.h"
 #include "Detector.h"
 #include "Diffractometer.h"
-#include "ErfInv.h"
 #include "Experiment.h"
 #include "GeometryTypes.h"
 #include "MathematicsTypes.h"
@@ -193,7 +192,7 @@ PeakList PeakFinder::find(DataList numors)
             Eigen::Vector3d center, eigenvalues;
             Eigen::Matrix3d eigenvectors;
 
-            blob.second.toEllipsoid(nsx::getConfidence(1.0), center, eigenvalues, eigenvectors);
+            blob.second.toEllipsoid(1.0, center, eigenvalues, eigenvectors);
             auto shape = Ellipsoid(center, eigenvalues, eigenvectors);
 
             auto p = sptrPeak3D(new Peak3D(numor, shape));
