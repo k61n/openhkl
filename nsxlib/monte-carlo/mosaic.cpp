@@ -12,7 +12,7 @@
 
 #include "mosaic.h"
 
-#include "BlobFinder.h"
+
 #include "Blob3D.h"
 
 #include "ConvexHull.h"
@@ -22,6 +22,7 @@
 #include "DataSet.h"
 #include "ILLDataReader.h"
 #include "Peak3D.h"
+#include "PeakFinder.h"
 #include "Sample.h"
 #include "Source.h"
 #include "Triangle.h"
@@ -356,21 +357,16 @@ bool Mosaic::run(const std::vector<std::string>& numors, unsigned int n, double&
         //int median = d->getBackgroundLevel() + 1;
 		//blob3DCollection blobs;
 
-
-		BlobFinder blob_finder(d);
-
-		auto blobs = blob_finder.find();
+		PeakFinder peak_finder;
+		auto peaks = peak_finder.find({d});
 
         //blobs=findBlobs3D<int>(temp,d->getDiffractometer()->getDetector()->getNRows(),d->getDiffractometer()->getDetector()->getNCols(),3.0*median,30,10000,0.997,0);
 
-        for (auto& p : blobs)
+        for (auto& p: peaks)
         {
-    		Eigen::Vector3d center1;
-    		Eigen::Vector3d eigenvalues1;
-    		Eigen::Matrix3d eigenvectors1;
-    		p.second.toEllipsoid(0.997,center1,eigenvalues1,eigenvectors1);
-    		Ellipsoid ellexp(center1,eigenvalues1,eigenvectors1);
-    		ellexp.translate(center-center1);
+			auto shape = p->shape();
+    		Ellipsoid ellexp = shape;
+    		ellexp.translate(center-shape.center());
 //    		std::cout<<eigenvectors<<std::endl;
 //    		std::cout<<eigenvectors1<<std::endl;
     		std::cout<<ellexp.aabb().extents()<<std::endl;

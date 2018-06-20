@@ -37,6 +37,7 @@
 
 namespace nsx {
 
+//! Construct a detector mask from an axis-aligned bounding box.
 class BoxMask: public IMask {
 
 public:

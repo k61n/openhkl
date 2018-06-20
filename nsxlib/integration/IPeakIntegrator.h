@@ -40,7 +40,6 @@
 #include "GeometryTypes.h"
 #include "IntegrationRegion.h"
 #include "Intensity.h"
-#include "Maybe.h"
 #include "ProgressHandler.h"
 #include "UtilsTypes.h"
 

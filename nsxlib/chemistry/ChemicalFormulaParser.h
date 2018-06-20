@@ -45,7 +45,6 @@
 
 namespace nsx {
 
-//! @Class: BuildElementFromUniqueIsotope.
 //! Functor for setting up a chemical element made of a unique isotope.
 //! In such case, the isotope contents of the element is made of that sngle istope
 //! and a molar ratio of 1.0
@@ -59,7 +58,6 @@ struct BuildElementFromUniqueIsotope
     }
 };
 
-//! @Class: BuildElementFromNaturalIsotopes.
 //! Functor for setting up a chemical element in its natural state.
 //! In such case, the isotope contents of the element is made of the all
 //! the isotopes that build the element with their natural abundances.
@@ -79,7 +77,6 @@ struct BuildElementFromNaturalIsotopes
 	}
 };
 
-//! @Class: ValidateIsotopeContents.
 //! Functor for validating the sum of the molar ratio of a set of isotopes.
 //! The sum of the ratio must be equal to 1 within a given tolerance
 struct ValidateIsotopeContents {
@@ -97,7 +94,6 @@ struct ValidateIsotopeContents {
 
 };
 
-//! @Class: BuildElementFromIsotopeMixture.
 //! Functor for setting up a chemical element using a mixture of istopes.
 //! In such case, the isotope contents of the element is made of the input isotopes
 //! with their corresponding input molar ratio.
@@ -128,7 +124,6 @@ struct BuildElementFromIsotopeMixture {
 	}
 };
 
-//! @Class: BuildCompoundFromElement.
 //! Functor for building incrementally a chemical compound from a chemical element.
 //! The isotope contents of the chemical compound is updated with the isotope contents
 //! of the chemical element multiplied by its stoichiometry
@@ -152,7 +147,6 @@ struct BuildCompoundFromElement
 	}
 };
 
-//! @Class: ValidateCompoundContents.
 //! Functor for validating the sum of the molar ratios of a set of chemical compounds.
 //! The sum of the ratio must be equal to 1 within a given tolerance
 struct ValidateCompoundContents {
@@ -170,7 +164,6 @@ struct ValidateCompoundContents {
 
 };
 
-//! @class: BuidMaterialFromCompounds.
 //! Functor for building material from a list of chemical compounds and their associated molar ratio in the material.
 //! The isotope contents of the material is updated with the isotope contents
 //! of the chemical compound multiplied by its molar ratio
@@ -196,7 +189,6 @@ struct BuidMaterialFromCompounds
 	}
 };
 
-//! @Class: ChemicalFormulaParser.
 //! Parses a chemical formula.
 //! The chemical formula is defined as a string that represents a sequence of elements (e.g. CH4, H2O, C[12]3H[2]8).
 //! Each element is in turn defined by a string that represents its chemical symbol as defined in the periodic table respectively followed

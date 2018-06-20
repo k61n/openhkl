@@ -40,6 +40,7 @@ namespace nsx {
 
 class MergedData;
 
+//! \brief Class used to compute the various R factors. 
 class RFactor: public IMergedPeakStatistic {
 public:
     RFactor(): 

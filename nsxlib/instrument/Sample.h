@@ -41,7 +41,8 @@
 
 namespace nsx {
 
-class Sample : public Component {
+//! \brief Class used to describe an experiment sample, consisting of a unit cell and material. 
+class Sample: public Component {
 public:
 
     //! Static constructor of a Sample from a property tree node

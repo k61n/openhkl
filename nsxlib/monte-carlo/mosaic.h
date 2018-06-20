@@ -19,6 +19,7 @@
 
 namespace nsx {
 
+//! \brief Class to predict peak profiles (intensity distribution) using Monte-Carlo integration.
 class Mosaic
 {
 

@@ -39,6 +39,7 @@
 
 namespace nsx {
 
+//! \brief Class used to construct a peak integration region.
 class IntegrationRegion {
 public:
     enum class EventType: int {BACKGROUND = 1, PEAK = 2, FORBIDDEN = -1, EXCLUDED = 0};

@@ -35,10 +35,9 @@
 
 namespace nsx {
 
-/* !
- * \brief Class Edge.
- * This class implements the Edge object used in the incremental convex hull algorithm.
- */
+//! \brief Class Edge.
+//! 
+//! This class implements the Edge object used in the incremental convex hull algorithm.
 class Edge {
 public:
 

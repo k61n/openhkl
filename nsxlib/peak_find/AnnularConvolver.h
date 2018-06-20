@@ -38,7 +38,8 @@
 
 namespace nsx {
 
-class AnnularConvolver : public Convolver {
+//! Annular convolution kernel used for local background subtraction.
+class AnnularConvolver: public Convolver {
 
 public:
 

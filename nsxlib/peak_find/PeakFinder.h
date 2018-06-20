@@ -10,7 +10,7 @@
 
 namespace nsx {
 
-//! Class to handle peak search in datasets
+//! \brief Class to handle peak search in datasets
 class PeakFinder {
 
 public:
