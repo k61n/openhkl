@@ -8,9 +8,9 @@ NSX_APP_CONTENTS=${CI_PROJECT_DIR}/build/qmake-build/nsxtool.app/Contents
 mkdir -p ${NSX_APP_CONTENTS}/lib
 
 # Copy the python executable used for building pynsx
-cp -r /System/Library/Frameworks/Python.framework/Versions/2.7/Python ${NSX_APP_CONTENTS}/Frameworks/libpython2.7.dylib
-cp -r /System/Library/Frameworks/Python.framework/Versions/2.7/lib/* ${NSX_APP_CONTENTS}/lib 
-cp -r /System/Library/Frameworks/Python.framework/Versions/2.7/Resources/Python.app/Contents/MacOS/Python ${NSX_APP_CONTENTS}/MacOS/python
+cp -r /Library/Frameworks/Python.framework/Versions/2.7/Python ${NSX_APP_CONTENTS}/Frameworks/libpython2.7.dylib
+cp -r /Library/Frameworks/Python.framework/Versions/2.7/lib/* ${NSX_APP_CONTENTS}/lib 
+cp -r /Library/Frameworks/Python.framework/Versions/2.7/Resources/Python.app/Contents/MacOS/Python ${NSX_APP_CONTENTS}/MacOS/python
 
 chmod 777 ${NSX_APP_CONTENTS}/Frameworks/libpython2.7.dylib
 
@@ -24,11 +24,11 @@ cp ${CI_PROJECT_DIR}/build/swig/_pynsx.so ${NSX_APP_CONTENTS}/lib/python2.7/site
 cp ${CI_PROJECT_DIR}/build/swig/pynsx.py ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/.
 
 # Modify the library dynamic path to make python self-contained
-install_name_tool -change /System/Library/Frameworks/Python.framework/Versions/2.7/Python @executable_path/../Frameworks/libpython2.7.dylib ${NSX_APP_CONTENTS}/MacOS/python
+install_name_tool -change /Library/Frameworks/Python.framework/Versions/2.7/Python @executable_path/../Frameworks/libpython2.7.dylib ${NSX_APP_CONTENTS}/MacOS/python
 install_name_tool -id @executable_path/../Frameworks/libpython2.7.dylib ${NSX_APP_CONTENTS}/Frameworks/libpython2.7.dylib
 
 # Modify the library dynamic path to make _pynsx binding self-contained
-install_name_tool -change /System/Library/Frameworks/Python.framework/Versions/2.7/Python @executable_path/../Frameworks/libpython2.7.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
+install_name_tool -change /Library/Frameworks/Python.framework/Versions/2.7/Python @executable_path/../Frameworks/libpython2.7.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
 
 # Modify the path to libraries deps in _pynsx binding
 
