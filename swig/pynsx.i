@@ -115,7 +115,6 @@ using Eigen::Quaterniond;
 #include "DoubleToFraction.h"
 #include "Timer.h"
 #include "Path.h"
-#include "Maybe.h"
 
 #include "LMFunctor.h"
 #include "RandomMatrix.h"
