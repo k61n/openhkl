@@ -1,45 +1,54 @@
 #!/bin/bash
 
-cd ${CI_PROJECT_DIR}
+NSX_APP=$1
 
-mkdir build
-cd build
+NSX_APP_CONTENTS=${NSX_APP}/Contents
 
-cmake -G"Ninja" -DCMAKE_BUILD_TYPE=Release -DNSX_PYTHON=OFF -DBUILD_NSX_APPS=ON -DCMAKE_INSTALL_PREFIX=. -DCMAKE_PREFIX_PATH="/usr/local/Cellar/qt5/5.6.0;/usr/local/Cellar/gsl/2.3"  ..
+# Setup the python to be used with pynsx
 
-cmake --build . --config Release
+# Create the directory where Python packages will be copied
+mkdir -p ${NSX_APP_CONTENTS}/lib
 
-cmake --build . --config Release --target install
+# Copy the python executable used for building pynsx
+PYTHON_DYLIB=`python -c "import os ; print os.path.realpath('@PYTHON_LIBRARY@')"`
+PYTHON_EXE=`@PYTHON_EXECUTABLE@ -c "import sys ; print sys.executable"`
+PYTHON_LIB_DIR=`${PYTHON_EXE} -c "import sys ; print sys.prefix"`/lib
+cp -r ${PYTHON_DYLIB} ${NSX_APP_CONTENTS}/Frameworks/libpython2.7.dylib
+cp -r ${PYTHON_LIB_DIR}/* ${NSX_APP_CONTENTS}/lib
+cp -r ${PYTHON_EXE} ${NSX_APP_CONTENTS}/MacOS/python
 
-declare -x CPLUS_INCLUDE_PATH=/usr/local/include:/usr/local/opt/eigen/include/eigen3:/usr/local/opt/boost/include:${CI_PROJECT_DIR}/build/include/NSXTool:${CI_PROJECT_DIR}/apps/nsxqt
+# Add NumPy
+rm -rf ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/*
+cp -r ${PYTHON_LIB_DIR}/python2.7/site-packages/numpy ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/.
 
-declare -x LIBRARY_PATH=${CI_PROJECT_DIR}/build/nsxlib:/usr/local/opt/boost/lib/:/usr/local/opt/fftw/lib/
+# Copy pynsx.py and _pynsx.so in nsxtool app
+cp ${CI_PROJECT_DIR}/build/swig/_pynsx.so ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/.
+cp ${CI_PROJECT_DIR}/build/swig/pynsx.py ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/.
 
-mkdir qmake-build
-cd qmake-build
+chmod 777 ${NSX_APP_CONTENTS}/Frameworks/libpython2.7.dylib
 
-/usr/local/opt/qt5/bin/qmake ${CI_PROJECT_DIR}/build/apps/NSXQt/NSXQt.pro CONFIG+=release
-make -j4
+# Modify the library dynamic path to make python self-contained
+install_name_tool -change ${PYTHON_DYLIB} @executable_path/../Frameworks/libpython2.7.dylib ${NSX_APP_CONTENTS}/MacOS/python
+install_name_tool -id @executable_path/../Frameworks/libpython2.7.dylib ${NSX_APP_CONTENTS}/Frameworks/libpython2.7.dylib
 
-# Prepare nsxtool.app for being a dmg
-/usr/local/opt/qt5/bin/macdeployqt nsxtool.app/
+# Modify the library dynamic path to make _pynsx binding self-contained
+install_name_tool -change ${PYTHON_DYLIB} @executable_path/../Frameworks/libpython2.7.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
 
-# Add pynsx and its corresponding python to the dmg
-chmod 755 ${CI_PROJECT_DIR}/build/fix_apple_bundle.sh
-${CI_PROJECT_DIR}/build/fix_apple_bundle.sh
+# Modify the path to libraries deps in _pynsx binding
 
-# Remove unnecessary files
-rm -f *.cpp
-rm -f *.h
-rm -f *.o
-rm Makefile
+install_name_tool -change /usr/local/opt/hdf5/lib/libhdf5_cpp.101.dylib @executable_path/../Frameworks/libhdf5_cpp.101.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
+install_name_tool -change /usr/local/opt/hdf5/lib/libhdf5.101.dylib @executable_path/../Frameworks/libhdf5.101.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
+install_name_tool -change /usr/local/opt/szip/lib/libsz.2.dylib @executable_path/../Frameworks/libsz.2.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
+install_name_tool -change /usr/local/opt/zlib/lib/libz.1.dylib @executable_path/../Frameworks/libz.1.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
+install_name_tool -change /usr/local/opt/fftw/lib/libfftw3.3.dylib @executable_path/../Frameworks/libfftw3.3.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
+install_name_tool -change /usr/local/opt/yaml-cpp/lib/libyaml-cpp.0.5.dylib @executable_path/../Frameworks/libyaml-cpp.0.5.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
+install_name_tool -change /usr/local/opt/libtiff/lib/libtiff.5.dylib @executable_path/../Frameworks/libtiff.5.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
+install_name_tool -change /usr/local/opt/gsl/lib/libgsl.19.dylib @executable_path/../Frameworks/libgsl.19.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
+install_name_tool -change /usr/local/opt/gsl/lib/libgslcblas.0.dylib @executable_path/../Frameworks/libgslcblas.0.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
+install_name_tool -change ${CI_PROJECT_DIR}/build/nsxlib/libnsx.dylib @executable_path/../Frameworks/libnsx.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
 
-${CI_PROJECT_DIR}/build_server/osx/tools/create-dmg/create-dmg \
---background "${CI_PROJECT_DIR}/build_server/osx/resources/background.jpg" \
---volicon "${CI_PROJECT_DIR}/build_server/osx/resources/nsxtool.icns" \
---volname nsxtool \
---window-pos 200 120 \
---window-size 800 400 \
---icon nsxtool.app 200 190 \
---hide-extension nsxtool.app \
---app-drop-link 600 185 nsxtool.dmg .
+# Modify the path to libz for HDF5 and Tiff dylibs
+install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/libz.1.dylib ${NSX_APP_CONTENTS}/Frameworks/libhdf5.101.dylib
+install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/libz.1.dylib ${NSX_APP_CONTENTS}/Frameworks/libhdf5_cpp.101.dylib
+install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/libz.1.dylib ${NSX_APP_CONTENTS}/Frameworks/libtiff.5.dylib
+

@@ -10,8 +10,8 @@ NSX_APP_CONTENTS=${NSX_APP}/Contents
 mkdir -p ${NSX_APP_CONTENTS}/lib
 
 # Copy the python executable used for building pynsx
-PYTHON_EXE=`readlink -e @PYTHON_EXECUTABLE@`
-PYTHON_DYLIB=`readlink -e @PYTHON_LIBRARIES@`
+PYTHON_EXE=`@PYTHON_EXECUTABLE@ -c "import sys ; print sys.executable"`
+PYTHON_DYLIB=`python -c "import os ; print os.path.realpath('@PYTHON_LIBRARY@')"`
 PYTHON_LIB_DIR=$(dirname ${PYTHON_DYLIB})
 cp -r ${PYTHON_DYLIB} ${NSX_APP_CONTENTS}/Frameworks/libpython2.7.dylib
 cp -r ${PYTHON_LIB_DIR}/* ${NSX_APP_CONTENTS}/lib 
