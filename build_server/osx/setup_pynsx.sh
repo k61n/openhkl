@@ -30,7 +30,17 @@ install_name_tool -id @executable_path/../Frameworks/libpython2.7.dylib ${NSX_AP
 # Modify the library dynamic path to make _pynsx binding self-contained
 install_name_tool -change /System/Library/Frameworks/Python.framework/Versions/2.7/Python @executable_path/../Frameworks/libpython2.7.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
 
-# Modify the path to nsx library in _pynsx binding
+# Modify the path to libraries deps in _pynsx binding
+
+install_name_tool -change /usr/local/opt/hdf5/lib/libhdf5_cpp.101.dylib @executable_path/../Frameworks/libhdf5_cpp.101.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
+install_name_tool -change /usr/local/opt/hdf5/lib/libhdf5.101.dylib @executable_path/../Frameworks/libhdf5.101.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
+install_name_tool -change /usr/local/opt/szip/lib/libsz.2.dylib @executable_path/../Frameworks/libsz.2.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
+install_name_tool -change /usr/local/opt/zlib/lib/libz.1.dylib @executable_path/../Frameworks/libz.1.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
+install_name_tool -change /usr/local/opt/fftw/lib/libfftw3.3.dylib @executable_path/../Frameworks/libfftw3.3.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
+install_name_tool -change /usr/local/opt/yaml-cpp/lib/libyaml-cpp.0.5.dylib @executable_path/../Frameworks/libyaml-cpp.0.5.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
+install_name_tool -change /usr/local/opt/libtiff/lib/libtiff.5.dylib @executable_path/../Frameworks/libtiff.5.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
+install_name_tool -change /usr/local/opt/gsl/lib/libgsl.19.dylib @executable_path/../Frameworks/libgsl.19.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
+install_name_tool -change /usr/local/opt/gsl/lib/libgslcblas.0.dylib @executable_path/../Frameworks/libgslcblas.0.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
 install_name_tool -change ${CI_PROJECT_DIR}/build/nsxlib/libnsx.dylib @executable_path/../Frameworks/libnsx.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
 
 # Modify the path to libz for HDF5 and Tiff dylibs
