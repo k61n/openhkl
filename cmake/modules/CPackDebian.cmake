@@ -1,5 +1,7 @@
 set(CPACK_GENERATOR "DEB")
 
+set(CPACK_DEBIAN_PACKAGE_NAME "${CPACK_PACKAGE_NAME}")
+
 # parameters to build a debian package
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER Eric Pellegrini <pellegrini@ill.fr>)
 

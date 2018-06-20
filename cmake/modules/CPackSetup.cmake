@@ -1,6 +1,6 @@
 set(NSXTOOL_VERSION "${NSXTool_VERSION_MAJOR}.${NSXTool_VERSION_MINOR}.${NSXTool_VERSION_PATCH}")
 
-set(CPACK_PACKAGE_NAME "NSXTool")
+set(CPACK_PACKAGE_NAME "nsxtool")
 set(CPACK_PACKAGE_DESCRIPTION"NSXTool: single crystal data reduction")
 set(CPACK_PACKAGE_VENDOR "Institut Laue Langevin")
 set(CPACK_PACKAGE_URL http://www.code.fr/scientific-software/nsxtool.git)
