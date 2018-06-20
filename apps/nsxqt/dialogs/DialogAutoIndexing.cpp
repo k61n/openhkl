@@ -1,11 +1,11 @@
 #include <map>
 #include <string>
 
-#include <QMenu>
-
 #include <Eigen/Dense>
 
+#include <QInputDialog>
 #include <QItemSelectionModel>
+#include <QMenu>
 #include <QMessageBox>
 #include <QStandardItemModel>
 
@@ -39,13 +39,6 @@ DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, nsx::Pea
 {
     ui->setupUi(this);
     setModal(true);
-    //_unitCells = _experiment_item->experiment()->diffractometer()->sample()->unitCells();
-
-    //for (auto unit_cell : _unitCells) {
-    //    ui->unitCells->addItem(QString::fromStdString(unit_cell->name()));
-    //}
-
-    //connect(ui->addUnitCell,SIGNAL(clicked()),this,SLOT(addUnitCell()));
 
     connect(ui->index,SIGNAL(clicked()),this,SLOT(autoIndex()));
 
@@ -108,8 +101,7 @@ void DialogAutoIndexing::autoIndex()
     params.subdiv = ui->subdiv->value();;
     params.maxdim = ui->maxCellDim->value();
     params.nSolutions = ui->nSolutions->value();
-    // todo: restore this functionality in dialog?
-    params.indexingTolerance = 0.2;
+    params.indexingTolerance = ui->indexingTolerance->value();
     params.nVertices = ui->nVertices->value();
     params.niggliReduction = ui->niggliReduction->isChecked();
     params.niggliTolerance = ui->niggliTolerance->value();
@@ -123,10 +115,6 @@ void DialogAutoIndexing::autoIndex()
         return;
     }
     _solutions = indexer.solutions();
-
-    for (auto&& sol: _solutions) {
-        sol.first->setName("new unit cell");
-    }
 
     buildSolutionsTable();
 }
@@ -180,10 +168,20 @@ void DialogAutoIndexing::buildSolutionsTable()
 
 void DialogAutoIndexing::selectSolution(int index)
 {
-    _unitCell = _solutions[index].first;
-    _unitCell->setName("new unit cell");
+    auto selected_unit_cell = _solutions[index].first;
 
-    QMessageBox::information(this, tr("NSXTool"),tr("Solution %1 set").arg(QString::number(index+1)));
+    bool ok;
+    QString text = QInputDialog::getText(this,
+                                         tr("Solution %1 set").arg(QString::number(index+1)),
+                                         tr("Enter cell name"),
+                                         QLineEdit::Normal,
+                                         QString::fromStdString(selected_unit_cell->name()),
+                                         &ok);
+
+    if (ok && !text.isEmpty()) {
+        _unitCell = selected_unit_cell;
+        _unitCell->setName(text.toStdString());
+    }
 }
 
 nsx::sptrUnitCell DialogAutoIndexing::unitCell()

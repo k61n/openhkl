@@ -373,7 +373,7 @@ void DialogStatistics::updateUnmergedPeaksTab()
 
         for (auto unmerged_peak : peak.peaks()) {
 
-            const auto& cell = *(unmerged_peak->activeUnitCell());
+            const auto& cell = *(unmerged_peak->unitCell());
             const auto& q = unmerged_peak->q();
 
             const nsx::MillerIndex hkl(q, cell);

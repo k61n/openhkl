@@ -186,7 +186,11 @@ void DataItem::findPeaks()
 
     nsx::debug() << "Peak search complete., found " << peaks.size() << " peaks.";
     auto peaks_item = experimentItem()->peaksItem();
-    model()->setData(peaks_item->index(),QVariant::fromValue(peaks),Qt::UserRole);
+
+    auto item = new PeakListItem(peaks);
+    item->setText("Found peaks");
+    peaks_item->appendRow(item);
+    //model()->setData(peaks_item->index(),QVariant::fromValue(peaks),Qt::UserRole);
 }
 
 nsx::DataList DataItem::selectedData()
@@ -204,8 +208,15 @@ nsx::DataList DataItem::selectedData()
 
 void DataItem::convertToHDF5()
 {
+    nsx::DataList selectedNumors = selectedData();
+
+    if (selectedNumors.empty()) {
+        nsx::error()<<"No numors selected for HDF5 conversion";
+        return;
+    }
+
     // dialog will automatically be deleted before we return from this method
-    std::unique_ptr<DialogHDF5Converter> dialog_ptr(new DialogHDF5Converter(experiment()));
+    std::unique_ptr<DialogHDF5Converter> dialog_ptr(new DialogHDF5Converter(selectedNumors));
 
     if (!dialog_ptr->exec()) {
         return;

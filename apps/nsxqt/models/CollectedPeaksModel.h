@@ -51,12 +51,6 @@ public:
 
     void normalizeToMonitor(double factor);
 
-    void writeShelX(const std::string& filename, QModelIndexList indices=QModelIndexList());
-
-    void writeFullProf(const std::string& filename, QModelIndexList indices=QModelIndexList());
-
-    void setUnitCells(const nsx::UnitCellList& cells);
-
     QModelIndexList getUnindexedPeaks();
 
     QModelIndexList getValidPeaks();

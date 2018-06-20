@@ -171,9 +171,9 @@ void PeaksItem::buildShapeLibrary()
         return;
     }
 
-    nsx::sptrUnitCell uc(peaks[0]->activeUnitCell());
+    nsx::sptrUnitCell uc(peaks[0]->unitCell());
     for (auto&& peak : peaks) {
-        if (peak->activeUnitCell() != uc) {
+        if (peak->unitCell() != uc) {
             uc = nullptr;
             break;
         }
@@ -233,7 +233,7 @@ void PeaksItem::autoindex()
     }
 
     for (auto peak : peaks) {
-        peak->addUnitCell(uc);
+        peak->setUnitCell(uc);
     }
 
     auto experiment_item = experimentItem();
@@ -251,9 +251,9 @@ void PeaksItem::refine()
         return;
     }
 
-    nsx::sptrUnitCell uc(peaks[0]->activeUnitCell());
+    nsx::sptrUnitCell uc(peaks[0]->unitCell());
     for (auto&& peak : peaks) {
-        if (peak->activeUnitCell() != uc) {
+        if (peak->unitCell() != uc) {
             uc = nullptr;
             break;
         }
@@ -285,7 +285,7 @@ void PeaksItem::autoAssignUnitCell()
             auto cell = sample->unitCell(i);
             nsx::MillerIndex hkl(peak->q(), *cell);
             if (hkl.indexed(cell->indexingTolerance())) {
-                peak->addUnitCell(cell, true);
+                peak->setUnitCell(cell);
                 assigned = true;
                 break;
             }
@@ -299,18 +299,17 @@ void PeaksItem::autoAssignUnitCell()
     nsx::debug() << "Done auto assigning unit cells";
 }
 
+#if 0
 void PeaksItem::setData(const QVariant& value, int role)
 {
-    switch (role)
-    {
+    switch (role) {
     case Qt::UserRole:
-
         auto item = new PeakListItem(value.value<nsx::PeakList>());
-        item->setText("Found peaks");
+        //item->setText("Found peaks");
         appendRow(item);
-
         break;
 
     }
     QStandardItem::setData(value,role);
 }
+#endif

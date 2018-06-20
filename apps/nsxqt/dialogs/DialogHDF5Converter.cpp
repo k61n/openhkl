@@ -18,16 +18,15 @@
 #include "DialogHDF5Converter.h"
 #include "ui_DialogHDF5Converter.h"
 
-DialogHDF5Converter::DialogHDF5Converter(nsx::sptrExperiment experiment, QWidget *parent)
+DialogHDF5Converter::DialogHDF5Converter(const nsx::DataList& numors, QWidget *parent)
 : QDialog(parent),
   ui(new Ui::DialogHDF5Converter),
-  _experiment(experiment)
+  _numors(numors)
 {
     ui->setupUi(this);
 
     ui->outputDirectory->setText(QDir::currentPath());
 
-    connect(ui->browseInputNumors,SIGNAL(clicked()),this,SLOT(browseInputNumors()));
     connect(ui->browseOutputDirectory,SIGNAL(clicked()),this,SLOT(browseOutputDirectory()));
     connect(ui->convert,SIGNAL(clicked()),this,SLOT(convert()));
 }
@@ -37,27 +36,9 @@ DialogHDF5Converter::~DialogHDF5Converter()
     delete ui;
 }
 
-void DialogHDF5Converter::browseInputNumors()
-{
-    QStringList numors = QFileDialog::getOpenFileNames(this, tr("Open ILL ASCII numors"), ".");
-
-    if (numors.isEmpty()) {
-        return;
-    }
-
-    for (size_t i = 0; i < ui->numors->count(); ++i) {
-        numors.append(ui->numors->item(i)->text());
-    }
-
-    numors.removeDuplicates();
-
-    ui->numors->clear();
-    ui->numors->addItems(numors);
-}
-
 void DialogHDF5Converter::convert()
 {
-    if (ui->numors->count() == 0) {
+    if (_numors.size() == 0) {
         QMessageBox::warning(this,"Output directory","No numors selected for conversion");
         return;
     }
@@ -69,49 +50,28 @@ void DialogHDF5Converter::convert()
         return;
     }
 
-    ui->progressBar_conversion->setMaximum(ui->numors->count());
+    ui->progressBar_conversion->setMaximum(_numors.size());
     ui->progressBar_conversion->setValue(0);
 
-    auto diffractometer = nsx::Diffractometer::build(_experiment->diffractometer()->name());
-
-    nsx::DataReaderFactory dataFactory;
-
     int comp(0);
-    while(ui->numors->count()) {
+    for (auto numor : _numors) {
 
-        auto item = ui->numors->item(0);
-        auto numor = item->text().toStdString();
+        auto&& numor_filename = numor->filename();
 
-        QFileInfo fileinfo(QString::fromStdString(numor));
+        QFileInfo fileinfo(QString::fromStdString(numor_filename));
         QString basename = fileinfo.baseName();
-        auto extension = fileinfo.suffix().toStdString();
-        auto outputFilename = QDir(outputDirectory).filePath(basename+".h5").toStdString();
 
-        std::shared_ptr<nsx::DataSet> data;
-        try {
-            data = dataFactory.create(extension,numor,diffractometer);
-        } catch(std::exception& e) {
-            nsx::error() << "opening file " << numor << e.what();
-            ui->progressBar_conversion->setValue(++comp);
-            if (data) {
-                data.reset();
-            }
-            delete item;
-            continue;
+        auto hdf5_filename = QDir(outputDirectory).filePath(basename+".h5").toStdString();
+
+        if (hdf5_filename.compare(numor_filename)==0) {
+            return;
         }
 
         try {
-            data->saveHDF5(outputFilename);
+            numor->saveHDF5(hdf5_filename);
         } catch(...) {
-            nsx::error() << "The filename " << outputFilename << " could not be saved. Maybe a permission problem.";
-            ui->progressBar_conversion->setValue(++comp);
-            data.reset();
-            delete item;
-            continue;
+            nsx::error() << "The filename " << hdf5_filename << " could not be saved. Maybe a permission problem.";
         }
-        data.reset();
-        delete item;
-        ui->numors->repaint();
         ui->progressBar_conversion->setValue(++comp);
     }
 }

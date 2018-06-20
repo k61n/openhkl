@@ -55,13 +55,12 @@ namespace nsx {
 
 Peak3D::Peak3D(sptrDataSet data):
     _shape(),
-    _unitCells(),
+    _unitCell(nullptr),
     _scale(1.0),
     _selected(true),
     _masked(false),
     _predicted(true),
     _transmission(1.0),
-    _activeUnitCellIndex(0),
     _data(data),
     _rockingCurve(),
     _peakEnd(4.0),
@@ -101,34 +100,14 @@ const std::vector<Intensity>& Peak3D::rockingCurve() const
     return _rockingCurve;
 }
 
-void Peak3D::addUnitCell(sptrUnitCell uc, bool activate)
+void Peak3D::setUnitCell(sptrUnitCell uc)
 {
-    auto it = std::find(_unitCells.begin(),_unitCells.end(), uc);
-
-    if (it == _unitCells.end()) {
-        _unitCells.emplace_back(std::move(uc));
-        it = --_unitCells.end();
-    }
-    
-    if (activate) {
-        _activeUnitCellIndex = int(it-_unitCells.begin());
-    }
+    _unitCell = uc;
 }
 
-sptrUnitCell Peak3D::activeUnitCell() const
+sptrUnitCell Peak3D::unitCell() const
 {
-    if (_activeUnitCellIndex < 0 || _activeUnitCellIndex >= int(_unitCells.size())) {
-        return nullptr;
-    }
-    return _unitCells[size_t(_activeUnitCellIndex)];
-}
-
-sptrUnitCell Peak3D::unitCell(int index) const
-{
-    if (index < 0 || index >= int(_unitCells.size())) {
-        return nullptr;
-    }
-    return _unitCells[size_t(index)];
+    return _unitCell;
 }
 
 Intensity Peak3D::rawIntensity() const
@@ -191,11 +170,6 @@ void Peak3D::setMasked(bool masked)
     _masked = masked;
 }
 
-bool Peak3D::indexed() const
-{
-    return (!_unitCells.empty());
-}
-
 void Peak3D::setPredicted(bool predicted)
 {
     _predicted = predicted;
@@ -224,16 +198,6 @@ void Peak3D::updateIntegration(const IPeakIntegrator& integrator, double peakEnd
 double Peak3D::pValue() const
 {
     return _pValue;
-}
-
-bool Peak3D::hasUnitCells() const
-{
-    return !_unitCells.empty();
-}
-
-int Peak3D::activeUnitCellIndex() const
-{
-    return _activeUnitCellIndex;
 }
 
 void Peak3D::setRawIntensity(const Intensity& i)
@@ -280,26 +244,24 @@ Ellipsoid Peak3D::qShape() const
 
 ReciprocalVector Peak3D::qPredicted() const
 {
-    auto uc = activeUnitCell();
-    if (!uc) {
+    if (!_unitCell) {
         return {};
     }
-    auto index = MillerIndex(q(), *uc);
-    return ReciprocalVector(uc->fromIndex(index.rowVector().cast<double>()));
+    auto index = MillerIndex(q(), *_unitCell);
+    return ReciprocalVector(_unitCell->fromIndex(index.rowVector().cast<double>()));
 }
 
 DetectorEvent Peak3D::predictCenter(double frame) const
 {
     const DetectorEvent no_event = {0, 0, -1, -1};
-    auto uc = activeUnitCell();
 
-    if (!uc) {
+    if (!_unitCell) {
         return no_event;
     }
 
-    auto index = MillerIndex(q(), *uc);
+    auto index = MillerIndex(q(), *_unitCell);
     auto state = _data->interpolatedState(frame);
-    Eigen::RowVector3d q_hkl = uc->fromIndex(index.rowVector().cast<double>());
+    Eigen::RowVector3d q_hkl = _unitCell->fromIndex(index.rowVector().cast<double>());
     Eigen::RowVector3d ki = state.ki().rowVector();
     Eigen::RowVector3d kf = q_hkl*state.sampleOrientationMatrix().transpose() + ki;
 

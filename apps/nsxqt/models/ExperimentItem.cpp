@@ -76,7 +76,7 @@ void ExperimentItem::writeLogFiles()
         return;
     }
 
-    auto cell = filtered_peaks[0]->activeUnitCell();
+    auto cell = filtered_peaks[0]->unitCell();
 
     filtered_peaks = peak_filter.unitCell(filtered_peaks,cell);
     filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance());

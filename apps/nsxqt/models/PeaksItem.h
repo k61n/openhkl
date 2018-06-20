@@ -15,7 +15,7 @@ public:
 
     nsx::PeakList selectedPeaks();
 
-    virtual void setData(const QVariant &value, int role) override;
+    //virtual void setData(const QVariant &value, int role) override;
 
     void integratePeaks();
     void findSpaceGroup();

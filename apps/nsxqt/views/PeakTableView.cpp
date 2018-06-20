@@ -155,11 +155,6 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
     auto normalize = new QAction("Normalize to monitor", menu);
     menu->addSeparator();
     menu->addAction(normalize);
-    auto writeMenu = menu->addMenu("Write");
-    auto writeFullProf = new QAction("FullProf file", writeMenu);
-    auto writeShelX = new QAction("SHELX file", writeMenu);
-    writeMenu->addAction(writeFullProf);
-    writeMenu->addAction(writeShelX);
 
     // Menu to plot against metadata
     QModelIndexList indexList = selectionModel()->selectedIndexes();
@@ -195,17 +190,7 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
     selectionMenu->addSeparator();
     selectionMenu->addAction(togglePeaksSelection);
 
-    menu->addSeparator();
-
-    auto refineParameters=new QAction("Refine unit cell and instrument parameters",menu);
-    menu->addAction(refineParameters);
-
-    auto fitProfile = new QAction("Fit average peak profile", menu);
-    menu->addAction(fitProfile);
-
     connect(normalize,SIGNAL(triggered()),this,SLOT(normalizeToMonitor()));
-    connect(writeFullProf,SIGNAL(triggered()),this,SLOT(writeFullProf()));
-    connect(writeShelX,SIGNAL(triggered()),this,SLOT(writeShelX()));
     menu->popup(event->globalPos());
 
     connect(clearSelectedPeaks,SIGNAL(triggered()),this,SLOT(clearSelectedPeaks()));
@@ -213,9 +198,6 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
     connect(selectValidPeaks,SIGNAL(triggered()),this,SLOT(selectValidPeaks()));
     connect(selectUnindexedPeaks,SIGNAL(triggered()),this,SLOT(selectUnindexedPeaks()));
     connect(togglePeaksSelection,SIGNAL(triggered()),this,SLOT(togglePeaksSelection()));
-
-    connect(refineParameters,SIGNAL(triggered()),this,SLOT(openRefiningParametersDialog()));
-    connect(fitProfile, SIGNAL(triggered()), this, SLOT(openProfileFitDialog()));
 }
 
 void PeakTableView::normalizeToMonitor()
@@ -249,47 +231,6 @@ void PeakTableView::normalizeToMonitor()
     }
     nsx::sptrPeak3D peak=peaks[index.row()];
     emit plotPeak(peak);
-}
-
-void PeakTableView::writeFullProf()
-{
-    if (!checkBeforeWritting()) {
-        return;
-    }
-
-    QString filename = QFileDialog::getSaveFileName(this,
-                                                    tr("Save FullProf file"),
-                                                    QString::fromStdString(getPeaksRange()+".int"),
-                                                    tr("FullProf Files (*.int)"),
-                                                    nullptr,
-                                                    QFileDialog::DontUseNativeDialog);
-
-
-    auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
-    if (peaksModel == nullptr) {
-        return;
-    }
-    peaksModel->writeFullProf(filename.toStdString());
-}
-
-void PeakTableView::writeShelX()
-{
-    if (!checkBeforeWritting()) {
-        return;
-    }
-
-    QString filename = QFileDialog::getSaveFileName(this,
-                                                    tr("Save ShelX file"),
-                                                    QString::fromStdString(getPeaksRange()+".hkl"),
-                                                    tr("ShelX Files (*.hkl)"),
-                                                    nullptr,
-                                                    QFileDialog::DontUseNativeDialog);
-
-    auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
-    if (peaksModel == nullptr) {
-        return;
-    }
-    peaksModel->writeShelX(filename.toStdString());
 }
 
 void PeakTableView::plotAs(const std::string& key)
@@ -400,7 +341,10 @@ void PeakTableView::showPeaksMatchingText(const QString& text)
     unsigned int row=0;
     for (row=0;row<peaks.size();row++) {
         nsx::sptrPeak3D peak = peaks[row];
-        auto cell = peak->activeUnitCell();
+        auto cell = peak->unitCell();
+        if (!cell) {
+            continue;
+        }
         nsx::MillerIndex hkl(peak->q(), *cell);
         setRowHidden(row,hkl.indexed(cell->indexingTolerance()));
     }
@@ -469,69 +413,4 @@ void PeakTableView::updateUnitCell(const nsx::sptrUnitCell& unitCell)
     nsx::info() << "updating unit cell";
     auto peakModel = dynamic_cast<CollectedPeaksModel*>(model());
     peakModel->setUnitCell(unitCell, selectedPeaks);
-}
-
-void PeakTableView::openRefiningParametersDialog()
-{
-    auto peakModel = dynamic_cast<CollectedPeaksModel*>(model());
-    auto experiment = peakModel->getExperiment();
-    nsx::PeakList peaks = peakModel->getPeaks(selectionModel()->selectedRows());
-
-    int nPeaks = peaks.size();
-    // Check that a minimum number of peaks have been selected for indexing
-    if (nPeaks < 10) {
-        QMessageBox::warning(this, tr("NSXTool"),tr("Need at least 10 peaks for refining"));
-        return;
-    }
-
-    nsx::sptrUnitCell uc(peaks[0]->activeUnitCell());
-    for (auto&& peak : peaks) {
-        if (peak->activeUnitCell() != uc) {
-            uc = nullptr;
-            break;
-        }
-    }
-
-    if (uc == nullptr) {
-        QMessageBox::warning(this, tr("NSXTool"),tr("The selected peaks must have the same active unit cell for refining"));
-        return;
-    }
-    DialogRefineUnitCell* dialog= new DialogRefineUnitCell(experiment,uc,peaks,this);
-    dialog->exec();
-}
-
-void PeakTableView::openProfileFitDialog()
-{
-    auto peakModel = dynamic_cast<CollectedPeaksModel*>(model());
-    auto experiment = peakModel->getExperiment();
-    nsx::PeakList peaks = peakModel->getPeaks(selectionModel()->selectedRows());
-
-    int nPeaks = peaks.size();
-    // Check that a minimum number of peaks have been selected for indexing
-    if (nPeaks < 1) {
-        QMessageBox::warning(this, tr("NSXTool"),tr("Need to selected peaks to fit profile!"));
-        return;
-    }
-
-    nsx::sptrUnitCell uc(peaks[0]->activeUnitCell());
-    for (auto&& peak : peaks) {
-        if (peak->activeUnitCell() != uc) {
-            uc = nullptr;
-            break;
-        }
-    }
-
-    if (uc == nullptr) {
-        QMessageBox::warning(this, tr("NSXTool"),tr("The selected peaks must have the same active unit cell for profile fitting"));
-        return;
-    }
-    DialogProfileFit* dialog = new DialogProfileFit(experiment, uc, peaks, this);
-
-    // rejected
-    if (dialog->exec() == QDialog::Rejected) {
-        return;
-    }
-
-    emit(updateShapeLibrary(dialog->library()));
-    nsx::info() << "Update profiles of " << peaks.size() << " peaks";
 }

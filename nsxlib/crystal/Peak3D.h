@@ -60,62 +60,68 @@ public:
     Peak3D(sptrDataSet data, const Peak3D& other) = delete;
     //! Assignment operator deleted
     Peak3D& operator=(const Peak3D& other) = delete;
+
+    //! Comparison operator used to sort peaks
+    friend bool operator<(const Peak3D& p1, const Peak3D& p2);
+
     //! Set the Peak region. Peak shaped is owned after setting
     void setShape(const Ellipsoid& peak);
+
     //! Get the projection of total data in the bounding box.
     const std::vector<Intensity>& rockingCurve() const;
+
     //! Compute the shape in q-space. May throw if there is no valid q-space ellipsoid.
     Ellipsoid qShape() const;
     //! Return the shape of the peak as an ellipsoid in detector coordinates
     const Ellipsoid& shape() const;
+
     //! Return the scaled intensity of the peak.
     Intensity scaledIntensity() const;
     //! Return the intensity, after scaling, transmission, and Lorentz factor corrections
     Intensity correctedIntensity() const;
     //! Return the raw intensity of the peak.
     Intensity rawIntensity() const;
+
     //! Return mean background of the peak
     Intensity meanBackground() const;
+
     //! Return shape scale used to define peak region
     double peakEnd() const;
     //! Return shape scale used to define beginning of background region
     double bkgBegin() const;
     //! Return shape scale used to define end of background region
     double bkgEnd() const;
+
     //! Return the scaling factor.
     double scale() const;
     //! Rescale the current scaling factor by scale.
     void rescale(double factor);
     //! Set the scaling factor.
     void setScale(double factor);
-    //! Comparison operator used to sort peaks
-    friend bool operator<(const Peak3D& p1, const Peak3D& p2);
+
     //! Selected the peak for fitting or integration
     void setSelected(bool);
     //! Return true if peak is selected
     bool selected() const;
+
     //! Apply mask to peak
     void setMasked(bool masked);
+
     //! Set the transmission factor
     void setTransmission(double transmission);
     //! Return the transmission factor
     double transmission() const;
+
     //! Add a unit cell to the peak, optionally make it the active cell
-    void addUnitCell(sptrUnitCell uc, bool activate=true);
-    //! Return the index of the active unit cell
-    int activeUnitCellIndex() const;
+    void setUnitCell(sptrUnitCell uc);
     //! Return the active unit cell
-    sptrUnitCell activeUnitCell() const;
-    //! Return the unit cell specified by the given index
-    sptrUnitCell unitCell(int index) const;
-    //! Return true if peak has been indexed by a unit cell
-    bool indexed() const;
+    sptrUnitCell unitCell() const;
+
     //! Set whether the peak is observed or predicted
     void setPredicted(bool predicted);
     //! Return if the peak is predicted
     bool isPredicted() const;
-    //! Return true if there is at least one unit cell assigned to the peak
-    bool hasUnitCells() const;
+
     //! Update the integration of the peak
     void updateIntegration(const IPeakIntegrator& integrator, double peakEnd, double bkgBegin, double bkgEnd);
     //! Compute P value that there is actually an observed peak, assuming Poisson statistics
@@ -149,14 +155,13 @@ private:
     //! Shape scale factor for end of background
     double _bkgEnd;
 
-    UnitCellList _unitCells;
+    sptrUnitCell _unitCell;
    
     double _scale;
     bool _selected;
     bool _masked;
     bool _predicted;
     double _transmission;
-    int _activeUnitCellIndex;
 
     //! Raw p value
     double _pValue;

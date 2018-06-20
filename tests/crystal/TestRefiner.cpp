@@ -109,7 +109,7 @@ int main()
     NSX_CHECK_SMALL( (cell->reciprocalBasis()-constrained_cell.reciprocalBasis()).norm(), 1e-6);
 
     for (auto&& peak: found_peaks) {
-        peak->addUnitCell(cell, true);
+        peak->setUnitCell(cell);
         peaks.push_back(peak);
     }
     
