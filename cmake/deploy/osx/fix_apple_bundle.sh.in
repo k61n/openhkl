@@ -10,23 +10,22 @@ NSX_APP_CONTENTS=${NSX_APP}/Contents
 mkdir -p ${NSX_APP_CONTENTS}/lib
 
 # Copy the python executable used for building pynsx
-PYTHON_EXE=`@PYTHON_EXECUTABLE@ -c "import sys ; print sys.executable"`
 PYTHON_DYLIB=`python -c "import os ; print os.path.realpath('@PYTHON_LIBRARY@')"`
-PYTHON_LIB_DIR=$(dirname ${PYTHON_DYLIB})
+PYTHON_EXE=`@PYTHON_EXECUTABLE@ -c "import sys ; print sys.executable"`
+PYTHON_LIB_DIR=`${PYTHON_EXE} -c "import sys ; print sys.prefix"`/lib
 cp -r ${PYTHON_DYLIB} ${NSX_APP_CONTENTS}/Frameworks/libpython2.7.dylib
-cp -r ${PYTHON_LIB_DIR}/* ${NSX_APP_CONTENTS}/lib 
+cp -r ${PYTHON_LIB_DIR}/* ${NSX_APP_CONTENTS}/lib
 cp -r ${PYTHON_EXE} ${NSX_APP_CONTENTS}/MacOS/python
 
-chmod 777 ${NSX_APP_CONTENTS}/Frameworks/libpython2.7.dylib
-
-mkdir ${NSX_APP_CONTENTS}/lib/python2.7/site-packages
-
 # Add NumPy
-cp -r ${PYTHON_LIB_DIR}/python2.7/site-packages/numpy ${NSX_APP_CONTENTS}/lib/python2.7/site-packages
+rm -rf ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/*
+cp -r ${PYTHON_LIB_DIR}/python2.7/site-packages/numpy ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/.
 
 # Copy pynsx.py and _pynsx.so in nsxtool app
 cp ${CI_PROJECT_DIR}/build/swig/_pynsx.so ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/.
 cp ${CI_PROJECT_DIR}/build/swig/pynsx.py ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/.
+
+chmod 777 ${NSX_APP_CONTENTS}/Frameworks/libpython2.7.dylib
 
 # Modify the library dynamic path to make python self-contained
 install_name_tool -change ${PYTHON_DYLIB} @executable_path/../Frameworks/libpython2.7.dylib ${NSX_APP_CONTENTS}/MacOS/python
@@ -50,6 +49,6 @@ install_name_tool -change ${CI_PROJECT_DIR}/build/nsxlib/libnsx.dylib @executabl
 
 # Modify the path to libz for HDF5 and Tiff dylibs
 install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/libz.1.dylib ${NSX_APP_CONTENTS}/Frameworks/libhdf5.101.dylib
-install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/libz.1.dylib ${NSX_APP_CONTENTS}/Frameworks/libhdf5_cpp.101.dylib 
-install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/libz.1.dylib ${NSX_APP_CONTENTS}/Frameworks/libtiff.5.dylib 
+install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/libz.1.dylib ${NSX_APP_CONTENTS}/Frameworks/libhdf5_cpp.101.dylib
+install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/libz.1.dylib ${NSX_APP_CONTENTS}/Frameworks/libtiff.5.dylib
 
