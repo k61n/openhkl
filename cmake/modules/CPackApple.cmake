@@ -1,7 +1,3 @@
-set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${NSXTOOL_VERSION}-${NSXTOOL_ARCHITECTURE}-10.10+")
-
-set(CPACK_BINARY_DRAGNDROP ON)
-
-set(CPACK_GENERATOR "DragNDrop")
+configure_file(${CMAKE_SOURCE_DIR}/cmake/deploy/osx/fix_apple_bundle.sh.in ${CMAKE_BINARY_DIR}/fix_apple_bundle.sh @ONLY)
 
 
