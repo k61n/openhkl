@@ -6,7 +6,7 @@ rm -rf build
 mkdir ./build
 cd build
 
-cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DBUILD_GSL=ON -DBUILD_QTAPPS=ON -DCMAKE_INSTALL_PREFIX=./ -DNSX_PYTHON3=OFF ..
+cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DBUILD_GSL=ON -DBUILD_NSX_APPS=ON -DCMAKE_INSTALL_PREFIX=./ -DNSX_PYTHON3=OFF ..
 cmake --build . --config Release
 cmake --build . --config Release --target install
 
