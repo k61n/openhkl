@@ -116,8 +116,6 @@ using Eigen::Quaterniond;
 #include "Timer.h"
 #include "Path.h"
 
-#include "LMFunctor.h"
-#include "RandomMatrix.h"
 #include "Parser.h"
 #include "YAMLType.h"
 #include "MatrixParser.h"
@@ -484,8 +482,7 @@ namespace nsx {
 %include "DoubleToFraction.h"
 %include "Timer.h"
 %include "Path.h"
-%include "LMFunctor.h"
-%include "RandomMatrix.h"
+
 %include "Parser.h"
 %include "MatrixParser.h"
 %include "ProgressHandler.h"
