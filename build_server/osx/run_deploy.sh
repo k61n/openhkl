@@ -25,8 +25,8 @@ make -j4
 /usr/local/opt/qt5/bin/macdeployqt nsxtool.app/
 
 # Add pynsx and its corresponding python to the dmg
-chmod 755 ${CI_PROJECT_DIR}/build_server/osx/setup_pynsx.sh
-${CI_PROJECT_DIR}/build_server/osx/setup_pynsx.sh
+chmod 755 ${CI_PROJECT_DIR}/build/fix_apple_bundle.sh
+${CI_PROJECT_DIR}/build/fix_apple_bundle.sh
 
 # Remove unnecessary files
 rm -f *.cpp
