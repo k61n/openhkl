@@ -3,21 +3,23 @@ cmake_minimum_required(VERSION 2.8)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # Add some paths to the cmake module search path.
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR})
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/macros)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/externals/c-blosc/cmake)
 
-project(NSXTOOL_PROJECT)
+project(nsxtool)
 
 ###########################################################################
 # Options
 ###########################################################################
 
-option(BUILD_QTAPPS "Build Qt based application." ON)
+option(BUILD_NSX_APPS "Build nsx based application." ON)
 option(BUILD_OPTIMIZED_DEBUG "Set optimization level -O1 or -Og for debug build" OFF)
 option(BUILD_COVERAGE_REPORT "Build code coverage report" OFF)
 option(BUILD_WITH_OPENMP "Build with OpenMP support" OFF)
 option(BUILD_GSL "Build GSL external dependency" OFF)
+option(NSXTOOL_APPLE_BUNDLE "Create a Mac OS X bundle" OFF)
 option(NSX_BUILD_STATIC "Link nsxlib statically" OFF)
 option(NSX_VALGRIND "Run tests with valgrind" OFF)
 option(NSX_SANITIZE "Compile with clang's -fsanitize (must also set NSX_SANITIZER variable)" OFF)
@@ -30,6 +32,7 @@ option(NSX_DOCS "Build documentation" OFF)
 # Scripts controlling build setup and dependencies
 ###########################################################################
 
+include(Version)
 include(GeneratePythonDocs)
 include(GetSubdirectories)
 include(CMakeFindBinUtils)
@@ -74,7 +77,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 add_subdirectory(nsxlib)
 
-if (BUILD_QTAPPS)
+if (BUILD_NSX_APPS)
     add_subdirectory(apps)
 endif()
 

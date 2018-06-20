@@ -4,6 +4,19 @@
 enable_language(CXX)
 enable_language(C)
 
+#---Setup details depending on the major platform type----------------------------------------------
+if(CMAKE_SYSTEM_NAME MATCHES Linux)
+  set(NSXTOOL_ARCHITECTURE linux)
+elseif(APPLE)
+  set(NSXTOOL_ARCHITECTURE macosx)
+elseif(WIN32)
+  if(${CMAKE_SIZEOF_VOID_P} EQUAL 8)
+    set(NSXTOOL_ARCHITECTURE win64)
+  else()
+    set(NSXTOOL_ARCHITECTURE win32)
+  endif()
+endif()
+
 # determine if compiler is GNU/clang variety
 if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   set(COMPILER_IS_GNU TRUE)
