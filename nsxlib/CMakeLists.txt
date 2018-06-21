@@ -1,16 +1,20 @@
-GET_SUBDIRECTORIES(NSXLIB_SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
+get_subdirectories(NSXLIB_SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
+
+# Set up the Version file
+configure_file(${CMAKE_SOURCE_DIR}/nsxlib/Version.h.in ${CMAKE_CURRENT_BINARY_DIR}/generated/Version.h @ONLY)
+set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/generated/Version.h PROPERTIES GENERATED TRUE)
 
 ###########################################################################
 # Setup resources manager helper program
 ###########################################################################
 
-add_executable(make_single_resource ${CMAKE_SOURCE_DIR}/scripts/make_single_resource.cpp)
-add_executable(update_resources ${CMAKE_SOURCE_DIR}/scripts/update_resources.cpp)
+add_executable(make_single_resource ${CMAKE_SOURCE_DIR}/cmake/scripts/make_single_resource.cpp)
+add_executable(update_resources ${CMAKE_SOURCE_DIR}/cmake/scripts/update_resources.cpp)
 
-configure_file(${CMAKE_SOURCE_DIR}/cmake/Resources.h.in ${CMAKE_CURRENT_BINARY_DIR}/resources/Resources.h)
-configure_file(${CMAKE_SOURCE_DIR}/cmake/Resources.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/tmp/Resources.cpp)
+configure_file(${CMAKE_SOURCE_DIR}/nsxlib/resources/Resources.h.in ${CMAKE_CURRENT_BINARY_DIR}/generated/Resources.h)
+configure_file(${CMAKE_SOURCE_DIR}/nsxlib/resources/Resources.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/tmp/Resources.cpp)
 
-set(NSXLIB_RESOURCES_CPP ${CMAKE_CURRENT_BINARY_DIR}/resources/Resources.cpp)
+set(NSXLIB_RESOURCES_CPP ${CMAKE_CURRENT_BINARY_DIR}/generated/Resources.cpp)
 
 file(GLOB_RECURSE NSX_RESOURCES ${CMAKE_SOURCE_DIR}/resources/*.yml)
 foreach (NSX_RESOURCE ${NSX_RESOURCES})
@@ -18,26 +22,26 @@ foreach (NSX_RESOURCE ${NSX_RESOURCES})
     get_filename_component(NSX_RESOURCE_DIR ${NSX_RESOURCE} DIRECTORY)
     get_filename_component(NSX_RESOURCE_TYPE ${NSX_RESOURCE_DIR} NAME)
 
-    configure_file(${CMAKE_SOURCE_DIR}/cmake/SingleResource.h.in   ${CMAKE_CURRENT_BINARY_DIR}/resources/SingleResource${NSX_RESOURCE_NAME}.h)
-    configure_file(${CMAKE_SOURCE_DIR}/cmake/SingleResource.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/tmp/SingleResource${NSX_RESOURCE_NAME}.cpp)
-    list(APPEND NSXLIB_RESOURCES_CPP ${CMAKE_CURRENT_BINARY_DIR}/resources/SingleResource${NSX_RESOURCE_NAME}.cpp)
+    configure_file(${CMAKE_SOURCE_DIR}/nsxlib/resources/SingleResource.h.in ${CMAKE_CURRENT_BINARY_DIR}/generated/SingleResource${NSX_RESOURCE_NAME}.h)
+    configure_file(${CMAKE_SOURCE_DIR}/nsxlib/resources/SingleResource.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/tmp/SingleResource${NSX_RESOURCE_NAME}.cpp)
+    list(APPEND NSXLIB_RESOURCES_CPP ${CMAKE_CURRENT_BINARY_DIR}/generated/SingleResource${NSX_RESOURCE_NAME}.cpp)
     add_custom_command(
-        OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/resources/SingleResource${NSX_RESOURCE_NAME}.cpp
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/tmp/SingleResource${NSX_RESOURCE_NAME}.cpp ${CMAKE_CURRENT_BINARY_DIR}/resources/SingleResource${NSX_RESOURCE_NAME}.cpp
-        COMMAND ${CMAKE_CURRENT_BINARY_DIR}/make_single_resource ${NSX_RESOURCE} ${CMAKE_CURRENT_BINARY_DIR}/resources/SingleResource${NSX_RESOURCE_NAME}.cpp
-        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/make_single_resource ${CMAKE_SOURCE_DIR}/cmake/SingleResource.h.in
-        COMMENT "Generating ${CMAKE_CURRENT_BINARY_DIR}/resources/SingleResource${NSX_RESOURCE_NAME}.cpp resource"
+        OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/generated/SingleResource${NSX_RESOURCE_NAME}.cpp
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/tmp/SingleResource${NSX_RESOURCE_NAME}.cpp ${CMAKE_CURRENT_BINARY_DIR}/generated/SingleResource${NSX_RESOURCE_NAME}.cpp
+        COMMAND ${CMAKE_CURRENT_BINARY_DIR}/make_single_resource ${NSX_RESOURCE} ${CMAKE_CURRENT_BINARY_DIR}/generated/SingleResource${NSX_RESOURCE_NAME}.cpp
+        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/make_single_resource ${CMAKE_SOURCE_DIR}/nsxlib/resources/SingleResource.h.in
+        COMMENT "Generating ${CMAKE_CURRENT_BINARY_DIR}/generated/SingleResource${NSX_RESOURCE_NAME}.cpp resource"
     )
 endforeach()
 
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/generate-nsx-resources.cmake 
- "execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/tmp/Resources.cpp ${CMAKE_CURRENT_BINARY_DIR}/resources/Resources.cpp)
+ "execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/tmp/Resources.cpp ${CMAKE_CURRENT_BINARY_DIR}/generated/Resources.cpp)
   foreach (NSX_RESOURCE ${NSX_RESOURCES})
     get_filename_component(NSX_RESOURCE_NAME \${NSX_RESOURCE} NAME_WE)
     get_filename_component(NSX_RESOURCE_DIR \${NSX_RESOURCE} DIRECTORY)
     get_filename_component(NSX_RESOURCE_TYPE \${NSX_RESOURCE_DIR} NAME)
 
-    execute_process(COMMAND ${CMAKE_CURRENT_BINARY_DIR}/update_resources \${NSX_RESOURCE_TYPE} \${NSX_RESOURCE_NAME} ${CMAKE_CURRENT_BINARY_DIR}/resources/Resources.cpp)
+    execute_process(COMMAND ${CMAKE_CURRENT_BINARY_DIR}/update_resources \${NSX_RESOURCE_TYPE} \${NSX_RESOURCE_NAME} ${CMAKE_CURRENT_BINARY_DIR}/generated/Resources.cpp)
   endforeach ()"
 )
 
@@ -51,10 +55,10 @@ file(GLOB_RECURSE NSXLIB_SOURCES *.cpp *.c)
 list(APPEND NSXLIB_SOURCES ${NSXLIB_RESOURCES_CPP})
 
 # Get the nsxlib headers
-file(GLOB_RECURSE NSXLIB_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_BINARY_DIR}/resources/*.h)
+file(GLOB_RECURSE NSXLIB_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 
 # Get the nsxlib headers
-file(GLOB NSXLIB_GENERATED_HEADERS ${CMAKE_CURRENT_BINARY_DIR}/resources/*.h)
+file(GLOB NSXLIB_GENERATED_HEADERS ${CMAKE_CURRENT_BINARY_DIR}/generated/*.h)
 list(APPEND NSXLIB_HEADERS ${NSXLIB_GENERATED_HEADERS})
 
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/copy-nsxlib-headers.cmake
@@ -62,8 +66,9 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/copy-nsxlib-headers.cmake
          get_filename_component(filename \${path} NAME)
          configure_file(\${path} ${CMAKE_CURRENT_BINARY_DIR}/include/nsxlib/\${filename} COPYONLY)
      endforeach()")
+add_custom_target(copy-nsx-headers COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/copy-nsxlib-headers.cmake)
 
-include_directories(${NSXLIB_SUBDIRS} ${CMAKE_CURRENT_BINARY_DIR}/resources)
+include_directories(${NSXLIB_SUBDIRS} ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
 # Creating the library
 # Under Windows and Miscrosoft Visual Studio the library will be static to avoid
@@ -74,7 +79,6 @@ else()
   add_library(nsx SHARED ${NSXLIB_SOURCES})
 endif()
 
-add_custom_target(copy-nsx-headers COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/copy-nsxlib-headers.cmake)
 add_dependencies(copy-nsx-headers generate-nsx-resources)
 add_dependencies(nsx copy-nsx-headers generate-nsx-resources)
 
@@ -92,7 +96,7 @@ target_link_libraries(nsx
 # Install section, installing libraries
 install(TARGETS nsx DESTINATION lib)
 install(CODE "MESSAGE(\"Installing headers...\")")
-install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/nsxlib/ DESTINATION include/nsxlib FILES_MATCHING PATTERN "*.h")
+install(FILES ${NSXLIB_HEADERS} DESTINATION include/nsxlib)
 
 if(NSX_TIDY)
   add_tidy_target(nsx)

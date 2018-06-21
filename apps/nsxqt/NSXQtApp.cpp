@@ -1,4 +1,5 @@
 #include <nsxlib/Logger.h>
+#include <nsxlib/Version.h>
 
 #include <QApplication>
 
@@ -6,7 +7,7 @@
 
 NSXQtApp::NSXQtApp(int &argc, char *argv[]) : QApplication(argc,argv)
 {
-    this->setApplicationDisplayName("nsxqt");
+    this->setApplicationDisplayName(QString::fromStdString("NSXQt "+nsx::__version__));
     this->setApplicationName("nsxqt");
 }
 

@@ -91,6 +91,8 @@ using Eigen::Matrix3d;
 using Eigen::Matrix;
 using Eigen::Quaterniond;
 
+#include "Version.h"
+
 #include "Material.h"
 #include "IsotopeDatabaseManager.h"
 
@@ -349,6 +351,8 @@ using namespace nsx;
 %template(vectorVectorXd) std::vector<Eigen::VectorXd>;
 %template(vectorVector3d) std::vector<Eigen::Vector3d>;
 %template(vectorRowVector3d) std::vector<Eigen::RowVector3d>;
+
+%include "Version.h"
 
 %include "ChemistryTypes.h"
 %include "CrystalTypes.h"

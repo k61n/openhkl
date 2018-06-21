@@ -1,0 +1,7 @@
+#include <string>
+
+namespace nsx {
+
+const std::string __version__ = "@NSXTOOL_VERSION@";
+
+} // end namespace nsx
