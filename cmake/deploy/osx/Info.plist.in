@@ -15,16 +15,16 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleLongVersionString</key>
-        <string>@NSXTool_VERSION_MAJOR@.@NSXTool_VERSION_MINOR@.@NSXTool_VERSION_PATCH@</string>
+        <string>@NSXTOOL_VERSION_MAJOR@</string>
 	<key>CFBundleName</key>
 	<string></string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-        <string>@NSXTool_VERSION_MAJOR@.@NSXTool_VERSION_MINOR@.@NSXTool_VERSION_PATCH@</string>
+        <string>@NSXTOOL_VERSION_MAJOR@</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-        <key>@NSXTool_VERSION_MAJOR@.@NSXTool_VERSION_MINOR@.@NSXTool_VERSION_PATCH@</key>
+        <key>@NSXTOOL_VERSION_MAJOR@</key>
 	<string></string>
 	<key>CSResourcesFileMapped</key>
 	<true/>

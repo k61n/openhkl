@@ -39,6 +39,7 @@
 #include <nsxlib/SpaceGroup.h>
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
+#include <nsxlib/Version.h>
 
 #include "AbsorptionWidget.h"
 #include "CollectedPeaksModel.h"
@@ -82,7 +83,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Set Date to the application window title
     QDateTime datetime=QDateTime::currentDateTime();
-    this->setWindowTitle(QString("NSXTool version:")+ datetime.toString());
 
     auto debug_log = [this]() -> nsx::Logger
     {

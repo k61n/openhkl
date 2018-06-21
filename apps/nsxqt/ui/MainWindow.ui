@@ -20,10 +20,10 @@
    <enum>Qt::ClickFocus</enum>
   </property>
   <property name="windowTitle">
-   <string>Integration Software Beta version (March 2015)</string>
+   <string/>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="../NSXQt.qrc">
     <normaloff>:/resources/NSXToolIcon.png</normaloff>:/resources/NSXToolIcon.png</iconset>
   </property>
   <property name="windowOpacity">
@@ -1556,7 +1556,7 @@ QDockWidget::title {
   </widget>
   <action name="action_open">
    <property name="icon">
-    <iconset>
+    <iconset resource="../NSXQt.qrc">
      <normaloff>:/resources/addExperimentIcon.png</normaloff>:/resources/addExperimentIcon.png</iconset>
    </property>
    <property name="text">
@@ -1771,7 +1771,9 @@ QDockWidget::title {
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../NSXQt.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>frame</sender>
