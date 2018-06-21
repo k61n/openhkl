@@ -53,11 +53,8 @@
 namespace nsx {
 
 
-/** @brief Base class for Detectors.
- *
- *
- */
-class Detector : public Component {
+//! \brief Base class for Detectors.
+class Detector: public Component {
 public:
     //! Static constructor of a Detector from a property tree node
     static Detector* create(const YAML::Node& node);
@@ -130,9 +127,9 @@ public:
 
     //! Returns the position of a given pixel in detector space. This takes into account the detector motions in detector space.
     virtual DirectVector pixelPosition(double x, double y) const=0;
-
-    double pixelHeigth() const;
-
+    //! Return the mean detector pixel height
+    double pixelHeight() const;
+    //! Return the mean detector pixel width
     double pixelWidth() const;
 
     //! Returns how data are mapped to detector
@@ -158,10 +155,15 @@ protected:
     double _angularHeight;
     //! Detector angular width
     double _angularWidth;
+    //! Number of rows of pixels
     unsigned int _nRows;
+    //! Number of columns of pixels
     unsigned int _nCols;
+    //! Minimum row number (y origin)
     double _minRow;
+    //! Minimum column number (x origin)
     double _minCol;
+    //! Distance from origin to detector
     double _distance;
 
 private:

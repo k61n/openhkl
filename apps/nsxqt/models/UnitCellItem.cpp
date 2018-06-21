@@ -25,7 +25,11 @@ UnitCellItem::UnitCellItem(nsx::sptrUnitCell cell):
 
 UnitCellItem::~UnitCellItem()
 {
-    experimentItem()->experiment()->diffractometer()->sample()->removeUnitCell(_cell);
+    nsx::UnitCellList& cells = experimentItem()->experiment()->diffractometer()->sample()->unitCells();
+    auto it = std::find(cells.begin(), cells.end(), _cell);
+    if (it != cells.end()) {
+        cells.erase(it);
+    }
 }
 
 void UnitCellItem::setData(const QVariant& value, int role)

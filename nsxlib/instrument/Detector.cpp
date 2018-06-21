@@ -266,7 +266,7 @@ void Detector::setNRows(unsigned int rows)
     _nRows=rows;
 }
 
-double Detector::pixelHeigth() const
+double Detector::pixelHeight() const
 {
     return _height/_nRows;
 }

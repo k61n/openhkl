@@ -104,7 +104,6 @@ using Eigen::Quaterniond;
 #include "Units.h"
 
 #include "DoubleToFraction.h"
-#include "Timer.h"
 #include "Path.h"
 
 #include "Parser.h"
@@ -343,8 +342,11 @@ using namespace nsx;
 %include "MathematicsTypes.h"
 %include "UtilsTypes.h"
 
+%template(UnitCellList) std::vector<nsx::sptrUnitCell>;
+
 %include "DirectVector.h"
 %template(DirectVectorList) std::vector<nsx::DirectVector>;
+
 
 %include "ReciprocalVector.h"
 %template(ReciprocalVectorList) std::vector<nsx::ReciprocalVector>;
@@ -457,7 +459,6 @@ namespace nsx {
 %include "CSV.h"
 %include "Enums.h"
 %include "DoubleToFraction.h"
-%include "Timer.h"
 %include "Path.h"
 
 %include "Parser.h"

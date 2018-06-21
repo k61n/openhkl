@@ -47,8 +47,7 @@ public:
 
     //! Static constructor of a Sample from a property tree node
     static Sample* create(const YAML::Node& node);
-
-    // Default constructor
+    //! Default constructor
     Sample();
     //! Copy constructor
     Sample(const Sample& other);
@@ -60,37 +59,16 @@ public:
     Sample* clone() const;
     //! Destructor
     virtual ~Sample();
-    // Operators
     //! Assignment operator
     Sample& operator=(const Sample& other);
-
     //! Set the sample shape described as a convex hull
     void setShape(const ConvexHull& shape);
-
     //! Return the sample shape, described as a convex hull
     ConvexHull& shape();
-
-    //! Create a new crystal with Empty UnitCell, and return it
-    std::shared_ptr<UnitCell> addUnitCell(std::shared_ptr<UnitCell> cell = nullptr);
-
-    //! Get the UnitCell of Crystal number i in the list
-    sptrUnitCell unitCell(int index);
+    //! Returnt he list of unit cells of the sample
+    UnitCellList& unitCells();
+    //! Return the list of unit cells of the sample
     const UnitCellList& unitCells() const;
-    //! Return number of crystals
-    std::size_t nCrystals() const;
-    //!
-    void removeUnitCell(int index);
-    void removeUnitCell(sptrUnitCell cell);
-
-    //! Gets the Z number of a given unit cell
-    unsigned int z(int index) const;
-    //! Sets the Z number of a given unit cell
-    void setZ(int Z, int index);
-
-    //! Gets the Material of one of the unit cells of this Sample
-    sptrMaterial material(int index) const;
-    //! Sets the Material of one of the unit cells of this Sample
-    void setMaterial(sptrMaterial material, int index);
 
 private:
     ConvexHull _sampleShape;

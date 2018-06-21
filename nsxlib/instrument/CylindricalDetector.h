@@ -35,6 +35,7 @@
 
 namespace nsx {
 
+//! Class implementing cylindrical and banana detectors.
 class CylindricalDetector : public Detector {
 public:
 

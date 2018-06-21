@@ -41,6 +41,7 @@
 #include "SampleItem.h"
 #include "SessionModel.h"
 #include "NumorItem.h"
+#include "UnitCellItem.h"
 
 PeaksItem::PeaksItem(): TreeItem()
 {
@@ -215,7 +216,6 @@ void PeaksItem::filterPeaks()
 
 void PeaksItem::autoindex()
 {
-
     nsx::PeakList peaks = selectedPeaks();
 
     DialogAutoIndexing dlg(experimentItem(), peaks);
@@ -232,13 +232,14 @@ void PeaksItem::autoindex()
         return;
     }
 
-    for (auto peak : peaks) {
+    for (auto peak: peaks) {
         peak->setUnitCell(uc);
     }
 
     auto experiment_item = experimentItem();
     auto sample_item = experiment_item->instrumentItem()->sampleItem();
-    experiment_item->model()->setData(sample_item->index(),QVariant::fromValue(uc),Qt::UserRole);
+    sample_item->appendRow(new UnitCellItem(uc));
+    //experiment_item->model()->setData(sample_item->index(),QVariant::fromValue(uc),Qt::UserRole);
 }
 
 void PeaksItem::refine()
@@ -272,9 +273,10 @@ void PeaksItem::autoAssignUnitCell()
 {
     auto&& peaks = selectedPeaks();
     auto sample = experiment()->diffractometer()->sample();
+    const auto& cells = sample->unitCells();
 
     //! nothing to do!
-    if (sample->nCrystals() < 1) {
+    if (cells.size() < 1) {
         nsx::info() << "There are no unit cells to assign";
         return;
     }
@@ -287,8 +289,7 @@ void PeaksItem::autoAssignUnitCell()
         Eigen::RowVector3d hkl;
         bool assigned = false;
 
-        for (size_t i = 0; i < sample->nCrystals(); ++i) {
-            auto cell = sample->unitCell(i);
+        for (auto cell: cells) {
             nsx::MillerIndex hkl(peak->q(), *cell);
             if (hkl.indexed(cell->indexingTolerance())) {
                 peak->setUnitCell(cell);

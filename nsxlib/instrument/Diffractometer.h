@@ -38,6 +38,7 @@
 
 namespace nsx {
 
+//! Class describing a general diffractometer, consisting of a sample, source, and detector.
 class Diffractometer {
 
 public:
@@ -85,16 +86,17 @@ public:
     void setSource(sptrSource source);
 
 protected:
-
     //! Default constructor
     Diffractometer();
-
     //! Constructs a diffractometer with a given name
     Diffractometer(const std::string& name);
-
+    //! Name of the diffractometer
     std::string _name;
+    //! Pointer to detector
     sptrDetector _detector;
+    //! Pointer to sample
     sptrSample _sample;
+    //! Pointer to source
     sptrSource _source;
 };
 

@@ -59,7 +59,7 @@ class TestWorkFlow(unittest.TestCase):
 
         uc = nsx.UnitCell(soln[0])
         sample = diff.sample()
-        sample.addUnitCell(uc)
+        sample.unitCells().push_back(uc)
 
         for peak in peaks:
             peak.setUnitCell(uc)

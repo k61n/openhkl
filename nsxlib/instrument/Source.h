@@ -39,13 +39,12 @@
 
 namespace nsx {
 
-class Source : public Component {
+//! Class encapsulating the source (incoming beam)
+class Source: public Component {
 public:
-
 	//! Static constructor of a monochromatic source from a yaml tree node
 	static Source* create(const YAML::Node& node);
-
-	// Default constructor
+	//! Default constructor
 	Source();
 	//! Copy constructor
 	Source(const Source& other);
@@ -57,22 +56,16 @@ public:
 	Source* clone() const;
 	//! Destructor
 	~Source();
-
 	//! Assignment operator
 	Source& operator=(const Source& other);
-
 	//! Returns the monochromators registered for this Source
 	const std::vector<Monochromator>& monochromators() const;
-
 	//! Returns the number of monochromators associated with this source
 	int nMonochromators() const;
-
 	//! Select a monochromator for this source
     void setSelectedMonochromator(size_t i);
-
 	//! Return a pointer to the selected monochromator
     Monochromator& selectedMonochromator();
-
 	//! Add a new monochromator to this source
 	void addMonochromator(Monochromator mono);
 
