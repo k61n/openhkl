@@ -41,17 +41,6 @@ int main()
     NSX_CHECK_CLOSE(transf[1],0.5*sqrt(2.0),tolerance);
     NSX_CHECK_SMALL(transf[2],tolerance);
 
-    // Ensure that offset is taken into account
-    // todo: reenable this test after offset refactor
-    #if 0
-    a.setRotationDirection(nsx::RotAxis::CCW);
-    a.setOffset(1.0*nsx::deg);
-    transf=a.transform(Eigen::Vector3d(1,0,0),44.0*nsx::deg);
-    NSX_CHECK_CLOSE(transf[0],0.5*sqrt(2.0),tolerance);
-    NSX_CHECK_CLOSE(transf[1],0.5*sqrt(2.0),tolerance);
-    NSX_CHECK_SMALL(transf[2],tolerance);
-    #endif
-
     // Switch rotation axis to y
     //a.setOffset(0.0);
     a.setAxis(Eigen::Vector3d(0,1,0));

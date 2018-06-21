@@ -140,10 +140,6 @@ bool Mosaic::run(const std::vector<std::string>& numors, unsigned int n, double&
     double lmin = _l-sigmal;
     double lmax = _l+sigmal;
 
-	#if 0
-    double monHeight = _diffractometer->source()->height();
-    double monWidth = _diffractometer->source()->width();
-	#endif
 	// todo: width,height should not be hard-coded!!
 	double monHeight = 1*UnitsManager::get("mm");
 	double monWidth = 1*UnitsManager::get("mm");

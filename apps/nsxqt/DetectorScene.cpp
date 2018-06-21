@@ -355,17 +355,6 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             }
         }
     }
-    
-    #if 0
-    for(mask == _masks)
-    {
-        if(item == mask.first)
-        data->addMask(BoxMask);
-        mask.second = BoxMask; 
-
-    } 
-    #endif
-
 }
 
 void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
@@ -415,10 +404,9 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             // If the item is a peak graphics item, remove its corresponding peak from the data,
             // update the set of peak graphics items and update the scene
             if (auto p = dynamic_cast<PeakGraphicsItem*>(item)) {
-                // todo
-                #if 0
-                _session->removePeak(p->getPeak());
-                #endif
+                // todo: actually delete the peak!
+                // this was changed during a refactor and never fixed properly
+                p->setSelected(false);
                 _peakGraphicsItems.erase(p->getPeak());
 
             }

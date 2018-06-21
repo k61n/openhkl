@@ -173,31 +173,11 @@ int main()
         NSX_CHECK_CLOSE(q0(0), q1(0), 2.0);
         NSX_CHECK_CLOSE(q0(1), q1(1), 2.0);
         NSX_CHECK_CLOSE(q0(2), q1(2), 2.0);
-
-        #if 0
-        if (library.addPeak(peak)) {
-            ++n_selected;
-        } else {
-            peak->setSelected(false);
-        }
-        #endif
     }
 
     NSX_CHECK_GREATER_THAN(n_selected, 600);
 
     // TODO: put peak prediction back into workflow test!!!
-
-    #if 0
-    NSX_CHECK_ASSERT(n_selected > 620);
-
-    library.setDefaultShape(library.meanShape());
-
-    nsx::PeakPredictor predictor(cell, library, 2.1, 50.0, 4);
-    auto predicted_peaks = predictor.predict(dataf);
-
-    std::cout << "predicted_peaks: " << predicted_peaks.size() << std::endl;
-    NSX_CHECK_ASSERT(predicted_peaks.size() > 1600);
-    #endif
 
     return 0;
 }

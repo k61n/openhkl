@@ -113,16 +113,6 @@ void AutoIndexer::computeFFTSolutions()
         auto& peak = filtered_peaks[i];
         auto q = peak->q().rowVector();
         qvects.push_back(ReciprocalVector(q));
-        //qvects.push_back(ReciprocalVector(-q));
-
-        #if 0
-        for (auto j = i+1; j < filtered_peaks.size(); ++j) {
-            auto p = filtered_peaks[j]->q().rowVector();
-            qvects.push_back(ReciprocalVector(q-p));
-            qvects.push_back(ReciprocalVector(q+p));
-            qvects.push_back(ReciprocalVector(p-q));
-        }
-        #endif
     }
 
     // Check that a minimum number of peaks have been selected for indexing

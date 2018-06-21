@@ -305,18 +305,3 @@ void PeaksItem::autoAssignUnitCell()
     }
     nsx::debug() << "Done auto assigning unit cells";
 }
-
-#if 0
-void PeaksItem::setData(const QVariant& value, int role)
-{
-    switch (role) {
-    case Qt::UserRole:
-        auto item = new PeakListItem(value.value<nsx::PeakList>());
-        //item->setText("Found peaks");
-        appendRow(item);
-        break;
-
-    }
-    QStandardItem::setData(value,role);
-}
-#endif
