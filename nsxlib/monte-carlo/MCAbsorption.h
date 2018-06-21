@@ -43,7 +43,9 @@ public:
 	//! Define absorption Engine with a rectangular source of WxH
 	MCAbsorption(double width, double height, double pos);
 	~MCAbsorption();
+	//! Set the sample
 	void setSample(ConvexHull* sample, double muScat, double muAbs);
+	//! Run the Monte-Carlo calculation
 	double run(unsigned int nIterations, const Eigen::Vector3d& outV, const Eigen::Matrix3d& sampleOrientation) const;
 
 

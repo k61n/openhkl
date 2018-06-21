@@ -53,6 +53,7 @@ public:
     double CChalf() const;
     //! Return CC star (estimate)
     double CCstar() const;
+    //! Return number of peaks
     unsigned int nPeaks() const;
 private:
     double _CChalf;

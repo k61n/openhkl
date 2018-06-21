@@ -69,22 +69,35 @@ void callback_helper(const size_t iter, void* data, const gsl_multifit_nlinear_w
     }
 }
 
-// Helper class to wrap GSL data structures. Used only in implementation of Minimizer.
+//! Helper class to wrap GSL data structures. Used only in implementation of Minimizer.
 struct MinimizerGSL {
+    //! GSL fit workspace
     gsl_multifit_nlinear_workspace* workspace;
+    //! GSL Residual/Jacobian structure
     gsl_multifit_nlinear_fdf fdf;
+    //! Fit parameters
     gsl_multifit_nlinear_parameters fdfParams;
+    //! Workspace for jacobian matrix
     gsl_matrix *jacobian;
+    //! Workspace of covariance matrix
     gsl_matrix* covariance;
-    int status, info;
+    //! Status
+    int status;
+    //! Additional information
+    int info;
+    //! Vector of fit parameters
     gsl_vector* x;
+    //! Weight vector
     gsl_vector* wt;
     
     MinimizerGSL(): workspace(nullptr), jacobian(nullptr), covariance(nullptr), x(nullptr), wt(nullptr) {};
 };
 
+//! Convert a GSL matrix to an Eigen matrix
 static void eigenFromGSL(const gsl_matrix* in, Eigen::MatrixXd& out);
+//! Convert and Eigen vector to a GSL vector
 static void gslFromEigen(const Eigen::VectorXd& in, gsl_vector* out);
+//! Convert an Eigen matrix to a GSL matrix
 static void gslFromEigen(const Eigen::MatrixXd& in, gsl_matrix* out);
 
 Minimizer::Minimizer():

@@ -43,6 +43,7 @@
 
 namespace nsx {
 
+//! 3D Ellipsoid, stored as center and covariance matrix
 class Ellipsoid {
 
 public:

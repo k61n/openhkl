@@ -41,7 +41,6 @@ namespace nsx {
 
 class DataSet;
 
-//! \class MergedData
 //! \brief Class to handle merged datasets.
 class MergedData {
 public:
@@ -55,7 +54,7 @@ public:
     //! Retern the set of merged peaks.
     const MergedPeakSet& peaks() const;
 
-    //! Return redundancy = #observations / #symmetry-inequvialent peaks.
+    //! Return redundancy = observations / symmetry-inequvialent peaks.
     double redundancy() const;
 
     //! Return total number of observations (including redundant ones)

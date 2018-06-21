@@ -197,21 +197,17 @@ void PeaksItem::buildShapeLibrary()
 
 void PeaksItem::filterPeaks()
 {
-    DialogPeakFilter* dlg = new DialogPeakFilter(selectedPeaks());
+    auto&& selected_peaks = selectedPeaks();
+    DialogPeakFilter* dlg = new DialogPeakFilter(selected_peaks);
 
-    if (dlg->exec()) {
-        auto&& bad_peaks = dlg->badPeaks();
-        for (auto peak: bad_peaks) {
-            peak->setSelected(false);
-
-            for (auto i = 0; i < rowCount(); ++i) {
-                if (auto item = dynamic_cast<PeakListItem*>(child(i))) {
-                    item->removePeak(peak);
-                }
-            }
-        }
+    if (!dlg->exec()) {
+        return;
     }    
     // todo: update peaks
+    auto&& good_peaks = dlg->goodPeaks();
+    auto peak_list = new PeakListItem(good_peaks);
+    peak_list->setText("Filtered peaks");
+    appendRow(peak_list);
 }
 
 void PeaksItem::autoindex()

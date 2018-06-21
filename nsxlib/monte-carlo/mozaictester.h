@@ -5,6 +5,7 @@
 
 namespace nsx {
 
+//! Class to test the Monte-Carlo peak profile calculation
 struct MozaicTester
 {
     MozaicTester();

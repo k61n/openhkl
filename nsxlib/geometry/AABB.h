@@ -104,9 +104,9 @@ public:
 #endif
 
 protected:
-    // The lower bound point
+    //! The lower bound point
     Eigen::Vector3d _lowerBound;
-    // The upper bound point
+    //! The upper bound point
     Eigen::Vector3d _upperBound;
 
 };

@@ -189,8 +189,8 @@ private:
     unsigned int _idx = 0;
 };
 
-class OctreeIterator
-{
+//! Iterator for octree leaves/chambers
+class OctreeIterator {
 public:
     //; The default constructor. Used only for end condition.
     OctreeIterator();

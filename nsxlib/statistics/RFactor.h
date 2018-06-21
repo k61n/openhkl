@@ -54,8 +54,11 @@ public:
     double Rmeas() {return _Rmeas;}
     double Rpim() {return _Rpim;}
 
+    //! Expected value of Rmerge, based on error estimates
     double expectedRmerge() {return _expectedRmerge;}
+    //! Expected Rmeas, based on error estimates
     double expectedRmeas() {return _expectedRmeas;}
+    //! Expected Rpim, based on error estimates
     double expectedRpim() {return _expectedRpim;}
 
 

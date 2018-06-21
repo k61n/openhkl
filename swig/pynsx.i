@@ -54,7 +54,7 @@
 %shared_ptr(nsx::HDF5DataReader)
 %shared_ptr(nsx::HDF5MetaDataReader)
 %shared_ptr(nsx::ILLDataReader)
-%shared_ptr(nsx::I16DataReader)
+
 %shared_ptr(nsx::RawDataReader)
 %shared_ptr(nsx::TiffDataReader)
 %shared_ptr(nsx::Experiment)
@@ -165,7 +165,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "IDataReader.h"
 #include "HDF5DataReader.h"
 #include "HDF5MetaDataReader.h"
-#include "I16DataReader.h"
+
 #include "RawDataReader.h"
 #include "TiffDataReader.h"
 #include "BloscFilter.h"
@@ -520,7 +520,7 @@ namespace nsx {
 %include "IDataReader.h"
 %include "HDF5MetaDataReader.h"
 %include "HDF5DataReader.h"
-%include "I16DataReader.h"
+
 %include "RawDataReader.h"
 %include "TiffDataReader.h"
 %include "BloscFilter.h"
