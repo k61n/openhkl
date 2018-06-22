@@ -18,7 +18,4 @@ public:
     void addUnitCell(); 
     QWidget* inspectItem() override;
     void openIsotopesDatabase();
-
-private:
-    std::vector<nsx::sptrUnitCell> _unitCells;
 };

@@ -11,10 +11,10 @@ class UnitCellItem : public InspectableTreeItem
 {
 public:
     UnitCellItem(nsx::sptrUnitCell);
-    ~UnitCellItem();
+    ~UnitCellItem();   
 
-    virtual QVariant data(int role) const override;
-    virtual void setData(const QVariant &value, int role) override;
+    QVariant data(int role) const;
+    void setData(const QVariant& value, int role);
 
     QWidget* inspectItem();
     nsx::sptrUnitCell unitCell();

@@ -234,7 +234,10 @@ void PeaksItem::autoindex()
 
     auto experiment_item = experimentItem();
     auto sample_item = experiment_item->instrumentItem()->sampleItem();
-    sample_item->appendRow(new UnitCellItem(uc));
+    auto uc_item = new UnitCellItem(uc);
+    uc_item->setData(QVariant::fromValue(uc), Qt::UserRole);
+    sample_item->appendRow(uc_item);
+    experiment_item->experiment()->diffractometer()->sample()->unitCells().push_back(uc);
     //experiment_item->model()->setData(sample_item->index(),QVariant::fromValue(uc),Qt::UserRole);
 }
 
