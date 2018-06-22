@@ -42,9 +42,9 @@ namespace nsx {
 class SymOp {
 
 public:
-	// needed for swig
+	//! Default constructor should not be used but is needed for swig.
 	SymOp()=default;
-
+	//! Construct a symmetry operation by parsing a generator.
 	SymOp(std::string generator);
 	//! Construct symmetry operation from an Eigen affine transformatiion
 	SymOp(const affineTransformation& symmetryOperation);

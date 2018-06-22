@@ -12,7 +12,7 @@
 #include <nsxlib/Logger.h>
 #include <nsxlib/PeakFinder.h>
 #include <nsxlib/ProgressHandler.h>
-#include <nsxlib/StrongPeakIntegrator.h>
+#include <nsxlib/PixelSumIntegrator.h>
 #include <nsxlib/RawDataReader.h>
 
 #include "DataItem.h"
@@ -177,7 +177,7 @@ void DataItem::findPeaks()
 
     // integrate peaks
     for (auto numor: selectedNumors) {
-        nsx::StrongPeakIntegrator integrator(true, true);
+        nsx::PixelSumIntegrator integrator(true, true);
         integrator.integrate(peaks, numor, dialog_ptr->peakScale(), dialog_ptr->bkgBegin(), dialog_ptr->bkgEnd());
     }
 

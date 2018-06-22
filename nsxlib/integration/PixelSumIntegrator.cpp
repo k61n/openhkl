@@ -34,20 +34,20 @@
 #include "Intensity.h"
 #include "MeanBackgroundIntegrator.h"
 #include "Peak3D.h"
-#include "StrongPeakIntegrator.h"
+#include "PixelSumIntegrator.h"
 
 namespace nsx {
 
-StrongPeakIntegrator::StrongPeakIntegrator(bool fit_center, bool fit_covariance): MeanBackgroundIntegrator(),
+PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance): MeanBackgroundIntegrator(),
     _fitCenter(fit_center), _fitCovariance(fit_covariance)
 {
 }
 
-StrongPeakIntegrator::~StrongPeakIntegrator()
+PixelSumIntegrator::~PixelSumIntegrator()
 {
 }
 
-bool StrongPeakIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
+bool PixelSumIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 {
     MeanBackgroundIntegrator::compute(peak, region);
     PeakCoordinateSystem frame(peak);

@@ -46,6 +46,7 @@ namespace nsx {
 class DataReaderFactory {
 
 public:
+    //! Callback type of the factory
     using callback = std::function<std::shared_ptr<DataSet>(const std::string&, const std::shared_ptr<Diffractometer>&)>;
 
     DataReaderFactory();

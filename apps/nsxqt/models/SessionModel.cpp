@@ -76,7 +76,7 @@
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/SpaceGroup.h>
-#include <nsxlib/StrongPeakIntegrator.h>
+#include <nsxlib/PixelSumIntegrator.h>
 #include <nsxlib/Source.h>
 #include <nsxlib/UnitCell.h>
 
@@ -120,7 +120,7 @@ void SessionModel::onItemChanged(QStandardItem* item)
         // The first item of the Sample item branch is the SampleShapeItem, skip it
         int idx = p->index().row()- 1;
         auto expt = p->experiment();
-        auto uc = expt->diffractometer()->sample()->unitCell(idx);
+        auto uc = expt->diffractometer()->sample()->unitCells()[idx];
         uc->setName(p->text().toStdString());
     }
 }

@@ -37,15 +37,13 @@
 
 namespace nsx {
 
-/**
- * @brief Class defining a rotation axis.
- *
- *  Allows to define a rotation axis in 3D space , constructed by a direction vector
- *  and a rotation direction (CW or CCW). The direction vector needs not be normalized.
- *
- */
-class RotAxis : public Axis {
+//! \brief Class defining a rotation axis.
+//!
+//! Allows to define a rotation axis in 3D space , constructed by a direction vector
+//! and a rotation direction (CW or CCW). The direction vector needs not be normalized.
+class RotAxis: public Axis {
 public:
+	//! Axis direction (counter-clockwise, clockwise)
 	enum Direction {CCW,CW};
 
 	//! Static constructor for a RotAxis
@@ -69,7 +67,7 @@ public:
 	RotAxis* clone() const;
 	//! Get rotation direction.
 	void setRotationDirection(Direction);
-	// ! Return 0 for CCW and 1 for CW
+	//! Return rotation direction: 0 for CCW and 1 for CW
 	Direction rotationDirection() const;
 	//! Get the rotation matrix associated with this rotation
 	//@param angle : rotation angle in radians by default, use Units to convert

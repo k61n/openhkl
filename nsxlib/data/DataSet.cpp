@@ -16,7 +16,6 @@
 #include "DetectorEvent.h"
 #include "Diffractometer.h"
 #include "Ellipsoid.h"
-#include "ErfInv.h"
 #include "Gonio.h"
 #include "IDataReader.h"
 #include "IntegrationRegion.h"
@@ -269,36 +268,6 @@ void DataSet::saveHDF5(const std::string& filename) //const
         H5::DataSet sampleScan(sampleGroup.createDataSet(samplenames[j], H5::PredType::NATIVE_DOUBLE, scanSpace));
         sampleScan.write(&valsSamples(j,0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
     }
-
-    #if 0
-    // Write source states
-    H5::Group sourceGroup(scanGroup.createGroup("Source"));
-    std::vector<std::string> sourcenames = _diffractometer->source()->gonio()->getPhysicalAxesNames();
-    RealMatrix valsSources(sourcenames.size(),_nFrames);
-
-    for (unsigned int i = 0; i < _states.size(); ++i) {
-        auto v = _states[i].source.values();
-
-        // pad with zeros if necessary
-        if (v.size() < sourcenames.size()) {
-            Eigen::ArrayXd w(sourcenames.size());
-            w.setZero();
-            for (auto i = 0; i < v.size(); ++i) {
-                w(i) = v(i);
-            }
-            v = w;
-        }
-
-        for (unsigned int j = 0; j < sourcenames.size(); ++j) {
-            valsSources(j,i) = v[j] / deg;
-        }
-    }
-
-    for (unsigned int j = 0; j < sourcenames.size(); ++j) {
-        H5::DataSet sourceScan(sourceGroup.createDataSet(sourcenames[j], H5::PredType::NATIVE_DOUBLE, scanSpace));
-        sourceScan.write(&valsSources(j,0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
-    }
-    #endif
 
     const auto& map=_metadata->map();
 

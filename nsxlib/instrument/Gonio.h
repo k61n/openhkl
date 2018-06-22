@@ -46,20 +46,17 @@
 
 namespace nsx {
 
-/* !
- * \brief Class Gonio.
- * Base class for all goniometers (system of several rotation axis). Any number of axis can be used.
- * The rotation is applied in reverse order of the given order. For example, when defining a goniometer with
- * 3 axes a,b,c, it is supposed that in such collection of axes, b is attached to the a shaft and c is attached to the
- * b shaft. Such gonio will rotate a vector v into a.b.c.v.
- * Once the Gonio is constructed, it is not allowed to change the number of axes.
- * Axes, their labels and respective limits can be modified by the class methods or by template accessor:
- * e.g. Axis<0>(g)=RotAxis(UnitZ,CW).
- */
-class Gonio
-{
+//! \brief Class Gonio.
+//! Base class for all goniometers (system of several rotation axis). Any number of axis can be used.
+//! The rotation is applied in reverse order of the given order. For example, when defining a goniometer with
+//! 3 axes a,b,c, it is supposed that in such collection of axes, b is attached to the a shaft and c is attached to the
+//! b shaft. Such gonio will rotate a vector v into a.b.c.v.
+//! Once the Gonio is constructed, it is not allowed to change the number of axes.
+//! Axes, their labels and respective limits can be modified by the class methods or by template accessor:
+//! e.g. Axis<0>(g)=RotAxis(UnitZ,CW).
+class Gonio {
 public:
-    // Default constructor
+    //! Default constructor
     Gonio();
     //! Copy constructor
     Gonio(const Gonio& other);
@@ -69,11 +66,8 @@ public:
     Gonio(const YAML::Node& node);
     //! Destructor
     ~Gonio();
-
     //! Assignment operator
     Gonio& operator=(const Gonio& other);
-
-    // Getters and setters
     //! Gets the axes of this goniometer
     const std::vector<Axis*>& axes() const;
     //! Gets the names of the axes of this goniometer
@@ -100,14 +94,12 @@ public:
     std::size_t nAxes() const;
     //! Return the number of physical axis defined in the gonio
     std::size_t nPhysicalAxes() const;
-
     //! Add an Axis to this Goniometer.
     void addAxis(Axis* axis);
     //! Add a rotation axis to this goniometer
     Axis* addRotation(const std::string& label,const Eigen::Vector3d& axis, RotAxis::Direction dir=RotAxis::Direction::CCW);
     //! Add a translation axis to this goniometer
     Axis* addTranslation(const std::string& label,const Eigen::Vector3d& axis);
-
     //! Transform a point in 3D space, given a vector of parameters
     DirectVector transform(const DirectVector& v, const std::vector<double>& state) const;
 
@@ -118,7 +110,6 @@ protected:
     unsigned int isAxisValid(const std::string& s) const;
     //! Check whether id matches one of the axis id
     unsigned int isAxisIdValid(unsigned int id) const;
-
     //! Given name of the gonio
     std::string _label;
     //! Set of axis

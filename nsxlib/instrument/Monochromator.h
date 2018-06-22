@@ -17,6 +17,7 @@
 
 namespace nsx {
 
+//! Class describing a monochromator together with various of its properties.
 class Monochromator {
 
 public:

@@ -40,12 +40,9 @@
 
 namespace nsx {
 
-/*
- * Interface for the components of an instrument (e.g. detector, goniometer, source ...).
- */
+//! \brief Interface for the components of an instrument (e.g. detector, goniometer, source ...).
 class Component {
 public:
-
     //! Default constructor
     Component()=default;
     // Copy constructor

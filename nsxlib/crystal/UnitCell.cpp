@@ -3,7 +3,6 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "GCD.h"
 #include "GruberReduction.h"
 #include "Material.h"
 #include "MillerIndex.h"
@@ -143,7 +142,7 @@ std::string UnitCell::bravaisTypeSymbol() const
 double UnitCell::d(int h, int k, int l)
 {
     auto q = fromIndex(Eigen::RowVector3d(h,k,l));
-    return gcd(h, k, l) / q.norm();
+    return 1.0 / q.norm();
 }
 
 

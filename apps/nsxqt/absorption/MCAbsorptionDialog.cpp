@@ -18,6 +18,7 @@
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/Source.h>
+#include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
 
 #include "MCAbsorptionDialog.h"
@@ -31,10 +32,12 @@ MCAbsorptionDialog::MCAbsorptionDialog(SessionModel* session, nsx::sptrExperimen
     _session(session)
 {
     ui->setupUi(this);
-    auto ncrystals=_experiment->diffractometer()->sample()->nCrystals();
-    if (ncrystals>0) {
+    auto sample = _experiment->diffractometer()->sample();
+    const auto& cells = sample->unitCells();
+    
+    if (cells.size() > 0) {
         ui->comboBox->setEnabled(true);
-        for (unsigned int i=0;i<ncrystals;++i) {
+        for (unsigned int i = 0; i < cells.size(); ++i) {
             ui->comboBox->addItem("Crystal"+QString::number(i+1));
         }
     }
@@ -57,8 +60,10 @@ void MCAbsorptionDialog::on_pushButton_run_pressed()
 
     // Get the material
     unsigned int cellIndex=static_cast<unsigned int>(ui->comboBox->currentIndex());
-    auto material=sample->material(cellIndex);
-    if (material==nullptr) {
+    auto cell = sample->unitCells()[cellIndex];
+    auto material = cell->material();
+
+    if (material == nullptr) {
         QMessageBox::critical(this,"NSXTOOL","No material defined for this crystal");
         return;
     }

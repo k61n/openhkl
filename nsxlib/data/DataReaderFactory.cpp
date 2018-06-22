@@ -3,7 +3,6 @@
 #include "DataReaderFactory.h"
 #include "DataSet.h"
 #include "HDF5DataReader.h"
-#include "I16DataReader.h"
 #include "ILLDataReader.h"
 #include "RawDataReader.h"
 #include "TiffDataReader.h"

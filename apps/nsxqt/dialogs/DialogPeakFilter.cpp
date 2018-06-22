@@ -16,7 +16,8 @@ DialogPeakFilter::DialogPeakFilter(const nsx::PeakList& peaks, QWidget* parent):
     QDialog(parent),
     _ui(new Ui::PeakFilterDialog),
     _peaks(peaks),
-    _badPeaks()
+    _badPeaks(),
+    _goodPeaks()
 {
     _ui->setupUi(this);
 }
@@ -47,14 +48,14 @@ void DialogPeakFilter::accept()
     filter._mergedP = _ui->spinBoxMergedP->value();
 
     nsx::info() << "Filtering peaks...";
-    auto&& good_peaks = filter.apply(_peaks);
-    nsx::info() << good_peaks.size() << " peaks remain";
+    _goodPeaks = filter.apply(_peaks);
+    nsx::info() << _goodPeaks.size() << " peaks remain";
 
     _badPeaks.clear();
 
     for (auto peak: _peaks) {
-        auto it = std::find(good_peaks.begin(),good_peaks.end(),peak);
-        if (it == good_peaks.end()) {
+        auto it = std::find(_goodPeaks.begin(), _goodPeaks.end(), peak);
+        if (it == _goodPeaks.end()) {
             _badPeaks.push_back(peak);
         }
     }
@@ -65,4 +66,9 @@ void DialogPeakFilter::accept()
 const nsx::PeakList& DialogPeakFilter::badPeaks() const
 {
     return _badPeaks;
+}
+
+const nsx::PeakList& DialogPeakFilter::goodPeaks() const
+{
+    return _goodPeaks;
 }

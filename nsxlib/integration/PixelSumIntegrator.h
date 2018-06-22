@@ -2,13 +2,15 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
     ------------------------------------------------------------------------------------------
     Copyright (C)
-    2012- Laurent C. Chapon, Eric C. Pellegrini Institut Laue-Langevin
+    2017- Laurent C. Chapon, Eric C. Pellegrini Institut Laue-Langevin
+          Jonathan Fisher, Forschungszentrum Juelich GmbH
     BP 156
     6, rue Jules Horowitz
     38042 Grenoble Cedex 9
     France
     chapon[at]ill.fr
     pellegrini[at]ill.fr
+    j.fisher[at]fz-juelich.de
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -28,19 +30,27 @@
 
 #pragma once
 
-#include <ctime>
-#include <iostream>
+#include <Eigen/Dense>
+
+#include "MeanBackgroundIntegrator.h"
 
 namespace nsx {
 
-struct Timer {
-    Timer();
-     ~Timer();
-     void start();
-     void stop();
-     friend std::ostream& operator<<(std::ostream& os,const Timer& t);
-    //! Beginning and end clock tick
-    clock_t _bt, _et;
+class DataSet;
+
+//! \brief Peak integration using naive background estimation and subtraction.
+class PixelSumIntegrator: public MeanBackgroundIntegrator {
+public:
+    //! Construct the pixel sum integrator
+    /** \param fit_center update the peak center as part of integration
+     *  \param fit_covariance update the peak shape covariance matrix as part of integration
+     */
+    PixelSumIntegrator(bool fit_center, bool fit_covariance);
+    ~PixelSumIntegrator();
+    bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
+private:
+    bool _fitCenter;
+    bool _fitCovariance;
 };
 
 } // end namespace nsx

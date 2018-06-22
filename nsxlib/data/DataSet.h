@@ -97,6 +97,7 @@ public:
     bool isOpened() const;
     //! Return total size of file
     std::size_t fileSize() const;
+    //! Export dataset to HDF5 format
     void saveHDF5(const std::string& filename);
     //! Return detector events corresponding to the list of q values.  
     std::vector<DetectorEvent> events(const std::vector<ReciprocalVector>& sample_qs) const;

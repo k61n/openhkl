@@ -20,7 +20,7 @@
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/Source.h>
-#include <nsxlib/ErfInv.h>
+
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Units.h>
 #include <nsxlib/ProgressHandler.h>

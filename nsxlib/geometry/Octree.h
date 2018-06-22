@@ -63,7 +63,8 @@ constexpr int getPow (int factor)
 
 class OctreeIterator;
 
-class Octree : public AABB {
+//! \brief This class is used to speed up collision detection.
+class Octree: public AABB {
 public:
 
     //! The Octree iterator class is made friend with Octree in order to access some of its private data
@@ -188,8 +189,8 @@ private:
     unsigned int _idx = 0;
 };
 
-class OctreeIterator
-{
+//! Iterator for octree leaves/chambers
+class OctreeIterator {
 public:
     //; The default constructor. Used only for end condition.
     OctreeIterator();

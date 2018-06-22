@@ -43,6 +43,7 @@
 
 namespace nsx {
 
+//! ILL ascii data format
 class ILLDataReader: public IDataReader {
 
 public:

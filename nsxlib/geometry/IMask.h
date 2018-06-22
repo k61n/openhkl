@@ -41,8 +41,8 @@ namespace nsx {
 
 class Ellipsoid;
 
+//! Abstract detector mask
 class IMask {
-
 public:
     virtual ~IMask() {}
     virtual bool collide(const Ellipsoid& e) = 0;

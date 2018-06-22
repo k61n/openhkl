@@ -9,7 +9,6 @@
 
 namespace nsx {
 
-//! \class IntegratedProfile
 //! Class to produce a histogram of 1d integrated intensity profiles,
 //! For use in the sigma/I integration method.
 class IntegratedProfile {

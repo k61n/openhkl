@@ -35,7 +35,8 @@
 
 namespace nsx {
 
-class FlatDetector : public Detector {
+//! Class implementing a flat detector
+class FlatDetector: public Detector {
 public:
 
 	//! Static constructor of a FlatDetector from a property tree node

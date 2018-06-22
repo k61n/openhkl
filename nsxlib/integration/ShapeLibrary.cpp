@@ -28,9 +28,24 @@ static Eigen::Matrix3d from_cholesky(const std::array<double, 6>& components)
 
 //! \brief Helper struct used internally by the shape library.
 struct FitData {
-    Eigen::Matrix3d Rs, Rd, Jk, Jp, Jd;
-    Eigen::Vector3d kf, ki, q;
+    //! Sample orientation matrix
+    Eigen::Matrix3d Rs;
+    //! Detector orientation matrix
+    Eigen::Matrix3d Rd;
+    //! Jacobian of kf
+    Eigen::Matrix3d Jk;
+    //! Jacobian of p
+    Eigen::Matrix3d Jp;
+    //! Jacobian of (x,y,f) -> q
+    Eigen::Matrix3d Jd;
+    //! kf
+    Eigen::Vector3d kf;
+    //! ki
+    Eigen::Vector3d ki;
+    //! Momentum transfer q
+    Eigen::Vector3d q;
 
+    //! Construct a FitData instance directly from a peak.
     FitData(sptrPeak3D peak)
     {
         auto detector = peak->data()->diffractometer()->detector();
@@ -267,24 +282,6 @@ Eigen::Matrix3d ShapeLibrary::meanCovariance(sptrPeak3D reference_peak, double r
     if (neighbors.size() < min_neighbors) {
         throw std::runtime_error("ShapeLibrary::meanCovariance(): peak has too few neighbors");
     }
-
-    // testing (try using detector space??)
-    #if 1
-    for (auto peak: neighbors) {
-        cov += peak->shape().inverseMetric();
-    }
-    cov /= neighbors.size();
-    return cov;
-    #endif
-
-    // testing (try using detector space??)
-    #if 0
-    for (auto peak: neighbors) {
-        cov += peak->shape().inverseMetric();
-    }
-    cov /= neighbors.size();
-    return cov;
-    #endif
 
     PeakCoordinateSystem reference_coord(reference_peak);
 

@@ -35,15 +35,15 @@
 #include "GeometryTypes.h"
 #include "IPeakIntegrator.h"
 #include "MeanBackgroundIntegrator.h"
-#include "StrongPeakIntegrator.h"
+#include "PixelSumIntegrator.h"
 #include "ShapeLibrary.h"
 
 namespace nsx {
 
 class DataSet;
 
-
-class ISigmaIntegrator: public StrongPeakIntegrator {
+//! \brief Compute the integrated intensity via the I/sigma method used in RETREAT.
+class ISigmaIntegrator: public PixelSumIntegrator {
 public:
     ISigmaIntegrator(sptrShapeLibrary library, double radius, double nframes);
     bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;

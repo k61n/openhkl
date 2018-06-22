@@ -40,7 +40,6 @@ InterpolatedState::InterpolatedState(sptrDiffractometer diffractometer): Instrum
 
 InterpolatedState::InterpolatedState(const InstrumentState& s1, const InstrumentState& s2, double t): 
     InstrumentState(s1.diffractometer()),
-    transformation(),
     axis(),
     stepSize()
 {

@@ -10,6 +10,7 @@
 
 namespace nsx {
 
+//! \brief Read the experiment metadata from and HDF file.
 class HDF5MetaDataReader: public IDataReader
 {
 

@@ -12,7 +12,7 @@
 #include <nsxlib/DetectorEvent.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/DirectVector.h>
-#include <nsxlib/ErfInv.h>
+
 #include <nsxlib/Experiment.h>
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Peak3D.h>
@@ -23,7 +23,7 @@
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/ShapeLibrary.h>
-#include <nsxlib/StrongPeakIntegrator.h>
+#include <nsxlib/PixelSumIntegrator.h>
 #include <nsxlib/Units.h>
 
 NSX_INIT_TEST
@@ -73,7 +73,7 @@ int main()
 
     NSX_CHECK_ASSERT(found_peaks.size() >= 800);
 
-    nsx::StrongPeakIntegrator integrator(false, false);
+    nsx::PixelSumIntegrator integrator(false, false);
     integrator.setHandler(progressHandler);
     integrator.integrate(found_peaks, dataf, 2.7, 3.5, 4.0);
 
@@ -104,7 +104,7 @@ int main()
 
     unsigned int indexed_peaks = numIndexedPeaks();
 
-    NSX_CHECK_ASSERT(indexed_peaks > 600);
+    NSX_CHECK_ASSERT(indexed_peaks > 500);
     NSX_CHECK_NO_THROW(indexer.autoIndex(params));
     NSX_CHECK_ASSERT(indexer.solutions().size() > 1);
 
@@ -120,7 +120,7 @@ int main()
     }
 
     // add cell to sample
-    dataf->diffractometer()->sample()->addUnitCell(cell);
+    dataf->diffractometer()->sample()->unitCells().push_back(cell);
  
     // reintegrate peaks
     integrator.integrate(found_peaks, dataf, 3.0, 4.0, 5.0);
@@ -131,7 +131,7 @@ int main()
 
     indexed_peaks = numIndexedPeaks();
     std::cout << indexed_peaks << std::endl;
-    NSX_CHECK_ASSERT(indexed_peaks > 600);
+    NSX_CHECK_ASSERT(indexed_peaks > 500);
 
     int n_selected = 0;
 
@@ -173,31 +173,11 @@ int main()
         NSX_CHECK_CLOSE(q0(0), q1(0), 2.0);
         NSX_CHECK_CLOSE(q0(1), q1(1), 2.0);
         NSX_CHECK_CLOSE(q0(2), q1(2), 2.0);
-
-        #if 0
-        if (library.addPeak(peak)) {
-            ++n_selected;
-        } else {
-            peak->setSelected(false);
-        }
-        #endif
     }
 
     NSX_CHECK_GREATER_THAN(n_selected, 600);
 
     // TODO: put peak prediction back into workflow test!!!
-
-    #if 0
-    NSX_CHECK_ASSERT(n_selected > 620);
-
-    library.setDefaultShape(library.meanShape());
-
-    nsx::PeakPredictor predictor(cell, library, 2.1, 50.0, 4);
-    auto predicted_peaks = predictor.predict(dataf);
-
-    std::cout << "predicted_peaks: " << predicted_peaks.size() << std::endl;
-    NSX_CHECK_ASSERT(predicted_peaks.size() > 1600);
-    #endif
 
     return 0;
 }

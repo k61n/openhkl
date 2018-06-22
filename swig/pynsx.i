@@ -12,7 +12,7 @@
 
 %feature("director") IPeakIntegrator;
 %feature("director") MeanBackgroundIntegrator;
-%feature("director") StrongPeakIntegrator;
+%feature("director") PixelSumIntegrator;
 %feature("director") Profile3DIntegrator;
 %feature("director") ISigmaIntegrator;
 %feature("director") ShapeIntegrator;
@@ -54,12 +54,12 @@
 %shared_ptr(nsx::HDF5DataReader)
 %shared_ptr(nsx::HDF5MetaDataReader)
 %shared_ptr(nsx::ILLDataReader)
-%shared_ptr(nsx::I16DataReader)
+
 %shared_ptr(nsx::RawDataReader)
 %shared_ptr(nsx::TiffDataReader)
 %shared_ptr(nsx::Experiment)
 %shared_ptr(nsx::ProgressHandler)
-%shared_ptr(nsx::Basis)
+
 %shared_ptr(nsx::UnitCell)
 %shared_ptr(nsx::Component)
 %shared_ptr(nsx::Detector)
@@ -96,17 +96,8 @@ using Eigen::Quaterniond;
 #include "Material.h"
 #include "IsotopeDatabaseManager.h"
 
-#include "ErfInv.h"
-#include "Gaussian.h"
-#include "GCD.h"
-#include "Interpolator.h"
-#include "Lorentzian.h"
 #include "FitParameters.h"
 #include "Minimizer.h"
-
-#include "Round.h"
-#include "RNG.h"
-#include "Gaussian3d.h"
 
 #include "EigenToVector.h"
 #include "System.h"
@@ -115,12 +106,8 @@ using Eigen::Quaterniond;
 #include "Units.h"
 
 #include "DoubleToFraction.h"
-#include "Timer.h"
 #include "Path.h"
-#include "Maybe.h"
 
-#include "LMFunctor.h"
-#include "RandomMatrix.h"
 #include "Parser.h"
 #include "YAMLType.h"
 #include "MatrixParser.h"
@@ -136,7 +123,7 @@ using Eigen::Quaterniond;
 #include "MeanBackgroundIntegrator.h"
 #include "Profile3DIntegrator.h"
 #include "ISigmaIntegrator.h"
-#include "StrongPeakIntegrator.h"
+#include "PixelSumIntegrator.h"
 #include "ShapeIntegrator.h"
 #include "IntegrationRegion.h"
 #include "PeakData.h"
@@ -157,7 +144,6 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "Vertex.h"
 #include "Triangle.h"
 
-#include "Basis.h"
 #include "Ellipsoid.h"
 #include "Face.h"
 #include "MCAbsorption.h"
@@ -181,7 +167,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "IDataReader.h"
 #include "HDF5DataReader.h"
 #include "HDF5MetaDataReader.h"
-#include "I16DataReader.h"
+
 #include "RawDataReader.h"
 #include "TiffDataReader.h"
 #include "BloscFilter.h"
@@ -210,6 +196,8 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "ConvolverFactory.h"
 #include "RadialConvolver.h"
 
+#include "mosaic.h"
+
 #include "Axis.h"
 #include "Experiment.h"
 
@@ -220,9 +208,6 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "ConstantConvolver.h"
 #include "Convolver.h"
 
-#include "Composite.h"
-
-#include "Memento.h"
 #include "Singleton.h"
 #include "Factory.h"
 
@@ -248,7 +233,6 @@ using sptrMaterial = std::shared_ptr<nsx::Material>;
  
 #include "Sample.h"
 
-#include "Basis.h"
 #include "AABB.h"
 #include "Ellipsoid.h"
 #include "Blob3D.h"
@@ -362,8 +346,11 @@ using namespace nsx;
 %include "MathematicsTypes.h"
 %include "UtilsTypes.h"
 
+%template(UnitCellList) std::vector<nsx::sptrUnitCell>;
+
 %include "DirectVector.h"
 %template(DirectVectorList) std::vector<nsx::DirectVector>;
+
 
 %include "ReciprocalVector.h"
 %template(ReciprocalVectorList) std::vector<nsx::ReciprocalVector>;
@@ -419,7 +406,7 @@ namespace nsx {
 %include "MeanBackgroundIntegrator.h"
 %include "Profile3DIntegrator.h"
 %include "ISigmaIntegrator.h"
-%include "StrongPeakIntegrator.h"
+%include "PixelSumIntegrator.h"
 %include "Peak3D.h"
 %include "Profile1D.h"
 %include "ShapeLibrary.h"
@@ -447,6 +434,8 @@ namespace nsx {
 %include "Convolver.h"
 %include "AtomicConvolver.h"
 
+%include "mosaic.h"
+
 %include "MetaData.h"
 %include "IDataReader.h"
 %include "DataReaderFactory.h"
@@ -466,27 +455,16 @@ namespace nsx {
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;
 
 %include "Material.h"
-
-%include "ErfInv.h"
-%include "Gaussian.h"
-%include "GCD.h"
-%include "Interpolator.h"
-%include "Lorentzian.h"
-%include "Round.h"
 %include "FitParameters.h"
 %include "Minimizer.h"
-%include "RNG.h"
-%include "Gaussian3d.h"
 
 %include "EigenToVector.h"
 %include "System.h"
 %include "CSV.h"
 %include "Enums.h"
 %include "DoubleToFraction.h"
-%include "Timer.h"
 %include "Path.h"
-%include "LMFunctor.h"
-%include "RandomMatrix.h"
+
 %include "Parser.h"
 %include "MatrixParser.h"
 %include "ProgressHandler.h"
@@ -497,8 +475,6 @@ namespace nsx {
 %include "Refiner.h"
 
 %template(RefinementBatchList) std::vector<nsx::RefinementBatch>;
-
-%include "Basis.h"
 
 %include "Intensity.h"
 
@@ -548,7 +524,7 @@ namespace nsx {
 %include "IDataReader.h"
 %include "HDF5MetaDataReader.h"
 %include "HDF5DataReader.h"
-%include "I16DataReader.h"
+
 %include "RawDataReader.h"
 %include "TiffDataReader.h"
 %include "BloscFilter.h"
@@ -589,7 +565,6 @@ namespace nsx {
 
 %include "AutoIndexer.h"
 
-%include "Memento.h"
 %include "Singleton.h"
 
 %newobject new_double;

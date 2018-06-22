@@ -45,7 +45,7 @@ DialogProfileFit::DialogProfileFit(nsx::sptrExperiment experiment,
     ui->y->setMaximum(10000);
     ui->frame->setMaximum(10000);
     ui->radius->setMaximum(10000);
-    ui->nframes->setMaximum(10000);
+    ui->nframes->setMaximum(10000); 
 
 
     // calculate reasonable values of sigmaD and sigmaM
@@ -66,7 +66,22 @@ DialogProfileFit::DialogProfileFit(nsx::sptrExperiment experiment,
     ui->sigmaD->setValue(std::sqrt(0.5*(cov(0,0)+cov(1,1))));
     ui->sigmaM->setValue(std::sqrt(cov(2,2)));
 
+    auto set_xds_options = [&](int state) {
+        bool use_xds = !ui->detectorCoords->isChecked();
+        // these matter only if working in XDS coordinates
+        ui->sigmaD->setEnabled(use_xds);
+        ui->sigmaM->setEnabled(use_xds);
+        ui->label_sigmaD->setEnabled(use_xds);
+        ui->label_sigmaM->setEnabled(use_xds);
+
+    };
+
+    // set initial values and connect to sinal
+    set_xds_options(ui->detectorCoords->checkState());
+    connect(ui->detectorCoords, &QCheckBox::stateChanged, set_xds_options);
+    
     connect(ui->drawFrame, SIGNAL(sliderMoved(int)), this, SLOT(drawFrame(int)));
+    
 }
 
 DialogProfileFit::~DialogProfileFit()
@@ -116,9 +131,8 @@ void DialogProfileFit::build()
 
     if (detector_coords) {
         Eigen::Vector3d dx(nx, ny, nz);
-        dx *= -0.5;
-        aabb.setLower(-dx);
-        aabb.setUpper(dx);
+        aabb.setLower(-0.5*dx);
+        aabb.setUpper(0.5*dx);
     } else {
         Eigen::Vector3d sigma(sigmaD, sigmaD, sigmaM);
         aabb.setLower(-peakScale*sigma);

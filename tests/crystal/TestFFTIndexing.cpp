@@ -12,7 +12,7 @@
 #include <nsxlib/DetectorEvent.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/DirectVector.h>
-#include <nsxlib/ErfInv.h>
+
 #include <nsxlib/Experiment.h>
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Peak3D.h>
@@ -23,7 +23,7 @@
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/ShapeLibrary.h>
-#include <nsxlib/StrongPeakIntegrator.h>
+#include <nsxlib/PixelSumIntegrator.h>
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
 
@@ -51,23 +51,6 @@ int main()
     params.minUnitCellVolume = 20.0;
     params.unitCellEquivalenceTolerance = 0.05;
     params.solutionCutoff = 10.0;
-
-#if 0
-struct IndexerParameters {
-    double maxdim = 200.0;
-    int nSolutions = 10;
-    int nVertices = 10000;
-    int subdiv = 30;
-    double indexingTolerance = 0.2;
-    double niggliTolerance = 1e-3;
-    double gruberTolerance = 4e-2;
-    bool niggliReduction = false;
-    double minUnitCellVolume = 20.0;
-    double unitCellEquivalenceTolerance = 0.05;
-    double solutionCutoff = 10.0;
-};
-#endif
-
 
     Eigen::Matrix3d A;
     A << 45.0, 1.0, -2.0, -1.5, 36.0, -2.2, 1.25, -3, 50.0;

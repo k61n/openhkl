@@ -2,7 +2,7 @@
  * nsxtool : Neutron Single Crystal analysis toolkit
  ------------------------------------------------------------------------------------------
  Copyright (C)
- 2012- Laurent C. Chapon, Eric Pellegrini
+ 2012- Laurent C. Chapon Eric Pellegrini
  Institut Laue-Langevin
  BP 156
  6, rue Jules Horowitz
@@ -29,44 +29,34 @@
 
 #pragma once
 
-#include <map>
-#include <sstream>
-#include <string>
+#include <functional>
+#include <random>
 #include <vector>
 
-#include <Eigen/Dense>
-
-#include "IDataReader.h"
-#include "InstrumentTypes.h"
+#include "GeometryTypes.h"
 
 namespace nsx {
 
-class I16DataReader: public IDataReader
-{
+//! Class used to compute absorption correction by Monte-Carlo integration.
+class MCAbsorption {
 public:
+	//! Define absorption Engine with a rectangular source of WxH
+	MCAbsorption(double width, double height, double pos);
+	~MCAbsorption();
+	//! Set the sample
+	void setSample(ConvexHull* sample, double muScat, double muAbs);
+	//! Run the Monte-Carlo calculation
+	double run(unsigned int nIterations, const Eigen::Vector3d& outV, const Eigen::Matrix3d& sampleOrientation) const;
 
-    static IDataReader* create(const std::string& filename, const sptrDiffractometer& diffractometer);
-
-    //! Default constructor
-    I16DataReader(const std::string& filename, const sptrDiffractometer& diffractometer);
-    //! Copy constructor
-    I16DataReader(const I16DataReader& other)=delete;
-    //! Destructor
-    virtual ~I16DataReader()=default;
-
-    //! Assignment operator
-    I16DataReader& operator=(const I16DataReader& other)=delete;
-
-    // Other methods
-    void open() override;
-    void close() override;
-    //! Read a single frame
-    Eigen::MatrixXi data(size_t frame) override;
 
 private:
-    //! Vector of all TIFF files.
-    std::vector<std::string> _tifs;
-    std::string _basedirectory;
+	//! Description of the sample in terms of individual oriented triangles
+	ConvexHull* _sample;
+	double _width, _height, _pos;
+	double _muScat, _muAbs;
+    //! A random uniform distribution of double [0,1[
+	std::function<double (void)> _random;
+
 };
 
 } // end namespace nsx

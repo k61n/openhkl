@@ -27,7 +27,7 @@
        <item row="1" column="0">
         <widget class="QGroupBox" name="niggliReduction">
          <property name="title">
-          <string>&amp;Niggli cell</string>
+          <string>&amp;Niggli cell only</string>
          </property>
          <property name="flat">
           <bool>false</bool>

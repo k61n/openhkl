@@ -18,7 +18,7 @@
 #include <nsxlib/Profile3DIntegrator.h>
 #include <nsxlib/RawDataReader.h>
 #include <nsxlib/Sample.h>
-#include <nsxlib/StrongPeakIntegrator.h>
+#include <nsxlib/PixelSumIntegrator.h>
 #include <nsxlib/UnitCell.h>
 
 #include "DataItem.h"
@@ -41,6 +41,7 @@
 #include "SampleItem.h"
 #include "SessionModel.h"
 #include "NumorItem.h"
+#include "UnitCellItem.h"
 
 PeaksItem::PeaksItem(): TreeItem()
 {
@@ -86,7 +87,7 @@ void PeaksItem::integratePeaks()
     std::map<std::string, std::function<nsx::IPeakIntegrator*()>> integrator_map;
     std::vector<std::string> integrator_names;
     
-    integrator_map["Pixel sum integrator"] = [&]() {return new nsx::StrongPeakIntegrator(dialog->fitCenter(), dialog->fitCov());};
+    integrator_map["Pixel sum integrator"] = [&]() {return new nsx::PixelSumIntegrator(dialog->fitCenter(), dialog->fitCov());};
     integrator_map["3d profile integrator"] = [&]() {return new nsx::Profile3DIntegrator(library, dialog->radius(), dialog->nframes(), false);};
     integrator_map["I/Sigma integrator"] = [&]() {return new nsx::ISigmaIntegrator(library, dialog->radius(), dialog->nframes());};
     integrator_map["1d Profile integrator"] = [&]() {return new nsx::Profile1DIntegrator(library, dialog->radius(), dialog->nframes());};
@@ -196,26 +197,21 @@ void PeaksItem::buildShapeLibrary()
 
 void PeaksItem::filterPeaks()
 {
-    DialogPeakFilter* dlg = new DialogPeakFilter(selectedPeaks());
+    auto&& selected_peaks = selectedPeaks();
+    DialogPeakFilter* dlg = new DialogPeakFilter(selected_peaks);
 
-    if (dlg->exec()) {
-        auto&& bad_peaks = dlg->badPeaks();
-        for (auto peak: bad_peaks) {
-            peak->setSelected(false);
-
-            for (auto i = 0; i < rowCount(); ++i) {
-                if (auto item = dynamic_cast<PeakListItem*>(child(i))) {
-                    item->removePeak(peak);
-                }
-            }
-        }
+    if (!dlg->exec()) {
+        return;
     }    
     // todo: update peaks
+    auto&& good_peaks = dlg->goodPeaks();
+    auto peak_list = new PeakListItem(good_peaks);
+    peak_list->setText("Filtered peaks");
+    appendRow(peak_list);
 }
 
 void PeaksItem::autoindex()
 {
-
     nsx::PeakList peaks = selectedPeaks();
 
     DialogAutoIndexing dlg(experimentItem(), peaks);
@@ -232,13 +228,17 @@ void PeaksItem::autoindex()
         return;
     }
 
-    for (auto peak : peaks) {
+    for (auto peak: peaks) {
         peak->setUnitCell(uc);
     }
 
     auto experiment_item = experimentItem();
     auto sample_item = experiment_item->instrumentItem()->sampleItem();
-    experiment_item->model()->setData(sample_item->index(),QVariant::fromValue(uc),Qt::UserRole);
+    auto uc_item = new UnitCellItem(uc);
+    uc_item->setData(QVariant::fromValue(uc), Qt::UserRole);
+    sample_item->appendRow(uc_item);
+    experiment_item->experiment()->diffractometer()->sample()->unitCells().push_back(uc);
+    //experiment_item->model()->setData(sample_item->index(),QVariant::fromValue(uc),Qt::UserRole);
 }
 
 void PeaksItem::refine()
@@ -272,6 +272,13 @@ void PeaksItem::autoAssignUnitCell()
 {
     auto&& peaks = selectedPeaks();
     auto sample = experiment()->diffractometer()->sample();
+    const auto& cells = sample->unitCells();
+
+    //! nothing to do!
+    if (cells.size() < 1) {
+        nsx::info() << "There are no unit cells to assign";
+        return;
+    }
 
     for (auto peak: peaks) {
         if (!peak->selected()) {
@@ -281,8 +288,7 @@ void PeaksItem::autoAssignUnitCell()
         Eigen::RowVector3d hkl;
         bool assigned = false;
 
-        for (size_t i = 0; i < sample->nCrystals(); ++i) {
-            auto cell = sample->unitCell(i);
+        for (auto cell: cells) {
             nsx::MillerIndex hkl(peak->q(), *cell);
             if (hkl.indexed(cell->indexingTolerance())) {
                 peak->setUnitCell(cell);
@@ -298,18 +304,3 @@ void PeaksItem::autoAssignUnitCell()
     }
     nsx::debug() << "Done auto assigning unit cells";
 }
-
-#if 0
-void PeaksItem::setData(const QVariant& value, int role)
-{
-    switch (role) {
-    case Qt::UserRole:
-        auto item = new PeakListItem(value.value<nsx::PeakList>());
-        //item->setText("Found peaks");
-        appendRow(item);
-        break;
-
-    }
-    QStandardItem::setData(value,role);
-}
-#endif

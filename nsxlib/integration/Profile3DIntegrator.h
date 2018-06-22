@@ -40,7 +40,7 @@ namespace nsx {
 
 class DataSet;
 
-//! \brief Peak integrator using 3d profile fitting.
+//! \brief Peak integrator using 3d profile fitting, as described by Kabsch (1988, 2010).
 class Profile3DIntegrator: public IPeakIntegrator {
 public:
     Profile3DIntegrator(sptrShapeLibrary library, double radius, double nframes, bool detector_space);
