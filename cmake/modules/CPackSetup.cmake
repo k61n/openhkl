@@ -44,6 +44,6 @@ set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSIO
     
 include(CPack)
 
-set(CPACK_COMPONENTS_ALL Libraries Headers Examples)
+set(CPACK_COMPONENTS_ALL Libraries Headers Data Applications)
 
 

@@ -8,8 +8,6 @@ endif()
 
 include(SetupQt)
 
-set(NSXQT_EXECUTABLE nsxqt)
-
 get_subdirectories(NSXQT_SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
 
 # add project root directory to include path
@@ -17,19 +15,18 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
                     ${NSXQT_SUBDIRS}
                     ${CMAKE_BINARY_DIR}/nsxlib/include)
 
-# Disable console on Windows
-if(WIN32)
-    set(EXECUTABLE_OPTIONS WIN32)
-endif(WIN32)
-
 # Build the nsxqt executable
 add_executable(${NSXQT_EXECUTABLE} ${EXECUTABLE_OPTIONS} ${NSXQT_SOURCES} ${NSXQT_RCS} ${NSXQT_RESOURCES_CPP} ${NSXQT_HEADERS} ${NSXQT_UI_HEADERS})
 
 # Link the nsxqt executable with the Qt5 libraries in use.
-target_link_libraries(${NSXQT_EXECUTABLE} ${QT_LIBRARIES} ${OPENGL_LIBRARIES} nsx ${HDF5_LIBRARIES})
+target_link_libraries(${NSXQT_EXECUTABLE} ${QT_LIBRARIES} ${OPENGL_LIBRARIES} ${NSX_LIBRARY} ${HDF5_LIBRARIES})
+
+message(${NSXQT_LINK_FLAGS})
+
+set_target_properties(${NSXQT_EXECUTABLE} PROPERTIES LINK_FLAGS ${NSXQT_LINK_FLAGS})
 
 # Install section, installing libraries
-install(TARGETS ${NSXQT_EXECUTABLE} DESTINATION bin)
+install(TARGETS ${NSXQT_EXECUTABLE} ${BUNDLE} DESTINATION ${NSXQT_INSTALL_DIR} COMPONENT Applications)
 
 string(REPLACE ";" "\\\n" NSXQT_SOURCES "${NSXQT_SOURCES}") 
 string(REPLACE ";" "\\\n" NSXQT_HEADERS "${NSXQT_HEADERS}")
