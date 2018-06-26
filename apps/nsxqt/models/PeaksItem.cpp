@@ -24,6 +24,7 @@
 #include "DataItem.h"
 #include "DialogAutoIndexing.h"
 #include "DialogIntegrate.h"
+#include "DialogMCAbsorption.h"
 #include "DialogPeakFilter.h"
 #include "DialogProfileFit.h"
 #include "DialogRefineUnitCell.h"
@@ -33,7 +34,6 @@
 #include "ExperimentItem.h"
 #include "InstrumentItem.h"
 #include "LibraryItem.h"
-#include "MCAbsorptionDialog.h"
 #include "MetaTypes.h"
 #include "PeaksItem.h"
 #include "PeakListItem.h"
@@ -157,7 +157,7 @@ void PeaksItem::showPeaksOpenGL()
 void PeaksItem::absorptionCorrection()
 {
     // todo: check that this is correct!
-    MCAbsorptionDialog* dialog = new MCAbsorptionDialog(dynamic_cast<SessionModel*>(model()), experiment());
+    DialogMCAbsorption* dialog = new DialogMCAbsorption(dynamic_cast<SessionModel*>(model()), experiment());
     dialog->open();
 }
 

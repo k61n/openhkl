@@ -11,7 +11,7 @@
 #include <nsxlib/Source.h>
 #include <nsxlib/Units.h>
 
-#include "AbsorptionDialog.h"
+#include "DialogAbsorption.h"
 #include "SampleShapeItem.h"
 #include "SampleShapePropertyWidget.h"
 
@@ -34,7 +34,7 @@ SampleShapePropertyWidget::~SampleShapePropertyWidget()
 
 void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
 {
-    AbsorptionDialog* dialog=new AbsorptionDialog(_caller->experiment(),nullptr);
+    DialogAbsorption* dialog=new DialogAbsorption(_caller->experiment(),nullptr);
     if (!dialog->exec())
     {
         auto sample=_caller->experiment()->diffractometer()->sample();

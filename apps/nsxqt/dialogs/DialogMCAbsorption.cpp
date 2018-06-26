@@ -21,13 +21,13 @@
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
 
-#include "MCAbsorptionDialog.h"
+#include "DialogMCAbsorption.h"
 
-#include "ui_MCAbsorptionDialog.h"
+#include "ui_DialogMCAbsorption.h"
 
-MCAbsorptionDialog::MCAbsorptionDialog(SessionModel* session, nsx::sptrExperiment experiment, QWidget *parent):
+DialogMCAbsorption::DialogMCAbsorption(SessionModel* session, nsx::sptrExperiment experiment, QWidget *parent):
     QDialog(parent),
-    ui(new Ui::MCAbsorptionDialog),
+    ui(new Ui::DialogMCAbsorption),
     _experiment(experiment),
     _session(session)
 {
@@ -44,12 +44,12 @@ MCAbsorptionDialog::MCAbsorptionDialog(SessionModel* session, nsx::sptrExperimen
     ui->progressBar_MCStatus->setValue(0);
 }
 
-MCAbsorptionDialog::~MCAbsorptionDialog()
+DialogMCAbsorption::~DialogMCAbsorption()
 {
     delete ui;
 }
 
-void MCAbsorptionDialog::on_pushButton_run_pressed()
+void DialogMCAbsorption::on_pushButton_run_pressed()
 {
     if (!ui->comboBox->isEnabled()) {
         return;

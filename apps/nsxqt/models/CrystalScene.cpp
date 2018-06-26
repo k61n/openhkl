@@ -10,10 +10,10 @@
 #include <nsxlib/Triangle.h>
 #include <nsxlib/Units.h>
 
-#include "CalibrateDistanceDialog.h"
 #include "CrystalNodeItem.h"
 #include "CrystalFaceItem.h"
 #include "CrystalScene.h"
+#include "DialogCalibrateDistance.h"
 #include "PinItem.h"
 #include "RulerItem.h"
 
@@ -21,12 +21,12 @@ CrystalScene::CrystalScene(nsx::ConvexHull* hull, QWidget *parent) :
     QGraphicsScene(parent), pixmapitem(0),_ruler(0),_pin(0),_hull(hull),_text(nullptr)
 {
     distance=1.0;
-   _distancedialog=new CalibrateDistanceDialog();
+   _distancedialog = new DialogCalibrateDistance();
     connect(_distancedialog,SIGNAL(on_calibrateDistanceSpinBox_valueChanged(double)),this,SLOT(getDistance(double)));
     connect(_distancedialog,SIGNAL(on_calibrateDistanceButtonOK_accepted()),this,SLOT(stampScale()));
-    _ruler=new RulerItem;
-    _pin=new PinItem;
-    _pinCreated=false;
+    _ruler = new RulerItem;
+    _pin = new PinItem;
+    _pinCreated = false;
 
 }
 

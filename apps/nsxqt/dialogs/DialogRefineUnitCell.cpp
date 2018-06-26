@@ -24,7 +24,6 @@
 #include <nsxlib/Units.h>
 
 #include "DialogRefineUnitCell.h"
-#include "DoubleTableItemDelegate.h"
 #include "externals/QCustomPlot.h"
 #include "ui_DialogRefineUnitCell.h"
 

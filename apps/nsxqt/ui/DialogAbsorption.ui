@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AbsorptionDialog</class>
- <widget class="QDialog" name="AbsorptionDialog">
+ <class>DialogAbsorption</class>
+ <widget class="QDialog" name="DialogAbsorption">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>

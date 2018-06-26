@@ -28,7 +28,6 @@
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/UnitCell.h>
 
-#include "AbsorptionDialog.h"
 #include "DataItem.h"
 #include "DetectorItem.h"
 #include "DetectorScene.h"
@@ -44,7 +43,6 @@
 #include "GLWidget.h"
 #include "InstrumentItem.h"
 #include "LibraryItem.h"
-#include "MCAbsorptionDialog.h"
 #include "NumorItem.h"
 #include "PeaksItem.h"
 #include "PeakListItem.h"

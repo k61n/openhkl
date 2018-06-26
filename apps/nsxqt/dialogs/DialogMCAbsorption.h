@@ -8,22 +8,22 @@
 class QWidget;
 
 namespace Ui {
-class MCAbsorptionDialog;
+class DialogMCAbsorption;
 }
 
-class MCAbsorptionDialog: public QDialog
+class DialogMCAbsorption: public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit MCAbsorptionDialog(SessionModel* session, nsx::sptrExperiment experiment, QWidget *parent = 0);
-    ~MCAbsorptionDialog();
+    explicit DialogMCAbsorption(SessionModel* session, nsx::sptrExperiment experiment, QWidget *parent = 0);
+    ~DialogMCAbsorption();
 
 private slots:
     void on_pushButton_run_pressed();
 
 private:
-    Ui::MCAbsorptionDialog *ui;
+    Ui::DialogMCAbsorption *ui;
     nsx::sptrExperiment _experiment;
     SessionModel* _session;
 };

@@ -14,14 +14,14 @@
 #include <nsxlib/RotAxis.h>
 #include <nsxlib/Sample.h>
 
-#include "AbsorptionDialog.h"
 #include "CrystalScene.h"
+#include "DialogAbsorption.h"
 
-#include "ui_AbsorptionDialog.h"
+#include "ui_DialogAbsorption.h"
 
-AbsorptionDialog::AbsorptionDialog(nsx::sptrExperiment experiment, QWidget *parent) :
+DialogAbsorption::DialogAbsorption(nsx::sptrExperiment experiment, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::AbsorptionDialog),
+    ui(new Ui::DialogAbsorption),
     _experiment(experiment),
     _cscene(new CrystalScene(&experiment->diffractometer()->sample()->shape()))
 {
@@ -55,17 +55,17 @@ AbsorptionDialog::AbsorptionDialog(nsx::sptrExperiment experiment, QWidget *pare
     setupInitialButtons();
 }
 
-AbsorptionDialog::~AbsorptionDialog()
+DialogAbsorption::~DialogAbsorption()
 {
     delete ui;
 }
 
-const std::string& AbsorptionDialog::getMovieFilename() const
+const std::string& DialogAbsorption::getMovieFilename() const
 {
     return _filepath;
 }
 
-void AbsorptionDialog::readInfoFile(const std::string &filename)
+void DialogAbsorption::readInfoFile(const std::string &filename)
 {
     // Clear alll images.
     _imageList.clear();
@@ -140,13 +140,13 @@ void AbsorptionDialog::readInfoFile(const std::string &filename)
 }
 
 
-void AbsorptionDialog::initializeSlider(int i)
+void DialogAbsorption::initializeSlider(int i)
 {
     ui->horizontalScrollBar->setEnabled(true);
     ui->horizontalScrollBar->setRange(0,i);
 }
 
-void AbsorptionDialog::on_button_openFile_pressed()
+void DialogAbsorption::on_button_openFile_pressed()
 {
     QFileDialog dialog(this);
     dialog.setFileMode(QFileDialog::ExistingFile);
@@ -159,7 +159,7 @@ void AbsorptionDialog::on_button_openFile_pressed()
     readInfoFile(fileName.toStdString());
 }
 
-void AbsorptionDialog::setupInitialButtons()
+void DialogAbsorption::setupInitialButtons()
 {
     ui->button_calibrateDistance->setDisabled(true);
     ui->button_pickCenter->setDisabled(true);
