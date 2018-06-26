@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core widgets printsupport opengl
+QT += core gui printsupport opengl widgets
 
 QMAKE_CXXFLAGS += -DNDEBUG -DEIGEN_FFTW_DEFAULT
 
@@ -12,36 +12,44 @@ win32: {
     LIBS += -lnsx
 }
 unix:!macx {
+    CONFddIG += c++11dd
+
     QMAKE_CXXFLAGS += -std=c++0x -fopenmp
     QMAKE_LFLAGS += -fopenmp
+    QMAKE_LFLAGS += "-Wl,-rpath,@CMAKE_BINARY_DIR@/nsxlib"
 
-    INCLUDEPATH += ${qmake_include_dirs}
+    INCLUDEPATH += ${NSXQT_QMAKE_INCLUDE_DIRECTORIES}
 
-    LIBS += -L@CMAKE_BINARY_DIR@/nsxlib -lnsx -lfftw3
+    LIBS += -L@CMAKE_BINARY_DIR@/nsxlib -lnsx 
+
+    LIBS += -lfftw3
 }
 macx {
     CONFIG += c++11
-    QMAKE_CXXFLAGS += -std=c++11
 
-    INCLUDEPATH += ${qmake_include_dirs}
+    QMAKE_CXXFLAGS += -std=c++11
+    QMAKE_LFLAGS += "-Wl,-rpath,@CMAKE_BINARY_DIR@/nsxlib"
+
+    INCLUDEPATH += ${NSXQT_QMAKE_INCLUDE_DIRECTORIES}
 
     LIBS += -L@CMAKE_BINARY_DIR@/nsxlib -lnsx
 
     LIBS += -L/usr/local/opt/fftw/lib -lfftw3
     
     ICON = @CMAKE_SOURCE_DIR@/build_server/osx/resources/nsxtool.icns
+
 }
 
-TARGET = nsxtool
+TARGET = @NSXQT_EXECUTABLE@
 
 TEMPLATE = app
 
 RESOURCES = @NSXQT_RCS@
 
-SOURCES = @qmake_sources@
+SOURCES = @NSXQT_SOURCES@
           
-HEADERS = @qmake_headers@
+HEADERS = @NSXQT_HEADERS@
 
-FORMS = @qmake_uis@
+FORMS = @NSXQT_UIS@
           
     
