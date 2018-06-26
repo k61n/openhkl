@@ -1,6 +1,5 @@
 #include <QIcon>
 
-#include "MCAbsorptionDialog.h"
 #include "PeakListItem.h"
 #include "PeakListPropertyWidget.h"
 

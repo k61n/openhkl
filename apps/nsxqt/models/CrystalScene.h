@@ -11,8 +11,8 @@ class QGraphicsPixmapItem;
 class QGraphicsTextItem;
 class QWidget;
 
-class CalibrateDistanceDialog;
 class CrystalNodeItem;
+class DialogCalibrateDistance;
 class PinItem;
 class RulerItem;
 
@@ -65,7 +65,7 @@ private:
     //! The coordinates of the points for the scale
     double scalebx,scaleby,scaleex, scaleey;
     //! Calibrate distance dialog
-    CalibrateDistanceDialog* _distancedialog;
+    DialogCalibrateDistance* _distancedialog;
     double distance;
     double npixels;
     double aspectratio;

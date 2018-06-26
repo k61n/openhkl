@@ -52,7 +52,6 @@
 #include "DialogPeakFilter.h"
 #include "ExperimentTree.h"
 #include "DialogIsotopesDatabase.h"
-#include "JobHandler.h"
 #include "MainWindow.h"
 #include "NoteBook.h"
 #include "PeakGraphicsItem.h"

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CalibrateDistanceDialog</class>
- <widget class="QDialog" name="CalibrateDistanceDialog">
+ <class>DialogCalibrateDistance</class>
+ <widget class="QDialog" name="DialogCalibrateDistance">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -74,7 +74,7 @@
   <connection>
    <sender>calibrateDistanceButtonOK</sender>
    <signal>accepted()</signal>
-   <receiver>CalibrateDistanceDialog</receiver>
+   <receiver>DialogCalibrateDistance</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -90,7 +90,7 @@
   <connection>
    <sender>calibrateDistanceButtonOK</sender>
    <signal>rejected()</signal>
-   <receiver>CalibrateDistanceDialog</receiver>
+   <receiver>DialogCalibrateDistance</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

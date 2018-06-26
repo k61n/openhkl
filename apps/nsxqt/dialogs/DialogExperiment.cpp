@@ -8,7 +8,7 @@
 #include <nsxlib/Resources.h>
 
 #include "DialogExperiment.h"
-#include "ui_ExperimentDialog.h"
+#include "ui_DialogExperiment.h"
 
 DialogExperiment::DialogExperiment(QWidget *parent) : QDialog(parent), ui(new Ui::DialogExperiment)
 {

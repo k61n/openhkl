@@ -12,19 +12,19 @@
 #include <nsxlib/InstrumentTypes.h>
 
 namespace Ui {
-class AbsorptionDialog;
+class DialogAbsorption;
 }
 
 class CrystalScene;
 
-class AbsorptionDialog : public QDialog
+class DialogAbsorption : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit AbsorptionDialog(nsx::sptrExperiment experiment, QWidget *parent = nullptr);
+    explicit DialogAbsorption(nsx::sptrExperiment experiment, QWidget *parent = nullptr);
     const std::string& getMovieFilename() const;
-    ~AbsorptionDialog();
+    ~DialogAbsorption();
 signals:
     //! Emitted when the image is changed in the movie
     void loadImage(QString image);
@@ -37,7 +37,7 @@ private slots:
     void setupInitialButtons();
 
 private:
-    Ui::AbsorptionDialog *ui;
+    Ui::DialogAbsorption *ui;
     //! Link to the experiment
     nsx::sptrExperiment _experiment;
     //! Rotation axis to collect movie

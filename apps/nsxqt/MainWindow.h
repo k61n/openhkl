@@ -13,7 +13,6 @@
 #include <nsxlib/DataTypes.h>
 #include <nsxlib/UtilsTypes.h>
 
-#include "JobHandler.h"
 #include "ProgressView.h"
 
 class QListWidgetItem;
