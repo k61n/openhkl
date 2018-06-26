@@ -13,7 +13,12 @@ endif()
 set_property(SOURCE pynsx.i PROPERTY CPLUSPLUS ON)
 set_property(SOURCE pynsx.i PROPERTY SWIG_MODULE_NAME pynsx)
 
-swig_add_module(pynsx python pynsx.i)
+if(${CMAKE_VERSION} VERSION_GREATER 3.8)
+    swig_add_library(pynsx TYPE MODULE LANGUAGE python SOURCES pynsx.i)
+else()
+    swig_add_module(pynsx python pynsx.i)
+endif()
+
 swig_link_libraries(pynsx nsx)
 
 install(TARGETS ${SWIG_MODULE_pynsx_REAL_NAME} DESTINATION ${PYTHON_SITE})

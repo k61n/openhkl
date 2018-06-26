@@ -2,6 +2,10 @@ if(POLICY CMP0020)
   cmake_policy(SET CMP0020 NEW)
 endif()
 
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+
 get_subdirectories(NSXQT_SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
 
 # add project root directory to include path
