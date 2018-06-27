@@ -2,17 +2,14 @@ include(MakeResources)
 
 get_subdirectories(NSXLIB_SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
 
-# Set up the Version file
-configure_file(${CMAKE_SOURCE_DIR}/nsxlib/Version.h.in ${CMAKE_CURRENT_BINARY_DIR}/generated/Version.h @ONLY)
-set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/generated/Version.h PROPERTIES GENERATED TRUE)
-
 # note: *.c needed for blosc files in data directory
 file(GLOB_RECURSE NSXLIB_SOURCES *.cpp *.c)
 
 # Get the nsxlib headers
 file(GLOB_RECURSE NSXLIB_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 
-include_directories(${NSXLIB_SUBDIRS} ${CMAKE_CURRENT_BINARY_DIR}/generated)
+include_directories(${NSXLIB_SUBDIRS}
+                    ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
 add_library(${NSX_LIBRARY} ${NSX_LIB_TYPE} ${NSXLIB_SOURCES} ${NSXLIB_RESOURCES_CPP})
 

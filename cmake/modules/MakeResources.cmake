@@ -44,5 +44,9 @@ add_dependencies(generate-nsx-resources update_resources)
 
 set_source_files_properties(${NSXLIB_RESOURCES_CPP} PROPERTIES GENERATED TRUE)
 
+# Set up the Version file
+configure_file(${CMAKE_SOURCE_DIR}/nsxlib/Version.h.in ${CMAKE_CURRENT_BINARY_DIR}/generated/Version.h @ONLY)
+set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/generated/Version.h PROPERTIES GENERATED TRUE)
+
 file(GLOB NSXLIB_GENERATED_HEADERS ${CMAKE_CURRENT_BINARY_DIR}/generated/*.h)
 
