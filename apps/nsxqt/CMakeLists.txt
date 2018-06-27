@@ -21,8 +21,6 @@ add_executable(${NSXQT_EXECUTABLE} ${EXECUTABLE_OPTIONS} ${NSXQT_SOURCES} ${NSXQ
 # Link the nsxqt executable with the Qt5 libraries in use.
 target_link_libraries(${NSXQT_EXECUTABLE} ${QT_LIBRARIES} ${OPENGL_LIBRARIES} ${NSX_LIBRARY} ${HDF5_LIBRARIES})
 
-message(${NSXQT_LINK_FLAGS})
-
 set_target_properties(${NSXQT_EXECUTABLE} PROPERTIES LINK_FLAGS ${NSXQT_LINK_FLAGS})
 
 # Install section, installing libraries

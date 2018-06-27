@@ -19,7 +19,6 @@ option(BUILD_OPTIMIZED_DEBUG "Set optimization level -O1 or -Og for debug build"
 option(BUILD_COVERAGE_REPORT "Build code coverage report" OFF)
 option(BUILD_WITH_OPENMP "Build with OpenMP support" OFF)
 option(BUILD_GSL "Build GSL external dependency" OFF)
-option(NSXTOOL_APPLE_BUNDLE "Create a Mac OS X bundle" OFF)
 option(NSX_BUILD_STATIC "Link nsxlib statically" OFF)
 option(NSX_VALGRIND "Run tests with valgrind" OFF)
 option(ENABLE_CPACK "Enable CPack package generation" OFF)
