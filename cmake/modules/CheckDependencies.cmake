@@ -50,7 +50,7 @@ endif()
 
 if(NSX_PYTHON)
   # python-dev and interpreter
-  if (NSX_PYTHON3)
+  if (USE_PYTHON3)
     set(Python_ADDITIONAL_VERSIONS 3.7 3.6 3.5 3.4)
     find_package(PythonInterp 3)
     find_package(PythonLibs 3)

@@ -8,7 +8,7 @@ RUN GIT_SSL_NO_VERIFY=true git clone -b ${NSX_GIT_BRANCH} https://code.ill.fr/sc
 
 WORKDIR /tmp/nsxtool/build
 
-RUN cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DBUILD_NSX_APPS=ON -DCMAKE_INSTALL_PREFIX=./ -DNSX_PYTHON3=ON .. \
+RUN cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DBUILD_NSX_APPS=ON -DCMAKE_INSTALL_PREFIX=./ -DUSE_PYTHON3=ON .. \
  && cmake --build . --config Release \
  && cmake --build . --config Release --target install
 

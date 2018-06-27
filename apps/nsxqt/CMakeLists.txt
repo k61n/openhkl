@@ -2,6 +2,10 @@ if(POLICY CMP0020)
   cmake_policy(SET CMP0020 NEW)
 endif()
 
+if(POLICY CMP0042)
+    cmake_policy(SET CMP0042 NEW)
+endif()
+
 if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
@@ -23,8 +27,14 @@ target_link_libraries(${NSXQT_EXECUTABLE} ${QT_LIBRARIES} ${OPENGL_LIBRARIES} ${
 
 set_target_properties(${NSXQT_EXECUTABLE} PROPERTIES LINK_FLAGS ${NSXQT_LINK_FLAGS})
 
+if(APPLE AND ENABLE_CPACK)
+    set_target_properties(${NSXQT_EXECUTABLE} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${NSXTOOL_BUNDLE_DIR}/Info.plist)
+
+endif()
+
+
 # Install section, installing libraries
-install(TARGETS ${NSXQT_EXECUTABLE} ${BUNDLE} DESTINATION ${NSXQT_INSTALL_DIR} COMPONENT Applications)
+install(TARGETS ${NSXQT_EXECUTABLE} ${NSXTOOL_TARGET} DESTINATION ${NSXQT_INSTALL_DIR} COMPONENT Applications)
 
 string(REPLACE ";" "\\\n" NSXQT_SOURCES "${NSXQT_SOURCES}") 
 string(REPLACE ";" "\\\n" NSXQT_HEADERS "${NSXQT_HEADERS}")
