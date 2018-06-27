@@ -2,8 +2,6 @@ if(POLICY CMP0042)
     cmake_policy(SET CMP0042 NEW)
 endif()
 
-set(NSX_LIBRARY nsx PARENT_SCOPE)
-
 include(MakeResources)
 
 get_subdirectories(NSXLIB_SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
@@ -16,6 +14,8 @@ file(GLOB_RECURSE NSXLIB_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 
 include_directories(${NSXLIB_SUBDIRS}
                     ${CMAKE_CURRENT_BINARY_DIR}/generated)
+
+message("dfsdfdsfds ${NSX_LIBRARY}")
 
 add_library(${NSX_LIBRARY} ${NSX_LIB_TYPE} ${NSXLIB_SOURCES} ${NSXLIB_RESOURCES_CPP})
 
