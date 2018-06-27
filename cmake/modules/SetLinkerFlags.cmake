@@ -8,6 +8,6 @@ if(APPLE)
 elseif(UNIX)
     set(NSXQT_LINK_FLAGS "-Wl,-rpath,@loader_path/../lib")
 else()
-    set(NSXQT_LINK_FLAGS "")
+    set(NSXQT_LINK_FLAGS "/ENTRY:mainCRTStartup")
 endif()
 
