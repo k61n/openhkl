@@ -1,3 +1,7 @@
+if(POLICY CMP0042)
+    cmake_policy(SET CMP0042 NEW)
+endif()
+
 # a simple way to detect that we are using CMAKE
 add_definitions(-DUSING_CMAKE)
 

@@ -15,8 +15,6 @@ file(GLOB_RECURSE NSXLIB_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 include_directories(${NSXLIB_SUBDIRS}
                     ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
-message("dfsdfdsfds ${NSX_LIBRARY}")
-
 add_library(${NSX_LIBRARY} ${NSX_LIB_TYPE} ${NSXLIB_SOURCES} ${NSXLIB_RESOURCES_CPP})
 
 target_link_libraries(${NSX_LIBRARY} 

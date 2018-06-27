@@ -19,6 +19,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
                     ${NSXQT_SUBDIRS}
                     ${CMAKE_BINARY_DIR}/nsxlib/include)
 
+if(APPLE AND ENABLE_CPACK)
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/resources/nsxtool.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+    configure_file("${CMAKE_SOURCE_DIR}/cmake/modules/MacOSXBundleInfo.plist.in" "${CMAKE_CURRENT_BINARY_DIR}/Info.plist" @ONLY)
+endif()
+
 # Build the nsxqt executable
 add_executable(${NSXQT_EXECUTABLE} ${EXECUTABLE_OPTIONS} ${NSXQT_SOURCES} ${NSXQT_RCS} ${NSXQT_RESOURCES_CPP} ${NSXQT_HEADERS} ${NSXQT_UI_HEADERS})
 
@@ -28,7 +33,7 @@ target_link_libraries(${NSXQT_EXECUTABLE} ${QT_LIBRARIES} ${OPENGL_LIBRARIES} ${
 set_target_properties(${NSXQT_EXECUTABLE} PROPERTIES LINK_FLAGS ${NSXQT_LINK_FLAGS})
 
 if(APPLE AND ENABLE_CPACK)
-    set_target_properties(${NSXQT_EXECUTABLE} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CURRENT_BINARY_DIR}/Info.plist)
+    set_target_properties(${NSXQT_EXECUTABLE} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_BINARY_DIR}/Info.plist)
 endif()
 
 # Install section, installing libraries

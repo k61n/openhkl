@@ -49,7 +49,7 @@ if(NSX_TIDY)
 endif()
 
 if(BUILD_COVERAGE_REPORT)
-  include(CheckCoverage)        # code coverage
+  include(CheckCoverage)
 endif()
 
 if(NSX_DOCS)

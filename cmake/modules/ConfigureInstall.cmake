@@ -17,10 +17,6 @@ if (APPLE)
         set(MACOSX_BUNDLE_IDENTIFIER "org.nsxtoolproject")
         set(MACOSX_BUNDLE_ICON_FILE nsxtool.icns)
         set(MACOSX_BUNDLE_NAME nsxtool)
-
-        set_source_files_properties(${CMAKE_SOURCE_DIR}/apps/nsxqt/resources/nsxtool.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-
-        configure_file("${CMAKE_SOURCE_DIR}/cmake/modules/MacOSXBundleInfo.plist.in" "${NSXTOOL_BUNDLE_DIR}/Info.plist" @ONLY)
     else()
         set(NSX_INSTALL_DIR "")
         set(NSXQT_INSTALL_DIR bin)
