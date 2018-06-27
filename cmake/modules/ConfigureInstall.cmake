@@ -1,4 +1,8 @@
+set(NSX_LIBRARY nsx)
+set(NSXQT_EXECUTABLE nsxqt)
+
 if (APPLE)
+    set(NSX_LIB_TYPE SHARED)
 
     if(ENABLE_CPACK)
         set(NSX_INSTALL_DIR "./lib")
@@ -20,16 +24,22 @@ if (APPLE)
 
         configure_file("${CMAKE_SOURCE_DIR}/cmake/modules/MacOSXBundleInfo.plist.in" "${NSXTOOL_BUNDLE_DIR}/Info.plist" @ONLY)
     else()
-        set(NSX_INSTALL_DIR "lib")
+        set(NSX_INSTALL_DIR lib)
         set(NSXQT_INSTALL_DIR bin)
-        set(NSXTOOL_TARGET bin)
     endif()
 
 elseif(WIN32)
-    set(NSX_INSTALL_DIR "lib")
+    set(NSX_LIB_TYPE STATIC)
+    set(NSX_INSTALL_DIR lib)
     set(NSXQT_INSTALL_DIR bin)
     set(EXECUTABLE_OPTIONS WIN32)
 elseif(UNIX)
-    set(NSX_INSTALL_DIR "lib")
+    set(NSX_LIB_TYPE SHARED)
+    set(NSX_INSTALL_DIR lib)
     set(NSXQT_INSTALL_DIR bin)
 endif()
+
+if (NSX_BUILD_STATIC)
+    set(NSX_LIB_TYPE STATIC)
+endif()
+
