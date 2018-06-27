@@ -39,19 +39,19 @@ add_dependencies(copy-nsx-headers generate-nsx-resources)
 add_dependencies(${NSX_LIBRARY} copy-nsx-headers generate-nsx-resources)
 
 # Install section, installing libraries
-install(TARGETS ${NSX_LIBRARY} DESTINATION lib COMPONENT Libraries)
-install(FILES ${NSXLIB_HEADERS} DESTINATION include/nsxlib COMPONENT Headers)
-install(FILES ${NSXLIB_GENERATED_HEADERS} DESTINATION include/nsxlib COMPONENT Headers)
+install(TARGETS ${NSX_LIBRARY} DESTINATION ${NSX_INSTALL_DIR} COMPONENT LIB)
+install(FILES ${NSXLIB_HEADERS} DESTINATION include/nsxlib COMPONENT DEV)
+install(FILES ${NSXLIB_GENERATED_HEADERS} DESTINATION include/nsxlib COMPONENT DEV)
 
 # Install the databases file
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/resources/databases
         DESTINATION share/nsxtool
-        COMPONENT Data
+        COMPONENT DATA
         PATTERN ".git" EXCLUDE)
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/resources/instruments
         DESTINATION share/nsxtool
-        COMPONENT Data
+        COMPONENT DATA
         PATTERN ".git" EXCLUDE)
 
 if(NSX_TIDY)

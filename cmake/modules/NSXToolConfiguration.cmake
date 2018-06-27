@@ -1,11 +1,8 @@
 if(APPLE)
-    set(NSXQT_INSTALL_DIR bin)
     set(NSX_LIB_TYPE SHARED)
 elseif(WIN32)
-    set(NSXQT_INSTALL_DIR bin)
     set(NSX_LIB_TYPE STATIC)
 else()
-    set(NSXQT_INSTALL_DIR bin)
     set(NSX_LIB_TYPE SHARED)
 endif()
 
