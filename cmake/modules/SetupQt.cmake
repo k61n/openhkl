@@ -9,8 +9,8 @@ find_package(Qt5OpenGL REQUIRED)
 find_package(Qt5PrintSupport REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 
-if(NOT ${Qt5Widgets_FOUND})
-    message(FATAL_ERROR "Could not find the Qt frameworks ${NSXQT_EXECUTABLE} is depending on")
+if(NOT ${Qt5Core_FOUND} OR NOT ${Qt5Gui_FOUND} OR NOT ${Qt5OpenGL_FOUND} OR NOT ${Qt5PrintSupport_FOUND} OR NOT ${Qt5Widgets_FOUND})
+    message(FATAL_ERROR "Could not find one or several Qt frameworks")
 endif()
 
 # Specify that the nsxqt will use OpenGL

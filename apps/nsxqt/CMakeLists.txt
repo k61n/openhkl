@@ -10,6 +10,8 @@ if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
+set(NSXQT_EXECUTABLE nsxqt)
+
 include(SetupQt)
 
 get_subdirectories(NSXQT_SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})

@@ -2,6 +2,8 @@ if(POLICY CMP0042)
     cmake_policy(SET CMP0042 NEW)
 endif()
 
+set(NSX_LIBRARY nsxqt PARENT_SCOPE)
+
 include(MakeResources)
 
 get_subdirectories(NSXLIB_SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
@@ -39,18 +41,18 @@ add_dependencies(copy-nsx-headers generate-nsx-resources)
 add_dependencies(${NSX_LIBRARY} copy-nsx-headers generate-nsx-resources)
 
 # Install section, installing libraries
-install(TARGETS ${NSX_LIBRARY} DESTINATION ${NSX_INSTALL_DIR} COMPONENT LIB)
-install(FILES ${NSXLIB_HEADERS} DESTINATION include/nsxlib COMPONENT DEV)
-install(FILES ${NSXLIB_GENERATED_HEADERS} DESTINATION include/nsxlib COMPONENT DEV)
+install(TARGETS ${NSX_LIBRARY} DESTINATION ${NSX_INSTALL_DIR}lib COMPONENT LIB)
+install(FILES ${NSXLIB_HEADERS} DESTINATION ${NSX_INSTALL_DIR}include/nsxlib COMPONENT DEV)
+install(FILES ${NSXLIB_GENERATED_HEADERS} DESTINATION ${NSX_INSTALL_DIR}include/nsxlib COMPONENT DEV)
 
 # Install the databases file
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/resources/databases
-        DESTINATION share/nsxtool
+        DESTINATION ${NSX_INSTALL_DIR}share/nsxtool
         COMPONENT DATA
         PATTERN ".git" EXCLUDE)
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/resources/instruments
-        DESTINATION share/nsxtool
+        DESTINATION ${NSX_INSTALL_DIR}share/nsxtool
         COMPONENT DATA
         PATTERN ".git" EXCLUDE)
 
