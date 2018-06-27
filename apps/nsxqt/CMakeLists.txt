@@ -28,11 +28,16 @@ target_link_libraries(${NSXQT_EXECUTABLE} ${QT_LIBRARIES} ${OPENGL_LIBRARIES} ${
 set_target_properties(${NSXQT_EXECUTABLE} PROPERTIES LINK_FLAGS ${NSXQT_LINK_FLAGS})
 
 if(APPLE AND ENABLE_CPACK)
-    set_target_properties(${NSXQT_EXECUTABLE} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${NSXTOOL_BUNDLE_DIR}/Info.plist)
+    set_target_properties(${NSXQT_EXECUTABLE} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CURRENT_BINARY_DIR}/Info.plist)
 endif()
 
 # Install section, installing libraries
 install(TARGETS ${NSXQT_EXECUTABLE} ${NSXTOOL_TARGET} DESTINATION ${NSXQT_INSTALL_DIR} COMPONENT APPLICATIONS)
+
+if(APPLE AND ENABLE_CPACK)
+    configure_file(${CMAKE_SOURCE_DIR}/cmake/modules/FixAppleBundle.cmake.in ${CURRENT_BINARY_DIR}/FixAppleBundle.cmake @ONLY) 
+    install(SCRIPT ${CURRENT_BINARY_DIR}/FixAppleBundle.cmake COMPONENT Runtime)
+endif()
 
 string(REPLACE ";" "\\\n" NSXQT_SOURCES "${NSXQT_SOURCES}") 
 string(REPLACE ";" "\\\n" NSXQT_HEADERS "${NSXQT_HEADERS}")
