@@ -2,7 +2,7 @@ if(POLICY CMP0042)
     cmake_policy(SET CMP0042 NEW)
 endif()
 
-set(NSX_LIBRARY nsxqt PARENT_SCOPE)
+set(NSX_LIBRARY nsx PARENT_SCOPE)
 
 include(MakeResources)
 
