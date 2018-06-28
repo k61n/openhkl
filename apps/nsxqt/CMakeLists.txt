@@ -60,7 +60,7 @@ get_property(NSXQT_QMAKE_INCLUDE_DIRECTORIES DIRECTORY PROPERTY INCLUDE_DIRECTOR
 string(REPLACE ";" "\\\n" NSXQT_QMAKE_INCLUDE_DIRECTORIES "${NSXQT_QMAKE_INCLUDE_DIRECTORIES}")
 
 # generate the qmake project file automatically
-configure_file(NSXQt.pro.in ${CMAKE_CURRENT_BINARY_DIR}/NSXQt.pro)
+configure_file(nsxqt.pro.in ${CMAKE_CURRENT_BINARY_DIR}/nsxqt.pro)
 
 # tidy
 if(NSX_TIDY)
