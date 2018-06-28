@@ -1,7 +1,7 @@
 #ifndef MOZAICTESTER_H
 #define MOZAICTESTER_H
 
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 
 namespace nsx {
 
