@@ -1,5 +1,5 @@
 """
-Script to fix all dependencies in OS X bundle. Runs automatically when -DBORNAGAIN_APPLE_BUNDLE
+Script to fix all dependencies in OS X bundle. Runs automatically when -DENABLE_CPACK is set to ON in a MacOS environment
 """
 from __future__ import print_function
 import os
@@ -46,7 +46,7 @@ def bundle_plugins_path():
 
 
 def bundle_main_executables():
-    return [os.path.join(bundle_dir(), "Contents", "MacOS", "BornAgain")]
+    return [os.path.join(bundle_dir(), "Contents", "MacOS", "nsxqt")]
 
 
 def bundle_python_library():
@@ -62,14 +62,15 @@ def qtplugins_path():
 
 
 def bundle_libraries():
-    return glob.glob(os.path.join(bundle_dir(), "Contents", "lib", "BornAgain-*", "*"))
+    bundle_contents_lib = os.path.join(bundle_dir(), "Contents","lib")
+    return [os.path.join(bundle_contents_lib, "libnsx.dylib"),os.path.join(bundle_contents_lib,"python%s"%python_version_string(),"site-packages","_pynsx.so")]
 
 
 def bundle_plugins():
     return glob.glob(os.path.join(bundle_plugins_path(), "*", "*"))
 
 
-def bornagain_binaries():
+def nsxtool_binaries():
     return bundle_main_executables() + bundle_libraries() + bundle_plugins()
 
 
@@ -194,7 +195,7 @@ def is_to_bundle_dependency(dependency):
     if is_system_dependency(dependency):
         return False
 
-    if "libBornAgain" in dependency:
+    if "libnsx" in dependency:
         # our own libraries are already in place and have right libId's
         return False
 
@@ -325,7 +326,7 @@ def copy_qt_libraries():
 def copy_qt_plugins():
     print("--> Copying Qt plugins")
     plugins = ['platforms/libqcocoa.dylib', 'iconengines/libqsvgicon.dylib',
-        'imageformats/libqjpeg.dylib', 'imageformats/libqsvg.dylib', 'styles/libqmacstyle.dylib']
+        'imageformats/libqjpeg.dylib', 'imageformats/libqsvg.dylib']
     print("   ", end="")
     for name in plugins:
         print(name, end="")
@@ -382,7 +383,7 @@ def walk_through_dependencies(file_name):
 
 def copy_dependencies():
     print("--> Copying third party dependencies")
-    for binfile in iter(bornagain_binaries()):
+    for binfile in iter(nsxtool_binaries()):
         walk_through_dependencies(binfile)
 
 
@@ -390,7 +391,7 @@ def validate_dependencies():
     """
     Analyse whole bundle for missed dependencies
     """
-    binaries = bornagain_binaries()
+    binaries = nsxtool_binaries()
     libraries = get_list_of_files(bundle_frameworks_path())
     file_list = binaries+libraries
     files_with_missed_dependencies = []
@@ -416,7 +417,7 @@ def fix_apple_bundle():
     print('-'*80)
     # # copy_python_framework()
     # FIXME provide automatic recognition of Qt dependency type (@rpath or hard coded)
-    copy_qt_libraries() # this line should be uncommented for macport based builds
+    #copy_qt_libraries() # this line should be uncommented for macport based builds
     copy_qt_plugins()
     copy_dependencies()
     validate_dependencies()
