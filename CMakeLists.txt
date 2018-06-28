@@ -19,13 +19,13 @@ option(BUILD_OPTIMIZED_DEBUG "Set optimization level -O1 or -Og for debug build"
 option(BUILD_COVERAGE_REPORT "Build code coverage report" OFF)
 option(BUILD_WITH_OPENMP "Build with OpenMP support" OFF)
 option(BUILD_GSL "Build GSL external dependency" OFF)
-option(NSXTOOL_APPLE_BUNDLE "Create a Mac OS X bundle" OFF)
 option(NSX_BUILD_STATIC "Link nsxlib statically" OFF)
 option(NSX_VALGRIND "Run tests with valgrind" OFF)
+option(ENABLE_CPACK "Enable CPack package generation" OFF)
 option(NSX_SANITIZE "Compile with clang's -fsanitize (must also set NSX_SANITIZER variable)" OFF)
 option(NSX_TIDY "Add clang-tidy custom target" OFF)
 option(NSX_PYTHON "Generate Python bindings" ON)
-option(NSX_PYTHON3 "Force Python 3" ON)
+option(USE_PYTHON3 "Force Python 3" ON)
 option(NSX_DOCS "Build documentation" OFF)
 
 ###########################################################################
@@ -33,12 +33,15 @@ option(NSX_DOCS "Build documentation" OFF)
 ###########################################################################
 
 include(Version)
+include(ConfigureNSXTool)
+include(ConfigureBuildType)
+include(ConfigureInstall)
 include(GeneratePythonDocs)
 include(GetSubdirectories)
 include(CMakeFindBinUtils)
-include(BuildType)             # build types: debug and release
-include(CheckDependencies)     # checkexternal dependencies
-include(CheckCompiler)         # configure compiler
+include(CheckDependencies)
+include(SetCompilerFlags)
+include(SetLinkerFlags)
 
 if(NSX_TIDY)
   set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -46,7 +49,7 @@ if(NSX_TIDY)
 endif()
 
 if(BUILD_COVERAGE_REPORT)
-  include(CheckCoverage)        # code coverage
+  include(CheckCoverage)
 endif()
 
 if(NSX_DOCS)
@@ -108,26 +111,10 @@ endif()
 
 
 ###########################################################################
-# Installation settings
-###########################################################################
-
-# Install the databases file
-install(DIRECTORY resources/databases
-        DESTINATION share/nsxtool
-        FILE_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
-        DIRECTORY_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
-        PATTERN ".svn" EXCLUDE)
-
-install(DIRECTORY resources/instruments
-        DESTINATION share/nsxtool
-        FILE_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
-        DIRECTORY_PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE GROUP_WRITE GROUP_READ GROUP_EXECUTE WORLD_WRITE WORLD_READ WORLD_EXECUTE
-        PATTERN ".svn" EXCLUDE)
-
-###########################################################################
 # CPack settings
 ###########################################################################
 
-include(CPackSetup)
-
+if(ENABLE_CPACK)
+ include(CPackSetup)
+endif()
 

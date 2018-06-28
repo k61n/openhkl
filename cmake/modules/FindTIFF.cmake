@@ -35,7 +35,6 @@ set(TIFF_NAMES ${TIFF_NAMES} libtiff tiff libtiff3 tiff3)
 find_library(TIFF_LIBRARY NAMES ${TIFF_NAMES}
     HINTS ${TIFF_ROOT}
     PATH_SUFFIXES lib)
-message("Found libtiff at ${TIFF_LIBRARY}")
 
 if(TIFF_INCLUDE_DIR AND EXISTS "${TIFF_INCLUDE_DIR}/tiffvers.h")
     file(STRINGS "${TIFF_INCLUDE_DIR}/tiffvers.h" tiff_version_str
@@ -58,8 +57,6 @@ if(TIFF_FOUND)
 endif()
 
 if(TIFF_FOUND)
-    message(STATUS "Found TIFF version ${TIFF_VERSION_STRING}, includes at ${TIFF_INCLUDE_DIR}, libraries at ${TIFF_LIBRARIES}")
-
     if(NOT WIN32)
         # looking for C++ version of library libtiffxx.so
         list(LENGTH TIFF_LIBRARIES len)
@@ -71,10 +68,15 @@ if(TIFF_FOUND)
             if(NOT EXISTS ${cpp_tiff_library})
                 message(FATAL_ERROR "Could NOT find TIFF/C++ library ${cpp_tiff_library}.")
             endif()
-            message(STATUS "Found TIFF C++ library ${cpp_tiff_library}")
             set(TIFF_LIBRARIES ${TIFF_LIBRARIES};${cpp_tiff_library})
         endif()
     endif()
+    message(STATUS "Found TIFF:")
+    message(STATUS "  version: ${TIFF_VERSION_STRING}")
+    message(STATUS "  libraries: ${TIFF_LIBRARY} ${cpp_tiff_library}")
+    message(STATUS "  headers: ${TIFF_INCLUDE_DIR}")
+else()
+    message(FATAL_ERROR "Could not find TIFF library")
 endif()
 
 mark_as_advanced(TIFF_INCLUDE_DIR TIFF_LIBRARY)

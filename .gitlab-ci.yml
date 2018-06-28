@@ -68,7 +68,7 @@ deploy:osx:
     - develop
   artifacts:
     paths:
-    - ${CI_PROJECT_DIR}/build/qmake-build/nsxtool*dmg
+    - ${CI_PROJECT_DIR}/build/nsxtool*dmg
   tags:
     - macmini2
 
@@ -103,7 +103,7 @@ deploy:windows:
     - develop
   artifacts:
     paths:
-    - .\\build\\nsxtool*.exe
+    - ${CI_PROJECT_DIR}\\build\\nsxtool*.exe
   tags:
     - windows
 

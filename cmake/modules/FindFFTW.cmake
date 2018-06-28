@@ -11,8 +11,6 @@ if(FFTW_LIBRARY AND FFTW_INCLUDE_DIR)
   set(FFTW_FIND_QUIETLY TRUE)
 endif()
 
-message("FFTW_DIR is $ENV{FFTW_DIR}")
-
 #if(NOT WIN32)
 if(TRUE)
     find_path(FFTW_INCLUDE_DIR fftw3.h
@@ -41,32 +39,29 @@ else()
         $ENV{FFTW_DIR}/include
         "C:/opt/local/include"
     )
-#    message("XXX ${FFTW_INCLUDE_DIR}")
 
     find_library(FFTW_LIBRARY NAMES libfftw3-3 PATHS
         $ENV{FFTW_DIR}/lib
         $ENV{FFTW3} $ENV{FFTW3}/lib $ENV{FFTW3}/.libs
         "C:/opt/local/lib"
     )
-#    message("XXX ${FFTW_LIBRARY}")
     
 endif()
 
 if(FFTW_INCLUDE_DIR AND FFTW_LIBRARY)
   set(FFTW_FOUND 1 )
-  if(NOT FFTW_FIND_QUIETLY)
-     message(STATUS "Found fftw3 includes at ${FFTW_INCLUDE_DIR}")
-     message(STATUS "Found fftw3 library at ${FFTW_LIBRARY}")
-  endif()
 endif()
 
 
-if( NOT FFTW_FOUND )
-    if( FFTW_FIND_REQUIRED )
+if(NOT FFTW_FOUND)
+    if(FFTW_FIND_REQUIRED)
         message( FATAL_ERROR "FindFFTW: can't find fftw3 header or library: include dir is ${FFTW_INCLUDE_DIR} and library is ${FFTW_LIBRARY}" )
     endif()
 endif()
 
+message(STATUS "Found FFTW")
+message(STATUS "  libraries: ${FFTW_LIBRARY}")
+message(STATUS "  headers: ${FFTW_INCLUDE_DIR}")
 
 set(FFTW_LIBRARIES ${FFTW_LIBRARY})
 

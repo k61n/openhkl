@@ -1,3 +1,7 @@
+if(POLICY CMP0042)
+    cmake_policy(SET CMP0042 NEW)
+endif()
+
 # a simple way to detect that we are using CMAKE
 add_definitions(-DUSING_CMAKE)
 
@@ -106,8 +110,8 @@ endif(BUILD_STATIC)
 
 
 # install
-install(FILES blosc.h DESTINATION include/nsxlib COMPONENT DEV)
-install(TARGETS blosc_shared DESTINATION ${lib_dir} COMPONENT LIB)
+install(FILES blosc.h DESTINATION ${NSX_INSTALL_DIR}include/nsxlib COMPONENT DEV)
+install(TARGETS blosc_shared DESTINATION ${NSX_INSTALL_DIR}${lib_dir} COMPONENT LIB)
 if(BUILD_STATIC)
-    install(TARGETS blosc_static DESTINATION ${lib_dir} COMPONENT DEV)
+    install(TARGETS blosc_static DESTINATION ${NSX_INSTALL_DIR}${lib_dir} COMPONENT DEV)
 endif(BUILD_STATIC)
