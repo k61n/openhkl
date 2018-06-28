@@ -152,7 +152,6 @@ Eigen::Matrix3d CylindricalDetector::jacobian(double px, double py) const
 
     // The coordinates are defined relative to the detector origin
     double x = px-_minCol;
-    double y = py-_minRow;
     double gamma = (x/(_nCols-1.0)-0.5)*_angularWidth;
     double dgamma = 1.0/(_nCols-1.0)*_angularWidth;
 

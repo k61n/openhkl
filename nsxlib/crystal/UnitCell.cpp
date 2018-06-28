@@ -327,7 +327,6 @@ UnitCell UnitCell::applyNiggliConstraints() const
     
     // geometric mean of side-lengths of unit cell & reciprocal unit cell
     // we use these to scale the residuals in the fitting function below   
-    const double a = std::pow(std::fabs(_A.determinant()), 1.0/3.0);
     const double b = std::pow(std::fabs(_B.determinant()), 1.0/3.0);
 
     // The orientation matrix (in direct space)
@@ -342,7 +341,6 @@ UnitCell UnitCell::applyNiggliConstraints() const
     auto functor = [&](Eigen::VectorXd& residuals) -> int
     {
         UnitCell uc = this->fromParameters(U, uOffset, p);
-        Eigen::Matrix3d A = uc.basis();
         Eigen::Matrix3d B = uc.reciprocalBasis();
 
         for (int i = 0; i < 3; ++i) {

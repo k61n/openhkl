@@ -61,9 +61,6 @@ Detector* Detector::create(const YAML::Node& node)
 
 Detector::Detector()
 : Component("detector"),
-  _dataorder(DataOrder::BottomLeftColMajor),
-  _baseline(0.0),
-  _gain(1.0),
   _height(0.0),
   _width(0.0),
   _angularHeight(0.0),
@@ -72,16 +69,15 @@ Detector::Detector()
   _nCols(0),
   _minRow(0.0),
   _minCol(0.0),
-  _distance(0)
-
+  _distance(0),
+  _dataorder(DataOrder::BottomLeftColMajor),
+  _baseline(0.0),
+  _gain(1.0)
 {
 }
 
 Detector::Detector(const std::string& name)
 : Component(name),
-  _dataorder(DataOrder::BottomLeftColMajor),
-  _baseline(0.0),
-  _gain(1.0),
   _height(0.0),
   _width(0.0),
   _angularHeight(0.0),
@@ -90,8 +86,10 @@ Detector::Detector(const std::string& name)
   _nCols(0),
   _minRow(0.0),
   _minCol(0.0),
-  _distance(0)
-
+  _distance(0),
+  _dataorder(DataOrder::BottomLeftColMajor),
+  _baseline(0.0),
+  _gain(1.0)
 {
 }
 

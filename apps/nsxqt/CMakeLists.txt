@@ -25,7 +25,14 @@ if(APPLE AND ENABLE_CPACK)
 endif()
 
 # Build the nsxqt executable
-add_executable(${NSXQT_EXECUTABLE} ${EXECUTABLE_OPTIONS} ${NSXQT_SOURCES} ${NSXQT_RCS} ${NSXQT_RESOURCES_CPP} ${NSXQT_HEADERS} ${NSXQT_UI_HEADERS})
+add_executable(${NSXQT_EXECUTABLE}
+               ${EXECUTABLE_OPTIONS}
+               ${NSXQT_SOURCES}
+               ${NSXQT_RCS}
+               ${NSXQT_RESOURCES_CPP}
+               ${NSXQT_HEADERS}
+               ${NSXQT_UI_HEADERS}
+               ${NSXQT_BUNDLE_RESOURCES})
 
 # Link the nsxqt executable with the Qt5 libraries in use.
 target_link_libraries(${NSXQT_EXECUTABLE} ${QT_LIBRARIES} ${OPENGL_LIBRARIES} ${NSX_LIBRARY} ${HDF5_LIBRARIES})
@@ -40,8 +47,9 @@ endif()
 install(TARGETS ${NSXQT_EXECUTABLE} ${NSXTOOL_TARGET} DESTINATION ${NSXQT_INSTALL_DIR} COMPONENT APPLICATIONS)
 
 if(APPLE AND ENABLE_CPACK)
-    configure_file(${CMAKE_SOURCE_DIR}/cmake/modules/FixAppleBundle.cmake.in ${CURRENT_BINARY_DIR}/FixAppleBundle.cmake @ONLY) 
-    install(SCRIPT ${CURRENT_BINARY_DIR}/FixAppleBundle.cmake COMPONENT Runtime)
+    set_target_properties(${NSXQT_EXECUTABLE} PROPERTIES RESOURCE ${NSXQT_BUNDLE_RESOURCES})
+    configure_file(${CMAKE_SOURCE_DIR}/cmake/modules/FixAppleBundle.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/FixAppleBundle.cmake @ONLY) 
+    install(SCRIPT ${CMAKE_CURRENT_BINARY_DIR}/FixAppleBundle.cmake COMPONENT Runtime)
 endif()
 
 string(REPLACE ";" "\\\n" NSXQT_SOURCES "${NSXQT_SOURCES}") 

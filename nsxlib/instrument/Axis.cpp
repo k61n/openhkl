@@ -63,8 +63,6 @@ Axis::Axis(const YAML::Node& node)
 
     _axis = axis;
 
-    UnitsManager* um = UnitsManager::Instance();   
-
     _physical = node["physical"].as<bool>();
 
     _id = node["id"] ? node["id"].as<unsigned int>() : 0;

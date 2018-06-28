@@ -49,9 +49,8 @@ if (NOT YAML_FOUND)
   ## Check for the library
 
   find_library (YAML_LIBRARIES yaml-cpp libyaml-cppmd
-    HINTS ${YAML_ROOT_DIR} ${CMAKE_INSTALL_PREFIX}
-    PATH_SUFFIXES lib
-    )
+                HINTS ${YAML_ROOT_DIR} ${CMAKE_INSTALL_PREFIX}
+                PATH_SUFFIXES lib)
 
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found
@@ -74,10 +73,9 @@ if (NOT YAML_FOUND)
 
   if (YAML_FOUND)
     if (NOT YAML_FIND_QUIETLY)
-      message (STATUS "Found components for YAML")
-      message (STATUS "YAML_ROOT_DIR  = ${YAML_ROOT_DIR}")
-      message (STATUS "YAML_INCLUDES  = ${YAML_INCLUDES}")
-      message (STATUS "YAML_LIBRARIES = ${YAML_LIBRARIES}")
+      message (STATUS "Found YAML:")
+      message (STATUS "  libraries: ${YAML_LIBRARIES}")
+      message (STATUS "  headers: ${YAML_INCLUDES}")
     endif (NOT YAML_FIND_QUIETLY)
   else (YAML_FOUND)
     if (YAML_FIND_REQUIRED)
