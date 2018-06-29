@@ -31,7 +31,7 @@ else()
     swig_add_module(pynsx python pynsx.i)
 endif()
 
-swig_link_libraries(pynsx nsx)
+swig_link_libraries(pynsx nsx ${PYTHON_LIBRARIES})
 
 if(ENABLE_CPACK)
     if(APPLE)
