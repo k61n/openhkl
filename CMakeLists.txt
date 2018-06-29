@@ -60,24 +60,6 @@ endif()
 # Enable unit testing with ctest. This must be called before any calls to add_subdirectory
 enable_testing()
   
-###########################################################################
-# RPATH manipulation
-###########################################################################
-
-# For info use 'objdump -x nsxqt | grep RPATH' to the installed executable (not the built one)
-# to check that the RPATH is correctly set
-
-# Update the RPATH with the path of some dependencies
-list(APPEND CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib ${GSL_LIBRARIES})
-
-# Use, i.e. don't skip the full RPATH for the build tree
-set(CMAKE_SKIP_BUILD_RPATH  FALSE)
-# When building, don't use the install RPATH already (but later on when installing)
-set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-# Disable the RPATH stripping during installation
-# See here for more explanations: https://stackoverflow.com/questions/32469953/why-is-cmake-designed-so-that-it-removes-runtime-path-when-installing
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
 add_subdirectory(nsxlib)
 
 if (BUILD_NSX_APPS)

@@ -21,12 +21,10 @@ target_link_libraries(${NSX_LIBRARY}
     ${HDF5_LIBRARIES}
     blosc_static
     ${Boost_LIBRARIES}
-    ${PYTHON_LIBRARIES}
     ${FFTW_LIBRARIES}
     ${YAML_LIBRARIES}
     ${TIFF_LIBRARY}
-    ${GSL_LIBRARIES}
-    )
+    ${GSL_LIBRARIES})
 
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/copy-nsxlib-headers.cmake
     "foreach (path ${NSXLIB_HEADERS} ${NSXLIB_GENERATED_HEADERS})
@@ -37,6 +35,12 @@ add_custom_target(copy-nsx-headers COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_B
 add_dependencies(copy-nsx-headers generate-nsx-resources)
 
 add_dependencies(${NSX_LIBRARY} copy-nsx-headers generate-nsx-resources)
+
+if(ENABLE_CPACK)
+    if(APPLE)
+        set_target_properties(${NSXQT_EXECUTABLE} PROPERTIES INSTALL_RPATH "@loader_path/../Frameworks")
+    endif()
+endif()
 
 # Install section, installing libraries
 install(TARGETS ${NSX_LIBRARY} DESTINATION ${NSX_INSTALL_DIR}lib COMPONENT LIB)

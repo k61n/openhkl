@@ -33,5 +33,13 @@ endif()
 
 swig_link_libraries(pynsx nsx)
 
+if(ENABLE_CPACK)
+    if(APPLE)
+        set_target_properties(${SWIG_MODULE_pynsx_REAL_NAME} PROPERTIES INSTALL_RPATH "@loader_path/../../../Frameworks @loader_path/../../")
+    elseif(LINUX)
+        set_target_properties(${SWIG_MODULE_pynsx_REAL_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN/../../")
+    endif()
+endif()
+
 install(TARGETS ${SWIG_MODULE_pynsx_REAL_NAME} DESTINATION ${NSX_INSTALL_DIR}${PYTHON_SITE} COMPONENT LIB)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pynsx.py DESTINATION ${NSX_INSTALL_DIR}${PYTHON_SITE} COMPONENT LIB)

@@ -44,7 +44,7 @@ endif()
 
 include_directories(SYSTEM "${HDF5_INCLUDE_DIRS}")
 
-if ( HDF5_INCLUDE_DIRS AND HDF5_LIBRARIES )
+if (HDF5_INCLUDE_DIRS AND HDF5_LIBRARIES)
    message("HDF5 found:")
    message("  versions: ${HDF5_VERSION}")
    message("  libraries: ${HDF5_LIBRARIES}")
@@ -129,10 +129,8 @@ else()
     find_package(GSL 2.3 REQUIRED)
     include_directories(SYSTEM ${GSL_INCLUDE_DIR})
 
-    set(temp_string ${GSL_VERSION})
-
-    string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\1" gsl_version_major ${temp_string})
-    string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\2" gsl_version_minor ${temp_string})
+    string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\1" GSL_VERSION_MAJOR ${GSL_VERSION})
+    string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\2" GSL_VERSION_MINOR ${GSL_VERSION})
 endif()
 
 message(STATUS "Found GSL:")
