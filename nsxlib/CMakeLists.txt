@@ -38,7 +38,7 @@ add_dependencies(${NSX_LIBRARY} copy-nsx-headers generate-nsx-resources)
 
 if(ENABLE_CPACK)
     if(APPLE)
-        set_target_properties(${NSXQT_EXECUTABLE} PROPERTIES INSTALL_RPATH "@loader_path/../Frameworks")
+        set_target_properties(${NSX_LIBRARY} PROPERTIES INSTALL_RPATH "@loader_path/../Frameworks;@loader_path/../lib")
     endif()
 endif()
 

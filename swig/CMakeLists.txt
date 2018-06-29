@@ -35,7 +35,7 @@ swig_link_libraries(pynsx nsx ${PYTHON_LIBRARIES})
 
 if(ENABLE_CPACK)
     if(APPLE)
-        set_target_properties(${SWIG_MODULE_pynsx_REAL_NAME} PROPERTIES INSTALL_RPATH "@loader_path/../../../Frameworks @loader_path/../../")
+        set_target_properties(${SWIG_MODULE_pynsx_REAL_NAME} PROPERTIES INSTALL_RPATH "@loader_path/../../../Frameworks;@loader_path/../../")
     elseif(LINUX)
         set_target_properties(${SWIG_MODULE_pynsx_REAL_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN/../../")
     endif()
