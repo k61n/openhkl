@@ -11,6 +11,7 @@ import glob
 from distutils import sysconfig
 
 BUNDLE_DIR = ""
+PYTHON_LIB = ""
 
 # -----------------------------------------------------------------------------
 # Locations
@@ -27,6 +28,11 @@ def python_version_string():
     return str(sys.version_info[0]) + "." + str(sys.version_info[1])
 
 
+def set_python_library(python_lib_dir):
+    global PYTHON_LIB
+    PYTHON_LIB = os.path.realpath(python_lib_dir)
+
+
 def set_bundle_dir(bundle_dir):
     global BUNDLE_DIR
     BUNDLE_DIR = bundle_dir
@@ -39,6 +45,14 @@ def bundle_dir():
 
 def bundle_frameworks_path():
     return os.path.join(bundle_dir(), "Contents", "Frameworks")
+
+
+def bundle_lib_path():
+    return os.path.join(bundle_dir(), "Contents", "lib")
+
+
+def bundle_macos_path():
+    return os.path.join(bundle_dir(), "Contents", "MacOS")
 
 
 def bundle_plugins_path():
@@ -370,7 +384,10 @@ def process_dependency(dependency):
 def walk_through_dependencies(file_name):
     print("============================")
     print("walk_through ", file_name)
+    print(list(otool(file_name)))
     for dependency in otool(file_name):
+        if dependency[-1] == ":":
+            dependency = dependency[:-1]
         print("---> ", file_name, dependency)
         if is_to_bundle_dependency(dependency):
             libId, new_location = process_dependency(dependency)
@@ -410,12 +427,47 @@ def validate_dependencies():
         print(files_with_missed_dependencies)
         raise Exception("Unresolved dependencies!")
 
+def bundle_python():
+
+    from distutils.dir_util import copy_tree
+
+    pythonxy = "python%s" % python_version_string()
+
+    site_packages = os.path.join(bundle_lib_path(),pythonxy,"site-packages")
+
+    # Copy the python dylib and set its id
+    python_dylib = os.path.join(bundle_lib_path(),"lib%s.dylib" % pythonxy)
+    shutil.copy(PYTHON_LIB,python_dylib)
+    os.chmod(python_dylib,0777)
+    setId(python_dylib,"@loader_path/%s" % os.path.basename(python_dylib))    
+
+    # Copy the Python exectubale and fix its dependency on python lib
+    python_exe = os.path.join(bundle_macos_path(),"python")
+    shutil.copy(sys.executable,python_exe)
+    fixDependency(python_exe,PYTHON_LIB,"@executable_path/../lib/%s" % os.path.basename(python_dylib))
+
+    # Copy the python lib directory contents
+    shutil.move(os.path.join(site_packages,"_pynsx.so"),bundle_lib_path())
+    shutil.move(os.path.join(site_packages,"pynsx.py"),bundle_lib_path())
+    copy_tree(os.path.join(os.path.dirname(PYTHON_LIB),"lib",pythonxy),os.path.join(bundle_lib_path(),pythonxy))
+    shutil.rmtree(site_packages)
+    make_dir(site_packages)
+    shutil.move(os.path.join(bundle_lib_path(),"_pynsx.so"),site_packages)
+    shutil.move(os.path.join(bundle_lib_path(),"pynsx.py"),site_packages)
+
+    # Add NumPy to the bundled python
+    numpy_dir = os.path.join(site_packages,"numpy")
+    import numpy
+    shutil.copytree(numpy.__path__[0],numpy_dir)
+
+    fixDependency(os.path.join(site_packages,"_pynsx.so"),"@rpath/Python.framework/Versions/2.7/Python","@loader_path/../../lib%s.dylib" % pythonxy)
+
 
 def fix_apple_bundle():
     print('-'*80)
     print("Fixing OS X bundle at '{0}'".format(bundle_dir()))
     print('-'*80)
-    # # copy_python_framework()
+    copy_python_framework()
     # FIXME provide automatic recognition of Qt dependency type (@rpath or hard coded)
     #copy_qt_libraries() # this line should be uncommented for macport based builds
     copy_qt_plugins()
@@ -428,9 +480,14 @@ if __name__ == '__main__':
     if not platform.system() == 'Darwin':
         exit("This script is intended for MacOs systems. Exiting...")
 
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 3:
         exit("Please specify bundle location")
 
     set_bundle_dir(sys.argv[1])
 
+    set_python_library(sys.argv[2])
+
     fix_apple_bundle()
+
+    bundle_python()
+

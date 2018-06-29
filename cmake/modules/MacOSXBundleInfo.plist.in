@@ -6,28 +6,22 @@
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>nsxqt</string>
-	<key>CFBundleIdentifier</key>
-	<string>${MACOSX_BUNDLE_GUI_IDENTIFIER}</string>
-	<key>CFBundleGetInfoString</key>
-	<string>@MACOSX_BUNDLE_INFO_STRING@</string>
 	<key>CFBundleIconFile</key>
     <string>@MACOSX_BUNDLE_ICON_FILE@</string>
-	<key>CFBundleLongVersionString</key>
-	<string>${MACOSX_BUNDLE_LONG_VERSION_STRING}</string>
-	<key>CFBundleShortVersionString</key>
-	<string>${MACOSX_BUNDLE_SHORT_VERSION_STRING}</string>
+	<key>CFBundleGetInfoString</key>
+	<string>@MACOSX_BUNDLE_INFO_STRING@</string>
 	<key>CFBundleIdentifier</key>
     <string>@MACOSX_BUNDLE_IDENTIFIER@</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleShortVersionString</key>
+	<string>@NSXTOOL_VERSION_MAJOR@</string>
 	<key>CFBundleLongVersionString</key>
-    <string>@NSXTOOL_VERSION_MAJOR@</string>
+    <string>@NSXTOOL_VERSION@</string>
 	<key>CFBundleName</key>
 	<string>@MACOSX_BUNDLE_NAME@</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-    <string>@NSXTOOL_VERSION_MAJOR@</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -38,6 +32,7 @@
 	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>Institut Laue Langevin 2014</string>
+	<key>NSHighResolutionCapable</key>
 	<true/>
 </dict>
 </plist>
