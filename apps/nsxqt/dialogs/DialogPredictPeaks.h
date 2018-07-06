@@ -22,10 +22,9 @@ public:
     double radius();
     double nframes();
 
-    int minimumNeighbors();
+    int minNeighbors();
 
-    nsx::sptrUnitCell cell();
-    
+    nsx::sptrUnitCell cell(); 
 
 private:
     Ui::DialogPredictPeaks *ui;

@@ -40,7 +40,7 @@ double DialogPredictPeaks::nframes()
     return ui->nframes->value();
 }
 
-int DialogPredictPeaks::minimumNeighbors()
+int DialogPredictPeaks::minNeighbors()
 {
     return ui->neighborSpinBox->value();
 }
