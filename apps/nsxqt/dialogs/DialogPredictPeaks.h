@@ -19,8 +19,6 @@ public:
 
     double dMin();
     double dMax();
-    double peakScale();
-    double bkgScale();
     double Isigma();
     double sigmaD();
     double sigmaM();

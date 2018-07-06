@@ -30,16 +30,6 @@ double DialogPredictPeaks::dMax()
     return ui->dMaxSpinBox->value();
 }
 
-double DialogPredictPeaks::peakScale()
-{
-    return ui->peakScaleSpinBox->value();
-}
-
-double DialogPredictPeaks::bkgScale()
-{
-    return ui->bkgScaleSpinBox->value();
-}
-
 double DialogPredictPeaks::Isigma()
 {
     return ui->sigmaSpinBox->value();
