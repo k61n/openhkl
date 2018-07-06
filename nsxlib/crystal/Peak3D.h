@@ -44,7 +44,6 @@
 #include "Intensity.h"
 #include "IPeakIntegrator.h"
 
-
 namespace nsx {
 
 //! \class Peak3D

@@ -82,7 +82,7 @@ void PeaksItem::integratePeaks()
 
     nsx::info() << "Reintegrating peaks...";
 
-    auto dialog = new DialogIntegrate();
+    auto dialog = new DialogIntegrate(selected_peaks);
 
     std::map<std::string, std::function<nsx::IPeakIntegrator*()>> integrator_map;
     std::vector<std::string> integrator_names;
@@ -104,9 +104,6 @@ void PeaksItem::integratePeaks()
         return;
     }
 
-    const double peak_scale = dialog->peakScale();
-    const double bkgBegin = dialog->bkgBegin();
-    const double bkgEnd = dialog->bkgEnd();
     const double dmin = dialog->dMin();
     const double dmax = dialog->dMax();
 
@@ -117,14 +114,16 @@ void PeaksItem::integratePeaks()
     ProgressView view(nullptr);
     view.watch(handler);
 
+    nsx::PeakFilter peak_filter;
+    // todo: bkg_begin and bkg_end
+    auto peaks = peak_filter.dMin(selected_peaks, dmin);
+    peaks = peak_filter.dMax(peaks, dmax);
+
     for (auto&& numor: numors) {
-        // todo: bkg_begin and bkg_end
-        auto peaks = nsx::PeakFilter().dMin(selected_peaks, dmin);
-        peaks = nsx::PeakFilter().dMax(peaks, dmax);
         nsx::info() << "Integrating " << peaks.size() << " peaks";
         std::unique_ptr<nsx::IPeakIntegrator> integrator(integrator_map[dialog->integrator()]());
         integrator->setHandler(handler);
-        integrator->integrate(peaks, numor, peak_scale, bkgBegin, bkgEnd);
+        integrator->integrate(peaks, numor, library->peakScale(), library->bkgBegin(), library->bkgEnd());
     }
 
     // todo: emit signal

@@ -5,6 +5,8 @@
 
 #include <QDialog>
 
+#include <nsxlib/CrystalTypes.h>
+
 namespace Ui {
 class DialogIntegrate;
 }
@@ -14,7 +16,7 @@ class DialogIntegrate : public QDialog
     Q_OBJECT
 
 public:
-    DialogIntegrate(QWidget *parent = 0);
+    DialogIntegrate(const nsx::PeakList& peaks, QWidget *parent = 0);
     ~DialogIntegrate();
 
     void setIntegrators(const std::vector<std::string>& names);

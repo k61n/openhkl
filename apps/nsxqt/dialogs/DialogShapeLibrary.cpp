@@ -142,15 +142,17 @@ void DialogShapeLibrary::build()
     nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
     ProgressView view(this);
     view.watch(handler);
-    _library = nsx::sptrShapeLibrary(new nsx::ShapeLibrary(detector_coords));
+
+    auto bkgBegin = ui->bkgBegin->value();
+    auto bkgEnd = ui->bkgEnd->value();
+    _library = nsx::sptrShapeLibrary(new nsx::ShapeLibrary(detector_coords, peakScale, bkgBegin, bkgEnd));
+
     nsx::ShapeIntegrator integrator(_library, aabb, nx, ny, nz);    
     integrator.setHandler(handler);
 
     for (auto data: _data) {
-        auto bkgBegin = ui->bkgBegin->value();
-        auto bkgEnd = ui->bkgEnd->value();
         nsx::info() << "Fitting profiles in dataset " << data->filename();
-        integrator.integrate(fit_peaks, data, peakScale, bkgBegin, bkgEnd);
+        integrator.integrate(fit_peaks, data, _library->peakScale(), _library->bkgBegin(), _library->bkgEnd());
     }
     nsx::info() << "Done fitting profiles";
 
