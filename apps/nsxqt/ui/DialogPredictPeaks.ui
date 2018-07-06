@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DialogCalculatedPeaks</class>
- <widget class="QDialog" name="DialogCalculatedPeaks">
+ <class>DialogPredictPeaks</class>
+ <widget class="QDialog" name="DialogPredictPeaks">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -230,7 +230,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>DialogCalculatedPeaks</receiver>
+   <receiver>DialogPredictPeaks</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -246,7 +246,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>DialogCalculatedPeaks</receiver>
+   <receiver>DialogPredictPeaks</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

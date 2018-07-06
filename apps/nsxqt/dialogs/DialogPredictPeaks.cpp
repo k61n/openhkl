@@ -1,11 +1,11 @@
-#include "DialogCalculatedPeaks.h"
-#include "ui_DialogCalculatedPeaks.h"
+#include "DialogPredictPeaks.h"
+#include "ui_DialogPredictPeaks.h"
 
 #include <nsxlib/UnitCell.h>
 
-DialogCalculatedPeaks::DialogCalculatedPeaks(const std::set<nsx::sptrUnitCell>& cells, QWidget *parent):
+DialogPredictPeaks::DialogPredictPeaks(const std::set<nsx::sptrUnitCell>& cells, QWidget *parent):
     QDialog(parent),
-    ui(new Ui::DialogCalculatedPeaks),
+    ui(new Ui::DialogPredictPeaks),
     _cells(cells)    
 {
     ui->setupUi(this);
@@ -15,63 +15,63 @@ DialogCalculatedPeaks::DialogCalculatedPeaks(const std::set<nsx::sptrUnitCell>& 
     }
 }
 
-DialogCalculatedPeaks::~DialogCalculatedPeaks()
+DialogPredictPeaks::~DialogPredictPeaks()
 {
     delete ui;
 }
 
-double DialogCalculatedPeaks::dMin()
+double DialogPredictPeaks::dMin()
 {
     return ui->dMinSpinBox->value();
 }
 
-double DialogCalculatedPeaks::dMax()
+double DialogPredictPeaks::dMax()
 {
     return ui->dMaxSpinBox->value();
 }
 
-double DialogCalculatedPeaks::peakScale()
+double DialogPredictPeaks::peakScale()
 {
     return ui->peakScaleSpinBox->value();
 }
 
-double DialogCalculatedPeaks::bkgScale()
+double DialogPredictPeaks::bkgScale()
 {
     return ui->bkgScaleSpinBox->value();
 }
 
-double DialogCalculatedPeaks::Isigma()
+double DialogPredictPeaks::Isigma()
 {
     return ui->sigmaSpinBox->value();
 }
 
-double DialogCalculatedPeaks::sigmaD()
+double DialogPredictPeaks::sigmaD()
 {
     return ui->sigmaD->value();
 }
 
 
-double DialogCalculatedPeaks::sigmaM()
+double DialogPredictPeaks::sigmaM()
 {
     return ui->sigmaM->value();
 }
 
-double DialogCalculatedPeaks::radius()
+double DialogPredictPeaks::radius()
 {
     return ui->radius->value();
 }
 
-double DialogCalculatedPeaks::nframes()
+double DialogPredictPeaks::nframes()
 {
     return ui->nframes->value();
 }
 
-int DialogCalculatedPeaks::minimumNeighbors()
+int DialogPredictPeaks::minimumNeighbors()
 {
     return ui->neighborSpinBox->value();
 }
 
-nsx::sptrUnitCell DialogCalculatedPeaks::cell()
+nsx::sptrUnitCell DialogPredictPeaks::cell()
 {
     for (auto cell: _cells) {
         if (ui->comboBoxUC->currentText() == cell->name().c_str()) {

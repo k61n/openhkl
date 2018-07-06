@@ -6,16 +6,16 @@
 #include <nsxlib/CrystalTypes.h>
 
 namespace Ui {
-class DialogCalculatedPeaks;
+class DialogPredictPeaks;
 }
 
-class DialogCalculatedPeaks : public QDialog
+class DialogPredictPeaks : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DialogCalculatedPeaks(const std::set<nsx::sptrUnitCell>& cells, QWidget *parent = 0);
-    ~DialogCalculatedPeaks();
+    explicit DialogPredictPeaks(const std::set<nsx::sptrUnitCell>& cells, QWidget *parent = 0);
+    ~DialogPredictPeaks();
 
     double dMin();
     double dMax();
@@ -33,6 +33,6 @@ public:
     
 
 private:
-    Ui::DialogCalculatedPeaks *ui;
+    Ui::DialogPredictPeaks *ui;
     std::set<nsx::sptrUnitCell> _cells;
 };

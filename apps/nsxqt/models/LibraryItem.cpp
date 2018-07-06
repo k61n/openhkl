@@ -7,7 +7,7 @@
 #include <nsxlib/ShapeLibrary.h>
 
 #include "DataItem.h"
-#include "DialogCalculatedPeaks.h"
+#include "DialogPredictPeaks.h"
 #include "ExperimentItem.h"
 #include "LibraryItem.h"
 #include "MetaTypes.h"
@@ -45,7 +45,7 @@ void LibraryItem::incorporateCalculatedPeaks()
         }
     }
 
-    DialogCalculatedPeaks dialog(cells);
+    DialogPredictPeaks dialog(cells);
 
     if (!dialog.exec()) {
         return;
