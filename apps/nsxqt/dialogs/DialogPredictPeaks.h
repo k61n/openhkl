@@ -20,8 +20,6 @@ public:
     double dMin();
     double dMax();
     double Isigma();
-    double sigmaD();
-    double sigmaM();
     double radius();
     double nframes();
 

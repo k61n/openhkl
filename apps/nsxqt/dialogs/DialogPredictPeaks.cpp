@@ -35,17 +35,6 @@ double DialogPredictPeaks::Isigma()
     return ui->sigmaSpinBox->value();
 }
 
-double DialogPredictPeaks::sigmaD()
-{
-    return ui->sigmaD->value();
-}
-
-
-double DialogPredictPeaks::sigmaM()
-{
-    return ui->sigmaM->value();
-}
-
 double DialogPredictPeaks::radius()
 {
     return ui->radius->value();
