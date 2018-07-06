@@ -56,7 +56,6 @@ void LibraryItem::incorporateCalculatedPeaks()
     progressView.watch(handler);
 
     int current_numor = 0;
-    int observed_peaks = 0;
 
     // TODO: get the crystal from the dialog!!
     auto cell = dialog.cell();

@@ -26,7 +26,7 @@
 #include "DialogIntegrate.h"
 #include "DialogMCAbsorption.h"
 #include "DialogPeakFilter.h"
-#include "DialogProfileFit.h"
+#include "DialogShapeLibrary.h"
 #include "DialogRefineUnitCell.h"
 #include "DialogSpaceGroup.h"
 #include "GLSphere.h"
@@ -184,7 +184,7 @@ void PeaksItem::buildShapeLibrary()
         QMessageBox::warning(nullptr, "NSXTool", "The selected peaks must have the same active unit cell for profile fitting");
         return;
     }
-    DialogProfileFit* dialog = new DialogProfileFit(experiment(), uc, peaks);
+    DialogShapeLibrary* dialog = new DialogShapeLibrary(experiment(), uc, peaks);
 
     // rejected
     if (dialog->exec() == QDialog::Rejected) {

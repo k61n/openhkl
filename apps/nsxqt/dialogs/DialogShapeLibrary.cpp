@@ -13,15 +13,15 @@
 
 #include "ProgressView.h"
 
-#include "DialogProfileFit.h"
-#include "ui_ProfileFitDialog.h"
+#include "DialogShapeLibrary.h"
+#include "ui_DialogShapeLibrary.h"
 
-DialogProfileFit::DialogProfileFit(nsx::sptrExperiment experiment,
-                                    nsx::sptrUnitCell unitCell,
-                                    const nsx::PeakList& peaks,
-                                    QWidget *parent):
+DialogShapeLibrary::DialogShapeLibrary(nsx::sptrExperiment experiment,
+                                       nsx::sptrUnitCell unitCell,
+                                       const nsx::PeakList& peaks,
+                                       QWidget *parent):
     QDialog(parent),
-    ui(new Ui::ProfileFitDialog),
+    ui(new Ui::DialogShapeLibrary),
     _experiment(std::move(experiment)),
     _unitCell(std::move(unitCell)),
     _peaks(peaks), 
@@ -55,7 +55,6 @@ DialogProfileFit::DialogProfileFit(nsx::sptrExperiment experiment,
     for (auto peak: peaks) {
         nsx::PeakCoordinateSystem coord(peak);
         auto shape = peak->shape();
-        auto state = peak->data()->interpolatedState(shape.center()[2]);
         Eigen::Matrix3d J = coord.jacobian();
         cov += J*shape.inverseMetric()*J.transpose();
     }
@@ -84,12 +83,12 @@ DialogProfileFit::DialogProfileFit(nsx::sptrExperiment experiment,
     
 }
 
-DialogProfileFit::~DialogProfileFit()
+DialogShapeLibrary::~DialogShapeLibrary()
 {
     delete ui;
 }
 
-void DialogProfileFit::build()
+void DialogShapeLibrary::build()
 {
     nsx::PeakList fit_peaks;
 
@@ -165,7 +164,7 @@ void DialogProfileFit::build()
     calculate();
 }
 
-void DialogProfileFit::calculate()
+void DialogShapeLibrary::calculate()
 {
     if (!_library) {
         nsx::info() << "Error: must build shape library before calculating a mean profile";
@@ -201,10 +200,10 @@ void DialogProfileFit::calculate()
     drawFrame(ui->drawFrame->value());
 }
 
-void DialogProfileFit::drawFrame(int value)
+void DialogShapeLibrary::drawFrame(int value)
 {
     if (value < 0 || value >= _profile.shape()[2]) {
-        throw std::runtime_error("DialogProfileFit::drawFrame(): invalid frame value");
+        throw std::runtime_error("DialogShapeLibrary::drawFrame(): invalid frame value");
     }
    
     auto shape = _profile.shape();
@@ -230,13 +229,13 @@ void DialogProfileFit::drawFrame(int value)
     ui->graphicsView->fitInView(0, 0, shape[0], shape[1]);
 }
 
-const nsx::Profile3D& DialogProfileFit::profile()
+const nsx::Profile3D& DialogShapeLibrary::profile()
 {
     return _profile;
 }
 
 
-nsx::sptrShapeLibrary DialogProfileFit::library() const
+nsx::sptrShapeLibrary DialogShapeLibrary::library() const
 {
     return _library;
 }

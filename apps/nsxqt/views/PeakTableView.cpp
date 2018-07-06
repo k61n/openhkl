@@ -53,9 +53,6 @@
 
 #include "CollectedPeaksDelegate.h"
 #include "CollectedPeaksModel.h"
-#include "DialogAutoIndexing.h"
-#include "DialogProfileFit.h"
-#include "DialogRefineUnitCell.h"
 #include "DialogTransformationMatrix.h"
 #include "DialogUnitCellParameters.h"
 #include "PeakTableView.h"
