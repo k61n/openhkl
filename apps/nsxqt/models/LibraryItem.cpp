@@ -17,7 +17,7 @@
 
 LibraryItem::LibraryItem()
 : TreeItem(),
-  _library(new nsx::ShapeLibrary(false))
+  _library(nullptr)
 {
     setText("Reference peak library");
     QIcon icon(":/resources/peakListIcon.png");
