@@ -19,7 +19,6 @@ public:
 
     double dMin();
     double dMax();
-    double Isigma();
     double radius();
     double nframes();
 
