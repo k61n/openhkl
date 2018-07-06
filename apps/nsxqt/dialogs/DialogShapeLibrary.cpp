@@ -154,7 +154,6 @@ void DialogShapeLibrary::build()
     }
     nsx::info() << "Done fitting profiles";
 
-
     _library = integrator.library();
 
     nsx::info() << "Updating peak shape model...";

@@ -66,7 +66,7 @@ void LibraryItem::incorporateCalculatedPeaks()
         nsx::debug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
 
         auto predictor = nsx::PeakPredictor(cell, dialog.dMin(), dialog.dMax(), _library);
-        auto predicted = predictor.predict(numor, dialog.radius(), dialog.nframes(), dialog.minNeighbors());
+        auto predicted = predictor.predict(numor, dialog.radius(), dialog.nFrames(), dialog.minNeighbors());
 
         for (auto peak: predicted) {
             predicted_peaks.push_back(peak);

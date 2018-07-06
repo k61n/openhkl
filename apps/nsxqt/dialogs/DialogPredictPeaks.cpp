@@ -35,7 +35,7 @@ double DialogPredictPeaks::radius()
     return ui->radius->value();
 }
 
-double DialogPredictPeaks::nframes()
+double DialogPredictPeaks::nFrames()
 {
     return ui->nframes->value();
 }

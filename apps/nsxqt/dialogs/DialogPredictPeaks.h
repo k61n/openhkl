@@ -20,7 +20,7 @@ public:
     double dMin();
     double dMax();
     double radius();
-    double nframes();
+    double nFrames();
 
     int minNeighbors();
 
