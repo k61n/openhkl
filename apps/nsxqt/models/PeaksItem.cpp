@@ -190,7 +190,13 @@ void PeaksItem::buildShapeLibrary()
         return;
     }
 
-    *(exp_item->libraryItem()->library()) = *dialog->library();
+    auto new_library = dialog->library();
+
+    if (!new_library) {
+        return;
+    }
+
+    *(exp_item->libraryItem()->library()) = *new_library;
     nsx::info() << "Update profiles of " << peaks.size() << " peaks";
 }
 

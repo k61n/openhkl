@@ -28,7 +28,8 @@ DialogShapeLibrary::DialogShapeLibrary(nsx::sptrExperiment experiment,
     _experiment(std::move(experiment)),
     _unitCell(std::move(unitCell)),
     _peaks(peaks), 
-    _cmap()
+    _cmap(),
+    _library(nullptr)
 {
     ui->setupUi(this);
 
