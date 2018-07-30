@@ -11,7 +11,7 @@
 #include <nsxlib/DataTypes.h>
 
 namespace Ui {
-class PeakFilterDialog;
+class DialogPeakFilter;
 }
 
 class DialogPeakFilter : public QDialog {
@@ -26,7 +26,7 @@ public slots:
     virtual void accept() override;
 
 private:
-    Ui::PeakFilterDialog* _ui;
+    Ui::DialogPeakFilter* _ui;
     nsx::PeakList _peaks;
     nsx::PeakList _badPeaks;
     nsx::PeakList _goodPeaks;

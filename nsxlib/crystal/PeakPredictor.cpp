@@ -66,7 +66,7 @@ PeakPredictor::PeakPredictor(sptrUnitCell cell, double dmin, double dmax, sptrSh
 {
 }
 
-PeakList PeakPredictor::predict(sptrDataSet data, double radius, double nframes) const
+PeakList PeakPredictor::predict(sptrDataSet data, double radius, double nframes, int min_neighbors) const
 {
     if (!_library) {
         throw std::runtime_error("PeakPredictor cannot predict without a shape library");
@@ -91,7 +91,7 @@ PeakList PeakPredictor::predict(sptrDataSet data, double radius, double nframes)
         try {
             // can throw if there are too few neighboring peaks
             // todo: number of neighboring peaks should not be hard-coded
-            Eigen::Matrix3d cov = _library->meanCovariance(p, radius, nframes, 20);
+            Eigen::Matrix3d cov = _library->meanCovariance(p, radius, nframes, min_neighbors);
             //Eigen::Matrix3d cov = _library->predictCovariance(p);
             Eigen::Vector3d center = p->shape().center();
             p->setShape(Ellipsoid(center, cov.inverse()));

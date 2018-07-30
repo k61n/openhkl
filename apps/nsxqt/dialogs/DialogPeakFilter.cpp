@@ -9,12 +9,12 @@
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFilter.h>
 
-#include "ui_PeakFilterDialog.h"
+#include "ui_DialogPeakFilter.h"
 #include "DialogPeakFilter.h"
 
 DialogPeakFilter::DialogPeakFilter(const nsx::PeakList& peaks, QWidget* parent):
     QDialog(parent),
-    _ui(new Ui::PeakFilterDialog),
+    _ui(new Ui::DialogPeakFilter),
     _peaks(peaks),
     _badPeaks(),
     _goodPeaks()

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DialogCalculatedPeaks</class>
- <widget class="QDialog" name="DialogCalculatedPeaks">
+ <class>DialogPredictPeaks</class>
+ <widget class="QDialog" name="DialogPredictPeaks">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -26,16 +26,6 @@
    </item>
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout_2">
-     <item row="11" column="2">
-      <widget class="QDoubleSpinBox" name="bkgScaleSpinBox">
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-       <property name="value">
-        <double>6.000000000000000</double>
-       </property>
-      </widget>
-     </item>
      <item row="6" column="2">
       <widget class="QSpinBox" name="neighborSpinBox">
        <property name="maximum">
@@ -86,34 +76,10 @@
        </property>
       </widget>
      </item>
-     <item row="10" column="0">
-      <widget class="QLabel" name="label_8">
-       <property name="text">
-        <string>Scale factor for integration</string>
-       </property>
-      </widget>
-     </item>
      <item row="5" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>d max (angstrom)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="0">
-      <widget class="QLabel" name="label_9">
-       <property name="text">
-        <string>Scale factor for background</string>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="2">
-      <widget class="QDoubleSpinBox" name="peakScaleSpinBox">
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-       <property name="value">
-        <double>3.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -137,6 +103,9 @@
        </property>
       </widget>
      </item>
+     <item row="0" column="2">
+      <widget class="QComboBox" name="comboBoxUC"/>
+     </item>
      <item row="1" column="2">
       <widget class="QDoubleSpinBox" name="sigmaD">
        <property name="decimals">
@@ -149,9 +118,6 @@
         <double>0.500000000000000</double>
        </property>
       </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QComboBox" name="comboBoxUC"/>
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_4">
@@ -187,21 +153,21 @@
        </property>
       </widget>
      </item>
-     <item row="12" column="0">
+     <item row="10" column="0">
       <widget class="QLabel" name="label_7">
        <property name="text">
         <string>Search radius</string>
        </property>
       </widget>
      </item>
-     <item row="13" column="0">
+     <item row="11" column="0">
       <widget class="QLabel" name="label_11">
        <property name="text">
         <string>Number of frames</string>
        </property>
       </widget>
      </item>
-     <item row="12" column="2">
+     <item row="10" column="2">
       <widget class="QDoubleSpinBox" name="radius">
        <property name="maximum">
         <double>10000.000000000000000</double>
@@ -211,7 +177,7 @@
        </property>
       </widget>
      </item>
-     <item row="13" column="2">
+     <item row="11" column="2">
       <widget class="QDoubleSpinBox" name="nframes">
        <property name="maximum">
         <double>10000.000000000000000</double>
@@ -230,7 +196,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>DialogCalculatedPeaks</receiver>
+   <receiver>DialogPredictPeaks</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -246,7 +212,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>DialogCalculatedPeaks</receiver>
+   <receiver>DialogPredictPeaks</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

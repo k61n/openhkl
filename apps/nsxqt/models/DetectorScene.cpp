@@ -513,11 +513,8 @@ void DetectorScene::changeInteractionMode(int mode)
 // TODO: fix this whole method, it should be using IntegrationRegion::updateMask()
 void DetectorScene::loadCurrentImage(bool newimage)
 {
-    const unsigned int red =     (128u << 24) | (255u << 16);
     const unsigned int green =   (128u << 24) | (255u << 8);
     const unsigned int yellow =  (128u << 24) | (255u << 16) | (255u << 8);
-    const unsigned int purple =  (128u << 24) | (153u << 16) | ( 51u << 8) | (255u);
-    const unsigned int pink   =  (128u << 24) | (255u << 16) | (153u << 8) | (204u);
     const unsigned int transparent = 0;
 
     using EventType = nsx::IntegrationRegion::EventType;

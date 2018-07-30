@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ProfileFitDialog</class>
- <widget class="QDialog" name="ProfileFitDialog">
+ <class>DialogShapeLibrary</class>
+ <widget class="QDialog" name="DialogShapeLibrary">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -356,7 +356,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>ProfileFitDialog</receiver>
+   <receiver>DialogShapeLibrary</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -372,7 +372,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>ProfileFitDialog</receiver>
+   <receiver>DialogShapeLibrary</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

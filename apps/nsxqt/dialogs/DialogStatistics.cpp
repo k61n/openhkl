@@ -23,6 +23,7 @@
 #include <nsxlib/RFactor.h>
 
 #include "DialogStatistics.h"
+#include "PeaksUtils.h"
 #include "ui_DialogStatistics.h"
 
 DialogStatistics::DialogStatistics(const nsx::PeakList& peaks, const nsx::SpaceGroup& spaceGroup, QWidget *parent)
@@ -36,16 +37,9 @@ DialogStatistics::DialogStatistics(const nsx::PeakList& peaks, const nsx::SpaceG
 
     ui->tabWidget->setCurrentIndex(0);
 
-    double dmin(std::numeric_limits<double>::infinity());
-    double dmax(-std::numeric_limits<double>::infinity());
-    for (auto peak : peaks) {
-        double d = 1.0/peak->q().rowVector().norm();
-        dmin = std::min(dmin,d);
-        dmax = std::max(dmax,d);
-    }
-
-    ui->dmin->setValue(dmin);
-    ui->dmax->setValue(dmax);
+    auto&& drange = dRange(peaks);
+    ui->dmin->setValue(drange.first);
+    ui->dmax->setValue(drange.second);
 
     QStandardItemModel* shell_model = new QStandardItemModel(0,13,this);
     ui->statistics->setModel(shell_model);

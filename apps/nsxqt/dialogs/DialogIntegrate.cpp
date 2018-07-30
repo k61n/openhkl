@@ -1,15 +1,17 @@
-// author: Jonathan Fisher
-// j.fisher@fz-juelich.de
-
 #include "DialogIntegrate.h"
+#include "PeaksUtils.h"
 #include "ui_DialogIntegrate.h"
 
-DialogIntegrate::DialogIntegrate(QWidget *parent):
+DialogIntegrate::DialogIntegrate(const nsx::PeakList& peaks, QWidget *parent):
     QDialog(parent),
     _ui(new Ui::DialogIntegrate)
 {
     _ui->setupUi(this);
 
+    auto&& drange = dRange(peaks);
+    _ui->dMin->setValue(drange.first);
+    _ui->dMax->setValue(drange.second);
+    
     connect(_ui->okButton, &QPushButton::clicked, [=] {this->done(QDialog::Accepted);});
     connect(_ui->cancelButton, &QPushButton::clicked, [=] {this->done(QDialog::Rejected);});
 

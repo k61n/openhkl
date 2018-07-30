@@ -75,7 +75,7 @@ SamplePropertyWidget::~SamplePropertyWidget()
 
 void SamplePropertyWidget::cellHasChanged(int i,int j)
 {
-    auto sample=_sampleItem->experiment()->diffractometer()->sample();
-    auto axis=sample->gonio()->axis(i);
+    Q_UNUSED(i)
+    Q_UNUSED(j)
 }
 

@@ -76,12 +76,15 @@ struct FitData {
 };
 
 
-ShapeLibrary::ShapeLibrary(bool detector_coords): 
+ShapeLibrary::ShapeLibrary(bool detector_coords, double peakScale, double bkgBegin, double bkgEnd): 
     _profiles(),
     _choleskyD(),
     _choleskyM(),
     _choleskyS(),
-    _detectorCoords(detector_coords)
+    _detectorCoords(detector_coords),
+    _peakScale(peakScale),
+    _bkgBegin(bkgBegin),
+    _bkgEnd(bkgEnd)
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
@@ -112,6 +115,22 @@ static void covariance_helper(Eigen::Matrix3d& result, const FitData& f, const E
     cov += Jp * sigmaS * Jp.transpose();
 
     result = Jd * cov * Jd.transpose();
+}
+
+double ShapeLibrary::peakScale() const
+{
+    return _peakScale;
+}
+
+
+double ShapeLibrary::bkgBegin() const
+{
+    return _bkgBegin;
+}
+
+double ShapeLibrary::bkgEnd() const
+{
+    return _bkgEnd;
 }
 
 bool ShapeLibrary::addPeak(sptrPeak3D peak, Profile3D&& profile, IntegratedProfile&& integrated_profile)

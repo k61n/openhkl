@@ -7,7 +7,7 @@
 #include <nsxlib/ShapeLibrary.h>
 
 #include "DataItem.h"
-#include "DialogCalculatedPeaks.h"
+#include "DialogPredictPeaks.h"
 #include "ExperimentItem.h"
 #include "LibraryItem.h"
 #include "MetaTypes.h"
@@ -17,7 +17,7 @@
 
 LibraryItem::LibraryItem()
 : TreeItem(),
-  _library(new nsx::ShapeLibrary(false))
+  _library(nullptr)
 {
     setText("Reference peak library");
     QIcon icon(":/resources/peakListIcon.png");
@@ -45,7 +45,7 @@ void LibraryItem::incorporateCalculatedPeaks()
         }
     }
 
-    DialogCalculatedPeaks dialog(cells);
+    DialogPredictPeaks dialog(cells);
 
     if (!dialog.exec()) {
         return;
@@ -56,7 +56,6 @@ void LibraryItem::incorporateCalculatedPeaks()
     progressView.watch(handler);
 
     int current_numor = 0;
-    int observed_peaks = 0;
 
     // TODO: get the crystal from the dialog!!
     auto cell = dialog.cell();
@@ -67,7 +66,7 @@ void LibraryItem::incorporateCalculatedPeaks()
         nsx::debug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
 
         auto predictor = nsx::PeakPredictor(cell, dialog.dMin(), dialog.dMax(), _library);
-        auto predicted = predictor.predict(numor, dialog.radius(), dialog.nframes());
+        auto predicted = predictor.predict(numor, dialog.radius(), dialog.nFrames(), dialog.minNeighbors());
 
         for (auto peak: predicted) {
             predicted_peaks.push_back(peak);

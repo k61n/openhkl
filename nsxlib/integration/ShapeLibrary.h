@@ -22,10 +22,11 @@ struct FitData;
 //! The covariance matrices are used to roughly predict the shapes of weak peaks, and the
 //! integrated profiles are used in the profile-fitting integration methods.
 class ShapeLibrary {
+
 public:
     //! Construct an empty library. 
     //! \param detector_coords if true, store profiles in detector coordinates; otherwise store in Kabsch coordinates
-    ShapeLibrary(bool detector_coords);
+    ShapeLibrary(bool detector_coords, double peakScale, double bkgBegin, double bkgEnd);
     //! Return whether the library is stored in detector coords or Kabsch coords
     bool detectorCoords() const;
     //! Add a reference peak to the library
@@ -44,6 +45,12 @@ public:
     Eigen::Matrix3d meanCovariance(sptrPeak3D reference_peak, double radius, double nframes, size_t min_neighbors) const;
     //! Find neighbors of a given peak
     PeakList findNeighbors(const DetectorEvent& ev, double radius, double nframes) const;
+    //! Returns the peak scale used for the library
+    double peakScale() const;
+    //! Returns the background begin used for the library
+    double bkgBegin() const;
+    //! Returns the background end used for the library
+    double bkgEnd() const;
 
 private:
     //! Predict the (detector space) covariance given the fit data
@@ -58,6 +65,13 @@ private:
     std::array<double, 6> _choleskyS;
     //! Set true if the profiles are stored in detector space coordinates or false for Kabsch coords
     bool _detectorCoords;
+    //! The peak scale used by the library for integration
+    double _peakScale;
+    //! The background begin used by the library for integration
+    double _bkgBegin;
+    //! The background end used by the library for integration
+    double _bkgEnd;
 };
+
 
 } // end namespace nsx
