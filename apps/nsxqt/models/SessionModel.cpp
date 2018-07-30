@@ -101,7 +101,6 @@
 #include "UnitCellItem.h"
 
 #include "ui_MainWindow.h"
-#include "ui_ScaleDialog.h"
 
 SessionModel::SessionModel()
 {

@@ -57,7 +57,6 @@
 #include "UnitCellItem.h"
 
 #include "ui_MainWindow.h"
-#include "ui_ScaleDialog.h"
 
 ExperimentTree::ExperimentTree(QWidget *parent):
     QTreeView(parent)
