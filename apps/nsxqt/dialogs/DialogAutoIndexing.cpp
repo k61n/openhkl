@@ -42,6 +42,7 @@ DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, nsx::Pea
 
     ui->niggli->setStyleSheet("font-weight: normal;");
     ui->niggli->setCheckable(true);
+    ui->niggli->setChecked(false);
 
     connect(ui->index,SIGNAL(clicked()),this,SLOT(autoIndex()));
 
@@ -70,6 +71,7 @@ DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, nsx::Pea
     ui->subdiv->setMinimum(0);
     ui->subdiv->setMaximum(999999);
     ui->subdiv->setValue(params.subdiv);
+
     connect(ui->cancelOK,SIGNAL(rejected()),this,SLOT(reject()));
     connect(ui->cancelOK,SIGNAL(accepted()),this,SLOT(accept()));
 }
