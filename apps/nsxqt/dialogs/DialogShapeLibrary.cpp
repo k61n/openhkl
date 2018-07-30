@@ -1,4 +1,6 @@
 
+#include <QDebug>
+#include <QHeaderView>
 #include <QLayout>
 #include <QStatusBar>
 
@@ -11,6 +13,7 @@
 #include <nsxlib/ShapeLibrary.h>
 #include <nsxlib/Logger.h>
 
+#include "CollectedPeaksModel.h"
 #include "ProgressView.h"
 
 #include "DialogShapeLibrary.h"
@@ -29,9 +32,7 @@ DialogShapeLibrary::DialogShapeLibrary(nsx::sptrExperiment experiment,
 {
     ui->setupUi(this);
 
-    ui->preview->setFixedSize(400,400);
-
-    window()->layout()->setSizeConstraint( QLayout::SetFixedSize );
+    ui->preview->resize(400,400);
 
     ui->kabsch->setStyleSheet("font-weight: normal;");
     ui->kabsch->setCheckable(true);
@@ -71,13 +72,43 @@ DialogShapeLibrary::DialogShapeLibrary(nsx::sptrExperiment experiment,
     ui->sigmaD->setValue(std::sqrt(0.5*(cov(0,0)+cov(1,1))));
     ui->sigmaM->setValue(std::sqrt(cov(2,2)));
     
+    auto model = new CollectedPeaksModel(_experiment);
+    model->setPeaks(peaks);
+    ui->peaks->setModel(model);
+    ui->peaks->verticalHeader()->show();
+
+    ui->peaks->hideColumn(CollectedPeaksModel::Column::transmission);
+    ui->peaks->hideColumn(CollectedPeaksModel::Column::lorentzFactor);
+    ui->peaks->hideColumn(CollectedPeaksModel::Column::selected);
+    ui->peaks->hideColumn(CollectedPeaksModel::Column::unitCell);
+
+    ui->peaks->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
+    ui->peaks->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
+
     connect(ui->drawFrame, SIGNAL(sliderMoved(int)), this, SLOT(drawFrame(int)));
-    
+    connect(ui->peaks,&QTableView::clicked,[this](QModelIndex index){selectTargetPeak(index.row());});
+    connect(ui->peaks->verticalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(selectTargetPeak(int)));
 }
 
 DialogShapeLibrary::~DialogShapeLibrary()
 {
     delete ui;
+}
+
+void DialogShapeLibrary::selectTargetPeak(int row)
+{
+    auto model = dynamic_cast<CollectedPeaksModel*>(ui->peaks->model());
+
+    auto& peaks = model->peaks();
+
+    auto selected_peak = peaks[row];
+
+    auto&& center = selected_peak->shape().center();
+
+    ui->x->setValue(center[0]);
+    ui->y->setValue(center[1]);
+    ui->frame->setValue(center[2]);
+
 }
 
 void DialogShapeLibrary::build()

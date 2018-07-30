@@ -89,7 +89,7 @@ void PeakTableView::plotSelectedPeak(const QModelIndex& index)
     if (peaksModel == nullptr) {
         return;
     }
-    auto peaks = peaksModel->getPeaks();
+    auto peaks = peaksModel->peaks();
     if (peaks.empty()) {
         return;
     }
@@ -111,7 +111,7 @@ void PeakTableView::keyPressEvent(QKeyEvent *event)
     if (peaksModel == nullptr) {
         return;
     }
-    auto peaks = peaksModel->getPeaks();
+    auto peaks = peaksModel->peaks();
     if (peaks.empty()) {
         return;
     }
@@ -138,7 +138,7 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
         return;
     }
 
-    auto peaks = peaksModel->getPeaks();
+    auto peaks = peaksModel->peaks();
     if (peaks.empty()) {
         return;
     }
@@ -211,7 +211,7 @@ void PeakTableView::normalizeToMonitor()
         return;
     }
 
-    auto peaks = peaksModel->getPeaks();
+    auto peaks = peaksModel->peaks();
     if (peaks.empty()) {
         return;
     }
@@ -242,7 +242,7 @@ void PeakTableView::plotAs(const std::string& key)
         return;
     }
 
-    auto peaks = peaksModel->getPeaks();
+    auto peaks = peaksModel->peaks();
     if (peaks.empty()) {
         return;
     }
@@ -262,13 +262,13 @@ void PeakTableView::plotAs(const std::string& key)
     emit plotData(x,y,e);
 }
 
-std::string PeakTableView::getPeaksRange() const
+std::string PeakTableView::peaksRange() const
 {
     auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
     if (peaksModel == nullptr) {
         return "";
     }
-    auto peaks = peaksModel->getPeaks();
+    auto peaks = peaksModel->peaks();
 
     if (peaks.empty()) {
         return "";
@@ -308,7 +308,7 @@ void PeakTableView::showPeaksMatchingText(const QString& text)
     if (peaksModel == nullptr) {
         return;
     }
-    auto peaks = peaksModel->getPeaks();
+    auto peaks = peaksModel->peaks();
     if (peaks.empty()) {
         return;
     }

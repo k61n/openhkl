@@ -42,8 +42,8 @@ public:
 
     void setPeaks(const nsx::PeakList& peaks);
 
-    const nsx::PeakList& getPeaks() const;
-    nsx::PeakList getPeaks(const QModelIndexList& indices) const;
+    const nsx::PeakList& peaks() const;
+    nsx::PeakList peaks(const QModelIndexList& indices) const;
 
     bool indexIsValid(const QModelIndex& index) const;
 

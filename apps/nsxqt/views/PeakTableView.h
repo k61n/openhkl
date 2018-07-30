@@ -96,7 +96,7 @@ private:
 
     bool checkBeforeWritting();
 
-    std::string getPeaksRange() const;
+    std::string peaksRange() const;
 
 private:
 
