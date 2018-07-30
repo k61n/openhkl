@@ -32,7 +32,7 @@ private slots:
     void calculate();
     void build();
     void drawFrame(int value);
-
+    void selectTargetPeak(int row);
 
 private:
     Ui::DialogShapeLibrary *ui;

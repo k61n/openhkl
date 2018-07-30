@@ -71,12 +71,12 @@ void CollectedPeaksModel::setPeaks(const nsx::PeakList& peaks)
     _peaks = peaks;
 }
 
-const nsx::PeakList& CollectedPeaksModel::getPeaks() const
+const nsx::PeakList& CollectedPeaksModel::peaks() const
 {
     return _peaks;
 }
 
-nsx::PeakList CollectedPeaksModel::getPeaks(const QModelIndexList &indices) const
+nsx::PeakList CollectedPeaksModel::peaks(const QModelIndexList &indices) const
 {
     nsx::PeakList peaks;
     peaks.reserve(indices.count());
@@ -145,7 +145,7 @@ QVariant CollectedPeaksModel::headerData(int section, Qt::Orientation orientatio
             return QVariant();
         }
     } else
-        return QVariant();
+        return QVariant(section+1);
 }
 
 QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const

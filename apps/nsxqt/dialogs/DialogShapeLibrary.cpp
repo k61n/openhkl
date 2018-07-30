@@ -1,4 +1,6 @@
 
+#include <QDebug>
+#include <QHeaderView>
 #include <QLayout>
 #include <QStatusBar>
 
@@ -11,6 +13,7 @@
 #include <nsxlib/ShapeLibrary.h>
 #include <nsxlib/Logger.h>
 
+#include "CollectedPeaksModel.h"
 #include "ProgressView.h"
 
 #include "DialogShapeLibrary.h"
@@ -25,9 +28,15 @@ DialogShapeLibrary::DialogShapeLibrary(nsx::sptrExperiment experiment,
     _experiment(std::move(experiment)),
     _unitCell(std::move(unitCell)),
     _peaks(peaks), 
-    _cmap()
+    _cmap(),
+    _library(nullptr)
 {
     ui->setupUi(this);
+
+    ui->preview->resize(400,400);
+
+    ui->kabsch->setStyleSheet("font-weight: normal;");
+    ui->kabsch->setCheckable(true);
 
     // get list of datasets
     for (auto p: _peaks) {
@@ -47,7 +56,6 @@ DialogShapeLibrary::DialogShapeLibrary(nsx::sptrExperiment experiment,
     ui->radius->setMaximum(10000);
     ui->nframes->setMaximum(10000); 
 
-
     // calculate reasonable values of sigmaD and sigmaM
     Eigen::Matrix3d cov;
     cov.setZero();
@@ -64,28 +72,44 @@ DialogShapeLibrary::DialogShapeLibrary(nsx::sptrExperiment experiment,
     // check this
     ui->sigmaD->setValue(std::sqrt(0.5*(cov(0,0)+cov(1,1))));
     ui->sigmaM->setValue(std::sqrt(cov(2,2)));
-
-    auto set_xds_options = [&](int state) {
-        bool use_xds = !ui->detectorCoords->isChecked();
-        // these matter only if working in XDS coordinates
-        ui->sigmaD->setEnabled(use_xds);
-        ui->sigmaM->setEnabled(use_xds);
-        ui->label_sigmaD->setEnabled(use_xds);
-        ui->label_sigmaM->setEnabled(use_xds);
-
-    };
-
-    // set initial values and connect to sinal
-    set_xds_options(ui->detectorCoords->checkState());
-    connect(ui->detectorCoords, &QCheckBox::stateChanged, set_xds_options);
     
+    auto model = new CollectedPeaksModel(_experiment);
+    model->setPeaks(peaks);
+    ui->peaks->setModel(model);
+    ui->peaks->verticalHeader()->show();
+
+    ui->peaks->hideColumn(CollectedPeaksModel::Column::transmission);
+    ui->peaks->hideColumn(CollectedPeaksModel::Column::lorentzFactor);
+    ui->peaks->hideColumn(CollectedPeaksModel::Column::selected);
+    ui->peaks->hideColumn(CollectedPeaksModel::Column::unitCell);
+
+    ui->peaks->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
+    ui->peaks->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
+
     connect(ui->drawFrame, SIGNAL(sliderMoved(int)), this, SLOT(drawFrame(int)));
-    
+    connect(ui->peaks,&QTableView::clicked,[this](QModelIndex index){selectTargetPeak(index.row());});
+    connect(ui->peaks->verticalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(selectTargetPeak(int)));
 }
 
 DialogShapeLibrary::~DialogShapeLibrary()
 {
     delete ui;
+}
+
+void DialogShapeLibrary::selectTargetPeak(int row)
+{
+    auto model = dynamic_cast<CollectedPeaksModel*>(ui->peaks->model());
+
+    auto& peaks = model->peaks();
+
+    auto selected_peak = peaks[row];
+
+    auto&& center = selected_peak->shape().center();
+
+    ui->x->setValue(center[0]);
+    ui->y->setValue(center[1]);
+    ui->frame->setValue(center[2]);
+
 }
 
 void DialogShapeLibrary::build()
@@ -114,9 +138,6 @@ void DialogShapeLibrary::build()
     auto ny = ui->ny->value();
     auto nz = ui->nz->value();
 
-    auto sigmaM = ui->sigmaM->value();
-    auto sigmaD = ui->sigmaD->value();
-
     // update the frame slider if necessary
     if (ui->drawFrame->maximum() != nz) {
         ui->drawFrame->setMaximum(nz-1);
@@ -124,18 +145,20 @@ void DialogShapeLibrary::build()
 
     nsx::AABB aabb;
 
-    bool detector_coords = ui->detectorCoords->isChecked();
+    bool kabsch_coords = ui->kabsch->isChecked();
 
     auto peakScale = ui->peakScale->value();
 
-    if (detector_coords) {
-        Eigen::Vector3d dx(nx, ny, nz);
-        aabb.setLower(-0.5*dx);
-        aabb.setUpper(0.5*dx);
-    } else {
+    if (kabsch_coords) {
+        auto sigmaD = ui->sigmaD->value();
+        auto sigmaM = ui->sigmaM->value();
         Eigen::Vector3d sigma(sigmaD, sigmaD, sigmaM);
         aabb.setLower(-peakScale*sigma);
         aabb.setUpper(peakScale*sigma);
+    } else {
+        Eigen::Vector3d dx(nx, ny, nz);
+        aabb.setLower(-0.5*dx);
+        aabb.setUpper(0.5*dx);
     }
 
     // free memory of old library
@@ -145,7 +168,7 @@ void DialogShapeLibrary::build()
 
     auto bkgBegin = ui->bkgBegin->value();
     auto bkgEnd = ui->bkgEnd->value();
-    _library = nsx::sptrShapeLibrary(new nsx::ShapeLibrary(detector_coords, peakScale, bkgBegin, bkgEnd));
+    _library = nsx::sptrShapeLibrary(new nsx::ShapeLibrary(!kabsch_coords, peakScale, bkgBegin, bkgEnd));
 
     nsx::ShapeIntegrator integrator(_library, aabb, nx, ny, nz);    
     integrator.setHandler(handler);
@@ -194,9 +217,6 @@ void DialogShapeLibrary::calculate()
     nsx::info() << "Mean profile has inertia tensor";
     nsx::info() << e.inverseMetric();
 
-    // for debugging purposes
-    std::vector<nsx::Intensity> profile1d = _library->meanIntegratedProfile(ev, ui->radius->value(), ui->nframes->value());
-
     // draw the updated frame
     drawFrame(ui->drawFrame->value());
 }
@@ -208,11 +228,11 @@ void DialogShapeLibrary::drawFrame(int value)
     }
    
     auto shape = _profile.shape();
-    auto scene = ui->graphicsView->scene();
+    auto scene = ui->preview->scene();
 
     if (!scene) {
         scene = new QGraphicsScene();
-        ui->graphicsView->setScene(scene);
+        ui->preview->setScene(scene);
     }
 
     QImage img(shape[0], shape[1], QImage::Format_ARGB32);
@@ -227,7 +247,7 @@ void DialogShapeLibrary::drawFrame(int value)
     scene->clear();
     scene->setSceneRect(QRectF(0, 0, shape[0], shape[1]));
     scene->addPixmap(QPixmap::fromImage(img));
-    ui->graphicsView->fitInView(0, 0, shape[0], shape[1]);
+    ui->preview->fitInView(0, 0, shape[0], shape[1]);
 }
 
 const nsx::Profile3D& DialogShapeLibrary::profile()

@@ -40,6 +40,10 @@ DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, nsx::Pea
     ui->setupUi(this);
     setModal(true);
 
+    ui->niggli->setStyleSheet("font-weight: normal;");
+    ui->niggli->setCheckable(true);
+    ui->niggli->setChecked(false);
+
     connect(ui->index,SIGNAL(clicked()),this,SLOT(autoIndex()));
 
     // Accept solution and set Unit-Cell
@@ -67,6 +71,7 @@ DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, nsx::Pea
     ui->subdiv->setMinimum(0);
     ui->subdiv->setMaximum(999999);
     ui->subdiv->setValue(params.subdiv);
+
     connect(ui->cancelOK,SIGNAL(rejected()),this,SLOT(reject()));
     connect(ui->cancelOK,SIGNAL(accepted()),this,SLOT(accept()));
 }
@@ -103,7 +108,7 @@ void DialogAutoIndexing::autoIndex()
     params.nSolutions = ui->nSolutions->value();
     params.indexingTolerance = ui->indexingTolerance->value();
     params.nVertices = ui->nVertices->value();
-    params.niggliReduction = ui->niggliReduction->isChecked();
+    params.niggliReduction = ui->niggli->isChecked();
     params.niggliTolerance = ui->niggliTolerance->value();
     params.gruberTolerance = ui->gruberTolerance->value();
     params.maxdim = ui->maxCellDim->value();
