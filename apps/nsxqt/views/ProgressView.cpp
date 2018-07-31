@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QPushButton>
 
 #include <nsxlib/Logger.h>
 #include <nsxlib/ProgressHandler.h>
@@ -13,6 +14,10 @@ ProgressView::ProgressView(QWidget* parent): QProgressDialog(parent)
     setMaximum(100);
     setValue(0);
     hide();
+
+    QPushButton* cancel_button = new QPushButton("Cancel");
+    cancel_button->setAutoDefault(false);
+    setCancelButton(cancel_button);
 
     connect(this, SIGNAL(canceled()), this, SLOT(abort()));
 
