@@ -13,6 +13,7 @@
 #include <QShowEvent>
 #include <QStandardItem>
 
+#include <nsxlib/CrystalTypes.h>
 #include <nsxlib/DataTypes.h>
 
 #include "ColorMap.h"
@@ -26,7 +27,7 @@ class DialogPeakFind : public QDialog
     Q_OBJECT
 
 public:
-    explicit DialogPeakFind(const nsx::DataList& data,nsx::sptrPeakFinder peakFinder=nullptr,QWidget *parent = 0);
+    explicit DialogPeakFind(const nsx::DataList& data,QWidget *parent = 0);
     ~DialogPeakFind();
 
     void setPreviewFrame(const Eigen::MatrixXi& frame);
@@ -36,6 +37,8 @@ public:
     double peakScale() const;
     double bkgBegin() const;
     double bkgEnd() const;
+
+    const nsx::PeakList& peaks() const;
 
 private slots:
 
@@ -53,6 +56,8 @@ private slots:
     void changeSelectedData(int selected_data);
     void changeSelectedFrame(int selected_frame);
 
+    void find();
+
 private:
 
     void buildConvolverParametersList();
@@ -66,7 +71,8 @@ private:
     QGraphicsScene* _scene;
     QGraphicsPixmapItem* _pxmapPreview;
     nsx::DataList _data;
-
     nsx::sptrPeakFinder _peakFinder;
+    nsx::PeakList _peaks;
+
     std::unique_ptr<ColorMap> _colormap;
 };

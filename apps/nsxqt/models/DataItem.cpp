@@ -141,56 +141,24 @@ void DataItem::findPeaks()
         return;
     }
 
-    // reset progress handler
-    auto progressHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler);
-
-    // set up peak finder
-    if ( !_peakFinder) {
-        _peakFinder = nsx::sptrPeakFinder(new nsx::PeakFinder);
-    }
-    _peakFinder->setHandler(progressHandler);
-
     // dialog will automatically be deleted before we return from this method
-    std::unique_ptr<DialogPeakFind> dialog_ptr(new DialogPeakFind(selectedNumors, _peakFinder, nullptr));
+    std::unique_ptr<DialogPeakFind> dialog_ptr(new DialogPeakFind(selectedNumors, nullptr));
 
     if (!dialog_ptr->exec()) {
         return;
     }
 
-    size_t max = selectedNumors.size();
-    nsx::info() << "Peak find algorithm: Searching peaks in " << max << " files";
+    auto peaks_item = experimentItem()->peaksItem();
 
-    // create a pop-up window that will show the progress
-    ProgressView* progressView = new ProgressView(nullptr);
-    progressView->watch(progressHandler);
+    auto peaks = dialog_ptr->peaks();
 
-    nsx::PeakList peaks;
-
-    // execute in a try-block because the progress handler may throw if it is aborted by GUI
-    try {
-        peaks = _peakFinder->find(selectedNumors);
-    }
-    catch(std::exception& e) {
-        nsx::debug() << "Caught exception during peak find: " << e.what();
+    if (peaks.empty()) {
         return;
     }
-
-    // integrate peaks
-    for (auto numor: selectedNumors) {
-        nsx::PixelSumIntegrator integrator(true, true);
-        integrator.integrate(peaks, numor, dialog_ptr->peakScale(), dialog_ptr->bkgBegin(), dialog_ptr->bkgEnd());
-    }
-
-    // delete the progressView
-    delete progressView;
-
-    nsx::debug() << "Peak search complete., found " << peaks.size() << " peaks.";
-    auto peaks_item = experimentItem()->peaksItem();
 
     auto item = new PeakListItem(peaks);
     item->setText("Found peaks");
     peaks_item->appendRow(item);
-    //model()->setData(peaks_item->index(),QVariant::fromValue(peaks),Qt::UserRole);
 }
 
 nsx::DataList DataItem::selectedData()

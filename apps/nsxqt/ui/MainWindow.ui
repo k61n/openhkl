@@ -156,40 +156,6 @@ QTreeView {
           </widget>
          </widget>
         </item>
-        <item>
-         <widget class="QProgressBar" name="progressBar">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QProgressBar {
-                                         border: 1px solid black;
-                                         text-align: center;
-											  color: white;
-                                         padding: 1px;
-                                         border-bottom-right-radius: 7px;
-                                         border-bottom-left-radius: 7px;
-                                         background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,
-                                         stop: 0 #eee,
-                                         stop: 0.5 #ddd,
-                                         stop: 1 #eee );
-                                         width: 15px;
-                                         }
-                                         
-                                         QProgressBar::chunk {
-                                         background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,
-                                         stop: 0 #78d,
-                                         stop: 1 #238 );
-                                         border-bottom-right-radius: 7px;
-                                         border-bottom-left-radius: 7px;
-                                         border: 1px solid black;
-                                         }</string>
-          </property>
-          <property name="value">
-           <number>0</number>
-          </property>
-         </widget>
-        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="layoutWidget1">
@@ -730,7 +696,7 @@ QCheckBox::indicator:unchecked {
         </item>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0,0">
-          <item alignment="Qt::AlignLeft">
+          <item>
            <widget class="QFrame" name="intensityFrame">
             <layout class="QVBoxLayout" name="verticalLayout">
              <property name="leftMargin">
@@ -1289,6 +1255,13 @@ border-radius: 4px;
      </widget>
     </item>
    </layout>
+   <zorder>splitterHorizontal</zorder>
+   <zorder>progressBar</zorder>
+   <zorder>frameFrame</zorder>
+   <zorder>selectionMode</zorder>
+   <zorder>progressBar</zorder>
+   <zorder>frameFrame</zorder>
+   <zorder>selectionMode</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

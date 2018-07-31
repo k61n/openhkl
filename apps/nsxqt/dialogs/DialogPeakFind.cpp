@@ -19,9 +19,11 @@
 #include <nsxlib/Logger.h>
 #include <nsxlib/MathematicsTypes.h>
 #include <nsxlib/PeakFinder.h>
+#include <nsxlib/ShapeIntegrator.h>
 
 #include "ColorMap.h"
 #include "DialogPeakFind.h"
+#include "ProgressView.h"
 
 #include "ui_DialogPeakFind.h"
 
@@ -41,11 +43,12 @@ public:
     }
 };
 
-DialogPeakFind::DialogPeakFind(const nsx::DataList& data,nsx::sptrPeakFinder peakFinder,QWidget *parent)
+DialogPeakFind::DialogPeakFind(const nsx::DataList& data, QWidget *parent)
 : QDialog(parent),
   ui(new Ui::DialogPeakFind),
   _pxmapPreview(nullptr),
   _data(data),
+  _peakFinder(new nsx::PeakFinder()),
   _colormap(new ColorMap)
 {
     ui->setupUi(this);
@@ -65,8 +68,6 @@ DialogPeakFind::DialogPeakFind(const nsx::DataList& data,nsx::sptrPeakFinder pea
 
     _scene = new QGraphicsScene(this);
     ui->preview->setScene(_scene);
-
-    _peakFinder = peakFinder;
 
     // flip image vertically to conform with DetectorScene
     ui->preview->scale(1, -1);
@@ -110,7 +111,10 @@ DialogPeakFind::DialogPeakFind(const nsx::DataList& data,nsx::sptrPeakFinder pea
     connect(ui->frameSlider,SIGNAL(valueChanged(int)),this,SLOT(changeSelectedFrame(int)));
     connect(ui->frameIndex,SIGNAL(valueChanged(int)),this,SLOT(changeSelectedFrame(int)));
 
-    connect(ui->startPeaksSearch,SIGNAL(clicked()),this,SLOT(accept()));
+    connect(ui->startPeaksSearch,SIGNAL(clicked()),this,SLOT(find()));
+
+    connect(ui->cancelOK, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(ui->cancelOK, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
 DialogPeakFind::~DialogPeakFind()
@@ -326,10 +330,53 @@ double DialogPeakFind::peakScale() const
 
 double DialogPeakFind::bkgBegin() const
 {
-return ui->bkgBegin->value();
+    return ui->bkgBegin->value();
 }
 
 double DialogPeakFind::bkgEnd() const
 {
-return ui->bkgEnd->value();
+    return ui->bkgEnd->value();
+}
+
+const nsx::PeakList& DialogPeakFind::peaks() const
+{
+    return _peaks;
+}
+
+void DialogPeakFind::find()
+{
+    size_t max = _data.size();
+
+    nsx::info() << "Peak find algorithm: Searching peaks in " << max << " files";
+
+    // reset progress handler
+    auto progressHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler);
+
+    // create a pop-up window that will show the progress
+    ProgressView* progressView = new ProgressView(nullptr);
+    progressView->watch(progressHandler);
+
+    _peakFinder->setHandler(progressHandler);
+
+    _peaks.clear();
+
+    // execute in a try-block because the progress handler may throw if it is aborted by GUI
+    try {
+        _peaks = _peakFinder->find(_data);
+    }
+    catch(std::exception& e) {
+        nsx::debug() << "Caught exception during peak find: " << e.what();
+        return;
+    }
+
+    // integrate peaks
+    for (auto numor : _data) {
+        nsx::PixelSumIntegrator integrator(true, true);
+        integrator.integrate(_peaks, numor, ui->peakScale->value(), ui->bkgBegin->value(), ui->bkgEnd->value());
+    }
+
+    // delete the progressView
+    delete progressView;
+
+    nsx::debug() << "Peak search complete., found " << _peaks.size() << " peaks.";
 }
