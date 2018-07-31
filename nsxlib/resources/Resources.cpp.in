@@ -7,16 +7,10 @@
 #include "Path.h"
 #include "Resources.h"
 
-
 namespace nsx {
 
-std::map<std::pair<std::string,std::string>,resource_function> resources_map = {
+std::map<std::pair<std::string,std::string>,resource_function> default_resources = {
 };
-
-const std::map<std::pair<std::string,std::string>,resource_function>& getResources()
-{
-    return resources_map;
-}
 
 void mergeResources(YAML::Node& node1, YAML::Node& node2) {
 
@@ -52,45 +46,54 @@ void mergeResources(YAML::Node& node1, YAML::Node& node2) {
 
 YAML::Node findResource(const std::pair<std::string,std::string>& resource)
 {
-    auto it = resources_map.find(resource);
-
-    if (it == resources_map.end()) {
-        throw std::runtime_error("Unknown resource: "+resource.first+" - "+resource.second);
+    YAML::Node resource_yaml;
+    auto it = default_resources.find(resource);
+    if (it != default_resources.end()) {
+        std::stringstream ss;
+        for (auto line : it->second()) {
+            ss << line << std::endl;
+        }
+        resource_yaml = YAML::Load(ss);
     }
 
     auto user_resource_dir = buildPath({applicationDataPath(),resource.first});
     auto user_resource_path = buildPath({user_resource_dir,resource.second+".yml"});
 
-    YAML::Node default_yaml;
-    std::stringstream ss;
-    for (auto line : it->second()) {
-        ss << line << std::endl;
-    }
-    default_yaml = YAML::Load(ss);
-
     if (fileExists(user_resource_path)) {
+    
         std::ifstream fin(user_resource_path);
         YAML::Node user_yaml = YAML::Load(fin);
         fin.close();
+
+        if (resource_yaml.IsNull()) {
+            return user_yaml;
+        }
         
-        mergeResources(default_yaml,user_yaml);
+        mergeResources(resource_yaml,user_yaml);
+        
     } else {
+        
+        if (resource_yaml.IsNull()) {
+            throw std::runtime_error("Unknown resource: "+resource.first+" - "+resource.second);
+        }
+        
         makeDirectory(user_resource_dir);
         std::ofstream fout(user_resource_path);
-        fout << default_yaml;
+        fout << resource_yaml;
         fout.close();
+        
     }
     
-    return default_yaml;
+    return resource_yaml;
 }
 
-std::vector<std::string> getResourcesName(const std::string& resource_type)
+std::set<std::string> getResourcesName(const std::string& resource_type)
 {
-    std::vector<std::string> resources_name;
+    std::set<std::string> resources_name;
     
-    for (auto p : resources_map) {
+    for (auto p : default_resources) {
         if (p.first.first.compare(resource_type)==0) {
-            resources_name.push_back(p.first.second);
+            resources_name.insert(p.first.second);
         }
     }
 
