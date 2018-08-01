@@ -101,6 +101,7 @@ void DetectorScene::setData(SessionModel* session, const nsx::sptrDataSet& data,
 {
     _currentData = data;
     _session = session;
+    _currentFrameIndex = -1;
 
     if (!_currentData) {
         return;
@@ -632,12 +633,17 @@ void DetectorScene::updatePeaks()
             continue;
         }
         PeakGraphicsItem* pgi = new PeakGraphicsItem(peak);
-        pgi->setFrame(_currentFrameIndex);
+//        pgi->setFrame(_currentFrameIndex);
         addItem(pgi);
         _peakGraphicsItems.insert(std::pair<nsx::sptrPeak3D, PeakGraphicsItem*>(peak,pgi));
     }
 
     loadCurrentImage(false);
+}
+
+int DetectorScene::currentFrame() const
+{
+    return _currentFrameIndex;
 }
 
 void DetectorScene::redrawImage()

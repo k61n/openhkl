@@ -86,6 +86,8 @@ public slots:
 
     void updateMasks(unsigned long frame);
 
+    int currentFrame() const;
+
 private:
     //! Load image from current Data and frame
     void loadCurrentImage(bool newimage=true);

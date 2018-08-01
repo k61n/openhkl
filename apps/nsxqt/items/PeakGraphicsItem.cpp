@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include <Eigen/Dense>
 
 #include <QPainter>
@@ -114,8 +112,6 @@ void PeakGraphicsItem::setFrame(unsigned long frame)
     peak_ellipsoid.scale(_peak->bkgEnd());
 
     const auto aabb = peak_ellipsoid.aabb();
-
-    std::cout<<_peak->bkgEnd()<<"  "<<_peak->peakEnd()<<std::endl;
 
     const Eigen::Vector3d& l = aabb.lower();
     const Eigen::Vector3d& u = aabb.upper();
