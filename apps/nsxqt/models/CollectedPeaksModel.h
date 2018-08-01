@@ -63,7 +63,6 @@ public slots:
 
 signals:
     void unitCellUpdated();
-    void updateFrame();
 
 private:
     nsx::sptrExperiment _experiment;

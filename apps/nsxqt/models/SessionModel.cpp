@@ -122,6 +122,8 @@ void SessionModel::onItemChanged(QStandardItem* item)
         auto uc = expt->diffractometer()->sample()->unitCells()[idx];
         uc->setName(p->text().toStdString());
     }
+
+    emit updatePeaks();
 }
 
 nsx::DataList SessionModel::getSelectedNumors(ExperimentItem* item) const

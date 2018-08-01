@@ -125,8 +125,9 @@ void PeakTableView::keyPressEvent(QKeyEvent *event)
             emit plotPeak(peaks[index]);
     } else if (event->key() == Qt::Key_Down) {
         ++index;
-        if (index >= 0 && static_cast<size_t>(index) < peaks.size())
+        if (index >= 0 && static_cast<size_t>(index) < peaks.size()) {
             emit plotPeak(peaks[index]);
+        }
     }
     QTableView::keyPressEvent(event);
 }

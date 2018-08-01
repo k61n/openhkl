@@ -327,11 +327,11 @@ bool CollectedPeaksModel::setData(const QModelIndex& index, const QVariant& valu
 
     if (role == Qt::CheckStateRole) {
         bool state = value.toBool();
-        if (column == Column::selected)
+        if (column == Column::selected) {
             _peaks[row]->setSelected(state);
+        }
     }
     emit dataChanged(index,index);
-    emit updateFrame();
     return true;
 }
 

@@ -91,7 +91,7 @@ public:
     const Eigen::Matrix3d& metric() const;
     //! Return the ellipsoid inverse metric (covariance matrix)
     const Eigen::Matrix3d& inverseMetric() const;
-    //! Return center of 2d ellipsoid formed by intercting with plane with normal n and point p.
+    //! Return center of 2d ellipsoid formed by intersecting with plane with normal n and point p.
     Eigen::Vector3d intersectionCenter(const Eigen::Vector3d& n, const Eigen::Vector3d& p) const;
     //! Return the axis aligned bounding box of the ellipsoid
     const AABB& aabb() const;

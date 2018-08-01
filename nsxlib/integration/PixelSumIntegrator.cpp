@@ -67,7 +67,6 @@ bool PixelSumIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     // background sigma, assuming Poisson statistics
     const double sigma = std::sqrt(mean_bkg);
 
-    // compute total peak intensity
     for (auto i = 0; i < counts.size(); ++i) {
         const auto& ev = events[i];
         auto ev_type = region.classify(ev);
@@ -97,7 +96,6 @@ bool PixelSumIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     // TODO: compute rocking curve
     double f_min = int(events[0]._frame);
     double f_max = f_min;
-
 
     for (size_t i = 0; i < counts.size(); ++i) {
         const auto& ev = events[i];
@@ -138,6 +136,30 @@ bool PixelSumIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
 
     size_t nframes = size_t(f_max-f_min)+1;
     _rockingCurve.resize(nframes);
+
+    std::vector<double> intensity_per_frame(nframes,0.0);
+    std::vector<double> n_peak_points_per_frame(nframes,0.0);
+    std::vector<double> n_bkg_points_per_frame(nframes,0.0);
+
+    for (auto i = 0; i < counts.size(); ++i) {
+
+        const auto& ev = events[i];
+        auto ev_type = region.classify(ev);
+
+        int bin = ev._frame - f_min;
+
+        if (ev_type == IntegrationRegion::EventType::PEAK) {
+            intensity_per_frame[bin] += counts[i];
+            n_peak_points_per_frame[bin] += 1;
+        } else if (ev_type == IntegrationRegion::EventType::BACKGROUND) {
+            n_bkg_points_per_frame[bin] += 1;
+        }
+    }
+
+    for (int i = 0; i < nframes; ++i) {
+        double corrected_intensity = intensity_per_frame[i] - n_peak_points_per_frame[i]*mean_bkg;
+        _rockingCurve[i] = Intensity(corrected_intensity,sqrt(corrected_intensity));
+    }
 
     return true;
 }
