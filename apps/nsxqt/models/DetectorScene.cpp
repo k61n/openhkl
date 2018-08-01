@@ -34,13 +34,10 @@
 #include "MaskGraphicsItem.h"
 #include "PeakGraphicsItem.h"
 
-// compile-time constant to determine whether to draw the peak masks
-static const bool g_drawMask = true;
-
 DetectorScene::DetectorScene(QObject *parent)
 : QGraphicsScene(parent),
   _currentData(nullptr),
-  _currentFrameIndex(0),
+  _currentFrameIndex(-1),
   _currentIntensity(10),
   _currentFrame(),
   _cursorMode(PIXEL),
@@ -75,7 +72,7 @@ void DetectorScene::changeFrame(size_t frame)
     }
     _currentFrameIndex = frame;
     updatePeaks();
-    loadCurrentImage();
+    loadCurrentImage(true);
     updateMasks(frame);
 }
 
@@ -116,11 +113,9 @@ void DetectorScene::setData(SessionModel* session, const nsx::sptrDataSet& data,
 
     if (_lastClickedGI != nullptr) {
         removeItem(_lastClickedGI);
-//        delete _lastClickedGI;
         _lastClickedGI=nullptr;
     }
-    loadCurrentImage();
-    updatePeaks();
+
     changeFrame(frame);
 }
 
@@ -316,13 +311,10 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             emit dataChanged();
         } else {
             if (auto p=dynamic_cast<CutterGraphicsItem*>(_lastClickedGI)) {
-                // check with tolerance
-                //if (p->to() == p->from()) {
                 if (true) {
                     // delete p....
                      _lastClickedGI = nullptr;
                     removeItem(p);
-//                    delete p;
                 }
                 else {
                     emit updatePlot(p);
@@ -439,8 +431,6 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             }
             // Remove the item from the scene
             removeItem(item);
-            // Delete the item
-//            delete item;
         }
         // Computes the new number of peaks, and if it changes log it
         nPeaksErased -= _peakGraphicsItems.size();
@@ -513,15 +503,15 @@ void DetectorScene::changeInteractionMode(int mode)
 // TODO: fix this whole method, it should be using IntegrationRegion::updateMask()
 void DetectorScene::loadCurrentImage(bool newimage)
 {
+    if (_currentData == nullptr) {
+        return;
+    }
+
     const unsigned int green =   (128u << 24) | (255u << 8);
     const unsigned int yellow =  (128u << 24) | (255u << 16) | (255u << 8);
     const unsigned int transparent = 0;
 
     using EventType = nsx::IntegrationRegion::EventType;
-
-    if (_currentData == nullptr) {
-        return;
-    }
 
     // Full image size, front of the stack
     QRect& full = _zoomStack.front();
@@ -531,9 +521,11 @@ void DetectorScene::loadCurrentImage(bool newimage)
     if (_currentFrameIndex >= _currentData->nFrames()) {
         _currentFrameIndex = _currentData->nFrames()-1;
     }
+
     if (newimage) {
         _currentFrame =_currentData->frame(_currentFrameIndex);
     }
+
     if (_image == nullptr) {
         _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
         _image->setZValue(-2);
@@ -542,13 +534,12 @@ void DetectorScene::loadCurrentImage(bool newimage)
     }
 
     // update the integration region pixmap
-    if (_drawIntegrationRegion && g_drawMask) {
+    if (_drawIntegrationRegion) {
         const int ncols = _currentData->nCols();
         const int nrows = _currentData->nRows();
         Eigen::MatrixXi mask(nrows, ncols);
         mask.setConstant(int(EventType::EXCLUDED));
 
-        //for (auto&& peak: _session->peaks(_currentData.get())) {
         auto peaks = _session->peaks(_currentData.get());
         for (size_t i = 0; i < peaks.size(); ++i) {
             auto peak = peaks[i];
@@ -628,6 +619,7 @@ void DetectorScene::updatePeaks()
     if (!_currentData) {
         return;
     }
+
     clearPeaks();
     auto peaks = _session->peaks(_currentData.get());
 
@@ -644,6 +636,8 @@ void DetectorScene::updatePeaks()
         addItem(pgi);
         _peakGraphicsItems.insert(std::pair<nsx::sptrPeak3D, PeakGraphicsItem*>(peak,pgi));
     }
+
+    loadCurrentImage(false);
 }
 
 void DetectorScene::redrawImage()
@@ -708,7 +702,6 @@ void DetectorScene::resetScene()
 {
     clearPeaks();
     clear();
-    updatePeaks();
     _currentData = nullptr;
     _currentFrameIndex = 0;
     _zoomrect = nullptr;

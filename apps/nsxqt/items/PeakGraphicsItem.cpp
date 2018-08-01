@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <Eigen/Dense>
 
 #include <QPainter>
@@ -52,21 +54,24 @@ PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D p):
 
 QRectF PeakGraphicsItem::boundingRect() const
 {
-    auto aabb = _peak->shape().aabb();
+    auto peak_ellipsoid = _peak->shape();
+    peak_ellipsoid.scale(_peak->bkgEnd()/_peak->peakEnd());
+
+    const auto aabb = peak_ellipsoid.aabb();
+
     const Eigen::Vector3d& l = aabb.lower();
     const Eigen::Vector3d& u = aabb.upper();
+
     qreal w=u[0]-l[0];
     qreal h=u[1]-l[1];
 
     // currently debugging...
 
     if (w < 0.0) {
-        //qDebug() << "width is less than zero!";
         w = 0.0;
     }
 
     if (h < 0.0) {
-        //qDebug() << "height is less than zero!";
         h = 0.0;
     }
 
@@ -105,7 +110,13 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
 void PeakGraphicsItem::setFrame(unsigned long frame)
 {
-    const auto aabb = _peak->shape().aabb();
+    auto peak_ellipsoid = _peak->shape();
+    peak_ellipsoid.scale(_peak->bkgEnd());
+
+    const auto aabb = peak_ellipsoid.aabb();
+
+    std::cout<<_peak->bkgEnd()<<"  "<<_peak->peakEnd()<<std::endl;
+
     const Eigen::Vector3d& l = aabb.lower();
     const Eigen::Vector3d& u = aabb.upper();
 
@@ -171,7 +182,7 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     QVector<double> q_intensity(N);
     QVector<double> q_error(N);
 
-    //Copy the data
+    // Copy the data
     double center = std::round(_peak->shape().center()(2));
     
     for (int i = 0; i < N; ++i) {
