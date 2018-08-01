@@ -41,7 +41,4 @@ private:
     //! (h,k,l) index visible in GraphicsScene
     static bool _labelVisible;
     static bool _drawBackground;
-
-    Eigen::Vector3d _frameCenter;
-    nsx::DetectorEvent _predictedCenter;
 };

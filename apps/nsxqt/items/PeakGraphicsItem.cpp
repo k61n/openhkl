@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <Eigen/Dense>
 
 #include <QPainter>
@@ -25,11 +27,10 @@
 bool PeakGraphicsItem::_labelVisible = false;
 bool PeakGraphicsItem::_drawBackground = false;
 
-PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D p):
-    PlottableGraphicsItem(nullptr,true,false),
-    _peak(std::move(p)),
-    _predictedCenter(0.0, 0.0, -1.0, -1.0)
-{ 
+PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D p)
+: PlottableGraphicsItem(nullptr,true,false),
+  _peak(std::move(p))
+{
     if (_peak) {
         Eigen::Vector3d c=_peak->shape().center();
         setPos(c[0], c[1]);
@@ -53,7 +54,7 @@ PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D p):
 QRectF PeakGraphicsItem::boundingRect() const
 {
     auto peak_ellipsoid = _peak->shape();
-    peak_ellipsoid.scale(_peak->bkgEnd()/_peak->peakEnd());
+    peak_ellipsoid.scale(_peak->bkgEnd());
 
     const auto aabb = peak_ellipsoid.aabb();
 
@@ -62,8 +63,6 @@ QRectF PeakGraphicsItem::boundingRect() const
 
     qreal w=u[0]-l[0];
     qreal h=u[1]-l[1];
-
-    // currently debugging...
 
     if (w < 0.0) {
         w = 0.0;
@@ -83,6 +82,7 @@ void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     if (!isVisible()) {
         return;
     }
+
     if (option->state & QStyle::State_Selected) {
         _pen.setStyle(Qt::DotLine);
     } else {
@@ -138,8 +138,6 @@ void PeakGraphicsItem::setFrame(unsigned long frame)
         hklString = "no unit cell";
     }
     _label->setPlainText(hklString);
-    _frameCenter = _peak->shape().intersectionCenter({0,0,1.0}, {0, 0, double(frame)});
-    _predictedCenter = _peak->predictCenter(frame);
 }
 
 std::string PeakGraphicsItem::getPlotType() const

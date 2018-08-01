@@ -625,7 +625,11 @@ void DetectorScene::updatePeaks()
     auto peaks = _session->peaks(_currentData.get());
 
     for (auto&& peak : peaks) {
-        auto aabb = peak->shape().aabb();
+        auto peak_ellipsoid = peak->shape();
+        peak_ellipsoid.scale(peak->bkgEnd());
+
+        const auto aabb = peak_ellipsoid.aabb();
+
         const Eigen::Vector3d& l = aabb.lower();
         const Eigen::Vector3d& u = aabb.upper();
 
@@ -633,7 +637,7 @@ void DetectorScene::updatePeaks()
             continue;
         }
         PeakGraphicsItem* pgi = new PeakGraphicsItem(peak);
-//        pgi->setFrame(_currentFrameIndex);
+        pgi->setFrame(_currentFrameIndex);
         addItem(pgi);
         _peakGraphicsItems.insert(std::pair<nsx::sptrPeak3D, PeakGraphicsItem*>(peak,pgi));
     }
