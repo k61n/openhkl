@@ -136,11 +136,11 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             QAction* transformationMatrix=menu->addAction("Transformation matrix");
             QAction* group = menu->addAction("Choose space group");
 
-            connect(info, &QAction::triggered,[=]{ucitem->info();});
-            connect(cellParameters, &QAction::triggered, [=]{ucitem->openChangeUnitCellDialog();});
-            connect(transformationMatrix, &QAction::triggered, [=]{ucitem->openTransformationMatrixDialog();});
-            connect(setTolerance, SIGNAL(triggered()),this, SLOT(setIndexingTolerance()));
-            connect(group, triggered, [=](){ucitem->determineSpaceGroup();});
+            connect(info, &QAction::triggered,[=](){ucitem->info();});
+            connect(cellParameters, &QAction::triggered, [=](){ucitem->openChangeUnitCellDialog();});
+            connect(transformationMatrix, &QAction::triggered, [=](){ucitem->openTransformationMatrixDialog();});
+            connect(setTolerance, &QAction::triggered,[=](){ucitem->openIndexingToleranceDialog();});
+            connect(group, triggered, [=](){ucitem->openSpaceGroupDialog();});
 
         }
         else if (NumorItem* nitem = dynamic_cast<NumorItem*>(item)) {
@@ -156,6 +156,7 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(predict, triggered, [=](){lib_item->incorporateCalculatedPeaks();});
         }
     }
+
     menu->popup(viewport()->mapToGlobal(point));
 }
 

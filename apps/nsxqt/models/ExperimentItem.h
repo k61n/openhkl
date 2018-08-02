@@ -20,6 +20,7 @@ class ExperimentItem: public TreeItem
 {
 public:
     explicit ExperimentItem(nsx::sptrExperiment experiment);
+
     virtual ~ExperimentItem() = default;    
 
     nsx::sptrExperiment experiment() { return _experiment; }
@@ -35,9 +36,14 @@ public:
     void writeLogFiles();
 
 private:
+
     nsx::sptrExperiment _experiment;
+
     InstrumentItem* _instr;
+
     DataItem* _data;
+
     PeaksItem* _peaks;
+
     LibraryItem* _library;
 };

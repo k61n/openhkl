@@ -73,6 +73,9 @@ DialogSpaceGroup::DialogSpaceGroup(const nsx::PeakList& peaks, QWidget *parent):
     evaluateSpaceGroups();
 
     buildTable();
+
+    connect(ui->cancelOK, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(ui->cancelOK, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
 DialogSpaceGroup::~DialogSpaceGroup()

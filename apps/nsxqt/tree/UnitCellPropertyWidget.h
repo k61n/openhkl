@@ -10,6 +10,7 @@ namespace Ui {
 class UnitCellPropertyWidget;
 }
 
+class QStandardItem;
 class QString;
 
 class UnitCellItem;
@@ -23,21 +24,35 @@ public:
     explicit UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent = 0);
     ~UnitCellPropertyWidget();
 
-public slots:
-
-    void updateCellParameters(nsx::sptrUnitCell);
-
 private slots:
+
+    void setUnitCellName();
+
     void getLatticeParams();
+
     void setLatticeParams();
-    void setChemicalFormula(const QString& formula);
-    void on_spinBox_Z_valueChanged(int arg1);
+
+    void setChemicalFormula();
+
+    void setSpaceGroup(QString sg);
+
+    void setZValue(int z);
+
     void setMassDensity() const;
-    void on_lineEdit_ChemicalFormula_editingFinished();
-    void onCompleterActivated(const QString&);
+
+    void activateSpaceGroupCompletion(QString sg);
+
     void setIndexingTolerance(double);
 
+    void update(QStandardItem* item=nullptr);
+
 private:
+
+    void updateCellParameters();
+
+private:
+
     UnitCellItem* _unitCellItem;
+
     Ui::UnitCellPropertyWidget *ui;
 };

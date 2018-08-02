@@ -15,7 +15,10 @@ public:
     explicit SampleItem();
 
     QList<UnitCellItem*> unitCellItems();
+
     void addUnitCell(); 
+
     QWidget* inspectItem() override;
+
     void openIsotopesDatabase();
 };

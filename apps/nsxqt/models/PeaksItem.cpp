@@ -1,6 +1,7 @@
-#include <QIcon>
+#include <memory>
+
 #include <QFileInfo>
-#include <QJsonArray>
+#include <QIcon>
 #include <QMessageBox>
 #include <QStandardItem>
 #include <QString>
@@ -169,19 +170,19 @@ void PeaksItem::buildShapeLibrary()
         return;
     }
 
-    nsx::sptrUnitCell uc(peaks[0]->unitCell());
+    nsx::sptrUnitCell unit_cell(peaks[0]->unitCell());
     for (auto&& peak : peaks) {
-        if (peak->unitCell() != uc) {
-            uc = nullptr;
+        if (peak->unitCell() != unit_cell) {
+            unit_cell = nullptr;
             break;
         }
     }
 
-    if (uc == nullptr) {
+    if (unit_cell == nullptr) {
         QMessageBox::warning(nullptr, "NSXTool", "The selected peaks must have the same active unit cell for profile fitting");
         return;
     }
-    DialogShapeLibrary* dialog = new DialogShapeLibrary(experiment(), uc, peaks);
+    DialogShapeLibrary* dialog = new DialogShapeLibrary(experiment(), unit_cell, peaks);
 
     // rejected
     if (dialog->exec() == QDialog::Rejected) {
@@ -201,13 +202,13 @@ void PeaksItem::buildShapeLibrary()
 void PeaksItem::filterPeaks()
 {
     auto&& selected_peaks = selectedPeaks();
-    DialogPeakFilter* dlg = new DialogPeakFilter(selected_peaks);
+    std::unique_ptr<DialogPeakFilter> dialog(new DialogPeakFilter(selected_peaks));
 
-    if (!dlg->exec()) {
+    if (!dialog->exec()) {
         return;
     }    
 
-    auto&& filtered_peaks = dlg->filteredPeaks();
+    auto&& filtered_peaks = dialog->filteredPeaks();
 
     if (filtered_peaks.empty()) {
         return;
@@ -226,31 +227,28 @@ void PeaksItem::autoindex()
 {
     nsx::PeakList peaks = selectedPeaks();
 
-    DialogAutoIndexing dlg(experimentItem(), peaks);
+    std::unique_ptr<DialogAutoIndexing> dialog(new DialogAutoIndexing(peaks));
 
-    int return_code = dlg.exec();
-
-    if (return_code == QDialog::Rejected) {
+    if (!dialog->exec()) {
         return;
     }
 
-    auto uc = dlg.unitCell();
+    auto unit_cell = dialog->unitCell();
 
-    if (!uc) {
+    if (!unit_cell) {
         return;
     }
 
     for (auto peak: peaks) {
-        peak->setUnitCell(uc);
+        peak->setUnitCell(unit_cell);
     }
 
     auto experiment_item = experimentItem();
+    experiment_item->experiment()->diffractometer()->sample()->unitCells().push_back(unit_cell);
+
     auto sample_item = experiment_item->instrumentItem()->sampleItem();
-    auto uc_item = new UnitCellItem(uc);
-    uc_item->setData(QVariant::fromValue(uc), Qt::UserRole);
+    auto uc_item = new UnitCellItem(unit_cell);
     sample_item->appendRow(uc_item);
-    experiment_item->experiment()->diffractometer()->sample()->unitCells().push_back(uc);
-    //experiment_item->model()->setData(sample_item->index(),QVariant::fromValue(uc),Qt::UserRole);
 }
 
 void PeaksItem::refine()
@@ -286,7 +284,6 @@ void PeaksItem::autoAssignUnitCell()
     auto sample = experiment()->diffractometer()->sample();
     const auto& cells = sample->unitCells();
 
-    //! nothing to do!
     if (cells.size() < 1) {
         nsx::info() << "There are no unit cells to assign";
         return;

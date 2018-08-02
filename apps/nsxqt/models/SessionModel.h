@@ -69,27 +69,31 @@ public:
     void setColorMap(const std::string& name);
     std::string getColorMap() const;
 
-  
-
     bool writeXDS(std::string filename, const nsx::PeakList& peaks, bool merge, bool friedel);
 
     void fitAllPeaks();
 
     nsx::PeakList peaks(const nsx::DataSet* data) const;
 
- signals:
+signals:
+
     void plotData(nsx::sptrDataSet);
+
     void inspectWidget(QWidget*);
+
     void updatePeaks();
-    void updateCellParameters(nsx::sptrUnitCell);
 
 public slots:
+
     void createNewExperiment();  
+
     void onItemChanged(QStandardItem* item);
 
 private:
-    //! Filename for the save/load feature
+
     QString _filename;
+
     nsx::sptrProgressHandler _progressHandler;
+
     std::string _colormap;
 };

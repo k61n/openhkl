@@ -30,10 +30,9 @@
 
 #include "ui_DialogAutoIndexing.h"
 
-DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, nsx::PeakList peaks, QWidget *parent):
+DialogAutoIndexing::DialogAutoIndexing(nsx::PeakList peaks, QWidget *parent):
     QDialog(parent),
     ui(new Ui::DialogAutoIndexing),
-    _experiment_item(experiment_item),
     _peaks(peaks),
     _unitCell(nullptr)
 {

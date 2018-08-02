@@ -21,7 +21,7 @@ class DialogAutoIndexing : public QDialog
 
 public:
 
-    explicit DialogAutoIndexing(ExperimentItem* experiment_item, const nsx::PeakList peaks, QWidget *parent=0);
+    explicit DialogAutoIndexing(const nsx::PeakList peaks, QWidget *parent=0);
     ~DialogAutoIndexing();
     void buildSolutionsTable();
 

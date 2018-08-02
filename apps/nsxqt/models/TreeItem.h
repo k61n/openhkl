@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QJsonObject>
 #include <QStandardItem>
 #include <QVariant>
 
@@ -25,5 +24,5 @@ public:
 
     nsx::sptrExperiment experiment();
 
-    ExperimentItem* experimentItem();
+    ExperimentItem* experimentItem() const;
 };
