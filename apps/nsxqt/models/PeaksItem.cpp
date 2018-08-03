@@ -229,25 +229,9 @@ void PeaksItem::autoindex()
 {
     nsx::PeakList peaks = selectedPeaks();
 
-    std::unique_ptr<DialogAutoIndexing> dialog(new DialogAutoIndexing(peaks));
+    DialogAutoIndexing* dialog = new DialogAutoIndexing(experimentItem(), peaks);
 
-    if (!dialog->exec()) {
-        return;
-    }
-
-    auto unit_cell = dialog->unitCell();
-
-    if (!unit_cell) {
-        return;
-    }
-
-    for (auto peak: peaks) {
-        peak->setUnitCell(unit_cell);
-    }
-
-    auto unit_cells_item = experimentItem()->unitCellsItem();
-    auto uc_item = new UnitCellItem(unit_cell);
-    unit_cells_item->appendRow(uc_item);
+    dialog->show();
 }
 
 void PeaksItem::refine()

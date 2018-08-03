@@ -6,7 +6,6 @@
 #include <QDialog>
 
 #include <nsxlib/CrystalTypes.h>
-#include <nsxlib/InstrumentTypes.h>
 
 namespace Ui
 {
@@ -21,28 +20,33 @@ class DialogAutoIndexing : public QDialog
 
 public:
 
-    explicit DialogAutoIndexing(const nsx::PeakList peaks, QWidget *parent=0);
+    explicit DialogAutoIndexing(ExperimentItem* experiment_tree, const nsx::PeakList peaks, QWidget* parent=nullptr);
+
     ~DialogAutoIndexing();
+
     void buildSolutionsTable();
 
-    nsx::sptrUnitCell unitCell();
+private slots:
 
-public slots:
     void autoIndex();
 
-private slots:
-    //void addUnitCell();
+    void removeUnitCells();
 
     void selectSolution(int);
 
+    virtual void accept() override;
+
 signals:
+
     void cellUpdated(nsx::sptrUnitCell);
 
 private:
-    Ui::DialogAutoIndexing *ui;
-    ExperimentItem* _experiment_item;
-    nsx::PeakList _peaks;
-    std::vector<std::pair<nsx::sptrUnitCell,double>> _solutions;
 
-    nsx::sptrUnitCell _unitCell;
+    Ui::DialogAutoIndexing *ui;
+
+    ExperimentItem* _experiment_item;
+
+    nsx::PeakList _peaks;
+
+    std::vector<std::pair<nsx::sptrUnitCell,double>> _solutions;
 };

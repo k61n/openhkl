@@ -1,12 +1,8 @@
-#include <map>
 #include <string>
 
-#include <Eigen/Dense>
-
-#include <QInputDialog>
 #include <QItemSelectionModel>
-#include <QMenu>
 #include <QMessageBox>
+#include <QShortcut>
 #include <QStandardItemModel>
 
 #include <nsxlib/AutoIndexer.h>
@@ -20,24 +16,25 @@
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
 
-#include "CollectedPeaksDelegate.h"
 #include "CollectedPeaksModel.h"
 #include "DialogAutoIndexing.h"
 #include "ExperimentItem.h"
-#include "InstrumentItem.h"
 #include "MetaTypes.h"
-#include "SampleItem.h"
+#include "UnitCellItem.h"
+#include "UnitCellsItem.h"
 
 #include "ui_DialogAutoIndexing.h"
 
-DialogAutoIndexing::DialogAutoIndexing(nsx::PeakList peaks, QWidget *parent):
-    QDialog(parent),
-    ui(new Ui::DialogAutoIndexing),
-    _peaks(peaks),
-    _unitCell(nullptr)
+DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, nsx::PeakList peaks, QWidget *parent)
+: QDialog(parent),
+  ui(new Ui::DialogAutoIndexing),
+  _experiment_item(experiment_item),
+  _peaks(peaks)
 {
     ui->setupUi(this);
-    setModal(true);
+
+    setAttribute(Qt::WA_DeleteOnClose);
+    setModal(false);
 
     ui->niggli->setStyleSheet("font-weight: normal;");
     ui->niggli->setCheckable(true);
@@ -71,6 +68,24 @@ DialogAutoIndexing::DialogAutoIndexing(nsx::PeakList peaks, QWidget *parent):
     ui->subdiv->setMaximum(999999);
     ui->subdiv->setValue(params.subdiv);
 
+    auto model = new CollectedPeaksModel(_experiment_item->experiment());
+    model->setPeaks(peaks);
+    ui->peaks->setModel(model);
+    ui->peaks->verticalHeader()->show();
+
+    ui->peaks->hideColumn(CollectedPeaksModel::Column::transmission);
+    ui->peaks->hideColumn(CollectedPeaksModel::Column::lorentzFactor);
+    ui->peaks->hideColumn(CollectedPeaksModel::Column::selected);
+    ui->peaks->hideColumn(CollectedPeaksModel::Column::unitCell);
+
+    ui->peaks->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
+    ui->peaks->setSelectionMode(QAbstractItemView::SelectionMode::MultiSelection);
+
+    ui->unitCells->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+    QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->unitCells);
+    connect(shortcut, SIGNAL(activated()), this, SLOT(removeUnitCells()));
+
     connect(ui->cancelOK,SIGNAL(rejected()),this,SLOT(reject()));
     connect(ui->cancelOK,SIGNAL(accepted()),this,SLOT(accept()));
 }
@@ -80,8 +95,41 @@ DialogAutoIndexing::~DialogAutoIndexing()
     delete ui;
 }
 
+void DialogAutoIndexing::accept()
+{
+    auto unit_cells_item = _experiment_item->unitCellsItem();
+
+    for (int i = 0; i < ui->unitCells->count(); ++i) {
+        auto item = ui->unitCells->item(i);
+        auto&& unit_cell = item->data(Qt::UserRole).value<nsx::sptrUnitCell>();
+        unit_cell->setName(item->text().toStdString());
+        unit_cells_item->appendRow(new UnitCellItem(unit_cell));
+    }
+
+    QDialog::accept();
+}
+
+void DialogAutoIndexing::removeUnitCells()
+{
+    auto selected_items = ui->unitCells->selectedItems();
+
+    for (auto item : selected_items) {
+        ui->unitCells->removeItemWidget(item);
+        delete item;
+    }
+}
+
 void DialogAutoIndexing::autoIndex()
 {
+    auto selection_model = ui->peaks->selectionModel();
+
+    auto selected_rows = selection_model->selectedRows();
+
+    if (selected_rows.empty()) {
+        nsx::error()<<"No peaks selected for auto-indexing";
+        return;
+    }
+
     auto handler = std::make_shared<nsx::ProgressHandler>();
 
     handler->setCallback([=]() {
@@ -96,8 +144,8 @@ void DialogAutoIndexing::autoIndex()
     // Clear the current solution list
     _solutions.clear();
 
-    for (auto peak : _peaks) {
-        indexer.addPeak(peak);
+    for (auto r : selected_rows) {
+        indexer.addPeak(_peaks[r.row()]);
     }
 
     nsx::IndexerParameters params;
@@ -114,8 +162,8 @@ void DialogAutoIndexing::autoIndex()
 
     try {
         indexer.autoIndex(params);
-    } catch (...) {
-        nsx::error() << "failed to auto index!";
+    } catch (const std::exception& e) {
+        nsx::error() << "AutoIndex: " << e.what();
         return;
     }
     _solutions = indexer.solutions();
@@ -174,21 +222,18 @@ void DialogAutoIndexing::selectSolution(int index)
 {
     auto selected_unit_cell = _solutions[index].first;
 
-    bool ok;
-    QString text = QInputDialog::getText(this,
-                                         tr("Solution %1 set").arg(QString::number(index+1)),
-                                         tr("Enter cell name"),
-                                         QLineEdit::Normal,
-                                         QString::fromStdString(selected_unit_cell->name()),
-                                         &ok);
+    auto selection_model = ui->peaks->selectionModel();
 
-    if (ok && !text.isEmpty()) {
-        _unitCell = selected_unit_cell;
-        _unitCell->setName(text.toStdString());
+    auto selected_rows = selection_model->selectedRows();
+
+    selected_unit_cell->setName("new unit cell");
+
+    for (auto r : selected_rows) {
+        _peaks[r.row()]->setUnitCell(selected_unit_cell);
     }
-}
 
-nsx::sptrUnitCell DialogAutoIndexing::unitCell()
-{
-    return _unitCell;
+    QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(selected_unit_cell->name()));
+    item->setData(Qt::UserRole,QVariant::fromValue(selected_unit_cell));
+    item->setFlags(item->flags() | Qt::ItemIsEditable);
+    ui->unitCells->addItem(item);
 }
