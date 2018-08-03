@@ -1,8 +1,5 @@
 #pragma once
 
-#include <QJsonObject>
-#include <QList>
-
 #include <nsxlib/CrystalTypes.h>
 #include <nsxlib/InstrumentTypes.h>
 

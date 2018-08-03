@@ -1,21 +1,10 @@
 #include <algorithm>
-#include <memory>
-
 #include <QIcon>
-#include <QJsonArray>
-
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/Sample.h>
-#include <nsxlib/UnitCell.h>
 
 #include "DialogIsotopesDatabase.h"
-#include "ExperimentItem.h"
-#include "InstrumentItem.h"
-#include "MetaTypes.h"
 #include "SampleItem.h"
 #include "SamplePropertyWidget.h"
 #include "SampleShapeItem.h"
-#include "UnitCellItem.h"
 
 SampleItem::SampleItem() : InspectableTreeItem()
 {
