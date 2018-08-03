@@ -24,7 +24,7 @@
 #include "DialogMCAbsorption.h"
 #include "ExperimentItem.h"
 #include "InstrumentItem.h"
-#include "SampleItem.h"
+#include "UnitCellsItem.h"
 
 #include "ui_DialogMCAbsorption.h"
 
@@ -35,9 +35,9 @@ DialogMCAbsorption::DialogMCAbsorption(ExperimentItem* experiment_item, QWidget 
 {
     ui->setupUi(this);
 
-    auto sample_item = _experiment_item->instrumentItem()->sampleItem();
+    auto unit_cells_item = _experiment_item->unitCellsItem();
 
-    const auto& cells = sample_item->unitCells();
+    auto&& cells = unit_cells_item->unitCells();
     
     if (cells.size() > 0) {
         ui->unitCells->setEnabled(true);
@@ -63,8 +63,8 @@ void DialogMCAbsorption::on_pushButton_run_pressed()
 
     auto diffractometer = experiment->diffractometer();
 
-    auto sample_item = _experiment_item->instrumentItem()->sampleItem();
-    const auto& cells = sample_item->unitCells();
+    auto unit_cells_item = _experiment_item->unitCellsItem();
+    auto&& cells = unit_cells_item->unitCells();
     auto cell = cells[ui->unitCells->currentIndex()];
 
     auto material = cell->material();

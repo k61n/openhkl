@@ -14,7 +14,7 @@
 #include "PeakListItem.h"
 #include "PeaksItem.h"
 #include "ProgressView.h"
-#include "SampleItem.h"
+#include "UnitCellsItem.h"
 
 LibraryItem::LibraryItem()
 : TreeItem(),
@@ -42,9 +42,9 @@ void LibraryItem::incorporateCalculatedPeaks()
     auto data_item = experiment_item->dataItem();
     nsx::DataList numors = data_item->selectedData();
 
-    auto sample_item = experiment_item->instrumentItem()->sampleItem();
+    auto unit_cells_item = experiment_item->unitCellsItem();
 
-    DialogPredictPeaks dialog(sample_item->unitCells());
+    DialogPredictPeaks dialog(unit_cells_item->unitCells());
 
     if (!dialog.exec()) {
         return;

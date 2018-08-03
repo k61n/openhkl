@@ -15,6 +15,7 @@ class DataItem;
 class LibraryItem;
 class InstrumentItem;
 class PeaksItem;
+class UnitCellsItem;
 
 class ExperimentItem: public TreeItem
 {
@@ -31,6 +32,8 @@ public:
 
     DataItem* dataItem();
 
+    UnitCellsItem* unitCellsItem();
+
     LibraryItem* libraryItem();
 
     void writeLogFiles();
@@ -42,6 +45,8 @@ private:
     InstrumentItem* _instr;
 
     DataItem* _data;
+
+    UnitCellsItem* _unitCells;
 
     PeaksItem* _peaks;
 

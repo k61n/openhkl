@@ -17,7 +17,5 @@ public:
 
     QWidget* inspectItem() override;
 
-    nsx::UnitCellList unitCells();
-
     void openIsotopesDatabase();
 };

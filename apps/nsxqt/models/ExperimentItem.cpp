@@ -27,6 +27,7 @@
 #include "SessionModel.h"
 #include "SourceItem.h"
 #include "TreeItem.h"
+#include "UnitCellsItem.h"
 
 ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment): TreeItem(), _experiment(experiment)
 {
@@ -47,6 +48,10 @@ ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment): TreeItem(), _exp
     _data = new DataItem();
     appendRow(_data);
 
+    // Create the reference peak library
+    _unitCells = new UnitCellsItem();
+    appendRow(_unitCells);
+
     // Create a peaks item and add it to the experiment item
     _peaks = new PeaksItem();
     appendRow(_peaks);
@@ -59,6 +64,26 @@ ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment): TreeItem(), _exp
 InstrumentItem* ExperimentItem::instrumentItem()
 {
     return _instr;
+}
+
+PeaksItem* ExperimentItem::peaksItem()
+{
+    return _peaks;
+}
+
+DataItem* ExperimentItem::dataItem()
+{
+    return _data;
+}
+
+LibraryItem* ExperimentItem::libraryItem()
+{
+    return _library;
+}
+
+UnitCellsItem* ExperimentItem::unitCellsItem()
+{
+    return _unitCells;
 }
 
 void ExperimentItem::writeLogFiles()
@@ -85,19 +110,4 @@ void ExperimentItem::writeLogFiles()
     if (!dlg.exec()) {
         return;
     }
-}
-
-PeaksItem* ExperimentItem::peaksItem()
-{
-    return _peaks;
-}
-
-DataItem* ExperimentItem::dataItem()
-{
-    return _data;
-}
-
-LibraryItem* ExperimentItem::libraryItem()
-{
-    return _library;
 }

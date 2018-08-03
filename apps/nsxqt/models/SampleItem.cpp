@@ -40,26 +40,6 @@ QWidget* SampleItem::inspectItem()
     return new SamplePropertyWidget(this);
 }
 
-nsx::UnitCellList SampleItem::unitCells()
-{
-    nsx::UnitCellList unitCells;
-    unitCells.reserve(rowCount()-1);
-
-    QModelIndex sampleItemIdx = model()->indexFromItem(this);
-
-    for (int i=0;i<model()->rowCount(sampleItemIdx);++i)
-    {
-        QModelIndex idx = model()->index(i,0,sampleItemIdx);
-        QStandardItem* item = model()->itemFromIndex(idx);
-        UnitCellItem* ucItem = dynamic_cast<UnitCellItem*>(item);
-        if (ucItem) {
-            unitCells.push_back(ucItem->unitCell());
-        }
-    }
-
-    return unitCells;
-}
-
 void SampleItem::openIsotopesDatabase()
 {
     // dialog will automatically be deleted before we return from this method

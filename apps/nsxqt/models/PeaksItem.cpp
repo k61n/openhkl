@@ -30,19 +30,20 @@
 #include "DialogShapeLibrary.h"
 #include "DialogRefineUnitCell.h"
 #include "DialogSpaceGroup.h"
+#include "ExperimentItem.h"
 #include "GLSphere.h"
 #include "GLWidget.h"
-#include "ExperimentItem.h"
 #include "InstrumentItem.h"
 #include "LibraryItem.h"
 #include "MetaTypes.h"
-#include "PeaksItem.h"
+#include "NumorItem.h"
 #include "PeakListItem.h"
+#include "PeaksItem.h"
 #include "ProgressView.h"
 #include "SampleItem.h"
 #include "SessionModel.h"
-#include "NumorItem.h"
 #include "UnitCellItem.h"
+#include "UnitCellsItem.h"
 
 PeaksItem::PeaksItem(): TreeItem()
 {
@@ -182,10 +183,11 @@ void PeaksItem::buildShapeLibrary()
         QMessageBox::warning(nullptr, "NSXTool", "The selected peaks must have the same active unit cell for profile fitting");
         return;
     }
+
     DialogShapeLibrary* dialog = new DialogShapeLibrary(experiment(), unit_cell, peaks);
 
     // rejected
-    if (dialog->exec() == QDialog::Rejected) {
+    if (!dialog->exec()) {
         return;
     }
 
@@ -243,9 +245,9 @@ void PeaksItem::autoindex()
         peak->setUnitCell(unit_cell);
     }
 
-    auto sample_item = experimentItem()->instrumentItem()->sampleItem();
+    auto unit_cells_item = experimentItem()->unitCellsItem();
     auto uc_item = new UnitCellItem(unit_cell);
-    sample_item->appendRow(uc_item);
+    unit_cells_item->appendRow(uc_item);
 }
 
 void PeaksItem::refine()
@@ -279,9 +281,9 @@ void PeaksItem::autoAssignUnitCell()
 {
     auto&& peaks = selectedPeaks();
 
-    auto sample_item = experimentItem()->instrumentItem()->sampleItem();
+    auto unit_cells_item = experimentItem()->unitCellsItem();
 
-    auto&& cells = sample_item->unitCells();
+    auto&& cells = unit_cells_item->unitCells();
 
     if (cells.size() < 1) {
         nsx::info() << "There are no unit cells to assign";
