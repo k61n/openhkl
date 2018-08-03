@@ -14,7 +14,7 @@ class DialogPredictPeaks : public QDialog
     Q_OBJECT
 
 public:
-    explicit DialogPredictPeaks(const std::set<nsx::sptrUnitCell>& cells, QWidget *parent = 0);
+    explicit DialogPredictPeaks(const nsx::UnitCellList& cells, QWidget *parent = 0);
     ~DialogPredictPeaks();
 
     double dMin() const;
@@ -30,5 +30,5 @@ public:
 
 private:
     Ui::DialogPredictPeaks *ui;
-    std::set<nsx::sptrUnitCell> _cells;
+    nsx::UnitCellList _cells;
 };

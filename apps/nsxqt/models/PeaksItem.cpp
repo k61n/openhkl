@@ -155,7 +155,7 @@ void PeaksItem::showPeaksOpenGL()
 void PeaksItem::absorptionCorrection()
 {
     // todo: check that this is correct!
-    DialogMCAbsorption* dialog = new DialogMCAbsorption(dynamic_cast<SessionModel*>(model()), experiment());
+    DialogMCAbsorption* dialog = new DialogMCAbsorption(experimentItem());
     dialog->open();
 }
 
@@ -243,10 +243,7 @@ void PeaksItem::autoindex()
         peak->setUnitCell(unit_cell);
     }
 
-    auto experiment_item = experimentItem();
-    experiment_item->experiment()->diffractometer()->sample()->unitCells().push_back(unit_cell);
-
-    auto sample_item = experiment_item->instrumentItem()->sampleItem();
+    auto sample_item = experimentItem()->instrumentItem()->sampleItem();
     auto uc_item = new UnitCellItem(unit_cell);
     sample_item->appendRow(uc_item);
 }
@@ -281,8 +278,10 @@ void PeaksItem::refine()
 void PeaksItem::autoAssignUnitCell()
 {
     auto&& peaks = selectedPeaks();
-    auto sample = experiment()->diffractometer()->sample();
-    const auto& cells = sample->unitCells();
+
+    auto sample_item = experimentItem()->instrumentItem()->sampleItem();
+
+    auto&& cells = sample_item->unitCells();
 
     if (cells.size() < 1) {
         nsx::info() << "There are no unit cells to assign";
@@ -297,7 +296,7 @@ void PeaksItem::autoAssignUnitCell()
         Eigen::RowVector3d hkl;
         bool assigned = false;
 
-        for (auto cell: cells) {
+        for (auto cell : cells) {
             nsx::MillerIndex hkl(peak->q(), *cell);
             if (hkl.indexed(cell->indexingTolerance())) {
                 peak->setUnitCell(cell);

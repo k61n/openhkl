@@ -114,14 +114,6 @@ SessionModel::~SessionModel()
 
 void SessionModel::onItemChanged(QStandardItem* item)
 {
-    if (auto p = dynamic_cast<UnitCellItem*>(item)) {
-        // The first item of the Sample item branch is the SampleShapeItem, skip it
-        int idx = p->index().row()- 1;
-        auto expt = p->experiment();
-        auto uc = expt->diffractometer()->sample()->unitCells()[idx];
-        uc->setName(p->text().toStdString());
-    }
-
     emit updatePeaks();
 }
 

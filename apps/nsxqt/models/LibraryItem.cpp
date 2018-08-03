@@ -8,11 +8,13 @@
 #include "DataItem.h"
 #include "DialogPredictPeaks.h"
 #include "ExperimentItem.h"
+#include "InstrumentItem.h"
 #include "LibraryItem.h"
 #include "MetaTypes.h"
 #include "PeakListItem.h"
 #include "PeaksItem.h"
 #include "ProgressView.h"
+#include "SampleItem.h"
 
 LibraryItem::LibraryItem()
 : TreeItem(),
@@ -35,22 +37,14 @@ void LibraryItem::incorporateCalculatedPeaks()
 
     nsx::debug() << "Incorporating missing peaks into current data set...";
 
-    auto expt_item = dynamic_cast<ExperimentItem*>(parent());
-    auto data_item = expt_item->dataItem();
+    auto experiment_item = dynamic_cast<ExperimentItem*>(parent());
 
-    std::set<nsx::sptrUnitCell> cells;
-
+    auto data_item = experiment_item->dataItem();
     nsx::DataList numors = data_item->selectedData();
 
-    for (auto numor: numors) {
-        auto sample = numor->diffractometer()->sample();
+    auto sample_item = experiment_item->instrumentItem()->sampleItem();
 
-        for (auto uc: sample->unitCells()) {
-            cells.insert(uc);
-        }
-    }
-
-    DialogPredictPeaks dialog(cells);
+    DialogPredictPeaks dialog(sample_item->unitCells());
 
     if (!dialog.exec()) {
         return;

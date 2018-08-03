@@ -153,8 +153,6 @@ bool Mosaic::run(const std::vector<std::string>& numors, unsigned int n, double&
 
 	// Create and get the unit cell of the sample
 	auto uc = std::make_shared<UnitCell>();
-	_sample->unitCells().push_back(uc);
-	//std::shared_ptr<UnitCell> uc = _sample->addUnitCell();
 
 	// Loop over the datas
 	for (auto d : datas)

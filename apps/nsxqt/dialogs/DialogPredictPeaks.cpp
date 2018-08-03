@@ -3,7 +3,7 @@
 
 #include <nsxlib/UnitCell.h>
 
-DialogPredictPeaks::DialogPredictPeaks(const std::set<nsx::sptrUnitCell>& cells, QWidget *parent):
+DialogPredictPeaks::DialogPredictPeaks(const nsx::UnitCellList& cells, QWidget *parent):
     QDialog(parent),
     ui(new Ui::DialogPredictPeaks),
     _cells(cells)    
@@ -11,7 +11,7 @@ DialogPredictPeaks::DialogPredictPeaks(const std::set<nsx::sptrUnitCell>& cells,
     ui->setupUi(this);
 
     for (auto cell: _cells) {
-        ui->comboBoxUC->addItem(cell->name().c_str());
+        ui->unitCells->addItem(cell->name().c_str());
     }
 }
 
@@ -52,10 +52,5 @@ int DialogPredictPeaks::interpolation() const
 
 nsx::sptrUnitCell DialogPredictPeaks::cell()
 {
-    for (auto cell: _cells) {
-        if (ui->comboBoxUC->currentText() == cell->name().c_str()) {
-            return cell;
-        }
-    }
-    throw std::runtime_error("invalid unit cell encountered!");
+    return _cells[ui->unitCells->currentIndex()];
 }

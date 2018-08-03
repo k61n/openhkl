@@ -33,11 +33,6 @@ UnitCellItem::UnitCellItem(nsx::sptrUnitCell unit_cell)
 
 UnitCellItem::~UnitCellItem()
 {
-    nsx::UnitCellList& unit_cells = experimentItem()->experiment()->diffractometer()->sample()->unitCells();
-    auto it = std::find(unit_cells.begin(),unit_cells.end(),_unit_cell);
-    if (it != unit_cells.end()) {
-        unit_cells.erase(it);
-    }
 }
 
 QVariant UnitCellItem::data(int role) const

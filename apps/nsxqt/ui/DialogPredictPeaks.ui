@@ -13,20 +13,10 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="5" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
     <layout class="QGridLayout" name="gridLayout_2">
-     <item row="6" column="2">
+     <item row="5" column="1">
       <widget class="QSpinBox" name="neighborSpinBox">
        <property name="maximum">
         <number>100000</number>
@@ -36,7 +26,7 @@
        </property>
       </widget>
      </item>
-     <item row="7" column="0">
+     <item row="6" column="0">
       <widget class="QLabel" name="label_10">
        <property name="text">
         <string>Minimum I/sigma</string>
@@ -50,7 +40,7 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="2">
+     <item row="4" column="1">
       <widget class="QDoubleSpinBox" name="dMaxSpinBox">
        <property name="maximum">
         <double>1000.000000000000000</double>
@@ -63,7 +53,7 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="2">
+     <item row="2" column="1">
       <widget class="QDoubleSpinBox" name="sigmaM">
        <property name="decimals">
         <number>3</number>
@@ -76,17 +66,20 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="0">
+     <item row="0" column="1">
+      <widget class="QComboBox" name="comboBoxUC"/>
+     </item>
+     <item row="4" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>d max (angstrom)</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="2">
-      <widget class="QComboBox" name="comboBoxUC"/>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="unitCells"/>
      </item>
-     <item row="7" column="2">
+     <item row="6" column="1">
       <widget class="QDoubleSpinBox" name="sigmaSpinBox">
        <property name="maximum">
         <double>100000.000000000000000</double>
@@ -99,14 +92,14 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
+     <item row="2" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
         <string>sigma M</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
+     <item row="1" column="1">
       <widget class="QDoubleSpinBox" name="sigmaD">
        <property name="decimals">
         <number>3</number>
@@ -126,7 +119,7 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="2">
+     <item row="3" column="1">
       <widget class="QDoubleSpinBox" name="dMinSpinBox">
        <property name="maximum">
         <double>1000.000000000000000</double>
@@ -139,35 +132,35 @@
        </property>
       </widget>
      </item>
-     <item row="6" column="0">
+     <item row="5" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
         <string>minimum neighbors</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
         <string>d min (angstrom)</string>
        </property>
       </widget>
      </item>
-     <item row="10" column="0">
+     <item row="7" column="0">
       <widget class="QLabel" name="label_7">
        <property name="text">
         <string>Search radius</string>
        </property>
       </widget>
      </item>
-     <item row="11" column="0">
+     <item row="8" column="0">
       <widget class="QLabel" name="label_11">
        <property name="text">
         <string>Number of frames</string>
        </property>
       </widget>
      </item>
-     <item row="10" column="2">
+     <item row="7" column="1">
       <widget class="QDoubleSpinBox" name="radius">
        <property name="maximum">
         <double>10000.000000000000000</double>
@@ -177,24 +170,7 @@
        </property>
       </widget>
      </item>
-     <item row="11" column="2">
-      <widget class="QDoubleSpinBox" name="nframes">
-       <property name="maximum">
-        <double>10000.000000000000000</double>
-       </property>
-       <property name="value">
-        <double>5.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="12" column="0">
-      <widget class="QLabel" name="label_8">
-       <property name="text">
-        <string>Interpolation</string>
-       </property>
-      </widget>
-     </item>
-     <item row="12" column="2">
+     <item row="9" column="1">
       <widget class="QComboBox" name="interpolation">
        <property name="currentIndex">
         <number>0</number>
@@ -216,7 +192,34 @@
        </item>
       </widget>
      </item>
+     <item row="8" column="1">
+      <widget class="QDoubleSpinBox" name="nframes">
+       <property name="maximum">
+        <double>10000.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>5.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="0">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>Interpolation</string>
+       </property>
+      </widget>
+     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
