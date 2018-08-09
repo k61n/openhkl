@@ -31,19 +31,15 @@ PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *pa
 
     std::for_each(datamap.begin(), datamap.end(), func);
 
-    CollectedPeaksModel *model = new CollectedPeaksModel(_caller->experiment());
-
-    nsx::PeakList data_peaks;
+    nsx::PeakList peaks;
 
     for (auto peak: _caller->peaks()) {
-        data_peaks.push_back(peak);
+        peaks.push_back(peak);
     }
 
-    model->setPeaks(data_peaks);
-    ui->tableView->setModel(model);
+    CollectedPeaksModel *model = new CollectedPeaksModel(_caller->experiment(), peaks);
 
-    //Connect search box
-    connect(ui->lineEdit,SIGNAL(textChanged(QString)),ui->tableView,SLOT(showPeaksMatchingText(QString)));
+    ui->tableView->setModel(model);
 
     // todo: fix shape library!!
     // connect(ui->tableView, SIGNAL(updateShapeLibrary(nsx::sptrShapeLibrary)), _session.get(), SLOT(updateShapeLibrary(nsx::sptrShapeLibrary)));

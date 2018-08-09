@@ -72,8 +72,7 @@ DialogShapeLibrary::DialogShapeLibrary(nsx::sptrExperiment experiment,
     ui->sigmaD->setValue(std::sqrt(0.5*(cov(0,0)+cov(1,1))));
     ui->sigmaM->setValue(std::sqrt(cov(2,2)));
     
-    auto model = new CollectedPeaksModel(_experiment);
-    model->setPeaks(peaks);
+    auto model = new CollectedPeaksModel(_experiment,peaks);
     ui->peaks->setModel(model);
     ui->peaks->verticalHeader()->show();
 

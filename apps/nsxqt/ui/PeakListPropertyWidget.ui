@@ -15,9 +15,6 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QLineEdit" name="lineEdit"/>
-   </item>
-   <item row="1" column="0">
     <widget class="PeakTableView" name="tableView">
      <property name="focusPolicy">
       <enum>Qt::StrongFocus</enum>

@@ -115,11 +115,6 @@ Intensity Peak3D::rawIntensity() const
     return _rawIntensity;
 }
 
-Intensity Peak3D::scaledIntensity() const
-{
-    return rawIntensity() * _scale;
-}
-
 Intensity Peak3D::correctedIntensity() const
 {
     auto c = _shape.center();
@@ -139,15 +134,9 @@ double Peak3D::scale() const
     return _scale;
 }
 
-void Peak3D::rescale(double factor)
-{
-    _scale *= factor;
-}
-
 void Peak3D::setScale(double factor)
 {
     _scale = factor;
-
 }
 
 void Peak3D::setTransmission(double transmission)

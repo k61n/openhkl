@@ -187,7 +187,6 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     p->graph(0)->setDataValueError(q_frames, q_intensity, q_error);
 
     // Now update text info:
-    Eigen::RowVector3d hkl;
     QString info;
 
     if (auto cell = _peak->unitCell()) {
@@ -209,9 +208,9 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     g/=nsx::deg;
     n/=nsx::deg;
     info+=" "+QString(QChar(0x03B3))+","+QString(QChar(0x03BD))+":"+QString::number(g,'f',2)+","+QString::number(n,'f',2)+"\n";
-    double intensity=_peak->scaledIntensity().value();
+    double intensity=_peak->correctedIntensity().value();
     auto corr_int = _peak->correctedIntensity();
-    double sI=_peak->scaledIntensity().sigma();
+    double sI=_peak->correctedIntensity().sigma();
     info+="Intensity ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";  
     info+="Cor. int. ("+QString(QChar(0x03C3))+"I): "+QString::number(corr_int.value(),'f',2)+" ("+QString::number(corr_int.sigma(),'f',2)+")\n";
 

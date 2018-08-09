@@ -26,10 +26,8 @@ public:
 
     ~CollectedPeaksModel() = default;
 
-    // todo(jonathan): virtual/override methods should not have default arguments!
-    int rowCount(const QModelIndex &parent=QModelIndex()) const override;
-    // todo(jonathan): virtual/override methods should not have default arguments!
-    int columnCount(const QModelIndex &parent=QModelIndex()) const override;
+    virtual int rowCount(const QModelIndex& parent) const override;
+    virtual int columnCount(const QModelIndex& parent) const override;
 
     QVariant data(const QModelIndex &index, int role) const override;
     bool setData(const QModelIndex &index, const QVariant &value, int role) override;
@@ -38,12 +36,7 @@ public:
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
-    void addPeak(const nsx::sptrPeak3D& peak);
-
-    void setPeaks(const nsx::PeakList& peaks);
-
     const nsx::PeakList& peaks() const;
-    nsx::PeakList peaks(const QModelIndexList& indices) const;
 
     bool indexIsValid(const QModelIndex& index) const;
 
@@ -51,11 +44,11 @@ public:
 
     void normalizeToMonitor(double factor);
 
-    QModelIndexList getUnindexedPeaks();
+    QModelIndexList unindexedPeaks();
 
-    QModelIndexList getValidPeaks();
+    QModelIndexList selectedPeaks();
 
-    nsx::sptrExperiment getExperiment();
+    nsx::sptrExperiment experiment();
 
 public slots:
     void sortEquivalents();

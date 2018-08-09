@@ -74,8 +74,6 @@ public:
     //! Return the shape of the peak as an ellipsoid in detector coordinates
     const Ellipsoid& shape() const;
 
-    //! Return the scaled intensity of the peak.
-    Intensity scaledIntensity() const;
     //! Return the intensity, after scaling, transmission, and Lorentz factor corrections
     Intensity correctedIntensity() const;
     //! Return the raw intensity of the peak.
@@ -93,8 +91,6 @@ public:
 
     //! Return the scaling factor.
     double scale() const;
-    //! Rescale the current scaling factor by scale.
-    void rescale(double factor);
     //! Set the scaling factor.
     void setScale(double factor);
 

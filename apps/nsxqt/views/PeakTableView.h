@@ -71,8 +71,6 @@ public slots:
     void normalizeToMonitor();
     //! Plot as function of parameter. Needs to be a numeric type
     void plotAs(const std::string& key);
-    //! Search peaks with hkl matching part of the string. Text must represent h,k,l values separated by white spaces
-    void showPeaksMatchingText(const QString& text);
     //! Plot selected peak
     void plotSelectedPeak(const QModelIndex& index);
 

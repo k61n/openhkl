@@ -257,8 +257,8 @@ void PeakTableView::plotAs(const std::string& key)
     for (int i=0;i<nPoints;++i) {
         nsx::sptrPeak3D p=peaks[indexList[i].row()];
         x[i]=p->data()->metadata()->key<double>(key);
-        y[i]=p->scaledIntensity().value();
-        e[i]=p->scaledIntensity().sigma();
+        y[i]=p->correctedIntensity().value();
+        e[i]=p->correctedIntensity().sigma();
     }
     emit plotData(x,y,e);
 }
@@ -303,58 +303,13 @@ bool PeakTableView::checkBeforeWritting()
     return true;
 }
 
-void PeakTableView::showPeaksMatchingText(const QString& text)
-{
-    auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
-    if (peaksModel == nullptr) {
-        return;
-    }
-    auto peaks = peaksModel->peaks();
-    if (peaks.empty()) {
-        return;
-    }
-
-    QStringList list=text.split(" ");
-    int nterms=list.size();
-
-    // Don't search if h,k,l not complete
-    if (nterms<3) {
-        unsigned int row=0;
-        for (row=0;row<peaks.size();row++) {
-            setRowHidden(row,false);
-        }
-        return;
-    }
-
-    bool okh=false,okk=false,okl=false;
-
-    if (!(okh && okk && okl)) {
-        unsigned int row=0;
-        for (row=0;row<peaks.size();row++) {
-            setRowHidden(row,false);
-        }
-        return;
-    }
-
-    unsigned int row=0;
-    for (row=0;row<peaks.size();row++) {
-        nsx::sptrPeak3D peak = peaks[row];
-        auto cell = peak->unitCell();
-        if (!cell) {
-            continue;
-        }
-        nsx::MillerIndex hkl(peak->q(), *cell);
-        setRowHidden(row,hkl.indexed(cell->indexingTolerance()));
-    }
-}
-
 void PeakTableView::selectUnindexedPeaks()
 {
     auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
     if (peaksModel == nullptr) {
         return;
     }
-    QModelIndexList unindexedPeaks = peaksModel->getUnindexedPeaks();
+    QModelIndexList unindexedPeaks = peaksModel->unindexedPeaks();
 
     for (QModelIndex index : unindexedPeaks) {
         selectRow(index.row());
@@ -386,7 +341,7 @@ void PeakTableView::selectValidPeaks()
     if (peaksModel == nullptr) {
         return;
     }
-    QModelIndexList validPeaksIndexes = peaksModel->getValidPeaks();
+    QModelIndexList validPeaksIndexes = peaksModel->selectedPeaks();
 
     for (QModelIndex index : validPeaksIndexes) {
         selectRow(index.row());

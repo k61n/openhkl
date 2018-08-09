@@ -68,8 +68,7 @@ DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, nsx::Pea
     ui->subdiv->setMaximum(999999);
     ui->subdiv->setValue(params.subdiv);
 
-    auto model = new CollectedPeaksModel(_experiment_item->experiment());
-    model->setPeaks(peaks);
+    auto model = new CollectedPeaksModel(_experiment_item->experiment(),peaks);
     ui->peaks->setModel(model);
     ui->peaks->verticalHeader()->show();
 

@@ -57,44 +57,22 @@ CollectedPeaksModel::CollectedPeaksModel(nsx::sptrExperiment experiment, const n
 {
 }
 
-void CollectedPeaksModel::addPeak(const nsx::sptrPeak3D& peak)
-{
-    auto it=std::find(_peaks.begin(),_peaks.end(),peak);
-    if (it!=_peaks.end()) {
-        return;
-    }
-    _peaks.push_back(peak);
-}
-
-void CollectedPeaksModel::setPeaks(const nsx::PeakList& peaks)
-{
-    _peaks = peaks;
-}
-
 const nsx::PeakList& CollectedPeaksModel::peaks() const
 {
     return _peaks;
 }
 
-nsx::PeakList CollectedPeaksModel::peaks(const QModelIndexList &indices) const
-{
-    nsx::PeakList peaks;
-    peaks.reserve(indices.count());
-    for (auto&& index: indices) {
-        peaks.push_back(_peaks[index.row()]);
-    }
-    return peaks;
-}
-
-int CollectedPeaksModel::rowCount(const QModelIndex &parent) const
+int CollectedPeaksModel::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
+
     return _peaks.size();
 }
 
-int CollectedPeaksModel::columnCount(const QModelIndex &parent) const
+int CollectedPeaksModel::columnCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
+
     return Column::count;
 }
 
@@ -373,7 +351,7 @@ void CollectedPeaksModel::sortEquivalents()
 void CollectedPeaksModel::setUnitCell(const nsx::sptrUnitCell& unitCell, QModelIndexList selectedPeaks)
 {
     if (selectedPeaks.isEmpty()) {
-        for (int i=0;i<rowCount();++i) {
+        for (int i=0;i<rowCount(QModelIndex());++i) {
             selectedPeaks << index(i,0);
         }
     }
@@ -390,13 +368,18 @@ void CollectedPeaksModel::normalizeToMonitor(double factor)
     for (auto&& peak : _peaks) {
         peak->setScale(factor/peak->data()->metadata()->key<double>("monitor"));
     }
+
+    QModelIndex topleft_index = index(0,0);
+    QModelIndex bottomright_index = index(rowCount(QModelIndex())-1,columnCount(QModelIndex())-1);
+
+    emit dataChanged(topleft_index,bottomright_index);
 }
 
-QModelIndexList CollectedPeaksModel::getUnindexedPeaks()
+QModelIndexList CollectedPeaksModel::unindexedPeaks()
 {
     QModelIndexList list;
 
-    for (int i=0; i<rowCount(); ++i) {
+    for (int i=0; i<rowCount(QModelIndex()); ++i) {
         auto peak = _peaks[i];
         if (!peak->unitCell()) {
             list.append(index(i,0));
@@ -405,11 +388,11 @@ QModelIndexList CollectedPeaksModel::getUnindexedPeaks()
     return list;
 }
 
-QModelIndexList CollectedPeaksModel::getValidPeaks()
+QModelIndexList CollectedPeaksModel::selectedPeaks()
 {
     QModelIndexList list;
 
-    for (int i=0; i<rowCount(); ++i) {
+    for (int i=0; i<rowCount(QModelIndex()); ++i) {
         auto peak = _peaks[i];
         if (peak->enabled()) {
             list.append(index(i,0));
@@ -418,7 +401,7 @@ QModelIndexList CollectedPeaksModel::getValidPeaks()
     return list;
 }
 
-nsx::sptrExperiment CollectedPeaksModel::getExperiment()
+nsx::sptrExperiment CollectedPeaksModel::experiment()
 {
     return _experiment;
 }
