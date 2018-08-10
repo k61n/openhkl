@@ -9,6 +9,8 @@
 #include "CollectedPeaksDelegate.h"
 #include "CollectedPeaksModel.h"
 
+#include <QDebug>
+
 CollectedPeaksDelegate::CollectedPeaksDelegate(QObject *parent) : QStyledItemDelegate(parent)
 {
     _icon.addPixmap(QPixmap(":/resources/peakSelectedIcon.png"),QIcon::Normal,QIcon::On);
@@ -32,25 +34,4 @@ void CollectedPeaksDelegate::paint(QPainter *painter, const QStyleOptionViewItem
     else {
         QStyledItemDelegate::paint(painter,option,index);
     }
-}
-
-bool CollectedPeaksDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
-{
-    Q_UNUSED(option);
-    if(event->type() == QEvent::MouseButtonRelease) {
-        int column = index.column();
-        if (column == CollectedPeaksModel::Column::selected) {
-            bool value  = model->data(index,Qt::CheckStateRole).toBool();
-            model->setData(index, !value, Qt::CheckStateRole);
-        }
-    } else if (event->type() == QEvent::KeyPress) {
-        auto evt = dynamic_cast<QKeyEvent*>(event);
-        if (evt->key() == Qt::Key_Space) {
-            QModelIndex idx = model->index(index.row(),CollectedPeaksModel::Column::selected,QModelIndex());
-            auto value  = model->data(idx,Qt::CheckStateRole).toBool();
-            model->setData(idx, !value, Qt::CheckStateRole);
-            value  = model->data(idx,Qt::CheckStateRole).toBool();
-        }
-    }
-    return QStyledItemDelegate::editorEvent(event,model,option,index);
 }

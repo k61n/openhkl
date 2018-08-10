@@ -13,18 +13,18 @@
 #include <nsxlib/Logger.h>
 
 #include "CollectedPeaksModel.h"
+#include "ExperimentItem.h"
 #include "ProgressView.h"
 
 #include "DialogShapeLibrary.h"
 #include "ui_DialogShapeLibrary.h"
 
-DialogShapeLibrary::DialogShapeLibrary(nsx::sptrExperiment experiment,
+DialogShapeLibrary::DialogShapeLibrary(ExperimentItem* experiment_item,
                                        nsx::sptrUnitCell unitCell,
                                        const nsx::PeakList& peaks,
                                        QWidget *parent):
     QDialog(parent),
     ui(new Ui::DialogShapeLibrary),
-    _experiment(std::move(experiment)),
     _unitCell(std::move(unitCell)),
     _peaks(peaks), 
     _cmap(),
@@ -72,8 +72,8 @@ DialogShapeLibrary::DialogShapeLibrary(nsx::sptrExperiment experiment,
     ui->sigmaD->setValue(std::sqrt(0.5*(cov(0,0)+cov(1,1))));
     ui->sigmaM->setValue(std::sqrt(cov(2,2)));
     
-    auto model = new CollectedPeaksModel(_experiment,peaks);
-    ui->peaks->setModel(model);
+    auto peaks_model = new CollectedPeaksModel(experiment_item->model(),experiment_item->experiment(),peaks);
+    ui->peaks->setModel(peaks_model);
     ui->peaks->verticalHeader()->show();
 
     ui->peaks->hideColumn(CollectedPeaksModel::Column::transmission);

@@ -13,9 +13,13 @@ public:
 
     explicit PeaksItem();
 
+    nsx::PeakList allPeaks();
+
     nsx::PeakList selectedPeaks();
 
     //virtual void setData(const QVariant &value, int role) override;
+
+    void removeUnitCell(nsx::sptrUnitCell unit_cell);
 
     void integratePeaks();
     void findSpaceGroup();

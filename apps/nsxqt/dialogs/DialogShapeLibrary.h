@@ -8,10 +8,13 @@
 #include <nsxlib/Profile3D.h>
 
 #include "ColorMap.h"
+#include "ExperimentItem.h"
 
 namespace Ui {
 class DialogShapeLibrary;
 }
+
+class ExperimentItem;
 
 class DialogShapeLibrary: public QDialog
 {
@@ -19,7 +22,7 @@ class DialogShapeLibrary: public QDialog
 
 public:
     
-    explicit DialogShapeLibrary(nsx::sptrExperiment experiment,
+    explicit DialogShapeLibrary(ExperimentItem* experiment_item,
                                 nsx::sptrUnitCell unitCell,
                                 const nsx::PeakList& peaks,
                                 QWidget *parent = 0);
@@ -36,7 +39,6 @@ private slots:
 
 private:
     Ui::DialogShapeLibrary *ui;
-    nsx::sptrExperiment _experiment;
     nsx::sptrUnitCell _unitCell;
     nsx::PeakList _peaks;
     std::set<nsx::sptrDataSet> _data;

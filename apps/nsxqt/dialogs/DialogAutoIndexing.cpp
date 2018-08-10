@@ -20,6 +20,7 @@
 #include "DialogAutoIndexing.h"
 #include "ExperimentItem.h"
 #include "MetaTypes.h"
+#include "PeakTableView.h"
 #include "UnitCellItem.h"
 #include "UnitCellsItem.h"
 
@@ -28,8 +29,7 @@
 DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, nsx::PeakList peaks, QWidget *parent)
 : QDialog(parent),
   ui(new Ui::DialogAutoIndexing),
-  _experiment_item(experiment_item),
-  _peaks(peaks)
+  _experiment_item(experiment_item)
 {
     ui->setupUi(this);
 
@@ -68,19 +68,8 @@ DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, nsx::Pea
     ui->subdiv->setMaximum(999999);
     ui->subdiv->setValue(params.subdiv);
 
-    auto model = new CollectedPeaksModel(_experiment_item->experiment(),peaks);
-    ui->peaks->setModel(model);
-    ui->peaks->verticalHeader()->show();
-
-    ui->peaks->hideColumn(CollectedPeaksModel::Column::transmission);
-    ui->peaks->hideColumn(CollectedPeaksModel::Column::lorentzFactor);
-    ui->peaks->hideColumn(CollectedPeaksModel::Column::selected);
-    ui->peaks->hideColumn(CollectedPeaksModel::Column::unitCell);
-
-    ui->peaks->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
-    ui->peaks->setSelectionMode(QAbstractItemView::SelectionMode::MultiSelection);
-
-    ui->unitCells->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    _peaks_model = new CollectedPeaksModel(_experiment_item->model(),_experiment_item->experiment(),peaks);
+    ui->peaks->setModel(_peaks_model);
 
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->unitCells);
     connect(shortcut, SIGNAL(activated()), this, SLOT(removeUnitCells()));
@@ -143,8 +132,10 @@ void DialogAutoIndexing::autoIndex()
     // Clear the current solution list
     _solutions.clear();
 
+    auto peaks = _peaks_model->peaks();
+
     for (auto r : selected_rows) {
-        indexer.addPeak(_peaks[r.row()]);
+        indexer.addPeak(peaks[r.row()]);
     }
 
     nsx::IndexerParameters params;
@@ -227,8 +218,10 @@ void DialogAutoIndexing::selectSolution(int index)
 
     selected_unit_cell->setName("new unit cell");
 
+    auto peaks = _peaks_model->peaks();
+
     for (auto r : selected_rows) {
-        _peaks[r.row()]->setUnitCell(selected_unit_cell);
+        peaks[r.row()]->setUnitCell(selected_unit_cell);
     }
 
     QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(selected_unit_cell->name()));

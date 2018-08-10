@@ -40,7 +40,7 @@ void CutLineGraphicsItem::plot(SXPlot* plot)
     p->yAxis->setLabel("Intensity (counts)");
 
     // Set the pointer to the detector scene to the scene that holds the cutter
-    auto detPtr=dynamic_cast<DetectorScene*>(scene());
+    auto detPtr = dynamic_cast<DetectorScene*>(scene());
     if (!detPtr) {
         return;
     }
@@ -51,7 +51,7 @@ void CutLineGraphicsItem::plot(SXPlot* plot)
     QLineF line;
     line.setP1(sceneBoundingRect().bottomLeft());
     line.setP2(sceneBoundingRect().topRight());
-    const Eigen::MatrixXi& currentFrame=detPtr->getCurrentFrame();
+    const Eigen::MatrixXi& currentFrame = detPtr->getCurrentFrame();
     std::iota(x.begin(),x.end(),0);
 
     for (int i=0; i<_nPoints; ++i) {

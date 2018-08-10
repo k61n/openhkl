@@ -64,10 +64,17 @@ private slots:
      
 
 public slots:
-    void changeData(nsx::sptrDataSet);
     void plotPeak(nsx::sptrPeak3D);
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
     void setInspectorWidget(QWidget*);
+
+private slots:
+
+    void slotChangeSelectedData(nsx::sptrDataSet, int frame);
+
+    void slotChangeSelectedPeak(nsx::sptrPeak3D peak);
+
+    void slotChangeSelectedFrame(int selected_frame);
 
 private:
     Ui::MainWindow* _ui;

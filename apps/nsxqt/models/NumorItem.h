@@ -18,7 +18,7 @@ public:
     explicit NumorItem(nsx::sptrDataSet data);
     ~NumorItem();
     QWidget* inspectItem() override;
-    nsx::sptrDataSet getData();
+    nsx::sptrDataSet data();
     void exportHDF5(const std::string& filename) const;
 
 private:

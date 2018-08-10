@@ -38,46 +38,61 @@ class DetectorScene: public QGraphicsScene
     Q_OBJECT
 
 public:
-    enum MODE {ZOOM=0, LINE=1, HORIZONTALSLICE=2, VERTICALSLICE=3, MASK=4,ELLIPSE_MASK = 5,INDEXING=6};
+    enum MODE {ZOOM=0, LINE=1, HORIZONTALSLICE=2, VERTICALSLICE=3, MASK=4, ELLIPSE_MASK=5,INDEXING=6};
+
     //! Which mode is the cursor diplaying
     enum CURSORMODE {THETA=0, GAMMA=1, DSPACING=2, PIXEL=3, HKL=4};
+
     explicit DetectorScene(QObject *parent = 0);
+
     nsx::sptrDataSet getData();
+
     const rowMatrix& getCurrentFrame() const;
+
     void setLogarithmic(bool checked);
+
     void setColorMap(const std::string& name);
 
-signals:
-     //! Signal emitted for all changes of the image
-    void dataChanged();
-    void updatePlot(PlottableGraphicsItem* cutter);
+    void setSession(SessionModel* session);
+
+    //! Load image from current Data and frame
+    void loadCurrentImage(bool newimage=true);
 
 protected:
+
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
+
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+
     void keyPressEvent(QKeyEvent *event);
+
     void wheelEvent(QGraphicsSceneWheelEvent *event);
 
 public slots:
     void resetScene();
-    // To be called to update detector image
-    void setData(SessionModel* session, const nsx::sptrDataSet&, size_t frame);
-    void setData(SessionModel* session, const nsx::sptrDataSet&);
 
-    void changeFrame(size_t frame = 0);
     void setMaxIntensity(int);
 
     PeakGraphicsItem* findPeakGraphicsItem(const nsx::sptrPeak3D& peak);
 
     void updatePeaks();
 
-    void redrawImage();
-    //! Change interaction mode in the scene
+    void slotChangeSelectedData(nsx::sptrDataSet peak, int frame);
+
+    void slotChangeSelectedFrame(int frame);
+
+    void slotChangeSelectedPeak(nsx::sptrPeak3D peak);
+
+    void slotChangeEnabledPeak(nsx::sptrPeak3D peak);
+
+    void slotChangeMaskedPeaks(const nsx::PeakList& peaks);
+
     void changeInteractionMode(int);
-    //!
+
     void changeCursorMode(int);
-    //!
+
     void showPeakLabels(bool);
 
     void drawIntegrationRegion(bool);
@@ -88,9 +103,18 @@ public slots:
 
     int currentFrame() const;
 
+signals:
+     //! Signal emitted for all changes of the image
+    void dataChanged();
+
+    void updatePlot(PlottableGraphicsItem* cutter);
+
+    void signalChangeSelectedData(nsx::sptrDataSet data);
+
+    void signalChangeSelectedFrame(int selected_frame);
+
 private:
-    //! Load image from current Data and frame
-    void loadCurrentImage(bool newimage=true);
+
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
 

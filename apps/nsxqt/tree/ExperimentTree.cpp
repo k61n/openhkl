@@ -78,6 +78,13 @@ ExperimentTree::~ExperimentTree()
 {
 }
 
+SessionModel* ExperimentTree::session()
+{
+    auto session_model = dynamic_cast<SessionModel*>(model());
+
+    return session_model;
+}
+
 void ExperimentTree::onCustomMenuRequested(const QPoint& point)
 {
     QModelIndex index = indexAt(point);
@@ -175,7 +182,7 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
             }
         }
     } else if (auto ptr=dynamic_cast<NumorItem*>(item)) {
-        emit plotData(ptr->getData());
+        session()->selectData(ptr->data());
     }
 }
 
@@ -198,7 +205,6 @@ void ExperimentTree::keyPressEvent(QKeyEvent *event)
         }
     }
 }
-
 
 void ExperimentTree::onSingleClick(const QModelIndex &index)
 {

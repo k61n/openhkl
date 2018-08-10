@@ -175,7 +175,5 @@ int main()
 
     NSX_CHECK_GREATER_THAN(n_selected, 600);
 
-    // TODO: put peak prediction back into workflow test!!!
-
     return 0;
 }

@@ -239,7 +239,6 @@ PeakList PeakFilter::complementary(const PeakList& peaks, const PeakList& other_
     return filtered_peaks;
 }
 
-
 PeakList PeakFilter::enabled(const PeakList& peaks, bool flag) const
 {
     PeakList filtered_peaks;

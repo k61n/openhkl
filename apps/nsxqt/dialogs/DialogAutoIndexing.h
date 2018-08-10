@@ -12,6 +12,7 @@ namespace Ui
 class DialogAutoIndexing;
 }
 
+class CollectedPeaksModel;
 class ExperimentItem;
 
 class DialogAutoIndexing : public QDialog
@@ -46,7 +47,7 @@ private:
 
     ExperimentItem* _experiment_item;
 
-    nsx::PeakList _peaks;
+    CollectedPeaksModel* _peaks_model;
 
     std::vector<std::pair<nsx::sptrUnitCell,double>> _solutions;
 };

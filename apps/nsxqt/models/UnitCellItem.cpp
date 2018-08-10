@@ -5,6 +5,7 @@
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Logger.h>
+#include <nsxlib/Peak3D.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/UnitCell.h>
 
@@ -33,6 +34,7 @@ UnitCellItem::UnitCellItem(nsx::sptrUnitCell unit_cell)
 
 UnitCellItem::~UnitCellItem()
 {
+    experimentItem()->peaksItem()->removeUnitCell(_unit_cell);
 }
 
 QVariant UnitCellItem::data(int role) const

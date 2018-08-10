@@ -64,6 +64,8 @@
 #include "SXPlot.h"
 #include "UnitCellPropertyWidget.h"
 
+#include <QDebug>
+
 #include "ui_MainWindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -78,9 +80,7 @@ MainWindow::MainWindow(QWidget *parent)
     // make experiment tree aware of the session
     _session = new SessionModel();
     _ui->experimentTree->setModel(_session);
-
-    // Set Date to the application window title
-    QDateTime datetime=QDateTime::currentDateTime();
+    _ui->dview->getScene()->setSession(_session);
 
     auto debug_log = [this]() -> nsx::Logger
     {
@@ -123,8 +123,8 @@ MainWindow::MainWindow(QWidget *parent)
     nsx::setError(error_log);
 
     //
-    _ui->frameFrame->setEnabled(false);
-    _ui->intensityFrame->setEnabled(false);
+    _ui->frameLayout->setEnabled(false);
+    _ui->intensityLayout->setEnabled(false);
 
     _ui->selectionMode->addItem(QIcon(":/resources/zoomIcon.png"),"");
     _ui->selectionMode->addItem(QIcon(":/resources/cutlineIcon.png"),"");
@@ -143,20 +143,19 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->splitterHorizontal->setStretchFactor(1,90);
 
     // signals and slots
-    connect(_ui->experimentTree, SIGNAL(plotData(nsx::sptrDataSet)),
-            this, SLOT(changeData(nsx::sptrDataSet)));
+    connect(_session, SIGNAL(signalSelectedDataChanged(nsx::sptrDataSet,int)), this, SLOT(slotChangeSelectedData(nsx::sptrDataSet,int)));
+    connect(_session, SIGNAL(signalSelectedPeakChanged(nsx::sptrPeak3D)), this, SLOT(slotChangeSelectedPeak(nsx::sptrPeak3D)));
 
+    connect(_ui->frame,SIGNAL(valueChanged(int)),_ui->dview->getScene(),SLOT(slotChangeSelectedFrame(int)));
 
-    connect(_ui->frame,&QScrollBar::valueChanged,[=](const int value){_ui->_dview->getScene()->changeFrame(value);});
-
-    connect(_ui->intensity,SIGNAL(valueChanged(int)),_ui->_dview->getScene(),SLOT(setMaxIntensity(int)));
-    connect(_ui->selectionMode,SIGNAL(currentIndexChanged(int)),_ui->_dview->getScene(),SLOT(changeInteractionMode(int)));
-    connect(_ui->_dview->getScene(),SIGNAL(updatePlot(PlottableGraphicsItem*)),this,SLOT(updatePlot(PlottableGraphicsItem*)));
+    connect(_ui->intensity,SIGNAL(valueChanged(int)),_ui->dview->getScene(),SLOT(setMaxIntensity(int)));
+    connect(_ui->selectionMode,SIGNAL(currentIndexChanged(int)),_ui->dview->getScene(),SLOT(changeInteractionMode(int)));
+    connect(_ui->dview->getScene(),SIGNAL(updatePlot(PlottableGraphicsItem*)),this,SLOT(updatePlot(PlottableGraphicsItem*)));
     connect(_ui->action_open,SIGNAL(triggered()), _session, SLOT(createNewExperiment()));
 
-    connect(_ui->experimentTree, SIGNAL(resetScene()), _ui->_dview->getScene(), SLOT(resetScene()));
+    connect(_ui->experimentTree, SIGNAL(resetScene()), _ui->dview->getScene(), SLOT(resetScene()));
    
-    connect(_session, SIGNAL(updatePeaks()), _ui->_dview->getScene(), SLOT(updatePeaks()));
+    connect(_session, SIGNAL(updatePeaks()), _ui->dview->getScene(), SLOT(updatePeaks()));
 
     _ui->loggerDockWidget->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
     _ui->plotterDockWidget->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
@@ -183,8 +182,8 @@ MainWindow::MainWindow(QWidget *parent)
         {
             const std::string name_str = action->text().toStdString();
             _session->setColorMap(name_str);
-            _ui->_dview->getScene()->setColorMap(name_str);
-            _ui->_dview->getScene()->redrawImage();
+            _ui->dview->getScene()->setColorMap(name_str);
+            _ui->dview->getScene()->loadCurrentImage(false);
         };
 
         connect(action, &QAction::triggered, this, slot_fn);
@@ -216,69 +215,79 @@ Ui::MainWindow* MainWindow::getUI() const
 }
 
 
-void MainWindow::changeData(nsx::sptrDataSet data)
+void MainWindow::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
 {
-    _ui->frameFrame->setEnabled(true);
-    _ui->intensityFrame->setEnabled(true);
+    _ui->frameLayout->setEnabled(true);
+    _ui->intensityLayout->setEnabled(true);
 
-    int frameMax = int(data->nFrames()-1);
-    int frame = _ui->frame->value();
+    int nFrames = int(data->nFrames());
 
-    if (frame > frameMax) {
-        frame = frameMax;
-    }
-    // why do we do this? why is the signal not working properly?
-    _ui->_dview->getScene()->setData(_session, data, frame);
+    frame = frame%nFrames >= 0 ? frame : frame+nFrames;
 
     _ui->frame->setValue(frame);
-    _ui->frame->setMaximum(frameMax);
-    _ui->spinBox_Frame->setMaximum(frameMax);
 
-    //_ui->intensity->setValue(10);
+    _ui->frame->setMinimum(0);
+    _ui->frame->setMaximum(nFrames-1);
+
+    _ui->spinBox_Frame->setMinimum(0);
+    _ui->spinBox_Frame->setMaximum(nFrames-1);
+}
+
+void MainWindow::slotChangeSelectedPeak(nsx::sptrPeak3D peak)
+{
+    // Get frame number to adjust the data
+    size_t frame = size_t(std::lround(peak->shape().aabb().center()[2]));
+
+    slotChangeSelectedData(peak->data(),frame);
 }
 
 void MainWindow::plotPeak(nsx::sptrPeak3D peak)
 {
-    auto data = peak->data();
-    auto scenePtr = _ui->_dview->getScene();
-    // Ensure that frames
-    changeData(data);
-    // Get frame number to adjust the data
-    size_t data_frame = size_t(std::lround(peak->shape().aabb().center()[2]));
-    scenePtr->setData(_session, data, data_frame);
-    // Update the scrollbar
-    _ui->frame->setValue(data_frame);
-    auto pgi = scenePtr->findPeakGraphicsItem(peak);
+//    auto data = peak->data();
+//    auto scenePtr = _ui->_dview->getScene();
+//    // Ensure that frames
+//    changeData(data);
+//    // Get frame number to adjust the data
+//    size_t data_frame = size_t(std::lround(peak->shape().aabb().center()[2]));
+//    scenePtr->setData(_session, data, data_frame);
+//    // Update the scrollbar
+//    _ui->frame->setValue(data_frame);
+//    auto pgi = scenePtr->findPeakGraphicsItem(peak);
 
-    if (pgi) {
-        updatePlot(pgi);
-    }
+//    if (pgi) {
+//        updatePlot(pgi);
+//    }
+}
+
+void MainWindow::slotChangeSelectedFrame(int selected_frame)
+{
+    _ui->frame->setValue(selected_frame);
 }
 
 void MainWindow::on_actionPixel_position_triggered()
 {
-   _ui->_dview->getScene()->changeCursorMode(DetectorScene::PIXEL);
+   _ui->dview->getScene()->changeCursorMode(DetectorScene::PIXEL);
 }
 
 void MainWindow::on_actionGamma_Nu_triggered()
 {
-    _ui->_dview->getScene()->changeCursorMode(DetectorScene::GAMMA);
+    _ui->dview->getScene()->changeCursorMode(DetectorScene::GAMMA);
 }
 
 void MainWindow::on_action2_Theta_triggered()
 {
-     _ui->_dview->getScene()->changeCursorMode(DetectorScene::THETA);
+     _ui->dview->getScene()->changeCursorMode(DetectorScene::THETA);
 }
 
 void MainWindow::on_actionH_k_l_triggered()
 {
-     _ui->_dview->getScene()->changeCursorMode(DetectorScene::HKL);
+     _ui->dview->getScene()->changeCursorMode(DetectorScene::HKL);
 }
 
 
 void MainWindow::on_actionD_spacing_triggered()
 {
-  _ui->_dview->getScene()->changeCursorMode(DetectorScene::DSPACING);
+  _ui->dview->getScene()->changeCursorMode(DetectorScene::DSPACING);
 }
 
 void MainWindow::on_actionLogger_triggered()
@@ -375,16 +384,16 @@ void MainWindow::on_actionFrom_Sample_triggered()
 {
     QTransform trans;
     trans.scale(1,-1);
-    _ui->_dview->setTransform(trans);
-    _ui->_dview->fitScene();
+    _ui->dview->setTransform(trans);
+    _ui->dview->fitScene();
 }
 
 void MainWindow::on_actionBehind_Detector_triggered()
 {
     QTransform trans;
     trans.scale(-1,-1);
-    _ui->_dview->setTransform(trans);
-    _ui->_dview->fitScene();
+    _ui->dview->setTransform(trans);
+    _ui->dview->fitScene();
 }
 
 void MainWindow::on_action_display_isotopes_database_triggered()
@@ -396,8 +405,8 @@ void MainWindow::on_action_display_isotopes_database_triggered()
 
 void MainWindow::on_actionShow_labels_triggered(bool checked)
 {
-    _ui->_dview->getScene()->showPeakLabels(checked);
-    _ui->_dview->getScene()->update();
+    _ui->dview->getScene()->showPeakLabels(checked);
+    _ui->dview->getScene()->update();
 }
 
 
@@ -405,36 +414,35 @@ void MainWindow::setInspectorWidget(QWidget* w)
 {
     // Ensure that previous Property Widget is deleted.
     auto widget=_ui->dockWidget_Property->widget();
-    if (widget)
+    if (widget) {
         delete widget;
+    }
 
     // Assign current property Widget
     _ui->dockWidget_Property->setWidget(w);
 
-    if (PeakListPropertyWidget* widget=dynamic_cast<PeakListPropertyWidget*>(w)) {
-        // Ensure plot1D is updated
-        connect(widget->getPeakTableView(),SIGNAL(plotPeak(nsx::sptrPeak3D)),this,SLOT(plotPeak(nsx::sptrPeak3D)));
-        connect(widget->getPeakTableView(),
-                SIGNAL(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)),
-                this,
-                SLOT(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)));
+    if (PeakListPropertyWidget* widget = dynamic_cast<PeakListPropertyWidget*>(w)) {
+//        connect(widget->model(),
+//                SIGNAL(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)),
+//                this,
+//                SLOT(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)));
 
-        CollectedPeaksModel* peakModel = dynamic_cast<CollectedPeaksModel*>(widget->getPeakTableView()->model());
-        connect(peakModel,SIGNAL(unitCellUpdated()),_ui->_dview->getScene(),SLOT(updatePeaks()));
+//        CollectedPeaksModel* peakModel = dynamic_cast<CollectedPeaksModel*>(widget->getPeakTableView()->model());
+//        connect(peakModel,SIGNAL(unitCellUpdated()),_ui->_dview->getScene(),SLOT(updatePeaks()));
     }
 }
 
 void MainWindow::on_checkBox_AspectRatio_toggled(bool checked)
 {
-    _ui->_dview->fixDetectorAspectRatio(checked);
+    _ui->dview->fixDetectorAspectRatio(checked);
 }
 
 void MainWindow::on_actionLogarithmic_Scale_triggered(bool checked)
 {
-    _ui->_dview->getScene()->setLogarithmic(checked);
+    _ui->dview->getScene()->setLogarithmic(checked);
 }
 
 void MainWindow::on_actionDraw_peak_integration_area_triggered(bool checked)
 {
-    _ui->_dview->getScene()->drawIntegrationRegion(checked);
+    _ui->dview->getScene()->drawIntegrationRegion(checked);
 }

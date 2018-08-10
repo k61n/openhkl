@@ -45,6 +45,8 @@
 #include "UnitCellItem.h"
 #include "UnitCellsItem.h"
 
+#include <QDebug>
+
 PeaksItem::PeaksItem(): TreeItem()
 {
     setText("Peaks");
@@ -52,6 +54,21 @@ PeaksItem::PeaksItem(): TreeItem()
     setIcon(icon);
     setEditable(false);
     setSelectable(false);
+}
+
+void PeaksItem::removeUnitCell(nsx::sptrUnitCell unit_cell)
+{
+    auto all_peaks = allPeaks();
+
+    for (auto peak : all_peaks) {
+        if (peak->unitCell() != unit_cell) {
+            continue;
+        }
+        qDebug()<<"fsdfsd";
+        peak->setUnitCell(nullptr);
+    }
+
+    emit model()->signalUnitCellRemoved(unit_cell);
 }
 
 nsx::PeakList PeaksItem::selectedPeaks()
@@ -71,6 +88,18 @@ nsx::PeakList PeaksItem::selectedPeaks()
     return peaks;
 }
 
+nsx::PeakList PeaksItem::allPeaks()
+{
+    nsx::PeakList peaks;
+    for (auto i = 0; i < rowCount(); ++i) {
+        auto& list = dynamic_cast<PeakListItem&>(*child(i));
+
+        for (auto&& peak: list.peaks()) {
+            peaks.push_back(peak);
+        }
+    }
+    return peaks;
+}
 
 void PeaksItem::integratePeaks()
 {
@@ -184,7 +213,7 @@ void PeaksItem::buildShapeLibrary()
         return;
     }
 
-    DialogShapeLibrary* dialog = new DialogShapeLibrary(experiment(), unit_cell, peaks);
+    DialogShapeLibrary* dialog = new DialogShapeLibrary(experimentItem(), unit_cell, peaks);
 
     // rejected
     if (!dialog->exec()) {
@@ -228,6 +257,12 @@ void PeaksItem::filterPeaks()
 void PeaksItem::autoindex()
 {
     nsx::PeakList peaks = selectedPeaks();
+
+//    std::unique_ptr<DialogAutoIndexing> dialog(new DialogAutoIndexing(experimentItem(), peaks));
+
+//    if (!dialog->exec()) {
+//        return;
+//    }
 
     DialogAutoIndexing* dialog = new DialogAutoIndexing(experimentItem(), peaks);
 

@@ -167,7 +167,7 @@ nsx::DataList DataItem::selectedData()
     for (int i = 0; i < rowCount(); ++i) {
         if (child(i)->checkState() == Qt::Checked) {
             if (auto ptr = dynamic_cast<NumorItem*>(child(i))) {
-                selectedNumors.push_back(ptr->getData());
+                selectedNumors.push_back(ptr->data());
             }
         }
     }

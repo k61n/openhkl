@@ -58,8 +58,6 @@ public:
     explicit SessionModel();
     ~SessionModel();
 
-    virtual bool setData(const QModelIndex &index, const QVariant &value, int role) override;
-
     nsx::DataList getSelectedNumors() const;
     nsx::DataList getSelectedNumors(ExperimentItem* item) const;
 
@@ -75,6 +73,10 @@ public:
 
     nsx::PeakList peaks(const nsx::DataSet* data) const;
 
+    void selectData(nsx::sptrDataSet data);
+
+    void removeUnitCell(nsx::sptrUnitCell unit_cell);
+
 signals:
 
     void plotData(nsx::sptrDataSet);
@@ -82,6 +84,16 @@ signals:
     void inspectWidget(QWidget*);
 
     void updatePeaks();
+
+    void signalSelectedDataChanged(nsx::sptrDataSet, int frame);
+
+    void signalSelectedPeakChanged(nsx::sptrPeak3D peak);
+
+    void signalEnabledPeakChanged(nsx::sptrPeak3D peak);
+
+    void signalMaskedPeaksChanged(const nsx::PeakList& peaks);
+
+    void signalUnitCellRemoved(nsx::sptrUnitCell unit_cell);
 
 public slots:
 

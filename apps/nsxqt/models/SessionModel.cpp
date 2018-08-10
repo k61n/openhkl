@@ -112,6 +112,15 @@ SessionModel::~SessionModel()
     //delete _model;
 }
 
+void SessionModel::removeUnitCell(nsx::sptrUnitCell unit_cell) {
+
+}
+
+void SessionModel::selectData(nsx::sptrDataSet data)
+{
+    emit signalSelectedDataChanged(data,0);
+}
+
 void SessionModel::onItemChanged(QStandardItem* item)
 {
     emit updatePeaks();
@@ -128,7 +137,7 @@ nsx::DataList SessionModel::getSelectedNumors(ExperimentItem* item) const
             if (it->child(i)->checkState() == Qt::Checked) {
                 if (auto ptr = dynamic_cast<NumorItem*>(it->child(i))) {
                     if (it->parent() == item)
-                        numors.push_back(ptr->getData());
+                        numors.push_back(ptr->data());
                 }
             }
         }
@@ -167,7 +176,7 @@ nsx::DataList SessionModel::getSelectedNumors() const
         for (auto i=0;i < rowCount(it->index());++i) {
             if (it->child(i)->checkState() == Qt::Checked) {
                 if (auto ptr = dynamic_cast<NumorItem*>(it->child(i)))
-                    numors.push_back(ptr->getData());
+                    numors.push_back(ptr->data());
             }
         }
     }
@@ -230,9 +239,4 @@ void SessionModel::createNewExperiment()
         nsx::error() << e.what();
         return;
     }
-}
-
-bool SessionModel::setData(const QModelIndex &index, const QVariant &value, int role)
-{
-    return QStandardItemModel::setData(index, value, role);
 }

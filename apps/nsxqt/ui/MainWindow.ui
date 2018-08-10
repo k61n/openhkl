@@ -163,7 +163,7 @@ QTreeView {
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0">
           <item>
-           <widget class="DetectorGraphicsView" name="_dview">
+           <widget class="DetectorGraphicsView" name="dview">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>3</horstretch>
@@ -221,7 +221,7 @@ QTreeView {
            </widget>
           </item>
           <item>
-           <widget class="QFrame" name="frameFrame">
+           <widget class="QFrame" name="frameLayout">
             <layout class="QHBoxLayout" name="horizontalLayout">
              <property name="leftMargin">
               <number>1</number>
@@ -697,7 +697,7 @@ QCheckBox::indicator:unchecked {
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0,0">
           <item>
-           <widget class="QFrame" name="intensityFrame">
+           <widget class="QFrame" name="intensityLayout">
             <layout class="QVBoxLayout" name="verticalLayout">
              <property name="leftMargin">
               <number>20</number>
@@ -1255,13 +1255,6 @@ border-radius: 4px;
      </widget>
     </item>
    </layout>
-   <zorder>splitterHorizontal</zorder>
-   <zorder>progressBar</zorder>
-   <zorder>frameFrame</zorder>
-   <zorder>selectionMode</zorder>
-   <zorder>progressBar</zorder>
-   <zorder>frameFrame</zorder>
-   <zorder>selectionMode</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -1310,7 +1303,7 @@ border-radius: 4px;
     </widget>
     <widget class="QMenu" name="menuColor_map">
      <property name="title">
-      <string>Color map</string>
+      <string>Color &amp;map</string>
      </property>
     </widget>
     <addaction name="menuGraphics"/>
@@ -1321,7 +1314,7 @@ border-radius: 4px;
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Help</string>
+     <string>&amp;Help</string>
     </property>
     <addaction name="actionAbout"/>
    </widget>
@@ -1688,12 +1681,12 @@ QDockWidget::title {
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Draw peak integration area</string>
+    <string>&amp;Draw peak integration area</string>
    </property>
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>About...</string>
+    <string>&amp;About...</string>
    </property>
   </action>
   <action name="actionLogarithmic_Scale">
@@ -1701,12 +1694,12 @@ QDockWidget::title {
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Logarithmic Scale</string>
+    <string>&amp;Logarithmic Scale</string>
    </property>
   </action>
   <action name="actionProperty">
    <property name="text">
-    <string>Property</string>
+    <string>&amp;Property</string>
    </property>
   </action>
   <action name="actionWrite_log_file">

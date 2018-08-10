@@ -20,6 +20,8 @@ public:
     explicit ExperimentTree(QWidget *parent = 0);
     ~ExperimentTree();
 
+    SessionModel* session();
+
 signals:
     void plotData(nsx::sptrDataSet);
     void inspectWidget(QWidget*);

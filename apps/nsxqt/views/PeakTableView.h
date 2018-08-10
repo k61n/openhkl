@@ -54,11 +54,10 @@ class PeakTableView : public QTableView
 public:
 
     explicit PeakTableView(QWidget* parent = 0);
+
     void contextMenuEvent(QContextMenuEvent *);
 
-    QItemSelectionModel::SelectionFlags selectionCommand(const QModelIndex &index, const QEvent *event) const;
-
-    void keyPressEvent(QKeyEvent *event);
+    virtual void keyPressEvent(QKeyEvent *event) override;
 
 signals:
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
@@ -71,16 +70,19 @@ public slots:
     void normalizeToMonitor();
     //! Plot as function of parameter. Needs to be a numeric type
     void plotAs(const std::string& key);
-    //! Plot selected peak
-    void plotSelectedPeak(const QModelIndex& index);
+
+    void selectPeak(QModelIndex index);
 
     void clearSelectedPeaks();
     void selectAllPeaks();
     void selectValidPeaks();
     void selectUnindexedPeaks();
+
     void togglePeaksSelection();
 
-    void updateUnitCell(const nsx::sptrUnitCell& unitCell);
+private slots:
+
+    void togglePeakSelection(QModelIndex index);
 
 private:
 
@@ -89,17 +91,5 @@ private:
     void sortByNumor(bool up);
     void sortBySelected(bool up);
     void sortByTransmission(bool up);
-    bool checkBeforeWriting();
     void constructTable();
-
-    bool checkBeforeWritting();
-
-    std::string peaksRange() const;
-
-private:
-
-    //! Flag indicating that data have been normalized either to time or monitor.
-    bool _normalized;
-    bool _friedel;
-
 };

@@ -96,6 +96,7 @@ public:
 
     //! Set the peak selection state
     void setSelected(bool);
+
     //! Return the peak selection state
     bool selected() const;
 

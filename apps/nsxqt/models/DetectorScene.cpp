@@ -34,6 +34,8 @@
 #include "MaskGraphicsItem.h"
 #include "PeakGraphicsItem.h"
 
+#include <QDebug>
+
 DetectorScene::DetectorScene(QObject *parent)
 : QGraphicsScene(parent),
   _currentData(nullptr),
@@ -59,20 +61,95 @@ DetectorScene::DetectorScene(QObject *parent)
 {
 }
 
-void DetectorScene::changeFrame(size_t frame)
+void DetectorScene::setSession(SessionModel* session)
+{
+    _session = dynamic_cast<SessionModel*>(session);
+
+    if (!_session) {
+        throw std::runtime_error("Invalid session model");
+    }
+
+    connect(_session,SIGNAL(signalSelectedDataChanged(nsx::sptrDataSet,int)),this,SLOT(slotChangeSelectedData(nsx::sptrDataSet,int)));
+
+    connect(_session,SIGNAL(signalSelectedPeakChanged(nsx::sptrPeak3D)),this,SLOT(slotChangeSelectedPeak(nsx::sptrPeak3D)));
+
+    connect(_session,SIGNAL(signalEnabledPeakChanged(nsx::sptrPeak3D)),this,SLOT(slotChangeEnabledPeak(nsx::sptrPeak3D)));
+
+    connect(_session,SIGNAL(signalMaskedPeaksChanged(const nsx::PeakList&)),this,SLOT(slotChangeMaskedPeaks(const nsx::PeakList&)));
+}
+
+void DetectorScene::slotChangeEnabledPeak(nsx::sptrPeak3D peak)
+{
+    Q_UNUSED(peak)
+
+    loadCurrentImage(false);
+}
+
+void DetectorScene::slotChangeMaskedPeaks(const nsx::PeakList& peaks)
+{
+    Q_UNUSED(peaks)
+
+    loadCurrentImage(false);
+}
+
+void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
+{
+    if (data == _currentData) {
+        return;
+    }
+
+    _currentData = data;
+
+    _currentData->open();
+    auto det = _currentData->diffractometer()->detector();
+
+    _currentFrameIndex = -1;
+
+    _zoomStack.clear();
+    _zoomStack.push_back(QRect(0,0,int(det->nCols()),int(det->nRows())));
+
+    if (_lastClickedGI != nullptr) {
+        removeItem(_lastClickedGI);
+        _lastClickedGI=nullptr;
+    }
+
+    slotChangeSelectedFrame(frame);
+}
+
+void DetectorScene::slotChangeSelectedPeak(nsx::sptrPeak3D peak)
+{
+    auto data = peak->data();
+
+    // Get frame number to adjust the data
+    size_t frame = size_t(std::lround(peak->shape().aabb().center()[2]));
+
+    if (data != _currentData) {
+        slotChangeSelectedData(data,frame);
+        return;
+    }
+
+    slotChangeSelectedFrame(frame);
+}
+
+void DetectorScene::slotChangeSelectedFrame(int frame)
 {
     if (!_currentData) {
         return;
     }
+
     if (!_currentData->isOpened()) {
         _currentData->open();
     }
+
     if (frame == _currentFrameIndex) {
         return;
     }
     _currentFrameIndex = frame;
+
     updatePeaks();
+
     loadCurrentImage(true);
+
     updateMasks(frame);
 }
 
@@ -90,34 +167,6 @@ void DetectorScene::setMaxIntensity(int intensity)
         _currentData->open();
     }
     loadCurrentImage(false);
-}
-
-void DetectorScene::setData(SessionModel* session, const nsx::sptrDataSet& data)
-{
-    setData(session, data, 0);
-}
-
-void DetectorScene::setData(SessionModel* session, const nsx::sptrDataSet& data, size_t frame)
-{
-    _currentData = data;
-    _session = session;
-    _currentFrameIndex = -1;
-
-    if (!_currentData) {
-        return;
-    }
-
-    _currentData->open();
-    auto det = _currentData->diffractometer()->detector();
-    _zoomStack.clear();
-    _zoomStack.push_back(QRect(0,0,int(det->nCols()),int(det->nRows())));
-
-    if (_lastClickedGI != nullptr) {
-        removeItem(_lastClickedGI);
-        _lastClickedGI=nullptr;
-    }
-
-    changeFrame(frame);
 }
 
 void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -320,11 +369,9 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                 else {
                     emit updatePlot(p);
                 }
-            }
-            else if (auto p=dynamic_cast<PlottableGraphicsItem*>(_lastClickedGI)) {
+            } else if (auto p=dynamic_cast<PlottableGraphicsItem*>(_lastClickedGI)) {
                 emit updatePlot(p);
-            }
-            else if (auto p=dynamic_cast<MaskGraphicsItem*>(_lastClickedGI)) {
+            } else if (auto p=dynamic_cast<MaskGraphicsItem*>(_lastClickedGI)) {
                 // add a new mask
                 auto it = findMask(p);
                 if (it != _masks.end()) {
@@ -335,6 +382,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                 _currentData->maskPeaks(peaks);
                 update();
                 updateMasks(_currentFrameIndex);
+                emit _session->signalMaskedPeaksChanged(peaks);
             }else if (auto p=dynamic_cast<EllipseMaskGraphicsItem*>(_lastClickedGI)) {
                 auto it = findMask(p);
                 if (it != _masks.end()) {
@@ -345,6 +393,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                 _currentData->maskPeaks(peaks);
                 update();
                 updateMasks(_currentFrameIndex);    
+                emit _session->signalMaskedPeaksChanged(peaks);
             }
         }
     }
@@ -414,6 +463,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                     _currentData->maskPeaks(peaks);
                     update();
                     updateMasks(_currentFrameIndex);    
+                    emit _session->signalMaskedPeaksChanged(peaks);
                 }
             }
             else if (auto p = dynamic_cast<EllipseMaskGraphicsItem*>(item)) {
@@ -425,6 +475,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                     _currentData->maskPeaks(peaks);
                     update();
                     updateMasks(_currentFrameIndex);    
+                    emit _session->signalMaskedPeaksChanged(peaks);
                 }
             }
             if (p == _lastClickedGI) {
@@ -504,7 +555,7 @@ void DetectorScene::changeInteractionMode(int mode)
 // TODO: fix this whole method, it should be using IntegrationRegion::updateMask()
 void DetectorScene::loadCurrentImage(bool newimage)
 {
-    if (_currentData == nullptr) {
+    if (!_currentData) {
         return;
     }
 
@@ -516,8 +567,6 @@ void DetectorScene::loadCurrentImage(bool newimage)
 
     // Full image size, front of the stack
     QRect& full = _zoomStack.front();
-
-    auto det = _currentData->diffractometer()->detector();
 
     if (_currentFrameIndex >= _currentData->nFrames()) {
         _currentFrameIndex = _currentData->nFrames()-1;
@@ -536,6 +585,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
 
     // update the integration region pixmap
     if (_drawIntegrationRegion) {
+
         const int ncols = _currentData->nCols();
         const int nrows = _currentData->nRows();
         Eigen::MatrixXi mask(nrows, ncols);
@@ -544,16 +594,15 @@ void DetectorScene::loadCurrentImage(bool newimage)
         auto peaks = _session->peaks(_currentData.get());
         for (size_t i = 0; i < peaks.size(); ++i) {
             auto peak = peaks[i];
+
             // IntegrationRegion constructor can throw if the region is invalid
             try {
                 if (peak->enabled()) {
                     auto region = nsx::IntegrationRegion(peak, peak->peakEnd(), peak->bkgBegin(), peak->bkgEnd());
                     region.updateMask(mask, _currentFrameIndex);
-                    // debugging
-                    //nsx::info() << peak->getShape().center().transpose() << "; " << mask.cast<double>().mean();
                 }
             } catch (...) {
-                peak->setSelected(false);
+                    peak->setSelected(false);
             }
         }
 
@@ -565,16 +614,23 @@ void DetectorScene::loadCurrentImage(bool newimage)
                 unsigned int color;
 
                 switch(ev) {
-                case EventType::PEAK: color = green; break;
-                case EventType::BACKGROUND: color = yellow; break;
-                default: color = transparent; break;
-                }            
+                case EventType::PEAK:
+                    color = green;
+                    break;
+                case EventType::BACKGROUND:
+                    color = yellow;
+                    break;
+                default:
+                    color = transparent;
+                    break;
+                }
+
                 // todo: what about unselected peaks?
                 region_img.setPixel(c, r, color);
             }
         }
 
-        if (_integrationRegion == nullptr) {
+        if (!_integrationRegion) {
             _integrationRegion = addPixmap(QPixmap::fromImage(region_img));
             _integrationRegion->setZValue(-1);
         } else {
@@ -602,7 +658,7 @@ const rowMatrix& DetectorScene::getCurrentFrame() const
 
 void DetectorScene::changeCursorMode(int mode)
 {
-    _cursorMode=static_cast<CURSORMODE>(mode);
+    _cursorMode = static_cast<CURSORMODE>(mode);
 }
 
 PeakGraphicsItem* DetectorScene::findPeakGraphicsItem(const nsx::sptrPeak3D& peak)
@@ -650,11 +706,6 @@ int DetectorScene::currentFrame() const
     return _currentFrameIndex;
 }
 
-void DetectorScene::redrawImage()
-{
-    loadCurrentImage(false);
-}
-
 void DetectorScene::clearPeaks()
 {
     if (!_currentData) {
@@ -685,7 +736,7 @@ void DetectorScene::showPeakLabels(bool peaklabel)
 void DetectorScene::drawIntegrationRegion(bool flag)
 {
     if (!_peakGraphicsItems.empty()) {
-        const auto& it=_peakGraphicsItems.begin();
+        const auto& it = _peakGraphicsItems.begin();
         it->second->drawBackground(flag);
     }
 
@@ -694,8 +745,10 @@ void DetectorScene::drawIntegrationRegion(bool flag)
         removeItem(_integrationRegion);
         _integrationRegion = nullptr;
     }
+
     _drawIntegrationRegion = flag;
-    redrawImage();
+
+    loadCurrentImage(false);
 }
 
 void DetectorScene::setLogarithmic(bool checked)
