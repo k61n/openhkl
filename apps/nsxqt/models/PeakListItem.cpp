@@ -27,3 +27,8 @@ void PeakListItem::removePeak(nsx::sptrPeak3D peak)
         _peaks.erase(it);
     }
 }
+
+nsx::PeakList& PeakListItem::peaks()
+{
+    return _peaks;
+}

@@ -31,7 +31,6 @@
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFilter.h>
 #include <nsxlib/PeakFinder.h>
-
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/Source.h>
@@ -56,13 +55,11 @@
 #include "NoteBook.h"
 #include "PeakGraphicsItem.h"
 #include "PlottableGraphicsItem.h"
-#include "PeakListPropertyWidget.h"
 #include "PeakTableView.h"
 #include "PlotFactory.h"
 #include "QtStreamWrapper.h"
 #include "SessionModel.h"
 #include "SXPlot.h"
-#include "UnitCellPropertyWidget.h"
 
 #include <QDebug>
 
@@ -421,7 +418,7 @@ void MainWindow::setInspectorWidget(QWidget* w)
     // Assign current property Widget
     _ui->dockWidget_Property->setWidget(w);
 
-    if (PeakListPropertyWidget* widget = dynamic_cast<PeakListPropertyWidget*>(w)) {
+//    if (PeakListPropertyWidget* widget = dynamic_cast<PeakListPropertyWidget*>(w)) {
 //        connect(widget->model(),
 //                SIGNAL(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)),
 //                this,
@@ -429,7 +426,7 @@ void MainWindow::setInspectorWidget(QWidget* w)
 
 //        CollectedPeaksModel* peakModel = dynamic_cast<CollectedPeaksModel*>(widget->getPeakTableView()->model());
 //        connect(peakModel,SIGNAL(unitCellUpdated()),_ui->_dview->getScene(),SLOT(updatePeaks()));
-    }
+//    }
 }
 
 void MainWindow::on_checkBox_AspectRatio_toggled(bool checked)

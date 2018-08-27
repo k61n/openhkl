@@ -114,7 +114,7 @@ PeakList PeakFinder::find(DataList numors)
             if ( _handler ) {
                 _handler->log("min comp is " + std::to_string(_minSize));
                 _handler->log("max comp is " + std::to_string(_maxSize));
-                _handler->log("search scalee is " + std::to_string(_peakScale));
+                _handler->log("search scale is " + std::to_string(_peakScale));
             }
 
             if (_handler) {

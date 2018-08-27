@@ -33,27 +33,32 @@
 #include "ExperimentItem.h"
 #include "GLSphere.h"
 #include "GLWidget.h"
+#include "InspectableTreeItem.h"
 #include "InstrumentItem.h"
 #include "LibraryItem.h"
 #include "MetaTypes.h"
 #include "NumorItem.h"
 #include "PeakListItem.h"
 #include "PeaksItem.h"
+#include "PeaksPropertyWidget.h"
 #include "ProgressView.h"
 #include "SampleItem.h"
 #include "SessionModel.h"
 #include "UnitCellItem.h"
 #include "UnitCellsItem.h"
 
-#include <QDebug>
-
-PeaksItem::PeaksItem(): TreeItem()
+PeaksItem::PeaksItem(): InspectableTreeItem()
 {
     setText("Peaks");
     QIcon icon(":/resources/peakListIcon.png");
     setIcon(icon);
     setEditable(false);
     setSelectable(false);
+}
+
+QWidget* PeaksItem::inspectItem()
+{
+    return new PeaksPropertyWidget(this);
 }
 
 void PeaksItem::removeUnitCell(nsx::sptrUnitCell unit_cell)
@@ -64,7 +69,6 @@ void PeaksItem::removeUnitCell(nsx::sptrUnitCell unit_cell)
         if (peak->unitCell() != unit_cell) {
             continue;
         }
-        qDebug()<<"fsdfsd";
         peak->setUnitCell(nullptr);
     }
 
