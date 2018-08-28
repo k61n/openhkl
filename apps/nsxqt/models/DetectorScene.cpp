@@ -57,7 +57,8 @@ DetectorScene::DetectorScene(QObject *parent)
   _drawIntegrationRegion(false),
   _colormap(new ColorMap()),
   _integrationRegion(nullptr),
-  _session(nullptr)
+  _session(nullptr),
+  _selected_peak_gi(nullptr)
 {
 }
 
@@ -82,14 +83,14 @@ void DetectorScene::slotChangeEnabledPeak(nsx::sptrPeak3D peak)
 {
     Q_UNUSED(peak)
 
-    loadCurrentImage(false);
+    loadCurrentImage();
 }
 
 void DetectorScene::slotChangeMaskedPeaks(const nsx::PeakList& peaks)
 {
     Q_UNUSED(peaks)
 
-    loadCurrentImage(false);
+    loadCurrentImage();
 }
 
 void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
@@ -129,6 +130,46 @@ void DetectorScene::slotChangeSelectedPeak(nsx::sptrPeak3D peak)
     }
 
     slotChangeSelectedFrame(frame);
+
+    showSelectedPeak(peak);
+}
+
+void DetectorScene::showSelectedPeak(nsx::sptrPeak3D peak)
+{
+    if (_selected_peak_gi) {
+        removeItem(_selected_peak_gi);
+        delete _selected_peak_gi;
+    }
+
+    auto ellipsoid = peak->shape();
+
+    double&& peak_end = peak->peakEnd();
+
+    ellipsoid.scale(peak_end);
+
+    auto&& aabb = ellipsoid.aabb();
+
+    auto&& lower = aabb.lower();
+    auto&& upper = aabb.upper();
+
+    double d_frame_index = static_cast<double>(_currentFrameIndex);
+
+    if (d_frame_index < lower[2] || d_frame_index > upper[2]) {
+        return;
+    }
+
+    qreal w = upper[0] - lower[0];
+    qreal h = upper[1] - lower[1];
+
+    // For some ill-defined peaks the extent can be null-negative. Skip in that case.
+    if (w < 0.0 || h < 0.0) {
+        return;
+    }
+
+    auto center = 0.5*(lower + upper);
+
+    _selected_peak_gi = addRect(QRectF(-w/2.0,-h/2.0,w,h));
+    _selected_peak_gi->setPos(QPointF(center[0],center[1]));
 }
 
 void DetectorScene::slotChangeSelectedFrame(int frame)
@@ -144,13 +185,14 @@ void DetectorScene::slotChangeSelectedFrame(int frame)
     if (frame == _currentFrameIndex) {
         return;
     }
+
     _currentFrameIndex = frame;
 
     updatePeaks();
 
-    loadCurrentImage(true);
+    loadCurrentImage();
 
-    updateMasks(frame);
+    updateMasks();
 }
 
 void DetectorScene::setMaxIntensity(int intensity)
@@ -166,7 +208,8 @@ void DetectorScene::setMaxIntensity(int intensity)
     if (!_currentData->isOpened()) {
         _currentData->open();
     }
-    loadCurrentImage(false);
+
+    loadCurrentImage();
 }
 
 void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -381,7 +424,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                 }
                 _currentData->maskPeaks(peaks);
                 update();
-                updateMasks(_currentFrameIndex);
+                updateMasks();
                 emit _session->signalMaskedPeaksChanged(peaks);
             }else if (auto p=dynamic_cast<EllipseMaskGraphicsItem*>(_lastClickedGI)) {
                 auto it = findMask(p);
@@ -392,7 +435,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                 }
                 _currentData->maskPeaks(peaks);
                 update();
-                updateMasks(_currentFrameIndex);    
+                updateMasks();
                 emit _session->signalMaskedPeaksChanged(peaks);
             }
         }
@@ -462,7 +505,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                     auto peaks = _session->peaks(_currentData.get());
                     _currentData->maskPeaks(peaks);
                     update();
-                    updateMasks(_currentFrameIndex);    
+                    updateMasks();
                     emit _session->signalMaskedPeaksChanged(peaks);
                 }
             }
@@ -474,7 +517,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                     auto peaks =  _session->peaks(_currentData.get());
                     _currentData->maskPeaks(peaks);
                     update();
-                    updateMasks(_currentFrameIndex);    
+                    updateMasks();
                     emit _session->signalMaskedPeaksChanged(peaks);
                 }
             }
@@ -553,7 +596,7 @@ void DetectorScene::changeInteractionMode(int mode)
 }
 
 // TODO: fix this whole method, it should be using IntegrationRegion::updateMask()
-void DetectorScene::loadCurrentImage(bool newimage)
+void DetectorScene::loadCurrentImage()
 {
     if (!_currentData) {
         return;
@@ -572,9 +615,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
         _currentFrameIndex = _currentData->nFrames()-1;
     }
 
-    if (newimage) {
-        _currentFrame =_currentData->frame(_currentFrameIndex);
-    }
+    _currentFrame =_currentData->frame(_currentFrameIndex);
 
     if (_image == nullptr) {
         _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(_currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
@@ -592,17 +633,15 @@ void DetectorScene::loadCurrentImage(bool newimage)
         mask.setConstant(int(EventType::EXCLUDED));
 
         auto peaks = _session->peaks(_currentData.get());
-        for (size_t i = 0; i < peaks.size(); ++i) {
-            auto peak = peaks[i];
-
-            // IntegrationRegion constructor can throw if the region is invalid
-            try {
-                if (peak->enabled()) {
+        for (auto peak : peaks) {
+            if (peak->enabled()) {
+                // IntegrationRegion constructor can throw if the region is invalid
+                try {
                     auto region = nsx::IntegrationRegion(peak, peak->peakEnd(), peak->bkgBegin(), peak->bkgEnd());
                     region.updateMask(mask, _currentFrameIndex);
-                }
-            } catch (...) {
+                } catch (...) {
                     peak->setSelected(false);
+                }
             }
         }
 
@@ -697,8 +736,6 @@ void DetectorScene::updatePeaks()
         addItem(pgi);
         _peakGraphicsItems.insert(std::pair<nsx::sptrPeak3D, PeakGraphicsItem*>(peak,pgi));
     }
-
-    loadCurrentImage(false);
 }
 
 int DetectorScene::currentFrame() const
@@ -719,9 +756,8 @@ void DetectorScene::clearPeaks()
     _peakGraphicsItems.clear();
 }
 
-void DetectorScene::updateMasks(unsigned long frame)
+void DetectorScene::updateMasks()
 {
-    Q_UNUSED(frame)
     _lastClickedGI = nullptr;
 }
 
@@ -748,7 +784,7 @@ void DetectorScene::drawIntegrationRegion(bool flag)
 
     _drawIntegrationRegion = flag;
 
-    loadCurrentImage(false);
+    loadCurrentImage();
 }
 
 void DetectorScene::setLogarithmic(bool checked)

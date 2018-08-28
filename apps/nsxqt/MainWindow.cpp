@@ -180,7 +180,7 @@ MainWindow::MainWindow(QWidget *parent)
             const std::string name_str = action->text().toStdString();
             _session->setColorMap(name_str);
             _ui->dview->getScene()->setColorMap(name_str);
-            _ui->dview->getScene()->loadCurrentImage(false);
+            _ui->dview->getScene()->loadCurrentImage();
         };
 
         connect(action, &QAction::triggered, this, slot_fn);

@@ -56,7 +56,9 @@ public:
     void setSession(SessionModel* session);
 
     //! Load image from current Data and frame
-    void loadCurrentImage(bool newimage=true);
+    void loadCurrentImage();
+
+    void showSelectedPeak(nsx::sptrPeak3D peak);
 
 protected:
 
@@ -99,7 +101,7 @@ public slots:
 
     void clearPeaks();
 
-    void updateMasks(unsigned long frame);
+    void updateMasks();
 
     int currentFrame() const;
 
@@ -153,4 +155,6 @@ private:
     QGraphicsPixmapItem* _integrationRegion;
 
     SessionModel* _session;
+
+    QGraphicsItem* _selected_peak_gi;
 };
