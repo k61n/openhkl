@@ -262,15 +262,11 @@ void PeaksItem::autoindex()
 {
     nsx::PeakList peaks = selectedPeaks();
 
-//    std::unique_ptr<DialogAutoIndexing> dialog(new DialogAutoIndexing(experimentItem(), peaks));
+    std::unique_ptr<DialogAutoIndexing> dialog(new DialogAutoIndexing(experimentItem(), peaks));
 
-//    if (!dialog->exec()) {
-//        return;
-//    }
-
-    DialogAutoIndexing* dialog = new DialogAutoIndexing(experimentItem(), peaks);
-
-    dialog->show();
+    if (!dialog->exec()) {
+        return;
+    }
 }
 
 void PeaksItem::refine()

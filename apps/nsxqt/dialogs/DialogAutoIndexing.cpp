@@ -26,15 +26,12 @@
 
 #include "ui_DialogAutoIndexing.h"
 
-DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, nsx::PeakList peaks, QWidget *parent)
+DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, const nsx::PeakList& peaks, QWidget *parent)
 : QDialog(parent),
   ui(new Ui::DialogAutoIndexing),
   _experiment_item(experiment_item)
 {
     ui->setupUi(this);
-
-    setAttribute(Qt::WA_DeleteOnClose);
-    setModal(false);
 
     ui->niggli->setStyleSheet("font-weight: normal;");
     ui->niggli->setCheckable(true);
@@ -71,9 +68,20 @@ DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, nsx::Pea
     _peaks_model = new CollectedPeaksModel(_experiment_item->model(),_experiment_item->experiment(),peaks);
     ui->peaks->setModel(_peaks_model);
 
+    _defaults.reserve(peaks.size());
+    for (auto peak : peaks) {
+        auto unit_cell = peak->unitCell();
+        if (unit_cell) {
+            _defaults.push_back(std::make_pair(peak,std::make_shared<nsx::UnitCell>(nsx::UnitCell(*unit_cell))));
+        } else {
+            _defaults.push_back(std::make_pair(peak,nullptr));
+        }
+    }
+
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->unitCells);
     connect(shortcut, SIGNAL(activated()), this, SLOT(removeUnitCells()));
 
+    connect(ui->cancelOK->button(QDialogButtonBox::StandardButton::Reset),SIGNAL(clicked()),this,SLOT(slotResetUnitCell()));
     connect(ui->cancelOK,SIGNAL(rejected()),this,SLOT(reject()));
     connect(ui->cancelOK,SIGNAL(accepted()),this,SLOT(accept()));
 }
@@ -81,6 +89,29 @@ DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, nsx::Pea
 DialogAutoIndexing::~DialogAutoIndexing()
 {
     delete ui;
+}
+
+void DialogAutoIndexing::slotResetUnitCell()
+{
+    // Restore for each peak the initial unit cell
+    for (auto p : _defaults) {
+        p.first->setUnitCell(p.second);
+    }
+
+    // Update the peak table view
+    QModelIndex topLeft = _peaks_model->index(0, 0);
+    QModelIndex bottomRight = _peaks_model->index(_peaks_model->rowCount(QModelIndex())-1, _peaks_model->columnCount(QModelIndex())-1);
+    emit _peaks_model->dataChanged(topLeft,bottomRight);
+
+    // Clear the unit cell list
+    ui->unitCells->clear();
+}
+
+void DialogAutoIndexing::reject()
+{
+    slotResetUnitCell();
+
+    QDialog::reject();
 }
 
 void DialogAutoIndexing::accept()
@@ -223,6 +254,9 @@ void DialogAutoIndexing::selectSolution(int index)
     for (auto r : selected_rows) {
         peaks[r.row()]->setUnitCell(selected_unit_cell);
     }
+    QModelIndex topLeft = _peaks_model->index(0, 0);
+    QModelIndex bottomRight = _peaks_model->index(_peaks_model->rowCount(QModelIndex())-1, _peaks_model->columnCount(QModelIndex())-1);
+    emit _peaks_model->dataChanged(topLeft,bottomRight);
 
     QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(selected_unit_cell->name()));
     item->setData(Qt::UserRole,QVariant::fromValue(selected_unit_cell));

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include <QDialog>
@@ -21,7 +22,7 @@ class DialogAutoIndexing : public QDialog
 
 public:
 
-    explicit DialogAutoIndexing(ExperimentItem* experiment_tree, const nsx::PeakList peaks, QWidget* parent=nullptr);
+    explicit DialogAutoIndexing(ExperimentItem* experiment_tree, const nsx::PeakList& peaks, QWidget* parent=nullptr);
 
     ~DialogAutoIndexing();
 
@@ -34,6 +35,10 @@ private slots:
     void removeUnitCells();
 
     void selectSolution(int);
+
+    void slotResetUnitCell();
+
+    virtual void reject() override;
 
     virtual void accept() override;
 
@@ -48,6 +53,8 @@ private:
     ExperimentItem* _experiment_item;
 
     CollectedPeaksModel* _peaks_model;
+
+    std::vector<std::pair<nsx::sptrPeak3D,std::shared_ptr<nsx::UnitCell>>> _defaults;
 
     std::vector<std::pair<nsx::sptrUnitCell,double>> _solutions;
 };
