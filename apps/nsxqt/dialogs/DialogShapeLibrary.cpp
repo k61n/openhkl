@@ -85,7 +85,7 @@ DialogShapeLibrary::DialogShapeLibrary(nsx::sptrExperiment experiment,
     ui->peaks->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
     ui->peaks->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
 
-    connect(ui->drawFrame, SIGNAL(sliderMoved(int)), this, SLOT(drawFrame(int)));
+    connect(ui->drawFrame, SIGNAL(valueChanged(int)), this, SLOT(drawFrame(int)));
     connect(ui->peaks,&QTableView::clicked,[this](QModelIndex index){selectTargetPeak(index.row());});
     connect(ui->peaks->verticalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(selectTargetPeak(int)));
 }
