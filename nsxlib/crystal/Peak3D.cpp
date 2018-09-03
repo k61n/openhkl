@@ -155,7 +155,7 @@ void Peak3D::setTransmission(double transmission)
     _transmission = transmission;
 }
 
-bool Peak3D::selected() const
+bool Peak3D::enabled() const
 {
     return (!_masked && _selected);
 }

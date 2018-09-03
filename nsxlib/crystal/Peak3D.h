@@ -101,7 +101,7 @@ public:
     //! Selected the peak for fitting or integration
     void setSelected(bool);
     //! Return true if peak is selected
-    bool selected() const;
+    bool enabled() const;
 
     //! Apply mask to peak
     void setMasked(bool masked);

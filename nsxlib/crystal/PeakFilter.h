@@ -17,7 +17,9 @@ public:
     //! Filter peaks that are complementary to the given peaks
     PeakList complementary(const PeakList& peaks, const PeakList& other_peaks) const;
     //! Filter only selected peaks
-    PeakList selected(const PeakList& peaks, bool selection_flag) const;
+    PeakList enabled(const PeakList& peaks, bool selection_flag) const;
+    //! Filter only peaks indexed by the given cell
+    PeakList indexed(const PeakList& peaks, double tolerance) const;
     //! Filter only peaks indexed by the given cell
     PeakList indexed(const PeakList& peaks, sptrUnitCell cell, double tolerance) const;
     //! Filter peaks associated to the given dataset
@@ -32,6 +34,8 @@ public:
     PeakList lowIntensity(const PeakList& peaks, double threshold) const;
     //! Filter those peaks which are predicted
     PeakList predicted(const PeakList& peaks) const;
+    //! Remove peaks which are not in a d-range
+    PeakList dRange(const PeakList& peaks, double dmin, double max) const;
     //! Filter peaks by minimum d
     PeakList dMin(const PeakList& peaks, double dmin) const;
     //! Filter peaks by maximum d

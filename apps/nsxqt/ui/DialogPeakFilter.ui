@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>512</width>
-    <height>400</height>
+    <width>702</width>
+    <height>434</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,105 +16,14 @@
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout">
-     <item row="4" column="0">
-      <widget class="QCheckBox" name="checkPValue">
-       <property name="text">
-        <string>Remove peaks with raw p-value greater than</string>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="2">
-      <widget class="QDoubleSpinBox" name="spinBoxDmax"/>
-     </item>
      <item row="7" column="0">
-      <widget class="QCheckBox" name="checkDmin">
-       <property name="text">
-        <string>Remove peaks with d less than</string>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="0">
-      <widget class="QCheckBox" name="checkDmax">
-       <property name="text">
-        <string>Remove peaks with d greater than</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2">
-      <widget class="QDoubleSpinBox" name="spinBoxIsigma">
-       <property name="minimum">
-        <double>-1000.000000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>1000.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.010000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.500000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="2">
-      <widget class="QDoubleSpinBox" name="spinBoxDmin"/>
-     </item>
-     <item row="4" column="2">
-      <widget class="QDoubleSpinBox" name="spinBoxPValue">
-       <property name="decimals">
-        <number>6</number>
-       </property>
-       <property name="singleStep">
-        <double>0.000001000000000</double>
-       </property>
-       <property name="value">
-        <double>0.000100000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="QCheckBox" name="checkOverlapping">
+      <widget class="QCheckBox" name="overlapping">
        <property name="text">
         <string>Remove overlapping peaks</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
-      <widget class="QCheckBox" name="checkIsigma">
-       <property name="text">
-        <string>Remove peaks with I/sigma less than</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QCheckBox" name="checkUnselected">
-       <property name="text">
-        <string>Remove unselected peaks</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QCheckBox" name="checkUnindexed">
-       <property name="text">
-        <string>Remove unindexed peaks</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QCheckBox" name="checkSpaceGroup">
-       <property name="text">
-        <string>Remove peaks forbidden by space group</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QCheckBox" name="checkBoxMergedP">
-       <property name="text">
-        <string>Remove merged peaks with p-value greater than</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="2">
+     <item row="6" column="2">
       <widget class="QDoubleSpinBox" name="spinBoxMergedP">
        <property name="decimals">
         <number>4</number>
@@ -130,15 +39,148 @@
        </property>
       </widget>
      </item>
+     <item row="2" column="0">
+      <widget class="QCheckBox" name="disabled">
+       <property name="text">
+        <string>Disabled peaks</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QCheckBox" name="checkIsigma">
+       <property name="text">
+        <string>Remove peaks with I/sigma less than</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QCheckBox" name="checkPValue">
+       <property name="text">
+        <string>Remove peaks with raw p-value greater than</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QGroupBox" name="dRange">
+       <property name="title">
+        <string>d value</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QDoubleSpinBox" name="dmin">
+          <property name="decimals">
+           <number>6</number>
+          </property>
+          <property name="maximum">
+           <double>999999.989999999990687</double>
+          </property>
+          <property name="singleStep">
+           <double>0.010000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="dmax">
+          <property name="decimals">
+           <number>6</number>
+          </property>
+          <property name="maximum">
+           <double>9999.989999999999782</double>
+          </property>
+          <property name="singleStep">
+           <double>0.010000000000000</double>
+          </property>
+          <property name="value">
+           <double>10.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="4" column="2">
+      <widget class="QDoubleSpinBox" name="spinBoxIsigma">
+       <property name="minimum">
+        <double>-1000.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1000.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.010000000000000</double>
+       </property>
+       <property name="value">
+        <double>0.500000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="2">
+      <widget class="QDoubleSpinBox" name="spinBoxPValue">
+       <property name="decimals">
+        <number>6</number>
+       </property>
+       <property name="singleStep">
+        <double>0.000001000000000</double>
+       </property>
+       <property name="value">
+        <double>0.000100000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QCheckBox" name="checkBoxMergedP">
+       <property name="text">
+        <string>Remove merged peaks with p-value greater than</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QGroupBox" name="unindexed">
+       <property name="title">
+        <string>Unindexed peaks</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QComboBox" name="unitCells"/>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="indexingTolerance">
+          <property name="decimals">
+           <number>6</number>
+          </property>
+          <property name="maximum">
+           <double>100.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.200000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QCheckBox" name="extincted">
+       <property name="text">
+        <string>Space-group extincted</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item row="1" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
+    <widget class="QDialogButtonBox" name="actions">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
@@ -147,7 +189,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>actions</sender>
    <signal>accepted()</signal>
    <receiver>DialogPeakFilter</receiver>
    <slot>accept()</slot>
@@ -163,7 +205,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>actions</sender>
    <signal>rejected()</signal>
    <receiver>DialogPeakFilter</receiver>
    <slot>reject()</slot>

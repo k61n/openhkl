@@ -36,7 +36,7 @@ bool invalid(const nsx::PeakFilter& filter, nsx::sptrPeak3D peak)
     }
    
     if (filter._removeUnselected) {
-        if (!peak->selected()) {
+        if (!peak->enabled()) {
             return true;
         }
     }
@@ -197,11 +197,11 @@ PeakList PeakFilter::complementary(const PeakList& peaks, const PeakList& other_
 }
 
 
-PeakList PeakFilter::selected(const PeakList& peaks, bool selection_flag) const
+PeakList PeakFilter::enabled(const PeakList& peaks, bool selection_flag) const
 {
     PeakList filtered_peaks;
 
-    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[selection_flag](sptrPeak3D peak){return selection_flag == peak->selected();});
+    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[selection_flag](sptrPeak3D peak){return selection_flag == peak->enabled();});
 
     return filtered_peaks;
 }
@@ -211,6 +211,27 @@ PeakList PeakFilter::indexed(const PeakList& peaks, sptrUnitCell cell, double to
     PeakList filtered_peaks;
 
     for (auto peak : peaks) {
+        if (!cell) {
+            continue;
+        }
+        MillerIndex miller_index(peak->q(), *cell);
+        if (miller_index.indexed(tolerance)) {
+            filtered_peaks.push_back(peak);
+        }
+    }
+
+    return filtered_peaks;
+}
+
+PeakList PeakFilter::indexed(const PeakList& peaks, double tolerance) const
+{
+    PeakList filtered_peaks;
+
+    for (auto peak : peaks) {
+        auto cell = peak->unitCell();
+        if (!cell) {
+            continue;
+        }
         MillerIndex miller_index(peak->q(), *cell);
         if (miller_index.indexed(tolerance)) {
             filtered_peaks.push_back(peak);
@@ -312,6 +333,24 @@ PeakList PeakFilter::predicted(const PeakList& peaks) const
     for (auto peak : peaks) {
 
         if (peak->isPredicted()) {
+            filtered_peaks.push_back(peak);
+        }
+    }
+
+    return filtered_peaks;
+}
+
+PeakList PeakFilter::dRange(const PeakList& peaks, double dmin, double dmax) const
+{
+    PeakList filtered_peaks;
+
+    for (auto peak : peaks) {
+
+        auto q = peak->q();
+
+        double d = 1.0/q.rowVector().norm();
+
+        if (d >= dmin && d <= dmax) {
             filtered_peaks.push_back(peak);
         }
     }

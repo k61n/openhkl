@@ -116,8 +116,7 @@ void PeaksItem::integratePeaks()
 
     nsx::PeakFilter peak_filter;
     // todo: bkg_begin and bkg_end
-    auto peaks = peak_filter.dMin(selected_peaks, dmin);
-    peaks = peak_filter.dMax(peaks, dmax);
+    auto peaks = peak_filter.dRange(selected_peaks, dmin, dmax);
 
     for (auto&& numor: numors) {
         nsx::info() << "Integrating " << peaks.size() << " peaks";
