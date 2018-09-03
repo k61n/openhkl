@@ -15,6 +15,7 @@ class DialogAutoIndexing;
 
 class CollectedPeaksModel;
 class ExperimentItem;
+class QAbstractButton;
 
 class DialogAutoIndexing : public QDialog
 {
@@ -29,6 +30,8 @@ public:
     void buildSolutionsTable();
 
 private slots:
+
+    void actionRequested(QAbstractButton* button);
 
     void autoIndex();
 

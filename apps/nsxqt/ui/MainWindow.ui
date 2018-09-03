@@ -1231,6 +1231,9 @@ border-radius: 4px;
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Interaction mode&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="layoutDirection">
              <enum>Qt::LeftToRight</enum>
             </property>
@@ -1298,7 +1301,8 @@ border-radius: 4px;
      <property name="title">
       <string>&amp;Peak</string>
      </property>
-     <addaction name="actionShow_labels"/>
+     <addaction name="showPeakLabels"/>
+     <addaction name="showPeakAreas"/>
      <addaction name="actionDraw_peak_integration_area"/>
     </widget>
     <widget class="QMenu" name="menuColor_map">
@@ -1607,14 +1611,6 @@ QDockWidget::title {
     <string>&amp;Behind Detector</string>
    </property>
   </action>
-  <action name="actionShow_labels">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Show labels</string>
-   </property>
-  </action>
   <action name="action_display_isotopes_database">
    <property name="text">
     <string>&amp;Display isotopes database</string>
@@ -1710,6 +1706,30 @@ QDockWidget::title {
   <action name="actionAuto_assign_unit_cell">
    <property name="text">
     <string>Auto assign unit cell</string>
+   </property>
+  </action>
+  <action name="showPeakAreas">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>S&amp;how Areas</string>
+   </property>
+  </action>
+  <action name="showPeakLabels">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Show labels</string>
+   </property>
+  </action>
+  <action name="actionIndexing">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;HKL</string>
    </property>
   </action>
  </widget>

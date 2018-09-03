@@ -1,5 +1,6 @@
 #include <string>
 
+#include <QAbstractButton>
 #include <QItemSelectionModel>
 #include <QMessageBox>
 #include <QShortcut>
@@ -36,8 +37,6 @@ DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, const ns
     ui->niggli->setStyleSheet("font-weight: normal;");
     ui->niggli->setCheckable(true);
     ui->niggli->setChecked(false);
-
-    connect(ui->index,SIGNAL(clicked()),this,SLOT(autoIndex()));
 
     // Accept solution and set Unit-Cell
     connect(ui->solutions->verticalHeader(),SIGNAL(sectionDoubleClicked(int)),this,SLOT(selectSolution(int)));
@@ -81,7 +80,7 @@ DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, const ns
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->unitCells);
     connect(shortcut, SIGNAL(activated()), this, SLOT(removeUnitCells()));
 
-    connect(ui->cancelOK->button(QDialogButtonBox::StandardButton::Reset),SIGNAL(clicked()),this,SLOT(slotResetUnitCell()));
+    connect(ui->cancelOK,SIGNAL(clicked(QAbstractButton*)),this,SLOT(actionRequested(QAbstractButton*)));
     connect(ui->cancelOK,SIGNAL(rejected()),this,SLOT(reject()));
     connect(ui->cancelOK,SIGNAL(accepted()),this,SLOT(accept()));
 }
@@ -89,6 +88,26 @@ DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, const ns
 DialogAutoIndexing::~DialogAutoIndexing()
 {
     delete ui;
+}
+
+void DialogAutoIndexing::actionRequested(QAbstractButton *button)
+{
+    auto button_role = ui->cancelOK->standardButton(button);
+
+    switch(button_role)
+    {
+    case QDialogButtonBox::StandardButton::Reset: {
+        slotResetUnitCell();
+        break;
+    }
+    case QDialogButtonBox::StandardButton::Apply: {
+        autoIndex();
+        break;
+    }
+    default: {
+        return;
+    }
+    }
 }
 
 void DialogAutoIndexing::slotResetUnitCell()

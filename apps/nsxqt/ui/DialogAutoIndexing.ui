@@ -214,16 +214,6 @@
         </widget>
        </item>
        <item row="8" column="0" colspan="2">
-        <widget class="QPushButton" name="index">
-         <property name="text">
-          <string>Autoindex</string>
-         </property>
-         <property name="autoDefault">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0" colspan="2">
         <widget class="QListWidget" name="unitCells"/>
        </item>
       </layout>
@@ -291,7 +281,7 @@ QPushButton:disabled {
         <string notr="true"/>
        </property>
        <property name="standardButtons">
-        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
+        <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
        </property>
        <property name="centerButtons">
         <bool>false</bool>

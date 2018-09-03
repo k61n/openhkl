@@ -18,6 +18,8 @@
 
 #include "ColorMap.h"
 
+class QAbstractButton;
+
 namespace Ui {
 class DialogPeakFind;
 }
@@ -41,6 +43,8 @@ public:
     const nsx::PeakList& peaks() const;
 
 private slots:
+
+    void actionRequested(QAbstractButton* button);
 
     void clipPreview(int state);
 

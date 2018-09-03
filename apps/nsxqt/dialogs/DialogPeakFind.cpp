@@ -111,8 +111,7 @@ DialogPeakFind::DialogPeakFind(const nsx::DataList& data, QWidget *parent)
     connect(ui->frameSlider,SIGNAL(valueChanged(int)),this,SLOT(changeSelectedFrame(int)));
     connect(ui->frameIndex,SIGNAL(valueChanged(int)),this,SLOT(changeSelectedFrame(int)));
 
-    connect(ui->startPeaksSearch,SIGNAL(clicked()),this,SLOT(find()));
-
+    connect(ui->cancelOK, SIGNAL(clicked(QAbstractButton*)),this,SLOT(actionRequested(QAbstractButton*)));
     connect(ui->cancelOK, SIGNAL(accepted()), this, SLOT(accept()));
     connect(ui->cancelOK, SIGNAL(rejected()), this, SLOT(reject()));
 }
@@ -120,6 +119,22 @@ DialogPeakFind::DialogPeakFind(const nsx::DataList& data, QWidget *parent)
 DialogPeakFind::~DialogPeakFind()
 {
     delete ui;
+}
+
+void DialogPeakFind::actionRequested(QAbstractButton *button)
+{
+    auto button_role = ui->cancelOK->standardButton(button);
+
+    switch(button_role)
+    {
+    case QDialogButtonBox::StandardButton::Apply: {
+        find();
+        break;
+    }
+    default: {
+        return;
+    }
+    }
 }
 
 void DialogPeakFind::changeSelectedData(int selected_data)
