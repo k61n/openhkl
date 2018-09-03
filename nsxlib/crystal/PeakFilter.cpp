@@ -86,7 +86,6 @@ PeakList PeakFilter::sparseDataSet(const PeakList& peaks, size_t min_num_peaks) 
     // Gather the peaks per dataset
     std::map<sptrDataSet,PeakList> peaks_per_dataset;
     for (auto peak : peaks) {
-
         auto data = peak->data();
         if (!data) {
             continue;
@@ -305,19 +304,6 @@ PeakList PeakFilter::indexed(const PeakList& peaks) const
     return filtered_peaks;
 }
 
-PeakList PeakFilter::dataset(const PeakList& peaks, sptrDataSet dataset) const
-{
-    PeakList filtered_peaks;
-
-    for (auto peak : peaks) {
-        if (peak->data() == dataset) {
-            filtered_peaks.push_back(peak);
-        }
-    }
-
-    return filtered_peaks;
-}
-
 PeakList PeakFilter::unitCell(const PeakList& peaks, sptrUnitCell unit_cell) const
 {
     PeakList filtered_peaks;
@@ -383,20 +369,6 @@ PeakList PeakFilter::dRange(const PeakList& peaks, double dmin, double dmax) con
         if (d >= dmin && d <= dmax) {
             filtered_peaks.push_back(peak);
         }
-    }
-
-    return filtered_peaks;
-}
-
-PeakList PeakFilter::selection(const PeakList& peaks, const std::vector<int>& indexes) const
-{
-    PeakList filtered_peaks;
-
-    for (int idx: indexes) {
-        if (idx <0 || idx >= peaks.size()) {
-            continue;
-        }
-        filtered_peaks.push_back(peaks[idx]);
     }
 
     return filtered_peaks;
