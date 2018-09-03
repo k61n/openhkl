@@ -73,6 +73,7 @@ void PeaksItem::removeUnitCell(nsx::sptrUnitCell unit_cell)
     }
 
     emit model()->signalUnitCellRemoved(unit_cell);
+    emit model()->itemChanged(this);
 }
 
 nsx::PeakList PeaksItem::selectedPeaks()
@@ -161,12 +162,18 @@ void PeaksItem::integratePeaks()
     }
 
     nsx::info() << "Done reintegrating peaks";
+
+    emit model()->itemChanged(this);
+
 }
 
 void PeaksItem::findSpaceGroup()
 {
-    DialogSpaceGroup dialog(selectedPeaks());
-    dialog.exec();
+    std::unique_ptr<DialogSpaceGroup> dialog(new DialogSpaceGroup(selectedPeaks()));
+    if (!dialog->exec()) {
+        return;
+    }
+    emit model()->itemChanged(this);
 }
 
 void PeaksItem::showPeaksOpenGL()
@@ -189,8 +196,10 @@ void PeaksItem::showPeaksOpenGL()
 void PeaksItem::absorptionCorrection()
 {
     // todo: check that this is correct!
-    DialogMCAbsorption* dialog = new DialogMCAbsorption(experimentItem());
-    dialog->open();
+    std::unique_ptr<DialogMCAbsorption> dialog(new DialogMCAbsorption(experimentItem()));
+    if (!dialog->exec()) {
+        return;
+    }
 }
 
 void PeaksItem::buildShapeLibrary()
@@ -217,7 +226,7 @@ void PeaksItem::buildShapeLibrary()
         return;
     }
 
-    DialogShapeLibrary* dialog = new DialogShapeLibrary(experimentItem(), unit_cell, peaks);
+    std::unique_ptr<DialogShapeLibrary> dialog(new DialogShapeLibrary(experimentItem(), unit_cell, peaks));
 
     // rejected
     if (!dialog->exec()) {
@@ -232,6 +241,8 @@ void PeaksItem::buildShapeLibrary()
 
     exp_item->libraryItem()->library() = new_library;
     nsx::info() << "Update profiles of " << peaks.size() << " peaks";
+
+    emit model()->itemChanged(this);
 }
 
 void PeaksItem::filterPeaks()
@@ -256,6 +267,8 @@ void PeaksItem::filterPeaks()
     peak_list->setText("Filtered peaks");
 
     appendRow(peak_list);
+
+    emit model()->itemChanged(this);
 }
 
 void PeaksItem::autoindex()
@@ -267,6 +280,8 @@ void PeaksItem::autoindex()
     if (!dialog->exec()) {
         return;
     }
+
+    emit model()->itemChanged(this);
 }
 
 void PeaksItem::refine()
@@ -292,8 +307,12 @@ void PeaksItem::refine()
         return;
     }
 
-    DialogRefineUnitCell* dialog = new DialogRefineUnitCell(experiment(),uc,peaks,nullptr);
-    dialog->exec();
+    std::unique_ptr<DialogRefineUnitCell> dialog(new DialogRefineUnitCell(experiment(),uc,peaks,nullptr));
+    if (!dialog->exec()) {
+        return;
+    }
+
+    emit model()->itemChanged(this);
 }
 
 void PeaksItem::autoAssignUnitCell()
@@ -332,4 +351,6 @@ void PeaksItem::autoAssignUnitCell()
         }
     }
     nsx::debug() << "Done auto assigning unit cells";
+
+    emit model()->itemChanged(this);
 }

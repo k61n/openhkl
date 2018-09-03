@@ -53,9 +53,7 @@ private slots:
     void updatePlot(PlottableGraphicsItem* cutter);
     void on_actionFrom_Sample_triggered();
     void on_actionBehind_Detector_triggered();
-    void on_actionShow_labels_triggered(bool checked);
     void on_action_display_isotopes_database_triggered();
-    void on_actionH_k_l_triggered();
     void on_checkBox_AspectRatio_toggled(bool checked);
 
     void on_actionLogarithmic_Scale_triggered(bool checked);

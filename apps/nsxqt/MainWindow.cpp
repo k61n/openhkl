@@ -123,13 +123,13 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->frameLayout->setEnabled(false);
     _ui->intensityLayout->setEnabled(false);
 
-    _ui->selectionMode->addItem(QIcon(":/resources/zoomIcon.png"),"");
-    _ui->selectionMode->addItem(QIcon(":/resources/cutlineIcon.png"),"");
-    _ui->selectionMode->addItem(QIcon(":/resources/horizontalSliceIcon.png"),"");
-    _ui->selectionMode->addItem(QIcon(":/resources/verticalSliceIcon.png"),"");
-    _ui->selectionMode->addItem(QIcon(":/resources/selectionIcon.png"),"");
-    _ui->selectionMode->addItem(QIcon(":/resources/ellipseIcon.png"),"");
-    _ui->selectionMode->addItem(QIcon(":/resources/slice3D.png"),"");
+    _ui->selectionMode->addItem(QIcon(":/resources/selectIcon.png"),"selection");
+    _ui->selectionMode->addItem(QIcon(":/resources/zoomIcon.png"),"zoom");
+    _ui->selectionMode->addItem(QIcon(":/resources/cutlineIcon.png"),"line plot");
+    _ui->selectionMode->addItem(QIcon(":/resources/horizontalSliceIcon.png"),"horizontal slice");
+    _ui->selectionMode->addItem(QIcon(":/resources/verticalSliceIcon.png"),"vertical slice");
+    _ui->selectionMode->addItem(QIcon(":/resources/rectangularMaskIcon.png"),"rectangular mask");
+    _ui->selectionMode->addItem(QIcon(":/resources/ellipsoidalMaskIcon.png"),"ellipsoidal mask");
 
     // Vertical splitter between Tree and Inspector Widget
     _ui->splitterVertical->setStretchFactor(0,50);
@@ -152,7 +152,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(_ui->experimentTree, SIGNAL(resetScene()), _ui->dview->getScene(), SLOT(resetScene()));
    
-    connect(_session, SIGNAL(updatePeaks()), _ui->dview->getScene(), SLOT(updatePeaks()));
+    connect(_session, SIGNAL(updatePeaks()), _ui->dview->getScene(), SLOT(resetPeakGraphicsItems()));
 
     _ui->loggerDockWidget->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
     _ui->plotterDockWidget->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
@@ -186,6 +186,9 @@ MainWindow::MainWindow(QWidget *parent)
         connect(action, &QAction::triggered, this, slot_fn);
         _ui->menuColor_map->addAction(action);
     }
+
+    connect(_ui->showPeakLabels,SIGNAL(triggered(bool)),_ui->dview->getScene(),SLOT(showPeakLabels(bool)));
+    connect(_ui->showPeakAreas,SIGNAL(triggered(bool)),_ui->dview->getScene(),SLOT(showPeakAreas(bool)));
 }
 
 MainWindow::~MainWindow()
@@ -210,7 +213,6 @@ Ui::MainWindow* MainWindow::getUI() const
 {
     return _ui;
 }
-
 
 void MainWindow::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
 {
@@ -266,21 +268,15 @@ void MainWindow::on_actionPixel_position_triggered()
    _ui->dview->getScene()->changeCursorMode(DetectorScene::PIXEL);
 }
 
-void MainWindow::on_actionGamma_Nu_triggered()
-{
-    _ui->dview->getScene()->changeCursorMode(DetectorScene::GAMMA);
-}
-
 void MainWindow::on_action2_Theta_triggered()
 {
      _ui->dview->getScene()->changeCursorMode(DetectorScene::THETA);
 }
 
-void MainWindow::on_actionH_k_l_triggered()
+void MainWindow::on_actionGamma_Nu_triggered()
 {
-     _ui->dview->getScene()->changeCursorMode(DetectorScene::HKL);
+    _ui->dview->getScene()->changeCursorMode(DetectorScene::GAMMA);
 }
-
 
 void MainWindow::on_actionD_spacing_triggered()
 {
@@ -399,13 +395,6 @@ void MainWindow::on_action_display_isotopes_database_triggered()
     DialogIsotopesDatabase* dlg=new DialogIsotopesDatabase();
     dlg->exec();
 }
-
-void MainWindow::on_actionShow_labels_triggered(bool checked)
-{
-    _ui->dview->getScene()->showPeakLabels(checked);
-    _ui->dview->getScene()->update();
-}
-
 
 void MainWindow::setInspectorWidget(QWidget* w)
 {

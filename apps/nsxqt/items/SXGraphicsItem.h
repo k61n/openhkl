@@ -16,22 +16,20 @@ class SXGraphicsItem : public QGraphicsItem
 {
 public:
 
-	// Constructors and destructor
-
 	// Construct a SX graphics item
     SXGraphicsItem(QGraphicsItem *parent=0, bool deletable=false, bool movable=false);
     // Destructor
     virtual ~SXGraphicsItem();
 
-    // Events
+    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
 
-    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
-    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
-    virtual void wheelEvent(QGraphicsSceneWheelEvent *event);
+    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
-    // Getters and setters
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+
+    virtual void wheelEvent(QGraphicsSceneWheelEvent* event) override;
 
     virtual QRectF boundingRect() const=0;
     DetectorScene* getScene() const;
@@ -39,8 +37,6 @@ public:
     void setDeletable(bool deletable);
     //! Set whether or not the item is movable
     void setMovable(bool movable);
-
-    // Other methods
 
     //! Returns whether or not the item is deletable
     bool isDeletable() const;
@@ -62,6 +58,6 @@ protected:
     QPen _pen;
 
     //! Text child object that contains hkl label
-    QGraphicsTextItem* _label;
+    QGraphicsTextItem* _label_gi;
 
 };

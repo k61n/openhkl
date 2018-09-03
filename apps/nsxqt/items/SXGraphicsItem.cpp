@@ -13,7 +13,7 @@ SXGraphicsItem::SXGraphicsItem(QGraphicsItem *parent, bool deletable, bool movab
   _movable(movable),
   _firstMove(true),
   _lastPos(),
-  _label(nullptr)
+  _label_gi(nullptr)
 {
     _pen.setWidth(1);
     _pen.setCosmetic(true);
@@ -32,7 +32,7 @@ SXGraphicsItem::~SXGraphicsItem()
 void SXGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
-    _hovered=true;
+    _hovered = true;
     setCursor(QCursor(Qt::PointingHandCursor));
     update();
 }
@@ -40,7 +40,7 @@ void SXGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 void SXGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
-    _hovered=false;
+    _hovered = false;
     setCursor(QCursor(Qt::CrossCursor));
     update();
 }
@@ -74,7 +74,7 @@ bool SXGraphicsItem::isMovable() const
 
 void SXGraphicsItem::showLabel(bool show)
 {
-    _label->setVisible(show);
+    _label_gi->setVisible(show);
 }
 
 void SXGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event)

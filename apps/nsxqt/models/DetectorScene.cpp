@@ -50,7 +50,6 @@ DetectorScene::DetectorScene(QObject *parent)
   _zoomStack(),
   _itemSelected(false),
   _image(nullptr),
-  _peakGraphicsItems(),
   _masks(),
   _lastClickedGI(nullptr),
   _logarithmic(false),
@@ -58,17 +57,19 @@ DetectorScene::DetectorScene(QObject *parent)
   _colormap(new ColorMap()),
   _integrationRegion(nullptr),
   _session(nullptr),
-  _selected_peak_gi(nullptr)
+  _selected_peak_gi(nullptr),
+  _peak_graphics_items()
 {
+}
+
+SessionModel* DetectorScene::session()
+{
+    return _session;
 }
 
 void DetectorScene::setSession(SessionModel* session)
 {
-    _session = dynamic_cast<SessionModel*>(session);
-
-    if (!_session) {
-        throw std::runtime_error("Invalid session model");
-    }
+    _session = session;
 
     connect(_session,SIGNAL(signalSelectedDataChanged(nsx::sptrDataSet,int)),this,SLOT(slotChangeSelectedData(nsx::sptrDataSet,int)));
 
@@ -77,6 +78,55 @@ void DetectorScene::setSession(SessionModel* session)
     connect(_session,SIGNAL(signalEnabledPeakChanged(nsx::sptrPeak3D)),this,SLOT(slotChangeEnabledPeak(nsx::sptrPeak3D)));
 
     connect(_session,SIGNAL(signalMaskedPeaksChanged(const nsx::PeakList&)),this,SLOT(slotChangeMaskedPeaks(const nsx::PeakList&)));
+}
+
+void DetectorScene::clearPeakGraphicsItems()
+{
+    if (!_currentData) {
+        return;
+    }
+
+    for (auto p : _peak_graphics_items) {
+        removeItem(p.second);
+        delete p.second;
+    }
+
+    _peak_graphics_items.clear();
+}
+
+void DetectorScene::resetPeakGraphicsItems()
+{
+    if (!_currentData) {
+        return;
+    }
+
+    clearPeakGraphicsItems();
+
+    auto peaks = _session->peaks(_currentData.get());
+
+    for (auto&& peak : peaks) {
+
+        auto peak_ellipsoid = peak->shape();
+
+        peak_ellipsoid.scale(peak->peakEnd());
+
+        auto& aabb = peak_ellipsoid.aabb();
+
+        auto lower = aabb.lower();
+
+        auto upper = aabb.upper();
+
+        // If the current frame of the scene is out of the peak bounds do not paint it
+        if (_currentFrameIndex < lower[2] || _currentFrameIndex > upper[2]) {
+            continue;
+        }
+
+        PeakGraphicsItem* peak_gi = new PeakGraphicsItem(peak,_currentFrameIndex);
+
+        addItem(peak_gi);
+
+        _peak_graphics_items.insert(std::make_pair(peak,peak_gi));
+    }
 }
 
 void DetectorScene::slotChangeEnabledPeak(nsx::sptrPeak3D peak)
@@ -136,40 +186,37 @@ void DetectorScene::slotChangeSelectedPeak(nsx::sptrPeak3D peak)
 
 void DetectorScene::showSelectedPeak(nsx::sptrPeak3D peak)
 {
+    auto it = _peak_graphics_items.find(peak);
+
+    if (it == _peak_graphics_items.end()) {
+        return;
+    }
+
     if (_selected_peak_gi) {
         removeItem(_selected_peak_gi);
         delete _selected_peak_gi;
     }
 
-    auto ellipsoid = peak->shape();
+    auto peak_ellipsoid = peak->shape();
 
-    double&& peak_end = peak->peakEnd();
+    auto center = peak_ellipsoid.intersectionCenter({0.0,0.0,1.0},{0.0,0.0,static_cast<double>(_currentFrameIndex)});
 
-    ellipsoid.scale(peak_end);
+    _selected_peak_gi = new QGraphicsRectItem(nullptr);
+    _selected_peak_gi->setPos(center[0],center[1]);
+    _selected_peak_gi->setRect(-10,-10,20,20);
 
-    auto&& aabb = ellipsoid.aabb();
+    QPen pen;
+    pen.setColor(Qt::darkCyan);
+    pen.setStyle(Qt::DotLine);
+    _selected_peak_gi->setPen(pen);
+    _selected_peak_gi->setZValue(-1);
+    _selected_peak_gi->setAcceptHoverEvents(false);
 
-    auto&& lower = aabb.lower();
-    auto&& upper = aabb.upper();
+    addItem(_selected_peak_gi);
 
-    double d_frame_index = static_cast<double>(_currentFrameIndex);
+    it->second->setVisible(true);
 
-    if (d_frame_index < lower[2] || d_frame_index > upper[2]) {
-        return;
-    }
-
-    qreal w = upper[0] - lower[0];
-    qreal h = upper[1] - lower[1];
-
-    // For some ill-defined peaks the extent can be null-negative. Skip in that case.
-    if (w < 0.0 || h < 0.0) {
-        return;
-    }
-
-    auto center = 0.5*(lower + upper);
-
-    _selected_peak_gi = addRect(QRectF(-w/2.0,-h/2.0,w,h));
-    _selected_peak_gi->setPos(QPointF(center[0],center[1]));
+    update();
 }
 
 void DetectorScene::slotChangeSelectedFrame(int frame)
@@ -188,7 +235,9 @@ void DetectorScene::slotChangeSelectedFrame(int frame)
 
     _currentFrameIndex = frame;
 
-    updatePeaks();
+    clearPeakGraphicsItems();
+
+    resetPeakGraphicsItems();
 
     loadCurrentImage();
 
@@ -223,9 +272,10 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     // The left button was pressed
     if (event->buttons() & Qt::LeftButton) {
 
-        if (event->modifiers()==Qt::ControlModifier) {
+        if (event->modifiers() == Qt::ControlModifier) {
             return;
         }
+
         // Case of the Zoom mode, update the scene
         if (_mode==ZOOM) {
             QRectF zoom=_zoomrect->rect();
@@ -233,12 +283,14 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             _zoomrect->setRect(zoom);
             return;
         }
-        if (_lastClickedGI == nullptr) {
+
+        if (!_lastClickedGI) {
             return;
         }
-        _lastClickedGI->mouseMoveEvent(event);
-        auto p = dynamic_cast<PlottableGraphicsItem*>(_lastClickedGI);
 
+        _lastClickedGI->mouseMoveEvent(event);
+
+        auto p = dynamic_cast<PlottableGraphicsItem*>(_lastClickedGI);
         if (p != nullptr) {
             emit updatePlot(p);
         }
@@ -253,7 +305,7 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             return;
         }
         auto p = dynamic_cast<PlottableGraphicsItem*>(gItem);
-        if (p != nullptr) {
+        if (p) {
             emit updatePlot(p);
             QGraphicsScene::mouseMoveEvent(event);
         }
@@ -276,13 +328,13 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     // The left button was pressed
     if (event->buttons() & Qt::LeftButton) {
         // Get the graphics item on which the user has clicked
-        auto item=itemAt(event->lastScenePos(),QTransform());
+        auto item = itemAt(event->lastScenePos(),QTransform());
 
         if (event->modifiers() == Qt::ControlModifier) {
             item->setSelected(!item->isSelected());
             return;
         }
-        // If the item is a NSXTools GI and is selectedit will become the current active GI
+        // If the item is a NSXTools GI and is selected it will become the current active GI
         if (auto p = dynamic_cast<SXGraphicsItem*>(item)) {
             if (p->isSelected()) {
                 _lastClickedGI = p;
@@ -290,54 +342,57 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             }
         }
         switch(_mode) {
-        // Case of the Zoom mode
-        case ZOOM:
+
+        case SELECT: {
+            break;
+        }
+        case ZOOM: {
             _zoomstart = event->lastScenePos().toPoint();
             _zoomend = _zoomstart;
             _zoomrect = addRect(QRect(_zoomstart,_zoomend));
-            // _zoomrect->setParentItem(_image);
+
             pen1 = QPen(QBrush(QColor("gray")),1.0);
             pen1.setWidth(1);
             pen1.setCosmetic(true);
             _zoomrect->setPen(pen1);
             _zoomrect->setBrush(QBrush(QColor(255,0,0,30)));
             break;
-            // Case of Cuttings mode (horizontal/vertical slices, line cut)
-        case HORIZONTALSLICE:
-            cutter=new CutSliceGraphicsItem(_currentData,true);
+        }
+        case HORIZONTALSLICE: {
+            cutter = new CutSliceGraphicsItem(_currentData,true);
             break;
-        case VERTICALSLICE:
-            cutter=new CutSliceGraphicsItem(_currentData,false);
+        }
+        case VERTICALSLICE: {
+            cutter = new CutSliceGraphicsItem(_currentData,false);
             break;
-        case LINE:
+        }
+        case LINE: {
             cutter=new CutLineGraphicsItem(_currentData);
             break;
-            // Case of Mask mode
-        case MASK:
+        }
+        case MASK: {
             mask = new MaskGraphicsItem(_currentData, new nsx::AABB);
             mask->setFrom(event->lastScenePos());
             mask->setTo(event->lastScenePos());
             addItem(mask);
-            _lastClickedGI=mask;
+            _lastClickedGI = mask;
             _masks.emplace_back(mask, nullptr);
             break;
-            //case of Ellipse mask mode
-        case ELLIPSE_MASK:
+        }
+        case ELLIPSE_MASK: {
             ellipse_mask = new EllipseMaskGraphicsItem(_currentData, new nsx::AABB);
             ellipse_mask->setFrom(event->lastScenePos());
             ellipse_mask->setTo(event->lastScenePos());
             addItem(ellipse_mask);
-            _lastClickedGI=ellipse_mask;
+            _lastClickedGI = ellipse_mask;
             _masks.emplace_back(ellipse_mask, nullptr);
             break;
-        case INDEXING:
-#pragma warning "todo: implement this case"
-            break;
+        }
         }
         if (cutter != nullptr) {
             cutter->setFrom(event->lastScenePos());
             addItem(cutter);
-            _lastClickedGI=cutter;
+            _lastClickedGI = cutter;
         }
     }
     // The right button was pressed
@@ -361,48 +416,77 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         return;
     }
 
-    auto peaks = _session->peaks(_currentData.get());
-
     // The user released the left mouse button
     if (event->button() & Qt::LeftButton) {
-        if (event->modifiers()==Qt::ControlModifier) {
+
+        if (event->modifiers() == Qt::ControlModifier) {
             return;
         }
-        // Case of the Zoom mode, the zoom is updated and added on top of the zoom stack
-        if(_mode==ZOOM) {
+
+        if (_mode == SELECT) {
+            auto item = itemAt(event->lastScenePos(),QTransform());
+
+            auto peak_item = dynamic_cast<PeakGraphicsItem*>(item);
+
+            if (!peak_item) {
+                return;
+            }
+
+            auto peak = peak_item->peak();
+
+            emit _session->signalSelectedPeakChanged(peak);
+
+        } else if (_mode == ZOOM) {
+
             qreal top = _zoomrect->rect().top();
             qreal bot = _zoomrect->rect().bottom();
             qreal left = _zoomrect->rect().left();
             qreal right = _zoomrect->rect().right();
 
-            if (qAbs(top-bot)<1e-10 || qAbs(left-right)<1e-10) {
+            // If the user just clicked on the left mouse button with holding it, skip the event
+            if (qAbs(top-bot)<=1 || qAbs(left-right)<=1) {
+                removeItem(_zoomrect);
+                delete _zoomrect;
                 return;
             }
+
             if (top > bot) {
                 std::swap(top,bot);
             }
+
             if (right < left) {
                 std::swap(left,right);
             }
-            QRect max=_zoomStack.front();
-            if (top<max.top()) {
-                top=max.top();
+
+            QRect max = _zoomStack.front();
+
+            if (top < max.top()) {
+                top = max.top();
             }
-            if (bot>max.bottom()) {
-                bot=max.bottom()+1;
+
+            if (bot > max.bottom()) {
+                bot = max.bottom()+1;
             }
-            if (left<max.left()) {
-                left=max.left();
+
+            if (left < max.left()) {
+                left = max.left();
             }
-            if (right>max.right()) {
-                right=max.right()+1;
+
+            if (right > max.right()) {
+                right = max.right()+1;
             }
+
             _zoomrect->setRect(left,top,right-left,bot-top);
+            _zoomStack.push_back(_zoomrect->rect().toRect());
             setSceneRect(_zoomrect->rect());
             removeItem(_zoomrect);
-            _zoomStack.push_back(_zoomrect->rect().toRect());
+            delete _zoomrect;
             emit dataChanged();
+
         } else {
+
+            auto peaks = _session->peaks(_currentData.get());
+
             if (auto p=dynamic_cast<CutterGraphicsItem*>(_lastClickedGI)) {
                 if (true) {
                     // delete p....
@@ -473,8 +557,8 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
 
     // The user pressed on Delete key
     if (event->key() == Qt::Key_Delete) {
-        QList<QGraphicsItem*> items=selectedItems();
-        int nPeaksErased = int(_peakGraphicsItems.size());
+        QList<QGraphicsItem*> items = selectedItems();
+        int nPeaksUnselected = int(_peak_graphics_items.size());
         for (auto item: items) {
             auto p = dynamic_cast<SXGraphicsItem*>(item);
 
@@ -489,11 +573,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             // If the item is a peak graphics item, remove its corresponding peak from the data,
             // update the set of peak graphics items and update the scene
             if (auto p = dynamic_cast<PeakGraphicsItem*>(item)) {
-                // todo: actually delete the peak!
-                // this was changed during a refactor and never fixed properly
-                p->setSelected(false);
-                _peakGraphicsItems.erase(p->getPeak());
-
+                p->peak()->setSelected(false);
             }
             // If the item is a mask graphics item, remove its corresponding mask from the data,
             // update the QList of mask graphics items and update the scene
@@ -528,9 +608,9 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             removeItem(item);
         }
         // Computes the new number of peaks, and if it changes log it
-        nPeaksErased -= _peakGraphicsItems.size();
-        if (nPeaksErased > 0) {
-            nsx::info() << "Removed "<< nPeaksErased << " peaks";
+        nPeaksUnselected -= _peak_graphics_items.size();
+        if (nPeaksUnselected > 0) {
+            nsx::info() << "Unselected "<< nPeaksUnselected << " peaks";
         }
     }
 }
@@ -540,8 +620,8 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     if (!_currentData) {
         return;
     }
-    auto instr=_currentData->diffractometer();
-    auto det=instr->detector();
+    auto instr = _currentData->diffractometer();
+    auto det = instr->detector();
 
     int nrows = int(det->nRows());
     int ncols = int(det->nCols());
@@ -556,11 +636,8 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
     nsx::InstrumentState state = _currentData->interpolatedState(_currentFrameIndex);
 
-    //const auto& samplev = state.sample.values();
-    //const auto& detectorv = state.detector.values();
-    auto sample=instr->sample();
     auto& mono = instr->source()->selectedMonochromator();
-    double wave=mono.wavelength();
+    double wave = mono.wavelength();
 
     QString ttip;
 
@@ -571,21 +648,22 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     double th2 = state.twoTheta(pos);
 
     switch (_cursorMode) {
-    case PIXEL:
+    case PIXEL: {
         ttip = QString("(%1,%2) I:%3").arg(col).arg(row).arg(intensity);
         break;
-    case GAMMA:           
+    }
+    case GAMMA: {
         ttip = QString("(%1,%2) I: %3").arg(gamma/nsx::deg).arg(nu/nsx::deg).arg(intensity);
         break;
-    case THETA:      
+    }
+    case THETA: {
         ttip = QString("(%1) I: %2").arg(th2/nsx::deg).arg(intensity);
         break;
-    case DSPACING:
+    }
+    case DSPACING: {
         ttip = QString("(%1) I: %2").arg(wave/(2*sin(0.5*th2))).arg(intensity);
         break;
-    case HKL:
-#pragma warning "todo: implement this case"
-        break;
+    }
     }
     QToolTip::showText(event->screenPos(),ttip);
 }
@@ -700,60 +778,9 @@ void DetectorScene::changeCursorMode(int mode)
     _cursorMode = static_cast<CURSORMODE>(mode);
 }
 
-PeakGraphicsItem* DetectorScene::findPeakGraphicsItem(const nsx::sptrPeak3D& peak)
-{
-    auto it = _peakGraphicsItems.find(peak);
-
-    if (it != _peakGraphicsItems.end()) {
-        return it->second;
-    }
-    return nullptr;
-}
-
-void DetectorScene::updatePeaks()
-{
-    if (!_currentData) {
-        return;
-    }
-
-    clearPeaks();
-    auto peaks = _session->peaks(_currentData.get());
-
-    for (auto&& peak : peaks) {
-        auto peak_ellipsoid = peak->shape();
-        peak_ellipsoid.scale(peak->bkgEnd());
-
-        const auto aabb = peak_ellipsoid.aabb();
-
-        const Eigen::Vector3d& l = aabb.lower();
-        const Eigen::Vector3d& u = aabb.upper();
-
-        if (_currentFrameIndex < l[2] || _currentFrameIndex > u[2]) {
-            continue;
-        }
-        PeakGraphicsItem* pgi = new PeakGraphicsItem(peak);
-        pgi->setFrame(_currentFrameIndex);
-        addItem(pgi);
-        _peakGraphicsItems.insert(std::pair<nsx::sptrPeak3D, PeakGraphicsItem*>(peak,pgi));
-    }
-}
-
 int DetectorScene::currentFrame() const
 {
     return _currentFrameIndex;
-}
-
-void DetectorScene::clearPeaks()
-{
-    if (!_currentData) {
-        return;
-    }
-
-    for (auto& peak : _peakGraphicsItems) {
-        removeItem(peak.second);
-        delete peak.second;
-    }
-    _peakGraphicsItems.clear();
 }
 
 void DetectorScene::updateMasks()
@@ -761,24 +788,28 @@ void DetectorScene::updateMasks()
     _lastClickedGI = nullptr;
 }
 
-void DetectorScene::showPeakLabels(bool peaklabel)
+void DetectorScene::showPeakLabels(bool flag)
 {
-    if (!_peakGraphicsItems.empty()) {
-        for (const auto& p : _peakGraphicsItems)
-            p.second->setLabelVisible(peaklabel);
+    for (auto p : _peak_graphics_items) {
+        p.second->showLabel(flag);
     }
+    update();
+}
+
+void DetectorScene::showPeakAreas(bool flag)
+{
+    for (auto p : _peak_graphics_items) {
+        p.second->showArea(flag);
+    }
+    update();
 }
 
 void DetectorScene::drawIntegrationRegion(bool flag)
 {
-    if (!_peakGraphicsItems.empty()) {
-        const auto& it = _peakGraphicsItems.begin();
-        it->second->drawBackground(flag);
-    }
-
     // clear the background if necessary
     if (_integrationRegion && flag == false) {
         removeItem(_integrationRegion);
+        delete _integrationRegion;
         _integrationRegion = nullptr;
     }
 
@@ -799,7 +830,7 @@ void DetectorScene::setColorMap(const std::string &name)
 
 void DetectorScene::resetScene()
 {
-    clearPeaks();
+    clearPeakGraphicsItems();
     clear();
     _currentData = nullptr;
     _currentFrameIndex = 0;
