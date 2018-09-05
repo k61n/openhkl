@@ -7,55 +7,61 @@
     <x>0</x>
     <y>0</y>
     <width>803</width>
-    <height>568</height>
+    <height>570</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Peak Filters</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,1">
      <item>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="9" column="0">
-        <widget class="QCheckBox" name="extincted">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QGroupBox" name="state">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Keep the peaks which satisfy space group extinction law&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Keep the peaks which are selected/unselected and/or masked/unmasked&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
-         <property name="text">
-          <string>Space-group extincted</string>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="0">
-        <widget class="QGroupBox" name="sparseDataSets">
          <property name="title">
-          <string>Sparse datasets</string>
+          <string>State</string>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
          </property>
          <property name="checkable">
           <bool>true</bool>
          </property>
          <property name="checked">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,0,0,1">
           <item>
-           <widget class="QLabel" name="label_6">
+           <widget class="QCheckBox" name="selected">
             <property name="text">
-             <string>Min. number of peaks</string>
+             <string>Selected</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="minNumPeaks">
-            <property name="maximum">
-             <number>100000</number>
+           <widget class="QCheckBox" name="masked">
+            <property name="text">
+             <string>Masked</string>
             </property>
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer">
+           <widget class="QCheckBox" name="predicted">
+            <property name="text">
+             <string>Predicted</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_4">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -70,10 +76,20 @@
          </layout>
         </widget>
        </item>
-       <item row="8" column="0">
-        <widget class="QGroupBox" name="dRange">
+       <item>
+        <widget class="QCheckBox" name="indexed">
+         <property name="text">
+          <string>Indexed peak</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="indexedByUnitCell">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Keep the peaks which are indexable with a given unit cell&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="title">
-          <string>d range</string>
+          <string>Indexed peaks by unit cell</string>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -81,52 +97,45 @@
          <property name="checked">
           <bool>false</bool>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0,1">
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0,2,3">
           <item>
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel" name="label_7">
             <property name="text">
-             <string>Min.</string>
+             <string>Unit cell</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="dmin">
+           <widget class="QComboBox" name="unitCells"/>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Tolerance</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="indexingTolerance">
             <property name="decimals">
              <number>6</number>
             </property>
             <property name="maximum">
-             <double>999999.989999999990687</double>
-            </property>
-            <property name="singleStep">
-             <double>0.010000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>Max.</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="dmax">
-            <property name="decimals">
-             <number>6</number>
-            </property>
-            <property name="maximum">
-             <double>9999.989999999999782</double>
-            </property>
-            <property name="singleStep">
-             <double>0.010000000000000</double>
-            </property>
-            <property name="value">
              <double>100.000000000000000</double>
             </property>
+            <property name="value">
+             <double>0.200000000000000</double>
+            </property>
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer_2">
+           <spacer name="horizontalSpacer_5">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -141,20 +150,7 @@
          </layout>
         </widget>
        </item>
-       <item row="13" column="0">
-        <widget class="QCheckBox" name="overlapping">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Keep the peaks which do not overlap&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Remove overlapping peaks</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
+       <item>
         <widget class="QGroupBox" name="strength">
          <property name="title">
           <string>Strength (I/sigma)</string>
@@ -234,71 +230,10 @@
          </layout>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QGroupBox" name="state">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Keep the peaks which are selected/unselected and/or masked/unmasked&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
+       <item>
+        <widget class="QGroupBox" name="dRange">
          <property name="title">
-          <string>State</string>
-         </property>
-         <property name="flat">
-          <bool>false</bool>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,0,0,1">
-          <item>
-           <widget class="QCheckBox" name="selected">
-            <property name="text">
-             <string>Selected</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="masked">
-            <property name="text">
-             <string>Masked</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="predicted">
-            <property name="text">
-             <string>Predicted</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QGroupBox" name="indexedByUnitCell">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Keep the peaks which are indexable with a given unit cell&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="title">
-          <string>Indexed peaks by unit cell</string>
+          <string>d range</string>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -306,45 +241,52 @@
          <property name="checked">
           <bool>false</bool>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0,2,3">
+         <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0,1">
           <item>
-           <widget class="QLabel" name="label_7">
+           <widget class="QLabel" name="label_4">
             <property name="text">
-             <string>Unit cell</string>
+             <string>Min.</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="unitCells"/>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_3">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Tolerance</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="indexingTolerance">
+           <widget class="QDoubleSpinBox" name="dMin">
             <property name="decimals">
              <number>6</number>
             </property>
             <property name="maximum">
-             <double>100.000000000000000</double>
+             <double>999999.989999999990687</double>
             </property>
-            <property name="value">
-             <double>0.200000000000000</double>
+            <property name="singleStep">
+             <double>0.010000000000000</double>
             </property>
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer_5">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Max.</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="dMax">
+            <property name="decimals">
+             <number>6</number>
+            </property>
+            <property name="maximum">
+             <double>9999.989999999999782</double>
+            </property>
+            <property name="singleStep">
+             <double>0.010000000000000</double>
+            </property>
+            <property name="value">
+             <double>100.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -359,24 +301,59 @@
          </layout>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QCheckBox" name="indexed">
-         <property name="text">
-          <string>Indexed peak</string>
-         </property>
-        </widget>
-       </item>
-       <item row="14" column="0">
-        <widget class="QCheckBox" name="complementary">
+       <item>
+        <widget class="QCheckBox" name="extincted">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Keep the peaks filtered out by the aformentionned filters&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Keep the peaks which satisfy space group extinction law&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>Keep the complementary selection</string>
+          <string>Space-group extincted</string>
          </property>
         </widget>
        </item>
-       <item row="11" column="0">
+       <item>
+        <widget class="QGroupBox" name="sparseDataSets">
+         <property name="title">
+          <string>Sparse datasets</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Min. number of peaks</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="minNumPeaks">
+            <property name="maximum">
+             <number>100000</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="mergedPeakSignificance">
          <property name="title">
           <string>Merged peak significance</string>
@@ -427,7 +404,33 @@
          </layout>
         </widget>
        </item>
+       <item>
+        <widget class="QCheckBox" name="overlapping">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Keep the peaks which do not overlap&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Remove overlapping peaks</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="complementary">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Keep the peaks filtered out by the aformentionned filters&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Keep the complementary selection</string>
+         </property>
+        </widget>
+       </item>
       </layout>
+     </item>
+     <item>
+      <widget class="PeakTableView" name="peaks"/>
      </item>
     </layout>
    </item>
@@ -443,6 +446,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PeakTableView</class>
+   <extends>QTableView</extends>
+   <header>PeakTableView.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

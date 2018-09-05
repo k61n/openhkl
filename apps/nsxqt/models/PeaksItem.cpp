@@ -248,7 +248,7 @@ void PeaksItem::buildShapeLibrary()
 void PeaksItem::filterPeaks()
 {
     auto&& selected_peaks = selectedPeaks();
-    std::unique_ptr<DialogPeakFilter> dialog(new DialogPeakFilter(selected_peaks));
+    std::unique_ptr<DialogPeakFilter> dialog(new DialogPeakFilter(experimentItem(), selected_peaks));
 
     if (!dialog->exec()) {
         return;

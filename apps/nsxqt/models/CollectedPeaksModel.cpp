@@ -24,8 +24,6 @@
 #include "ProgressView.h"
 #include "SessionModel.h"
 
-#include <QDebug>
-
 struct PeakFactors {
 
     double gamma;

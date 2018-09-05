@@ -13,12 +13,15 @@
 #include <nsxlib/UnitCell.h>
 
 #include "ui_DialogPeakFilter.h"
+#include "CollectedPeaksModel.h"
+#include "ExperimentItem.h"
 #include "MetaTypes.h"
 #include "DialogPeakFilter.h"
 
-DialogPeakFilter::DialogPeakFilter(const nsx::PeakList& peaks, QWidget* parent)
+DialogPeakFilter::DialogPeakFilter(ExperimentItem* experiment_item, const nsx::PeakList& peaks, QWidget* parent)
 : QDialog(parent),
   _ui(new Ui::DialogPeakFilter),
+  _experiment_item(experiment_item),
   _peaks(peaks),
   _filtered_peaks()
 {
@@ -49,9 +52,13 @@ DialogPeakFilter::DialogPeakFilter(const nsx::PeakList& peaks, QWidget* parent)
     _ui->dRange->setCheckable(true);
     _ui->dRange->setChecked(false);
 
-    // Populate the unit cell combobox
+    // Populate the unit cell combobox and set the dmin and dmax value
+    double dmin(std::numeric_limits<double>::infinity()), dmax(-std::numeric_limits<double>::infinity());
     std::set<nsx::sptrUnitCell> unit_cells;
     for (auto peak : peaks) {
+        auto d = 1.0/peak->q().rowVector().norm();
+        dmin = std::min(dmin,d);
+        dmax = std::max(dmax,d);
         auto unit_cell = peak->unitCell();
         if (!unit_cell) {
             continue;
@@ -61,10 +68,16 @@ DialogPeakFilter::DialogPeakFilter(const nsx::PeakList& peaks, QWidget* parent)
             unit_cells.insert(unit_cell);
         }
     }
-    for (auto unit_cell : unit_cells) {
 
+    _ui->dMin->setValue(dmin);
+    _ui->dMax->setValue(dmax);
+
+    for (auto unit_cell : unit_cells) {
         _ui->unitCells->addItem(QString::fromStdString(unit_cell->name()),QVariant::fromValue(unit_cell));
     }
+
+    _peaks_model = new CollectedPeaksModel(_experiment_item->model(),_experiment_item->experiment(),_peaks);
+    _ui->peaks->setModel(_peaks_model);
 
     connect(_ui->unitCells,SIGNAL(currentIndexChanged(int)),this,SLOT(slotUnitCellChanged(int)));
 
@@ -75,6 +88,10 @@ DialogPeakFilter::DialogPeakFilter(const nsx::PeakList& peaks, QWidget* parent)
 
 DialogPeakFilter::~DialogPeakFilter()
 {
+    if (_peaks_model) {
+        delete _peaks_model;
+    }
+
     delete _ui;
 }
 
@@ -101,8 +118,8 @@ void DialogPeakFilter::slotActionClicked(QAbstractButton *button)
     }
 }
 
-void DialogPeakFilter::filterPeaks() {
-
+void DialogPeakFilter::filterPeaks()
+{
     _filtered_peaks.clear();
 
     _filtered_peaks = _peaks;
@@ -134,10 +151,10 @@ void DialogPeakFilter::filterPeaks() {
     }
 
     if (_ui->dRange->isChecked()) {
-        double dmin = _ui->dmin->value();
-        double dmax = _ui->dmax->value();
+        double d_min = _ui->dMin->value();
+        double d_max = _ui->dMax->value();
 
-        _filtered_peaks = peak_filter.dRange(_filtered_peaks,dmin,dmax);
+        _filtered_peaks = peak_filter.dRange(_filtered_peaks,d_min,d_max);
     }
 
     if (_ui->extincted->isChecked()) {
@@ -163,6 +180,16 @@ void DialogPeakFilter::filterPeaks() {
     if (_ui->complementary->isChecked()) {
         _filtered_peaks = peak_filter.complementary(_peaks,_filtered_peaks);
     }
+
+    if (_peaks_model) {
+        delete _peaks_model;
+        QItemSelectionModel *selection_model = _ui->peaks->selectionModel();
+        delete selection_model;
+    }
+    _peaks_model = new CollectedPeaksModel(_experiment_item->model(),_experiment_item->experiment(),_filtered_peaks);
+
+    _ui->peaks->setModel(_peaks_model);
+
 }
 
 void DialogPeakFilter::accept()
