@@ -98,13 +98,18 @@ public:
     //! Set the scaling factor.
     void setScale(double factor);
 
-    //! Selected the peak for fitting or integration
+    //! Set the peak selection state
     void setSelected(bool);
-    //! Return true if peak is selected
-    bool enabled() const;
+    //! Return the peak selection state
+    bool selected() const;
 
-    //! Apply mask to peak
+    //! Set the peak masking state
     void setMasked(bool masked);
+    //! eturn the peak masking state
+    bool masked() const;
+
+    //! Return true if peak is enable (selected and not masked)
+    bool enabled() const;
 
     //! Set the transmission factor
     void setTransmission(double transmission);
@@ -123,8 +128,6 @@ public:
 
     //! Update the integration of the peak
     void updateIntegration(const IPeakIntegrator& integrator, double peakEnd, double bkgBegin, double bkgEnd);
-    //! Compute P value that there is actually an observed peak, assuming Poisson statistics
-    double pValue() const;
     //! Return the q vector of the peak, transformed into sample coordinates.
     ReciprocalVector q() const;
     //! Return the predicted q vector of the peak, based on Miller index.
@@ -161,9 +164,6 @@ private:
     bool _masked;
     bool _predicted;
     double _transmission;
-
-    //! Raw p value
-    double _pValue;
 
     sptrDataSet _data;
     //! Peak profile along frame (rotation) axis

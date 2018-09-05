@@ -68,7 +68,7 @@ void ExperimentItem::writeLogFiles()
 
     nsx::PeakFilter peak_filter;
     nsx::PeakList filtered_peaks;
-    filtered_peaks = peak_filter.selected(peaks,true);
+    filtered_peaks = peak_filter.enabled(peaks,true);
     filtered_peaks = peak_filter.hasUnitCell(filtered_peaks);
 
     if (filtered_peaks.empty()) {

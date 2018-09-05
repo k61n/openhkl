@@ -17,20 +17,20 @@ class DialogPeakFilter;
 }
 
 class DialogPeakFilter : public QDialog {
+    Q_OBJECT
 
 public:
     DialogPeakFilter(const nsx::PeakList& peaks, QWidget* parent=0);
+
     virtual ~DialogPeakFilter();
-    const nsx::PeakList& badPeaks() const;
-    const nsx::PeakList& goodPeaks() const;
+
+    const nsx::PeakList& filteredPeaks() const;
 
 public slots:
 
-    void actionClicked(QAbstractButton *button);
-
     virtual void accept() override;
 
-private slots:
+    void slotActionClicked(QAbstractButton *button);
 
     void slotUnitCellChanged(int index);
 
@@ -42,6 +42,4 @@ private:
     Ui::DialogPeakFilter* _ui;
     nsx::PeakList _peaks;
     nsx::PeakList _filtered_peaks;
-    nsx::PeakList _badPeaks;
-    nsx::PeakList _goodPeaks;
 };
