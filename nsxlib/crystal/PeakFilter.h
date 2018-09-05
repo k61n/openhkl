@@ -37,7 +37,7 @@ public:
     PeakList strength(const PeakList& peaks, double min, double max) const;
 
     //! Filter those peaks which are predicted
-    PeakList predicted(const PeakList& peaks) const;
+    PeakList predicted(const PeakList& peaks, bool flag) const;
 
     //! Remove peaks which are not in a d-range
     PeakList dRange(const PeakList& peaks, double dmin, double max) const;

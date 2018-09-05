@@ -121,7 +121,7 @@ public:
     //! Set whether the peak is observed or predicted
     void setPredicted(bool predicted);
     //! Return if the peak is predicted
-    bool isPredicted() const;
+    bool predicted() const;
 
     //! Update the integration of the peak
     void updateIntegration(const IPeakIntegrator& integrator, double peakEnd, double bkgBegin, double bkgEnd);

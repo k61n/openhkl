@@ -342,16 +342,11 @@ PeakList PeakFilter::strength(const PeakList& peaks, double min, double max) con
     return filtered_peaks;
 }
 
-PeakList PeakFilter::predicted(const PeakList& peaks) const
+PeakList PeakFilter::predicted(const PeakList& peaks, bool flag) const
 {
     PeakList filtered_peaks;
 
-    for (auto peak : peaks) {
-
-        if (peak->isPredicted()) {
-            filtered_peaks.push_back(peak);
-        }
-    }
+    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[flag](sptrPeak3D peak){return flag == peak->predicted();});
 
     return filtered_peaks;
 }

@@ -112,6 +112,7 @@ void DialogPeakFilter::filterPeaks() {
     if (_ui->state->isChecked()) {
         _filtered_peaks = peak_filter.selected(_filtered_peaks,_ui->selected->isChecked());
         _filtered_peaks = peak_filter.masked(_filtered_peaks,_ui->masked->isChecked());
+        _filtered_peaks = peak_filter.predicted(_filtered_peaks,_ui->predicted->isChecked());
     }
 
     if (_ui->indexed->isChecked()) {

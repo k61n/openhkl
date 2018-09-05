@@ -174,7 +174,7 @@ void Peak3D::setPredicted(bool predicted)
     _predicted = predicted;
 }
 
-bool Peak3D::isPredicted() const
+bool Peak3D::predicted() const
 {
     return _predicted;
 }

@@ -82,7 +82,7 @@ void DialogRefineUnitCell::refineParameters()
             if (peak->data() != d) {
                 continue;
             }
-            if (peak->isPredicted()) {
+            if (peak->predicted()) {
                 predicted_peaks.push_back(peak);
             } else {
                 reference_peaks.push_back(peak);
