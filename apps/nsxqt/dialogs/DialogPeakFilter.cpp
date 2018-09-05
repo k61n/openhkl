@@ -57,12 +57,12 @@ DialogPeakFilter::DialogPeakFilter(const nsx::PeakList& peaks, QWidget* parent)
             continue;
         }
         auto it = unit_cells.find(unit_cell);
-        if (it != unit_cells.end()) {
+        if (it == unit_cells.end()) {
             unit_cells.insert(unit_cell);
         }
     }
-
     for (auto unit_cell : unit_cells) {
+
         _ui->unitCells->addItem(QString::fromStdString(unit_cell->name()),QVariant::fromValue(unit_cell));
     }
 
@@ -119,9 +119,10 @@ void DialogPeakFilter::filterPeaks() {
     }
 
     if (_ui->indexedByUnitCell->isChecked()) {
-        auto unit_cell = _ui->unitCells->itemData(_ui->unitCells->currentIndex(),Qt::UserRole).value<nsx::sptrUnitCell>();
-
-        _filtered_peaks = peak_filter.indexed(_filtered_peaks,unit_cell,_ui->indexingTolerance->value());
+        if (_ui->unitCells->count() > 0) {
+            auto unit_cell = _ui->unitCells->itemData(_ui->unitCells->currentIndex(),Qt::UserRole).value<nsx::sptrUnitCell>();
+            _filtered_peaks = peak_filter.indexed(_filtered_peaks,unit_cell,_ui->indexingTolerance->value());
+        }
     }
 
     if (_ui->strength->isChecked()) {
