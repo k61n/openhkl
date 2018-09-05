@@ -214,7 +214,6 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     double sI=_peak->scaledIntensity().sigma();
     info+="Intensity ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";  
     info+="Cor. int. ("+QString(QChar(0x03C3))+"I): "+QString::number(corr_int.value(),'f',2)+" ("+QString::number(corr_int.sigma(),'f',2)+")\n";
-    info += "p value (" + QString::number(_peak->pValue(), 'f', 3) + ")\n";
 
     double scale=_peak->scale();
     double monitor=_peak->data()->metadata()->key<double>("monitor");

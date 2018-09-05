@@ -10,24 +10,36 @@
 #include <nsxlib/CrystalTypes.h>
 #include <nsxlib/DataTypes.h>
 
+class QAbstractButton;
+
 namespace Ui {
 class DialogPeakFilter;
 }
 
 class DialogPeakFilter : public QDialog {
+    Q_OBJECT
 
 public:
     DialogPeakFilter(const nsx::PeakList& peaks, QWidget* parent=0);
+
     virtual ~DialogPeakFilter();
-    const nsx::PeakList& badPeaks() const;
-    const nsx::PeakList& goodPeaks() const;
+
+    const nsx::PeakList& filteredPeaks() const;
 
 public slots:
+
     virtual void accept() override;
+
+    void slotActionClicked(QAbstractButton *button);
+
+    void slotUnitCellChanged(int index);
+
+private:
+
+    void filterPeaks();
 
 private:
     Ui::DialogPeakFilter* _ui;
     nsx::PeakList _peaks;
-    nsx::PeakList _badPeaks;
-    nsx::PeakList _goodPeaks;
+    nsx::PeakList _filtered_peaks;
 };

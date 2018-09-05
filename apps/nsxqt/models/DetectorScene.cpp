@@ -546,7 +546,7 @@ void DetectorScene::loadCurrentImage(bool newimage)
             auto peak = peaks[i];
             // IntegrationRegion constructor can throw if the region is invalid
             try {
-                if (peak->selected()) {
+                if (peak->enabled()) {
                     auto region = nsx::IntegrationRegion(peak, peak->peakEnd(), peak->bkgBegin(), peak->bkgEnd());
                     region.updateMask(mask, _currentFrameIndex);
                     // debugging

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iterator>
+#include <limits>
 #include <map>
 #include <set>
 
@@ -15,152 +16,49 @@
 #include "SpaceGroup.h"
 #include "UnitCell.h"
 
-namespace {
-
-
-bool invalid(const nsx::PeakFilter& filter, nsx::sptrPeak3D peak)
-{
-    if (filter._removeUnindexed) {
-        auto cell = peak->unitCell();
-
-        // no unit cell assigned:
-        if (!cell) {
-            return true;
-        }
-
-        // try to index
-        nsx::MillerIndex hkl(peak->q(), *cell);
-        if (!hkl.indexed(cell->indexingTolerance())) {
-            return true;
-        }
-    }
-   
-    if (filter._removeUnselected) {
-        if (!peak->selected()) {
-            return true;
-        }
-    }
-
-    if (filter._removeIsigma) {
-        nsx::Intensity i = peak->correctedIntensity();
-        // note: we use negated condition so that nan/inf automatically get rejected
-        if (!(i.value() > filter._Isigma * i.sigma())) {
-            return true;
-        }
-    }
-
-    if (filter._removePValue) {
-        if (peak->pValue() > filter._pvalue) {
-            return true;
-        }
-    }
-
-    // note: _removeOverlapping is a special case handled in PeakFilter::apply
-
-    // note: _removeForbidden is a special case handled in PeakFilter::apply
-
-    // note: merged peaks are handled separately    
-
-    auto q = peak->q().rowVector();
-    const double d = 1.0 / q.norm();
-
-    if (filter._removeDmin) {
-        if (d < filter._dmin) {
-            return true;
-        }
-    }
-
-    if (filter._removeDmax) {
-        if (d > filter._dmax) {
-            return true;
-        }
-    }
-
-    // failed to violate any condition
-    return false;
-}
-
-} // end anonymous namespace
-
 namespace nsx {
 
-PeakList PeakFilter::apply(const PeakList& reference_peaks) const
+PeakList PeakFilter::mergedPeaksSignificance(const PeakList& peaks, double significance_level) const
 {
-    PeakList peaks;
+    PeakFilter peak_filter;
+
+    PeakList filtered_peaks = peak_filter.hasUnitCell(peaks);
+
+    std::map<nsx::sptrUnitCell,PeakList> peaks_per_unit_cell;
+
+    for (auto peak : filtered_peaks) {
+
+        auto unit_cell = peak->unitCell();
+
+        auto it = peaks_per_unit_cell.find(unit_cell);
+
+        if (it == peaks_per_unit_cell.end()) {
+            peaks_per_unit_cell.insert(std::make_pair(unit_cell,PeakList({peak})));
+        } else {
+            it->second.push_back(peak);
+        }
+    }
+
     PeakList bad_peaks;
-    PeakList good_peaks;
 
-    std::vector<Ellipsoid> ellipsoids;
-    std::set<Octree::collision_pair> collisions;
-    std::set<sptrUnitCell> crystals;
-    Eigen::Vector3d lower(1e100, 1e100, 1e100);
-    Eigen::Vector3d upper(-1e100, -1e100, -1e100);
+    for (auto p : peaks_per_unit_cell) {
 
-    for (auto peak: reference_peaks) {
-        ellipsoids.emplace_back(peak->shape());
-        peaks.push_back(peak);
-        auto cell = peak->unitCell();
+        auto unit_cell = p.first;
 
-        if (cell) {
-            crystals.insert(cell);
-        }
+        SpaceGroup group(unit_cell->spaceGroup());
 
-        Eigen::Vector3d p = peak->shape().center();
-
-        for (int i = 0; i < 3; ++i) {
-            lower(i) = std::min(lower(i), p(i));
-            upper(i) = std::max(upper(i), p(i));
-        }
-    }
-
-    for (auto peak: peaks) {
-        if (invalid(*this, peak)) {
-            bad_peaks.push_back(peak);
-        }
-    }
-
-    if (_removeOverlapping) {
-        // build octree
-        Octree tree(lower, upper);
-
-        for (unsigned int i = 0; i < peaks.size(); ++i) {
-            tree.addData(&ellipsoids[i]);
-        }
-
-        collisions = tree.getCollisions();
-
-        // handle collisions below
-        for (auto collision: collisions) {
-            unsigned int i = collision.first - &ellipsoids[0];
-            unsigned int j = collision.second - &ellipsoids[0];
-            bad_peaks.push_back(peaks[i]);
-            bad_peaks.push_back(peaks[j]);
-        }
-    }
-
-    for (auto cell: crystals) {     
-        SpaceGroup group(cell->spaceGroup());
         MergedData merged(group, true);
 
-        PeakFilter peak_filter;
         PeakList filtered_peaks;
-        filtered_peaks = peak_filter.unitCell(peaks,cell);
-        filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance());
+        filtered_peaks = peak_filter.indexed(filtered_peaks,unit_cell,unit_cell->indexingTolerance());
 
         for (auto peak : filtered_peaks) {
-
             merged.addPeak(peak);
-
-            MillerIndex hkl(peak->q(), *cell);
-
-            if (_removeForbidden && group.isExtinct(hkl)) {
-                bad_peaks.push_back(peak);
-            }
         }
 
-        for (auto&& merged_peak: merged.peaks()) {
+        for (auto&& merged_peak : merged.peaks()) {
             // p value too high: reject peaks
-            if (_removeMergedP && merged_peak.pValue() > _mergedP) {
+            if (merged_peak.pValue() > significance_level) {
                 for (auto&& p: merged_peak.peaks()) {
                     bad_peaks.push_back(p);
                 }
@@ -168,18 +66,163 @@ PeakList PeakFilter::apply(const PeakList& reference_peaks) const
         }
     }
 
-    for (auto it = peaks.begin(); it != peaks.end(); ) {
+    for (auto it = filtered_peaks.begin(); it != filtered_peaks.end();) {
         auto jt = std::find(bad_peaks.begin(),bad_peaks.end(),*it);
         if (jt != bad_peaks.end()) {
-            it = peaks.erase(it);
+            it = filtered_peaks.erase(it);
             bad_peaks.erase(jt);
         } else {
-            good_peaks.push_back(*it);
             ++it;
-        }        
+        }
     }
 
-    return good_peaks;
+    return filtered_peaks;
+}
+
+PeakList PeakFilter::sparseDataSet(const PeakList& peaks, size_t min_num_peaks) {
+
+    PeakList filtered_peaks;
+
+    // Gather the peaks per dataset
+    std::map<sptrDataSet,PeakList> peaks_per_dataset;
+    for (auto peak : peaks) {
+
+        auto data = peak->data();
+        if (!data) {
+            continue;
+        }
+
+        auto it = peaks_per_dataset.find(data);
+        if (it == peaks_per_dataset.end()) {
+            peaks_per_dataset.insert(std::make_pair(data,PeakList({peak})));
+        } else {
+            it->second.push_back(peak);
+        }
+    }
+
+    // Keep the peaks that belong to datasets with a number of peaks > min_num_peaks
+    for (auto p : peaks_per_dataset) {
+        if (p.second.size() < min_num_peaks) {
+            continue;
+        }
+
+        for (auto peak : p.second) {
+            filtered_peaks.push_back(peak);
+        }
+    }
+
+    return filtered_peaks;
+}
+
+PeakList PeakFilter::extincted(const PeakList& peaks)
+{
+    PeakFilter peak_filter;
+
+    PeakList filtered_peaks = peak_filter.hasUnitCell(peaks);
+
+    std::map<nsx::sptrUnitCell,PeakList> peaks_per_unit_cell;
+
+    for (auto peak : filtered_peaks) {
+
+        auto unit_cell = peak->unitCell();
+
+        auto it = peaks_per_unit_cell.find(unit_cell);
+
+        if (it == peaks_per_unit_cell.end()) {
+            peaks_per_unit_cell.insert(std::make_pair(unit_cell,PeakList({peak})));
+        } else {
+            it->second.push_back(peak);
+        }
+    }
+
+    PeakList extincted_peaks;
+
+    for (auto p : peaks_per_unit_cell) {
+
+        PeakList indexed_peaks = peak_filter.indexed(p.second,p.first,p.first->indexingTolerance());
+
+        SpaceGroup group(p.first->spaceGroup());
+
+        MergedData merged(group, true);
+
+        for (auto peak : indexed_peaks) {
+
+            merged.addPeak(peak);
+
+            MillerIndex hkl(peak->q(), *(p.first));
+
+            if (group.isExtinct(hkl)) {
+                extincted_peaks.push_back(peak);
+            }
+        }
+    }
+
+    for (auto it = filtered_peaks.begin(); it != filtered_peaks.end();) {
+        auto jt = std::find(extincted_peaks.begin(),extincted_peaks.end(),*it);
+        if (jt != extincted_peaks.end()) {
+            it = filtered_peaks.erase(it);
+            extincted_peaks.erase(jt);
+        } else {
+            ++it;
+        }
+    }
+
+    return filtered_peaks;
+}
+
+PeakList PeakFilter::overlapping(const PeakList& peaks)
+{
+    PeakList filtered_peaks(peaks);
+
+    std::vector<Ellipsoid> ellipsoids;
+    std::set<Octree::collision_pair> collisions;
+
+    Eigen::Vector3d lower(std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity());
+    Eigen::Vector3d upper(-lower);
+
+    for (auto peak: peaks) {
+
+        auto&& ellipsoid = peak->shape();
+        ellipsoids.emplace_back(ellipsoid);
+
+        Eigen::Vector3d p = ellipsoid.center();
+
+        for (int i = 0; i < 3; ++i) {
+            lower(i) = std::min(lower(i), p(i));
+            upper(i) = std::max(upper(i), p(i));
+        }
+    }
+
+    // build octree
+    Octree tree(lower, upper);
+
+    for (unsigned int i = 0; i < peaks.size(); ++i) {
+        tree.addData(&ellipsoids[i]);
+    }
+
+    collisions = tree.getCollisions();
+
+    PeakList colliding_peaks;
+
+    // handle collisions below
+    for (auto collision: collisions) {
+        unsigned int i = collision.first - &ellipsoids[0];
+        unsigned int j = collision.second - &ellipsoids[0];
+        colliding_peaks.push_back(peaks[i]);
+        colliding_peaks.push_back(peaks[j]);
+    }
+
+    for (auto it = filtered_peaks.begin(); it != filtered_peaks.end();) {
+        auto jt = std::find(colliding_peaks.begin(),colliding_peaks.end(),*it);
+        if (jt != colliding_peaks.end()) {
+            it = filtered_peaks.erase(it);
+            colliding_peaks.erase(jt);
+        } else {
+            ++it;
+        }
+    }
+
+    return filtered_peaks;
 }
 
 PeakList PeakFilter::complementary(const PeakList& peaks, const PeakList& other_peaks) const
@@ -197,11 +240,29 @@ PeakList PeakFilter::complementary(const PeakList& peaks, const PeakList& other_
 }
 
 
-PeakList PeakFilter::selected(const PeakList& peaks, bool selection_flag) const
+PeakList PeakFilter::enabled(const PeakList& peaks, bool flag) const
 {
     PeakList filtered_peaks;
 
-    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[selection_flag](sptrPeak3D peak){return selection_flag == peak->selected();});
+    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[flag](sptrPeak3D peak){return flag == peak->enabled();});
+
+    return filtered_peaks;
+}
+
+PeakList PeakFilter::selected(const PeakList& peaks, bool flag) const
+{
+    PeakList filtered_peaks;
+
+    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[flag](sptrPeak3D peak){return flag == peak->selected();});
+
+    return filtered_peaks;
+}
+
+PeakList PeakFilter::masked(const PeakList& peaks, bool flag) const
+{
+    PeakList filtered_peaks;
+
+    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[flag](sptrPeak3D peak){return flag == peak->masked();});
 
     return filtered_peaks;
 }
@@ -211,8 +272,33 @@ PeakList PeakFilter::indexed(const PeakList& peaks, sptrUnitCell cell, double to
     PeakList filtered_peaks;
 
     for (auto peak : peaks) {
+
+        if (!cell) {
+            continue;
+        }
+
         MillerIndex miller_index(peak->q(), *cell);
         if (miller_index.indexed(tolerance)) {
+            filtered_peaks.push_back(peak);
+        }
+    }
+
+    return filtered_peaks;
+}
+
+PeakList PeakFilter::indexed(const PeakList& peaks) const
+{
+    PeakList filtered_peaks;
+
+    for (auto peak : peaks) {
+
+        auto cell = peak->unitCell();
+
+        if (!cell) {
+            continue;
+        }
+        MillerIndex miller_index(peak->q(), *cell);
+        if (miller_index.indexed(cell->indexingTolerance())) {
             filtered_peaks.push_back(peak);
         }
     }
@@ -246,25 +332,7 @@ PeakList PeakFilter::unitCell(const PeakList& peaks, sptrUnitCell unit_cell) con
     return filtered_peaks;
 }
 
-PeakList PeakFilter::minSigma(const PeakList& peaks, double threshold) const
-{
-    PeakList filtered_peaks;
-
-    for (auto peak : peaks) {
-
-        auto corrected_intensity = peak->correctedIntensity();
-
-        double sigma = corrected_intensity.sigma();
-
-        if (sigma > threshold) {
-            filtered_peaks.push_back(peak);
-        }
-    }
-
-    return filtered_peaks;
-}
-
-PeakList PeakFilter::signalToNoise(const PeakList& peaks, double threshold) const
+PeakList PeakFilter::strength(const PeakList& peaks, double min, double max) const
 {
     PeakList filtered_peaks;
 
@@ -281,23 +349,7 @@ PeakList PeakFilter::signalToNoise(const PeakList& peaks, double threshold) cons
 
         double i_over_sigma = intensity / sigma;
 
-        if (i_over_sigma > threshold) {
-            filtered_peaks.push_back(peak);
-        }
-    }
-
-    return filtered_peaks;
-}
-
-PeakList PeakFilter::lowIntensity(const PeakList& peaks, double threshold) const
-{
-    PeakList filtered_peaks;
-
-    for (auto peak : peaks) {
-
-        auto intensity = peak->correctedIntensity();
-
-        if (intensity.value() < threshold) {
+        if (i_over_sigma >= min && i_over_sigma <= max) {
             filtered_peaks.push_back(peak);
         }
     }
@@ -319,7 +371,7 @@ PeakList PeakFilter::predicted(const PeakList& peaks) const
     return filtered_peaks;
 }
 
-PeakList PeakFilter::dMin(const PeakList& peaks, double dmin) const
+PeakList PeakFilter::dRange(const PeakList& peaks, double dmin, double dmax) const
 {
     PeakList filtered_peaks;
 
@@ -329,41 +381,7 @@ PeakList PeakFilter::dMin(const PeakList& peaks, double dmin) const
 
         double d = 1.0/q.rowVector().norm();
 
-        if (d >= dmin) {
-            filtered_peaks.push_back(peak);
-        }
-    }
-
-    return filtered_peaks;
-}
-
-PeakList PeakFilter::dMax(const PeakList& peaks, double dmax) const
-{
-    PeakList filtered_peaks;
-
-    for (auto peak : peaks) {
-
-        auto q = peak->q();
-
-        double d = 1.0/q.rowVector().norm();
-
-        if (d <= dmax) {
-            filtered_peaks.push_back(peak);
-        }
-    }
-
-    return filtered_peaks;
-}
-
-PeakList PeakFilter::significance(const PeakList& peaks, double p_value_threshold) const
-{
-    PeakList filtered_peaks;
-
-    for (auto peak : peaks) {
-
-        const double p_value = peak->pValue();
-
-        if (p_value <= p_value_threshold) {
+        if (d >= dmin && d <= dmax) {
             filtered_peaks.push_back(peak);
         }
     }

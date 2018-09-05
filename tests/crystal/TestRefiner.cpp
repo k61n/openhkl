@@ -70,9 +70,8 @@ int main()
 
     nsx::PeakFilter peak_filter;
     nsx::PeakList selected_peaks;
-    selected_peaks = peak_filter.selected(found_peaks,true);
-    selected_peaks = peak_filter.dMin(selected_peaks, 2.0);
-    selected_peaks = peak_filter.dMax(selected_peaks, 100.0);
+    selected_peaks = peak_filter.enabled(found_peaks,true);
+    selected_peaks = peak_filter.dRange(selected_peaks, 2.0, 100.0);
     
     NSX_CHECK_ASSERT(selected_peaks.size() >= 600);
 

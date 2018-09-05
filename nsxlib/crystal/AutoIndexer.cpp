@@ -107,7 +107,7 @@ void AutoIndexer::computeFFTSolutions()
     std::vector<ReciprocalVector> qvects;
 
     PeakFilter peak_filter;
-    auto filtered_peaks = peak_filter.selected(_peaks,true);
+    auto filtered_peaks = peak_filter.enabled(_peaks,true);
 
     for (size_t i = 0; i < filtered_peaks.size(); ++i) {
         auto& peak = filtered_peaks[i];
@@ -197,7 +197,7 @@ void AutoIndexer::refineSolutions()
 
         PeakFilter peak_filter;
         PeakList filtered_peaks;
-        filtered_peaks = peak_filter.selected(_peaks,true);
+        filtered_peaks = peak_filter.enabled(_peaks,true);
         filtered_peaks = peak_filter.indexed(filtered_peaks, cell, cell->indexingTolerance());
 
         int success = filtered_peaks.size();

@@ -116,7 +116,7 @@ void DialogShapeLibrary::build()
     nsx::PeakList fit_peaks;
 
     for (auto peak: _peaks) {
-        if (!peak->selected()) {
+        if (!peak->enabled()) {
             continue;
         }
         double d = 1.0 / peak->q().rowVector().norm();

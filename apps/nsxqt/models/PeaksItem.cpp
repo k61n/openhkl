@@ -116,8 +116,7 @@ void PeaksItem::integratePeaks()
 
     nsx::PeakFilter peak_filter;
     // todo: bkg_begin and bkg_end
-    auto peaks = peak_filter.dMin(selected_peaks, dmin);
-    peaks = peak_filter.dMax(peaks, dmax);
+    auto peaks = peak_filter.dRange(selected_peaks, dmin, dmax);
 
     for (auto&& numor: numors) {
         nsx::info() << "Integrating " << peaks.size() << " peaks";
@@ -208,10 +207,19 @@ void PeaksItem::filterPeaks()
     if (!dlg->exec()) {
         return;
     }    
-    // todo: update peaks
-    auto&& good_peaks = dlg->goodPeaks();
-    auto peak_list = new PeakListItem(good_peaks);
+
+    auto&& filtered_peaks = dlg->filteredPeaks();
+
+    if (filtered_peaks.empty()) {
+        return;
+    }
+
+    auto peak_list = new PeakListItem(filtered_peaks);
+
+    nsx::info()<<"Applied peak filters on selected peaks. Remains "<<filtered_peaks.size()<<" out of "<<selected_peaks.size()<<" peaks";
+
     peak_list->setText("Filtered peaks");
+
     appendRow(peak_list);
 }
 
@@ -286,7 +294,7 @@ void PeaksItem::autoAssignUnitCell()
     }
 
     for (auto peak: peaks) {
-        if (!peak->selected()) {
+        if (!peak->enabled()) {
             continue;
         }
 

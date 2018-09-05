@@ -155,7 +155,7 @@ void Peak3D::setTransmission(double transmission)
     _transmission = transmission;
 }
 
-bool Peak3D::selected() const
+bool Peak3D::enabled() const
 {
     return (!_masked && _selected);
 }
@@ -165,9 +165,19 @@ void Peak3D::setSelected(bool s)
     _selected = s;
 }
 
+bool Peak3D::selected() const
+{
+    return _selected;
+}
+
 void Peak3D::setMasked(bool masked)
 {
     _masked = masked;
+}
+
+bool Peak3D::masked() const
+{
+    return _masked;
 }
 
 void Peak3D::setPredicted(bool predicted)
@@ -193,11 +203,6 @@ void Peak3D::updateIntegration(const IPeakIntegrator& integrator, double peakEnd
     _peakEnd = peakEnd;
     _bkgBegin = bkgBegin;
     _bkgEnd = bkgEnd;
-}
-
-double Peak3D::pValue() const
-{
-    return _pValue;
 }
 
 void Peak3D::setRawIntensity(const Intensity& i)

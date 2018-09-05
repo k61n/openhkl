@@ -31,7 +31,7 @@ class TestWorkFlow(unittest.TestCase):
         selected_peaks = []
 
         for peak in peaks:
-            if peak.selected():
+            if peak.enabled():
                 selected_peaks.append(peak)
 
         self.assertTrue(len(peaks) > 800)
@@ -76,7 +76,7 @@ class TestWorkFlow(unittest.TestCase):
         library_size = 0
 
         for peak in peaks:
-            if not peak.isSelected():
+            if not peak.enabled():
                 continue
             if library.addPeak(peak):
                 library_size +=1
