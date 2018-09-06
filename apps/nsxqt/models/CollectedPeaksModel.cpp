@@ -233,27 +233,39 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             auto cell1 = p1->unitCell();
             auto cell2 = p2->unitCell();
-            nsx::MillerIndex miller_index1(p1->q(), *cell1);
-            nsx::MillerIndex miller_index2(p2->q(), *cell2);
-            return (miller_index1[0]<miller_index2[0]);
+            if (cell1 && cell2){
+                nsx::MillerIndex miller_index1(p1->q(), *cell1);
+                nsx::MillerIndex miller_index2(p2->q(), *cell2);
+                return (miller_index1[0]<miller_index2[0]);
+            } else {
+                return ((cell1 != nullptr) < (cell2 != nullptr));
+            }
         };
         break;
     case Column::k:
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             auto cell1 = p1->unitCell();
             auto cell2 = p2->unitCell();
-            nsx::MillerIndex miller_index1(p1->q(), *cell1);
-            nsx::MillerIndex miller_index2(p2->q(), *cell2);
-            return (miller_index1[1]<miller_index2[1]);
+            if (cell1 && cell2){
+                nsx::MillerIndex miller_index1(p1->q(), *cell1);
+                nsx::MillerIndex miller_index2(p2->q(), *cell2);
+                return (miller_index1[1]<miller_index2[1]);
+            } else {
+                return ((cell1 != nullptr) < (cell2 != nullptr));
+            }
         };
         break;
     case Column::l:
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             auto cell1 = p1->unitCell();
             auto cell2 = p2->unitCell();
-            nsx::MillerIndex miller_index1(p1->q(), *cell1);
-            nsx::MillerIndex miller_index2(p2->q(), *cell2);
-            return (miller_index1[2]<miller_index2[2]);
+            if (cell1 && cell2){
+                nsx::MillerIndex miller_index1(p1->q(), *cell1);
+                nsx::MillerIndex miller_index2(p2->q(), *cell2);
+                return (miller_index1[2]<miller_index2[2]);
+            } else {
+                return ((cell1 != nullptr) < (cell2 != nullptr));
+            }
         };
         break;
     case  Column::intensity:
