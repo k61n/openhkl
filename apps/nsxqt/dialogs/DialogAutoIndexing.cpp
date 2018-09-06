@@ -81,8 +81,6 @@ DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, const ns
     connect(shortcut, SIGNAL(activated()), this, SLOT(removeUnitCells()));
 
     connect(ui->cancelOK,SIGNAL(clicked(QAbstractButton*)),this,SLOT(actionRequested(QAbstractButton*)));
-    connect(ui->cancelOK,SIGNAL(rejected()),this,SLOT(reject()));
-    connect(ui->cancelOK,SIGNAL(accepted()),this,SLOT(accept()));
 }
 
 DialogAutoIndexing::~DialogAutoIndexing()

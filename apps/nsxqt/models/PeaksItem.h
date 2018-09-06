@@ -19,15 +19,25 @@ public:
 
     nsx::PeakList selectedPeaks();
 
+    void filterPeaks(const nsx::PeakList& peaks, const nsx::PeakList& filtered_peaks);
+
+    void openPeakFilterDialog();
+
     void removeUnitCell(nsx::sptrUnitCell unit_cell);
 
     void integratePeaks();
+
     void findSpaceGroup();
+
     void showPeaksOpenGL();
+
     void absorptionCorrection();
+
     void buildShapeLibrary();
-    void filterPeaks();
+
     void autoindex();
+
     void refine();
+
     void autoAssignUnitCell();
 };

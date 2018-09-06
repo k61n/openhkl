@@ -95,7 +95,7 @@ void UnitCellItem::openChangeUnitCellDialog()
 
 void UnitCellItem::openTransformationMatrixDialog()
 {
-    std::unique_ptr<DialogTransformationmatrix> dialog(new DialogTransformationmatrix(_unit_cell));
+    std::unique_ptr<DialogTransformationMatrix> dialog(new DialogTransformationMatrix(_unit_cell));
     dialog->exec();
 
     emitDataChanged();

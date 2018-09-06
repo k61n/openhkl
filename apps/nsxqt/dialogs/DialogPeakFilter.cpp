@@ -14,9 +14,31 @@
 
 #include "ui_DialogPeakFilter.h"
 #include "CollectedPeaksModel.h"
-#include "ExperimentItem.h"
-#include "MetaTypes.h"
 #include "DialogPeakFilter.h"
+#include "ExperimentItem.h"
+#include "PeaksItem.h"
+#include "MetaTypes.h"
+
+DialogPeakFilter* DialogPeakFilter::_instance = nullptr;
+
+DialogPeakFilter* DialogPeakFilter::create(ExperimentItem* experiment_item, const nsx::PeakList& peaks, QWidget* parent)
+{
+    if (!_instance) {
+        _instance = new DialogPeakFilter(experiment_item, peaks, parent);
+    }
+
+    return _instance;
+}
+
+DialogPeakFilter* DialogPeakFilter::Instance()
+{
+    return _instance;
+}
+
+const nsx::PeakList& DialogPeakFilter::peaks() const
+{
+    return _peaks;
+}
 
 DialogPeakFilter::DialogPeakFilter(ExperimentItem* experiment_item, const nsx::PeakList& peaks, QWidget* parent)
 : QDialog(parent),
@@ -26,6 +48,9 @@ DialogPeakFilter::DialogPeakFilter(ExperimentItem* experiment_item, const nsx::P
   _filtered_peaks()
 {
     _ui->setupUi(this);
+
+    setModal(false);
+    setWindowModality(Qt::NonModal);
 
     _ui->state->setStyleSheet("font-weight: normal;");
     _ui->state->setCheckable(true);
@@ -82,14 +107,17 @@ DialogPeakFilter::DialogPeakFilter(ExperimentItem* experiment_item, const nsx::P
     connect(_ui->unitCells,SIGNAL(currentIndexChanged(int)),this,SLOT(slotUnitCellChanged(int)));
 
     connect(_ui->actions,SIGNAL(clicked(QAbstractButton*)),this,SLOT(slotActionClicked(QAbstractButton*)));
-    connect(_ui->actions,SIGNAL(accepted()), this, SLOT(accept()));
-    connect(_ui->actions,SIGNAL(rejected()), this, SLOT(reject()));
 }
 
 DialogPeakFilter::~DialogPeakFilter()
 {
     if (_peaks_model) {
         delete _peaks_model;
+    }
+
+    if (_instance) {
+        delete _instance;
+        _instance = nullptr;
     }
 
     delete _ui;
@@ -194,6 +222,10 @@ void DialogPeakFilter::filterPeaks()
 
 void DialogPeakFilter::accept()
 {
+    if (!_filtered_peaks.empty()) {
+        _experiment_item->peaksItem()->filterPeaks(_peaks,_filtered_peaks);
+    }
+
     QDialog::accept();
 }
 

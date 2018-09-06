@@ -245,30 +245,26 @@ void PeaksItem::buildShapeLibrary()
     emit model()->itemChanged(this);
 }
 
-void PeaksItem::filterPeaks()
+void PeaksItem::openPeakFilterDialog()
 {
     auto&& selected_peaks = selectedPeaks();
-    std::unique_ptr<DialogPeakFilter> dialog(new DialogPeakFilter(experimentItem(), selected_peaks));
 
-    if (!dialog->exec()) {
-        return;
-    }    
+    DialogPeakFilter* dialog = DialogPeakFilter::create(experimentItem(), selected_peaks);
 
-    auto&& filtered_peaks = dialog->filteredPeaks();
+    dialog->show();
 
-    if (filtered_peaks.empty()) {
-        return;
-    }
+    dialog->raise();
+}
 
+void PeaksItem::filterPeaks(const nsx::PeakList& peaks, const nsx::PeakList& filtered_peaks)
+{
     auto peak_list = new PeakListItem(filtered_peaks);
-
-    nsx::info()<<"Applied peak filters on selected peaks. Remains "<<filtered_peaks.size()<<" out of "<<selected_peaks.size()<<" peaks";
 
     peak_list->setText("Filtered peaks");
 
     appendRow(peak_list);
 
-    emit model()->itemChanged(this);
+    nsx::info()<<"Applied peak filters on selected peaks. Remains "<<filtered_peaks.size()<<" out of "<<peaks.size()<<" peaks";
 }
 
 void PeaksItem::autoindex()

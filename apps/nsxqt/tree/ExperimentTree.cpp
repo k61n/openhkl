@@ -124,7 +124,7 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(abs, triggered, [=]{pitem->absorptionCorrection();});
             connect(scene3d, triggered, [=]{pitem->showPeaksOpenGL();});
             connect(library, triggered, [=]{pitem->buildShapeLibrary();});
-            connect(filter, triggered, [=](){pitem->filterPeaks();});
+            connect(filter, triggered, [=](){pitem->openPeakFilterDialog();});
             connect(integrate, triggered, [=](){pitem->integratePeaks();});
             connect(autoidx, triggered, [=](){pitem->autoindex();});
             connect(refine, triggered, [=](){pitem->refine();});

@@ -20,11 +20,16 @@ class DialogPeakFilter : public QDialog {
     Q_OBJECT
 
 public:
-    DialogPeakFilter(ExperimentItem* experiment_tree, const nsx::PeakList& peaks, QWidget* parent=nullptr);
+
+    static DialogPeakFilter* create(ExperimentItem* experiment_tree, const nsx::PeakList& peaks, QWidget* parent=nullptr);
+
+    static DialogPeakFilter* Instance();
 
     virtual ~DialogPeakFilter();
 
     const nsx::PeakList& filteredPeaks() const;
+
+    const nsx::PeakList& peaks() const;
 
 public slots:
 
@@ -36,9 +41,14 @@ public slots:
 
 private:
 
+    DialogPeakFilter(ExperimentItem* experiment_tree, const nsx::PeakList& peaks, QWidget* parent=nullptr);
+
     void filterPeaks();
 
 private:
+
+    static DialogPeakFilter* _instance;
+
     Ui::DialogPeakFilter* _ui;
 
     ExperimentItem* _experiment_item;
