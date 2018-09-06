@@ -1,5 +1,6 @@
 #include <cmath>
 #include <cstring>
+#include <fstream>
 #include <map>
 #include <set>
 #include <stdexcept>
@@ -39,6 +40,11 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
         throw std::runtime_error(std::string("ILLDataReader() caught exception: ") + e.what());
     }
 
+    // Get the actual file size
+    std::ifstream filein(filename,std::ifstream::ate);
+    size_t actual_file_size = filein.tellg();
+    filein.close();
+
     // Beginning of the blockILLAsciiDataReader
     _mapAddress = reinterpret_cast<char*>(_map.get_address());
     std::vector<char> buffer(BlockSize+1, 0); // +1 to make space for 0 at end of string
@@ -47,6 +53,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
 
     // Extract some variables from the metadata
     _nFrames = size_t(_metadata.key<int>("npdone"));
+
     _dataPoints = size_t(_metadata.key<int>("nbdata"));
     _nAngles = size_t(_metadata.key<int>("nbang"));
 
@@ -55,6 +62,12 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
 
     // ILL Ascii file for 2D detector store 10 values per line.
     _dataLength = size_t(std::lround(std::ceil(_dataPoints/10.0))*81);
+
+    size_t predicted_file_size = _headerSize+_nFrames*(_skipChar+_dataLength);
+
+    if (predicted_file_size != actual_file_size) {
+        throw std::runtime_error("Error when reading "+filename+". The file is corrupted.");
+    }
 
     // Get the value of the monitor for the first frame
     std::vector<int> vi;
