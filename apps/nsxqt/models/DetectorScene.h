@@ -60,8 +60,6 @@ public:
     //! Load image from current Data and frame
     void loadCurrentImage();
 
-    void showSelectedPeak(nsx::sptrPeak3D peak);
-
     void clearPeakGraphicsItems();
 
 protected:

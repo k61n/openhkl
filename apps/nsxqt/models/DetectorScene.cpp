@@ -34,8 +34,6 @@
 #include "MaskGraphicsItem.h"
 #include "PeakGraphicsItem.h"
 
-#include <QDebug>
-
 DetectorScene::DetectorScene(QObject *parent)
 : QGraphicsScene(parent),
   _currentData(nullptr),
@@ -145,23 +143,22 @@ void DetectorScene::slotChangeMaskedPeaks(const nsx::PeakList& peaks)
 
 void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
 {
-    if (data == _currentData) {
-        return;
-    }
+    if (data != _currentData) {
+        _currentData = data;
 
-    _currentData = data;
+        _currentData->open();
 
-    _currentData->open();
-    auto det = _currentData->diffractometer()->detector();
+        auto det = _currentData->diffractometer()->detector();
 
-    _currentFrameIndex = -1;
+        _currentFrameIndex = -1;
 
-    _zoomStack.clear();
-    _zoomStack.push_back(QRect(0,0,int(det->nCols()),int(det->nRows())));
+        _zoomStack.clear();
+        _zoomStack.push_back(QRect(0,0,int(det->nCols()),int(det->nRows())));
 
-    if (_lastClickedGI != nullptr) {
-        removeItem(_lastClickedGI);
-        _lastClickedGI=nullptr;
+        if (_lastClickedGI != nullptr) {
+            removeItem(_lastClickedGI);
+            _lastClickedGI=nullptr;
+        }
     }
 
     slotChangeSelectedFrame(frame);
@@ -174,18 +171,8 @@ void DetectorScene::slotChangeSelectedPeak(nsx::sptrPeak3D peak)
     // Get frame number to adjust the data
     size_t frame = size_t(std::lround(peak->shape().aabb().center()[2]));
 
-    if (data != _currentData) {
-        slotChangeSelectedData(data,frame);
-        return;
-    }
+    slotChangeSelectedData(data,frame);
 
-    slotChangeSelectedFrame(frame);
-
-    showSelectedPeak(peak);
-}
-
-void DetectorScene::showSelectedPeak(nsx::sptrPeak3D peak)
-{
     auto it = _peak_graphics_items.find(peak);
 
     if (it == _peak_graphics_items.end()) {
