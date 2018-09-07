@@ -29,7 +29,7 @@ class DialogPeakFind : public QDialog
     Q_OBJECT
 
 public:
-    explicit DialogPeakFind(const nsx::DataList& data,QWidget *parent = 0);
+    explicit DialogPeakFind(const nsx::DataList& data, QWidget *parent = 0);
     ~DialogPeakFind();
 
     void setPreviewFrame(const Eigen::MatrixXi& frame);

@@ -16,6 +16,7 @@
 #include <nsxlib/RawDataReader.h>
 
 #include "DataItem.h"
+#include "DialogExploreInstrumentStates.h"
 #include "DialogHDF5Converter.h"
 #include "DialogPeakFind.h"
 #include "DialogRawData.h"
@@ -176,17 +177,33 @@ nsx::DataList DataItem::selectedData()
 
 void DataItem::convertToHDF5()
 {
-    nsx::DataList selectedNumors = selectedData();
+    nsx::DataList selected_data = selectedData();
 
-    if (selectedNumors.empty()) {
+    if (selected_data.empty()) {
         nsx::error()<<"No numors selected for HDF5 conversion";
         return;
     }
 
     // dialog will automatically be deleted before we return from this method
-    std::unique_ptr<DialogHDF5Converter> dialog_ptr(new DialogHDF5Converter(selectedNumors));
+    std::unique_ptr<DialogHDF5Converter> dialog_ptr(new DialogHDF5Converter(selected_data));
 
     if (!dialog_ptr->exec()) {
         return;
     }
+}
+
+void DataItem::exploreInstrumentStates()
+{
+    nsx::DataList selected_data = selectedData();
+
+    if (selected_data.empty()) {
+        nsx::error()<<"No numors selected for exploring instrument states";
+        return;
+    }
+
+    DialogExploreInstrumentStates* dialog = DialogExploreInstrumentStates::create(selected_data,nullptr);
+
+    dialog->show();
+
+    dialog->raise();
 }

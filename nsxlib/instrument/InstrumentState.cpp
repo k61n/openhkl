@@ -40,7 +40,7 @@ InstrumentState::InstrumentState(sptrDiffractometer diffractometer):
     sampleOrientation = Eigen::Quaterniond(1, 0, 0, 0);
     sampleOrientationOffset = Eigen::Quaterniond(1, 0, 0, 0);
     samplePosition.setZero();
-    detectorOffset.setZero();
+    detectorPositionOffset.setZero();
     ni = {0.0, 1.0, 0.0};
     wavelength = 1.0;
 }

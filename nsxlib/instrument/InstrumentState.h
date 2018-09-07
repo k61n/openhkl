@@ -44,8 +44,7 @@ public:
     InstrumentState(sptrDiffractometer diffractomer = sptrDiffractometer());
     //! Destructor
     virtual ~InstrumentState() {}
-    //! Matrix given the orientation of the detector. Normally this is not
-    //! needed but it is stored as metadata in the ILL ascii formats.
+    //! Detector orientation as read from metadata
     Eigen::Matrix3d detectorOrientation;
     //! compute the sample orientation from fixed orientation and offset
     Eigen::Matrix3d sampleOrientationMatrix() const;
@@ -55,8 +54,8 @@ public:
     Eigen::Quaterniond sampleOrientationOffset;
     //! Sample position
     Eigen::Vector3d samplePosition;
-    //! Detector offset. Normally unused but it is stored as metadata in ILL ascii format.
-    Eigen::Vector3d detectorOffset;
+    //! Detector offset.
+    Eigen::Vector3d detectorPositionOffset;
     //! Incoming beam direction.
     Eigen::RowVector3d ni;
     //! Incoming beam wavelength.

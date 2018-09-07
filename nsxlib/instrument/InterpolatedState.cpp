@@ -35,13 +35,12 @@ namespace nsx {
 
 InterpolatedState::InterpolatedState(sptrDiffractometer diffractometer): InstrumentState(diffractometer)
 {
-    
 }
 
-InterpolatedState::InterpolatedState(const InstrumentState& s1, const InstrumentState& s2, double t): 
-    InstrumentState(s1.diffractometer()),
-    axis(),
-    stepSize()
+InterpolatedState::InterpolatedState(const InstrumentState& s1, const InstrumentState& s2, double t)
+: InstrumentState(s1.diffractometer()),
+  axis(),
+  stepSize()
 {
     if (s1.diffractometer() != s2.diffractometer()) {
         throw std::runtime_error("Cannot interpolate states between different diffractometers");
@@ -50,7 +49,7 @@ InterpolatedState::InterpolatedState(const InstrumentState& s1, const Instrument
     const double s = 1-t;
 
     detectorOrientation = interpolateRotation(s1.detectorOrientation, s2.detectorOrientation, t);
-    detectorOffset = s*s1.detectorOffset + t*s2.detectorOffset;
+    detectorPositionOffset = s*s1.detectorPositionOffset + t*s2.detectorPositionOffset;
 
     Eigen::Quaterniond q1 = s1.sampleOrientationOffset*s1.sampleOrientation;
     Eigen::Quaterniond q2 = s2.sampleOrientationOffset*s2.sampleOrientation;

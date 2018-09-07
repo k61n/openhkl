@@ -106,11 +106,13 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             QAction* import = menu->addAction("Load data");
             QAction* convert_to_hdf5 = menu->addAction("Convert to HDF5");
             QAction* import_raw = menu->addAction("Import raw data");
-            QAction* findpeaks = menu->addAction("Find peaks in data");
+            QAction* find_peaks = menu->addAction("Find peaks in data");
+            QAction* explore_instrument_states = menu->addAction("Explore instrument states");
             connect(convert_to_hdf5, &QAction::triggered, [=](){ditem->convertToHDF5();});
             connect(import, &QAction::triggered, [=](){ditem->importData();});
             connect(import_raw, &QAction::triggered, [=](){ditem->importRawData();});
-            connect(findpeaks, &QAction::triggered, [=](){ditem->findPeaks();});
+            connect(find_peaks, &QAction::triggered, [=](){ditem->findPeaks();});
+            connect(explore_instrument_states, &QAction::triggered, [=](){ditem->exploreInstrumentStates();});
         }
         else if (auto pitem = dynamic_cast<PeaksItem*>(item)) {
             QAction* filter = menu->addAction("Filter peaks");

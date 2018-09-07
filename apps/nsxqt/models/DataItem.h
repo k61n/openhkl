@@ -22,6 +22,9 @@ public:
                              bool rowMajor, bool swapEndian, int bpp);
 
     void findPeaks();
+
+    void exploreInstrumentStates();
+
     nsx::DataList selectedData();
 
     void convertToHDF5();

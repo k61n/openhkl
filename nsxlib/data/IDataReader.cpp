@@ -74,7 +74,7 @@ InstrumentState IDataReader::state(size_t frame) const
     state.detectorOrientation = detector_trans.rotation();
     state.sampleOrientation = Eigen::Quaterniond(sample_trans.rotation());
 
-    state.detectorOffset = detector_trans.translation();
+    state.detectorPositionOffset = detector_trans.translation();
     state.samplePosition = sample_trans.translation();
 
     state.ni = _diffractometer->source()->selectedMonochromator().ki().rowVector();

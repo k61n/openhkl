@@ -112,7 +112,7 @@ void RefinementBatch::refineDetectorOffset(InstrumentStateList& states)
             if (!contains(i)) {
                 continue;
             }
-            int id = _params.addParameter(&states[i].detectorOffset(axis));
+            int id = _params.addParameter(&states[i].detectorPositionOffset(axis));
             ids.push_back(id);
         }
         // record the constraints
