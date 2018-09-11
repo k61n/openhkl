@@ -45,7 +45,6 @@
 #include "MillerIndex.h"
 #include "Peak3D.h"
 #include "PeakFilter.h"
-#include "PeakPredictor.h"
 #include "Refiner.h"
 #include "UnitCell.h"
 

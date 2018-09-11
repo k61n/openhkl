@@ -114,7 +114,6 @@ using Eigen::Quaterniond;
 #include "ProgressHandler.h"
 
 #include "PeakCoordinateSystem.h"
-#include "PeakPredictor.h"
 #include "RefinementBatch.h"
 #include "Refiner.h"
 #include "AutoIndexer.h"
@@ -470,7 +469,6 @@ namespace nsx {
 %include "ProgressHandler.h"
 
 %include "PeakCoordinateSystem.h"
-%include "PeakPredictor.h"
 %include "RefinementBatch.h"
 %include "Refiner.h"
 
