@@ -405,10 +405,6 @@ Eigen::Matrix3d ShapeLibrary::meanCovariance(sptrPeak3D reference_peak, double r
         sum_weight += weight;
     }
 
-    if (neighbors.size() == 0) {
-        throw std::runtime_error("Error, no neighboring profiles found.");
-    }
-
     cov /= sum_weight;
 
     Eigen::Matrix3d JI = reference_coord.jacobian().inverse();
