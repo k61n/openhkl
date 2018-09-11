@@ -1,7 +1,6 @@
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Logger.h>
-#include <nsxlib/PeakPredictor.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/ShapeLibrary.h>
@@ -28,6 +27,12 @@ LibraryItem::LibraryItem()
 
 void LibraryItem::incorporateCalculatedPeaks()
 {
+    if (!_library) {
+        nsx::error() << "A library must be set for peak prediction";
+        return;
+    }
+
+
     nsx::debug() << "Incorporating missing peaks into current data set...";
 
     auto expt_item = dynamic_cast<ExperimentItem*>(parent());
@@ -57,16 +62,20 @@ void LibraryItem::incorporateCalculatedPeaks()
 
     int current_numor = 0;
 
-    // TODO: get the crystal from the dialog!!
     auto cell = dialog.cell();
+    auto&& d_min = dialog.dMin();
+    auto&& d_max = dialog.dMax();
+    auto&& radius = dialog.radius();
+    auto&& n_frames = dialog.nFrames();
+    auto&& min_neighbors = dialog.minNeighbors();
+    nsx::PeakInterpolation interpolation = static_cast<nsx::PeakInterpolation>(dialog.interpolation());
 
     nsx::PeakList predicted_peaks;
 
     for(auto numor: numors) {
         nsx::debug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
 
-        auto predictor = nsx::PeakPredictor(cell, dialog.dMin(), dialog.dMax(), _library);
-        auto predicted = predictor.predict(numor, dialog.radius(), dialog.nFrames(), dialog.minNeighbors());
+        auto&& predicted = nsx::predictPeaks(*_library, numor, cell, d_min, d_max, radius, n_frames, min_neighbors, interpolation);
 
         for (auto peak: predicted) {
             predicted_peaks.push_back(peak);

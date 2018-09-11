@@ -1,16 +1,85 @@
+#include <stdexcept>
+
+#include <Eigen/Core>
 
 #include "DataSet.h"
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "Ellipsoid.h"
+#include "Logger.h"
 #include "Minimizer.h"
 #include "Peak3D.h"
 #include "ShapeLibrary.h"
-
-
-#include <Eigen/Core>
+#include "Source.h"
+#include "UnitCell.h"
 
 namespace nsx {
+
+static PeakList buildPeaksFromMillerIndices(sptrDataSet data, const std::vector<MillerIndex>& hkls, const Eigen::Matrix3d& BU)
+{
+    std::vector<ReciprocalVector> qs;
+    PeakList peaks;
+
+    for (auto idx: hkls) {
+        qs.emplace_back(idx.rowVector().cast<double>()*BU);
+    }
+
+    auto events = data->events(qs);
+
+    for (auto event: events) {
+        sptrPeak3D peak(new Peak3D(data));
+        Eigen::Vector3d center = {event._px, event._py, event._frame};
+
+        // dummy shape
+        try {
+            peak->setShape(Ellipsoid(center, 1.0));
+            peaks.push_back(peak);
+        } catch(...) {
+            // invalid shape, nothing to do
+        }
+    }
+    return peaks;
+}
+
+PeakList predictPeaks(ShapeLibrary library,
+                      sptrDataSet data,
+                      sptrUnitCell unit_cell,
+                      double dmin,
+                      double dmax,
+                      double radius,
+                      double nframes,
+                      int min_neighbors,
+                      PeakInterpolation interpolation)
+{
+    // Generate the Miller indices found in the [dmin,dmax] shell
+    auto& mono = data->diffractometer()->source()->selectedMonochromator();
+    const double wavelength = mono.wavelength();
+    auto predicted_hkls = unit_cell->generateReflectionsInShell(dmin, dmax, wavelength);
+
+    PeakList peaks = buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell->reciprocalBasis());
+    nsx::info() << "Computing shapes of " << peaks.size() << " calculated peaks...";
+
+    PeakList predicted_peaks;
+
+    for (auto peak : peaks) {
+        peak->setUnitCell(unit_cell);
+        peak->setPredicted(true);
+        peak->setSelected(true);
+
+        // Skip the peak if any error occur when computing its mean covariance (e.g. too few or no neighbouring peaks found)
+        try {
+            Eigen::Matrix3d cov = library.meanCovariance(peak, radius, nframes, min_neighbors, interpolation);
+            //Eigen::Matrix3d cov = _library->predictCovariance(p);
+            Eigen::Vector3d center = peak->shape().center();
+            peak->setShape(Ellipsoid(center, cov.inverse()));
+        } catch (std::exception& e) {
+            nsx::info() << e.what();
+            continue;
+        }
+        predicted_peaks.push_back(peak);
+    }
+    return predicted_peaks;
+}
 
 static Eigen::Matrix3d from_cholesky(const std::array<double, 6>& components)
 {
@@ -292,7 +361,7 @@ PeakList ShapeLibrary::findNeighbors(const DetectorEvent& ev, double radius, dou
     return neighbors;
 }
 
-Eigen::Matrix3d ShapeLibrary::meanCovariance(sptrPeak3D reference_peak, double radius, double nframes, size_t min_neighbors) const
+Eigen::Matrix3d ShapeLibrary::meanCovariance(sptrPeak3D reference_peak, double radius, double nframes, size_t min_neighbors, PeakInterpolation interpolation) const
 {
     Eigen::Matrix3d cov;
     cov.setZero();
@@ -304,17 +373,44 @@ Eigen::Matrix3d ShapeLibrary::meanCovariance(sptrPeak3D reference_peak, double r
 
     PeakCoordinateSystem reference_coord(reference_peak);
 
+    double sum_weight(0.0);
     for (auto peak: neighbors) {
         PeakCoordinateSystem coord(peak);
         Eigen::Matrix3d J = coord.jacobian();
-        cov += J * peak->shape().inverseMetric() * J.transpose();
+
+        double weight;
+        switch(interpolation) {
+        case(PeakInterpolation::NoInterpolation): {
+            weight = 1.0;
+            break;
+        }
+        case(PeakInterpolation::InverseDistance): {
+            Eigen::RowVector3d dq = reference_peak->q().rowVector() - peak->q().rowVector();
+            weight = 1.0/dq.norm();
+            break;
+        }
+        case(PeakInterpolation::Intensity): {
+            auto corrected_intensity = peak->correctedIntensity();
+            double intensity = corrected_intensity.value();
+            double sigma = corrected_intensity.sigma();
+            weight = intensity/sigma;
+            break;
+        }
+        default: {
+            throw std::runtime_error("Invalid peak interpolation");
+        }
+        }
+
+        cov += weight*(J * peak->shape().inverseMetric() * J.transpose());
+
+        sum_weight += weight;
     }
 
     if (neighbors.size() == 0) {
         throw std::runtime_error("Error, no neighboring profiles found.");
     }
 
-    cov /= neighbors.size();
+    cov /= sum_weight;
     Eigen::Matrix3d JI = reference_coord.jacobian().inverse();
     return JI * cov * JI.transpose();
 }

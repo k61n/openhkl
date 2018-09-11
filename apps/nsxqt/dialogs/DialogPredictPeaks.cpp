@@ -20,29 +20,34 @@ DialogPredictPeaks::~DialogPredictPeaks()
     delete ui;
 }
 
-double DialogPredictPeaks::dMin()
+double DialogPredictPeaks::dMin() const
 {
     return ui->dMinSpinBox->value();
 }
 
-double DialogPredictPeaks::dMax()
+double DialogPredictPeaks::dMax() const
 {
     return ui->dMaxSpinBox->value();
 }
 
-double DialogPredictPeaks::radius()
+double DialogPredictPeaks::radius() const
 {
     return ui->radius->value();
 }
 
-double DialogPredictPeaks::nFrames()
+double DialogPredictPeaks::nFrames() const
 {
     return ui->nframes->value();
 }
 
-int DialogPredictPeaks::minNeighbors()
+int DialogPredictPeaks::minNeighbors() const
 {
     return ui->neighborSpinBox->value();
+}
+
+int DialogPredictPeaks::interpolation() const
+{
+    return ui->interpolation->currentIndex();
 }
 
 nsx::sptrUnitCell DialogPredictPeaks::cell()

@@ -1,30 +1,9 @@
-#include <fstream>
-#include <iostream>
-#include <string>
-#include <vector>
-
-#include <Eigen/Dense>
-
-#include <nsxlib/AutoIndexer.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/PeakPredictor.h>
 #include <nsxlib/DataReaderFactory.h>
-#include <nsxlib/PeakFinder.h>
+#include <nsxlib/Experiment.h>
 #include <nsxlib/DataSet.h>
-#include <nsxlib/Detector.h>
-#include <nsxlib/Gonio.h>
 #include <nsxlib/IDataReader.h>
 #include <nsxlib/InstrumentState.h>
-#include <nsxlib/Sample.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/Sample.h>
-#include <nsxlib/Source.h>
-
 #include <nsxlib/NSXTest.h>
-#include <nsxlib/Units.h>
-#include <nsxlib/ProgressHandler.h>
-#include <nsxlib/ReciprocalVector.h>
 
 NSX_INIT_TEST
 
@@ -45,9 +24,6 @@ int nsx::UnitTest_DataSet::run()
 
     expt->addData(dataf);
 
-    auto detector_gonio = dataf->diffractometer()->detector()->gonio();
-    auto sample_gonio = dataf->diffractometer()->sample()->gonio();
-
     auto detectorStates = dataf->_reader->detectorStates();
     auto sampleStates = dataf->_reader->sampleStates();
 
@@ -56,7 +32,7 @@ int nsx::UnitTest_DataSet::run()
         auto state = dataf->interpolatedState(frame);
 
         auto lframe = std::lround(std::floor(frame));
-                   }
+    }
     return 0;
 }
 

@@ -1,8 +1,3 @@
-#include <fstream>
-#include <iostream>
-#include <string>
-#include <vector>
-
 #include <Eigen/Dense>
 
 #include <nsxlib/AutoIndexer.h>
@@ -12,20 +7,16 @@
 #include <nsxlib/DetectorEvent.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/DirectVector.h>
-
 #include <nsxlib/Experiment.h>
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFilter.h>
 #include <nsxlib/PeakFinder.h>
-#include <nsxlib/PeakPredictor.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/ShapeLibrary.h>
-#include <nsxlib/PixelSumIntegrator.h>
 #include <nsxlib/UnitCell.h>
-#include <nsxlib/Units.h>
 
 NSX_INIT_TEST
 

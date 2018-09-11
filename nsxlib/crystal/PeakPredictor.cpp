@@ -68,39 +68,39 @@ PeakPredictor::PeakPredictor(sptrUnitCell cell, double dmin, double dmax, sptrSh
 
 PeakList PeakPredictor::predict(sptrDataSet data, double radius, double nframes, int min_neighbors) const
 {
-    if (!_library) {
-        throw std::runtime_error("PeakPredictor cannot predict without a shape library");
-    }
-
-    auto& mono = data->diffractometer()->source()->selectedMonochromator();
-    const double wavelength = mono.wavelength();
-    PeakList calculated_peaks;     
-    std::set<MillerIndex> found_hkls;
-
-    auto predicted_hkls = _cell->generateReflectionsInShell(_dmin, _dmax, wavelength); 
-    PeakList peaks = predictPeaks(data, predicted_hkls, _cell->reciprocalBasis());
-
-    nsx::info() << "Computing shapes of " << peaks.size() << " calculated peaks...";
-
-    for (size_t peak_id = 0; peak_id < peaks.size(); ++peak_id) {
-        sptrPeak3D p = peaks[peak_id];
-        p->setUnitCell(_cell);
-        p->setPredicted(true);
-        p->setSelected(true);
-
-        try {
-            // can throw if there are too few neighboring peaks
-            // todo: number of neighboring peaks should not be hard-coded
-            Eigen::Matrix3d cov = _library->meanCovariance(p, radius, nframes, min_neighbors);
-            //Eigen::Matrix3d cov = _library->predictCovariance(p);
-            Eigen::Vector3d center = p->shape().center();
-            p->setShape(Ellipsoid(center, cov.inverse()));
-        } catch (std::exception& e) {
-            nsx::info() << e.what();
-            continue;
-        }
-        calculated_peaks.push_back(p);
-    }    
+//    if (!_library) {
+//        throw std::runtime_error("PeakPredictor cannot predict without a shape library");
+//    }
+//
+//    auto& mono = data->diffractometer()->source()->selectedMonochromator();
+//    const double wavelength = mono.wavelength();
+    PeakList calculated_peaks;
+//    std::set<MillerIndex> found_hkls;
+//
+//    auto predicted_hkls = _cell->generateReflectionsInShell(_dmin, _dmax, wavelength);
+//    PeakList peaks = predictPeaks(data, predicted_hkls, _cell->reciprocalBasis());
+//
+//    nsx::info() << "Computing shapes of " << peaks.size() << " calculated peaks...";
+//
+//    for (size_t peak_id = 0; peak_id < peaks.size(); ++peak_id) {
+//        sptrPeak3D p = peaks[peak_id];
+//        p->setUnitCell(_cell);
+//        p->setPredicted(true);
+//        p->setSelected(true);
+//
+//        try {
+//            // can throw if there are too few neighboring peaks
+//            // todo: number of neighboring peaks should not be hard-coded
+//            Eigen::Matrix3d cov = _library->meanCovariance(p, radius, nframes, min_neighbors);
+//            //Eigen::Matrix3d cov = _library->predictCovariance(p);
+//            Eigen::Vector3d center = p->shape().center();
+//            p->setShape(Ellipsoid(center, cov.inverse()));
+//        } catch (std::exception& e) {
+//            nsx::info() << e.what();
+//            continue;
+//        }
+//        calculated_peaks.push_back(p);
+//    }
     return calculated_peaks;
 }
 
