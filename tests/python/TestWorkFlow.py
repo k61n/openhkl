@@ -81,12 +81,5 @@ class TestWorkFlow(unittest.TestCase):
             if library.addPeak(peak):
                 library_size +=1
 
-        library.setDefaultShape(library.meanShape())
-        predictor = nsx.PeakPredictor(uc, library, 2.1, 50.0, 0)
-       
-        predicted_peaks = predictor.predict(data)
-        #self.assertTrue(len(predicted_peaks) > 1600)
-
-
 if __name__ == '__main__':
     unittest.main()

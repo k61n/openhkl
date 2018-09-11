@@ -1,31 +1,20 @@
-#include <fstream>
-#include <iostream>
-#include <string>
-#include <vector>
+#include <array>
 
 #include <Eigen/Dense>
 
-#include <nsxlib/AutoIndexer.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/PeakPredictor.h>
 #include <nsxlib/DataReaderFactory.h>
-#include <nsxlib/PeakFinder.h>
+#include <nsxlib/Diffractometer.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Detector.h>
-#include <nsxlib/Gonio.h>
+#include <nsxlib/Experiment.h>
 #include <nsxlib/IDataReader.h>
 #include <nsxlib/InstrumentState.h>
 #include <nsxlib/InterpolatedState.h>
-#include <nsxlib/Sample.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/Sample.h>
-#include <nsxlib/Source.h>
-
 #include <nsxlib/NSXTest.h>
-#include <nsxlib/Units.h>
 #include <nsxlib/ProgressHandler.h>
+#include <nsxlib/Sample.h>
 #include <nsxlib/ReciprocalVector.h>
+#include <nsxlib/Source.h>
 
 NSX_INIT_TEST
 

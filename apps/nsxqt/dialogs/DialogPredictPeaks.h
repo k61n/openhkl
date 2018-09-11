@@ -17,12 +17,14 @@ public:
     explicit DialogPredictPeaks(const std::set<nsx::sptrUnitCell>& cells, QWidget *parent = 0);
     ~DialogPredictPeaks();
 
-    double dMin();
-    double dMax();
-    double radius();
-    double nFrames();
+    double dMin() const;
+    double dMax() const;
+    double radius() const;
+    double nFrames() const;
 
-    int minNeighbors();
+    int minNeighbors() const;
+
+    int interpolation() const;
 
     nsx::sptrUnitCell cell(); 
 

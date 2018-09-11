@@ -125,7 +125,6 @@ void PeaksItem::integratePeaks()
         integrator->integrate(peaks, numor, library->peakScale(), library->bkgBegin(), library->bkgEnd());
     }
 
-    // todo: emit signal
     nsx::info() << "Done reintegrating peaks";
 }
 

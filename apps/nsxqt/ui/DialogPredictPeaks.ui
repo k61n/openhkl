@@ -83,6 +83,9 @@
        </property>
       </widget>
      </item>
+     <item row="0" column="2">
+      <widget class="QComboBox" name="comboBoxUC"/>
+     </item>
      <item row="7" column="2">
       <widget class="QDoubleSpinBox" name="sigmaSpinBox">
        <property name="maximum">
@@ -102,9 +105,6 @@
         <string>sigma M</string>
        </property>
       </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QComboBox" name="comboBoxUC"/>
      </item>
      <item row="1" column="2">
       <widget class="QDoubleSpinBox" name="sigmaD">
@@ -185,6 +185,35 @@
        <property name="value">
         <double>5.000000000000000</double>
        </property>
+      </widget>
+     </item>
+     <item row="12" column="0">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>Interpolation</string>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="2">
+      <widget class="QComboBox" name="interpolation">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>No interpolation</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Inverse distance</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Intensity</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>
