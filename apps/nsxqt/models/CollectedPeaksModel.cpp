@@ -100,6 +100,16 @@ void CollectedPeaksModel::slotChangeMaskedPeaks(const nsx::PeakList& peaks)
     }
 }
 
+void CollectedPeaksModel::setPeaks(const nsx::PeakList& peaks) {
+    reset();
+    _peaks = peaks;
+
+    QModelIndex topleft_index = index(0,0);
+    QModelIndex bottomright_index = index(rowCount(QModelIndex())-1,columnCount(QModelIndex())-1);
+
+    emit dataChanged(topleft_index,bottomright_index);
+}
+
 const nsx::PeakList& CollectedPeaksModel::peaks() const
 {
     return _peaks;
@@ -130,6 +140,13 @@ int CollectedPeaksModel::columnCount(const QModelIndex& parent) const
     Q_UNUSED(parent);
 
     return Column::count;
+}
+
+void CollectedPeaksModel::reset()
+{
+    beginResetModel();
+    _peaks.clear();
+    endResetModel();
 }
 
 Qt::ItemFlags CollectedPeaksModel::flags(const QModelIndex &index) const

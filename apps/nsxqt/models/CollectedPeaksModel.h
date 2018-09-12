@@ -29,13 +29,18 @@ public:
     ~CollectedPeaksModel() = default;
 
     virtual int rowCount(const QModelIndex& parent) const override;
+
     virtual int columnCount(const QModelIndex& parent) const override;
+
+    void reset();
 
     QVariant data(const QModelIndex &index, int role) const override;
 
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+
+    void setPeaks(const nsx::PeakList& peaks);
 
     const nsx::PeakList& peaks() const;
 
