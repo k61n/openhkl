@@ -30,7 +30,10 @@ DialogExploreInstrumentStates::DialogExploreInstrumentStates(const nsx::DataList
     _ui->setupUi(this);
 
     setModal(false);
+
     setWindowModality(Qt::NonModal);
+
+    setAttribute(Qt::WA_DeleteOnClose);
 
     for (auto d : data) {
         QFileInfo fileinfo(QString::fromStdString(d->filename()));
@@ -49,16 +52,18 @@ DialogExploreInstrumentStates::DialogExploreInstrumentStates(const nsx::DataList
 
 void DialogExploreInstrumentStates::slotSelectedDataChanged(int selected_data)
 {
+    Q_UNUSED(selected_data)
+
     auto current_item = _ui->data->currentItem();
 
     auto data = current_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
 
     _ui->frameIndex->setMinimum(0);
-    _ui->frameIndex->setMaximum(data->nFrames());
+    _ui->frameIndex->setMaximum(data->nFrames()-1);
     _ui->frameIndex->setValue(0);
 
     _ui->frameSlider->setMinimum(0);
-    _ui->frameSlider->setMaximum(data->nFrames());
+    _ui->frameSlider->setMaximum(data->nFrames()-1);
     _ui->frameSlider->setValue(0);
 
     slotSelectedFrameChanged(0);
