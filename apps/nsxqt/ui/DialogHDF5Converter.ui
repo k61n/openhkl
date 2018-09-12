@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>108</height>
+    <height>145</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -46,19 +46,6 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QPushButton" name="convert">
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
-       <property name="text">
-        <string>Convert</string>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item>
@@ -89,6 +76,13 @@
      </property>
      <property name="value">
       <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="cancelOK">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
