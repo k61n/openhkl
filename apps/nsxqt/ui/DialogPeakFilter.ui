@@ -13,8 +13,8 @@
   <property name="windowTitle">
    <string>Peak Filters</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,1">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -89,7 +89,7 @@
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Keep the peaks which are indexable with a given unit cell&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="title">
-          <string>Indexed peaks by unit cell</string>
+          <string>&amp;Indexed peaks by unit cell</string>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -153,7 +153,7 @@
        <item>
         <widget class="QGroupBox" name="strength">
          <property name="title">
-          <string>Strength (I/sigma)</string>
+          <string>Stren&amp;gth (I/sigma)</string>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -233,7 +233,7 @@
        <item>
         <widget class="QGroupBox" name="dRange">
          <property name="title">
-          <string>d range</string>
+          <string>&amp;d range</string>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -356,7 +356,7 @@
        <item>
         <widget class="QGroupBox" name="mergedPeakSignificance">
          <property name="title">
-          <string>Merged peak significance</string>
+          <string>&amp;Merged peak significance</string>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -434,7 +434,7 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
+   <item>
     <widget class="QDialogButtonBox" name="actions">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -454,38 +454,5 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>actions</sender>
-   <signal>accepted()</signal>
-   <receiver>DialogPeakFilter</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actions</sender>
-   <signal>rejected()</signal>
-   <receiver>DialogPeakFilter</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
