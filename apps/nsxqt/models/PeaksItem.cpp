@@ -36,6 +36,7 @@
 #include "InspectableTreeItem.h"
 #include "InstrumentItem.h"
 #include "LibraryItem.h"
+#include "MainWindow.h"
 #include "MetaTypes.h"
 #include "NumorItem.h"
 #include "PeakListItem.h"
@@ -256,28 +257,15 @@ void PeaksItem::openPeakFilterDialog()
     dialog->raise();
 }
 
-void PeaksItem::filterPeaks(const nsx::PeakList& peaks, const nsx::PeakList& filtered_peaks)
+void PeaksItem::openAutoIndexingDialog()
 {
-    auto peak_list = new PeakListItem(filtered_peaks);
+    auto&& selected_peaks = selectedPeaks();
 
-    peak_list->setText("Filtered peaks");
+    DialogAutoIndexing* dialog = DialogAutoIndexing::create(experimentItem(), selected_peaks, MainWindow::Instance());
 
-    appendRow(peak_list);
+    dialog->show();
 
-    nsx::info()<<"Applied peak filters on selected peaks. Remains "<<filtered_peaks.size()<<" out of "<<peaks.size()<<" peaks";
-}
-
-void PeaksItem::autoindex()
-{
-    nsx::PeakList peaks = selectedPeaks();
-
-    std::unique_ptr<DialogAutoIndexing> dialog(new DialogAutoIndexing(experimentItem(), peaks));
-
-    if (!dialog->exec()) {
-        return;
-    }
-
-    emit model()->itemChanged(this);
+    dialog->raise();
 }
 
 void PeaksItem::refine()

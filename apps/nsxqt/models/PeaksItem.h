@@ -19,7 +19,7 @@ public:
 
     nsx::PeakList selectedPeaks();
 
-    void filterPeaks(const nsx::PeakList& peaks, const nsx::PeakList& filtered_peaks);
+    void openAutoIndexingDialog();
 
     void openPeakFilterDialog();
 
@@ -34,8 +34,6 @@ public:
     void absorptionCorrection();
 
     void buildShapeLibrary();
-
-    void autoindex();
 
     void refine();
 

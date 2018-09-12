@@ -34,7 +34,6 @@ void LibraryItem::incorporateCalculatedPeaks()
         return;
     }
 
-
     nsx::debug() << "Incorporating missing peaks into current data set...";
 
     auto experiment_item = dynamic_cast<ExperimentItem*>(parent());
@@ -44,42 +43,9 @@ void LibraryItem::incorporateCalculatedPeaks()
 
     auto unit_cells_item = experiment_item->unitCellsItem();
 
-    DialogPredictPeaks dialog(unit_cells_item->unitCells());
+    DialogPredictPeaks *dialog = DialogPredictPeaks::create(experimentItem(), unit_cells_item->unitCells(), nullptr);
 
-    if (!dialog.exec()) {
-        return;
-    }
+    dialog->show();
 
-    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
-    ProgressView progressView(nullptr);
-    progressView.watch(handler);
-
-    int current_numor = 0;
-
-    auto cell = dialog.cell();
-    auto&& d_min = dialog.dMin();
-    auto&& d_max = dialog.dMax();
-    auto&& radius = dialog.radius();
-    auto&& n_frames = dialog.nFrames();
-    auto&& min_neighbors = dialog.minNeighbors();
-    nsx::PeakInterpolation interpolation = static_cast<nsx::PeakInterpolation>(dialog.interpolation());
-
-    nsx::PeakList predicted_peaks;
-
-    for(auto numor: numors) {
-        nsx::debug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
-
-        auto&& predicted = nsx::predictPeaks(*_library, numor, cell, d_min, d_max, radius, n_frames, min_neighbors, interpolation);
-
-        for (auto peak: predicted) {
-            predicted_peaks.push_back(peak);
-        }
-
-        nsx::debug() << "Added " << predicted.size() << " predicted peaks.";
-    }
-
-    auto peaks_item = experimentItem()->peaksItem();
-    auto item = new PeakListItem(predicted_peaks);
-    item->setText("Predicted peaks");
-    peaks_item->appendRow(item);
+    dialog->raise();
 }
