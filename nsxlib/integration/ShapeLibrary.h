@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "CrystalTypes.h"
+#include "DataTypes.h"
 #include "DetectorEvent.h"
 #include "Profile3D.h"
 #include "Profile1D.h"
