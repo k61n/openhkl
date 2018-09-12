@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 #include "GruberReduction.h"
+#include "Logger.h"
 #include "Material.h"
 #include "MillerIndex.h"
 #include "Minimizer.h"
@@ -185,7 +186,6 @@ std::ostream& operator<<(std::ostream& os,const UnitCell& uc)
     return os;
 }
 
-// todo: check this again
 std::vector<MillerIndex> UnitCell::generateReflectionsInShell(double dmin, double dmax, double wavelength) const
 {
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> eigen_solver;
@@ -230,6 +230,9 @@ std::vector<MillerIndex> UnitCell::generateReflectionsInShell(double dmin, doubl
             }
         }
     }
+
+    nsx::info() << "Generated "<<hkls.size()<<" hkl in ["<<dmin<<","<<dmax<<"] range";
+
     return hkls;
 }
 
