@@ -9,8 +9,6 @@
 #include "CollectedPeaksDelegate.h"
 #include "CollectedPeaksModel.h"
 
-#include <QDebug>
-
 CollectedPeaksDelegate::CollectedPeaksDelegate(QObject *parent) : QStyledItemDelegate(parent)
 {
     _icon.addPixmap(QPixmap(":/resources/peakSelectedIcon.png"),QIcon::Normal,QIcon::On);
