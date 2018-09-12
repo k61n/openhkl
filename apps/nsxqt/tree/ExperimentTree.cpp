@@ -50,11 +50,11 @@
 #include "ProgressView.h"
 #include "QCustomPlot.h"
 #include "SampleItem.h"
-
 #include "SessionModel.h"
 #include "SourceItem.h"
 #include "TreeItem.h"
 #include "UnitCellItem.h"
+#include "UnitCellsItem.h"
 
 #include "ui_MainWindow.h"
 
@@ -115,22 +115,29 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(explore_instrument_states, &QAction::triggered, [=](){ditem->exploreInstrumentStates();});
         }
         else if (auto pitem = dynamic_cast<PeaksItem*>(item)) {
-            QAction* filter = menu->addAction("Filter peaks");
-            QAction* autoidx = menu->addAction("FFT-autoindex peaks");
-            QAction* assign = menu->addAction("Autoindex existing lattice");
-            QAction* refine = menu->addAction("Refine lattice and instrument parameters");
-            QAction* library = menu->addAction("Build shape library");
-            QAction* integrate = menu->addAction("Integrate peaks");
             QAction* abs = menu->addAction("Correct for Absorption");
-            QAction* scene3d = menu->addAction("Show 3D view");                      
             connect(abs, triggered, [=]{pitem->absorptionCorrection();});
-            connect(scene3d, triggered, [=]{pitem->showPeaksOpenGL();});
-            connect(library, triggered, [=]{pitem->buildShapeLibrary();});
+
+            QAction* filter = menu->addAction("Filter peaks");
             connect(filter, triggered, [=](){pitem->openPeakFilterDialog();});
-            connect(integrate, triggered, [=](){pitem->integratePeaks();});
-            connect(autoidx, triggered, [=](){pitem->autoindex();});
-            connect(refine, triggered, [=](){pitem->refine();});
+
+            QAction* autoindex = menu->addAction("FFT-autoindex peaks");
+            connect(autoindex, triggered, [=](){pitem->openAutoIndexingDialog();});
+
+            QAction* assign = menu->addAction("Autoindex existing lattice");
             connect(assign, triggered, [=](){pitem->autoAssignUnitCell();});
+
+            QAction* refine = menu->addAction("Refine lattice and instrument parameters");
+            connect(refine, triggered, [=](){pitem->refine();});
+
+            QAction* library = menu->addAction("Build shape library");
+            connect(library, triggered, [=]{pitem->buildShapeLibrary();});
+
+            QAction* integrate = menu->addAction("Integrate peaks");
+            connect(integrate, triggered, [=](){pitem->integratePeaks();});
+
+            QAction* scene3d = menu->addAction("Show 3D view");
+            connect(scene3d, triggered, [=]{pitem->showPeaksOpenGL();});
         }
         else if (SampleItem* sitem = dynamic_cast<SampleItem*>(item)) {
             QAction* openIsotopesDatabase = menu->addAction("Open isotopes database");
@@ -163,6 +170,12 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
         } else if (LibraryItem* lib_item = dynamic_cast<LibraryItem*>(item)) {
             QAction* predict = menu->addAction("Predict peaks");
             connect(predict, triggered, [=](){lib_item->incorporateCalculatedPeaks();});
+        } else if (UnitCellsItem* unit_cells_item = dynamic_cast<UnitCellsItem*>(item)) {
+            QAction* remove_unused_unit_cell = menu->addAction("Remove unused unit cells");
+            connect(remove_unused_unit_cell, triggered, [=](){unit_cells_item->removeUnusedUnitCells();});
+        } else {
+            delete menu;
+            return;
         }
     }
 

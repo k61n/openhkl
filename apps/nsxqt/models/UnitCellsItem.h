@@ -9,4 +9,5 @@ public:
 
     nsx::UnitCellList unitCells();
 
+    void removeUnusedUnitCells();
 };
