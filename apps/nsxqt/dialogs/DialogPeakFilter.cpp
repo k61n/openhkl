@@ -16,6 +16,7 @@
 #include "CollectedPeaksModel.h"
 #include "DialogPeakFilter.h"
 #include "ExperimentItem.h"
+#include "PeakListItem.h"
 #include "PeaksItem.h"
 #include "MetaTypes.h"
 
@@ -35,22 +36,19 @@ DialogPeakFilter* DialogPeakFilter::Instance()
     return _instance;
 }
 
-const nsx::PeakList& DialogPeakFilter::peaks() const
-{
-    return _peaks;
-}
-
 DialogPeakFilter::DialogPeakFilter(ExperimentItem* experiment_item, const nsx::PeakList& peaks, QWidget* parent)
 : QDialog(parent),
   _ui(new Ui::DialogPeakFilter),
   _experiment_item(experiment_item),
-  _peaks(peaks),
-  _filtered_peaks()
+  _peaks(peaks)
 {
     _ui->setupUi(this);
 
     setModal(false);
+
     setWindowModality(Qt::NonModal);
+
+    setAttribute(Qt::WA_DeleteOnClose);
 
     _ui->state->setStyleSheet("font-weight: normal;");
     _ui->state->setCheckable(true);
@@ -115,12 +113,11 @@ DialogPeakFilter::~DialogPeakFilter()
         delete _peaks_model;
     }
 
+    delete _ui;
+
     if (_instance) {
-        delete _instance;
         _instance = nullptr;
     }
-
-    delete _ui;
 }
 
 void DialogPeakFilter::slotUnitCellChanged(int index) {
@@ -140,6 +137,14 @@ void DialogPeakFilter::slotActionClicked(QAbstractButton *button)
         filterPeaks();
         break;
     }
+    case QDialogButtonBox::StandardButton::Cancel: {
+        reject();
+        break;
+    }
+    case QDialogButtonBox::StandardButton::Ok: {
+        accept();
+        break;
+    }
     default: {
         return;
     }
@@ -148,26 +153,24 @@ void DialogPeakFilter::slotActionClicked(QAbstractButton *button)
 
 void DialogPeakFilter::filterPeaks()
 {
-    _filtered_peaks.clear();
-
-    _filtered_peaks = _peaks;
+    nsx::PeakList filtered_peaks = _peaks;
 
     nsx::PeakFilter peak_filter;
 
     if (_ui->state->isChecked()) {
-        _filtered_peaks = peak_filter.selected(_filtered_peaks,_ui->selected->isChecked());
-        _filtered_peaks = peak_filter.masked(_filtered_peaks,_ui->masked->isChecked());
-        _filtered_peaks = peak_filter.predicted(_filtered_peaks,_ui->predicted->isChecked());
+        filtered_peaks = peak_filter.selected(filtered_peaks,_ui->selected->isChecked());
+        filtered_peaks = peak_filter.masked(filtered_peaks,_ui->masked->isChecked());
+        filtered_peaks = peak_filter.predicted(filtered_peaks,_ui->predicted->isChecked());
     }
 
     if (_ui->indexed->isChecked()) {
-        _filtered_peaks = peak_filter.indexed(_filtered_peaks);
+        filtered_peaks = peak_filter.indexed(filtered_peaks);
     }
 
     if (_ui->indexedByUnitCell->isChecked()) {
         if (_ui->unitCells->count() > 0) {
             auto unit_cell = _ui->unitCells->itemData(_ui->unitCells->currentIndex(),Qt::UserRole).value<nsx::sptrUnitCell>();
-            _filtered_peaks = peak_filter.indexed(_filtered_peaks,unit_cell,_ui->indexingTolerance->value());
+            filtered_peaks = peak_filter.indexed(filtered_peaks,unit_cell,_ui->indexingTolerance->value());
         }
     }
 
@@ -175,61 +178,57 @@ void DialogPeakFilter::filterPeaks()
         double smin = _ui->strengthMin->value();
         double smax = _ui->strengthMax->value();
 
-        _filtered_peaks = peak_filter.strength(_filtered_peaks,smin,smax);
+        filtered_peaks = peak_filter.strength(filtered_peaks,smin,smax);
     }
 
     if (_ui->dRange->isChecked()) {
         double d_min = _ui->dMin->value();
         double d_max = _ui->dMax->value();
 
-        _filtered_peaks = peak_filter.dRange(_filtered_peaks,d_min,d_max);
+        filtered_peaks = peak_filter.dRange(filtered_peaks,d_min,d_max);
     }
 
     if (_ui->extincted->isChecked()) {
-        _filtered_peaks = peak_filter.extincted(_filtered_peaks);
+        filtered_peaks = peak_filter.extincted(filtered_peaks);
     }
 
     if (_ui->sparseDataSets->isChecked()) {
         size_t min_num_peaks = static_cast<size_t>(_ui->minNumPeaks->value());
 
-        _filtered_peaks = peak_filter.sparseDataSet(_filtered_peaks,min_num_peaks);
+        filtered_peaks = peak_filter.sparseDataSet(filtered_peaks,min_num_peaks);
     }
 
     if (_ui->mergedPeakSignificance->isChecked()) {
         double significance_level = _ui->significanceLevel->value();
 
-        _filtered_peaks = peak_filter.mergedPeaksSignificance(_filtered_peaks,significance_level);
+        filtered_peaks = peak_filter.mergedPeaksSignificance(filtered_peaks,significance_level);
     }
 
     if (_ui->overlapping->isChecked()) {
-        _filtered_peaks = peak_filter.overlapping(_filtered_peaks);
+        filtered_peaks = peak_filter.overlapping(filtered_peaks);
     }
 
     if (_ui->complementary->isChecked()) {
-        _filtered_peaks = peak_filter.complementary(_peaks,_filtered_peaks);
+        filtered_peaks = peak_filter.complementary(_peaks,filtered_peaks);
     }
 
-    if (_peaks_model) {
-        delete _peaks_model;
-        QItemSelectionModel *selection_model = _ui->peaks->selectionModel();
-        delete selection_model;
-    }
-    _peaks_model = new CollectedPeaksModel(_experiment_item->model(),_experiment_item->experiment(),_filtered_peaks);
-
-    _ui->peaks->setModel(_peaks_model);
-
+    _peaks_model->setPeaks(filtered_peaks);
 }
 
 void DialogPeakFilter::accept()
 {
-    if (!_filtered_peaks.empty()) {
-        _experiment_item->peaksItem()->filterPeaks(_peaks,_filtered_peaks);
+    auto& filtered_peaks = _peaks_model->peaks();
+
+    if (!filtered_peaks.empty()) {
+
+        auto peak_list = new PeakListItem(filtered_peaks);
+
+        peak_list->setText("Filtered peaks");
+
+        _experiment_item->peaksItem()->appendRow(peak_list);
+
+        nsx::info()<<"Applied peak filters on selected peaks. Remains "<<filtered_peaks.size()<<" out of "<<_peaks.size()<<" peaks";
     }
 
     QDialog::accept();
-}
-
-const nsx::PeakList& DialogPeakFilter::filteredPeaks() const
-{
-    return _filtered_peaks;
 }

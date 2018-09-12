@@ -27,10 +27,6 @@ public:
 
     virtual ~DialogPeakFilter();
 
-    const nsx::PeakList& filteredPeaks() const;
-
-    const nsx::PeakList& peaks() const;
-
 public slots:
 
     virtual void accept() override;
@@ -47,15 +43,13 @@ private:
 
 private:
 
-    static DialogPeakFilter* _instance;
+    static DialogPeakFilter *_instance;
 
-    Ui::DialogPeakFilter* _ui;
+    Ui::DialogPeakFilter *_ui;
 
-    ExperimentItem* _experiment_item;
+    ExperimentItem *_experiment_item;
 
-    CollectedPeaksModel* _peaks_model;
+    CollectedPeaksModel *_peaks_model;
 
     nsx::PeakList _peaks;
-
-    nsx::PeakList _filtered_peaks;
 };
