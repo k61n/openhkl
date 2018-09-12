@@ -61,15 +61,27 @@
 #include "SessionModel.h"
 #include "SXPlot.h"
 
-#include <QDebug>
-
 #include "ui_MainWindow.h"
+
+MainWindow* MainWindow::_instance = nullptr;
+
+MainWindow* MainWindow::create(QWidget* parent)
+{
+    if (!_instance) {
+        _instance = new MainWindow(parent);
+    }
+
+    return _instance;
+}
+
+MainWindow* MainWindow::Instance()
+{
+    return _instance;
+}
 
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent),
-  _ui(new Ui::MainWindow),
-  //_experiments(),
-  _currentData(nullptr)
+  _ui(new Ui::MainWindow)
 {
 
     _ui->setupUi(this);
@@ -163,9 +175,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(_ui->experimentTree,SIGNAL(inspectWidget(QWidget*)),this,SLOT(setInspectorWidget(QWidget*)));
 
-    _progressHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler());
-    _peakFinder = nsx::sptrPeakFinder(new nsx::PeakFinder());
-
     for (auto&& action: _ui->menuColor_map->actions()) {
         _ui->menuColor_map->removeAction(action);
     }
@@ -192,9 +201,14 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 MainWindow::~MainWindow()
-{
+{    
     qInstallMessageHandler(0);
+
     delete _ui;
+
+    if (_instance) {
+        _instance = nullptr;
+    }
 }
 
 void MainWindow::on_actionAbout_triggered()
@@ -207,11 +221,6 @@ void MainWindow::on_actionAbout_triggered()
     QSize screenSize = QApplication::desktop()->geometry().size();
     splashScrWindow->move(screenSize.width()/2-300,screenSize.height()/2-150);
     splashScrWindow->show();
-}
-
-Ui::MainWindow* MainWindow::getUI() const
-{
-    return _ui;
 }
 
 void MainWindow::slotChangeSelectedData(nsx::sptrDataSet data, int frame)

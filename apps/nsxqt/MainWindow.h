@@ -29,9 +29,10 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
 
-    Ui::MainWindow* getUI() const;
+    static MainWindow* create(QWidget* parent=nullptr);
+
+    static MainWindow* Instance();
 
     ~MainWindow();
 
@@ -75,12 +76,14 @@ private slots:
     void slotChangeSelectedFrame(int selected_frame);
 
 private:
+
+    MainWindow(QWidget *parent = 0);
+
+private:
+
+    static MainWindow *_instance;
+
     Ui::MainWindow* _ui;
-
-    nsx::sptrDataSet _currentData;
-
-    nsx::sptrProgressHandler _progressHandler;
-    nsx::sptrPeakFinder _peakFinder;
 
     SessionModel* _session;
 };
