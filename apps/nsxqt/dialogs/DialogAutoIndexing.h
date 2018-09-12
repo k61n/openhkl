@@ -16,6 +16,7 @@ class DialogAutoIndexing;
 class CollectedPeaksModel;
 class ExperimentItem;
 class QAbstractButton;
+class QListWidgetItem;
 
 class DialogAutoIndexing : public QDialog
 {
@@ -23,15 +24,23 @@ class DialogAutoIndexing : public QDialog
 
 public:
 
-    explicit DialogAutoIndexing(ExperimentItem* experiment_item, const nsx::PeakList& peaks, QWidget* parent=nullptr);
+    static DialogAutoIndexing* create(ExperimentItem* experiment_tree, const nsx::PeakList& peaks, QWidget* parent=nullptr);
+
+    static DialogAutoIndexing* Instance();
 
     ~DialogAutoIndexing();
 
     void buildSolutionsTable();
 
+public slots:
+
+    virtual void accept() override;
+
+    virtual void reject() override;
+
 private slots:
 
-    void actionRequested(QAbstractButton* button);
+    void slotActionClicked(QAbstractButton* button);
 
     void autoIndex();
 
@@ -39,11 +48,7 @@ private slots:
 
     void selectSolution(int);
 
-    void slotResetUnitCell();
-
-    virtual void reject() override;
-
-    virtual void accept() override;
+    void slotEditUnitCellName(QListWidgetItem *item);
 
 signals:
 
@@ -51,7 +56,16 @@ signals:
 
 private:
 
-    Ui::DialogAutoIndexing *ui;
+    //! Private ctor for Singleton pattern
+    DialogAutoIndexing(ExperimentItem* experiment_item, const nsx::PeakList& peaks, QWidget *parent=nullptr);
+
+    void resetUnitCell();
+
+private:
+
+    static DialogAutoIndexing *_instance;
+
+    Ui::DialogAutoIndexing *_ui;
 
     ExperimentItem* _experiment_item;
 
