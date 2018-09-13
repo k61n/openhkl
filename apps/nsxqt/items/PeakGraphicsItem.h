@@ -40,8 +40,6 @@ private:
     //! Pointer to the Peak3D object
     nsx::sptrPeak3D _peak;
 
-    int _frame;
-
     static bool _show_label;
 
     static bool _show_center;

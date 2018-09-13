@@ -172,4 +172,6 @@ private:
     QGraphicsRectItem* _selected_peak_gi;
 
     std::map<nsx::sptrPeak3D,PeakGraphicsItem*> _peak_graphics_items;
+
+    nsx::sptrPeak3D _selected_peak;
 };

@@ -56,7 +56,8 @@ DetectorScene::DetectorScene(QObject *parent)
   _integrationRegion(nullptr),
   _session(nullptr),
   _selected_peak_gi(nullptr),
-  _peak_graphics_items()
+  _peak_graphics_items(),
+  _selected_peak(nullptr)
 {
 }
 
@@ -125,6 +126,42 @@ void DetectorScene::resetPeakGraphicsItems()
 
         _peak_graphics_items.insert(std::make_pair(peak,peak_gi));
     }
+
+    if (_selected_peak_gi) {
+        removeItem(_selected_peak_gi);
+        delete _selected_peak_gi;
+        _selected_peak_gi = nullptr;
+    }
+
+    if (_selected_peak) {
+
+        auto it = _peak_graphics_items.find(_selected_peak);
+
+        if (it == _peak_graphics_items.end()) {
+            return;
+        }
+
+        auto selected_peak_ellipsoid = _selected_peak->shape();
+
+        selected_peak_ellipsoid.scale(_selected_peak->peakEnd());
+
+        auto center = selected_peak_ellipsoid.intersectionCenter({0.0,0.0,1.0},{0.0,0.0,static_cast<double>(_currentFrameIndex)});
+
+        _selected_peak_gi = new QGraphicsRectItem(nullptr);
+        _selected_peak_gi->setPos(center[0],center[1]);
+        _selected_peak_gi->setRect(-10,-10,20,20);
+
+        QPen pen;
+        pen.setColor(Qt::darkCyan);
+        pen.setStyle(Qt::DotLine);
+        _selected_peak_gi->setPen(pen);
+        _selected_peak_gi->setZValue(-1);
+        _selected_peak_gi->setAcceptHoverEvents(false);
+
+        addItem(_selected_peak_gi);
+
+        it->second->setVisible(true);
+    }
 }
 
 void DetectorScene::slotChangeEnabledPeak(nsx::sptrPeak3D peak)
@@ -166,42 +203,20 @@ void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
 
 void DetectorScene::slotChangeSelectedPeak(nsx::sptrPeak3D peak)
 {
-    auto data = peak->data();
-
-    // Get frame number to adjust the data
-    size_t frame = size_t(std::lround(peak->shape().aabb().center()[2]));
-
-    slotChangeSelectedData(data,frame);
-
-    auto it = _peak_graphics_items.find(peak);
-
-    if (it == _peak_graphics_items.end()) {
+    if (peak == _selected_peak) {
         return;
     }
 
-    if (_selected_peak_gi) {
-        removeItem(_selected_peak_gi);
-        delete _selected_peak_gi;
-    }
+    _selected_peak = peak;
+
+    auto data = peak->data();
 
     auto peak_ellipsoid = peak->shape();
 
-    auto center = peak_ellipsoid.intersectionCenter({0.0,0.0,1.0},{0.0,0.0,static_cast<double>(_currentFrameIndex)});
+    // Get frame number to adjust the data
+    size_t frame = size_t(std::lround(peak_ellipsoid.aabb().center()[2]));
 
-    _selected_peak_gi = new QGraphicsRectItem(nullptr);
-    _selected_peak_gi->setPos(center[0],center[1]);
-    _selected_peak_gi->setRect(-10,-10,20,20);
-
-    QPen pen;
-    pen.setColor(Qt::darkCyan);
-    pen.setStyle(Qt::DotLine);
-    _selected_peak_gi->setPen(pen);
-    _selected_peak_gi->setZValue(-1);
-    _selected_peak_gi->setAcceptHoverEvents(false);
-
-    addItem(_selected_peak_gi);
-
-    it->second->setVisible(true);
+    slotChangeSelectedData(data,frame);
 
     update();
 }
