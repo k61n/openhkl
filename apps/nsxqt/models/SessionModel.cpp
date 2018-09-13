@@ -146,26 +146,6 @@ nsx::DataList SessionModel::getSelectedNumors(ExperimentItem* item) const
     return numors;
 }
 
-void SessionModel::setFilename(QString name)
-{
-    _filename = name;
-}
-
-QString SessionModel::getFilename()
-{
-    return _filename;
-}
-
-void SessionModel::setColorMap(const std::string &name)
-{
-    _colormap = name;
-}
-
-std::string SessionModel::getColorMap() const
-{
-    return _colormap;
-}
-
 nsx::DataList SessionModel::getSelectedNumors() const
 {
     nsx::DataList numors;

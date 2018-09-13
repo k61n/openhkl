@@ -75,6 +75,7 @@ void DataItem::removeSelectedData()
             continue;
         }
         removeRow(numor_item->row());
+        experiment()->removeData(data->filename());
     }
 }
 

@@ -187,7 +187,7 @@ MainWindow::MainWindow(QWidget *parent)
         auto slot_fn = [=] () -> void
         {
             const std::string name_str = action->text().toStdString();
-            _session->setColorMap(name_str);
+            setColorMap(name_str);
             _ui->dview->getScene()->setColorMap(name_str);
             _ui->dview->getScene()->loadCurrentImage();
         };
@@ -198,6 +198,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(_ui->showPeakLabels,SIGNAL(triggered(bool)),_ui->dview->getScene(),SLOT(showPeakLabels(bool)));
     connect(_ui->showPeakAreas,SIGNAL(triggered(bool)),_ui->dview->getScene(),SLOT(showPeakAreas(bool)));
+}
+
+void MainWindow::setColorMap(const std::string &name)
+{
+    _colormap = name;
 }
 
 MainWindow::~MainWindow()

@@ -26,7 +26,6 @@ NumorItem::NumorItem(nsx::sptrDataSet data):
 
 NumorItem::~NumorItem()
 {
-    experiment()->removeData(_data->filename());
 }
 
 nsx::sptrDataSet NumorItem::data()

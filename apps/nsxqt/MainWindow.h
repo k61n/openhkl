@@ -1,7 +1,6 @@
 #pragma once
 
-#include <map>
-#include <memory>
+#include <string>
 
 #include <QGraphicsScene>
 #include <QMainWindow>
@@ -36,7 +35,7 @@ public:
 
     ~MainWindow();
 
-    void findPeaks();
+    void setColorMap(const std::string& name);
 
 signals:
     void plotDetectorData(nsx::DataSet*,int frame);
@@ -86,4 +85,6 @@ private:
     Ui::MainWindow* _ui;
 
     SessionModel* _session;
+
+    std::string _colormap;
 };

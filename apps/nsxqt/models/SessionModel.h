@@ -64,9 +64,6 @@ public:
     void setFilename(QString name);
     QString getFilename();
 
-    void setColorMap(const std::string& name);
-    std::string getColorMap() const;
-
     bool writeXDS(std::string filename, const nsx::PeakList& peaks, bool merge, bool friedel);
 
     void fitAllPeaks();
@@ -100,12 +97,4 @@ public slots:
     void createNewExperiment();  
 
     void onItemChanged(QStandardItem* item);
-
-private:
-
-    QString _filename;
-
-    nsx::sptrProgressHandler _progressHandler;
-
-    std::string _colormap;
 };
