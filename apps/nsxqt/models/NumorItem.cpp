@@ -20,6 +20,8 @@ NumorItem::NumorItem(nsx::sptrDataSet data):
     setEditable(false);
     setDragEnabled(true);
     setDropEnabled(true);
+    setSelectable(false);
+    setCheckable(true);
 }
 
 NumorItem::~NumorItem()

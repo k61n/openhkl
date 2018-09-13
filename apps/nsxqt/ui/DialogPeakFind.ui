@@ -245,13 +245,6 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QCheckBox" name="applyThreshold">
-           <property name="text">
-            <string>apply threshold to preview</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QLabel" name="label">
            <property name="text">
             <string>Frame</string>
@@ -281,6 +274,13 @@
            </property>
            <property name="tickPosition">
             <enum>QSlider::NoTicks</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="applyThreshold">
+           <property name="text">
+            <string>Apply threshold to preview</string>
            </property>
           </widget>
          </item>

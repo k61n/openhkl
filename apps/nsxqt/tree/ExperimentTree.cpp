@@ -58,6 +58,8 @@
 
 #include "ui_MainWindow.h"
 
+#include <QDebug>
+
 ExperimentTree::ExperimentTree(QWidget *parent):
     QTreeView(parent)
 {
@@ -103,16 +105,23 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(log, triggered, [=](){exp_item->writeLogFiles();});
         }
         else if (auto ditem = dynamic_cast<DataItem*>(item)) {            
-            QAction* import = menu->addAction("Load data");
+            QAction* load_data = menu->addAction("Load data");
+            connect(load_data, &QAction::triggered, [=](){ditem->importData();});
+
+            QAction* remove_selected_data = menu->addAction("Remove selected data");
+            connect(remove_selected_data, &QAction::triggered, [=](){ditem->removeSelectedData();});
+
             QAction* convert_to_hdf5 = menu->addAction("Convert to HDF5");
-            QAction* import_raw = menu->addAction("Import raw data");
-            QAction* find_peaks = menu->addAction("Find peaks in data");
-            QAction* explore_instrument_states = menu->addAction("Explore instrument states");
             connect(convert_to_hdf5, &QAction::triggered, [=](){ditem->convertToHDF5();});
-            connect(import, &QAction::triggered, [=](){ditem->importData();});
+
+            QAction* import_raw = menu->addAction("Import raw data");
             connect(import_raw, &QAction::triggered, [=](){ditem->importRawData();});
-            connect(find_peaks, &QAction::triggered, [=](){ditem->findPeaks();});
+
+            QAction* explore_instrument_states = menu->addAction("Explore instrument states");
             connect(explore_instrument_states, &QAction::triggered, [=](){ditem->exploreInstrumentStates();});
+
+            QAction* find_peaks = menu->addAction("Find peaks in data");
+            connect(find_peaks, &QAction::triggered, [=](){ditem->findPeaks();});
         }
         else if (auto pitem = dynamic_cast<PeaksItem*>(item)) {
             QAction* abs = menu->addAction("Correct for Absorption");

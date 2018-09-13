@@ -22,7 +22,7 @@ class ExperimentItem: public TreeItem
 public:
     explicit ExperimentItem(nsx::sptrExperiment experiment);
 
-    virtual ~ExperimentItem() = default;    
+    virtual ~ExperimentItem();
 
     nsx::sptrExperiment experiment() { return _experiment; }
 

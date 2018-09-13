@@ -61,6 +61,10 @@ ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment): TreeItem(), _exp
     appendRow(_library);
 }
 
+ExperimentItem::~ExperimentItem()
+{
+}
+
 InstrumentItem* ExperimentItem::instrumentItem()
 {
     return _instr;

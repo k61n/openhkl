@@ -28,4 +28,6 @@ public:
     nsx::DataList selectedData();
 
     void convertToHDF5();
+
+    void removeSelectedData();
 };

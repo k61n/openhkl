@@ -1,3 +1,6 @@
+#include <set>
+#include <vector>
+
 #include <QIcon>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -10,6 +13,7 @@
 #include <nsxlib/Experiment.h>
 #include <nsxlib/IDataReader.h>
 #include <nsxlib/Logger.h>
+#include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFinder.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/PixelSumIntegrator.h>
@@ -34,6 +38,44 @@ DataItem::DataItem() : TreeItem()
     setIcon(icon);
     setEditable(false);
     setSelectable(false);
+}
+
+void DataItem::removeSelectedData()
+{
+    std::vector<NumorItem*> selected_numor_items;
+    selected_numor_items.reserve(rowCount());
+
+    for (int i = 0; i < rowCount(); ++i) {
+        auto numor_item = dynamic_cast<NumorItem*>(child(i));
+        if (numor_item) {
+            if (numor_item->checkState() == Qt::Checked) {
+                selected_numor_items.push_back(numor_item);
+            }
+        }
+    }
+
+    auto peaks_item = experimentItem()->peaksItem();
+    auto all_peaks = peaks_item->allPeaks();
+
+    std::set<nsx::sptrDataSet> used_data;
+
+    for (auto peak : all_peaks) {
+        auto data = peak->data();
+        if (!data) {
+            continue;
+        }
+        used_data.insert(data);
+    }
+
+    for (auto numor_item : selected_numor_items) {
+        auto data = numor_item->data();
+        auto it = used_data.find(data);
+        if (it != used_data.end()) {
+            nsx::info()<<"The numor "<<numor_item->text().toStdString()<<" is currently used. Can not be removed";
+            continue;
+        }
+        removeRow(numor_item->row());
+    }
 }
 
 void DataItem::importData()

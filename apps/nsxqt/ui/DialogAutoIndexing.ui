@@ -58,6 +58,9 @@
          <property name="title">
           <string>&amp;Find Niggli cell only</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
          <property name="checkable">
           <bool>true</bool>
          </property>
