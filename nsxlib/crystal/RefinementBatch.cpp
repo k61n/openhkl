@@ -244,9 +244,6 @@ Eigen::MatrixXd RefinementBatch::constraintKernel() const
         }
     }
 
-    // debugging
-    std::cout << "kernel:\n" << K << std::endl;
-
     return K;
 }
 

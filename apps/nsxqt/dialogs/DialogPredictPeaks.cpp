@@ -45,6 +45,11 @@ DialogPredictPeaks::DialogPredictPeaks(ExperimentItem* experiment_item, const ns
     for (auto unit_cell : unit_cells) {
         _ui->unitCells->addItem(QString::fromStdString(unit_cell->name()),QVariant::fromValue(unit_cell));
     }
+
+    _peaks_model = new CollectedPeaksModel(_experiment_item->model(),_experiment_item->experiment(),{});
+    _ui->predictedPeaks->setModel(_peaks_model);
+
+    connect(_ui->actions,SIGNAL(clicked(QAbstractButton*)),this,SLOT(slotActionClicked(QAbstractButton*)));
 }
 
 DialogPredictPeaks::~DialogPredictPeaks()
@@ -140,6 +145,6 @@ void DialogPredictPeaks::predictPeaks()
 
     nsx::info() << "Completed  peak prediction. Added "<<predicted_peaks.size()<<" peaks";
 
-    _peaks_model->reset();
+    _peaks_model->setPeaks(predicted_peaks);
 
 }

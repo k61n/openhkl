@@ -39,13 +39,15 @@ public slots:
 
     virtual void accept() override;
 
+private slots:
+
+    void slotActionClicked(QAbstractButton *button);
+
 private:
 
     DialogPredictPeaks(ExperimentItem* experiment_tree, const nsx::UnitCellList& unit_cells, QWidget* parent=nullptr);
 
     void predictPeaks();
-
-    void slotActionClicked(QAbstractButton *button);
 
 private:
 
