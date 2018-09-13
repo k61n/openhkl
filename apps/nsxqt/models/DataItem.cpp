@@ -34,10 +34,18 @@
 DataItem::DataItem() : TreeItem()
 {
     setText("Data");
+
     QIcon icon(":/resources/dataIcon.png");
     setIcon(icon);
+
+    setDragEnabled(false);
+    setDropEnabled(false);
+
     setEditable(false);
+
     setSelectable(false);
+
+    setCheckable(false);
 }
 
 void DataItem::removeSelectedData()

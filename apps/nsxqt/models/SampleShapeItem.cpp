@@ -6,11 +6,17 @@ SampleShapeItem::SampleShapeItem():
 {
     QIcon icon(":/resources/sampleIcon.png");
     setIcon(icon);
+
     setText("Shape");
+
     setEditable(false);
-    setSelectable(false);
+
     setDragEnabled(false);
     setDropEnabled(false);
+
+    setSelectable(false);
+
+    setCheckable(false);
 }
 
 QWidget* SampleShapeItem::inspectItem()

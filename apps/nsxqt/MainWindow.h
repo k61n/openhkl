@@ -62,8 +62,9 @@ private slots:
      
 
 public slots:
-    void plotPeak(nsx::sptrPeak3D);
+
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
+
     void setInspectorWidget(QWidget*);
 
 private slots:

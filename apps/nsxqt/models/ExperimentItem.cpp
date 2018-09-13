@@ -32,12 +32,20 @@
 ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment): TreeItem(), _experiment(experiment)
 {
     setText(QString::fromStdString(experiment->name()));
+
     setForeground(QBrush(QColor("blue")));
+
     QIcon icon(":/resources/experimentIcon.png");
     setIcon(icon);
-    setDragEnabled(true);
-    setDropEnabled(true);
+
+    setDragEnabled(false);
+    setDropEnabled(false);
+
     setEditable(true);
+
+    setSelectable(true);
+
+    setCheckable(false);
 
     // Create an instrument item and add it to the experiment item
     auto diff = experiment->diffractometer();

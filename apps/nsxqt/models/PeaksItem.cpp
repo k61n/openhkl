@@ -51,10 +51,18 @@
 PeaksItem::PeaksItem(): InspectableTreeItem()
 {
     setText("Peaks");
+
     QIcon icon(":/resources/peakListIcon.png");
     setIcon(icon);
+
+    setDragEnabled(false);
+    setDropEnabled(false);
+
     setEditable(false);
+
     setSelectable(false);
+
+    setCheckable(false);
 }
 
 QWidget* PeaksItem::inspectItem()

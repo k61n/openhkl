@@ -15,13 +15,16 @@ SampleItem::SampleItem() : InspectableTreeItem()
     setIcon(icon);
 
     setEditable(false);
-    setSelectable(false);
+
     setDragEnabled(false);
     setDropEnabled(false);
 
+    setSelectable(false);
+
+    setCheckable(false);
+
     SampleShapeItem* shape = new SampleShapeItem();
     appendRow(shape);
-
 }
 
 QWidget* SampleItem::inspectItem()

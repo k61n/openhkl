@@ -21,9 +21,15 @@ LibraryItem::LibraryItem()
   _library(nullptr)
 {
     setText("Reference peak library");
+
     QIcon icon(":/resources/peakListIcon.png");
     setIcon(icon);
+
+    setDragEnabled(false);
+    setDropEnabled(false);
+
     setEditable(false);
+
     setSelectable(false);
 }
 

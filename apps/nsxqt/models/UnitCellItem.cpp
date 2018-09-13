@@ -24,17 +24,22 @@ UnitCellItem::UnitCellItem(nsx::sptrUnitCell unit_cell)
 {
     setText(QString::fromStdString(_unit_cell->name()));
 
+    setForeground(QBrush(Qt::red));
+
     setIcon(QIcon(":/resources/unitCellIcon.png"));
 
     setEditable(true);
+
     setDragEnabled(false);
     setDropEnabled(false);
-    setForeground(QBrush(Qt::red));
+
+    setSelectable(false);
+
+    setCheckable(false);
 }
 
 UnitCellItem::~UnitCellItem()
 {
-    experimentItem()->peaksItem()->removeUnitCell(_unit_cell);
 }
 
 QVariant UnitCellItem::data(int role) const

@@ -108,12 +108,6 @@ SessionModel::SessionModel()
 
 SessionModel::~SessionModel()
 {
-    // _model should be deleted automatically during destructor by QT
-    //delete _model;
-}
-
-void SessionModel::removeUnitCell(nsx::sptrUnitCell unit_cell) {
-
 }
 
 void SessionModel::selectData(nsx::sptrDataSet data)
@@ -126,46 +120,8 @@ void SessionModel::onItemChanged(QStandardItem* item)
     emit updatePeaks();
 }
 
-nsx::DataList SessionModel::getSelectedNumors(ExperimentItem* item) const
+nsx::PeakList SessionModel::peaks(nsx::sptrDataSet data) const
 {
-    nsx::DataList numors;
-
-    QList<QStandardItem*> dataItems = findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
-
-    for (const auto& it : dataItems) {
-        for (auto i=0;i < rowCount(it->index());++i) {
-            if (it->child(i)->checkState() == Qt::Checked) {
-                if (auto ptr = dynamic_cast<NumorItem*>(it->child(i))) {
-                    if (it->parent() == item)
-                        numors.push_back(ptr->data());
-                }
-            }
-        }
-    }
-
-    return numors;
-}
-
-nsx::DataList SessionModel::getSelectedNumors() const
-{
-    nsx::DataList numors;
-
-    QList<QStandardItem*> dataItems = findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
-
-    for (const auto& it : dataItems) {
-        for (auto i=0;i < rowCount(it->index());++i) {
-            if (it->child(i)->checkState() == Qt::Checked) {
-                if (auto ptr = dynamic_cast<NumorItem*>(it->child(i)))
-                    numors.push_back(ptr->data());
-            }
-        }
-    }
-
-    return numors;
-}
-
-nsx::PeakList SessionModel::peaks(const nsx::DataSet* data) const
-{  
     nsx::PeakList list;
 
     for (auto i = 0; i < rowCount(); ++i) {
@@ -173,7 +129,7 @@ nsx::PeakList SessionModel::peaks(const nsx::DataSet* data) const
         auto&& peaks = exp_item->peaksItem()->selectedPeaks();
 
         for (auto peak: peaks) {
-            if (data == nullptr || peak->data().get() == data) {
+            if (data == nullptr || peak->data() == data) {
                 list.push_back(peak);
             }
         }

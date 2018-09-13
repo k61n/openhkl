@@ -17,10 +17,14 @@ NumorItem::NumorItem(nsx::sptrDataSet data):
     _data(data)
 {
     setText("Numor");
+
     setEditable(false);
-    setDragEnabled(true);
-    setDropEnabled(true);
+
+    setDragEnabled(false);
+    setDropEnabled(false);
+
     setSelectable(false);
+
     setCheckable(true);
 }
 

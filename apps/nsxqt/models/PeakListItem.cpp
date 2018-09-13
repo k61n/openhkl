@@ -8,10 +8,14 @@ PeakListItem::PeakListItem(const nsx::PeakList& peaks)
   _peaks(peaks)
 {
 	setText("Peaks");
+
     setEditable(true);
+
     setDragEnabled(true);
     setDropEnabled(true);
-    setSelectable(true);
+
+    setSelectable(false);
+
     setCheckable(true);
 }
 

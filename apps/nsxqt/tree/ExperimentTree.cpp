@@ -218,7 +218,7 @@ void ExperimentTree::keyPressEvent(QKeyEvent *event)
         QListIterator<QModelIndex> it(selIndexes);
         it.toBack();
         while (it.hasPrevious()) {
-            QStandardItem* item = dynamic_cast<SessionModel*>(model())->itemFromIndex(it.previous());
+            auto item = dynamic_cast<SessionModel*>(model())->itemFromIndex(it.previous());
             if (!item->parent()) {
                 model()->removeRow(item->row());
                 emit resetScene();

@@ -100,7 +100,7 @@ void DetectorScene::resetPeakGraphicsItems()
 
     clearPeakGraphicsItems();
 
-    auto peaks = _session->peaks(_currentData.get());
+    auto peaks = _session->peaks(_currentData);
 
     for (auto&& peak : peaks) {
 
@@ -472,7 +472,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
         } else {
 
-            auto peaks = _session->peaks(_currentData.get());
+            auto peaks = _session->peaks(_currentData);
 
             if (auto p=dynamic_cast<CutterGraphicsItem*>(_lastClickedGI)) {
                 if (true) {
@@ -569,7 +569,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 if (it != _masks.end()) {
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
-                    auto peaks = _session->peaks(_currentData.get());
+                    auto peaks = _session->peaks(_currentData);
                     _currentData->maskPeaks(peaks);
                     update();
                     updateMasks();
@@ -581,7 +581,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 if (it != _masks.end()) {
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
-                    auto peaks =  _session->peaks(_currentData.get());
+                    auto peaks =  _session->peaks(_currentData);
                     _currentData->maskPeaks(peaks);
                     update();
                     updateMasks();
@@ -697,7 +697,7 @@ void DetectorScene::loadCurrentImage()
         Eigen::MatrixXi mask(nrows, ncols);
         mask.setConstant(int(EventType::EXCLUDED));
 
-        auto peaks = _session->peaks(_currentData.get());
+        auto peaks = _session->peaks(_currentData);
         for (auto peak : peaks) {
             if (peak->enabled()) {
                 // IntegrationRegion constructor can throw if the region is invalid

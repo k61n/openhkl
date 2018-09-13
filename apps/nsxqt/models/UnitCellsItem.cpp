@@ -23,6 +23,8 @@ UnitCellsItem::UnitCellsItem() : TreeItem()
     setDropEnabled(true);
 
     setSelectable(false);
+
+    setCheckable(false);
 }
 
 nsx::UnitCellList UnitCellsItem::unitCells()

@@ -254,24 +254,6 @@ void MainWindow::slotChangeSelectedPeak(nsx::sptrPeak3D peak)
     slotChangeSelectedData(peak->data(),frame);
 }
 
-void MainWindow::plotPeak(nsx::sptrPeak3D peak)
-{
-//    auto data = peak->data();
-//    auto scenePtr = _ui->_dview->getScene();
-//    // Ensure that frames
-//    changeData(data);
-//    // Get frame number to adjust the data
-//    size_t data_frame = size_t(std::lround(peak->shape().aabb().center()[2]));
-//    scenePtr->setData(_session, data, data_frame);
-//    // Update the scrollbar
-//    _ui->frame->setValue(data_frame);
-//    auto pgi = scenePtr->findPeakGraphicsItem(peak);
-
-//    if (pgi) {
-//        updatePlot(pgi);
-//    }
-}
-
 void MainWindow::slotChangeSelectedFrame(int selected_frame)
 {
     _ui->frame->setValue(selected_frame);

@@ -98,7 +98,7 @@ void DialogMCAbsorption::on_pushButton_run_pressed()
     const auto& data = experiment->data();
 
     for (auto& d: data) {
-        const auto& peaks = session->peaks(d.second.get());
+        const auto& peaks = session->peaks(d.second);
         ui->progressBar_MCStatus->setMaximum(peaks.size());
         ui->progressBar_MCStatus->setFormat(QString::fromStdString(d.second->filename()) + ": "+QString::number(progress)+"%");
         for (auto& p: peaks) {
