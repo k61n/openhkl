@@ -1,5 +1,4 @@
 #include <fstream>
-#include <locale>
 
 #include <QSplashScreen>
 #include <QDesktopWidget>
@@ -23,8 +22,6 @@ int main(int argc, char* argv[])
 
     // Ensure . is used rather than , for float and double boxes
     QLocale::setDefault(QLocale::c());
-
-    std::setlocale(LC_ALL, "C");
 
     MainWindow* main_window = MainWindow::create(nullptr);
 

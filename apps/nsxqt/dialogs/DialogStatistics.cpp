@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iomanip>
 #include <limits>
 #include <vector>
 
@@ -87,39 +88,39 @@ void DialogStatistics::saveStatistics()
         return;
     }
 
-    std::vector<char> buf(1024, 0); // buffer for snprintf
-
-    std::snprintf(&buf[0], buf.size(),
-            " %10s %10s %10s %10s %10s %10s %11s %10s %12s %10s %10s %10s %10s",
-            "dmax","dmin","nobs","nmerged","redundancy","Rmeas","Rmeas(est.)","Rmerge/sym","Rmerge(est.)","Rpim","Rpim(est.)","CChalf","CC*");
-
-    file << &buf[0] << std::endl;
+    file << std::setw(10) << "dmax";
+    file << std::setw(10) << "dmin";
+    file << std::setw(10) << "nobs";
+    file << std::setw(10) << "nmerged";
+    file << std::setw(11) << "redundancy";
+    file << std::setw(10) << "Rmeas";
+    file << std::setw(12) << "Rmeas(est.)";
+    file << std::setw(11) << "Rmerge/sym";
+    file << std::setw(13) << "Rmerge(est.)";
+    file << std::setw(10) << "Rpim";
+    file << std::setw(11) << "Rpim(est.)";
+    file << std::setw(10) << "CChalf";
+    file << std::setw(10) << "CC*";
+    file << std::endl;
 
     auto model = dynamic_cast<QStandardItemModel*>(ui->statistics->model());
 
     for (size_t i = 0; i < model->rowCount(); ++i) {
-        std::snprintf(&buf[0], buf.size(),
-                " %10.2f %10.2f" // dmax, dmin
-                " %10zd %10zd %10.3f" // nobs, nmerge, redundancy
-                " %10.3f %11.3f" // Rmeas, expected Rmeas
-                " %10.3f %12.3f" // Rmerge, expected Rmerge
-                " %10.3f %10.3f" // Rpim, expected Rpim
-                " %10.3f %10.3f", // CC half, CC*
-                model->index(i, 0).data().toDouble(),
-                model->index(i, 1).data().toDouble(),
-                model->index(i, 2).data().toInt(),
-                model->index(i, 3).data().toInt(),
-                model->index(i, 4).data().toDouble(),
-                model->index(i, 5).data().toDouble(),
-                model->index(i, 6).data().toDouble(),
-                model->index(i, 7).data().toDouble(),
-                model->index(i, 8).data().toDouble(),
-                model->index(i, 9).data().toDouble(),
-                model->index(i,10).data().toDouble(),
-                model->index(i,11).data().toDouble(),
-                model->index(i,12).data().toDouble(),
-                model->index(i,13).data().toDouble());
-        file << &buf[0] << std::endl;
+
+        file << std::fixed << std::setw(10) << std::setprecision(2) << model->index(i, 0).data().toDouble();
+        file << std::fixed << std::setw(10) << std::setprecision(2) << model->index(i, 1).data().toDouble();
+        file << std::fixed << std::setw(10) << model->index(i, 2).data().toInt();
+        file << std::fixed << std::setw(10) << model->index(i, 3).data().toInt();
+        file << std::fixed << std::setw(11) << std::setprecision(3) << model->index(i, 4).data().toDouble();
+        file << std::fixed << std::setw(10) << std::setprecision(3) << model->index(i, 5).data().toDouble();
+        file << std::fixed << std::setw(12) << std::setprecision(3) << model->index(i, 6).data().toDouble();
+        file << std::fixed << std::setw(11) << std::setprecision(3) << model->index(i, 7).data().toDouble();
+        file << std::fixed << std::setw(13) << std::setprecision(3) << model->index(i, 8).data().toDouble();
+        file << std::fixed << std::setw(10) << std::setprecision(3) << model->index(i, 9).data().toDouble();
+        file << std::fixed << std::setw(11) << std::setprecision(3) << model->index(i,10).data().toDouble();
+        file << std::fixed << std::setw(10) << std::setprecision(3) << model->index(i,11).data().toDouble();
+        file << std::fixed << std::setw(10) << std::setprecision(3) << model->index(i,12).data().toDouble();
+        file << std::endl;
     }
 
     file.close();
@@ -163,18 +164,18 @@ void DialogStatistics::saveToShelX(QTableView* table) {
 
     auto model = dynamic_cast<QStandardItemModel*>(table->model());
 
-    // buffer for snprintf
-    std::vector<char> buf(1024, 0);
-
     for (size_t i = 0; i < model->rowCount(); ++i) {
-        std::snprintf(&buf[0], buf.size(),
-                "%4d%4d%4d%8.2f%8.2f",
-                model->index(i, 0).data().toInt(),     // h
-                model->index(i, 1).data().toInt(),     // k
-                model->index(i, 2).data().toInt(),     // l
-                model->index(i, 3).data().toDouble(),  // I
-                model->index(i, 4).data().toDouble()); // sigmaI
-        file << &buf[0] << std::endl;
+        // h
+        file << std::fixed << std::setw(4) << model->index(i, 0).data().toInt();
+        // k
+        file << std::fixed << std::setw(4) << model->index(i, 1).data().toInt();
+        // l
+        file << std::fixed << std::setw(4) << model->index(i, 2).data().toInt();
+        // I
+        file << std::fixed << std::setw(8) << std::setprecision(2) << model->index(i, 3).data().toDouble();
+        // sigma I
+        file << std::fixed << std::setw(8) << std::setprecision(2) << model->index(i, 4).data().toDouble();
+        file << std::endl;
     }
 
     file.close();
@@ -197,25 +198,29 @@ void DialogStatistics::saveToFullProf(QTableView* table) {
     file << "TITLE File written by ...\n";
     file << "(3i4,2F14.4,i5,4f8.2)\n";
 
-    double wave = _peaks[0]->data()->metadata()->key<double>("wavelength");
+    double wavelength = _peaks[0]->data()->metadata()->key<double>("wavelength");
 
-    std::vector<char> buf(1024, 0); // buffer for snprintf
-    std::snprintf(&buf[0], buf.size(),"%8.3f",wave);
-    file << &buf[0] << " 0 0" << std::endl;
+    // wavelength
+    file << std::fixed << std::setw(8) << std::setprecision(3) << wavelength;
+    file << " 0 0" << std::endl;
 
     auto model = dynamic_cast<QStandardItemModel*>(table->model());
 
     for (size_t i = 0; i < model->rowCount(); ++i) {
-        buf.assign(1024,0);
-        std::snprintf(&buf[0], buf.size(),
-                "%4d%4d%4d%14.4f%14.4f%5d",
-                model->index(i, 0).data().toInt(),    // h
-                model->index(i, 1).data().toInt(),    // k
-                model->index(i, 2).data().toInt(),    // l
-                model->index(i, 3).data().toDouble(), // I
-                model->index(i, 4).data().toDouble(), // sigmaI
-                1);
-        file << &buf[0] << std::endl;
+
+        // h
+        file << std::fixed << std::setw(4) << model->index(i, 0).data().toInt();
+        // k
+        file << std::fixed << std::setw(4) << model->index(i, 1).data().toInt();
+        // l
+        file << std::fixed << std::setw(4) << model->index(i, 2).data().toInt();
+        // I
+        file << std::fixed << std::setw(14) << std::setprecision(4) << model->index(i, 3).data().toDouble();
+        // sigma I
+        file << std::fixed << std::setw(14) << std::setprecision(4) << model->index(i, 4).data().toDouble();
+        // dummy
+        file << std::fixed << std::setw(5) << 1;
+        file << std::endl;
     }
 
     file.close();
