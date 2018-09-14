@@ -38,4 +38,6 @@ public:
     void refine();
 
     void autoAssignUnitCell();
+
+    void normalizeToMonitor();
 };

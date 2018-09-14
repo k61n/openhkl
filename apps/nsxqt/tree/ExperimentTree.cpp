@@ -124,8 +124,6 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(find_peaks, &QAction::triggered, [=](){ditem->findPeaks();});
         }
         else if (auto pitem = dynamic_cast<PeaksItem*>(item)) {
-            QAction* abs = menu->addAction("Correct for Absorption");
-            connect(abs, triggered, [=]{pitem->absorptionCorrection();});
 
             QAction* filter = menu->addAction("Filter peaks");
             connect(filter, triggered, [=](){pitem->openPeakFilterDialog();});
@@ -144,6 +142,12 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
 
             QAction* integrate = menu->addAction("Integrate peaks");
             connect(integrate, triggered, [=](){pitem->integratePeaks();});
+
+            QAction* normalize = menu->addAction("Normalize to monitor");
+            connect(normalize, triggered, [=](){pitem->normalizeToMonitor();});
+
+            QAction* abs = menu->addAction("Correct for Absorption");
+            connect(abs, triggered, [=]{pitem->absorptionCorrection();});
 
             QAction* scene3d = menu->addAction("Show 3D view");
             connect(scene3d, triggered, [=]{pitem->showPeaksOpenGL();});

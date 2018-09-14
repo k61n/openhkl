@@ -2,6 +2,7 @@
 
 #include <QFileInfo>
 #include <QIcon>
+#include <QInputDialog>
 #include <QMessageBox>
 #include <QStandardItem>
 #include <QString>
@@ -14,6 +15,7 @@
 #include <nsxlib/ISigmaIntegrator.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/MeanBackgroundIntegrator.h>
+#include <nsxlib/MetaData.h>
 #include <nsxlib/PeakFilter.h>
 #include <nsxlib/Profile1DIntegrator.h>
 #include <nsxlib/Profile3DIntegrator.h>
@@ -100,6 +102,30 @@ nsx::PeakList PeaksItem::selectedPeaks()
         }
     }
     return peaks;
+}
+
+void PeaksItem::normalizeToMonitor()
+{
+    bool ok;
+    double factor = QInputDialog::getDouble(nullptr,"Enter normalization factor","",1.0e4,1.0e-9,1.0e9,3,&ok);
+
+    if (!ok) {
+        return;
+    }
+
+    auto selected_peaks = selectedPeaks();
+
+    for (auto peak : selected_peaks) {
+        auto data = peak->data();
+        if (!data) {
+            continue;
+        }
+
+        double monitor = data->metadata()->key<double>("monitor");
+
+        peak->setScale(factor/monitor);
+    }
+    emit model()->itemChanged(this);
 }
 
 nsx::PeakList PeaksItem::allPeaks()
