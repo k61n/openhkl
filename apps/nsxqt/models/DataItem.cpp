@@ -186,31 +186,20 @@ void DataItem::importRawData()
 
 void DataItem::findPeaks()
 {
-    nsx::DataList selectedNumors = selectedData();
+    nsx::DataList data = selectedData();
 
-    if (selectedNumors.empty()) {
+    if (data.empty()) {
         nsx::error()<<"No numors selected for finding peaks";
         return;
     }
 
-    // dialog will automatically be deleted before we return from this method
-    std::unique_ptr<DialogPeakFind> dialog_ptr(new DialogPeakFind(selectedNumors, nullptr));
+    auto experiment_item = experimentItem();
 
-    if (!dialog_ptr->exec()) {
-        return;
-    }
+    DialogPeakFind* dialog = DialogPeakFind::create(experiment_item, data, nullptr);
 
-    auto peaks_item = experimentItem()->peaksItem();
+    dialog->show();
 
-    auto peaks = dialog_ptr->peaks();
-
-    if (peaks.empty()) {
-        return;
-    }
-
-    auto item = new PeakListItem(peaks);
-    item->setText("Found peaks");
-    peaks_item->appendRow(item);
+    dialog->raise();
 }
 
 nsx::DataList DataItem::selectedData()

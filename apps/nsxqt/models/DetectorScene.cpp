@@ -133,34 +133,43 @@ void DetectorScene::resetPeakGraphicsItems()
         _selected_peak_gi = nullptr;
     }
 
+    auto it = _peak_graphics_items.find(_selected_peak);
+
+    if (it != _peak_graphics_items.end()) {
+        it->second->setVisible(true);
+    }
+
     if (_selected_peak) {
-
-        auto it = _peak_graphics_items.find(_selected_peak);
-
-        if (it == _peak_graphics_items.end()) {
-            return;
-        }
 
         auto selected_peak_ellipsoid = _selected_peak->shape();
 
         selected_peak_ellipsoid.scale(_selected_peak->peakEnd());
 
-        auto center = selected_peak_ellipsoid.intersectionCenter({0.0,0.0,1.0},{0.0,0.0,static_cast<double>(_currentFrameIndex)});
+        double frame_index = static_cast<double>(_currentFrameIndex);
 
-        _selected_peak_gi = new QGraphicsRectItem(nullptr);
-        _selected_peak_gi->setPos(center[0],center[1]);
-        _selected_peak_gi->setRect(-10,-10,20,20);
+        auto& aabb = selected_peak_ellipsoid.aabb();
 
-        QPen pen;
-        pen.setColor(Qt::darkCyan);
-        pen.setStyle(Qt::DotLine);
-        _selected_peak_gi->setPen(pen);
-        _selected_peak_gi->setZValue(-1);
-        _selected_peak_gi->setAcceptHoverEvents(false);
+        auto&& lower = aabb.lower();
+        auto&& upper = aabb.upper();
 
-        addItem(_selected_peak_gi);
+        if (frame_index >= lower[2] && frame_index <= upper[2]) {
 
-        it->second->setVisible(true);
+            auto center = selected_peak_ellipsoid.intersectionCenter({0.0,0.0,1.0},{0.0,0.0,static_cast<double>(_currentFrameIndex)});
+
+            _selected_peak_gi = new QGraphicsRectItem(nullptr);
+            _selected_peak_gi->setPos(center[0],center[1]);
+            _selected_peak_gi->setRect(-10,-10,20,20);
+
+            QPen pen;
+            pen.setColor(Qt::darkCyan);
+            pen.setStyle(Qt::DotLine);
+            _selected_peak_gi->setPen(pen);
+            _selected_peak_gi->setZValue(-1);
+            _selected_peak_gi->setAcceptHoverEvents(false);
+
+            addItem(_selected_peak_gi);
+
+        }
     }
 }
 

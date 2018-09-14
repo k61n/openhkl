@@ -58,5 +58,4 @@ private:
     ExperimentItem *_experiment_item;
 
     CollectedPeaksModel* _peaks_model;
-
 };

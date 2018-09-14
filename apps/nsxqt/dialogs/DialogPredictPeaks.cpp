@@ -146,5 +146,4 @@ void DialogPredictPeaks::predictPeaks()
     nsx::info() << "Completed  peak prediction. Added "<<predicted_peaks.size()<<" peaks";
 
     _peaks_model->setPeaks(predicted_peaks);
-
 }

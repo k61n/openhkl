@@ -18,11 +18,16 @@
 #include <nsxlib/DataTypes.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/MathematicsTypes.h>
+#include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFinder.h>
 #include <nsxlib/ShapeIntegrator.h>
 
+#include "CollectedPeaksModel.h"
 #include "ColorMap.h"
 #include "DialogPeakFind.h"
+#include "ExperimentItem.h"
+#include "PeaksItem.h"
+#include "PeakListItem.h"
 #include "ProgressView.h"
 
 #include "ui_DialogPeakFind.h"
@@ -43,92 +48,126 @@ public:
     }
 };
 
-DialogPeakFind::DialogPeakFind(const nsx::DataList& data, QWidget *parent)
+DialogPeakFind* DialogPeakFind::_instance = nullptr;
+
+DialogPeakFind* DialogPeakFind::create(ExperimentItem* experiment_item, const nsx::DataList& data, QWidget* parent)
+{
+    if (!_instance) {
+        _instance = new DialogPeakFind(experiment_item, data, parent);
+    }
+
+    return _instance;
+}
+
+DialogPeakFind* DialogPeakFind::Instance()
+{
+    return _instance;
+}
+
+DialogPeakFind::DialogPeakFind(ExperimentItem* experiment_item, const nsx::DataList& data, QWidget *parent)
 : QDialog(parent),
-  ui(new Ui::DialogPeakFind),
+  _ui(new Ui::DialogPeakFind),
+  _experiment_item(experiment_item),
   _pxmapPreview(nullptr),
   _data(data),
   _peakFinder(new nsx::PeakFinder()),
   _colormap(new ColorMap)
 {
-    ui->setupUi(this);
+    _ui->setupUi(this);
+
+    setModal(false);
+
+    setWindowModality(Qt::NonModal);
+
+    setAttribute(Qt::WA_DeleteOnClose);
+
+    _ui->tabs->setCurrentIndex(0);
 
     for (auto d : _data) {
         QFileInfo fileinfo(QString::fromStdString(d->filename()));
-        ui->dataList->addItem(fileinfo.baseName());
+        _ui->dataList->addItem(fileinfo.baseName());
     }
 
-    ui->dataList->setCurrentRow(0);
+    _ui->dataList->setCurrentRow(0);
 
-    ui->frameSlider->setMinimum(0);
-    ui->frameSlider->setMaximum(_data[0]->nFrames());
+    _ui->frameSlider->setMinimum(0);
+    _ui->frameSlider->setMaximum(_data[0]->nFrames());
 
-    ui->frameIndex->setMinimum(0);
-    ui->frameIndex->setMaximum(_data[0]->nFrames());
+    _ui->frameIndex->setMinimum(0);
+    _ui->frameIndex->setMaximum(_data[0]->nFrames());
 
-    _scene = new QGraphicsScene(this);
-    ui->preview->setScene(_scene);
+    _scene = new QGraphicsScene(_ui->settings_tab);
+    _ui->preview->setScene(_scene);
 
     // flip image vertically to conform with DetectorScene
-    ui->preview->scale(1, -1);
+    _ui->preview->scale(1, -1);
 
     // Set the filter combo box and table
-    ui->convolverParameters->setColumnCount(2);
-    ui->convolverParameters->horizontalHeader()->hide();
-    ui->convolverParameters->verticalHeader()->hide();
+    _ui->convolverParameters->setColumnCount(2);
+    _ui->convolverParameters->horizontalHeader()->hide();
+    _ui->convolverParameters->verticalHeader()->hide();
 
     // Set the delegate that will force a numeric input for the convolution kernel parameters value column
     DoubleDelegate* convolver_table_delegate = new DoubleDelegate();
-    ui->convolverParameters->setItemDelegateForColumn(1,convolver_table_delegate);
+    _ui->convolverParameters->setItemDelegateForColumn(1,convolver_table_delegate);
 
-    ui->convolver->clear();
+    _ui->convolver->clear();
     nsx::ConvolverFactory convolver_factory;
     for (auto& k : convolver_factory.callbacks()) {
-        ui->convolver->addItem(QString::fromStdString(k.first));
+        _ui->convolver->addItem(QString::fromStdString(k.first));
     }
-    ui->convolver->setCurrentText(_peakFinder->convolver()->name());
+    _ui->convolver->setCurrentText(_peakFinder->convolver()->name());
 
     // Update dialog with the selected convolver parameters
     buildConvolverParametersList();
 
     updatePreview();
 
+    _peaks_model = new CollectedPeaksModel(_experiment_item->model(),_experiment_item->experiment(),{});
+    _ui->peaks->setModel(_peaks_model);
+
     // note: need cast due to overloads of this method
     auto valueChanged = static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged);
-    connect(ui->searchScale, valueChanged, this, [&] { _peakFinder->setPeakScale(ui->searchScale->value()); });
+    connect(_ui->searchScale, valueChanged, this, [&] { _peakFinder->setPeakScale(_ui->searchScale->value()); });
 
-    connect(ui->threshold,SIGNAL(valueChanged(double)),this,SLOT(changeThreshold()));
-    connect(ui->applyThreshold,SIGNAL(stateChanged(int)),this,SLOT(clipPreview(int)));
+    connect(_ui->threshold,SIGNAL(valueChanged(double)),this,SLOT(changeThreshold()));
+    connect(_ui->applyThreshold,SIGNAL(stateChanged(int)),this,SLOT(clipPreview(int)));
 
-    connect(ui->convolver,SIGNAL(currentIndexChanged(QString)),this,SLOT(changeConvolver(QString)));
-    connect(ui->convolverParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeConvolverParameters(int,int)));
+    connect(_ui->convolver,SIGNAL(currentIndexChanged(QString)),this,SLOT(changeConvolver(QString)));
+    connect(_ui->convolverParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeConvolverParameters(int,int)));
 
-    connect(ui->minSize,SIGNAL(valueChanged(int)),this,SLOT(changeMinSize(int)));
-    connect(ui->maxSize,SIGNAL(valueChanged(int)),this,SLOT(changeMaxSize(int)));
-    connect(ui->maxFrames,SIGNAL(valueChanged(int)),this,SLOT(changeMaxFrames(int)));
+    connect(_ui->minSize,SIGNAL(valueChanged(int)),this,SLOT(changeMinSize(int)));
+    connect(_ui->maxSize,SIGNAL(valueChanged(int)),this,SLOT(changeMaxSize(int)));
+    connect(_ui->maxFrames,SIGNAL(valueChanged(int)),this,SLOT(changeMaxFrames(int)));
 
-    connect(ui->dataList,SIGNAL(currentRowChanged(int)),this,SLOT(changeSelectedData(int)));
-    connect(ui->frameSlider,SIGNAL(valueChanged(int)),this,SLOT(changeSelectedFrame(int)));
-    connect(ui->frameIndex,SIGNAL(valueChanged(int)),this,SLOT(changeSelectedFrame(int)));
+    connect(_ui->dataList,SIGNAL(currentRowChanged(int)),this,SLOT(changeSelectedData(int)));
+    connect(_ui->frameSlider,SIGNAL(valueChanged(int)),this,SLOT(changeSelectedFrame(int)));
+    connect(_ui->frameIndex,SIGNAL(valueChanged(int)),this,SLOT(changeSelectedFrame(int)));
 
-    connect(ui->cancelOK, SIGNAL(clicked(QAbstractButton*)),this,SLOT(actionRequested(QAbstractButton*)));
-    connect(ui->cancelOK, SIGNAL(accepted()), this, SLOT(accept()));
-    connect(ui->cancelOK, SIGNAL(rejected()), this, SLOT(reject()));
+    connect(_ui->cancelOK, SIGNAL(clicked(QAbstractButton*)),this,SLOT(actionRequested(QAbstractButton*)));
 }
 
 DialogPeakFind::~DialogPeakFind()
 {
-    delete ui;
+    delete _ui;
 }
 
 void DialogPeakFind::actionRequested(QAbstractButton *button)
 {
-    auto button_role = ui->cancelOK->standardButton(button);
+    auto button_role = _ui->cancelOK->standardButton(button);
 
     switch(button_role)
     {
     case QDialogButtonBox::StandardButton::Apply: {
         find();
+        break;
+    }
+    case QDialogButtonBox::StandardButton::Cancel: {
+        reject();
+        break;
+    }
+    case QDialogButtonBox::StandardButton::Ok: {
+        accept();
         break;
     }
     default: {
@@ -137,17 +176,43 @@ void DialogPeakFind::actionRequested(QAbstractButton *button)
     }
 }
 
+void DialogPeakFind::accept()
+{
+    auto peaks_item = _experiment_item->peaksItem();
+
+    auto peaks = _peaks_model->peaks();
+
+    if (peaks.empty()) {
+        return;
+    }
+
+    nsx::PeakList found_peaks;
+    found_peaks.reserve(peaks.size());
+
+    for (auto peak : peaks) {
+        if (peak->selected()) {
+            found_peaks.push_back(peak);
+        }
+    }
+
+    auto item = new PeakListItem(found_peaks);
+    item->setText("Found peaks");
+    peaks_item->appendRow(item);
+
+    QDialog::accept();
+}
+
 void DialogPeakFind::changeSelectedData(int selected_data)
 {
     auto data = _data[selected_data];
 
-    ui->frameIndex->setMinimum(0);
-    ui->frameIndex->setMaximum(data->nFrames());
-    ui->frameIndex->setValue(0);
+    _ui->frameIndex->setMinimum(0);
+    _ui->frameIndex->setMaximum(data->nFrames());
+    _ui->frameIndex->setValue(0);
 
-    ui->frameSlider->setMinimum(0);
-    ui->frameSlider->setMaximum(data->nFrames());
-    ui->frameSlider->setValue(0);
+    _ui->frameSlider->setMinimum(0);
+    _ui->frameSlider->setMaximum(data->nFrames());
+    _ui->frameSlider->setValue(0);
 
     updatePreview();
 }
@@ -159,20 +224,20 @@ void DialogPeakFind::setColorMap(const std::string &name)
 
 void DialogPeakFind::changeSelectedFrame(int selected_frame)
 {
-    ui->frameIndex->setValue(selected_frame);
-    ui->frameSlider->setValue(selected_frame);
+    _ui->frameIndex->setValue(selected_frame);
+    _ui->frameSlider->setValue(selected_frame);
 
     updatePreview();
 }
 
 void DialogPeakFind::updatePreview()
 {
-    int selected_data = ui->dataList->currentRow();
+    int selected_data = _ui->dataList->currentRow();
 
     auto data = _data[selected_data];
 
-    ui->frameSlider->setMaximum(data->nFrames()-1);
-    int selected_frame = ui->frameSlider->value();
+    _ui->frameSlider->setMaximum(data->nFrames()-1);
+    int selected_frame = _ui->frameSlider->value();
 
     if (selected_frame >= data->nFrames()) {
         selected_frame = data->nFrames()-1;
@@ -183,14 +248,14 @@ void DialogPeakFind::updatePreview()
     int nrows = data->nRows();
     int ncols = data->nCols();
 
-    std::string convolver_type = ui->convolver->currentText().toStdString();
+    std::string convolver_type = _ui->convolver->currentText().toStdString();
     auto convolver_parameters = convolverParameters();
 
     Eigen::MatrixXd convolved_frame = data->convolvedFrame(selected_frame,convolver_type, convolver_parameters);
 
     // apply threshold in preview
-    if (ui->applyThreshold->isChecked()) {
-        double threshold_value = ui->threshold->value();
+    if (_ui->applyThreshold->isChecked()) {
+        double threshold_value = _ui->threshold->value();
 
         for (int i = 0; i < nrows; ++i) {
             for (int j = 0; j < ncols; ++j) {
@@ -218,20 +283,22 @@ void DialogPeakFind::updatePreview()
     } else {
         _pxmapPreview->setPixmap(QPixmap::fromImage(image));
     }
+
+    _ui->preview->fitInView(_scene->sceneRect());
 }
 
 void DialogPeakFind::showEvent(QShowEvent* event)
 {
     Q_UNUSED(event)
 
-    ui->preview->fitInView(_scene->sceneRect());
+    _ui->preview->fitInView(_scene->sceneRect());
 }
 
 void DialogPeakFind::resizeEvent(QResizeEvent* event)
 {
     Q_UNUSED(event)
 
-    ui->preview->fitInView(_scene->sceneRect());
+    _ui->preview->fitInView(_scene->sceneRect());
 
     QDialog::resizeEvent(event);
 }
@@ -259,7 +326,7 @@ void DialogPeakFind::changeMaxFrames(int size)
 
 void DialogPeakFind::changeThreshold()
 {
-    _peakFinder->setThreshold(ui->threshold->value());
+    _peakFinder->setThreshold(_ui->threshold->value());
     updatePreview();
 }
 
@@ -281,7 +348,7 @@ void DialogPeakFind::changeConvolverParameters(int row, int col)
     Q_UNUSED(col)
 
     // Get the current convolver type
-    std::string convolver_type = ui->convolver->currentText().toStdString();
+    std::string convolver_type = _ui->convolver->currentText().toStdString();
 
     // Get the corresponding parameters
     auto parameters = convolverParameters();
@@ -297,9 +364,9 @@ std::map<std::string,double> DialogPeakFind::convolverParameters() const
 {
     std::map<std::string,double> parameters;
 
-    for (int i = 0; i < ui->convolverParameters->rowCount(); ++i) {
-        std::string pname = ui->convolverParameters->item(i,0)->text().toStdString();
-        double pvalue = ui->convolverParameters->item(i,1)->text().toDouble();
+    for (int i = 0; i < _ui->convolverParameters->rowCount(); ++i) {
+        std::string pname = _ui->convolverParameters->item(i,0)->text().toStdString();
+        double pvalue = _ui->convolverParameters->item(i,1)->text().toDouble();
         parameters.insert(std::make_pair(pname,pvalue));
     }
 
@@ -314,48 +381,28 @@ void DialogPeakFind::buildConvolverParametersList()
     // Get its corresponding parameters
     const std::map<std::string, double>& parameters = convolver->parameters();
 
-    disconnect(ui->convolverParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeConvolverParameters(int,int)));
+    disconnect(_ui->convolverParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeConvolverParameters(int,int)));
 
-    ui->convolverParameters->setRowCount(0);
+    _ui->convolverParameters->setRowCount(0);
 
     // Iterate through parameters to build the tree
     for (auto p : parameters) {
-        int current_row = ui->convolverParameters->rowCount();
+        int current_row = _ui->convolverParameters->rowCount();
 
-        ui->convolverParameters->insertRow(current_row);
+        _ui->convolverParameters->insertRow(current_row);
 
         QTableWidgetItem* pname = new QTableWidgetItem();
         pname->setText(QString::fromStdString(p.first));
-        ui->convolverParameters->setItem(current_row,0,pname);
+        _ui->convolverParameters->setItem(current_row,0,pname);
 
         pname->setFlags(pname->flags() ^ Qt::ItemIsEditable);
 
         QTableWidgetItem* pvalue = new QTableWidgetItem();
         pvalue->setText(QString::number(p.second));
-        ui->convolverParameters->setItem(current_row,1,pvalue);
+        _ui->convolverParameters->setItem(current_row,1,pvalue);
     }
 
-    connect(ui->convolverParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeConvolverParameters(int,int)));
-}
-
-double DialogPeakFind::peakScale() const
-{
-    return ui->peakScale->value();
-}
-
-double DialogPeakFind::bkgBegin() const
-{
-    return ui->bkgBegin->value();
-}
-
-double DialogPeakFind::bkgEnd() const
-{
-    return ui->bkgEnd->value();
-}
-
-const nsx::PeakList& DialogPeakFind::peaks() const
-{
-    return _peaks;
+    connect(_ui->convolverParameters,SIGNAL(cellChanged(int,int)),this,SLOT(changeConvolverParameters(int,int)));
 }
 
 void DialogPeakFind::find()
@@ -387,11 +434,13 @@ void DialogPeakFind::find()
     // integrate peaks
     for (auto numor : _data) {
         nsx::PixelSumIntegrator integrator(true, true);
-        integrator.integrate(_peaks, numor, ui->peakScale->value(), ui->bkgBegin->value(), ui->bkgEnd->value());
+        integrator.integrate(_peaks, numor, _ui->peakScale->value(), _ui->bkgBegin->value(), _ui->bkgEnd->value());
     }
 
     // delete the progressView
     delete progressView;
 
-    nsx::debug() << "Peak search complete., found " << _peaks.size() << " peaks.";
+    _peaks_model->setPeaks(_peaks);
+
+    nsx::info() << "Peak search complete., found " << _peaks.size() << " peaks.";
 }
