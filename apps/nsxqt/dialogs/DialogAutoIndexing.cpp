@@ -192,7 +192,8 @@ void DialogAutoIndexing::accept()
         auto item = _ui->unitCells->item(i);
         auto&& unit_cell = item->data(Qt::UserRole).value<nsx::sptrUnitCell>();
         unit_cell->setName(item->text().toStdString());
-        unit_cells_item->appendRow(new UnitCellItem(unit_cell));
+        auto unit_cell_item = new UnitCellItem(unit_cell);
+        unit_cells_item->appendRow(unit_cell_item);
     }
 
     emit _experiment_item->model()->itemChanged(unit_cells_item);
