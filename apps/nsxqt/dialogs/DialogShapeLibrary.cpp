@@ -76,11 +76,6 @@ DialogShapeLibrary::DialogShapeLibrary(ExperimentItem* experiment_item,
     ui->peaks->setModel(peaks_model);
     ui->peaks->verticalHeader()->show();
 
-    ui->peaks->hideColumn(CollectedPeaksModel::Column::transmission);
-    ui->peaks->hideColumn(CollectedPeaksModel::Column::lorentzFactor);
-    ui->peaks->hideColumn(CollectedPeaksModel::Column::selected);
-    ui->peaks->hideColumn(CollectedPeaksModel::Column::unitCell);
-
     ui->peaks->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
     ui->peaks->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
 

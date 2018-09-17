@@ -20,7 +20,7 @@ class CollectedPeaksModel : public QAbstractTableModel
     Q_OBJECT
 public:
 
-    enum Column {h,k,l,intensity,sigmaIntensity,i_over_sigmai,transmission,lorentzFactor,numor,selected,unitCell,count};
+    enum Column {h,k,l,px,py,frame,intensity,sigmaIntensity,numor,unitCell,count};
 
     explicit CollectedPeaksModel(SessionModel* session, nsx::sptrExperiment experiment,QObject* parent = 0);
 
@@ -59,6 +59,8 @@ public:
     void selectPeak(const QModelIndex& index);
 
     SessionModel* session();
+
+    void togglePeakSelection(QModelIndex peak_index);
 
 public slots:
 

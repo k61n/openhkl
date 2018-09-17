@@ -17,7 +17,6 @@
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/UnitCell.h>
 
-#include "CollectedPeaksDelegate.h"
 #include "CollectedPeaksModel.h"
 #include "PeakTableView.h"
 #include "SessionModel.h"
@@ -26,6 +25,7 @@ PeakTableView::PeakTableView(QWidget *parent)
 : QTableView(parent)
 {
     setEditTriggers(QAbstractItemView::SelectedClicked);
+
     // Selection of a cell in the table select the whole line.
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -37,9 +37,6 @@ PeakTableView::PeakTableView(QWidget *parent)
     verticalHeader()->show();
 
     setFocusPolicy(Qt::StrongFocus);
-
-    auto delegate = new CollectedPeaksDelegate(this);
-    setItemDelegate(delegate);
 
     this->verticalHeader()->setVisible(false);
 
@@ -94,17 +91,7 @@ void PeakTableView::togglePeakSelection(QModelIndex index)
         return;
     }
 
-    auto peaks = peaks_model->peaks();
-
-    QModelIndex cell_index = model()->index(index.row(),CollectedPeaksModel::Column::selected);
-
-    auto peak = peaks[index.row()];
-
-    bool value  = model()->data(cell_index,Qt::CheckStateRole).toBool();
-
-    peak->setSelected(!value);
-
-    emit peaks_model->session()->signalEnabledPeakChanged(peak);
+    peaks_model->togglePeakSelection(index);
 }
 
 void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
