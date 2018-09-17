@@ -13,6 +13,7 @@
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
 
+#include "MetaTypes.h"
 #include "SessionModel.h"
 #include "UnitCellItem.h"
 #include "UnitCellPropertyWidget.h"
@@ -68,7 +69,9 @@ UnitCellPropertyWidget::~UnitCellPropertyWidget()
 
 void UnitCellPropertyWidget::setZValue(int z)
 {
-    _unitCellItem->unitCell()->setZ(z);
+    auto unit_cell = _unitCellItem->data(Qt::UserRole).value<nsx::sptrUnitCell>();
+
+    unit_cell->setZ(z);
     setMassDensity();
 }
 
@@ -88,7 +91,7 @@ void UnitCellPropertyWidget::setLatticeParams()
 
     try
     {
-        _unitCellItem->unitCell()->setParams(a,b,c,alpha*nsx::deg,beta*nsx::deg,gamma*nsx::deg);
+        _unitCellItem->data(Qt::UserRole).value<nsx::sptrUnitCell>()->setParams(a,b,c,alpha*nsx::deg,beta*nsx::deg,gamma*nsx::deg);
     } catch(const std::exception& e) {
         nsx::error() << e.what();
     }
@@ -99,21 +102,23 @@ void UnitCellPropertyWidget::setLatticeParams()
 
 void UnitCellPropertyWidget::setMassDensity() const
 {
-    auto material=_unitCellItem->unitCell()->material();
+    auto unit_cell = _unitCellItem->data(Qt::UserRole).value<nsx::sptrUnitCell>();
+
+    auto material = unit_cell->material();
     if (!material) {
         return;
     }
 
     double mm=material->molarMass();
     mm*=ui->z->value()/nsx::avogadro;
-    double volume=_unitCellItem->unitCell()->volume()*nsx::ang3;
+    double volume = unit_cell->volume()*nsx::ang3;
     material->setMassDensity(mm/volume);
 }
 
 
 void UnitCellPropertyWidget::updateCellParameters()
 {
-    auto unit_cell = _unitCellItem->unitCell();
+    auto unit_cell = _unitCellItem->data(Qt::UserRole).value<nsx::sptrUnitCell>();
 
     auto cell_params = unit_cell->character();
 
@@ -135,7 +140,7 @@ void UnitCellPropertyWidget::setChemicalFormula()
 
     try {
         nsx::sptrMaterial material(new nsx::Material(formula.toStdString()));
-        _unitCellItem->unitCell()->setMaterial(material);
+        _unitCellItem->data(Qt::UserRole).value<nsx::sptrUnitCell>()->setMaterial(material);
     } catch(std::exception& e) {
        nsx::error() << e.what();
    }
@@ -145,6 +150,8 @@ void UnitCellPropertyWidget::setChemicalFormula()
 
 void UnitCellPropertyWidget::setSpaceGroup(QString sg)
 {
+    auto unit_cell = _unitCellItem->data(Qt::UserRole).value<nsx::sptrUnitCell>();
+
     std::string space_group = sg.toStdString();
 
     auto&& symbols = nsx::SpaceGroup::symbols();
@@ -153,11 +160,11 @@ void UnitCellPropertyWidget::setSpaceGroup(QString sg)
 
     // The space group does not exist, reset to the current value
     if (it == symbols.end()) {
-        space_group = _unitCellItem->unitCell()->spaceGroup().symbol();
+        space_group = unit_cell->spaceGroup().symbol();
         ui->spaceGroup->setCurrentText(QString::fromStdString(space_group));
     }
 
-    _unitCellItem->unitCell()->setSpaceGroup(space_group);
+    unit_cell->setSpaceGroup(space_group);
 }
 
 void UnitCellPropertyWidget::activateSpaceGroupCompletion(QString sg)
@@ -167,14 +174,16 @@ void UnitCellPropertyWidget::activateSpaceGroupCompletion(QString sg)
 
 void UnitCellPropertyWidget::setIndexingTolerance(double tolerance)
 {
-    _unitCellItem->unitCell()->setIndexingTolerance(tolerance);
+    auto unit_cell = _unitCellItem->data(Qt::UserRole).value<nsx::sptrUnitCell>();
+
+    unit_cell->setIndexingTolerance(tolerance);
 }
 
 void UnitCellPropertyWidget::update(QStandardItem* item)
 {
     Q_UNUSED(item)
 
-    auto unit_cell = _unitCellItem->unitCell();
+    auto unit_cell = _unitCellItem->data(Qt::UserRole).value<nsx::sptrUnitCell>();
 
     ui->name->setText(QString::fromStdString(unit_cell->name()));
 
@@ -182,9 +191,9 @@ void UnitCellPropertyWidget::update(QStandardItem* item)
 
     ui->z->setValue(unit_cell->z());
 
-    auto material=_unitCellItem->unitCell()->material();
+    auto material = unit_cell->material();
     if (material) {
-        ui->chemicalFormula->setText(QString::fromStdString(unit_cell->material()->formula()));
+        ui->chemicalFormula->setText(QString::fromStdString(material->formula()));
     }
 
     ui->spaceGroup->setCurrentText(QString::fromStdString(unit_cell->spaceGroup().symbol()));

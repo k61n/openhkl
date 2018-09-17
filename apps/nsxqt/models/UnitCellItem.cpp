@@ -17,14 +17,13 @@
 #include "PeaksItem.h"
 #include "UnitCellItem.h"
 #include "UnitCellPropertyWidget.h"
+#include "UnitCellsItem.h"
 
 UnitCellItem::UnitCellItem(nsx::sptrUnitCell unit_cell)
 : InspectableTreeItem(),
   _unit_cell(unit_cell)
 {
     setText(QString::fromStdString(_unit_cell->name()));
-
-    setForeground(QBrush(Qt::red));
 
     setIcon(QIcon(":/resources/unitCellIcon.png"));
 
@@ -35,7 +34,9 @@ UnitCellItem::UnitCellItem(nsx::sptrUnitCell unit_cell)
 
     setSelectable(false);
 
-    setCheckable(false);
+    setCheckable(true);
+
+    setCheckState(Qt::Unchecked);
 }
 
 UnitCellItem::~UnitCellItem()
@@ -45,44 +46,40 @@ UnitCellItem::~UnitCellItem()
 QVariant UnitCellItem::data(int role) const
 {
     switch(role) {
-    case(Qt::DecorationRole):
+    case(Qt::DecorationRole): {
         return QIcon(":/resources/unitCellIcon.png");
-    case(Qt::EditRole):
+    }
+    case(Qt::EditRole): {
         return QString::fromStdString(_unit_cell->name());
-    case(Qt::DisplayRole):
+    }
+    case(Qt::DisplayRole): {
         return QString::fromStdString(_unit_cell->name());
-    case(Qt::UserRole):
+    }
+    case(Qt::UserRole): {
         return QVariant::fromValue(_unit_cell);
+    }
     }
     return InspectableTreeItem::data(role);
 }
 
 void UnitCellItem::setData(const QVariant& value, int role)
 {
-    if (!index().isValid()) {
-        return;
-    }
-
     switch(role) {
-    case (Qt::DisplayRole):
-        _unit_cell->setName(value.toString().toStdString());
-        break;
-    case (Qt::EditRole):
+    case (Qt::DisplayRole): {
         _unit_cell->setName(value.toString().toStdString());
         break;
     }
-
+    case (Qt::EditRole): {
+        _unit_cell->setName(value.toString().toStdString());
+        break;
+    }
+    }
     InspectableTreeItem::setData(value,role);
 }
 
 QWidget* UnitCellItem::inspectItem()
 {
     return new UnitCellPropertyWidget(this);
-}
-
-nsx::sptrUnitCell UnitCellItem::unitCell()
-{
-    return _unit_cell;
 }
 
 void UnitCellItem::info() const

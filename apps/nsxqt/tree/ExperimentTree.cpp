@@ -43,6 +43,7 @@
 #include "GLWidget.h"
 #include "InstrumentItem.h"
 #include "LibraryItem.h"
+#include "MetaTypes.h"
 #include "NumorItem.h"
 #include "PeaksItem.h"
 #include "PeakListItem.h"
@@ -51,6 +52,7 @@
 #include "QCustomPlot.h"
 #include "SampleItem.h"
 #include "SessionModel.h"
+#include "SessionModelDelegate.h"
 #include "SourceItem.h"
 #include "TreeItem.h"
 #include "UnitCellItem.h"
@@ -70,6 +72,10 @@ ExperimentTree::ExperimentTree(QWidget *parent):
     update();
 
     setExpandsOnDoubleClick(false);
+
+    auto session_model_delegate = new SessionModelDelegate();
+
+    setItemDelegate(session_model_delegate);
 
     connect(this,SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onCustomMenuRequested(const QPoint&)));
     connect(this,SIGNAL(doubleClicked(const QModelIndex&)),this,SLOT(onDoubleClick(const QModelIndex&)));
@@ -210,7 +216,7 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
             }
         }
     } else if (auto ptr=dynamic_cast<NumorItem*>(item)) {
-        session()->selectData(ptr->data());
+        session()->selectData(ptr->data(Qt::UserRole).value<nsx::sptrDataSet>());
     }
 }
 

@@ -76,7 +76,7 @@ void DataItem::removeSelectedData()
     }
 
     for (auto numor_item : selected_numor_items) {
-        auto data = numor_item->data();
+        auto data = numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
         auto it = used_data.find(data);
         if (it != used_data.end()) {
             nsx::info()<<"The numor "<<numor_item->text().toStdString()<<" is currently used. Can not be removed";
@@ -102,12 +102,11 @@ void DataItem::importData()
             return; // nullptr;
         }
 
-
         nsx::sptrDataSet data_ptr;
 
         std::string extension = fileinfo.completeSuffix().toStdString();
         data_ptr = nsx::DataReaderFactory().create(extension, filename.toStdString(), exp->diffractometer());
-        exp->addData(data_ptr);      
+        exp->addData(data_ptr);
 
         // Get the basename of the current numor
         auto&& basename = fileinfo.baseName();
@@ -207,8 +206,8 @@ nsx::DataList DataItem::selectedData()
     nsx::DataList selectedNumors;
     for (int i = 0; i < rowCount(); ++i) {
         if (child(i)->checkState() == Qt::Checked) {
-            if (auto ptr = dynamic_cast<NumorItem*>(child(i))) {
-                selectedNumors.push_back(ptr->data());
+            if (auto numor_item = dynamic_cast<NumorItem*>(child(i))) {
+                selectedNumors.push_back(numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>());
             }
         }
     }

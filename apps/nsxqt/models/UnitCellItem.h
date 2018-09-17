@@ -13,12 +13,10 @@ public:
     UnitCellItem(nsx::sptrUnitCell unit_cell);
     ~UnitCellItem();   
 
-    QVariant data(int role) const;
-    void setData(const QVariant& value, int role);
+    virtual QVariant data(int role) const override;
+    virtual void setData(const QVariant& value, int role) override;
 
     QWidget* inspectItem();
-
-    nsx::sptrUnitCell unitCell();
 
     void info() const;
 

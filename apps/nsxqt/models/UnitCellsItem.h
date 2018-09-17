@@ -2,6 +2,8 @@
 
 #include "TreeItem.h"
 
+class UnitCellItem;
+
 class UnitCellsItem : public TreeItem
 {
 public:
@@ -10,4 +12,6 @@ public:
     nsx::UnitCellList unitCells();
 
     void removeUnusedUnitCells();
+
+    UnitCellItem* selectedUnitCellItem();
 };

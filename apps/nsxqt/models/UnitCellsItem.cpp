@@ -6,6 +6,7 @@
 #include <nsxlib/Peak3D.h>
 
 #include "ExperimentItem.h"
+#include "MetaTypes.h"
 #include "PeaksItem.h"
 #include "UnitCellItem.h"
 #include "UnitCellsItem.h"
@@ -27,6 +28,22 @@ UnitCellsItem::UnitCellsItem() : TreeItem()
     setCheckable(false);
 }
 
+UnitCellItem* UnitCellsItem::selectedUnitCellItem()
+{
+    for (auto i = 0; i < rowCount(); ++i) {
+        auto unit_cell_item = dynamic_cast<UnitCellItem*>(child(i));
+        if (!unit_cell_item) {
+            continue;
+        }
+
+        if (unit_cell_item->checkState() == Qt::Checked) {
+            return unit_cell_item;
+        }
+    }
+
+    return nullptr;
+}
+
 nsx::UnitCellList UnitCellsItem::unitCells()
 {
     nsx::UnitCellList unitCells;
@@ -36,7 +53,7 @@ nsx::UnitCellList UnitCellsItem::unitCells()
     {
         UnitCellItem* ucItem = dynamic_cast<UnitCellItem*>(child(i));
         if (ucItem) {
-            unitCells.push_back(ucItem->unitCell());
+            unitCells.push_back(ucItem->data(Qt::UserRole).value<nsx::sptrUnitCell>());
         }
     }
 
@@ -66,7 +83,7 @@ void UnitCellsItem::removeUnusedUnitCells()
     {
         UnitCellItem* unit_cell_item = dynamic_cast<UnitCellItem*>(child(i));
         if (unit_cell_item) {
-            auto it = unit_cells.find(unit_cell_item->unitCell());
+            auto it = unit_cells.find(unit_cell_item->data(Qt::UserRole).value<nsx::sptrUnitCell>());
             if (it == unit_cells.end()) {
                 removeRow(i);
             }

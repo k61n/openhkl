@@ -17,9 +17,11 @@ public:
 
     ~SessionModel();
 
-    nsx::PeakList peaks(const nsx::sptrDataSet data) const;
+    nsx::PeakList peaks(nsx::sptrDataSet data) const;
 
     void selectData(nsx::sptrDataSet data);
+
+    ExperimentItem* selectExperiment(nsx::sptrDataSet data);
 
 signals:
 

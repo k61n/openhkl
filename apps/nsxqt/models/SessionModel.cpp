@@ -87,6 +87,7 @@
 #include "GLSphere.h"
 #include "GLWidget.h"
 #include "InstrumentItem.h"
+#include "MetaTypes.h"
 #include "NumorItem.h"
 #include "PeakListItem.h"
 #include "PeakTableView.h"
@@ -110,13 +111,41 @@ SessionModel::~SessionModel()
 {
 }
 
+ExperimentItem* SessionModel::selectExperiment(nsx::sptrDataSet data)
+{
+    ExperimentItem *experiment_item=nullptr;
+
+    for (auto i = 0; i < rowCount(); ++i) {
+        experiment_item = dynamic_cast<ExperimentItem*>(item(i));
+        if (!experiment_item) {
+            continue;
+        }
+
+        auto data_item  = experiment_item->dataItem();
+        for (auto j = 0; j < data_item->rowCount(); ++j) {
+            auto numor_item = dynamic_cast<NumorItem*>(data_item->child(j));
+            if (!numor_item) {
+                continue;
+            }
+
+            if (numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>() == data) {
+                return experiment_item;
+            }
+        }
+    }
+
+    return experiment_item;
+}
+
 void SessionModel::selectData(nsx::sptrDataSet data)
 {
     emit signalSelectedDataChanged(data,0);
 }
 
-void SessionModel::onItemChanged(QStandardItem* item)
+void SessionModel::onItemChanged(QStandardItem *item)
 {
+    Q_UNUSED(item)
+
     emit updatePeaks();
 }
 
