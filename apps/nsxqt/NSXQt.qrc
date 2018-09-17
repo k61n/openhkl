@@ -43,5 +43,6 @@
         <file>resources/ellipsoidalMask.png</file>
         <file>resources/unitCellsIcon.png</file>
         <file>resources/selectIcon.png</file>
+        <file>resources/numorIcon.png</file>
     </qresource>
 </RCC>
