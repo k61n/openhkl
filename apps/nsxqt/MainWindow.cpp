@@ -271,12 +271,17 @@ void MainWindow::on_action2_Theta_triggered()
 
 void MainWindow::on_actionGamma_Nu_triggered()
 {
-    _ui->dview->getScene()->changeCursorMode(DetectorScene::GAMMA);
+    _ui->dview->getScene()->changeCursorMode(DetectorScene::GAMMA_NU);
 }
 
 void MainWindow::on_actionD_spacing_triggered()
 {
-  _ui->dview->getScene()->changeCursorMode(DetectorScene::DSPACING);
+    _ui->dview->getScene()->changeCursorMode(DetectorScene::D_SPACING);
+}
+
+void MainWindow::on_actionMiller_indices_triggered()
+{
+    _ui->dview->getScene()->changeCursorMode(DetectorScene::MILLER_INDICES);
 }
 
 void MainWindow::on_actionLogger_triggered()

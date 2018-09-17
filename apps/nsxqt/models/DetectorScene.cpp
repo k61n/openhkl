@@ -18,6 +18,7 @@
 #include <nsxlib/InstrumentState.h>
 #include <nsxlib/IntegrationRegion.h>
 #include <nsxlib/Logger.h>
+#include <nsxlib/MillerIndex.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/Sample.h>
@@ -27,12 +28,16 @@
 #include <nsxlib/Units.h>
 
 #include "ColorMap.h"
-#include "DetectorScene.h"
 #include "CutLineGraphicsItem.h"
 #include "CutSliceGraphicsItem.h"
+#include "DetectorScene.h"
 #include "EllipseMaskGraphicsItem.h"
+#include "ExperimentItem.h"
 #include "MaskGraphicsItem.h"
+#include "MetaTypes.h"
 #include "PeakGraphicsItem.h"
+#include "UnitCellItem.h"
+#include "UnitCellsItem.h"
 
 DetectorScene::DetectorScene(QObject *parent)
 : QGraphicsScene(parent),
@@ -663,16 +668,35 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
         ttip = QString("(%1,%2) I:%3").arg(col).arg(row).arg(intensity);
         break;
     }
-    case GAMMA: {
-        ttip = QString("(%1,%2) I: %3").arg(gamma/nsx::deg).arg(nu/nsx::deg).arg(intensity);
+    case GAMMA_NU: {
+        ttip = QString("(%1,%2) I: %3").arg(gamma/nsx::deg,0,'f',3).arg(nu/nsx::deg,0,'f',3).arg(intensity);
         break;
     }
     case THETA: {
-        ttip = QString("(%1) I: %2").arg(th2/nsx::deg).arg(intensity);
+        ttip = QString("(%1) I: %2").arg(th2/nsx::deg,0,'f',3).arg(intensity);
         break;
     }
-    case DSPACING: {
-        ttip = QString("(%1) I: %2").arg(wave/(2*sin(0.5*th2))).arg(intensity);
+    case D_SPACING: {
+        ttip = QString("(%1) I: %2").arg(wave/(2*sin(0.5*th2)),0,'f',3).arg(intensity);
+        break;
+    }
+    case MILLER_INDICES: {
+
+        auto experiment_item = _session->selectExperiment(_currentData);
+        if (!experiment_item) {
+            ttip = QString("No experiment found");
+        } else {
+            auto selected_unit_cell_item = experiment_item->unitCellsItem()->selectedUnitCellItem();
+            if (selected_unit_cell_item) {
+                auto q = state.sampleQ(pos);
+                auto miller_indices = nsx::MillerIndex(q,*(selected_unit_cell_item->data(Qt::UserRole).value<nsx::sptrUnitCell>()));
+
+                Eigen::RowVector3d hkl = miller_indices.rowVector().cast<double>() + miller_indices.error();
+                ttip = QString("(%1,%2,%3) I: %4").arg(hkl[0],0,'f',2).arg(hkl[1],0,'f',2).arg(hkl[2],0,'f',2).arg(intensity);
+            } else {
+                ttip = QString("No unit cell selected");
+            }
+        }
         break;
     }
     }

@@ -41,7 +41,7 @@ public:
     enum MODE {SELECT=0, ZOOM=1, LINE=2, HORIZONTALSLICE=3, VERTICALSLICE=4, MASK=5, ELLIPSE_MASK=6};
 
     //! Which mode is the cursor diplaying
-    enum CURSORMODE {PIXEL=0, THETA=1, GAMMA=2, DSPACING=3};
+    enum CURSORMODE {PIXEL=0, THETA=1, GAMMA_NU=2, D_SPACING=3, MILLER_INDICES=4};
 
     explicit DetectorScene(QObject *parent = 0);
 

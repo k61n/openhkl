@@ -1280,6 +1280,7 @@ border-radius: 4px;
      <addaction name="actionGamma_Nu"/>
      <addaction name="action2_Theta"/>
      <addaction name="actionD_spacing"/>
+     <addaction name="actionMiller_indices"/>
     </widget>
     <widget class="QMenu" name="menuShow_Window">
      <property name="title">
@@ -1730,6 +1731,11 @@ QDockWidget::title {
    </property>
    <property name="text">
     <string>&amp;HKL</string>
+   </property>
+  </action>
+  <action name="actionMiller_indices">
+   <property name="text">
+    <string>Miller indices</string>
    </property>
   </action>
  </widget>

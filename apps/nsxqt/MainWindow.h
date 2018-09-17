@@ -47,6 +47,7 @@ private slots:
     void on_actionGamma_Nu_triggered();
     void on_action2_Theta_triggered();
     void on_actionD_spacing_triggered();
+    void on_actionMiller_indices_triggered();
     void on_actionLogger_triggered();
     void on_action1D_Peak_Ploter_triggered();
     void on_actionProperty_triggered();
