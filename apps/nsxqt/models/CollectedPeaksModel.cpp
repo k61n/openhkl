@@ -169,6 +169,7 @@ QVariant CollectedPeaksModel::headerData(int section, Qt::Orientation orientatio
     if (role != Qt::DisplayRole) {
         return QVariant();
     }
+
     if (orientation == Qt::Horizontal) {
         switch(section) {
         case Column::h: {
@@ -204,8 +205,9 @@ QVariant CollectedPeaksModel::headerData(int section, Qt::Orientation orientatio
         default:
             return QVariant();
         }
-    } else
+    } else {
         return QVariant(section+1);
+    }
 }
 
 QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
@@ -214,7 +216,8 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    Eigen::RowVector3i hkl= {0,0,0};
+    Eigen::RowVector3i hkl = {0,0,0};
+    Eigen::RowVector3d hkl_error = {0.0,0.0,0.0};
 
     int row = index.row();
     int column = index.column();
@@ -223,6 +226,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         nsx::MillerIndex miller_index(_peaks[row]->q(), *cell);
         if (miller_index.indexed(cell->indexingTolerance())) {
             hkl = miller_index.rowVector();
+            hkl_error = miller_index.error();
         }
     }
 
@@ -286,11 +290,11 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
     case Qt::ToolTipRole:
         switch (column) {
             case Column::h:                
-                return hkl[0];
+                return hkl[0]+hkl_error[0];
             case Column::k:                
-                return hkl[1];
+                return hkl[1]+hkl_error[1];
             case Column::l:                
-                return hkl[2];
+                return hkl[2]+hkl_error[2];
         }
         break;
     }

@@ -38,8 +38,6 @@ PeakTableView::PeakTableView(QWidget *parent)
 
     setFocusPolicy(Qt::StrongFocus);
 
-    this->verticalHeader()->setVisible(false);
-
     connect(this,SIGNAL(clicked(QModelIndex)),this,SLOT(selectPeak(QModelIndex)));
 
     connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(togglePeakSelection(QModelIndex)));
