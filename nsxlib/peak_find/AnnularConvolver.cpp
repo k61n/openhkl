@@ -4,12 +4,8 @@
 namespace nsx {
 
 AnnularConvolver::AnnularConvolver()
-: Convolver()
+: Convolver({{"r1",5},{"r2",10},{"r3",15}})
 {
-    // default values
-    _parameters["r1"] = 5;
-    _parameters["r2"] = 10;
-    _parameters["r3"] = 15;
 }
 
 AnnularConvolver::AnnularConvolver(const std::map<std::string,double>& parameters)
@@ -25,6 +21,13 @@ AnnularConvolver::~AnnularConvolver()
 const char* AnnularConvolver::name() const
 {
     return "annular";
+}
+
+std::pair<size_t,size_t> AnnularConvolver::kernelSize() const
+{
+    size_t r = _parameters.at("r3");
+
+    return std::make_pair(r,r);
 }
 
 RealMatrix AnnularConvolver::convolve(const RealMatrix& image)

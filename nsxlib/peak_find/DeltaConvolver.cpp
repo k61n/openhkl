@@ -2,9 +2,15 @@
 
 namespace nsx {
 
+DeltaConvolver::DeltaConvolver()
+: AtomicConvolver()
+{
+}
+
 DeltaConvolver::DeltaConvolver(const std::map<std::string,double>& parameters)
 : DeltaConvolver()
 {
+    setParameters(parameters);
 }
 
 DeltaConvolver::~DeltaConvolver()
@@ -14,6 +20,11 @@ DeltaConvolver::~DeltaConvolver()
 const char* DeltaConvolver::name() const
 {
     return "delta";
+}
+
+std::pair<size_t,size_t> DeltaConvolver::kernelSize() const
+{
+    return std::make_pair(0,0);
 }
 
 RealMatrix DeltaConvolver::_matrix(int nrows, int ncols) const

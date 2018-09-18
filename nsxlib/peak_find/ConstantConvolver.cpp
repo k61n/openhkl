@@ -3,9 +3,8 @@
 namespace nsx {
 
 ConstantConvolver::ConstantConvolver()
-: AtomicConvolver()
+: AtomicConvolver({{"box_size",3}})
 {
-    _parameters["box_size"] = 3;
 }
 
 ConstantConvolver::ConstantConvolver(const std::map<std::string,double>& parameters)
@@ -21,6 +20,13 @@ ConstantConvolver::~ConstantConvolver()
 const char* ConstantConvolver::name() const
 {
     return "constant";
+}
+
+std::pair<size_t,size_t> ConstantConvolver::kernelSize() const
+{
+    size_t r = _parameters.at("box_size");
+
+    return std::make_pair(r,r);
 }
 
 RealMatrix ConstantConvolver::_matrix(int nrows, int ncols) const

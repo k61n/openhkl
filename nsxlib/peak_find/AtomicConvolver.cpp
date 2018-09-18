@@ -49,6 +49,19 @@ AtomicConvolver::AtomicConvolver()
 {
 }
 
+AtomicConvolver::AtomicConvolver(const std::map<std::string,double> &parameters)
+: Convolver(parameters),
+  _n_rows(0),
+  _n_cols(0),
+  _halfCols(0),
+  _forwardPlan(nullptr),
+  _backwardPlan(nullptr),
+  _realData(nullptr),
+  _transformedData(nullptr),
+  _transformedKernel()
+{
+}
+
 AtomicConvolver::~AtomicConvolver()
 {
     reset();

@@ -15,9 +15,11 @@ public:
 
     ConstantConvolver(const std::map<std::string,double>& parameters);
 
+    virtual ~ConstantConvolver();
+
     const char* name() const override;
 
-    virtual ~ConstantConvolver();
+    virtual std::pair<size_t,size_t> kernelSize() const override;
 
 private:
 
