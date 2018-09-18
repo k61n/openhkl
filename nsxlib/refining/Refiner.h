@@ -52,7 +52,7 @@ public:
     //! the given number of frame batches. The peaks must belong to the same dataset.
     Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches);
     //! Set the lattice B matrix to be refined.
-    void refineB();
+    void refineUB();
     //! Set detector offsets in the given list of instrument states to be refined.
     void refineDetectorOffset(InstrumentStateList& states);
     //! Set the sample position in the given list of instrument states to be refined.

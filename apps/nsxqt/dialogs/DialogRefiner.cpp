@@ -23,16 +23,16 @@
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
 
-#include "DialogRefineUnitCell.h"
+#include "DialogRefiner.h"
 #include "externals/QCustomPlot.h"
-#include "ui_DialogRefineUnitCell.h"
+#include "ui_DialogRefiner.h"
 
-DialogRefineUnitCell::DialogRefineUnitCell(nsx::sptrExperiment experiment,
+DialogRefiner::DialogRefiner(nsx::sptrExperiment experiment,
                                            nsx::sptrUnitCell unitCell,
                                            nsx::PeakList peaks,
                                            QWidget *parent):
     QDialog(parent),
-    ui(new Ui::DialogRefineUnitCell),
+    ui(new Ui::DialogRefiner),
     _experiment(std::move(experiment)),
     _unitCell(std::move(unitCell)),
     _peaks(std::move(peaks))
@@ -46,12 +46,12 @@ DialogRefineUnitCell::DialogRefineUnitCell(nsx::sptrExperiment experiment,
     connect(ui->pushButtonRefine, SIGNAL(clicked()), this, SLOT(refineParameters()));
 }
 
-DialogRefineUnitCell::~DialogRefineUnitCell()
+DialogRefiner::~DialogRefiner()
 {
     delete ui;
 }
 
-void DialogRefineUnitCell::refineParameters()
+void DialogRefiner::refineParameters()
 {
     const unsigned int frames_per_batch = ui->spinBoxFramesPerBatch->value();
 
@@ -94,7 +94,7 @@ void DialogRefineUnitCell::refineParameters()
         nsx::Refiner r(_unitCell, reference_peaks, nbatches(reference_peaks));    
 
         if (ui->checkBoxRefineLattice->isChecked()) {
-            r.refineB();
+            r.refineUB();
             nsx::info() << "Refining B matrix";
         }
 

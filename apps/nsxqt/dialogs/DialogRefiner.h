@@ -8,26 +8,24 @@
 
 namespace Ui
 {
-class DialogRefineUnitCell;
+class DialogRefiner;
 }
 
-class DialogRefineUnitCell : public QDialog
+class DialogRefiner : public QDialog
 {
     Q_OBJECT
 
 public:
     
-    explicit DialogRefineUnitCell(nsx::sptrExperiment experiment,
-                                  nsx::sptrUnitCell unitCell,
-                                  nsx::PeakList peaks,
-                                  QWidget *parent = 0);
-    ~DialogRefineUnitCell();
+    explicit DialogRefiner(nsx::sptrExperiment experiment,nsx::sptrUnitCell unitCell,nsx::PeakList peaks,QWidget *parent = 0);
+
+    ~DialogRefiner();
 
 private slots:    
     void refineParameters();
 
 private:
-    Ui::DialogRefineUnitCell *ui;
+    Ui::DialogRefiner *ui;
     nsx::sptrExperiment _experiment;
     nsx::sptrUnitCell _unitCell;
     nsx::PeakList _peaks;

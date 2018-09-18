@@ -59,7 +59,7 @@ public:
     //! Construct batch with initial unit cell and list of peaks.
     RefinementBatch(const UnitCell& uc, const PeakList& peaksmax);
     //! Set the lattice B matrix to be refined.
-    void refineB();
+    void refineUB();
     //! Set detector offsets in the given list of instrument states to be refined.
     void refineDetectorOffset(InstrumentStateList& states);
     //! Set the sample position in the given list of instrument states to be refined.

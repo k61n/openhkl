@@ -115,10 +115,10 @@ bool Refiner::refine(unsigned int max_iter)
     return true;
 }
 
-void Refiner::refineB()
+void Refiner::refineUB()
 {  
     for (auto&& batch: _batches) {
-        batch.refineB();
+        batch.refineUB();
     }
 }
 

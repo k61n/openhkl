@@ -120,7 +120,7 @@ int main()
         NSX_CHECK_ASSERT(batch.peaks().size() > 200);
     }
 
-    refiner.refineB();
+    refiner.refineUB();
     //refiner.refineU();
     auto&& states = dataf->instrumentStates();
     refiner.refineSamplePosition(states);

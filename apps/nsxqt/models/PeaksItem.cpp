@@ -29,8 +29,8 @@
 #include "DialogIntegrate.h"
 #include "DialogMCAbsorption.h"
 #include "DialogPeakFilter.h"
+#include "DialogRefiner.h"
 #include "DialogShapeLibrary.h"
-#include "DialogRefineUnitCell.h"
 #include "DialogSpaceGroup.h"
 #include "ExperimentItem.h"
 #include "GLSphere.h"
@@ -325,7 +325,7 @@ void PeaksItem::refine()
         return;
     }
 
-    std::unique_ptr<DialogRefineUnitCell> dialog(new DialogRefineUnitCell(experiment(),uc,peaks,nullptr));
+    std::unique_ptr<DialogRefiner> dialog(new DialogRefiner(experiment(),uc,peaks,nullptr));
     if (!dialog->exec()) {
         return;
     }
