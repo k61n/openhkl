@@ -150,6 +150,10 @@ DialogPeakFind::DialogPeakFind(ExperimentItem* experiment_item, const nsx::DataL
 DialogPeakFind::~DialogPeakFind()
 {
     delete _ui;
+
+    if (_instance) {
+        _instance = nullptr;
+    }
 }
 
 void DialogPeakFind::actionRequested(QAbstractButton *button)

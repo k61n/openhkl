@@ -50,6 +50,15 @@ DialogExploreInstrumentStates::DialogExploreInstrumentStates(const nsx::DataList
     _ui->data->setCurrentRow(0);
 }
 
+DialogExploreInstrumentStates::~DialogExploreInstrumentStates()
+{
+    delete _ui;
+
+    if (_instance) {
+        _instance = nullptr;
+    }
+}
+
 void DialogExploreInstrumentStates::slotSelectedDataChanged(int selected_data)
 {
     Q_UNUSED(selected_data)

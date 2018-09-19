@@ -20,6 +20,8 @@ public:
 
     static DialogExploreInstrumentStates* Instance();
 
+    ~DialogExploreInstrumentStates();
+
 private slots:
 
     void slotSelectedDataChanged(int selected_data);
