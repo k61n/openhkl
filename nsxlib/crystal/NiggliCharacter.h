@@ -67,6 +67,16 @@ struct NiggliCharacter {
     Eigen::MatrixXd C; //!< matrix of linear constraints
     Eigen::Matrix3d P = Eigen::Matrix3d::Identity(); //!< transformation matrix
     
+    bool operator==(const NiggliCharacter& other) const {
+        return ((number == other.number) && (typeI == other.typeI) && (bravais == other.bravais) && (C == other.C) && (P == other.P));
+
+    }
+
+    bool operator!=(const NiggliCharacter& other) const {
+        return ((number != other.number) || (typeI != other.typeI) || (bravais != other.bravais) || (C != other.C) || (P != other.P));
+
+    }
+
     //! Initialize the condition according to priority in the table of characters
     //! with s = sign(D+E+F) and t = sign(2D+F)
     bool set(int priority, double s, double t);

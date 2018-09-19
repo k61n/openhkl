@@ -88,6 +88,9 @@ namespace nsx {
 class UnitCell 
 {
 public:
+
+    static UnitCell interpolate(const UnitCell &uc1, const UnitCell &uc2, double t);
+
     //! Empty UnitCell, initialiazed to right-handed orthonormal system
     UnitCell();
     //! Create unit cell from a basis

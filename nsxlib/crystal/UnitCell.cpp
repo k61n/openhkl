@@ -15,6 +15,81 @@
 
 namespace nsx {
 
+UnitCell UnitCell::interpolate(const UnitCell &uc1, const UnitCell &uc2, double t)
+{
+    if (uc1._niggli != uc2._niggli) {
+        throw std::runtime_error("Inconsistent Niggli type");
+    }
+
+    if (uc1._bravaisType != uc2._bravaisType) {
+        throw std::runtime_error("Inconsistent Bravais type");
+    }
+
+    if (uc1._centring != uc2._centring) {
+        throw std::runtime_error("Inconsistent centring type");
+    }
+
+    const double s = 1.0-t;
+
+    const Eigen::Quaterniond uc1_u_quat(uc1.orientation());
+    const Eigen::Quaterniond uc2_u_quat(uc2.orientation());
+
+    Eigen::Quaterniond u_quat = uc1_u_quat.slerp(t,uc2_u_quat);
+    u_quat.normalize();
+    const Eigen::Matrix3d u_matrix = u_quat.toRotationMatrix();
+
+    auto&& uc1_params = uc1.character();
+    auto&& uc2_params = uc2.character();
+
+    const double A = s*uc1_params.A + t*uc2_params.A;
+    const double B = s*uc1_params.B + t*uc2_params.B;
+    const double C = s*uc1_params.C + t*uc2_params.C;
+
+    const double D = s*uc1_params.D + t*uc2_params.D;
+    const double E = s*uc1_params.E + t*uc2_params.E;
+    const double F = s*uc1_params.F + t*uc2_params.F;
+
+    // create new unit cell
+    UnitCell uc(uc1);
+    uc.setABCDEF(A,B,C,D,E,F);
+
+    Eigen::MatrixXd kernel;
+
+    // no constraints
+    if (uc1._niggli.number == 31 || uc1._niggli.number == 44) {
+        kernel.setIdentity(6, 6);
+    } else {
+        // matrix of Niggli character constraints, taken from the table 9.2.5.1
+        Eigen::MatrixXd C = uc._niggli.C;
+        // compute kernel of Niggli constraints
+        Eigen::FullPivLU<Eigen::MatrixXd> lu(C);
+        kernel = lu.kernel();
+    }
+
+    auto&& uc_params = uc.character();
+    Eigen::VectorXd parameters(6);
+    parameters(0) = uc_params.A;
+    parameters(1) = uc_params.B;
+    parameters(2) = uc_params.C;
+    parameters(3) = uc_params.D;
+    parameters(4) = uc_params.E;
+    parameters(5) = uc_params.F;
+
+    const int nparams = kernel.cols();
+
+    // lattice character
+    Eigen::VectorXd ch(6);
+    ch.setZero();
+    // parameters defining lattice chatacer
+    for (auto i = 0; i < nparams; ++i) {
+        ch += parameters(i)*kernel.col(i);
+    }
+
+    uc.setBasis(u_matrix*uc._A*uc._NP);
+
+    return uc;
+}
+
 CellCharacter::CellCharacter():
     A(0.0), B(0.0), C(0.0), D(0.0), E(0.0), F(0.0),
     a(0.0), b(0.0), c(0.0), alpha(0.0), beta(0.0), gamma(0.0)
@@ -455,6 +530,8 @@ int UnitCell::reduce(bool niggli_only, double niggliTolerance, double gruberTole
     Eigen::Matrix3d newg, P;
     niggli.reduce(newg, P);
     transform(P);
+    std::cout<<"POLLUX"<<std::endl;
+    std::cout<<P<<std::endl;
 
     // use GruberReduction::reduce to get Bravais type
     GruberReduction gruber(metric(), gruberTolerance);
@@ -466,17 +543,19 @@ int UnitCell::reduce(bool niggli_only, double niggliTolerance, double gruberTole
         setLatticeCentring(c);
         setBravaisType(b);
         _niggli = gruber.classify();
+        std::cout<<"POPOL"<<std::endl;
+        std::cout<<_niggli.P<<std::endl;
     }
     catch(std::exception& e) {
         //qDebug() << "Gruber reduction error:" << e.what();
         //continue;
     }
 
-    if (niggli_only == false) {
+    if (niggli_only) {
+        _NP = Eigen::Matrix3d::Identity();
+    } else {
         transform(P);
         _NP = P;
-    } else {
-        _NP = Eigen::Matrix3d::Identity();
     }
     return _niggli.number;
 }
