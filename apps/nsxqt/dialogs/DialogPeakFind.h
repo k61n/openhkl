@@ -45,9 +45,9 @@ public:
 
     void setColorMap(const std::string& name);
 
-    void showEvent(QShowEvent*) override;
+    virtual void showEvent(QShowEvent*) override;
 
-    void resizeEvent(QResizeEvent*) override;
+    virtual void resizeEvent(QResizeEvent*) override;
 
 public slots:
 

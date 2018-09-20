@@ -1,4 +1,5 @@
 #include <QCheckBox>
+#include <QMessageBox>
 #include <QLayout>
 
 #include <nsxlib/Axis.h>
@@ -27,10 +28,10 @@
 
 DialogRefiner* DialogRefiner::_instance = nullptr;
 
-DialogRefiner* DialogRefiner::create(ExperimentItem *experiment_item, nsx::sptrUnitCell unit_cell, const nsx::PeakList &peaks, QWidget *parent)
+DialogRefiner* DialogRefiner::create(ExperimentItem *experiment_item, const nsx::PeakList &peaks, QWidget *parent)
 {
     if (!_instance) {
-        _instance = new DialogRefiner(experiment_item, unit_cell, peaks, parent);
+        _instance = new DialogRefiner(experiment_item, peaks, parent);
     }
 
     return _instance;
@@ -41,11 +42,12 @@ DialogRefiner* DialogRefiner::Instance()
     return _instance;
 }
 
-DialogRefiner::DialogRefiner(ExperimentItem *experiment_item, nsx::sptrUnitCell unit_cell, const nsx::PeakList &peaks, QWidget *parent):
-    QDialog(parent),
-    _ui(new Ui::DialogRefiner),
-    _experiment_item(experiment_item),
-    _unit_cell(unit_cell){
+DialogRefiner::DialogRefiner(ExperimentItem *experiment_item, const nsx::PeakList &peaks, QWidget *parent)
+: QDialog(parent),
+  _ui(new Ui::DialogRefiner),
+  _experiment_item(experiment_item),
+  _peaks_model(nullptr)
+{
     _ui->setupUi(this);
 
     setModal(false);
@@ -67,7 +69,7 @@ DialogRefiner::DialogRefiner(ExperimentItem *experiment_item, nsx::sptrUnitCell 
     _ui->detector_offsets->setHorizontalHeaderLabels(labels);
     _ui->detector_offsets->horizontalHeader()->setStretchLastSection(true);
 
-    for (auto i = 0; i < detector_axis_names.size(); ++i) {
+    for (size_t i = 0; i < detector_axis_names.size(); ++i) {
         auto item = new QTableWidgetItem();
         item->setText(QString::fromStdString(detector_axis_names[i]));
         _ui->detector_offsets->setItem(i,0,item);
@@ -82,7 +84,7 @@ DialogRefiner::DialogRefiner(ExperimentItem *experiment_item, nsx::sptrUnitCell 
     _ui->sample_offsets->setHorizontalHeaderLabels(labels);
     _ui->sample_offsets->horizontalHeader()->setStretchLastSection(true);
 
-    for (auto i = 0; i < sample_axis_names.size(); ++i) {
+    for (size_t i = 0; i < sample_axis_names.size(); ++i) {
         auto item = new QTableWidgetItem();
         item->setText(QString::fromStdString(sample_axis_names[i]));
         _ui->sample_offsets->setItem(i,0,item);
@@ -90,6 +92,8 @@ DialogRefiner::DialogRefiner(ExperimentItem *experiment_item, nsx::sptrUnitCell 
 
     _peaks_model = new CollectedPeaksModel(_experiment_item->model(),_experiment_item->experiment(),peaks);
     _ui->peaks->setModel(_peaks_model);
+
+    connect(_ui->actions,SIGNAL(clicked(QAbstractButton*)),this,SLOT(slotActionClicked(QAbstractButton*)));
 }
 
 DialogRefiner::~DialogRefiner()
@@ -142,6 +146,20 @@ void DialogRefiner::refine()
         selected_peaks.push_back(peaks[r.row()]);
     }
 
+    nsx::sptrUnitCell unit_cell(selected_peaks[0]->unitCell());
+    for (auto&& peak : selected_peaks) {
+        if (peak->unitCell() != unit_cell) {
+            unit_cell = nullptr;
+            break;
+        }
+    }
+
+    if (!unit_cell) {
+        QMessageBox::warning(this, "NSXTool", "The selected peaks must have the same unit cell for refining");
+        return;
+    }
+
+
     std::set<nsx::sptrDataSet> data;
     // get list of datasets
     for (auto p: selected_peaks) {
@@ -187,7 +205,7 @@ void DialogRefiner::refine()
 
         nsx::info() << reference_peaks.size() << " available for refinement.";
 
-        nsx::Refiner r(_unit_cell, reference_peaks, nbatches(reference_peaks));
+        nsx::Refiner r(unit_cell, reference_peaks, nbatches(reference_peaks));
 
         if (_ui->checkBoxRefineLattice->isChecked()) {
             r.refineUB();
@@ -218,13 +236,13 @@ void DialogRefiner::refine()
 
         bool success = r.refine();
 
-        if (!success) {
-            nsx::info() << "Failed to refine parameters for numor " << d->filename();
-        }  else {
+        if (success) {
             nsx::info() << "Successfully refined parameters for numor " << d->filename();
 
-            int updated = r.updatePredictions(predicted_peaks);
-            nsx::info() << "done; updated " << updated << " predicted peaks";
+            int updated = r.updatePredictions(selected_peaks);
+            nsx::info() << "done; updated " << updated << " peaks";
+        }  else {
+            nsx::info() << "Failed to refine parameters for numor " << d->filename();
         }
     }
 

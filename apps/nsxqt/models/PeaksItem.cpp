@@ -306,20 +306,7 @@ void PeaksItem::refine()
 {
     nsx::PeakList selected_peaks = selectedPeaks();
 
-    nsx::sptrUnitCell uc(selected_peaks[0]->unitCell());
-    for (auto&& peak : selected_peaks) {
-        if (peak->unitCell() != uc) {
-            uc = nullptr;
-            break;
-        }
-    }
-
-    if (uc == nullptr) {
-        QMessageBox::warning(nullptr, "NSXTool", "The selected peaks must have the same active unit cell for refining");
-        return;
-    }
-
-    DialogRefiner* dialog = DialogRefiner::create(experimentItem(), uc, selected_peaks, MainWindow::Instance());
+    DialogRefiner* dialog = DialogRefiner::create(experimentItem(), selected_peaks, MainWindow::Instance());
 
     dialog->show();
 

@@ -25,6 +25,7 @@
 #include "DialogPeakFind.h"
 #include "DialogRawData.h"
 #include "ExperimentItem.h"
+#include "MainWindow.h"
 #include "MetaTypes.h"
 #include "NumorItem.h"
 #include "PeaksItem.h"
@@ -194,11 +195,13 @@ void DataItem::findPeaks()
 
     auto experiment_item = experimentItem();
 
-    DialogPeakFind* dialog = DialogPeakFind::create(experiment_item, data, nullptr);
+    DialogPeakFind* dialog = DialogPeakFind::create(experiment_item, data, MainWindow::Instance());
 
     dialog->show();
 
     dialog->raise();
+
+    dialog->activateWindow();
 }
 
 nsx::DataList DataItem::selectedData()
@@ -240,7 +243,7 @@ void DataItem::exploreInstrumentStates()
         return;
     }
 
-    DialogExploreInstrumentStates* dialog = DialogExploreInstrumentStates::create(selected_data,nullptr);
+    DialogExploreInstrumentStates* dialog = DialogExploreInstrumentStates::create(selected_data,MainWindow::Instance());
 
     dialog->show();
 

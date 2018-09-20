@@ -11,6 +11,7 @@ namespace Ui
 class DialogRefiner;
 }
 
+class QAbstractButton;
 class CollectedPeaksModel;
 class ExperimentItem;
 
@@ -20,7 +21,7 @@ class DialogRefiner : public QDialog
 
 public:
     
-    static DialogRefiner* create(ExperimentItem* experiment_item, nsx::sptrUnitCell unit_cell, const nsx::PeakList& peaks, QWidget* parent=nullptr);
+    static DialogRefiner* create(ExperimentItem* experiment_item, const nsx::PeakList &peaks, QWidget *parent=nullptr);
 
     static DialogRefiner* Instance();
 
@@ -40,15 +41,13 @@ private:
 
 private:
 
-    DialogRefiner(ExperimentItem* experiment_item, nsx::sptrUnitCell unit_cell, const nsx::PeakList& peaks, QWidget* parent=nullptr);
+    DialogRefiner(ExperimentItem *experiment_item, const nsx::PeakList &peaks, QWidget *parent=nullptr);
 
     static DialogRefiner *_instance;
 
     Ui::DialogRefiner *_ui;
 
     ExperimentItem *_experiment_item;
-
-    nsx::sptrUnitCell _unit_cell;
 
     CollectedPeaksModel* _peaks_model;
 };

@@ -32,6 +32,8 @@
 
 #include "ui_DialogPeakFind.h"
 
+#include <QDebug>
+
 class DoubleDelegate : public QItemDelegate
 {
 public:
@@ -80,6 +82,8 @@ DialogPeakFind::DialogPeakFind(ExperimentItem* experiment_item, const nsx::DataL
     setWindowModality(Qt::NonModal);
 
     setAttribute(Qt::WA_DeleteOnClose);
+
+    setFocusPolicy(Qt::ClickFocus);
 
     _ui->tabs->setCurrentIndex(0);
 
@@ -241,13 +245,11 @@ void DialogPeakFind::updatePreview()
     auto data = _data[selected_data];
 
     _ui->frameSlider->setMaximum(data->nFrames()-1);
-    int selected_frame = _ui->frameSlider->value();
+    size_t selected_frame = _ui->frameSlider->value();
 
     if (selected_frame >= data->nFrames()) {
         selected_frame = data->nFrames()-1;
     }
-
-    auto frame = data->frame(selected_frame);
 
     int nrows = data->nRows();
     int ncols = data->nCols();
