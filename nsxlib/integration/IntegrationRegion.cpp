@@ -50,8 +50,6 @@ IntegrationRegion::IntegrationRegion(sptrPeak3D peak, double peak_end, double bk
     _bkgEnd(bkg_end),
     _data(peak)
 {
-    auto uc = peak->unitCell();
-
     Ellipsoid bkg(_shape);
     bkg.scale(_bkgEnd);
     auto aabb = bkg.aabb();
