@@ -306,14 +306,6 @@ void PeaksItem::refine()
 {
     nsx::PeakList selected_peaks = selectedPeaks();
 
-    int nPeaks = selected_peaks.size();
-
-    // Check that a minimum number of peaks have been selected for indexing
-    if (nPeaks < 10) {
-        QMessageBox::warning(nullptr, "NSXTool", "Need at least 10 peaks for refining");
-        return;
-    }
-
     nsx::sptrUnitCell uc(selected_peaks[0]->unitCell());
     for (auto&& peak : selected_peaks) {
         if (peak->unitCell() != uc) {

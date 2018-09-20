@@ -202,7 +202,7 @@ double ShapeLibrary::bkgEnd() const
     return _bkgEnd;
 }
 
-bool ShapeLibrary::addPeak(sptrPeak3D peak, Profile3D&& profile, IntegratedProfile&& integrated_profile)
+bool ShapeLibrary::addPeak(sptrPeak3D peak, Profile3D&& profile, Profile1D&& integrated_profile)
 {
     Eigen::Matrix3d A = peak->shape().inverseMetric();
     Eigen::Matrix3d cov = 0.5 * (A + A.transpose());
@@ -316,7 +316,7 @@ Profile3D ShapeLibrary::meanProfile(const DetectorEvent& ev, double radius, doub
     return mean;
 }
 
-std::vector<Intensity> ShapeLibrary::meanIntegratedProfile(const DetectorEvent& ev, double radius, double nframes) const
+std::vector<Intensity> ShapeLibrary::meanProfile1D(const DetectorEvent& ev, double radius, double nframes) const
 {
     PeakList neighbors = findNeighbors(ev, radius, nframes);
     std::vector<Intensity> mean_profile;

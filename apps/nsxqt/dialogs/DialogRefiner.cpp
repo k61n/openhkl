@@ -130,8 +130,8 @@ void DialogRefiner::refine()
 
     auto selected_rows = selection_model->selectedRows();
 
-    if (selected_rows.empty()) {
-        nsx::error()<<"No peaks selected for auto-indexing";
+    if (selected_rows.size() < 10) {
+        nsx::error()<<"Not enough peak selecting for refining";
         return;
     }
 

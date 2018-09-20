@@ -11,10 +11,10 @@ namespace nsx {
 
 //! Class to produce a histogram of 1d integrated intensity profiles,
 //! For use in the sigma/I integration method.
-class IntegratedProfile {
+class Profile1D {
 public:
     //! Constructor. sigma_max indicates maximum number of standard deviations
-    IntegratedProfile(const Intensity& mean_background = {}, double sigma_max = 4.0, size_t num=200);
+    Profile1D(const Intensity& mean_background = {}, double sigma_max = 4.0, size_t num=200);
     //! Add a data point to the bins.
     //! Parameter r2 should be equal to (x-x0).dot(A*(x-x0)) where A is the inverse covariance matrix
     //! of the peak.
