@@ -12,10 +12,10 @@ NSX_INIT_TEST
 
 int main()
 {
-    double a=6.32;
-    double b=7.22;
-    double c=3.44;
-    double alpha=90*nsx::deg;
+    double a = 6.32;
+    double b = 7.22;
+    double c = 3.44;
+    double alpha = 90*nsx::deg;
     nsx::UnitCell cell(a,b,c,alpha,alpha,alpha);
     auto cc = cell.character();
 
@@ -28,7 +28,7 @@ int main()
 
     NSX_CHECK_CLOSE(cell.volume(),a*b*c,tolerance);
 
-    const Eigen::Matrix3d& A=cell.basis();
+    const Eigen::Matrix3d& A = cell.basis();
     NSX_CHECK_CLOSE(A(0,0),a,tolerance);
     NSX_CHECK_SMALL(A(1,0),tolerance);
     NSX_CHECK_SMALL(A(2,0),tolerance);
@@ -39,7 +39,7 @@ int main()
     NSX_CHECK_SMALL(A(1,2),tolerance);
     NSX_CHECK_CLOSE(A(2,2),c,tolerance);
 
-    const Eigen::Matrix3d& B=cell.reciprocalBasis();
+    const Eigen::Matrix3d& B = cell.reciprocalBasis();
     NSX_CHECK_CLOSE(B(0,0),1/a,tolerance);
     NSX_CHECK_SMALL(B(1,0),tolerance);
     NSX_CHECK_SMALL(B(2,0),tolerance);
@@ -51,7 +51,7 @@ int main()
     NSX_CHECK_CLOSE(B(2,2),1/c,tolerance);
 
 
-    const Eigen::Matrix3d& G=cell.metric();
+    const Eigen::Matrix3d& G = cell.metric();
     NSX_CHECK_CLOSE(G(0,0),a*a,tolerance);
     NSX_CHECK_SMALL(G(1,0),tolerance);
     NSX_CHECK_SMALL(G(2,0),tolerance);
@@ -79,10 +79,9 @@ int main()
 
     // test covariance
     Eigen::Matrix3d AA;
-    AA <<
-    2.0, 1.0, 1.0,
-    -0.5, 2.5,0.7,
-    0.1, 0.2, 1.8;
+    AA << 2.0, 1.0, 1.0,
+         -0.5, 2.5, 0.7,
+          0.1, 0.2, 1.8;
 
     cell = nsx::UnitCell(AA);
     NSX_CHECK_CLOSE(cell.volume(), std::fabs(AA.determinant()), 1e-10);
@@ -105,10 +104,9 @@ int main()
     nsx::CellCharacter sigma_expected;
     const int nmax = 1000;
 
-    AA <<
-    15.0, 1.0, 1.0,
-    -0.5, 17.5,0.7,
-    0.1, 0.2, 19.8;
+    AA << 15.0,  1.0, 1.0,
+          -0.5, 17.5,0.7,
+           0.1,  0.2, 19.8;
 
     cell.setBasis(AA);
     auto A_cc = cell.character();
@@ -131,21 +129,21 @@ int main()
         }
 
         nsx::UnitCell new_cell = cell;
-        new_cell.setABCDEF(ch.A+d[0], ch.B+d[1], ch.C+d[2], ch.D+d[3], ch.E+d[4], ch.F+d[5]);
+        new_cell.setMetric(ch.g00+d[0], ch.g01+d[5], ch.g02+d[4], ch.g11+d[1], ch.g12+d[3], ch.g22+d[2]);
         nsx::CellCharacter dA_cc = new_cell.character();
 
-        sigma_expected.A += std::pow(A_cc.A-dA_cc.A, 2) / nmax;
-        sigma_expected.B += std::pow(A_cc.B-dA_cc.B, 2) / nmax;
-        sigma_expected.C += std::pow(A_cc.C-dA_cc.C, 2) / nmax;
-        sigma_expected.D += std::pow(A_cc.D-dA_cc.D, 2) / nmax;
-        sigma_expected.E += std::pow(A_cc.E-dA_cc.E, 2) / nmax;
-        sigma_expected.F += std::pow(A_cc.F-dA_cc.F, 2) / nmax;
+        sigma_expected.g00 += std::pow(A_cc.g00-dA_cc.g00, 2) / nmax;
+        sigma_expected.g01 += std::pow(A_cc.g01-dA_cc.g01, 2) / nmax;
+        sigma_expected.g02 += std::pow(A_cc.g02-dA_cc.g02, 2) / nmax;
+        sigma_expected.g11 += std::pow(A_cc.g11-dA_cc.g11, 2) / nmax;
+        sigma_expected.g12 += std::pow(A_cc.g12-dA_cc.g12, 2) / nmax;
+        sigma_expected.g22 += std::pow(A_cc.g22-dA_cc.g22, 2) / nmax;
 
         sigma_expected.a += std::pow(A_cc.a-dA_cc.a, 2) / nmax;
         sigma_expected.b += std::pow(A_cc.b-dA_cc.b, 2) / nmax;
         sigma_expected.c += std::pow(A_cc.c-dA_cc.c, 2) / nmax;
         sigma_expected.alpha += std::pow(A_cc.alpha-dA_cc.alpha, 2) / nmax;
-        sigma_expected.beta += std::pow(A_cc.beta-dA_cc.beta, 2) / nmax;
+        sigma_expected.beta  += std::pow(A_cc.beta-dA_cc.beta, 2) / nmax;
         sigma_expected.gamma += std::pow(A_cc.gamma-dA_cc.gamma, 2) / nmax;
     }
 
@@ -154,12 +152,12 @@ int main()
     cell.setBasis(AA);
     cell.setParameterCovariance(cov);
 
-    sigma_expected.A = std::sqrt(sigma_expected.A);
-    sigma_expected.B = std::sqrt(sigma_expected.B);
-    sigma_expected.C = std::sqrt(sigma_expected.C);
-    sigma_expected.D = std::sqrt(sigma_expected.D);
-    sigma_expected.E = std::sqrt(sigma_expected.E);
-    sigma_expected.F = std::sqrt(sigma_expected.F);
+    sigma_expected.g00 = std::sqrt(sigma_expected.g00);
+    sigma_expected.g01 = std::sqrt(sigma_expected.g01);
+    sigma_expected.g02 = std::sqrt(sigma_expected.g02);
+    sigma_expected.g11 = std::sqrt(sigma_expected.g11);
+    sigma_expected.g12 = std::sqrt(sigma_expected.g12);
+    sigma_expected.g22 = std::sqrt(sigma_expected.g22);
 
     sigma_expected.a = std::sqrt(sigma_expected.a);
     sigma_expected.b = std::sqrt(sigma_expected.b);
@@ -172,12 +170,12 @@ int main()
 
     // because of the way UnitCell computes sigmas,
     // for ABCDEF the sigma should be almost exact
-    NSX_CHECK_CLOSE(sigma.A, sigma_expected.A, 1e-3);
-    NSX_CHECK_CLOSE(sigma.B, sigma_expected.B, 1e-3);
-    NSX_CHECK_CLOSE(sigma.C, sigma_expected.C, 1e-3);
-    NSX_CHECK_CLOSE(sigma.D, sigma_expected.D, 1e-3);
-    NSX_CHECK_CLOSE(sigma.E, sigma_expected.E, 1e-3);
-    NSX_CHECK_CLOSE(sigma.F, sigma_expected.F, 1e-3);
+    NSX_CHECK_CLOSE(sigma.g00, sigma_expected.g00, 1e-3);
+    NSX_CHECK_CLOSE(sigma.g01, sigma_expected.g01, 1e-3);
+    NSX_CHECK_CLOSE(sigma.g02, sigma_expected.g02, 1e-3);
+    NSX_CHECK_CLOSE(sigma.g11, sigma_expected.g11, 1e-3);
+    NSX_CHECK_CLOSE(sigma.g12, sigma_expected.g12, 1e-3);
+    NSX_CHECK_CLOSE(sigma.g22, sigma_expected.g22, 1e-3);
 
     // the sigmas of parameters a,b,c,alpha,beta,gamma are 
     // computed by first order propagation of errors, so we do

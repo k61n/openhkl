@@ -43,18 +43,18 @@ namespace nsx {
     //! \class CellCharacter
     //! \brief Structure to encapsulate lattice cell character.
     struct CellCharacter {
-        //! Lattice character \f$A = \mathbf{a} \cdot \mathbf{a}\f$
-        double A;
-        //! Lattice character \f$B = \mathbf{b} \cdot \mathbf{b}\f$
-        double B;
-        //! Lattice character \f$C = \mathbf{c} \cdot \mathbf{c}\f$
-        double C;
-        //! Lattice character \f$D = \mathbf{b} \cdot \mathbf{c}\f$
-        double D;
-        //! Lattice character \f$E = \mathbf{a} \cdot \mathbf{c}\f$
-        double E;
-        //! Lattice character \f$F = \mathbf{a} \cdot \mathbf{b}\f$
-        double F;
+        //! Component (0,0) of the metric tensor
+        double g00;
+        //! Component (0,1) of the metric tensor
+        double g01;
+        //! Component (0,2) of the metric tensor
+        double g02;
+        //! Component (1,1) of the metric tensor
+        double g11;
+        //! Component (2,2) of the metric tensor
+        double g22;
+        //! Component (1,2) of the metric tensor
+        double g12;
         //! Lattice character \f$a = |\mathbf{a}|\f$
         double a;
         //! Lattice character \f$b = |\mathbf{b}|\f$
@@ -73,7 +73,7 @@ namespace nsx {
         //! Construct a lattice character from a given metric tensor $g$.
         CellCharacter(const Eigen::Matrix3d& g);
         //! Construct a lattice character from the given metric components.
-        CellCharacter(double A, double B, double C, double D, double E, double F);
+        CellCharacter(double g00_, double g01_, double g02_, double g11_, double g12_, double g22_);
     };
 
 //! \class UnitCell
@@ -101,8 +101,6 @@ public:
     UnitCell(const UnitCell& other) = default;
     //! Set lattice parameters
     void setParams(double a, double b, double c, double alpha, double beta, double gamma);
-    //! Set lattice parmeters from ABCDEF
-    void setABCDEF(double A, double B, double C, double D, double E, double F);
     //! Set the reciprocal basis
     void setReciprocalBasis(const Eigen::Matrix3d& B);
     //! Set lattice centering type
@@ -155,6 +153,8 @@ public:
     void setBasis(const Eigen::Matrix3d& b);
     //! Return the reciprocal bases
     const Eigen::Matrix3d& reciprocalBasis() const;
+    //! Set lattice parameters from metric tensor
+    void setMetric(double g00, double g01, double g02, double g11, double g12, double g22);
     //! Return the real space metric tensor
     Eigen::Matrix3d metric() const;
     //! Return the reciprocal space metric tensor

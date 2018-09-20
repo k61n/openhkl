@@ -41,17 +41,16 @@ UnitCell UnitCell::interpolate(const UnitCell &uc1, const UnitCell &uc2, double 
     auto&& uc1_params = uc1.character();
     auto&& uc2_params = uc2.character();
 
-    const double A = s*uc1_params.A + t*uc2_params.A;
-    const double B = s*uc1_params.B + t*uc2_params.B;
-    const double C = s*uc1_params.C + t*uc2_params.C;
-
-    const double D = s*uc1_params.D + t*uc2_params.D;
-    const double E = s*uc1_params.E + t*uc2_params.E;
-    const double F = s*uc1_params.F + t*uc2_params.F;
+    const double g00 = s*uc1_params.g00 + t*uc2_params.g00;
+    const double g01 = s*uc1_params.g01 + t*uc2_params.g01;
+    const double g02 = s*uc1_params.g02 + t*uc2_params.g02;
+    const double g11 = s*uc1_params.g11 + t*uc2_params.g11;
+    const double g12 = s*uc1_params.g12 + t*uc2_params.g12;
+    const double g22 = s*uc1_params.g22 + t*uc2_params.g22;
 
     // create new unit cell
     UnitCell uc(uc1);
-    uc.setABCDEF(A,B,C,D,E,F);
+    uc.setMetric(g00,g01,g02,g11,g12,g22);
 
     Eigen::MatrixXd kernel;
 
@@ -68,12 +67,12 @@ UnitCell UnitCell::interpolate(const UnitCell &uc1, const UnitCell &uc2, double 
 
     auto&& uc_params = uc.character();
     Eigen::VectorXd parameters(6);
-    parameters(0) = uc_params.A;
-    parameters(1) = uc_params.B;
-    parameters(2) = uc_params.C;
-    parameters(3) = uc_params.D;
-    parameters(4) = uc_params.E;
-    parameters(5) = uc_params.F;
+    parameters(0) = uc_params.g00;
+    parameters(5) = uc_params.g01;
+    parameters(4) = uc_params.g02;
+    parameters(1) = uc_params.g11;
+    parameters(3) = uc_params.g12;
+    parameters(2) = uc_params.g22;
 
     const int nparams = kernel.cols();
 
@@ -90,33 +89,33 @@ UnitCell UnitCell::interpolate(const UnitCell &uc1, const UnitCell &uc2, double 
     return uc;
 }
 
-CellCharacter::CellCharacter():
-    A(0.0), B(0.0), C(0.0), D(0.0), E(0.0), F(0.0),
-    a(0.0), b(0.0), c(0.0), alpha(0.0), beta(0.0), gamma(0.0)
+CellCharacter::CellCharacter()
+: g00(0.0), g01(0.0), g02(0.0),   g11(0.0), g12(0.0), g22(0.0),
+    a(0.0),   b(0.0),   c(0.0), alpha(0.0), beta(0.0), gamma(0.0)
 {
 }
 
-CellCharacter::CellCharacter(const Eigen::Matrix3d& g): 
-    CellCharacter(g(0,0), g(1,1), g(2,2), g(1,2), g(0,2), g(0,1))
+CellCharacter::CellCharacter(const Eigen::Matrix3d& g):
+    CellCharacter(g(0,0), g(0,1), g(0,2), g(1,1), g(1,2), g(2,2))
 {
 }
 
-CellCharacter::CellCharacter(double A_, double B_, double C_, double D_, double E_, double F_)
+CellCharacter::CellCharacter(double g00_, double g01_, double g02_, double g11_, double g12_, double g22_)
 {
-    A = A_;
-    B = B_;
-    C = C_;
-    D = D_;
-    E = E_;
-    F = F_;
+    g00 = g00_;
+    g01 = g01_;
+    g02 = g02_;
+    g11 = g11_;
+    g22 = g22_;
+    g12 = g12_;
 
-    a = std::sqrt(A);
-    b = std::sqrt(B);
-    c = std::sqrt(C);
+    a = std::sqrt(g00);
+    b = std::sqrt(g11);
+    c = std::sqrt(g22);
 
-    alpha = std::acos(D / b / c);
-    beta  = std::acos(E / a / c);
-    gamma = std::acos(F / a / b);
+    alpha = std::acos(g12 / b / c);
+    beta  = std::acos(g02 / a / c);
+    gamma = std::acos(g01 / a / b);
 }
 
 UnitCell::UnitCell(const Eigen::Matrix3d& b, bool reciprocal): UnitCell()
@@ -160,40 +159,39 @@ void UnitCell::setParams(double a, double b, double c, double alpha, double beta
     const double c2 = (c*cos_alpha - c1*cos_gamma) / sin_gamma;
     const double c3 = std::sqrt(c*c - c1*c1 - c2*c2);
 
-    _A << 
-        a1, b1, c1,
-        0, b2, c2,
-        0, 0, c3;
+    _A << a1, b1, c1,
+           0, b2, c2,
+           0, 0, c3;
 
     _B = _A.inverse();
 }
 
-void UnitCell::setABCDEF(double A, double B, double C, double D, double E, double F)
+void UnitCell::setMetric(double g00, double g01, double g02, double g11, double g12, double g22)
 {
     // make sure the parameters are in the valid range
-    A = std::fabs(A);
-    B = std::fabs(B);
-    C = std::fabs(C);
+    g00 = std::fabs(g00);
+    g11 = std::fabs(g11);
+    g22 = std::fabs(g22);
 
     double a, b, c, alpha, beta, gamma;
-    a = std::sqrt(A);
-    b = std::sqrt(B);
-    c = std::sqrt(C);
+    a = std::sqrt(g00);
+    b = std::sqrt(g11);
+    c = std::sqrt(g22);
 
     // more checking
-    if (std::fabs(D) > b*c) {
-        D = (std::signbit(D) ? -1 : 1) * b * c;
+    if (std::fabs(g12) > b*c) {
+        g12 = (std::signbit(g12) ? -1 : 1) * b * c;
     }
-    if (std::fabs(E) > a*c) {
-        E = (std::signbit(E) ? -1 : 1) * a * c;
+    if (std::fabs(g02) > a*c) {
+        g02 = (std::signbit(g02) ? -1 : 1) * a * c;
     }
-    if (std::fabs(F) > a*b) {
-        F = (std::signbit(F) ? -1 : 1) * a * b;
+    if (std::fabs(g01) > a*b) {
+        g01 = (std::signbit(g01) ? -1 : 1) * a * b;
     }
 
-    alpha = std::acos(D / b / c);
-    beta = std::acos(E / a / c);
-    gamma = std::acos(F / a / b);
+    alpha = std::acos(g12 / b / c);
+    beta  = std::acos(g02 / a / c);
+    gamma = std::acos(g01 / a / b);
 
     setParams(a, b, c, alpha, beta, gamma);
 }
@@ -702,7 +700,7 @@ UnitCell UnitCell::fromParameters(const Eigen::Matrix3d& U0, const Eigen::Vector
 
     // create new unit cell
     UnitCell uc(*this);
-    uc.setABCDEF(ch(0), ch(1), ch(2), ch(3), ch(4), ch(5));
+    uc.setMetric(ch(0), ch(5), ch(4), ch(1), ch(3), ch(2));
     uc.setBasis(U*uc._A*_NP);
 
     return uc;
@@ -746,10 +744,10 @@ void UnitCell::setParameterCovariance(const Eigen::MatrixXd& cov)
     // lattice character
     CellCharacter ch = character();
     // store character in these arrays to make symbolic calculation easier
-    const double ABC[6] = {ch.A, ch.B, ch.C, ch.D, ch.E, ch.F};
+    const double ABC[6] = {ch.g00, ch.g11, ch.g22, ch.g12, ch.g02, ch.g01};
     const double abc[6] = {ch.a, ch.b, ch.c, ch.alpha, ch.beta, ch.gamma}; 
 
-    // Jacobian of the transformation (A,B,C,D,E,F) -> (a,b,c,alpha,beta,gamma)
+    // Jacobian of the transformation (g00,g01,g02,g11,g12,g22) -> (a,b,c,alpha,beta,gamma)
     Eigen::MatrixXd J(6, 6);
     J.setZero();    
 
@@ -785,12 +783,12 @@ void UnitCell::setParameterCovariance(const Eigen::MatrixXd& cov)
     Eigen::MatrixXd abc_cov = J * ABC_cov * J.transpose();
 
     // store the result
-    _characterSigmas.A = std::sqrt(ABC_cov(0,0));
-    _characterSigmas.B = std::sqrt(ABC_cov(1,1));
-    _characterSigmas.C = std::sqrt(ABC_cov(2,2));
-    _characterSigmas.D = std::sqrt(ABC_cov(3,3));
-    _characterSigmas.E = std::sqrt(ABC_cov(4,4));
-    _characterSigmas.F = std::sqrt(ABC_cov(5,5));
+    _characterSigmas.g00 = std::sqrt(ABC_cov(0,0));
+    _characterSigmas.g01 = std::sqrt(ABC_cov(5,5));
+    _characterSigmas.g02 = std::sqrt(ABC_cov(4,4));
+    _characterSigmas.g11 = std::sqrt(ABC_cov(1,1));
+    _characterSigmas.g12 = std::sqrt(ABC_cov(3,3));
+    _characterSigmas.g22 = std::sqrt(ABC_cov(2,2));
 
     _characterSigmas.a = std::sqrt(abc_cov(0,0));
     _characterSigmas.b = std::sqrt(abc_cov(1,1));
