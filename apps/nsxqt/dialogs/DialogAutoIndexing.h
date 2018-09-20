@@ -24,7 +24,7 @@ class DialogAutoIndexing : public QDialog
 
 public:
 
-    static DialogAutoIndexing* create(ExperimentItem* experiment_tree, const nsx::PeakList& peaks, QWidget* parent=nullptr);
+    static DialogAutoIndexing* create(ExperimentItem* experiment_item, const nsx::PeakList& peaks, QWidget* parent=nullptr);
 
     static DialogAutoIndexing* Instance();
 

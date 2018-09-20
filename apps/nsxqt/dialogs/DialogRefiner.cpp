@@ -1,8 +1,5 @@
-#include <sstream>
-
 #include <QCheckBox>
 #include <QLayout>
-#include <QStatusBar>
 
 #include <nsxlib/Axis.h>
 #include <nsxlib/DataSet.h>
@@ -14,7 +11,6 @@
 #include <nsxlib/InstrumentState.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/Minimizer.h>
-#include <nsxlib/Monochromator.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/Refiner.h>
@@ -23,37 +19,136 @@
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
 
+#include "CollectedPeaksModel.h"
 #include "DialogRefiner.h"
-#include "externals/QCustomPlot.h"
+#include "ExperimentItem.h"
+#include "PeaksItem.h"
 #include "ui_DialogRefiner.h"
 
-DialogRefiner::DialogRefiner(nsx::sptrExperiment experiment,
-                                           nsx::sptrUnitCell unitCell,
-                                           nsx::PeakList peaks,
-                                           QWidget *parent):
-    QDialog(parent),
-    ui(new Ui::DialogRefiner),
-    _experiment(std::move(experiment)),
-    _unitCell(std::move(unitCell)),
-    _peaks(std::move(peaks))
-{
-    ui->setupUi(this);
+DialogRefiner* DialogRefiner::_instance = nullptr;
 
-    // get list of datasets
-    for (auto p: _peaks) {
-        _data.insert(p->data());
-    }  
-    connect(ui->pushButtonRefine, SIGNAL(clicked()), this, SLOT(refineParameters()));
+DialogRefiner* DialogRefiner::create(ExperimentItem *experiment_item, nsx::sptrUnitCell unit_cell, const nsx::PeakList &peaks, QWidget *parent)
+{
+    if (!_instance) {
+        _instance = new DialogRefiner(experiment_item, unit_cell, peaks, parent);
+    }
+
+    return _instance;
+}
+
+DialogRefiner* DialogRefiner::Instance()
+{
+    return _instance;
+}
+
+DialogRefiner::DialogRefiner(ExperimentItem *experiment_item, nsx::sptrUnitCell unit_cell, const nsx::PeakList &peaks, QWidget *parent):
+    QDialog(parent),
+    _ui(new Ui::DialogRefiner),
+    _experiment_item(experiment_item),
+    _unit_cell(unit_cell){
+    _ui->setupUi(this);
+
+    setModal(false);
+
+    setWindowModality(Qt::NonModal);
+
+    setAttribute(Qt::WA_DeleteOnClose);
+
+    QStringList labels({"axis name","offset value (deg)"});
+
+    auto diffractometer = _experiment_item->experiment()->diffractometer();
+
+    auto detector = diffractometer->detector();
+    auto detector_gonio = detector->gonio();
+
+    auto detector_axis_names = detector_gonio->physicalAxesNames();
+    _ui->detector_offsets->setRowCount(detector_axis_names.size());
+    _ui->detector_offsets->setColumnCount(2);
+    _ui->detector_offsets->setHorizontalHeaderLabels(labels);
+    _ui->detector_offsets->horizontalHeader()->setStretchLastSection(true);
+
+    for (auto i = 0; i < detector_axis_names.size(); ++i) {
+        auto item = new QTableWidgetItem();
+        item->setText(QString::fromStdString(detector_axis_names[i]));
+        _ui->detector_offsets->setItem(i,0,item);
+    }
+
+    auto sample = diffractometer->sample();
+    auto sample_gonio = sample->gonio();
+
+    auto sample_axis_names = sample_gonio->physicalAxesNames();
+    _ui->sample_offsets->setRowCount(sample_axis_names.size());
+    _ui->sample_offsets->setColumnCount(2);
+    _ui->sample_offsets->setHorizontalHeaderLabels(labels);
+    _ui->sample_offsets->horizontalHeader()->setStretchLastSection(true);
+
+    for (auto i = 0; i < sample_axis_names.size(); ++i) {
+        auto item = new QTableWidgetItem();
+        item->setText(QString::fromStdString(sample_axis_names[i]));
+        _ui->sample_offsets->setItem(i,0,item);
+    }
+
+    _peaks_model = new CollectedPeaksModel(_experiment_item->model(),_experiment_item->experiment(),peaks);
+    _ui->peaks->setModel(_peaks_model);
 }
 
 DialogRefiner::~DialogRefiner()
 {
-    delete ui;
+    delete _ui;
+
+    if (_instance) {
+        _instance = nullptr;
+    }
 }
 
-void DialogRefiner::refineParameters()
+void DialogRefiner::slotActionClicked(QAbstractButton *button)
 {
-    const unsigned int frames_per_batch = ui->spinBoxFramesPerBatch->value();
+    auto button_role = _ui->actions->standardButton(button);
+
+    switch(button_role)
+    {
+    case QDialogButtonBox::StandardButton::Apply: {
+        refine();
+        break;
+    }
+    case QDialogButtonBox::StandardButton::Cancel: {
+        reject();
+        break;
+    }
+    case QDialogButtonBox::StandardButton::Ok: {
+        accept();
+        break;
+    }
+    default: {
+        return;
+    }
+    }
+}
+void DialogRefiner::refine()
+{
+    auto selection_model = _ui->peaks->selectionModel();
+
+    auto selected_rows = selection_model->selectedRows();
+
+    if (selected_rows.empty()) {
+        nsx::error()<<"No peaks selected for auto-indexing";
+        return;
+    }
+
+    auto&& peaks = _peaks_model->peaks();
+
+    nsx::PeakList selected_peaks;
+    for (auto r : selected_rows) {
+        selected_peaks.push_back(peaks[r.row()]);
+    }
+
+    std::set<nsx::sptrDataSet> data;
+    // get list of datasets
+    for (auto p: selected_peaks) {
+        data.insert(p->data());
+    }
+
+    const unsigned int frames_per_batch = _ui->spinBoxFramesPerBatch->value();
 
     // used to compute optimal number of batches
     auto nbatches = [=](const nsx::PeakList& peaks) {        
@@ -75,10 +170,11 @@ void DialogRefiner::refineParameters()
         }
     };
       
-    for (auto d: _data) {
+    for (auto d : data) {
+
         nsx::PeakList reference_peaks, predicted_peaks;
 
-        for (auto peak: _peaks) {
+        for (auto peak: selected_peaks) {
             if (peak->data() != d) {
                 continue;
             }
@@ -91,35 +187,31 @@ void DialogRefiner::refineParameters()
 
         nsx::info() << reference_peaks.size() << " available for refinement.";
 
-        nsx::Refiner r(_unitCell, reference_peaks, nbatches(reference_peaks));    
+        nsx::Refiner r(_unit_cell, reference_peaks, nbatches(reference_peaks));
 
-        if (ui->checkBoxRefineLattice->isChecked()) {
+        if (_ui->checkBoxRefineLattice->isChecked()) {
             r.refineUB();
             nsx::info() << "Refining B matrix";
         }
 
         std::vector<nsx::InstrumentState>& states = d->instrumentStates();
         
-        if (ui->checkBoxRefineSamplePosition->isChecked()) {
+        if (_ui->checkBoxRefineSamplePosition->isChecked()) {
             r.refineSamplePosition(states); 
             nsx::info() << "Refinining sample position";
         }
 
-        if (ui->checkBoxRefineSampleOrientation->isChecked()) {
+        if (_ui->checkBoxRefineSampleOrientation->isChecked()) {
             nsx::info() << "Refinining sample orientation";
             r.refineSampleOrientation(states);
         }
 
-        if (ui->checkBoxRefineDetectorOffset->isChecked()) {
+        if (_ui->checkBoxRefineDetectorOffset->isChecked()) {
             r.refineDetectorOffset(states);
             nsx::info() << "Refinining detector offset";
         }
 
-        if (ui->checkBoxRefineDetectorOrientation->isChecked()) {
-            nsx::info() << "Refinining detector orientation NOT IMPLEMENTED";
-        }
-
-        if (ui->checkBoxRefineKi->isChecked()) {
+        if (_ui->checkBoxRefineKi->isChecked()) {
             nsx::info() << "Refining Ki";
             r.refineKi(states);
         }
@@ -135,4 +227,18 @@ void DialogRefiner::refineParameters()
             nsx::info() << "done; updated " << updated << " predicted peaks";
         }
     }
+
+    // Update the peak table view
+    QModelIndex topLeft = _peaks_model->index(0, 0);
+    QModelIndex bottomRight = _peaks_model->index(_peaks_model->rowCount(QModelIndex())-1, _peaks_model->columnCount(QModelIndex())-1);
+    emit _peaks_model->dataChanged(topLeft,bottomRight);
+}
+
+void DialogRefiner::accept()
+{
+    auto peaks_item = _experiment_item->peaksItem();
+
+    emit _experiment_item->model()->itemChanged(peaks_item);
+
+    QDialog::accept();
 }

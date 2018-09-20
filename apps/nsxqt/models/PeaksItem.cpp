@@ -304,16 +304,18 @@ void PeaksItem::openAutoIndexingDialog()
 
 void PeaksItem::refine()
 {
-    nsx::PeakList peaks = selectedPeaks();
-    int nPeaks = peaks.size();
+    nsx::PeakList selected_peaks = selectedPeaks();
+
+    int nPeaks = selected_peaks.size();
+
     // Check that a minimum number of peaks have been selected for indexing
     if (nPeaks < 10) {
         QMessageBox::warning(nullptr, "NSXTool", "Need at least 10 peaks for refining");
         return;
     }
 
-    nsx::sptrUnitCell uc(peaks[0]->unitCell());
-    for (auto&& peak : peaks) {
+    nsx::sptrUnitCell uc(selected_peaks[0]->unitCell());
+    for (auto&& peak : selected_peaks) {
         if (peak->unitCell() != uc) {
             uc = nullptr;
             break;
@@ -325,12 +327,11 @@ void PeaksItem::refine()
         return;
     }
 
-    std::unique_ptr<DialogRefiner> dialog(new DialogRefiner(experiment(),uc,peaks,nullptr));
-    if (!dialog->exec()) {
-        return;
-    }
+    DialogRefiner* dialog = DialogRefiner::create(experimentItem(), uc, selected_peaks, MainWindow::Instance());
 
-    emit model()->itemChanged(this);
+    dialog->show();
+
+    dialog->raise();
 }
 
 void PeaksItem::autoAssignUnitCell()

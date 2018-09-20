@@ -530,8 +530,6 @@ int UnitCell::reduce(bool niggli_only, double niggliTolerance, double gruberTole
     Eigen::Matrix3d newg, P;
     niggli.reduce(newg, P);
     transform(P);
-    std::cout<<"POLLUX"<<std::endl;
-    std::cout<<P<<std::endl;
 
     // use GruberReduction::reduce to get Bravais type
     GruberReduction gruber(metric(), gruberTolerance);
@@ -543,8 +541,6 @@ int UnitCell::reduce(bool niggli_only, double niggliTolerance, double gruberTole
         setLatticeCentring(c);
         setBravaisType(b);
         _niggli = gruber.classify();
-        std::cout<<"POPOL"<<std::endl;
-        std::cout<<_niggli.P<<std::endl;
     }
     catch(std::exception& e) {
         //qDebug() << "Gruber reduction error:" << e.what();

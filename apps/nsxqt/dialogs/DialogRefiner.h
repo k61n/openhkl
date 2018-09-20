@@ -11,23 +11,44 @@ namespace Ui
 class DialogRefiner;
 }
 
+class CollectedPeaksModel;
+class ExperimentItem;
+
 class DialogRefiner : public QDialog
 {
     Q_OBJECT
 
 public:
     
-    explicit DialogRefiner(nsx::sptrExperiment experiment,nsx::sptrUnitCell unitCell,nsx::PeakList peaks,QWidget *parent = 0);
+    static DialogRefiner* create(ExperimentItem* experiment_item, nsx::sptrUnitCell unit_cell, const nsx::PeakList& peaks, QWidget* parent=nullptr);
+
+    static DialogRefiner* Instance();
 
     ~DialogRefiner();
 
+public slots:
+
+    virtual void accept() override;
+
 private slots:    
-    void refineParameters();
+
+    void slotActionClicked(QAbstractButton* button);
 
 private:
-    Ui::DialogRefiner *ui;
-    nsx::sptrExperiment _experiment;
-    nsx::sptrUnitCell _unitCell;
-    nsx::PeakList _peaks;
-    std::set<nsx::sptrDataSet> _data;
+
+    void refine();
+
+private:
+
+    DialogRefiner(ExperimentItem* experiment_item, nsx::sptrUnitCell unit_cell, const nsx::PeakList& peaks, QWidget* parent=nullptr);
+
+    static DialogRefiner *_instance;
+
+    Ui::DialogRefiner *_ui;
+
+    ExperimentItem *_experiment_item;
+
+    nsx::sptrUnitCell _unit_cell;
+
+    CollectedPeaksModel* _peaks_model;
 };
