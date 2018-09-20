@@ -101,7 +101,7 @@ int main()
 
     // generate random unit cells, with some non-zero correlation in components
     // check that we correctly calculate the errors in the lattice character
-    nsx::CellCharacter sigma_expected;
+    nsx::UnitCellCharacter sigma_expected;
     const int nmax = 1000;
 
     AA << 15.0,  1.0, 1.0,
@@ -110,7 +110,7 @@ int main()
 
     cell.setBasis(AA);
     auto A_cc = cell.character();
-    nsx::CellCharacter ch = cell.character();
+    auto ch = cell.character();
     
     for (auto n = 0; n < nmax; ++n) {
         // random perturbation to character
@@ -130,7 +130,7 @@ int main()
 
         nsx::UnitCell new_cell = cell;
         new_cell.setMetric(ch.g00+d[0], ch.g01+d[5], ch.g02+d[4], ch.g11+d[1], ch.g12+d[3], ch.g22+d[2]);
-        nsx::CellCharacter dA_cc = new_cell.character();
+        auto dA_cc = new_cell.character();
 
         sigma_expected.g00 += std::pow(A_cc.g00-dA_cc.g00, 2) / nmax;
         sigma_expected.g01 += std::pow(A_cc.g01-dA_cc.g01, 2) / nmax;
@@ -188,7 +188,7 @@ int main()
     NSX_CHECK_CLOSE(sigma.gamma, sigma_expected.gamma, 1.0);    
 
     // test niggli constraints
-    cell.setParams(55.03, 58.60, 66.89, 1.569, 1.57, 1.571);
+    cell.setParameters(55.03, 58.60, 66.89, 1.569, 1.57, 1.571);
     int num = cell.reduce(false, 1e-2, 5e-3);
     NSX_CHECK_EQUAL(num, 32);
     auto new_cell = cell.applyNiggliConstraints();

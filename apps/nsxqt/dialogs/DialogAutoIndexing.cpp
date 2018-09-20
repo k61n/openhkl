@@ -286,8 +286,8 @@ void DialogAutoIndexing::buildSolutionsTable()
         auto& cell=_solutions[i].first;
         double quality=_solutions[i].second;
 
-        nsx::CellCharacter ch = cell->character();
-        nsx::CellCharacter sigma = cell->characterSigmas();
+        auto ch = cell->character();
+        auto sigma = cell->characterSigmas();
 
         QStandardItem* col1 = new QStandardItem(QString::number(ch.a,'f',3) + "("+ QString::number(sigma.a*1000,'f',0)+")");
         QStandardItem* col2 = new QStandardItem(QString::number(ch.b,'f',3) + "("+ QString::number(sigma.b*1000,'f',0)+")");

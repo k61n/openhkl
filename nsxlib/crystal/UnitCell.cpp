@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "DataSet.h"
 #include "GruberReduction.h"
 #include "Logger.h"
 #include "Material.h"
@@ -89,18 +90,28 @@ UnitCell UnitCell::interpolate(const UnitCell &uc1, const UnitCell &uc2, double 
     return uc;
 }
 
-CellCharacter::CellCharacter()
-: g00(0.0), g01(0.0), g02(0.0),   g11(0.0), g12(0.0), g22(0.0),
-    a(0.0),   b(0.0),   c(0.0), alpha(0.0), beta(0.0), gamma(0.0)
+UnitCellCharacter::UnitCellCharacter()
+: g00(0.0),
+  g01(0.0),
+  g02(0.0),
+  g11(0.0),
+  g12(0.0),
+  g22(0.0),
+  a(0.0),
+  b(0.0),
+  c(0.0),
+  alpha(0.0),
+  beta(0.0),
+  gamma(0.0)
 {
 }
 
-CellCharacter::CellCharacter(const Eigen::Matrix3d& g):
-    CellCharacter(g(0,0), g(0,1), g(0,2), g(1,1), g(1,2), g(2,2))
+UnitCellCharacter::UnitCellCharacter(const Eigen::Matrix3d& g)
+: UnitCellCharacter(g(0,0), g(0,1), g(0,2), g(1,1), g(1,2), g(2,2))
 {
 }
 
-CellCharacter::CellCharacter(double g00_, double g01_, double g02_, double g11_, double g12_, double g22_)
+UnitCellCharacter::UnitCellCharacter(double g00_, double g01_, double g02_, double g11_, double g12_, double g22_)
 {
     g00 = g00_;
     g01 = g01_;
@@ -141,10 +152,148 @@ UnitCell::UnitCell():
 
 UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, double gamma): UnitCell()
 {
-    setParams(a,b,c,alpha,beta,gamma);
+    setParameters(a,b,c,alpha,beta,gamma);
 }
 
-void UnitCell::setParams(double a, double b, double c, double alpha, double beta, double gamma)
+void UnitCell::initState(sptrDataSet data) {
+
+    auto it = _states.find(data);
+    if (it != _states.end()) {
+        return;
+    }
+
+    std::vector<UnitCellState> states;
+    auto n_frames = data->nFrames();
+    states.reserve(n_frames);
+
+    auto u_matrix = orientation();
+    auto ch = character();
+
+    for (size_t i=0; i < n_frames; ++i) {
+        states.push_back({u_matrix,ch});
+    }
+}
+
+UnitCellState& UnitCell::state(sptrDataSet data, size_t frame) {
+
+    auto it = _states.find(data);
+    if (it == _states.end()) {
+        initState(data);
+    }
+
+    auto&& states = _states[data];
+
+    if (frame > (states.size()-1) || frame < 0) {
+        throw std::runtime_error("UnitCell::setState: Invalid frame number");
+    }
+
+    return states[frame];
+}
+
+void UnitCell::setState(sptrDataSet data, size_t frame, const UnitCellState& state)
+{
+    auto it = _states.find(data);
+    if (it == _states.end()) {
+        initState(data);
+    }
+
+    auto&& states = _states[data];
+
+    if (frame > (states.size()-1) || frame < 0) {
+        throw std::runtime_error("UnitCell::setState: Invalid frame number");
+    }
+
+    states[frame] = state;
+}
+
+UnitCell UnitCell::interpolate(sptrDataSet data, double frame)
+{
+    auto it = _states.find(data);
+    if (it == _states.end()) {
+        throw std::runtime_error("No unit cells states stored for this dataset.");
+    }
+
+    auto&& states = it->second;
+
+    auto n_frames = data->nFrames();
+
+    if (n_frames != states.size()) {
+        throw std::runtime_error("Inconsistent state");
+    }
+
+    if (frame > (n_frames-1) || frame < 0) {
+        throw std::runtime_error("Error when interpolating state: invalid frame value: " + std::to_string(frame));
+    }
+
+    const std::size_t idx = std::size_t(std::lround(std::floor(frame)));
+    const std::size_t next = std::min(idx+1, n_frames-1);
+
+    auto&& state1 = states[idx];
+    auto&& state2 = states[next];
+
+    const double t = frame-idx;
+
+    const Eigen::Quaterniond uc1_u_quat(state1.orientation);
+    const Eigen::Quaterniond uc2_u_quat(state2.orientation);
+
+    Eigen::Quaterniond u_quat = uc1_u_quat.slerp(t,uc2_u_quat);
+    u_quat.normalize();
+    const Eigen::Matrix3d u_matrix = u_quat.toRotationMatrix();
+
+    auto&& character1 = state1.character;
+    auto&& character2 = state2.character;
+
+    const double s = 1.0-t;
+
+    const double g00 = s*character1.g00 + t*character2.g00;
+    const double g01 = s*character1.g01 + t*character2.g01;
+    const double g02 = s*character1.g02 + t*character2.g02;
+    const double g11 = s*character1.g11 + t*character2.g11;
+    const double g12 = s*character1.g12 + t*character2.g12;
+    const double g22 = s*character1.g22 + t*character2.g22;
+
+    // create new unit cell
+    UnitCell uc(*this);
+    uc.setMetric(g00,g01,g02,g11,g12,g22);
+
+    Eigen::MatrixXd kernel;
+
+    // no constraints
+    if (_niggli.number == 31 || _niggli.number == 44) {
+        kernel.setIdentity(6, 6);
+    } else {
+        // matrix of Niggli character constraints, taken from the table 9.2.5.1
+        Eigen::MatrixXd C = uc._niggli.C;
+        // compute kernel of Niggli constraints
+        Eigen::FullPivLU<Eigen::MatrixXd> lu(C);
+        kernel = lu.kernel();
+    }
+
+    auto&& uc_params = uc.character();
+    Eigen::VectorXd parameters(6);
+    parameters(0) = uc_params.g00;
+    parameters(5) = uc_params.g01;
+    parameters(4) = uc_params.g02;
+    parameters(1) = uc_params.g11;
+    parameters(3) = uc_params.g12;
+    parameters(2) = uc_params.g22;
+
+    const int nparams = kernel.cols();
+
+    // lattice character
+    Eigen::VectorXd ch(6);
+    ch.setZero();
+    // parameters defining lattice character
+    for (auto i = 0; i < nparams; ++i) {
+        ch += parameters(i)*kernel.col(i);
+    }
+
+    uc.setBasis(u_matrix*uc._A*uc._NP);
+
+    return uc;
+}
+
+void UnitCell::setParameters(double a, double b, double c, double alpha, double beta, double gamma)
 {
     const double cos_alpha = std::cos(alpha);
     const double cos_beta = std::cos(beta);
@@ -193,7 +342,7 @@ void UnitCell::setMetric(double g00, double g01, double g02, double g11, double 
     beta  = std::acos(g02 / a / c);
     gamma = std::acos(g01 / a / b);
 
-    setParams(a, b, c, alpha, beta, gamma);
+    setParameters(a, b, c, alpha, beta, gamma);
 }
 
 void UnitCell::setLatticeCentring(LatticeCentring centring)
@@ -469,19 +618,19 @@ Eigen::RowVector3d UnitCell::fromIndex(const Eigen::RowVector3d& hkl) const
     return hkl*_B;
 }
     
-CellCharacter UnitCell::character() const
+UnitCellCharacter UnitCell::character() const
 {
-    return CellCharacter(metric());
+    return UnitCellCharacter(metric());
 }
 
-CellCharacter UnitCell::characterSigmas() const
+UnitCellCharacter UnitCell::characterSigmas() const
 {   
     return _characterSigmas;
 }
 
-CellCharacter UnitCell::reciprocalCharacter() const
+UnitCellCharacter UnitCell::reciprocalCharacter() const
 {
-    return CellCharacter(reciprocalMetric());
+    return UnitCellCharacter(reciprocalMetric());
 }
 
 double UnitCell::volume() const
@@ -742,7 +891,7 @@ void UnitCell::setParameterCovariance(const Eigen::MatrixXd& cov)
     Eigen::MatrixXd ABC_cov = kernel.transpose() * cov * kernel;
     
     // lattice character
-    CellCharacter ch = character();
+    auto ch = character();
     // store character in these arrays to make symbolic calculation easier
     const double ABC[6] = {ch.g00, ch.g11, ch.g22, ch.g12, ch.g02, ch.g01};
     const double abc[6] = {ch.a, ch.b, ch.c, ch.alpha, ch.beta, ch.gamma}; 

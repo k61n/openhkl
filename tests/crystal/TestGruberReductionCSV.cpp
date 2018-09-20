@@ -73,7 +73,7 @@ int main()
         nsx::UnitCell gruberCell(a, b, c, alpha, beta, gamma);
         nsx::UnitCell cell;
 
-        cell.setParams(a, b, c, alpha, beta, gamma);
+        cell.setParameters(a, b, c, alpha, beta, gamma);
 
         // perform reduction using NiggliReduction class
         Eigen::Matrix3d niggli_g, niggli_P;

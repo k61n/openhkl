@@ -56,27 +56,27 @@ int main()
     Eigen::Matrix3d B;
 
     // primitive triclinic aP
-    uc.setParams(20, 25, 15, 95*deg, 85*deg, 93*deg);
+    uc.setParameters(20, 25, 15, 95*deg, 85*deg, 93*deg);
     validate_zone(uc.reciprocalBasis(), 24, 14);
 
     // face-centered cubic cF
-    uc.setParams(10, 10, 10, 30*deg, 30*deg, 30*deg);
+    uc.setParameters(10, 10, 10, 30*deg, 30*deg, 30*deg);
     validate_zone(uc.reciprocalBasis(), 24, 14);
 
     // primitive cubic cP
-    uc.setParams(10, 10, 10, 90*deg, 90*deg, 90*deg);
+    uc.setParameters(10, 10, 10, 90*deg, 90*deg, 90*deg);
     validate_zone(uc.reciprocalBasis(), 8, 6);
 
     // primitive monoclinic mP
-    uc.setParams(15, 20, 25, 78*deg, 90*deg, 90*deg);
+    uc.setParameters(15, 20, 25, 78*deg, 90*deg, 90*deg);
     validate_zone(uc.reciprocalBasis(), 12, 8);
 
     // face-centered monoclinic mC
-    uc.setParams(20, 20, 25, 78*deg, 78*deg, 85*deg);
+    uc.setParameters(20, 20, 25, 78*deg, 78*deg, 85*deg);
     validate_zone(uc.reciprocalBasis(), 24, 14);
 
     // primitive orthorhombic oP
-    uc.setParams(15, 20, 25, 90*deg, 90*deg, 90*deg);
+    uc.setParameters(15, 20, 25, 90*deg, 90*deg, 90*deg);
     validate_zone(uc.reciprocalBasis(), 8, 6);
 
     // face-centered orthorhombic oC
@@ -85,16 +85,16 @@ int main()
 
     // body-centered orthorhombic oI
     const double oI_beta = std::acos(0.5 * std::sqrt(15.0 / 20.0));
-    uc.setParams(15, 20, 20, 78*deg, oI_beta, oI_beta);
+    uc.setParameters(15, 20, 20, 78*deg, oI_beta, oI_beta);
     validate_zone(uc.reciprocalBasis(), 24, 14);
 
     // primitive tetragonal tP
-    uc.setParams(20, 25, 25, 90*deg, 90*deg, 90*deg);
+    uc.setParameters(20, 25, 25, 90*deg, 90*deg, 90*deg);
     validate_zone(uc.reciprocalBasis(), 8, 6);
 
     // body-centered tetragonal tI
     const double tI_alpha = std::acos(0.5*20.0/25.0);
-    uc.setParams(20, 20, 25, -tI_alpha, -tI_alpha, 90*deg);
+    uc.setParameters(20, 20, 25, -tI_alpha, -tI_alpha, 90*deg);
     validate_zone(uc.reciprocalBasis(), 24, 14);
 
     // hP 

@@ -91,7 +91,7 @@ void UnitCellPropertyWidget::setLatticeParams()
 
     try
     {
-        _unitCellItem->data(Qt::UserRole).value<nsx::sptrUnitCell>()->setParams(a,b,c,alpha*nsx::deg,beta*nsx::deg,gamma*nsx::deg);
+        _unitCellItem->data(Qt::UserRole).value<nsx::sptrUnitCell>()->setParameters(a,b,c,alpha*nsx::deg,beta*nsx::deg,gamma*nsx::deg);
     } catch(const std::exception& e) {
         nsx::error() << e.what();
     }
