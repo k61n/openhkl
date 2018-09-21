@@ -462,8 +462,14 @@ std::vector<MillerIndex> UnitCell::generateReflectionsInShell(double dmin, doubl
 double UnitCell::angle(const Eigen::RowVector3d& hkl1, const Eigen::RowVector3d& hkl2) const
 {
     auto q1=hkl1*_B;
-    auto q2=hkl2*_B;    
-    return std::acos(q1.dot(q2)/q1.norm()/q2.norm());
+    auto q2=hkl2*_B;
+
+    // Safe guard for avoiding nan with acos
+    double a_dot_b_over_ab = q1.dot(q2)/q1.norm()/q2.norm();
+    a_dot_b_over_ab = std::min(a_dot_b_over_ab, 1.0);
+    a_dot_b_over_ab = std::max(a_dot_b_over_ab,-1.0);
+
+    return std::acos(a_dot_b_over_ab);
 }
 
 unsigned int UnitCell::z() const
