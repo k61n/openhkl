@@ -35,6 +35,8 @@ public:
 
     ~MainWindow();
 
+    virtual void closeEvent(QCloseEvent *event) override;
+
     void setColorMap(const std::string& name);
 
 signals:
