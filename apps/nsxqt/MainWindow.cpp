@@ -200,6 +200,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(_ui->showPeakAreas,SIGNAL(triggered(bool)),_ui->dview->getScene(),SLOT(showPeakAreas(bool)));
 }
 
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    QApplication::closeAllWindows();
+
+    QMainWindow::closeEvent(event);
+}
+
 void MainWindow::setColorMap(const std::string &name)
 {
     _colormap = name;

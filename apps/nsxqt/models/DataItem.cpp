@@ -22,7 +22,7 @@
 #include "DataItem.h"
 #include "DialogExploreInstrumentStates.h"
 #include "DialogHDF5Converter.h"
-#include "DialogPeakFind.h"
+#include "FramePeakFinder.h"
 #include "DialogRawData.h"
 #include "ExperimentItem.h"
 #include "MainWindow.h"
@@ -195,13 +195,9 @@ void DataItem::findPeaks()
 
     auto experiment_item = experimentItem();
 
-    DialogPeakFind* dialog = DialogPeakFind::create(experiment_item, data, MainWindow::Instance());
+    FramePeakFinder* frame = FramePeakFinder::create(experiment_item, data);
 
-    dialog->show();
-
-    dialog->raise();
-
-    dialog->activateWindow();
+    frame->show();
 }
 
 nsx::DataList DataItem::selectedData()
