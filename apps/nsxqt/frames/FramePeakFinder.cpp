@@ -71,6 +71,8 @@ FramePeakFinder::FramePeakFinder(ExperimentItem *experiment_item, const nsx::Dat
   _pixmap(nullptr),
   _colormap(new ColorMap)
 {
+    setWindowTitle(tr("Peak finder"));
+
     setupLayout();
 
     for (auto d : data) {
@@ -174,8 +176,8 @@ void FramePeakFinder::setupLayout()
     // The frame number spinbox
     _preview_frame_number = new QSpinBox();
     _preview_frame_number->setMinimum(0);
-    _preview_frame_number->setMaximum(1e2);
-    _preview_frame_number->setValue(1e1);
+    _preview_frame_number->setMaximum(1e4);
+    _preview_frame_number->setValue(0);
     _preview_frame_number->setWrapping(true);
     _preview_frame_number->setSingleStep(1);
     _preview_frame_number->setToolTip("The value of the selected frame for previewing the peak search");
@@ -185,7 +187,7 @@ void FramePeakFinder::setupLayout()
     _preview_frame->setOrientation(Qt::Horizontal);
     _preview_frame->setMinimum(0);
     _preview_frame->setMaximum(1e4);
-    _preview_frame->setValue(1e3);
+    _preview_frame->setValue(0);
     _preview_frame->setSingleStep(1);
     _preview_frame->setToolTip("The selected frame for previewing the peak search");
 
@@ -244,7 +246,7 @@ void FramePeakFinder::setupLayout()
 
     QHBoxLayout *settings_tabs_layout = new QHBoxLayout();
 
-    QVBoxLayout *settings_parameters_tabs_layout = new QVBoxLayout();
+    QVBoxLayout *parameters_layout = new QVBoxLayout();
 
     QFormLayout *blob_search_box_layout = new QFormLayout();
     blob_search_box_layout->addRow(new QLabel("threshold"),_threshold);
@@ -271,12 +273,12 @@ void FramePeakFinder::setupLayout()
     integration_box_layout->addRow(new QLabel("background upper limit"),_background_end_scale);
     integration_box->setLayout(integration_box_layout);
 
-    settings_parameters_tabs_layout->addWidget(blob_search_box);
-    settings_parameters_tabs_layout->addWidget(preview_box);
-    settings_parameters_tabs_layout->addWidget(integration_box);
-    settings_parameters_tabs_layout->addStretch(1);
+    parameters_layout->addWidget(blob_search_box);
+    parameters_layout->addWidget(preview_box);
+    parameters_layout->addWidget(integration_box);
+    parameters_layout->addStretch(1);
 
-    settings_tabs_layout->addLayout(settings_parameters_tabs_layout);
+    settings_tabs_layout->addLayout(parameters_layout);
     settings_tabs_layout->addWidget(_preview);
     settings_tabs_layout->setStretch(0,2);
     settings_tabs_layout->setStretch(1,3);
