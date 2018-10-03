@@ -1,3 +1,6 @@
+rem Remove the resources before running the test
+rmdir /S /Q %APPDATA%\\nsxtool
+
 set BUILD_DIR=%cd%\build
 
 set NSX_ROOT_DIR=%BUILD_DIR%\share\nsxtool
