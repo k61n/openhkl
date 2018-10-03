@@ -77,6 +77,9 @@ public:
     //! Return the diffractometer of the state
     sptrDiffractometer diffractometer() const;
 
+    //! Return true if this state has been refined
+    bool refined;
+
     #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     #endif

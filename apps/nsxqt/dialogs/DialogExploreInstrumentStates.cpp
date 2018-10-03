@@ -1,4 +1,5 @@
 #include <QFileInfo>
+#include <QFont>
 
 #include <nsxlib/DataSet.h>
 #include <nsxlib/InstrumentState.h>
@@ -80,7 +81,6 @@ void DialogExploreInstrumentStates::slotSelectedDataChanged(int selected_data)
 
 void DialogExploreInstrumentStates::slotSelectedFrameChanged(int selected_frame)
 {
-
     _ui->frameIndex->setValue(selected_frame);
     _ui->frameSlider->setValue(selected_frame);
 
@@ -91,6 +91,12 @@ void DialogExploreInstrumentStates::slotSelectedFrameChanged(int selected_frame)
     auto&& instrument_states = data->instrumentStates();
 
     auto selected_state = instrument_states[selected_frame];
+
+    QFont font;
+    font.setBold(true);
+    _ui->refined->setStyleSheet(selected_state.refined ? "QLabel {color : blue;}" : "QLabel {color : red;}");
+    _ui->refined->setFont(font);
+    _ui->refined->setText(selected_state.refined ? "Refined" : "Not refined");
 
     // Set the sample position values
     const auto& sample_position = selected_state.samplePosition;

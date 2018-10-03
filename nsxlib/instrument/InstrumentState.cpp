@@ -43,6 +43,7 @@ InstrumentState::InstrumentState(sptrDiffractometer diffractometer):
     detectorPositionOffset.setZero();
     ni = {0.0, 1.0, 0.0};
     wavelength = 1.0;
+    refined=false;
 }
 
 ReciprocalVector InstrumentState::kfLab(const DirectVector& detector_position) const

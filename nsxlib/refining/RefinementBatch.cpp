@@ -153,6 +153,22 @@ void RefinementBatch::refineSampleOrientation()
     }
 }
 
+void RefinementBatch::refineKi()
+{
+    std::vector<int> x_ids;
+    std::vector<int> z_ids;
+
+    for (size_t i = 0; i < _states.size(); ++i) {
+        // note: do _not_ refine y component since it is not functionally dependent
+        x_ids.push_back(_params.addParameter(&(_states[i].get().ni(0))));
+        z_ids.push_back(_params.addParameter(&(_states[i].get().ni(2))));
+    }
+
+    // record the constraints
+    _constraints.push_back(x_ids);
+    _constraints.push_back(z_ids);
+}
+
 bool RefinementBatch::refine(unsigned int max_iter)
 {  
     Minimizer min;
@@ -167,7 +183,10 @@ bool RefinementBatch::refine(unsigned int max_iter)
 
     min.initialize(_params, _peaks.size()*3);
     min.set_f([&](Eigen::VectorXd& fvec) {return residuals(fvec);});
-    bool success = min.fit(max_iter);   
+    bool success = min.fit(max_iter);
+    for (auto state : _states) {
+        state.get().refined = true;
+    }
     *_cell = _cell->fromParameters(_u0, _uOffsets, _cellParameters);        
     return success;
 }
@@ -251,22 +270,6 @@ Eigen::MatrixXd RefinementBatch::constraintKernel() const
 bool RefinementBatch::contains(double f) const
 {
     return (f > _fmin) && (f < _fmax);
-}
-
-void RefinementBatch::refineKi()
-{
-    std::vector<int> x_ids;
-    std::vector<int> z_ids;
-
-    for (size_t i = 0; i < _states.size(); ++i) {
-        // note: do _not_ refine y component since it is not functionally dependent
-        x_ids.push_back(_params.addParameter(&(_states[i].get().ni(0))));
-        z_ids.push_back(_params.addParameter(&(_states[i].get().ni(2))));
-    }
-
-    // record the constraints
-    _constraints.push_back(x_ids);
-    _constraints.push_back(z_ids);
 }
 
 } // end namespace nsx
