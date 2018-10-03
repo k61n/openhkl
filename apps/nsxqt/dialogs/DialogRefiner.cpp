@@ -205,33 +205,33 @@ void DialogRefiner::refine()
 
         nsx::info() << reference_peaks.size() << " available for refinement.";
 
-        nsx::Refiner r(unit_cell, reference_peaks, nbatches(reference_peaks));
+        std::vector<nsx::InstrumentState>& states = d->instrumentStates();
+
+        nsx::Refiner r(states, unit_cell, reference_peaks, nbatches(reference_peaks));
 
         if (_ui->checkBoxRefineLattice->isChecked()) {
             r.refineUB();
             nsx::info() << "Refining B matrix";
         }
-
-        std::vector<nsx::InstrumentState>& states = d->instrumentStates();
         
         if (_ui->checkBoxRefineSamplePosition->isChecked()) {
-            r.refineSamplePosition(states); 
+            r.refineSamplePosition();
             nsx::info() << "Refinining sample position";
         }
 
         if (_ui->checkBoxRefineSampleOrientation->isChecked()) {
             nsx::info() << "Refinining sample orientation";
-            r.refineSampleOrientation(states);
+            r.refineSampleOrientation();
         }
 
         if (_ui->checkBoxRefineDetectorOffset->isChecked()) {
-            r.refineDetectorOffset(states);
+            r.refineDetectorOffset();
             nsx::info() << "Refinining detector offset";
         }
 
         if (_ui->checkBoxRefineKi->isChecked()) {
             nsx::info() << "Refining Ki";
-            r.refineKi(states);
+            r.refineKi();
         }
 
         bool success = r.refine();

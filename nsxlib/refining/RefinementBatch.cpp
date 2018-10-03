@@ -50,7 +50,7 @@ const static double g_eps = 1e-5;
 
 namespace nsx {
 
-RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks)
+RefinementBatch::RefinementBatch(InstrumentStateList& states, const UnitCell& uc, const PeakList& peaks)
 : _fmin(std::numeric_limits<double>().max()),
   _fmax(std::numeric_limits<double>().lowest()),
   _cell(new UnitCell(uc)),
@@ -95,6 +95,15 @@ RefinementBatch::RefinementBatch(const UnitCell& uc, const PeakList& peaks)
     UnitCell constrained = _cell->applyNiggliConstraints();
     _u0 = constrained.niggliOrientation();
     _cellParameters = constrained.parameters();
+
+    _states.reserve(states.size());
+    for (size_t i = 0; i < states.size(); ++i) {
+        if (!contains(i)) {
+            continue;
+        }
+        _states.push_back(states[i]);
+    }
+
 }
 
 void RefinementBatch::refineUB()
@@ -104,15 +113,12 @@ void RefinementBatch::refineUB()
     }
 }
 
-void RefinementBatch::refineDetectorOffset(InstrumentStateList& states)
+void RefinementBatch::refineDetectorOffset()
 {
     for (int axis = 0; axis < 3; ++axis) {
         std::vector<int> ids;
-        for (size_t i = 0; i < states.size(); ++i) {
-            if (!contains(i)) {
-                continue;
-            }
-            int id = _params.addParameter(&states[i].detectorPositionOffset(axis));
+        for (size_t i = 0; i < _states.size(); ++i) {
+            int id = _params.addParameter(&(_states[i].get().detectorPositionOffset(axis)));
             ids.push_back(id);
         }
         // record the constraints
@@ -120,15 +126,12 @@ void RefinementBatch::refineDetectorOffset(InstrumentStateList& states)
     }
 }
 
-void RefinementBatch::refineSamplePosition(InstrumentStateList& states)
+void RefinementBatch::refineSamplePosition()
 {
     for (int axis = 0; axis < 3; ++axis) {
         std::vector<int> ids;
-        for (size_t i = 0; i < states.size(); ++i) {
-            if (!contains(i)) {
-                continue;
-            }
-            int id = _params.addParameter(&states[i].samplePosition(axis));
+        for (size_t i = 0; i < _states.size(); ++i) {
+            int id = _params.addParameter(&(_states[i].get().samplePosition(axis)));
             ids.push_back(id);
         }
         // record the constraints
@@ -136,16 +139,13 @@ void RefinementBatch::refineSamplePosition(InstrumentStateList& states)
     }
 }
 
-void RefinementBatch::refineSampleOrientation(InstrumentStateList& states)
+void RefinementBatch::refineSampleOrientation()
 {
     // refine the imaginary parts of the quaternion
     for (int axis = 0; axis < 3; ++axis) {
         std::vector<int> ids;
-        for (size_t i = 0; i < states.size(); ++i) {
-            if (!contains(i)) {
-                continue;
-            }
-            int id = _params.addParameter(&states[i].sampleOrientationOffset.coeffs()[axis]);
+        for (size_t i = 0; i < _states.size(); ++i) {
+            int id = _params.addParameter(&(_states[i].get().sampleOrientationOffset.coeffs()[axis]));
             ids.push_back(id);
         }
         // record the constraints
@@ -253,18 +253,15 @@ bool RefinementBatch::contains(double f) const
     return (f > _fmin) && (f < _fmax);
 }
 
-void RefinementBatch::refineKi(InstrumentStateList& states)
+void RefinementBatch::refineKi()
 {
     std::vector<int> x_ids;
     std::vector<int> z_ids;
 
-    for (size_t i = 0; i < states.size(); ++i) {
-        if (!contains(i)) {
-            continue;
-        }
+    for (size_t i = 0; i < _states.size(); ++i) {
         // note: do _not_ refine y component since it is not functionally dependent
-        x_ids.push_back(_params.addParameter(&states[i].ni(0)));
-        z_ids.push_back(_params.addParameter(&states[i].ni(2)));    
+        x_ids.push_back(_params.addParameter(&(_states[i].get().ni(0))));
+        z_ids.push_back(_params.addParameter(&(_states[i].get().ni(2))));
     }
 
     // record the constraints

@@ -50,7 +50,7 @@
 
 namespace nsx {
 
-Refiner::Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches)
+Refiner::Refiner(InstrumentStateList& states, sptrUnitCell cell, const PeakList& peaks, int nbatches)
 : _batches(), _cell(cell)
 {
     PeakList sorted_peaks(peaks);
@@ -72,7 +72,7 @@ Refiner::Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches)
         peaks_subset.push_back(sorted_peaks[i]);
 
         if (i + 1.1 >= (current_batch+1)*batch_size) {
-            RefinementBatch b(*cell, peaks_subset);
+            RefinementBatch b(states,*cell, peaks_subset);
             _batches.emplace_back(std::move(b));
             peaks_subset.clear();
             ++current_batch;
@@ -80,24 +80,38 @@ Refiner::Refiner(sptrUnitCell cell, const PeakList& peaks, int nbatches)
     }
 }
 
-void Refiner::refineDetectorOffset(InstrumentStateList& states)
+void Refiner::refineDetectorOffset()
 {
     for (auto&& batch: _batches) {
-        batch.refineDetectorOffset(states);
+        batch.refineDetectorOffset();
     }
 }
 
-void Refiner::refineSamplePosition(InstrumentStateList& states)
+void Refiner::refineSamplePosition()
 {
     for (auto&& batch: _batches) {
-        batch.refineSamplePosition(states);
+        batch.refineSamplePosition();
     }
 }
 
-void Refiner::refineSampleOrientation(InstrumentStateList& states)
+void Refiner::refineSampleOrientation()
 {
     for (auto&& batch: _batches) {
-        batch.refineSampleOrientation(states);
+        batch.refineSampleOrientation();
+    }
+}
+
+void Refiner::refineKi()
+{
+    for (auto&& batch: _batches) {
+        batch.refineKi();
+    }
+}
+
+void Refiner::refineUB()
+{
+    for (auto&& batch: _batches) {
+        batch.refineUB();
     }
 }
 
@@ -113,13 +127,6 @@ bool Refiner::refine(unsigned int max_iter)
         }
     }
     return true;
-}
-
-void Refiner::refineUB()
-{  
-    for (auto&& batch: _batches) {
-        batch.refineUB();
-    }
 }
 
 const std::vector<RefinementBatch>& Refiner::batches() const
@@ -179,13 +186,6 @@ int Refiner::updatePredictions(PeakList& peaks) const
         
     }
     return updated;
-}
-
-void Refiner::refineKi(InstrumentStateList& states)
-{
-    for (auto&& batch: _batches) {
-        batch.refineKi(states); 
-    }
 }
 
 } // end namespace nsx

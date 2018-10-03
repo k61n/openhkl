@@ -112,7 +112,9 @@ int main()
         peaks.push_back(peak);
     }
     
-    nsx::Refiner refiner(cell, peaks, 1);
+    auto&& states = dataf->instrumentStates();
+
+    nsx::Refiner refiner(states, cell, peaks, 1);
 
     NSX_CHECK_ASSERT(refiner.batches().size() == 1);
 
@@ -121,9 +123,7 @@ int main()
     }
 
     refiner.refineUB();
-    //refiner.refineU();
-    auto&& states = dataf->instrumentStates();
-    refiner.refineSamplePosition(states);
+    refiner.refineSamplePosition();
 
     std::cout << "peaks to refine: " << peaks.size() << std::endl;
 

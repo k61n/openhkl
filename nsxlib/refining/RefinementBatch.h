@@ -36,6 +36,7 @@
 
 #pragma once
 
+#include <functional>
 #include <map>
 #include <vector>
 
@@ -57,15 +58,17 @@ public:
     //! Default constructor. Should not be used but needed for swig
     RefinementBatch() = default;
     //! Construct batch with initial unit cell and list of peaks.
-    RefinementBatch(const UnitCell& uc, const PeakList& peaksmax);
+    RefinementBatch(InstrumentStateList& states, const UnitCell& uc, const PeakList& peaksmax);
     //! Set the lattice B matrix to be refined.
     void refineUB();
     //! Set detector offsets in the given list of instrument states to be refined.
-    void refineDetectorOffset(InstrumentStateList& states);
+    void refineDetectorOffset();
     //! Set the sample position in the given list of instrument states to be refined.
-    void refineSamplePosition(InstrumentStateList& states);
+    void refineSamplePosition();
     //! Set the sample orientation in the given list of instrument states to be refined.
-    void refineSampleOrientation(InstrumentStateList& states);
+    void refineSampleOrientation();
+    //! Set the source ki in the given list of instrument states to be refined.
+    void refineKi();
     //! Perform the refinement with the maximum number of iterations as given.
     bool refine(unsigned int max_iter = 100);
     //! Compute the residual vector for the current set of parameters.
@@ -78,8 +81,6 @@ public:
     Eigen::MatrixXd constraintKernel() const;
     //! Determine if a given frame number is part of this batch.
     bool contains(double f) const;
-    //! Set the source ki in the given list of instrument states to be refined.
-    void refineKi(InstrumentStateList& states);
 
 private:
 
@@ -107,6 +108,8 @@ private:
     std::vector<std::vector<int>> _constraints;
 
     std::vector<Eigen::Matrix3d> _wts;
+
+    std::vector<std::reference_wrapper<InstrumentState>> _states;
 };
 
 } // end namespace nsx
