@@ -9,6 +9,10 @@
 #include "ColorMap.h"
 #include "NSXQFrame.h"
 
+namespace Ui {
+class FramePeakFinder;
+}
+
 class ExperimentItem;
 class PeakTableView;
 class QAbstractButton;
@@ -32,8 +36,6 @@ public:
     static FramePeakFinder* create(ExperimentItem* experiment_tree, const nsx::DataList& data);
 
     static FramePeakFinder* Instance();
-
-    FramePeakFinder(ExperimentItem *experiment_item, const nsx::DataList &data);
 
     virtual ~FramePeakFinder();
 
@@ -68,6 +70,7 @@ private slots:
 
     //! Change the convolution kernel used to perform the peak search
     void changeConvolutionKernel(QString convolution_kernel);
+
     //! Change the parameters of the convolution kernel used to perform the peak search
     void changeConvolutionParameters(int row, int col);
 
@@ -78,9 +81,7 @@ private slots:
 
 private:
 
-    void setupLayout();
-
-    void setupConnections();
+    FramePeakFinder(ExperimentItem *experiment_item, const nsx::DataList &data);
 
     void updateConvolutionParameters();
 
@@ -96,60 +97,11 @@ private:
 
     static FramePeakFinder *_instance;
 
+    Ui::FramePeakFinder *_ui;
+
     ExperimentItem *_experiment_item;
 
     QGraphicsPixmapItem *_pixmap;
 
     std::unique_ptr<ColorMap> _colormap;
-
-    //! The threshold spinbox
-    QSpinBox *_threshold;
-
-    //! The merge scale spinbox
-    QDoubleSpinBox *_merge_scale;
-
-    //! The minimum blob size spinbox
-    QSpinBox *_min_blob_size;
-
-    //! The maximum blob size spinbox
-    QSpinBox *_max_blob_size;
-
-    //! The blob width spinbox
-    QSpinBox *_max_blob_width;
-
-    //! The convolution kernel combox box
-    QComboBox *_convolution_kernels;
-
-    //! The convolution kernel parameters table widget
-    QTableWidget *_convolution_parameters;
-
-    //! The Data list combox
-    QComboBox *_preview_data;
-
-    //! The frame number spinbox
-    QSpinBox *_preview_frame_number;
-
-    //! The frame number slider
-    QSlider *_preview_frame;
-
-    //! The apply theshold to preview check box
-    QCheckBox *_apply_threshold;
-
-    //! The peak area scale spinbox
-    QDoubleSpinBox *_peak_scale;
-
-    //! The background lower limit area scale spinbox
-    QDoubleSpinBox *_background_begin_scale;
-
-    //! The background upper limit area scale spinbox
-    QDoubleSpinBox *_background_end_scale;
-
-    //! The graphics view to show the peak search preview
-    QGraphicsView *_preview;
-
-    //! The table that shows the peaks found by the current peak search
-    PeakTableView *_peaks;
-
-    //! The button box with the different actions for this dialog
-    QDialogButtonBox *_actions;
 };
