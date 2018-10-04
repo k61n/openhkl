@@ -81,6 +81,8 @@ public:
     Eigen::MatrixXd constraintKernel() const;
     //! Determine if a given frame number is part of this batch.
     bool contains(double f) const;
+    //! Return the cost function
+    const std::vector<double>& costFunction() const;
 
 private:
 
@@ -110,6 +112,8 @@ private:
     std::vector<Eigen::Matrix3d> _wts;
 
     std::vector<std::reference_wrapper<InstrumentState>> _states;
+
+    std::vector<double> _cost_function;
 };
 
 } // end namespace nsx

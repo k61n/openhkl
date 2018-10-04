@@ -29,10 +29,10 @@
 #include "DialogIntegrate.h"
 #include "DialogMCAbsorption.h"
 #include "DialogPeakFilter.h"
-#include "DialogRefiner.h"
 #include "DialogShapeLibrary.h"
 #include "DialogSpaceGroup.h"
 #include "ExperimentItem.h"
+#include "FrameRefiner.h"
 #include "GLSphere.h"
 #include "GLWidget.h"
 #include "InspectableTreeItem.h"
@@ -306,11 +306,11 @@ void PeaksItem::refine()
 {
     nsx::PeakList selected_peaks = selectedPeaks();
 
-    DialogRefiner* dialog = DialogRefiner::create(experimentItem(), selected_peaks, MainWindow::Instance());
+    FrameRefiner* frame_refiner = FrameRefiner::create(experimentItem(), selected_peaks);
 
-    dialog->show();
+    frame_refiner->show();
 
-    dialog->raise();
+    frame_refiner->raise();
 }
 
 void PeaksItem::autoAssignUnitCell()

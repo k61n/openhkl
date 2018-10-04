@@ -213,7 +213,17 @@ int RefinementBatch::residuals(Eigen::VectorXd &fvec)
             fvec(3*i+2) = 0.0;
         }
     }
+
+    _cost_function.clear();
+
+    _cost_function.push_back(0.5*fvec.norm());
+
     return 0;
+}
+
+const std::vector<double>& RefinementBatch::costFunction() const
+{
+    return _cost_function;
 }
 
 const PeakList& RefinementBatch::peaks() const

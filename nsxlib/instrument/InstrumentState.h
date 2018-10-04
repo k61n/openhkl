@@ -76,7 +76,6 @@ public:
     Eigen::Matrix3d jacobianK(double px, double py) const;
     //! Return the diffractometer of the state
     sptrDiffractometer diffractometer() const;
-
     //! Return true if this state has been refined
     bool refined;
 
