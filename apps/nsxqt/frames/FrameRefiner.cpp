@@ -18,6 +18,8 @@
 
 #include "ui_FrameRefiner.h"
 
+#include <QDebug>
+
 FrameRefiner* FrameRefiner::_instance = nullptr;
 
 FrameRefiner* FrameRefiner::create(ExperimentItem *experiment_item, const nsx::PeakList &peaks)
@@ -47,6 +49,24 @@ FrameRefiner::FrameRefiner(ExperimentItem* experiment_item, const nsx::PeakList 
 
     _ui->tabWidget->setCurrentIndex(0);
 
+    std::set<nsx::sptrDataSet> data;
+    // get list of datasets
+    for (auto p: peaks) {
+        auto d = p->data();
+        if (!d) {
+            continue;
+        }
+        data.insert(d);
+    }
+
+    for (auto d : data) {
+        QFileInfo fileinfo(QString::fromStdString(d->filename()));
+
+        QListWidgetItem* item = new QListWidgetItem(fileinfo.baseName());
+        item->setData(Qt::UserRole,QVariant::fromValue(d));
+        _ui->selected_data->addItem(item);
+    }
+
     connect(_ui->selected_data,SIGNAL(currentRowChanged(int)),this,SLOT(slotSelectedDataChanged(int)));
 
     connect(_ui->selected_batch,SIGNAL(valueChanged(int)),this,SLOT(slotSelectedBatchChanged()));
@@ -55,6 +75,8 @@ FrameRefiner::FrameRefiner(ExperimentItem* experiment_item, const nsx::PeakList 
     connect(_ui->selected_frame_slider,SIGNAL(valueChanged(int)),this,SLOT(slotSelectedFrameChanged(int)));
 
     connect(_ui->actions,SIGNAL(clicked(QAbstractButton*)),this,SLOT(slotActionClicked(QAbstractButton*)));
+
+    _ui->selected_data->setCurrentRow(0);
 }
 
 FrameRefiner::~FrameRefiner()
@@ -98,13 +120,13 @@ void FrameRefiner::slotSelectedDataChanged(int selected_data)
 
     auto data = current_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
 
-    auto&& refiner = _refiners.at(data);
+//    auto&& refiner = _refiners.at(data);
 
-    auto&& batches =  refiner.batches();
+//    auto&& batches =  refiner.batches();
 
-    _ui->selected_batch->setMaximum(batches.size() - 1);
+//    _ui->selected_batch->setMaximum(batches.size() - 1);
 
-    slotSelectedBatchChanged();
+//    slotSelectedBatchChanged();
 }
 
 void FrameRefiner::slotSelectedBatchChanged()
@@ -244,20 +266,10 @@ void FrameRefiner::refine()
 
     _refiners.clear();
 
-    _ui->selected_data->clear();
-
     std::set<nsx::sptrDataSet> data;
     // get list of datasets
     for (auto p: peaks) {
         data.insert(p->data());
-    }
-
-    for (auto d : data) {
-        QFileInfo fileinfo(QString::fromStdString(d->filename()));
-
-        QListWidgetItem* item = new QListWidgetItem(fileinfo.baseName());
-        item->setData(Qt::UserRole,QVariant::fromValue(d));
-        _ui->selected_data->addItem(item);
     }
 
     for (auto d : data) {
