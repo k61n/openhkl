@@ -66,13 +66,8 @@ RefinementBatch::RefinementBatch(InstrumentStateList& states, const UnitCell& uc
     _fmin -= g_eps;
     _fmax += g_eps;
 
-    PeakFilter peak_filter;
-    PeakList filtered_peaks;
-    filtered_peaks = peak_filter.enabled(peaks,true);
-    filtered_peaks = peak_filter.indexed(filtered_peaks,_cell,_cell->indexingTolerance());
-
-    _hkls.reserve(filtered_peaks.size());
-    for (auto peak : peaks) {
+    _hkls.reserve(_peaks.size());
+    for (auto peak : _peaks) {
         MillerIndex hkl(peak->q(), *_cell);
         _hkls.push_back(hkl.rowVector().cast<double>());
 
@@ -94,6 +89,7 @@ RefinementBatch::RefinementBatch(InstrumentStateList& states, const UnitCell& uc
 
     UnitCell constrained = _cell->applyNiggliConstraints();
     _u0 = constrained.niggliOrientation();
+    _uOffsets = Eigen::Vector3d::Zero();
     _cellParameters = constrained.parameters();
 
     _states.reserve(states.size());

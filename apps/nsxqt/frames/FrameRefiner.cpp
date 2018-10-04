@@ -18,8 +18,6 @@
 
 #include "ui_FrameRefiner.h"
 
-#include <QDebug>
-
 FrameRefiner* FrameRefiner::_instance = nullptr;
 
 FrameRefiner* FrameRefiner::create(ExperimentItem *experiment_item, const nsx::PeakList &peaks)
@@ -292,11 +290,9 @@ void FrameRefiner::refine()
 
         std::vector<nsx::InstrumentState>& states = d->instrumentStates();
 
-//        auto&& p =_refiners.emplace(d,nsx::Refiner(states, unit_cell, reference_peaks, nbatches(reference_peaks)));
-//
-//        auto&& refiner = p.first->second;
+        auto&& p =_refiners.emplace(d,nsx::Refiner(states, unit_cell, reference_peaks, nbatches(reference_peaks)));
 
-        nsx::Refiner refiner(states, unit_cell, reference_peaks, nbatches(reference_peaks));
+        auto&& refiner = p.first->second;
 
         if (_ui->refine_ub->isChecked()) {
             refiner.refineUB();

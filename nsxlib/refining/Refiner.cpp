@@ -53,7 +53,11 @@ namespace nsx {
 Refiner::Refiner(InstrumentStateList& states, sptrUnitCell cell, const PeakList& peaks, int nbatches)
 : _batches(), _cell(cell)
 {
-    PeakList sorted_peaks(peaks);
+
+    PeakFilter peak_filter;
+    PeakList filtered_peaks;
+    filtered_peaks = peak_filter.enabled(peaks,true);
+    filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance());
 
     auto sort_peaks_by_frame = [](sptrPeak3D p1, sptrPeak3D p2) -> bool {
         auto&& c1 = p1->shape().center();
@@ -61,15 +65,15 @@ Refiner::Refiner(InstrumentStateList& states, sptrUnitCell cell, const PeakList&
         return c1[2] < c2[2];
     };
 
-    std::sort(sorted_peaks.begin(),sorted_peaks.end(),sort_peaks_by_frame);
+    std::sort(filtered_peaks.begin(),filtered_peaks.end(),sort_peaks_by_frame);
 
-    double batch_size = sorted_peaks.size() / double(nbatches);
+    double batch_size = filtered_peaks.size() / double(nbatches);
     size_t current_batch = 0;
 
     PeakList peaks_subset;
 
-    for (size_t i = 0; i < sorted_peaks.size(); ++i) {
-        peaks_subset.push_back(sorted_peaks[i]);
+    for (size_t i = 0; i < filtered_peaks.size(); ++i) {
+        peaks_subset.push_back(filtered_peaks[i]);
 
         if (i + 1.1 >= (current_batch+1)*batch_size) {
             RefinementBatch b(states,*cell, peaks_subset);

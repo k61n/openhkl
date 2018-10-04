@@ -90,6 +90,10 @@ private:
 
     double _fmax;
 
+    sptrUnitCell _cell;
+
+    PeakList _peaks;
+
     FitParameters _params;
 
     //! Initial U matrix of cell
@@ -100,10 +104,6 @@ private:
 
     //! Cell parameters, internal format. Used internally by UBMinimizer.
     Eigen::VectorXd _cellParameters;
-
-    sptrUnitCell _cell;
-
-    PeakList _peaks;
 
     std::vector<Eigen::RowVector3d> _hkls;
 
