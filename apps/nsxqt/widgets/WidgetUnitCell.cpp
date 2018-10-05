@@ -33,15 +33,27 @@ WidgetUnitCell::WidgetUnitCell(nsx::sptrUnitCell unit_cell)
 
     Eigen::Matrix3d u_matrix = _unit_cell->orientation();
 
-    _ui->u00->setValue(u_matrix(0,0));
-    _ui->u01->setValue(u_matrix(0,1));
-    _ui->u02->setValue(u_matrix(0,2));
-    _ui->u10->setValue(u_matrix(1,0));
-    _ui->u11->setValue(u_matrix(1,1));
-    _ui->u12->setValue(u_matrix(1,2));
-    _ui->u20->setValue(u_matrix(2,0));
-    _ui->u21->setValue(u_matrix(2,1));
-    _ui->u20->setValue(u_matrix(2,2));
+    Eigen::Matrix3d b_matrix = _unit_cell->reciprocalBasis() * u_matrix;
+    _ui->b00->setValue(b_matrix(0,0));
+    _ui->b01->setValue(b_matrix(0,1));
+    _ui->b02->setValue(b_matrix(0,2));
+    _ui->b10->setValue(b_matrix(1,0));
+    _ui->b11->setValue(b_matrix(1,1));
+    _ui->b12->setValue(b_matrix(1,2));
+    _ui->b20->setValue(b_matrix(2,0));
+    _ui->b21->setValue(b_matrix(2,1));
+    _ui->b22->setValue(b_matrix(2,2));
+
+    Eigen::Matrix3d u_matrix_inverse = u_matrix.inverse();
+    _ui->u00->setValue(u_matrix_inverse(0,0));
+    _ui->u01->setValue(u_matrix_inverse(0,1));
+    _ui->u02->setValue(u_matrix_inverse(0,2));
+    _ui->u10->setValue(u_matrix_inverse(1,0));
+    _ui->u11->setValue(u_matrix_inverse(1,1));
+    _ui->u12->setValue(u_matrix_inverse(1,2));
+    _ui->u20->setValue(u_matrix_inverse(2,0));
+    _ui->u21->setValue(u_matrix_inverse(2,1));
+    _ui->u22->setValue(u_matrix_inverse(2,2));
 }
 
 WidgetUnitCell::~WidgetUnitCell()
