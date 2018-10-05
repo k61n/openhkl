@@ -31,7 +31,6 @@
 #include "DataItem.h"
 #include "DetectorItem.h"
 #include "DetectorScene.h"
-#include "DialogAutoIndexing.h"
 #include "DialogExperiment.h"
 #include "DialogIsotopesDatabase.h"
 #include "DialogRawData.h"
