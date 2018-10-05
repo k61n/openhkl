@@ -1,67 +1,44 @@
-#include <string>
-
-#include <QAbstractButton>
-#include <QItemSelectionModel>
-#include <QMessageBox>
-#include <QShortcut>
-#include <QStandardItemModel>
-
 #include <nsxlib/AutoIndexer.h>
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/Logger.h>
 #include <nsxlib/Peak3D.h>
-#include <nsxlib/ProgressHandler.h>
-#include <nsxlib/Sample.h>
+#include <nsxlib/Logger.h>
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
 
 #include "CollectedPeaksModel.h"
-#include "DialogAutoIndexing.h"
 #include "ExperimentItem.h"
-#include "MetaTypes.h"
-#include "PeakTableView.h"
+#include "FrameAutoIndexer.h"
 #include "UnitCellItem.h"
 #include "UnitCellsItem.h"
+#include "WidgetUnitCell.h"
 
-#include "ui_DialogAutoIndexing.h"
+#include "ui_FrameAutoIndexer.h"
 
-DialogAutoIndexing* DialogAutoIndexing::_instance = nullptr;
+#include <QInputDialog>
 
-DialogAutoIndexing* DialogAutoIndexing::create(ExperimentItem* experiment_item, const nsx::PeakList& peaks, QWidget* parent)
+FrameAutoIndexer* FrameAutoIndexer::_instance = nullptr;
+
+FrameAutoIndexer* FrameAutoIndexer::create(ExperimentItem *experiment_item, const nsx::PeakList &peaks)
 {
     if (!_instance) {
-        _instance = new DialogAutoIndexing(experiment_item, peaks, parent);
+        _instance = new FrameAutoIndexer(experiment_item, peaks);
     }
 
     return _instance;
 }
 
-DialogAutoIndexing* DialogAutoIndexing::Instance()
+FrameAutoIndexer* FrameAutoIndexer::Instance()
 {
     return _instance;
 }
 
-DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, const nsx::PeakList& peaks, QWidget *parent)
-: QDialog(parent),
-  _ui(new Ui::DialogAutoIndexing),
+FrameAutoIndexer::FrameAutoIndexer(ExperimentItem *experiment_item, const nsx::PeakList &peaks)
+: NSXQFrame(),
+  _ui(new Ui::FrameAutoIndexer),
   _experiment_item(experiment_item)
 {
     _ui->setupUi(this);
 
-    setModal(false);
-
-    setWindowModality(Qt::NonModal);
-
-    setAttribute(Qt::WA_DeleteOnClose);
-
-    _ui->niggli->setStyleSheet("font-weight: normal;");
-    _ui->niggli->setCheckable(true);
-    _ui->niggli->setChecked(false);
-
-    // Accept solution and set Unit-Cell
-    connect(_ui->solutions->verticalHeader(),SIGNAL(sectionDoubleClicked(int)),this,SLOT(selectSolution(int)));
+    _ui->tabs->tabBar()->tabButton(0,QTabBar::RightSide)->hide();
 
     // get set of default values to populate controls
     nsx::IndexerParameters params;
@@ -99,15 +76,15 @@ DialogAutoIndexing::DialogAutoIndexing(ExperimentItem* experiment_item, const ns
         }
     }
 
-    QShortcut *delete_unit_cell_shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), _ui->unitCells);
-    connect(delete_unit_cell_shortcut, SIGNAL(activated()), this, SLOT(removeUnitCells()));
+    connect(_ui->tabs->tabBar(),SIGNAL(tabBarDoubleClicked(int)),this,SLOT(slotTabEdited(int)));
+    connect(_ui->tabs,SIGNAL(tabCloseRequested(int)),this,SLOT(slotTabRemoved(int)));
 
-    connect(_ui->unitCells,SIGNAL(itemChanged(QListWidgetItem*)),this,SLOT(slotEditUnitCellName(QListWidgetItem*)));
+    connect(_ui->solutions->verticalHeader(),SIGNAL(sectionDoubleClicked(int)),this,SLOT(selectSolution(int)));
 
-    connect(_ui->cancelOK,SIGNAL(clicked(QAbstractButton*)),this,SLOT(slotActionClicked(QAbstractButton*)));
+    connect(_ui->actions,SIGNAL(clicked(QAbstractButton*)),this,SLOT(slotActionClicked(QAbstractButton*)));
 }
 
-DialogAutoIndexing::~DialogAutoIndexing()
+FrameAutoIndexer::~FrameAutoIndexer()
 {
     if (_peaks_model) {
         delete _peaks_model;
@@ -120,10 +97,51 @@ DialogAutoIndexing::~DialogAutoIndexing()
     }
 }
 
-void DialogAutoIndexing::slotEditUnitCellName(QListWidgetItem *item)
+void FrameAutoIndexer::slotTabRemoved(int index)
 {
-    auto unit_cell = item->data(Qt::UserRole).value<nsx::sptrUnitCell>();
-    unit_cell->setName(item->text().toStdString());
+    auto unit_cell_tab = dynamic_cast<WidgetUnitCell*>(_ui->tabs->widget(index));
+    if (!unit_cell_tab) {
+        return;
+    }
+
+    _ui->tabs->removeTab(index);
+
+    delete unit_cell_tab;
+}
+
+void FrameAutoIndexer::slotTabEdited(int index)
+{
+    auto unit_cell_tab = dynamic_cast<WidgetUnitCell*>(_ui->tabs->widget(index));
+
+    if (!unit_cell_tab) {
+        return;
+    }
+
+    QInputDialog dialog(this);
+    dialog.setLabelText("");
+    dialog.setWindowTitle(tr("Set unit cell name"));
+    auto pos = mapToGlobal(_ui->tabs->pos());
+
+    int width(0);
+    for (auto i = 0; i < index; ++i) {
+        width += _ui->tabs->tabBar()->tabRect(index).width();
+    }
+
+    int height = _ui->tabs->tabBar()->tabRect(index).height();
+
+    dialog.move(pos.x() + width,pos.y() + height);
+
+    if (dialog.exec() == QDialog::Rejected) {
+        return;
+    }
+
+    QString unit_cell_name = dialog.textValue();
+    if (unit_cell_name.isEmpty()) {
+        return;
+    }
+
+    _ui->tabs->setTabText(index,unit_cell_name);
+    unit_cell_tab->unitCell()->setName(unit_cell_name.toStdString());
 
     QModelIndex topleft_index = _peaks_model->index(0,0);
     QModelIndex bottomright_index = _peaks_model->index(_peaks_model->rowCount(QModelIndex())-1,_peaks_model->columnCount(QModelIndex())-1);
@@ -131,9 +149,9 @@ void DialogAutoIndexing::slotEditUnitCellName(QListWidgetItem *item)
     emit _peaks_model->dataChanged(topleft_index,bottomright_index);
 }
 
-void DialogAutoIndexing::slotActionClicked(QAbstractButton *button)
+void FrameAutoIndexer::slotActionClicked(QAbstractButton *button)
 {
-    auto button_role = _ui->cancelOK->standardButton(button);
+    auto button_role = _ui->actions->standardButton(button);
 
     switch(button_role)
     {
@@ -142,11 +160,12 @@ void DialogAutoIndexing::slotActionClicked(QAbstractButton *button)
         break;
     }
     case QDialogButtonBox::StandardButton::Apply: {
-        autoIndex();
+        run();
         break;
     }
     case QDialogButtonBox::StandardButton::Cancel: {
-        reject();
+        resetUnitCell();
+        close();
         break;
     }
     case QDialogButtonBox::StandardButton::Ok: {
@@ -159,57 +178,48 @@ void DialogAutoIndexing::slotActionClicked(QAbstractButton *button)
     }
 }
 
-void DialogAutoIndexing::resetUnitCell()
+void FrameAutoIndexer::resetUnitCell()
 {
     // Restore for each peak the initial unit cell
     for (auto p : _defaults) {
         p.first->setUnitCell(p.second);
     }
 
+    for (auto i = _ui->tabs->count()-1; i > 0; i--) {
+
+        auto tab = dynamic_cast<WidgetUnitCell*>(_ui->tabs->widget(i));
+        if (!tab) {
+            continue;
+        }
+        _ui->tabs->removeTab(i);
+        delete tab;
+    }
+
     // Update the peak table view
     QModelIndex topLeft = _peaks_model->index(0, 0);
     QModelIndex bottomRight = _peaks_model->index(_peaks_model->rowCount(QModelIndex())-1, _peaks_model->columnCount(QModelIndex())-1);
     emit _peaks_model->dataChanged(topLeft,bottomRight);
-
-    // Clear the unit cell list
-    _ui->unitCells->clear();
 }
 
-void DialogAutoIndexing::reject()
-{
-    resetUnitCell();
-
-    QDialog::reject();
-}
-
-void DialogAutoIndexing::accept()
+void FrameAutoIndexer::accept()
 {
     auto unit_cells_item = _experiment_item->unitCellsItem();
 
-    for (int i = 0; i < _ui->unitCells->count(); ++i) {
-        auto item = _ui->unitCells->item(i);
-        auto&& unit_cell = item->data(Qt::UserRole).value<nsx::sptrUnitCell>();
-        unit_cell->setName(item->text().toStdString());
-        auto unit_cell_item = new UnitCellItem(unit_cell);
+    for (auto i = 0; i < _ui->tabs->count(); ++i) {
+        auto unit_cell_tab = dynamic_cast<WidgetUnitCell*>(_ui->tabs->widget(i));
+        if (!unit_cell_tab) {
+            continue;
+        }
+        auto unit_cell_item = new UnitCellItem(unit_cell_tab->unitCell());
         unit_cells_item->appendRow(unit_cell_item);
     }
 
     emit _experiment_item->model()->itemChanged(unit_cells_item);
 
-    QDialog::accept();
+    close();
 }
 
-void DialogAutoIndexing::removeUnitCells()
-{
-    auto selected_items = _ui->unitCells->selectedItems();
-
-    for (auto item : selected_items) {
-        _ui->unitCells->removeItemWidget(item);
-        delete item;
-    }
-}
-
-void DialogAutoIndexing::autoIndex()
+void FrameAutoIndexer::run()
 {
     auto selection_model = _ui->peaks->selectionModel();
 
@@ -247,7 +257,7 @@ void DialogAutoIndexing::autoIndex()
     params.nSolutions = _ui->nSolutions->value();
     params.indexingTolerance = _ui->indexingTolerance->value();
     params.nVertices = _ui->nVertices->value();
-    params.niggliReduction = _ui->niggli->isChecked();
+    params.niggliReduction = _ui->niggli_only->isChecked();
     params.niggliTolerance = _ui->niggliTolerance->value();
     params.gruberTolerance = _ui->gruberTolerance->value();
     params.maxdim = _ui->maxCellDim->value();
@@ -263,7 +273,7 @@ void DialogAutoIndexing::autoIndex()
     buildSolutionsTable();
 }
 
-void DialogAutoIndexing::buildSolutionsTable()
+void FrameAutoIndexer::buildSolutionsTable()
 {
     // Create table with 9 columns
     QStandardItemModel* model = new QStandardItemModel(_solutions.size(),9,this);
@@ -310,7 +320,7 @@ void DialogAutoIndexing::buildSolutionsTable()
     _ui->solutions->setModel(model);
 }
 
-void DialogAutoIndexing::selectSolution(int index)
+void FrameAutoIndexer::selectSolution(int index)
 {
     auto selected_unit_cell = _solutions[index].first;
 
@@ -325,12 +335,14 @@ void DialogAutoIndexing::selectSolution(int index)
     for (auto r : selected_rows) {
         peaks[r.row()]->setUnitCell(selected_unit_cell);
     }
+
+    WidgetUnitCell *widget_unit_cell = new WidgetUnitCell(selected_unit_cell);
+    _ui->tabs->addTab(widget_unit_cell,QString::fromStdString(selected_unit_cell->name()));
+    QCheckBox *checkbox = new QCheckBox();
+    checkbox->setChecked(true);
+    _ui->tabs->tabBar()->setTabButton(_ui->tabs->count()-1,QTabBar::LeftSide,checkbox);
+
     QModelIndex topLeft = _peaks_model->index(0, 0);
     QModelIndex bottomRight = _peaks_model->index(_peaks_model->rowCount(QModelIndex())-1, _peaks_model->columnCount(QModelIndex())-1);
     emit _peaks_model->dataChanged(topLeft,bottomRight);
-
-    QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(selected_unit_cell->name()));
-    item->setData(Qt::UserRole,QVariant::fromValue(selected_unit_cell));
-    item->setFlags(item->flags() | Qt::ItemIsEditable);
-    _ui->unitCells->addItem(item);
 }

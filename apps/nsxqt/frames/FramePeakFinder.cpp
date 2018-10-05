@@ -8,6 +8,7 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <QInputDialog>
 #include <QItemDelegate>
 #include <QLineEdit>
 #include <QLabel>
@@ -35,6 +36,8 @@
 #include "WidgetFoundPeaks.h"
 
 #include "ui_FramePeakFinder.h"
+
+#include <QDebug>
 
 class DoubleDelegate : public QItemDelegate
 {
@@ -76,6 +79,8 @@ FramePeakFinder::FramePeakFinder(ExperimentItem *experiment_item, const nsx::Dat
   _colormap(new ColorMap)
 {
     _ui->setupUi(this);
+
+    _ui->tabs->tabBar()->tabButton(0,QTabBar::RightSide)->hide();
 
     DoubleDelegate* convolution_parameters_delegate = new DoubleDelegate();
     _ui->convolution_parameters->setItemDelegateForColumn(1,convolution_parameters_delegate);
@@ -122,7 +127,9 @@ FramePeakFinder::FramePeakFinder(ExperimentItem *experiment_item, const nsx::Dat
     connect(_ui->selected_frame,SIGNAL(valueChanged(int)),this,SLOT(changeSelectedFrame(int)));
     connect(_ui->selected_frame_slider,SIGNAL(valueChanged(int)),this,SLOT(changeSelectedFrame(int)));
 
-    // The action buttons clicking
+    connect(_ui->tabs->tabBar(),SIGNAL(tabBarDoubleClicked(int)),this,SLOT(slotTabEdited(int)));
+    connect(_ui->tabs,SIGNAL(tabCloseRequested(int)),this,SLOT(slotTabRemoved(int)));
+
     connect(_ui->actions,SIGNAL(clicked(QAbstractButton*)),this,SLOT(doActions(QAbstractButton*)));
 
     emit _ui->selected_data->currentIndexChanged(_ui->selected_data->currentIndex());
@@ -135,6 +142,52 @@ FramePeakFinder::~FramePeakFinder()
     if (_instance) {
         _instance = nullptr;
     }
+}
+
+void FramePeakFinder::slotTabRemoved(int index)
+{
+    auto tab = dynamic_cast<WidgetFoundPeaks*>(_ui->tabs->widget(index));
+    if (!tab) {
+        return;
+    }
+
+    _ui->tabs->removeTab(index);
+
+    delete tab;
+}
+
+void FramePeakFinder::slotTabEdited(int index)
+{
+    auto found_peaks_tab = dynamic_cast<WidgetFoundPeaks*>(_ui->tabs->widget(index));
+
+    if (!found_peaks_tab) {
+        return;
+    }
+
+    QInputDialog dialog(this);
+    dialog.setLabelText("");
+    dialog.setWindowTitle(tr("Set unit cell name"));
+    auto pos = mapToGlobal(_ui->tabs->pos());
+
+    int width(0);
+    for (auto i = 0; i < index; ++i) {
+        width += _ui->tabs->tabBar()->tabRect(index).width();
+    }
+
+    int height = _ui->tabs->tabBar()->tabRect(index).height();
+
+    dialog.move(pos.x() + width,pos.y() + height);
+
+    if (dialog.exec() == QDialog::Rejected) {
+        return;
+    }
+
+    QString tab_name = dialog.textValue();
+    if (tab_name.isEmpty()) {
+        return;
+    }
+
+    _ui->tabs->setTabText(index,tab_name);
 }
 
 void FramePeakFinder::changeSelectedFrame(int selected_frame)
@@ -152,7 +205,6 @@ void FramePeakFinder::accept()
     for (auto i = 0; i < _ui->tabs->count(); ++i) {
 
         auto widget_found_peaks = dynamic_cast<WidgetFoundPeaks*>(_ui->tabs->widget(i));
-
         if (!widget_found_peaks) {
             continue;
         }
@@ -235,7 +287,7 @@ void FramePeakFinder::run()
     WidgetFoundPeaks *widget_found_peaks = new WidgetFoundPeaks(_experiment_item,peaks);
     _ui->tabs->addTab(widget_found_peaks,"peaks");
     QCheckBox *checkbox = new QCheckBox();
-    checkbox->setChecked(true);
+    checkbox->setChecked(true);    
     _ui->tabs->tabBar()->setTabButton(_ui->tabs->count()-1,QTabBar::LeftSide,checkbox);
 
     nsx::info() << "Peak search complete. Found " << peaks.size() << " peaks.";

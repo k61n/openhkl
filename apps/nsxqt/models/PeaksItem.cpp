@@ -25,13 +25,13 @@
 #include <nsxlib/UnitCell.h>
 
 #include "DataItem.h"
-#include "DialogAutoIndexing.h"
 #include "DialogIntegrate.h"
 #include "DialogMCAbsorption.h"
 #include "DialogPeakFilter.h"
 #include "DialogShapeLibrary.h"
 #include "DialogSpaceGroup.h"
 #include "ExperimentItem.h"
+#include "FrameAutoIndexer.h"
 #include "FrameRefiner.h"
 #include "GLSphere.h"
 #include "GLWidget.h"
@@ -295,11 +295,11 @@ void PeaksItem::openAutoIndexingDialog()
 {
     auto&& selected_peaks = selectedPeaks();
 
-    DialogAutoIndexing* dialog = DialogAutoIndexing::create(experimentItem(), selected_peaks, MainWindow::Instance());
+    FrameAutoIndexer *frame_autoindexer = FrameAutoIndexer::create(experimentItem(), selected_peaks);
 
-    dialog->show();
+    frame_autoindexer->show();
 
-    dialog->raise();
+    frame_autoindexer->raise();
 }
 
 void PeaksItem::refine()

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>FramePeakFinder</class>
- <widget class="NSXQFrame" name="Frame">
+ <widget class="NSXQFrame" name="FramePeakFinder">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -24,6 +24,9 @@
     <widget class="QTabWidget" name="tabs">
      <property name="currentIndex">
       <number>0</number>
+     </property>
+     <property name="tabsClosable">
+      <bool>true</bool>
      </property>
      <widget class="QWidget" name="tab1">
       <attribute name="title">
@@ -435,7 +438,7 @@
  <customwidgets>
   <customwidget>
    <class>NSXQFrame</class>
-   <extends>QWidget</extends>
+   <extends>QFrame</extends>
    <header>NSXQFrame.h</header>
    <container>1</container>
   </customwidget>

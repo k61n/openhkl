@@ -79,6 +79,10 @@ private slots:
 
     void changeSelectedFrame(int selected_frame);
 
+    void slotTabEdited(int index);
+
+    void slotTabRemoved(int index);
+
 private:
 
     FramePeakFinder(ExperimentItem *experiment_item, const nsx::DataList &data);
