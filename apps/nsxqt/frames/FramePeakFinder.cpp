@@ -26,6 +26,7 @@
 #include <nsxlib/PixelSumIntegrator.h>
 
 #include "CollectedPeaksModel.h"
+#include "DoubleItemDelegate.h"
 #include "ExperimentItem.h"
 #include "FramePeakFinder.h"
 #include "MetaTypes.h"
@@ -36,24 +37,6 @@
 #include "WidgetFoundPeaks.h"
 
 #include "ui_FramePeakFinder.h"
-
-#include <QDebug>
-
-class DoubleDelegate : public QItemDelegate
-{
-public:
-    QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem & option,const QModelIndex & index) const
-    {
-        Q_UNUSED(option)
-        Q_UNUSED(index)
-
-        QLineEdit* lineEdit = new QLineEdit(parent);
-        // Set validator
-        QDoubleValidator *validator = new QDoubleValidator(lineEdit);
-        lineEdit->setValidator(validator);
-        return lineEdit;
-    }
-};
 
 FramePeakFinder* FramePeakFinder::_instance = nullptr;
 
@@ -82,7 +65,7 @@ FramePeakFinder::FramePeakFinder(ExperimentItem *experiment_item, const nsx::Dat
 
     _ui->tabs->tabBar()->tabButton(0,QTabBar::RightSide)->hide();
 
-    DoubleDelegate* convolution_parameters_delegate = new DoubleDelegate();
+    DoubleItemDelegate* convolution_parameters_delegate = new DoubleItemDelegate();
     _ui->convolution_parameters->setItemDelegateForColumn(1,convolution_parameters_delegate);
 
     for (auto d : data) {

@@ -6,10 +6,16 @@
 #include <QSpinBox>
 
 #include <nsxlib/DataSet.h>
+#include <nsxlib/Detector.h>
+#include <nsxlib/Diffractometer.h>
+#include <nsxlib/Experiment.h>
+#include <nsxlib/Gonio.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/Peak3D.h>
+#include <nsxlib/Sample.h>
 
 #include "CollectedPeaksModel.h"
+#include "DoubleItemDelegate.h"
 #include "ExperimentItem.h"
 #include "FrameRefiner.h"
 #include "MetaTypes.h"
@@ -73,6 +79,30 @@ FrameRefiner::FrameRefiner(ExperimentItem* experiment_item, const nsx::PeakList 
     connect(_ui->selected_frame_slider,SIGNAL(valueChanged(int)),this,SLOT(slotSelectedFrameChanged(int)));
 
     connect(_ui->actions,SIGNAL(clicked(QAbstractButton*)),this,SLOT(slotActionClicked(QAbstractButton*)));
+
+    _ui->selected_data->setCurrentRow(0);
+
+    DoubleItemDelegate* sample_axis_parameters_delegate = new DoubleItemDelegate();
+    _ui->sample_orientation->setItemDelegateForColumn(1,sample_axis_parameters_delegate);
+    _ui->sample_orientation->setItemDelegateForColumn(2,sample_axis_parameters_delegate);
+    auto sample_axes = _experiment_item->experiment()->diffractometer()->sample()->gonio()->axes();
+    _ui->sample_orientation->setRowCount(sample_axes.size());
+    for (size_t i = 0; i < sample_axes.size(); ++i) {
+        auto axes = sample_axes[i];
+        _ui->sample_orientation->setItem(i,0, new QTableWidgetItem(QString::fromStdString(axes->label())));
+
+    }
+
+    DoubleItemDelegate* detector_axis_parameters_delegate = new DoubleItemDelegate();
+    _ui->detector_orientation->setItemDelegateForColumn(1,detector_axis_parameters_delegate);
+    _ui->detector_orientation->setItemDelegateForColumn(2,detector_axis_parameters_delegate);
+    auto detector_axes = _experiment_item->experiment()->diffractometer()->detector()->gonio()->axes();
+    _ui->detector_orientation->setRowCount(detector_axes.size());
+    for (size_t i = 0; i < detector_axes.size(); ++i) {
+        auto axes = detector_axes[i];
+        _ui->detector_orientation->setItem(i,0, new QTableWidgetItem(QString::fromStdString(axes->label())));
+
+    }
 }
 
 FrameRefiner::~FrameRefiner()
@@ -116,6 +146,7 @@ void FrameRefiner::slotSelectedDataChanged(int selected_data)
 
     auto data = current_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
 
+    // No refiner set for this data, return.
     auto it = _refiners.find(data);
     if (it == _refiners.end()) {
         return;
@@ -125,46 +156,48 @@ void FrameRefiner::slotSelectedDataChanged(int selected_data)
 
     auto&& batches =  refiner.batches();
 
-    _ui->selected_batch->setMaximum(batches.size() - 1);
+    _ui->selected_batch->setMinimum(0);
 
-    slotSelectedBatchChanged();
+    // If this refiner has some batches defined then plot the cost function for the first of them
+    if (!batches.empty()) {
+        _ui->selected_batch->setMaximum(batches.size() - 1);
+        _ui->selected_batch->setValue(0);
+    }
+
+    auto max_frame = data->nFrames() - 1;
+
+    _ui->selected_frame->setMinimum(0);
+    _ui->selected_frame->setMaximum(max_frame);
+
+    _ui->selected_frame_slider->setMinimum(0);
+    _ui->selected_frame_slider->setMaximum(max_frame);
+
+    slotSelectedFrameChanged(0);
 }
 
 void FrameRefiner::slotSelectedBatchChanged()
 {
     _ui->plot->clearGraphs();
 
-    if (_refiners.empty()) {
-        return;
-    }
-
+    // If no data is selected, return
     auto current_data_item = _ui->selected_data->currentItem();
-
     if (!current_data_item) {
         return;
     }
 
+    // If no refiner is set for this data, return
     auto data = current_data_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
-
     auto it = _refiners.find(data);
     if (it == _refiners.end()) {
         return;
     }
 
+    // If no batches are set for this refiner, return
     auto&& refiner = it->second;
-
     auto&& batches =  refiner.batches();
     if (batches.empty()) {
         return;
     }
-
-    auto selected_batch = _ui->selected_batch->value();
-
-    auto&& batch = batches[selected_batch];
-
-    auto&& cost_function = batch.costFunction();
-    std::vector<double> iterations(cost_function.size());
-    std::iota(iterations.begin(),iterations.end(),0);
 
     QPen pen;
     pen.setColor(QColor("black"));
@@ -172,6 +205,14 @@ void FrameRefiner::slotSelectedBatchChanged()
 
     _ui->plot->addGraph();
     _ui->plot->graph(0)->setPen(pen);
+
+    // Get the cost function for this batch
+    auto selected_batch = _ui->selected_batch->value();
+    auto&& batch = batches[selected_batch];
+    auto&& cost_function = batch.costFunction();
+
+    std::vector<double> iterations(cost_function.size());
+    std::iota(iterations.begin(),iterations.end(),0);
 
     QVector<double> x_values = QVector<double>::fromStdVector(iterations);
     QVector<double> y_values = QVector<double>::fromStdVector(cost_function);
@@ -201,6 +242,11 @@ void FrameRefiner::slotSelectedFrameChanged(int selected_frame)
     _ui->selected_frame_slider->setValue(selected_frame);
 
     auto current_item = _ui->selected_data->currentItem();
+
+    // No data selected, return
+    if (!current_item) {
+        return;
+    }
 
     auto data = current_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
 
