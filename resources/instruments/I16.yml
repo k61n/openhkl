@@ -22,13 +22,13 @@ instrument:
         goniometer:
             name: delta-arm
             axis:
-                - name: delta
+                - name: delta-arm
                   type: rotation
                   direction: [1.0,0.0,0.0]
                   clockwise: false
                   physical: true
 
-                - name: gamma
+                - name: gamma-arm
                   type: rotation
                   direction: [0.0,0.0,1.0]
                   clockwise: false
@@ -36,7 +36,7 @@ instrument:
     sample:
         name: sample
         goniometer:
-            name: Kappa goniometer
+            name: kappa-goniometer
             axis:
                 - name: phi
                   type: rotation
@@ -77,16 +77,4 @@ instrument:
             fwhm:
                 value: 0.00901
                 units: ang
-        goniometer:
-            name: source
-            axis:
-                - name: x-offset
-                  type: translation
-                  direction: [1.0,0.0,0.0]
-                  physical: false
-
-                - name: y-offset
-                  type: translation
-                  direction: [0.0,1.0,0.0]
-                  physical: false
 ...

@@ -70,10 +70,8 @@ void AbsorptionWidget::readInfoFile(const std::string &filename)
         // Cout number of axes, validate with goniometer definition
         std::size_t numberAngles=std::count(line.begin(),line.end(),':');
         auto sample = _experiment->diffractometer()->sample();
-        std::size_t sampleAngles=sample->hasGonio() ? sample->gonio()->nPhysicalAxes() : 0;
-        if (numberAngles==0 || (numberAngles!=sampleAngles)) {
-            QMessageBox::critical(this, tr("NSXTool"),
-                                  tr("Number of goniometer axes in video file do not match instrument definition"));
+        if (numberAngles == 0) {
+            QMessageBox::critical(this, tr("NSXTool"), tr("Number of goniometer axes in video file do not match instrument definition"));
         }
         // Remove all occurences of ':' before reading
         line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
@@ -82,9 +80,9 @@ void AbsorptionWidget::readInfoFile(const std::string &filename)
             std::string name;
             double value;
             is >> name >> value;
-            if (!_experiment->diffractometer()->sample()->gonio()->hasPhysicalAxis(name)) {
-                QMessageBox::critical(this, tr("NSXTool"),
-                                      tr("Physical axes in video file do not match instrument definition"));
+            auto axis = _experiment->diffractometer()->sample()->gonio()->axis(name);
+            if (!axis) {
+                QMessageBox::critical(this, tr("NSXTool"), tr("Physical axes in video file do not match instrument definition"));
             }
         }
         // Get base directory where images are stored

@@ -107,32 +107,37 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
     auto source = _diffractometer->source();
 
     // This map relates the ids of the physical axis registered in the instrument definition file with their name
-    std::map<unsigned int,std::string> instrPhysAxisIds;
+    std::map<size_t,std::string> instrument_axis;
     if (detector && detector->hasGonio()) {
-        auto axisIdsToNames = detector->gonio()->physicalAxisIdToNames();
-        instrPhysAxisIds.insert(axisIdsToNames.begin(),axisIdsToNames.end());
+        auto axes = detector->gonio()->axes();
+        for (auto axis : axes) {
+            instrument_axis.insert(std::make_pair(axis->id(),axis->name()));
+        }
     }
 
     if (sample && sample->hasGonio()) {
-        auto axisIdsToNames = sample->gonio()->physicalAxisIdToNames();
-        instrPhysAxisIds.insert(axisIdsToNames.begin(),axisIdsToNames.end());
+        auto axes = sample->gonio()->axes();
+        for (auto axis : axes) {
+            instrument_axis.insert(std::make_pair(axis->id(),axis->name()));
+        }
     }
 
     if (source && source->hasGonio()) {
-        auto axisIdsToNames = source->gonio()->physicalAxisIdToNames();
-        instrPhysAxisIds.insert(axisIdsToNames.begin(),axisIdsToNames.end());
+        auto axes = source->gonio()->axes();
+        for (auto axis : axes) {
+            instrument_axis.insert(std::make_pair(axis->id(),axis->name()));
+        }
     }
 
-
-    // Check that every scanned axis has been defined in the instrumnet file. Otherwise, throws.
+    // Check that every scanned axis has been defined in the instrument file. Otherwise, throws.
     for (const auto& id: scannedAxisId) {
-        auto it = instrPhysAxisIds.find(id);
-        if (it == instrPhysAxisIds.end()) {
+        auto it = instrument_axis.find(id);
+        if (it == instrument_axis.end()) {
             throw std::runtime_error("The axis with id " + std::to_string(id) + " is not defined in instrument configuration file.");
         }
     }
 
-    // This map will store the values over the framess of each physical axis of the goniometers bound to the instrument (detector + sample + source)
+    // This map will store the values over the frames of each physical axis of the goniometers bound to the instrument (detector + sample + source)
     // 3 cases:
     //	1) a physical axis is not a scanned axis and its name is not defined in the metadata, then the corresponding values will
     //	   be a constant equal to 0
@@ -142,7 +147,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
     std::map<unsigned int,std::vector<double>> gonioValues;
 
     // Loop over the physical axis of the instrument
-    for (const auto& p : instrPhysAxisIds) {
+    for (auto&& p : instrument_axis) {
         // Case of a physical axis that is also a scanned axis
         // Prepare a vector that will be further set with the corresponding values
         auto it = std::find(scannedAxisId.begin(), scannedAxisId.end(), p.first);
@@ -155,7 +160,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
         // Case of a physical axis that is not a scanned axis.
         // The values for this axis will be a constant
         else {
-            // If the axis name is defined in the metadata, the contant will be the corresponding value
+            // If the axis name is defined in the metadata, the constant will be the corresponding value
             // other wise it will be 0
             double val = _metadata.isKey(p.second) ? _metadata.key<double>(p.second) : 0.0;
             // Data are given in deg for angles
@@ -188,14 +193,14 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
     // of the detector the corresponding values defined previously. The gathered values being further pushed as
     // a new detector state
     if (detector) {
-        auto detAxisIdsToNames = detector->gonio()->physicalAxesIds();
-        for (std::size_t f = 0; f < _nFrames; ++f) {
+        auto axes = detector->gonio()->axes();
+        for (size_t i = 0; i < _nFrames; ++i) {
             std::vector<double> detValues;
-            detValues.reserve(detAxisIdsToNames.size());
-            for (const auto& v: detAxisIdsToNames) {
-                detValues.push_back(gonioValues[v][f]);
+            detValues.reserve(axes.size());
+            for (auto axis : axes) {
+                detValues.push_back(gonioValues[axis->id()][i]);
             }
-            _detectorStates[f] = detValues;
+            _detectorStates[i] = detValues;
         }
     }
 
@@ -203,14 +208,14 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
     // of the sample the corresponding values defined previously. The gathered values being further pushed as
     // a new sample state
     if (sample) {
-        auto sampleAxisIdsToNames = sample->gonio()->physicalAxesIds();
-        for (std::size_t f = 0; f < _nFrames; ++f) {
+        auto axes = sample->gonio()->axes();
+        for (size_t i = 0; i < _nFrames; ++i) {
             std::vector<double> sampleValues;
-            sampleValues.reserve(sampleAxisIdsToNames.size());
-            for (const auto& v: sampleAxisIdsToNames) {
-                sampleValues.push_back(gonioValues[v][f]);
+            sampleValues.reserve(axes.size());
+            for (auto axis : axes) {
+                sampleValues.push_back(gonioValues[axis->id()][i]);
             }
-            _sampleStates[f] = sampleValues;
+            _sampleStates[i] = sampleValues;
         }
     }
 

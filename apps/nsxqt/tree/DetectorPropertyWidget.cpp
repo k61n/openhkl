@@ -19,7 +19,10 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
     ui->setupUi(this);
 
     auto detector = _detectorItem->experiment()->diffractometer()->detector();
+
     auto gonio = detector->gonio();
+
+    auto axes = gonio->axes();
 
     ui->lineEdit_H->setText(QString::number(detector->height())+" m");
     ui->lineEdit_W->setText(QString::number(detector->width())+" m");
@@ -31,15 +34,15 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
 
     //
     ui->tableWidget_Detector->setEditTriggers(QAbstractItemView::DoubleClicked);
-    ui->tableWidget_Detector->setRowCount(gonio->nAxes());
+    ui->tableWidget_Detector->setRowCount(axes.size());
 
     ui->tableWidget_Detector->setColumnCount(3);
     ui->tableWidget_Detector->verticalHeader()->setVisible(false);
 
-    for (unsigned int i = 0; i < gonio->nAxes(); ++i) {
-        auto axis=gonio->axis(i);
-        QTableWidgetItem* item0=new QTableWidgetItem();
-        item0->setData(Qt::EditRole, QString(axis->label().c_str()));
+    for (size_t i = 0; i < axes.size(); ++i) {
+        auto axis = axes[i];
+        QTableWidgetItem* item0 = new QTableWidgetItem();
+        item0->setData(Qt::EditRole, QString(axis->name().c_str()));
         if (axis->physical()) {
             item0->setBackgroundColor(QColor("#FFDDDD"));
         } else {
@@ -86,9 +89,8 @@ DetectorPropertyWidget::~DetectorPropertyWidget()
 
 void DetectorPropertyWidget::cellHasChanged(int i, int j)
 {
-    auto detector=_detectorItem->experiment()->diffractometer()->detector();
-    auto axis=detector->gonio()->axis(i);
-    // todo: fix this after offset refactor
+    Q_UNUSED(i)
+    Q_UNUSED(j)
 }
 
 void DetectorPropertyWidget::on_doubleSpinBox_Distance_valueChanged(double arg1)

@@ -18,20 +18,25 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
     _sampleItem(caller),
     ui(new Ui::SamplePropertyWidget)
 {
+
     ui->setupUi(this);
-    auto sample=_sampleItem->experiment()->diffractometer()->sample();
-    auto gonio=sample->gonio();
+
+    auto sample = _sampleItem->experiment()->diffractometer()->sample();
+
+    auto gonio = sample->gonio();
+
+    auto axes = gonio->axes();
 
     ui->tableWidget_Sample->setEditTriggers(QAbstractItemView::DoubleClicked);
-    ui->tableWidget_Sample->setRowCount(gonio->nAxes());
+    ui->tableWidget_Sample->setRowCount(axes.size());
 
     ui->tableWidget_Sample->setColumnCount(3);
     ui->tableWidget_Sample->verticalHeader()->setVisible(false);
 
-    for (unsigned int i=0;i<gonio->nAxes();++i) {
-        auto axis=gonio->axis(i);
-        QTableWidgetItem* item0=new QTableWidgetItem();
-        item0->setData(Qt::EditRole, QString(axis->label().c_str()));
+    for (size_t i = 0; i < axes.size(); ++i) {
+        auto axis = axes[i];
+        QTableWidgetItem* item0 = new QTableWidgetItem();
+        item0->setData(Qt::EditRole, QString(axis->name().c_str()));
         if (axis->physical()) {
             item0->setBackgroundColor(QColor("#FFDDDD"));
         } else {
@@ -49,7 +54,6 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
             } else {
                 os << "CCW";
             }
-            //isrot=true;
         }
         else if(dynamic_cast<nsx::TransAxis*>(axis)) {
             os << "T(";

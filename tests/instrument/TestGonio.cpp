@@ -31,12 +31,6 @@ int main()
     NSX_CHECK_CLOSE(result[2],3,tolerance);
     // Check that throws if the number of parameters is invalid
     NSX_CHECK_THROW(t.transform(nsx::DirectVector(0.0,0.0,0.0),{1,2}),std::range_error);
-    const auto a0 = t.axis(0);
-    const auto a1 = t.axis(1);
-    const auto a2 = t.axis(2);
-    NSX_CHECK_EQUAL(a0->label(),"x");
-    NSX_CHECK_EQUAL(a1->label(),"y");
-    NSX_CHECK_EQUAL(a2->label(),"z");
 
     // Simple goniometer as in Busing Levy
     nsx::Gonio g("Busing Levy convention");

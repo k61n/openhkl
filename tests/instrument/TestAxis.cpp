@@ -11,13 +11,13 @@ NSX_INIT_TEST
 class TestAxis: public nsx::Axis
 {
 public:
-    TestAxis(const std::string& label, bool physical);
+    TestAxis(const std::string& name, bool physical);
     ~TestAxis();
     TestAxis* clone() const;
-    Eigen::Transform<double,3,Eigen::Affine> homMatrix(double value) const;
+    Eigen::Transform<double,3,Eigen::Affine> affineMatrix(double value) const;
 };
 
-TestAxis::TestAxis(const std::string& label, bool physical) : Axis(label)
+TestAxis::TestAxis(const std::string& name, bool physical) : Axis(name)
 {
     setPhysical(physical);
 }
@@ -31,7 +31,7 @@ TestAxis* TestAxis::clone() const
     return new TestAxis(*this);
 }
 
-Eigen::Transform<double,3,Eigen::Affine> TestAxis::homMatrix(double value) const
+Eigen::Transform<double,3,Eigen::Affine> TestAxis::affineMatrix(double value) const
 {
     NSX_UNUSED(value);
 
@@ -41,9 +41,9 @@ Eigen::Transform<double,3,Eigen::Affine> TestAxis::homMatrix(double value) const
 int main()
 {
     TestAxis axis("Omega",true);
-    const std::string& label = axis.label();
+    const std::string& name = axis.name();
 
-    NSX_CHECK_EQUAL(label,"Omega");
+    NSX_CHECK_EQUAL(name,"Omega");
     Eigen::Vector3d v;
     v << 0,0,1;
     axis.setAxis(v);

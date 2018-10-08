@@ -89,7 +89,7 @@ FrameRefiner::FrameRefiner(ExperimentItem* experiment_item, const nsx::PeakList 
     _ui->sample_orientation->setRowCount(sample_axes.size());
     for (size_t i = 0; i < sample_axes.size(); ++i) {
         auto axes = sample_axes[i];
-        _ui->sample_orientation->setItem(i,0, new QTableWidgetItem(QString::fromStdString(axes->label())));
+        _ui->sample_orientation->setItem(i,0, new QTableWidgetItem(QString::fromStdString(axes->name())));
 
     }
 
@@ -100,7 +100,7 @@ FrameRefiner::FrameRefiner(ExperimentItem* experiment_item, const nsx::PeakList 
     _ui->detector_orientation->setRowCount(detector_axes.size());
     for (size_t i = 0; i < detector_axes.size(); ++i) {
         auto axes = detector_axes[i];
-        _ui->detector_orientation->setItem(i,0, new QTableWidgetItem(QString::fromStdString(axes->label())));
+        _ui->detector_orientation->setItem(i,0, new QTableWidgetItem(QString::fromStdString(axes->name())));
 
     }
 }
