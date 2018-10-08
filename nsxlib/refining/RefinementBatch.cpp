@@ -177,13 +177,17 @@ bool RefinementBatch::refine(unsigned int max_iter)
         _params.setKernel(constraintKernel());
     }
 
+    _cost_function.clear();
+    _cost_function.shrink_to_fit();
+
     min.initialize(_params, _peaks.size()*3);
     min.set_f([&](Eigen::VectorXd& fvec) {return residuals(fvec);});
     bool success = min.fit(max_iter);
     for (auto state : _states) {
         state.get().refined = true;
     }
-    *_cell = _cell->fromParameters(_u0, _uOffsets, _cellParameters);        
+    *_cell = _cell->fromParameters(_u0, _uOffsets, _cellParameters);
+
     return success;
 }
 
@@ -209,8 +213,6 @@ int RefinementBatch::residuals(Eigen::VectorXd &fvec)
             fvec(3*i+2) = 0.0;
         }
     }
-
-    _cost_function.clear();
 
     _cost_function.push_back(0.5*fvec.norm());
 

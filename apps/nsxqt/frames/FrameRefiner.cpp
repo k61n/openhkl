@@ -73,8 +73,6 @@ FrameRefiner::FrameRefiner(ExperimentItem* experiment_item, const nsx::PeakList 
     connect(_ui->selected_frame_slider,SIGNAL(valueChanged(int)),this,SLOT(slotSelectedFrameChanged(int)));
 
     connect(_ui->actions,SIGNAL(clicked(QAbstractButton*)),this,SLOT(slotActionClicked(QAbstractButton*)));
-
-    _ui->selected_data->setCurrentRow(0);
 }
 
 FrameRefiner::~FrameRefiner()
@@ -118,64 +116,83 @@ void FrameRefiner::slotSelectedDataChanged(int selected_data)
 
     auto data = current_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
 
-//    auto&& refiner = _refiners.at(data);
+    auto it = _refiners.find(data);
+    if (it == _refiners.end()) {
+        return;
+    }
 
-//    auto&& batches =  refiner.batches();
+    auto&& refiner = it->second;
 
-//    _ui->selected_batch->setMaximum(batches.size() - 1);
+    auto&& batches =  refiner.batches();
 
-//    slotSelectedBatchChanged();
+    _ui->selected_batch->setMaximum(batches.size() - 1);
+
+    slotSelectedBatchChanged();
 }
 
 void FrameRefiner::slotSelectedBatchChanged()
 {
-//    auto data = _ui->selected_data->currentItem()->data(Qt::UserRole).value<nsx::sptrDataSet>();
+    _ui->plot->clearGraphs();
 
-//    auto&& refiner = _refiners.at(data);
+    if (_refiners.empty()) {
+        return;
+    }
 
-//    auto&& batches =  refiner.batches();
+    auto current_data_item = _ui->selected_data->currentItem();
 
-//    auto selected_batch = _ui->selected_batch->value();
+    if (!current_data_item) {
+        return;
+    }
 
-//    auto&& batch = batches[selected_batch];
+    auto data = current_data_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
 
-//    auto&& cost_function = batch.costFunction();
-//    std::vector<double> iterations(cost_function.size());
-//    std::iota(iterations.begin(),iterations.end(),0);
+    auto it = _refiners.find(data);
+    if (it == _refiners.end()) {
+        return;
+    }
 
-//    QPen pen;
-//    pen.setColor(QColor("black"));
-//    pen.setWidth(2.0);
+    auto&& refiner = it->second;
 
-//    _ui->plot->clearGraphs();
+    auto&& batches =  refiner.batches();
+    if (batches.empty()) {
+        return;
+    }
 
-//    _ui->plot->addGraph();
-//    _ui->plot->graph(0)->setPen(pen);
-//    _ui->plot->graph(0)->setErrorType(QCPGraph::etBoth);
-//    _ui->plot->graph(0)->setLineStyle(QCPGraph::lsLine);
-//    _ui->plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 6));
+    auto selected_batch = _ui->selected_batch->value();
 
-//    QVector<double> x_values = QVector<double>::fromStdVector(iterations);
-//    QVector<double> y_values = QVector<double>::fromStdVector(cost_function);
+    auto&& batch = batches[selected_batch];
 
-//    _ui->plot->graph(0)->addData(x_values,y_values);
+    auto&& cost_function = batch.costFunction();
+    std::vector<double> iterations(cost_function.size());
+    std::iota(iterations.begin(),iterations.end(),0);
 
-//    _ui->plot->xAxis->setLabel("# iterations");
-//    _ui->plot->yAxis->setLabel("Cost function");
+    QPen pen;
+    pen.setColor(QColor("black"));
+    pen.setWidth(2.0);
 
-//    _ui->plot->plotLayout()->insertRow(0);
+    _ui->plot->addGraph();
+    _ui->plot->graph(0)->setPen(pen);
 
-//    _ui->plot->setNotAntialiasedElements(QCP::aeAll);
-//    QFont font;
-//    font.setStyleStrategy(QFont::NoAntialias);
-//    _ui->plot->xAxis->setTickLabelFont(font);
-//    _ui->plot->yAxis->setTickLabelFont(font);
+    QVector<double> x_values = QVector<double>::fromStdVector(iterations);
+    QVector<double> y_values = QVector<double>::fromStdVector(cost_function);
 
-//    _ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
+    _ui->plot->graph(0)->addData(x_values,y_values);
 
-//    _ui->plot->rescaleAxes();
+    _ui->plot->xAxis->setLabel("# iterations");
+    _ui->plot->yAxis->setLabel("Cost function");
 
-//    _ui->plot->replot();
+    _ui->plot->setNotAntialiasedElements(QCP::aeAll);
+
+    QFont font;
+    font.setStyleStrategy(QFont::NoAntialias);
+    _ui->plot->xAxis->setTickLabelFont(font);
+    _ui->plot->yAxis->setTickLabelFont(font);
+
+    _ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
+
+    _ui->plot->rescaleAxes();
+
+    _ui->plot->replot();
 }
 
 void FrameRefiner::slotSelectedFrameChanged(int selected_frame)
@@ -231,6 +248,7 @@ void FrameRefiner::refine()
         nsx::error()<<"No or not enough peaks selected for refining";
         return;
     }
+
     auto peaks_model = dynamic_cast<CollectedPeaksModel*>(_ui->peaks->model());
     auto&& peaks = peaks_model->peaks();
     nsx::PeakList selected_peaks;
@@ -239,6 +257,11 @@ void FrameRefiner::refine()
     }
 
     auto unit_cell = selected_peaks[0]->unitCell();
+
+    if (!unit_cell) {
+        nsx::error()<<"No unit cell set for the selected peaks";
+        return;
+    }
 
     auto&& frames_per_batch = _ui->nframes_per_batch->value();
 
@@ -323,13 +346,14 @@ void FrameRefiner::refine()
 
         if (success) {
             nsx::info() << "Successfully refined parameters for numor " << d->filename();
-
             int updated = refiner.updatePredictions(predicted_peaks);
             nsx::info() << "done; updated " << updated << " peaks";
         }  else {
             nsx::info() << "Failed to refine parameters for numor " << d->filename();
         }
     }
+
+    slotSelectedBatchChanged();
 
     // Update the peak table view
     QModelIndex topLeft = peaks_model->index(0, 0);
