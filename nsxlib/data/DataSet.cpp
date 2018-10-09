@@ -431,4 +431,9 @@ Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx)
     return new_frame;
 }
 
+std::shared_ptr<IDataReader> DataSet::dataReader() const
+{
+    return _reader;
+}
+
 } // end namespace nsx

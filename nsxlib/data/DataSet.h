@@ -103,6 +103,8 @@ public:
     std::vector<DetectorEvent> events(const std::vector<ReciprocalVector>& sample_qs) const;
     //! Return the sample-space q vector corresponding to a detector event
     ReciprocalVector computeQ(const DetectorEvent& ev) const;
+    //! Return the data reader used to set this dataset
+    std::shared_ptr<IDataReader> dataReader() const;
 
 private:
     bool _isOpened;
