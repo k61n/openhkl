@@ -10,9 +10,11 @@
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Gonio.h>
+#include <nsxlib/IDataReader.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/Sample.h>
+#include <nsxlib/Units.h>
 
 #include "CollectedPeaksModel.h"
 #include "DoubleItemDelegate.h"
@@ -80,8 +82,6 @@ FrameRefiner::FrameRefiner(ExperimentItem* experiment_item, const nsx::PeakList 
 
     connect(_ui->actions,SIGNAL(clicked(QAbstractButton*)),this,SLOT(slotActionClicked(QAbstractButton*)));
 
-    _ui->selected_data->setCurrentRow(0);
-
     DoubleItemDelegate* sample_axis_parameters_delegate = new DoubleItemDelegate();
     _ui->sample_orientation->setItemDelegateForColumn(1,sample_axis_parameters_delegate);
     _ui->sample_orientation->setItemDelegateForColumn(2,sample_axis_parameters_delegate);
@@ -101,8 +101,9 @@ FrameRefiner::FrameRefiner(ExperimentItem* experiment_item, const nsx::PeakList 
     for (size_t i = 0; i < detector_axes.size(); ++i) {
         auto axes = detector_axes[i];
         _ui->detector_orientation->setItem(i,0, new QTableWidgetItem(QString::fromStdString(axes->name())));
-
     }
+
+    _ui->selected_data->setCurrentRow(0);
 }
 
 FrameRefiner::~FrameRefiner()
@@ -146,22 +147,20 @@ void FrameRefiner::slotSelectedDataChanged(int selected_data)
 
     auto data = current_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
 
+    _ui->selected_batch->setMinimum(0);
+
     // No refiner set for this data, return.
     auto it = _refiners.find(data);
     if (it == _refiners.end()) {
-        return;
-    }
+        auto&& refiner = it->second;
 
-    auto&& refiner = it->second;
+        auto&& batches =  refiner.batches();
 
-    auto&& batches =  refiner.batches();
-
-    _ui->selected_batch->setMinimum(0);
-
-    // If this refiner has some batches defined then plot the cost function for the first of them
-    if (!batches.empty()) {
-        _ui->selected_batch->setMaximum(batches.size() - 1);
-        _ui->selected_batch->setValue(0);
+        // If this refiner has some batches defined then plot the cost function for the first of them
+        if (!batches.empty()) {
+            _ui->selected_batch->setMaximum(batches.size() - 1);
+            _ui->selected_batch->setValue(0);
+        }
     }
 
     auto max_frame = data->nFrames() - 1;
@@ -283,6 +282,22 @@ void FrameRefiner::slotSelectedFrameChanged(int selected_frame)
 
     double wavelength_offset = wavelength*(ni.norm() - 1.0);
     _ui->wavelength_offset->setValue(wavelength_offset);
+
+    auto&& sample_states = data->dataReader()->sampleStates();
+    auto&& sample_state = sample_states[selected_frame];
+    for (size_t i = 0; i < sample_state.size(); ++i) {
+        auto item = new QTableWidgetItem();
+        item->setData(Qt::DisplayRole,QVariant::fromValue(sample_state[i]/nsx::deg));
+        _ui->sample_orientation->setItem(i,1,item);
+    }
+
+    auto&& detector_states = data->dataReader()->detectorStates();
+    auto&& detector_state = detector_states[selected_frame];
+    for (size_t i = 0; i < detector_state.size(); ++i) {
+        auto item = new QTableWidgetItem();
+        item->setData(Qt::DisplayRole,QVariant::fromValue(detector_state[i]/nsx::deg));
+        _ui->detector_orientation->setItem(i,1,item);
+    }
 }
 
 void FrameRefiner::refine()
