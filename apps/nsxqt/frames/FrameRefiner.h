@@ -33,11 +33,7 @@ private slots:
 
     void slotActionClicked(QAbstractButton *button);
 
-    void slotSelectedDataChanged(int selected_data);
-
-    void slotSelectedBatchChanged();
-
-    void slotSelectedFrameChanged(int selected_frame);
+    void slotTabRemoved(int index);
 
 private:
 
@@ -54,6 +50,4 @@ private:
     Ui::FrameRefiner *_ui;
 
     ExperimentItem *_experiment_item;
-
-    std::map<nsx::sptrDataSet,nsx::Refiner> _refiners;
 };

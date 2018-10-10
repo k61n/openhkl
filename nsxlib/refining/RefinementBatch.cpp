@@ -184,8 +184,9 @@ bool RefinementBatch::refine(unsigned int max_iter)
     min.set_f([&](Eigen::VectorXd& fvec) {return residuals(fvec);});
     bool success = min.fit(max_iter);
     for (auto state : _states) {
-        state.get().refined = true;
+        state.get().refined = success;
     }
+
     *_cell = _cell->fromParameters(_u0, _uOffsets, _cellParameters);
 
     return success;
