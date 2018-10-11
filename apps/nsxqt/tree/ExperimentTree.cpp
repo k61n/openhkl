@@ -133,11 +133,17 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             QAction* filter = menu->addAction("Filter peaks");
             connect(filter, triggered, [=](){pitem->openPeakFilterDialog();});
 
-            QAction* autoindex = menu->addAction("FFT-autoindex peaks");
-            connect(autoindex, triggered, [=](){pitem->openAutoIndexingDialog();});
+            QMenu *indexing_menu = new QMenu("Indexing");
+            QAction* autoindex = indexing_menu->addAction("FFT auto indexer");
+            connect(autoindex, triggered, [=](){pitem->openAutoIndexingFrame();});
 
-            QAction* assign = menu->addAction("Autoindex existing lattice");
+            QAction* user_defined = indexing_menu->addAction("User defined cell parameters indexer");
+            connect(user_defined, triggered, [=](){pitem->openUserDefinedUnitCellIndexerFrame();});
+
+            QAction* assign = indexing_menu->addAction("Assign unit cell");
             connect(assign, triggered, [=](){pitem->autoAssignUnitCell();});
+
+            menu->addMenu(indexing_menu);
 
             QAction* refine = menu->addAction("Refine lattice and instrument parameters");
             connect(refine, triggered, [=](){pitem->refine();});
@@ -181,7 +187,6 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(transformationMatrix, &QAction::triggered, [=](){ucitem->openTransformationMatrixDialog();});
             connect(setTolerance, &QAction::triggered,[=](){ucitem->openIndexingToleranceDialog();});
             connect(group, triggered, [=](){ucitem->openSpaceGroupDialog();});
-
         }
         else if (NumorItem* nitem = dynamic_cast<NumorItem*>(item)) {
             QAction* export_hdf = menu->addAction("Export to HDF5...");            

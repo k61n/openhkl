@@ -33,6 +33,7 @@
 #include "ExperimentItem.h"
 #include "FrameAutoIndexer.h"
 #include "FrameRefiner.h"
+#include "FrameUserDefinedUnitCellIndexer.h"
 #include "GLSphere.h"
 #include "GLWidget.h"
 #include "InspectableTreeItem.h"
@@ -291,7 +292,7 @@ void PeaksItem::openPeakFilterDialog()
     dialog->raise();
 }
 
-void PeaksItem::openAutoIndexingDialog()
+void PeaksItem::openAutoIndexingFrame()
 {
     auto&& selected_peaks = selectedPeaks();
 
@@ -300,6 +301,17 @@ void PeaksItem::openAutoIndexingDialog()
     frame_autoindexer->show();
 
     frame_autoindexer->raise();
+}
+
+void PeaksItem::openUserDefinedUnitCellIndexerFrame()
+{
+    auto&& selected_peaks = selectedPeaks();
+
+    FrameUserDefinedUnitCellIndexer *frame = FrameUserDefinedUnitCellIndexer::create(experimentItem(), selected_peaks);
+
+    frame->show();
+
+    frame->raise();
 }
 
 void PeaksItem::refine()

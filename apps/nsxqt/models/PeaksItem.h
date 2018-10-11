@@ -19,7 +19,7 @@ public:
 
     nsx::PeakList selectedPeaks();
 
-    void openAutoIndexingDialog();
+    void openAutoIndexingFrame();
 
     void openPeakFilterDialog();
 
@@ -38,6 +38,8 @@ public:
     void refine();
 
     void autoAssignUnitCell();
+
+    void openUserDefinedUnitCellIndexerFrame();
 
     void normalizeToMonitor();
 };
