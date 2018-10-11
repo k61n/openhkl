@@ -30,7 +30,6 @@
 #pragma once
 
 #include <string>
-#include <utility>
 #include <vector>
 
 #include <yaml-cpp/yaml.h>
@@ -42,6 +41,14 @@
 #include "DataTypes.h"
 
 namespace nsx {
+
+//! Helper struct for storing the result of the sample gonio fit
+struct SampleGonioFit
+{
+    bool success;
+    std::vector<double> offsets;
+    std::vector<double> cost_function;
+};
 
 //! \brief Class used to describe an experiment sample, consisting of a unit cell and material. 
 class Sample: public Component {
@@ -77,7 +84,7 @@ public:
     //! Return the sample shape, described as a convex hull
     ConvexHull& shape();
 
-    std::pair<bool,std::vector<double>> fitGonioOffsets(const DataList& dataset, size_t n_iterations=1000, double tolerance=1.0e-6) const;
+    SampleGonioFit fitGonioOffsets(const DataList& dataset, size_t n_iterations=1000, double tolerance=1.0e-6) const;
 
 private:
 

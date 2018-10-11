@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>FrameRefiner</class>
- <widget class="QFrame" name="FrameRefiner">
+ <widget class="NSXQFrame" name="FrameRefiner">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -178,6 +178,11 @@
    <class>PeakTableView</class>
    <extends>QTableView</extends>
    <header>PeakTableView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>NSXQFrame</class>
+   <extends>QFrame</extends>
+   <header>NSXQFrame.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -25,6 +25,8 @@ public:
 
     void exploreInstrumentStates();
 
+    nsx::DataList allData();
+
     nsx::DataList selectedData();
 
     void convertToHDF5();

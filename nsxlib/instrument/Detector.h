@@ -45,6 +45,7 @@
 #include <Eigen/Dense>
 
 #include "Component.h"
+#include "DataTypes.h"
 #include "DetectorEvent.h"
 #include "DirectVector.h"
 #include "Enums.h"
@@ -52,6 +53,13 @@
 
 namespace nsx {
 
+//! Helper struct for storing the result of the sample gonio fit
+struct DetectorGonioFit
+{
+    bool success;
+    std::vector<double> offsets;
+    std::vector<double> cost_function;
+};
 
 //! \brief Base class for Detectors.
 class Detector: public Component {
@@ -144,6 +152,8 @@ public:
     double baseline() const;
     //! Return the detector gain. Measured count = gain * (neutron count) + baseline
     double gain() const;
+
+    DetectorGonioFit fitGonioOffsets(const DataList& dataset, size_t n_iterations=1000, double tolerance=1.0e-6) const;
 
 protected:
 

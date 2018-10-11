@@ -2,6 +2,7 @@
 #include <QIcon>
 
 #include "DialogIsotopesDatabase.h"
+#include "FrameSampleGlobalOffsets.h"
 #include "SampleItem.h"
 #include "SamplePropertyWidget.h"
 #include "SampleShapeItem.h"
@@ -40,4 +41,13 @@ void SampleItem::openIsotopesDatabase()
     if (!dialog_ptr->exec()) {
         return;
     }
+}
+
+void SampleItem::openSampleGlobalOffsetsFrame()
+{
+    FrameSampleGlobalOffsets *frame = FrameSampleGlobalOffsets::create(experimentItem());
+
+    frame->show();
+
+    frame->raise();
 }

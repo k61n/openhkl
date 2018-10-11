@@ -160,6 +160,12 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
         else if (SampleItem* sitem = dynamic_cast<SampleItem*>(item)) {
             QAction* openIsotopesDatabase = menu->addAction("Open isotopes database");
             connect(openIsotopesDatabase, &QAction::triggered, [=](){sitem->openIsotopesDatabase();});
+            QAction* openSampleGlobalOffsets = menu->addAction("Sample goniometer global offsets");
+            connect(openSampleGlobalOffsets, &QAction::triggered, [=](){sitem->openSampleGlobalOffsetsFrame();});
+        }
+        else if (DetectorItem* detector_item = dynamic_cast<DetectorItem*>(item)) {
+            QAction* openDetectorGlobalOffsets = menu->addAction("Detector goniometer global offsets");
+            connect(openDetectorGlobalOffsets, &QAction::triggered, [=](){detector_item->openDetectorGlobalOffsetsFrame();});
         }
         else if (UnitCellItem* ucitem = dynamic_cast<UnitCellItem*>(item)) {
             QAction* info = menu->addAction("Info");

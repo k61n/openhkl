@@ -1,12 +1,5 @@
 #pragma once
 
-#include <memory>
-#include <string>
-
-#include <QString>
-
-#include <nsxlib/InstrumentTypes.h>
-
 #include "InspectableTreeItem.h"
 
 class QWidget;
@@ -17,4 +10,6 @@ public:
 
     explicit DetectorItem();
     QWidget* inspectItem() override;
+
+    void openDetectorGlobalOffsetsFrame();
 };

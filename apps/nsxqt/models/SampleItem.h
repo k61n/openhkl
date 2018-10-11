@@ -15,4 +15,6 @@ public:
     QWidget* inspectItem() override;
 
     void openIsotopesDatabase();
+
+    void openSampleGlobalOffsetsFrame();
 };

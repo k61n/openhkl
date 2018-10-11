@@ -59,7 +59,7 @@ ConvexHull& Sample::shape()
     return _sampleShape;
 }
 
-std::pair<bool,std::vector<double>> Sample::fitGonioOffsets(const DataList& dataset, size_t n_iterations, double tolerance) const
+SampleGonioFit Sample::fitGonioOffsets(const DataList& dataset, size_t n_iterations, double tolerance) const
 {
     auto sample_gonio = gonio();
     size_t n_axes = sample_gonio->axes().size();
@@ -68,7 +68,7 @@ std::pair<bool,std::vector<double>> Sample::fitGonioOffsets(const DataList& data
     // No data provided, return zero offsets
     if (dataset.empty()) {
         nsx::info()<<"No data provided, offsets set to zero";
-        return std::make_pair(false,fitted_offsets);
+        return {false,std::move(fitted_offsets),{}};
     }
 
     size_t n_selected_states(0);
@@ -84,7 +84,7 @@ std::pair<bool,std::vector<double>> Sample::fitGonioOffsets(const DataList& data
 
     if (n_selected_states < n_axes) {
         nsx::info()<<"No or not enough refined states found in the dataset for a reliable fit, offsets set to zero";
-        return std::make_pair(false,fitted_offsets);
+        return {false,std::move(fitted_offsets),{}};
     }
 
     std::vector<Eigen::Matrix3d> selected_orientations;
@@ -106,8 +106,11 @@ std::pair<bool,std::vector<double>> Sample::fitGonioOffsets(const DataList& data
         }
     }
 
+    std::vector<double> cost_function;
+    cost_function.reserve(n_iterations);
+
     // Lambda to compute residuals
-    auto residuals = [sample_gonio, &fitted_offsets, selected_orientations, selected_states] (Eigen::VectorXd& f) -> int
+    auto residuals = [sample_gonio, &fitted_offsets, selected_orientations, selected_states, &cost_function] (Eigen::VectorXd& f) -> int
     {
         int n_obs = f.size();
         // Just duplicate the 0-residual to reach a "sufficient" amount of data points
@@ -118,6 +121,8 @@ std::pair<bool,std::vector<double>> Sample::fitGonioOffsets(const DataList& data
             Eigen::Matrix3d fitted_sample_orientation = sample_gonio->affineMatrix(real_values).rotation();
             f(i) = (fitted_sample_orientation - selected_orientations[i]).norm();
         }
+
+        cost_function.push_back(0.5*f.norm());
 
         return 0;
     };
@@ -141,9 +146,10 @@ std::pair<bool,std::vector<double>> Sample::fitGonioOffsets(const DataList& data
 
     if (!success) {
         nsx::error()<<"Failed to fit sample orientation offsets";
-        return std::make_pair(false,fitted_offsets);
+        return {false,std::move(fitted_offsets),{}};
     }
 
-    return std::make_pair(true,fitted_offsets);}
+    return {true,std::move(fitted_offsets),std::move(cost_function)};
+}
 
 } // end namespace nsx

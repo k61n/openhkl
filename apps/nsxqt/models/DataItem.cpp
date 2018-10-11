@@ -200,6 +200,17 @@ void DataItem::findPeaks()
     frame->show();
 }
 
+nsx::DataList DataItem::allData()
+{
+    nsx::DataList data;
+    for (int i = 0; i < rowCount(); ++i) {
+        if (auto numor_item = dynamic_cast<NumorItem*>(child(i))) {
+            data.push_back(numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>());
+        }
+    }
+    return data;
+}
+
 nsx::DataList DataItem::selectedData()
 {
     nsx::DataList selectedNumors;

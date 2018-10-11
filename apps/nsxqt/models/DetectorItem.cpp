@@ -2,6 +2,7 @@
 
 #include "DetectorItem.h"
 #include "DetectorPropertyWidget.h"
+#include "FrameDetectorGlobalOffsets.h"
 
 DetectorItem::DetectorItem() : InspectableTreeItem()
 {
@@ -23,4 +24,14 @@ DetectorItem::DetectorItem() : InspectableTreeItem()
 QWidget* DetectorItem::inspectItem()
 {
     return new DetectorPropertyWidget(this);
+}
+
+
+void DetectorItem::openDetectorGlobalOffsetsFrame()
+{
+    FrameDetectorGlobalOffsets *frame = FrameDetectorGlobalOffsets::create(experimentItem());
+
+    frame->show();
+
+    frame->raise();
 }
