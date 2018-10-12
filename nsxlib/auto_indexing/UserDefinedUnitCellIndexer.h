@@ -38,7 +38,7 @@ public:
 
 private:
 
-    std::vector<std::pair<Eigen::Matrix3d,Eigen::Matrix3d>> index(const std::vector<ReciprocalVector>& q_vectors, double wavelength) const;
+    std::vector<std::pair<Eigen::Matrix3d,Eigen::Matrix3d>> index(const std::multimap<double,Eigen::RowVector3d>& q_vectors_mmap, double wavelength) const;
 
     bool match_triplets(const Eigen::Matrix3d& b_triplet, const Eigen::Matrix3d& bu_triplet, Eigen::Matrix3d& b_matrix, Eigen::Matrix3d& bu_matrix) const;
 

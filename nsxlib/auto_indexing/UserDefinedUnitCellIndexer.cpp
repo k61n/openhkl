@@ -1,5 +1,6 @@
 #include <iostream>
 #include <limits>
+#include <map>
 #include <stdexcept>
 
 #include "Peak3D.h"
@@ -141,13 +142,13 @@ bool UserDefinedUnitCellIndexer::match_triplets(const Eigen::Matrix3d& b_triplet
     return false;
 }
 
-std::vector<indexer_solution> UserDefinedUnitCellIndexer::index(const std::vector<ReciprocalVector>& q_vectors, double wavelength) const
+std::vector<indexer_solution> UserDefinedUnitCellIndexer::index(const std::multimap<double,Eigen::RowVector3d>& q_vectors_mmap, double wavelength) const
 {
     // Compute the dmin and dmax form the input q vectors
     double dmin(std::numeric_limits<double>::infinity());
     double dmax(-std::numeric_limits<double>::infinity());
-    for (auto&& q_vector : q_vectors) {
-        const double d = 1.0/q_vector.rowVector().norm();
+    for (auto&& p : q_vectors_mmap) {
+        const double d = 1.0/p.first;
         dmin = std::min(d,dmin);
         dmax = std::max(d,dmax);
     }
@@ -175,13 +176,25 @@ std::vector<indexer_solution> UserDefinedUnitCellIndexer::index(const std::vecto
 
         b_triplet.row(0) = predicted_q_vectors.at(i);
 
+        const double qi_norm = b_triplet.row(0).norm();
+        auto lit_i = q_vectors_mmap.lower_bound(qi_norm*(1.0-_distance_tolerance));
+        auto uit_i = q_vectors_mmap.upper_bound(qi_norm*(1.0+_distance_tolerance));
+
         for (size_t j = i+1; j < predicted_q_vectors.size()-1; ++j) {
 
             b_triplet.row(1) = predicted_q_vectors.at(j);
 
+            const double qj_norm = b_triplet.row(1).norm();
+            auto lit_j = q_vectors_mmap.lower_bound(qj_norm*(1.0-_distance_tolerance));
+            auto uit_j = q_vectors_mmap.upper_bound(qj_norm*(1.0+_distance_tolerance));
+
             for (size_t k = j+1; k < predicted_q_vectors.size(); ++k) {
 
                 b_triplet.row(2) = predicted_q_vectors.at(k);
+
+                const double qk_norm = b_triplet.row(2).norm();
+                auto lit_k = q_vectors_mmap.lower_bound(qk_norm*(1.0-_distance_tolerance));
+                auto uit_k = q_vectors_mmap.upper_bound(qk_norm*(1.0+_distance_tolerance));
 
                 double det_b_triplet = b_triplet.determinant();
                 if (std::fabs(det_b_triplet) < 1.0e-6) {
@@ -191,17 +204,17 @@ std::vector<indexer_solution> UserDefinedUnitCellIndexer::index(const std::vecto
                 Eigen::Matrix3d bu_triplet;
 
                 // Triple loop over the experimental q vectors to build experimental q triplets which will be match over the predicted q-triplet (aka qe)
-                for (size_t ii = 0; ii < q_vectors.size()-2; ++ii) {
+                for (auto it_i = lit_i; it_i != uit_i; ++it_i) {
 
-                    bu_triplet.row(0)  = q_vectors.at(ii).rowVector();
+                    bu_triplet.row(0)  = it_i->second;;
 
-                    for (size_t jj = ii+1; jj < q_vectors.size()-1; ++jj) {
+                    for (auto it_j = lit_j; it_j != uit_j; ++it_j) {
 
-                        bu_triplet.row(1)  = q_vectors.at(jj).rowVector();
+                        bu_triplet.row(1)  = it_j->second;
 
-                        for (size_t kk = jj+1; kk < q_vectors.size(); ++kk) {
+                        for (auto it_k = lit_k; it_k != uit_k; ++it_k) {
 
-                            bu_triplet.row(2)  = q_vectors.at(kk).rowVector();
+                            bu_triplet.row(2)  = it_k->second;
 
                             double det_bu_triplet = bu_triplet.determinant();
                             if (std::fabs(det_bu_triplet) < 1.0e-6) {
@@ -242,7 +255,13 @@ void UserDefinedUnitCellIndexer::run(const std::vector<ReciprocalVector>& q_vect
         throw std::runtime_error("Negative wavelength value");
     }
 
-    auto solutions = index(q_vectors,wavelength);
+    std::multimap<double,Eigen::RowVector3d> q_vectors_mmap;
+    for (auto q_vector : q_vectors) {
+        Eigen::RowVector3d row_vect = q_vector.rowVector();
+        q_vectors_mmap.emplace(row_vect.norm(),row_vect);
+    }
+
+    auto solutions = index(q_vectors_mmap,wavelength);
 
     for (auto&& solution : solutions) {
 

@@ -50,7 +50,7 @@ int main()
 
     nsx::UnitCell uc(a,b,c,alpha,beta,gamma);
 
-    const double dmin =  0.98;
+    const double dmin =  0.95;
     const double dmax = 1.00;
 
     auto hkls = uc.generateReflectionsInShell(dmin,dmax,wavelength);
