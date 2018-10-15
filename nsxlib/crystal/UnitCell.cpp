@@ -85,7 +85,7 @@ UnitCell UnitCell::interpolate(const UnitCell &uc1, const UnitCell &uc2, double 
         ch += parameters(i)*kernel.col(i);
     }
 
-    uc.setBasis(u_matrix*uc._A*uc._NP);
+    uc.setBasis(u_matrix*uc._a*uc._NP);
 
     return uc;
 }
@@ -129,15 +129,17 @@ UnitCellCharacter::UnitCellCharacter(double g00_, double g01_, double g02_, doub
     gamma = std::acos(g01 / a / b);
 }
 
-UnitCell::UnitCell(const Eigen::Matrix3d& b, bool reciprocal): UnitCell()
+UnitCell::UnitCell(const Eigen::Matrix3d& basis, bool reciprocal): UnitCell()
 {
-    _A = reciprocal ? b.inverse() : b;
-    _B = reciprocal ? b : b.inverse();
+    // If reciprocal is false basis must be column formed, upper triangular
+    _a = reciprocal ? basis.inverse() : basis;
+    // If reciprocal is true basis must be row formed, lower triangular
+    _b_transposed = reciprocal ? basis : basis.inverse();
 }
 
 UnitCell::UnitCell():
-    _A(Eigen::Matrix3d::Identity()),
-    _B(Eigen::Matrix3d::Identity()),
+    _a(Eigen::Matrix3d::Identity()),
+    _b_transposed(Eigen::Matrix3d::Identity()),
     _NP(Eigen::Matrix3d::Identity()),
     _material(),
     _centring(LatticeCentring::P),
@@ -288,7 +290,7 @@ UnitCell UnitCell::interpolate(sptrDataSet data, double frame)
         ch += parameters(i)*kernel.col(i);
     }
 
-    uc.setBasis(u_matrix*uc._A*uc._NP);
+    uc.setBasis(u_matrix*uc._a*uc._NP);
 
     return uc;
 }
@@ -318,11 +320,11 @@ void UnitCell::setParameters(double a, double b, double c, double alpha, double 
     const double sbs = std::sin(std::acos(cbs));
     const double sgs = std::sin(std::acos(cgs));
 
-    _B << as    ,         0,   0,
-          bs*cgs,    bs*sgs,   0,
-          cs*cbs,-cs*sbs*ca, 1/c;
+    _b_transposed << as    ,         0,   0,
+                     bs*cgs,    bs*sgs,   0,
+                     cs*cbs,-cs*sbs*ca, 1/c;
 
-    _A = _B.inverse();
+    _a = _b_transposed.inverse();
 }
 
 void UnitCell::setReciprocalParameters(double as, double bs, double cs, double alphas, double betas, double gammas)
@@ -342,12 +344,12 @@ void UnitCell::setReciprocalParameters(double as, double bs, double cs, double a
 
     const double c = sgs/metric_factor/cs;
 
-    _B << as    ,          0,   0,
-          bs*cgs,     bs*sgs,   0,
-          cs*cbs, -cs*sbs*ca, 1/c;
+    _b_transposed << as    ,          0,   0,
+                     bs*cgs,     bs*sgs,   0,
+                     cs*cbs, -cs*sbs*ca, 1/c;
 
 
-    _A = _B.inverse();
+    _a = _b_transposed.inverse();
 }
 
 void UnitCell::setMetric(double g00, double g01, double g02, double g11, double g12, double g22)
@@ -426,7 +428,7 @@ void UnitCell::printSelf(std::ostream& os) const
     os << std::fixed << std::setw(10) << std::setprecision(5) << rc.beta/deg;
     os << std::fixed << std::setw(10) << std::setprecision(5) << rc.gamma/deg << std::endl;
     os << "Reciprocal basis (row vectors):" << std::endl;
-    os << _B << std::endl;
+    os << _b_transposed << std::endl;
     //
     if (_material) {
         os << *(_material) << std::endl;
@@ -459,7 +461,7 @@ std::vector<MillerIndex> UnitCell::generateReflectionsInShell(double dmin, doubl
         for (int k = -hkl_max; k <= hkl_max; ++k) {
             for (int l = -hkl_max; l <= hkl_max; ++l) {
                 MillerIndex hkl(h, k, l);
-                Eigen::RowVector3d q = hkl.rowVector().cast<double>()*_B;
+                Eigen::RowVector3d q = hkl.rowVector().cast<double>()*_b_transposed;
                 const double d = 1.0 / q.norm();
 
                 const double sin_theta = wavelength / (2.0 * d);
@@ -496,8 +498,8 @@ std::vector<MillerIndex> UnitCell::generateReflectionsInShell(double dmin, doubl
 
 double UnitCell::angle(const Eigen::RowVector3d& hkl1, const Eigen::RowVector3d& hkl2) const
 {
-    auto q1=hkl1*_B;
-    auto q2=hkl2*_B;
+    auto q1=hkl1*_b_transposed;
+    auto q2=hkl2*_b_transposed;
 
     // Safe guard for avoiding nan with acos
     double a_dot_b_over_ab = q1.dot(q2)/q1.norm()/q2.norm();
@@ -593,7 +595,7 @@ UnitCell UnitCell::applyNiggliConstraints() const
     
     // geometric mean of side-lengths of unit cell & reciprocal unit cell
     // we use these to scale the residuals in the fitting function below   
-    const double b = std::pow(std::fabs(_B.determinant()), 1.0/3.0);
+    const double b = std::pow(std::fabs(_b_transposed.determinant()), 1.0/3.0);
 
     // The orientation matrix (in direct space)
     Eigen::Matrix3d U = niggliOrientation();
@@ -611,7 +613,7 @@ UnitCell UnitCell::applyNiggliConstraints() const
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
-                residuals(3*i+j) = (B(i,j) - _B(i, j)) / b;                
+                residuals(3*i+j) = (B(i,j) - _b_transposed(i, j)) / b;
             }
         } 
         return 0;
@@ -641,7 +643,7 @@ UnitCell UnitCell::applyNiggliConstraints() const
     nsx::UnitCell new_uc = fromParameters(U, uOffset, p);
 
     // check if the new UC is close to the old one
-    const double delta = (new_uc.reciprocalBasis()-_B).norm() / _B.norm();
+    const double delta = (new_uc.reciprocalBasis()-_b_transposed).norm() / _b_transposed.norm();
 
     if (delta < 0.1) {
         return new_uc;
@@ -651,12 +653,12 @@ UnitCell UnitCell::applyNiggliConstraints() const
 
 Eigen::RowVector3d UnitCell::index(const ReciprocalVector& q) const
 {
-    return q.rowVector()*_A;
+    return q.rowVector()*_a;
 }
 
 Eigen::RowVector3d UnitCell::fromIndex(const Eigen::RowVector3d& hkl) const
 {
-    return hkl*_B;
+    return hkl*_b_transposed;
 }
     
 UnitCellCharacter UnitCell::character() const
@@ -676,39 +678,39 @@ UnitCellCharacter UnitCell::reciprocalCharacter() const
 
 double UnitCell::volume() const
 {
-    return std::fabs(_A.determinant());
+    return std::fabs(_a.determinant());
 }
 
 Eigen::Matrix3d UnitCell::metric() const
 {
-    return _A.transpose()*_A;
+    return _a.transpose()*_a;
 }
 
 Eigen::Matrix3d UnitCell::reciprocalMetric() const
 {
-    return _B*_B.transpose();
+    return _b_transposed*_b_transposed.transpose();
 }
 
 const Eigen::Matrix3d& UnitCell::basis() const
 {
-    return _A;
+    return _a;
 }
 
 const Eigen::Matrix3d& UnitCell::reciprocalBasis() const
 {
-    return _B;
+    return _b_transposed;
 }
 
-void UnitCell::setReciprocalBasis(const Eigen::Matrix3d& B)
+void UnitCell::setReciprocalBasis(const Eigen::Matrix3d& b_transposed)
 {
-    _B = B;
-    _A = B.inverse();
+    _b_transposed = b_transposed;
+    _a = b_transposed.inverse();
 }
 
 void UnitCell::transform(const Eigen::Matrix3d& P)
 {
-    _A = _A*P;
-    _B = _A.inverse();
+    _a = _a*P;
+    _b_transposed = _a.inverse();
 }
 
 int UnitCell::reduce(bool niggli_only, double niggliTolerance, double gruberTolerance)
@@ -744,10 +746,10 @@ int UnitCell::reduce(bool niggli_only, double niggliTolerance, double gruberTole
     return _niggli.number;
 }
 
-void UnitCell::setBasis(const Eigen::Matrix3d& b)
+void UnitCell::setBasis(const Eigen::Matrix3d& a)
 {
-    _A = b;
-    _B = b.inverse();
+    _a = a;
+    _b_transposed = a.inverse();
 }
 
 const NiggliCharacter& UnitCell::niggliCharacter() const
@@ -757,12 +759,12 @@ const NiggliCharacter& UnitCell::niggliCharacter() const
 
 Eigen::Matrix3d UnitCell::niggliBasis() const
 {
-    return _A*_NP.inverse();
+    return _a*_NP.inverse();
 }
 
 Eigen::Matrix3d UnitCell::reciprocalNiggliBasis() const
 {
-    return _NP*_B;
+    return _NP*_b_transposed;
 }
 
 bool UnitCell::equivalent(const UnitCell& other, double tolerance) const
@@ -807,8 +809,8 @@ const Eigen::Matrix3d& UnitCell::niggliTransformation() const
 
 Eigen::Matrix3d UnitCell::orientation() const
 {
-    Eigen::Matrix3d Q = _A.householderQr().householderQ();
-    Eigen::Matrix3d R = Q.transpose() * _A;
+    Eigen::Matrix3d Q = _a.householderQr().householderQ();
+    Eigen::Matrix3d R = Q.transpose() * _a;
 
     for (auto i = 0; i < 3; ++i) {
         if (R(i,i) < 0) {
@@ -820,7 +822,7 @@ Eigen::Matrix3d UnitCell::orientation() const
 
 Eigen::Matrix3d UnitCell::niggliOrientation() const
 {
-    const Eigen::Matrix3d NA  =_A*_NP.inverse();
+    const Eigen::Matrix3d NA = _a*_NP.inverse();
     Eigen::Matrix3d Q = NA.householderQr().householderQ();
     Eigen::Matrix3d R = Q.transpose() * NA;
 
@@ -835,7 +837,7 @@ Eigen::Matrix3d UnitCell::niggliOrientation() const
 Eigen::VectorXd UnitCell::parameters() const
 {
     // note that we use NP to transform to the Niggli cell (in case we are currently a Gruber cell)
-    Eigen::Matrix3d A0 = _A*_NP.inverse();
+    Eigen::Matrix3d A0 = _a*_NP.inverse();
     Eigen::Matrix3d G = A0.transpose()*A0;
     Eigen::VectorXd ch(6);
     ch << G(0,0), G(1,1), G(2,2), G(1,2), G(0,2), G(0,1);
@@ -891,7 +893,7 @@ UnitCell UnitCell::fromParameters(const Eigen::Matrix3d& U0, const Eigen::Vector
     // create new unit cell
     UnitCell uc(*this);
     uc.setMetric(ch(0), ch(5), ch(4), ch(1), ch(3), ch(2));
-    uc.setBasis(U*uc._A*_NP);
+    uc.setBasis(U*uc._a*_NP);
 
     return uc;
 }

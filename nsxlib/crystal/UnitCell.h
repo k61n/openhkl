@@ -114,8 +114,8 @@ public:
     void setParameters(double a, double b, double c, double alpha, double beta, double gamma);
     //! Set reciprocal lattice parameters
     void setReciprocalParameters(double as, double bs, double cs, double alphas, double betas, double gammas);
-    //! Set the reciprocal basis
-    void setReciprocalBasis(const Eigen::Matrix3d& B);
+    //! Set the reciprocal space basis (lower triangular row form)
+    void setReciprocalBasis(const Eigen::Matrix3d& b_transposed);
     //! Set lattice centering type
     void setLatticeCentring(LatticeCentring centring);
     //! Set Bravais type
@@ -162,8 +162,8 @@ public:
     double indexingTolerance() const;
     //! Return the real-space basis
     const Eigen::Matrix3d& basis() const;
-    //! Set the real-space basis
-    void setBasis(const Eigen::Matrix3d& b);
+    //! Set the real-space basis (upper tirangular, column form)
+    void setBasis(const Eigen::Matrix3d& a);
     //! Return the reciprocal bases
     const Eigen::Matrix3d& reciprocalBasis() const;
     //! Set lattice parameters from metric tensor
@@ -230,9 +230,9 @@ public:
 
 private:
     //! Real-space basis of column vectors
-    Eigen::Matrix3d _A;
+    Eigen::Matrix3d _a;
     //! Reciprocal-space basis of row vectors
-    Eigen::Matrix3d _B;
+    Eigen::Matrix3d _b_transposed;
     //! _NP is the transformation such that _A*_NP.inverse() is the Niggli cell
     Eigen::Matrix3d _NP; 
 
