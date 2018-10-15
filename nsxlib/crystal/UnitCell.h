@@ -112,6 +112,8 @@ public:
     UnitCell(const UnitCell& other) = default;
     //! Set lattice parameters
     void setParameters(double a, double b, double c, double alpha, double beta, double gamma);
+    //! Set reciprocal lattice parameters
+    void setReciprocalParameters(double as, double bs, double cs, double alphas, double betas, double gammas);
     //! Set the reciprocal basis
     void setReciprocalBasis(const Eigen::Matrix3d& B);
     //! Set lattice centering type
