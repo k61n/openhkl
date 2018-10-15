@@ -55,6 +55,7 @@ void UserDefinedUnitCellIndexer::setAngularTolerance(double angular_tolerance) {
 
 bool UserDefinedUnitCellIndexer::match_triplets(const Eigen::Matrix3d& b_triplet, const Eigen::Matrix3d& bu_triplet, Eigen::Matrix3d& b_matrix, Eigen::Matrix3d& bu_matrix) const
 {
+/*
     const double volume_tolerance = _distance_tolerance * _distance_tolerance * _distance_tolerance;
 
     const double det_b_triplet = b_triplet.determinant();
@@ -64,22 +65,29 @@ bool UserDefinedUnitCellIndexer::match_triplets(const Eigen::Matrix3d& b_triplet
     if (std::fabs((det_bu_triplet - det_b_triplet)/det_b_triplet) > volume_tolerance) {
         return false;
     }
-
+*/
     for (size_t i = 0; i < 3; ++i) {
+
         const double q1i_norm = b_triplet.row(i).norm();
+
         for (size_t j = 0; j < 3; ++j) {
+
             if (i==j) {
                 continue;
             }
+
             const double q1j_norm = b_triplet.row(j).norm();
 
             for (size_t k = 0; k < 3; ++k) {
+
                 if (i==k || j==k) {
                     continue;
                 }
+
                 const double q1k_norm = b_triplet.row(k).norm();
 
                 for (size_t ii = 0; ii < 3; ++ii) {
+
                     const double q2i_norm = bu_triplet.row(ii).norm();
 
                     // Try to match triplet1 and triplet2 i vectors, if the match fails skip this experimental triplet
@@ -112,6 +120,7 @@ bool UserDefinedUnitCellIndexer::match_triplets(const Eigen::Matrix3d& b_triplet
                             const double q1iq1j_angle = std::acos(b_triplet.row(i).dot(b_triplet.row(j))/q1i_norm/q1j_norm);
                             const double q2iq2j_angle = std::acos(bu_triplet.row(ii).dot(bu_triplet.row(jj))/q2i_norm/q2j_norm);
 
+
                             if (std::fabs((q2iq2j_angle - q1iq1j_angle)/q1iq1j_angle) > _angular_tolerance) {
                                 continue;
                             }
@@ -120,6 +129,13 @@ bool UserDefinedUnitCellIndexer::match_triplets(const Eigen::Matrix3d& b_triplet
                             const double q2iq2k_angle = std::acos(bu_triplet.row(ii).dot(bu_triplet.row(kk))/q2i_norm/q2k_norm);
 
                             if (std::fabs((q2iq2k_angle - q1iq1k_angle)/q1iq1k_angle) > _angular_tolerance) {
+                                continue;
+                            }
+
+                            const double q1jq1k_angle = std::acos(b_triplet.row(j).dot(b_triplet.row(k))/q1j_norm/q1k_norm);
+                            const double q2jq2k_angle = std::acos(bu_triplet.row(jj).dot(bu_triplet.row(kk))/q2j_norm/q2k_norm);
+
+                            if (std::fabs((q2jq2k_angle - q1jq1k_angle)/q1jq1k_angle) > _angular_tolerance) {
                                 continue;
                             }
 
@@ -230,10 +246,8 @@ std::vector<indexer_solution> UserDefinedUnitCellIndexer::index(const std::multi
                             // The predicted and experimental triplets match, keep that solution
                             solutions.emplace_back(b_matrix,bu_matrix);
                             if (solutions.size() >= _n_solutions) {
-                                std::cout<<solutions.size()<<" "<<_n_solutions<<std::endl;
                                 return solutions;
                             }
-
 
                         }
                     }
@@ -268,12 +282,7 @@ void UserDefinedUnitCellIndexer::run(const std::vector<ReciprocalVector>& q_vect
         auto&& b_matrix = solution.first;
         auto&& bu_matrix = solution.second;
 
-
-        auto QR = b_matrix.colPivHouseholderQr();
-
-        Eigen::Matrix3d U = QR.solve(bu_matrix);
-
-        std::cout<<U<<std::endl;
+        break;
     }
 }
 

@@ -38,11 +38,19 @@ Eigen::Matrix3d make_rotation(Eigen::Vector3d angles)
 
 int main()
 {
-    const double a =  5.557;
-    const double b =  5.770;
-    const double c = 16.138;
+//    const double a =  5.557;
+//    const double b =  5.770;
+//    const double c = 16.138;
 
-    const double alpha = 96.314*nsx::deg;
+    const double a = 10.0;
+    const double b = 10.0;
+    const double c = 10.0;
+
+//    const double alpha = 96.314*nsx::deg;
+//    const double beta  = 90.000*nsx::deg;
+//    const double gamma = 90.000*nsx::deg;
+
+    const double alpha = 45.000*nsx::deg;
     const double beta  = 90.000*nsx::deg;
     const double gamma = 90.000*nsx::deg;
 
@@ -50,22 +58,34 @@ int main()
 
     nsx::UnitCell uc(a,b,c,alpha,beta,gamma);
 
+    std::cout<<"ddd"<<std::endl;
+    std::cout<<uc.reciprocalBasis()<<std::endl;
+
     const double dmin =  0.95;
     const double dmax = 1.00;
 
     auto hkls = uc.generateReflectionsInShell(dmin,dmax,wavelength);
 
     std::default_random_engine generator;
-    std::uniform_real_distribution<double> distribution(-0.00001,0.00001);
+    std::uniform_real_distribution<double> distribution(-0.00000,0.00000);
 
-    const double omega = 26.0*nsx::deg;
-    const double chi   = 32.0*nsx::deg;
-    const double phi   = 11.0*nsx::deg;
+//    const double omega = 26.0*nsx::deg;
+//    const double chi   = 32.0*nsx::deg;
+//    const double phi   = 11.0*nsx::deg;
+
+    const double omega = 0.0*nsx::deg;
+    const double chi   = 0.0*nsx::deg;
+    const double phi   = 0.0*nsx::deg;
 
     Eigen::Matrix3d u_matrix = make_rotation({omega,chi,phi});
 
+    std::cout<<"TRUE matrix" << std::endl;
+    std::cout<<u_matrix<<std::endl;
+
     std::vector<nsx::ReciprocalVector> q_vectors;
     q_vectors.reserve(hkls.size());
+
+    std::cout<<uc.reciprocalBasis()<<std::endl;
 
     for (auto hkl : hkls) {
 
@@ -75,7 +95,6 @@ int main()
 
         Eigen::RowVector3d q = hkl.rowVector().cast<double>() * uc.reciprocalBasis() * u_matrix.transpose();
 
-        std::cout<<q.norm()<<std::endl;
         q(0) += qx_err;
         q(1) += qy_err;
         q(2) += qz_err;
@@ -83,7 +102,7 @@ int main()
         q_vectors.push_back(nsx::ReciprocalVector(q));
     }
 
-    auto indexer = nsx::UserDefinedUnitCellIndexer(a,b,c,alpha,beta,gamma,10);
+    auto indexer = nsx::UserDefinedUnitCellIndexer(a,b,c,alpha,beta,gamma,1);
 
     std::cout<<q_vectors.size()<<std::endl;
 
