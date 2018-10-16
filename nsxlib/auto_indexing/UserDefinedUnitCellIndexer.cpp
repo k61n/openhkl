@@ -6,7 +6,6 @@
 
 #include <Eigen/QR>
 
-#include "Any.h"
 #include "FitParameters.h"
 #include "MillerIndex.h"
 #include "Minimizer.h"
@@ -320,7 +319,6 @@ void UserDefinedUnitCellIndexer::run(const std::vector<ReciprocalVector>& q_vect
 
         std::vector<Eigen::RowVector3d> hkls;
         std::vector<Eigen::RowVector3d> qs;
-        std::vector<Eigen::Matrix3d> wt;
 
         for (auto q_vector : q_vectors) {
             MillerIndex hkld(q_vector, uc);
