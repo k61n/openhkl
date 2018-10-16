@@ -1,11 +1,14 @@
+#include <iostream>
+#include <limits>
 #include <random>
 #include <vector>
 
-#include <nsxlib/UserDefinedUnitCellIndexer.h>
+#include <nsxlib/Any.h>
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
+#include <nsxlib/UserDefinedUnitCellIndexer.h>
 
 NSX_INIT_TEST
 
@@ -38,54 +41,33 @@ Eigen::Matrix3d make_rotation(Eigen::Vector3d angles)
 
 int main()
 {
-//    const double a =  5.557;
-//    const double b =  5.770;
-//    const double c = 16.138;
-
     const double a = 10.0;
     const double b = 10.0;
     const double c = 10.0;
 
-//    const double alpha = 96.314*nsx::deg;
-//    const double beta  = 90.000*nsx::deg;
-//    const double gamma = 90.000*nsx::deg;
-
-    const double alpha = 45.000*nsx::deg;
-    const double beta  = 90.000*nsx::deg;
-    const double gamma = 90.000*nsx::deg;
+    const double alpha = 28.000*nsx::deg;
+    const double beta  = 28.000*nsx::deg;
+    const double gamma = 28.000*nsx::deg;
 
     const double wavelength = 1.0;
 
     nsx::UnitCell uc(a,b,c,alpha,beta,gamma);
 
-    std::cout<<"ddd"<<std::endl;
-    std::cout<<uc.reciprocalBasis()<<std::endl;
-
-    const double dmin =  0.95;
-    const double dmax = 1.00;
+    const double dmin =  0.98;
+    const double dmax = std::numeric_limits<double>::infinity();
 
     auto hkls = uc.generateReflectionsInShell(dmin,dmax,wavelength);
 
     std::default_random_engine generator;
-    std::uniform_real_distribution<double> distribution(-0.00000,0.00000);
+    std::uniform_real_distribution<double> distribution(-0.001,0.001);
 
-//    const double omega = 26.0*nsx::deg;
-//    const double chi   = 32.0*nsx::deg;
-//    const double phi   = 11.0*nsx::deg;
-
-    const double omega = 0.0*nsx::deg;
-    const double chi   = 0.0*nsx::deg;
-    const double phi   = 0.0*nsx::deg;
+    const double omega = 26.0*nsx::deg;
+    const double chi   = 32.0*nsx::deg;
+    const double phi   = 11.0*nsx::deg;
 
     Eigen::Matrix3d u_matrix = make_rotation({omega,chi,phi});
 
-    std::cout<<"TRUE matrix" << std::endl;
-    std::cout<<u_matrix<<std::endl;
-
     std::vector<nsx::ReciprocalVector> q_vectors;
-    q_vectors.reserve(hkls.size());
-
-    std::cout<<uc.reciprocalBasis()<<std::endl;
 
     for (auto hkl : hkls) {
 
@@ -102,9 +84,15 @@ int main()
         q_vectors.push_back(nsx::ReciprocalVector(q));
     }
 
-    auto indexer = nsx::UserDefinedUnitCellIndexer(a,b,c,alpha,beta,gamma,1);
+    std::map<std::string,nsx::Any> parameters;
+    parameters.emplace("a",a);
+    parameters.emplace("b",b);
+    parameters.emplace("c",c);
+    parameters.emplace("alpha",alpha);
+    parameters.emplace("beta",beta);
+    parameters.emplace("gamma",gamma);
 
-    std::cout<<q_vectors.size()<<std::endl;
+    auto indexer = nsx::UserDefinedUnitCellIndexer(parameters);
 
     indexer.run(q_vectors,wavelength);
 
