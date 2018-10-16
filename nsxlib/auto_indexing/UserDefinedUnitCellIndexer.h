@@ -1,7 +1,9 @@
 #pragma once
 
 #include <array>
+#include <map>
 #include <utility>
+#include <string>
 #include <vector>
 
 #include <Eigen/Dense>
@@ -16,9 +18,9 @@ class UserDefinedUnitCellIndexer {
 
 public:
 
-    UserDefinedUnitCellIndexer(double a, double b, double c, double alpha, double beta, double gamma, size_t n_solutions);
+    UserDefinedUnitCellIndexer();
 
-    UserDefinedUnitCellIndexer(double a, double b, double c, double alpha, double beta, double gamma, double distance_tolerance, double angular_tolerance, size_t n_solutions);
+    UserDefinedUnitCellIndexer(const std::map<std::string,Any>& parameters);
 
     UserDefinedUnitCellIndexer(const UserDefinedUnitCellIndexer& other) = default;
 
@@ -30,27 +32,18 @@ public:
 
     UserDefinedUnitCellIndexer& operator=(UserDefinedUnitCellIndexer&& other)=default;
 
-    void setDistanceTolerance(double distance_tolerance);
-
-    void setAngularTolerance(double angular_tolerance);
+    const std::map<std::string,Any>& parameters() const;
+    void setParameters(const std::map<std::string,Any>& parameters);
 
     void run(const std::vector<ReciprocalVector>& q_vectors, double wavelength);
 
 private:
 
-    std::vector<std::pair<Eigen::Matrix3d,Eigen::Matrix3d>> index(const std::multimap<double,Eigen::RowVector3d>& q_vectors_mmap, double wavelength) const;
-
-    bool match_triplets(const Eigen::Matrix3d& b_triplet, const Eigen::Matrix3d& bu_triplet, Eigen::Matrix3d& b_matrix, Eigen::Matrix3d& bu_matrix) const;
+    std::vector<UnitCell> index(const std::multimap<double,Eigen::RowVector3d> &q_vectors_mmap, double wavelength) const;
 
 private:
 
-    UnitCell _unit_cell;
-
-    double _distance_tolerance;
-
-    double _angular_tolerance;
-
-    size_t _n_solutions;
+    std::map<std::string,Any> _parameters;
 };
 
 } // end namespace nsx
