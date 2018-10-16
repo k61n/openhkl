@@ -279,7 +279,7 @@ int main()
     nsx::Minimizer min;
     min.initialize(params, 3*q.size());
     min.set_f(residual);
-    NSX_CHECK_EQUAL(min.fit(500), true);
+    NSX_CHECK_EQUAL(min.fit(100), true);
 
     // new character of fitted cell
     ch = cell.fromParameters(U, u, x).character();
