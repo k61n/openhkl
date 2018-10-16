@@ -312,11 +312,9 @@ void UnitCell::setParameters(double a, double b, double c, double alpha, double 
     const double bs = sb/metric_factor/b;
     const double cs = sg/metric_factor/c;
 
-    const double cas = (cb*cg - ca)/sb/sg;
     const double cbs = (ca*cg - cb)/sa/sg;
     const double cgs = (ca*cb - cg)/sa/sb;
 
-    const double sas = std::sin(std::acos(cas));
     const double sbs = std::sin(std::acos(cbs));
     const double sgs = std::sin(std::acos(cgs));
 
@@ -330,7 +328,6 @@ void UnitCell::setParameters(double a, double b, double c, double alpha, double 
 void UnitCell::setReciprocalParameters(double as, double bs, double cs, double alphas, double betas, double gammas)
 {
     const double cas = std::cos(alphas);
-    const double sas = std::sin(alphas);
 
     const double cbs = std::cos(betas);
     const double sbs = std::sin(betas);
@@ -349,7 +346,7 @@ void UnitCell::setReciprocalParameters(double as, double bs, double cs, double a
                      cs*cbs, -cs*sbs*ca, 1/c;
 
 
-    _a = _b_transposed.inverse();
+    _a = _b_transposed.transpose().inverse();
 }
 
 void UnitCell::setMetric(double g00, double g01, double g02, double g11, double g12, double g22)
@@ -458,8 +455,16 @@ std::vector<MillerIndex> UnitCell::generateReflectionsInShell(double dmin, doubl
     SpaceGroup group(spaceGroup());
 
     for (int h = -hkl_max; h <= hkl_max; ++h) {
+
         for (int k = -hkl_max; k <= hkl_max; ++k) {
+
             for (int l = -hkl_max; l <= hkl_max; ++l) {
+
+                // Always skip the (0,0,0) which is irrelevant
+                if (h == 0 && k == 0 && l == 0) {
+                    continue;
+                }
+
                 MillerIndex hkl(h, k, l);
                 Eigen::RowVector3d q = hkl.rowVector().cast<double>()*_b_transposed;
                 const double d = 1.0 / q.norm();
@@ -485,6 +490,7 @@ std::vector<MillerIndex> UnitCell::generateReflectionsInShell(double dmin, doubl
                 if (group.isExtinct(hkl)) {
                     continue;
                 }
+
                 hkls.emplace_back(hkl);
             }
         }
