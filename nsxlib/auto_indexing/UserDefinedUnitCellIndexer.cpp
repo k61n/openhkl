@@ -141,7 +141,7 @@ std::vector<UnitCell> UserDefinedUnitCellIndexer::index(const std::multimap<doub
                     continue;
                 }
 
-                std::array<size_t,3> indexes({i,j,k});
+                std::array<size_t,3> indexes{{i,j,k}};
 
                 Eigen::Matrix3d bu_triplet;
 
