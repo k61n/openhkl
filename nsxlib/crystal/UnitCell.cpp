@@ -337,10 +337,9 @@ void UnitCell::setParameters(double a, double b, double c, double alpha, double 
     const double c2 = (c*cos_alpha - c1*cos_gamma) / sin_gamma;
     const double c3 = std::sqrt(c*c - c1*c1 - c2*c2);
 
-    _a <<
-        a1, b1, c1,
-        0, b2, c2,
-        0, 0, c3;
+    _a << a1, b1, c1,
+           0, b2, c2,
+           0,  0, c3;
 
     _b_transposed = _a.inverse();
 }
@@ -361,12 +360,12 @@ void UnitCell::setReciprocalParameters(double as, double bs, double cs, double a
 
     const double c = sgs/metric_factor/cs;
 
-    _b_transposed << as    ,          0,   0,
-                     bs*cgs,     bs*sgs,   0,
-                     cs*cbs, -cs*sbs*ca, 1/c;
+    _b_transposed << as, bs*cgs,     cs*cbs,
+                      0, bs*sgs, -cs*sbs*ca,
+                      0,      0,        1/c;
 
 
-    _a = _b_transposed.transpose().inverse();
+    _a = _b_transposed.inverse();
 }
 
 void UnitCell::setMetric(double g00, double g01, double g02, double g11, double g12, double g22)
