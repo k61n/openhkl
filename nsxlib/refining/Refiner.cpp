@@ -57,7 +57,7 @@ Refiner::Refiner(InstrumentStateList& states, sptrUnitCell cell, const PeakList&
     PeakFilter peak_filter;
     PeakList filtered_peaks;
     filtered_peaks = peak_filter.enabled(peaks,true);
-    filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance());
+    filtered_peaks = peak_filter.indexed(filtered_peaks,*cell,cell->indexingTolerance());
 
     auto sort_peaks_by_frame = [](sptrPeak3D p1, sptrPeak3D p2) -> bool {
         auto&& c1 = p1->shape().center();
@@ -145,7 +145,7 @@ int Refiner::updatePredictions(PeakList& peaks) const
     filtered_peaks = peak_filter.enabled(peaks,true);
 //    filtered_peaks = peak_filter.predicted(filtered_peaks,true);
     filtered_peaks = peak_filter.unitCell(filtered_peaks,_cell);
-    filtered_peaks = peak_filter.indexed(filtered_peaks,_cell,_cell->indexingTolerance());
+    filtered_peaks = peak_filter.indexed(filtered_peaks,*_cell,_cell->indexingTolerance());
 
     PeakList pred_peaks;
     int updated = 0;

@@ -25,7 +25,7 @@ public:
     PeakList indexed(const PeakList& peaks) const;
 
     //! Filter only peaks indexed by a given unit cell with a given indexing tolerance
-    PeakList indexed(const PeakList& peaks, sptrUnitCell cell, double tolerance) const;
+    PeakList indexed(const PeakList& peaks, const UnitCell& cell, double tolerance) const;
 
     //! Keeps only the peaks whose unit cell is the given unit cell
     PeakList unitCell(const PeakList& peaks, sptrUnitCell unit_cell) const;
