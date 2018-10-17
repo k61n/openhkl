@@ -1,5 +1,11 @@
 #pragma once
 
+#include <utility>
+#include <vector>
+
+#include <nsxlib/CrystalTypes.h>
+#include <nsxlib/UserDefinedUnitCellIndexer.h>
+
 #include "NSXQFrame.h"
 
 namespace Ui {
@@ -29,6 +35,8 @@ private:
 
     explicit FrameUserDefinedUnitCellIndexer(ExperimentItem *experiment_item, const nsx::PeakList &peaks);
 
+    void buildUnitCellsTable();
+
     void accept();
 
     void index();
@@ -40,4 +48,8 @@ private:
     Ui::FrameUserDefinedUnitCellIndexer *_ui;
 
     ExperimentItem *_experiment_item;
+
+    nsx::UserDefinedUnitCellIndexer _indexer;
+
+    std::vector<std::pair<nsx::sptrUnitCell,double>> _solutions;
 };

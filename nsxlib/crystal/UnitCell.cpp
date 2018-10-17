@@ -297,40 +297,56 @@ UnitCell UnitCell::interpolate(sptrDataSet data, double frame)
 
 void UnitCell::setParameters(double a, double b, double c, double alpha, double beta, double gamma)
 {
-    const double ca = std::cos(alpha);
-    const double sa = std::sin(alpha);
+//    const double ca = std::cos(alpha);
+//    const double sa = std::sin(alpha);
+//
+//    const double cb = std::cos(beta);
+//    const double sb = std::sin(beta);
+//
+//    const double cg = std::cos(gamma);
+//    const double sg = std::sin(gamma);
+//
+//    const double metric_factor = std::sqrt(1.0 - ca*ca - cb*cb - cg*cg + 2.0*ca*cb*cg);
+//
+//    const double as = sa/metric_factor/a;
+//    const double bs = sb/metric_factor/b;
+//    const double cs = sg/metric_factor/c;
+//
+//    const double cbs = (ca*cg - cb)/sa/sg;
+//    const double cgs = (ca*cb - cg)/sa/sb;
+//
+//    const double sbs = std::sin(std::acos(cbs));
+//    const double sgs = std::sin(std::acos(cgs));
+//
+//    _b_transposed << as    ,         0,   0,
+//                     bs*cgs,    bs*sgs,   0,
+//                     cs*cbs,-cs*sbs*ca, 1/c;
+//
+//    _a = _b_transposed.inverse();
 
-    const double cb = std::cos(beta);
-    const double sb = std::sin(beta);
+    const double cos_alpha = std::cos(alpha);
+    const double cos_beta = std::cos(beta);
+    const double cos_gamma = std::cos(gamma);
+    const double sin_gamma = std::sin(gamma);
 
-    const double cg = std::cos(gamma);
-    const double sg = std::sin(gamma);
+    const double a1 = a;
+    const double b1 = b*cos_gamma;
+    const double b2 = b*sin_gamma;
 
-    const double metric_factor = std::sqrt(1.0 - ca*ca - cb*cb - cg*cg + 2.0*ca*cb*cg);
+    const double c1 = c*cos_beta;
+    const double c2 = (c*cos_alpha - c1*cos_gamma) / sin_gamma;
+    const double c3 = std::sqrt(c*c - c1*c1 - c2*c2);
 
-    const double as = sa/metric_factor/a;
-    const double bs = sb/metric_factor/b;
-    const double cs = sg/metric_factor/c;
+    _a << a1, b1, c1,
+           0, b2, c2,
+           0,  0, c3;
 
-    const double cas = (cb*cg - ca)/sb/sg;
-    const double cbs = (ca*cg - cb)/sa/sg;
-    const double cgs = (ca*cb - cg)/sa/sb;
-
-    const double sas = std::sin(std::acos(cas));
-    const double sbs = std::sin(std::acos(cbs));
-    const double sgs = std::sin(std::acos(cgs));
-
-    _b_transposed << as    ,         0,   0,
-                     bs*cgs,    bs*sgs,   0,
-                     cs*cbs,-cs*sbs*ca, 1/c;
-
-    _a = _b_transposed.inverse();
+    _b_transposed = _a.inverse();
 }
 
 void UnitCell::setReciprocalParameters(double as, double bs, double cs, double alphas, double betas, double gammas)
 {
     const double cas = std::cos(alphas);
-    const double sas = std::sin(alphas);
 
     const double cbs = std::cos(betas);
     const double sbs = std::sin(betas);
@@ -344,9 +360,9 @@ void UnitCell::setReciprocalParameters(double as, double bs, double cs, double a
 
     const double c = sgs/metric_factor/cs;
 
-    _b_transposed << as    ,          0,   0,
-                     bs*cgs,     bs*sgs,   0,
-                     cs*cbs, -cs*sbs*ca, 1/c;
+    _b_transposed << as, bs*cgs,     cs*cbs,
+                      0, bs*sgs, -cs*sbs*ca,
+                      0,      0,        1/c;
 
 
     _a = _b_transposed.inverse();
@@ -458,8 +474,16 @@ std::vector<MillerIndex> UnitCell::generateReflectionsInShell(double dmin, doubl
     SpaceGroup group(spaceGroup());
 
     for (int h = -hkl_max; h <= hkl_max; ++h) {
+
         for (int k = -hkl_max; k <= hkl_max; ++k) {
+
             for (int l = -hkl_max; l <= hkl_max; ++l) {
+
+                // Always skip the (0,0,0) which is irrelevant
+                if (h == 0 && k == 0 && l == 0) {
+                    continue;
+                }
+
                 MillerIndex hkl(h, k, l);
                 Eigen::RowVector3d q = hkl.rowVector().cast<double>()*_b_transposed;
                 const double d = 1.0 / q.norm();
@@ -485,6 +509,7 @@ std::vector<MillerIndex> UnitCell::generateReflectionsInShell(double dmin, doubl
                 if (group.isExtinct(hkl)) {
                     continue;
                 }
+
                 hkls.emplace_back(hkl);
             }
         }

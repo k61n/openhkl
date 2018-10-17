@@ -50,7 +50,7 @@ PeakList PeakFilter::mergedPeaksSignificance(const PeakList& peaks, double signi
         MergedData merged(group, true);
 
         PeakList filtered_peaks;
-        filtered_peaks = peak_filter.indexed(filtered_peaks,unit_cell,unit_cell->indexingTolerance());
+        filtered_peaks = peak_filter.indexed(filtered_peaks,*unit_cell,unit_cell->indexingTolerance());
 
         for (auto peak : filtered_peaks) {
             merged.addPeak(peak);
@@ -138,7 +138,7 @@ PeakList PeakFilter::extincted(const PeakList& peaks)
 
     for (auto p : peaks_per_unit_cell) {
 
-        PeakList indexed_peaks = peak_filter.indexed(p.second,p.first,p.first->indexingTolerance());
+        PeakList indexed_peaks = peak_filter.indexed(p.second,*(p.first),p.first->indexingTolerance());
 
         SpaceGroup group(p.first->spaceGroup());
 
@@ -265,17 +265,13 @@ PeakList PeakFilter::masked(const PeakList& peaks, bool flag) const
     return filtered_peaks;
 }
 
-PeakList PeakFilter::indexed(const PeakList& peaks, sptrUnitCell cell, double tolerance) const
+PeakList PeakFilter::indexed(const PeakList& peaks, const UnitCell& cell, double tolerance) const
 {
     PeakList filtered_peaks;
 
     for (auto peak : peaks) {
 
-        if (!cell) {
-            continue;
-        }
-
-        MillerIndex miller_index(peak->q(), *cell);
+        MillerIndex miller_index(peak->q(), cell);
         if (miller_index.indexed(tolerance)) {
             filtered_peaks.push_back(peak);
         }

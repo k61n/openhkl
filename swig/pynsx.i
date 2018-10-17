@@ -93,6 +93,8 @@ using Eigen::Quaterniond;
 
 #include "Version.h"
 
+#include "Any.h"
+
 #include "Material.h"
 #include "IsotopeDatabaseManager.h"
 
@@ -350,7 +352,6 @@ using namespace nsx;
 %include "DirectVector.h"
 %template(DirectVectorList) std::vector<nsx::DirectVector>;
 
-
 %include "ReciprocalVector.h"
 %template(ReciprocalVectorList) std::vector<nsx::ReciprocalVector>;
 %template(ReciprocalVectorQueue) std::deque<nsx::ReciprocalVector>;
@@ -367,7 +368,20 @@ using namespace nsx;
 %include "Ellipsoid.h"
 %include "Blob3D.h"
 
+%include "Any.h"
+%extend nsx::Any {
+     %template(Anyi) Any<int>;
+     %template(Anyd) Any<double>;
+     %template(Anyb) Any<bool>;
+     %template(Anys) Any<std::string>;
+}
+
 %include "Material.h"
+%include "IsotopeDatabaseManager.h"
+%template(propertyi) nsx::IsotopeDatabaseManager::property<int>;
+%template(propertyd) nsx::IsotopeDatabaseManager::property<double>;
+%template(propertys) nsx::IsotopeDatabaseManager::property<std::string>;
+%template(propertyb) nsx::IsotopeDatabaseManager::property<bool>;
 
 %template(scored_uc) std::pair<std::shared_ptr<nsx::UnitCell>, double>;
 %template(indexer_solutions) std::vector<std::pair<std::shared_ptr<nsx::UnitCell>,double>>;

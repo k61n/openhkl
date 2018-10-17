@@ -331,7 +331,7 @@ public:
         if (_typeid == typeid(T)) {
             return *reinterpret_cast<const T*>(_storage);
         } else {
-            throw std::runtime_error("error: wrong type for Variant; typeid is " + std::string(_typeid.name()));
+            throw std::runtime_error("error: can not cast Variant from " + std::string(_typeid.name()) + " to " + std::string(typeid(T).name()));
         }
     }
 

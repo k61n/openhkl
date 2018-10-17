@@ -162,7 +162,7 @@ public:
     double indexingTolerance() const;
     //! Return the real-space basis
     const Eigen::Matrix3d& basis() const;
-    //! Set the real-space basis (upper tirangular, column form)
+    //! Set the real-space basis (upper triangular, column form)
     void setBasis(const Eigen::Matrix3d& a);
     //! Return the reciprocal bases
     const Eigen::Matrix3d& reciprocalBasis() const;

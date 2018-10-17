@@ -105,6 +105,13 @@
               </property>
              </widget>
             </item>
+            <item row="2" column="0">
+             <widget class="QCheckBox" name="niggli_only">
+              <property name="text">
+               <string>Find Niggli cell only</string>
+              </property>
+             </widget>
+            </item>
             <item row="3" column="0">
              <widget class="QLabel" name="label_3">
               <property name="text">
@@ -163,8 +170,11 @@
             </item>
             <item row="5" column="1">
              <widget class="QSpinBox" name="nSolutions">
+              <property name="wrapping">
+               <bool>true</bool>
+              </property>
               <property name="buttonSymbols">
-               <enum>QAbstractSpinBox::NoButtons</enum>
+               <enum>QAbstractSpinBox::UpDownArrows</enum>
               </property>
               <property name="minimum">
                <number>1</number>
@@ -186,6 +196,9 @@
             </item>
             <item row="6" column="1">
              <widget class="QSpinBox" name="subdiv">
+              <property name="wrapping">
+               <bool>true</bool>
+              </property>
               <property name="maximum">
                <number>999999</number>
               </property>
@@ -221,13 +234,6 @@
               </property>
               <property name="value">
                <double>0.200000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QCheckBox" name="niggli_only">
-              <property name="text">
-               <string>Find Niggli cell only</string>
               </property>
              </widget>
             </item>
@@ -310,15 +316,15 @@ QPushButton:disabled {
  </widget>
  <customwidgets>
   <customwidget>
+   <class>PeakTableView</class>
+   <extends>QTableView</extends>
+   <header>PeakTableView.h</header>
+  </customwidget>
+  <customwidget>
    <class>NSXQFrame</class>
    <extends>QFrame</extends>
    <header>NSXQFrame.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>PeakTableView</class>
-   <extends>QTableView</extends>
-   <header>PeakTableView.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

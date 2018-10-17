@@ -115,7 +115,7 @@ void ExperimentItem::writeLogFiles()
     auto cell = filtered_peaks[0]->unitCell();
 
     filtered_peaks = peak_filter.unitCell(filtered_peaks,cell);
-    filtered_peaks = peak_filter.indexed(filtered_peaks,cell,cell->indexingTolerance());
+    filtered_peaks = peak_filter.indexed(filtered_peaks,*cell,cell->indexingTolerance());
 
     DialogStatistics dlg(filtered_peaks,cell->spaceGroup());
 

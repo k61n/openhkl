@@ -170,7 +170,7 @@ void DialogPeakFilter::filterPeaks()
     if (_ui->indexedByUnitCell->isChecked()) {
         if (_ui->unitCells->count() > 0) {
             auto unit_cell = _ui->unitCells->itemData(_ui->unitCells->currentIndex(),Qt::UserRole).value<nsx::sptrUnitCell>();
-            filtered_peaks = peak_filter.indexed(filtered_peaks,unit_cell,_ui->indexingTolerance->value());
+            filtered_peaks = peak_filter.indexed(filtered_peaks,*unit_cell,_ui->indexingTolerance->value());
         }
     }
 
