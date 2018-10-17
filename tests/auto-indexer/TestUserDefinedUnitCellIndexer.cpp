@@ -3,7 +3,6 @@
 #include <random>
 #include <vector>
 
-#include <nsxlib/Any.h>
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/UnitCell.h>
@@ -84,17 +83,18 @@ int main()
         q_vectors.push_back(nsx::ReciprocalVector(q));
     }
 
-    std::map<std::string,nsx::Any> parameters;
-    parameters.emplace("a",a);
-    parameters.emplace("b",b);
-    parameters.emplace("c",c);
-    parameters.emplace("alpha",alpha);
-    parameters.emplace("beta",beta);
-    parameters.emplace("gamma",gamma);
+    nsx::UserDefinedUnitCellIndexerParameters parameters;
+    parameters.a = a;
+    parameters.b = b;
+    parameters.c = c;
+    parameters.alpha = alpha;
+    parameters.beta = beta;
+    parameters.gamma = gamma;
+    parameters.wavelength = wavelength;
 
     auto indexer = nsx::UserDefinedUnitCellIndexer(parameters);
 
-    indexer.run(q_vectors,wavelength);
+//    indexer.run(q_vectors);
 
     return 0;
 }
