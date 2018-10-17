@@ -167,7 +167,7 @@ public:
         delete _variant;
     }
 
-    const std::type_index type() {return _type_index;}
+    const std::type_index& type() {return _type_index;}
 
     void setImmutability(bool immutability) {_immutability = immutability;}
 
