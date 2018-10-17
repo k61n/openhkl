@@ -7,6 +7,7 @@
 #include <Eigen/QR>
 
 #include "FitParameters.h"
+#include "Logger.h"
 #include "MillerIndex.h"
 #include "Minimizer.h"
 #include "Peak3D.h"
@@ -14,58 +15,91 @@
 #include "ReciprocalVector.h"
 #include "UnitCell.h"
 #include "UserDefinedUnitCellIndexer.h"
-#include "Units.h"
 
 namespace nsx {
 
-UserDefinedUnitCellIndexer::UserDefinedUnitCellIndexer()
+using indexer_solution = std::pair<sptrUnitCell,double>;
+
+void UserDefinedUnitCellIndexerParameters::checkParameters() const
 {
-    _parameters.emplace("distance_tolerance",1.0e-2);
-    _parameters.emplace("angular_tolerance" ,1.0e-2);
+    if (wavelength <= 0.0) {
+        throw std::runtime_error("Invalid wavelength. Must be > 0.");
+    }
 
-    _parameters.emplace("niggli_only",false);
+    if (a <= 0.0) {
+        throw std::runtime_error("Invalid a value. Must be > 0.");
+    }
 
-    _parameters.emplace("niggli_tolerance",1.0e-3);
-    _parameters.emplace("gruber_tolerance",4.0e-2);
+    if (b <= 0.0) {
+        throw std::runtime_error("Invalid b value. Must be > 0.");
+    }
 
-    _parameters.emplace("n_solutions",size_t(10));
-    _parameters.emplace("indexing_tolerance",2.0e-1);
-    _parameters.emplace("indexing_threshold",9.0e-1);
+    if (c <= 0.0) {
+        throw std::runtime_error("Invalid c value. Must be > 0.");
+    }
 
-    _parameters.emplace("a",10.0);
-    _parameters.emplace("b",10.0);
-    _parameters.emplace("c",10.0);
+    if (std::fabs(niggli_tolerance - 1.0) > 1.0) {
+        throw std::runtime_error("Invalid Niggli tolerance. Must be in [0,1].");
+    }
 
-    _parameters.emplace("alpha",90.0*nsx::deg);
-    _parameters.emplace("beta" ,90.0*nsx::deg);
-    _parameters.emplace("gamma",90.0*nsx::deg);
+    if (std::fabs(gruber_tolerance - 1.0) > 1.0) {
+        throw std::runtime_error("Invalid Gruber tolerance. Must be in [0,1].");
+    }
+
+    if (std::fabs(indexing_tolerance - 1.0) > 1.0) {
+        throw std::runtime_error("Invalid indexing tolerance. Must be in [0,1].");
+    }
+
+    if (std::fabs(indexing_threshold - 1.0) > 1.0) {
+        throw std::runtime_error("Invalid indexing tolerance. Must be in [0,1].");
+    }
+
+    if (n_solutions < 1) {
+        throw std::runtime_error("Invalid number of solutions. Must be >= 1.");
+    }
+
+    if (max_n_q_vectors < 1) {
+        throw std::runtime_error("Invalid number of q vectors. Must be in [10,500].");
+    }
+
 }
 
-UserDefinedUnitCellIndexer::UserDefinedUnitCellIndexer(const std::map<std::string,Any>& parameters)
+UserDefinedUnitCellIndexer::UserDefinedUnitCellIndexer() : _parameters(), _solutions()
+{
+}
+
+UserDefinedUnitCellIndexer::UserDefinedUnitCellIndexer(const UserDefinedUnitCellIndexerParameters& parameters)
 : UserDefinedUnitCellIndexer()
 {
     setParameters(parameters);
 }
 
-const std::map<std::string,Any>& UserDefinedUnitCellIndexer::parameters() const
+const UserDefinedUnitCellIndexerParameters& UserDefinedUnitCellIndexer::parameters() const
 {
     return _parameters;
 }
 
-void UserDefinedUnitCellIndexer::setParameters(const std::map<std::string,Any>& parameters)
+void UserDefinedUnitCellIndexer::setParameters(const UserDefinedUnitCellIndexerParameters& parameters)
 {
-    for (auto p : parameters) {
-        auto it = _parameters.find(p.first);
-        // This parameter is used
-        if (it == _parameters.end()) {
-            continue;
-        }
-        _parameters[p.first] = p.second;
-    }
+    _parameters = parameters;
 }
 
-std::vector<UnitCell> UserDefinedUnitCellIndexer::index(const std::multimap<double,Eigen::RowVector3d>& q_vectors_mmap, double wavelength) const
+void UserDefinedUnitCellIndexer::setPeaks(const PeakList& peaks)
 {
+    _peaks = peaks;
+}
+
+void UserDefinedUnitCellIndexer::index()
+{
+    PeakFilter peak_filter;
+    auto filtered_peaks = peak_filter.enabled(_peaks,true);
+
+    std::multimap<double,Eigen::RowVector3d> q_vectors_mmap;
+    for (auto peak : filtered_peaks) {
+        Eigen::RowVector3d row_vect = peak->q().rowVector();
+        q_vectors_mmap.emplace(row_vect.norm(),row_vect);
+    }
+
     // Compute the dmin and dmax form the input q vectors
     double dmin(std::numeric_limits<double>::infinity());
     double dmax(-std::numeric_limits<double>::infinity());
@@ -75,18 +109,21 @@ std::vector<UnitCell> UserDefinedUnitCellIndexer::index(const std::multimap<doub
         dmax = std::max(d,dmax);
     }
 
+    // Add little tolerance on dmin and dmax for not missing any q-vectors within [dmin,dmax]
     dmin -= 1.0e-6;
     dmax += 1.0e-6;
 
-    nsx::UnitCell unit_cell(_parameters.at("a").as<double>(),
-                            _parameters.at("b").as<double>(),
-                            _parameters.at("c").as<double>(),
-                            _parameters.at("alpha").as<double>(),
-                            _parameters.at("beta").as<double>(),
-                            _parameters.at("gamma").as<double>());
+    nsx::UnitCell unit_cell(_parameters.a,
+                            _parameters.b,
+                            _parameters.c,
+                            _parameters.alpha,
+                            _parameters.beta,
+                            _parameters.gamma);
+
+    const double wavelength = _parameters.wavelength;
 
     // Generate the q vectors from the initial B matrix within [dmin,dmax]
-    // The generation uses the initial B matrix built from the uit cell parameters provided by the user hence without orientation matrix
+    // The generation uses the initial B matrix built from the unit cell parameters provided by the user hence without orientation matrix
     auto&& b_mat = unit_cell.reciprocalBasis();
     std::vector<std::pair<Eigen::RowVector3d,Eigen::RowVector3d>> predicted_q_vectors;
     auto hkls = unit_cell.generateReflectionsInShell(dmin,dmax,wavelength);
@@ -95,19 +132,27 @@ std::vector<UnitCell> UserDefinedUnitCellIndexer::index(const std::multimap<doub
         predicted_q_vectors.emplace_back(hkl.rowVector().cast<double>(),q);
     }
 
-    std::sort(predicted_q_vectors.begin(),predicted_q_vectors.end(),[](const std::pair<Eigen::RowVector3d,Eigen::RowVector3d>& v1,
-                                                                       const std::pair<Eigen::RowVector3d,Eigen::RowVector3d>& v2){return v1.second.norm() < v2.second.norm();});
+    using row_vector_pair = std::pair<Eigen::RowVector3d,Eigen::RowVector3d>;
 
-    std::vector<UnitCell> solutions;
-    solutions.reserve(_parameters.at("n_solutions").as<size_t>());
+    std::sort(predicted_q_vectors.begin(),predicted_q_vectors.end(),[](const row_vector_pair& v1,
+                                                                       const row_vector_pair& v2){return v1.second.norm() < v2.second.norm();});
+
+
+    if (_parameters.max_n_q_vectors < predicted_q_vectors.size()) {
+        predicted_q_vectors.resize(_parameters.max_n_q_vectors);
+    }
+
+    _solutions.clear();
+    _solutions.shrink_to_fit();
+    _solutions.reserve(_parameters.n_solutions);
 
     Eigen::Matrix3d b_triplet;
 
     Eigen::Matrix3d matching_hkls;
     Eigen::Matrix3d matching_q_vectors;
 
-    const double distance_tolerance = _parameters.at("distance_tolerance").as<double>();
-    const double angular_tolerance = _parameters.at("angular_tolerance").as<double>();
+    const double distance_tolerance = _parameters.distance_tolerance;
+    const double angular_tolerance = _parameters.angular_tolerance;
 
     const double volume_tolerance = distance_tolerance * distance_tolerance * distance_tolerance;
 
@@ -259,25 +304,27 @@ std::vector<UnitCell> UserDefinedUnitCellIndexer::index(const std::multimap<doub
                                                         continue;
                                                     }
 
-                                                    nsx::UnitCell uc(BtUt,true);
+                                                    auto unit_cell = std::shared_ptr<UnitCell>(new UnitCell(BtUt,true));
+
+                                                    unit_cell->setIndexingTolerance(_parameters.indexing_tolerance);
 
                                                     double n_indexed_q_vectors(0);
                                                     for (auto q : q_vectors_mmap) {
-                                                        MillerIndex miller_index(nsx::ReciprocalVector(q.second), uc);
-                                                        if (miller_index.indexed(_parameters.at("indexing_tolerance").as<double>())) {
+                                                        MillerIndex miller_index(nsx::ReciprocalVector(q.second), *unit_cell);
+                                                        if (miller_index.indexed(unit_cell->indexingTolerance())) {
                                                             ++n_indexed_q_vectors;
                                                         }
                                                     }
 
                                                     const double quality = n_indexed_q_vectors/static_cast<double>(q_vectors_mmap.size());
-                                                    if (quality < _parameters.at("indexing_threshold").as<double>()) {
+                                                    if (quality < _parameters.indexing_threshold) {
                                                         continue;
                                                     }
 
                                                     // The predicted and experimental triplets match, keep that solution
-                                                    solutions.push_back(uc);
-                                                    if (solutions.size() >= _parameters.at("n_solutions").as<size_t>()) {
-                                                        return solutions;
+                                                    _solutions.emplace_back(unit_cell,quality);
+                                                    if (_solutions.size() >= _parameters.n_solutions) {
+                                                        return;
                                                     }
                                                 }
                                             }
@@ -291,48 +338,61 @@ std::vector<UnitCell> UserDefinedUnitCellIndexer::index(const std::multimap<doub
             }
         }
     }
-
-    return solutions;
 }
 
-void UserDefinedUnitCellIndexer::run(const std::vector<ReciprocalVector>& q_vectors, double wavelength)
+void UserDefinedUnitCellIndexer::removeBadUnitCells()
 {
-    if (q_vectors.empty()) {
-        throw std::runtime_error("No q vectors provided for indexing");
-    }
+    const double quality = _parameters.indexing_threshold;
 
-    if (wavelength <= 0.0) {
-        throw std::runtime_error("Negative wavelength value");
-    }
+    // remove the bad solutions
+    auto remove_bad_unit_cell = std::remove_if(_solutions.begin(), _solutions.end(), [=] (const indexer_solution& s) { return s.second < quality;});
+    _solutions.erase(remove_bad_unit_cell, _solutions.end());
+}
 
-    std::multimap<double,Eigen::RowVector3d> q_vectors_mmap;
-    for (auto q_vector : q_vectors) {
-        Eigen::RowVector3d row_vect = q_vector.rowVector();
-        q_vectors_mmap.emplace(row_vect.norm(),row_vect);
-    }
+void UserDefinedUnitCellIndexer::rankUnitCells()
+{
+    // Sort solutions by decreasing quality.
+    // For equal quality, smallest volume is first
+    std::sort(_solutions.begin(),_solutions.end(),[](const indexer_solution& s1, const indexer_solution& s2) -> bool
+    {
+        if (std::fabs(s1.second - s2.second) < 1.0e-6) {
+            return (s1.first->volume() < s2.first->volume());
+        } else {
+            return (s1.second > s2.second);
+        }
+    });
+}
 
-    auto solutions = index(q_vectors_mmap,wavelength);
+void UserDefinedUnitCellIndexer::refineUnitCells()
+{
+    for (auto& p : _solutions) {
 
-    for (auto&& uc : solutions) {
+        auto unit_cell = p.first;
 
-        Eigen::Matrix3d B = uc.reciprocalBasis();
+        PeakFilter peak_filter;
+        PeakList filtered_peaks;
+        filtered_peaks = peak_filter.enabled(_peaks,true);
+        filtered_peaks = peak_filter.indexed(filtered_peaks, *unit_cell, unit_cell->indexingTolerance());
+
+        Eigen::Matrix3d B = unit_cell->reciprocalBasis();
 
         std::vector<Eigen::RowVector3d> hkls;
-        std::vector<Eigen::RowVector3d> qs;
+        std::vector<Eigen::RowVector3d> q_vectors;
 
-        for (auto q_vector : q_vectors) {
-            MillerIndex hkld(q_vector, uc);
+        for (auto peak : filtered_peaks) {
+            auto q_vector = peak->q();
+            MillerIndex hkld(q_vector, *unit_cell);
             hkls.emplace_back(hkld.rowVector().cast<double>());
-            qs.emplace_back(q_vector.rowVector());
+            q_vectors.emplace_back(q_vector.rowVector());
         }
 
         // Lambda to compute residuals
-        auto residuals = [&B, &hkls, &qs] (Eigen::VectorXd& f) -> int
+        auto residuals = [&B, &hkls, &q_vectors] (Eigen::VectorXd& f) -> int
         {
             int n = f.size() / 3;
 
             for (int i = 0; i < n; ++i) {
-                auto dq = qs[i] - hkls[i]*B;
+                auto dq = q_vectors[i] - hkls[i]*B;
                 f(3*i+0) = dq(0);
                 f(3*i+1) = dq(1);
                 f(3*i+2) = dq(2);
@@ -363,12 +423,12 @@ void UserDefinedUnitCellIndexer::run(const std::vector<ReciprocalVector>& q_vect
 
         // Update the cell with the fitter one and reduce it
         try {
-            uc.setReciprocalBasis(B);
-            uc.setIndexingTolerance(_parameters["indexing_tolerance"].as<double>());
-            uc.reduce(_parameters["niggli_only"].as<bool>(), _parameters["niggli_tolerance"].as<double>(),_parameters["gruber_tolerance"].as<double>());
-            auto reduced_unit_cell = uc.applyNiggliConstraints();
-            auto character = reduced_unit_cell.character();
-            auto rec_basis = reduced_unit_cell.basis();
+            unit_cell->setReciprocalBasis(B);
+            unit_cell->setIndexingTolerance(_parameters.indexing_tolerance);
+            unit_cell->reduce(_parameters.niggli_only, _parameters.niggli_tolerance,_parameters.gruber_tolerance);
+            *unit_cell = unit_cell->applyNiggliConstraints();
+//            auto character = reduced_unit_cell.character();
+//            auto rec_basis = reduced_unit_cell.basis();
 //            std::cout<<"a* = "<<rec_basis.col(0).norm()<<std::endl;
 //            std::cout<<"b* = "<<rec_basis.col(1).norm()<<std::endl;
 //            std::cout<<"c* = "<<rec_basis.col(2).norm()<<std::endl;
@@ -384,7 +444,47 @@ void UserDefinedUnitCellIndexer::run(const std::vector<ReciprocalVector>& q_vect
         } catch(std::exception& e) {
             continue;
         }
+
+        PeakList refiltered_peaks;
+        refiltered_peaks = peak_filter.indexed(filtered_peaks, *unit_cell, unit_cell->indexingTolerance());
+
+        double score = static_cast<double>(refiltered_peaks.size());
+        double maxscore = static_cast<double>(filtered_peaks.size());
+
+        // Percentage of indexing
+        score /= 0.01*maxscore;
+        p.second = score;
     }
+}
+
+const std::vector<std::pair<sptrUnitCell,double>>& UserDefinedUnitCellIndexer::solutions() const
+{
+    return _solutions;
+}
+
+void UserDefinedUnitCellIndexer::run()
+{
+    if (_peaks.empty()) {
+        nsx::error() << "No peaks vectors provided for indexing";
+        return;
+    }
+
+    try {
+        _parameters.checkParameters();
+    } catch (const std::exception& e) {
+        nsx::error() << e.what();
+        return;
+    }
+
+    index();
+
+    refineUnitCells();
+
+    removeBadUnitCells();
+
+    rankUnitCells();
+
+    nsx::info() << _solutions.size() << "unit cells found";
 }
 
 } // end namespace nsx
