@@ -1,3 +1,4 @@
+#include <QInputDialog>
 #include <QStandardItem>
 #include <QStandardItemModel>
 
@@ -17,6 +18,9 @@
 #include "FrameUserDefinedUnitCellIndexer.h"
 #include "PeaksItem.h"
 #include "SessionModel.h"
+#include "UnitCellItem.h"
+#include "UnitCellsItem.h"
+#include "WidgetUnitCell.h"
 
 #include "ui_FrameUserDefinedUnitCellIndexer.h"
 
@@ -43,6 +47,8 @@ FrameUserDefinedUnitCellIndexer::FrameUserDefinedUnitCellIndexer(ExperimentItem*
   _indexer()
 {
     _ui->setupUi(this);
+
+    _ui->tabs->tabBar()->tabButton(0,QTabBar::RightSide)->hide();
 
     CollectedPeaksModel *peaks_model = new CollectedPeaksModel(_experiment_item->model(),_experiment_item->experiment(),peaks);
     _ui->peaks->setModel(peaks_model);
@@ -84,6 +90,21 @@ FrameUserDefinedUnitCellIndexer::FrameUserDefinedUnitCellIndexer(ExperimentItem*
 
     _ui->max_n_q_vectors->setValue(parameters.max_n_q_vectors);
 
+    _defaults.reserve(peaks.size());
+    for (auto peak : peaks) {
+        auto unit_cell = peak->unitCell();
+        if (unit_cell) {
+            _defaults.push_back(std::make_pair(peak,std::make_shared<nsx::UnitCell>(*unit_cell)));
+        } else {
+            _defaults.push_back(std::make_pair(peak,nullptr));
+        }
+    }
+
+    connect(_ui->tabs->tabBar(),SIGNAL(tabBarDoubleClicked(int)),this,SLOT(slotTabEdited(int)));
+    connect(_ui->tabs,SIGNAL(tabCloseRequested(int)),this,SLOT(slotTabRemoved(int)));
+
+    connect(_ui->unit_cells->verticalHeader(),SIGNAL(sectionDoubleClicked(int)),this,SLOT(slotSelectSolution(int)));
+
     connect(_ui->actions,SIGNAL(clicked(QAbstractButton*)),this,SLOT(slotActionClicked(QAbstractButton*)));
 }
 
@@ -107,6 +128,7 @@ void FrameUserDefinedUnitCellIndexer::slotActionClicked(QAbstractButton *button)
         break;
     }
     case QDialogButtonBox::StandardButton::Cancel: {
+        resetPeaks();
         close();
         break;
     }
@@ -114,10 +136,124 @@ void FrameUserDefinedUnitCellIndexer::slotActionClicked(QAbstractButton *button)
         accept();
         break;
     }
+    case QDialogButtonBox::StandardButton::Reset: {
+        resetPeaks();
+        break;
+    }
     default: {
         return;
     }
     }
+}
+
+void FrameUserDefinedUnitCellIndexer::slotSelectSolution(int index)
+{
+    auto selected_unit_cell = _solutions[index].first;
+
+    auto selection_model = _ui->peaks->selectionModel();
+
+    auto selected_rows = selection_model->selectedRows();
+
+    selected_unit_cell->setName("new unit cell");
+
+    auto peaks_model = dynamic_cast<CollectedPeaksModel*>(_ui->peaks->model());
+
+    auto peaks = peaks_model->peaks();
+
+    for (auto r : selected_rows) {
+        peaks[r.row()]->setUnitCell(selected_unit_cell);
+    }
+
+    WidgetUnitCell *widget_unit_cell = new WidgetUnitCell(selected_unit_cell);
+    _ui->tabs->addTab(widget_unit_cell,QString::fromStdString(selected_unit_cell->name()));
+    QCheckBox *checkbox = new QCheckBox();
+    checkbox->setChecked(true);
+    _ui->tabs->tabBar()->setTabButton(_ui->tabs->count()-1,QTabBar::LeftSide,checkbox);
+
+    QModelIndex topLeft = peaks_model->index(0, 0);
+    QModelIndex bottomRight = peaks_model->index(peaks_model->rowCount(QModelIndex())-1, peaks_model->columnCount(QModelIndex())-1);
+
+    emit peaks_model->dataChanged(topLeft,bottomRight);
+}
+
+void FrameUserDefinedUnitCellIndexer::slotTabEdited(int index)
+{
+    auto unit_cell_tab = dynamic_cast<WidgetUnitCell*>(_ui->tabs->widget(index));
+
+    if (!unit_cell_tab) {
+        return;
+    }
+
+    QInputDialog dialog(this);
+    dialog.setLabelText("");
+    dialog.setWindowTitle(tr("Set unit cell name"));
+    auto pos = mapToGlobal(_ui->tabs->pos());
+
+    int width(0);
+    for (auto i = 0; i < index; ++i) {
+        width += _ui->tabs->tabBar()->tabRect(index).width();
+    }
+
+    int height = _ui->tabs->tabBar()->tabRect(index).height();
+
+    dialog.move(pos.x() + width,pos.y() + height);
+
+    if (dialog.exec() == QDialog::Rejected) {
+        return;
+    }
+
+    QString unit_cell_name = dialog.textValue();
+    if (unit_cell_name.isEmpty()) {
+        return;
+    }
+
+    _ui->tabs->setTabText(index,unit_cell_name);
+    unit_cell_tab->unitCell()->setName(unit_cell_name.toStdString());
+
+    auto peaks_model = dynamic_cast<CollectedPeaksModel*>(_ui->peaks->model());
+
+    QModelIndex topleft_index = peaks_model->index(0,0);
+    QModelIndex bottomright_index = peaks_model->index(peaks_model->rowCount(QModelIndex())-1,peaks_model->columnCount(QModelIndex())-1);
+
+    emit peaks_model->dataChanged(topleft_index,bottomright_index);
+}
+
+void FrameUserDefinedUnitCellIndexer::slotTabRemoved(int index)
+{
+    auto unit_cell_tab = dynamic_cast<WidgetUnitCell*>(_ui->tabs->widget(index));
+    if (!unit_cell_tab) {
+        return;
+    }
+
+    _ui->tabs->removeTab(index);
+
+    delete unit_cell_tab;
+}
+
+void FrameUserDefinedUnitCellIndexer::resetPeaks()
+{
+    // Restore for each peak the initial unit cell
+    for (auto p : _defaults) {
+        p.first->setUnitCell(p.second);
+    }
+
+    for (auto i = _ui->tabs->count()-1; i > 0; i--) {
+
+        auto tab = dynamic_cast<WidgetUnitCell*>(_ui->tabs->widget(i));
+        if (!tab) {
+            continue;
+        }
+        _ui->tabs->removeTab(i);
+        delete tab;
+    }
+
+    auto peaks_model = dynamic_cast<CollectedPeaksModel*>(_ui->peaks->model());
+
+    // Update the peak table view
+    QModelIndex topLeft = peaks_model->index(0, 0);
+    QModelIndex bottomRight = peaks_model->index(peaks_model->rowCount(QModelIndex())-1, peaks_model->columnCount(QModelIndex())-1);
+
+    emit peaks_model->dataChanged(topLeft,bottomRight);
 }
 
 void FrameUserDefinedUnitCellIndexer::index()
@@ -227,6 +363,17 @@ void FrameUserDefinedUnitCellIndexer::buildUnitCellsTable()
 
 void FrameUserDefinedUnitCellIndexer::accept()
 {
+    auto unit_cells_item = _experiment_item->unitCellsItem();
+
+    for (auto i = 0; i < _ui->tabs->count(); ++i) {
+        auto unit_cell_tab = dynamic_cast<WidgetUnitCell*>(_ui->tabs->widget(i));
+        if (!unit_cell_tab) {
+            continue;
+        }
+        auto unit_cell_item = new UnitCellItem(unit_cell_tab->unitCell());
+        unit_cells_item->appendRow(unit_cell_item);
+    }
+
     auto peaks_item = _experiment_item->peaksItem();
 
     emit _experiment_item->model()->itemChanged(peaks_item);

@@ -17,9 +17,9 @@ namespace nsx {
 
 struct UserDefinedUnitCellIndexerParameters {
 
-    double distance_tolerance = 1.0e-2;
+    double distance_tolerance = 5.0e-2;
 
-    double angular_tolerance = 1.0e-2;
+    double angular_tolerance = 5.0e-2;
 
     bool niggli_only = false;
 
@@ -30,7 +30,7 @@ struct UserDefinedUnitCellIndexerParameters {
     double indexing_tolerance = 2.0e-1;
     double indexing_threshold = 9.0e-1;
 
-    size_t max_n_q_vectors = 100;
+    size_t max_n_q_vectors = 300;
 
     double wavelength = 1.0;
 

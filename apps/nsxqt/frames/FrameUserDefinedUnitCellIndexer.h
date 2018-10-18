@@ -31,15 +31,23 @@ private slots:
 
     void slotActionClicked(QAbstractButton *button);
 
+    void slotTabEdited(int index);
+
+    void slotTabRemoved(int index);
+
+    void slotSelectSolution(int);
+
 private:
 
     explicit FrameUserDefinedUnitCellIndexer(ExperimentItem *experiment_item, const nsx::PeakList &peaks);
 
-    void buildUnitCellsTable();
-
     void accept();
 
+    void buildUnitCellsTable();
+
     void index();
+
+    void resetPeaks();
 
 private:
 
@@ -48,6 +56,8 @@ private:
     Ui::FrameUserDefinedUnitCellIndexer *_ui;
 
     ExperimentItem *_experiment_item;
+
+    std::vector<std::pair<nsx::sptrPeak3D,nsx::sptrUnitCell>> _defaults;
 
     nsx::UserDefinedUnitCellIndexer _indexer;
 
