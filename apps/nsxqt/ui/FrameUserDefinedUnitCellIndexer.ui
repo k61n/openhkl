@@ -508,6 +508,27 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>peaks</tabstop>
+  <tabstop>a</tabstop>
+  <tabstop>b</tabstop>
+  <tabstop>c</tabstop>
+  <tabstop>alpha</tabstop>
+  <tabstop>beta</tabstop>
+  <tabstop>gamma</tabstop>
+  <tabstop>wavelength</tabstop>
+  <tabstop>gruber_tolerance</tabstop>
+  <tabstop>niggli_tolerance</tabstop>
+  <tabstop>niggli_only</tabstop>
+  <tabstop>distance_tolerance</tabstop>
+  <tabstop>angular_tolerance</tabstop>
+  <tabstop>max_n_q_vectors</tabstop>
+  <tabstop>indexing_tolerance</tabstop>
+  <tabstop>indexing_threshold</tabstop>
+  <tabstop>n_solutions</tabstop>
+  <tabstop>unit_cells</tabstop>
+  <tabstop>tabs</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
