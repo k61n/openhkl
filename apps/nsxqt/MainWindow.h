@@ -29,9 +29,7 @@ class MainWindow : public QMainWindow {
 
 public:
 
-    static MainWindow* create(QWidget* parent=nullptr);
-
-    static MainWindow* Instance();
+    MainWindow(QWidget *parent=nullptr);
 
     ~MainWindow();
 
@@ -79,12 +77,6 @@ private slots:
     void slotChangeSelectedFrame(int selected_frame);
 
 private:
-
-    MainWindow(QWidget *parent = 0);
-
-private:
-
-    static MainWindow *_instance;
 
     Ui::MainWindow* _ui;
 

@@ -23,12 +23,12 @@ int main(int argc, char* argv[])
     // Ensure . is used rather than , for float and double boxes
     QLocale::setDefault(QLocale::c());
 
-    MainWindow* main_window = MainWindow::create(nullptr);
+    MainWindow main_window(nullptr);
 
     nsx::info()<<"NSXQt session started";
 
-    main_window->showMaximized();
-    main_window->show();
+    main_window.showMaximized();
+    main_window.show();
 
     return a.exec();
 }

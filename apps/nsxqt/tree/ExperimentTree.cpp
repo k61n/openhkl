@@ -42,6 +42,7 @@
 #include "GLWidget.h"
 #include "InstrumentItem.h"
 #include "LibraryItem.h"
+#include "MainWindow.h"
 #include "MetaTypes.h"
 #include "NumorItem.h"
 #include "PeaksItem.h"
@@ -61,8 +62,8 @@
 
 #include <QDebug>
 
-ExperimentTree::ExperimentTree(QWidget *parent):
-    QTreeView(parent)
+ExperimentTree::ExperimentTree(QWidget *parent)
+    : QTreeView(parent)
 {
     setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -122,8 +123,8 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             QAction* import_raw = menu->addAction("Import raw data");
             connect(import_raw, &QAction::triggered, [=](){ditem->importRawData();});
 
-            QAction* explore_instrument_states = menu->addAction("Explore instrument states");
-            connect(explore_instrument_states, &QAction::triggered, [=](){ditem->exploreInstrumentStates();});
+            QAction* open_instrument_states_dialog = menu->addAction("Open instrument states dialog");
+            connect(open_instrument_states_dialog, &QAction::triggered, [=](){ditem->openInstrumentStatesDialog();});
 
             QAction* find_peaks = menu->addAction("Find peaks in data");
             connect(find_peaks, &QAction::triggered, [=](){ditem->findPeaks();});

@@ -20,10 +20,10 @@
 #include <nsxlib/RawDataReader.h>
 
 #include "DataItem.h"
-#include "DialogExploreInstrumentStates.h"
 #include "DialogHDF5Converter.h"
 #include "FramePeakFinder.h"
 #include "DialogRawData.h"
+#include "FrameInstrumentStates.h"
 #include "ExperimentItem.h"
 #include "MainWindow.h"
 #include "MetaTypes.h"
@@ -241,7 +241,7 @@ void DataItem::convertToHDF5()
     }
 }
 
-void DataItem::exploreInstrumentStates()
+void DataItem::openInstrumentStatesDialog()
 {
     nsx::DataList selected_data = selectedData();
 
@@ -250,9 +250,9 @@ void DataItem::exploreInstrumentStates()
         return;
     }
 
-    DialogExploreInstrumentStates* dialog = DialogExploreInstrumentStates::create(selected_data,MainWindow::Instance());
+    FrameInstrumentStates *frame = FrameInstrumentStates::create(selected_data);
 
-    dialog->show();
+    frame->show();
 
-    dialog->raise();
+    frame->raise();
 }

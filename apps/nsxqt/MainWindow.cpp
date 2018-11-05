@@ -63,27 +63,10 @@
 
 #include "ui_MainWindow.h"
 
-MainWindow* MainWindow::_instance = nullptr;
-
-MainWindow* MainWindow::create(QWidget* parent)
-{
-    if (!_instance) {
-        _instance = new MainWindow(parent);
-    }
-
-    return _instance;
-}
-
-MainWindow* MainWindow::Instance()
-{
-    return _instance;
-}
-
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent),
   _ui(new Ui::MainWindow)
 {
-
     _ui->setupUi(this);
 
     // make experiment tree aware of the session
@@ -217,10 +200,6 @@ MainWindow::~MainWindow()
     qInstallMessageHandler(0);
 
     delete _ui;
-
-    if (_instance) {
-        _instance = nullptr;
-    }
 }
 
 void MainWindow::on_actionAbout_triggered()

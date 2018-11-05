@@ -1,20 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DialogExploreInstrumentStates</class>
- <widget class="QDialog" name="DialogExploreInstrumentStates">
+ <class>FrameInstrumentStates</class>
+ <widget class="NSXQFrame" name="Frame">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>789</width>
-    <height>602</height>
+    <width>815</width>
+    <height>647</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Explore instrument states</string>
+   <string>Frame</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0">
+  <property name="frameShape">
+   <enum>QFrame::StyledPanel</enum>
+  </property>
+  <property name="frameShadow">
+   <enum>QFrame::Raised</enum>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,3">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -763,15 +769,23 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
+   <item>
+    <widget class="QDialogButtonBox" name="actions">
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>NSXQFrame</class>
+   <extends>QFrame</extends>
+   <header>NSXQFrame.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

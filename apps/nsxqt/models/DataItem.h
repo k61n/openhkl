@@ -6,6 +6,7 @@
 
 #include "TreeItem.h"
 
+class MainWindow;
 class NumorItem;
 
 class DataItem : public TreeItem
@@ -23,7 +24,7 @@ public:
 
     void findPeaks();
 
-    void exploreInstrumentStates();
+    void openInstrumentStatesDialog();
 
     nsx::DataList allData();
 

@@ -1,40 +1,33 @@
 #include <QFileInfo>
-#include <QFont>
 
 #include <nsxlib/DataSet.h>
-#include <nsxlib/InstrumentState.h>
 
-#include "ui_DialogExploreInstrumentStates.h"
-#include "DialogExploreInstrumentStates.h"
+#include "FrameInstrumentStates.h"
 #include "MetaTypes.h"
 
-DialogExploreInstrumentStates* DialogExploreInstrumentStates::_instance = nullptr;
+#include "ui_FrameInstrumentStates.h"
 
-DialogExploreInstrumentStates* DialogExploreInstrumentStates::create(const nsx::DataList& data, QWidget* parent)
+FrameInstrumentStates* FrameInstrumentStates::_instance = nullptr;
+
+FrameInstrumentStates* FrameInstrumentStates::create(const nsx::DataList& data)
 {
     if (!_instance) {
-        _instance = new DialogExploreInstrumentStates(data, parent);
+        _instance = new FrameInstrumentStates(data);
     }
 
     return _instance;
 }
 
-DialogExploreInstrumentStates* DialogExploreInstrumentStates::Instance()
+FrameInstrumentStates* FrameInstrumentStates::Instance()
 {
     return _instance;
 }
 
-DialogExploreInstrumentStates::DialogExploreInstrumentStates(const nsx::DataList& data, QWidget *parent)
-: QDialog(parent),
-  _ui(new Ui::DialogExploreInstrumentStates)
+FrameInstrumentStates::FrameInstrumentStates(const nsx::DataList& data)
+: NSXQFrame(),
+  _ui(new Ui::FrameInstrumentStates)
 {
     _ui->setupUi(this);
-
-    setModal(false);
-
-    setWindowModality(Qt::NonModal);
-
-    setAttribute(Qt::WA_DeleteOnClose);
 
     for (auto d : data) {
         QFileInfo fileinfo(QString::fromStdString(d->filename()));
@@ -48,10 +41,12 @@ DialogExploreInstrumentStates::DialogExploreInstrumentStates(const nsx::DataList
     connect(_ui->frameSlider,SIGNAL(valueChanged(int)),this,SLOT(slotSelectedFrameChanged(int)));
     connect(_ui->frameIndex,SIGNAL(valueChanged(int)),this,SLOT(slotSelectedFrameChanged(int)));
 
+    connect(_ui->actions,SIGNAL(clicked(QAbstractButton*)),this,SLOT(slotActionClicked(QAbstractButton*)));
+
     _ui->data->setCurrentRow(0);
 }
 
-DialogExploreInstrumentStates::~DialogExploreInstrumentStates()
+FrameInstrumentStates::~FrameInstrumentStates()
 {
     delete _ui;
 
@@ -60,7 +55,23 @@ DialogExploreInstrumentStates::~DialogExploreInstrumentStates()
     }
 }
 
-void DialogExploreInstrumentStates::slotSelectedDataChanged(int selected_data)
+void FrameInstrumentStates::slotActionClicked(QAbstractButton *button)
+{
+    auto button_role = _ui->actions->standardButton(button);
+
+    switch(button_role)
+    {
+    case QDialogButtonBox::StandardButton::Ok: {
+        close();
+        break;
+    }
+    default: {
+        return;
+    }
+    }
+}
+
+void FrameInstrumentStates::slotSelectedDataChanged(int selected_data)
 {
     Q_UNUSED(selected_data)
 
@@ -79,7 +90,7 @@ void DialogExploreInstrumentStates::slotSelectedDataChanged(int selected_data)
     slotSelectedFrameChanged(0);
 }
 
-void DialogExploreInstrumentStates::slotSelectedFrameChanged(int selected_frame)
+void FrameInstrumentStates::slotSelectedFrameChanged(int selected_frame)
 {
     _ui->frameIndex->setValue(selected_frame);
     _ui->frameSlider->setValue(selected_frame);
