@@ -137,10 +137,23 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="0">
-      <widget class="QLabel" name="label_5">
+     <item row="9" column="0">
+      <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>search radius</string>
+        <string>number of frames</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="1">
+      <widget class="QDoubleSpinBox" name="nframes">
+       <property name="decimals">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <double>1000.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>5.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -160,23 +173,10 @@
        </property>
       </widget>
      </item>
-     <item row="9" column="0">
-      <widget class="QLabel" name="label_6">
+     <item row="8" column="0">
+      <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>number of frames</string>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="1">
-      <widget class="QDoubleSpinBox" name="nframes">
-       <property name="decimals">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <double>1000.000000000000000</double>
-       </property>
-       <property name="value">
-        <double>5.000000000000000</double>
+        <string>search radius</string>
        </property>
       </widget>
      </item>
@@ -214,8 +214,6 @@
     </layout>
    </item>
   </layout>
-  <zorder>gridLayoutWidget</zorder>
-  <zorder>peakScale</zorder>
  </widget>
  <resources/>
  <connections/>
