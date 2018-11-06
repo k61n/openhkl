@@ -4,7 +4,7 @@
 
 namespace nsx {
 
-IntegratedProfile::IntegratedProfile(const Intensity& mean_background, double sigma_max, size_t num):
+Profile1D::Profile1D(const Intensity& mean_background, double sigma_max, size_t num):
     _counts(num, 0.0), _npoints(num, 0), _endpoints(num+1), _sigmaMax(sigma_max), _meanBkg(mean_background)
 {
     const double dr3 = sigma_max*sigma_max*sigma_max / num;
@@ -14,7 +14,7 @@ IntegratedProfile::IntegratedProfile(const Intensity& mean_background, double si
     }
 }
 
-void IntegratedProfile::addPoint(double r2, double M)
+void Profile1D::addPoint(double r2, double M)
 {
     // outside of allowable range
     if (r2 < 0 || r2 > _endpoints.back()) {
@@ -29,17 +29,17 @@ void IntegratedProfile::addPoint(double r2, double M)
     }
 }
 
-const std::vector<double>& IntegratedProfile::counts() const
+const std::vector<double>& Profile1D::counts() const
 {
     return _counts;
 }
 
-const std::vector<int>& IntegratedProfile::npoints() const
+const std::vector<int>& Profile1D::npoints() const
 {
     return _npoints;
 }
 
-std::vector<Intensity> IntegratedProfile::profile() const
+std::vector<Intensity> Profile1D::profile() const
 {
     std::vector<Intensity> profile(_counts.size(), 0.0);
     const double mean_bkg = _meanBkg.value();
@@ -79,7 +79,7 @@ std::vector<Intensity> IntegratedProfile::profile() const
     return profile;
 }
 
-void IntegratedProfile::reset()
+void Profile1D::reset()
 {
     std::fill(_counts.begin(), _counts.end(), 0);
     std::fill(_npoints.begin(), _npoints.end(), 0);

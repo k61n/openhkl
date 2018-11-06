@@ -1,8 +1,6 @@
 #pragma once
 
-#include <QJsonObject>
-#include <QList>
-
+#include <nsxlib/CrystalTypes.h>
 #include <nsxlib/InstrumentTypes.h>
 
 #include "InspectableTreeItem.h"
@@ -14,8 +12,9 @@ class SampleItem : public InspectableTreeItem
 public:
     explicit SampleItem();
 
-    QList<UnitCellItem*> unitCellItems();
-    void addUnitCell(); 
     QWidget* inspectItem() override;
+
     void openIsotopesDatabase();
+
+    void openSampleGlobalOffsetsFrame();
 };

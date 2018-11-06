@@ -39,6 +39,7 @@
 #include <fstream>
 #include <set>
 #include <stdexcept>
+#include <string>
 
 #include "Component.h"
 #include "Detector.h"
@@ -92,35 +93,31 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const st
 
     _nFrames = _filenames.size();
 
-    std::vector<std::string> axesS = _diffractometer->detector()->gonio()->physicalAxesNames();
-    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm
-            = Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor>::Zero(long(axesS.size()), long(_nFrames));
-
-    _sampleStates.resize(_nFrames);
+    auto axes = _diffractometer->detector()->gonio()->axes();
+    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm(axes.size(),_nFrames);
     _detectorStates.resize(_nFrames);
-
     for (unsigned int i = 0; i < _nFrames; ++i) {
         _detectorStates[i] = eigenToVector((dm.col(i)));
     }
 
     // Getting Scan parameters for the sample
-    axesS = _diffractometer->sample()->gonio()->physicalAxesNames();
-    dm.resize(long(axesS.size()), long(_nFrames));
+    axes = _diffractometer->sample()->gonio()->axes();
+    dm.resize(axes.size(),_nFrames);
 
     int omega, phi, chi;
-    unsigned int i;
 
-    for (i = 0, omega = -1, phi = -1, chi = -1; i < axesS.size(); ++i) {
-        omega = axesS[i] == "omega" ? int(i) : omega;
-        chi = axesS[i] == "chi"? int(i) : chi;
-        phi = axesS[i] == "phi"? int(i) : phi;
+    for (size_t i = 0, omega = -1, phi = -1, chi = -1; i < axes.size(); ++i) {
+        const std::string axis_name = axes[i]->name();
+        omega = axis_name == "omega" ? int(i) : omega;
+        chi = axis_name == "chi"? int(i) : chi;
+        phi = axis_name == "phi"? int(i) : phi;
     }
 
     assert(omega != -1);
     assert(phi   != -1);
     assert(chi != -1);
 
-    for (i = 0; i < _nFrames; ++i) {
+    for (size_t i = 0; i < _nFrames; ++i) {
         dm(omega, i) = i*delta_omega;
         dm(phi, i) = i*delta_phi;
         dm(chi,i) = i*delta_chi;
@@ -129,7 +126,8 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const st
     // Use natural units internally (rad)
     dm*=deg;
 
-    for (unsigned int i=0;i<_nFrames;++i) {
+    _sampleStates.resize(_nFrames);
+    for (size_t i=0;i<_nFrames;++i) {
         _sampleStates[i] = eigenToVector(dm.col(i));
     }
 }

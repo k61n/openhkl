@@ -15,7 +15,7 @@ DialogUnitCellParameters::DialogUnitCellParameters(nsx::sptrUnitCell unitCell, Q
     ui->labelBeta->setText(QString((QChar) 0x03B2));
     ui->labelGamma->setText(QString((QChar) 0x03B3));
 
-    nsx::CellCharacter ch = _unitCell->character();
+    auto ch = _unitCell->character();
 
     ui->a->setValue(ch.a);
     ui->b->setValue(ch.b);
@@ -42,5 +42,5 @@ void DialogUnitCellParameters::setUnitCellParameters()
     double beta=ui->beta->value()*nsx::deg;
     double gamma=ui->gamma->value()*nsx::deg;
 
-    _unitCell->setParams(a,b,c,alpha,beta,gamma);
+    _unitCell->setParameters(a,b,c,alpha,beta,gamma);
 }

@@ -82,7 +82,7 @@ Eigen::Matrix3d PeakCoordinateSystem::jacobian() const
     #endif
 
 
-    return J;    
+    return J;
 }
 
 Ellipsoid PeakCoordinateSystem::detectorShape(double sigmaD, double sigmaM) const

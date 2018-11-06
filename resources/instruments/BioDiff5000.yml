@@ -19,7 +19,7 @@ instrument:
         ncols: 5000
         data_ordering: TopLeftRowMajor
         goniometer:
-            name: gamma-arm
+            name: detector-gonio
             axis:
                 - name: 2theta(gamma)
                   type: rotation
@@ -28,24 +28,15 @@ instrument:
                   clockwise: true
                   physical: true
 
-                - name: x-offset
-                  type: translation
+                - name: 2theta(nu)
+                  type: rotation
                   direction: [1.0,0.0,0.0]
-                  physical: false
-
-                - name: y-offset
-                  type: translation
-                  direction: [0.0,1.0,0.0]
-                  physical: false
-
-                - name: z-offset
-                  type: translation
-                  direction: [0.0,0.0,1.0]
+                  clockwise: true
                   physical: false
     sample:
         name: sample
         goniometer:
-            name: Euler cradle (BL)
+            name: sample-gonio
             axis:
                 - name: omega
                   type: rotation
@@ -67,21 +58,6 @@ instrument:
                   direction: [0.0,0.0,1.0]
                   clockwise: true
                   physical: true
-
-                - name: x-offset
-                  type: translation
-                  direction: [1.0,0.0,0.0]
-                  physical: false
-
-                - name: y-offset
-                  type: translation
-                  direction: [0.0,1.0,0.0]
-                  physical: false
-
-                - name: z-offset
-                  type: translation
-                  direction: [0.0,0.0,1.0]
-                  physical: false
     source:
         name: monochromatic source
         monochromator:
@@ -98,39 +74,4 @@ instrument:
             fwhm:
                 value: 0.00901
                 units: ang
-        goniometer:
-            name: source-gonio
-            axis:
-                - name: om-mono
-                  type: rotation
-                  id: 8
-                  direction: [0.0,0.0,1.0]
-                  clockwise: true
-                  physical: true
-
-                - name: chi-mono
-                  type: rotation
-                  id: 9
-                  direction: [0.0,1.0,0.0]
-                  clockwise: false
-                  physical: true
-
-                - name: phi-mono
-                  type: rotation
-                  id: 10
-                  direction: [0.0,0.0,1.0]
-                  clockwise: true
-                  physical: true
-
-                - name: x-mono
-                  type: translation
-                  id: 7
-                  direction: [1.0,0.0,0.0]
-                  physical: true
-
-                - name: y-mono
-                  type: translation
-                  id: 6
-                  direction: [0.0,1.0,0.0]
-                  physical: true
 ...

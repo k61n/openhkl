@@ -64,7 +64,7 @@ DialogSpaceGroup::DialogSpaceGroup(const nsx::PeakList& peaks, QWidget *parent):
         throw std::runtime_error("No unit cell defined for the selected peaks");
     }
 
-    _peaks = peak_filter.indexed(_peaks, _cell, _cell->indexingTolerance());
+    _peaks = peak_filter.indexed(_peaks, *_cell, _cell->indexingTolerance());
 
     if ( _peaks.size()  == 0) {
         throw std::runtime_error("Need at least one peak to find space group!");
@@ -73,6 +73,9 @@ DialogSpaceGroup::DialogSpaceGroup(const nsx::PeakList& peaks, QWidget *parent):
     evaluateSpaceGroups();
 
     buildTable();
+
+    connect(ui->cancelOK, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(ui->cancelOK, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
 DialogSpaceGroup::~DialogSpaceGroup()

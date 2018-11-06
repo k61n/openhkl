@@ -50,37 +50,6 @@ IntegrationRegion::IntegrationRegion(sptrPeak3D peak, double peak_end, double bk
     _bkgEnd(bkg_end),
     _data(peak)
 {
-    auto uc = peak->unitCell();
-
-    #if 0
-    // this code is disabled because it was discovered to be too slow
-    // we should a faster way of implementing the test for the Brillouin zone
-    //
-    // try to find Brillouin zone if peak has been indexed
-    if (uc && peak->indexed()) {
-        BrillouinZone zone(uc->reciprocalBasis());
-        _hull = zone.detectorConvexHull(peak->q(), peak->data());
-    }
-    // otherwise, just use bounding box of the integration ellipsoid
-    else {
-        Ellipsoid bkg(_shape);
-        bkg.scale(_bkgEnd);
-        auto aabb = bkg.aabb();
-
-        Eigen::Vector3d lo = aabb.lower();
-        Eigen::Vector3d dx = aabb.upper() - aabb.lower();
-
-        _hull.addVertex(lo);
-        _hull.addVertex(lo+Eigen::Vector3d(0, 0, dx[2]));
-        _hull.addVertex(lo+Eigen::Vector3d(0, dx[1], 0));
-        _hull.addVertex(lo+Eigen::Vector3d(0, dx[1], dx[2]));
-        _hull.addVertex(lo+Eigen::Vector3d(dx[0], 0, 0));
-        _hull.addVertex(lo+Eigen::Vector3d(dx[0], 0, dx[2]));
-        _hull.addVertex(lo+Eigen::Vector3d(dx[0], dx[1], 0));
-        _hull.addVertex(lo+Eigen::Vector3d(dx[0], dx[1], dx[2]));
-    }
-    _hull.updateHull();
-    #else
     Ellipsoid bkg(_shape);
     bkg.scale(_bkgEnd);
     auto aabb = bkg.aabb();
@@ -97,7 +66,6 @@ IntegrationRegion::IntegrationRegion(sptrPeak3D peak, double peak_end, double bk
     _hull.addVertex(lo+Eigen::Vector3d(dx[0], dx[1], 0));
     _hull.addVertex(lo+Eigen::Vector3d(dx[0], dx[1], dx[2]));
     _hull.updateHull();
-    #endif
 }
 
 const AABB IntegrationRegion::aabb() const

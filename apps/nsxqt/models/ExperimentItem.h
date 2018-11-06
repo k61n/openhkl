@@ -15,12 +15,14 @@ class DataItem;
 class LibraryItem;
 class InstrumentItem;
 class PeaksItem;
+class UnitCellsItem;
 
 class ExperimentItem: public TreeItem
 {
 public:
     explicit ExperimentItem(nsx::sptrExperiment experiment);
-    virtual ~ExperimentItem() = default;    
+
+    virtual ~ExperimentItem();
 
     nsx::sptrExperiment experiment() { return _experiment; }
 
@@ -30,14 +32,23 @@ public:
 
     DataItem* dataItem();
 
+    UnitCellsItem* unitCellsItem();
+
     LibraryItem* libraryItem();
 
     void writeLogFiles();
 
 private:
+
     nsx::sptrExperiment _experiment;
+
     InstrumentItem* _instr;
+
     DataItem* _data;
+
+    UnitCellsItem* _unitCells;
+
     PeaksItem* _peaks;
+
     LibraryItem* _library;
 };

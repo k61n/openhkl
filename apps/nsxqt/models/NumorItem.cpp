@@ -9,6 +9,7 @@
 #include <nsxlib/Logger.h>
 
 #include "ExperimentItem.h"
+#include "MetaTypes.h"
 #include "NumorItem.h"
 #include "NumorPropertyWidget.h"
 
@@ -17,19 +18,32 @@ NumorItem::NumorItem(nsx::sptrDataSet data):
     _data(data)
 {
     setText("Numor");
+
+    QIcon icon(":/resources/numorIcon.png");
+    setIcon(icon);
+
     setEditable(false);
-    setDragEnabled(true);
-    setDropEnabled(true);
+
+    setDragEnabled(false);
+    setDropEnabled(false);
+
+    setSelectable(false);
+
+    setCheckable(true);
 }
 
 NumorItem::~NumorItem()
 {
-    experiment()->removeData(_data->filename());
 }
 
-nsx::sptrDataSet NumorItem::getData()
+QVariant NumorItem::data(int role) const
 {
-    return _data;
+    switch(role) {
+    case(Qt::UserRole): {
+        return QVariant::fromValue(_data);
+    }
+    }
+    return InspectableTreeItem::data(role);
 }
 
 void NumorItem::exportHDF5(const std::string& filename) const

@@ -3,12 +3,9 @@
 #include <map>
 #include <string>
 
-#include <QGroupBox>
 #include <QDialog>
-#include <QVBoxLayout>
 
 #include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DataTypes.h>
 
 class QAbstractButton;
 
@@ -16,15 +13,19 @@ namespace Ui {
 class DialogPeakFilter;
 }
 
+class CollectedPeaksModel;
+class ExperimentItem;
+
 class DialogPeakFilter : public QDialog {
     Q_OBJECT
 
 public:
-    DialogPeakFilter(const nsx::PeakList& peaks, QWidget* parent=0);
+
+    static DialogPeakFilter* create(ExperimentItem* experiment_tree, const nsx::PeakList& peaks, QWidget* parent=nullptr);
+
+    static DialogPeakFilter* Instance();
 
     virtual ~DialogPeakFilter();
-
-    const nsx::PeakList& filteredPeaks() const;
 
 public slots:
 
@@ -36,10 +37,19 @@ public slots:
 
 private:
 
+    DialogPeakFilter(ExperimentItem* experiment_tree, const nsx::PeakList& peaks, QWidget* parent=nullptr);
+
     void filterPeaks();
 
 private:
-    Ui::DialogPeakFilter* _ui;
+
+    static DialogPeakFilter *_instance;
+
+    Ui::DialogPeakFilter *_ui;
+
+    ExperimentItem *_experiment_item;
+
+    CollectedPeaksModel *_peaks_model;
+
     nsx::PeakList _peaks;
-    nsx::PeakList _filtered_peaks;
 };

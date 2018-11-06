@@ -3,29 +3,43 @@
 #include <nsxlib/DataTypes.h>
 #include <nsxlib/InstrumentTypes.h>
 
-#include "TreeItem.h"
+#include "InspectableTreeItem.h"
 
 class PeakListItem;
 
-class PeaksItem: public TreeItem {
+class PeaksItem: public InspectableTreeItem {
 
 public:
 
     explicit PeaksItem();
 
+    virtual QWidget* inspectItem() override;
+
+    nsx::PeakList allPeaks();
+
     nsx::PeakList selectedPeaks();
 
-    //virtual void setData(const QVariant &value, int role) override;
+    void openAutoIndexingFrame();
+
+    void openPeakFilterDialog();
+
+    void removeUnitCell(nsx::sptrUnitCell unit_cell);
 
     void integratePeaks();
+
     void findSpaceGroup();
+
     void showPeaksOpenGL();
+
     void absorptionCorrection();
+
     void buildShapeLibrary();
-    void filterPeaks();
-    void autoindex();
+
     void refine();
+
     void autoAssignUnitCell();
 
+    void openUserDefinedUnitCellIndexerFrame();
 
+    void normalizeToMonitor();
 };

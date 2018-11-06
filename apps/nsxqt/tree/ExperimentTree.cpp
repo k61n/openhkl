@@ -31,7 +31,6 @@
 #include "DataItem.h"
 #include "DetectorItem.h"
 #include "DetectorScene.h"
-#include "DialogAutoIndexing.h"
 #include "DialogExperiment.h"
 #include "DialogIsotopesDatabase.h"
 #include "DialogRawData.h"
@@ -43,6 +42,8 @@
 #include "GLWidget.h"
 #include "InstrumentItem.h"
 #include "LibraryItem.h"
+#include "MainWindow.h"
+#include "MetaTypes.h"
 #include "NumorItem.h"
 #include "PeaksItem.h"
 #include "PeakListItem.h"
@@ -50,16 +51,19 @@
 #include "ProgressView.h"
 #include "QCustomPlot.h"
 #include "SampleItem.h"
-
 #include "SessionModel.h"
+#include "SessionModelDelegate.h"
 #include "SourceItem.h"
 #include "TreeItem.h"
 #include "UnitCellItem.h"
+#include "UnitCellsItem.h"
 
 #include "ui_MainWindow.h"
 
-ExperimentTree::ExperimentTree(QWidget *parent):
-    QTreeView(parent)
+#include <QDebug>
+
+ExperimentTree::ExperimentTree(QWidget *parent)
+    : QTreeView(parent)
 {
     setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -69,6 +73,10 @@ ExperimentTree::ExperimentTree(QWidget *parent):
 
     setExpandsOnDoubleClick(false);
 
+    auto session_model_delegate = new SessionModelDelegate();
+
+    setItemDelegate(session_model_delegate);
+
     connect(this,SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onCustomMenuRequested(const QPoint&)));
     connect(this,SIGNAL(doubleClicked(const QModelIndex&)),this,SLOT(onDoubleClick(const QModelIndex&)));
     connect(this,SIGNAL(clicked(QModelIndex)),this,SLOT(onSingleClick(QModelIndex)));
@@ -76,6 +84,13 @@ ExperimentTree::ExperimentTree(QWidget *parent):
 
 ExperimentTree::~ExperimentTree()
 {
+}
+
+SessionModel* ExperimentTree::session()
+{
+    auto session_model = dynamic_cast<SessionModel*>(model());
+
+    return session_model;
 }
 
 void ExperimentTree::onCustomMenuRequested(const QPoint& point)
@@ -96,36 +111,68 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(log, triggered, [=](){exp_item->writeLogFiles();});
         }
         else if (auto ditem = dynamic_cast<DataItem*>(item)) {            
-            QAction* import = menu->addAction("Load data");
+            QAction* load_data = menu->addAction("Load data");
+            connect(load_data, &QAction::triggered, [=](){ditem->importData();});
+
+            QAction* remove_selected_data = menu->addAction("Remove selected data");
+            connect(remove_selected_data, &QAction::triggered, [=](){ditem->removeSelectedData();});
+
             QAction* convert_to_hdf5 = menu->addAction("Convert to HDF5");
-            QAction* import_raw = menu->addAction("Import raw data");
-            QAction* findpeaks = menu->addAction("Find peaks in data");
             connect(convert_to_hdf5, &QAction::triggered, [=](){ditem->convertToHDF5();});
-            connect(import, &QAction::triggered, [=](){ditem->importData();});
+
+            QAction* import_raw = menu->addAction("Import raw data");
             connect(import_raw, &QAction::triggered, [=](){ditem->importRawData();});
-            connect(findpeaks, &QAction::triggered, [=](){ditem->findPeaks();});
+
+            QAction* open_instrument_states_dialog = menu->addAction("Open instrument states dialog");
+            connect(open_instrument_states_dialog, &QAction::triggered, [=](){ditem->openInstrumentStatesDialog();});
+
+            QAction* find_peaks = menu->addAction("Find peaks in data");
+            connect(find_peaks, &QAction::triggered, [=](){ditem->findPeaks();});
         }
         else if (auto pitem = dynamic_cast<PeaksItem*>(item)) {
+
             QAction* filter = menu->addAction("Filter peaks");
-            QAction* autoidx = menu->addAction("FFT-autoindex peaks");
-            QAction* assign = menu->addAction("Autoindex existing lattice");
-            QAction* refine = menu->addAction("Refine lattice and instrument parameters");
-            QAction* library = menu->addAction("Build shape library");
-            QAction* integrate = menu->addAction("Integrate peaks");
-            QAction* abs = menu->addAction("Correct for Absorption");
-            QAction* scene3d = menu->addAction("Show 3D view");                      
-            connect(abs, triggered, [=]{pitem->absorptionCorrection();});
-            connect(scene3d, triggered, [=]{pitem->showPeaksOpenGL();});
-            connect(library, triggered, [=]{pitem->buildShapeLibrary();});
-            connect(filter, triggered, [=](){pitem->filterPeaks();});
-            connect(integrate, triggered, [=](){pitem->integratePeaks();});
-            connect(autoidx, triggered, [=](){pitem->autoindex();});
-            connect(refine, triggered, [=](){pitem->refine();});
+            connect(filter, triggered, [=](){pitem->openPeakFilterDialog();});
+
+            QMenu *indexing_menu = new QMenu("Indexing");
+            QAction* autoindex = indexing_menu->addAction("FFT auto indexer");
+            connect(autoindex, triggered, [=](){pitem->openAutoIndexingFrame();});
+
+            QAction* user_defined = indexing_menu->addAction("User defined cell parameters indexer");
+            connect(user_defined, triggered, [=](){pitem->openUserDefinedUnitCellIndexerFrame();});
+
+            QAction* assign = indexing_menu->addAction("Assign unit cell");
             connect(assign, triggered, [=](){pitem->autoAssignUnitCell();});
+
+            menu->addMenu(indexing_menu);
+
+            QAction* refine = menu->addAction("Refine lattice and instrument parameters");
+            connect(refine, triggered, [=](){pitem->refine();});
+
+            QAction* library = menu->addAction("Build shape library");
+            connect(library, triggered, [=]{pitem->buildShapeLibrary();});
+
+            QAction* integrate = menu->addAction("Integrate peaks");
+            connect(integrate, triggered, [=](){pitem->integratePeaks();});
+
+            QAction* normalize = menu->addAction("Normalize to monitor");
+            connect(normalize, triggered, [=](){pitem->normalizeToMonitor();});
+
+            QAction* abs = menu->addAction("Correct for Absorption");
+            connect(abs, triggered, [=]{pitem->absorptionCorrection();});
+
+            QAction* scene3d = menu->addAction("Show 3D view");
+            connect(scene3d, triggered, [=]{pitem->showPeaksOpenGL();});
         }
         else if (SampleItem* sitem = dynamic_cast<SampleItem*>(item)) {
             QAction* openIsotopesDatabase = menu->addAction("Open isotopes database");
             connect(openIsotopesDatabase, &QAction::triggered, [=](){sitem->openIsotopesDatabase();});
+            QAction* openSampleGlobalOffsets = menu->addAction("Sample goniometer global offsets");
+            connect(openSampleGlobalOffsets, &QAction::triggered, [=](){sitem->openSampleGlobalOffsetsFrame();});
+        }
+        else if (DetectorItem* detector_item = dynamic_cast<DetectorItem*>(item)) {
+            QAction* openDetectorGlobalOffsets = menu->addAction("Detector goniometer global offsets");
+            connect(openDetectorGlobalOffsets, &QAction::triggered, [=](){detector_item->openDetectorGlobalOffsetsFrame();});
         }
         else if (UnitCellItem* ucitem = dynamic_cast<UnitCellItem*>(item)) {
             QAction* info = menu->addAction("Info");
@@ -136,12 +183,11 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             QAction* transformationMatrix=menu->addAction("Transformation matrix");
             QAction* group = menu->addAction("Choose space group");
 
-            connect(info, &QAction::triggered,[=]{ucitem->info();});
-            connect(cellParameters, &QAction::triggered, [=]{ucitem->openChangeUnitCellDialog();});
-            connect(transformationMatrix, &QAction::triggered, [=]{ucitem->openTransformationMatrixDialog();});
-            connect(setTolerance, SIGNAL(triggered()),this, SLOT(setIndexingTolerance()));
-            connect(group, triggered, [=](){ucitem->determineSpaceGroup();});
-
+            connect(info, &QAction::triggered,[=](){ucitem->info();});
+            connect(cellParameters, &QAction::triggered, [=](){ucitem->openChangeUnitCellDialog();});
+            connect(transformationMatrix, &QAction::triggered, [=](){ucitem->openTransformationMatrixDialog();});
+            connect(setTolerance, &QAction::triggered,[=](){ucitem->openIndexingToleranceDialog();});
+            connect(group, triggered, [=](){ucitem->openSpaceGroupDialog();});
         }
         else if (NumorItem* nitem = dynamic_cast<NumorItem*>(item)) {
             QAction* export_hdf = menu->addAction("Export to HDF5...");            
@@ -154,8 +200,15 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
         } else if (LibraryItem* lib_item = dynamic_cast<LibraryItem*>(item)) {
             QAction* predict = menu->addAction("Predict peaks");
             connect(predict, triggered, [=](){lib_item->incorporateCalculatedPeaks();});
+        } else if (UnitCellsItem* unit_cells_item = dynamic_cast<UnitCellsItem*>(item)) {
+            QAction* remove_unused_unit_cell = menu->addAction("Remove unused unit cells");
+            connect(remove_unused_unit_cell, triggered, [=](){unit_cells_item->removeUnusedUnitCells();});
+        } else {
+            delete menu;
+            return;
         }
     }
+
     menu->popup(viewport()->mapToGlobal(point));
 }
 
@@ -174,7 +227,7 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
             }
         }
     } else if (auto ptr=dynamic_cast<NumorItem*>(item)) {
-        emit plotData(ptr->getData());
+        session()->selectData(ptr->data(Qt::UserRole).value<nsx::sptrDataSet>());
     }
 }
 
@@ -186,7 +239,7 @@ void ExperimentTree::keyPressEvent(QKeyEvent *event)
         QListIterator<QModelIndex> it(selIndexes);
         it.toBack();
         while (it.hasPrevious()) {
-            QStandardItem* item = dynamic_cast<SessionModel*>(model())->itemFromIndex(it.previous());
+            auto item = dynamic_cast<SessionModel*>(model())->itemFromIndex(it.previous());
             if (!item->parent()) {
                 model()->removeRow(item->row());
                 emit resetScene();
@@ -197,7 +250,6 @@ void ExperimentTree::keyPressEvent(QKeyEvent *event)
         }
     }
 }
-
 
 void ExperimentTree::onSingleClick(const QModelIndex &index)
 {

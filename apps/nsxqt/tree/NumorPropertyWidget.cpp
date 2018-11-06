@@ -3,6 +3,7 @@
 #include <nsxlib/DataSet.h>
 #include <nsxlib/MetaData.h>
 
+#include "MetaTypes.h"
 #include "NumorItem.h"
 #include "NumorPropertyWidget.h"
 
@@ -19,14 +20,15 @@ NumorPropertyWidget::NumorPropertyWidget(NumorItem* caller,QWidget *parent) :
     ui->tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    auto data=caller->getData();
-    if (!data)
+    auto data = caller->data(Qt::UserRole).value<nsx::sptrDataSet>();
+    if (!data) {
         return;
+    }
 
     ui->label_Data->setText(QString::fromStdString(data->filename()));
 
-    auto metadata=data->metadata();
-    const auto& map=metadata->map();
+    auto metadata = data->metadata();
+    const auto& map = metadata->map();
 
     ui->tableWidget->setColumnCount(2);
     ui->tableWidget->setRowCount(map.size());

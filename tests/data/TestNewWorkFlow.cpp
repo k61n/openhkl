@@ -116,9 +116,6 @@ int main()
     for (auto&& peak: found_peaks) {
         peak->setUnitCell(cell);
     }
-
-    // add cell to sample
-    dataf->diffractometer()->sample()->unitCells().push_back(cell);
  
     // reintegrate peaks
     integrator.integrate(found_peaks, dataf, 3.0, 4.0, 5.0);
@@ -174,8 +171,6 @@ int main()
     }
 
     NSX_CHECK_GREATER_THAN(n_selected, 600);
-
-    // TODO: put peak prediction back into workflow test!!!
 
     return 0;
 }

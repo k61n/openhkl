@@ -22,23 +22,27 @@
 #include <nsxlib/Units.h>
 
 #include "DialogMCAbsorption.h"
+#include "ExperimentItem.h"
+#include "InstrumentItem.h"
+#include "UnitCellsItem.h"
 
 #include "ui_DialogMCAbsorption.h"
 
-DialogMCAbsorption::DialogMCAbsorption(SessionModel* session, nsx::sptrExperiment experiment, QWidget *parent):
+DialogMCAbsorption::DialogMCAbsorption(ExperimentItem* experiment_item, QWidget *parent):
     QDialog(parent),
     ui(new Ui::DialogMCAbsorption),
-    _experiment(experiment),
-    _session(session)
+    _experiment_item(experiment_item)
 {
     ui->setupUi(this);
-    auto sample = _experiment->diffractometer()->sample();
-    const auto& cells = sample->unitCells();
+
+    auto unit_cells_item = _experiment_item->unitCellsItem();
+
+    auto&& cells = unit_cells_item->unitCells();
     
     if (cells.size() > 0) {
-        ui->comboBox->setEnabled(true);
+        ui->unitCells->setEnabled(true);
         for (unsigned int i = 0; i < cells.size(); ++i) {
-            ui->comboBox->addItem("Crystal"+QString::number(i+1));
+            ui->unitCells->addItem("Crystal"+QString::number(i+1));
         }
     }
     ui->progressBar_MCStatus->setValue(0);
@@ -51,16 +55,18 @@ DialogMCAbsorption::~DialogMCAbsorption()
 
 void DialogMCAbsorption::on_pushButton_run_pressed()
 {
-    if (!ui->comboBox->isEnabled()) {
+    if (!ui->unitCells->isEnabled()) {
         return;
     }
-    // Get the source
-    auto source=_experiment->diffractometer()->source();
-    auto sample=_experiment->diffractometer()->sample();
 
-    // Get the material
-    unsigned int cellIndex=static_cast<unsigned int>(ui->comboBox->currentIndex());
-    auto cell = sample->unitCells()[cellIndex];
+    auto experiment = _experiment_item->experiment();
+
+    auto diffractometer = experiment->diffractometer();
+
+    auto unit_cells_item = _experiment_item->unitCellsItem();
+    auto&& cells = unit_cells_item->unitCells();
+    auto cell = cells[ui->unitCells->currentIndex()];
+
     auto material = cell->material();
 
     if (material == nullptr) {
@@ -68,23 +74,31 @@ void DialogMCAbsorption::on_pushButton_run_pressed()
         return;
     }
 
+    auto source = diffractometer->source();
     auto& mono = source->selectedMonochromator();
 
-    nsx::MCAbsorption mca(mono.width(),mono.height(),-1.0);
-    auto& hull=sample->shape();
+    auto sample = diffractometer->sample();
+    auto& hull = sample->shape();
     if (!hull.checkEulerConditions()) {
         QMessageBox::critical(this,"NSXTOOL","The sample shape (hull) is ill-defined");
         return;
     }
 
+    nsx::MCAbsorption mca(mono.width(),mono.height(),-1.0);
+
     mca.setSample(&hull,material->muIncoherent(),material->muAbsorption(mono.wavelength()*nsx::ang));
-    const auto& data=_experiment->data();
+
     ui->progressBar_MCStatus->setValue(0);
     ui->progressBar_MCStatus->setTextVisible(true);
+
     int progress=0;
 
+    auto session = dynamic_cast<SessionModel*>(_experiment_item->model());
+
+    const auto& data = experiment->data();
+
     for (auto& d: data) {
-        const auto& peaks = _session->peaks(d.second.get());
+        const auto& peaks = session->peaks(d.second);
         ui->progressBar_MCStatus->setMaximum(peaks.size());
         ui->progressBar_MCStatus->setFormat(QString::fromStdString(d.second->filename()) + ": "+QString::number(progress)+"%");
         for (auto& p: peaks) {

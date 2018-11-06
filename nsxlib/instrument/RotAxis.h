@@ -74,7 +74,7 @@ public:
 	//@return rotation matrix
 	Eigen::Matrix3d rotationMatrix(double angle) const;
 	//! Return the 4x4 Homogeous matrix corresponding to this transformation.
-	Eigen::Transform<double,3,Eigen::Affine> homMatrix(double angle) const;
+	Eigen::Transform<double,3,Eigen::Affine> affineMatrix(double angle) const;
 	//! Get the quaternion associated with this rotation
 	//@param angle : rotation angle in radians by default
 	//@return rotation matrix

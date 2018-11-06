@@ -58,8 +58,6 @@ class TestWorkFlow(unittest.TestCase):
         self.assertTrue(soln[1] > 92.0)
 
         uc = nsx.UnitCell(soln[0])
-        sample = diff.sample()
-        sample.unitCells().push_back(uc)
 
         for peak in peaks:
             peak.setUnitCell(uc)

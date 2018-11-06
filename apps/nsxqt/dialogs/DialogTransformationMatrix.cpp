@@ -1,25 +1,22 @@
 #include <nsxlib/UnitCell.h>
 
 #include "DialogTransformationMatrix.h"
-#include "ui_TransformationMatrixDialog.h"
+#include "ui_DialogTransformationMatrix.h"
 
-DialogTransformationmatrix::DialogTransformationmatrix(nsx::sptrUnitCell unitCell, QWidget *parent) :
+DialogTransformationMatrix::DialogTransformationMatrix(nsx::sptrUnitCell unitCell, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::DialogTransformationmatrix),
+    ui(new Ui::DialogTransformationMatrix),
     _unitCell(unitCell)
 {
     ui->setupUi(this);
-
-    connect(ui->buttonBox,SIGNAL(accepted()),this,SLOT(getTransformation()));
-
 }
 
-DialogTransformationmatrix::~DialogTransformationmatrix()
+DialogTransformationMatrix::~DialogTransformationMatrix()
 {
     delete ui;
 }
 
-void DialogTransformationmatrix::getTransformation()
+void DialogTransformationMatrix::accept()
 {
     Eigen::Matrix3d P;
     P << ui->P00->value(), ui->P01->value(), ui->P02->value(),

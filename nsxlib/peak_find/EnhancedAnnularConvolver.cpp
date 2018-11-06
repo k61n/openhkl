@@ -15,12 +15,8 @@
 namespace nsx {
 
 EnhancedAnnularConvolver::EnhancedAnnularConvolver()
-: Convolver()
+: Convolver({{"r1",5},{"r2",10},{"r3",15}})
 {
-    // default values
-    _parameters["r1"] = 5;
-    _parameters["r2"] = 10;
-    _parameters["r3"] = 15;
 }
 
 EnhancedAnnularConvolver::EnhancedAnnularConvolver(const std::map<std::string,double>& parameters)
@@ -36,6 +32,13 @@ EnhancedAnnularConvolver::~EnhancedAnnularConvolver()
 const char* EnhancedAnnularConvolver::name() const
 {
     return "enhanced annular";
+}
+
+std::pair<size_t,size_t> EnhancedAnnularConvolver::kernelSize() const
+{
+    size_t r = _parameters.at("r3");
+
+    return std::make_pair(r,r);
 }
 
 RealMatrix EnhancedAnnularConvolver::convolve(const RealMatrix& image)

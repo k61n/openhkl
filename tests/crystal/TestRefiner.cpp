@@ -112,9 +112,9 @@ int main()
         peaks.push_back(peak);
     }
     
-    // add cell to sample
-    dataf->diffractometer()->sample()->unitCells().push_back(cell);
-    nsx::Refiner refiner(cell, peaks, 1);
+    auto&& states = dataf->instrumentStates();
+
+    nsx::Refiner refiner(states, cell, peaks, 1);
 
     NSX_CHECK_ASSERT(refiner.batches().size() == 1);
 
@@ -122,10 +122,8 @@ int main()
         NSX_CHECK_ASSERT(batch.peaks().size() > 200);
     }
 
-    refiner.refineB();
-    //refiner.refineU();
-    auto&& states = dataf->instrumentStates();
-    refiner.refineSamplePosition(states);
+    refiner.refineUB();
+    refiner.refineSamplePosition();
 
     std::cout << "peaks to refine: " << peaks.size() << std::endl;
 

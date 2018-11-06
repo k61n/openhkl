@@ -23,6 +23,8 @@ InstrumentItem::InstrumentItem(const char* name, const char* source_name) : Tree
 
     setSelectable(false);
 
+    setCheckable(false);
+
     // Create a detector item and add it to the instrument item
     _detector = new DetectorItem();
     appendRow(_detector);

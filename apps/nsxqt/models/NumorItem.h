@@ -16,9 +16,13 @@ class NumorItem : public InspectableTreeItem
 public:
 
     explicit NumorItem(nsx::sptrDataSet data);
+
     ~NumorItem();
+
+    virtual QVariant data(int role) const override;
+
     QWidget* inspectItem() override;
-    nsx::sptrDataSet getData();
+
     void exportHDF5(const std::string& filename) const;
 
 private:

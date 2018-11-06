@@ -4,6 +4,8 @@
 
 #include <nsxlib/DataTypes.h>
 
+class QAbstractButton;
+
 namespace Ui {
 class DialogHDF5Converter;
 }
@@ -18,11 +20,16 @@ public:
 
 private slots:
 
+    void slotActionClicked(QAbstractButton* button);
+
     void browseOutputDirectory();
+
+private:
+
     void convert();
 
 private:
-    Ui::DialogHDF5Converter *ui;
+    Ui::DialogHDF5Converter *_ui;
 
     nsx::DataList _numors;
 };

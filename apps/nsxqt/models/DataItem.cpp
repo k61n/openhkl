@@ -1,3 +1,6 @@
+#include <set>
+#include <vector>
+
 #include <QIcon>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -10,6 +13,7 @@
 #include <nsxlib/Experiment.h>
 #include <nsxlib/IDataReader.h>
 #include <nsxlib/Logger.h>
+#include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFinder.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/PixelSumIntegrator.h>
@@ -17,9 +21,11 @@
 
 #include "DataItem.h"
 #include "DialogHDF5Converter.h"
-#include "DialogPeakFind.h"
+#include "FramePeakFinder.h"
 #include "DialogRawData.h"
+#include "FrameInstrumentStates.h"
 #include "ExperimentItem.h"
+#include "MainWindow.h"
 #include "MetaTypes.h"
 #include "NumorItem.h"
 #include "PeaksItem.h"
@@ -29,10 +35,57 @@
 DataItem::DataItem() : TreeItem()
 {
     setText("Data");
+
     QIcon icon(":/resources/dataIcon.png");
     setIcon(icon);
+
+    setDragEnabled(false);
+    setDropEnabled(false);
+
     setEditable(false);
+
     setSelectable(false);
+
+    setCheckable(false);
+}
+
+void DataItem::removeSelectedData()
+{
+    std::vector<NumorItem*> selected_numor_items;
+    selected_numor_items.reserve(rowCount());
+
+    for (int i = 0; i < rowCount(); ++i) {
+        auto numor_item = dynamic_cast<NumorItem*>(child(i));
+        if (numor_item) {
+            if (numor_item->checkState() == Qt::Checked) {
+                selected_numor_items.push_back(numor_item);
+            }
+        }
+    }
+
+    auto peaks_item = experimentItem()->peaksItem();
+    auto all_peaks = peaks_item->allPeaks();
+
+    std::set<nsx::sptrDataSet> used_data;
+
+    for (auto peak : all_peaks) {
+        auto data = peak->data();
+        if (!data) {
+            continue;
+        }
+        used_data.insert(data);
+    }
+
+    for (auto numor_item : selected_numor_items) {
+        auto data = numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
+        auto it = used_data.find(data);
+        if (it != used_data.end()) {
+            nsx::info()<<"The numor "<<numor_item->text().toStdString()<<" is currently used. Can not be removed";
+            continue;
+        }
+        removeRow(numor_item->row());
+        experiment()->removeData(data->filename());
+    }
 }
 
 void DataItem::importData()
@@ -50,12 +103,11 @@ void DataItem::importData()
             return; // nullptr;
         }
 
-
         nsx::sptrDataSet data_ptr;
 
         std::string extension = fileinfo.completeSuffix().toStdString();
         data_ptr = nsx::DataReaderFactory().create(extension, filename.toStdString(), exp->diffractometer());
-        exp->addData(data_ptr);      
+        exp->addData(data_ptr);
 
         // Get the basename of the current numor
         auto&& basename = fileinfo.baseName();
@@ -134,31 +186,29 @@ void DataItem::importRawData()
 
 void DataItem::findPeaks()
 {
-    nsx::DataList selectedNumors = selectedData();
+    nsx::DataList data = selectedData();
 
-    if (selectedNumors.empty()) {
+    if (data.empty()) {
         nsx::error()<<"No numors selected for finding peaks";
         return;
     }
 
-    // dialog will automatically be deleted before we return from this method
-    std::unique_ptr<DialogPeakFind> dialog_ptr(new DialogPeakFind(selectedNumors, nullptr));
+    auto experiment_item = experimentItem();
 
-    if (!dialog_ptr->exec()) {
-        return;
+    FramePeakFinder* frame = FramePeakFinder::create(experiment_item, data);
+
+    frame->show();
+}
+
+nsx::DataList DataItem::allData()
+{
+    nsx::DataList data;
+    for (int i = 0; i < rowCount(); ++i) {
+        if (auto numor_item = dynamic_cast<NumorItem*>(child(i))) {
+            data.push_back(numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>());
+        }
     }
-
-    auto peaks_item = experimentItem()->peaksItem();
-
-    auto peaks = dialog_ptr->peaks();
-
-    if (peaks.empty()) {
-        return;
-    }
-
-    auto item = new PeakListItem(peaks);
-    item->setText("Found peaks");
-    peaks_item->appendRow(item);
+    return data;
 }
 
 nsx::DataList DataItem::selectedData()
@@ -166,8 +216,8 @@ nsx::DataList DataItem::selectedData()
     nsx::DataList selectedNumors;
     for (int i = 0; i < rowCount(); ++i) {
         if (child(i)->checkState() == Qt::Checked) {
-            if (auto ptr = dynamic_cast<NumorItem*>(child(i))) {
-                selectedNumors.push_back(ptr->getData());
+            if (auto numor_item = dynamic_cast<NumorItem*>(child(i))) {
+                selectedNumors.push_back(numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>());
             }
         }
     }
@@ -176,17 +226,33 @@ nsx::DataList DataItem::selectedData()
 
 void DataItem::convertToHDF5()
 {
-    nsx::DataList selectedNumors = selectedData();
+    nsx::DataList selected_data = selectedData();
 
-    if (selectedNumors.empty()) {
+    if (selected_data.empty()) {
         nsx::error()<<"No numors selected for HDF5 conversion";
         return;
     }
 
     // dialog will automatically be deleted before we return from this method
-    std::unique_ptr<DialogHDF5Converter> dialog_ptr(new DialogHDF5Converter(selectedNumors));
+    std::unique_ptr<DialogHDF5Converter> dialog_ptr(new DialogHDF5Converter(selected_data));
 
     if (!dialog_ptr->exec()) {
         return;
     }
+}
+
+void DataItem::openInstrumentStatesDialog()
+{
+    nsx::DataList selected_data = selectedData();
+
+    if (selected_data.empty()) {
+        nsx::error()<<"No numors selected for exploring instrument states";
+        return;
+    }
+
+    FrameInstrumentStates *frame = FrameInstrumentStates::create(selected_data);
+
+    frame->show();
+
+    frame->raise();
 }

@@ -71,14 +71,14 @@ bool ISigmaIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
     }
 
     std::vector<Intensity> mean_profile;
-    IntegratedProfile profile;
+    Profile1D profile;
 
     Eigen::Vector3d c = peak->shape().center();
     Eigen::Matrix3d A = peak->shape().metric();
 
     try {
         // throws if there are no neighboring peaks within the bounds
-        mean_profile = _library->meanIntegratedProfile(DetectorEvent(c), _radius, _nframes);
+        mean_profile = _library->meanProfile1D(DetectorEvent(c), _radius, _nframes);
     } catch(...) {
         return false;
     }

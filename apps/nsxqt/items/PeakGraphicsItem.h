@@ -5,7 +5,6 @@
 #include <string>
 
 #include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DetectorEvent.h>
 #include <nsxlib/GeometryTypes.h>
 
 #include "PlottableGraphicsItem.h"
@@ -17,28 +16,39 @@ class PeakGraphicsItem : public PlottableGraphicsItem
 {
 public:
 
-    PeakGraphicsItem(nsx::sptrPeak3D p);
+    PeakGraphicsItem(nsx::sptrPeak3D peak, int frame);
+
     ~PeakGraphicsItem() = default;
 
     void plot(SXPlot* plot);
+
     QRectF boundingRect() const;
+
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    void setFrame(unsigned long);
 
     //! Returns the type of plot related to the item
     std::string getPlotType() const;
 
-    //! Return the peak object
-    nsx::sptrPeak3D getPeak();
+    nsx::sptrPeak3D peak() const;
 
-    static void setLabelVisible(bool flag=true);
-    static void drawBackground(bool flag);
+    static void showLabel(bool flag);
+
+    static void showArea(bool flag);
 
 private:
 
     //! Pointer to the Peak3D object
     nsx::sptrPeak3D _peak;
-    //! (h,k,l) index visible in GraphicsScene
-    static bool _labelVisible;
-    static bool _drawBackground;
+
+    static bool _show_label;
+
+    static bool _show_center;
+
+    QGraphicsEllipseItem* _center_gi;
+
+    Eigen::Vector3d _lower;
+
+    Eigen::Vector3d _upper;
+
+    QGraphicsRectItem* _area;
 };

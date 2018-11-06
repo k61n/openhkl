@@ -1,9 +1,4 @@
-#include <cassert>
-
 #include <QStandardItem>
-#include <QString>
-#include <QJsonObject>
-#include <QJsonArray>
 
 #include "ExperimentItem.h"
 #include "TreeItem.h"
@@ -26,8 +21,9 @@ nsx::sptrExperiment TreeItem::experiment()
     return experimentItem()->experiment();
 }
 
-ExperimentItem* TreeItem::experimentItem()
+ExperimentItem* TreeItem::experimentItem() const
 {
+
     ExperimentItem* exp_item = nullptr;
     QStandardItem* p = parent();
 
@@ -40,7 +36,7 @@ ExperimentItem* TreeItem::experimentItem()
     }
 
     if (exp_item == nullptr) {
-        throw std::runtime_error("TreeItem::importData(): no experiment in tree!");
+        throw std::runtime_error("TreeItem: no experiment in tree!");
     }
 
     return exp_item;

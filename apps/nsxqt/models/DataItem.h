@@ -6,6 +6,7 @@
 
 #include "TreeItem.h"
 
+class MainWindow;
 class NumorItem;
 
 class DataItem : public TreeItem
@@ -22,7 +23,14 @@ public:
                              bool rowMajor, bool swapEndian, int bpp);
 
     void findPeaks();
+
+    void openInstrumentStatesDialog();
+
+    nsx::DataList allData();
+
     nsx::DataList selectedData();
 
     void convertToHDF5();
+
+    void removeSelectedData();
 };

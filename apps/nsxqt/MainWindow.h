@@ -1,7 +1,6 @@
 #pragma once
 
-#include <map>
-#include <memory>
+#include <string>
 
 #include <QGraphicsScene>
 #include <QMainWindow>
@@ -29,13 +28,14 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
 
-    Ui::MainWindow* getUI() const;
+    MainWindow(QWidget *parent=nullptr);
 
     ~MainWindow();
 
-    void findPeaks();
+    virtual void closeEvent(QCloseEvent *event) override;
+
+    void setColorMap(const std::string& name);
 
 signals:
     void plotDetectorData(nsx::DataSet*,int frame);
@@ -47,15 +47,14 @@ private slots:
     void on_actionGamma_Nu_triggered();
     void on_action2_Theta_triggered();
     void on_actionD_spacing_triggered();
+    void on_actionMiller_indices_triggered();
     void on_actionLogger_triggered();
     void on_action1D_Peak_Ploter_triggered();
     void on_actionProperty_triggered();
     void updatePlot(PlottableGraphicsItem* cutter);
     void on_actionFrom_Sample_triggered();
     void on_actionBehind_Detector_triggered();
-    void on_actionShow_labels_triggered(bool checked);
     void on_action_display_isotopes_database_triggered();
-    void on_actionH_k_l_triggered();
     void on_checkBox_AspectRatio_toggled(bool checked);
 
     void on_actionLogarithmic_Scale_triggered(bool checked);
@@ -64,18 +63,24 @@ private slots:
      
 
 public slots:
-    void changeData(nsx::sptrDataSet);
-    void plotPeak(nsx::sptrPeak3D);
+
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
+
     void setInspectorWidget(QWidget*);
 
+private slots:
+
+    void slotChangeSelectedData(nsx::sptrDataSet, int frame);
+
+    void slotChangeSelectedPeak(nsx::sptrPeak3D peak);
+
+    void slotChangeSelectedFrame(int selected_frame);
+
 private:
+
     Ui::MainWindow* _ui;
 
-    nsx::sptrDataSet _currentData;
-
-    nsx::sptrProgressHandler _progressHandler;
-    nsx::sptrPeakFinder _peakFinder;
-
     SessionModel* _session;
+
+    std::string _colormap;
 };

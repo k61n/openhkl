@@ -51,6 +51,8 @@ public:
 
     const char* name() const override;
 
+    virtual std::pair<size_t,size_t> kernelSize() const override;
+
     RealMatrix convolve(const RealMatrix& image) override;
 };
 

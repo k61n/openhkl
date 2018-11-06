@@ -87,6 +87,7 @@
 #include "GLSphere.h"
 #include "GLWidget.h"
 #include "InstrumentItem.h"
+#include "MetaTypes.h"
 #include "NumorItem.h"
 #include "PeakListItem.h"
 #include "PeakTableView.h"
@@ -108,83 +109,48 @@ SessionModel::SessionModel()
 
 SessionModel::~SessionModel()
 {
-    // _model should be deleted automatically during destructor by QT
-    //delete _model;
 }
 
-void SessionModel::onItemChanged(QStandardItem* item)
+ExperimentItem* SessionModel::selectExperiment(nsx::sptrDataSet data)
 {
-    if (auto p = dynamic_cast<UnitCellItem*>(item)) {
-        // The first item of the Sample item branch is the SampleShapeItem, skip it
-        int idx = p->index().row()- 1;
-        auto expt = p->experiment();
-        auto uc = expt->diffractometer()->sample()->unitCells()[idx];
-        uc->setName(p->text().toStdString());
+    ExperimentItem *experiment_item=nullptr;
+
+    for (auto i = 0; i < rowCount(); ++i) {
+        experiment_item = dynamic_cast<ExperimentItem*>(item(i));
+        if (!experiment_item) {
+            continue;
+        }
+
+        auto data_item  = experiment_item->dataItem();
+        for (auto j = 0; j < data_item->rowCount(); ++j) {
+            auto numor_item = dynamic_cast<NumorItem*>(data_item->child(j));
+            if (!numor_item) {
+                continue;
+            }
+
+            if (numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>() == data) {
+                return experiment_item;
+            }
+        }
     }
+
+    return experiment_item;
+}
+
+void SessionModel::selectData(nsx::sptrDataSet data)
+{
+    emit signalSelectedDataChanged(data,0);
+}
+
+void SessionModel::onItemChanged(QStandardItem *item)
+{
+    Q_UNUSED(item)
 
     emit updatePeaks();
 }
 
-nsx::DataList SessionModel::getSelectedNumors(ExperimentItem* item) const
+nsx::PeakList SessionModel::peaks(nsx::sptrDataSet data) const
 {
-    nsx::DataList numors;
-
-    QList<QStandardItem*> dataItems = findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
-
-    for (const auto& it : dataItems) {
-        for (auto i=0;i < rowCount(it->index());++i) {
-            if (it->child(i)->checkState() == Qt::Checked) {
-                if (auto ptr = dynamic_cast<NumorItem*>(it->child(i))) {
-                    if (it->parent() == item)
-                        numors.push_back(ptr->getData());
-                }
-            }
-        }
-    }
-
-    return numors;
-}
-
-void SessionModel::setFilename(QString name)
-{
-    _filename = name;
-}
-
-QString SessionModel::getFilename()
-{
-    return _filename;
-}
-
-void SessionModel::setColorMap(const std::string &name)
-{
-    _colormap = name;
-}
-
-std::string SessionModel::getColorMap() const
-{
-    return _colormap;
-}
-
-nsx::DataList SessionModel::getSelectedNumors() const
-{
-    nsx::DataList numors;
-
-    QList<QStandardItem*> dataItems = findItems(QString("Data"),Qt::MatchCaseSensitive|Qt::MatchRecursive);
-
-    for (const auto& it : dataItems) {
-        for (auto i=0;i < rowCount(it->index());++i) {
-            if (it->child(i)->checkState() == Qt::Checked) {
-                if (auto ptr = dynamic_cast<NumorItem*>(it->child(i)))
-                    numors.push_back(ptr->getData());
-            }
-        }
-    }
-
-    return numors;
-}
-
-nsx::PeakList SessionModel::peaks(const nsx::DataSet* data) const
-{  
     nsx::PeakList list;
 
     for (auto i = 0; i < rowCount(); ++i) {
@@ -192,7 +158,7 @@ nsx::PeakList SessionModel::peaks(const nsx::DataSet* data) const
         auto&& peaks = exp_item->peaksItem()->selectedPeaks();
 
         for (auto peak: peaks) {
-            if (data == nullptr || peak->data().get() == data) {
+            if (data == nullptr || peak->data() == data) {
                 list.push_back(peak);
             }
         }
@@ -209,13 +175,13 @@ void SessionModel::createNewExperiment()
         dlg = std::unique_ptr<DialogExperiment>(new DialogExperiment());
 
         // The user pressed cancel, return
-        if (!dlg->exec())
+        if (!dlg->exec()) {
             return;
+        }
 
         // If no experiment name is provided, pop up a warning
         if (dlg->getExperimentName().isEmpty()) {
-            nsx::error() << "Empty experiment name";
-            return;
+            throw std::runtime_error("Empty experiment name");
         }
     }
     catch(std::exception& e) {
@@ -223,13 +189,14 @@ void SessionModel::createNewExperiment()
         return;
     }
 
-    // Add the experiment
     try {
-        // Create an experiment
         auto experimentName = dlg->getExperimentName().toStdString();
         auto instrumentName = dlg->getInstrumentName().toStdString();
+
+        // Create an experiment
         nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName,instrumentName));
-        // Create an experiment item
+
+        // Create an experiment item out of the experiment
         ExperimentItem* expt = new ExperimentItem(expPtr);    
         appendRow(expt);
     }
@@ -237,9 +204,4 @@ void SessionModel::createNewExperiment()
         nsx::error() << e.what();
         return;
     }
-}
-
-bool SessionModel::setData(const QModelIndex &index, const QVariant &value, int role)
-{
-    return QStandardItemModel::setData(index, value, role);
 }

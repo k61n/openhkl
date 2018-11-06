@@ -13,10 +13,15 @@ SourceItem::SourceItem(const char* name) : InspectableTreeItem()
 
     QIcon icon(":/resources/sourceIcon.png");
     setIcon(icon);
+
     setEditable(false);
-    setSelectable(false);
+
     setDragEnabled(false);
     setDropEnabled(false);
+
+    setSelectable(false);
+
+    setCheckable(false);
 }
 
 QWidget* SourceItem::inspectItem()

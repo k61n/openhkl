@@ -8,10 +8,14 @@ PeakListItem::PeakListItem(const nsx::PeakList& peaks)
   _peaks(peaks)
 {
 	setText("Peaks");
+
     setEditable(true);
+
     setDragEnabled(true);
     setDropEnabled(true);
-    setSelectable(true);
+
+    setSelectable(false);
+
     setCheckable(true);
 }
 
@@ -26,4 +30,9 @@ void PeakListItem::removePeak(nsx::sptrPeak3D peak)
     if (it != _peaks.end()) {
         _peaks.erase(it);
     }
+}
+
+nsx::PeakList& PeakListItem::peaks()
+{
+    return _peaks;
 }

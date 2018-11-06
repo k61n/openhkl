@@ -11,12 +11,14 @@ namespace Ui {
 class DialogMCAbsorption;
 }
 
+class ExperimentItem;
+
 class DialogMCAbsorption: public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DialogMCAbsorption(SessionModel* session, nsx::sptrExperiment experiment, QWidget *parent = 0);
+    explicit DialogMCAbsorption(ExperimentItem* experiment_item, QWidget *parent = 0);
     ~DialogMCAbsorption();
 
 private slots:
@@ -24,6 +26,5 @@ private slots:
 
 private:
     Ui::DialogMCAbsorption *ui;
-    nsx::sptrExperiment _experiment;
-    SessionModel* _session;
+    ExperimentItem* _experiment_item;
 };

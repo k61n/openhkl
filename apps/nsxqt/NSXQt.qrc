@@ -27,7 +27,7 @@
         <file>resources/detectorIcon.png</file>
         <file>resources/dataIcon.png</file>
         <file>resources/addExperimentIcon.png</file>
-        <file>resources/selectionIcon.png</file>
+        <file>resources/rectangularMaskIcon.png</file>
         <file>resources/gonioIcon.png</file>
         <file>resources/saveIcon.png</file>
         <file>resources/IconmeasureDistance.png</file>
@@ -40,6 +40,9 @@
         <file>resources/detectorAspectRatioOffIcon.png</file>
         <file>resources/slice3D.png</file>
         <file>resources/reciprocal_space.png</file>
-	<file>resources/ellipseIcon.png</file>
+        <file>resources/ellipsoidalMask.png</file>
+        <file>resources/unitCellsIcon.png</file>
+        <file>resources/selectIcon.png</file>
+        <file>resources/numorIcon.png</file>
     </qresource>
 </RCC>

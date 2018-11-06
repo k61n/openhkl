@@ -1,4 +1,5 @@
 #include <memory>
+#include <stdexcept>
 
 #include "blosc.h"
 
@@ -63,34 +64,36 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, sptrDiffract
     _nFrames=_metadata.key<int>("npdone");
 
     // Getting Scan parameters for the detector
-    std::vector<std::string> axesS=_diffractometer->detector()->gonio()->physicalAxesNames();
+    auto axes = _diffractometer->detector()->gonio()->axes();
 
-    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm(axesS.size(),_nFrames);
-    for (unsigned int i=0;i<axesS.size();++i) {
-        try {
-            H5::DataSet dset=detectorGroup.openDataSet(axesS[i]);
-            H5::DataSpace space(dset.getSpace());
-            hsize_t dim=space.getSimpleExtentNdims();
-            if (dim!=1) {
-                throw std::runtime_error("Read HDF5, problem reading detector scan parameters, dimension of array should be 1");
+    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm(axes.size(),_nFrames);
+    for (size_t i = 0; i < axes.size(); ++i) {
+        auto axis = axes[i];
+        if (axis->physical()) {
+            try {
+                H5::DataSet dset = detectorGroup.openDataSet(axis->name());
+                H5::DataSpace space(dset.getSpace());
+                hsize_t dim = space.getSimpleExtentNdims();
+                if (dim != 1) {
+                    throw std::runtime_error("Read HDF5, problem reading detector scan parameters, dimension of array should be 1");
+                }
+                std::vector<hsize_t> dims(dim), maxdims(dim);
+                space.getSimpleExtentDims(&dims[0], &maxdims[0]);
+                if (dims[0] != _nFrames) {
+                    throw std::runtime_error("Read HDF5, problem reading detector scan parameters, different array length to npdone");
+                }
+                dset.read(&dm(i,0),H5::PredType::NATIVE_DOUBLE,space,space);
+            } catch(...) {
+                throw std::runtime_error("Coud not read "+axis->name()+" HDF5 dataset");
             }
-            std::vector<hsize_t> dims(dim), maxdims(dim);
-            space.getSimpleExtentDims(&dims[0], &maxdims[0]);
-            //hsize_t dims[dim], maxdims[dim];
-            //space.getSimpleExtentDims(dims,maxdims);
-            if (dims[0]!=_nFrames) {
-                throw std::runtime_error("Read HDF5, problem reading detector scan parameters, different array length to npdone");
-            }
-            dset.read(&dm(i,0),H5::PredType::NATIVE_DOUBLE,space,space);
-        } catch(...) {
-            throw;
+        } else {
+            dm.row(i) = Eigen::VectorXd::Zero(_nFrames);
         }
     }
 
     // Use natural units internally (rad)
     dm*=deg;
 
-    _sampleStates.resize(_nFrames);
     _detectorStates.resize(_nFrames);
 
     for (unsigned int i=0;i<_nFrames;++i) {
@@ -98,41 +101,40 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, sptrDiffract
     }
 
     // Getting Scan parameters for the sample
-    axesS=_diffractometer->sample()->gonio()->physicalAxesNames();
+    axes =_diffractometer->sample()->gonio()->axes();
 
-    dm.resize(axesS.size(),_nFrames);
-    for (unsigned int i=0;i<axesS.size();++i) {
-        try {
-            H5::DataSet dset=sampleGroup.openDataSet(axesS[i]);
-            H5::DataSpace space(dset.getSpace());
-            hsize_t dim=space.getSimpleExtentNdims();
-            if (dim!=1) {
-                throw std::runtime_error("Read HDF5, problem reading sample scan parameters, dimension of array should be 1");
+    dm.resize(axes.size(),_nFrames);
+    for (size_t i = 0; i <axes.size(); ++i) {
+        auto axis = axes[i];
+        if (axis->physical()) {
+            try {
+                H5::DataSet dset = sampleGroup.openDataSet(axis->name());
+                H5::DataSpace space(dset.getSpace());
+                hsize_t dim = space.getSimpleExtentNdims();
+                if (dim != 1) {
+                    throw std::runtime_error("Read HDF5, problem reading sample scan parameters, dimension of array should be 1");
+                }
+                std::vector<hsize_t> dims(dim), maxdims(dim);
+                space.getSimpleExtentDims(&dims[0], &maxdims[0]);
+                if (dims[0] != _nFrames) {
+                    throw std::runtime_error("Read HDF5, problem reading sample scan parameters, different array length to npdone");
+                }
+                dset.read(&dm(i,0),H5::PredType::NATIVE_DOUBLE,space,space);
+            } catch(...) {
+                throw std::runtime_error("Coud not read "+axis->name()+" HDF5 dataset");
             }
-            std::vector<hsize_t> dims(dim), maxdims(dim);
-            space.getSimpleExtentDims(&dims[0], &maxdims[0]);
-            // hsize_t dims[dim], maxdims[dim];
-            // space.getSimpleExtentDims(dims,maxdims);
-            if (dims[0]!=_nFrames) {
-                throw std::runtime_error("Read HDF5, problem reading sample scan parameters, different array length to npdone");
-            }
-            dset.read(&dm(i,0),H5::PredType::NATIVE_DOUBLE,space,space);
-        } catch(...) {
-            throw;
+        } else {
+            dm.row(i) = Eigen::VectorXd::Zero(_nFrames);
         }
     }
 
     // Use natural units internally (rad)
     dm*=deg;
 
+    _sampleStates.resize(_nFrames);
     for (unsigned int i=0;i<_nFrames;++i) {
         _sampleStates[i] = eigenToVector(dm.col(i));
     }
-
-
-    // todo: fix this!!
-    dm.resize(_diffractometer->source()->gonio()->nPhysicalAxes(), _nFrames);
-    dm.setZero();
 
     _file->close();
 

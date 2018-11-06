@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "CrystalTypes.h"
+#include "DataTypes.h"
 #include "DetectorEvent.h"
 #include "Profile3D.h"
 #include "Profile1D.h"
@@ -45,7 +46,7 @@ public:
     bool detectorCoords() const;
 
     //! Add a reference peak to the library
-    bool addPeak(sptrPeak3D peak, Profile3D&& profile, IntegratedProfile&& integrated_profile);
+    bool addPeak(sptrPeak3D peak, Profile3D&& profile, Profile1D&& integrated_profile);
 
     //! Update the fitted covariances
     void updateFit(int num_iterations);
@@ -60,7 +61,7 @@ public:
     Profile3D meanProfile(const DetectorEvent& ev, double radius, double nframes) const;
 
     //! Return the average peak profile near the given detector event
-    std::vector<Intensity> meanIntegratedProfile(const DetectorEvent& ev, double radius, double nframes) const;
+    std::vector<Intensity> meanProfile1D(const DetectorEvent& ev, double radius, double nframes) const;
 
     //! Return the average peak covariance near the given detector event
     Eigen::Matrix3d meanCovariance(sptrPeak3D reference_peak, double radius, double nframes, size_t min_neighbors, PeakInterpolation interpolation) const;
@@ -82,7 +83,7 @@ private:
     Eigen::Matrix3d predictCovariance(const FitData& data) const;
 
     //! List of reference peak profiles
-    std::map<sptrPeak3D, std::pair<Profile3D, IntegratedProfile>> _profiles;
+    std::map<sptrPeak3D, std::pair<Profile3D, Profile1D>> _profiles;
 
     //! Components of the Cholesky factor of beam divergence covariance matrix
     std::array<double, 6> _choleskyD;

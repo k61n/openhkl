@@ -2,9 +2,16 @@
 
 namespace nsx {
 
+using parameters_map = std::map<std::string,double>;
+
 Convolver::Convolver()
 : _parameters()
 {
+}
+
+Convolver::Convolver(const parameters_map &parameters)
+{
+    _parameters = parameters;
 }
 
 Convolver::~Convolver()

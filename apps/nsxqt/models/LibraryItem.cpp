@@ -8,20 +8,28 @@
 #include "DataItem.h"
 #include "DialogPredictPeaks.h"
 #include "ExperimentItem.h"
+#include "InstrumentItem.h"
 #include "LibraryItem.h"
 #include "MetaTypes.h"
 #include "PeakListItem.h"
 #include "PeaksItem.h"
 #include "ProgressView.h"
+#include "UnitCellsItem.h"
 
 LibraryItem::LibraryItem()
 : TreeItem(),
   _library(nullptr)
 {
     setText("Reference peak library");
+
     QIcon icon(":/resources/peakListIcon.png");
     setIcon(icon);
+
+    setDragEnabled(false);
+    setDropEnabled(false);
+
     setEditable(false);
+
     setSelectable(false);
 }
 
@@ -32,60 +40,18 @@ void LibraryItem::incorporateCalculatedPeaks()
         return;
     }
 
-
     nsx::debug() << "Incorporating missing peaks into current data set...";
 
-    auto expt_item = dynamic_cast<ExperimentItem*>(parent());
-    auto data_item = expt_item->dataItem();
+    auto experiment_item = dynamic_cast<ExperimentItem*>(parent());
 
-    std::set<nsx::sptrUnitCell> cells;
-
+    auto data_item = experiment_item->dataItem();
     nsx::DataList numors = data_item->selectedData();
 
-    for (auto numor: numors) {
-        auto sample = numor->diffractometer()->sample();
+    auto unit_cells_item = experiment_item->unitCellsItem();
 
-        for (auto uc: sample->unitCells()) {
-            cells.insert(uc);
-        }
-    }
+    DialogPredictPeaks *dialog = DialogPredictPeaks::create(experimentItem(), unit_cells_item->unitCells(), nullptr);
 
-    DialogPredictPeaks dialog(cells);
+    dialog->show();
 
-    if (!dialog.exec()) {
-        return;
-    }
-
-    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
-    ProgressView progressView(nullptr);
-    progressView.watch(handler);
-
-    int current_numor = 0;
-
-    auto cell = dialog.cell();
-    auto&& d_min = dialog.dMin();
-    auto&& d_max = dialog.dMax();
-    auto&& radius = dialog.radius();
-    auto&& n_frames = dialog.nFrames();
-    auto&& min_neighbors = dialog.minNeighbors();
-    nsx::PeakInterpolation interpolation = static_cast<nsx::PeakInterpolation>(dialog.interpolation());
-
-    nsx::PeakList predicted_peaks;
-
-    for(auto numor: numors) {
-        nsx::debug() << "Finding missing peaks for numor " << ++current_numor << " of " << numors.size();
-
-        auto&& predicted = nsx::predictPeaks(*_library, numor, cell, d_min, d_max, radius, n_frames, min_neighbors, interpolation);
-
-        for (auto peak: predicted) {
-            predicted_peaks.push_back(peak);
-        }
-
-        nsx::debug() << "Added " << predicted.size() << " predicted peaks.";
-    }
-
-    auto peaks_item = experimentItem()->peaksItem();
-    auto item = new PeakListItem(predicted_peaks);
-    item->setText("Predicted peaks");
-    peaks_item->appendRow(item);
+    dialog->raise();
 }

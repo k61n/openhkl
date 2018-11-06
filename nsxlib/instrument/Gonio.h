@@ -70,55 +70,29 @@ public:
     Gonio& operator=(const Gonio& other);
     //! Gets the axes of this goniometer
     const std::vector<Axis*>& axes() const;
-    //! Gets the names of the axes of this goniometer
-    std::vector<std::string> axesNames() const;
-    //! Gets the ids of the physical axes of this goniometer
-    std::vector<unsigned int> physicalAxesIds() const;
-    //! Gets the names of the physical axes of this goniometer
-    std::vector<std::string> physicalAxesNames() const;
-    //! Gets the names of the physical axes of this goniometer
-    std::map<unsigned int,std::string> physicalAxisIdToNames() const;
-    //! Has physical axis with this name
-    bool hasPhysicalAxis(const std::string&) const;
-    //! Has axis with this name
-    bool hasAxis(const std::string&) const;
-    //! Get a pointer to axis i, throw range_error if not found
-    Axis* axis(unsigned int i);
-    //! Get a pointer to axis with id id, throw range_error if not found
-    Axis* axisFromId(unsigned int id);
-    //! Get a pointer to axis with label, throw range_error if not found
-    Axis* axis(const std::string& label);
+    //! Get a pointer to axis with name, throw range_error if not found
+    Axis* axis(const std::string& name);
     //! Return the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
-    Eigen::Transform<double,3,Eigen::Affine> homMatrix(const std::vector<double>& values) const;
-    //! Return the number of axes attached to this goniometer
-    std::size_t nAxes() const;
-    //! Return the number of physical axis defined in the gonio
-    std::size_t nPhysicalAxes() const;
+    Eigen::Transform<double,3,Eigen::Affine> affineMatrix(const std::vector<double>& values) const;
     //! Add an Axis to this Goniometer.
     void addAxis(Axis* axis);
     //! Add a rotation axis to this goniometer
-    Axis* addRotation(const std::string& label,const Eigen::Vector3d& axis, RotAxis::Direction dir=RotAxis::Direction::CCW);
+    Axis* addRotation(const std::string& name,const Eigen::Vector3d& axis, RotAxis::Direction dir=RotAxis::Direction::CCW);
     //! Add a translation axis to this goniometer
-    Axis* addTranslation(const std::string& label,const Eigen::Vector3d& axis);
+    Axis* addTranslation(const std::string& name,const Eigen::Vector3d& axis);
     //! Transform a point in 3D space, given a vector of parameters
     DirectVector transform(const DirectVector& v, const std::vector<double>& state) const;
 
-protected:
-    //! Check whether axis i within the range of Axis
-    void isAxisValid(unsigned int i) const;
-    //! Check whether s names a valid axis
-    unsigned int isAxisValid(const std::string& s) const;
-    //! Check whether id matches one of the axis id
-    unsigned int isAxisIdValid(unsigned int id) const;
-    //! Given name of the gonio
-    std::string _label;
-    //! Set of axis
-    std::vector<Axis*> _axes;
-
-public:
 #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 #endif
+
+private:
+
+    //! Given name of the gonio
+    std::string _name;
+    //! Set of axis
+    std::vector<Axis*> _axes;
 };
 
 } // end namespace nsx

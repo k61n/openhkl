@@ -202,7 +202,7 @@ double ShapeLibrary::bkgEnd() const
     return _bkgEnd;
 }
 
-bool ShapeLibrary::addPeak(sptrPeak3D peak, Profile3D&& profile, IntegratedProfile&& integrated_profile)
+bool ShapeLibrary::addPeak(sptrPeak3D peak, Profile3D&& profile, Profile1D&& integrated_profile)
 {
     Eigen::Matrix3d A = peak->shape().inverseMetric();
     Eigen::Matrix3d cov = 0.5 * (A + A.transpose());
@@ -220,9 +220,7 @@ bool ShapeLibrary::addPeak(sptrPeak3D peak, Profile3D&& profile, IntegratedProfi
 
 void ShapeLibrary::updateFit(int num_iterations)
 {
-    // todo: reenable this when done testing!
-    return;
-
+#if 0
 
     std::vector<std::pair<Eigen::Matrix3d, FitData>> fit_data;
     std::vector<std::pair<int, int>> fit_constraints;
@@ -271,6 +269,7 @@ void ShapeLibrary::updateFit(int num_iterations)
     min.initialize(params, 6*fit_data.size());
     min.set_f(residual);
     min.fit(num_iterations);
+#endif
 }
 
 Eigen::Matrix3d ShapeLibrary::predictCovariance(sptrPeak3D peak) const
@@ -317,7 +316,7 @@ Profile3D ShapeLibrary::meanProfile(const DetectorEvent& ev, double radius, doub
     return mean;
 }
 
-std::vector<Intensity> ShapeLibrary::meanIntegratedProfile(const DetectorEvent& ev, double radius, double nframes) const
+std::vector<Intensity> ShapeLibrary::meanProfile1D(const DetectorEvent& ev, double radius, double nframes) const
 {
     PeakList neighbors = findNeighbors(ev, radius, nframes);
     std::vector<Intensity> mean_profile;
@@ -367,8 +366,8 @@ Eigen::Matrix3d ShapeLibrary::meanCovariance(sptrPeak3D reference_peak, double r
     cov.setZero();
     PeakList neighbors = findNeighbors(DetectorEvent(reference_peak->shape().center()), radius, nframes);
 
-    if (neighbors.size() < min_neighbors) {
-        throw std::runtime_error("ShapeLibrary::meanCovariance(): peak has too few neighbors");
+    if (neighbors.empty() || (neighbors.size() < min_neighbors)) {
+        throw std::runtime_error("ShapeLibrary::meanCovariance(): peak has no or too few neighbors");
     }
 
     PeakCoordinateSystem reference_coord(reference_peak);
@@ -406,11 +405,8 @@ Eigen::Matrix3d ShapeLibrary::meanCovariance(sptrPeak3D reference_peak, double r
         sum_weight += weight;
     }
 
-    if (neighbors.size() == 0) {
-        throw std::runtime_error("Error, no neighboring profiles found.");
-    }
-
     cov /= sum_weight;
+
     Eigen::Matrix3d JI = reference_coord.jacobian().inverse();
     return JI * cov * JI.transpose();
 }

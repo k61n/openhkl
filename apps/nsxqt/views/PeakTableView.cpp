@@ -1,33 +1,3 @@
-/*
- * nsxtool : Neutron Single Crystal analysis toolkit
-    ------------------------------------------------------------------------------------------
-    Copyright (C)
-    2016- Laurent C. Chapon, Eric C. Pellegrini Institut Laue-Langevin
-          Jonathan Fisher, Forschungszentrum Juelich GmbH
-    BP 156
-    6, rue Jules Horowitz
-    38042 Grenoble Cedex 9
-    France
-    chapon[at]ill.fr
-    pellegrini[at]ill.fr
-    j.fisher[at]fz-juelich.de
-
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
-
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *
- */
-
 #include <cstdio>
 #include <memory>
 #include <set>
@@ -42,27 +12,20 @@
 
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Logger.h>
-#include <nsxlib/MergedPeak.h>
 #include <nsxlib/MetaData.h>
-#include <nsxlib/MillerIndex.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/ProgressHandler.h>
-#include <nsxlib/ReciprocalVector.h>
-#include <nsxlib/ResolutionShell.h>
 #include <nsxlib/UnitCell.h>
 
-#include "CollectedPeaksDelegate.h"
 #include "CollectedPeaksModel.h"
-#include "DialogTransformationMatrix.h"
-#include "DialogUnitCellParameters.h"
 #include "PeakTableView.h"
+#include "SessionModel.h"
 
 PeakTableView::PeakTableView(QWidget *parent)
-: QTableView(parent),
-  _normalized(false),
-  _friedel(false)
+: QTableView(parent)
 {
     setEditTriggers(QAbstractItemView::SelectedClicked);
+
     // Selection of a cell in the table select the whole line.
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -70,66 +33,63 @@ PeakTableView::PeakTableView(QWidget *parent)
     setSortingEnabled(true);
     sortByColumn(0, Qt::AscendingOrder);
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    //
-    //setMinimumSize(800,400);
+
+    verticalHeader()->show();
+
     setFocusPolicy(Qt::StrongFocus);
 
-    auto delegate = new CollectedPeaksDelegate(this);
-    setItemDelegate(delegate);
+    connect(this,SIGNAL(clicked(QModelIndex)),this,SLOT(selectPeak(QModelIndex)));
 
-    this->verticalHeader()->setVisible(false);
-
-    connect(this,SIGNAL(clicked(const QModelIndex&)),this,SLOT(plotSelectedPeak(const QModelIndex&)));
+    connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(togglePeakSelection(QModelIndex)));
 }
 
-void PeakTableView::plotSelectedPeak(const QModelIndex& index)
+void PeakTableView::selectPeak(QModelIndex index)
 {
-    int idx = index.row();
-    auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
-    if (peaksModel == nullptr) {
-        return;
-    }
-    auto peaks = peaksModel->peaks();
-    if (peaks.empty()) {
-        return;
-    }
-    if (idx < 0 || static_cast<size_t>(idx) >= peaks.size()) {
+    if (!index.isValid()) {
         return;
     }
 
-    nsx::sptrPeak3D peak=peaks[idx];
-    emit plotPeak(peak);
+    CollectedPeaksModel* peaks_model = dynamic_cast<CollectedPeaksModel*>(model());
+
+    peaks_model->selectPeak(index);
 }
 
 void PeakTableView::keyPressEvent(QKeyEvent *event)
 {
-    QModelIndexList selected=selectedIndexes();
-    if (selected.isEmpty())
-        return;
+    auto previous_index = currentIndex();
 
-    auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
-    if (peaksModel == nullptr) {
-        return;
-    }
-    auto peaks = peaksModel->peaks();
-    if (peaks.empty()) {
-        return;
-    }
+    QTableView::keyPressEvent(event);
 
-    // take last element
-    QModelIndex last=selected.last();
-    int index=last.row();
-    if (event->key() == Qt::Key_Up) {
-        --index;
-        if (index >= 0 && static_cast<size_t>(index) < peaks.size())
-            emit plotPeak(peaks[index]);
-    } else if (event->key() == Qt::Key_Down) {
-        ++index;
-        if (index >= 0 && static_cast<size_t>(index) < peaks.size()) {
-            emit plotPeak(peaks[index]);
+    auto current_index = currentIndex();
+
+    auto key = event->key();
+
+    if (event->modifiers() == Qt::NoModifier) {
+
+        if (key == Qt::Key_Down || key == Qt::Key_Tab || key == Qt::Key_PageDown) {
+            if (current_index == previous_index) {
+                setCurrentIndex(model()->index(0,0));
+            }
+            selectPeak(currentIndex());
+        } else if (key == Qt::Key_Up || key == Qt::Key_Backspace || key == Qt::Key_PageDown) {
+            if (current_index == previous_index) {
+                setCurrentIndex(model()->index(model()->rowCount()-1,0));
+            }
+            selectPeak(currentIndex());
+        } else if (key == Qt::Key_Return || key == Qt::Key_Space) {
+            togglePeakSelection(currentIndex());
         }
     }
-    QTableView::keyPressEvent(event);
+}
+
+void PeakTableView::togglePeakSelection(QModelIndex index)
+{
+    auto peaks_model = dynamic_cast<CollectedPeaksModel*>(model());
+    if (peaks_model == nullptr) {
+        return;
+    }
+
+    peaks_model->togglePeakSelection(index);
 }
 
 void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
@@ -216,11 +176,12 @@ void PeakTableView::normalizeToMonitor()
     if (peaks.empty()) {
         return;
     }
+
     peaksModel->normalizeToMonitor(factor);
 
     // Keep track of the last selected index before rebuilding the table
     QModelIndex index=currentIndex();
-    _normalized=true;
+
     selectRow(index.row());
 
     // If no row selected do nothing else.
@@ -257,95 +218,10 @@ void PeakTableView::plotAs(const std::string& key)
     for (int i=0;i<nPoints;++i) {
         nsx::sptrPeak3D p=peaks[indexList[i].row()];
         x[i]=p->data()->metadata()->key<double>(key);
-        y[i]=p->scaledIntensity().value();
-        e[i]=p->scaledIntensity().sigma();
+        y[i]=p->correctedIntensity().value();
+        e[i]=p->correctedIntensity().sigma();
     }
     emit plotData(x,y,e);
-}
-
-std::string PeakTableView::peaksRange() const
-{
-    auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
-    if (peaksModel == nullptr) {
-        return "";
-    }
-    auto peaks = peaksModel->peaks();
-
-    if (peaks.empty()) {
-        return "";
-    }
-    std::set<std::string> temp;
-
-    for (auto&& p : peaks) {
-        temp.insert(std::to_string(p->data()->metadata()->key<int>("Numor")));
-    }
-    std::string range(*(temp.begin()));
-    std::string last=*(temp.rbegin());
-
-    if (range.compare(last)!=0) {
-        range += "_"+last;
-    }
-    return range;
-}
-
-bool PeakTableView::checkBeforeWritting()
-{
-    if (!_normalized) {
-        int reply=QMessageBox::question(
-                    this,
-                    "Writing data",
-                    "No normalisation (time/monitor) has been found. Are you sure you want to export",
-                    (QMessageBox::Yes | QMessageBox::Abort));
-        if (reply==QMessageBox::Abort) {
-            return false;
-        }
-    }
-    return true;
-}
-
-void PeakTableView::showPeaksMatchingText(const QString& text)
-{
-    auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
-    if (peaksModel == nullptr) {
-        return;
-    }
-    auto peaks = peaksModel->peaks();
-    if (peaks.empty()) {
-        return;
-    }
-
-    QStringList list=text.split(" ");
-    int nterms=list.size();
-
-    // Don't search if h,k,l not complete
-    if (nterms<3) {
-        unsigned int row=0;
-        for (row=0;row<peaks.size();row++) {
-            setRowHidden(row,false);
-        }
-        return;
-    }
-
-    bool okh=false,okk=false,okl=false;
-
-    if (!(okh && okk && okl)) {
-        unsigned int row=0;
-        for (row=0;row<peaks.size();row++) {
-            setRowHidden(row,false);
-        }
-        return;
-    }
-
-    unsigned int row=0;
-    for (row=0;row<peaks.size();row++) {
-        nsx::sptrPeak3D peak = peaks[row];
-        auto cell = peak->unitCell();
-        if (!cell) {
-            continue;
-        }
-        nsx::MillerIndex hkl(peak->q(), *cell);
-        setRowHidden(row,hkl.indexed(cell->indexingTolerance()));
-    }
 }
 
 void PeakTableView::selectUnindexedPeaks()
@@ -354,7 +230,7 @@ void PeakTableView::selectUnindexedPeaks()
     if (peaksModel == nullptr) {
         return;
     }
-    QModelIndexList unindexedPeaks = peaksModel->getUnindexedPeaks();
+    QModelIndexList unindexedPeaks = peaksModel->unindexedPeaks();
 
     for (QModelIndex index : unindexedPeaks) {
         selectRow(index.row());
@@ -386,29 +262,9 @@ void PeakTableView::selectValidPeaks()
     if (peaksModel == nullptr) {
         return;
     }
-    QModelIndexList validPeaksIndexes = peaksModel->getValidPeaks();
+    QModelIndexList validPeaksIndexes = peaksModel->selectedPeaks();
 
     for (QModelIndex index : validPeaksIndexes) {
         selectRow(index.row());
     }
-}
-
-QItemSelectionModel::SelectionFlags PeakTableView::selectionCommand(const QModelIndex &index, const QEvent *event) const
-{
-    if (event==nullptr) {
-        return QItemSelectionModel::NoUpdate;
-    }
-    return QTableView::selectionCommand(index,event);
-}
-
-void PeakTableView::updateUnitCell(const nsx::sptrUnitCell& unitCell)
-{
-    QModelIndexList selectedPeaks = selectionModel()->selectedRows();
-    if (selectedPeaks.empty()) {
-        nsx::error() << "no peaks selected!";
-        return;
-    }
-    nsx::info() << "updating unit cell";
-    auto peakModel = dynamic_cast<CollectedPeaksModel*>(model());
-    peakModel->setUnitCell(unitCell, selectedPeaks);
 }

@@ -50,7 +50,7 @@ PeakList PeakFilter::mergedPeaksSignificance(const PeakList& peaks, double signi
         MergedData merged(group, true);
 
         PeakList filtered_peaks;
-        filtered_peaks = peak_filter.indexed(filtered_peaks,unit_cell,unit_cell->indexingTolerance());
+        filtered_peaks = peak_filter.indexed(filtered_peaks,*unit_cell,unit_cell->indexingTolerance());
 
         for (auto peak : filtered_peaks) {
             merged.addPeak(peak);
@@ -86,7 +86,6 @@ PeakList PeakFilter::sparseDataSet(const PeakList& peaks, size_t min_num_peaks) 
     // Gather the peaks per dataset
     std::map<sptrDataSet,PeakList> peaks_per_dataset;
     for (auto peak : peaks) {
-
         auto data = peak->data();
         if (!data) {
             continue;
@@ -139,7 +138,7 @@ PeakList PeakFilter::extincted(const PeakList& peaks)
 
     for (auto p : peaks_per_unit_cell) {
 
-        PeakList indexed_peaks = peak_filter.indexed(p.second,p.first,p.first->indexingTolerance());
+        PeakList indexed_peaks = peak_filter.indexed(p.second,*(p.first),p.first->indexingTolerance());
 
         SpaceGroup group(p.first->spaceGroup());
 
@@ -239,7 +238,6 @@ PeakList PeakFilter::complementary(const PeakList& peaks, const PeakList& other_
     return filtered_peaks;
 }
 
-
 PeakList PeakFilter::enabled(const PeakList& peaks, bool flag) const
 {
     PeakList filtered_peaks;
@@ -267,17 +265,13 @@ PeakList PeakFilter::masked(const PeakList& peaks, bool flag) const
     return filtered_peaks;
 }
 
-PeakList PeakFilter::indexed(const PeakList& peaks, sptrUnitCell cell, double tolerance) const
+PeakList PeakFilter::indexed(const PeakList& peaks, const UnitCell& cell, double tolerance) const
 {
     PeakList filtered_peaks;
 
     for (auto peak : peaks) {
 
-        if (!cell) {
-            continue;
-        }
-
-        MillerIndex miller_index(peak->q(), *cell);
+        MillerIndex miller_index(peak->q(), cell);
         if (miller_index.indexed(tolerance)) {
             filtered_peaks.push_back(peak);
         }
@@ -299,19 +293,6 @@ PeakList PeakFilter::indexed(const PeakList& peaks) const
         }
         MillerIndex miller_index(peak->q(), *cell);
         if (miller_index.indexed(cell->indexingTolerance())) {
-            filtered_peaks.push_back(peak);
-        }
-    }
-
-    return filtered_peaks;
-}
-
-PeakList PeakFilter::dataset(const PeakList& peaks, sptrDataSet dataset) const
-{
-    PeakList filtered_peaks;
-
-    for (auto peak : peaks) {
-        if (peak->data() == dataset) {
             filtered_peaks.push_back(peak);
         }
     }
@@ -357,16 +338,11 @@ PeakList PeakFilter::strength(const PeakList& peaks, double min, double max) con
     return filtered_peaks;
 }
 
-PeakList PeakFilter::predicted(const PeakList& peaks) const
+PeakList PeakFilter::predicted(const PeakList& peaks, bool flag) const
 {
     PeakList filtered_peaks;
 
-    for (auto peak : peaks) {
-
-        if (peak->isPredicted()) {
-            filtered_peaks.push_back(peak);
-        }
-    }
+    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[flag](sptrPeak3D peak){return flag == peak->predicted();});
 
     return filtered_peaks;
 }
@@ -384,20 +360,6 @@ PeakList PeakFilter::dRange(const PeakList& peaks, double dmin, double dmax) con
         if (d >= dmin && d <= dmax) {
             filtered_peaks.push_back(peak);
         }
-    }
-
-    return filtered_peaks;
-}
-
-PeakList PeakFilter::selection(const PeakList& peaks, const std::vector<int>& indexes) const
-{
-    PeakList filtered_peaks;
-
-    for (int idx: indexes) {
-        if (idx <0 || idx >= peaks.size()) {
-            continue;
-        }
-        filtered_peaks.push_back(peaks[idx]);
     }
 
     return filtered_peaks;

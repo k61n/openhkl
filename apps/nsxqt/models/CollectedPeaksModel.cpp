@@ -22,6 +22,7 @@
 
 #include "CollectedPeaksModel.h"
 #include "ProgressView.h"
+#include "SessionModel.h"
 
 struct PeakFactors {
 
@@ -44,31 +45,72 @@ static PeakFactors peakFactors(nsx::sptrPeak3D peak)
     return peak_factors;
 }
 
-CollectedPeaksModel::CollectedPeaksModel(nsx::sptrExperiment experiment, QObject *parent)
+CollectedPeaksModel::CollectedPeaksModel(SessionModel* session, nsx::sptrExperiment experiment, QObject *parent)
 : QAbstractTableModel(parent),
-  _experiment(std::move(experiment))
+  _experiment(std::move(experiment)),
+  _peaks()
 {
+    setSession(session);
 }
 
-CollectedPeaksModel::CollectedPeaksModel(nsx::sptrExperiment experiment, const nsx::PeakList &peaks, QObject *parent)
+CollectedPeaksModel::CollectedPeaksModel(SessionModel* session, nsx::sptrExperiment experiment, const nsx::PeakList &peaks, QObject *parent)
 : QAbstractTableModel(parent),
   _experiment(std::move(experiment)),
   _peaks(peaks)
 {
+    setSession(session);
 }
 
-void CollectedPeaksModel::addPeak(const nsx::sptrPeak3D& peak)
+SessionModel* CollectedPeaksModel::session()
 {
-    auto it=std::find(_peaks.begin(),_peaks.end(),peak);
-    if (it!=_peaks.end()) {
-        return;
+    return _session;
+}
+
+void CollectedPeaksModel::setSession(SessionModel* session)
+{
+    _session = session;
+    connect(this, &CollectedPeaksModel::signalSelectedPeakChanged,[this](nsx::sptrPeak3D peak){emit _session->signalSelectedPeakChanged(peak);});
+    connect(_session,SIGNAL(signalEnabledPeakChanged(nsx::sptrPeak3D)),this,SLOT(slotChangeEnabledPeak(nsx::sptrPeak3D)));
+    connect(_session,SIGNAL(signalMaskedPeaksChanged(const nsx::PeakList&)),this,SLOT(slotChangeMaskedPeaks(const nsx::PeakList&)));
+    connect(_session,SIGNAL(signalUnitCellRemoved(nsx::sptrUnitCell)),this,SLOT(slotRemoveUnitCell(nsx::sptrUnitCell)));
+}
+
+void CollectedPeaksModel::slotRemoveUnitCell(const nsx::sptrUnitCell unit_cell)
+{
+    Q_UNUSED(unit_cell)
+
+    QModelIndex topleft_index = index(0,0);
+    QModelIndex bottomright_index = index(rowCount(QModelIndex())-1,columnCount(QModelIndex())-1);
+
+    emit dataChanged(topleft_index,bottomright_index);
+}
+
+void CollectedPeaksModel::slotChangeMaskedPeaks(const nsx::PeakList& peaks)
+{
+    for (auto peak : peaks) {
+
+        auto it = std::find(_peaks.begin(),_peaks.end(),peak);
+        if (it == _peaks.end()) {
+            continue;
+        }
+
+        int row = std::distance(_peaks.begin(),it);
+
+        QModelIndex topleft_index = index(row,0);
+        QModelIndex bottomright_index = index(row,columnCount(QModelIndex())-1);
+
+        emit dataChanged(topleft_index,bottomright_index);
     }
-    _peaks.push_back(peak);
 }
 
-void CollectedPeaksModel::setPeaks(const nsx::PeakList& peaks)
-{
+void CollectedPeaksModel::setPeaks(const nsx::PeakList& peaks) {
+    reset();
     _peaks = peaks;
+
+    QModelIndex topleft_index = index(0,0);
+    QModelIndex bottomright_index = index(rowCount(QModelIndex())-1,columnCount(QModelIndex())-1);
+
+    emit dataChanged(topleft_index,bottomright_index);
 }
 
 const nsx::PeakList& CollectedPeaksModel::peaks() const
@@ -76,26 +118,41 @@ const nsx::PeakList& CollectedPeaksModel::peaks() const
     return _peaks;
 }
 
-nsx::PeakList CollectedPeaksModel::peaks(const QModelIndexList &indices) const
+void CollectedPeaksModel::slotChangeEnabledPeak(nsx::sptrPeak3D peak)
 {
-    nsx::PeakList peaks;
-    peaks.reserve(indices.count());
-    for (auto&& index: indices) {
-        peaks.push_back(_peaks[index.row()]);
+    auto it = std::find(_peaks.begin(),_peaks.end(),peak);
+    if (it == _peaks.end()) {
+        return;
     }
-    return peaks;
+
+    int row = std::distance(_peaks.begin(),it);
+
+    QModelIndex topleft_index = index(row,0);
+    QModelIndex bottomright_index = index(row,columnCount(QModelIndex())-1);
+
+    emit dataChanged(topleft_index,bottomright_index);
 }
 
-int CollectedPeaksModel::rowCount(const QModelIndex &parent) const
+
+int CollectedPeaksModel::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
+
     return _peaks.size();
 }
 
-int CollectedPeaksModel::columnCount(const QModelIndex &parent) const
+int CollectedPeaksModel::columnCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
+
     return Column::count;
+}
+
+void CollectedPeaksModel::reset()
+{
+    beginResetModel();
+    _peaks.clear();
+    endResetModel();
 }
 
 Qt::ItemFlags CollectedPeaksModel::flags(const QModelIndex &index) const
@@ -104,11 +161,6 @@ Qt::ItemFlags CollectedPeaksModel::flags(const QModelIndex &index) const
         return Qt::ItemIsEnabled;
     }
 
-    int column = index.column();
-
-    if (column == Column::selected) {
-        return QAbstractTableModel::flags(index) | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
-    }
     return QAbstractTableModel::flags(index);
 }
 
@@ -117,35 +169,45 @@ QVariant CollectedPeaksModel::headerData(int section, Qt::Orientation orientatio
     if (role != Qt::DisplayRole) {
         return QVariant();
     }
+
     if (orientation == Qt::Horizontal) {
         switch(section) {
-        case Column::h:
+        case Column::h: {
             return QString("h");
-        case Column::k:
+        }
+        case Column::k: {
             return QString("k");
-        case Column::l:
+        }
+        case Column::l: {
             return QString("l");
-        case Column::intensity:
+        }
+        case Column::px: {
+            return QString("pixel x");
+        }
+        case Column::py: {
+            return QString("pixel y");
+        }
+        case Column::frame: {
+            return QString("frame");
+        }
+        case Column::intensity: {
             return QString("intensity");
-        case Column::sigmaIntensity:
+        }
+        case Column::sigmaIntensity: {
             return QString(QChar(0x03C3))+"(intensity)";
-        case Column::i_over_sigmai:
-            return "intensity/" + QString(QChar(0x03C3))+"(intensity)";
-        case Column::transmission:
-            return QString("transmission");
-        case Column::lorentzFactor:
-            return QString("lorentz factor");
-        case Column::numor:
+        }
+        case Column::numor: {
             return QString("numor");
-        case Column::selected:
-            return QString("valid");
-        case Column::unitCell:
+        }
+        case Column::unitCell: {
             return QString("unit cell");
+        }
         default:
             return QVariant();
         }
-    } else
+    } else {
         return QVariant(section+1);
+    }
 }
 
 QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
@@ -154,8 +216,8 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    Eigen::RowVector3i hkl= {0,0,0};
-    double transmissionFactor, scaledIntensity, sigmaScaledIntensity;
+    Eigen::RowVector3i hkl = {0,0,0};
+    Eigen::RowVector3d hkl_error = {0.0,0.0,0.0};
 
     int row = index.row();
     int column = index.column();
@@ -164,60 +226,75 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
         nsx::MillerIndex miller_index(_peaks[row]->q(), *cell);
         if (miller_index.indexed(cell->indexingTolerance())) {
             hkl = miller_index.rowVector();
+            hkl_error = miller_index.error();
         }
     }
-    PeakFactors pf = peakFactors(_peaks[row]);
-    transmissionFactor = _peaks[row]->transmission();
-    scaledIntensity = _peaks[row]->correctedIntensity().value();
-    sigmaScaledIntensity = _peaks[row]->correctedIntensity().sigma();
+
+    double intensity = _peaks[row]->correctedIntensity().value();
+    double sigma_intensity = _peaks[row]->correctedIntensity().sigma();
+
+    auto peak_center = _peaks[row]->shape().center();
 
     switch (role) {
 
     case Qt::DisplayRole:        
 
         switch (column) {
-        case Column::h:
+        case Column::h: {
             return hkl(0);
-        case Column::k:
+        }
+        case Column::k: {
             return hkl(1);
-        case Column::l:
+        }
+        case Column::l: {
             return hkl(2);
-        case Column::intensity:
-            return scaledIntensity;
-        case Column::sigmaIntensity:
-            return sigmaScaledIntensity;
-        case Column::i_over_sigmai:
-            return scaledIntensity/sigmaScaledIntensity;
-        case Column::transmission:
-            return transmissionFactor;
-        case Column::lorentzFactor:
-            return pf.lorentz;
-        case Column::numor:
+        }
+        case Column::px: {
+            return peak_center(0);
+        }
+        case Column::py: {
+            return peak_center(1);
+        }
+        case Column::frame: {
+            return peak_center(2);
+        }
+        case Column::intensity: {
+            return intensity;
+        }
+        case Column::sigmaIntensity: {
+            return sigma_intensity;
+        }
+        case Column::numor: {
             return _peaks[row]->data()->metadata()->key<int>("Numor");
-        case Column::selected:
-            return _peaks[row]->enabled();
+        }
         case Column::unitCell:
-            if (auto unitCell = _peaks[row]->unitCell()) {
-                return QString::fromStdString(unitCell->name());
+            auto unit_cell = _peaks[row]->unitCell();
+            if (unit_cell) {
+                return QString::fromStdString(unit_cell->name());
             }
             else {
                 return QString("not set");
             }
         }
         break;
+    case Qt::ForegroundRole: {
+
+        if (_peaks[row]->enabled()) {
+            return QBrush(Qt::black);
+        } else {
+            return QBrush(Qt::red);
+        }
+
+        break;
+    }
     case Qt::ToolTipRole:
         switch (column) {
             case Column::h:                
-                return hkl[0];
+                return hkl[0]+hkl_error[0];
             case Column::k:                
-                return hkl[1];
+                return hkl[1]+hkl_error[1];
             case Column::l:                
-                return hkl[2];
-        }
-        break;
-    case Qt::CheckStateRole:
-        if (column == Column::selected) {
-            return _peaks[row]->enabled();
+                return hkl[2]+hkl_error[2];
         }
         break;
     }
@@ -229,7 +306,7 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
     std::function<bool(nsx::sptrPeak3D, nsx::sptrPeak3D)> compareFn = [](nsx::sptrPeak3D, nsx::sptrPeak3D) { return false; };
 
     switch (column) {
-    case Column::h:
+    case Column::h: {
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             auto cell1 = p1->unitCell();
             auto cell2 = p2->unitCell();
@@ -242,7 +319,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
             }
         };
         break;
-    case Column::k:
+    }
+    case Column::k: {
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             auto cell1 = p1->unitCell();
             auto cell2 = p2->unitCell();
@@ -255,7 +333,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
             }
         };
         break;
-    case Column::l:
+    }
+    case Column::l: {
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             auto cell1 = p1->unitCell();
             auto cell2 = p2->unitCell();
@@ -268,49 +347,56 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
             }
         };
         break;
-    case  Column::intensity:
+    }
+    case Column::px: {
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            return (p1->correctedIntensity().value())
-                    > (p2->correctedIntensity().value());
+            auto center1 = p1->shape().center();
+            auto center2 = p2->shape().center();
+            return (center1[0] < center2[0]);
         };
         break;
-    case Column::sigmaIntensity:
+    }
+    case Column::py: {
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            return (p1->correctedIntensity().sigma())
-                    > (p2->correctedIntensity().sigma());
+            auto center1 = p1->shape().center();
+            auto center2 = p2->shape().center();
+            return (center1[1] < center2[1]);
         };
         break;
-    case Column::i_over_sigmai:
+    }
+    case Column::frame: {
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            return (p1->correctedIntensity().value()/p1->correctedIntensity().sigma())
-                    > (p2->correctedIntensity().value()/p2->correctedIntensity().sigma());
+            auto center1 = p1->shape().center();
+            auto center2 = p2->shape().center();
+            return (center1[2] < center2[2]);
         };
         break;
-    case Column::transmission:
-        compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            return p1->transmission()>p2->transmission();
+    }
+    case  Column::intensity: {
+        compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
+            auto intensity1 = p1->correctedIntensity().value();
+            auto intensity2 = p2->correctedIntensity().value();
+            return (intensity1 < intensity2);
         };
         break;
-    case Column::lorentzFactor:
-        compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto pf1 = peakFactors(p1);
-            auto pf2 = peakFactors(p2);
-            return pf1.lorentz > pf2.lorentz;
+    }
+    case Column::sigmaIntensity: {
+        compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
+            auto sigma_intensity1 = p1->correctedIntensity().sigma();
+            auto sigma_intensity2 = p2->correctedIntensity().sigma();
+            return (sigma_intensity1 < sigma_intensity2);
         };
         break;
-    case Column::numor:
+    }
+    case Column::numor: {
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             int numor1=p1->data()->metadata()->key<int>("Numor");
             int numor2=p2->data()->metadata()->key<int>("Numor");
-            return (numor1>numor2);
+            return (numor1 < numor2);
         };
         break;
-    case Column::selected:
-        compareFn = [&](nsx::sptrPeak3D p1, const nsx::sptrPeak3D p2) {
-            return (p2->enabled()<p1->enabled());
-        };
-        break;
-    case Column::unitCell:
+    }
+    case Column::unitCell: {
         compareFn = [&](nsx::sptrPeak3D p1, const nsx::sptrPeak3D p2) {
             auto uc1 = p1->unitCell();
             auto uc2 = p2->unitCell();
@@ -320,6 +406,7 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         };
         break;
     }
+    }
     std::sort(_peaks.begin(), _peaks.end(), compareFn);
 
     if (order == Qt::DescendingOrder) {
@@ -328,23 +415,27 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
     emit layoutChanged();
 }
 
-bool CollectedPeaksModel::setData(const QModelIndex& index, const QVariant& value, int role)
+void CollectedPeaksModel::togglePeakSelection(QModelIndex peak_index)
 {
-    if (!indexIsValid(index)) {
-        return false;
-    }
+    int row = peak_index.row();
 
-    int row = index.row();
-    int column = index.column();
+    auto peak = _peaks[row];
 
-    if (role == Qt::CheckStateRole) {
-        bool state = value.toBool();
-        if (column == Column::selected) {
-            _peaks[row]->setSelected(state);
-        }
-    }
-    emit dataChanged(index,index);
-    return true;
+    peak->setSelected(!(peak->selected()));
+
+    QModelIndex topleft_index = index(row,0);
+    QModelIndex bottomright_index = index(row,columnCount(QModelIndex())-1);
+
+    emit dataChanged(topleft_index,bottomright_index);
+
+    emit _session->signalEnabledPeakChanged(peak);
+}
+
+void CollectedPeaksModel::selectPeak(const QModelIndex& index)
+{
+    auto selected_peak = _peaks[index.row()];
+
+    emit signalSelectedPeakChanged(selected_peak);
 }
 
 bool CollectedPeaksModel::indexIsValid(const QModelIndex& index) const
@@ -373,7 +464,7 @@ void CollectedPeaksModel::sortEquivalents()
 void CollectedPeaksModel::setUnitCell(const nsx::sptrUnitCell& unitCell, QModelIndexList selectedPeaks)
 {
     if (selectedPeaks.isEmpty()) {
-        for (int i=0;i<rowCount();++i) {
+        for (int i=0;i<rowCount(QModelIndex());++i) {
             selectedPeaks << index(i,0);
         }
     }
@@ -390,13 +481,18 @@ void CollectedPeaksModel::normalizeToMonitor(double factor)
     for (auto&& peak : _peaks) {
         peak->setScale(factor/peak->data()->metadata()->key<double>("monitor"));
     }
+
+    QModelIndex topleft_index = index(0,0);
+    QModelIndex bottomright_index = index(rowCount(QModelIndex())-1,columnCount(QModelIndex())-1);
+
+    emit dataChanged(topleft_index,bottomright_index);
 }
 
-QModelIndexList CollectedPeaksModel::getUnindexedPeaks()
+QModelIndexList CollectedPeaksModel::unindexedPeaks()
 {
     QModelIndexList list;
 
-    for (int i=0; i<rowCount(); ++i) {
+    for (int i=0; i<rowCount(QModelIndex()); ++i) {
         auto peak = _peaks[i];
         if (!peak->unitCell()) {
             list.append(index(i,0));
@@ -405,11 +501,11 @@ QModelIndexList CollectedPeaksModel::getUnindexedPeaks()
     return list;
 }
 
-QModelIndexList CollectedPeaksModel::getValidPeaks()
+QModelIndexList CollectedPeaksModel::selectedPeaks()
 {
     QModelIndexList list;
 
-    for (int i=0; i<rowCount(); ++i) {
+    for (int i=0; i<rowCount(QModelIndex()); ++i) {
         auto peak = _peaks[i];
         if (peak->enabled()) {
             list.append(index(i,0));
@@ -418,7 +514,7 @@ QModelIndexList CollectedPeaksModel::getValidPeaks()
     return list;
 }
 
-nsx::sptrExperiment CollectedPeaksModel::getExperiment()
+nsx::sptrExperiment CollectedPeaksModel::experiment()
 {
     return _experiment;
 }

@@ -43,7 +43,7 @@ void CutSliceGraphicsItem::plot(SXPlot* plot)
         return;
     }
 
-    auto dataPtr=detPtr->getData();
+    auto dataPtr = detPtr->getData();
     auto det=dataPtr->diffractometer()->detector();
     
     int nrows=det->nRows();

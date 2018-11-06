@@ -24,25 +24,42 @@
  *
  */
 
+#include <algorithm>
+
+#include <Eigen/Dense>
+
 #include "Component.h"
 #include "Detector.h"
 #include "DetectorEvent.h"
 #include "Diffractometer.h"
+#include "FitParameters.h"
+#include "Gonio.h"
 #include "InstrumentState.h"
+#include "Logger.h"
 #include "MatrixOperations.h"
+#include "Minimizer.h"
+#include "Sample.h"
 
 namespace nsx {
 
-InstrumentState::InstrumentState(sptrDiffractometer diffractometer):
-    _diffractometer(diffractometer)
+InstrumentState::InstrumentState(sptrDiffractometer diffractometer)
+: _diffractometer(diffractometer)
 {
     detectorOrientation.setIdentity();
+
     sampleOrientation = Eigen::Quaterniond(1, 0, 0, 0);
+
     sampleOrientationOffset = Eigen::Quaterniond(1, 0, 0, 0);
+
     samplePosition.setZero();
-    detectorOffset.setZero();
+
+    detectorPositionOffset.setZero();
+
     ni = {0.0, 1.0, 0.0};
+
     wavelength = 1.0;
+
+    refined=false;
 }
 
 ReciprocalVector InstrumentState::kfLab(const DirectVector& detector_position) const

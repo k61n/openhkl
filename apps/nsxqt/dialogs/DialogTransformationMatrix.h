@@ -7,12 +7,12 @@
 #include <nsxlib/CrystalTypes.h>
 
 namespace Ui {
-class DialogTransformationmatrix;
+class DialogTransformationMatrix;
 }
 
 class Widget;
 
-class DialogTransformationmatrix : public QDialog
+class DialogTransformationMatrix : public QDialog
 {
     Q_OBJECT
 
@@ -20,13 +20,14 @@ signals:
     void getMatrix(const Eigen::Matrix3d& m);
 
 public:
-    explicit DialogTransformationmatrix(nsx::sptrUnitCell unitCell, QWidget *parent=0);
-    ~DialogTransformationmatrix();
+    explicit DialogTransformationMatrix(nsx::sptrUnitCell unitCell, QWidget *parent=0);
+    ~DialogTransformationMatrix();
 
 public slots:
-    void getTransformation();
+
+    virtual void accept() override;
 
 private:
-    Ui::DialogTransformationmatrix *ui;
+    Ui::DialogTransformationMatrix *ui;
     nsx::sptrUnitCell _unitCell;
 };

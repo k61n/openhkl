@@ -28,53 +28,64 @@
 
 #pragma once
 
-#include <vector>
+#include <map>
 #include <string>
+#include <vector>
 
 #include <Eigen/Dense>
 
 #include "ChemistryTypes.h"
+#include "DataTypes.h"
 #include "GeometryTypes.h"
 #include "NiggliCharacter.h"
 #include "SpaceGroup.h"
 
 namespace nsx {
 
-    //! \class CellCharacter
-    //! \brief Structure to encapsulate lattice cell character.
-    struct CellCharacter {
-        //! Lattice character \f$A = \mathbf{a} \cdot \mathbf{a}\f$
-        double A;
-        //! Lattice character \f$B = \mathbf{b} \cdot \mathbf{b}\f$
-        double B;
-        //! Lattice character \f$C = \mathbf{c} \cdot \mathbf{c}\f$
-        double C;
-        //! Lattice character \f$D = \mathbf{b} \cdot \mathbf{c}\f$
-        double D;
-        //! Lattice character \f$E = \mathbf{a} \cdot \mathbf{c}\f$
-        double E;
-        //! Lattice character \f$F = \mathbf{a} \cdot \mathbf{b}\f$
-        double F;
-        //! Lattice character \f$a = |\mathbf{a}|\f$
-        double a;
-        //! Lattice character \f$b = |\mathbf{b}|\f$
-        double b;
-        //! Lattice character \f$c = |\mathbf{c}|\f$
-        double c;
-        //! Lattice character \f$\alpha = \angle(\mathbf{b}, \mathbf{c})\f$
-        double alpha;
-        //! Lattice character \f$\beta = \angle(\mathbf{a}, \mathbf{c})\f$ 
-        double beta;
-        //! Lattice character \f$\gamma = \angle(\mathbf{a}, \mathbf{b})\f$
-        double gamma;
+//! \class UnitCellCharacter
+//! \brief Structure to encapsulate lattice cell character.
+struct UnitCellCharacter {
+    //! Component (0,0) of the metric tensor
+    double g00;
+    //! Component (0,1) of the metric tensor
+    double g01;
+    //! Component (0,2) of the metric tensor
+    double g02;
+    //! Component (1,1) of the metric tensor
+    double g11;
+    //! Component (1,2) of the metric tensor
+    double g12;
+    //! Component (2,2) of the metric tensor
+    double g22;
+    //! Lattice character \f$a = |\mathbf{a}|\f$
+    double a;
+    //! Lattice character \f$b = |\mathbf{b}|\f$
+    double b;
+    //! Lattice character \f$c = |\mathbf{c}|\f$
+    double c;
+    //! Lattice character \f$\alpha = \angle(\mathbf{b}, \mathbf{c})\f$
+    double alpha;
+    //! Lattice character \f$\beta = \angle(\mathbf{a}, \mathbf{c})\f$
+    double beta;
+    //! Lattice character \f$\gamma = \angle(\mathbf{a}, \mathbf{b})\f$
+    double gamma;
 
-        //! Default constructor: set all parameters to zero.
-        CellCharacter();
-        //! Construct a lattice character from a given metric tensor $g$.
-        CellCharacter(const Eigen::Matrix3d& g);
-        //! Construct a lattice character from the given metric components.
-        CellCharacter(double A, double B, double C, double D, double E, double F);
-    };
+    //! Default constructor: set all parameters to zero.
+    UnitCellCharacter();
+    //! Construct a lattice character from a given metric tensor $g$.
+    UnitCellCharacter(const Eigen::Matrix3d& g);
+    //! Construct a lattice character from the given metric components.
+    UnitCellCharacter(double g00_, double g01_, double g02_, double g11_, double g12_, double g22_);
+};
+
+//! \class UnitCellState
+//! \brief Structure to encapsulate the state of the unit cell for a given dataset at a given frame.
+struct UnitCellState {
+
+    Eigen::Matrix3d orientation;
+    UnitCellCharacter character;
+};
+
 
 //! \class UnitCell
 //! \brief Class to define a crystallographic unit-cell.
@@ -88,6 +99,9 @@ namespace nsx {
 class UnitCell 
 {
 public:
+
+    static UnitCell interpolate(const UnitCell &uc1, const UnitCell &uc2, double t);
+
     //! Empty UnitCell, initialiazed to right-handed orthonormal system
     UnitCell();
     //! Create unit cell from a basis
@@ -97,11 +111,11 @@ public:
     //! Copy constructor
     UnitCell(const UnitCell& other) = default;
     //! Set lattice parameters
-    void setParams(double a, double b, double c, double alpha, double beta, double gamma);
-    //! Set lattice parmeters from ABCDEF
-    void setABCDEF(double A, double B, double C, double D, double E, double F);
-    //! Set the reciprocal basis
-    void setReciprocalBasis(const Eigen::Matrix3d& B);
+    void setParameters(double a, double b, double c, double alpha, double beta, double gamma);
+    //! Set reciprocal lattice parameters
+    void setReciprocalParameters(double as, double bs, double cs, double alphas, double betas, double gammas);
+    //! Set the reciprocal space basis (lower triangular row form)
+    void setReciprocalBasis(const Eigen::Matrix3d& b_transposed);
     //! Set lattice centering type
     void setLatticeCentring(LatticeCentring centring);
     //! Set Bravais type
@@ -148,10 +162,12 @@ public:
     double indexingTolerance() const;
     //! Return the real-space basis
     const Eigen::Matrix3d& basis() const;
-    //! Set the real-space basis
-    void setBasis(const Eigen::Matrix3d& b);
+    //! Set the real-space basis (upper triangular, column form)
+    void setBasis(const Eigen::Matrix3d& a);
     //! Return the reciprocal bases
     const Eigen::Matrix3d& reciprocalBasis() const;
+    //! Set lattice parameters from metric tensor
+    void setMetric(double g00, double g01, double g02, double g11, double g12, double g22);
     //! Return the real space metric tensor
     Eigen::Matrix3d metric() const;
     //! Return the reciprocal space metric tensor
@@ -163,11 +179,11 @@ public:
     //! Return q vector from a given hkl
     Eigen::RowVector3d fromIndex(const Eigen::RowVector3d& hkl) const;
     //! Return the character of the cell
-    CellCharacter character() const;
+    UnitCellCharacter character() const;
     //! Return the errors in the character of the cell
-    CellCharacter characterSigmas() const;
+    UnitCellCharacter characterSigmas() const;
     //! Return the reciprocal character of the cell
-    CellCharacter reciprocalCharacter() const;
+    UnitCellCharacter reciprocalCharacter() const;
     //! Reduce the unit cell to Niggli or conventional cell. Returns the number 
     //! according to the classification into 44 lattice types.
     int reduce(bool niggli_only, double niggliTolerance, double gruberTolerance);
@@ -199,15 +215,24 @@ public:
     //! Return list of space groups which are compatible with the Bravais type of the cell
     std::vector<std::string> compatibleSpaceGroups() const;
 
+    //! Initialize this unit cell state for a given data
+    void initState(sptrDataSet data);
+    //! Set the state of this unit cell for a given data and unit cell
+    void setState(sptrDataSet data, size_t frame, const UnitCellState& state);
+    //! Return a non-const reference to the state of this unit cell for a given data at a given frame
+    UnitCellState& state(sptrDataSet data, size_t frame);
+    //! Return the interpolated unit cell between two states
+    UnitCell interpolate(sptrDataSet data, double frame);
+
     #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     #endif
 
 private:
     //! Real-space basis of column vectors
-    Eigen::Matrix3d _A;
+    Eigen::Matrix3d _a;
     //! Reciprocal-space basis of row vectors
-    Eigen::Matrix3d _B;
+    Eigen::Matrix3d _b_transposed;
     //! _NP is the transformation such that _A*_NP.inverse() is the Niggli cell
     Eigen::Matrix3d _NP; 
 
@@ -219,7 +244,9 @@ private:
     std::string _name;
     double _indexingTolerance;
     NiggliCharacter _niggli;
-    CellCharacter _characterSigmas;
+    UnitCellCharacter _characterSigmas;
+
+    std::map<sptrDataSet,std::vector<UnitCellState>> _states;
 };
 
 //! Print to a stream

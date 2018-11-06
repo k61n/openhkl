@@ -20,6 +20,13 @@
    <item row="0" column="0">
     <widget class="QTableView" name="tableView"/>
    </item>
+   <item row="1" column="0">
+    <widget class="QDialogButtonBox" name="cancelOK">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>

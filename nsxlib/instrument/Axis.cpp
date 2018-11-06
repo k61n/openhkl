@@ -23,23 +23,23 @@ Axis* Axis::create(const YAML::Node& node)
 }
 
 Axis::Axis()
-: _label("axis"),
+: _name("axis"),
   _axis(Eigen::Vector3d(0.0,0.0,1.0)),
   _physical(true),
   _id(0)
 {
 }
 
-Axis::Axis(const std::string& label)
-: _label(label),
+Axis::Axis(const std::string& name)
+: _name(name),
   _axis(Eigen::Vector3d(0.0,0.0,1.0)),
   _physical(true),
   _id(0)
 {
 }
 
-Axis::Axis(const std::string& label, const Eigen::Vector3d& axis)
-: _label(label),
+Axis::Axis(const std::string& name, const Eigen::Vector3d& axis)
+: _name(name),
   _physical(true),
   _id(0)
 {
@@ -47,7 +47,7 @@ Axis::Axis(const std::string& label, const Eigen::Vector3d& axis)
 }
 
 Axis::Axis(const Axis& other)
-: _label(other._label),
+: _name(other._name),
   _axis(other._axis),
   _physical(other._physical),
   _id(other._id)
@@ -56,7 +56,7 @@ Axis::Axis(const Axis& other)
 
 Axis::Axis(const YAML::Node& node)
 {
-    _label = node["name"] ? node["name"].as<std::string>() : "no name";
+    _name = node["name"] ? node["name"].as<std::string>() : "no name";
 
     Eigen::Vector3d axis = node["direction"].as<Eigen::Vector3d>();
     axis.normalize();
@@ -71,10 +71,10 @@ Axis::Axis(const YAML::Node& node)
 Axis& Axis::operator=(const Axis& other)
 {
     if (this != &other) {
-        _label       = other._label;
-        _axis        = other._axis;
-        _physical    = other._physical;
-        _id          = other._id;
+        _name = other._name;
+        _axis = other._axis;
+        _physical = other._physical;
+        _id = other._id;
     }
     return *this;
 }
@@ -84,20 +84,20 @@ Axis::~Axis()
 }
 
 
-void Axis::setLabel(const std::string& label)
+void Axis::setName(const std::string& name)
 {
-    _label=label;
+    _name = name;
 }
 
-const std::string& Axis::label() const
+const std::string& Axis::name() const
 {
-    return _label;
+    return _name;
 }
 
 void Axis::setAxis(const Eigen::Vector3d& axis)
 {
     if (axis.isZero())
-        throw std::runtime_error("Invalid null axis for axis "+_label);
+        throw std::runtime_error("Invalid null axis for axis "+_name);
     _axis=axis;
     // Normalize the axis
     _axis.normalize();
@@ -119,7 +119,7 @@ unsigned int Axis::id() const
 
 Eigen::Vector3d Axis::transform(const Eigen::Vector3d& v,double value)
 {
-    Eigen::Transform<double,3,Eigen::Affine> hom = homMatrix(value);
+    Eigen::Transform<double,3,Eigen::Affine> hom = affineMatrix(value);
     return (hom*v.homogeneous());
 }
 

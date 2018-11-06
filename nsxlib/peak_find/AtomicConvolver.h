@@ -52,6 +52,8 @@ public:
 
     AtomicConvolver();
 
+    AtomicConvolver(const std::map<std::string,double> &parameters);
+
     AtomicConvolver(const AtomicConvolver& other)=default;
 
     AtomicConvolver& operator=(const AtomicConvolver& other)=default;
@@ -64,6 +66,8 @@ public:
 
     //! Convolve an image
     virtual RealMatrix convolve(const RealMatrix& image) override;
+
+    virtual std::pair<size_t,size_t> kernelSize() const=0;
 
 protected:
 

@@ -7,6 +7,8 @@
 
 #include "H5Cpp.h"
 
+#include <Eigen/Dense>
+
 #include "AABB.h"
 #include "BloscFilter.h"
 #include "ConvolverFactory.h"
@@ -229,47 +231,42 @@ void DataSet::saveHDF5(const std::string& filename) //const
     // Write detector states
     H5::Group detectorGroup(scanGroup.createGroup("Detector"));
 
-    std::vector<std::string> names=_diffractometer->detector()->gonio()->physicalAxesNames();
+    auto axes = _diffractometer->detector()->gonio()->axes();
     hsize_t nf[1]={_nFrames};
     H5::DataSpace scanSpace(1,nf);
-    RealMatrix vals(names.size(),_nFrames);
 
     const auto& detectorStates = _reader->detectorStates();
 
-    for (unsigned int i = 0; i < detectorStates.size(); ++i) {
-        auto&& v = detectorStates[i];
-
-        for (unsigned int j = 0; j < names.size(); ++j) {
-            vals(j,i) = v[j] / deg;
+    for (size_t j = 0; j < axes.size(); ++j) {
+        auto axis = axes[j];
+        Eigen::VectorXd values(_nFrames);
+        for (size_t i = 0; i < _nFrames; ++i) {
+            auto&& v = detectorStates[i];
+            values(i) = v[j] / deg;
         }
+        H5::DataSet detectorScan(detectorGroup.createDataSet(axis->name(), H5::PredType::NATIVE_DOUBLE, scanSpace));
+        detectorScan.write(&values(0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
     }
 
-    for (unsigned int j = 0; j < names.size(); ++j) {
-        H5::DataSet detectorScan(detectorGroup.createDataSet(names[j], H5::PredType::NATIVE_DOUBLE, scanSpace));
-        detectorScan.write(&vals(j,0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
-    }
 
     // Write sample states
     H5::Group sampleGroup(scanGroup.createGroup("Sample"));
-    std::vector<std::string> samplenames=_diffractometer->sample()->gonio()->physicalAxesNames();
-    RealMatrix valsSamples(samplenames.size(), _nFrames);
+    axes =_diffractometer->sample()->gonio()->axes();
 
     const auto& sampleStates = _reader->sampleStates();
 
-    for (unsigned int i = 0; i < sampleStates.size(); ++i) {
-        auto&& v = sampleStates[i];
-
-        for (unsigned int j = 0; j < samplenames.size(); ++j) {
-            valsSamples(j,i) = v[j]/deg;
+    for (size_t j = 0; j < axes.size(); ++j) {
+        auto axis = axes[j];
+        Eigen::VectorXd values(_nFrames);
+        for (size_t i = 0; i < _nFrames; ++i) {
+            auto&& v = sampleStates[i];
+            values(i) = v[j]/deg;
         }
+        H5::DataSet sampleScan(sampleGroup.createDataSet(axis->name(), H5::PredType::NATIVE_DOUBLE, scanSpace));
+        sampleScan.write(&values(0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
     }
 
-    for (unsigned int j = 0; j < samplenames.size(); ++j) {
-        H5::DataSet sampleScan(sampleGroup.createDataSet(samplenames[j], H5::PredType::NATIVE_DOUBLE, scanSpace));
-        sampleScan.write(&valsSamples(j,0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
-    }
-
-    const auto& map=_metadata->map();
+    const auto& map = _metadata->map();
 
     // Write all string metadata into the "Info" group
     H5::Group infogroup(file.createGroup("/Info"));
@@ -432,6 +429,11 @@ Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx)
     new_frame -= detector->baseline();
     new_frame /= detector->gain();
     return new_frame;
+}
+
+std::shared_ptr<IDataReader> DataSet::dataReader() const
+{
+    return _reader;
 }
 
 } // end namespace nsx

@@ -3,11 +3,8 @@
 namespace nsx {
 
 RadialConvolver::RadialConvolver()
-: AtomicConvolver()
+: AtomicConvolver({{"r_in",5},{"r_out",10}})
 {
-    // default values
-    _parameters["r_in"] = 5;
-    _parameters["r_out"] = 10;
 }
 
 RadialConvolver::RadialConvolver(const std::map<std::string,double>& parameters)
@@ -23,6 +20,13 @@ RadialConvolver::~RadialConvolver()
 const char* RadialConvolver::name() const
 {
     return "radial";
+}
+
+std::pair<size_t,size_t> RadialConvolver::kernelSize() const
+{
+    size_t r = _parameters.at("r_out");
+
+    return std::make_pair(r,r);
 }
 
 RealMatrix RadialConvolver::_matrix(int nrows, int ncols) const

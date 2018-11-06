@@ -38,8 +38,17 @@
 #include "Component.h"
 #include "ConvexHull.h"
 #include "CrystalTypes.h"
+#include "DataTypes.h"
 
 namespace nsx {
+
+//! Helper struct for storing the result of the sample gonio fit
+struct SampleGonioFit
+{
+    bool success;
+    std::vector<double> offsets;
+    std::vector<double> cost_function;
+};
 
 //! \brief Class used to describe an experiment sample, consisting of a unit cell and material. 
 class Sample: public Component {
@@ -47,33 +56,39 @@ public:
 
     //! Static constructor of a Sample from a property tree node
     static Sample* create(const YAML::Node& node);
+
     //! Default constructor
     Sample();
+
     //! Copy constructor
     Sample(const Sample& other);
+
     //! Constructs a default sample with a given name
     Sample(const std::string& name);
+
     //! Constructs a sample from a property tree node
     Sample(const YAML::Node& node);
+
     //! Virtual copy constructor
     Sample* clone() const;
+
     //! Destructor
     virtual ~Sample();
+
     //! Assignment operator
     Sample& operator=(const Sample& other);
+
     //! Set the sample shape described as a convex hull
     void setShape(const ConvexHull& shape);
+
     //! Return the sample shape, described as a convex hull
     ConvexHull& shape();
-    //! Returnt he list of unit cells of the sample
-    UnitCellList& unitCells();
-    //! Return the list of unit cells of the sample
-    const UnitCellList& unitCells() const;
+
+    SampleGonioFit fitGonioOffsets(const DataList& dataset, size_t n_iterations=1000, double tolerance=1.0e-6) const;
 
 private:
+
     ConvexHull _sampleShape;
-    //! UnitCells of all crystals associated with this sample
-    UnitCellList _cells;
 };
 
 } // end namespace nsx

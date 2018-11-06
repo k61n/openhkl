@@ -1,9 +1,12 @@
 #pragma once
 
 #include <QDialog>
-#include <set>
 
 #include <nsxlib/CrystalTypes.h>
+
+class CollectedPeaksModel;
+class ExperimentItem;
+class QAbstractButton;
 
 namespace Ui {
 class DialogPredictPeaks;
@@ -14,7 +17,11 @@ class DialogPredictPeaks : public QDialog
     Q_OBJECT
 
 public:
-    explicit DialogPredictPeaks(const std::set<nsx::sptrUnitCell>& cells, QWidget *parent = 0);
+
+    static DialogPredictPeaks* create(ExperimentItem* experiment_tree, const nsx::UnitCellList& peaks, QWidget* parent=nullptr);
+
+    static DialogPredictPeaks* Instance();
+
     ~DialogPredictPeaks();
 
     double dMin() const;
@@ -28,7 +35,27 @@ public:
 
     nsx::sptrUnitCell cell(); 
 
+public slots:
+
+    virtual void accept() override;
+
+private slots:
+
+    void slotActionClicked(QAbstractButton *button);
+
 private:
-    Ui::DialogPredictPeaks *ui;
-    std::set<nsx::sptrUnitCell> _cells;
+
+    DialogPredictPeaks(ExperimentItem* experiment_tree, const nsx::UnitCellList& unit_cells, QWidget* parent=nullptr);
+
+    void predictPeaks();
+
+private:
+
+    static DialogPredictPeaks *_instance;
+
+    Ui::DialogPredictPeaks *_ui;
+
+    ExperimentItem *_experiment_item;
+
+    CollectedPeaksModel* _peaks_model;
 };

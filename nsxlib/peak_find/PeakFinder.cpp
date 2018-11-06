@@ -114,7 +114,7 @@ PeakList PeakFinder::find(DataList numors)
             if ( _handler ) {
                 _handler->log("min comp is " + std::to_string(_minSize));
                 _handler->log("max comp is " + std::to_string(_maxSize));
-                _handler->log("search scalee is " + std::to_string(_peakScale));
+                _handler->log("search scale is " + std::to_string(_peakScale));
             }
 
             if (_handler) {
@@ -183,9 +183,12 @@ PeakList PeakFinder::find(DataList numors)
 
         int count = 0;
 
-        AABB dAABB(Eigen::Vector3d(0,0,0),
-                   Eigen::Vector3d(ncols, nrows, nframes-1)
-                    );
+        auto&& kernel_size = _convolver->kernelSize();
+        auto&& x_offset = kernel_size.first;
+        auto&& y_offset = kernel_size.second;
+
+        // AABB used for rejecting peaks which overlaps with detector boundaries
+        AABB dAABB(Eigen::Vector3d(x_offset,y_offset,0),Eigen::Vector3d(ncols-x_offset, nrows-y_offset, nframes-1));
 
         for (auto& blob : blobs) {
 

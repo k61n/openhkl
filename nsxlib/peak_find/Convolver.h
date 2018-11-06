@@ -30,9 +30,9 @@
 
 #pragma once
 
-#include <stdexcept>
 #include <string>
 #include <map>
+#include <utility>
 
 #include "MathematicsTypes.h"
 
@@ -43,6 +43,8 @@ class Convolver {
 public:
 
     Convolver();
+
+    Convolver(const std::map<std::string,double> &parameters);
 
     Convolver(const Convolver& other)=default;
 
@@ -62,6 +64,8 @@ public:
     virtual RealMatrix convolve(const RealMatrix& image)=0;
 
     virtual const char* name() const = 0;
+
+    virtual std::pair<size_t,size_t> kernelSize() const=0;
 
 protected:
 

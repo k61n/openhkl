@@ -7,7 +7,6 @@
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Sample.h>
 
-#include "CollectedPeaksModel.h"
 #include "ExperimentItem.h"
 #include "InstrumentItem.h"
 #include "PeakListItem.h"
@@ -18,32 +17,22 @@
 
 #include "ui_PeakListPropertyWidget.h"
 
-PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *parent) :
-     QWidget(parent),
-     _caller(caller),
-     ui(new Ui::PeakListPropertyWidget)
+PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *parent)
+: QWidget(parent),
+  _caller(caller),
+  ui(new Ui::PeakListPropertyWidget)
 {
     ui->setupUi(this);
-    std::map<std::string,nsx::sptrDataSet>  datamap=_caller->experiment()->data();
-    nsx::DataList datav;
 
-    auto func = [&](std::pair<std::string,nsx::sptrDataSet> value){datav.push_back(value.second);};
-
-    std::for_each(datamap.begin(), datamap.end(), func);
-
-    CollectedPeaksModel *model = new CollectedPeaksModel(_caller->experiment());
-
-    nsx::PeakList data_peaks;
+    nsx::PeakList peaks;
 
     for (auto peak: _caller->peaks()) {
-        data_peaks.push_back(peak);
+        peaks.push_back(peak);
     }
 
-    model->setPeaks(data_peaks);
-    ui->tableView->setModel(model);
+    _peaks_model = new CollectedPeaksModel(_caller->model(),_caller->experiment(), peaks);
 
-    //Connect search box
-    connect(ui->lineEdit,SIGNAL(textChanged(QString)),ui->tableView,SLOT(showPeaksMatchingText(QString)));
+    ui->tableView->setModel(_peaks_model);
 
     // todo: fix shape library!!
     // connect(ui->tableView, SIGNAL(updateShapeLibrary(nsx::sptrShapeLibrary)), _session.get(), SLOT(updateShapeLibrary(nsx::sptrShapeLibrary)));
@@ -54,7 +43,7 @@ PeakListPropertyWidget::~PeakListPropertyWidget()
     delete ui;
 }
 
-PeakTableView* PeakListPropertyWidget::getPeakTableView() const
+CollectedPeaksModel* PeakListPropertyWidget::model()
 {
-    return ui->tableView;
+    return _peaks_model;
 }

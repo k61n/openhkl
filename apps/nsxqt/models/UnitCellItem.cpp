@@ -1,6 +1,11 @@
+#include <memory>
+
+#include <QInputDialog>
+
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Logger.h>
+#include <nsxlib/Peak3D.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/UnitCell.h>
 
@@ -12,60 +17,64 @@
 #include "PeaksItem.h"
 #include "UnitCellItem.h"
 #include "UnitCellPropertyWidget.h"
+#include "UnitCellsItem.h"
 
-UnitCellItem::UnitCellItem(nsx::sptrUnitCell cell):
-    InspectableTreeItem(),
-    _cell(cell)
+UnitCellItem::UnitCellItem(nsx::sptrUnitCell unit_cell)
+: InspectableTreeItem(),
+  _unit_cell(unit_cell)
 {
+    setText(QString::fromStdString(_unit_cell->name()));
+
+    setIcon(QIcon(":/resources/unitCellIcon.png"));
+
     setEditable(true);
+
     setDragEnabled(false);
     setDropEnabled(false);
-    setForeground(QBrush(Qt::red));
+
+    setSelectable(false);
+
+    setCheckable(true);
+
+    setCheckState(Qt::Unchecked);
 }
 
 UnitCellItem::~UnitCellItem()
 {
-    nsx::UnitCellList& cells = experimentItem()->experiment()->diffractometer()->sample()->unitCells();
-    auto it = std::find(cells.begin(), cells.end(), _cell);
-    if (it != cells.end()) {
-        cells.erase(it);
-    }
-}
-
-void UnitCellItem::setData(const QVariant& value, int role)
-{
-    if (!index().isValid()) {
-        return;
-    }
-
-    switch(role) {
-    case (Qt::DisplayRole):
-        _cell->setName(value.toString().toStdString());
-        break;
-    case (Qt::EditRole):
-        _cell->setName(value.toString().toStdString());
-        break;
-    case(Qt::UserRole):
-        _cell = value.value<nsx::sptrUnitCell>();
-        break;
-    }
-
-    InspectableTreeItem::setData(value,role);
 }
 
 QVariant UnitCellItem::data(int role) const
 {
     switch(role) {
-    case(Qt::DecorationRole):
+    case(Qt::DecorationRole): {
         return QIcon(":/resources/unitCellIcon.png");
-    case(Qt::EditRole):
-        return QString::fromStdString(_cell->name());
-    case(Qt::DisplayRole):
-        return QString::fromStdString(_cell->name());
-    case(Qt::UserRole):
-        return QVariant::fromValue(_cell);
     }
-    return QVariant::Invalid;
+    case(Qt::EditRole): {
+        return QString::fromStdString(_unit_cell->name());
+    }
+    case(Qt::DisplayRole): {
+        return QString::fromStdString(_unit_cell->name());
+    }
+    case(Qt::UserRole): {
+        return QVariant::fromValue(_unit_cell);
+    }
+    }
+    return InspectableTreeItem::data(role);
+}
+
+void UnitCellItem::setData(const QVariant& value, int role)
+{
+    switch(role) {
+    case (Qt::DisplayRole): {
+        _unit_cell->setName(value.toString().toStdString());
+        break;
+    }
+    case (Qt::EditRole): {
+        _unit_cell->setName(value.toString().toStdString());
+        break;
+    }
+    }
+    InspectableTreeItem::setData(value,role);
 }
 
 QWidget* UnitCellItem::inspectItem()
@@ -73,38 +82,50 @@ QWidget* UnitCellItem::inspectItem()
     return new UnitCellPropertyWidget(this);
 }
 
-nsx::sptrUnitCell UnitCellItem::unitCell()
-{
-    return _cell;
-}
-
 void UnitCellItem::info() const
 {
-    nsx::debug() << "" << *_cell;
+    nsx::debug() << "" << *(_unit_cell);
 }
 
 void UnitCellItem::openChangeUnitCellDialog()
 {
-    DialogUnitCellParameters* dialog = new DialogUnitCellParameters(_cell);
+    std::unique_ptr<DialogUnitCellParameters> dialog(new DialogUnitCellParameters(_unit_cell));
     dialog->exec();
+
+    emitDataChanged();
 }
 
 void UnitCellItem::openTransformationMatrixDialog()
 {
-    DialogTransformationmatrix* dialog=new DialogTransformationmatrix(_cell);
+    std::unique_ptr<DialogTransformationMatrix> dialog(new DialogTransformationMatrix(_unit_cell));
     dialog->exec();
+
+    emitDataChanged();
 }
 
-void UnitCellItem::determineSpaceGroup()
+void UnitCellItem::openSpaceGroupDialog()
 {
     auto selected_peaks = experimentItem()->peaksItem()->selectedPeaks();
-    // todo
-    DialogSpaceGroup dlg(selected_peaks);
 
-    if (!dlg.exec()) {
+    std::unique_ptr<DialogSpaceGroup> dialog(new DialogSpaceGroup(selected_peaks));
+
+    if (!dialog->exec()) {
         return;
     }
 
-    auto group = dlg.getSelectedGroup();
-    _cell->setSpaceGroup(group);
+    auto group = dialog->getSelectedGroup();
+    _unit_cell->setSpaceGroup(group);
+
+    emitDataChanged();
+}
+
+void UnitCellItem::openIndexingToleranceDialog()
+{
+    bool ok;
+    double tolerance = QInputDialog::getDouble(nullptr, "Enter indexing tolerance","",_unit_cell->indexingTolerance(), 0.0, 1.0, 6, &ok);
+    if (ok) {
+        _unit_cell->setIndexingTolerance(tolerance);
+    }
+
+    emitDataChanged();
 }

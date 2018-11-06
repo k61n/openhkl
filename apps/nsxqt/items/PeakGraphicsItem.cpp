@@ -19,125 +19,104 @@
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
 
+#include "DetectorScene.h"
 #include "PeakGraphicsItem.h"
 #include "PeakPlot.h"
 #include "SXPlot.h"
 
+bool PeakGraphicsItem::_show_label = false;
+bool PeakGraphicsItem::_show_center = false;
 
-bool PeakGraphicsItem::_labelVisible = false;
-bool PeakGraphicsItem::_drawBackground = false;
-
-PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D p)
+PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D peak, int frame)
 : PlottableGraphicsItem(nullptr,true,false),
-  _peak(std::move(p))
+  _peak(peak),
+  _area(nullptr)
 {
-    if (_peak) {
-        Eigen::Vector3d c=_peak->shape().center();
-        setPos(c[0], c[1]);
-    }
-    _pen.setWidth(2);
-    _pen.setCosmetic(true);
-    _pen.setStyle(Qt::SolidLine);
-    _pen.setColor(QColor(0,0,255,255));
+    setVisible(true);
 
-    QString hkl;
-    _label=new QGraphicsTextItem(this);
-    //Ensure text is alwyas real size despite zoom
-    _label->setFlag(QGraphicsItem::ItemIgnoresTransformations);
-    _label->setParentItem(this);
+    QString peak_label;
+    auto unit_cell = _peak->unitCell();
+    if (unit_cell) {
+        nsx::MillerIndex miller_index(_peak->q(), *unit_cell);
+        if (miller_index.indexed(unit_cell->indexingTolerance())) {
+            peak_label = QString("%1,%2,%3").arg(miller_index[0]).arg(miller_index[1]).arg(miller_index[2]);
+        } else {
+            peak_label = "not indexed";
+        }
+
+    } else {
+        peak_label = "no unit cell";
+    }
+
+    _label_gi = new QGraphicsTextItem(this);
+    _label_gi->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+    _label_gi->setParentItem(this);
+    _label_gi->setPlainText(peak_label);
+    _label_gi->setAcceptHoverEvents(false);
+    _label_gi->setZValue(-1);
+    _label_gi->setPos(3,3);
+    _label_gi->setVisible(_show_label);
+
+    QPen center_pen;
+    center_pen.setCosmetic(true);
+    center_pen.setColor(Qt::red);
+    center_pen.setStyle(Qt::SolidLine);
+
+    _center_gi = new QGraphicsEllipseItem(this);
+    _center_gi->setPen(center_pen);
+    _center_gi->setRect(-1,-1,2,2);
+    _center_gi->setParentItem(this);
+    _center_gi->setBrush(QBrush(Qt::red));
+    _center_gi->setAcceptHoverEvents(false);
+    _center_gi->setZValue(-1);
+    _center_gi->setVisible(_show_center);
+
+    auto peak_ellipsoid = _peak->shape();
+
+    peak_ellipsoid.scale(_peak->peakEnd());
+
+    auto& aabb = peak_ellipsoid.aabb();
+
+    _lower = aabb.lower();
+
+    _upper = aabb.upper();
+
+    auto center = peak_ellipsoid.intersectionCenter({0.0,0.0,1.0},{0.0,0.0,static_cast<double>(frame)});
+
+    setPos(center[0],center[1]);
+
     setBoundingRegionGranularity(0.0);
 
     // A peak item is always put on foreground of the scene
     setZValue(2);
 }
 
+nsx::sptrPeak3D PeakGraphicsItem::peak() const
+{
+    return _peak;
+}
+
 QRectF PeakGraphicsItem::boundingRect() const
 {
-    auto peak_ellipsoid = _peak->shape();
-    peak_ellipsoid.scale(_peak->bkgEnd());
 
-    const auto aabb = peak_ellipsoid.aabb();
+    double width = _upper[0] - _lower[0];
 
-    const Eigen::Vector3d& l = aabb.lower();
-    const Eigen::Vector3d& u = aabb.upper();
+    double height = _upper[1] - _lower[1];
 
-    qreal w=u[0]-l[0];
-    qreal h=u[1]-l[1];
-
-    if (w < 0.0) {
-        w = 0.0;
-    }
-
-    if (h < 0.0) {
-        h = 0.0;
-    }
-
-    return QRectF(-w/2.0,-h/2.0,w,h);
+    return QRectF(-width/2.0,-height/2.0,width,height);
 }
 
 void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    Q_UNUSED(widget);
+    Q_UNUSED(widget)
 
-    if (!isVisible()) {
-        return;
-    }
+    Q_UNUSED(option)
 
-    if (option->state & QStyle::State_Selected) {
-        _pen.setStyle(Qt::DotLine);
-    } else {
-        _pen.setStyle(Qt::SolidLine);
-    }
-    painter->setRenderHint(QPainter::Antialiasing);
+    Q_UNUSED(painter)
 
-    if (_hovered) {
-        painter->setBrush(QBrush(QColor(255,255,0,120)));
-    }
-    _label->setVisible(_hovered || _labelVisible);
+    _label_gi->setVisible(_hovered || _show_label);
 
-    const auto aabb = _peak->shape().aabb();
-    const Eigen::Vector3d& peak_l = aabb.lower();
-    const Eigen::Vector3d& peak_u = aabb.upper();
-    qreal peak_w = peak_u[0]-peak_l[0];
-    qreal peak_h = peak_u[1]-peak_l[1];
-
-    _label->setPos(peak_w/2,peak_h/2);  
-    
-    painter->setBrush(QBrush(QColor(127, 255, 127, 127)));
-}
-
-void PeakGraphicsItem::setFrame(unsigned long frame)
-{
-    auto peak_ellipsoid = _peak->shape();
-    peak_ellipsoid.scale(_peak->bkgEnd());
-
-    const auto aabb = peak_ellipsoid.aabb();
-
-    const Eigen::Vector3d& l = aabb.lower();
-    const Eigen::Vector3d& u = aabb.upper();
-
-    // out of bounds
-    if (frame < l[2] || frame > u[2]) {
-        setVisible(false);
-        _label->setVisible(false);
-        return;
-    }
-
-    setVisible(true);
-    _label->setVisible(_labelVisible);
-    QString hklString;
-
-    if (auto cell = _peak->unitCell()) {
-        nsx::MillerIndex miller_index(_peak->q(), *cell);
-        if (miller_index.indexed(cell->indexingTolerance())) {
-            hklString = QString("%1,%2,%3").arg(miller_index[0]).arg(miller_index[1]).arg(miller_index[2]);
-        } else {
-            hklString = "unindexed";
-        }
-    } else {
-        hklString = "no unit cell";
-    }
-    _label->setPlainText(hklString);
+    _center_gi->setVisible(_hovered || _show_center);
 }
 
 std::string PeakGraphicsItem::getPlotType() const
@@ -145,26 +124,21 @@ std::string PeakGraphicsItem::getPlotType() const
     return "peak";
 }
 
-nsx::sptrPeak3D PeakGraphicsItem::getPeak()
+void PeakGraphicsItem::showLabel(bool flag)
 {
-    return _peak;
+    _show_label = flag;
 }
 
-void PeakGraphicsItem::setLabelVisible(bool flag)
+void PeakGraphicsItem::showArea(bool flag)
 {
-    _labelVisible = flag;
-}
-
-void PeakGraphicsItem::drawBackground(bool flag)
-{
-    _drawBackground = flag;
+    _show_center = flag;
 }
 
 void PeakGraphicsItem::plot(SXPlot* plot)
 {
 
-    auto p=dynamic_cast<PeakPlot*>(plot);
-    if (p == nullptr) {
+    auto p = dynamic_cast<PeakPlot*>(plot);
+    if (!p) {
         return;
     }
 
@@ -187,7 +161,6 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     p->graph(0)->setDataValueError(q_frames, q_intensity, q_error);
 
     // Now update text info:
-    Eigen::RowVector3d hkl;
     QString info;
 
     if (auto cell = _peak->unitCell()) {
@@ -209,9 +182,9 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     g/=nsx::deg;
     n/=nsx::deg;
     info+=" "+QString(QChar(0x03B3))+","+QString(QChar(0x03BD))+":"+QString::number(g,'f',2)+","+QString::number(n,'f',2)+"\n";
-    double intensity=_peak->scaledIntensity().value();
+    double intensity=_peak->correctedIntensity().value();
     auto corr_int = _peak->correctedIntensity();
-    double sI=_peak->scaledIntensity().sigma();
+    double sI=_peak->correctedIntensity().sigma();
     info+="Intensity ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";  
     info+="Cor. int. ("+QString(QChar(0x03C3))+"I): "+QString::number(corr_int.value(),'f',2)+" ("+QString::number(corr_int.sigma(),'f',2)+")\n";
 

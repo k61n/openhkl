@@ -12,13 +12,17 @@
 #include <nsxlib/DataTypes.h>
 
 class ExperimentItem;
+class MainWindow;
 class SessionModel;
 
 class ExperimentTree: public QTreeView {
     Q_OBJECT
 public:
-    explicit ExperimentTree(QWidget *parent = 0);
+    explicit ExperimentTree(QWidget *parent);
+
     ~ExperimentTree();
+
+    SessionModel* session();
 
 signals:
     void plotData(nsx::sptrDataSet);
@@ -31,4 +35,8 @@ public slots:
     void onDoubleClick(const QModelIndex& index);
 
     void onSingleClick(const QModelIndex& index);
+
+private:
+
+    void openInstrumentStatesDialog();
 };
