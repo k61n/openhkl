@@ -17,9 +17,9 @@
 #include <nsxlib/UnitCell.h>
 
 #include "DataItem.h"
-#include "DialogStatistics.h"
 #include "DetectorItem.h"
 #include "ExperimentItem.h"
+#include "FrameStatistics.h"
 #include "InstrumentItem.h"
 #include "LibraryItem.h"
 #include "PeaksItem.h"
@@ -117,9 +117,9 @@ void ExperimentItem::writeLogFiles()
     filtered_peaks = peak_filter.unitCell(filtered_peaks,cell);
     filtered_peaks = peak_filter.indexed(filtered_peaks,*cell,cell->indexingTolerance());
 
-    DialogStatistics dlg(filtered_peaks,cell->spaceGroup());
+    FrameStatistics *frame = FrameStatistics::create(filtered_peaks,cell->spaceGroup());
 
-    if (!dlg.exec()) {
-        return;
-    }
+    frame->show();
+
+    frame->raise();
 }

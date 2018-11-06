@@ -1,17 +1,12 @@
+#include <algorithm>
 #include <fstream>
 #include <iomanip>
-#include <limits>
 #include <vector>
 
-#include <QCheckBox>
-#include <QDoubleSpinBox>
-#include <QFileDialog>
-#include <QFileInfo>
-#include <QModelIndex>
-#include <QPushButton>
-#include <QSpinBox>
-#include <QStandardItemModel>
-#include <QString>
+#include <QComboBox>
+#include <QStandardItem>
+#include <QTableView>
+#include <QVector>
 
 #include <nsxlib/CC.h>
 #include <nsxlib/DataSet.h>
@@ -22,27 +17,50 @@
 #include <nsxlib/ResolutionShell.h>
 #include <nsxlib/RFactor.h>
 
-#include "DialogStatistics.h"
+#include "CollectedPeaksModel.h"
+#include "DoubleItemDelegate.h"
+#include "ExperimentItem.h"
+#include "FrameStatistics.h"
+#include "PeaksItem.h"
 #include "PeaksUtils.h"
-#include "ui_DialogStatistics.h"
+#include "SXPlot.h"
+#include "WidgetRefinerFit.h"
 
-DialogStatistics::DialogStatistics(const nsx::PeakList& peaks, const nsx::SpaceGroup& spaceGroup, QWidget *parent)
-: QDialog(parent),
-  ui(new Ui::DialogStatistics),
-  _peaks(peaks),
-  _spaceGroup(spaceGroup),
-  _merged_data(spaceGroup,true)
+#include "ui_FrameStatistics.h"
+
+FrameStatistics* FrameStatistics::_instance = nullptr;
+
+FrameStatistics* FrameStatistics::create(const nsx::PeakList& peaks, const nsx::SpaceGroup& space_group)
 {
-    ui->setupUi(this);
+    if (!_instance) {
+        _instance = new FrameStatistics(peaks,space_group);
+    }
 
-    ui->tabWidget->setCurrentIndex(0);
+    return _instance;
+}
+
+FrameStatistics* FrameStatistics::Instance()
+{
+    return _instance;
+}
+
+FrameStatistics::FrameStatistics(const nsx::PeakList& peaks, const nsx::SpaceGroup& space_group)
+: NSXQFrame(),
+  _ui(new Ui::FrameStatistics),
+  _peaks(peaks),
+  _space_group(space_group),
+  _merged_data(space_group,true)
+{
+    _ui->setupUi(this);
+
+    _ui->tabs->setCurrentIndex(0);
 
     auto&& drange = dRange(peaks);
-    ui->dmin->setValue(drange.first);
-    ui->dmax->setValue(drange.second);
+    _ui->dmin->setValue(drange.first);
+    _ui->dmax->setValue(drange.second);
 
     QStandardItemModel* shell_model = new QStandardItemModel(0,13,this);
-    ui->statistics->setModel(shell_model);
+    _ui->statistics->setModel(shell_model);
     shell_model->setHorizontalHeaderLabels({"dmax","dmin","nobs","nmerge","redundancy",
                                             "Rmeas","Rmeas(est.)",
                                             "Rmerge/Rsym","Rmerge(est.)",
@@ -50,31 +68,103 @@ DialogStatistics::DialogStatistics(const nsx::PeakList& peaks, const nsx::SpaceG
                                             "CChalf","CC*"});
 
     QStandardItemModel* merged_peaks_model = new QStandardItemModel(7,0,this);
-    ui->mergedPeaks->setModel(merged_peaks_model);
+    _ui->merged_peaks->setModel(merged_peaks_model);
     merged_peaks_model->setHorizontalHeaderLabels({"h","k","l","I","sigmaI","chi2","p"});
 
     QStandardItemModel* unmerged_peaks_model = new QStandardItemModel(9,0,this);
-    ui->unmergedPeaks->setModel(unmerged_peaks_model);
+    _ui->unmerged_peaks->setModel(unmerged_peaks_model);
     unmerged_peaks_model->setHorizontalHeaderLabels({"h","k","l","I","sigmaI","x","y","frame","numor"});
 
+    for (auto i = 0; i < shell_model->columnCount(); ++i) {
+        auto header_item = shell_model->horizontalHeaderItem(i);
+        _ui->selected_statistics->addItem(header_item->text());
+    }
+
+    connect(_ui->dmin,SIGNAL(valueChanged(double)),this,SLOT(update()));
+    connect(_ui->dmax,SIGNAL(valueChanged(double)),this,SLOT(update()));
+    connect(_ui->n_shells,SIGNAL(valueChanged(int)),this,SLOT(update()));
+    connect(_ui->friedel,SIGNAL(stateChanged(int)),this,SLOT(update()));
+
+    connect(_ui->save_statistics,SIGNAL(clicked()),this,SLOT(saveStatistics()));
+    connect(_ui->save_merged_peaks,SIGNAL(clicked()),this,SLOT(saveMergedPeaks()));
+    connect(_ui->save_unmerged_peaks,SIGNAL(clicked()),this,SLOT(saveUnmergedPeaks()));
+
+    connect(_ui->selected_statistics,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),[=](int column){plotStatistics(column);});
+
     update();
-
-    connect(ui->dmin,SIGNAL(valueChanged(double)),this,SLOT(update()));
-    connect(ui->dmax,SIGNAL(valueChanged(double)),this,SLOT(update()));
-    connect(ui->nShells,SIGNAL(valueChanged(int)),this,SLOT(update()));
-    connect(ui->friedel,SIGNAL(stateChanged(int)),this,SLOT(update()));
-
-    connect(ui->saveStatistics,SIGNAL(clicked()),this,SLOT(saveStatistics()));
-    connect(ui->saveMergedPeaks,SIGNAL(clicked()),this,SLOT(saveMergedPeaks()));
-    connect(ui->saveUnmergedPeaks,SIGNAL(clicked()),this,SLOT(saveUnmergedPeaks()));
 }
 
-DialogStatistics::~DialogStatistics()
+FrameStatistics::~FrameStatistics()
 {
-    delete ui;
+    delete _ui;
+
+    if (_instance) {
+        _instance = nullptr;
+    }
 }
 
-void DialogStatistics::saveStatistics()
+void FrameStatistics::slotActionClicked(QAbstractButton *button)
+{
+    auto button_role = _ui->actions->standardButton(button);
+
+    switch(button_role)
+    {
+    case QDialogButtonBox::StandardButton::Ok: {
+        close();
+        break;
+    }
+    default: {
+        return;
+    }
+    }
+}
+
+void FrameStatistics::plotStatistics(int column)
+{
+    auto statistics_table_model = dynamic_cast<QStandardItemModel*>(_ui->statistics->model());
+
+    // The last row is for the overall statistics, skip it
+    int n_shells = statistics_table_model->rowCount()-1;
+
+    std::vector<double> shells(n_shells);
+    std::iota(shells.begin(),shells.end(),0);
+
+    QVector<double> x_values = QVector<double>::fromStdVector(shells);
+    QVector<double> y_values;
+
+    for (auto i = 0; i < n_shells; ++i) {
+        auto value = statistics_table_model->item(i,column)->data(Qt::DisplayRole).value<double>();
+        y_values.append(value);
+    }
+
+    QPen pen;
+    pen.setColor(QColor("black"));
+    pen.setWidth(2.0);
+
+    _ui->plot->clearGraphs();
+    _ui->plot->addGraph();
+    _ui->plot->graph(0)->setPen(pen);
+
+    _ui->plot->graph(0)->addData(x_values,y_values);
+
+    _ui->plot->xAxis->setLabel("shell");
+    _ui->plot->yAxis->setLabel(_ui->selected_statistics->itemText(column));
+
+    _ui->plot->setNotAntialiasedElements(QCP::aeAll);
+
+    QFont font;
+    font.setStyleStrategy(QFont::NoAntialias);
+    _ui->plot->xAxis->setTickLabelFont(font);
+    _ui->plot->yAxis->setTickLabelFont(font);
+
+    _ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
+
+    _ui->plot->rescaleAxes();
+
+    _ui->plot->replot();
+}
+
+void FrameStatistics::saveStatistics()
 {
     QString filename = QFileDialog::getSaveFileName(this, tr("Save statistics"), ".", tr("Text file (*.dat *.txt)"));
 
@@ -103,7 +193,7 @@ void DialogStatistics::saveStatistics()
     file << std::setw(10) << "CC*";
     file << std::endl;
 
-    auto model = dynamic_cast<QStandardItemModel*>(ui->statistics->model());
+    auto model = dynamic_cast<QStandardItemModel*>(_ui->statistics->model());
 
     for (size_t i = 0; i < model->rowCount(); ++i) {
 
@@ -126,29 +216,29 @@ void DialogStatistics::saveStatistics()
     file.close();
 }
 
-void DialogStatistics::saveMergedPeaks()
+void FrameStatistics::saveMergedPeaks()
 {
-    QString format = ui->mergedPeaksFormat->currentText();
+    QString format = _ui->merged_peaks_format->currentText();
 
     if (format.compare("ShelX")==0) {
-        saveToShelX(ui->mergedPeaks);
+        saveToShelX(_ui->merged_peaks);
     } else if (format.compare("FullProf")==0) {
-        saveToFullProf(ui->mergedPeaks);
+        saveToFullProf(_ui->merged_peaks);
     }
 }
 
-void DialogStatistics::saveUnmergedPeaks()
+void FrameStatistics::saveUnmergedPeaks()
 {
-    QString format = ui->unmergedPeaksFormat->currentText();
+    QString format = _ui->unmerged_peaks_format->currentText();
 
     if (format.compare("ShelX")==0) {
-        saveToShelX(ui->unmergedPeaks);
+        saveToShelX(_ui->unmerged_peaks);
     } else if (format.compare("FullProf")==0) {
-        saveToFullProf(ui->unmergedPeaks);
+        saveToFullProf(_ui->unmerged_peaks);
     }
 }
 
-void DialogStatistics::saveToShelX(QTableView* table) {
+void FrameStatistics::saveToShelX(QTableView* table) {
 
     QString filename = QFileDialog::getSaveFileName(this, tr("Save peaks to ShelX"), ".", tr("ShelX hkl file (*.hkl)"));
 
@@ -181,7 +271,7 @@ void DialogStatistics::saveToShelX(QTableView* table) {
     file.close();
 }
 
-void DialogStatistics::saveToFullProf(QTableView* table) {
+void FrameStatistics::saveToFullProf(QTableView* table) {
 
     QString filename = QFileDialog::getSaveFileName(this, tr("Save peaks to FullProf"), ".", tr("ShelX hkl file (*.hkl)"));
 
@@ -226,11 +316,11 @@ void DialogStatistics::saveToFullProf(QTableView* table) {
     file.close();
 }
 
-void DialogStatistics::update()
+void FrameStatistics::update()
 {
-    bool include_friedel = ui->friedel->isChecked();
+    bool include_friedel = _ui->friedel->isChecked();
 
-    _merged_data = nsx::MergedData(_spaceGroup,include_friedel);
+    _merged_data = nsx::MergedData(_space_group,include_friedel);
 
     for (auto peak : _peaks) {
         _merged_data.addPeak(peak);
@@ -239,22 +329,23 @@ void DialogStatistics::update()
     updateStatisticsTab();
     updateMergedPeaksTab();
     updateUnmergedPeaksTab();
+    plotStatistics(_ui->selected_statistics->currentIndex());
 }
 
-void DialogStatistics::updateStatisticsTab()
+void FrameStatistics::updateStatisticsTab()
 {
-    double dmin  = ui->dmin->value();
-    double dmax  = ui->dmax->value();
-    int n_shells = ui->nShells->value();
+    double dmin  = _ui->dmin->value();
+    double dmax  = _ui->dmax->value();
+    int n_shells = _ui->n_shells->value();
 
-    bool include_friedel = ui->friedel->isChecked();
+    bool include_friedel = _ui->friedel->isChecked();
 
     nsx::ResolutionShell resolution_shells(dmin, dmax, n_shells);
     for (auto peak : _peaks) {
         resolution_shells.addPeak(peak);
     }
 
-    auto model = dynamic_cast<QStandardItemModel*>(ui->statistics->model());
+    auto model = dynamic_cast<QStandardItemModel*>(_ui->statistics->model());
 
     model->removeRows(0,model->rowCount());
 
@@ -265,7 +356,7 @@ void DialogStatistics::updateStatisticsTab()
         const double d_lower = resolution_shells.shell(i).dmin;
         const double d_upper = resolution_shells.shell(i).dmax;
 
-        nsx::MergedData merged_data_per_shell(_spaceGroup, include_friedel);
+        nsx::MergedData merged_data_per_shell(_space_group, include_friedel);
 
         for (auto&& peak: resolution_shells.shell(i).peaks) {
             merged_data_per_shell.addPeak(peak);
@@ -324,10 +415,10 @@ void DialogStatistics::updateStatisticsTab()
     model->appendRow(row);
 }
 
-void DialogStatistics::updateMergedPeaksTab()
+void FrameStatistics::updateMergedPeaksTab()
 {
     // Clear the merged peaks model/table
-    auto model = dynamic_cast<QStandardItemModel*>(ui->mergedPeaks->model());
+    auto model = dynamic_cast<QStandardItemModel*>(_ui->merged_peaks->model());
     model->removeRows(0,model->rowCount());
 
     for (auto&& peak : _merged_data.peaks()) {
@@ -361,10 +452,10 @@ void DialogStatistics::updateMergedPeaksTab()
     }
 }
 
-void DialogStatistics::updateUnmergedPeaksTab()
+void FrameStatistics::updateUnmergedPeaksTab()
 {
     // Clear the unmerged peaks model/table
-    auto model = dynamic_cast<QStandardItemModel*>(ui->unmergedPeaks->model());
+    auto model = dynamic_cast<QStandardItemModel*>(_ui->unmerged_peaks->model());
     model->removeRows(0,model->rowCount());
 
     for (auto&& peak : _merged_data.peaks()) {
