@@ -42,8 +42,8 @@ int main()
 
     // Build an isotopically pure methane material
     nsx::sptrMaterial methane(new nsx::Material("CH4"));
-    double mm=methane->molarMass();
-    double volume=chull.getVolume();
+    double mm = methane->molarMass();
+    double volume = chull.volume();
     methane->setMassDensity(mm/volume);
 
     // Create the MC absorption calculator

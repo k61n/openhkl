@@ -12,8 +12,8 @@ class TestConvexexHull(unittest.TestCase):
 
         def checkConvexity(chull): # todo : check if it is correctly imported    
             #todo : getFaces() is not imported to py 
-            faces = chull.getFaces()
-            vertices = chull.getVertices()
+            faces = chull.faces()
+            vertices = chull.vertices()
 
             # todo : cannot use faces instance
            # for f in faces
@@ -56,9 +56,9 @@ class TestConvexexHull(unittest.TestCase):
         # Checks that with 4 vertices the hull can be built
         chull.updateHull()
 
-        faces = chull.getFaces()
-        edges = chull.getEdges()
-        vertices = chull.getVertices()
+        faces = chull.faces()
+        edges = chull.edges()
+        vertices = chull.vertices()
 
         #  todo : not working - BOOST_CHECK_EQUAL(vertices.size(),4);
         # todo: update python bindings (AttributeError: 'SwigPyObject' object has no attribute 'size')
@@ -99,18 +99,17 @@ class TestConvexexHull(unittest.TestCase):
         # todo : "'float' object cannot be interpreted as an integer"
         # self.assertAlmostEqual(chull.getVolume(),1000.0,tolerance)
 
-        oldVolume = chull.getVolume() 
+        oldVolume = chull.volume() 
         chull.translateToCenter()
-        newVolume = chull.getVolume()
+        newVolume = chull.volume()
         self.assertAlmostEqual(oldVolume,newVolume,tolerance)
 
         # Check that the copy construction is OK
         newHull = nsx.ConvexHull(chull) 
-        print("n vertices", chull.getNVertices())
-        self.assertAlmostEqual(chull.getNVertices(),newHull.getNVertices())
-        self.assertAlmostEqual(chull.getNEdges(),newHull.getNEdges())
-        self.assertAlmostEqual(chull.getNFaces(),newHull.getNFaces())
-        self.assertAlmostEqual(chull.getVolume(),newHull.getVolume(),tolerance)
+        self.assertAlmostEqual(chull.nVertices(),newHull.nVertices())
+        self.assertAlmostEqual(chull.nEdges(),newHull.nEdges())
+        self.assertAlmostEqual(chull.nFaces(),newHull.nFaces())
+        self.assertAlmostEqual(chull.volume(),newHull.volume(),tolerance)
 
 
 if __name__ == '__main__':

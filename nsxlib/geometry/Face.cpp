@@ -37,10 +37,16 @@
 
 namespace nsx {
 
-Face::Face() : _edges(), _vertices(), _visible(false)
+Face::Face() : _id(-1), _edges(), _vertices(), _visible(false)
 {
-	_edges.fill(nullptr);
-	_vertices.fill(nullptr);
+    _edges.resize(3,nullptr);
+    _vertices.resize(3,nullptr);
+}
+
+Face::Face(int id) : _id(id), _edges(), _vertices(), _visible(false)
+{
+    _edges.resize(3,nullptr);
+    _vertices.resize(3,nullptr);
 }
 
 double Face::volume(const Eigen::Vector3d& pos) const

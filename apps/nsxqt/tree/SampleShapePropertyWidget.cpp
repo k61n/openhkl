@@ -63,8 +63,8 @@ void SampleShapePropertyWidget::setHullProperties()
     auto sample=_caller->experiment()->diffractometer()->sample();
     auto& hull=sample->shape();
 
-    ui->lineEdit_Volume->setText(QString::number(hull.getVolume()/nsx::mm3)+" mm^3");
-    ui->lineEdit_Faces->setText(QString::number(hull.getNFaces()));
-    ui->lineEdit_Edges->setText(QString::number(hull.getNEdges()));
-    ui->lineEdit_Vertices->setText(QString::number(hull.getNVertices()));
+    ui->lineEdit_Volume->setText(QString::number(hull.volume()/nsx::mm3)+" mm^3");
+    ui->lineEdit_Faces->setText(QString::number(hull.nFaces()));
+    ui->lineEdit_Edges->setText(QString::number(hull.nEdges()));
+    ui->lineEdit_Vertices->setText(QString::number(hull.nVertices()));
 }

@@ -14,13 +14,15 @@ NSX_INIT_TEST
 //! This shows that each point is inside every face and therefore the hull is convex.
 bool CheckConvexity(const nsx::ConvexHull& chull)
 {
-    const auto& faces=chull.getFaces();
-    const auto& vertices=chull.getVertices();
+    const auto& faces = chull.faces();
+    const auto& vertices = chull.vertices();
 
-    for (auto & f: faces)
+    for (auto p : faces)
     {
-        for (auto& v : vertices)
+        nsx::Face *f = p.second;
+        for (auto pp : vertices)
         {
+            nsx::Vertex *v = pp.second;
             if (f->volumeSign(v) < 0)
                 return false;
         }
@@ -53,9 +55,9 @@ int main()
     // Checks that with 4 vertices the hull can be built
     NSX_CHECK_NO_THROW(chull.updateHull());
 
-    const auto& faces=chull.getFaces();
-    const auto& edges=chull.getEdges();
-    const auto& vertices=chull.getVertices();
+    const auto& faces = chull.faces();
+    const auto& edges = chull.edges();
+    const auto& vertices = chull.vertices();
 
     // Check that the number of vertices, edges and faces corresponds to a tetrahedron
     NSX_CHECK_EQUAL(vertices.size(),4);
@@ -89,19 +91,19 @@ int main()
     NSX_CHECK_ASSERT(CheckConvexity(chull));
 
     //! Checks that the volume of the cube is 10*10*10=1000
-    NSX_CHECK_CLOSE(chull.getVolume(),1000,tolerance);
+    NSX_CHECK_CLOSE(chull.volume(),1000,tolerance);
 
-    double oldVolume=chull.getVolume();
+    double oldVolume = chull.volume();
     chull.translateToCenter();
-    double newVolume=chull.getVolume();
+    double newVolume = chull.volume();
     NSX_CHECK_CLOSE(oldVolume,newVolume,tolerance);
 
     // Check that the copy construction is OK
     nsx::ConvexHull newhull(chull);
-    NSX_CHECK_EQUAL(chull.getNVertices(),newhull.getNVertices());
-    NSX_CHECK_EQUAL(chull.getNEdges(),newhull.getNEdges());
-    NSX_CHECK_EQUAL(chull.getNFaces(),newhull.getNFaces());
-    NSX_CHECK_CLOSE(chull.getVolume(),newhull.getVolume(),tolerance);
+    NSX_CHECK_EQUAL(chull.nVertices(),newhull.nVertices());
+    NSX_CHECK_EQUAL(chull.nEdges(),newhull.nEdges());
+    NSX_CHECK_EQUAL(chull.nFaces(),newhull.nFaces());
+    NSX_CHECK_CLOSE(chull.volume(),newhull.volume(),tolerance);
 
     nsx::ConvexHull box;
     box.addVertex(Eigen::Vector3d(0,0,0));

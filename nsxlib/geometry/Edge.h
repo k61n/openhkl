@@ -29,20 +29,24 @@
 
 #pragma once
 
-#include <array>
+#include <ostream>
 
-#include "GeometryTypes.h"
+#include <vector>
 
 namespace nsx {
+
+class Face;
+class Vertex;
 
 //! \brief Class Edge.
 //! 
 //! This class implements the Edge object used in the incremental convex hull algorithm.
-class Edge {
-public:
+struct Edge {
 
 	//! Default constructor
 	Edge();
+
+	Edge(int _id);
 
 	//! Copy constructor
 	Edge(const Edge& other)=delete;
@@ -56,15 +60,19 @@ public:
 	//! Send some information about this Edge on an output stream
 	void print(std::ostream& os) const;
 
-public:
 	//! The two pointers to the faces adjacent to this Edge
-	std::array<Face*,2> _adjFace;
+	std::vector<Face*> _faces;
+
 	//! The two pointers to the vertices that makes this Edge
-	std::array<Vertex*,2> _endPts;
+	std::vector<Vertex*> _vertices;
+
 	//! When not null indicates the new face formed by this Edge and a new vertex of the hull
 	Face* _newFace;
+
 	//! If true this Edge is marked to be deleted at the next clean up step
 	bool _delete;
+
+    int _id;
 };
 
 std::ostream& operator<<(std::ostream& os, const Edge& edge);
