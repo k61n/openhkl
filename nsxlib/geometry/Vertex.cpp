@@ -31,11 +31,15 @@
 
 namespace nsx {
 
-Vertex::Vertex() : _coords(), _duplicate(nullptr), _onHull(false), _mark(false)
+Vertex::Vertex() : _id(-1),_coords(), _duplicate(nullptr), _onHull(false), _mark(false)
 {
 }
 
-Vertex::Vertex(const Eigen::Vector3d& coords) : _coords(coords), _duplicate(nullptr), _onHull(false), _mark(false)
+Vertex::Vertex(int id) : _id(id),_coords(), _duplicate(nullptr), _onHull(false), _mark(false)
+{
+}
+
+Vertex::Vertex(int id, const Eigen::Vector3d& coords) : _id(id), _coords(coords), _duplicate(nullptr), _onHull(false), _mark(false)
 {
 }
 

@@ -29,25 +29,27 @@
 
 #pragma once
 
-#include <array>
+#include <vector>
 #include <ostream>
 
 #include <Eigen/Dense>
 
-#include "GeometryTypes.h"
-
 namespace nsx {
+
+struct Edge;
+struct Vertex;
 
 /* !
  * \brief Class Face.
  * This class implements the Face object used in the incremental convex hull algorithm.
  */
-class Face {
-
-public:
+struct Face {
 
 	//! Default constructor
 	Face();
+
+	//! Default constructor
+	Face(int id);
 
 	//! Copy constructor
 	Face(const Face& other)=delete;
@@ -69,13 +71,16 @@ public:
 	//! Send some informations about this Face on an output stream
 	void print(std::ostream& os) const;
 
-public:
 	//! The three pointer to the edges of this Face
-	std::array<Edge*,3> _edges;
+	std::vector<Edge*> _edges;
+
 	//! The three pointers to the vertices of this Face
-	std::array<Vertex*,3> _vertices;
+	std::vector<Vertex*> _vertices;
+
 	//! Indicates whether or not this Face is visible
 	bool _visible;
+
+    int _id;
 };
 
 std::ostream& operator<<(std::ostream& os, const Face& face);

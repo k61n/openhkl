@@ -1,9 +1,11 @@
+#include <fstream>
 #include <stdexcept>
 
 #include <nsxlib/AABB.h>
 #include <nsxlib/ConvexHull.h>
 #include <nsxlib/Face.h>
 #include <nsxlib/NSXTest.h>
+#include <nsxlib/Vertex.h>
 
 const double tolerance=1e-9;
 
@@ -14,13 +16,15 @@ NSX_INIT_TEST
 //! This shows that each point is inside every face and therefore the hull is convex.
 bool CheckConvexity(const nsx::ConvexHull& chull)
 {
-    const auto& faces=chull.getFaces();
-    const auto& vertices=chull.getVertices();
+    const auto& faces = chull.faces();
+    const auto& vertices = chull.vertices();
 
-    for (auto & f: faces)
+    for (auto p : faces)
     {
-        for (auto& v : vertices)
+        nsx::Face *f = p.second;
+        for (auto pp : vertices)
         {
+            nsx::Vertex *v = pp.second;
             if (f->volumeSign(v) < 0)
                 return false;
         }
@@ -53,9 +57,9 @@ int main()
     // Checks that with 4 vertices the hull can be built
     NSX_CHECK_NO_THROW(chull.updateHull());
 
-    const auto& faces=chull.getFaces();
-    const auto& edges=chull.getEdges();
-    const auto& vertices=chull.getVertices();
+    auto faces = chull.faces();
+    auto edges = chull.edges();
+    auto vertices = chull.vertices();
 
     // Check that the number of vertices, edges and faces corresponds to a tetrahedron
     NSX_CHECK_EQUAL(vertices.size(),4);
@@ -78,9 +82,9 @@ int main()
     chull.updateHull();
 
     // Check that the number of vertices, edges and faces corresponds to a cube
-    NSX_CHECK_EQUAL(vertices.size(),8);
-    NSX_CHECK_EQUAL(edges.size(),18);
-    NSX_CHECK_EQUAL(faces.size(),12);
+    NSX_CHECK_EQUAL(chull.nVertices(),8);
+    NSX_CHECK_EQUAL(chull.nEdges(),18);
+    NSX_CHECK_EQUAL(chull.nFaces(),12);
 
     //! Checks that the hull satisfies the Euler conditions
     NSX_CHECK_ASSERT(chull.checkEulerConditions());
@@ -89,19 +93,19 @@ int main()
     NSX_CHECK_ASSERT(CheckConvexity(chull));
 
     //! Checks that the volume of the cube is 10*10*10=1000
-    NSX_CHECK_CLOSE(chull.getVolume(),1000,tolerance);
+    NSX_CHECK_CLOSE(chull.volume(),1000,tolerance);
 
-    double oldVolume=chull.getVolume();
+    double oldVolume = chull.volume();
     chull.translateToCenter();
-    double newVolume=chull.getVolume();
+    double newVolume = chull.volume();
     NSX_CHECK_CLOSE(oldVolume,newVolume,tolerance);
 
     // Check that the copy construction is OK
     nsx::ConvexHull newhull(chull);
-    NSX_CHECK_EQUAL(chull.getNVertices(),newhull.getNVertices());
-    NSX_CHECK_EQUAL(chull.getNEdges(),newhull.getNEdges());
-    NSX_CHECK_EQUAL(chull.getNFaces(),newhull.getNFaces());
-    NSX_CHECK_CLOSE(chull.getVolume(),newhull.getVolume(),tolerance);
+    NSX_CHECK_EQUAL(chull.nVertices(),newhull.nVertices());
+    NSX_CHECK_EQUAL(chull.nEdges(),newhull.nEdges());
+    NSX_CHECK_EQUAL(chull.nFaces(),newhull.nFaces());
+    NSX_CHECK_CLOSE(chull.volume(),newhull.volume(),tolerance);
 
     nsx::ConvexHull box;
     box.addVertex(Eigen::Vector3d(0,0,0));
@@ -127,6 +131,66 @@ int main()
     NSX_CHECK_EQUAL(bb.isInside(p), box.contains(p));
     p = {0.5, 0.5, -0.5};
     NSX_CHECK_EQUAL(bb.isInside(p), box.contains(p));
+
+    chull.reset();
+
+    std::ifstream f_in("convex_hull_vertices.xyz");
+
+    size_t n_points;
+
+    f_in >> n_points;
+
+    for (size_t i = 0; i < n_points; ++i) {
+        double x, y, z;
+        f_in >> x >> y >> z;
+        Eigen::Vector3d vertex(x,y,z);
+        chull.addVertex(vertex);
+    }
+
+    f_in.close();
+
+    chull.updateHull();
+
+    // Check the results with the one obtained by third-party code
+    // http://cs.smith.edu/~jorourke/
+
+    f_in.open("convex_hull_faces.xyz");
+
+    size_t n_triangles;
+
+    f_in >> n_triangles;
+
+    using triangle = std::vector<Eigen::Vector3d>;
+    std::vector<triangle> triangles;
+    triangles.reserve(n_triangles);
+    for (size_t i = 0; i < n_triangles; ++i) {
+        triangle t;
+        for (size_t j = 0; j < 3; ++j) {
+            double x, y, z;
+            f_in >> x >> y >> z;
+            t.emplace_back(x,y,z);
+        }
+        triangles.push_back(t);
+    }
+
+    f_in.close();
+
+    faces = chull.faces();
+
+    NSX_CHECK_EQUAL(faces.size(),triangles.size());
+
+    size_t comp(0);
+    for (auto p : faces) {
+        nsx::Face *f = p.second;
+        const auto& t = triangles[comp];
+        for (size_t i = 0; i < 3; ++i) {
+            nsx::Vertex *v = f->_vertices[i];
+            NSX_CHECK_CLOSE(v->_coords[0],t[i](0),tolerance);
+            NSX_CHECK_CLOSE(v->_coords[1],t[i](1),tolerance);
+            NSX_CHECK_CLOSE(v->_coords[2],t[i](2),tolerance);
+        }
+        ++comp;
+    }
 
     return 0;
 }

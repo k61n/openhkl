@@ -28,6 +28,7 @@
  *
  */
 
+#include "ConvexHull.h"
 #include "BrillouinZone.h"
 #include "Detector.h"
 #include "Diffractometer.h"

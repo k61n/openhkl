@@ -21,7 +21,7 @@ void validate_zone(const Eigen::Matrix3d& B, int nverts, int nfaces)
     nsx::BrillouinZone zone(B, 1e-3);
     nsx::ConvexHull hull = zone.convexHull();
     
-    NSX_CHECK_EQUAL(hull.getNVertices(), nverts);
+    NSX_CHECK_EQUAL(hull.nVertices(), nverts);
     NSX_CHECK_EQUAL(zone.vertices().size(), nverts);
     NSX_CHECK_EQUAL(2*zone.normals().size(), nfaces);
 
@@ -44,7 +44,7 @@ void validate_zone(const Eigen::Matrix3d& B, int nverts, int nfaces)
         NSX_CHECK_ASSERT(zone.inside(-1.01*v) == false);
     }    
 
-    NSX_CHECK_CLOSE(hull.getVolume(), std::fabs(B.determinant()), 1e-8);
+    NSX_CHECK_CLOSE(hull.volume(), std::fabs(B.determinant()), 1e-8);
 }
 
 int main()

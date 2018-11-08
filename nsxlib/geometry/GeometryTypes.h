@@ -15,15 +15,16 @@ class AABB;
 class Blob3D;
 class ConvexHull;
 class DirectVector;
-class Edge;
 class Ellipsoid;
-class Face;
 class Octree;
 class ReciprocalVector;
 class ShapeLibrary;
-struct Triangle;
-class Vertex;
 class Profile3D;
+
+struct Edge;
+struct Face;
+struct Triangle;
+struct Vertex;
 
 using HomVector   = Eigen::Matrix<double,4,1>;
 using HomMatrix   = Eigen::Matrix<double,4,4>;
