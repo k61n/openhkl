@@ -154,11 +154,11 @@ int main()
     // Check the results with the one obtained by third-party code
     // http://cs.smith.edu/~jorourke/
 
-    f_in.open("convex_hull_faces.xyz");
+    std::ifstream f_in1("convex_hull_faces.xyz");
 
     size_t n_triangles;
 
-    f_in >> n_triangles;
+    f_in1 >> n_triangles;
 
     using triangle = std::vector<Eigen::Vector3d>;
     std::vector<triangle> triangles;
@@ -167,13 +167,13 @@ int main()
         triangle t;
         for (size_t j = 0; j < 3; ++j) {
             double x, y, z;
-            f_in >> x >> y >> z;
+            f_in1 >> x >> y >> z;
             t.emplace_back(x,y,z);
         }
         triangles.push_back(t);
     }
 
-    f_in.close();
+    f_in1.close();
 
     faces = chull.faces();
 
