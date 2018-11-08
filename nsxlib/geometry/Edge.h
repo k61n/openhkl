@@ -35,8 +35,8 @@
 
 namespace nsx {
 
-class Face;
-class Vertex;
+struct Face;
+struct Vertex;
 
 //! \brief Class Edge.
 //! 

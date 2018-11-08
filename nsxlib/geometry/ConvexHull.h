@@ -41,9 +41,9 @@
 
 namespace nsx {
 
-class Face;
-class Edge;
-class Vertex;
+struct Edge;
+struct Face;
+struct Vertex;
 
 //! \brief Class ConvexHull.
 //! This class implements an templated object-oriented adaptation of the 3D incremental convex hull

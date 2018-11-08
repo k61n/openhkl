@@ -35,7 +35,7 @@
 
 namespace nsx {
 
-class Edge;
+struct Edge;
 
 /* !
  * \brief Class Vertex.
