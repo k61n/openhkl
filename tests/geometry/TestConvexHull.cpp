@@ -154,11 +154,11 @@ int main()
     // Check the results with the one obtained by third-party code
     // http://cs.smith.edu/~jorourke/
 
-    std::ifstream f_in1("convex_hull_faces.xyz");
+    f_in.open("convex_hull_faces.xyz");
 
     size_t n_triangles;
 
-    f_in1 >> n_triangles;
+    f_in >> n_triangles;
 
     using triangle = std::vector<Eigen::Vector3d>;
     std::vector<triangle> triangles;
@@ -167,19 +167,19 @@ int main()
         triangle t;
         for (size_t j = 0; j < 3; ++j) {
             double x, y, z;
-            f_in1 >> x >> y >> z;
+            f_in >> x >> y >> z;
             t.emplace_back(x,y,z);
         }
         triangles.push_back(t);
     }
 
-    f_in1.close();
+    f_in.close();
 
     faces = chull.faces();
 
     NSX_CHECK_EQUAL(faces.size(),triangles.size());
 
-    size_t comp;
+    size_t comp(0);
     for (auto p : faces) {
         nsx::Face *f = p.second;
         const auto& t = triangles[comp];
