@@ -8,9 +8,7 @@
 namespace nsx {
 
 
-Component::Component(const std::string& name)
-: _name(name),
-  _gonio()
+Component::Component(const std::string& name) : _name(name), _gonio()
 {
 }
 
@@ -19,14 +17,35 @@ Component::Component(const YAML::Node& node)
     // Set the component name
     _name = node["name"].as<std::string>();
 
-    _gonio = node["goniometer"] ? std::make_shared<Gonio>(Gonio(node["goniometer"])) : nullptr;
+    _gonio = node["goniometer"] ? Gonio(node["goniometer"]) : Gonio();
+}
+
+Component::Component(const Component& other)
+{
+    *this = other;
 }
 
 Component::~Component()
 {
 }
 
-sptrGonio Component::gonio() const
+Component& Component::operator=(const Component& other)
+{
+    if (this != &other) {
+        _name = other._name;
+        _position = other._position;
+        _gonio = Gonio(other._gonio);
+    }
+
+    return *this;
+}
+
+const Gonio& Component::gonio() const
+{
+    return _gonio;
+}
+
+Gonio& Component::gonio()
 {
     return _gonio;
 }
@@ -36,19 +55,9 @@ const std::string& Component::name() const
     return _name;
 }
 
-void Component::setGonio(sptrGonio gonio)
-{
-    _gonio = gonio;
-}
-
 void Component::setName(const std::string& name)
 {
     _name = name;
-}
-
-bool Component::hasGonio() const
-{
-    return _gonio != nullptr;
 }
 
 } // end namespace nsx

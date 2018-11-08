@@ -54,12 +54,12 @@ FrameSampleGlobalOffsets::FrameSampleGlobalOffsets(ExperimentItem *experiment_it
     _ui->selected_data->setSelectionMode(QAbstractItemView::MultiSelection);
 
     // Fill the offset table with the name of the sample goniometer axes
-    auto gonio_axes = _experiment_item->experiment()->diffractometer()->sample()->gonio()->axes();
-    size_t n_axes = gonio_axes.size();
+    const auto &sample_gonio = _experiment_item->experiment()->diffractometer()->sample()->gonio();
+    size_t n_axes = sample_gonio.nAxes();
     _ui->offsets->setRowCount(n_axes);
-
     for (size_t i = 0; i < n_axes; ++i) {
-        _ui->offsets->setItem(i,0,new QTableWidgetItem(QString::fromStdString(gonio_axes[i]->name())));
+        const auto &axis = sample_gonio.axis(i);
+        _ui->offsets->setItem(i,0,new QTableWidgetItem(QString::fromStdString(axis.name())));
 
     }
 

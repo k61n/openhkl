@@ -51,5 +51,12 @@ Eigen::Transform<double,3,Eigen::Affine> TransAxis::affineMatrix(double value) c
 	return mat;
 }
 
+std::ostream& TransAxis::printSelf(std::ostream& os) const
+{
+    os << "T(" << _axis.transpose() << ")";
+
+    return os;
+}
+
 } // end namespace nsx
 

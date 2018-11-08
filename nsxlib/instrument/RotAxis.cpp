@@ -10,11 +10,11 @@ Axis* RotAxis::create(const YAML::Node& node)
 	return new RotAxis(node);
 }
 
-RotAxis::RotAxis() : Axis("rotation"), _dir(CCW)
+RotAxis::RotAxis() : Axis("rotation"), _dir(Direction::CCW)
 {
 }
 
-RotAxis::RotAxis(const std::string& label) : Axis(label),_dir(CCW)
+RotAxis::RotAxis(const std::string& label) : Axis(label),_dir(Direction::CCW)
 {
 }
 
@@ -38,8 +38,8 @@ RotAxis& RotAxis::operator=(const RotAxis& other)
 
 RotAxis::RotAxis(const YAML::Node& node) : Axis(node)
 {
-	bool clockwise=node["clockwise"].as<bool>();
-	_dir = clockwise ? RotAxis::Direction::CW : RotAxis::Direction::CCW;
+	bool clockwise = node["clockwise"].as<bool>();
+	_dir = clockwise ? Direction::CW : Direction::CCW;
 }
 
 RotAxis::~RotAxis()
@@ -53,8 +53,9 @@ RotAxis* RotAxis::clone() const
 
 void RotAxis::setRotationDirection(Direction dir)
 {
-	_dir=dir;
+	_dir = dir;
 }
+
 RotAxis::Direction RotAxis::rotationDirection() const
 {
 	return _dir;
@@ -75,7 +76,7 @@ Eigen::Transform<double,3,Eigen::Affine> RotAxis::affineMatrix(double angle) con
 
 Eigen::Quaterniond RotAxis::quaternion(double angle) const
 {
-	if (_dir==RotAxis::CW)
+	if (_dir==Direction::CW)
 		angle*=-1;
 	// Create the quaternion representing this rotation
 	double hc = cos(0.5*angle);
@@ -83,14 +84,13 @@ Eigen::Quaterniond RotAxis::quaternion(double angle) const
 	Eigen::Quaterniond temp(hc,_axis(0)*hs,_axis(1)*hs,_axis(2)*hs);
 	return temp;
 }
-std::ostream& operator<<(std::ostream& os, const RotAxis& Rot)
+
+std::ostream& RotAxis::printSelf(std::ostream& os) const
 {
-	os << "Rotation Axis: " << Rot._axis << ", direction: ";
-	if (Rot._dir==RotAxis::CW)
-		os << " CW";
-	else
-		os << " CCW";
-	return os;
+    os << "Rotation Axis: " << _axis.transpose() << ", direction: ";
+    os << (_dir == Direction::CW ? "CW" : "CCW");
+
+    return os;
 }
 
 } // end namespace nsx

@@ -63,15 +63,15 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, sptrDiffract
 
     _nFrames=_metadata.key<int>("npdone");
 
-    // Getting Scan parameters for the detector
-    auto axes = _diffractometer->detector()->gonio()->axes();
+    const auto &detector_gonio = _diffractometer->detector()->gonio();
+    size_t n_detector_gonio_axes = detector_gonio.nAxes();
 
-    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm(axes.size(),_nFrames);
-    for (size_t i = 0; i < axes.size(); ++i) {
-        auto axis = axes[i];
-        if (axis->physical()) {
+    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm(n_detector_gonio_axes,_nFrames);
+    for (size_t i = 0; i < n_detector_gonio_axes; ++i) {
+        const auto &axis = detector_gonio.axis(i);
+        if (axis.physical()) {
             try {
-                H5::DataSet dset = detectorGroup.openDataSet(axis->name());
+                H5::DataSet dset = detectorGroup.openDataSet(axis.name());
                 H5::DataSpace space(dset.getSpace());
                 hsize_t dim = space.getSimpleExtentNdims();
                 if (dim != 1) {
@@ -84,7 +84,7 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, sptrDiffract
                 }
                 dset.read(&dm(i,0),H5::PredType::NATIVE_DOUBLE,space,space);
             } catch(...) {
-                throw std::runtime_error("Coud not read "+axis->name()+" HDF5 dataset");
+                throw std::runtime_error("Coud not read "+axis.name()+" HDF5 dataset");
             }
         } else {
             dm.row(i) = Eigen::VectorXd::Zero(_nFrames);
@@ -100,15 +100,15 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, sptrDiffract
         _detectorStates[i] = eigenToVector(dm.col(i));
     }
 
-    // Getting Scan parameters for the sample
-    axes =_diffractometer->sample()->gonio()->axes();
+    const auto &sample_gonio = _diffractometer->sample()->gonio();
+    size_t n_sample_gonio_axes = sample_gonio.nAxes();;
 
-    dm.resize(axes.size(),_nFrames);
-    for (size_t i = 0; i <axes.size(); ++i) {
-        auto axis = axes[i];
-        if (axis->physical()) {
+    dm.resize(n_sample_gonio_axes,_nFrames);
+    for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
+        const auto &axis = sample_gonio.axis(i);
+        if (axis.physical()) {
             try {
-                H5::DataSet dset = sampleGroup.openDataSet(axis->name());
+                H5::DataSet dset = sampleGroup.openDataSet(axis.name());
                 H5::DataSpace space(dset.getSpace());
                 hsize_t dim = space.getSimpleExtentNdims();
                 if (dim != 1) {
@@ -121,7 +121,7 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, sptrDiffract
                 }
                 dset.read(&dm(i,0),H5::PredType::NATIVE_DOUBLE,space,space);
             } catch(...) {
-                throw std::runtime_error("Coud not read "+axis->name()+" HDF5 dataset");
+                throw std::runtime_error("Coud not read "+axis.name()+" HDF5 dataset");
             }
         } else {
             dm.row(i) = Eigen::VectorXd::Zero(_nFrames);

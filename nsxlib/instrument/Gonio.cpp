@@ -22,8 +22,9 @@ Gonio::Gonio(const std::string& name) : _name(name)
 Gonio::Gonio(const Gonio& other) : _name(other._name)
 {
     _axes.reserve(other._axes.size());
-    for (auto ax : other._axes)
-        _axes.push_back(ax->clone());
+    for (auto&& ax : other._axes) {
+        _axes.emplace_back(std::unique_ptr<Axis>(ax->clone()));
+    }
 }
 
 Gonio::Gonio(const YAML::Node& node)
@@ -31,20 +32,19 @@ Gonio::Gonio(const YAML::Node& node)
     _name = node["name"] ? node["name"].as<std::string>() : "";
 
     // Set the axis of the detector goniometer from the XML node
-    for(auto&& axisItem : node["axis"])
-    {
-        addAxis(Axis::create(axisItem));
+    for(auto&& axisItem : node["axis"]) {
+        _axes.emplace_back(std::unique_ptr<Axis>(Axis::create(axisItem)));
     }
 }
 
 Gonio& Gonio::operator=(const Gonio& other)
 {
-    if (this != &other)
-    {
+    if (this != &other) {
         _name = other._name;
         _axes.reserve(other._axes.size());
-        for (auto ax : other._axes)
-            _axes.push_back(ax->clone());
+        for (auto&& ax : other._axes) {
+            _axes.emplace_back(std::unique_ptr<Axis>(ax->clone()));
+        }
     }
 
     return *this;
@@ -52,40 +52,29 @@ Gonio& Gonio::operator=(const Gonio& other)
 
 Gonio::~Gonio()
 {
-    for (auto ax : _axes)
-        delete ax;
 }
 
-const std::vector<Axis*>& Gonio::axes() const
+size_t Gonio::nAxes() const
 {
-    return _axes;
+    return _axes.size();
 }
 
-Axis* Gonio::axis(const std::string& name)
+Axis& Gonio::axis(size_t index)
 {
-    for (auto axis : _axes) {
-        if (axis->name().compare(name) == 0) {
-            return axis;
-        }
+    if (index >= _axes.size()) {
+        throw std::runtime_error("Invalid axis id.");
     }
-    return nullptr;
+
+    return *_axes[index];
 }
 
-void Gonio::addAxis(Axis* axis)
+const Axis& Gonio::axis(size_t index) const
 {
-    _axes.push_back(axis);
-}
+    if (index >= _axes.size()) {
+        throw std::runtime_error("Invalid axis id.");
+    }
 
-Axis* Gonio::addRotation(const std::string& name, const Eigen::Vector3d& axis,RotAxis::Direction dir)
-{
-    _axes.push_back(new RotAxis(name,axis,dir));
-    return _axes.back();
-}
-
-Axis* Gonio::addTranslation(const std::string& name, const Eigen::Vector3d& axis)
-{
-    _axes.push_back(new TransAxis(name,axis));
-    return _axes.back();
+    return *_axes[index];
 }
 
 Eigen::Transform<double,3,Eigen::Affine> Gonio::affineMatrix(const std::vector<double>& state) const
@@ -95,13 +84,14 @@ Eigen::Transform<double,3,Eigen::Affine> Gonio::affineMatrix(const std::vector<d
     }
 
     Eigen::Transform<double,3,Eigen::Affine> result=Eigen::Transform<double,3,Eigen::Affine>::Identity();
-    std::vector<Axis*>::const_reverse_iterator it;
+    std::vector<std::unique_ptr<Axis>>::const_reverse_iterator it;
     int axis = state.size()-1;
 
-    for (it=_axes.rbegin();it!=_axes.rend();++it) {
+    for (it = _axes.rbegin() ; it != _axes.rend(); ++it) {
         result=(*it)->affineMatrix(state[axis])*result;
         axis--;
     }
+
     return result;
 }
 

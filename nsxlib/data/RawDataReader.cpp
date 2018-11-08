@@ -93,21 +93,23 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const st
 
     _nFrames = _filenames.size();
 
-    auto axes = _diffractometer->detector()->gonio()->axes();
-    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm(axes.size(),_nFrames);
+    const auto& detector_gonio = _diffractometer->detector()->gonio();
+    size_t n_detector_gonio_axes = detector_gonio.nAxes();
+    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm(n_detector_gonio_axes,_nFrames);
     _detectorStates.resize(_nFrames);
     for (unsigned int i = 0; i < _nFrames; ++i) {
         _detectorStates[i] = eigenToVector((dm.col(i)));
     }
 
     // Getting Scan parameters for the sample
-    axes = _diffractometer->sample()->gonio()->axes();
-    dm.resize(axes.size(),_nFrames);
+    const auto &sample_gonio = _diffractometer->sample()->gonio();
+    size_t n_sample_gonio_axes = sample_gonio.nAxes();
+
+    dm.resize(n_sample_gonio_axes,_nFrames);
 
     int omega, phi, chi;
-
-    for (size_t i = 0, omega = -1, phi = -1, chi = -1; i < axes.size(); ++i) {
-        const std::string axis_name = axes[i]->name();
+    for (size_t i = 0, omega = -1, phi = -1, chi = -1; i < n_sample_gonio_axes; ++i) {
+        const std::string axis_name = sample_gonio.axis(i).name();
         omega = axis_name == "omega" ? int(i) : omega;
         chi = axis_name == "chi"? int(i) : chi;
         phi = axis_name == "phi"? int(i) : phi;
@@ -140,8 +142,9 @@ void RawDataReader::close() {
 
 void RawDataReader::swapEndian() {
 
-    if (!_swapEndian)
+    if (!_swapEndian) {
         return;
+    }
 
     for (unsigned int i = 0; i < _nRows*_nCols; ++i) {
         for (unsigned int byte = 0; byte < _bpp/2; ++byte) {
@@ -162,8 +165,9 @@ Eigen::MatrixXi RawDataReader::data(std::size_t frame) {
     std::ifstream file;
     file.open(filename, std::ios_base::binary | std::ios_base::in);
 
-    if (!file.is_open())
+    if (!file.is_open()) {
         throw std::runtime_error("could not open data file " + filename);
+    }
 
     file.seekg(0, std::ios_base::end);
 

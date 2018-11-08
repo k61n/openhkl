@@ -43,8 +43,8 @@ namespace nsx {
 //! and a rotation direction (CW or CCW). The direction vector needs not be normalized.
 class RotAxis: public Axis {
 public:
-	//! Axis direction (counter-clockwise, clockwise)
-	enum Direction {CCW,CW};
+	//! Axis direction (clockwise, counter-clockwise)
+	enum class Direction {CW,CCW};
 
 	//! Static constructor for a RotAxis
 	static Axis* create(const YAML::Node& node);
@@ -56,7 +56,7 @@ public:
 	//! Constructs an axis with a given name
 	explicit RotAxis(const std::string& label);
 	//! Explicit
-	explicit RotAxis(const std::string& label, const Eigen::Vector3d& axis, Direction direction=CCW);
+	explicit RotAxis(const std::string& label, const Eigen::Vector3d& axis, Direction direction=Direction::CCW);
 	//! Construct a RotAxis from a property tree node.
 	RotAxis(const YAML::Node& node);
 	//! Assignment operator
@@ -79,19 +79,13 @@ public:
 	//@param angle : rotation angle in radians by default
 	//@return rotation matrix
 	Eigen::Quaterniond quaternion(double angle) const;
-	//! Print information into a stream
-	friend std::ostream& operator<<(std::ostream& os, const RotAxis&);
+
+    std::ostream& printSelf(std::ostream& os) const override;
 
 protected:
+
 	//! Rotation direction
 	Direction _dir;
 };
-
-static const RotAxis AxisXCW=RotAxis("XCW",Eigen::Vector3d(1,0,0),RotAxis::CW);
-static const RotAxis AxisXCCW=RotAxis("XCCW",Eigen::Vector3d(1,0,0),RotAxis::CCW);
-static const RotAxis AxisYCW=RotAxis("YCW",Eigen::Vector3d(0,1,0),RotAxis::CW);
-static const RotAxis AxisYCCW=RotAxis("YCCW",Eigen::Vector3d(0,1,0),RotAxis::CCW);
-static const RotAxis AxisZCW=RotAxis("ZCW",Eigen::Vector3d(0,0,1),RotAxis::CW);
-static const RotAxis AxisZCCW=RotAxis("ZCCW",Eigen::Vector3d(0,0,1),RotAxis::CCW);
 
 } // end namespace nsx

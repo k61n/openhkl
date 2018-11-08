@@ -29,6 +29,7 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -55,31 +56,39 @@ namespace nsx {
 //! Axes, their labels and respective limits can be modified by the class methods or by template accessor:
 //! e.g. Axis<0>(g)=RotAxis(UnitZ,CW).
 class Gonio {
+
 public:
+
     //! Default constructor
     Gonio();
+
     //! Copy constructor
     Gonio(const Gonio& other);
+
     //! Constructs a gonio with a given name
     Gonio(const std::string& name);
+
     //! Constructs a Gonio from a property tree node
     Gonio(const YAML::Node& node);
+
     //! Destructor
     ~Gonio();
+
     //! Assignment operator
     Gonio& operator=(const Gonio& other);
-    //! Gets the axes of this goniometer
-    const std::vector<Axis*>& axes() const;
+
+    //! Return the number of axis of this goniometer
+    size_t nAxes() const;
+
     //! Get a pointer to axis with name, throw range_error if not found
-    Axis* axis(const std::string& name);
+    Axis& axis(size_t index);
+
+    //! Get a pointer to axis with name, throw range_error if not found
+    const Axis& axis(size_t index) const;
+
     //! Return the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
     Eigen::Transform<double,3,Eigen::Affine> affineMatrix(const std::vector<double>& values) const;
-    //! Add an Axis to this Goniometer.
-    void addAxis(Axis* axis);
-    //! Add a rotation axis to this goniometer
-    Axis* addRotation(const std::string& name,const Eigen::Vector3d& axis, RotAxis::Direction dir=RotAxis::Direction::CCW);
-    //! Add a translation axis to this goniometer
-    Axis* addTranslation(const std::string& name,const Eigen::Vector3d& axis);
+
     //! Transform a point in 3D space, given a vector of parameters
     DirectVector transform(const DirectVector& v, const std::vector<double>& state) const;
 
@@ -92,7 +101,7 @@ private:
     //! Given name of the gonio
     std::string _name;
     //! Set of axis
-    std::vector<Axis*> _axes;
+    std::vector<std::unique_ptr<Axis>> _axes;
 };
 
 } // end namespace nsx
