@@ -1,9 +1,11 @@
+#include <fstream>
 #include <stdexcept>
 
 #include <nsxlib/AABB.h>
 #include <nsxlib/ConvexHull.h>
 #include <nsxlib/Face.h>
 #include <nsxlib/NSXTest.h>
+#include <nsxlib/Vertex.h>
 
 const double tolerance=1e-9;
 
@@ -55,9 +57,9 @@ int main()
     // Checks that with 4 vertices the hull can be built
     NSX_CHECK_NO_THROW(chull.updateHull());
 
-    const auto& faces = chull.faces();
-    const auto& edges = chull.edges();
-    const auto& vertices = chull.vertices();
+    auto faces = chull.faces();
+    auto edges = chull.edges();
+    auto vertices = chull.vertices();
 
     // Check that the number of vertices, edges and faces corresponds to a tetrahedron
     NSX_CHECK_EQUAL(vertices.size(),4);
@@ -80,9 +82,9 @@ int main()
     chull.updateHull();
 
     // Check that the number of vertices, edges and faces corresponds to a cube
-    NSX_CHECK_EQUAL(vertices.size(),8);
-    NSX_CHECK_EQUAL(edges.size(),18);
-    NSX_CHECK_EQUAL(faces.size(),12);
+    NSX_CHECK_EQUAL(chull.nVertices(),8);
+    NSX_CHECK_EQUAL(chull.nEdges(),18);
+    NSX_CHECK_EQUAL(chull.nFaces(),12);
 
     //! Checks that the hull satisfies the Euler conditions
     NSX_CHECK_ASSERT(chull.checkEulerConditions());
@@ -129,6 +131,66 @@ int main()
     NSX_CHECK_EQUAL(bb.isInside(p), box.contains(p));
     p = {0.5, 0.5, -0.5};
     NSX_CHECK_EQUAL(bb.isInside(p), box.contains(p));
+
+    chull.reset();
+
+    std::ifstream f_in("convex_hull_vertices.xyz");
+
+    size_t n_points;
+
+    f_in >> n_points;
+
+    for (size_t i = 0; i < n_points; ++i) {
+        double x, y, z;
+        f_in >> x >> y >> z;
+        Eigen::Vector3d vertex(x,y,z);
+        chull.addVertex(vertex);
+    }
+
+    f_in.close();
+
+    chull.updateHull();
+
+    // Check the results with the one obtained by third-party code
+    // http://cs.smith.edu/~jorourke/
+
+    f_in = std::ifstream("convex_hull_faces.xyz");
+
+    size_t n_triangles;
+
+    f_in >> n_triangles;
+
+    using triangle = std::vector<Eigen::Vector3d>;
+    std::vector<triangle> triangles;
+    triangles.reserve(n_triangles);
+    for (size_t i = 0; i < n_triangles; ++i) {
+        triangle t;
+        for (size_t j = 0; j < 3; ++j) {
+            double x, y, z;
+            f_in >> x >> y >> z;
+            t.emplace_back(x,y,z);
+        }
+        triangles.push_back(t);
+    }
+
+    f_in.close();
+
+    faces = chull.faces();
+
+    NSX_CHECK_EQUAL(faces.size(),triangles.size());
+
+    size_t comp;
+    for (auto p : faces) {
+        nsx::Face *f = p.second;
+        const auto& t = triangles[comp];
+        for (size_t i = 0; i < 3; ++i) {
+            nsx::Vertex *v = f->_vertices[i];
+            NSX_CHECK_CLOSE(v->_coords[0],t[i](0),tolerance);
+            NSX_CHECK_CLOSE(v->_coords[1],t[i](1),tolerance);
+            NSX_CHECK_CLOSE(v->_coords[2],t[i](2),tolerance);
+        }
+        ++comp;
+    }
 
     return 0;
 }

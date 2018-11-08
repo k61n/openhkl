@@ -42,6 +42,9 @@ configure_file(data/d19_test.hdf d19_test.hdf COPYONLY)
 configure_file(data/H5_example.hdf H5_example.hdf COPYONLY)
 configure_file(data/blank.hdf blank.hdf COPYONLY)
 
+configure_file(geometry/convex_hull_faces.xyz convex_hull_faces.xyz COPYONLY)
+configure_file(geometry/convex_hull_vertices.xyz convex_hull_vertices.xyz COPYONLY)
+
 configure_file(instrument/RotAxis.xml RotAxis.xml COPYONLY)
 
 configure_file(instrument/D10_ascii_example D10_ascii_example COPYONLY)
