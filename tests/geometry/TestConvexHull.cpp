@@ -154,7 +154,7 @@ int main()
     // Check the results with the one obtained by third-party code
     // http://cs.smith.edu/~jorourke/
 
-    f_in = std::ifstream("convex_hull_faces.xyz");
+    f_in.open("convex_hull_faces.xyz");
 
     size_t n_triangles;
 
