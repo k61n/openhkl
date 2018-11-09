@@ -100,7 +100,7 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, sptrDiffract
         _detectorStates[i] = eigenToVector(dm.col(i));
     }
 
-    const auto &sample_gonio = _diffractometer->sample()->gonio();
+    const auto &sample_gonio = _diffractometer->sample().gonio();
     size_t n_sample_gonio_axes = sample_gonio.nAxes();;
 
     dm.resize(n_sample_gonio_axes,_nFrames);

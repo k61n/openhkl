@@ -255,7 +255,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
 
     const auto& sampleStates = _reader->sampleStates();
 
-    const auto &sample_gonio = _diffractometer->sample()->gonio();
+    const auto &sample_gonio = _diffractometer->sample().gonio();
     size_t n_sample_gonio_axes = sample_gonio.nAxes();;
 
     for (size_t i = 0; i < n_sample_gonio_axes; ++i) {

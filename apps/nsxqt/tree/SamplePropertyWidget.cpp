@@ -21,9 +21,9 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
 
     ui->setupUi(this);
 
-    auto sample = _sampleItem->experiment()->diffractometer()->sample();
+    const auto &sample = _sampleItem->experiment()->diffractometer()->sample();
 
-    const auto &sample_gonio = sample->gonio();
+    const auto &sample_gonio = sample.gonio();
 
     size_t n_sample_gonio_axes = sample_gonio.nAxes();
 

@@ -66,7 +66,7 @@ InstrumentState IDataReader::state(size_t frame) const
 
     // compute transformations
     const auto &detector_gonio = _diffractometer->detector()->gonio();
-    const auto &sample_gonio = _diffractometer->sample()->gonio();
+    const auto &sample_gonio = _diffractometer->sample().gonio();
 
     Eigen::Transform<double,3,Eigen::Affine> detector_trans = detector_gonio.affineMatrix(_detectorStates[frame]);
     Eigen::Transform<double,3,Eigen::Affine> sample_trans = sample_gonio.affineMatrix(_sampleStates[frame]);
