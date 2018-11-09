@@ -31,19 +31,19 @@ sptrDiffractometer Diffractometer::build(const std::string& name)
     return diffractometer;
 }
 
-Diffractometer::Diffractometer() : _name(""), _detector(nullptr), _sample(nullptr), _source(nullptr)
+Diffractometer::Diffractometer() : _name(""), _detector(nullptr), _sample(), _source(nullptr)
 {
 }
 
 Diffractometer::Diffractometer(const Diffractometer& other)
 : _name(other._name),
   _detector(other._detector==nullptr ? nullptr : other._detector->clone()),
-  _sample(other._sample==nullptr ? nullptr : other._sample->clone()),
+  _sample(other._sample),
   _source(other._source==nullptr ? nullptr : other._source->clone())
 {
 }
 
-Diffractometer::Diffractometer(const std::string& name) : _name(name), _detector(nullptr), _sample(nullptr), _source(nullptr)
+Diffractometer::Diffractometer(const std::string& name) : _name(name), _detector(nullptr), _sample(), _source(nullptr)
 {
 }
 
@@ -56,7 +56,7 @@ Diffractometer::Diffractometer(const YAML::Node& node)
     _detector = sptrDetector(Detector::create(node["detector"]));
 
     // Build the sample from its corresponding node
-    _sample= sptrSample(Sample::create(node["sample"]));
+    _sample = Sample(node["sample"]);
 
     // Build the source from its corresponding node
     _source= sptrSource(Source::create(node["source"]));
@@ -72,7 +72,7 @@ Diffractometer& Diffractometer::operator=(const Diffractometer& other)
         _name = other._name;
 
         _detector = sptrDetector(other._detector==nullptr ? nullptr : other._detector->clone());
-        _sample = sptrSample(other._detector==nullptr ? nullptr : other._sample->clone());
+        _sample = other._sample;
         _source = sptrSource(other._source==nullptr ? nullptr : other._source->clone());
     }
     return *this;
@@ -88,10 +88,11 @@ void Diffractometer::setName(const std::string& name)
     _name = name;
 }
 
-void Diffractometer::setSample(sptrSample sample)
+void Diffractometer::setSample(const Sample &sample)
 {
     _sample=sample;
 }
+
 void Diffractometer::setSource(sptrSource source)
 {
     _source=source;
@@ -107,7 +108,12 @@ sptrDetector Diffractometer::detector()
     return _detector;
 }
 
-sptrSample Diffractometer::sample()
+Sample& Diffractometer::sample()
+{
+    return _sample;
+}
+
+const Sample& Diffractometer::sample() const
 {
     return _sample;
 }

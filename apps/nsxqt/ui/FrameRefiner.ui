@@ -120,14 +120,14 @@
            <item>
             <widget class="QLabel" name="label">
              <property name="text">
-              <string>Maximum number of frames per batch</string>
+              <string>Number of batches</string>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QSpinBox" name="n_batches">
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the number of frames per data set over which the refined parameters will b constant.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the number batches used for refining. A batch being a frame interval in which the refined parameters will be constant.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="wrapping">
               <bool>true</bool>
@@ -183,6 +183,7 @@
    <class>NSXQFrame</class>
    <extends>QFrame</extends>
    <header>NSXQFrame.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

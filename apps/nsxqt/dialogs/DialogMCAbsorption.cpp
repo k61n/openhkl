@@ -77,16 +77,17 @@ void DialogMCAbsorption::on_pushButton_run_pressed()
     auto source = diffractometer->source();
     auto& mono = source->selectedMonochromator();
 
-    auto sample = diffractometer->sample();
-    auto& hull = sample->shape();
+    const auto &sample = diffractometer->sample();
+    const auto &hull = sample.shape();
     if (!hull.checkEulerConditions()) {
         QMessageBox::critical(this,"NSXTOOL","The sample shape (hull) is ill-defined");
         return;
     }
 
-    nsx::MCAbsorption mca(mono.width(),mono.height(),-1.0);
+    nsx::MCAbsorption mca(hull,mono.width(),mono.height(),-1.0);
 
-    mca.setSample(&hull,material->muIncoherent(),material->muAbsorption(mono.wavelength()*nsx::ang));
+    mca.setMuAbsorption(material->muAbsorption());
+    mca.setMuScattering(material->muIncoherent());
 
     ui->progressBar_MCStatus->setValue(0);
     ui->progressBar_MCStatus->setTextVisible(true);

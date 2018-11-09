@@ -54,7 +54,7 @@ FrameSampleGlobalOffsets::FrameSampleGlobalOffsets(ExperimentItem *experiment_it
     _ui->selected_data->setSelectionMode(QAbstractItemView::MultiSelection);
 
     // Fill the offset table with the name of the sample goniometer axes
-    const auto &sample_gonio = _experiment_item->experiment()->diffractometer()->sample()->gonio();
+    const auto &sample_gonio = _experiment_item->experiment()->diffractometer()->sample().gonio();
     size_t n_axes = sample_gonio.nAxes();
     _ui->offsets->setRowCount(n_axes);
     for (size_t i = 0; i < n_axes; ++i) {
@@ -120,8 +120,8 @@ void FrameSampleGlobalOffsets::fit()
     }
 
     // Fit the sample offsets with the selected data
-    auto sample = _experiment_item->experiment()->diffractometer()->sample();
-    auto fit_results = sample->fitGonioOffsets(selected_data,_ui->n_iterations->value(),_ui->tolerance->value());
+    const auto &sample = _experiment_item->experiment()->diffractometer()->sample();
+    auto fit_results = sample.fitGonioOffsets(selected_data,_ui->n_iterations->value(),_ui->tolerance->value());
 
     // The fit failed for whatever reason, return
     if (!fit_results.success) {

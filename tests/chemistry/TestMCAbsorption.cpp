@@ -28,14 +28,13 @@ int main()
     chull.translateToCenter();
     chull.scale(0.032);
 
+    double muScattering = helium->muIncoherent();
+    double muAbsorption = helium->muAbsorption(1.46e-10);
+
     // Create the MC absorption calculator
-    nsx::MCAbsorption mca(3.2*nsx::cm,3.2*nsx::cm,-100);
-
-    double muScattering=helium->muIncoherent();
-    double muAbsorption=helium->muAbsorption(1.46e-10);
-
-    // Set the material hull and its scattering and absorption attenuation factors
-    mca.setSample(&chull,muScattering,muAbsorption);
+    nsx::MCAbsorption mca(chull,3.2*nsx::cm,3.2*nsx::cm,-100);
+    mca.setMuScattering(muScattering);
+    mca.setMuAbsorption(muAbsorption);
 
     // Compute the transmission factor
     mca.run(10,Eigen::Vector3d(0,1,0),Eigen::Matrix3d::Identity());
@@ -47,13 +46,14 @@ int main()
     methane->setMassDensity(mm/volume);
 
     // Create the MC absorption calculator
-    mca=nsx::MCAbsorption(3.2*nsx::cm,3.2*nsx::cm,-100);
+    mca = nsx::MCAbsorption(chull,3.2*nsx::cm,3.2*nsx::cm,-100);
 
-    muScattering=methane->muIncoherent();
-    muAbsorption=methane->muAbsorption(1.46e-10);
+    muScattering = methane->muIncoherent();
+    muAbsorption = methane->muAbsorption(1.46e-10);
 
-    // Set the material hull and its scattering and absorption attenuation factors
-    mca.setSample(&chull,muScattering,muAbsorption);
+    // Set the material scattering and absorption attenuation factors
+    mca.setMuScattering(muScattering);
+    mca.setMuAbsorption(muAbsorption);
 
     // Compute the transmission factor
     mca.run(10000,Eigen::Vector3d(0,1,0),Eigen::Matrix3d::Identity());

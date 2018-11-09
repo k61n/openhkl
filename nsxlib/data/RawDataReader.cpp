@@ -102,7 +102,7 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const st
     }
 
     // Getting Scan parameters for the sample
-    const auto &sample_gonio = _diffractometer->sample()->gonio();
+    const auto &sample_gonio = _diffractometer->sample().gonio();
     size_t n_sample_gonio_axes = sample_gonio.nAxes();
 
     dm.resize(n_sample_gonio_axes,_nFrames);

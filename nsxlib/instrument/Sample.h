@@ -61,7 +61,7 @@ public:
     Sample();
 
     //! Copy constructor
-    Sample(const Sample& other);
+    Sample(const Sample& other)=default;
 
     //! Constructs a default sample with a given name
     Sample(const std::string& name);
@@ -76,13 +76,16 @@ public:
     virtual ~Sample();
 
     //! Assignment operator
-    Sample& operator=(const Sample& other);
+    Sample& operator=(const Sample& other)=default;
 
     //! Set the sample shape described as a convex hull
     void setShape(const ConvexHull& shape);
 
-    //! Return the sample shape, described as a convex hull
+    //! Return a non-const reference to the convex hull describing the sample shape
     ConvexHull& shape();
+
+    //! Return a const reference to the convex hull describing the sample shape
+    const ConvexHull& shape() const;
 
     SampleGonioFit fitGonioOffsets(const DataList& dataset, size_t n_iterations=1000, double tolerance=1.0e-6) const;
 

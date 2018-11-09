@@ -23,7 +23,7 @@ DialogAbsorption::DialogAbsorption(nsx::sptrExperiment experiment, QWidget *pare
     QDialog(parent),
     ui(new Ui::DialogAbsorption),
     _experiment(experiment),
-    _cscene(new CrystalScene(&experiment->diffractometer()->sample()->shape()))
+    _cscene(new CrystalScene(&experiment->diffractometer()->sample().shape()))
 {
     ui->setupUi(this);
 
@@ -91,8 +91,8 @@ void DialogAbsorption::readInfoFile(const std::string &filename)
         // Read line with goniometer angles
         getline(file,line);
         // Cout number of axes, validate with goniometer definition
-        auto sample = _experiment->diffractometer()->sample();
-        const auto& sample_gonio = sample->gonio();
+        const auto &sample = _experiment->diffractometer()->sample();
+        const auto& sample_gonio = sample.gonio();
         std::size_t numberAngles = std::count(line.begin(),line.end(),':');
         if (numberAngles == sample_gonio.nAxes()) {
             QMessageBox::critical(this, tr("NSXTool"), tr("Number of goniometer axes in video file does not match instrument definition"));

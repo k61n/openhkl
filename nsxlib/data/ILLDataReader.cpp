@@ -103,7 +103,6 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
     }
 
     auto detector = _diffractometer->detector();
-    auto sample = _diffractometer->sample();
     auto source = _diffractometer->source();
 
     // This map relates the ids of the physical axis registered in the instrument definition file with their name
@@ -117,13 +116,12 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
         }
     }
 
-    if (sample) {
-        const auto &sample_gonio = _diffractometer->sample()->gonio();
-        size_t n_sample_gonio_axes = sample_gonio.nAxes();;
-        for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
-            const auto &axis = sample_gonio.axis(i);
-            instrument_axis.insert(std::make_pair(axis.id(),axis.name()));
-        }
+    const auto &sample = _diffractometer->sample();
+    const auto &sample_gonio = _diffractometer->sample().gonio();
+    size_t n_sample_gonio_axes = sample_gonio.nAxes();;
+    for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
+        const auto &axis = sample_gonio.axis(i);
+        instrument_axis.insert(std::make_pair(axis.id(),axis.name()));
     }
 
     if (source) {
@@ -212,21 +210,17 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
         }
     }
 
-    // If a sample is set for this instrument, loop over the frames and gather for each physical axis
+    // Loop over the frames and gather for each physical axis
     // of the sample the corresponding values defined previously. The gathered values being further pushed as
     // a new sample state
-    if (sample) {
-        const auto &sample_gonio = _diffractometer->sample()->gonio();
-        size_t n_sample_gonio_axes = sample_gonio.nAxes();;
-        for (size_t i = 0; i < _nFrames; ++i) {
-            std::vector<double> sampleValues;
-            sampleValues.reserve(n_sample_gonio_axes);
-            for (size_t j = 0; j < n_sample_gonio_axes; ++j) {
-                const auto &axis = sample_gonio.axis(j);
-                sampleValues.push_back(gonioValues[axis.id()][i]);
-            }
-            _sampleStates[i] = sampleValues;
+    for (size_t i = 0; i < _nFrames; ++i) {
+        std::vector<double> sampleValues;
+        sampleValues.reserve(n_sample_gonio_axes);
+        for (size_t j = 0; j < n_sample_gonio_axes; ++j) {
+            const auto &axis = sample_gonio.axis(j);
+            sampleValues.push_back(gonioValues[axis.id()][i]);
         }
+        _sampleStates[i] = sampleValues;
     }
 
     _fileSize = _map.get_size();

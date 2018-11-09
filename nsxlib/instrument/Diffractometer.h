@@ -35,6 +35,7 @@
 #include <yaml-cpp/yaml.h>
 
 #include "InstrumentTypes.h"
+#include "Sample.h"
 
 namespace nsx {
 
@@ -67,8 +68,14 @@ public:
     //! Get the detector of this diffractometer
     sptrDetector detector();
 
-    //! Get the sample of this diffractometer
-    sptrSample sample();
+    //! Get the non-const reference to the sample of this diffractometer
+    Sample& sample();
+
+    //! Get the const reference to the sample of this diffractometer
+    const Sample& sample() const;
+
+    //! Set the sample of this diffractometer
+    void setSample(const Sample &sample);
 
     //! Get the source of this diffractometer
     sptrSource source();
@@ -79,23 +86,26 @@ public:
     //! Set the name of the diffractometer
     void setName(const std::string& name);
 
-    //! Set the sample of this diffractometer
-    void setSample(sptrSample sample);
-
     //! Set the source of this diffractometer
     void setSource(sptrSource source);
 
 protected:
+
     //! Default constructor
     Diffractometer();
+
     //! Constructs a diffractometer with a given name
     Diffractometer(const std::string& name);
+
     //! Name of the diffractometer
     std::string _name;
+
     //! Pointer to detector
     sptrDetector _detector;
-    //! Pointer to sample
-    sptrSample _sample;
+
+    //! Sample
+    Sample _sample;
+
     //! Pointer to source
     sptrSource _source;
 };
