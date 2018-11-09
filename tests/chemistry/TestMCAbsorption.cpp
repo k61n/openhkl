@@ -1,3 +1,5 @@
+#include <memory>
+
 #include <Eigen/Dense>
 
 #include <nsxlib/ChemistryTypes.h>
@@ -12,7 +14,7 @@ NSX_INIT_TEST
 int main()
 {
     // Build an isotopically pure methane material
-    nsx::sptrMaterial helium(new nsx::Material("He[3]"));
+    std::unique_ptr<nsx::Material> helium(new nsx::Material("He[3]"));
 
     // Create a cubic convex hull
     nsx::ConvexHull chull;
@@ -40,7 +42,7 @@ int main()
     mca.run(10,Eigen::Vector3d(0,1,0),Eigen::Matrix3d::Identity());
 
     // Build an isotopically pure methane material
-    nsx::sptrMaterial methane(new nsx::Material("CH4"));
+    std::unique_ptr<nsx::Material> methane(new nsx::Material("CH4"));
     double mm = methane->molarMass();
     double volume = chull.volume();
     methane->setMassDensity(mm/volume);

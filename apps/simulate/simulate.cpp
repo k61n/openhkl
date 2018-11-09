@@ -181,7 +181,7 @@ int main(int argc, char* argv[])
     Eigen::Matrix3d U = solver.eigenvectors();
 
     auto uc = std::make_shared<nsx::UnitCell>(U*A);
-    uc->setSpaceGroup(group_name);
+    uc->setSpaceGroup(group);
     Eigen::Matrix3d B = uc->reciprocalBasis();
 
     auto det_shape = nsx::Ellipsoid({800.0, 450.0, 10.0}, 5.0);

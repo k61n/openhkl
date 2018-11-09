@@ -56,8 +56,10 @@ public:
 	//! Destructor
 	~Material()=default;
 
-    //! Assignment operator (deleted)
-    Material& operator=(const Material& other)=delete;
+    //! Assignment operator
+    Material& operator=(const Material& other)=default;
+
+    Material* clone() const;
 
 	//! Returns the name of this Material
 	const std::string& formula() const;

@@ -6,7 +6,6 @@
 #include "DataSet.h"
 #include "GruberReduction.h"
 #include "Logger.h"
-#include "Material.h"
 #include "MillerIndex.h"
 #include "Minimizer.h"
 #include "NiggliReduction.h"
@@ -137,24 +136,62 @@ UnitCell::UnitCell(const Eigen::Matrix3d& basis, bool reciprocal): UnitCell()
     _b_transposed = reciprocal ? basis : basis.inverse();
 }
 
-UnitCell::UnitCell():
-    _a(Eigen::Matrix3d::Identity()),
-    _b_transposed(Eigen::Matrix3d::Identity()),
-    _NP(Eigen::Matrix3d::Identity()),
-    _material(),
-    _centring(LatticeCentring::P),
-    _bravaisType(BravaisType::Triclinic),
-    _Z(1),
-    _group("P 1"),
-    _name("uc"),
-    _indexingTolerance(0.2),
-    _niggli()
+UnitCell::UnitCell()
+: _a(Eigen::Matrix3d::Identity()),
+  _b_transposed(Eigen::Matrix3d::Identity()),
+  _NP(Eigen::Matrix3d::Identity()),
+  _material(nullptr),
+  _centring(LatticeCentring::P),
+  _bravaisType(BravaisType::Triclinic),
+  _Z(1),
+  _space_group("P 1"),
+  _name("uc"),
+  _indexingTolerance(0.2),
+  _niggli()
 {
 }
+
+UnitCell::UnitCell(const UnitCell &other)
+: _a(other._a),
+  _b_transposed(other._b_transposed),
+  _NP(other._NP),
+  _centring(other._centring),
+  _bravaisType(other._bravaisType),
+  _Z(other._Z),
+  _space_group(other._space_group),
+  _name(other._name),
+  _indexingTolerance(other._indexingTolerance),
+  _niggli(other._niggli),
+  _characterSigmas(other._characterSigmas),
+  _states(other._states)
+{
+    _material.reset(other._material ? other._material->clone() : nullptr);
+}
+
 
 UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, double gamma): UnitCell()
 {
     setParameters(a,b,c,alpha,beta,gamma);
+}
+
+UnitCell& UnitCell::operator=(const UnitCell &other)
+{
+    if (this != &other) {
+        _a = other._a;
+        _b_transposed = other._b_transposed;
+        _NP = other._NP;
+        _material.reset(other._material ? other._material->clone() : nullptr);
+        _centring = other._centring;
+        _bravaisType = other._bravaisType;
+        _Z = other._Z;
+        _space_group = other._space_group;
+        _name = other._name;
+        _indexingTolerance = other._indexingTolerance;
+        _niggli = other._niggli;
+        _characterSigmas = other._characterSigmas;
+        _states = other._states;
+    }
+    return *this;
 }
 
 void UnitCell::initState(sptrDataSet data) {
@@ -428,7 +465,7 @@ void UnitCell::printSelf(std::ostream& os) const
     auto rc = reciprocalCharacter();
 
     os << "Space group:" << std::endl;
-    os << _group << std::endl;
+    os << _space_group << std::endl;
     os << "Direct Lattice:\n";
     os << std::fixed << std::setw(10) << std::setprecision(5) << c.a;
     os << std::fixed << std::setw(10) << std::setprecision(5) << c.b;
@@ -471,8 +508,6 @@ std::vector<MillerIndex> UnitCell::generateReflectionsInShell(double dmin, doubl
     const int num_hkl = 2*hkl_max+1;
     hkls.reserve(num_hkl*num_hkl*num_hkl);
 
-    SpaceGroup group(spaceGroup());
-
     for (int h = -hkl_max; h <= hkl_max; ++h) {
 
         for (int k = -hkl_max; k <= hkl_max; ++k) {
@@ -506,7 +541,7 @@ std::vector<MillerIndex> UnitCell::generateReflectionsInShell(double dmin, doubl
                 }
 
                 // skip those HKL which are forbidden by the space group
-                if (group.isExtinct(hkl)) {
+                if (_space_group.isExtinct(hkl)) {
                     continue;
                 }
 
@@ -544,24 +579,34 @@ void UnitCell::setZ(unsigned int Z)
     _Z = Z;
 }
 
-sptrMaterial UnitCell::material() const
+Material* UnitCell::material()
 {
-    return _material;
+    return _material.get();
 }
 
-void UnitCell::setMaterial(const sptrMaterial& material)
+const Material* UnitCell::material() const
 {
-    _material = material;
+    return _material.get();
 }
 
-void UnitCell::setSpaceGroup(const std::string& symbol)
+void UnitCell::setMaterial(std::unique_ptr<Material> material)
 {
-    _group = SpaceGroup(symbol);
+    _material = std::move(material);
+}
+
+void UnitCell::setMaterial(const Material& material)
+{
+    _material.reset(material.clone());
+}
+
+void UnitCell::setSpaceGroup(const SpaceGroup& space_group)
+{
+    _space_group = _space_group;
 }
 
 const SpaceGroup& UnitCell::spaceGroup() const
 {
-    return _group;
+    return _space_group;
 }
 
 void UnitCell::setName(const std::string& name)

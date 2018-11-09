@@ -3,6 +3,7 @@
 #include <nsxlib/MillerIndex.h>
 #include <nsxlib/Minimizer.h>
 #include <nsxlib/NSXTest.h>
+#include <nsxlib/SpaceGroup.h>
 #include <nsxlib/UnitCell.h>
 #include <nsxlib/Units.h>
 
@@ -69,7 +70,7 @@ int main()
     NSX_CHECK_CLOSE(cell4.angle({1,0,0},{0,0,1}),82.0*nsx::deg,tolerance);
 
     // Check equivalence
-    cell4.setSpaceGroup("P 4/m m m");
+    cell4.setSpaceGroup(nsx::SpaceGroup("P 4/m m m"));
 
     auto space_group = cell4.spaceGroup();
 
@@ -89,7 +90,7 @@ int main()
     // computed covariance matrix
     Eigen::Matrix<double, 6, 6> cov;
     cov.setZero();
-   
+
     // random number generator
     auto get_random = []()
     {
@@ -111,7 +112,7 @@ int main()
     cell.setBasis(AA);
     auto A_cc = cell.character();
     auto ch = cell.character();
-    
+
     for (auto n = 0; n < nmax; ++n) {
         // random perturbation to character
         double d[6];
@@ -119,10 +120,10 @@ int main()
         for (auto i = 0; i < 6; ++i) {
             d[i] = get_random();
         }
-        
+
         // update covariance matrix
         for (auto i = 0; i < 6; ++i) {
-            for (auto j = 0; j < 6; ++j) {            
+            for (auto j = 0; j < 6; ++j) {
                 cov(i, j) += d[i]*d[j];
                 cov(j, i) = cov(i, j);
             }
@@ -177,7 +178,7 @@ int main()
     NSX_CHECK_CLOSE(sigma.g12, sigma_expected.g12, 1e-3);
     NSX_CHECK_CLOSE(sigma.g22, sigma_expected.g22, 1e-3);
 
-    // the sigmas of parameters a,b,c,alpha,beta,gamma are 
+    // the sigmas of parameters a,b,c,alpha,beta,gamma are
     // computed by first order propagation of errors, so we do
     // not expect them to be so close to the true value
     NSX_CHECK_CLOSE(sigma.a, sigma_expected.a, 1e-1);
@@ -185,7 +186,7 @@ int main()
     NSX_CHECK_CLOSE(sigma.c, sigma_expected.c, 1e-1);
     NSX_CHECK_CLOSE(sigma.alpha, sigma_expected.alpha, 1.0);
     NSX_CHECK_CLOSE(sigma.beta, sigma_expected.beta, 1.0);
-    NSX_CHECK_CLOSE(sigma.gamma, sigma_expected.gamma, 1.0);    
+    NSX_CHECK_CLOSE(sigma.gamma, sigma_expected.gamma, 1.0);
 
     // test niggli constraints
     cell.setParameters(55.03, 58.60, 66.89, 1.569, 1.57, 1.571);
@@ -203,7 +204,7 @@ int main()
     NSX_CHECK_CLOSE(ch.gamma, M_PI/2.0, 1e-6);
 
     NSX_CHECK_EQUAL(new_cell.equivalent(cell, 1e-3), true);
-   
+
     const double deg = M_PI / 180.0;
     nsx::NiggliCharacter nch;
 
@@ -249,7 +250,7 @@ int main()
     nsx::FitParameters params;
     Eigen::Vector3d u;
     const Eigen::Matrix3d U = cell.niggliOrientation();
-    Eigen::VectorXd x = cell.parameters();    
+    Eigen::VectorXd x = cell.parameters();
     u.setZero();
 
     auto residual = [&](Eigen::VectorXd& f) -> int

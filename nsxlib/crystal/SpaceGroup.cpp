@@ -285,6 +285,19 @@ std::vector<std::string> SpaceGroup::symbols()
     return symbols;
 }
 
+SpaceGroup::SpaceGroup()
+{
+    auto p = symmetry_table[0];
+
+    _symbol = p.first;
+
+    _generators = p.second;
+
+    reduceSymbol();
+
+    generateGroupElements();
+}
+
 SpaceGroup::SpaceGroup(std::string symbol)
 {
     symbol = compress(trim(symbol));

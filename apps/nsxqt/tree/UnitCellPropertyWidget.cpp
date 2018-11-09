@@ -1,3 +1,4 @@
+#include <memory>
 #include <stdexcept>
 
 #include <QCompleter>
@@ -139,8 +140,7 @@ void UnitCellPropertyWidget::setChemicalFormula()
     auto formula = ui->chemicalFormula->text();
 
     try {
-        nsx::sptrMaterial material(new nsx::Material(formula.toStdString()));
-        _unitCellItem->data(Qt::UserRole).value<nsx::sptrUnitCell>()->setMaterial(material);
+        _unitCellItem->data(Qt::UserRole).value<nsx::sptrUnitCell>()->setMaterial(std::unique_ptr<nsx::Material>(new nsx::Material(formula.toStdString())));
     } catch(std::exception& e) {
        nsx::error() << e.what();
    }
