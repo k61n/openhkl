@@ -29,12 +29,12 @@
 
 #pragma once
 
-#include <map>
+#include <memory>
 #include <string>
 
 #include <yaml-cpp/yaml.h>
 
-#include "InstrumentTypes.h"
+#include "Detector.h"
 #include "Sample.h"
 #include "Source.h"
 
@@ -54,9 +54,6 @@ public:
     //! Constructs a diffractometer from another one
     Diffractometer(const Diffractometer& other);
 
-    //! Virtual copy constructor
-    virtual Diffractometer* clone() const {return nullptr;}
-
     //! Destructor
     virtual ~Diffractometer();
 
@@ -66,8 +63,19 @@ public:
     //! Return the name of this diffractometer
     const std::string& name() const;
 
-    //! Return the detector of this diffractometer
-    sptrDetector detector();
+    //! Set the name of the diffractometer
+    void setName(const std::string& name);
+
+    //! Return a pointer to the detector of this diffractometer
+    Detector* detector();
+
+    //! Returns const pointer to the detector of this diffractometer
+    const Detector* detector() const;
+
+#ifndef SWIG
+    //! Set the detector of this diffractometer
+    void setDetector(std::unique_ptr<Detector> detector);
+#endif
 
     //! Return the non-const reference to the sample of this diffractometer
     Sample& sample();
@@ -87,12 +95,6 @@ public:
     //! Set the source of this diffractometer
     void setSource(const Source &source);
 
-    //! Set the detector of this diffractometer
-    void setDetector(sptrDetector detector);
-
-    //! Set the name of the diffractometer
-    void setName(const std::string& name);
-
 protected:
 
     //! Default constructor
@@ -105,7 +107,7 @@ protected:
     std::string _name;
 
     //! Pointer to detector
-    sptrDetector _detector;
+    std::unique_ptr<Detector> _detector;
 
     //! The sample
     Sample _sample;

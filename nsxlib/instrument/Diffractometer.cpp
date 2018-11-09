@@ -37,7 +37,7 @@ Diffractometer::Diffractometer() : _name(""), _detector(nullptr), _sample(), _so
 
 Diffractometer::Diffractometer(const Diffractometer& other)
 : _name(other._name),
-  _detector(other._detector==nullptr ? nullptr : other._detector->clone()),
+  _detector(other._detector ? other._detector->clone() : nullptr),
   _sample(other._sample),
   _source(other._source)
 {
@@ -53,7 +53,7 @@ Diffractometer::Diffractometer(const YAML::Node& node)
     _name = node["name"].as<std::string>();
 
     // Build the detector from its corresponding YAML node
-    _detector = sptrDetector(Detector::create(node["detector"]));
+    _detector.reset(Detector::create(node["detector"]));
 
     // Build the sample from its corresponding node
     _sample = Sample(node["sample"]);
@@ -70,17 +70,16 @@ Diffractometer& Diffractometer::operator=(const Diffractometer& other)
 {
     if (this != &other) {
         _name = other._name;
-
-        _detector = sptrDetector(other._detector==nullptr ? nullptr : other._detector->clone());
+        _detector.reset(other._detector ? other._detector->clone() : nullptr);
         _sample = other._sample;
         _source = other._source;
     }
     return *this;
 }
 
-void Diffractometer::setDetector(sptrDetector d)
+void Diffractometer::setDetector(std::unique_ptr<Detector> detector)
 {
-    _detector=d;
+    _detector = std::move(detector);
 }
 
 void Diffractometer::setName(const std::string& name)
@@ -93,9 +92,14 @@ const std::string& Diffractometer::name() const
     return _name;
 }
 
-sptrDetector Diffractometer::detector()
+Detector* Diffractometer::detector()
 {
-    return _detector;
+    return _detector.get();
+}
+
+const Detector* Diffractometer::detector() const
+{
+    return _detector.get();
 }
 
 Sample& Diffractometer::sample()

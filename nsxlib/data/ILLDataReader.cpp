@@ -102,10 +102,9 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
         scannedAxisId.push_back(id);
     }
 
-    auto detector = _diffractometer->detector();
-
     // This map relates the ids of the physical axis registered in the instrument definition file with their name
     std::map<size_t,std::string> instrument_axis;
+    const auto* detector = _diffractometer->detector();
     if (detector) {
         const auto &detector_gonio = _diffractometer->detector()->gonio();
         size_t n_detector_gonio_axes = detector_gonio.nAxes();;

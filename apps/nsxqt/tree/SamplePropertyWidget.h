@@ -13,13 +13,14 @@ class SamplePropertyWidget : public QWidget
     Q_OBJECT
 
 public:
-    //! Create new SamplePropertyWidget from a Sample TreeItems
+
     explicit SamplePropertyWidget(SampleItem* caller,QWidget* parent=0);
+
     ~SamplePropertyWidget();
-private slots:
-    void cellHasChanged(int,int);
+
 private:
-    //!Pointer to the sample
+
+    Ui::SamplePropertyWidget *_ui;
+
     SampleItem* _sampleItem;
-    Ui::SamplePropertyWidget *ui;
 };
