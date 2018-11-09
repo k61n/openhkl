@@ -103,7 +103,6 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
     }
 
     auto detector = _diffractometer->detector();
-    auto source = _diffractometer->source();
 
     // This map relates the ids of the physical axis registered in the instrument definition file with their name
     std::map<size_t,std::string> instrument_axis;
@@ -124,13 +123,12 @@ ILLDataReader::ILLDataReader(const std::string& filename, const sptrDiffractomet
         instrument_axis.insert(std::make_pair(axis.id(),axis.name()));
     }
 
-    if (source) {
-        const auto &source_gonio = _diffractometer->source()->gonio();
-        size_t n_source_gonio_axes = source_gonio.nAxes();;
-        for (size_t i = 0; i < n_source_gonio_axes; ++i) {
-            const auto &axis = source_gonio.axis(i);
-            instrument_axis.insert(std::make_pair(axis.id(),axis.name()));
-        }
+    const auto &source = _diffractometer->source();
+    const auto &source_gonio = _diffractometer->source().gonio();
+    size_t n_source_gonio_axes = source_gonio.nAxes();;
+    for (size_t i = 0; i < n_source_gonio_axes; ++i) {
+        const auto &axis = source_gonio.axis(i);
+        instrument_axis.insert(std::make_pair(axis.id(),axis.name()));
     }
 
     // Check that every scanned axis has been defined in the instrument file. Otherwise, throws.

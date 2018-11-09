@@ -31,7 +31,7 @@ sptrDiffractometer Diffractometer::build(const std::string& name)
     return diffractometer;
 }
 
-Diffractometer::Diffractometer() : _name(""), _detector(nullptr), _sample(), _source(nullptr)
+Diffractometer::Diffractometer() : _name(""), _detector(nullptr), _sample(), _source()
 {
 }
 
@@ -39,11 +39,11 @@ Diffractometer::Diffractometer(const Diffractometer& other)
 : _name(other._name),
   _detector(other._detector==nullptr ? nullptr : other._detector->clone()),
   _sample(other._sample),
-  _source(other._source==nullptr ? nullptr : other._source->clone())
+  _source(other._source)
 {
 }
 
-Diffractometer::Diffractometer(const std::string& name) : _name(name), _detector(nullptr), _sample(), _source(nullptr)
+Diffractometer::Diffractometer(const std::string& name) : _name(name), _detector(nullptr), _sample(), _source()
 {
 }
 
@@ -59,7 +59,7 @@ Diffractometer::Diffractometer(const YAML::Node& node)
     _sample = Sample(node["sample"]);
 
     // Build the source from its corresponding node
-    _source= sptrSource(Source::create(node["source"]));
+    _source= Source(node["source"]);
 }
 
 Diffractometer::~Diffractometer()
@@ -73,7 +73,7 @@ Diffractometer& Diffractometer::operator=(const Diffractometer& other)
 
         _detector = sptrDetector(other._detector==nullptr ? nullptr : other._detector->clone());
         _sample = other._sample;
-        _source = sptrSource(other._source==nullptr ? nullptr : other._source->clone());
+        _source = other._source;
     }
     return *this;
 }
@@ -86,16 +86,6 @@ void Diffractometer::setDetector(sptrDetector d)
 void Diffractometer::setName(const std::string& name)
 {
     _name = name;
-}
-
-void Diffractometer::setSample(const Sample &sample)
-{
-    _sample=sample;
-}
-
-void Diffractometer::setSource(sptrSource source)
-{
-    _source=source;
 }
 
 const std::string& Diffractometer::name() const
@@ -118,9 +108,24 @@ const Sample& Diffractometer::sample() const
     return _sample;
 }
 
-sptrSource Diffractometer::source()
+void Diffractometer::setSample(const Sample &sample)
+{
+    _sample = sample;
+}
+
+Source& Diffractometer::source()
 {
     return _source;
+}
+
+const Source& Diffractometer::source() const
+{
+    return _source;
+}
+
+void Diffractometer::setSource(const Source &source)
+{
+    _source = source;
 }
 
 } // end namespace nsx

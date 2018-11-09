@@ -16,13 +16,16 @@ SourcePropertyWidget::SourcePropertyWidget(SourceItem* caller,QWidget *parent) :
     _caller(caller)
 {
     ui->setupUi(this);
-    nsx::sptrSource source=_caller->experiment()->diffractometer()->source();
-    auto monos = source->monochromators();
+
+    const auto &source =_caller->experiment()->diffractometer()->source();
+
+    const auto &monos = source.monochromators();
+
     for (auto&& m : monos) {
         ui->comboBox_Monochromators->addItem(QString::fromStdString(m.name()));
     }
 
-    auto& mono=source->selectedMonochromator();
+    const auto& mono = source.selectedMonochromator();
 
     try {
         ui->doubleSpinBox_Wavelength->setValue(mono.wavelength());
@@ -42,27 +45,32 @@ SourcePropertyWidget::~SourcePropertyWidget()
 
 void SourcePropertyWidget::on_doubleSpinBox_Wavelength_valueChanged(double arg1)
 {
-     auto& mono=_caller->experiment()->diffractometer()->source()->selectedMonochromator();
-     mono.setWavelength(arg1);
+    auto &source = _caller->experiment()->diffractometer()->source();
+    auto &mono = source.selectedMonochromator();
+    mono.setWavelength(arg1);
 }
 
 void SourcePropertyWidget::on_doubleSpinBox_Width_valueChanged(double arg1)
 {
-    auto& mono=_caller->experiment()->diffractometer()->source()->selectedMonochromator();
+    auto &source =_caller->experiment()->diffractometer()->source();
+    auto &mono = source.selectedMonochromator();
     mono.setWidth(arg1*nsx::mm);
 }
 
 void SourcePropertyWidget::on_doubleSpinBox_Height_valueChanged(double arg1)
 {
-    auto& mono=_caller->experiment()->diffractometer()->source()->selectedMonochromator();
+    auto &source =_caller->experiment()->diffractometer()->source();
+    auto &mono = source.selectedMonochromator();
     mono.setHeight(arg1*nsx::mm);
 }
 
 void SourcePropertyWidget::on_comboBox_Monochromators_currentIndexChanged(int index)
 {
-    auto source=_caller->experiment()->diffractometer()->source();
-    source->setSelectedMonochromator(index);
-    auto& mono=source->selectedMonochromator();
+    auto &source =_caller->experiment()->diffractometer()->source();
+    source.setSelectedMonochromator(index);
+
+    const auto& mono = source.selectedMonochromator();
+
     ui->doubleSpinBox_Wavelength->setValue(mono.wavelength());
     ui->doubleSpinBox_FWHM->setValue(mono.fullWidthHalfMaximum());
     ui->doubleSpinBox_Height->setValue(mono.height()/nsx::mm);

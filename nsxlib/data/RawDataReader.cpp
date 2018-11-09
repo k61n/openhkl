@@ -74,13 +74,13 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const st
   _wavelength(wavelength)
 {
     // ensure that there is at least one monochromator!
-    if ( _diffractometer->source()->nMonochromators() == 0 ) {
+    if ( _diffractometer->source().nMonochromators() == 0 ) {
         Monochromator mono("mono");
-        _diffractometer->source()->addMonochromator(mono);
+        _diffractometer->source().addMonochromator(mono);
     }
 
     _length = _bpp * _nRows * _nCols;
-    auto& mono = _diffractometer->source()->selectedMonochromator();
+    auto& mono = _diffractometer->source().selectedMonochromator();
     mono.setWavelength(_wavelength);
 
     _metadata.add<std::string>("Instrument", _diffractometer->name());
