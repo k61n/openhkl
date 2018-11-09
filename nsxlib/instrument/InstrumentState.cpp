@@ -111,7 +111,7 @@ Eigen::Matrix3d InstrumentState::sampleOrientationMatrix() const
 
 Eigen::Matrix3d InstrumentState::jacobianK(double px, double py) const
 {
-    auto detector = _diffractometer->detector();
+    const auto* detector = _diffractometer->detector();
 
     // Jacobian from (px, py, frame) to lab coordinates on detector
     Eigen::Matrix3d dpdx = detector->jacobian(px, py);

@@ -87,8 +87,8 @@ Eigen::Quaterniond RotAxis::quaternion(double angle) const
 
 std::ostream& RotAxis::printSelf(std::ostream& os) const
 {
-    os << "Rotation Axis: " << _axis.transpose() << ", direction: ";
-    os << (_dir == Direction::CW ? "CW" : "CCW");
+    os << "Rotation Axis: " << _axis.transpose() << ", orientation: ";
+    os << (_dir == Direction::CW ? "clockwise" : "counter-clockwise");
 
     return os;
 }

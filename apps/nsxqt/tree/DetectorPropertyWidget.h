@@ -8,19 +8,21 @@ namespace Ui {
 
 class DetectorItem;
 
-class DetectorPropertyWidget : public QWidget
-{
+class DetectorPropertyWidget : public QWidget {
+
     Q_OBJECT
 
 public:
-    explicit DetectorPropertyWidget(DetectorItem* caller,QWidget *parent = 0);
+    explicit DetectorPropertyWidget(DetectorItem* caller,QWidget *parent = nullptr);
+
     ~DetectorPropertyWidget();
 
-private slots:
-    void cellHasChanged(int,int);
-    void on_doubleSpinBox_Distance_valueChanged(double arg1);
+private:
+
+    void onSampleToDectorDistanceChanged(double distance);
 
 private:
+    Ui::DetectorPropertyWidget *_ui;
+
     DetectorItem* _detectorItem;
-    Ui::DetectorPropertyWidget *ui;
 };

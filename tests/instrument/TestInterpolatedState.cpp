@@ -24,7 +24,7 @@ void run_test(const char* filename, const char* instrument)
 
     nsx::sptrExperiment expt(new nsx::Experiment("test", instrument));
     auto diff = expt->diffractometer();
-    auto detector = diff->detector();
+    const auto* detector = diff->detector();
     nsx::sptrDataSet dataf(factory.create("hdf", filename, diff));
 
     expt->addData(dataf);

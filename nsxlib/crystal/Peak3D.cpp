@@ -204,7 +204,7 @@ ReciprocalVector Peak3D::q() const
 {
     auto pixel_coords = _shape.center();
     auto state = _data->interpolatedState(pixel_coords[2]);
-    auto detector = _data->diffractometer()->detector();
+    const auto* detector = _data->diffractometer()->detector();
     auto detector_position = DirectVector(detector->pixelPosition(pixel_coords[0], pixel_coords[1]));
     return state.sampleQ(detector_position);
 }

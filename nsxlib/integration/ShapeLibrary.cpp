@@ -117,7 +117,7 @@ struct FitData {
     //! Construct a FitData instance directly from a peak.
     FitData(sptrPeak3D peak)
     {
-        auto detector = peak->data()->diffractometer()->detector();
+        const auto* detector = peak->data()->diffractometer()->detector();
         Eigen::Vector3d center = peak->shape().center();
         auto state = peak->data()->interpolatedState(center[2]);
 

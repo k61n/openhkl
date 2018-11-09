@@ -120,7 +120,7 @@ void FrameDetectorGlobalOffsets::fit()
     }
 
     // Fit the detector offsets with the selected data
-    auto detector = _experiment_item->experiment()->diffractometer()->detector();
+    const auto* detector = _experiment_item->experiment()->diffractometer()->detector();
     auto fit_results = detector->fitGonioOffsets(selected_data,_ui->n_iterations->value(),_ui->tolerance->value());
 
     // The fit failed for whatever reason, return

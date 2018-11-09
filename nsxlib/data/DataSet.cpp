@@ -405,7 +405,7 @@ std::vector<DetectorEvent> DataSet::events(const std::vector<ReciprocalVector>& 
         const double f = 0.5*(f0+f1);
         const auto state = interpolatedState(f);
         Eigen::RowVector3d kf = state.ki().rowVector() + q_vect*state.sampleOrientationMatrix().transpose();
-        auto detector = _diffractometer->detector();
+        const auto* detector = _diffractometer->detector();
         auto event = detector->constructEvent(DirectVector(state.samplePosition), ReciprocalVector((kf*state.detectorOrientation)));
         bool accept = event._tof > 0;
 
@@ -420,14 +420,14 @@ std::vector<DetectorEvent> DataSet::events(const std::vector<ReciprocalVector>& 
 ReciprocalVector DataSet::computeQ(const DetectorEvent& ev) const
 {
     const auto& state = interpolatedState(ev._frame);
-    auto detector = diffractometer()->detector();
+    const auto* detector = diffractometer()->detector();
     const auto& detector_position = DirectVector(detector->pixelPosition(ev._px, ev._py));
     return state.sampleQ(detector_position);
 }
 
 Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx)
 {
-    auto detector = _diffractometer->detector();
+    const auto* detector = _diffractometer->detector();
     Eigen::ArrayXXd new_frame = frame(idx).cast<double>();
     new_frame -= detector->baseline();
     new_frame /= detector->gain();

@@ -48,8 +48,6 @@
 %shared_ptr(nsx::EnhancedAnnularConvolver)
 %shared_ptr(nsx::RadialConvolver)
 %shared_ptr(nsx::DataSet)
-%shared_ptr(nsx::Source)
-%shared_ptr(nsx::Sample)
 %shared_ptr(nsx::IDataReader)
 %shared_ptr(nsx::HDF5DataReader)
 %shared_ptr(nsx::HDF5MetaDataReader)
@@ -61,10 +59,6 @@
 %shared_ptr(nsx::ProgressHandler)
 
 %shared_ptr(nsx::UnitCell)
-%shared_ptr(nsx::Component)
-%shared_ptr(nsx::Detector)
-%shared_ptr(nsx::FlatDetector)
-%shared_ptr(nsx::CylindricalDetector)
 %shared_ptr(nsx::ShapeLibrary)
 
 %{
