@@ -1,3 +1,6 @@
+#include <QComboBox>
+#include <QDoubleSpinBox>
+
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/InstrumentTypes.h>
 #include <nsxlib/Logger.h>
@@ -10,69 +13,64 @@
 
 #include "ui_SourcePropertyWidget.h"
 
-SourcePropertyWidget::SourcePropertyWidget(SourceItem* caller,QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::SourcePropertyWidget),
-    _caller(caller)
+SourcePropertyWidget::SourcePropertyWidget(SourceItem* caller,QWidget *parent)
+    : QWidget(parent),
+      _ui(new Ui::SourcePropertyWidget),
+      _caller(caller)
 {
-    ui->setupUi(this);
+    _ui->setupUi(this);
 
     const auto &source =_caller->experiment()->diffractometer()->source();
 
     const auto &monos = source.monochromators();
 
     for (auto&& m : monos) {
-        ui->comboBox_Monochromators->addItem(QString::fromStdString(m.name()));
+        _ui->monochromators->addItem(QString::fromStdString(m.name()));
     }
 
-    const auto& mono = source.selectedMonochromator();
+    connect(_ui->monochromators,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),[=](int index){onSelectedMonochromatorChanged(index);});
+    connect(_ui->height,static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),[=](double height){onHeightChanged(height);});
+    connect(_ui->wavelength,static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),[=](double wavelength){onWavelengthChanged(wavelength);});
+    connect(_ui->width,static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),[=](double width){onWidthChanged(width);});
 
-    try {
-        ui->doubleSpinBox_Wavelength->setValue(mono.wavelength());
-        ui->doubleSpinBox_FWHM->setValue(mono.fullWidthHalfMaximum());
-        ui->doubleSpinBox_Height->setValue(mono.height()/nsx::mm);
-        ui->doubleSpinBox_Width->setValue(mono.width()/nsx::mm);
-    }
-    catch (std::exception& e) {
-        nsx::error() << e.what();
-    }
+    onSelectedMonochromatorChanged(0);
 }
 
 SourcePropertyWidget::~SourcePropertyWidget()
 {
-    delete ui;
+    delete _ui;
 }
 
-void SourcePropertyWidget::on_doubleSpinBox_Wavelength_valueChanged(double arg1)
+void SourcePropertyWidget::onWavelengthChanged(double wavelength)
 {
     auto &source = _caller->experiment()->diffractometer()->source();
     auto &mono = source.selectedMonochromator();
-    mono.setWavelength(arg1);
+    mono.setWavelength(wavelength);
 }
 
-void SourcePropertyWidget::on_doubleSpinBox_Width_valueChanged(double arg1)
+void SourcePropertyWidget::onWidthChanged(double width)
 {
-    auto &source =_caller->experiment()->diffractometer()->source();
+    auto &source = _caller->experiment()->diffractometer()->source();
     auto &mono = source.selectedMonochromator();
-    mono.setWidth(arg1*nsx::mm);
+    mono.setWidth(width*nsx::mm);
 }
 
-void SourcePropertyWidget::on_doubleSpinBox_Height_valueChanged(double arg1)
+void SourcePropertyWidget::onHeightChanged(double height)
 {
-    auto &source =_caller->experiment()->diffractometer()->source();
+    auto &source = _caller->experiment()->diffractometer()->source();
     auto &mono = source.selectedMonochromator();
-    mono.setHeight(arg1*nsx::mm);
+    mono.setHeight(height*nsx::mm);
 }
 
-void SourcePropertyWidget::on_comboBox_Monochromators_currentIndexChanged(int index)
+void SourcePropertyWidget::onSelectedMonochromatorChanged(int index)
 {
-    auto &source =_caller->experiment()->diffractometer()->source();
+    auto &source = _caller->experiment()->diffractometer()->source();
     source.setSelectedMonochromator(index);
 
-    const auto& mono = source.selectedMonochromator();
+    const auto &mono = source.selectedMonochromator();
 
-    ui->doubleSpinBox_Wavelength->setValue(mono.wavelength());
-    ui->doubleSpinBox_FWHM->setValue(mono.fullWidthHalfMaximum());
-    ui->doubleSpinBox_Height->setValue(mono.height()/nsx::mm);
-    ui->doubleSpinBox_Width->setValue(mono.width()/nsx::mm);
+    _ui->wavelength->setValue(mono.wavelength());
+    _ui->fwhm->setValue(mono.fullWidthHalfMaximum());
+    _ui->height->setValue(mono.height()/nsx::mm);
+    _ui->width->setValue(mono.width()/nsx::mm);
 }
