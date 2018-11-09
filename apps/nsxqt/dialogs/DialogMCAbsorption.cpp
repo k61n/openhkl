@@ -74,8 +74,8 @@ void DialogMCAbsorption::on_pushButton_run_pressed()
         return;
     }
 
-    auto source = diffractometer->source();
-    auto& mono = source->selectedMonochromator();
+    const auto &source = diffractometer->source();
+    const auto &mono = source.selectedMonochromator();
 
     const auto &sample = diffractometer->sample();
     const auto &hull = sample.shape();

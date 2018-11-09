@@ -652,7 +652,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
     nsx::InstrumentState state = _currentData->interpolatedState(_currentFrameIndex);
 
-    auto& mono = instr->source()->selectedMonochromator();
+    const auto &mono = instr->source().selectedMonochromator();
     double wave = mono.wavelength();
 
     QString ttip;

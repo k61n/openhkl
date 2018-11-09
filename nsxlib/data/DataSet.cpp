@@ -64,7 +64,7 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader):
     _nFrames = _metadata->key<int>("npdone");
 
     double wav = _metadata->key<double>("wavelength");
-    _diffractometer->source()->selectedMonochromator().setWavelength(wav);
+    _diffractometer->source().selectedMonochromator().setWavelength(wav);
 
     // Getting Scan parameters for the detector
     _states.reserve(_nFrames);

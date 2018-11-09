@@ -36,6 +36,7 @@
 
 #include "InstrumentTypes.h"
 #include "Sample.h"
+#include "Source.h"
 
 namespace nsx {
 
@@ -62,32 +63,35 @@ public:
     //! Assignment operator
     Diffractometer& operator=(const Diffractometer& other);
 
-    //! Get the name of this diffractometer
+    //! Return the name of this diffractometer
     const std::string& name() const;
 
-    //! Get the detector of this diffractometer
+    //! Return the detector of this diffractometer
     sptrDetector detector();
 
-    //! Get the non-const reference to the sample of this diffractometer
+    //! Return the non-const reference to the sample of this diffractometer
     Sample& sample();
 
-    //! Get the const reference to the sample of this diffractometer
+    //! Return the const reference to the sample of this diffractometer
     const Sample& sample() const;
 
     //! Set the sample of this diffractometer
     void setSample(const Sample &sample);
 
-    //! Get the source of this diffractometer
-    sptrSource source();
+    //! Return the non-const reference to the source of this diffractometer
+    Source& source();
+
+    //! Return the const reference to the source of this diffractometer
+    const Source& source() const;
+
+    //! Set the source of this diffractometer
+    void setSource(const Source &source);
 
     //! Set the detector of this diffractometer
     void setDetector(sptrDetector detector);
 
     //! Set the name of the diffractometer
     void setName(const std::string& name);
-
-    //! Set the source of this diffractometer
-    void setSource(sptrSource source);
 
 protected:
 
@@ -103,11 +107,11 @@ protected:
     //! Pointer to detector
     sptrDetector _detector;
 
-    //! Sample
+    //! The sample
     Sample _sample;
 
-    //! Pointer to source
-    sptrSource _source;
+    //! The neutron incoming beam
+    Source _source;
 };
 
 } // end namespace nsx

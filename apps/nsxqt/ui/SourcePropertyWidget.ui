@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="2" column="1" colspan="2">
-    <widget class="QDoubleSpinBox" name="doubleSpinBox_Wavelength">
+    <widget class="QDoubleSpinBox" name="wavelength">
      <property name="buttonSymbols">
       <enum>QAbstractSpinBox::NoButtons</enum>
      </property>
@@ -39,7 +39,7 @@
     </widget>
    </item>
    <item row="5" column="1" colspan="2">
-    <widget class="QDoubleSpinBox" name="doubleSpinBox_Height">
+    <widget class="QDoubleSpinBox" name="height">
      <property name="buttonSymbols">
       <enum>QAbstractSpinBox::NoButtons</enum>
      </property>
@@ -60,7 +60,7 @@
     </widget>
    </item>
    <item row="3" column="1" colspan="2">
-    <widget class="QDoubleSpinBox" name="doubleSpinBox_FWHM">
+    <widget class="QDoubleSpinBox" name="fwhm">
      <property name="buttonSymbols">
       <enum>QAbstractSpinBox::NoButtons</enum>
      </property>
@@ -77,7 +77,7 @@
     </widget>
    </item>
    <item row="4" column="1" colspan="2">
-    <widget class="QDoubleSpinBox" name="doubleSpinBox_Width">
+    <widget class="QDoubleSpinBox" name="width">
      <property name="buttonSymbols">
       <enum>QAbstractSpinBox::NoButtons</enum>
      </property>
@@ -91,7 +91,7 @@
     </widget>
    </item>
    <item row="0" column="1" colspan="2">
-    <widget class="QComboBox" name="comboBox">
+    <widget class="QComboBox" name="source_type">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -108,7 +108,7 @@
     </widget>
    </item>
    <item row="1" column="1" colspan="2">
-    <widget class="QComboBox" name="comboBox_Monochromators">
+    <widget class="QComboBox" name="monochromators">
      <property name="enabled">
       <bool>true</bool>
      </property>

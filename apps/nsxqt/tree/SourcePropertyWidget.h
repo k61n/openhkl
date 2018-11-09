@@ -13,19 +13,24 @@ class SourcePropertyWidget : public QWidget
     Q_OBJECT
 
 public:
+
     explicit SourcePropertyWidget(SourceItem* caller,QWidget *parent = 0);
+
     ~SourcePropertyWidget();
 
-private slots:
-    void on_doubleSpinBox_Wavelength_valueChanged(double arg1);
+private:
 
-    void on_doubleSpinBox_Width_valueChanged(double arg1);
+    void onHeightChanged(double height);
 
-    void on_doubleSpinBox_Height_valueChanged(double arg1);
+    void onSelectedMonochromatorChanged(int index);
 
-    void on_comboBox_Monochromators_currentIndexChanged(int index);
+    void onWavelengthChanged(double wavelength);
+
+    void onWidthChanged(double width);
 
 private:
-    Ui::SourcePropertyWidget *ui;
+
+    Ui::SourcePropertyWidget *_ui;
+
     SourceItem* _caller;
 };

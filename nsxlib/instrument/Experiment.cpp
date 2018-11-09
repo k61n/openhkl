@@ -77,12 +77,12 @@ void Experiment::addData(sptrDataSet data)
     double wav=data->metadata()->key<double>("wavelength");
 
     // ensure that there is at least one monochromator!
-    if ( _diffractometer->source()->nMonochromators() == 0 ) {
+    if ( _diffractometer->source().nMonochromators() == 0 ) {
         Monochromator mono("mono");
-        _diffractometer->source()->addMonochromator(mono);
+        _diffractometer->source().addMonochromator(mono);
     }
 
-    auto& mono = _diffractometer->source()->selectedMonochromator();
+    auto& mono = _diffractometer->source().selectedMonochromator();
 
     if (_data.empty()) {
         mono.setWavelength(wav);

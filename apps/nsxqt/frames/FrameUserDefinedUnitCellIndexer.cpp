@@ -86,7 +86,7 @@ FrameUserDefinedUnitCellIndexer::FrameUserDefinedUnitCellIndexer(ExperimentItem*
     _ui->indexing_tolerance->setValue(parameters.indexing_tolerance);
     _ui->indexing_threshold->setValue(parameters.indexing_threshold);
 
-    _ui->wavelength->setValue(_experiment_item->experiment()->diffractometer()->source()->selectedMonochromator().wavelength());
+    _ui->wavelength->setValue(_experiment_item->experiment()->diffractometer()->source().selectedMonochromator().wavelength());
 
     _ui->max_n_q_vectors->setValue(parameters.max_n_q_vectors);
 

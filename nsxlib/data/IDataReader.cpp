@@ -77,9 +77,9 @@ InstrumentState IDataReader::state(size_t frame) const
     state.detectorPositionOffset = detector_trans.translation();
     state.samplePosition = sample_trans.translation();
 
-    state.ni = _diffractometer->source()->selectedMonochromator().ki().rowVector();
+    state.ni = _diffractometer->source().selectedMonochromator().ki().rowVector();
     state.ni.normalize();
-    state.wavelength = _diffractometer->source()->selectedMonochromator().wavelength();
+    state.wavelength = _diffractometer->source().selectedMonochromator().wavelength();
 
     return state;
 }

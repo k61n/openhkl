@@ -52,7 +52,7 @@ PeakList predictPeaks(ShapeLibrary library,
                       PeakInterpolation interpolation)
 {
     // Generate the Miller indices found in the [dmin,dmax] shell
-    auto& mono = data->diffractometer()->source()->selectedMonochromator();
+    const auto& mono = data->diffractometer()->source().selectedMonochromator();
     const double wavelength = mono.wavelength();
     auto predicted_hkls = unit_cell->generateReflectionsInShell(dmin, dmax, wavelength);
 
