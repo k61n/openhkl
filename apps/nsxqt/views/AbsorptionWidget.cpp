@@ -56,8 +56,7 @@ void AbsorptionWidget::readInfoFile(const std::string &filename)
         std::string _instrumentName, date;
         file >> _instrumentName >> date;
         if (_instrumentName.compare(_experiment->diffractometer()->name())!=0) {
-            QMessageBox::critical(this, tr("NSXTool"),
-                                  tr("Instrument name in video file does not match the diffractometer name"));
+            QMessageBox::critical(this, tr("NSXTool"), tr("Unknown instrument name"));
         }
 
         std::string line;
@@ -68,20 +67,23 @@ void AbsorptionWidget::readInfoFile(const std::string &filename)
         // Read line with goniometer angles
         getline(file,line);
         // Cout number of axes, validate with goniometer definition
-        std::size_t numberAngles=std::count(line.begin(),line.end(),':');
+        std::size_t numberAngles = std::count(line.begin(),line.end(),':');
         auto sample = _experiment->diffractometer()->sample();
-        if (numberAngles == 0) {
+        const auto &sample_gonio = sample->gonio();
+        if (numberAngles == sample_gonio.nAxes()) {
             QMessageBox::critical(this, tr("NSXTool"), tr("Number of goniometer axes in video file do not match instrument definition"));
         }
+
         // Remove all occurences of ':' before reading
         line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
         std::stringstream is(line);
-        for (std::size_t i=0;i<numberAngles;++i) {
+
+        for (std::size_t i = 0; i < numberAngles; ++i) {
             std::string name;
             double value;
             is >> name >> value;
-            auto axis = _experiment->diffractometer()->sample()->gonio()->axis(name);
-            if (!axis) {
+            const auto &axis = sample_gonio.axis(i);
+            if (axis.name().compare(name) != 0) {
                 QMessageBox::critical(this, tr("NSXTool"), tr("Physical axes in video file do not match instrument definition"));
             }
         }

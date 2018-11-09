@@ -23,43 +23,29 @@ SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent) :
 
     auto sample = _sampleItem->experiment()->diffractometer()->sample();
 
-    auto gonio = sample->gonio();
+    const auto &sample_gonio = sample->gonio();
 
-    auto axes = gonio->axes();
+    size_t n_sample_gonio_axes = sample_gonio.nAxes();
 
     ui->tableWidget_Sample->setEditTriggers(QAbstractItemView::DoubleClicked);
-    ui->tableWidget_Sample->setRowCount(axes.size());
+    ui->tableWidget_Sample->setRowCount(n_sample_gonio_axes);
 
     ui->tableWidget_Sample->setColumnCount(3);
     ui->tableWidget_Sample->verticalHeader()->setVisible(false);
 
-    for (size_t i = 0; i < axes.size(); ++i) {
-        auto axis = axes[i];
-        QTableWidgetItem* item0 = new QTableWidgetItem();
-        item0->setData(Qt::EditRole, QString(axis->name().c_str()));
-        if (axis->physical()) {
-            item0->setBackgroundColor(QColor("#FFDDDD"));
-        } else {
-            item0->setBackgroundColor(QColor("#DDFFDD"));
-        }
-        QTableWidgetItem* item1=new QTableWidgetItem();
-        std::ostringstream os;
+    for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
+        const auto &axis = sample_gonio.axis(i);
 
-        if (nsx::RotAxis* rot=dynamic_cast<nsx::RotAxis*>(axis)) {
-            os << "R(";
-            os << rot->axis().transpose();
-            os << ")";
-            if (rot->rotationDirection()) {
-                os << "CW";
-            } else {
-                os << "CCW";
-            }
-        }
-        else if(dynamic_cast<nsx::TransAxis*>(axis)) {
-            os << "T(";
-            os << axis->axis().transpose();
-            os << ")";
-        }
+        QTableWidgetItem* item0 = new QTableWidgetItem();
+
+        item0->setData(Qt::EditRole, QString(axis.name().c_str()));
+        item0->setBackgroundColor(axis.physical() ? QColor("#FFDDDD") : QColor("#DDFFDD"));
+
+        QTableWidgetItem* item1 = new QTableWidgetItem();
+
+        std::ostringstream os;
+        os << axis;
+
         item1->setData(Qt::EditRole, QString(os.str().c_str()));
         QTableWidgetItem* item2=new QTableWidgetItem();
 

@@ -65,7 +65,6 @@
 %shared_ptr(nsx::Detector)
 %shared_ptr(nsx::FlatDetector)
 %shared_ptr(nsx::CylindricalDetector)
-%shared_ptr(nsx::Gonio)
 %shared_ptr(nsx::ShapeLibrary)
 
 %{
@@ -217,9 +216,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "Axis.h"
 #include "RotAxis.h"
 #include "TransAxis.h"
-#include "Gonio.h"
   
-#include "Component.h"
 #include "Monochromator.h"
 
 #include "Detector.h"
@@ -563,7 +560,6 @@ namespace nsx {
 %include "Monochromator.h"
 %include "Diffractometer.h"
 %include "CylindricalDetector.h"
-%include "Gonio.h"
 
 
 %template(InstrumentStateList) std::vector<nsx::InstrumentState>;
@@ -571,7 +567,6 @@ namespace nsx {
 
 %include "Axis.h"
 %include "Experiment.h"
-%include "Component.h"
 %include "AxisFactory.h"
 %include "RotAxis.h"
 

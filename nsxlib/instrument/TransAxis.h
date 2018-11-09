@@ -60,8 +60,10 @@ public:
 
 	//! Assignment operator
 	TransAxis& operator=(const TransAxis& other);
+
 	Eigen::Transform<double,3,Eigen::Affine> affineMatrix(double value) const;
 
+	std::ostream& printSelf(std::ostream& os) const override;
 };
 
 } // end namespace nsx

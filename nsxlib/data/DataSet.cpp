@@ -231,38 +231,41 @@ void DataSet::saveHDF5(const std::string& filename) //const
     // Write detector states
     H5::Group detectorGroup(scanGroup.createGroup("Detector"));
 
-    auto axes = _diffractometer->detector()->gonio()->axes();
     hsize_t nf[1]={_nFrames};
     H5::DataSpace scanSpace(1,nf);
 
     const auto& detectorStates = _reader->detectorStates();
 
-    for (size_t j = 0; j < axes.size(); ++j) {
-        auto axis = axes[j];
+    const auto &detector_gonio = _diffractometer->detector()->gonio();
+    size_t n_detector_gonio_axes = detector_gonio.nAxes();
+    for (size_t i = 0; i < n_detector_gonio_axes; ++i) {
+        const auto &axis = detector_gonio.axis(i);
         Eigen::VectorXd values(_nFrames);
-        for (size_t i = 0; i < _nFrames; ++i) {
-            auto&& v = detectorStates[i];
-            values(i) = v[j] / deg;
+        for (size_t j = 0; j < _nFrames; ++j) {
+            auto&& v = detectorStates[j];
+            values(j) = v[i] / deg;
         }
-        H5::DataSet detectorScan(detectorGroup.createDataSet(axis->name(), H5::PredType::NATIVE_DOUBLE, scanSpace));
+        H5::DataSet detectorScan(detectorGroup.createDataSet(axis.name(), H5::PredType::NATIVE_DOUBLE, scanSpace));
         detectorScan.write(&values(0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
     }
 
 
     // Write sample states
     H5::Group sampleGroup(scanGroup.createGroup("Sample"));
-    axes =_diffractometer->sample()->gonio()->axes();
 
     const auto& sampleStates = _reader->sampleStates();
 
-    for (size_t j = 0; j < axes.size(); ++j) {
-        auto axis = axes[j];
+    const auto &sample_gonio = _diffractometer->sample()->gonio();
+    size_t n_sample_gonio_axes = sample_gonio.nAxes();;
+
+    for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
+        const auto &axis = sample_gonio.axis(i);
         Eigen::VectorXd values(_nFrames);
-        for (size_t i = 0; i < _nFrames; ++i) {
-            auto&& v = sampleStates[i];
-            values(i) = v[j]/deg;
+        for (size_t j = 0; j < _nFrames; ++j) {
+            auto&& v = sampleStates[j];
+            values(j) = v[i]/deg;
         }
-        H5::DataSet sampleScan(sampleGroup.createDataSet(axis->name(), H5::PredType::NATIVE_DOUBLE, scanSpace));
+        H5::DataSet sampleScan(sampleGroup.createDataSet(axis.name(), H5::PredType::NATIVE_DOUBLE, scanSpace));
         sampleScan.write(&values(0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
     }
 

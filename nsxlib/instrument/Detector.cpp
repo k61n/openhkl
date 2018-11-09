@@ -282,9 +282,9 @@ double Detector::pixelWidth() const
 
 DetectorGonioFit Detector::fitGonioOffsets(const DataList& dataset, size_t n_iterations, double tolerance) const
 {
-    auto detector_gonio = gonio();
+    const auto &detector_gonio = gonio();
 
-    size_t n_axes = detector_gonio->axes().size();
+    size_t n_axes = detector_gonio.nAxes();
 
     std::vector<double> fitted_offsets(n_axes,0.0);
 
@@ -334,7 +334,7 @@ DetectorGonioFit Detector::fitGonioOffsets(const DataList& dataset, size_t n_ite
     {
         int n_obs = f.size();
 
-        Eigen::Matrix3d fitted_detector_orientation = detector_gonio->affineMatrix(fitted_offsets).rotation().transpose();
+        Eigen::Matrix3d fitted_detector_orientation = detector_gonio.affineMatrix(fitted_offsets).rotation().transpose();
 
         // Just duplicate the 0-residual to reach a "sufficient" amout of data points
         for (int i = 0; i < n_obs; ++i) {

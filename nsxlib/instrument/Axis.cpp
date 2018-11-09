@@ -133,5 +133,10 @@ bool Axis::physical() const
     return _physical;
 }
 
+std::ostream& operator<<(std::ostream& os, const Axis& axis)
+{
+    return axis.printSelf(os);
+}
+
 } // end namespace nsx
 

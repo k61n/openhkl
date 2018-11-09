@@ -92,8 +92,9 @@ void DialogAbsorption::readInfoFile(const std::string &filename)
         getline(file,line);
         // Cout number of axes, validate with goniometer definition
         auto sample = _experiment->diffractometer()->sample();
+        const auto& sample_gonio = sample->gonio();
         std::size_t numberAngles = std::count(line.begin(),line.end(),':');
-        if (numberAngles == 0) {
+        if (numberAngles == sample_gonio.nAxes()) {
             QMessageBox::critical(this, tr("NSXTool"), tr("Number of goniometer axes in video file does not match instrument definition"));
         }
 
@@ -104,11 +105,12 @@ void DialogAbsorption::readInfoFile(const std::string &filename)
             std::string name;
             double value;
             is >> name >> value;
-            auto axis = _experiment->diffractometer()->sample()->gonio()->axis(name);
-            if (!axis) {
-                QMessageBox::critical(this, tr("NSXTool"), tr("Axis in video file do not match instrument definition"));
+            const auto &axis = sample_gonio.axis(i);
+            if (axis.name().compare(name) != 0) {
+                QMessageBox::critical(this, tr("NSXTool"), tr("Mismatch between axis names in video file and in instrument definition"));
             }
         }
+
         // Get base directory where images are stored
         QFileInfo info(filename.c_str());
         QDir dir=info.absoluteDir();

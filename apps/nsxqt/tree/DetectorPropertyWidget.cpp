@@ -20,9 +20,9 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
 
     auto detector = _detectorItem->experiment()->diffractometer()->detector();
 
-    auto gonio = detector->gonio();
+    const auto detector_gonio = detector->gonio();
 
-    auto axes = gonio->axes();
+    size_t n_detector_gonio_axes = detector_gonio.nAxes();
 
     ui->lineEdit_H->setText(QString::number(detector->height())+" m");
     ui->lineEdit_W->setText(QString::number(detector->width())+" m");
@@ -34,38 +34,24 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
 
     //
     ui->tableWidget_Detector->setEditTriggers(QAbstractItemView::DoubleClicked);
-    ui->tableWidget_Detector->setRowCount(axes.size());
+    ui->tableWidget_Detector->setRowCount(n_detector_gonio_axes);
 
     ui->tableWidget_Detector->setColumnCount(3);
     ui->tableWidget_Detector->verticalHeader()->setVisible(false);
 
-    for (size_t i = 0; i < axes.size(); ++i) {
-        auto axis = axes[i];
-        QTableWidgetItem* item0 = new QTableWidgetItem();
-        item0->setData(Qt::EditRole, QString(axis->name().c_str()));
-        if (axis->physical()) {
-            item0->setBackgroundColor(QColor("#FFDDDD"));
-        } else {
-            item0->setBackgroundColor(QColor("#DDFFDD"));
-        }
-        QTableWidgetItem* item1 = new QTableWidgetItem();
-        std::ostringstream os;
+    for (size_t i = 0; i < n_detector_gonio_axes; ++i) {
+        const auto &axis = detector_gonio.axis(i);
 
-        if (nsx::RotAxis* rot=dynamic_cast<nsx::RotAxis*>(axis)) {
-            os << "R(";
-            os << rot->axis().transpose();
-            os << ")";
-            if (rot->rotationDirection()) {
-                os << "CW";
-            } else {
-                os << "CCW";
-            }
-            //isRot = true;
-        } else if(dynamic_cast<nsx::TransAxis*>(axis)) {
-            os << "T(";
-            os << axis->axis().transpose();
-            os << ")";
-        }
+        QTableWidgetItem* item0 = new QTableWidgetItem();
+
+        item0->setData(Qt::EditRole, QString(axis.name().c_str()));
+        item0->setBackgroundColor(axis.physical() ? QColor("#FFDDDD") : QColor("#DDFFDD"));
+
+        QTableWidgetItem* item1 = new QTableWidgetItem();
+
+        std::ostringstream os;
+        os << axis;
+
         item1->setData(Qt::EditRole, QString(os.str().c_str()));
 
         QTableWidgetItem* item2=new QTableWidgetItem();

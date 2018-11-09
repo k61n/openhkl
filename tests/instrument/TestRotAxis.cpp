@@ -17,7 +17,7 @@ int main()
     NSX_CHECK_ASSERT(axis[1]==0);
     NSX_CHECK_ASSERT(axis[2]==1);
     //NSX_CHECK_SMALL(a.getOffset(),tolerance);
-    a.setRotationDirection(nsx::RotAxis::CCW);
+    a.setRotationDirection(nsx::RotAxis::Direction::CCW);
     // Check that a rotation CCW of 45.0 degrees brings the 1,0,0 vector into 1/2.(sqrt(2),sqrt(2),0)
     Eigen::Vector3d transf=a.transform(Eigen::Vector3d(1,0,0),45.0*nsx::deg);
     NSX_CHECK_CLOSE(transf[0],0.5*sqrt(2.0),tolerance);
@@ -30,7 +30,7 @@ int main()
     NSX_CHECK_SMALL(transf[2],tolerance);
 
     // Switch rotation direction CW
-    a.setRotationDirection(nsx::RotAxis::CW);
+    a.setRotationDirection(nsx::RotAxis::Direction::CW);
     transf = a.transform(Eigen::Vector3d(1,0,0),45.0*nsx::deg);
     NSX_CHECK_CLOSE(transf[0],0.5*sqrt(2.0),tolerance);
     NSX_CHECK_CLOSE(transf[1],-0.5*sqrt(2.0),tolerance);
@@ -44,7 +44,7 @@ int main()
     // Switch rotation axis to y
     //a.setOffset(0.0);
     a.setAxis(Eigen::Vector3d(0,1,0));
-    a.setRotationDirection(nsx::RotAxis::CCW);
+    a.setRotationDirection(nsx::RotAxis::Direction::CCW);
     transf = a.transform(Eigen::Vector3d(1,0,0),45.0*nsx::deg);
     NSX_CHECK_CLOSE(transf[0],0.5*sqrt(2.0),tolerance);
     NSX_CHECK_SMALL(transf[1],tolerance);

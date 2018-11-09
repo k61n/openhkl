@@ -61,8 +61,8 @@ ConvexHull& Sample::shape()
 
 SampleGonioFit Sample::fitGonioOffsets(const DataList& dataset, size_t n_iterations, double tolerance) const
 {
-    auto sample_gonio = gonio();
-    size_t n_axes = sample_gonio->axes().size();
+    const auto &sample_gonio = gonio();
+    size_t n_axes = sample_gonio.nAxes();
     std::vector<double> fitted_offsets(n_axes,0);
 
     // No data provided, return zero offsets
@@ -118,7 +118,7 @@ SampleGonioFit Sample::fitGonioOffsets(const DataList& dataset, size_t n_iterati
             std::vector<double> real_values(selected_states[i].size(),0.0);
             const auto& state = selected_states[i];
             std::transform(state.begin(),state.end(),fitted_offsets.begin(),real_values.begin(),std::plus<double>());
-            Eigen::Matrix3d fitted_sample_orientation = sample_gonio->affineMatrix(real_values).rotation();
+            Eigen::Matrix3d fitted_sample_orientation = sample_gonio.affineMatrix(real_values).rotation();
             f(i) = (fitted_sample_orientation - selected_orientations[i]).norm();
         }
 
