@@ -38,7 +38,6 @@
 %template(vector_string) std::vector<std::string>;
 
 %shared_ptr(nsx::Peak3D)
-%shared_ptr(nsx::Material)
 %shared_ptr(nsx::Diffractometer)
 %shared_ptr(nsx::Convolver)
 %shared_ptr(nsx::AtomicConvolver)
@@ -218,10 +217,6 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "FlatDetector.h"
  
 #include "Source.h"
-
-#include "Material.h"
-
-using sptrMaterial = std::shared_ptr<nsx::Material>;
  
 #include "Sample.h"
 
@@ -458,7 +453,6 @@ namespace nsx {
 
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;
 
-%include "Material.h"
 %include "FitParameters.h"
 %include "Minimizer.h"
 

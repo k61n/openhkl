@@ -48,7 +48,7 @@ int main()
     nsx::UnitCell uc(A);
     uc.reduce(params.niggliReduction, params.niggliTolerance, params.gruberTolerance);
     uc = uc.applyNiggliConstraints();
-    
+
     A = uc.basis();
     Eigen::Matrix3d BU = uc.reciprocalBasis();
 
@@ -92,7 +92,7 @@ int main()
         indexer.addPeak(peak);
     }
 
-   
+
     NSX_CHECK_NO_THROW(indexer.autoIndex(params));
 
     auto solutions = indexer.solutions();
@@ -104,13 +104,9 @@ int main()
 
     Eigen::Matrix3d fit_A = fit_uc->basis();
     Eigen::Matrix3d E = fit_A.inverse()*A;
-    
+
     // square because of the orientation issue
     NSX_CHECK_ASSERT((E*E-Eigen::Matrix3d::Identity()).norm() < 1e-10);
-
-    std::cout << A << "\n-----------------------------" << std::endl;
-    std::cout << fit_A << std::endl;
-
 
     return 0;
 }

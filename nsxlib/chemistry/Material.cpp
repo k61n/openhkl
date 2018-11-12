@@ -23,6 +23,11 @@ Material::Material(const std::string& formula)
     }
 }
 
+Material* Material::clone() const
+{
+    return new Material(*this);
+}
+
 const std::string& Material::formula() const
 {
     return _formula;
