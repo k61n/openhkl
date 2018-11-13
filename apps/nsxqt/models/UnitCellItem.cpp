@@ -114,7 +114,10 @@ void UnitCellItem::openSpaceGroupDialog()
     }
 
     auto group = dialog->getSelectedGroup();
-    _unit_cell->setSpaceGroup(group);
+
+    auto space_group = nsx::SpaceGroup(group);
+
+    _unit_cell->setSpaceGroup(space_group);
 
     emitDataChanged();
 }

@@ -178,7 +178,9 @@ void DialogSpaceGroup::on_tableView_doubleClicked(const QModelIndex &index)
     QMessageBox* box = new QMessageBox(this);
     box->setText(QString("Setting space group to ") + _selectedGroup.c_str());
 
-    _cell->setSpaceGroup(_selectedGroup);
+    auto space_group = nsx::SpaceGroup(_selectedGroup);
+
+    _cell->setSpaceGroup(space_group);
 
     box->exec();
 }
