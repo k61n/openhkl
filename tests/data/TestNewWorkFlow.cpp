@@ -6,6 +6,7 @@
 #include <Eigen/Dense>
 
 #include <nsxlib/AutoIndexer.h>
+#include <nsxlib/ConvolverFactory.h>
 #include <nsxlib/CrystalTypes.h>
 #include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
@@ -55,7 +56,11 @@ int main()
     peakFinder->setMinSize(30);
     peakFinder->setMaxSize(10000);
     peakFinder->setMaxFrames(10);
-    peakFinder->setConvolver("annular",{});
+
+    nsx::ConvolverFactory convolver_factory;
+    auto convolver = convolver_factory.create("annular",{});
+    peakFinder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
+
     peakFinder->setThreshold(15.0);
     peakFinder->setPeakScale(1.0);
 

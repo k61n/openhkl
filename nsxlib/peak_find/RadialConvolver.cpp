@@ -7,19 +7,15 @@ RadialConvolver::RadialConvolver()
 {
 }
 
+Convolver* RadialConvolver::clone() const
+{
+    return new RadialConvolver(*this);
+}
+
 RadialConvolver::RadialConvolver(const std::map<std::string,double>& parameters)
 : RadialConvolver()
 {
     setParameters(parameters);
-}
-
-RadialConvolver::~RadialConvolver()
-{
-}
-
-const char* RadialConvolver::name() const
-{
-    return "radial";
 }
 
 std::pair<size_t,size_t> RadialConvolver::kernelSize() const

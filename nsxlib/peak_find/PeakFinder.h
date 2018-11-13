@@ -1,11 +1,12 @@
 #pragma once
 
+#include <memory>
+
 #include "Blob3D.h"
 #include "Convolver.h"
 #include "CrystalTypes.h"
 #include "DataTypes.h"
 #include "GeometryTypes.h"
-#include "PeakFindTypes.h"
 #include "UtilsTypes.h"
 
 namespace nsx {
@@ -32,8 +33,11 @@ public:
     void setMaxFrames(int maxComp);
     int maxFrames() const;
 
-    sptrConvolver convolver() const;
-    void setConvolver(const std::string& convolver_type, const std::map<std::string,double>& parameters);
+#ifndef SWIG
+    void setConvolver(std::unique_ptr<Convolver> convolver);
+#endif
+
+    void setConvolver(const Convolver& convolver);
 
     void setThreshold(double value);
 
@@ -50,8 +54,10 @@ private:
     void mergeEquivalentBlobs(std::map<int,Blob3D>& blobs, EquivalenceList& equivalences) const;
 
 private:
+
     sptrProgressHandler _handler;
-    sptrConvolver _convolver;
+
+    std::unique_ptr<Convolver> _convolver;
 
     double _threshold;
 
@@ -60,6 +66,7 @@ private:
     int _current_label;
 
     int _minSize;
+
     int _maxSize;
 
     int _maxFrames;

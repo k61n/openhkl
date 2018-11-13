@@ -25,13 +25,9 @@ EnhancedAnnularConvolver::EnhancedAnnularConvolver(const std::map<std::string,do
     setParameters(parameters);
 }
 
-EnhancedAnnularConvolver::~EnhancedAnnularConvolver()
+Convolver* EnhancedAnnularConvolver::clone() const
 {
-}
-
-const char* EnhancedAnnularConvolver::name() const
-{
-    return "enhanced annular";
+    return new EnhancedAnnularConvolver(*this);
 }
 
 std::pair<size_t,size_t> EnhancedAnnularConvolver::kernelSize() const

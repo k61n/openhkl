@@ -45,11 +45,15 @@ public:
 
     EnhancedAnnularConvolver();
 
+    EnhancedAnnularConvolver(const EnhancedAnnularConvolver &other)=default;
+
     EnhancedAnnularConvolver(const std::map<std::string,double>& parameters);
 
-    virtual ~EnhancedAnnularConvolver();
+    ~EnhancedAnnularConvolver()=default;
 
-    const char* name() const override;
+    EnhancedAnnularConvolver& operator=(const EnhancedAnnularConvolver &other)=default;
+
+    Convolver* clone() const override;
 
     virtual std::pair<size_t,size_t> kernelSize() const override;
 

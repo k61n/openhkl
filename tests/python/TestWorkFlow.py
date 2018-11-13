@@ -19,9 +19,10 @@ class TestWorkFlow(unittest.TestCase):
         finder.setMinSize(30)
         finder.setMaxSize(10000)
         finder.setMaxFrames(10)
-        #finder.setSearchConfidence(0.98)
-        #finder.setIntegrationConfidence(0.997)
-        finder.setConvolver("annular",{})
+
+        convolver = nsx.AnnularConvolver({});
+
+        finder.setConvolver(convolver)
         finder.setThreshold(15.0)
 
         numors = nsx.DataList()

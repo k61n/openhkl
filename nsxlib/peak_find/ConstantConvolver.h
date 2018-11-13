@@ -13,11 +13,15 @@ public:
 
     ConstantConvolver();
 
+    ConstantConvolver(const ConstantConvolver &other)=default;
+
     ConstantConvolver(const std::map<std::string,double>& parameters);
 
-    virtual ~ConstantConvolver();
+    ~ConstantConvolver()=default;
 
-    const char* name() const override;
+    ConstantConvolver& operator=(const ConstantConvolver &other)=default;
+
+    Convolver* clone() const override;
 
     virtual std::pair<size_t,size_t> kernelSize() const override;
 

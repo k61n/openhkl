@@ -78,7 +78,7 @@ PeakFinder::PeakFinder()
   _threshold(3.0)
 {
     ConvolverFactory convolver_factory;
-    _convolver = convolver_factory.create("annular",{});
+    _convolver.reset(convolver_factory.create("annular",{}));
 }
 
 /*
@@ -115,13 +115,6 @@ PeakList PeakFinder::find(DataList numors)
                 _handler->log("min comp is " + std::to_string(_minSize));
                 _handler->log("max comp is " + std::to_string(_maxSize));
                 _handler->log("search scale is " + std::to_string(_peakScale));
-            }
-
-            if (_handler) {
-                _handler->log("kernel " + std::string(_convolver->name()) + " selected");
-                for (auto& it: _convolver->parameters()) {
-                    _handler->log(it.first + " " + std::to_string(it.second));
-                }
             }
 
             _current_label = 0;
@@ -281,15 +274,13 @@ int PeakFinder::maxSize() const
     return _maxSize;
 }
 
-sptrConvolver PeakFinder::convolver() const
+void PeakFinder::setConvolver(std::unique_ptr<Convolver> convolver)
 {
-    return _convolver;
+    _convolver = std::move(convolver);
 }
 
-void PeakFinder::setConvolver(const std::string& convolver_type, const std::map<std::string,double>& parameters)
-{
-    ConvolverFactory convolver_factory;
-    _convolver = convolver_factory.create(convolver_type,parameters);
+void PeakFinder::setConvolver(const Convolver& convolver) {
+    _convolver.reset(convolver.clone());
 }
 
 void PeakFinder::setThreshold(double value)

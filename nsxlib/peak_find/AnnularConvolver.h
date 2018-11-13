@@ -45,11 +45,15 @@ public:
 
     AnnularConvolver();
 
+    AnnularConvolver(const AnnularConvolver &other)=default;
+
     AnnularConvolver(const std::map<std::string,double>& parameters);
 
-    virtual ~AnnularConvolver();
+    ~AnnularConvolver()=default;
 
-    const char* name() const override;
+    AnnularConvolver& operator=(const AnnularConvolver &other)=default;
+
+    Convolver* clone() const override;
 
     virtual std::pair<size_t,size_t> kernelSize() const override;
 

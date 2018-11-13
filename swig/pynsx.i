@@ -40,13 +40,6 @@
 %shared_ptr(nsx::Peak3D)
 %shared_ptr(nsx::Material)
 %shared_ptr(nsx::Diffractometer)
-%shared_ptr(nsx::Convolver)
-%shared_ptr(nsx::AtomicConvolver)
-%shared_ptr(nsx::ConstantConvolver)
-%shared_ptr(nsx::DeltaConvolver)
-%shared_ptr(nsx::AnnularConvolver)
-%shared_ptr(nsx::EnhancedAnnularConvolver)
-%shared_ptr(nsx::RadialConvolver)
 %shared_ptr(nsx::DataSet)
 %shared_ptr(nsx::IDataReader)
 %shared_ptr(nsx::HDF5DataReader)
@@ -199,8 +192,6 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "AxisFactory.h"
 #include "RotAxis.h"
 #include "PhysicalUnit.h"
-#include "ConstantConvolver.h"
-#include "Convolver.h"
 
 #include "Singleton.h"
 #include "Factory.h"
@@ -425,10 +416,8 @@ namespace nsx {
 
 %include "PeakFilter.h"
 
+%template(ConvolverParameters) std::map<std::string,double>;
 %include "Convolver.h"
-
-%template(mapConvolverParameters) std::map<std::string,double>;
-
 %include "ConvolverFactory.h"
 %include "ConstantConvolver.h"
 %include "DeltaConvolver.h"
