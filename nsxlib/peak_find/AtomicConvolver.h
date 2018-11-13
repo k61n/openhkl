@@ -60,9 +60,9 @@ public:
 
     virtual ~AtomicConvolver()=0;
 
-    RealMatrix matrix(int nrows, int ncols) const;
+    Convolver* clone() const=0;
 
-    virtual const char* name() const = 0;
+    RealMatrix matrix(int nrows, int ncols) const;
 
     //! Convolve an image
     virtual RealMatrix convolve(const RealMatrix& image) override;

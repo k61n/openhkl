@@ -13,13 +13,9 @@ DeltaConvolver::DeltaConvolver(const std::map<std::string,double>& parameters)
     setParameters(parameters);
 }
 
-DeltaConvolver::~DeltaConvolver()
+Convolver* DeltaConvolver::clone() const
 {
-}
-
-const char* DeltaConvolver::name() const
-{
-    return "delta";
+    return new DeltaConvolver(*this);
 }
 
 std::pair<size_t,size_t> DeltaConvolver::kernelSize() const

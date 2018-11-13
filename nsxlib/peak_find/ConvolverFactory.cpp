@@ -8,9 +8,9 @@
 namespace nsx {
 
 template <typename T>
-sptrConvolver create_convolver(const std::map<std::string,double>& parameters)
+T* create_convolver(const std::map<std::string,double>& parameters)
 {
-    return std::make_shared<T>(parameters);
+    return new T(parameters);
 }
 
 ConvolverFactory::ConvolverFactory(): _callbacks()
@@ -18,12 +18,12 @@ ConvolverFactory::ConvolverFactory(): _callbacks()
     _callbacks["annular"] = &create_convolver<AnnularConvolver>;
     _callbacks["constant"] = &create_convolver<ConstantConvolver>;
     _callbacks["delta"] = &create_convolver<DeltaConvolver>;
-    _callbacks["enhanced_annular"] = &create_convolver<EnhancedAnnularConvolver>;
+    _callbacks["enhanced annular"] = &create_convolver<EnhancedAnnularConvolver>;
     _callbacks["none"] = &create_convolver<DeltaConvolver>;
     _callbacks["radial"] = &create_convolver<RadialConvolver>;
 }
 
-sptrConvolver ConvolverFactory::create(const std::string& convolver_type, const std::map<std::string,double>& parameters) const
+Convolver* ConvolverFactory::create(const std::string& convolver_type, const std::map<std::string,double>& parameters) const
 {
     const auto it = _callbacks.find(convolver_type);
 

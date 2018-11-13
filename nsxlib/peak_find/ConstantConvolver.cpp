@@ -13,13 +13,9 @@ ConstantConvolver::ConstantConvolver(const std::map<std::string,double>& paramet
     setParameters(parameters);
 }
 
-ConstantConvolver::~ConstantConvolver()
+Convolver* ConstantConvolver::clone() const
 {
-}
-
-const char* ConstantConvolver::name() const
-{
-    return "constant";
+    return new ConstantConvolver(*this);
 }
 
 std::pair<size_t,size_t> ConstantConvolver::kernelSize() const

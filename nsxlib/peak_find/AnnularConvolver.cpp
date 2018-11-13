@@ -14,13 +14,9 @@ AnnularConvolver::AnnularConvolver(const std::map<std::string,double>& parameter
     setParameters(parameters);
 }
 
-AnnularConvolver::~AnnularConvolver()
+Convolver* AnnularConvolver::clone() const
 {
-}
-
-const char* AnnularConvolver::name() const
-{
-    return "annular";
+    return new AnnularConvolver(*this);
 }
 
 std::pair<size_t,size_t> AnnularConvolver::kernelSize() const

@@ -1,3 +1,5 @@
+#include <memory>
+
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -248,8 +250,11 @@ void FramePeakFinder::run()
     // Get the corresponding parameters
     auto&& parameters = convolutionParameters();
 
+    nsx::ConvolverFactory convolver_factory;
+    auto convolver = convolver_factory.create(convolver_type,{});
+
     // Propagate changes to peak finder
-    peak_finder.setConvolver(convolver_type,parameters);
+    peak_finder.setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
 
     nsx::PeakList peaks;
 

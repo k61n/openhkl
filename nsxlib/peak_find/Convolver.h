@@ -52,6 +52,8 @@ public:
 
     virtual ~Convolver()=0;
 
+    virtual Convolver* clone() const=0;
+
     // Non-const getter for kernel parameter
     std::map<std::string,double>& parameters();
 
@@ -62,8 +64,6 @@ public:
 
     //! Convolve an image
     virtual RealMatrix convolve(const RealMatrix& image)=0;
-
-    virtual const char* name() const = 0;
 
     virtual std::pair<size_t,size_t> kernelSize() const=0;
 
