@@ -45,7 +45,7 @@ class Diffractometer {
 
 public:
 
-    static sptrDiffractometer build(const std::string& name);
+    static sptrDiffractometer create(const std::string& name);
 
 public:
 

@@ -106,7 +106,7 @@ Mosaic::Mosaic(const std::string& instr, double l, double dl, double dMonSam, do
   _dl(dl),
   _dMonSam(dMonSam),
   _mu(mu*UnitsManager::get("deg")),
-  _diffractometer(Diffractometer::build(instr))
+  _diffractometer(Diffractometer::create(instr))
 {
 	
 }

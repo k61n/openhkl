@@ -19,7 +19,7 @@ int main()
     std::vector<Eigen::MatrixXi> frames;
 
     try {
-        diff = nsx::Diffractometer::build("D10");
+        diff = nsx::Diffractometer::create("D10");
         dataf = factory.create("", "D10_ascii_example", diff);
         dataf->open();
 

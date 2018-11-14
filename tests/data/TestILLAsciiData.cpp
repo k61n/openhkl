@@ -32,7 +32,7 @@ int UnitTest_DataSet::run()
     Eigen::MatrixXi v;
 
     try {
-        diff = nsx::Diffractometer::build("D10");
+        diff = nsx::Diffractometer::create("D10");
         dataf = factory.create("", "D10_ascii_example", diff);
         meta=dataf->metadata();
 

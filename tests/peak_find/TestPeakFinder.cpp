@@ -17,7 +17,7 @@ int main()
     nsx::DataList numors;
 
     nsx::DataReaderFactory factory;
-    auto diff = nsx::Diffractometer::build("D10");
+    auto diff = nsx::Diffractometer::create("D10");
     auto dataf = factory.create("", "D10_ascii_example", diff);
     auto meta = dataf->metadata();
     nsx::PeakFinder peakFinder;

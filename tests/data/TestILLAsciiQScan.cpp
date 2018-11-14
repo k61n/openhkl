@@ -22,7 +22,7 @@ int main()
     Eigen::MatrixXi v;
 
     try {
-        diff = nsx::Diffractometer::build("D9");
+        diff = nsx::Diffractometer::create("D9");
         dataf = factory.create("", "D9_QSCAN", diff);
         meta=dataf->metadata();
 

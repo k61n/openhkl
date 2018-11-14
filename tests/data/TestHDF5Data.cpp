@@ -11,7 +11,7 @@ int main()
 {
     nsx::DataReaderFactory factory;
 
-    auto diff = nsx::Diffractometer::build("BioDiff2500");
+    auto diff = nsx::Diffractometer::create("BioDiff2500");
     auto dataf = factory.create("hdf", "H5_example.hdf", diff);
 
     dataf->open();

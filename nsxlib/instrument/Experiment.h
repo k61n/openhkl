@@ -52,11 +52,8 @@ public:
     //! Construct an empty experiment from a given name and diffractometer
     Experiment(const std::string& name, const std::string& diffractometerName);
 
-    //! Construct an empty experiment from a diffractometer name
-    Experiment(const std::string& diffractometerName);
-
     //! Destructor
-    virtual ~Experiment();
+    ~Experiment()=default;
 
     //! Assignment operator
     Experiment& operator=(const Experiment& other)=default;
@@ -85,9 +82,6 @@ private:
 
     //! The name of this experiment
     std::string _name;
-
-    //! The name of the diffractometer assigned to the experiment
-    std::string _diffractometerName;
 
     //! A pointer to the detector assigned to this experiment
     sptrDiffractometer _diffractometer;

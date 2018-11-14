@@ -13,22 +13,9 @@ namespace nsx {
 
 Experiment::Experiment(const std::string& name, const std::string& diffractometerName)
 : _name(name),
-  _diffractometerName(diffractometerName),
   _data()
 {
-    _diffractometer = Diffractometer::build(diffractometerName);
-}
-
-Experiment::Experiment(const std::string& diffractometerName)
-: _name("experiment"),
-  _diffractometerName(diffractometerName),
-  _data()
-{
-    _diffractometer = Diffractometer::build(diffractometerName);
-}
-
-Experiment::~Experiment()
-{
+    _diffractometer = Diffractometer::create(diffractometerName);
 }
 
 sptrDiffractometer Experiment::diffractometer() const

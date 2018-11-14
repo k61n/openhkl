@@ -8,7 +8,7 @@ class TestILLAscii(unittest.TestCase):
     # todo: fix MetaDat::getKey() and DataSet::getInstrumentStates()
     def test(self):
         factory = nsx.DataReaderFactory()
-        diff = nsx.Diffractometer.build("D10")
+        diff = nsx.Diffractometer.create("D10")
         dataf = factory.create("", "D10_ascii_example", diff)
         meta = dataf.metadata()
         dataf.open()

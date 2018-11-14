@@ -10,7 +10,7 @@
 
 namespace nsx {
 
-sptrDiffractometer Diffractometer::build(const std::string& name)
+sptrDiffractometer Diffractometer::create(const std::string& name)
 {
 
     YAML::Node instrumentDefinition = findResource({"instruments",name});
