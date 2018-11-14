@@ -6,6 +6,7 @@
 #include "DataSet.h"
 #include "Detector.h"
 #include "Diffractometer.h"
+#include "IDataReader.h"
 #include "Experiment.h"
 #include "GeometryTypes.h"
 #include "MathematicsTypes.h"
@@ -101,7 +102,7 @@ PeakList PeakFinder::find(DataList numors)
     for (auto&& numor : numors) {
         PeakList numor_peaks;
 
-        auto dectector = numor->diffractometer()->detector();
+        auto dectector = numor->reader()->diffractometer()->detector();
         int nrows = dectector->nRows();
         int ncols = dectector->nCols();
         int nframes = numor->nFrames();
@@ -355,7 +356,7 @@ void PeakFinder::findPrimaryBlobs(sptrDataSet data, std::map<int,Blob3D>& blobs,
         _handler->setProgress(0);
     }
 
-    auto dectector = data->diffractometer()->detector();
+    auto dectector = data->reader()->diffractometer()->detector();
     int nrows = dectector->nRows();
     int ncols = dectector->nCols();
 
@@ -567,7 +568,7 @@ void PeakFinder::findCollisions(sptrDataSet data, std::map<int,Blob3D>& blobs, E
         }
     }
 
-    auto dectector = data->diffractometer()->detector();
+    auto dectector = data->reader()->diffractometer()->detector();
     int nrows = dectector->nRows();
     int ncols = dectector->nCols();
     int nframes = data->nFrames();

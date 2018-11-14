@@ -6,6 +6,7 @@
 #include "DetectorEvent.h"
 #include "Diffractometer.h"
 #include "Ellipsoid.h"
+#include "IDataReader.h"
 #include "GeometryTypes.h"
 #include "ReciprocalVector.h"
 
@@ -311,7 +312,7 @@ Ellipsoid Ellipsoid::toDetectorSpace(sptrDataSet data) const
     }
 
     const auto& event = events[0];
-    auto position = data->diffractometer()->detector()->pixelPosition(event._px, event._py);
+    auto position = data->reader()->diffractometer()->detector()->pixelPosition(event._px, event._py);
     auto state = data->interpolatedState(event._frame);  
    
     // Jacobian of map from detector coords to sample q space

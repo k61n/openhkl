@@ -6,6 +6,7 @@
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "Ellipsoid.h"
+#include "IDataReader.h"
 #include "Logger.h"
 #include "Minimizer.h"
 #include "Peak3D.h"
@@ -52,7 +53,7 @@ PeakList predictPeaks(ShapeLibrary library,
                       PeakInterpolation interpolation)
 {
     // Generate the Miller indices found in the [dmin,dmax] shell
-    const auto& mono = data->diffractometer()->source().selectedMonochromator();
+    const auto& mono = data->reader()->diffractometer()->source().selectedMonochromator();
     const double wavelength = mono.wavelength();
     auto predicted_hkls = unit_cell->generateReflectionsInShell(dmin, dmax, wavelength);
 
@@ -117,7 +118,7 @@ struct FitData {
     //! Construct a FitData instance directly from a peak.
     FitData(sptrPeak3D peak)
     {
-        const auto* detector = peak->data()->diffractometer()->detector();
+        const auto* detector = peak->data()->reader()->diffractometer()->detector();
         Eigen::Vector3d center = peak->shape().center();
         auto state = peak->data()->interpolatedState(center[2]);
 

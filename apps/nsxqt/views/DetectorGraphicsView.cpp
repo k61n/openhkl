@@ -7,6 +7,7 @@
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Detector.h>
 #include <nsxlib/Diffractometer.h>
+#include <nsxlib/IDataReader.h>
 
 #include "DetectorGraphicsView.h"
 #include "DetectorScene.h"
@@ -65,10 +66,12 @@ void DetectorGraphicsView::fitScene()
 
 void DetectorGraphicsView::fixDetectorAspectRatio(bool value)
 {
+    const auto* detector = _scene->getData()->reader()->diffractometer()->detector();
+
     if (value) {
         int h=this->height();
-        double dw=_scene->getData()->diffractometer()->detector()->width();
-        double dh=_scene->getData()->diffractometer()->detector()->height();
+        double dw = detector->width();
+        double dh = detector->height();
         resize(int(h*dw/dh),h);
     } else {
         fitInView(_scene->sceneRect());

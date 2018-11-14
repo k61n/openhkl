@@ -177,7 +177,7 @@ void PeakGraphicsItem::plot(SXPlot* plot)
 
     auto c = _peak->shape().center();
     auto state = _peak->data()->interpolatedState(c[2]);
-    auto position = _peak->data()->diffractometer()->detector()->pixelPosition(c[0], c[1]);
+    auto position = _peak->data()->reader()->diffractometer()->detector()->pixelPosition(c[0], c[1]);
     double g = state.gamma(position);
     double n = state.nu(position);
     g/=nsx::deg;

@@ -36,7 +36,7 @@ static PeakFactors peakFactors(nsx::sptrPeak3D peak)
 {
     auto coord = peak->shape().center();
     auto state = peak->data()->interpolatedState(coord[2]);
-    auto position = peak->data()->diffractometer()->detector()->pixelPosition(coord[0], coord[1]);
+    auto position = peak->data()->reader()->diffractometer()->detector()->pixelPosition(coord[0], coord[1]);
 
     PeakFactors peak_factors;
     peak_factors.gamma = state.gamma(position);

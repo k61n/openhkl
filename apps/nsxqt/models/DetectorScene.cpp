@@ -12,9 +12,9 @@
 #include <nsxlib/DataSet.h>
 #include <nsxlib/EllipseMask.h>
 #include <nsxlib/Detector.h>
-
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Gonio.h>
+#include <nsxlib/IDataReader.h>
 #include <nsxlib/InstrumentState.h>
 #include <nsxlib/IntegrationRegion.h>
 #include <nsxlib/Logger.h>
@@ -199,7 +199,7 @@ void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
 
         _currentData->open();
 
-        auto det = _currentData->diffractometer()->detector();
+        auto det = _currentData->reader()->diffractometer()->detector();
 
         _currentFrameIndex = -1;
 
@@ -636,7 +636,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     if (!_currentData) {
         return;
     }
-    auto instr = _currentData->diffractometer();
+    auto instr = _currentData->reader()->diffractometer();
     auto det = instr->detector();
 
     int nrows = int(det->nRows());
@@ -657,7 +657,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
     QString ttip;
 
-    auto pos = _currentData->diffractometer()->detector()->pixelPosition(col, row);
+    auto pos = _currentData->reader()->diffractometer()->detector()->pixelPosition(col, row);
 
     double gamma = state.gamma(pos);
     double nu = state.nu(pos);

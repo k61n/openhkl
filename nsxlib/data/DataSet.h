@@ -62,9 +62,6 @@ public:
     //! Gets the data filename
     const std::string& filename() const;
 
-    //! Gets a shared pointer to the diffractometer used to collect the data
-    sptrDiffractometer diffractometer() const;
-
     //! Return the number of frames
     std::size_t nFrames() const;
 
@@ -142,8 +139,6 @@ private:
     std::size_t _nrows;
 
     std::size_t _ncols;
-
-    sptrDiffractometer _diffractometer;
 
     std::vector<Eigen::MatrixXi> _data;
 

@@ -41,6 +41,7 @@
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "GeometryTypes.h"
+#include "IDataReader.h"
 #include "InstrumentState.h"
 #include "IPeakIntegrator.h"
 #include "MillerIndex.h"
@@ -204,7 +205,7 @@ ReciprocalVector Peak3D::q() const
 {
     auto pixel_coords = _shape.center();
     auto state = _data->interpolatedState(pixel_coords[2]);
-    const auto* detector = _data->diffractometer()->detector();
+    const auto* detector = _data->reader()->diffractometer()->detector();
     auto detector_position = DirectVector(detector->pixelPosition(pixel_coords[0], pixel_coords[1]));
     return state.sampleQ(detector_position);
 }
@@ -267,7 +268,7 @@ DetectorEvent Peak3D::predictCenter(double frame) const
 
     Eigen::RowVector3d pred_kf = (kf1-kf).norm() < (kf2-kf).norm() ? kf1 : kf2;
 
-    return _data->diffractometer()->detector()->constructEvent(DirectVector(state.samplePosition), ReciprocalVector(pred_kf*state.detectorOrientation));
+    return _data->reader()->diffractometer()->detector()->constructEvent(DirectVector(state.samplePosition), ReciprocalVector(pred_kf*state.detectorOrientation));
 }
 
     
