@@ -11,6 +11,7 @@
 #include <QStandardItemModel>
 
 #include <nsxlib/DataSet.h>
+#include <nsxlib/IDataReader.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/MetaData.h>
 #include <nsxlib/Peak3D.h>
@@ -119,12 +120,12 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
 
     if (indexList.size()) {
         QMenu* plotasmenu=menu->addMenu("Plot as");
-        nsx::MetaData* met=peaks[indexList[0].row()]->data()->metadata();
-        const std::set<std::string>& keys=met->keys();
+        const auto& metadata = peaks[indexList[0].row()]->data()->reader()->metadata();
+        const auto& keys = metadata.keys();
         for (const auto& key : keys) {
             try {
                 //Ensure metadata is a Numeric type
-                met->key<double>(key);
+                metadata.key<double>(key);
             } catch(std::exception& e) {
                 continue;
             }
@@ -217,7 +218,7 @@ void PeakTableView::plotAs(const std::string& key)
 
     for (int i=0;i<nPoints;++i) {
         nsx::sptrPeak3D p=peaks[indexList[i].row()];
-        x[i]=p->data()->metadata()->key<double>(key);
+        x[i]=p->data()->reader()->metadata().key<double>(key);
         y[i]=p->correctedIntensity().value();
         e[i]=p->correctedIntensity().sigma();
     }

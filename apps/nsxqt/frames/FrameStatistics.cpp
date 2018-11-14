@@ -10,6 +10,7 @@
 
 #include <nsxlib/CC.h>
 #include <nsxlib/DataSet.h>
+#include <nsxlib/IDataReader.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/MetaData.h>
 #include <nsxlib/MillerIndex.h>
@@ -288,7 +289,7 @@ void FrameStatistics::saveToFullProf(QTableView* table) {
     file << "TITLE File written by ...\n";
     file << "(3i4,2F14.4,i5,4f8.2)\n";
 
-    double wavelength = _peaks[0]->data()->metadata()->key<double>("wavelength");
+    double wavelength = _peaks[0]->data()->reader()->metadata().key<double>("wavelength");
 
     // wavelength
     file << std::fixed << std::setw(8) << std::setprecision(3) << wavelength;

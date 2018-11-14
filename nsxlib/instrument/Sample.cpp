@@ -87,7 +87,7 @@ SampleGonioFit Sample::fitGonioOffsets(const DataList& dataset, size_t n_iterati
 
     for (auto data : dataset) {
         auto&& states = data->instrumentStates();
-        auto&& sample_states = data->dataReader()->sampleStates();
+        auto&& sample_states = data->reader()->sampleStates();
         for (size_t i = 0; i < states.size(); ++i) {
             auto state = states[i];
             if (state.refined) {

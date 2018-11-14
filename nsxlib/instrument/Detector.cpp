@@ -317,7 +317,7 @@ DetectorGonioFit Detector::fitGonioOffsets(const DataList& dataset, size_t n_ite
 
     for (auto data : dataset) {
         auto&& states = data->instrumentStates();
-        auto&& detector_states = data->dataReader()->detectorStates();
+        auto&& detector_states = data->reader()->detectorStates();
         for (size_t i = 0; i < states.size(); ++i) {
             auto state = states[i];
             if (state.refined) {

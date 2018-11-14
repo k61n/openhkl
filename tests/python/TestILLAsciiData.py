@@ -10,7 +10,7 @@ class TestILLAscii(unittest.TestCase):
         factory = nsx.DataReaderFactory()
         diff = nsx.Diffractometer.create("D10")
         dataf = factory.create("", "D10_ascii_example", diff)
-        meta = dataf.metadata()
+        meta = dataf.reader().metadata()
         dataf.open()
         v = dataf.frame(0)
             

@@ -38,23 +38,33 @@ IDataReader::IDataReader(const std::string& filename, const sptrDiffractometer& 
     _nCols = _diffractometer->detector()->nCols();
 }
 
-size_t IDataReader::nFrames() const {
+size_t IDataReader::nFrames() const
+{
     return _nFrames;
 }
 
-size_t IDataReader::nCols() const {
+size_t IDataReader::nCols() const
+{
     return _nCols;
 }
 
-size_t IDataReader::nRows() const {
+size_t IDataReader::nRows() const
+{
     return _nRows;
 }
 
-const MetaData& IDataReader::metadata() const {
+const MetaData& IDataReader::metadata() const
+{
     return _metadata;
 }
 
-sptrDiffractometer IDataReader::diffractometer() const {
+MetaData& IDataReader::metadata()
+{
+    return _metadata;
+}
+
+sptrDiffractometer IDataReader::diffractometer() const
+{
     return _diffractometer;
 }
 

@@ -74,9 +74,6 @@ public:
     //! Return the number of columns in each detector image
     std::size_t nCols() const;
 
-    //! Gets a reference to the metadata of the data
-    MetaData* metadata() const;
-
     //! Gets the the sample states
     InstrumentStateList& instrumentStates();
 
@@ -132,7 +129,7 @@ public:
     ReciprocalVector computeQ(const DetectorEvent& ev) const;
 
     //! Return the data reader used to set this dataset
-    std::shared_ptr<IDataReader> dataReader() const;
+    std::shared_ptr<IDataReader> reader() const;
 
 private:
 
@@ -147,8 +144,6 @@ private:
     std::size_t _ncols;
 
     sptrDiffractometer _diffractometer;
-
-    uptrMetaData _metadata;
 
     std::vector<Eigen::MatrixXi> _data;
 

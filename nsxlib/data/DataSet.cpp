@@ -45,7 +45,6 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader):
     _nrows(0),
     _ncols(0),
     _diffractometer(reader->diffractometer()),
-    _metadata(uptrMetaData(new MetaData())),
     _data(),
     _states(),
     _fileSize(0),
@@ -60,10 +59,9 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader):
     _nrows = _diffractometer->detector()->nRows();
     _ncols = _diffractometer->detector()->nCols();
 
-    _metadata = uptrMetaData(new MetaData(_reader->metadata()));
-    _nFrames = _metadata->key<int>("npdone");
+    _nFrames = _reader->metadata().key<int>("npdone");
 
-    double wav = _metadata->key<double>("wavelength");
+    double wav = _reader->metadata().key<double>("wavelength");
     _diffractometer->source().selectedMonochromator().setWavelength(wav);
 
     // Getting Scan parameters for the detector
@@ -119,11 +117,6 @@ const std::string& DataSet::filename() const
 sptrDiffractometer DataSet::diffractometer() const
 {
     return _diffractometer;
-}
-
-MetaData*  DataSet::metadata() const
-{
-    return _metadata.get();
 }
 
 std::size_t DataSet::nFrames() const
@@ -269,7 +262,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
         sampleScan.write(&values(0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
     }
 
-    const auto& map = _metadata->map();
+    const auto& map = _reader->metadata().map();
 
     // Write all string metadata into the "Info" group
     H5::Group infogroup(file.createGroup("/Info"));
@@ -434,7 +427,7 @@ Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx)
     return new_frame;
 }
 
-std::shared_ptr<IDataReader> DataSet::dataReader() const
+std::shared_ptr<IDataReader> DataSet::reader() const
 {
     return _reader;
 }

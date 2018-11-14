@@ -28,16 +28,18 @@ int UnitTest_DataSet::run()
     nsx::DataReaderFactory factory;
     nsx::sptrDiffractometer diff;
     nsx::sptrDataSet dataf;
-    nsx::MetaData* meta(nullptr);
     Eigen::MatrixXi v;
+
+    nsx::MetaData metadata;
 
     try {
         diff = nsx::Diffractometer::create("D10");
-        dataf = factory.create("", "D10_ascii_example", diff);
-        meta=dataf->metadata();
 
-        NSX_CHECK_ASSERT(meta != nullptr);
-        NSX_CHECK_ASSERT(meta->key<int>("nbang")==2);
+        dataf = factory.create("", "D10_ascii_example", diff);
+
+        metadata = dataf->reader()->metadata();
+
+        NSX_CHECK_ASSERT(metadata.key<int>("nbang")==2);
 
         dataf->open();
         v = dataf->frame(0);
@@ -53,18 +55,15 @@ int UnitTest_DataSet::run()
     NSX_CHECK_EQUAL(v.sum(),65);
 
     // Check the value of the monitor
-    NSX_CHECK_CLOSE(meta->key<double>("monitor"),20000,tolerance);
+    NSX_CHECK_CLOSE(metadata.key<double>("monitor"),20000,tolerance);
 
-    auto sampleStates = dataf->_reader->sampleStates();
-    auto detectorStates = dataf->_reader->detectorStates();
-
+    auto sampleStates = dataf->reader()->sampleStates();
+    auto detectorStates = dataf->reader()->detectorStates();
     
     NSX_CHECK_CLOSE(detectorStates[3][0],0.54347000E+05/1000.0*nsx::deg,tolerance);
     NSX_CHECK_CLOSE(sampleStates[2][0],0.26572000E+05/1000.0*nsx::deg,tolerance);
     NSX_CHECK_CLOSE(sampleStates[2][1],0.48923233E+02*nsx::deg,tolerance);
     NSX_CHECK_CLOSE(sampleStates[2][2],-0.48583171E+02*nsx::deg,tolerance);
-
-    meta = nullptr;
 
     return 0;
 }

@@ -31,8 +31,13 @@ public:
     const std::vector<std::vector<double>>& sampleStates() const;
     //! Return the list of detector states associated to the detecot images
     const std::vector<std::vector<double>>& detectorStates() const;
+
     //! Return the metadata in the file
     const MetaData& metadata() const;
+
+    //! Return the metadata in the file
+    MetaData& metadata();
+
     //! Return number of detector images
     size_t nFrames() const;
     //! Return number of columns in each detector image

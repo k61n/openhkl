@@ -157,23 +157,25 @@ bool Mosaic::run(const std::vector<std::string>& numors, unsigned int n, double&
 	// Loop over the datas
 	for (auto d : datas)
 	{
-		// Fetch h,k,l from the current data
+	    const auto& metadata = d->reader()->metadata();
+
+	    // Fetch h,k,l from the current data
 		Eigen::Vector3d hkl;
-		hkl[0] = d->metadata()->key<double>("qH");
-		hkl[1] = d->metadata()->key<double>("qK");
-		hkl[2] = d->metadata()->key<double>("qL");
+		hkl[0] = metadata.key<double>("qH");
+		hkl[1] = metadata.key<double>("qK");
+		hkl[2] = metadata.key<double>("qL");
 
 		// Fetch the UB matrix from the current data
 		Eigen::Matrix3d ub;
-		ub(0,0) = d->metadata()->key<double>("ub(1,1)");
-		ub(0,1) = d->metadata()->key<double>("ub(1,2)");
-		ub(0,2) = d->metadata()->key<double>("ub(1,3)");
-		ub(1,0) = d->metadata()->key<double>("ub(2,1)");
-		ub(1,1) = d->metadata()->key<double>("ub(2,2)");
-		ub(1,2) = d->metadata()->key<double>("ub(2,3)");
-		ub(2,0) = d->metadata()->key<double>("ub(3,1)");
-		ub(2,1) = d->metadata()->key<double>("ub(3,2)");
-		ub(2,2) = d->metadata()->key<double>("ub(3,3)");
+		ub(0,0) = metadata.key<double>("ub(1,1)");
+		ub(0,1) = metadata.key<double>("ub(1,2)");
+		ub(0,2) = metadata.key<double>("ub(1,3)");
+		ub(1,0) = metadata.key<double>("ub(2,1)");
+		ub(1,1) = metadata.key<double>("ub(2,2)");
+		ub(1,2) = metadata.key<double>("ub(2,3)");
+		ub(2,0) = metadata.key<double>("ub(3,1)");
+		ub(2,1) = metadata.key<double>("ub(3,2)");
+		ub(2,2) = metadata.key<double>("ub(3,3)");
 
 		Eigen::Vector3d zvect=ub*hkl;
         double znorm = zvect.norm();
