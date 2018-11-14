@@ -14,11 +14,14 @@ namespace nsx {
 //! This is used to testing purposes.
 class FakeDataReader: public HDF5MetaDataReader {
 public:
+
     //! Constructor. Behaves as if it is loaded from filename (which must exist!),
     //! but the frame values may be overwritten arbitrarily (without modifying the file on disk).
-    FakeDataReader(const std::string& filename, sptrDiffractometer instrument);
+    FakeDataReader(const std::string& filename, Diffractometer *instrument);
+
     //! Return the data frame for the given index.
     Eigen::MatrixXi data(size_t frame) override;
+
     //! Set the value of the data at the given frame
     void setData(size_t frame, const Eigen::MatrixXi& data);
 

@@ -45,7 +45,7 @@ class Diffractometer {
 
 public:
 
-    static sptrDiffractometer create(const std::string& name);
+    static Diffractometer* create(const std::string& name);
 
 public:
 
@@ -53,6 +53,8 @@ public:
 
     //! Constructs a diffractometer from another one
     Diffractometer(const Diffractometer& other);
+
+    Diffractometer* clone() const;
 
     //! Destructor
     virtual ~Diffractometer();

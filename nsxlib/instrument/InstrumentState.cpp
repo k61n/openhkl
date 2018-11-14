@@ -42,7 +42,7 @@
 
 namespace nsx {
 
-InstrumentState::InstrumentState(sptrDiffractometer diffractometer)
+InstrumentState::InstrumentState(Diffractometer *diffractometer)
 : _diffractometer(diffractometer)
 {
     detectorOrientation.setIdentity();
@@ -133,7 +133,12 @@ Eigen::Matrix3d InstrumentState::jacobianK(double px, double py) const
     return dkdx;   
 }
 
-sptrDiffractometer InstrumentState::diffractometer() const
+const Diffractometer* InstrumentState::diffractometer() const
+{
+    return _diffractometer;
+}
+
+Diffractometer* InstrumentState::diffractometer()
 {
     return _diffractometer;
 }

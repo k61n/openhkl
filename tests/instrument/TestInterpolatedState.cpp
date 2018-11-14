@@ -22,12 +22,12 @@ void run_test(const char* filename, const char* instrument)
 {
     nsx::DataReaderFactory factory;
 
-    nsx::sptrExperiment expt(new nsx::Experiment("test", instrument));
-    auto diffractometer = expt->diffractometer();
+    nsx::Experiment experiment("test", instrument);
+    auto diffractometer = experiment.diffractometer();
     const auto* detector = diffractometer->detector();
     nsx::sptrDataSet dataf(factory.create("hdf", filename, diffractometer));
 
-    expt->addData(dataf);
+    experiment.addData(dataf);
 
     const int nrows = dataf->nRows();
     const int ncols = dataf->nCols();

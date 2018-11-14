@@ -10,7 +10,7 @@
 
 namespace nsx {
 
-sptrDiffractometer Diffractometer::create(const std::string& name)
+Diffractometer* Diffractometer::create(const std::string& name)
 {
 
     YAML::Node instrumentDefinition = findResource({"instruments",name});
@@ -19,10 +19,10 @@ sptrDiffractometer Diffractometer::create(const std::string& name)
         throw std::runtime_error("Invalid instrument definition: missing 'instrument root node'");
     }
 
-    sptrDiffractometer diffractometer;
+    Diffractometer *diffractometer;
 
     try {
-        diffractometer = std::make_shared<Diffractometer>(Diffractometer(instrumentDefinition["instrument"]));
+        diffractometer = new Diffractometer(instrumentDefinition["instrument"]);
     } catch (std::exception& e) {
         std::string msg = "Error when reading instrument definition file: ";
         throw std::runtime_error(msg+e.what());
@@ -41,6 +41,11 @@ Diffractometer::Diffractometer(const Diffractometer& other)
   _sample(other._sample),
   _source(other._source)
 {
+}
+
+Diffractometer* Diffractometer::clone() const
+{
+    return new Diffractometer(*this);
 }
 
 Diffractometer::Diffractometer(const std::string& name) : _name(name), _detector(nullptr), _sample(), _source()

@@ -13,14 +13,14 @@ NSX_INIT_TEST
 int main()
 {
     nsx::DataReaderFactory factory;
-    nsx::sptrDiffractometer diff;
+    nsx::Diffractometer *diffractometer;
     nsx::sptrDataSet dataf;
 
     std::vector<Eigen::MatrixXi> frames;
 
     try {
-        diff = nsx::Diffractometer::create("D10");
-        dataf = factory.create("", "D10_ascii_example", diff);
+        diffractometer = nsx::Diffractometer::create("D10");
+        dataf = factory.create("", "D10_ascii_example", diffractometer);
         dataf->open();
 
         for (size_t i = 0; i < dataf->nFrames(); ++i) {
@@ -31,7 +31,7 @@ int main()
         dataf->close();
         
         // read data back in and check that it agrees!
-        dataf = factory.create("h5", "D10_hdf5_example.h5", diff);
+        dataf = factory.create("h5", "D10_hdf5_example.h5", diffractometer);
 
         NSX_CHECK_ASSERT(dataf != nullptr);
 

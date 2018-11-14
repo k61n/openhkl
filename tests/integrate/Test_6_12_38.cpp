@@ -32,11 +32,10 @@ int main()
 {
     nsx::DataReaderFactory factory;
 
-    nsx::sptrExperiment expt(new nsx::Experiment("test", "BioDiff2500"));
-    auto diff = expt->diffractometer();
-    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", diff));
+    nsx::Experiment experiment("test", "BioDiff2500");
+    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
 
-    expt->addData(dataf);
+    experiment.addData(dataf);
 
     Eigen::Matrix3d A;
 

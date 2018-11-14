@@ -17,15 +17,15 @@ NSX_INIT_TEST
 int main()
 {
     nsx::DataReaderFactory factory;
-    nsx::sptrDiffractometer diff;
+    nsx::Diffractometer *diffractometer;
     nsx::sptrDataSet dataf;
     Eigen::MatrixXi v;
 
     nsx::MetaData metadata;
 
     try {
-        diff = nsx::Diffractometer::create("D9");
-        dataf = factory.create("", "D9_QSCAN", diff);
+        diffractometer = nsx::Diffractometer::create("D9");
+        dataf = factory.create("", "D9_QSCAN", diffractometer);
 
         metadata = dataf->reader()->metadata();
 

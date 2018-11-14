@@ -33,12 +33,12 @@
 
 namespace nsx {
 
-InterpolatedState::InterpolatedState(sptrDiffractometer diffractometer): InstrumentState(diffractometer)
+InterpolatedState::InterpolatedState(Diffractometer *diffractometer): InstrumentState(diffractometer)
 {
 }
 
 InterpolatedState::InterpolatedState(const InstrumentState& s1, const InstrumentState& s2, double t)
-: InstrumentState(s1.diffractometer()),
+: InstrumentState(const_cast<Diffractometer*>(s1.diffractometer())),
   axis(),
   stepSize()
 {

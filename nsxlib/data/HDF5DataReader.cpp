@@ -14,13 +14,13 @@
 
 namespace nsx {
 
-HDF5DataReader::HDF5DataReader(const std::string& filename, sptrDiffractometer instrument):
+HDF5DataReader::HDF5DataReader(const std::string& filename, Diffractometer* instrument):
     HDF5MetaDataReader(filename, instrument)
 {
     
 }
 
-IDataReader* HDF5DataReader::create(const std::string& filename, sptrDiffractometer diffractometer)
+IDataReader* HDF5DataReader::create(const std::string& filename, Diffractometer *diffractometer)
 {
     return new HDF5DataReader(filename, diffractometer);
 }

@@ -22,15 +22,12 @@ NSX_INIT_TEST
 
 void run_test(const char* filename, const char* instrument)
 {
-    std::cout << "Running test of " << filename << ", " << instrument << std::endl;
-
     nsx::DataReaderFactory factory;
 
-    nsx::sptrExperiment expt(new nsx::Experiment("test", instrument));
-    auto diff = expt->diffractometer();
-    nsx::sptrDataSet dataf(factory.create("hdf", filename, diff));
+    nsx::Experiment experiment("test", instrument);
+    nsx::sptrDataSet dataf(factory.create("hdf", filename, experiment.diffractometer()));
 
-    expt->addData(dataf);
+    experiment.addData(dataf);
 
     const int nrows = dataf->nRows();
     const int ncols = dataf->nCols();

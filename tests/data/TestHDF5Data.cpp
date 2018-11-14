@@ -11,8 +11,8 @@ int main()
 {
     nsx::DataReaderFactory factory;
 
-    auto diff = nsx::Diffractometer::create("BioDiff2500");
-    auto dataf = factory.create("hdf", "H5_example.hdf", diff);
+    nsx::Diffractometer *diffractometer = nsx::Diffractometer::create("BioDiff2500");
+    auto dataf = factory.create("hdf", "H5_example.hdf", diffractometer);
 
     dataf->open();
     Eigen::MatrixXi v = dataf->frame(0);

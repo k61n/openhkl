@@ -48,16 +48,16 @@ class ILLDataReader: public IDataReader {
 
 public:
 
-    static IDataReader* create(const std::string& filename, const sptrDiffractometer& diffractometer);
+    static IDataReader* create(const std::string& filename, Diffractometer *diffractometer);
 
     //! Default constructor
-    ILLDataReader(const std::string& filename, const sptrDiffractometer& diffractometer);
+    ILLDataReader(const std::string& filename, Diffractometer *diffractometer);
+
     //! Copy constructor
     ILLDataReader(const ILLDataReader& other)=delete;
+
     //! Destructor
     virtual ~ILLDataReader()=default;
-
-    // Operators
 
     //! Assignment operator
     ILLDataReader& operator=(const ILLDataReader& other)=delete;
@@ -66,6 +66,7 @@ public:
     void open() override;
 
     void close() override;
+
     //! Read a single frame
     Eigen::MatrixXi data(size_t frame) override;
 

@@ -36,6 +36,8 @@
 
 namespace nsx {
 
+class Diffractometer;
+
 //! Class storing the state of the experiment at a given moment of time.
 //! State refers to any parameters which might change during the experiment:
 //! sample orientation, sample position, etc. States are initially loaded
@@ -44,7 +46,7 @@ class InstrumentState {
 public:
 
     //! default value needed for SWIG (note: nullptr does _not_ work)
-    InstrumentState(sptrDiffractometer diffractomer = sptrDiffractometer());
+    InstrumentState(Diffractometer *diffractometer=nullptr);
 
     //! Destructor
     virtual ~InstrumentState() {}
@@ -70,8 +72,11 @@ public:
     //! Compute the jacobian of the transformation (x,y) -> k_lab
     Eigen::Matrix3d jacobianK(double px, double py) const;
 
-    //! Return the diffractometer of the state
-    sptrDiffractometer diffractometer() const;
+    //! Return a pointer to the diffractometer of the state
+    Diffractometer* diffractometer();
+
+    //! Return a const pointer to the diffractometer of the state
+    const Diffractometer* diffractometer() const;
 
 public:
 
@@ -107,8 +112,9 @@ public:
     #endif
 
 protected:
-    //! Pointer to the diffractometer whose state this object stores
-    sptrDiffractometer _diffractometer;
+    //! Pointer to the diffractometer whose state this object stores.
+    //! The actual resource is not owned by this object which just borrows it.
+    Diffractometer *_diffractometer;
 };
 
 } // end namespace nsx

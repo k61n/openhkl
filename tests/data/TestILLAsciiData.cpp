@@ -26,16 +26,16 @@ public:
 int UnitTest_DataSet::run()
 {
     nsx::DataReaderFactory factory;
-    nsx::sptrDiffractometer diff;
+    nsx::Diffractometer *diffractometer;
     nsx::sptrDataSet dataf;
     Eigen::MatrixXi v;
 
     nsx::MetaData metadata;
 
     try {
-        diff = nsx::Diffractometer::create("D10");
+        diffractometer = nsx::Diffractometer::create("D10");
 
-        dataf = factory.create("", "D10_ascii_example", diff);
+        dataf = factory.create("", "D10_ascii_example", diffractometer);
 
         metadata = dataf->reader()->metadata();
 

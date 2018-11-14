@@ -7,10 +7,11 @@ class TestILLAscii(unittest.TestCase):
 
     # todo: fix MetaDat::getKey() and DataSet::getInstrumentStates()
     def test(self):
+        
+        experiment = nsx.Experiment("exp","D19");
         factory = nsx.DataReaderFactory()
-        diff = nsx.Diffractometer.create("D10")
-        dataf = factory.create("", "D10_ascii_example", diff)
-        meta = dataf.reader().metadata()
+        dataf = factory.create("", "D10_ascii_example", experiment.diffractometer())
+        metadata = dataf.reader().metadata()
         dataf.open()
         v = dataf.frame(0)
             
@@ -18,7 +19,7 @@ class TestILLAscii(unittest.TestCase):
         self.assertAlmostEqual(v.sum(),65)
         # check the value of monitor 
 
-        monitor = meta.key("monitor")        
+        monitor = metadata.key("monitor")        
         #self.assertAlmostEqual(meta.getKey("monitor"),20000)
 
         # todo : check if the following line is correct 

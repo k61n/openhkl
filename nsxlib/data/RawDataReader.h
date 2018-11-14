@@ -51,8 +51,10 @@ namespace nsx {
 class RawDataReader: public IDataReader {
 
 public:
+
     //! Create data reader from the given filename, associated to given diffractometer.
-    static IDataReader* create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer);
+    static IDataReader* create(const std::string& filename, Diffractometer* diffractometer);
+
     //! Construct a dataset from the list of files, with the give metadata.
     //! \param delta_chi per-frame change in chi axis of sample goniometer
     //! \param delta_omega per-frame change in omega axis of sample goniometer
@@ -60,21 +62,28 @@ public:
     //! \param rowMajor determines if data is stored in row-major format (column major otherwise)
     //! \param swapEndian determines whether to swap the endianness of the input data
     //! \param bpp is the number of bytes per pixel
-    RawDataReader(const std::vector<std::string>& filenames, const std::shared_ptr<Diffractometer>& diffractometer,
+    RawDataReader(const std::vector<std::string>& filenames, Diffractometer *diffractometer,
             double wavelength, double delta_chi, double delta_omega, double delta_phi,
             bool rowMajor, bool swapEndian, unsigned int bpp);
+
     //! Deleted copy constructor
     RawDataReader(const RawDataReader& other) = delete;
+
     //! Deleted assignment operator
     RawDataReader& operator=(const RawDataReader& other) = delete;
+
     //! Open the file(s)
     void open() override;
+
     //! Close the file(s)
     void close() override;
+
     //! Read a single frame
     Eigen::MatrixXi data(size_t frame) override;
+
     //! Swap enddianness of the data
     void swapEndian();
+
     //! Set the bytes-per-pixel of the data
     void setBpp(unsigned int bpp);
 

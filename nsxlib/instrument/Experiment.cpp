@@ -16,12 +16,34 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
 : _name(name),
   _data()
 {
-    _diffractometer = Diffractometer::create(diffractometerName);
+    _diffractometer.reset(Diffractometer::create(diffractometerName));
 }
 
-sptrDiffractometer Experiment::diffractometer() const
+Experiment::Experiment(const Experiment& other)
 {
-    return _diffractometer;
+    _name = other._name;
+    _data = other._data;
+    _diffractometer.reset(other._diffractometer->clone());
+}
+
+Experiment& Experiment::operator=(const Experiment &other)
+{
+    if (this != &other) {
+        _name = other._name;
+        _data = other._data;
+        _diffractometer.reset(other._diffractometer->clone());
+    }
+    return *this;
+}
+
+const Diffractometer *Experiment::diffractometer() const
+{
+    return _diffractometer.get();
+}
+
+Diffractometer *Experiment::diffractometer()
+{
+    return _diffractometer.get();
 }
 
 const std::map<std::string,sptrDataSet>& Experiment::data() const

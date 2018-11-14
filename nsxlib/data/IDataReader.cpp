@@ -24,7 +24,7 @@
 
 namespace nsx {
 
-IDataReader::IDataReader(const std::string& filename, const sptrDiffractometer& diffractometer)
+IDataReader::IDataReader(const std::string& filename, Diffractometer *diffractometer)
 : _diffractometer(std::move(diffractometer)),
   _nFrames(0),
   _sampleStates(),
@@ -63,7 +63,12 @@ MetaData& IDataReader::metadata()
     return _metadata;
 }
 
-sptrDiffractometer IDataReader::diffractometer() const
+const Diffractometer* IDataReader::diffractometer() const
+{
+    return _diffractometer;
+}
+
+Diffractometer* IDataReader::diffractometer()
 {
     return _diffractometer;
 }

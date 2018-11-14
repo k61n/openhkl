@@ -10,9 +10,9 @@
 namespace nsx {
 
 template <typename T> 
-std::shared_ptr<DataSet> create_reader(const std::string& filename, const std::shared_ptr<Diffractometer>& diff)
+std::shared_ptr<DataSet> create_reader(const std::string& filename, Diffractometer *diffractometer)
 {
-    auto reader = std::shared_ptr<IDataReader>(new T(filename, diff));
+    auto reader = std::shared_ptr<IDataReader>(new T(filename, diffractometer));
     return std::shared_ptr<DataSet>(new DataSet(reader));
 }
 
@@ -25,10 +25,9 @@ DataReaderFactory::DataReaderFactory(): _callbacks()
     _callbacks["nxs"] = &create_reader<HDF5DataReader>;
     _callbacks["tif"] = &create_reader<TiffDataReader>;
     _callbacks["tiff"] = &create_reader<TiffDataReader>;
-    //_callbacks["raw"] = &create_reader<RawDataReader>;
 }
 
-std::shared_ptr<DataSet> DataReaderFactory::create(const std::string& extension, const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer) const
+std::shared_ptr<DataSet> DataReaderFactory::create(const std::string& extension, const std::string& filename, Diffractometer *diffractometer) const
 {
     const auto it = _callbacks.find(extension);
 
