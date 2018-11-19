@@ -55,6 +55,11 @@ public:
     //! Create data reader from the given filename, associated to given diffractometer.
     static IDataReader* create(const std::string& filename, Diffractometer* diffractometer);
 
+    RawDataReader() = delete;
+
+    //! Deleted copy constructor
+    RawDataReader(const RawDataReader &other) = delete;
+
     //! Construct a dataset from the list of files, with the give metadata.
     //! \param delta_chi per-frame change in chi axis of sample goniometer
     //! \param delta_omega per-frame change in omega axis of sample goniometer
@@ -66,20 +71,19 @@ public:
             double wavelength, double delta_chi, double delta_omega, double delta_phi,
             bool rowMajor, bool swapEndian, unsigned int bpp);
 
-    //! Deleted copy constructor
-    RawDataReader(const RawDataReader& other) = delete;
+    ~RawDataReader() = default;
 
     //! Deleted assignment operator
-    RawDataReader& operator=(const RawDataReader& other) = delete;
+    RawDataReader& operator=(const RawDataReader &other) = delete;
 
     //! Open the file(s)
-    void open() override;
+    void open() final;
 
     //! Close the file(s)
-    void close() override;
+    void close() final;
 
     //! Read a single frame
-    Eigen::MatrixXi data(size_t frame) override;
+    Eigen::MatrixXi data(size_t frame) final;
 
     //! Swap enddianness of the data
     void swapEndian();
@@ -88,14 +92,24 @@ public:
     void setBpp(unsigned int bpp);
 
 private:
+
     template<typename T_>
     Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> matrixFromData() const;
+
+private:
+
     unsigned int _bpp;
+
     size_t _length;
+
     bool _swapEndian;
+
     bool _rowMajor;
+
     std::vector<std::string> _filenames;
+
     std::vector<char> _data;
+
     double _wavelength;
 };
 

@@ -42,15 +42,21 @@ class TiffDataReader: public IDataReader {
 public:
     static IDataReader* create(const std::string& filename, Diffractometer *diffractometer);
 
+    TiffDataReader() = delete;
+
+    TiffDataReader(const TiffDataReader &other) = delete;
+
     TiffDataReader(const std::string& filename, Diffractometer *diffractometer);
 
-    virtual ~TiffDataReader()=default;
+    ~TiffDataReader() = default;
 
-    void open() override;
+    TiffDataReader& operator=(const TiffDataReader &other) = delete;
 
-    void close() override;
+    void open() final;
 
-    Eigen::MatrixXi data(std::size_t frame) override;
+    void close() final;
+
+    Eigen::MatrixXi data(std::size_t frame) final;
 
 private:
 

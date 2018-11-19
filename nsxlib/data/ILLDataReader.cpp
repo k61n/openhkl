@@ -233,7 +233,7 @@ void ILLDataReader::open()
         boost::interprocess::file_mapping filemap(_metadata.key<std::string>("filename").c_str(), boost::interprocess::read_only);
         boost::interprocess::mapped_region reg(filemap,boost::interprocess::read_only);
         _map.swap(reg);
-        _mapAddress=reinterpret_cast<char*>(_map.get_address());
+        _mapAddress = reinterpret_cast<char*>(_map.get_address());
     } catch(std::exception& e) {
         throw std::runtime_error(std::string("ILLAsciiData::open() caught exception: ") + e.what());
     }

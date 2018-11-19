@@ -21,7 +21,7 @@ public:
     IDataReader(const std::string& filename, Diffractometer* diffractometer);
 
     //! Destructor
-    virtual ~IDataReader() = default;
+    virtual ~IDataReader() = 0;
 
     //! Open the file
     virtual void open() = 0;
@@ -30,7 +30,7 @@ public:
     virtual void close() = 0;
 
     //! Return the a detector image
-    virtual Eigen::MatrixXi data(size_t frame)=0;
+    virtual Eigen::MatrixXi data(size_t frame) = 0;
 
     //! Return the instrument state as read from the metadata
     InstrumentState state(size_t frame) const;
@@ -75,6 +75,13 @@ public:
     std::size_t fileSize() const;//
 
 protected:
+
+    IDataReader() = delete;
+
+    IDataReader(const IDataReader &other) = delete;
+
+    IDataReader& operator=(const IDataReader &other) = delete;
+
     //! Stores the metadata
     MetaData _metadata;
 

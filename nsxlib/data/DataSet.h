@@ -50,14 +50,19 @@ class DataSet {
     friend class UnitTest_DataSet;
 
 public:
+
+    DataSet() = delete;
+
+    DataSet(const DataSet &other) = default;
+
     //! Construct using the given data reader (allowing multiple formats)
     DataSet(std::shared_ptr<IDataReader> reader);
 
     //! Destructor
-    virtual ~DataSet();
+    ~DataSet();
 
     //! Assignment operator
-    DataSet& operator=(const DataSet& other);
+    DataSet& operator=(const DataSet& other) = delete;
 
     //! Gets the data filename
     const std::string& filename() const;
