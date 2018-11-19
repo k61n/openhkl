@@ -35,14 +35,18 @@
 
 namespace nsx {
 
-BoxMask::BoxMask(const AABB& aabb): _aabb(aabb)
+BoxMask::BoxMask(const AABB& aabb) : IMask(), _aabb(aabb)
 {
-
 }
 
-bool BoxMask::collide(const Ellipsoid& e)
+bool BoxMask::collide(const Ellipsoid& ellipsoid) const
 {
-    return _aabb.collide(e);
+    return _aabb.collide(ellipsoid);
+}
+
+IMask* BoxMask::clone() const
+{
+    return new BoxMask(*this);
 }
 
 } // end namespace nsx
