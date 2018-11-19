@@ -38,6 +38,10 @@ IDataReader::IDataReader(const std::string& filename, Diffractometer *diffractom
     _nCols = _diffractometer->detector()->nCols();
 }
 
+IDataReader::~IDataReader()
+{
+}
+
 size_t IDataReader::nFrames() const
 {
     return _nFrames;

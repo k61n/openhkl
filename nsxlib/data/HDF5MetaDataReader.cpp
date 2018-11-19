@@ -140,13 +140,6 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
 
 }
 
-HDF5MetaDataReader::~HDF5MetaDataReader()
-{
-    if (_isOpened) {
-        close();
-    }
-}
-
 void HDF5MetaDataReader::open()
 {
     if (_isOpened) {
@@ -209,6 +202,7 @@ void HDF5MetaDataReader::close()
     if (!_isOpened) {
         return;
     }
+
     _file->close();
     _space->close();
     _memspace->close();

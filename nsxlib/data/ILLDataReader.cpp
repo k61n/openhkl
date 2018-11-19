@@ -24,11 +24,6 @@ namespace nsx {
 // 81 characters per line, at least 100 lines of header
 std::size_t ILLDataReader::BlockSize = 100*81;
 
-IDataReader* ILLDataReader::create(const std::string& filename, Diffractometer *diffractometer)
-{
-    return new ILLDataReader(filename, diffractometer);
-}
-
 ILLDataReader::ILLDataReader(const std::string& filename, Diffractometer *diffractometer)
 : IDataReader(filename,diffractometer)
 {
@@ -233,7 +228,7 @@ void ILLDataReader::open()
         boost::interprocess::file_mapping filemap(_metadata.key<std::string>("filename").c_str(), boost::interprocess::read_only);
         boost::interprocess::mapped_region reg(filemap,boost::interprocess::read_only);
         _map.swap(reg);
-        _mapAddress=reinterpret_cast<char*>(_map.get_address());
+        _mapAddress = reinterpret_cast<char*>(_map.get_address());
     } catch(std::exception& e) {
         throw std::runtime_error(std::string("ILLAsciiData::open() caught exception: ") + e.what());
     }
