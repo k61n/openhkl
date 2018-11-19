@@ -18,11 +18,11 @@ int nsx::UnitTest_DataSet::run()
 {
     nsx::DataReaderFactory factory;
 
-    nsx::sptrExperiment expt(new nsx::Experiment("test", "BioDiff2500"));
-    auto diff = expt->diffractometer();
-    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", diff));
+    nsx::Experiment experiment("test", "BioDiff2500");
 
-    expt->addData(dataf);
+    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
+
+    experiment.addData(dataf);
 
     auto detectorStates = dataf->_reader->detectorStates();
     auto sampleStates = dataf->_reader->sampleStates();

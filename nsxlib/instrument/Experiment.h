@@ -30,10 +30,12 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "DataTypes.h"
+#include "Diffractometer.h"
 #include "InstrumentTypes.h"
 
 namespace nsx {
@@ -47,22 +49,22 @@ public:
     Experiment()=delete;
 
     //! Copy constructor
-    Experiment(const Experiment& other)=default;
+    Experiment(const Experiment& other);
 
     //! Construct an empty experiment from a given name and diffractometer
     Experiment(const std::string& name, const std::string& diffractometerName);
 
-    //! Construct an empty experiment from a diffractometer name
-    Experiment(const std::string& diffractometerName);
-
     //! Destructor
-    virtual ~Experiment();
+    ~Experiment()=default;
 
     //! Assignment operator
-    Experiment& operator=(const Experiment& other)=default;
+    Experiment& operator=(const Experiment& other);
 
-    //! Gets a shared pointer to the diffractometer related to the experiment
-    sptrDiffractometer diffractometer() const;
+    //! Returns a non-const pointerh  to the diffractometer related to the experiment
+    Diffractometer* diffractometer();
+
+    //! Returns a const pointerh  to the diffractometer related to the experiment
+    const Diffractometer* diffractometer() const;
 
     //! Get a reference to the data
     const std::map<std::string,sptrDataSet>& data() const;
@@ -86,11 +88,8 @@ private:
     //! The name of this experiment
     std::string _name;
 
-    //! The name of the diffractometer assigned to the experiment
-    std::string _diffractometerName;
-
     //! A pointer to the detector assigned to this experiment
-    sptrDiffractometer _diffractometer;
+    std::unique_ptr<Diffractometer> _diffractometer;
 
     //! A map of the data related to the experiment. The keys are the basename of their corresponding file.
     std::map<std::string,sptrDataSet> _data;

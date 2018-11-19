@@ -122,7 +122,7 @@ void PeaksItem::normalizeToMonitor()
             continue;
         }
 
-        double monitor = data->metadata()->key<double>("monitor");
+        double monitor = data->reader()->metadata().key<double>("monitor");
 
         peak->setScale(factor/monitor);
     }

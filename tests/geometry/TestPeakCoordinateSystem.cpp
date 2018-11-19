@@ -22,16 +22,12 @@ NSX_INIT_TEST
 
 void run_test(const char* filename, const char* instrument)
 {
-    std::cout << "Running test of " << filename << ", " << instrument << std::endl;
-
     nsx::DataReaderFactory factory;
 
-    nsx::sptrExperiment expt(new nsx::Experiment("test", instrument));
-    auto diff = expt->diffractometer();
-    const auto* detector = diff->detector();
-    nsx::sptrDataSet dataf(factory.create("hdf", filename, diff));
+    nsx::Experiment experiment("test", instrument);
+    nsx::sptrDataSet dataf(factory.create("hdf", filename, experiment.diffractometer()));
 
-    expt->addData(dataf);
+    experiment.addData(dataf);
 
     const int nrows = dataf->nRows();
     const int ncols = dataf->nCols();
@@ -70,8 +66,6 @@ void run_test(const char* filename, const char* instrument)
         Eigen::Vector3d y1 = J*Eigen::Vector3d(dt, 0, 0);
         Eigen::Vector3d y2 = J*Eigen::Vector3d(0, dt, 0);
         Eigen::Vector3d y3 = J*Eigen::Vector3d(0, 0, dt);
-
-        const auto* detector = peak->data()->diffractometer()->detector();
 
         NSX_CHECK_SMALL(e0.norm(), 1e-8);
         std::cout << e0.transpose() << std::endl;

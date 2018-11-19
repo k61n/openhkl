@@ -55,13 +55,13 @@
 
 namespace nsx {
 
-IDataReader* RawDataReader::create(const std::string &filename, const std::shared_ptr<Diffractometer>& diffractometer) {
+IDataReader* RawDataReader::create(const std::string &filename, Diffractometer *diffractometer) {
     std::vector<std::string> filenames;
     filenames.push_back(filename);
     return new RawDataReader(filenames, diffractometer, 0, 0, 0, 0, true, true, 2);
 }
 
-RawDataReader::RawDataReader(const std::vector<std::string>& filenames, const std::shared_ptr<Diffractometer>& diffractometer,
+RawDataReader::RawDataReader(const std::vector<std::string>& filenames, Diffractometer *diffractometer,
                  double wavelength, double delta_chi, double delta_omega, double delta_phi,
                  bool rowMajor, bool swapEndian, unsigned int bpp)
 : IDataReader(filenames[0], diffractometer),

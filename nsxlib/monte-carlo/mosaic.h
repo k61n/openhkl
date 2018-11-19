@@ -8,20 +8,19 @@
 #ifndef MOSAIC_H_
 #define MOSAIC_H_
 
-#include <memory>
 #include <string>
 #include <vector>
 
-#include "InstrumentTypes.h"
 #include "Ellipsoid.h"
 #include "ConvexHull.h"
 #include "Sample.h"
 
 namespace nsx {
 
+class Diffractometer;
+
 //! \brief Class to predict peak profiles (intensity distribution) using Monte-Carlo integration.
-class Mosaic
-{
+class Mosaic {
 
 public:
 
@@ -37,7 +36,7 @@ public:
 
 private:
 
-	std::shared_ptr<Diffractometer> _diffractometer;
+	Diffractometer *_diffractometer;
 
 	Sample* _sample;
 

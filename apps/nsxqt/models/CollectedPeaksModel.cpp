@@ -11,6 +11,7 @@
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Detector.h>
 #include <nsxlib/Diffractometer.h>
+#include <nsxlib/IDataReader.h>
 #include <nsxlib/InstrumentState.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/MetaData.h>
@@ -35,7 +36,7 @@ static PeakFactors peakFactors(nsx::sptrPeak3D peak)
 {
     auto coord = peak->shape().center();
     auto state = peak->data()->interpolatedState(coord[2]);
-    auto position = peak->data()->diffractometer()->detector()->pixelPosition(coord[0], coord[1]);
+    auto position = peak->data()->reader()->diffractometer()->detector()->pixelPosition(coord[0], coord[1]);
 
     PeakFactors peak_factors;
     peak_factors.gamma = state.gamma(position);
@@ -265,7 +266,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
             return sigma_intensity;
         }
         case Column::numor: {
-            return _peaks[row]->data()->metadata()->key<int>("Numor");
+            return _peaks[row]->data()->reader()->metadata().key<int>("Numor");
         }
         case Column::unitCell:
             auto unit_cell = _peaks[row]->unitCell();
@@ -390,8 +391,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
     }
     case Column::numor: {
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            int numor1=p1->data()->metadata()->key<int>("Numor");
-            int numor2=p2->data()->metadata()->key<int>("Numor");
+            int numor1=p1->data()->reader()->metadata().key<int>("Numor");
+            int numor2=p2->data()->reader()->metadata().key<int>("Numor");
             return (numor1 < numor2);
         };
         break;
@@ -479,7 +480,8 @@ void CollectedPeaksModel::setUnitCell(const nsx::sptrUnitCell& unitCell, QModelI
 void CollectedPeaksModel::normalizeToMonitor(double factor)
 {
     for (auto&& peak : _peaks) {
-        peak->setScale(factor/peak->data()->metadata()->key<double>("monitor"));
+        double monitor = peak->data()->reader()->metadata().key<double>("monitor");
+        peak->setScale(factor/monitor);
     }
 
     QModelIndex topleft_index = index(0,0);

@@ -15,7 +15,7 @@
 namespace nsx {
 
  
-FakeDataReader::FakeDataReader(const std::string& filename, sptrDiffractometer diffractometer)
+FakeDataReader::FakeDataReader(const std::string& filename, Diffractometer *diffractometer)
     :HDF5MetaDataReader(filename, diffractometer)
 {
     _frames.resize(_nFrames);

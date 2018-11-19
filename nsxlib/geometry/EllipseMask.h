@@ -41,12 +41,25 @@ namespace nsx {
 class EllipseMask: public IMask {
 
 public:
+
+    EllipseMask()=delete;
+
+    EllipseMask(const EllipseMask &other)=default;
+
     EllipseMask(const AABB& aabb, bool two_dim=true);
-    virtual ~EllipseMask() {}
-    bool collide(const Ellipsoid& e) override;
+
+    ~EllipseMask()=default;
+
+    EllipseMask& operator=(const EllipseMask &other)=default;
+
+    IMask* clone() const override;
+
+    bool collide(const Ellipsoid& ellipsoid) const override;
 
 private:
+
     Ellipsoid _ellipsoid;
+
     bool _2d;
 };
 

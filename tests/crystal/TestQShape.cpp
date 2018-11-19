@@ -18,10 +18,9 @@ NSX_INIT_TEST
 int main()
 {
     nsx::DataReaderFactory factory;
-    nsx::sptrExperiment expt(new nsx::Experiment("test", "BioDiff2500"));
-    auto diff = expt->diffractometer();
-    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", diff));
-    expt->addData(dataf);
+    nsx::Experiment experiment("test", "BioDiff2500");
+    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
+    experiment.addData(dataf);
 
     nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
     nsx::sptrPeakFinder peakFinder(new nsx::PeakFinder);

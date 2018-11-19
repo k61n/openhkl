@@ -10,6 +10,7 @@
 #include <nsxlib/Detector.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Ellipsoid.h>
+#include <nsxlib/IDataReader.h>
 #include <nsxlib/InstrumentState.h>
 #include <nsxlib/IntegrationRegion.h>
 #include <nsxlib/MetaData.h>
@@ -176,7 +177,7 @@ void PeakGraphicsItem::plot(SXPlot* plot)
 
     auto c = _peak->shape().center();
     auto state = _peak->data()->interpolatedState(c[2]);
-    auto position = _peak->data()->diffractometer()->detector()->pixelPosition(c[0], c[1]);
+    auto position = _peak->data()->reader()->diffractometer()->detector()->pixelPosition(c[0], c[1]);
     double g = state.gamma(position);
     double n = state.nu(position);
     g/=nsx::deg;
@@ -189,7 +190,7 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     info+="Cor. int. ("+QString(QChar(0x03C3))+"I): "+QString::number(corr_int.value(),'f',2)+" ("+QString::number(corr_int.sigma(),'f',2)+")\n";
 
     double scale=_peak->scale();
-    double monitor=_peak->data()->metadata()->key<double>("monitor");
+    double monitor=_peak->data()->reader()->metadata().key<double>("monitor");
     info+="Monitor "+QString::number(monitor*scale)+" counts";
     QCPPlotTitle* title=dynamic_cast<QCPPlotTitle*>(p->plotLayout()->element(0,0));
     if (title != nullptr) {

@@ -12,6 +12,7 @@
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Detector.h>
 #include <nsxlib/Diffractometer.h>
+#include <nsxlib/IDataReader.h>
 
 #include "CutSliceGraphicsItem.h"
 #include "DetectorScene.h"
@@ -43,8 +44,8 @@ void CutSliceGraphicsItem::plot(SXPlot* plot)
         return;
     }
 
-    auto dataPtr = detPtr->getData();
-    auto det=dataPtr->diffractometer()->detector();
+    auto data = detPtr->getData();
+    auto det = data->reader()->diffractometer()->detector();
     
     int nrows=det->nRows();
     int ncols=det->nCols();

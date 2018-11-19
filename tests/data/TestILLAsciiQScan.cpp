@@ -5,6 +5,7 @@
 #include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Diffractometer.h>
+#include <nsxlib/IDataReader.h>
 #include <nsxlib/MetaData.h>
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Units.h>
@@ -16,17 +17,19 @@ NSX_INIT_TEST
 int main()
 {
     nsx::DataReaderFactory factory;
-    nsx::sptrDiffractometer diff;
+    nsx::Diffractometer *diffractometer;
     nsx::sptrDataSet dataf;
-    nsx::MetaData* meta(nullptr);
     Eigen::MatrixXi v;
 
-    try {
-        diff = nsx::Diffractometer::build("D9");
-        dataf = factory.create("", "D9_QSCAN", diff);
-        meta=dataf->metadata();
+    nsx::MetaData metadata;
 
-        NSX_CHECK_ASSERT(meta->key<int>("nbang")==4);
+    try {
+        diffractometer = nsx::Diffractometer::create("D9");
+        dataf = factory.create("", "D9_QSCAN", diffractometer);
+
+        metadata = dataf->reader()->metadata();
+
+        NSX_CHECK_ASSERT(metadata.key<int>("nbang")==4);
 
         dataf->open();
         v = dataf->frame(0);
@@ -42,7 +45,7 @@ int main()
     NSX_CHECK_EQUAL(v.sum(),5.90800000e+03);
 
     // Check the value of the monitor
-    NSX_CHECK_CLOSE(meta->key<double>("monitor"),3.74130000e+04,tolerance);
+    NSX_CHECK_CLOSE(metadata.key<double>("monitor"),3.74130000e+04,tolerance);
 
     dataf->close();
 }

@@ -15,7 +15,8 @@ class HDF5MetaDataReader: public IDataReader
 {
 
 public:
-    HDF5MetaDataReader(const std::string& filename, sptrDiffractometer instrument);
+    HDF5MetaDataReader(const std::string& filename, Diffractometer* instrument);
+
     virtual ~HDF5MetaDataReader();
 
     void open() override;

@@ -44,8 +44,6 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader):
     _nFrames(0),
     _nrows(0),
     _ncols(0),
-    _diffractometer(reader->diffractometer()),
-    _metadata(uptrMetaData(new MetaData())),
     _data(),
     _states(),
     _fileSize(0),
@@ -57,14 +55,15 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader):
         throw std::runtime_error("IData, file: " + _filename + " does not exist");
     }
 
-    _nrows = _diffractometer->detector()->nRows();
-    _ncols = _diffractometer->detector()->nCols();
+    auto diffractometer = _reader->diffractometer();
 
-    _metadata = uptrMetaData(new MetaData(_reader->metadata()));
-    _nFrames = _metadata->key<int>("npdone");
+    _nrows = diffractometer->detector()->nRows();
+    _ncols = diffractometer->detector()->nCols();
 
-    double wav = _metadata->key<double>("wavelength");
-    _diffractometer->source().selectedMonochromator().setWavelength(wav);
+    _nFrames = _reader->metadata().key<int>("npdone");
+
+    double wav = _reader->metadata().key<double>("wavelength");
+    diffractometer->source().selectedMonochromator().setWavelength(wav);
 
     // Getting Scan parameters for the detector
     _states.reserve(_nFrames);
@@ -114,16 +113,6 @@ void DataSet::close()
 const std::string& DataSet::filename() const
 {
     return _filename;
-}
-
-sptrDiffractometer DataSet::diffractometer() const
-{
-    return _diffractometer;
-}
-
-MetaData*  DataSet::metadata() const
-{
-    return _metadata.get();
 }
 
 std::size_t DataSet::nFrames() const
@@ -236,7 +225,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
 
     const auto& detectorStates = _reader->detectorStates();
 
-    const auto &detector_gonio = _diffractometer->detector()->gonio();
+    const auto &detector_gonio = _reader->diffractometer()->detector()->gonio();
     size_t n_detector_gonio_axes = detector_gonio.nAxes();
     for (size_t i = 0; i < n_detector_gonio_axes; ++i) {
         const auto &axis = detector_gonio.axis(i);
@@ -249,13 +238,12 @@ void DataSet::saveHDF5(const std::string& filename) //const
         detectorScan.write(&values(0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
     }
 
-
     // Write sample states
     H5::Group sampleGroup(scanGroup.createGroup("Sample"));
 
     const auto& sampleStates = _reader->sampleStates();
 
-    const auto &sample_gonio = _diffractometer->sample().gonio();
+    const auto &sample_gonio = _reader->diffractometer()->sample().gonio();
     size_t n_sample_gonio_axes = sample_gonio.nAxes();;
 
     for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
@@ -269,7 +257,7 @@ void DataSet::saveHDF5(const std::string& filename) //const
         sampleScan.write(&values(0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
     }
 
-    const auto& map = _metadata->map();
+    const auto& map = _reader->metadata().map();
 
     // Write all string metadata into the "Info" group
     H5::Group infogroup(file.createGroup("/Info"));
@@ -405,7 +393,7 @@ std::vector<DetectorEvent> DataSet::events(const std::vector<ReciprocalVector>& 
         const double f = 0.5*(f0+f1);
         const auto state = interpolatedState(f);
         Eigen::RowVector3d kf = state.ki().rowVector() + q_vect*state.sampleOrientationMatrix().transpose();
-        const auto* detector = _diffractometer->detector();
+        const auto* detector = _reader->diffractometer()->detector();
         auto event = detector->constructEvent(DirectVector(state.samplePosition), ReciprocalVector((kf*state.detectorOrientation)));
         bool accept = event._tof > 0;
 
@@ -420,21 +408,21 @@ std::vector<DetectorEvent> DataSet::events(const std::vector<ReciprocalVector>& 
 ReciprocalVector DataSet::computeQ(const DetectorEvent& ev) const
 {
     const auto& state = interpolatedState(ev._frame);
-    const auto* detector = diffractometer()->detector();
+    const auto* detector = _reader->diffractometer()->detector();
     const auto& detector_position = DirectVector(detector->pixelPosition(ev._px, ev._py));
     return state.sampleQ(detector_position);
 }
 
 Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx)
 {
-    const auto* detector = _diffractometer->detector();
+    const auto* detector = _reader->diffractometer()->detector();
     Eigen::ArrayXXd new_frame = frame(idx).cast<double>();
     new_frame -= detector->baseline();
     new_frame /= detector->gain();
     return new_frame;
 }
 
-std::shared_ptr<IDataReader> DataSet::dataReader() const
+std::shared_ptr<IDataReader> DataSet::reader() const
 {
     return _reader;
 }

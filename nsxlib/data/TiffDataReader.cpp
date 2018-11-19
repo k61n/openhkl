@@ -6,13 +6,13 @@
 
 namespace nsx {
 
-IDataReader* TiffDataReader::create(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
+IDataReader* TiffDataReader::create(const std::string& filename, Diffractometer *diffractometer)
 {
     return new TiffDataReader(filename,diffractometer);
 }
 
 
-TiffDataReader::TiffDataReader(const std::string& filename, const std::shared_ptr<Diffractometer>& diffractometer)
+TiffDataReader::TiffDataReader(const std::string& filename, Diffractometer *diffractometer)
 : IDataReader(filename,diffractometer)
  {
     uint32 w,h;

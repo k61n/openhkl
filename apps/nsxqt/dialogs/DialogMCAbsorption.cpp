@@ -5,9 +5,9 @@
 #include <Eigen/Dense>
 
 #include <nsxlib/DataSet.h>
-
 #include <nsxlib/Detector.h>
 #include <nsxlib/Diffractometer.h>
+#include <nsxlib/IDataReader.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Gonio.h>
 #include <nsxlib/InstrumentState.h>
@@ -106,7 +106,7 @@ void DialogMCAbsorption::on_pushButton_run_pressed()
             auto data = p->data();
             auto coord = p->shape().center();
             auto state = data->interpolatedState(coord[2]);
-            auto position = data->diffractometer()->detector()->pixelPosition(coord[0], coord[1]);
+            auto position = data->reader()->diffractometer()->detector()->pixelPosition(coord[0], coord[1]);
             auto kf = state.kfLab(position);
             // todo: check coordinate systems here, may not be consistent
             double transmission=mca.run(ui->spinBox->value(),kf.rowVector(),state.sampleOrientationMatrix());

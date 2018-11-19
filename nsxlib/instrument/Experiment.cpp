@@ -5,6 +5,7 @@
 #include "DataSet.h"
 #include "Diffractometer.h"
 #include "Experiment.h"
+#include "IDataReader.h"
 #include "MetaData.h"
 #include "Monochromator.h"
 #include "Source.h"
@@ -13,27 +14,36 @@ namespace nsx {
 
 Experiment::Experiment(const std::string& name, const std::string& diffractometerName)
 : _name(name),
-  _diffractometerName(diffractometerName),
   _data()
 {
-    _diffractometer = Diffractometer::build(diffractometerName);
+    _diffractometer.reset(Diffractometer::create(diffractometerName));
 }
 
-Experiment::Experiment(const std::string& diffractometerName)
-: _name("experiment"),
-  _diffractometerName(diffractometerName),
-  _data()
+Experiment::Experiment(const Experiment& other)
 {
-    _diffractometer = Diffractometer::build(diffractometerName);
+    _name = other._name;
+    _data = other._data;
+    _diffractometer.reset(other._diffractometer->clone());
 }
 
-Experiment::~Experiment()
+Experiment& Experiment::operator=(const Experiment &other)
 {
+    if (this != &other) {
+        _name = other._name;
+        _data = other._data;
+        _diffractometer.reset(other._diffractometer->clone());
+    }
+    return *this;
 }
 
-sptrDiffractometer Experiment::diffractometer() const
+const Diffractometer *Experiment::diffractometer() const
 {
-    return _diffractometer;
+    return _diffractometer.get();
+}
+
+Diffractometer *Experiment::diffractometer()
+{
+    return _diffractometer.get();
 }
 
 const std::map<std::string,sptrDataSet>& Experiment::data() const
@@ -69,12 +79,15 @@ void Experiment::addData(sptrDataSet data)
     if (_data.find(filename) != _data.end()) {
         return;
     }
-    std::string diffName = data->metadata()->key<std::string>("Instrument");
+
+    const auto& metadata = data->reader()->metadata();
+
+    std::string diffName = metadata.key<std::string>("Instrument");
 
     if (!(diffName.compare(_diffractometer->name())==0)) {
         throw std::runtime_error("Mismatch between the diffractometers assigned to the experiment and the data");
     }
-    double wav=data->metadata()->key<double>("wavelength");
+    double wav = metadata.key<double>("wavelength");
 
     // ensure that there is at least one monochromator!
     if ( _diffractometer->source().nMonochromators() == 0 ) {

@@ -40,9 +40,9 @@ namespace nsx {
 class TiffDataReader: public IDataReader {
 
 public:
-    static IDataReader* create(const std::string& filename, const sptrDiffractometer& diffractometer);
+    static IDataReader* create(const std::string& filename, Diffractometer *diffractometer);
 
-    TiffDataReader(const std::string& filename, const sptrDiffractometer& diffractometer);
+    TiffDataReader(const std::string& filename, Diffractometer *diffractometer);
 
     virtual ~TiffDataReader()=default;
 

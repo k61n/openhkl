@@ -32,7 +32,6 @@
 #pragma once
 
 #include "AABB.h"
-#include "Ellipsoid.h"
 #include "IMask.h"
 
 namespace nsx {
@@ -41,11 +40,23 @@ namespace nsx {
 class BoxMask: public IMask {
 
 public:
+
+    BoxMask()=delete;
+
+    BoxMask(const BoxMask &other)=default;
+
     BoxMask(const AABB& aabb);
-    virtual ~BoxMask() {}
-    bool collide(const Ellipsoid& e) override;
+
+    ~BoxMask()=default;
+
+    BoxMask& operator=(const BoxMask &other)=default;
+
+    IMask* clone() const override;
+
+    bool collide(const Ellipsoid& ellipsoid) const override;
 
 private:
+
     AABB _aabb;
 };
 

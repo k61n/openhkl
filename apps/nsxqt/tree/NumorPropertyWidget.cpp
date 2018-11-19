@@ -1,6 +1,7 @@
 #include <QWidget>
 
 #include <nsxlib/DataSet.h>
+#include <nsxlib/IDataReader.h>
 #include <nsxlib/MetaData.h>
 
 #include "MetaTypes.h"
@@ -27,8 +28,8 @@ NumorPropertyWidget::NumorPropertyWidget(NumorItem* caller,QWidget *parent) :
 
     ui->label_Data->setText(QString::fromStdString(data->filename()));
 
-    auto metadata = data->metadata();
-    const auto& map = metadata->map();
+    const auto& metadata = data->reader()->metadata();
+    const auto& map = metadata.map();
 
     ui->tableWidget->setColumnCount(2);
     ui->tableWidget->setRowCount(map.size());

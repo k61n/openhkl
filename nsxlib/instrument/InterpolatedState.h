@@ -41,7 +41,7 @@ namespace nsx {
 class InterpolatedState: public InstrumentState {
 public:
     //! Default value needed for SWIG (note: nullptr does _not_ work) 
-    InterpolatedState(sptrDiffractometer = sptrDiffractometer());
+    InterpolatedState(Diffractometer *diffractometer=nullptr);
     //! Construct by interpolation. The paramter t should be between 0 and 1.
     InterpolatedState(const InstrumentState& s1, const InstrumentState& s2, double t);
     //! Compute the jacobian of the transformation (x,y,frame) -> q_sample

@@ -3,6 +3,8 @@
 #include <Eigen/Dense>
 
 #include <nsxlib/DataReaderFactory.h>
+#include <nsxlib/Experiment.h>
+#include <nsxlib/IDataReader.h>
 #include <nsxlib/PeakFinder.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/MetaData.h>
@@ -14,16 +16,17 @@ NSX_INIT_TEST
 
 int main()
 {
+    nsx::Experiment experiment("exp","D10");
+
     nsx::DataList numors;
 
     nsx::DataReaderFactory factory;
-    auto diff = nsx::Diffractometer::build("D10");
-    auto dataf = factory.create("", "D10_ascii_example", diff);
-    auto meta = dataf->metadata();
+    auto dataf = factory.create("", "D10_ascii_example", experiment.diffractometer());
+    const auto& metadata = dataf->reader()->metadata();
     nsx::PeakFinder peakFinder;
     nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
 
-    NSX_CHECK_ASSERT(meta->key<int>("nbang")==2);
+    NSX_CHECK_ASSERT(metadata.key<int>("nbang")==2);
 
     dataf->open();
     numors.push_back(dataf);

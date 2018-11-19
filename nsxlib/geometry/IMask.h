@@ -31,21 +31,30 @@
 
 #pragma once
 
-#include <cmath>
-
-#include <Eigen/Dense>
-#include <Eigen/Eigenvalues>
-#include <Eigen/Geometry>
-
 namespace nsx {
 
 class Ellipsoid;
 
-//! Abstract detector mask
+//! Abstract class for detector mask
 class IMask {
+
 public:
-    virtual ~IMask() {}
-    virtual bool collide(const Ellipsoid& e) = 0;
+
+    virtual ~IMask()=0;
+
+    virtual bool collide(const Ellipsoid& e) const=0;
+
+    virtual IMask* clone() const=0;
+
+protected:
+
+    IMask()=default;
+
+    IMask(const IMask &other)=default;
+
+    IMask& operator=(const IMask &other)=default;
+
+
 };
 
 } // end namespace nsx

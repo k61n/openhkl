@@ -22,12 +22,12 @@ void run_test(const char* filename, const char* instrument)
 {
     nsx::DataReaderFactory factory;
 
-    nsx::sptrExperiment expt(new nsx::Experiment("test", instrument));
-    auto diff = expt->diffractometer();
-    const auto* detector = diff->detector();
-    nsx::sptrDataSet dataf(factory.create("hdf", filename, diff));
+    nsx::Experiment experiment("test", instrument);
+    auto diffractometer = experiment.diffractometer();
+    const auto* detector = diffractometer->detector();
+    nsx::sptrDataSet dataf(factory.create("hdf", filename, diffractometer));
 
-    expt->addData(dataf);
+    experiment.addData(dataf);
 
     const int nrows = dataf->nRows();
     const int ncols = dataf->nCols();
@@ -49,7 +49,6 @@ void run_test(const char* filename, const char* instrument)
    
     for (auto coord: coords) {
         const double dt = 1e-3;
-        auto detector = dataf->diffractometer()->detector();
 
         auto state = dataf->interpolatedState(coord[2]);
         Eigen::Matrix3d Jq = state.jacobianQ(coord[0], coord[1]);
