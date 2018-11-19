@@ -47,6 +47,17 @@
 
 namespace nsx {
 
+struct RawDataReaderParameters {
+
+    double wavelength = 1.0;
+    double delta_omega = 1.0;
+    double delta_chi = 1.0;
+    double delta_phi = 1.0;
+    bool row_major=false;
+    bool swap_endian = false;
+    size_t bpp = 2;
+};
+
 //! \brief Class to detector counts from raw binary data.
 class RawDataReader: public IDataReader {
 
@@ -64,14 +75,14 @@ public:
     //! \param rowMajor determines if data is stored in row-major format (column major otherwise)
     //! \param swapEndian determines whether to swap the endianness of the input data
     //! \param bpp is the number of bytes per pixel
-    RawDataReader(const std::vector<std::string>& filenames, Diffractometer *diffractometer,
-            double wavelength, double delta_chi, double delta_omega, double delta_phi,
-            bool rowMajor, bool swapEndian, unsigned int bpp);
+    RawDataReader(const std::string &filename, Diffractometer *diffractometer);
 
     ~RawDataReader() = default;
 
     //! Deleted assignment operator
     RawDataReader& operator=(const RawDataReader &other) = delete;
+
+    void addFrame(const std::string &filename);
 
     //! Open the file(s)
     void open() final;
@@ -82,11 +93,11 @@ public:
     //! Read a single frame
     Eigen::MatrixXi data(size_t frame) final;
 
+    const RawDataReaderParameters& parameters() const;
+    void setParameters(const RawDataReaderParameters &parameters);
+
     //! Swap enddianness of the data
     void swapEndian();
-
-    //! Set the bytes-per-pixel of the data
-    void setBpp(unsigned int bpp);
 
 private:
 
@@ -95,19 +106,13 @@ private:
 
 private:
 
-    unsigned int _bpp;
+    std::vector<std::string> _filenames;
+
+    RawDataReaderParameters _parameters;
 
     size_t _length;
 
-    bool _swapEndian;
-
-    bool _rowMajor;
-
-    std::vector<std::string> _filenames;
-
     std::vector<char> _data;
-
-    double _wavelength;
 };
 
 template<typename T_>
@@ -115,7 +120,7 @@ Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> RawDataReader::matrixFromData(
 {
     assert(sizeof(T_)*_nRows*_nCols == _length);
 
-    if (_rowMajor) {
+    if (_parameters.row_major) {
         Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> frame;
         frame.resize(_nRows, _nCols);
         memcpy(&frame(0,0), &_data[0], _length);

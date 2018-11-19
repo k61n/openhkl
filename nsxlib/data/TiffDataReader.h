@@ -61,7 +61,8 @@ private:
 
     //! Type of encoding for each pixel.
     uint16 _bits;
-    //!
+
+    //! The handler to the TIFF file
     TIFF* _file;
 };
 

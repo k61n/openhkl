@@ -154,17 +154,23 @@ void DataItem::importRawData()
     std::shared_ptr<nsx::DataSet> data;
     std::shared_ptr<nsx::IDataReader> reader;
 
-    auto wavelength = dialog.wavelength();
-    auto delta_chi = dialog.deltaChi();
-    auto delta_omega = dialog.deltaOmega();
-    auto delta_phi = dialog.deltaPhi();
-    auto rowMajor = dialog.rowMajor();
-    auto swapEndian = dialog.swapEndian();
-    auto bpp = dialog.bpp();
+    nsx::RawDataReaderParameters parameters;
+
+    parameters.wavelength = dialog.wavelength();
+    parameters.delta_omega = dialog.deltaOmega();
+    parameters.delta_chi = dialog.deltaChi();
+    parameters.delta_phi = dialog.deltaPhi();
+    parameters.row_major = dialog.rowMajor();
+    parameters.swap_endian = dialog.swapEndian();
+    parameters.bpp = dialog.bpp();
 
     try {
         auto diff = exp->diffractometer();
-        reader.reset(new nsx::RawDataReader(filenames, diff, wavelength, delta_chi, delta_omega, delta_phi, rowMajor, swapEndian, bpp));
+        reader.reset(new nsx::RawDataReader(filenames[0], diff));
+        auto raw_data_reader = std::dynamic_pointer_cast<nsx::RawDataReader>(reader);
+        for (size_t i = 1; i < filenames.size(); ++i) {
+            raw_data_reader->addFrame(filenames[i]);
+        }
         data = std::make_shared<nsx::DataSet>(reader);
     }
     catch(std::exception& e) {

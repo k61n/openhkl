@@ -55,17 +55,11 @@
 
 namespace nsx {
 
-RawDataReader::RawDataReader(const std::vector<std::string>& filenames, Diffractometer *diffractometer,
-                 double wavelength, double delta_chi, double delta_omega, double delta_phi,
-                 bool rowMajor, bool swapEndian, unsigned int bpp)
-: IDataReader(filenames[0], diffractometer),
-  _bpp(bpp),
+RawDataReader::RawDataReader(const std::string &filename, Diffractometer *diffractometer)
+: IDataReader(filename, diffractometer),
+  _parameters(),
   _length(0),
-  _swapEndian(swapEndian),
-  _rowMajor(rowMajor),
-  _filenames(filenames),
-  _data(),
-  _wavelength(wavelength)
+  _data()
 {
     // ensure that there is at least one monochromator!
     if ( _diffractometer->source().nMonochromators() == 0 ) {
@@ -73,33 +67,28 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, Diffract
         _diffractometer->source().addMonochromator(mono);
     }
 
-    _length = _bpp * _nRows * _nCols;
-    auto& mono = _diffractometer->source().selectedMonochromator();
-    mono.setWavelength(_wavelength);
+    setParameters(_parameters);
 
-    _metadata.add<std::string>("Instrument", _diffractometer->name());
-    _metadata.add<double>("wavelength", _wavelength);
-    _metadata.add<int>("npdone", int(_filenames.size()));
-    _metadata.add<double>("monitor", 0.0);
-    _metadata.add<int>("Numor", 0.0);
+    addFrame(filename);
 
-    _data.resize(_bpp*_nRows*_nCols);
+}
+
+void RawDataReader::addFrame(const std::string &filename)
+{
+    _filenames.push_back(filename);
 
     _nFrames = _filenames.size();
 
     const auto& detector_gonio = _diffractometer->detector()->gonio();
     size_t n_detector_gonio_axes = detector_gonio.nAxes();
-    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> dm(n_detector_gonio_axes,_nFrames);
-    _detectorStates.resize(_nFrames);
-    for (unsigned int i = 0; i < _nFrames; ++i) {
-        _detectorStates[i] = eigenToVector((dm.col(i)));
-    }
+    Eigen::VectorXd dm(n_detector_gonio_axes);
+    _detectorStates.push_back(eigenToVector(dm));
 
     // Getting Scan parameters for the sample
     const auto &sample_gonio = _diffractometer->sample().gonio();
     size_t n_sample_gonio_axes = sample_gonio.nAxes();
 
-    dm.resize(n_sample_gonio_axes,_nFrames);
+    dm.resize(n_sample_gonio_axes);
 
     int omega, phi, chi;
     for (size_t i = 0, omega = -1, phi = -1, chi = -1; i < n_sample_gonio_axes; ++i) {
@@ -113,19 +102,16 @@ RawDataReader::RawDataReader(const std::vector<std::string>& filenames, Diffract
     assert(phi   != -1);
     assert(chi != -1);
 
-    for (size_t i = 0; i < _nFrames; ++i) {
-        dm(omega, i) = i*delta_omega;
-        dm(phi, i) = i*delta_phi;
-        dm(chi,i) = i*delta_chi;
-    }
+    size_t idx = _nFrames - 1;
+
+    dm(omega) = idx*_parameters.delta_omega;
+    dm(phi) = idx*_parameters.delta_phi;
+    dm(chi) = idx*_parameters.delta_chi;
 
     // Use natural units internally (rad)
     dm*=deg;
 
-    _sampleStates.resize(_nFrames);
-    for (size_t i=0;i<_nFrames;++i) {
-        _sampleStates[i] = eigenToVector(dm.col(i));
-    }
+    _sampleStates.push_back(eigenToVector(dm));
 }
 
 void RawDataReader::open() {
@@ -134,25 +120,42 @@ void RawDataReader::open() {
 void RawDataReader::close() {
 }
 
+const RawDataReaderParameters& RawDataReader::parameters() const
+{
+    return _parameters;
+}
+
+void RawDataReader::setParameters(const RawDataReaderParameters &parameters)
+{
+    _parameters = parameters;
+
+    _length = _parameters.bpp * _nRows * _nCols;
+    auto& mono = _diffractometer->source().selectedMonochromator();
+    mono.setWavelength(_parameters.wavelength);
+
+    _metadata.add<std::string>("Instrument", _diffractometer->name());
+    _metadata.add<double>("wavelength", _parameters.wavelength);
+    _metadata.add<int>("npdone", int(_filenames.size()));
+    _metadata.add<double>("monitor", 0.0);
+    _metadata.add<int>("Numor", 0.0);
+
+    _data.resize(_parameters.bpp*_nRows*_nCols);
+}
+
 void RawDataReader::swapEndian() {
 
-    if (!_swapEndian) {
+    if (!_parameters.swap_endian) {
         return;
     }
 
     for (unsigned int i = 0; i < _nRows*_nCols; ++i) {
-        for (unsigned int byte = 0; byte < _bpp/2; ++byte) {
-            std::swap(_data[_bpp*i+byte], _data[_bpp*i+(_bpp-1-byte)]);
+        for (unsigned int byte = 0; byte < _parameters.bpp/2; ++byte) {
+            std::swap(_data[_parameters.bpp*i+byte], _data[_parameters.bpp*i+(_parameters.bpp-1-byte)]);
         }
     }
 }
 
-void RawDataReader::setBpp(unsigned int bpp) {
-    _bpp = bpp;
-    _length = _bpp*_nRows*_nCols;
-}
-
-Eigen::MatrixXi RawDataReader::data(std::size_t frame) {
+Eigen::MatrixXi RawDataReader::data(size_t frame) {
 
     std::string filename = _filenames.at(frame);
 
@@ -182,7 +185,7 @@ Eigen::MatrixXi RawDataReader::data(std::size_t frame) {
 
     swapEndian();
 
-    switch(_bpp) {
+    switch(_parameters.bpp) {
     case 1:
         return matrixFromData<uint8_t>().cast<int>();
     case 2:
@@ -190,7 +193,7 @@ Eigen::MatrixXi RawDataReader::data(std::size_t frame) {
     case 3:
         return matrixFromData<uint32_t>().cast<int>();
     default:
-        throw std::runtime_error("bpp unsupported: " + std::to_string(_bpp));
+        throw std::runtime_error("bpp unsupported: " + std::to_string(_parameters.bpp));
     }
 }
 
