@@ -48,8 +48,6 @@ class ILLDataReader: public IDataReader {
 
 public:
 
-    static IDataReader* create(const std::string& filename, Diffractometer *diffractometer);
-
     ILLDataReader() = delete;
 
     //! Copy constructor

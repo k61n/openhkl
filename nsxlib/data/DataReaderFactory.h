@@ -50,6 +50,7 @@ public:
     using callback = std::function<std::shared_ptr<DataSet>(const std::string&, Diffractometer*)>;
 
     DataReaderFactory();
+
     std::shared_ptr<DataSet> create(const std::string& extension, const std::string& filename, Diffractometer *diffractometer) const;
 
 private:

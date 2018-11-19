@@ -40,7 +40,6 @@ namespace nsx {
 class TiffDataReader: public IDataReader {
 
 public:
-    static IDataReader* create(const std::string& filename, Diffractometer *diffractometer);
 
     TiffDataReader() = delete;
 

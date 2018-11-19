@@ -52,9 +52,6 @@ class RawDataReader: public IDataReader {
 
 public:
 
-    //! Create data reader from the given filename, associated to given diffractometer.
-    static IDataReader* create(const std::string& filename, Diffractometer* diffractometer);
-
     RawDataReader() = delete;
 
     //! Deleted copy constructor

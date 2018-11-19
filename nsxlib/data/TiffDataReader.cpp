@@ -6,12 +6,6 @@
 
 namespace nsx {
 
-IDataReader* TiffDataReader::create(const std::string& filename, Diffractometer *diffractometer)
-{
-    return new TiffDataReader(filename,diffractometer);
-}
-
-
 TiffDataReader::TiffDataReader(const std::string& filename, Diffractometer *diffractometer)
 : IDataReader(filename,diffractometer)
 {

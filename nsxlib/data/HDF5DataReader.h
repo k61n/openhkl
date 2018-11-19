@@ -44,8 +44,6 @@ class HDF5DataReader: public HDF5MetaDataReader
 
 public:
 
-    static IDataReader* create(const std::string &filename, Diffractometer *diffractometer);
-
     HDF5DataReader() = delete;
 
     HDF5DataReader(const HDF5DataReader & other) = delete;

@@ -24,11 +24,6 @@ namespace nsx {
 // 81 characters per line, at least 100 lines of header
 std::size_t ILLDataReader::BlockSize = 100*81;
 
-IDataReader* ILLDataReader::create(const std::string& filename, Diffractometer *diffractometer)
-{
-    return new ILLDataReader(filename, diffractometer);
-}
-
 ILLDataReader::ILLDataReader(const std::string& filename, Diffractometer *diffractometer)
 : IDataReader(filename,diffractometer)
 {
