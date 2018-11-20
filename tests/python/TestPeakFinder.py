@@ -6,8 +6,6 @@ import unittest
 class TestPeakFinder(unittest.TestCase):
     def test(self):
 
-        factory = nsx.DataReaderFactory()
-
         peakFinder = nsx.PeakFinder()
         ph = nsx.ProgressHandler()
 

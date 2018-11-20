@@ -1,6 +1,3 @@
-#include <stdexcept>
-
-#include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/NSXTest.h>
@@ -9,37 +6,27 @@ NSX_INIT_TEST
 
 int main()
 {
-    nsx::Experiment exp("my-exp","D10");
-    nsx::sptrDataSet data;
+    nsx::Experiment experiment("my-exp","D10");
 
-    NSX_CHECK_EQUAL(exp.name(),"my-exp");
+    NSX_CHECK_EQUAL(experiment.name(),"my-exp");
 
     // Change the name of the experiment
-    exp.setName("toto");
-    NSX_CHECK_EQUAL(exp.name(),"toto");
+    experiment.setName("toto");
 
-    // Add some data
-    try {
-        data = nsx::sptrDataSet(nsx::DataReaderFactory().create("", "D10_ascii_example", exp.diffractometer()));
-    }
-    catch(std::exception& e) {
-        NSX_FAIL(std::string("caught exception: ") + e.what());
-    }
-    catch(...) {
-        NSX_FAIL("unknown exception");
-    }
+    NSX_CHECK_EQUAL(experiment.name(),"toto");
 
-    exp.addData(data);
+    nsx::sptrDataSet dataset(new nsx::DataSet("", "D10_ascii_example", experiment.diffractometer()));
+
+    experiment.addData(dataset);
 
     // Check that adding the same data is now taken into account
-    exp.addData(data);
-    exp.addData(data);
-    exp.addData(data);
+    experiment.addData(dataset);
+    experiment.addData(dataset);
 
-    NSX_CHECK_EQUAL(exp.data("D10_ascii_example")->filename(),"D10_ascii_example");
+    NSX_CHECK_EQUAL(experiment.data("D10_ascii_example")->filename(),"D10_ascii_example");
 
     // Remove the data from the experiment
-    exp.removeData("D10_ascii_example");
+    experiment.removeData("D10_ascii_example");
 
     return 0;
 }

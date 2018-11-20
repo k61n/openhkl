@@ -8,10 +8,8 @@
 #include <nsxlib/AutoIndexer.h>
 #include <nsxlib/ConvolverFactory.h>
 #include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Diffractometer.h>
-
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Gonio.h>
 #include <nsxlib/InstrumentState.h>
@@ -29,12 +27,10 @@ NSX_INIT_TEST
 
 int main()
 {
-    nsx::DataReaderFactory factory;
-
     nsx::Experiment experiment("test", "BioDiff2500");
-    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
+    nsx::sptrDataSet dataset(new nsx::DataSet("hdf", "gal3.hdf", experiment.diffractometer()));
 
-    experiment.addData(dataf);
+    experiment.addData(dataset);
 
     nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
     nsx::sptrPeakFinder peakFinder(new nsx::PeakFinder);
@@ -49,7 +45,7 @@ int main()
     progressHandler->setCallback(callback);
 
     nsx::DataList numors;
-    numors.push_back(dataf);
+    numors.push_back(dataset);
 
     // propagate changes to peak finder
     peakFinder->setMinSize(30);
@@ -116,7 +112,7 @@ int main()
         peaks.push_back(peak);
     }
     
-    auto&& states = dataf->instrumentStates();
+    auto&& states = dataset->instrumentStates();
 
     nsx::Refiner refiner(states, cell, peaks, 1);
 
@@ -132,5 +128,8 @@ int main()
     std::cout << "peaks to refine: " << peaks.size() << std::endl;
 
     NSX_CHECK_ASSERT(refiner.refine(500));
+
+    dataset->close();
+
     return 0;
 }

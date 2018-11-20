@@ -1,7 +1,6 @@
 #include <Eigen/Dense>
 
 #include <nsxlib/ConvolverFactory.h>
-#include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Experiment.h>
@@ -17,10 +16,11 @@ NSX_INIT_TEST
 
 int main()
 {
-    nsx::DataReaderFactory factory;
     nsx::Experiment experiment("test", "BioDiff2500");
-    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
-    experiment.addData(dataf);
+
+    nsx::sptrDataSet dataset(new nsx::DataSet("hdf", "gal3.hdf", experiment.diffractometer()));
+
+    experiment.addData(dataset);
 
     nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
     nsx::sptrPeakFinder peakFinder(new nsx::PeakFinder);
@@ -35,7 +35,7 @@ int main()
     progressHandler->setCallback(callback);
 
     nsx::DataList numors;
-    numors.push_back(dataf);
+    numors.push_back(dataset);
 
     // propagate changes to peak finder
     peakFinder->setMinSize(30);
@@ -71,7 +71,7 @@ int main()
         auto qshape = peak->qShape();
         nsx::Ellipsoid new_shape;
         try {
-            new_shape = qshape.toDetectorSpace(dataf);
+            new_shape = qshape.toDetectorSpace(dataset);
         } catch(...) {
             continue;
         }

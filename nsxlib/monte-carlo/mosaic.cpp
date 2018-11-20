@@ -147,8 +147,7 @@ bool Mosaic::run(const std::vector<std::string>& numors, unsigned int n, double&
 	// Read the numors
 	std::vector<sptrDataSet> datas;
 	for (const auto& num : numors) {
-		auto reader = std::shared_ptr<IDataReader>(new ILLDataReader(num, _diffractometer));
-		datas.emplace_back(new DataSet(reader));
+		datas.emplace_back(new DataSet("",num,_diffractometer));
 	}
 
 	// Create and get the unit cell of the sample

@@ -2,9 +2,9 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Diffractometer.h>
+#include <nsxlib/Experiment.h>
 #include <nsxlib/IDataReader.h>
 #include <nsxlib/MetaData.h>
 #include <nsxlib/NSXTest.h>
@@ -16,30 +16,18 @@ NSX_INIT_TEST
 
 int main()
 {
-    nsx::DataReaderFactory factory;
-    nsx::Diffractometer *diffractometer;
-    nsx::sptrDataSet dataf;
+    nsx::Experiment experiment("","D9");
+
     Eigen::MatrixXi v;
 
-    nsx::MetaData metadata;
+    nsx::sptrDataSet dataset(new nsx::DataSet("", "D9_QSCAN", experiment.diffractometer()));
 
-    try {
-        diffractometer = nsx::Diffractometer::create("D9");
-        dataf = factory.create("", "D9_QSCAN", diffractometer);
+    auto metadata = dataset->reader()->metadata();
 
-        metadata = dataf->reader()->metadata();
+    NSX_CHECK_ASSERT(metadata.key<int>("nbang")==4);
 
-        NSX_CHECK_ASSERT(metadata.key<int>("nbang")==4);
-
-        dataf->open();
-        v = dataf->frame(0);
-    }
-    catch (std::exception& e) {
-        NSX_FAIL(std::string("caught exception: ") + e.what());
-    }
-    catch(...) {
-        NSX_FAIL("unknown exception");
-    }
+    dataset->open();
+    v = dataset->frame(0);
 
     // Check the total number of count in the frame 0
     NSX_CHECK_EQUAL(v.sum(),5.90800000e+03);
@@ -47,5 +35,5 @@ int main()
     // Check the value of the monitor
     NSX_CHECK_CLOSE(metadata.key<double>("monitor"),3.74130000e+04,tolerance);
 
-    dataf->close();
+    dataset->close();
 }

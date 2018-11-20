@@ -8,7 +8,6 @@
 #include <QStandardItem>
 #include <QString>
 
-#include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/IDataReader.h>
@@ -103,10 +102,8 @@ void DataItem::importData()
             return; // nullptr;
         }
 
-        nsx::sptrDataSet data_ptr;
-
         std::string extension = fileinfo.completeSuffix().toStdString();
-        data_ptr = nsx::DataReaderFactory().create(extension, filename.toStdString(), exp->diffractometer());
+        nsx::sptrDataSet data_ptr(new nsx::DataSet(extension, filename.toStdString(), exp->diffractometer()));
         exp->addData(data_ptr);
 
         // Get the basename of the current numor
@@ -151,7 +148,6 @@ void DataItem::importRawData()
         return;
     }
 
-    std::shared_ptr<nsx::DataSet> data;
     std::shared_ptr<nsx::IDataReader> reader;
 
     nsx::RawDataReaderParameters parameters;
@@ -164,14 +160,14 @@ void DataItem::importRawData()
     parameters.swap_endian = dialog.swapEndian();
     parameters.bpp = dialog.bpp();
 
+    auto diff = exp->diffractometer();
+    std::shared_ptr<nsx::DataSet> data(new nsx::DataSet("raw",filenames[0],diff));
+
     try {
-        auto diff = exp->diffractometer();
-        reader.reset(new nsx::RawDataReader(filenames[0], diff));
-        auto raw_data_reader = std::dynamic_pointer_cast<nsx::RawDataReader>(reader);
+        auto raw_data_reader = std::dynamic_pointer_cast<nsx::RawDataReader>(data->reader());
         for (size_t i = 1; i < filenames.size(); ++i) {
             raw_data_reader->addFrame(filenames[i]);
         }
-        data = std::make_shared<nsx::DataSet>(reader);
     }
     catch(std::exception& e) {
         nsx::error() << "reading numor:" << filenames[0].c_str() << e.what();

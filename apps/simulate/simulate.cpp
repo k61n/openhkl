@@ -70,7 +70,6 @@ std::vector<Eigen::ArrayXXd> generate_frames(
         auto aabb = peak->shape().aabb();
         auto shape = peak->shape();
         auto center = shape.center();
-        auto inv_cov = shape.metric();
         auto extents = aabb.extents();
         
         double I = 0;
@@ -155,7 +154,6 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    const double pi2 = M_PI / 2.0;
     const double wavelength = 2.67;
     const double dmin = 1.5;
     const double dmax = 50.0;
@@ -166,9 +164,8 @@ int main(int argc, char* argv[])
 
     auto expt = std::make_shared<nsx::Experiment>("Simulated", "BioDiff2500");
     auto diff = expt->diffractometer();
-    auto reader = std::make_shared<nsx::FakeDataReader>(infile, diff);
-    auto data = std::make_shared<nsx::DataSet>(reader);
-    expt->addData(data);
+    auto dataset = std::make_shared<nsx::DataSet>("fake",infile,diff);
+    expt->addData(dataset);
 
     Eigen::Matrix3d A, C;
     A << 
@@ -185,7 +182,7 @@ int main(int argc, char* argv[])
     Eigen::Matrix3d B = uc->reciprocalBasis();
 
     auto det_shape = nsx::Ellipsoid({800.0, 450.0, 10.0}, 5.0);
-    auto peak = std::make_shared<nsx::Peak3D>(data, det_shape);
+    auto peak = std::make_shared<nsx::Peak3D>(dataset, det_shape);
 
     auto hkls = uc->generateReflectionsInShell(dmin, dmax, wavelength);
     std::vector<nsx::ReciprocalVector> qs;
@@ -195,7 +192,7 @@ int main(int argc, char* argv[])
         qs.push_back(nsx::ReciprocalVector(q));
     }
 
-    auto events = data->events(qs);
+    auto events = dataset->events(qs);
 
     const double sigmaD = 0.3;
     const double sigmaM = 0.2;
@@ -204,7 +201,7 @@ int main(int argc, char* argv[])
 
     for (auto&& event: events) {
         Eigen::Vector3d center = {event._px, event._py, event._frame};
-        auto peak = std::make_shared<nsx::Peak3D>(data, nsx::Ellipsoid(center, 5.0));
+        auto peak = std::make_shared<nsx::Peak3D>(dataset, nsx::Ellipsoid(center, 5.0));
         auto coords = nsx::PeakCoordinateSystem(peak);
         auto shape = coords.detectorShape(sigmaD, sigmaM);
         peak->setShape(shape);
@@ -218,17 +215,16 @@ int main(int argc, char* argv[])
     A.normalize();
     A *= 10.0;
 
-    auto&& simulated_frames = generate_frames(peaks, data->nRows(), data->nCols(), 0, data->nFrames(), A, B, group);
-    std::cout << "simulated frames " << simulated_frames.size() << std::endl;
+    auto&& simulated_frames = generate_frames(peaks, dataset->nRows(), dataset->nCols(), 0, dataset->nFrames(), A, B, group);
     
     for (size_t i = 0; i < simulated_frames.size(); ++i) {
         simulated_frames[i] += 20.0;
-        correct_image(simulated_frames[i], 8.0, 200.0, true);       
-        std::cout << simulated_frames[i].sum() << std::endl;
-        reader->setData(i, simulated_frames[i].cast<int>());
+        correct_image(simulated_frames[i], 8.0, 200.0, true);
+        auto* fake_data_reader = dynamic_cast<nsx::FakeDataReader*>(dataset->reader().get());
+        fake_data_reader->setData(i, simulated_frames[i].cast<int>());
     }
 
-    data->saveHDF5(outfile);
+    dataset->saveHDF5(outfile);
 
     return 0;
 }

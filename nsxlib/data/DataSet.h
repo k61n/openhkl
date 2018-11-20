@@ -53,10 +53,9 @@ public:
 
     DataSet() = delete;
 
-    DataSet(const DataSet &other) = default;
+    DataSet(const std::string& filetype, const std::string& filename, Diffractometer* diffractometer);
 
-    //! Construct using the given data reader (allowing multiple formats)
-    DataSet(std::shared_ptr<IDataReader> reader);
+    DataSet(const DataSet &other) = default;
 
     //! Destructor
     ~DataSet();
@@ -118,9 +117,6 @@ public:
     //! True if file is open
     bool isOpened() const;
 
-    //! Return total size of file
-    std::size_t fileSize() const;
-
     //! Export dataset to HDF5 format
     void saveHDF5(const std::string& filename);
 
@@ -148,8 +144,6 @@ private:
     std::vector<Eigen::MatrixXi> _data;
 
     InstrumentStateList _states;
-
-    std::size_t _fileSize;
 
     //! The set of masks bound to the data
     std::set<IMask*> _masks;

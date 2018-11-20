@@ -9,7 +9,6 @@
 #include <nsxlib/NSXTest.h>
 
 #include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Detector.h>
 #include <nsxlib/DetectorEvent.h>
@@ -22,18 +21,17 @@ NSX_INIT_TEST
 
 void run_test(const char* filename, const char* instrument)
 {
-    nsx::DataReaderFactory factory;
-
     nsx::Experiment experiment("test", instrument);
-    nsx::sptrDataSet dataf(factory.create("hdf", filename, experiment.diffractometer()));
 
-    experiment.addData(dataf);
+    nsx::sptrDataSet dataset(new nsx::DataSet("hdf", filename, experiment.diffractometer()));
 
-    const int nrows = dataf->nRows();
-    const int ncols = dataf->nCols();
+    experiment.addData(dataset);
+
+    const int nrows = dataset->nRows();
+    const int ncols = dataset->nCols();
 
 
-    const int nframes = dataf->nFrames();
+    const int nframes = dataset->nFrames();
 
     const std::array<double, 9> fractions = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9};
 
@@ -48,7 +46,7 @@ void run_test(const char* filename, const char* instrument)
         }
     }
     
-    nsx::sptrPeak3D peak(new nsx::Peak3D(dataf));
+    nsx::sptrPeak3D peak(new nsx::Peak3D(dataset));
 
     for (auto coord: coords) {
         peak->setShape(nsx::Ellipsoid(coord, 2.0));

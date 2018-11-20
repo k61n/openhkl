@@ -2,7 +2,6 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/IDataReader.h>
 #include <nsxlib/PeakFinder.h>
@@ -20,16 +19,15 @@ int main()
 
     nsx::DataList numors;
 
-    nsx::DataReaderFactory factory;
-    auto dataf = factory.create("", "D10_ascii_example", experiment.diffractometer());
-    const auto& metadata = dataf->reader()->metadata();
+    nsx::sptrDataSet dataset(new nsx::DataSet("", "D10_ascii_example", experiment.diffractometer()));
+    const auto& metadata = dataset->reader()->metadata();
     nsx::PeakFinder peakFinder;
     nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
 
     NSX_CHECK_ASSERT(metadata.key<int>("nbang")==2);
 
-    dataf->open();
-    numors.push_back(dataf);
+    dataset->open();
+    numors.push_back(dataset);
     peakFinder.setHandler(handler);
 
     peakFinder.setPeakScale(1.0);
@@ -48,5 +46,5 @@ int main()
 
     NSX_CHECK_ASSERT(num_peaks == 1);
 
-    dataf->close();
+    dataset->close();
 }

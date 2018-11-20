@@ -7,7 +7,6 @@
 #include <QStandardItem>
 #include <QString>
 
-#include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/GaussianIntegrator.h>

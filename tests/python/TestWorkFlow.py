@@ -6,14 +6,12 @@ import sys
 class TestWorkFlow(unittest.TestCase):
     
     def test(self):
-        expt = nsx.Experiment('test', 'BioDiff2500')
-        diff = expt.diffractometer()
-        data = nsx.DataReaderFactory().create("hdf", "gal3.hdf", diff)
-        expt.addData(data)
-        source = diff.source()
+        
+        experiment = nsx.Experiment('test', 'BioDiff2500')
+        dataset = nsx.DataSet("hdf", "gal3.hdf", experiment.diffractometer())
+        experiment.addData(dataset)
 
-        reader = nsx.HDF5DataReader("gal3.hdf", diff)
-        data = nsx.DataSet(reader)
+        reader = nsx.HDF5DataReader("gal3.hdf", experiment.diffractometer())
 
         finder = nsx.PeakFinder()
         finder.setMinSize(30)
@@ -26,7 +24,7 @@ class TestWorkFlow(unittest.TestCase):
         finder.setThreshold(15.0)
 
         numors = nsx.DataList()
-        numors.push_back(data)
+        numors.push_back(dataset)
         peaks = finder.find(numors)
 
         selected_peaks = []

@@ -8,7 +8,6 @@
 #include <nsxlib/AutoIndexer.h>
 #include <nsxlib/ConvolverFactory.h>
 #include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/DetectorEvent.h>
 #include <nsxlib/Diffractometer.h>
@@ -29,12 +28,10 @@ NSX_INIT_TEST
 
 int main()
 {
-    nsx::DataReaderFactory factory;
-
     nsx::Experiment experiment("test", "BioDiff2500");
-    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
+    nsx::sptrDataSet dataset(new nsx::DataSet("hdf", "gal3.hdf", experiment.diffractometer()));
 
-    experiment.addData(dataf);
+    experiment.addData(dataset);
 
     nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
     nsx::sptrPeakFinder peakFinder(new nsx::PeakFinder);
@@ -49,7 +46,7 @@ int main()
     progressHandler->setCallback(callback);
 
     nsx::DataList numors;
-    numors.push_back(dataf);
+    numors.push_back(dataset);
 
     // propagate changes to peak finder
     peakFinder->setMinSize(30);
@@ -77,7 +74,7 @@ int main()
 
     nsx::PixelSumIntegrator integrator(false, false);
     integrator.setHandler(progressHandler);
-    integrator.integrate(found_peaks, dataf, 2.7, 3.5, 4.0);
+    integrator.integrate(found_peaks, dataset, 2.7, 3.5, 4.0);
 
     // at this stage we have the peaks, now we index
     nsx::IndexerParameters params;
@@ -122,7 +119,7 @@ int main()
     }
  
     // reintegrate peaks
-    integrator.integrate(found_peaks, dataf, 3.0, 4.0, 5.0);
+    integrator.integrate(found_peaks, dataset, 3.0, 4.0, 5.0);
 
     // compute shape library
 
@@ -138,7 +135,7 @@ int main()
 
         std::vector<nsx::ReciprocalVector> q_vectors;
         q_vectors.push_back(peak->q());
-        auto events = dataf->events(q_vectors);
+        auto events = dataset->events(q_vectors);
 
         //NSX_CHECK_ASSERT(events.size() >= 1);
 
@@ -162,8 +159,8 @@ int main()
             }
         }
         
-        Eigen::RowVector3d q0 = nsx::Peak3D(dataf, nsx::Ellipsoid(p0, 1.0)).q().rowVector();
-        Eigen::RowVector3d q1 = nsx::Peak3D(dataf, nsx::Ellipsoid(p1, 1.0)).q().rowVector();
+        Eigen::RowVector3d q0 = nsx::Peak3D(dataset, nsx::Ellipsoid(p0, 1.0)).q().rowVector();
+        Eigen::RowVector3d q1 = nsx::Peak3D(dataset, nsx::Ellipsoid(p1, 1.0)).q().rowVector();
 
         NSX_CHECK_CLOSE(p0(0), p1(0), 3.0);
         NSX_CHECK_CLOSE(p0(1), p1(1), 3.0);
@@ -175,6 +172,8 @@ int main()
     }
 
     NSX_CHECK_GREATER_THAN(n_selected, 600);
+
+    dataset->close();
 
     return 0;
 }

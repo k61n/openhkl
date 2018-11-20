@@ -2,7 +2,6 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Detector.h>
@@ -20,19 +19,17 @@ NSX_INIT_TEST
 
 void run_test(const char* filename, const char* instrument)
 {
-    nsx::DataReaderFactory factory;
-
     nsx::Experiment experiment("test", instrument);
     auto diffractometer = experiment.diffractometer();
     const auto* detector = diffractometer->detector();
-    nsx::sptrDataSet dataf(factory.create("hdf", filename, diffractometer));
+    nsx::sptrDataSet dataset(new nsx::DataSet("hdf", filename, diffractometer));
 
-    experiment.addData(dataf);
+    experiment.addData(dataset);
 
-    const int nrows = dataf->nRows();
-    const int ncols = dataf->nCols();
+    const int nrows = dataset->nRows();
+    const int ncols = dataset->nCols();
 
-    const int nframes = dataf->nFrames();
+    const int nframes = dataset->nFrames();
 
     const std::array<double, 9> fractions = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9};
 
@@ -50,7 +47,7 @@ void run_test(const char* filename, const char* instrument)
     for (auto coord: coords) {
         const double dt = 1e-3;
 
-        auto state = dataf->interpolatedState(coord[2]);
+        auto state = dataset->interpolatedState(coord[2]);
         Eigen::Matrix3d Jq = state.jacobianQ(coord[0], coord[1]);
 
         auto pos0 = detector->pixelPosition(coord[0], coord[1]);
@@ -62,7 +59,7 @@ void run_test(const char* filename, const char* instrument)
         auto pos2 = detector->pixelPosition(coord[0], coord[1]+dt);
         Eigen::Vector3d dq2 = state.sampleQ(pos2).rowVector().transpose() - q0;
 
-        auto state3 = dataf->interpolatedState(coord[2]+dt);
+        auto state3 = dataset->interpolatedState(coord[2]+dt);
         Eigen::Vector3d dq3 = state3.sampleQ(pos0).rowVector().transpose() - q0;
 
         // Numerical Jacobian
@@ -78,6 +75,8 @@ void run_test(const char* filename, const char* instrument)
         // test numerical vs. analytic Jacobian
         NSX_CHECK_SMALL((NJ-Jq).norm() / Jq.norm(), 1e-5);
     }
+
+    dataset->close();
 }
 
 

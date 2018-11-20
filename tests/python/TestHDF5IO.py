@@ -4,27 +4,28 @@ import ctypes as c
 import unittest
 
 class TestHDF5IO(unittest.TestCase):
+    
     def test(self):
-        factory = nsx.DataReaderFactory()
-        diff = nsx.Diffractometer.create("D10")
-        dataf = factory.create("","D10_ascii_example",diff)
-        dataf.open()
+    
+        experiment = nsx.Experiment("","D10")
+        dataset = nsx.DataSet("","D10_ascii_example",experiment.diffractometer())
+        dataset.open()
         
         frames = []
         i = 0
-        for i in range(0,dataf.nFrames()): 
-            frames.append(dataf.frame(i))
+        for i in range(0,dataset.nFrames()): 
+            frames.append(dataset.frame(i))
         
-        dataf.saveHDF5("D10_hdf5_example.h5")
-        dataf.close()
+        dataset.saveHDF5("D10_hdf5_example.h5")
+        dataset.close()
             
         # read data back in and check that it agrees!
-        dataf = factory.create("h5","D10_hdf5_example.h5", diff)
+        dataset = nsx.DataSet("h5","D10_hdf5_example.h5", experiment.diffractometer())
         
-        for j in range(0,dataf.nFrames()):
-            self.assertTrue((dataf.frame(j) == frames[j]).all())
+        for j in range(0,dataset.nFrames()):
+            self.assertTrue((dataset.frame(j) == frames[j]).all())
        
-        dataf.close()
+        dataset.close()
 
 
 if __name__ == '__main__':

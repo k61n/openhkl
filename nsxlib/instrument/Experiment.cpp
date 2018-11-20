@@ -103,6 +103,7 @@ void Experiment::addData(sptrDataSet data)
         if (std::abs(wav-mono.wavelength())>1e-5)
             throw std::runtime_error("trying to mix data with different wavelengths");
     }
+
     _data.insert(std::make_pair(filename,data));
 }
 

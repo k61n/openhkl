@@ -15,6 +15,7 @@
 #include "CrystalTypes.h"
 #include "DataSet.h"
 #include "Detector.h"
+#include "DataReaderFactory.h"
 #include "DetectorEvent.h"
 #include "Diffractometer.h"
 #include "Ellipsoid.h"
@@ -38,27 +39,18 @@
 
 namespace nsx {
 
-DataSet::DataSet(std::shared_ptr<IDataReader> reader):
-    _isOpened(false),
-    _filename(reader->filename()),
-    _nFrames(0),
-    _nrows(0),
-    _ncols(0),
-    _data(),
-    _states(),
-    _fileSize(0),
-    _masks(),
-    _background(0.0),
-    _reader(reader)
+DataSet::DataSet(const std::string &filetype, const std::string &filename, Diffractometer *diffractometer)
 {
-    if (!fileExists(_filename)) {
-        throw std::runtime_error("IData, file: " + _filename + " does not exist");
-    }
-
-    auto diffractometer = _reader->diffractometer();
-
     _nrows = diffractometer->detector()->nRows();
     _ncols = diffractometer->detector()->nCols();
+
+    DataReaderFactory factory;
+
+    auto* reader = factory.create(filetype,filename,diffractometer);
+
+    _reader.reset(reader);
+
+    _filename = reader->filename();
 
     _nFrames = _reader->metadata().key<int>("npdone");
 
@@ -159,11 +151,6 @@ std::vector<InstrumentState>& DataSet::instrumentStates()
 bool DataSet::isOpened() const
 {
     return _isOpened;
-}
-
-std::size_t DataSet::fileSize() const
-{
-    return _fileSize;
 }
 
 void DataSet::saveHDF5(const std::string& filename) //const
