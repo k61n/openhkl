@@ -220,7 +220,7 @@ int main(int argc, char* argv[])
     for (size_t i = 0; i < simulated_frames.size(); ++i) {
         simulated_frames[i] += 20.0;
         correct_image(simulated_frames[i], 8.0, 200.0, true);
-        auto* fake_data_reader = dynamic_cast<nsx::FakeDataReader*>(dataset->reader().get());
+        auto* fake_data_reader = dynamic_cast<nsx::FakeDataReader*>(dataset->reader());
         fake_data_reader->setData(i, simulated_frames[i].cast<int>());
     }
 

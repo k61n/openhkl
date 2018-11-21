@@ -19,6 +19,11 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, Diffractometer* inst
 {
 }
 
+IDataReader* HDF5DataReader::clone() const
+{
+    return new HDF5DataReader(*this);
+}
+
 Eigen::MatrixXi HDF5DataReader::data(size_t frame)
 {
     if (!_isOpened) {

@@ -6,6 +6,15 @@
 
 namespace nsx {
 
+TiffDataReader::TiffDataReader(const TiffDataReader &other) : IDataReader(other)
+{
+    _bits = other._bits;
+
+    if (other._isOpened) {
+        open();
+    }
+}
+
 TiffDataReader::TiffDataReader(const std::string& filename, Diffractometer *diffractometer)
 : IDataReader(filename,diffractometer)
 {
@@ -41,6 +50,26 @@ TiffDataReader::TiffDataReader(const std::string& filename, Diffractometer *diff
     _sampleStates[0] = {};
 
     _metadata.add<std::string>("Instrument",diffractometer->name());
+
+    close();
+}
+
+TiffDataReader& TiffDataReader::operator=(const TiffDataReader &other)
+{
+    if (this != &other) {
+        IDataReader::operator=(other);
+        _bits = other._bits;
+
+        if (other._isOpened) {
+            open();
+        }
+    }
+    return *this;
+}
+
+IDataReader* TiffDataReader::clone() const
+{
+    return new TiffDataReader(*this);
 }
 
 void TiffDataReader::open()
@@ -50,7 +79,7 @@ void TiffDataReader::open()
     }
 
     try {
-        _file=TIFFOpen(_metadata.key<std::string>("filename").c_str(),"r");
+        _file = TIFFOpen(_metadata.key<std::string>("filename").c_str(),"r");
     } catch(...) {
         throw;
     }

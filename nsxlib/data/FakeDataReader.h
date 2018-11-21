@@ -18,7 +18,7 @@ public:
 
     FakeDataReader() = delete;
 
-    FakeDataReader(const FakeDataReader &other) = delete;
+    FakeDataReader(const FakeDataReader &other) = default;
 
     //! Constructor. Behaves as if it is loaded from filename (which must exist!),
     //! but the frame values may be overwritten arbitrarily (without modifying the file on disk).
@@ -26,7 +26,9 @@ public:
 
     ~FakeDataReader() = default;
 
-    FakeDataReader& operator=(const FakeDataReader &other) = delete;
+    FakeDataReader& operator=(const FakeDataReader &other) = default;
+
+    IDataReader* clone() const final;
 
     //! Return the data frame for the given index.
     Eigen::MatrixXi data(size_t frame) final;

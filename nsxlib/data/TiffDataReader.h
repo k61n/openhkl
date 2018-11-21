@@ -43,13 +43,15 @@ public:
 
     TiffDataReader() = delete;
 
-    TiffDataReader(const TiffDataReader &other) = delete;
+    TiffDataReader(const TiffDataReader &other);
 
     TiffDataReader(const std::string& filename, Diffractometer *diffractometer);
 
     ~TiffDataReader() = default;
 
-    TiffDataReader& operator=(const TiffDataReader &other) = delete;
+    TiffDataReader& operator=(const TiffDataReader &other);
+
+    IDataReader* clone() const final;
 
     void open() final;
 

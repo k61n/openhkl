@@ -55,13 +55,13 @@ public:
 
     DataSet(const std::string& filetype, const std::string& filename, Diffractometer* diffractometer);
 
-    DataSet(const DataSet &other) = default;
+    DataSet(const DataSet &other);
 
     //! Destructor
     ~DataSet();
 
     //! Assignment operator
-    DataSet& operator=(const DataSet& other) = delete;
+    DataSet& operator=(const DataSet& other);
 
     //! Gets the data filename
     const std::string& filename() const;
@@ -126,8 +126,11 @@ public:
     //! Return the sample-space q vector corresponding to a detector event
     ReciprocalVector computeQ(const DetectorEvent& ev) const;
 
-    //! Return the data reader used to set this dataset
-    std::shared_ptr<IDataReader> reader() const;
+    //! Return a non-const to the data reader used to set this dataset
+    IDataReader* reader();
+
+    //! Return a non-const to the data reader used to set this dataset
+    const IDataReader* reader() const;
 
 private:
 
@@ -148,11 +151,9 @@ private:
     //! The set of masks bound to the data
     std::set<IMask*> _masks;
 
-    double _background;
-
     FrameIteratorCallback _iteratorCallback;
 
-    std::shared_ptr<IDataReader> _reader;
+    std::unique_ptr<IDataReader> _reader;
 };
 
 } // end namespace nsx

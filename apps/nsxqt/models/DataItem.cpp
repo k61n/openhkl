@@ -164,7 +164,7 @@ void DataItem::importRawData()
     std::shared_ptr<nsx::DataSet> data(new nsx::DataSet("raw",filenames[0],diff));
 
     try {
-        auto raw_data_reader = std::dynamic_pointer_cast<nsx::RawDataReader>(data->reader());
+        auto raw_data_reader = dynamic_cast<nsx::RawDataReader*>(data->reader());
         for (size_t i = 1; i < filenames.size(); ++i) {
             raw_data_reader->addFrame(filenames[i]);
         }

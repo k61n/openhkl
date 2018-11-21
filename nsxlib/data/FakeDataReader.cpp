@@ -13,7 +13,6 @@
 #include "Units.h"
 
 namespace nsx {
-
  
 FakeDataReader::FakeDataReader(const std::string& filename, Diffractometer *diffractometer)
     :HDF5MetaDataReader(filename, diffractometer)
@@ -25,6 +24,10 @@ FakeDataReader::FakeDataReader(const std::string& filename, Diffractometer *diff
     }
 }
 
+IDataReader* FakeDataReader::clone() const
+{
+    return new FakeDataReader(*this);
+}
 
 Eigen::MatrixXi FakeDataReader::data(size_t frame)
 {

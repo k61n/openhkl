@@ -29,14 +29,14 @@ int UnitTest_DataSet::run()
 
     Eigen::MatrixXi v;
 
-    nsx::sptrDataSet dataset(new nsx::DataSet("", "D10_ascii_example", experiment.diffractometer()));
+    nsx::DataSet dataset("", "D10_ascii_example", experiment.diffractometer());
 
-    auto metadata = dataset->reader()->metadata();
+    auto metadata = dataset.reader()->metadata();
 
     NSX_CHECK_ASSERT(metadata.key<int>("nbang")==2);
 
-    dataset->open();
-    v = dataset->frame(0);
+    dataset.open();
+    v = dataset.frame(0);
 
     // Check the total number of count in the frame 0
     NSX_CHECK_EQUAL(v.sum(),65);
@@ -44,13 +44,27 @@ int UnitTest_DataSet::run()
     // Check the value of the monitor
     NSX_CHECK_CLOSE(metadata.key<double>("monitor"),20000,tolerance);
 
-    auto sampleStates = dataset->reader()->sampleStates();
-    auto detectorStates = dataset->reader()->detectorStates();
+    auto sampleStates = dataset.reader()->sampleStates();
+    auto detectorStates = dataset.reader()->detectorStates();
     
     NSX_CHECK_CLOSE(detectorStates[3][0],0.54347000E+05/1000.0*nsx::deg,tolerance);
     NSX_CHECK_CLOSE(sampleStates[2][0],0.26572000E+05/1000.0*nsx::deg,tolerance);
     NSX_CHECK_CLOSE(sampleStates[2][1],0.48923233E+02*nsx::deg,tolerance);
     NSX_CHECK_CLOSE(sampleStates[2][2],-0.48583171E+02*nsx::deg,tolerance);
+
+    dataset.close();
+
+    nsx::DataSet dataset1(dataset);
+
+    auto sampleStates1 = dataset1.reader()->sampleStates();
+    auto detectorStates1 = dataset1.reader()->detectorStates();
+
+    NSX_CHECK_CLOSE(detectorStates1[3][0],detectorStates[3][0],tolerance);
+    NSX_CHECK_CLOSE(sampleStates1[2][0],sampleStates[2][0],tolerance);
+    NSX_CHECK_CLOSE(sampleStates1[2][1],sampleStates[2][1],tolerance);
+    NSX_CHECK_CLOSE(sampleStates1[2][2],sampleStates[2][2],tolerance);
+
+    dataset1.close();
 
     return 0;
 }

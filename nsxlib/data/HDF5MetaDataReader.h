@@ -18,13 +18,15 @@ public:
 
     HDF5MetaDataReader() = delete;
 
-    HDF5MetaDataReader(const HDF5MetaDataReader &other) = delete;
+    HDF5MetaDataReader(const HDF5MetaDataReader &other);
 
     HDF5MetaDataReader(const std::string& filename, Diffractometer* instrument);
 
     virtual ~HDF5MetaDataReader() = default;
 
-    HDF5MetaDataReader& operator=(const HDF5MetaDataReader & other) = delete;
+    HDF5MetaDataReader& operator=(const HDF5MetaDataReader & other);
+
+    IDataReader* clone() const = 0;
 
     virtual void open() override;
 

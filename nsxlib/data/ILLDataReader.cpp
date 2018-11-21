@@ -24,6 +24,26 @@ namespace nsx {
 // 81 characters per line, at least 100 lines of header
 std::size_t ILLDataReader::BlockSize = 100*81;
 
+ILLDataReader::ILLDataReader(const ILLDataReader &other) : IDataReader(other)
+{
+    _dataPoints = other._dataPoints;
+    _nAngles = other._nAngles;
+    _headerSize = other._headerSize;
+    _skipChar = other._skipChar;
+    _dataLength = other._dataLength;
+    _currentLine = other._currentLine;
+
+    try {
+        boost::interprocess::file_mapping filemap(other._filename.c_str(), boost::interprocess::read_only);
+        _map = boost::interprocess::mapped_region(filemap, boost::interprocess::read_only);
+    }
+    catch(std::exception& e) {
+        throw std::runtime_error(std::string("ILLDataReader() caught exception: ") + e.what());
+    }
+
+    _mapAddress = reinterpret_cast<char*>(_map.get_address());
+}
+
 ILLDataReader::ILLDataReader(const std::string& filename, Diffractometer *diffractometer)
 : IDataReader(filename,diffractometer)
 {
@@ -215,9 +235,36 @@ ILLDataReader::ILLDataReader(const std::string& filename, Diffractometer *diffra
         _sampleStates[i] = sampleValues;
     }
 
-    _fileSize = _map.get_size();
-
     close();
+}
+
+ILLDataReader& ILLDataReader::operator=(const ILLDataReader &other)
+{
+    if (this != &other) {
+        IDataReader::operator=(other);
+        _dataPoints = other._dataPoints;
+        _nAngles = other._nAngles;
+        _headerSize = other._headerSize;
+        _skipChar = other._skipChar;
+        _dataLength = other._dataLength;
+        _currentLine = other._currentLine;
+
+        try {
+            boost::interprocess::file_mapping filemap(other._filename.c_str(), boost::interprocess::read_only);
+            _map = boost::interprocess::mapped_region(filemap, boost::interprocess::read_only);
+        }
+        catch(std::exception& e) {
+            throw std::runtime_error(std::string("ILLDataReader() caught exception: ") + e.what());
+        }
+
+        _mapAddress = reinterpret_cast<char*>(_map.get_address());
+    }
+    return *this;
+}
+
+IDataReader* ILLDataReader::clone() const
+{
+    return new ILLDataReader(*this);
 }
 
 void ILLDataReader::open()

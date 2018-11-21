@@ -73,6 +73,11 @@ RawDataReader::RawDataReader(const std::string &filename, Diffractometer *diffra
 
 }
 
+IDataReader* RawDataReader::clone() const
+{
+    return new RawDataReader(*this);
+}
+
 void RawDataReader::addFrame(const std::string &filename)
 {
     _filenames.push_back(filename);

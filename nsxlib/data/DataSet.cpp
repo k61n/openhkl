@@ -65,10 +65,57 @@ DataSet::DataSet(const std::string &filetype, const std::string &filename, Diffr
     }
 }
 
+DataSet::DataSet(const DataSet &other)
+{
+    _isOpened = other._isOpened;;
+
+    _filename = other._filename;
+
+    _nFrames = other._nFrames;
+
+    _nrows = other._nrows;
+
+    _ncols = other._ncols;
+
+    _data = other._data;
+
+    _states = other._states;
+
+    for (auto m : other._masks) {
+        _masks.insert(m->clone());
+    }
+
+    _iteratorCallback = other._iteratorCallback;
+
+    _reader.reset(other._reader->clone());
+}
+
 DataSet::~DataSet()
 {
     blosc_destroy();
 }
+
+DataSet& DataSet::operator=(const DataSet &other)
+{
+    if (this != &other) {
+        _isOpened = other._isOpened;;
+        _filename = other._filename;
+        _nFrames = other._nFrames;
+        _nrows = other._nrows;
+        _ncols = other._ncols;
+        _data = other._data;
+        _states = other._states;
+
+        for (auto m : other._masks) {
+            _masks.insert(m->clone());
+        }
+
+        _iteratorCallback = other._iteratorCallback;
+        _reader.reset(other._reader->clone());
+    }
+    return *this;
+}
+
 
 int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z)
 {
@@ -409,9 +456,14 @@ Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx)
     return new_frame;
 }
 
-std::shared_ptr<IDataReader> DataSet::reader() const
+const IDataReader* DataSet::reader() const
 {
-    return _reader;
+    return _reader.get();
+}
+
+IDataReader* DataSet::reader()
+{
+    return _reader.get();
 }
 
 } // end namespace nsx

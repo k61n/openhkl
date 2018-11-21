@@ -66,7 +66,7 @@ public:
     RawDataReader() = delete;
 
     //! Deleted copy constructor
-    RawDataReader(const RawDataReader &other) = delete;
+    RawDataReader(const RawDataReader &other) = default;
 
     //! Construct a dataset from the list of files, with the give metadata.
     //! \param delta_chi per-frame change in chi axis of sample goniometer
@@ -80,7 +80,9 @@ public:
     ~RawDataReader() = default;
 
     //! Deleted assignment operator
-    RawDataReader& operator=(const RawDataReader &other) = delete;
+    RawDataReader& operator=(const RawDataReader &other) = default;
+
+    IDataReader* clone() const final;
 
     void addFrame(const std::string &filename);
 
