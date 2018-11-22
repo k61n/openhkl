@@ -100,7 +100,7 @@ public:
     int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);
 
     //! Read a single frame
-    Eigen::MatrixXi frame(std::size_t idx);
+    Eigen::MatrixXi frame(std::size_t idx) const;
 
     //! Return frame after transforming to account for detector gain and baseline
     Eigen::MatrixXd transformedFrame(std::size_t idx);

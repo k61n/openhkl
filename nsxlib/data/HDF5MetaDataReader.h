@@ -22,7 +22,7 @@ public:
 
     HDF5MetaDataReader(const std::string& filename, Diffractometer* instrument);
 
-    virtual ~HDF5MetaDataReader() = default;
+    virtual ~HDF5MetaDataReader();
 
     HDF5MetaDataReader& operator=(const HDF5MetaDataReader & other);
 
@@ -33,6 +33,8 @@ public:
     virtual void close() override;
 
 protected:
+
+    void init();
 
     std::unique_ptr<H5::H5File> _file;
 

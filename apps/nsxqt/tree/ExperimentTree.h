@@ -11,6 +11,7 @@
 
 #include <nsxlib/DataTypes.h>
 
+class DataItem;
 class ExperimentItem;
 class MainWindow;
 class SessionModel;
@@ -28,6 +29,7 @@ signals:
     void plotData(nsx::sptrDataSet);
     void inspectWidget(QWidget*);
     void resetScene();
+    void openPeakFindDialog(DataItem *data_item);
 
 public slots:
     void keyPressEvent(QKeyEvent* event);

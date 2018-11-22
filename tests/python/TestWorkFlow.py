@@ -13,7 +13,10 @@ class TestWorkFlow(unittest.TestCase):
 
         reader = nsx.HDF5DataReader("gal3.hdf", experiment.diffractometer())
 
-        finder = nsx.PeakFinder()
+        datasets = nsx.DataList()
+        datasets.push_back(dataset)
+
+        finder = nsx.PeakFinder(datasets)
         finder.setMinSize(30)
         finder.setMaxSize(10000)
         finder.setMaxFrames(10)
@@ -23,9 +26,9 @@ class TestWorkFlow(unittest.TestCase):
         finder.setConvolver(convolver)
         finder.setThreshold(15.0)
 
-        numors = nsx.DataList()
-        numors.push_back(dataset)
-        peaks = finder.find(numors)
+        finder.run()
+
+        peaks = finder.peaks()
 
         selected_peaks = []
 

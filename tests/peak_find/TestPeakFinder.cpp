@@ -17,18 +17,15 @@ int main()
 {
     nsx::Experiment experiment("exp","D10");
 
-    nsx::DataList numors;
-
     nsx::sptrDataSet dataset(new nsx::DataSet("", "D10_ascii_example", experiment.diffractometer()));
     const auto& metadata = dataset->reader()->metadata();
-    nsx::PeakFinder peakFinder;
-    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
 
     NSX_CHECK_ASSERT(metadata.key<int>("nbang")==2);
 
-    dataset->open();
-    numors.push_back(dataset);
-    peakFinder.setHandler(handler);
+    nsx::DataList datasets;
+    datasets.push_back(dataset);
+
+    nsx::PeakFinder peakFinder(datasets);
 
     peakFinder.setPeakScale(1.0);
 
@@ -41,7 +38,10 @@ int main()
     peakFinder.setMaxFrames(10);
     NSX_CHECK_ASSERT(peakFinder.maxFrames() == 10);
 
-    auto found_peaks = peakFinder.find(numors);
+    peakFinder.run();
+
+    auto found_peaks = peakFinder.peaks();
+
     size_t num_peaks = found_peaks.size();
 
     NSX_CHECK_ASSERT(num_peaks == 1);

@@ -13,9 +13,11 @@
 #include <nsxlib/UtilsTypes.h>
 
 #include "ProgressView.h"
+#include "TaskManagerModel.h"
 
-class QListWidgetItem;
+class DataItem;
 class PlottableGraphicsItem;
+class QListWidgetItem;
 class SessionModel;
 
 namespace Ui {
@@ -36,6 +38,8 @@ public:
     virtual void closeEvent(QCloseEvent *event) override;
 
     void setColorMap(const std::string& name);
+
+    TaskManagerModel* taskManagerModel();
 
 signals:
     void plotDetectorData(nsx::DataSet*,int frame);
@@ -68,6 +72,8 @@ public slots:
 
     void setInspectorWidget(QWidget*);
 
+    void onOpenPeakFinderDialog(DataItem *data_item);
+
 private slots:
 
     void slotChangeSelectedData(nsx::sptrDataSet, int frame);
@@ -80,7 +86,9 @@ private:
 
     Ui::MainWindow* _ui;
 
-    SessionModel* _session;
+    SessionModel *_session_model;
+
+    TaskManagerModel *_task_manager_model;
 
     std::string _colormap;
 };

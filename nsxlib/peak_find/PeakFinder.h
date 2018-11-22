@@ -7,20 +7,19 @@
 #include "CrystalTypes.h"
 #include "DataTypes.h"
 #include "GeometryTypes.h"
+#include "ITask.h"
 #include "UtilsTypes.h"
 
 namespace nsx {
 
 //! \brief Class to handle peak search in datasets
-class PeakFinder {
+class PeakFinder : public ITask {
 
 public:
 
-    PeakFinder();
+    PeakFinder(const DataList &datasets);
 
-    PeakList find(DataList numors);
-
-    void setHandler(const sptrProgressHandler& handler);
+    bool doTask() final;
 
     void setPeakScale(double scale) { _peakScale = scale; }
 
@@ -32,6 +31,8 @@ public:
 
     void setMaxFrames(int maxComp);
     int maxFrames() const;
+
+    const PeakList& peaks() const;
 
 #ifndef SWIG
     void setConvolver(std::unique_ptr<Convolver> convolver);
@@ -45,19 +46,19 @@ private:
 
     void eliminateBlobs(std::map<int, Blob3D>& blobs) const;
 
-    void findPrimaryBlobs(sptrDataSet data, std::map<int,Blob3D>& blobs,EquivalenceList& equivalences, size_t begin, size_t end);
+    void findPrimaryBlobs(const DataSet &data, std::map<int,Blob3D>& blobs,EquivalenceList& equivalences, size_t begin, size_t end);
 
-    void findCollisions(sptrDataSet data, std::map<int,Blob3D>& blobs, EquivalenceList& equivalences) const;
+    void findCollisions(const DataSet &data, std::map<int,Blob3D>& blobs, EquivalenceList& equivalences) const;
 
-    void mergeCollidingBlobs(sptrDataSet data, std::map<int,Blob3D>& blobs) const;
+    void mergeCollidingBlobs(const DataSet &data, std::map<int,Blob3D>& blobs) const;
 
     void mergeEquivalentBlobs(std::map<int,Blob3D>& blobs, EquivalenceList& equivalences) const;
 
 private:
 
-    sptrProgressHandler _handler;
-
     std::unique_ptr<Convolver> _convolver;
+
+    DataList _datasets;
 
     double _threshold;
 
@@ -70,6 +71,8 @@ private:
     int _maxSize;
 
     int _maxFrames;
+
+    PeakList _peaks;
 };
 
 } // end namespace nsx

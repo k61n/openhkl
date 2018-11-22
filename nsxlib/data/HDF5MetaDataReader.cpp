@@ -36,7 +36,7 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
     H5::Group infoGroup, experimentGroup, detectorGroup, sampleGroup;
 
     try {
-        _file = std::unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
+        _file.reset(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
         infoGroup = _file->openGroup("/Info");
         experimentGroup = _file->openGroup("/Experiment");
         detectorGroup =_file->openGroup("/Data/Scan/Detector");
@@ -152,6 +152,11 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
 
 }
 
+HDF5MetaDataReader::~HDF5MetaDataReader()
+{
+    blosc_destroy();
+}
+
 HDF5MetaDataReader& HDF5MetaDataReader::operator=(const HDF5MetaDataReader &other)
 {
     if (this != &other) {
@@ -183,7 +188,11 @@ void HDF5MetaDataReader::open()
         throw;
     }
 
-    // handled automaticall by HDF5 blosc filter
+    init();
+}
+
+void HDF5MetaDataReader::init()
+{
     blosc_init();
     blosc_set_nthreads(4);
 

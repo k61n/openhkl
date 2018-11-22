@@ -126,7 +126,7 @@ int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z)
     return frame(z)(x,y);
 }
 
-Eigen::MatrixXi DataSet::frame(std::size_t idx)
+Eigen::MatrixXi DataSet::frame(std::size_t idx) const
 {
     return _reader->data(idx);
 }
@@ -333,7 +333,8 @@ void DataSet::saveHDF5(const std::string& filename) //const
         }
     }
     file.close();
-    // blosc_destroy();
+
+    blosc_destroy();
 }
 
 void DataSet::addMask(IMask* mask)

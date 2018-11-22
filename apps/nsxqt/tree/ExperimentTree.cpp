@@ -127,7 +127,7 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(open_instrument_states_dialog, &QAction::triggered, [=](){ditem->openInstrumentStatesDialog();});
 
             QAction* find_peaks = menu->addAction("Find peaks in data");
-            connect(find_peaks, &QAction::triggered, [=](){ditem->findPeaks();});
+            connect(find_peaks, &QAction::triggered, [=](){emit openPeakFindDialog(ditem);});
         }
         else if (auto pitem = dynamic_cast<PeaksItem*>(item)) {
 
@@ -262,3 +262,4 @@ void ExperimentTree::onSingleClick(const QModelIndex &index)
         emit inspectWidget(widget);
     }
 }
+

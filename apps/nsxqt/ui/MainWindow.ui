@@ -1326,8 +1326,7 @@ border-radius: 4px;
    <addaction name="menu_Options"/>
    <addaction name="menuHelp"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
-  <widget class="QDockWidget" name="loggerDockWidget">
+  <widget class="QDockWidget" name="monitorDockWidget">
    <property name="enabled">
     <bool>true</bool>
    </property>
@@ -1340,7 +1339,7 @@ border-radius: 4px;
    <property name="minimumSize">
     <size>
      <width>400</width>
-     <height>121</height>
+     <height>166</height>
     </size>
    </property>
    <property name="layoutDirection">
@@ -1380,7 +1379,7 @@ QDockWidget::title {
     <set>Qt::BottomDockWidgetArea|Qt::RightDockWidgetArea|Qt::TopDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string>&amp;Logger</string>
+    <string/>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -1388,25 +1387,49 @@ QDockWidget::title {
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="NoteBook" name="noteBook">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+      <widget class="QTabWidget" name="monitorTabs">
+       <property name="currentIndex">
+        <number>1</number>
        </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>10000000</height>
-        </size>
-       </property>
-       <property name="mouseTracking">
-        <bool>true</bool>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::StrongFocus</enum>
-       </property>
+       <widget class="QWidget" name="logger_tab">
+        <attribute name="title">
+         <string>Logger</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_6">
+         <item>
+          <widget class="NoteBook" name="logger">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>10000000</height>
+            </size>
+           </property>
+           <property name="mouseTracking">
+            <bool>true</bool>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::StrongFocus</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="task_manager_tab">
+        <attribute name="title">
+         <string>Tasks</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_7">
+         <item>
+          <widget class="TaskManagerView" name="task_manager"/>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
     </layout>
@@ -1422,7 +1445,7 @@ QDockWidget::title {
    <property name="minimumSize">
     <size>
      <width>200</width>
-     <height>100</height>
+     <height>110</height>
     </size>
    </property>
    <property name="styleSheet">
@@ -1761,6 +1784,11 @@ QDockWidget::title {
    <extends>QWidget</extends>
    <header>plot/SXPlot.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TaskManagerView</class>
+   <extends>QTableView</extends>
+   <header>TaskManagerView.h</header>
   </customwidget>
  </customwidgets>
  <resources>

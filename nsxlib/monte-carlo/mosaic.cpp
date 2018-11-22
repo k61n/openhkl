@@ -332,8 +332,6 @@ bool Mosaic::run(const std::vector<std::string>& numors, unsigned int n, double&
 			}
 		}
 
-		std::cout<<blob<<std::endl;
-
 		if (blob.getComponents()==0)
 			return false;
 
@@ -343,38 +341,25 @@ bool Mosaic::run(const std::vector<std::string>& numors, unsigned int n, double&
 		blob.toEllipsoid(0.997,center,eigenvalues,eigenvectors);
 		Ellipsoid ellmc(center,eigenvalues,eigenvectors);
 
-		//d->readInMemory();
         std::vector<int*> temp(d->nFrames());
         for (unsigned int i=0;i < d->nFrames();++i)
         {
             const Eigen::MatrixXi& counts=d->frame(i);
             temp[i] = const_cast<int*>(counts.data());
         }
-		// 
-        //int median = d->getBackgroundLevel() + 1;
-		//blob3DCollection blobs;
 
-		PeakFinder peak_finder;
-		auto peaks = peak_finder.find({d});
+		PeakFinder peak_finder({d});
+		peak_finder.run();
 
-        //blobs=findBlobs3D<int>(temp,d->getDiffractometer()->getDetector()->getNRows(),d->getDiffractometer()->getDetector()->getNCols(),3.0*median,30,10000,0.997,0);
+        auto peaks = peak_finder.peaks();
 
         for (auto& p: peaks)
         {
 			auto shape = p->shape();
     		Ellipsoid ellexp = shape;
     		ellexp.translate(center-shape.center());
-//    		std::cout<<eigenvectors<<std::endl;
-//    		std::cout<<eigenvectors1<<std::endl;
-    		std::cout<<ellexp.aabb().extents()<<std::endl;
-    		std::cout<<ellmc.aabb().extents()<<std::endl;
-    		std::cout<<"exp = "<<4.0*M_PI*ellexp.aabb().extents().prod()/3.0<<std::endl;
-    		std::cout<<"mc = "<<4.0*M_PI*ellmc.aabb().extents().prod()/3.0<<std::endl;
     		overlap = ellipsoids_overlap(ellexp,ellmc);
         }
-
-        for (auto v : countsPerFrame)
-        	std::cout<<v<<std::endl;
 	}
 
 	return true;

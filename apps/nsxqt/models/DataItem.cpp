@@ -186,22 +186,6 @@ void DataItem::importRawData()
     appendRow(item);
 }
 
-void DataItem::findPeaks()
-{
-    nsx::DataList data = selectedData();
-
-    if (data.empty()) {
-        nsx::error()<<"No numors selected for finding peaks";
-        return;
-    }
-
-    auto experiment_item = experimentItem();
-
-    FramePeakFinder* frame = FramePeakFinder::create(experiment_item, data);
-
-    frame->show();
-}
-
 nsx::DataList DataItem::allData()
 {
     nsx::DataList data;

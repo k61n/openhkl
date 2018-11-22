@@ -157,6 +157,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "RawDataReader.h"
 #include "TiffDataReader.h"
 #include "BloscFilter.h"
+#include "ITask.h"
 #include "PeakFinder.h"
 #include "Detector.h"
 #include "DetectorFactory.h"
@@ -244,7 +245,6 @@ using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 #include "ILLDataReader.h"
 #include "HDF5DataReader.h"
 #include "DataSet.h"
-#include "PeakFinder.h"
 #include "MergedData.h"
 
 #include "PeakFilter.h"
@@ -434,6 +434,7 @@ namespace nsx {
 
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
 
+%include "ITask.h"
 %include "PeakFinder.h"
 
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;

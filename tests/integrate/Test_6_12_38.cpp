@@ -17,7 +17,6 @@
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFilter.h>
 #include <nsxlib/PeakFinder.h>
-#include <nsxlib/ProgressHandler.h>
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/ShapeLibrary.h>

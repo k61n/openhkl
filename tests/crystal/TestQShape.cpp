@@ -23,7 +23,6 @@ int main()
     experiment.addData(dataset);
 
     nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
-    nsx::sptrPeakFinder peakFinder(new nsx::PeakFinder);
 
     auto callback = [progressHandler] () {
         auto log = progressHandler->getLog();
@@ -34,24 +33,26 @@ int main()
 
     progressHandler->setCallback(callback);
 
-    nsx::DataList numors;
-    numors.push_back(dataset);
+    nsx::DataList datasets;
+    datasets.push_back(dataset);
+
+    nsx::PeakFinder peakFinder(datasets);
 
     // propagate changes to peak finder
-    peakFinder->setMinSize(30);
-    peakFinder->setMaxSize(10000);
-    peakFinder->setMaxFrames(10);
+    peakFinder.setMinSize(30);
+    peakFinder.setMaxSize(10000);
+    peakFinder.setMaxFrames(10);
 
     nsx::ConvolverFactory convolver_factory;
     auto convolver = convolver_factory.create("annular",{});
-    peakFinder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
+    peakFinder.setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
 
-    peakFinder->setThreshold(15.0);
-    peakFinder->setPeakScale(1.0);
+    peakFinder.setThreshold(15.0);
+    peakFinder.setPeakScale(1.0);
 
-    peakFinder->setHandler(progressHandler);
+    peakFinder.run();
 
-    auto found_peaks = peakFinder->find(numors);
+    auto found_peaks = peakFinder.peaks();
 
     try {
         NSX_CHECK_ASSERT(static_cast<int>(found_peaks.size()) >= 0);
