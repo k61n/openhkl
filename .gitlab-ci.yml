@@ -103,7 +103,7 @@ deploy:windows:
     - develop
   artifacts:
     paths:
-    - ${CI_PROJECT_DIR}\\build\\nsxtool*.exe
+    - .\\build\\nsxtool*.exe
   tags:
     - windows
 
