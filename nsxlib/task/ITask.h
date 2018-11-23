@@ -9,7 +9,7 @@
 
 namespace nsx {
 
-class TaskState;
+struct TaskState;
 
 class ITask
 {
