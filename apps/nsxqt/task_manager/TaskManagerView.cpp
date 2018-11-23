@@ -16,6 +16,21 @@ TaskManagerView::TaskManagerView(QWidget *parent)
     connect(delegate,&TaskManagerViewDelegate::actionButtonPressed,[this](QModelIndex index){onActionButtonClicked(index);});
 }
 
+void TaskManagerView::setModel(TaskManagerModel *task_manager_model)
+{
+    QTableView::setModel(task_manager_model);
+
+    verticalHeader()->hide();
+
+    horizontalHeader()->hide();
+
+    horizontalHeader()->setSectionResizeMode(static_cast<int>(nsx::TaskState::Section::PROGRESS),QHeaderView::Stretch);
+
+    horizontalHeader()->resizeSection(static_cast<int>(nsx::TaskState::Section::ABORT),30);
+    horizontalHeader()->resizeSection(static_cast<int>(nsx::TaskState::Section::START),30);
+    horizontalHeader()->resizeSection(static_cast<int>(nsx::TaskState::Section::REMOVE),30);
+}
+
 void TaskManagerView::onActionButtonClicked(QModelIndex index)
 {
     auto task_manager_model = dynamic_cast<TaskManagerModel*>(model());

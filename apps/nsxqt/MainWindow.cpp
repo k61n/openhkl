@@ -75,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent)
     _session_model = new SessionModel();
     _ui->experimentTree->setModel(_session_model);
 
-    _task_manager_model = new TaskManagerModel();
+    _task_manager_model = new TaskManagerModel(this);
     _ui->task_manager->setModel(_task_manager_model);
 
     _ui->dview->getScene()->setSession(_session_model);

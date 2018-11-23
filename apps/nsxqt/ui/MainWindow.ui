@@ -1426,7 +1426,11 @@ QDockWidget::title {
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_7">
          <item>
-          <widget class="TaskManagerView" name="task_manager"/>
+          <widget class="TaskManagerView" name="task_manager">
+           <attribute name="horizontalHeaderStretchLastSection">
+            <bool>false</bool>
+           </attribute>
+          </widget>
          </item>
         </layout>
        </widget>

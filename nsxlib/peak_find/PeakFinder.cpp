@@ -101,13 +101,15 @@ bool PeakFinder::doTask()
     _current_step = 0;
     _n_steps = _datasets.size();
     _status = Status::STARTED;
-    _info = "Search blob";
+    _info = "Start peak search";
 
     sendState();
 
     _peaks.clear();
 
     for (auto&& dataset : _datasets) {
+
+        auto dataset_basename = dataset->reader()->basename();
 
         size_t peaks_per_dataset(0);
 
@@ -139,8 +141,14 @@ bool PeakFinder::doTask()
                     loop_end = i+1;
                 }
 
+                _info = dataset_basename + ": find primary blobs";
+                sendState();
+
                 // find blobs within the current frame range
                 findPrimaryBlobs(*dataset, local_blobs, local_equivalences, loop_begin, loop_end);
+
+                _info = dataset_basename + ": merge primary blobs";
+                sendState();
 
                 // merge adjacent blobs
                 mergeEquivalentBlobs(local_blobs, local_equivalences);
@@ -153,6 +161,9 @@ bool PeakFinder::doTask()
                     }
                 }
             }
+
+            _info = dataset_basename + ": merge colliding blobs";
+            sendState();
 
             mergeCollidingBlobs(*dataset, blobs);
 
@@ -186,11 +197,11 @@ bool PeakFinder::doTask()
 
             // peak too small or too large
             if (extents.maxCoeff() > 1e5 || extents.minCoeff() < 1e-5) {
-                p->setSelected(false);
+                continue;
             }
 
             if (extents(2) > _maxFrames) {
-                p->setSelected(false);
+                continue;
             }
 
             // peak's bounding box not completely contained in detector image

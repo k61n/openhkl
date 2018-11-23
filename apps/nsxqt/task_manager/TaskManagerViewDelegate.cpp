@@ -61,7 +61,7 @@ void TaskManagerViewDelegate::paint(QPainter *painter, const QStyleOptionViewIte
 
         int progress = index.model()->data(index).toInt();
 
-        QRect progress_bar_rect(cell_pos_x,cell_pos_y,progress,cell_height);
+        QRect progress_bar_rect(cell_pos_x,cell_pos_y,progress * cell_width / 100,cell_height);
 
         painter->save();
 

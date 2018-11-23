@@ -57,7 +57,7 @@ protected:
 
 struct TaskState {
 
-    enum class Section {NAME=0,TYPE=1,PROGRESS=2,INFO=3,START=4,ABORT=5,REMOVE=6,COUNT=7};
+    enum class Section : size_t {NAME=0,PROGRESS=1,START=2,ABORT=3,REMOVE=4,COUNT=5};
 
     std::string name;
     std::string type;

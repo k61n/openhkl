@@ -5,6 +5,7 @@
 
 class QWidget;
 class QResizeEvent;
+class TaskManagerModel;
 
 class TaskManagerView : public QTableView
 {
@@ -13,6 +14,8 @@ class TaskManagerView : public QTableView
 public:
 
     TaskManagerView(QWidget *parent);
+
+    void setModel(TaskManagerModel *task_manager_model);
 
 signals:
 

@@ -44,36 +44,6 @@ int TaskManagerModel::columnCount(const QModelIndex &parent) const
     return static_cast<int>(nsx::TaskState::Section::COUNT);
 }
 
-QVariant TaskManagerModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    Q_UNUSED(role)
-
-    if (orientation == Qt::Vertical) {
-        return QVariant();
-    }
-
-    auto task_state_section = static_cast<nsx::TaskState::Section>(section);
-
-    switch (task_state_section) {
-    case nsx::TaskState::Section::NAME:
-        return QString("name");
-    case nsx::TaskState::Section::TYPE:
-        return QString("type");
-    case nsx::TaskState::Section::PROGRESS:
-        return QString("progress");
-    case nsx::TaskState::Section::INFO:
-        return QString("info");
-    case nsx::TaskState::Section::START:
-        return QString("start");
-    case nsx::TaskState::Section::ABORT:
-        return QString("abort");
-    case nsx::TaskState::Section::REMOVE:
-        return QString("remove");
-    default:
-        return QVariant();
-    }
-}
-
 QVariant TaskManagerModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) {
@@ -85,23 +55,39 @@ QVariant TaskManagerModel::data(const QModelIndex &index, int role) const
 
     auto task_state = _task_states[row];
 
+    auto section = static_cast<nsx::TaskState::Section>(col);
+
     if (role == Qt::DisplayRole || role == Qt::EditRole) {
-        switch (static_cast<nsx::TaskState::Section>(col)) {
+        switch (section) {
         case nsx::TaskState::Section::NAME: {
             return QString::fromStdString(task_state.name);
-        }
-        case nsx::TaskState::Section::TYPE: {
-            return QString::fromStdString(task_state.type);
         }
         case nsx::TaskState::Section::PROGRESS: {
             int progress = task_state.n_steps > 0 ? task_state.current_step * 100 / task_state.n_steps : 0;
             return progress;
         }
-        case nsx::TaskState::Section::INFO: {
-            return QString::fromStdString(task_state.info);
+        default:
+            return QVariant();
+        }
+    } else if (role == Qt::ToolTipRole) {
+        switch (section) {
+        case nsx::TaskState::Section::ABORT: {
+            std::string tooltip = "Abort task "+task_state.name;
+            return QString(tooltip.c_str());
+        }
+        case nsx::TaskState::Section::NAME: {
+            return QString(task_state.type.c_str());
+        }
+        case nsx::TaskState::Section::REMOVE: {
+            std::string tooltip = "Remove task "+task_state.name;
+            return QString(tooltip.c_str());
+        }
+        case nsx::TaskState::Section::START: {
+            std::string tooltip = "(Re)start task "+task_state.name;
+            return QString(tooltip.c_str());
         }
         default:
-            break;
+            return QString::fromStdString(task_state.info);
         }
     }
 
