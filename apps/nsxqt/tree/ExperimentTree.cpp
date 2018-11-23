@@ -134,6 +134,9 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             QAction* filter = menu->addAction("Filter peaks");
             connect(filter, triggered, [=](){pitem->openPeakFilterDialog();});
 
+            QAction* remove_selected_data = menu->addAction("Remove selected peak collections");
+            connect(remove_selected_data, &QAction::triggered, [=](){pitem->removeSelectedPeakCollections();});
+
             QMenu *indexing_menu = new QMenu("Indexing");
             QAction* autoindex = indexing_menu->addAction("FFT auto indexer");
             connect(autoindex, triggered, [=](){pitem->openAutoIndexingFrame();});

@@ -57,7 +57,7 @@ QVariant TaskManagerModel::data(const QModelIndex &index, int role) const
 
     auto section = static_cast<nsx::TaskState::Section>(col);
 
-    if (role == Qt::DisplayRole || role == Qt::EditRole) {
+    if (role == Qt::DisplayRole) {
         switch (section) {
         case nsx::TaskState::Section::NAME: {
             return QString::fromStdString(task_state.name);

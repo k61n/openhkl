@@ -21,7 +21,7 @@ public:
 
     bool doTask() final;
 
-    void setPeakScale(double scale) { _peakScale = scale; }
+    void setPeakScale(double scale);
 
     void setMinSize(int minComp);
     int minSize() const;

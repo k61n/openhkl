@@ -127,7 +127,6 @@ FramePeakFinder::FramePeakFinder(MainWindow *main_window, ExperimentItem *experi
 FramePeakFinder::~FramePeakFinder()
 {
     delete _ui;
-
     if (_instance) {
         _instance = nullptr;
     }
@@ -211,9 +210,9 @@ void FramePeakFinder::accept()
         }
 
         auto item = new PeakListItem(found_peaks);
+
         item->setText(_ui->tabs->tabText(i));
         peaks_item->appendRow(item);
-
     }
 
     close();
@@ -226,7 +225,7 @@ void FramePeakFinder::setColorMap(const std::string &name)
 
 void FramePeakFinder::run()
 {
-    nsx::info() << "Peak find algorithm: Searching peaks in " << _ui->selected_data->count() << " files";
+    nsx::info() << "Peak find algorithm: searching peaks in " << _ui->selected_data->count() << " files";
 
     nsx::DataList data;
     for (int i = 0; i < _ui->selected_data->count(); ++i) {
@@ -267,7 +266,7 @@ void FramePeakFinder::onShowFoundPeaks(std::shared_ptr<nsx::ITask> task)
         return;
     }
 
-    auto peaks = peak_finder->peaks();
+    const auto &peaks = peak_finder->peaks();
 
     auto &&peak_end = _ui->peak_scale->value();
     auto &&background_begin = _ui->background_begin_scale->value();

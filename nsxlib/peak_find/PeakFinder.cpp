@@ -229,6 +229,11 @@ bool PeakFinder::doTask()
     return true;
 }
 
+void PeakFinder::setPeakScale(double scale)
+{
+    _peakScale = scale;
+}
+
 void PeakFinder::setMaxFrames(int maxFrames)
 {
     _maxFrames = maxFrames;

@@ -17,22 +17,22 @@
 
 #include "ui_PeakListPropertyWidget.h"
 
-PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *parent)
+PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* peak_list_item, QWidget *parent)
 : QWidget(parent),
-  _caller(caller),
-  ui(new Ui::PeakListPropertyWidget)
+  _peak_list_item(peak_list_item),
+  _ui(new Ui::PeakListPropertyWidget)
 {
-    ui->setupUi(this);
+    _ui->setupUi(this);
 
     nsx::PeakList peaks;
 
-    for (auto peak: _caller->peaks()) {
+    for (auto peak: peak_list_item->peaks()) {
         peaks.push_back(peak);
     }
 
-    _peaks_model = new CollectedPeaksModel(_caller->model(),_caller->experiment(), peaks);
+    auto* peaks_model = new CollectedPeaksModel(peak_list_item->model(),peak_list_item->experiment(), peaks, this);
 
-    ui->tableView->setModel(_peaks_model);
+    _ui->tableView->setModel(peaks_model);
 
     // todo: fix shape library!!
     // connect(ui->tableView, SIGNAL(updateShapeLibrary(nsx::sptrShapeLibrary)), _session.get(), SLOT(updateShapeLibrary(nsx::sptrShapeLibrary)));
@@ -40,10 +40,10 @@ PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget *pa
 
 PeakListPropertyWidget::~PeakListPropertyWidget()
 {
-    delete ui;
+    delete _ui;
 }
 
 CollectedPeaksModel* PeakListPropertyWidget::model()
 {
-    return _peaks_model;
+    return dynamic_cast<CollectedPeaksModel*>(_ui->tableView->model());
 }

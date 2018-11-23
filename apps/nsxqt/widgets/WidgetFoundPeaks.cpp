@@ -12,7 +12,7 @@ WidgetFoundPeaks::WidgetFoundPeaks(ExperimentItem *experiment_item, const nsx::P
 {
     _ui->setupUi(this);
 
-    CollectedPeaksModel *peaks_model = new CollectedPeaksModel(experiment_item->model(),experiment_item->experiment(),peaks);
+    CollectedPeaksModel *peaks_model = new CollectedPeaksModel(experiment_item->model(),experiment_item->experiment(),peaks,this);
     _ui->peaks->setModel(peaks_model);
 }
 

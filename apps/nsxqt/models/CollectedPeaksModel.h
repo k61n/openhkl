@@ -26,8 +26,6 @@ public:
 
     CollectedPeaksModel(SessionModel* session, nsx::sptrExperiment experiment, const nsx::PeakList& peaks, QObject *parent = 0);
 
-    ~CollectedPeaksModel() = default;
-
     virtual int rowCount(const QModelIndex& parent) const override;
 
     virtual int columnCount(const QModelIndex& parent) const override;

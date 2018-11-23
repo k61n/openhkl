@@ -399,9 +399,9 @@ void MainWindow::on_action_display_isotopes_database_triggered()
 void MainWindow::setInspectorWidget(QWidget* w)
 {
     // Ensure that previous Property Widget is deleted.
-    auto widget=_ui->dockWidget_Property->widget();
-    if (widget) {
-        delete widget;
+    auto previous_widget = _ui->dockWidget_Property->widget();
+    if (previous_widget) {
+        delete previous_widget;
     }
 
     // Assign current property Widget

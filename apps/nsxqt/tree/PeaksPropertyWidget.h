@@ -29,6 +29,4 @@ private:
     PeaksItem* _peaks_item;
 
     Ui::PeaksPropertyWidget *ui;
-
-    CollectedPeaksModel* _peaks_model;
 };

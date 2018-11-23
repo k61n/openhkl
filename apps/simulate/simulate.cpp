@@ -138,7 +138,6 @@ std::vector<Eigen::ArrayXXd> generate_frames(
         }
     }
 
-    std::cout << "returning..." << std::endl;
     return images;
 }
 

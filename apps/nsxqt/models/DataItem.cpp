@@ -13,14 +13,12 @@
 #include <nsxlib/IDataReader.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/Peak3D.h>
-#include <nsxlib/PeakFinder.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/PixelSumIntegrator.h>
 #include <nsxlib/RawDataReader.h>
 
 #include "DataItem.h"
 #include "DialogHDF5Converter.h"
-#include "FramePeakFinder.h"
 #include "DialogRawData.h"
 #include "FrameInstrumentStates.h"
 #include "ExperimentItem.h"
@@ -50,39 +48,34 @@ DataItem::DataItem() : TreeItem()
 
 void DataItem::removeSelectedData()
 {
-    std::vector<NumorItem*> selected_numor_items;
-    selected_numor_items.reserve(rowCount());
+    std::set<NumorItem*> _selected_datasets_for_removal;
+    bool accept_removal(true);
 
     for (int i = 0; i < rowCount(); ++i) {
         auto numor_item = dynamic_cast<NumorItem*>(child(i));
         if (numor_item) {
             if (numor_item->checkState() == Qt::Checked) {
-                selected_numor_items.push_back(numor_item);
+                auto dataset = numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
+                auto use_count = dataset.use_count();
+                // If the dataset is not used the use count should be 3 (1 in experiment,1 in NumorItem and one in dataset local variable)
+                if (use_count > 3) {
+                    nsx::error()<<"The dataset "<<dataset->reader()->basename()<<" is currently used by "<< std::to_string(use_count - 3) << "other resources.";
+                    accept_removal = false;
+                } else {
+                    _selected_datasets_for_removal.insert(numor_item);
+                }
             }
         }
     }
 
-    auto peaks_item = experimentItem()->peaksItem();
-    auto all_peaks = peaks_item->allPeaks();
-
-    std::set<nsx::sptrDataSet> used_data;
-
-    for (auto peak : all_peaks) {
-        auto data = peak->data();
-        if (!data) {
-            continue;
-        }
-        used_data.insert(data);
+    if (!accept_removal) {
+        nsx::error()<<"One or more datasets are in use. Data removal aborted.";
+        return;
     }
 
-    for (auto numor_item : selected_numor_items) {
-        auto data = numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
-        auto it = used_data.find(data);
-        if (it != used_data.end()) {
-            nsx::info()<<"The numor "<<numor_item->text().toStdString()<<" is currently used. Can not be removed";
-            continue;
-        }
-        removeRow(numor_item->row());
+    for (auto* dataset_item : _selected_datasets_for_removal) {
+        auto data = dataset_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
+        removeRow(dataset_item->row());
         experiment()->removeData(data->filename());
     }
 }

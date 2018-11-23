@@ -363,3 +363,39 @@ void PeaksItem::autoAssignUnitCell()
 
     emit model()->itemChanged(this);
 }
+
+void PeaksItem::removeSelectedPeakCollections()
+{
+    std::set<PeakListItem*> _selected_peak_collections_for_removal;
+    bool accept_removal(true);
+
+    for (int i = 0; i < rowCount(); ++i) {
+        auto peak_list_item = dynamic_cast<PeakListItem*>(child(i));
+        if (!peak_list_item) {
+            continue;
+        }
+        if (peak_list_item->checkState() == Qt::Checked) {
+            const auto& peaks = peak_list_item->peaks();
+            for (auto&& peak : peaks) {
+                auto use_count = peak.use_count();
+                // If the peak is not used its use count should be 3 (1 in collected peaks model 1 in PeakListItem and one in peak local variable)
+                if (use_count > 1) {
+                    accept_removal = false;
+                    break;
+                }
+            }
+            if (accept_removal) {
+                _selected_peak_collections_for_removal.insert(peak_list_item);
+            }
+        }
+    }
+
+    if (!accept_removal) {
+        nsx::error()<<"One or more peaks are used by other resources.";
+        return;
+    }
+
+    for (auto* peaks_item : _selected_peak_collections_for_removal) {
+        removeRow(peaks_item->row());
+    }
+}
