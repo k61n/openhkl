@@ -406,16 +406,6 @@ void MainWindow::setInspectorWidget(QWidget* w)
 
     // Assign current property Widget
     _ui->dockWidget_Property->setWidget(w);
-
-//    if (PeakListPropertyWidget* widget = dynamic_cast<PeakListPropertyWidget*>(w)) {
-//        connect(widget->model(),
-//                SIGNAL(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)),
-//                this,
-//                SLOT(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)));
-
-//        CollectedPeaksModel* peakModel = dynamic_cast<CollectedPeaksModel*>(widget->getPeakTableView()->model());
-//        connect(peakModel,SIGNAL(unitCellUpdated()),_ui->_dview->getScene(),SLOT(updatePeaks()));
-//    }
 }
 
 void MainWindow::on_checkBox_AspectRatio_toggled(bool checked)
