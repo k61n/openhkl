@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <chrono>
 #include <iterator>
 #include <random>
 #include <set>
@@ -9,20 +10,21 @@ namespace nsx {
 
 std::string generateRandomString(size_t length)
 {
-    std::string charmap("abcdefghijklmnopqrstuvwxyz");
+    std::string letters("abcdefghijklmnopqrstuvwxyz");
 
-    const size_t charmapLength = charmap.size();
+    auto generator = std::mt19937(std::time(0));
+    auto distribution = std::uniform_int_distribution<int>(0,25);
 
-    auto generator = [&](){ return charmap[rand()%charmapLength]; };
+    auto random_letter = [&](){return letters[distribution(generator)];};
 
     std::string result;
-
     result.reserve(length);
 
-    std::generate_n(back_inserter(result), length, generator);
+    std::generate_n(back_inserter(result), length, random_letter);
 
     return result;
 }
+
 
 ITask::ITask(const std::string& type)
     : _abort(false),
