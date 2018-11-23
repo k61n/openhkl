@@ -7,7 +7,6 @@
 
 #include <nsxlib/AutoIndexer.h>
 #include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/DetectorEvent.h>
 #include <nsxlib/Diffractometer.h>
@@ -18,7 +17,6 @@
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFilter.h>
 #include <nsxlib/PeakFinder.h>
-#include <nsxlib/ProgressHandler.h>
 #include <nsxlib/ReciprocalVector.h>
 #include <nsxlib/Sample.h>
 #include <nsxlib/ShapeLibrary.h>
@@ -30,12 +28,10 @@ NSX_INIT_TEST
 
 int main()
 {
-    nsx::DataReaderFactory factory;
-
     nsx::Experiment experiment("test", "BioDiff2500");
-    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
+    nsx::sptrDataSet dataset(new nsx::DataSet("hdf", "gal3.hdf", experiment.diffractometer()));
 
-    experiment.addData(dataf);
+    experiment.addData(dataset);
 
     Eigen::Matrix3d A;
 
@@ -55,7 +51,7 @@ int main()
     const Eigen::Matrix3d B = A.inverse().transpose();
     const Eigen::Vector3d q0 = Eigen::RowVector3d(-6, 12, -38)*B;
     nsx::Ellipsoid shape(Eigen::Vector3d(434, 802, 10), 2);
-    auto peak = std::make_shared<nsx::Peak3D>(dataf, shape);
+    auto peak = std::make_shared<nsx::Peak3D>(dataset, shape);
     peak->setSelected(true);
 
     Eigen::Vector3d q1 = peak->q().rowVector();
@@ -67,7 +63,7 @@ int main()
     nsx::PeakList peaks;
     peaks.push_back(peak);
     nsx::PixelSumIntegrator integrator(false, false);
-    integrator.integrate(peaks, dataf, 2.7, 3.0, 4.0);
+    integrator.integrate(peaks, dataset, 2.7, 3.0, 4.0);
 
     NSX_CHECK_ASSERT(peak->enabled() == true);
 

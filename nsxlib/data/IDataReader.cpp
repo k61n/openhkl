@@ -25,11 +25,11 @@
 namespace nsx {
 
 IDataReader::IDataReader(const std::string& filename, Diffractometer *diffractometer)
-: _diffractometer(std::move(diffractometer)),
+: _filename(filename),
+  _diffractometer(std::move(diffractometer)),
   _nFrames(0),
   _sampleStates(),
   _detectorStates(),
-  _fileSize(0),
   _isOpened(false)
 {
     _metadata.add<std::string>("filename",filename);
@@ -110,7 +110,7 @@ std::string IDataReader::basename() const
 
 std::string IDataReader::filename() const
 {
-    return _metadata.key<std::string>("filename");
+    return _filename;
 }
 
 
@@ -119,11 +119,6 @@ bool IDataReader::isOpened() const
     return _isOpened;
 }
 
-
-std::size_t IDataReader::fileSize() const
-{
-    return _fileSize;
-}
 
 const std::vector<std::vector<double>>& IDataReader::sampleStates() const
 {

@@ -2,9 +2,9 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Diffractometer.h>
+#include <nsxlib/Experiment.h>
 #include <nsxlib/NSXTest.h>
 #include <nsxlib/Units.h>
 
@@ -12,38 +12,28 @@ NSX_INIT_TEST
 
 int main()
 {
-    nsx::DataReaderFactory factory;
-    nsx::Diffractometer *diffractometer;
-    nsx::sptrDataSet dataf;
+    nsx::Experiment experiment("","D10");
+
+    nsx::sptrDataSet dataset(new nsx::DataSet("", "D10_ascii_example", experiment.diffractometer()));
 
     std::vector<Eigen::MatrixXi> frames;
 
-    try {
-        diffractometer = nsx::Diffractometer::create("D10");
-        dataf = factory.create("", "D10_ascii_example", diffractometer);
-        dataf->open();
+    dataset->open();
 
-        for (size_t i = 0; i < dataf->nFrames(); ++i) {
-            frames.push_back(dataf->frame(i));
-        }
-
-        dataf->saveHDF5("D10_hdf5_example.h5");
-        dataf->close();
-        
-        // read data back in and check that it agrees!
-        dataf = factory.create("h5", "D10_hdf5_example.h5", diffractometer);
-
-        NSX_CHECK_ASSERT(dataf != nullptr);
-
-        for (size_t i = 0; i < dataf->nFrames(); ++i) {
-            NSX_CHECK_ASSERT(dataf->frame(i) == frames[i]);
-        }
-        dataf->close();
+    for (size_t i = 0; i < dataset->nFrames(); ++i) {
+        frames.push_back(dataset->frame(i));
     }
-    catch (std::exception& e) {
-        NSX_FAIL(std::string("saveHDF5() threw exception: ") + e.what());
+
+    dataset->saveHDF5("D10_hdf5_example.h5");
+    dataset->close();
+
+    // read data back in and check that it agrees!
+    dataset = std::make_shared<nsx::DataSet>("h5", "D10_hdf5_example.h5", experiment.diffractometer());
+
+    NSX_CHECK_ASSERT(dataset != nullptr);
+
+    for (size_t i = 0; i < dataset->nFrames(); ++i) {
+        NSX_CHECK_ASSERT(dataset->frame(i) == frames[i]);
     }
-    catch(...) {
-        NSX_FAIL("saveHDF5() threw unknown exception");
-    }  
+    dataset->close();
 }

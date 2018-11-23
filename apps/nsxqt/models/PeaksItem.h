@@ -42,4 +42,6 @@ public:
     void openUserDefinedUnitCellIndexerFrame();
 
     void normalizeToMonitor();
+
+    void removeSelectedPeakCollections();
 };

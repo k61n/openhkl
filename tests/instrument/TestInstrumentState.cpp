@@ -1,4 +1,3 @@
-#include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/IDataReader.h>
@@ -16,23 +15,24 @@ public:
 
 int nsx::UnitTest_DataSet::run()
 {
-    nsx::DataReaderFactory factory;
-
     nsx::Experiment experiment("test", "BioDiff2500");
 
-    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
+    nsx::sptrDataSet dataset(new nsx::DataSet("hdf", "gal3.hdf", experiment.diffractometer()));
 
-    experiment.addData(dataf);
+    experiment.addData(dataset);
 
-    auto detectorStates = dataf->_reader->detectorStates();
-    auto sampleStates = dataf->_reader->sampleStates();
+    auto detectorStates = dataset->_reader->detectorStates();
+    auto sampleStates = dataset->_reader->sampleStates();
 
-    for (size_t i = 0; i < 100*(dataf->nFrames()-1); ++i) {
+    for (size_t i = 0; i < 100*(dataset->nFrames()-1); ++i) {
         double frame = double(i) / 100.0;
-        auto state = dataf->interpolatedState(frame);
+        auto state = dataset->interpolatedState(frame);
 
         auto lframe = std::lround(std::floor(frame));
     }
+
+    dataset->close();
+
     return 0;
 }
 

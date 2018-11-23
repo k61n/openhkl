@@ -157,8 +157,8 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "RawDataReader.h"
 #include "TiffDataReader.h"
 #include "BloscFilter.h"
+#include "ITask.h"
 #include "PeakFinder.h"
-#include "DataReaderFactory.h"
 #include "Detector.h"
 #include "DetectorFactory.h"
 #include "TransAxis.h"
@@ -242,11 +242,9 @@ using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 
 #include "MetaData.h"
 #include "IDataReader.h"
-#include "DataReaderFactory.h"
 #include "ILLDataReader.h"
 #include "HDF5DataReader.h"
 #include "DataSet.h"
-#include "PeakFinder.h"
 #include "MergedData.h"
 
 #include "PeakFilter.h"
@@ -378,7 +376,6 @@ using namespace nsx;
 %include "InterpolatedState.h"
 
 namespace nsx {
-   class DataReaderFactory; 
    class ConvolverFactory; 
    struct tVector;
 }
@@ -426,7 +423,6 @@ namespace nsx {
 
 %include "MetaData.h"
 %include "IDataReader.h"
-%include "DataReaderFactory.h"
 %include "ILLDataReader.h"
 %include "HDF5MetaDataReader.h"
 %include "HDF5DataReader.h"
@@ -438,6 +434,7 @@ namespace nsx {
 
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
 
+%include "ITask.h"
 %include "PeakFinder.h"
 
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;
@@ -514,7 +511,6 @@ namespace nsx {
 %include "RawDataReader.h"
 %include "TiffDataReader.h"
 %include "BloscFilter.h"
-%include "DataReaderFactory.h"
 
 %include "Convolver.h"
 %include "AtomicConvolver.h"

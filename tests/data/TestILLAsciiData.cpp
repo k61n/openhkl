@@ -3,9 +3,9 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Diffractometer.h>
+#include <nsxlib/Experiment.h>
 #include <nsxlib/IDataReader.h>
 #include <nsxlib/InstrumentState.h>
 #include <nsxlib/MetaData.h>
@@ -25,31 +25,18 @@ public:
 
 int UnitTest_DataSet::run()
 {
-    nsx::DataReaderFactory factory;
-    nsx::Diffractometer *diffractometer;
-    nsx::sptrDataSet dataf;
+    nsx::Experiment experiment("","D10");
+
     Eigen::MatrixXi v;
 
-    nsx::MetaData metadata;
+    nsx::DataSet dataset("", "D10_ascii_example", experiment.diffractometer());
 
-    try {
-        diffractometer = nsx::Diffractometer::create("D10");
+    auto metadata = dataset.reader()->metadata();
 
-        dataf = factory.create("", "D10_ascii_example", diffractometer);
+    NSX_CHECK_ASSERT(metadata.key<int>("nbang")==2);
 
-        metadata = dataf->reader()->metadata();
-
-        NSX_CHECK_ASSERT(metadata.key<int>("nbang")==2);
-
-        dataf->open();
-        v = dataf->frame(0);
-    }
-    catch(std::exception& e) {
-        NSX_FAIL(std::string("caught exception: ") + e.what());
-    }
-    catch (...) {
-        NSX_FAIL("unknown exception while loading data");
-    }
+    dataset.open();
+    v = dataset.frame(0);
 
     // Check the total number of count in the frame 0
     NSX_CHECK_EQUAL(v.sum(),65);
@@ -57,13 +44,27 @@ int UnitTest_DataSet::run()
     // Check the value of the monitor
     NSX_CHECK_CLOSE(metadata.key<double>("monitor"),20000,tolerance);
 
-    auto sampleStates = dataf->reader()->sampleStates();
-    auto detectorStates = dataf->reader()->detectorStates();
+    auto sampleStates = dataset.reader()->sampleStates();
+    auto detectorStates = dataset.reader()->detectorStates();
     
     NSX_CHECK_CLOSE(detectorStates[3][0],0.54347000E+05/1000.0*nsx::deg,tolerance);
     NSX_CHECK_CLOSE(sampleStates[2][0],0.26572000E+05/1000.0*nsx::deg,tolerance);
     NSX_CHECK_CLOSE(sampleStates[2][1],0.48923233E+02*nsx::deg,tolerance);
     NSX_CHECK_CLOSE(sampleStates[2][2],-0.48583171E+02*nsx::deg,tolerance);
+
+    dataset.close();
+
+    nsx::DataSet dataset1(dataset);
+
+    auto sampleStates1 = dataset1.reader()->sampleStates();
+    auto detectorStates1 = dataset1.reader()->detectorStates();
+
+    NSX_CHECK_CLOSE(detectorStates1[3][0],detectorStates[3][0],tolerance);
+    NSX_CHECK_CLOSE(sampleStates1[2][0],sampleStates[2][0],tolerance);
+    NSX_CHECK_CLOSE(sampleStates1[2][1],sampleStates[2][1],tolerance);
+    NSX_CHECK_CLOSE(sampleStates1[2][2],sampleStates[2][2],tolerance);
+
+    dataset1.close();
 
     return 0;
 }

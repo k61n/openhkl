@@ -2,6 +2,7 @@
 
 #include <map>
 #include <memory>
+#include <set>
 #include <string>
 
 #include <nsxlib/DataTypes.h>
@@ -11,6 +12,10 @@
 
 namespace Ui {
 class FramePeakFinder;
+}
+
+namespace nsx {
+class ITask;
 }
 
 class ExperimentItem;
@@ -27,13 +32,15 @@ class QSpinBox;
 class QTableWidget;
 class QWidget;
 
+class MainWindow;
+
 class FramePeakFinder : public NSXQFrame
 {
     Q_OBJECT
 
 public:
 
-    static FramePeakFinder* create(ExperimentItem* experiment_tree, const nsx::DataList& data);
+    static FramePeakFinder* create(MainWindow *main_window, ExperimentItem* experiment_tree, const nsx::DataList& data);
 
     static FramePeakFinder* Instance();
 
@@ -83,9 +90,11 @@ private slots:
 
     void slotTabRemoved(int index);
 
+    void onShowFoundPeaks(std::shared_ptr<nsx::ITask> task);
+
 private:
 
-    FramePeakFinder(ExperimentItem *experiment_item, const nsx::DataList &data);
+    FramePeakFinder(MainWindow *main_window, ExperimentItem *experiment_item, const nsx::DataList &data);
 
     void updateConvolutionParameters();
 
@@ -103,9 +112,13 @@ private:
 
     Ui::FramePeakFinder *_ui;
 
+    MainWindow *_main_window;
+
     ExperimentItem *_experiment_item;
 
     QGraphicsPixmapItem *_pixmap;
 
     std::unique_ptr<ColorMap> _colormap;
+
+    std::set<std::shared_ptr<nsx::PeakFinder>> _peak_finders;
 };

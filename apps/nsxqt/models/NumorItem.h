@@ -17,8 +17,6 @@ public:
 
     explicit NumorItem(nsx::sptrDataSet data);
 
-    ~NumorItem();
-
     virtual QVariant data(int role) const override;
 
     QWidget* inspectItem() override;
@@ -26,5 +24,7 @@ public:
     void exportHDF5(const std::string& filename) const;
 
 private:
+
     nsx::sptrDataSet _data;
+
 };

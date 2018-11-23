@@ -44,5 +44,8 @@
         <file>resources/unitCellsIcon.png</file>
         <file>resources/selectIcon.png</file>
         <file>resources/numorIcon.png</file>
+        <file>resources/abortTaskIcon.png</file>
+        <file>resources/runTaskIcon.png</file>
+        <file>resources/removeTaskIcon.png</file>
     </qresource>
 </RCC>

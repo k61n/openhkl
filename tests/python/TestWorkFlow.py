@@ -6,16 +6,17 @@ import sys
 class TestWorkFlow(unittest.TestCase):
     
     def test(self):
-        expt = nsx.Experiment('test', 'BioDiff2500')
-        diff = expt.diffractometer()
-        data = nsx.DataReaderFactory().create("hdf", "gal3.hdf", diff)
-        expt.addData(data)
-        source = diff.source()
+        
+        experiment = nsx.Experiment('test', 'BioDiff2500')
+        dataset = nsx.DataSet("hdf", "gal3.hdf", experiment.diffractometer())
+        experiment.addData(dataset)
 
-        reader = nsx.HDF5DataReader("gal3.hdf", diff)
-        data = nsx.DataSet(reader)
+        reader = nsx.HDF5DataReader("gal3.hdf", experiment.diffractometer())
 
-        finder = nsx.PeakFinder()
+        datasets = nsx.DataList()
+        datasets.push_back(dataset)
+
+        finder = nsx.PeakFinder(datasets)
         finder.setMinSize(30)
         finder.setMaxSize(10000)
         finder.setMaxFrames(10)
@@ -25,9 +26,9 @@ class TestWorkFlow(unittest.TestCase):
         finder.setConvolver(convolver)
         finder.setThreshold(15.0)
 
-        numors = nsx.DataList()
-        numors.push_back(data)
-        peaks = finder.find(numors)
+        finder.run()
+
+        peaks = finder.peaks()
 
         selected_peaks = []
 

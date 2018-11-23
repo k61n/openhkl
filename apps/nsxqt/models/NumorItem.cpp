@@ -32,10 +32,6 @@ NumorItem::NumorItem(nsx::sptrDataSet data):
     setCheckable(true);
 }
 
-NumorItem::~NumorItem()
-{
-}
-
 QVariant NumorItem::data(int role) const
 {
     switch(role) {

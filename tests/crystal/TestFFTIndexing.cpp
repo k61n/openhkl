@@ -2,7 +2,6 @@
 
 #include <nsxlib/AutoIndexer.h>
 #include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/DetectorEvent.h>
 #include <nsxlib/Diffractometer.h>
@@ -22,11 +21,9 @@ NSX_INIT_TEST
 
 int main()
 {
-    nsx::DataReaderFactory factory;
-
     nsx::Experiment experiment("test", "BioDiff2500");
-    nsx::sptrDataSet data(factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
-    experiment.addData(data);
+    nsx::sptrDataSet dataset(new nsx::DataSet("hdf", "gal3.hdf", experiment.diffractometer()));
+    experiment.addData(dataset);
 
     nsx::IndexerParameters params;
 
@@ -59,12 +56,12 @@ int main()
         qs.emplace_back(index.rowVector().cast<double>()*BU);
     }
 
-    auto events = data->events(qs);
+    auto events = dataset->events(qs);
 
     std::vector<nsx::sptrPeak3D> peaks;
 
      for (auto event: events) {
-        nsx::sptrPeak3D peak(new nsx::Peak3D(data));
+        nsx::sptrPeak3D peak(new nsx::Peak3D(dataset));
         Eigen::Vector3d center = {event._px, event._py, event._frame};
 
         // dummy shape
@@ -106,6 +103,8 @@ int main()
 
     // square because of the orientation issue
     NSX_CHECK_ASSERT((E*E-Eigen::Matrix3d::Identity()).norm() < 1e-10);
+
+    dataset->close();
 
     return 0;
 }

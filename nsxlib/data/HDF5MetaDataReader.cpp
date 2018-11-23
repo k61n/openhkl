@@ -15,6 +15,18 @@
 
 namespace nsx {
 
+HDF5MetaDataReader::HDF5MetaDataReader(const HDF5MetaDataReader &other) : IDataReader(other)
+{
+    _file.reset(new H5::H5File(other._filename.c_str(), H5F_ACC_RDONLY));
+    if (other._isOpened) {
+        open();
+    } else {
+        _dataset = nullptr;
+        _space = nullptr;
+        _memspace = nullptr;
+    }
+}
+
 HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractometer* diffractometer)
     :IDataReader(filename,diffractometer),
       _dataset(nullptr),
@@ -24,7 +36,7 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
     H5::Group infoGroup, experimentGroup, detectorGroup, sampleGroup;
 
     try {
-        _file = std::unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
+        _file.reset(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
         infoGroup = _file->openGroup("/Info");
         experimentGroup = _file->openGroup("/Experiment");
         detectorGroup =_file->openGroup("/Data/Scan/Detector");
@@ -35,17 +47,17 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
     }
     
     // Read the info group and store in metadata    
-    int ninfo=infoGroup.getNumAttrs();
-    for (int i=0;i<ninfo;++i) {
-        H5::Attribute attr=infoGroup.openAttribute(i);
-        H5::DataType typ=attr.getDataType();
+    int ninfo = infoGroup.getNumAttrs();
+    for (int i = 0; i < ninfo; ++i) {
+        H5::Attribute attr = infoGroup.openAttribute(i);
+        H5::DataType typ = attr.getDataType();
         std::string value;
         attr.read(typ,value);
         _metadata.add<std::string>(attr.getName(),value);
     }
 
     // Read the experiment group and store all int and double attributes in metadata
-    int nexps=experimentGroup.getNumAttrs();
+    int nexps = experimentGroup.getNumAttrs();
     for (int i=0;i<nexps;++i) {
         H5::Attribute attr=experimentGroup.openAttribute(i);
         H5::DataType typ=attr.getDataType();
@@ -54,14 +66,14 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
             attr.read(typ,&value);
             _metadata.add<int>(attr.getName(),value);
         }
-        if (typ==H5::PredType::NATIVE_DOUBLE) {
+        if (typ == H5::PredType::NATIVE_DOUBLE) {
             double value;
             attr.read(typ,&value);
             _metadata.add<double>(attr.getName(),value);
         }
     }
 
-    _nFrames=_metadata.key<int>("npdone");
+    _nFrames = _metadata.key<int>("npdone");
 
     const auto &detector_gonio = _diffractometer->detector()->gonio();
     size_t n_detector_gonio_axes = detector_gonio.nAxes();
@@ -92,11 +104,11 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
     }
 
     // Use natural units internally (rad)
-    dm*=deg;
+    dm *= deg;
 
     _detectorStates.resize(_nFrames);
 
-    for (unsigned int i=0;i<_nFrames;++i) {
+    for (size_t i = 0; i< _nFrames; ++i) {
         _detectorStates[i] = eigenToVector(dm.col(i));
     }
 
@@ -140,6 +152,27 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
 
 }
 
+HDF5MetaDataReader::~HDF5MetaDataReader()
+{
+    blosc_destroy();
+}
+
+HDF5MetaDataReader& HDF5MetaDataReader::operator=(const HDF5MetaDataReader &other)
+{
+    if (this != &other) {
+        IDataReader::operator=(other);
+        _file.reset(new H5::H5File(other._filename.c_str(), H5F_ACC_RDONLY));
+        if (other._isOpened) {
+            open();
+        } else {
+            _dataset = nullptr;
+            _space = nullptr;
+            _memspace = nullptr;
+        }
+    }
+    return *this;
+}
+
 void HDF5MetaDataReader::open()
 {
     if (_isOpened) {
@@ -155,7 +188,11 @@ void HDF5MetaDataReader::open()
         throw;
     }
 
-    // handled automaticall by HDF5 blosc filter
+    init();
+}
+
+void HDF5MetaDataReader::init()
+{
     blosc_init();
     blosc_set_nthreads(4);
 
@@ -180,9 +217,9 @@ void HDF5MetaDataReader::open()
 
     // Get dimensions of data
     _space->getSimpleExtentDims(&dims[0], &maxdims[0]);
-    _nFrames=dims[0];
-    _nRows=dims[1];
-    _nCols=dims[2];
+    _nFrames = dims[0];
+    _nRows = dims[1];
+    _nCols = dims[2];
 
     // Size of one hyperslab
     hsize_t  count[3];

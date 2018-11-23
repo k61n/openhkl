@@ -23,6 +23,9 @@ public:
     //! Destructor
     virtual ~IDataReader() = 0;
 
+    //! Clone this reader
+    virtual IDataReader* clone() const = 0;
+
     //! Open the file
     virtual void open() = 0;
 
@@ -71,22 +74,21 @@ public:
     //! True if file is open
     bool isOpened() const;
 
-    //! Returns the size of the file in disk
-    std::size_t fileSize() const;//
-
 protected:
 
     IDataReader() = delete;
 
-    IDataReader(const IDataReader &other) = delete;
+    IDataReader(const IDataReader &other) = default;
 
-    IDataReader& operator=(const IDataReader &other) = delete;
+    IDataReader& operator=(const IDataReader &other) = default;
 
-    //! Stores the metadata
-    MetaData _metadata;
+    std::string _filename;
 
     //! A pointer to the diffractometer. The actual resource is not owned by this object which is just a borrower.
     Diffractometer* _diffractometer;
+
+    //! Stores the metadata
+    MetaData _metadata;
 
     //! Number of frames of data
     std::size_t _nFrames;
@@ -102,9 +104,6 @@ protected:
 
     //! Vector of detector states
     std::vector<std::vector<double>> _detectorStates;
-
-    //! Total size of file
-    std::size_t _fileSize;
 
     //! Status of file handle
     bool _isOpened;

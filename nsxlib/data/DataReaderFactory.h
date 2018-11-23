@@ -47,11 +47,11 @@ class DataReaderFactory {
 
 public:
     //! Callback type of the factory
-    using callback = std::function<std::shared_ptr<DataSet>(const std::string&, Diffractometer*)>;
+    using callback = std::function<IDataReader*(const std::string&, Diffractometer*)>;
 
     DataReaderFactory();
 
-    std::shared_ptr<DataSet> create(const std::string& extension, const std::string& filename, Diffractometer *diffractometer) const;
+    IDataReader* create(const std::string& extension, const std::string& filename, Diffractometer *diffractometer) const;
 
 private:
     std::map<std::string, callback> _callbacks;

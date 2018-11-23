@@ -6,9 +6,9 @@ import unittest
 class TestPeakFinder(unittest.TestCase):
     def test(self):
 
-        factory = nsx.DataReaderFactory()
+        datasets = nsx.DataList()
 
-        peakFinder = nsx.PeakFinder()
+        peakFinder = nsx.PeakFinder(datasets)
         ph = nsx.ProgressHandler()
 
         #peakFinder.setIntegrationConfidence(0.997)        

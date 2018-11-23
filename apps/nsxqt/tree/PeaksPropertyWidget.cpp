@@ -24,9 +24,9 @@ PeaksPropertyWidget::PeaksPropertyWidget(PeaksItem* peaks_item, QWidget *parent)
 {
     ui->setupUi(this);
 
-    _peaks_model = new CollectedPeaksModel(_peaks_item->model(),_peaks_item->experiment(), _peaks_item->selectedPeaks());
+    auto* peaks_model = new CollectedPeaksModel(_peaks_item->model(),_peaks_item->experiment(), _peaks_item->selectedPeaks(), this);
 
-    ui->tableView->setModel(_peaks_model);
+    ui->tableView->setModel(peaks_model);
 }
 
 PeaksPropertyWidget::~PeaksPropertyWidget()
@@ -36,5 +36,5 @@ PeaksPropertyWidget::~PeaksPropertyWidget()
 
 CollectedPeaksModel* PeaksPropertyWidget::model()
 {
-    return _peaks_model;
+    return dynamic_cast<CollectedPeaksModel*>(ui->tableView->model());
 }

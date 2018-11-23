@@ -45,12 +45,14 @@
 #include "CutLineGraphicsItem.h"
 #include "CutSliceGraphicsItem.h"
 #include "CutterGraphicsItem.h"
+#include "DataItem.h"
 #include "DetectorScene.h"
 #include "DialogExperiment.h"
 #include "DialogIntegrate.h"
 #include "DialogPeakFilter.h"
 #include "ExperimentTree.h"
 #include "DialogIsotopesDatabase.h"
+#include "FramePeakFinder.h"
 #include "MainWindow.h"
 #include "NoteBook.h"
 #include "PeakGraphicsItem.h"
@@ -70,9 +72,13 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->setupUi(this);
 
     // make experiment tree aware of the session
-    _session = new SessionModel();
-    _ui->experimentTree->setModel(_session);
-    _ui->dview->getScene()->setSession(_session);
+    _session_model = new SessionModel();
+    _ui->experimentTree->setModel(_session_model);
+
+    _task_manager_model = new TaskManagerModel(this);
+    _ui->task_manager->setModel(_task_manager_model);
+
+    _ui->dview->getScene()->setSession(_session_model);
 
     auto debug_log = [this]() -> nsx::Logger
     {
@@ -81,7 +87,7 @@ MainWindow::MainWindow(QWidget *parent)
 
         nsx::AggregateStreamWrapper* wrapper = new nsx::AggregateStreamWrapper();
         wrapper->addWrapper(new nsx::LogFileStreamWrapper("nsx_debug.txt",initialize,finalize));
-        wrapper->addWrapper(new QtStreamWrapper(this->_ui->noteBook,initialize));
+        wrapper->addWrapper(new QtStreamWrapper(this->_ui->logger,initialize));
 
         return nsx::Logger(wrapper);
     };
@@ -93,7 +99,7 @@ MainWindow::MainWindow(QWidget *parent)
 
         nsx::AggregateStreamWrapper* wrapper = new nsx::AggregateStreamWrapper();
         wrapper->addWrapper(new nsx::LogFileStreamWrapper("nsx_info.txt",initialize,finalize));
-        wrapper->addWrapper(new QtStreamWrapper(this->_ui->noteBook,initialize));
+        wrapper->addWrapper(new QtStreamWrapper(this->_ui->logger,initialize));
 
         return nsx::Logger(wrapper);
     };
@@ -105,7 +111,7 @@ MainWindow::MainWindow(QWidget *parent)
 
         nsx::AggregateStreamWrapper* wrapper = new nsx::AggregateStreamWrapper();
         wrapper->addWrapper(new nsx::LogFileStreamWrapper("nsx_error.txt",initialize,finalize));
-        wrapper->addWrapper(new QtStreamWrapper(this->_ui->noteBook, initialize));
+        wrapper->addWrapper(new QtStreamWrapper(this->_ui->logger, initialize));
 
         return nsx::Logger(wrapper);
     };
@@ -135,21 +141,22 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->splitterHorizontal->setStretchFactor(1,90);
 
     // signals and slots
-    connect(_session, SIGNAL(signalSelectedDataChanged(nsx::sptrDataSet,int)), this, SLOT(slotChangeSelectedData(nsx::sptrDataSet,int)));
-    connect(_session, SIGNAL(signalSelectedPeakChanged(nsx::sptrPeak3D)), this, SLOT(slotChangeSelectedPeak(nsx::sptrPeak3D)));
+    connect(_session_model, SIGNAL(signalSelectedDataChanged(nsx::sptrDataSet,int)), this, SLOT(slotChangeSelectedData(nsx::sptrDataSet,int)));
+    connect(_session_model, SIGNAL(signalSelectedPeakChanged(nsx::sptrPeak3D)), this, SLOT(slotChangeSelectedPeak(nsx::sptrPeak3D)));
 
     connect(_ui->frame,SIGNAL(valueChanged(int)),_ui->dview->getScene(),SLOT(slotChangeSelectedFrame(int)));
 
     connect(_ui->intensity,SIGNAL(valueChanged(int)),_ui->dview->getScene(),SLOT(setMaxIntensity(int)));
     connect(_ui->selectionMode,SIGNAL(currentIndexChanged(int)),_ui->dview->getScene(),SLOT(changeInteractionMode(int)));
     connect(_ui->dview->getScene(),SIGNAL(updatePlot(PlottableGraphicsItem*)),this,SLOT(updatePlot(PlottableGraphicsItem*)));
-    connect(_ui->action_open,SIGNAL(triggered()), _session, SLOT(createNewExperiment()));
+    connect(_ui->action_open,SIGNAL(triggered()), _session_model, SLOT(createNewExperiment()));
 
     connect(_ui->experimentTree, SIGNAL(resetScene()), _ui->dview->getScene(), SLOT(resetScene()));
-   
-    connect(_session, SIGNAL(updatePeaks()), _ui->dview->getScene(), SLOT(resetPeakGraphicsItems()));
+    connect(_ui->experimentTree,&ExperimentTree::openPeakFindDialog,[=](DataItem *data_item){onOpenPeakFinderDialog(data_item);});
 
-    _ui->loggerDockWidget->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
+    connect(_session_model, SIGNAL(updatePeaks()), _ui->dview->getScene(), SLOT(resetPeakGraphicsItems()));
+
+    _ui->monitorDockWidget->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
     _ui->plotterDockWidget->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
     _ui->dockWidget_Property->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
 
@@ -200,6 +207,11 @@ MainWindow::~MainWindow()
     qInstallMessageHandler(0);
 
     delete _ui;
+}
+
+TaskManagerModel* MainWindow::taskManagerModel()
+{
+    return _task_manager_model;
 }
 
 void MainWindow::on_actionAbout_triggered()
@@ -272,10 +284,11 @@ void MainWindow::on_actionMiller_indices_triggered()
 
 void MainWindow::on_actionLogger_triggered()
 {
-    if (_ui->loggerDockWidget->isHidden())
-        _ui->loggerDockWidget->show();
-    else
-        _ui->loggerDockWidget->hide();
+    if (_ui->monitorDockWidget->isHidden()) {
+        _ui->monitorDockWidget->show();
+    } else {
+        _ui->monitorDockWidget->hide();
+    }
 }
 
 void MainWindow::on_action1D_Peak_Ploter_triggered()
@@ -386,23 +399,13 @@ void MainWindow::on_action_display_isotopes_database_triggered()
 void MainWindow::setInspectorWidget(QWidget* w)
 {
     // Ensure that previous Property Widget is deleted.
-    auto widget=_ui->dockWidget_Property->widget();
-    if (widget) {
-        delete widget;
+    auto previous_widget = _ui->dockWidget_Property->widget();
+    if (previous_widget) {
+        delete previous_widget;
     }
 
     // Assign current property Widget
     _ui->dockWidget_Property->setWidget(w);
-
-//    if (PeakListPropertyWidget* widget = dynamic_cast<PeakListPropertyWidget*>(w)) {
-//        connect(widget->model(),
-//                SIGNAL(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)),
-//                this,
-//                SLOT(plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&)));
-
-//        CollectedPeaksModel* peakModel = dynamic_cast<CollectedPeaksModel*>(widget->getPeakTableView()->model());
-//        connect(peakModel,SIGNAL(unitCellUpdated()),_ui->_dview->getScene(),SLOT(updatePeaks()));
-//    }
 }
 
 void MainWindow::on_checkBox_AspectRatio_toggled(bool checked)
@@ -418,4 +421,20 @@ void MainWindow::on_actionLogarithmic_Scale_triggered(bool checked)
 void MainWindow::on_actionDraw_peak_integration_area_triggered(bool checked)
 {
     _ui->dview->getScene()->drawIntegrationRegion(checked);
+}
+
+void MainWindow::onOpenPeakFinderDialog(DataItem *data_item)
+{
+    nsx::DataList data = data_item->selectedData();
+
+    if (data.empty()) {
+        nsx::error()<<"No numors selected for finding peaks";
+        return;
+    }
+
+    auto experiment_item = data_item->experimentItem();
+
+    FramePeakFinder* frame = FramePeakFinder::create(this,experiment_item,data);
+
+    frame->show();
 }

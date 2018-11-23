@@ -53,16 +53,15 @@ public:
 
     DataSet() = delete;
 
-    DataSet(const DataSet &other) = default;
+    DataSet(const std::string& filetype, const std::string& filename, Diffractometer* diffractometer);
 
-    //! Construct using the given data reader (allowing multiple formats)
-    DataSet(std::shared_ptr<IDataReader> reader);
+    DataSet(const DataSet &other);
 
     //! Destructor
     ~DataSet();
 
     //! Assignment operator
-    DataSet& operator=(const DataSet& other) = delete;
+    DataSet& operator=(const DataSet& other);
 
     //! Gets the data filename
     const std::string& filename() const;
@@ -101,7 +100,7 @@ public:
     int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);
 
     //! Read a single frame
-    Eigen::MatrixXi frame(std::size_t idx);
+    Eigen::MatrixXi frame(std::size_t idx) const;
 
     //! Return frame after transforming to account for detector gain and baseline
     Eigen::MatrixXd transformedFrame(std::size_t idx);
@@ -118,9 +117,6 @@ public:
     //! True if file is open
     bool isOpened() const;
 
-    //! Return total size of file
-    std::size_t fileSize() const;
-
     //! Export dataset to HDF5 format
     void saveHDF5(const std::string& filename);
 
@@ -130,8 +126,11 @@ public:
     //! Return the sample-space q vector corresponding to a detector event
     ReciprocalVector computeQ(const DetectorEvent& ev) const;
 
-    //! Return the data reader used to set this dataset
-    std::shared_ptr<IDataReader> reader() const;
+    //! Return a non-const to the data reader used to set this dataset
+    IDataReader* reader();
+
+    //! Return a non-const to the data reader used to set this dataset
+    const IDataReader* reader() const;
 
 private:
 
@@ -149,16 +148,12 @@ private:
 
     InstrumentStateList _states;
 
-    std::size_t _fileSize;
-
     //! The set of masks bound to the data
     std::set<IMask*> _masks;
 
-    double _background;
-
     FrameIteratorCallback _iteratorCallback;
 
-    std::shared_ptr<IDataReader> _reader;
+    std::unique_ptr<IDataReader> _reader;
 };
 
 } // end namespace nsx

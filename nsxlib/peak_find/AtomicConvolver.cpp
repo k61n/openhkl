@@ -29,12 +29,15 @@
  */
 
 #include <cstring>
+#include <mutex>
 #include <stdexcept>
 #include <utility>
 
 #include "AtomicConvolver.h"
 
 namespace nsx {
+
+std::mutex g_mutex;
 
 AtomicConvolver::AtomicConvolver()
 : Convolver(),
@@ -69,6 +72,10 @@ AtomicConvolver::~AtomicConvolver()
 
 void AtomicConvolver::reset()
 {
+    // FFTW is not thread safe for all its function but fftw_execute
+    // See http://www.fftw.org/fftw3_doc/Thread-safety.html
+    std::unique_lock<std::mutex> lock(g_mutex);
+
     if (_forwardPlan) {
         fftw_destroy_plan(_forwardPlan);
     }
@@ -102,6 +109,10 @@ void AtomicConvolver::reset()
 void AtomicConvolver::updateKernel(int nrows, int ncols)
 {
     reset();
+
+    // FFTW is not thread safe for all its function but fftw_execute
+    // See http://www.fftw.org/fftw3_doc/Thread-safety.html
+    std::unique_lock<std::mutex> lock(g_mutex);
 
     _n_rows = nrows;
     _n_cols = ncols;

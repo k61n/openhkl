@@ -127,12 +127,15 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(open_instrument_states_dialog, &QAction::triggered, [=](){ditem->openInstrumentStatesDialog();});
 
             QAction* find_peaks = menu->addAction("Find peaks in data");
-            connect(find_peaks, &QAction::triggered, [=](){ditem->findPeaks();});
+            connect(find_peaks, &QAction::triggered, [=](){emit openPeakFindDialog(ditem);});
         }
         else if (auto pitem = dynamic_cast<PeaksItem*>(item)) {
 
             QAction* filter = menu->addAction("Filter peaks");
             connect(filter, triggered, [=](){pitem->openPeakFilterDialog();});
+
+            QAction* remove_selected_data = menu->addAction("Remove selected peak collections");
+            connect(remove_selected_data, &QAction::triggered, [=](){pitem->removeSelectedPeakCollections();});
 
             QMenu *indexing_menu = new QMenu("Indexing");
             QAction* autoindex = indexing_menu->addAction("FFT auto indexer");
@@ -262,3 +265,4 @@ void ExperimentTree::onSingleClick(const QModelIndex &index)
         emit inspectWidget(widget);
     }
 }
+

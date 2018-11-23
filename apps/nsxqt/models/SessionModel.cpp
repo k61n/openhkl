@@ -58,7 +58,6 @@
 
 #include <nsxlib/CC.h>
 #include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/Detector.h>
 #include <nsxlib/Diffractometer.h>
 #include <nsxlib/Ellipsoid.h>

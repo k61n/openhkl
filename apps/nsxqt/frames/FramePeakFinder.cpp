@@ -22,6 +22,7 @@
 
 #include <nsxlib/ConvolverFactory.h>
 #include <nsxlib/DataSet.h>
+#include <nsxlib/ITask.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/Peak3D.h>
 #include <nsxlib/PeakFinder.h>
@@ -31,21 +32,21 @@
 #include "DoubleItemDelegate.h"
 #include "ExperimentItem.h"
 #include "FramePeakFinder.h"
+#include "MainWindow.h"
 #include "MetaTypes.h"
 #include "PeakListItem.h"
 #include "PeaksItem.h"
 #include "PeakTableView.h"
-#include "ProgressView.h"
 #include "WidgetFoundPeaks.h"
 
 #include "ui_FramePeakFinder.h"
 
 FramePeakFinder* FramePeakFinder::_instance = nullptr;
 
-FramePeakFinder* FramePeakFinder::create(ExperimentItem *experiment_item, const nsx::DataList& data)
+FramePeakFinder* FramePeakFinder::create(MainWindow *main_window, ExperimentItem *experiment_item, const nsx::DataList& data)
 {
     if (!_instance) {
-        _instance = new FramePeakFinder(experiment_item, data);
+        _instance = new FramePeakFinder(main_window, experiment_item, data);
     }
 
     return _instance;
@@ -56,9 +57,10 @@ FramePeakFinder* FramePeakFinder::Instance()
     return _instance;
 }
 
-FramePeakFinder::FramePeakFinder(ExperimentItem *experiment_item, const nsx::DataList& data)
+FramePeakFinder::FramePeakFinder(MainWindow *main_window, ExperimentItem *experiment_item, const nsx::DataList& data)
 : NSXQFrame(),
   _ui(new Ui::FramePeakFinder),
+  _main_window(main_window),
   _experiment_item(experiment_item),
   _pixmap(nullptr),
   _colormap(new ColorMap)
@@ -117,13 +119,14 @@ FramePeakFinder::FramePeakFinder(ExperimentItem *experiment_item, const nsx::Dat
 
     connect(_ui->actions,SIGNAL(clicked(QAbstractButton*)),this,SLOT(doActions(QAbstractButton*)));
 
+    connect(_main_window->taskManagerModel(),&TaskManagerModel::sendCompletedTask,[=](std::shared_ptr<nsx::ITask> task){onShowFoundPeaks(task);});
+
     emit _ui->selected_data->currentIndexChanged(_ui->selected_data->currentIndex());
 }
 
 FramePeakFinder::~FramePeakFinder()
 {
     delete _ui;
-
     if (_instance) {
         _instance = nullptr;
     }
@@ -151,7 +154,7 @@ void FramePeakFinder::slotTabEdited(int index)
 
     QInputDialog dialog(this);
     dialog.setLabelText("");
-    dialog.setWindowTitle(tr("Set unit cell name"));
+    dialog.setWindowTitle(tr("Set peak collection name"));
     auto pos = mapToGlobal(_ui->tabs->pos());
 
     int width(0);
@@ -207,9 +210,9 @@ void FramePeakFinder::accept()
         }
 
         auto item = new PeakListItem(found_peaks);
+
         item->setText(_ui->tabs->tabText(i));
         peaks_item->appendRow(item);
-
     }
 
     close();
@@ -222,27 +225,20 @@ void FramePeakFinder::setColorMap(const std::string &name)
 
 void FramePeakFinder::run()
 {
-    nsx::info() << "Peak find algorithm: Searching peaks in " << _ui->selected_data->count() << " files";
-
-    // reset progress handler
-    auto progressHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler);
+    nsx::info() << "Peak find algorithm: searching peaks in " << _ui->selected_data->count() << " files";
 
     nsx::DataList data;
     for (int i = 0; i < _ui->selected_data->count(); ++i) {
         data.push_back(_ui->selected_data->itemData(i,Qt::UserRole).value<nsx::sptrDataSet>());
     }
 
-    nsx::PeakFinder peak_finder;
+    std::shared_ptr<nsx::PeakFinder> peak_finder(new nsx::PeakFinder(data));
 
-    // create a pop-up window that will show the progress
-    ProgressView progressView(nullptr);
-    progressView.watch(progressHandler);
+    _peak_finders.insert(peak_finder);
 
-    peak_finder.setHandler(progressHandler);
-
-    peak_finder.setMinSize(_ui->min_blob_size->value());
-    peak_finder.setMaxSize(_ui->max_blob_size->value());
-    peak_finder.setMaxFrames(_ui->max_blob_width->value());
+    peak_finder->setMinSize(_ui->min_blob_size->value());
+    peak_finder->setMaxSize(_ui->max_blob_size->value());
+    peak_finder->setMaxFrames(_ui->max_blob_width->value());
 
     // Get the current convolver type
     std::string convolver_type = _ui->convolution_kernels->currentText().toStdString();
@@ -251,31 +247,42 @@ void FramePeakFinder::run()
     auto&& parameters = convolutionParameters();
 
     nsx::ConvolverFactory convolver_factory;
-    auto convolver = convolver_factory.create(convolver_type,{});
+    auto convolver = convolver_factory.create(convolver_type,parameters);
 
     // Propagate changes to peak finder
-    peak_finder.setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
+    peak_finder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
 
-    nsx::PeakList peaks;
+    auto *task_manager_model = _main_window->taskManagerModel();
 
-    // execute in a try-block because the progress handler may throw if it is aborted by GUI
-    try {
-        peaks = peak_finder.find(data);
-    }
-    catch(std::exception& e) {
+    task_manager_model->addTask(peak_finder,true);
+}
+
+void FramePeakFinder::onShowFoundPeaks(std::shared_ptr<nsx::ITask> task)
+{
+    auto peak_finder = std::dynamic_pointer_cast<nsx::PeakFinder>(task);
+
+    auto it = _peak_finders.find(peak_finder);
+    if (it == _peak_finders.end()) {
         return;
     }
 
+    const auto &peaks = peak_finder->peaks();
+
+    auto &&peak_end = _ui->peak_scale->value();
+    auto &&background_begin = _ui->background_begin_scale->value();
+    auto &&background_end = _ui->background_end_scale->value();
+
     // integrate peaks
-    for (auto d : data) {
+    for (int i = 0; i < _ui->selected_data->count(); ++i) {
+        auto dataset = _ui->selected_data->itemData(i,Qt::UserRole).value<nsx::sptrDataSet>();
         nsx::PixelSumIntegrator integrator(true, true);
-        integrator.integrate(peaks, d, _ui->peak_scale->value(), _ui->background_begin_scale->value(), _ui->background_end_scale->value());
+        integrator.integrate(peaks, dataset,peak_end,background_begin,background_end);
     }
 
     WidgetFoundPeaks *widget_found_peaks = new WidgetFoundPeaks(_experiment_item,peaks);
     _ui->tabs->addTab(widget_found_peaks,"peaks");
     QCheckBox *checkbox = new QCheckBox();
-    checkbox->setChecked(true);    
+    checkbox->setChecked(true);
     _ui->tabs->tabBar()->setTabButton(_ui->tabs->count()-1,QTabBar::LeftSide,checkbox);
 
     nsx::info() << "Peak search complete. Found " << peaks.size() << " peaks.";

@@ -8,10 +8,8 @@
 #include <nsxlib/AutoIndexer.h>
 #include <nsxlib/ConvolverFactory.h>
 #include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Diffractometer.h>
-
 #include <nsxlib/Experiment.h>
 #include <nsxlib/Gonio.h>
 #include <nsxlib/InstrumentState.h>
@@ -29,15 +27,12 @@ NSX_INIT_TEST
 
 int main()
 {
-    nsx::DataReaderFactory factory;
-
     nsx::Experiment experiment("test", "BioDiff2500");
-    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
+    nsx::sptrDataSet dataset(new nsx::DataSet("hdf", "gal3.hdf", experiment.diffractometer()));
 
-    experiment.addData(dataf);
+    experiment.addData(dataset);
 
     nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
-    nsx::sptrPeakFinder peakFinder(new nsx::PeakFinder);
 
     auto callback = [progressHandler] () {
         auto log = progressHandler->getLog();
@@ -48,24 +43,27 @@ int main()
 
     progressHandler->setCallback(callback);
 
-    nsx::DataList numors;
-    numors.push_back(dataf);
+    nsx::DataList datasets;
+    datasets.push_back(dataset);
+
+    nsx::PeakFinder peakFinder(datasets);
 
     // propagate changes to peak finder
-    peakFinder->setMinSize(30);
-    peakFinder->setMaxSize(10000);
-    peakFinder->setMaxFrames(10);
+    peakFinder.setMinSize(30);
+    peakFinder.setMaxSize(10000);
+    peakFinder.setMaxFrames(10);
 
     nsx::ConvolverFactory convolver_factory;
     auto convolver = convolver_factory.create("annular",{});
 
-    peakFinder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
-    peakFinder->setThreshold(15.0);
-    peakFinder->setPeakScale(1.0);
+    peakFinder.setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
+    peakFinder.setThreshold(15.0);
+    peakFinder.setPeakScale(1.0);
 
-    peakFinder->setHandler(progressHandler);
+    peakFinder.run();
 
-    auto found_peaks = peakFinder->find(numors);
+    auto found_peaks = peakFinder.peaks();
+
     NSX_CHECK_ASSERT(found_peaks.size() >= 800);
 
     // at this stage we have the peaks, now we index
@@ -116,7 +114,7 @@ int main()
         peaks.push_back(peak);
     }
     
-    auto&& states = dataf->instrumentStates();
+    auto&& states = dataset->instrumentStates();
 
     nsx::Refiner refiner(states, cell, peaks, 1);
 
@@ -132,5 +130,8 @@ int main()
     std::cout << "peaks to refine: " << peaks.size() << std::endl;
 
     NSX_CHECK_ASSERT(refiner.refine(500));
+
+    dataset->close();
+
     return 0;
 }

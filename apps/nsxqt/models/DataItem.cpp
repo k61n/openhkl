@@ -8,20 +8,17 @@
 #include <QStandardItem>
 #include <QString>
 
-#include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Experiment.h>
 #include <nsxlib/IDataReader.h>
 #include <nsxlib/Logger.h>
 #include <nsxlib/Peak3D.h>
-#include <nsxlib/PeakFinder.h>
 #include <nsxlib/ProgressHandler.h>
 #include <nsxlib/PixelSumIntegrator.h>
 #include <nsxlib/RawDataReader.h>
 
 #include "DataItem.h"
 #include "DialogHDF5Converter.h"
-#include "FramePeakFinder.h"
 #include "DialogRawData.h"
 #include "FrameInstrumentStates.h"
 #include "ExperimentItem.h"
@@ -51,39 +48,34 @@ DataItem::DataItem() : TreeItem()
 
 void DataItem::removeSelectedData()
 {
-    std::vector<NumorItem*> selected_numor_items;
-    selected_numor_items.reserve(rowCount());
+    std::set<NumorItem*> _selected_datasets_for_removal;
+    bool accept_removal(true);
 
     for (int i = 0; i < rowCount(); ++i) {
         auto numor_item = dynamic_cast<NumorItem*>(child(i));
         if (numor_item) {
             if (numor_item->checkState() == Qt::Checked) {
-                selected_numor_items.push_back(numor_item);
+                auto dataset = numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
+                auto use_count = dataset.use_count();
+                // If the dataset is not used the use count should be 3 (1 in experiment,1 in NumorItem and one in dataset local variable)
+                if (use_count > 3) {
+                    nsx::error()<<"The dataset "<<dataset->reader()->basename()<<" is currently used by "<< std::to_string(use_count - 3) << "other resources.";
+                    accept_removal = false;
+                } else {
+                    _selected_datasets_for_removal.insert(numor_item);
+                }
             }
         }
     }
 
-    auto peaks_item = experimentItem()->peaksItem();
-    auto all_peaks = peaks_item->allPeaks();
-
-    std::set<nsx::sptrDataSet> used_data;
-
-    for (auto peak : all_peaks) {
-        auto data = peak->data();
-        if (!data) {
-            continue;
-        }
-        used_data.insert(data);
+    if (!accept_removal) {
+        nsx::error()<<"One or more datasets are in use. Data removal aborted.";
+        return;
     }
 
-    for (auto numor_item : selected_numor_items) {
-        auto data = numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
-        auto it = used_data.find(data);
-        if (it != used_data.end()) {
-            nsx::info()<<"The numor "<<numor_item->text().toStdString()<<" is currently used. Can not be removed";
-            continue;
-        }
-        removeRow(numor_item->row());
+    for (auto* dataset_item : _selected_datasets_for_removal) {
+        auto data = dataset_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
+        removeRow(dataset_item->row());
         experiment()->removeData(data->filename());
     }
 }
@@ -103,10 +95,8 @@ void DataItem::importData()
             return; // nullptr;
         }
 
-        nsx::sptrDataSet data_ptr;
-
         std::string extension = fileinfo.completeSuffix().toStdString();
-        data_ptr = nsx::DataReaderFactory().create(extension, filename.toStdString(), exp->diffractometer());
+        nsx::sptrDataSet data_ptr(new nsx::DataSet(extension, filename.toStdString(), exp->diffractometer()));
         exp->addData(data_ptr);
 
         // Get the basename of the current numor
@@ -151,7 +141,6 @@ void DataItem::importRawData()
         return;
     }
 
-    std::shared_ptr<nsx::DataSet> data;
     std::shared_ptr<nsx::IDataReader> reader;
 
     nsx::RawDataReaderParameters parameters;
@@ -164,14 +153,14 @@ void DataItem::importRawData()
     parameters.swap_endian = dialog.swapEndian();
     parameters.bpp = dialog.bpp();
 
+    auto diff = exp->diffractometer();
+    std::shared_ptr<nsx::DataSet> data(new nsx::DataSet("raw",filenames[0],diff));
+
     try {
-        auto diff = exp->diffractometer();
-        reader.reset(new nsx::RawDataReader(filenames[0], diff));
-        auto raw_data_reader = std::dynamic_pointer_cast<nsx::RawDataReader>(reader);
+        auto raw_data_reader = dynamic_cast<nsx::RawDataReader*>(data->reader());
         for (size_t i = 1; i < filenames.size(); ++i) {
             raw_data_reader->addFrame(filenames[i]);
         }
-        data = std::make_shared<nsx::DataSet>(reader);
     }
     catch(std::exception& e) {
         nsx::error() << "reading numor:" << filenames[0].c_str() << e.what();
@@ -188,22 +177,6 @@ void DataItem::importRawData()
     item->setToolTip(qfilenames[0]);
     item->setCheckable(true);
     appendRow(item);
-}
-
-void DataItem::findPeaks()
-{
-    nsx::DataList data = selectedData();
-
-    if (data.empty()) {
-        nsx::error()<<"No numors selected for finding peaks";
-        return;
-    }
-
-    auto experiment_item = experimentItem();
-
-    FramePeakFinder* frame = FramePeakFinder::create(experiment_item, data);
-
-    frame->show();
 }
 
 nsx::DataList DataItem::allData()

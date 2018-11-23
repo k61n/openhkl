@@ -1,24 +1,34 @@
 #include <Eigen/Dense>
 
-#include <nsxlib/DataReaderFactory.h>
 #include <nsxlib/DataSet.h>
 #include <nsxlib/Diffractometer.h>
+#include <nsxlib/Experiment.h>
 #include <nsxlib/NSXTest.h>
 
 NSX_INIT_TEST
 
 int main()
 {
-    nsx::DataReaderFactory factory;
+    nsx::Experiment experiment("","BioDiff2500");
 
-    nsx::Diffractometer *diffractometer = nsx::Diffractometer::create("BioDiff2500");
-    auto dataf = factory.create("hdf", "H5_example.hdf", diffractometer);
+    nsx::DataSet dataset("hdf", "H5_example.hdf", experiment.diffractometer());
 
-    dataf->open();
-    Eigen::MatrixXi v = dataf->frame(0);
+    dataset.open();
+    Eigen::MatrixXi v = dataset.frame(0);
 
     // Check the total number of count in the frame 0
     NSX_CHECK_EQUAL(v.sum(), 1282584565);
 
-    dataf->close();
+    dataset.close();
+
+    nsx::DataSet dataset1(dataset);
+
+    dataset1.open();
+
+    Eigen::MatrixXi v1 = dataset1.frame(0);
+
+    // Check the total number of count in the frame 0
+    NSX_CHECK_EQUAL(v1.sum(), v.sum());
+
+    dataset1.close();
 }
