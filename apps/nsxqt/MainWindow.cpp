@@ -47,6 +47,7 @@
 #include "CutterGraphicsItem.h"
 #include "DataItem.h"
 #include "DetectorScene.h"
+#include "DialogAbout.h"
 #include "DialogExperiment.h"
 #include "DialogIntegrate.h"
 #include "DialogPeakFilter.h"
@@ -216,14 +217,9 @@ TaskManagerModel* MainWindow::taskManagerModel()
 
 void MainWindow::on_actionAbout_triggered()
 {
-    // Show splash
-    QImage splashScrImage(":/resources/splashScreen.png");
-    QPixmap Logo;
-    Logo.convertFromImage(splashScrImage);
-    QSplashScreen* splashScrWindow = new QSplashScreen(this, Logo, Qt::WindowStaysOnTopHint);
-    QSize screenSize = QApplication::desktop()->geometry().size();
-    splashScrWindow->move(screenSize.width()/2-300,screenSize.height()/2-150);
-    splashScrWindow->show();
+    DialogAbout dlg;
+
+    dlg.exec();
 }
 
 void MainWindow::slotChangeSelectedData(nsx::sptrDataSet data, int frame)

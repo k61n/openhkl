@@ -1,3 +1,17 @@
+# the commit's SHA1, and whether the building workspace was dirty or not
+execute_process(COMMAND
+  git rev-parse --short HEAD
+  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+  OUTPUT_VARIABLE NSXTOOL_COMMIT_ID
+  ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+# the date of the commit
+execute_process(COMMAND
+  git log -1 --format=%ad --date=local
+  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+  OUTPUT_VARIABLE NSXTOOL_COMMIT_DATE
+  ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
+  
 set(NSXTOOL_VERSION_MAJOR 1)
 set(NSXTOOL_VERSION_MINOR 0)
 set(NSXTOOL_VERSION_PATCH 0)
