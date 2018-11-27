@@ -395,7 +395,7 @@ int SpaceGroup::id() const
 {
     auto find_symbol = [this](const std::pair<std::string,std::string>& s){return s.first.compare(this->_symbol)==0;};
     auto it = std::find_if(symmetry_table.begin(),symmetry_table.end(),find_symbol);
-    return std::distance(symmetry_table.begin(),it);
+    return std::distance(symmetry_table.begin(),it) + 1;
 }
 
 bool SpaceGroup::isCentrosymmetric() const
