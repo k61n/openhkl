@@ -4,4 +4,8 @@ namespace nsx {
 
 const std::string __version__ = "@NSXTOOL_VERSION@";
 
+const std::string __commit_id__ = "@NSXTOOL_COMMIT_ID@";
+
+const std::string __commit_date__ = "@NSXTOOL_COMMIT_DATE@";
+
 } // end namespace nsx

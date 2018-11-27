@@ -47,5 +47,10 @@
         <file>resources/abortTaskIcon.png</file>
         <file>resources/runTaskIcon.png</file>
         <file>resources/removeTaskIcon.png</file>
+        <file>resources/crystalIcon.png</file>
+        <file>resources/aboutNSXTool</file>
+        <file>resources/frm2_logo.png</file>
+        <file>resources/ill_logo.png</file>
+        <file>resources/jcns_logo.png</file>
     </qresource>
 </RCC>
