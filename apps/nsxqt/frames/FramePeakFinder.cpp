@@ -363,11 +363,11 @@ void FramePeakFinder::changePreviewData()
     auto data = _ui->selected_data->currentData(Qt::UserRole).value<nsx::sptrDataSet>();
 
     _ui->selected_frame->setMinimum(0);
-    _ui->selected_frame->setMaximum(data->nFrames());
+    _ui->selected_frame->setMaximum(data->nFrames()-1);
     _ui->selected_frame->setValue(0);
 
     _ui->selected_frame_slider->setMinimum(0);
-    _ui->selected_frame_slider->setMaximum(data->nFrames());
+    _ui->selected_frame_slider->setMaximum(data->nFrames()-1);
     _ui->selected_frame_slider->setValue(0);
 
     preview();
