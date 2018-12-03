@@ -62,7 +62,7 @@ public:
 
     Convolver* clone() const=0;
 
-    RealMatrix matrix(int nrows, int ncols) const;
+    RealMatrix matrix(int n_rows, int n_cols) const;
 
     //! Convolve an image
     virtual RealMatrix convolve(const RealMatrix& image) override;

@@ -27,13 +27,13 @@ std::string generateRandomString(size_t length)
 
 
 ITask::ITask(const std::string& type)
-    : _abort(false),
-      _callback(),
-      _type(type),
-      _current_step(0),
-      _n_steps(0),
-      _status(Status::SUBMITTED),
-      _info()
+: _abort(false),
+  _callback(),
+  _type(type),
+  _current_step(0),
+  _n_steps(0),
+  _status(Status::SUBMITTED),
+  _info()
 {
     static std::set<std::string> registered_task_names;
 

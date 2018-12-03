@@ -21,7 +21,7 @@ public:
 
     bool doTask() final;
 
-    void setPeakScale(double scale);
+    void setPeakMergingScale(double scale);
 
     void setMinSize(int minComp);
     int minSize() const;
@@ -62,7 +62,7 @@ private:
 
     double _threshold;
 
-    double _peakScale;
+    double _peak_merging_scale;
 
     int _current_label;
 

@@ -32,7 +32,7 @@ int main()
         }
     }
     NSX_CHECK_CLOSE(tot,1.0,tolerance);
-    NSX_CHECK_CLOSE(tot,blob.getMass(),tolerance);
+    NSX_CHECK_CLOSE(tot,blob.mass(),tolerance);
     Eigen::Vector3d center,eigVal;
     Eigen::Matrix3d eigVec;
     double scale = 1.0;

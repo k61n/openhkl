@@ -72,7 +72,7 @@ namespace nsx {
 PeakFinder::PeakFinder(const DataList &datasets)
 : ITask("peak finder"),
   _datasets(datasets),
-  _peakScale(1.0),  
+  _peak_merging_scale(1.0),
   _current_label(0),
   _minSize(30),
   _maxSize(10000),
@@ -229,9 +229,9 @@ bool PeakFinder::doTask()
     return true;
 }
 
-void PeakFinder::setPeakScale(double scale)
+void PeakFinder::setPeakMergingScale(double peak_merging_scale)
 {
-    _peakScale = scale;
+    _peak_merging_scale = peak_merging_scale;
 }
 
 void PeakFinder::setMaxFrames(int maxFrames)
@@ -287,7 +287,7 @@ void PeakFinder::eliminateBlobs(std::map<int, Blob3D>& blobs) const
 {
     for (auto it = blobs.begin(); it != blobs.end();) {
         Blob3D& p=it->second;
-        if (p.getComponents() < _minSize || p.getComponents() > _maxSize) {
+        if (p.nPixels() < _minSize || p.nPixels() > _maxSize) {
             it = blobs.erase(it);
         } else {
             it++;
@@ -468,14 +468,13 @@ void PeakFinder::findCollisions(const DataSet &dataset, std::map<int,Blob3D>& bl
     for (auto it = blobs.begin(); it != blobs.end();) {
         try {
             // toEllipsoid throws exception if mass is too small
-            it->second.toEllipsoid(_peakScale,center,extents,axis);
+            it->second.toEllipsoid(_peak_merging_scale,center,extents,axis);
         } catch(...) {
             it = blobs.erase(it);
             continue;
         }
 
-        // if the threshold is too small it will break the OpenMP peak search
-        // when the number of threads is very large
+        // a peak whose ellipsoid radii is smaller than 1 pixel is probably ill-formed. Skip it.
         if (extents.minCoeff()<1.0e-13) {
             it = blobs.erase(it);
             continue;
@@ -496,8 +495,9 @@ void PeakFinder::findCollisions(const DataSet &dataset, std::map<int,Blob3D>& bl
 
     std::vector<const Ellipsoid*> xyz_sorted_ellipsoids;
     xyz_sorted_ellipsoids.reserve(boxes.size());
-    for (auto&& it : boxes)
+    for (auto&& it : boxes) {
         xyz_sorted_ellipsoids.push_back(it.first);
+    }
 
     // Sort the ellipsoid by increasing x, y and z
     auto cmp = [](const Ellipsoid* ell1, const Ellipsoid* ell2) -> bool {

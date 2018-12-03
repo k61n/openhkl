@@ -108,10 +108,12 @@ bool PixelSumIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
 
     // center of mass is consistent
     if (std::isnan(center.norm())) {
+        std::cout<<"reason 1"<<center.norm()<<std::endl;
         return false;
     }
 
     if (!peak->shape().isInside(center)) {
+        std::cout<<"reason 2"<<center.transpose()<<std::endl;
         return false;
     }
 
@@ -121,6 +123,7 @@ bool PixelSumIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
 
     // check that the covariance is consistent
     if (!(dA < 2.0)) {
+        std::cout<<"reason 3"<<A0<<" "<<A1<<std::endl;
         return false;
     }
 
@@ -129,6 +132,7 @@ bool PixelSumIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     auto w = solver.eigenvalues();
 
     if (w.minCoeff() < 0.1 || w.maxCoeff() > 100) {
+        std::cout<<"reason 4"<<w.transpose()<<std::endl;
         return false;
     }
 

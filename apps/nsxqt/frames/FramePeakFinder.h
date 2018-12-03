@@ -90,11 +90,15 @@ private slots:
 
     void slotTabRemoved(int index);
 
+private slots:
+
     void onShowFoundPeaks(std::shared_ptr<nsx::ITask> task);
 
 private:
 
     FramePeakFinder(MainWindow *main_window, ExperimentItem *experiment_item, const nsx::DataList &data);
+
+    void showFoundPeaks(std::shared_ptr<nsx::ITask> task);
 
     void updateConvolutionParameters();
 

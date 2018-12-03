@@ -63,7 +63,8 @@ FramePeakFinder::FramePeakFinder(MainWindow *main_window, ExperimentItem *experi
   _main_window(main_window),
   _experiment_item(experiment_item),
   _pixmap(nullptr),
-  _colormap(new ColorMap)
+  _colormap(new ColorMap),
+  _peak_finders()
 {
     _ui->setupUi(this);
 
@@ -119,7 +120,7 @@ FramePeakFinder::FramePeakFinder(MainWindow *main_window, ExperimentItem *experi
 
     connect(_ui->actions,SIGNAL(clicked(QAbstractButton*)),this,SLOT(doActions(QAbstractButton*)));
 
-    connect(_main_window->taskManagerModel(),&TaskManagerModel::sendCompletedTask,[=](std::shared_ptr<nsx::ITask> task){onShowFoundPeaks(task);});
+    connect(_main_window->taskManagerModel(),SIGNAL(sendCompletedTask(std::shared_ptr<nsx::ITask>)),this,SLOT(onShowFoundPeaks(std::shared_ptr<nsx::ITask>)));
 
     emit _ui->selected_data->currentIndexChanged(_ui->selected_data->currentIndex());
 }
@@ -127,6 +128,9 @@ FramePeakFinder::FramePeakFinder(MainWindow *main_window, ExperimentItem *experi
 FramePeakFinder::~FramePeakFinder()
 {
     delete _ui;
+
+    disconnect(_main_window->taskManagerModel(),SIGNAL(sendCompletedTask(std::shared_ptr<nsx::ITask>)),this,SLOT(onShowFoundPeaks(std::shared_ptr<nsx::ITask>)));
+
     if (_instance) {
         _instance = nullptr;
     }
@@ -259,6 +263,11 @@ void FramePeakFinder::run()
 
 void FramePeakFinder::onShowFoundPeaks(std::shared_ptr<nsx::ITask> task)
 {
+    showFoundPeaks(task);
+}
+
+void FramePeakFinder::showFoundPeaks(std::shared_ptr<nsx::ITask> task)
+{
     auto peak_finder = std::dynamic_pointer_cast<nsx::PeakFinder>(task);
 
     auto it = _peak_finders.find(peak_finder);
@@ -275,7 +284,7 @@ void FramePeakFinder::onShowFoundPeaks(std::shared_ptr<nsx::ITask> task)
     // integrate peaks
     for (int i = 0; i < _ui->selected_data->count(); ++i) {
         auto dataset = _ui->selected_data->itemData(i,Qt::UserRole).value<nsx::sptrDataSet>();
-        nsx::PixelSumIntegrator integrator(true, true);
+        nsx::PixelSumIntegrator integrator(false,false);
         integrator.integrate(peaks, dataset,peak_end,background_begin,background_end);
     }
 

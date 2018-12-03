@@ -108,7 +108,10 @@ void DetectorScene::resetPeakGraphicsItems()
 
     auto peaks = _session->peaks(_currentData);
 
-    for (auto&& peak : peaks) {
+    std::cout<<"peaks found"<<peaks.size()<<std::endl;
+
+    // Loop over the peaks found for this dataset
+    for (auto peak : peaks) {
 
         auto peak_ellipsoid = peak->shape();
 
@@ -250,8 +253,6 @@ void DetectorScene::slotChangeSelectedFrame(int frame)
     }
 
     _currentFrameIndex = frame;
-
-    clearPeakGraphicsItems();
 
     resetPeakGraphicsItems();
 
@@ -833,6 +834,7 @@ void DetectorScene::showPeakLabels(bool flag)
 
 void DetectorScene::showPeakAreas(bool flag)
 {
+    std::cout<<"fdsfsdfdsf "<<_peak_graphics_items.size()<<std::endl;
     for (auto p : _peak_graphics_items) {
         p.second->showArea(flag);
     }

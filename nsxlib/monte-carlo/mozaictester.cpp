@@ -337,8 +337,9 @@ Eigen::MatrixXd MozaicTester::run(double h, double k, double l, int n)
     double znorm = zvect.norm();
     double znorm2= znorm*znorm;
     double st=0.5*_l*znorm;
-    if (st>1.0)
+    if (st>1.0) {
         nsx::info() << "Warning: No Bragg condition possible";
+    }
 
     double theta = asin(0.5*_l*znorm);
     double cTheta = cos(theta);
@@ -404,7 +405,6 @@ Eigen::MatrixXd MozaicTester::run(double h, double k, double l, int n)
         }
 
     }
-    std::cout << bb.getMass() << std::endl;
     return detector;
 }
 
