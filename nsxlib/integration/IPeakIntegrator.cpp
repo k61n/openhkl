@@ -92,7 +92,6 @@ void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_en
             regions.emplace(std::make_pair(peak, IntegrationRegion(peak, peak_end, bkg_begin, bkg_end)));
             integrated.emplace(std::make_pair(peak, false));
         } catch (...) {
-            std::cout<<"failure 0 "<<peak->shape().center().transpose()<<std::endl;
             peak->setSelected(false);
             continue;
         }
@@ -104,12 +103,10 @@ void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_en
         auto hi = bb.upper();
 
         if (lo[0] < 0 || lo[1] < 0 || lo[2] < 0) {
-            std::cout<<"failure 1 "<<peak->shape().center().transpose()<<std::endl;
             peak->setSelected(false);
         }
 
         if (hi[0] >= data->nCols() || hi[1] >= data->nRows() || hi[2] >= data->nFrames()) {
-            std::cout<<"failure 2 "<<peak->shape().center().transpose()<<std::endl;
             peak->setSelected(false);
         }
     }
@@ -145,12 +142,9 @@ void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_en
                     if (compute(peak, regions[peak])) {
                         peak->updateIntegration(*this, peak_end, bkg_begin, bkg_end);
                     } else {
-                        std::cout<<"failure 10 "<<peak->shape().center().transpose()<<std::endl;
                         peak->setSelected(false);
                     }
                 } catch(std::exception& e) {
-                    std::cout<<"failure 3 "<<peak->shape().center().transpose()<<std::endl;
-
                     // integration failed...
                     nsx::info() << "integration failed: " << e.what();
                     peak->setSelected(false);
