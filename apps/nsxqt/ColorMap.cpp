@@ -34,10 +34,7 @@
 
 #include "ColorMap.h"
 
-ColorMap::ColorMap(const double *rgb):
-    _rgb(256*3, 0),
-    _log_rgb(256*3, 0)
-
+ColorMap::ColorMap(const double *rgb) : _rgb(256*3, 0), _log_rgb(256*3, 0)
 {
     std::memcpy(&_rgb[0], rgb, 256*3*sizeof(double)); // warning: this might be dangerous
     const double ilog2 = 1.0 / std::log(2.0);
@@ -55,21 +52,31 @@ ColorMap::ColorMap(const double *rgb):
     }
 }
 
-ColorMap::ColorMap(const std::string &name):
-    ColorMap(getColorMap(name))
-{
-
-}
-
-ColorMap::ColorMap():
-    ColorMap(getColorMapNames().front())
-{
-
-}
-
-ColorMap::~ColorMap()
+ColorMap::ColorMap(const std::string &name) : ColorMap(colorMap(name))
 {
 }
+
+ColorMap::ColorMap() : ColorMap("blue white")
+{
+}
+
+QRgb ColorMap::color(double v, double vmax)
+{
+    int i = int(v/vmax*255.0);
+    i = std::max(0, i);
+    i = std::min(255, i);
+
+    return qRgb(_rgb[3*i+0], _rgb[3*i+1], _rgb[3*i+2]);
+}
+
+QRgb ColorMap::logColor(double v, double vmax)
+{
+    double t = std::max(v/vmax*255.0, 0.0);
+    int i = std::min(255, int(t+0.5));
+
+    return qRgb(_log_rgb[3*i+0], _log_rgb[3*i+1], _log_rgb[3*i+2]);
+}
+
 
 QImage ColorMap::matToImage(const Eigen::ArrayXXd &source, const QRect &rect, double colorMax, bool log)
 {
@@ -101,7 +108,7 @@ QImage ColorMap::matToImage(const Eigen::ArrayXXd &source, const QRect &rect, do
 
         for (int x = xmin; x <= xmax; ++x) {
             if (log)
-                destrow[x-xmin] = log_color(source(y, x), colorMax);
+                destrow[x-xmin] = logColor(source(y, x), colorMax);
             else
                 destrow[x-xmin] = color(source(y, x), colorMax);
         }
