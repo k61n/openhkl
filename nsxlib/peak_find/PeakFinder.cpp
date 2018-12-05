@@ -25,9 +25,9 @@ namespace {
     void registerEquivalence(int a, int b, EquivalenceList& equivalences)
     {
         if (a < b) {
-            equivalences.emplace_back(EquivalenceList::value_type(b,a));
+            equivalences.emplace_back(b,a);
         } else {
-            equivalences.emplace_back(EquivalenceList::value_type(a,b));
+            equivalences.emplace_back(a,b);
         }
     }
 
@@ -177,12 +177,8 @@ bool PeakFinder::doTask()
             return false;
         }
 
-        auto&& kernel_size = _convolver->kernelSize();
-        auto&& x_offset = kernel_size.first;
-        auto&& y_offset = kernel_size.second;
-
         // AABB used for rejecting peaks which overlaps with detector boundaries
-        AABB dAABB(Eigen::Vector3d(x_offset,y_offset,0),Eigen::Vector3d(ncols-x_offset, nrows-y_offset, nframes-1));
+        AABB dAABB(Eigen::Vector3d(0,0,0),Eigen::Vector3d(ncols-1, nrows-1, nframes-1));
 
         for (auto& blob : blobs) {
 
@@ -446,8 +442,7 @@ void PeakFinder::findPrimaryBlobs(const DataSet &dataset, std::map<int,Blob3D>& 
                 if (newlabel) {
                     blobs.insert(std::make_pair(label,Blob3D(col,row,idx,value)));
                 } else {
-                    auto it = blobs.find(label);
-                    it->second.addPoint(col,row,idx,value);
+                    blobs[label].addPoint(col,row,idx,value);
                 }
             }
         }
@@ -474,7 +469,6 @@ void PeakFinder::findCollisions(const DataSet &dataset, std::map<int,Blob3D>& bl
             continue;
         }
 
-        // a peak whose ellipsoid radii is smaller than 1 pixel is probably ill-formed. Skip it.
         if (extents.minCoeff()<1.0e-13) {
             it = blobs.erase(it);
             continue;
