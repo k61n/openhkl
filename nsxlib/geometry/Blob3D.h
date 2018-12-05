@@ -50,17 +50,21 @@ class Blob3D {
 public:
   
   //! Initialize an empty blob
-  Blob3D();
+  Blob3D() = default;
 
   //! Initialize a blob with a point of mass m at x,y,z
   Blob3D(double x, double y,double z, double m);
 
   //! Copy constructor
-  Blob3D(const Blob3D&);
+  Blob3D(const Blob3D&) = default;
+
   Blob3D(Blob3D&&) = default;
 
   //! Assignment
-  Blob3D& operator=(const Blob3D&);
+  Blob3D& operator=(const Blob3D&) = default;
+
+  //! Move assignment
+  Blob3D& operator=(Blob3D&&) = default;
 
   //! Add point to the Blob
   void addPoint(double x, double y, double z, double m);
@@ -69,16 +73,10 @@ public:
   void merge(const Blob3D&);
 
   //! Return the total mass
-  double getMass() const;
+  double mass() const;
 
   //! Return the number of points
-  int getComponents() const;
-
-  //! Return the minimumMass
-  double getMinimumMass() const;
-
-  //! Return the minimumMass
-  double getMaximumMass() const;
+  int nPixels() const;
 
   //! Return the center of Mass
   Eigen::Vector3d center() const;
@@ -103,8 +101,8 @@ private:
   //! Second moments  
   Eigen::Matrix3d _m2;
 
-  //! Number of points contributing
-  unsigned int _npoints;
+  //! Number of pixels contributing to this blob
+  unsigned int _n_pixels;
 
   //! Minimum mass value
   double _minValue;

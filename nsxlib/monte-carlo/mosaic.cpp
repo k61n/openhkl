@@ -332,8 +332,9 @@ bool Mosaic::run(const std::vector<std::string>& numors, unsigned int n, double&
 			}
 		}
 
-		if (blob.getComponents()==0)
+		if (blob.nPixels()==0) {
 			return false;
+        }
 
 		Eigen::Vector3d center;
 		Eigen::Vector3d eigenvalues;

@@ -20,7 +20,7 @@ Convolver* ConstantConvolver::clone() const
 
 std::pair<size_t,size_t> ConstantConvolver::kernelSize() const
 {
-    size_t r = _parameters.at("box_size");
+    size_t r = _parameters.at("box_size")/2;
 
     return std::make_pair(r,r);
 }

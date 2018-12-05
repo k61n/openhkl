@@ -10,47 +10,12 @@ static const double minimum_blob_mass = 1e-15;
 
 namespace nsx {
 
-Blob3D::Blob3D()
- :_m0(0),
-  _m1(Eigen::Vector3d::Zero()),
-  _m2(Eigen::Matrix3d::Zero()),
-  _npoints(0),
-  _minValue(std::numeric_limits<double>::max()),
-  _maxValue(std::numeric_limits<double>::min())
-{
-}
-
-Blob3D::Blob3D(const Blob3D& b)
-: _m0(b._m0),
-  _m1(b._m1),
-  _m2(b._m2),
-  _npoints(b._npoints),
-  _minValue(b._minValue),
-  _maxValue(b._maxValue)
-{
-}
-
-Blob3D& Blob3D::operator=(const Blob3D& b)
-{
-    if (this != &b) {
-        _m0 = b._m0; 
-        _m1 = b._m1;
-        _m2 = b._m2;     
-        _npoints = b._npoints;
-        _minValue = b._minValue;
-        _maxValue = b._maxValue;
-    }
-    return *this;
-}
-
-
-Blob3D::Blob3D(double x, double y,double z, double m)
+Blob3D::Blob3D(double x, double y,double z, double m) : _n_pixels(1)
 {
     Eigen::Vector3d v(x,y,z);
     _m0 = m;
     _m1 = m * v;
     _m2 = m * v * v.transpose();
-    _npoints = 1;
     _minValue = m;
     _maxValue = m;
 }
@@ -61,7 +26,7 @@ void Blob3D::addPoint(double x, double y, double z, double m)
     _m0 += m; 
     _m1 += m * v;
     _m2 += m * v * v.transpose();
-    ++_npoints;
+    ++_n_pixels;
 
     if (m<_minValue) {
         _minValue = m;
@@ -77,28 +42,19 @@ void Blob3D::merge(const Blob3D& b)
     _m1 += b._m1;
     _m2 += b._m2;
   
-    _npoints += b._npoints;
+    _n_pixels += b._n_pixels;
     _minValue = (_minValue < b._minValue ? _minValue : b._minValue);
     _maxValue = (_maxValue > b._maxValue ? _maxValue : b._maxValue);
 }
 
-double Blob3D::getMass() const
+double Blob3D::mass() const
 {
     return _m0;
 }
-int Blob3D::getComponents() const
-{
-    return _npoints;
-}
 
-double Blob3D::getMinimumMass() const
+int Blob3D::nPixels() const
 {
-    return _minValue;
-}
-
-double Blob3D::getMaximumMass() const
-{
-    return _maxValue;
+    return _n_pixels;
 }
 
 Eigen::Vector3d Blob3D::center() const
@@ -113,7 +69,7 @@ void Blob3D::printSelf(std::ostream& os) const
 {
     os << "#Blob center: " << center().transpose() << std::endl;
     os << "Mass: " << _m0 << std::endl;
-    os << "Points in the blob: " << _npoints << std::endl;
+    os << "Pixels in the blob: " << _n_pixels << std::endl;
 }
 
 // todo: remove non-const reference args, just return Ellipsoid3D
@@ -129,7 +85,6 @@ void Blob3D::toEllipsoid(double scale,Eigen::Vector3d& c, Eigen::Vector3d& eigen
     // Define the variance-covariance/inertia tensor (inverse of the metric tensor)
     Eigen::Matrix3d inertia = _m2 / _m0  - c * c.transpose();
     inertia /= scale*scale;
-
   
     // todo(jonathan): rewrite so that we no longer use eigenvalue solver (new Ellipsoid implementation)
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver;

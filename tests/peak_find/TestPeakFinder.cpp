@@ -27,7 +27,7 @@ int main()
 
     nsx::PeakFinder peakFinder(datasets);
 
-    peakFinder.setPeakScale(1.0);
+    peakFinder.setPeakMergingScale(1.0);
 
     peakFinder.setMaxSize(10000);
     NSX_CHECK_ASSERT(peakFinder.maxSize() == 10000);

@@ -58,7 +58,7 @@ int main()
 
     peakFinder.setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
     peakFinder.setThreshold(15.0);
-    peakFinder.setPeakScale(1.0);
+    peakFinder.setPeakMergingScale(1.0);
 
     peakFinder.run();
 

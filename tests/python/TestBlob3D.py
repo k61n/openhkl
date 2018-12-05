@@ -29,7 +29,7 @@ class TestBlob3D(unittest.TestCase):
                     tot = (tot + mass)    
 
         self.assertAlmostEqual(tot,1.0)
-        self.assertAlmostEqual(tot,blob.getMass())
+        self.assertAlmostEqual(tot,blob.mass())
         
         center = np.zeros(shape=(3,1), dtype=float)
         eigVal = np.zeros(shape=(3,1), dtype=float)
