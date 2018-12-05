@@ -53,6 +53,7 @@
 #include "ExperimentTree.h"
 #include "FramePeakFinder.h"
 #include "MainWindow.h"
+#include "MouseInteractionModeModel.h"
 #include "NoteBook.h"
 #include "NSXMenu.h"
 #include "PeakGraphicsItem.h"
@@ -89,13 +90,8 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->frameLayout->setEnabled(false);
     _ui->intensityLayout->setEnabled(false);
 
-    _ui->selectionMode->addItem(QIcon(":/resources/selectIcon.png"),"selection");
-    _ui->selectionMode->addItem(QIcon(":/resources/zoomIcon.png"),"zoom");
-    _ui->selectionMode->addItem(QIcon(":/resources/cutlineIcon.png"),"line plot");
-    _ui->selectionMode->addItem(QIcon(":/resources/horizontalSliceIcon.png"),"horizontal slice");
-    _ui->selectionMode->addItem(QIcon(":/resources/verticalSliceIcon.png"),"vertical slice");
-    _ui->selectionMode->addItem(QIcon(":/resources/rectangularMaskIcon.png"),"rectangular mask");
-    _ui->selectionMode->addItem(QIcon(":/resources/ellipsoidalMaskIcon.png"),"ellipsoidal mask");
+    MouseInteractionModeModel *mouse_interaction_model = new MouseInteractionModeModel(this);
+    _ui->selectionMode->setModel(mouse_interaction_model);
 
     // Vertical splitter between Tree and Inspector Widget
     _ui->splitterVertical->setStretchFactor(0,50);
