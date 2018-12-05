@@ -824,10 +824,10 @@ void DetectorScene::showPeakLabels(bool flag)
     update();
 }
 
-void DetectorScene::showPeakAreas(bool flag)
+void DetectorScene::showPeakCenters(bool flag)
 {
     for (auto p : _peak_graphics_items) {
-        p.second->showArea(flag);
+        p.second->showCenter(flag);
     }
     update();
 }
@@ -854,6 +854,7 @@ void DetectorScene::setLogarithmic(bool checked)
 void DetectorScene::setColorMap(const std::string &name)
 {
     _colormap = std::unique_ptr<ColorMap>(new ColorMap(name));
+    loadCurrentImage();
 }
 
 void DetectorScene::resetScene()

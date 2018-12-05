@@ -130,72 +130,54 @@ void PeakGraphicsItem::showLabel(bool flag)
     _show_label = flag;
 }
 
-void PeakGraphicsItem::showArea(bool flag)
+void PeakGraphicsItem::showCenter(bool flag)
 {
     _show_center = flag;
 }
 
 void PeakGraphicsItem::plot(SXPlot* plot)
 {
-
     auto p = dynamic_cast<PeakPlot*>(plot);
     if (!p) {
         return;
     }
 
-    const auto& rockingCurve =_peak->rockingCurve();
-    const int N = int(rockingCurve.size());
+    auto ellipsoid = _peak->shape();
+    ellipsoid.scale(_peak->bkgEnd());
+    const auto& aabb = ellipsoid.aabb();
+    Eigen::Vector3i lower = aabb.lower().cast<int>();
 
-    // Transform to QDouble
-    QVector<double> q_frames(N);
-    QVector<double> q_intensity(N);
-    QVector<double> q_error(N);
+    lower[0] = (lower[0] < 0) ? 0 : lower[0];
+    lower[1] = (lower[1] < 0) ? 0 : lower[1];
+    lower[2] = (lower[2] < 0) ? 0 : lower[2];
 
-    // Copy the data
-    double center = std::round(_peak->shape().center()(2));
-    
-    for (int i = 0; i < N; ++i) {
-        q_frames[i]= center - i/2.0;
-        q_intensity[i] = rockingCurve[i].value();
-        q_error[i] = rockingCurve[i].sigma();
+    auto data = _peak->data();
+    const int n_rows = data->nRows();
+    const int n_cols = data->nCols();
+    const int n_frames = data->nFrames();
+
+    Eigen::Vector3i upper = aabb.upper().cast<int>();
+    upper[0] = (upper[0] >= n_cols) ? n_cols - 1 : upper[0];
+    upper[1] = (upper[1] >= n_rows) ? n_rows - 1 : upper[1];
+    upper[2] = (upper[2] >= n_frames) ? n_frames - 1 : upper[2];
+
+    QVector<double> x_values;
+    QVector<double> y_values;
+    QVector<double> err_y_values;
+
+    for (int z = lower[2]; z <= upper[2]; ++z) {
+        const auto& frame = data->frame(z);
+        double counts = static_cast<double>(frame.block(lower[1],lower[0],upper[1]-lower[1],upper[0]-lower[0]).sum());
+        x_values.append(static_cast<double>(z));
+        y_values.append(counts);
+        err_y_values.append(counts > 0 ? std::sqrt(counts) : 0.0);
     }
-    p->graph(0)->setDataValueError(q_frames, q_intensity, q_error);
 
-    // Now update text info:
-    QString info;
+    p->graph(0)->setDataValueError(x_values, y_values, err_y_values);
 
-    if (auto cell = _peak->unitCell()) {
-        nsx::MillerIndex miller_index(_peak->q(), *cell);
-        if (miller_index.indexed(cell->indexingTolerance())) {
-            info="(h,k,l):"+QString::number(miller_index[0])+","+QString::number(miller_index[1])+","+QString::number(miller_index[2]);
-        } else {
-            info = "unindexed";
-        }
-    } else {
-        info = "no unit cell";
-    }
+    p->xAxis->setAutoTicks(false);
+    p->xAxis->setTickVector(x_values);
 
-    auto c = _peak->shape().center();
-    auto state = _peak->data()->interpolatedState(c[2]);
-    auto position = _peak->data()->reader()->diffractometer()->detector()->pixelPosition(c[0], c[1]);
-    double g = state.gamma(position);
-    double n = state.nu(position);
-    g/=nsx::deg;
-    n/=nsx::deg;
-    info+=" "+QString(QChar(0x03B3))+","+QString(QChar(0x03BD))+":"+QString::number(g,'f',2)+","+QString::number(n,'f',2)+"\n";
-    double intensity=_peak->correctedIntensity().value();
-    auto corr_int = _peak->correctedIntensity();
-    double sI=_peak->correctedIntensity().sigma();
-    info+="Intensity ("+QString(QChar(0x03C3))+"I): "+QString::number(intensity)+" ("+QString::number(sI,'f',2)+")\n";  
-    info+="Cor. int. ("+QString(QChar(0x03C3))+"I): "+QString::number(corr_int.value(),'f',2)+" ("+QString::number(corr_int.sigma(),'f',2)+")\n";
-
-    double scale=_peak->scale();
-    double monitor=_peak->data()->reader()->metadata().key<double>("monitor");
-    info+="Monitor "+QString::number(monitor*scale)+" counts";
-    QCPPlotTitle* title=dynamic_cast<QCPPlotTitle*>(p->plotLayout()->element(0,0));
-    if (title != nullptr) {
-        title->setText(info);
-    }
     p->rescaleAxes();
     p->replot();
 }

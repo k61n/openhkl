@@ -1,11 +1,17 @@
 #pragma once
 
+#include <memory>
+
 #include <QStandardItemModel>
 
-#include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DataTypes.h>
+#include <nsxlib/DataSet.h>
+#include <nsxlib/Experiment.h>
+#include <nsxlib/Peak3D.h>
 
+class DataSet;
+class Experiment;
 class ExperimentItem;
+class Peak3D;
 
 class SessionModel: public QStandardItemModel {
 
@@ -22,6 +28,8 @@ public:
     void selectData(nsx::sptrDataSet data);
 
     ExperimentItem* selectExperiment(nsx::sptrDataSet data);
+
+    void addExperiment(nsx::sptrExperiment experiment);
 
 signals:
 
@@ -43,7 +51,6 @@ signals:
 
 public slots:
 
-    void createNewExperiment();  
-
     void onItemChanged(QStandardItem* item);
+
 };

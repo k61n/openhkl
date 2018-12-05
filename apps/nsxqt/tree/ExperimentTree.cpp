@@ -86,6 +86,11 @@ ExperimentTree::~ExperimentTree()
 {
 }
 
+void ExperimentTree::setMainWindow(MainWindow *main_window)
+{
+    _main_window = main_window;
+}
+
 SessionModel* ExperimentTree::session()
 {
     auto session_model = dynamic_cast<SessionModel*>(model());
@@ -102,7 +107,7 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
 
     if (index == rootIndex()) {
         QAction* newexp = menu->addAction("Add new experiment");
-        connect(newexp, triggered, [=]() {session->createNewExperiment();});
+        connect(newexp, triggered, [=]() {_main_window->onNewExperiment();});
     } else {
         QStandardItem* item = session->itemFromIndex(index);
         

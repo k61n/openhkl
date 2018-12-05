@@ -14,10 +14,12 @@ class DialogExperiment : public QDialog
 
 public:
     explicit DialogExperiment(QWidget *parent = 0);
+
     ~DialogExperiment();
 
-    QString getExperimentName() const;
-    QString getInstrumentName() const;
+    QString experimentName() const;
+
+    QString instrumentName() const;
 
 
 private:
