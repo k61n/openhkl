@@ -284,7 +284,7 @@ void FramePeakFinder::showFoundPeaks(std::shared_ptr<nsx::ITask> task)
     // integrate peaks
     for (int i = 0; i < _ui->selected_data->count(); ++i) {
         auto dataset = _ui->selected_data->itemData(i,Qt::UserRole).value<nsx::sptrDataSet>();
-        nsx::PixelSumIntegrator integrator(true,true);
+        nsx::PixelSumIntegrator integrator(false,false);
         integrator.integrate(peaks, dataset,peak_end,background_begin,background_end);
     }
 
