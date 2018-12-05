@@ -33,7 +33,7 @@ public:
 
     static void showLabel(bool flag);
 
-    static void showArea(bool flag);
+    static void showCenter(bool flag);
 
 private:
 

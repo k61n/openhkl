@@ -98,7 +98,7 @@ public slots:
 
     void showPeakLabels(bool flag);
 
-    void showPeakAreas(bool flag);
+    void showPeakCenters(bool flag);
 
     void drawIntegrationRegion(bool);
 

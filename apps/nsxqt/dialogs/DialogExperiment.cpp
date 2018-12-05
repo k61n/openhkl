@@ -37,12 +37,12 @@ DialogExperiment::~DialogExperiment()
     delete ui;
 }
 
-QString DialogExperiment::getExperimentName() const
+QString DialogExperiment::experimentName() const
 {
     return ui->experiment->toPlainText();
 }
 
-QString DialogExperiment::getInstrumentName() const
+QString DialogExperiment::instrumentName() const
 {
     return ui->instrument->currentText();
 }

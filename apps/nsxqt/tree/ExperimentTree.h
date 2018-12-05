@@ -23,6 +23,8 @@ public:
 
     ~ExperimentTree();
 
+    void setMainWindow(MainWindow *main_window);
+
     SessionModel* session();
 
 signals:
@@ -41,4 +43,8 @@ public slots:
 private:
 
     void openInstrumentStatesDialog();
+
+private:
+
+    MainWindow *_main_window;
 };

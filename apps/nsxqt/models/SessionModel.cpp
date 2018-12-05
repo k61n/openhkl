@@ -165,42 +165,10 @@ nsx::PeakList SessionModel::peaks(nsx::sptrDataSet data) const
     return list;
 }
 
-void SessionModel::createNewExperiment()
+
+void SessionModel::addExperiment(nsx::sptrExperiment experiment)
 {
-    std::unique_ptr<DialogExperiment> dlg;
-
-    // DialogExperiment could throw an exception if it fails to read the resource files
-    try {
-        dlg = std::unique_ptr<DialogExperiment>(new DialogExperiment());
-
-        // The user pressed cancel, return
-        if (!dlg->exec()) {
-            return;
-        }
-
-        // If no experiment name is provided, pop up a warning
-        if (dlg->getExperimentName().isEmpty()) {
-            throw std::runtime_error("Empty experiment name");
-        }
-    }
-    catch(std::exception& e) {
-        nsx::error() << e.what();
-        return;
-    }
-
-    try {
-        auto experimentName = dlg->getExperimentName().toStdString();
-        auto instrumentName = dlg->getInstrumentName().toStdString();
-
-        // Create an experiment
-        nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName,instrumentName));
-
-        // Create an experiment item out of the experiment
-        ExperimentItem* expt = new ExperimentItem(expPtr);    
-        appendRow(expt);
-    }
-    catch(const std::runtime_error& e) {
-        nsx::error() << e.what();
-        return;
-    }
+    // Create an experiment item out of the experiment
+    ExperimentItem* expt = new ExperimentItem(experiment);
+    appendRow(expt);
 }
