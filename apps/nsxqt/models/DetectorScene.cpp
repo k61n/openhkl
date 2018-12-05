@@ -108,8 +108,6 @@ void DetectorScene::resetPeakGraphicsItems()
 
     auto peaks = _session->peaks(_currentData);
 
-    std::cout<<"peaks found"<<peaks.size()<<std::endl;
-
     // Loop over the peaks found for this dataset
     for (auto peak : peaks) {
 
@@ -197,22 +195,20 @@ void DetectorScene::slotChangeMaskedPeaks(const nsx::PeakList& peaks)
 
 void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
 {
-    if (data != _currentData) {
-        _currentData = data;
+    _currentData = data;
 
-        _currentData->open();
+    _currentData->open();
 
-        auto det = _currentData->reader()->diffractometer()->detector();
+    auto det = _currentData->reader()->diffractometer()->detector();
 
-        _currentFrameIndex = -1;
+    _currentFrameIndex = -1;
 
-        _zoomStack.clear();
-        _zoomStack.push_back(QRect(0,0,int(det->nCols()),int(det->nRows())));
+    _zoomStack.clear();
+    _zoomStack.push_back(QRect(0,0,int(det->nCols()),int(det->nRows())));
 
-        if (_lastClickedGI != nullptr) {
-            removeItem(_lastClickedGI);
-            _lastClickedGI=nullptr;
-        }
+    if (_lastClickedGI != nullptr) {
+        removeItem(_lastClickedGI);
+        _lastClickedGI=nullptr;
     }
 
     slotChangeSelectedFrame(frame);
@@ -246,10 +242,6 @@ void DetectorScene::slotChangeSelectedFrame(int frame)
 
     if (!_currentData->isOpened()) {
         _currentData->open();
-    }
-
-    if (frame == _currentFrameIndex) {
-        return;
     }
 
     _currentFrameIndex = frame;
@@ -834,7 +826,6 @@ void DetectorScene::showPeakLabels(bool flag)
 
 void DetectorScene::showPeakAreas(bool flag)
 {
-    std::cout<<"fdsfsdfdsf "<<_peak_graphics_items.size()<<std::endl;
     for (auto p : _peak_graphics_items) {
         p.second->showArea(flag);
     }
