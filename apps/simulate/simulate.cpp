@@ -41,10 +41,10 @@ void correct_image(Eigen::ArrayXXd& data, double gain, double baseline, bool noi
 
 //! Generate simulated frames
 std::vector<Eigen::ArrayXXd> generate_frames(
-    nsx::PeakList& peaks, 
-    int nrows, int ncols, 
-    size_t frame_min, size_t frame_max, 
-    const Eigen::Matrix3d& A, const Eigen::Matrix3d& B, 
+    nsx::PeakList& peaks,
+    int nrows, int ncols,
+    size_t frame_min, size_t frame_max,
+    const Eigen::Matrix3d& A, const Eigen::Matrix3d& B,
     const nsx::SpaceGroup& grp)
 {
     std::vector<Eigen::ArrayXXd> images;
@@ -54,11 +54,11 @@ std::vector<Eigen::ArrayXXd> generate_frames(
         image.setZero();
         images.emplace_back(std::move(image));
     }
-    
+
     const double Imax = 200*200*5;
     const size_t nsigma = 4;
-        
-    Eigen::Matrix3d BI = B.inverse();      
+
+    Eigen::Matrix3d BI = B.inverse();
     auto elements = grp.groupElements();
     std::vector<Eigen::Matrix3d> gs;
 
@@ -71,15 +71,15 @@ std::vector<Eigen::ArrayXXd> generate_frames(
         auto shape = peak->shape();
         auto center = shape.center();
         auto extents = aabb.extents();
-        
+
         double I = 0;
-        Eigen::Vector3d q = peak->q().rowVector().transpose(); 
-        
-        for (auto g: gs) {        
+        Eigen::Vector3d q = peak->q().rowVector().transpose();
+
+        for (auto g: gs) {
             auto gq = g*q;
             I += Imax * std::exp(-0.5*gq.dot(A*gq));
         }
-            
+
         I /= gs.size();
 
         peak->setRawIntensity(1.0);
@@ -87,22 +87,22 @@ std::vector<Eigen::ArrayXXd> generate_frames(
 
         auto xmin = int(center(0) - nsigma*extents(0)/2);
         auto xmax = int(center(0) + nsigma*extents(0)/2);
-        
+
         auto ymin = int(center(1) - nsigma*extents(1)/2);
         auto ymax = int(center(1) + nsigma*extents(1)/2);
-        
+
         auto zmin = int(center(2) - nsigma*extents(2)/2);
         auto zmax = int(center(2) + nsigma*extents(2)/2);
-        
+
         xmin = std::max(0, xmin);
         xmax = std::min(ncols, xmax);
-        
+
         ymin = std::max(0, ymin);
         ymax = std::min(nrows, ymax);
 
         zmin = std::max(int(frame_min), zmin);
         zmax = std::min(int(frame_max), zmax);
-                
+
         if (xmin >= xmax || ymin >= ymax || zmin >= zmax) {
             continue;
         }
@@ -122,10 +122,10 @@ std::vector<Eigen::ArrayXXd> generate_frames(
 
                 for (auto j = ymin; j < ymax; ++j) {
                     const double dy = j - center(1);
-          
+
                     double arg = dx*dx * M(0,0) + dy*dy * M(1,1) + dz*dz * M(2,2);
                     arg += 2*dx*dy*M(0,1) + 2*dx*dz*M(0,2) + 2*dy*dz*M(1,2);
-              
+
                     im(j-ymin, i-xmin) = std::exp(-0.5*arg);
                 }
             }
@@ -159,17 +159,17 @@ int main(int argc, char* argv[])
     const char* infile = argv[1];
     const char* outfile = argv[2];
     const char* group_name = "P 21 21 21";
-    auto group = nsx::SpaceGroup(group_name);
+    const auto group = nsx::SpaceGroup(group_name);
 
     auto expt = std::make_shared<nsx::Experiment>("Simulated", "BioDiff2500");
-    auto diff = expt->diffractometer();
-    auto dataset = std::make_shared<nsx::DataSet>("fake",infile,diff);
+    const auto diff = expt->diffractometer();
+    const auto dataset = std::make_shared<nsx::DataSet>("fake",infile,diff);
     expt->addData(dataset);
 
     Eigen::Matrix3d A, C;
-    A << 
-        43.0, 0.0, 0.0, 
-        0.0, 53.0, 0.0, 
+    A <<
+        43.0, 0.0, 0.0,
+        0.0, 53.0, 0.0,
         0.0, 0.0, 61;
 
     C = Eigen::Matrix3d::Random();
@@ -178,31 +178,31 @@ int main(int argc, char* argv[])
 
     auto uc = std::make_shared<nsx::UnitCell>(U*A);
     uc->setSpaceGroup(group);
-    Eigen::Matrix3d B = uc->reciprocalBasis();
+    const Eigen::Matrix3d B = uc->reciprocalBasis();
 
-    auto det_shape = nsx::Ellipsoid({800.0, 450.0, 10.0}, 5.0);
-    auto peak = std::make_shared<nsx::Peak3D>(dataset, det_shape);
+    const auto det_shape = nsx::Ellipsoid({800.0, 450.0, 10.0}, 5.0);
+    const auto peak = std::make_shared<nsx::Peak3D>(dataset, det_shape);
 
-    auto hkls = uc->generateReflectionsInShell(dmin, dmax, wavelength);
+    const auto hkls = uc->generateReflectionsInShell(dmin, dmax, wavelength);
     std::vector<nsx::ReciprocalVector> qs;
 
-    for (auto hkl: hkls) {
+    for (const auto& hkl: hkls) {
         Eigen::RowVector3d q = hkl.rowVector().cast<double>() * B;
         qs.push_back(nsx::ReciprocalVector(q));
     }
 
-    auto events = dataset->events(qs);
+    const auto events = dataset->events(qs);
 
     const double sigmaD = 0.3;
     const double sigmaM = 0.2;
 
     nsx::PeakList peaks;
 
-    for (auto&& event: events) {
+    for (const auto& event: events) {
         Eigen::Vector3d center = {event._px, event._py, event._frame};
         auto peak = std::make_shared<nsx::Peak3D>(dataset, nsx::Ellipsoid(center, 5.0));
-        auto coords = nsx::PeakCoordinateSystem(peak);
-        auto shape = coords.detectorShape(sigmaD, sigmaM);
+        const auto coords = nsx::PeakCoordinateSystem(peak);
+        const auto shape = coords.detectorShape(sigmaD, sigmaM);
         peak->setShape(shape);
         peaks.push_back(peak);
     }
@@ -215,7 +215,7 @@ int main(int argc, char* argv[])
     A *= 10.0;
 
     auto&& simulated_frames = generate_frames(peaks, dataset->nRows(), dataset->nCols(), 0, dataset->nFrames(), A, B, group);
-    
+
     for (size_t i = 0; i < simulated_frames.size(); ++i) {
         simulated_frames[i] += 20.0;
         correct_image(simulated_frames[i], 8.0, 200.0, true);
