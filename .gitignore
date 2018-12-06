@@ -1,0 +1,6 @@
+*~
+*.tmp
+build/
+mybuild/
+qbuild/
+html/
