@@ -63,6 +63,8 @@ enable_testing()
 add_subdirectory(nsxlib)
 
 if (BUILD_NSX_APPS)
+    include(SetupQt)
+    add_subdirectory(3rdparty/QCustomPlot)
     add_subdirectory(apps)
 endif()
 
