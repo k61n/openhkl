@@ -4,7 +4,6 @@
 
 #include <Eigen/Dense>
 
-#include "AABB.h"
 #include "Intensity.h"
 
 namespace nsx {

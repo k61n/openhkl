@@ -42,7 +42,6 @@
 
 #include <Eigen/Dense>
 
-#include "Diffractometer.h"
 #include "IDataReader.h"
 
 namespace nsx {

@@ -32,9 +32,7 @@
 
 #include <Eigen/Dense>
 
-#include "GeometryTypes.h"
 #include "IPeakIntegrator.h"
-#include "ShapeLibrary.h"
 
 namespace nsx {
 

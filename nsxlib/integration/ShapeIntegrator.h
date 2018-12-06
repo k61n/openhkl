@@ -2,8 +2,6 @@
 
 #include <Eigen/Dense>
 
-#include "CrystalTypes.h"
-#include "GeometryTypes.h"
 #include "PixelSumIntegrator.h"
 #include "ShapeLibrary.h"
 

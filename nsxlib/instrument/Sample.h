@@ -34,10 +34,8 @@
 
 #include <yaml-cpp/yaml.h>
 
-#include "ChemistryTypes.h"
 #include "Component.h"
 #include "ConvexHull.h"
-#include "CrystalTypes.h"
 #include "DataTypes.h"
 
 namespace nsx {
@@ -50,7 +48,7 @@ struct SampleGonioFit
     std::vector<double> cost_function;
 };
 
-//! \brief Class used to describe an experiment sample, consisting of a unit cell and material. 
+//! \brief Class used to describe an experiment sample, consisting of a unit cell and material.
 class Sample: public Component {
 public:
 

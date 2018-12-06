@@ -4,11 +4,8 @@
 
 #include "Blob3D.h"
 #include "Convolver.h"
-#include "CrystalTypes.h"
-#include "DataTypes.h"
-#include "GeometryTypes.h"
+#include "CrystalTypes.h" // defines PeakList
 #include "ITask.h"
-#include "UtilsTypes.h"
 
 namespace nsx {
 
