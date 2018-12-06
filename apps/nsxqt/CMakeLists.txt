@@ -32,29 +32,36 @@ list(REMOVE_DUPLICATES PYNSX_INCLUDE_DIRECTORIES)
 
 get_subdirectories(NSXQT_SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
 
-# add project root directory to include path
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}
-                    ${CMAKE_SOURCE_DIR}/3rdparty/QCustomPlot
-                    ${NSXQT_SUBDIRS}
-                    ${CMAKE_BINARY_DIR}/nsxlib/include)
-
 if(APPLE AND ENABLE_CPACK)
     set_source_files_properties(${NSXQT_BUNDLE_RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
     configure_file("${CMAKE_SOURCE_DIR}/cmake/modules/MacOSXBundleInfo.plist.in" "${CMAKE_CURRENT_BINARY_DIR}/Info.plist" @ONLY)
 endif()
 
 # Build the nsxqt executable
-add_executable(${NSXQT_EXECUTABLE}
-               ${EXECUTABLE_OPTIONS}
-               ${NSXQT_SOURCES}
-               ${NSXQT_RCS}
-               ${NSXQT_RESOURCES_CPP}
-               ${NSXQT_HEADERS}
-               ${NSXQT_UI_HEADERS}
-               ${NSXQT_BUNDLE_RESOURCES})
+add_executable(
+    ${NSXQT_EXECUTABLE}
+    ${EXECUTABLE_OPTIONS}
+    ${NSXQT_SOURCES}
+    ${NSXQT_RCS}
+    ${NSXQT_RESOURCES_CPP}
+    ${NSXQT_HEADERS}
+    ${NSXQT_UI_HEADERS}
+    ${NSXQT_BUNDLE_RESOURCES})
 
-# Link the nsxqt executable with the Qt5 libraries in use.
-target_link_libraries(${NSXQT_EXECUTABLE} ${QT_LIBRARIES} QCustomPlot ${OPENGL_LIBRARIES} ${NSX_LIBRARY})
+target_include_directories(
+    ${NSXQT_EXECUTABLE}
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/3rdparty/QCustomPlot
+    ${NSXQT_SUBDIRS}
+    ${CMAKE_BINARY_DIR}/nsxlib/include)
+
+target_link_libraries(
+    ${NSXQT_EXECUTABLE}
+    ${QT_LIBRARIES}
+    QCustomPlot
+    ${OPENGL_LIBRARIES}
+    ${NSX_LIBRARY})
 
 if(ENABLE_CPACK)
     if(APPLE)

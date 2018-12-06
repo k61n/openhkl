@@ -1,11 +1,10 @@
-include_directories(${CMAKE_BINARY_DIR}/nsxlib/include)
-
 file(GLOB_RECURSE test_sources "*.cpp")
 file(GLOB_RECURSE test_headers "*.h")
 
 foreach(source_file ${test_sources})
   get_filename_component(base_name ${source_file} NAME_WE)
   add_executable(${base_name} ${source_file} ${test_headers})
+  target_include_directories(${base_name} PRIVATE ${CMAKE_BINARY_DIR}/nsxlib/include)
   target_link_libraries(${base_name} ${Boost_LIBRARIES} nsx)
 
   if(${NSX_VALGRIND})
@@ -64,7 +63,7 @@ if(NSX_PYTHON)
   SET (CTEST_ENVIRONMENT
   "PYTHONPATH=${CMAKE_BINARY_DIR}/swig"
   )
- 
+
   file(GLOB_RECURSE python_tests *.py)
 
   foreach(python_script ${python_tests})
