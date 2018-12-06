@@ -6,7 +6,7 @@ endif()
 add_definitions(-DUSING_CMAKE)
 
 # NSXTOOL: modified the path
-set(INTERNAL_LIBS ${CMAKE_SOURCE_DIR}/externals/c-blosc/internal-complibs)
+set(INTERNAL_LIBS ${CMAKE_CURRENT_SOURCE_DIR}/../internal-complibs)
 
 # includes
 if(NOT DEACTIVATE_LZ4)

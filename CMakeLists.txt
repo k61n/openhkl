@@ -6,7 +6,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR})
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/macros)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/externals/c-blosc/cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/3rdparty/c-blosc/cmake)
 
 project(nsxtool)
 
@@ -59,7 +59,7 @@ endif()
 
 # Enable unit testing with ctest. This must be called before any calls to add_subdirectory
 enable_testing()
-  
+
 add_subdirectory(nsxlib)
 
 if (BUILD_NSX_APPS)
@@ -83,7 +83,7 @@ if(BUILD_COVERAGE_REPORT)
   list(APPEND ignore_dirs "'/usr/include/*'")
   list(APPEND ignore_dirs "'/usr/lib/*'")
   list(APPEND ignore_dirs "'${CMAKE_BINARY_DIR}/*'")
-  list(APPEND ignore_dirs "'${CMAKE_SOURCE_DIR}/externals/*'")
+  list(APPEND ignore_dirs "'${CMAKE_SOURCE_DIR}/3rdparty/*'")
 
   message("coverage ignore dirs = ${ignore_dirs}")
 
@@ -99,4 +99,3 @@ endif()
 if(ENABLE_CPACK)
  include(CPackSetup)
 endif()
-

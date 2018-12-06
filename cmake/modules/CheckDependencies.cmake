@@ -21,7 +21,7 @@ if (BUILD_WITH_OPENMP)
 endif()
 
 ###### Find the Eigen3
-include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/externals/eigen3)
+include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/3rdparty/eigen3)
 
 ###### Search the HDF5 library
 find_package(HDF5 COMPONENTS CXX REQUIRED)
@@ -71,7 +71,7 @@ if(NSX_PYTHON)
         ERROR_VARIABLE NUMPY_FIND_ERROR
         RESULT_VARIABLE NUMPY_FIND_RESULT
         OUTPUT_VARIABLE NUMPY_FIND_OUTPUT
-        OUTPUT_STRIP_TRAILING_WHITESPACE      
+        OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 
   ## process the output from the execution of the command
@@ -82,7 +82,7 @@ if(NSX_PYTHON)
   else()
     message(FATAL_ERROR "Could NOT find numpy headers")
   endif()
-  
+
   # Python packages dir
   execute_process(COMMAND ${PYTHON_EXECUTABLE} -c
     "from __future__ import print_function; from distutils import sysconfig as sc; print(sc.get_python_lib(prefix='', plat_specific=True))"
@@ -102,8 +102,8 @@ if(NSX_PYTHON)
 endif(NSX_PYTHON)
 
 ###### C-BLOSC
-add_subdirectory(externals/c-blosc)
-include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/externals/c-blosc/blosc)
+add_subdirectory(3rdparty/c-blosc)
+include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/3rdparty/c-blosc/blosc)
 
 find_package(YAML REQUIRED)
 include_directories(SYSTEM ${YAML_INCLUDES})
@@ -117,9 +117,9 @@ include_directories(SYSTEM ${FFTW_INCLUDE_DIR})
 
 ###### GSL library
 if (BUILD_GSL)
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/externals/gsl/cmake)
-    add_subdirectory(externals/gsl)
-    include_directories(SYSTEM ${CMAKE_BINARY_DIR}/externals/gsl/gsl)
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/3rdparty/gsl/cmake)
+    add_subdirectory(3rdparty/gsl)
+    include_directories(SYSTEM ${CMAKE_BINARY_DIR}/3rdparty/gsl/gsl)
 
     set (GSL_VERSION_MAJOR 2)
     set (GSL_VERSION_MINOR 3)
