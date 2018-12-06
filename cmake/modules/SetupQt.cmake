@@ -41,26 +41,6 @@ message(STATUS "  headers: ${Qt5Widgets_INCLUDE_DIRS}")
 
 set(QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5PrintSupport_LIBRARIES} ${Qt5Widgets_LIBRARIES})
 
-GET_SUBDIRECTORIES(NSXQT_SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
-
-# Find recursively all the header files of NSXQt
-file(GLOB_RECURSE NSXQT_HEADERS ${CMAKE_SOURCE_DIR}/apps/nsxqt/*.h)
-
-# Find recursively all the cpp source files of NSXQt
-file(GLOB_RECURSE NSXQT_SOURCES ${CMAKE_SOURCE_DIR}/apps/nsxqt/*.cpp)
-
-# Find recursively all the Qt ui files of NSXQt
-file(GLOB_RECURSE NSXQT_UIS ${CMAKE_SOURCE_DIR}/apps/nsxqt/*.ui)
-
-# Build the headers files for all Qt ui files
-qt5_wrap_ui(NSXQT_UI_HEADERS ${NSXQT_UIS})
-
-# Find recursively all the Qt resources files of NSXQt
-file(GLOB_RECURSE NSXQT_RCS *.qrc)
-
-get_directory_property(PYNSX_INCLUDE_DIRECTORIES INCLUDE_DIRECTORIES)
-list(REMOVE_DUPLICATES PYNSX_INCLUDE_DIRECTORIES)
-
 if (${CMAKE_VERSION} VERSION_LESS 2.8.11)
 
   # Add the include directories for the Qt 5 Widgets module to the compile lines.
@@ -94,7 +74,7 @@ if (${CMAKE_VERSION} VERSION_LESS 2.8.11)
 
   # "Compile" the resources files
   qt5_add_resources(NSXQT_RESOURCES_CPP ${NSXQT_RCS})
-  
+
 else()
 
   # Find includes in corresponding build directories
@@ -109,4 +89,3 @@ else()
   set(CMAKE_AUTORCC ON)
 
 endif()
-
