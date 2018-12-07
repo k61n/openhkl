@@ -6,6 +6,7 @@
 
 #include <core/CrystalTypes.h>
 #include <core/DataTypes.h>
+#include <core/UnitCell.h>
 
 Q_DECLARE_METATYPE(nsx::PeakList)
 Q_DECLARE_METATYPE(nsx::sptrUnitCell)

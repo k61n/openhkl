@@ -10,7 +10,7 @@
 #include "DetectorEvent.h"
 #include "Profile3D.h"
 #include "Profile1D.h"
-#include "MillerIndex.h"
+#include "UnitCell.h"
 
 namespace nsx {
 
@@ -38,7 +38,7 @@ PeakList predictPeaks(ShapeLibrary library,
 class ShapeLibrary {
 
 public:
-    //! Construct an empty library. 
+    //! Construct an empty library.
     //! \param detector_coords if true, store profiles in detector coordinates; otherwise store in Kabsch coordinates
     ShapeLibrary(bool detector_coords, double peakScale, double bkgBegin, double bkgEnd);
 
@@ -52,7 +52,7 @@ public:
     void updateFit(int num_iterations);
 
     //! Predict the (detector space) covariance of a given peak
-    Eigen::Matrix3d predictCovariance(sptrPeak3D peak) const;    
+    Eigen::Matrix3d predictCovariance(sptrPeak3D peak) const;
 
     //! Return mean Pearson coefficient to measure quality of fit
     double meanPearson() const;

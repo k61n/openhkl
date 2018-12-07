@@ -29,10 +29,7 @@
 
 #pragma once
 
-#include <map>
-#include <memory>
 #include <vector>
-
 #include <Eigen/Dense>
 
 #include "CrystalTypes.h"
@@ -42,6 +39,7 @@
 #include "InstrumentTypes.h"
 #include "Intensity.h"
 #include "IPeakIntegrator.h"
+#include "UnitCell.h"
 
 namespace nsx {
 

@@ -97,7 +97,7 @@ struct UnitCellState {
 //! The UnitCell parameters a,b,c are given in \f$ \AA \f$  and angle alpha, beta, gamma
 //! are given in degrees.
 //! The a axis is chosen as pointing along the x-direction, and the b-axis is in the xy-plane.
-class UnitCell 
+class UnitCell
 {
 public:
 
@@ -135,7 +135,7 @@ public:
     void setBravaisType(BravaisType bravais);
 
     //! Get Bravais type symbol
-    std::string bravaisTypeSymbol() const;    
+    std::string bravaisTypeSymbol() const;
 
     //! Get a list of reflections with d value in the range [dmin, dmax]
     std::vector<MillerIndex> generateReflectionsInShell(double dmin, double dmax, double wavelength) const;
@@ -238,7 +238,7 @@ public:
     //! Return the reciprocal character of the cell
     UnitCellCharacter reciprocalCharacter() const;
 
-    //! Reduce the unit cell to Niggli or conventional cell. Returns the number 
+    //! Reduce the unit cell to Niggli or conventional cell. Returns the number
     //! according to the classification into 44 lattice types.
     int reduce(bool niggli_only, double niggliTolerance, double gruberTolerance);
 
@@ -254,12 +254,12 @@ public:
     //! Return the matrix P transforming the Niggli cell to the conventional cell
     const Eigen::Matrix3d& niggliTransformation() const;
 
-    //! Return the orientation matrix Q such that _A = Q*R where R is 
+    //! Return the orientation matrix Q such that _A = Q*R where R is
     //! upper triangular with positive entries on the diagonal, i.e. transformation
     //! mapping crystal space into real space.
     Eigen::Matrix3d orientation() const;
 
-    //! Return the orientation matrix Q such that _A*_NP^{-1} = Q*R where R is 
+    //! Return the orientation matrix Q such that _A*_NP^{-1} = Q*R where R is
     //! upper triangular with positive entries on the diagonal. This is similar to UnitCell::orientation()
     //! except that the orientation is computed for the Niggli cell.
     Eigen::Matrix3d niggliOrientation() const;
@@ -300,7 +300,7 @@ private:
     //! Reciprocal-space basis of row vectors
     Eigen::Matrix3d _b_transposed;
     //! _NP is the transformation such that _A*_NP.inverse() is the Niggli cell
-    Eigen::Matrix3d _NP; 
+    Eigen::Matrix3d _NP;
 
     std::unique_ptr<Material> _material;
 
@@ -322,6 +322,9 @@ private:
 
     std::map<sptrDataSet,std::vector<UnitCellState>> _states;
 };
+
+using sptrUnitCell = std::shared_ptr<UnitCell>;
+using UnitCellList = std::vector<sptrUnitCell>;
 
 //! Print to a stream
 std::ostream& operator<<(std::ostream&,const UnitCell&);

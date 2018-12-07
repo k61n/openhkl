@@ -38,9 +38,12 @@
 #include <vector>
 
 #include "CrystalTypes.h"
+#include "UnitCell.h"
 #include "UtilsTypes.h"
 
 namespace nsx {
+
+using RankedSolution = std::pair<sptrUnitCell,double>;
 
 //! \class IndexerParameters
 //! \brief Struct to store parameters used by autoindexer.
