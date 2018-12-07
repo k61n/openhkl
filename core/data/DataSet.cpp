@@ -18,7 +18,6 @@
 #include "Diffractometer.h"
 #include "Ellipsoid.h"
 #include "Gonio.h"
-#include "IDataReader.h"
 #include "MathematicsTypes.h" // IntMatrix
 #include "Monochromator.h"
 #include "Path.h"
