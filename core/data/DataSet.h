@@ -29,7 +29,6 @@
 #pragma once
 
 #include <memory>
-#include <mutex>
 #include <set>
 #include <string>
 
@@ -44,6 +43,8 @@
 #include "UtilsTypes.h"
 
 namespace nsx {
+
+using FrameIteratorCallback = std::function<IFrameIterator*(DataSet&, int)>;
 
 //! \brief Class used to manage loading detector images and metadata from disk.
 class DataSet {
