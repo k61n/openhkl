@@ -35,6 +35,7 @@
 
 #pragma once
 
+#include <set>
 #include <Eigen/Dense>
 
 #include "CrystalTypes.h"
@@ -49,7 +50,7 @@ namespace nsx {
 class MergedPeak {
 public:
 
-    //! \brief Construct a merged peak with the given spacegroup. 
+    //! \brief Construct a merged peak with the given spacegroup.
     //!
     //! The resulting peak has intensity given by the average intensity of the input peaks.
     //! The parameter \p friedel
@@ -86,13 +87,15 @@ private:
     //! Update the hkl that represents the set of equivalences.
     void determineRepresentativeHKL();
     void update();
-    
+
     MillerIndex _hkl;
     Intensity _intensitySum;
     PeakList _peaks;
     SpaceGroup _grp;
     bool _friedel;
 };
+
+using MergedPeakSet = std::set<MergedPeak>;
 
 #ifndef SWIG
 bool operator<(const MergedPeak& p, const MergedPeak& q);

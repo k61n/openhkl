@@ -1,14 +1,10 @@
 #pragma once
 
 #include <memory>
-#include <set>
 #include <vector>
 #include <Eigen/Dense>
 
 namespace nsx {
-
-class MergedPeak;
-using MergedPeakSet = std::set<MergedPeak>;
 
 class Peak3D;
 using sptrPeak3D   = std::shared_ptr<Peak3D>;
