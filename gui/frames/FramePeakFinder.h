@@ -5,7 +5,7 @@
 #include <set>
 #include <string>
 
-#include <core/DataTypes.h>
+#include <core/PeakFinder.h>
 
 #include "ColorMap.h"
 #include "NSXQFrame.h"

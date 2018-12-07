@@ -33,10 +33,12 @@
 #include <stdexcept>
 #include <string>
 
-#include "DataTypes.h"
 #include "Variant.h"
 
 namespace nsx {
+
+using MetaDataMap = std::map<const char*,Variant<int,double,std::string>>;
+using MetaDataKeySet = std::set<std::string>;
 
 /*! \brief Class to store MetaData of a DataSet stored by a map of key/value pair
  *
