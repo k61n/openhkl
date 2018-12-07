@@ -43,7 +43,6 @@
 #include "GeometryTypes.h"
 #include "IDataReader.h"
 #include "InstrumentState.h"
-#include "IPeakIntegrator.h"
 #include "MillerIndex.h"
 #include "Peak3D.h"
 #include "ReciprocalVector.h"
@@ -68,13 +67,13 @@ Peak3D::Peak3D(sptrDataSet data):
     _bkgBegin(5.0),
     _bkgEnd(6.0)
 {
-  
+
 }
 
 Peak3D::Peak3D(sptrDataSet data, const Ellipsoid &shape):
     Peak3D(data)
 {
-    setShape(shape);  
+    setShape(shape);
 }
 
 void Peak3D::setShape(const Ellipsoid& shape)
@@ -83,7 +82,7 @@ void Peak3D::setShape(const Ellipsoid& shape)
     if (_data) {
         Eigen::Vector3d c = shape.center();
         if (c[2] < 0.0 || c[2] > _data->nFrames()-1
-          || c[0] < 0.0 || c[0] >_data->nCols()-1 
+          || c[0] < 0.0 || c[0] >_data->nCols()-1
           || c[1] < 0.0 || c[1] > _data->nRows()-1) {
             throw std::runtime_error("Peak3D::setShape(): peak center out of bounds");
         }
@@ -196,7 +195,7 @@ void Peak3D::updateIntegration(const IPeakIntegrator& integrator, double peakEnd
 }
 
 void Peak3D::setRawIntensity(const Intensity& i)
-{  
+{
     // note: the scaling factor is taken to be consistent with Peak3D::getRawIntensity()
     _rawIntensity = i; // / data()->getSampleStepSize();
 }
@@ -224,8 +223,8 @@ Ellipsoid Peak3D::qShape() const
     }
 
     Eigen::Vector3d p = _shape.center();
-    auto state = _data->interpolatedState(p[2]);    
-    Eigen::Vector3d q0 = q().rowVector();    
+    auto state = _data->interpolatedState(p[2]);
+    Eigen::Vector3d q0 = q().rowVector();
 
     // Jacobian of map from detector coords to sample q space
     Eigen::Matrix3d J = state.jacobianQ(p[0], p[1]);
@@ -261,7 +260,7 @@ DetectorEvent Peak3D::predictCenter(double frame) const
     Eigen::RowVector3d kf = q_hkl*state.sampleOrientationMatrix().transpose() + ki;
 
     const double alpha = ki.norm() / kf.norm();
-    
+
 
     Eigen::RowVector3d kf1 = alpha*kf;
     Eigen::RowVector3d kf2 = -alpha*kf;
@@ -271,7 +270,7 @@ DetectorEvent Peak3D::predictCenter(double frame) const
     return _data->reader()->diffractometer()->detector()->constructEvent(DirectVector(state.samplePosition), ReciprocalVector(pred_kf*state.detectorOrientation));
 }
 
-    
+
 Intensity Peak3D::meanBackground() const {
     return _meanBackground;
 }
