@@ -16,8 +16,6 @@ class PeakValidator;
 class Profile;
 class UnitCell;
 
-using UnitCellSolution = std::pair<UnitCell,double>;
-
 using sptrPeak3D   = std::shared_ptr<Peak3D>;
 using sptrUnitCell = std::shared_ptr<UnitCell>;
 
