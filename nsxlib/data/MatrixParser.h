@@ -2,7 +2,7 @@
 
 #include <Eigen/Dense>
 
-#include "Enums.h"
+#include "DataOrder.h"
 
 // The convention for 2D data in NSXTOOL is to look at the detector
 // from the sample point. In the rest position, the detector is along the beam

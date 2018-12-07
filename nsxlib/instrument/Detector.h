@@ -45,10 +45,10 @@
 #include <Eigen/Dense>
 
 #include "Component.h"
+#include "DataOrder.h"
 #include "DataTypes.h"
 #include "DetectorEvent.h"
 #include "DirectVector.h"
-#include "Enums.h"
 #include "GeometryTypes.h"
 
 namespace nsx {
@@ -129,7 +129,7 @@ public:
     //! Set the height in angular units of the detector (radians)
     virtual void setAngularWidth(double angle)=0;
 
-    //! Return the detector event (pixel x, pixel y, time of flight) associated with a given kf. 
+    //! Return the detector event (pixel x, pixel y, time of flight) associated with a given kf.
     //! Returns with _negative_ tof if no such event is possible.
     virtual DetectorEvent constructEvent(const DirectVector& from, const ReciprocalVector& kf) const = 0;
 

@@ -2,7 +2,7 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/Enums.h>
+#include <nsxlib/DataOrder.h>
 #include <nsxlib/MatrixParser.h>
 #include <nsxlib/NSXTest.h>
 

@@ -46,7 +46,6 @@
 
 #include "Component.h"
 #include "DirectVector.h"
-#include "Enums.h"
 #include "GeometryTypes.h"
 
 namespace nsx {
