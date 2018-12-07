@@ -56,9 +56,6 @@ if(NSX_DOCS)
     include(Doxygen)
 endif()
 
-
-include(CTest)
-
 add_subdirectory(core)
 
 if (BUILD_NSX_APPS)
@@ -67,10 +64,11 @@ if (BUILD_NSX_APPS)
     add_subdirectory(gui)
 endif()
 
-# additional tools
+# development tools
 add_subdirectory(devtools/converters)
 add_subdirectory(devtools/simulate)
 
+include(CTest)
 if(BUILD_TESTING)
     add_subdirectory(tests)
 endif()
@@ -79,7 +77,6 @@ endif()
 if(NSX_PYTHON)
     add_subdirectory(swig)
 endif()
-
 
 # code coverage report
 if(BUILD_COVERAGE_REPORT)
@@ -93,7 +90,6 @@ if(BUILD_COVERAGE_REPORT)
     #list(APPEND ignore_dirs "'*/tests/*'")
     add_coverage_target(coverage "${ignore_dirs}")
 endif()
-
 
 ###########################################################################
 # CPack settings
