@@ -1,7 +1,5 @@
 #pragma once
 
-#include <functional>
-
 #include <Eigen/Dense>
 
 namespace nsx {
