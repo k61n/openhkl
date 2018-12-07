@@ -37,7 +37,6 @@
 
 #include "DirectVector.h"
 #include "Gonio.h"
-#include "InstrumentTypes.h"
 
 namespace nsx {
 
