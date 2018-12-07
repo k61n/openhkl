@@ -87,7 +87,6 @@ using Eigen::Quaterniond;
 #include "Minimizer.h"
 
 #include "EigenToVector.h"
-#include "System.h"
 #include "CSV.h"
 #include "DataOrder.h"
 #include "Units.h"
@@ -442,7 +441,6 @@ namespace nsx {
 %include "Minimizer.h"
 
 %include "EigenToVector.h"
-%include "System.h"
 %include "CSV.h"
 %include "DataOrder.h"
 %include "DoubleToFraction.h"
