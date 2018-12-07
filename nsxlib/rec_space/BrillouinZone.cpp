@@ -40,9 +40,9 @@ void remove_duplicates(std::vector<Eigen::RowVector3d>& q_vectors, bool reflect,
 
 namespace nsx {
 
-BrillouinZone::BrillouinZone(const Eigen::Matrix3d& B, double eps): 
+BrillouinZone::BrillouinZone(const Eigen::Matrix3d& B, double eps):
     _qs(),
-    _eps(eps), 
+    _eps(eps),
     _B(B),
     _vertices()
 {
@@ -60,7 +60,7 @@ BrillouinZone::BrillouinZone(const Eigen::Matrix3d& B, double eps):
     compute_vertices();
 }
 
-bool BrillouinZone::inside(const Eigen::RowVector3d& q) const 
+bool BrillouinZone::inside(const Eigen::RowVector3d& q) const
 {
     // first-pass check: the point is outside of the bounding sphere
     if (q.squaredNorm() > (1+_eps)*_r2) {
@@ -76,7 +76,7 @@ bool BrillouinZone::inside(const Eigen::RowVector3d& q) const
     return true;
 }
 
-void BrillouinZone::clean_qs() 
+void BrillouinZone::clean_qs()
 {
     // remove duplicates, if any
     remove_duplicates(_qs, true, _eps);
@@ -108,16 +108,16 @@ void BrillouinZone::clean_qs()
 
 void BrillouinZone::compute()
 {
-    _qs.clear();    
+    _qs.clear();
 
     // start with initial parallelepiped; compute bounding sphere
     for (int i = 0; i < 3; ++i) {
         auto q = _B.row(i);
-        _qs.emplace_back(q);  
+        _qs.emplace_back(q);
     }
 
     // get vertices of parallelepiped
-    compute_vertices();   
+    compute_vertices();
     _vertices.clear();
     assert(_r2 > 0.0);
 
@@ -203,13 +203,13 @@ void BrillouinZone::compute_vertices()
                 if (QR.rank() != 3) {
                     continue;
                 }
-                
+
                 // get the point of intersection
                 auto x = QR.solve(b);
 
                 // check if it is inside the Brillouin Zone
                 if (!inside((1.0-_eps)*x.transpose())) {
-                    continue;                    
+                    continue;
                 }
                 _vertices.emplace_back(x);
             }
