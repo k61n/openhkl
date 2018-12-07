@@ -36,7 +36,6 @@
 
 #include "ConvexHull.h"
 #include "DataTypes.h"
-#include "GeometryTypes.h"
 
 namespace nsx {
 
@@ -44,7 +43,7 @@ namespace nsx {
 //! \brief Class to calculate first Brillouin zone of a lattice and to convert it to a convex hull representation.
 //! The first Brillouin zone of a lattice is defined to be the set of all vectors which are closer to the origin
 //! than to any other lattice point. From this definition, it comes that it is a convex hull bounded
-//! by Bragg planes, i.e. planes with normal vector q passing through the point q/2 for lattice vectors q. 
+//! by Bragg planes, i.e. planes with normal vector q passing through the point q/2 for lattice vectors q.
 //! Hence, to construct the Brillouin zone, one has to enumerate the finitely many q's which appear
 //! as normals to the faces of the zone. Then, the bouding vertices are determined by taking 3-fold intersections of the bounding planes.
 class BrillouinZone {
