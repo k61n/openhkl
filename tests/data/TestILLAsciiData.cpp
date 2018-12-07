@@ -3,14 +3,14 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/IDataReader.h>
-#include <nsxlib/InstrumentState.h>
-#include <nsxlib/MetaData.h>
-#include <nsxlib/NSXTest.h>
-#include <nsxlib/Units.h>
+#include <core/DataSet.h>
+#include <core/Diffractometer.h>
+#include <core/Experiment.h>
+#include <core/IDataReader.h>
+#include <core/InstrumentState.h>
+#include <core/MetaData.h>
+#include <core/NSXTest.h>
+#include <core/Units.h>
 
 const double tolerance=1e-2;
 

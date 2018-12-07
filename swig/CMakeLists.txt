@@ -1,9 +1,9 @@
 set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
-GET_SUBDIRECTORIES(NSX_SUBDIRS ${CMAKE_SOURCE_DIR}/nsxlib)
+GET_SUBDIRECTORIES(NSX_SUBDIRS ${CMAKE_SOURCE_DIR}/core)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${CMAKE_BINARY_DIR}/nsxlib/generated)
+include_directories(${CMAKE_BINARY_DIR}/core/generated)
 include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${NSX_SUBDIRS})
 
@@ -16,7 +16,7 @@ endif()
 set_property(SOURCE pynsx.i PROPERTY CPLUSPLUS ON)
 set_property(SOURCE pynsx.i PROPERTY SWIG_MODULE_NAME pynsx)
 
-# Set the nsxlib headers path at the swig level
+# Set the core headers path at the swig level
 get_directory_property(PYNSX_INCLUDE_DIRECTORIES INCLUDE_DIRECTORIES)
 list(REMOVE_DUPLICATES PYNSX_INCLUDE_DIRECTORIES)
 set(PYNSX_SWIG_INCLUDE_DIRECTORIES)

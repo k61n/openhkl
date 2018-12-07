@@ -2,12 +2,12 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/DirectVector.h>
-#include <nsxlib/FlatDetector.h>
-#include <nsxlib/Gonio.h>
-#include <nsxlib/InstrumentState.h>
-#include <nsxlib/NSXTest.h>
-#include <nsxlib/Units.h>
+#include <core/DirectVector.h>
+#include <core/FlatDetector.h>
+#include <core/Gonio.h>
+#include <core/InstrumentState.h>
+#include <core/NSXTest.h>
+#include <core/Units.h>
 
 NSX_INIT_TEST
 

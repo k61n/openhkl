@@ -2,9 +2,9 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/AABB.h>
-#include <nsxlib/NSXTest.h>
-#include <nsxlib/Profile3D.h>
+#include <core/AABB.h>
+#include <core/NSXTest.h>
+#include <core/Profile3D.h>
 
 NSX_INIT_TEST
 

@@ -1,11 +1,11 @@
 #include <Eigen/Dense>
 
-#include <nsxlib/Axis.h>
-#include <nsxlib/DirectVector.h>
-#include <nsxlib/Gonio.h>
-#include <nsxlib/NSXTest.h>
-#include <nsxlib/Sample.h>
-#include <nsxlib/Units.h>
+#include <core/Axis.h>
+#include <core/DirectVector.h>
+#include <core/Gonio.h>
+#include <core/NSXTest.h>
+#include <core/Sample.h>
+#include <core/Units.h>
 
 const double tolerance=1e-6;
 

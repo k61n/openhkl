@@ -3,9 +3,9 @@
 #include <stdexcept>
 #include <string>
 
-#include <nsxlib/ChemicalFormulaParser.h>
-#include <nsxlib/ChemistryTypes.h>
-#include <nsxlib/NSXTest.h>
+#include <core/ChemicalFormulaParser.h>
+#include <core/ChemistryTypes.h>
+#include <core/NSXTest.h>
 
 // This had to be included here to avoid lengthy compile error with boost::spirit
 #include <boost/spirit/include/phoenix_stl.hpp>

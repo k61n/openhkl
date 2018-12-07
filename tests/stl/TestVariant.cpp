@@ -1,7 +1,7 @@
 #include <string>
 
-#include <nsxlib/NSXTest.h>
-#include <nsxlib/Variant.h>
+#include <core/NSXTest.h>
+#include <core/Variant.h>
 
 NSX_INIT_TEST
 

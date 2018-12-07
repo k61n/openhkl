@@ -2,9 +2,9 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/Enums.h>
-#include <nsxlib/MatrixParser.h>
-#include <nsxlib/NSXTest.h>
+#include <core/DataOrder.h>
+#include <core/MatrixParser.h>
+#include <core/NSXTest.h>
 
 NSX_INIT_TEST
 

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <nsxlib/NSXTest.h>
+#include <core/NSXTest.h>
 
 NSX_INIT_TEST
 

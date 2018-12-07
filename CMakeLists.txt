@@ -19,7 +19,7 @@ option(BUILD_OPTIMIZED_DEBUG "Set optimization level -O1 or -Og for debug build"
 option(BUILD_COVERAGE_REPORT "Build code coverage report" OFF)
 option(BUILD_WITH_OPENMP "Build with OpenMP support" OFF)
 option(BUILD_GSL "Build GSL external dependency" OFF)
-option(NSX_BUILD_STATIC "Link nsxlib statically" OFF)
+option(NSX_BUILD_STATIC "Link core statically" OFF)
 option(NSX_VALGRIND "Run tests with valgrind" OFF)
 option(ENABLE_CPACK "Enable CPack package generation" OFF)
 option(NSX_SANITIZE "Compile with clang's -fsanitize (must also set NSX_SANITIZER variable)" OFF)
@@ -59,16 +59,17 @@ endif()
 
 include(CTest)
 
-add_subdirectory(nsxlib)
+add_subdirectory(core)
 
 if (BUILD_NSX_APPS)
     include(SetupQt)
     add_subdirectory(3rdparty/QCustomPlot)
-    add_subdirectory(apps)
+    add_subdirectory(gui)
 endif()
 
 # additional tools
-add_subdirectory(tools)
+add_subdirectory(devtools/converters)
+add_subdirectory(devtools/simulate)
 
 if(BUILD_TESTING)
     add_subdirectory(tests)

@@ -3,9 +3,9 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/FitParameters.h>
-#include <nsxlib/Minimizer.h>
-#include <nsxlib/NSXTest.h>
+#include <core/FitParameters.h>
+#include <core/Minimizer.h>
+#include <core/NSXTest.h>
 
 NSX_INIT_TEST
 
