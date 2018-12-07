@@ -20,6 +20,7 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 
+#include <core/ConvolvedFrame.h>
 #include <core/ConvolverFactory.h>
 #include <core/DataSet.h>
 #include <core/ITask.h>
@@ -191,7 +192,7 @@ void FramePeakFinder::changeSelectedFrame(int selected_frame)
 }
 
 void FramePeakFinder::accept()
-{    
+{
     auto peaks_item = _experiment_item->peaksItem();
 
     for (auto i = 0; i < _ui->tabs->count(); ++i) {
@@ -394,7 +395,7 @@ void FramePeakFinder::preview()
     std::string convolver_type = _ui->convolution_kernels->currentText().toStdString();
     auto&& convolver_parameters = convolutionParameters();
 
-    Eigen::MatrixXd convolved_frame = data->convolvedFrame(selected_frame,convolver_type, convolver_parameters);
+    Eigen::MatrixXd convolved_frame = convolvedFrame(*data, selected_frame,convolver_type, convolver_parameters);
 
     // apply threshold in preview
     if (_ui->apply_threshold->isChecked()) {

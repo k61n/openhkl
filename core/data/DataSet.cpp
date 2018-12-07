@@ -11,7 +11,6 @@
 
 #include "AABB.h"
 #include "BloscFilter.h"
-#include "ConvolverFactory.h"
 #include "DataSet.h"
 #include "Detector.h"
 #include "DataReaderFactory.h"
@@ -20,6 +19,7 @@
 #include "Ellipsoid.h"
 #include "Gonio.h"
 #include "IDataReader.h"
+#include "MathematicsTypes.h" // IntMatrix
 #include "Monochromator.h"
 #include "Path.h"
 #include "Peak3D.h"
@@ -120,14 +120,6 @@ int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z)
 Eigen::MatrixXi DataSet::frame(std::size_t idx) const
 {
     return _reader->data(idx);
-}
-
-Eigen::MatrixXd DataSet::convolvedFrame(std::size_t idx, const std::string& convolver_type, const std::map<std::string,double>& parameters)
-{
-    ConvolverFactory convolver_factory;
-    auto convolver = convolver_factory.create(convolver_type,parameters);
-    Eigen::MatrixXi frame_data = _reader->data(idx);
-    return convolver->convolve(frame_data.cast<double>());
 }
 
 void DataSet::open()

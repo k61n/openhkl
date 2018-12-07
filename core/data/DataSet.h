@@ -105,9 +105,6 @@ public:
     //! Return frame after transforming to account for detector gain and baseline
     Eigen::MatrixXd transformedFrame(std::size_t idx);
 
-    //! Return a convolved frame
-    Eigen::MatrixXd convolvedFrame(std::size_t idx, const std::string& convolver_type, const std::map<std::string,double>& parameters);
-
     //! Get the file handle.
     void open();
 
@@ -120,7 +117,7 @@ public:
     //! Export dataset to HDF5 format
     void saveHDF5(const std::string& filename);
 
-    //! Return detector events corresponding to the list of q values.  
+    //! Return detector events corresponding to the list of q values.
     std::vector<DetectorEvent> events(const std::vector<ReciprocalVector>& sample_qs) const;
 
     //! Return the sample-space q vector corresponding to a detector event
