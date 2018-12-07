@@ -5,8 +5,6 @@
 #include "Gonio.h"
 #include "Path.h"
 #include "Resources.h"
-#include "Sample.h"
-#include "Source.h"
 
 namespace nsx {
 
@@ -138,4 +136,3 @@ void Diffractometer::setSource(const Source &source)
 }
 
 } // end namespace nsx
-

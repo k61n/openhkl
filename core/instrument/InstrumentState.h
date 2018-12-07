@@ -31,7 +31,6 @@
 #include <Eigen/Core>
 
 #include "DirectVector.h"
-#include "InstrumentTypes.h"
 #include "ReciprocalVector.h"
 
 namespace nsx {
