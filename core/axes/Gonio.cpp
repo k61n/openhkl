@@ -6,7 +6,6 @@
 #include "DirectVector.h"
 #include "Gonio.h"
 #include "RotAxis.h"
-#include "TransAxis.h"
 #include "Units.h"
 
 namespace nsx {
@@ -103,4 +102,3 @@ DirectVector Gonio::transform(const DirectVector& v, const std::vector<double>& 
 }
 
 } // end namespace nsx
-

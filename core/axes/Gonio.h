@@ -42,8 +42,6 @@
 
 #include "Axis.h"
 #include "GeometryTypes.h"
-#include "InstrumentTypes.h"
-#include "RotAxis.h"
 
 namespace nsx {
 
