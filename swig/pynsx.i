@@ -18,12 +18,9 @@
 %feature("director") ShapeIntegrator;
 
 %include "pynsx_doc.i"
-
 %include "warnings.i"
-
 %include "typemaps.i"
 %include "cpointer.i"
-
 %include "std_shared_ptr.i"
 %include "std_string.i"
 %include "std_vector.i"
@@ -44,12 +41,10 @@
 %shared_ptr(nsx::HDF5DataReader)
 %shared_ptr(nsx::HDF5MetaDataReader)
 %shared_ptr(nsx::ILLDataReader)
-
 %shared_ptr(nsx::RawDataReader)
 %shared_ptr(nsx::TiffDataReader)
 %shared_ptr(nsx::Experiment)
 %shared_ptr(nsx::ProgressHandler)
-
 %shared_ptr(nsx::UnitCell)
 %shared_ptr(nsx::ShapeLibrary)
 
@@ -60,9 +55,7 @@
 
 #include <Python.h>
 #include <numpy/arrayobject.h>
-
 #include <memory>
-
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -77,28 +70,21 @@ using Eigen::Matrix;
 using Eigen::Quaterniond;
 
 #include "Version.h"
-
 #include "Any.h"
-
 #include "Material.h"
 #include "IsotopeDatabaseManager.h"
-
 #include "FitParameters.h"
 #include "Minimizer.h"
-
 #include "EigenToVector.h"
 #include "CSV.h"
 #include "DataOrder.h"
 #include "Units.h"
-
 #include "DoubleToFraction.h"
 #include "Path.h"
-
 #include "Parser.h"
 #include "YAMLType.h"
 #include "MatrixParser.h"
 #include "ProgressHandler.h"
-
 #include "PeakCoordinateSystem.h"
 #include "RefinementBatch.h"
 #include "Refiner.h"
@@ -118,9 +104,7 @@ using Eigen::Quaterniond;
 #include "CC.h"
 #include "Peak3D.h"
 using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
-
 #include "FFTIndexing.h"
-
 #include "MergedPeak.h"
 #include "SpaceGroup.h"
 #include "NiggliReduction.h"
@@ -128,23 +112,17 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "SymOp.h"
 #include "Vertex.h"
 #include "Triangle.h"
-
 #include "Ellipsoid.h"
 #include "Face.h"
 #include "MCAbsorption.h"
 #include "ConvexHull.h"
 #include "BrillouinZone.h"
-
 #include "AABB.h"
 #include "Edge.h"
 #include "Blob3D.h"
-
-
 #include "DirectVector.h"
 #include "ReciprocalVector.h"
-
 #include "DetectorEvent.h"
-
 #include "DataSet.h"
 #include "Profile3D.h"
 #include "MetaData.h"
@@ -152,7 +130,6 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "IDataReader.h"
 #include "HDF5DataReader.h"
 #include "HDF5MetaDataReader.h"
-
 #include "RawDataReader.h"
 #include "TiffDataReader.h"
 #include "BloscFilter.h"
@@ -166,12 +143,10 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "Source.h"
 #include "InstrumentState.h"
 #include "InterpolatedState.h"
-
 #include "Monochromator.h"
 #include "Diffractometer.h"
 #include "CylindricalDetector.h"
 #include "Gonio.h"
-
 #include "Convolver.h"
 #include "AtomicConvolver.h"
 #include "DeltaConvolver.h"
@@ -180,55 +155,37 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "ConstantConvolver.h"
 #include "ConvolverFactory.h"
 #include "RadialConvolver.h"
-
 #include "mosaic.h"
-
 #include "Axis.h"
 #include "Experiment.h"
-
 #include "Component.h"
 #include "AxisFactory.h"
 #include "RotAxis.h"
-
 #include "Singleton.h"
 #include "Factory.h"
-
 #include "DataOrder.h"
-
 #include "Axis.h"
 #include "RotAxis.h"
 #include "TransAxis.h"
-
 #include "Monochromator.h"
-
 #include "Detector.h"
 #include "CylindricalDetector.h"
 #include "FlatDetector.h"
-
 #include "Source.h"
-
 #include "Sample.h"
-
 #include "AABB.h"
 #include "Ellipsoid.h"
 #include "Blob3D.h"
-
 #include "FFTIndexing.h"
 #include "Peak3D.h"
 #include "SpaceGroup.h"
 #include "UnitCell.h"
 #include "GruberReduction.h"
-
 #include "Intensity.h"
-
 using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
-
 #include "Diffractometer.h"
-
 using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
-
 #include "Singleton.h"
-
 #include "Convolver.h"
 #include "AtomicConvolver.h"
 #include "ConvolverFactory.h"
@@ -237,21 +194,17 @@ using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 #include "EnhancedAnnularConvolver.h"
 #include "ConstantConvolver.h"
 #include "RadialConvolver.h"
-
 #include "MetaData.h"
 #include "IDataReader.h"
 #include "ILLDataReader.h"
 #include "HDF5DataReader.h"
 #include "DataSet.h"
 #include "MergedData.h"
-
 #include "PeakFilter.h"
-
 #include "MillerIndex.h"
 #include "Profile1D.h"
 #include "ShapeLibrary.h"
 using sptrShapeLibrary = std::shared_ptr<nsx::ShapeLibrary>;
-
 #include "CC.h"
 #include "RFactor.h"
 
@@ -309,9 +262,7 @@ using namespace nsx;
 %template(vectorVectorXd) std::vector<Eigen::VectorXd>;
 %template(vectorVector3d) std::vector<Eigen::Vector3d>;
 %template(vectorRowVector3d) std::vector<Eigen::RowVector3d>;
-
 %include "Version.h"
-
 %include "ChemistryTypes.h"
 %include "CrystalTypes.h"
 %include "DataTypes.h"
@@ -320,16 +271,12 @@ using namespace nsx;
 %include "MathematicsTypes.h"
 %include "UnitCell.h"
 %include "UtilsTypes.h"
-
 %template(UnitCellList) std::vector<nsx::sptrUnitCell>;
-
 %include "DirectVector.h"
 %template(DirectVectorList) std::vector<nsx::DirectVector>;
-
 %include "ReciprocalVector.h"
 %template(ReciprocalVectorList) std::vector<nsx::ReciprocalVector>;
 %template(ReciprocalVectorQueue) std::deque<nsx::ReciprocalVector>;
-
 %include "Axis.h"
 %include "RotAxis.h"
 %include "TransAxis.h"
@@ -337,7 +284,6 @@ using namespace nsx;
 %include "Component.h"
 %include "Monochromator.h"
 %include "Source.h"
-
 %include "AABB.h"
 %include "Ellipsoid.h"
 %include "Blob3D.h"
@@ -356,10 +302,8 @@ using namespace nsx;
 %template(propertyd) nsx::IsotopeDatabaseManager::property<double>;
 %template(propertys) nsx::IsotopeDatabaseManager::property<std::string>;
 %template(propertyb) nsx::IsotopeDatabaseManager::property<bool>;
-
 %template(scored_uc) std::pair<std::shared_ptr<nsx::UnitCell>, double>;
 %template(indexer_solutions) std::vector<std::pair<std::shared_ptr<nsx::UnitCell>,double>>;
-
 %include "InstrumentTypes.h"
 %include "Detector.h"
 %include "DetectorEvent.h"
@@ -380,8 +324,6 @@ namespace nsx {
 }
 
 %include "FFTIndexing.h"
-
-
 %include "PeakData.h"
 %include "IntegrationRegion.h"
 %include "Intensity.h"
@@ -401,12 +343,9 @@ namespace nsx {
 %include "PeakData.h"
 %include "Intensity.h"
 %include "Peak3D.h"
-
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
 %template(PeakShell) std::vector<std::vector<std::shared_ptr<nsx::Peak3D>>>;
-
 %include "PeakFilter.h"
-
 %template(ConvolverParameters) std::map<std::string,double>;
 %include "Convolver.h"
 %include "ConvolverFactory.h"
@@ -417,9 +356,7 @@ namespace nsx {
 %include "RadialConvolver.h"
 %include "Convolver.h"
 %include "AtomicConvolver.h"
-
 %include "mosaic.h"
-
 %include "MetaData.h"
 %include "IDataReader.h"
 %include "ILLDataReader.h"
@@ -427,57 +364,38 @@ namespace nsx {
 %include "HDF5DataReader.h"
 %include "Profile3D.h"
 %include "DataSet.h"
-
-
 %include "MergedData.h"
-
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
-
 %include "ITask.h"
 %include "PeakFinder.h"
-
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;
-
 %include "FitParameters.h"
 %include "Minimizer.h"
-
 %include "EigenToVector.h"
 %include "CSV.h"
 %include "DataOrder.h"
 %include "DoubleToFraction.h"
 %include "Path.h"
-
 %include "Parser.h"
 %include "MatrixParser.h"
 %include "ProgressHandler.h"
-
 %include "PeakCoordinateSystem.h"
 %include "RefinementBatch.h"
 %include "Refiner.h"
-
 %template(RefinementBatchList) std::vector<nsx::RefinementBatch>;
-
 %include "Intensity.h"
-
 %include "IntegrationRegion.h"
 %include "PeakData.h"
-
-
 %include "UnitCell.h"
 %include "ResolutionShell.h"
-
 %include "RFactor.h"
 %include "CC.h"
 %include "CC.h"
-
 %include "Peak3D.h"
-
 %include "MillerIndex.h"
 %template(MillerIndexList) std::vector<nsx::MillerIndex>;
-
 %include "Profile1D.h"
 %include "ShapeLibrary.h"
-
 %include "FFTIndexing.h"
 %include "MergedPeak.h"
 %include "SpaceGroup.h"
@@ -485,7 +403,6 @@ namespace nsx {
 %include "GruberReduction.h"
 %include "SymOp.h"
 %template(SymOpList) std::vector<nsx::SymOp>;
-
 %include "Vertex.h"
 %include "Triangle.h"
 %include "Ellipsoid.h"
@@ -495,9 +412,7 @@ namespace nsx {
 %include "AABB.h"
 %include "Edge.h"
 %include "Blob3D.h"
-
 %include "BrillouinZone.h"
-
 %include "Profile3D.h"
 %include "DataSet.h"
 %include "MetaData.h"
@@ -505,11 +420,9 @@ namespace nsx {
 %include "IDataReader.h"
 %include "HDF5MetaDataReader.h"
 %include "HDF5DataReader.h"
-
 %include "RawDataReader.h"
 %include "TiffDataReader.h"
 %include "BloscFilter.h"
-
 %include "Convolver.h"
 %include "AtomicConvolver.h"
 %include "ConstantConvolver.h"
@@ -518,7 +431,6 @@ namespace nsx {
 %include "EnhancedAnnularConvolver.h"
 %include "RadialConvolver.h"
 %include "ConvolverFactory.h"
-
 %include "Detector.h"
 %include "DetectorFactory.h"
 %include "TransAxis.h"
@@ -527,22 +439,15 @@ namespace nsx {
 %include "Source.h"
 %include "InstrumentState.h"
 %include "InterpolatedState.h"
-
 %include "Monochromator.h"
 %include "Diffractometer.h"
 %include "CylindricalDetector.h"
-
-
 %template(InstrumentStateList) std::vector<nsx::InstrumentState>;
-
-
 %include "Axis.h"
 %include "Experiment.h"
 %include "AxisFactory.h"
 %include "RotAxis.h"
-
 %include "AutoIndexer.h"
-
 %include "Singleton.h"
 
 %newobject new_double;
