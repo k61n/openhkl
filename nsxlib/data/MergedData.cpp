@@ -29,12 +29,11 @@
  */
 
 #include "MergedData.h"
-#include "MergedPeak.h"
 
 namespace nsx {
 
 MergedData::MergedData(const SpaceGroup& grp, bool friedel): _group(grp), _friedel(friedel), _peaks()
-{      
+{
 }
 
 bool MergedData::addPeak(const sptrPeak3D& peak)
@@ -44,7 +43,7 @@ bool MergedData::addPeak(const sptrPeak3D& peak)
     auto it = _peaks.find(new_peak);
 
     if ( it != _peaks.end() ) {
-        MergedPeak merged(*it); 
+        MergedPeak merged(*it);
         merged.addPeak(peak);
         _peaks.erase(it);
         _peaks.emplace(std::move(merged));

@@ -12,7 +12,6 @@
 #include "AABB.h"
 #include "BloscFilter.h"
 #include "ConvolverFactory.h"
-#include "CrystalTypes.h"
 #include "DataSet.h"
 #include "Detector.h"
 #include "DetectorEvent.h"
@@ -20,21 +19,13 @@
 #include "Ellipsoid.h"
 #include "Gonio.h"
 #include "IDataReader.h"
-#include "IntegrationRegion.h"
-#include "Logger.h"
-#include "MathematicsTypes.h"
 #include "Monochromator.h"
 #include "Path.h"
 #include "Peak3D.h"
-#include "PeakFilter.h"
-#include "IPeakIntegrator.h"
 #include "ProgressHandler.h"
-#include "ReciprocalVector.h"
 #include "Sample.h"
 #include "Source.h"
-#include "SpaceGroup.h"
-#include "UnitCell.h"
-#include "Units.h"
+#include "Units.h" // deg
 
 namespace nsx {
 
@@ -341,7 +332,7 @@ void DataSet::maskPeaks(PeakList& peaks) const
 
 std::vector<DetectorEvent> DataSet::events(const std::vector<ReciprocalVector>& sample_qs) const
 {
-    std::vector<DetectorEvent> events;  
+    std::vector<DetectorEvent> events;
 
     // return true if inside Ewald sphere, false otherwise
     auto compute_sign = [](const Eigen::RowVector3d& q, const InterpolatedState& state) -> bool
@@ -380,7 +371,7 @@ std::vector<DetectorEvent> DataSet::events(const std::vector<ReciprocalVector>& 
                 s0 = sign;
                 state0 = state;
                 f0 = f;
-            } 
+            }
             // branch left
             else {
                 s1 = sign;
@@ -400,7 +391,7 @@ std::vector<DetectorEvent> DataSet::events(const std::vector<ReciprocalVector>& 
         if (accept) {
             event._frame = f;
             events.emplace_back(event);
-        }       
+        }
     }
     return events;
 }
