@@ -1,5 +1,11 @@
 *~
 *.tmp
+*.aux
+*.bbl
+*.blg
+*.log
+*.toc
+manual.pdf
 build/
 mybuild/
 qbuild/
