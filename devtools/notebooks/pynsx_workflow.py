@@ -7,7 +7,7 @@ import yaml
 import pynsx_utils
 
 if __name__ == "__main__":
-        
+
     if len(sys.argv) < 2:
         raise RuntimeError("Invalid number of input arguments")
 
@@ -15,7 +15,7 @@ if __name__ == "__main__":
     # Read the workflow parameters
     parameters_yaml_file = sys.argv[1]
     with open(parameters_yaml_file,"r") as fin:
-        
+
         parameters = yaml.load(fin)
 
     # Setup the experiment
@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     # Find unit cells and set the selected one to the peaks
     unit_cells = pynsx_utils.find_unit_cells(filtered_peaks)
-    if parameters["auto_indexing"]["select_best_unit_cell"]:        
+    if parameters["auto_indexing"]["select_best_unit_cell"]:
         selected_unit_cell_id = 0
     else:
         selected_unit_cell_id = int(input("Please enter selected unit cell id: "))
@@ -55,8 +55,8 @@ if __name__ == "__main__":
                  break
         if selected_space_group_id is None:
             print("Invalid space group")
-        
-    else:                
+
+    else:
         if parameters["space_group_definition"].get("select_best_space_group",False):
             selected_space_group_id = 0
         else:
@@ -74,7 +74,8 @@ if __name__ == "__main__":
     predicted_peaks = []
     for r in refinements:
         dataset, refiner, success = r
-        preds = pynsx_utils.predict_peaks(filtered_peaks, dataset, unit_cell, refiner.batches())
+        throw std::runtime_error("predict_peaks was removed in commit #3af40b4a")
+        # preds = pynsx_utils.predict_peaks(filtered_peaks, dataset, unit_cell, refiner.batches())
         predicted_peaks.extend(preds)
     print("Total number of predicted peaks: {:d}\n".format(len(predicted_peaks)))
 

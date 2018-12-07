@@ -19,7 +19,7 @@ def read_data(experiment, datasets, **kwargs):
     data = []
 
     min_number_frames = kwargs.get("min_number_frames",1)
-    
+
     files = glob.glob(datasets)
 
     for f in files:
@@ -63,7 +63,7 @@ def find_peaks(data, **kwargs):
     if kernel_parameters:
         for p_name, p_value in kernel_parameters.items():
             kernel_parameters[p_name] = p_value
-    
+
     kernel_image = kernel.matrix()
     convolver = nsx.Convolver()
     convolver.setKernel(kernel_image)
@@ -158,7 +158,7 @@ def find_space_group(peaks, unit_cell):
         space_groups.append((idx,symbol,100.0*(1.0-sg.fractionExtinct(hkls))))
         print("idx: {0:3d} --- symbol = {1:10s}  --- % non-extincted peaks = {2:6.2f}".format(*(space_groups[-1])))
 
-    return space_groups   
+    return space_groups
 
 def refine_offsets(data, peaks, unit_cell, **kwargs):
 
@@ -173,69 +173,24 @@ def refine_offsets(data, peaks, unit_cell, **kwargs):
         print("Refining parameters for dataset", dataset.filename())
 
         states = dataset.instrumentStates()
-                
+
         peak_filter = nsx.PeakFilter()
         peaks_per_dataset = peak_filter.dataset(peaks,dataset)
-                    
+
         refiner = nsx.Refiner(unit_cell, peaks_per_dataset, n_batches)
-        
+
         if (len(peaks_per_dataset) < min_peaks_per_dataset):
             print("Too few peaks; skipping")
-        
+
         refiner.refineB()
-        
+
         success = refiner.refine(n_iterations)
-        
+
         refinements.append([dataset, refiner, success])
 
         print("refinement successful:", success)
 
     return refinements
-
-def predict_peaks(peaks, dataset, unit_cell, batches):
-  
-    pred = nsx.PeakPredictor(dataset)
-
-    qshape = pred.averageQShape(peaks)
-
-    wavelength = dataset.diffractometer().source().getSelectedMonochromator().getWavelength()    
-
-    d_values = [1/np.linalg.norm(p.getQ().rowVector()) for p in peaks]
-
-    dmin = min(d_values)
-    dmax = max(d_values)
-
-    hkls = unit_cell.generateReflectionsInShell(dmin, dmax, wavelength)       
-    
-    predicted_peaks = []
-    
-    for batch in batches:
-
-        bcell = batch.cell()
-        preds = pred.predictPeaks(hkls, bcell.reciprocalBasis())
-        
-        for p in preds:
-
-            if not batch.contains(p.getShape().center()[2,0]):
-                continue                
-
-            miller_index = nsx.MillerIndex(p,bcell)
-            
-            if not miller_index.indexed(bcell.indexingTolerance()):
-                continue
-                
-            q = miller_index.rowVector().dot(bcell.reciprocalBasis())
-            shape = nsx.Ellipsoid(q.transpose(), qshape)
-            try:
-                shape = pred.toDetectorSpace(shape)
-            except:
-                continue
-                
-            p.setShape(shape)                
-            p.addUnitCell(bcell, True)
-            predicted_peaks.append(p)
-    
-    return predicted_peaks
 
 def integrate_peaks(data, peaks, **kwargs):
 
@@ -254,58 +209,58 @@ def write_statistics(filename, resolution_shells, space_group_name, **kwargs):
     with open(filename,"w") as fout:
 
         stats = []
-    
+
         fout.write("{:8s} {:8s} {:8s} {:8s} {:8s} {:8s} {:8s} {:8s}\n".format("dmin","dmax","n_peaks","Rmeas","Rmerge","Rpim","CChalf","CCtrue"))
-        
+
         for i in range(resolution_shells.nShells()):
-        
+
             d_shell = resolution_shells.shell(i)
-    
+
             merged = nsx.MergedData(space_group, include_friedel)
-    
+
             for peak in d_shell.peaks:
                 merged.addPeak(peak)
-                
+
             r = nsx.RFactor()
             cc = nsx.CC()
-        
+
             r.calculate(merged)
             cc.calculate(merged)
-        
+
             shell_stats = {}
             shell_stats['CChalf'] = cc.CChalf()
             shell_stats['CCtrue'] = cc.CCstar()
             shell_stats['Rmeas'] = r.Rmeas()
             shell_stats['Rmerge'] = r.Rmerge()
             shell_stats['Rpim'] = r.Rpim()
-        
+
             fmt = "{:<8.3f} {:<8.3f} {:<8d} {:<8.3f} {:<8.3f} {:<8.3f} {:<8.3f} {:<8.3f}\n"
             fout.write(fmt.format(d_shell.dmin, d_shell.dmax, len(d_shell.peaks), shell_stats["Rmeas"], shell_stats["Rmerge"], shell_stats["Rpim"], shell_stats["CChalf"], shell_stats["CCtrue"]))
 
 def write_shelx_file(filename, unit_cell, peaks):
-    
+
     peak_filter = nsx.PeakFilter()
-    
+
     filtered_peaks = peaks
-    
+
     filtered_peaks = peak_filter.unitCell(filtered_peaks,unit_cell)
     filtered_peaks = peak_filter.indexed(filtered_peaks,unit_cell,unit_cell.indexingTolerance())
-    
+
     peak_fmt = "{:4d}{:4d}{:4d}{:8.2f}{:8.2f}\n"
-    
+
     with open(filename,"w") as fout:
-    
+
         for peak in filtered_peaks:
-                        
+
             miller_index = nsx.MillerIndex(peak,unit_cell)
-            
+
             hkl = miller_index.rowVector()
-            
+
             intensity = peak.correctedIntensity()
-            
+
             fout.write(peak_fmt.format(hkl[0][0],hkl[0][1],hkl[0][2],intensity.value(),intensity.sigma()))
-    
-                        
+
+
 def set_resolution_shells(peaks, **kwargs):
 
     n_resolution_shells = kwargs.get("n_resolution_shells",10)
@@ -325,13 +280,13 @@ def set_resolution_shells(peaks, **kwargs):
 def plot_I_vs_q(peak_list):
     qs = []
     Is = []
-    
+
     for peak in peak_list:
         q = np.linalg.norm(peak.getQ().rowVector())
         I = peak.correctedIntensity().value()
         qs.append(q)
         Is.append(I)
-    
+
     plt.figure(figsize=(10,10))
     plt.scatter(qs, Is)
     plt.show()
@@ -339,22 +294,22 @@ def plot_I_vs_q(peak_list):
 def plot_Isigma_vs_q(peak_list):
     qs = []
     Is = []
-    
+
     for peak in peak_list:
         q = np.linalg.norm(peak.getQ().rowVector())
         I = peak.correctedIntensity().value()
         sigma = peak.correctedIntensity().sigma()
         qs.append(q)
         Is.append(I/sigma)
-    
+
     plt.figure(figsize=(10,10))
     plt.scatter(qs, Is)
-    plt.show()    
+    plt.show()
 
 def plot_dq_vs_frame(peak_list):
     dqs = []
     frames = []
-    
+
     for i in range(len(peak_list)):
         peak = peak_list[i]
         obs_q = peak.getQ().rowVector()
@@ -363,72 +318,37 @@ def plot_dq_vs_frame(peak_list):
         hkl = nsx.MillerIndex(peak,uc)
         pred_q = hkl.rowVector().dot(bu)
         dq = np.linalg.norm(pred_q-obs_q)
-        
+
         dqs.append(dq)
         frames.append(peak.getShape().center()[2])
-        
+
     plt.figure(figsize=(10,10))
     plt.scatter(frames, dqs)
     plt.show()
 
-def plot_dx_vs_frame(peak_list, outlier=20):
-    dxs = []
-    frames = []
-    
-    for i in range(len(peak_list)):
-        peak = peak_list[i]
-        obs_x = peak.getShape().center()
-        uc = peak.activeUnitCell()
-        bu = uc.reciprocalBasis()
-        hkl = nsx.MillerIndex(peak,uc)
-        pred_q = hkl.rowVector().dot(bu)
-        
-        predictor = nsx.PeakPredictor(peak.data())
-        ellipsoid = nsx.Ellipsoid(pred_q.transpose(), 100.0*np.identity(3)) 
-        
-        preds = predictor.predictPeaks([nsx.MillerIndex(int(hkl[0,0]), int(hkl[0,1]), int(hkl[0,2]))], uc.reciprocalBasis())
-            
-        if len(preds) != 1:
-            peak.setSelected(False)
-            continue
-            
-        dx = np.linalg.norm(obs_x - preds[0].getShape().center())
-        
-        if (dx > outlier):
-            peak.setSelected(False)
-            continue
-        
-        dxs.append(dx)
-        frames.append(peak.getShape().center()[2])
-
-    plt.figure(figsize=(10,10))
-    plt.scatter(frames, dxs)
-    plt.show()
-
-
 def find_batch(peak, batches):
 
     z = peak.getShape().center()[2,0]
-    
+
     for b in batches:
         if b.contains(z):
             return b
-        
+
     return None
-    
-def reindex(peak_list, batches):          
+
+def reindex(peak_list, batches):
 
     new_peaks = []
-    
+
     for peak in peak_list:
-        
+
         batch = find_batch(peak, batches)
-        
+
         if batch is None:
             continue
-        
+
         uc = batch.cell()
-        
+
         miller_index = nsx.MillerIndex(peak,uc)
 
         if not miller_index.indexed(uc.indexingTolerance()):
@@ -436,45 +356,42 @@ def reindex(peak_list, batches):
 
         peak.addUnitCell(uc, True)
         new_peaks.append(peak)
-            
+
     return new_peaks
 
 def filter_peaks1(peaks):
     for peak in peaks:
         if not peak.isSelected():
             continue
-            
+
         if peak.pValue() > 1e-3:
             peak.setSelected(False)
             continue
-            
+
         d = 1.0 / np.linalg.norm(peak.getQ())
-        
+
         if d > 50.0 or d < 2.1:
             peak.setSelected(False)
             continue
-            
+
         profile = nsx.Profile()
-        
+
         if profile.fit(peak.getIntegration().getProjectionPeak()) == False:
             peak.setSelected(False)
             continue
 
 def num_selected_peaks(peaks):
     num_selected = 0
-    
+
     for peak in peaks:
         if peak.isSelected():
             num_selected += 1
-            
+
     return num_selected
 
 def remove_deselected(data):
     peaks = data.getPeaks()
-    
+
     for peak in peaks:
         if not peak.isSelected():
             data.removePeak(peak)
-
-
-

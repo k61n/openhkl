@@ -299,27 +299,6 @@ Eigen::Vector3d Ellipsoid::intersectionCenter(const Eigen::Vector3d& n, const Ei
 }
 
 
-Ellipsoid Ellipsoid::toDetectorSpace(sptrDataSet data) const
-{
-    auto events = data->events({ReciprocalVector(_center)});
-
-    // something bad happened
-    if (events.size() != 1) {
-        throw std::runtime_error("could not transform ellipse from q space to detector space");
-    }
-
-    const auto& event = events[0];
-    auto position = data->reader()->diffractometer()->detector()->pixelPosition(event._px, event._py);
-    auto state = data->interpolatedState(event._frame);
-
-    // Jacobian of map from detector coords to sample q space
-    Eigen::Matrix3d J = state.jacobianQ(event._px, event._py);
-    const Eigen::Matrix3d det_inv_cov = J.transpose() * _metric * J;
-
-    Eigen::Vector3d p(event._px, event._py, event._frame);
-    return Ellipsoid(p, det_inv_cov);
-}
-
 double Ellipsoid::r2(const Eigen::Vector3d x) const
 {
     return (x-_center).dot(_metric*(x-_center));

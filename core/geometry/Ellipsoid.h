@@ -58,13 +58,13 @@ public:
     //! Construct a 3-dimensional ellipsoid from its center, radii, and principal axes ()
     Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& radii, const Eigen::Matrix3d& axes);
     //! Destructor
-    virtual ~Ellipsoid()=default; 
+    virtual ~Ellipsoid()=default;
     //! Assignment
     Ellipsoid& operator=(const Ellipsoid& other);
     //! Return true if the ellipsoid intersects an aabb.
     bool collide(const AABB& other) const;
     //! Return true if the ellipsoid intersects an ellipsoid.
-    bool collide(const Ellipsoid& other) const;    
+    bool collide(const Ellipsoid& other) const;
     //! Return true if ellipsoid collides with segment from a to b
     bool collideSegment(const Eigen::Vector3d& a, const Eigen::Vector3d& b) const;
     //! Return true if ellipsoid collides with face o (o+a) (o+a+b) (o+n) with normal n
@@ -76,7 +76,7 @@ public:
     //! Scale isotropically the ellipsoid.
     void scale(double value);
     //! Translate the ellipsoid
-    void translate(const Eigen::Vector3d& t);   
+    void translate(const Eigen::Vector3d& t);
     //! Return the volume of the ellipsoid
     double volume() const;
     //! Return the homogenous matrix Q defining the ellipsoid
@@ -95,8 +95,6 @@ public:
     Eigen::Vector3d intersectionCenter(const Eigen::Vector3d& n, const Eigen::Vector3d& p) const;
     //! Return the axis aligned bounding box of the ellipsoid
     const AABB& aabb() const;
-    //! Transform the ellipsoid to detector space, assuming it is currently in q-space.
-    Ellipsoid toDetectorSpace(sptrDataSet data) const;
     //! Return the value (x-center)*metric*(x-center)
     double r2(const Eigen::Vector3d x) const;
 
