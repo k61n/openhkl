@@ -1,12 +1,10 @@
 #include <array>
 
-#include "AABB.h"
 #include "DataSet.h"
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "Ellipsoid.h"
 #include "IDataReader.h"
-//#include "GeometryTypes.h"
 #include "ReciprocalVector.h"
 
 namespace nsx {
