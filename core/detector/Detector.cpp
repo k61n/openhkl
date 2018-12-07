@@ -372,4 +372,3 @@ DetectorGonioFit Detector::fitGonioOffsets(const DataList& dataset, size_t n_ite
 }
 
 } // end namespace nsx
-

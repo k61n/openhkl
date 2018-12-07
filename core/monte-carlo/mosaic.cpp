@@ -12,19 +12,15 @@
 
 #include "mosaic.h"
 
-
 #include "Blob3D.h"
-
 #include "ConvexHull.h"
 #include "Detector.h"
 #include "Diffractometer.h"
-#include "Gonio.h"
 #include "DataSet.h"
-#include "ILLDataReader.h"
+#include "IDataReader.h"
 #include "Peak3D.h"
 #include "PeakFinder.h"
 #include "Sample.h"
-#include "Source.h"
 #include "Triangle.h"
 #include "UnitCell.h"
 #include "Units.h"
@@ -85,7 +81,7 @@ double ellipsoids_overlap(const nsx::Ellipsoid& ell1, const nsx::Ellipsoid& ell2
 	for (int i=0;i<100000;++i)
         {
 		Eigen::Vector3d point(d1(gen),d2(gen),d3(gen));
-	
+
 		if (ell1.isInside(point))
                 {
 			++inside1;
@@ -108,7 +104,7 @@ Mosaic::Mosaic(const std::string& instr, double l, double dl, double dMonSam, do
   _mu(mu*UnitsManager::get("deg")),
   _diffractometer(Diffractometer::create(instr))
 {
-	
+
 }
 
 void Mosaic::setSample(Sample* sample)
@@ -200,7 +196,7 @@ bool Mosaic::run(const std::vector<std::string>& numors, unsigned int n, double&
 			//ComponentState detectorState=d->getDetectorState(z);
 
 	        Eigen::Matrix3d omchiphi = state.sampleOrientationMatrix();
-			
+
 			Eigen::Vector3d qvect = omchiphi*zvect;
 
 			std::cout<<qvect.transpose()<<std::endl;

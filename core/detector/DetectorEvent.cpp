@@ -40,7 +40,6 @@
 
 #include "Detector.h"
 #include "DetectorFactory.h"
-#include "Gonio.h"
 
 namespace nsx {
 
@@ -57,4 +56,3 @@ DetectorEvent::DetectorEvent(Eigen::Vector3d x, double tof):
 }
 
 } // end namespace nsx
-

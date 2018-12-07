@@ -44,7 +44,6 @@
 
 #include <Eigen/Dense>
 
-#include "Component.h"
 #include "DirectVector.h"
 #include "GeometryTypes.h"
 
