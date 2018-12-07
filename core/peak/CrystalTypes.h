@@ -14,8 +14,6 @@ class Peak3D;
 class PeakIntegrator;
 class PeakValidator;
 class Profile;
-class SpaceGroup;
-class SpaceGroupSymbols;
 class UnitCell;
 
 using UnitCellSolution = std::pair<UnitCell,double>;
@@ -30,9 +28,5 @@ using PeakList = std::vector<sptrPeak3D>;
 using MergedPeakSet = std::set<MergedPeak>;
 
 using UnitCellList = std::vector<sptrUnitCell>;
-
-using SpaceGroupSymmetry = std::pair<std::string,std::string>;
-
-using AutoIndexingSoluce = std::pair<UnitCell,double>;
 
 } // end namespace nsx

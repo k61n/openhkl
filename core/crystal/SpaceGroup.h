@@ -36,11 +36,15 @@
 
 #include <Eigen/Dense>
 
-#include "CrystalTypes.h"
-#include "MillerIndex.h"
+#include "CrystalTypes.h" // PeakList
+#include "MillerIndex.h" // MillerIndex, MillerIndexList
 #include "SymOp.h"
 
 namespace nsx {
+
+class SpaceGroup;
+class SpaceGroupSymbols;
+using SpaceGroupSymmetry = std::pair<std::string,std::string>;
 
 //! \class SpaceGroup
 //! \brief Class to enumerate and construct the 3d spacegroups.
