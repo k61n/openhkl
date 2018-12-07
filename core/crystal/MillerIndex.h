@@ -1,13 +1,17 @@
 #pragma once
 
 #include <iostream>
-
+#include <vector>
 #include <Eigen/Dense>
 
-#include "CrystalTypes.h"
 #include "ReciprocalVector.h"
 
 namespace nsx {
+
+class MillerIndex;
+using MillerIndexList = std::vector<MillerIndex>;
+
+class UnitCell;
 
 //! \brief Class to define the Miller indices (a.k.a hkl index)
 //!
@@ -40,7 +44,7 @@ public:
 
     //! Return indices in the form of an Eigen row vector
     const Eigen::RowVector3i& rowVector() const;
-  
+
     //! Return the value of an element of the vector
     int operator[](int index) const;
     //! Return a reference to an element of the vector
