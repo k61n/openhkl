@@ -39,7 +39,6 @@
 
 #include "AABB.h"
 #include "GeometryTypes.h"
-#include "DataTypes.h"
 
 namespace nsx {
 

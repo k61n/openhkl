@@ -1,11 +1,6 @@
 #include <array>
 
-#include "DataSet.h"
-#include "Detector.h"
-#include "Diffractometer.h"
 #include "Ellipsoid.h"
-#include "IDataReader.h"
-#include "ReciprocalVector.h"
 
 namespace nsx {
 
