@@ -45,8 +45,6 @@
 
 namespace nsx {
 
-using FrameIteratorCallback = std::function<IFrameIterator*(DataSet&, int)>;
-
 //! \brief Class used to manage loading detector images and metadata from disk.
 class DataSet {
     friend class UnitTest_DataSet;
@@ -149,8 +147,6 @@ private:
 
     //! The set of masks bound to the data
     std::set<IMask*> _masks;
-
-    FrameIteratorCallback _iteratorCallback;
 
     std::unique_ptr<IDataReader> _reader;
 };

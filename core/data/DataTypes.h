@@ -11,7 +11,6 @@
 namespace nsx {
 
 class DataSet;
-class IFrameIterator;
 
 using sptrDataSet = std::shared_ptr<DataSet>;
 

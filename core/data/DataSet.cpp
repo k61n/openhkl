@@ -74,8 +74,6 @@ DataSet::DataSet(const DataSet &other)
         _masks.insert(m->clone());
     }
 
-    _iteratorCallback = other._iteratorCallback;
-
     _reader.reset(other._reader->clone());
 }
 
@@ -99,7 +97,6 @@ DataSet& DataSet::operator=(const DataSet &other)
             _masks.insert(m->clone());
         }
 
-        _iteratorCallback = other._iteratorCallback;
         _reader.reset(other._reader->clone());
     }
     return *this;
