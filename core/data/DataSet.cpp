@@ -24,7 +24,6 @@
 #include "Path.h"
 #include "Peak3D.h"
 #include "ProgressHandler.h"
-#include "Sample.h"
 #include "Source.h"
 #include "Units.h" // deg
 
