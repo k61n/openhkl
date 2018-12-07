@@ -28,34 +28,26 @@ public:
     double dMax() const;
     double radius() const;
     double nFrames() const;
-
     int minNeighbors() const;
-
     int interpolation() const;
 
-    nsx::sptrUnitCell cell(); 
+    nsx::sptrUnitCell cell();
 
 public slots:
-
     virtual void accept() override;
 
 private slots:
-
     void slotActionClicked(QAbstractButton *button);
 
 private:
-
     DialogPredictPeaks(ExperimentItem* experiment_tree, const nsx::UnitCellList& unit_cells, QWidget* parent=nullptr);
 
     void predictPeaks();
 
 private:
-
     static DialogPredictPeaks *_instance;
 
     Ui::DialogPredictPeaks *_ui;
-
     ExperimentItem *_experiment_item;
-
     CollectedPeaksModel* _peaks_model;
 };

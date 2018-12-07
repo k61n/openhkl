@@ -1,4 +1,3 @@
-#include <core/UnitCell.h>
 #include <core/Units.h>
 
 #include "DialogUnitCellParameters.h"

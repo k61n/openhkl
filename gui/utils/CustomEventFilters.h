@@ -10,7 +10,6 @@ class ShortcodeFilter : public QObject
     Q_OBJECT
 
 public:
-
     ShortcodeFilter(const QString& shortcode, QObject *parent = 0);
 
 signals:
@@ -21,4 +20,3 @@ protected:
     QString _shortcode;
     int _index;
 };
-

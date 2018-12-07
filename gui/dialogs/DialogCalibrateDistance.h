@@ -18,9 +18,6 @@ signals:
     void on_calibrateDistanceSpinBox_valueChanged(double arg1);
     void on_calibrateDistanceButtonOK_accepted();
 
-private slots:
-
-
 private:
     Ui::DialogCalibrateDistance *ui;
 };

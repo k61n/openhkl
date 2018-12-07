@@ -19,13 +19,11 @@ public:
     ~DialogHDF5Converter();
 
 private slots:
-
     void slotActionClicked(QAbstractButton* button);
 
     void browseOutputDirectory();
 
 private:
-
     void convert();
 
 private:

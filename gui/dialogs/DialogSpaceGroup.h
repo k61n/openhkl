@@ -1,17 +1,10 @@
 #pragma once
 
-#include <memory>
 #include <string>
-#include <tuple>
-
 #include <Eigen/Dense>
-
 #include <QDialog>
 
 #include <core/DataTypes.h>
-#include <core/DataSet.h>
-#include <core/DataTypes.h>
-#include <core/SpaceGroup.h>
 
 class QModelIndex;
 class QWidget;

@@ -21,7 +21,6 @@ class DialogShapeLibrary: public QDialog
     Q_OBJECT
 
 public:
-    
     explicit DialogShapeLibrary(ExperimentItem* experiment_item,
                                 nsx::sptrUnitCell unitCell,
                                 const nsx::PeakList& peaks,
@@ -31,7 +30,7 @@ public:
     const nsx::Profile3D& profile();
     nsx::sptrShapeLibrary library() const;
 
-private slots:    
+private slots:
     void calculate();
     void build();
     void drawFrame(int value);

@@ -21,7 +21,6 @@ public:
 
     QString instrumentName() const;
 
-
 private:
     Ui::DialogExperiment *ui;
 };

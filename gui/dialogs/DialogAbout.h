@@ -2,7 +2,6 @@
 
 #include <QDialog>
 
-class QBoxLayout;
 class QHBoxLayout;
 class QPushButton;
 

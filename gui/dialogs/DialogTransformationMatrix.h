@@ -24,7 +24,6 @@ public:
     ~DialogTransformationMatrix();
 
 public slots:
-
     virtual void accept() override;
 
 private:
