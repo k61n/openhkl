@@ -43,7 +43,6 @@
 
 #include <Eigen/Dense>
 
-#include "Macros.h"
 #include "Minimizer.h"
 
 namespace nsx {
@@ -58,11 +57,8 @@ static void error_handler (const char * reason, const char * file, int line, int
     throw std::runtime_error(msg);
 }
 
-void callback_helper(const size_t iter, void* data, const gsl_multifit_nlinear_workspace *w)
+void callback_helper(const size_t /*iter*/, void* /*data*/, const gsl_multifit_nlinear_workspace *w)
 {
-    NSX_UNUSED(iter)
-    NSX_UNUSED(data)
-
     double r = 0.0;
     for (size_t i = 0; i < w->f->size; ++i) {
         r += gsl_vector_get(w->f, i) * gsl_vector_get(w->f, i);
@@ -89,7 +85,7 @@ struct MinimizerGSL {
     gsl_vector* x;
     //! Weight vector
     gsl_vector* wt;
-    
+
     MinimizerGSL(): workspace(nullptr), jacobian(nullptr), covariance(nullptr), x(nullptr), wt(nullptr) {};
 };
 
@@ -105,8 +101,8 @@ Minimizer::Minimizer():
     _numValues(0),
     _xtol(1e-7),
     _gtol(1e-7),
-    _ftol(1e-7), 
-    _f(nullptr), 
+    _ftol(1e-7),
+    _f(nullptr),
     _df(nullptr)
 
 {
@@ -146,7 +142,7 @@ void Minimizer::initialize(FitParameters& params, int values)
     for (size_t i = 0; i < _numValues; ++i) {
         gsl_vector_set(_gsl->wt, i, 1.0);
     }
-    
+
     _gsl->workspace = gsl_multifit_nlinear_alloc(gsl_multifit_nlinear_trust, &_gsl->fdfParams, _numValues, nfree);
 }
 
@@ -164,13 +160,13 @@ bool Minimizer::fit(int max_iter)
     }
 
     // function which computes vector of residuals
-    _gsl->fdf.f = &Minimizer::gsl_f_wrapper; 
+    _gsl->fdf.f = &Minimizer::gsl_f_wrapper;
     _gsl->fdf.df = _df ? &Minimizer::gsl_df_wrapper : nullptr;
     _gsl->fdf.p = nfree; // number of parameters to be fit
     _gsl->fdf.n = _numValues; // number of residuals
     _gsl->fdf.params = this; // this is the data ptr which is passed to gsl_f_wrapper
     _gsl->fdf.fvv = nullptr;  // not using geodesic acceleration
-    
+
     if (_df) {
         _dfInputEigen.resize(nfree);
         _dfOutputEigen.resize(_numValues, nfree);
@@ -253,11 +249,11 @@ int Minimizer::gsl_df_wrapper(const gsl_vector* input, void* data, gsl_matrix* o
 {
     // call the function
     Minimizer* self = reinterpret_cast<Minimizer*>(data);
-    assert(self->_df != nullptr);   
+    assert(self->_df != nullptr);
 
     // update the parameters
     self->_params.setValues(input);
-    // calculate jacobian   
+    // calculate jacobian
     int result = self->_df(self->_dfOutputEigen);
     // convert output to GSL vectors
     gslFromEigen(self->_dfOutputEigen, output);
