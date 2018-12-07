@@ -44,21 +44,20 @@ include(SetCompilerFlags)
 include(SetLinkerFlags)
 
 if(NSX_TIDY)
-  set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-  include(ClangTidy)
+    set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+    include(ClangTidy)
 endif()
 
 if(BUILD_COVERAGE_REPORT)
-  include(CheckCoverage)
+    include(CheckCoverage)
 endif()
 
 if(NSX_DOCS)
-  include(Doxygen)
+    include(Doxygen)
 endif()
 
 
-# Enable unit testing with ctest. This must be called before any calls to add_subdirectory
-enable_testing()
+include(CTest)
 
 add_subdirectory(nsxlib)
 
@@ -71,26 +70,27 @@ endif()
 # additional tools
 add_subdirectory(tools)
 
-# Directory with all the unit-tests.
-add_subdirectory(tests)
+if(BUILD_TESTING)
+    add_subdirectory(tests)
+endif()
 
 # swig + python tests
 if(NSX_PYTHON)
-  add_subdirectory(swig)
+    add_subdirectory(swig)
 endif()
 
 
 # code coverage report
 if(BUILD_COVERAGE_REPORT)
-  list(APPEND ignore_dirs "'/usr/include/*'")
-  list(APPEND ignore_dirs "'/usr/lib/*'")
-  list(APPEND ignore_dirs "'${CMAKE_BINARY_DIR}/*'")
-  list(APPEND ignore_dirs "'${CMAKE_SOURCE_DIR}/3rdparty/*'")
+    list(APPEND ignore_dirs "'/usr/include/*'")
+    list(APPEND ignore_dirs "'/usr/lib/*'")
+    list(APPEND ignore_dirs "'${CMAKE_BINARY_DIR}/*'")
+    list(APPEND ignore_dirs "'${CMAKE_SOURCE_DIR}/3rdparty/*'")
 
-  message("coverage ignore dirs = ${ignore_dirs}")
+    message("coverage ignore dirs = ${ignore_dirs}")
 
-  #list(APPEND ignore_dirs "'*/tests/*'")
-  add_coverage_target(coverage "${ignore_dirs}")
+    #list(APPEND ignore_dirs "'*/tests/*'")
+    add_coverage_target(coverage "${ignore_dirs}")
 endif()
 
 
@@ -99,5 +99,5 @@ endif()
 ###########################################################################
 
 if(ENABLE_CPACK)
- include(CPackSetup)
+    include(CPackSetup)
 endif()
