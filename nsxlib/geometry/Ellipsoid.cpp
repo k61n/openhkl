@@ -3,11 +3,10 @@
 #include "AABB.h"
 #include "DataSet.h"
 #include "Detector.h"
-#include "DetectorEvent.h"
 #include "Diffractometer.h"
 #include "Ellipsoid.h"
 #include "IDataReader.h"
-#include "GeometryTypes.h"
+//#include "GeometryTypes.h"
 #include "ReciprocalVector.h"
 
 namespace nsx {
@@ -108,7 +107,7 @@ bool Ellipsoid::collide(const AABB& aabb) const
 // by Choi, Wang, and Liu. The lemma is stated for ellipses but one can
 // easily check that the proof is valid for ellipsoids in all dimensions.
 bool Ellipsoid::collide(const Ellipsoid& other) const
-{ 
+{
     // quick test using AABB, also needed for numerical stability
     if (!_aabb.collide(other._aabb)) {
         return false;
@@ -119,10 +118,10 @@ bool Ellipsoid::collide(const Ellipsoid& other) const
     const auto& B = other.homogeneousMatrix();
     Eigen::ComplexEigenSolver<Eigen::Matrix4d> solver(AI*B);
     const auto& roots = solver.eigenvalues();
-    
+
     const double eps = 1e-5;
 
-    // if there exists a real negative root then the ellipsoids are separated    
+    // if there exists a real negative root then the ellipsoids are separated
     for (auto i = 0; i < 4; ++i) {
         if (std::fabs(imag(roots(i))) < eps && real(roots(i)) < 0.0) {
             return false;
@@ -148,7 +147,7 @@ void Ellipsoid::scale(double value)
 void Ellipsoid::translate(const Eigen::Vector3d& t)
 {
     _center += t;
-    updateAABB();  
+    updateAABB();
 }
 
 bool Ellipsoid::isInside(const Eigen::Vector3d& point) const
@@ -173,7 +172,7 @@ double Ellipsoid::volume() const
     return c * std::pow(_metric.determinant(), -0.5);
 }
 
-void Ellipsoid::updateAABB() 
+void Ellipsoid::updateAABB()
 {
     Eigen::Vector3d a;
     for (auto i = 0; i < 3; ++i) {
@@ -259,7 +258,7 @@ bool Ellipsoid::collideFace(const Eigen::Vector3d& o, const Eigen::Vector3d& a, 
     const double d = n.dot(o);
     const double nAn = n.dot(_inverseMetric*n);
     const double lagrange = (d-n.dot(_center)) / nAn;
-        
+
     // ellipsoid does not even intersect the plane containing the face
     if (lagrange*lagrange*nAn > 1.0) {
         return false;
@@ -313,8 +312,8 @@ Ellipsoid Ellipsoid::toDetectorSpace(sptrDataSet data) const
 
     const auto& event = events[0];
     auto position = data->reader()->diffractometer()->detector()->pixelPosition(event._px, event._py);
-    auto state = data->interpolatedState(event._frame);  
-   
+    auto state = data->interpolatedState(event._frame);
+
     // Jacobian of map from detector coords to sample q space
     Eigen::Matrix3d J = state.jacobianQ(event._px, event._py);
     const Eigen::Matrix3d det_inv_cov = J.transpose() * _metric * J;
