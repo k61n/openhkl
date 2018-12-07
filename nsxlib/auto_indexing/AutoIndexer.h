@@ -38,7 +38,6 @@
 #include <vector>
 
 #include "CrystalTypes.h"
-#include "InstrumentTypes.h"
 #include "UtilsTypes.h"
 
 namespace nsx {
@@ -102,7 +101,7 @@ private:
     void refineConstraints();
 
     void removeBad(double quality);
-  
+
     IndexerParameters _params;
 
     PeakList _peaks;

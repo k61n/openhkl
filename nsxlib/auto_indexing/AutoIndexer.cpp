@@ -47,7 +47,6 @@
 #include "PeakFilter.h"
 #include "ProgressHandler.h"
 #include "ReciprocalVector.h"
-#include "Sample.h"
 #include "UnitCell.h"
 
 namespace nsx {
