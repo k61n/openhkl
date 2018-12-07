@@ -2,7 +2,7 @@
 
 #include <QDialog>
 
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 #include <core/DataTypes.h>
 #include <core/InstrumentTypes.h>
 #include <core/Profile3D.h>

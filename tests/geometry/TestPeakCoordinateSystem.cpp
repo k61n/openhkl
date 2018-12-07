@@ -8,7 +8,7 @@
 
 #include <core/NSXTest.h>
 
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 #include <core/DataSet.h>
 #include <core/Detector.h>
 #include <core/DetectorEvent.h>

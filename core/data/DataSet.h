@@ -34,7 +34,7 @@
 
 #include <Eigen/Dense>
 
-#include "CrystalTypes.h"
+#include "PeakList.h"
 #include "DataTypes.h"
 #include "GeometryTypes.h"
 #include "IDataReader.h"

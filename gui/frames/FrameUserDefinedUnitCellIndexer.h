@@ -3,7 +3,7 @@
 #include <utility>
 #include <vector>
 
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 #include <core/UserDefinedUnitCellIndexer.h>
 
 #include "NSXQFrame.h"

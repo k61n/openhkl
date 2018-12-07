@@ -38,7 +38,7 @@
 #include <set>
 #include <Eigen/Dense>
 
-#include "CrystalTypes.h"
+#include "PeakList.h"
 #include "Intensity.h"
 #include "MillerIndex.h"
 #include "SpaceGroup.h"

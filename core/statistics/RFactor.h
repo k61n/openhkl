@@ -33,7 +33,7 @@
 #include <set>
 #include <vector>
 
-#include "CrystalTypes.h"
+#include "PeakList.h"
 #include "IMergedPeakStatistic.h"
 
 namespace nsx {

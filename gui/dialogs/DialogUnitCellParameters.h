@@ -2,7 +2,7 @@
 
 #include <QDialog>
 
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 
 namespace Ui
 {

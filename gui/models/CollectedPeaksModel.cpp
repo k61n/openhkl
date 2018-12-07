@@ -7,7 +7,7 @@
 #include <QIcon>
 #include <QString>
 
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 #include <core/DataSet.h>
 #include <core/Detector.h>
 #include <core/Diffractometer.h>

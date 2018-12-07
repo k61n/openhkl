@@ -4,7 +4,7 @@
 
 #include <string>
 
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 #include <core/GeometryTypes.h>
 
 #include "PlottableGraphicsItem.h"

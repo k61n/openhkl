@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "CrystalTypes.h"
+#include "PeakList.h"
 
 namespace nsx {
 

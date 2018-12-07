@@ -2,7 +2,7 @@
 
 #include <map>
 
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 #include <core/DataTypes.h>
 #include <core/Refiner.h>
 

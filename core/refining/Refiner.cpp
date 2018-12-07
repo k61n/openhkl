@@ -38,7 +38,7 @@
 #include <algorithm>
 #include <iterator>
 
-#include "CrystalTypes.h"
+#include "PeakList.h"
 #include "DataSet.h"
 #include "DetectorEvent.h"
 #include "InstrumentState.h"

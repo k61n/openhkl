@@ -2,7 +2,7 @@
 
 #include "InspectableTreeItem.h"
 
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 #include <core/InstrumentTypes.h>
 
 class QWidget;

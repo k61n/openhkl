@@ -2,7 +2,7 @@
 
 #include <QWidget>
 
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 
 namespace Ui {
 class WidgetUnitCell;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 #include <core/InstrumentTypes.h>
 
 #include "InspectableTreeItem.h"

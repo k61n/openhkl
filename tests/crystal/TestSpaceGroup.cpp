@@ -1,7 +1,7 @@
 #include <map>
 #include <string>
 
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 #include <core/MillerIndex.h>
 #include <core/NSXTest.h>
 #include <core/SpaceGroup.h>

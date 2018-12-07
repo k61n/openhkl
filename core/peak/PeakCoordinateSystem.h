@@ -2,7 +2,7 @@
 
 #include <Eigen/Core>
 
-#include "CrystalTypes.h"
+#include "PeakList.h"
 #include "DetectorEvent.h"
 #include "Ellipsoid.h"
 #include "InterpolatedState.h"

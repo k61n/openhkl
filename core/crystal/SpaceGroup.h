@@ -36,7 +36,7 @@
 
 #include <Eigen/Dense>
 
-#include "CrystalTypes.h" // PeakList
+#include "PeakList.h" // PeakList
 #include "MillerIndex.h" // MillerIndex, MillerIndexList
 #include "SymOp.h"
 

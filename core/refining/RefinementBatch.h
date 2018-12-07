@@ -42,7 +42,7 @@
 
 #include <Eigen/SparseCore>
 
-#include "CrystalTypes.h"
+#include "PeakList.h"
 #include "FitParameters.h"
 #include "InstrumentTypes.h"
 #include "ReciprocalVector.h"

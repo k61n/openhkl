@@ -2,7 +2,7 @@
 
 #include <QIcon>
 
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 #include <core/Peak3D.h>
 
 #include "ExperimentItem.h"

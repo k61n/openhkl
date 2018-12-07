@@ -7,7 +7,7 @@
 
 #include <core/AutoIndexer.h>
 #include <core/ConvolverFactory.h>
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 #include <core/DataSet.h>
 #include <core/Diffractometer.h>
 #include <core/Experiment.h>

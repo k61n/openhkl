@@ -1,7 +1,7 @@
 #include <Eigen/Dense>
 
 #include <core/AutoIndexer.h>
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 #include <core/DataSet.h>
 #include <core/DetectorEvent.h>
 #include <core/Diffractometer.h>

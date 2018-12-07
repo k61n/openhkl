@@ -57,7 +57,7 @@
 #include <QVector>
 
 #include <core/CC.h>
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 #include <core/Detector.h>
 #include <core/Diffractometer.h>
 #include <core/Ellipsoid.h>

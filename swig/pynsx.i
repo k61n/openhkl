@@ -264,7 +264,7 @@ using namespace nsx;
 %template(vectorRowVector3d) std::vector<Eigen::RowVector3d>;
 %include "Version.h"
 %include "ChemistryTypes.h"
-%include "CrystalTypes.h"
+%include "PeakList.h"
 %include "DataTypes.h"
 %include "GeometryTypes.h"
 %include "InstrumentTypes.h"

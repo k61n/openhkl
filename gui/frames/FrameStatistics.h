@@ -2,7 +2,7 @@
 
 #include <map>
 
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 #include <core/MergedData.h>
 #include <core/SpaceGroup.h>
 

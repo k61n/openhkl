@@ -33,7 +33,7 @@
 #include <sstream>
 #include <vector>
 
-#include "CrystalTypes.h"
+#include "PeakList.h"
 #include "Peak3D.h"
 #include "PeakFilter.h"
 #include "ReciprocalVector.h"

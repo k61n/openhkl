@@ -5,7 +5,7 @@
 #include <map>
 #include <vector>
 
-#include "CrystalTypes.h"
+#include "PeakList.h"
 #include "DataTypes.h"
 #include "DetectorEvent.h"
 #include "Profile3D.h"

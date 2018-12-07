@@ -34,7 +34,7 @@
 
 #include <Eigen/Dense>
 
-#include "CrystalTypes.h"
+#include "PeakList.h"
 #include "MergedPeak.h"
 
 namespace nsx {

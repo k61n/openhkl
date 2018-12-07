@@ -7,7 +7,7 @@
 #include <QMenu>
 #include <QProgressBar>
 
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 #include <core/DataSet.h>
 #include <core/DataTypes.h>
 #include <core/UtilsTypes.h>

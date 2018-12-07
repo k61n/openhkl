@@ -2,7 +2,7 @@
 
 #include <QWidget>
 
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 #include <core/InstrumentTypes.h>
 
 namespace Ui {

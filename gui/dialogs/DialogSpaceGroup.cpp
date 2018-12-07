@@ -13,7 +13,7 @@
 #include <QString>
 #include <QTreeView>
 
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 #include <core/DataSet.h>
 #include <core/Diffractometer.h>
 #include <core/Logger.h>

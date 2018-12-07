@@ -8,7 +8,7 @@
 #include <Eigen/Dense>
 
 #include "Any.h"
-#include "CrystalTypes.h"
+#include "PeakList.h"
 #include "ReciprocalVector.h"
 #include "UnitCell.h"
 #include "Units.h"

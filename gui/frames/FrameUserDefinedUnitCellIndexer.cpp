@@ -2,7 +2,7 @@
 #include <QStandardItem>
 #include <QStandardItemModel>
 
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 #include <core/Diffractometer.h>
 #include <core/Experiment.h>
 #include <core/Logger.h>

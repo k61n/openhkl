@@ -11,7 +11,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 
-#include <core/CrystalTypes.h>
+#include <core/PeakList.h>
 #include <core/DataTypes.h>
 #include <core/IMask.h>
 
