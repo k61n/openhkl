@@ -30,12 +30,14 @@
 #pragma once
 
 #include <ostream>
-
+#include <vector>
 #include <Eigen/Dense>
 
-#include "CrystalTypes.h"
-
 namespace nsx {
+
+class SymOp;
+using SymOpList    = std::vector<SymOp>;
+using affineTransformation=Eigen::Transform<double,3,Eigen::Affine>;
 
 //! \class SymOp
 //! \brief Class to represent a symmetry operation of a spacegroup.
