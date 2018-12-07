@@ -32,20 +32,6 @@ struct PeakFactors {
     double lorentz;
 };
 
-static PeakFactors peakFactors(nsx::sptrPeak3D peak)
-{
-    auto coord = peak->shape().center();
-    auto state = peak->data()->interpolatedState(coord[2]);
-    auto position = peak->data()->reader()->diffractometer()->detector()->pixelPosition(coord[0], coord[1]);
-
-    PeakFactors peak_factors;
-    peak_factors.gamma = state.gamma(position);
-    peak_factors.nu = state.nu(position);
-    peak_factors.lorentz = state.lorentzFactor(coord[0], coord[1]);
-
-    return peak_factors;
-}
-
 CollectedPeaksModel::CollectedPeaksModel(SessionModel* session, nsx::sptrExperiment experiment, QObject *parent)
 : QAbstractTableModel(parent),
   _experiment(std::move(experiment)),
@@ -238,7 +224,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
 
-    case Qt::DisplayRole:        
+    case Qt::DisplayRole:
 
         switch (column) {
         case Column::h: {
@@ -290,11 +276,11 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
     }
     case Qt::ToolTipRole:
         switch (column) {
-            case Column::h:                
+            case Column::h:
                 return hkl[0]+hkl_error[0];
-            case Column::k:                
+            case Column::k:
                 return hkl[1]+hkl_error[1];
-            case Column::l:                
+            case Column::l:
                 return hkl[2]+hkl_error[2];
         }
         break;
