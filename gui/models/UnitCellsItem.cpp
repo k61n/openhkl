@@ -2,8 +2,8 @@
 
 #include <QIcon>
 
-#include <nsxlib/CrystalTypes.h>
-#include <nsxlib/Peak3D.h>
+#include <core/CrystalTypes.h>
+#include <core/Peak3D.h>
 
 #include "ExperimentItem.h"
 #include "MetaTypes.h"

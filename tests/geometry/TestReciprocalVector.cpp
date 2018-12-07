@@ -1,7 +1,7 @@
 #include <Eigen/Dense>
 
-#include <nsxlib/NSXTest.h>
-#include <nsxlib/ReciprocalVector.h>
+#include <core/NSXTest.h>
+#include <core/ReciprocalVector.h>
 
 NSX_INIT_TEST
 

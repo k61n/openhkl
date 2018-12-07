@@ -4,8 +4,8 @@
 
 #include <string>
 
-#include <nsxlib/CrystalTypes.h>
-#include <nsxlib/GeometryTypes.h>
+#include <core/CrystalTypes.h>
+#include <core/GeometryTypes.h>
 
 #include "PlottableGraphicsItem.h"
 

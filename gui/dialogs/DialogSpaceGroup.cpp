@@ -13,18 +13,18 @@
 #include <QString>
 #include <QTreeView>
 
-#include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/Logger.h>
-#include <nsxlib/MillerIndex.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/PeakFilter.h>
-#include <nsxlib/ReciprocalVector.h>
-#include <nsxlib/RFactor.h>
-#include <nsxlib/Sample.h>
-#include <nsxlib/SpaceGroup.h>
-#include <nsxlib/UnitCell.h>
+#include <core/CrystalTypes.h>
+#include <core/DataSet.h>
+#include <core/Diffractometer.h>
+#include <core/Logger.h>
+#include <core/MillerIndex.h>
+#include <core/Peak3D.h>
+#include <core/PeakFilter.h>
+#include <core/ReciprocalVector.h>
+#include <core/RFactor.h>
+#include <core/Sample.h>
+#include <core/SpaceGroup.h>
+#include <core/UnitCell.h>
 
 #include "DialogSpaceGroup.h"
 #include "ui_DialogSpaceGroup.h"

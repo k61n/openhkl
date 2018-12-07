@@ -9,7 +9,7 @@
 #include <QStandardItemModel>
 #include <QTreeView>
 
-#include <nsxlib/DataTypes.h>
+#include <core/DataTypes.h>
 
 class DataItem;
 class ExperimentItem;

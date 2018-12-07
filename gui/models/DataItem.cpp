@@ -8,14 +8,14 @@
 #include <QStandardItem>
 #include <QString>
 
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/IDataReader.h>
-#include <nsxlib/Logger.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/ProgressHandler.h>
-#include <nsxlib/PixelSumIntegrator.h>
-#include <nsxlib/RawDataReader.h>
+#include <core/DataSet.h>
+#include <core/Experiment.h>
+#include <core/IDataReader.h>
+#include <core/Logger.h>
+#include <core/Peak3D.h>
+#include <core/ProgressHandler.h>
+#include <core/PixelSumIntegrator.h>
+#include <core/RawDataReader.h>
 
 #include "DataItem.h"
 #include "DialogHDF5Converter.h"

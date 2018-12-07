@@ -9,7 +9,7 @@
 
 #include <QAbstractTableModel>
 
-#include <nsxlib/ITask.h>
+#include <core/ITask.h>
 
 class TaskManagerModel : public QAbstractTableModel
 {

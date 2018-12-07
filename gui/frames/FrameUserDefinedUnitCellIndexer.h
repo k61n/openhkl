@@ -3,8 +3,8 @@
 #include <utility>
 #include <vector>
 
-#include <nsxlib/CrystalTypes.h>
-#include <nsxlib/UserDefinedUnitCellIndexer.h>
+#include <core/CrystalTypes.h>
+#include <core/UserDefinedUnitCellIndexer.h>
 
 #include "NSXQFrame.h"
 

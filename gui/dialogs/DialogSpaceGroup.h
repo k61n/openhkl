@@ -8,10 +8,10 @@
 
 #include <QDialog>
 
-#include <nsxlib/DataTypes.h>
-#include <nsxlib/DataSet.h>
-#include <nsxlib/DataTypes.h>
-#include <nsxlib/SpaceGroup.h>
+#include <core/DataTypes.h>
+#include <core/DataSet.h>
+#include <core/DataTypes.h>
+#include <core/SpaceGroup.h>
 
 class QModelIndex;
 class QWidget;

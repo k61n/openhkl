@@ -8,15 +8,15 @@
 #include <QTableView>
 #include <QVector>
 
-#include <nsxlib/CC.h>
-#include <nsxlib/DataSet.h>
-#include <nsxlib/IDataReader.h>
-#include <nsxlib/Logger.h>
-#include <nsxlib/MetaData.h>
-#include <nsxlib/MillerIndex.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/ResolutionShell.h>
-#include <nsxlib/RFactor.h>
+#include <core/CC.h>
+#include <core/DataSet.h>
+#include <core/IDataReader.h>
+#include <core/Logger.h>
+#include <core/MetaData.h>
+#include <core/MillerIndex.h>
+#include <core/Peak3D.h>
+#include <core/ResolutionShell.h>
+#include <core/RFactor.h>
 
 #include "CollectedPeaksModel.h"
 #include "DoubleItemDelegate.h"

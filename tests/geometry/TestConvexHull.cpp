@@ -1,11 +1,11 @@
 #include <fstream>
 #include <stdexcept>
 
-#include <nsxlib/AABB.h>
-#include <nsxlib/ConvexHull.h>
-#include <nsxlib/Face.h>
-#include <nsxlib/NSXTest.h>
-#include <nsxlib/Vertex.h>
+#include <core/AABB.h>
+#include <core/ConvexHull.h>
+#include <core/Face.h>
+#include <core/NSXTest.h>
+#include <core/Vertex.h>
 
 const double tolerance=1e-9;
 

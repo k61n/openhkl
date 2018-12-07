@@ -1,15 +1,15 @@
 #include <QMessageBox>
 
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/Gonio.h>
-#include <nsxlib/Logger.h>
-#include <nsxlib/Material.h>
-#include <nsxlib/MCAbsorption.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/Sample.h>
-#include <nsxlib/Source.h>
-#include <nsxlib/Units.h>
+#include <core/DataSet.h>
+#include <core/Diffractometer.h>
+#include <core/Gonio.h>
+#include <core/Logger.h>
+#include <core/Material.h>
+#include <core/MCAbsorption.h>
+#include <core/Peak3D.h>
+#include <core/Sample.h>
+#include <core/Source.h>
+#include <core/Units.h>
 
 #include "DialogAbsorption.h"
 #include "SampleShapeItem.h"

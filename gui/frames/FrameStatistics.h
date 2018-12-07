@@ -2,9 +2,9 @@
 
 #include <map>
 
-#include <nsxlib/CrystalTypes.h>
-#include <nsxlib/MergedData.h>
-#include <nsxlib/SpaceGroup.h>
+#include <core/CrystalTypes.h>
+#include <core/MergedData.h>
+#include <core/SpaceGroup.h>
 
 #include "NSXQFrame.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <nsxlib/CrystalTypes.h>
+#include <core/CrystalTypes.h>
 
 #include "GLActor.h"
 

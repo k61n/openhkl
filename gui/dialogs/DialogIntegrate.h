@@ -5,7 +5,7 @@
 
 #include <QDialog>
 
-#include <nsxlib/CrystalTypes.h>
+#include <core/CrystalTypes.h>
 
 namespace Ui {
 class DialogIntegrate;

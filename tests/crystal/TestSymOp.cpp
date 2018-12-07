@@ -1,8 +1,8 @@
 #include <stdexcept>
 #include <string>
 
-#include <nsxlib/NSXTest.h>
-#include <nsxlib/SymOp.h>
+#include <core/NSXTest.h>
+#include <core/SymOp.h>
 
 NSX_INIT_TEST
 

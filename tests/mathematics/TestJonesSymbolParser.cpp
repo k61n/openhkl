@@ -3,8 +3,8 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/JonesSymbolParser.h>
-#include <nsxlib/NSXTest.h>
+#include <core/JonesSymbolParser.h>
+#include <core/NSXTest.h>
 
 #include <iostream>
 

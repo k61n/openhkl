@@ -5,7 +5,7 @@
 
 #include <QObject>
 
-#include <nsxlib/IStreamWrapper.h>
+#include <core/IStreamWrapper.h>
 
 class NoteBook;
 

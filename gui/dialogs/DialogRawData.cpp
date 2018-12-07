@@ -33,7 +33,7 @@
  *
  */
 
-#include <nsxlib/Logger.h>
+#include <core/Logger.h>
 
 #include "DialogRawData.h"
 #include "ui_DialogRawData.h"

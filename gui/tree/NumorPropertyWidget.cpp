@@ -1,8 +1,8 @@
 #include <QWidget>
 
-#include <nsxlib/DataSet.h>
-#include <nsxlib/IDataReader.h>
-#include <nsxlib/MetaData.h>
+#include <core/DataSet.h>
+#include <core/IDataReader.h>
+#include <core/MetaData.h>
 
 #include "MetaTypes.h"
 #include "NumorItem.h"

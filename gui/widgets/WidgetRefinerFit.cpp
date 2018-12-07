@@ -1,6 +1,6 @@
 #include <QFileInfo>
 
-#include <nsxlib/DataSet.h>
+#include <core/DataSet.h>
 
 #include "MetaTypes.h"
 #include "WidgetRefinerFit.h"

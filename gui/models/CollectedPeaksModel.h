@@ -7,9 +7,9 @@
 #include <QAbstractTableModel>
 #include <QModelIndexList>
 
-#include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DataTypes.h>
-#include <nsxlib/InstrumentTypes.h>
+#include <core/CrystalTypes.h>
+#include <core/DataTypes.h>
+#include <core/InstrumentTypes.h>
 
 class QObject;
 

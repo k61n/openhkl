@@ -4,9 +4,9 @@
 
 #include <QStandardItemModel>
 
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/Peak3D.h>
+#include <core/DataSet.h>
+#include <core/Experiment.h>
+#include <core/Peak3D.h>
 
 class DataSet;
 class Experiment;

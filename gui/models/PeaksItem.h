@@ -1,7 +1,7 @@
 #pragma once
 
-#include <nsxlib/DataTypes.h>
-#include <nsxlib/InstrumentTypes.h>
+#include <core/DataTypes.h>
+#include <core/InstrumentTypes.h>
 
 #include "InspectableTreeItem.h"
 

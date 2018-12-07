@@ -7,21 +7,21 @@
 #include <QStandardItem>
 #include <QString>
 
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/GaussianIntegrator.h>
-#include <nsxlib/IDataReader.h>
-#include <nsxlib/ISigmaIntegrator.h>
-#include <nsxlib/Logger.h>
-#include <nsxlib/MeanBackgroundIntegrator.h>
-#include <nsxlib/MetaData.h>
-#include <nsxlib/PeakFilter.h>
-#include <nsxlib/Profile1DIntegrator.h>
-#include <nsxlib/Profile3DIntegrator.h>
-#include <nsxlib/RawDataReader.h>
-#include <nsxlib/Sample.h>
-#include <nsxlib/PixelSumIntegrator.h>
-#include <nsxlib/UnitCell.h>
+#include <core/DataSet.h>
+#include <core/Experiment.h>
+#include <core/GaussianIntegrator.h>
+#include <core/IDataReader.h>
+#include <core/ISigmaIntegrator.h>
+#include <core/Logger.h>
+#include <core/MeanBackgroundIntegrator.h>
+#include <core/MetaData.h>
+#include <core/PeakFilter.h>
+#include <core/Profile1DIntegrator.h>
+#include <core/Profile3DIntegrator.h>
+#include <core/RawDataReader.h>
+#include <core/Sample.h>
+#include <core/PixelSumIntegrator.h>
+#include <core/UnitCell.h>
 
 #include "DataItem.h"
 #include "DialogIntegrate.h"

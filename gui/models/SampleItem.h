@@ -1,7 +1,7 @@
 #pragma once
 
-#include <nsxlib/CrystalTypes.h>
-#include <nsxlib/InstrumentTypes.h>
+#include <core/CrystalTypes.h>
+#include <core/InstrumentTypes.h>
 
 #include "InspectableTreeItem.h"
 

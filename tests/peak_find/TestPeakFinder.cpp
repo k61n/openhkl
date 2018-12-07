@@ -2,14 +2,14 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/Experiment.h>
-#include <nsxlib/IDataReader.h>
-#include <nsxlib/PeakFinder.h>
-#include <nsxlib/DataSet.h>
-#include <nsxlib/MetaData.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/NSXTest.h>
-#include <nsxlib/ProgressHandler.h>
+#include <core/Experiment.h>
+#include <core/IDataReader.h>
+#include <core/PeakFinder.h>
+#include <core/DataSet.h>
+#include <core/MetaData.h>
+#include <core/Diffractometer.h>
+#include <core/NSXTest.h>
+#include <core/ProgressHandler.h>
 
 NSX_INIT_TEST
 

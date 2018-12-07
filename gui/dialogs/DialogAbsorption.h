@@ -8,8 +8,8 @@
 #include <QDialog>
 #include <QString>
 
-#include <nsxlib/GeometryTypes.h>
-#include <nsxlib/InstrumentTypes.h>
+#include <core/GeometryTypes.h>
+#include <core/InstrumentTypes.h>
 
 namespace Ui {
 class DialogAbsorption;

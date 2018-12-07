@@ -3,6 +3,6 @@
 #include <functional>
 #include <utility>
 
-#include <nsxlib/CrystalTypes.h>
+#include <core/CrystalTypes.h>
 
 std::pair<double,double> dRange(const nsx::PeakList& peaks); 

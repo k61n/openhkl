@@ -3,13 +3,13 @@
 #include <QFileInfo>
 #include <QPen>
 
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/Gonio.h>
-#include <nsxlib/Logger.h>
-#include <nsxlib/Detector.h>
-#include <nsxlib/Units.h>
+#include <core/DataSet.h>
+#include <core/Diffractometer.h>
+#include <core/Experiment.h>
+#include <core/Gonio.h>
+#include <core/Logger.h>
+#include <core/Detector.h>
+#include <core/Units.h>
 
 #include "DataItem.h"
 #include "DoubleItemDelegate.h"

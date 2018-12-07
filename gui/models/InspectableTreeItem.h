@@ -1,6 +1,6 @@
 #pragma once
 
-#include <nsxlib/InstrumentTypes.h>
+#include <core/InstrumentTypes.h>
 
 #include "TreeItem.h"
 

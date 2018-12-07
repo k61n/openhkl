@@ -2,7 +2,7 @@
 
 #include <QDialog>
 
-#include <nsxlib/InstrumentTypes.h>
+#include <core/InstrumentTypes.h>
 #include "models/SessionModel.h"
 
 class QWidget;

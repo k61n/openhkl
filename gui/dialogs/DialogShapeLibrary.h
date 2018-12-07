@@ -2,10 +2,10 @@
 
 #include <QDialog>
 
-#include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DataTypes.h>
-#include <nsxlib/InstrumentTypes.h>
-#include <nsxlib/Profile3D.h>
+#include <core/CrystalTypes.h>
+#include <core/DataTypes.h>
+#include <core/InstrumentTypes.h>
+#include <core/Profile3D.h>
 
 #include "ColorMap.h"
 #include "ExperimentItem.h"

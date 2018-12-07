@@ -4,8 +4,8 @@
 
 #include <QJsonObject>
 
-#include <nsxlib/GeometryTypes.h>
-#include <nsxlib/ShapeLibrary.h>
+#include <core/GeometryTypes.h>
+#include <core/ShapeLibrary.h>
 
 #include "TreeItem.h"
 

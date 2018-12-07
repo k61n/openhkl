@@ -4,15 +4,15 @@
 #include <QCompleter>
 #include <QStandardItem>
 
-#include <nsxlib/ChemistryTypes.h>
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Gonio.h>
-#include <nsxlib/Logger.h>
-#include <nsxlib/Material.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/SpaceGroup.h>
-#include <nsxlib/UnitCell.h>
-#include <nsxlib/Units.h>
+#include <core/ChemistryTypes.h>
+#include <core/DataSet.h>
+#include <core/Gonio.h>
+#include <core/Logger.h>
+#include <core/Material.h>
+#include <core/Peak3D.h>
+#include <core/SpaceGroup.h>
+#include <core/UnitCell.h>
+#include <core/Units.h>
 
 #include "MetaTypes.h"
 #include "SessionModel.h"

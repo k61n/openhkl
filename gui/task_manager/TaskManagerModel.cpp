@@ -3,7 +3,7 @@
 
 #include <QModelIndex>
 
-#include <nsxlib/ITask.h>
+#include <core/ITask.h>
 
 #include "MetaTypes.h"
 #include "TaskManagerModel.h"

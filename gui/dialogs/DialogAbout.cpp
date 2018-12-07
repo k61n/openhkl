@@ -12,7 +12,7 @@
 #include <QTextBrowser>
 #include <QVBoxLayout>
 
-#include <nsxlib/Version.h>
+#include <core/Version.h>
 
 #include "CustomEventFilters.h"
 #include "DialogAbout.h"

@@ -2,10 +2,10 @@
 
 #include <QSortFilterProxyModel>
 
-#include <nsxlib/DataSet.h>
-#include <nsxlib/DataTypes.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/Sample.h>
+#include <core/DataSet.h>
+#include <core/DataTypes.h>
+#include <core/Diffractometer.h>
+#include <core/Sample.h>
 
 #include "ExperimentItem.h"
 #include "InstrumentItem.h"

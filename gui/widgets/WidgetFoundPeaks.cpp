@@ -1,5 +1,5 @@
-#include <nsxlib/Experiment.h>
-#include <nsxlib/Peak3D.h>
+#include <core/Experiment.h>
+#include <core/Peak3D.h>
 
 #include "CollectedPeaksModel.h"
 #include "ExperimentItem.h"

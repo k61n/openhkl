@@ -1,6 +1,6 @@
 #include <limits>
 
-#include <nsxlib/Peak3D.h>
+#include <core/Peak3D.h>
 
 #include "PeaksUtils.h"
 

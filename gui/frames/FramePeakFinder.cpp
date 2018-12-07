@@ -20,13 +20,13 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 
-#include <nsxlib/ConvolverFactory.h>
-#include <nsxlib/DataSet.h>
-#include <nsxlib/ITask.h>
-#include <nsxlib/Logger.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/PeakFinder.h>
-#include <nsxlib/PixelSumIntegrator.h>
+#include <core/ConvolverFactory.h>
+#include <core/DataSet.h>
+#include <core/ITask.h>
+#include <core/Logger.h>
+#include <core/Peak3D.h>
+#include <core/PeakFinder.h>
+#include <core/PixelSumIntegrator.h>
 
 #include "CollectedPeaksModel.h"
 #include "DoubleItemDelegate.h"

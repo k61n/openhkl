@@ -6,11 +6,11 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Logger.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/PeakFilter.h>
-#include <nsxlib/UnitCell.h>
+#include <core/DataSet.h>
+#include <core/Logger.h>
+#include <core/Peak3D.h>
+#include <core/PeakFilter.h>
+#include <core/UnitCell.h>
 
 #include "ui_DialogPeakFilter.h"
 #include "CollectedPeaksModel.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <nsxlib/DataTypes.h>
+#include <core/DataTypes.h>
 
 #include "NSXQFrame.h"
 

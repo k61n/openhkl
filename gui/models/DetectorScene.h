@@ -11,9 +11,9 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 
-#include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DataTypes.h>
-#include <nsxlib/IMask.h>
+#include <core/CrystalTypes.h>
+#include <core/DataTypes.h>
+#include <core/IMask.h>
 
 #include "ColorMap.h"
 #include "models/SessionModel.h"

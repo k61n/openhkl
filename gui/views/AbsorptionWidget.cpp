@@ -8,11 +8,11 @@
 #include <QMessageBox>
 #include <QPixmap>
 
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/Gonio.h>
-#include <nsxlib/RotAxis.h>
-#include <nsxlib/Sample.h>
+#include <core/Diffractometer.h>
+#include <core/Experiment.h>
+#include <core/Gonio.h>
+#include <core/RotAxis.h>
+#include <core/Sample.h>
 
 #include "AbsorptionWidget.h"
 #include "ui_AbsorptionWidget.h"

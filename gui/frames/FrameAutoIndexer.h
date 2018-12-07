@@ -3,7 +3,7 @@
 #include <utility>
 #include <vector>
 
-#include <nsxlib/CrystalTypes.h>
+#include <core/CrystalTypes.h>
 
 #include "NSXQFrame.h"
 

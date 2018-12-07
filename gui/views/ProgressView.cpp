@@ -1,8 +1,8 @@
 #include <QApplication>
 #include <QPushButton>
 
-#include <nsxlib/Logger.h>
-#include <nsxlib/ProgressHandler.h>
+#include <core/Logger.h>
+#include <core/ProgressHandler.h>
 
 #include "ProgressView.h"
 

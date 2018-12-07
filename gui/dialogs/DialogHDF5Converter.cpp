@@ -6,12 +6,12 @@
 #include <QString>
 #include <QStringList>
 
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/InstrumentTypes.h>
-#include <nsxlib/Logger.h>
-#include <nsxlib/Path.h>
-#include <nsxlib/Resources.h>
+#include <core/DataSet.h>
+#include <core/Diffractometer.h>
+#include <core/InstrumentTypes.h>
+#include <core/Logger.h>
+#include <core/Path.h>
+#include <core/Resources.h>
 
 #include "DataItem.h"
 #include "DialogHDF5Converter.h"

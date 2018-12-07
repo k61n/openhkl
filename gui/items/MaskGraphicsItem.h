@@ -3,8 +3,8 @@
 #include <memory>
 #include <string>
 
-#include <nsxlib/DataTypes.h>
-#include <nsxlib/GeometryTypes.h>
+#include <core/DataTypes.h>
+#include <core/GeometryTypes.h>
 
 #include "CutterGraphicsItem.h"
 

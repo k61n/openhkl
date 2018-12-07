@@ -5,7 +5,7 @@
 #include <set>
 #include <string>
 
-#include <nsxlib/DataTypes.h>
+#include <core/DataTypes.h>
 
 #include "ColorMap.h"
 #include "NSXQFrame.h"

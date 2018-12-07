@@ -12,8 +12,8 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Detector.h>
+#include <core/DataSet.h>
+#include <core/Detector.h>
 
 #include "CutLineGraphicsItem.h"
 #include "DetectorScene.h"

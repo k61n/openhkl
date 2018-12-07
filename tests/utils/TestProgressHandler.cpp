@@ -1,8 +1,8 @@
 #include <string>
 #include <vector>
 
-#include <nsxlib/NSXTest.h>
-#include <nsxlib/ProgressHandler.h>
+#include <core/NSXTest.h>
+#include <core/ProgressHandler.h>
 
 NSX_INIT_TEST
 

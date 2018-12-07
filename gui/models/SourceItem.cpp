@@ -1,8 +1,8 @@
 #include <QIcon>
 
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/Source.h>
+#include <core/Diffractometer.h>
+#include <core/Experiment.h>
+#include <core/Source.h>
 
 #include "SourceItem.h"
 #include "SourcePropertyWidget.h"

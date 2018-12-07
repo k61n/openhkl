@@ -5,7 +5,7 @@
 #include <QPainter>
 #include <QPushButton>
 
-#include <nsxlib/ITask.h>
+#include <core/ITask.h>
 
 #include "TaskManagerModel.h"
 #include "TaskManagerViewDelegate.h"

@@ -3,7 +3,7 @@
 #include <QPen>
 #include <QPointF>
 
-#include <nsxlib/DataTypes.h>
+#include <core/DataTypes.h>
 
 #include "PlottableGraphicsItem.h"
 

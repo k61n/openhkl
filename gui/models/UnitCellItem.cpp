@@ -2,12 +2,12 @@
 
 #include <QInputDialog>
 
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/Logger.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/Sample.h>
-#include <nsxlib/UnitCell.h>
+#include <core/Diffractometer.h>
+#include <core/Experiment.h>
+#include <core/Logger.h>
+#include <core/Peak3D.h>
+#include <core/Sample.h>
+#include <core/UnitCell.h>
 
 #include "DialogSpaceGroup.h"
 #include "DialogTransformationMatrix.h"

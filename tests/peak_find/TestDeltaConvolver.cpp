@@ -1,6 +1,6 @@
-#include <nsxlib/DeltaConvolver.h>
-#include <nsxlib/MathematicsTypes.h>
-#include <nsxlib/NSXTest.h>
+#include <core/DeltaConvolver.h>
+#include <core/MathematicsTypes.h>
+#include <core/NSXTest.h>
 
 NSX_INIT_TEST
 
