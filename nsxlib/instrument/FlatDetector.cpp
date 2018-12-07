@@ -2,7 +2,6 @@
 
 #include "FlatDetector.h"
 #include "Gonio.h"
-#include "Macros.h"
 #include "ReciprocalVector.h"
 #include "RotAxis.h"
 #include "TransAxis.h"
@@ -115,15 +114,12 @@ DetectorEvent FlatDetector::constructEvent(const DirectVector& from, const Recip
     if (px<0 || px > _nCols|| py<0 || py> _nRows) {
         return no_event;
     }
-     
+
     return {px, py, 0.0, tof};
 }
 
-Eigen::Matrix3d FlatDetector::jacobian(double px, double py) const
+Eigen::Matrix3d FlatDetector::jacobian(double /*px*/, double /*py*/) const
 {
-    NSX_UNUSED(px)
-    NSX_UNUSED(py)
-
     Eigen::Matrix3d J;
     J.setZero();
 

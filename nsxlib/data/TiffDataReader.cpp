@@ -1,6 +1,5 @@
 #include "Detector.h"
 #include "Diffractometer.h"
-#include "Macros.h"
 #include "Sample.h"
 #include "TiffDataReader.h"
 
@@ -66,10 +65,8 @@ void TiffDataReader::close()
 }
 
 
-Eigen::MatrixXi TiffDataReader::data(std::size_t frame)
+Eigen::MatrixXi TiffDataReader::data(std::size_t /*frame*/)
 {
-    NSX_UNUSED(frame)
-
     if (!_isOpened) {
         open();
     }
