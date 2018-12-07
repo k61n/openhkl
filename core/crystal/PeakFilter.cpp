@@ -5,14 +5,12 @@
 #include <set>
 
 #include "DataSet.h"
-#include "Diffractometer.h"
 #include "MergedData.h"
 #include "MillerIndex.h"
 #include "Octree.h"
 #include "Peak3D.h"
 #include "PeakFilter.h"
 #include "ReciprocalVector.h"
-#include "Sample.h"
 #include "SpaceGroup.h"
 #include "UnitCell.h"
 

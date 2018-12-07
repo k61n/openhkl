@@ -34,20 +34,15 @@
  */
 
 #include <algorithm>
-#include <cmath>
 #include <stdexcept>
 
 #include "DataSet.h"
 #include "Detector.h"
 #include "Diffractometer.h"
-#include "GeometryTypes.h"
 #include "IDataReader.h"
-#include "InstrumentState.h"
 #include "MillerIndex.h"
 #include "Peak3D.h"
 #include "ReciprocalVector.h"
-#include "Sample.h"
-#include "Source.h"
 #include "UnitCell.h"
 #include "Units.h"
 
