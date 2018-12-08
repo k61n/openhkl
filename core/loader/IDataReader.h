@@ -7,7 +7,7 @@
 
 #include "InstrumentState.h"
 #include "InstrumentTypes.h"
-#include "MetaData.h"
+#include "MetaData.h" // member
 
 namespace nsx {
 

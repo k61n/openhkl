@@ -11,16 +11,12 @@
 
 #include "H5Cpp.h"
 
+#include "IDataReader.h"
 #include "BloscFilter.h"
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "Gonio.h"
-#include "IDataReader.h"
-#include "MathematicsTypes.h"
-#include "Path.h"
-#include "Sample.h"
-#include "Source.h"
-#include "Units.h"
+#include "Path.h" // fileBasename
 
 namespace nsx {
 

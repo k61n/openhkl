@@ -28,17 +28,12 @@
 
 #include <Eigen/Dense>
 
-#include "Component.h"
 #include "Detector.h"
-#include "DetectorEvent.h"
 #include "Diffractometer.h"
 #include "FitParameters.h"
-#include "Gonio.h"
 #include "InstrumentState.h"
 #include "Logger.h"
 #include "MatrixOperations.h"
-#include "Minimizer.h"
-#include "Sample.h"
 
 namespace nsx {
 
@@ -93,7 +88,7 @@ double InstrumentState::nu(const DirectVector& detector_position) const
 
 double InstrumentState::twoTheta(const DirectVector& detector_position) const
 {
-    auto kf = kfLab(detector_position).rowVector();  
+    auto kf = kfLab(detector_position).rowVector();
     double proj = kf.dot(ni);
     return acos(proj/kf.norm()/ni.norm());
 }
@@ -130,7 +125,7 @@ Eigen::Matrix3d InstrumentState::jacobianK(double px, double py) const
     // Jacobian of (px, py) -> kf
     Eigen::Matrix3d dkdx = nki * detectorOrientation * (dpdx / r - dp * drdx / r / r);
 
-    return dkdx;   
+    return dkdx;
 }
 
 const Diffractometer* InstrumentState::diffractometer() const
