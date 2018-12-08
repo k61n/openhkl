@@ -116,4 +116,6 @@ protected:
     Diffractometer *_diffractometer;
 };
 
+using InstrumentStateList = std::vector<InstrumentState>;
+
 } // end namespace nsx
