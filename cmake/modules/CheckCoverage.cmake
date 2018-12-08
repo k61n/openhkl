@@ -4,7 +4,8 @@
 #
 # usage: from build directory
 #
-#        cmake .. -DCMAKE_BUILD_TYPE=Debug
+#        cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_COVERAGE_REPORT=ON
+#        make
 #        ctest   (or make check)
 #        cmake --build . --config Debug --target coverage
 #
@@ -53,7 +54,7 @@ endif()
 # function to add a coverage target
 # it will scan the working directory for coverage info, ignoring the directories in ignore_directories
 function(add_coverage_target targetname ignore_directories)
-  
+
   if (NOT CMAKE_GCOV_FOUND)
     message(FATAL_ERROR "gcov not found! aborting")
   endif()
@@ -67,7 +68,7 @@ function(add_coverage_target targetname ignore_directories)
   endif()
 
   set(lcov_output "${CMAKE_CURRENT_BINARY_DIR}/${targetname}.info")
-  
+
   add_custom_target(${targetname}
     COMMAND ${LCOV_COMMAND} --directory ${CMAKE_CURRENT_BINARY_DIR} --capture --output-file ${lcov_output})
 
@@ -80,9 +81,9 @@ function(add_coverage_target targetname ignore_directories)
       COMMAND ${LCOV_COMMAND} --remove ${lcov_output} ${dirname} --output-file ${lcov_output}.clean
       COMMAND ${CMAKE_COMMAND} -E rename ${lcov_output}.clean ${lcov_output})
   endforeach()
-  
+
   add_custom_command(TARGET ${targetname} POST_BUILD
     COMMAND ${GENHTML_COMMAND} ${lcov_output} -o coverage
     COMMENT "open index.html in your webbrowser to see the code coverage report.")
-  
+
 endfunction()
