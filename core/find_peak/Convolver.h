@@ -34,7 +34,7 @@
 #include <map>
 #include <utility>
 
-#include "MathematicsTypes.h"
+#include "RealMatrix.h"
 
 namespace nsx {
 

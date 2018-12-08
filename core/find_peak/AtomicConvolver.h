@@ -42,7 +42,7 @@
 #include <Eigen/Dense>
 
 #include "Convolver.h"
-#include "MathematicsTypes.h"
+#include "RealMatrix.h"
 
 namespace nsx {
 

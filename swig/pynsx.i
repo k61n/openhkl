@@ -267,7 +267,7 @@ using namespace nsx;
 %include "PeakList.h"
 %include "DataTypes.h"
 %include "GeometryTypes.h"
-%include "MathematicsTypes.h"
+%include "RealMatrix.h"
 %include "UnitCell.h"
 %template(UnitCellList) std::vector<nsx::sptrUnitCell>;
 %include "DirectVector.h"

@@ -26,7 +26,6 @@
 #include <core/GruberReduction.h>
 #include <core/LogFileStreamWrapper.h>
 #include <core/Logger.h>
-#include <core/MathematicsTypes.h>
 #include <core/NiggliReduction.h>
 #include <core/Path.h>
 #include <core/Peak3D.h>

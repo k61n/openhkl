@@ -1,5 +1,5 @@
 #include <core/DeltaConvolver.h>
-#include <core/MathematicsTypes.h>
+#include <core/RealMatrix.h>
 #include <core/NSXTest.h>
 
 NSX_INIT_TEST
