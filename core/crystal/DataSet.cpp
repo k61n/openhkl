@@ -18,7 +18,6 @@
 #include "Diffractometer.h"
 #include "Ellipsoid.h"
 #include "Gonio.h"
-#include "MathematicsTypes.h" // IntMatrix
 #include "Monochromator.h"
 #include "Path.h"
 #include "Peak3D.h"
@@ -221,7 +220,8 @@ void DataSet::saveHDF5(const std::string& filename) //const
     for(offset[0]=0; offset[0] < _nFrames; offset[0] += count[0]) {
         space.selectHyperslab(H5S_SELECT_SET, count, offset, nullptr, nullptr);
         // HDF5 requires row-major storage, so copy frame into a row-major matrix
-        IntMatrix current_frame(frame(offset[0]));
+        Eigen::Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor>
+            current_frame(frame(offset[0]));
         dset.write(current_frame.data(), H5::PredType::NATIVE_INT32, memspace, space);
     }
 
