@@ -8,6 +8,10 @@
 #include <core/GeometryTypes.h>
 #include <core/InstrumentTypes.h>
 
+namespace nsx {
+class RotAxis;
+}
+
 namespace Ui {
 class DialogAbsorption;
 }

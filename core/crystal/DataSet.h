@@ -45,6 +45,8 @@
 
 namespace nsx {
 
+class DetectorEvent;
+
 //! \brief Class used to manage loading detector images and metadata from disk.
 class DataSet {
     friend class UnitTest_DataSet;

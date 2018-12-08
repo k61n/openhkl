@@ -6,7 +6,10 @@
 
 #include <QWidget>
 
-#include <core/InstrumentTypes.h>
+namespace nsx {
+class Experiment;
+class RotAxis;
+}
 
 namespace Ui {
 class AbsorptionWidget;
