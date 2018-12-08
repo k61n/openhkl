@@ -4,9 +4,7 @@
 #include <Eigen/Eigenvalues>
 
 #include "BrillouinZone.h"
-#include "DataSet.h"
 #include "NiggliReduction.h"
-#include "ReciprocalVector.h"
 
 /**
  * @brief Update a list of Q-vectors by removing the duplicates.

@@ -35,7 +35,6 @@
 #include <Eigen/Dense>
 
 #include "ConvexHull.h"
-#include "DataTypes.h"
 
 namespace nsx {
 
