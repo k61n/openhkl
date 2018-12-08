@@ -10,7 +10,6 @@
 #include <core/PeakList.h>
 #include <core/DataSet.h>
 #include <core/DataTypes.h>
-#include <core/UtilsTypes.h>
 
 #include "ProgressView.h"
 #include "TaskManagerModel.h"

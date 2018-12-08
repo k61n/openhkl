@@ -32,7 +32,6 @@
 #include <core/Peak3D.h>
 #include <core/PeakFilter.h>
 #include <core/PeakFinder.h>
-#include <core/ProgressHandler.h>
 #include <core/Sample.h>
 #include <core/Source.h>
 #include <core/SpaceGroup.h>
@@ -239,7 +238,7 @@ void MainWindow::onSetColorMap(const std::string &color_map)
 }
 
 MainWindow::~MainWindow()
-{    
+{
     qInstallMessageHandler(0);
 
     delete _ui;

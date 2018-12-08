@@ -39,7 +39,7 @@
 
 #include "PeakList.h"
 #include "UnitCell.h"
-#include "UtilsTypes.h"
+#include "ProgressHandler.h"
 
 namespace nsx {
 

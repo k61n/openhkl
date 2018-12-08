@@ -34,21 +34,17 @@
 #include "IPeakIntegrator.h"
 #include "Logger.h"
 #include "Peak3D.h"
-#include "ProgressHandler.h"
 #include "UnitCell.h"
-#include "UtilsTypes.h"
 
 
 namespace nsx {
 
 IPeakIntegrator::IPeakIntegrator(): _meanBackground(), _integratedIntensity(), _rockingCurve(), _handler(nullptr)
 {
-
 }
 
 IPeakIntegrator::~IPeakIntegrator()
 {
-
 }
 
 Intensity IPeakIntegrator::meanBackground() const
@@ -121,7 +117,7 @@ void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_en
         current_frame = data->transformedFrame(idx);
 
         mask.resize(data->nRows(), data->nCols());
-        mask.setConstant(int(IntegrationRegion::EventType::EXCLUDED));        
+        mask.setConstant(int(IntegrationRegion::EventType::EXCLUDED));
 
         for (auto peak: peaks) {
             assert(peak != nullptr);
@@ -136,8 +132,8 @@ void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_en
             result |= idx == data->nFrames()-1;
 
             // done reading peak data
-            if (result && !integrated[peak]) {      
-                regions[peak].data().computeStandard();            
+            if (result && !integrated[peak]) {
+                regions[peak].data().computeStandard();
                 try {
                     if (compute(peak, regions[peak])) {
                         peak->updateIntegration(*this, peak_end, bkg_begin, bkg_end);
@@ -152,7 +148,7 @@ void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_en
                 // free memory (important!!)
                 regions[peak].reset();
                 integrated[peak] = true;
-            }                
+            }
         }
 
         if (_handler) {

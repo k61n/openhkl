@@ -41,7 +41,6 @@
 #include "IMask.h"
 #include "InstrumentTypes.h"
 #include "InterpolatedState.h"
-#include "UtilsTypes.h"
 
 namespace nsx {
 

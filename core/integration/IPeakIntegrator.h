@@ -40,7 +40,6 @@
 #include "IntegrationRegion.h"
 #include "Intensity.h"
 #include "ProgressHandler.h"
-#include "UtilsTypes.h"
 
 namespace nsx {
 

@@ -270,7 +270,6 @@ using namespace nsx;
 %include "InstrumentTypes.h"
 %include "MathematicsTypes.h"
 %include "UnitCell.h"
-%include "UtilsTypes.h"
 %template(UnitCellList) std::vector<nsx::sptrUnitCell>;
 %include "DirectVector.h"
 %template(DirectVectorList) std::vector<nsx::DirectVector>;

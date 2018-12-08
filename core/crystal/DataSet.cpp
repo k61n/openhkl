@@ -22,7 +22,6 @@
 #include "Monochromator.h"
 #include "Path.h"
 #include "Peak3D.h"
-#include "ProgressHandler.h"
 #include "Source.h"
 #include "Units.h" // deg
 

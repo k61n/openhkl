@@ -2,6 +2,7 @@
 
 #include <atomic>
 #include <functional>
+#include <memory>
 #include <mutex>
 #include <string>
 #include <vector>
@@ -39,5 +40,7 @@ private:
 
     std::function<void(void)> _callback;
 };
+
+using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
 
 } // end namespace nsx
