@@ -2,7 +2,6 @@
 #include <QDoubleSpinBox>
 
 #include <core/Diffractometer.h>
-#include <core/InstrumentTypes.h>
 #include <core/Logger.h>
 #include <core/Monochromator.h>
 #include <core/Source.h>

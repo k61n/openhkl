@@ -44,7 +44,6 @@
 
 #include "PeakList.h"
 #include "FitParameters.h"
-#include "InstrumentTypes.h"
 #include "ReciprocalVector.h"
 #include "UnitCell.h"
 

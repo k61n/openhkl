@@ -7,8 +7,6 @@
 #include <QStandardItemModel>
 
 #include <core/Experiment.h>
-#include <core/InstrumentTypes.h>
-
 #include "TreeItem.h"
 
 class DataItem;

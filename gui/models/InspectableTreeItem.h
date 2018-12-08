@@ -1,7 +1,5 @@
 #pragma once
 
-#include <core/InstrumentTypes.h>
-
 #include "TreeItem.h"
 
 //! Interface for tree Items for which

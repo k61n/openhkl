@@ -3,8 +3,6 @@
 #include <QWidget>
 
 #include <core/PeakList.h>
-#include <core/InstrumentTypes.h>
-
 namespace Ui {
 class WidgetFoundPeaks;
 }

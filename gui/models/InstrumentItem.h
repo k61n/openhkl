@@ -2,8 +2,6 @@
 
 #include <QJsonObject>
 
-#include <core/InstrumentTypes.h>
-
 #include "TreeItem.h"
 
 class DetectorItem;

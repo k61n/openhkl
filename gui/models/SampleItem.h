@@ -1,8 +1,6 @@
 #pragma once
 
 #include <core/PeakList.h>
-#include <core/InstrumentTypes.h>
-
 #include "InspectableTreeItem.h"
 
 class UnitCellItem;

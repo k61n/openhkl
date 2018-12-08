@@ -5,8 +5,6 @@
 #include <QJsonObject>
 
 #include <core/DataTypes.h>
-#include <core/InstrumentTypes.h>
-
 #include "InspectableTreeItem.h"
 
 class QWidget;

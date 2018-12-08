@@ -3,8 +3,6 @@
 #include "InspectableTreeItem.h"
 
 #include <core/PeakList.h>
-#include <core/InstrumentTypes.h>
-
 class QWidget;
 
 class UnitCellItem : public InspectableTreeItem

@@ -4,8 +4,6 @@
 #include <QVariant>
 
 #include <core/Experiment.h>
-#include <core/InstrumentTypes.h>
-
 #include "SessionModel.h"
 
 class QWidget;

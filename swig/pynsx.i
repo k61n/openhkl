@@ -267,7 +267,6 @@ using namespace nsx;
 %include "PeakList.h"
 %include "DataTypes.h"
 %include "GeometryTypes.h"
-%include "InstrumentTypes.h"
 %include "MathematicsTypes.h"
 %include "UnitCell.h"
 %template(UnitCellList) std::vector<nsx::sptrUnitCell>;
@@ -303,7 +302,6 @@ using namespace nsx;
 %template(propertyb) nsx::IsotopeDatabaseManager::property<bool>;
 %template(scored_uc) std::pair<std::shared_ptr<nsx::UnitCell>, double>;
 %template(indexer_solutions) std::vector<std::pair<std::shared_ptr<nsx::UnitCell>,double>>;
-%include "InstrumentTypes.h"
 %include "Detector.h"
 %include "DetectorEvent.h"
 %template(DetectorEventQueue) std::deque<nsx::DetectorEvent>;

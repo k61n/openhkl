@@ -1,7 +1,6 @@
 #pragma once
 
 #include <core/PeakList.h>
-#include <core/InstrumentTypes.h>
 #include <core/Peak3D.h>
 
 #include "InspectableTreeItem.h"

@@ -36,8 +36,6 @@
 
 #include "DataTypes.h"
 #include "Diffractometer.h"
-#include "InstrumentTypes.h"
-
 namespace nsx {
 
 //! \brief Experiment class, a data type containing a diffractometer and data sets.

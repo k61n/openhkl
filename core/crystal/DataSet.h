@@ -39,7 +39,6 @@
 #include "GeometryTypes.h"
 #include "IDataReader.h"
 #include "IMask.h"
-#include "InstrumentTypes.h"
 #include "InterpolatedState.h"
 
 namespace nsx {

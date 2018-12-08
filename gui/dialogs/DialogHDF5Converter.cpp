@@ -8,7 +8,6 @@
 
 #include <core/DataSet.h>
 #include <core/Diffractometer.h>
-#include <core/InstrumentTypes.h>
 #include <core/Logger.h>
 #include <core/Path.h>
 #include <core/Resources.h>

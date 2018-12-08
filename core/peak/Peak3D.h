@@ -36,7 +36,6 @@
 #include "DataTypes.h"
 #include "Ellipsoid.h"
 #include "GeometryTypes.h"
-#include "InstrumentTypes.h"
 #include "Intensity.h"
 #include "IPeakIntegrator.h"
 #include "UnitCell.h"

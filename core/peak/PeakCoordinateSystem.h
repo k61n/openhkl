@@ -6,8 +6,6 @@
 #include "DetectorEvent.h"
 #include "Ellipsoid.h"
 #include "InterpolatedState.h"
-#include "InstrumentTypes.h"
-
 namespace nsx {
 
 //! \class PeakCoordinateSystem
