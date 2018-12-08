@@ -95,4 +95,6 @@ private:
     std::map<std::string,sptrDataSet> _data;
 };
 
+using sptrExperiment = std::shared_ptr<Experiment>;
+
 } // end namespace nsx

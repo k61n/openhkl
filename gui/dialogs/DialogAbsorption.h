@@ -6,7 +6,7 @@
 #include <QString>
 
 #include <core/GeometryTypes.h>
-#include <core/InstrumentTypes.h>
+#include <core/Experiment.h>
 
 namespace nsx {
 class RotAxis;
