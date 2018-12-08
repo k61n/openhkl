@@ -184,7 +184,6 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "Intensity.h"
 using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 #include "Diffractometer.h"
-using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 #include "Singleton.h"
 #include "Convolver.h"
 #include "AtomicConvolver.h"
