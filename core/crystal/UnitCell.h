@@ -35,7 +35,6 @@
 
 #include <Eigen/Dense>
 
-#include "DataTypes.h"
 #include "GeometryTypes.h"
 #include "Material.h"
 #include "NiggliCharacter.h"
@@ -77,14 +76,6 @@ struct UnitCellCharacter {
     UnitCellCharacter(const Eigen::Matrix3d& g);
     //! Construct a lattice character from the given metric components.
     UnitCellCharacter(double g00_, double g01_, double g02_, double g11_, double g12_, double g22_);
-};
-
-//! \class UnitCellState
-//! \brief Structure to encapsulate the state of the unit cell for a given dataset at a given frame.
-struct UnitCellState {
-
-    Eigen::Matrix3d orientation;
-    UnitCellCharacter character;
 };
 
 
@@ -276,12 +267,6 @@ public:
     //! Return list of space groups which are compatible with the Bravais type of the cell
     std::vector<std::string> compatibleSpaceGroups() const;
 
-    //! Initialize this unit cell state for a given data
-    void initState(sptrDataSet data);
-
-    //! Return a non-const reference to the state of this unit cell for a given data at a given frame
-    UnitCellState& state(sptrDataSet data, size_t frame);
-
     #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     #endif
@@ -311,8 +296,6 @@ private:
     NiggliCharacter _niggli;
 
     UnitCellCharacter _characterSigmas;
-
-    std::map<sptrDataSet,std::vector<UnitCellState>> _states;
 };
 
 using sptrUnitCell = std::shared_ptr<UnitCell>;

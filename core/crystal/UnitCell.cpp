@@ -3,7 +3,6 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "DataSet.h"
 #include "GruberReduction.h"
 #include "Logger.h"
 #include "MillerIndex.h"
@@ -88,8 +87,7 @@ UnitCell::UnitCell(const UnitCell &other)
   _name(other._name),
   _indexingTolerance(other._indexingTolerance),
   _niggli(other._niggli),
-  _characterSigmas(other._characterSigmas),
-  _states(other._states)
+  _characterSigmas(other._characterSigmas)
 {
     _material.reset(other._material ? other._material->clone() : nullptr);
 }
@@ -115,44 +113,8 @@ UnitCell& UnitCell::operator=(const UnitCell &other)
         _indexingTolerance = other._indexingTolerance;
         _niggli = other._niggli;
         _characterSigmas = other._characterSigmas;
-        _states = other._states;
     }
     return *this;
-}
-
-void UnitCell::initState(sptrDataSet data) {
-
-    auto it = _states.find(data);
-    if (it != _states.end()) {
-        return;
-    }
-
-    std::vector<UnitCellState> states;
-    auto n_frames = data->nFrames();
-    states.reserve(n_frames);
-
-    auto u_matrix = orientation();
-    auto ch = character();
-
-    for (size_t i=0; i < n_frames; ++i) {
-        states.push_back({u_matrix,ch});
-    }
-}
-
-UnitCellState& UnitCell::state(sptrDataSet data, size_t frame) {
-
-    auto it = _states.find(data);
-    if (it == _states.end()) {
-        initState(data);
-    }
-
-    auto&& states = _states[data];
-
-    if (frame > (states.size()-1) || frame < 0) {
-        throw std::runtime_error("UnitCell::setState: Invalid frame number");
-    }
-
-    return states[frame];
 }
 
 void UnitCell::setParameters(double a, double b, double c, double alpha, double beta, double gamma)
