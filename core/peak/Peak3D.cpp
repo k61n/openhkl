@@ -36,12 +36,12 @@
 #include <algorithm>
 #include <stdexcept>
 
+#include "Peak3D.h"
 #include "DataSet.h"
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "IDataReader.h"
 #include "MillerIndex.h"
-#include "Peak3D.h"
 #include "ReciprocalVector.h"
 #include "UnitCell.h"
 #include "Units.h"

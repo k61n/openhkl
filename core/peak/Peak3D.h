@@ -32,7 +32,6 @@
 #include <vector>
 #include <Eigen/Dense>
 
-#include "PeakList.h"
 #include "DataTypes.h"
 #include "Ellipsoid.h"
 #include "GeometryTypes.h"
