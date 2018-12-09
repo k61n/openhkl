@@ -23,9 +23,6 @@ struct Face;
 struct Triangle;
 struct Vertex;
 
-using HomVector   = Eigen::Matrix<double,4,1>;
-using HomMatrix   = Eigen::Matrix<double,4,4>;
-
 using covMat = Eigen::Matrix<double,9,9>;
 
 using sptrEllipsoid = std::shared_ptr<Ellipsoid>;
