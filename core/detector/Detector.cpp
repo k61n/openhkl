@@ -40,7 +40,6 @@
 
 #include "Detector.h"
 #include "DetectorFactory.h"
-#include "IDataReader.h"
 #include "Units.h"
 
 namespace nsx {
