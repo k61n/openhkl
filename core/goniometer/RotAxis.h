@@ -37,6 +37,8 @@
 
 namespace nsx {
 
+enum class Direction {CW=1,CCW=2};
+
 //! \brief Class defining a rotation axis.
 //!
 //! Allows to define a rotation axis in 3D space , constructed by a direction vector

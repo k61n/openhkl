@@ -9,6 +9,9 @@
 
 namespace nsx {
 
+using EquivalencePair = std::pair<int,int>;
+using EquivalenceList = std::vector<EquivalencePair>;
+
 //! \brief Class to handle peak search in datasets
 class PeakFinder : public ITask {
 

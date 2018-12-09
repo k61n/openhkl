@@ -142,7 +142,6 @@ public:
     double gain() const;
 
 protected:
-
     //! Detector height
     double _height;
     //! Detector width
@@ -163,14 +162,11 @@ protected:
     double _distance;
 
 private:
-
     DataOrder _dataorder;
     //! Detector baseline. Default is 0.0
     double _baseline;
     //! Detector gain. Default is 1.0
     double _gain;
-
-
 };
 
-} // end namespace nsx
+} // namespace nsx
