@@ -20,7 +20,6 @@ class Diffractometer;
 class Mosaic {
 
 public:
-
 	Mosaic(const std::string& instr, double l, double dl, double dMonSam, double mu);
 	//! Run the Monte-Carlo simulation
 	bool run(const std::vector<std::string>& numors, unsigned int n, double& overlap);
@@ -32,7 +31,6 @@ public:
 	virtual ~Mosaic();
 
 private:
-
 	Diffractometer *_diffractometer;
 
 	Sample* _sample;
