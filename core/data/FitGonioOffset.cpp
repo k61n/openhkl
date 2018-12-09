@@ -7,7 +7,7 @@
 
 namespace nsx {
 
-DetectorGonioFit fitDetectorGonioOffsets(
+GonioFitOutcome fitDetectorGonioOffsets(
     const Gonio& gonio, const DataList& dataset, size_t n_iterations, double tolerance)
 {
     size_t n_axes = gonio.nAxes();
@@ -95,7 +95,7 @@ DetectorGonioFit fitDetectorGonioOffsets(
 }
 
 
-SampleGonioFit fitSampleGonioOffsets(
+GonioFitOutcome fitSampleGonioOffsets(
     const Gonio& gonio, const DataList& dataset, size_t n_iterations, double tolerance)
 {
     size_t n_axes = gonio.nAxes();

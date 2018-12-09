@@ -3,15 +3,7 @@
 namespace nsx {
 
 //! Helper struct for storing the result of the sample gonio fit
-struct DetectorGonioFit
-{
-    bool success;
-    std::vector<double> offsets;
-    std::vector<double> cost_function;
-};
-
-//! Helper struct for storing the result of the sample gonio fit
-struct SampleGonioFit
+struct GonioFitOutcome
 {
     bool success;
     std::vector<double> offsets;
@@ -20,10 +12,10 @@ struct SampleGonioFit
 
 class Gonio;
 
-DetectorGonioFit fitDetectorGonioOffsets(
+GonioFitOutcome fitDetectorGonioOffsets(
     const Gonio& gonio, const DataList& dataset, size_t n_iterations, double tolerance);
 
-SampleGonioFit fitSampleGonioOffsets(
+GonioFitOutcome fitSampleGonioOffsets(
     const Gonio& gonio, const DataList& dataset, size_t n_iterations, double tolerance);
 
 } // namespace nsx
