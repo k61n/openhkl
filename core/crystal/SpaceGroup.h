@@ -88,7 +88,8 @@ public:
     bool isFriedelEquivalent(const MillerIndex& miller_index1, const MillerIndex& miller_index2) const;
     //! Sort peak into a list of equivalent peaks, using the space group symmetry, optinally including
     //! Friedel pairs (if this is not already a symmetry of the space group)
-    std::vector<PeakList> findEquivalences(const PeakList &peak_list, bool friedel) const;
+    static std::vector<PeakList> findEquivalences(
+        const SpaceGroup& spaceGroup, const PeakList &peak_list, bool friedel);
 
 private:
 

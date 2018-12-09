@@ -458,7 +458,7 @@ bool SpaceGroup::isExtinct(const MillerIndex& hkl) const
     // todo(jonathan): improve this routine? need a journal reference
     // check that this produces results consistent with
     // http://www.ccp14.ac.uk/ccp/web-mirrors/powdcell/a_v/v_1/powder/details/extinct.htm
-    
+
     Eigen::Vector3d hkld = hkl.rowVector().transpose().cast<double>();
 
     for (auto&& element : _groupElements) {
@@ -599,7 +599,8 @@ void SpaceGroup::reduceSymbol()
 
 }
 
-std::vector<PeakList> SpaceGroup::findEquivalences(const PeakList& peaks, bool friedel) const
+std::vector<PeakList> SpaceGroup::findEquivalences(
+    const SpaceGroup& spaceGroup, const PeakList& peaks, bool friedel)
 {
 
     std::vector<PeakList> peak_equivs;
@@ -617,8 +618,8 @@ std::vector<PeakList> SpaceGroup::findEquivalences(const PeakList& peaks, bool f
         for (size_t i = 0; i < peak_equivs.size() && !found_equivalence; ++i) {
             MillerIndex miller_index2(peak_equivs[i][0]->q(), *cell);
 
-            if ( (friedel && isFriedelEquivalent(miller_index1,miller_index2))
-                 || (!friedel && isEquivalent(miller_index1,miller_index2))) {
+            if ( (friedel && spaceGroup.isFriedelEquivalent(miller_index1,miller_index2))
+                 || (!friedel && spaceGroup.isEquivalent(miller_index1,miller_index2))) {
                 found_equivalence = true;
                 peak_equivs[i].push_back(peak);
                 continue;
@@ -626,9 +627,8 @@ std::vector<PeakList> SpaceGroup::findEquivalences(const PeakList& peaks, bool f
         }
 
         // didn't find an equivalence?
-        if ( !found_equivalence) {
+        if ( !found_equivalence)
             peak_equivs.emplace_back(PeakList({peak}));
-        }
     }
     return peak_equivs;
 }
