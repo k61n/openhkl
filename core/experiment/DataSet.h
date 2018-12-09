@@ -34,7 +34,6 @@
 
 #include <Eigen/Dense>
 
-#include "PeakList.h"
 #include "DataTypes.h"
 #include "GeometryTypes.h"
 #include "IDataReader.h"
@@ -91,10 +90,7 @@ public:
     void removeMask(IMask* mask);
 
     //! Return the list of masks
-    const std::set<IMask*>& masks();
-
-    //! Mask a given peak
-    void maskPeaks(PeakList& peaks) const;
+    const std::set<IMask*>& masks() const;
 
     //! Return the intensity at point x,y,z.
     int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);

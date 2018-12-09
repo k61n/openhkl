@@ -327,7 +327,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     MaskGraphicsItem* mask(nullptr);
     EllipseMaskGraphicsItem* ellipse_mask(nullptr);
     //_masks.emplace_back(new graphicsItem(nullptr));
-    
+
     QPen pen1;
 
     // If no data is loaded, do nothing
@@ -512,10 +512,10 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                 auto it = findMask(p);
                 if (it != _masks.end()) {
                     it->second = new nsx::BoxMask(*p->getAABB());
-                    _currentData->addMask(it->second);                    
+                    _currentData->addMask(it->second);
                     _lastClickedGI = nullptr;
                 }
-                _currentData->maskPeaks(peaks);
+                maskPeaks(_currentData.get(), peaks);
                 update();
                 updateMasks();
                 emit _session->signalMaskedPeaksChanged(peaks);
@@ -523,10 +523,10 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                 auto it = findMask(p);
                 if (it != _masks.end()) {
                     it->second = new nsx::EllipseMask(*p->getAABB());
-                    _currentData->addMask(it->second);                    
+                    _currentData->addMask(it->second);
                     _lastClickedGI = nullptr;
                 }
-                _currentData->maskPeaks(peaks);
+                maskPeaks(_currentData.get(), peaks);
                 update();
                 updateMasks();
                 emit _session->signalMaskedPeaksChanged(peaks);
@@ -592,7 +592,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
                     auto peaks = _session->peaks(_currentData);
-                    _currentData->maskPeaks(peaks);
+                    maskPeaks(_currentData.get(), peaks);
                     update();
                     updateMasks();
                     emit _session->signalMaskedPeaksChanged(peaks);
@@ -604,7 +604,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
                     auto peaks =  _session->peaks(_currentData);
-                    _currentData->maskPeaks(peaks);
+                    maskPeaks(_currentData.get(), peaks);
                     update();
                     updateMasks();
                     emit _session->signalMaskedPeaksChanged(peaks);

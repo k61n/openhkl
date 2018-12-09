@@ -20,7 +20,6 @@
 #include "Gonio.h"
 #include "Monochromator.h"
 #include "Path.h"
-#include "Peak3D.h"
 #include "Source.h"
 #include "Units.h" // deg
 
@@ -327,28 +326,9 @@ void DataSet::removeMask(IMask* mask)
     }
 }
 
-const std::set<IMask*>& DataSet::masks()
+const std::set<IMask*>& DataSet::masks() const
 {
     return _masks;
-}
-
-void DataSet::maskPeaks(PeakList& peaks) const
-{
-    for (auto peak: peaks) {
-        // peak belongs to another dataset
-        if (peak->data().get() != this) {
-            continue;
-        }
-
-        peak->setMasked(false);
-        for (auto&& m : _masks) {
-            // If the background of the peak intercept the mask, unselected the peak
-            if (m->collide(peak->shape())) {
-                peak->setMasked(true);
-                break;
-            }
-        }
-    }
 }
 
 std::vector<DetectorEvent> DataSet::events(const std::vector<ReciprocalVector>& sample_qs) const
