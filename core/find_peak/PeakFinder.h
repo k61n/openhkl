@@ -13,7 +13,6 @@ namespace nsx {
 class PeakFinder : public ITask {
 
 public:
-
     PeakFinder(const DataList &datasets);
 
     bool doTask() final;

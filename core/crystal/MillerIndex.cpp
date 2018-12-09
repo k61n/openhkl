@@ -96,4 +96,4 @@ bool MillerIndex::indexed(double tolerance) const
         (std::fabs(_error[2]) < tolerance);
 }
 
-} // end namespace nsx
+} // namespace nsx

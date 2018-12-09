@@ -94,7 +94,6 @@ public:
     const std::vector<RankedSolution>& solutions() const;
 
 private:
-
     void computeFFTSolutions();
 
     void refineSolutions();
@@ -114,4 +113,4 @@ private:
     std::shared_ptr<ProgressHandler> _handler;
 };
 
-} // end namespace nsx
+} // namespace nsx

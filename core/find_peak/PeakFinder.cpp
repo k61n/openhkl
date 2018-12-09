@@ -6,7 +6,6 @@
 #include "DataSet.h"
 #include "Diffractometer.h"
 #include "IDataReader.h"
-#include "Experiment.h"
 #include "RealMatrix.h"
 #include "Octree.h"
 #include "Peak3D.h"
