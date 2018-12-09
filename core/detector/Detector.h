@@ -45,7 +45,7 @@
 #include "DataOrder.h"
 #include "DetectorEvent.h"
 #include "DirectVector.h"
-#include "GeometryTypes.h"
+#include "ReciprocalVector.h"
 
 namespace nsx {
 

@@ -7,7 +7,6 @@
 #include <unsupported/Eigen/FFT>
 
 #include "FFTIndexing.h"
-#include "ReciprocalVector.h"
 #include "Units.h"
 
 namespace nsx {

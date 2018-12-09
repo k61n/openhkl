@@ -11,8 +11,6 @@ namespace nsx {
 class AABB;
 class Blob3D;
 class ConvexHull;
-class DirectVector;
-class ReciprocalVector;
 
 struct Edge;
 struct Face;

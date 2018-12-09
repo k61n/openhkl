@@ -34,8 +34,7 @@
 
 #include <Eigen/Dense>
 
-#include "GeometryTypes.h"
-#include "Units.h"
+#include "ReciprocalVector.h"
 
 namespace nsx {
 
