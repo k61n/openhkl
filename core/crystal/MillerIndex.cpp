@@ -3,17 +3,18 @@
 #include <Eigen/Dense>
 
 #include "MillerIndex.h"
-#include "Peak3D.h"
 #include "ReciprocalVector.h"
 #include "UnitCell.h"
 
 namespace nsx {
 
-MillerIndex::MillerIndex(int h, int k, int l) : _hkl(h,k,l), _error(Eigen::RowVector3d::Zero())
+MillerIndex::MillerIndex(int h, int k, int l)
+    : _hkl(h,k,l), _error(Eigen::RowVector3d::Zero())
 {
 }
 
-MillerIndex::MillerIndex(const Eigen::RowVector3i& hkl) : _hkl(hkl), _error(Eigen::RowVector3d::Zero())
+MillerIndex::MillerIndex(const Eigen::RowVector3i& hkl)
+    : _hkl(hkl), _error(Eigen::RowVector3d::Zero())
 {
 }
 
@@ -37,33 +38,29 @@ const Eigen::RowVector3i& MillerIndex::rowVector() const
 
 int MillerIndex::operator[](int index) const
 {
-    if (index < 0 || index > 2) {
+    if (index < 0 || index > 2)
         throw std::runtime_error("Invalid index for a 3D vector");
-    }
     return _hkl[index];
 }
 
 int& MillerIndex::operator[](int index)
 {
-    if (index < 0 || index > 2) {
+    if (index < 0 || index > 2)
         throw std::runtime_error("Invalid index for a 3D vector");
-    }
     return _hkl[index];
 }
 
 int MillerIndex::operator()(int index) const
 {
-    if (index < 0 || index > 2) {
+    if (index < 0 || index > 2)
         throw std::runtime_error("Invalid index for a 3D vector");
-    }
     return _hkl[index];
 }
 
 int& MillerIndex::operator()(int index)
 {
-    if (index < 0 || index > 2) {
+    if (index < 0 || index > 2)
         throw std::runtime_error("Invalid index for a 3D vector");
-    }
     return _hkl[index];
 }
 
@@ -81,9 +78,8 @@ std::ostream& operator<<(std::ostream& os, const MillerIndex& hkl)
 bool MillerIndex::operator<(const MillerIndex& other) const
 {
     for (int i = 0; i < 3; i++) {
-        if (_hkl(i) != other._hkl(i)) {
+        if (_hkl(i) != other._hkl(i))
             return _hkl(i) < other._hkl(i);
-        }
     }
     return false;
 }
@@ -95,7 +91,9 @@ const Eigen::RowVector3d& MillerIndex::error() const
 
 bool MillerIndex::indexed(double tolerance) const
 {
-    return (std::fabs(_error[0]) < tolerance) && (std::fabs(_error[1]) < tolerance) && (std::fabs(_error[2]) < tolerance);
+    return (std::fabs(_error[0]) < tolerance) &&
+        (std::fabs(_error[1]) < tolerance) &&
+        (std::fabs(_error[2]) < tolerance);
 }
 
 } // end namespace nsx

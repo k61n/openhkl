@@ -36,7 +36,6 @@
 
 #include <Eigen/Dense>
 
-#include "PeakList.h" // PeakList
 #include "MillerIndex.h" // MillerIndex, MillerIndexList
 #include "SymOp.h"
 
@@ -87,18 +86,12 @@ public:
     //! Return whether two sets of indices are related by a symmetry up to Friedel reflection
     bool isFriedelEquivalent(const MillerIndex& miller_index1, const MillerIndex& miller_index2) const;
     //! Sort peak into a list of equivalent peaks, using the space group symmetry, optinally including
-    //! Friedel pairs (if this is not already a symmetry of the space group)
-    static std::vector<PeakList> findEquivalences(
-        const SpaceGroup& spaceGroup, const PeakList &peak_list, bool friedel);
-
 private:
-
     void reduceSymbol();
 
     void generateGroupElements();
 
 private:
-
     std::string _symbol;
 
     std::string _generators;
