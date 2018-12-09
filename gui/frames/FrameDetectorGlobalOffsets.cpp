@@ -7,6 +7,7 @@
 #include <core/Diffractometer.h>
 #include <core/Experiment.h>
 #include <core/Gonio.h>
+#include <core/FitGonioOffset.h>
 #include <core/Logger.h>
 #include <core/Detector.h>
 #include <core/Units.h>
@@ -120,8 +121,9 @@ void FrameDetectorGlobalOffsets::fit()
     }
 
     // Fit the detector offsets with the selected data
-    const auto* detector = _experiment_item->experiment()->diffractometer()->detector();
-    auto fit_results = detector->fitGonioOffsets(selected_data,_ui->n_iterations->value(),_ui->tolerance->value());
+    const auto& gonio = _experiment_item->experiment()->diffractometer()->detector()->gonio();
+    auto fit_results = fitDetectorGonioOffsets(
+        gonio, selected_data,_ui->n_iterations->value(),_ui->tolerance->value());
 
     // The fit failed for whatever reason, return
     if (!fit_results.success) {

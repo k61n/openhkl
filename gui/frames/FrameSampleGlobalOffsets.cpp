@@ -6,6 +6,7 @@
 #include <core/DataSet.h>
 #include <core/Diffractometer.h>
 #include <core/Experiment.h>
+#include <core/FitGonioOffset.h>
 #include <core/Gonio.h>
 #include <core/Logger.h>
 #include <core/Sample.h>
@@ -115,18 +116,17 @@ void FrameSampleGlobalOffsets::fit()
     }
 
     nsx::DataList selected_data;
-    for (auto item : selected_items) {
+    for (auto item : selected_items)
         selected_data.push_back(item->data(Qt::UserRole).value<nsx::sptrDataSet>());
-    }
 
     // Fit the sample offsets with the selected data
-    const auto &sample = _experiment_item->experiment()->diffractometer()->sample();
-    auto fit_results = sample.fitGonioOffsets(selected_data,_ui->n_iterations->value(),_ui->tolerance->value());
+    const auto &gonio = _experiment_item->experiment()->diffractometer()->sample().gonio();
+    auto fit_results = fitSampleGonioOffsets(
+        gonio, selected_data,_ui->n_iterations->value(),_ui->tolerance->value());
 
     // The fit failed for whatever reason, return
-    if (!fit_results.success) {
+    if (!fit_results.success)
         nsx::error()<<"Could not fit the sample offsets.";
-    }
 
     int comp(0);
     for (auto&& offset : fit_results.offsets) {
@@ -165,7 +165,8 @@ void FrameSampleGlobalOffsets::fit()
     _ui->plot->xAxis->setTickLabelFont(font);
     _ui->plot->yAxis->setTickLabelFont(font);
 
-    _ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
+    _ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
+                               QCP::iSelectLegend | QCP::iSelectPlottables);
 
     _ui->plot->rescaleAxes();
 
