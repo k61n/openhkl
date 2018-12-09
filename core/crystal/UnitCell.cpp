@@ -229,22 +229,6 @@ UnitCellState& UnitCell::state(sptrDataSet data, size_t frame) {
     return states[frame];
 }
 
-void UnitCell::setState(sptrDataSet data, size_t frame, const UnitCellState& state)
-{
-    auto it = _states.find(data);
-    if (it == _states.end()) {
-        initState(data);
-    }
-
-    auto&& states = _states[data];
-
-    if (frame > (states.size()-1) || frame < 0) {
-        throw std::runtime_error("UnitCell::setState: Invalid frame number");
-    }
-
-    states[frame] = state;
-}
-
 UnitCell UnitCell::interpolate(sptrDataSet data, double frame)
 {
     auto it = _states.find(data);
@@ -638,7 +622,7 @@ void UnitCell::setNiggli(const NiggliCharacter& niggli)
     _niggli = niggli;
 }
 
-//! This method finds the unit cell closest to the given cell, which also satisfies the 
+//! This method finds the unit cell closest to the given cell, which also satisfies the
 //! symmetry constraints on the Niggli character (see e.g. tables 9.2.5.1 of volume A of the international tables).
 //! Since the constraints are _non-linear_ on the components of the basis matrix, we perform a change of coordinates
 //! into a system where the constraints are linear.
@@ -662,9 +646,9 @@ UnitCell UnitCell::applyNiggliConstraints() const
     if (_niggli.number == 31 || _niggli.number == 44) {
         return *this;
     }
-    
+
     // geometric mean of side-lengths of unit cell & reciprocal unit cell
-    // we use these to scale the residuals in the fitting function below   
+    // we use these to scale the residuals in the fitting function below
     const double b = std::pow(std::fabs(_b_transposed.determinant()), 1.0/3.0);
 
     // The orientation matrix (in direct space)
@@ -685,7 +669,7 @@ UnitCell UnitCell::applyNiggliConstraints() const
             for (int j = 0; j < 3; ++j) {
                 residuals(3*i+j) = (B(i,j) - _b_transposed(i, j)) / b;
             }
-        } 
+        }
         return 0;
     };
 
@@ -717,7 +701,7 @@ UnitCell UnitCell::applyNiggliConstraints() const
 
     if (delta < 0.1) {
         return new_uc;
-    } 
+    }
     throw std::runtime_error("ERROR: could not apply symmetry constraints to unit cell");
 }
 
@@ -730,14 +714,14 @@ Eigen::RowVector3d UnitCell::fromIndex(const Eigen::RowVector3d& hkl) const
 {
     return hkl*_b_transposed;
 }
-    
+
 UnitCellCharacter UnitCell::character() const
 {
     return UnitCellCharacter(metric());
 }
 
 UnitCellCharacter UnitCell::characterSigmas() const
-{   
+{
     return _characterSigmas;
 }
 
@@ -916,14 +900,14 @@ Eigen::VectorXd UnitCell::parameters() const
     if (_niggli.number == 31 || _niggli.number == 44) {
         return ch;
     }
-    
+
     // matrix of Niggli character constraints, taken from the table 9.2.5.1
     Eigen::MatrixXd C = _niggli.C;
 
     // used for the space of constraints
     Eigen::FullPivLU<Eigen::MatrixXd> lu(C);
     Eigen::MatrixXd kernel = lu.kernel();
-    
+
     // get starting values: these are just the lattice character (components of metric tensor)
     return (kernel.transpose()*kernel).inverse()*kernel.transpose()*ch;
 }
@@ -954,7 +938,7 @@ UnitCell UnitCell::fromParameters(const Eigen::Matrix3d& U0, const Eigen::Vector
 
     // lattice character
     Eigen::VectorXd ch(6);
-    ch.setZero();        
+    ch.setZero();
     // parameters defining lattice chatacer
     for (auto i = 0; i < nparams; ++i) {
         ch += parameters(i)*kernel.col(i);
@@ -988,7 +972,7 @@ void UnitCell::setParameterCovariance(const Eigen::MatrixXd& cov)
 
     // the kernel matrix of the Niggli constraints
     Eigen::MatrixXd kernel;
-    
+
     // no constraints?
     if (_niggli.number == 31 || _niggli.number == 44) {
         kernel.setIdentity(6, 6);
@@ -999,19 +983,19 @@ void UnitCell::setParameterCovariance(const Eigen::MatrixXd& cov)
         Eigen::FullPivLU<Eigen::MatrixXd> lu(_niggli.C);
         kernel = lu.kernel();
     }
-    
+
     // covariance matrix of the paramters A, B, C, D, E, F
     Eigen::MatrixXd ABC_cov = kernel.transpose() * cov * kernel;
-    
+
     // lattice character
     auto ch = character();
     // store character in these arrays to make symbolic calculation easier
     const double ABC[6] = {ch.g00, ch.g11, ch.g22, ch.g12, ch.g02, ch.g01};
-    const double abc[6] = {ch.a, ch.b, ch.c, ch.alpha, ch.beta, ch.gamma}; 
+    const double abc[6] = {ch.a, ch.b, ch.c, ch.alpha, ch.beta, ch.gamma};
 
     // Jacobian of the transformation (g00,g01,g02,g11,g12,g22) -> (a,b,c,alpha,beta,gamma)
     Eigen::MatrixXd J(6, 6);
-    J.setZero();    
+    J.setZero();
 
     // Jacobian entries for a,b,c
     for (int i = 0; i < 3; ++i) {
@@ -1038,7 +1022,7 @@ void UnitCell::setParameterCovariance(const Eigen::MatrixXd& cov)
         // d(alpha)/dB and d(alpha)/dC
         J(i,i1) = factor * Dbc / 2.0 / ABC[i1];
         J(i,i2) = factor * Dbc / 2.0 / ABC[i2];
-        
+
     }
 
     // covariance matrix of the paramters a, b, c, alpha, beta, gamma

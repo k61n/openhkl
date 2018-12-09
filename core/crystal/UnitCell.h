@@ -281,9 +281,6 @@ public:
     //! Initialize this unit cell state for a given data
     void initState(sptrDataSet data);
 
-    //! Set the state of this unit cell for a given data and unit cell
-    void setState(sptrDataSet data, size_t frame, const UnitCellState& state);
-
     //! Return a non-const reference to the state of this unit cell for a given data at a given frame
     UnitCellState& state(sptrDataSet data, size_t frame);
 
