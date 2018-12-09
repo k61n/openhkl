@@ -101,8 +101,6 @@ class UnitCell
 {
 public:
 
-    static UnitCell interpolate(const UnitCell &uc1, const UnitCell &uc2, double t);
-
     //! Empty UnitCell, initialiazed to right-handed orthonormal system
     UnitCell();
 
@@ -283,9 +281,6 @@ public:
 
     //! Return a non-const reference to the state of this unit cell for a given data at a given frame
     UnitCellState& state(sptrDataSet data, size_t frame);
-
-    //! Return the interpolated unit cell between two states
-    UnitCell interpolate(sptrDataSet data, double frame);
 
     #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
