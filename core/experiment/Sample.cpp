@@ -53,9 +53,10 @@ const ConvexHull& Sample::shape() const
 
 SampleGonioFit Sample::fitGonioOffsets(const DataList& dataset, size_t n_iterations, double tolerance) const
 {
-    const auto &sample_gonio = gonio();
-    size_t n_axes = sample_gonio.nAxes();
-    std::vector<double> fitted_offsets(n_axes,0);
+    const auto &gonio = gonio();
+    size_t n_axes = gonio.nAxes();
+
+    std::vector<double> fitted_offsets(n_axes, 0.);
 
     // No data provided, return zero offsets
     if (dataset.empty()) {
@@ -102,7 +103,7 @@ SampleGonioFit Sample::fitGonioOffsets(const DataList& dataset, size_t n_iterati
     cost_function.reserve(n_iterations);
 
     // Lambda to compute residuals
-    auto residuals = [sample_gonio, &fitted_offsets, selected_orientations, selected_states, &cost_function] (Eigen::VectorXd& f) -> int
+    auto residuals = [gonio, &fitted_offsets, selected_orientations, selected_states, &cost_function] (Eigen::VectorXd& f) -> int
     {
         int n_obs = f.size();
         // Just duplicate the 0-residual to reach a "sufficient" amount of data points
@@ -110,7 +111,7 @@ SampleGonioFit Sample::fitGonioOffsets(const DataList& dataset, size_t n_iterati
             std::vector<double> real_values(selected_states[i].size(),0.0);
             const auto& state = selected_states[i];
             std::transform(state.begin(),state.end(),fitted_offsets.begin(),real_values.begin(),std::plus<double>());
-            Eigen::Matrix3d fitted_sample_orientation = sample_gonio.affineMatrix(real_values).rotation();
+            Eigen::Matrix3d fitted_sample_orientation = gonio.affineMatrix(real_values).rotation();
             f(i) = (fitted_sample_orientation - selected_orientations[i]).norm();
         }
 
@@ -128,7 +129,7 @@ SampleGonioFit Sample::fitGonioOffsets(const DataList& dataset, size_t n_iterati
     // Set the Minimizer with the parameters store and the size of the residual vector
     nsx::Minimizer minimizer;
     // Hack to do the fit with GSL for having enough data points
-    minimizer.initialize(parameters,n_selected_states);
+    minimizer.initialize(parameters, n_selected_states);
     minimizer.set_f(residuals);
     minimizer.setxTol(tolerance);
     minimizer.setfTol(tolerance);

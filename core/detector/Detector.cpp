@@ -282,11 +282,10 @@ double Detector::pixelWidth() const
 
 DetectorGonioFit Detector::fitGonioOffsets(const DataList& dataset, size_t n_iterations, double tolerance) const
 {
-    const auto &detector_gonio = gonio();
+    const auto &gonio = gonio();
+    size_t n_axes = gonio.nAxes();
 
-    size_t n_axes = detector_gonio.nAxes();
-
-    std::vector<double> fitted_offsets(n_axes,0.0);
+    std::vector<double> fitted_offsets(n_axes, 0.);
 
     // No data provided, return zero offsets
     if (dataset.empty()) {
@@ -330,13 +329,13 @@ DetectorGonioFit Detector::fitGonioOffsets(const DataList& dataset, size_t n_ite
     cost_function.reserve(n_iterations);
 
     // Lambda to compute residuals
-    auto residuals = [detector_gonio, &fitted_offsets, selected_nis, &cost_function] (Eigen::VectorXd& f) -> int
+    auto residuals = [gonio, &fitted_offsets, selected_nis, &cost_function] (Eigen::VectorXd& f) -> int
     {
         int n_obs = f.size();
 
-        Eigen::Matrix3d fitted_detector_orientation = detector_gonio.affineMatrix(fitted_offsets).rotation().transpose();
+        Eigen::Matrix3d fitted_detector_orientation = gonio.affineMatrix(fitted_offsets).rotation().transpose();
 
-        // Just duplicate the 0-residual to reach a "sufficient" amout of data points
+        // Just duplicate the 0-residual to reach a "sufficient" amount of data points
         for (int i = 0; i < n_obs; ++i) {
             f(i) = std::abs(selected_nis[i].dot(Eigen::RowVector3d(0,1,0) * fitted_detector_orientation) - 1.0);
         }
