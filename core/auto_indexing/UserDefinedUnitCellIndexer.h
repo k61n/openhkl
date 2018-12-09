@@ -7,9 +7,7 @@
 
 #include <Eigen/Dense>
 
-#include "Any.h"
 #include "PeakList.h"
-#include "ReciprocalVector.h"
 #include "UnitCell.h"
 #include "Units.h"
 
@@ -48,7 +46,6 @@ struct UserDefinedUnitCellIndexerParameters {
 class UserDefinedUnitCellIndexer {
 
 public:
-
     UserDefinedUnitCellIndexer();
 
     UserDefinedUnitCellIndexer(const UserDefinedUnitCellIndexerParameters& parameters);
@@ -73,7 +70,6 @@ public:
     void setPeaks(const PeakList& peaks);
 
 private:
-
     void index();
 
     void rankUnitCells();
@@ -83,12 +79,9 @@ private:
     void removeBadUnitCells();
 
 private:
-
     UserDefinedUnitCellIndexerParameters _parameters;
-
     std::vector<std::pair<sptrUnitCell,double>> _solutions;
-
     PeakList _peaks;
 };
 
-} // end namespace nsx
+} // namespace nsx
