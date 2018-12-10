@@ -13,9 +13,9 @@
 #include "NumorItem.h"
 #include "NumorPropertyWidget.h"
 
-NumorItem::NumorItem(nsx::sptrDataSet data):
-    InspectableTreeItem(),
-    _data(data)
+NumorItem::NumorItem(nsx::sptrDataSet data)
+    : InspectableTreeItem()
+    , _data(data)
 {
     setText("Numor");
 
@@ -28,8 +28,8 @@ NumorItem::NumorItem(nsx::sptrDataSet data):
     setDropEnabled(false);
 
     setSelectable(false);
-
     setCheckable(true);
+    setCheckState(Qt::Checked);
 }
 
 QVariant NumorItem::data(int role) const

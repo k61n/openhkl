@@ -18,8 +18,7 @@ class SessionModel: public QStandardItemModel {
     Q_OBJECT
 
 public:
-
-    explicit SessionModel();
+    SessionModel();
 
     ~SessionModel();
 
@@ -32,7 +31,6 @@ public:
     void addExperiment(nsx::sptrExperiment experiment);
 
 signals:
-
     void plotData(nsx::sptrDataSet);
 
     void inspectWidget(QWidget*);
@@ -50,7 +48,6 @@ signals:
     void signalUnitCellRemoved(nsx::sptrUnitCell unit_cell);
 
 public slots:
-
     void onItemChanged(QStandardItem* item);
 
 };

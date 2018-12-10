@@ -57,9 +57,12 @@ void DataItem::removeSelectedData()
             if (numor_item->checkState() == Qt::Checked) {
                 auto dataset = numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
                 auto use_count = dataset.use_count();
-                // If the dataset is not used the use count should be 3 (1 in experiment,1 in NumorItem and one in dataset local variable)
+                // If the dataset is not used the use count should be 3
+                // (1 in experiment, 1 in NumorItem and 1 in dataset local variable)
                 if (use_count > 3) {
-                    nsx::error()<<"The dataset "<<dataset->reader()->basename()<<" is currently used by "<< std::to_string(use_count - 3) << "other resources.";
+                    nsx::error()<<"The dataset "<<dataset->reader()->basename()
+                                <<" is currently used by "<< std::to_string(use_count - 3)
+                                << "other resources.";
                     accept_removal = false;
                 } else {
                     _selected_datasets_for_removal.insert(numor_item);
@@ -83,7 +86,8 @@ void DataItem::removeSelectedData()
 void DataItem::importData()
 {
     QStringList filenames;
-    filenames = QFileDialog::getOpenFileNames(nullptr,"select numors","","",nullptr,QFileDialog::Option::DontUseNativeDialog);
+    filenames = QFileDialog::getOpenFileNames(
+        nullptr,"select numors","","",nullptr,QFileDialog::Option::DontUseNativeDialog);
 
     for (auto i = 0; i < filenames.size(); ++i) {
         auto&& filename = filenames[i];
@@ -91,12 +95,12 @@ void DataItem::importData()
         auto exp = experiment();
 
         // If the experience already stores the current numor, skip it
-        if (exp->hasData(filename.toStdString())) {
+        if (exp->hasData(filename.toStdString()))
             return; // nullptr;
-        }
 
         std::string extension = fileinfo.completeSuffix().toStdString();
-        nsx::sptrDataSet data_ptr(new nsx::DataSet(extension, filename.toStdString(), exp->diffractometer()));
+        nsx::sptrDataSet data_ptr(
+            new nsx::DataSet(extension, filename.toStdString(), exp->diffractometer()));
         exp->addData(data_ptr);
 
         // Get the basename of the current numor
@@ -105,7 +109,6 @@ void DataItem::importData()
         NumorItem* item = new NumorItem(data_ptr);
         item->setText(basename);
         item->setToolTip(filename);
-        item->setCheckable(true);
         appendRow(item);
     }
 }
@@ -113,33 +116,30 @@ void DataItem::importData()
 void DataItem::importRawData()
 {
     QStringList qfilenames;
-    qfilenames = QFileDialog::getOpenFileNames(nullptr,"select raw data","","",nullptr,QFileDialog::Option::DontUseNativeDialog);
+    qfilenames = QFileDialog::getOpenFileNames(
+        nullptr,"select raw data","","",nullptr,QFileDialog::Option::DontUseNativeDialog);
 
-    if (qfilenames.empty()) {
+    if (qfilenames.empty())
         return;
-    }
 
     std::vector<std::string> filenames;
 
-    for (auto& filename: qfilenames) {
+    for (auto& filename: qfilenames)
         filenames.push_back(filename.toStdString());
-    }
 
     DialogRawData dialog;
 
-    if (!dialog.exec()) {
+    if (!dialog.exec())
         return;
-    }
-   
+
     // Get the basename of the current numor
     QFileInfo fileinfo(qfilenames[0]);
     std::string basename = fileinfo.fileName().toStdString();
     auto exp = experiment();
 
     // If the experience already stores the current numor, skip it
-    if (exp->hasData(filenames[0])) {
+    if (exp->hasData(filenames[0]))
         return;
-    }
 
     std::shared_ptr<nsx::IDataReader> reader;
 
@@ -158,9 +158,8 @@ void DataItem::importRawData()
 
     try {
         auto raw_data_reader = dynamic_cast<nsx::RawDataReader*>(data->reader());
-        for (size_t i = 1; i < filenames.size(); ++i) {
+        for (size_t i = 1; i < filenames.size(); ++i)
             raw_data_reader->addFrame(filenames[i]);
-        }
     }
     catch(std::exception& e) {
         nsx::error() << "reading numor:" << filenames[0].c_str() << e.what();
@@ -175,7 +174,6 @@ void DataItem::importRawData()
     NumorItem* item = new NumorItem(data);
     item->setText(basename.c_str());
     item->setToolTip(qfilenames[0]);
-    item->setCheckable(true);
     appendRow(item);
 }
 
@@ -215,9 +213,8 @@ void DataItem::convertToHDF5()
     // dialog will automatically be deleted before we return from this method
     std::unique_ptr<DialogHDF5Converter> dialog_ptr(new DialogHDF5Converter(selected_data));
 
-    if (!dialog_ptr->exec()) {
+    if (!dialog_ptr->exec())
         return;
-    }
 }
 
 void DataItem::openInstrumentStatesDialog()

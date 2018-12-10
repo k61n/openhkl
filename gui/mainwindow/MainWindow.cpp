@@ -189,14 +189,12 @@ void MainWindow::onNewExperiment()
         dlg = std::unique_ptr<DialogExperiment>(new DialogExperiment());
 
         // The user pressed cancel, return
-        if (!dlg->exec()) {
+        if (!dlg->exec())
             return;
-        }
 
         // If no experiment name is provided, pop up a warning
-        if (dlg->experimentName().isEmpty()) {
+        if (dlg->experimentName().isEmpty())
             throw std::runtime_error("Empty experiment name");
-        }
     }
     catch(std::exception& e) {
         nsx::error() << e.what();
