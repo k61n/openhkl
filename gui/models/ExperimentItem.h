@@ -1,11 +1,5 @@
 #pragma once
 
-#include <string>
-#include <memory>
-
-#include <QJsonObject>
-#include <QStandardItemModel>
-
 #include <core/Experiment.h>
 #include "TreeItem.h"
 
@@ -18,6 +12,7 @@ class UnitCellsItem;
 class ExperimentItem: public TreeItem
 {
 public:
+    ExperimentItem() = delete;
     explicit ExperimentItem(nsx::sptrExperiment experiment);
 
     virtual ~ExperimentItem();
@@ -37,7 +32,6 @@ public:
     void writeLogFiles();
 
 private:
-
     nsx::sptrExperiment _experiment;
 
     InstrumentItem* _instr;

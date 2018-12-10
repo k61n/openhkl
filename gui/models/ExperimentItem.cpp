@@ -1,24 +1,9 @@
-#include <fstream>
+#include "ExperimentItem.h"
 
-#include <QIcon>
-#include <QJsonArray>
-#include <QJsonObject>
-
-#include <core/CC.h>
-#include <core/DataSet.h>
-#include <core/Diffractometer.h>
 #include <core/Logger.h>
-#include <core/MergedData.h>
-#include <core/Peak3D.h>
 #include <core/PeakFilter.h>
-#include <core/ResolutionShell.h>
-#include <core/RFactor.h>
-#include <core/Source.h>
-#include <core/UnitCell.h>
 
 #include "DataItem.h"
-#include "DetectorItem.h"
-#include "ExperimentItem.h"
 #include "FrameStatistics.h"
 #include "InstrumentItem.h"
 #include "LibraryItem.h"
