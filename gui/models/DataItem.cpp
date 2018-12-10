@@ -1,33 +1,17 @@
-#include <set>
-#include <vector>
+#include "DataItem.h"
 
-#include <QIcon>
 #include <QFileDialog>
 #include <QFileInfo>
-#include <QJsonArray>
-#include <QStandardItem>
-#include <QString>
 
-#include <core/DataSet.h>
-#include <core/Experiment.h>
-#include <core/IDataReader.h>
 #include <core/Logger.h>
-#include <core/Peak3D.h>
-#include <core/ProgressHandler.h>
-#include <core/PixelSumIntegrator.h>
 #include <core/RawDataReader.h>
 
-#include "DataItem.h"
 #include "DialogHDF5Converter.h"
 #include "DialogRawData.h"
 #include "FrameInstrumentStates.h"
 #include "ExperimentItem.h"
-#include "MainWindow.h"
 #include "MetaTypes.h"
 #include "NumorItem.h"
-#include "PeaksItem.h"
-#include "PeakListItem.h"
-#include "ProgressView.h"
 
 DataItem::DataItem() : TreeItem()
 {
@@ -40,9 +24,7 @@ DataItem::DataItem() : TreeItem()
     setDropEnabled(false);
 
     setEditable(false);
-
     setSelectable(false);
-
     setCheckable(false);
 }
 
@@ -228,6 +210,5 @@ void DataItem::openInstrumentStatesDialog()
     FrameInstrumentStates *frame = FrameInstrumentStates::create(selected_data);
 
     frame->show();
-
     frame->raise();
 }

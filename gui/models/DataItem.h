@@ -1,12 +1,8 @@
 #pragma once
 
 #include <core/DataTypes.h>
-#include <core/PeakFinder.h>
 
 #include "TreeItem.h"
-
-class MainWindow;
-class NumorItem;
 
 class DataItem : public TreeItem
 {

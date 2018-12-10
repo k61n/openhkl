@@ -27,9 +27,7 @@ ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment): TreeItem(), _exp
     setDropEnabled(false);
 
     setEditable(true);
-
     setSelectable(true);
-
     setCheckable(false);
 
     // Create an instrument item and add it to the experiment item
