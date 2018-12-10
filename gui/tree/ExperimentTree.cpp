@@ -1,44 +1,7 @@
-#include <array>
-#include <memory>
-#include <map>
-#include <stdexcept>
-#include <tuple>
-#include <utility>
-#include <vector>
-
-#include <hdf5.h>
-#include <H5Exception.h>
-
-#include <QAbstractItemView>
-#include <QFileDialog>
-#include <QFileInfo>
-#include <QKeyEvent>
-#include <QList>
-#include <QListIterator>
-#include <QMenu>
-#include <QModelIndexList>
-#include <QStandardItem>
-#include <QString>
-#include <QVector>
-
-#include <core/Diffractometer.h>
-#include <core/Experiment.h>
-#include <core/Logger.h>
-#include <core/Peak3D.h>
-#include <core/ReciprocalVector.h>
-#include <core/UnitCell.h>
-
+#include "ExperimentTree.h"
 #include "DataItem.h"
 #include "DetectorItem.h"
-#include "DetectorScene.h"
-#include "DialogExperiment.h"
-#include "DialogRawData.h"
-#include "DialogSpaceGroup.h"
-#include "DialogTransformationMatrix.h"
 #include "ExperimentItem.h"
-#include "ExperimentTree.h"
-#include "GLSphere.h"
-#include "GLWidget.h"
 #include "InstrumentItem.h"
 #include "LibraryItem.h"
 #include "MainWindow.h"
@@ -46,9 +9,6 @@
 #include "NumorItem.h"
 #include "PeaksItem.h"
 #include "PeakListItem.h"
-#include "PeakTableView.h"
-#include "ProgressView.h"
-#include "QCustomPlot.h"
 #include "SampleItem.h"
 #include "SessionModel.h"
 #include "SessionModelDelegate.h"
@@ -58,8 +18,6 @@
 #include "UnitCellsItem.h"
 
 #include "ui_MainWindow.h"
-
-#include <QDebug>
 
 ExperimentTree::ExperimentTree(QWidget *parent)
     : QTreeView(parent)
