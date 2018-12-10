@@ -1,6 +1,3 @@
-#include <cmath>
-#include <fstream>
-#include <functional>
 #include <stdexcept>
 
 #include <Eigen/Dense>

@@ -31,7 +31,6 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-
     MainWindow(QWidget *parent=nullptr);
 
     ~MainWindow();
@@ -41,7 +40,6 @@ public:
     TaskManagerModel* taskManagerModel();
 
 public slots:
-
     void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
 
     void setInspectorWidget(QWidget*);
@@ -68,7 +66,6 @@ public slots:
     void onSetColorMap(const std::string& color_map);
 
 private slots:
-
     void updatePlot(PlottableGraphicsItem* cutter);
 
     void on_checkBox_AspectRatio_toggled(bool checked);
@@ -83,10 +80,7 @@ private slots:
     void slotChangeSelectedFrame(int selected_frame);
 
 private:
-
     void initLoggers();
-
-private:
 
     Ui::MainWindow* _ui;
 
