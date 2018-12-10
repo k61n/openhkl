@@ -32,7 +32,6 @@
 #include "DetectorItem.h"
 #include "DetectorScene.h"
 #include "DialogExperiment.h"
-#include "DialogIsotopesDatabase.h"
 #include "DialogRawData.h"
 #include "DialogSpaceGroup.h"
 #include "DialogTransformationMatrix.h"
@@ -110,12 +109,12 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
         connect(newexp, triggered, [=]() {_main_window->onNewExperiment();});
     } else {
         QStandardItem* item = session->itemFromIndex(index);
-        
+
         if (auto exp_item = dynamic_cast<ExperimentItem*>(item)) {
             QAction* log = menu->addAction("Write detailed log files");
             connect(log, triggered, [=](){exp_item->writeLogFiles();});
         }
-        else if (auto ditem = dynamic_cast<DataItem*>(item)) {            
+        else if (auto ditem = dynamic_cast<DataItem*>(item)) {
             QAction* load_data = menu->addAction("Load data");
             connect(load_data, &QAction::triggered, [=](){ditem->importData();});
 
@@ -173,8 +172,6 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(scene3d, triggered, [=]{pitem->showPeaksOpenGL();});
         }
         else if (SampleItem* sitem = dynamic_cast<SampleItem*>(item)) {
-            QAction* openIsotopesDatabase = menu->addAction("Open isotopes database");
-            connect(openIsotopesDatabase, &QAction::triggered, [=](){sitem->openIsotopesDatabase();});
             QAction* openSampleGlobalOffsets = menu->addAction("Sample goniometer global offsets");
             connect(openSampleGlobalOffsets, &QAction::triggered, [=](){sitem->openSampleGlobalOffsetsFrame();});
         }
@@ -198,7 +195,7 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(group, triggered, [=](){ucitem->openSpaceGroupDialog();});
         }
         else if (NumorItem* nitem = dynamic_cast<NumorItem*>(item)) {
-            QAction* export_hdf = menu->addAction("Export to HDF5...");            
+            QAction* export_hdf = menu->addAction("Export to HDF5...");
 
             auto export_fn = [=] {
                 QString filename = QFileDialog::getSaveFileName(this, "Save File", "", "HDF5 (*.hdf *.hdf5)", nullptr, QFileDialog::Option::DontUseNativeDialog);
@@ -229,7 +226,7 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
             ptr->importData();
         } else {
             for (auto i = 0; i < ptr->model()->rowCount(ptr->index());++i) {
-                auto ci = ptr->child(i);                
+                auto ci = ptr->child(i);
                 Qt::CheckState new_state = ci->checkState() == Qt::Unchecked ? Qt::Checked : Qt::Unchecked;
                 ci->setCheckState(new_state);
             }
@@ -270,4 +267,3 @@ void ExperimentTree::onSingleClick(const QModelIndex &index)
         emit inspectWidget(widget);
     }
 }
-

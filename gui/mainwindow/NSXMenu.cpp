@@ -8,7 +8,6 @@
 
 #include "ColorMap.h"
 #include "DialogAbout.h"
-#include "DialogIsotopesDatabase.h"
 #include "GlobalInfo.h"
 #include "MainWindow.h"
 #include "NSXMenu.h"
@@ -135,11 +134,6 @@ void NSXMenu::createActions()
     _widget_property_action->setChecked(true);
     connect(_widget_property_action,&QAction::triggered,_main_window,&MainWindow::onToggleWidgetPropertyPanel);
 
-    _display_isotopes_database_action = new QAction("Display isotopes database",_main_window);
-    _display_isotopes_database_action->setStatusTip("Display isotopes database");
-    connect(_display_isotopes_database_action,&QAction::triggered,this,&NSXMenu::onDisplayIsotopesDatabase);
-    _display_isotopes_database_action->setShortcut(QKeySequence("Ctrl+I"));
-
     _about_action = new QAction("&About",_main_window);
     _about_action->setStatusTip("About application");
     _about_action->setShortcut(QKeySequence("Ctrl+A"));
@@ -188,9 +182,6 @@ void NSXMenu::createMenus()
     _panels_menu->addAction(_plotter_action);
     _panels_menu->addAction(_widget_property_action);
 
-    _chemistry_menu = _menu_bar->addMenu("&Chemistry");
-    _chemistry_menu->addAction(_display_isotopes_database_action);
-
     _help_menu = _menu_bar->addMenu("&Help");
     _help_menu->addAction(_about_action);
 }
@@ -198,12 +189,6 @@ void NSXMenu::createMenus()
 void NSXMenu::onAboutApplication()
 {
     DialogAbout dlg;
-
-    dlg.exec();
-}
-void NSXMenu::onDisplayIsotopesDatabase()
-{
-    DialogIsotopesDatabase dlg;
 
     dlg.exec();
 }

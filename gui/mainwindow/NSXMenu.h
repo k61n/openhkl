@@ -14,23 +14,16 @@ class NSXMenu : public QObject
 {
 
 public:
-
     NSXMenu(MainWindow *main_window);
 
 private slots:
-
     void onAboutApplication();
 
-    void onDisplayIsotopesDatabase();
-
 private:
-
     void createActions();
-
     void createMenus();
 
 private:
-
     MainWindow *_main_window;
 
     QMenuBar *_menu_bar;
@@ -66,9 +59,6 @@ private:
     QAction *_monitor_action;
     QAction *_plotter_action;
     QAction *_widget_property_action;
-
-    QMenu *_chemistry_menu;
-    QAction *_display_isotopes_database_action;
 
     QMenu *_help_menu;
     QAction *_about_action;
