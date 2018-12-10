@@ -70,7 +70,6 @@ using Eigen::Matrix;
 using Eigen::Quaterniond;
 
 #include "Version.h"
-#include "Any.h"
 #include "Material.h"
 #include "IsotopeDatabaseManager.h"
 #include "FitParameters.h"
@@ -284,14 +283,6 @@ using namespace nsx;
 %include "AABB.h"
 %include "Ellipsoid.h"
 %include "Blob3D.h"
-
-%include "Any.h"
-%extend nsx::Any {
-     %template(Anyi) Any<int>;
-     %template(Anyd) Any<double>;
-     %template(Anyb) Any<bool>;
-     %template(Anys) Any<std::string>;
-}
 
 %include "Material.h"
 %include "IsotopeDatabaseManager.h"
