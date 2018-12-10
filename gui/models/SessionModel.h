@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include <QStandardItemModel>
 
 #include <core/DataSet.h>
@@ -9,12 +7,9 @@
 #include <core/Peak3D.h>
 
 class DataSet;
-class Experiment;
 class ExperimentItem;
-class Peak3D;
 
 class SessionModel: public QStandardItemModel {
-
     Q_OBJECT
 
 public:
@@ -49,5 +44,4 @@ signals:
 
 public slots:
     void onItemChanged(QStandardItem* item);
-
 };

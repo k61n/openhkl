@@ -33,71 +33,13 @@
  *
  */
 
-#include <fstream>
-#include <map>
-#include <memory>
-#include <stdexcept>
-#include <vector>
-
-#include <hdf5.h>
-#include <H5Exception.h>
-
-#include <QAbstractItemView>
-#include <QDate>
-#include <QFileDialog>
-#include <QFileInfo>
-#include <QKeyEvent>
-
-#include <QList>
-#include <QListIterator>
-#include <QMenu>
-#include <QModelIndexList>
-#include <QStandardItem>
-#include <QString>
-#include <QVector>
-
-#include <core/CC.h>
-#include <core/PeakList.h>
-#include <core/Detector.h>
-#include <core/Diffractometer.h>
-#include <core/Ellipsoid.h>
-#include <core/GeometryTypes.h>
-#include <core/InstrumentState.h>
-#include <core/Logger.h>
-#include <core/MergedData.h>
-#include <core/MergedPeak.h>
-#include <core/MillerIndex.h>
-#include <core/Peak3D.h>
-#include <core/PeakFilter.h>
-#include <core/PeakFinder.h>
-#include <core/ProgressHandler.h>
-#include <core/ReciprocalVector.h>
-#include <core/Sample.h>
-#include <core/SpaceGroup.h>
-#include <core/PixelSumIntegrator.h>
-#include <core/Source.h>
-#include <core/UnitCell.h>
-
+#include "SessionModel.h"
 #include "DataItem.h"
-#include "DetectorItem.h"
-#include "DetectorScene.h"
-#include "DialogExperiment.h"
 #include "ExperimentItem.h"
-#include "GLSphere.h"
-#include "GLWidget.h"
 #include "InstrumentItem.h"
 #include "MetaTypes.h"
 #include "NumorItem.h"
-#include "PeakListItem.h"
-#include "PeakTableView.h"
-#include "ProgressView.h"
-#include "QCustomPlot.h"
 #include "PeaksItem.h"
-#include "SampleItem.h"
-#include "SessionModel.h"
-#include "SourceItem.h"
-#include "TreeItem.h"
-#include "UnitCellItem.h"
 
 #include "ui_MainWindow.h"
 

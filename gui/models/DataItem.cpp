@@ -193,9 +193,8 @@ nsx::DataList DataItem::selectedData()
     nsx::DataList selectedNumors;
     for (int i = 0; i < rowCount(); ++i) {
         if (child(i)->checkState() == Qt::Checked) {
-            if (auto numor_item = dynamic_cast<NumorItem*>(child(i))) {
+            if (auto numor_item = dynamic_cast<NumorItem*>(child(i)))
                 selectedNumors.push_back(numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>());
-            }
         }
     }
     return selectedNumors;

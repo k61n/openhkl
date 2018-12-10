@@ -1,18 +1,11 @@
 #pragma once
 
-#include <memory>
-#include <string>
-#include <vector>
-
 #include <QPoint>
-#include <QStandardItem>
-#include <QStandardItemModel>
 #include <QTreeView>
 
 #include <core/DataTypes.h>
 
 class DataItem;
-class ExperimentItem;
 class MainWindow;
 class SessionModel;
 
@@ -41,10 +34,8 @@ public slots:
     void onSingleClick(const QModelIndex& index);
 
 private:
-
     void openInstrumentStatesDialog();
 
 private:
-
     MainWindow *_main_window;
 };
