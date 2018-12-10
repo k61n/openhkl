@@ -1,5 +1,3 @@
-#include <fstream>
-
 #include <QSplashScreen>
 #include <QDesktopWidget>
 #include <QPainter>
