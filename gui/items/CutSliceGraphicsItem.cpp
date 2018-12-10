@@ -32,21 +32,19 @@ CutSliceGraphicsItem::~CutSliceGraphicsItem()
 void CutSliceGraphicsItem::plot(SXPlot* plot)
 {
     auto p=dynamic_cast<SimplePlot*>(plot);
-    if (!p) {
+    if (!p)
         return;
-    }
     p->xAxis->setLabel("Frame (a.u.)");
     p->yAxis->setLabel("Intensity (counts)");
 
     // Set the pointer to the detector scene to the scene that holds the cutter
     auto detPtr=dynamic_cast<DetectorScene*>(scene());
-    if (!detPtr) {
+    if (!detPtr)
         return;
-    }
 
     auto data = detPtr->getData();
     auto det = data->reader()->diffractometer()->detector();
-    
+
     int nrows=det->nRows();
     int ncols=det->nCols();
 
@@ -104,7 +102,8 @@ bool CutSliceGraphicsItem::isHorizontal() const
     return _horizontal;
 }
 
-void CutSliceGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWidget *widget)
+void CutSliceGraphicsItem::paint(
+    QPainter *painter, const QStyleOptionGraphicsItem *option,QWidget *widget)
 {
     Q_UNUSED(widget);
 
@@ -133,12 +132,10 @@ std::string CutSliceGraphicsItem::getPlotType() const
 
 void CutSliceGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
-    if (!isVisible()) {
+    if (!isVisible())
         return;
-    }
-    if (!isSelected()) {
+    if (!isSelected())
         return;
-    }
     int step=event->delta()/120;
 
     if (_horizontal) {

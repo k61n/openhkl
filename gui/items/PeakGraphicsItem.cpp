@@ -20,7 +20,6 @@
 #include <core/UnitCell.h>
 #include <core/Units.h>
 
-#include "DetectorScene.h"
 #include "PeakGraphicsItem.h"
 #include "PeakPlot.h"
 #include "SXPlot.h"
@@ -39,11 +38,11 @@ PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D peak, int frame)
     auto unit_cell = _peak->unitCell();
     if (unit_cell) {
         nsx::MillerIndex miller_index(_peak->q(), *unit_cell);
-        if (miller_index.indexed(unit_cell->indexingTolerance())) {
-            peak_label = QString("%1,%2,%3").arg(miller_index[0]).arg(miller_index[1]).arg(miller_index[2]);
-        } else {
+        if (miller_index.indexed(unit_cell->indexingTolerance()))
+            peak_label = QString("%1,%2,%3").
+                arg(miller_index[0]).arg(miller_index[1]).arg(miller_index[2]);
+        else
             peak_label = "not indexed";
-        }
 
     } else {
         peak_label = "no unit cell";
@@ -82,7 +81,8 @@ PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D peak, int frame)
 
     _upper = aabb.upper();
 
-    auto center = peak_ellipsoid.intersectionCenter({0.0,0.0,1.0},{0.0,0.0,static_cast<double>(frame)});
+    auto center = peak_ellipsoid.intersectionCenter(
+        {0.0,0.0,1.0},{0.0,0.0,static_cast<double>(frame)});
 
     setPos(center[0],center[1]);
 
@@ -99,15 +99,14 @@ nsx::sptrPeak3D PeakGraphicsItem::peak() const
 
 QRectF PeakGraphicsItem::boundingRect() const
 {
-
-    double width = _upper[0] - _lower[0];
-
+    double width  = _upper[0] - _lower[0];
     double height = _upper[1] - _lower[1];
 
     return QRectF(-width/2.0,-height/2.0,width,height);
 }
 
-void PeakGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void PeakGraphicsItem::paint(
+    QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget)
 

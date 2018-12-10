@@ -12,7 +12,6 @@
 #include <core/AABB.h>
 #include <core/DataSet.h>
 
-#include "DetectorScene.h"
 #include "EllipseMaskGraphicsItem.h"
 
 EllipseMaskGraphicsItem::EllipseMaskGraphicsItem(nsx::sptrDataSet data, nsx::AABB* aabb)
@@ -154,7 +153,5 @@ void EllipseMaskGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
     }
 
     update();
-
     updateAABB();
-
 }

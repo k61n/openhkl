@@ -12,7 +12,6 @@
 #include <core/AABB.h>
 #include <core/DataSet.h>
 
-#include "DetectorScene.h"
 #include "MaskGraphicsItem.h"
 
 MaskGraphicsItem::MaskGraphicsItem(nsx::sptrDataSet data, nsx::AABB* aabb)
@@ -34,7 +33,8 @@ MaskGraphicsItem::~MaskGraphicsItem()
 {
 }
 
-void MaskGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void MaskGraphicsItem::paint(
+    QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget);
 
@@ -52,8 +52,10 @@ void MaskGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
     QPointF tl=sceneBoundingRect().topLeft();
     QPointF br=sceneBoundingRect().bottomRight();
-    QString text2=QString::number(tl.x())+"\n"+QString::number(tl.y())+"\n"+QString::number(br.x())+"\n"+QString::number(br.y());
-
+    QString text2=QString::number(
+        tl.x())+"\n"+QString::number(tl.y())+"\n"+
+        QString::number(br.x())+"\n"+
+        QString::number(br.y());
 }
 
 QRectF MaskGraphicsItem::boundingRect() const
@@ -156,5 +158,4 @@ void MaskGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
     update();
 
     updateAABB();
-
 }

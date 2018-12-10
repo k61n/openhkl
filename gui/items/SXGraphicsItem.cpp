@@ -2,7 +2,6 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsSceneMouseEvent>
 
-#include "DetectorScene.h"
 #include "SXGraphicsItem.h"
 #include "SXPlot.h"
 
@@ -89,10 +88,8 @@ void SXGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
 
 void SXGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-
-    if (!_movable || !isVisible() || !isSelected()) {
+    if (!_movable || !isVisible() || !isSelected())
         return;
-    }
 
     if (_firstMove) {
         _firstMove=false;
