@@ -15,12 +15,10 @@ SampleShapeItem::SampleShapeItem():
     setDropEnabled(false);
 
     setSelectable(false);
-
     setCheckable(false);
 }
 
 QWidget* SampleShapeItem::inspectItem()
 {
-    return new SampleShapePropertyWidget(this);
+    return new SampleShapePropertyWidget(experiment());
 }
-

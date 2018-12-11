@@ -83,7 +83,6 @@ void DialogAbsorption::readInfoFile(const std::string &filename)
             QMessageBox::critical(this, tr("NSXTool"), tr("Instrument name in video file does not match the diffractometer name"));
         }
 
-
         std::string line;
         // Skip one line (comment)
         getline(file,line);
@@ -167,4 +166,3 @@ void DialogAbsorption::setupInitialButtons()
     ui->button_removingPoints->setDisabled(true);
     ui->button_triangulate->setDisabled(true);
 }
-
