@@ -1,28 +1,23 @@
 #pragma once
 
 #include <QWidget>
-
-namespace Ui {
-    class DetectorPropertyWidget;
-}
-
-class DetectorItem;
+#include <core/Detector.h>
+#include "ui_DetectorPropertyWidget.h"
 
 class DetectorPropertyWidget : public QWidget {
 
     Q_OBJECT
 
 public:
-    explicit DetectorPropertyWidget(DetectorItem* caller,QWidget *parent = nullptr);
+    explicit DetectorPropertyWidget(nsx::Detector& detector);
 
     ~DetectorPropertyWidget();
 
 private:
-
     void onSampleToDectorDistanceChanged(double distance);
 
 private:
     Ui::DetectorPropertyWidget *_ui;
 
-    DetectorItem* _detectorItem;
+    nsx::Detector& _detector;
 };

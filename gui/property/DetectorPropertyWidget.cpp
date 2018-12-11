@@ -1,35 +1,29 @@
+#include "DetectorPropertyWidget.h"
+
 #include <QDoubleSpinBox>
 #include <QSpinBox>
 
-#include <core/Detector.h>
 #include <core/DirectVector.h>
 #include <core/Diffractometer.h>
 #include <core/Gonio.h>
 #include <core/RotAxis.h>
 #include <core/TransAxis.h>
-#include <core/Units.h>
 
-#include "DetectorItem.h"
-#include "DetectorPropertyWidget.h"
-
-#include "ui_DetectorPropertyWidget.h"
-
-DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *parent) :
-    QWidget(parent),
+DetectorPropertyWidget::DetectorPropertyWidget(nsx::Detector& detector) :
+    QWidget(),
     _ui(new Ui::DetectorPropertyWidget),
-    _detectorItem(caller)
+    _detector(detector)
 {
     _ui->setupUi(this);
 
-    const auto* detector = _detectorItem->experiment()->diffractometer()->detector();
-    const auto &detector_gonio = detector->gonio();
+    const auto &detector_gonio = _detector.gonio();
     size_t n_detector_gonio_axes = detector_gonio.nAxes();
 
-    _ui->height->setValue(detector->height());
-    _ui->width->setValue(detector->width());
-    _ui->columns->setValue(detector->nCols());
-    _ui->rows->setValue(detector->nRows());
-    _ui->sample_to_detector_distance->setValue(detector->distance());
+    _ui->height->setValue(_detector.height());
+    _ui->width->setValue(_detector.width());
+    _ui->columns->setValue(_detector.nCols());
+    _ui->rows->setValue(_detector.nRows());
+    _ui->sample_to_detector_distance->setValue(_detector.distance());
 
     _ui->axes->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _ui->axes->setRowCount(n_detector_gonio_axes);
@@ -52,7 +46,9 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller,QWidget *par
         _ui->axes->setItem(i,1,new QTableWidgetItem(QString(os.str().c_str())));
     }
 
-    connect(_ui->sample_to_detector_distance,static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),[=](double value){onSampleToDectorDistanceChanged(value);});
+    connect(_ui->sample_to_detector_distance,
+            static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+            [=](double value){onSampleToDectorDistanceChanged(value);});
 }
 
 DetectorPropertyWidget::~DetectorPropertyWidget()
@@ -62,7 +58,5 @@ DetectorPropertyWidget::~DetectorPropertyWidget()
 
 void DetectorPropertyWidget::onSampleToDectorDistanceChanged(double distance)
 {
-    auto* detector = _detectorItem->experiment()->diffractometer()->detector();
-
-    detector->setDistance(distance);
+    _detector.setDistance(distance);
 }

@@ -17,13 +17,12 @@ DetectorItem::DetectorItem() : InspectableTreeItem()
     setDropEnabled(false);
 
     setSelectable(false);
-
     setCheckable(false);
 }
 
 QWidget* DetectorItem::inspectItem()
 {
-    return new DetectorPropertyWidget(this);
+    return new DetectorPropertyWidget(*experiment()->diffractometer()->detector());
 }
 
 
