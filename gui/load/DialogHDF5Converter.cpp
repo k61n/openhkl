@@ -1,19 +1,16 @@
+#include "DialogHDF5Converter.h"
+
 #include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
-#include <QListWidgetItem>
 #include <QString>
-#include <QStringList>
 
 #include <core/DataSet.h>
-#include <core/Diffractometer.h>
 #include <core/Logger.h>
 #include <core/Path.h>
 #include <core/Resources.h>
 
-#include "DataItem.h"
-#include "DialogHDF5Converter.h"
 #include "ui_DialogHDF5Converter.h"
 
 DialogHDF5Converter::DialogHDF5Converter(const nsx::DataList& numors, QWidget *parent)
