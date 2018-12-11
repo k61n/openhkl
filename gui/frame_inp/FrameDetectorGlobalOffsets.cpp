@@ -18,15 +18,13 @@
 #include "MetaTypes.h"
 #include "FrameDetectorGlobalOffsets.h"
 
-#include "ui_FrameDetectorGlobalOffsets.h"
 
 FrameDetectorGlobalOffsets* FrameDetectorGlobalOffsets::_instance = nullptr;
 
 FrameDetectorGlobalOffsets* FrameDetectorGlobalOffsets::create(ExperimentItem *experiment_item)
 {
-    if (!_instance) {
+    if (!_instance)
         _instance = new FrameDetectorGlobalOffsets(experiment_item);
-    }
 
     return _instance;
 }
@@ -37,9 +35,9 @@ FrameDetectorGlobalOffsets* FrameDetectorGlobalOffsets::Instance()
 }
 
 FrameDetectorGlobalOffsets::FrameDetectorGlobalOffsets(ExperimentItem *experiment_item)
-: NSXQFrame(),
-  _ui(new Ui::FrameDetectorGlobalOffsets),
-  _experiment_item(experiment_item)
+    : NSXQFrame()
+    , _ui(new Ui::FrameDetectorGlobalOffsets)
+    , _experiment_item(experiment_item)
 {
     _ui->setupUi(this);
 
@@ -47,7 +45,6 @@ FrameDetectorGlobalOffsets::FrameDetectorGlobalOffsets(ExperimentItem *experimen
     auto all_data = _experiment_item->dataItem()->allData();
     for (auto data : all_data) {
         QFileInfo fileinfo(QString::fromStdString(data->filename()));
-
         QListWidgetItem* item = new QListWidgetItem(fileinfo.baseName());
         item->setData(Qt::UserRole,QVariant::fromValue(data));
         _ui->selected_data->addItem(item);
@@ -61,24 +58,23 @@ FrameDetectorGlobalOffsets::FrameDetectorGlobalOffsets(ExperimentItem *experimen
     for (size_t i = 0; i < n_axes; ++i) {
         const auto &axis = detector_gonio.axis(i);
         _ui->offsets->setItem(i,0,new QTableWidgetItem(QString::fromStdString(axis.name())));
-
     }
 
-    _ui->offsets->setHorizontalHeaderItem(1,new QTableWidgetItem("Offset (" + QString(QChar(0x00B0)) + ")"));
+    _ui->offsets->setHorizontalHeaderItem(
+        1, new QTableWidgetItem("Offset (" + QString(QChar(0x00B0)) + ")"));
     _ui->offsets->setItemDelegateForColumn(1,new DoubleItemDelegate());
 
     _ui->tolerance->setValue(1.0e-6);
 
-    connect(_ui->actions,SIGNAL(clicked(QAbstractButton*)),this,SLOT(slotActionClicked(QAbstractButton*)));
+    connect(_ui->actions,SIGNAL(clicked(QAbstractButton*)),
+            this,SLOT(slotActionClicked(QAbstractButton*)));
 }
 
 FrameDetectorGlobalOffsets::~FrameDetectorGlobalOffsets()
 {
     delete _ui;
-
-    if (_instance) {
+    if (_instance)
         _instance = nullptr;
-    }
 }
 
 void FrameDetectorGlobalOffsets::slotActionClicked(QAbstractButton *button)
@@ -116,9 +112,8 @@ void FrameDetectorGlobalOffsets::fit()
     }
 
     nsx::DataList selected_data;
-    for (auto item : selected_items) {
+    for (auto item : selected_items)
         selected_data.push_back(item->data(Qt::UserRole).value<nsx::sptrDataSet>());
-    }
 
     // Fit the detector offsets with the selected data
     const auto& gonio = _experiment_item->experiment()->diffractometer()->detector()->gonio();
@@ -126,9 +121,8 @@ void FrameDetectorGlobalOffsets::fit()
         gonio, selected_data,_ui->n_iterations->value(),_ui->tolerance->value());
 
     // The fit failed for whatever reason, return
-    if (!fit_results.success) {
+    if (!fit_results.success)
         nsx::error()<<"Could not fit the detector offsets.";
-    }
 
     int comp(0);
     for (auto&& offset : fit_results.offsets) {
@@ -167,7 +161,8 @@ void FrameDetectorGlobalOffsets::fit()
     _ui->plot->xAxis->setTickLabelFont(font);
     _ui->plot->yAxis->setTickLabelFont(font);
 
-    _ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
+    _ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes
+                               | QCP::iSelectLegend | QCP::iSelectPlottables);
 
     _ui->plot->rescaleAxes();
 

@@ -1,10 +1,7 @@
 #pragma once
 
 #include "NSXQFrame.h"
-
-namespace Ui {
-class FrameDetectorGlobalOffsets;
-}
+#include "ui_FrameDetectorGlobalOffsets.h"
 
 class ExperimentItem;
 class QAbstractButton;
@@ -14,7 +11,6 @@ class FrameDetectorGlobalOffsets : public NSXQFrame
     Q_OBJECT
 
 public:
-
     static FrameDetectorGlobalOffsets* create(ExperimentItem* experiment_item);
 
     static FrameDetectorGlobalOffsets* Instance();
@@ -26,17 +22,14 @@ public:
     ~FrameDetectorGlobalOffsets();
 
 private slots:
-
     void slotActionClicked(QAbstractButton *button);
 
 private:
-
     explicit FrameDetectorGlobalOffsets(ExperimentItem *experiment_item);
 
     void fit();
 
 private:
-
     static FrameDetectorGlobalOffsets *_instance;
 
     Ui::FrameDetectorGlobalOffsets *_ui;
