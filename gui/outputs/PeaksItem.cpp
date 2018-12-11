@@ -1,7 +1,7 @@
 #include <memory>
 
-#include <QMessageBox>
 #include <QInputDialog>
+#include <QMessageBox>
 
 #include <core/DataSet.h>
 #include <core/Experiment.h>
@@ -12,10 +12,10 @@
 #include <core/MeanBackgroundIntegrator.h>
 #include <core/MetaData.h>
 #include <core/PeakFilter.h>
+#include <core/PixelSumIntegrator.h>
 #include <core/Profile1DIntegrator.h>
 #include <core/Profile3DIntegrator.h>
 #include <core/RawDataReader.h>
-#include <core/PixelSumIntegrator.h>
 #include <core/UnitCell.h>
 
 #include "DataItem.h"
@@ -44,7 +44,7 @@
 #include "UnitCellItem.h"
 #include "UnitCellsItem.h"
 
-PeaksItem::PeaksItem(): InspectableTreeItem()
+PeaksItem::PeaksItem() : InspectableTreeItem()
 {
     setText("Peaks");
 
@@ -87,7 +87,7 @@ nsx::PeakList PeaksItem::selectedPeaks()
         if (list.checkState() != Qt::Checked)
             continue;
 
-        for (auto&& peak: list.peaks())
+        for (auto&& peak : list.peaks())
             peaks.push_back(peak);
     }
     return peaks;
@@ -110,7 +110,7 @@ void PeaksItem::normalizeToMonitor()
 
         double monitor = data->reader()->metadata().key<double>("monitor");
 
-        peak->setScale(factor/monitor);
+        peak->setScale(factor / monitor);
     }
     emit model()->itemChanged(this);
 }
@@ -121,7 +121,7 @@ nsx::PeakList PeaksItem::allPeaks()
     for (auto i = 0; i < rowCount(); ++i) {
         auto& list = dynamic_cast<PeakListItem&>(*child(i));
 
-        for (auto&& peak: list.peaks())
+        for (auto&& peak : list.peaks())
             peaks.push_back(peak);
     }
     return peaks;
@@ -144,17 +144,22 @@ void PeaksItem::integratePeaks()
     std::vector<std::string> integrator_names;
 
     integrator_map["Pixel sum integrator"] = [&]() {
-        return new nsx::PixelSumIntegrator(dialog->fitCenter(), dialog->fitCov());};
+        return new nsx::PixelSumIntegrator(dialog->fitCenter(), dialog->fitCov());
+    };
     integrator_map["3d profile integrator"] = [&]() {
-        return new nsx::Profile3DIntegrator(library, dialog->radius(), dialog->nframes(), false);};
+        return new nsx::Profile3DIntegrator(library, dialog->radius(), dialog->nframes(), false);
+    };
     integrator_map["I/Sigma integrator"] = [&]() {
-        return new nsx::ISigmaIntegrator(library, dialog->radius(), dialog->nframes());};
+        return new nsx::ISigmaIntegrator(library, dialog->radius(), dialog->nframes());
+    };
     integrator_map["1d Profile integrator"] = [&]() {
-        return new nsx::Profile1DIntegrator(library, dialog->radius(), dialog->nframes());};
+        return new nsx::Profile1DIntegrator(library, dialog->radius(), dialog->nframes());
+    };
     integrator_map["Gaussian integrator"] = [&]() {
-        return new nsx::GaussianIntegrator(dialog->fitCenter(), dialog->fitCov());};
+        return new nsx::GaussianIntegrator(dialog->fitCenter(), dialog->fitCov());
+    };
 
-    for (const auto& pair: integrator_map)
+    for (const auto& pair : integrator_map)
         integrator_names.push_back(pair.first);
 
     dialog->setIntegrators(integrator_names);
@@ -167,7 +172,7 @@ void PeaksItem::integratePeaks()
     const double dmin = dialog->dMin();
     const double dmax = dialog->dMax();
 
-    //nsx::DataList numors = _session->getSelectedNumors();
+    // nsx::DataList numors = _session->getSelectedNumors();
     auto&& numors = exp_item->dataItem()->selectedData();
 
     nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
@@ -178,18 +183,17 @@ void PeaksItem::integratePeaks()
     // todo: bkg_begin and bkg_end
     auto peaks = peak_filter.dRange(selected_peaks, dmin, dmax);
 
-    for (auto&& numor: numors) {
+    for (auto&& numor : numors) {
         nsx::info() << "Integrating " << peaks.size() << " peaks";
         std::unique_ptr<nsx::IPeakIntegrator> integrator(integrator_map[dialog->integrator()]());
         integrator->setHandler(handler);
-        integrator->integrate(peaks, numor,
-                              library->peakScale(), library->bkgBegin(), library->bkgEnd());
+        integrator->integrate(
+            peaks, numor, library->peakScale(), library->bkgBegin(), library->bkgEnd());
     }
 
     nsx::info() << "Done reintegrating peaks";
 
     emit model()->itemChanged(this);
-
 }
 
 void PeaksItem::findSpaceGroup()
@@ -206,11 +210,11 @@ void PeaksItem::showPeaksOpenGL()
     auto& scene = glw->getScene();
     auto peaks = selectedPeaks();
 
-    for (auto peak: peaks) {
-        GLSphere* sphere=new GLSphere("");
+    for (auto peak : peaks) {
+        GLSphere* sphere = new GLSphere("");
         Eigen::RowVector3d pos = peak->q().rowVector();
-        sphere->setPos(pos[0]*100,pos[1]*100,pos[2]*100);
-        sphere->setColor(0,1,0);
+        sphere->setPos(pos[0] * 100, pos[1] * 100, pos[2] * 100);
+        sphere->setColor(0, 1, 0);
         scene.addActor(sphere);
     }
 
@@ -232,7 +236,7 @@ void PeaksItem::buildShapeLibrary()
 
     // Check that a minimum number of peaks have been selected for indexing
     if (peaks.size() == 0) {
-        QMessageBox::warning(nullptr, "NSXTool","Need to selected peaks to fit profile!");
+        QMessageBox::warning(nullptr, "NSXTool", "Need to selected peaks to fit profile!");
         return;
     }
 
@@ -281,8 +285,8 @@ void PeaksItem::openAutoIndexingFrame()
 {
     auto&& selected_peaks = selectedPeaks();
 
-    FrameAutoIndexer *frame_autoindexer = FrameAutoIndexer::create(
-        experimentItem(), selected_peaks);
+    FrameAutoIndexer* frame_autoindexer =
+        FrameAutoIndexer::create(experimentItem(), selected_peaks);
 
     frame_autoindexer->show();
     frame_autoindexer->raise();
@@ -292,8 +296,8 @@ void PeaksItem::openUserDefinedUnitCellIndexerFrame()
 {
     auto&& selected_peaks = selectedPeaks();
 
-    FrameUserDefinedUnitCellIndexer *frame = FrameUserDefinedUnitCellIndexer::create(
-        experimentItem(), selected_peaks);
+    FrameUserDefinedUnitCellIndexer* frame =
+        FrameUserDefinedUnitCellIndexer::create(experimentItem(), selected_peaks);
 
     frame->show();
     frame->raise();
@@ -323,7 +327,7 @@ void PeaksItem::autoAssignUnitCell()
         return;
     }
 
-    for (auto peak: peaks) {
+    for (auto peak : peaks) {
         if (!peak->enabled())
             continue;
 
@@ -374,7 +378,7 @@ void PeaksItem::removeSelectedPeakCollections()
     }
 
     if (!accept_removal) {
-        nsx::error()<<"One or more peaks are used by other resources.";
+        nsx::error() << "One or more peaks are used by other resources.";
         return;
     }
 

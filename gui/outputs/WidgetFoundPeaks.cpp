@@ -8,11 +8,13 @@
 
 #include "ui_WidgetFoundPeaks.h"
 
-WidgetFoundPeaks::WidgetFoundPeaks(ExperimentItem *experiment_item, const nsx::PeakList &peaks) : _ui(new Ui::WidgetFoundPeaks)
+WidgetFoundPeaks::WidgetFoundPeaks(ExperimentItem* experiment_item, const nsx::PeakList& peaks)
+    : _ui(new Ui::WidgetFoundPeaks)
 {
     _ui->setupUi(this);
 
-    CollectedPeaksModel *peaks_model = new CollectedPeaksModel(experiment_item->model(),experiment_item->experiment(),peaks,this);
+    CollectedPeaksModel* peaks_model = new CollectedPeaksModel(
+        experiment_item->model(), experiment_item->experiment(), peaks, this);
     _ui->peaks->setModel(peaks_model);
 }
 

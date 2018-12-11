@@ -41,15 +41,15 @@ std::string fileSeparator();
 std::string fileBasename(const std::string& input_path);
 
 //! Returns a path stripped off its file extension
-std::pair<std::string,std::string> splitFileExtension(const std::string& input_path);
+std::pair<std::string, std::string> splitFileExtension(const std::string& input_path);
 
 //! Get the directory name of a given path
 std::string fileDirname(const std::string& input_path);
 
 //! Create a directory. The directory can be nested (0x1C0 is 0700)
-void makeDirectory(const std::string& path, int mode=0x1C0);
+void makeDirectory(const std::string& path, int mode = 0x1C0);
 
-std::string buildPath(const std::vector<std::string>& paths, const std::string& root="");
+std::string buildPath(const std::vector<std::string>& paths, const std::string& root = "");
 
 //! Returns the home directory
 std::string homeDirectory();

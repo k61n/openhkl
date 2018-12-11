@@ -30,11 +30,9 @@ void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
             _shape.translateToCenter();
             // The hull is rotated of -90 along chi axis (Y axis)
             Eigen::Matrix3d mat;
-            mat << 0, 0, 1,
-                   0, 1, 0,
-                  -1, 0, 0;
+            mat << 0, 0, 1, 0, 1, 0, -1, 0, 0;
             _shape.rotate(mat);
-            //Convert to m
+            // Convert to m
             _shape.scale(nsx::mm);
             nsx::debug() << "Coordinates of the Hull at rest:" << _shape;
             setHullProperties();
@@ -44,7 +42,7 @@ void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
 
 void SampleShapePropertyWidget::setHullProperties()
 {
-    ui->lineEdit_Volume->setText(QString::number(_shape.volume()/nsx::mm3)+" mm^3");
+    ui->lineEdit_Volume->setText(QString::number(_shape.volume() / nsx::mm3) + " mm^3");
     ui->lineEdit_Faces->setText(QString::number(_shape.nFaces()));
     ui->lineEdit_Edges->setText(QString::number(_shape.nEdges()));
     ui->lineEdit_Vertices->setText(QString::number(_shape.nVertices()));

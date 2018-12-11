@@ -2,10 +2,10 @@
 
 #include <Eigen/Core>
 
-#include "PeakList.h"
 #include "DetectorEvent.h"
 #include "Ellipsoid.h"
 #include "InterpolatedState.h"
+#include "PeakList.h"
 namespace nsx {
 
 //! \class PeakCoordinateSystem
@@ -14,18 +14,19 @@ namespace nsx {
 //! Following Kabsch 1988, we introduce about each peak a new coordinate system which is supposed
 //! to undo the effects of detector geometry and distortion from the Lorentz factor.
 //! In this system, the peaks intensity distribution is _approximately_ gaussian with an
-//! _approximately_ diagonal covariance matrix. 
+//! _approximately_ diagonal covariance matrix.
 //!
-//! This allows us to compare the shapes of peaks on different regions of the detector in a 
-//! way that is independent of the detector geometry. This is crucial for shape prediction and profile
-//! fitting.
+//! This allows us to compare the shapes of peaks on different regions of the detector in a
+//! way that is independent of the detector geometry. This is crucial for shape prediction and
+//! profile fitting.
 class PeakCoordinateSystem {
 public:
     //! Construct the coordinate system about the given peak.
     PeakCoordinateSystem(sptrPeak3D peak);
     //! Transform from detector coordinates in to peak coordinates.
     Eigen::Vector3d transform(const DetectorEvent& ev) const;
-    //! Compute the Jacobian of the transformation from detector (x, y, frame) -> (alpha, beta, gamma).
+    //! Compute the Jacobian of the transformation from detector (x, y, frame) -> (alpha, beta,
+    //! gamma).
     Eigen::Matrix3d jacobian() const;
     //! Estimate the beam divergence from the peak's shape in detector space
     double estimateDivergence() const;

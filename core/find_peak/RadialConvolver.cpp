@@ -2,27 +2,24 @@
 
 namespace nsx {
 
-RadialConvolver::RadialConvolver()
-: AtomicConvolver({{"r_in",5},{"r_out",10}})
-{
-}
+RadialConvolver::RadialConvolver() : AtomicConvolver({{"r_in", 5}, {"r_out", 10}}) {}
 
 Convolver* RadialConvolver::clone() const
 {
     return new RadialConvolver(*this);
 }
 
-RadialConvolver::RadialConvolver(const std::map<std::string,double>& parameters)
-: RadialConvolver()
+RadialConvolver::RadialConvolver(const std::map<std::string, double>& parameters)
+    : RadialConvolver()
 {
     setParameters(parameters);
 }
 
-std::pair<size_t,size_t> RadialConvolver::kernelSize() const
+std::pair<size_t, size_t> RadialConvolver::kernelSize() const
 {
     size_t r = _parameters.at("r_out");
 
-    return std::make_pair(r,r);
+    return std::make_pair(r, r);
 }
 
 RealMatrix RadialConvolver::_matrix(int nrows, int ncols) const
@@ -39,13 +36,14 @@ RealMatrix RadialConvolver::_matrix(int nrows, int ncols) const
 
     for (int i = 0; i < nrows; ++i) {
         for (int j = 0; j < ncols; ++j) {
-            // shift so that (0,0) = (rows, cols) = (rows, 0) = (0, cols) is the center of the kernel
-            double x = j > ncols/2 ? ncols-j : j;
-            double y = i > nrows/2 ? nrows-i : i;
+            // shift so that (0,0) = (rows, cols) = (rows, 0) = (0, cols) is the center of the
+            // kernel
+            double x = j > ncols / 2 ? ncols - j : j;
+            double y = i > nrows / 2 ? nrows - i : i;
 
-            double dist2 = x*x + y*y;
+            double dist2 = x * x + y * y;
 
-            if (dist2 >= r_in*r_in && dist2 < r_out*r_out) {
+            if (dist2 >= r_in * r_in && dist2 < r_out * r_out) {
                 kernel(i, j) = 1.0;
             }
         }
@@ -57,4 +55,3 @@ RealMatrix RadialConvolver::_matrix(int nrows, int ncols) const
 }
 
 } // end namespace nsx
-

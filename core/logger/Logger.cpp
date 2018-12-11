@@ -9,28 +9,27 @@
 
 namespace nsx {
 
-Logger::Logger(IStreamWrapper* wrapper)
-: _wrapper(wrapper),
-  _msg()
+Logger::Logger(IStreamWrapper* wrapper) : _wrapper(wrapper), _msg()
 {
     _wrapper->printPrefix();
 }
 
-Logger::~Logger(){
-	// Explicitly check if wrapper is non-null because the Logger object
+Logger::~Logger()
+{
+    // Explicitly check if wrapper is non-null because the Logger object
     // could have been moved
-	if (_wrapper) {
-		_wrapper->print(_msg);
-		_wrapper->printSuffix();
-	}
+    if (_wrapper) {
+        _wrapper->print(_msg);
+        _wrapper->printSuffix();
+    }
 }
 
 auto current_time() -> std::string
 {
     auto now = std::chrono::system_clock::now();
-    std::time_t tt = std::chrono::system_clock::to_time_t (now);
+    std::time_t tt = std::chrono::system_clock::to_time_t(now);
     std::string current_time = std::ctime(&tt);
-    current_time.erase(current_time.size()-1);
+    current_time.erase(current_time.size() - 1);
     return current_time;
 }
 
@@ -41,28 +40,28 @@ std::string currentTime()
 
 auto debug_log() -> Logger
 {
-    auto initialize = []() -> std::string {return "[DEBUG] " + current_time();};
-    auto finalize = []() -> std::string {return "\n";};
+    auto initialize = []() -> std::string { return "[DEBUG] " + current_time(); };
+    auto finalize = []() -> std::string { return "\n"; };
     AggregateStreamWrapper* wrapper = new AggregateStreamWrapper();
-    wrapper->addWrapper(new LogFileStreamWrapper("nsx_debug.txt",initialize,finalize));
+    wrapper->addWrapper(new LogFileStreamWrapper("nsx_debug.txt", initialize, finalize));
     return Logger(wrapper);
 }
 
 auto info_log() -> Logger
 {
-    auto initialize = []() -> std::string {return "[INFO]  " + current_time();};
-    auto finalize = []() -> std::string {return "\n";};
+    auto initialize = []() -> std::string { return "[INFO]  " + current_time(); };
+    auto finalize = []() -> std::string { return "\n"; };
     AggregateStreamWrapper* wrapper = new AggregateStreamWrapper();
-    wrapper->addWrapper(new LogFileStreamWrapper("nsx_info.txt",initialize,finalize));
+    wrapper->addWrapper(new LogFileStreamWrapper("nsx_info.txt", initialize, finalize));
     return Logger(wrapper);
 }
 
 auto error_log() -> Logger
 {
-    auto initialize = []() -> std::string {return "[ERROR] " + current_time();};
-    auto finalize = []() -> std::string {return "\n";};
+    auto initialize = []() -> std::string { return "[ERROR] " + current_time(); };
+    auto finalize = []() -> std::string { return "\n"; };
     AggregateStreamWrapper* wrapper = new AggregateStreamWrapper();
-    wrapper->addWrapper(new LogFileStreamWrapper("nsx_error.txt",initialize,finalize));
+    wrapper->addWrapper(new LogFileStreamWrapper("nsx_error.txt", initialize, finalize));
     return Logger(wrapper);
 }
 
@@ -101,6 +100,3 @@ void setError(std::function<Logger()> error)
 }
 
 } // end namespace nsx
-
-
-

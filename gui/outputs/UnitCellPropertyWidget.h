@@ -15,13 +15,11 @@ class QString;
 
 class UnitCellItem;
 
-class UnitCellPropertyWidget : public QWidget
-{
+class UnitCellPropertyWidget : public QWidget {
     Q_OBJECT
 
 public:
-
-    explicit UnitCellPropertyWidget(UnitCellItem* caller,QWidget *parent = 0);
+    explicit UnitCellPropertyWidget(UnitCellItem* caller, QWidget* parent = 0);
     ~UnitCellPropertyWidget();
 
 private slots:
@@ -44,15 +42,13 @@ private slots:
 
     void setIndexingTolerance(double);
 
-    void update(QStandardItem* item=nullptr);
+    void update(QStandardItem* item = nullptr);
 
 private:
-
     void updateCellParameters();
 
 private:
-
     UnitCellItem* _unitCellItem;
 
-    Ui::UnitCellPropertyWidget *ui;
+    Ui::UnitCellPropertyWidget* ui;
 };

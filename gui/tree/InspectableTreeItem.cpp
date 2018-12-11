@@ -1,9 +1,5 @@
 #include "InspectableTreeItem.h"
 
-InspectableTreeItem::InspectableTreeItem() :TreeItem()
-{
-}
+InspectableTreeItem::InspectableTreeItem() : TreeItem() {}
 
-InspectableTreeItem::~InspectableTreeItem()
-{
-}
+InspectableTreeItem::~InspectableTreeItem() {}

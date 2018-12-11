@@ -32,7 +32,8 @@
 
 namespace nsx {
 
-MergedData::MergedData(const SpaceGroup& grp, bool friedel): _group(grp), _friedel(friedel), _peaks()
+MergedData::MergedData(const SpaceGroup& grp, bool friedel)
+    : _group(grp), _friedel(friedel), _peaks()
 {
 }
 
@@ -42,7 +43,7 @@ bool MergedData::addPeak(const sptrPeak3D& peak)
     new_peak.addPeak(peak);
     auto it = _peaks.find(new_peak);
 
-    if ( it != _peaks.end() ) {
+    if (it != _peaks.end()) {
         MergedPeak merged(*it);
         merged.addPeak(peak);
         _peaks.erase(it);
@@ -63,7 +64,7 @@ size_t MergedData::totalSize() const
 {
     size_t total = 0;
 
-    for (const auto& peak: _peaks) {
+    for (const auto& peak : _peaks) {
         total += peak.redundancy();
     }
     return total;

@@ -36,19 +36,18 @@
 namespace nsx {
 
 //! Read detector image from Tiff file
-class TiffDataReader: public IDataReader {
+class TiffDataReader : public IDataReader {
 
 public:
-
     TiffDataReader() = delete;
 
-    TiffDataReader(const TiffDataReader &other);
+    TiffDataReader(const TiffDataReader& other);
 
-    TiffDataReader(const std::string& filename, Diffractometer *diffractometer);
+    TiffDataReader(const std::string& filename, Diffractometer* diffractometer);
 
     ~TiffDataReader() = default;
 
-    TiffDataReader& operator=(const TiffDataReader &other);
+    TiffDataReader& operator=(const TiffDataReader& other);
 
     IDataReader* clone() const final;
 
@@ -59,7 +58,6 @@ public:
     Eigen::MatrixXi data(std::size_t frame) final;
 
 private:
-
     //! Type of encoding for each pixel.
     uint16 _bits;
 

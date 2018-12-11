@@ -2,14 +2,13 @@
 
 namespace nsx {
 
-StdStreamWrapper::StdStreamWrapper(std::ostream& stream, std::function<std::string()> prefix, std::function<std::string()> suffix)
-: IStreamWrapper(prefix, suffix),
-  _stream(stream)
+StdStreamWrapper::StdStreamWrapper(
+    std::ostream& stream, std::function<std::string()> prefix, std::function<std::string()> suffix)
+    : IStreamWrapper(prefix, suffix), _stream(stream)
 {
 }
 
-StdStreamWrapper::~StdStreamWrapper() {
-}
+StdStreamWrapper::~StdStreamWrapper() {}
 
 void StdStreamWrapper::print(const std::string& message)
 {
@@ -19,7 +18,7 @@ void StdStreamWrapper::print(const std::string& message)
 void StdStreamWrapper::printPrefix()
 {
     if (_prefix) {
-        _stream<<_prefix();
+        _stream << _prefix();
     }
 }
 

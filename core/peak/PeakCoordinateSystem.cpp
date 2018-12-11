@@ -1,13 +1,13 @@
+#include "PeakCoordinateSystem.h"
 #include "DataSet.h"
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "IDataReader.h"
 #include "Peak3D.h"
-#include "PeakCoordinateSystem.h"
 
 namespace nsx {
 
-PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak): _peak(peak)
+PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak) : _peak(peak)
 {
     if (!_peak) {
         throw std::runtime_error("Cannot construct PeakCoordinateSystem from null Peak3d");
@@ -16,8 +16,8 @@ PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak): _peak(peak)
     _event = DetectorEvent(peak->shape().center());
     _state = peak->data()->interpolatedState(_event._frame);
     _ki = _state.ki().rowVector();
-    _kf = peak->q().rowVector()*_state.sampleOrientationMatrix().transpose() + _ki;
-    
+    _kf = peak->q().rowVector() * _state.sampleOrientationMatrix().transpose() + _ki;
+
     _e1 = _kf.cross(_ki);
     _e2 = _kf.cross(_e1);
 
@@ -35,20 +35,20 @@ Eigen::Vector3d PeakCoordinateSystem::transform(const DetectorEvent& ev) const
     auto position = det->pixelPosition(ev._px, ev._py);
     const Eigen::RowVector3d dk = _state.kfLab(position).rowVector() - _kf;
 
-    // Kabsh coordinate system
-    #if 1
+// Kabsh coordinate system
+#if 1
     const double eps1 = _e1.dot(dk);
     const double eps2 = _e2.dot(dk);
     const double eps3 = _zeta * (ev._frame - _event._frame);
-    #else
+#else
 
     // new coordinate system?
-    const Eigen::RowVector3d dq = _state.axis.cross(_kf-_ki) * _state.stepSize;
-    const Eigen::RowVector3d dk2 = dk + (ev._frame-_event._frame)*dq;
+    const Eigen::RowVector3d dq = _state.axis.cross(_kf - _ki) * _state.stepSize;
+    const Eigen::RowVector3d dk2 = dk + (ev._frame - _event._frame) * dq;
     const double eps1 = _e1.dot(dk2);
-    const double eps2 = _e2.dot(dk2); 
-    const double eps3 = _kf.dot(dq) / _kf.norm() / (_kf-_ki).norm() * (ev._frame-_event._frame);
-    #endif
+    const double eps2 = _e2.dot(dk2);
+    const double eps3 = _kf.dot(dq) / _kf.norm() / (_kf - _ki).norm() * (ev._frame - _event._frame);
+#endif
 
     return Eigen::Vector3d(eps1, eps2, eps3);
 }
@@ -60,27 +60,27 @@ Eigen::Matrix3d PeakCoordinateSystem::jacobian() const
     // Jacobian of epsilon coordinates
     Eigen::Matrix3d J;
 
-    // Kabsch coordinate system
-    #if 1
+// Kabsch coordinate system
+#if 1
     J.row(0) = _e1.transpose() * dkdx;
     J.row(1) = _e2.transpose() * dkdx;
     J.row(2) = Eigen::RowVector3d(0, 0, _zeta);
-    #else
+#else
 
     // new coordinate system?
     J.setZero();
 
-    const Eigen::RowVector3d dq = _state.axis.cross(_kf-_ki) * _state.stepSize;
+    const Eigen::RowVector3d dq = _state.axis.cross(_kf - _ki) * _state.stepSize;
 
     J.row(0) = _e1.transpose() * dkdx;
-    J(0,2) +=  _e1.dot(dq);
+    J(0, 2) += _e1.dot(dq);
 
     J.row(1) = _e2.transpose() * dkdx;
-    J(1,2) +=  _e2.dot(dq);
+    J(1, 2) += _e2.dot(dq);
 
-    J(2,2) = _kf.dot(dq) / _kf.norm() / (_kf-_ki).norm();
+    J(2, 2) = _kf.dot(dq) / _kf.norm() / (_kf - _ki).norm();
 
-    #endif
+#endif
 
 
     return J;
@@ -95,8 +95,8 @@ Ellipsoid PeakCoordinateSystem::detectorShape(double sigmaD, double sigmaM) cons
     metric.setZero();
 
     // inverse covariance in standard coordinates
-    metric(0,0) = metric(1,1) = 1 / sigmaD / sigmaD;
-    metric(2,2) = 1 / sigmaM / sigmaM;
+    metric(0, 0) = metric(1, 1) = 1 / sigmaD / sigmaD;
+    metric(2, 2) = 1 / sigmaM / sigmaM;
 
     // transform inverse covariance to detector space
     Eigen::Matrix3d detector_metric = J.transpose() * metric * J;
@@ -115,14 +115,14 @@ double PeakCoordinateSystem::estimateDivergence() const
 {
     auto shape = standardShape();
     auto C = shape.inverseMetric();
-    return std::sqrt(0.5 * (C(0,0) + C(1,1)));
+    return std::sqrt(0.5 * (C(0, 0) + C(1, 1)));
 }
 
 double PeakCoordinateSystem::estimateMosaicity() const
 {
     auto shape = standardShape();
     auto C = shape.inverseMetric();
-    return std::sqrt(C(2,2));
+    return std::sqrt(C(2, 2));
 }
 
 } // end namespace nsx

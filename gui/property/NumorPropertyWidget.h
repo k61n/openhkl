@@ -1,11 +1,10 @@
 #pragma once
 
-#include <QWidget>
 #include "ui_NumorPropertyWidget.h"
+#include <QWidget>
 #include <core/DataTypes.h>
 
-class NumorPropertyWidget : public QWidget
-{
+class NumorPropertyWidget : public QWidget {
     Q_OBJECT
 
 public:
@@ -13,5 +12,5 @@ public:
     ~NumorPropertyWidget();
 
 private:
-    Ui::NumorPropertyWidget *ui;
+    Ui::NumorPropertyWidget* ui;
 };

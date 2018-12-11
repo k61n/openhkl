@@ -45,7 +45,7 @@
 namespace nsx {
 
 ResolutionShell::ResolutionShell(double dmin, double dmax, size_t num_shells)
-: _shells(std::max(num_shells, size_t(1)))
+    : _shells(std::max(num_shells, size_t(1)))
 {
     size_t n_shells = _shells.size();
 
@@ -54,12 +54,12 @@ ResolutionShell::ResolutionShell(double dmin, double dmax, size_t num_shells)
 
     _shells[0].dmin = dmin;
 
-    for (size_t i = 0; i < n_shells-1; ++i) {
-        _shells[i].dmax = std::pow(q3max - (i+1)*dq3,-1.0/3.0);
-        _shells[i+1].dmin = _shells[i].dmax;
+    for (size_t i = 0; i < n_shells - 1; ++i) {
+        _shells[i].dmax = std::pow(q3max - (i + 1) * dq3, -1.0 / 3.0);
+        _shells[i + 1].dmin = _shells[i].dmax;
     }
 
-    _shells[n_shells-1].dmax = dmax;
+    _shells[n_shells - 1].dmax = dmax;
 }
 
 void ResolutionShell::addPeak(const sptrPeak3D& peak)

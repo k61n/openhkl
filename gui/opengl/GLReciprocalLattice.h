@@ -4,16 +4,14 @@
 
 #include "GLActor.h"
 
-class GLReciprocalLattice : public GLActor
-{
+class GLReciprocalLattice : public GLActor {
 
 public:
-
     GLReciprocalLattice(const char* name);
     void setUnitCell(nsx::sptrUnitCell cell);
-    void setPeriodicCells(int xmin,int xmax,int ymin,int ymax,int zmin,int zmax);
+    void setPeriodicCells(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax);
     void setSingleCell();
-    int pickableElements() {return 1;}
+    int pickableElements() { return 1; }
 
 private:
     //! Pointer to the UnitCell

@@ -1,19 +1,19 @@
 #pragma once
 
 #include <map>
-#include <vector>
 #include <utility>
+#include <vector>
 
 #include <Eigen/Dense>
 
+#include <QGraphicsPixmapItem>
+#include <QGraphicsScene>
 #include <QRect>
 #include <QStack>
-#include <QGraphicsScene>
-#include <QGraphicsPixmapItem>
 
-#include <core/PeakList.h>
 #include <core/DataTypes.h>
 #include <core/IMask.h>
+#include <core/PeakList.h>
 
 #include "ColorMap.h"
 #include "SessionModel.h"
@@ -29,21 +29,28 @@ class SXGraphicsItem;
 
 // For the plotting part, better to have RowMajor matrix to use QImage scanline function and
 // optimize cache hit.
-typedef Eigen::Matrix<int,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> rowMatrix;
+typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rowMatrix;
 
 //! Master Scene containing the pixmap of the detector counts
 //! and overlayed graphics items (peaks, data cutters, masks ...)
-class DetectorScene: public QGraphicsScene
-{
+class DetectorScene : public QGraphicsScene {
     Q_OBJECT
 
 public:
-    enum MODE {SELECT=0, ZOOM=1, LINE=2, HORIZONTALSLICE=3, VERTICALSLICE=4, MASK=5, ELLIPSE_MASK=6};
+    enum MODE {
+        SELECT = 0,
+        ZOOM = 1,
+        LINE = 2,
+        HORIZONTALSLICE = 3,
+        VERTICALSLICE = 4,
+        MASK = 5,
+        ELLIPSE_MASK = 6
+    };
 
     //! Which mode is the cursor diplaying
-    enum CURSORMODE {PIXEL=0, THETA=1, GAMMA_NU=2, D_SPACING=3, MILLER_INDICES=4};
+    enum CURSORMODE { PIXEL = 0, THETA = 1, GAMMA_NU = 2, D_SPACING = 3, MILLER_INDICES = 4 };
 
-    explicit DetectorScene(QObject *parent = 0);
+    explicit DetectorScene(QObject* parent = 0);
 
     nsx::sptrDataSet getData();
 
@@ -63,16 +70,15 @@ public:
     void clearPeakGraphicsItems();
 
 protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent* event);
 
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
 
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
 
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void keyPressEvent(QKeyEvent* event);
 
-    void keyPressEvent(QKeyEvent *event);
-
-    void wheelEvent(QGraphicsSceneWheelEvent *event);
+    void wheelEvent(QGraphicsSceneWheelEvent* event);
 
 public slots:
 
@@ -107,7 +113,7 @@ public slots:
     int currentFrame() const;
 
 signals:
-     //! Signal emitted for all changes of the image
+    //! Signal emitted for all changes of the image
     void dataChanged();
 
     void updatePlot(PlottableGraphicsItem* cutter);
@@ -119,7 +125,6 @@ signals:
     void signalChangeSelectedPeak(nsx::sptrPeak3D peak);
 
 private:
-
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
 
@@ -171,7 +176,7 @@ private:
 
     QGraphicsRectItem* _selected_peak_gi;
 
-    std::map<nsx::sptrPeak3D,PeakGraphicsItem*> _peak_graphics_items;
+    std::map<nsx::sptrPeak3D, PeakGraphicsItem*> _peak_graphics_items;
 
     nsx::sptrPeak3D _selected_peak;
 };

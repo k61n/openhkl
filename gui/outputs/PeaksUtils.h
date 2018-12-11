@@ -4,4 +4,4 @@
 
 #include <core/PeakList.h>
 
-std::pair<double,double> dRange(const nsx::PeakList& peaks);
+std::pair<double, double> dRange(const nsx::PeakList& peaks);

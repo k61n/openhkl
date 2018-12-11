@@ -45,23 +45,21 @@
 
 SessionModel::SessionModel()
 {
-    connect(this,SIGNAL(itemChanged(QStandardItem*)),this,SLOT(onItemChanged(QStandardItem*)));
+    connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onItemChanged(QStandardItem*)));
 }
 
-SessionModel::~SessionModel()
-{
-}
+SessionModel::~SessionModel() {}
 
 ExperimentItem* SessionModel::selectExperiment(nsx::sptrDataSet data)
 {
-    ExperimentItem *experiment_item=nullptr;
+    ExperimentItem* experiment_item = nullptr;
 
     for (auto i = 0; i < rowCount(); ++i) {
         experiment_item = dynamic_cast<ExperimentItem*>(item(i));
         if (!experiment_item)
             continue;
 
-        auto data_item  = experiment_item->dataItem();
+        auto data_item = experiment_item->dataItem();
         for (auto j = 0; j < data_item->rowCount(); ++j) {
             auto numor_item = dynamic_cast<NumorItem*>(data_item->child(j));
             if (!numor_item)
@@ -77,10 +75,10 @@ ExperimentItem* SessionModel::selectExperiment(nsx::sptrDataSet data)
 
 void SessionModel::selectData(nsx::sptrDataSet data)
 {
-    emit signalSelectedDataChanged(data,0);
+    emit signalSelectedDataChanged(data, 0);
 }
 
-void SessionModel::onItemChanged(QStandardItem *item)
+void SessionModel::onItemChanged(QStandardItem* item)
 {
     Q_UNUSED(item)
 
@@ -95,7 +93,7 @@ nsx::PeakList SessionModel::peaks(nsx::sptrDataSet data) const
         auto exp_item = dynamic_cast<ExperimentItem*>(item(i));
         auto&& peaks = exp_item->peaksItem()->selectedPeaks();
 
-        for (auto peak: peaks) {
+        for (auto peak : peaks) {
             if (data == nullptr || peak->data() == data)
                 list.push_back(peak);
         }

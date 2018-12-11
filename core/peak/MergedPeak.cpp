@@ -40,18 +40,18 @@
 
 #include <gsl/gsl_cdf.h>
 
-#include "UnitCell.h"
 #include "DataSet.h"
 #include "Logger.h"
 #include "MergedPeak.h"
 #include "MillerIndex.h"
 #include "Peak3D.h"
 #include "ReciprocalVector.h"
+#include "UnitCell.h"
 
 namespace nsx {
 
-MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel):
-    _hkl(), _intensitySum(0.0, 0.0), _peaks(), _grp(grp), _friedel(friedel)
+MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel)
+    : _hkl(), _intensitySum(0.0, 0.0), _peaks(), _grp(grp), _friedel(friedel)
 {
 }
 
@@ -97,19 +97,19 @@ void MergedPeak::determineRepresentativeHKL()
     Eigen::RowVector3d best_hkl = _hkl.rowVector().cast<double>();
     std::vector<Eigen::RowVector3d> equivs;
 
-    for (auto&& g: _grp.groupElements()) {
+    for (auto&& g : _grp.groupElements()) {
         const Eigen::Matrix3d rotation = g.getRotationPart().transpose();
-        equivs.emplace_back(best_hkl*rotation);
+        equivs.emplace_back(best_hkl * rotation);
 
         if (_friedel) {
-            equivs.emplace_back(-best_hkl*rotation);
+            equivs.emplace_back(-best_hkl * rotation);
         }
     }
 
-    auto compare_fn = [=](const Eigen::RowVector3d     & a, const Eigen::RowVector3d& b) -> bool {
+    auto compare_fn = [=](const Eigen::RowVector3d& a, const Eigen::RowVector3d& b) -> bool {
         const double eps = 1e-5;
         for (auto i = 0; i < 3; ++i) {
-            if (std::abs(a(i)-b(i)) > eps) {
+            if (std::abs(a(i) - b(i)) > eps) {
                 return a(i) > b(i);
             }
         }
@@ -140,7 +140,7 @@ std::pair<MergedPeak, MergedPeak> MergedPeak::split() const
     // randomly reorder
     std::random_shuffle(random_idx.begin(), random_idx.end());
 
-    unsigned int parity = std::rand()%2;
+    unsigned int parity = std::rand() % 2;
 
     MergedPeak p1(_grp, _friedel), p2(_grp, _friedel);
 
@@ -148,10 +148,9 @@ std::pair<MergedPeak, MergedPeak> MergedPeak::split() const
         auto idx = random_idx[i];
         auto p = _peaks[idx];
 
-        if ((i%2) == parity) {
+        if ((i % 2) == parity) {
             p1.addPeak(p);
-        }
-        else {
+        } else {
             p2.addPeak(p);
         }
     }
@@ -172,7 +171,7 @@ bool operator<(const MergedPeak& p, const MergedPeak& q)
     return a(2) < b(2);
 }
 
-//! The merged intensity and error are computed as \f$I_{\mathrm{merge}} = N^{-1} \sum_i I_i\f$, 
+//! The merged intensity and error are computed as \f$I_{\mathrm{merge}} = N^{-1} \sum_i I_i\f$,
 //! \f$\sigma_{\mathrm{merge}}^2 = N^{-2}\sum_i \sigma_i^2\f$.
 //! where \f$N\f$ is the redundancy of the reflection. This method computes the statistic
 //! \f[ \chi^2 = \frac{\sum_i (I_i-I_{\mathrm{merge}})^2}{N \sigma_{\mathrm{merge}}^2}, \f]
@@ -188,11 +187,11 @@ double MergedPeak::chi2() const
 
     double chi_sq = 0.0;
 
-    for (auto&& peak: _peaks) {
+    for (auto&& peak : _peaks) {
         auto&& I = peak->correctedIntensity();
         const double std = I.sigma();
-        const double x = (I.value() - I_merge) / (std*std);
-        chi_sq += x*x;
+        const double x = (I.value() - I_merge) / (std * std);
+        chi_sq += x * x;
     }
 
     return chi_sq;
@@ -200,12 +199,12 @@ double MergedPeak::chi2() const
 
 //! This method returns the probability that a chi-squared random variable takes a value less than
 //! the computed value of MergedPeak::chi2(). A large p-value indicates that the computed variance
-//! is larger than the expected variance, indicating the possibility of a systematic error either 
-//! in the integrated intensities or in the computed error. 
+//! is larger than the expected variance, indicating the possibility of a systematic error either
+//! in the integrated intensities or in the computed error.
 double MergedPeak::pValue() const
 {
     // todo: k or k-1?? need to check
-    const double k = redundancy()-1.0;
+    const double k = redundancy() - 1.0;
 
     // if there is only one observation, we cannot compute a p-value
     if (k < 0.9) {

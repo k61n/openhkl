@@ -8,8 +8,8 @@
 
 #include "DialogHDF5Converter.h"
 #include "DialogRawData.h"
-#include "FrameInstrumentStates.h"
 #include "ExperimentItem.h"
+#include "FrameInstrumentStates.h"
 #include "MetaTypes.h"
 #include "NumorItem.h"
 
@@ -42,9 +42,9 @@ void DataItem::removeSelectedData()
                 // If the dataset is not used the use count should be 3
                 // (1 in experiment, 1 in NumorItem and 1 in dataset local variable)
                 if (use_count > 3) {
-                    nsx::error()<<"The dataset "<<dataset->reader()->basename()
-                                <<" is currently used by "<< std::to_string(use_count - 3)
-                                << "other resources.";
+                    nsx::error() << "The dataset " << dataset->reader()->basename()
+                                 << " is currently used by " << std::to_string(use_count - 3)
+                                 << "other resources.";
                     accept_removal = false;
                 } else {
                     _selected_datasets_for_removal.insert(numor_item);
@@ -54,7 +54,7 @@ void DataItem::removeSelectedData()
     }
 
     if (!accept_removal) {
-        nsx::error()<<"One or more datasets are in use. Data removal aborted.";
+        nsx::error() << "One or more datasets are in use. Data removal aborted.";
         return;
     }
 
@@ -69,7 +69,7 @@ void DataItem::importData()
 {
     QStringList filenames;
     filenames = QFileDialog::getOpenFileNames(
-        nullptr,"select numors","","",nullptr,QFileDialog::Option::DontUseNativeDialog);
+        nullptr, "select numors", "", "", nullptr, QFileDialog::Option::DontUseNativeDialog);
 
     for (auto i = 0; i < filenames.size(); ++i) {
         auto&& filename = filenames[i];
@@ -99,14 +99,14 @@ void DataItem::importRawData()
 {
     QStringList qfilenames;
     qfilenames = QFileDialog::getOpenFileNames(
-        nullptr,"select raw data","","",nullptr,QFileDialog::Option::DontUseNativeDialog);
+        nullptr, "select raw data", "", "", nullptr, QFileDialog::Option::DontUseNativeDialog);
 
     if (qfilenames.empty())
         return;
 
     std::vector<std::string> filenames;
 
-    for (auto& filename: qfilenames)
+    for (auto& filename : qfilenames)
         filenames.push_back(filename.toStdString());
 
     DialogRawData dialog;
@@ -136,18 +136,16 @@ void DataItem::importRawData()
     parameters.bpp = dialog.bpp();
 
     auto diff = exp->diffractometer();
-    std::shared_ptr<nsx::DataSet> data(new nsx::DataSet("raw",filenames[0],diff));
+    std::shared_ptr<nsx::DataSet> data(new nsx::DataSet("raw", filenames[0], diff));
 
     try {
         auto raw_data_reader = dynamic_cast<nsx::RawDataReader*>(data->reader());
         for (size_t i = 1; i < filenames.size(); ++i)
             raw_data_reader->addFrame(filenames[i]);
-    }
-    catch(std::exception& e) {
+    } catch (std::exception& e) {
         nsx::error() << "reading numor:" << filenames[0].c_str() << e.what();
         return;
-    }
-    catch(...)  {
+    } catch (...) {
         nsx::error() << "reading numor:" << filenames[0].c_str() << " reason not known:";
         return;
     }
@@ -187,7 +185,7 @@ void DataItem::convertToHDF5()
     nsx::DataList selected_data = selectedData();
 
     if (selected_data.empty()) {
-        nsx::error()<<"No numors selected for HDF5 conversion";
+        nsx::error() << "No numors selected for HDF5 conversion";
         return;
     }
 
@@ -203,11 +201,11 @@ void DataItem::openInstrumentStatesDialog()
     nsx::DataList selected_data = selectedData();
 
     if (selected_data.empty()) {
-        nsx::error()<<"No numors selected for exploring instrument states";
+        nsx::error() << "No numors selected for exploring instrument states";
         return;
     }
 
-    FrameInstrumentStates *frame = FrameInstrumentStates::create(selected_data);
+    FrameInstrumentStates* frame = FrameInstrumentStates::create(selected_data);
 
     frame->show();
     frame->raise();

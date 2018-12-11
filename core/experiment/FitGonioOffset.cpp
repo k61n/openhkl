@@ -16,8 +16,8 @@ GonioFitOutcome fitDetectorGonioOffsets(
 
     // No data provided, return zero offsets
     if (dataset.empty()) {
-        nsx::info()<<"No data provided, offsets set to zero";
-        return {false,std::move(fitted_offsets),{}};
+        nsx::info() << "No data provided, offsets set to zero";
+        return {false, std::move(fitted_offsets), {}};
     }
 
     size_t n_selected_states(0);
@@ -31,8 +31,9 @@ GonioFitOutcome fitDetectorGonioOffsets(
     }
 
     if (n_selected_states < n_axes) {
-        nsx::info()<<"No or not enough refined states found in the dataset for a reliable fit, offsets set to zero";
-        return {false,std::move(fitted_offsets),{}};
+        nsx::info() << "No or not enough refined states found in the dataset for a reliable fit, "
+                       "offsets set to zero";
+        return {false, std::move(fitted_offsets), {}};
     }
 
     std::vector<Eigen::RowVector3d> selected_nis;
@@ -54,18 +55,21 @@ GonioFitOutcome fitDetectorGonioOffsets(
     cost_function.reserve(n_iterations);
 
     // Lambda to compute residuals
-    auto residuals = [gonio, &fitted_offsets, selected_nis, &cost_function] (Eigen::VectorXd& f) -> int
-    {
+    auto residuals = [gonio, &fitted_offsets, selected_nis,
+                      &cost_function](Eigen::VectorXd& f) -> int {
         int n_obs = f.size();
 
-        Eigen::Matrix3d fitted_detector_orientation = gonio.affineMatrix(fitted_offsets).rotation().transpose();
+        Eigen::Matrix3d fitted_detector_orientation =
+            gonio.affineMatrix(fitted_offsets).rotation().transpose();
 
         // Just duplicate the 0-residual to reach a "sufficient" amount of data points
         for (int i = 0; i < n_obs; ++i) {
-            f(i) = std::abs(selected_nis[i].dot(Eigen::RowVector3d(0,1,0) * fitted_detector_orientation) - 1.0);
+            f(i) = std::abs(
+                selected_nis[i].dot(Eigen::RowVector3d(0, 1, 0) * fitted_detector_orientation)
+                - 1.0);
         }
 
-        cost_function.push_back(0.5*f.norm());
+        cost_function.push_back(0.5 * f.norm());
 
         return 0;
     };
@@ -87,11 +91,11 @@ GonioFitOutcome fitDetectorGonioOffsets(
     auto success = minimizer.fit(n_iterations);
 
     if (!success) {
-        nsx::error()<<"Failed to fit detector orientation offsets";
-        return {false,std::move(fitted_offsets),{}};
+        nsx::error() << "Failed to fit detector orientation offsets";
+        return {false, std::move(fitted_offsets), {}};
     }
 
-    return {true,std::move(fitted_offsets),std::move(cost_function)};
+    return {true, std::move(fitted_offsets), std::move(cost_function)};
 }
 
 
@@ -104,8 +108,8 @@ GonioFitOutcome fitSampleGonioOffsets(
 
     // No data provided, return zero offsets
     if (dataset.empty()) {
-        nsx::info()<<"No data provided, offsets set to zero";
-        return {false,std::move(fitted_offsets),{}};
+        nsx::info() << "No data provided, offsets set to zero";
+        return {false, std::move(fitted_offsets), {}};
     }
 
     size_t n_selected_states(0);
@@ -119,8 +123,9 @@ GonioFitOutcome fitSampleGonioOffsets(
     }
 
     if (n_selected_states < n_axes) {
-        nsx::info()<<"No or not enough refined states found in the dataset for a reliable fit, offsets set to zero";
-        return {false,std::move(fitted_offsets),{}};
+        nsx::info() << "No or not enough refined states found in the dataset for a reliable fit, "
+                       "offsets set to zero";
+        return {false, std::move(fitted_offsets), {}};
     }
 
     std::vector<Eigen::Matrix3d> selected_orientations;
@@ -138,7 +143,6 @@ GonioFitOutcome fitSampleGonioOffsets(
                 selected_orientations.push_back(state.sampleOrientationMatrix());
                 selected_states.push_back(sample_states[i]);
             }
-
         }
     }
 
@@ -146,19 +150,21 @@ GonioFitOutcome fitSampleGonioOffsets(
     cost_function.reserve(n_iterations);
 
     // Lambda to compute residuals
-    auto residuals = [gonio, &fitted_offsets, selected_orientations, selected_states, &cost_function] (Eigen::VectorXd& f) -> int
-    {
+    auto residuals = [gonio, &fitted_offsets, selected_orientations, selected_states,
+                      &cost_function](Eigen::VectorXd& f) -> int {
         int n_obs = f.size();
         // Just duplicate the 0-residual to reach a "sufficient" amount of data points
         for (int i = 0; i < n_obs; ++i) {
-            std::vector<double> real_values(selected_states[i].size(),0.0);
+            std::vector<double> real_values(selected_states[i].size(), 0.0);
             const auto& state = selected_states[i];
-            std::transform(state.begin(),state.end(),fitted_offsets.begin(),real_values.begin(),std::plus<double>());
+            std::transform(
+                state.begin(), state.end(), fitted_offsets.begin(), real_values.begin(),
+                std::plus<double>());
             Eigen::Matrix3d fitted_sample_orientation = gonio.affineMatrix(real_values).rotation();
             f(i) = (fitted_sample_orientation - selected_orientations[i]).norm();
         }
 
-        cost_function.push_back(0.5*f.norm());
+        cost_function.push_back(0.5 * f.norm());
 
         return 0;
     };
@@ -180,11 +186,11 @@ GonioFitOutcome fitSampleGonioOffsets(
     auto success = minimizer.fit(n_iterations);
 
     if (!success) {
-        nsx::error()<<"Failed to fit sample orientation offsets";
-        return {false,std::move(fitted_offsets),{}};
+        nsx::error() << "Failed to fit sample orientation offsets";
+        return {false, std::move(fitted_offsets), {}};
     }
 
-    return {true,std::move(fitted_offsets),std::move(cost_function)};
+    return {true, std::move(fitted_offsets), std::move(cost_function)};
 }
 
 } // namespace nsx

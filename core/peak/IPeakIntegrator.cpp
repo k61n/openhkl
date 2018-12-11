@@ -28,10 +28,10 @@
  *
  */
 
+#include "IPeakIntegrator.h"
 #include "BrillouinZone.h"
 #include "DataSet.h"
 #include "Intensity.h"
-#include "IPeakIntegrator.h"
 #include "Logger.h"
 #include "Peak3D.h"
 #include "UnitCell.h"
@@ -39,13 +39,12 @@
 
 namespace nsx {
 
-IPeakIntegrator::IPeakIntegrator(): _meanBackground(), _integratedIntensity(), _rockingCurve(), _handler(nullptr)
+IPeakIntegrator::IPeakIntegrator()
+    : _meanBackground(), _integratedIntensity(), _rockingCurve(), _handler(nullptr)
 {
 }
 
-IPeakIntegrator::~IPeakIntegrator()
-{
-}
+IPeakIntegrator::~IPeakIntegrator() {}
 
 Intensity IPeakIntegrator::meanBackground() const
 {
@@ -62,10 +61,12 @@ const std::vector<Intensity>& IPeakIntegrator::rockingCurve() const
     return _rockingCurve;
 }
 
-void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end)
+void IPeakIntegrator::integrate(
+    PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end)
 {
     // integrate only those peaks that belong to the specified dataset
-    auto it = std::remove_if(peaks.begin(), peaks.end(), [&](const sptrPeak3D& peak) { return peak->data() != data;});
+    auto it = std::remove_if(
+        peaks.begin(), peaks.end(), [&](const sptrPeak3D& peak) { return peak->data() != data; });
     peaks.erase(it, peaks.end());
 
     std::string status = "Integrating " + std::to_string(peaks.size()) + " peaks...";
@@ -82,10 +83,11 @@ void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_en
     std::map<sptrPeak3D, IntegrationRegion> regions;
     std::map<sptrPeak3D, bool> integrated;
 
-    for (auto peak: peaks) {
+    for (auto peak : peaks) {
         try {
             // IntegrationRegion constructor may throw (e.g. peak on boundary of image)
-            regions.emplace(std::make_pair(peak, IntegrationRegion(peak, peak_end, bkg_begin, bkg_end)));
+            regions.emplace(
+                std::make_pair(peak, IntegrationRegion(peak, peak_end, bkg_begin, bkg_end)));
             integrated.emplace(std::make_pair(peak, false));
         } catch (...) {
             peak->setSelected(false);
@@ -108,10 +110,12 @@ void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_en
     }
 
     // only integrate the peaks with valid integration regions
-    it = std::remove_if(peaks.begin(), peaks.end(), [&](const sptrPeak3D& p) { return regions.find(p) == regions.end(); });
+    it = std::remove_if(peaks.begin(), peaks.end(), [&](const sptrPeak3D& p) {
+        return regions.find(p) == regions.end();
+    });
     peaks.erase(it, peaks.end());
 
-    for (idx = 0; idx < data->nFrames(); ++idx ) {
+    for (idx = 0; idx < data->nFrames(); ++idx) {
         Eigen::MatrixXd current_frame;
         Eigen::MatrixXi mask;
         current_frame = data->transformedFrame(idx);
@@ -119,17 +123,17 @@ void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_en
         mask.resize(data->nRows(), data->nCols());
         mask.setConstant(int(IntegrationRegion::EventType::EXCLUDED));
 
-        for (auto peak: peaks) {
+        for (auto peak : peaks) {
             assert(peak != nullptr);
             assert(regions.find(peak) != regions.end());
             regions[peak].updateMask(mask, idx);
         }
 
-        for (auto peak: peaks) {
+        for (auto peak : peaks) {
 
             bool result = regions[peak].advanceFrame(current_frame, mask, idx);
             // this allows for partials at end of data
-            result |= idx == data->nFrames()-1;
+            result |= idx == data->nFrames() - 1;
 
             // done reading peak data
             if (result && !integrated[peak]) {
@@ -140,7 +144,7 @@ void IPeakIntegrator::integrate(PeakList peaks, sptrDataSet data, double peak_en
                     } else {
                         peak->setSelected(false);
                     }
-                } catch(std::exception& e) {
+                } catch (std::exception& e) {
                     // integration failed...
                     nsx::info() << "integration failed: " << e.what();
                     peak->setSelected(false);

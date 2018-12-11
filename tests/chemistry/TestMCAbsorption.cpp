@@ -4,8 +4,8 @@
 
 #include <core/ChemistryTypes.h>
 #include <core/ConvexHull.h>
-#include <core/Material.h>
 #include <core/MCAbsorption.h>
+#include <core/Material.h>
 #include <core/NSXTest.h>
 #include <core/Units.h>
 
@@ -18,14 +18,14 @@ int main()
 
     // Create a cubic convex hull
     nsx::ConvexHull chull;
-    chull.addVertex(Eigen::Vector3d( 0, 0, 0));
-    chull.addVertex(Eigen::Vector3d( 1, 0, 0));
-    chull.addVertex(Eigen::Vector3d( 0, 1, 0));
-    chull.addVertex(Eigen::Vector3d( 0, 0, 1));
-    chull.addVertex(Eigen::Vector3d( 1, 1, 0));
-    chull.addVertex(Eigen::Vector3d( 1, 0, 1));
-    chull.addVertex(Eigen::Vector3d( 0, 1, 1));
-    chull.addVertex(Eigen::Vector3d( 1, 1, 1));
+    chull.addVertex(Eigen::Vector3d(0, 0, 0));
+    chull.addVertex(Eigen::Vector3d(1, 0, 0));
+    chull.addVertex(Eigen::Vector3d(0, 1, 0));
+    chull.addVertex(Eigen::Vector3d(0, 0, 1));
+    chull.addVertex(Eigen::Vector3d(1, 1, 0));
+    chull.addVertex(Eigen::Vector3d(1, 0, 1));
+    chull.addVertex(Eigen::Vector3d(0, 1, 1));
+    chull.addVertex(Eigen::Vector3d(1, 1, 1));
     chull.updateHull();
     chull.translateToCenter();
     chull.scale(0.032);
@@ -34,21 +34,21 @@ int main()
     double muAbsorption = helium->muAbsorption(1.46e-10);
 
     // Create the MC absorption calculator
-    nsx::MCAbsorption mca(chull,3.2*nsx::cm,3.2*nsx::cm,-100);
+    nsx::MCAbsorption mca(chull, 3.2 * nsx::cm, 3.2 * nsx::cm, -100);
     mca.setMuScattering(muScattering);
     mca.setMuAbsorption(muAbsorption);
 
     // Compute the transmission factor
-    mca.run(10,Eigen::Vector3d(0,1,0),Eigen::Matrix3d::Identity());
+    mca.run(10, Eigen::Vector3d(0, 1, 0), Eigen::Matrix3d::Identity());
 
     // Build an isotopically pure methane material
     std::unique_ptr<nsx::Material> methane(new nsx::Material("CH4"));
     double mm = methane->molarMass();
     double volume = chull.volume();
-    methane->setMassDensity(mm/volume);
+    methane->setMassDensity(mm / volume);
 
     // Create the MC absorption calculator
-    mca = nsx::MCAbsorption(chull,3.2*nsx::cm,3.2*nsx::cm,-100);
+    mca = nsx::MCAbsorption(chull, 3.2 * nsx::cm, 3.2 * nsx::cm, -100);
 
     muScattering = methane->muIncoherent();
     muAbsorption = methane->muAbsorption(1.46e-10);
@@ -58,7 +58,7 @@ int main()
     mca.setMuAbsorption(muAbsorption);
 
     // Compute the transmission factor
-    mca.run(10000,Eigen::Vector3d(0,1,0),Eigen::Matrix3d::Identity());
+    mca.run(10000, Eigen::Vector3d(0, 1, 0), Eigen::Matrix3d::Identity());
 
     return 0;
 }

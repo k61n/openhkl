@@ -1,5 +1,5 @@
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <Eigen/Dense>
 #include <Eigen/SparseCore>
@@ -18,7 +18,7 @@ int main()
     y.resize(num_points, 1);
     wt.resize(num_points, 1);
 
-    x.resize(3+num_dummy);
+    x.resize(3 + num_dummy);
     x.setZero();
     // constraint x(0) == 10*x(1)
     x(0) = 4.01;
@@ -27,13 +27,13 @@ int main()
 
     for (int i = 0; i < num_points; i++) {
         double t = i;
-        double yi = x(2) + x(0) * exp (-x(1) * t);
+        double yi = x(2) + x(0) * exp(-x(1) * t);
 
         wt[i] = 1.0;
         y[i] = yi;
     }
 
-    auto residual_fn = [y, &x] (Eigen::VectorXd& r) -> int {
+    auto residual_fn = [y, &x](Eigen::VectorXd& r) -> int {
         int n = r.rows();
 
         double A = x(0);
@@ -43,12 +43,12 @@ int main()
         for (int i = 0; i < n; i++) {
             /* Model Yi = A * exp(-lambda * i) + b */
             double t = i;
-            double Yi = A * exp (-lambda * t) + b;
+            double Yi = A * exp(-lambda * t) + b;
             r(i) = Yi - y[i];
         }
         return 0;
     };
- 
+
     nsx::FitParameters params;
 
     for (auto i = 0; i < x.size(); ++i) {
@@ -57,17 +57,17 @@ int main()
 
     Eigen::SparseMatrix<double> constraint;
     constraint.setZero();
-    constraint.resize(2+num_dummy, 3+num_dummy);
-    
-    constraint.coeffRef(0,0) = 1.0;
-    constraint.coeffRef(0,1) = -10.0;
-    constraint.coeffRef(0,2) = 0.0;
+    constraint.resize(2 + num_dummy, 3 + num_dummy);
 
-    constraint.coeffRef(1,3) = 0.0;
+    constraint.coeffRef(0, 0) = 1.0;
+    constraint.coeffRef(0, 1) = -10.0;
+    constraint.coeffRef(0, 2) = 0.0;
+
+    constraint.coeffRef(1, 3) = 0.0;
 
     for (auto i = 1; i < num_dummy; ++i) {
-        constraint.coeffRef(i+2, i+3) = 1.0;
-        constraint.coeffRef(i+2, i+2) = 1.0;
+        constraint.coeffRef(i + 2, i + 3) = 1.0;
+        constraint.coeffRef(i + 2, i + 2) = 1.0;
     }
 
     params.setConstraint(constraint);
@@ -77,7 +77,7 @@ int main()
     min.set_f(residual_fn);
     NSX_CHECK_ASSERT(min.fit(100));
 
-    NSX_CHECK_SMALL( (constraint*x).norm(), 1e-6);
+    NSX_CHECK_SMALL((constraint * x).norm(), 1e-6);
 
     NSX_CHECK_CLOSE(x(0), 4.008, 1e-1);
     NSX_CHECK_CLOSE(x(1), 0.4008, 1e-1);

@@ -38,10 +38,10 @@ namespace nsx {
 //! In addition to the data fields stored in an InstrumentState, this class
 //! also stores information about the (angular) velocity and step size, which
 //! is needed to compute analytic derivatives of various functions.
-class InterpolatedState: public InstrumentState {
+class InterpolatedState : public InstrumentState {
 public:
-    //! Default value needed for SWIG (note: nullptr does _not_ work) 
-    InterpolatedState(Diffractometer *diffractometer=nullptr);
+    //! Default value needed for SWIG (note: nullptr does _not_ work)
+    InterpolatedState(Diffractometer* diffractometer = nullptr);
     //! Construct by interpolation. The paramter t should be between 0 and 1.
     InterpolatedState(const InstrumentState& s1, const InstrumentState& s2, double t);
     //! Compute the jacobian of the transformation (x,y,frame) -> q_sample
@@ -53,9 +53,9 @@ public:
     //! Step size between the two underlying InstrumentStates, in radians
     double stepSize;
 
-    #ifndef SWIG
+#ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    #endif
+#endif
 };
 
 } // end namespace nsx

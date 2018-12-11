@@ -5,14 +5,14 @@
 #include "SXGraphicsItem.h"
 #include "SXPlot.h"
 
-SXGraphicsItem::SXGraphicsItem(QGraphicsItem *parent, bool deletable, bool movable)
-: QGraphicsItem(parent),
-  _deletable(deletable),
-  _hovered(false),
-  _movable(movable),
-  _firstMove(true),
-  _lastPos(),
-  _label_gi(nullptr)
+SXGraphicsItem::SXGraphicsItem(QGraphicsItem* parent, bool deletable, bool movable)
+    : QGraphicsItem(parent)
+    , _deletable(deletable)
+    , _hovered(false)
+    , _movable(movable)
+    , _firstMove(true)
+    , _lastPos()
+    , _label_gi(nullptr)
 {
     _pen.setWidth(1);
     _pen.setCosmetic(true);
@@ -20,15 +20,13 @@ SXGraphicsItem::SXGraphicsItem(QGraphicsItem *parent, bool deletable, bool movab
 
     // By default a plottable graphics can be selected
     setFlags(QGraphicsItem::ItemIsSelectable);
-    setFlag(QGraphicsItem::ItemIsMovable,_movable);
+    setFlag(QGraphicsItem::ItemIsMovable, _movable);
     setAcceptHoverEvents(true);
 }
 
-SXGraphicsItem::~SXGraphicsItem()
-{
-}
+SXGraphicsItem::~SXGraphicsItem() {}
 
-void SXGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+void SXGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
     Q_UNUSED(event);
     _hovered = true;
@@ -36,7 +34,7 @@ void SXGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
     update();
 }
 
-void SXGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+void SXGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 {
     Q_UNUSED(event);
     _hovered = false;
@@ -46,8 +44,10 @@ void SXGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 bool SXGraphicsItem::isInScene(const QPointF& pos) const
 {
-    QRectF rect=scene()->sceneRect();
-    return (pos.x()>rect.left() && pos.x()<rect.right() && pos.y() > rect.top() && pos.y() <rect.bottom());
+    QRectF rect = scene()->sceneRect();
+    return (
+        pos.x() > rect.left() && pos.x() < rect.right() && pos.y() > rect.top()
+        && pos.y() < rect.bottom());
 }
 
 void SXGraphicsItem::setDeletable(bool deletable)
@@ -58,7 +58,7 @@ void SXGraphicsItem::setDeletable(bool deletable)
 void SXGraphicsItem::setMovable(bool movable)
 {
     _movable = movable;
-    setFlag(QGraphicsItem::ItemIsMovable,_movable);
+    setFlag(QGraphicsItem::ItemIsMovable, _movable);
 }
 
 bool SXGraphicsItem::isDeletable() const
@@ -81,7 +81,7 @@ void SXGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
     Q_UNUSED(event)
 }
 
-void SXGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
+void SXGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent* event)
 {
     Q_UNUSED(event)
 }
@@ -92,17 +92,18 @@ void SXGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
         return;
 
     if (_firstMove) {
-        _firstMove=false;
+        _firstMove = false;
     } else {
         // The translation vector
         QPointF dr = event->lastScenePos() - _lastPos;
-        QRectF itemRect=sceneBoundingRect();
+        QRectF itemRect = sceneBoundingRect();
         itemRect.translate(dr);
 
         // At target position the item must be fully inside the scene
-        if (scene()->sceneRect().contains(itemRect.topLeft()) && scene()->sceneRect().contains(itemRect.bottomRight())) {
-            moveBy(dr.x(),dr.y());
+        if (scene()->sceneRect().contains(itemRect.topLeft())
+            && scene()->sceneRect().contains(itemRect.bottomRight())) {
+            moveBy(dr.x(), dr.y());
         }
     }
-    _lastPos=event->lastScenePos();
+    _lastPos = event->lastScenePos();
 }

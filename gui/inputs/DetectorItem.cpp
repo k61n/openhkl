@@ -28,7 +28,7 @@ QWidget* DetectorItem::inspectItem()
 
 void DetectorItem::openDetectorGlobalOffsetsFrame()
 {
-    FrameDetectorGlobalOffsets *frame = FrameDetectorGlobalOffsets::create(experimentItem());
+    FrameDetectorGlobalOffsets* frame = FrameDetectorGlobalOffsets::create(experimentItem());
 
     frame->show();
 

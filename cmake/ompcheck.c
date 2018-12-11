@@ -13,7 +13,7 @@
 
 #include <omp.h>
 
-int main (int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     int array[100];
     unsigned int i;
@@ -21,10 +21,9 @@ int main (int argc, char *argv[])
     omp_set_num_threads(2);
 
 
-    #pragma omp parallel for schedule( dynamic )
-    for (i = 0; i < 100; i++)
-    {
-        array[i] = i+i;
+#pragma omp parallel for schedule(dynamic)
+    for (i = 0; i < 100; i++) {
+        array[i] = i + i;
     }
 
     return 0;

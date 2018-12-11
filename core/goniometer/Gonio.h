@@ -32,8 +32,8 @@
 #include <memory>
 #include <set>
 #include <string>
-#include <vector>
 #include <utility>
+#include <vector>
 
 #include <yaml-cpp/yaml.h>
 
@@ -46,17 +46,16 @@
 namespace nsx {
 
 //! \brief Class Gonio.
-//! Base class for all goniometers (system of several rotation axis). Any number of axis can be used.
-//! The rotation is applied in reverse order of the given order. For example, when defining a goniometer with
-//! 3 axes a,b,c, it is supposed that in such collection of axes, b is attached to the a shaft and c is attached to the
-//! b shaft. Such gonio will rotate a vector v into a.b.c.v.
+//! Base class for all goniometers (system of several rotation axis). Any number of axis can be
+//! used. The rotation is applied in reverse order of the given order. For example, when defining a
+//! goniometer with 3 axes a,b,c, it is supposed that in such collection of axes, b is attached to
+//! the a shaft and c is attached to the b shaft. Such gonio will rotate a vector v into a.b.c.v.
 //! Once the Gonio is constructed, it is not allowed to change the number of axes.
-//! Axes, their labels and respective limits can be modified by the class methods or by template accessor:
-//! e.g. Axis<0>(g)=RotAxis(UnitZ,CW).
+//! Axes, their labels and respective limits can be modified by the class methods or by template
+//! accessor: e.g. Axis<0>(g)=RotAxis(UnitZ,CW).
 class Gonio {
 
 public:
-
     //! Default constructor
     Gonio();
 
@@ -84,8 +83,10 @@ public:
     //! Get a pointer to axis with name, throw range_error if not found
     const Axis& axis(size_t index) const;
 
-    //! Return the homogeneous matrix corresponding to this set of parameters. Throw if angles outside limits.
-    Eigen::Transform<double,3,Eigen::Affine> affineMatrix(const std::vector<double>& values) const;
+    //! Return the homogeneous matrix corresponding to this set of parameters. Throw if angles
+    //! outside limits.
+    Eigen::Transform<double, 3, Eigen::Affine>
+    affineMatrix(const std::vector<double>& values) const;
 
     //! Transform a point in 3D space, given a vector of parameters
     DirectVector transform(const DirectVector& v, const std::vector<double>& state) const;
@@ -95,7 +96,6 @@ public:
 #endif
 
 private:
-
     //! Given name of the gonio
     std::string _name;
     //! Set of axis

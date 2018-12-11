@@ -3,8 +3,7 @@
 namespace nsx {
 
 //! Helper struct for storing the result of the sample gonio fit
-struct GonioFitOutcome
-{
+struct GonioFitOutcome {
     bool success;
     std::vector<double> offsets;
     std::vector<double> cost_function;

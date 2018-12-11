@@ -2,8 +2,8 @@
 
 #include <map>
 
-#include <core/PeakList.h>
 #include <core/DataTypes.h>
+#include <core/PeakList.h>
 #include <core/Refiner.h>
 
 #include "NSXQFrame.h"
@@ -17,13 +17,11 @@ class ExperimentItem;
 class QAbstractButton;
 class QWidget;
 
-class FrameRefiner : public NSXQFrame
-{
+class FrameRefiner : public NSXQFrame {
     Q_OBJECT
 
 public:
-
-    static FrameRefiner* create(ExperimentItem* experiment_item, const nsx::PeakList &peaks);
+    static FrameRefiner* create(ExperimentItem* experiment_item, const nsx::PeakList& peaks);
 
     static FrameRefiner* Instance();
 
@@ -31,23 +29,21 @@ public:
 
 private slots:
 
-    void slotActionClicked(QAbstractButton *button);
+    void slotActionClicked(QAbstractButton* button);
 
     void slotTabRemoved(int index);
 
 private:
-
-    explicit FrameRefiner(ExperimentItem *experiment_item, const nsx::PeakList &peaks);
+    explicit FrameRefiner(ExperimentItem* experiment_item, const nsx::PeakList& peaks);
 
     void accept();
 
     void refine();
 
 private:
+    static FrameRefiner* _instance;
 
-    static FrameRefiner *_instance;
+    Ui::FrameRefiner* _ui;
 
-    Ui::FrameRefiner *_ui;
-
-    ExperimentItem *_experiment_item;
+    ExperimentItem* _experiment_item;
 };

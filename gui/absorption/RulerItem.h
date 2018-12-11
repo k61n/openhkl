@@ -2,8 +2,7 @@
 
 #include <QGraphicsItem>
 
-class RulerItem : public QGraphicsItem
-{
+class RulerItem : public QGraphicsItem {
 public:
     //! Constructor ...
     RulerItem(QGraphicsItem* parent = 0);
@@ -15,20 +14,21 @@ public:
     //! Set the ruler width
     void setTipWidth(double);
     //! Overloaded paint method
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                QWidget *widget);
+    virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
     //! Overloaded bounding box
     QRectF boundingRect() const;
+
 public:
     //! When first point is clicked, draw
     void startDrawingAt(const QPointF&);
     //! when ruler end is dragged
     void moveTipAt(const QPointF&);
     //! Stamp the ruler corresponding to a calibrated distance
-    QGraphicsItemGroup* stampRuler(double distance,const QPointF& pos);
+    QGraphicsItemGroup* stampRuler(double distance, const QPointF& pos);
     void activateDistanceDisplay();
     void setDistance(double val);
     double getConversion() const;
+
 private:
     //! The base of the ruler
     QGraphicsLineItem* _base;
@@ -38,8 +38,8 @@ private:
     QGraphicsLineItem* _body;
     //! Text to be displayed (picking positions and length)
     QGraphicsTextItem* _basetext;
-    QGraphicsTextItem*_tiptext;
-    QGraphicsTextItem*_bodytext;
+    QGraphicsTextItem* _tiptext;
+    QGraphicsTextItem* _bodytext;
     //! Starting and end point of the ruler
     QPointF _start, _end;
     //! Tip half width

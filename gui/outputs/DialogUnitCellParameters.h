@@ -4,25 +4,23 @@
 
 #include <core/UnitCell.h>
 
-namespace Ui
-{
+namespace Ui {
 class DialogUnitCellParameters;
 }
 
 class Widget;
 
-class DialogUnitCellParameters : public QDialog
-{
+class DialogUnitCellParameters : public QDialog {
     Q_OBJECT
 
 public:
-    explicit DialogUnitCellParameters(nsx::sptrUnitCell unitCell, QWidget *parent=0);
+    explicit DialogUnitCellParameters(nsx::sptrUnitCell unitCell, QWidget* parent = 0);
     ~DialogUnitCellParameters();
 
 public slots:
     void setUnitCellParameters();
 
 private:
-    Ui::DialogUnitCellParameters *ui;
+    Ui::DialogUnitCellParameters* ui;
     nsx::sptrUnitCell _unitCell;
 };

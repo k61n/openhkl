@@ -43,17 +43,16 @@
 namespace nsx {
 
 //! ILL ascii data format
-class ILLDataReader: public IDataReader {
+class ILLDataReader : public IDataReader {
 
 public:
-
     ILLDataReader() = delete;
 
     //! Copy constructor
-    ILLDataReader(const ILLDataReader &other);
+    ILLDataReader(const ILLDataReader& other);
 
     //! Default constructor
-    ILLDataReader(const std::string& filename, Diffractometer *diffractometer);
+    ILLDataReader(const std::string& filename, Diffractometer* diffractometer);
 
     //! Destructor
     ~ILLDataReader() = default;
@@ -72,11 +71,10 @@ public:
     Eigen::MatrixXi data(size_t frame) final;
 
 private:
-
     static std::size_t BlockSize;
 
     //! Invoke seekg to beginning the line number, at position pos. First line is 1
-    void goToLine(std::stringstream& buffer, int number,int pos);
+    void goToLine(std::stringstream& buffer, int number, int pos);
 
     //! Read the control block containing all float parameters.
     void readControlFBlock(std::stringstream&);

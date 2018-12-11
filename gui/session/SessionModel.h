@@ -9,7 +9,7 @@
 class DataSet;
 class ExperimentItem;
 
-class SessionModel: public QStandardItemModel {
+class SessionModel : public QStandardItemModel {
     Q_OBJECT
 
 public:

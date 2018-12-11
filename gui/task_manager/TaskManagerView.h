@@ -7,15 +7,13 @@ class QWidget;
 class QResizeEvent;
 class TaskManagerModel;
 
-class TaskManagerView : public QTableView
-{
+class TaskManagerView : public QTableView {
     Q_OBJECT
 
 public:
+    TaskManagerView(QWidget* parent);
 
-    TaskManagerView(QWidget *parent);
-
-    void setModel(TaskManagerModel *task_manager_model);
+    void setModel(TaskManagerModel* task_manager_model);
 
 signals:
 
@@ -24,6 +22,5 @@ signals:
     void runTask(QModelIndex index);
 
 private:
-
     void onActionButtonClicked(QModelIndex index);
 };

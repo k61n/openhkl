@@ -7,9 +7,9 @@
 #include <QMenu>
 #include <QProgressBar>
 
-#include <core/PeakList.h>
 #include <core/DataSet.h>
 #include <core/DataTypes.h>
+#include <core/PeakList.h>
 
 #include "ProgressView.h"
 #include "TaskManagerModel.h"
@@ -31,20 +31,20 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent=nullptr);
+    MainWindow(QWidget* parent = nullptr);
 
     ~MainWindow();
 
-    virtual void closeEvent(QCloseEvent *event) override;
+    virtual void closeEvent(QCloseEvent* event) override;
 
     TaskManagerModel* taskManagerModel();
 
 public slots:
-    void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
+    void plotData(const QVector<double>&, const QVector<double>&, const QVector<double>&);
 
     void setInspectorWidget(QWidget*);
 
-    void onOpenPeakFinderDialog(DataItem *data_item);
+    void onOpenPeakFinderDialog(DataItem* data_item);
 
     void onNewExperiment();
     void onTogglePlotterPanel();
@@ -84,13 +84,13 @@ private:
 
     Ui::MainWindow* _ui;
 
-    NSXMenu *_menu_bar;
+    NSXMenu* _menu_bar;
 
-    QStatusBar *_status_bar;
+    QStatusBar* _status_bar;
 
-    SessionModel *_session_model;
+    SessionModel* _session_model;
 
-    TaskManagerModel *_task_manager_model;
+    TaskManagerModel* _task_manager_model;
 
     std::string _color_map;
 };

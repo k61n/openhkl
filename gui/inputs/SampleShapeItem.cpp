@@ -1,8 +1,7 @@
 #include "SampleShapeItem.h"
 #include "SampleShapePropertyWidget.h"
 
-SampleShapeItem::SampleShapeItem():
-    InspectableTreeItem()
+SampleShapeItem::SampleShapeItem() : InspectableTreeItem()
 {
     QIcon icon(":/resources/sampleIcon.png");
     setIcon(icon);

@@ -1,10 +1,10 @@
 #pragma once
 
+#include <Eigen/Dense>
 #include <memory>
 #include <unordered_map>
 #include <utility>
 #include <vector>
-#include <Eigen/Dense>
 
 namespace nsx {
 

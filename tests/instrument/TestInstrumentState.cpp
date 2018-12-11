@@ -1,5 +1,5 @@
-#include <core/Experiment.h>
 #include <core/DataSet.h>
+#include <core/Experiment.h>
 #include <core/IDataReader.h>
 #include <core/InstrumentState.h>
 #include <core/NSXTest.h>
@@ -24,7 +24,7 @@ int nsx::UnitTest_DataSet::run()
     auto detectorStates = dataset->_reader->detectorStates();
     auto sampleStates = dataset->_reader->sampleStates();
 
-    for (size_t i = 0; i < 100*(dataset->nFrames()-1); ++i) {
+    for (size_t i = 0; i < 100 * (dataset->nFrames() - 1); ++i) {
         double frame = double(i) / 100.0;
         auto state = dataset->interpolatedState(frame);
 
@@ -36,7 +36,7 @@ int nsx::UnitTest_DataSet::run()
     return 0;
 }
 
-int main() 
+int main()
 {
     return nsx::UnitTest_DataSet::run();
 }

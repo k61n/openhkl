@@ -1,8 +1,8 @@
 #pragma once
 
+#include <Eigen/Dense>
 #include <iostream>
 #include <vector>
-#include <Eigen/Dense>
 
 #include "ReciprocalVector.h"
 
@@ -17,15 +17,13 @@ class UnitCell;
 //!
 //! This class allows to enforce dimensional and C++-type consistency when
 //! dealing with vectors in algorithms dedicated to crystallographic data.
-class MillerIndex
-{
+class MillerIndex {
 public:
-
     //! Default constructor
-    MillerIndex()=default;
+    MillerIndex() = default;
 
     //! Copy constructor
-    MillerIndex(const MillerIndex& other)=default;
+    MillerIndex(const MillerIndex& other) = default;
 
     //! Constructor from its 3 components and the error on hkl
     MillerIndex(int h, int k, int l);
@@ -37,10 +35,10 @@ public:
     explicit MillerIndex(const Eigen::RowVector3i& hkl);
 
     //! Assignment operator
-    MillerIndex& operator=(const MillerIndex& other)=default;
+    MillerIndex& operator=(const MillerIndex& other) = default;
 
     //! Destructor
-    ~MillerIndex()=default;
+    ~MillerIndex() = default;
 
     //! Return indices in the form of an Eigen row vector
     const Eigen::RowVector3i& rowVector() const;

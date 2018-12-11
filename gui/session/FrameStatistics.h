@@ -2,8 +2,8 @@
 
 #include <map>
 
-#include <core/PeakList.h>
 #include <core/MergedData.h>
+#include <core/PeakList.h>
 #include <core/SpaceGroup.h>
 
 #include "NSXQFrame.h"
@@ -18,12 +18,10 @@ class QAbstractButton;
 class QTableView;
 class QWidget;
 
-class FrameStatistics : public NSXQFrame
-{
+class FrameStatistics : public NSXQFrame {
     Q_OBJECT
 
 public:
-
     static FrameStatistics* create(const nsx::PeakList& peaks, const nsx::SpaceGroup& space_group);
 
     static FrameStatistics* Instance();
@@ -40,10 +38,9 @@ private slots:
 
     void saveUnmergedPeaks();
 
-    void slotActionClicked(QAbstractButton *button);
+    void slotActionClicked(QAbstractButton* button);
 
 private:
-
     explicit FrameStatistics(const nsx::PeakList& peaks, const nsx::SpaceGroup& space_group);
 
     void plotStatistics(int column);
@@ -59,12 +56,11 @@ private:
     void updateStatisticsTab();
 
 private:
+    static FrameStatistics* _instance;
 
-    static FrameStatistics *_instance;
+    Ui::FrameStatistics* _ui;
 
-    Ui::FrameStatistics *_ui;
-
-    ExperimentItem *_experiment_item;
+    ExperimentItem* _experiment_item;
 
     nsx::PeakList _peaks;
 

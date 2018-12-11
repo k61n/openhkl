@@ -6,9 +6,9 @@
 std::vector<std::string> load_file(std::ifstream& fin)
 {
     std::vector<std::string> contents;
-    while(fin.good()) {
+    while (fin.good()) {
         std::string line;
-        getline(fin,line);
+        getline(fin, line);
         if (fin.eof()) {
             break;
         }
@@ -21,7 +21,9 @@ std::vector<std::string> load_file(std::ifstream& fin)
 int main(int argc, char** argv)
 {
     if (argc < 3) {
-        std::cerr<<"USAGE: "<<argv[0]<<"{res file} {res cpp}\n\nSet the {res cpp}.cpp file using the contents of {res file}file\n";
+        std::cerr << "USAGE: " << argv[0]
+                  << "{res file} {res cpp}\n\nSet the {res cpp}.cpp file using the contents of "
+                     "{res file}file\n";
         return 1;
     }
 
@@ -31,7 +33,7 @@ int main(int argc, char** argv)
     // Read the contents of the YAML file
     std::ifstream fin(resource_filename.c_str());
     if (!fin.is_open()) {
-        std::cerr<<"The file "<<resource_filename<<" could not be opened\n";
+        std::cerr << "The file " << resource_filename << " could not be opened\n";
         return 1;
     }
     auto yaml_contents = load_file(fin);
@@ -41,11 +43,11 @@ int main(int argc, char** argv)
     std::ifstream resources_cpp_in(resource_cpp_filename.c_str());
     auto cpp_contents = load_file(resources_cpp_in);
     resources_cpp_in.close();
-    for (size_t i=0; i<cpp_contents.size(); ++i) {
+    for (size_t i = 0; i < cpp_contents.size(); ++i) {
         auto pos = cpp_contents[i].find("static std::vector<std::string> data = {");
         if (pos != std::string::npos) {
-            for (auto it=yaml_contents.rbegin(); it!=yaml_contents.rend();it++) {
-                cpp_contents.insert(cpp_contents.begin()+i+1,"\t{\""+*it+"\"},");
+            for (auto it = yaml_contents.rbegin(); it != yaml_contents.rend(); it++) {
+                cpp_contents.insert(cpp_contents.begin() + i + 1, "\t{\"" + *it + "\"},");
             }
             break;
         }

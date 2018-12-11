@@ -3,11 +3,9 @@
 #include "PeakListItem.h"
 #include "PeakListPropertyWidget.h"
 
-PeakListItem::PeakListItem(const nsx::PeakList& peaks)
-: InspectableTreeItem(),
-  _peaks(peaks)
+PeakListItem::PeakListItem(const nsx::PeakList& peaks) : InspectableTreeItem(), _peaks(peaks)
 {
-	setText("Peaks");
+    setText("Peaks");
 
     setEditable(true);
 

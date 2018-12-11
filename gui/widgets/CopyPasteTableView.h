@@ -3,11 +3,10 @@
 #include <QKeyEvent>
 #include <QTableView>
 
-class CopyPasteTableView : public QTableView
-{
+class CopyPasteTableView : public QTableView {
 public:
-    CopyPasteTableView(QWidget* parent=nullptr);
+    CopyPasteTableView(QWidget* parent = nullptr);
 
 protected:
-    void keyPressEvent(QKeyEvent *event);
+    void keyPressEvent(QKeyEvent* event);
 };

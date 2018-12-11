@@ -11,19 +11,16 @@ ProgressHandler::ProgressHandler()
     _callback = nullptr;
 }
 
-ProgressHandler::~ProgressHandler()
-{
+ProgressHandler::~ProgressHandler() {}
 
-}
-
-void ProgressHandler::setCallback(std::function<void ()> callback)
+void ProgressHandler::setCallback(std::function<void()> callback)
 {
     _callback = callback;
 }
 
 void ProgressHandler::setProgress(int progress)
 {
-    if ( _callback ) {
+    if (_callback) {
         _callback();
     }
 
@@ -32,7 +29,7 @@ void ProgressHandler::setProgress(int progress)
     _progress = progress > 100 ? 100 : progress;
     _progress = _progress < 0 ? 0 : _progress;
 
-    if ( aborted() ) {
+    if (aborted()) {
         throw std::runtime_error("Exception: job was aborted!");
     }
 }
@@ -44,7 +41,7 @@ int ProgressHandler::getProgress()
     return progress;
 }
 
-void ProgressHandler::setStatus(const char *status)
+void ProgressHandler::setStatus(const char* status)
 {
     std::lock_guard<std::mutex> lock(_mutex);
     _status = std::string(status);
@@ -63,7 +60,7 @@ void ProgressHandler::log(const std::string& message)
     _log.push_back(message);
 }
 
-void ProgressHandler::log(const char *message)
+void ProgressHandler::log(const char* message)
 {
     std::lock_guard<std::mutex> lock(_mutex);
     _log.push_back(message);
@@ -90,4 +87,3 @@ bool ProgressHandler::aborted()
 }
 
 } // end namespace nsx
-

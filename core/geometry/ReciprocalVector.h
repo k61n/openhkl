@@ -10,15 +10,13 @@ namespace nsx {
 //!
 //! This class allows to enforce dimensional and C++-type consistency when
 //! dealing with vectors in algorithms dedicated to crystallographic data.
-class ReciprocalVector
-{
+class ReciprocalVector {
 public:
-
     //! Default constructor
-    ReciprocalVector()=default;
+    ReciprocalVector() = default;
 
     //! Copy constructor
-    ReciprocalVector(const ReciprocalVector& other)=default;
+    ReciprocalVector(const ReciprocalVector& other) = default;
 
     //! Constructor from its 3 components
     explicit ReciprocalVector(double x, double y, double z);
@@ -27,10 +25,10 @@ public:
     explicit ReciprocalVector(const Eigen::RowVector3d& rvector);
 
     //! Assignment operator
-    ReciprocalVector& operator=(const ReciprocalVector& other)=default;
+    ReciprocalVector& operator=(const ReciprocalVector& other) = default;
 
     //! Destructor
-    ~ReciprocalVector()=default;
+    ~ReciprocalVector() = default;
 
     //! Cast operator to an Eigen row vector
     const Eigen::RowVector3d& rowVector() const;

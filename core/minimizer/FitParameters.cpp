@@ -50,7 +50,7 @@ int FitParameters::addParameter(double* addr)
     _params.emplace_back(addr);
     _originalValues.emplace_back(*addr);
     _constrained = false;
-    return _params.size()-1;
+    return _params.size() - 1;
 }
 
 void FitParameters::setValues(const gsl_vector* v)
@@ -62,7 +62,7 @@ void FitParameters::setValues(const gsl_vector* v)
         p0(i) = gsl_vector_get(v, i);
     }
 
-    const auto& p1 = _constrained ? _K*p0 : p0;
+    const auto& p1 = _constrained ? _K * p0 : p0;
 
     for (size_t i = 0; i < nparams(); ++i) {
         *_params[i] = p1(i);
@@ -78,7 +78,7 @@ void FitParameters::writeValues(gsl_vector* v) const
         p1(i) = *_params[i];
     }
 
-    const auto& p0 = _constrained ? _P*p1 : p1;
+    const auto& p0 = _constrained ? _P * p1 : p1;
 
     for (size_t i = 0; i < nfree(); ++i) {
         gsl_vector_set(v, i, p0(i));
@@ -116,7 +116,7 @@ void FitParameters::setConstraint(const Eigen::SparseMatrix<double>& C_input)
 
     // Write R in block form R = [R0 R1] where R0 is square and full rank
     Eigen::SparseMatrix<double> R0 = R.block(0, 0, r, r);
-    Eigen::SparseMatrix<double> R1 = R.block(0, r, r, n-r);
+    Eigen::SparseMatrix<double> R1 = R.block(0, r, r, n - r);
 
     // now factorize R0
     solver2.analyzePattern(R0);
@@ -127,12 +127,12 @@ void FitParameters::setConstraint(const Eigen::SparseMatrix<double>& C_input)
     Eigen::MatrixXd K0 = solver2.solve(-R1);
 
     Eigen::MatrixXd K;
-    K.resize(n, n-r);
-    K.block(0, 0, r, n-r) = K0;
-    K.block(r, 0, n-r, n-r).setIdentity();
+    K.resize(n, n - r);
+    K.block(0, 0, r, n - r) = K0;
+    K.block(r, 0, n - r, n - r).setIdentity();
 
     // undo the permutation from QR pivoting
-    setKernel(U*K);
+    setKernel(U * K);
 
     _constrained = true;
 }
@@ -169,7 +169,7 @@ void FitParameters::reset()
 void FitParameters::setKernel(const Eigen::MatrixXd& ker)
 {
     _K = ker;
-    _P = (_K.transpose()*_K).inverse()*_K.transpose();
+    _P = (_K.transpose() * _K).inverse() * _K.transpose();
     _constrained = true;
 }
 

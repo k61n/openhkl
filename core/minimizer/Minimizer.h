@@ -50,7 +50,7 @@ struct MinimizerGSL;
 
 //! \class Minimizer
 //! \brief Class to wrap the GSL non-linear least squares minimization routines.
-//! This class supports both numerical and analytic derivatives. 
+//! This class supports both numerical and analytic derivatives.
 class Minimizer {
 public:
     //! The signature of the function f which specifies the vector of residuals.
@@ -90,18 +90,10 @@ public:
     //! Set the weights of the residuals.
     void setWeights(const Eigen::VectorXd& wt);
     //! Set the function which computes the least-squares residuals.
-    template <typename Fun_>
-    void set_f(Fun_ functor)
-    {
-        _f = static_cast<f_type>(functor);
-    }
+    template <typename Fun_> void set_f(Fun_ functor) { _f = static_cast<f_type>(functor); }
     //! Set the function computes the Jacobian of the residuals.
     //! The default value is \p nullptr, in which case a numerical derivative is used instead.
-    template <typename Fun_>
-    void set_df(Fun_ functor)
-    {
-        _df = static_cast<df_type>(functor);
-    }
+    template <typename Fun_> void set_df(Fun_ functor) { _df = static_cast<df_type>(functor); }
     //! Return the mean squared error with respect to the current minimizer values.
     double meanSquaredError() const;
 
@@ -133,7 +125,7 @@ private:
     //! Relative tolerance of gradient.
     double _gtol;
     //! Relative tolerance of residuals.
-    double _ftol;  
+    double _ftol;
     //! The function computing the residuals.
     f_type _f;
     //! The function computing the analytic gradient.

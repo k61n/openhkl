@@ -1,7 +1,6 @@
 #include <Eigen/Dense>
 
 #include <core/AutoIndexer.h>
-#include <core/PeakList.h>
 #include <core/DataSet.h>
 #include <core/DetectorEvent.h>
 #include <core/Diffractometer.h>
@@ -11,6 +10,7 @@
 #include <core/Peak3D.h>
 #include <core/PeakFilter.h>
 #include <core/PeakFinder.h>
+#include <core/PeakList.h>
 #include <core/ProgressHandler.h>
 #include <core/ReciprocalVector.h>
 #include <core/Sample.h>
@@ -52,15 +52,15 @@ int main()
 
     std::vector<nsx::ReciprocalVector> qs;
 
-    for (auto index: reflections) {
-        qs.emplace_back(index.rowVector().cast<double>()*BU);
+    for (auto index : reflections) {
+        qs.emplace_back(index.rowVector().cast<double>() * BU);
     }
 
     auto events = dataset->events(qs);
 
     std::vector<nsx::sptrPeak3D> peaks;
 
-     for (auto event: events) {
+    for (auto event : events) {
         nsx::sptrPeak3D peak(new nsx::Peak3D(dataset));
         Eigen::Vector3d center = {event._px, event._py, event._frame};
 
@@ -75,7 +75,7 @@ int main()
             NSX_CHECK_ASSERT(hkl.error().norm() < 1e-10);
 
 
-        } catch(...) {
+        } catch (...) {
             // invalid shape, nothing to do
         }
     }
@@ -84,7 +84,7 @@ int main()
 
     nsx::AutoIndexer indexer;
 
-    for (auto peak: peaks) {
+    for (auto peak : peaks) {
         indexer.addPeak(peak);
     }
 
@@ -99,10 +99,10 @@ int main()
     auto fit_uc = solutions.front().first;
 
     Eigen::Matrix3d fit_A = fit_uc->basis();
-    Eigen::Matrix3d E = fit_A.inverse()*A;
+    Eigen::Matrix3d E = fit_A.inverse() * A;
 
     // square because of the orientation issue
-    NSX_CHECK_ASSERT((E*E-Eigen::Matrix3d::Identity()).norm() < 1e-10);
+    NSX_CHECK_ASSERT((E * E - Eigen::Matrix3d::Identity()).norm() < 1e-10);
 
     dataset->close();
 

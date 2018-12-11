@@ -11,24 +11,24 @@
 #include "DetectorScene.h"
 
 DetectorGraphicsView::DetectorGraphicsView(QWidget* parent)
-    : QGraphicsView(parent)
-    , _scene(new DetectorScene(this))
+    : QGraphicsView(parent), _scene(new DetectorScene(this))
 {
-    setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform
-                   | QPainter::HighQualityAntialiasing);
+    setRenderHints(
+        QPainter::Antialiasing | QPainter::SmoothPixmapTransform
+        | QPainter::HighQualityAntialiasing);
     setScene(_scene);
     // Make sure that first views are rescaled, especially first created one
-    connect(_scene,&DetectorScene::dataChanged,this,[&](){fitInView(_scene->sceneRect());});
+    connect(_scene, &DetectorScene::dataChanged, this, [&]() { fitInView(_scene->sceneRect()); });
     setMouseTracking(true);
     viewport()->setMouseTracking(true);
     setInteractive(true);
     // Invert the y-axis so that (0,0) coordinate is at bottom left (and not top left)
     // This match detector coordinates in NSXTool
-    scale(1,-1);
+    scale(1, -1);
     setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
-void DetectorGraphicsView::resizeEvent(QResizeEvent *event)
+void DetectorGraphicsView::resizeEvent(QResizeEvent* event)
 {
     Q_UNUSED(event);
     fitInView(_scene->sceneRect());
@@ -69,10 +69,10 @@ void DetectorGraphicsView::fixDetectorAspectRatio(bool value)
     const auto* detector = _scene->getData()->reader()->diffractometer()->detector();
 
     if (value) {
-        int h=this->height();
+        int h = this->height();
         double dw = detector->width();
         double dh = detector->height();
-        resize(int(h*dw/dh),h);
+        resize(int(h * dw / dh), h);
     } else {
         fitInView(_scene->sceneRect());
     }

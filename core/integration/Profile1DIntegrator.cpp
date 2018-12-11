@@ -28,30 +28,28 @@
  *
  */
 
+#include "Profile1DIntegrator.h"
 #include "DataSet.h"
 #include "Ellipsoid.h"
 #include "Intensity.h"
 #include "Peak3D.h"
 #include "PeakCoordinateSystem.h"
 #include "ShapeLibrary.h"
-#include "Profile1DIntegrator.h"
 
 namespace nsx {
 
-Profile1DIntegrator::Profile1DIntegrator(sptrShapeLibrary library, double radius, double nframes):
-    IPeakIntegrator(),
-    _library(library),
-    _radius(radius),
-    _nframes(nframes)
+Profile1DIntegrator::Profile1DIntegrator(sptrShapeLibrary library, double radius, double nframes)
+    : IPeakIntegrator(), _library(library), _radius(radius), _nframes(nframes)
 {
-
 }
 
-static void updateFit(Intensity& I, Intensity& B, const std::vector<double>& dp, const std::vector<double>& dM, const std::vector<int>& dn)
+static void updateFit(
+    Intensity& I, Intensity& B, const std::vector<double>& dp, const std::vector<double>& dM,
+    const std::vector<int>& dn)
 {
     Eigen::Matrix2d A;
     A.setZero();
-    Eigen::Vector2d b(0,0);
+    Eigen::Vector2d b(0, 0);
     const size_t n = dp.size();
     assert(dp.size() == dM.size() && dp.size() == dn.size());
 
@@ -67,24 +65,24 @@ static void updateFit(Intensity& I, Intensity& B, const std::vector<double>& dp,
         const double p = dp[i];
         const double n = dn[i];
         const double M = dM[i];
-        const double var = B.value()*dn[i] + I.value()*dp[i];
+        const double var = B.value() * dn[i] + I.value() * dp[i];
 
-        A(0,0) += n*n/var;
-        A(0,1) += n*p/var;
-        A(1,0) += n*p/var;
-        A(1,1) += p*p/var;
+        A(0, 0) += n * n / var;
+        A(0, 1) += n * p / var;
+        A(1, 0) += n * p / var;
+        A(1, 1) += p * p / var;
 
-        b(0) += M*n/var;
-        b(1) += M*p/var;
+        b(0) += M * n / var;
+        b(1) += M * p / var;
 
-        b_cov(0,0) += n*n/var;
-        b_cov(1,0) += p*n/var;
-        b_cov(0,1) += p*n/var;
-        b_cov(1,1) += p*p/var;
-    }  
+        b_cov(0, 0) += n * n / var;
+        b_cov(1, 0) += p * n / var;
+        b_cov(0, 1) += p * n / var;
+        b_cov(1, 1) += p * p / var;
+    }
 
     Eigen::Matrix2d AI = A.inverse();
-    const Eigen::Vector2d& x = AI*b;
+    const Eigen::Vector2d& x = AI * b;
 
     const double new_B = x(0);
     const double new_I = x(1);
@@ -92,9 +90,10 @@ static void updateFit(Intensity& I, Intensity& B, const std::vector<double>& dp,
     Eigen::Matrix2d cov = AI * b_cov * AI.transpose();
 
 
-    // Note: this error estimate assumes the variances are correct (i.e., gain and baseline accounted for)
-    B = Intensity(new_B, cov(0,0));
-    I = Intensity(new_I, cov(1,1));
+    // Note: this error estimate assumes the variances are correct (i.e., gain and baseline
+    // accounted for)
+    B = Intensity(new_B, cov(0, 0));
+    I = Intensity(new_I, cov(1, 1));
 }
 
 bool Profile1DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
@@ -124,7 +123,7 @@ bool Profile1DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
     try {
         // throws if there are no neighboring peaks within the bounds
         mean_profile = _library->meanProfile1D(DetectorEvent(c), _radius, _nframes);
-    } catch(...) {
+    } catch (...) {
         return false;
     }
 
@@ -132,14 +131,14 @@ bool Profile1DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
     for (size_t i = 0; i < events.size(); ++i) {
         Eigen::Vector3d dx(events[i]._px, events[i]._py, events[i]._frame);
         dx -= c;
-        const double r2 = dx.transpose()*A*dx;
+        const double r2 = dx.transpose() * A * dx;
         profile.addPoint(r2, counts[i]);
     }
 
     std::vector<int> dn;
     std::vector<double> dm;
     std::vector<double> dp;
-    
+
     dn.push_back(profile.npoints()[0]);
     dm.push_back(profile.counts()[0]);
     dp.push_back(mean_profile[0].value());
@@ -148,9 +147,9 @@ bool Profile1DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
     for (size_t i = 1; i < mean_profile.size(); ++i) {
         const auto& counts = profile.counts();
         const auto& npoints = profile.npoints();
-        dn.push_back(npoints[i]-npoints[i-1]);
-        dm.push_back(counts[i]-counts[i-1]);
-        dp.push_back(mean_profile[i].value()-mean_profile[i-1].value());
+        dn.push_back(npoints[i] - npoints[i - 1]);
+        dm.push_back(counts[i] - counts[i - 1]);
+        dp.push_back(mean_profile[i].value() - mean_profile[i - 1].value());
     }
 
     Intensity I = 1e-6;

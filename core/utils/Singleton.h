@@ -48,14 +48,14 @@ namespace nsx {
  * classes in order to provide singleton mechanism for classes with a level of inheritance
  * deeper than 1.
  */
-template <typename T,template<class> class Constructor,template <class> class Destructor>
+template <typename T, template <class> class Constructor, template <class> class Destructor>
 class Singleton {
 public:
     //! return an instance of the class to be singletonized
     static T* Instance()
     {
         static std::unique_ptr<T, Destructor<T>> ptr(Constructor<T>::construct());
-        //static std::unique_ptr<T> ptr(Constructor<T>::construct());
+        // static std::unique_ptr<T> ptr(Constructor<T>::construct());
         return ptr.get();
     }
 };
@@ -63,27 +63,17 @@ public:
 /**
  * @brief actually constructs the unique instance of the class to be singletonized
  */
-template <class T>
-class Constructor
-{
+template <class T> class Constructor {
 public:
-    static T* construct()
-    {
-        return new T;
-    }
+    static T* construct() { return new T; }
 };
 
 /**
  * @brief actually destroys the unique instance of the class to be singletonized
  */
-template <class T>
-class Destructor
-{
+template <class T> class Destructor {
 public:
-    void operator()(T* p)
-    {
-        delete p;
-    }
+    void operator()(T* p) { delete p; }
 };
 
 } // end namespace nsx

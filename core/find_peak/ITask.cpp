@@ -13,9 +13,9 @@ std::string generateRandomString(size_t length)
     std::string letters("abcdefghijklmnopqrstuvwxyz");
 
     auto generator = std::mt19937(std::time(0));
-    auto distribution = std::uniform_int_distribution<int>(0,25);
+    auto distribution = std::uniform_int_distribution<int>(0, 25);
 
-    auto random_letter = [&](){return letters[distribution(generator)];};
+    auto random_letter = [&]() { return letters[distribution(generator)]; };
 
     std::string result;
     result.reserve(length);
@@ -27,13 +27,13 @@ std::string generateRandomString(size_t length)
 
 
 ITask::ITask(const std::string& type)
-: _abort(false),
-  _callback(),
-  _type(type),
-  _current_step(0),
-  _n_steps(0),
-  _status(Status::SUBMITTED),
-  _info()
+    : _abort(false)
+    , _callback()
+    , _type(type)
+    , _current_step(0)
+    , _n_steps(0)
+    , _status(Status::SUBMITTED)
+    , _info()
 {
     static std::set<std::string> registered_task_names;
 
@@ -43,9 +43,7 @@ ITask::ITask(const std::string& type)
     }
 }
 
-ITask::~ITask()
-{
-}
+ITask::~ITask() {}
 
 void ITask::abort()
 {
@@ -90,4 +88,3 @@ bool ITask::run()
 }
 
 } // end namespace nsx
-

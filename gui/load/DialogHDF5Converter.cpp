@@ -13,18 +13,18 @@
 
 #include "ui_DialogHDF5Converter.h"
 
-DialogHDF5Converter::DialogHDF5Converter(const nsx::DataList& numors, QWidget *parent)
-: QDialog(parent),
-  _ui(new Ui::DialogHDF5Converter),
-  _numors(numors)
+DialogHDF5Converter::DialogHDF5Converter(const nsx::DataList& numors, QWidget* parent)
+    : QDialog(parent), _ui(new Ui::DialogHDF5Converter), _numors(numors)
 {
-   _ui->setupUi(this);
+    _ui->setupUi(this);
 
     _ui->outputDirectory->setText(QDir::currentPath());
 
-    connect(_ui->browseOutputDirectory,SIGNAL(clicked()),this,SLOT(browseOutputDirectory()));
+    connect(_ui->browseOutputDirectory, SIGNAL(clicked()), this, SLOT(browseOutputDirectory()));
 
-    connect(_ui->cancelOK,SIGNAL(clicked(QAbstractButton*)),this,SLOT(slotActionClicked(QAbstractButton*)));
+    connect(
+        _ui->cancelOK, SIGNAL(clicked(QAbstractButton*)), this,
+        SLOT(slotActionClicked(QAbstractButton*)));
 }
 
 DialogHDF5Converter::~DialogHDF5Converter()
@@ -32,12 +32,11 @@ DialogHDF5Converter::~DialogHDF5Converter()
     delete _ui;
 }
 
-void DialogHDF5Converter::slotActionClicked(QAbstractButton *button)
+void DialogHDF5Converter::slotActionClicked(QAbstractButton* button)
 {
     auto button_role = _ui->cancelOK->standardButton(button);
 
-    switch(button_role)
-    {
+    switch (button_role) {
     case QDialogButtonBox::StandardButton::Apply: {
         convert();
         break;
@@ -59,14 +58,13 @@ void DialogHDF5Converter::slotActionClicked(QAbstractButton *button)
 void DialogHDF5Converter::convert()
 {
     if (_numors.size() == 0) {
-        QMessageBox::warning(this,"Output directory","No numors selected for conversion");
+        QMessageBox::warning(this, "Output directory", "No numors selected for conversion");
         return;
     }
 
     QString outputDirectory = _ui->outputDirectory->text();
-    if (outputDirectory.isEmpty())
-    {
-        QMessageBox::warning(this,"Output directory","Please enter an output directory.");
+    if (outputDirectory.isEmpty()) {
+        QMessageBox::warning(this, "Output directory", "Please enter an output directory.");
         return;
     }
 
@@ -81,16 +79,17 @@ void DialogHDF5Converter::convert()
         QFileInfo fileinfo(QString::fromStdString(numor_filename));
         QString basename = fileinfo.baseName();
 
-        auto hdf5_filename = QDir(outputDirectory).filePath(basename+".h5").toStdString();
+        auto hdf5_filename = QDir(outputDirectory).filePath(basename + ".h5").toStdString();
 
-        if (hdf5_filename.compare(numor_filename)==0) {
+        if (hdf5_filename.compare(numor_filename) == 0) {
             return;
         }
 
         try {
             numor->saveHDF5(hdf5_filename);
-        } catch(...) {
-            nsx::error() << "The filename " << hdf5_filename << " could not be saved. Maybe a permission problem.";
+        } catch (...) {
+            nsx::error() << "The filename " << hdf5_filename
+                         << " could not be saved. Maybe a permission problem.";
         }
         _ui->progressBar_conversion->setValue(++comp);
     }
@@ -98,7 +97,8 @@ void DialogHDF5Converter::convert()
 
 void DialogHDF5Converter::browseOutputDirectory()
 {
-    QString outputDirectory = QFileDialog::getExistingDirectory (this, "Enter output directory", ".", QFileDialog::ShowDirsOnly);
+    QString outputDirectory = QFileDialog::getExistingDirectory(
+        this, "Enter output directory", ".", QFileDialog::ShowDirsOnly);
     if (!outputDirectory.isEmpty()) {
         _ui->outputDirectory->setText(outputDirectory);
     }

@@ -8,7 +8,7 @@
 
 #include <core/ProgressHandler.h>
 
-class ProgressView: public QProgressDialog {
+class ProgressView : public QProgressDialog {
     Q_OBJECT
 
 public:

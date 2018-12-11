@@ -1,12 +1,11 @@
 #pragma once
 
-#include <core/PeakList.h>
 #include "InspectableTreeItem.h"
+#include <core/PeakList.h>
 
 class UnitCellItem;
 
-class SampleItem : public InspectableTreeItem
-{
+class SampleItem : public InspectableTreeItem {
 public:
     explicit SampleItem();
 

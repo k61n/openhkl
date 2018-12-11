@@ -49,6 +49,7 @@ public:
     void reduce(Eigen::Matrix3d& newg, Eigen::Matrix3d& P);
     //! Change the maximum allowed number of iterations
     static void setIterMax(unsigned int max);
+
 private:
     //! Number of iteration max allowed in the reduction procedure.
     static unsigned int _itermax;
@@ -67,7 +68,7 @@ private:
     //! Niggli parameters
     double _A, _B, _C, _zeta, _eta, _xi;
     //! Internal variables storing 1 0 or -1 for each angle (acute, right, or obtuse)
-    int _l,_m,_n;
+    int _l, _m, _n;
 };
 
 } // end namespace nsx

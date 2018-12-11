@@ -1,5 +1,5 @@
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <Eigen/Dense>
 
@@ -22,13 +22,13 @@ int main()
 
     for (int i = 0; i < nvalues; i++) {
         double t = i;
-        double yi = 1.0 + 5 * exp (-0.1 * t);
+        double yi = 1.0 + 5 * exp(-0.1 * t);
 
         wt[i] = 1.0;
         y[i] = yi;
     }
 
-    auto residual_fn = [y, &x] (Eigen::VectorXd& r) -> int {
+    auto residual_fn = [y, &x](Eigen::VectorXd& r) -> int {
         int n = r.rows();
 
         double A = x(0);
@@ -38,12 +38,12 @@ int main()
         for (int i = 0; i < n; i++) {
             /* Model Yi = A * exp(-lambda * i) + b */
             double t = i;
-            double Yi = A * exp (-lambda * t) + b;
+            double Yi = A * exp(-lambda * t) + b;
             r(i) = Yi - y[i];
         }
         return 0;
     };
- 
+
     nsx::FitParameters params;
     params.addParameter(&x(0));
     params.addParameter(&x(1));

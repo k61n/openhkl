@@ -21,21 +21,21 @@ class CrystalScene : public QGraphicsScene {
 public:
     //! Enum describing the type of user interaction
     enum crystalSelectionMode {
-        calibrateDistance=1,
-        pickingPoint=2,
-        pickCenter=3,
-        nodeSelected=4,
-        removingPoint=5,
-        none=0
+        calibrateDistance = 1,
+        pickingPoint = 2,
+        pickCenter = 3,
+        nodeSelected = 4,
+        removingPoint = 5,
+        none = 0
     };
 
     //! Constructors
-    CrystalScene(nsx::ConvexHull* hull,QWidget *parent = 0);
+    CrystalScene(nsx::ConvexHull* hull, QWidget* parent = 0);
     ~CrystalScene();
     //! Mouse interactions
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
 public slots:
     //! Load an image from full filename including directory
     void loadImage(QString filename);
@@ -56,6 +56,7 @@ public slots:
 signals:
     void calibrateDistanceOK(double npixels, double distance);
     void calibrateCenterOK(double x, double y);
+
 private:
     //! Position of the mouse at the beginning of a selection
     int _startxmouse, _startymouse;
@@ -63,7 +64,7 @@ private:
     crystalSelectionMode mode;
     QGraphicsPixmapItem* pixmapitem;
     //! The coordinates of the points for the scale
-    double scalebx,scaleby,scaleex, scaleey;
+    double scalebx, scaleby, scaleex, scaleey;
     //! Calibrate distance dialog
     DialogCalibrateDistance* _distancedialog;
     double distance;

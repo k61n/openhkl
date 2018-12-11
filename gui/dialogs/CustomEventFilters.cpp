@@ -5,9 +5,7 @@
 #include "CustomEventFilters.h"
 
 ShortcodeFilter::ShortcodeFilter(const QString& shortcode, QObject* parent)
-: QObject(parent),
-  _shortcode(shortcode),
-  _index(0)
+    : QObject(parent), _shortcode(shortcode), _index(0)
 {
 }
 
@@ -25,7 +23,9 @@ bool ShortcodeFilter::eventFilter(QObject* obj, QEvent* event)
         } else {
             int right = _index;
             while (_index > 0) {
-                if (_shortcode.at(_index - 1) == keyEvent->text() && _shortcode.left(_index - 1) == _shortcode.mid(right - _index + 1, _index - 1))
+                if (_shortcode.at(_index - 1) == keyEvent->text()
+                    && _shortcode.left(_index - 1)
+                        == _shortcode.mid(right - _index + 1, _index - 1))
                     break;
                 _index--;
             }
@@ -33,4 +33,3 @@ bool ShortcodeFilter::eventFilter(QObject* obj, QEvent* event)
     }
     return false;
 }
-

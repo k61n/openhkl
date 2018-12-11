@@ -35,9 +35,7 @@
 
 namespace nsx {
 
-BoxMask::BoxMask(const AABB& aabb) : IMask(), _aabb(aabb)
-{
-}
+BoxMask::BoxMask(const AABB& aabb) : IMask(), _aabb(aabb) {}
 
 bool BoxMask::collide(const Ellipsoid& ellipsoid) const
 {

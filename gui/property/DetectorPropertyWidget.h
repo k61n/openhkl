@@ -1,8 +1,8 @@
 #pragma once
 
+#include "ui_DetectorPropertyWidget.h"
 #include <QWidget>
 #include <core/Detector.h>
-#include "ui_DetectorPropertyWidget.h"
 
 class DetectorPropertyWidget : public QWidget {
 
@@ -17,7 +17,7 @@ private:
     void onSampleToDectorDistanceChanged(double distance);
 
 private:
-    Ui::DetectorPropertyWidget *_ui;
+    Ui::DetectorPropertyWidget* _ui;
 
     nsx::Detector& _detector;
 };

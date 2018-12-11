@@ -8,7 +8,7 @@ NSX_INIT_TEST
 int main()
 {
 
-    Eigen::RowVector3d v1(1,2,3);
+    Eigen::RowVector3d v1(1, 2, 3);
 
     nsx::ReciprocalVector rv1(v1);
 
@@ -16,7 +16,7 @@ int main()
 
     x = 100;
 
-    NSX_CHECK_EQUAL(rv1[0],100);
+    NSX_CHECK_EQUAL(rv1[0], 100);
 
     return 0;
 }

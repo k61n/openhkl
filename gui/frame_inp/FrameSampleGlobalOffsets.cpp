@@ -15,14 +15,14 @@
 #include "DataItem.h"
 #include "DoubleItemDelegate.h"
 #include "ExperimentItem.h"
-#include "MetaTypes.h"
 #include "FrameSampleGlobalOffsets.h"
+#include "MetaTypes.h"
 
 #include "ui_FrameSampleGlobalOffsets.h"
 
 FrameSampleGlobalOffsets* FrameSampleGlobalOffsets::_instance = nullptr;
 
-FrameSampleGlobalOffsets* FrameSampleGlobalOffsets::create(ExperimentItem *experiment_item)
+FrameSampleGlobalOffsets* FrameSampleGlobalOffsets::create(ExperimentItem* experiment_item)
 {
     if (!_instance) {
         _instance = new FrameSampleGlobalOffsets(experiment_item);
@@ -36,10 +36,8 @@ FrameSampleGlobalOffsets* FrameSampleGlobalOffsets::Instance()
     return _instance;
 }
 
-FrameSampleGlobalOffsets::FrameSampleGlobalOffsets(ExperimentItem *experiment_item)
-: NSXQFrame(),
-  _ui(new Ui::FrameSampleGlobalOffsets),
-  _experiment_item(experiment_item)
+FrameSampleGlobalOffsets::FrameSampleGlobalOffsets(ExperimentItem* experiment_item)
+    : NSXQFrame(), _ui(new Ui::FrameSampleGlobalOffsets), _experiment_item(experiment_item)
 {
     _ui->setupUi(this);
 
@@ -49,27 +47,29 @@ FrameSampleGlobalOffsets::FrameSampleGlobalOffsets(ExperimentItem *experiment_it
         QFileInfo fileinfo(QString::fromStdString(data->filename()));
 
         QListWidgetItem* item = new QListWidgetItem(fileinfo.baseName());
-        item->setData(Qt::UserRole,QVariant::fromValue(data));
+        item->setData(Qt::UserRole, QVariant::fromValue(data));
         _ui->selected_data->addItem(item);
     }
     _ui->selected_data->setSelectionMode(QAbstractItemView::MultiSelection);
 
     // Fill the offset table with the name of the sample goniometer axes
-    const auto &sample_gonio = _experiment_item->experiment()->diffractometer()->sample().gonio();
+    const auto& sample_gonio = _experiment_item->experiment()->diffractometer()->sample().gonio();
     size_t n_axes = sample_gonio.nAxes();
     _ui->offsets->setRowCount(n_axes);
     for (size_t i = 0; i < n_axes; ++i) {
-        const auto &axis = sample_gonio.axis(i);
-        _ui->offsets->setItem(i,0,new QTableWidgetItem(QString::fromStdString(axis.name())));
-
+        const auto& axis = sample_gonio.axis(i);
+        _ui->offsets->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(axis.name())));
     }
 
-    _ui->offsets->setHorizontalHeaderItem(1,new QTableWidgetItem("Offset (" + QString(QChar(0x00B0)) + ")"));
-    _ui->offsets->setItemDelegateForColumn(1,new DoubleItemDelegate());
+    _ui->offsets->setHorizontalHeaderItem(
+        1, new QTableWidgetItem("Offset (" + QString(QChar(0x00B0)) + ")"));
+    _ui->offsets->setItemDelegateForColumn(1, new DoubleItemDelegate());
 
     _ui->tolerance->setValue(1.0e-6);
 
-    connect(_ui->actions,SIGNAL(clicked(QAbstractButton*)),this,SLOT(slotActionClicked(QAbstractButton*)));
+    connect(
+        _ui->actions, SIGNAL(clicked(QAbstractButton*)), this,
+        SLOT(slotActionClicked(QAbstractButton*)));
 }
 
 FrameSampleGlobalOffsets::~FrameSampleGlobalOffsets()
@@ -81,12 +81,11 @@ FrameSampleGlobalOffsets::~FrameSampleGlobalOffsets()
     }
 }
 
-void FrameSampleGlobalOffsets::slotActionClicked(QAbstractButton *button)
+void FrameSampleGlobalOffsets::slotActionClicked(QAbstractButton* button)
 {
     auto button_role = _ui->actions->standardButton(button);
 
-    switch(button_role)
-    {
+    switch (button_role) {
     case QDialogButtonBox::StandardButton::Apply: {
         fit();
         break;
@@ -111,7 +110,7 @@ void FrameSampleGlobalOffsets::fit()
 
     // No item selected, just return
     if (selected_items.empty()) {
-        nsx::error()<<"No data selected for the fit.";
+        nsx::error() << "No data selected for the fit.";
         return;
     }
 
@@ -120,19 +119,19 @@ void FrameSampleGlobalOffsets::fit()
         selected_data.push_back(item->data(Qt::UserRole).value<nsx::sptrDataSet>());
 
     // Fit the sample offsets with the selected data
-    const auto &gonio = _experiment_item->experiment()->diffractometer()->sample().gonio();
+    const auto& gonio = _experiment_item->experiment()->diffractometer()->sample().gonio();
     auto fit_results = fitSampleGonioOffsets(
-        gonio, selected_data,_ui->n_iterations->value(),_ui->tolerance->value());
+        gonio, selected_data, _ui->n_iterations->value(), _ui->tolerance->value());
 
     // The fit failed for whatever reason, return
     if (!fit_results.success)
-        nsx::error()<<"Could not fit the sample offsets.";
+        nsx::error() << "Could not fit the sample offsets.";
 
     int comp(0);
     for (auto&& offset : fit_results.offsets) {
-        QTableWidgetItem *offset_item = new QTableWidgetItem();
-        offset_item->setData(Qt::DisplayRole,offset/nsx::deg);
-        _ui->offsets->setItem(comp++,1,offset_item);
+        QTableWidgetItem* offset_item = new QTableWidgetItem();
+        offset_item->setData(Qt::DisplayRole, offset / nsx::deg);
+        _ui->offsets->setItem(comp++, 1, offset_item);
     }
 
     _ui->plot->clearGraphs();
@@ -148,12 +147,12 @@ void FrameSampleGlobalOffsets::fit()
     const auto& cost_function = fit_results.cost_function;
 
     std::vector<double> iterations(cost_function.size());
-    std::iota(iterations.begin(),iterations.end(),0);
+    std::iota(iterations.begin(), iterations.end(), 0);
 
     QVector<double> x_values = QVector<double>::fromStdVector(iterations);
     QVector<double> y_values = QVector<double>::fromStdVector(cost_function);
 
-    _ui->plot->graph(0)->addData(x_values,y_values);
+    _ui->plot->graph(0)->addData(x_values, y_values);
 
     _ui->plot->xAxis->setLabel("# iterations");
     _ui->plot->yAxis->setLabel("Cost function");
@@ -165,8 +164,9 @@ void FrameSampleGlobalOffsets::fit()
     _ui->plot->xAxis->setTickLabelFont(font);
     _ui->plot->yAxis->setTickLabelFont(font);
 
-    _ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
-                               QCP::iSelectLegend | QCP::iSelectPlottables);
+    _ui->plot->setInteractions(
+        QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend
+        | QCP::iSelectPlottables);
 
     _ui->plot->rescaleAxes();
 

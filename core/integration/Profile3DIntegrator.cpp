@@ -28,47 +28,47 @@
  *
  */
 
+#include "Profile3DIntegrator.h"
 #include "DataSet.h"
 #include "Ellipsoid.h"
 #include "Intensity.h"
 #include "Peak3D.h"
 #include "PeakCoordinateSystem.h"
 #include "ShapeLibrary.h"
-#include "Profile3DIntegrator.h"
 
 namespace nsx {
 
-Profile3DIntegrator::Profile3DIntegrator(sptrShapeLibrary library, double radius, double nframes, bool detector_space):
-    _library(library),
-    _radius(radius),
-    _nframes(nframes)
+Profile3DIntegrator::Profile3DIntegrator(
+    sptrShapeLibrary library, double radius, double nframes, bool detector_space)
+    : _library(library), _radius(radius), _nframes(nframes)
 {
-
 }
 
-static void updateFit(Intensity& I, Intensity& B, const std::vector<double>& profile, const std::vector<double>& counts)
+static void updateFit(
+    Intensity& I, Intensity& B, const std::vector<double>& profile,
+    const std::vector<double>& counts)
 {
     Eigen::Matrix2d A;
     A.setZero();
-    Eigen::Vector2d b(0,0);
+    Eigen::Vector2d b(0, 0);
     const size_t n = std::min(profile.size(), counts.size());
 
     for (size_t i = 0; i < n; ++i) {
         const double p = profile[i];
         const double M = counts[i];
-        const double var = B.value() + I.value()*p;
+        const double var = B.value() + I.value() * p;
 
-        A(0,0) += 1/var;
-        A(0,1) += p/var;
-        A(1,0) += p/var;
-        A(1,1) += p*p/var;
+        A(0, 0) += 1 / var;
+        A(0, 1) += p / var;
+        A(1, 0) += p / var;
+        A(1, 1) += p * p / var;
 
-        b(0) += M/var;
-        b(1) += M*p/var;
-    }  
+        b(0) += M / var;
+        b(1) += M * p / var;
+    }
 
     Eigen::Matrix2d AI = A.inverse();
-    const Eigen::Vector2d& x = AI*b;
+    const Eigen::Vector2d& x = AI * b;
 
     const double new_B = x(0);
     const double new_I = x(1);
@@ -76,9 +76,10 @@ static void updateFit(Intensity& I, Intensity& B, const std::vector<double>& pro
     // check this calculation!
     Eigen::Matrix2d cov = AI;
 
-    // Note: this error estimate assumes the variances are correct (i.e., gain and baseline accounted for)
-    B = Intensity(new_B, cov(0,0));
-    I = Intensity(new_I, cov(1,1));
+    // Note: this error estimate assumes the variances are correct (i.e., gain and baseline
+    // accounted for)
+    B = Intensity(new_B, cov(0, 0));
+    I = Intensity(new_I, cov(1, 1));
 }
 
 bool Profile3DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
@@ -105,10 +106,10 @@ bool Profile3DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
 
     std::vector<double> profile;
     std::vector<double> obs_counts;
-    
+
     profile.reserve(events.size());
     obs_counts.reserve(events.size());
-    
+
     const double tolerance = 1e-5;
 
     Profile3D model_profile;
@@ -117,7 +118,7 @@ bool Profile3DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
     try {
         // throws if there are no neighboring peaks within the bounds
         model_profile = _library->meanProfile(event, _radius, _nframes);
-    } catch(...) {
+    } catch (...) {
         return false;
     }
 
@@ -137,12 +138,12 @@ bool Profile3DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
 
         const double predict = model_profile.predict(x);
 
-        //if (predict > 0.0001) {
-            profile.push_back(predict);
-            obs_counts.push_back(counts[i]);
+        // if (predict > 0.0001) {
+        profile.push_back(predict);
+        obs_counts.push_back(counts[i]);
         //}
     }
-    
+
     // todo: stopping criterion
     for (auto i = 0; i < 20; ++i) {
         Intensity old_intensity = _integratedIntensity;
@@ -155,7 +156,7 @@ bool Profile3DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
             break;
         }
 
-        if (I1 < 0.0 || (I1 < (1+tolerance)*I0 && I0 < (1+tolerance)*I1)) {
+        if (I1 < 0.0 || (I1 < (1 + tolerance) * I0 && I0 < (1 + tolerance) * I1)) {
             break;
         }
     }

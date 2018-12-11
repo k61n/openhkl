@@ -38,12 +38,12 @@
 #include <vector>
 
 #include "PeakList.h"
-#include "UnitCell.h"
 #include "ProgressHandler.h"
+#include "UnitCell.h"
 
 namespace nsx {
 
-using RankedSolution = std::pair<sptrUnitCell,double>;
+using RankedSolution = std::pair<sptrUnitCell, double>;
 
 //! \class IndexerParameters
 //! \brief Struct to store parameters used by autoindexer.
@@ -90,7 +90,8 @@ public:
     void addPeak(sptrPeak3D peak);
 
     //! Returns the best solutions found for the auto-indexing
-    //! @return a list of the best solutions ordered by percentage of successfully auto-indexed peaks
+    //! @return a list of the best solutions ordered by percentage of successfully auto-indexed
+    //! peaks
     const std::vector<RankedSolution>& solutions() const;
 
 private:

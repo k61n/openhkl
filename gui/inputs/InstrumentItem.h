@@ -8,8 +8,7 @@ class DetectorItem;
 class SampleItem;
 class SourceItem;
 
-class InstrumentItem : public TreeItem
-{
+class InstrumentItem : public TreeItem {
 public:
     explicit InstrumentItem(const char* name, const char* source_name);
 

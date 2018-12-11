@@ -9,9 +9,10 @@ namespace nsx {
 
 class LogFileStreamWrapper : public IStreamWrapper {
 public:
-
     //! Constructor
-    LogFileStreamWrapper(const std::string& logfile, std::function<std::string()> prefix=nullptr, std::function<std::string()> suffix=nullptr);
+    LogFileStreamWrapper(
+        const std::string& logfile, std::function<std::string()> prefix = nullptr,
+        std::function<std::string()> suffix = nullptr);
 
     //! Destructor
     virtual ~LogFileStreamWrapper();
@@ -24,7 +25,6 @@ public:
     virtual void printSuffix() override;
 
 private:
-
     std::ofstream _stream;
 };
 

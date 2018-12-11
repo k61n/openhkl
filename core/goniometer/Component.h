@@ -44,9 +44,8 @@ namespace nsx {
 class Component {
 
 public:
-
     //! Default constructor
-    Component()=default;
+    Component() = default;
 
     // Copy constructor
     Component(const Component& other);
@@ -58,10 +57,10 @@ public:
     Component(const YAML::Node& node);
 
     //! Virtual copy constructor
-    virtual Component* clone() const=0;
+    virtual Component* clone() const = 0;
 
     //! Destructor.
-    virtual ~Component()=0;
+    virtual ~Component() = 0;
 
     //! Assignment operator
     virtual Component& operator=(const Component& other);
@@ -78,8 +77,7 @@ public:
     //! Return a non-const reference to the goniometer
     Gonio& gonio();
 
- protected:
-
+protected:
     //! Name of the component
     std::string _name;
 

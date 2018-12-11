@@ -7,7 +7,6 @@
 
 #include <core/AutoIndexer.h>
 #include <core/ConvolverFactory.h>
-#include <core/PeakList.h>
 #include <core/DataSet.h>
 #include <core/DetectorEvent.h>
 #include <core/Diffractometer.h>
@@ -17,11 +16,12 @@
 #include <core/Peak3D.h>
 #include <core/PeakFilter.h>
 #include <core/PeakFinder.h>
+#include <core/PeakList.h>
+#include <core/PixelSumIntegrator.h>
 #include <core/ProgressHandler.h>
 #include <core/ReciprocalVector.h>
 #include <core/Sample.h>
 #include <core/ShapeLibrary.h>
-#include <core/PixelSumIntegrator.h>
 #include <core/Units.h>
 
 NSX_INIT_TEST
@@ -35,9 +35,9 @@ int main()
 
     nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
 
-    auto callback = [progressHandler] () {
+    auto callback = [progressHandler]() {
         auto log = progressHandler->getLog();
-        for (auto&& msg: log) {
+        for (auto&& msg : log) {
             std::cout << msg << std::endl;
         }
     };
@@ -55,7 +55,7 @@ int main()
     peakFinder.setMaxFrames(10);
 
     nsx::ConvolverFactory convolver_factory;
-    auto convolver = convolver_factory.create("annular",{});
+    auto convolver = convolver_factory.create("annular", {});
     peakFinder.setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
 
     peakFinder.setThreshold(15.0);
@@ -77,13 +77,12 @@ int main()
 
     nsx::PeakFilter peak_filter;
     nsx::PeakList selected_peaks;
-    selected_peaks = peak_filter.enabled(found_peaks,true);
+    selected_peaks = peak_filter.enabled(found_peaks, true);
 
-    auto numIndexedPeaks = [&]() -> unsigned int
-    {
+    auto numIndexedPeaks = [&]() -> unsigned int {
         unsigned int indexed_peaks = 0;
 
-        for (auto&& peak: selected_peaks) {
+        for (auto&& peak : selected_peaks) {
             double d = 1.0 / peak->q().rowVector().norm();
 
             if (d < 2.0) {
@@ -109,16 +108,16 @@ int main()
 
     // set unit cell
     auto cell = soln.first;
-    for (auto&& peak: found_peaks) {
+    for (auto&& peak : found_peaks) {
         peak->setUnitCell(cell);
     }
- 
+
     // reintegrate peaks
     integrator.integrate(found_peaks, dataset, 3.0, 4.0, 5.0);
 
     // compute shape library
 
-    //dataf->integratePeaks(found_peaks, integrator, 3.0, 4.0, 5.0);
+    // dataf->integratePeaks(found_peaks, integrator, 3.0, 4.0, 5.0);
 
     indexed_peaks = numIndexedPeaks();
     std::cout << indexed_peaks << std::endl;
@@ -126,13 +125,13 @@ int main()
 
     int n_selected = 0;
 
-    for (auto peak: selected_peaks) {
+    for (auto peak : selected_peaks) {
 
         std::vector<nsx::ReciprocalVector> q_vectors;
         q_vectors.push_back(peak->q());
         auto events = dataset->events(q_vectors);
 
-        //NSX_CHECK_ASSERT(events.size() >= 1);
+        // NSX_CHECK_ASSERT(events.size() >= 1);
 
         if (events.size() == 0) {
             continue;
@@ -146,14 +145,14 @@ int main()
         double diff = 1e200;
 
         // q could cross Ewald sphere multiple times, so find best match
-        for (auto&& event: events) {
+        for (auto&& event : events) {
             const Eigen::Vector3d pnew = {event._px, event._py, event._frame};
-            if ((pnew-p0).squaredNorm() < diff) {
-                diff = (pnew-p0).squaredNorm();
+            if ((pnew - p0).squaredNorm() < diff) {
+                diff = (pnew - p0).squaredNorm();
                 p1 = pnew;
             }
         }
-        
+
         Eigen::RowVector3d q0 = nsx::Peak3D(dataset, nsx::Ellipsoid(p0, 1.0)).q().rowVector();
         Eigen::RowVector3d q1 = nsx::Peak3D(dataset, nsx::Ellipsoid(p1, 1.0)).q().rowVector();
 

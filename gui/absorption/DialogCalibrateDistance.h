@@ -6,12 +6,11 @@ namespace Ui {
 class DialogCalibrateDistance;
 }
 
-class DialogCalibrateDistance : public QDialog
-{
+class DialogCalibrateDistance : public QDialog {
     Q_OBJECT
 
 public:
-    explicit DialogCalibrateDistance(QWidget *parent = 0);
+    explicit DialogCalibrateDistance(QWidget* parent = 0);
     ~DialogCalibrateDistance();
 
 signals:
@@ -19,5 +18,5 @@ signals:
     void on_calibrateDistanceButtonOK_accepted();
 
 private:
-    Ui::DialogCalibrateDistance *ui;
+    Ui::DialogCalibrateDistance* ui;
 };

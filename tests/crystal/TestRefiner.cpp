@@ -7,7 +7,6 @@
 
 #include <core/AutoIndexer.h>
 #include <core/ConvolverFactory.h>
-#include <core/PeakList.h>
 #include <core/DataSet.h>
 #include <core/Diffractometer.h>
 #include <core/Experiment.h>
@@ -17,9 +16,10 @@
 #include <core/Peak3D.h>
 #include <core/PeakFilter.h>
 #include <core/PeakFinder.h>
+#include <core/PeakList.h>
 #include <core/ProgressHandler.h>
-#include <core/Refiner.h>
 #include <core/ReciprocalVector.h>
+#include <core/Refiner.h>
 #include <core/Sample.h>
 #include <core/Units.h>
 
@@ -34,9 +34,9 @@ int main()
 
     nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
 
-    auto callback = [progressHandler] () {
+    auto callback = [progressHandler]() {
         auto log = progressHandler->getLog();
-        for (auto&& msg: log) {
+        for (auto&& msg : log) {
             std::cout << msg << std::endl;
         }
     };
@@ -54,7 +54,7 @@ int main()
     peakFinder.setMaxFrames(10);
 
     nsx::ConvolverFactory convolver_factory;
-    auto convolver = convolver_factory.create("annular",{});
+    auto convolver = convolver_factory.create("annular", {});
 
     peakFinder.setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
     peakFinder.setThreshold(15.0);
@@ -72,16 +72,15 @@ int main()
 
     nsx::PeakFilter peak_filter;
     nsx::PeakList selected_peaks;
-    selected_peaks = peak_filter.enabled(found_peaks,true);
+    selected_peaks = peak_filter.enabled(found_peaks, true);
     selected_peaks = peak_filter.dRange(selected_peaks, 2.0, 100.0);
-    
+
     NSX_CHECK_ASSERT(selected_peaks.size() >= 600);
 
-    auto numIndexedPeaks = [&]() -> unsigned int
-    {
+    auto numIndexedPeaks = [&]() -> unsigned int {
         unsigned int indexed_peaks = 0;
 
-        for (auto&& peak: selected_peaks) {
+        for (auto&& peak : selected_peaks) {
             indexer.addPeak(peak);
             ++indexed_peaks;
         }
@@ -107,20 +106,20 @@ int main()
 
     // set constraints
     auto constrained_cell = cell->applyNiggliConstraints();
-    NSX_CHECK_SMALL( (cell->reciprocalBasis()-constrained_cell.reciprocalBasis()).norm(), 1e-6);
+    NSX_CHECK_SMALL((cell->reciprocalBasis() - constrained_cell.reciprocalBasis()).norm(), 1e-6);
 
-    for (auto&& peak: found_peaks) {
+    for (auto&& peak : found_peaks) {
         peak->setUnitCell(cell);
         peaks.push_back(peak);
     }
-    
+
     auto&& states = dataset->instrumentStates();
 
     nsx::Refiner refiner(states, cell, peaks, 1);
 
     NSX_CHECK_ASSERT(refiner.batches().size() == 1);
 
-    for (auto&& batch: refiner.batches()) {
+    for (auto&& batch : refiner.batches()) {
         NSX_CHECK_ASSERT(batch.peaks().size() > 200);
     }
 

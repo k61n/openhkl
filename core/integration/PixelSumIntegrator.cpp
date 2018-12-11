@@ -28,24 +28,22 @@
  *
  */
 
+#include "PixelSumIntegrator.h"
 #include "Blob3D.h"
 #include "DataSet.h"
 #include "Ellipsoid.h"
 #include "Intensity.h"
 #include "MeanBackgroundIntegrator.h"
 #include "Peak3D.h"
-#include "PixelSumIntegrator.h"
 
 namespace nsx {
 
-PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance): MeanBackgroundIntegrator(),
-    _fitCenter(fit_center), _fitCovariance(fit_covariance)
+PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance)
+    : MeanBackgroundIntegrator(), _fitCenter(fit_center), _fitCovariance(fit_covariance)
 {
 }
 
-PixelSumIntegrator::~PixelSumIntegrator()
-{
-}
+PixelSumIntegrator::~PixelSumIntegrator() {}
 
 bool PixelSumIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 {
@@ -81,17 +79,18 @@ bool PixelSumIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
             npeak++;
 
             // update blob if pixel is strong (Poisson statistics)
-            if (counts[i] > mean_bkg+sigma) {
-                blob.addPoint(ev._px, ev._py, ev._frame, counts[i]-mean_bkg);
+            if (counts[i] > mean_bkg + sigma) {
+                blob.addPoint(ev._px, ev._py, ev._frame, counts[i] - mean_bkg);
             }
         }
     }
 
-    sum_peak -= npeak*_meanBackground.value();
+    sum_peak -= npeak * _meanBackground.value();
 
     // TODO: ERROR ESTIMATE!!
     // This INCORRECTLY assumes Poisson statistics (no gain or baseline)
-    _integratedIntensity = Intensity(sum_peak, sum_peak + npeak*mean_bkg + npeak*npeak*std_bkg*std_bkg);
+    _integratedIntensity =
+        Intensity(sum_peak, sum_peak + npeak * mean_bkg + npeak * npeak * std_bkg * std_bkg);
 
     // TODO: compute rocking curve
     double f_min = int(events[0]._frame);
@@ -117,7 +116,7 @@ bool PixelSumIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
 
     Eigen::Matrix3d A0 = peak->shape().metric();
     Eigen::Matrix3d A1 = cov.inverse();
-    const double dA = (A1-A0).norm() / A0.norm();
+    const double dA = (A1 - A0).norm() / A0.norm();
 
     // check that the covariance is consistent
     if (!(dA < 2.0)) {
@@ -134,12 +133,12 @@ bool PixelSumIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
 
     peak->setShape(Ellipsoid(center, A1));
 
-    size_t nframes = size_t(f_max-f_min)+1;
+    size_t nframes = size_t(f_max - f_min) + 1;
     _rockingCurve.resize(nframes);
 
-    std::vector<double> intensity_per_frame(nframes,0.0);
-    std::vector<double> n_peak_points_per_frame(nframes,0.0);
-    std::vector<double> n_bkg_points_per_frame(nframes,0.0);
+    std::vector<double> intensity_per_frame(nframes, 0.0);
+    std::vector<double> n_peak_points_per_frame(nframes, 0.0);
+    std::vector<double> n_bkg_points_per_frame(nframes, 0.0);
 
     for (auto i = 0; i < counts.size(); ++i) {
 
@@ -157,8 +156,8 @@ bool PixelSumIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     }
 
     for (int i = 0; i < nframes; ++i) {
-        double corrected_intensity = intensity_per_frame[i] - n_peak_points_per_frame[i]*mean_bkg;
-        _rockingCurve[i] = Intensity(corrected_intensity,sqrt(corrected_intensity));
+        double corrected_intensity = intensity_per_frame[i] - n_peak_points_per_frame[i] * mean_bkg;
+        _rockingCurve[i] = Intensity(corrected_intensity, sqrt(corrected_intensity));
     }
 
     return true;

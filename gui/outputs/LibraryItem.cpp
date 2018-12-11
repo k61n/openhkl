@@ -16,9 +16,7 @@
 #include "ProgressView.h"
 #include "UnitCellsItem.h"
 
-LibraryItem::LibraryItem()
-: TreeItem(),
-  _library(nullptr)
+LibraryItem::LibraryItem() : TreeItem(), _library(nullptr)
 {
     setText("Reference peak library");
 
@@ -49,7 +47,8 @@ void LibraryItem::incorporateCalculatedPeaks()
 
     auto unit_cells_item = experiment_item->unitCellsItem();
 
-    DialogPredictPeaks *dialog = DialogPredictPeaks::create(experimentItem(), unit_cells_item->unitCells(), nullptr);
+    DialogPredictPeaks* dialog =
+        DialogPredictPeaks::create(experimentItem(), unit_cells_item->unitCells(), nullptr);
 
     dialog->show();
 

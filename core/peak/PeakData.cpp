@@ -1,4 +1,5 @@
 
+#include "PeakData.h"
 #include "DataSet.h"
 #include "Detector.h"
 #include "DetectorEvent.h"
@@ -6,20 +7,11 @@
 #include "DirectVector.h"
 #include "InstrumentState.h"
 #include "Peak3D.h"
-#include "PeakData.h"
 #include "ReciprocalVector.h"
 
 namespace nsx {
 
-PeakData::PeakData(sptrPeak3D peak): 
-    _peak(peak),
-    _system(peak),
-    _events(), 
-    _counts(), 
-    _coords()
-{
-
-}
+PeakData::PeakData(sptrPeak3D peak) : _peak(peak), _system(peak), _events(), _counts(), _coords() {}
 
 const std::deque<DetectorEvent>& PeakData::events() const
 {
@@ -30,11 +22,12 @@ const std::deque<double>& PeakData::counts() const
 {
     return _counts;
 }
-    
+
 void PeakData::computeStandard()
 {
     if (_peak == nullptr) {
-        throw std::runtime_error("PeakData::computeStandard() cannot be called if _peak is nullptr");
+        throw std::runtime_error(
+            "PeakData::computeStandard() cannot be called if _peak is nullptr");
     }
 
     _coords.resize(_events.size());

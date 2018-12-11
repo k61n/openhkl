@@ -9,21 +9,21 @@ class DataItem;
 class MainWindow;
 class SessionModel;
 
-class ExperimentTree: public QTreeView {
+class ExperimentTree : public QTreeView {
     Q_OBJECT
 public:
-    explicit ExperimentTree(QWidget *parent);
+    explicit ExperimentTree(QWidget* parent);
 
     ~ExperimentTree();
 
-    void setMainWindow(MainWindow *main_window);
+    void setMainWindow(MainWindow* main_window);
 
     SessionModel* session();
 
 signals:
     void inspectWidget(QWidget*);
     void resetScene();
-    void openPeakFindDialog(DataItem *data_item);
+    void openPeakFindDialog(DataItem* data_item);
 
 public slots:
     void keyPressEvent(QKeyEvent* event);
@@ -36,5 +36,5 @@ private:
     void openInstrumentStatesDialog();
 
 private:
-    MainWindow *_main_window;
+    MainWindow* _main_window;
 };

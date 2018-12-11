@@ -5,29 +5,23 @@
 #include <map>
 #include <vector>
 
-#include "PeakList.h"
 #include "DataTypes.h"
 #include "DetectorEvent.h"
-#include "Profile3D.h"
+#include "PeakList.h"
 #include "Profile1D.h"
+#include "Profile3D.h"
 #include "UnitCell.h"
 
 namespace nsx {
 
-enum class PeakInterpolation {NoInterpolation=0, InverseDistance=1, Intensity=2};
+enum class PeakInterpolation { NoInterpolation = 0, InverseDistance = 1, Intensity = 2 };
 
 struct FitData;
 
 //! Helper function for predicting peaks
-PeakList predictPeaks(ShapeLibrary library,
-                      sptrDataSet data,
-                      sptrUnitCell,
-                      double dmin,
-                      double dmax,
-                      double radius,
-                      double nframes,
-                      int min_neighbors,
-                      PeakInterpolation interpolation);
+PeakList predictPeaks(
+    ShapeLibrary library, sptrDataSet data, sptrUnitCell, double dmin, double dmax, double radius,
+    double nframes, int min_neighbors, PeakInterpolation interpolation);
 
 //! \brief Class to store a library of peak shapes, to be used for peak prediction and integration.
 //!
@@ -39,7 +33,8 @@ class ShapeLibrary {
 
 public:
     //! Construct an empty library.
-    //! \param detector_coords if true, store profiles in detector coordinates; otherwise store in Kabsch coordinates
+    //! \param detector_coords if true, store profiles in detector coordinates; otherwise store in
+    //! Kabsch coordinates
     ShapeLibrary(bool detector_coords, double peakScale, double bkgBegin, double bkgEnd);
 
     //! Return whether the library is stored in detector coords or Kabsch coords
@@ -61,10 +56,13 @@ public:
     Profile3D meanProfile(const DetectorEvent& ev, double radius, double nframes) const;
 
     //! Return the average peak profile near the given detector event
-    std::vector<Intensity> meanProfile1D(const DetectorEvent& ev, double radius, double nframes) const;
+    std::vector<Intensity>
+    meanProfile1D(const DetectorEvent& ev, double radius, double nframes) const;
 
     //! Return the average peak covariance near the given detector event
-    Eigen::Matrix3d meanCovariance(sptrPeak3D reference_peak, double radius, double nframes, size_t min_neighbors, PeakInterpolation interpolation) const;
+    Eigen::Matrix3d meanCovariance(
+        sptrPeak3D reference_peak, double radius, double nframes, size_t min_neighbors,
+        PeakInterpolation interpolation) const;
 
     //! Find neighbors of a given peak
     PeakList findNeighbors(const DetectorEvent& ev, double radius, double nframes) const;

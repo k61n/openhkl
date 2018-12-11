@@ -37,9 +37,9 @@
 
 #pragma once
 
+#include <Eigen/Dense>
 #include <string>
 #include <yaml-cpp/yaml.h>
-#include <Eigen/Dense>
 
 #include "Component.h"
 #include "DataOrder.h"
@@ -50,7 +50,7 @@
 namespace nsx {
 
 //! \brief Base class for Detectors.
-class Detector: public Component {
+class Detector : public Component {
 public:
     //! Static constructor of a Detector from a property tree node
     static Detector* create(const YAML::Node& node);
@@ -58,18 +58,18 @@ public:
     //! Construct a Detector
     Detector();
     //! Construct a Detector from another Detector
-    Detector(const Detector& other)=default;
+    Detector(const Detector& other) = default;
     //! Construct a Detector with a given name
     Detector(const std::string& name);
     //! Constructs a sample from a property tree node
     Detector(const YAML::Node& node);
     //! Return a pointer to a copy of the Detector
-    virtual Detector* clone() const=0;
+    virtual Detector* clone() const = 0;
     // Destructor
-    virtual ~Detector()=0;
+    virtual ~Detector() = 0;
 
     //! Assignment operator
-    Detector& operator=(const Detector& other)=default;
+    Detector& operator=(const Detector& other) = default;
 
     //! Return the sample to detector distance (meters)
     double distance() const;
@@ -100,29 +100,31 @@ public:
     //! Return the height of the detector (meters)
     double height() const;
     //! Set the height of the detector (meters)
-    virtual void setHeight(double height)=0;
+    virtual void setHeight(double height) = 0;
 
     //! Return the width of the detector (meters)
     double width() const;
     //! Set the width of the detector (meters)
-    virtual void setWidth(double width)=0;
+    virtual void setWidth(double width) = 0;
 
     //! Return the height in angular units of the detector (radians)
     double angularHeight() const;
     //! Set the height in angular units of the detector (radians)
-    virtual void setAngularHeight(double angle)=0;
+    virtual void setAngularHeight(double angle) = 0;
 
     //! Return the width in angular units of the detector (radians)
     double angularWidth() const;
     //! Set the height in angular units of the detector (radians)
-    virtual void setAngularWidth(double angle)=0;
+    virtual void setAngularWidth(double angle) = 0;
 
     //! Return the detector event (pixel x, pixel y, time of flight) associated with a given kf.
     //! Returns with _negative_ tof if no such event is possible.
-    virtual DetectorEvent constructEvent(const DirectVector& from, const ReciprocalVector& kf) const = 0;
+    virtual DetectorEvent
+    constructEvent(const DirectVector& from, const ReciprocalVector& kf) const = 0;
 
-    //! Returns the position of a given pixel in detector space. This takes into account the detector motions in detector space.
-    virtual DirectVector pixelPosition(double x, double y) const=0;
+    //! Returns the position of a given pixel in detector space. This takes into account the
+    //! detector motions in detector space.
+    virtual DirectVector pixelPosition(double x, double y) const = 0;
     //! Return the mean detector pixel height
     double pixelHeight() const;
     //! Return the mean detector pixel width
@@ -131,9 +133,9 @@ public:
     //! Returns how data are mapped to detector
     DataOrder dataOrder() const;
 
-    //! Return the Jacobian matrix of the transformation (px,py) -> (x,y,z) from pixel coordinates to lab coordinates.
-    //! The first and second columns are the derivatives of (x,y,z) with respect to px and py.
-    //! The third column is identically zero and is kept only for convenience.
+    //! Return the Jacobian matrix of the transformation (px,py) -> (x,y,z) from pixel coordinates
+    //! to lab coordinates. The first and second columns are the derivatives of (x,y,z) with respect
+    //! to px and py. The third column is identically zero and is kept only for convenience.
     virtual Eigen::Matrix3d jacobian(double x, double y) const = 0;
 
     //! Return the detector baseline. Measured count = gain * (neutron count) + baseline

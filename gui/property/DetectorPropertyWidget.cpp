@@ -3,20 +3,18 @@
 #include <QDoubleSpinBox>
 #include <QSpinBox>
 
-#include <core/DirectVector.h>
 #include <core/Diffractometer.h>
+#include <core/DirectVector.h>
 #include <core/Gonio.h>
 #include <core/RotAxis.h>
 #include <core/TransAxis.h>
 
-DetectorPropertyWidget::DetectorPropertyWidget(nsx::Detector& detector) :
-    QWidget(),
-    _ui(new Ui::DetectorPropertyWidget),
-    _detector(detector)
+DetectorPropertyWidget::DetectorPropertyWidget(nsx::Detector& detector)
+    : QWidget(), _ui(new Ui::DetectorPropertyWidget), _detector(detector)
 {
     _ui->setupUi(this);
 
-    const auto &detector_gonio = _detector.gonio();
+    const auto& detector_gonio = _detector.gonio();
     size_t n_detector_gonio_axes = detector_gonio.nAxes();
 
     _ui->height->setValue(_detector.height());
@@ -33,7 +31,7 @@ DetectorPropertyWidget::DetectorPropertyWidget(nsx::Detector& detector) :
 
     for (size_t i = 0; i < n_detector_gonio_axes; ++i) {
 
-        const auto &axis = detector_gonio.axis(i);
+        const auto& axis = detector_gonio.axis(i);
 
         std::ostringstream os;
         os << axis;
@@ -41,14 +39,15 @@ DetectorPropertyWidget::DetectorPropertyWidget(nsx::Detector& detector) :
         QTableWidgetItem* item0 = new QTableWidgetItem();
         item0->setData(Qt::DisplayRole, QString(axis.name().c_str()));
         item0->setBackgroundColor(axis.physical() ? QColor("#FFDDDD") : QColor("#DDFFDD"));
-        _ui->axes->setItem(i,0,item0);
+        _ui->axes->setItem(i, 0, item0);
 
-        _ui->axes->setItem(i,1,new QTableWidgetItem(QString(os.str().c_str())));
+        _ui->axes->setItem(i, 1, new QTableWidgetItem(QString(os.str().c_str())));
     }
 
-    connect(_ui->sample_to_detector_distance,
-            static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-            [=](double value){onSampleToDectorDistanceChanged(value);});
+    connect(
+        _ui->sample_to_detector_distance,
+        static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+        [=](double value) { onSampleToDectorDistanceChanged(value); });
 }
 
 DetectorPropertyWidget::~DetectorPropertyWidget()

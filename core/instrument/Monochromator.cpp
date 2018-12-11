@@ -11,29 +11,21 @@
 namespace nsx {
 
 Monochromator::Monochromator()
-: _name(""),
-  _wavelength(1.0),
-  _fwhm(0.1),
-  _width(0.01),
-  _height(0.01)
+    : _name(""), _wavelength(1.0), _fwhm(0.1), _width(0.01), _height(0.01)
 {
 }
 
 Monochromator::Monochromator(const std::string& name)
-: _name(name),
-  _wavelength(1.0),
-  _fwhm(0.1),
-  _width(0.01),
-  _height(0.01)
+    : _name(name), _wavelength(1.0), _fwhm(0.1), _width(0.01), _height(0.01)
 {
 }
 
 Monochromator::Monochromator(const Monochromator& other)
-: _name(other._name),
-  _wavelength(other._wavelength),
-  _fwhm(other._fwhm),
-  _width(other._width),
-  _height(other._height)
+    : _name(other._name)
+    , _wavelength(other._wavelength)
+    , _fwhm(other._fwhm)
+    , _width(other._width)
+    , _height(other._height)
 {
 }
 
@@ -41,7 +33,7 @@ Monochromator::Monochromator(const YAML::Node& node)
 {
     _name = node["name"].as<std::string>();
 
-    UnitsManager* um=UnitsManager::Instance();
+    UnitsManager* um = UnitsManager::Instance();
 
     // Set the source slit width from the yaml tree node
     auto&& widthNode = node["width"];
@@ -52,17 +44,19 @@ Monochromator::Monochromator(const YAML::Node& node)
     _height = heightNode["value"].as<double>() * um->get(heightNode["units"].as<std::string>());
 
     auto&& wavelengthNode = node["wavelength"];
-    _wavelength = wavelengthNode["value"].as<double>() * um->get(wavelengthNode["units"].as<std::string>()) / nsx::ang;
+    _wavelength = wavelengthNode["value"].as<double>()
+        * um->get(wavelengthNode["units"].as<std::string>()) / nsx::ang;
 
     auto&& fwhmNode = node["fwhm"];
-    _fwhm = fwhmNode["value"].as<double>() * um->get(fwhmNode["units"].as<std::string>()) / nsx::ang;
+    _fwhm =
+        fwhmNode["value"].as<double>() * um->get(fwhmNode["units"].as<std::string>()) / nsx::ang;
 }
 
 Monochromator& Monochromator::operator=(const Monochromator& other)
 {
-    if (this!=&other) {
+    if (this != &other) {
         _name = other._name;
-        _wavelength = other._wavelength;      
+        _wavelength = other._wavelength;
         _fwhm = other._fwhm;
         _width = other._width;
         _height = other._height;
@@ -70,9 +64,7 @@ Monochromator& Monochromator::operator=(const Monochromator& other)
     return *this;
 }
 
-Monochromator::~Monochromator()
-{
-}
+Monochromator::~Monochromator() {}
 
 const std::string& Monochromator::name() const
 {
@@ -135,10 +127,10 @@ bool Monochromator::operator==(const Monochromator& other)
     if (_fwhm != other._fwhm)
         return false;
 
-    if ( _width != other._width)
+    if (_width != other._width)
         return false;
 
-    if ( _height != other._height)
+    if (_height != other._height)
         return false;
 
     return true;
@@ -146,7 +138,7 @@ bool Monochromator::operator==(const Monochromator& other)
 
 ReciprocalVector Monochromator::ki() const
 {
-    return ReciprocalVector(0.0, 1.0/_wavelength, 0.0);
+    return ReciprocalVector(0.0, 1.0 / _wavelength, 0.0);
 }
 
 } // end namespace nsx

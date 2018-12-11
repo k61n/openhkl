@@ -5,11 +5,11 @@
 #include <core/DataSet.h>
 #include <core/Detector.h>
 #include <core/Diffractometer.h>
-#include <core/IDataReader.h>
 #include <core/Experiment.h>
+#include <core/IDataReader.h>
 #include <core/InstrumentState.h>
-#include <core/Material.h>
 #include <core/MCAbsorption.h>
+#include <core/Material.h>
 #include <core/Monochromator.h>
 #include <core/Sample.h>
 #include <core/Source.h>
@@ -23,10 +23,8 @@
 
 #include "ui_DialogMCAbsorption.h"
 
-DialogMCAbsorption::DialogMCAbsorption(ExperimentItem* experiment_item, QWidget *parent):
-    QDialog(parent),
-    ui(new Ui::DialogMCAbsorption),
-    _experiment_item(experiment_item)
+DialogMCAbsorption::DialogMCAbsorption(ExperimentItem* experiment_item, QWidget* parent)
+    : QDialog(parent), ui(new Ui::DialogMCAbsorption), _experiment_item(experiment_item)
 {
     ui->setupUi(this);
 
@@ -37,7 +35,7 @@ DialogMCAbsorption::DialogMCAbsorption(ExperimentItem* experiment_item, QWidget 
     if (cells.size() > 0) {
         ui->unitCells->setEnabled(true);
         for (unsigned int i = 0; i < cells.size(); ++i) {
-            ui->unitCells->addItem("Crystal"+QString::number(i+1));
+            ui->unitCells->addItem("Crystal" + QString::number(i + 1));
         }
     }
     ui->progressBar_MCStatus->setValue(0);
@@ -65,21 +63,21 @@ void DialogMCAbsorption::on_pushButton_run_pressed()
     auto material = cell->material();
 
     if (material == nullptr) {
-        QMessageBox::critical(this,"NSXTOOL","No material defined for this crystal");
+        QMessageBox::critical(this, "NSXTOOL", "No material defined for this crystal");
         return;
     }
 
-    const auto &source = diffractometer->source();
-    const auto &mono = source.selectedMonochromator();
+    const auto& source = diffractometer->source();
+    const auto& mono = source.selectedMonochromator();
 
-    const auto &sample = diffractometer->sample();
-    const auto &hull = sample.shape();
+    const auto& sample = diffractometer->sample();
+    const auto& hull = sample.shape();
     if (!hull.checkEulerConditions()) {
-        QMessageBox::critical(this,"NSXTOOL","The sample shape (hull) is ill-defined");
+        QMessageBox::critical(this, "NSXTOOL", "The sample shape (hull) is ill-defined");
         return;
     }
 
-    nsx::MCAbsorption mca(hull,mono.width(),mono.height(),-1.0);
+    nsx::MCAbsorption mca(hull, mono.width(), mono.height(), -1.0);
 
     mca.setMuAbsorption(material->muAbsorption());
     mca.setMuScattering(material->muIncoherent());
@@ -87,27 +85,27 @@ void DialogMCAbsorption::on_pushButton_run_pressed()
     ui->progressBar_MCStatus->setValue(0);
     ui->progressBar_MCStatus->setTextVisible(true);
 
-    int progress=0;
+    int progress = 0;
 
     auto session = dynamic_cast<SessionModel*>(_experiment_item->model());
 
     const auto& data = experiment->data();
 
-    for (auto& d: data) {
+    for (auto& d : data) {
         const auto& peaks = session->peaks(d.second);
         ui->progressBar_MCStatus->setMaximum(peaks.size());
         ui->progressBar_MCStatus->setFormat(
-            QString::fromStdString(d.second->filename()) + ": "+QString::number(progress)+"%");
-        for (auto& p: peaks) {
+            QString::fromStdString(d.second->filename()) + ": " + QString::number(progress) + "%");
+        for (auto& p : peaks) {
             auto data = p->data();
             auto coord = p->shape().center();
             auto state = data->interpolatedState(coord[2]);
-            auto position = data->reader()->diffractometer()->detector()->pixelPosition(
-                coord[0], coord[1]);
+            auto position =
+                data->reader()->diffractometer()->detector()->pixelPosition(coord[0], coord[1]);
             auto kf = state.kfLab(position);
             // todo: check coordinate systems here, may not be consistent
-            double transmission=mca.run(ui->spinBox->value(),kf.rowVector(),
-                                        state.sampleOrientationMatrix());
+            double transmission =
+                mca.run(ui->spinBox->value(), kf.rowVector(), state.sampleOrientationMatrix());
             p->setTransmission(transmission);
             ui->progressBar_MCStatus->setValue(++progress);
         }

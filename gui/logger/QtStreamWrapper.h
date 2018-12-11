@@ -14,9 +14,10 @@ class QtStreamWrapper : public QObject, public nsx::IStreamWrapper {
     Q_OBJECT
 
 public:
-
     //! Constructor
-    QtStreamWrapper(NoteBook* notebook, std::function<std::string()> prefix=nullptr, std::function<std::string()> suffix=nullptr);
+    QtStreamWrapper(
+        NoteBook* notebook, std::function<std::string()> prefix = nullptr,
+        std::function<std::string()> suffix = nullptr);
 
     //! Destructor
     virtual ~QtStreamWrapper();
@@ -33,6 +34,5 @@ signals:
     void sendLogMessage(const std::string& message);
 
 private:
-
     std::ostringstream _os;
 };

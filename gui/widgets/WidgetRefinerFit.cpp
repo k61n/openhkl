@@ -7,9 +7,8 @@
 
 #include "ui_WidgetRefinerFit.h"
 
-WidgetRefinerFit::WidgetRefinerFit(const std::map<nsx::sptrDataSet,nsx::Refiner>& refiners)
-: _ui(new Ui::WidgetRefinerFit),
-  _refiners(refiners)
+WidgetRefinerFit::WidgetRefinerFit(const std::map<nsx::sptrDataSet, nsx::Refiner>& refiners)
+    : _ui(new Ui::WidgetRefinerFit), _refiners(refiners)
 {
     _ui->setupUi(this);
 
@@ -18,16 +17,22 @@ WidgetRefinerFit::WidgetRefinerFit(const std::map<nsx::sptrDataSet,nsx::Refiner>
         QFileInfo fileinfo(QString::fromStdString(data->filename()));
 
         QListWidgetItem* item = new QListWidgetItem(fileinfo.baseName());
-        item->setData(Qt::UserRole,QVariant::fromValue(data));
+        item->setData(Qt::UserRole, QVariant::fromValue(data));
         _ui->selected_data->addItem(item);
     }
 
-    connect(_ui->selected_data,SIGNAL(currentRowChanged(int)),this,SLOT(slotSelectedDataChanged(int)));
+    connect(
+        _ui->selected_data, SIGNAL(currentRowChanged(int)), this,
+        SLOT(slotSelectedDataChanged(int)));
 
-    connect(_ui->selected_batch,SIGNAL(valueChanged(int)),this,SLOT(slotSelectedBatchChanged(int)));
+    connect(
+        _ui->selected_batch, SIGNAL(valueChanged(int)), this, SLOT(slotSelectedBatchChanged(int)));
 
-    connect(_ui->selected_frame,SIGNAL(valueChanged(int)),this,SLOT(slotSelectedFrameChanged(int)));
-    connect(_ui->selected_frame_slider,SIGNAL(valueChanged(int)),this,SLOT(slotSelectedFrameChanged(int)));
+    connect(
+        _ui->selected_frame, SIGNAL(valueChanged(int)), this, SLOT(slotSelectedFrameChanged(int)));
+    connect(
+        _ui->selected_frame_slider, SIGNAL(valueChanged(int)), this,
+        SLOT(slotSelectedFrameChanged(int)));
 }
 
 WidgetRefinerFit::~WidgetRefinerFit()
@@ -44,7 +49,7 @@ void WidgetRefinerFit::slotSelectedDataChanged(int selected_data)
     auto data = current_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
 
     auto&& refiner = _refiners.at(data);
-    auto&& batches =  refiner.batches();
+    auto&& batches = refiner.batches();
 
     _ui->selected_batch->setMinimum(0);
     _ui->selected_batch->setMaximum(batches.size() - 1);
@@ -76,7 +81,7 @@ void WidgetRefinerFit::slotSelectedBatchChanged(int selected_batch)
 
     // If no batches are set for this refiner, return
     auto&& refiner = _refiners.at(data);
-    auto&& batches =  refiner.batches();
+    auto&& batches = refiner.batches();
 
     QPen pen;
     pen.setColor(QColor("black"));
@@ -90,12 +95,12 @@ void WidgetRefinerFit::slotSelectedBatchChanged(int selected_batch)
     auto&& cost_function = batch.costFunction();
 
     std::vector<double> iterations(cost_function.size());
-    std::iota(iterations.begin(),iterations.end(),0);
+    std::iota(iterations.begin(), iterations.end(), 0);
 
     QVector<double> x_values = QVector<double>::fromStdVector(iterations);
     QVector<double> y_values = QVector<double>::fromStdVector(cost_function);
 
-    _ui->plot->graph(0)->addData(x_values,y_values);
+    _ui->plot->graph(0)->addData(x_values, y_values);
 
     _ui->plot->xAxis->setLabel("# iterations");
     _ui->plot->yAxis->setLabel("Cost function");
@@ -107,7 +112,9 @@ void WidgetRefinerFit::slotSelectedBatchChanged(int selected_batch)
     _ui->plot->xAxis->setTickLabelFont(font);
     _ui->plot->yAxis->setTickLabelFont(font);
 
-    _ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
+    _ui->plot->setInteractions(
+        QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend
+        | QCP::iSelectPlottables);
 
     _ui->plot->rescaleAxes();
 
@@ -134,7 +141,8 @@ void WidgetRefinerFit::slotSelectedFrameChanged(int selected_frame)
 
     QFont font;
     font.setBold(true);
-    _ui->refined->setStyleSheet(selected_state.refined ? "QLabel {color : blue;}" : "QLabel {color : red;}");
+    _ui->refined->setStyleSheet(
+        selected_state.refined ? "QLabel {color : blue;}" : "QLabel {color : red;}");
     _ui->refined->setFont(font);
     _ui->refined->setText(selected_state.refined ? "Refined" : "Not refined");
 
@@ -159,27 +167,27 @@ void WidgetRefinerFit::slotSelectedFrameChanged(int selected_frame)
     const auto& wavelength = selected_state.wavelength;
     _ui->wavelength->setValue(wavelength);
 
-    double wavelength_offset = wavelength*(ni.norm() - 1.0);
+    double wavelength_offset = wavelength * (ni.norm() - 1.0);
     _ui->wavelength_offset->setValue(wavelength_offset);
 
     Eigen::Matrix3d sample_orientation_matrix = selected_state.sampleOrientationMatrix();
-    _ui->sample_orientation_00->setValue(sample_orientation_matrix(0,0));
-    _ui->sample_orientation_01->setValue(sample_orientation_matrix(0,1));
-    _ui->sample_orientation_02->setValue(sample_orientation_matrix(0,2));
-    _ui->sample_orientation_10->setValue(sample_orientation_matrix(1,0));
-    _ui->sample_orientation_11->setValue(sample_orientation_matrix(1,1));
-    _ui->sample_orientation_12->setValue(sample_orientation_matrix(1,2));
-    _ui->sample_orientation_20->setValue(sample_orientation_matrix(2,0));
-    _ui->sample_orientation_21->setValue(sample_orientation_matrix(2,1));
-    _ui->sample_orientation_22->setValue(sample_orientation_matrix(2,2));
+    _ui->sample_orientation_00->setValue(sample_orientation_matrix(0, 0));
+    _ui->sample_orientation_01->setValue(sample_orientation_matrix(0, 1));
+    _ui->sample_orientation_02->setValue(sample_orientation_matrix(0, 2));
+    _ui->sample_orientation_10->setValue(sample_orientation_matrix(1, 0));
+    _ui->sample_orientation_11->setValue(sample_orientation_matrix(1, 1));
+    _ui->sample_orientation_12->setValue(sample_orientation_matrix(1, 2));
+    _ui->sample_orientation_20->setValue(sample_orientation_matrix(2, 0));
+    _ui->sample_orientation_21->setValue(sample_orientation_matrix(2, 1));
+    _ui->sample_orientation_22->setValue(sample_orientation_matrix(2, 2));
 
-    _ui->detector_orientation_00->setValue(selected_state.detectorOrientation(0,0));
-    _ui->detector_orientation_01->setValue(selected_state.detectorOrientation(0,1));
-    _ui->detector_orientation_02->setValue(selected_state.detectorOrientation(0,2));
-    _ui->detector_orientation_10->setValue(selected_state.detectorOrientation(1,0));
-    _ui->detector_orientation_11->setValue(selected_state.detectorOrientation(1,1));
-    _ui->detector_orientation_12->setValue(selected_state.detectorOrientation(1,2));
-    _ui->detector_orientation_20->setValue(selected_state.detectorOrientation(2,0));
-    _ui->detector_orientation_21->setValue(selected_state.detectorOrientation(2,1));
-    _ui->detector_orientation_22->setValue(selected_state.detectorOrientation(2,2));
+    _ui->detector_orientation_00->setValue(selected_state.detectorOrientation(0, 0));
+    _ui->detector_orientation_01->setValue(selected_state.detectorOrientation(0, 1));
+    _ui->detector_orientation_02->setValue(selected_state.detectorOrientation(0, 2));
+    _ui->detector_orientation_10->setValue(selected_state.detectorOrientation(1, 0));
+    _ui->detector_orientation_11->setValue(selected_state.detectorOrientation(1, 1));
+    _ui->detector_orientation_12->setValue(selected_state.detectorOrientation(1, 2));
+    _ui->detector_orientation_20->setValue(selected_state.detectorOrientation(2, 0));
+    _ui->detector_orientation_21->setValue(selected_state.detectorOrientation(2, 1));
+    _ui->detector_orientation_22->setValue(selected_state.detectorOrientation(2, 2));
 }

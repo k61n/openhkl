@@ -6,17 +6,18 @@
 #include "TaskManagerView.h"
 #include "TaskManagerViewDelegate.h"
 
-TaskManagerView::TaskManagerView(QWidget *parent)
-    : QTableView(parent)
+TaskManagerView::TaskManagerView(QWidget* parent) : QTableView(parent)
 {
     auto delegate = new TaskManagerViewDelegate(parent);
 
     setItemDelegate(delegate);
 
-    connect(delegate,&TaskManagerViewDelegate::actionButtonPressed,[this](QModelIndex index){onActionButtonClicked(index);});
+    connect(delegate, &TaskManagerViewDelegate::actionButtonPressed, [this](QModelIndex index) {
+        onActionButtonClicked(index);
+    });
 }
 
-void TaskManagerView::setModel(TaskManagerModel *task_manager_model)
+void TaskManagerView::setModel(TaskManagerModel* task_manager_model)
 {
     QTableView::setModel(task_manager_model);
 
@@ -24,11 +25,12 @@ void TaskManagerView::setModel(TaskManagerModel *task_manager_model)
 
     horizontalHeader()->hide();
 
-    horizontalHeader()->setSectionResizeMode(static_cast<int>(nsx::TaskState::Section::PROGRESS),QHeaderView::Stretch);
+    horizontalHeader()->setSectionResizeMode(
+        static_cast<int>(nsx::TaskState::Section::PROGRESS), QHeaderView::Stretch);
 
-    horizontalHeader()->resizeSection(static_cast<int>(nsx::TaskState::Section::ABORT),30);
-    horizontalHeader()->resizeSection(static_cast<int>(nsx::TaskState::Section::START),30);
-    horizontalHeader()->resizeSection(static_cast<int>(nsx::TaskState::Section::REMOVE),30);
+    horizontalHeader()->resizeSection(static_cast<int>(nsx::TaskState::Section::ABORT), 30);
+    horizontalHeader()->resizeSection(static_cast<int>(nsx::TaskState::Section::START), 30);
+    horizontalHeader()->resizeSection(static_cast<int>(nsx::TaskState::Section::REMOVE), 30);
 }
 
 void TaskManagerView::onActionButtonClicked(QModelIndex index)
@@ -40,7 +42,7 @@ void TaskManagerView::onActionButtonClicked(QModelIndex index)
 
     auto col = static_cast<nsx::TaskState::Section>(index.column());
 
-    switch(col) {
+    switch (col) {
     case nsx::TaskState::Section::ABORT: {
         task_manager_model->abortTask(index);
         break;
@@ -53,8 +55,7 @@ void TaskManagerView::onActionButtonClicked(QModelIndex index)
         task_manager_model->removeTask(index);
         break;
     }
-    default:
-        break;
+    default: break;
     }
     return;
 }

@@ -43,19 +43,17 @@ class QContextMenuEvent;
 class QMouseEvent;
 class QWidget;
 
-class PeakTableView : public QTableView
-{
+class PeakTableView : public QTableView {
     Q_OBJECT
 public:
-
     explicit PeakTableView(QWidget* parent = 0);
 
-    void contextMenuEvent(QContextMenuEvent *);
+    void contextMenuEvent(QContextMenuEvent*);
 
-    virtual void keyPressEvent(QKeyEvent *event) override;
+    virtual void keyPressEvent(QKeyEvent* event) override;
 
 signals:
-    void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
+    void plotData(const QVector<double>&, const QVector<double>&, const QVector<double>&);
     void plotPeak(nsx::sptrPeak3D);
     void autoIndexed();
     void updateShapeLibrary(nsx::sptrShapeLibrary);

@@ -2,9 +2,10 @@
 
 namespace nsx {
 
-LogFileStreamWrapper::LogFileStreamWrapper(const std::string& logfile, std::function<std::string()> prefix, std::function<std::string()> suffix)
-: IStreamWrapper(prefix,suffix),
-  _stream(logfile,std::fstream::app)
+LogFileStreamWrapper::LogFileStreamWrapper(
+    const std::string& logfile, std::function<std::string()> prefix,
+    std::function<std::string()> suffix)
+    : IStreamWrapper(prefix, suffix), _stream(logfile, std::fstream::app)
 {
 }
 
@@ -22,7 +23,7 @@ void LogFileStreamWrapper::print(const std::string& message)
 void LogFileStreamWrapper::printPrefix()
 {
     if (_prefix) {
-        _stream<<_prefix();
+        _stream << _prefix();
     }
 }
 

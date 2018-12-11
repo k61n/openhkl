@@ -8,7 +8,6 @@
 #include <QIcon>
 #include <QString>
 
-#include <core/PeakList.h>
 #include <core/DataSet.h>
 #include <core/Detector.h>
 #include <core/Diffractometer.h>
@@ -19,6 +18,7 @@
 #include <core/MillerIndex.h>
 #include <core/Peak3D.h>
 #include <core/PeakFilter.h>
+#include <core/PeakList.h>
 #include <core/ReciprocalVector.h>
 
 #include "ProgressView.h"
@@ -30,18 +30,17 @@ struct PeakFactors {
     double lorentz;
 };
 
-CollectedPeaksModel::CollectedPeaksModel(SessionModel* session, nsx::sptrExperiment experiment, QObject *parent)
-: QAbstractTableModel(parent),
-  _experiment(std::move(experiment)),
-  _peaks()
+CollectedPeaksModel::CollectedPeaksModel(
+    SessionModel* session, nsx::sptrExperiment experiment, QObject* parent)
+    : QAbstractTableModel(parent), _experiment(std::move(experiment)), _peaks()
 {
     setSession(session);
 }
 
-CollectedPeaksModel::CollectedPeaksModel(SessionModel* session, nsx::sptrExperiment experiment, const nsx::PeakList &peaks, QObject *parent)
-: QAbstractTableModel(parent),
-  _experiment(std::move(experiment)),
-  _peaks(peaks)
+CollectedPeaksModel::CollectedPeaksModel(
+    SessionModel* session, nsx::sptrExperiment experiment, const nsx::PeakList& peaks,
+    QObject* parent)
+    : QAbstractTableModel(parent), _experiment(std::move(experiment)), _peaks(peaks)
 {
     setSession(session);
 }
@@ -54,48 +53,59 @@ SessionModel* CollectedPeaksModel::session()
 void CollectedPeaksModel::setSession(SessionModel* session)
 {
     _session = session;
-    connect(this, &CollectedPeaksModel::signalSelectedPeakChanged,[this](nsx::sptrPeak3D peak){emit _session->signalSelectedPeakChanged(peak);});
-    connect(_session,SIGNAL(signalEnabledPeakChanged(nsx::sptrPeak3D)),this,SLOT(slotChangeEnabledPeak(nsx::sptrPeak3D)));
-    connect(_session,SIGNAL(signalMaskedPeaksChanged(const nsx::PeakList&)),this,SLOT(slotChangeMaskedPeaks(const nsx::PeakList&)));
-    connect(_session,SIGNAL(signalUnitCellRemoved(nsx::sptrUnitCell)),this,SLOT(slotRemoveUnitCell(nsx::sptrUnitCell)));
+    connect(this, &CollectedPeaksModel::signalSelectedPeakChanged, [this](nsx::sptrPeak3D peak) {
+        emit _session->signalSelectedPeakChanged(peak);
+    });
+    connect(
+        _session, SIGNAL(signalEnabledPeakChanged(nsx::sptrPeak3D)), this,
+        SLOT(slotChangeEnabledPeak(nsx::sptrPeak3D)));
+    connect(
+        _session, SIGNAL(signalMaskedPeaksChanged(const nsx::PeakList&)), this,
+        SLOT(slotChangeMaskedPeaks(const nsx::PeakList&)));
+    connect(
+        _session, SIGNAL(signalUnitCellRemoved(nsx::sptrUnitCell)), this,
+        SLOT(slotRemoveUnitCell(nsx::sptrUnitCell)));
 }
 
 void CollectedPeaksModel::slotRemoveUnitCell(const nsx::sptrUnitCell unit_cell)
 {
     Q_UNUSED(unit_cell)
 
-    QModelIndex topleft_index = index(0,0);
-    QModelIndex bottomright_index = index(rowCount(QModelIndex())-1,columnCount(QModelIndex())-1);
+    QModelIndex topleft_index = index(0, 0);
+    QModelIndex bottomright_index =
+        index(rowCount(QModelIndex()) - 1, columnCount(QModelIndex()) - 1);
 
-    emit dataChanged(topleft_index,bottomright_index);
+    emit dataChanged(topleft_index, bottomright_index);
 }
 
 void CollectedPeaksModel::slotChangeMaskedPeaks(const nsx::PeakList& peaks)
 {
     for (auto peak : peaks) {
 
-        auto it = std::find(_peaks.begin(),_peaks.end(),peak);
+        auto it = std::find(_peaks.begin(), _peaks.end(), peak);
         if (it == _peaks.end()) {
             continue;
         }
 
-        int row = std::distance(_peaks.begin(),it);
+        int row = std::distance(_peaks.begin(), it);
 
-        QModelIndex topleft_index = index(row,0);
-        QModelIndex bottomright_index = index(row,columnCount(QModelIndex())-1);
+        QModelIndex topleft_index = index(row, 0);
+        QModelIndex bottomright_index = index(row, columnCount(QModelIndex()) - 1);
 
-        emit dataChanged(topleft_index,bottomright_index);
+        emit dataChanged(topleft_index, bottomright_index);
     }
 }
 
-void CollectedPeaksModel::setPeaks(const nsx::PeakList& peaks) {
+void CollectedPeaksModel::setPeaks(const nsx::PeakList& peaks)
+{
     reset();
     _peaks = peaks;
 
-    QModelIndex topleft_index = index(0,0);
-    QModelIndex bottomright_index = index(rowCount(QModelIndex())-1,columnCount(QModelIndex())-1);
+    QModelIndex topleft_index = index(0, 0);
+    QModelIndex bottomright_index =
+        index(rowCount(QModelIndex()) - 1, columnCount(QModelIndex()) - 1);
 
-    emit dataChanged(topleft_index,bottomright_index);
+    emit dataChanged(topleft_index, bottomright_index);
 }
 
 const nsx::PeakList& CollectedPeaksModel::peaks() const
@@ -105,17 +115,17 @@ const nsx::PeakList& CollectedPeaksModel::peaks() const
 
 void CollectedPeaksModel::slotChangeEnabledPeak(nsx::sptrPeak3D peak)
 {
-    auto it = std::find(_peaks.begin(),_peaks.end(),peak);
+    auto it = std::find(_peaks.begin(), _peaks.end(), peak);
     if (it == _peaks.end()) {
         return;
     }
 
-    int row = std::distance(_peaks.begin(),it);
+    int row = std::distance(_peaks.begin(), it);
 
-    QModelIndex topleft_index = index(row,0);
-    QModelIndex bottomright_index = index(row,columnCount(QModelIndex())-1);
+    QModelIndex topleft_index = index(row, 0);
+    QModelIndex bottomright_index = index(row, columnCount(QModelIndex()) - 1);
 
-    emit dataChanged(topleft_index,bottomright_index);
+    emit dataChanged(topleft_index, bottomright_index);
 }
 
 
@@ -140,7 +150,7 @@ void CollectedPeaksModel::reset()
     endResetModel();
 }
 
-Qt::ItemFlags CollectedPeaksModel::flags(const QModelIndex &index) const
+Qt::ItemFlags CollectedPeaksModel::flags(const QModelIndex& index) const
 {
     if (!indexIsValid(index)) {
         return Qt::ItemIsEnabled;
@@ -156,7 +166,7 @@ QVariant CollectedPeaksModel::headerData(int section, Qt::Orientation orientatio
     }
 
     if (orientation == Qt::Horizontal) {
-        switch(section) {
+        switch (section) {
         case Column::h: {
             return QString("h");
         }
@@ -179,7 +189,7 @@ QVariant CollectedPeaksModel::headerData(int section, Qt::Orientation orientatio
             return QString("intensity");
         }
         case Column::sigmaIntensity: {
-            return QString(QChar(0x03C3))+"(intensity)";
+            return QString(QChar(0x03C3)) + "(intensity)";
         }
         case Column::numor: {
             return QString("numor");
@@ -187,22 +197,21 @@ QVariant CollectedPeaksModel::headerData(int section, Qt::Orientation orientatio
         case Column::unitCell: {
             return QString("unit cell");
         }
-        default:
-            return QVariant();
+        default: return QVariant();
         }
     } else {
-        return QVariant(section+1);
+        return QVariant(section + 1);
     }
 }
 
-QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
+QVariant CollectedPeaksModel::data(const QModelIndex& index, int role) const
 {
     if (!indexIsValid(index)) {
         return QVariant();
     }
 
-    Eigen::RowVector3i hkl = {0,0,0};
-    Eigen::RowVector3d hkl_error = {0.0,0.0,0.0};
+    Eigen::RowVector3i hkl = {0, 0, 0};
+    Eigen::RowVector3d hkl_error = {0.0, 0.0, 0.0};
 
     int row = index.row();
     int column = index.column();
@@ -256,8 +265,7 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
             auto unit_cell = _peaks[row]->unitCell();
             if (unit_cell) {
                 return QString::fromStdString(unit_cell->name());
-            }
-            else {
+            } else {
                 return QString("not set");
             }
         }
@@ -274,12 +282,9 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
     }
     case Qt::ToolTipRole:
         switch (column) {
-            case Column::h:
-                return hkl[0]+hkl_error[0];
-            case Column::k:
-                return hkl[1]+hkl_error[1];
-            case Column::l:
-                return hkl[2]+hkl_error[2];
+        case Column::h: return hkl[0] + hkl_error[0];
+        case Column::k: return hkl[1] + hkl_error[1];
+        case Column::l: return hkl[2] + hkl_error[2];
         }
         break;
     }
@@ -288,17 +293,18 @@ QVariant CollectedPeaksModel::data(const QModelIndex &index, int role) const
 
 void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
 {
-    std::function<bool(nsx::sptrPeak3D, nsx::sptrPeak3D)> compareFn = [](nsx::sptrPeak3D, nsx::sptrPeak3D) { return false; };
+    std::function<bool(nsx::sptrPeak3D, nsx::sptrPeak3D)> compareFn =
+        [](nsx::sptrPeak3D, nsx::sptrPeak3D) { return false; };
 
     switch (column) {
     case Column::h: {
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             auto cell1 = p1->unitCell();
             auto cell2 = p2->unitCell();
-            if (cell1 && cell2){
+            if (cell1 && cell2) {
                 nsx::MillerIndex miller_index1(p1->q(), *cell1);
                 nsx::MillerIndex miller_index2(p2->q(), *cell2);
-                return (miller_index1[0]<miller_index2[0]);
+                return (miller_index1[0] < miller_index2[0]);
             } else {
                 return ((cell1 != nullptr) < (cell2 != nullptr));
             }
@@ -309,10 +315,10 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             auto cell1 = p1->unitCell();
             auto cell2 = p2->unitCell();
-            if (cell1 && cell2){
+            if (cell1 && cell2) {
                 nsx::MillerIndex miller_index1(p1->q(), *cell1);
                 nsx::MillerIndex miller_index2(p2->q(), *cell2);
-                return (miller_index1[1]<miller_index2[1]);
+                return (miller_index1[1] < miller_index2[1]);
             } else {
                 return ((cell1 != nullptr) < (cell2 != nullptr));
             }
@@ -323,10 +329,10 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             auto cell1 = p1->unitCell();
             auto cell2 = p2->unitCell();
-            if (cell1 && cell2){
+            if (cell1 && cell2) {
                 nsx::MillerIndex miller_index1(p1->q(), *cell1);
                 nsx::MillerIndex miller_index2(p2->q(), *cell2);
-                return (miller_index1[2]<miller_index2[2]);
+                return (miller_index1[2] < miller_index2[2]);
             } else {
                 return ((cell1 != nullptr) < (cell2 != nullptr));
             }
@@ -357,7 +363,7 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         };
         break;
     }
-    case  Column::intensity: {
+    case Column::intensity: {
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
             auto intensity1 = p1->correctedIntensity().value();
             auto intensity2 = p2->correctedIntensity().value();
@@ -375,8 +381,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
     }
     case Column::numor: {
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            int numor1=p1->data()->reader()->metadata().key<int>("Numor");
-            int numor2=p2->data()->reader()->metadata().key<int>("Numor");
+            int numor1 = p1->data()->reader()->metadata().key<int>("Numor");
+            int numor2 = p2->data()->reader()->metadata().key<int>("Numor");
             return (numor1 < numor2);
         };
         break;
@@ -387,7 +393,7 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
             auto uc2 = p2->unitCell();
             std::string uc1Name = uc1 ? uc1->name() : "";
             std::string uc2Name = uc2 ? uc2->name() : "";
-            return (uc2Name<uc1Name);
+            return (uc2Name < uc1Name);
         };
         break;
     }
@@ -395,7 +401,7 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
     std::sort(_peaks.begin(), _peaks.end(), compareFn);
 
     if (order == Qt::DescendingOrder) {
-        std::reverse(_peaks.begin(),_peaks.end());
+        std::reverse(_peaks.begin(), _peaks.end());
     }
     emit layoutChanged();
 }
@@ -408,10 +414,10 @@ void CollectedPeaksModel::togglePeakSelection(QModelIndex peak_index)
 
     peak->setSelected(!(peak->selected()));
 
-    QModelIndex topleft_index = index(row,0);
-    QModelIndex bottomright_index = index(row,columnCount(QModelIndex())-1);
+    QModelIndex topleft_index = index(row, 0);
+    QModelIndex bottomright_index = index(row, columnCount(QModelIndex()) - 1);
 
-    emit dataChanged(topleft_index,bottomright_index);
+    emit dataChanged(topleft_index, bottomright_index);
 
     emit _session->signalEnabledPeakChanged(peak);
 }
@@ -431,7 +437,7 @@ bool CollectedPeaksModel::indexIsValid(const QModelIndex& index) const
 void CollectedPeaksModel::sortEquivalents()
 {
     // todo: investigate this method. Likely incorrect if there are multiple unit cells.
-    auto cell=_peaks[0]->unitCell();
+    auto cell = _peaks[0]->unitCell();
 
     // If no unit cell defined for the peak collection, return.
     if (!cell) {
@@ -442,15 +448,16 @@ void CollectedPeaksModel::sortEquivalents()
     std::sort(_peaks.begin(), _peaks.end(), [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
         nsx::MillerIndex miller_index1(p1->q(), *cell);
         nsx::MillerIndex miller_index2(p2->q(), *cell);
-        return cell->spaceGroup().isEquivalent(miller_index1,miller_index2);
+        return cell->spaceGroup().isEquivalent(miller_index1, miller_index2);
     });
 }
 
-void CollectedPeaksModel::setUnitCell(const nsx::sptrUnitCell& unitCell, QModelIndexList selectedPeaks)
+void CollectedPeaksModel::setUnitCell(
+    const nsx::sptrUnitCell& unitCell, QModelIndexList selectedPeaks)
 {
     if (selectedPeaks.isEmpty()) {
-        for (int i=0;i<rowCount(QModelIndex());++i) {
-            selectedPeaks << index(i,0);
+        for (int i = 0; i < rowCount(QModelIndex()); ++i) {
+            selectedPeaks << index(i, 0);
         }
     }
     for (auto&& index : selectedPeaks) {
@@ -465,23 +472,24 @@ void CollectedPeaksModel::normalizeToMonitor(double factor)
 {
     for (auto&& peak : _peaks) {
         double monitor = peak->data()->reader()->metadata().key<double>("monitor");
-        peak->setScale(factor/monitor);
+        peak->setScale(factor / monitor);
     }
 
-    QModelIndex topleft_index = index(0,0);
-    QModelIndex bottomright_index = index(rowCount(QModelIndex())-1,columnCount(QModelIndex())-1);
+    QModelIndex topleft_index = index(0, 0);
+    QModelIndex bottomright_index =
+        index(rowCount(QModelIndex()) - 1, columnCount(QModelIndex()) - 1);
 
-    emit dataChanged(topleft_index,bottomright_index);
+    emit dataChanged(topleft_index, bottomright_index);
 }
 
 QModelIndexList CollectedPeaksModel::unindexedPeaks()
 {
     QModelIndexList list;
 
-    for (int i=0; i<rowCount(QModelIndex()); ++i) {
+    for (int i = 0; i < rowCount(QModelIndex()); ++i) {
         auto peak = _peaks[i];
         if (!peak->unitCell()) {
-            list.append(index(i,0));
+            list.append(index(i, 0));
         }
     }
     return list;
@@ -491,10 +499,10 @@ QModelIndexList CollectedPeaksModel::selectedPeaks()
 {
     QModelIndexList list;
 
-    for (int i=0; i<rowCount(QModelIndex()); ++i) {
+    for (int i = 0; i < rowCount(QModelIndex()); ++i) {
         auto peak = _peaks[i];
         if (peak->enabled()) {
-            list.append(index(i,0));
+            list.append(index(i, 0));
         }
     }
     return list;

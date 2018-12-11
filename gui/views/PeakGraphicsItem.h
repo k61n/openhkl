@@ -4,18 +4,16 @@
 
 #include <string>
 
-#include <core/PeakList.h>
 #include <core/GeometryTypes.h>
+#include <core/PeakList.h>
 
 #include "PlottableGraphicsItem.h"
 
 class QWidget;
 class SXPlot;
 
-class PeakGraphicsItem : public PlottableGraphicsItem
-{
+class PeakGraphicsItem : public PlottableGraphicsItem {
 public:
-
     PeakGraphicsItem(nsx::sptrPeak3D peak, int frame);
 
     ~PeakGraphicsItem() = default;
@@ -24,7 +22,7 @@ public:
 
     QRectF boundingRect() const;
 
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
 
     //! Returns the type of plot related to the item
     std::string getPlotType() const;
@@ -36,7 +34,6 @@ public:
     static void showCenter(bool flag);
 
 private:
-
     //! Pointer to the Peak3D object
     nsx::sptrPeak3D _peak;
 

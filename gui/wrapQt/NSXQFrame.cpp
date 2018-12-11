@@ -1,10 +1,9 @@
 #include "NSXQFrame.h"
 
-NSXQFrame::NSXQFrame()
-    : QFrame(nullptr)
+NSXQFrame::NSXQFrame() : QFrame(nullptr)
 {
     // The frame is destroyed when closed
-    setAttribute(Qt::WA_DeleteOnClose,true);
+    setAttribute(Qt::WA_DeleteOnClose, true);
 
     setWindowFlags(Qt::Window);
 

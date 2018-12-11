@@ -5,13 +5,11 @@
 #include <QStandardItem>
 
 
-TreeItem::TreeItem() : QStandardItem()
-{
-}
+TreeItem::TreeItem() : QStandardItem() {}
 
-void TreeItem::setData(const QVariant &value, int role)
+void TreeItem::setData(const QVariant& value, int role)
 {
-    QStandardItem::setData(value,role);
+    QStandardItem::setData(value, role);
 }
 
 nsx::sptrExperiment TreeItem::experiment()

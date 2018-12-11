@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/Experiment.h>
 #include "TreeItem.h"
+#include <core/Experiment.h>
 
 class DataItem;
 class LibraryItem;
@@ -9,8 +9,7 @@ class InstrumentItem;
 class PeaksItem;
 class UnitCellsItem;
 
-class ExperimentItem: public TreeItem
-{
+class ExperimentItem : public TreeItem {
 public:
     ExperimentItem() = delete;
     explicit ExperimentItem(nsx::sptrExperiment experiment);

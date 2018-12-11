@@ -22,7 +22,7 @@ PeakList PeakFilter::mergedPeaksSignificance(const PeakList& peaks, double signi
 
     PeakList filtered_peaks = peak_filter.hasUnitCell(peaks);
 
-    std::map<nsx::sptrUnitCell,PeakList> peaks_per_unit_cell;
+    std::map<nsx::sptrUnitCell, PeakList> peaks_per_unit_cell;
 
     for (auto peak : filtered_peaks) {
 
@@ -31,7 +31,7 @@ PeakList PeakFilter::mergedPeaksSignificance(const PeakList& peaks, double signi
         auto it = peaks_per_unit_cell.find(unit_cell);
 
         if (it == peaks_per_unit_cell.end()) {
-            peaks_per_unit_cell.insert(std::make_pair(unit_cell,PeakList({peak})));
+            peaks_per_unit_cell.insert(std::make_pair(unit_cell, PeakList({peak})));
         } else {
             it->second.push_back(peak);
         }
@@ -48,7 +48,8 @@ PeakList PeakFilter::mergedPeaksSignificance(const PeakList& peaks, double signi
         MergedData merged(group, true);
 
         PeakList filtered_peaks;
-        filtered_peaks = peak_filter.indexed(filtered_peaks,*unit_cell,unit_cell->indexingTolerance());
+        filtered_peaks =
+            peak_filter.indexed(filtered_peaks, *unit_cell, unit_cell->indexingTolerance());
 
         for (auto peak : filtered_peaks) {
             merged.addPeak(peak);
@@ -57,7 +58,7 @@ PeakList PeakFilter::mergedPeaksSignificance(const PeakList& peaks, double signi
         for (auto&& merged_peak : merged.peaks()) {
             // p value too high: reject peaks
             if (merged_peak.pValue() > significance_level) {
-                for (auto&& p: merged_peak.peaks()) {
+                for (auto&& p : merged_peak.peaks()) {
                     bad_peaks.push_back(p);
                 }
             }
@@ -65,7 +66,7 @@ PeakList PeakFilter::mergedPeaksSignificance(const PeakList& peaks, double signi
     }
 
     for (auto it = filtered_peaks.begin(); it != filtered_peaks.end();) {
-        auto jt = std::find(bad_peaks.begin(),bad_peaks.end(),*it);
+        auto jt = std::find(bad_peaks.begin(), bad_peaks.end(), *it);
         if (jt != bad_peaks.end()) {
             it = filtered_peaks.erase(it);
             bad_peaks.erase(jt);
@@ -77,12 +78,13 @@ PeakList PeakFilter::mergedPeaksSignificance(const PeakList& peaks, double signi
     return filtered_peaks;
 }
 
-PeakList PeakFilter::sparseDataSet(const PeakList& peaks, size_t min_num_peaks) {
+PeakList PeakFilter::sparseDataSet(const PeakList& peaks, size_t min_num_peaks)
+{
 
     PeakList filtered_peaks;
 
     // Gather the peaks per dataset
-    std::map<sptrDataSet,PeakList> peaks_per_dataset;
+    std::map<sptrDataSet, PeakList> peaks_per_dataset;
     for (auto peak : peaks) {
         auto data = peak->data();
         if (!data) {
@@ -91,7 +93,7 @@ PeakList PeakFilter::sparseDataSet(const PeakList& peaks, size_t min_num_peaks) 
 
         auto it = peaks_per_dataset.find(data);
         if (it == peaks_per_dataset.end()) {
-            peaks_per_dataset.insert(std::make_pair(data,PeakList({peak})));
+            peaks_per_dataset.insert(std::make_pair(data, PeakList({peak})));
         } else {
             it->second.push_back(peak);
         }
@@ -117,7 +119,7 @@ PeakList PeakFilter::extincted(const PeakList& peaks)
 
     PeakList filtered_peaks = peak_filter.hasUnitCell(peaks);
 
-    std::map<nsx::sptrUnitCell,PeakList> peaks_per_unit_cell;
+    std::map<nsx::sptrUnitCell, PeakList> peaks_per_unit_cell;
 
     for (auto peak : filtered_peaks) {
 
@@ -126,7 +128,7 @@ PeakList PeakFilter::extincted(const PeakList& peaks)
         auto it = peaks_per_unit_cell.find(unit_cell);
 
         if (it == peaks_per_unit_cell.end()) {
-            peaks_per_unit_cell.insert(std::make_pair(unit_cell,PeakList({peak})));
+            peaks_per_unit_cell.insert(std::make_pair(unit_cell, PeakList({peak})));
         } else {
             it->second.push_back(peak);
         }
@@ -136,7 +138,8 @@ PeakList PeakFilter::extincted(const PeakList& peaks)
 
     for (auto p : peaks_per_unit_cell) {
 
-        PeakList indexed_peaks = peak_filter.indexed(p.second,*(p.first),p.first->indexingTolerance());
+        PeakList indexed_peaks =
+            peak_filter.indexed(p.second, *(p.first), p.first->indexingTolerance());
 
         SpaceGroup group(p.first->spaceGroup());
 
@@ -155,7 +158,7 @@ PeakList PeakFilter::extincted(const PeakList& peaks)
     }
 
     for (auto it = filtered_peaks.begin(); it != filtered_peaks.end();) {
-        auto jt = std::find(extincted_peaks.begin(),extincted_peaks.end(),*it);
+        auto jt = std::find(extincted_peaks.begin(), extincted_peaks.end(), *it);
         if (jt != extincted_peaks.end()) {
             it = filtered_peaks.erase(it);
             extincted_peaks.erase(jt);
@@ -174,10 +177,12 @@ PeakList PeakFilter::overlapping(const PeakList& peaks)
     std::vector<Ellipsoid> ellipsoids;
     std::set<Octree::collision_pair> collisions;
 
-    Eigen::Vector3d lower(std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity());
+    Eigen::Vector3d lower(
+        std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity(),
+        std::numeric_limits<double>::infinity());
     Eigen::Vector3d upper(-lower);
 
-    for (auto peak: peaks) {
+    for (auto peak : peaks) {
 
         auto&& ellipsoid = peak->shape();
         ellipsoids.emplace_back(ellipsoid);
@@ -202,7 +207,7 @@ PeakList PeakFilter::overlapping(const PeakList& peaks)
     PeakList colliding_peaks;
 
     // handle collisions below
-    for (auto collision: collisions) {
+    for (auto collision : collisions) {
         unsigned int i = collision.first - &ellipsoids[0];
         unsigned int j = collision.second - &ellipsoids[0];
         colliding_peaks.push_back(peaks[i]);
@@ -210,7 +215,7 @@ PeakList PeakFilter::overlapping(const PeakList& peaks)
     }
 
     for (auto it = filtered_peaks.begin(); it != filtered_peaks.end();) {
-        auto jt = std::find(colliding_peaks.begin(),colliding_peaks.end(),*it);
+        auto jt = std::find(colliding_peaks.begin(), colliding_peaks.end(), *it);
         if (jt != colliding_peaks.end()) {
             it = filtered_peaks.erase(it);
             colliding_peaks.erase(jt);
@@ -240,7 +245,9 @@ PeakList PeakFilter::enabled(const PeakList& peaks, bool flag) const
 {
     PeakList filtered_peaks;
 
-    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[flag](sptrPeak3D peak){return flag == peak->enabled();});
+    std::copy_if(
+        peaks.begin(), peaks.end(), std::back_inserter(filtered_peaks),
+        [flag](sptrPeak3D peak) { return flag == peak->enabled(); });
 
     return filtered_peaks;
 }
@@ -249,7 +256,9 @@ PeakList PeakFilter::selected(const PeakList& peaks, bool flag) const
 {
     PeakList filtered_peaks;
 
-    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[flag](sptrPeak3D peak){return flag == peak->selected();});
+    std::copy_if(
+        peaks.begin(), peaks.end(), std::back_inserter(filtered_peaks),
+        [flag](sptrPeak3D peak) { return flag == peak->selected(); });
 
     return filtered_peaks;
 }
@@ -258,7 +267,9 @@ PeakList PeakFilter::masked(const PeakList& peaks, bool flag) const
 {
     PeakList filtered_peaks;
 
-    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[flag](sptrPeak3D peak){return flag == peak->masked();});
+    std::copy_if(
+        peaks.begin(), peaks.end(), std::back_inserter(filtered_peaks),
+        [flag](sptrPeak3D peak) { return flag == peak->masked(); });
 
     return filtered_peaks;
 }
@@ -340,7 +351,9 @@ PeakList PeakFilter::predicted(const PeakList& peaks, bool flag) const
 {
     PeakList filtered_peaks;
 
-    std::copy_if(peaks.begin(),peaks.end(),std::back_inserter(filtered_peaks),[flag](sptrPeak3D peak){return flag == peak->predicted();});
+    std::copy_if(
+        peaks.begin(), peaks.end(), std::back_inserter(filtered_peaks),
+        [flag](sptrPeak3D peak) { return flag == peak->predicted(); });
 
     return filtered_peaks;
 }
@@ -353,7 +366,7 @@ PeakList PeakFilter::dRange(const PeakList& peaks, double dmin, double dmax) con
 
         auto q = peak->q();
 
-        double d = 1.0/q.rowVector().norm();
+        double d = 1.0 / q.rowVector().norm();
 
         if (d >= dmin && d <= dmax) {
             filtered_peaks.push_back(peak);

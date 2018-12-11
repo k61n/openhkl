@@ -44,11 +44,9 @@ namespace nsx {
 class Diffractometer {
 
 public:
-
     static Diffractometer* create(const std::string& name);
 
 public:
-
     Diffractometer(const YAML::Node& node);
 
     //! Constructs a diffractometer from another one
@@ -86,7 +84,7 @@ public:
     const Sample& sample() const;
 
     //! Set the sample of this diffractometer
-    void setSample(const Sample &sample);
+    void setSample(const Sample& sample);
 
     //! Return the non-const reference to the source of this diffractometer
     Source& source();
@@ -95,10 +93,9 @@ public:
     const Source& source() const;
 
     //! Set the source of this diffractometer
-    void setSource(const Source &source);
+    void setSource(const Source& source);
 
 protected:
-
     //! Default constructor
     Diffractometer();
 

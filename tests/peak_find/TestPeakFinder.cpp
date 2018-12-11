@@ -2,25 +2,26 @@
 
 #include <Eigen/Dense>
 
+#include <core/DataSet.h>
+#include <core/Diffractometer.h>
 #include <core/Experiment.h>
 #include <core/IDataReader.h>
-#include <core/PeakFinder.h>
-#include <core/DataSet.h>
 #include <core/MetaData.h>
-#include <core/Diffractometer.h>
 #include <core/NSXTest.h>
+#include <core/PeakFinder.h>
 #include <core/ProgressHandler.h>
 
 NSX_INIT_TEST
 
 int main()
 {
-    nsx::Experiment experiment("exp","D10");
+    nsx::Experiment experiment("exp", "D10");
 
-    nsx::sptrDataSet dataset(new nsx::DataSet("", "D10_ascii_example", experiment.diffractometer()));
+    nsx::sptrDataSet dataset(
+        new nsx::DataSet("", "D10_ascii_example", experiment.diffractometer()));
     const auto& metadata = dataset->reader()->metadata();
 
-    NSX_CHECK_ASSERT(metadata.key<int>("nbang")==2);
+    NSX_CHECK_ASSERT(metadata.key<int>("nbang") == 2);
 
     nsx::DataList datasets;
     datasets.push_back(dataset);

@@ -1,11 +1,11 @@
 #include "PeakPlot.h"
 
-SXPlot* PeakPlot::create(QWidget *parent)
+SXPlot* PeakPlot::create(QWidget* parent)
 {
     return new PeakPlot(parent);
 }
 
-PeakPlot::PeakPlot(QWidget *parent) : SXPlot(parent)
+PeakPlot::PeakPlot(QWidget* parent) : SXPlot(parent)
 {
     plotLayout()->insertRow(0);
     QPen pen;
@@ -28,10 +28,12 @@ PeakPlot::PeakPlot(QWidget *parent) : SXPlot(parent)
     yAxis->setLabel("Intensity (counts)");
 
     //
-    setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
+    setInteractions(
+        QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend
+        | QCP::iSelectPlottables);
 
-    QCPPlotTitle* element=new QCPPlotTitle(this, "");
-    element->setFont(QFont("Arial",8,-1,true));
+    QCPPlotTitle* element = new QCPPlotTitle(this, "");
+    element->setFont(QFont("Arial", 8, -1, true));
     plotLayout()->addElement(0, 0, element);
 }
 

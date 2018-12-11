@@ -15,13 +15,12 @@ class FrameUserDefinedUnitCellIndexer;
 class ExperimentItem;
 class QAbstractButton;
 
-class FrameUserDefinedUnitCellIndexer : public NSXQFrame
-{
+class FrameUserDefinedUnitCellIndexer : public NSXQFrame {
     Q_OBJECT
 
 public:
-
-    static FrameUserDefinedUnitCellIndexer* create(ExperimentItem* experiment_item, const nsx::PeakList &peaks);
+    static FrameUserDefinedUnitCellIndexer*
+    create(ExperimentItem* experiment_item, const nsx::PeakList& peaks);
 
     static FrameUserDefinedUnitCellIndexer* Instance();
 
@@ -29,7 +28,7 @@ public:
 
 private slots:
 
-    void slotActionClicked(QAbstractButton *button);
+    void slotActionClicked(QAbstractButton* button);
 
     void slotTabEdited(int index);
 
@@ -38,8 +37,8 @@ private slots:
     void slotSelectSolution(int);
 
 private:
-
-    explicit FrameUserDefinedUnitCellIndexer(ExperimentItem *experiment_item, const nsx::PeakList &peaks);
+    explicit FrameUserDefinedUnitCellIndexer(
+        ExperimentItem* experiment_item, const nsx::PeakList& peaks);
 
     void accept();
 
@@ -50,16 +49,15 @@ private:
     void resetPeaks();
 
 private:
+    static FrameUserDefinedUnitCellIndexer* _instance;
 
-    static FrameUserDefinedUnitCellIndexer *_instance;
+    Ui::FrameUserDefinedUnitCellIndexer* _ui;
 
-    Ui::FrameUserDefinedUnitCellIndexer *_ui;
+    ExperimentItem* _experiment_item;
 
-    ExperimentItem *_experiment_item;
-
-    std::vector<std::pair<nsx::sptrPeak3D,nsx::sptrUnitCell>> _defaults;
+    std::vector<std::pair<nsx::sptrPeak3D, nsx::sptrUnitCell>> _defaults;
 
     nsx::UserDefinedUnitCellIndexer _indexer;
 
-    std::vector<std::pair<nsx::sptrUnitCell,double>> _solutions;
+    std::vector<std::pair<nsx::sptrUnitCell, double>> _solutions;
 };

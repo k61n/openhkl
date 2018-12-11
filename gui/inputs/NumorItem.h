@@ -4,13 +4,12 @@
 
 #include <QJsonObject>
 
-#include <core/DataTypes.h>
 #include "InspectableTreeItem.h"
+#include <core/DataTypes.h>
 
 class QWidget;
 
-class NumorItem : public InspectableTreeItem
-{
+class NumorItem : public InspectableTreeItem {
 public:
     NumorItem() = delete;
     explicit NumorItem(nsx::sptrDataSet data);

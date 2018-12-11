@@ -12,14 +12,12 @@ class QWidget;
 
 class SXPlot;
 
-class CutSliceGraphicsItem : public CutterGraphicsItem
-{
+class CutSliceGraphicsItem : public CutterGraphicsItem {
 public:
-
     // Constructors and destructor
 
     //! Construct a data slicer
-    CutSliceGraphicsItem(nsx::sptrDataSet, bool horizontal=true);
+    CutSliceGraphicsItem(nsx::sptrDataSet, bool horizontal = true);
     //! The destructor
     ~CutSliceGraphicsItem();
 
@@ -40,7 +38,7 @@ public:
     //! Return true if the slice is horizontal.
     bool isHorizontal() const;
     //! Paint the slice
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
 
 private:
     //! Horizontal or vertical integration

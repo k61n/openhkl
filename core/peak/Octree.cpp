@@ -26,33 +26,32 @@
  *
  */
 
-#include "Ellipsoid.h"
 #include "Octree.h"
+#include "Ellipsoid.h"
 
 namespace nsx {
 
 std::vector<unsigned int> Octree::createPowers()
 {
     std::vector<unsigned int> p(3);
-    int i=0;
+    int i = 0;
     // Powers of 2
-    std::generate(p.begin(),p.end(),[&i](){return std::pow(2,i++);});
+    std::generate(p.begin(), p.end(), [&i]() { return std::pow(2, i++); });
 
     return p;
 }
 
-Octree::Octree(Octree&& other):
-    _MAX_DEPTH(other._MAX_DEPTH),
-    _MAX_STORAGE(other._MAX_STORAGE),
-    _MULTIPLICITY(other._MULTIPLICITY),
-    _POWERS(std::move(other._POWERS)),
-    _children(std::move(other._children)),
-    _data(std::move(other._data)),
-    _depth(other._depth),
-    _parent(other._parent),
-    _idx(other._idx)
+Octree::Octree(Octree&& other)
+    : _MAX_DEPTH(other._MAX_DEPTH)
+    , _MAX_STORAGE(other._MAX_STORAGE)
+    , _MULTIPLICITY(other._MULTIPLICITY)
+    , _POWERS(std::move(other._POWERS))
+    , _children(std::move(other._children))
+    , _data(std::move(other._data))
+    , _depth(other._depth)
+    , _parent(other._parent)
+    , _idx(other._idx)
 {
-
 }
 
 void Octree::nullifyChildren()
@@ -60,27 +59,24 @@ void Octree::nullifyChildren()
     _children.clear();
 }
 
-Octree::Octree():
-    AABB(), _depth(0), _parent(nullptr)
+Octree::Octree() : AABB(), _depth(0), _parent(nullptr)
 {
     nullifyChildren();
 }
 
 Octree::Octree(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub)
-: AABB(lb,ub), 
-  _depth(0), 
-  _parent(nullptr)
+    : AABB(lb, ub), _depth(0), _parent(nullptr)
 {
     nullifyChildren();
 }
 
-Octree::Octree(const Octree* parent, unsigned int sector):
-    AABB(),
-    _MAX_DEPTH(parent->_MAX_DEPTH),
-    _MAX_STORAGE(parent->_MAX_STORAGE),
-    _depth(parent->_depth+1),
-    _parent(parent),
-    _idx(sector)
+Octree::Octree(const Octree* parent, unsigned int sector)
+    : AABB()
+    , _MAX_DEPTH(parent->_MAX_DEPTH)
+    , _MAX_STORAGE(parent->_MAX_STORAGE)
+    , _depth(parent->_depth + 1)
+    , _parent(parent)
+    , _idx(sector)
 {
     nullifyChildren();
 
@@ -89,7 +85,7 @@ Octree::Octree(const Octree* parent, unsigned int sector):
 
     // The numbering of sub-voxels is encoded into bits of an int a follows:
     // ....... | dim[2] | dim[1] | dim[0]
-    for (unsigned int i=0; i<3; ++i) {
+    for (unsigned int i = 0; i < 3; ++i) {
         bool b = (sector & _POWERS[i]);
         _lowerBound(i) = (b ? center[i] : parent->_lowerBound(i));
         _upperBound(i) = (b ? parent->_upperBound(i) : center(i));
@@ -105,7 +101,7 @@ bool Octree::addData(const Ellipsoid* ellipsoid)
 
     // AABB overlap with this node
     if (hasChildren()) {
-        for (auto&& child: _children) {
+        for (auto&& child : _children) {
             child.addData(ellipsoid);
         }
     } else {
@@ -132,10 +128,10 @@ std::set<Octree::collision_pair> Octree::getCollisions() const
     std::set<collision_pair> collisions;
 
     // loop over chambers of the ndtree
-    for (auto&& chamber: *this) {
+    for (auto&& chamber : *this) {
         // loop over ellipsoids in the chamber
         for (size_t i = 0; i < chamber._data.size(); ++i) {
-            for (size_t j = i+1; j < chamber._data.size(); ++j) {
+            for (size_t j = i + 1; j < chamber._data.size(); ++j) {
                 auto&& a = chamber._data[i];
                 auto&& b = chamber._data[j];
 
@@ -143,8 +139,7 @@ std::set<Octree::collision_pair> Octree::getCollisions() const
                 if (a->collide(*b)) {
                     if (a < b) {
                         collisions.emplace(collision_pair(a, b));
-                    }
-                    else {
+                    } else {
                         collisions.emplace(collision_pair(b, a));
                     }
                 }
@@ -162,8 +157,8 @@ std::set<const Ellipsoid*> Octree::getCollisions(const Ellipsoid& given) const
 
     std::function<void(const Octree*, CollisionSet&)> recursiveCollisions;
 
-    recursiveCollisions = [&given, &recursiveCollisions] (const Octree* tree, CollisionSet& collisions) -> void
-    {
+    recursiveCollisions =
+        [&given, &recursiveCollisions](const Octree* tree, CollisionSet& collisions) -> void {
         // ellipsoid's box does not intercept tree
         if (!tree->collide(given.aabb())) {
             return;
@@ -171,14 +166,14 @@ std::set<const Ellipsoid*> Octree::getCollisions(const Ellipsoid& given) const
 
         // tree has children
         if (tree->hasChildren()) {
-            for (auto&& child: tree->_children) {
+            for (auto&& child : tree->_children) {
                 recursiveCollisions(&child, collisions);
             }
             return;
         }
 
         // otherwise, tree has no children
-        for (auto&& ellipsoid: tree->_data) {
+        for (auto&& ellipsoid : tree->_data) {
             if (ellipsoid->collide(given)) {
                 collisions.emplace(ellipsoid);
             }
@@ -198,7 +193,7 @@ bool Octree::isInsideObject(const Eigen::Vector3d& vector)
 
     // tree has children
     if (hasChildren()) {
-        for (auto&& child: _children) {
+        for (auto&& child : _children) {
             if (child.isInsideObject(vector)) {
                 return true;
             }
@@ -207,7 +202,7 @@ bool Octree::isInsideObject(const Eigen::Vector3d& vector)
     }
 
     // otherwise, tree has no children
-    for (auto&& ellipsoid: _data) {
+    for (auto&& ellipsoid : _data) {
         if (ellipsoid->isInside(vector)) {
             return true;
         }
@@ -221,7 +216,7 @@ void Octree::getVoxels(std::vector<AABB*>& voxels)
 {
     voxels.push_back(this);
     if (hasChildren()) {
-        for (unsigned int i=0;i<_MULTIPLICITY;++i) {
+        for (unsigned int i = 0; i < _MULTIPLICITY; ++i) {
             _children[i].getVoxels(voxels);
         }
     }
@@ -229,10 +224,10 @@ void Octree::getVoxels(std::vector<AABB*>& voxels)
 
 void Octree::printSelf(std::ostream& os) const
 {
-    os << "*** Node ***  " << this->_lowerBound  << "," << this->_upperBound << std::endl;
+    os << "*** Node ***  " << this->_lowerBound << "," << this->_upperBound << std::endl;
     if (!hasChildren()) {
-        os << " has no children" <<std::endl;
-        os << "... and has " << _data.size() << " data" <<  std::endl;
+        os << " has no children" << std::endl;
+        os << "... and has " << _data.size() << " data" << std::endl;
     } else {
         os << " has children :" << std::endl;
         for (size_t i = 0; i < _MULTIPLICITY; ++i) {
@@ -245,12 +240,12 @@ void Octree::removeData(const Ellipsoid* data)
 {
     if (hasData()) {
         auto it = std::find(_data.begin(), _data.end(), data);
-        if (it!=_data.end()) {
+        if (it != _data.end()) {
             _data.erase(it);
         }
     }
-    if (hasChildren())  {
-        for (unsigned int i=0; i<_MULTIPLICITY; ++i) {
+    if (hasChildren()) {
+        for (unsigned int i = 0; i < _MULTIPLICITY; ++i) {
             _children[i].removeData(data);
         }
     }
@@ -258,10 +253,10 @@ void Octree::removeData(const Ellipsoid* data)
 
 void Octree::setMaxDepth(unsigned int maxDepth)
 {
-    if (maxDepth ==0) {
+    if (maxDepth == 0) {
         throw std::invalid_argument("Depth of the Octree must be at least 1");
     }
-    if (maxDepth >10) {
+    if (maxDepth > 10) {
         throw std::invalid_argument("Depth of Octree > 10 consume too much memory");
     }
     _MAX_DEPTH = maxDepth;
@@ -287,11 +282,11 @@ void Octree::split()
     _children.reserve(_MULTIPLICITY);
 
     // Split the current node into 2^D subnodes
-    for (unsigned int i=0; i<_MULTIPLICITY; ++i) {
+    for (unsigned int i = 0; i < _MULTIPLICITY; ++i) {
         _children.emplace_back(this, i);
     }
-    for (auto ptr=_data.begin(); ptr!=_data.end(); ++ptr) {
-        for (auto&& child: _children) {
+    for (auto ptr = _data.begin(); ptr != _data.end(); ++ptr) {
+        for (auto&& child : _children) {
             child.addData(*ptr);
         }
     }
@@ -314,22 +309,20 @@ std::ostream& operator<<(std::ostream& os, const Octree& tree)
     return os;
 }
 
-OctreeIterator::OctreeIterator() : _node(nullptr)
-{
-}
+OctreeIterator::OctreeIterator() : _node(nullptr) {}
 
 OctreeIterator::OctreeIterator(const Octree& node) : _node(&node)
 {
     // find the leftmost leaf
-    while(_node->hasChildren()) {
+    while (_node->hasChildren()) {
         _node = &_node->_children[0];
     }
 }
 
 OctreeIterator& OctreeIterator::operator=(const OctreeIterator& other)
 {
-  _node = other._node;
-  return *this;
+    _node = other._node;
+    return *this;
 }
 
 bool OctreeIterator::operator!=(const OctreeIterator& other) const
@@ -361,10 +354,10 @@ OctreeIterator& OctreeIterator::operator++()
     }
 
     // can move right
-    if (_node->_idx < _node->_parent->_children.size()-1) {
-        _node = &_node->_parent->_children[_node->_idx+1];
+    if (_node->_idx < _node->_parent->_children.size() - 1) {
+        _node = &_node->_parent->_children[_node->_idx + 1];
 
-        while(_node->hasChildren()) {
+        while (_node->hasChildren()) {
             _node = &_node->_children[0];
         }
 
@@ -393,7 +386,7 @@ unsigned int Octree::numChambers() const
 {
     if (hasChildren()) {
         unsigned int count = 0;
-        for (auto&& child: _children) {
+        for (auto&& child : _children) {
             count += child.numChambers();
         }
         return count;
@@ -402,4 +395,3 @@ unsigned int Octree::numChambers() const
 }
 
 } // end namespace nsx
-

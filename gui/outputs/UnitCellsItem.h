@@ -4,8 +4,7 @@
 
 class UnitCellItem;
 
-class UnitCellsItem : public TreeItem
-{
+class UnitCellsItem : public TreeItem {
 public:
     explicit UnitCellsItem();
 

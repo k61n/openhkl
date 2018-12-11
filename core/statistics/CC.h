@@ -38,7 +38,7 @@
 #include "MergedPeak.h"
 
 namespace nsx {
-    class MergedData;
+class MergedData;
 
 //! Class to handle calculation of correlation coefficients (CChalf and CC*)
 class CC {
@@ -55,6 +55,7 @@ public:
     double CCstar() const;
     //! Return number of peaks
     unsigned int nPeaks() const;
+
 private:
     double _CChalf;
     double _CCstar;

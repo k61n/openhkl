@@ -5,24 +5,25 @@
 #include <QAbstractTableModel>
 #include <QModelIndexList>
 
-#include <core/PeakList.h>
 #include <core/Experiment.h>
+#include <core/PeakList.h>
 #include <core/UnitCell.h>
 
 #include "SessionModel.h"
 
 class QObject;
 
-class CollectedPeaksModel : public QAbstractTableModel
-{
+class CollectedPeaksModel : public QAbstractTableModel {
     Q_OBJECT
 public:
+    enum Column { h, k, l, px, py, frame, intensity, sigmaIntensity, numor, unitCell, count };
 
-    enum Column {h,k,l,px,py,frame,intensity,sigmaIntensity,numor,unitCell,count};
+    explicit CollectedPeaksModel(
+        SessionModel* session, nsx::sptrExperiment experiment, QObject* parent = 0);
 
-    explicit CollectedPeaksModel(SessionModel* session, nsx::sptrExperiment experiment,QObject* parent = 0);
-
-    CollectedPeaksModel(SessionModel* session, nsx::sptrExperiment experiment, const nsx::PeakList& peaks, QObject *parent = 0);
+    CollectedPeaksModel(
+        SessionModel* session, nsx::sptrExperiment experiment, const nsx::PeakList& peaks,
+        QObject* parent = 0);
 
     virtual int rowCount(const QModelIndex& parent) const override;
 
@@ -30,9 +31,9 @@ public:
 
     void reset();
 
-    QVariant data(const QModelIndex &index, int role) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
 
-    Qt::ItemFlags flags(const QModelIndex &index) const override;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
@@ -66,7 +67,8 @@ public slots:
 
     void slotRemoveUnitCell(const nsx::sptrUnitCell unit_cell);
 
-    void setUnitCell(const nsx::sptrUnitCell& unitCell, QModelIndexList selectedPeaks=QModelIndexList());
+    void setUnitCell(
+        const nsx::sptrUnitCell& unitCell, QModelIndexList selectedPeaks = QModelIndexList());
 
     void sortEquivalents();
 
@@ -77,11 +79,9 @@ signals:
     void unitCellUpdated();
 
 private:
-
     void setSession(SessionModel* session);
 
 private:
-
     SessionModel* _session;
 
     nsx::sptrExperiment _experiment;

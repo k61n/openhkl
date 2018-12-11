@@ -20,8 +20,7 @@
 #include "UnitCellsItem.h"
 
 UnitCellItem::UnitCellItem(nsx::sptrUnitCell unit_cell)
-: InspectableTreeItem(),
-  _unit_cell(unit_cell)
+    : InspectableTreeItem(), _unit_cell(unit_cell)
 {
     setText(QString::fromStdString(_unit_cell->name()));
 
@@ -39,23 +38,21 @@ UnitCellItem::UnitCellItem(nsx::sptrUnitCell unit_cell)
     setCheckState(Qt::Unchecked);
 }
 
-UnitCellItem::~UnitCellItem()
-{
-}
+UnitCellItem::~UnitCellItem() {}
 
 QVariant UnitCellItem::data(int role) const
 {
-    switch(role) {
-    case(Qt::DecorationRole): {
+    switch (role) {
+    case (Qt::DecorationRole): {
         return QIcon(":/resources/unitCellIcon.png");
     }
-    case(Qt::EditRole): {
+    case (Qt::EditRole): {
         return QString::fromStdString(_unit_cell->name());
     }
-    case(Qt::DisplayRole): {
+    case (Qt::DisplayRole): {
         return QString::fromStdString(_unit_cell->name());
     }
-    case(Qt::UserRole): {
+    case (Qt::UserRole): {
         return QVariant::fromValue(_unit_cell);
     }
     }
@@ -64,7 +61,7 @@ QVariant UnitCellItem::data(int role) const
 
 void UnitCellItem::setData(const QVariant& value, int role)
 {
-    switch(role) {
+    switch (role) {
     case (Qt::DisplayRole): {
         _unit_cell->setName(value.toString().toStdString());
         break;
@@ -74,7 +71,7 @@ void UnitCellItem::setData(const QVariant& value, int role)
         break;
     }
     }
-    InspectableTreeItem::setData(value,role);
+    InspectableTreeItem::setData(value, role);
 }
 
 QWidget* UnitCellItem::inspectItem()
@@ -125,7 +122,8 @@ void UnitCellItem::openSpaceGroupDialog()
 void UnitCellItem::openIndexingToleranceDialog()
 {
     bool ok;
-    double tolerance = QInputDialog::getDouble(nullptr, "Enter indexing tolerance","",_unit_cell->indexingTolerance(), 0.0, 1.0, 6, &ok);
+    double tolerance = QInputDialog::getDouble(
+        nullptr, "Enter indexing tolerance", "", _unit_cell->indexingTolerance(), 0.0, 1.0, 6, &ok);
     if (ok) {
         _unit_cell->setIndexingTolerance(tolerance);
     }

@@ -56,8 +56,7 @@
 #include <GL/glut.h>
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /*
@@ -72,8 +71,8 @@ extern GLfloat zprReferencePoint[4];
 
 /* Picking API (Optional) */
 
-extern void zprSelectionFunc(void (*f)(void));      /* Selection-mode draw function */
-extern void zprPickFunc(void (*f)(GLint name));     /* Pick event handling function */
+extern void zprSelectionFunc(void (*f)(void)); /* Selection-mode draw function */
+extern void zprPickFunc(void (*f)(GLint name)); /* Pick event handling function */
 
 /*
  *

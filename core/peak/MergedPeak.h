@@ -35,12 +35,12 @@
 
 #pragma once
 
-#include <set>
 #include <Eigen/Dense>
+#include <set>
 
-#include "PeakList.h"
 #include "Intensity.h"
 #include "MillerIndex.h"
+#include "PeakList.h"
 #include "SpaceGroup.h"
 
 namespace nsx {
@@ -49,14 +49,13 @@ namespace nsx {
 //! \brief Class to handle calculation of merged data
 class MergedPeak {
 public:
-
     //! \brief Construct a merged peak with the given spacegroup.
     //!
     //! The resulting peak has intensity given by the average intensity of the input peaks.
     //! The parameter \p friedel
     //! specifies whether to also include the Friedel relation \f$(h,k,l)\mapsto(-h,-k,-l)\f$,
     //! if this is not already part of the space group symmetry.
-    MergedPeak(const SpaceGroup& grp, bool friedel=false);
+    MergedPeak(const SpaceGroup& grp, bool friedel = false);
 
     //! Add a peak to the merged peak.
     bool addPeak(const sptrPeak3D& peak);
@@ -83,7 +82,6 @@ public:
     std::pair<MergedPeak, MergedPeak> split() const;
 
 private:
-
     //! Update the hkl that represents the set of equivalences.
     void determineRepresentativeHKL();
     void update();

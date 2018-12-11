@@ -34,7 +34,7 @@
 
 namespace nsx {
 
-EllipseMask::EllipseMask(const AABB& aabb, bool two_dim): IMask(), _ellipsoid(), _2d(two_dim)
+EllipseMask::EllipseMask(const AABB& aabb, bool two_dim) : IMask(), _ellipsoid(), _2d(two_dim)
 {
     auto center = aabb.center();
     auto radii = 0.5 * (aabb.upper() - aabb.lower());

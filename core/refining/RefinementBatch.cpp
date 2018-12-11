@@ -41,8 +41,8 @@
 #include "InstrumentState.h"
 #include "MillerIndex.h"
 #include "Minimizer.h"
-#include "PeakFilter.h"
 #include "Peak3D.h"
+#include "PeakFilter.h"
 #include "Refiner.h"
 #include "UnitCell.h"
 
@@ -50,11 +50,12 @@ const static double g_eps = 1e-5;
 
 namespace nsx {
 
-RefinementBatch::RefinementBatch(InstrumentStateList& states, const UnitCell& uc, const PeakList& peaks)
-: _fmin(std::numeric_limits<double>().max()),
-  _fmax(std::numeric_limits<double>().lowest()),
-  _cell(new UnitCell(uc)),
-  _peaks(peaks)
+RefinementBatch::RefinementBatch(
+    InstrumentStateList& states, const UnitCell& uc, const PeakList& peaks)
+    : _fmin(std::numeric_limits<double>().max())
+    , _fmax(std::numeric_limits<double>().lowest())
+    , _cell(new UnitCell(uc))
+    , _peaks(peaks)
 {
     for (auto peak : peaks) {
         const double z = peak->shape().center()[2];
@@ -82,7 +83,7 @@ RefinementBatch::RefinementBatch(InstrumentStateList& states, const UnitCell& uc
         Eigen::Matrix3d D;
         D.setZero();
         for (auto i = 0; i < 3; ++i) {
-            D(i,i) = std::sqrt(solver.eigenvalues()[i]);
+            D(i, i) = std::sqrt(solver.eigenvalues()[i]);
         }
         _wts.emplace_back(U.transpose() * D * U);
     }
@@ -99,7 +100,6 @@ RefinementBatch::RefinementBatch(InstrumentStateList& states, const UnitCell& uc
         }
         _states.push_back(states[i]);
     }
-
 }
 
 void RefinementBatch::refineUB()
@@ -141,7 +141,8 @@ void RefinementBatch::refineSampleOrientation()
     for (int axis = 0; axis < 3; ++axis) {
         std::vector<int> ids;
         for (size_t i = 0; i < _states.size(); ++i) {
-            int id = _params.addParameter(&(_states[i].get().sampleOrientationOffset.coeffs()[axis]));
+            int id =
+                _params.addParameter(&(_states[i].get().sampleOrientationOffset.coeffs()[axis]));
             ids.push_back(id);
         }
         // record the constraints
@@ -166,7 +167,7 @@ void RefinementBatch::refineKi()
 }
 
 bool RefinementBatch::refine(unsigned int max_iter)
-{  
+{
     Minimizer min;
 
     min.setxTol(1e-10);
@@ -180,8 +181,8 @@ bool RefinementBatch::refine(unsigned int max_iter)
     _cost_function.clear();
     _cost_function.shrink_to_fit();
 
-    min.initialize(_params, _peaks.size()*3);
-    min.set_f([&](Eigen::VectorXd& fvec) {return residuals(fvec);});
+    min.initialize(_params, _peaks.size() * 3);
+    min.set_f([&](Eigen::VectorXd& fvec) { return residuals(fvec); });
     bool success = min.fit(max_iter);
     for (auto state : _states) {
         state.get().refined = success;
@@ -192,7 +193,7 @@ bool RefinementBatch::refine(unsigned int max_iter)
     return success;
 }
 
-int RefinementBatch::residuals(Eigen::VectorXd &fvec)
+int RefinementBatch::residuals(Eigen::VectorXd& fvec)
 {
     UnitCell uc = _cell->fromParameters(_u0, _uOffsets, _cellParameters);
     Eigen::Matrix3d UB = uc.reciprocalBasis();
@@ -200,22 +201,21 @@ int RefinementBatch::residuals(Eigen::VectorXd &fvec)
     //#pragma omp parallel for
     for (unsigned int i = 0; i < _peaks.size(); ++i) {
         const Eigen::RowVector3d q0 = _peaks[i]->q().rowVector();
-        const Eigen::RowVector3d q1 = _hkls[i]*UB;
-        const Eigen::RowVector3d dq = _wts[i]*(q1-q0).transpose();
+        const Eigen::RowVector3d q1 = _hkls[i] * UB;
+        const Eigen::RowVector3d dq = _wts[i] * (q1 - q0).transpose();
 
         if (dq.squaredNorm() < 10.0) {
-            fvec(3*i)   = dq[0];
-            fvec(3*i+1) = dq[1];
-            fvec(3*i+2) = dq[2];
-        }
-        else {
-            fvec(3*i) = 0.0;
-            fvec(3*i+1) = 0.0;
-            fvec(3*i+2) = 0.0;
+            fvec(3 * i) = dq[0];
+            fvec(3 * i + 1) = dq[1];
+            fvec(3 * i + 2) = dq[2];
+        } else {
+            fvec(3 * i) = 0.0;
+            fvec(3 * i + 1) = 0.0;
+            fvec(3 * i + 2) = 0.0;
         }
     }
 
-    _cost_function.push_back(0.5*fvec.norm());
+    _cost_function.push_back(0.5 * fvec.norm());
 
     return 0;
 }
@@ -234,7 +234,7 @@ sptrUnitCell RefinementBatch::cell() const
 {
     return _cell;
 }
-    
+
 Eigen::MatrixXd RefinementBatch::constraintKernel() const
 {
     const int nparams = _params.nparams();
@@ -242,10 +242,10 @@ Eigen::MatrixXd RefinementBatch::constraintKernel() const
     std::vector<std::vector<double>> columns;
 
     // columns corresponding to the constrained parameters
-    for (auto&& constraint: _constraints) {
+    for (auto&& constraint : _constraints) {
         std::vector<double> column(nparams, 0.0);
 
-        for (auto idx: constraint) {
+        for (auto idx : constraint) {
             column[idx] = 1.0;
             is_free[idx] = false;
         }
@@ -266,7 +266,7 @@ Eigen::MatrixXd RefinementBatch::constraintKernel() const
     // pack columns into a matrix
     Eigen::MatrixXd K(nparams, columns.size());
 
-    for (size_t j = 0;  j < columns.size(); ++j) {
+    for (size_t j = 0; j < columns.size(); ++j) {
         for (auto i = 0; i < nparams; ++i) {
             K(i, j) = columns[j][i];
         }

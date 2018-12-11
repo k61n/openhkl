@@ -41,10 +41,9 @@ namespace nsx {
 //! \brief Experiment class, a data type containing a diffractometer and data sets.
 class Experiment {
 public:
-
     // Constructors & Destructors
     //! Default constructor (deleted)
-    Experiment()=delete;
+    Experiment() = delete;
 
     //! Copy constructor
     Experiment(const Experiment& other);
@@ -53,7 +52,7 @@ public:
     Experiment(const std::string& name, const std::string& diffractometerName);
 
     //! Destructor
-    ~Experiment()=default;
+    ~Experiment() = default;
 
     //! Assignment operator
     Experiment& operator=(const Experiment& other);
@@ -65,12 +64,12 @@ public:
     const Diffractometer* diffractometer() const;
 
     //! Get a reference to the data
-    const std::map<std::string,sptrDataSet>& data() const;
+    const std::map<std::string, sptrDataSet>& data() const;
     //! Gets the pointer to a given data stored in the experiment
     sptrDataSet data(std::string name);
 
     const std::string& name() const;
-    //std::string getName() const;
+    // std::string getName() const;
     //! Sets the name of the experiment
     void setName(const std::string& name);
 
@@ -82,15 +81,15 @@ public:
     void removeData(const std::string& name);
 
 private:
-
     //! The name of this experiment
     std::string _name;
 
     //! A pointer to the detector assigned to this experiment
     std::unique_ptr<Diffractometer> _diffractometer;
 
-    //! A map of the data related to the experiment. The keys are the basename of their corresponding file.
-    std::map<std::string,sptrDataSet> _data;
+    //! A map of the data related to the experiment. The keys are the basename of their
+    //! corresponding file.
+    std::map<std::string, sptrDataSet> _data;
 };
 
 using sptrExperiment = std::shared_ptr<Experiment>;

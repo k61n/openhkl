@@ -11,32 +11,30 @@ namespace nsx {
 Diffractometer* Diffractometer::create(const std::string& name)
 {
 
-    YAML::Node instrumentDefinition = findResource({"instruments",name});
+    YAML::Node instrumentDefinition = findResource({"instruments", name});
 
     if (!instrumentDefinition["instrument"])
         throw std::runtime_error("Invalid instrument definition: missing 'instrument root node'");
 
-    Diffractometer *diffractometer;
+    Diffractometer* diffractometer;
 
     try {
         diffractometer = new Diffractometer(instrumentDefinition["instrument"]);
     } catch (std::exception& e) {
         std::string msg = "Error when reading instrument definition file: ";
-        throw std::runtime_error(msg+e.what());
+        throw std::runtime_error(msg + e.what());
     }
 
     return diffractometer;
 }
 
-Diffractometer::Diffractometer() : _name(""), _detector(nullptr), _sample(), _source()
-{
-}
+Diffractometer::Diffractometer() : _name(""), _detector(nullptr), _sample(), _source() {}
 
 Diffractometer::Diffractometer(const Diffractometer& other)
-: _name(other._name),
-  _detector(other._detector ? other._detector->clone() : nullptr),
-  _sample(other._sample),
-  _source(other._source)
+    : _name(other._name)
+    , _detector(other._detector ? other._detector->clone() : nullptr)
+    , _sample(other._sample)
+    , _source(other._source)
 {
 }
 
@@ -45,7 +43,8 @@ Diffractometer* Diffractometer::clone() const
     return new Diffractometer(*this);
 }
 
-Diffractometer::Diffractometer(const std::string& name) : _name(name), _detector(nullptr), _sample(), _source()
+Diffractometer::Diffractometer(const std::string& name)
+    : _name(name), _detector(nullptr), _sample(), _source()
 {
 }
 
@@ -61,12 +60,10 @@ Diffractometer::Diffractometer(const YAML::Node& node)
     _sample = Sample(node["sample"]);
 
     // Build the source from its corresponding node
-    _source= Source(node["source"]);
+    _source = Source(node["source"]);
 }
 
-Diffractometer::~Diffractometer()
-{
-}
+Diffractometer::~Diffractometer() {}
 
 Diffractometer& Diffractometer::operator=(const Diffractometer& other)
 {
@@ -114,7 +111,7 @@ const Sample& Diffractometer::sample() const
     return _sample;
 }
 
-void Diffractometer::setSample(const Sample &sample)
+void Diffractometer::setSample(const Sample& sample)
 {
     _sample = sample;
 }
@@ -129,7 +126,7 @@ const Source& Diffractometer::source() const
     return _source;
 }
 
-void Diffractometer::setSource(const Source &source)
+void Diffractometer::setSource(const Source& source)
 {
     _source = source;
 }

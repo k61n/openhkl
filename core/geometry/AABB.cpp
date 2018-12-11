@@ -3,9 +3,7 @@
 
 namespace nsx {
 
-AABB::AABB()
-{
-}
+AABB::AABB() {}
 
 AABB::AABB(const AABB& other)
 {
@@ -13,25 +11,22 @@ AABB::AABB(const AABB& other)
     _upperBound = other._upperBound;
 }
 
-AABB::AABB(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub)
-: _lowerBound(lb),
-  _upperBound(ub)
+AABB::AABB(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub) : _lowerBound(lb), _upperBound(ub)
 {
 }
 
 AABB& AABB::operator=(const AABB& other)
 {
-  if (this != &other) {
-      _lowerBound = other._lowerBound;
-      _upperBound = other._upperBound;
-
-  }
-  return *this;
+    if (this != &other) {
+        _lowerBound = other._lowerBound;
+        _upperBound = other._upperBound;
+    }
+    return *this;
 }
 
 bool AABB::isInside(const Eigen::Vector3d& point) const
 {
-    for(auto i=0; i<3; ++i) {
+    for (auto i = 0; i < 3; ++i) {
         if (point(i) < _lowerBound(i) || point(i) > _upperBound(i))
             return false;
     }
@@ -75,7 +70,7 @@ const Eigen::Vector3d& AABB::upper() const
 
 Eigen::Vector3d AABB::center() const
 {
-    return (_lowerBound + _upperBound)*0.5;
+    return (_lowerBound + _upperBound) * 0.5;
 }
 
 Eigen::Vector3d AABB::extents() const
@@ -85,14 +80,13 @@ Eigen::Vector3d AABB::extents() const
 
 void AABB::translate(const Eigen::Vector3d& t)
 {
-    _lowerBound+=t;
-    _upperBound+=t;
+    _lowerBound += t;
+    _upperBound += t;
 }
 
 bool AABB::contains(const AABB& other) const
 {
-    for (unsigned int i=0; i<3; ++i)
-    {
+    for (unsigned int i = 0; i < 3; ++i) {
         if (_lowerBound(i) >= other._lowerBound(i) || _upperBound(i) <= other._upperBound(i))
             return false;
     }
@@ -101,8 +95,10 @@ bool AABB::contains(const AABB& other) const
 
 std::ostream& AABB::printSelf(std::ostream& os) const
 {
-      os<<"AABB --> "<<"lower bound: "<<_lowerBound.transpose()<<" , upper bound: "<<_upperBound.transpose();
-      return os;
+    os << "AABB --> "
+       << "lower bound: " << _lowerBound.transpose()
+       << " , upper bound: " << _upperBound.transpose();
+    return os;
 }
 
 std::ostream& operator<<(std::ostream& os, const AABB& aabb)
@@ -111,4 +107,3 @@ std::ostream& operator<<(std::ostream& os, const AABB& aabb)
 }
 
 } // end namespace nsx
-

@@ -22,7 +22,7 @@ int main()
     // skip header
     csv_reader.getRow(csv_file);
 
-    while(!csv_file.eof()) {
+    while (!csv_file.eof()) {
         std::vector<std::string> row = csv_reader.getRow(csv_file);
 
         // extra newline at end of file
@@ -31,7 +31,7 @@ int main()
 
         NSX_CHECK_ASSERT(row.size() == 8);
 
-        std::cout<<row[0]<<std::endl;
+        std::cout << row[0] << std::endl;
 
         NSX_CHECK_NO_THROW(nsx::SpaceGroup sg(row[0]));
     }

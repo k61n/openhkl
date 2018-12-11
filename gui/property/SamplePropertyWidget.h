@@ -5,15 +5,14 @@
 
 #include "ui_SamplePropertyWidget.h"
 
-class SamplePropertyWidget : public QWidget
-{
+class SamplePropertyWidget : public QWidget {
     Q_OBJECT
 
 public:
-    explicit SamplePropertyWidget(const nsx::Sample &sample);
+    explicit SamplePropertyWidget(const nsx::Sample& sample);
 
     ~SamplePropertyWidget();
 
 private:
-    Ui::SamplePropertyWidget *_ui;
+    Ui::SamplePropertyWidget* _ui;
 };

@@ -50,7 +50,8 @@ namespace nsx {
 class FitParameters {
 
 public:
-    //! Add a parameter to be fit. The original value of the parameter is stored (see reset()). The return value is the index of the parameter.
+    //! Add a parameter to be fit. The original value of the parameter is stored (see reset()). The
+    //! return value is the index of the parameter.
     int addParameter(double* addr);
     //! Set values of the parameters from a GSL vector.
     void setValues(const gsl_vector* v);
@@ -64,7 +65,8 @@ public:
     void setConstraint(const Eigen::SparseMatrix<double>& C);
     //! Remove the constraints
     void resetConstraints();
-    //! Kernel of the constraints: this is the transformation from constrained parameters to original parameters.
+    //! Kernel of the constraints: this is the transformation from constrained parameters to
+    //! original parameters.
     const Eigen::MatrixXd& kernel() const;
     //! Set the kernel of the constraints.
     void setKernel(const Eigen::MatrixXd& ker);
@@ -85,7 +87,6 @@ private:
 
     //! Need to update constraints
     bool _constrained;
-
 };
 
 } // end namespace nsx

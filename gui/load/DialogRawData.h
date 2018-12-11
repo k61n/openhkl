@@ -41,12 +41,11 @@ namespace Ui {
 class DialogRawData;
 }
 
-class DialogRawData : public QDialog
-{
+class DialogRawData : public QDialog {
     Q_OBJECT
 
 public:
-    explicit DialogRawData(QWidget *parent = 0);
+    explicit DialogRawData(QWidget* parent = 0);
     ~DialogRawData();
 
     double wavelength();
@@ -61,5 +60,5 @@ public:
     void setWavelength(double new_wavelength);
 
 private:
-    Ui::DialogRawData *ui;
+    Ui::DialogRawData* ui;
 };

@@ -8,9 +8,10 @@ namespace nsx {
 
 class StdStreamWrapper : public IStreamWrapper {
 public:
-
     //! Constructor
-    StdStreamWrapper(std::ostream& stream, std::function<std::string()> prefix=nullptr, std::function<std::string()> suffix=nullptr);
+    StdStreamWrapper(
+        std::ostream& stream, std::function<std::string()> prefix = nullptr,
+        std::function<std::string()> suffix = nullptr);
 
     //! Destructor
     virtual ~StdStreamWrapper();

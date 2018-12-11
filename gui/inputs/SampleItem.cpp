@@ -1,7 +1,7 @@
 #include "SampleItem.h"
 
-#include <algorithm>
 #include <QIcon>
+#include <algorithm>
 
 #include "FrameSampleGlobalOffsets.h"
 #include "SamplePropertyWidget.h"
@@ -35,7 +35,7 @@ QWidget* SampleItem::inspectItem()
 
 void SampleItem::openSampleGlobalOffsetsFrame()
 {
-    FrameSampleGlobalOffsets *frame = FrameSampleGlobalOffsets::create(experimentItem());
+    FrameSampleGlobalOffsets* frame = FrameSampleGlobalOffsets::create(experimentItem());
 
     frame->show();
     frame->raise();

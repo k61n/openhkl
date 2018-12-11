@@ -9,11 +9,11 @@
 
 #include <core/AABB.h>
 #include <core/AggregateStreamWrapper.h>
-#include <core/PeakList.h>
 #include <core/LogFileStreamWrapper.h>
 #include <core/Logger.h>
 #include <core/Peak3D.h>
 #include <core/PeakFinder.h>
+#include <core/PeakList.h>
 #include <core/Version.h>
 
 #include "AbsorptionWidget.h"
@@ -31,18 +31,16 @@
 #include "MouseInteractionModeModel.h"
 #include "NSXMenu.h"
 #include "PeakGraphicsItem.h"
-#include "PlottableGraphicsItem.h"
 #include "PeakTableView.h"
 #include "PlotFactory.h"
+#include "PlottableGraphicsItem.h"
 #include "QtStreamWrapper.h"
-#include "SessionModel.h"
 #include "SXPlot.h"
+#include "SessionModel.h"
 
 #include "ui_MainWindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-: QMainWindow(parent),
-  _ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), _ui(new Ui::MainWindow)
 {
     _ui->setupUi(this);
 
@@ -64,50 +62,71 @@ MainWindow::MainWindow(QWidget *parent)
     _ui->frameLayout->setEnabled(false);
     _ui->intensityLayout->setEnabled(false);
 
-    MouseInteractionModeModel *mouse_interaction_model = new MouseInteractionModeModel(this);
+    MouseInteractionModeModel* mouse_interaction_model = new MouseInteractionModeModel(this);
     _ui->selectionMode->setModel(mouse_interaction_model);
 
     // Vertical splitter between Tree and Inspector Widget
-    _ui->splitterVertical->setStretchFactor(0,50);
-    _ui->splitterVertical->setStretchFactor(1,50);
+    _ui->splitterVertical->setStretchFactor(0, 50);
+    _ui->splitterVertical->setStretchFactor(1, 50);
 
     // Horizontal splitter between Tree and DetectorScene
-    _ui->splitterHorizontal->setStretchFactor(0,10);
-    _ui->splitterHorizontal->setStretchFactor(1,90);
+    _ui->splitterHorizontal->setStretchFactor(0, 10);
+    _ui->splitterHorizontal->setStretchFactor(1, 90);
 
     // signals and slots
-    connect(_session_model, SIGNAL(signalSelectedDataChanged(nsx::sptrDataSet,int)), this, SLOT(slotChangeSelectedData(nsx::sptrDataSet,int)));
-    connect(_session_model, SIGNAL(signalSelectedPeakChanged(nsx::sptrPeak3D)), this, SLOT(slotChangeSelectedPeak(nsx::sptrPeak3D)));
+    connect(
+        _session_model, SIGNAL(signalSelectedDataChanged(nsx::sptrDataSet, int)), this,
+        SLOT(slotChangeSelectedData(nsx::sptrDataSet, int)));
+    connect(
+        _session_model, SIGNAL(signalSelectedPeakChanged(nsx::sptrPeak3D)), this,
+        SLOT(slotChangeSelectedPeak(nsx::sptrPeak3D)));
 
-    connect(_ui->frame,SIGNAL(valueChanged(int)),_ui->dview->getScene(),SLOT(slotChangeSelectedFrame(int)));
+    connect(
+        _ui->frame, SIGNAL(valueChanged(int)), _ui->dview->getScene(),
+        SLOT(slotChangeSelectedFrame(int)));
 
-    connect(_ui->intensity,SIGNAL(valueChanged(int)),_ui->dview->getScene(),SLOT(setMaxIntensity(int)));
-    connect(_ui->selectionMode,SIGNAL(currentIndexChanged(int)),_ui->dview->getScene(),SLOT(changeInteractionMode(int)));
-    connect(_ui->dview->getScene(),SIGNAL(updatePlot(PlottableGraphicsItem*)),this,SLOT(updatePlot(PlottableGraphicsItem*)));
+    connect(
+        _ui->intensity, SIGNAL(valueChanged(int)), _ui->dview->getScene(),
+        SLOT(setMaxIntensity(int)));
+    connect(
+        _ui->selectionMode, SIGNAL(currentIndexChanged(int)), _ui->dview->getScene(),
+        SLOT(changeInteractionMode(int)));
+    connect(
+        _ui->dview->getScene(), SIGNAL(updatePlot(PlottableGraphicsItem*)), this,
+        SLOT(updatePlot(PlottableGraphicsItem*)));
 
     connect(_ui->experimentTree, SIGNAL(resetScene()), _ui->dview->getScene(), SLOT(resetScene()));
-    connect(_ui->experimentTree,&ExperimentTree::openPeakFindDialog,[=](DataItem *data_item){onOpenPeakFinderDialog(data_item);});
+    connect(_ui->experimentTree, &ExperimentTree::openPeakFindDialog, [=](DataItem* data_item) {
+        onOpenPeakFinderDialog(data_item);
+    });
 
-    connect(_session_model, SIGNAL(updatePeaks()), _ui->dview->getScene(), SLOT(resetPeakGraphicsItems()));
+    connect(
+        _session_model, SIGNAL(updatePeaks()), _ui->dview->getScene(),
+        SLOT(resetPeakGraphicsItems()));
 
-    _ui->monitorDockWidget->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
-    _ui->plotterDockWidget->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
-    _ui->dockWidget_Property->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
+    _ui->monitorDockWidget->setFeatures(
+        QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
+    _ui->plotterDockWidget->setFeatures(
+        QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
+    _ui->dockWidget_Property->setFeatures(
+        QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
 
     _ui->plotterDockWidget->show();
     _ui->dockWidget_Property->show();
 
-    connect(_ui->experimentTree,SIGNAL(inspectWidget(QWidget*)),this,SLOT(setInspectorWidget(QWidget*)));
+    connect(
+        _ui->experimentTree, SIGNAL(inspectWidget(QWidget*)), this,
+        SLOT(setInspectorWidget(QWidget*)));
 }
 
 void MainWindow::onDisplayPeakLabels(bool flag)
 {
-    _ui->dview->getScene(),SLOT(showPeakLabels(flag));
+    _ui->dview->getScene(), SLOT(showPeakLabels(flag));
 }
 
 void MainWindow::onDisplayPeakAreas(bool flag)
 {
-    _ui->dview->getScene(),SLOT(showPeakAreas(flag));
+    _ui->dview->getScene(), SLOT(showPeakAreas(flag));
 }
 
 void MainWindow::onDisplayPeakIntegrationAreas(bool flag)
@@ -117,37 +136,34 @@ void MainWindow::onDisplayPeakIntegrationAreas(bool flag)
 
 void MainWindow::initLoggers()
 {
-    auto debug_log = [this]() -> nsx::Logger
-    {
-        auto initialize = []() -> std::string {return "[DEBUG] " + nsx::currentTime();};
-        auto finalize = []() -> std::string {return "\n";};
+    auto debug_log = [this]() -> nsx::Logger {
+        auto initialize = []() -> std::string { return "[DEBUG] " + nsx::currentTime(); };
+        auto finalize = []() -> std::string { return "\n"; };
 
         nsx::AggregateStreamWrapper* wrapper = new nsx::AggregateStreamWrapper();
-        wrapper->addWrapper(new nsx::LogFileStreamWrapper("nsx_debug.txt",initialize,finalize));
-        wrapper->addWrapper(new QtStreamWrapper(this->_ui->logger,initialize));
+        wrapper->addWrapper(new nsx::LogFileStreamWrapper("nsx_debug.txt", initialize, finalize));
+        wrapper->addWrapper(new QtStreamWrapper(this->_ui->logger, initialize));
 
         return nsx::Logger(wrapper);
     };
 
-    auto info_log = [this]() -> nsx::Logger
-    {
-        auto initialize = []() -> std::string {return "[INFO]  " + nsx::currentTime();};
-        auto finalize = []() -> std::string {return "\n";};
+    auto info_log = [this]() -> nsx::Logger {
+        auto initialize = []() -> std::string { return "[INFO]  " + nsx::currentTime(); };
+        auto finalize = []() -> std::string { return "\n"; };
 
         nsx::AggregateStreamWrapper* wrapper = new nsx::AggregateStreamWrapper();
-        wrapper->addWrapper(new nsx::LogFileStreamWrapper("nsx_info.txt",initialize,finalize));
-        wrapper->addWrapper(new QtStreamWrapper(this->_ui->logger,initialize));
+        wrapper->addWrapper(new nsx::LogFileStreamWrapper("nsx_info.txt", initialize, finalize));
+        wrapper->addWrapper(new QtStreamWrapper(this->_ui->logger, initialize));
 
         return nsx::Logger(wrapper);
     };
 
-    auto error_log = [this]() -> nsx::Logger
-    {
-        auto initialize = []() -> std::string {return "[ERROR]" + nsx::currentTime();};
-        auto finalize = []() -> std::string {return "\n";};
+    auto error_log = [this]() -> nsx::Logger {
+        auto initialize = []() -> std::string { return "[ERROR]" + nsx::currentTime(); };
+        auto finalize = []() -> std::string { return "\n"; };
 
         nsx::AggregateStreamWrapper* wrapper = new nsx::AggregateStreamWrapper();
-        wrapper->addWrapper(new nsx::LogFileStreamWrapper("nsx_error.txt",initialize,finalize));
+        wrapper->addWrapper(new nsx::LogFileStreamWrapper("nsx_error.txt", initialize, finalize));
         wrapper->addWrapper(new QtStreamWrapper(this->_ui->logger, initialize));
 
         return nsx::Logger(wrapper);
@@ -174,8 +190,7 @@ void MainWindow::onNewExperiment()
         // If no experiment name is provided, pop up a warning
         if (dlg->experimentName().isEmpty())
             throw std::runtime_error("Empty experiment name");
-    }
-    catch(std::exception& e) {
+    } catch (std::exception& e) {
         nsx::error() << e.what();
         return;
     }
@@ -187,9 +202,8 @@ void MainWindow::onNewExperiment()
         auto instrument_name = dlg->instrumentName().toStdString();
 
         // Create an experiment
-        experiment = std::make_shared<nsx::Experiment>(experiment_name,instrument_name);
-    }
-    catch(const std::runtime_error& e) {
+        experiment = std::make_shared<nsx::Experiment>(experiment_name, instrument_name);
+    } catch (const std::runtime_error& e) {
         nsx::error() << e.what();
         return;
     }
@@ -197,14 +211,14 @@ void MainWindow::onNewExperiment()
     _session_model->addExperiment(experiment);
 }
 
-void MainWindow::closeEvent(QCloseEvent *event)
+void MainWindow::closeEvent(QCloseEvent* event)
 {
     QApplication::closeAllWindows();
 
     QMainWindow::closeEvent(event);
 }
 
-void MainWindow::onSetColorMap(const std::string &color_map)
+void MainWindow::onSetColorMap(const std::string& color_map)
 {
     _color_map = color_map;
     _ui->dview->getScene()->setColorMap(_color_map);
@@ -229,15 +243,15 @@ void MainWindow::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
 
     int nFrames = int(data->nFrames());
 
-    frame = frame%nFrames >= 0 ? frame : frame+nFrames;
+    frame = frame % nFrames >= 0 ? frame : frame + nFrames;
 
     _ui->frame->setValue(frame);
 
     _ui->frame->setMinimum(0);
-    _ui->frame->setMaximum(nFrames-1);
+    _ui->frame->setMaximum(nFrames - 1);
 
     _ui->spinBox_Frame->setMinimum(0);
-    _ui->spinBox_Frame->setMaximum(nFrames-1);
+    _ui->spinBox_Frame->setMaximum(nFrames - 1);
 }
 
 void MainWindow::slotChangeSelectedPeak(nsx::sptrPeak3D peak)
@@ -245,7 +259,7 @@ void MainWindow::slotChangeSelectedPeak(nsx::sptrPeak3D peak)
     // Get frame number to adjust the data
     size_t frame = size_t(std::lround(peak->shape().aabb().center()[2]));
 
-    slotChangeSelectedData(peak->data(),frame);
+    slotChangeSelectedData(peak->data(), frame);
 }
 
 void MainWindow::slotChangeSelectedFrame(int selected_frame)
@@ -255,7 +269,7 @@ void MainWindow::slotChangeSelectedFrame(int selected_frame)
 
 void MainWindow::onSelectPixelPositionCursorMode()
 {
-   _ui->dview->getScene()->changeCursorMode(DetectorScene::PIXEL);
+    _ui->dview->getScene()->changeCursorMode(DetectorScene::PIXEL);
 }
 
 void MainWindow::onSelect2ThetaCursorMode()
@@ -303,7 +317,8 @@ void MainWindow::onToggleWidgetPropertyPanel()
         _ui->dockWidget_Property->hide();
 }
 
-void MainWindow::plotData(const QVector<double>& x,const QVector<double>& y,const QVector<double>& e)
+void MainWindow::plotData(
+    const QVector<double>& x, const QVector<double>& y, const QVector<double>& e)
 {
     if (_ui->plot1D->getType().compare("simple") != 0) {
         // Store the old size policy
@@ -313,9 +328,9 @@ void MainWindow::plotData(const QVector<double>& x,const QVector<double>& y,cons
         // Delete the plotter instance
         delete _ui->plot1D;
 
-        PlotFactory* pFactory=PlotFactory::Instance();
+        PlotFactory* pFactory = PlotFactory::Instance();
 
-        _ui->plot1D = pFactory->create("simple",_ui->dockWidgetContents_4);
+        _ui->plot1D = pFactory->create("simple", _ui->dockWidgetContents_4);
 
         // Restore the size policy
         _ui->plot1D->setSizePolicy(oldSizePolicy);
@@ -329,7 +344,7 @@ void MainWindow::plotData(const QVector<double>& x,const QVector<double>& y,cons
         _ui->horizontalLayout_4->addWidget(_ui->plot1D);
     }
 
-    _ui->plot1D->graph(0)->setDataValueError(x,y,e);
+    _ui->plot1D->graph(0)->setDataValueError(x, y, e);
     _ui->plot1D->rescaleAxes();
     _ui->plot1D->replot();
 }
@@ -347,9 +362,9 @@ void MainWindow::updatePlot(PlottableGraphicsItem* item)
         // Delete the plotter instance
         delete _ui->plot1D;
 
-        PlotFactory* pFactory=PlotFactory::Instance();
+        PlotFactory* pFactory = PlotFactory::Instance();
 
-        _ui->plot1D = pFactory->create(item->getPlotType(),_ui->dockWidgetContents_4);
+        _ui->plot1D = pFactory->create(item->getPlotType(), _ui->dockWidgetContents_4);
 
         // Restore the size policy
         _ui->plot1D->setSizePolicy(oldSizePolicy);
@@ -366,13 +381,12 @@ void MainWindow::updatePlot(PlottableGraphicsItem* item)
     // Plot the data
     item->plot(_ui->plot1D);
     update();
-
 }
 
 void MainWindow::onViewDetectorFromSample()
 {
     QTransform trans;
-    trans.scale(1,-1);
+    trans.scale(1, -1);
     _ui->dview->setTransform(trans);
     _ui->dview->fitScene();
 }
@@ -380,7 +394,7 @@ void MainWindow::onViewDetectorFromSample()
 void MainWindow::onViewDetectorFromBehind()
 {
     QTransform trans;
-    trans.scale(-1,-1);
+    trans.scale(-1, -1);
     _ui->dview->setTransform(trans);
     _ui->dview->fitScene();
 }
@@ -407,18 +421,18 @@ void MainWindow::on_actionLogarithmic_Scale_triggered(bool checked)
     _ui->dview->getScene()->setLogarithmic(checked);
 }
 
-void MainWindow::onOpenPeakFinderDialog(DataItem *data_item)
+void MainWindow::onOpenPeakFinderDialog(DataItem* data_item)
 {
     nsx::DataList data = data_item->selectedData();
 
     if (data.empty()) {
-        nsx::error()<<"No numors selected for finding peaks";
+        nsx::error() << "No numors selected for finding peaks";
         return;
     }
 
     auto experiment_item = data_item->experimentItem();
 
-    FramePeakFinder* frame = FramePeakFinder::create(this,experiment_item,data);
+    FramePeakFinder* frame = FramePeakFinder::create(this, experiment_item, data);
 
     frame->show();
 }

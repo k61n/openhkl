@@ -19,4 +19,3 @@ void readDoublesFromChar(const char* begin, const char* end, std::vector<double>
 }
 
 } // end namespace nsx
-

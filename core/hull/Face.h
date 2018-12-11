@@ -29,8 +29,8 @@
 
 #pragma once
 
-#include <vector>
 #include <ostream>
+#include <vector>
 
 #include <Eigen/Dense>
 
@@ -45,40 +45,41 @@ struct Vertex;
  */
 struct Face {
 
-	//! Default constructor
-	Face();
+    //! Default constructor
+    Face();
 
-	//! Default constructor
-	Face(int id);
+    //! Default constructor
+    Face(int id);
 
-	//! Copy constructor
-	Face(const Face& other)=delete;
+    //! Copy constructor
+    Face(const Face& other) = delete;
 
-	//! Destructor
-	~Face()=default;
+    //! Destructor
+    ~Face() = default;
 
-	//! Assignment operator
-	Face& operator=(const Face& other)=delete;
+    //! Assignment operator
+    Face& operator=(const Face& other) = delete;
 
-	//! Returns the int signed volume of the tetrahedron formed by this Face and a vertex.
-	//! It is equal respectively to 1 and -1  if the vertex is on the negative or positive side of this Face
-	//! with the positive side determined by the right hand rule. It is equal to 0 if the vertice is within the face
-	int volumeSign(Vertex* v) const;
+    //! Returns the int signed volume of the tetrahedron formed by this Face and a vertex.
+    //! It is equal respectively to 1 and -1  if the vertex is on the negative or positive side of
+    //! this Face with the positive side determined by the right hand rule. It is equal to 0 if the
+    //! vertice is within the face
+    int volumeSign(Vertex* v) const;
 
-	//! Returns the volume of the tetrahedron formed by this Face and any point.
-	double volume(const Eigen::Vector3d& pos) const;
+    //! Returns the volume of the tetrahedron formed by this Face and any point.
+    double volume(const Eigen::Vector3d& pos) const;
 
-	//! Send some informations about this Face on an output stream
-	void print(std::ostream& os) const;
+    //! Send some informations about this Face on an output stream
+    void print(std::ostream& os) const;
 
-	//! The three pointer to the edges of this Face
-	std::vector<Edge*> _edges;
+    //! The three pointer to the edges of this Face
+    std::vector<Edge*> _edges;
 
-	//! The three pointers to the vertices of this Face
-	std::vector<Vertex*> _vertices;
+    //! The three pointers to the vertices of this Face
+    std::vector<Vertex*> _vertices;
 
-	//! Indicates whether or not this Face is visible
-	bool _visible;
+    //! Indicates whether or not this Face is visible
+    bool _visible;
 
     int _id;
 };

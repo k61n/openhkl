@@ -42,9 +42,9 @@ namespace nsx {
 // Constant expression necessary to initialize
 // _children attribute in the Octree class
 // which requires a constant literal.
-constexpr int getPow (int factor)
+constexpr int getPow(int factor)
 {
-    return factor > 1 ? 2 * getPow( factor-1 ) : 2;
+    return factor > 1 ? 2 * getPow(factor - 1) : 2;
 }
 
 /*! \brief A template class to handle binary trees in D dimensions
@@ -59,27 +59,27 @@ constexpr int getPow (int factor)
  * and a maximal depth for each branch (_MAX_DEPTH). If the number of subdivisions reaches
  * _MAX_DEPTH, the soft constraint on _MAX_STORAGE is broken.
  *
-*/
+ */
 
 class OctreeIterator;
 
 //! \brief This class is used to speed up collision detection.
-class Octree: public AABB {
+class Octree : public AABB {
 public:
-
-    //! The Octree iterator class is made friend with Octree in order to access some of its private data
+    //! The Octree iterator class is made friend with Octree in order to access some of its private
+    //! data
     friend class OctreeIterator;
 
     // These typedefs insure compatibility with STL
     using size_type = size_t;
     using difference_type = ptrdiff_t;
     using iterator = OctreeIterator;
-    using value_type=double;
+    using value_type = double;
     using pointer = double*;
     using reference = double&;
 
     //! Pair of Ellipsoid*
-    using collision_pair = std::pair<const Ellipsoid*,const Ellipsoid*>;
+    using collision_pair = std::pair<const Ellipsoid*, const Ellipsoid*>;
 
     //! Move constructor
     Octree(Octree&& other);
@@ -94,7 +94,7 @@ public:
     Octree(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub);
 
     //! destructor
-    ~Octree()=default;
+    ~Octree() = default;
 
     //! Add a new AABB object to the deepest leaf.
     //! If the leaf has reached capacity of _MAX_STORAGE, then it will be split into
@@ -119,7 +119,7 @@ public:
     void setMaxStorage(unsigned int maxStorage);
 
     //! Return the list of AABB* pairs that intercept.
-    //void getPossibleCollisions(std::set<collision_pair>& collisions) const;
+    // void getPossibleCollisions(std::set<collision_pair>& collisions) const;
     std::set<collision_pair> getCollisions() const;
 
     //! Return collisions with a given shape
@@ -138,7 +138,7 @@ public:
 
     iterator end() const;
 
-    const std::vector<const Ellipsoid*>& getData() const {return _data;}
+    const std::vector<const Ellipsoid*>& getData() const { return _data; }
 
     Octree(const Octree* parent, unsigned int i);
 
@@ -169,7 +169,7 @@ private:
     unsigned int _MAX_STORAGE = 5;
 
     //! Multiplicity of the tree branch (D=2 ->4), (D=3 ->8)
-    const unsigned int _MULTIPLICITY = unsigned(std::pow(2,3));
+    const unsigned int _MULTIPLICITY = unsigned(std::pow(2, 3));
 
     //! vector of powers 2^D
     std::vector<unsigned int> _POWERS = createPowers();
@@ -213,7 +213,6 @@ public:
     OctreeIterator operator++(int);
 
 private:
-
     const Octree* _node;
 };
 

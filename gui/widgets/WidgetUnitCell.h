@@ -13,7 +13,6 @@ class WidgetUnitCell : public QWidget {
     Q_OBJECT
 
 public:
-
     WidgetUnitCell(nsx::sptrUnitCell);
 
     ~WidgetUnitCell();
@@ -21,8 +20,7 @@ public:
     nsx::sptrUnitCell unitCell() const;
 
 private:
-
-    Ui::WidgetUnitCell *_ui;
+    Ui::WidgetUnitCell* _ui;
 
     nsx::sptrUnitCell _unit_cell;
 };

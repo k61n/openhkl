@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/Source.h>
 #include <QWidget>
+#include <core/Source.h>
 
 namespace Ui {
 class SourcePropertyWidget;
@@ -9,8 +9,7 @@ class SourcePropertyWidget;
 
 class SourceItem;
 
-class SourcePropertyWidget : public QWidget
-{
+class SourcePropertyWidget : public QWidget {
     Q_OBJECT
 
 public:
@@ -28,7 +27,7 @@ private:
     void onWidthChanged(double width);
 
 private:
-    Ui::SourcePropertyWidget *_ui;
+    Ui::SourcePropertyWidget* _ui;
 
     nsx::Source& _source;
 };

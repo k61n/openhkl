@@ -41,23 +41,21 @@ namespace nsx {
 class RadialConvolver : public AtomicConvolver {
 
 public:
-
     RadialConvolver();
 
-    RadialConvolver(const RadialConvolver& other)=default;
+    RadialConvolver(const RadialConvolver& other) = default;
 
-    RadialConvolver(const std::map<std::string,double>& parameters);
+    RadialConvolver(const std::map<std::string, double>& parameters);
 
-    ~RadialConvolver()=default;
+    ~RadialConvolver() = default;
 
-    RadialConvolver& operator=(const RadialConvolver &other)=default;
+    RadialConvolver& operator=(const RadialConvolver& other) = default;
 
     Convolver* clone() const override;
 
-    virtual std::pair<size_t,size_t> kernelSize() const override;
+    virtual std::pair<size_t, size_t> kernelSize() const override;
 
 private:
-
     RealMatrix _matrix(int nrows, int ncols) const override;
 };
 

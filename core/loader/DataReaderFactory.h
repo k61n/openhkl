@@ -35,12 +35,13 @@
 
 namespace nsx {
 
-    class IDataReader;
-    class DataSet;
-    class Diffractometer;
+class IDataReader;
+class DataSet;
+class Diffractometer;
 
-/** \brief DataReaderFactory. All IData formats must register their "create" method with the factory in order to
- * choose the correct DataReader at runtime. Reader selection is based on the extension of the datafile.
+/** \brief DataReaderFactory. All IData formats must register their "create" method with the factory
+ * in order to choose the correct DataReader at runtime. Reader selection is based on the extension
+ * of the datafile.
  *
  */
 class DataReaderFactory {
@@ -51,7 +52,9 @@ public:
 
     DataReaderFactory();
 
-    IDataReader* create(const std::string& extension, const std::string& filename, Diffractometer *diffractometer) const;
+    IDataReader* create(
+        const std::string& extension, const std::string& filename,
+        Diffractometer* diffractometer) const;
 
 private:
     std::map<std::string, callback> _callbacks;

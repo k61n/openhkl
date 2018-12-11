@@ -1,8 +1,8 @@
 #pragma once
 
 #include <map>
-#include <utility>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <Eigen/Dense>
@@ -36,9 +36,9 @@ struct UserDefinedUnitCellIndexerParameters {
     double b = 10.0;
     double c = 10.0;
 
-    double alpha = 90.0*nsx::deg;
-    double beta = 90.0*nsx::deg;
-    double gamma = 90.0*nsx::deg;
+    double alpha = 90.0 * nsx::deg;
+    double beta = 90.0 * nsx::deg;
+    double gamma = 90.0 * nsx::deg;
 
     void checkParameters() const;
 };
@@ -54,18 +54,18 @@ public:
 
     UserDefinedUnitCellIndexer(UserDefinedUnitCellIndexer&& other) = default;
 
-    ~UserDefinedUnitCellIndexer()=default;
+    ~UserDefinedUnitCellIndexer() = default;
 
-    UserDefinedUnitCellIndexer& operator=(const UserDefinedUnitCellIndexer& other)=default;
+    UserDefinedUnitCellIndexer& operator=(const UserDefinedUnitCellIndexer& other) = default;
 
-    UserDefinedUnitCellIndexer& operator=(UserDefinedUnitCellIndexer&& other)=default;
+    UserDefinedUnitCellIndexer& operator=(UserDefinedUnitCellIndexer&& other) = default;
 
     const UserDefinedUnitCellIndexerParameters& parameters() const;
     void setParameters(const UserDefinedUnitCellIndexerParameters& parameters);
 
     void run();
 
-    const std::vector<std::pair<sptrUnitCell,double>>& solutions() const;
+    const std::vector<std::pair<sptrUnitCell, double>>& solutions() const;
 
     void setPeaks(const PeakList& peaks);
 
@@ -80,7 +80,7 @@ private:
 
 private:
     UserDefinedUnitCellIndexerParameters _parameters;
-    std::vector<std::pair<sptrUnitCell,double>> _solutions;
+    std::vector<std::pair<sptrUnitCell, double>> _solutions;
     PeakList _peaks;
 };
 

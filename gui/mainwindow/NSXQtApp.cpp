@@ -5,9 +5,9 @@
 
 #include "NSXQtApp.h"
 
-NSXQtApp::NSXQtApp(int &argc, char *argv[]) : QApplication(argc,argv)
+NSXQtApp::NSXQtApp(int& argc, char* argv[]) : QApplication(argc, argv)
 {
-//    this->setApplicationDisplayName(QString::fromStdString("NSXQt "+nsx::__version__));
+    //    this->setApplicationDisplayName(QString::fromStdString("NSXQt "+nsx::__version__));
     this->setApplicationName("nsxqt");
 }
 

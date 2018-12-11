@@ -11,21 +11,19 @@
 
 #include <core/ITask.h>
 
-class TaskManagerModel : public QAbstractTableModel
-{
+class TaskManagerModel : public QAbstractTableModel {
     Q_OBJECT
 
 public:
-
-    TaskManagerModel(QObject *parent = nullptr);
+    TaskManagerModel(QObject* parent = nullptr);
 
     ~TaskManagerModel();
 
-    int columnCount(const QModelIndex &parent) const override;
+    int columnCount(const QModelIndex& parent) const override;
 
-    int rowCount(const QModelIndex &parent) const override;
+    int rowCount(const QModelIndex& parent) const override;
 
-    QVariant data(const QModelIndex &index, int role) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
 
     //! Check whether a task is registered into the model
     bool hasTask(const std::string& name) const;
@@ -40,10 +38,10 @@ public:
     void addTask(std::shared_ptr<nsx::ITask> task, bool run);
 
     //! Start a task registered into the model
-    void runTask(const QModelIndex &index);
+    void runTask(const QModelIndex& index);
 
     //! Return the current state of a task registered into the model
-    nsx::TaskState state(const QModelIndex &index);
+    nsx::TaskState state(const QModelIndex& index);
 
 signals:
 
@@ -57,15 +55,14 @@ signals:
     void sendCompletedTask(std::shared_ptr<nsx::ITask> task);
 
 private:
-
     //! Fetch the current state of a registered task (called in a different thread)
-    void fetchState(nsx::ITask *task);
+    void fetchState(nsx::ITask* task);
 
-    //! Prepare the completed task before sending it to the client views (called from the main thread)
+    //! Prepare the completed task before sending it to the client views (called from the main
+    //! thread)
     void _completeTask(std::string task_name);
 
 private:
-
     mutable std::mutex _mutex;
 
     std::vector<std::string> _task_names;

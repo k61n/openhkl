@@ -47,53 +47,52 @@ namespace nsx {
 Detector* Detector::create(const YAML::Node& node)
 {
     // Create an instance of the detector factory
-    DetectorFactory* detectorFactory=DetectorFactory::Instance();
+    DetectorFactory* detectorFactory = DetectorFactory::Instance();
 
     // Get the detector type
     std::string detectorType = node["type"].as<std::string>();
 
     // Fetch the detector from the factory
-    Detector* detector = detectorFactory->create(detectorType,node);
+    Detector* detector = detectorFactory->create(detectorType, node);
 
     return detector;
 }
 
 Detector::Detector()
-: Component("detector"),
-  _height(0.0),
-  _width(0.0),
-  _angularHeight(0.0),
-  _angularWidth(0.0),
-  _nRows(0),
-  _nCols(0),
-  _minRow(0.0),
-  _minCol(0.0),
-  _distance(0),
-  _dataorder(DataOrder::BottomLeftColMajor),
-  _baseline(0.0),
-  _gain(1.0)
+    : Component("detector")
+    , _height(0.0)
+    , _width(0.0)
+    , _angularHeight(0.0)
+    , _angularWidth(0.0)
+    , _nRows(0)
+    , _nCols(0)
+    , _minRow(0.0)
+    , _minCol(0.0)
+    , _distance(0)
+    , _dataorder(DataOrder::BottomLeftColMajor)
+    , _baseline(0.0)
+    , _gain(1.0)
 {
 }
 
 Detector::Detector(const std::string& name)
-: Component(name),
-  _height(0.0),
-  _width(0.0),
-  _angularHeight(0.0),
-  _angularWidth(0.0),
-  _nRows(0),
-  _nCols(0),
-  _minRow(0.0),
-  _minCol(0.0),
-  _distance(0),
-  _dataorder(DataOrder::BottomLeftColMajor),
-  _baseline(0.0),
-  _gain(1.0)
+    : Component(name)
+    , _height(0.0)
+    , _width(0.0)
+    , _angularHeight(0.0)
+    , _angularWidth(0.0)
+    , _nRows(0)
+    , _nCols(0)
+    , _minRow(0.0)
+    , _minCol(0.0)
+    , _distance(0)
+    , _dataorder(DataOrder::BottomLeftColMajor)
+    , _baseline(0.0)
+    , _gain(1.0)
 {
 }
 
-Detector::Detector(const YAML::Node& node)
-: Component(node)
+Detector::Detector(const YAML::Node& node) : Component(node)
 {
     // If data order is not defined assumed default
     if (!node["data_ordering"]) {
@@ -115,34 +114,35 @@ Detector::Detector(const YAML::Node& node)
         _baseline = 0.0;
     }
 
-    std::string dataOrder=node["data_ordering"].as<std::string>();
+    std::string dataOrder = node["data_ordering"].as<std::string>();
 
-    if (dataOrder.compare("TopLeftColMajor")==0) {
-        _dataorder=DataOrder::TopLeftColMajor;
-    } else if (dataOrder.compare("TopLeftRowMajor")==0) {
-        _dataorder=DataOrder::TopLeftRowMajor;
-    } else if (dataOrder.compare("TopRightColMajor")==0) {
-        _dataorder=DataOrder::TopRightColMajor;
-    } else if (dataOrder.compare("TopRightRowMajor")==0) {
-        _dataorder=DataOrder::TopRightRowMajor;
-    } else if (dataOrder.compare("BottomLeftColMajor")==0) {
-        _dataorder=DataOrder::BottomLeftColMajor;
-    } else if (dataOrder.compare("BottomLeftRowMajor")==0) {
-        _dataorder=DataOrder::BottomLeftRowMajor;
-    } else if (dataOrder.compare("BottomRightColMajor")==0) {
-        _dataorder=DataOrder::BottomRightColMajor;
-    } else if (dataOrder.compare("BottomRightRowMajor")==0) {
-        _dataorder=DataOrder::BottomRightRowMajor;
+    if (dataOrder.compare("TopLeftColMajor") == 0) {
+        _dataorder = DataOrder::TopLeftColMajor;
+    } else if (dataOrder.compare("TopLeftRowMajor") == 0) {
+        _dataorder = DataOrder::TopLeftRowMajor;
+    } else if (dataOrder.compare("TopRightColMajor") == 0) {
+        _dataorder = DataOrder::TopRightColMajor;
+    } else if (dataOrder.compare("TopRightRowMajor") == 0) {
+        _dataorder = DataOrder::TopRightRowMajor;
+    } else if (dataOrder.compare("BottomLeftColMajor") == 0) {
+        _dataorder = DataOrder::BottomLeftColMajor;
+    } else if (dataOrder.compare("BottomLeftRowMajor") == 0) {
+        _dataorder = DataOrder::BottomLeftRowMajor;
+    } else if (dataOrder.compare("BottomRightColMajor") == 0) {
+        _dataorder = DataOrder::BottomRightColMajor;
+    } else if (dataOrder.compare("BottomRightRowMajor") == 0) {
+        _dataorder = DataOrder::BottomRightRowMajor;
     } else {
-        throw std::runtime_error("Detector class: Data ordering mode not valid, can not build detector");
+        throw std::runtime_error(
+            "Detector class: Data ordering mode not valid, can not build detector");
     }
 
-    UnitsManager* um=UnitsManager::Instance();
+    UnitsManager* um = UnitsManager::Instance();
 
     // Set the detector to sample distance from the property tree node
     auto&& distanceNode = node["sample_distance"];
-    double units=um->get(distanceNode["units"].as<std::string>());
-    double distance=distanceNode["value"].as<double>();
+    double units = um->get(distanceNode["units"].as<std::string>());
+    double distance = distanceNode["value"].as<double>();
     distance *= units;
     setDistance(distance);
 
@@ -157,9 +157,7 @@ Detector::Detector(const YAML::Node& node)
     _minRow = node["origin_y"] ? node["origin_y"].as<double>() : 0.0;
 }
 
-Detector::~Detector()
-{
-}
+Detector::~Detector() {}
 
 DataOrder Detector::dataOrder() const
 {
@@ -193,7 +191,7 @@ int Detector::minRow() const
 
 int Detector::maxRow() const
 {
-    return _minRow+_nRows;
+    return _minRow + _nRows;
 }
 
 int Detector::minCol() const
@@ -203,7 +201,7 @@ int Detector::minCol() const
 
 int Detector::maxCol() const
 {
-    return _minCol+_nCols;
+    return _minCol + _nCols;
 }
 
 double Detector::angularHeight() const
@@ -224,16 +222,17 @@ double Detector::distance() const
 void Detector::setDistance(double d)
 {
     _distance = d;
-    _position = DirectVector(0.0,d,0.0);
+    _position = DirectVector(0.0, d, 0.0);
 }
 
 bool Detector::hasPixel(double px, double py) const
 {
 
-    double dx = px-_minCol;
-    double dy = py-_minRow;
+    double dx = px - _minCol;
+    double dy = py - _minRow;
 
-    return (dx>=0 && dx<static_cast<double>(_nCols) && dy>=0 && dy<static_cast<double>(_nRows));
+    return (
+        dx >= 0 && dx < static_cast<double>(_nCols) && dy >= 0 && dy < static_cast<double>(_nRows));
 }
 
 unsigned int Detector::nCols() const
@@ -243,10 +242,11 @@ unsigned int Detector::nCols() const
 
 void Detector::setNCols(unsigned int cols)
 {
-    if (cols==0) {
-        throw std::range_error("Detector "+Component::_name+" number of pixels (row,col) must be >0");
+    if (cols == 0) {
+        throw std::range_error(
+            "Detector " + Component::_name + " number of pixels (row,col) must be >0");
     }
-    _nCols=cols;
+    _nCols = cols;
 }
 
 
@@ -257,20 +257,21 @@ unsigned int Detector::nRows() const
 
 void Detector::setNRows(unsigned int rows)
 {
-    if (rows==0) {
-        throw std::range_error("Detector "+Component::_name+" number of pixels (row,col) must be >0");
+    if (rows == 0) {
+        throw std::range_error(
+            "Detector " + Component::_name + " number of pixels (row,col) must be >0");
     }
-    _nRows=rows;
+    _nRows = rows;
 }
 
 double Detector::pixelHeight() const
 {
-    return _height/_nRows;
+    return _height / _nRows;
 }
 
 double Detector::pixelWidth() const
 {
-    return _width/_nCols;
+    return _width / _nCols;
 }
 
 } // end namespace nsx

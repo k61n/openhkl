@@ -11,32 +11,30 @@
 
 #include "H5Cpp.h"
 
-#include "IDataReader.h"
 #include "BloscFilter.h"
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "Gonio.h"
+#include "IDataReader.h"
 #include "Path.h" // fileBasename
 
 namespace nsx {
 
-IDataReader::IDataReader(const std::string& filename, Diffractometer *diffractometer)
-: _filename(filename),
-  _diffractometer(std::move(diffractometer)),
-  _nFrames(0),
-  _sampleStates(),
-  _detectorStates(),
-  _isOpened(false)
+IDataReader::IDataReader(const std::string& filename, Diffractometer* diffractometer)
+    : _filename(filename)
+    , _diffractometer(std::move(diffractometer))
+    , _nFrames(0)
+    , _sampleStates()
+    , _detectorStates()
+    , _isOpened(false)
 {
-    _metadata.add<std::string>("filename",filename);
+    _metadata.add<std::string>("filename", filename);
 
     _nRows = _diffractometer->detector()->nRows();
     _nCols = _diffractometer->detector()->nCols();
 }
 
-IDataReader::~IDataReader()
-{
-}
+IDataReader::~IDataReader() {}
 
 size_t IDataReader::nFrames() const
 {
@@ -80,11 +78,13 @@ InstrumentState IDataReader::state(size_t frame) const
     InstrumentState state(_diffractometer);
 
     // compute transformations
-    const auto &detector_gonio = _diffractometer->detector()->gonio();
-    const auto &sample_gonio = _diffractometer->sample().gonio();
+    const auto& detector_gonio = _diffractometer->detector()->gonio();
+    const auto& sample_gonio = _diffractometer->sample().gonio();
 
-    Eigen::Transform<double,3,Eigen::Affine> detector_trans = detector_gonio.affineMatrix(_detectorStates[frame]);
-    Eigen::Transform<double,3,Eigen::Affine> sample_trans = sample_gonio.affineMatrix(_sampleStates[frame]);
+    Eigen::Transform<double, 3, Eigen::Affine> detector_trans =
+        detector_gonio.affineMatrix(_detectorStates[frame]);
+    Eigen::Transform<double, 3, Eigen::Affine> sample_trans =
+        sample_gonio.affineMatrix(_sampleStates[frame]);
 
     state.detectorOrientation = detector_trans.rotation();
     state.sampleOrientation = Eigen::Quaterniond(sample_trans.rotation());

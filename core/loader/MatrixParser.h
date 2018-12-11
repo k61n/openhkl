@@ -69,15 +69,14 @@ namespace nsx {
 class MatrixParser {
 
 public:
+    MatrixParser() = default;
 
-    MatrixParser()=default;
+    ~MatrixParser() = default;
 
-    ~MatrixParser()=default;
-
-    bool operator()(DataOrder dataOrder, const char* begin, size_t buffer_size, Eigen::MatrixXi& matrix) const;
+    bool operator()(
+        DataOrder dataOrder, const char* begin, size_t buffer_size, Eigen::MatrixXi& matrix) const;
 
     bool operator()(DataOrder dataOrder, const std::string& buffer, Eigen::MatrixXi& matrix) const;
-
 };
 
 } // end namespace nsx

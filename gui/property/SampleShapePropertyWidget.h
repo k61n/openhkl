@@ -1,12 +1,11 @@
 #pragma once
 
+#include "ui_SampleShapePropertyWidget.h"
+#include <QWidget>
 #include <core/ConvexHull.h>
 #include <core/Experiment.h>
-#include <QWidget>
-#include "ui_SampleShapePropertyWidget.h"
 
-class SampleShapePropertyWidget : public QWidget
-{
+class SampleShapePropertyWidget : public QWidget {
     Q_OBJECT
 
 public:
@@ -20,5 +19,5 @@ private slots:
 private:
     const nsx::sptrExperiment& _experiment;
     const nsx::ConvexHull& _shape;
-    Ui::SampleShapePropertyWidget *ui;
+    Ui::SampleShapePropertyWidget* ui;
 };

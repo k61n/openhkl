@@ -2,8 +2,8 @@
 
 #include <QIcon>
 
-#include <core/PeakList.h>
 #include <core/Peak3D.h>
+#include <core/PeakList.h>
 
 #include "ExperimentItem.h"
 #include "MetaTypes.h"
@@ -49,8 +49,7 @@ nsx::UnitCellList UnitCellsItem::unitCells()
     nsx::UnitCellList unitCells;
     unitCells.reserve(rowCount());
 
-    for (int i = 0; i < rowCount(); ++i)
-    {
+    for (int i = 0; i < rowCount(); ++i) {
         UnitCellItem* ucItem = dynamic_cast<UnitCellItem*>(child(i));
         if (ucItem) {
             unitCells.push_back(ucItem->data(Qt::UserRole).value<nsx::sptrUnitCell>());
@@ -79,11 +78,11 @@ void UnitCellsItem::removeUnusedUnitCells()
         }
     }
 
-    for (int i = rowCount()-1; i >= 0; --i)
-    {
+    for (int i = rowCount() - 1; i >= 0; --i) {
         UnitCellItem* unit_cell_item = dynamic_cast<UnitCellItem*>(child(i));
         if (unit_cell_item) {
-            auto it = unit_cells.find(unit_cell_item->data(Qt::UserRole).value<nsx::sptrUnitCell>());
+            auto it =
+                unit_cells.find(unit_cell_item->data(Qt::UserRole).value<nsx::sptrUnitCell>());
             if (it == unit_cells.end()) {
                 removeRow(i);
             }

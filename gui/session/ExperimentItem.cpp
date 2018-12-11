@@ -14,7 +14,7 @@
 #include "TreeItem.h"
 #include "UnitCellsItem.h"
 
-ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment): TreeItem(), _experiment(experiment)
+ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment) : TreeItem(), _experiment(experiment)
 {
     setText(QString::fromStdString(experiment->name()));
 
@@ -52,9 +52,7 @@ ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment): TreeItem(), _exp
     appendRow(_library);
 }
 
-ExperimentItem::~ExperimentItem()
-{
-}
+ExperimentItem::~ExperimentItem() {}
 
 InstrumentItem* ExperimentItem::instrumentItem()
 {
@@ -87,7 +85,7 @@ void ExperimentItem::writeLogFiles()
 
     nsx::PeakFilter peak_filter;
     nsx::PeakList filtered_peaks;
-    filtered_peaks = peak_filter.enabled(peaks,true);
+    filtered_peaks = peak_filter.enabled(peaks, true);
     filtered_peaks = peak_filter.hasUnitCell(filtered_peaks);
 
     if (filtered_peaks.empty()) {
@@ -97,10 +95,10 @@ void ExperimentItem::writeLogFiles()
 
     auto cell = filtered_peaks[0]->unitCell();
 
-    filtered_peaks = peak_filter.unitCell(filtered_peaks,cell);
-    filtered_peaks = peak_filter.indexed(filtered_peaks,*cell,cell->indexingTolerance());
+    filtered_peaks = peak_filter.unitCell(filtered_peaks, cell);
+    filtered_peaks = peak_filter.indexed(filtered_peaks, *cell, cell->indexingTolerance());
 
-    FrameStatistics *frame = FrameStatistics::create(filtered_peaks,cell->spaceGroup());
+    FrameStatistics* frame = FrameStatistics::create(filtered_peaks, cell->spaceGroup());
 
     frame->show();
     frame->raise();

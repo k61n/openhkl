@@ -1,12 +1,12 @@
 #pragma once
 
-#include <string>
-#include <vector>
 #include <QDialog>
 #include <QString>
+#include <string>
+#include <vector>
 
-#include <core/GeometryTypes.h>
 #include <core/Experiment.h>
+#include <core/GeometryTypes.h>
 
 namespace nsx {
 class RotAxis;
@@ -18,12 +18,11 @@ class DialogAbsorption;
 
 class CrystalScene;
 
-class DialogAbsorption : public QDialog
-{
+class DialogAbsorption : public QDialog {
     Q_OBJECT
 
 public:
-    explicit DialogAbsorption(nsx::sptrExperiment experiment, QWidget *parent = nullptr);
+    explicit DialogAbsorption(nsx::sptrExperiment experiment, QWidget* parent = nullptr);
     const std::string& getMovieFilename() const;
     ~DialogAbsorption();
 signals:
@@ -38,14 +37,14 @@ private slots:
     void setupInitialButtons();
 
 private:
-    Ui::DialogAbsorption *ui;
+    Ui::DialogAbsorption* ui;
     //! Link to the experiment
     nsx::sptrExperiment _experiment;
     //! Rotation axis to collect movie
     nsx::RotAxis* _spindleAxis;
     //! Set of Roatation angle and absolute fileName for jpg image
-    std::vector<std::pair<double,std::string>> _imageList;
-    //!Path of the file
+    std::vector<std::pair<double, std::string>> _imageList;
+    //! Path of the file
     std::string _filepath;
     //! read info file containing video information
     void readInfoFile(const std::string& filename);

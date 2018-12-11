@@ -4,19 +4,19 @@
 
 #include "Blob3D.h"
 #include "Convolver.h"
-#include "PeakList.h" // defines PeakList
 #include "ITask.h"
+#include "PeakList.h" // defines PeakList
 
 namespace nsx {
 
-using EquivalencePair = std::pair<int,int>;
+using EquivalencePair = std::pair<int, int>;
 using EquivalenceList = std::vector<EquivalencePair>;
 
 //! \brief Class to handle peak search in datasets
 class PeakFinder : public ITask {
 
 public:
-    PeakFinder(const DataList &datasets);
+    PeakFinder(const DataList& datasets);
 
     bool doTask() final;
 
@@ -42,19 +42,20 @@ public:
     void setThreshold(double value);
 
 private:
-
     void eliminateBlobs(std::map<int, Blob3D>& blobs) const;
 
-    void findPrimaryBlobs(const DataSet &data, std::map<int,Blob3D>& blobs,EquivalenceList& equivalences, size_t begin, size_t end);
+    void findPrimaryBlobs(
+        const DataSet& data, std::map<int, Blob3D>& blobs, EquivalenceList& equivalences,
+        size_t begin, size_t end);
 
-    void findCollisions(const DataSet &data, std::map<int,Blob3D>& blobs, EquivalenceList& equivalences) const;
+    void findCollisions(
+        const DataSet& data, std::map<int, Blob3D>& blobs, EquivalenceList& equivalences) const;
 
-    void mergeCollidingBlobs(const DataSet &data, std::map<int,Blob3D>& blobs) const;
+    void mergeCollidingBlobs(const DataSet& data, std::map<int, Blob3D>& blobs) const;
 
-    void mergeEquivalentBlobs(std::map<int,Blob3D>& blobs, EquivalenceList& equivalences) const;
+    void mergeEquivalentBlobs(std::map<int, Blob3D>& blobs, EquivalenceList& equivalences) const;
 
 private:
-
     std::unique_ptr<Convolver> _convolver;
 
     DataList _datasets;

@@ -17,7 +17,7 @@ int main()
 
     // send it a dummy callback
     int count = 0;
-    handler.setCallback([&count] () {++count;});
+    handler.setCallback([&count]() { ++count; });
 
     handler.setProgress(50);
     NSX_CHECK_ASSERT(handler.getProgress() == 50);
@@ -46,8 +46,7 @@ int main()
 
     try {
         handler.setProgress(20);
-    }
-    catch (std::exception& e) {
+    } catch (std::exception& e) {
         aborted = true;
     }
     NSX_CHECK_ASSERT(aborted == true);

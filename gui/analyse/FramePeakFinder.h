@@ -1,4 +1,4 @@
-#pragma  once
+#pragma once
 
 #include <map>
 #include <memory>
@@ -34,19 +34,18 @@ class QWidget;
 
 class MainWindow;
 
-class FramePeakFinder : public NSXQFrame
-{
+class FramePeakFinder : public NSXQFrame {
     Q_OBJECT
 
 public:
-
-    static FramePeakFinder* create(MainWindow *main_window, ExperimentItem* experiment_tree, const nsx::DataList& data);
+    static FramePeakFinder*
+    create(MainWindow* main_window, ExperimentItem* experiment_tree, const nsx::DataList& data);
 
     static FramePeakFinder* Instance();
 
     virtual ~FramePeakFinder();
 
-    void setColorMap(const std::string &name);
+    void setColorMap(const std::string& name);
 
     virtual void showEvent(QShowEvent*) override;
 
@@ -70,7 +69,7 @@ private slots:
     void changeBackgroundEnd();
 
     //! Start one of the actions proposed by the frame actions button box
-    void doActions(QAbstractButton *button);
+    void doActions(QAbstractButton* button);
 
     //! Change the data for previewing the peak search
     void changePreviewData();
@@ -95,14 +94,14 @@ private slots:
     void onShowFoundPeaks(std::shared_ptr<nsx::ITask> task);
 
 private:
-
-    FramePeakFinder(MainWindow *main_window, ExperimentItem *experiment_item, const nsx::DataList &data);
+    FramePeakFinder(
+        MainWindow* main_window, ExperimentItem* experiment_item, const nsx::DataList& data);
 
     void showFoundPeaks(std::shared_ptr<nsx::ITask> task);
 
     void updateConvolutionParameters();
 
-    std::map<std::string,double> convolutionParameters() const;
+    std::map<std::string, double> convolutionParameters() const;
 
     void preview();
 
@@ -111,16 +110,15 @@ private:
     void accept();
 
 private:
+    static FramePeakFinder* _instance;
 
-    static FramePeakFinder *_instance;
+    Ui::FramePeakFinder* _ui;
 
-    Ui::FramePeakFinder *_ui;
+    MainWindow* _main_window;
 
-    MainWindow *_main_window;
+    ExperimentItem* _experiment_item;
 
-    ExperimentItem *_experiment_item;
-
-    QGraphicsPixmapItem *_pixmap;
+    QGraphicsPixmapItem* _pixmap;
 
     std::unique_ptr<ColorMap> _colormap;
 

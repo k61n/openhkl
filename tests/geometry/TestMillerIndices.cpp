@@ -5,9 +5,10 @@
 
 NSX_INIT_TEST
 
-int main() {
+int main()
+{
 
-    Eigen::RowVector3i v1(1,2,3);
+    Eigen::RowVector3i v1(1, 2, 3);
 
     nsx::MillerIndex hkl1(v1);
 
@@ -15,7 +16,7 @@ int main() {
 
     x = 100;
 
-    NSX_CHECK_EQUAL(hkl1[0],100);
+    NSX_CHECK_EQUAL(hkl1[0], 100);
 
     return 0;
 }

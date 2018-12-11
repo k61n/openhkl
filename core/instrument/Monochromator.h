@@ -21,48 +21,47 @@ namespace nsx {
 class Monochromator {
 
 public:
+    Monochromator();
 
-	Monochromator();
+    Monochromator(const std::string& name);
 
-	Monochromator(const std::string& name);
+    ~Monochromator();
 
-	~Monochromator();
+    Monochromator(const Monochromator& other);
 
-	Monochromator(const Monochromator& other);
+    Monochromator(const YAML::Node& node);
 
-	Monochromator(const YAML::Node& node);
+    Monochromator& operator=(const Monochromator& other);
 
-	Monochromator& operator=(const Monochromator& other);
+    //! Return the name for this monochromator
+    const std::string& name() const;
 
-	//! Return the name for this monochromator
-	const std::string& name() const;
+    //! Set the name for this monochromator
+    void setName(const std::string& name);
 
-	//! Set the name for this monochromator
-	void setName(const std::string& name);
+    //! Return the wavelength for this monochromator
+    double wavelength() const;
 
-	//! Return the wavelength for this monochromator
-	double wavelength() const;
+    //! Set the wavelength for this monochromator
+    void setWavelength(double wavelength);
 
-	//! Set the wavelength for this monochromator
-	void setWavelength(double wavelength);
+    //! Return the full width at half maximum of the wavelength for this monochromator
+    double fullWidthHalfMaximum() const;
 
-	//! Return the full width at half maximum of the wavelength for this monochromator
-	double fullWidthHalfMaximum() const;
+    //! Set the full width at half maximum of the wavelength for this monochromator
+    void setFullWidthHalfMaximum(double fwhm);
 
-	//! Set the full width at half maximum of the wavelength for this monochromator
-	void setFullWidthHalfMaximum(double fwhm);
+    //! Return the width for this monochromator
+    double width() const;
 
-	//! Return the width for this monochromator
-	double width() const;
+    //! Set the width for this monochromator
+    void setWidth(double width);
 
-	//! Set the width for this monochromator
-	void setWidth(double width);
+    //! Return height for this monochromator
+    double height() const;
 
-	//! Return height for this monochromator
-	double height() const;
-
-	//! Set the height for this monochromator
-	void setHeight(double height);
+    //! Set the height for this monochromator
+    void setHeight(double height);
 
     bool operator==(const Monochromator& other);
 
@@ -70,17 +69,15 @@ public:
     ReciprocalVector ki() const;
 
 private:
+    std::string _name;
 
-	std::string _name;
+    double _wavelength;
 
-	double _wavelength;
+    double _fwhm;
 
-	double _fwhm;
+    double _width;
 
-	double _width;
-
-	double _height;
-
+    double _height;
 };
 
 } // end namespace nsx

@@ -37,8 +37,7 @@
 
 namespace nsx {
 
-InstrumentState::InstrumentState(Diffractometer *diffractometer)
-: _diffractometer(diffractometer)
+InstrumentState::InstrumentState(Diffractometer* diffractometer) : _diffractometer(diffractometer)
 {
     detectorOrientation.setIdentity();
 
@@ -54,12 +53,12 @@ InstrumentState::InstrumentState(Diffractometer *diffractometer)
 
     wavelength = 1.0;
 
-    refined=false;
+    refined = false;
 }
 
 ReciprocalVector InstrumentState::kfLab(const DirectVector& detector_position) const
 {
-    Eigen::Vector3d k = detectorOrientation*(detector_position.vector() - samplePosition);
+    Eigen::Vector3d k = detectorOrientation * (detector_position.vector() - samplePosition);
     k.normalize();
     k /= wavelength;
     return ReciprocalVector(k);
@@ -69,7 +68,7 @@ ReciprocalVector InstrumentState::sampleQ(const DirectVector& detector_position)
 {
     Eigen::RowVector3d ki = ni / ni.norm() / wavelength;
     auto qLab = kfLab(detector_position).rowVector() - ki;
-    return ReciprocalVector(qLab*sampleOrientationMatrix());
+    return ReciprocalVector(qLab * sampleOrientationMatrix());
 }
 
 double InstrumentState::gamma(const DirectVector& detector_position) const
@@ -90,17 +89,17 @@ double InstrumentState::twoTheta(const DirectVector& detector_position) const
 {
     auto kf = kfLab(detector_position).rowVector();
     double proj = kf.dot(ni);
-    return acos(proj/kf.norm()/ni.norm());
+    return acos(proj / kf.norm() / ni.norm());
 }
 
 ReciprocalVector InstrumentState::ki() const
 {
-    return ReciprocalVector(ni/ni.norm()/wavelength);
+    return ReciprocalVector(ni / ni.norm() / wavelength);
 }
 
 Eigen::Matrix3d InstrumentState::sampleOrientationMatrix() const
 {
-    return (sampleOrientationOffset*sampleOrientation).normalized().toRotationMatrix();
+    return (sampleOrientationOffset * sampleOrientation).normalized().toRotationMatrix();
 }
 
 
@@ -120,7 +119,7 @@ Eigen::Matrix3d InstrumentState::jacobianK(double px, double py) const
     Eigen::Vector3d dp = p - samplePosition;
     double r = dp.norm();
 
-    Eigen::RowVector3d drdx = 1/r * dp.transpose() * dpdx;
+    Eigen::RowVector3d drdx = 1 / r * dp.transpose() * dpdx;
 
     // Jacobian of (px, py) -> kf
     Eigen::Matrix3d dkdx = nki * detectorOrientation * (dpdx / r - dp * drdx / r / r);

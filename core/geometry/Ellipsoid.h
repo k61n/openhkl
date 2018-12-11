@@ -46,7 +46,6 @@ namespace nsx {
 class Ellipsoid {
 
 public:
-
     Ellipsoid();
     //! Copy constructor
     Ellipsoid(const Ellipsoid& other);
@@ -55,9 +54,10 @@ public:
     //! Constructor for a sphere
     Ellipsoid(const Eigen::Vector3d& center, double radius);
     //! Construct a 3-dimensional ellipsoid from its center, radii, and principal axes ()
-    Ellipsoid(const Eigen::Vector3d& center, const Eigen::Vector3d& radii, const Eigen::Matrix3d& axes);
+    Ellipsoid(
+        const Eigen::Vector3d& center, const Eigen::Vector3d& radii, const Eigen::Matrix3d& axes);
     //! Destructor
-    virtual ~Ellipsoid()=default;
+    virtual ~Ellipsoid() = default;
     //! Assignment
     Ellipsoid& operator=(const Ellipsoid& other);
     //! Return true if the ellipsoid intersects an aabb.
@@ -67,7 +67,9 @@ public:
     //! Return true if ellipsoid collides with segment from a to b
     bool collideSegment(const Eigen::Vector3d& a, const Eigen::Vector3d& b) const;
     //! Return true if ellipsoid collides with face o (o+a) (o+a+b) (o+n) with normal n
-    bool collideFace(const Eigen::Vector3d& o, const Eigen::Vector3d& a, const Eigen::Vector3d& b, const Eigen::Vector3d& n) const;
+    bool collideFace(
+        const Eigen::Vector3d& o, const Eigen::Vector3d& a, const Eigen::Vector3d& b,
+        const Eigen::Vector3d& n) const;
     //! Determine if given point is inside the ellipsoid
     bool isInside(const Eigen::Vector3d& point) const;
     //! Rotate the ellipsoid.

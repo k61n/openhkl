@@ -29,7 +29,8 @@ public:
 
     //! The mouse move event.
     //! If the item is selected when the event is triggered then the item will be moved on the scene
-    //! Otherwise, that means that the item is being drawn and then the move event corresponds to a resize
+    //! Otherwise, that means that the item is being drawn and then the move event corresponds to a
+    //! resize
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
     //! Handles a mouse wheel event
     void wheelEvent(QGraphicsSceneWheelEvent* event);
@@ -47,7 +48,7 @@ public:
     // Other methods
 
     //! Paint the slice
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
 
 protected:
     //! The data on which the cutter will act upon
@@ -57,7 +58,7 @@ protected:
     QPointF _from;
     QPointF _to;
     QGraphicsTextItem* _text;
+
 private:
     void updateAABB();
-
 };

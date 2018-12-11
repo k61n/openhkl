@@ -28,12 +28,12 @@
  *
  */
 
-#include "ConvexHull.h"
+#include "IntegrationRegion.h"
 #include "BrillouinZone.h"
+#include "ConvexHull.h"
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "Ellipsoid.h"
-#include "IntegrationRegion.h"
 #include "Peak3D.h"
 #include "UnitCell.h"
 
@@ -44,12 +44,9 @@ IntegrationRegion::IntegrationRegion()
     throw std::runtime_error("The default constructor of IntegrationRegion should no be called.");
 }
 
-IntegrationRegion::IntegrationRegion(sptrPeak3D peak, double peak_end, double bkg_begin, double bkg_end):
-    _shape(peak->shape()),
-    _peakEnd(peak_end),
-    _bkgBegin(bkg_begin),
-    _bkgEnd(bkg_end),
-    _data(peak)
+IntegrationRegion::IntegrationRegion(
+    sptrPeak3D peak, double peak_end, double bkg_begin, double bkg_end)
+    : _shape(peak->shape()), _peakEnd(peak_end), _bkgBegin(bkg_begin), _bkgEnd(bkg_end), _data(peak)
 {
     Ellipsoid bkg(_shape);
     bkg.scale(_bkgEnd);
@@ -59,13 +56,13 @@ IntegrationRegion::IntegrationRegion(sptrPeak3D peak, double peak_end, double bk
     Eigen::Vector3d dx = aabb.upper() - aabb.lower();
 
     _hull.addVertex(lo);
-    _hull.addVertex(lo+Eigen::Vector3d(0, 0, dx[2]));
-    _hull.addVertex(lo+Eigen::Vector3d(0, dx[1], 0));
-    _hull.addVertex(lo+Eigen::Vector3d(0, dx[1], dx[2]));
-    _hull.addVertex(lo+Eigen::Vector3d(dx[0], 0, 0));
-    _hull.addVertex(lo+Eigen::Vector3d(dx[0], 0, dx[2]));
-    _hull.addVertex(lo+Eigen::Vector3d(dx[0], dx[1], 0));
-    _hull.addVertex(lo+Eigen::Vector3d(dx[0], dx[1], dx[2]));
+    _hull.addVertex(lo + Eigen::Vector3d(0, 0, dx[2]));
+    _hull.addVertex(lo + Eigen::Vector3d(0, dx[1], 0));
+    _hull.addVertex(lo + Eigen::Vector3d(0, dx[1], dx[2]));
+    _hull.addVertex(lo + Eigen::Vector3d(dx[0], 0, 0));
+    _hull.addVertex(lo + Eigen::Vector3d(dx[0], 0, dx[2]));
+    _hull.addVertex(lo + Eigen::Vector3d(dx[0], dx[1], 0));
+    _hull.addVertex(lo + Eigen::Vector3d(dx[0], dx[1], dx[2]));
     _hull.updateHull();
 }
 
@@ -93,8 +90,8 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
 
     long xmin = std::lround(std::floor(lower[0]));
     long ymin = std::lround(std::floor(lower[1]));
-    long xmax = std::lround(std::ceil(upper[0])+1);
-    long ymax = std::lround(std::ceil(upper[1])+1);
+    long xmax = std::lround(std::ceil(upper[0]) + 1);
+    long ymax = std::lround(std::ceil(upper[1]) + 1);
 
     xmin = std::max(0l, xmin);
     ymin = std::max(0l, ymin);
@@ -103,8 +100,8 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
     ymax = std::min(ymax, long(mask.rows()));
 
     for (auto x = xmin; x < xmax; ++x) {
-        for (auto y = ymin; y < ymax; ++y) {    
-            EventType val = EventType(mask(y,x));
+        for (auto y = ymin; y < ymax; ++y) {
+            EventType val = EventType(mask(y, x));
             // once forbidden, always forbidden...
             if (val == EventType::FORBIDDEN) {
                 continue;
@@ -112,23 +109,18 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
 
             DetectorEvent ev(x, y, z);
             auto ev_type = classify(ev);
-            
+
             switch (ev_type) {
-            case EventType::FORBIDDEN:
-                val = EventType::FORBIDDEN;
-                break;
-            case EventType::PEAK:
-                val = EventType::PEAK;
-                break;
+            case EventType::FORBIDDEN: val = EventType::FORBIDDEN; break;
+            case EventType::PEAK: val = EventType::PEAK; break;
             case EventType::BACKGROUND:
                 if (val == EventType::EXCLUDED) {
                     val = EventType::BACKGROUND;
                 }
                 break;
-            default:
-                break;           
+            default: break;
             }
-            mask(y,x) = int(val);
+            mask(y, x) = int(val);
         }
     }
 }
@@ -137,21 +129,22 @@ IntegrationRegion::EventType IntegrationRegion::classify(const DetectorEvent& ev
 {
     Eigen::Vector3d p(ev._px, ev._py, ev._frame);
     p -= _shape.center();
-    const double rr = p.dot(_shape.metric()*p);
+    const double rr = p.dot(_shape.metric() * p);
 
-    if (rr <= _peakEnd*_peakEnd) {
+    if (rr <= _peakEnd * _peakEnd) {
         return EventType::PEAK;
     }
-    if (rr > _bkgEnd*_bkgEnd) {
+    if (rr > _bkgEnd * _bkgEnd) {
         return EventType::EXCLUDED;
     }
-    if (rr >= _bkgBegin*_bkgBegin) {
+    if (rr >= _bkgBegin * _bkgBegin) {
         return EventType::BACKGROUND;
     }
     return EventType::FORBIDDEN;
 }
 
-bool IntegrationRegion::advanceFrame(const Eigen::MatrixXd& image, const Eigen::MatrixXi& mask, double frame)
+bool IntegrationRegion::advanceFrame(
+    const Eigen::MatrixXd& image, const Eigen::MatrixXi& mask, double frame)
 {
     const auto aabb = _hull.aabb();
     auto lower = aabb.lower();
@@ -173,7 +166,7 @@ bool IntegrationRegion::advanceFrame(const Eigen::MatrixXd& image, const Eigen::
 
     for (auto x = xmin; x < xmax; ++x) {
         for (auto y = ymin; y < ymax; ++y) {
-            EventType mask_type = EventType(mask(y,x));
+            EventType mask_type = EventType(mask(y, x));
             if (mask_type == EventType::FORBIDDEN) {
                 continue;
             }
@@ -190,9 +183,9 @@ bool IntegrationRegion::advanceFrame(const Eigen::MatrixXd& image, const Eigen::
             }
 
             // check if point is in Brillouin zone (or AABB if no UC available)
-            //if (_hull.contains(p)) {
+            // if (_hull.contains(p)) {
             //    _data.addEvent(ev, image(y,x));
-            //}          
+            //}
         }
     }
     return false;

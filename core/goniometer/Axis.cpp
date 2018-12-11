@@ -11,46 +11,32 @@ namespace nsx {
 Axis* Axis::create(const YAML::Node& node)
 {
     // Create an instance of the source factory
-    AxisFactory* axisFactory=AxisFactory::Instance();
+    AxisFactory* axisFactory = AxisFactory::Instance();
 
     // Get the axis type
     std::string axisType = node["type"].as<std::string>();
 
     // Fetch the axis from the factory
-    Axis* axis = axisFactory->create(axisType,node);
+    Axis* axis = axisFactory->create(axisType, node);
 
     return axis;
 }
 
-Axis::Axis()
-: _name("axis"),
-  _axis(Eigen::Vector3d(0.0,0.0,1.0)),
-  _physical(true),
-  _id(0)
-{
-}
+Axis::Axis() : _name("axis"), _axis(Eigen::Vector3d(0.0, 0.0, 1.0)), _physical(true), _id(0) {}
 
 Axis::Axis(const std::string& name)
-: _name(name),
-  _axis(Eigen::Vector3d(0.0,0.0,1.0)),
-  _physical(true),
-  _id(0)
+    : _name(name), _axis(Eigen::Vector3d(0.0, 0.0, 1.0)), _physical(true), _id(0)
 {
 }
 
 Axis::Axis(const std::string& name, const Eigen::Vector3d& axis)
-: _name(name),
-  _physical(true),
-  _id(0)
+    : _name(name), _physical(true), _id(0)
 {
     setAxis(axis);
 }
 
 Axis::Axis(const Axis& other)
-: _name(other._name),
-  _axis(other._axis),
-  _physical(other._physical),
-  _id(other._id)
+    : _name(other._name), _axis(other._axis), _physical(other._physical), _id(other._id)
 {
 }
 
@@ -79,9 +65,7 @@ Axis& Axis::operator=(const Axis& other)
     return *this;
 }
 
-Axis::~Axis()
-{
-}
+Axis::~Axis() {}
 
 
 void Axis::setName(const std::string& name)
@@ -97,8 +81,8 @@ const std::string& Axis::name() const
 void Axis::setAxis(const Eigen::Vector3d& axis)
 {
     if (axis.isZero())
-        throw std::runtime_error("Invalid null axis for axis "+_name);
-    _axis=axis;
+        throw std::runtime_error("Invalid null axis for axis " + _name);
+    _axis = axis;
     // Normalize the axis
     _axis.normalize();
 }
@@ -117,10 +101,10 @@ unsigned int Axis::id() const
     return _id;
 }
 
-Eigen::Vector3d Axis::transform(const Eigen::Vector3d& v,double value)
+Eigen::Vector3d Axis::transform(const Eigen::Vector3d& v, double value)
 {
-    Eigen::Transform<double,3,Eigen::Affine> hom = affineMatrix(value);
-    return (hom*v.homogeneous());
+    Eigen::Transform<double, 3, Eigen::Affine> hom = affineMatrix(value);
+    return (hom * v.homogeneous());
 }
 
 void Axis::setPhysical(bool physical)
@@ -139,4 +123,3 @@ std::ostream& operator<<(std::ostream& os, const Axis& axis)
 }
 
 } // end namespace nsx
-

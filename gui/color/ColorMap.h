@@ -42,7 +42,6 @@
 
 class ColorMap {
 public:
-
     ColorMap();
 
     ColorMap(const std::string& name);
@@ -53,7 +52,8 @@ public:
 
     QRgb logColor(double v, double vmax);
 
-    QImage matToImage(const Eigen::ArrayXXd& source, const QRect& rect, double colorMax, bool log=false);
+    QImage
+    matToImage(const Eigen::ArrayXXd& source, const QRect& rect, double colorMax, bool log = false);
 
     static ColorMap colorMap(const std::string& name);
     static std::vector<std::string> colorMaps();

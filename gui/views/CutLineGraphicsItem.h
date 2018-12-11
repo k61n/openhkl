@@ -12,10 +12,8 @@ class QGraphicsSceneWheelEvent;
 class QWidget;
 class SXPlot;
 
-class CutLineGraphicsItem : public CutterGraphicsItem
-{
+class CutLineGraphicsItem : public CutterGraphicsItem {
 public:
-
     explicit CutLineGraphicsItem(nsx::sptrDataSet data);
 
     ~CutLineGraphicsItem();
@@ -24,7 +22,7 @@ public:
 
     void wheelEvent(QGraphicsSceneWheelEvent* event);
 
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
 
     int getNPoints() const;
 
@@ -36,5 +34,4 @@ public:
 
 private:
     int _nPoints;
-
 };

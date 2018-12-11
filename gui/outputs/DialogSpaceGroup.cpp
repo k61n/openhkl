@@ -18,12 +18,8 @@
 #include "DialogSpaceGroup.h"
 #include "ui_DialogSpaceGroup.h"
 
-DialogSpaceGroup::DialogSpaceGroup(const nsx::PeakList& peaks, QWidget *parent):
-    QDialog(parent),
-    ui(new Ui::DialogSpaceGroup),
-    _groups(),
-    _cell(nullptr),
-    _selectedGroup("")
+DialogSpaceGroup::DialogSpaceGroup(const nsx::PeakList& peaks, QWidget* parent)
+    : QDialog(parent), ui(new Ui::DialogSpaceGroup), _groups(), _cell(nullptr), _selectedGroup("")
 {
     ui->setupUi(this);
 
@@ -33,7 +29,7 @@ DialogSpaceGroup::DialogSpaceGroup(const nsx::PeakList& peaks, QWidget *parent):
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     nsx::PeakFilter peak_filter;
-    _peaks = peak_filter.enabled(peaks,true);
+    _peaks = peak_filter.enabled(peaks, true);
     for (auto peak : _peaks) {
         auto current_peak_cell = peak->unitCell();
         if (!current_peak_cell) {
@@ -55,7 +51,7 @@ DialogSpaceGroup::DialogSpaceGroup(const nsx::PeakList& peaks, QWidget *parent):
 
     _peaks = peak_filter.indexed(_peaks, *_cell, _cell->indexingTolerance());
 
-    if ( _peaks.size()  == 0) {
+    if (_peaks.size() == 0) {
         throw std::runtime_error("Need at least one peak to find space group!");
     }
 
@@ -92,22 +88,24 @@ void DialogSpaceGroup::evaluateSpaceGroups()
 
     _groups.clear();
 
-    nsx::info() << "Evaluating " << symbols.size() << " space groups based on " << hkls.size() << " peaks";
+    nsx::info() << "Evaluating " << symbols.size() << " space groups based on " << hkls.size()
+                << " peaks";
 
     auto compatible_space_groups = _cell->compatibleSpaceGroups();
 
-    for (auto& symbol: compatible_space_groups) {
+    for (auto& symbol : compatible_space_groups) {
 
         nsx::SpaceGroup group = nsx::SpaceGroup(symbol);
 
-        std::pair<std::string, double> entry = std::make_pair(symbol,100.0*(1-group.fractionExtinct(hkls)));
+        std::pair<std::string, double> entry =
+            std::make_pair(symbol, 100.0 * (1 - group.fractionExtinct(hkls)));
 
         // group is compatible with observed reflections, so add it to list
         _groups.push_back(entry);
     }
 
-    auto compare_fn = [](const std::pair<std::string, double>& a, const std::pair<std::string, double>& b) -> bool
-    {
+    auto compare_fn = [](const std::pair<std::string, double>& a,
+                         const std::pair<std::string, double>& b) -> bool {
         double quality_a = a.second;
         double quality_b = b.second;
 
@@ -131,15 +129,15 @@ void DialogSpaceGroup::buildTable()
 {
     QStandardItemModel* model = new QStandardItemModel(_groups.size(), 2, this);
 
-    model->setHorizontalHeaderItem(0,new QStandardItem("Symbol"));
-    model->setHorizontalHeaderItem(1,new QStandardItem("Group ID"));
-    model->setHorizontalHeaderItem(2,new QStandardItem("Bravais Type"));
-    model->setHorizontalHeaderItem(3,new QStandardItem("Agreement"));
+    model->setHorizontalHeaderItem(0, new QStandardItem("Symbol"));
+    model->setHorizontalHeaderItem(1, new QStandardItem("Group ID"));
+    model->setHorizontalHeaderItem(2, new QStandardItem("Bravais Type"));
+    model->setHorizontalHeaderItem(3, new QStandardItem("Agreement"));
 
     unsigned int row = 0;
 
     // Display solutions
-    for (auto&& item: _groups) {
+    for (auto&& item : _groups) {
 
         const std::string& symbol = std::get<0>(item);
         double agreement = std::get<1>(item);
@@ -150,18 +148,18 @@ void DialogSpaceGroup::buildTable()
         QStandardItem* col2 = new QStandardItem(QString::fromStdString(grp.bravaisTypeSymbol()));
         QStandardItem* col3 = new QStandardItem(QString::number(agreement));
 
-        model->setItem(row,0,col0);
-        model->setItem(row,1,col1);
-        model->setItem(row,2,col2);
-        model->setItem(row,3,col3);
+        model->setItem(row, 0, col0);
+        model->setItem(row, 1, col1);
+        model->setItem(row, 2, col2);
+        model->setItem(row, 3, col3);
 
         ++row;
     }
 
-   ui->tableView->setModel(model);
+    ui->tableView->setModel(model);
 }
 
-void DialogSpaceGroup::on_tableView_doubleClicked(const QModelIndex &index)
+void DialogSpaceGroup::on_tableView_doubleClicked(const QModelIndex& index)
 {
     _selectedGroup = std::get<0>(_groups[index.row()]);
     QMessageBox* box = new QMessageBox(this);

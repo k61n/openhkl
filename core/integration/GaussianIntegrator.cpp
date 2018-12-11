@@ -28,10 +28,10 @@
  *
  */
 
+#include "GaussianIntegrator.h"
 #include "DataSet.h"
 #include "Ellipsoid.h"
 #include "FitParameters.h"
-#include "GaussianIntegrator.h"
 #include "Intensity.h"
 #include "Logger.h"
 #include "Minimizer.h"
@@ -42,9 +42,9 @@
 
 namespace nsx {
 
-GaussianIntegrator::GaussianIntegrator(bool fit_center, bool fit_cov): IPeakIntegrator(), _fitCenter(fit_center), _fitCov(fit_cov)
+GaussianIntegrator::GaussianIntegrator(bool fit_center, bool fit_cov)
+    : IPeakIntegrator(), _fitCenter(fit_center), _fitCov(fit_cov)
 {
-
 }
 
 static Eigen::Matrix3d from_cholesky(const Eigen::VectorXd a)
@@ -52,17 +52,19 @@ static Eigen::Matrix3d from_cholesky(const Eigen::VectorXd a)
     // Reconstruct Cholesky L factor
     Eigen::Matrix3d L;
     L.setZero();
-    L(0,0) = a(0); L(1,1) = a(1); L(2,2) = a(2);
-    L(1,0) = a(3); L(2,0) = a(4); L(2,1) = a(5);
+    L(0, 0) = a(0);
+    L(1, 1) = a(1);
+    L(2, 2) = a(2);
+    L(1, 0) = a(3);
+    L(2, 0) = a(4);
+    L(2, 1) = a(5);
     // build A using Cholesky decomposition
-    return L*L.transpose();
+    return L * L.transpose();
 }
 
 
 static void residuals(
-    Eigen::VectorXd& res,  
-    double B, double I, 
-    const Eigen::Vector3d x0, const Eigen::VectorXd& a, 
+    Eigen::VectorXd& res, double B, double I, const Eigen::Vector3d x0, const Eigen::VectorXd& a,
     const std::vector<Eigen::Vector3d>& x, const std::vector<double>& M, double* pearson)
 {
     const size_t n = x.size();
@@ -72,21 +74,21 @@ static void residuals(
     const Eigen::Matrix3d A = from_cholesky(a);
     const double factor = std::sqrt(A.determinant() / 8 / M_PI / M_PI / M_PI);
 
-    double u = 0, v = 0, uu = 0, vv = 0, uv = 0;    
+    double u = 0, v = 0, uu = 0, vv = 0, uv = 0;
 
     for (size_t i = 0; i < n; ++i) {
         Eigen::Vector3d dx = x[i] - x0;
-        const double xAx = dx.dot(A*dx);
-        const double M_pred = B + I*std::exp(-0.5*xAx);
+        const double xAx = dx.dot(A * dx);
+        const double M_pred = B + I * std::exp(-0.5 * xAx);
         const double M_obs = M[i];
         res[i] = M_pred - M_obs;
 
         if (pearson) {
             u += M_pred;
-            uu += M_pred*M_pred;
+            uu += M_pred * M_pred;
             v += M_obs;
-            vv += M_obs*M_obs;
-            uv += M_pred*M_obs;
+            vv += M_obs * M_obs;
+            uv += M_pred * M_obs;
         }
     }
 
@@ -94,10 +96,10 @@ static void residuals(
     if (pearson) {
         u /= n;
         v /= n;
-        uu -= n*u*u;
-        vv -= n*v*v;
-        uv -= n*u*v;
-        *pearson = uv / std::sqrt(uu*vv);
+        uu -= n * u * u;
+        vv -= n * v * v;
+        uv -= n * u * v;
+        *pearson = uv / std::sqrt(uu * vv);
     }
 }
 
@@ -108,7 +110,7 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     }
 
     const size_t N = region.data().events().size();
-    
+
     std::vector<double> counts(N);
     std::vector<Eigen::Vector3d> x(N);
     Eigen::VectorXd wts(N);
@@ -117,7 +119,7 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
         counts[i] = region.data().counts()[i];
         const auto& ev = region.data().events()[i];
         x[i] = {ev._px, ev._py, ev._frame};
-        wts[i] = counts[i] <= 0.0 ? 0.0 : 1.0/counts[i];
+        wts[i] = counts[i] <= 0.0 ? 0.0 : 1.0 / counts[i];
     }
 
     const auto& shape = peak->shape();
@@ -126,9 +128,13 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     // We only fit independent components of the Cholesky factor
     Eigen::Matrix3d L = Eigen::LLT<Eigen::Matrix3d>(shape.metric()).matrixL();
     Eigen::VectorXd a(6);
-    a(0) = L(0,0); a(1) = L(1,1); a(2) = L(2,2);
-    a(3) = L(1,0); a(4) = L(2,0); a(5) = L(2,1);
-   
+    a(0) = L(0, 0);
+    a(1) = L(1, 1);
+    a(2) = L(2, 2);
+    a(3) = L(1, 0);
+    a(4) = L(2, 0);
+    a(5) = L(2, 1);
+
     Minimizer min;
     FitParameters params;
 
@@ -185,14 +191,14 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
 
     // consistency check: covariance matrix should be positive definite
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(from_cholesky(a));
-    
+
     if (solver.eigenvalues().minCoeff() <= 0) {
         return false;
     }
 
     const auto& covar = min.covariance();
-    _meanBackground = {B, covar(0,0)};
-    _integratedIntensity = {I, covar(1,1)};
+    _meanBackground = {B, covar(0, 0)};
+    _integratedIntensity = {I, covar(1, 1)};
 
     // get pearson coefficient of fit
     double pearson;
@@ -221,7 +227,7 @@ std::vector<double> GaussianIntegrator::profile(sptrPeak3D peak, const Integrati
         const DetectorEvent& ev = events[i];
         Eigen::Vector3d dx(ev._px, ev._py, ev._frame);
         dx -= x0;
-        result[i] = std::exp(-0.5 * dx.dot(A*dx)) * factor;
+        result[i] = std::exp(-0.5 * dx.dot(A * dx)) * factor;
     }
     return result;
 }

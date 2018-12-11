@@ -24,8 +24,7 @@ FrameInstrumentStates* FrameInstrumentStates::Instance()
 }
 
 FrameInstrumentStates::FrameInstrumentStates(const nsx::DataList& data)
-: NSXQFrame(),
-  _ui(new Ui::FrameInstrumentStates)
+    : NSXQFrame(), _ui(new Ui::FrameInstrumentStates)
 {
     _ui->setupUi(this);
 
@@ -33,15 +32,17 @@ FrameInstrumentStates::FrameInstrumentStates(const nsx::DataList& data)
         QFileInfo fileinfo(QString::fromStdString(d->filename()));
 
         QListWidgetItem* item = new QListWidgetItem(fileinfo.baseName());
-        item->setData(Qt::UserRole,QVariant::fromValue(d));
+        item->setData(Qt::UserRole, QVariant::fromValue(d));
         _ui->data->addItem(item);
     }
 
-    connect(_ui->data,SIGNAL(currentRowChanged(int)),this,SLOT(slotSelectedDataChanged(int)));
-    connect(_ui->frameSlider,SIGNAL(valueChanged(int)),this,SLOT(slotSelectedFrameChanged(int)));
-    connect(_ui->frameIndex,SIGNAL(valueChanged(int)),this,SLOT(slotSelectedFrameChanged(int)));
+    connect(_ui->data, SIGNAL(currentRowChanged(int)), this, SLOT(slotSelectedDataChanged(int)));
+    connect(_ui->frameSlider, SIGNAL(valueChanged(int)), this, SLOT(slotSelectedFrameChanged(int)));
+    connect(_ui->frameIndex, SIGNAL(valueChanged(int)), this, SLOT(slotSelectedFrameChanged(int)));
 
-    connect(_ui->actions,SIGNAL(clicked(QAbstractButton*)),this,SLOT(slotActionClicked(QAbstractButton*)));
+    connect(
+        _ui->actions, SIGNAL(clicked(QAbstractButton*)), this,
+        SLOT(slotActionClicked(QAbstractButton*)));
 
     _ui->data->setCurrentRow(0);
 }
@@ -55,12 +56,11 @@ FrameInstrumentStates::~FrameInstrumentStates()
     }
 }
 
-void FrameInstrumentStates::slotActionClicked(QAbstractButton *button)
+void FrameInstrumentStates::slotActionClicked(QAbstractButton* button)
 {
     auto button_role = _ui->actions->standardButton(button);
 
-    switch(button_role)
-    {
+    switch (button_role) {
     case QDialogButtonBox::StandardButton::Ok: {
         close();
         break;
@@ -80,11 +80,11 @@ void FrameInstrumentStates::slotSelectedDataChanged(int selected_data)
     auto data = current_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
 
     _ui->frameIndex->setMinimum(0);
-    _ui->frameIndex->setMaximum(data->nFrames()-1);
+    _ui->frameIndex->setMaximum(data->nFrames() - 1);
     _ui->frameIndex->setValue(0);
 
     _ui->frameSlider->setMinimum(0);
-    _ui->frameSlider->setMaximum(data->nFrames()-1);
+    _ui->frameSlider->setMaximum(data->nFrames() - 1);
     _ui->frameSlider->setValue(0);
 
     slotSelectedFrameChanged(0);
@@ -105,7 +105,8 @@ void FrameInstrumentStates::slotSelectedFrameChanged(int selected_frame)
 
     QFont font;
     font.setBold(true);
-    _ui->refined->setStyleSheet(selected_state.refined ? "QLabel {color : blue;}" : "QLabel {color : red;}");
+    _ui->refined->setStyleSheet(
+        selected_state.refined ? "QLabel {color : blue;}" : "QLabel {color : red;}");
     _ui->refined->setFont(font);
     _ui->refined->setText(selected_state.refined ? "Refined" : "Not refined");
 
@@ -117,39 +118,40 @@ void FrameInstrumentStates::slotSelectedFrameChanged(int selected_frame)
 
     // Set the sample orientation values
     auto&& sample_orientation = selected_state.sampleOrientation.normalized().toRotationMatrix();
-    _ui->sample_orientation_00->setValue(sample_orientation(0,0));
-    _ui->sample_orientation_01->setValue(sample_orientation(0,1));
-    _ui->sample_orientation_02->setValue(sample_orientation(0,2));
-    _ui->sample_orientation_10->setValue(sample_orientation(1,0));
-    _ui->sample_orientation_11->setValue(sample_orientation(1,1));
-    _ui->sample_orientation_12->setValue(sample_orientation(1,2));
-    _ui->sample_orientation_20->setValue(sample_orientation(2,0));
-    _ui->sample_orientation_21->setValue(sample_orientation(2,1));
-    _ui->sample_orientation_22->setValue(sample_orientation(2,2));
+    _ui->sample_orientation_00->setValue(sample_orientation(0, 0));
+    _ui->sample_orientation_01->setValue(sample_orientation(0, 1));
+    _ui->sample_orientation_02->setValue(sample_orientation(0, 2));
+    _ui->sample_orientation_10->setValue(sample_orientation(1, 0));
+    _ui->sample_orientation_11->setValue(sample_orientation(1, 1));
+    _ui->sample_orientation_12->setValue(sample_orientation(1, 2));
+    _ui->sample_orientation_20->setValue(sample_orientation(2, 0));
+    _ui->sample_orientation_21->setValue(sample_orientation(2, 1));
+    _ui->sample_orientation_22->setValue(sample_orientation(2, 2));
 
     // Set the sample orientation offset values
-    auto&& sample_orientation_offset = selected_state.sampleOrientationOffset.normalized().toRotationMatrix();
-    _ui->sample_orientation_offset_00->setValue(sample_orientation_offset(0,0));
-    _ui->sample_orientation_offset_01->setValue(sample_orientation_offset(0,1));
-    _ui->sample_orientation_offset_02->setValue(sample_orientation_offset(0,2));
-    _ui->sample_orientation_offset_10->setValue(sample_orientation_offset(1,0));
-    _ui->sample_orientation_offset_11->setValue(sample_orientation_offset(1,1));
-    _ui->sample_orientation_offset_12->setValue(sample_orientation_offset(1,2));
-    _ui->sample_orientation_offset_20->setValue(sample_orientation_offset(2,0));
-    _ui->sample_orientation_offset_21->setValue(sample_orientation_offset(2,1));
-    _ui->sample_orientation_offset_22->setValue(sample_orientation_offset(2,2));
+    auto&& sample_orientation_offset =
+        selected_state.sampleOrientationOffset.normalized().toRotationMatrix();
+    _ui->sample_orientation_offset_00->setValue(sample_orientation_offset(0, 0));
+    _ui->sample_orientation_offset_01->setValue(sample_orientation_offset(0, 1));
+    _ui->sample_orientation_offset_02->setValue(sample_orientation_offset(0, 2));
+    _ui->sample_orientation_offset_10->setValue(sample_orientation_offset(1, 0));
+    _ui->sample_orientation_offset_11->setValue(sample_orientation_offset(1, 1));
+    _ui->sample_orientation_offset_12->setValue(sample_orientation_offset(1, 2));
+    _ui->sample_orientation_offset_20->setValue(sample_orientation_offset(2, 0));
+    _ui->sample_orientation_offset_21->setValue(sample_orientation_offset(2, 1));
+    _ui->sample_orientation_offset_22->setValue(sample_orientation_offset(2, 2));
 
     // Set the detector orientation values
     const auto& detector_orientation = selected_state.detectorOrientation;
-    _ui->detector_orientation_00->setValue(detector_orientation(0,0));
-    _ui->detector_orientation_01->setValue(detector_orientation(0,1));
-    _ui->detector_orientation_02->setValue(detector_orientation(0,2));
-    _ui->detector_orientation_10->setValue(detector_orientation(1,0));
-    _ui->detector_orientation_11->setValue(detector_orientation(1,1));
-    _ui->detector_orientation_12->setValue(detector_orientation(1,2));
-    _ui->detector_orientation_20->setValue(detector_orientation(2,0));
-    _ui->detector_orientation_21->setValue(detector_orientation(2,1));
-    _ui->detector_orientation_22->setValue(detector_orientation(2,2));
+    _ui->detector_orientation_00->setValue(detector_orientation(0, 0));
+    _ui->detector_orientation_01->setValue(detector_orientation(0, 1));
+    _ui->detector_orientation_02->setValue(detector_orientation(0, 2));
+    _ui->detector_orientation_10->setValue(detector_orientation(1, 0));
+    _ui->detector_orientation_11->setValue(detector_orientation(1, 1));
+    _ui->detector_orientation_12->setValue(detector_orientation(1, 2));
+    _ui->detector_orientation_20->setValue(detector_orientation(2, 0));
+    _ui->detector_orientation_21->setValue(detector_orientation(2, 1));
+    _ui->detector_orientation_22->setValue(detector_orientation(2, 2));
 
     // Set the normalized incoming beam
     const auto& ni = selected_state.ni;

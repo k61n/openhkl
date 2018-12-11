@@ -2,18 +2,17 @@
 #include "PeaksUtils.h"
 #include "ui_DialogIntegrate.h"
 
-DialogIntegrate::DialogIntegrate(const nsx::PeakList& peaks, QWidget *parent):
-    QDialog(parent),
-    _ui(new Ui::DialogIntegrate)
+DialogIntegrate::DialogIntegrate(const nsx::PeakList& peaks, QWidget* parent)
+    : QDialog(parent), _ui(new Ui::DialogIntegrate)
 {
     _ui->setupUi(this);
 
     auto&& drange = dRange(peaks);
     _ui->dMin->setValue(drange.first);
     _ui->dMax->setValue(drange.second);
-    
-    connect(_ui->okButton, &QPushButton::clicked, [=] {this->done(QDialog::Accepted);});
-    connect(_ui->cancelButton, &QPushButton::clicked, [=] {this->done(QDialog::Rejected);});
+
+    connect(_ui->okButton, &QPushButton::clicked, [=] { this->done(QDialog::Accepted); });
+    connect(_ui->cancelButton, &QPushButton::clicked, [=] { this->done(QDialog::Rejected); });
 
     _ui->method->addItem("background subtraction");
     _ui->method->addItem("3d gaussian fit");
@@ -31,11 +30,11 @@ std::string DialogIntegrate::integrator() const
 
 void DialogIntegrate::setIntegrators(const std::vector<std::string>& names)
 {
-    while(_ui->method->count()) {
+    while (_ui->method->count()) {
         _ui->method->removeItem(0);
     }
 
-    for (const auto& name: names) {
+    for (const auto& name : names) {
         _ui->method->addItem(name.c_str());
     }
 }

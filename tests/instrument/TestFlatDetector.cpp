@@ -11,14 +11,14 @@
 
 NSX_INIT_TEST
 
-const double tolerance=1e-3;
+const double tolerance = 1e-3;
 
 int main()
 {
     nsx::FlatDetector d("D10-detector");
-    d.setDistance(380*nsx::mm);
-    d.setWidth(80*nsx::mm);
-    d.setHeight(80*nsx::mm);
+    d.setDistance(380 * nsx::mm);
+    d.setWidth(80 * nsx::mm);
+    d.setHeight(80 * nsx::mm);
     d.setNCols(32);
     d.setNRows(32);
 
@@ -26,9 +26,9 @@ int main()
     nsx::DirectVector pixel_position = d.pixelPosition(15.5, 15.5);
 
     Eigen::Vector3d center = pixel_position.vector();
-    NSX_CHECK_SMALL(center[0],tolerance);
-    NSX_CHECK_CLOSE(center[1],0.380,tolerance);
-    NSX_CHECK_SMALL(center[2],tolerance);
+    NSX_CHECK_SMALL(center[0], tolerance);
+    NSX_CHECK_CLOSE(center[1], 0.380, tolerance);
+    NSX_CHECK_SMALL(center[2], tolerance);
 
     // Create a fake instrument state
     nsx::InstrumentState state1(nullptr);
@@ -46,46 +46,45 @@ int main()
     // Rotate the detector by 90 deg clockwise
     nsx::InstrumentState state2(nullptr);
 
-    state2.detectorOrientation <<  0, 1, 0,
-                                  -1, 0, 0,
-                                   0, 0, 1;
+    state2.detectorOrientation << 0, 1, 0, -1, 0, 0, 0, 0, 1;
 
     gamma = state2.gamma(pixel_position);
-    NSX_CHECK_CLOSE(gamma, 90*nsx::deg, tolerance);
+    NSX_CHECK_CLOSE(gamma, 90 * nsx::deg, tolerance);
 
     nu = state2.nu(pixel_position);
     NSX_CHECK_SMALL(nu, tolerance);
 
     th2 = state2.twoTheta(pixel_position);
-    NSX_CHECK_CLOSE(th2, 90*nsx::deg, tolerance);
+    NSX_CHECK_CLOSE(th2, 90 * nsx::deg, tolerance);
 
     nsx::ReciprocalVector kf = state2.kfLab(pixel_position);
 
     // Scattering in the center of the detector with wavelength 2.0
-    NSX_CHECK_CLOSE(kf[0],1,0,tolerance);
-    NSX_CHECK_SMALL(kf[1],tolerance);
-    NSX_CHECK_SMALL(kf[2],tolerance);
+    NSX_CHECK_CLOSE(kf[0], 1, 0, tolerance);
+    NSX_CHECK_SMALL(kf[1], tolerance);
+    NSX_CHECK_SMALL(kf[2], tolerance);
 
     nsx::ReciprocalVector q = state2.sampleQ(pixel_position);
 
     // Should be 45 deg in the x,-y plane
-    NSX_CHECK_CLOSE(q[0], 1.0,tolerance);
-    NSX_CHECK_CLOSE(q[1],-1.0,tolerance);
+    NSX_CHECK_CLOSE(q[0], 1.0, tolerance);
+    NSX_CHECK_CLOSE(q[1], -1.0, tolerance);
     NSX_CHECK_SMALL(q[2], tolerance);
 
-    for (int i = d.minRow()+1; i < d.maxRow()-1; i++) {
+    for (int i = d.minRow() + 1; i < d.maxRow() - 1; i++) {
 
-        for (int j = d.minCol()+1; j < d.maxCol()-1; j++) {
+        for (int j = d.minCol() + 1; j < d.maxCol() - 1; j++) {
 
             NSX_CHECK_EQ(d.hasPixel(j, i), true);
 
             auto position = d.pixelPosition(j, i);
 
-            Eigen::Vector3d from(-1,-1,-1);
+            Eigen::Vector3d from(-1, -1, -1);
             from *= nsx::cm;
             Eigen::Vector3d kf = position.vector() - from;
 
-            nsx::DetectorEvent event = d.constructEvent(nsx::DirectVector(from), nsx::ReciprocalVector(kf.transpose()));
+            nsx::DetectorEvent event =
+                d.constructEvent(nsx::DirectVector(from), nsx::ReciprocalVector(kf.transpose()));
 
             // detector has event
             NSX_CHECK_EQ(event._tof > 0.0, true);

@@ -5,21 +5,22 @@
 #include <QTextEdit>
 
 #include <core/AggregateStreamWrapper.h>
-#include <core/Logger.h>
 #include <core/LogFileStreamWrapper.h>
+#include <core/Logger.h>
 
 #include "NoteBook.h"
 #include "QtStreamWrapper.h"
 
-QtStreamWrapper::QtStreamWrapper(NoteBook* notebook, std::function<std::string()> prefix, std::function<std::string()> suffix)
-: nsx::IStreamWrapper(prefix, suffix)
+QtStreamWrapper::QtStreamWrapper(
+    NoteBook* notebook, std::function<std::string()> prefix, std::function<std::string()> suffix)
+    : nsx::IStreamWrapper(prefix, suffix)
 {
-    connect(this,SIGNAL(sendLogMessage(const std::string&)),notebook,SLOT(printLogMessage(const std::string&)));
+    connect(
+        this, SIGNAL(sendLogMessage(const std::string&)), notebook,
+        SLOT(printLogMessage(const std::string&)));
 }
 
-QtStreamWrapper::~QtStreamWrapper()
-{
-}
+QtStreamWrapper::~QtStreamWrapper() {}
 
 void QtStreamWrapper::print(const std::string& message)
 {

@@ -4,13 +4,17 @@
 
 namespace nsx {
 
-Profile1D::Profile1D(const Intensity& mean_background, double sigma_max, size_t num):
-    _counts(num, 0.0), _npoints(num, 0), _endpoints(num+1), _sigmaMax(sigma_max), _meanBkg(mean_background)
+Profile1D::Profile1D(const Intensity& mean_background, double sigma_max, size_t num)
+    : _counts(num, 0.0)
+    , _npoints(num, 0)
+    , _endpoints(num + 1)
+    , _sigmaMax(sigma_max)
+    , _meanBkg(mean_background)
 {
-    const double dr3 = sigma_max*sigma_max*sigma_max / num;
+    const double dr3 = sigma_max * sigma_max * sigma_max / num;
 
-    for (size_t i = 0; i < num+1; ++i) {
-        _endpoints[i] = std::pow(i*dr3, 2.0/3.0);
+    for (size_t i = 0; i < num + 1; ++i) {
+        _endpoints[i] = std::pow(i * dr3, 2.0 / 3.0);
     }
 }
 
@@ -22,7 +26,7 @@ void Profile1D::addPoint(double r2, double M)
     }
 
     for (size_t i = 0; i < _counts.size(); ++i) {
-        if (r2 <= _endpoints[i+1]) {
+        if (r2 <= _endpoints[i + 1]) {
             _counts[i] += M;
             _npoints[i] += 1;
         }
@@ -47,15 +51,15 @@ std::vector<Intensity> Profile1D::profile() const
 
     // maximum intensity
     const size_t nmax = _npoints.back();
-    const double I_max = _counts.back() - nmax*mean_bkg;
-    const double var_max = _counts.back() + nmax*nmax*var_bkg;
-    const double I3 = I_max*I_max*I_max;
-    const double I4 = I_max*I_max*I_max*I_max;
+    const double I_max = _counts.back() - nmax * mean_bkg;
+    const double var_max = _counts.back() + nmax * nmax * var_bkg;
+    const double I3 = I_max * I_max * I_max;
+    const double I4 = I_max * I_max * I_max * I_max;
 
     for (size_t i = 0; i < _counts.size(); ++i) {
         const int n = _npoints[i];
-        const double I = _counts[i] - n*mean_bkg;
-        const double I_var = _counts[i] + n*n*var_bkg;
+        const double I = _counts[i] - n * mean_bkg;
+        const double I_var = _counts[i] + n * n * var_bkg;
 
         // profile value
         const double p = I / I_max;
@@ -67,11 +71,11 @@ std::vector<Intensity> Profile1D::profile() const
         double p_var = I_var / I / I;
 
         // variance due to I_max
-        p_var += I*I*var_max / I4;
+        p_var += I * I * var_max / I4;
 
         // covariance between I and I_max. Note the sign!
-        const double cov = _counts[i] + n*nmax*var_bkg;
-        p_var -= 2*I/I3*cov;
+        const double cov = _counts[i] + n * nmax * var_bkg;
+        p_var -= 2 * I / I3 * cov;
 
         // record result
         profile[i] = Intensity(p, p_var);

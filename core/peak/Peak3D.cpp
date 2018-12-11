@@ -36,37 +36,35 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include "Peak3D.h"
 #include "DataSet.h"
 #include "Detector.h"
 #include "Diffractometer.h"
 #include "IDataReader.h"
 #include "MillerIndex.h"
+#include "Peak3D.h"
 #include "ReciprocalVector.h"
 #include "UnitCell.h"
 #include "Units.h"
 
 namespace nsx {
 
-Peak3D::Peak3D(sptrDataSet data):
-    _shape(),
-    _unitCell(nullptr),
-    _scale(1.0),
-    _selected(true),
-    _masked(false),
-    _predicted(true),
-    _transmission(1.0),
-    _data(data),
-    _rockingCurve(),
-    _peakEnd(4.0),
-    _bkgBegin(5.0),
-    _bkgEnd(6.0)
+Peak3D::Peak3D(sptrDataSet data)
+    : _shape()
+    , _unitCell(nullptr)
+    , _scale(1.0)
+    , _selected(true)
+    , _masked(false)
+    , _predicted(true)
+    , _transmission(1.0)
+    , _data(data)
+    , _rockingCurve()
+    , _peakEnd(4.0)
+    , _bkgBegin(5.0)
+    , _bkgEnd(6.0)
 {
-
 }
 
-Peak3D::Peak3D(sptrDataSet data, const Ellipsoid &shape):
-    Peak3D(data)
+Peak3D::Peak3D(sptrDataSet data, const Ellipsoid& shape) : Peak3D(data)
 {
     setShape(shape);
 }
@@ -76,9 +74,8 @@ void Peak3D::setShape(const Ellipsoid& shape)
     // shape should be consistent with data
     if (_data) {
         Eigen::Vector3d c = shape.center();
-        if (c[2] < 0.0 || c[2] > _data->nFrames()-1
-          || c[0] < 0.0 || c[0] >_data->nCols()-1
-          || c[1] < 0.0 || c[1] > _data->nRows()-1) {
+        if (c[2] < 0.0 || c[2] > _data->nFrames() - 1 || c[0] < 0.0 || c[0] > _data->nCols() - 1
+            || c[1] < 0.0 || c[1] > _data->nRows() - 1) {
             throw std::runtime_error("Peak3D::setShape(): peak center out of bounds");
         }
     }
@@ -174,7 +171,8 @@ bool Peak3D::predicted() const
     return _predicted;
 }
 
-void Peak3D::updateIntegration(const IPeakIntegrator& integrator, double peakEnd, double bkgBegin, double bkgEnd)
+void Peak3D::updateIntegration(
+    const IPeakIntegrator& integrator, double peakEnd, double bkgBegin, double bkgEnd)
 {
     _rockingCurve = integrator.rockingCurve();
     // testing
@@ -200,7 +198,8 @@ ReciprocalVector Peak3D::q() const
     auto pixel_coords = _shape.center();
     auto state = _data->interpolatedState(pixel_coords[2]);
     const auto* detector = _data->reader()->diffractometer()->detector();
-    auto detector_position = DirectVector(detector->pixelPosition(pixel_coords[0], pixel_coords[1]));
+    auto detector_position =
+        DirectVector(detector->pixelPosition(pixel_coords[0], pixel_coords[1]));
     return state.sampleQ(detector_position);
 }
 
@@ -252,25 +251,28 @@ DetectorEvent Peak3D::predictCenter(double frame) const
     auto state = _data->interpolatedState(frame);
     Eigen::RowVector3d q_hkl = _unitCell->fromIndex(index.rowVector().cast<double>());
     Eigen::RowVector3d ki = state.ki().rowVector();
-    Eigen::RowVector3d kf = q_hkl*state.sampleOrientationMatrix().transpose() + ki;
+    Eigen::RowVector3d kf = q_hkl * state.sampleOrientationMatrix().transpose() + ki;
 
     const double alpha = ki.norm() / kf.norm();
 
 
-    Eigen::RowVector3d kf1 = alpha*kf;
-    Eigen::RowVector3d kf2 = -alpha*kf;
+    Eigen::RowVector3d kf1 = alpha * kf;
+    Eigen::RowVector3d kf2 = -alpha * kf;
 
-    Eigen::RowVector3d pred_kf = (kf1-kf).norm() < (kf2-kf).norm() ? kf1 : kf2;
+    Eigen::RowVector3d pred_kf = (kf1 - kf).norm() < (kf2 - kf).norm() ? kf1 : kf2;
 
-    return _data->reader()->diffractometer()->detector()->constructEvent(DirectVector(state.samplePosition), ReciprocalVector(pred_kf*state.detectorOrientation));
+    return _data->reader()->diffractometer()->detector()->constructEvent(
+        DirectVector(state.samplePosition), ReciprocalVector(pred_kf * state.detectorOrientation));
 }
 
 
-Intensity Peak3D::meanBackground() const {
+Intensity Peak3D::meanBackground() const
+{
     return _meanBackground;
 }
 
-double Peak3D::peakEnd() const {
+double Peak3D::peakEnd() const
+{
     return _peakEnd;
 }
 

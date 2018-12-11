@@ -74,16 +74,16 @@ public:
     bool isOpened() const;
 
 protected:
-
     IDataReader() = delete;
 
-    IDataReader(const IDataReader &other) = default;
+    IDataReader(const IDataReader& other) = default;
 
-    IDataReader& operator=(const IDataReader &other) = default;
+    IDataReader& operator=(const IDataReader& other) = default;
 
     std::string _filename;
 
-    //! A pointer to the diffractometer. The actual resource is not owned by this object which is just a borrower.
+    //! A pointer to the diffractometer. The actual resource is not owned by this object which is
+    //! just a borrower.
     Diffractometer* _diffractometer;
 
     //! Stores the metadata

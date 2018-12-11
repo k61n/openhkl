@@ -1,15 +1,15 @@
 #include <vector>
 
+#include "QDesktopServices"
+#include "QUrl"
 #include <QBoxLayout>
 #include <QDate>
-#include "QDesktopServices"
 #include <QFont>
 #include <QLabel>
 #include <QPixmap>
-#include <QTextEdit>
 #include <QPushButton>
-#include "QUrl"
 #include <QTextBrowser>
+#include <QTextEdit>
 #include <QVBoxLayout>
 
 #include <core/Version.h>
@@ -19,8 +19,7 @@
 
 #include <QDebug>
 
-namespace
-{
+namespace {
 
 QLabel* createTitle()
 {
@@ -28,7 +27,10 @@ QLabel* createTitle()
     title_string.append(nsx::__version__.c_str());
     title_string.append(" , commit ");
     auto commit = nsx::__commit_id__.c_str();
-    title_string.append(QString("<a href=\"https://code.ill.fr/scientific-software/nsxtool/commit/%1\">%2</a>)").arg(commit).arg(commit));
+    title_string.append(
+        QString("<a href=\"https://code.ill.fr/scientific-software/nsxtool/commit/%1\">%2</a>)")
+            .arg(commit)
+            .arg(commit));
 
     QLabel* title = new QLabel();
 
@@ -46,7 +48,7 @@ QLabel* createTitle()
 
 QLabel* createSubTitle()
 {
-    QLabel* subtitle = new  QLabel("A software for reducing single crystal diffraction data.");
+    QLabel* subtitle = new QLabel("A software for reducing single crystal diffraction data.");
 
     subtitle->setAlignment(Qt::AlignHCenter);
 
@@ -85,21 +87,20 @@ QLabel* createLogoLabel(int width)
 {
     QPixmap logo(":/resources/aboutNSXTool", "JPG");
     auto result = new QLabel;
-    auto scaled_logo = logo.scaled(width-20, 200, Qt::IgnoreAspectRatio);
+    auto scaled_logo = logo.scaled(width - 20, 200, Qt::IgnoreAspectRatio);
     result->setPixmap(scaled_logo);
     result->setFixedSize(scaled_logo.rect().size());
     result->setAlignment(Qt::AlignHCenter);
     return result;
 }
-
 }
 
-DialogAbout::DialogAbout(QWidget *parent) : QDialog(parent)
+DialogAbout::DialogAbout(QWidget* parent) : QDialog(parent)
 {
     setWindowTitle("About NSXTool");
     setWindowFlags(Qt::Dialog);
 
-    setFixedSize(800,500);
+    setFixedSize(800, 500);
 
     QFont titleFont;
     titleFont.setPointSize(16);
@@ -138,7 +139,7 @@ DialogAbout::DialogAbout(QWidget *parent) : QDialog(parent)
 
     setLayout(main_layout);
 
-    static const char mydata[] = {0x45,0x75,0x72,0x79,0x64,0x69,0x63,0x65};
+    static const char mydata[] = {0x45, 0x75, 0x72, 0x79, 0x64, 0x69, 0x63, 0x65};
     QByteArray b = QByteArray::fromRawData(mydata, sizeof(mydata));
     auto f = new ShortcodeFilter(b, this);
     connect(f, &ShortcodeFilter::found, this, [=]() {
@@ -152,14 +153,17 @@ QPushButton* DialogAbout::createLogo()
 {
     auto nsxtool_logo = new QPushButton;
 
-    nsxtool_logo->setStyleSheet("QPushButton::focus{border: none; outline: none; background: none}");
+    nsxtool_logo->setStyleSheet(
+        "QPushButton::focus{border: none; outline: none; background: none}");
 
     QPixmap nsxtool_logo_pixmap(":/resources/crystalIcon", "PNG");
-    auto nsxtool_logo_pixmap_scaled = nsxtool_logo_pixmap.scaled(80,80, Qt::KeepAspectRatio);
+    auto nsxtool_logo_pixmap_scaled = nsxtool_logo_pixmap.scaled(80, 80, Qt::KeepAspectRatio);
     nsxtool_logo->setIcon(QIcon(nsxtool_logo_pixmap_scaled));
     nsxtool_logo->setIconSize(nsxtool_logo_pixmap_scaled.rect().size());
     nsxtool_logo->setFixedSize(nsxtool_logo_pixmap_scaled.rect().size());
-    connect(nsxtool_logo,&QPushButton::clicked,[](){QDesktopServices::openUrl(QUrl("https://code.ill.fr/scientific-software/nsxtool.git"));});
+    connect(nsxtool_logo, &QPushButton::clicked, []() {
+        QDesktopServices::openUrl(QUrl("https://code.ill.fr/scientific-software/nsxtool.git"));
+    });
 
     return nsxtool_logo;
 }
@@ -169,31 +173,37 @@ QHBoxLayout* DialogAbout::createPartnersLayout()
     QHBoxLayout* layout = new QHBoxLayout();
 
     QPixmap ill_logo_pixmap(":/resources/ill_logo.png", "PNG");
-    QPushButton *ill_logo = new QPushButton();
+    QPushButton* ill_logo = new QPushButton();
     ill_logo->setStyleSheet("QPushButton::focus{background: none}");
-    auto ill_logo_pixmap_scaled = ill_logo_pixmap.scaled(100,100, Qt::KeepAspectRatio);
+    auto ill_logo_pixmap_scaled = ill_logo_pixmap.scaled(100, 100, Qt::KeepAspectRatio);
     ill_logo->setIcon(QIcon(ill_logo_pixmap_scaled));
     ill_logo->setIconSize(ill_logo_pixmap_scaled.rect().size());
     ill_logo->setFixedSize(ill_logo_pixmap_scaled.rect().size());
-    connect(ill_logo,&QPushButton::clicked,[](){QDesktopServices::openUrl(QUrl("https://www.ill.eu/en"));});
+    connect(ill_logo, &QPushButton::clicked, []() {
+        QDesktopServices::openUrl(QUrl("https://www.ill.eu/en"));
+    });
 
     QPixmap jcns_logo_pixmap(":/resources/jcns_logo.png", "PNG");
-    QPushButton *jcns_logo = new QPushButton();
+    QPushButton* jcns_logo = new QPushButton();
     jcns_logo->setStyleSheet("QPushButton::focus{background: none}");
-    auto jcns_logo_pixmap_scaled = jcns_logo_pixmap.scaled(200,200, Qt::KeepAspectRatio);
+    auto jcns_logo_pixmap_scaled = jcns_logo_pixmap.scaled(200, 200, Qt::KeepAspectRatio);
     jcns_logo->setIcon(QIcon(jcns_logo_pixmap_scaled));
     jcns_logo->setIconSize(jcns_logo_pixmap_scaled.rect().size());
     jcns_logo->setFixedSize(jcns_logo_pixmap_scaled.rect().size());
-    connect(jcns_logo,&QPushButton::clicked,[](){QDesktopServices::openUrl(QUrl("http://www.fz-juelich.de/jcns/EN/Home/home_node.html"));});
+    connect(jcns_logo, &QPushButton::clicked, []() {
+        QDesktopServices::openUrl(QUrl("http://www.fz-juelich.de/jcns/EN/Home/home_node.html"));
+    });
 
     QPixmap frm2_logo_pixmap(":/resources/frm2_logo.png", "PNG");
-    QPushButton *frm2_logo = new QPushButton();
+    QPushButton* frm2_logo = new QPushButton();
     frm2_logo->setStyleSheet("QPushButton::focus{background: none}");
-    auto frm2_logo_pixmap_scaled = frm2_logo_pixmap.scaled(120,120, Qt::KeepAspectRatio);
+    auto frm2_logo_pixmap_scaled = frm2_logo_pixmap.scaled(120, 120, Qt::KeepAspectRatio);
     frm2_logo->setIcon(QIcon(frm2_logo_pixmap_scaled));
     frm2_logo->setIconSize(frm2_logo_pixmap_scaled.rect().size());
     frm2_logo->setFixedSize(frm2_logo_pixmap_scaled.rect().size());
-    connect(frm2_logo,&QPushButton::clicked,[](){QDesktopServices::openUrl(QUrl("http://www.frm2.tum.de/en/home/"));});
+    connect(frm2_logo, &QPushButton::clicked, []() {
+        QDesktopServices::openUrl(QUrl("http://www.frm2.tum.de/en/home/"));
+    });
 
     layout->addWidget(ill_logo);
     layout->addWidget(jcns_logo);

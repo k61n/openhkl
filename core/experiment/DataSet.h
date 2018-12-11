@@ -49,12 +49,12 @@ class DataSet {
     friend class UnitTest_DataSet;
 
 public:
-
     DataSet() = delete;
 
-    DataSet(const std::string& filetype, const std::string& filename, Diffractometer* diffractometer);
+    DataSet(
+        const std::string& filetype, const std::string& filename, Diffractometer* diffractometer);
 
-    DataSet(const DataSet &other);
+    DataSet(const DataSet& other);
 
     //! Destructor
     ~DataSet();
@@ -93,7 +93,7 @@ public:
     const std::set<IMask*>& masks() const;
 
     //! Return the intensity at point x,y,z.
-    int dataAt(unsigned int x=0, unsigned int y=0, unsigned int z=0);
+    int dataAt(unsigned int x = 0, unsigned int y = 0, unsigned int z = 0);
 
     //! Read a single frame
     Eigen::MatrixXi frame(std::size_t idx) const;
@@ -126,7 +126,6 @@ public:
     const IDataReader* reader() const;
 
 private:
-
     bool _isOpened;
 
     std::string _filename;

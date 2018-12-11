@@ -10,8 +10,7 @@ namespace Ui {
 class DialogHDF5Converter;
 }
 
-class DialogHDF5Converter : public QDialog
-{
+class DialogHDF5Converter : public QDialog {
     Q_OBJECT
 
 public:
@@ -27,7 +26,7 @@ private:
     void convert();
 
 private:
-    Ui::DialogHDF5Converter *_ui;
+    Ui::DialogHDF5Converter* _ui;
 
     nsx::DataList _numors;
 };

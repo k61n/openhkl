@@ -38,7 +38,8 @@ namespace nsx {
 class MergedData;
 
 //! \class IMergedPeakStatistic
-//! \brief Interface for statistics of merged peaks (e.g. R factors, correlation coefficient, chi-squared).
+//! \brief Interface for statistics of merged peaks (e.g. R factors, correlation coefficient,
+//! chi-squared).
 class IMergedPeakStatistic {
 public:
     virtual ~IMergedPeakStatistic() = default;

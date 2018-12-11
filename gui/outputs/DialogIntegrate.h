@@ -11,12 +11,11 @@ namespace Ui {
 class DialogIntegrate;
 }
 
-class DialogIntegrate : public QDialog
-{
+class DialogIntegrate : public QDialog {
     Q_OBJECT
 
 public:
-    DialogIntegrate(const nsx::PeakList& peaks, QWidget *parent = 0);
+    DialogIntegrate(const nsx::PeakList& peaks, QWidget* parent = 0);
     ~DialogIntegrate();
 
     void setIntegrators(const std::vector<std::string>& names);
@@ -35,5 +34,5 @@ public:
     std::string integrator() const;
 
 private:
-    Ui::DialogIntegrate* _ui;   
+    Ui::DialogIntegrate* _ui;
 };

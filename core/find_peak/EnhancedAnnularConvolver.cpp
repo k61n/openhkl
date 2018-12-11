@@ -15,12 +15,12 @@
 namespace nsx {
 
 EnhancedAnnularConvolver::EnhancedAnnularConvolver()
-: Convolver({{"r1",5},{"r2",10},{"r3",15}})
+    : Convolver({{"r1", 5}, {"r2", 10}, {"r3", 15}})
 {
 }
 
-EnhancedAnnularConvolver::EnhancedAnnularConvolver(const std::map<std::string,double>& parameters)
-: EnhancedAnnularConvolver()
+EnhancedAnnularConvolver::EnhancedAnnularConvolver(const std::map<std::string, double>& parameters)
+    : EnhancedAnnularConvolver()
 {
     setParameters(parameters);
 }
@@ -30,22 +30,23 @@ Convolver* EnhancedAnnularConvolver::clone() const
     return new EnhancedAnnularConvolver(*this);
 }
 
-std::pair<size_t,size_t> EnhancedAnnularConvolver::kernelSize() const
+std::pair<size_t, size_t> EnhancedAnnularConvolver::kernelSize() const
 {
     size_t r = _parameters.at("r3");
 
-    return std::make_pair(r,r);
+    return std::make_pair(r, r);
 }
 
 RealMatrix EnhancedAnnularConvolver::convolve(const RealMatrix& image)
 {
-    RadialConvolver radial_convolver_peak({{"r_in",0.0},{"r_out",_parameters.at("r1")}});
+    RadialConvolver radial_convolver_peak({{"r_in", 0.0}, {"r_out", _parameters.at("r1")}});
     RealMatrix conv_peak = radial_convolver_peak.convolve(image);
 
-    RadialConvolver radial_convolver_bkg({{"r_in",_parameters.at("r2")},{"r_out",_parameters.at("r3")}});
+    RadialConvolver radial_convolver_bkg(
+        {{"r_in", _parameters.at("r2")}, {"r_out", _parameters.at("r3")}});
     RealMatrix bkg = radial_convolver_bkg.convolve(image);
 
-    RealMatrix diff2 = (image - bkg).cwiseProduct(image-bkg);
+    RealMatrix diff2 = (image - bkg).cwiseProduct(image - bkg);
     RealMatrix std = radial_convolver_bkg.convolve(diff2).array().sqrt();
 
     RealMatrix result = (conv_peak - bkg).array() / std.array();
@@ -54,4 +55,3 @@ RealMatrix EnhancedAnnularConvolver::convolve(const RealMatrix& image)
 }
 
 } // end namespace nsx
-

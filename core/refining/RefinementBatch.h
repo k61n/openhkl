@@ -42,8 +42,8 @@
 
 #include <Eigen/SparseCore>
 
-#include "PeakList.h"
 #include "FitParameters.h"
+#include "PeakList.h"
 #include "ReciprocalVector.h"
 #include "UnitCell.h"
 
@@ -84,7 +84,6 @@ public:
     const std::vector<double>& costFunction() const;
 
 private:
-
     double _fmin;
 
     double _fmax;
@@ -96,7 +95,7 @@ private:
     FitParameters _params;
 
     //! Initial U matrix of cell
-    Eigen::Matrix3d _u0; 
+    Eigen::Matrix3d _u0;
 
     //! U offsets
     Eigen::Vector3d _uOffsets;

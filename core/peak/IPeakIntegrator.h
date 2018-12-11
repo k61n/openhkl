@@ -60,7 +60,8 @@ public:
      *  \param bkg_begin Background beginning (in sigma)
      *  \param bkg_end Background end (in sigma)
      */
-    void integrate(PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end);
+    void
+    integrate(PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end);
     //! Return the mean background.
     Intensity meanBackground() const;
     //! Return the integrated intensity.
@@ -71,7 +72,8 @@ public:
     void setHandler(sptrProgressHandler handler);
 
 protected:
-    //! Mean local background of peak. The uncertainty is the uncertainty of the _estimate_ of the background.
+    //! Mean local background of peak. The uncertainty is the uncertainty of the _estimate_ of the
+    //! background.
     Intensity _meanBackground;
     //! Net integrated intensity, after background correction.
     Intensity _integratedIntensity;

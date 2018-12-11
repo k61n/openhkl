@@ -1,14 +1,13 @@
 #pragma once
 
-#include <core/DataTypes.h>
 #include "InspectableTreeItem.h"
+#include <core/DataTypes.h>
 
 class PeakListItem;
 
-class PeaksItem: public InspectableTreeItem {
+class PeaksItem : public InspectableTreeItem {
 
 public:
-
     explicit PeaksItem();
 
     virtual QWidget* inspectItem() override;

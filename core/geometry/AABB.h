@@ -29,9 +29,9 @@
 #pragma once
 
 #include <initializer_list>
-#include <stdexcept>
 #include <iostream>
 #include <limits>
+#include <stdexcept>
 #include <utility>
 #include <vector>
 
@@ -53,15 +53,15 @@ namespace nsx {
 class AABB {
 
 public:
-
     //! Constructs an unitialized AABB object
     AABB();
     //! Constructs a AABB object from another ABB object
     AABB(const AABB& other);
-    //! Constructs a AABB object from two Eigen vectors representing respectively its lower and upper bound
+    //! Constructs a AABB object from two Eigen vectors representing respectively its lower and
+    //! upper bound
     AABB(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub);
     //! Destructor
-    virtual ~AABB()=default;
+    virtual ~AABB() = default;
 
     //! Assignment operator
     AABB& operator=(const AABB& other);
@@ -108,7 +108,6 @@ protected:
     Eigen::Vector3d _lowerBound;
     //! The upper bound point
     Eigen::Vector3d _upperBound;
-
 };
 
 std::ostream& operator<<(std::ostream& os, const AABB& aabb);

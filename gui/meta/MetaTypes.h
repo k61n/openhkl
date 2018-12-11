@@ -4,8 +4,8 @@
 
 #include <string>
 
-#include <core/PeakList.h>
 #include <core/DataTypes.h>
+#include <core/PeakList.h>
 #include <core/UnitCell.h>
 
 Q_DECLARE_METATYPE(nsx::PeakList)

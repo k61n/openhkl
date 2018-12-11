@@ -34,7 +34,8 @@ public:
     size_t count() const;
     //! Make a prediction based on the profile
     double predict(const Eigen::Vector3d& x) const;
-    //! Normalize the profile so that the sum is equal to one. Returns false if it cannot be normalized.
+    //! Normalize the profile so that the sum is equal to one. Returns false if it cannot be
+    //! normalized.
     bool normalize();
     //! Add the given profile to this one, with the specified weight
     void addProfile(const Profile3D& other, double weight);

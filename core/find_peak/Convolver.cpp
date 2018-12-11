@@ -2,33 +2,28 @@
 
 namespace nsx {
 
-using parameters_map = std::map<std::string,double>;
+using parameters_map = std::map<std::string, double>;
 
-Convolver::Convolver()
-: _parameters()
-{
-}
+Convolver::Convolver() : _parameters() {}
 
-Convolver::Convolver(const parameters_map &parameters)
+Convolver::Convolver(const parameters_map& parameters)
 {
     _parameters = parameters;
 }
 
-Convolver::~Convolver()
-{
-}
+Convolver::~Convolver() {}
 
-std::map<std::string,double>& Convolver::parameters()
+std::map<std::string, double>& Convolver::parameters()
 {
     return _parameters;
 }
 
-const std::map<std::string,double>& Convolver::parameters() const
+const std::map<std::string, double>& Convolver::parameters() const
 {
     return _parameters;
 }
 
-void Convolver::setParameters(const std::map<std::string,double>& parameters)
+void Convolver::setParameters(const std::map<std::string, double>& parameters)
 {
     for (auto p : parameters) {
         auto it = _parameters.find(p.first);
@@ -39,4 +34,3 @@ void Convolver::setParameters(const std::map<std::string,double>& parameters)
 }
 
 } // end namespace nsx
-

@@ -38,9 +38,8 @@
 namespace nsx {
 
 //! \brief Class used to describe an experiment sample, consisting of a unit cell and material.
-class Sample: public Component {
+class Sample : public Component {
 public:
-
     //! Static constructor of a Sample from a property tree node
     static Sample* create(const YAML::Node& node);
 
@@ -48,7 +47,7 @@ public:
     Sample();
 
     //! Copy constructor
-    Sample(const Sample& other)=default;
+    Sample(const Sample& other) = default;
 
     //! Constructs a default sample with a given name
     Sample(const std::string& name);
@@ -63,7 +62,7 @@ public:
     virtual ~Sample();
 
     //! Assignment operator
-    Sample& operator=(const Sample& other)=default;
+    Sample& operator=(const Sample& other) = default;
 
     //! Set the sample shape described as a convex hull
     void setShape(const ConvexHull& shape);
@@ -75,7 +74,6 @@ public:
     const ConvexHull& shape() const;
 
 private:
-
     ConvexHull _sampleShape;
 };
 

@@ -2,8 +2,8 @@
 
 #include <QDialog>
 
-#include <core/PeakList.h>
 #include <core/DataTypes.h>
+#include <core/PeakList.h>
 #include <core/Profile3D.h>
 
 #include "ColorMap.h"
@@ -15,15 +15,13 @@ class DialogShapeLibrary;
 
 class ExperimentItem;
 
-class DialogShapeLibrary: public QDialog
-{
+class DialogShapeLibrary : public QDialog {
     Q_OBJECT
 
 public:
-    explicit DialogShapeLibrary(ExperimentItem* experiment_item,
-                                nsx::sptrUnitCell unitCell,
-                                const nsx::PeakList& peaks,
-                                QWidget *parent = 0);
+    explicit DialogShapeLibrary(
+        ExperimentItem* experiment_item, nsx::sptrUnitCell unitCell, const nsx::PeakList& peaks,
+        QWidget* parent = 0);
     ~DialogShapeLibrary();
 
     const nsx::Profile3D& profile();
@@ -36,7 +34,7 @@ private slots:
     void selectTargetPeak(int row);
 
 private:
-    Ui::DialogShapeLibrary *ui;
+    Ui::DialogShapeLibrary* ui;
     nsx::sptrUnitCell _unitCell;
     nsx::PeakList _peaks;
     std::set<nsx::sptrDataSet> _data;

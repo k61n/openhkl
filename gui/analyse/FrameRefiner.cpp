@@ -13,7 +13,7 @@
 
 FrameRefiner* FrameRefiner::_instance = nullptr;
 
-FrameRefiner* FrameRefiner::create(ExperimentItem *experiment_item, const nsx::PeakList &peaks)
+FrameRefiner* FrameRefiner::create(ExperimentItem* experiment_item, const nsx::PeakList& peaks)
 {
     if (!_instance) {
         _instance = new FrameRefiner(experiment_item, peaks);
@@ -27,24 +27,25 @@ FrameRefiner* FrameRefiner::Instance()
     return _instance;
 }
 
-FrameRefiner::FrameRefiner(ExperimentItem* experiment_item, const nsx::PeakList &peaks)
-: NSXQFrame(),
-  _ui(new Ui::FrameRefiner),
-  _experiment_item(experiment_item)
+FrameRefiner::FrameRefiner(ExperimentItem* experiment_item, const nsx::PeakList& peaks)
+    : NSXQFrame(), _ui(new Ui::FrameRefiner), _experiment_item(experiment_item)
 {
     _ui->setupUi(this);
 
-    _ui->tabs->tabBar()->tabButton(0,QTabBar::RightSide)->hide();
+    _ui->tabs->tabBar()->tabButton(0, QTabBar::RightSide)->hide();
 
-    CollectedPeaksModel *peaks_model = new CollectedPeaksModel(_experiment_item->model(),_experiment_item->experiment(),peaks);
+    CollectedPeaksModel* peaks_model =
+        new CollectedPeaksModel(_experiment_item->model(), _experiment_item->experiment(), peaks);
     _ui->peaks->setModel(peaks_model);
     _ui->peaks->selectAll();
 
     _ui->tabs->setCurrentIndex(0);
 
-    connect(_ui->tabs,SIGNAL(tabCloseRequested(int)),this,SLOT(slotTabRemoved(int)));
+    connect(_ui->tabs, SIGNAL(tabCloseRequested(int)), this, SLOT(slotTabRemoved(int)));
 
-    connect(_ui->actions,SIGNAL(clicked(QAbstractButton*)),this,SLOT(slotActionClicked(QAbstractButton*)));
+    connect(
+        _ui->actions, SIGNAL(clicked(QAbstractButton*)), this,
+        SLOT(slotActionClicked(QAbstractButton*)));
 }
 
 FrameRefiner::~FrameRefiner()
@@ -68,12 +69,11 @@ void FrameRefiner::slotTabRemoved(int index)
     delete refiner_fit_tab;
 }
 
-void FrameRefiner::slotActionClicked(QAbstractButton *button)
+void FrameRefiner::slotActionClicked(QAbstractButton* button)
 {
     auto button_role = _ui->actions->standardButton(button);
 
-    switch(button_role)
-    {
+    switch (button_role) {
     case QDialogButtonBox::StandardButton::Apply: {
         refine();
         break;
@@ -98,7 +98,7 @@ void FrameRefiner::refine()
     auto selection_model = _ui->peaks->selectionModel();
     QModelIndexList selected_rows = selection_model->selectedRows();
     if (selected_rows.size() < 100) {
-        nsx::error()<<"No or not enough peaks selected for refining";
+        nsx::error() << "No or not enough peaks selected for refining";
         return;
     }
 
@@ -112,17 +112,17 @@ void FrameRefiner::refine()
     auto unit_cell = selected_peaks[0]->unitCell();
 
     if (!unit_cell) {
-        nsx::error()<<"No unit cell set for the selected peaks";
+        nsx::error() << "No unit cell set for the selected peaks";
         return;
     }
 
     auto&& n_batches = _ui->n_batches->value();
 
-    std::map<nsx::sptrDataSet,nsx::Refiner> refiners;
+    std::map<nsx::sptrDataSet, nsx::Refiner> refiners;
 
     std::set<nsx::sptrDataSet> data;
     // get list of datasets
-    for (auto p: peaks) {
+    for (auto p : peaks) {
         data.insert(p->data());
     }
 
@@ -130,8 +130,9 @@ void FrameRefiner::refine()
 
         nsx::PeakList reference_peaks, predicted_peaks;
 
-        // Keep the peak that belong to this data and split them between the found and predicted ones
-        for (auto peak: selected_peaks) {
+        // Keep the peak that belong to this data and split them between the found and predicted
+        // ones
+        for (auto peak : selected_peaks) {
             if (peak->data() != d) {
                 continue;
             }
@@ -142,7 +143,8 @@ void FrameRefiner::refine()
             }
         }
 
-        nsx::info() << reference_peaks.size() << " splitted into " << n_batches <<"refining batches.";
+        nsx::info() << reference_peaks.size() << " splitted into " << n_batches
+                    << "refining batches.";
 
         std::vector<nsx::InstrumentState>& states = d->instrumentStates();
 
@@ -178,9 +180,9 @@ void FrameRefiner::refine()
         if (success) {
             nsx::info() << "Successfully refined parameters for numor " << d->filename();
             int updated = refiner.updatePredictions(predicted_peaks);
-            refiners.emplace(d,std::move(refiner));
+            refiners.emplace(d, std::move(refiner));
             nsx::info() << "done; updated " << updated << " peaks";
-        }  else {
+        } else {
             nsx::info() << "Failed to refine parameters for numor " << d->filename();
         }
     }
@@ -191,14 +193,15 @@ void FrameRefiner::refine()
             _ui->tabs->removeTab(1);
             delete refiner_fit_tab;
         }
-        WidgetRefinerFit *refiner_fit_tab = new WidgetRefinerFit(refiners);
-        _ui->tabs->addTab(refiner_fit_tab,"Fit");
+        WidgetRefinerFit* refiner_fit_tab = new WidgetRefinerFit(refiners);
+        _ui->tabs->addTab(refiner_fit_tab, "Fit");
     }
 
     // Update the peak table view
     QModelIndex topLeft = peaks_model->index(0, 0);
-    QModelIndex bottomRight = peaks_model->index(peaks_model->rowCount(QModelIndex())-1, peaks_model->columnCount(QModelIndex())-1);
-    emit peaks_model->dataChanged(topLeft,bottomRight);
+    QModelIndex bottomRight = peaks_model->index(
+        peaks_model->rowCount(QModelIndex()) - 1, peaks_model->columnCount(QModelIndex()) - 1);
+    emit peaks_model->dataChanged(topLeft, bottomRight);
 }
 
 void FrameRefiner::accept()

@@ -12,9 +12,10 @@ NSX_INIT_TEST
 
 int main()
 {
-    nsx::Experiment experiment("","D10");
+    nsx::Experiment experiment("", "D10");
 
-    nsx::sptrDataSet dataset(new nsx::DataSet("", "D10_ascii_example", experiment.diffractometer()));
+    nsx::sptrDataSet dataset(
+        new nsx::DataSet("", "D10_ascii_example", experiment.diffractometer()));
 
     std::vector<Eigen::MatrixXi> frames;
 
@@ -28,7 +29,8 @@ int main()
     dataset->close();
 
     // read data back in and check that it agrees!
-    dataset = std::make_shared<nsx::DataSet>("h5", "D10_hdf5_example.h5", experiment.diffractometer());
+    dataset =
+        std::make_shared<nsx::DataSet>("h5", "D10_hdf5_example.h5", experiment.diffractometer());
 
     NSX_CHECK_ASSERT(dataset != nullptr);
 

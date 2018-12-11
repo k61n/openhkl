@@ -1,7 +1,7 @@
 #pragma once
 
-#include <deque>
 #include <Eigen/Dense>
+#include <deque>
 
 #include "DetectorEvent.h"
 #include "PeakCoordinateSystem.h"

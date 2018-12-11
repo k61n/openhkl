@@ -10,7 +10,7 @@ namespace nsx {
 class DataSet;
 
 //! \brief Peak integrator class used to build a shape library for profile fitting.
-class ShapeIntegrator: public PixelSumIntegrator {
+class ShapeIntegrator : public PixelSumIntegrator {
 public:
     //! Construct the integrator with the given shape library, bounding box, and box shape.
     ShapeIntegrator(sptrShapeLibrary lib, const AABB& aabb, int nx, int ny, int nz);

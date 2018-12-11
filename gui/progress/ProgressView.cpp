@@ -6,7 +6,7 @@
 
 #include "ProgressView.h"
 
-ProgressView::ProgressView(QWidget* parent): QProgressDialog(parent)
+ProgressView::ProgressView(QWidget* parent) : QProgressDialog(parent)
 {
     setModal(true);
 
@@ -30,7 +30,6 @@ ProgressView::~ProgressView()
 
     delete _timer;
     _timer = nullptr;
-
 }
 
 void ProgressView::watch(nsx::sptrProgressHandler handler)
@@ -45,7 +44,7 @@ void ProgressView::watch(nsx::sptrProgressHandler handler)
 
     _timer->start();
 
-    _handler->setCallback([] () {QApplication::processEvents();});
+    _handler->setCallback([]() { QApplication::processEvents(); });
 }
 
 void ProgressView::updateProgress()
@@ -55,19 +54,19 @@ void ProgressView::updateProgress()
 
     // dialog was cancelled or otherwise failed
     if (_handler->aborted())
-            return;
+        return;
 
     int progress = _handler->getProgress();
 
     setLabelText(_handler->getStatus().c_str());
     setValue(progress);
 
-    if ( progress < 0)
+    if (progress < 0)
         nsx::info() << "Status:" << _handler->getStatus().c_str() << " " << _handler->getProgress();
 
     auto log = _handler->getLog();
 
-    for (auto& msg: log)
+    for (auto& msg : log)
         nsx::info() << msg.c_str();
 }
 

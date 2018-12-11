@@ -10,21 +10,20 @@ namespace nsx {
 
 //! This class is used to make simulated/faked data behave as if it were real data.
 //! This is used to testing purposes.
-class FakeDataReader: public HDF5MetaDataReader {
+class FakeDataReader : public HDF5MetaDataReader {
 
 public:
-
     FakeDataReader() = delete;
 
-    FakeDataReader(const FakeDataReader &other) = default;
+    FakeDataReader(const FakeDataReader& other) = default;
 
     //! Constructor. Behaves as if it is loaded from filename (which must exist!),
     //! but the frame values may be overwritten arbitrarily (without modifying the file on disk).
-    FakeDataReader(const std::string& filename, Diffractometer *instrument);
+    FakeDataReader(const std::string& filename, Diffractometer* instrument);
 
     ~FakeDataReader() = default;
 
-    FakeDataReader& operator=(const FakeDataReader &other) = default;
+    FakeDataReader& operator=(const FakeDataReader& other) = default;
 
     IDataReader* clone() const final;
 
@@ -35,7 +34,6 @@ public:
     void setData(size_t frame, const Eigen::MatrixXi& data);
 
 private:
-
     //! Stored data frames. Could be real or simulated/faked.
     std::vector<Eigen::MatrixXi> _frames;
 };

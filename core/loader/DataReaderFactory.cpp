@@ -10,12 +10,12 @@
 namespace nsx {
 
 template <typename T>
-IDataReader* create_reader(const std::string& filename, Diffractometer *diffractometer)
+IDataReader* create_reader(const std::string& filename, Diffractometer* diffractometer)
 {
     return new T(filename, diffractometer);
 }
 
-DataReaderFactory::DataReaderFactory(): _callbacks()
+DataReaderFactory::DataReaderFactory() : _callbacks()
 {
     _callbacks[""] = &create_reader<ILLDataReader>;
     _callbacks["fake"] = &create_reader<FakeDataReader>;
@@ -29,7 +29,7 @@ DataReaderFactory::DataReaderFactory(): _callbacks()
 }
 
 IDataReader* DataReaderFactory::create(
-    const std::string& extension, const std::string& filename, Diffractometer *diffractometer) const
+    const std::string& extension, const std::string& filename, Diffractometer* diffractometer) const
 {
     const auto it = _callbacks.find(extension);
 

@@ -1,21 +1,22 @@
 #include <core/Logger.h>
-#include <core/ShapeLibrary.h>
 #include <core/ProgressHandler.h>
+#include <core/ShapeLibrary.h>
 #include <core/UnitCell.h>
 
-#include "ui_DialogPredictPeaks.h"
 #include "CollectedPeaksModel.h"
 #include "DataItem.h"
 #include "DialogPredictPeaks.h"
 #include "ExperimentItem.h"
 #include "LibraryItem.h"
+#include "MetaTypes.h"
 #include "PeakListItem.h"
 #include "PeaksItem.h"
-#include "MetaTypes.h"
+#include "ui_DialogPredictPeaks.h"
 
 DialogPredictPeaks* DialogPredictPeaks::_instance = nullptr;
 
-DialogPredictPeaks* DialogPredictPeaks::create(ExperimentItem* experiment_item, const nsx::UnitCellList& unit_cells, QWidget* parent)
+DialogPredictPeaks* DialogPredictPeaks::create(
+    ExperimentItem* experiment_item, const nsx::UnitCellList& unit_cells, QWidget* parent)
 {
     if (!_instance) {
         _instance = new DialogPredictPeaks(experiment_item, unit_cells, parent);
@@ -29,10 +30,9 @@ DialogPredictPeaks* DialogPredictPeaks::Instance()
     return _instance;
 }
 
-DialogPredictPeaks::DialogPredictPeaks(ExperimentItem* experiment_item, const nsx::UnitCellList& unit_cells, QWidget *parent)
-: QDialog(parent),
-  _ui(new Ui::DialogPredictPeaks),
-  _experiment_item(experiment_item)
+DialogPredictPeaks::DialogPredictPeaks(
+    ExperimentItem* experiment_item, const nsx::UnitCellList& unit_cells, QWidget* parent)
+    : QDialog(parent), _ui(new Ui::DialogPredictPeaks), _experiment_item(experiment_item)
 {
     _ui->setupUi(this);
 
@@ -43,13 +43,17 @@ DialogPredictPeaks::DialogPredictPeaks(ExperimentItem* experiment_item, const ns
     setAttribute(Qt::WA_DeleteOnClose);
 
     for (auto unit_cell : unit_cells) {
-        _ui->unitCells->addItem(QString::fromStdString(unit_cell->name()),QVariant::fromValue(unit_cell));
+        _ui->unitCells->addItem(
+            QString::fromStdString(unit_cell->name()), QVariant::fromValue(unit_cell));
     }
 
-    _peaks_model = new CollectedPeaksModel(_experiment_item->model(),_experiment_item->experiment(),{});
+    _peaks_model =
+        new CollectedPeaksModel(_experiment_item->model(), _experiment_item->experiment(), {});
     _ui->predictedPeaks->setModel(_peaks_model);
 
-    connect(_ui->actions,SIGNAL(clicked(QAbstractButton*)),this,SLOT(slotActionClicked(QAbstractButton*)));
+    connect(
+        _ui->actions, SIGNAL(clicked(QAbstractButton*)), this,
+        SLOT(slotActionClicked(QAbstractButton*)));
 }
 
 DialogPredictPeaks::~DialogPredictPeaks()
@@ -65,12 +69,11 @@ DialogPredictPeaks::~DialogPredictPeaks()
     }
 }
 
-void DialogPredictPeaks::slotActionClicked(QAbstractButton *button)
+void DialogPredictPeaks::slotActionClicked(QAbstractButton* button)
 {
     auto button_role = _ui->actions->standardButton(button);
 
-    switch(button_role)
-    {
+    switch (button_role) {
     case QDialogButtonBox::StandardButton::Apply: {
         predictPeaks();
         break;
@@ -130,20 +133,22 @@ void DialogPredictPeaks::predictPeaks()
     nsx::PeakList predicted_peaks;
 
     int current_numor = 0;
-    for(auto d : data) {
+    for (auto d : data) {
 
         nsx::info() << "Predicting peaks for numor " << ++current_numor << " of " << data.size();
 
-        auto&& predicted = nsx::predictPeaks(*library, d, unit_cell, d_min, d_max, radius, n_frames, min_neighbors, peak_interpolation);
+        auto&& predicted = nsx::predictPeaks(
+            *library, d, unit_cell, d_min, d_max, radius, n_frames, min_neighbors,
+            peak_interpolation);
 
-        for (auto peak: predicted) {
+        for (auto peak : predicted) {
             predicted_peaks.push_back(peak);
         }
 
         nsx::info() << "Added " << predicted.size() << " predicted peaks.";
     }
 
-    nsx::info() << "Completed  peak prediction. Added "<<predicted_peaks.size()<<" peaks";
+    nsx::info() << "Completed  peak prediction. Added " << predicted_peaks.size() << " peaks";
 
     _peaks_model->setPeaks(predicted_peaks);
 }

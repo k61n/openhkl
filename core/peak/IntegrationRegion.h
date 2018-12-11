@@ -43,7 +43,7 @@ namespace nsx {
 class IntegrationRegion {
 public:
     //! Classify the type of detector event with respect to the current integration region
-    enum class EventType: int {BACKGROUND = 1, PEAK = 2, FORBIDDEN = -1, EXCLUDED = 0};
+    enum class EventType : int { BACKGROUND = 1, PEAK = 2, FORBIDDEN = -1, EXCLUDED = 0 };
 
     IntegrationRegion();
 

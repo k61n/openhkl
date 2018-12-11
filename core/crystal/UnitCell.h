@@ -88,31 +88,31 @@ struct UnitCellCharacter {
 //! The UnitCell parameters a,b,c are given in \f$ \AA \f$  and angle alpha, beta, gamma
 //! are given in degrees.
 //! The a axis is chosen as pointing along the x-direction, and the b-axis is in the xy-plane.
-class UnitCell
-{
+class UnitCell {
 public:
-
     //! Empty UnitCell, initialiazed to right-handed orthonormal system
     UnitCell();
 
     //! Create unit cell from a basis
-    UnitCell(const Eigen::Matrix3d& basis_, bool reciprocal=false);
+    UnitCell(const Eigen::Matrix3d& basis_, bool reciprocal = false);
 
-    //! Construct unitCell from lattice parameters, the A matrix is built with avector along x, bvector in the xy-plane.
+    //! Construct unitCell from lattice parameters, the A matrix is built with avector along x,
+    //! bvector in the xy-plane.
     UnitCell(double a, double b, double c, double alpha, double beta, double gamma);
 
     //! Copy constructor
     UnitCell(const UnitCell& other);
 
-    ~UnitCell()=default;
+    ~UnitCell() = default;
 
-    UnitCell& operator=(const UnitCell &other);
+    UnitCell& operator=(const UnitCell& other);
 
     //! Set lattice parameters
     void setParameters(double a, double b, double c, double alpha, double beta, double gamma);
 
     //! Set reciprocal lattice parameters
-    void setReciprocalParameters(double as, double bs, double cs, double alphas, double betas, double gammas);
+    void setReciprocalParameters(
+        double as, double bs, double cs, double alphas, double betas, double gammas);
 
     //! Set the reciprocal space basis (lower triangular row form)
     void setReciprocalBasis(const Eigen::Matrix3d& b_transposed);
@@ -127,7 +127,8 @@ public:
     std::string bravaisTypeSymbol() const;
 
     //! Get a list of reflections with d value in the range [dmin, dmax]
-    std::vector<MillerIndex> generateReflectionsInShell(double dmin, double dmax, double wavelength) const;
+    std::vector<MillerIndex>
+    generateReflectionsInShell(double dmin, double dmax, double wavelength) const;
 
     //! Return the angle in radians between two reflections hkl1 and hkl2
     double angle(const Eigen::RowVector3d& hkl1, const Eigen::RowVector3d& hkl2) const;
@@ -165,10 +166,10 @@ public:
     //! Return a const pointer to the material of this unit cell
     const Material* material() const;
 
-    #ifndef SWIG
+#ifndef SWIG
     //! Sets the Material for the unit cell
     void setMaterial(std::unique_ptr<Material> material);
-    #endif
+#endif
 
     //! Sets the Material for the unit cell
     void setMaterial(const Material& material);
@@ -249,27 +250,31 @@ public:
     Eigen::Matrix3d orientation() const;
 
     //! Return the orientation matrix Q such that _A*_NP^{-1} = Q*R where R is
-    //! upper triangular with positive entries on the diagonal. This is similar to UnitCell::orientation()
-    //! except that the orientation is computed for the Niggli cell.
+    //! upper triangular with positive entries on the diagonal. This is similar to
+    //! UnitCell::orientation() except that the orientation is computed for the Niggli cell.
     Eigen::Matrix3d niggliOrientation() const;
 
     //! \brief Return parameters of the unit cell in an internal format.
     Eigen::VectorXd parameters() const;
 
     //! \brief Set the uncertainty in the cell parameters.
-    //! We use the parameter uncertainty and propagation of error to estimate the uncertainty in the cell parameters
+    //! We use the parameter uncertainty and propagation of error to estimate the uncertainty in the
+    //! cell parameters
     // \f$a\f$,\f$b\f$,\f$c\f$,\f$\alpha\f$,\f$\beta\f$,\f$\gamma\f$.
     void setParameterCovariance(const Eigen::MatrixXd& cov);
 
-    //! \brief Construct a new unit cell from a reference orientation, an orientation offset, and a set of parameters.
-    UnitCell fromParameters(const Eigen::Matrix3d& U0, const Eigen::Vector3d& uOffset, const Eigen::VectorXd& parameters) const;
+    //! \brief Construct a new unit cell from a reference orientation, an orientation offset, and a
+    //! set of parameters.
+    UnitCell fromParameters(
+        const Eigen::Matrix3d& U0, const Eigen::Vector3d& uOffset,
+        const Eigen::VectorXd& parameters) const;
 
     //! Return list of space groups which are compatible with the Bravais type of the cell
     std::vector<std::string> compatibleSpaceGroups() const;
 
-    #ifndef SWIG
+#ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    #endif
+#endif
 
 private:
     //! Real-space basis of column vectors
@@ -302,6 +307,6 @@ using sptrUnitCell = std::shared_ptr<UnitCell>;
 using UnitCellList = std::vector<sptrUnitCell>;
 
 //! Print to a stream
-std::ostream& operator<<(std::ostream&,const UnitCell&);
+std::ostream& operator<<(std::ostream&, const UnitCell&);
 
 } // end namespace nsx

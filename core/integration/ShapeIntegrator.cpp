@@ -1,22 +1,17 @@
+#include "ShapeIntegrator.h"
 #include "DataSet.h"
 #include "Ellipsoid.h"
 #include "Intensity.h"
 #include "MillerIndex.h"
 #include "Peak3D.h"
-#include "Profile1D.h"
-#include "ShapeIntegrator.h"
 #include "PeakCoordinateSystem.h"
+#include "Profile1D.h"
 
 namespace nsx {
 
-ShapeIntegrator::ShapeIntegrator(sptrShapeLibrary lib, const AABB& aabb, int nx, int ny, int nz): PixelSumIntegrator(false, false), 
-    _library(lib), 
-    _aabb(aabb),
-    _nx(nx),
-    _ny(ny),
-    _nz(nz)
+ShapeIntegrator::ShapeIntegrator(sptrShapeLibrary lib, const AABB& aabb, int nx, int ny, int nz)
+    : PixelSumIntegrator(false, false), _library(lib), _aabb(aabb), _nx(nx), _ny(ny), _nz(nz)
 {
-
 }
 
 bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
@@ -25,7 +20,7 @@ bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
     auto data = peak->data();
 
     if (!uc || !data) {
-        throw std::runtime_error("ShapeIntegrator: Peak must have unit cell and data attached");        
+        throw std::runtime_error("ShapeIntegrator: Peak must have unit cell and data attached");
     }
 
     PixelSumIntegrator::compute(peak, region);
@@ -43,11 +38,11 @@ bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 
     for (size_t i = 0; i < events.size(); ++i) {
         const auto& ev = events[i];
-        Eigen::Vector3d x(ev._px, ev._py, ev._frame);              
-        const double dI = counts[i]-mean_bkg;
+        Eigen::Vector3d x(ev._px, ev._py, ev._frame);
+        const double dI = counts[i] - mean_bkg;
         // todo: variance here assumes Poisson (no gain or baseline)
         integrated_profile.addPoint(e.r2(x), counts[i]);
-        
+
         if (_library->detectorCoords()) {
             x -= peak->shape().center();
             profile.addValue(x, dI);

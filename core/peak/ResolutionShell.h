@@ -58,7 +58,7 @@ class ResolutionShell {
 public:
     //! Construct the given number of cells with abolute minimum dmin and absolute maximum dmax.
     ResolutionShell(double dmin, double dmax, size_t num_shells);
-    //! Add a peak to the list of shells. 
+    //! Add a peak to the list of shells.
     //! It will automatically be added to the appropriate shell.
     void addPeak(const sptrPeak3D& peak);
     //! Return the given shell.

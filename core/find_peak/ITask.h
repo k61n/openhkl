@@ -11,19 +11,17 @@ namespace nsx {
 
 struct TaskState;
 
-class ITask
-{
+class ITask {
 public:
-
-    enum class Status {SUBMITTED,STARTED,ABORTED,COMPLETED};
+    enum class Status { SUBMITTED, STARTED, ABORTED, COMPLETED };
 
     ITask(const std::string& type);
 
-    ITask(const ITask& other)=delete;
+    ITask(const ITask& other) = delete;
 
-    ITask& operator=(const ITask& other)=delete;
+    ITask& operator=(const ITask& other) = delete;
 
-    virtual ~ITask()=0;
+    virtual ~ITask() = 0;
 
     TaskState state() const;
     void sendState();
@@ -32,12 +30,11 @@ public:
 
     bool run();
 
-    virtual bool doTask()=0;
+    virtual bool doTask() = 0;
 
     void setCallBack(std::function<void(ITask*)> callback);
 
 protected:
-
     std::atomic<bool> _abort;
 
     std::function<void(ITask*)> _callback;
@@ -57,7 +54,14 @@ protected:
 
 struct TaskState {
 
-    enum class Section : size_t {NAME=0,PROGRESS=1,START=2,ABORT=3,REMOVE=4,COUNT=5};
+    enum class Section : size_t {
+        NAME = 0,
+        PROGRESS = 1,
+        START = 2,
+        ABORT = 3,
+        REMOVE = 4,
+        COUNT = 5
+    };
 
     std::string name;
     std::string type;

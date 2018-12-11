@@ -11,8 +11,7 @@
 #include "CollectedPeaksModel.h"
 #include "PeakTableView.h"
 
-PeakTableView::PeakTableView(QWidget *parent)
-: QTableView(parent)
+PeakTableView::PeakTableView(QWidget* parent) : QTableView(parent)
 {
     setEditTriggers(QAbstractItemView::SelectedClicked);
 
@@ -28,9 +27,9 @@ PeakTableView::PeakTableView(QWidget *parent)
 
     setFocusPolicy(Qt::StrongFocus);
 
-    connect(this,SIGNAL(clicked(QModelIndex)),this,SLOT(selectPeak(QModelIndex)));
+    connect(this, SIGNAL(clicked(QModelIndex)), this, SLOT(selectPeak(QModelIndex)));
 
-    connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(togglePeakSelection(QModelIndex)));
+    connect(this, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(togglePeakSelection(QModelIndex)));
 }
 
 void PeakTableView::selectPeak(QModelIndex index)
@@ -43,7 +42,7 @@ void PeakTableView::selectPeak(QModelIndex index)
     peaks_model->selectPeak(index);
 }
 
-void PeakTableView::keyPressEvent(QKeyEvent *event)
+void PeakTableView::keyPressEvent(QKeyEvent* event)
 {
     auto previous_index = currentIndex();
 
@@ -57,12 +56,12 @@ void PeakTableView::keyPressEvent(QKeyEvent *event)
 
         if (key == Qt::Key_Down || key == Qt::Key_Tab || key == Qt::Key_PageDown) {
             if (current_index == previous_index) {
-                setCurrentIndex(model()->index(0,0));
+                setCurrentIndex(model()->index(0, 0));
             }
             selectPeak(currentIndex());
         } else if (key == Qt::Key_Up || key == Qt::Key_Backspace || key == Qt::Key_PageDown) {
             if (current_index == previous_index) {
-                setCurrentIndex(model()->index(model()->rowCount()-1,0));
+                setCurrentIndex(model()->index(model()->rowCount() - 1, 0));
             }
             selectPeak(currentIndex());
         } else if (key == Qt::Key_Return || key == Qt::Key_Space) {
@@ -93,9 +92,9 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
     // Show all peaks as selected when context menu is requested
     auto menu = new QMenu(this);
     //
-    QAction* sortbyEquivalence=new QAction("Sort by equivalences",menu);
+    QAction* sortbyEquivalence = new QAction("Sort by equivalences", menu);
     menu->addAction(sortbyEquivalence);
-    connect(sortbyEquivalence,SIGNAL(triggered()),peaksModel,SLOT(sortEquivalents()));
+    connect(sortbyEquivalence, SIGNAL(triggered()), peaksModel, SLOT(sortEquivalents()));
 
     auto normalize = new QAction("Normalize to monitor", menu);
     menu->addSeparator();
@@ -105,28 +104,28 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
     QModelIndexList indexList = selectionModel()->selectedIndexes();
 
     if (indexList.size()) {
-        QMenu* plotasmenu=menu->addMenu("Plot as");
+        QMenu* plotasmenu = menu->addMenu("Plot as");
         const auto& metadata = peaks[indexList[0].row()]->data()->reader()->metadata();
         const auto& keys = metadata.keys();
         for (const auto& key : keys) {
             try {
-                //Ensure metadata is a Numeric type
+                // Ensure metadata is a Numeric type
                 metadata.key<double>(key);
-            } catch(std::exception& e) {
+            } catch (std::exception& e) {
                 continue;
             }
-            QAction* newparam=new QAction(QString::fromStdString(key),plotasmenu);
-            connect(newparam,&QAction::triggered,this,[&](){plotAs(key);});
+            QAction* newparam = new QAction(QString::fromStdString(key), plotasmenu);
+            connect(newparam, &QAction::triggered, this, [&]() { plotAs(key); });
             plotasmenu->addAction(newparam);
         }
     }
     menu->addSeparator();
-    QMenu* selectionMenu=menu->addMenu("Selection");
-    auto selectAllPeaks=new QAction("all peaks",menu);
-    auto selectValidPeaks=new QAction("valid peaks",menu);
-    auto selectUnindexedPeaks=new QAction("unindexed peaks",menu);
-    auto clearSelectedPeaks=new QAction("clear selection",menu);
-    auto togglePeaksSelection=new QAction("toggle",menu);
+    QMenu* selectionMenu = menu->addMenu("Selection");
+    auto selectAllPeaks = new QAction("all peaks", menu);
+    auto selectValidPeaks = new QAction("valid peaks", menu);
+    auto selectUnindexedPeaks = new QAction("unindexed peaks", menu);
+    auto clearSelectedPeaks = new QAction("clear selection", menu);
+    auto togglePeaksSelection = new QAction("toggle", menu);
     selectionMenu->addAction(selectAllPeaks);
     selectionMenu->addAction(selectValidPeaks);
     selectionMenu->addAction(selectUnindexedPeaks);
@@ -135,22 +134,22 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
     selectionMenu->addSeparator();
     selectionMenu->addAction(togglePeaksSelection);
 
-    connect(normalize,SIGNAL(triggered()),this,SLOT(normalizeToMonitor()));
+    connect(normalize, SIGNAL(triggered()), this, SLOT(normalizeToMonitor()));
     menu->popup(event->globalPos());
 
-    connect(clearSelectedPeaks,SIGNAL(triggered()),this,SLOT(clearSelectedPeaks()));
-    connect(selectAllPeaks,SIGNAL(triggered()),this,SLOT(selectAllPeaks()));
-    connect(selectValidPeaks,SIGNAL(triggered()),this,SLOT(selectValidPeaks()));
-    connect(selectUnindexedPeaks,SIGNAL(triggered()),this,SLOT(selectUnindexedPeaks()));
-    connect(togglePeaksSelection,SIGNAL(triggered()),this,SLOT(togglePeaksSelection()));
+    connect(clearSelectedPeaks, SIGNAL(triggered()), this, SLOT(clearSelectedPeaks()));
+    connect(selectAllPeaks, SIGNAL(triggered()), this, SLOT(selectAllPeaks()));
+    connect(selectValidPeaks, SIGNAL(triggered()), this, SLOT(selectValidPeaks()));
+    connect(selectUnindexedPeaks, SIGNAL(triggered()), this, SLOT(selectUnindexedPeaks()));
+    connect(togglePeaksSelection, SIGNAL(triggered()), this, SLOT(togglePeaksSelection()));
 }
 
 void PeakTableView::normalizeToMonitor()
 {
     bool ok;
-    double factor = QInputDialog::getDouble(
-        this,"Enter normalization factor","",1,1,100000000,1,&ok);
-    if(!ok)
+    double factor =
+        QInputDialog::getDouble(this, "Enter normalization factor", "", 1, 1, 100000000, 1, &ok);
+    if (!ok)
         return;
 
     auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
@@ -164,14 +163,14 @@ void PeakTableView::normalizeToMonitor()
     peaksModel->normalizeToMonitor(factor);
 
     // Keep track of the last selected index before rebuilding the table
-    QModelIndex index=currentIndex();
+    QModelIndex index = currentIndex();
 
     selectRow(index.row());
 
     // If no row selected do nothing else.
     if (!index.isValid())
         return;
-    nsx::sptrPeak3D peak=peaks[index.row()];
+    nsx::sptrPeak3D peak = peaks[index.row()];
     emit plotPeak(peak);
 }
 
@@ -189,19 +188,19 @@ void PeakTableView::plotAs(const std::string& key)
     if (peaks.empty())
         return;
 
-    int nPoints=indexList.size();
+    int nPoints = indexList.size();
 
     QVector<double> x(nPoints);
     QVector<double> y(nPoints);
     QVector<double> e(nPoints);
 
-    for (int i=0;i<nPoints;++i) {
-        nsx::sptrPeak3D p=peaks[indexList[i].row()];
-        x[i]=p->data()->reader()->metadata().key<double>(key);
-        y[i]=p->correctedIntensity().value();
-        e[i]=p->correctedIntensity().sigma();
+    for (int i = 0; i < nPoints; ++i) {
+        nsx::sptrPeak3D p = peaks[indexList[i].row()];
+        x[i] = p->data()->reader()->metadata().key<double>(key);
+        y[i] = p->correctedIntensity().value();
+        e[i] = p->correctedIntensity().sigma();
     }
-    emit plotData(x,y,e);
+    emit plotData(x, y, e);
 }
 
 void PeakTableView::selectUnindexedPeaks()
@@ -227,11 +226,11 @@ void PeakTableView::clearSelectedPeaks()
 
 void PeakTableView::togglePeaksSelection()
 {
-    QItemSelectionModel *selection = selectionModel();
+    QItemSelectionModel* selection = selectionModel();
 
-    for (int i=0;i<model()->rowCount();++i)
+    for (int i = 0; i < model()->rowCount(); ++i)
         selection->select(
-            model()->index(i,0),QItemSelectionModel::Rows|QItemSelectionModel::Toggle);
+            model()->index(i, 0), QItemSelectionModel::Rows | QItemSelectionModel::Toggle);
 }
 
 void PeakTableView::selectValidPeaks()

@@ -3,20 +3,19 @@
 #include <QStandardItem>
 #include <QVariant>
 
-#include <core/Experiment.h>
 #include "SessionModel.h"
+#include <core/Experiment.h>
 
 class QWidget;
 class ExperimentItem; // cross-include
 
-class TreeItem: public QStandardItem
-{
+class TreeItem : public QStandardItem {
 public:
     explicit TreeItem();
 
     virtual ~TreeItem() {}
 
-    virtual void setData(const QVariant& value, int role=Qt::UserRole + 1) override;
+    virtual void setData(const QVariant& value, int role = Qt::UserRole + 1) override;
 
     virtual SessionModel* model() const;
 

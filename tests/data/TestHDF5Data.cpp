@@ -9,7 +9,7 @@ NSX_INIT_TEST
 
 int main()
 {
-    nsx::Experiment experiment("","BioDiff2500");
+    nsx::Experiment experiment("", "BioDiff2500");
 
     nsx::DataSet dataset("hdf", "H5_example.hdf", experiment.diffractometer());
 

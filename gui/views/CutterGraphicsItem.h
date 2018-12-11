@@ -11,10 +11,8 @@ class QGraphicsSceneHoverEvent;
 class QGraphicsSceneMouseEvent;
 class QWidget;
 
-class CutterGraphicsItem : public PlottableGraphicsItem
-{
+class CutterGraphicsItem : public PlottableGraphicsItem {
 public:
-
     // Constructors and destructor
 
     //! Constructs a data cutter
@@ -26,7 +24,8 @@ public:
 
     //! The mouse move event.
     //! If the item is selected when the event is triggered then the item will be moved on the scene
-    //! Otherwise, that means that the item is being drawn and then the move event corresponds to a resize
+    //! Otherwise, that means that the item is being drawn and then the move event corresponds to a
+    //! resize
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
 
     // Getters and setters
@@ -46,7 +45,7 @@ public:
     // Other methods
 
     //! Paint the contents of the item [pure virtual]
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)=0;
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) = 0;
 
 
 protected:
@@ -56,6 +55,4 @@ protected:
     QPointF _from;
     //! The bottom right coordinates of the slice
     QPointF _to;
-
-
 };

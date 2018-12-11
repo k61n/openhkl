@@ -34,28 +34,23 @@
 
 namespace nsx {
 
-CSV::CSV(char delim, char quotchar): _delim(delim), _quotchar(quotchar)
-{
-}
+CSV::CSV(char delim, char quotchar) : _delim(delim), _quotchar(quotchar) {}
 
-CSV::~CSV()
-{
+CSV::~CSV() {}
 
-}
-
-std::vector<std::string> CSV::getRow(std::istream &stream)
+std::vector<std::string> CSV::getRow(std::istream& stream)
 {
     char delim(0);
     const char eof = std::char_traits<char>::eof();
     std::vector<std::string> row;
 
-    while(delim != '\n' && delim != eof)
+    while (delim != '\n' && delim != eof)
         row.push_back(getToken(stream, delim));
 
     return row;
 }
 
-std::string CSV::getToken(std::istream &stream, char &delim)
+std::string CSV::getToken(std::istream& stream, char& delim)
 {
     std::string tok("");
     char curr, eof, n1, n2;
@@ -66,10 +61,10 @@ std::string CSV::getToken(std::istream &stream, char &delim)
     int pos = stream.tellg();
     stream.seekg(0, std::ios_base::end);
     int size = stream.tellg();
-    stream.seekg(pos-size, std::ios_base::end);
+    stream.seekg(pos - size, std::ios_base::end);
     assert(pos == stream.tellg());
 
-    while(!done && !stream.eof()) {
+    while (!done && !stream.eof()) {
         curr = eof;
         stream.get(curr);
 
@@ -79,20 +74,19 @@ std::string CSV::getToken(std::istream &stream, char &delim)
         }
 
         if (!in_string) {
-            if ( (curr == _delim) || (curr == '\n')) {
+            if ((curr == _delim) || (curr == '\n')) {
                 done = true;
                 continue;
             }
             if (curr == _quotchar)
                 in_string = true;
-        }
-        else {
+        } else {
             // check whether we are at end of string, or a quoted '"'
-            if ( curr == _quotchar) {
+            if (curr == _quotchar) {
                 pos = stream.tellg();
 
                 // reached end of file
-                if (size-pos < 2) {
+                if (size - pos < 2) {
                     in_string = false;
                 }
                 // else check for triple quote
@@ -100,7 +94,7 @@ std::string CSV::getToken(std::istream &stream, char &delim)
                     stream.get(n1);
                     stream.get(n2);
 
-                    if ( (n1 == _quotchar) && (n2 == _quotchar)) {
+                    if ((n1 == _quotchar) && (n2 == _quotchar)) {
                         tok += _quotchar;
                         tok += _quotchar;
                         tok += _quotchar;
@@ -129,4 +123,3 @@ std::string CSV::getToken(std::istream &stream, char &delim)
 }
 
 } // end namespace nsx
-

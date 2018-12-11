@@ -5,11 +5,11 @@
 
 #include <Eigen/Dense>
 
-#include <core/Component.h>
 #include <core/CSV.h>
+#include <core/Component.h>
 #include <core/GruberReduction.h>
-#include <core/NiggliReduction.h>
 #include <core/NSXTest.h>
+#include <core/NiggliReduction.h>
 #include <core/SpaceGroup.h>
 #include <core/UnitCell.h>
 #include <core/Units.h>
@@ -43,11 +43,11 @@ int main()
     // read header row
     csv_reader.getRow(database);
 
-    while ( !database.eof()) {
+    while (!database.eof()) {
 
-        std::vector<std::string> row =  csv_reader.getRow(database);
+        std::vector<std::string> row = csv_reader.getRow(database);
 
-        if ( row.size() < 8)
+        if (row.size() < 8)
             continue;
 
         symbol = row[0];
@@ -62,8 +62,7 @@ int main()
 
         try {
             bravais = nsx::SpaceGroup(symbol).bravaisTypeSymbol();
-        }
-        catch(...) {
+        } catch (...) {
             continue; // unknown space group
         }
 
@@ -89,25 +88,18 @@ int main()
         nsx::GruberReduction gruber(gruberCell.metric(), gruber_tolerance);
 
         try {
-           gruber.reduce(gruber_P, centering, bravaisType);
-        }
-        catch (std::exception& e) {
+            gruber.reduce(gruber_P, centering, bravaisType);
+        } catch (std::exception& e) {
             NSX_CHECK_ASSERT(false);
         }
 
         gruberCell.setBravaisType(bravaisType);
         gruberCell.setLatticeCentring(centering);
 
-        if ( gruberCell.bravaisTypeSymbol() == bravais) {
+        if (gruberCell.bravaisTypeSymbol() == bravais) {
             ++correct;
-            outfile << row[0] << '\t'
-                    << row[1] << '\t'
-                    << row[2] << '\t'
-                    << row[3] << '\t'
-                    << row[4] << '\t'
-                    << row[5] << '\t'
-                    << row[6] << '\t'
-                    << row[7] << '\n';
+            outfile << row[0] << '\t' << row[1] << '\t' << row[2] << '\t' << row[3] << '\t'
+                    << row[4] << '\t' << row[5] << '\t' << row[6] << '\t' << row[7] << '\n';
         }
 
         NSX_CHECK_ASSERT(gruberCell.bravaisTypeSymbol()[0] == bravais[0]);

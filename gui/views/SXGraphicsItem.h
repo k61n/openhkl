@@ -12,12 +12,10 @@ class QGraphicsSceneWheelEvent;
 class QKeyEvent;
 class QWidget;
 
-class SXGraphicsItem : public QGraphicsItem
-{
+class SXGraphicsItem : public QGraphicsItem {
 public:
-
-	// Construct a SX graphics item
-    SXGraphicsItem(QGraphicsItem *parent=0, bool deletable=false, bool movable=false);
+    // Construct a SX graphics item
+    SXGraphicsItem(QGraphicsItem* parent = 0, bool deletable = false, bool movable = false);
     // Destructor
     virtual ~SXGraphicsItem();
 
@@ -31,7 +29,7 @@ public:
 
     virtual void wheelEvent(QGraphicsSceneWheelEvent* event) override;
 
-    virtual QRectF boundingRect() const=0;
+    virtual QRectF boundingRect() const = 0;
     DetectorScene* getScene() const;
     //! Set whether or not the item is deletable
     void setDeletable(bool deletable);
@@ -45,7 +43,8 @@ public:
     //! Returns whether or not the item is movable
     bool isMovable() const;
     //! Paint the graphics item
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)=0;
+    virtual void
+    paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) = 0;
     //! Show or does not show the label bound to the item
     void showLabel(bool);
 
@@ -59,5 +58,4 @@ protected:
 
     //! Text child object that contains hkl label
     QGraphicsTextItem* _label_gi;
-
 };

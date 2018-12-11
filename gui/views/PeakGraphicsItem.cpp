@@ -28,9 +28,7 @@ bool PeakGraphicsItem::_show_label = false;
 bool PeakGraphicsItem::_show_center = false;
 
 PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D peak, int frame)
-: PlottableGraphicsItem(nullptr,true,false),
-  _peak(peak),
-  _area(nullptr)
+    : PlottableGraphicsItem(nullptr, true, false), _peak(peak), _area(nullptr)
 {
     setVisible(true);
 
@@ -39,8 +37,8 @@ PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D peak, int frame)
     if (unit_cell) {
         nsx::MillerIndex miller_index(_peak->q(), *unit_cell);
         if (miller_index.indexed(unit_cell->indexingTolerance()))
-            peak_label = QString("%1,%2,%3").
-                arg(miller_index[0]).arg(miller_index[1]).arg(miller_index[2]);
+            peak_label =
+                QString("%1,%2,%3").arg(miller_index[0]).arg(miller_index[1]).arg(miller_index[2]);
         else
             peak_label = "not indexed";
 
@@ -54,7 +52,7 @@ PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D peak, int frame)
     _label_gi->setPlainText(peak_label);
     _label_gi->setAcceptHoverEvents(false);
     _label_gi->setZValue(-1);
-    _label_gi->setPos(3,3);
+    _label_gi->setPos(3, 3);
     _label_gi->setVisible(_show_label);
 
     QPen center_pen;
@@ -64,7 +62,7 @@ PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D peak, int frame)
 
     _center_gi = new QGraphicsEllipseItem(this);
     _center_gi->setPen(center_pen);
-    _center_gi->setRect(-1,-1,2,2);
+    _center_gi->setRect(-1, -1, 2, 2);
     _center_gi->setParentItem(this);
     _center_gi->setBrush(QBrush(Qt::red));
     _center_gi->setAcceptHoverEvents(false);
@@ -81,10 +79,10 @@ PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D peak, int frame)
 
     _upper = aabb.upper();
 
-    auto center = peak_ellipsoid.intersectionCenter(
-        {0.0,0.0,1.0},{0.0,0.0,static_cast<double>(frame)});
+    auto center =
+        peak_ellipsoid.intersectionCenter({0.0, 0.0, 1.0}, {0.0, 0.0, static_cast<double>(frame)});
 
-    setPos(center[0],center[1]);
+    setPos(center[0], center[1]);
 
     setBoundingRegionGranularity(0.0);
 
@@ -99,14 +97,14 @@ nsx::sptrPeak3D PeakGraphicsItem::peak() const
 
 QRectF PeakGraphicsItem::boundingRect() const
 {
-    double width  = _upper[0] - _lower[0];
+    double width = _upper[0] - _lower[0];
     double height = _upper[1] - _lower[1];
 
-    return QRectF(-width/2.0,-height/2.0,width,height);
+    return QRectF(-width / 2.0, -height / 2.0, width, height);
 }
 
 void PeakGraphicsItem::paint(
-    QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+    QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(widget)
 
@@ -166,7 +164,8 @@ void PeakGraphicsItem::plot(SXPlot* plot)
 
     for (int z = lower[2]; z <= upper[2]; ++z) {
         const auto& frame = data->frame(z);
-        double counts = static_cast<double>(frame.block(lower[1],lower[0],upper[1]-lower[1],upper[0]-lower[0]).sum());
+        double counts = static_cast<double>(
+            frame.block(lower[1], lower[0], upper[1] - lower[1], upper[0] - lower[0]).sum());
         x_values.append(static_cast<double>(z));
         y_values.append(counts);
         err_y_values.append(counts > 0 ? std::sqrt(counts) : 0.0);

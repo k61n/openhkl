@@ -29,14 +29,14 @@
 
 #pragma once
 
-#include <vector>
 #include <Eigen/Dense>
+#include <vector>
 
 #include "DataTypes.h"
 #include "Ellipsoid.h"
 #include "GeometryTypes.h"
-#include "Intensity.h"
 #include "IPeakIntegrator.h"
+#include "Intensity.h"
 #include "UnitCell.h"
 
 namespace nsx {
@@ -119,7 +119,8 @@ public:
     bool predicted() const;
 
     //! Update the integration of the peak
-    void updateIntegration(const IPeakIntegrator& integrator, double peakEnd, double bkgBegin, double bkgEnd);
+    void updateIntegration(
+        const IPeakIntegrator& integrator, double peakEnd, double bkgBegin, double bkgEnd);
     //! Return the q vector of the peak, transformed into sample coordinates.
     ReciprocalVector q() const;
     //! Return the predicted q vector of the peak, based on Miller index.
@@ -131,9 +132,9 @@ public:
     //! Return peak center at the given frame
     DetectorEvent predictCenter(double frame) const;
 
-    #ifndef SWIG
+#ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    #endif
+#endif
 
 private:
     //! Shape describing the Peak zone

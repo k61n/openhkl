@@ -1,23 +1,22 @@
 #include <core/DataSet.h>
+#include <core/Logger.h>
 #include <core/Peak3D.h>
 #include <core/PeakCoordinateSystem.h>
 #include <core/PeakFilter.h>
 #include <core/Profile3D.h>
 #include <core/ShapeIntegrator.h>
 #include <core/ShapeLibrary.h>
-#include <core/Logger.h>
 
-#include "DialogShapeLibrary.h"
 #include "CollectedPeaksModel.h"
+#include "DialogShapeLibrary.h"
 #include "ExperimentItem.h"
 #include "ProgressView.h"
 
 #include "ui_DialogShapeLibrary.h"
 
-DialogShapeLibrary::DialogShapeLibrary(ExperimentItem* experiment_item,
-                                       nsx::sptrUnitCell unitCell,
-                                       const nsx::PeakList& peaks,
-                                       QWidget *parent)
+DialogShapeLibrary::DialogShapeLibrary(
+    ExperimentItem* experiment_item, nsx::sptrUnitCell unitCell, const nsx::PeakList& peaks,
+    QWidget* parent)
     : QDialog(parent)
     , ui(new Ui::DialogShapeLibrary)
     , _unitCell(std::move(unitCell))
@@ -27,13 +26,13 @@ DialogShapeLibrary::DialogShapeLibrary(ExperimentItem* experiment_item,
 {
     ui->setupUi(this);
 
-    ui->preview->resize(400,400);
+    ui->preview->resize(400, 400);
 
     ui->kabsch->setStyleSheet("font-weight: normal;");
     ui->kabsch->setCheckable(true);
 
     // get list of datasets
-    for (auto p: _peaks)
+    for (auto p : _peaks)
         _data.insert(p->data());
 
     connect(ui->calculate, SIGNAL(released()), this, SLOT(calculate()));
@@ -53,21 +52,21 @@ DialogShapeLibrary::DialogShapeLibrary(ExperimentItem* experiment_item,
     Eigen::Matrix3d cov;
     cov.setZero();
 
-    for (auto peak: peaks) {
+    for (auto peak : peaks) {
         nsx::PeakCoordinateSystem coord(peak);
         auto shape = peak->shape();
         Eigen::Matrix3d J = coord.jacobian();
-        cov += J*shape.inverseMetric()*J.transpose();
+        cov += J * shape.inverseMetric() * J.transpose();
     }
 
     cov /= peaks.size();
 
     // check this
-    ui->sigmaD->setValue(std::sqrt(0.5*(cov(0,0)+cov(1,1))));
-    ui->sigmaM->setValue(std::sqrt(cov(2,2)));
+    ui->sigmaD->setValue(std::sqrt(0.5 * (cov(0, 0) + cov(1, 1))));
+    ui->sigmaM->setValue(std::sqrt(cov(2, 2)));
 
-    auto peaks_model = new CollectedPeaksModel(
-        experiment_item->model(),experiment_item->experiment(),peaks);
+    auto peaks_model =
+        new CollectedPeaksModel(experiment_item->model(), experiment_item->experiment(), peaks);
     ui->peaks->setModel(peaks_model);
     ui->peaks->verticalHeader()->show();
 
@@ -75,10 +74,12 @@ DialogShapeLibrary::DialogShapeLibrary(ExperimentItem* experiment_item,
     ui->peaks->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
 
     connect(ui->drawFrame, SIGNAL(valueChanged(int)), this, SLOT(drawFrame(int)));
-    connect(ui->peaks,&QTableView::clicked,[this](QModelIndex index){
-            selectTargetPeak(index.row());});
-    connect(ui->peaks->verticalHeader(),SIGNAL(sectionClicked(int)),
-            this,SLOT(selectTargetPeak(int)));
+    connect(ui->peaks, &QTableView::clicked, [this](QModelIndex index) {
+        selectTargetPeak(index.row());
+    });
+    connect(
+        ui->peaks->verticalHeader(), SIGNAL(sectionClicked(int)), this,
+        SLOT(selectTargetPeak(int)));
 }
 
 DialogShapeLibrary::~DialogShapeLibrary()
@@ -105,7 +106,7 @@ void DialogShapeLibrary::build()
 {
     nsx::PeakList fit_peaks;
 
-    for (auto peak: _peaks) {
+    for (auto peak : _peaks) {
         if (!peak->enabled()) {
             continue;
         }
@@ -129,7 +130,7 @@ void DialogShapeLibrary::build()
 
     // update the frame slider if necessary
     if (ui->drawFrame->maximum() != nz)
-        ui->drawFrame->setMaximum(nz-1);
+        ui->drawFrame->setMaximum(nz - 1);
 
     nsx::AABB aabb;
 
@@ -141,12 +142,12 @@ void DialogShapeLibrary::build()
         auto sigmaD = ui->sigmaD->value();
         auto sigmaM = ui->sigmaM->value();
         Eigen::Vector3d sigma(sigmaD, sigmaD, sigmaM);
-        aabb.setLower(-peakScale*sigma);
-        aabb.setUpper(peakScale*sigma);
+        aabb.setLower(-peakScale * sigma);
+        aabb.setUpper(peakScale * sigma);
     } else {
         Eigen::Vector3d dx(nx, ny, nz);
-        aabb.setLower(-0.5*dx);
-        aabb.setUpper(0.5*dx);
+        aabb.setLower(-0.5 * dx);
+        aabb.setUpper(0.5 * dx);
     }
 
     // free memory of old library
@@ -156,13 +157,13 @@ void DialogShapeLibrary::build()
 
     auto bkgBegin = ui->bkgBegin->value();
     auto bkgEnd = ui->bkgEnd->value();
-    _library = nsx::sptrShapeLibrary(
-        new nsx::ShapeLibrary(!kabsch_coords, peakScale, bkgBegin, bkgEnd));
+    _library =
+        nsx::sptrShapeLibrary(new nsx::ShapeLibrary(!kabsch_coords, peakScale, bkgBegin, bkgEnd));
 
     nsx::ShapeIntegrator integrator(_library, aabb, nx, ny, nz);
     integrator.setHandler(handler);
 
-    for (auto data: _data) {
+    for (auto data : _data) {
         nsx::info() << "Fitting profiles in dataset " << data->filename();
         integrator.integrate(
             fit_peaks, data, _library->peakScale(), _library->bkgBegin(), _library->bkgEnd());
