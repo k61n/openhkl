@@ -7,14 +7,14 @@
 #include "SessionModel.h"
 
 class QWidget;
-class ExperimentItem;
+class ExperimentItem; // cross-include
 
 class TreeItem: public QStandardItem
 {
 public:
     explicit TreeItem();
 
-    virtual ~TreeItem();
+    virtual ~TreeItem() {}
 
     virtual void setData(const QVariant& value, int role=Qt::UserRole + 1) override;
 

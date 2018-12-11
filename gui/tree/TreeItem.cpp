@@ -1,13 +1,11 @@
-#include <QStandardItem>
-
-#include "ExperimentItem.h"
 #include "TreeItem.h"
 
-TreeItem::TreeItem() : QStandardItem()
-{
-}
+#include "ExperimentItem.h"
 
-TreeItem::~TreeItem()
+#include <QStandardItem>
+
+
+TreeItem::TreeItem() : QStandardItem()
 {
 }
 
@@ -23,7 +21,6 @@ nsx::sptrExperiment TreeItem::experiment()
 
 ExperimentItem* TreeItem::experimentItem() const
 {
-
     ExperimentItem* exp_item = nullptr;
     QStandardItem* p = parent();
 
