@@ -103,6 +103,5 @@ void ExperimentItem::writeLogFiles()
     FrameStatistics *frame = FrameStatistics::create(filtered_peaks,cell->spaceGroup());
 
     frame->show();
-
     frame->raise();
 }

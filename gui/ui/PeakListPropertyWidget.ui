@@ -30,7 +30,7 @@
   <customwidget>
    <class>PeakTableView</class>
    <extends>QTableView</extends>
-   <header>views/PeakTableView.h</header>
+   <header>PeakTableView.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
