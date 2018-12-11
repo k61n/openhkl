@@ -1,18 +1,14 @@
 #include "SamplePropertyWidget.h"
 
 #include <core/Axis.h>
-#include <core/Diffractometer.h>
 #include <core/Gonio.h>
-#include <core/Sample.h>
 
-SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent)
-    : QWidget(parent),
-      _ui(new Ui::SamplePropertyWidget),
-      _sampleItem(caller)
+SamplePropertyWidget::SamplePropertyWidget(const nsx::Sample &sample)
+    : QWidget()
+    , _ui(new Ui::SamplePropertyWidget)
 {
     _ui->setupUi(this);
 
-    const auto &sample = _sampleItem->experiment()->diffractometer()->sample();
     const auto &sample_gonio = sample.gonio();
     size_t n_sample_gonio_axes = sample_gonio.nAxes();
 

@@ -27,10 +27,18 @@ SourcePropertyWidget::SourcePropertyWidget(SourceItem* caller,QWidget *parent)
         _ui->monochromators->addItem(QString::fromStdString(m.name()));
     }
 
-    connect(_ui->monochromators,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),[=](int index){onSelectedMonochromatorChanged(index);});
-    connect(_ui->height,static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),[=](double height){onHeightChanged(height);});
-    connect(_ui->wavelength,static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),[=](double wavelength){onWavelengthChanged(wavelength);});
-    connect(_ui->width,static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),[=](double width){onWidthChanged(width);});
+    connect(_ui->monochromators,
+            static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            [=](int index){onSelectedMonochromatorChanged(index);});
+    connect(_ui->height,
+            static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+            [=](double height){onHeightChanged(height);});
+    connect(_ui->wavelength,
+            static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+            [=](double wavelength){onWavelengthChanged(wavelength);});
+    connect(_ui->width,
+            static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+            [=](double width){onWidthChanged(width);});
 
     onSelectedMonochromatorChanged(0);
 }

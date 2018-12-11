@@ -13,13 +13,11 @@ class SourcePropertyWidget : public QWidget
     Q_OBJECT
 
 public:
-
     explicit SourcePropertyWidget(SourceItem* caller,QWidget *parent = 0);
 
     ~SourcePropertyWidget();
 
 private:
-
     void onHeightChanged(double height);
 
     void onSelectedMonochromatorChanged(int index);
@@ -29,7 +27,6 @@ private:
     void onWidthChanged(double width);
 
 private:
-
     Ui::SourcePropertyWidget *_ui;
 
     SourceItem* _caller;

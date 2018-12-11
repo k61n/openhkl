@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QWidget>
-#include "SampleItem.h"
+#include <core/Sample.h>
 
 #include "ui_SamplePropertyWidget.h"
 
@@ -10,14 +10,10 @@ class SamplePropertyWidget : public QWidget
     Q_OBJECT
 
 public:
-
-    explicit SamplePropertyWidget(SampleItem* caller,QWidget* parent=0);
+    explicit SamplePropertyWidget(const nsx::Sample &sample);
 
     ~SamplePropertyWidget();
 
 private:
-
     Ui::SamplePropertyWidget *_ui;
-
-    SampleItem* _sampleItem;
 };
