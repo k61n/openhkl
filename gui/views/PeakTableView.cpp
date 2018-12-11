@@ -1,26 +1,15 @@
-#include <cstdio>
-#include <memory>
-#include <set>
-
 #include <QContextMenuEvent>
 #include <QHeaderView>
 #include <QInputDialog>
 #include <QItemSelectionModel>
 #include <QMessageBox>
-#include <QMouseEvent>
-#include <QStandardItemModel>
 
-#include <core/DataSet.h>
 #include <core/IDataReader.h>
 #include <core/Logger.h>
-#include <core/MetaData.h>
 #include <core/Peak3D.h>
-#include <core/ProgressHandler.h>
-#include <core/UnitCell.h>
 
 #include "CollectedPeaksModel.h"
 #include "PeakTableView.h"
-#include "SessionModel.h"
 
 PeakTableView::PeakTableView(QWidget *parent)
 : QTableView(parent)
@@ -46,9 +35,8 @@ PeakTableView::PeakTableView(QWidget *parent)
 
 void PeakTableView::selectPeak(QModelIndex index)
 {
-    if (!index.isValid()) {
+    if (!index.isValid())
         return;
-    }
 
     CollectedPeaksModel* peaks_model = dynamic_cast<CollectedPeaksModel*>(model());
 
@@ -86,9 +74,8 @@ void PeakTableView::keyPressEvent(QKeyEvent *event)
 void PeakTableView::togglePeakSelection(QModelIndex index)
 {
     auto peaks_model = dynamic_cast<CollectedPeaksModel*>(model());
-    if (peaks_model == nullptr) {
+    if (!peaks_model)
         return;
-    }
 
     peaks_model->togglePeakSelection(index);
 }
@@ -96,14 +83,13 @@ void PeakTableView::togglePeakSelection(QModelIndex index)
 void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
 {
     auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
-    if (peaksModel == nullptr) {
+    if (!peaksModel)
         return;
-    }
 
     auto peaks = peaksModel->peaks();
-    if (peaks.empty()) {
+    if (peaks.empty())
         return;
-    }
+
     // Show all peaks as selected when context menu is requested
     auto menu = new QMenu(this);
     //
@@ -162,21 +148,18 @@ void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
 void PeakTableView::normalizeToMonitor()
 {
     bool ok;
-    double factor = QInputDialog::getDouble(this,"Enter normalization factor","",1,1,100000000,1,&ok);
-
-    if(!ok) {
+    double factor = QInputDialog::getDouble(
+        this,"Enter normalization factor","",1,1,100000000,1,&ok);
+    if(!ok)
         return;
-    }
 
     auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
-    if (peaksModel == nullptr) {
+    if (peaksModel == nullptr)
         return;
-    }
 
     auto peaks = peaksModel->peaks();
-    if (peaks.empty()) {
+    if (peaks.empty())
         return;
-    }
 
     peaksModel->normalizeToMonitor(factor);
 
@@ -186,9 +169,8 @@ void PeakTableView::normalizeToMonitor()
     selectRow(index.row());
 
     // If no row selected do nothing else.
-    if (!index.isValid()) {
+    if (!index.isValid())
         return;
-    }
     nsx::sptrPeak3D peak=peaks[index.row()];
     emit plotPeak(peak);
 }
@@ -196,19 +178,16 @@ void PeakTableView::normalizeToMonitor()
 void PeakTableView::plotAs(const std::string& key)
 {
     QModelIndexList indexList = selectionModel()->selectedIndexes();
-    if (!indexList.size()) {
+    if (!indexList.size())
         return;
-    }
 
     auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
-    if (peaksModel == nullptr) {
+    if (peaksModel == nullptr)
         return;
-    }
 
     auto peaks = peaksModel->peaks();
-    if (peaks.empty()) {
+    if (peaks.empty())
         return;
-    }
 
     int nPoints=indexList.size();
 
@@ -228,14 +207,12 @@ void PeakTableView::plotAs(const std::string& key)
 void PeakTableView::selectUnindexedPeaks()
 {
     auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
-    if (peaksModel == nullptr) {
+    if (peaksModel == nullptr)
         return;
-    }
     QModelIndexList unindexedPeaks = peaksModel->unindexedPeaks();
 
-    for (QModelIndex index : unindexedPeaks) {
+    for (QModelIndex index : unindexedPeaks)
         selectRow(index.row());
-    }
 }
 
 void PeakTableView::selectAllPeaks()
@@ -252,20 +229,18 @@ void PeakTableView::togglePeaksSelection()
 {
     QItemSelectionModel *selection = selectionModel();
 
-    for (int i=0;i<model()->rowCount();++i) {
-        selection->select(model()->index(i,0),QItemSelectionModel::Rows|QItemSelectionModel::Toggle);
-    }
+    for (int i=0;i<model()->rowCount();++i)
+        selection->select(
+            model()->index(i,0),QItemSelectionModel::Rows|QItemSelectionModel::Toggle);
 }
 
 void PeakTableView::selectValidPeaks()
 {
     auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
-    if (peaksModel == nullptr) {
+    if (peaksModel == nullptr)
         return;
-    }
     QModelIndexList validPeaksIndexes = peaksModel->selectedPeaks();
 
-    for (QModelIndex index : validPeaksIndexes) {
+    for (QModelIndex index : validPeaksIndexes)
         selectRow(index.row());
-    }
 }

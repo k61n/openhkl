@@ -27,10 +27,8 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-
 #pragma once
 
-#include <memory>
 #include <string>
 
 #include <QFileDialog>
@@ -43,10 +41,7 @@
 
 class QContextMenuEvent;
 class QMouseEvent;
-class QString;
 class QWidget;
-
-class PeakCustomPlot;
 
 class PeakTableView : public QTableView
 {
@@ -81,11 +76,9 @@ public slots:
     void togglePeaksSelection();
 
 private slots:
-
     void togglePeakSelection(QModelIndex index);
 
 private:
-
     void sortByHKL(bool up);
     void sortByIntensity(bool up);
     void sortByNumor(bool up);
