@@ -4,24 +4,20 @@
 #include <core/Diffractometer.h>
 #include <core/Logger.h>
 #include <core/Monochromator.h>
-#include <core/Source.h>
 #include <core/Units.h>
 
-#include "SourceItem.h"
 #include "SourcePropertyWidget.h"
 
 #include "ui_SourcePropertyWidget.h"
 
-SourcePropertyWidget::SourcePropertyWidget(SourceItem* caller,QWidget *parent)
-    : QWidget(parent),
+SourcePropertyWidget::SourcePropertyWidget(nsx::Source& source)
+    : QWidget(),
       _ui(new Ui::SourcePropertyWidget),
-      _caller(caller)
+      _source(source)
 {
     _ui->setupUi(this);
 
-    const auto &source =_caller->experiment()->diffractometer()->source();
-
-    const auto &monos = source.monochromators();
+    const auto &monos = _source.monochromators();
 
     for (auto&& m : monos) {
         _ui->monochromators->addItem(QString::fromStdString(m.name()));
@@ -50,31 +46,27 @@ SourcePropertyWidget::~SourcePropertyWidget()
 
 void SourcePropertyWidget::onWavelengthChanged(double wavelength)
 {
-    auto &source = _caller->experiment()->diffractometer()->source();
-    auto &mono = source.selectedMonochromator();
+    auto &mono = _source.selectedMonochromator();
     mono.setWavelength(wavelength);
 }
 
 void SourcePropertyWidget::onWidthChanged(double width)
 {
-    auto &source = _caller->experiment()->diffractometer()->source();
-    auto &mono = source.selectedMonochromator();
+    auto &mono = _source.selectedMonochromator();
     mono.setWidth(width*nsx::mm);
 }
 
 void SourcePropertyWidget::onHeightChanged(double height)
 {
-    auto &source = _caller->experiment()->diffractometer()->source();
-    auto &mono = source.selectedMonochromator();
+    auto &mono = _source.selectedMonochromator();
     mono.setHeight(height*nsx::mm);
 }
 
 void SourcePropertyWidget::onSelectedMonochromatorChanged(int index)
 {
-    auto &source = _caller->experiment()->diffractometer()->source();
-    source.setSelectedMonochromator(index);
+    _source.setSelectedMonochromator(index);
 
-    const auto &mono = source.selectedMonochromator();
+    const auto &mono = _source.selectedMonochromator();
 
     _ui->wavelength->setValue(mono.wavelength());
     _ui->fwhm->setValue(mono.fullWidthHalfMaximum());

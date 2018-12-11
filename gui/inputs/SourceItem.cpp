@@ -20,11 +20,10 @@ SourceItem::SourceItem(const char* name) : InspectableTreeItem()
     setDropEnabled(false);
 
     setSelectable(false);
-
     setCheckable(false);
 }
 
 QWidget* SourceItem::inspectItem()
 {
-    return new SourcePropertyWidget(this);
+    return new SourcePropertyWidget(experiment()->diffractometer()->source());
 }

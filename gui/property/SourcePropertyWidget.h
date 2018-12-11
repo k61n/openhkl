@@ -1,5 +1,6 @@
 #pragma once
 
+#include <core/Source.h>
 #include <QWidget>
 
 namespace Ui {
@@ -13,7 +14,7 @@ class SourcePropertyWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit SourcePropertyWidget(SourceItem* caller,QWidget *parent = 0);
+    explicit SourcePropertyWidget(nsx::Source& source);
 
     ~SourcePropertyWidget();
 
@@ -29,5 +30,5 @@ private:
 private:
     Ui::SourcePropertyWidget *_ui;
 
-    SourceItem* _caller;
+    nsx::Source& _source;
 };
