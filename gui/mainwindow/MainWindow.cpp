@@ -2,35 +2,22 @@
 
 #include <Eigen/Dense>
 
-#include <QDateTime>
 #include <QDockWidget>
-#include <QFileDialog>
-#include <QGraphicsBlurEffect>
-#include <QGraphicsEllipseItem>
-#include <QMouseEvent>
 #include <QProgressDialog>
 #include <QStatusBar>
-#include <QShortcut>
-#include <QThread>
 #include <QTransform>
 
 #include <core/AABB.h>
 #include <core/AggregateStreamWrapper.h>
 #include <core/PeakList.h>
-#include <core/Detector.h>
-#include <core/Diffractometer.h>
-#include <core/Ellipsoid.h>
-#include <core/GruberReduction.h>
 #include <core/LogFileStreamWrapper.h>
 #include <core/Logger.h>
-#include <core/NiggliReduction.h>
 #include <core/Path.h>
 #include <core/Peak3D.h>
 #include <core/PeakFilter.h>
 #include <core/PeakFinder.h>
 #include <core/Sample.h>
 #include <core/Source.h>
-#include <core/SpaceGroup.h>
 #include <core/UnitCell.h>
 #include <core/Units.h>
 #include <core/Version.h>
@@ -49,7 +36,6 @@
 #include "FramePeakFinder.h"
 #include "MainWindow.h"
 #include "MouseInteractionModeModel.h"
-#include "NoteBook.h"
 #include "NSXMenu.h"
 #include "PeakGraphicsItem.h"
 #include "PlottableGraphicsItem.h"
