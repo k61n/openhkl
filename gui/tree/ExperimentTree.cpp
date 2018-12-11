@@ -34,9 +34,12 @@ ExperimentTree::ExperimentTree(QWidget *parent)
 
     setItemDelegate(session_model_delegate);
 
-    connect(this,SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onCustomMenuRequested(const QPoint&)));
-    connect(this,SIGNAL(doubleClicked(const QModelIndex&)),this,SLOT(onDoubleClick(const QModelIndex&)));
-    connect(this,SIGNAL(clicked(QModelIndex)),this,SLOT(onSingleClick(QModelIndex)));
+    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
+            this, SLOT(onCustomMenuRequested(const QPoint&)));
+    connect(this, SIGNAL(doubleClicked(const QModelIndex&)),
+            this, SLOT(onDoubleClick(const QModelIndex&)));
+    connect(this, SIGNAL(clicked(QModelIndex)),
+            this, SLOT(onSingleClick(QModelIndex)));
 }
 
 ExperimentTree::~ExperimentTree()
@@ -85,8 +88,10 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             QAction* import_raw = menu->addAction("Import raw data");
             connect(import_raw, &QAction::triggered, [=](){ditem->importRawData();});
 
-            QAction* open_instrument_states_dialog = menu->addAction("Open instrument states dialog");
-            connect(open_instrument_states_dialog, &QAction::triggered, [=](){ditem->openInstrumentStatesDialog();});
+            QAction* open_instrument_states_dialog = menu->addAction(
+                "Open instrument states dialog");
+            connect(open_instrument_states_dialog, &QAction::triggered,
+                    [=](){ditem->openInstrumentStatesDialog();});
 
             QAction* find_peaks = menu->addAction("Find peaks in data");
             connect(find_peaks, &QAction::triggered, [=](){emit openPeakFindDialog(ditem);});
@@ -97,13 +102,15 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(filter, triggered, [=](){pitem->openPeakFilterDialog();});
 
             QAction* remove_selected_data = menu->addAction("Remove selected peak collections");
-            connect(remove_selected_data, &QAction::triggered, [=](){pitem->removeSelectedPeakCollections();});
+            connect(remove_selected_data, &QAction::triggered,
+                    [=](){pitem->removeSelectedPeakCollections();});
 
             QMenu *indexing_menu = new QMenu("Indexing");
             QAction* autoindex = indexing_menu->addAction("FFT auto indexer");
             connect(autoindex, triggered, [=](){pitem->openAutoIndexingFrame();});
 
-            QAction* user_defined = indexing_menu->addAction("User defined cell parameters indexer");
+            QAction* user_defined = indexing_menu->addAction(
+                "User defined cell parameters indexer");
             connect(user_defined, triggered, [=](){pitem->openUserDefinedUnitCellIndexerFrame();});
 
             QAction* assign = indexing_menu->addAction("Assign unit cell");
@@ -131,11 +138,14 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
         }
         else if (SampleItem* sitem = dynamic_cast<SampleItem*>(item)) {
             QAction* openSampleGlobalOffsets = menu->addAction("Sample goniometer global offsets");
-            connect(openSampleGlobalOffsets, &QAction::triggered, [=](){sitem->openSampleGlobalOffsetsFrame();});
+            connect(openSampleGlobalOffsets, &QAction::triggered,
+                    [=](){sitem->openSampleGlobalOffsetsFrame();});
         }
         else if (DetectorItem* detector_item = dynamic_cast<DetectorItem*>(item)) {
-            QAction* openDetectorGlobalOffsets = menu->addAction("Detector goniometer global offsets");
-            connect(openDetectorGlobalOffsets, &QAction::triggered, [=](){detector_item->openDetectorGlobalOffsetsFrame();});
+            QAction* openDetectorGlobalOffsets = menu->addAction(
+                "Detector goniometer global offsets");
+            connect(openDetectorGlobalOffsets, &QAction::triggered,
+                    [=](){detector_item->openDetectorGlobalOffsetsFrame();});
         }
         else if (UnitCellItem* ucitem = dynamic_cast<UnitCellItem*>(item)) {
             QAction* info = menu->addAction("Info");
@@ -147,16 +157,21 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             QAction* group = menu->addAction("Choose space group");
 
             connect(info, &QAction::triggered,[=](){ucitem->info();});
-            connect(cellParameters, &QAction::triggered, [=](){ucitem->openChangeUnitCellDialog();});
-            connect(transformationMatrix, &QAction::triggered, [=](){ucitem->openTransformationMatrixDialog();});
-            connect(setTolerance, &QAction::triggered,[=](){ucitem->openIndexingToleranceDialog();});
+            connect(cellParameters, &QAction::triggered,
+                    [=](){ucitem->openChangeUnitCellDialog();});
+            connect(transformationMatrix, &QAction::triggered,
+                    [=](){ucitem->openTransformationMatrixDialog();});
+            connect(setTolerance, &QAction::triggered,
+                    [=](){ucitem->openIndexingToleranceDialog();});
             connect(group, triggered, [=](){ucitem->openSpaceGroupDialog();});
         }
         else if (NumorItem* nitem = dynamic_cast<NumorItem*>(item)) {
             QAction* export_hdf = menu->addAction("Export to HDF5...");
 
             auto export_fn = [=] {
-                QString filename = QFileDialog::getSaveFileName(this, "Save File", "", "HDF5 (*.hdf *.hdf5)", nullptr, QFileDialog::Option::DontUseNativeDialog);
+                QString filename = QFileDialog::getSaveFileName(
+                    this, "Save File", "", "HDF5 (*.hdf *.hdf5)", nullptr,
+                    QFileDialog::Option::DontUseNativeDialog);
                 nitem->exportHDF5(filename.toStdString());
             };
             connect(export_hdf, &QAction::triggered, this, export_fn);
@@ -165,7 +180,8 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             connect(predict, triggered, [=](){lib_item->incorporateCalculatedPeaks();});
         } else if (UnitCellsItem* unit_cells_item = dynamic_cast<UnitCellsItem*>(item)) {
             QAction* remove_unused_unit_cell = menu->addAction("Remove unused unit cells");
-            connect(remove_unused_unit_cell, triggered, [=](){unit_cells_item->removeUnusedUnitCells();});
+            connect(remove_unused_unit_cell, triggered,
+                    [=](){unit_cells_item->removeUnusedUnitCells();});
         } else {
             delete menu;
             return;
@@ -185,7 +201,8 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
         } else {
             for (auto i = 0; i < ptr->model()->rowCount(ptr->index());++i) {
                 auto ci = ptr->child(i);
-                Qt::CheckState new_state = ci->checkState() == Qt::Unchecked ? Qt::Checked : Qt::Unchecked;
+                Qt::CheckState new_state =
+                    ci->checkState() == Qt::Unchecked ? Qt::Checked : Qt::Unchecked;
                 ci->setCheckState(new_state);
             }
         }
@@ -217,7 +234,8 @@ void ExperimentTree::keyPressEvent(QKeyEvent *event)
 void ExperimentTree::onSingleClick(const QModelIndex &index)
 {
     // Inspect this item if it is inspectable
-    InspectableTreeItem* item = dynamic_cast<InspectableTreeItem*>(dynamic_cast<SessionModel*>(model())->itemFromIndex(index));
+    InspectableTreeItem* item = dynamic_cast<InspectableTreeItem*>(
+        dynamic_cast<SessionModel*>(model())->itemFromIndex(index));
     if (item) {
         emit inspectWidget(item->inspectItem());
     } else {
