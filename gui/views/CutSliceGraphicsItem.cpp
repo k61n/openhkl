@@ -20,8 +20,8 @@
 #include "SXPlot.h"
 
 CutSliceGraphicsItem::CutSliceGraphicsItem(nsx::sptrDataSet data, bool horizontal)
-: CutterGraphicsItem(data),
-  _horizontal(horizontal)
+    : CutterGraphicsItem(data)
+    , _horizontal(horizontal)
 {
 }
 

@@ -3,10 +3,8 @@
 
 #include <Eigen/Dense>
 
-#include <QDrag>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneWheelEvent>
-#include <QMimeData>
 #include <QPainter>
 #include <QPen>
 #include <QStyleOptionGraphicsItem>
