@@ -2,8 +2,6 @@
 
 #include <QDialog>
 
-#include "models/SessionModel.h"
-
 class QWidget;
 
 namespace Ui {

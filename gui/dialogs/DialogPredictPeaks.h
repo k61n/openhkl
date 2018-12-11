@@ -3,6 +3,7 @@
 #include <QDialog>
 
 #include <core/PeakList.h>
+#include <core/UnitCell.h>
 
 class CollectedPeaksModel;
 class ExperimentItem;
@@ -18,8 +19,8 @@ class DialogPredictPeaks : public QDialog
 
 public:
 
-    static DialogPredictPeaks* create(ExperimentItem* experiment_tree, const nsx::UnitCellList& peaks, QWidget* parent=nullptr);
-
+    static DialogPredictPeaks* create(ExperimentItem* experiment_tree,
+                                      const nsx::UnitCellList& peaks, QWidget* parent=nullptr);
     static DialogPredictPeaks* Instance();
 
     ~DialogPredictPeaks();
@@ -40,7 +41,8 @@ private slots:
     void slotActionClicked(QAbstractButton *button);
 
 private:
-    DialogPredictPeaks(ExperimentItem* experiment_tree, const nsx::UnitCellList& unit_cells, QWidget* parent=nullptr);
+    DialogPredictPeaks(ExperimentItem* experiment_tree, const nsx::UnitCellList& unit_cells,
+                       QWidget* parent=nullptr);
 
     void predictPeaks();
 

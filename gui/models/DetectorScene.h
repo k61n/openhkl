@@ -16,7 +16,7 @@
 #include <core/IMask.h>
 
 #include "ColorMap.h"
-#include "models/SessionModel.h"
+#include "SessionModel.h"
 
 class QImage;
 class QGraphicsSceneWheelEvent;
@@ -125,7 +125,7 @@ private:
 
     // find the iterator corresponding to given graphics item
     std::vector<std::pair<QGraphicsItem*, nsx::IMask*>>::iterator findMask(QGraphicsItem* item);
-    
+
     nsx::sptrDataSet _currentData;
 
     unsigned long _currentFrameIndex;
@@ -156,7 +156,7 @@ private:
     QGraphicsPixmapItem* _image;
 
     std::vector<std::pair<QGraphicsItem*, nsx::IMask*>> _masks;
-    
+
     SXGraphicsItem* _lastClickedGI;
 
     bool _logarithmic;

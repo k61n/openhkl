@@ -9,7 +9,6 @@
 #include <core/Diffractometer.h>
 #include <core/IDataReader.h>
 #include <core/Experiment.h>
-#include <core/Gonio.h>
 #include <core/InstrumentState.h>
 #include <core/Material.h>
 #include <core/MCAbsorption.h>
@@ -24,6 +23,7 @@
 #include "DialogMCAbsorption.h"
 #include "ExperimentItem.h"
 #include "InstrumentItem.h"
+#include "SessionModel.h"
 #include "UnitCellsItem.h"
 
 #include "ui_DialogMCAbsorption.h"
@@ -38,7 +38,7 @@ DialogMCAbsorption::DialogMCAbsorption(ExperimentItem* experiment_item, QWidget 
     auto unit_cells_item = _experiment_item->unitCellsItem();
 
     auto&& cells = unit_cells_item->unitCells();
-    
+
     if (cells.size() > 0) {
         ui->unitCells->setEnabled(true);
         for (unsigned int i = 0; i < cells.size(); ++i) {
@@ -101,15 +101,18 @@ void DialogMCAbsorption::on_pushButton_run_pressed()
     for (auto& d: data) {
         const auto& peaks = session->peaks(d.second);
         ui->progressBar_MCStatus->setMaximum(peaks.size());
-        ui->progressBar_MCStatus->setFormat(QString::fromStdString(d.second->filename()) + ": "+QString::number(progress)+"%");
+        ui->progressBar_MCStatus->setFormat(
+            QString::fromStdString(d.second->filename()) + ": "+QString::number(progress)+"%");
         for (auto& p: peaks) {
             auto data = p->data();
             auto coord = p->shape().center();
             auto state = data->interpolatedState(coord[2]);
-            auto position = data->reader()->diffractometer()->detector()->pixelPosition(coord[0], coord[1]);
+            auto position = data->reader()->diffractometer()->detector()->pixelPosition(
+                coord[0], coord[1]);
             auto kf = state.kfLab(position);
             // todo: check coordinate systems here, may not be consistent
-            double transmission=mca.run(ui->spinBox->value(),kf.rowVector(),state.sampleOrientationMatrix());
+            double transmission=mca.run(ui->spinBox->value(),kf.rowVector(),
+                                        state.sampleOrientationMatrix());
             p->setTransmission(transmission);
             ui->progressBar_MCStatus->setValue(++progress);
         }
