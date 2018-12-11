@@ -1,5 +1,3 @@
-#include <memory>
-
 #include <QMessageBox>
 
 #include <Eigen/Dense>
@@ -13,8 +11,6 @@
 #include <core/Material.h>
 #include <core/MCAbsorption.h>
 #include <core/Monochromator.h>
-#include <core/Peak3D.h>
-#include <core/ReciprocalVector.h>
 #include <core/Sample.h>
 #include <core/Source.h>
 #include <core/UnitCell.h>
@@ -22,7 +18,6 @@
 
 #include "DialogMCAbsorption.h"
 #include "ExperimentItem.h"
-#include "InstrumentItem.h"
 #include "SessionModel.h"
 #include "UnitCellsItem.h"
 

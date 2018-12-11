@@ -1,7 +1,7 @@
 #include "NSXQFrame.h"
 
 NSXQFrame::NSXQFrame()
-: QFrame(nullptr)
+    : QFrame(nullptr)
 {
     // The frame is destroyed when closed
     setAttribute(Qt::WA_DeleteOnClose,true);
@@ -14,4 +14,3 @@ NSXQFrame::NSXQFrame()
 
     setFocusPolicy(Qt::StrongFocus);
 }
-

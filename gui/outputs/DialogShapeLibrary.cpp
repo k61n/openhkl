@@ -1,8 +1,3 @@
-
-#include <QHeaderView>
-#include <QLayout>
-#include <QStatusBar>
-
 #include <core/DataSet.h>
 #include <core/Peak3D.h>
 #include <core/PeakCoordinateSystem.h>
@@ -12,23 +7,23 @@
 #include <core/ShapeLibrary.h>
 #include <core/Logger.h>
 
+#include "DialogShapeLibrary.h"
 #include "CollectedPeaksModel.h"
 #include "ExperimentItem.h"
 #include "ProgressView.h"
 
-#include "DialogShapeLibrary.h"
 #include "ui_DialogShapeLibrary.h"
 
 DialogShapeLibrary::DialogShapeLibrary(ExperimentItem* experiment_item,
                                        nsx::sptrUnitCell unitCell,
                                        const nsx::PeakList& peaks,
-                                       QWidget *parent):
-    QDialog(parent),
-    ui(new Ui::DialogShapeLibrary),
-    _unitCell(std::move(unitCell)),
-    _peaks(peaks), 
-    _cmap(),
-    _library(nullptr)
+                                       QWidget *parent)
+    : QDialog(parent)
+    , ui(new Ui::DialogShapeLibrary)
+    , _unitCell(std::move(unitCell))
+    , _peaks(peaks)
+    , _cmap()
+    , _library(nullptr)
 {
     ui->setupUi(this);
 
@@ -38,9 +33,8 @@ DialogShapeLibrary::DialogShapeLibrary(ExperimentItem* experiment_item,
     ui->kabsch->setCheckable(true);
 
     // get list of datasets
-    for (auto p: _peaks) {
+    for (auto p: _peaks)
         _data.insert(p->data());
-    }  
 
     connect(ui->calculate, SIGNAL(released()), this, SLOT(calculate()));
     connect(ui->build, SIGNAL(released()), this, SLOT(build()));
@@ -53,7 +47,7 @@ DialogShapeLibrary::DialogShapeLibrary(ExperimentItem* experiment_item,
     ui->y->setMaximum(10000);
     ui->frame->setMaximum(10000);
     ui->radius->setMaximum(10000);
-    ui->nframes->setMaximum(10000); 
+    ui->nframes->setMaximum(10000);
 
     // calculate reasonable values of sigmaD and sigmaM
     Eigen::Matrix3d cov;
@@ -71,8 +65,9 @@ DialogShapeLibrary::DialogShapeLibrary(ExperimentItem* experiment_item,
     // check this
     ui->sigmaD->setValue(std::sqrt(0.5*(cov(0,0)+cov(1,1))));
     ui->sigmaM->setValue(std::sqrt(cov(2,2)));
-    
-    auto peaks_model = new CollectedPeaksModel(experiment_item->model(),experiment_item->experiment(),peaks);
+
+    auto peaks_model = new CollectedPeaksModel(
+        experiment_item->model(),experiment_item->experiment(),peaks);
     ui->peaks->setModel(peaks_model);
     ui->peaks->verticalHeader()->show();
 
@@ -80,8 +75,10 @@ DialogShapeLibrary::DialogShapeLibrary(ExperimentItem* experiment_item,
     ui->peaks->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
 
     connect(ui->drawFrame, SIGNAL(valueChanged(int)), this, SLOT(drawFrame(int)));
-    connect(ui->peaks,&QTableView::clicked,[this](QModelIndex index){selectTargetPeak(index.row());});
-    connect(ui->peaks->verticalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(selectTargetPeak(int)));
+    connect(ui->peaks,&QTableView::clicked,[this](QModelIndex index){
+            selectTargetPeak(index.row());});
+    connect(ui->peaks->verticalHeader(),SIGNAL(sectionClicked(int)),
+            this,SLOT(selectTargetPeak(int)));
 }
 
 DialogShapeLibrary::~DialogShapeLibrary()
@@ -102,7 +99,6 @@ void DialogShapeLibrary::selectTargetPeak(int row)
     ui->x->setValue(center[0]);
     ui->y->setValue(center[1]);
     ui->frame->setValue(center[2]);
-
 }
 
 void DialogShapeLibrary::build()
@@ -132,9 +128,8 @@ void DialogShapeLibrary::build()
     auto nz = ui->nz->value();
 
     // update the frame slider if necessary
-    if (ui->drawFrame->maximum() != nz) {
+    if (ui->drawFrame->maximum() != nz)
         ui->drawFrame->setMaximum(nz-1);
-    }
 
     nsx::AABB aabb;
 
@@ -161,14 +156,16 @@ void DialogShapeLibrary::build()
 
     auto bkgBegin = ui->bkgBegin->value();
     auto bkgEnd = ui->bkgEnd->value();
-    _library = nsx::sptrShapeLibrary(new nsx::ShapeLibrary(!kabsch_coords, peakScale, bkgBegin, bkgEnd));
+    _library = nsx::sptrShapeLibrary(
+        new nsx::ShapeLibrary(!kabsch_coords, peakScale, bkgBegin, bkgEnd));
 
-    nsx::ShapeIntegrator integrator(_library, aabb, nx, ny, nz);    
+    nsx::ShapeIntegrator integrator(_library, aabb, nx, ny, nz);
     integrator.setHandler(handler);
 
     for (auto data: _data) {
         nsx::info() << "Fitting profiles in dataset " << data->filename();
-        integrator.integrate(fit_peaks, data, _library->peakScale(), _library->bkgBegin(), _library->bkgEnd());
+        integrator.integrate(
+            fit_peaks, data, _library->peakScale(), _library->bkgBegin(), _library->bkgEnd());
     }
     nsx::info() << "Done fitting profiles";
 
@@ -190,7 +187,7 @@ void DialogShapeLibrary::calculate()
 
     auto nx = ui->nx->value();
     auto ny = ui->ny->value();
-    auto nz = ui->nz->value();  
+    auto nz = ui->nz->value();
 
     nsx::DetectorEvent ev(ui->x->value(), ui->y->value(), ui->frame->value());
     // update maximum value, used for drawing
@@ -199,9 +196,8 @@ void DialogShapeLibrary::calculate()
 
     for (auto i = 0; i < nx; ++i) {
         for (auto j = 0; j < ny; ++j) {
-            for (auto k = 0; k < nz; ++k) {
+            for (auto k = 0; k < nz; ++k)
                 _maximum = std::max(_maximum, _profile(i, j, k));
-            }
         }
     }
 
@@ -216,10 +212,9 @@ void DialogShapeLibrary::calculate()
 
 void DialogShapeLibrary::drawFrame(int value)
 {
-    if (value < 0 || value >= _profile.shape()[2]) {
+    if (value < 0 || value >= _profile.shape()[2])
         throw std::runtime_error("DialogShapeLibrary::drawFrame(): invalid frame value");
-    }
-   
+
     auto shape = _profile.shape();
     auto scene = ui->preview->scene();
 
@@ -236,7 +231,7 @@ void DialogShapeLibrary::drawFrame(int value)
             auto color = _cmap.color(value, _maximum);
             img.setPixel(i, j, color);
         }
-    }   
+    }
     scene->clear();
     scene->setSceneRect(QRectF(0, 0, shape[0], shape[1]));
     scene->addPixmap(QPixmap::fromImage(img));
