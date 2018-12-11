@@ -1,9 +1,5 @@
 #include <string>
 
-#include <QJsonArray>
-
-#include <core/AABB.h>
-#include <core/BoxMask.h>
 #include <core/DataSet.h>
 #include <core/Experiment.h>
 #include <core/Logger.h>
@@ -58,5 +54,5 @@ void NumorItem::exportHDF5(const std::string& filename) const
 
 QWidget* NumorItem::inspectItem()
 {
-    return new NumorPropertyWidget(this);
+    return new NumorPropertyWidget(data(Qt::UserRole).value<nsx::sptrDataSet>());
 }

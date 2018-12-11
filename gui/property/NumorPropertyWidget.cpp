@@ -1,19 +1,13 @@
-#include <QWidget>
+#include "NumorPropertyWidget.h"
 
-#include <core/DataSet.h>
 #include <core/IDataReader.h>
 #include <core/MetaData.h>
 
 #include "MetaTypes.h"
-#include "NumorItem.h"
-#include "NumorPropertyWidget.h"
 
-#include "ui_NumorPropertyWidget.h"
-
-NumorPropertyWidget::NumorPropertyWidget(NumorItem* caller,QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::NumorPropertyWidget),
-    _numorItem(caller)
+NumorPropertyWidget::NumorPropertyWidget(const nsx::sptrDataSet& data)
+    : QWidget()
+    , ui(new Ui::NumorPropertyWidget)
 {
     ui->setupUi(this);
     ui->tableWidget->horizontalHeader()->setVisible(false);
@@ -21,10 +15,8 @@ NumorPropertyWidget::NumorPropertyWidget(NumorItem* caller,QWidget *parent) :
     ui->tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    auto data = caller->data(Qt::UserRole).value<nsx::sptrDataSet>();
-    if (!data) {
+    if (!data)
         return;
-    }
 
     ui->label_Data->setText(QString::fromStdString(data->filename()));
 
@@ -42,19 +34,13 @@ NumorPropertyWidget::NumorPropertyWidget(NumorItem* caller,QWidget *parent) :
         col0->setData(Qt::EditRole,QString(element.first));
 
         if (element.second.is<int>())
-        {
             col1->setData(Qt::EditRole,element.second.as<int>());
-        }
         else if (element.second.is<double>())
-        {
             col1->setData(Qt::EditRole,element.second.as<double>());
-        }
         else if (element.second.is<std::string>())
-        {
-            col1->setData(Qt::EditRole,QString(QString::fromStdString(element.second.as<std::string>())));
-        }
-        else
-        {
+            col1->setData(Qt::EditRole,QString(
+                              QString::fromStdString(element.second.as<std::string>())));
+        else {
             delete col0;
             delete col1;
             continue;

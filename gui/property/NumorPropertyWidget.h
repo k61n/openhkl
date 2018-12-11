@@ -1,22 +1,17 @@
 #pragma once
 
 #include <QWidget>
-
-namespace Ui {
-class NumorPropertyWidget;
-}
-
-class NumorItem;
+#include "ui_NumorPropertyWidget.h"
+#include <core/DataTypes.h>
 
 class NumorPropertyWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit NumorPropertyWidget(NumorItem* caller,QWidget *parent = 0);
+    explicit NumorPropertyWidget(const nsx::sptrDataSet& data);
     ~NumorPropertyWidget();
 
 private:
     Ui::NumorPropertyWidget *ui;
-    NumorItem* _numorItem;
 };
