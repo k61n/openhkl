@@ -1,5 +1,3 @@
-#include <core/UnitCell.h>
-
 #include "DialogTransformationMatrix.h"
 #include "ui_DialogTransformationMatrix.h"
 

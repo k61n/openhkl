@@ -1,30 +1,19 @@
-#include <array>
 #include <stdexcept>
-#include <tuple>
 
 #include <Eigen/Core>
 
-#include <QImage>
-#include <QList>
 #include <QMessageBox>
 #include <QModelIndex>
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QString>
-#include <QTreeView>
 
-#include <core/PeakList.h>
 #include <core/DataSet.h>
-#include <core/Diffractometer.h>
 #include <core/Logger.h>
 #include <core/MillerIndex.h>
 #include <core/Peak3D.h>
 #include <core/PeakFilter.h>
-#include <core/ReciprocalVector.h>
-#include <core/RFactor.h>
-#include <core/Sample.h>
 #include <core/SpaceGroup.h>
-#include <core/UnitCell.h>
 
 #include "DialogSpaceGroup.h"
 #include "ui_DialogSpaceGroup.h"
@@ -109,7 +98,7 @@ void DialogSpaceGroup::evaluateSpaceGroups()
 
     for (auto& symbol: compatible_space_groups) {
 
-        nsx::SpaceGroup group = nsx::SpaceGroup(symbol);       
+        nsx::SpaceGroup group = nsx::SpaceGroup(symbol);
 
         std::pair<std::string, double> entry = std::make_pair(symbol,100.0*(1-group.fractionExtinct(hkls)));
 

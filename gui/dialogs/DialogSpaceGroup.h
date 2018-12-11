@@ -4,7 +4,8 @@
 #include <Eigen/Dense>
 #include <QDialog>
 
-#include <core/DataTypes.h>
+#include <core/PeakList.h>
+#include <core/UnitCell.h>
 
 class QModelIndex;
 class QWidget;

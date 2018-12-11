@@ -4,7 +4,7 @@
 
 #include <QDialog>
 
-#include <core/PeakList.h>
+#include <core/UnitCell.h>
 
 namespace Ui {
 class DialogTransformationMatrix;

@@ -12,14 +12,8 @@
 #include <core/PeakList.h>
 #include <core/LogFileStreamWrapper.h>
 #include <core/Logger.h>
-#include <core/Path.h>
 #include <core/Peak3D.h>
-#include <core/PeakFilter.h>
 #include <core/PeakFinder.h>
-#include <core/Sample.h>
-#include <core/Source.h>
-#include <core/UnitCell.h>
-#include <core/Units.h>
 #include <core/Version.h>
 
 #include "AbsorptionWidget.h"
@@ -31,7 +25,6 @@
 #include "DetectorScene.h"
 #include "DialogExperiment.h"
 #include "DialogIntegrate.h"
-#include "DialogPeakFilter.h"
 #include "ExperimentTree.h"
 #include "FramePeakFinder.h"
 #include "MainWindow.h"
