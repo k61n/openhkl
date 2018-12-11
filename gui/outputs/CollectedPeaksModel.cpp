@@ -1,5 +1,6 @@
+#include "CollectedPeaksModel.h"
+
 #include <algorithm>
-#include <fstream>
 #include <iomanip>
 #include <limits>
 #include <vector>
@@ -19,11 +20,8 @@
 #include <core/Peak3D.h>
 #include <core/PeakFilter.h>
 #include <core/ReciprocalVector.h>
-#include <core/UnitCell.h>
 
-#include "CollectedPeaksModel.h"
 #include "ProgressView.h"
-#include "SessionModel.h"
 
 struct PeakFactors {
 

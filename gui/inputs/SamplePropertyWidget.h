@@ -1,12 +1,9 @@
 #pragma once
 
 #include <QWidget>
+#include "SampleItem.h"
 
-namespace Ui {
-class SamplePropertyWidget;
-}
-
-class SampleItem;
+#include "ui_SamplePropertyWidget.h"
 
 class SamplePropertyWidget : public QWidget
 {

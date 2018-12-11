@@ -1,17 +1,9 @@
-#include <sstream>
+#include "SamplePropertyWidget.h"
 
 #include <core/Axis.h>
 #include <core/Diffractometer.h>
 #include <core/Gonio.h>
 #include <core/Sample.h>
-#include <core/TransAxis.h>
-#include <core/Units.h>
-
-#include "SampleItem.h"
-#include "SamplePropertyWidget.h"
-#include "UnitCellItem.h"
-
-#include "ui_SamplePropertyWidget.h"
 
 SamplePropertyWidget::SamplePropertyWidget(SampleItem* caller,QWidget *parent)
     : QWidget(parent),
@@ -50,4 +42,3 @@ SamplePropertyWidget::~SamplePropertyWidget()
 {
     delete _ui;
 }
-

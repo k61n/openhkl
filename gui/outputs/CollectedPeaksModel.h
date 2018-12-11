@@ -1,19 +1,17 @@
 #pragma once
 
-#include <memory>
 #include <string>
-#include <vector>
 
 #include <QAbstractTableModel>
 #include <QModelIndexList>
 
 #include <core/PeakList.h>
-#include <core/DataTypes.h>
 #include <core/Experiment.h>
+#include <core/UnitCell.h>
+
+#include "SessionModel.h"
 
 class QObject;
-
-class SessionModel;
 
 class CollectedPeaksModel : public QAbstractTableModel
 {
