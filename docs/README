@@ -1,0 +1,5 @@
+nsxtool_workflow.odt: One-page document that summarizes the overall workflow of NSXTool.
+
+tex: LaTeX document that describes the implemented algorithms in depth.
+  Moved here from repo nsx-docs, which is outdated.
+
