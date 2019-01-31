@@ -13,11 +13,11 @@ file(GLOB_RECURSE NSXLIB_SOURCES *.cpp *.c)
 file(GLOB_RECURSE NSXLIB_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 
 include_directories(${NSXLIB_SUBDIRS}
-                    ${CMAKE_CURRENT_BINARY_DIR}/generated)
+    ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
 add_library(${NSX_LIBRARY} ${NSX_LIB_TYPE} ${NSXLIB_SOURCES} ${NSXLIB_RESOURCES_CPP})
 
-target_link_libraries(${NSX_LIBRARY} 
+target_link_libraries(${NSX_LIBRARY}
     ${HDF5_LIBRARIES}
     blosc_static
     ${Boost_LIBRARIES}
@@ -49,15 +49,11 @@ install(FILES ${NSXLIB_GENERATED_HEADERS} DESTINATION ${NSX_INSTALL_DIR}include/
 
 # Install the databases file
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/resources/databases
-        DESTINATION ${NSX_INSTALL_DIR}share/nsxtool
-        COMPONENT DATA
-        PATTERN ".git" EXCLUDE)
+    DESTINATION ${NSX_INSTALL_DIR}share/nsxtool
+    COMPONENT DATA
+    PATTERN ".git" EXCLUDE)
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/resources/instruments
-        DESTINATION ${NSX_INSTALL_DIR}share/nsxtool
-        COMPONENT DATA
-        PATTERN ".git" EXCLUDE)
-
-if(NSX_TIDY)
-  add_tidy_target(${NSX_LIBRARY})
-endif()
+    DESTINATION ${NSX_INSTALL_DIR}share/nsxtool
+    COMPONENT DATA
+    PATTERN ".git" EXCLUDE)

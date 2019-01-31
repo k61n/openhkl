@@ -1,5 +1,5 @@
 if(POLICY CMP0020)
-  cmake_policy(SET CMP0020 NEW)
+    cmake_policy(SET CMP0020 NEW)
 endif()
 
 if(POLICY CMP0042)
@@ -7,7 +7,7 @@ if(POLICY CMP0042)
 endif()
 
 if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
+    cmake_policy(SET CMP0071 NEW)
 endif()
 
 get_subdirectories(NSXQT_SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
@@ -88,8 +88,3 @@ string(REPLACE ";" "\\\n" NSXQT_QMAKE_INCLUDE_DIRECTORIES "${NSXQT_QMAKE_INCLUDE
 
 # generate the qmake project file automatically
 configure_file(nsxqt.pro.in ${CMAKE_CURRENT_BINARY_DIR}/nsxqt.pro)
-
-# tidy
-if(NSX_TIDY)
-  add_tidy_target(nsxqt)
-endif()
