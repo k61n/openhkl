@@ -1,0 +1,12 @@
+Dependences:
+
+- Python3
+- Swig
+- Boost (which components??)
+- HDF5
+- FFTW      (Debian: libfftw3-dev)
+- PkgConfig (Debian: pkg-config)
+- GSL
+- zlib
+- libyaml
+- libtiff
