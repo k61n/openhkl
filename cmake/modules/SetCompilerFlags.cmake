@@ -4,6 +4,8 @@
 enable_language(CXX)
 enable_language(C)
 
+set(CMAKE_CXX_STANDARD 14)
+
 #---Setup details depending on the major platform type----------------------------------------------
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
   set(NSXTOOL_ARCHITECTURE linux)
@@ -49,16 +51,6 @@ else()
   message(WARNING "C++ compiler not recognized; build may fail")
 endif()
 
-# enable c++11 support
-if (CMAKE_VERSION VERSION_LESS "3.1")
-    if(COMPILER_IS_GNU_OR_CLANG)
-        add_compile_options(-std=c++11)
-    elseif(COMPILER_IS_MSVC)
-        # nothing to do...? does MSVC support different standards?
-    endif()
-else()
-  set(CMAKE_CXX_STANDARD 11)
-endif()
 
 # disable annoying warnings during msvc build
 if (COMPILER_IS_MSVC)
@@ -69,7 +61,7 @@ endif()
 # special configuration for GNU/clang
 if(COMPILER_IS_GNU_OR_CLANG)
     add_compile_options(-Wall -Wextra -Wpedantic)
-    add_compile_options(-pthread)    
+    add_compile_options(-pthread)
     add_definitions(-DEIGEN_FFTW_DEFAULT)
     add_definitions(-D_USE_MATH_DEFINES)
   elseif(COMPILER_IS_MSVC)
@@ -111,8 +103,6 @@ if (NSX_SANITIZE)
 endif()
 
 message("Finished configuring compiler")
-message(STATUS "The c++ compiler is ${CMAKE_CXX_COMPILER_ID}")
-message(STATUS "The build type is ${CMAKE_BUILD_TYPE}")
 
 if ( CMAKE_BUILD_TYPE STREQUAL "Release")
     message(STATUS "The build flags are ${CMAKE_CXX_FLAGS_RELEASE} ${CMAKE_CXX_FLAGS}")
@@ -125,5 +115,3 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 else()
     message(WARNING "Build type is not recognized")
 endif()
-
-
