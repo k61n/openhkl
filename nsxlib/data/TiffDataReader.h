@@ -32,7 +32,6 @@
 #include <tiffio.h>
 
 #include "IDataReader.h"
-#include "InstrumentTypes.h"
 
 namespace nsx {
 

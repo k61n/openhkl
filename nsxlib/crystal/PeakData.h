@@ -3,11 +3,7 @@
 #include <deque>
 #include <Eigen/Dense>
 
-#include "CrystalTypes.h"
 #include "DetectorEvent.h"
-#include "GeometryTypes.h"
-#include "InstrumentTypes.h"
-#include "ReciprocalVector.h"
 #include "PeakCoordinateSystem.h"
 
 namespace nsx {

@@ -38,7 +38,6 @@
 
 #include "CrystalTypes.h"
 #include "MillerIndex.h"
-#include "GeometryTypes.h"
 #include "SymOp.h"
 
 namespace nsx {
@@ -78,7 +77,7 @@ public:
     //! Return the Bravais type symbol
     std::string bravaisTypeSymbol() const;
     //! Return the ID of the space group
-    int id() const;    
+    int id() const;
     //! Return whether two sets of indices are related by a symmetry
     bool isEquivalent(const MillerIndex& miller_index1, const MillerIndex& miller_index2, bool friedel=false) const;
     //! Return whether two sets of indices are related by a symmetry up to Friedel reflection

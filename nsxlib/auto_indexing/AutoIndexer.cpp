@@ -37,12 +37,8 @@
 
 #include "AutoIndexer.h"
 #include "DataSet.h"
-#include "Detector.h"
-#include "Diffractometer.h"
-#include "Experiment.h"
 #include "FFTIndexing.h"
 #include "FitParameters.h"
-#include "Gonio.h"
 #include "GruberReduction.h"
 #include "MillerIndex.h"
 #include "Minimizer.h"
@@ -56,7 +52,7 @@
 
 namespace nsx {
 
- 
+
 AutoIndexer::AutoIndexer(const std::shared_ptr<ProgressHandler>& handler):
     _peaks(),
     _solutions(),
@@ -67,7 +63,7 @@ AutoIndexer::AutoIndexer(const std::shared_ptr<ProgressHandler>& handler):
 void AutoIndexer::autoIndex(const IndexerParameters& params)
 {
     _params = params;
-        
+
     // Find the Q-space directions along which the projection of the the Q-vectors shows the highest periodicity
     computeFFTSolutions();
 
@@ -102,7 +98,7 @@ const std::vector<std::pair<sptrUnitCell, double> > &AutoIndexer::solutions() co
 void AutoIndexer::computeFFTSolutions()
 {
     _solutions.clear();
-        
+
     // Store the q-vectors of the peaks for auto-indexing
     std::vector<ReciprocalVector> qvects;
 
@@ -126,14 +122,14 @@ void AutoIndexer::computeFFTSolutions()
     if (_handler) {
         _handler->log("Searching direct lattice vectors using" + std::to_string(qvects.size()) + "peaks defined on numors:");
     }
-    
+
     // Set up a FFT indexer object
     FFTIndexing indexing(_params.subdiv, _params.maxdim);
-    
+
     // Find the best vectors via FFT
     auto&& tvects = indexing.findOnSphere(qvects, _params.nVertices, _params.nSolutions);
     qvects.clear();
-    
+
     for (int i = 0; i < _params.nSolutions; ++i) {
         for (int j = i+1; j < _params.nSolutions; ++j) {
             for (int k = j+1; k < _params.nSolutions; ++k) {
@@ -151,7 +147,7 @@ void AutoIndexer::computeFFTSolutions()
                 }
 
                 bool equivalent = false;
-    
+
                 // check to see if the cell is equivalent to a previous one. If so, skip it
                 for (auto solution: _solutions) {
                     if (cell->equivalent(*solution.first, _params.unitCellEquivalenceTolerance)) {
@@ -228,7 +224,7 @@ void AutoIndexer::refineSolutions()
         }
 
         // The number of peaks must be at least for a proper minimization
-        if (success < 10) {      
+        if (success < 10) {
             continue;
         }
 
@@ -258,7 +254,7 @@ void AutoIndexer::refineSolutions()
         // Set the Minimizer with the parameters store and the size of the residual vector
         Minimizer minimizer;
         minimizer.initialize(params, 3*success);
-        minimizer.set_f(residuals);  
+        minimizer.set_f(residuals);
         minimizer.setxTol(1e-15);
         minimizer.setfTol(1e-15);
         minimizer.setgTol(1e-15);

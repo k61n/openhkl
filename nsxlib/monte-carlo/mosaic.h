@@ -8,11 +8,8 @@
 #ifndef MOSAIC_H_
 #define MOSAIC_H_
 
-#include <string>
 #include <vector>
 
-#include "Ellipsoid.h"
-#include "ConvexHull.h"
 #include "Sample.h"
 
 namespace nsx {

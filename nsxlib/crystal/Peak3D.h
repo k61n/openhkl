@@ -40,7 +40,6 @@
 #include "Ellipsoid.h"
 #include "GeometryTypes.h"
 #include "InstrumentTypes.h"
-#include "IntegrationRegion.h"
 #include "Intensity.h"
 #include "IPeakIntegrator.h"
 
@@ -155,7 +154,7 @@ private:
     double _bkgEnd;
 
     sptrUnitCell _unitCell;
-   
+
     double _scale;
     bool _selected;
     bool _masked;

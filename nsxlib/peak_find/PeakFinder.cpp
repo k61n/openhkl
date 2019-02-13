@@ -4,18 +4,14 @@
 #include "AABB.h"
 #include "ConvolverFactory.h"
 #include "DataSet.h"
-#include "Detector.h"
 #include "Diffractometer.h"
 #include "IDataReader.h"
 #include "Experiment.h"
-#include "GeometryTypes.h"
 #include "MathematicsTypes.h"
 #include "Octree.h"
 #include "Peak3D.h"
 #include "PeakFinder.h"
-#include "ProgressHandler.h"
 #include "Sample.h"
-#include "PixelSumIntegrator.h"
 
 using EquivalencePair = std::pair<int,int>;
 using EquivalenceList = std::vector<EquivalencePair>;

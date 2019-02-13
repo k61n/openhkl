@@ -38,8 +38,6 @@
 
 #include <vector>
 
-#include "CrystalTypes.h"
-#include "InstrumentTypes.h"
 #include "RefinementBatch.h"
 
 namespace nsx {
@@ -69,7 +67,6 @@ public:
     const std::vector<RefinementBatch>& batches() const;
 
 private:
-
     sptrUnitCell _cell;
 
     std::vector<RefinementBatch> _batches;

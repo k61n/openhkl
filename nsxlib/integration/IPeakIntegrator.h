@@ -35,7 +35,6 @@
 
 #include <Eigen/Dense>
 
-#include "Blob3D.h"
 #include "BrillouinZone.h"
 #include "GeometryTypes.h"
 #include "IntegrationRegion.h"
@@ -76,7 +75,7 @@ protected:
     //! Mean local background of peak. The uncertainty is the uncertainty of the _estimate_ of the background.
     Intensity _meanBackground;
     //! Net integrated intensity, after background correction.
-    Intensity _integratedIntensity;    
+    Intensity _integratedIntensity;
     //! The rocking curve of the peak.
     std::vector<Intensity> _rockingCurve;
     //! Optional pointer to progress handler.

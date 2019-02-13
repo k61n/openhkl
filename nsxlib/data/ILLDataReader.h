@@ -39,7 +39,6 @@
 #include <Eigen/Dense>
 
 #include "IDataReader.h"
-#include "InstrumentTypes.h"
 
 namespace nsx {
 

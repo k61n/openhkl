@@ -32,9 +32,7 @@
 #include <string>
 
 #include "H5Cpp.h"
-
 #include "HDF5MetaDataReader.h"
-#include "InstrumentTypes.h"
 
 namespace nsx {
 

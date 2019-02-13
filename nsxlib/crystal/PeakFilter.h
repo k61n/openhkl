@@ -1,7 +1,6 @@
 #pragma once
 
 #include "CrystalTypes.h"
-#include "DataTypes.h"
 
 namespace nsx {
 

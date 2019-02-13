@@ -1,6 +1,5 @@
 #include "mozaictester.h"
 #include <random>
-
 #include <vector>
 #include <iostream>
 
