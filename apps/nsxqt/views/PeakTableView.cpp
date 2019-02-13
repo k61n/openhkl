@@ -10,13 +10,13 @@
 #include <QMouseEvent>
 #include <QStandardItemModel>
 
-#include <nsxlib/DataSet.h>
-#include <nsxlib/IDataReader.h>
-#include <nsxlib/Logger.h>
-#include <nsxlib/MetaData.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/ProgressHandler.h>
-#include <nsxlib/UnitCell.h>
+#include <core/DataSet.h>
+#include <core/IDataReader.h>
+#include <core/Logger.h>
+#include <core/MetaData.h>
+#include <core/Peak3D.h>
+#include <core/ProgressHandler.h>
+#include <core/UnitCell.h>
 
 #include "CollectedPeaksModel.h"
 #include "PeakTableView.h"

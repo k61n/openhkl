@@ -4,17 +4,17 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-#include <nsxlib/CC.h>
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/Logger.h>
-#include <nsxlib/MergedData.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/PeakFilter.h>
-#include <nsxlib/ResolutionShell.h>
-#include <nsxlib/RFactor.h>
-#include <nsxlib/Source.h>
-#include <nsxlib/UnitCell.h>
+#include <core/CC.h>
+#include <core/DataSet.h>
+#include <core/Diffractometer.h>
+#include <core/Logger.h>
+#include <core/MergedData.h>
+#include <core/Peak3D.h>
+#include <core/PeakFilter.h>
+#include <core/ResolutionShell.h>
+#include <core/RFactor.h>
+#include <core/Source.h>
+#include <core/UnitCell.h>
 
 #include "DataItem.h"
 #include "DetectorItem.h"

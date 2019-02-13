@@ -2,8 +2,8 @@
 #include <string>
 #include <vector>
 
-#include <nsxlib/CSV.h>
-#include <nsxlib/NSXTest.h>
+#include <core/CSV.h>
+#include <core/NSXTest.h>
 
 NSX_INIT_TEST
 

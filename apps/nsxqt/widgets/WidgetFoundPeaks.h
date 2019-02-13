@@ -2,8 +2,8 @@
 
 #include <QWidget>
 
-#include <nsxlib/CrystalTypes.h>
-#include <nsxlib/InstrumentTypes.h>
+#include <core/CrystalTypes.h>
+#include <core/InstrumentTypes.h>
 
 namespace Ui {
 class WidgetFoundPeaks;

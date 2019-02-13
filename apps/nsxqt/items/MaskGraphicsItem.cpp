@@ -9,8 +9,8 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
-#include <nsxlib/AABB.h>
-#include <nsxlib/DataSet.h>
+#include <core/AABB.h>
+#include <core/DataSet.h>
 
 #include "DetectorScene.h"
 #include "MaskGraphicsItem.h"

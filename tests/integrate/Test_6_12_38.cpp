@@ -5,26 +5,26 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/AutoIndexer.h>
-#include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DataReaderFactory.h>
-#include <nsxlib/DataSet.h>
-#include <nsxlib/DetectorEvent.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/DirectVector.h>
-#include <nsxlib/Ellipsoid.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/NSXTest.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/PeakFilter.h>
-#include <nsxlib/PeakFinder.h>
-#include <nsxlib/ProgressHandler.h>
-#include <nsxlib/ReciprocalVector.h>
-#include <nsxlib/Sample.h>
-#include <nsxlib/ShapeLibrary.h>
-#include <nsxlib/PixelSumIntegrator.h>
-#include <nsxlib/UnitCell.h>
-#include <nsxlib/Units.h>
+#include <core/AutoIndexer.h>
+#include <core/CrystalTypes.h>
+#include <core/DataReaderFactory.h>
+#include <core/DataSet.h>
+#include <core/DetectorEvent.h>
+#include <core/Diffractometer.h>
+#include <core/DirectVector.h>
+#include <core/Ellipsoid.h>
+#include <core/Experiment.h>
+#include <core/NSXTest.h>
+#include <core/Peak3D.h>
+#include <core/PeakFilter.h>
+#include <core/PeakFinder.h>
+#include <core/ProgressHandler.h>
+#include <core/ReciprocalVector.h>
+#include <core/Sample.h>
+#include <core/ShapeLibrary.h>
+#include <core/PixelSumIntegrator.h>
+#include <core/UnitCell.h>
+#include <core/Units.h>
 
 NSX_INIT_TEST
 

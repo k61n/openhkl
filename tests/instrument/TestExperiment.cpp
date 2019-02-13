@@ -1,9 +1,9 @@
 #include <stdexcept>
 
-#include <nsxlib/DataReaderFactory.h>
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/NSXTest.h>
+#include <core/DataReaderFactory.h>
+#include <core/DataSet.h>
+#include <core/Experiment.h>
+#include <core/NSXTest.h>
 
 NSX_INIT_TEST
 

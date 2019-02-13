@@ -1,8 +1,8 @@
 #pragma once
 
-#include <nsxlib/CrystalTypes.h>
-#include <nsxlib/InstrumentTypes.h>
-#include <nsxlib/Peak3D.h>
+#include <core/CrystalTypes.h>
+#include <core/InstrumentTypes.h>
+#include <core/Peak3D.h>
 
 #include "InspectableTreeItem.h"
 #include "SessionModel.h"

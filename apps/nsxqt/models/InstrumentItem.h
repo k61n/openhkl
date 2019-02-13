@@ -2,7 +2,7 @@
 
 #include <QJsonObject>
 
-#include <nsxlib/InstrumentTypes.h>
+#include <core/InstrumentTypes.h>
 
 #include "TreeItem.h"
 

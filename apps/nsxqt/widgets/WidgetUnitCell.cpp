@@ -1,5 +1,5 @@
-#include <nsxlib/UnitCell.h>
-#include <nsxlib/Units.h>
+#include <core/UnitCell.h>
+#include <core/Units.h>
 
 #include "WidgetUnitCell.h"
 

@@ -2,8 +2,8 @@
 
 #include <QStandardItemModel>
 
-#include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DataTypes.h>
+#include <core/CrystalTypes.h>
+#include <core/DataTypes.h>
 
 class ExperimentItem;
 

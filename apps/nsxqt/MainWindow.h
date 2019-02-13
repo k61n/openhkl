@@ -7,10 +7,10 @@
 #include <QMenu>
 #include <QProgressBar>
 
-#include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DataSet.h>
-#include <nsxlib/DataTypes.h>
-#include <nsxlib/UtilsTypes.h>
+#include <core/CrystalTypes.h>
+#include <core/DataSet.h>
+#include <core/DataTypes.h>
+#include <core/UtilsTypes.h>
 
 #include "ProgressView.h"
 

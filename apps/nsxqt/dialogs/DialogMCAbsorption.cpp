@@ -4,22 +4,22 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Detector.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/IDataReader.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/Gonio.h>
-#include <nsxlib/InstrumentState.h>
-#include <nsxlib/Material.h>
-#include <nsxlib/MCAbsorption.h>
-#include <nsxlib/Monochromator.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/ReciprocalVector.h>
-#include <nsxlib/Sample.h>
-#include <nsxlib/Source.h>
-#include <nsxlib/UnitCell.h>
-#include <nsxlib/Units.h>
+#include <core/DataSet.h>
+#include <core/Detector.h>
+#include <core/Diffractometer.h>
+#include <core/IDataReader.h>
+#include <core/Experiment.h>
+#include <core/Gonio.h>
+#include <core/InstrumentState.h>
+#include <core/Material.h>
+#include <core/MCAbsorption.h>
+#include <core/Monochromator.h>
+#include <core/Peak3D.h>
+#include <core/ReciprocalVector.h>
+#include <core/Sample.h>
+#include <core/Source.h>
+#include <core/UnitCell.h>
+#include <core/Units.h>
 
 #include "DialogMCAbsorption.h"
 #include "ExperimentItem.h"

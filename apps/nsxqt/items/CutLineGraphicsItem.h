@@ -4,7 +4,7 @@
 
 #include <QGraphicsItem>
 
-#include <nsxlib/DataTypes.h>
+#include <core/DataTypes.h>
 
 #include "CutterGraphicsItem.h"
 

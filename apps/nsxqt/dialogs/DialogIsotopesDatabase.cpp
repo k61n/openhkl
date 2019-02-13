@@ -3,9 +3,9 @@
 #include <QStandardItem>
 #include <QStandardItemModel>
 
-#include <nsxlib/ChemistryTypes.h>
-#include <nsxlib/IsotopeDatabaseManager.h>
-#include <nsxlib/Units.h>
+#include <core/ChemistryTypes.h>
+#include <core/IsotopeDatabaseManager.h>
+#include <core/Units.h>
 
 #include "DialogIsotopesDatabase.h"
 

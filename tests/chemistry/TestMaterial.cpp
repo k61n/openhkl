@@ -1,8 +1,8 @@
 #include <stdexcept>
 
-#include <nsxlib/Material.h>
-#include <nsxlib/NSXTest.h>
-#include <nsxlib/Units.h>
+#include <core/Material.h>
+#include <core/NSXTest.h>
+#include <core/Units.h>
 
 const double tolerance=1.0e-9;
 

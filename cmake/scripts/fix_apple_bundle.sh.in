@@ -45,7 +45,7 @@ install_name_tool -change /usr/local/opt/yaml-cpp/lib/libyaml-cpp.0.5.dylib @exe
 install_name_tool -change /usr/local/opt/libtiff/lib/libtiff.5.dylib @executable_path/../Frameworks/libtiff.5.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
 install_name_tool -change /usr/local/opt/gsl/lib/libgsl.19.dylib @executable_path/../Frameworks/libgsl.19.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
 install_name_tool -change /usr/local/opt/gsl/lib/libgslcblas.0.dylib @executable_path/../Frameworks/libgslcblas.0.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
-install_name_tool -change ${CI_PROJECT_DIR}/build/nsxlib/libnsx.dylib @executable_path/../Frameworks/libnsx.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
+install_name_tool -change ${CI_PROJECT_DIR}/build/core/libnsx.dylib @executable_path/../Frameworks/libnsx.dylib ${NSX_APP_CONTENTS}/lib/python2.7/site-packages/_pynsx.so
 
 # Modify the path to libz for HDF5 and Tiff dylibs
 install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/libz.1.dylib ${NSX_APP_CONTENTS}/Frameworks/libhdf5.101.dylib

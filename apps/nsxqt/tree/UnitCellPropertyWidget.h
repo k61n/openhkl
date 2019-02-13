@@ -4,7 +4,7 @@
 
 #include <QWidget>
 
-#include <nsxlib/CrystalTypes.h>
+#include <core/CrystalTypes.h>
 
 namespace Ui {
 class UnitCellPropertyWidget;

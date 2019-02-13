@@ -4,9 +4,9 @@
 #include <QString>
 #include <QTextEdit>
 
-#include <nsxlib/AggregateStreamWrapper.h>
-#include <nsxlib/Logger.h>
-#include <nsxlib/LogFileStreamWrapper.h>
+#include <core/AggregateStreamWrapper.h>
+#include <core/Logger.h>
+#include <core/LogFileStreamWrapper.h>
 
 #include "NoteBook.h"
 #include "QtStreamWrapper.h"

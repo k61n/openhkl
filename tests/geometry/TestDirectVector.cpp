@@ -1,7 +1,7 @@
 #include <Eigen/Dense>
 
-#include <nsxlib/DirectVector.h>
-#include <nsxlib/NSXTest.h>
+#include <core/DirectVector.h>
+#include <core/NSXTest.h>
 
 NSX_INIT_TEST
 

@@ -2,9 +2,9 @@
 
 #include <map>
 
-#include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DataTypes.h>
-#include <nsxlib/Refiner.h>
+#include <core/CrystalTypes.h>
+#include <core/DataTypes.h>
+#include <core/Refiner.h>
 
 #include "NSXQFrame.h"
 

@@ -29,7 +29,7 @@
 
 // Define necessary symbols for exporting symbols in dll table.
 #ifdef _WIN32
-#    ifdef NSXLIB_EXPORT
+#    ifdef core_EXPORT
 #        define DLLExport __declspec(dllexport)
 #    else
 #        define DLLEXport __declspec(dllimport)

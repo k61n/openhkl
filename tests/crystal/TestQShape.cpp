@@ -1,17 +1,17 @@
 #include <Eigen/Dense>
 
-#include <nsxlib/ConvolverFactory.h>
-#include <nsxlib/DataReaderFactory.h>
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/NSXTest.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/PeakFinder.h>
-#include <nsxlib/ProgressHandler.h>
-#include <nsxlib/ReciprocalVector.h>
-#include <nsxlib/Sample.h>
-#include <nsxlib/Units.h>
+#include <core/ConvolverFactory.h>
+#include <core/DataReaderFactory.h>
+#include <core/DataSet.h>
+#include <core/Diffractometer.h>
+#include <core/Experiment.h>
+#include <core/NSXTest.h>
+#include <core/Peak3D.h>
+#include <core/PeakFinder.h>
+#include <core/ProgressHandler.h>
+#include <core/ReciprocalVector.h>
+#include <core/Sample.h>
+#include <core/Units.h>
 
 NSX_INIT_TEST
 

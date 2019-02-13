@@ -2,11 +2,11 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/CylindricalDetector.h>
-#include <nsxlib/Gonio.h>
-#include <nsxlib/InstrumentState.h>
-#include <nsxlib/NSXTest.h>
-#include <nsxlib/Units.h>
+#include <core/CylindricalDetector.h>
+#include <core/Gonio.h>
+#include <core/InstrumentState.h>
+#include <core/NSXTest.h>
+#include <core/Units.h>
 
 NSX_INIT_TEST
 

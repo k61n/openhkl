@@ -5,25 +5,25 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/AutoIndexer.h>
-#include <nsxlib/ConvolverFactory.h>
-#include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DataReaderFactory.h>
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Diffractometer.h>
+#include <core/AutoIndexer.h>
+#include <core/ConvolverFactory.h>
+#include <core/CrystalTypes.h>
+#include <core/DataReaderFactory.h>
+#include <core/DataSet.h>
+#include <core/Diffractometer.h>
 
-#include <nsxlib/Experiment.h>
-#include <nsxlib/Gonio.h>
-#include <nsxlib/InstrumentState.h>
-#include <nsxlib/NSXTest.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/PeakFilter.h>
-#include <nsxlib/PeakFinder.h>
-#include <nsxlib/ProgressHandler.h>
-#include <nsxlib/Refiner.h>
-#include <nsxlib/ReciprocalVector.h>
-#include <nsxlib/Sample.h>
-#include <nsxlib/Units.h>
+#include <core/Experiment.h>
+#include <core/Gonio.h>
+#include <core/InstrumentState.h>
+#include <core/NSXTest.h>
+#include <core/Peak3D.h>
+#include <core/PeakFilter.h>
+#include <core/PeakFinder.h>
+#include <core/ProgressHandler.h>
+#include <core/Refiner.h>
+#include <core/ReciprocalVector.h>
+#include <core/Sample.h>
+#include <core/Units.h>
 
 NSX_INIT_TEST
 

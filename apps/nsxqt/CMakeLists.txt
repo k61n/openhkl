@@ -54,7 +54,7 @@ target_include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/3rdparty/QCustomPlot
     ${NSXQT_SUBDIRS}
-    ${CMAKE_BINARY_DIR}/nsxlib/include)
+    ${CMAKE_BINARY_DIR}/core/include)
 
 target_link_libraries(
     ${NSXQT_EXECUTABLE}

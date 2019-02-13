@@ -2,7 +2,7 @@
 
 #include <QDialog>
 
-#include <nsxlib/DataTypes.h>
+#include <core/DataTypes.h>
 
 class QAbstractButton;
 

@@ -16,11 +16,11 @@ unix:!macx {
 
     QMAKE_CXXFLAGS += -std=c++0x -fopenmp
     QMAKE_LFLAGS += -fopenmp
-    QMAKE_LFLAGS += "-Wl,-rpath,@CMAKE_BINARY_DIR@/nsxlib"
+    QMAKE_LFLAGS += "-Wl,-rpath,@CMAKE_BINARY_DIR@/core"
 
     INCLUDEPATH += ${NSXQT_QMAKE_INCLUDE_DIRECTORIES}
 
-    LIBS += -L@CMAKE_BINARY_DIR@/nsxlib -lnsx 
+    LIBS += -L@CMAKE_BINARY_DIR@/core -lnsx 
 
     LIBS += -lfftw3
 }
@@ -28,11 +28,11 @@ macx {
     CONFIG += c++11
 
     QMAKE_CXXFLAGS += -std=c++11
-    QMAKE_LFLAGS += "-Wl,-rpath,@CMAKE_BINARY_DIR@/nsxlib"
+    QMAKE_LFLAGS += "-Wl,-rpath,@CMAKE_BINARY_DIR@/core"
 
     INCLUDEPATH += ${NSXQT_QMAKE_INCLUDE_DIRECTORIES}
 
-    LIBS += -L@CMAKE_BINARY_DIR@/nsxlib -lnsx
+    LIBS += -L@CMAKE_BINARY_DIR@/core -lnsx
 
     LIBS += -L/usr/local/opt/fftw/lib -lfftw3
     

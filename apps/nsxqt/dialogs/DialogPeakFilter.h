@@ -5,7 +5,7 @@
 
 #include <QDialog>
 
-#include <nsxlib/CrystalTypes.h>
+#include <core/CrystalTypes.h>
 
 class QAbstractButton;
 

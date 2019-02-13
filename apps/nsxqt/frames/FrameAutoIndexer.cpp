@@ -1,8 +1,8 @@
-#include <nsxlib/AutoIndexer.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/Logger.h>
-#include <nsxlib/UnitCell.h>
-#include <nsxlib/Units.h>
+#include <core/AutoIndexer.h>
+#include <core/Peak3D.h>
+#include <core/Logger.h>
+#include <core/UnitCell.h>
+#include <core/Units.h>
 
 #include "CollectedPeaksModel.h"
 #include "ExperimentItem.h"

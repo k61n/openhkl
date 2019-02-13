@@ -4,7 +4,7 @@ target_include_directories(
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${NSXQT_SUBDIRS}
-    ${CMAKE_BINARY_DIR}/nsxlib/include)
+    ${CMAKE_BINARY_DIR}/core/include)
 
 target_link_libraries(simulate nsx ${HDF5_LIBRARIES})
 

@@ -2,11 +2,11 @@
 
 #include <QJsonArray>
 
-#include <nsxlib/AABB.h>
-#include <nsxlib/BoxMask.h>
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/Logger.h>
+#include <core/AABB.h>
+#include <core/BoxMask.h>
+#include <core/DataSet.h>
+#include <core/Experiment.h>
+#include <core/Logger.h>
 
 #include "ExperimentItem.h"
 #include "MetaTypes.h"

@@ -7,19 +7,19 @@
 #include <QIcon>
 #include <QString>
 
-#include <nsxlib/CrystalTypes.h>
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Detector.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/IDataReader.h>
-#include <nsxlib/InstrumentState.h>
-#include <nsxlib/Logger.h>
-#include <nsxlib/MetaData.h>
-#include <nsxlib/MillerIndex.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/PeakFilter.h>
-#include <nsxlib/ReciprocalVector.h>
-#include <nsxlib/UnitCell.h>
+#include <core/CrystalTypes.h>
+#include <core/DataSet.h>
+#include <core/Detector.h>
+#include <core/Diffractometer.h>
+#include <core/IDataReader.h>
+#include <core/InstrumentState.h>
+#include <core/Logger.h>
+#include <core/MetaData.h>
+#include <core/MillerIndex.h>
+#include <core/Peak3D.h>
+#include <core/PeakFilter.h>
+#include <core/ReciprocalVector.h>
+#include <core/UnitCell.h>
 
 #include "CollectedPeaksModel.h"
 #include "ProgressView.h"

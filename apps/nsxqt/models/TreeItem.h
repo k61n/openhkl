@@ -3,8 +3,8 @@
 #include <QStandardItem>
 #include <QVariant>
 
-#include <nsxlib/Experiment.h>
-#include <nsxlib/InstrumentTypes.h>
+#include <core/Experiment.h>
+#include <core/InstrumentTypes.h>
 
 #include "SessionModel.h"
 

@@ -1,12 +1,12 @@
 #include <QComboBox>
 #include <QDoubleSpinBox>
 
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/InstrumentTypes.h>
-#include <nsxlib/Logger.h>
-#include <nsxlib/Monochromator.h>
-#include <nsxlib/Source.h>
-#include <nsxlib/Units.h>
+#include <core/Diffractometer.h>
+#include <core/InstrumentTypes.h>
+#include <core/Logger.h>
+#include <core/Monochromator.h>
+#include <core/Source.h>
+#include <core/Units.h>
 
 #include "SourceItem.h"
 #include "SourcePropertyWidget.h"

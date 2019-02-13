@@ -1,11 +1,11 @@
 #include <sstream>
 
-#include <nsxlib/Axis.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/Gonio.h>
-#include <nsxlib/Sample.h>
-#include <nsxlib/TransAxis.h>
-#include <nsxlib/Units.h>
+#include <core/Axis.h>
+#include <core/Diffractometer.h>
+#include <core/Gonio.h>
+#include <core/Sample.h>
+#include <core/TransAxis.h>
+#include <core/Units.h>
 
 #include "SampleItem.h"
 #include "SamplePropertyWidget.h"

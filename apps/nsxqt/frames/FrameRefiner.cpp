@@ -1,5 +1,5 @@
-#include <nsxlib/Logger.h>
-#include <nsxlib/Peak3D.h>
+#include <core/Logger.h>
+#include <core/Peak3D.h>
 
 #include "CollectedPeaksModel.h"
 #include "DoubleItemDelegate.h"

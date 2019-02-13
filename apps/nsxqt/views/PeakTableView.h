@@ -37,7 +37,7 @@
 #include <QMenu>
 #include <QTableView>
 
-#include <nsxlib/CrystalTypes.h>
+#include <core/CrystalTypes.h>
 
 #include <MainWindow.h>
 

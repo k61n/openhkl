@@ -4,7 +4,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneHoverEvent>
 
-#include <nsxlib/DataSet.h>
+#include <core/DataSet.h>
 
 #include "CutterGraphicsItem.h"
 

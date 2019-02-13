@@ -1,13 +1,13 @@
 #include <QDoubleSpinBox>
 #include <QSpinBox>
 
-#include <nsxlib/Detector.h>
-#include <nsxlib/DirectVector.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/Gonio.h>
-#include <nsxlib/RotAxis.h>
-#include <nsxlib/TransAxis.h>
-#include <nsxlib/Units.h>
+#include <core/Detector.h>
+#include <core/DirectVector.h>
+#include <core/Diffractometer.h>
+#include <core/Gonio.h>
+#include <core/RotAxis.h>
+#include <core/TransAxis.h>
+#include <core/Units.h>
 
 #include "DetectorItem.h"
 #include "DetectorPropertyWidget.h"

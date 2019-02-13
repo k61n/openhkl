@@ -6,19 +6,19 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Detector.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/Ellipsoid.h>
-#include <nsxlib/IDataReader.h>
-#include <nsxlib/InstrumentState.h>
-#include <nsxlib/IntegrationRegion.h>
-#include <nsxlib/MetaData.h>
-#include <nsxlib/MillerIndex.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/ReciprocalVector.h>
-#include <nsxlib/UnitCell.h>
-#include <nsxlib/Units.h>
+#include <core/DataSet.h>
+#include <core/Detector.h>
+#include <core/Diffractometer.h>
+#include <core/Ellipsoid.h>
+#include <core/IDataReader.h>
+#include <core/InstrumentState.h>
+#include <core/IntegrationRegion.h>
+#include <core/MetaData.h>
+#include <core/MillerIndex.h>
+#include <core/Peak3D.h>
+#include <core/ReciprocalVector.h>
+#include <core/UnitCell.h>
+#include <core/Units.h>
 
 #include "DetectorScene.h"
 #include "PeakGraphicsItem.h"

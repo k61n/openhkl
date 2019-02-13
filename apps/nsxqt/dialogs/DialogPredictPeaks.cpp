@@ -1,7 +1,7 @@
-#include <nsxlib/Logger.h>
-#include <nsxlib/ShapeLibrary.h>
-#include <nsxlib/ProgressHandler.h>
-#include <nsxlib/UnitCell.h>
+#include <core/Logger.h>
+#include <core/ShapeLibrary.h>
+#include <core/ProgressHandler.h>
+#include <core/UnitCell.h>
 
 #include "ui_DialogPredictPeaks.h"
 #include "CollectedPeaksModel.h"

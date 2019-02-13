@@ -1,4 +1,4 @@
-#include <nsxlib/UnitCell.h>
+#include <core/UnitCell.h>
 
 #include "GLReciprocalLattice.h"
 

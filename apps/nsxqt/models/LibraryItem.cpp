@@ -1,9 +1,9 @@
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/Logger.h>
-#include <nsxlib/ProgressHandler.h>
-#include <nsxlib/Sample.h>
-#include <nsxlib/ShapeLibrary.h>
+#include <core/DataSet.h>
+#include <core/Diffractometer.h>
+#include <core/Logger.h>
+#include <core/ProgressHandler.h>
+#include <core/Sample.h>
+#include <core/ShapeLibrary.h>
 
 #include "DataItem.h"
 #include "DialogPredictPeaks.h"

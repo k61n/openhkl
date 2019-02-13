@@ -7,7 +7,7 @@
 # description:
 #     generates (obviously fake) simulated biodiff data,
 #  with and without slowly varying background. This is used
-#  in functional tests of nsxlib.
+#  in functional tests of core.
 #
 ###############################################################################
 

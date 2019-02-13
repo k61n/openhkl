@@ -2,15 +2,15 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/DataSet.h>
-#include <nsxlib/DetectorEvent.h>
-#include <nsxlib/Ellipsoid.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/FakeDataReader.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/ReciprocalVector.h>
-#include <nsxlib/SpaceGroup.h>
-#include <nsxlib/UnitCell.h>
+#include <core/DataSet.h>
+#include <core/DetectorEvent.h>
+#include <core/Ellipsoid.h>
+#include <core/Experiment.h>
+#include <core/FakeDataReader.h>
+#include <core/Peak3D.h>
+#include <core/ReciprocalVector.h>
+#include <core/SpaceGroup.h>
+#include <core/UnitCell.h>
 
 
 //! Correct the generated image by adding baseline, gain, and optional Poisson noise

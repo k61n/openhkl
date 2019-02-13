@@ -4,8 +4,8 @@
 
 #include <QWidget>
 
-#include <nsxlib/DataTypes.h>
-#include <nsxlib/Refiner.h>
+#include <core/DataTypes.h>
+#include <core/Refiner.h>
 
 namespace Ui {
 class WidgetRefinerFit;

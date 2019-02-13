@@ -1,8 +1,8 @@
 #pragma once
 
-#include <nsxlib/DataTypes.h>
-#include <nsxlib/InstrumentTypes.h>
-#include <nsxlib/PeakFinder.h>
+#include <core/DataTypes.h>
+#include <core/InstrumentTypes.h>
+#include <core/PeakFinder.h>
 
 #include "TreeItem.h"
 

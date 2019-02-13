@@ -1,5 +1,5 @@
-#include <nsxlib/Logger.h>
-#include <nsxlib/Version.h>
+#include <core/Logger.h>
+#include <core/Version.h>
 
 #include <QApplication>
 

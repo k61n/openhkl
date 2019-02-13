@@ -3,14 +3,14 @@
 #include <QLayout>
 #include <QStatusBar>
 
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Peak3D.h>
-#include <nsxlib/PeakCoordinateSystem.h>
-#include <nsxlib/PeakFilter.h>
-#include <nsxlib/Profile3D.h>
-#include <nsxlib/ShapeIntegrator.h>
-#include <nsxlib/ShapeLibrary.h>
-#include <nsxlib/Logger.h>
+#include <core/DataSet.h>
+#include <core/Peak3D.h>
+#include <core/PeakCoordinateSystem.h>
+#include <core/PeakFilter.h>
+#include <core/Profile3D.h>
+#include <core/ShapeIntegrator.h>
+#include <core/ShapeLibrary.h>
+#include <core/Logger.h>
 
 #include "CollectedPeaksModel.h"
 #include "ExperimentItem.h"

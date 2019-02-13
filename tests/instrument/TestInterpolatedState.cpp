@@ -2,19 +2,19 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/DataReaderFactory.h>
-#include <nsxlib/Diffractometer.h>
-#include <nsxlib/DataSet.h>
-#include <nsxlib/Detector.h>
-#include <nsxlib/Experiment.h>
-#include <nsxlib/IDataReader.h>
-#include <nsxlib/InstrumentState.h>
-#include <nsxlib/InterpolatedState.h>
-#include <nsxlib/NSXTest.h>
-#include <nsxlib/ProgressHandler.h>
-#include <nsxlib/Sample.h>
-#include <nsxlib/ReciprocalVector.h>
-#include <nsxlib/Source.h>
+#include <core/DataReaderFactory.h>
+#include <core/Diffractometer.h>
+#include <core/DataSet.h>
+#include <core/Detector.h>
+#include <core/Experiment.h>
+#include <core/IDataReader.h>
+#include <core/InstrumentState.h>
+#include <core/InterpolatedState.h>
+#include <core/NSXTest.h>
+#include <core/ProgressHandler.h>
+#include <core/Sample.h>
+#include <core/ReciprocalVector.h>
+#include <core/Source.h>
 
 NSX_INIT_TEST
 

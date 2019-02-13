@@ -1,6 +1,6 @@
-#include <nsxlib/IsotopeDatabaseManager.h>
-#include <nsxlib/NSXTest.h>
-#include <nsxlib/Units.h>
+#include <core/IsotopeDatabaseManager.h>
+#include <core/NSXTest.h>
+#include <core/Units.h>
 
 const double tolerance=1e-6;
 

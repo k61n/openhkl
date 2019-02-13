@@ -110,7 +110,7 @@ endif(BUILD_STATIC)
 
 
 # install
-install(FILES blosc.h DESTINATION ${NSX_INSTALL_DIR}include/nsxlib COMPONENT DEV)
+install(FILES blosc.h DESTINATION ${NSX_INSTALL_DIR}include/core COMPONENT DEV)
 install(TARGETS blosc_shared DESTINATION ${NSX_INSTALL_DIR}${lib_dir} COMPONENT LIB)
 if(BUILD_STATIC)
     install(TARGETS blosc_static DESTINATION ${NSX_INSTALL_DIR}${lib_dir} COMPONENT DEV)

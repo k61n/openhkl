@@ -1,11 +1,11 @@
 #include <random>
 
-#include <nsxlib/MillerIndex.h>
-#include <nsxlib/Minimizer.h>
-#include <nsxlib/NSXTest.h>
-#include <nsxlib/SpaceGroup.h>
-#include <nsxlib/UnitCell.h>
-#include <nsxlib/Units.h>
+#include <core/MillerIndex.h>
+#include <core/Minimizer.h>
+#include <core/NSXTest.h>
+#include <core/SpaceGroup.h>
+#include <core/UnitCell.h>
+#include <core/Units.h>
 
 const double tolerance=1e-6;
 

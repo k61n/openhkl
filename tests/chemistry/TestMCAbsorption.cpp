@@ -2,12 +2,12 @@
 
 #include <Eigen/Dense>
 
-#include <nsxlib/ChemistryTypes.h>
-#include <nsxlib/ConvexHull.h>
-#include <nsxlib/Material.h>
-#include <nsxlib/MCAbsorption.h>
-#include <nsxlib/NSXTest.h>
-#include <nsxlib/Units.h>
+#include <core/ChemistryTypes.h>
+#include <core/ConvexHull.h>
+#include <core/Material.h>
+#include <core/MCAbsorption.h>
+#include <core/NSXTest.h>
+#include <core/Units.h>
 
 NSX_INIT_TEST
 

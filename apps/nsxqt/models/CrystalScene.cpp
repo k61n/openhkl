@@ -6,9 +6,9 @@
 #include <QMouseEvent>
 #include <QWidget>
 
-#include <nsxlib/ConvexHull.h>
-#include <nsxlib/Triangle.h>
-#include <nsxlib/Units.h>
+#include <core/ConvexHull.h>
+#include <core/Triangle.h>
+#include <core/Units.h>
 
 #include "CrystalNodeItem.h"
 #include "CrystalFaceItem.h"
