@@ -21,7 +21,7 @@ if (BUILD_WITH_OPENMP)
 endif()
 
 ###### Find the Eigen3
-include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/externals/eigen3)
+include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/3rdparty/eigen3)
 
 ###### Search the HDF5 library
 find_package(HDF5 COMPONENTS CXX REQUIRED)
@@ -102,8 +102,8 @@ if(NSX_PYTHON)
 endif(NSX_PYTHON)
 
 ###### C-BLOSC
-add_subdirectory(externals/c-blosc)
-include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/externals/c-blosc/blosc)
+add_subdirectory(3rdparty/c-blosc)
+include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/3rdparty/c-blosc/blosc)
 
 find_package(YAML REQUIRED)
 include_directories(SYSTEM ${YAML_INCLUDES})
@@ -117,9 +117,9 @@ include_directories(SYSTEM ${FFTW_INCLUDE_DIR})
 
 ###### GSL library
 if (BUILD_GSL)
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/externals/gsl/cmake)
-    add_subdirectory(externals/gsl)
-    include_directories(SYSTEM ${CMAKE_BINARY_DIR}/externals/gsl/gsl)
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/3rdparty/gsl/cmake)
+    add_subdirectory(3rdparty/gsl)
+    include_directories(SYSTEM ${CMAKE_BINARY_DIR}/3rdparty/gsl/gsl)
 
     set (GSL_VERSION_MAJOR 2)
     set (GSL_VERSION_MINOR 3)
