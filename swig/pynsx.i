@@ -190,7 +190,6 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "Component.h"
 #include "AxisFactory.h"
 #include "RotAxis.h"
-#include "PhysicalUnit.h"
 
 #include "Singleton.h"
 #include "Factory.h"
@@ -200,15 +199,15 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "Axis.h"
 #include "RotAxis.h"
 #include "TransAxis.h"
-  
+
 #include "Monochromator.h"
 
 #include "Detector.h"
 #include "CylindricalDetector.h"
 #include "FlatDetector.h"
- 
+
 #include "Source.h"
- 
+
 #include "Sample.h"
 
 #include "AABB.h"
@@ -565,5 +564,3 @@ double get_value(const double*);
         return *ptr;
     }
 %}
-
-
