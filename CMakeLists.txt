@@ -69,7 +69,7 @@ if (BUILD_NSX_APPS)
 endif()
 
 # additional tools
-add_subdirectory(tools)
+# add_subdirectory(tools)
 
 # Directory with all the unit-tests.
 add_subdirectory(tests)
