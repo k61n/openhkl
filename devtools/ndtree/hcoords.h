@@ -32,110 +32,94 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
-namespace nsx
-{
+namespace nsx {
 
-namespace Geometry
-{
+namespace Geometry {
 
 namespace ublas = boost::numeric::ublas;
 
 template <typename T, std::size_t D>
-class HCoords : public ublas::bounded_vector<T,D>
-{
+class HCoords : public ublas::bounded_vector<T, D> {
 public:
+  //! constructor
+  HCoords();
 
-	//! constructor
-	HCoords();
+  //! copy constructor
+  HCoords(const HCoords<T, D> &other);
 
-	//! copy constructor
-	HCoords(const HCoords<T,D>& other);
+  //! constructor from a bounded_vector
+  HCoords(const ublas::bounded_vector<T, D> &other);
 
-	//! constructor from a bounded_vector
-	HCoords(const ublas::bounded_vector<T,D>& other);
+  //! constructor from an initializer list
+  HCoords(const std::initializer_list<T> &other);
 
-	//! constructor from an initializer list
-	HCoords(const std::initializer_list<T>& other);
+  //! constructor from a single value
+  HCoords(T value);
 
-	//! constructor from a single value
-	HCoords(T value);
+  //! move constructor
+  HCoords(HCoords &&other);
 
-	//! move constructor
-	HCoords(HCoords&& other);
+  //! assignment operator
+  HCoords<T, D> &operator=(const HCoords<T, D> &other);
 
-	//! assignment operator
-	HCoords<T,D>& operator=(const HCoords<T,D>& other);
+  //! move assignment operator
+  HCoords<T, D> &operator=(HCoords<T, D> &&other);
 
-	//! move assignment operator
-	HCoords<T,D>& operator=(HCoords<T,D>&& other);
-
-	//! normalize an homogeneous vector
-	void normalize();
-
+  //! normalize an homogeneous vector
+  void normalize();
 };
 
-template<typename T, std::size_t D>
-HCoords<T,D>::HCoords() : ublas::bounded_vector<T,D>(ublas::zero_vector<T>(D))
-{
+template <typename T, std::size_t D>
+HCoords<T, D>::HCoords()
+    : ublas::bounded_vector<T, D>(ublas::zero_vector<T>(D)) {}
+
+template <typename T, std::size_t D>
+HCoords<T, D>::HCoords(const HCoords<T, D> &other)
+    : ublas::bounded_vector<T, D>(other) {}
+
+template <typename T, std::size_t D>
+HCoords<T, D>::HCoords(const ublas::bounded_vector<T, D> &other)
+    : ublas::bounded_vector<T, D>(other) {}
+
+template <typename T, std::size_t D>
+HCoords<T, D>::HCoords(const std::initializer_list<T> &other) {
+  auto dataIt = this->data().begin();
+  for (auto it = other.begin(); it != other.end(); ++it)
+    *(dataIt++) = *it;
 }
 
-template<typename T, std::size_t D>
-HCoords<T,D>::HCoords(const HCoords<T,D>& other) : ublas::bounded_vector<T,D>(other)
-{
+template <typename T, std::size_t D>
+HCoords<T, D>::HCoords(T value)
+    : ublas::bounded_vector<T, D>(ublas::scalar_vector<T>(D, value)) {}
+
+template <typename T, std::size_t D> HCoords<T, D>::HCoords(HCoords &&other) {
+  this->assign_temporary(other);
 }
 
-template<typename T, std::size_t D>
-HCoords<T,D>::HCoords(const ublas::bounded_vector<T,D>& other) : ublas::bounded_vector<T,D>(other)
-{
+template <typename T, std::size_t D>
+HCoords<T, D> &HCoords<T, D>::operator=(const HCoords<T, D> &other) {
+  if (this != &other)
+    ublas::bounded_vector<T, D>::operator=(other);
+
+  return *this;
 }
 
-template<typename T, std::size_t D>
-HCoords<T,D>::HCoords(const std::initializer_list<T>& other)
-{
-	auto dataIt=this->data().begin();
-	for (auto it=other.begin(); it!=other.end(); ++it)
-		*(dataIt++) = *it;
+template <typename T, std::size_t D>
+HCoords<T, D> &HCoords<T, D>::operator=(HCoords<T, D> &&other) {
+  if (this != &other)
+    this->assign_temporary(other);
+
+  return *this;
 }
 
-template<typename T, std::size_t D>
-HCoords<T,D>::HCoords(T value) : ublas::bounded_vector<T,D>(ublas::scalar_vector<T>(D,value))
-{
+template <typename T, std::size_t D> void HCoords<T, D>::normalize() {
+  if (this->data()[D - 1] == 0)
+    throw("HCoords: zero division error");
+
+  this->operator/=(this->data()[D - 1]);
 }
 
-template<typename T, std::size_t D>
-HCoords<T,D>::HCoords(HCoords&& other)
-{
-	this->assign_temporary(other);
-}
-
-template<typename T, std::size_t D>
-HCoords<T,D>& HCoords<T,D>::operator=(const HCoords<T,D>& other)
-{
-	if (this != &other)
-		ublas::bounded_vector<T,D>::operator=(other);
-
-	return *this;
-}
-
-template<typename T, std::size_t D>
-HCoords<T,D>& HCoords<T,D>::operator=(HCoords<T,D>&& other)
-{
-	if (this != &other)
-		this->assign_temporary(other);
-
-	return *this;
-}
-
-template<typename T, std::size_t D>
-void HCoords<T,D>::normalize()
-{
-	if (this->data()[D-1] == 0)
-		throw("HCoords: zero division error");
-
-	this->operator/=(this->data()[D-1]);
-}
-
-} //namespace Geometry
+} // namespace Geometry
 
 } // end namespace nsx
 

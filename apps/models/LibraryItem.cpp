@@ -16,42 +16,39 @@
 #include "ProgressView.h"
 #include "UnitCellsItem.h"
 
-LibraryItem::LibraryItem()
-: TreeItem(),
-  _library(nullptr)
-{
-    setText("Reference peak library");
+LibraryItem::LibraryItem() : TreeItem(), _library(nullptr) {
+  setText("Reference peak library");
 
-    QIcon icon(":/resources/peakListIcon.png");
-    setIcon(icon);
+  QIcon icon(":/resources/peakListIcon.png");
+  setIcon(icon);
 
-    setDragEnabled(false);
-    setDropEnabled(false);
+  setDragEnabled(false);
+  setDropEnabled(false);
 
-    setEditable(false);
+  setEditable(false);
 
-    setSelectable(false);
+  setSelectable(false);
 }
 
-void LibraryItem::incorporateCalculatedPeaks()
-{
-    if (!_library) {
-        nsx::error() << "A library must be set for peak prediction";
-        return;
-    }
+void LibraryItem::incorporateCalculatedPeaks() {
+  if (!_library) {
+    nsx::error() << "A library must be set for peak prediction";
+    return;
+  }
 
-    nsx::debug() << "Incorporating missing peaks into current data set...";
+  nsx::debug() << "Incorporating missing peaks into current data set...";
 
-    auto experiment_item = dynamic_cast<ExperimentItem*>(parent());
+  auto experiment_item = dynamic_cast<ExperimentItem *>(parent());
 
-    auto data_item = experiment_item->dataItem();
-    nsx::DataList numors = data_item->selectedData();
+  auto data_item = experiment_item->dataItem();
+  nsx::DataList numors = data_item->selectedData();
 
-    auto unit_cells_item = experiment_item->unitCellsItem();
+  auto unit_cells_item = experiment_item->unitCellsItem();
 
-    DialogPredictPeaks *dialog = DialogPredictPeaks::create(experimentItem(), unit_cells_item->unitCells(), nullptr);
+  DialogPredictPeaks *dialog = DialogPredictPeaks::create(
+      experimentItem(), unit_cells_item->unitCells(), nullptr);
 
-    dialog->show();
+  dialog->show();
 
-    dialog->raise();
+  dialog->raise();
 }

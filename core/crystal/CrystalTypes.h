@@ -22,24 +22,24 @@ class UnitCell;
 
 using MillerIndexList = std::vector<MillerIndex>;
 
-using affineTransformation=Eigen::Transform<double,3,Eigen::Affine>;
+using affineTransformation = Eigen::Transform<double, 3, Eigen::Affine>;
 
-using UnitCellSolution = std::pair<UnitCell,double>;
+using UnitCellSolution = std::pair<UnitCell, double>;
 
-using sptrPeak3D   = std::shared_ptr<Peak3D>;
+using sptrPeak3D = std::shared_ptr<Peak3D>;
 using sptrUnitCell = std::shared_ptr<UnitCell>;
 
-using RankedSolution = std::pair<sptrUnitCell,double>;
+using RankedSolution = std::pair<sptrUnitCell, double>;
 
 using PeakList = std::vector<sptrPeak3D>;
 
 using MergedPeakSet = std::set<MergedPeak>;
 
-using SymOpList    = std::vector<SymOp>;
+using SymOpList = std::vector<SymOp>;
 using UnitCellList = std::vector<sptrUnitCell>;
 
-using SpaceGroupSymmetry = std::pair<std::string,std::string>;
+using SpaceGroupSymmetry = std::pair<std::string, std::string>;
 
-using AutoIndexingSoluce = std::pair<UnitCell,double>;
+using AutoIndexingSoluce = std::pair<UnitCell, double>;
 
 } // end namespace nsx

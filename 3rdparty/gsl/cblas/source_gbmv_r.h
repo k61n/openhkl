@@ -14,7 +14,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
  */
 
 {
@@ -23,7 +24,8 @@
 
   const int Trans = (TransA != CblasConjTrans) ? TransA : CblasTrans;
 
-  CHECK_ARGS14(GBMV,order,TransA,M,N,KL,KU,alpha,A,lda,X,incX,beta,Y,incY);
+  CHECK_ARGS14(GBMV, order, TransA, M, N, KL, KU, alpha, A, lda, X, incX, beta,
+               Y, incY);
 
   if (M == 0 || N == 0)
     return;
@@ -61,8 +63,8 @@
   if (alpha == 0.0)
     return;
 
-  if ((order == CblasRowMajor && Trans == CblasNoTrans)
-      || (order == CblasColMajor && Trans == CblasTrans)) {
+  if ((order == CblasRowMajor && Trans == CblasNoTrans) ||
+      (order == CblasColMajor && Trans == CblasTrans)) {
     /* form  y := alpha*A*x + y */
     INDEX iy = OFFSET(lenY, incY);
     for (i = 0; i < lenY; i++) {
@@ -77,8 +79,8 @@
       Y[iy] += alpha * temp;
       iy += incY;
     }
-  } else if ((order == CblasRowMajor && Trans == CblasTrans)
-             || (order == CblasColMajor && Trans == CblasNoTrans)) {
+  } else if ((order == CblasRowMajor && Trans == CblasTrans) ||
+             (order == CblasColMajor && Trans == CblasNoTrans)) {
     /* form  y := alpha*A'*x + y */
     INDEX jx = OFFSET(lenX, incX);
     for (j = 0; j < lenX; j++) {

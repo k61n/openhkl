@@ -16,32 +16,32 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
  */
 
 #ifndef __GSL_MULTISET_H__
 #define __GSL_MULTISET_H__
 
-#include <stdlib.h>
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_types.h>
-#include <gsl/gsl_inline.h>
 #include <gsl/gsl_check_range.h>
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_inline.h>
+#include <gsl/gsl_types.h>
+#include <stdlib.h>
 
 #undef __BEGIN_DECLS
 #undef __END_DECLS
 #ifdef __cplusplus
-# define __BEGIN_DECLS extern "C" {
-# define __END_DECLS }
+#define __BEGIN_DECLS extern "C" {
+#define __END_DECLS }
 #else
-# define __BEGIN_DECLS /* empty */
-# define __END_DECLS /* empty */
+#define __BEGIN_DECLS /* empty */
+#define __END_DECLS   /* empty */
 #endif
 
 __BEGIN_DECLS
 
-struct gsl_multiset_struct
-{
+struct gsl_multiset_struct {
   size_t n;
   size_t k;
   size_t *data;
@@ -49,39 +49,38 @@ struct gsl_multiset_struct
 
 typedef struct gsl_multiset_struct gsl_multiset;
 
-gsl_multiset *gsl_multiset_alloc (const size_t n, const size_t k);
-gsl_multiset *gsl_multiset_calloc (const size_t n, const size_t k);
-void gsl_multiset_init_first (gsl_multiset * c);
-void gsl_multiset_init_last (gsl_multiset * c);
-void gsl_multiset_free (gsl_multiset * c);
-int gsl_multiset_memcpy (gsl_multiset * dest, const gsl_multiset * src);
+gsl_multiset *gsl_multiset_alloc(const size_t n, const size_t k);
+gsl_multiset *gsl_multiset_calloc(const size_t n, const size_t k);
+void gsl_multiset_init_first(gsl_multiset *c);
+void gsl_multiset_init_last(gsl_multiset *c);
+void gsl_multiset_free(gsl_multiset *c);
+int gsl_multiset_memcpy(gsl_multiset *dest, const gsl_multiset *src);
 
-int gsl_multiset_fread (FILE * stream, gsl_multiset * c);
-int gsl_multiset_fwrite (FILE * stream, const gsl_multiset * c);
-int gsl_multiset_fscanf (FILE * stream, gsl_multiset * c);
-int gsl_multiset_fprintf (FILE * stream, const gsl_multiset * c, const char *format);
+int gsl_multiset_fread(FILE *stream, gsl_multiset *c);
+int gsl_multiset_fwrite(FILE *stream, const gsl_multiset *c);
+int gsl_multiset_fscanf(FILE *stream, gsl_multiset *c);
+int gsl_multiset_fprintf(FILE *stream, const gsl_multiset *c,
+                         const char *format);
 
-size_t gsl_multiset_n (const gsl_multiset * c);
-size_t gsl_multiset_k (const gsl_multiset * c);
-size_t * gsl_multiset_data (const gsl_multiset * c);
+size_t gsl_multiset_n(const gsl_multiset *c);
+size_t gsl_multiset_k(const gsl_multiset *c);
+size_t *gsl_multiset_data(const gsl_multiset *c);
 
-int gsl_multiset_valid (gsl_multiset * c);
-int gsl_multiset_next (gsl_multiset * c);
-int gsl_multiset_prev (gsl_multiset * c);
+int gsl_multiset_valid(gsl_multiset *c);
+int gsl_multiset_next(gsl_multiset *c);
+int gsl_multiset_prev(gsl_multiset *c);
 
-INLINE_DECL size_t gsl_multiset_get (const gsl_multiset * c, const size_t i);
+INLINE_DECL size_t gsl_multiset_get(const gsl_multiset *c, const size_t i);
 
 #ifdef HAVE_INLINE
 
 INLINE_FUN
-size_t
-gsl_multiset_get (const gsl_multiset * c, const size_t i)
-{
+size_t gsl_multiset_get(const gsl_multiset *c, const size_t i) {
 #if GSL_RANGE_CHECK
   if (GSL_RANGE_COND(i >= c->k)) /* size_t is unsigned, can't be negative */
-    {
-      GSL_ERROR_VAL ("index out of range", GSL_EINVAL, 0);
-    }
+  {
+    GSL_ERROR_VAL("index out of range", GSL_EINVAL, 0);
+  }
 #endif
   return c->data[i];
 }

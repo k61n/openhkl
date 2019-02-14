@@ -84,10 +84,9 @@ using namespace std;
 // decompression; for simplicity we just remove it from the open-source
 // version (anyone who wants to regenerate it can just do the call
 // themselves within main()).
-#define DEFINE_bool(flag_name, default_value, description) \
-  bool FLAGS_ ## flag_name = default_value
-#define DECLARE_bool(flag_name) \
-  extern bool FLAGS_ ## flag_name
+#define DEFINE_bool(flag_name, default_value, description)                     \
+  bool FLAGS_##flag_name = default_value
+#define DECLARE_bool(flag_name) extern bool FLAGS_##flag_name
 
 namespace snappy {
 
@@ -117,19 +116,13 @@ static const int64 kint64max = static_cast<int64>(0x7FFFFFFFFFFFFFFFLL);
 //
 // This is a mess, but there's not much we can do about it.
 
-#elif defined(__arm__) && \
-      !defined(__ARM_ARCH_4__) && \
-      !defined(__ARM_ARCH_4T__) && \
-      !defined(__ARM_ARCH_5__) && \
-      !defined(__ARM_ARCH_5T__) && \
-      !defined(__ARM_ARCH_5TE__) && \
-      !defined(__ARM_ARCH_5TEJ__) && \
-      !defined(__ARM_ARCH_6__) && \
-      !defined(__ARM_ARCH_6J__) && \
-      !defined(__ARM_ARCH_6K__) && \
-      !defined(__ARM_ARCH_6Z__) && \
-      !defined(__ARM_ARCH_6ZK__) && \
-      !defined(__ARM_ARCH_6T2__)
+#elif defined(__arm__) && !defined(__ARM_ARCH_4__) &&                          \
+    !defined(__ARM_ARCH_4T__) && !defined(__ARM_ARCH_5__) &&                   \
+    !defined(__ARM_ARCH_5T__) && !defined(__ARM_ARCH_5TE__) &&                 \
+    !defined(__ARM_ARCH_5TEJ__) && !defined(__ARM_ARCH_6__) &&                 \
+    !defined(__ARM_ARCH_6J__) && !defined(__ARM_ARCH_6K__) &&                  \
+    !defined(__ARM_ARCH_6Z__) && !defined(__ARM_ARCH_6ZK__) &&                 \
+    !defined(__ARM_ARCH_6T2__)
 
 #define UNALIGNED_LOAD16(_p) (*reinterpret_cast<const uint16 *>(_p))
 #define UNALIGNED_LOAD32(_p) (*reinterpret_cast<const uint32 *>(_p))
@@ -147,9 +140,7 @@ inline uint64 UNALIGNED_LOAD64(const void *p) {
   return t;
 }
 
-inline void UNALIGNED_STORE64(void *p, uint64 v) {
-  memcpy(p, &v, sizeof v);
-}
+inline void UNALIGNED_STORE64(void *p, uint64 v) { memcpy(p, &v, sizeof v); }
 
 #else
 
@@ -174,17 +165,11 @@ inline uint64 UNALIGNED_LOAD64(const void *p) {
   return t;
 }
 
-inline void UNALIGNED_STORE16(void *p, uint16 v) {
-  memcpy(p, &v, sizeof v);
-}
+inline void UNALIGNED_STORE16(void *p, uint16 v) { memcpy(p, &v, sizeof v); }
 
-inline void UNALIGNED_STORE32(void *p, uint32 v) {
-  memcpy(p, &v, sizeof v);
-}
+inline void UNALIGNED_STORE32(void *p, uint32 v) { memcpy(p, &v, sizeof v); }
 
-inline void UNALIGNED_STORE64(void *p, uint64 v) {
-  memcpy(p, &v, sizeof v);
-}
+inline void UNALIGNED_STORE64(void *p, uint64 v) { memcpy(p, &v, sizeof v); }
 
 #endif
 
@@ -243,9 +228,7 @@ inline void UnalignedCopy64(const void *src, void *dst) {
 
 #else
 
-inline uint16 bswap_16(uint16 x) {
-  return (x << 8) | (x >> 8);
-}
+inline uint16 bswap_16(uint16 x) { return (x << 8) | (x >> 8); }
 
 inline uint32 bswap_32(uint32 x) {
   x = ((x & 0xff00ff00UL) >> 8) | ((x & 0x00ff00ffUL) << 8);
@@ -260,7 +243,7 @@ inline uint64 bswap_64(uint64 x) {
 
 #endif
 
-#endif  // WORDS_BIGENDIAN
+#endif // WORDS_BIGENDIAN
 
 // Convert to little-endian storage, opposite of network format.
 // Convert x from host to little endian: x = LittleEndian.FromHost(x);
@@ -272,7 +255,7 @@ inline uint64 bswap_64(uint64 x) {
 //  Load unaligned values stored in little endian converting to host order:
 //    x = LittleEndian.Load16(p);
 class LittleEndian {
- public:
+public:
   // Conversion functions.
 #ifdef WORDS_BIGENDIAN
 
@@ -284,7 +267,7 @@ class LittleEndian {
 
   static bool IsLittleEndian() { return false; }
 
-#else  // !defined(WORDS_BIGENDIAN)
+#else // !defined(WORDS_BIGENDIAN)
 
   static uint16 FromHost16(uint16 x) { return x; }
   static uint16 ToHost16(uint16 x) { return x; }
@@ -294,20 +277,16 @@ class LittleEndian {
 
   static bool IsLittleEndian() { return true; }
 
-#endif  // !defined(WORDS_BIGENDIAN)
+#endif // !defined(WORDS_BIGENDIAN)
 
   // Functions to do unaligned loads and stores in little-endian order.
-  static uint16 Load16(const void *p) {
-    return ToHost16(UNALIGNED_LOAD16(p));
-  }
+  static uint16 Load16(const void *p) { return ToHost16(UNALIGNED_LOAD16(p)); }
 
   static void Store16(void *p, uint16 v) {
     UNALIGNED_STORE16(p, FromHost16(v));
   }
 
-  static uint32 Load32(const void *p) {
-    return ToHost32(UNALIGNED_LOAD32(p));
-  }
+  static uint32 Load32(const void *p) { return ToHost32(UNALIGNED_LOAD32(p)); }
 
   static void Store32(void *p, uint32 v) {
     UNALIGNED_STORE32(p, FromHost32(v));
@@ -316,7 +295,7 @@ class LittleEndian {
 
 // Some bit-manipulation functions.
 class Bits {
- public:
+public:
   // Return floor(log2(n)) for positive integer n.  Returns -1 iff n == 0.
   static int Log2Floor(uint32 n);
 
@@ -326,7 +305,7 @@ class Bits {
   static int FindLSBSetNonZero(uint32 n);
   static int FindLSBSetNonZero64(uint64 n);
 
- private:
+private:
   DISALLOW_COPY_AND_ASSIGN(Bits);
 };
 
@@ -336,15 +315,11 @@ inline int Bits::Log2Floor(uint32 n) {
   return n == 0 ? -1 : 31 ^ __builtin_clz(n);
 }
 
-inline int Bits::FindLSBSetNonZero(uint32 n) {
-  return __builtin_ctz(n);
-}
+inline int Bits::FindLSBSetNonZero(uint32 n) { return __builtin_ctz(n); }
 
-inline int Bits::FindLSBSetNonZero64(uint64 n) {
-  return __builtin_ctzll(n);
-}
+inline int Bits::FindLSBSetNonZero64(uint64 n) { return __builtin_ctzll(n); }
 
-#else  // Portable versions.
+#else // Portable versions.
 
 inline int Bits::Log2Floor(uint32 n) {
   if (n == 0)
@@ -387,11 +362,11 @@ inline int Bits::FindLSBSetNonZero64(uint64 n) {
   }
 }
 
-#endif  // End portable versions.
+#endif // End portable versions.
 
 // Variable-length integer encoding.
 class Varint {
- public:
+public:
   // Maximum lengths of varint encoding of uint32.
   static const int kMax32 = 5;
 
@@ -400,73 +375,92 @@ class Varint {
   // was found in the range, stores it in *OUTPUT and returns a pointer just
   // past the last byte of the varint32. Else returns NULL.  On success,
   // "result <= limit".
-  static const char* Parse32WithLimit(const char* ptr, const char* limit,
-                                      uint32* OUTPUT);
+  static const char *Parse32WithLimit(const char *ptr, const char *limit,
+                                      uint32 *OUTPUT);
 
   // REQUIRES   "ptr" points to a buffer of length sufficient to hold "v".
   // EFFECTS    Encodes "v" into "ptr" and returns a pointer to the
   //            byte just past the last encoded byte.
-  static char* Encode32(char* ptr, uint32 v);
+  static char *Encode32(char *ptr, uint32 v);
 
   // EFFECTS    Appends the varint representation of "value" to "*s".
-  static void Append32(string* s, uint32 value);
+  static void Append32(string *s, uint32 value);
 };
 
-inline const char* Varint::Parse32WithLimit(const char* p,
-                                            const char* l,
-                                            uint32* OUTPUT) {
-  const unsigned char* ptr = reinterpret_cast<const unsigned char*>(p);
-  const unsigned char* limit = reinterpret_cast<const unsigned char*>(l);
+inline const char *Varint::Parse32WithLimit(const char *p, const char *l,
+                                            uint32 *OUTPUT) {
+  const unsigned char *ptr = reinterpret_cast<const unsigned char *>(p);
+  const unsigned char *limit = reinterpret_cast<const unsigned char *>(l);
   uint32 b, result;
-  if (ptr >= limit) return NULL;
-  b = *(ptr++); result = b & 127;          if (b < 128) goto done;
-  if (ptr >= limit) return NULL;
-  b = *(ptr++); result |= (b & 127) <<  7; if (b < 128) goto done;
-  if (ptr >= limit) return NULL;
-  b = *(ptr++); result |= (b & 127) << 14; if (b < 128) goto done;
-  if (ptr >= limit) return NULL;
-  b = *(ptr++); result |= (b & 127) << 21; if (b < 128) goto done;
-  if (ptr >= limit) return NULL;
-  b = *(ptr++); result |= (b & 127) << 28; if (b < 16) goto done;
-  return NULL;       // Value is too long to be a varint32
- done:
+  if (ptr >= limit)
+    return NULL;
+  b = *(ptr++);
+  result = b & 127;
+  if (b < 128)
+    goto done;
+  if (ptr >= limit)
+    return NULL;
+  b = *(ptr++);
+  result |= (b & 127) << 7;
+  if (b < 128)
+    goto done;
+  if (ptr >= limit)
+    return NULL;
+  b = *(ptr++);
+  result |= (b & 127) << 14;
+  if (b < 128)
+    goto done;
+  if (ptr >= limit)
+    return NULL;
+  b = *(ptr++);
+  result |= (b & 127) << 21;
+  if (b < 128)
+    goto done;
+  if (ptr >= limit)
+    return NULL;
+  b = *(ptr++);
+  result |= (b & 127) << 28;
+  if (b < 16)
+    goto done;
+  return NULL; // Value is too long to be a varint32
+done:
   *OUTPUT = result;
-  return reinterpret_cast<const char*>(ptr);
+  return reinterpret_cast<const char *>(ptr);
 }
 
-inline char* Varint::Encode32(char* sptr, uint32 v) {
+inline char *Varint::Encode32(char *sptr, uint32 v) {
   // Operate on characters as unsigneds
-  unsigned char* ptr = reinterpret_cast<unsigned char*>(sptr);
+  unsigned char *ptr = reinterpret_cast<unsigned char *>(sptr);
   static const int B = 128;
-  if (v < (1<<7)) {
+  if (v < (1 << 7)) {
     *(ptr++) = v;
-  } else if (v < (1<<14)) {
+  } else if (v < (1 << 14)) {
     *(ptr++) = v | B;
-    *(ptr++) = v>>7;
-  } else if (v < (1<<21)) {
+    *(ptr++) = v >> 7;
+  } else if (v < (1 << 21)) {
     *(ptr++) = v | B;
-    *(ptr++) = (v>>7) | B;
-    *(ptr++) = v>>14;
-  } else if (v < (1<<28)) {
+    *(ptr++) = (v >> 7) | B;
+    *(ptr++) = v >> 14;
+  } else if (v < (1 << 28)) {
     *(ptr++) = v | B;
-    *(ptr++) = (v>>7) | B;
-    *(ptr++) = (v>>14) | B;
-    *(ptr++) = v>>21;
+    *(ptr++) = (v >> 7) | B;
+    *(ptr++) = (v >> 14) | B;
+    *(ptr++) = v >> 21;
   } else {
     *(ptr++) = v | B;
-    *(ptr++) = (v>>7) | B;
-    *(ptr++) = (v>>14) | B;
-    *(ptr++) = (v>>21) | B;
-    *(ptr++) = v>>28;
+    *(ptr++) = (v >> 7) | B;
+    *(ptr++) = (v >> 14) | B;
+    *(ptr++) = (v >> 21) | B;
+    *(ptr++) = v >> 28;
   }
-  return reinterpret_cast<char*>(ptr);
+  return reinterpret_cast<char *>(ptr);
 }
 
 // If you know the internal layout of the std::string in use, you can
 // replace this function with one that resizes the string without
 // filling the new space with zeros (if applicable) --
 // it will be non-portable but faster.
-inline void STLStringResizeUninitialized(string* s, size_t new_size) {
+inline void STLStringResizeUninitialized(string *s, size_t new_size) {
   s->resize(new_size);
 }
 
@@ -482,10 +476,10 @@ inline void STLStringResizeUninitialized(string* s, size_t new_size) {
 // (http://www.open-std.org/JTC1/SC22/WG21/docs/lwg-defects.html#530)
 // proposes this as the method. It will officially be part of the standard
 // for C++0x. This should already work on all current implementations.
-inline char* string_as_array(string* str) {
+inline char *string_as_array(string *str) {
   return str->empty() ? NULL : &*str->begin();
 }
 
-}  // namespace snappy
+} // namespace snappy
 
-#endif  // UTIL_SNAPPY_OPENSOURCE_SNAPPY_STUBS_INTERNAL_H_
+#endif // UTIL_SNAPPY_OPENSOURCE_SNAPPY_STUBS_INTERNAL_H_

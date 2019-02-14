@@ -7,15 +7,11 @@
 
 namespace nsx {
 
-DetectorFactory::DetectorFactory()
-{
-	registerCallback("flat", &FlatDetector::create);
-	registerCallback("cylindrical", &CylindricalDetector::create);
+DetectorFactory::DetectorFactory() {
+  registerCallback("flat", &FlatDetector::create);
+  registerCallback("cylindrical", &CylindricalDetector::create);
 }
 
-DetectorFactory::~DetectorFactory()
-{
-}
+DetectorFactory::~DetectorFactory() {}
 
 } // end namespace nsx
-

@@ -12,11 +12,10 @@
   about copyright and rights to use.
 **********************************************************************/
 
-
 #ifndef BLOSCLZ_H
 #define BLOSCLZ_H
 
-#if defined (__cplusplus)
+#if defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -35,8 +34,8 @@ extern "C" {
   The input buffer and the output buffer can not overlap.
 */
 
-int blosclz_compress(int opt_level, const void* input, int length,
-                     void* output, int maxout);
+int blosclz_compress(int opt_level, const void *input, int length, void *output,
+                     int maxout);
 
 /**
   Decompress a block of compressed data and returns the size of the
@@ -50,9 +49,9 @@ int blosclz_compress(int opt_level, const void* input, int length,
   more than what is specified in maxout.
  */
 
-int blosclz_decompress(const void* input, int length, void* output, int maxout);
+int blosclz_decompress(const void *input, int length, void *output, int maxout);
 
-#if defined (__cplusplus)
+#if defined(__cplusplus)
 }
 #endif
 

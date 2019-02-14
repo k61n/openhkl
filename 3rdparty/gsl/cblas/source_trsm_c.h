@@ -14,7 +14,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
  */
 
 {
@@ -25,7 +26,8 @@
   const int conj = (TransA == CblasConjTrans) ? -1 : 1;
   int side, uplo, trans;
 
-  CHECK_ARGS12(TRSM,Order,Side,Uplo,TransA,Diag,M,N,alpha,A,lda,B,ldb);
+  CHECK_ARGS12(TRSM, Order, Side, Uplo, TransA, Diag, M, N, alpha, A, lda, B,
+               ldb);
 
   {
     const BASE alpha_real = CONST_REAL0(alpha);
@@ -41,9 +43,9 @@
     } else {
       n1 = N;
       n2 = M;
-      side = (Side == CblasLeft) ? CblasRight : CblasLeft;        /* exchanged */
-      uplo = (Uplo == CblasUpper) ? CblasLower : CblasUpper;      /* exchanged */
-      trans = (TransA == CblasNoTrans) ? CblasNoTrans : CblasTrans;       /* same */
+      side = (Side == CblasLeft) ? CblasRight : CblasLeft;   /* exchanged */
+      uplo = (Uplo == CblasUpper) ? CblasLower : CblasUpper; /* exchanged */
+      trans = (TransA == CblasNoTrans) ? CblasNoTrans : CblasTrans; /* same */
     }
 
     if (side == CblasLeft && uplo == CblasUpper && trans == CblasNoTrans) {
@@ -55,8 +57,10 @@
           for (j = 0; j < n2; j++) {
             const BASE Bij_real = REAL(B, ldb * i + j);
             const BASE Bij_imag = IMAG(B, ldb * i + j);
-            REAL(B, ldb * i + j) = alpha_real * Bij_real - alpha_imag * Bij_imag;
-            IMAG(B, ldb * i + j) = alpha_real * Bij_imag + alpha_imag * Bij_real;
+            REAL(B, ldb * i + j) =
+                alpha_real * Bij_real - alpha_imag * Bij_imag;
+            IMAG(B, ldb * i + j) =
+                alpha_real * Bij_imag + alpha_imag * Bij_real;
           }
         }
       }
@@ -98,8 +102,10 @@
           for (j = 0; j < n2; j++) {
             const BASE Bij_real = REAL(B, ldb * i + j);
             const BASE Bij_imag = IMAG(B, ldb * i + j);
-            REAL(B, ldb * i + j) = alpha_real * Bij_real - alpha_imag * Bij_imag;
-            IMAG(B, ldb * i + j) = alpha_real * Bij_imag + alpha_imag * Bij_real;
+            REAL(B, ldb * i + j) =
+                alpha_real * Bij_real - alpha_imag * Bij_imag;
+            IMAG(B, ldb * i + j) =
+                alpha_real * Bij_imag + alpha_imag * Bij_real;
           }
         }
       }
@@ -133,7 +139,8 @@
         }
       }
 
-    } else if (side == CblasLeft && uplo == CblasLower && trans == CblasNoTrans) {
+    } else if (side == CblasLeft && uplo == CblasLower &&
+               trans == CblasNoTrans) {
 
       /* form  B := alpha * inv(TriL(A))*B */
 
@@ -142,8 +149,10 @@
           for (j = 0; j < n2; j++) {
             const BASE Bij_real = REAL(B, ldb * i + j);
             const BASE Bij_imag = IMAG(B, ldb * i + j);
-            REAL(B, ldb * i + j) = alpha_real * Bij_real - alpha_imag * Bij_imag;
-            IMAG(B, ldb * i + j) = alpha_real * Bij_imag + alpha_imag * Bij_real;
+            REAL(B, ldb * i + j) =
+                alpha_real * Bij_real - alpha_imag * Bij_imag;
+            IMAG(B, ldb * i + j) =
+                alpha_real * Bij_imag + alpha_imag * Bij_real;
           }
         }
       }
@@ -177,7 +186,6 @@
         }
       }
 
-
     } else if (side == CblasLeft && uplo == CblasLower && trans == CblasTrans) {
 
       /* form  B := alpha * TriL(A)' *B */
@@ -187,8 +195,10 @@
           for (j = 0; j < n2; j++) {
             const BASE Bij_real = REAL(B, ldb * i + j);
             const BASE Bij_imag = IMAG(B, ldb * i + j);
-            REAL(B, ldb * i + j) = alpha_real * Bij_real - alpha_imag * Bij_imag;
-            IMAG(B, ldb * i + j) = alpha_real * Bij_imag + alpha_imag * Bij_real;
+            REAL(B, ldb * i + j) =
+                alpha_real * Bij_real - alpha_imag * Bij_imag;
+            IMAG(B, ldb * i + j) =
+                alpha_real * Bij_imag + alpha_imag * Bij_real;
           }
         }
       }
@@ -221,7 +231,8 @@
         }
       }
 
-    } else if (side == CblasRight && uplo == CblasUpper && trans == CblasNoTrans) {
+    } else if (side == CblasRight && uplo == CblasUpper &&
+               trans == CblasNoTrans) {
 
       /* form  B := alpha * B * inv(TriU(A)) */
 
@@ -230,8 +241,10 @@
           for (j = 0; j < n2; j++) {
             const BASE Bij_real = REAL(B, ldb * i + j);
             const BASE Bij_imag = IMAG(B, ldb * i + j);
-            REAL(B, ldb * i + j) = alpha_real * Bij_real - alpha_imag * Bij_imag;
-            IMAG(B, ldb * i + j) = alpha_real * Bij_imag + alpha_imag * Bij_real;
+            REAL(B, ldb * i + j) =
+                alpha_real * Bij_real - alpha_imag * Bij_imag;
+            IMAG(B, ldb * i + j) =
+                alpha_real * Bij_imag + alpha_imag * Bij_real;
           }
         }
       }
@@ -263,7 +276,8 @@
         }
       }
 
-    } else if (side == CblasRight && uplo == CblasUpper && trans == CblasTrans) {
+    } else if (side == CblasRight && uplo == CblasUpper &&
+               trans == CblasTrans) {
 
       /* form  B := alpha * B * inv(TriU(A))' */
 
@@ -272,8 +286,10 @@
           for (j = 0; j < n2; j++) {
             const BASE Bij_real = REAL(B, ldb * i + j);
             const BASE Bij_imag = IMAG(B, ldb * i + j);
-            REAL(B, ldb * i + j) = alpha_real * Bij_real - alpha_imag * Bij_imag;
-            IMAG(B, ldb * i + j) = alpha_real * Bij_imag + alpha_imag * Bij_real;
+            REAL(B, ldb * i + j) =
+                alpha_real * Bij_real - alpha_imag * Bij_imag;
+            IMAG(B, ldb * i + j) =
+                alpha_real * Bij_imag + alpha_imag * Bij_real;
           }
         }
       }
@@ -306,8 +322,8 @@
         }
       }
 
-
-    } else if (side == CblasRight && uplo == CblasLower && trans == CblasNoTrans) {
+    } else if (side == CblasRight && uplo == CblasLower &&
+               trans == CblasNoTrans) {
 
       /* form  B := alpha * B * inv(TriL(A)) */
 
@@ -316,8 +332,10 @@
           for (j = 0; j < n2; j++) {
             const BASE Bij_real = REAL(B, ldb * i + j);
             const BASE Bij_imag = IMAG(B, ldb * i + j);
-            REAL(B, ldb * i + j) = alpha_real * Bij_real - alpha_imag * Bij_imag;
-            IMAG(B, ldb * i + j) = alpha_real * Bij_imag + alpha_imag * Bij_real;
+            REAL(B, ldb * i + j) =
+                alpha_real * Bij_real - alpha_imag * Bij_imag;
+            IMAG(B, ldb * i + j) =
+                alpha_real * Bij_imag + alpha_imag * Bij_real;
           }
         }
       }
@@ -350,18 +368,20 @@
         }
       }
 
-    } else if (side == CblasRight && uplo == CblasLower && trans == CblasTrans) {
+    } else if (side == CblasRight && uplo == CblasLower &&
+               trans == CblasTrans) {
 
       /* form  B := alpha * B * inv(TriL(A))' */
-
 
       if (!(alpha_real == 1.0 && alpha_imag == 0.0)) {
         for (i = 0; i < n1; i++) {
           for (j = 0; j < n2; j++) {
             const BASE Bij_real = REAL(B, ldb * i + j);
             const BASE Bij_imag = IMAG(B, ldb * i + j);
-            REAL(B, ldb * i + j) = alpha_real * Bij_real - alpha_imag * Bij_imag;
-            IMAG(B, ldb * i + j) = alpha_real * Bij_imag + alpha_imag * Bij_real;
+            REAL(B, ldb * i + j) =
+                alpha_real * Bij_real - alpha_imag * Bij_imag;
+            IMAG(B, ldb * i + j) =
+                alpha_real * Bij_imag + alpha_imag * Bij_real;
           }
         }
       }
@@ -393,7 +413,6 @@
           }
         }
       }
-
 
     } else {
       BLAS_ERROR("unrecognized operation");

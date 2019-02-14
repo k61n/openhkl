@@ -1,20 +1,21 @@
 /* blas/source_rotmg.h
- * 
+ *
  * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2007 Brian Gough
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
  */
 
 {
@@ -39,7 +40,7 @@
   }
 
   if (D2 * y == 0.0) {
-    P[0] = -2;                  /* case of H = I, page 315 */
+    P[0] = -2; /* case of H = I, page 315 */
     return;
   }
 
@@ -58,7 +59,7 @@
 
     u = 1 - h21 * h12;
 
-    if (u <= 0.0) {             /* the case u <= 0 is rejected */
+    if (u <= 0.0) { /* the case u <= 0 is rejected */
       P[0] = -1;
       P[1] = 0;
       P[2] = 0;

@@ -25,31 +25,27 @@
 
     You should have received a copy of the GNU Lesser General Public
     License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ USA
  *
  */
-
 
 #include "EllipseMask.h"
 
 namespace nsx {
 
-EllipseMask::EllipseMask(const AABB& aabb, bool two_dim): IMask(), _ellipsoid(), _2d(two_dim)
-{
-    auto center = aabb.center();
-    auto radii = 0.5 * (aabb.upper() - aabb.lower());
-    auto axes = Eigen::Matrix3d::Identity();
-    _ellipsoid = Ellipsoid(center, radii, axes);
+EllipseMask::EllipseMask(const AABB &aabb, bool two_dim)
+    : IMask(), _ellipsoid(), _2d(two_dim) {
+  auto center = aabb.center();
+  auto radii = 0.5 * (aabb.upper() - aabb.lower());
+  auto axes = Eigen::Matrix3d::Identity();
+  _ellipsoid = Ellipsoid(center, radii, axes);
 }
 
-bool EllipseMask::collide(const Ellipsoid& ellipsoid) const
-{
-    return _ellipsoid.collide(ellipsoid);
+bool EllipseMask::collide(const Ellipsoid &ellipsoid) const {
+  return _ellipsoid.collide(ellipsoid);
 }
 
-IMask* EllipseMask::clone() const
-{
-    return new EllipseMask(*this);
-}
+IMask *EllipseMask::clone() const { return new EllipseMask(*this); }
 
 } // end namespace nsx

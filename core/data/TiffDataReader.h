@@ -36,33 +36,31 @@
 namespace nsx {
 
 //! Read detector image from Tiff file
-class TiffDataReader: public IDataReader {
+class TiffDataReader : public IDataReader {
 
 public:
+  TiffDataReader() = delete;
 
-    TiffDataReader() = delete;
+  TiffDataReader(const TiffDataReader &other) = delete;
 
-    TiffDataReader(const TiffDataReader &other) = delete;
+  TiffDataReader(const std::string &filename, Diffractometer *diffractometer);
 
-    TiffDataReader(const std::string& filename, Diffractometer *diffractometer);
+  ~TiffDataReader() = default;
 
-    ~TiffDataReader() = default;
+  TiffDataReader &operator=(const TiffDataReader &other) = delete;
 
-    TiffDataReader& operator=(const TiffDataReader &other) = delete;
+  void open() final;
 
-    void open() final;
+  void close() final;
 
-    void close() final;
-
-    Eigen::MatrixXi data(std::size_t frame) final;
+  Eigen::MatrixXi data(std::size_t frame) final;
 
 private:
+  //! Type of encoding for each pixel.
+  uint16 _bits;
 
-    //! Type of encoding for each pixel.
-    uint16 _bits;
-
-    //! The handler to the TIFF file
-    TIFF* _file;
+  //! The handler to the TIFF file
+  TIFF *_file;
 };
 
 } // end namespace nsx

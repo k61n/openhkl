@@ -4,34 +4,31 @@
 #include "DetectorPropertyWidget.h"
 #include "FrameDetectorGlobalOffsets.h"
 
-DetectorItem::DetectorItem() : InspectableTreeItem()
-{
-    setText("Detector");
+DetectorItem::DetectorItem() : InspectableTreeItem() {
+  setText("Detector");
 
-    QIcon icon(":/resources/detectorIcon.png");
-    setIcon(icon);
+  QIcon icon(":/resources/detectorIcon.png");
+  setIcon(icon);
 
-    setEditable(false);
+  setEditable(false);
 
-    setDragEnabled(false);
-    setDropEnabled(false);
+  setDragEnabled(false);
+  setDropEnabled(false);
 
-    setSelectable(false);
+  setSelectable(false);
 
-    setCheckable(false);
+  setCheckable(false);
 }
 
-QWidget* DetectorItem::inspectItem()
-{
-    return new DetectorPropertyWidget(this);
+QWidget *DetectorItem::inspectItem() {
+  return new DetectorPropertyWidget(this);
 }
 
+void DetectorItem::openDetectorGlobalOffsetsFrame() {
+  FrameDetectorGlobalOffsets *frame =
+      FrameDetectorGlobalOffsets::create(experimentItem());
 
-void DetectorItem::openDetectorGlobalOffsetsFrame()
-{
-    FrameDetectorGlobalOffsets *frame = FrameDetectorGlobalOffsets::create(experimentItem());
+  frame->show();
 
-    frame->show();
-
-    frame->raise();
+  frame->raise();
 }

@@ -14,7 +14,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
  */
 
 {
@@ -24,10 +25,10 @@
 
   INDEX i, j;
 
-  CHECK_ARGS9(TRMV,order,Uplo,TransA,Diag,N,A,lda,X,incX);
+  CHECK_ARGS9(TRMV, order, Uplo, TransA, Diag, N, A, lda, X, incX);
 
-  if ((order == CblasRowMajor && Trans == CblasNoTrans && Uplo == CblasUpper)
-      || (order == CblasColMajor && Trans == CblasTrans && Uplo == CblasLower)) {
+  if ((order == CblasRowMajor && Trans == CblasNoTrans && Uplo == CblasUpper) ||
+      (order == CblasColMajor && Trans == CblasTrans && Uplo == CblasLower)) {
 
     /* form  x := A*x */
     INDEX ix = OFFSET(N, incX);
@@ -61,8 +62,10 @@
       }
       ix += incX;
     }
-  } else if ((order == CblasRowMajor && Trans == CblasNoTrans && Uplo == CblasLower)
-             || (order == CblasColMajor && Trans == CblasTrans && Uplo == CblasUpper)) {
+  } else if ((order == CblasRowMajor && Trans == CblasNoTrans &&
+              Uplo == CblasLower) ||
+             (order == CblasColMajor && Trans == CblasTrans &&
+              Uplo == CblasUpper)) {
 
     INDEX ix = OFFSET(N, incX) + (N - 1) * incX;
 
@@ -96,8 +99,10 @@
       }
       ix -= incX;
     }
-  } else if ((order == CblasRowMajor && Trans == CblasTrans && Uplo == CblasUpper)
-             || (order == CblasColMajor && Trans == CblasNoTrans && Uplo == CblasLower)) {
+  } else if ((order == CblasRowMajor && Trans == CblasTrans &&
+              Uplo == CblasUpper) ||
+             (order == CblasColMajor && Trans == CblasNoTrans &&
+              Uplo == CblasLower)) {
     /* form  x := A'*x */
 
     INDEX ix = OFFSET(N, incX) + (N - 1) * incX;
@@ -132,8 +137,10 @@
       ix -= incX;
     }
 
-  } else if ((order == CblasRowMajor && Trans == CblasTrans && Uplo == CblasLower)
-             || (order == CblasColMajor && Trans == CblasNoTrans && Uplo == CblasUpper)) {
+  } else if ((order == CblasRowMajor && Trans == CblasTrans &&
+              Uplo == CblasLower) ||
+             (order == CblasColMajor && Trans == CblasNoTrans &&
+              Uplo == CblasUpper)) {
     INDEX ix = OFFSET(N, incX);
     for (i = 0; i < N; i++) {
       BASE temp_r = 0.0;

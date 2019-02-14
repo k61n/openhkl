@@ -7,11 +7,8 @@
 #include <core/Sample.h>
 #include <core/Units.h>
 
-const double tolerance=1e-6;
+const double tolerance = 1e-6;
 
 NSX_INIT_TEST
 
-int main()
-{
-    return 0;
-}
+int main() { return 0; }

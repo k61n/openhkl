@@ -15,51 +15,49 @@ class FrameUserDefinedUnitCellIndexer;
 class ExperimentItem;
 class QAbstractButton;
 
-class FrameUserDefinedUnitCellIndexer : public NSXQFrame
-{
-    Q_OBJECT
+class FrameUserDefinedUnitCellIndexer : public NSXQFrame {
+  Q_OBJECT
 
 public:
+  static FrameUserDefinedUnitCellIndexer *
+  create(ExperimentItem *experiment_item, const nsx::PeakList &peaks);
 
-    static FrameUserDefinedUnitCellIndexer* create(ExperimentItem* experiment_item, const nsx::PeakList &peaks);
+  static FrameUserDefinedUnitCellIndexer *Instance();
 
-    static FrameUserDefinedUnitCellIndexer* Instance();
-
-    ~FrameUserDefinedUnitCellIndexer();
+  ~FrameUserDefinedUnitCellIndexer();
 
 private slots:
 
-    void slotActionClicked(QAbstractButton *button);
+  void slotActionClicked(QAbstractButton *button);
 
-    void slotTabEdited(int index);
+  void slotTabEdited(int index);
 
-    void slotTabRemoved(int index);
+  void slotTabRemoved(int index);
 
-    void slotSelectSolution(int);
-
-private:
-
-    explicit FrameUserDefinedUnitCellIndexer(ExperimentItem *experiment_item, const nsx::PeakList &peaks);
-
-    void accept();
-
-    void buildUnitCellsTable();
-
-    void index();
-
-    void resetPeaks();
+  void slotSelectSolution(int);
 
 private:
+  explicit FrameUserDefinedUnitCellIndexer(ExperimentItem *experiment_item,
+                                           const nsx::PeakList &peaks);
 
-    static FrameUserDefinedUnitCellIndexer *_instance;
+  void accept();
 
-    Ui::FrameUserDefinedUnitCellIndexer *_ui;
+  void buildUnitCellsTable();
 
-    ExperimentItem *_experiment_item;
+  void index();
 
-    std::vector<std::pair<nsx::sptrPeak3D,nsx::sptrUnitCell>> _defaults;
+  void resetPeaks();
 
-    nsx::UserDefinedUnitCellIndexer _indexer;
+private:
+  static FrameUserDefinedUnitCellIndexer *_instance;
 
-    std::vector<std::pair<nsx::sptrUnitCell,double>> _solutions;
+  Ui::FrameUserDefinedUnitCellIndexer *_ui;
+
+  ExperimentItem *_experiment_item;
+
+  std::vector<std::pair<nsx::sptrPeak3D, nsx::sptrUnitCell>> _defaults;
+
+  nsx::UserDefinedUnitCellIndexer _indexer;
+
+  std::vector<std::pair<nsx::sptrUnitCell, double>> _solutions;
 };

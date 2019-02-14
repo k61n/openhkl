@@ -22,9 +22,7 @@ namespace internal {
 
     This implementation works on both scalars and packets.
 */
-template<typename T>
-T generic_fast_tanh_float(const T& a_x)
-{
+template <typename T> T generic_fast_tanh_float(const T &a_x) {
   // Clamp the inputs to the range [-9, 9] since anything outside
   // this range is +/-1.0f in single-precision.
   const T plus_9 = pset1<T>(9.f);
@@ -34,7 +32,7 @@ T generic_fast_tanh_float(const T& a_x)
   //      and tanh will return 1 or -1 instead of nan.
   //      This is supposed to be fixed in gcc6.3,
   //      see: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=72867
-  const T x = pmax(minus_9,pmin(plus_9,a_x));
+  const T x = pmax(minus_9, pmin(plus_9, a_x));
   // The monomial coefficients of the numerator polynomial (odd).
   const T alpha_1 = pset1<T>(4.89352455891786e-03f);
   const T alpha_3 = pset1<T>(6.37261928875436e-04f);

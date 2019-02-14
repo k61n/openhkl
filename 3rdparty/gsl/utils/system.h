@@ -30,9 +30,9 @@
 #include <unistd.h>
 #endif /* HAVE_UNISTD_H */
 
+#include <ctype.h>
 #include <stdio.h>
 #include <sys/types.h>
-#include <ctype.h>
 
 #if HAVE_LOCALE_H
 #include <locale.h>
@@ -42,13 +42,13 @@
 /* Don't use bcopy!  Use memmove if source and destination may overlap,
    memcpy otherwise.  */
 #if HAVE_STRING_H
-# if !STDC_HEADERS && HAVE_MEMORY_H
-#  include <memory.h>
-# endif
-# include <string.h>
+#if !STDC_HEADERS && HAVE_MEMORY_H
+#include <memory.h>
+#endif
+#include <string.h>
 #else
-# include <strings.h>
-char *memchr ();
+#include <strings.h>
+char *memchr();
 #endif
 
 #ifdef STDC_HEADERS
@@ -56,11 +56,11 @@ char *memchr ();
 #include <stdlib.h>
 #undef getopt
 #else
-extern char *getenv ();
+extern char *getenv();
 #endif
 
 #ifndef HAVE_STRERROR
-extern char *strerror ();
+extern char *strerror();
 #endif
 
 #include <errno.h>
@@ -93,10 +93,10 @@ extern int errno;
 #include <pwd.h>
 #endif
 /* Some systems don't declare this function in pwd.h. */
-struct passwd *getpwnam ();
+struct passwd *getpwnam();
 
 /* Our library routines not included in any system library.  */
-extern void *xmalloc (), *xrealloc ();
-extern char *xstrdup ();
+extern void *xmalloc(), *xrealloc();
+extern char *xstrdup();
 
 #endif /* TEXINFO_SYSTEM_H */

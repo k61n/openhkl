@@ -14,13 +14,14 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
  */
 
 {
   INDEX i, j;
 
-  CHECK_ARGS10(SD_GER,order,M,N,alpha,X,incX,Y,incY,A,lda);
+  CHECK_ARGS10(SD_GER, order, M, N, alpha, X, incX, Y, incY, A, lda);
 
   if (order == CblasRowMajor) {
     INDEX ix = OFFSET(M, incX);

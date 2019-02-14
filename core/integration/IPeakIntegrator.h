@@ -24,7 +24,8 @@
 
     You should have received a copy of the GNU Lesser General Public
     License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ USA
  *
  */
 
@@ -50,36 +51,39 @@ class DataSet;
 //! \brief This is a helper class to handle per-frame integration of a peak.
 class IPeakIntegrator {
 public:
-    //! Default constructor
-    IPeakIntegrator();
-    //! Destructor
-    virtual ~IPeakIntegrator();
-    //! Compute the integrated intensity of the peak given the integration region.
-    virtual bool compute(sptrPeak3D peak, const IntegrationRegion& region) = 0;
-    //! Integrate all peaks in the list which are contained in the specified data set.
-    /** \param peak_end Peak boundary (in sigma)
-     *  \param bkg_begin Background beginning (in sigma)
-     *  \param bkg_end Background end (in sigma)
-     */
-    void integrate(PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end);
-    //! Return the mean background.
-    Intensity meanBackground() const;
-    //! Return the integrated intensity.
-    Intensity integratedIntensity() const;
-    //! Return the peak rocking curve.
-    const std::vector<Intensity>& rockingCurve() const;
-    //! Set the progress handler.
-    void setHandler(sptrProgressHandler handler);
+  //! Default constructor
+  IPeakIntegrator();
+  //! Destructor
+  virtual ~IPeakIntegrator();
+  //! Compute the integrated intensity of the peak given the integration region.
+  virtual bool compute(sptrPeak3D peak, const IntegrationRegion &region) = 0;
+  //! Integrate all peaks in the list which are contained in the specified data
+  //! set.
+  /** \param peak_end Peak boundary (in sigma)
+   *  \param bkg_begin Background beginning (in sigma)
+   *  \param bkg_end Background end (in sigma)
+   */
+  void integrate(PeakList peaks, sptrDataSet data, double peak_end,
+                 double bkg_begin, double bkg_end);
+  //! Return the mean background.
+  Intensity meanBackground() const;
+  //! Return the integrated intensity.
+  Intensity integratedIntensity() const;
+  //! Return the peak rocking curve.
+  const std::vector<Intensity> &rockingCurve() const;
+  //! Set the progress handler.
+  void setHandler(sptrProgressHandler handler);
 
 protected:
-    //! Mean local background of peak. The uncertainty is the uncertainty of the _estimate_ of the background.
-    Intensity _meanBackground;
-    //! Net integrated intensity, after background correction.
-    Intensity _integratedIntensity;
-    //! The rocking curve of the peak.
-    std::vector<Intensity> _rockingCurve;
-    //! Optional pointer to progress handler.
-    sptrProgressHandler _handler;
+  //! Mean local background of peak. The uncertainty is the uncertainty of the
+  //! _estimate_ of the background.
+  Intensity _meanBackground;
+  //! Net integrated intensity, after background correction.
+  Intensity _integratedIntensity;
+  //! The rocking curve of the peak.
+  std::vector<Intensity> _rockingCurve;
+  //! Optional pointer to progress handler.
+  sptrProgressHandler _handler;
 };
 
 } // end namespace nsx

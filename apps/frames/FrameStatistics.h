@@ -18,57 +18,55 @@ class QAbstractButton;
 class QTableView;
 class QWidget;
 
-class FrameStatistics : public NSXQFrame
-{
-    Q_OBJECT
+class FrameStatistics : public NSXQFrame {
+  Q_OBJECT
 
 public:
+  static FrameStatistics *create(const nsx::PeakList &peaks,
+                                 const nsx::SpaceGroup &space_group);
 
-    static FrameStatistics* create(const nsx::PeakList& peaks, const nsx::SpaceGroup& space_group);
+  static FrameStatistics *Instance();
 
-    static FrameStatistics* Instance();
-
-    ~FrameStatistics();
+  ~FrameStatistics();
 
 private slots:
 
-    void update();
+  void update();
 
-    void saveStatistics();
+  void saveStatistics();
 
-    void saveMergedPeaks();
+  void saveMergedPeaks();
 
-    void saveUnmergedPeaks();
+  void saveUnmergedPeaks();
 
-    void slotActionClicked(QAbstractButton *button);
-
-private:
-
-    explicit FrameStatistics(const nsx::PeakList& peaks, const nsx::SpaceGroup& space_group);
-
-    void plotStatistics(int column);
-
-    void saveToFullProf(QTableView* table);
-
-    void saveToShelX(QTableView* table);
-
-    void updateMergedPeaksTab();
-
-    void updateUnmergedPeaksTab();
-
-    void updateStatisticsTab();
+  void slotActionClicked(QAbstractButton *button);
 
 private:
+  explicit FrameStatistics(const nsx::PeakList &peaks,
+                           const nsx::SpaceGroup &space_group);
 
-    static FrameStatistics *_instance;
+  void plotStatistics(int column);
 
-    Ui::FrameStatistics *_ui;
+  void saveToFullProf(QTableView *table);
 
-    ExperimentItem *_experiment_item;
+  void saveToShelX(QTableView *table);
 
-    nsx::PeakList _peaks;
+  void updateMergedPeaksTab();
 
-    nsx::SpaceGroup _space_group;
+  void updateUnmergedPeaksTab();
 
-    nsx::MergedData _merged_data;
+  void updateStatisticsTab();
+
+private:
+  static FrameStatistics *_instance;
+
+  Ui::FrameStatistics *_ui;
+
+  ExperimentItem *_experiment_item;
+
+  nsx::PeakList _peaks;
+
+  nsx::SpaceGroup _space_group;
+
+  nsx::MergedData _merged_data;
 };

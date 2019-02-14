@@ -24,7 +24,8 @@
 
     You should have received a copy of the GNU Lesser General Public
     License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ USA
  *
  */
 
@@ -32,51 +33,40 @@
 
 namespace nsx {
 
-MergedData::MergedData(const SpaceGroup& grp, bool friedel): _group(grp), _friedel(friedel), _peaks()
-{
+MergedData::MergedData(const SpaceGroup &grp, bool friedel)
+    : _group(grp), _friedel(friedel), _peaks() {}
+
+bool MergedData::addPeak(const sptrPeak3D &peak) {
+  MergedPeak new_peak(_group, _friedel);
+  new_peak.addPeak(peak);
+  auto it = _peaks.find(new_peak);
+
+  if (it != _peaks.end()) {
+    MergedPeak merged(*it);
+    merged.addPeak(peak);
+    _peaks.erase(it);
+    _peaks.emplace(std::move(merged));
+    return false;
+  }
+  _peaks.emplace(std::move(new_peak));
+  return true;
 }
 
-bool MergedData::addPeak(const sptrPeak3D& peak)
-{
-    MergedPeak new_peak(_group, _friedel);
-    new_peak.addPeak(peak);
-    auto it = _peaks.find(new_peak);
+const MergedPeakSet &MergedData::peaks() const { return _peaks; }
 
-    if ( it != _peaks.end() ) {
-        MergedPeak merged(*it);
-        merged.addPeak(peak);
-        _peaks.erase(it);
-        _peaks.emplace(std::move(merged));
-        return false;
-    }
-    _peaks.emplace(std::move(new_peak));
-    return true;
+size_t MergedData::totalSize() const {
+  size_t total = 0;
+
+  for (const auto &peak : _peaks) {
+    total += peak.redundancy();
+  }
+  return total;
 }
 
-const MergedPeakSet& MergedData::peaks() const
-{
-    return _peaks;
+double MergedData::redundancy() const {
+  return double(totalSize()) / double(_peaks.size());
 }
 
-
-size_t MergedData::totalSize() const
-{
-    size_t total = 0;
-
-    for (const auto& peak: _peaks) {
-        total += peak.redundancy();
-    }
-    return total;
-}
-
-double MergedData::redundancy() const
-{
-    return double(totalSize()) / double(_peaks.size());
-}
-
-void MergedData::clear()
-{
-    _peaks.clear();
-}
+void MergedData::clear() { _peaks.clear(); }
 
 } // end namespace nsx

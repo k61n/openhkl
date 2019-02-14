@@ -17,11 +17,11 @@
 #include <core/MeanBackgroundIntegrator.h>
 #include <core/MetaData.h>
 #include <core/PeakFilter.h>
+#include <core/PixelSumIntegrator.h>
 #include <core/Profile1DIntegrator.h>
 #include <core/Profile3DIntegrator.h>
 #include <core/RawDataReader.h>
 #include <core/Sample.h>
-#include <core/PixelSumIntegrator.h>
 #include <core/UnitCell.h>
 
 #include "DataItem.h"
@@ -51,316 +51,324 @@
 #include "UnitCellItem.h"
 #include "UnitCellsItem.h"
 
-PeaksItem::PeaksItem(): InspectableTreeItem()
-{
-    setText("Peaks");
+PeaksItem::PeaksItem() : InspectableTreeItem() {
+  setText("Peaks");
 
-    QIcon icon(":/resources/peakListIcon.png");
-    setIcon(icon);
+  QIcon icon(":/resources/peakListIcon.png");
+  setIcon(icon);
 
-    setDragEnabled(false);
-    setDropEnabled(false);
+  setDragEnabled(false);
+  setDropEnabled(false);
 
-    setEditable(false);
+  setEditable(false);
 
-    setSelectable(false);
+  setSelectable(false);
 
-    setCheckable(false);
+  setCheckable(false);
 }
 
-QWidget* PeaksItem::inspectItem()
-{
-    return new PeaksPropertyWidget(this);
+QWidget *PeaksItem::inspectItem() { return new PeaksPropertyWidget(this); }
+
+void PeaksItem::removeUnitCell(nsx::sptrUnitCell unit_cell) {
+  auto all_peaks = allPeaks();
+
+  for (auto peak : all_peaks) {
+    if (peak->unitCell() != unit_cell) {
+      continue;
+    }
+    peak->setUnitCell(nullptr);
+  }
+
+  emit model()->signalUnitCellRemoved(unit_cell);
+  emit model()->itemChanged(this);
 }
 
-void PeaksItem::removeUnitCell(nsx::sptrUnitCell unit_cell)
-{
-    auto all_peaks = allPeaks();
+nsx::PeakList PeaksItem::selectedPeaks() {
+  nsx::PeakList peaks;
+  for (auto i = 0; i < rowCount(); ++i) {
+    auto &list = dynamic_cast<PeakListItem &>(*child(i));
 
-    for (auto peak : all_peaks) {
-        if (peak->unitCell() != unit_cell) {
-            continue;
-        }
-        peak->setUnitCell(nullptr);
+    if (list.checkState() != Qt::Checked) {
+      continue;
     }
 
-    emit model()->signalUnitCellRemoved(unit_cell);
-    emit model()->itemChanged(this);
+    for (auto &&peak : list.peaks()) {
+      peaks.push_back(peak);
+    }
+  }
+  return peaks;
 }
 
-nsx::PeakList PeaksItem::selectedPeaks()
-{
-    nsx::PeakList peaks;
-    for (auto i = 0; i < rowCount(); ++i) {
-        auto& list = dynamic_cast<PeakListItem&>(*child(i));
+void PeaksItem::normalizeToMonitor() {
+  bool ok;
+  double factor = QInputDialog::getDouble(nullptr, "Enter normalization factor",
+                                          "", 1.0e4, 1.0e-9, 1.0e9, 3, &ok);
 
-        if (list.checkState() != Qt::Checked) {
-            continue;
-        }
+  if (!ok) {
+    return;
+  }
 
-        for (auto&& peak: list.peaks()) {
-            peaks.push_back(peak);
-        }
+  auto selected_peaks = selectedPeaks();
+
+  for (auto peak : selected_peaks) {
+    auto data = peak->data();
+    if (!data) {
+      continue;
     }
-    return peaks;
+
+    double monitor = data->reader()->metadata().key<double>("monitor");
+
+    peak->setScale(factor / monitor);
+  }
+  emit model()->itemChanged(this);
 }
 
-void PeaksItem::normalizeToMonitor()
-{
-    bool ok;
-    double factor = QInputDialog::getDouble(nullptr,"Enter normalization factor","",1.0e4,1.0e-9,1.0e9,3,&ok);
+nsx::PeakList PeaksItem::allPeaks() {
+  nsx::PeakList peaks;
+  for (auto i = 0; i < rowCount(); ++i) {
+    auto &list = dynamic_cast<PeakListItem &>(*child(i));
 
-    if (!ok) {
-        return;
+    for (auto &&peak : list.peaks()) {
+      peaks.push_back(peak);
     }
-
-    auto selected_peaks = selectedPeaks();
-
-    for (auto peak : selected_peaks) {
-        auto data = peak->data();
-        if (!data) {
-            continue;
-        }
-
-        double monitor = data->reader()->metadata().key<double>("monitor");
-
-        peak->setScale(factor/monitor);
-    }
-    emit model()->itemChanged(this);
+  }
+  return peaks;
 }
 
-nsx::PeakList PeaksItem::allPeaks()
-{
-    nsx::PeakList peaks;
-    for (auto i = 0; i < rowCount(); ++i) {
-        auto& list = dynamic_cast<PeakListItem&>(*child(i));
+void PeaksItem::integratePeaks() {
+  ExperimentItem *exp_item = dynamic_cast<ExperimentItem *>(parent());
+  auto &&selected_peaks = selectedPeaks();
+  auto &library = exp_item->libraryItem()->library();
 
-        for (auto&& peak: list.peaks()) {
-            peaks.push_back(peak);
-        }
-    }
-    return peaks;
+  if (!library) {
+    throw std::runtime_error(
+        "Error: cannot integrate weak peaks without a shape library!");
+  }
+
+  nsx::info() << "Reintegrating peaks...";
+
+  auto dialog = new DialogIntegrate(selected_peaks);
+
+  std::map<std::string, std::function<nsx::IPeakIntegrator *()>> integrator_map;
+  std::vector<std::string> integrator_names;
+
+  integrator_map["Pixel sum integrator"] = [&]() {
+    return new nsx::PixelSumIntegrator(dialog->fitCenter(), dialog->fitCov());
+  };
+  integrator_map["3d profile integrator"] = [&]() {
+    return new nsx::Profile3DIntegrator(library, dialog->radius(),
+                                        dialog->nframes(), false);
+  };
+  integrator_map["I/Sigma integrator"] = [&]() {
+    return new nsx::ISigmaIntegrator(library, dialog->radius(),
+                                     dialog->nframes());
+  };
+  integrator_map["1d Profile integrator"] = [&]() {
+    return new nsx::Profile1DIntegrator(library, dialog->radius(),
+                                        dialog->nframes());
+  };
+  integrator_map["Gaussian integrator"] = [&]() {
+    return new nsx::GaussianIntegrator(dialog->fitCenter(), dialog->fitCov());
+  };
+
+  for (const auto &pair : integrator_map) {
+    integrator_names.push_back(pair.first);
+  }
+
+  dialog->setIntegrators(integrator_names);
+
+  if (!dialog->exec()) {
+    nsx::info() << "Peak integration canceled.";
+    return;
+  }
+
+  const double dmin = dialog->dMin();
+  const double dmax = dialog->dMax();
+
+  // nsx::DataList numors = _session->getSelectedNumors();
+  auto &&numors = exp_item->dataItem()->selectedData();
+
+  nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
+  ProgressView view(nullptr);
+  view.watch(handler);
+
+  nsx::PeakFilter peak_filter;
+  // todo: bkg_begin and bkg_end
+  auto peaks = peak_filter.dRange(selected_peaks, dmin, dmax);
+
+  for (auto &&numor : numors) {
+    nsx::info() << "Integrating " << peaks.size() << " peaks";
+    std::unique_ptr<nsx::IPeakIntegrator> integrator(
+        integrator_map[dialog->integrator()]());
+    integrator->setHandler(handler);
+    integrator->integrate(peaks, numor, library->peakScale(),
+                          library->bkgBegin(), library->bkgEnd());
+  }
+
+  nsx::info() << "Done reintegrating peaks";
+
+  emit model()->itemChanged(this);
 }
 
-void PeaksItem::integratePeaks()
-{
-    ExperimentItem* exp_item = dynamic_cast<ExperimentItem*>(parent());
-    auto&& selected_peaks = selectedPeaks();
-    auto& library = exp_item->libraryItem()->library();
-
-    if (!library) {
-        throw std::runtime_error("Error: cannot integrate weak peaks without a shape library!");
-    }
-
-    nsx::info() << "Reintegrating peaks...";
-
-    auto dialog = new DialogIntegrate(selected_peaks);
-
-    std::map<std::string, std::function<nsx::IPeakIntegrator*()>> integrator_map;
-    std::vector<std::string> integrator_names;
-    
-    integrator_map["Pixel sum integrator"] = [&]() {return new nsx::PixelSumIntegrator(dialog->fitCenter(), dialog->fitCov());};
-    integrator_map["3d profile integrator"] = [&]() {return new nsx::Profile3DIntegrator(library, dialog->radius(), dialog->nframes(), false);};
-    integrator_map["I/Sigma integrator"] = [&]() {return new nsx::ISigmaIntegrator(library, dialog->radius(), dialog->nframes());};
-    integrator_map["1d Profile integrator"] = [&]() {return new nsx::Profile1DIntegrator(library, dialog->radius(), dialog->nframes());};
-    integrator_map["Gaussian integrator"] = [&]() {return new nsx::GaussianIntegrator(dialog->fitCenter(), dialog->fitCov());};
-
-    for (const auto& pair: integrator_map) {
-        integrator_names.push_back(pair.first);
-    }
-
-    dialog->setIntegrators(integrator_names);
-
-    if (!dialog->exec()) {
-        nsx::info() << "Peak integration canceled.";
-        return;
-    }
-
-    const double dmin = dialog->dMin();
-    const double dmax = dialog->dMax();
-
-    //nsx::DataList numors = _session->getSelectedNumors();
-    auto&& numors = exp_item->dataItem()->selectedData();
-
-    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
-    ProgressView view(nullptr);
-    view.watch(handler);
-
-    nsx::PeakFilter peak_filter;
-    // todo: bkg_begin and bkg_end
-    auto peaks = peak_filter.dRange(selected_peaks, dmin, dmax);
-
-    for (auto&& numor: numors) {
-        nsx::info() << "Integrating " << peaks.size() << " peaks";
-        std::unique_ptr<nsx::IPeakIntegrator> integrator(integrator_map[dialog->integrator()]());
-        integrator->setHandler(handler);
-        integrator->integrate(peaks, numor, library->peakScale(), library->bkgBegin(), library->bkgEnd());
-    }
-
-    nsx::info() << "Done reintegrating peaks";
-
-    emit model()->itemChanged(this);
-
+void PeaksItem::findSpaceGroup() {
+  std::unique_ptr<DialogSpaceGroup> dialog(
+      new DialogSpaceGroup(selectedPeaks()));
+  if (!dialog->exec()) {
+    return;
+  }
+  emit model()->itemChanged(this);
 }
 
-void PeaksItem::findSpaceGroup()
-{
-    std::unique_ptr<DialogSpaceGroup> dialog(new DialogSpaceGroup(selectedPeaks()));
-    if (!dialog->exec()) {
-        return;
-    }
-    emit model()->itemChanged(this);
+void PeaksItem::showPeaksOpenGL() {
+  GLWidget *glw = new GLWidget();
+  auto &scene = glw->getScene();
+  auto peaks = selectedPeaks();
+
+  for (auto peak : peaks) {
+    GLSphere *sphere = new GLSphere("");
+    Eigen::RowVector3d pos = peak->q().rowVector();
+    sphere->setPos(pos[0] * 100, pos[1] * 100, pos[2] * 100);
+    sphere->setColor(0, 1, 0);
+    scene.addActor(sphere);
+  }
+
+  glw->show();
 }
 
-void PeaksItem::showPeaksOpenGL()
-{
-    GLWidget* glw = new GLWidget();
-    auto& scene = glw->getScene();
-    auto peaks = selectedPeaks();
-
-    for (auto peak: peaks) {
-        GLSphere* sphere=new GLSphere("");
-        Eigen::RowVector3d pos = peak->q().rowVector();
-        sphere->setPos(pos[0]*100,pos[1]*100,pos[2]*100);
-        sphere->setColor(0,1,0);
-        scene.addActor(sphere);
-    }
-
-    glw->show();
+void PeaksItem::absorptionCorrection() {
+  // todo: check that this is correct!
+  std::unique_ptr<DialogMCAbsorption> dialog(
+      new DialogMCAbsorption(experimentItem()));
+  if (!dialog->exec()) {
+    return;
+  }
 }
 
-void PeaksItem::absorptionCorrection()
-{
-    // todo: check that this is correct!
-    std::unique_ptr<DialogMCAbsorption> dialog(new DialogMCAbsorption(experimentItem()));
-    if (!dialog->exec()) {
-        return;
+void PeaksItem::buildShapeLibrary() {
+  nsx::PeakList peaks = selectedPeaks();
+  ExperimentItem *exp_item = dynamic_cast<ExperimentItem *>(parent());
+
+  // Check that a minimum number of peaks have been selected for indexing
+  if (peaks.size() == 0) {
+    QMessageBox::warning(nullptr, "NSXTool",
+                         "Need to selected peaks to fit profile!");
+    return;
+  }
+
+  nsx::sptrUnitCell unit_cell(peaks[0]->unitCell());
+  for (auto &&peak : peaks) {
+    if (peak->unitCell() != unit_cell) {
+      unit_cell = nullptr;
+      break;
     }
+  }
+
+  if (unit_cell == nullptr) {
+    QMessageBox::warning(nullptr, "NSXTool",
+                         "The selected peaks must have the same active unit "
+                         "cell for profile fitting");
+    return;
+  }
+
+  std::unique_ptr<DialogShapeLibrary> dialog(
+      new DialogShapeLibrary(experimentItem(), unit_cell, peaks));
+
+  // rejected
+  if (!dialog->exec()) {
+    return;
+  }
+
+  auto new_library = dialog->library();
+
+  if (!new_library) {
+    return;
+  }
+
+  exp_item->libraryItem()->library() = new_library;
+  nsx::info() << "Update profiles of " << peaks.size() << " peaks";
+
+  emit model()->itemChanged(this);
 }
 
-void PeaksItem::buildShapeLibrary()
-{
-    nsx::PeakList peaks = selectedPeaks();
-    ExperimentItem* exp_item = dynamic_cast<ExperimentItem*>(parent());
+void PeaksItem::openPeakFilterDialog() {
+  auto &&selected_peaks = selectedPeaks();
 
-    // Check that a minimum number of peaks have been selected for indexing
-    if (peaks.size() == 0) {
-        QMessageBox::warning(nullptr, "NSXTool","Need to selected peaks to fit profile!");
-        return;
-    }
+  DialogPeakFilter *dialog =
+      DialogPeakFilter::create(experimentItem(), selected_peaks);
 
-    nsx::sptrUnitCell unit_cell(peaks[0]->unitCell());
-    for (auto&& peak : peaks) {
-        if (peak->unitCell() != unit_cell) {
-            unit_cell = nullptr;
-            break;
-        }
-    }
+  dialog->show();
 
-    if (unit_cell == nullptr) {
-        QMessageBox::warning(nullptr, "NSXTool", "The selected peaks must have the same active unit cell for profile fitting");
-        return;
-    }
-
-    std::unique_ptr<DialogShapeLibrary> dialog(new DialogShapeLibrary(experimentItem(), unit_cell, peaks));
-
-    // rejected
-    if (!dialog->exec()) {
-        return;
-    }
-
-    auto new_library = dialog->library();
-
-    if (!new_library) {
-        return;
-    }
-
-    exp_item->libraryItem()->library() = new_library;
-    nsx::info() << "Update profiles of " << peaks.size() << " peaks";
-
-    emit model()->itemChanged(this);
+  dialog->raise();
 }
 
-void PeaksItem::openPeakFilterDialog()
-{
-    auto&& selected_peaks = selectedPeaks();
+void PeaksItem::openAutoIndexingFrame() {
+  auto &&selected_peaks = selectedPeaks();
 
-    DialogPeakFilter* dialog = DialogPeakFilter::create(experimentItem(), selected_peaks);
+  FrameAutoIndexer *frame_autoindexer =
+      FrameAutoIndexer::create(experimentItem(), selected_peaks);
 
-    dialog->show();
+  frame_autoindexer->show();
 
-    dialog->raise();
+  frame_autoindexer->raise();
 }
 
-void PeaksItem::openAutoIndexingFrame()
-{
-    auto&& selected_peaks = selectedPeaks();
+void PeaksItem::openUserDefinedUnitCellIndexerFrame() {
+  auto &&selected_peaks = selectedPeaks();
 
-    FrameAutoIndexer *frame_autoindexer = FrameAutoIndexer::create(experimentItem(), selected_peaks);
+  FrameUserDefinedUnitCellIndexer *frame =
+      FrameUserDefinedUnitCellIndexer::create(experimentItem(), selected_peaks);
 
-    frame_autoindexer->show();
+  frame->show();
 
-    frame_autoindexer->raise();
+  frame->raise();
 }
 
-void PeaksItem::openUserDefinedUnitCellIndexerFrame()
-{
-    auto&& selected_peaks = selectedPeaks();
+void PeaksItem::refine() {
+  nsx::PeakList selected_peaks = selectedPeaks();
 
-    FrameUserDefinedUnitCellIndexer *frame = FrameUserDefinedUnitCellIndexer::create(experimentItem(), selected_peaks);
+  FrameRefiner *frame_refiner =
+      FrameRefiner::create(experimentItem(), selected_peaks);
 
-    frame->show();
+  frame_refiner->show();
 
-    frame->raise();
+  frame_refiner->raise();
 }
 
-void PeaksItem::refine()
-{
-    nsx::PeakList selected_peaks = selectedPeaks();
+void PeaksItem::autoAssignUnitCell() {
+  auto &&peaks = selectedPeaks();
 
-    FrameRefiner* frame_refiner = FrameRefiner::create(experimentItem(), selected_peaks);
+  auto unit_cells_item = experimentItem()->unitCellsItem();
 
-    frame_refiner->show();
+  auto &&cells = unit_cells_item->unitCells();
 
-    frame_refiner->raise();
-}
+  if (cells.size() < 1) {
+    nsx::info() << "There are no unit cells to assign";
+    return;
+  }
 
-void PeaksItem::autoAssignUnitCell()
-{
-    auto&& peaks = selectedPeaks();
-
-    auto unit_cells_item = experimentItem()->unitCellsItem();
-
-    auto&& cells = unit_cells_item->unitCells();
-
-    if (cells.size() < 1) {
-        nsx::info() << "There are no unit cells to assign";
-        return;
+  for (auto peak : peaks) {
+    if (!peak->enabled()) {
+      continue;
     }
 
-    for (auto peak: peaks) {
-        if (!peak->enabled()) {
-            continue;
-        }
+    Eigen::RowVector3d hkl;
+    bool assigned = false;
 
-        Eigen::RowVector3d hkl;
-        bool assigned = false;
-
-        for (auto cell : cells) {
-            nsx::MillerIndex hkl(peak->q(), *cell);
-            if (hkl.indexed(cell->indexingTolerance())) {
-                peak->setUnitCell(cell);
-                assigned = true;
-                break;
-            }
-        }
-
-        // could not assign unit cell
-        if (assigned == false) {
-            peak->setSelected(false);
-        }
+    for (auto cell : cells) {
+      nsx::MillerIndex hkl(peak->q(), *cell);
+      if (hkl.indexed(cell->indexingTolerance())) {
+        peak->setUnitCell(cell);
+        assigned = true;
+        break;
+      }
     }
-    nsx::debug() << "Done auto assigning unit cells";
 
-    emit model()->itemChanged(this);
+    // could not assign unit cell
+    if (assigned == false) {
+      peak->setSelected(false);
+    }
+  }
+  nsx::debug() << "Done auto assigning unit cells";
+
+  emit model()->itemChanged(this);
 }

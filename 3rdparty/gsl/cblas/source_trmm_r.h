@@ -14,7 +14,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
  */
 
 {
@@ -24,7 +25,8 @@
   const int nonunit = (Diag == CblasNonUnit);
   int side, uplo, trans;
 
-  CHECK_ARGS12(TRMM,Order,Side,Uplo,TransA,Diag,M,N,alpha,A,lda,B,ldb);
+  CHECK_ARGS12(TRMM, Order, Side, Uplo, TransA, Diag, M, N, alpha, A, lda, B,
+               ldb);
 
   if (Order == CblasRowMajor) {
     n1 = M;
@@ -88,7 +90,6 @@
 
     /* form  B := alpha * TriL(A)*B */
 
-
     for (i = n1; i > 0 && i--;) {
       for (j = 0; j < n2; j++) {
         BASE temp = 0.0;
@@ -106,8 +107,6 @@
         B[ldb * i + j] = alpha * temp;
       }
     }
-
-
 
   } else if (side == CblasLeft && uplo == CblasLower && trans == CblasTrans) {
 
@@ -131,7 +130,8 @@
       }
     }
 
-  } else if (side == CblasRight && uplo == CblasUpper && trans == CblasNoTrans) {
+  } else if (side == CblasRight && uplo == CblasUpper &&
+             trans == CblasNoTrans) {
 
     /* form  B := alpha * B * TriU(A) */
 
@@ -175,7 +175,8 @@
       }
     }
 
-  } else if (side == CblasRight && uplo == CblasLower && trans == CblasNoTrans) {
+  } else if (side == CblasRight && uplo == CblasLower &&
+             trans == CblasNoTrans) {
 
     /* form  B := alpha *B * TriL(A) */
 
@@ -192,7 +193,6 @@
         for (k = j + 1; k < n2; k++) {
           temp += A[lda * k + j] * B[i * ldb + k];
         }
-
 
         B[ldb * i + j] = alpha * temp;
       }

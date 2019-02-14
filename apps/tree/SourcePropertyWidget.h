@@ -8,29 +8,25 @@ class SourcePropertyWidget;
 
 class SourceItem;
 
-class SourcePropertyWidget : public QWidget
-{
-    Q_OBJECT
+class SourcePropertyWidget : public QWidget {
+  Q_OBJECT
 
 public:
+  explicit SourcePropertyWidget(SourceItem *caller, QWidget *parent = 0);
 
-    explicit SourcePropertyWidget(SourceItem* caller,QWidget *parent = 0);
-
-    ~SourcePropertyWidget();
-
-private:
-
-    void onHeightChanged(double height);
-
-    void onSelectedMonochromatorChanged(int index);
-
-    void onWavelengthChanged(double wavelength);
-
-    void onWidthChanged(double width);
+  ~SourcePropertyWidget();
 
 private:
+  void onHeightChanged(double height);
 
-    Ui::SourcePropertyWidget *_ui;
+  void onSelectedMonochromatorChanged(int index);
 
-    SourceItem* _caller;
+  void onWavelengthChanged(double wavelength);
+
+  void onWidthChanged(double width);
+
+private:
+  Ui::SourcePropertyWidget *_ui;
+
+  SourceItem *_caller;
 };

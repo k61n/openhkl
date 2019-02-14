@@ -1,4 +1,5 @@
-// Convolver description: the kernel is non-zero in a circular and annular region, as follows
+// Convolver description: the kernel is non-zero in a circular and annular
+// region, as follows
 
 // [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 // [0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0]
@@ -28,9 +29,9 @@
 // The motivation is as follows: if a peak is contained inside region 1, then
 // the convolution with region 1 computes the average intensity of the peak,
 // and the convolution with region 2 computes (minus) the average background
-// The the total convolution computes the average intensity minus the average background.
-// This make the kernel effective for peak-finding in images which have a non-homogeneous
-// background.
+// The the total convolution computes the average intensity minus the average
+// background. This make the kernel effective for peak-finding in images which
+// have a non-homogeneous background.
 
 #pragma once
 
@@ -42,22 +43,22 @@ namespace nsx {
 class EnhancedAnnularConvolver : public Convolver {
 
 public:
+  EnhancedAnnularConvolver();
 
-    EnhancedAnnularConvolver();
+  EnhancedAnnularConvolver(const EnhancedAnnularConvolver &other) = default;
 
-    EnhancedAnnularConvolver(const EnhancedAnnularConvolver &other)=default;
+  EnhancedAnnularConvolver(const std::map<std::string, double> &parameters);
 
-    EnhancedAnnularConvolver(const std::map<std::string,double>& parameters);
+  ~EnhancedAnnularConvolver() = default;
 
-    ~EnhancedAnnularConvolver()=default;
+  EnhancedAnnularConvolver &
+  operator=(const EnhancedAnnularConvolver &other) = default;
 
-    EnhancedAnnularConvolver& operator=(const EnhancedAnnularConvolver &other)=default;
+  Convolver *clone() const override;
 
-    Convolver* clone() const override;
+  virtual std::pair<size_t, size_t> kernelSize() const override;
 
-    virtual std::pair<size_t,size_t> kernelSize() const override;
-
-    RealMatrix convolve(const RealMatrix& image) override;
+  RealMatrix convolve(const RealMatrix &image) override;
 };
 
 } // end namespace nsx

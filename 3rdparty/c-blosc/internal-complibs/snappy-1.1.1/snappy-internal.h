@@ -37,18 +37,18 @@ namespace snappy {
 namespace internal {
 
 class WorkingMemory {
- public:
-  WorkingMemory() : large_table_(NULL) { }
+public:
+  WorkingMemory() : large_table_(NULL) {}
   ~WorkingMemory() { delete[] large_table_; }
 
   // Allocates and clears a hash table using memory in "*this",
   // stores the number of buckets in "*table_size" and returns a pointer to
   // the base of the hash table.
-  uint16* GetHashTable(size_t input_size, int* table_size);
+  uint16 *GetHashTable(size_t input_size, int *table_size);
 
- private:
-  uint16 small_table_[1<<10];    // 2KB
-  uint16* large_table_;          // Allocated only when needed
+private:
+  uint16 small_table_[1 << 10]; // 2KB
+  uint16 *large_table_;         // Allocated only when needed
 
   DISALLOW_COPY_AND_ASSIGN(WorkingMemory);
 };
@@ -64,11 +64,8 @@ class WorkingMemory {
 //
 // Returns an "end" pointer into "op" buffer.
 // "end - op" is the compressed size of "input".
-char* CompressFragment(const char* input,
-                       size_t input_length,
-                       char* op,
-                       uint16* table,
-                       const int table_size);
+char *CompressFragment(const char *input, size_t input_length, char *op,
+                       uint16 *table, const int table_size);
 
 // Return the largest n such that
 //
@@ -82,9 +79,8 @@ char* CompressFragment(const char* input,
 // Separate implementation for x86_64, for speed.  Uses the fact that
 // x86_64 is little endian.
 #if defined(ARCH_K8)
-static inline int FindMatchLength(const char* s1,
-                                  const char* s2,
-                                  const char* s2_limit) {
+static inline int FindMatchLength(const char *s1, const char *s2,
+                                  const char *s2_limit) {
   assert(s2_limit >= s2);
   int matched = 0;
 
@@ -118,9 +114,8 @@ static inline int FindMatchLength(const char* s1,
   return matched;
 }
 #else
-static inline int FindMatchLength(const char* s1,
-                                  const char* s2,
-                                  const char* s2_limit) {
+static inline int FindMatchLength(const char *s1, const char *s2,
+                                  const char *s2_limit) {
   // Implementation based on the x86-64 version, above.
   assert(s2_limit >= s2);
   int matched = 0;
@@ -144,7 +139,7 @@ static inline int FindMatchLength(const char* s1,
 }
 #endif
 
-}  // end namespace internal
-}  // end namespace snappy
+} // end namespace internal
+} // end namespace snappy
 
-#endif  // UTIL_SNAPPY_SNAPPY_INTERNAL_H_
+#endif // UTIL_SNAPPY_SNAPPY_INTERNAL_H_

@@ -1,26 +1,22 @@
 #include "SampleShapeItem.h"
 #include "SampleShapePropertyWidget.h"
 
-SampleShapeItem::SampleShapeItem():
-    InspectableTreeItem()
-{
-    QIcon icon(":/resources/sampleIcon.png");
-    setIcon(icon);
+SampleShapeItem::SampleShapeItem() : InspectableTreeItem() {
+  QIcon icon(":/resources/sampleIcon.png");
+  setIcon(icon);
 
-    setText("Shape");
+  setText("Shape");
 
-    setEditable(false);
+  setEditable(false);
 
-    setDragEnabled(false);
-    setDropEnabled(false);
+  setDragEnabled(false);
+  setDropEnabled(false);
 
-    setSelectable(false);
+  setSelectable(false);
 
-    setCheckable(false);
+  setCheckable(false);
 }
 
-QWidget* SampleShapeItem::inspectItem()
-{
-    return new SampleShapePropertyWidget(this);
+QWidget *SampleShapeItem::inspectItem() {
+  return new SampleShapePropertyWidget(this);
 }
-

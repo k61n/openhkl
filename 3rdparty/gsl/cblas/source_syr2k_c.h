@@ -14,14 +14,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
  */
 
 {
   INDEX i, j, k;
   int uplo, trans;
 
-  CHECK_ARGS13(SYR2K,Order,Uplo,Trans,N,K,alpha,A,lda,B,ldb,beta,C,ldc);
+  CHECK_ARGS13(SYR2K, Order, Uplo, Trans, N, K, alpha, A, lda, B, ldb, beta, C,
+               ldc);
 
   {
     const BASE alpha_real = CONST_REAL0(alpha);
@@ -29,8 +31,8 @@
     const BASE beta_real = CONST_REAL0(beta);
     const BASE beta_imag = CONST_IMAG0(beta);
 
-    if ((alpha_real == 0.0 && alpha_imag == 0.0)
-        && (beta_real == 1.0 && beta_imag == 0.0))
+    if ((alpha_real == 0.0 && alpha_imag == 0.0) &&
+        (beta_real == 1.0 && beta_imag == 0.0))
       return;
 
     if (Order == CblasRowMajor) {
@@ -81,7 +83,6 @@
       }
     }
 
-
     if (alpha_real == 0.0 && alpha_imag == 0.0)
       return;
 
@@ -100,13 +101,15 @@
             const BASE Ajk_imag = CONST_IMAG(A, j * lda + k);
             const BASE Bjk_real = CONST_REAL(B, j * ldb + k);
             const BASE Bjk_imag = CONST_IMAG(B, j * ldb + k);
-            temp_real += ((Aik_real * Bjk_real - Aik_imag * Bjk_imag)
-                          + (Bik_real * Ajk_real - Bik_imag * Ajk_imag));
-            temp_imag += ((Aik_real * Bjk_imag + Aik_imag * Bjk_real)
-                          + (Bik_real * Ajk_imag + Bik_imag * Ajk_real));
+            temp_real += ((Aik_real * Bjk_real - Aik_imag * Bjk_imag) +
+                          (Bik_real * Ajk_real - Bik_imag * Ajk_imag));
+            temp_imag += ((Aik_real * Bjk_imag + Aik_imag * Bjk_real) +
+                          (Bik_real * Ajk_imag + Bik_imag * Ajk_real));
           }
-          REAL(C, i * ldc + j) += alpha_real * temp_real - alpha_imag * temp_imag;
-          IMAG(C, i * ldc + j) += alpha_real * temp_imag + alpha_imag * temp_real;
+          REAL(C, i * ldc + j) +=
+              alpha_real * temp_real - alpha_imag * temp_imag;
+          IMAG(C, i * ldc + j) +=
+              alpha_real * temp_imag + alpha_imag * temp_real;
         }
       }
 
@@ -127,16 +130,17 @@
             BASE Akj_imag = CONST_IMAG(A, k * lda + j);
             BASE Bkj_real = CONST_REAL(B, k * ldb + j);
             BASE Bkj_imag = CONST_IMAG(B, k * ldb + j);
-            REAL(C, i * lda + j) += (temp1_real * Bkj_real - temp1_imag * Bkj_imag)
-              + (temp2_real * Akj_real - temp2_imag * Akj_imag);
-            IMAG(C, i * lda + j) += (temp1_real * Bkj_imag + temp1_imag * Bkj_real)
-              + (temp2_real * Akj_imag + temp2_imag * Akj_real);
+            REAL(C, i * lda + j) +=
+                (temp1_real * Bkj_real - temp1_imag * Bkj_imag) +
+                (temp2_real * Akj_real - temp2_imag * Akj_imag);
+            IMAG(C, i * lda + j) +=
+                (temp1_real * Bkj_imag + temp1_imag * Bkj_real) +
+                (temp2_real * Akj_imag + temp2_imag * Akj_real);
           }
         }
       }
 
     } else if (uplo == CblasLower && trans == CblasNoTrans) {
-
 
       for (i = 0; i < N; i++) {
         for (j = 0; j <= i; j++) {
@@ -151,13 +155,15 @@
             const BASE Ajk_imag = CONST_IMAG(A, j * lda + k);
             const BASE Bjk_real = CONST_REAL(B, j * ldb + k);
             const BASE Bjk_imag = CONST_IMAG(B, j * ldb + k);
-            temp_real += ((Aik_real * Bjk_real - Aik_imag * Bjk_imag)
-                          + (Bik_real * Ajk_real - Bik_imag * Ajk_imag));
-            temp_imag += ((Aik_real * Bjk_imag + Aik_imag * Bjk_real)
-                          + (Bik_real * Ajk_imag + Bik_imag * Ajk_real));
+            temp_real += ((Aik_real * Bjk_real - Aik_imag * Bjk_imag) +
+                          (Bik_real * Ajk_real - Bik_imag * Ajk_imag));
+            temp_imag += ((Aik_real * Bjk_imag + Aik_imag * Bjk_real) +
+                          (Bik_real * Ajk_imag + Bik_imag * Ajk_real));
           }
-          REAL(C, i * ldc + j) += alpha_real * temp_real - alpha_imag * temp_imag;
-          IMAG(C, i * ldc + j) += alpha_real * temp_imag + alpha_imag * temp_real;
+          REAL(C, i * ldc + j) +=
+              alpha_real * temp_real - alpha_imag * temp_imag;
+          IMAG(C, i * ldc + j) +=
+              alpha_real * temp_imag + alpha_imag * temp_real;
         }
       }
 
@@ -178,14 +184,15 @@
             BASE Akj_imag = CONST_IMAG(A, k * lda + j);
             BASE Bkj_real = CONST_REAL(B, k * ldb + j);
             BASE Bkj_imag = CONST_IMAG(B, k * ldb + j);
-            REAL(C, i * lda + j) += (temp1_real * Bkj_real - temp1_imag * Bkj_imag)
-              + (temp2_real * Akj_real - temp2_imag * Akj_imag);
-            IMAG(C, i * lda + j) += (temp1_real * Bkj_imag + temp1_imag * Bkj_real)
-              + (temp2_real * Akj_imag + temp2_imag * Akj_real);
+            REAL(C, i * lda + j) +=
+                (temp1_real * Bkj_real - temp1_imag * Bkj_imag) +
+                (temp2_real * Akj_real - temp2_imag * Akj_imag);
+            IMAG(C, i * lda + j) +=
+                (temp1_real * Bkj_imag + temp1_imag * Bkj_real) +
+                (temp2_real * Akj_imag + temp2_imag * Akj_real);
           }
         }
       }
-
 
     } else {
       BLAS_ERROR("unrecognized operation");

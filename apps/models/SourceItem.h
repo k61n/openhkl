@@ -4,9 +4,8 @@
 
 #include "InspectableTreeItem.h"
 
-class SourceItem : public InspectableTreeItem
-{
+class SourceItem : public InspectableTreeItem {
 public:
-    explicit SourceItem(const char* name);
-    QWidget* inspectItem();
+  explicit SourceItem(const char *name);
+  QWidget *inspectItem();
 };

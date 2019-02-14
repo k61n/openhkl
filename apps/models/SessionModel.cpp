@@ -39,8 +39,8 @@
 #include <stdexcept>
 #include <vector>
 
-#include <hdf5.h>
 #include <H5Exception.h>
+#include <hdf5.h>
 
 #include <QAbstractItemView>
 #include <QDate>
@@ -71,12 +71,12 @@
 #include <core/Peak3D.h>
 #include <core/PeakFilter.h>
 #include <core/PeakFinder.h>
+#include <core/PixelSumIntegrator.h>
 #include <core/ProgressHandler.h>
 #include <core/ReciprocalVector.h>
 #include <core/Sample.h>
-#include <core/SpaceGroup.h>
-#include <core/PixelSumIntegrator.h>
 #include <core/Source.h>
+#include <core/SpaceGroup.h>
 #include <core/UnitCell.h>
 
 #include "DataItem.h"
@@ -91,9 +91,9 @@
 #include "NumorItem.h"
 #include "PeakListItem.h"
 #include "PeakTableView.h"
+#include "PeaksItem.h"
 #include "ProgressView.h"
 #include "QCustomPlot.h"
-#include "PeaksItem.h"
 #include "SampleItem.h"
 #include "SessionModel.h"
 #include "SourceItem.h"
@@ -102,106 +102,99 @@
 
 #include "ui_MainWindow.h"
 
-SessionModel::SessionModel()
-{
-    connect(this,SIGNAL(itemChanged(QStandardItem*)),this,SLOT(onItemChanged(QStandardItem*)));
+SessionModel::SessionModel() {
+  connect(this, SIGNAL(itemChanged(QStandardItem *)), this,
+          SLOT(onItemChanged(QStandardItem *)));
 }
 
-SessionModel::~SessionModel()
-{
+SessionModel::~SessionModel() {}
+
+ExperimentItem *SessionModel::selectExperiment(nsx::sptrDataSet data) {
+  ExperimentItem *experiment_item = nullptr;
+
+  for (auto i = 0; i < rowCount(); ++i) {
+    experiment_item = dynamic_cast<ExperimentItem *>(item(i));
+    if (!experiment_item) {
+      continue;
+    }
+
+    auto data_item = experiment_item->dataItem();
+    for (auto j = 0; j < data_item->rowCount(); ++j) {
+      auto numor_item = dynamic_cast<NumorItem *>(data_item->child(j));
+      if (!numor_item) {
+        continue;
+      }
+
+      if (numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>() == data) {
+        return experiment_item;
+      }
+    }
+  }
+
+  return experiment_item;
 }
 
-ExperimentItem* SessionModel::selectExperiment(nsx::sptrDataSet data)
-{
-    ExperimentItem *experiment_item=nullptr;
-
-    for (auto i = 0; i < rowCount(); ++i) {
-        experiment_item = dynamic_cast<ExperimentItem*>(item(i));
-        if (!experiment_item) {
-            continue;
-        }
-
-        auto data_item  = experiment_item->dataItem();
-        for (auto j = 0; j < data_item->rowCount(); ++j) {
-            auto numor_item = dynamic_cast<NumorItem*>(data_item->child(j));
-            if (!numor_item) {
-                continue;
-            }
-
-            if (numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>() == data) {
-                return experiment_item;
-            }
-        }
-    }
-
-    return experiment_item;
+void SessionModel::selectData(nsx::sptrDataSet data) {
+  emit signalSelectedDataChanged(data, 0);
 }
 
-void SessionModel::selectData(nsx::sptrDataSet data)
-{
-    emit signalSelectedDataChanged(data,0);
+void SessionModel::onItemChanged(QStandardItem *item) {
+  Q_UNUSED(item)
+
+  emit updatePeaks();
 }
 
-void SessionModel::onItemChanged(QStandardItem *item)
-{
-    Q_UNUSED(item)
+nsx::PeakList SessionModel::peaks(nsx::sptrDataSet data) const {
+  nsx::PeakList list;
 
-    emit updatePeaks();
+  for (auto i = 0; i < rowCount(); ++i) {
+    auto exp_item = dynamic_cast<ExperimentItem *>(item(i));
+    auto &&peaks = exp_item->peaksItem()->selectedPeaks();
+
+    for (auto peak : peaks) {
+      if (data == nullptr || peak->data() == data) {
+        list.push_back(peak);
+      }
+    }
+  }
+  return list;
 }
 
-nsx::PeakList SessionModel::peaks(nsx::sptrDataSet data) const
-{
-    nsx::PeakList list;
+void SessionModel::createNewExperiment() {
+  std::unique_ptr<DialogExperiment> dlg;
 
-    for (auto i = 0; i < rowCount(); ++i) {
-        auto exp_item = dynamic_cast<ExperimentItem*>(item(i));
-        auto&& peaks = exp_item->peaksItem()->selectedPeaks();
+  // DialogExperiment could throw an exception if it fails to read the resource
+  // files
+  try {
+    dlg = std::unique_ptr<DialogExperiment>(new DialogExperiment());
 
-        for (auto peak: peaks) {
-            if (data == nullptr || peak->data() == data) {
-                list.push_back(peak);
-            }
-        }
-    }
-    return list;
-}
-
-void SessionModel::createNewExperiment()
-{
-    std::unique_ptr<DialogExperiment> dlg;
-
-    // DialogExperiment could throw an exception if it fails to read the resource files
-    try {
-        dlg = std::unique_ptr<DialogExperiment>(new DialogExperiment());
-
-        // The user pressed cancel, return
-        if (!dlg->exec()) {
-            return;
-        }
-
-        // If no experiment name is provided, pop up a warning
-        if (dlg->getExperimentName().isEmpty()) {
-            throw std::runtime_error("Empty experiment name");
-        }
-    }
-    catch(std::exception& e) {
-        nsx::error() << e.what();
-        return;
+    // The user pressed cancel, return
+    if (!dlg->exec()) {
+      return;
     }
 
-    try {
-        auto experimentName = dlg->getExperimentName().toStdString();
-        auto instrumentName = dlg->getInstrumentName().toStdString();
-
-        // Create an experiment
-        nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName,instrumentName));
-
-        // Create an experiment item out of the experiment
-        ExperimentItem* expt = new ExperimentItem(expPtr);    
-        appendRow(expt);
+    // If no experiment name is provided, pop up a warning
+    if (dlg->getExperimentName().isEmpty()) {
+      throw std::runtime_error("Empty experiment name");
     }
-    catch(const std::runtime_error& e) {
-        nsx::error() << e.what();
-        return;
-    }
+  } catch (std::exception &e) {
+    nsx::error() << e.what();
+    return;
+  }
+
+  try {
+    auto experimentName = dlg->getExperimentName().toStdString();
+    auto instrumentName = dlg->getInstrumentName().toStdString();
+
+    // Create an experiment
+    nsx::sptrExperiment expPtr(
+        new nsx::Experiment(experimentName, instrumentName));
+
+    // Create an experiment item out of the experiment
+    ExperimentItem *expt = new ExperimentItem(expPtr);
+    appendRow(expt);
+  } catch (const std::runtime_error &e) {
+    nsx::error() << e.what();
+    return;
+  }
 }

@@ -3,46 +3,38 @@
 #include "ExperimentItem.h"
 #include "TreeItem.h"
 
-TreeItem::TreeItem(): QStandardItem()
-{
+TreeItem::TreeItem() : QStandardItem() {}
+
+TreeItem::~TreeItem() {}
+
+void TreeItem::setData(const QVariant &value, int role) {
+  QStandardItem::setData(value, role);
 }
 
-TreeItem::~TreeItem()
-{
+nsx::sptrExperiment TreeItem::experiment() {
+  return experimentItem()->experiment();
 }
 
-void TreeItem::setData(const QVariant &value, int role)
-{
-    QStandardItem::setData(value,role);
-}
+ExperimentItem *TreeItem::experimentItem() const {
 
-nsx::sptrExperiment TreeItem::experiment()
-{
-    return experimentItem()->experiment();
-}
+  ExperimentItem *exp_item = nullptr;
+  QStandardItem *p = parent();
 
-ExperimentItem* TreeItem::experimentItem() const
-{
-
-    ExperimentItem* exp_item = nullptr;
-    QStandardItem* p = parent();
-
-    while (p != nullptr) {
-        exp_item = dynamic_cast<ExperimentItem*>(p);
-        if (exp_item != nullptr) {
-            break;
-        }
-        p = p->parent();
+  while (p != nullptr) {
+    exp_item = dynamic_cast<ExperimentItem *>(p);
+    if (exp_item != nullptr) {
+      break;
     }
+    p = p->parent();
+  }
 
-    if (exp_item == nullptr) {
-        throw std::runtime_error("TreeItem: no experiment in tree!");
-    }
+  if (exp_item == nullptr) {
+    throw std::runtime_error("TreeItem: no experiment in tree!");
+  }
 
-    return exp_item;
+  return exp_item;
 }
 
-SessionModel* TreeItem::model() const
-{
-    return dynamic_cast<SessionModel*>(QStandardItem::model());
+SessionModel *TreeItem::model() const {
+  return dynamic_cast<SessionModel *>(QStandardItem::model());
 }

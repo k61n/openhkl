@@ -14,14 +14,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
  */
 
 {
   INDEX i, j, k;
   int uplo, trans;
 
-  CHECK_ARGS13(SYR2K,Order,Uplo,Trans,N,K,alpha,A,lda,B,ldb,beta,C,ldc);
+  CHECK_ARGS13(SYR2K, Order, Uplo, Trans, N, K, alpha, A, lda, B, ldb, beta, C,
+               ldc);
 
   if (alpha == 0.0 && beta == 1.0)
     return;
@@ -79,8 +81,8 @@
       for (j = i; j < N; j++) {
         BASE temp = 0.0;
         for (k = 0; k < K; k++) {
-          temp += (A[i * lda + k] * B[j * ldb + k]
-                   + B[i * ldb + k] * A[j * lda + k]);
+          temp += (A[i * lda + k] * B[j * ldb + k] +
+                   B[i * ldb + k] * A[j * lda + k]);
         }
         C[i * ldc + j] += alpha * temp;
       }
@@ -100,13 +102,12 @@
 
   } else if (uplo == CblasLower && trans == CblasNoTrans) {
 
-
     for (i = 0; i < N; i++) {
       for (j = 0; j <= i; j++) {
         BASE temp = 0.0;
         for (k = 0; k < K; k++) {
-          temp += (A[i * lda + k] * B[j * ldb + k]
-                   + B[i * ldb + k] * A[j * lda + k]);
+          temp += (A[i * lda + k] * B[j * ldb + k] +
+                   B[i * ldb + k] * A[j * lda + k]);
         }
         C[i * ldc + j] += alpha * temp;
       }
@@ -123,7 +124,6 @@
         }
       }
     }
-
 
   } else {
     BLAS_ERROR("unrecognized operation");

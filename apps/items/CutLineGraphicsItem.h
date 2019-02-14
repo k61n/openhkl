@@ -12,29 +12,26 @@ class QGraphicsSceneWheelEvent;
 class QWidget;
 class SXPlot;
 
-class CutLineGraphicsItem : public CutterGraphicsItem
-{
+class CutLineGraphicsItem : public CutterGraphicsItem {
 public:
+  explicit CutLineGraphicsItem(nsx::sptrDataSet data);
 
-    explicit CutLineGraphicsItem(nsx::sptrDataSet data);
+  ~CutLineGraphicsItem();
 
-    ~CutLineGraphicsItem();
+  void plot(SXPlot *plot);
 
-    void plot(SXPlot* plot);
+  void wheelEvent(QGraphicsSceneWheelEvent *event);
 
-    void wheelEvent(QGraphicsSceneWheelEvent* event);
+  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+             QWidget *widget);
 
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+  int getNPoints() const;
 
-    int getNPoints() const;
+  void setNPoints(int nPoints);
 
-    void setNPoints(int nPoints);
-
-    // Getters and setters
-    std::string getPlotType() const;
-
+  // Getters and setters
+  std::string getPlotType() const;
 
 private:
-    int _nPoints;
-
+  int _nPoints;
 };

@@ -1,20 +1,21 @@
 /* ode-initval/odeiv2.h
- * 
+ *
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Gerard Jungman
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
  */
 
 /* Author:  G. Jungman */
@@ -23,18 +24,18 @@
 #ifndef __GSL_ODEIV2_H__
 #define __GSL_ODEIV2_H__
 
+#include <gsl/gsl_types.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <gsl/gsl_types.h>
 
 #undef __BEGIN_DECLS
 #undef __END_DECLS
 #ifdef __cplusplus
-# define __BEGIN_DECLS extern "C" {
-# define __END_DECLS }
+#define __BEGIN_DECLS extern "C" {
+#define __END_DECLS }
 #else
-# define __BEGIN_DECLS          /* empty */
-# define __END_DECLS            /* empty */
+#define __BEGIN_DECLS /* empty */
+#define __END_DECLS   /* empty */
 #endif
 
 __BEGIN_DECLS
@@ -51,22 +52,21 @@ __BEGIN_DECLS
  * values, in row-order.
  *
  * As with GSL function objects, user-supplied parameter
- * data is also present. 
+ * data is also present.
  */
-  typedef struct
-{
-  int (*function) (double t, const double y[], double dydt[], void *params);
-  int (*jacobian) (double t, const double y[], double *dfdy, double dfdt[],
-                   void *params);
+typedef struct {
+  int (*function)(double t, const double y[], double dydt[], void *params);
+  int (*jacobian)(double t, const double y[], double *dfdy, double dfdt[],
+                  void *params);
   size_t dimension;
   void *params;
-}
-gsl_odeiv2_system;
+} gsl_odeiv2_system;
 
 /* Function evaluation macros */
 
-#define GSL_ODEIV_FN_EVAL(S,t,y,f)  (*((S)->function))(t,y,f,(S)->params)
-#define GSL_ODEIV_JA_EVAL(S,t,y,dfdy,dfdt)  (*((S)->jacobian))(t,y,dfdy,dfdt,(S)->params)
+#define GSL_ODEIV_FN_EVAL(S, t, y, f) (*((S)->function))(t, y, f, (S)->params)
+#define GSL_ODEIV_JA_EVAL(S, t, y, dfdy, dfdt)                                 \
+  (*((S)->jacobian))(t, y, dfdy, dfdt, (S)->params)
 
 /* Type definitions */
 
@@ -82,24 +82,21 @@ typedef struct gsl_odeiv2_driver_struct gsl_odeiv2_driver;
  * iterating the stepping operation.
  */
 
-typedef struct
-{
+typedef struct {
   const char *name;
   int can_use_dydt_in;
   int gives_exact_dydt_out;
-  void *(*alloc) (size_t dim);
-  int (*apply) (void *state, size_t dim, double t, double h, double y[],
-                double yerr[], const double dydt_in[], double dydt_out[],
-                const gsl_odeiv2_system * dydt);
-  int (*set_driver) (void *state, const gsl_odeiv2_driver * d);
-  int (*reset) (void *state, size_t dim);
-  unsigned int (*order) (void *state);
-  void (*free) (void *state);
-}
-gsl_odeiv2_step_type;
+  void *(*alloc)(size_t dim);
+  int (*apply)(void *state, size_t dim, double t, double h, double y[],
+               double yerr[], const double dydt_in[], double dydt_out[],
+               const gsl_odeiv2_system *dydt);
+  int (*set_driver)(void *state, const gsl_odeiv2_driver *d);
+  int (*reset)(void *state, size_t dim);
+  unsigned int (*order)(void *state);
+  void (*free)(void *state);
+} gsl_odeiv2_step_type;
 
-struct gsl_odeiv2_step_struct
-{
+struct gsl_odeiv2_step_struct {
   const gsl_odeiv2_step_type *type;
   size_t dimension;
   void *state;
@@ -121,45 +118,41 @@ GSL_VAR const gsl_odeiv2_step_type *gsl_odeiv2_step_msbdf;
 
 /* Stepper object methods */
 
-gsl_odeiv2_step *gsl_odeiv2_step_alloc (const gsl_odeiv2_step_type * T,
-                                        size_t dim);
-int gsl_odeiv2_step_reset (gsl_odeiv2_step * s);
-void gsl_odeiv2_step_free (gsl_odeiv2_step * s);
-const char *gsl_odeiv2_step_name (const gsl_odeiv2_step * s);
-unsigned int gsl_odeiv2_step_order (const gsl_odeiv2_step * s);
-int gsl_odeiv2_step_apply (gsl_odeiv2_step * s, double t, double h,
-                           double y[], double yerr[], const double dydt_in[],
-                           double dydt_out[], const gsl_odeiv2_system * dydt);
-int gsl_odeiv2_step_set_driver (gsl_odeiv2_step * s,
-                                const gsl_odeiv2_driver * d);
+gsl_odeiv2_step *gsl_odeiv2_step_alloc(const gsl_odeiv2_step_type *T,
+                                       size_t dim);
+int gsl_odeiv2_step_reset(gsl_odeiv2_step *s);
+void gsl_odeiv2_step_free(gsl_odeiv2_step *s);
+const char *gsl_odeiv2_step_name(const gsl_odeiv2_step *s);
+unsigned int gsl_odeiv2_step_order(const gsl_odeiv2_step *s);
+int gsl_odeiv2_step_apply(gsl_odeiv2_step *s, double t, double h, double y[],
+                          double yerr[], const double dydt_in[],
+                          double dydt_out[], const gsl_odeiv2_system *dydt);
+int gsl_odeiv2_step_set_driver(gsl_odeiv2_step *s, const gsl_odeiv2_driver *d);
 
 /* Step size control object. */
 
-typedef struct
-{
+typedef struct {
   const char *name;
-  void *(*alloc) (void);
-  int (*init) (void *state, double eps_abs, double eps_rel, double a_y,
-               double a_dydt);
-  int (*hadjust) (void *state, size_t dim, unsigned int ord, const double y[],
-                  const double yerr[], const double yp[], double *h);
-  int (*errlevel) (void *state, const double y, const double dydt,
-                   const double h, const size_t ind, double *errlev);
-  int (*set_driver) (void *state, const gsl_odeiv2_driver * d);
-  void (*free) (void *state);
-}
-gsl_odeiv2_control_type;
+  void *(*alloc)(void);
+  int (*init)(void *state, double eps_abs, double eps_rel, double a_y,
+              double a_dydt);
+  int (*hadjust)(void *state, size_t dim, unsigned int ord, const double y[],
+                 const double yerr[], const double yp[], double *h);
+  int (*errlevel)(void *state, const double y, const double dydt,
+                  const double h, const size_t ind, double *errlev);
+  int (*set_driver)(void *state, const gsl_odeiv2_driver *d);
+  void (*free)(void *state);
+} gsl_odeiv2_control_type;
 
-struct gsl_odeiv2_control_struct
-{
+struct gsl_odeiv2_control_struct {
   const gsl_odeiv2_control_type *type;
   void *state;
 };
 
 /* Possible return values for an hadjust() evolution method */
 
-#define GSL_ODEIV_HADJ_INC   1  /* step was increased */
-#define GSL_ODEIV_HADJ_NIL   0  /* step unchanged     */
+#define GSL_ODEIV_HADJ_INC 1    /* step was increased */
+#define GSL_ODEIV_HADJ_NIL 0    /* step unchanged     */
 #define GSL_ODEIV_HADJ_DEC (-1) /* step decreased     */
 
 /* General step size control methods.
@@ -173,20 +166,19 @@ struct gsl_odeiv2_control_struct
  * to store state and control their heuristics.
  */
 
-gsl_odeiv2_control *gsl_odeiv2_control_alloc (const gsl_odeiv2_control_type *
-                                              T);
-int gsl_odeiv2_control_init (gsl_odeiv2_control * c, double eps_abs,
-                             double eps_rel, double a_y, double a_dydt);
-void gsl_odeiv2_control_free (gsl_odeiv2_control * c);
-int gsl_odeiv2_control_hadjust (gsl_odeiv2_control * c, gsl_odeiv2_step * s,
-                                const double y[], const double yerr[],
-                                const double dydt[], double *h);
-const char *gsl_odeiv2_control_name (const gsl_odeiv2_control * c);
-int gsl_odeiv2_control_errlevel (gsl_odeiv2_control * c, const double y,
-                                 const double dydt, const double h,
-                                 const size_t ind, double *errlev);
-int gsl_odeiv2_control_set_driver (gsl_odeiv2_control * c,
-                                   const gsl_odeiv2_driver * d);
+gsl_odeiv2_control *gsl_odeiv2_control_alloc(const gsl_odeiv2_control_type *T);
+int gsl_odeiv2_control_init(gsl_odeiv2_control *c, double eps_abs,
+                            double eps_rel, double a_y, double a_dydt);
+void gsl_odeiv2_control_free(gsl_odeiv2_control *c);
+int gsl_odeiv2_control_hadjust(gsl_odeiv2_control *c, gsl_odeiv2_step *s,
+                               const double y[], const double yerr[],
+                               const double dydt[], double *h);
+const char *gsl_odeiv2_control_name(const gsl_odeiv2_control *c);
+int gsl_odeiv2_control_errlevel(gsl_odeiv2_control *c, const double y,
+                                const double dydt, const double h,
+                                const size_t ind, double *errlev);
+int gsl_odeiv2_control_set_driver(gsl_odeiv2_control *c,
+                                  const gsl_odeiv2_driver *d);
 
 /* Available control object constructors.
  *
@@ -207,13 +199,11 @@ int gsl_odeiv2_control_set_driver (gsl_odeiv2_control * c,
  * The yp method is the standard method with a_y=0, a_dydt=1.
  */
 
-gsl_odeiv2_control *gsl_odeiv2_control_standard_new (double eps_abs,
-                                                     double eps_rel,
-                                                     double a_y,
-                                                     double a_dydt);
-gsl_odeiv2_control *gsl_odeiv2_control_y_new (double eps_abs, double eps_rel);
-gsl_odeiv2_control *gsl_odeiv2_control_yp_new (double eps_abs,
-                                               double eps_rel);
+gsl_odeiv2_control *gsl_odeiv2_control_standard_new(double eps_abs,
+                                                    double eps_rel, double a_y,
+                                                    double a_dydt);
+gsl_odeiv2_control *gsl_odeiv2_control_y_new(double eps_abs, double eps_rel);
+gsl_odeiv2_control *gsl_odeiv2_control_yp_new(double eps_abs, double eps_rel);
 
 /* This controller computes errors using different absolute errors for
  * each component
@@ -221,16 +211,15 @@ gsl_odeiv2_control *gsl_odeiv2_control_yp_new (double eps_abs,
  *    D0 = eps_abs * scale_abs[i] + eps_rel * (a_y |y| + a_dydt h |y'|)
  */
 
-gsl_odeiv2_control *gsl_odeiv2_control_scaled_new (double eps_abs,
-                                                   double eps_rel, double a_y,
-                                                   double a_dydt,
-                                                   const double scale_abs[],
-                                                   size_t dim);
+gsl_odeiv2_control *gsl_odeiv2_control_scaled_new(double eps_abs,
+                                                  double eps_rel, double a_y,
+                                                  double a_dydt,
+                                                  const double scale_abs[],
+                                                  size_t dim);
 
 /* Evolution object */
 
-struct gsl_odeiv2_evolve_struct
-{
+struct gsl_odeiv2_evolve_struct {
   size_t dimension;
   double *y0;
   double *yerr;
@@ -244,30 +233,28 @@ struct gsl_odeiv2_evolve_struct
 
 /* Evolution object methods */
 
-gsl_odeiv2_evolve *gsl_odeiv2_evolve_alloc (size_t dim);
-int gsl_odeiv2_evolve_apply (gsl_odeiv2_evolve * e, gsl_odeiv2_control * con,
-                             gsl_odeiv2_step * step,
-                             const gsl_odeiv2_system * dydt, double *t,
-                             double t1, double *h, double y[]);
-int gsl_odeiv2_evolve_apply_fixed_step (gsl_odeiv2_evolve * e,
-                                        gsl_odeiv2_control * con,
-                                        gsl_odeiv2_step * step,
-                                        const gsl_odeiv2_system * dydt,
-                                        double *t, const double h0,
-                                        double y[]);
-int gsl_odeiv2_evolve_reset (gsl_odeiv2_evolve * e);
-void gsl_odeiv2_evolve_free (gsl_odeiv2_evolve * e);
-int gsl_odeiv2_evolve_set_driver (gsl_odeiv2_evolve * e,
-                                  const gsl_odeiv2_driver * d);
+gsl_odeiv2_evolve *gsl_odeiv2_evolve_alloc(size_t dim);
+int gsl_odeiv2_evolve_apply(gsl_odeiv2_evolve *e, gsl_odeiv2_control *con,
+                            gsl_odeiv2_step *step,
+                            const gsl_odeiv2_system *dydt, double *t, double t1,
+                            double *h, double y[]);
+int gsl_odeiv2_evolve_apply_fixed_step(gsl_odeiv2_evolve *e,
+                                       gsl_odeiv2_control *con,
+                                       gsl_odeiv2_step *step,
+                                       const gsl_odeiv2_system *dydt, double *t,
+                                       const double h0, double y[]);
+int gsl_odeiv2_evolve_reset(gsl_odeiv2_evolve *e);
+void gsl_odeiv2_evolve_free(gsl_odeiv2_evolve *e);
+int gsl_odeiv2_evolve_set_driver(gsl_odeiv2_evolve *e,
+                                 const gsl_odeiv2_driver *d);
 
 /* Driver object
  *
  * This is a high level wrapper for step, control and
- * evolve objects. 
+ * evolve objects.
  */
 
-struct gsl_odeiv2_driver_struct
-{
+struct gsl_odeiv2_driver_struct {
   const gsl_odeiv2_system *sys; /* ODE system */
   gsl_odeiv2_step *s;           /* stepper object */
   gsl_odeiv2_control *c;        /* control object */
@@ -281,53 +268,36 @@ struct gsl_odeiv2_driver_struct
 
 /* Driver object methods */
 
-gsl_odeiv2_driver *gsl_odeiv2_driver_alloc_y_new (const gsl_odeiv2_system *
-                                                  sys,
-                                                  const gsl_odeiv2_step_type *
-                                                  T, const double hstart,
+gsl_odeiv2_driver *gsl_odeiv2_driver_alloc_y_new(const gsl_odeiv2_system *sys,
+                                                 const gsl_odeiv2_step_type *T,
+                                                 const double hstart,
+                                                 const double epsabs,
+                                                 const double epsrel);
+gsl_odeiv2_driver *gsl_odeiv2_driver_alloc_yp_new(const gsl_odeiv2_system *sys,
+                                                  const gsl_odeiv2_step_type *T,
+                                                  const double hstart,
                                                   const double epsabs,
                                                   const double epsrel);
-gsl_odeiv2_driver *gsl_odeiv2_driver_alloc_yp_new (const gsl_odeiv2_system *
-                                                   sys,
-                                                   const gsl_odeiv2_step_type
-                                                   * T, const double hstart,
-                                                   const double epsabs,
-                                                   const double epsrel);
-gsl_odeiv2_driver *gsl_odeiv2_driver_alloc_scaled_new (const gsl_odeiv2_system
-                                                       * sys,
-                                                       const
-                                                       gsl_odeiv2_step_type *
-                                                       T, const double hstart,
-                                                       const double epsabs,
-                                                       const double epsrel,
-                                                       const double a_y,
-                                                       const double a_dydt,
-                                                       const double
-                                                       scale_abs[]);
-gsl_odeiv2_driver *gsl_odeiv2_driver_alloc_standard_new (const
-                                                         gsl_odeiv2_system *
-                                                         sys,
-                                                         const
-                                                         gsl_odeiv2_step_type
-                                                         * T,
-                                                         const double hstart,
-                                                         const double epsabs,
-                                                         const double epsrel,
-                                                         const double a_y,
-                                                         const double a_dydt);
-int gsl_odeiv2_driver_set_hmin (gsl_odeiv2_driver * d, const double hmin);
-int gsl_odeiv2_driver_set_hmax (gsl_odeiv2_driver * d, const double hmax);
-int gsl_odeiv2_driver_set_nmax (gsl_odeiv2_driver * d,
-                                const unsigned long int nmax);
-int gsl_odeiv2_driver_apply (gsl_odeiv2_driver * d, double *t,
-                             const double t1, double y[]);
-int gsl_odeiv2_driver_apply_fixed_step (gsl_odeiv2_driver * d, double *t,
-                                        const double h,
-                                        const unsigned long int n,
-                                        double y[]);
-int gsl_odeiv2_driver_reset (gsl_odeiv2_driver * d);
-int gsl_odeiv2_driver_reset_hstart (gsl_odeiv2_driver * d, const double hstart);
-void gsl_odeiv2_driver_free (gsl_odeiv2_driver * state);
+gsl_odeiv2_driver *gsl_odeiv2_driver_alloc_scaled_new(
+    const gsl_odeiv2_system *sys, const gsl_odeiv2_step_type *T,
+    const double hstart, const double epsabs, const double epsrel,
+    const double a_y, const double a_dydt, const double scale_abs[]);
+gsl_odeiv2_driver *gsl_odeiv2_driver_alloc_standard_new(
+    const gsl_odeiv2_system *sys, const gsl_odeiv2_step_type *T,
+    const double hstart, const double epsabs, const double epsrel,
+    const double a_y, const double a_dydt);
+int gsl_odeiv2_driver_set_hmin(gsl_odeiv2_driver *d, const double hmin);
+int gsl_odeiv2_driver_set_hmax(gsl_odeiv2_driver *d, const double hmax);
+int gsl_odeiv2_driver_set_nmax(gsl_odeiv2_driver *d,
+                               const unsigned long int nmax);
+int gsl_odeiv2_driver_apply(gsl_odeiv2_driver *d, double *t, const double t1,
+                            double y[]);
+int gsl_odeiv2_driver_apply_fixed_step(gsl_odeiv2_driver *d, double *t,
+                                       const double h,
+                                       const unsigned long int n, double y[]);
+int gsl_odeiv2_driver_reset(gsl_odeiv2_driver *d);
+int gsl_odeiv2_driver_reset_hstart(gsl_odeiv2_driver *d, const double hstart);
+void gsl_odeiv2_driver_free(gsl_odeiv2_driver *state);
 
 __END_DECLS
 #endif /* __GSL_ODEIV2_H__ */

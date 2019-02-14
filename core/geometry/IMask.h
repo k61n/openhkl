@@ -25,7 +25,8 @@
 
     You should have received a copy of the GNU Lesser General Public
     License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ USA
  *
  */
 
@@ -39,22 +40,18 @@ class Ellipsoid;
 class IMask {
 
 public:
+  virtual ~IMask() = 0;
 
-    virtual ~IMask()=0;
+  virtual bool collide(const Ellipsoid &e) const = 0;
 
-    virtual bool collide(const Ellipsoid& e) const=0;
-
-    virtual IMask* clone() const=0;
+  virtual IMask *clone() const = 0;
 
 protected:
+  IMask() = default;
 
-    IMask()=default;
+  IMask(const IMask &other) = default;
 
-    IMask(const IMask &other)=default;
-
-    IMask& operator=(const IMask &other)=default;
-
-
+  IMask &operator=(const IMask &other) = default;
 };
 
 } // end namespace nsx

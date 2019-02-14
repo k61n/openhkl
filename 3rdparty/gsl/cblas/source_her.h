@@ -14,20 +14,21 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
  */
 
 {
   INDEX i, j;
   const int conj = (order == CblasColMajor) ? -1 : 1;
 
-  CHECK_ARGS8(CZ_HER,order,Uplo,N,alpha,X,incX,A,lda);
+  CHECK_ARGS8(CZ_HER, order, Uplo, N, alpha, X, incX, A, lda);
 
   if (alpha == 0.0)
     return;
 
-  if ((order == CblasRowMajor && Uplo == CblasUpper)
-      || (order == CblasColMajor && Uplo == CblasLower)) {
+  if ((order == CblasRowMajor && Uplo == CblasUpper) ||
+      (order == CblasColMajor && Uplo == CblasLower)) {
     INDEX ix = OFFSET(N, incX);
     for (i = 0; i < N; i++) {
       const BASE tmp_real = alpha * CONST_REAL(X, ix);
@@ -51,8 +52,8 @@
       }
       ix += incX;
     }
-  } else if ((order == CblasRowMajor && Uplo == CblasLower)
-             || (order == CblasColMajor && Uplo == CblasUpper)) {
+  } else if ((order == CblasRowMajor && Uplo == CblasLower) ||
+             (order == CblasColMajor && Uplo == CblasUpper)) {
     INDEX ix = OFFSET(N, incX);
     for (i = 0; i < N; i++) {
       const BASE tmp_real = alpha * CONST_REAL(X, ix);

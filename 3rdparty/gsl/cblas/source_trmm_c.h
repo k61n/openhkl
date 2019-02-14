@@ -14,7 +14,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
  */
 
 {
@@ -25,7 +26,8 @@
   const int conj = (TransA == CblasConjTrans) ? -1 : 1;
   int side, uplo, trans;
 
-  CHECK_ARGS12(TRMM,Order,Side,Uplo,TransA,Diag,M,N,alpha,A,lda,B,ldb);
+  CHECK_ARGS12(TRMM, Order, Side, Uplo, TransA, Diag, M, N, alpha, A, lda, B,
+               ldb);
 
   {
     const BASE alpha_real = CONST_REAL0(alpha);
@@ -40,9 +42,9 @@
     } else {
       n1 = N;
       n2 = M;
-      side = (Side == CblasLeft) ? CblasRight : CblasLeft;        /* exchanged */
-      uplo = (Uplo == CblasUpper) ? CblasLower : CblasUpper;      /* exchanged */
-      trans = (TransA == CblasNoTrans) ? CblasNoTrans : CblasTrans;       /* same */
+      side = (Side == CblasLeft) ? CblasRight : CblasLeft;   /* exchanged */
+      uplo = (Uplo == CblasUpper) ? CblasLower : CblasUpper; /* exchanged */
+      trans = (TransA == CblasNoTrans) ? CblasNoTrans : CblasTrans; /* same */
     }
 
     if (side == CblasLeft && uplo == CblasUpper && trans == CblasNoTrans) {
@@ -75,8 +77,10 @@
             temp_imag += Aik_real * Bkj_imag + Aik_imag * Bkj_real;
           }
 
-          REAL(B, ldb * i + j) = alpha_real * temp_real - alpha_imag * temp_imag;
-          IMAG(B, ldb * i + j) = alpha_real * temp_imag + alpha_imag * temp_real;
+          REAL(B, ldb * i + j) =
+              alpha_real * temp_real - alpha_imag * temp_imag;
+          IMAG(B, ldb * i + j) =
+              alpha_real * temp_imag + alpha_imag * temp_real;
         }
       }
 
@@ -110,15 +114,17 @@
             temp_imag += IMAG(B, i * ldb + j);
           }
 
-          REAL(B, ldb * i + j) = alpha_real * temp_real - alpha_imag * temp_imag;
-          IMAG(B, ldb * i + j) = alpha_real * temp_imag + alpha_imag * temp_real;
+          REAL(B, ldb * i + j) =
+              alpha_real * temp_real - alpha_imag * temp_imag;
+          IMAG(B, ldb * i + j) =
+              alpha_real * temp_imag + alpha_imag * temp_real;
         }
       }
 
-    } else if (side == CblasLeft && uplo == CblasLower && trans == CblasNoTrans) {
+    } else if (side == CblasLeft && uplo == CblasLower &&
+               trans == CblasNoTrans) {
 
       /* form  B := alpha * TriL(A)*B */
-
 
       for (i = n1; i > 0 && i--;) {
         for (j = 0; j < n2; j++) {
@@ -146,12 +152,12 @@
             temp_imag += IMAG(B, i * ldb + j);
           }
 
-          REAL(B, ldb * i + j) = alpha_real * temp_real - alpha_imag * temp_imag;
-          IMAG(B, ldb * i + j) = alpha_real * temp_imag + alpha_imag * temp_real;
+          REAL(B, ldb * i + j) =
+              alpha_real * temp_real - alpha_imag * temp_imag;
+          IMAG(B, ldb * i + j) =
+              alpha_real * temp_imag + alpha_imag * temp_real;
         }
       }
-
-
 
     } else if (side == CblasLeft && uplo == CblasLower && trans == CblasTrans) {
 
@@ -183,12 +189,15 @@
             temp_imag += Aki_real * Bkj_imag + Aki_imag * Bkj_real;
           }
 
-          REAL(B, ldb * i + j) = alpha_real * temp_real - alpha_imag * temp_imag;
-          IMAG(B, ldb * i + j) = alpha_real * temp_imag + alpha_imag * temp_real;
+          REAL(B, ldb * i + j) =
+              alpha_real * temp_real - alpha_imag * temp_imag;
+          IMAG(B, ldb * i + j) =
+              alpha_real * temp_imag + alpha_imag * temp_real;
         }
       }
 
-    } else if (side == CblasRight && uplo == CblasUpper && trans == CblasNoTrans) {
+    } else if (side == CblasRight && uplo == CblasUpper &&
+               trans == CblasNoTrans) {
 
       /* form  B := alpha * B * TriU(A) */
 
@@ -218,12 +227,15 @@
             temp_imag += IMAG(B, i * ldb + j);
           }
 
-          REAL(B, ldb * i + j) = alpha_real * temp_real - alpha_imag * temp_imag;
-          IMAG(B, ldb * i + j) = alpha_real * temp_imag + alpha_imag * temp_real;
+          REAL(B, ldb * i + j) =
+              alpha_real * temp_real - alpha_imag * temp_imag;
+          IMAG(B, ldb * i + j) =
+              alpha_real * temp_imag + alpha_imag * temp_real;
         }
       }
 
-    } else if (side == CblasRight && uplo == CblasUpper && trans == CblasTrans) {
+    } else if (side == CblasRight && uplo == CblasUpper &&
+               trans == CblasTrans) {
 
       /* form  B := alpha * B * (TriU(A))' */
 
@@ -253,12 +265,15 @@
             temp_imag += Ajk_real * Bik_imag + Ajk_imag * Bik_real;
           }
 
-          REAL(B, ldb * i + j) = alpha_real * temp_real - alpha_imag * temp_imag;
-          IMAG(B, ldb * i + j) = alpha_real * temp_imag + alpha_imag * temp_real;
+          REAL(B, ldb * i + j) =
+              alpha_real * temp_real - alpha_imag * temp_imag;
+          IMAG(B, ldb * i + j) =
+              alpha_real * temp_imag + alpha_imag * temp_real;
         }
       }
 
-    } else if (side == CblasRight && uplo == CblasLower && trans == CblasNoTrans) {
+    } else if (side == CblasRight && uplo == CblasLower &&
+               trans == CblasNoTrans) {
 
       /* form  B := alpha *B * TriL(A) */
 
@@ -288,12 +303,15 @@
             temp_imag += Akj_real * Bik_imag + Akj_imag * Bik_real;
           }
 
-          REAL(B, ldb * i + j) = alpha_real * temp_real - alpha_imag * temp_imag;
-          IMAG(B, ldb * i + j) = alpha_real * temp_imag + alpha_imag * temp_real;
+          REAL(B, ldb * i + j) =
+              alpha_real * temp_real - alpha_imag * temp_imag;
+          IMAG(B, ldb * i + j) =
+              alpha_real * temp_imag + alpha_imag * temp_real;
         }
       }
 
-    } else if (side == CblasRight && uplo == CblasLower && trans == CblasTrans) {
+    } else if (side == CblasRight && uplo == CblasLower &&
+               trans == CblasTrans) {
 
       /* form  B := alpha * B * TriL(A)' */
 
@@ -323,8 +341,10 @@
             temp_imag += IMAG(B, i * ldb + j);
           }
 
-          REAL(B, ldb * i + j) = alpha_real * temp_real - alpha_imag * temp_imag;
-          IMAG(B, ldb * i + j) = alpha_real * temp_imag + alpha_imag * temp_real;
+          REAL(B, ldb * i + j) =
+              alpha_real * temp_real - alpha_imag * temp_imag;
+          IMAG(B, ldb * i + j) =
+              alpha_real * temp_imag + alpha_imag * temp_real;
         }
       }
 

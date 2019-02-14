@@ -43,62 +43,61 @@ namespace nsx {
 class Material {
 
 public:
+  //! Default constructor (deleted)
+  Material() = delete;
 
-    //! Default constructor (deleted)
-    Material()=delete;
+  //! Constructs a Material with a given name
+  Material(const std::string &formula);
 
-    //! Constructs a Material with a given name
-    Material(const std::string& formula);
+  //! Copy constructor (deleted)
+  Material(const Material &other) = default;
 
-    //! Copy constructor (deleted)
-    Material(const Material& other)=default;
+  //! Destructor
+  ~Material() = default;
 
-	//! Destructor
-	~Material()=default;
+  //! Assignment operator
+  Material &operator=(const Material &other) = default;
 
-    //! Assignment operator
-    Material& operator=(const Material& other)=default;
+  Material *clone() const;
 
-    Material* clone() const;
+  //! Returns the name of this Material
+  const std::string &formula() const;
 
-	//! Returns the name of this Material
-	const std::string& formula() const;
+  const isotopeContents &isotopes() const;
 
-	const isotopeContents& isotopes() const;
+  //! Returns the mass density of this Material
+  double massDensity() const;
+  //! Sets the mass density of this Material
+  void setMassDensity(double massDensity);
 
-	//! Returns the mass density of this Material
-	double massDensity() const;
-	//! Sets the mass density of this Material
-	void setMassDensity(double massDensity);
+  //! Returns the molar mass of this Material
+  double molarMass() const;
 
-	//! Returns the molar mass of this Material
-	double molarMass() const;
+  //! Returns the mass fractions of this Material
+  isotopeContents massFractions() const;
 
-	//! Returns the mass fractions of this Material
-    isotopeContents massFractions() const;
+  //! Returns the number of atoms per volume units per element (1/m3)
+  isotopeContents atomicNumberDensity() const;
 
-	//! Returns the number of atoms per volume units per element (1/m3)
-    isotopeContents atomicNumberDensity() const;
+  //! Returns the scattering attenuation factor of this Material
+  double muIncoherent() const;
+  //! Returns the absorption attenuation factor of this Material at a given
+  //! wavelength
+  double muAbsorption(double lambda = 1.798e-10) const;
 
-	//! Returns the scattering attenuation factor of this Material
-	double muIncoherent() const;
-	//! Returns the absorption attenuation factor of this Material at a given wavelength
-	double muAbsorption(double lambda=1.798e-10) const;
-
-	//! Print informations about this Material to an output stream
-	void print(std::ostream& os) const;
+  //! Print informations about this Material to an output stream
+  void print(std::ostream &os) const;
 
 private:
+  std::string _formula;
 
-	std::string _formula;
+  isotopeContents _isotopes;
 
-	isotopeContents _isotopes;
-
-	double _massDensity;
+  double _massDensity;
 };
 
 #ifndef SWIG
-std::ostream& operator<<(std::ostream& os, const Material& material);
+std::ostream &operator<<(std::ostream &os, const Material &material);
 #endif
 
 } // end namespace nsx

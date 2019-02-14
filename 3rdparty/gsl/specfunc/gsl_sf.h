@@ -8,8 +8,8 @@
 #include <gsl/gsl_sf_airy.h>
 #include <gsl/gsl_sf_bessel.h>
 #include <gsl/gsl_sf_clausen.h>
-#include <gsl/gsl_sf_coupling.h>
 #include <gsl/gsl_sf_coulomb.h>
+#include <gsl/gsl_sf_coupling.h>
 #include <gsl/gsl_sf_dawson.h>
 #include <gsl/gsl_sf_debye.h>
 #include <gsl/gsl_sf_dilog.h>
@@ -34,6 +34,5 @@
 #include <gsl/gsl_sf_transport.h>
 #include <gsl/gsl_sf_trig.h>
 #include <gsl/gsl_sf_zeta.h>
-
 
 #endif /* __GSL_SF_H__ */

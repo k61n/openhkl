@@ -4,10 +4,9 @@
 
 #include "InspectableTreeItem.h"
 
-class SampleShapeItem : public InspectableTreeItem
-{
+class SampleShapeItem : public InspectableTreeItem {
 public:
-    SampleShapeItem();
-    ~SampleShapeItem()=default;
-    QWidget* inspectItem();
+  SampleShapeItem();
+  ~SampleShapeItem() = default;
+  QWidget *inspectItem();
 };

@@ -11,7 +11,7 @@ class ProgressHandler;
 
 using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
 
-using ConstraintTuple = std::tuple<unsigned int,unsigned int,double>;
+using ConstraintTuple = std::tuple<unsigned int, unsigned int, double>;
 using ConstraintSet = std::set<ConstraintTuple>;
 
 using FinishedCallback = std::function<void(bool)>;

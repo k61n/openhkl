@@ -14,7 +14,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
  */
 
 {
@@ -24,7 +25,8 @@
   const int nonunit = (Diag == CblasNonUnit);
   int side, uplo, trans;
 
-  CHECK_ARGS12(TRSM,Order,Side,Uplo,TransA,Diag,M,N,alpha,A,lda,B,ldb);
+  CHECK_ARGS12(TRSM, Order, Side, Uplo, TransA, Diag, M, N, alpha, A, lda, B,
+               ldb);
 
   if (Order == CblasRowMajor) {
     n1 = M;
@@ -100,7 +102,6 @@
 
     /* form  B := alpha * inv(TriL(A))*B */
 
-
     if (alpha != 1.0) {
       for (i = 0; i < n1; i++) {
         for (j = 0; j < n2; j++) {
@@ -124,7 +125,6 @@
         }
       }
     }
-
 
   } else if (side == CblasLeft && uplo == CblasLower && trans == CblasTrans) {
 
@@ -154,7 +154,8 @@
       }
     }
 
-  } else if (side == CblasRight && uplo == CblasUpper && trans == CblasNoTrans) {
+  } else if (side == CblasRight && uplo == CblasUpper &&
+             trans == CblasNoTrans) {
 
     /* form  B := alpha * B * inv(TriU(A)) */
 
@@ -211,8 +212,8 @@
       }
     }
 
-
-  } else if (side == CblasRight && uplo == CblasLower && trans == CblasNoTrans) {
+  } else if (side == CblasRight && uplo == CblasLower &&
+             trans == CblasNoTrans) {
 
     /* form  B := alpha * B * inv(TriL(A)) */
 
@@ -245,7 +246,6 @@
 
     /* form  B := alpha * B * inv(TriL(A))' */
 
-
     if (alpha != 1.0) {
       for (i = 0; i < n1; i++) {
         for (j = 0; j < n2; j++) {
@@ -269,8 +269,6 @@
         }
       }
     }
-
-
 
   } else {
     BLAS_ERROR("unrecognized operation");

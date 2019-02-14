@@ -25,7 +25,8 @@
 
     You should have received a copy of the GNU Lesser General Public
     License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ USA
  *
  */
 
@@ -38,29 +39,27 @@
 namespace nsx {
 
 //! Ellipsoidal detector mask
-class EllipseMask: public IMask {
+class EllipseMask : public IMask {
 
 public:
+  EllipseMask() = delete;
 
-    EllipseMask()=delete;
+  EllipseMask(const EllipseMask &other) = default;
 
-    EllipseMask(const EllipseMask &other)=default;
+  EllipseMask(const AABB &aabb, bool two_dim = true);
 
-    EllipseMask(const AABB& aabb, bool two_dim=true);
+  ~EllipseMask() = default;
 
-    ~EllipseMask()=default;
+  EllipseMask &operator=(const EllipseMask &other) = default;
 
-    EllipseMask& operator=(const EllipseMask &other)=default;
+  IMask *clone() const override;
 
-    IMask* clone() const override;
-
-    bool collide(const Ellipsoid& ellipsoid) const override;
+  bool collide(const Ellipsoid &ellipsoid) const override;
 
 private:
+  Ellipsoid _ellipsoid;
 
-    Ellipsoid _ellipsoid;
-
-    bool _2d;
+  bool _2d;
 };
 
 } // end namespace nsx

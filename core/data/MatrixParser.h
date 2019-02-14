@@ -9,9 +9,9 @@
 // (y-axis). The x-axis is horizontal and z-axis vertical, so that pixel (0,0)
 // represents the bottom left and pixel (rows,cols) represents the top right.
 // The functors in this file are used to do the mapping between written order
-// of the data and parsing into a Eigen Matrix. For example TopRightColMajorMapper
-// means that the datastream is written linearly from TopRight detector pixel and
-// Column Major order (implicitly going down)
+// of the data and parsing into a Eigen Matrix. For example
+// TopRightColMajorMapper means that the datastream is written linearly from
+// TopRight detector pixel and Column Major order (implicitly going down)
 
 /*
  * TopRightColMajor
@@ -65,19 +65,20 @@
 
 namespace nsx {
 
-//! \brief Utility class to parse real or complex matrices from plain ASCII text.
+//! \brief Utility class to parse real or complex matrices from plain ASCII
+//! text.
 class MatrixParser {
 
 public:
+  MatrixParser() = default;
 
-    MatrixParser()=default;
+  ~MatrixParser() = default;
 
-    ~MatrixParser()=default;
+  bool operator()(DataOrder dataOrder, const char *begin, size_t buffer_size,
+                  Eigen::MatrixXi &matrix) const;
 
-    bool operator()(DataOrder dataOrder, const char* begin, size_t buffer_size, Eigen::MatrixXi& matrix) const;
-
-    bool operator()(DataOrder dataOrder, const std::string& buffer, Eigen::MatrixXi& matrix) const;
-
+  bool operator()(DataOrder dataOrder, const std::string &buffer,
+                  Eigen::MatrixXi &matrix) const;
 };
 
 } // end namespace nsx

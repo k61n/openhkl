@@ -24,7 +24,8 @@
 
     You should have received a copy of the GNU Lesser General Public
     License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ USA
  *
  */
 
@@ -39,16 +40,16 @@ namespace nsx {
 class DataSet;
 
 //! \brief Compute integrated intensity by fitting to an analytic 3d Gaussian.
-class GaussianIntegrator: public IPeakIntegrator {
+class GaussianIntegrator : public IPeakIntegrator {
 public:
-    GaussianIntegrator(bool fit_center, bool fit_cov);
-    bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
-    //! Return the analytic profile computed over the given integration region
-    std::vector<double> profile(sptrPeak3D peak, const IntegrationRegion& region);
+  GaussianIntegrator(bool fit_center, bool fit_cov);
+  bool compute(sptrPeak3D peak, const IntegrationRegion &region) override;
+  //! Return the analytic profile computed over the given integration region
+  std::vector<double> profile(sptrPeak3D peak, const IntegrationRegion &region);
 
 private:
-    bool _fitCenter;
-    bool _fitCov;
+  bool _fitCenter;
+  bool _fitCov;
 };
 
 } // end namespace nsx

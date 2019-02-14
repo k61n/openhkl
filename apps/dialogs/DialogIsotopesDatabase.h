@@ -8,16 +8,14 @@ namespace Ui {
 class DialogIsotopesDatabase;
 }
 
-class DialogIsotopesDatabase : public QDialog
-{
-    Q_OBJECT
+class DialogIsotopesDatabase : public QDialog {
+  Q_OBJECT
 
 public:
-    explicit DialogIsotopesDatabase(QWidget *parent = 0);
+  explicit DialogIsotopesDatabase(QWidget *parent = 0);
 
-    ~DialogIsotopesDatabase();
+  ~DialogIsotopesDatabase();
 
 private:
-    Ui::DialogIsotopesDatabase *ui;
+  Ui::DialogIsotopesDatabase *ui;
 };
-

@@ -19,25 +19,25 @@
 //! missing coordinate. The node is displayed as an ellipse
 //! with set colors and respond to mouse interaction.
 
-class CrystalNodeItem : public QGraphicsItem
-{
+class CrystalNodeItem : public QGraphicsItem {
 public:
-    explicit CrystalNodeItem(QGraphicsItem *parent = 0);
-    //! Method called when point is first created
-    void initiate(double posx, double posy,double yc, double angle);
-    //! Method called when point is moved in another frame
-    void adjust(double posy,double yc, double angle);
-    //! Overloaded
-    QRectF boundingRect() const;
-    //! Paint method
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWidget *widget);
-    //! Methiod called when the frame is rotated to a new angle
-    void rotate(double angle,double yc);
-    //! Get the position coordinates of this node
-    void getCoordinates(double& x, double& y, double& z);
+  explicit CrystalNodeItem(QGraphicsItem *parent = 0);
+  //! Method called when point is first created
+  void initiate(double posx, double posy, double yc, double angle);
+  //! Method called when point is moved in another frame
+  void adjust(double posy, double yc, double angle);
+  //! Overloaded
+  QRectF boundingRect() const;
+  //! Paint method
+  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+             QWidget *widget);
+  //! Methiod called when the frame is rotated to a new angle
+  void rotate(double angle, double yc);
+  //! Get the position coordinates of this node
+  void getCoordinates(double &x, double &y, double &z);
 signals:
 
 public slots:
-    private:
-      double _p1x,_p1y,_p1z,_angle;
+private:
+  double _p1x, _p1y, _p1z, _angle;
 };

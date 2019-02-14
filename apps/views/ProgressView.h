@@ -8,20 +8,20 @@
 
 #include <core/UtilsTypes.h>
 
-class ProgressView: public QProgressDialog {
-    Q_OBJECT
+class ProgressView : public QProgressDialog {
+  Q_OBJECT
 
 public:
-    ProgressView(QWidget* parent);
-    ~ProgressView();
+  ProgressView(QWidget *parent);
+  ~ProgressView();
 
-    void watch(nsx::sptrProgressHandler handler);
+  void watch(nsx::sptrProgressHandler handler);
 
 public slots:
-    void updateProgress();
-    void abort();
+  void updateProgress();
+  void abort();
 
 private:
-    nsx::sptrProgressHandler _handler;
-    QTimer* _timer;
+  nsx::sptrProgressHandler _handler;
+  QTimer *_timer;
 };

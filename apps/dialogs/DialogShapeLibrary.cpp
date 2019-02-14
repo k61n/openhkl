@@ -4,13 +4,13 @@
 #include <QStatusBar>
 
 #include <core/DataSet.h>
+#include <core/Logger.h>
 #include <core/Peak3D.h>
 #include <core/PeakCoordinateSystem.h>
 #include <core/PeakFilter.h>
 #include <core/Profile3D.h>
 #include <core/ShapeIntegrator.h>
 #include <core/ShapeLibrary.h>
-#include <core/Logger.h>
 
 #include "CollectedPeaksModel.h"
 #include "ExperimentItem.h"
@@ -19,237 +19,228 @@
 #include "DialogShapeLibrary.h"
 #include "ui_DialogShapeLibrary.h"
 
-DialogShapeLibrary::DialogShapeLibrary(ExperimentItem* experiment_item,
+DialogShapeLibrary::DialogShapeLibrary(ExperimentItem *experiment_item,
                                        nsx::sptrUnitCell unitCell,
-                                       const nsx::PeakList& peaks,
-                                       QWidget *parent):
-    QDialog(parent),
-    ui(new Ui::DialogShapeLibrary),
-    _unitCell(std::move(unitCell)),
-    _peaks(peaks), 
-    _cmap(),
-    _library(nullptr)
-{
-    ui->setupUi(this);
+                                       const nsx::PeakList &peaks,
+                                       QWidget *parent)
+    : QDialog(parent), ui(new Ui::DialogShapeLibrary),
+      _unitCell(std::move(unitCell)), _peaks(peaks), _cmap(),
+      _library(nullptr) {
+  ui->setupUi(this);
 
-    ui->preview->resize(400,400);
+  ui->preview->resize(400, 400);
 
-    ui->kabsch->setStyleSheet("font-weight: normal;");
-    ui->kabsch->setCheckable(true);
+  ui->kabsch->setStyleSheet("font-weight: normal;");
+  ui->kabsch->setCheckable(true);
 
-    // get list of datasets
-    for (auto p: _peaks) {
-        _data.insert(p->data());
-    }  
+  // get list of datasets
+  for (auto p : _peaks) {
+    _data.insert(p->data());
+  }
 
-    connect(ui->calculate, SIGNAL(released()), this, SLOT(calculate()));
-    connect(ui->build, SIGNAL(released()), this, SLOT(build()));
+  connect(ui->calculate, SIGNAL(released()), this, SLOT(calculate()));
+  connect(ui->build, SIGNAL(released()), this, SLOT(build()));
 
-    // setup slider
-    ui->drawFrame->setMaximum(0);
-    ui->drawFrame->setMaximum(0);
+  // setup slider
+  ui->drawFrame->setMaximum(0);
+  ui->drawFrame->setMaximum(0);
 
-    ui->x->setMaximum(10000);
-    ui->y->setMaximum(10000);
-    ui->frame->setMaximum(10000);
-    ui->radius->setMaximum(10000);
-    ui->nframes->setMaximum(10000); 
+  ui->x->setMaximum(10000);
+  ui->y->setMaximum(10000);
+  ui->frame->setMaximum(10000);
+  ui->radius->setMaximum(10000);
+  ui->nframes->setMaximum(10000);
 
-    // calculate reasonable values of sigmaD and sigmaM
-    Eigen::Matrix3d cov;
-    cov.setZero();
+  // calculate reasonable values of sigmaD and sigmaM
+  Eigen::Matrix3d cov;
+  cov.setZero();
 
-    for (auto peak: peaks) {
-        nsx::PeakCoordinateSystem coord(peak);
-        auto shape = peak->shape();
-        Eigen::Matrix3d J = coord.jacobian();
-        cov += J*shape.inverseMetric()*J.transpose();
-    }
+  for (auto peak : peaks) {
+    nsx::PeakCoordinateSystem coord(peak);
+    auto shape = peak->shape();
+    Eigen::Matrix3d J = coord.jacobian();
+    cov += J * shape.inverseMetric() * J.transpose();
+  }
 
-    cov /= peaks.size();
+  cov /= peaks.size();
 
-    // check this
-    ui->sigmaD->setValue(std::sqrt(0.5*(cov(0,0)+cov(1,1))));
-    ui->sigmaM->setValue(std::sqrt(cov(2,2)));
-    
-    auto peaks_model = new CollectedPeaksModel(experiment_item->model(),experiment_item->experiment(),peaks);
-    ui->peaks->setModel(peaks_model);
-    ui->peaks->verticalHeader()->show();
+  // check this
+  ui->sigmaD->setValue(std::sqrt(0.5 * (cov(0, 0) + cov(1, 1))));
+  ui->sigmaM->setValue(std::sqrt(cov(2, 2)));
 
-    ui->peaks->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
-    ui->peaks->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
+  auto peaks_model = new CollectedPeaksModel(
+      experiment_item->model(), experiment_item->experiment(), peaks);
+  ui->peaks->setModel(peaks_model);
+  ui->peaks->verticalHeader()->show();
 
-    connect(ui->drawFrame, SIGNAL(valueChanged(int)), this, SLOT(drawFrame(int)));
-    connect(ui->peaks,&QTableView::clicked,[this](QModelIndex index){selectTargetPeak(index.row());});
-    connect(ui->peaks->verticalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(selectTargetPeak(int)));
+  ui->peaks->setSelectionBehavior(
+      QAbstractItemView::SelectionBehavior::SelectRows);
+  ui->peaks->setSelectionMode(
+      QAbstractItemView::SelectionMode::SingleSelection);
+
+  connect(ui->drawFrame, SIGNAL(valueChanged(int)), this, SLOT(drawFrame(int)));
+  connect(ui->peaks, &QTableView::clicked,
+          [this](QModelIndex index) { selectTargetPeak(index.row()); });
+  connect(ui->peaks->verticalHeader(), SIGNAL(sectionClicked(int)), this,
+          SLOT(selectTargetPeak(int)));
 }
 
-DialogShapeLibrary::~DialogShapeLibrary()
-{
-    delete ui;
+DialogShapeLibrary::~DialogShapeLibrary() { delete ui; }
+
+void DialogShapeLibrary::selectTargetPeak(int row) {
+  auto model = dynamic_cast<CollectedPeaksModel *>(ui->peaks->model());
+
+  auto &peaks = model->peaks();
+
+  auto selected_peak = peaks[row];
+
+  auto &&center = selected_peak->shape().center();
+
+  ui->x->setValue(center[0]);
+  ui->y->setValue(center[1]);
+  ui->frame->setValue(center[2]);
 }
 
-void DialogShapeLibrary::selectTargetPeak(int row)
-{
-    auto model = dynamic_cast<CollectedPeaksModel*>(ui->peaks->model());
+void DialogShapeLibrary::build() {
+  nsx::PeakList fit_peaks;
 
-    auto& peaks = model->peaks();
+  for (auto peak : _peaks) {
+    if (!peak->enabled()) {
+      continue;
+    }
+    double d = 1.0 / peak->q().rowVector().norm();
 
-    auto selected_peak = peaks[row];
+    if (d > ui->dMax->value() || d < ui->dMin->value()) {
+      continue;
+    }
 
-    auto&& center = selected_peak->shape().center();
+    auto inten = peak->correctedIntensity();
 
-    ui->x->setValue(center[0]);
-    ui->y->setValue(center[1]);
-    ui->frame->setValue(center[2]);
+    if (inten.value() <= ui->Isigma->value() * inten.sigma()) {
+      continue;
+    }
+    fit_peaks.push_back(peak);
+  }
 
+  auto nx = ui->nx->value();
+  auto ny = ui->ny->value();
+  auto nz = ui->nz->value();
+
+  // update the frame slider if necessary
+  if (ui->drawFrame->maximum() != nz) {
+    ui->drawFrame->setMaximum(nz - 1);
+  }
+
+  nsx::AABB aabb;
+
+  bool kabsch_coords = ui->kabsch->isChecked();
+
+  auto peakScale = ui->peakScale->value();
+
+  if (kabsch_coords) {
+    auto sigmaD = ui->sigmaD->value();
+    auto sigmaM = ui->sigmaM->value();
+    Eigen::Vector3d sigma(sigmaD, sigmaD, sigmaM);
+    aabb.setLower(-peakScale * sigma);
+    aabb.setUpper(peakScale * sigma);
+  } else {
+    Eigen::Vector3d dx(nx, ny, nz);
+    aabb.setLower(-0.5 * dx);
+    aabb.setUpper(0.5 * dx);
+  }
+
+  // free memory of old library
+  nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
+  ProgressView view(this);
+  view.watch(handler);
+
+  auto bkgBegin = ui->bkgBegin->value();
+  auto bkgEnd = ui->bkgEnd->value();
+  _library = nsx::sptrShapeLibrary(
+      new nsx::ShapeLibrary(!kabsch_coords, peakScale, bkgBegin, bkgEnd));
+
+  nsx::ShapeIntegrator integrator(_library, aabb, nx, ny, nz);
+  integrator.setHandler(handler);
+
+  for (auto data : _data) {
+    nsx::info() << "Fitting profiles in dataset " << data->filename();
+    integrator.integrate(fit_peaks, data, _library->peakScale(),
+                         _library->bkgBegin(), _library->bkgEnd());
+  }
+  nsx::info() << "Done fitting profiles";
+
+  _library = integrator.library();
+
+  nsx::info() << "Updating peak shape model...";
+  _library->updateFit(1000);
+  nsx::info() << "Done, mean pearson is " << _library->meanPearson();
+
+  calculate();
 }
 
-void DialogShapeLibrary::build()
-{
-    nsx::PeakList fit_peaks;
+void DialogShapeLibrary::calculate() {
+  if (!_library) {
+    nsx::info()
+        << "Error: must build shape library before calculating a mean profile";
+    return;
+  }
 
-    for (auto peak: _peaks) {
-        if (!peak->enabled()) {
-            continue;
-        }
-        double d = 1.0 / peak->q().rowVector().norm();
+  auto nx = ui->nx->value();
+  auto ny = ui->ny->value();
+  auto nz = ui->nz->value();
 
-        if (d > ui->dMax->value() || d < ui->dMin->value()) {
-            continue;
-        }
+  nsx::DetectorEvent ev(ui->x->value(), ui->y->value(), ui->frame->value());
+  // update maximum value, used for drawing
+  _profile =
+      _library->meanProfile(ev, ui->radius->value(), ui->nframes->value());
+  _maximum = 0;
 
-        auto inten = peak->correctedIntensity();
-
-        if (inten.value() <= ui->Isigma->value() * inten.sigma()) {
-            continue;
-        }
-        fit_peaks.push_back(peak);
+  for (auto i = 0; i < nx; ++i) {
+    for (auto j = 0; j < ny; ++j) {
+      for (auto k = 0; k < nz; ++k) {
+        _maximum = std::max(_maximum, _profile(i, j, k));
+      }
     }
+  }
 
-    auto nx = ui->nx->value();
-    auto ny = ui->ny->value();
-    auto nz = ui->nz->value();
+  nsx::Ellipsoid e = _profile.ellipsoid();
 
-    // update the frame slider if necessary
-    if (ui->drawFrame->maximum() != nz) {
-        ui->drawFrame->setMaximum(nz-1);
-    }
+  nsx::info() << "Mean profile has inertia tensor";
+  nsx::info() << e.inverseMetric();
 
-    nsx::AABB aabb;
-
-    bool kabsch_coords = ui->kabsch->isChecked();
-
-    auto peakScale = ui->peakScale->value();
-
-    if (kabsch_coords) {
-        auto sigmaD = ui->sigmaD->value();
-        auto sigmaM = ui->sigmaM->value();
-        Eigen::Vector3d sigma(sigmaD, sigmaD, sigmaM);
-        aabb.setLower(-peakScale*sigma);
-        aabb.setUpper(peakScale*sigma);
-    } else {
-        Eigen::Vector3d dx(nx, ny, nz);
-        aabb.setLower(-0.5*dx);
-        aabb.setUpper(0.5*dx);
-    }
-
-    // free memory of old library
-    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
-    ProgressView view(this);
-    view.watch(handler);
-
-    auto bkgBegin = ui->bkgBegin->value();
-    auto bkgEnd = ui->bkgEnd->value();
-    _library = nsx::sptrShapeLibrary(new nsx::ShapeLibrary(!kabsch_coords, peakScale, bkgBegin, bkgEnd));
-
-    nsx::ShapeIntegrator integrator(_library, aabb, nx, ny, nz);    
-    integrator.setHandler(handler);
-
-    for (auto data: _data) {
-        nsx::info() << "Fitting profiles in dataset " << data->filename();
-        integrator.integrate(fit_peaks, data, _library->peakScale(), _library->bkgBegin(), _library->bkgEnd());
-    }
-    nsx::info() << "Done fitting profiles";
-
-    _library = integrator.library();
-
-    nsx::info() << "Updating peak shape model...";
-    _library->updateFit(1000);
-    nsx::info() << "Done, mean pearson is " << _library->meanPearson();
-
-    calculate();
+  // draw the updated frame
+  drawFrame(ui->drawFrame->value());
 }
 
-void DialogShapeLibrary::calculate()
-{
-    if (!_library) {
-        nsx::info() << "Error: must build shape library before calculating a mean profile";
-        return;
+void DialogShapeLibrary::drawFrame(int value) {
+  if (value < 0 || value >= _profile.shape()[2]) {
+    throw std::runtime_error(
+        "DialogShapeLibrary::drawFrame(): invalid frame value");
+  }
+
+  auto shape = _profile.shape();
+  auto scene = ui->preview->scene();
+
+  if (!scene) {
+    scene = new QGraphicsScene();
+    ui->preview->setScene(scene);
+  }
+
+  QImage img(shape[0], shape[1], QImage::Format_ARGB32);
+
+  for (auto i = 0; i < shape[0]; ++i) {
+    for (auto j = 0; j < shape[1]; ++j) {
+      const double value = _profile.at(i, j, ui->drawFrame->value());
+      auto color = _cmap.color(value, _maximum);
+      img.setPixel(i, j, color);
     }
-
-    auto nx = ui->nx->value();
-    auto ny = ui->ny->value();
-    auto nz = ui->nz->value();  
-
-    nsx::DetectorEvent ev(ui->x->value(), ui->y->value(), ui->frame->value());
-    // update maximum value, used for drawing
-    _profile = _library->meanProfile(ev, ui->radius->value(), ui->nframes->value());
-    _maximum = 0;
-
-    for (auto i = 0; i < nx; ++i) {
-        for (auto j = 0; j < ny; ++j) {
-            for (auto k = 0; k < nz; ++k) {
-                _maximum = std::max(_maximum, _profile(i, j, k));
-            }
-        }
-    }
-
-    nsx::Ellipsoid e = _profile.ellipsoid();
-
-    nsx::info() << "Mean profile has inertia tensor";
-    nsx::info() << e.inverseMetric();
-
-    // draw the updated frame
-    drawFrame(ui->drawFrame->value());
+  }
+  scene->clear();
+  scene->setSceneRect(QRectF(0, 0, shape[0], shape[1]));
+  scene->addPixmap(QPixmap::fromImage(img));
+  ui->preview->fitInView(0, 0, shape[0], shape[1]);
 }
 
-void DialogShapeLibrary::drawFrame(int value)
-{
-    if (value < 0 || value >= _profile.shape()[2]) {
-        throw std::runtime_error("DialogShapeLibrary::drawFrame(): invalid frame value");
-    }
-   
-    auto shape = _profile.shape();
-    auto scene = ui->preview->scene();
+const nsx::Profile3D &DialogShapeLibrary::profile() { return _profile; }
 
-    if (!scene) {
-        scene = new QGraphicsScene();
-        ui->preview->setScene(scene);
-    }
-
-    QImage img(shape[0], shape[1], QImage::Format_ARGB32);
-
-    for (auto i = 0; i < shape[0]; ++i) {
-        for (auto j = 0; j < shape[1]; ++j) {
-            const double value = _profile.at(i, j, ui->drawFrame->value());
-            auto color = _cmap.color(value, _maximum);
-            img.setPixel(i, j, color);
-        }
-    }   
-    scene->clear();
-    scene->setSceneRect(QRectF(0, 0, shape[0], shape[1]));
-    scene->addPixmap(QPixmap::fromImage(img));
-    ui->preview->fitInView(0, 0, shape[0], shape[1]);
-}
-
-const nsx::Profile3D& DialogShapeLibrary::profile()
-{
-    return _profile;
-}
-
-
-nsx::sptrShapeLibrary DialogShapeLibrary::library() const
-{
-    return _library;
-}
+nsx::sptrShapeLibrary DialogShapeLibrary::library() const { return _library; }

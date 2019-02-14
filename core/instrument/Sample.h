@@ -41,55 +41,56 @@
 namespace nsx {
 
 //! Helper struct for storing the result of the sample gonio fit
-struct SampleGonioFit
-{
-    bool success;
-    std::vector<double> offsets;
-    std::vector<double> cost_function;
+struct SampleGonioFit {
+  bool success;
+  std::vector<double> offsets;
+  std::vector<double> cost_function;
 };
 
-//! \brief Class used to describe an experiment sample, consisting of a unit cell and material.
-class Sample: public Component {
+//! \brief Class used to describe an experiment sample, consisting of a unit
+//! cell and material.
+class Sample : public Component {
 public:
+  //! Static constructor of a Sample from a property tree node
+  static Sample *create(const YAML::Node &node);
 
-    //! Static constructor of a Sample from a property tree node
-    static Sample* create(const YAML::Node& node);
+  //! Default constructor
+  Sample();
 
-    //! Default constructor
-    Sample();
+  //! Copy constructor
+  Sample(const Sample &other) = default;
 
-    //! Copy constructor
-    Sample(const Sample& other)=default;
+  //! Constructs a default sample with a given name
+  Sample(const std::string &name);
 
-    //! Constructs a default sample with a given name
-    Sample(const std::string& name);
+  //! Constructs a sample from a property tree node
+  Sample(const YAML::Node &node);
 
-    //! Constructs a sample from a property tree node
-    Sample(const YAML::Node& node);
+  //! Virtual copy constructor
+  Sample *clone() const;
 
-    //! Virtual copy constructor
-    Sample* clone() const;
+  //! Destructor
+  virtual ~Sample();
 
-    //! Destructor
-    virtual ~Sample();
+  //! Assignment operator
+  Sample &operator=(const Sample &other) = default;
 
-    //! Assignment operator
-    Sample& operator=(const Sample& other)=default;
+  //! Set the sample shape described as a convex hull
+  void setShape(const ConvexHull &shape);
 
-    //! Set the sample shape described as a convex hull
-    void setShape(const ConvexHull& shape);
+  //! Return a non-const reference to the convex hull describing the sample
+  //! shape
+  ConvexHull &shape();
 
-    //! Return a non-const reference to the convex hull describing the sample shape
-    ConvexHull& shape();
+  //! Return a const reference to the convex hull describing the sample shape
+  const ConvexHull &shape() const;
 
-    //! Return a const reference to the convex hull describing the sample shape
-    const ConvexHull& shape() const;
-
-    SampleGonioFit fitGonioOffsets(const DataList& dataset, size_t n_iterations=1000, double tolerance=1.0e-6) const;
+  SampleGonioFit fitGonioOffsets(const DataList &dataset,
+                                 size_t n_iterations = 1000,
+                                 double tolerance = 1.0e-6) const;
 
 private:
-
-    ConvexHull _sampleShape;
+  ConvexHull _sampleShape;
 };
 
 } // end namespace nsx

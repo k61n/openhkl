@@ -14,7 +14,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
  */
 
 {
@@ -27,13 +28,14 @@
   const BASE beta_real = CONST_REAL0(beta);
   const BASE beta_imag = CONST_IMAG0(beta);
 
-  CHECK_ARGS12(GEMV,order,TransA,M,N,alpha,A,lda,X,incX,beta,Y,incY);
+  CHECK_ARGS12(GEMV, order, TransA, M, N, alpha, A, lda, X, incX, beta, Y,
+               incY);
 
   if (M == 0 || N == 0)
     return;
 
-  if ((alpha_real == 0.0 && alpha_imag == 0.0)
-      && (beta_real == 1.0 && beta_imag == 0.0))
+  if ((alpha_real == 0.0 && alpha_imag == 0.0) &&
+      (beta_real == 1.0 && beta_imag == 0.0))
     return;
 
   if (TransA == CblasNoTrans) {
@@ -69,8 +71,8 @@
   if (alpha_real == 0.0 && alpha_imag == 0.0)
     return;
 
-  if ((order == CblasRowMajor && TransA == CblasNoTrans)
-      || (order == CblasColMajor && TransA == CblasTrans)) {
+  if ((order == CblasRowMajor && TransA == CblasNoTrans) ||
+      (order == CblasColMajor && TransA == CblasTrans)) {
     /* form  y := alpha*A*x + y */
     INDEX iy = OFFSET(lenY, incY);
     for (i = 0; i < lenY; i++) {
@@ -92,8 +94,8 @@
       IMAG(Y, iy) += alpha_real * dotI + alpha_imag * dotR;
       iy += incY;
     }
-  } else if ((order == CblasRowMajor && TransA == CblasTrans)
-             || (order == CblasColMajor && TransA == CblasNoTrans)) {
+  } else if ((order == CblasRowMajor && TransA == CblasTrans) ||
+             (order == CblasColMajor && TransA == CblasNoTrans)) {
     /* form  y := alpha*A'*x + y */
     INDEX ix = OFFSET(lenX, incX);
     for (j = 0; j < lenX; j++) {
@@ -156,5 +158,4 @@
   } else {
     BLAS_ERROR("unrecognized operation");
   }
-
 }

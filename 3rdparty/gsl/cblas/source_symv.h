@@ -14,13 +14,14 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
  */
 
 {
   INDEX i, j;
 
-  CHECK_ARGS11(SD_SYMV,order,Uplo,N,alpha,A,lda,X,incX,beta,Y,incY);
+  CHECK_ARGS11(SD_SYMV, order, Uplo, N, alpha, A, lda, X, incX, beta, Y, incY);
 
   if (alpha == 0.0 && beta == 1.0)
     return;
@@ -45,8 +46,8 @@
 
   /* form  y := alpha*A*x + y */
 
-  if ((order == CblasRowMajor && Uplo == CblasUpper)
-      || (order == CblasColMajor && Uplo == CblasLower)) {
+  if ((order == CblasRowMajor && Uplo == CblasUpper) ||
+      (order == CblasColMajor && Uplo == CblasLower)) {
     INDEX ix = OFFSET(N, incX);
     INDEX iy = OFFSET(N, incY);
     for (i = 0; i < N; i++) {
@@ -67,8 +68,8 @@
       ix += incX;
       iy += incY;
     }
-  } else if ((order == CblasRowMajor && Uplo == CblasLower)
-             || (order == CblasColMajor && Uplo == CblasUpper)) {
+  } else if ((order == CblasRowMajor && Uplo == CblasLower) ||
+             (order == CblasColMajor && Uplo == CblasUpper)) {
     INDEX ix = OFFSET(N, incX) + (N - 1) * incX;
     INDEX iy = OFFSET(N, incY) + (N - 1) * incY;
     for (i = N; i > 0 && i--;) {

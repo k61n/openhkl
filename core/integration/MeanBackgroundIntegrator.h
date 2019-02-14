@@ -10,10 +10,10 @@ namespace nsx {
 class DataSet;
 
 //! \brief Compute the mean background near a peak.
-class MeanBackgroundIntegrator: public IPeakIntegrator {
+class MeanBackgroundIntegrator : public IPeakIntegrator {
 public:
-    MeanBackgroundIntegrator();
-    bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
+  MeanBackgroundIntegrator();
+  bool compute(sptrPeak3D peak, const IntegrationRegion &region) override;
 };
 
 } // end namespace nsx

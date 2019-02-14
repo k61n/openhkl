@@ -1,20 +1,21 @@
 /* specfunc/gsl_sf_dilog.h
- * 
+ *
  * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2004 Gerard Jungman
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
  */
 
 /* Author:  G. Jungman */
@@ -27,15 +28,14 @@
 #undef __BEGIN_DECLS
 #undef __END_DECLS
 #ifdef __cplusplus
-# define __BEGIN_DECLS extern "C" {
-# define __END_DECLS }
+#define __BEGIN_DECLS extern "C" {
+#define __END_DECLS }
 #else
-# define __BEGIN_DECLS /* empty */
-# define __END_DECLS /* empty */
+#define __BEGIN_DECLS /* empty */
+#define __END_DECLS   /* empty */
 #endif
 
 __BEGIN_DECLS
-
 
 /* Real part of DiLogarithm(x), for real argument.
  * In Lewin's notation, this is Li_2(x).
@@ -49,9 +49,8 @@ __BEGIN_DECLS
  * affect the real part and so is not relevant to the
  * interpretation of this implemented function.
  */
-int     gsl_sf_dilog_e(const double x, gsl_sf_result * result);
-double  gsl_sf_dilog(const double x);
-
+int gsl_sf_dilog_e(const double x, gsl_sf_result *result);
+double gsl_sf_dilog(const double x);
 
 /* DiLogarithm(z), for complex argument z = x + i y.
  * Computes the principal branch.
@@ -70,15 +69,9 @@ double  gsl_sf_dilog(const double x);
  * to know anything about it. This is why GSL chooses to compute
  * only on the principal branch.
  */
-int
-gsl_sf_complex_dilog_xy_e(
-  const double x,
-  const double y,
-  gsl_sf_result * result_re,
-  gsl_sf_result * result_im
-  );
-
-
+int gsl_sf_complex_dilog_xy_e(const double x, const double y,
+                              gsl_sf_result *result_re,
+                              gsl_sf_result *result_im);
 
 /* DiLogarithm(z), for complex argument z = r Exp[i theta].
  * Computes the principal branch, thereby assuming an
@@ -98,15 +91,8 @@ gsl_sf_complex_dilog_xy_e(
  * Furthermore the handling of values close to the branch
  * cut is subtle. Perhap this interface should be deprecated.
  */
-int
-gsl_sf_complex_dilog_e(
-  const double r,
-  const double theta,
-  gsl_sf_result * result_re,
-  gsl_sf_result * result_im
-  );
-
-
+int gsl_sf_complex_dilog_e(const double r, const double theta,
+                           gsl_sf_result *result_re, gsl_sf_result *result_im);
 
 /* Spence integral; spence(s) := Li_2(1-s)
  *
@@ -116,14 +102,8 @@ gsl_sf_complex_dilog_e(
  * s approaches the cut from above. In other words,
  * we define spence(x) = spence(x + i 0+).
  */
-int
-gsl_sf_complex_spence_xy_e(
-  const double x,
-  const double y,
-  gsl_sf_result * real_sp,
-  gsl_sf_result * imag_sp
-  );
-
+int gsl_sf_complex_spence_xy_e(const double x, const double y,
+                               gsl_sf_result *real_sp, gsl_sf_result *imag_sp);
 
 __END_DECLS
 

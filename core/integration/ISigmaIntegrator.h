@@ -24,7 +24,8 @@
 
     You should have received a copy of the GNU Lesser General Public
     License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ USA
  *
  */
 
@@ -42,15 +43,17 @@ namespace nsx {
 
 class DataSet;
 
-//! \brief Compute the integrated intensity via the I/sigma method used in RETREAT.
-class ISigmaIntegrator: public PixelSumIntegrator {
+//! \brief Compute the integrated intensity via the I/sigma method used in
+//! RETREAT.
+class ISigmaIntegrator : public PixelSumIntegrator {
 public:
-    ISigmaIntegrator(sptrShapeLibrary library, double radius, double nframes);
-    bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
+  ISigmaIntegrator(sptrShapeLibrary library, double radius, double nframes);
+  bool compute(sptrPeak3D peak, const IntegrationRegion &region) override;
+
 private:
-    sptrShapeLibrary _library;
-    double _radius;
-    double _nframes;
+  sptrShapeLibrary _library;
+  double _radius;
+  double _nframes;
 };
 
 } // end namespace nsx

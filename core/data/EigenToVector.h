@@ -41,6 +41,6 @@
 
 namespace nsx {
 
-std::vector<double> eigenToVector(const Eigen::VectorXd& ev);
+std::vector<double> eigenToVector(const Eigen::VectorXd &ev);
 
 } // end namespace nsx

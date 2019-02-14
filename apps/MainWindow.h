@@ -25,62 +25,60 @@ class MainWindow;
 class QProgressDialog;
 
 class MainWindow : public QMainWindow {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
+  MainWindow(QWidget *parent = nullptr);
 
-    MainWindow(QWidget *parent=nullptr);
+  ~MainWindow();
 
-    ~MainWindow();
+  virtual void closeEvent(QCloseEvent *event) override;
 
-    virtual void closeEvent(QCloseEvent *event) override;
-
-    void setColorMap(const std::string& name);
+  void setColorMap(const std::string &name);
 
 signals:
-    void plotDetectorData(nsx::DataSet*,int frame);
+  void plotDetectorData(nsx::DataSet *, int frame);
 
 private slots:
-    void on_actionAbout_triggered();
+  void on_actionAbout_triggered();
 
-    void on_actionPixel_position_triggered();
-    void on_actionGamma_Nu_triggered();
-    void on_action2_Theta_triggered();
-    void on_actionD_spacing_triggered();
-    void on_actionMiller_indices_triggered();
-    void on_actionLogger_triggered();
-    void on_action1D_Peak_Ploter_triggered();
-    void on_actionProperty_triggered();
-    void updatePlot(PlottableGraphicsItem* cutter);
-    void on_actionFrom_Sample_triggered();
-    void on_actionBehind_Detector_triggered();
-    void on_action_display_isotopes_database_triggered();
-    void on_checkBox_AspectRatio_toggled(bool checked);
+  void on_actionPixel_position_triggered();
+  void on_actionGamma_Nu_triggered();
+  void on_action2_Theta_triggered();
+  void on_actionD_spacing_triggered();
+  void on_actionMiller_indices_triggered();
+  void on_actionLogger_triggered();
+  void on_action1D_Peak_Ploter_triggered();
+  void on_actionProperty_triggered();
+  void updatePlot(PlottableGraphicsItem *cutter);
+  void on_actionFrom_Sample_triggered();
+  void on_actionBehind_Detector_triggered();
+  void on_action_display_isotopes_database_triggered();
+  void on_checkBox_AspectRatio_toggled(bool checked);
 
-    void on_actionLogarithmic_Scale_triggered(bool checked);
+  void on_actionLogarithmic_Scale_triggered(bool checked);
 
-    void on_actionDraw_peak_integration_area_triggered(bool checked);
-     
+  void on_actionDraw_peak_integration_area_triggered(bool checked);
 
 public slots:
 
-    void plotData(const QVector<double>&,const QVector<double>&,const QVector<double>&);
+  void plotData(const QVector<double> &, const QVector<double> &,
+                const QVector<double> &);
 
-    void setInspectorWidget(QWidget*);
+  void setInspectorWidget(QWidget *);
 
 private slots:
 
-    void slotChangeSelectedData(nsx::sptrDataSet, int frame);
+  void slotChangeSelectedData(nsx::sptrDataSet, int frame);
 
-    void slotChangeSelectedPeak(nsx::sptrPeak3D peak);
+  void slotChangeSelectedPeak(nsx::sptrPeak3D peak);
 
-    void slotChangeSelectedFrame(int selected_frame);
+  void slotChangeSelectedFrame(int selected_frame);
 
 private:
+  Ui::MainWindow *_ui;
 
-    Ui::MainWindow* _ui;
+  SessionModel *_session;
 
-    SessionModel* _session;
-
-    std::string _colormap;
+  std::string _colormap;
 };

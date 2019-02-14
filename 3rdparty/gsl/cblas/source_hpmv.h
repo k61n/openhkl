@@ -14,14 +14,15 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
  */
 
 {
   INDEX i, j;
   const int conj = (order == CblasColMajor) ? -1 : 1;
 
-  CHECK_ARGS10(CZ_HPMV,order,Uplo,N,alpha,Ap,X,incX,beta,Y,incY);
+  CHECK_ARGS10(CZ_HPMV, order, Uplo, N, alpha, Ap, X, incX, beta, Y, incY);
 
   {
     const BASE alpha_real = CONST_REAL0(alpha);
@@ -30,8 +31,8 @@
     const BASE beta_real = CONST_REAL0(beta);
     const BASE beta_imag = CONST_IMAG0(beta);
 
-    if ((alpha_real == 0.0 && alpha_imag == 0.0)
-        && (beta_real == 1.0 && beta_imag == 0.0))
+    if ((alpha_real == 0.0 && alpha_imag == 0.0) &&
+        (beta_real == 1.0 && beta_imag == 0.0))
       return;
 
     /* form  y := beta*y */
@@ -60,8 +61,8 @@
 
     /* form  y := alpha*A*x + y */
 
-    if ((order == CblasRowMajor && Uplo == CblasUpper)
-        || (order == CblasColMajor && Uplo == CblasLower)) {
+    if ((order == CblasRowMajor && Uplo == CblasUpper) ||
+        (order == CblasColMajor && Uplo == CblasLower)) {
 
       INDEX ix = OFFSET(N, incX);
       INDEX iy = OFFSET(N, incY);
@@ -97,8 +98,8 @@
         ix += incX;
         iy += incY;
       }
-    } else if ((order == CblasRowMajor && Uplo == CblasLower)
-               || (order == CblasColMajor && Uplo == CblasUpper)) {
+    } else if ((order == CblasRowMajor && Uplo == CblasLower) ||
+               (order == CblasColMajor && Uplo == CblasUpper)) {
 
       INDEX ix = OFFSET(N, incX);
       INDEX iy = OFFSET(N, incY);

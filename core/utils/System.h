@@ -21,7 +21,8 @@
 
     You should have received a copy of the GNU Lesser General Public
     License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ USA
  *
  */
 
@@ -29,11 +30,11 @@
 
 // Define necessary symbols for exporting symbols in dll table.
 #ifdef _WIN32
-#    ifdef core_EXPORT
-#        define DLLExport __declspec(dllexport)
-#    else
-#        define DLLEXport __declspec(dllimport)
-#    endif
+#ifdef core_EXPORT
+#define DLLExport __declspec(dllexport)
 #else
-#    define DLLExport
+#define DLLEXport __declspec(dllimport)
+#endif
+#else
+#define DLLExport
 #endif

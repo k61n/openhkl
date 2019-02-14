@@ -12,50 +12,50 @@ namespace Ui {
 class DialogPredictPeaks;
 }
 
-class DialogPredictPeaks : public QDialog
-{
-    Q_OBJECT
+class DialogPredictPeaks : public QDialog {
+  Q_OBJECT
 
 public:
+  static DialogPredictPeaks *create(ExperimentItem *experiment_tree,
+                                    const nsx::UnitCellList &peaks,
+                                    QWidget *parent = nullptr);
 
-    static DialogPredictPeaks* create(ExperimentItem* experiment_tree, const nsx::UnitCellList& peaks, QWidget* parent=nullptr);
+  static DialogPredictPeaks *Instance();
 
-    static DialogPredictPeaks* Instance();
+  ~DialogPredictPeaks();
 
-    ~DialogPredictPeaks();
+  double dMin() const;
+  double dMax() const;
+  double radius() const;
+  double nFrames() const;
 
-    double dMin() const;
-    double dMax() const;
-    double radius() const;
-    double nFrames() const;
+  int minNeighbors() const;
 
-    int minNeighbors() const;
+  int interpolation() const;
 
-    int interpolation() const;
-
-    nsx::sptrUnitCell cell(); 
+  nsx::sptrUnitCell cell();
 
 public slots:
 
-    virtual void accept() override;
+  virtual void accept() override;
 
 private slots:
 
-    void slotActionClicked(QAbstractButton *button);
+  void slotActionClicked(QAbstractButton *button);
 
 private:
+  DialogPredictPeaks(ExperimentItem *experiment_tree,
+                     const nsx::UnitCellList &unit_cells,
+                     QWidget *parent = nullptr);
 
-    DialogPredictPeaks(ExperimentItem* experiment_tree, const nsx::UnitCellList& unit_cells, QWidget* parent=nullptr);
-
-    void predictPeaks();
+  void predictPeaks();
 
 private:
+  static DialogPredictPeaks *_instance;
 
-    static DialogPredictPeaks *_instance;
+  Ui::DialogPredictPeaks *_ui;
 
-    Ui::DialogPredictPeaks *_ui;
+  ExperimentItem *_experiment_item;
 
-    ExperimentItem *_experiment_item;
-
-    CollectedPeaksModel* _peaks_model;
+  CollectedPeaksModel *_peaks_model;
 };

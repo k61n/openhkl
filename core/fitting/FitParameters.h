@@ -50,42 +50,44 @@ namespace nsx {
 class FitParameters {
 
 public:
-    //! Add a parameter to be fit. The original value of the parameter is stored (see reset()). The return value is the index of the parameter.
-    int addParameter(double* addr);
-    //! Set values of the parameters from a GSL vector.
-    void setValues(const gsl_vector* v);
-    //! Write the values to a GSL vector
-    void writeValues(gsl_vector* v) const;
-    //! Return the number of parameters
-    size_t nparams() const;
-    //! Return the number of free parameters
-    size_t nfree() const;
-    //! Set the constraint matrix
-    void setConstraint(const Eigen::SparseMatrix<double>& C);
-    //! Remove the constraints
-    void resetConstraints();
-    //! Kernel of the constraints: this is the transformation from constrained parameters to original parameters.
-    const Eigen::MatrixXd& kernel() const;
-    //! Set the kernel of the constraints.
-    void setKernel(const Eigen::MatrixXd& ker);
+  //! Add a parameter to be fit. The original value of the parameter is stored
+  //! (see reset()). The return value is the index of the parameter.
+  int addParameter(double *addr);
+  //! Set values of the parameters from a GSL vector.
+  void setValues(const gsl_vector *v);
+  //! Write the values to a GSL vector
+  void writeValues(gsl_vector *v) const;
+  //! Return the number of parameters
+  size_t nparams() const;
+  //! Return the number of free parameters
+  size_t nfree() const;
+  //! Set the constraint matrix
+  void setConstraint(const Eigen::SparseMatrix<double> &C);
+  //! Remove the constraints
+  void resetConstraints();
+  //! Kernel of the constraints: this is the transformation from constrained
+  //! parameters to original parameters.
+  const Eigen::MatrixXd &kernel() const;
+  //! Set the kernel of the constraints.
+  void setKernel(const Eigen::MatrixXd &ker);
 
-    //! Reset parameter values to their original state.
-    void reset();
+  //! Reset parameter values to their original state.
+  void reset();
 
 private:
-    //! Vector of addresses to fit parameters. Pointers are _not_ owned.
-    std::vector<double*> _params;
-    std::vector<double> _originalValues;
-    //! Linear transformation from kernel to parameters. The columns of K form a basis
-    //! for the kernel of _C.
-    Eigen::MatrixXd _K;
+  //! Vector of addresses to fit parameters. Pointers are _not_ owned.
+  std::vector<double *> _params;
+  std::vector<double> _originalValues;
+  //! Linear transformation from kernel to parameters. The columns of K form a
+  //! basis for the kernel of _C.
+  Eigen::MatrixXd _K;
 
-    //! Projection from unconstrained parameter space to constrained parameter space.
-    Eigen::MatrixXd _P;
+  //! Projection from unconstrained parameter space to constrained parameter
+  //! space.
+  Eigen::MatrixXd _P;
 
-    //! Need to update constraints
-    bool _constrained;
-
+  //! Need to update constraints
+  bool _constrained;
 };
 
 } // end namespace nsx

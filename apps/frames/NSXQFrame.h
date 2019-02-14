@@ -4,10 +4,9 @@
 
 class QWidget;
 
-class NSXQFrame : public QFrame
-{
-    Q_OBJECT
+class NSXQFrame : public QFrame {
+  Q_OBJECT
 
 public:
-    NSXQFrame();
+  NSXQFrame();
 };

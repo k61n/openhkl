@@ -11,17 +11,14 @@
 
 class QWidget;
 
-class LibraryItem : public TreeItem
-{
+class LibraryItem : public TreeItem {
 public:
+  explicit LibraryItem();
 
-    explicit LibraryItem();
+  void incorporateCalculatedPeaks();
 
-    void incorporateCalculatedPeaks();
-    
-    nsx::sptrShapeLibrary& library() { return _library; }
+  nsx::sptrShapeLibrary &library() { return _library; }
 
 private:
-    nsx::sptrShapeLibrary _library;
+  nsx::sptrShapeLibrary _library;
 };
-

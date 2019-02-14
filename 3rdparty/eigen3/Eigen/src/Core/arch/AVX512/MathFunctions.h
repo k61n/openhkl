@@ -14,19 +14,20 @@ namespace Eigen {
 
 namespace internal {
 
-// Disable the code for older versions of gcc that don't support many of the required avx512 instrinsics.
+// Disable the code for older versions of gcc that don't support many of the
+// required avx512 instrinsics.
 #if EIGEN_GNUC_AT_LEAST(5, 3)
 
-#define _EIGEN_DECLARE_CONST_Packet16f(NAME, X) \
+#define _EIGEN_DECLARE_CONST_Packet16f(NAME, X)                                \
   const Packet16f p16f_##NAME = pset1<Packet16f>(X)
 
-#define _EIGEN_DECLARE_CONST_Packet16f_FROM_INT(NAME, X) \
+#define _EIGEN_DECLARE_CONST_Packet16f_FROM_INT(NAME, X)                       \
   const Packet16f p16f_##NAME = (__m512)pset1<Packet16i>(X)
 
-#define _EIGEN_DECLARE_CONST_Packet8d(NAME, X) \
+#define _EIGEN_DECLARE_CONST_Packet8d(NAME, X)                                 \
   const Packet8d p8d_##NAME = pset1<Packet8d>(X)
 
-#define _EIGEN_DECLARE_CONST_Packet8d_FROM_INT64(NAME, X) \
+#define _EIGEN_DECLARE_CONST_Packet8d_FROM_INT64(NAME, X)                      \
   const Packet8d p8d_##NAME = _mm512_castsi512_pd(_mm512_set1_epi64(X))
 
 // Natural logarithm
@@ -36,7 +37,7 @@ namespace internal {
 #if defined(EIGEN_VECTORIZE_AVX512DQ)
 template <>
 EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED Packet16f
-plog<Packet16f>(const Packet16f& _x) {
+plog<Packet16f>(const Packet16f &_x) {
   Packet16f x = _x;
   _EIGEN_DECLARE_CONST_Packet16f(1, 1.0f);
   _EIGEN_DECLARE_CONST_Packet16f(half, 0.5f);
@@ -129,7 +130,7 @@ plog<Packet16f>(const Packet16f& _x) {
 // "exp(x) = 2^m*exp(r)" where exp(r) is in the range [-1,1).
 template <>
 EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED Packet16f
-pexp<Packet16f>(const Packet16f& _x) {
+pexp<Packet16f>(const Packet16f &_x) {
   _EIGEN_DECLARE_CONST_Packet16f(1, 1.0f);
   _EIGEN_DECLARE_CONST_Packet16f(half, 0.5f);
   _EIGEN_DECLARE_CONST_Packet16f(127, 127.0f);
@@ -256,7 +257,7 @@ pexp<Packet8d>(const Packet8d& _x) {
 #if EIGEN_FAST_MATH
 template <>
 EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED Packet16f
-psqrt<Packet16f>(const Packet16f& _x) {
+psqrt<Packet16f>(const Packet16f &_x) {
   _EIGEN_DECLARE_CONST_Packet16f(one_point_five, 1.5f);
   _EIGEN_DECLARE_CONST_Packet16f(minus_half, -0.5f);
   _EIGEN_DECLARE_CONST_Packet16f_FROM_INT(flt_min, 0x00800000);
@@ -279,7 +280,7 @@ psqrt<Packet16f>(const Packet16f& _x) {
 
 template <>
 EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED Packet8d
-psqrt<Packet8d>(const Packet8d& _x) {
+psqrt<Packet8d>(const Packet8d &_x) {
   _EIGEN_DECLARE_CONST_Packet8d(one_point_five, 1.5);
   _EIGEN_DECLARE_CONST_Packet8d(minus_half, -0.5);
   _EIGEN_DECLARE_CONST_Packet8d_FROM_INT64(dbl_min, 0x0010000000000000LL);
@@ -303,12 +304,10 @@ psqrt<Packet8d>(const Packet8d& _x) {
   return pmul(_x, x);
 }
 #else
-template <>
-EIGEN_STRONG_INLINE Packet16f psqrt<Packet16f>(const Packet16f& x) {
+template <> EIGEN_STRONG_INLINE Packet16f psqrt<Packet16f>(const Packet16f &x) {
   return _mm512_sqrt_ps(x);
 }
-template <>
-EIGEN_STRONG_INLINE Packet8d psqrt<Packet8d>(const Packet8d& x) {
+template <> EIGEN_STRONG_INLINE Packet8d psqrt<Packet8d>(const Packet8d &x) {
   return _mm512_sqrt_pd(x);
 }
 #endif
@@ -321,7 +320,7 @@ EIGEN_STRONG_INLINE Packet8d psqrt<Packet8d>(const Packet8d& x) {
 #ifdef EIGEN_FAST_MATH
 template <>
 EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED Packet16f
-prsqrt<Packet16f>(const Packet16f& _x) {
+prsqrt<Packet16f>(const Packet16f &_x) {
   _EIGEN_DECLARE_CONST_Packet16f_FROM_INT(inf, 0x7f800000);
   _EIGEN_DECLARE_CONST_Packet16f_FROM_INT(nan, 0x7fc00000);
   _EIGEN_DECLARE_CONST_Packet16f(one_point_five, 1.5f);
@@ -351,7 +350,7 @@ prsqrt<Packet16f>(const Packet16f& _x) {
 
 template <>
 EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED Packet8d
-prsqrt<Packet8d>(const Packet8d& _x) {
+prsqrt<Packet8d>(const Packet8d &_x) {
   _EIGEN_DECLARE_CONST_Packet8d_FROM_INT64(inf, 0x7ff0000000000000LL);
   _EIGEN_DECLARE_CONST_Packet8d_FROM_INT64(nan, 0x7ff1000000000000LL);
   _EIGEN_DECLARE_CONST_Packet8d(one_point_five, 1.5);
@@ -383,14 +382,14 @@ prsqrt<Packet8d>(const Packet8d& _x) {
 }
 #else
 template <>
-EIGEN_STRONG_INLINE Packet16f prsqrt<Packet16f>(const Packet16f& x) {
+EIGEN_STRONG_INLINE Packet16f prsqrt<Packet16f>(const Packet16f &x) {
   return _mm512_rsqrt28_ps(x);
 }
 #endif
 #endif
 
-}  // end namespace internal
+} // end namespace internal
 
-}  // end namespace Eigen
+} // end namespace Eigen
 
-#endif  // THIRD_PARTY_EIGEN3_EIGEN_SRC_CORE_ARCH_AVX512_MATHFUNCTIONS_H_
+#endif // THIRD_PARTY_EIGEN3_EIGEN_SRC_CORE_ARCH_AVX512_MATHFUNCTIONS_H_

@@ -25,28 +25,22 @@
 
     You should have received a copy of the GNU Lesser General Public
     License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ USA
  *
  */
-
 
 #include "BoxMask.h"
 #include "Ellipsoid.h"
 
 namespace nsx {
 
-BoxMask::BoxMask(const AABB& aabb) : IMask(), _aabb(aabb)
-{
+BoxMask::BoxMask(const AABB &aabb) : IMask(), _aabb(aabb) {}
+
+bool BoxMask::collide(const Ellipsoid &ellipsoid) const {
+  return _aabb.collide(ellipsoid);
 }
 
-bool BoxMask::collide(const Ellipsoid& ellipsoid) const
-{
-    return _aabb.collide(ellipsoid);
-}
-
-IMask* BoxMask::clone() const
-{
-    return new BoxMask(*this);
-}
+IMask *BoxMask::clone() const { return new BoxMask(*this); }
 
 } // end namespace nsx

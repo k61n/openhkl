@@ -14,7 +14,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
  */
 
 {
@@ -22,15 +23,15 @@
   INDEX i, j;
   const int Trans = (TransA != CblasConjTrans) ? TransA : CblasTrans;
 
-  CHECK_ARGS10(TBSV,order,Uplo,TransA,Diag,N,K,A,lda,X,incX);
+  CHECK_ARGS10(TBSV, order, Uplo, TransA, Diag, N, K, A, lda, X, incX);
 
   if (N == 0)
     return;
 
   /* form  x := inv( A )*x */
 
-  if ((order == CblasRowMajor && Trans == CblasNoTrans && Uplo == CblasUpper)
-      || (order == CblasColMajor && Trans == CblasTrans && Uplo == CblasLower)) {
+  if ((order == CblasRowMajor && Trans == CblasNoTrans && Uplo == CblasUpper) ||
+      (order == CblasColMajor && Trans == CblasTrans && Uplo == CblasLower)) {
     /* backsubstitution */
     INDEX ix = OFFSET(N, incX) + incX * (N - 1);
     for (i = N; i > 0 && i--;) {
@@ -50,8 +51,10 @@
       }
       ix -= incX;
     }
-  } else if ((order == CblasRowMajor && Trans == CblasNoTrans && Uplo == CblasLower)
-             || (order == CblasColMajor && Trans == CblasTrans && Uplo == CblasUpper)) {
+  } else if ((order == CblasRowMajor && Trans == CblasNoTrans &&
+              Uplo == CblasLower) ||
+             (order == CblasColMajor && Trans == CblasTrans &&
+              Uplo == CblasUpper)) {
 
     /* forward substitution */
     INDEX ix = OFFSET(N, incX);
@@ -73,8 +76,10 @@
       }
       ix += incX;
     }
-  } else if ((order == CblasRowMajor && Trans == CblasTrans && Uplo == CblasUpper)
-             || (order == CblasColMajor && Trans == CblasNoTrans && Uplo == CblasLower)) {
+  } else if ((order == CblasRowMajor && Trans == CblasTrans &&
+              Uplo == CblasUpper) ||
+             (order == CblasColMajor && Trans == CblasNoTrans &&
+              Uplo == CblasLower)) {
 
     /* form  x := inv( A' )*x */
 
@@ -97,8 +102,10 @@
       }
       ix += incX;
     }
-  } else if ((order == CblasRowMajor && Trans == CblasTrans && Uplo == CblasLower)
-             || (order == CblasColMajor && Trans == CblasNoTrans && Uplo == CblasUpper)) {
+  } else if ((order == CblasRowMajor && Trans == CblasTrans &&
+              Uplo == CblasLower) ||
+             (order == CblasColMajor && Trans == CblasNoTrans &&
+              Uplo == CblasUpper)) {
 
     /* backsubstitution */
     INDEX ix = OFFSET(N, incX) + (N - 1) * incX;

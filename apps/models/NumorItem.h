@@ -11,20 +11,18 @@
 
 class QWidget;
 
-class NumorItem : public InspectableTreeItem
-{
+class NumorItem : public InspectableTreeItem {
 public:
+  explicit NumorItem(nsx::sptrDataSet data);
 
-    explicit NumorItem(nsx::sptrDataSet data);
+  ~NumorItem();
 
-    ~NumorItem();
+  virtual QVariant data(int role) const override;
 
-    virtual QVariant data(int role) const override;
+  QWidget *inspectItem() override;
 
-    QWidget* inspectItem() override;
-
-    void exportHDF5(const std::string& filename) const;
+  void exportHDF5(const std::string &filename) const;
 
 private:
-    nsx::sptrDataSet _data;
+  nsx::sptrDataSet _data;
 };

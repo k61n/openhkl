@@ -8,19 +8,16 @@ class SamplePropertyWidget;
 
 class SampleItem;
 
-class SamplePropertyWidget : public QWidget
-{
-    Q_OBJECT
+class SamplePropertyWidget : public QWidget {
+  Q_OBJECT
 
 public:
+  explicit SamplePropertyWidget(SampleItem *caller, QWidget *parent = 0);
 
-    explicit SamplePropertyWidget(SampleItem* caller,QWidget* parent=0);
-
-    ~SamplePropertyWidget();
+  ~SamplePropertyWidget();
 
 private:
+  Ui::SamplePropertyWidget *_ui;
 
-    Ui::SamplePropertyWidget *_ui;
-
-    SampleItem* _sampleItem;
+  SampleItem *_sampleItem;
 };
