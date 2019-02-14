@@ -23,23 +23,22 @@ find_program(TIDY_COMMAND clang-tidy)
 # note: CMAKE_EXPORT_COMPILE_COMMANDS must be ON!
 
 if(TIDY_COMMAND)
-  message(STATUS "Found tidy command: ${TIDY_COMMAND}")
+    message(STATUS "Found tidy command: ${TIDY_COMMAND}")
 else()
-  message(FATAL "Could not find tidy command")
+    message(FATAL "Could not find tidy command")
 endif()
 
 function(add_tidy_target targetname)
-  get_property(sources TARGET ${targetname} PROPERTY SOURCES)
-  
-  add_custom_target(${targetname}-tidy)
-  foreach(source ${sources})
-    add_custom_command(
-      TARGET ${targetname}-tidy
-      COMMAND ${TIDY_COMMAND} ARGS -checks=* ${source} -p=${CMAKE_BINARY_DIR}
-      VERBATIM
-      )
-  endforeach()
+    get_property(sources TARGET ${targetname} PROPERTY SOURCES)
 
-  message(STATUS "Added tidy target ${targetname}-tidy")
+    add_custom_target(${targetname}-tidy)
+    foreach(source ${sources})
+        add_custom_command(
+            TARGET ${targetname}-tidy
+            COMMAND ${TIDY_COMMAND} ARGS -checks=* ${source} -p=${CMAKE_BINARY_DIR}
+            VERBATIM
+            )
+    endforeach()
+
+    message(STATUS "Added tidy target ${targetname}-tidy")
 endfunction()
-
