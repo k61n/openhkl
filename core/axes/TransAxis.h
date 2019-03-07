@@ -53,14 +53,14 @@ public:
   //! Construct a TransAxis from a property tree node.
   TransAxis(const YAML::Node &node);
   // Destructor
-  ~TransAxis();
+  ~TransAxis() override;
   //! Virtual copy constructor
   TransAxis *clone() const;
 
   //! Assignment operator
   TransAxis &operator=(const TransAxis &other);
 
-  Eigen::Transform<double, 3, Eigen::Affine> affineMatrix(double value) const;
+  Eigen::Transform<double, 3, Eigen::Affine> affineMatrix(double value) const override;
 
   std::ostream &printSelf(std::ostream &os) const override;
 };

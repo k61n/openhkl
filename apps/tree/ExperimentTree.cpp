@@ -6,7 +6,7 @@
 #include <utility>
 #include <vector>
 
-#include <H5Exception.h>
+
 #include <hdf5.h>
 
 #include <QAbstractItemView>

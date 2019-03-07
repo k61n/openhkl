@@ -141,11 +141,11 @@ private:
 
   std::string _filename;
 
-  std::size_t _nFrames;
+  unsigned int _nFrames;
 
-  std::size_t _nrows;
+  unsigned int _nrows;
 
-  std::size_t _ncols;
+  unsigned int _ncols;
 
   std::vector<Eigen::MatrixXi> _data;
 

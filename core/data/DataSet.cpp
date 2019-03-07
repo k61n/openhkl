@@ -41,7 +41,6 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader)
 
   _nrows = diffractometer->detector()->nRows();
   _ncols = diffractometer->detector()->nCols();
-
   _nFrames = _reader->metadata().key<int>("npdone");
 
   double wav = _reader->metadata().key<double>("wavelength");

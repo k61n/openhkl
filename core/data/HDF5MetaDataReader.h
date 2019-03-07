@@ -18,7 +18,7 @@ public:
 
   HDF5MetaDataReader(const std::string &filename, Diffractometer *instrument);
 
-  virtual ~HDF5MetaDataReader() = default;
+  ~HDF5MetaDataReader() override = default;
 
   HDF5MetaDataReader &operator=(const HDF5MetaDataReader &other) = delete;
 
