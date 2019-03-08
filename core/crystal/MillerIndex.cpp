@@ -15,7 +15,18 @@ MillerIndex::MillerIndex(int h, int k, int l)
 MillerIndex::MillerIndex(const Eigen::RowVector3i &hkl)
     : _hkl(hkl), _error(Eigen::RowVector3d::Zero()) {}
 
-MillerIndex::MillerIndex(const ReciprocalVector &q, const UnitCell &unit_cell) {
+// MillerIndex::MillerIndex(const ReciprocalVector &q, const UnitCell &unit_cell) {
+//   const Eigen::RowVector3d hkld = q.rowVector() * unit_cell.basis();
+
+//   auto h = std::lround(hkld[0]);
+//   auto k = std::lround(hkld[1]);
+//   auto l = std::lround(hkld[2]);
+
+//   _hkl = Eigen::RowVector3i(h, k, l);
+//   _error = hkld - _hkl.cast<double>();
+// }
+
+MillerIndex::MillerIndex(const ReciprocalVector q, const UnitCell unit_cell) {
   const Eigen::RowVector3d hkld = q.rowVector() * unit_cell.basis();
 
   auto h = std::lround(hkld[0]);
@@ -79,5 +90,12 @@ bool MillerIndex::indexed(double tolerance) const {
          (std::fabs(_error[1]) < tolerance) &&
          (std::fabs(_error[2]) < tolerance);
 }
+
+
+int MillerIndex::h() const {return _hkl[0];}
+
+int MillerIndex::k() const {return _hkl[1];}
+
+int MillerIndex::l() const {return _hkl[2];}
 
 } // end namespace nsx

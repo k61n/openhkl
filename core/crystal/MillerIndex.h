@@ -25,7 +25,10 @@ public:
   MillerIndex(int h, int k, int l);
 
   //! Construct from a given q vector and unit cell
-  MillerIndex(const ReciprocalVector &q, const UnitCell &unit_cell);
+  // MillerIndex(const ReciprocalVector &q, const UnitCell &unit_cell);
+
+  //! (Python) Construct from a given q vector and unit cell
+  MillerIndex(const ReciprocalVector q, const UnitCell unit_cell);
 
   //! Construct a MillerIndex from an Eigen row vector of integer
   explicit MillerIndex(const Eigen::RowVector3i &hkl);
@@ -58,6 +61,13 @@ public:
   //! Return true if it is indexed, i.e. hkl are integral to within the
   //! tolerance
   bool indexed(double tolerance) const;
+
+  //! direct h output for python
+  int h() const;
+  //! direct k output for python
+  int k() const;
+  //! direct l output for python
+  int l() const;
 
 private:
   Eigen::RowVector3i _hkl;
