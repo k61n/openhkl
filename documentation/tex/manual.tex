@@ -361,26 +361,74 @@ and it is typically better to find the integrated intensity by fitting to a prof
 
 3D profile fitting is used by XDS \cite{xds-2010} and is described in some detail in \cite{kabsch-1988, kabsch-2010}.
 
-As in the previous subsection, using a covariance matrix and a parameters $r_1 < r_2 < r_3$ we produce sets $\calP$ and $\calB$ of peak and background points. Assume that for each $i \in \calP$, we have a predicted profile height $P_i$ satisfying $\sum_i P_i = 1$.
+As in the previous subsection, using a covariance matrix and a parameters $r_1 < r_2 < r_3$ we produce sets $\calP$ and $\calB$ of peak and background points.
+Assume that we know the resolution function $R_i$,
+normalized as
+\begin{equation}\label{Eresnor}
+  \sum_i R_i = 1.
+\end{equation}
 
 We model the observed intensities $M_i$ as
-\begin{equation} M_i \simeq B + I P_i, \end{equation}
+\begin{equation} M_i \simeq B + I R_i, \end{equation}
 where $B, I$ are the mean background and integrated intensity, yet to be fit. To find optimal values of $B,I$ we minimize the chi-squared loss
-\begin{equation} \chi^2 = \sum_{i \in \calP} \frac{(B+IP_i - M_i)^2}{\sigma^2_i}. \end{equation}
+\begin{equation} \chi^2 = \sum_{i \in \calP} \frac{(B+IR_i - M_i)^2}{\sigma^2_i}. \end{equation}
 For a fixed set of variances, minimizing $\chi^2$ reduces to the 2x2 linear system below:
 \begin{equation} \begin{bmatrix}
-  \sum 1/\sigma^2_i & \sum P_i / \sigma^2_i \\
-  \sum P_i/\sigma_i^2 & \sum P_i^2 / \sigma^2_i
+  \sum 1/\sigma^2_i & \sum R_i / \sigma^2_i \\
+  \sum R_i/\sigma_i^2 & \sum R_i^2 / \sigma^2_i
 \end{bmatrix}
 \begin{bmatrix} B \\ I \end{bmatrix}
- = \begin{bmatrix} \sum M_i/\sigma^2_i \\ \sum M_i P_i / \sigma^2_i \end{bmatrix} \end{equation}
+ = \begin{bmatrix} \sum M_i/\sigma^2_i \\ \sum M_i R_i / \sigma^2_i \end{bmatrix} \end{equation}
  Write this equation as $Ax = b$. It is easy to compute that the covariance matrix of $b$ is exactly the coefficient matrix
  $A$, and therefore the variance-covariance matrix of the solution vector $x = (B, I)$ is given by $A^{-1}$.
 
 The solution given above depends on the pixel uncertainties $\sigma_i^2$. As suggested by Kabsch 2010, we solve this iteratively. To begin, we set all $\sigma^2_i$ equal to some fixed value, say 1. This allows us to solve for $B$ and $I$. We then put the solved values into the error model
-\begin{equation} \sigma_i^2 = B + I P_i \end{equation}
+\begin{equation} \sigma_i^2 = B + I R_i \end{equation}
 and iterate until either $I$ becomes negative, or $(B, I)$ do not change within some given convergence criterion.
 
+\textbf{Bayesian approach} [JWu apr19]:
+Determine expectation values or most probable values of $B,I$ from the conditional probability
+\begin{equation}\label{Ebayes}
+  p(B,I|M) \propto p(M|B,I) p(B) p(I).
+\end{equation}
+Count statistics of the single pixels are independent of each other, hence
+\begin{equation}\label{Ec2p}
+  p(M|B,I) = \prod_i\, c(M_i|B,I;R_i)
+\end{equation}
+with the single-pixel count probability distribution given by Poisson statistics,
+\begin{equation}
+  c(m|B,I;r) = \frac{\lambda^m{\mathrm e}^{-\lambda}}{m!}
+\end{equation}
+with $\lambda=B+Ir$.
+
+Rewrite (\ref{Ebayes}) as
+\begin{widetext}
+\begin{equation}
+  \ln p(B,I|M) = \sum_i\Big\{M_i\ln(B+IR_i)-(B+IR_i)\Big\} +\ln p(B) + \ln p(I) + \mathrm{const}.
+\end{equation}
+Let $N$ pixels contribute to the sum.
+Use the normalization~(\ref{Eresnor}).
+Then
+\begin{equation}
+  \ln p(B,I|M) = \sum_i\Big\{M_i\ln(B+IR_i)\Big\}-(NB+I) +\ln p(B) + \ln p(I) + \mathrm{const}.
+\end{equation}
+\end{widetext}
+We now must specify the a priori distributions of $B$ and $I$.
+This cannot be done without some arbitrariness.
+For instance, assume equal probability per decade within given limits.
+Then
+\begin{equation}
+  p(I) = \frac{1}{\ln(I_{+}/I_{-})} \frac{1}{I},
+\end{equation}
+and similarly for $B$, lest we breed a better idea.
+
+Now, compute the most probable parameter values from
+\begin{equation}
+  \begin{array}{l}
+  \partial \ln p(B,I|M) / \partial B = 0, \\[1.2ex]
+  \partial \ln p(B,I|M) / \partial I = 0.
+  \end{array}
+\end{equation}
 
 \subsection{$I/\sigma$ Integration}
 %--------------------------------------------------------------------------------------------------
