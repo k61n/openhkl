@@ -1,5 +1,5 @@
 %--------------------------------------------------------------------------------------------------
-\documentclass{report}
+\documentclass[twocolumn,preprintnumbers,amsmath,amssymb]{revtex4}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{url}
@@ -42,17 +42,30 @@
 % \usepackage{lipsum}
 
 %--------------------------------------------------------------------------------------------------
-\title{NSXTool Internal Documentation}
-\author{Jonathan Fisher}
 
 \begin{document}
+
+\title{NSXTool Internal Documentation}
+\author{Laurent Chapon}
+\author{Jonathan Fisher}
+\author{Eric Pellegrini}
+\author{Alexander Schober}
+\author{Joachim Wuttke}
+% \email{j.wuttke@fz-juelich.de}
+%\affiliation
+%{Forschungszentrum J\"ulich GmbH,\\
+%J\"ulich Centre for Neutron Science at MLZ,\\
+%Lichtenbergstra\ss e 1,
+%85748 Garching, Germany}
+
+\date{draft, \today}
+
+
 \maketitle
 
-\tableofcontents
-
-\chapter{Overview}
+\section{Overview}
 %--------------------------------------------------------------------------------------------------
-We mention a few predecessors, for the sake of listing references: RETREAT \cite{retreat-manual}, 
+We mention a few predecessors, for the sake of listing references: RETREAT \cite{retreat-manual},
 XDS \cite{xds-2010}, HKL2000 \cite{otwinowski-1997, denzo-scalepack, hkl2000-manual}.
 
 The NSXTool project was initially started as a replacement for RETREAT but many features were added
@@ -69,11 +82,11 @@ The basic workflow of NSXTool is as follows
   \item Computed merged statistics \ref{merged-statistics}
 \end{enumerate}
 
-\chapter{Lattice determination}
+\section{Lattice determination}
 %--------------------------------------------------------------------------------------------------
 We use \cite{crystal-lattices} as one of our primary references.
 
-\section{Peak search} \label{peak-search}
+\subsection{Peak search} \label{peak-search}
 %--------------------------------------------------------------------------------------------------
 The initial peak search is essentially a pure image processing step, with no crystallographic
 input. The technique is roughly as follows
@@ -100,7 +113,7 @@ The collision detection problem for ellipsoids is sped up by storing them in an 
 ellipsoid overlap detection is implemented using the criterion described in \cite{ellipsoid-collision}.
 
 
-\section{Autoindexing} \label{autoindex}
+\subsection{Autoindexing} \label{autoindex}
 %--------------------------------------------------------------------------------------------------
 We use an autoindexing method based on 1d Fourier-transform, see \cite{fft1, fft2}.
 
@@ -111,7 +124,7 @@ infinite line specified by the direction. We then take a finite number of bins a
 (the way the binning is performed can be controlled by user-defined parameters), and then take
 FFT of the resulting histogram. The histogram will be strongly periodic when the direction corresponds
 to a lattice direction, so we identify lattice vectors by taking the strongest Fourier modes of
-the histograms. 
+the histograms.
 
 The FFT method produces a finite set of potential lattice vectors. To find a basis, we enumerate over
 triples of these basis vectors and rank them according to
@@ -127,17 +140,17 @@ We remark that when indexing fails, try one of the following:
   \item Reduce the number of input peaks, e.g. by taking just the very strong peaks
   \item Change the parameters of the FFT method so that the bin sizes change
 \end{itemize}
-In all cases that we have encountered, we were able to correctly index the peaks, but sometimes 
+In all cases that we have encountered, we were able to correctly index the peaks, but sometimes
 trial and error is required to determine the best FFT parameters.
 
 
-\section{Computing the reduced unit cell} \label{unit-cell}
+\subsection{Computing the reduced unit cell} \label{unit-cell}
 %--------------------------------------------------------------------------------------------------
 Once we have a lattice basis, we compute the Niggli cell following \cite{gruber-1973, krivy-gruber-1976}
 and then transform the Niggli cell to a reduced standard form following \cite{unit-cell-2003}. The cell
 is given an index from 1 to 44 corresponding to the 44 cases in the International Tables \cite{gruber-table}.
 
-\section{Computation of the first Brillouin zone}
+\subsection{Computation of the first Brillouin zone}
 %--------------------------------------------------------------------------------------------------
 Let $B$ be matrix whose rows form a basis for the reciprocal space lattice. Thus the reciprocal lattice consists
 of the set
@@ -151,19 +164,19 @@ which contains the origin, i.e.
 \[ H_\bq = \{ \bq' \ | \ \bq \cdot \bq' \leq \frac{1}{2} \bq^2 \}. \]
 
 
-For convenience, let us define a \emph{zone} to be an convex intersection of the half-spaces $H_\bq$.
-The \emph{Brillouin zone} is the smallest zone, which equivalently is the intersection
+For convenience, let us define a \emph{zone} to be an convex intersubsection of the half-spaces $H_\bq$.
+The \emph{Brillouin zone} is the smallest zone, which equivalently is the intersubsection
 \[ Z_B :=\bigcap_{\bq \in \Lambda^\ast} H_\bq. \]
 
-The goal of this section is to describe an algorithm to compute $Z_B$, without any assumptions on $B$.
+The goal of this subsection is to describe an algorithm to compute $Z_B$, without any assumptions on $B$.
 
-\subsection{Step 1: Compute an initial zone.}
+\subsubsection{Step 1: Compute an initial zone.}
 %--------------------------------------------------------------------------------------------------
 Let $\bb_1, \bb_2, \bb_3$ denote the rows of $B$, which form a basis of the dual lattice.
 We let the initial zone $Z_0$ be the parallelpiped centered at the origin bounded by the planes
 $H_{\pm \bq_i}$.
 
-\subsection{Step 2: Compute a bounding sphere.}
+\subsubsection{Step 2: Compute a bounding sphere.}
 %--------------------------------------------------------------------------------------------------
 The initial zone $Z_0$ contains the Brillouin zone. To find a bounding radius, compute the 6 vertices $\bq_i$ of $Z_0$,
 and take $R = \max_i |\bq_i|$. Since the Brillouin zone is contained in $Z_0$, and $Z_0$ is contained in the ball of radius $R$,
@@ -176,7 +189,7 @@ where $\lambda$ is the smallest eigenvalue of the symmetric matrix $B B^t$. Ther
 \[ |(h,k,\ell)| \leq \frac{R}{\sqrt\lambda}, \]
 so we obtain an effective bound on the (finitely-many) values of $h,k,\ell$ which must be checked.
 
-\subsection{Step 3: Find the finitely-many bounding planes of $Z_B$.}
+\subsubsection{Step 3: Find the finitely-many bounding planes of $Z_B$.}
 %--------------------------------------------------------------------------------------------------
 Now we iterate.
 \begin{enumerate}
@@ -195,7 +208,7 @@ Now we iterate.
 \end{enumerate}
 
 
-\section{Space Groups} \label{spacegroup}
+\subsection{Space Groups} \label{spacegroup}
 %--------------------------------------------------------------------------------------------------
 We fix a real-space lattice $\Lambda$ which is spanned by real-space vectors $\ba_1, \ba_2, \ba_3$, i.e.
 \[ \Lambda = \{ n_1 \ba_1 + n_2 \ba_2 + n_3 \ba_3 \ | \ n_1, n_2, n_3 \in \mathbf{Z} \} \]
@@ -228,7 +241,7 @@ which shows that $f_{A^t q} = f_{q} e^{2 \pi i q \cdot b}$ whenever $(A,b) \in G
 For space group determination see e.g. \cite{evans-2011}, \cite{kabsch-2010}.
 
 
-\chapter{Shape Prediction} \label{peak-prediction}
+\section{Shape Prediction} \label{peak-prediction}
 %--------------------------------------------------------------------------------------------------
 We make a simplifying assumption, that for a \emph{perfect plane wave} $k_i$, the observed scattering function has the form
 \[ \sum_{hkl} I_{hkl} f(\bq - \bq_{hkl}), \]
@@ -267,7 +280,7 @@ Now make a simplifying assumption, $\Sigma_M = \sigma_M^2 Id$ and $\Sigma_D = \s
 
 Setting $\nabla L = 0$ we obtain the 2x2 system of linear equations...
 
-
+\begin{widetext}
 
 \[ \begin{bmatrix}
   3N & \sum_i \tr( (R_iA_i)(R_i A_i)^t) \\
@@ -275,6 +288,7 @@ Setting $\nabla L = 0$ we obtain the 2x2 system of linear equations...
 \end{bmatrix}
 \begin{bmatrix} \sigma_M^2 \\ \sigma_D^2 \end{bmatrix}
 =  \begin{bmatrix} \sum_i \tr(\Sigma_i) \\ \sum_i \tr((R_i A_i)^t \Sigma_i (R_i A_i)) \end{bmatrix}  \]
+\end{widetext}
 which is easily solved. One can also solve for the the full covariance matrices $\Sigma_M, \Sigma_D$ via gradient descent, since the gradient is easily computed analytically.. \textbf{Note: tested this out in Python, and it seems to work pretty well. So the assumptions may be justified!}
 
 Now, if we work in lab-based q-space, under the simplifying assumptions above, we find a covariance matrix
@@ -287,7 +301,7 @@ Now let
   \be_3 &= (k_f + k_i) / |k_f + k_i|
 \end{align*}
 
-\section{Kabsch's Coordinate System}
+\subsection{Kabsch's Coordinate System}
 %--------------------------------------------------------------------------------------------------
 
 In \cite{kabsch-1988} Kabsch introduced a per-peak coordinate system intented to undo effects from detector geometry.
@@ -315,9 +329,9 @@ To better understand $\be_3$, consider the following: we want to find the axis $
 Now $(\ba \times \bq) \cdots k_f) = \ba \cdot (\ba \times k_f) = \ba \cdot (k_f \times k_i)$, so by the method of Langrange multipliers we must solve $k_f \times k_i = \lambda \ba$, which tells us immediately that the axis is in the direction of $\be_1$.
 
 
-\chapter{Integration} \label{integration}
+\section{Integration} \label{integration}
 %--------------------------------------------------------------------------------------------------
-\section{Pixel sum method}
+\subsection{Pixel sum method}
 %--------------------------------------------------------------------------------------------------
 Consider a peak centered at $q_0$ in (sampled-fixed) reciprocal space. The background-subtracted intensity distribution in a neighborhood of $q_0$ has a covariance matrix $\Sigma$, which is either computed (for strong peaks) or predicted (for weak peaks). The integration routine takes three parameters $r_1, r_2, r_2$ and produces
 two sets $\calB$ and $\calP$ of background and peak events, respectively, as follows:
@@ -340,14 +354,14 @@ The integrated peak intensity is then estimated as
 
 It should be noted that for weak peaks, the error is dominated by the error in the background estimate, and therefore we will obtain unsatisfactorily low values of $I/\sigma_I$.
 
-\section{Fitted Intensity}
+\subsection{Fitted Intensity}
 %--------------------------------------------------------------------------------------------------
 As shown in \cite{diamond-1969}, the integration error for weak peaks is dominated by background subtraction
 and it is typically better to find the integrated intensity by fitting to a profile learned from strong peaks.
 
 3D profile fitting is used by XDS \cite{xds-2010} and is described in some detail in \cite{kabsch-1988, kabsch-2010}.
 
-As in the previous section, using a covariance matrix and a parameters $r_1 < r_2 < r_3$ we produce sets $\calP$ and $\calB$ of peak and background points. Assume that for each $i \in \calP$, we have a predicted profile height $P_i$ satisfying $\sum_i P_i = 1$.
+As in the previous subsection, using a covariance matrix and a parameters $r_1 < r_2 < r_3$ we produce sets $\calP$ and $\calB$ of peak and background points. Assume that for each $i \in \calP$, we have a predicted profile height $P_i$ satisfying $\sum_i P_i = 1$.
 
 We model the observed intensities $M_i$ as
 \[ M_i \approx B + I P_i, \]
@@ -363,11 +377,11 @@ For a fixed set of variances, minimizing $\chi^2$ reduces to the 2x2 linear syst
  Write this equation as $Ax = b$. It is easy to compute that the covariance matrix of $b$ is exactly the coefficient matrix
  $A$, and therefore the variance-covariance matrix of the solution vector $x = (B, I)$ is given by $A^{-1}$.
 
- \section{Error Estimate} The solution given above depends on the pixel uncertainties $\sigma_i^2$. As suggested by Kabsch 2010, we solve this iteratively. To begin, we set all $\sigma^2_i$ equal to some fixed value, say 1. This allows us to solve for $B$ and $I$. We then put the solved values into the error model
+ \subsection{Error Estimate} The solution given above depends on the pixel uncertainties $\sigma_i^2$. As suggested by Kabsch 2010, we solve this iteratively. To begin, we set all $\sigma^2_i$ equal to some fixed value, say 1. This allows us to solve for $B$ and $I$. We then put the solved values into the error model
 \[ \sigma_i^2 = B + I P_i \]
 and iterate until either $I$ becomes negative, or $(B, I)$ do not change within some given convergence criterion.
 
-\section{$I/\sigma$ Integration}
+\subsection{$I/\sigma$ Integration}
 %--------------------------------------------------------------------------------------------------
 This is the integration technique used by RETREAT \cite{retreat-manual}. The method is described in detail in \cite{wilkinson-1988}.
 In the article \cite{prince-1997} there is a detailed comparison between this method and profile fitting.
@@ -448,9 +462,9 @@ The fitted intensity is then defined to be
 \end{align}
 
 
-\section{Combining estimates}
+\subsection{Combining estimates}
 %--------------------------------------------------------------------------------------------------
-In the previous sections, we have described two methods of integration, producing estimates $\Ifit$ and $\Isum$, and also
+In the previous subsections, we have described two methods of integration, producing estimates $\Ifit$ and $\Isum$, and also
 how to estimate their errors. Provided our error estimate is reasonable, we can combine these estimates into an even stronger
 estimate $\Iwt$, which is a weighted linear combination of $\Ifit$ and $\Isum$:
 \[ \Iwt = a\Ifit + b\Isum, \]
@@ -459,12 +473,12 @@ subject to $a + b = 1$. We wish to minimize $\sigma^2_\Iwt$, which is equal to
 This is easily minimized using the method of Lagrange multipliers. The solution is $(a,b) = x/(x_1+x_2)$,
 where $x = \Sigma^{-1} \begin{bmatrix} 1 \\ 1 \end{bmatrix}$ and $\Sigma$ is the variance-covariance matrix of $\Ifit$ and $\Isum$.
 
-Now, from the previous sections, both $\Ifit$ and $\Isum$ have an explicit, linear dependence on the measured intensities $M_i$.
+Now, from the previous subsections, both $\Ifit$ and $\Isum$ have an explicit, linear dependence on the measured intensities $M_i$.
 Assuming that $M_i$ and $M_j$ are independent for $i \neq j$, and that $\calP$ and $\calB$
 are disjoint sets, we can now easily and explicitly compute the covariance $\cov(\Ifit, \Isum)$.
 
 
-\section{Peak Shape Model}
+\subsection{Peak Shape Model}
 %---------------------------------------------------------------------------------------------------
 Motivated by the Monte-Carlo technique of EVAL-14 and EVAL-15, we consider a probabilistic
 approach to estimate the covariance matrix of the intensity distribution for a given peak.
@@ -494,7 +508,7 @@ Remarks
   \item This model assumes that there is no covariance between beam divergence, scattering point, and
     mosaicity. This seems reasonable for typical experiments but could be violated by some extreme cases.
   \item $P_q, J_k, J_p$ are all determined by experiment setup and geometry; can be computed analytically.
-  \item For isotropic mosaicity, can take $\Sigma_M = \sigma_M^2 1_{3\times 3}$ 
+  \item For isotropic mosaicity, can take $\Sigma_M = \sigma_M^2 1_{3\times 3}$
   \item Similarly, can set off-diagonal components of $\Sigma_D$ to zero if it is known there is no correlation.
   \item $\Sigma_S$ represents the shape \emph{in the beam for a fixed orientation of the sample}, and therefore
     will typically need to be updated every few frames (unless e.g. the crystal is small and approximately spherical).
@@ -509,14 +523,14 @@ Remarks
 
 
 
-\chapter{Measures of Data Quality} \label{merged-statistics}
+\section{Measures of Data Quality} \label{merged-statistics}
 %--------------------------------------------------------------------------------------------------
-\section{$R$ factors}
+\subsection{$R$ factors}
 %--------------------------------------------------------------------------------------------------
 
 For the definition of $R_{merge}$ see \cite{karplus-diederichs-2012}. For $R$ factors in general there is the paper \cite{evans-2011}.
 
-\section{The correlation coefficients $\CChalf$ and $\CCstar$}
+\subsection{The correlation coefficients $\CChalf$ and $\CCstar$}
 The statistic $\CChalf$ as introduced in ~\cite{karplus-diederichs-2012}.
 The statistic $\CChalf$ is defined as follows. Randomly divide the unmerged dataset into two subsets. For each symmetry-equivalence class $[hkl]$,
 we have a merged intensity $x_{hkl}$ from the first set and $y_{hkl}$ from the second set. $\CChalf$ is defined as the Pearson correlation coefficient
@@ -543,17 +557,17 @@ Then
   &= \frac{\cov(x, y)}{\sigma_x \sigma_y} \\
   &= \frac{\cov(J + \xi, J + \eta)}{\sigma_x \sigma_y} \\
   &= \frac{\sigma^2_J + \cov(\xi, J) + \cov(\eta, J) + \cov(\xi, \eta)}{\sigma_x \sigma_y} \\
-  &= \frac{\sigma^2_J}{\sigma^2_J + \sigma^2_\xi} 
+  &= \frac{\sigma^2_J}{\sigma^2_J + \sigma^2_\xi}
 \end{align*}
 Thus we have
 \begin{equation}
   \label{cc-half-simplified}
   \CChalf = \sigma^2_J / \left(\sigma^2_J + \sigma^2_\xi \right)
 \end{equation}
-This expression will be useful in the following section.
+This expression will be useful in the following subsection.
 
-\section{$\CCtrue$}
-Let $x, y, \xi, \eta, J$ be as in the previous section. Define
+\subsection{$\CCtrue$}
+Let $x, y, \xi, \eta, J$ be as in the previous subsection. Define
 \[ I = \frac{x+y}{2} \]
 denote the merged intensities of the entire dataset.
 Then $\CCtrue$ is defined to be the Pearson correlation coefficient of $I$ and the true intensities $J$:
@@ -563,7 +577,7 @@ Then $\CCtrue$ is defined to be the Pearson correlation coefficient of $I$ and t
 \end{equation}
 Since in most cases we do not know the true intensities, this definition is not directly useful.
 
-Making the same assumptions about measurement error as in the previous section, we have
+Making the same assumptions about measurement error as in the previous subsection, we have
 \begin{align*}
   \sigma^2_z &= \frac{1}{4} \sigma^2_x + \frac{1}{4}\sigma^2_y  + \frac{1}{2} \cov(x, y) \\
   &= \sigma_J^2 + \frac{1}{2} \sigma_\xi^2
@@ -588,13 +602,13 @@ which amazingly is a function of $\CChalf$ only. We therefore define
 to be an estimate of $\CCtrue$, which can be calculated directly from the data. The statistic was introduced in \cite{karplus-diederichs-2012}.
 
 
-\chapter{Other topics}
+\section{Other topics}
 %--------------------------------------------------------------------------------------------------
-\section{Absorption correction}
+\subsection{Absorption correction}
 %--------------------------------------------------------------------------------------------------
 TODO
 
-\section{Monte-Carlo profile prediction}
+\subsection{Monte-Carlo profile prediction}
 %--------------------------------------------------------------------------------------------------
 See papers \cite{eval-14}, \cite{eval-15}. We have implemented a preliminary version of this algorithm,
 however it is definitely in need of testing and improvement.
