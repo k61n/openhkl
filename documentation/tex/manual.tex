@@ -66,8 +66,8 @@
 
 \section{Overview}
 %--------------------------------------------------------------------------------------------------
-We mention a few predecessors, for the sake of listing references: RETREAT \cite{retreat-manual},
-XDS \cite{xds-2010}, HKL2000 \cite{otwinowski-1997, denzo-scalepack, hkl2000-manual}.
+We mention a few predecessors, for the sake of listing references: RETREAT \cite{StMc13},
+XDS \cite{Kab10a}, HKL2000 \cite{OtMi97,OtMi06,GewOJ}.
 
 The NSXTool project was initially started as a replacement for RETREAT but many features were added
 in order to add support for BioDiff.
@@ -85,7 +85,7 @@ The basic workflow of NSXTool is as follows
 
 \section{Lattice determination}
 %--------------------------------------------------------------------------------------------------
-We use \cite{crystal-lattices} as one of our primary references.
+We use \cite{BuGG16} as one of our primary references.
 
 \subsection{Peak search} \label{peak-search}
 %--------------------------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ ellipsoid overlap detection is implemented using the criterion described in \cit
 
 \subsection{Autoindexing} \label{autoindex}
 %--------------------------------------------------------------------------------------------------
-We use an autoindexing method based on 1d Fourier-transform, see \cite{fft1, fft2}.
+We use an autoindexing method based on 1d Fourier-transform, see \cite{StBR97,SaGA04}.
 
 The algorithm works as follows. We are given some set of $\bq$ vectors which lie approximately on
 a lattice, yet to be determined. To find candidate lattice directions, we take a random sample of
@@ -147,8 +147,8 @@ trial and error is required to determine the best FFT parameters.
 
 \subsection{Computing the reduced unit cell} \label{unit-cell}
 %--------------------------------------------------------------------------------------------------
-Once we have a lattice basis, we compute the Niggli cell following \cite{gruber-1973, krivy-gruber-1976}
-and then transform the Niggli cell to a reduced standard form following \cite{unit-cell-2003}. The cell
+Once we have a lattice basis, we compute the Niggli cell following \cite{Gru73, KrGr76}
+and then transform the Niggli cell to a reduced standard form following \cite{GrSA03}. The cell
 is given an index from 1 to 44 corresponding to the 44 cases in the International Tables \cite{gruber-table}.
 
 \subsection{Computation of the first Brillouin zone}
@@ -239,7 +239,7 @@ Now consider the action of $g = (A,b)$:
 which shows that $f_{A^t q} = f_{q} e^{2 \pi i q \cdot b}$ whenever $(A,b) \in G$.
 
 
-For space group determination see e.g. \cite{evans-2011}, \cite{kabsch-2010}.
+For space group determination see e.g. \cite{Eva11,Kab10b}.
 
 
 \section{Shape Prediction} \label{peak-prediction}
@@ -305,8 +305,8 @@ Now let
 \subsection{Kabsch's Coordinate System}
 %--------------------------------------------------------------------------------------------------
 
-In \cite{kabsch-1988} Kabsch introduced a per-peak coordinate system intented to undo effects from detector geometry.
-See also \cite{kabsch-2010} for an updated description of the coordinates and integration technique.
+In \cite{Kab88} Kabsch introduced a per-peak coordinate system intented to undo effects from detector geometry.
+See also \cite{Kab10b} for an updated description of the coordinates and integration technique.
 The basis introduced by Kabsch is the following:
 \begin{align}
   \be_1 &= (\bq \times k_i) / |\bq \times k_i| \\
@@ -357,10 +357,10 @@ It should be noted that for weak peaks, the error is dominated by the error in t
 
 \subsection{Fitted Intensity}
 %--------------------------------------------------------------------------------------------------
-As shown in \cite{diamond-1969}, the integration error for weak peaks is dominated by background subtraction
+As shown in \cite{Dia69}, the integration error for weak peaks is dominated by background subtraction
 and it is typically better to find the integrated intensity by fitting to a profile learned from strong peaks.
 
-3D profile fitting is used by XDS \cite{xds-2010} and is described in some detail in \cite{kabsch-1988, kabsch-2010}.
+3D profile fitting is used by XDS \cite{Kab10a} and is described in some detail in \cite{Kab88,Kab10b}.
 
 As in the previous subsection, using a covariance matrix and a parameters $r_1 < r_2 < r_3$ we produce sets $\calP$ and $\calB$ of peak and background points.
 Assume that we know the resolution function $R_i$,
@@ -433,8 +433,8 @@ Now, compute the most probable parameter values from
 
 \subsection{$I/\sigma$ Integration}
 %--------------------------------------------------------------------------------------------------
-This is the integration technique used by RETREAT \cite{retreat-manual}. The method is described in detail in \cite{wilkinson-1988}.
-In the article \cite{prince-1997} there is a detailed comparison between this method and profile fitting.
+This is the integration technique used by RETREAT \cite{StMc13}. The method is described in detail in \cite{WiKS88}.
+In the article \cite{PrWM97} there is a detailed comparison between this method and profile fitting.
 
 For a given peak with mean background $\mu_b$, center $x_0$, and covariance matrix $\Sigma$, define
 \begin{align}
@@ -578,10 +578,10 @@ Remarks
 \subsection{$R$ factors}
 %--------------------------------------------------------------------------------------------------
 
-For the definition of $R_{merge}$ see \cite{karplus-diederichs-2012}. For $R$ factors in general there is the paper \cite{evans-2011}.
+For the definition of $R_{merge}$ see \cite{KaDi12}. For $R$ factors in general there is the paper \cite{Eva11}.
 
 \subsection{The correlation coefficients $\CChalf$ and $\CCstar$}
-The statistic $\CChalf$ as introduced in ~\cite{karplus-diederichs-2012}.
+The statistic $\CChalf$ as introduced in ~\cite{KaDi12}.
 The statistic $\CChalf$ is defined as follows. Randomly divide the unmerged dataset into two subsets. For each symmetry-equivalence class $[hkl]$,
 we have a merged intensity $x_{hkl}$ from the first set and $y_{hkl}$ from the second set. $\CChalf$ is defined as the Pearson correlation coefficient
 of the joint measurements $(x_{hkl}, y_{hkl})$.
@@ -649,7 +649,7 @@ which amazingly is a function of $\CChalf$ only. We therefore define
   \label{cc-star-definition}
   \CCstar := \sqrt{\frac{2 \CChalf}{1+\CChalf}},
 \end{equation}
-to be an estimate of $\CCtrue$, which can be calculated directly from the data. The statistic was introduced in \cite{karplus-diederichs-2012}.
+to be an estimate of $\CCtrue$, which can be calculated directly from the data. The statistic was introduced in \cite{KaDi12}.
 
 
 \section{Other topics}
@@ -660,11 +660,12 @@ TODO
 
 \subsection{Monte-Carlo profile prediction}
 %--------------------------------------------------------------------------------------------------
-See papers \cite{eval-14}, \cite{eval-15}. We have implemented a preliminary version of this algorithm,
+See papers \cite{DuKS14,ScXK15}. We have implemented a preliminary version of this algorithm,
 however it is definitely in need of testing and improvement.
 
-\nocite{*}
-%\otherchapter{Bibliography}{X}
-\bibliographystyle{alpha}
-\bibliography{references}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{switch}
+\bibliography{jw7}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \end{document}
