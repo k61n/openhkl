@@ -1,0 +1,102 @@
+%--------------------------------------------------------------------------------------------------
+\documentclass[twocolumn,preprintnumbers,amsmath,amssymb]{revtex4}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage[nottoc,numbib]{tocbibind}
+
+
+% convenience commands
+\newcommand{\CChalf}{CC_{1/2}}
+\newcommand{\CCtrue}{CC_{\mathrm{true}}}
+\newcommand{\CCstar}{CC\ast}
+\newcommand{\cov}{\mathrm{cov}}
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\nsxtool}{{\tt{nsxtool}}}
+
+\newcommand{\calP}{\mathcal{P}}
+\newcommand{\calB}{\mathcal{B}}
+
+\def\v#1{\mathbf{#1}}
+
+% for placeholder text
+% \usepackage{lipsum}
+
+%--------------------------------------------------------------------------------------------------
+
+\begin{document}
+
+\title{NSXTool Internal Documentation: Notes on Literature}
+\author{the NSXTool collaboration}
+
+\date{internal notes, work in progress, do not circulate, \today}
+
+
+\maketitle
+
+\section{Kabsch 2010b}
+
+Paper on ``Integration, scaling, space-group assignement and post-refinement'' \cite{Kab10b}.
+
+\subsection{Notation correspondences}
+%--------------------------------------------------------------------------------------------------
+
+\begin{tabular}{lll}
+&Kabsch &we\\\hline
+incident wavevector &$\v{S}_0$ &$\v{k}_\text{i}$\\
+reciprocal vector &$\v{p^*}$ &$\v{q}$\\
+detector distance &$F$ &?\\
+\end{tabular}
+
+\subsection{Spot prediction (Sect 2.2)}
+%--------------------------------------------------------------------------------------------------
+
+This section uses vector components in the coordinate system $\{\v{m}_1,\v{m}_2,\v{m}_3\}$.
+In this special system,
+$\v{p}^*$ and $\v{p}^*_0$ are related to each other
+through a rotation by $\varphi$ around $v{m}_2$,
+and $\v{S}_0$ is perpendicular to $\v{m}_1$.
+
+\subsubsection{How to obtain $\v{p}^*$ as function of $\v{p}^*_0,\varphi$}
+
+In $\v{p}^*=D(\v{m}_2,\varphi)\v{p}^*_0$, just insert the standard rotation matrix~$D$.
+Skip the line that involves the cross-product $\v{m}_2\times\v{p}^*_0$,
+and directly obtain the next line.
+
+\subsubsection{How to obtain $\v{p}^*$ as function of $\v{p}^*_0,\v{S}_0$}
+
+First, the component along $\v{m}_2$: Rotation around $\v{m}_2$ does not change this component,
+hence $\v{p}^*\v{m}_2 = \v{p}^*_0\v{m}_2$.
+
+Next, the component along $\v{m}_3$:
+By construction, $\v{m}_1\perp\v{S}_0$.
+This simplifies the vector product
+\begin{equation}
+\begin{array}{ll}
+   \v{S}_0\v{p}^*&=(\v{S_0}\v{m}_2)(\v{m}_2\v{p}^*) + (\v{S_0}\v{m}_3)(\v{m}_3\v{p}^*)
+\\
+                &=(\v{S_0}\v{m}_2)(\v{m}_2\v{p}^*_0) + (\v{S_0}\v{m}_3)(\v{m}_3\v{p}^*).
+\end{array}
+\end{equation}
+Insert this in the Laue equation $-2\v{S}_0\v{p}^*={p^*_0}^2$,
+and resolve for $\v{p}^*\v{m}_3$.
+
+Finally, the component along $\v{m}_1$:
+Resolve ${p^*_0}^2=\sum {(\v{p}^*\v{m}_i)}^2$ for $\v{p}^*\v{m}_1$.
+
+\subsubsection{How to obtain $\varphi$ as function of $\v{p}^*_0,\v{p}^*$}
+
+Start from
+\begin{equation}
+  \cos\varphi=\frac{{\v{p}^*}_\perp{\v{p}^*_0}_\perp}{|{\v{p}^*}_\perp|\cdot|{\v{p}^*_0}_\perp|}
+\end{equation}
+where the subscript~$\perp$ designates the projection into the plane
+perpendicular to $\v{m_2}$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{switch}
+\bibliography{jw7}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
