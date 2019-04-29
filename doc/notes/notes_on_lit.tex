@@ -45,7 +45,7 @@ Paper on ``Integration, scaling, space-group assignement and post-refinement'' \
 \begin{tabular}{lll}
 &Kabsch &we\\\hline
 incident wavevector &$\v{S}_0$ &$\v{k}_\text{i}$\\
-reciprocal vector &$\v{p^*}$ &$\v{q}$\\
+reciprocal vector &$\v{p^*}$ &?\\
 detector distance &$F$ &?\\
 \end{tabular}
 
@@ -89,10 +89,63 @@ Resolve ${p^*_0}^2=\sum {(\v{p}^*\v{m}_i)}^2$ for $\v{p}^*\v{m}_1$.
 
 Start from
 \begin{equation}
-  \cos\varphi=\frac{{\v{p}^*}_\perp{\v{p}^*_0}_\perp}{|{\v{p}^*}_\perp|\cdot|{\v{p}^*_0}_\perp|}
+  \cos\varphi=\frac{{\v{p}^*}_\perp{\v{p}^*_0}_\perp}{|{\v{p}^*}_\perp|\;|{\v{p}^*_0}_\perp|},
 \end{equation}
 where the subscript~$\perp$ designates the projection into the plane
 perpendicular to $\v{m_2}$.
+
+\subsection{Standard spot size (Sect 2.3)}
+%--------------------------------------------------------------------------------------------------
+
+\subsubsection{Increase in path length}
+
+Kabsch introduces a factor $1/|\v{e}_1\v{m}_2|$ as
+\textit{an increase in the length of the shortest path},
+viz.\ of a rotated reciprocal space vector $\v{p}^*_\varphi$ across the Ewald sphere.
+
+To explain this notion,
+replace the Ewald sphere by its tangential plane,
+and approximate the trajectory $\v{p}^*_\varphi$ by a straight line.
+Suppose this line forms an angle $\alpha$ with the normal of the plane.
+Then ask: how long is the line segment that brings us from the intersection
+with the plane to a distance $\Delta x$ from the plane.
+Answer: $\Delta x/\cos\alpha$.
+So $1/\cos\alpha$ is the factor by which the shortest path increases.
+
+The trajectory $\v{p}^*_\varphi=D(\v{m}_2,\varphi)\v{p}^*_0$
+has the tangent vector
+$\mathrm{d}\v{p}^*_\varphi/\mathrm{d}\varphi=\v{\hat p}^*_\varphi\times\v{\hat m}_2$.
+When it intersects the Ewald sphere,
+we may equate $\v{p}^*_\varphi=\v{q}\equiv\v{k}_\text{f}-\v{k}_\text{i}$.
+The normal vector of the Ewald sphere is $\v{\hat k}_\text{f}$.
+So
+\begin{equation}
+  \cos\alpha = \frac{(\v{q}\times\v{m_2})\v{k}_\text{f}}{|\v{q}\times\v{m_2}| k}
+\end{equation}
+The numerator can be transformed as
+$(\v{q}\times\v{m_2})\v{k}_\text{f}
+=(\v{k}_\text{f}\times\v{q})\v{m_2}
+=(\v{k}_\text{f}\times(\v{k}_\text{f}-\v{k}_\text{i}))\v{m_2}
+=(\v{k}_\text{f}\times(-\v{k}_\text{i}))\v{m_2}
+=(\v{k}_\text{i}\times\v{k}_\text{f})\v{m_2}$.
+So we have
+\begin{equation}
+  \cos\alpha = \frac{(\v{k}_\text{i}\times\v{k}_\text{f})\v{m_2}}{|\v{q}\times\v{m_2}| k},
+\end{equation}
+which agrees with Kabsch's
+\begin{equation}
+  |\v{e}_1\v{m}_2|
+  =\left|\frac{(\v{k}_\text{i}\times\v{k}_\text{f})\v{m_2}}{|\v{k}_\text{f}\times\v{k}_\text{i}|}\right|
+\end{equation}
+in the numerator, but not in the denominator.
+
+
+\subsubsection{Lorentz correction factor}
+
+``Another geometric correction that accounts for the length of time that a moving crystal remains in the diffracting position for any particular scattered beam. Since different reciprocal lattice points correspond to different sets of diffracting planes with different geometries relative to the instrument, the Lorentz factor depends both on the Bragg angle and on the diffraction geometry.''
+[Online Dictionary of Crystallography,
+\url{http://reference.iucr.org/dictionary/Lorentz-polarization_correction}]
+See also \cite{Bue40}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{switch}
