@@ -331,9 +331,10 @@ SpaceGroup::SpaceGroup() {
 }
 
 SpaceGroup::SpaceGroup(std::string symbol) {
-  symbol = compress(trim(symbol));
-  _symbol = std::move(symbol);
-  reduceSymbol();
+  // _init_name  = symbol
+  // symbol      = compress(trim(symbol));
+  _symbol     = std::move(symbol);
+  // reduceSymbol();
 
   auto find_symbol = [this](const std::pair<std::string, std::string> &s) {
     return s.first.compare(this->_symbol) == 0;

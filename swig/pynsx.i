@@ -14,6 +14,7 @@
 %feature("director") MeanBackgroundIntegrator;
 %feature("director") PixelSumIntegrator;
 %feature("director") Profile3DIntegrator;
+%feature("director") Profile1DIntegrator;
 %feature("director") ISigmaIntegrator;
 %feature("director") ShapeIntegrator;
 
@@ -108,6 +109,7 @@ using Eigen::Quaterniond;
 #include "IPeakIntegrator.h"
 #include "MeanBackgroundIntegrator.h"
 #include "Profile3DIntegrator.h"
+#include "Profile1DIntegrator.h"
 #include "ISigmaIntegrator.h"
 #include "PixelSumIntegrator.h"
 #include "ShapeIntegrator.h"
@@ -394,6 +396,7 @@ namespace nsx {
 %include "IPeakIntegrator.h"
 %include "MeanBackgroundIntegrator.h"
 %include "Profile3DIntegrator.h"
+%include "Profile1DIntegrator.h"
 %include "ISigmaIntegrator.h"
 %include "PixelSumIntegrator.h"
 %include "Peak3D.h"

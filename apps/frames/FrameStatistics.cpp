@@ -225,7 +225,7 @@ void FrameStatistics::saveStatistics() {
   }
 
   file.close();
-}
+}-
 
 void FrameStatistics::saveMergedPeaks() {
   QString format = _ui->merged_peaks_format->currentText();

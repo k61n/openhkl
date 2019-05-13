@@ -555,6 +555,10 @@ void UnitCell::setSpaceGroup(const SpaceGroup &space_group) {
   _space_group = _space_group;
 }
 
+void UnitCell::setSpaceGroup(const std::string symbol) {
+  _space_group = SpaceGroup(symbol);
+}
+
 const SpaceGroup &UnitCell::spaceGroup() const { return _space_group; }
 
 void UnitCell::setName(const std::string &name) {

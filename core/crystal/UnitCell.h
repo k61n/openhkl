@@ -196,6 +196,9 @@ public:
   //! Set space group from its symbol.
   void setSpaceGroup(const SpaceGroup &space_group);
 
+  //! Set space group from its symbol.
+  void setSpaceGroup(const std::string symbol);
+
   //! Return the space group symbol of the unit cell.
   const SpaceGroup &spaceGroup() const;
 
