@@ -10,8 +10,9 @@ find_package(Qt5Gui REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
 find_package(Qt5PrintSupport REQUIRED)
 find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Network REQUIRED)
 
-if(NOT ${Qt5Core_FOUND} OR NOT ${Qt5Gui_FOUND} OR NOT ${Qt5OpenGL_FOUND} OR NOT ${Qt5PrintSupport_FOUND} OR NOT ${Qt5Widgets_FOUND})
+if(NOT ${Qt5Core_FOUND} OR NOT ${Qt5Gui_FOUND} OR NOT ${Qt5OpenGL_FOUND} OR NOT ${Qt5PrintSupport_FOUND} OR NOT ${Qt5Widgets_FOUND} OR NOT ${Qt5Network_FOUND})
     message(FATAL_ERROR "Could not find one or several Qt frameworks")
 endif()
 
@@ -37,9 +38,12 @@ message(STATUS "    ${Qt5PrintSupport_LIBRARIES}: ${Qt5PrintSupport_location}")
 get_target_property(Qt5Widgets_location Qt5::Widgets LOCATION_Release)
 message(STATUS "    ${Qt5Widgets_LIBRARIES}: ${Qt5Widgets_location}")
 
+get_target_property(Qt5Network_location Qt5::Network LOCATION_Release)
+message(STATUS "    ${Qt5Network_LIBRARIES}: ${Qt5Network_location}")
+
 message(STATUS "  headers: ${Qt5Widgets_INCLUDE_DIRS}")
 
-set(QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5PrintSupport_LIBRARIES} ${Qt5Widgets_LIBRARIES})
+set(QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5PrintSupport_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Network_LIBRARIES})
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

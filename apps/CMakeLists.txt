@@ -38,58 +38,84 @@ if(APPLE AND ENABLE_CPACK)
 endif()
 
 # Build the nsxqt executable
-add_executable(
-    ${NSXQT_EXECUTABLE}
-    ${EXECUTABLE_OPTIONS}
+#add_executable(
+#    ${NSXQT_EXECUTABLE}
+#    ${EXECUTABLE_OPTIONS}
+#    ${NSXQT_SOURCES}
+#    ${NSXQT_RCS}
+#    ${NSXQT_RESOURCES_CPP}
+#    ${NSXQT_HEADERS}
+#    ${NSXQT_UI_HEADERS}
+#    ${NSXQT_BUNDLE_RESOURCES})
+
+#target_include_directories(
+#    ${NSXQT_EXECUTABLE}
+#    PRIVATE
+#    ${CMAKE_CURRENT_SOURCE_DIR}
+#    ${CMAKE_SOURCE_DIR}/3rdparty/QCustomPlot
+#    ${NSXQT_SUBDIRS}
+#    ${CMAKE_BINARY_DIR}/core/include)
+
+#target_link_libraries(
+#    ${NSXQT_EXECUTABLE}
+#    ${QT_LIBRARIES}
+#    QCustomPlot
+#    ${OPENGL_LIBRARIES}
+#    ${NSX_LIBRARY})
+
+#library for use in the new gui
+add_library(
+    apps
     ${NSXQT_SOURCES}
     ${NSXQT_RCS}
     ${NSXQT_RESOURCES_CPP}
+    ${NSXQT_BUNDLE_RESOURCES}
     ${NSXQT_HEADERS}
-    ${NSXQT_UI_HEADERS}
-    ${NSXQT_BUNDLE_RESOURCES})
+    ${NSXQT_UI_HEADERS})
 
 target_include_directories(
-    ${NSXQT_EXECUTABLE}
+    apps
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/3rdparty/QCustomPlot
     ${NSXQT_SUBDIRS}
     ${CMAKE_BINARY_DIR}/core/include)
 
 target_link_libraries(
-    ${NSXQT_EXECUTABLE}
+    apps
     ${QT_LIBRARIES}
     QCustomPlot
     ${OPENGL_LIBRARIES}
     ${NSX_LIBRARY})
 
-if(ENABLE_CPACK)
-    if(APPLE)
-        set_target_properties(${NSXQT_EXECUTABLE} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_BINARY_DIR}/Info.plist)
-        set_target_properties(${NSXQT_EXECUTABLE} PROPERTIES INSTALL_RPATH "@loader_path/../Frameworks;@loader_path/../lib")
+#if(ENABLE_CPACK)
+#    if(APPLE)
+#        set_target_properties(${NSXQT_EXECUTABLE} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_BINARY_DIR}/Info.plist)
+#        set_target_properties(${NSXQT_EXECUTABLE} PROPERTIES INSTALL_RPATH "@loader_path/../Frameworks;@loader_path/../lib")
 
-        configure_file(${CMAKE_SOURCE_DIR}/cmake/modules/FixAppleBundle.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/FixAppleBundle.cmake @ONLY)
-        install(SCRIPT ${CMAKE_CURRENT_BINARY_DIR}/FixAppleBundle.cmake COMPONENT Runtime)
-    elseif(LINUX)
-        set_target_properties(${NSXQT_EXECUTABLE} PROPERTIES INSTALL_RPATH "\$ORIGIN/../lib")
-    endif()
-endif()
+#        configure_file(${CMAKE_SOURCE_DIR}/cmake/modules/FixAppleBundle.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/FixAppleBundle.cmake @ONLY)
+#        install(SCRIPT ${CMAKE_CURRENT_BINARY_DIR}/FixAppleBundle.cmake COMPONENT Runtime)
+#    elseif(LINUX)
+#        set_target_properties(${NSXQT_EXECUTABLE} PROPERTIES INSTALL_RPATH "\$ORIGIN/../lib")
+#    endif()
+#endif()
 
 
-# Install section, installing libraries
-install(TARGETS ${NSXQT_EXECUTABLE} ${NSXTOOL_TARGET} DESTINATION ${NSXQT_INSTALL_DIR} COMPONENT APPLICATIONS)
+## Install section, installing libraries
+#install(TARGETS ${NSXQT_EXECUTABLE} ${NSXTOOL_TARGET} DESTINATION ${NSXQT_INSTALL_DIR} COMPONENT APPLICATIONS)
 
-string(REPLACE ";" "\\\n" NSXQT_SOURCES "${NSXQT_SOURCES}")
-string(REPLACE ";" "\\\n" NSXQT_HEADERS "${NSXQT_HEADERS}")
-string(REPLACE ";" "\\\n" NSXQT_UIS "${NSXQT_UIS}")
+#string(REPLACE ";" "\\\n" NSXQT_SOURCES "${NSXQT_SOURCES}")
+#string(REPLACE ";" "\\\n" NSXQT_HEADERS "${NSXQT_HEADERS}")
+#string(REPLACE ";" "\\\n" NSXQT_UIS "${NSXQT_UIS}")
 
-get_property(NSXQT_QMAKE_INCLUDE_DIRECTORIES DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
-string(REPLACE ";" "\\\n" NSXQT_QMAKE_INCLUDE_DIRECTORIES "${NSXQT_QMAKE_INCLUDE_DIRECTORIES}")
+#get_property(NSXQT_QMAKE_INCLUDE_DIRECTORIES DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
+#string(REPLACE ";" "\\\n" NSXQT_QMAKE_INCLUDE_DIRECTORIES "${NSXQT_QMAKE_INCLUDE_DIRECTORIES}")
 
-# generate the qmake project file automatically
-configure_file(nsxqt.pro.in ${CMAKE_CURRENT_BINARY_DIR}/nsxqt.pro)
+## generate the qmake project file automatically
+#configure_file(nsxqt.pro.in ${CMAKE_CURRENT_BINARY_DIR}/nsxqt.pro)
 
-# tidy
-if(NSX_TIDY)
-  add_tidy_target(nsxqt)
-endif()
+##tidy
+#if(NSX_TIDY)
+#  add_tidy_target(nsxqt)
+#endif()

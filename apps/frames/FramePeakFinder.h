@@ -6,7 +6,7 @@
 
 #include <core/DataTypes.h>
 
-#include "ColorMap.h"
+#include "../ColorMap.h"
 #include "NSXQFrame.h"
 
 namespace Ui {

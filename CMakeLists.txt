@@ -66,6 +66,7 @@ if (BUILD_NSX_APPS)
     include(SetupQt)
     add_subdirectory(3rdparty/QCustomPlot)
     add_subdirectory(apps)
+    add_subdirectory(nsxgui)
 endif()
 
 # additional tools

@@ -6,8 +6,8 @@
 #include <QJsonObject>
 #include <QStandardItemModel>
 
-#include <core/Experiment.h>
-#include <core/InstrumentTypes.h>
+#include <build/core/include/core/Experiment.h>
+#include <build/core/include/core/InstrumentTypes.h>
 
 #include "TreeItem.h"
 
