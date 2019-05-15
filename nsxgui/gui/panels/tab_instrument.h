@@ -1,0 +1,21 @@
+
+
+#ifndef TAB_INSTRUMENT_H
+#define TAB_INSTRUMENT_H
+
+#include "nsxgui/qcr/widgets/controls.h"
+#include "nsxgui/gui/panels/subtab_detector.h"
+#include "nsxgui/gui/panels/subtab_monochromaticsource.h"
+#include "nsxgui/gui/panels/subtab_sample.h"
+
+class TabInstrument : public QcrTabWidget {
+public:
+    TabInstrument();
+    SubtabDetector* detector;
+    SubtabMonochromatic* monoSource;
+    SubtabSample* sample;
+
+    void setCurrent(int);
+};
+
+#endif // TAB_INSTRUMENT_H

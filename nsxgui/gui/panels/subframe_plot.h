@@ -1,0 +1,14 @@
+
+#ifndef SUBFRAME_PLOT_H
+#define SUBFRAME_PLOT_H
+
+#include "nsxgui/qcr/widgets/views.h"
+
+//! Subframe of the main window, with tabs to control detector, fits, &c
+
+class SubframePlot : public QcrDockWidget {
+public:
+    SubframePlot();
+};
+
+#endif // SUBFRAME_PLOT_H

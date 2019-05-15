@@ -1,0 +1,36 @@
+
+#include "nsxgui/gui/properties/unitcellproperty.h"
+
+#include "nsxgui/qcr/engine/cell.h"
+#include <QGroupBox>
+#include <QFormLayout>
+#include <QGridLayout>
+#include <QSpacerItem>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+
+UnitCellProperty::UnitCellProperty()
+    : QcrWidget{"unitCellProperty"}
+{
+    QVBoxLayout* overallLayout = new QVBoxLayout(this);
+    QHBoxLayout* horizontalLayout = new QHBoxLayout;
+    QFormLayout* formLayout = new QFormLayout;
+    name = new QcrLineEdit("unitCellName", "");
+    spaceGroup = new QcrComboBox("spaceGroup", new QcrCell<int>(0), [](){ return QStringList{}; });
+    chemicalFormula = new QcrLineEdit("chemicalFormula", "");
+    z = new QcrSpinBox("z", new QcrCell<int>(0), 3);
+    indexingTolerance = new QcrDoubleSpinBox("indexingTolerance", new QcrCell<double>(0.00), 6, 4);
+    formLayout->addRow("Name:", name);
+    formLayout->addRow("Spacegroup:", spaceGroup);
+    formLayout->addRow("Chemical Formula:", chemicalFormula);
+    formLayout->addRow("z", z);
+    formLayout->addRow("Indexing Tolerance", indexingTolerance);
+    horizontalLayout->addLayout(formLayout);
+    horizontalLayout->addItem(new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
+    overallLayout->addLayout(horizontalLayout);
+    
+    QGroupBox* cellParameters = new QGroupBox(this);
+    QGridLayout* grid = new QGridLayout(cellParameters);
+    a = new QcrDoubleSpinBox("a", new QcrCell<double>(0.00), 8, 4);
+    b = new 
+}
