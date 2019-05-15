@@ -1,5 +1,6 @@
 
 #include "nsxgui/gui/panels/tab_unitcells.h"
+#include "nsxgui/gui/properties/unitcellproperty.h"
 #include <QHBoxLayout>
 #include <QTreeView>
 
@@ -10,6 +11,6 @@ TabUnitcells::TabUnitcells()
     : QcrWidget{"unit cells"}
 {
     auto* layout = new QHBoxLayout;
-    layout->addWidget(new QTreeView);
+    layout->addWidget(new UnitCellProperty);
     setLayout(layout);
 }
