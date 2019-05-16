@@ -25,11 +25,11 @@ public:
     QcrToggle showAreas {"show areas", "show areas", false};
     QcrToggle drawPeakArea {"draw peak area", "draw peak integration area", false};
 //View
-    QcrToggle viewExperiment {"view experiment", "show experiment", true};
-    QcrToggle viewProperties {"viewProperties", "show Properties", true};
-    QcrToggle viewLogger {"viewLogger", "show Logger", true};
-    QcrToggle viewImage {"viewImage", "show Image", true};
-    QcrToggle viewPlotter {"viewPlotter", "show Plot", true};
+    QcrToggle viewExperiment {"adhoc_viewExperiment", "show experiment", true};
+    QcrToggle viewProperties {"adhoc_viewProperties", "show Properties", true};
+    QcrToggle viewLogger {"adhoc_viewLogger", "show Logger", true};
+    QcrToggle viewImage {"adhoc_viewImage", "show Image", true};
+    QcrToggle viewPlotter {"adhoc_viewPlotter", "show Plot", true};
 };
 
 #endif // TOGGLES_H

@@ -15,13 +15,6 @@ SampleShapeProperties::SampleShapeProperties()
     QGroupBox* sampleProperty = new QGroupBox("Goniometer", this);
     QVBoxLayout* box = new QVBoxLayout(sampleProperty);
     sampleGoniometer = new QTableWidget(this);
-    QTableWidgetItem *__qtablewidgetitem = new QTableWidgetItem();
-    __qtablewidgetitem->setText("Name");
-    sampleGoniometer->setHorizontalHeaderItem(0, __qtablewidgetitem);
-    QTableWidgetItem *__qtablewidgetitem1 = new QTableWidgetItem();
-    __qtablewidgetitem1->setText("Type");
-    sampleGoniometer->setHorizontalHeaderItem(1, __qtablewidgetitem1);
-    sampleGoniometer->horizontalHeader()->setStretchLastSection(true);
     box->addWidget(sampleGoniometer);
     //ShapeProperty
     QGridLayout* grid = new QGridLayout();
@@ -52,7 +45,7 @@ SampleShapeProperties::SampleShapeProperties()
 
 void SampleShapeProperties::onRemake()
 {
-    if (gSession->selectedExperiment()){
+    if (gSession->selectedExperimentNum()>=0){
         //SampleProperty
         const auto &sample = gSession->selectedExperiment()->experiment()->diffractometer()->sample();
         const auto &sample_gonio = sample.gonio();
@@ -62,6 +55,13 @@ void SampleShapeProperties::onRemake()
         sampleGoniometer->setRowCount(n_sample_gonio_axes);
 
         sampleGoniometer->setColumnCount(2);
+        QTableWidgetItem *__qtablewidgetitem = new QTableWidgetItem();
+        __qtablewidgetitem->setText("Name");
+        sampleGoniometer->setHorizontalHeaderItem(0, __qtablewidgetitem);
+        QTableWidgetItem *__qtablewidgetitem1 = new QTableWidgetItem();
+        __qtablewidgetitem1->setText("Type");
+        sampleGoniometer->setHorizontalHeaderItem(1, __qtablewidgetitem1);
+        sampleGoniometer->horizontalHeader()->setStretchLastSection(true);
         sampleGoniometer->verticalHeader()->setVisible(false);
 
         for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
@@ -90,8 +90,8 @@ void SampleShapeProperties::onRemake()
         vertices->setCellValue(QString::number(hull.nVertices()));
     } else {
         //SampleProperty
-        for (int i=0; i<sampleGoniometer->rowCount(); i++)
-            sampleGoniometer->removeRow(i);
+        sampleGoniometer->removeColumn(1);
+        sampleGoniometer->removeColumn(0);
         //Shape
         volume->setCellValue("");
         faces->setCellValue("");

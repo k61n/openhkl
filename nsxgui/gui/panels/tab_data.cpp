@@ -11,6 +11,6 @@ TabData::TabData()
     : QcrWidget{"data"}
 {
     auto* layout = new QHBoxLayout;
-    layout->addWidget(new NumorProperty);
+    layout->addWidget((property = new NumorProperty));
     setLayout(layout);
 }

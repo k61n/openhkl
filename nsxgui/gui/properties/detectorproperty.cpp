@@ -1,7 +1,7 @@
 
 #include "nsxgui/gui/properties/detectorproperty.h"
 #include "nsxgui/gui/models/session.h"
-#include <core/Detector.h>
+#include <build/core/include/core/Detector.h>
 #include <QGroupBox>
 #include <QGridLayout>
 #include <QTableWidget>
@@ -36,15 +36,6 @@ DetectorProperty::DetectorProperty()
     QGroupBox* group_2 = new QGroupBox("Goniometer", this);
     QVBoxLayout* layout = new QVBoxLayout(group_2);
     axes = new QTableWidget(group_2);
-    if (axes->columnCount() < 2)
-        axes->setColumnCount(2);
-    QTableWidgetItem *__qtablewidgetitem = new QTableWidgetItem();
-    __qtablewidgetitem->setText("Name");
-    axes->setHorizontalHeaderItem(0, __qtablewidgetitem);
-    QTableWidgetItem *__qtablewidgetitem1 = new QTableWidgetItem();
-    __qtablewidgetitem1->setText("Type");
-    axes->setHorizontalHeaderItem(1, __qtablewidgetitem1);
-    axes->horizontalHeader()->setStretchLastSection(true);
     layout->addWidget(axes);
 
     QVBoxLayout* vboxlayout = new QVBoxLayout(this);
@@ -72,6 +63,13 @@ void DetectorProperty::onRemake()
         axes->setEditTriggers(QAbstractItemView::NoEditTriggers);
         axes->setRowCount(n_detector_gonio_axes);
         axes->setColumnCount(2);
+        QTableWidgetItem *__qtablewidgetitem = new QTableWidgetItem();
+        __qtablewidgetitem->setText("Name");
+        axes->setHorizontalHeaderItem(0, __qtablewidgetitem);
+        QTableWidgetItem *__qtablewidgetitem1 = new QTableWidgetItem();
+        __qtablewidgetitem1->setText("Type");
+        axes->setHorizontalHeaderItem(1, __qtablewidgetitem1);
+        axes->horizontalHeader()->setStretchLastSection(true);
         axes->verticalHeader()->setVisible(false);
         for (size_t i = 0; i < n_detector_gonio_axes; ++i) {
             const auto &axis = detector_gonio.axis(i);
@@ -93,7 +91,7 @@ void DetectorProperty::onRemake()
         distance->setCellValue(0.00);
         rows->setCellValue(0);
         columns->setCellValue(0);
-        for (int i =0; i<axes->rowCount(); i++)
-            axes->removeRow(i);
+        axes->removeColumn(1);
+        axes->removeColumn(0);
     }
 }

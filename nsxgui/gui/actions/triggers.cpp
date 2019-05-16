@@ -4,9 +4,7 @@
 #include "nsxgui/gui/panels/tab_instrument.h"
 #include "nsxgui/gui/panels/subframe_setup.h"
 #include "nsxgui/gui/dialogs/open_files.h"
-
-#include "apps/dialogs/DialogExperiment.h"
-#include "apps/frames/FramePeakFinder.h"
+#include "nsxgui/gui/frames/instrumentstates.h"
 
 #include <QInputDialog>
 #include <QDesktopServices>
@@ -70,4 +68,5 @@ Triggers::Triggers()
 
         gLogger->log("[WARNING] not yet available");
     });
+    instrumentStates.setTriggerHook([](){ new InstrumentStates; });
 }

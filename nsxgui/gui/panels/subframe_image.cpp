@@ -11,19 +11,6 @@
 
 //-------------------------------------------------------------------------------------------------
 
-class ImageWidget : public QcrWidget {
-public:
-    ImageWidget();
-private:
-    QcrSpinBox* max;
-    QcrSpinBox* frame;
-    QcrComboBox* mode;
-    QSlider* slide;
-    QScrollBar* scrollbar;
-    QGraphicsView* imageView;
-    QGraphicsScene* imageScene;
-};
-
 ImageWidget::ImageWidget()
     : QcrWidget{"Image"}
 {
@@ -75,7 +62,7 @@ ImageWidget::ImageWidget()
 SubframeImage::SubframeImage()
     :QcrDockWidget{"Image"}
 {
-    setWidget(new ImageWidget);
+    setWidget((centralWidget = new ImageWidget));
     connect(this, SIGNAL( visibilityChanged(bool) ), &gGui->toggles->viewImage,
             SLOT( setChecked(bool)) );
 }

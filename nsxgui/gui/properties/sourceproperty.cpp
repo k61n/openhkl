@@ -48,6 +48,7 @@ SourceProperty::SourceProperty()
     grid->addWidget(new QLabel("FWHM (ang):"), 3, 0, 1, 1);
     grid->addWidget(new QLabel("Width (mm):"), 4, 0, 1, 1);
     grid->addWidget(new QLabel("Height (mm):"), 5, 0, 1, 1);
+    grid->addItem(new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum), 6, 3, 1, 1);
 
     setRemake([this](){ onRemake(); });
     remake();
@@ -57,7 +58,7 @@ void SourceProperty::onRemake()
 {
     clear();
     monochromators->remake();
-    if (gSession->selectedExperiment())
+    if (gSession->selectedExperimentNum()>=0)
         onMonoChanged(0);
 }
 

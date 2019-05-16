@@ -11,6 +11,6 @@ SubtabSample::SubtabSample()
     : QcrWidget{"sample"}
 {
     auto* layout = new QHBoxLayout;
-    layout->addWidget(new SampleShapeProperties);
+    layout->addWidget((property = new SampleShapeProperties));
     setLayout(layout);
 }

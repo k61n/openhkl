@@ -1,9 +1,9 @@
 
 #include "nsxgui/gui/properties/numorproperty.h"
 #include "nsxgui/gui/models/session.h"
-#include <core/DataSet.h>
-#include <core/IDataReader.h>
-#include <core/DataTypes.h>
+#include <build/core/include/core/DataSet.h>
+#include <build/core/include/core/IDataReader.h>
+#include <build/core/include/core/DataTypes.h>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
@@ -38,9 +38,10 @@ void NumorProperty::onRemake()
 {
     clear();
 
-    ExperimentModel* exp = gSession->selectedExperiment();
 
-    if (exp) {
+
+    if (gSession->selectedExperimentNum()>=0) {
+        ExperimentModel* exp = gSession->selectedExperiment();
         auto data = exp->data()->selectedData();
 
         if (data) {
@@ -83,6 +84,7 @@ void NumorProperty::onRemake()
 
 void NumorProperty::clear()
 {
-    for (int i=0; i<table->rowCount(); i++)
-        table->removeRow(i);
+    table->removeColumn(1);
+    table->removeColumn(0);
+    label->setText("");
 }
