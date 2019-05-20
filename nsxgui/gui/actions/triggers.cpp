@@ -5,6 +5,8 @@
 #include "nsxgui/gui/panels/subframe_setup.h"
 #include "nsxgui/gui/dialogs/open_files.h"
 #include "nsxgui/gui/frames/instrumentstates.h"
+#include "nsxgui/gui/frames/autoindexer.h"
+#include "nsxgui/gui/frames/peakfinder.h"
 
 #include <QInputDialog>
 #include <QDesktopServices>
@@ -65,8 +67,9 @@ Triggers::Triggers()
 //        FramePeakFinder* frame = FramePeakFinder::create(experiment_item, data);
 //        frame->show(); }
 
-
+        new PeakFinder;
         gLogger->log("[WARNING] not yet available");
     });
     instrumentStates.setTriggerHook([](){ new InstrumentStates; });
+    autoIndexer.setTriggerHook([](){ new AutoIndexer; });
 }

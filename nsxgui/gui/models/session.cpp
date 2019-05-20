@@ -6,12 +6,12 @@
 #include <core/DataSet.h>
 #include <core/IDataReader.h>
 
-#include "apps/dialogs/DialogExperiment.h"
 #include "apps/dialogs/DialogRawData.h"
 #include "nsxgui/qcr/engine/logger.h"
 #include "nsxgui/qcr/widgets/modal_dialogs.h"
 #include "nsxgui/qcr/engine/mixin.h"
 #include "nsxgui/gui/mainwin.h"
+#include "nsxgui/gui/dialogs/experimentdialog.h"
 
 Session* gSession;
 
@@ -22,15 +22,15 @@ Session::Session()
 
 void Session::createExperiment()
 {
-    std::unique_ptr<DialogExperiment> dlg;
+    std::unique_ptr<ExperimentDialog> dlg;
 
     // DialogExperiment could throw an exception if it fails to read the resource files
     try {
-        dlg = std::unique_ptr<DialogExperiment>(new DialogExperiment());
+        dlg = std::unique_ptr<ExperimentDialog>(new ExperimentDialog());
         if (!dlg->exec()) {
             return;
         }
-        if (dlg->getExperimentName().isEmpty()) {
+        if (dlg->experimentName().isEmpty()) {
             gLogger->log("[WARNING] Failed adding new experiment due to empty experiment name");
             return;
         }
@@ -40,8 +40,8 @@ void Session::createExperiment()
     }
 
     try {
-        auto experimentName = dlg->getExperimentName().toStdString();
-        auto instrumentName = dlg->getInstrumentName().toStdString();
+        auto experimentName = dlg->experimentName().toStdString();
+        auto instrumentName = dlg->instrumentName().toStdString();
         nsx::sptrExperiment expPtr(
                     new nsx::Experiment(experimentName, instrumentName));
 

@@ -22,7 +22,7 @@ InstrumentStates::InstrumentStates()
     vertical_1->addWidget(data);
     QHBoxLayout* hL = new QHBoxLayout;
     hL->addWidget(new QLabel("Frame"));
-    frameIndex = new QcrSpinBox("frameIndex", new QcrCell<int>(0), 3);
+    frameIndex = new QcrSpinBox("adhoc_frameIndex", new QcrCell<int>(0), 3);
     hL->addWidget(frameIndex);
     //frameSlider
     vertical_1->addLayout(hL);
@@ -32,26 +32,35 @@ InstrumentStates::InstrumentStates()
     QGroupBox* groupBox_1 = new QGroupBox("Sample position", this);
     QHBoxLayout* gbLayout_1 = new QHBoxLayout(groupBox_1);
     gbLayout_1->addWidget(new QLabel("x"));
-    samplePosX = new QcrDoubleSpinBox("samplePosX", new QcrCell<double>(0.00), 8, 6);
+    samplePosX = new QcrDoubleSpinBox("adhoc_samplePosX", new QcrCell<double>(0.00), 8, 6);
     gbLayout_1->addWidget(samplePosX);
     gbLayout_1->addWidget(new QLabel("y"));
-    samplePosY = new QcrDoubleSpinBox("samplePosY", new QcrCell<double>(0.00), 8, 6);
+    samplePosY = new QcrDoubleSpinBox("adhoc_samplePosY", new QcrCell<double>(0.00), 8, 6);
     gbLayout_1->addWidget(samplePosY);
     gbLayout_1->addWidget(new QLabel("z"));
-    samplePosZ = new QcrDoubleSpinBox("samplePosZ", new QcrCell<double>(0.00), 8, 6);
+    samplePosZ = new QcrDoubleSpinBox("adhoc_samplePosZ", new QcrCell<double>(0.00), 8, 6);
     gbLayout_1->addWidget(samplePosZ);
     vertical_2->addWidget(groupBox_1);
     QGroupBox* sampleOrientation = new QGroupBox("Sample orientation", this);
     QGridLayout* sampleOriGrid = new QGridLayout(sampleOrientation);
-    sampleOri_00 = new QcrDoubleSpinBox("sampleOrientation00", new QcrCell<double>(0.00), 8, 6);
-    sampleOri_01 = new QcrDoubleSpinBox("sampleOrientation01", new QcrCell<double>(0.10), 8, 6);
-    sampleOri_02 = new QcrDoubleSpinBox("sampleOrientation02", new QcrCell<double>(0.20), 8, 6);
-    sampleOri_10 = new QcrDoubleSpinBox("sampleOrientation10", new QcrCell<double>(1.00), 8, 6);
-    sampleOri_11 = new QcrDoubleSpinBox("sampleOrientation11", new QcrCell<double>(1.10), 8, 6);
-    sampleOri_12 = new QcrDoubleSpinBox("sampleOrientation12", new QcrCell<double>(1.20), 8, 6);
-    sampleOri_20 = new QcrDoubleSpinBox("sampleOrientation20", new QcrCell<double>(2.00), 8, 6);
-    sampleOri_21 = new QcrDoubleSpinBox("sampleOrientation21", new QcrCell<double>(2.10), 8, 6);
-    sampleOri_22 = new QcrDoubleSpinBox("sampleOrientation22", new QcrCell<double>(2.20), 8, 6);
+    sampleOri_00 =
+            new QcrDoubleSpinBox("adhoc_sampleOrientation00", new QcrCell<double>(0.00), 8, 6);
+    sampleOri_01 =
+            new QcrDoubleSpinBox("adhoc_sampleOrientation01", new QcrCell<double>(0.10), 8, 6);
+    sampleOri_02 =
+            new QcrDoubleSpinBox("adhoc_sampleOrientation02", new QcrCell<double>(0.20), 8, 6);
+    sampleOri_10 =
+            new QcrDoubleSpinBox("adhoc_sampleOrientation10", new QcrCell<double>(1.00), 8, 6);
+    sampleOri_11 =
+            new QcrDoubleSpinBox("adhoc_sampleOrientation11", new QcrCell<double>(1.10), 8, 6);
+    sampleOri_12 =
+            new QcrDoubleSpinBox("adhoc_sampleOrientation12", new QcrCell<double>(1.20), 8, 6);
+    sampleOri_20 =
+            new QcrDoubleSpinBox("adhoc_sampleOrientation20", new QcrCell<double>(2.00), 8, 6);
+    sampleOri_21 =
+            new QcrDoubleSpinBox("adhoc_sampleOrientation21", new QcrCell<double>(2.10), 8, 6);
+    sampleOri_22 =
+            new QcrDoubleSpinBox("adhoc_sampleOrientation22", new QcrCell<double>(2.20), 8, 6);
     sampleOriGrid->addWidget(sampleOri_00, 0, 0, 1, 1);
     sampleOriGrid->addWidget(sampleOri_01, 0, 1, 1, 1);
     sampleOriGrid->addWidget(sampleOri_02, 0, 2, 1, 1);
@@ -64,15 +73,24 @@ InstrumentStates::InstrumentStates()
     vertical_2->addWidget(sampleOrientation);
     QGroupBox* sampleOffsets = new QGroupBox("Sample orientation offsets", this);
     QGridLayout* offsetGrid = new QGridLayout(sampleOffsets);
-    sampleOff_00 = new QcrDoubleSpinBox("sampleOrientationOffset00", new QcrCell<double>(0.00), 8, 6);
-    sampleOff_01 = new QcrDoubleSpinBox("sampleOrientationOffset01", new QcrCell<double>(0.10), 8, 6);
-    sampleOff_02 = new QcrDoubleSpinBox("sampleOrientationOffset02", new QcrCell<double>(0.20), 8, 6);
-    sampleOff_10 = new QcrDoubleSpinBox("sampleOrientationOffset10", new QcrCell<double>(1.00), 8, 6);
-    sampleOff_11 = new QcrDoubleSpinBox("sampleOrientationOffset11", new QcrCell<double>(1.10), 8, 6);
-    sampleOff_12 = new QcrDoubleSpinBox("sampleOrientationOffset12", new QcrCell<double>(1.20), 8, 6);
-    sampleOff_20 = new QcrDoubleSpinBox("sampleOrientationOffset20", new QcrCell<double>(2.00), 8, 6);
-    sampleOff_21 = new QcrDoubleSpinBox("sampleOrientationOffset21", new QcrCell<double>(2.10), 8, 6);
-    sampleOff_22 = new QcrDoubleSpinBox("sampleOrientationOffset22", new QcrCell<double>(2.20), 8, 6);
+    sampleOff_00 =
+            new QcrDoubleSpinBox("adhoc_sampleOrientationOffset00", new QcrCell<double>(0.00), 8, 6);
+    sampleOff_01 =
+            new QcrDoubleSpinBox("adhoc_sampleOrientationOffset01", new QcrCell<double>(0.10), 8, 6);
+    sampleOff_02 =
+            new QcrDoubleSpinBox("adhoc_sampleOrientationOffset02", new QcrCell<double>(0.20), 8, 6);
+    sampleOff_10 =
+            new QcrDoubleSpinBox("adhoc_sampleOrientationOffset10", new QcrCell<double>(1.00), 8, 6);
+    sampleOff_11 =
+            new QcrDoubleSpinBox("adhoc_sampleOrientationOffset11", new QcrCell<double>(1.10), 8, 6);
+    sampleOff_12 =
+            new QcrDoubleSpinBox("adhoc_sampleOrientationOffset12", new QcrCell<double>(1.20), 8, 6);
+    sampleOff_20 =
+            new QcrDoubleSpinBox("adhoc_sampleOrientationOffset20", new QcrCell<double>(2.00), 8, 6);
+    sampleOff_21 =
+            new QcrDoubleSpinBox("adhoc_sampleOrientationOffset21", new QcrCell<double>(2.10), 8, 6);
+    sampleOff_22 =
+            new QcrDoubleSpinBox("adhoc_sampleOrientationOffset22", new QcrCell<double>(2.20), 8, 6);
     offsetGrid->addWidget(sampleOff_00, 0, 0, 1, 1);
     offsetGrid->addWidget(sampleOff_01, 0, 1, 1, 1);
     offsetGrid->addWidget(sampleOff_02, 0, 2, 1, 1);
@@ -85,15 +103,24 @@ InstrumentStates::InstrumentStates()
     vertical_2->addWidget(sampleOffsets);
     QGroupBox* detectorOrientation = new QGroupBox("Detector orientation", this);
     QGridLayout* detectorGrid = new QGridLayout(detectorOrientation);
-    detectorOri_00 = new QcrDoubleSpinBox("detectorOrientation00", new QcrCell<double>(0.00), 8, 6);
-    detectorOri_01 = new QcrDoubleSpinBox("detectorOrientation01", new QcrCell<double>(0.10), 8, 6);
-    detectorOri_02 = new QcrDoubleSpinBox("detectorOrientation02", new QcrCell<double>(0.20), 8, 6);
-    detectorOri_10 = new QcrDoubleSpinBox("detectorOrientation10", new QcrCell<double>(1.00), 8, 6);
-    detectorOri_11 = new QcrDoubleSpinBox("detectorOrientation11", new QcrCell<double>(1.10), 8, 6);
-    detectorOri_12 = new QcrDoubleSpinBox("detectorOrientation12", new QcrCell<double>(1.20), 8, 6);
-    detectorOri_20 = new QcrDoubleSpinBox("detectorOrientation20", new QcrCell<double>(2.00), 8, 6);
-    detectorOri_21 = new QcrDoubleSpinBox("detectorOrientation21", new QcrCell<double>(2.10), 8, 6);
-    detectorOri_22 = new QcrDoubleSpinBox("detectorOrientation22", new QcrCell<double>(2.20), 8, 6);
+    detectorOri_00 =
+            new QcrDoubleSpinBox("adhoc_detectorOrientation00", new QcrCell<double>(0.00), 8, 6);
+    detectorOri_01 =
+            new QcrDoubleSpinBox("adhoc_detectorOrientation01", new QcrCell<double>(0.10), 8, 6);
+    detectorOri_02 =
+            new QcrDoubleSpinBox("adhoc_detectorOrientation02", new QcrCell<double>(0.20), 8, 6);
+    detectorOri_10 =
+            new QcrDoubleSpinBox("adhoc_detectorOrientation10", new QcrCell<double>(1.00), 8, 6);
+    detectorOri_11 =
+            new QcrDoubleSpinBox("adhoc_detectorOrientation11", new QcrCell<double>(1.10), 8, 6);
+    detectorOri_12 =
+            new QcrDoubleSpinBox("adhoc_detectorOrientation12", new QcrCell<double>(1.20), 8, 6);
+    detectorOri_20 =
+            new QcrDoubleSpinBox("adhoc_detectorOrientation20", new QcrCell<double>(2.00), 8, 6);
+    detectorOri_21 =
+            new QcrDoubleSpinBox("adhoc_detectorOrientation21", new QcrCell<double>(2.10), 8, 6);
+    detectorOri_22 =
+            new QcrDoubleSpinBox("adhoc_detectorOrientation22", new QcrCell<double>(2.20), 8, 6);
     detectorGrid->addWidget(detectorOri_00, 0, 0, 1, 1);
     detectorGrid->addWidget(detectorOri_01, 0, 1, 1, 1);
     detectorGrid->addWidget(detectorOri_02, 0, 2, 1, 1);
@@ -107,13 +134,13 @@ InstrumentStates::InstrumentStates()
     QGroupBox* incommingBeam = new QGroupBox("Normalized incomming beam", this);
     QHBoxLayout* beamBox = new QHBoxLayout(incommingBeam);
     beamBox->addWidget(new QLabel("x"));
-    beamX = new QcrDoubleSpinBox("beamX", new QcrCell<double>(0.00), 8, 6);
+    beamX = new QcrDoubleSpinBox("adhoc_beamX", new QcrCell<double>(0.00), 8, 6);
     beamBox->addWidget(beamX);
     beamBox->addWidget(new QLabel("y"));
-    beamY = new QcrDoubleSpinBox("beamY", new QcrCell<double>(0.00), 8, 6);
+    beamY = new QcrDoubleSpinBox("adhoc_beamY", new QcrCell<double>(0.00), 8, 6);
     beamBox->addWidget(beamY);
     beamBox->addWidget(new QLabel("z"));
-    beamZ = new QcrDoubleSpinBox("beamZ", new QcrCell<double>(0.00), 8, 6);
+    beamZ = new QcrDoubleSpinBox("adhoc_beamZ", new QcrCell<double>(0.00), 8, 6);
     beamBox->addWidget(beamZ);
     vertical_2->addWidget(incommingBeam);
     horizLayout->addLayout(vertical_2);

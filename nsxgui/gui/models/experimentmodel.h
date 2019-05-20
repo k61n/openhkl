@@ -9,6 +9,7 @@
 #define EXPERIMENTMODEL_H
 
 #include <QList>
+#include <vector>
 
 #include <build/core/include/core/Experiment.h>
 #include <build/core/include/core/InstrumentTypes.h>
@@ -22,6 +23,7 @@ public:
     void removeSelectedData();
     void addData(nsx::sptrDataSet);
     QList<nsx::sptrDataSet> allData() { return data_; }
+    nsx::DataList allDataVector();
     nsx::sptrDataSet selectedData();
     void selectData(int);
 

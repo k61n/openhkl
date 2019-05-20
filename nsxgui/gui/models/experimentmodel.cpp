@@ -34,6 +34,14 @@ nsx::sptrDataSet ExperimentData::selectedData()
     return nullptr;
 }
 
+nsx::DataList ExperimentData::allDataVector()
+{
+    nsx::DataList vector;
+    for (nsx::sptrDataSet data : data_)
+        vector.push_back(data);
+    return vector;
+}
+
 void ExperimentData::findPeaks()
 {
     //TODO: implement the function
