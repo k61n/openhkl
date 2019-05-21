@@ -31,6 +31,7 @@ private:
     QcrDoubleSpinBox* backgroundUpperLimit;
     QGraphicsView* preview;
     QDialogButtonBox* buttons;
+    QcrTabWidget* tab;
 
     void breakUp();
 private slots:

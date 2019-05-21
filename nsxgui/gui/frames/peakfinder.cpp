@@ -2,6 +2,7 @@
 #include "nsxgui/gui/frames/peakfinder.h"
 #include "nsxgui/gui/models/experimentmodel.h"
 #include "nsxgui/gui/models/session.h"
+#include "nsxgui/gui/models/peakstable.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -52,7 +53,7 @@ PeakFinder::PeakFinder()
             //Layout
             QVBoxLayout* whole = new QVBoxLayout(this);
 
-            QcrTabWidget* tab = new QcrTabWidget("peakFinderSettings");
+            tab = new QcrTabWidget("peakFinderSettings");
             QcrWidget* settings = new QcrWidget("peakFinderTab");
             QHBoxLayout* tabLayout = new QHBoxLayout(settings);
             QVBoxLayout* leftTabLayout = new QVBoxLayout;
@@ -173,16 +174,10 @@ void PeakFinder::updateConvolutionParameters()
     typedef std::map<std::string, double>::const_iterator mapIterator;
     for (mapIterator it = params.begin(); it!=params.end(); ++it) {
         convolutionParams->insertRow(currentRow);
-//        QTableWidgetItem* pname = new QTableWidgetItem;
-//        pname->setText(QString::fromStdString(p.first));
-//        convolutionParams->setItem(currentRow, 0, pname);
-//        //pname->setFlags(pname->flags() ^ Qt::ItemIsEditable);
-//        QTableWidgetItem* pvalue = new QTableWidgetItem;
-//        pvalue->setText(QString::number(p.second));
-//        convolutionParams->setItem(currentRow, 1, pvalue);
         QString name = QString::fromStdString(it->first);
         QTableWidgetItem* pname = new QTableWidgetItem();
         pname->setData(Qt::DisplayRole, name);
+        pname->setFlags(pname->flags() ^ Qt::ItemIsEditable);
         convolutionParams->setItem(currentRow, 0, pname);
         QString val = QString::number(it->second);
         QTableWidgetItem* pvalue = new QTableWidgetItem(val);
@@ -227,6 +222,19 @@ void PeakFinder::run()
     }
 
     //add Tab WidgetFoundPeaks
+    PeaksTableModel* tableModel =
+            new PeaksTableModel("foundPeaksTable",
+                                gSession->selectedExperiment()->experiment(),
+                                peaks);
+    QcrWidget* foundPeaks = new QcrWidget("foundPeaksTab");
+    QVBoxLayout* vertical = new QVBoxLayout(foundPeaks);
+    PeaksTableView* peaksTable = new PeaksTableView(foundPeaks);
+    peaksTable->setModel(tableModel);
+    vertical->addWidget(peaksTable);
+    QcrCheckBox* keepSelectedPeaks =
+            new QcrCheckBox("adhoc_keepPeaks", "keep selected peaks", new QcrCell<bool>(false));
+    vertical->addWidget(keepSelectedPeaks);
+    tab->addTab(foundPeaks, "Peaks");
 
     gLogger->log("Peak search complete. Found some peaks.");
 }
