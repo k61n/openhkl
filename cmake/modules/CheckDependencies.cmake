@@ -55,16 +55,9 @@ endif()
 
 if(NSX_PYTHON)
     # python-dev and interpreter
-    if (USE_PYTHON3)
-        set(Python_ADDITIONAL_VERSIONS 3.7 3.6 3.5 3.4)
-        find_package(PythonInterp 3)
-        find_package(PythonLibs 3)
-    else()
-        set(Python_ADDITIONAL_VERSIONS 2.7)
-        find_package(PythonInterp 2)
-        find_package(PythonLibs 2)
-    endif()
-
+    set(Python_ADDITIONAL_VERSIONS 3.7 3.6 3.5 3.4)
+    find_package(PythonInterp 3)
+    find_package(PythonLibs 3)
 
     execute_process (
         COMMAND ${PYTHON_EXECUTABLE} -c "from __future__ import print_function; import numpy; print(numpy.get_include())"
