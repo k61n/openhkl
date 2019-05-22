@@ -30,8 +30,13 @@ option(NSX_DOCS "Build documentation" OFF)
 # Scripts controlling build setup and dependencies
 ###########################################################################
 
+if(UNIX AND NOT APPLE)
+    set(LINUX TRUE)
+endif()
+set(NSX_LIBRARY nsx)
+set(NSXQT_EXECUTABLE nsxqt)
+
 include(Version)
-include(ConfigureNSXTool)
 include(ConfigureBuildType)
 include(ConfigureInstall)
 include(GeneratePythonDocs)
