@@ -37,7 +37,7 @@ public:
   double operator[](int index) const;
 
   //! Return a reference to an element of the vector
-  double &operator[](int index);
+  const double &operator[](int index);
 
   //! Return the value of an element of the vector
   double operator()(int index) const;

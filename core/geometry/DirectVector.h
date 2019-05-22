@@ -33,11 +33,11 @@ public:
   //! Return the underlying Eigen::Vector3d stored in the DirectVector.
   const Eigen::Vector3d &vector() const;
 
-  //! Return a reference to an element of the vector
-  double &operator[](int index);
-
   //! Return the value of an element of the vector
   double operator[](int index) const;
+
+  //! Return a reference to an element of the vector
+  const double &operator[](int index);
 
   //! Return a reference to an element of the vector
   double &operator()(int index);

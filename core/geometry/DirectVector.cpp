@@ -20,7 +20,7 @@ double DirectVector::operator[](int index) const {
   return _dvector[index];
 }
 
-double &DirectVector::operator[](int index) {
+const double &DirectVector::operator[](int index) {
   if (index < 0 || index > 2) {
     throw std::runtime_error("Invalid index for a 3D vector");
   }
