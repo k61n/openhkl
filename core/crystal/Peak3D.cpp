@@ -54,9 +54,19 @@
 namespace nsx {
 
 Peak3D::Peak3D(sptrDataSet data)
-    : _shape(), _unitCell(nullptr), _scale(1.0), _selected(true),
-      _masked(false), _predicted(true), _transmission(1.0), _data(data),
-      _rockingCurve(), _peakEnd(4.0), _bkgBegin(5.0), _bkgEnd(6.0) {}
+    : _shape()
+    , _peakEnd(4.0)
+    , _bkgBegin(5.0)
+    , _bkgEnd(6.0)
+    , _unitCell(nullptr)
+    , _scale(1.0)
+    , _selected(true)
+    , _masked(false)
+    , _predicted(true)
+    , _transmission(1.0)
+    , _data(data)
+    , _rockingCurve()
+{}
 
 Peak3D::Peak3D(sptrDataSet data, const Ellipsoid &shape) : Peak3D(data) {
   setShape(shape);
