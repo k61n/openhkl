@@ -15,7 +15,6 @@ NumorProperty::NumorProperty()
     table = new QTableWidget(this);
     QHBoxLayout* box = new QHBoxLayout();
 
-
     table->horizontalHeader()->setVisible(false);
     table->verticalHeader()->setVisible(false);
     table->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -37,8 +36,6 @@ NumorProperty::NumorProperty()
 void NumorProperty::onRemake()
 {
     clear();
-
-
 
     if (gSession->selectedExperimentNum()>=0) {
         ExperimentModel* exp = gSession->selectedExperiment();

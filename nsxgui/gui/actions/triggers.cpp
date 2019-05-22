@@ -7,6 +7,7 @@
 #include "nsxgui/gui/frames/instrumentstates.h"
 #include "nsxgui/gui/frames/autoindexer.h"
 #include "nsxgui/gui/frames/peakfinder.h"
+#include "nsxgui/gui/dialogs/peakfilter.h"
 
 #include <QInputDialog>
 #include <QDesktopServices>
@@ -72,4 +73,5 @@ Triggers::Triggers()
     });
     instrumentStates.setTriggerHook([](){ new InstrumentStates; });
     autoIndexer.setTriggerHook([](){ new AutoIndexer; });
+    filterPeaks.setTriggerHook([](){ new PeakFilter; });
 }
