@@ -1,4 +1,4 @@
-###### Find boost libraries  ##############
+###### Find boost
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME ON)
@@ -20,10 +20,10 @@ if (BUILD_WITH_OPENMP)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
 
-###### Find the Eigen3
+###### Find Eigen3
 include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/3rdparty/eigen3)
 
-###### Search the HDF5 library
+###### Find HDF5
 find_package(HDF5 COMPONENTS CXX REQUIRED)
 
 # manually fix problem with windows build
@@ -53,6 +53,7 @@ else()
     message(FATAL_ERROR "HDF5 not found")
 endif()
 
+###### Find Python
 if(NSX_PYTHON)
     # python-dev and interpreter
     set(Python_ADDITIONAL_VERSIONS 3.7 3.6 3.5 3.4)
@@ -94,21 +95,21 @@ if(NSX_PYTHON)
     include(UseSWIG)
 endif(NSX_PYTHON)
 
-###### C-BLOSC
+###### Find C-BLOSC
 find_package(Blosc REQUIRED)
 include_directories(SYSTEM ${BLOSC_INCLUDES})
 
 find_package(YAML REQUIRED)
 include_directories(SYSTEM ${YAML_INCLUDES})
 
-###### TIFF library
+###### Find TIFF
 find_package(TIFF REQUIRED)
 include_directories(SYSTEM ${TIFF_INCLUDE_DIR})
 
 find_package(FFTW REQUIRED)
 include_directories(SYSTEM ${FFTW_INCLUDE_DIR})
 
-###### GSL library
+###### Find GSL
 find_package(GSL 2.3 REQUIRED)
 include_directories(SYSTEM ${GSL_INCLUDE_DIR})
 
