@@ -112,13 +112,3 @@ include_directories(SYSTEM ${FFTW_INCLUDE_DIR})
 ###### Find GSL
 find_package(GSL 2.3 REQUIRED)
 include_directories(SYSTEM ${GSL_INCLUDE_DIR})
-
-string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\1" GSL_VERSION_MAJOR ${GSL_VERSION})
-string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\2" GSL_VERSION_MINOR ${GSL_VERSION})
-
-message(STATUS "Found GSL:")
-message(STATUS "  version: ${GSL_VERSION_MAJOR}.${GSL_VERSION_MINOR}")
-message(STATUS "  libraries: ${GSL_LIBRARIES}")
-
-add_definitions(-DNSXTOOL_GSL_VERSION_MAJOR=${GSL_VERSION_MAJOR})
-add_definitions(-DNSXTOOL_GSL_VERSION_MINOR=${GSL_VERSION_MINOR})
