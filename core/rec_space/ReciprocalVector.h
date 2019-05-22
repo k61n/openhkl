@@ -39,12 +39,6 @@ public:
   //! Return a reference to an element of the vector
   const double &operator[](int index);
 
-  //! Return the value of an element of the vector
-  double operator()(int index) const;
-
-  //! Return a reference to an element of the vector
-  double &operator()(int index);
-
   //! Print information about a ReciprocalVector to a stream
   void print(std::ostream &os) const;
 

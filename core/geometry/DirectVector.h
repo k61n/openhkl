@@ -39,12 +39,6 @@ public:
   //! Return a reference to an element of the vector
   const double &operator[](int index);
 
-  //! Return a reference to an element of the vector
-  double &operator()(int index);
-
-  //! Return the value of an element of the vector
-  double operator()(int index) const;
-
   //! Print information about a DirectVector to a stream
   void print(std::ostream &os) const;
 
