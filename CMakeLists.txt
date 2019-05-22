@@ -35,14 +35,21 @@ endif()
 set(NSX_LIBRARY nsx)
 set(NSXQT_EXECUTABLE nsxqt)
 
-include(ConfigureBuildType)
-include(ConfigureInstall)
-include(GeneratePythonDocs)
-include(GetSubdirectories)
-include(CMakeFindBinUtils)
+# Set a default build type if none was specified
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "Setting build type to 'Release' as none was specified.")
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+  # Set the possible values of build type for cmake-gui
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
+    "MinSizeRel" "RelWithDebInfo")
+endif()
+
 include(CheckDependencies)
+include(GetSubdirectories) # defines MACRO get_subdirectories
 include(SetCompilerFlags)
 include(SetLinkerFlags)
+include(ConfigureInstall)
+include(GeneratePythonDocs)
 
 if(NSX_TIDY)
   set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
