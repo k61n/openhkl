@@ -7,7 +7,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR})
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/macros)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules)
 
-project(nsxtool)
+project(nsxtool VERSION 0.1.0)
 
 ###########################################################################
 # Options
@@ -36,7 +36,6 @@ endif()
 set(NSX_LIBRARY nsx)
 set(NSXQT_EXECUTABLE nsxqt)
 
-include(Version)
 include(ConfigureBuildType)
 include(ConfigureInstall)
 include(GeneratePythonDocs)
