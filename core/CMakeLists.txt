@@ -17,9 +17,9 @@ include_directories(${core_SUBDIRS}
 
 add_library(${NSX_LIBRARY} ${NSX_LIB_TYPE} ${core_SOURCES} ${core_RESOURCES_CPP})
 
-target_link_libraries(${NSX_LIBRARY} 
+target_link_libraries(${NSX_LIBRARY}
     ${HDF5_LIBRARIES}
-    blosc_static
+    ${BLOSC_LIBRARY}
     ${Boost_LIBRARIES}
     ${FFTW_LIBRARIES}
     ${YAML_LIBRARIES}

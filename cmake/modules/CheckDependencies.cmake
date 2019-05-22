@@ -102,8 +102,8 @@ if(NSX_PYTHON)
 endif(NSX_PYTHON)
 
 ###### C-BLOSC
-add_subdirectory(3rdparty/c-blosc)
-include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/3rdparty/c-blosc/blosc)
+find_package(Blosc REQUIRED)
+include_directories(SYSTEM ${BLOSC_INCLUDES})
 
 find_package(YAML REQUIRED)
 include_directories(SYSTEM ${YAML_INCLUDES})
