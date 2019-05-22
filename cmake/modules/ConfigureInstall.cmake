@@ -39,7 +39,7 @@ if(ENABLE_CPACK)
         set(NSXQT_INSTALL_DIR ".")
 
         set(NSXQT_BUNDLE_RESOURCES ${CMAKE_SOURCE_DIR}/cmake/modules/qt.conf
-                                   ${CMAKE_SOURCE_DIR}/apps/nsxqt/resources/nsxtool.icns)
+            ${CMAKE_SOURCE_DIR}/apps/nsxqt/resources/nsxtool.icns)
 
         set(MACOSX_BUNDLE_INFO_STRING "NSXTool: an application for reducing single-crystal diffraction data")
         set(MACOSX_BUNDLE_SHORT_VERSION_STRING "NSXTool version ${NSXTOOL_VERSION}")
@@ -69,9 +69,3 @@ else()
     endif("${isSystemDir}" STREQUAL "-1")
 
 endif()
-
-
-
-
-
-

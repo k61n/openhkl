@@ -37,11 +37,11 @@ set(NSXQT_EXECUTABLE nsxqt)
 
 # Set a default build type if none was specified
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  message(STATUS "Setting build type to 'Release' as none was specified.")
-  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
-  # Set the possible values of build type for cmake-gui
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
-    "MinSizeRel" "RelWithDebInfo")
+    message(STATUS "Setting build type to 'Release' as none was specified.")
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+    # Set the possible values of build type for cmake-gui
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
+        "MinSizeRel" "RelWithDebInfo")
 endif()
 
 include(CheckDependencies)
@@ -52,16 +52,16 @@ include(ConfigureInstall)
 include(GeneratePythonDocs)
 
 if(NSX_TIDY)
-  set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-  include(ClangTidy)
+    set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+    include(ClangTidy)
 endif()
 
 if(BUILD_COVERAGE_REPORT)
-  include(CheckCoverage)
+    include(CheckCoverage)
 endif()
 
 if(NSX_DOCS)
-  include(Doxygen)
+    include(Doxygen)
 endif()
 
 
@@ -87,21 +87,21 @@ add_subdirectory(tests)
 
 # swig + python tests
 if(NSX_PYTHON)
-  add_subdirectory(swig)
+    add_subdirectory(swig)
 endif()
 
 
 # code coverage report
 if(BUILD_COVERAGE_REPORT)
-  list(APPEND ignore_dirs "'/usr/include/*'")
-  list(APPEND ignore_dirs "'/usr/lib/*'")
-  list(APPEND ignore_dirs "'${CMAKE_BINARY_DIR}/*'")
-  list(APPEND ignore_dirs "'${CMAKE_SOURCE_DIR}/externals/*'")
+    list(APPEND ignore_dirs "'/usr/include/*'")
+    list(APPEND ignore_dirs "'/usr/lib/*'")
+    list(APPEND ignore_dirs "'${CMAKE_BINARY_DIR}/*'")
+    list(APPEND ignore_dirs "'${CMAKE_SOURCE_DIR}/externals/*'")
 
-  message("coverage ignore dirs = ${ignore_dirs}")
+    message("coverage ignore dirs = ${ignore_dirs}")
 
-  #list(APPEND ignore_dirs "'*/tests/*'")
-  add_coverage_target(coverage "${ignore_dirs}")
+    #list(APPEND ignore_dirs "'*/tests/*'")
+    add_coverage_target(coverage "${ignore_dirs}")
 endif()
 
 
@@ -110,5 +110,5 @@ endif()
 ###########################################################################
 
 if(ENABLE_CPACK)
- include(CPackSetup)
+    include(CPackSetup)
 endif()

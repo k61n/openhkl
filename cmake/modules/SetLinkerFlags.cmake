@@ -10,4 +10,3 @@ elseif(UNIX)
 else(WIN32)
     set(NSXQT_LINK_FLAGS "/ENTRY:mainCRTStartup")
 endif()
-
