@@ -60,7 +60,7 @@ endif()
 
 # special configuration for GNU/clang
 if(COMPILER_IS_GNU_OR_CLANG)
-    add_compile_options(-Wall -Wextra -Wpedantic)
+    add_compile_options(-Wall -Wextra -Wpedantic -Wno-sign-compare)
     add_compile_options(-pthread)
     add_definitions(-DEIGEN_FFTW_DEFAULT)
     add_definitions(-D_USE_MATH_DEFINES)
