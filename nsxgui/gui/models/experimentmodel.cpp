@@ -58,6 +58,28 @@ void ExperimentData::convertToHDF5()
 }
 
 //  ***********************************************************************************************
+//! @class PeaksModel
+
+PeaksModel::PeaksModel()
+{}
+
+nsx::PeakList PeaksModel::allPeaks()
+{
+    nsx::PeakList all;
+    for (auto &peakList : peakLists_) {
+        for (auto &&peak : peakList) {
+            all.push_back(peak);
+        }
+    }
+    return all;
+}
+
+void PeaksModel::appendPeaks(nsx::PeakList peaks)
+{
+    peakLists_.push_back(peaks);
+}
+
+//  ***********************************************************************************************
 //! @class InstrumentModel
 
 InstrumentModel::InstrumentModel(const QString& name, const QString& sourceName)
@@ -77,4 +99,5 @@ ExperimentModel::ExperimentModel(nsx::sptrExperiment experiment)
 {
     data_ = new ExperimentData;
     instrument_ = new InstrumentModel(QString::fromStdString(experiment_->name()), "sourceName");
+    peaks_ = new PeaksModel;
 }

@@ -43,17 +43,55 @@ QWidget* ItemDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem&
     return lineEdit;
 }
 
+//  ***********************************************************************************************
 
+FoundPeaks::FoundPeaks(nsx::PeakList peaks)
+    : QcrWidget{"foundPeaksTab"}
+{
+    tableModel =
+            new PeaksTableModel("foundPeaksTable",
+                                gSession->selectedExperiment()->experiment(),
+                                peaks);
+    QVBoxLayout* vertical = new QVBoxLayout(this);
+    PeaksTableView* peaksTable = new PeaksTableView(this);
+    peaksTable->setModel(tableModel);
+    vertical->addWidget(peaksTable);
+    keepSelectedPeaks =
+            new QcrCheckBox("adhoc_keepPeaks", "keep selected peaks", new QcrCell<bool>(false));
+    vertical->addWidget(keepSelectedPeaks);
+}
+
+nsx::PeakList FoundPeaks::selectedPeaks()
+{
+    auto& foundPeaks = tableModel->peaks();
+    gLogger->log("selectedPeaks");
+    nsx::PeakList peaks;
+
+    if (!foundPeaks.empty()) {
+        peaks.reserve(foundPeaks.size());
+        for (auto peak : foundPeaks) {
+            if (keepSelectedPeaks->isChecked()) {
+                if (peak->selected())
+                    peaks.push_back(peak);
+            } else
+                peaks.push_back(peak);
+        }
+    }
+    return peaks;
+}
+
+//  ***********************************************************************************************
 
 PeakFinder::PeakFinder()
     : QcrFrame{"peakFinder"}
 {
+    setAttribute(Qt::WA_DeleteOnClose);
     if (gSession->selectedExperimentNum() >= 0){
         if (gSession->selectedExperiment()->data()->allData().size() != 0){
             //Layout
             QVBoxLayout* whole = new QVBoxLayout(this);
 
-            tab = new QcrTabWidget("peakFinderSettings");
+            tab = new QcrTabWidget("adhoc_peakFinderSettings");
             QcrWidget* settings = new QcrWidget("peakFinderTab");
             QHBoxLayout* tabLayout = new QHBoxLayout(settings);
             QVBoxLayout* leftTabLayout = new QVBoxLayout;
@@ -159,7 +197,8 @@ PeakFinder::PeakFinder()
 
 void PeakFinder::breakUp()
 {
-    gLogger->log("[WARNING] Peak finding broken due to no selected Experiment or no data");
+    gLogger->log("## Peak finding broken due to no selected Experiment or no data");
+    close();
 }
 
 void PeakFinder::updateConvolutionParameters()
@@ -191,7 +230,6 @@ void PeakFinder::updateConvolutionParameters()
 
 void PeakFinder::run()
 {
-    gLogger->log("Peak find algorithm: Searching peaks...");
     nsx::sptrProgressHandler progHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler);
     nsx::DataList datalist;
     for (int i=0; i<data->count(); ++i)
@@ -222,21 +260,7 @@ void PeakFinder::run()
     }
 
     //add Tab WidgetFoundPeaks
-    PeaksTableModel* tableModel =
-            new PeaksTableModel("foundPeaksTable",
-                                gSession->selectedExperiment()->experiment(),
-                                peaks);
-    QcrWidget* foundPeaks = new QcrWidget("foundPeaksTab");
-    QVBoxLayout* vertical = new QVBoxLayout(foundPeaks);
-    PeaksTableView* peaksTable = new PeaksTableView(foundPeaks);
-    peaksTable->setModel(tableModel);
-    vertical->addWidget(peaksTable);
-    QcrCheckBox* keepSelectedPeaks =
-            new QcrCheckBox("adhoc_keepPeaks", "keep selected peaks", new QcrCell<bool>(false));
-    vertical->addWidget(keepSelectedPeaks);
-    tab->addTab(foundPeaks, "Peaks");
-
-    gLogger->log("Peak search complete. Found some peaks.");
+    tab->addTab(new FoundPeaks(peaks), "Peaks");
 }
 
 std::map<std::string, double> PeakFinder::convolutionParameters()
@@ -261,8 +285,40 @@ void PeakFinder::doActions(QAbstractButton* button)
         close();
         break;
     case QDialogButtonBox::StandardButton::Ok:
-        //accept();
+        accept();
         break;
     default: { return; }
     }
+}
+
+void PeakFinder::accept()
+{
+    gLogger->log("@accept");
+    for (auto i = 0; i < tab->count(); ++i) {
+
+      auto widget_found_peaks =
+          dynamic_cast<FoundPeaks *>(tab->widget(i));
+      if (!widget_found_peaks) {
+        continue;
+      }
+
+      auto &&found_peaks = widget_found_peaks->selectedPeaks();
+
+      gLogger->log("peaksWidget found...");
+
+      if (found_peaks.empty()) {
+        continue;
+      }
+
+//      auto checkbox = dynamic_cast<QCheckBox *>(
+//          tab->tabBar()->tabButton(i, QTabBar::LeftSide));
+
+//      if (!checkbox->isChecked()) {
+//        continue;
+//      }
+
+      gSession->selectedExperiment()->peaks()->appendPeaks(found_peaks);
+    }
+
+    close();
 }

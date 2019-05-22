@@ -4,9 +4,19 @@
 
 #include "nsxgui/qcr/widgets/views.h"
 #include "nsxgui/qcr/widgets/controls.h"
+#include "nsxgui/gui/models/peakstable.h"
 #include <QTableWidget>
 #include <QGraphicsView>
 #include <QDialogButtonBox>
+
+class FoundPeaks : public QcrWidget {
+public:
+    FoundPeaks(nsx::PeakList);
+    nsx::PeakList selectedPeaks();
+private:
+    PeaksTableModel* tableModel;
+    QcrCheckBox* keepSelectedPeaks;
+};
 
 class PeakFinder : public QcrFrame {
 public:
@@ -34,6 +44,7 @@ private:
     QcrTabWidget* tab;
 
     void breakUp();
+    void accept();
 private slots:
     void doActions(QAbstractButton*);
 };

@@ -12,10 +12,10 @@
 #include <QModelIndexList>
 #include <QTableView>
 
-#include <core/CrystalTypes.h>
-#include <core/DataTypes.h>
-#include <core/InstrumentTypes.h>
-#include <core/GeometryTypes.h>
+#include <build/core/include/core/CrystalTypes.h>
+#include <build/core/include/core/DataTypes.h>
+#include <build/core/include/core/InstrumentTypes.h>
+#include <build/core/include/core/GeometryTypes.h>
 
 #include "nsxgui/qcr/widgets/tables.h"
 

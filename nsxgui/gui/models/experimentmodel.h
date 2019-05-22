@@ -13,6 +13,7 @@
 
 #include <build/core/include/core/Experiment.h>
 #include <build/core/include/core/InstrumentTypes.h>
+#include <build/core/include/core/CrystalTypes.h>
 
 class ExperimentData {
 public:
@@ -30,6 +31,20 @@ public:
 private:
     QList<nsx::sptrDataSet> data_;
     int index_;
+};
+
+class PeaksModel {
+public:
+    PeaksModel();
+
+    void appendPeaks(nsx::PeakList);
+    void integratePeaks();
+    void buildShapeLibrary();
+    void autoAssignUnitCell();
+    nsx::PeakList selectedPeaks();
+    nsx::PeakList allPeaks();
+private:
+    std::vector<nsx::PeakList> peakLists_;
 };
 
 class InstrumentModel {
@@ -54,10 +69,12 @@ public:
     ExperimentData* data() { return data_; }
     InstrumentModel* instrument() { return instrument_; }
     void addData(nsx::sptrDataSet data) { data_->addData(data); }
+    PeaksModel* peaks() { return peaks_; }
 private:
 	nsx::sptrExperiment experiment_;
     ExperimentData* data_;
     InstrumentModel* instrument_;
+    PeaksModel* peaks_;
 };
 
 #endif //EXPERIMENTMODEL_H
