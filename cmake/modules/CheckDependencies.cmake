@@ -116,22 +116,11 @@ find_package(FFTW REQUIRED)
 include_directories(SYSTEM ${FFTW_INCLUDE_DIR})
 
 ###### GSL library
-if (BUILD_GSL)
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/3rdparty/gsl/cmake)
-    add_subdirectory(3rdparty/gsl)
-    include_directories(SYSTEM ${CMAKE_BINARY_DIR}/3rdparty/gsl/gsl)
+find_package(GSL 2.3 REQUIRED)
+include_directories(SYSTEM ${GSL_INCLUDE_DIR})
 
-    set (GSL_VERSION_MAJOR 2)
-    set (GSL_VERSION_MINOR 3)
-
-    set (GSL_LIBRARIES gsl gslcblas)
-else()
-    find_package(GSL 2.3 REQUIRED)
-    include_directories(SYSTEM ${GSL_INCLUDE_DIR})
-
-    string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\1" GSL_VERSION_MAJOR ${GSL_VERSION})
-    string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\2" GSL_VERSION_MINOR ${GSL_VERSION})
-endif()
+string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\1" GSL_VERSION_MAJOR ${GSL_VERSION})
+string(REGEX REPLACE "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?" "\\2" GSL_VERSION_MINOR ${GSL_VERSION})
 
 message(STATUS "Found GSL:")
 message(STATUS "  version: ${GSL_VERSION_MAJOR}.${GSL_VERSION_MINOR}")
