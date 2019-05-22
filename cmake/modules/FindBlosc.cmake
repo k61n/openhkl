@@ -2,9 +2,5 @@ find_path(BLOSC_INCLUDE_DIR blosc.h)
 
 find_library(BLOSC_LIBRARY NAMES blosc)
 
-if (BLOSC_INCLUDE_DIR AND BLOSC_LIBRARY)
-    set(BLOSC_FOUND TRUE)
-    message(STATUS "Found BLOSC library: ${BLOSC_LIBRARY}")
-else ()
-    message(STATUS "No Blosc library found.  Using internal sources.")
-endif ()
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(BLOSC DEFAULT_MSG BLOSC_LIBRARY BLOSC_INCLUDE_DIR)
