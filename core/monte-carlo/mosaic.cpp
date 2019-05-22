@@ -45,26 +45,6 @@ double xor128(void) {
   return w / 4294967295.0;
 }
 
-bool intersect(double p0, double p1, double p2, double u0, double u1, double u2,
-               double d, double radius, double &t1, double &t2) {
-
-  double a = (u0 * u0) + (u1 * u1) + (u2 * u2);
-  double b = 2.0 * (u0 * p0 + u1 * p1 + u2 * p2 - u1 * d);
-  double c = (p0 * p0) + (p1 * p1) + (p2 * p2) + d * d - radius * radius;
-
-  double delta = b * b - 4.0 * a * c;
-
-  if (delta < 0)
-    return false;
-
-  double sdelta = sqrt(delta);
-
-  t1 = 0.5 * (-b - sdelta) / a;
-  t2 = 0.5 * (-b + sdelta) / a;
-
-  return (t1 > 0 && t2 > 0);
-}
-
 } // namespace
 
 namespace nsx {
