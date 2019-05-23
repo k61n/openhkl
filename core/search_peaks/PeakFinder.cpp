@@ -12,6 +12,7 @@
 #include "Peak3D.h"
 #include "PeakFinder.h"
 #include "Sample.h"
+#include "Logger.h"
 
 using EquivalencePair = std::pair<int, int>;
 using EquivalenceList = std::vector<EquivalencePair>;

@@ -3,6 +3,7 @@
 #include <functional>
 #include <memory>
 #include <sstream>
+#include <iostream>
 
 #include "IStreamWrapper.h"
 
@@ -27,6 +28,7 @@ private:
 };
 
 template <typename T> Logger &Logger::operator<<(T &&x) {
+  std::cout << x << std::endl;
   std::stringstream str;
   str << " " << x;
   _msg += str.str();
