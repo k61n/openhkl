@@ -61,7 +61,7 @@ public:
 
     //! Add some data to the experiment
     void addData(sptrDataSet data);
-    //! Check whether the experiment has a data
+    //! Returns true if the experiment has a data
     bool hasData(const std::string& name) const;
     //! Remove a data from the experiment
     void removeData(const std::string& name);

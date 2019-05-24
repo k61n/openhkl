@@ -106,7 +106,7 @@ void BrillouinZone::clean_qs()
         unsigned int intersections = 0;
         for (size_t j = 0; j < n; ++j) {
             Eigen::RowVector3d qj = _qs[j];
-            // check whether the point qi lies on either of the Bragg planes given by
+            // Returns true if the point qi lies on either of the Bragg planes given by
             // +- qj
             if (std::fabs(std::fabs(qj.dot(qi) / qj.dot(qj)) - 0.5) < _eps) {
                 ++intersections;

@@ -878,7 +878,7 @@ bool UnitCell::equivalent(const UnitCell& other, double tolerance) const
         }
     }
 
-    // check whether T and S are inverse
+    // Returns true if T and S are inverse
     if ((T * S - Eigen::Matrix3d::Identity()).norm() > tolerance) {
         return false;
     }

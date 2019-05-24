@@ -84,10 +84,10 @@ public:
     //! false otherwise.
     bool addData(const Ellipsoid* ellipsoid);
 
-    //! Check whether the node has some children
+    //! Returns true if the node has some children
     bool hasChildren() const;
 
-    //! Check whether the node has some data
+    //! Returns true if the node has some data
     bool hasData() const;
 
     //! Recursively send some information about the node (and children) to a

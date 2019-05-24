@@ -48,10 +48,10 @@ public:
 
     AABB& operator=(const AABB& other);
 
-    //! Translate the AABB.
+    //! Translates the AABB.
     void translate(const Eigen::Vector3d& t);
 
-    //! Check whether a point given as Homogeneous coordinate is inside the AABB.
+    //! Returns true if a point given as Homogeneous coordinate is inside the AABB.
     bool isInside(const Eigen::Vector3d& vector) const;
 
     //! Returns true if the AABB intersects an ellipsoid.
@@ -74,7 +74,7 @@ public:
     //! Returns the extends of the bounding box of the shape
     Eigen::Vector3d extents() const;
 
-    //! Check whether the bounding box of the shape contains the bounding box of
+    //! Returns true if the bounding box of the shape contains the bounding box of
     //! the another shape
     bool contains(const AABB& other) const;
 
