@@ -69,17 +69,12 @@ public:
     //! Pair of Ellipsoid*
     using collision_pair = std::pair<const Ellipsoid*, const Ellipsoid*>;
 
-    //! Move constructor
     Octree(Octree&& other);
     Octree(const Octree& other) = delete;
-
-    //! Assignment operator
-    Octree& operator=(const Octree& other) = delete;
 
     //! Constructor from two Eigen3 vectors, throw invalid_argument if lb < ub
     Octree(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub);
 
-    //! destructor
     ~Octree() = default;
 
     //! Add a new AABB object to the deepest leaf.
@@ -162,7 +157,6 @@ private:
 
     //! Vector of 2^D children
     std::vector<Octree> _children;
-    // Octree<T,D>* _children[getPow(D)];
 
     //! Vector of data object in this leaf
     std::vector<const Ellipsoid*> _data;
@@ -178,10 +172,10 @@ private:
 //! Iterator for octree leaves/chambers
 class OctreeIterator {
 public:
-    //; The default constructor. Used only for end condition.
+    //! The default constructor. Used only for end condition.
     OctreeIterator();
 
-    //; The constructor from a reference to the Octree to be iterated.
+    //! The constructor from a reference to the Octree to be iterated.
     OctreeIterator(const Octree& tree);
 
     OctreeIterator& operator=(const OctreeIterator& other);

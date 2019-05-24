@@ -42,8 +42,6 @@ class RawDataReader : public IDataReader {
 
 public:
     RawDataReader() = delete;
-
-    //! Deleted copy constructor
     RawDataReader(const RawDataReader& other) = delete;
 
     //! Construct a dataset from the list of files, with the give metadata.
@@ -56,9 +54,6 @@ public:
     RawDataReader(const std::string& filename, Diffractometer* diffractometer);
 
     ~RawDataReader() = default;
-
-    //! Deleted assignment operator
-    RawDataReader& operator=(const RawDataReader& other) = delete;
 
     void addFrame(const std::string& filename);
 

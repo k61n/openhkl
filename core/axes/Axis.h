@@ -55,8 +55,6 @@ public:
     //! Assignment operator
     Axis& operator=(const Axis& other);
     virtual ~Axis() = 0;
-
-    //! Virtual copy constructor
     virtual Axis* clone() const = 0;
 
     //! Give a name to this axis

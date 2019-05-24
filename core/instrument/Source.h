@@ -39,8 +39,6 @@ public:
 
     //! Constructs a source from a property tree node
     Source(const YAML::Node& node);
-
-    //! Virtual copy constructor
     Source* clone() const;
     ~Source();
 

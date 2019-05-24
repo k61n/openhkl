@@ -37,15 +37,12 @@ namespace nsx {
 class Peak3D {
 
 public:
-    //! Create peak belonging to data without setting a position, shape, or
-    //! intensity
+    //! Create peak belonging to data without setting a position, shape, or intensity
     Peak3D(sptrDataSet data);
     //! Create peak belonging to data with given shape
     Peak3D(sptrDataSet data, const Ellipsoid& shape);
-    //! Copy constructor deleted
+
     Peak3D(sptrDataSet data, const Peak3D& other) = delete;
-    //! Assignment operator deleted
-    Peak3D& operator=(const Peak3D& other) = delete;
 
     //! Comparison operator used to sort peaks
     friend bool operator<(const Peak3D& p1, const Peak3D& p2);
@@ -56,14 +53,12 @@ public:
     //! Get the projection of total data in the bounding box.
     const std::vector<Intensity>& rockingCurve() const;
 
-    //! Compute the shape in q-space. May throw if there is no valid q-space
-    //! ellipsoid.
+    //! Compute the shape in q-space. May throw if there is no valid q-space ellipsoid.
     Ellipsoid qShape() const;
     //! Return the shape of the peak as an ellipsoid in detector coordinates
     const Ellipsoid& shape() const;
 
-    //! Return the intensity, after scaling, transmission, and Lorentz factor
-    //! corrections
+    //! Return the intensity, after scaling, transmission, and Lorentz factor corrections
     Intensity correctedIntensity() const;
     //! Return the raw intensity of the peak.
     Intensity rawIntensity() const;

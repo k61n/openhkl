@@ -76,12 +76,10 @@ template <typename... Args> struct DestructStorage;
 template <typename T, typename... S> struct DestructStorage<T, S...> {
     DestructStorage(const std::type_index& type, void* ptr)
     {
-
-        if (type == typeid(T)) {
+        if (type == typeid(T))
             reinterpret_cast<T*>(ptr)->~T();
-        } else {
+        else
             DestructStorage<S...>(type, ptr);
-        }
     }
 };
 
@@ -96,11 +94,10 @@ template <typename... Args> struct CopyStorage;
 template <typename T, typename... S> struct CopyStorage<T, S...> {
     CopyStorage(void* dst_ptr, const std::type_index& type, const void* src_ptr)
     {
-        if (type == typeid(T)) {
+        if (type == typeid(T))
             new (dst_ptr) T(*reinterpret_cast<const T*>(src_ptr));
-        } else {
+        else
             CopyStorage<S...>(dst_ptr, type, src_ptr);
-        }
     }
 };
 
@@ -122,7 +119,6 @@ template <typename T, typename... S> struct MoveStorage<T, S...> {
         if (type == typeid(T)) {
             const T* t_ptr = reinterpret_cast<const T*>(src_ptr);
             new (dst_ptr) T(std::move(*t_ptr));
-
         } else {
             MoveStorage<S...>(dst_ptr, type, src_ptr);
         }

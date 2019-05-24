@@ -34,8 +34,6 @@ class Component {
 
 public:
     Component() = default;
-
-    // Copy constructor
     Component(const Component& other);
 
     //! Constructs a component with a given name
@@ -43,8 +41,6 @@ public:
 
     //! Construct a component from a property tree node
     Component(const YAML::Node& node);
-
-    //! Virtual copy constructor
     virtual Component* clone() const = 0;
 
     //! Destructor.

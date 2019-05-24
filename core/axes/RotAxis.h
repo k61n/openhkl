@@ -49,7 +49,6 @@ public:
     //! Assignment operator
     RotAxis& operator=(const RotAxis& other);
     ~RotAxis();
-    //! Virtual copy constructor
     RotAxis* clone() const;
     //! Get rotation direction.
     void setRotationDirection(Direction);

@@ -24,8 +24,6 @@ class Intensity {
 public:
     //! Constructs an Intensity from its value and variance.
     Intensity(double value = 0.0, double sigma2 = 0.0);
-
-    //! Copy constructor.
     Intensity(const Intensity& other);
 
     //! Return the value of the Intensity

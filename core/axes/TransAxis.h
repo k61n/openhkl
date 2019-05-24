@@ -38,7 +38,6 @@ public:
     TransAxis(const YAML::Node& node);
     // Destructor
     ~TransAxis() override;
-    //! Virtual copy constructor
     TransAxis* clone() const;
 
     //! Assignment operator

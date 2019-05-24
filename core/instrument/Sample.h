@@ -47,8 +47,6 @@ public:
 
     //! Constructs a sample from a property tree node
     Sample(const YAML::Node& node);
-
-    //! Virtual copy constructor
     Sample* clone() const;
     virtual ~Sample();
 

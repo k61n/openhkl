@@ -40,8 +40,6 @@ class NSXTest {
 public:
     //! Constructor.
     NSXTest();
-
-    //! Copy constructor.
     NSXTest(const NSXTest& other) = default;
 
     //! Copy-assignment operator.
