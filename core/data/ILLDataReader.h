@@ -33,8 +33,6 @@ class ILLDataReader : public IDataReader {
 
 public:
     ILLDataReader() = delete;
-
-    //! Copy constructor
     ILLDataReader(const ILLDataReader& other) = delete;
     ILLDataReader(const std::string& filename, Diffractometer* diffractometer);
     ~ILLDataReader() = default;

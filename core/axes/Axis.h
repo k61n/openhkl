@@ -41,8 +41,6 @@ public:
     //! Static constructor for an Axis
     static Axis* create(const YAML::Node& node);
     Axis();
-
-    //! Copy constructor
     Axis(const Axis& other);
 
     //! Contruct a default z-axis

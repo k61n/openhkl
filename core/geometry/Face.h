@@ -33,8 +33,6 @@ struct Vertex;
 struct Face {
     Face();
     Face(int id);
-
-    //! Copy constructor
     Face(const Face& other) = delete;
     ~Face() = default;
 

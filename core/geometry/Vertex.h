@@ -31,8 +31,6 @@ struct Edge;
 struct Vertex {
     Vertex();
     Vertex(int id);
-
-    //! Copy constructor
     Vertex(const Vertex& other) = delete;
 
     //! Constructs a Vertex object from a vector of coordinates

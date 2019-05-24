@@ -32,8 +32,6 @@ struct Edge {
     Edge();
 
     Edge(int _id);
-
-    //! Copy constructor
     Edge(const Edge& other) = delete;
     ~Edge() = default;
 

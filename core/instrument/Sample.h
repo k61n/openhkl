@@ -40,8 +40,6 @@ public:
     //! Static constructor of a Sample from a property tree node
     static Sample* create(const YAML::Node& node);
     Sample();
-
-    //! Copy constructor
     Sample(const Sample& other) = default;
 
     //! Constructs a default sample with a given name

@@ -28,8 +28,6 @@ namespace nsx {
 class ReciprocalVector {
 public:
     ReciprocalVector() = default;
-
-    //! Copy constructor
     ReciprocalVector(const ReciprocalVector& other) = default;
 
     //! Constructor from its 3 components

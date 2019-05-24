@@ -32,8 +32,6 @@ public:
     //! Static constructor of a monochromatic source from a yaml tree node
     static Source* create(const YAML::Node& node);
     Source();
-
-    //! Copy constructor
     Source(const Source& other);
 
     //! Constructs a default source with a given name

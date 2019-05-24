@@ -97,8 +97,6 @@ public:
     //! Construct unitCell from lattice parameters, the A matrix is built with
     //! avector along x, bvector in the xy-plane.
     UnitCell(double a, double b, double c, double alpha, double beta, double gamma);
-
-    //! Copy constructor
     UnitCell(const UnitCell& other);
 
     ~UnitCell() = default;

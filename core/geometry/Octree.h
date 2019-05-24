@@ -71,8 +71,6 @@ public:
 
     //! Move constructor
     Octree(Octree&& other);
-
-    //! Copy constructor
     Octree(const Octree& other) = delete;
 
     //! Assignment operator

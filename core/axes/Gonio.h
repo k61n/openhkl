@@ -45,8 +45,6 @@ class Gonio {
 
 public:
     Gonio();
-
-    //! Copy constructor
     Gonio(const Gonio& other);
 
     //! Constructs a gonio with a given name

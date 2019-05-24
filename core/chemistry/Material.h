@@ -29,13 +29,11 @@ namespace nsx {
 class Material {
 
 public:
-    //! Default constructor (deleted)
     Material() = delete;
 
     //! Constructs a Material with a given name
     Material(const std::string& formula);
 
-    //! Copy constructor (deleted)
     Material(const Material& other) = default;
     ~Material() = default;
 

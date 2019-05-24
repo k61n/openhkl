@@ -32,7 +32,6 @@ class Ellipsoid {
 
 public:
     Ellipsoid();
-    //! Copy constructor
     Ellipsoid(const Ellipsoid& other);
     //! Construct directly from metric tensor
     Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& metric);

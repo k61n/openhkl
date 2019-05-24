@@ -29,7 +29,6 @@ public:
     //! Static constructor for a TransAxis
     static Axis* create(const YAML::Node& node);
     TransAxis();
-    //! Copy constructor
     TransAxis(const TransAxis& other);
     //! Constructs a translation axis with a given label
     TransAxis(const std::string& label);

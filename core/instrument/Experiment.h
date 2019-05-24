@@ -33,8 +33,6 @@ public:
     // Constructors & Destructors
     //! Default constructor (deleted)
     Experiment() = delete;
-
-    //! Copy constructor
     Experiment(const Experiment& other);
 
     //! Construct an empty experiment from a given name and diffractometer

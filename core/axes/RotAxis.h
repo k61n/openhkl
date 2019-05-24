@@ -37,7 +37,6 @@ public:
     //! Static constructor for a RotAxis
     static Axis* create(const YAML::Node& node);
     RotAxis();
-    //! Copy constructor
     RotAxis(const RotAxis& other);
     //! Constructs an axis with a given name
     explicit RotAxis(const std::string& label);

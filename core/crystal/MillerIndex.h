@@ -31,8 +31,6 @@ namespace nsx {
 class MillerIndex {
 public:
     MillerIndex() = default;
-
-    //! Copy constructor
     MillerIndex(const MillerIndex& other) = default;
 
     //! Constructor from its 3 components and the error on hkl

@@ -34,7 +34,6 @@ public:
     SymOp(std::string generator);
     //! Construct symmetry operation from an Eigen affine transformatiion
     SymOp(const affineTransformation& symmetryOperation);
-    //! Copy constructor
     SymOp(const SymOp& other);
     ~SymOp();
     //! Assignment

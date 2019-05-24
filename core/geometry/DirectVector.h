@@ -28,8 +28,6 @@ namespace nsx {
 class DirectVector {
 public:
     DirectVector() = default;
-
-    //! Copy constructor
     DirectVector(const DirectVector& other) = default;
 
     //! Constructor from its 3 components
