@@ -14,6 +14,7 @@
 #include <build/core/include/core/Experiment.h>
 #include <build/core/include/core/InstrumentTypes.h>
 #include <build/core/include/core/CrystalTypes.h>
+#include <build/core/include/core/UnitCell.h>
 
 class ExperimentData {
 public:
@@ -47,6 +48,17 @@ private:
     std::vector<nsx::PeakList> peakLists_;
 };
 
+class UnitCellsModel {
+public:
+    UnitCellsModel();
+
+    void appendUnitCell(nsx::sptrUnitCell cell) { unitCells_.append(cell); }
+//    nsx::UnitCell selectedCell();
+    QList<nsx::sptrUnitCell> allUnitCells() { return unitCells_; }
+private:
+    QList<nsx::sptrUnitCell> unitCells_;
+};
+
 class InstrumentModel {
 public:
     InstrumentModel(const QString&, const QString&);
@@ -70,11 +82,13 @@ public:
     InstrumentModel* instrument() { return instrument_; }
     void addData(nsx::sptrDataSet data) { data_->addData(data); }
     PeaksModel* peaks() { return peaks_; }
+    UnitCellsModel* unitCells() { return units_; }
 private:
 	nsx::sptrExperiment experiment_;
     ExperimentData* data_;
     InstrumentModel* instrument_;
     PeaksModel* peaks_;
+    UnitCellsModel* units_;
 };
 
 #endif //EXPERIMENTMODEL_H
