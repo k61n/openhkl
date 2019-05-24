@@ -182,7 +182,7 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     _meanBackground = {B, covar(0, 0)};
     _integratedIntensity = {I, covar(1, 1)};
 
-    // get pearson coefficient of fit
+    // Gets pearson coefficient of fit
     double pearson;
     Eigen::VectorXd r(N);
     residuals(r, B, I, x0, a, x, counts, &pearson);

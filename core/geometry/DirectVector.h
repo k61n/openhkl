@@ -40,13 +40,13 @@ public:
     DirectVector& operator=(const DirectVector& other) = default;
     ~DirectVector() = default;
 
-    //! Return the underlying Eigen::Vector3d stored in the DirectVector.
+    //! Returns the underlying Eigen::Vector3d stored in the DirectVector.
     const Eigen::Vector3d& vector() const;
 
-    //! Return the value of an element of the vector
+    //! Returns the value of an element of the vector
     double operator[](int index) const;
 
-    //! Return a reference to an element of the vector
+    //! Returns a reference to an element of the vector
     const double& operator[](int index);
 
     //! Print information about a DirectVector to a stream

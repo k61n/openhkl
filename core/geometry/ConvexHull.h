@@ -133,10 +133,10 @@ public:
     std::vector<Triangle>
     createFaceCache(const Eigen::Matrix3d& rotation = Eigen::Matrix3d::Identity()) const;
 
-    //! Return whether a vertex is contained in the hull
+    //! Returns whether a vertex is contained in the hull
     bool contains(const Eigen::Vector3d& v) const;
 
-    //! Get AABB of the convex hull
+    //! Gets AABB of the convex hull
     AABB aabb() const;
 
 private:

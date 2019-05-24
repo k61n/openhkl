@@ -170,7 +170,7 @@ void NiggliReduction::reduce(Eigen::Matrix3d& newg, Eigen::Matrix3d& P)
 
 void NiggliReduction::updateParameters()
 {
-    // Get the Niggli parameters
+    // Gets the Niggli parameters
     _A = _g(0, 0);
     _B = _g(1, 1);
     _C = _g(2, 2);

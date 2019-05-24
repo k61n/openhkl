@@ -33,22 +33,22 @@ public:
     //! Add a parameter to be fit. The original value of the parameter is stored
     //! (see reset()). The return value is the index of the parameter.
     int addParameter(double* addr);
-    //! Set values of the parameters from a GSL vector.
+    //! Sets values of the parameters from a GSL vector.
     void setValues(const gsl_vector* v);
     //! Write the values to a GSL vector
     void writeValues(gsl_vector* v) const;
-    //! Return the number of parameters
+    //! Returns the number of parameters
     size_t nparams() const;
-    //! Return the number of free parameters
+    //! Returns the number of free parameters
     size_t nfree() const;
-    //! Set the constraint matrix
+    //! Sets the constraint matrix
     void setConstraint(const Eigen::SparseMatrix<double>& C);
     //! Remove the constraints
     void resetConstraints();
     //! Kernel of the constraints: this is the transformation from constrained
     //! parameters to original parameters.
     const Eigen::MatrixXd& kernel() const;
-    //! Set the kernel of the constraints.
+    //! Sets the kernel of the constraints.
     void setKernel(const Eigen::MatrixXd& ker);
 
     //! Reset parameter values to their original state.

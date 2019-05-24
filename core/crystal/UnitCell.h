@@ -103,50 +103,50 @@ public:
 
     UnitCell& operator=(const UnitCell& other);
 
-    //! Set lattice parameters
+    //! Sets lattice parameters
     void setParameters(double a, double b, double c, double alpha, double beta, double gamma);
 
-    //! Set reciprocal lattice parameters
+    //! Sets reciprocal lattice parameters
     void setReciprocalParameters(
         double as, double bs, double cs, double alphas, double betas, double gammas);
 
-    //! Set the reciprocal space basis (lower triangular row form)
+    //! Sets the reciprocal space basis (lower triangular row form)
     void setReciprocalBasis(const Eigen::Matrix3d& b_transposed);
 
-    //! Set lattice centering type
+    //! Sets lattice centering type
     void setLatticeCentring(LatticeCentring centring);
 
-    //! Set Bravais type
+    //! Sets Bravais type
     void setBravaisType(BravaisType bravais);
 
-    //! Get Bravais type symbol
+    //! Gets Bravais type symbol
     std::string bravaisTypeSymbol() const;
 
-    //! Get a list of reflections with d value in the range [dmin, dmax]
+    //! Gets a list of reflections with d value in the range [dmin, dmax]
     std::vector<MillerIndex>
     generateReflectionsInShell(double dmin, double dmax, double wavelength) const;
 
-    //! Return the angle in radians between two reflections hkl1 and hkl2
+    //! Returns the angle in radians between two reflections hkl1 and hkl2
     double angle(const Eigen::RowVector3d& hkl1, const Eigen::RowVector3d& hkl2) const;
 
-    //! Set the Niggli character of the cell
+    //! Sets the Niggli character of the cell
     void setNiggli(const NiggliCharacter& niggli);
 
-    //! Get the Niggli character of the cell
+    //! Gets the Niggli character of the cell
     const NiggliCharacter& niggliCharacter() const;
 
-    //! Return the basis for the Niggli cell (assuming cell has already been
+    //! Returns the basis for the Niggli cell (assuming cell has already been
     //! reduced)
     Eigen::Matrix3d niggliBasis() const;
 
-    //! Return the basis for the Niggli cell (assuming cell has already been
+    //! Returns the basis for the Niggli cell (assuming cell has already been
     //! reduced)
     Eigen::Matrix3d reciprocalNiggliBasis() const;
 
     //! Apply constraint from the Niggli character
     UnitCell applyNiggliConstraints() const;
 
-    //! Return d of the Bragg condition for the given reflection
+    //! Returns d of the Bragg condition for the given reflection
     double d(int h, int k, int l);
 
     //! Print into a stream
@@ -158,10 +158,10 @@ public:
     //! Sets the Z value for the unit cell
     void setZ(unsigned int Z);
 
-    //! Return a pointer to the material of this unit cell
+    //! Returns a pointer to the material of this unit cell
     Material* material();
 
-    //! Return a const pointer to the material of this unit cell
+    //! Returns a const pointer to the material of this unit cell
     const Material* material() const;
 
 #ifndef SWIG
@@ -172,61 +172,61 @@ public:
     //! Sets the Material for the unit cell
     void setMaterial(const Material& material);
 
-    //! Set space group from its symbol.
+    //! Sets space group from its symbol.
     void setSpaceGroup(const SpaceGroup& space_group);
 
-    //! Set space group from its symbol.
+    //! Sets space group from its symbol.
     void setSpaceGroup(const std::string symbol);
 
-    //! Return the space group symbol of the unit cell.
+    //! Returns the space group symbol of the unit cell.
     const SpaceGroup& spaceGroup() const;
 
-    //! Set name of the unit cell
+    //! Sets name of the unit cell
     void setName(const std::string& name);
 
-    //! Get name of the unit cell
+    //! Gets name of the unit cell
     const std::string& name() const;
 
-    //! Set the integer tolerance for this unit cell
+    //! Sets the integer tolerance for this unit cell
     void setIndexingTolerance(double tolerance);
 
-    //! Get the integer tolerance for this unit cell
+    //! Gets the integer tolerance for this unit cell
     double indexingTolerance() const;
 
-    //! Return the real-space basis
+    //! Returns the real-space basis
     const Eigen::Matrix3d& basis() const;
 
-    //! Set the real-space basis (upper triangular, column form)
+    //! Sets the real-space basis (upper triangular, column form)
     void setBasis(const Eigen::Matrix3d& a);
 
-    //! Return the reciprocal bases
+    //! Returns the reciprocal bases
     const Eigen::Matrix3d& reciprocalBasis() const;
 
-    //! Set lattice parameters from metric tensor
+    //! Sets lattice parameters from metric tensor
     void setMetric(double g00, double g01, double g02, double g11, double g12, double g22);
 
-    //! Return the real space metric tensor
+    //! Returns the real space metric tensor
     Eigen::Matrix3d metric() const;
 
-    //! Return the reciprocal space metric tensor
+    //! Returns the reciprocal space metric tensor
     Eigen::Matrix3d reciprocalMetric() const;
 
-    //! Return the volume of the unit cell
+    //! Returns the volume of the unit cell
     double volume() const;
 
-    //! Return the index of a given q vector (not necessarily integral!!)
+    //! Returns the index of a given q vector (not necessarily integral!!)
     Eigen::RowVector3d index(const ReciprocalVector& q) const;
 
-    //! Return q vector from a given hkl
+    //! Returns q vector from a given hkl
     Eigen::RowVector3d fromIndex(const Eigen::RowVector3d& hkl) const;
 
-    //! Return the character of the cell
+    //! Returns the character of the cell
     UnitCellCharacter character() const;
 
-    //! Return the errors in the character of the cell
+    //! Returns the errors in the character of the cell
     UnitCellCharacter characterSigmas() const;
 
-    //! Return the reciprocal character of the cell
+    //! Returns the reciprocal character of the cell
     UnitCellCharacter reciprocalCharacter() const;
 
     //! Reduce the unit cell to Niggli or conventional cell. Returns the number
@@ -242,15 +242,15 @@ public:
     //! such that ST = 1 and A1 = A0*T, A0 = A1*S
     bool equivalent(const UnitCell& other, double tolerance) const;
 
-    //! Return the matrix P transforming the Niggli cell to the conventional cell
+    //! Returns the matrix P transforming the Niggli cell to the conventional cell
     const Eigen::Matrix3d& niggliTransformation() const;
 
-    //! Return the orientation matrix Q such that _A = Q*R where R is
+    //! Returns the orientation matrix Q such that _A = Q*R where R is
     //! upper triangular with positive entries on the diagonal, i.e.
     //! transformation mapping crystal space into real space.
     Eigen::Matrix3d orientation() const;
 
-    //! Return the orientation matrix Q such that _A*_NP^{-1} = Q*R where R is
+    //! Returns the orientation matrix Q such that _A*_NP^{-1} = Q*R where R is
     //! upper triangular with positive entries on the diagonal. This is similar to
     //! UnitCell::orientation() except that the orientation is computed for the
     //! Niggli cell.
@@ -271,21 +271,21 @@ public:
         const Eigen::Matrix3d& U0, const Eigen::Vector3d& uOffset,
         const Eigen::VectorXd& parameters) const;
 
-    //! Return list of space groups which are compatible with the Bravais type of
+    //! Returns list of space groups which are compatible with the Bravais type of
     //! the cell
     std::vector<std::string> compatibleSpaceGroups() const;
 
     //! Initialize this unit cell state for a given data
     void initState(sptrDataSet data);
 
-    //! Set the state of this unit cell for a given data and unit cell
+    //! Sets the state of this unit cell for a given data and unit cell
     void setState(sptrDataSet data, size_t frame, const UnitCellState& state);
 
-    //! Return a non-const reference to the state of this unit cell for a given
+    //! Returns a non-const reference to the state of this unit cell for a given
     //! data at a given frame
     UnitCellState& state(sptrDataSet data, size_t frame);
 
-    //! Return the interpolated unit cell between two states
+    //! Returns the interpolated unit cell between two states
     UnitCell interpolate(sptrDataSet data, double frame);
 
 #ifndef SWIG

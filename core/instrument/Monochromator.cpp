@@ -42,11 +42,11 @@ Monochromator::Monochromator(const YAML::Node& node)
 
     UnitsManager* um = UnitsManager::Instance();
 
-    // Set the source slit width from the yaml tree node
+    // Sets the source slit width from the yaml tree node
     auto&& widthNode = node["width"];
     _width = widthNode["value"].as<double>() * um->get(widthNode["units"].as<std::string>());
 
-    // Set the source slit height from the yaml tree node
+    // Sets the source slit height from the yaml tree node
     auto&& heightNode = node["height"];
     _height = heightNode["value"].as<double>() * um->get(heightNode["units"].as<std::string>());
 

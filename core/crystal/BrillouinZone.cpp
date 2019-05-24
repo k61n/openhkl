@@ -130,7 +130,7 @@ void BrillouinZone::compute()
         _qs.emplace_back(q);
     }
 
-    // get vertices of parallelepiped
+    // Gets vertices of parallelepiped
     compute_vertices();
     _vertices.clear();
     assert(_r2 > 0.0);
@@ -222,7 +222,7 @@ void BrillouinZone::compute_vertices()
                     continue;
                 }
 
-                // get the point of intersection
+                // Gets the point of intersection
                 auto x = QR.solve(b);
 
                 // check if it is inside the Brillouin Zone

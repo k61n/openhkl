@@ -43,10 +43,10 @@ public:
     //! Cast operator to an Eigen row vector
     const Eigen::RowVector3d& rowVector() const;
 
-    //! Return the value of an element of the vector
+    //! Returns the value of an element of the vector
     double operator[](int index) const;
 
-    //! Return a reference to an element of the vector
+    //! Returns a reference to an element of the vector
     const double& operator[](int index);
 
     //! Print information about a ReciprocalVector to a stream

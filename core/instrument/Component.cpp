@@ -25,7 +25,7 @@ Component::Component(const std::string& name) : _name(name), _gonio() {}
 
 Component::Component(const YAML::Node& node)
 {
-    // Set the component name
+    // Sets the component name
     _name = node["name"].as<std::string>();
 
     _gonio = node["goniometer"] ? Gonio(node["goniometer"]) : Gonio();

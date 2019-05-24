@@ -29,9 +29,9 @@ class PeakData {
 public:
     //! Construct instance associated to the given peak
     PeakData(sptrPeak3D peak = nullptr);
-    //! Return the list of detector events associated to the peak
+    //! Returns the list of detector events associated to the peak
     const std::deque<DetectorEvent>& events() const;
-    //! Return the list of detector counts associated to the peak
+    //! Returns the list of detector counts associated to the peak
     const std::deque<double>& counts() const;
     //! Compute the standard coordinates for each of the observed events.
     void computeStandard();

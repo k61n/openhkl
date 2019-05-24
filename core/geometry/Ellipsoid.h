@@ -44,13 +44,13 @@ public:
     virtual ~Ellipsoid() = default;
     //! Assignment
     Ellipsoid& operator=(const Ellipsoid& other);
-    //! Return true if the ellipsoid intersects an aabb.
+    //! Returns true if the ellipsoid intersects an aabb.
     bool collide(const AABB& other) const;
-    //! Return true if the ellipsoid intersects an ellipsoid.
+    //! Returns true if the ellipsoid intersects an ellipsoid.
     bool collide(const Ellipsoid& other) const;
-    //! Return true if ellipsoid collides with segment from a to b
+    //! Returns true if ellipsoid collides with segment from a to b
     bool collideSegment(const Eigen::Vector3d& a, const Eigen::Vector3d& b) const;
-    //! Return true if ellipsoid collides with face o (o+a) (o+a+b) (o+n) with
+    //! Returns true if ellipsoid collides with face o (o+a) (o+a+b) (o+n) with
     //! normal n
     bool collideFace(
         const Eigen::Vector3d& o, const Eigen::Vector3d& a, const Eigen::Vector3d& b,
@@ -63,29 +63,29 @@ public:
     void scale(double value);
     //! Translate the ellipsoid
     void translate(const Eigen::Vector3d& t);
-    //! Return the volume of the ellipsoid
+    //! Returns the volume of the ellipsoid
     double volume() const;
-    //! Return the homogenous matrix Q defining the ellipsoid
+    //! Returns the homogenous matrix Q defining the ellipsoid
     Eigen::Matrix4d homogeneousMatrix() const;
-    //! Return the inverse of the homogenous matrix Q defining the ellipsoid
+    //! Returns the inverse of the homogenous matrix Q defining the ellipsoid
     Eigen::Matrix4d homogeneousMatrixInverse() const;
-    //! Return semiaxes of the ellipsoid
+    //! Returns semiaxes of the ellipsoid
     Eigen::Vector3d radii() const;
-    //! Return the ellipsoid center
+    //! Returns the ellipsoid center
     const Eigen::Vector3d& center() const;
-    //! Return the ellipsoid metric (inverse covariance matrix)
+    //! Returns the ellipsoid metric (inverse covariance matrix)
     const Eigen::Matrix3d& metric() const;
-    //! Return the ellipsoid inverse metric (covariance matrix)
+    //! Returns the ellipsoid inverse metric (covariance matrix)
     const Eigen::Matrix3d& inverseMetric() const;
-    //! Return center of 2d ellipsoid formed by intersecting with plane with
+    //! Returns center of 2d ellipsoid formed by intersecting with plane with
     //! normal n and point p.
     Eigen::Vector3d intersectionCenter(const Eigen::Vector3d& n, const Eigen::Vector3d& p) const;
-    //! Return the axis aligned bounding box of the ellipsoid
+    //! Returns the axis aligned bounding box of the ellipsoid
     const AABB& aabb() const;
     //! Transform the ellipsoid to detector space, assuming it is currently in
     //! q-space.
     Ellipsoid toDetectorSpace(sptrDataSet data) const;
-    //! Return the value (x-center)*metric*(x-center)
+    //! Returns the value (x-center)*metric*(x-center)
     double r2(const Eigen::Vector3d x) const;
 
 #ifndef SWIG

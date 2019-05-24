@@ -39,16 +39,13 @@ namespace nsx {
 class AABB {
 
 public:
-    //! Constructs an unitialized AABB object
     AABB();
-    //! Constructs a AABB object from another ABB object
     AABB(const AABB& other);
     //! Constructs a AABB object from two Eigen vectors representing respectively
     //! its lower and upper bound
     AABB(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub);
     virtual ~AABB() = default;
 
-    //! Assignment operator
     AABB& operator=(const AABB& other);
 
     //! Translate the AABB.
@@ -57,26 +54,24 @@ public:
     //! Check whether a point given as Homogeneous coordinate is inside the AABB.
     bool isInside(const Eigen::Vector3d& vector) const;
 
-    //! Return true if the AABB intersects an ellipsoid.
+    //! Returns true if the AABB intersects an ellipsoid.
     bool collide(const AABB& aabb) const;
-    //! Return true if the AABB intersects an ellipsoid.
+    //! Returns true if the AABB intersects an ellipsoid.
     bool collide(const Ellipsoid& ellipsoid) const;
 
-    //! Get a constant reference to the lower bound of the bounding box of the
-    //! shape
+    //! Gets a constant reference to the lower bound of the bounding box of the shape
     const Eigen::Vector3d& lower() const;
-    //! Set the lower bound of the ellipsoid
+    //! Sets the lower bound of the ellipsoid
     void setLower(const Eigen::Vector3d& lower);
 
-    //! Get a constant reference to the upper bound of the bounding box of the
-    //! shape
+    //! Gets a constant reference to the upper bound of the bounding box of the shape
     const Eigen::Vector3d& upper() const;
-    //! Set the upper bound of the ellipsoid
+    //! Sets the upper bound of the ellipsoid
     void setUpper(const Eigen::Vector3d& upper);
 
-    //! Return the center of the bounding box of the shape
+    //! Returns the center of the bounding box of the shape
     Eigen::Vector3d center() const;
-    //! Return the extends of the bounding box of the shape
+    //! Returns the extends of the bounding box of the shape
     Eigen::Vector3d extents() const;
 
     //! Check whether the bounding box of the shape contains the bounding box of

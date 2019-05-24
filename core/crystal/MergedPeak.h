@@ -39,13 +39,13 @@ public:
     //! Add a peak to the merged peak.
     bool addPeak(const sptrPeak3D& peak);
 
-    //! Return a representative Miller index of the peak.
+    //! Returns a representative Miller index of the peak.
     MillerIndex index() const;
 
-    //! Return the merged intensity of the peak.
+    //! Returns the merged intensity of the peak.
     Intensity intensity() const;
 
-    //! Return the redundancy (number of symmetry-equivalent observations) of the
+    //! Returns the redundancy (number of symmetry-equivalent observations) of the
     //! merged peak.
     size_t redundancy() const;
 
@@ -55,7 +55,7 @@ public:
     //! Compute the p-value of the chi-squared statistic of the merged peak.
     double pValue() const;
 
-    //! Return vector of peaks used to compute the merged peak.
+    //! Returns vector of peaks used to compute the merged peak.
     const PeakList& peaks() const;
 
     //! split the merged peak randomly into two, for calculation of CC

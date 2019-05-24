@@ -27,7 +27,7 @@ Axis* Axis::create(const YAML::Node& node)
     // Create an instance of the source factory
     AxisFactory* axisFactory = AxisFactory::Instance();
 
-    // Get the axis type
+    // Gets the axis type
     std::string axisType = node["type"].as<std::string>();
 
     // Fetch the axis from the factory

@@ -949,7 +949,7 @@ Eigen::VectorXd UnitCell::parameters() const
     Eigen::FullPivLU<Eigen::MatrixXd> lu(C);
     Eigen::MatrixXd kernel = lu.kernel();
 
-    // get starting values: these are just the lattice character (components of
+    // Gets starting values: these are just the lattice character (components of
     // metric tensor)
     return (kernel.transpose() * kernel).inverse() * kernel.transpose() * ch;
 }
@@ -958,7 +958,7 @@ UnitCell UnitCell::fromParameters(
     const Eigen::Matrix3d& U0, const Eigen::Vector3d& uOffset,
     const Eigen::VectorXd& parameters) const
 {
-    // get new orientation from offsets
+    // Gets new orientation from offsets
     Eigen::Quaterniond q(1.0, uOffset(0), uOffset(1), uOffset(2));
     q.normalize();
 

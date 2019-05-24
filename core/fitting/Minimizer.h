@@ -54,29 +54,29 @@ public:
     //! \param [in] values The size of the residual vector.
     void initialize(FitParameters& params, int values);
 
-    //! Return the GSL status string
+    //! Returns the GSL status string
     const char* getStatusStr();
     //! Run the fitting routine with the specified maximum number of iterations.
     bool fit(int max_iter);
-    //! Return the variance-covariance matrix of the fit parameters.
+    //! Returns the variance-covariance matrix of the fit parameters.
     Eigen::MatrixXd covariance();
-    //! Set the relative tolerance in the fit parameters.
+    //! Sets the relative tolerance in the fit parameters.
     void setxTol(double xtol);
-    //! Set the relative tolerance in the gradient (Jacobian).
+    //! Sets the relative tolerance in the gradient (Jacobian).
     void setgTol(double gtol);
-    //! Set the relative tolerance in the residuals.
+    //! Sets the relative tolerance in the residuals.
     void setfTol(double ftol);
-    //! Return the Jacobian matrix.
+    //! Returns the Jacobian matrix.
     Eigen::MatrixXd jacobian();
-    //! Set the weights of the residuals.
+    //! Sets the weights of the residuals.
     void setWeights(const Eigen::VectorXd& wt);
-    //! Set the function which computes the least-squares residuals.
+    //! Sets the function which computes the least-squares residuals.
     template <typename Fun_> void set_f(Fun_ functor) { _f = static_cast<f_type>(functor); }
-    //! Set the function computes the Jacobian of the residuals.
+    //! Sets the function computes the Jacobian of the residuals.
     //! The default value is \p nullptr, in which case a numerical derivative is
     //! used instead.
     template <typename Fun_> void set_df(Fun_ functor) { _df = static_cast<df_type>(functor); }
-    //! Return the mean squared error with respect to the current minimizer
+    //! Returns the mean squared error with respect to the current minimizer
     //! values.
     double meanSquaredError() const;
 

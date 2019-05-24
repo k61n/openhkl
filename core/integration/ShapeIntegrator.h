@@ -32,7 +32,7 @@ public:
     //! box shape.
     ShapeIntegrator(sptrShapeLibrary lib, const AABB& aabb, int nx, int ny, int nz);
     bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
-    //! Return the library of cached peak shapes
+    //! Returns the library of cached peak shapes
     sptrShapeLibrary library() const;
 
 private:

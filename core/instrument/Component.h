@@ -52,13 +52,13 @@ public:
     //! Returns the name of the component.
     const std::string& name() const;
 
-    //! Set the name of the component
+    //! Sets the name of the component
     void setName(const std::string& name);
 
-    //! Return a const reference to the goniometer
+    //! Returns a const reference to the goniometer
     const Gonio& gonio() const;
 
-    //! Return a non-const reference to the goniometer
+    //! Returns a non-const reference to the goniometer
     Gonio& gonio();
 
 protected:

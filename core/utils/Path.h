@@ -30,7 +30,7 @@ std::string fileBasename(const std::string& input_path);
 //! Returns a path stripped off its file extension
 std::pair<std::string, std::string> splitFileExtension(const std::string& input_path);
 
-//! Get the directory name of a given path
+//! Gets the directory name of a given path
 std::string fileDirname(const std::string& input_path);
 
 //! Create a directory. The directory can be nested (0x1C0 is 0700)
@@ -44,7 +44,7 @@ std::string homeDirectory();
 //! Returns the NSXTool application data path
 std::string applicationDataPath();
 
-//! Return true if the file exists
+//! Returns true if the file exists
 bool fileExists(const std::string& filename);
 
 std::string diffractometersPath();

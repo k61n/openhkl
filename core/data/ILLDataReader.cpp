@@ -48,7 +48,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, Diffractometer* diffra
         throw std::runtime_error(std::string("ILLDataReader() caught exception: ") + e.what());
     }
 
-    // Get the actual file size
+    // Gets the actual file size
     std::ifstream filein(filename, std::ifstream::ate);
     size_t actual_file_size = filein.tellg();
     filein.close();
@@ -78,7 +78,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, Diffractometer* diffra
         throw std::runtime_error("Error when reading " + filename + ". The file is corrupted.");
     }
 
-    // Get the value of the monitor for the first frame
+    // Gets the value of the monitor for the first frame
     std::vector<int> vi;
     std::size_t skip3Lines = 3 * 81;
     readIntsFromChar(

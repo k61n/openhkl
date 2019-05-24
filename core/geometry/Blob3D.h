@@ -53,22 +53,22 @@ public:
     //! Merge a second blob
     void merge(const Blob3D&);
 
-    //! Return the total mass
+    //! Returns the total mass
     double getMass() const;
 
-    //! Return the number of points
+    //! Returns the number of points
     int getComponents() const;
 
-    //! Return the minimumMass
+    //! Returns the minimumMass
     double getMinimumMass() const;
 
-    //! Return the minimumMass
+    //! Returns the minimumMass
     double getMaximumMass() const;
 
-    //! Return the center of Mass
+    //! Returns the center of Mass
     Eigen::Vector3d center() const;
 
-    //! Get the ellipsoid parameters
+    //! Gets the ellipsoid parameters
     void toEllipsoid(
         double scale, Eigen::Vector3d& center, Eigen::Vector3d& eigenvalues,
         Eigen::Matrix3d& eigenvectors) const;
@@ -76,7 +76,7 @@ public:
     //! Print
     void printSelf(std::ostream& os) const;
 
-    //! Get covariance matrix of the blob
+    //! Gets covariance matrix of the blob
     Eigen::Matrix3d covariance() const;
 
 private:

@@ -197,11 +197,11 @@ void HDF5MetaDataReader::open()
     } catch (...) {
         throw;
     }
-    // Get rank of data
+    // Gets rank of data
     const hsize_t ndims = _space->getSimpleExtentNdims();
     std::vector<hsize_t> dims(ndims), maxdims(ndims);
 
-    // Get dimensions of data
+    // Gets dimensions of data
     _space->getSimpleExtentDims(&dims[0], &maxdims[0]);
     _nFrames = dims[0];
     _nRows = dims[1];

@@ -136,7 +136,7 @@ Sample::fitGonioOffsets(const DataList& dataset, size_t n_iterations, double tol
         parameters.addParameter(&v);
     }
 
-    // Set the Minimizer with the parameters store and the size of the residual
+    // Sets the Minimizer with the parameters store and the size of the residual
     // vector
     nsx::Minimizer minimizer;
     // Hack to do the fit with GSL for having enough data points

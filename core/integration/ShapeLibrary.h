@@ -54,7 +54,7 @@ public:
     //! otherwise store in Kabsch coordinates
     ShapeLibrary(bool detector_coords, double peakScale, double bkgBegin, double bkgEnd);
 
-    //! Return whether the library is stored in detector coords or Kabsch coords
+    //! Returns whether the library is stored in detector coords or Kabsch coords
     bool detectorCoords() const;
 
     //! Add a reference peak to the library
@@ -66,17 +66,17 @@ public:
     //! Predict the (detector space) covariance of a given peak
     Eigen::Matrix3d predictCovariance(sptrPeak3D peak) const;
 
-    //! Return mean Pearson coefficient to measure quality of fit
+    //! Returns mean Pearson coefficient to measure quality of fit
     double meanPearson() const;
 
-    //! Return the average peak profile near the given detector event
+    //! Returns the average peak profile near the given detector event
     Profile3D meanProfile(const DetectorEvent& ev, double radius, double nframes) const;
 
-    //! Return the average peak profile near the given detector event
+    //! Returns the average peak profile near the given detector event
     std::vector<Intensity>
     meanProfile1D(const DetectorEvent& ev, double radius, double nframes) const;
 
-    //! Return the average peak covariance near the given detector event
+    //! Returns the average peak covariance near the given detector event
     Eigen::Matrix3d meanCovariance(
         sptrPeak3D reference_peak, double radius, double nframes, size_t min_neighbors,
         PeakInterpolation interpolation) const;
@@ -109,7 +109,7 @@ private:
     //! Components of the Cholesky factor of shape covariance matrix
     std::array<double, 6> _choleskyS;
 
-    //! Set true if the profiles are stored in detector space coordinates or false
+    //! Sets true if the profiles are stored in detector space coordinates or false
     //! for Kabsch coords
     bool _detectorCoords;
 

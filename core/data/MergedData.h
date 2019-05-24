@@ -39,10 +39,10 @@ public:
     //! Retern the set of merged peaks.
     const MergedPeakSet& peaks() const;
 
-    //! Return redundancy = observations / symmetry-inequvialent peaks.
+    //! Returns redundancy = observations / symmetry-inequvialent peaks.
     double redundancy() const;
 
-    //! Return total number of observations (including redundant ones)
+    //! Returns total number of observations (including redundant ones)
     size_t totalSize() const;
 
     //! Clear the merged data

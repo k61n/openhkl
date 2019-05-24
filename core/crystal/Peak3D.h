@@ -47,78 +47,78 @@ public:
     //! Comparison operator used to sort peaks
     friend bool operator<(const Peak3D& p1, const Peak3D& p2);
 
-    //! Set the Peak region. Peak shaped is owned after setting
+    //! Sets the Peak region. Peak shaped is owned after setting
     void setShape(const Ellipsoid& peak);
 
-    //! Get the projection of total data in the bounding box.
+    //! Gets the projection of total data in the bounding box.
     const std::vector<Intensity>& rockingCurve() const;
 
     //! Compute the shape in q-space. May throw if there is no valid q-space ellipsoid.
     Ellipsoid qShape() const;
-    //! Return the shape of the peak as an ellipsoid in detector coordinates
+    //! Returns the shape of the peak as an ellipsoid in detector coordinates
     const Ellipsoid& shape() const;
 
-    //! Return the intensity, after scaling, transmission, and Lorentz factor corrections
+    //! Returns the intensity, after scaling, transmission, and Lorentz factor corrections
     Intensity correctedIntensity() const;
-    //! Return the raw intensity of the peak.
+    //! Returns the raw intensity of the peak.
     Intensity rawIntensity() const;
 
-    //! Return mean background of the peak
+    //! Returns mean background of the peak
     Intensity meanBackground() const;
 
-    //! Return shape scale used to define peak region
+    //! Returns shape scale used to define peak region
     double peakEnd() const;
-    //! Return shape scale used to define beginning of background region
+    //! Returns shape scale used to define beginning of background region
     double bkgBegin() const;
-    //! Return shape scale used to define end of background region
+    //! Returns shape scale used to define end of background region
     double bkgEnd() const;
 
-    //! Return the scaling factor.
+    //! Returns the scaling factor.
     double scale() const;
-    //! Set the scaling factor.
+    //! Sets the scaling factor.
     void setScale(double factor);
 
-    //! Set the peak selection state
+    //! Sets the peak selection state
     void setSelected(bool);
 
-    //! Return the peak selection state
+    //! Returns the peak selection state
     bool selected() const;
 
-    //! Set the peak masking state
+    //! Sets the peak masking state
     void setMasked(bool masked);
     //! eturn the peak masking state
     bool masked() const;
 
-    //! Return true if peak is enable (selected and not masked)
+    //! Returns true if peak is enable (selected and not masked)
     bool enabled() const;
 
-    //! Set the transmission factor
+    //! Sets the transmission factor
     void setTransmission(double transmission);
-    //! Return the transmission factor
+    //! Returns the transmission factor
     double transmission() const;
 
     //! Add a unit cell to the peak, optionally make it the active cell
     void setUnitCell(sptrUnitCell uc);
-    //! Return the active unit cell
+    //! Returns the active unit cell
     sptrUnitCell unitCell() const;
 
-    //! Set whether the peak is observed or predicted
+    //! Sets whether the peak is observed or predicted
     void setPredicted(bool predicted);
-    //! Return if the peak is predicted
+    //! Returns if the peak is predicted
     bool predicted() const;
 
     //! Update the integration of the peak
     void updateIntegration(
         const IPeakIntegrator& integrator, double peakEnd, double bkgBegin, double bkgEnd);
-    //! Return the q vector of the peak, transformed into sample coordinates.
+    //! Returns the q vector of the peak, transformed into sample coordinates.
     ReciprocalVector q() const;
-    //! Return the predicted q vector of the peak, based on Miller index.
+    //! Returns the predicted q vector of the peak, based on Miller index.
     ReciprocalVector qPredicted() const;
-    //! Return the data set to which this peak belongs
+    //! Returns the data set to which this peak belongs
     sptrDataSet data() const { return _data; }
-    //! Set raw intensity count (from image), with no corrections
+    //! Sets raw intensity count (from image), with no corrections
     void setRawIntensity(const Intensity& i);
-    //! Return peak center at the given frame
+    //! Returns peak center at the given frame
     DetectorEvent predictCenter(double frame) const;
 
 #ifndef SWIG

@@ -28,11 +28,11 @@ public:
     void calculate(const std::vector<MergedPeak>& peaks);
     //! Calculate the statistic on the given data.
     void calculate(const MergedData& data);
-    //! Return CC half (correlation of a random split of data into two bags)
+    //! Returns CC half (correlation of a random split of data into two bags)
     double CChalf() const;
-    //! Return CC star (estimate)
+    //! Returns CC star (estimate)
     double CCstar() const;
-    //! Return number of peaks
+    //! Returns number of peaks
     unsigned int nPeaks() const;
 
 private:

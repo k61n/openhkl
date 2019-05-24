@@ -49,7 +49,7 @@ public:
     //! Returns a const pointerh  to the diffractometer related to the experiment
     const Diffractometer* diffractometer() const;
 
-    //! Get a reference to the data
+    //! Gets a reference to the data
     const std::map<std::string, sptrDataSet>& data() const;
     //! Gets the pointer to a given data stored in the experiment
     sptrDataSet data(std::string name);

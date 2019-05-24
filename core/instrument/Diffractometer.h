@@ -45,39 +45,39 @@ public:
     //! Assignment operator
     Diffractometer& operator=(const Diffractometer& other);
 
-    //! Return the name of this diffractometer
+    //! Returns the name of this diffractometer
     const std::string& name() const;
 
-    //! Set the name of the diffractometer
+    //! Sets the name of the diffractometer
     void setName(const std::string& name);
 
-    //! Return a pointer to the detector of this diffractometer
+    //! Returns a pointer to the detector of this diffractometer
     Detector* detector();
 
     //! Returns const pointer to the detector of this diffractometer
     const Detector* detector() const;
 
 #ifndef SWIG
-    //! Set the detector of this diffractometer
+    //! Sets the detector of this diffractometer
     void setDetector(std::unique_ptr<Detector> detector);
 #endif
 
-    //! Return the non-const reference to the sample of this diffractometer
+    //! Returns the non-const reference to the sample of this diffractometer
     Sample& sample();
 
-    //! Return the const reference to the sample of this diffractometer
+    //! Returns the const reference to the sample of this diffractometer
     const Sample& sample() const;
 
-    //! Set the sample of this diffractometer
+    //! Sets the sample of this diffractometer
     void setSample(const Sample& sample);
 
-    //! Return the non-const reference to the source of this diffractometer
+    //! Returns the non-const reference to the source of this diffractometer
     Source& source();
 
-    //! Return the const reference to the source of this diffractometer
+    //! Returns the const reference to the source of this diffractometer
     const Source& source() const;
 
-    //! Set the source of this diffractometer
+    //! Sets the source of this diffractometer
     void setSource(const Source& source);
 
 protected:

@@ -67,7 +67,7 @@ Diffractometer::Diffractometer(const std::string& name)
 
 Diffractometer::Diffractometer(const YAML::Node& node)
 {
-    // Set the name of the diffractometer from the YAML node
+    // Sets the name of the diffractometer from the YAML node
     _name = node["name"].as<std::string>();
 
     // Build the detector from its corresponding YAML node

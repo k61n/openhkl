@@ -473,7 +473,7 @@ void UserDefinedUnitCellIndexer::refineUnitCells()
             }
         }
 
-        // Set the Minimizer with the parameters store and the size of the residual
+        // Sets the Minimizer with the parameters store and the size of the residual
         // vector
         Minimizer minimizer;
         minimizer.initialize(params, 3 * q_vectors.size());

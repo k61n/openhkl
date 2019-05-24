@@ -49,26 +49,26 @@ public:
     MillerIndex& operator=(const MillerIndex& other) = default;
     ~MillerIndex() = default;
 
-    //! Return indices in the form of an Eigen row vector
+    //! Returns indices in the form of an Eigen row vector
     const Eigen::RowVector3i& rowVector() const;
 
-    //! Return the value of an element of the vector
+    //! Returns the value of an element of the vector
     int operator[](int index) const;
-    //! Return a reference to an element of the vector
+    //! Returns a reference to an element of the vector
     int& operator[](int index);
-    //! Return the value of an element of the vector
+    //! Returns the value of an element of the vector
     int operator()(int index) const;
-    //! Return a reference to an element of the vector
+    //! Returns a reference to an element of the vector
     int& operator()(int index);
     //! Print information about a MillerIndex to a stream
     void print(std::ostream& os) const;
 
     bool operator<(const MillerIndex& other) const;
 
-    //! Return the indexing error (difference between "true" hkl and integers)
+    //! Returns the indexing error (difference between "true" hkl and integers)
     const Eigen::RowVector3d& error() const;
 
-    //! Return true if it is indexed, i.e. hkl are integral to within the
+    //! Returns true if it is indexed, i.e. hkl are integral to within the
     //! tolerance
     bool indexed(double tolerance) const;
 

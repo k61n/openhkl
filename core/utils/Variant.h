@@ -320,10 +320,10 @@ public:
         new (_storage) S(std::forward<T>(value));
     }
 
-    //! Return true is the variant curren type is of type T
+    //! Returns true is the variant curren type is of type T
     template <typename T> bool is() const { return (_typeid == typeid(T)); }
 
-    //! Return const reference to underlying object. Throws if type is wrong
+    //! Returns const reference to underlying object. Throws if type is wrong
     template <typename T> const T& as() const
     {
         static_assert(IsOneOf<T, Args...>::value, "T must be one of Args");

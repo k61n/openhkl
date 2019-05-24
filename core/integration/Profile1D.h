@@ -34,11 +34,11 @@ public:
     //! inverse covariance matrix of the peak. Parameter M is the total count (no
     //! background correction)
     void addPoint(double r2, double M);
-    //! Return the vector of integrated counts values
+    //! Returns the vector of integrated counts values
     const std::vector<double>& counts() const;
-    //! Return the number of points in each bin
+    //! Returns the number of points in each bin
     const std::vector<int>& npoints() const;
-    //! Return the profile I(s) / I(smax)
+    //! Returns the profile I(s) / I(smax)
     std::vector<Intensity> profile() const;
     //! Reset the profile to zero
     void reset();

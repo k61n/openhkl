@@ -38,31 +38,31 @@ public:
     RefinementBatch() = default;
     //! Construct batch with initial unit cell and list of peaks.
     RefinementBatch(InstrumentStateList& states, const UnitCell& uc, const PeakList& peaksmax);
-    //! Set the lattice B matrix to be refined.
+    //! Sets the lattice B matrix to be refined.
     void refineUB();
-    //! Set detector offsets in the given list of instrument states to be refined.
+    //! Sets detector offsets in the given list of instrument states to be refined.
     void refineDetectorOffset();
-    //! Set the sample position in the given list of instrument states to be
+    //! Sets the sample position in the given list of instrument states to be
     //! refined.
     void refineSamplePosition();
-    //! Set the sample orientation in the given list of instrument states to be
+    //! Sets the sample orientation in the given list of instrument states to be
     //! refined.
     void refineSampleOrientation();
-    //! Set the source ki in the given list of instrument states to be refined.
+    //! Sets the source ki in the given list of instrument states to be refined.
     void refineKi();
     //! Perform the refinement with the maximum number of iterations as given.
     bool refine(unsigned int max_iter = 100);
     //! Compute the residual vector for the current set of parameters.
     int residuals(Eigen::VectorXd& fvec);
-    //! Return the list of peaks used for refinement.
+    //! Returns the list of peaks used for refinement.
     const PeakList& peaks() const;
-    //! Return the refined unit cell.
+    //! Returns the refined unit cell.
     sptrUnitCell cell() const;
-    //! Return the matrix of parameter constraints.
+    //! Returns the matrix of parameter constraints.
     Eigen::MatrixXd constraintKernel() const;
     //! Determine if a given frame number is part of this batch.
     bool contains(double f) const;
-    //! Return the cost function
+    //! Returns the cost function
     const std::vector<double>& costFunction() const;
 
 private:

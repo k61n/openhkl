@@ -34,14 +34,14 @@ FlatDetector::FlatDetector(const YAML::Node& node) : Detector(node)
 {
     UnitsManager* um = UnitsManager::Instance();
 
-    // Set the detector width from the property tree node
+    // Sets the detector width from the property tree node
     auto&& widthNode = node["width"];
     double units = um->get(widthNode["units"].as<std::string>());
     double width = widthNode["value"].as<double>();
     width *= units;
     setWidth(width);
 
-    // Set the detector height from the property tree node
+    // Sets the detector height from the property tree node
     auto&& heightNode = node["height"];
     units = um->get(heightNode["units"].as<std::string>());
     double height = heightNode["value"].as<double>();

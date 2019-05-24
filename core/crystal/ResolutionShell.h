@@ -44,9 +44,9 @@ public:
     //! Add a peak to the list of shells.
     //! It will automatically be added to the appropriate shell.
     void addPeak(const sptrPeak3D& peak);
-    //! Return the given shell.
+    //! Returns the given shell.
     const DShell& shell(size_t i) const;
-    //! Return the number of shells.
+    //! Returns the number of shells.
     size_t nShells() const;
 
 private:

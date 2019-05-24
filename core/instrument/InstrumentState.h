@@ -41,29 +41,29 @@ public:
     //! coordinates
     ReciprocalVector kfLab(const DirectVector& detector_position) const;
 
-    //! Return source ki
+    //! Returns source ki
     ReciprocalVector ki() const;
 
     //! Takes direct vector in detector coordinates and computes q in sample
     //! coordinates
     ReciprocalVector sampleQ(const DirectVector& detector_position) const;
 
-    //! Return the gamma angle associated to the given lab space position
+    //! Returns the gamma angle associated to the given lab space position
     double gamma(const DirectVector& detector_position) const;
 
-    //! Return the nu angle associated to the given lab space position
+    //! Returns the nu angle associated to the given lab space position
     double nu(const DirectVector& detector_position) const;
 
-    //! Return the 2*theta angle associated to the given lab space position
+    //! Returns the 2*theta angle associated to the given lab space position
     double twoTheta(const DirectVector& detector_position) const;
 
     //! Compute the jacobian of the transformation (x,y) -> k_lab
     Eigen::Matrix3d jacobianK(double px, double py) const;
 
-    //! Return a pointer to the diffractometer of the state
+    //! Returns a pointer to the diffractometer of the state
     Diffractometer* diffractometer();
 
-    //! Return a const pointer to the diffractometer of the state
+    //! Returns a const pointer to the diffractometer of the state
     const Diffractometer* diffractometer() const;
 
 public:

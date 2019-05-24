@@ -51,13 +51,13 @@ public:
     //! Gets the data filename
     const std::string& filename() const;
 
-    //! Return the number of frames
+    //! Returns the number of frames
     std::size_t nFrames() const;
 
-    //! Return the number of rows in each detector image
+    //! Returns the number of rows in each detector image
     std::size_t nRows() const;
 
-    //! Return the number of columns in each detector image
+    //! Returns the number of columns in each detector image
     std::size_t nCols() const;
 
     //! Gets the the sample states
@@ -66,7 +66,7 @@ public:
     //! Gets the the sample states
     const InstrumentStateList& instrumentStates() const;
 
-    //! Get the interpolated state of a given component
+    //! Gets the interpolated state of a given component
     InterpolatedState interpolatedState(double frame) const;
 
     //! Add a new mask to the data
@@ -75,27 +75,27 @@ public:
     //! Remove a mask from the data, by reference
     void removeMask(IMask* mask);
 
-    //! Return the list of masks
+    //! Returns the list of masks
     const std::set<IMask*>& masks();
 
     //! Mask a given peak
     void maskPeaks(PeakList& peaks) const;
 
-    //! Return the intensity at point x,y,z.
+    //! Returns the intensity at point x,y,z.
     int dataAt(unsigned int x = 0, unsigned int y = 0, unsigned int z = 0);
 
     //! Read a single frame
     Eigen::MatrixXi frame(std::size_t idx);
 
-    //! Return frame after transforming to account for detector gain and baseline
+    //! Returns frame after transforming to account for detector gain and baseline
     Eigen::MatrixXd transformedFrame(std::size_t idx);
 
-    //! Return a convolved frame
+    //! Returns a convolved frame
     Eigen::MatrixXd convolvedFrame(
         std::size_t idx, const std::string& convolver_type,
         const std::map<std::string, double>& parameters);
 
-    //! Get the file handle.
+    //! Gets the file handle.
     void open();
 
     //! Close file and release handle
@@ -104,19 +104,19 @@ public:
     //! True if file is open
     bool isOpened() const;
 
-    //! Return total size of file
+    //! Returns total size of file
     std::size_t fileSize() const;
 
     //! Export dataset to HDF5 format
     void saveHDF5(const std::string& filename);
 
-    //! Return detector events corresponding to the list of q values.
+    //! Returns detector events corresponding to the list of q values.
     std::vector<DetectorEvent> events(const std::vector<ReciprocalVector>& sample_qs) const;
 
-    //! Return the sample-space q vector corresponding to a detector event
+    //! Returns the sample-space q vector corresponding to a detector event
     ReciprocalVector computeQ(const DetectorEvent& ev) const;
 
-    //! Return the data reader used to set this dataset
+    //! Returns the data reader used to set this dataset
     std::shared_ptr<IDataReader> reader() const;
 
 private:

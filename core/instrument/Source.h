@@ -54,10 +54,10 @@ public:
 
     void setSelectedMonochromator(size_t i);
 
-    //! Return a non-const reference to the selected monochromator
+    //! Returns a non-const reference to the selected monochromator
     Monochromator& selectedMonochromator();
 
-    //! Return a non-const reference to the selected monochromator
+    //! Returns a non-const reference to the selected monochromator
     const Monochromator& selectedMonochromator() const;
 
     //! Add a new monochromator to this source

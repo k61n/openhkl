@@ -26,13 +26,13 @@ public:
     Intensity(double value = 0.0, double sigma2 = 0.0);
     Intensity(const Intensity& other);
 
-    //! Return the value of the Intensity
+    //! Returns the value of the Intensity
     double value() const;
 
-    //! Return the standard deviation of the Intensity.
+    //! Returns the standard deviation of the Intensity.
     double sigma() const;
 
-    //! Return the variance of the Intensity
+    //! Returns the variance of the Intensity
     double variance() const;
 
     //! Returns the sum of two Intensity whose value and variance are summed.

@@ -52,7 +52,7 @@ public:
     //! remove a key from the factory
     //@param key : key representing how the callback is stored
     std::size_t unregisterCallback(const keytype& key);
-    //! Return true if a given callback has been registered so far
+    //! Returns true if a given callback has been registered so far
     bool hasCallback(const keytype& key);
 
 protected:

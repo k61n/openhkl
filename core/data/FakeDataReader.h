@@ -41,10 +41,10 @@ public:
 
     FakeDataReader& operator=(const FakeDataReader& other) = delete;
 
-    //! Return the data frame for the given index.
+    //! Returns the data frame for the given index.
     Eigen::MatrixXi data(size_t frame) final;
 
-    //! Set the value of the data at the given frame
+    //! Sets the value of the data at the given frame
     void setData(size_t frame, const Eigen::MatrixXi& data);
 
 private:

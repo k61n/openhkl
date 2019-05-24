@@ -469,7 +469,7 @@ void PeakFinder::findPrimaryBlobs(
 
                 newlabel = false;
 
-                // Get labels of adjacent pixels
+                // Gets labels of adjacent pixels
                 left = (col == 0 ? 0 : labels[index2D - 1]);
                 top = (row == 0 ? 0 : labels[index2D - ncols]);
                 previous = (idx == begin ? 0 : labels2[index2D]);

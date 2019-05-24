@@ -50,17 +50,17 @@ public:
     RotAxis& operator=(const RotAxis& other);
     ~RotAxis();
     RotAxis* clone() const;
-    //! Get rotation direction.
+    //! Gets rotation direction.
     void setRotationDirection(Direction);
-    //! Return rotation direction: 0 for CCW and 1 for CW
+    //! Returns rotation direction: 0 for CCW and 1 for CW
     Direction rotationDirection() const;
-    //! Get the rotation matrix associated with this rotation
+    //! Gets the rotation matrix associated with this rotation
     //@param angle : rotation angle in radians by default, use Units to convert
     //@return rotation matrix
     Eigen::Matrix3d rotationMatrix(double angle) const;
-    //! Return the 4x4 Homogeous matrix corresponding to this transformation.
+    //! Returns the 4x4 Homogeous matrix corresponding to this transformation.
     Eigen::Transform<double, 3, Eigen::Affine> affineMatrix(double angle) const;
-    //! Get the quaternion associated with this rotation
+    //! Gets the quaternion associated with this rotation
     //@param angle : rotation angle in radians by default
     //@return rotation matrix
     Eigen::Quaterniond quaternion(double angle) const;

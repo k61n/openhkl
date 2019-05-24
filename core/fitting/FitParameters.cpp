@@ -89,9 +89,9 @@ void FitParameters::setConstraint(const Eigen::SparseMatrix<double>& C_input)
     auto r = solver1.rank();
     auto n = solver1.cols();
 
-    // get the permutation
+    // Gets the permutation
     SolverType::PermutationType U = solver1.colsPermutation();
-    // get R, and restrict so that the number of rows is equal to the rank
+    // Gets R, and restrict so that the number of rows is equal to the rank
     Eigen::SparseMatrix<double> R = solver1.matrixR().topLeftCorner(r, n);
 
     // Write R in block form R = [R0 R1] where R0 is square and full rank

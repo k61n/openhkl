@@ -42,7 +42,7 @@ public:
     bool operator==(const SymOp& other) const;
     //! Compose symmetry operations
     SymOp operator*(const SymOp& other) const;
-    //! Return 4x4 homogeneous matrix representation of the operation
+    //! Returns 4x4 homogeneous matrix representation of the operation
     const affineTransformation& getMatrix() const;
     //! Pretty print
     void print(std::ostream& os) const;
@@ -52,13 +52,13 @@ public:
     std::string getJonesSymbol() const;
     //! True if has translational part non zero
     bool hasTranslation() const;
-    //! Return true if operation is pure translation
+    //! Returns true if operation is pure translation
     bool isPureTranslation() const;
-    //! Return the translation part of the symmetry operator
+    //! Returns the translation part of the symmetry operator
     Eigen::Vector3d getTranslationPart() const;
-    //! Return the rotational part of the symmetry operator
+    //! Returns the rotational part of the symmetry operator
     Eigen::Matrix3d getRotationPart() const;
-    //! Return whether the translation part of 'other' is an integral multiple
+    //! Returns whether the translation part of 'other' is an integral multiple
     //! of the translation part of 'this'. Note: returns false if either is pure
     //! rotation. The return value, if non-zero, is the number n such that n *
     //! this->getTranslationPart() == other.getTranslationPart()

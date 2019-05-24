@@ -47,13 +47,13 @@ public:
      */
     void
     integrate(PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end);
-    //! Return the mean background.
+    //! Returns the mean background.
     Intensity meanBackground() const;
-    //! Return the integrated intensity.
+    //! Returns the integrated intensity.
     Intensity integratedIntensity() const;
-    //! Return the peak rocking curve.
+    //! Returns the peak rocking curve.
     const std::vector<Intensity>& rockingCurve() const;
-    //! Set the progress handler.
+    //! Sets the progress handler.
     void setHandler(sptrProgressHandler handler);
 
 protected:

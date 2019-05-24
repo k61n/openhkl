@@ -57,16 +57,16 @@ public:
     //! Assignment operator
     Gonio& operator=(const Gonio& other);
 
-    //! Return the number of axis of this goniometer
+    //! Returns the number of axis of this goniometer
     size_t nAxes() const;
 
-    //! Get a pointer to axis with name, throw range_error if not found
+    //! Gets a pointer to axis with name, throw range_error if not found
     Axis& axis(size_t index);
 
-    //! Get a pointer to axis with name, throw range_error if not found
+    //! Gets a pointer to axis with name, throw range_error if not found
     const Axis& axis(size_t index) const;
 
-    //! Return the homogeneous matrix corresponding to this set of parameters.
+    //! Returns the homogeneous matrix corresponding to this set of parameters.
     //! Throw if angles outside limits.
     Eigen::Transform<double, 3, Eigen::Affine>
     affineMatrix(const std::vector<double>& values) const;
@@ -81,7 +81,7 @@ public:
 private:
     //! Given name of the gonio
     std::string _name;
-    //! Set of axis
+    //! Sets of axis
     std::vector<std::unique_ptr<Axis>> _axes;
 };
 

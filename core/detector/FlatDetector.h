@@ -36,21 +36,21 @@ public:
     FlatDetector(const std::string& name);
     //! Constructs a FlatDetector from a property tree node
     FlatDetector(const YAML::Node& node);
-    //! Return a pointer to a copy of a FlatDetector
+    //! Returns a pointer to a copy of a FlatDetector
     Detector* clone() const override;
     virtual ~FlatDetector();
 
     //! Assignment operator
     FlatDetector& operator=(const FlatDetector& other) = default;
 
-    //! Set the height of the detector (meters)
+    //! Sets the height of the detector (meters)
     virtual void setHeight(double height) override;
-    //! Set the width of the detector (meters)
+    //! Sets the width of the detector (meters)
     virtual void setWidth(double width) override;
 
-    //! Set the angular height of the detector (radians)
+    //! Sets the angular height of the detector (radians)
     virtual void setAngularHeight(double angle) override;
-    //! Set the angular width of the detector (radians)
+    //! Sets the angular width of the detector (radians)
     virtual void setAngularWidth(double angle) override;
 
     //! Returns the position of a given pixel in detector space. This takes into

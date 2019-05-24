@@ -36,21 +36,21 @@ public:
     CylindricalDetector(const std::string& name);
     //! Constructs a CylindricalDetector from a property tree node
     CylindricalDetector(const YAML::Node& node);
-    //! Return a pointer to a copy of a CylindricalDetector
+    //! Returns a pointer to a copy of a CylindricalDetector
     Detector* clone() const override;
     virtual ~CylindricalDetector();
 
     //! Assignment operator
     CylindricalDetector& operator=(const CylindricalDetector& other) = default;
 
-    //! Set the height of the detector (meters)
+    //! Sets the height of the detector (meters)
     void setHeight(double height) override;
-    //! Set the width of the detector (meters)
+    //! Sets the width of the detector (meters)
     void setWidth(double width) override;
 
-    //! Set the angular height of the detector (radians)
+    //! Sets the angular height of the detector (radians)
     void setAngularHeight(double angle) override;
-    //! Set the angular width of the detector (radians)
+    //! Sets the angular width of the detector (radians)
     void setAngularWidth(double angle) override;
 
     //! Returns the position of a given pixel in detector space. This takes into

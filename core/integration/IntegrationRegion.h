@@ -40,9 +40,9 @@ public:
     //! Update the integration mask of the detector (peak, background, forbiddgen
     //! zones)
     void updateMask(Eigen::MatrixXi& mask, double frame) const;
-    //! Return the bounding box of the region
+    //! Returns the bounding box of the region
     const AABB aabb() const;
-    //! Return the bounding box of the peak region
+    //! Returns the bounding box of the peak region
     const AABB peakBB() const;
     //! Classify a detector event (peak, background, forbidden, etc.)
     EventType classify(const DetectorEvent& ev) const;
@@ -50,15 +50,15 @@ public:
     bool advanceFrame(const Eigen::MatrixXd& image, const Eigen::MatrixXi& mask, double frame);
     //! Reset the integration region (i.e. free memory)
     void reset();
-    //! Return the underlying data stored by the region
+    //! Returns the underlying data stored by the region
     const PeakData& data() const;
-    //! Return the data stored by the region
+    //! Returns the data stored by the region
     PeakData& data();
-    //! Return the peak shape used by the region
+    //! Returns the peak shape used by the region
     const Ellipsoid& shape() const;
-    //! Return the convex hull of the region (e.g. BrillouinZone)
+    //! Returns the convex hull of the region (e.g. BrillouinZone)
     const ConvexHull& hull() const;
-    //! Return the scaling factor used to determine the peak boundary
+    //! Returns the scaling factor used to determine the peak boundary
     double peakEnd() const { return _peakEnd; }
 
 private:

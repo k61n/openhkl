@@ -60,31 +60,31 @@ public:
     //! Give a name to this axis
     void setName(const std::string& name);
 
-    //! Return the axis name
+    //! Returns the axis name
     const std::string& name() const;
 
-    //! Set and normalize the axis direction
+    //! Sets and normalize the axis direction
     void setAxis(const Eigen::Vector3d& axis);
 
-    //! Get the normalized direction of this axis
+    //! Gets the normalized direction of this axis
     const Eigen::Vector3d& axis() const;
 
-    //! Get the instrument id of the axis
+    //! Gets the instrument id of the axis
     unsigned int id() const;
 
-    //! Set the instrument id of the axis
+    //! Sets the instrument id of the axis
     void setId(unsigned int id);
 
-    //! Get the homogeneous (4x4) matrix corresponding to the value
+    //! Gets the homogeneous (4x4) matrix corresponding to the value
     virtual Eigen::Transform<double, 3, Eigen::Affine> affineMatrix(double value) const = 0;
 
     //! Transform vector
     Eigen::Vector3d transform(const Eigen::Vector3d& v, double value);
 
-    //! Set the axis to physical (true) or virtual (true)
+    //! Sets the axis to physical (true) or virtual (true)
     void setPhysical(bool physical);
 
-    //! Return whether or not the axis is physical or not
+    //! Returns whether or not the axis is physical or not
     bool physical() const;
 
     virtual std::ostream& printSelf(std::ostream& os) const = 0;

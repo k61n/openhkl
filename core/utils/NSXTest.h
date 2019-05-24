@@ -192,19 +192,19 @@ public:
     //! Trigger a success.
     void triggerSuccess();
 
-    //! Return the number of successes of the unit test
+    //! Returns the number of successes of the unit test
     //! \return the number of successful tests
     int nSuccesses() const;
 
-    //! Return the number of failures of the unit test
+    //! Returns the number of failures of the unit test
     //! \return the number of failing tests
     int nFailures() const;
 
-    //! Return the number of unit tests that have been skipped
+    //! Returns the number of unit tests that have been skipped
     //! \return the number of skipped tests
     int nSkipped() const;
 
-    //! Return the number of tests of the unit test
+    //! Returns the number of tests of the unit test
     //! \return the total number of tests
     int nTests() const;
 

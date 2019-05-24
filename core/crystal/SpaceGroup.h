@@ -32,12 +32,12 @@ namespace nsx {
 //! \brief Class to enumerate and construct the 3d spacegroups.
 class SpaceGroup {
 private:
-    //! Return the list of spacegroup symmetry generators associated to each
+    //! Returns the list of spacegroup symmetry generators associated to each
     //! spacegroup
     static const std::vector<SpaceGroupSymmetry> symmetry_table;
 
 public:
-    //! Return the list of spacegroup symbols
+    //! Returns the list of spacegroup symbols
     static std::vector<std::string> symbols();
     SpaceGroup();
     //! Construct a space group from its IT symbol. Lookup in the IUCR table
@@ -46,32 +46,32 @@ public:
     SpaceGroup(const SpaceGroup& other) = default;
     //! Assignment
     SpaceGroup& operator=(const SpaceGroup& other);
-    //! Get the IT symbol for this space group
+    //! Gets the IT symbol for this space group
     const std::string& symbol() const;
-    //! Get the string containing the generators (in the Jones notation),
+    //! Gets the string containing the generators (in the Jones notation),
     //! separated bt ";' character
     const std::string& generators() const;
-    //! Get a vector containing the Symmetry operations for this space group
+    //! Gets a vector containing the Symmetry operations for this space group
     const SymOpList& groupElements() const;
     //! Determine whether a h,k,l reflection is forbidden
     bool isExtinct(const MillerIndex& hkl) const;
-    //! Return true if centrosymmetric
+    //! Returns true if centrosymmetric
     bool isCentrosymmetric() const;
     //! Print to a stream
     void print(std::ostream& os) const;
-    //! Return the type of cell (triclinic, monoclinic ...)
+    //! Returns the type of cell (triclinic, monoclinic ...)
     char bravaisType() const;
-    //! Return the percentage of extinct reflections
+    //! Returns the percentage of extinct reflections
     double fractionExtinct(const MillerIndexList& hkls) const;
-    //! Return the Bravais type symbol
+    //! Returns the Bravais type symbol
     std::string bravaisTypeSymbol() const;
-    //! Return the ID of the space group
+    //! Returns the ID of the space group
     int id() const;
-    //! Return whether two sets of indices are related by a symmetry
+    //! Returns whether two sets of indices are related by a symmetry
     bool isEquivalent(
         const MillerIndex& miller_index1, const MillerIndex& miller_index2,
         bool friedel = false) const;
-    //! Return whether two sets of indices are related by a symmetry up to Friedel
+    //! Returns whether two sets of indices are related by a symmetry up to Friedel
     //! reflection
     bool
     isFriedelEquivalent(const MillerIndex& miller_index1, const MillerIndex& miller_index2) const;

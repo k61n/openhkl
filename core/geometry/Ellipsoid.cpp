@@ -127,7 +127,7 @@ bool Ellipsoid::collide(const Ellipsoid& other) const
         return false;
     }
 
-    // get roots of characteristic equation
+    // Gets roots of characteristic equation
     const auto& AI = homogeneousMatrixInverse();
     const auto& B = other.homogeneousMatrix();
     Eigen::ComplexEigenSolver<Eigen::Matrix4d> solver(AI * B);

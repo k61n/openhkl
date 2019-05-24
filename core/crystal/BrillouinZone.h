@@ -41,16 +41,16 @@ public:
     BrillouinZone(const Eigen::Matrix3d& B, double eps = 1e-6);
     //! Check if a reciprocal vector is inside the Brillouin zone.
     bool inside(const Eigen::RowVector3d& q) const;
-    //! Return the vertices of the polytope.
+    //! Returns the vertices of the polytope.
     const std::vector<Eigen::RowVector3d>& vertices() const;
-    //! Return the list of plane normals (q values for Bragg planes).
+    //! Returns the list of plane normals (q values for Bragg planes).
     const std::vector<Eigen::RowVector3d>& normals() const;
-    //! Return a convex hull representation.
+    //! Returns a convex hull representation.
     ConvexHull convexHull() const;
 
-    //! Return radius of largest sphere contained in the zone.
+    //! Returns radius of largest sphere contained in the zone.
     double innerRadius() const;
-    //! Return radius of smallest sphere containing the zone.
+    //! Returns radius of smallest sphere containing the zone.
     double outerRadius() const;
 
 private:

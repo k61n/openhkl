@@ -421,7 +421,7 @@ Face* ConvexHull::buildConeFace(Edge* e, Vertex* v)
 
     _faces.emplace(newFace->_id, newFace);
 
-    // Set the adjacent faces
+    // Sets the adjacent faces
     for (unsigned int i = 0; i < 2; ++i) {
         for (unsigned int j = 0; j < 2; ++j) {
             if (!newEdges[i]->_faces[j]) {

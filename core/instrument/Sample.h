@@ -53,14 +53,14 @@ public:
     //! Assignment operator
     Sample& operator=(const Sample& other) = default;
 
-    //! Set the sample shape described as a convex hull
+    //! Sets the sample shape described as a convex hull
     void setShape(const ConvexHull& shape);
 
-    //! Return a non-const reference to the convex hull describing the sample
+    //! Returns a non-const reference to the convex hull describing the sample
     //! shape
     ConvexHull& shape();
 
-    //! Return a const reference to the convex hull describing the sample shape
+    //! Returns a const reference to the convex hull describing the sample shape
     const ConvexHull& shape() const;
 
     SampleGonioFit fitGonioOffsets(

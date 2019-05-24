@@ -28,7 +28,7 @@ class GaussianIntegrator : public IPeakIntegrator {
 public:
     GaussianIntegrator(bool fit_center, bool fit_cov);
     bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
-    //! Return the analytic profile computed over the given integration region
+    //! Returns the analytic profile computed over the given integration region
     std::vector<double> profile(sptrPeak3D peak, const IntegrationRegion& region);
 
 private:

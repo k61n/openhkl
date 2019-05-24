@@ -100,17 +100,17 @@ public:
     //! Change the _MAX_STORAGE property of the Tree
     void setMaxStorage(unsigned int maxStorage);
 
-    //! Return the list of AABB* pairs that intercept.
+    //! Returns the list of AABB* pairs that intercept.
     // void getPossibleCollisions(std::set<collision_pair>& collisions) const;
     std::set<collision_pair> getCollisions() const;
 
-    //! Return collisions with a given shape
+    //! Returns collisions with a given shape
     std::set<const Ellipsoid*> getCollisions(const Ellipsoid& given) const;
 
-    //! Return true if the point is contained in any object of the octree
+    //! Returns true if the point is contained in any object of the octree
     bool isInsideObject(const Eigen::Vector3d& vector);
 
-    //! Get the voxels of the tree
+    //! Gets the voxels of the tree
     void getVoxels(std::vector<AABB*>& voxels);
 
     //! Remove a data from the Octree
@@ -134,7 +134,7 @@ private:
      *  the parent tree. For example i goes from 1 to 8 for voxels
      */
 
-    //! Set all children to nullptr
+    //! Sets all children to nullptr
     void nullifyChildren();
 
     //! Split the node into 2^D subnodes

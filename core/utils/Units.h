@@ -38,7 +38,7 @@ namespace nsx {
 //! XML files.
 class UnitsManager : public Singleton<UnitsManager, Constructor, Destructor> {
 public:
-    //! Get the value of a given unit with respect to the internal reference unit.
+    //! Gets the value of a given unit with respect to the internal reference unit.
     //! Throws std::invalid_argument if not present
     static double get(const std::string& units);
 

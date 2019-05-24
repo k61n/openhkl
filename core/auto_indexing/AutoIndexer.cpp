@@ -105,7 +105,7 @@ void AutoIndexer::computeFFTSolutions()
             + "peaks defined on numors:");
     }
 
-    // Set up a FFT indexer object
+    // Sets up a FFT indexer object
     FFTIndexing indexing(_params.subdiv, _params.maxdim);
 
     // Find the best vectors via FFT
@@ -236,7 +236,7 @@ void AutoIndexer::refineSolutions()
             }
         }
 
-        // Set the Minimizer with the parameters store and the size of the residual
+        // Sets the Minimizer with the parameters store and the size of the residual
         // vector
         Minimizer minimizer;
         minimizer.initialize(params, 3 * success);

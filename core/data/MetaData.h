@@ -46,13 +46,13 @@ public:
     MetaData& operator=(const MetaData&);
     //! Add a pair of key and value.
     template <class _type> void add(const std::string& key, const _type& value);
-    //! Get the value associated with the key. User must know the return type,
+    //! Gets the value associated with the key. User must know the return type,
     //! otherwise use method that return boost_any
     template <class _type> _type key(const std::string& key) const;
-    //! Get the value associated with the key. User must know the return type,
+    //! Gets the value associated with the key. User must know the return type,
     //! otherwise use method that return boost_any
     template <class _type> _type key(const char* key) const;
-    //! Return the value
+    //! Returns the value
     //@ return : value corresponding to key
     Variant<int, double, std::string> key(const std::string& key) const;
     //! Is this key in the metadata
@@ -62,9 +62,9 @@ public:
     //! Number of elements in the map
     //@ return : Number of elements in the map
     // std::size_t size() const;
-    //! Get all the keys available.
+    //! Gets all the keys available.
     const MetaDataKeySet& keys() const;
-    //! Get the full map of parameters
+    //! Gets the full map of parameters
     const MetaDataMap& map() const;
 
 private:

@@ -167,7 +167,7 @@ bool Mosaic::run(const std::vector<std::string>& numors, unsigned int n, double&
 
         uc->setReciprocalBasis(ub.transpose());
 
-        // Get the U matrix (actually tU in NSXTool convention)
+        // Gets the U matrix (actually tU in NSXTool convention)
         // todo: should this take transpose isntead??
         Eigen::Matrix3d umat = uc->orientation();
 

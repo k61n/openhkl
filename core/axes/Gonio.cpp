@@ -40,7 +40,7 @@ Gonio::Gonio(const YAML::Node& node)
 {
     _name = node["name"] ? node["name"].as<std::string>() : "";
 
-    // Set the axis of the detector goniometer from the XML node
+    // Sets the axis of the detector goniometer from the XML node
     for (auto&& axisItem : node["axis"]) {
         _axes.emplace_back(std::unique_ptr<Axis>(Axis::create(axisItem)));
     }

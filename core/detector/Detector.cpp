@@ -33,7 +33,7 @@ Detector* Detector::create(const YAML::Node& node)
     // Create an instance of the detector factory
     DetectorFactory* detectorFactory = DetectorFactory::Instance();
 
-    // Get the detector type
+    // Gets the detector type
     std::string detectorType = node["type"].as<std::string>();
 
     // Fetch the detector from the factory
@@ -123,14 +123,14 @@ Detector::Detector(const YAML::Node& node) : Component(node)
 
     UnitsManager* um = UnitsManager::Instance();
 
-    // Set the detector to sample distance from the property tree node
+    // Sets the detector to sample distance from the property tree node
     auto&& distanceNode = node["sample_distance"];
     double units = um->get(distanceNode["units"].as<std::string>());
     double distance = distanceNode["value"].as<double>();
     distance *= units;
     setDistance(distance);
 
-    // Set the detector number of pixels from the property tree node
+    // Sets the detector number of pixels from the property tree node
     unsigned int nCols = node["ncols"].as<unsigned int>();
     setNCols(nCols);
 
@@ -335,7 +335,7 @@ Detector::fitGonioOffsets(const DataList& dataset, size_t n_iterations, double t
         parameters.addParameter(&v);
     }
 
-    // Set the Minimizer with the parameters store and the size of the residual
+    // Sets the Minimizer with the parameters store and the size of the residual
     // vector
     nsx::Minimizer minimizer;
     // Hack to do the fit with GSL for having enough data points
