@@ -4,9 +4,6 @@ if(POLICY CMP0078)
   cmake_policy(SET CMP0078 NEW)
 endif()
 
-
-set(CMAKE_VERBOSE_MAKEFILE ON)
-
 # Add some paths to the cmake module search path.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR})
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/macros)
@@ -29,6 +26,7 @@ option(NSX_SANITIZE "Compile with clang's -fsanitize (must also set NSX_SANITIZE
 option(NSX_TIDY "Add clang-tidy custom target" OFF)
 option(NSX_PYTHON "Generate Python bindings" ON)
 option(NSX_DOCS "Build documentation" OFF)
+#set(CMAKE_VERBOSE_MAKEFILE ON)
 
 ###########################################################################
 # Scripts controlling build setup and dependencies
