@@ -25,7 +25,6 @@ option(ENABLE_CPACK "Enable CPack package generation" OFF)
 option(NSX_SANITIZE "Compile with clang's -fsanitize (must also set NSX_SANITIZER variable)" OFF)
 option(NSX_TIDY "Add clang-tidy custom target" OFF)
 option(NSX_PYTHON "Generate Python bindings" ON)
-option(NSX_DOCS "Build documentation" OFF)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
 ###########################################################################
@@ -61,10 +60,6 @@ endif()
 
 if(BUILD_COVERAGE_REPORT)
     include(CheckCoverage)
-endif()
-
-if(NSX_DOCS)
-    include(Doxygen)
 endif()
 
 
