@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_CRYSTAL_SYMOP_H
+#define CORE_CRYSTAL_SYMOP_H
 
 #include <ostream>
 
@@ -58,3 +59,5 @@ private:
 std::ostream& operator<<(std::ostream& os, const SymOp& sym);
 
 } // end namespace nsx
+
+#endif // CORE_CRYSTAL_SYMOP_H

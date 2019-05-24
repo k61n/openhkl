@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_UTILS_FACTORY_H
+#define CORE_UTILS_FACTORY_H
 
 #include <algorithm>
 #include <functional>
@@ -95,3 +96,5 @@ bool Factory<base, keytype, args...>::hasCallback(const keytype& key)
 }
 
 } // end namespace nsx
+
+#endif // CORE_UTILS_FACTORY_H

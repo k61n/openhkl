@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_UTILS_VARIANT_H
+#define CORE_UTILS_VARIANT_H
 
 #include <iostream>
 #include <stdexcept>
@@ -342,3 +343,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_UTILS_VARIANT_H

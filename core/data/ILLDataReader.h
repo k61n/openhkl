@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_DATA_ILLDATAREADER_H
+#define CORE_DATA_ILLDATAREADER_H
 
 #include <map>
 #include <sstream>
@@ -78,3 +79,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_DATA_ILLDATAREADER_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_CHEMISTRY_CHEMISTRYTYPES_H
+#define CORE_CHEMISTRY_CHEMISTRYTYPES_H
 
 #include <complex>
 #include <map>
@@ -22,3 +23,5 @@ using isotopeProperties =
     std::map<std::string, Variant<bool, int, double, std::complex<double>, std::string>>;
 
 } // end namespace nsx
+
+#endif // CORE_CHEMISTRY_CHEMISTRYTYPES_H

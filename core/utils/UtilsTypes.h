@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_UTILS_UTILSTYPES_H
+#define CORE_UTILS_UTILSTYPES_H
 
 #include <functional>
 #include <memory>
@@ -18,3 +19,5 @@ using FinishedCallback = std::function<void(bool)>;
 using TaskCallback = std::function<bool(void)>;
 
 } // end namespace nsx
+
+#endif // CORE_UTILS_UTILSTYPES_H

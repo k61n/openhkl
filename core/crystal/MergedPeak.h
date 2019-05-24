@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_CRYSTAL_MERGEDPEAK_H
+#define CORE_CRYSTAL_MERGEDPEAK_H
 
 #include <Eigen/Dense>
 
@@ -63,3 +64,5 @@ bool operator<(const MergedPeak& p, const MergedPeak& q);
 #endif
 
 } // end namespace nsx
+
+#endif // CORE_CRYSTAL_MERGEDPEAK_H

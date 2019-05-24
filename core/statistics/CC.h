@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_STATISTICS_CC_H
+#define CORE_STATISTICS_CC_H
 
 #include "MergedPeak.h"
 
@@ -28,3 +29,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_STATISTICS_CC_H

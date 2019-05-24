@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_INTEGRATION_IPEAKINTEGRATOR_H
+#define CORE_INTEGRATION_IPEAKINTEGRATOR_H
 
 #include <map>
 #include <vector>
@@ -56,3 +57,5 @@ protected:
 };
 
 } // end namespace nsx
+
+#endif // CORE_INTEGRATION_IPEAKINTEGRATOR_H

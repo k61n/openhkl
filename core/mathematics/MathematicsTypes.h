@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_MATHEMATICS_MATHEMATICSTYPES_H
+#define CORE_MATHEMATICS_MATHEMATICSTYPES_H
 
 #include <Eigen/Dense>
 
@@ -8,3 +9,5 @@ using IntMatrix = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowM
 using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
 } // end namespace nsx
+
+#endif // CORE_MATHEMATICS_MATHEMATICSTYPES_H

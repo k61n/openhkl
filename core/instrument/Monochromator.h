@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_INSTRUMENT_MONOCHROMATOR_H
+#define CORE_INSTRUMENT_MONOCHROMATOR_H
 
 #include "ReciprocalVector.h"
 
@@ -76,3 +77,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_INSTRUMENT_MONOCHROMATOR_H

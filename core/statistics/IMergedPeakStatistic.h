@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_STATISTICS_IMERGEDPEAKSTATISTIC_H
+#define CORE_STATISTICS_IMERGEDPEAKSTATISTIC_H
 
 #include "CrystalTypes.h"
 
@@ -19,3 +20,5 @@ public:
 };
 
 } // end namespace nsx
+
+#endif // CORE_STATISTICS_IMERGEDPEAKSTATISTIC_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_STATISTICS_RFACTOR_H
+#define CORE_STATISTICS_RFACTOR_H
 
 #include <set>
 #include <vector>
@@ -43,3 +44,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_STATISTICS_RFACTOR_H

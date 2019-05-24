@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_DATA_DATASET_H
+#define CORE_DATA_DATASET_H
 
 #include <memory>
 #include <mutex>
@@ -134,3 +135,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_DATA_DATASET_H

@@ -1,6 +1,6 @@
 
-#ifndef DETECTORGLOBALOFFSETS_H
-#define DETECTORGLOBALOFFSETS_H
+#ifndef NSXGUI_GUI_FRAMES_GLOBALOFFSETS_H
+#define NSXGUI_GUI_FRAMES_GLOBALOFFSETS_H
 
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
@@ -27,4 +27,4 @@ private:
     offsetMode mode_;
 };
 
-#endif // DETECTORGLOBALOFFSETS_H
+#endif // NSXGUI_GUI_FRAMES_GLOBALOFFSETS_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_GEOMETRY_VERTEX_H
+#define CORE_GEOMETRY_VERTEX_H
 
 #include <ostream>
 
@@ -54,3 +55,5 @@ struct Vertex {
 std::ostream& operator<<(std::ostream& os, const Vertex& vertex);
 
 } // end namespace nsx
+
+#endif // CORE_GEOMETRY_VERTEX_H

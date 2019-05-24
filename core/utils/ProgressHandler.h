@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_UTILS_PROGRESSHANDLER_H
+#define CORE_UTILS_PROGRESSHANDLER_H
 
 #include <atomic>
 #include <functional>
@@ -41,3 +42,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_UTILS_PROGRESSHANDLER_H

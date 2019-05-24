@@ -1,6 +1,6 @@
 
-#ifndef MESSAGE_BOXES_H
-#define MESSAGE_BOXES_H
+#ifndef NSXGUI_GUI_DIALOGS_MESSAGE_BOXES_H
+#define NSXGUI_GUI_DIALOGS_MESSAGE_BOXES_H
 
 #include <QDialog>
 
@@ -14,4 +14,4 @@ public:
     HelpBox();
 };
 
-#endif // MESSAGE_BOXES_H
+#endif // NSXGUI_GUI_DIALOGS_MESSAGE_BOXES_H

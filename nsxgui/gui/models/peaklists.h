@@ -1,6 +1,6 @@
 
-#ifndef PEAKLISTS_H
-#define PEAKLISTS_H
+#ifndef NSXGUI_GUI_MODELS_PEAKLISTS_H
+#define NSXGUI_GUI_MODELS_PEAKLISTS_H
 
 #include <QList>
 #include <build/core/include/core/CrystalTypes.h>
@@ -52,4 +52,4 @@ private:
     QList<PeakListsModel*> peakLists_;
 };
 
-#endif // PEAKLISTS_H
+#endif // NSXGUI_GUI_MODELS_PEAKLISTS_H

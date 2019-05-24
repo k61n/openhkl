@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_DATA_RAWDATAREADER_H
+#define CORE_DATA_RAWDATAREADER_H
 
 #include <map>
 #include <sstream>
@@ -94,3 +95,5 @@ Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> RawDataReader::matrixFromData(
 }
 
 } // end namespace nsx
+
+#endif // CORE_DATA_RAWDATAREADER_H

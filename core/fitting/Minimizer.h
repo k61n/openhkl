@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_FITTING_MINIMIZER_H
+#define CORE_FITTING_MINIMIZER_H
 
 #include <functional>
 
@@ -105,3 +106,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_FITTING_MINIMIZER_H

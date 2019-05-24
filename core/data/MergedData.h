@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_DATA_MERGEDDATA_H
+#define CORE_DATA_MERGEDDATA_H
 
 #include <set>
 
@@ -40,3 +41,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_DATA_MERGEDDATA_H

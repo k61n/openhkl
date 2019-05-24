@@ -1,6 +1,6 @@
 
-#ifndef PEAKFINDER_H
-#define PEAKFINDER_H
+#ifndef NSXGUI_GUI_FRAMES_PEAKFINDER_H
+#define NSXGUI_GUI_FRAMES_PEAKFINDER_H
 
 #include "nsxgui/gui/models/peakstable.h"
 #include <QCR/widgets/controls.h>
@@ -52,4 +52,4 @@ private slots:
     void doActions(QAbstractButton*);
 };
 
-#endif // PEAKFINDER_H
+#endif // NSXGUI_GUI_FRAMES_PEAKFINDER_H

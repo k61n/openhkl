@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_UTILS_DOUBLETOFRACTION_H
+#define CORE_UTILS_DOUBLETOFRACTION_H
 
 #include <cmath>
 
@@ -62,3 +63,5 @@ void doubleToFraction(double number, int nmax, long& nom, long& dnom)
 }
 
 } // end namespace nsx
+
+#endif // CORE_UTILS_DOUBLETOFRACTION_H

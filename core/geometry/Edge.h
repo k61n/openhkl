@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_GEOMETRY_EDGE_H
+#define CORE_GEOMETRY_EDGE_H
 
 #include <ostream>
 
@@ -51,3 +52,5 @@ struct Edge {
 std::ostream& operator<<(std::ostream& os, const Edge& edge);
 
 } // end namespace nsx
+
+#endif // CORE_GEOMETRY_EDGE_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_MONTE_CARLO_MOSAIC_H
+#define CORE_MONTE_CARLO_MOSAIC_H
 
 #include <vector>
 
@@ -37,3 +38,5 @@ private:
 double ellipsoids_overlap(const Ellipsoid& ell1, const Ellipsoid& ell2);
 
 } // namespace nsx
+
+#endif // CORE_MONTE_CARLO_MOSAIC_H

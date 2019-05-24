@@ -1,3 +1,6 @@
+#ifndef VERSION_HH
+#define VERSION_HH
+
 #include <string>
 
 namespace nsx {
@@ -5,3 +8,5 @@ namespace nsx {
 const std::string __version__ = "@NSXTOOL_VERSION@";
 
 } // end namespace nsx
+
+#endif // VERSION_HH

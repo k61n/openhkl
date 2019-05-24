@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_CRYSTAL_RESOLUTIONSHELL_H
+#define CORE_CRYSTAL_RESOLUTIONSHELL_H
 
 #include <vector>
 
@@ -39,3 +40,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_CRYSTAL_RESOLUTIONSHELL_H

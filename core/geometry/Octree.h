@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_GEOMETRY_OCTREE_H
+#define CORE_GEOMETRY_OCTREE_H
 
 #include <cmath>
 #include <initializer_list>
@@ -190,3 +191,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_GEOMETRY_OCTREE_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_CHEMISTRY_MATERIAL_H
+#define CORE_CHEMISTRY_MATERIAL_H
 
 #include <map>
 #include <ostream>
@@ -72,3 +73,5 @@ std::ostream& operator<<(std::ostream& os, const Material& material);
 #endif
 
 } // end namespace nsx
+
+#endif // CORE_CHEMISTRY_MATERIAL_H

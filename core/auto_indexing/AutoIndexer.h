@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_AUTO_INDEXING_AUTOINDEXER_H
+#define CORE_AUTO_INDEXING_AUTOINDEXER_H
 
 #include <vector>
 
@@ -81,3 +82,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_AUTO_INDEXING_AUTOINDEXER_H

@@ -1,6 +1,6 @@
 
-#ifndef SUBTAB_DETECTOR_H
-#define SUBTAB_DETECTOR_H
+#ifndef NSXGUI_GUI_PANELS_SUBTAB_DETECTOR_H
+#define NSXGUI_GUI_PANELS_SUBTAB_DETECTOR_H
 
 #include "nsxgui/gui/properties/detectorproperty.h"
 #include <QCR/widgets/views.h>
@@ -13,4 +13,4 @@ private:
     DetectorProperty* property;
 };
 
-#endif // SUBTAB_DETECTOR_H
+#endif // NSXGUI_GUI_PANELS_SUBTAB_DETECTOR_H

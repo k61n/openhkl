@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_UTILS_YAMLTYPE_H
+#define CORE_UTILS_YAMLTYPE_H
 
 #include <complex>
 
@@ -77,3 +78,5 @@ template <> struct convert<Eigen::Vector2d> {
 };
 
 } // end namespace YAML
+
+#endif // CORE_UTILS_YAMLTYPE_H

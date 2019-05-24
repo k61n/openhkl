@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_LOGGER_LOGFILESTREAMWRAPPER_H
+#define CORE_LOGGER_LOGFILESTREAMWRAPPER_H
 
 #include <fstream>
 #include <string>
@@ -29,3 +30,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_LOGGER_LOGFILESTREAMWRAPPER_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_GEOMETRY_GEOMETRYTYPES_H
+#define CORE_GEOMETRY_GEOMETRYTYPES_H
 
 #include <functional>
 #include <memory>
@@ -49,3 +50,5 @@ enum class Direction { CW = 1, CCW = 2 };
 enum class PointType { REGION = 1, BACKGROUND = 2, EXCLUDED = 3 };
 
 } // end namespace nsx
+
+#endif // CORE_GEOMETRY_GEOMETRYTYPES_H

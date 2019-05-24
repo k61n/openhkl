@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_INTEGRATION_PROFILE3DINTEGRATOR_H
+#define CORE_INTEGRATION_PROFILE3DINTEGRATOR_H
 
 #include <Eigen/Dense>
 
@@ -24,3 +25,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_INTEGRATION_PROFILE3DINTEGRATOR_H

@@ -1,3 +1,6 @@
+#ifndef CORE_SEARCH_PEAKS_ANNULARCONVOLVER_H
+#define CORE_SEARCH_PEAKS_ANNULARCONVOLVER_H
+
 // Convolver description: the kernel is non-zero in a circular and annular
 // region, as follows
 
@@ -33,8 +36,6 @@
 // background. This make the kernel effective for peak-finding in images which
 // have a non-homogeneous background.
 
-#pragma once
-
 #include "Convolver.h"
 
 namespace nsx {
@@ -61,3 +62,5 @@ public:
 };
 
 } // end namespace nsx
+
+#endif // CORE_SEARCH_PEAKS_ANNULARCONVOLVER_H

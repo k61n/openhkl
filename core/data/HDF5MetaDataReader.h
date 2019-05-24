@@ -1,5 +1,6 @@
+#ifndef CORE_DATA_HDF5METADATAREADER_H
+#define CORE_DATA_HDF5METADATAREADER_H
 
-#pragma once
 
 #include <string>
 
@@ -37,3 +38,5 @@ protected:
 };
 
 } // end namespace nsx
+
+#endif // CORE_DATA_HDF5METADATAREADER_H

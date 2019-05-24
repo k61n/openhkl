@@ -1,6 +1,7 @@
-//! \file
+#ifndef CORE_CRYSTAL_NIGGLICHARACTER_H
+#define CORE_CRYSTAL_NIGGLICHARACTER_H
 
-#pragma once
+//! \file
 
 #include <string>
 
@@ -52,3 +53,5 @@ struct NiggliCharacter {
 };
 
 } // end namespace nsx
+
+#endif // CORE_CRYSTAL_NIGGLICHARACTER_H

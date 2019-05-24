@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_DATA_DATAREADERFACTORY_H
+#define CORE_DATA_DATAREADERFACTORY_H
 
 #include <functional>
 #include <map>
@@ -33,3 +34,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_DATA_DATAREADERFACTORY_H

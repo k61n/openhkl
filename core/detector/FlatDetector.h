@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_DETECTOR_FLATDETECTOR_H
+#define CORE_DETECTOR_FLATDETECTOR_H
 
 #include <yaml-cpp/yaml.h>
 
@@ -52,3 +53,5 @@ public:
 };
 
 } // end namespace nsx
+
+#endif // CORE_DETECTOR_FLATDETECTOR_H

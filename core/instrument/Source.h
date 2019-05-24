@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_INSTRUMENT_SOURCE_H
+#define CORE_INSTRUMENT_SOURCE_H
 
 #include <string>
 #include <vector>
@@ -62,3 +63,5 @@ protected:
 };
 
 } // end namespace nsx
+
+#endif // CORE_INSTRUMENT_SOURCE_H

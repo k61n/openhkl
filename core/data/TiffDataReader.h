@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_DATA_TIFFDATAREADER_H
+#define CORE_DATA_TIFFDATAREADER_H
 
 #include <tiffio.h>
 
@@ -35,3 +36,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_DATA_TIFFDATAREADER_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_REC_SPACE_RECIPROCALVECTOR_H
+#define CORE_REC_SPACE_RECIPROCALVECTOR_H
 
 #include <iostream>
 
@@ -50,3 +51,5 @@ private:
 std::ostream& operator<<(std::ostream& os, const ReciprocalVector& rvector);
 
 } // end namespace nsx
+
+#endif // CORE_REC_SPACE_RECIPROCALVECTOR_H

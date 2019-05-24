@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_GEOMETRY_AABB_H
+#define CORE_GEOMETRY_AABB_H
 
 #include <initializer_list>
 #include <iostream>
@@ -86,3 +87,5 @@ protected:
 std::ostream& operator<<(std::ostream& os, const AABB& aabb);
 
 } // end namespace nsx
+
+#endif // CORE_GEOMETRY_AABB_H

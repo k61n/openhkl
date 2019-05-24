@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_CRYSTAL_BRILLOUINZONE_H
+#define CORE_CRYSTAL_BRILLOUINZONE_H
 
 #include <vector>
 
@@ -59,3 +60,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_CRYSTAL_BRILLOUINZONE_H

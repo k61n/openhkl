@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_MONTE_CARLO_MCABSORPTION_H
+#define CORE_MONTE_CARLO_MCABSORPTION_H
 
 #include <functional>
 #include <random>
@@ -46,3 +47,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_MONTE_CARLO_MCABSORPTION_H

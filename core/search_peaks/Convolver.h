@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_SEARCH_PEAKS_CONVOLVER_H
+#define CORE_SEARCH_PEAKS_CONVOLVER_H
 
 #include <map>
 #include <string>
@@ -41,3 +42,5 @@ protected:
 };
 
 } // end namespace nsx
+
+#endif // CORE_SEARCH_PEAKS_CONVOLVER_H

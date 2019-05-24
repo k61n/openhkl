@@ -1,7 +1,7 @@
 
 
-#ifndef TAB_PEAKLIBRARY_H
-#define TAB_PEAKLIBRARY_H
+#ifndef NSXGUI_GUI_PANELS_TAB_PEAKLIBRARY_H
+#define NSXGUI_GUI_PANELS_TAB_PEAKLIBRARY_H
 
 #include <QCR/widgets/views.h>
 
@@ -10,4 +10,4 @@ public:
     TabPeaklibrary();
 };
 
-#endif // TAB_PEAKLIBRARY_H
+#endif // NSXGUI_GUI_PANELS_TAB_PEAKLIBRARY_H

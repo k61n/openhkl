@@ -1,6 +1,6 @@
 
-#ifndef EXPERIMENTDIALOG_H
-#define EXPERIMENTDIALOG_H
+#ifndef NSXGUI_GUI_DIALOGS_EXPERIMENTDIALOG_H
+#define NSXGUI_GUI_DIALOGS_EXPERIMENTDIALOG_H
 
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/modal_dialogs.h>
@@ -16,4 +16,4 @@ private:
     QcrLineEdit* experiment;
 };
 
-#endif // EXPERIMENTDIALOG_H
+#endif // NSXGUI_GUI_DIALOGS_EXPERIMENTDIALOG_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_CRYSTAL_MILLERINDEX_H
+#define CORE_CRYSTAL_MILLERINDEX_H
 
 #include <iostream>
 
@@ -78,3 +79,5 @@ private:
 std::ostream& operator<<(std::ostream& os, const MillerIndex& hkl);
 
 } // end namespace nsx
+
+#endif // CORE_CRYSTAL_MILLERINDEX_H

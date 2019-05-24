@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_FITTING_FITPARAMETERS_H
+#define CORE_FITTING_FITPARAMETERS_H
 
 #include <vector>
 
@@ -56,3 +57,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_FITTING_FITPARAMETERS_H

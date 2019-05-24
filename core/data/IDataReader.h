@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_DATA_IDATAREADER_H
+#define CORE_DATA_IDATAREADER_H
 
 #include <string>
 #include <vector>
@@ -111,3 +112,5 @@ protected:
 };
 
 } // end namespace nsx
+
+#endif // CORE_DATA_IDATAREADER_H

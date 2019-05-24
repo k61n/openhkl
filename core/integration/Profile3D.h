@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_INTEGRATION_PROFILE3D_H
+#define CORE_INTEGRATION_PROFILE3D_H
 
 #include <vector>
 
@@ -55,3 +56,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_INTEGRATION_PROFILE3D_H

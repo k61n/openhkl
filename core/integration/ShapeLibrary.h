@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_INTEGRATION_SHAPELIBRARY_H
+#define CORE_INTEGRATION_SHAPELIBRARY_H
 
 #include <Eigen/Dense>
 #include <array>
@@ -109,3 +110,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_INTEGRATION_SHAPELIBRARY_H

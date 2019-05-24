@@ -1,6 +1,6 @@
 
-#ifndef SESSION_H
-#define SESSION_H
+#ifndef NSXGUI_GUI_MODELS_SESSION_H
+#define NSXGUI_GUI_MODELS_SESSION_H
 
 #include "nsxgui/gui/models/experimentmodel.h"
 #include <QList>
@@ -29,4 +29,4 @@ private:
     int selected = -1;
 };
 
-#endif // SESSION_H
+#endif // NSXGUI_GUI_MODELS_SESSION_H

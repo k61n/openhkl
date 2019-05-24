@@ -1,6 +1,6 @@
 
-#ifndef AUTOINDEXER_H
-#define AUTOINDEXER_H
+#ifndef NSXGUI_GUI_FRAMES_AUTOINDEXER_H
+#define NSXGUI_GUI_FRAMES_AUTOINDEXER_H
 
 #include "nsxgui/gui/models/peakstable.h"
 #include <QCR/widgets/controls.h>
@@ -45,4 +45,4 @@ private:
     std::vector<std::pair<nsx::sptrUnitCell, double>> _solutions;
 };
 
-#endif // AUTOINDEXER_H
+#endif // NSXGUI_GUI_FRAMES_AUTOINDEXER_H

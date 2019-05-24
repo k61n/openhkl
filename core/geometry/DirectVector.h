@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_GEOMETRY_DIRECTVECTOR_H
+#define CORE_GEOMETRY_DIRECTVECTOR_H
 
 #include <iostream>
 
@@ -50,3 +51,5 @@ private:
 std::ostream& operator<<(std::ostream& os, const DirectVector& dvector);
 
 } // end namespace nsx
+
+#endif // CORE_GEOMETRY_DIRECTVECTOR_H

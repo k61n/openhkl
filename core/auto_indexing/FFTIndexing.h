@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_AUTO_INDEXING_FFTINDEXING_H
+#define CORE_AUTO_INDEXING_FFTINDEXING_H
 
 #include <functional>
 #include <utility>
@@ -34,3 +35,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_AUTO_INDEXING_FFTINDEXING_H

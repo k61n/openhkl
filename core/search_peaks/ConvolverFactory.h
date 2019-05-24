@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_SEARCH_PEAKS_CONVOLVERFACTORY_H
+#define CORE_SEARCH_PEAKS_CONVOLVERFACTORY_H
 
 #include <functional>
 
@@ -27,3 +28,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_SEARCH_PEAKS_CONVOLVERFACTORY_H

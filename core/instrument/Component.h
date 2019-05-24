@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_INSTRUMENT_COMPONENT_H
+#define CORE_INSTRUMENT_COMPONENT_H
 
 #include <map>
 #include <string>
@@ -63,3 +64,5 @@ protected:
 };
 
 } // end namespace nsx
+
+#endif // CORE_INSTRUMENT_COMPONENT_H

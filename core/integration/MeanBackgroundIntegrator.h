@@ -1,5 +1,6 @@
+#ifndef CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H
+#define CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H
 
-#pragma once
 
 #include <Eigen/Dense>
 
@@ -17,3 +18,5 @@ public:
 };
 
 } // end namespace nsx
+
+#endif // CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H

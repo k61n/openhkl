@@ -1,6 +1,6 @@
 
-#ifndef SUBFRAME_SETUP_H
-#define SUBFRAME_SETUP_H
+#ifndef NSXGUI_GUI_PANELS_SUBFRAME_SETUP_H
+#define NSXGUI_GUI_PANELS_SUBFRAME_SETUP_H
 
 #include "nsxgui/gui/panels/tab_data.h"
 #include "nsxgui/gui/panels/tab_instrument.h"
@@ -23,4 +23,4 @@ public:
     void setCurrent(int);
 };
 
-#endif // SUBFRAME_SETUP_H
+#endif // NSXGUI_GUI_PANELS_SUBFRAME_SETUP_H

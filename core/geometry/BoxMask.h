@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_GEOMETRY_BOXMASK_H
+#define CORE_GEOMETRY_BOXMASK_H
 
 #include "AABB.h"
 #include "IMask.h"
@@ -28,3 +29,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_GEOMETRY_BOXMASK_H

@@ -1,6 +1,6 @@
 
-#ifndef PEAKFILTER_H
-#define PEAKFILTER_H
+#ifndef NSXGUI_GUI_DIALOGS_PEAKFILTER_H
+#define NSXGUI_GUI_DIALOGS_PEAKFILTER_H
 
 #include "nsxgui/gui/models/experimentmodel.h"
 #include "nsxgui/gui/models/peakstable.h"
@@ -53,4 +53,4 @@ private:
 };
 
 
-#endif // PEAKFILTER_H
+#endif // NSXGUI_GUI_DIALOGS_PEAKFILTER_H

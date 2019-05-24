@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_CRYSTAL_UNITCELL_H
+#define CORE_CRYSTAL_UNITCELL_H
 
 #include <map>
 #include <memory>
@@ -312,3 +313,5 @@ private:
 std::ostream& operator<<(std::ostream&, const UnitCell&);
 
 } // end namespace nsx
+
+#endif // CORE_CRYSTAL_UNITCELL_H

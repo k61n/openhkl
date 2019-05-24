@@ -1,7 +1,7 @@
 
 
-#ifndef TAB_UNITCELLS_H
-#define TAB_UNITCELLS_H
+#ifndef NSXGUI_GUI_PANELS_TAB_UNITCELLS_H
+#define NSXGUI_GUI_PANELS_TAB_UNITCELLS_H
 
 #include "nsxgui/gui/properties/unitcellproperty.h"
 #include <QCR/widgets/views.h>
@@ -14,4 +14,4 @@ private:
     UnitCellProperty* property;
 };
 
-#endif // TAB_UNITCELLS_H
+#endif // NSXGUI_GUI_PANELS_TAB_UNITCELLS_H

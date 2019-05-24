@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_CHEMISTRY_ISOTOPEDATABASEMANAGER_H
+#define CORE_CHEMISTRY_ISOTOPEDATABASEMANAGER_H
 
 #include <complex>
 #include <map>
@@ -49,3 +50,5 @@ T IsotopeDatabaseManager::property(const std::string& isotope, const std::string
 }
 
 } // end namespace nsx
+
+#endif // CORE_CHEMISTRY_ISOTOPEDATABASEMANAGER_H

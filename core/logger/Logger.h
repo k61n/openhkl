@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_LOGGER_LOGGER_H
+#define CORE_LOGGER_LOGGER_H
 
 #include <functional>
 #include <iostream>
@@ -48,3 +49,5 @@ Logger error();
 void setError(std::function<Logger()> error);
 
 } // end namespace nsx
+
+#endif // CORE_LOGGER_LOGGER_H

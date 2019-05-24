@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_MONTE_CARLO_MOZAICTESTER_H
+#define CORE_MONTE_CARLO_MOZAICTESTER_H
 
 #include <Eigen/Dense>
 
@@ -37,3 +38,5 @@ struct MozaicTester {
 };
 
 } // namespace nsx
+
+#endif // CORE_MONTE_CARLO_MOZAICTESTER_H

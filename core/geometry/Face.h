@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_GEOMETRY_FACE_H
+#define CORE_GEOMETRY_FACE_H
 
 #include <ostream>
 #include <vector>
@@ -59,3 +60,5 @@ struct Face {
 std::ostream& operator<<(std::ostream& os, const Face& face);
 
 } // end namespace nsx
+
+#endif // CORE_GEOMETRY_FACE_H

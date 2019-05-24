@@ -1,6 +1,6 @@
 
-#ifndef USERDEFINEDUNITCELLINDEXER_H
-#define USERDEFINEDUNITCELLINDEXER_H
+#ifndef NSXGUI_GUI_FRAMES_USERDEFINEDUNITCELLINDEXER_H
+#define NSXGUI_GUI_FRAMES_USERDEFINEDUNITCELLINDEXER_H
 
 #include "nsxgui/gui/models/peakstable.h"
 #include <QCR/widgets/controls.h>
@@ -52,4 +52,4 @@ private:
     std::vector<std::pair<nsx::sptrUnitCell, double>> solutions_;
 };
 
-#endif // USERDEFINEDUNITCELLINDEXER_H
+#endif // NSXGUI_GUI_FRAMES_USERDEFINEDUNITCELLINDEXER_H

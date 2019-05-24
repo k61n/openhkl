@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_UTILS_CSV_H
+#define CORE_UTILS_CSV_H
 
 #include <iostream>
 #include <string>
@@ -25,3 +26,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_UTILS_CSV_H

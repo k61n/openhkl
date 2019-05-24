@@ -1,6 +1,6 @@
 
-#ifndef SUBFRAME_EXPERIMENTS_H
-#define SUBFRAME_EXPERIMENTS_H
+#ifndef NSXGUI_GUI_PANELS_SUBFRAME_EXPERIMENTS_H
+#define NSXGUI_GUI_PANELS_SUBFRAME_EXPERIMENTS_H
 
 #include <QCR/widgets/views.h>
 
@@ -12,4 +12,4 @@ public:
     void removeExperiment();
 };
 
-#endif // SUBFRAME_EXPERIMENTS_H
+#endif // NSXGUI_GUI_PANELS_SUBFRAME_EXPERIMENTS_H

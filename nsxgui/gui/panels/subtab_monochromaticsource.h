@@ -1,6 +1,6 @@
 
-#ifndef SUBTAB_MONOCHROMATICSOURCE_H
-#define SUBTAB_MONOCHROMATICSOURCE_H
+#ifndef NSXGUI_GUI_PANELS_SUBTAB_MONOCHROMATICSOURCE_H
+#define NSXGUI_GUI_PANELS_SUBTAB_MONOCHROMATICSOURCE_H
 
 #include "nsxgui/gui/properties/sourceproperty.h"
 #include <QCR/widgets/views.h>
@@ -13,4 +13,4 @@ private:
     SourceProperty* property;
 };
 
-#endif // SUBTAB_MONOCHROMATICSOURCE_H
+#endif // NSXGUI_GUI_PANELS_SUBTAB_MONOCHROMATICSOURCE_H

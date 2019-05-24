@@ -1,6 +1,6 @@
 
-#ifndef UNITCELLPROPERTY_H
-#define UNITCELLPROPERTY_H
+#ifndef NSXGUI_GUI_PROPERTIES_UNITCELLPROPERTY_H
+#define NSXGUI_GUI_PROPERTIES_UNITCELLPROPERTY_H
 
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
@@ -35,4 +35,4 @@ private:
     QcrDoubleSpinBox* gamma;
 };
 
-#endif // UNITCELLPROPERTY_H
+#endif // NSXGUI_GUI_PROPERTIES_UNITCELLPROPERTY_H

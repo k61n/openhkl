@@ -1,5 +1,5 @@
-#ifndef LISTNAMEDIALOG_H
-#define LISTNAMEDIALOG_H
+#ifndef NSXGUI_GUI_DIALOGS_LISTNAMEDIALOG_H
+#define NSXGUI_GUI_DIALOGS_LISTNAMEDIALOG_H
 
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/modal_dialogs.h>
@@ -16,4 +16,4 @@ private:
     nsx::PeakList list_;
 };
 
-#endif // LISTNAMEDIALOG
+#endif // NSXGUI_GUI_DIALOGS_LISTNAMEDIALOG_H

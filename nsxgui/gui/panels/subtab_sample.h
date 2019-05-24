@@ -1,6 +1,6 @@
 
-#ifndef SUBTAB_SAMPLE_H
-#define SUBTAB_SAMPLE_H
+#ifndef NSXGUI_GUI_PANELS_SUBTAB_SAMPLE_H
+#define NSXGUI_GUI_PANELS_SUBTAB_SAMPLE_H
 
 #include "nsxgui/gui/properties/sampleshapeproperties.h"
 #include <QCR/widgets/views.h>
@@ -13,4 +13,4 @@ private:
     SampleShapeProperties* property;
 };
 
-#endif // SUBTAB_SAMPLE_H
+#endif // NSXGUI_GUI_PANELS_SUBTAB_SAMPLE_H

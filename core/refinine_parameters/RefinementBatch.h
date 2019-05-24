@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_REFININE_PARAMETERS_REFINEMENTBATCH_H
+#define CORE_REFININE_PARAMETERS_REFINEMENTBATCH_H
 
 #include <functional>
 #include <map>
@@ -82,3 +83,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_REFININE_PARAMETERS_REFINEMENTBATCH_H

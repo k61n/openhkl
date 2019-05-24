@@ -1,6 +1,6 @@
 
-#ifndef SUBFRAME_LOGGER_H
-#define SUBFRAME_LOGGER_H
+#ifndef NSXGUI_GUI_PANELS_SUBFRAME_LOGGER_H
+#define NSXGUI_GUI_PANELS_SUBFRAME_LOGGER_H
 
 #include <QCR/widgets/views.h>
 #include <QTextEdit>
@@ -19,4 +19,4 @@ private:
     QTextEdit* logText;
 };
 
-#endif // SUBFRAME_LOGGER_H
+#endif // NSXGUI_GUI_PANELS_SUBFRAME_LOGGER_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_UTILS_ENUMS_H
+#define CORE_UTILS_ENUMS_H
 
 namespace nsx {
 
@@ -14,3 +15,5 @@ enum class DataOrder : size_t {
 };
 
 } // end namespace nsx
+
+#endif // CORE_UTILS_ENUMS_H

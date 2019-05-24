@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_INTEGRATION_GAUSSIANINTEGRATOR_H
+#define CORE_INTEGRATION_GAUSSIANINTEGRATOR_H
 
 #include <Eigen/Dense>
 
@@ -22,3 +23,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_INTEGRATION_GAUSSIANINTEGRATOR_H

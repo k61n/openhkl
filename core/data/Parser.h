@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_DATA_PARSER_H
+#define CORE_DATA_PARSER_H
 
 #include <vector>
 
@@ -13,3 +14,5 @@ void readIntsFromChar(const char* begin, const char* end, std::vector<int>& v);
 void readDoublesFromChar(const char* begin, const char* end, std::vector<double>& v);
 
 } // end namespace nsx
+
+#endif // CORE_DATA_PARSER_H

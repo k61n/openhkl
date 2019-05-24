@@ -5,8 +5,8 @@
 //
 //*************************************************************************************************
 
-#ifndef EXPERIMENTMODEL_H
-#define EXPERIMENTMODEL_H
+#ifndef NSXGUI_GUI_MODELS_EXPERIMENTMODEL_H
+#define NSXGUI_GUI_MODELS_EXPERIMENTMODEL_H
 
 #include <QList>
 #include <vector>
@@ -81,4 +81,4 @@ private:
     UnitCellsModel* units_;
 };
 
-#endif // EXPERIMENTMODEL_H
+#endif // NSXGUI_GUI_MODELS_EXPERIMENTMODEL_H

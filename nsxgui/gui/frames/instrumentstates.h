@@ -1,6 +1,6 @@
 
-#ifndef INSTRUMENTSTATES_H
-#define INSTRUMENTSTATES_H
+#ifndef NSXGUI_GUI_FRAMES_INSTRUMENTSTATES_H
+#define NSXGUI_GUI_FRAMES_INSTRUMENTSTATES_H
 
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
@@ -54,4 +54,4 @@ private:
     QcrDoubleSpinBox* beamZ;
 };
 
-#endif // INSTRUMENTSTATES_H
+#endif // NSXGUI_GUI_FRAMES_INSTRUMENTSTATES_H

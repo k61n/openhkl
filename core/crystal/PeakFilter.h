@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_CRYSTAL_PEAKFILTER_H
+#define CORE_CRYSTAL_PEAKFILTER_H
 
 #include "CrystalTypes.h"
 
@@ -56,3 +57,5 @@ public:
 };
 
 } // end namespace nsx
+
+#endif // CORE_CRYSTAL_PEAKFILTER_H

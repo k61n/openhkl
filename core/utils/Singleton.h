@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_UTILS_SINGLETON_H
+#define CORE_UTILS_SINGLETON_H
 
 #include <memory>
 
@@ -42,3 +43,5 @@ public:
 };
 
 } // end namespace nsx
+
+#endif // CORE_UTILS_SINGLETON_H

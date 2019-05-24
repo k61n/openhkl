@@ -1,6 +1,6 @@
 
-#ifndef SOURCEPROPERTY_H
-#define SOURCEPROPERTY_H
+#ifndef NSXGUI_GUI_PROPERTIES_SOURCEPROPERTY_H
+#define NSXGUI_GUI_PROPERTIES_SOURCEPROPERTY_H
 
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
@@ -25,4 +25,4 @@ private:
     QcrDoubleSpinBox* fwhm;
 };
 
-#endif // SOURCEPROPERTY_H
+#endif // NSXGUI_GUI_PROPERTIES_SOURCEPROPERTY_H

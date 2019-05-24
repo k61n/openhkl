@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_UTILS_PATH_H
+#define CORE_UTILS_PATH_H
 
 #include <string>
 #include <utility>
@@ -35,3 +36,5 @@ bool fileExists(const std::string& filename);
 std::string diffractometersPath();
 
 } // end namespace nsx
+
+#endif // CORE_UTILS_PATH_H

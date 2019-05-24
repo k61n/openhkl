@@ -1,5 +1,6 @@
+#ifndef CORE_DATA_FAKEDATAREADER_H
+#define CORE_DATA_FAKEDATAREADER_H
 
-#pragma once
 
 #include <string>
 
@@ -38,3 +39,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_DATA_FAKEDATAREADER_H

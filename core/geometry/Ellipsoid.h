@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_GEOMETRY_ELLIPSOID_H
+#define CORE_GEOMETRY_ELLIPSOID_H
 
 #include <cmath>
 
@@ -89,3 +90,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_GEOMETRY_ELLIPSOID_H

@@ -1,6 +1,6 @@
 
-#ifndef TOGGLES_H
-#define TOGGLES_H
+#ifndef NSXGUI_GUI_VIEW_TOGGLES_H
+#define NSXGUI_GUI_VIEW_TOGGLES_H
 
 //! Collection of toggle actions, for use as member of MainWin.
 
@@ -32,4 +32,4 @@ public:
     QcrToggle viewPlotter {"adhoc_viewPlotter", "show Plot", true};
 };
 
-#endif // TOGGLES_H
+#endif // NSXGUI_GUI_VIEW_TOGGLES_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_AUTO_INDEXING_USERDEFINEDUNITCELLINDEXER_H
+#define CORE_AUTO_INDEXING_USERDEFINEDUNITCELLINDEXER_H
 
 #include <map>
 #include <string>
@@ -89,3 +90,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_AUTO_INDEXING_USERDEFINEDUNITCELLINDEXER_H

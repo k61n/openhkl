@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_INSTRUMENT_EXPERIMENT_H
+#define CORE_INSTRUMENT_EXPERIMENT_H
 
 #include <map>
 #include <memory>
@@ -68,3 +69,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_INSTRUMENT_EXPERIMENT_H

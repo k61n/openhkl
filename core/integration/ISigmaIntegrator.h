@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_INTEGRATION_ISIGMAINTEGRATOR_H
+#define CORE_INTEGRATION_ISIGMAINTEGRATOR_H
 
 #include <Eigen/Dense>
 
@@ -26,3 +27,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_INTEGRATION_ISIGMAINTEGRATOR_H

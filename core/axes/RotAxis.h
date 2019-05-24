@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_AXES_ROTAXIS_H
+#define CORE_AXES_ROTAXIS_H
 
 #include <yaml-cpp/yaml.h>
 
@@ -63,3 +64,5 @@ protected:
 };
 
 } // end namespace nsx
+
+#endif // CORE_AXES_ROTAXIS_H

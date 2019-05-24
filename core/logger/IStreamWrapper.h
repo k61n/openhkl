@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_LOGGER_ISTREAMWRAPPER_H
+#define CORE_LOGGER_ISTREAMWRAPPER_H
 
 #include <functional>
 #include <string>
@@ -35,3 +36,5 @@ protected:
 };
 
 } // end namespace nsx
+
+#endif // CORE_LOGGER_ISTREAMWRAPPER_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_CRYSTAL_JONESSYMBOLPARSER_H
+#define CORE_CRYSTAL_JONESSYMBOLPARSER_H
 
 #include <Eigen/Dense>
 
@@ -19,3 +20,5 @@ namespace nsx {
 Eigen::Transform<double, 3, Eigen::Affine> parseJonesSymbol(const std::string& jonesSymbol);
 
 } // end namespace nsx
+
+#endif // CORE_CRYSTAL_JONESSYMBOLPARSER_H

@@ -1,5 +1,5 @@
-#ifndef MAINWIN_H
-#define MAINWIN_H
+#ifndef NSXGUI_GUI_MAINWIN_H
+#define NSXGUI_GUI_MAINWIN_H
 
 #include "nsxgui/gui/panels/subframe_experiments.h"
 #include "nsxgui/gui/panels/subframe_image.h"
@@ -38,4 +38,4 @@ private:
     friend class Triggers;
     friend class Toggles;
 };
-#endif // MAINWIN_H
+#endif // NSXGUI_GUI_MAINWIN_H

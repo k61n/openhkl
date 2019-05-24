@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_DETECTOR_DATAORDER_H
+#define CORE_DETECTOR_DATAORDER_H
 
 namespace nsx {
 
@@ -14,3 +15,5 @@ enum class DataOrder : size_t {
 };
 
 } // end namespace nsx
+
+#endif // CORE_DETECTOR_DATAORDER_H

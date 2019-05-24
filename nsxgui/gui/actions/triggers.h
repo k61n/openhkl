@@ -1,6 +1,6 @@
 
-#ifndef TRIGGERS_H
-#define TRIGGERS_H
+#ifndef NSXGUI_GUI_ACTIONS_TRIGGERS_H
+#define NSXGUI_GUI_ACTIONS_TRIGGERS_H
 
 #include <QAction>
 #include <QCR/widgets/actions.h>
@@ -57,4 +57,4 @@ public:
     QcrTrigger exportPlot {"exportPlot", "export plot"};
 };
 
-#endif // TRIGGERS_H
+#endif // NSXGUI_GUI_ACTIONS_TRIGGERS_H

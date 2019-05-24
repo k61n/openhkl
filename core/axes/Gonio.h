@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_AXES_GONIO_H
+#define CORE_AXES_GONIO_H
 
 #include <map>
 #include <memory>
@@ -76,3 +77,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_AXES_GONIO_H

@@ -1,6 +1,6 @@
 
-#ifndef DETECTORPROPERTY_H
-#define DETECTORPROPERTY_H
+#ifndef NSXGUI_GUI_PROPERTIES_DETECTORPROPERTY_H
+#define NSXGUI_GUI_PROPERTIES_DETECTORPROPERTY_H
 
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
@@ -23,4 +23,4 @@ private:
     QTableWidget* axes;
 };
 
-#endif // DETECTORPROPERTY_H
+#endif // NSXGUI_GUI_PROPERTIES_DETECTORPROPERTY_H

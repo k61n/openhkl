@@ -1,7 +1,7 @@
 
 
-#ifndef TAB_INSTRUMENT_H
-#define TAB_INSTRUMENT_H
+#ifndef NSXGUI_GUI_PANELS_TAB_INSTRUMENT_H
+#define NSXGUI_GUI_PANELS_TAB_INSTRUMENT_H
 
 #include "nsxgui/gui/panels/subtab_detector.h"
 #include "nsxgui/gui/panels/subtab_monochromaticsource.h"
@@ -18,4 +18,4 @@ public:
     void setCurrent(int);
 };
 
-#endif // TAB_INSTRUMENT_H
+#endif // NSXGUI_GUI_PANELS_TAB_INSTRUMENT_H

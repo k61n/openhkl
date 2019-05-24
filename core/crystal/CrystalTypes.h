@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_CRYSTAL_CRYSTALTYPES_H
+#define CORE_CRYSTAL_CRYSTALTYPES_H
 
 #include <memory>
 #include <set>
@@ -43,3 +44,5 @@ using SpaceGroupSymmetry = std::pair<std::string, std::string>;
 using AutoIndexingSoluce = std::pair<UnitCell, double>;
 
 } // end namespace nsx
+
+#endif // CORE_CRYSTAL_CRYSTALTYPES_H

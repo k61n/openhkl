@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_GEOMETRY_ELLIPSEMASK_H
+#define CORE_GEOMETRY_ELLIPSEMASK_H
 
 #include "AABB.h"
 #include "Ellipsoid.h"
@@ -31,3 +32,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_GEOMETRY_ELLIPSEMASK_H

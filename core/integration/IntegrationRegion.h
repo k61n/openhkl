@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_INTEGRATION_INTEGRATIONREGION_H
+#define CORE_INTEGRATION_INTEGRATIONREGION_H
 
 #include <Eigen/Core>
 
@@ -56,3 +57,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_INTEGRATION_INTEGRATIONREGION_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_DATA_BLOSCFILTER_H
+#define CORE_DATA_BLOSCFILTER_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -19,3 +20,5 @@ int register_blosc(char** version, char** date);
 #ifdef __cplusplus
 }
 #endif
+
+#endif // CORE_DATA_BLOSCFILTER_H

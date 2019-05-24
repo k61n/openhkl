@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_AXES_AXIS_H
+#define CORE_AXES_AXIS_H
 
 #include <iostream>
 #include <string>
@@ -98,3 +99,5 @@ protected:
 std::ostream& operator<<(std::ostream& os, const Axis& axis);
 
 } // end namespace nsx
+
+#endif // CORE_AXES_AXIS_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_DETECTOR_DETECTORFACTORY_H
+#define CORE_DETECTOR_DETECTORFACTORY_H
 
 #include <string>
 
@@ -21,3 +22,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_DETECTOR_DETECTORFACTORY_H

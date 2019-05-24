@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_INSTRUMENT_INTERPOLATEDSTATE_H
+#define CORE_INSTRUMENT_INTERPOLATEDSTATE_H
 
 #include "DirectVector.h"
 #include "InstrumentState.h"
@@ -33,3 +34,5 @@ public:
 };
 
 } // end namespace nsx
+
+#endif // CORE_INSTRUMENT_INTERPOLATEDSTATE_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_UTILS_NSXTEST_H
+#define CORE_UTILS_NSXTEST_H
 
 #include <cmath>
 #include <iostream>
@@ -622,3 +623,5 @@ template <typename T> T NSXTest::safeFloatingDivision(T f1, T f2)
 #define NSX_FAIL(...) EXPAND(NSX_FAIL_X(__VA_ARGS__)(__VA_ARGS__))
 
 #define NSX_INIT_TEST nsx::NSXTest all_tests;
+
+#endif // CORE_UTILS_NSXTEST_H

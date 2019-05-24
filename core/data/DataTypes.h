@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_DATA_DATATYPES_H
+#define CORE_DATA_DATATYPES_H
 
 #include <functional>
 #include <map>
@@ -35,3 +36,5 @@ using MetaDataMap = std::map<const char*, Variant<int, double, std::string>>;
 using MetaDataKeySet = std::set<std::string>;
 
 } // end namespace nsx
+
+#endif // CORE_DATA_DATATYPES_H

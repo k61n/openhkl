@@ -1,6 +1,6 @@
 
-#ifndef SUBFRAME_PORPERTIES_H
-#define SUBFRAME_PROPERTIES_H
+#ifndef NSXGUI_GUI_PANELS_SUBFRAME_PROPERTIES_H
+#define NSXGUI_GUI_PANELS_SUBFRAME_PROPERTIES_H
 
 #pragma once
 
@@ -13,4 +13,4 @@ public:
     SubframeSetup* tabsframe;
 };
 
-#endif // SUBFRAME_PROPERTIES_H
+#endif // NSXGUI_GUI_PANELS_SUBFRAME_PROPERTIES_H

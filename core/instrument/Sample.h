@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_INSTRUMENT_SAMPLE_H
+#define CORE_INSTRUMENT_SAMPLE_H
 
 #include <string>
 #include <vector>
@@ -64,3 +65,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_INSTRUMENT_SAMPLE_H

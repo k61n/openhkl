@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_DATA_HDF5DATAREADER_H
+#define CORE_DATA_HDF5DATAREADER_H
 
 #include <string>
 
@@ -26,3 +27,5 @@ public:
 };
 
 } // end namespace nsx
+
+#endif // CORE_DATA_HDF5DATAREADER_H

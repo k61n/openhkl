@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_DATA_METADATA_H
+#define CORE_DATA_METADATA_H
 
 #include <map>
 #include <set>
@@ -92,3 +93,5 @@ template <typename _type> _type MetaData::key(const char* name) const
 }
 
 } // end namespace nsx
+
+#endif // CORE_DATA_METADATA_H

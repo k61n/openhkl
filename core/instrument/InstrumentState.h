@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_INSTRUMENT_INSTRUMENTSTATE_H
+#define CORE_INSTRUMENT_INSTRUMENTSTATE_H
 
 #include <vector>
 
@@ -92,3 +93,5 @@ protected:
 };
 
 } // end namespace nsx
+
+#endif // CORE_INSTRUMENT_INSTRUMENTSTATE_H

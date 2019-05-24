@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_DETECTOR_DETECTOREVENT_H
+#define CORE_DETECTOR_DETECTOREVENT_H
 
 #include <string>
 #include <vector>
@@ -34,3 +35,5 @@ public:
 };
 
 } // end namespace nsx
+
+#endif // CORE_DETECTOR_DETECTOREVENT_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_GEOMETRY_IMASK_H
+#define CORE_GEOMETRY_IMASK_H
 
 namespace nsx {
 
@@ -23,3 +24,5 @@ protected:
 };
 
 } // end namespace nsx
+
+#endif // CORE_GEOMETRY_IMASK_H

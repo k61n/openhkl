@@ -1,6 +1,6 @@
 
-#ifndef SUBFRAME_PLOT_H
-#define SUBFRAME_PLOT_H
+#ifndef NSXGUI_GUI_PANELS_SUBFRAME_PLOT_H
+#define NSXGUI_GUI_PANELS_SUBFRAME_PLOT_H
 
 #include <QCR/widgets/views.h>
 
@@ -11,4 +11,4 @@ public:
     SubframePlot();
 };
 
-#endif // SUBFRAME_PLOT_H
+#endif // NSXGUI_GUI_PANELS_SUBFRAME_PLOT_H

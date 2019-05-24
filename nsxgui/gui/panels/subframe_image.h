@@ -1,6 +1,6 @@
 
-#ifndef SUBFRAME_IMAGE_H
-#define SUBFRAME_IMAGE_H
+#ifndef NSXGUI_GUI_PANELS_SUBFRAME_IMAGE_H
+#define NSXGUI_GUI_PANELS_SUBFRAME_IMAGE_H
 
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
@@ -30,4 +30,4 @@ private:
     ImageWidget* centralWidget;
 };
 
-#endif // SUBFRAME_IMAGE_H
+#endif // NSXGUI_GUI_PANELS_SUBFRAME_IMAGE_H

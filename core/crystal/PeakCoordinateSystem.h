@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_CRYSTAL_PEAKCOORDINATESYSTEM_H
+#define CORE_CRYSTAL_PEAKCOORDINATESYSTEM_H
 
 #include <Eigen/Core>
 
@@ -61,3 +62,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_CRYSTAL_PEAKCOORDINATESYSTEM_H

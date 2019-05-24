@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_UTILS_ANY_H
+#define CORE_UTILS_ANY_H
 
 #include <stdexcept>
 #include <type_traits>
@@ -166,3 +167,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_UTILS_ANY_H

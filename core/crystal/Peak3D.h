@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CORE_CRYSTAL_PEAK3D_H
+#define CORE_CRYSTAL_PEAK3D_H
 
 #include <map>
 #include <memory>
@@ -143,3 +144,5 @@ private:
 };
 
 } // end namespace nsx
+
+#endif // CORE_CRYSTAL_PEAK3D_H
