@@ -53,8 +53,6 @@ public:
     //! Constructs a Gonio from a property tree node
     Gonio(const YAML::Node& node);
     ~Gonio();
-
-    //! Assignment operator
     Gonio& operator=(const Gonio& other);
 
     //! Returns the number of axis of this goniometer

@@ -41,8 +41,6 @@ public:
 
     Diffractometer* clone() const;
     virtual ~Diffractometer();
-
-    //! Assignment operator
     Diffractometer& operator=(const Diffractometer& other);
 
     //! Returns the name of this diffractometer

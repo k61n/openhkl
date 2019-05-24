@@ -39,8 +39,6 @@ public:
     //! Returns a pointer to a copy of a CylindricalDetector
     Detector* clone() const override;
     virtual ~CylindricalDetector();
-
-    //! Assignment operator
     CylindricalDetector& operator=(const CylindricalDetector& other) = default;
 
     //! Sets the height of the detector (meters)

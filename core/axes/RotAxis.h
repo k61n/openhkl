@@ -46,7 +46,6 @@ public:
         Direction direction = Direction::CCW);
     //! Construct a RotAxis from a property tree node.
     RotAxis(const YAML::Node& node);
-    //! Assignment operator
     RotAxis& operator=(const RotAxis& other);
     ~RotAxis();
     RotAxis* clone() const;

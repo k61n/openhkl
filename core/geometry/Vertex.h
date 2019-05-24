@@ -36,8 +36,6 @@ struct Vertex {
     //! Constructs a Vertex object from a vector of coordinates
     Vertex(int id, const Eigen::Vector3d& coords);
     ~Vertex() = default;
-
-    //! Assignment operator
     Vertex& operator=(const Vertex& other) = delete;
 
     //! Send some informations about this Vertex on an output stream

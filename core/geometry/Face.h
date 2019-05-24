@@ -35,8 +35,6 @@ struct Face {
     Face(int id);
     Face(const Face& other) = delete;
     ~Face() = default;
-
-    //! Assignment operator
     Face& operator=(const Face& other) = delete;
 
     //! Returns the int signed volume of the tetrahedron formed by this Face and a

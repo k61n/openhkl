@@ -39,8 +39,6 @@ public:
     //! Returns a pointer to a copy of a FlatDetector
     Detector* clone() const override;
     virtual ~FlatDetector();
-
-    //! Assignment operator
     FlatDetector& operator=(const FlatDetector& other) = default;
 
     //! Sets the height of the detector (meters)

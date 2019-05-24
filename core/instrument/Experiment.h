@@ -38,8 +38,6 @@ public:
     //! Construct an empty experiment from a given name and diffractometer
     Experiment(const std::string& name, const std::string& diffractometerName);
     ~Experiment() = default;
-
-    //! Assignment operator
     Experiment& operator=(const Experiment& other);
 
     //! Returns a non-const pointerh  to the diffractometer related to the

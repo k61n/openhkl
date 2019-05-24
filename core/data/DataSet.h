@@ -44,8 +44,6 @@ public:
     //! Construct using the given data reader (allowing multiple formats)
     DataSet(std::shared_ptr<IDataReader> reader);
     ~DataSet();
-
-    //! Assignment operator
     DataSet& operator=(const DataSet& other) = delete;
 
     //! Gets the data filename

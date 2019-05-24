@@ -45,8 +45,6 @@ public:
 
     //! Destructor.
     virtual ~Component() = 0;
-
-    //! Assignment operator
     virtual Component& operator=(const Component& other);
 
     //! Returns the name of the component.

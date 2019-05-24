@@ -56,8 +56,6 @@ public:
     virtual Detector* clone() const = 0;
     // Destructor
     virtual ~Detector() = 0;
-
-    //! Assignment operator
     Detector& operator=(const Detector& other) = default;
 
     //! Returns the sample to detector distance (meters)

@@ -35,8 +35,6 @@ public:
 
     //! Construct a DirectVector from an Eigen column vector
     explicit DirectVector(const Eigen::Vector3d& dvector);
-
-    //! Assignment operator
     DirectVector& operator=(const DirectVector& other) = default;
     ~DirectVector() = default;
 

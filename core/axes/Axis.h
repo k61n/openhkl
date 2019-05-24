@@ -51,8 +51,6 @@ public:
 
     //! Construct an Axis from a property tree node.
     Axis(const YAML::Node& node);
-
-    //! Assignment operator
     Axis& operator=(const Axis& other);
     virtual ~Axis() = 0;
     virtual Axis* clone() const = 0;

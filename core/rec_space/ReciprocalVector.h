@@ -35,8 +35,6 @@ public:
 
     //! Construct a ReciprocalVector from an Eigen row vector
     explicit ReciprocalVector(const Eigen::RowVector3d& rvector);
-
-    //! Assignment operator
     ReciprocalVector& operator=(const ReciprocalVector& other) = default;
     ~ReciprocalVector() = default;
 

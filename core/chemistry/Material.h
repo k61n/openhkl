@@ -36,8 +36,6 @@ public:
 
     Material(const Material& other) = default;
     ~Material() = default;
-
-    //! Assignment operator
     Material& operator=(const Material& other) = default;
 
     Material* clone() const;

@@ -39,8 +39,6 @@ public:
     // Destructor
     ~TransAxis() override;
     TransAxis* clone() const;
-
-    //! Assignment operator
     TransAxis& operator=(const TransAxis& other);
 
     Eigen::Transform<double, 3, Eigen::Affine> affineMatrix(double value) const override;

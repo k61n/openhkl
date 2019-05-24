@@ -41,8 +41,6 @@ public:
     Source(const YAML::Node& node);
     Source* clone() const;
     ~Source();
-
-    //! Assignment operator
     Source& operator=(const Source& other);
 
     //! Returns the monochromators registered for this Source

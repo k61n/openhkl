@@ -44,8 +44,6 @@ public:
 
     //! Construct a MillerIndex from an Eigen row vector of integer
     explicit MillerIndex(const Eigen::RowVector3i& hkl);
-
-    //! Assignment operator
     MillerIndex& operator=(const MillerIndex& other) = default;
     ~MillerIndex() = default;
 

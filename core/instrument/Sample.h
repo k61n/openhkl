@@ -49,8 +49,6 @@ public:
     Sample(const YAML::Node& node);
     Sample* clone() const;
     virtual ~Sample();
-
-    //! Assignment operator
     Sample& operator=(const Sample& other) = default;
 
     //! Sets the sample shape described as a convex hull

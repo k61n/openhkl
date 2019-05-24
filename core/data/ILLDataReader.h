@@ -36,8 +36,6 @@ public:
     ILLDataReader(const ILLDataReader& other) = delete;
     ILLDataReader(const std::string& filename, Diffractometer* diffractometer);
     ~ILLDataReader() = default;
-
-    //! Assignment operator
     ILLDataReader& operator=(const ILLDataReader& other) = delete;
 
     // Other methods
