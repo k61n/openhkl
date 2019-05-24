@@ -1,5 +1,4 @@
-#ifndef MOZAICTESTER_H
-#define MOZAICTESTER_H
+#pragma once
 
 #include <Eigen/Dense>
 
@@ -38,5 +37,3 @@ struct MozaicTester {
 };
 
 } // namespace nsx
-
-#endif // MOZAICTESTER_H

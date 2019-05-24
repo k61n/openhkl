@@ -1,5 +1,4 @@
-#ifndef MOSAIC_H_
-#define MOSAIC_H_
+#pragma once
 
 #include <vector>
 
@@ -38,4 +37,3 @@ private:
 double ellipsoids_overlap(const Ellipsoid& ell1, const Ellipsoid& ell2);
 
 } // namespace nsx
-#endif /* MOSAIC_H_ */
