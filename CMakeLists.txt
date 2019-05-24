@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.6 FATAL_ERROR) # 3.6+ required by IFW for VS2015+
 
+if(POLICY CMP0078)
+  cmake_policy(SET CMP0078 NEW)
+endif()
+
+
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # Add some paths to the cmake module search path.

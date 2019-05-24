@@ -1,7 +1,3 @@
-if(POLICY CMP0042)
-    cmake_policy(SET CMP0042 NEW)
-endif()
-
 include(MakeResources)
 
 get_subdirectories(core_SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
@@ -13,7 +9,7 @@ file(GLOB_RECURSE core_SOURCES *.cpp *.c)
 file(GLOB_RECURSE core_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 
 include_directories(${core_SUBDIRS}
-                    ${CMAKE_CURRENT_BINARY_DIR}/generated)
+    ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
 add_library(${NSX_LIBRARY} ${NSX_LIB_TYPE} ${core_SOURCES} ${core_RESOURCES_CPP})
 
@@ -49,15 +45,15 @@ install(FILES ${core_GENERATED_HEADERS} DESTINATION ${NSX_INSTALL_DIR}include/co
 
 # Install the databases file
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/resources/databases
-        DESTINATION ${NSX_INSTALL_DIR}share/nsxtool
-        COMPONENT DATA
-        PATTERN ".git" EXCLUDE)
+    DESTINATION ${NSX_INSTALL_DIR}share/nsxtool
+    COMPONENT DATA
+    PATTERN ".git" EXCLUDE)
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/resources/instruments
-        DESTINATION ${NSX_INSTALL_DIR}share/nsxtool
-        COMPONENT DATA
-        PATTERN ".git" EXCLUDE)
+    DESTINATION ${NSX_INSTALL_DIR}share/nsxtool
+    COMPONENT DATA
+    PATTERN ".git" EXCLUDE)
 
 if(NSX_TIDY)
-  add_tidy_target(${NSX_LIBRARY})
+    add_tidy_target(${NSX_LIBRARY})
 endif()
