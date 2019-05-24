@@ -1,6 +1,9 @@
 
 #include "nsxgui/gui/models/experimentmodel.h"
+#include "nsxgui/gui/models/session.h"
+#include "nsxgui/qcr/engine/logger.h"
 #include "nsxgui/qcr/engine/mixin.h"
+#include <core/Peak3D.h>
 //  ***********************************************************************************************
 //! @class ExperimentData
 
@@ -77,6 +80,46 @@ nsx::PeakList PeaksModel::allPeaks()
 void PeaksModel::appendPeaks(nsx::PeakList peaks)
 {
     peakLists_.push_back(peaks);
+}
+
+void PeaksModel::autoAssignUnitCell()
+{
+    nsx::PeakList peaks = allPeaks(); //selectedPeaks();
+
+    UnitCellsModel* unitCellModel = gSession->selectedExperiment()->unitCells();
+
+    QList<nsx::sptrUnitCell> cells = unitCellModel->allUnitCells();
+
+    if (cells.size() < 1) {
+      gLogger->log("[INFO] There are no unit cells to assign");
+      return;
+    }
+
+    for (nsx::sptrPeak3D peak : peaks) {
+      if (!peak->enabled()) {
+        continue;
+      }
+
+      Eigen::RowVector3d hkl;
+      bool assigned = false;
+
+      for (nsx::sptrUnitCell cell : cells) {
+        nsx::MillerIndex hkl(peak->q(), *cell);
+        if (hkl.indexed(cell->indexingTolerance())) {
+          peak->setUnitCell(cell);
+          assigned = true;
+          break;
+        }
+      }
+
+      // could not assign unit cell
+      if (assigned == false) {
+        peak->setSelected(false);
+      }
+    }
+    gLogger->log("Done auto assigning unit cells");
+
+    //emit model()->itemChanged(this);
 }
 
 //  ***********************************************************************************************

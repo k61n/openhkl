@@ -9,6 +9,7 @@
 #include "nsxgui/gui/frames/peakfinder.h"
 #include "nsxgui/gui/dialogs/peakfilter.h"
 #include "nsxgui/gui/frames/userdefinedunitcellindexer.h"
+#include "nsxgui/gui/dialogs/shapelibrary.h"
 
 #include <QInputDialog>
 #include <QDesktopServices>
@@ -76,4 +77,16 @@ Triggers::Triggers()
     autoIndexer.setTriggerHook([](){ new AutoIndexer; });
     filterPeaks.setTriggerHook([](){ new PeakFilter; });
     userDefinedIndexer.setTriggerHook([](){ new UserDefinedUnitCellIndexer; });
+    assignUnitCell.setTriggerHook([](){
+        if (gSession->selectedExperimentNum() < 0) {
+            gLogger->log("[ERROR] No experiment selected");
+            return;
+        }
+        if (gSession->selectedExperiment()->peaks()->allPeaks().empty()) {
+            gLogger->log("[ERROR] No peaks in selected experiment");
+            return;
+        }
+        gSession->selectedExperiment()->peaks()->autoAssignUnitCell();
+    });
+    buildShapeLibrary.setTriggerHook([](){ new ShapeLibraryDialog; });
 }
