@@ -1,10 +1,3 @@
-/*
- * mosaic.cpp
- *
- *  Created on: Feb 10, 2016
- *      Author: pellegrini
- */
-
 #include <cmath>
 #include <limits>
 #include <random>

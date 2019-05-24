@@ -1,10 +1,3 @@
-/*
- * IDataReader.cpp
- *
- *  Created on: Feb 23, 2017
- *      Author: pellegrini
- */
-
 #include <cassert>
 
 #include "blosc.h"

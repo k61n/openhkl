@@ -1,10 +1,3 @@
-/*
- * Monochromator.h
- *
- *  Created on: Apr 8, 2016
- *      Author: pellegrini
- */
-
 #pragma once
 
 #include "ReciprocalVector.h"

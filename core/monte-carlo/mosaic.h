@@ -1,10 +1,3 @@
-/*
- * mosaic.h
- *
- *  Created on: Feb 10, 2016
- *      Author: pellegrini
- */
-
 #ifndef MOSAIC_H_
 #define MOSAIC_H_
 

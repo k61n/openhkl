@@ -1,10 +1,3 @@
-/*
- * Monochromator.cpp
- *
- *  Created on: Apr 8, 2016
- *      Author: pellegrini
- */
-
 #include "Monochromator.h"
 #include "Units.h"
 
