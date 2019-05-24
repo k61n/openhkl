@@ -23,7 +23,6 @@ class MergedData;
 //! Class to handle calculation of correlation coefficients (CChalf and CC*)
 class CC {
 public:
-    //! Default constructor
     CC();
     //! Calculate the statistic on the given set of merged peaks.
     void calculate(const std::vector<MergedPeak>& peaks);

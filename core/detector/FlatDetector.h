@@ -38,7 +38,6 @@ public:
     FlatDetector(const YAML::Node& node);
     //! Return a pointer to a copy of a FlatDetector
     Detector* clone() const override;
-    //! Destructor
     virtual ~FlatDetector();
 
     //! Assignment operator

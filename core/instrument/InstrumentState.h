@@ -35,8 +35,6 @@ class InstrumentState {
 public:
     //! default value needed for SWIG (note: nullptr does _not_ work)
     InstrumentState(Diffractometer* diffractometer = nullptr);
-
-    //! Destructor
     virtual ~InstrumentState() {}
 
     //! Takes a direct vector in detector coordinates and computes kf in lab

@@ -36,11 +36,7 @@ public:
 
     //! Copy constructor
     ILLDataReader(const ILLDataReader& other) = delete;
-
-    //! Default constructor
     ILLDataReader(const std::string& filename, Diffractometer* diffractometer);
-
-    //! Destructor
     ~ILLDataReader() = default;
 
     //! Assignment operator

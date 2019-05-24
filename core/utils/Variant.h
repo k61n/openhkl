@@ -149,8 +149,6 @@ public:
     template <typename T, typename... OtherArgs> struct is_subset<T, OtherArgs...> {
         static constexpr bool value = IsOneOf<T, Args...>::value && is_subset<OtherArgs...>::value;
     };
-
-    //! Default constructor
     Variant() : _typeid(typeid(typename FirstArg<Args...>::type))
     {
         using T = typename FirstArg<Args...>::type;

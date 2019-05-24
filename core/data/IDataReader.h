@@ -34,8 +34,6 @@ class IDataReader {
 public:
     //! Construct data reader from given filename and diffractometer
     IDataReader(const std::string& filename, Diffractometer* diffractometer);
-
-    //! Destructor
     virtual ~IDataReader() = 0;
 
     //! Open the file

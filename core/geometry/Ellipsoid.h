@@ -42,7 +42,6 @@ public:
     //! axes ()
     Ellipsoid(
         const Eigen::Vector3d& center, const Eigen::Vector3d& radii, const Eigen::Matrix3d& axes);
-    //! Destructor
     virtual ~Ellipsoid() = default;
     //! Assignment
     Ellipsoid& operator=(const Ellipsoid& other);

@@ -56,11 +56,7 @@ class ConvexHull {
 public:
     //! Checks whether three vertices are coplanar
     static bool isCoplanar(Vertex* v0, Vertex* v1, Vertex* v2);
-
-    //! Default constructor
     ConvexHull();
-
-    //! Destructor
     ~ConvexHull();
 
     //! Copy Convex Hull

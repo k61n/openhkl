@@ -30,8 +30,6 @@ public:
         std::function<std::string()> suffix = nullptr);
 
     IStreamWrapper(const IStreamWrapper& other) = delete;
-
-    //! Destructor
     virtual ~IStreamWrapper() = 0;
 
     IStreamWrapper& operator=(const IStreamWrapper& oter) = delete;

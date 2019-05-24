@@ -43,8 +43,6 @@ public:
 
     //! Construct using the given data reader (allowing multiple formats)
     DataSet(std::shared_ptr<IDataReader> reader);
-
-    //! Destructor
     ~DataSet();
 
     //! Assignment operator

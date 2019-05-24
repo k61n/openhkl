@@ -35,9 +35,7 @@ class DataSet;
 //! \brief This is a helper class to handle per-frame integration of a peak.
 class IPeakIntegrator {
 public:
-    //! Default constructor
     IPeakIntegrator();
-    //! Destructor
     virtual ~IPeakIntegrator();
     //! Compute the integrated intensity of the peak given the integration region.
     virtual bool compute(sptrPeak3D peak, const IntegrationRegion& region) = 0;

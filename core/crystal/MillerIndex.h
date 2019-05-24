@@ -30,7 +30,6 @@ namespace nsx {
 //! dealing with vectors in algorithms dedicated to crystallographic data.
 class MillerIndex {
 public:
-    //! Default constructor
     MillerIndex() = default;
 
     //! Copy constructor
@@ -50,8 +49,6 @@ public:
 
     //! Assignment operator
     MillerIndex& operator=(const MillerIndex& other) = default;
-
-    //! Destructor
     ~MillerIndex() = default;
 
     //! Return indices in the form of an Eigen row vector

@@ -28,8 +28,6 @@ class TransAxis : public Axis {
 public:
     //! Static constructor for a TransAxis
     static Axis* create(const YAML::Node& node);
-
-    //! Default constructor
     TransAxis();
     //! Copy constructor
     TransAxis(const TransAxis& other);

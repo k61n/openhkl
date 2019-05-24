@@ -40,8 +40,6 @@ class Axis {
 public:
     //! Static constructor for an Axis
     static Axis* create(const YAML::Node& node);
-
-    //! Default constructor
     Axis();
 
     //! Copy constructor
@@ -58,8 +56,6 @@ public:
 
     //! Assignment operator
     Axis& operator=(const Axis& other);
-
-    //! Destructor
     virtual ~Axis() = 0;
 
     //! Virtual copy constructor

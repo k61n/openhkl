@@ -31,8 +31,6 @@ class Source : public Component {
 public:
     //! Static constructor of a monochromatic source from a yaml tree node
     static Source* create(const YAML::Node& node);
-
-    //! Default constructor
     Source();
 
     //! Copy constructor
@@ -46,8 +44,6 @@ public:
 
     //! Virtual copy constructor
     Source* clone() const;
-
-    //! Destructor
     ~Source();
 
     //! Assignment operator

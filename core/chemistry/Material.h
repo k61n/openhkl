@@ -37,8 +37,6 @@ public:
 
     //! Copy constructor (deleted)
     Material(const Material& other) = default;
-
-    //! Destructor
     ~Material() = default;
 
     //! Assignment operator

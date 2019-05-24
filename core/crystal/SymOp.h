@@ -36,7 +36,6 @@ public:
     SymOp(const affineTransformation& symmetryOperation);
     //! Copy constructor
     SymOp(const SymOp& other);
-    //! Destructor
     ~SymOp();
     //! Assignment
     SymOp& operator=(const SymOp& other);

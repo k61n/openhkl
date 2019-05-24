@@ -31,17 +31,11 @@ struct Vertex;
  * algorithm.
  */
 struct Face {
-
-    //! Default constructor
     Face();
-
-    //! Default constructor
     Face(int id);
 
     //! Copy constructor
     Face(const Face& other) = delete;
-
-    //! Destructor
     ~Face() = default;
 
     //! Assignment operator

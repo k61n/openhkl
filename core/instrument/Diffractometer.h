@@ -40,8 +40,6 @@ public:
     Diffractometer(const Diffractometer& other);
 
     Diffractometer* clone() const;
-
-    //! Destructor
     virtual ~Diffractometer();
 
     //! Assignment operator
@@ -83,7 +81,6 @@ public:
     void setSource(const Source& source);
 
 protected:
-    //! Default constructor
     Diffractometer();
 
     //! Constructs a diffractometer with a given name

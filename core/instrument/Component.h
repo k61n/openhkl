@@ -33,7 +33,6 @@ namespace nsx {
 class Component {
 
 public:
-    //! Default constructor
     Component() = default;
 
     // Copy constructor

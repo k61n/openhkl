@@ -46,7 +46,6 @@ public:
     //! Constructs a AABB object from two Eigen vectors representing respectively
     //! its lower and upper bound
     AABB(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub);
-    //! Destructor
     virtual ~AABB() = default;
 
     //! Assignment operator

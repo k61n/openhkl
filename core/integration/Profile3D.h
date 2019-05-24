@@ -26,7 +26,6 @@ namespace nsx {
 //! \brief Class to store a 3d peak profile
 class Profile3D {
 public:
-    //! Default constructor
     Profile3D();
     //! Construct with given bounding box and number of bins
     Profile3D(const AABB& aabb, int nx, int ny, int nz);

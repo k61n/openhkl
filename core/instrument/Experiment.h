@@ -39,8 +39,6 @@ public:
 
     //! Construct an empty experiment from a given name and diffractometer
     Experiment(const std::string& name, const std::string& diffractometerName);
-
-    //! Destructor
     ~Experiment() = default;
 
     //! Assignment operator

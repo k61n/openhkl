@@ -36,8 +36,6 @@ public:
 
     //! Static constructor for a RotAxis
     static Axis* create(const YAML::Node& node);
-
-    //! Default constructor
     RotAxis();
     //! Copy constructor
     RotAxis(const RotAxis& other);
@@ -51,7 +49,6 @@ public:
     RotAxis(const YAML::Node& node);
     //! Assignment operator
     RotAxis& operator=(const RotAxis& other);
-    //! Destructor
     ~RotAxis();
     //! Virtual copy constructor
     RotAxis* clone() const;

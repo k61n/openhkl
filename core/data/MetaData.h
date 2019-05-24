@@ -39,7 +39,6 @@ class MetaData {
 public:
     //! Constructor
     MetaData();
-    //! Destructor
     ~MetaData();
     //! Copy
     MetaData(const MetaData&);

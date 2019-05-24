@@ -28,8 +28,6 @@ public:
     LogFileStreamWrapper(
         const std::string& logfile, std::function<std::string()> prefix = nullptr,
         std::function<std::string()> suffix = nullptr);
-
-    //! Destructor
     virtual ~LogFileStreamWrapper();
 
     //! Write a message to the stream

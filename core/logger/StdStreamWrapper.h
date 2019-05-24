@@ -27,8 +27,6 @@ public:
     StdStreamWrapper(
         std::ostream& stream, std::function<std::string()> prefix = nullptr,
         std::function<std::string()> suffix = nullptr);
-
-    //! Destructor
     virtual ~StdStreamWrapper();
 
     //! Write a message to the stream

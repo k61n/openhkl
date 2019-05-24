@@ -44,7 +44,6 @@ namespace nsx {
 class Gonio {
 
 public:
-    //! Default constructor
     Gonio();
 
     //! Copy constructor
@@ -55,8 +54,6 @@ public:
 
     //! Constructs a Gonio from a property tree node
     Gonio(const YAML::Node& node);
-
-    //! Destructor
     ~Gonio();
 
     //! Assignment operator

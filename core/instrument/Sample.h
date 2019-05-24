@@ -39,8 +39,6 @@ class Sample : public Component {
 public:
     //! Static constructor of a Sample from a property tree node
     static Sample* create(const YAML::Node& node);
-
-    //! Default constructor
     Sample();
 
     //! Copy constructor
@@ -54,8 +52,6 @@ public:
 
     //! Virtual copy constructor
     Sample* clone() const;
-
-    //! Destructor
     virtual ~Sample();
 
     //! Assignment operator

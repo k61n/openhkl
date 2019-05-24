@@ -29,16 +29,12 @@ struct Vertex;
 //! This class implements the Edge object used in the incremental convex hull
 //! algorithm.
 struct Edge {
-
-    //! Default constructor
     Edge();
 
     Edge(int _id);
 
     //! Copy constructor
     Edge(const Edge& other) = delete;
-
-    //! Destructor
     ~Edge() = default;
 
     //! Assignment operator

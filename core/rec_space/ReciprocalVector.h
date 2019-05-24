@@ -27,7 +27,6 @@ namespace nsx {
 //! dealing with vectors in algorithms dedicated to crystallographic data.
 class ReciprocalVector {
 public:
-    //! Default constructor
     ReciprocalVector() = default;
 
     //! Copy constructor
@@ -41,8 +40,6 @@ public:
 
     //! Assignment operator
     ReciprocalVector& operator=(const ReciprocalVector& other) = default;
-
-    //! Destructor
     ~ReciprocalVector() = default;
 
     //! Cast operator to an Eigen row vector

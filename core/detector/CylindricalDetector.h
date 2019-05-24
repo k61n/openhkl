@@ -38,7 +38,6 @@ public:
     CylindricalDetector(const YAML::Node& node);
     //! Return a pointer to a copy of a CylindricalDetector
     Detector* clone() const override;
-    //! Destructor
     virtual ~CylindricalDetector();
 
     //! Assignment operator

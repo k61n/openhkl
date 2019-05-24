@@ -29,11 +29,7 @@ struct Edge;
  * algorithm.
  */
 struct Vertex {
-
-    //! Default constructor
     Vertex();
-
-    //! Default constructor
     Vertex(int id);
 
     //! Copy constructor
@@ -41,8 +37,6 @@ struct Vertex {
 
     //! Constructs a Vertex object from a vector of coordinates
     Vertex(int id, const Eigen::Vector3d& coords);
-
-    //! Destructor
     ~Vertex() = default;
 
     //! Assignment operator
