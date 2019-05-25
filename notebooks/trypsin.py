@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import least_squares
 
 ################################################################################
-## load the instrument and associated elements
+## load configuration and raw data
 ################################################################################
 
 expt = nsx.Experiment('test', 'BioDiff2500')
@@ -19,11 +19,12 @@ biodiff = expt.diffractometer()
 reader = nsx.HDF5DataReader("trypsin.hdf", biodiff)
 data = nsx.DataSet(reader)
 expt.addData(data)
+print("data loaded")
 
 ## show the data
-plt.figure(figsize=(20,10))
-plt.imshow(np.log(data.frame(0)))
-plt.show()
+#plt.figure(figsize=(20,10))
+#plt.imshow(np.log(data.frame(0)))
+#plt.show()
 
 ################################################################################
 ## find the peaks and their position on the map
@@ -49,7 +50,7 @@ peaks = finder.find([data])
 
 # amount of peaks found
 print("... peakfinder found", len(peaks), "peaks")
-print("Are we good:", len(peaks) == 9913)
+print("Are we good 1:", len(peaks) == 9913)
 
 peak_list = nsx.PeakList()
 
@@ -86,7 +87,7 @@ def autoindex(peaks):
 
     print("indexing", num_to_index, "peaks")
 
-    print("Are we good:", num_to_index == 7798)
+    print("Are we good 2:", num_to_index == 7798)
 
     # autoindex
     params = nsx.IndexerParameters()
@@ -121,7 +122,7 @@ def reindex(uc, peaks, tolerance=0.2):
 print("reindex ...")
 indexed_peaks = reindex(uc, peaks)
 print("... reindex, found", len(indexed_peaks), "indexed peaks")
-print("Are we good:", len(indexed_peaks) == 7521)
+print("Are we good 3:", len(indexed_peaks) == 7521)
 
 
 ################################################################################

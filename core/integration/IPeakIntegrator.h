@@ -45,8 +45,8 @@ public:
      *  \param bkg_begin Background beginning (in sigma)
      *  \param bkg_end Background end (in sigma)
      */
-    void
-    integrate(PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end);
+    void integrate(
+        PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end);
     //! Returns the mean background.
     Intensity meanBackground() const;
     //! Returns the integrated intensity.
