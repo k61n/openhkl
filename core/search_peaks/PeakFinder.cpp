@@ -14,6 +14,7 @@
 
 #include <utility>
 #include <vector>
+#include <cstdio>
 
 #include "AABB.h"
 #include "ConvolverFactory.h"
@@ -91,8 +92,10 @@ PeakFinder::PeakFinder()
     , _framesBegin(-1)
     , _framesEnd(-1)
 {
+    printf("PeakFinder::ctor ...\n");
     ConvolverFactory convolver_factory;
     _convolver.reset(convolver_factory.create("annular", {}));
+    printf("PeakFinder::ctor done\n");
 }
 
 /*
@@ -109,10 +112,14 @@ PeakFinder::PeakFinder()
  */
 PeakList PeakFinder::find(DataList numors)
 {
+    printf("PeakFinder::find ... with %li numors\n", numors.size());
     std::size_t npeaks = 0;
     PeakList peaks;
 
+    int i = 0;
     for (auto&& numor : numors) {
+        if (numors.size()>1)
+            printf("  numor %i\n", i);
         PeakList numor_peaks;
 
         auto dectector = numor->reader()->diffractometer()->detector();
@@ -124,7 +131,6 @@ PeakList PeakFinder::find(DataList numors)
         std::map<int, Blob3D> blobs;
 
         try {
-
             if (_handler) {
                 _handler->log("min comp is " + std::to_string(_minSize));
                 _handler->log("max comp is " + std::to_string(_maxSize));
@@ -155,12 +161,15 @@ PeakList PeakFinder::find(DataList numors)
                 //        }
 
                 // find blobs within the current frame range
+                printf("PeakFinder::find: findPrimary\n");
                 findPrimaryBlobs(numor, local_blobs, local_equivalences, loop_begin, loop_end);
 
                 // merge adjacent blobs
+                printf("PeakFinder::find: mergeBlobs\n");
                 mergeEquivalentBlobs(local_blobs, local_equivalences);
 
 #pragma omp critical
+                printf("PeakFinder::find: blob loop\n");
                 {
                     // merge the blobs into the global set
                     for (auto&& blob : local_blobs) {
@@ -252,6 +261,7 @@ PeakList PeakFinder::find(DataList numors)
             _handler->log("Found " + std::to_string(numor_peaks.size()) + " peaks.");
         }
     }
+    printf("\n");
 
     if (_handler) {
         _handler->setStatus("Peak finding completed.");

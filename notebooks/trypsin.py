@@ -34,10 +34,10 @@ print("peakfinder ...")
 
 # get the peakfinder
 finder = nsx.PeakFinder()
-convoler = nsx.AnnularConvolver()
+convolver = nsx.AnnularConvolver()
 
 # set the method as annular (I guess like circular)
-finder.setConvolver(convoler)
+finder.setConvolver(convolver)
 
 # set seach parameters
 finder.setMinSize(30)
@@ -46,6 +46,7 @@ finder.setPeakScale(1.0)
 finder.setThreshold(80.0)
 
 # find the peaks
+print("peakfinder ... find ...")
 peaks = finder.find([data])
 
 # amount of peaks found
@@ -58,6 +59,7 @@ for peak in peaks:
     peak_list.push_back(peak)
 
 print("integrator ...")
+sys.exit(0)
 integrator = nsx.PixelSumIntegrator(False, False)
 integrator.integrate(peak_list, data, 3.0, 3.0, 6.0)
 print("... integrator")
