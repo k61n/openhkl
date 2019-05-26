@@ -51,7 +51,6 @@ include(GetSubdirectories) # defines MACRO get_subdirectories
 include(SetCompilerFlags)
 include(SetLinkerFlags)
 include(ConfigureInstall)
-include(GeneratePythonDocs)
 
 if(NSX_TIDY)
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

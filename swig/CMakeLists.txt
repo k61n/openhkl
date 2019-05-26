@@ -11,12 +11,6 @@ include_directories(${CMAKE_BINARY_DIR}/core/generated)
 include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${NSX_SUBDIRS})
 
-if (NSX_DOCS)
-    GeneratePythonDocs(pynsx_doc.i ${CMAKE_SOURCE_DIR}/swig)
-else()
-    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/pynsx_doc.i "")
-endif()
-
 set_property(SOURCE pynsx.i PROPERTY CPLUSPLUS ON)
 set_property(SOURCE pynsx.i PROPERTY SWIG_MODULE_NAME pynsx)
 
