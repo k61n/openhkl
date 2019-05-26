@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include <stdexcept>
+#include <iostream>
 
 #include "ProgressHandler.h"
 
@@ -40,8 +41,14 @@ void ProgressHandler::setProgress(int progress)
 
     std::lock_guard<std::mutex> lock(_mutex);
 
-    _progress = progress > 100 ? 100 : progress;
-    _progress = _progress < 0 ? 0 : _progress;
+    progress = progress > 100 ? 100 : progress;
+    progress = progress < 0 ? 0 : progress;
+
+    if (progress != _progress) {
+        // ad-hoc reporting to command-line interface
+        std::cout << progress << " %\r" << std::flush;
+        _progress = progress;
+    }
 
     if (aborted()) {
         throw std::runtime_error("Exception: job was aborted!");
