@@ -86,7 +86,7 @@ PeakList predictPeaks(
             Eigen::Vector3d center = peak->shape().center();
             peak->setShape(Ellipsoid(center, cov.inverse()));
         } catch (std::exception& e) {
-            nsx::info() << e.what();
+            // nsx::info() << e.what(); // TODO replace by less verbous reporting
             continue;
         }
         predicted_peaks.push_back(peak);
@@ -260,7 +260,7 @@ void ShapeLibrary::updateFit(int num_iterations)
         Eigen::Matrix3d sigmaM = from_cholesky(_choleskyM);
         Eigen::Matrix3d sigmaD = from_cholesky(_choleskyD);
         Eigen::Matrix3d sigmaS = from_cholesky(_choleskyS);
-        
+
         for (const auto& tup: fit_data) {
             const auto& cov = tup.first;
             const auto& data = tup.second;
