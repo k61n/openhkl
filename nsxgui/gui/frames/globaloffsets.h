@@ -8,9 +8,14 @@
 #include <QListWidget>
 #include <QTableWidget>
 
-class DetectorGlobalOffsets : public QcrFrame {
+enum class offsetMode {
+    DETECTOR,
+    SAMPLE
+};
+
+class GlobalOffsets : public QcrFrame {
 public:
-	DetectorGlobalOffsets();
+    GlobalOffsets(offsetMode mode);
 private:
 	void layout();
     void fit();
@@ -21,6 +26,7 @@ private:
 	QListWidget* selectedData;
 	QTableWidget* offsets;
 	QDialogButtonBox* buttons;
+    offsetMode mode_;
 };
 
 #endif //DETECTORGLOBALOFFSETS_H

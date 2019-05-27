@@ -1,5 +1,5 @@
 
-#include "nsxgui/gui/frames/detectorglobaloffsets.h"
+#include "nsxgui/gui/frames/globaloffsets.h"
 #include "nsxgui/gui/models/session.h"
 
 #include <QVBoxLayout>
@@ -11,7 +11,7 @@
 #include <core/Units.h>
 #include "apps/models/MetaTypes.h"
 
-DetectorGlobalOffsets::DetectorGlobalOffsets()
+GlobalOffsets::GlobalOffsets(offsetMode mode)
     : QcrFrame{"adhoc_detectorOffsets"}
 {
     if (gSession->selectedExperimentNum() < 0) {
@@ -23,10 +23,11 @@ DetectorGlobalOffsets::DetectorGlobalOffsets()
         return;
     }
 
+    mode_ = mode;
     layout();
 }
 
-void DetectorGlobalOffsets::layout()
+void GlobalOffsets::layout()
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -82,12 +83,12 @@ void DetectorGlobalOffsets::layout()
     whole->addWidget(buttons);
 
     connect(buttons, &QDialogButtonBox::clicked, this,
-            &DetectorGlobalOffsets::actionClicked);
+            &GlobalOffsets::actionClicked);
 
     show();
 }
 
-void DetectorGlobalOffsets::fit()
+void GlobalOffsets::fit()
 {
     auto selected_items = selectedData->selectedItems();
 
@@ -102,22 +103,43 @@ void DetectorGlobalOffsets::fit()
       selected_data.push_back(item->data(Qt::UserRole).value<nsx::sptrDataSet>());
     }
 
-    // Fit the detector offsets with the selected data
-    const auto *detector =
-        gSession->selectedExperiment()->experiment()->diffractometer()->detector();
-    auto fit_results = detector->fitGonioOffsets(
-        selected_data, iterations->value(), tolerance->value());
+    if (mode_ == offsetMode::DETECTOR) {
+        // Fit the detector offsets with the selected data
+        const auto *detector =
+                gSession->selectedExperiment()->experiment()->diffractometer()->detector();
+        auto fit_results = detector->fitGonioOffsets(
+                    selected_data, iterations->value(), tolerance->value());
 
-    // The fit failed for whatever reason, return
-    if (!fit_results.success) {
-      gLogger->log("[ERROR] Could not fit the detector offsets.");
-    }
+        // The fit failed for whatever reason, return
+        if (!fit_results.success) {
+            gLogger->log("[ERROR] Could not fit the detector offsets.");
+        }
 
-    int comp(0);
-    for (auto &&offset : fit_results.offsets) {
-      QTableWidgetItem *offset_item = new QTableWidgetItem();
-      offset_item->setData(Qt::DisplayRole, offset / nsx::deg);
-      offsets->setItem(comp++, 1, offset_item);
+        int comp(0);
+        for (auto &&offset : fit_results.offsets) {
+            QTableWidgetItem *offset_item = new QTableWidgetItem();
+            offset_item->setData(Qt::DisplayRole, offset / nsx::deg);
+            offsets->setItem(comp++, 1, offset_item);
+        }
+    } else if (mode_ == offsetMode::SAMPLE) {
+        const auto &sample =
+            gSession->selectedExperiment()->experiment()->diffractometer()->sample();
+        auto fit_results = sample.fitGonioOffsets(
+            selected_data, iterations->value(), tolerance->value());
+
+        // The fit failed for whatever reason, return
+        if (!fit_results.success) {
+          gLogger->log("[ERROR] Could not fit the sample offsets.");
+        }
+
+        int comp(0);
+        for (auto &&offset : fit_results.offsets) {
+          QTableWidgetItem *offset_item = new QTableWidgetItem();
+          offset_item->setData(Qt::DisplayRole, offset / nsx::deg);
+          offsets->setItem(comp++, 1, offset_item);
+        }
+    } else {
+        gLogger->log("[ERROR] invalide offset mode. Should be DETECTOR or SAMPLE");
     }
 
 //    plot->clearGraphs();
@@ -159,7 +181,7 @@ void DetectorGlobalOffsets::fit()
 //    plot->replot();
 }
 
-void DetectorGlobalOffsets::actionClicked(QAbstractButton *button)
+void GlobalOffsets::actionClicked(QAbstractButton *button)
 {
     auto button_role = buttons->standardButton(button);
 
