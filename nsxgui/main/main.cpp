@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
     Console console;
     Session session;
 
-    MainWin* mainWin = new MainWin{};
+    new MainWin{};
 
     return app.exec();
 }
