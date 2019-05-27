@@ -10,6 +10,7 @@
 #include "nsxgui/gui/frames/userdefinedunitcellindexer.h"
 #include "nsxgui/gui/dialogs/shapelibrary.h"
 #include "nsxgui/gui/frames/refiner.h"
+#include "nsxgui/gui/frames/detectorglobaloffsets.h"
 
 #include <QInputDialog>
 #include <QDesktopServices>
@@ -83,4 +84,5 @@ Triggers::Triggers()
     });
     buildShapeLibrary.setTriggerHook([](){ new ShapeLibraryDialog; });
     refine.setTriggerHook([](){ new Refiner; });
+    goniometer.setTriggerHook([](){ new DetectorGlobalOffsets; });
 }
