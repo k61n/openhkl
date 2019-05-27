@@ -50,7 +50,8 @@ Menus::Menus(QMenuBar* mbar)
     QMenu* peaks = new QMenu{"&Peaks"};
     peaks->addAction(&triggers->filterPeaks);
     peaks->addMenu(indexing);
-    peaks->addActions({&triggers->buildShapeLibrary,
+    peaks->addActions({&triggers->refine,
+                      &triggers->buildShapeLibrary,
                       &triggers->integratepeaks,
                       &triggers->normalize,
                       &triggers->correctAbsorption,
