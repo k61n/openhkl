@@ -10,7 +10,7 @@ target_include_directories(nsxgui
     ${CMAKE_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/3rdparty)
 
-target_link_libraries(nsxgui PRIVATE qcr gui Qt5::Widgets)
+target_link_libraries(nsxgui PRIVATE QCR gui Qt5::Widgets)
 
 if(WIN32)
     include(PackIFW)

@@ -1,8 +1,8 @@
 #ifndef REFINER_H
 #define REFINER_H
 
-#include "nsxgui/qcr/widgets/views.h"
-#include "nsxgui/qcr/widgets/controls.h"
+#include <QCR/widgets/views.h>
+#include <QCR/widgets/controls.h>
 #include "nsxgui/gui/models/peakstable.h"
 #include <QDialogButtonBox>
 #include <QListWidget>

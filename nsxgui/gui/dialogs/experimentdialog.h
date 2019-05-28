@@ -2,8 +2,8 @@
 #ifndef EXPERIMENTDIALOG_H
 #define EXPERIMENTDIALOG_H
 
-#include "nsxgui/qcr/widgets/modal_dialogs.h"
-#include "nsxgui/qcr/widgets/controls.h"
+#include <QCR/widgets/modal_dialogs.h>
+#include <QCR/widgets/controls.h>
 
 class ExperimentDialog : public QcrModalDialog {
 public:

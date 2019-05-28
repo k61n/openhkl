@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "nsxgui/qcr/widgets/views.h"
+#include <QCR/widgets/views.h>
 #include "nsxgui/gui/panels/subframe_setup.h"
 
 class SubframeProperties : public QcrDockWidget {

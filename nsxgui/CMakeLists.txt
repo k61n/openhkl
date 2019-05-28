@@ -60,7 +60,6 @@ message(STATUS "Building NsxGui")
 
 #configure_file("manifest.h.in" "${CMAKE_BINARY_DIR}/manifest.h")
 
-add_subdirectory(qcr)
 add_subdirectory(gui)
 add_subdirectory(main)
 

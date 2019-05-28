@@ -1,8 +1,8 @@
 
 #include "nsxgui/gui/mainwin.h"
 #include <QApplication>
-#include "nsxgui/qcr/engine/console.h"
-#include "nsxgui/qcr/engine/logger.h"
+#include <QCR/engine/console.h>
+#include <QCR/engine/logger.h>
 #include "nsxgui/gui/models/session.h"
 
 

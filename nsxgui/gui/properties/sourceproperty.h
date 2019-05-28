@@ -2,8 +2,8 @@
 #ifndef SOURCEPROPERTY_H
 #define SOURCEPROPERTY_H
 
-#include "nsxgui/qcr/widgets/views.h"
-#include "nsxgui/qcr/widgets/controls.h"
+#include <QCR/widgets/views.h>
+#include <QCR/widgets/controls.h>
 
 class SourceProperty : public QcrWidget {
 public:

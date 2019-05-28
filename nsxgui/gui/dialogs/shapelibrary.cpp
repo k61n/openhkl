@@ -3,7 +3,7 @@
 #include "nsxgui/gui/models/experimentmodel.h"
 #include "nsxgui/gui/models/session.h"
 #include "nsxgui/gui/models/peakstable.h"
-#include "nsxgui/qcr/engine/logger.h"
+#include <QCR/engine/logger.h>
 
 #include <QFormLayout>
 #include <QVBoxLayout>

@@ -11,10 +11,15 @@ DetectorProperty::DetectorProperty()
     : QcrWidget{"detectorProperty"}
 {
     width = new QcrDoubleSpinBox("adhoc_width", new QcrCell<double>(0.00), 4, 2);
+    width->setReadOnly(true);
     height = new QcrDoubleSpinBox("adhoc_height", new QcrCell<double>(0.00), 4, 2);
+    height->setReadOnly(true);
     distance = new QcrDoubleSpinBox("adhoc_distance", new QcrCell<double>(0.00), 4, 2);
+    distance->setReadOnly(true);
     rows = new QcrSpinBox("adhoc_rows", new QcrCell<int>(0), 4);
+    rows->setReadOnly(true);
     columns = new QcrSpinBox("adhoc_columns", new QcrCell<int>(0), 4);
+    columns->setReadOnly(true);
     //groupBox Parameters
     QGroupBox* groupBox = new QGroupBox("Parameters", this);
     QGridLayout* gridLayout_2 = new QGridLayout(groupBox);

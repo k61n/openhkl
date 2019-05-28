@@ -2,7 +2,7 @@
 #include "nsxgui/gui/panels/tab_peaks.h"
 #include "nsxgui/gui/models/experimentmodel.h"
 #include "nsxgui/gui/models/session.h"
-#include "nsxgui/qcr/engine/logger.h"
+#include <QCR/engine/logger.h>
 #include <QHBoxLayout>
 #include <QTreeView>
 

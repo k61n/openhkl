@@ -2,8 +2,8 @@
 #ifndef USERDEFINEDUNITCELLINDEXER_H
 #define USERDEFINEDUNITCELLINDEXER_H
 
-#include "nsxgui/qcr/widgets/views.h"
-#include "nsxgui/qcr/widgets/controls.h"
+#include <QCR/widgets/views.h>
+#include <QCR/widgets/controls.h>
 #include <QDialogButtonBox>
 #include <QTableView>
 #include "nsxgui/gui/models/peakstable.h"

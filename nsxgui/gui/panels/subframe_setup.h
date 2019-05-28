@@ -2,7 +2,7 @@
 #ifndef SUBFRAME_SETUP_H
 #define SUBFRAME_SETUP_H
 
-#include "nsxgui/qcr/widgets/controls.h"
+#include <QCR/widgets/controls.h>
 #include "nsxgui/gui/panels/tab_data.h"
 #include "nsxgui/gui/panels/tab_unitcells.h"
 #include "nsxgui/gui/panels/tab_peaks.h"

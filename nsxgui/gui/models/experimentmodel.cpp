@@ -1,9 +1,9 @@
 
 #include "nsxgui/gui/models/experimentmodel.h"
 #include "nsxgui/gui/models/session.h"
-#include "nsxgui/qcr/engine/logger.h"
-#include "nsxgui/qcr/engine/mixin.h"
 #include <core/Peak3D.h>
+#include <QCR/engine/logger.h>
+#include <QCR/engine/mixin.h>
 //  ***********************************************************************************************
 //! @class ExperimentData
 
@@ -43,16 +43,6 @@ nsx::DataList ExperimentData::allDataVector()
     for (nsx::sptrDataSet data : data_)
         vector.push_back(data);
     return vector;
-}
-
-void ExperimentData::findPeaks()
-{
-    //TODO: implement the function
-}
-
-void ExperimentData::openInstrumentStates()
-{
-    //TODO: implement the function
 }
 
 void ExperimentData::convertToHDF5()
@@ -130,9 +120,16 @@ InstrumentModel::InstrumentModel(const QString& name, const QString& sourceName)
     //TODO: implement constructor
 }
 
+//  ***********************************************************************************************
 
-
-
+nsx::sptrUnitCell UnitCellsModel::selectedCell()
+{
+    if (unitCells_.empty())
+        return nullptr;
+    if (selected_ >= unitCells_.size() || selected_ < 0)
+        return unitCells_.at(0);
+    return unitCells_.at(selected_);
+}
 
 //  ***********************************************************************************************
 //! @class ExperimentModel

@@ -13,9 +13,9 @@
 #include <core/InstrumentTypes.h>
 #include <core/Profile3D.h>
 
-#include "nsxgui/qcr/widgets/views.h"
-#include "nsxgui/qcr/widgets/controls.h"
-#include "nsxgui/qcr/widgets/actions.h"
+#include <QCR/widgets/views.h>
+#include <QCR/widgets/controls.h>
+#include <QCR/widgets/actions.h>
 #include "apps/ColorMap.h"
 
 class ShapeLibraryDialog : public QDialog {

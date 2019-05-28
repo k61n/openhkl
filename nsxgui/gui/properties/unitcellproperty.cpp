@@ -1,13 +1,17 @@
 
 #include "nsxgui/gui/properties/unitcellproperty.h"
 
-#include "nsxgui/qcr/engine/cell.h"
+#include <QCR/engine/cell.h>
+#include "nsxgui/gui/models/session.h"
 #include <QGroupBox>
 #include <QFormLayout>
 #include <QGridLayout>
 #include <QSpacerItem>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QCompleter>
+#include <core/SpaceGroup.h>
+#include <core/UnitCell.h>
 
 UnitCellProperty::UnitCellProperty()
     : QcrWidget{"unitCellProperty"}
@@ -16,7 +20,16 @@ UnitCellProperty::UnitCellProperty()
     QHBoxLayout* horizontalLayout = new QHBoxLayout;
     QFormLayout* formLayout = new QFormLayout;
     name = new QcrLineEdit("unitCellName", "");
-    spaceGroup = new QcrComboBox("spaceGroup", new QcrCell<int>(0), [](){ return QStringList{}; });
+    QStringList spacegroups;
+    for (auto &&sg : nsx::SpaceGroup::symbols()) {
+      spacegroups.append(QString::fromStdString(sg));
+    }
+    spaceGroup = new QcrComboBox("spaceGroup", new QcrCell<int>(0), spacegroups);
+    QCompleter *completer =
+        new QCompleter(spaceGroup->model(), spaceGroup);
+    spaceGroup->setCompleter(completer);
+    completer->setCompletionMode(QCompleter::PopupCompletion);
+    completer->setCaseSensitivity(Qt::CaseSensitive);
     chemicalFormula = new QcrLineEdit("chemicalFormula", "");
     z = new QcrSpinBox("z", new QcrCell<int>(0), 3);
     indexingTolerance = new QcrDoubleSpinBox("indexingTolerance", new QcrCell<double>(0.00), 6, 4);
@@ -51,4 +64,12 @@ UnitCellProperty::UnitCellProperty()
     grid->addWidget(new QLabel(QString((QChar)0x03B3)), 1, 5, 1, 1);
     grid->addItem(new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 7, 1, 1);
     overallLayout->addWidget(cellParameters);
+}
+
+void UnitCellProperty::setZValue(int z)
+{
+    auto unit_cell = gSession->selectedExperiment()->unitCells()->selectedCell();
+
+    unit_cell->setZ(z);
+    //setMassDensity();
 }

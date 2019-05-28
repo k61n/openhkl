@@ -2,8 +2,8 @@
 #ifndef DETECTORPROPERTY_H
 #define DETECTORPROPERTY_H
 
-#include "nsxgui/qcr/widgets/views.h"
-#include "nsxgui/qcr/widgets/controls.h"
+#include <QCR/widgets/views.h>
+#include <QCR/widgets/controls.h>
 #include <QTableWidget>
 
 class DetectorProperty : public QcrWidget {

@@ -2,7 +2,7 @@
 #ifndef NUMORPROPERTY_H
 #define NUMORPROPERTY_H
 
-#include "nsxgui/qcr/widgets/views.h"
+#include <QCR/widgets/views.h>
 #include <QTableWidget>
 
 class NumorProperty : public QcrWidget {

@@ -4,7 +4,7 @@
 
 //! Collection of toggle actions, for use as member of MainWin.
 
-#include "nsxgui/qcr/widgets/actions.h"
+#include <QCR/widgets/actions.h>
 
 class Toggles {
 public:

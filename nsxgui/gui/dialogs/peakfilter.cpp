@@ -2,7 +2,7 @@
 #include "nsxgui/gui/dialogs/peakfilter.h"
 #include "nsxgui/gui/mainwin.h"
 #include "nsxgui/gui/models/session.h"
-#include "nsxgui/qcr/engine/logger.h"
+#include <QCR/engine/logger.h>
 
 #include "apps/models/MetaTypes.h"
 

@@ -2,7 +2,7 @@
 #include "nsxgui/gui/frames/userdefinedunitcellindexer.h"
 
 #include "nsxgui/gui/models/session.h"
-#include "nsxgui/qcr/engine/logger.h"
+#include <QCR/engine/logger.h>
 #include "nsxgui/gui/frames/unitcellwidget.h"
 
 #include <core/Diffractometer.h>

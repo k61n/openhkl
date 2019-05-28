@@ -2,8 +2,8 @@
 #ifndef PEAKFINDER_H
 #define PEAKFINDER_H
 
-#include "nsxgui/qcr/widgets/views.h"
-#include "nsxgui/qcr/widgets/controls.h"
+#include <QCR/widgets/views.h>
+#include <QCR/widgets/controls.h>
 #include "nsxgui/gui/models/peakstable.h"
 #include <QTableWidget>
 #include <QGraphicsView>

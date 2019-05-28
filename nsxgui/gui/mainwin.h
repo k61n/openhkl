@@ -6,7 +6,7 @@
 #include "nsxgui/gui/panels/subframe_experiments.h"
 #include "nsxgui/gui/panels/subframe_logger.h"
 #include "nsxgui/gui/panels/subframe_properties.h"
-#include "nsxgui/qcr/widgets/views.h"
+#include <QCR/widgets/views.h>
 
 extern class MainWin* gGui; //!< global pointer to the main window
 

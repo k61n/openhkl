@@ -56,7 +56,7 @@ void AutoIndexer::layout()
     QGridLayout* grid = new QGridLayout(params);
     grid->addWidget(new QLabel("Gruber tolerance"), 0, 0, 1, 1);
     grid->addWidget(new QLabel("Niggli tolerance"), 1, 0, 1, 1);
-    only_niggli = new QcrCheckBox("adhoc_onlyNiggli",
+    only_niggli = new QcrCheckBox("adhoc_autoIndexerOnlyNiggli",
                                   "find Niggli cell only",
                                   new QcrCell<bool>(false));
     grid->addWidget(only_niggli, 2, 0, 1, 1);
@@ -66,25 +66,25 @@ void AutoIndexer::layout()
     grid->addWidget(new QLabel("number solutions"), 5, 0, 1, 1);
     grid->addWidget(new QLabel("minimum cell volume"), 7, 0, 1, 1);
     grid->addWidget(new QLabel("indexing tolerance"), 8, 0, 1, 1);
-    gruber = new QcrDoubleSpinBox("adhoc_gruber",
+    gruber = new QcrDoubleSpinBox("adhoc_autoIndexerGruber",
                                   new QcrCell<double>(indexParams.gruberTolerance),
                                   8, 6);
-    niggli = new QcrDoubleSpinBox("adhoc_niggli",
+    niggli = new QcrDoubleSpinBox("adhoc_autoIndexerNiggli",
                                   new QcrCell<double>(indexParams.niggliTolerance),
                                   8, 6);
-    maxCellDim = new QcrDoubleSpinBox("adhoc_maxCellDim",
+    maxCellDim = new QcrDoubleSpinBox("adhoc_autoIndexerMaxCellDim",
                                       new QcrCell<double>(indexParams.maxdim),
                                       6, 2);
-    nVertices = new QcrSpinBox("adhoc_vertices",
+    nVertices = new QcrSpinBox("adhoc_autoIndexerVertices",
                                new QcrCell<int>(indexParams.nVertices), 4);
-    nSolutions = new QcrSpinBox("adhoc_solutions",
+    nSolutions = new QcrSpinBox("adhoc_autoIndexerolutions",
                                 new QcrCell<int>(indexParams.nSolutions), 4);
-    nSubdivisions = new QcrSpinBox("adhoc_subdiversion",
+    nSubdivisions = new QcrSpinBox("adhoc_autoIndexerSubdiversion",
                                    new QcrCell<int>(indexParams.subdiv), 4);
-    minCellVolume = new QcrDoubleSpinBox("adhoc_minCellVolume",
+    minCellVolume = new QcrDoubleSpinBox("adhoc_autoIndexerMinCellVolume",
                                          new QcrCell<double>(indexParams.minUnitCellVolume),
                                          5, 2);
-    indexingTolerance = new QcrDoubleSpinBox("adhoc_indexingTol",
+    indexingTolerance = new QcrDoubleSpinBox("adhoc_autoIndexingTol",
                                              new QcrCell<double>(indexParams.indexingTolerance),
                                              5, 3);
     grid->addWidget(gruber, 0, 1, 1, 1);
@@ -249,14 +249,17 @@ void AutoIndexer::run() {
       return;
   }
 
-  auto handler = std::make_shared<nsx::ProgressHandler>();
+  //auto handler = std::make_shared<nsx::ProgressHandler>();
+  std::shared_ptr<nsx::ProgressHandler> handler(new nsx::ProgressHandler());
 
-  handler->setCallback([=]() {
+  handler->setCallback([handler]() {
     auto log = handler->getLog();
     for (auto &&msg : log) {
         gLogger->log("[INFO] " + QString::fromStdString(msg));
     }
   });
+
+  handler->log("Test log");
 
   nsx::AutoIndexer indexer(handler);
 
@@ -352,7 +355,6 @@ void AutoIndexer::buildSolutionsTable() {
     model->setItem(i, 7, col8);
     model->setItem(i, 8, col9);
   }
-  model->setItem(_solutions.size()+1, 0, new QStandardItem("This is an example..."));
   solutions->setModel(model);
 }
 

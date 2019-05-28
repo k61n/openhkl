@@ -2,8 +2,8 @@
 #ifndef DETECTORGLOBALOFFSETS_H
 #define DETECTORGLOBALOFFSETS_H
 
-#include "nsxgui/qcr/widgets/views.h"
-#include "nsxgui/qcr/widgets/controls.h"
+#include <QCR/widgets/views.h>
+#include <QCR/widgets/controls.h>
 #include <QDialogButtonBox>
 #include <QListWidget>
 #include <QTableWidget>

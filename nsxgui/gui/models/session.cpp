@@ -7,9 +7,9 @@
 #include <core/IDataReader.h>
 
 #include "apps/dialogs/DialogRawData.h"
-#include "nsxgui/qcr/engine/logger.h"
-#include "nsxgui/qcr/widgets/modal_dialogs.h"
-#include "nsxgui/qcr/engine/mixin.h"
+#include <QCR/engine/logger.h>
+#include <QCR/widgets/modal_dialogs.h>
+#include <QCR/engine/mixin.h>
 #include "nsxgui/gui/mainwin.h"
 #include "nsxgui/gui/dialogs/experimentdialog.h"
 

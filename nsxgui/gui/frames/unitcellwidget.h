@@ -3,8 +3,8 @@
 #define UNITCELLWIDGET_H
 
 #include <core/CrystalTypes.h>
-#include "nsxgui/qcr/widgets/views.h"
-#include "nsxgui/qcr/widgets/controls.h"
+#include <QCR/widgets/views.h>
+#include <QCR/widgets/controls.h>
 
 class UnitCellWidget : public QcrWidget {
   Q_OBJECT

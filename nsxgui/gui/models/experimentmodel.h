@@ -19,8 +19,6 @@
 class ExperimentData {
 public:
     ExperimentData() {}
-    void findPeaks();
-    void openInstrumentStates();
     void convertToHDF5();
     void removeSelectedData();
     void addData(nsx::sptrDataSet);
@@ -53,10 +51,11 @@ public:
     UnitCellsModel();
 
     void appendUnitCell(nsx::sptrUnitCell cell) { unitCells_.append(cell); }
-//    nsx::UnitCell selectedCell();
+    nsx::sptrUnitCell selectedCell();
     QList<nsx::sptrUnitCell> allUnitCells() { return unitCells_; }
 private:
     QList<nsx::sptrUnitCell> unitCells_;
+    int selected_;
 };
 
 class InstrumentModel {

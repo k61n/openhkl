@@ -18,12 +18,17 @@ SampleShapeProperties::SampleShapeProperties()
     box->addWidget(sampleGoniometer);
     //ShapeProperty
     QGridLayout* grid = new QGridLayout();
-    loadMovieButton = new QcrTextTriggerButton("movieButton", "Load crystal movie");
-    movie = new QcrLineEdit("movie", "");
-    volume = new QcrLineEdit("volume", "");
-    faces = new QcrLineEdit("faces", "");
-    edges = new QcrLineEdit("edges", "");
-    vertices = new QcrLineEdit("vertices", "");
+    loadMovieButton = new QcrTextTriggerButton("adhoc_movieButton", "Load crystal movie");
+    movie = new QcrLineEdit("adhoc_movie", "");
+    movie->setReadOnly(true);
+    volume = new QcrLineEdit("adhoc_volume", "");
+    volume->setReadOnly(true);
+    faces = new QcrLineEdit("adhoc_faces", "");
+    faces->setReadOnly(true);
+    edges = new QcrLineEdit("adhoc_edges", "");
+    edges->setReadOnly(true);
+    vertices = new QcrLineEdit("adhoc_vertices", "");
+    vertices->setReadOnly(true);
     grid->addWidget(loadMovieButton, 0, 0, 1, 1);
     grid->addWidget(movie, 0, 1, 1, 1);
     grid->addWidget(volume, 1, 1, 1, 1);

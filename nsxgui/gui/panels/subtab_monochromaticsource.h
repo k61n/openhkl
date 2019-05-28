@@ -2,7 +2,7 @@
 #ifndef SUBTAB_MONOCHROMATICSOURCE_H
 #define SUBTAB_MONOCHROMATICSOURCE_H
 
-#include "nsxgui/qcr/widgets/views.h"
+#include <QCR/widgets/views.h>
 #include "nsxgui/gui/properties/sourceproperty.h"
 
 class SubtabMonochromatic : public QcrWidget {

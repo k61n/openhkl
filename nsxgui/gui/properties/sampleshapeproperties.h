@@ -2,9 +2,9 @@
 #ifndef SAMPLESHAPEPROPERTIES_H
 #define SAMPLESHAPEPROPERTIES_H
 
-#include "nsxgui/qcr/widgets/views.h"
-#include "nsxgui/qcr/widgets/controls.h"
-#include "nsxgui/qcr/widgets/actions.h"
+#include <QCR/widgets/views.h>
+#include <QCR/widgets/controls.h>
+#include <QCR/widgets/actions.h>
 #include <QTableWidget>
 
 class SampleShapeProperties : public QcrWidget {

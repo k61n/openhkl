@@ -3,7 +3,7 @@
 #define TRIGGERS_H
 
 #include <QAction>
-#include "nsxgui/qcr/widgets/actions.h"
+#include <QCR/widgets/actions.h>
 
 //! Collection of trigger actions, for use as member of MainWin.
 

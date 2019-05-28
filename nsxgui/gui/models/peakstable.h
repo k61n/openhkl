@@ -17,7 +17,7 @@
 #include <build/core/include/core/InstrumentTypes.h>
 #include <build/core/include/core/GeometryTypes.h>
 
-#include "nsxgui/qcr/widgets/tables.h"
+#include <QCR/widgets/tables.h>
 
 class QObject;
 

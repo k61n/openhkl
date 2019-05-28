@@ -1,6 +1,6 @@
 
 #include "nsxgui/gui/properties/sourceproperty.h"
-#include "nsxgui/qcr/engine/cell.h"
+#include <QCR/engine/cell.h>
 #include "nsxgui/gui/models/session.h"
 #include <core/Units.h>
 #include <QGridLayout>
@@ -56,18 +56,26 @@ SourceProperty::SourceProperty()
 
 void SourceProperty::onRemake()
 {
-    clear();
     monochromators->remake();
-    if (gSession->selectedExperimentNum()>=0)
+    if (gSession->selectedExperimentNum()>=0) {
+        wavelength->setHook([this](double v){ onWavelength(v); });
+        width->setHook([this](double v){ onWidth(v); });
+        height->setHook([this](double v){ onHeight(v); });
         onMonoChanged(0);
+    } else {
+        clear();
+    }
 }
 
 void SourceProperty::clear()
 {
     wavelength->setCellValue(0.00);
+    wavelength->setHook([](double){});
     fwhm->setCellValue(0.00);
     width->setCellValue(0.00);
+    width->setHook([](double){});
     height->setCellValue(0.00);
+    height->setHook([](double){});
 }
 
 void SourceProperty::onMonoChanged(int index)
@@ -81,4 +89,25 @@ void SourceProperty::onMonoChanged(int index)
     fwhm->setCellValue(mono.fullWidthHalfMaximum());
     height->setCellValue(mono.height() / nsx::mm);
     width->setCellValue(mono.width() / nsx::mm);
+}
+
+void SourceProperty::onWavelength(double wavelength)
+{
+    auto &source = gSession->selectedExperiment()->experiment()->diffractometer()->source();
+    auto &mono = source.selectedMonochromator();
+    mono.setWavelength(wavelength);
+}
+
+void SourceProperty::onWidth(double width)
+{
+    auto &source = gSession->selectedExperiment()->experiment()->diffractometer()->source();
+    auto &mono = source.selectedMonochromator();
+    mono.setWidth(width * nsx::mm);
+}
+
+void SourceProperty::onHeight(double height)
+{
+    auto &source = gSession->selectedExperiment()->experiment()->diffractometer()->source();
+    auto &mono = source.selectedMonochromator();
+    mono.setHeight(height * nsx::mm);
 }

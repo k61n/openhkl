@@ -4,7 +4,7 @@
 #include "nsxgui/gui/actions/triggers.h"
 #include "nsxgui/gui/mainwin.h"
 #include "nsxgui/gui/models/session.h"
-#include "nsxgui/qcr/widgets/tables.h"
+#include <QCR/widgets/tables.h>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QTreeView>

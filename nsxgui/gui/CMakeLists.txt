@@ -14,6 +14,6 @@ target_link_libraries(${lib}
     PRIVATE
     Qt5::Network
     Qt5::Widgets
-    qcr
+    QCR
     apps
     )

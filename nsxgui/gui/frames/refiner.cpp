@@ -1,7 +1,7 @@
 
 #include "nsxgui/gui/frames/refiner.h"
 #include "nsxgui/gui/models/session.h"
-#include "nsxgui/qcr/engine/logger.h"
+#include <QCR/engine/logger.h>
 
 #include <QGroupBox>
 #include <QHBoxLayout>
