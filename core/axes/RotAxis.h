@@ -48,7 +48,7 @@ public:
     RotAxis(const YAML::Node& node);
     RotAxis& operator=(const RotAxis& other);
     ~RotAxis();
-    RotAxis* clone() const;
+    RotAxis* clone() const override;
     //! Gets rotation direction.
     void setRotationDirection(Direction);
     //! Returns rotation direction: 0 for CCW and 1 for CW
@@ -58,7 +58,7 @@ public:
     //@return rotation matrix
     Eigen::Matrix3d rotationMatrix(double angle) const;
     //! Returns the 4x4 Homogeous matrix corresponding to this transformation.
-    Eigen::Transform<double, 3, Eigen::Affine> affineMatrix(double angle) const;
+    Eigen::Transform<double, 3, Eigen::Affine> affineMatrix(double angle) const override;
     //! Gets the quaternion associated with this rotation
     //@param angle : rotation angle in radians by default
     //@return rotation matrix

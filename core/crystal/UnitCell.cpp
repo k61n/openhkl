@@ -616,7 +616,7 @@ void UnitCell::setMaterial(const Material& material)
 
 void UnitCell::setSpaceGroup(const SpaceGroup& space_group)
 {
-    _space_group = _space_group;
+    _space_group = space_group;
 }
 
 void UnitCell::setSpaceGroup(const std::string symbol)

@@ -38,7 +38,7 @@ public:
     TransAxis(const YAML::Node& node);
     // Destructor
     ~TransAxis() override;
-    TransAxis* clone() const;
+    TransAxis* clone() const override;
     TransAxis& operator=(const TransAxis& other);
 
     Eigen::Transform<double, 3, Eigen::Affine> affineMatrix(double value) const override;

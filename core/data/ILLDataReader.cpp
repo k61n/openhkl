@@ -129,7 +129,6 @@ ILLDataReader::ILLDataReader(const std::string& filename, Diffractometer* diffra
         }
     }
 
-    const auto& sample = _diffractometer->sample();
     const auto& sample_gonio = _diffractometer->sample().gonio();
     size_t n_sample_gonio_axes = sample_gonio.nAxes();
     ;
@@ -138,7 +137,6 @@ ILLDataReader::ILLDataReader(const std::string& filename, Diffractometer* diffra
         instrument_axis.insert(std::make_pair(axis.id(), axis.name()));
     }
 
-    const auto& source = _diffractometer->source();
     const auto& source_gonio = _diffractometer->source().gonio();
     size_t n_source_gonio_axes = source_gonio.nAxes();
     ;

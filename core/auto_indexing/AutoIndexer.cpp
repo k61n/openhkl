@@ -215,7 +215,7 @@ void AutoIndexer::refineSolutions()
         }
 
         // Lambda to compute residuals
-        auto residuals = [&B, &hkls, &qs, &wt](Eigen::VectorXd& f) -> int {
+        auto residuals = [&B, &hkls, &qs](Eigen::VectorXd& f) -> int {
             int n = f.size() / 3;
 
             for (int i = 0; i < n; ++i) {
