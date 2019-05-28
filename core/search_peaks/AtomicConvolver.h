@@ -44,14 +44,10 @@ public:
 
     virtual ~AtomicConvolver() = 0;
 
-    Convolver* clone() const = 0;
-
     RealMatrix matrix(int nrows, int ncols) const;
 
     //! Convolve an image
     virtual RealMatrix convolve(const RealMatrix& image) override;
-
-    virtual std::pair<size_t, size_t> kernelSize() const = 0;
 
 protected:
     void updateKernel(int nrows, int ncols);

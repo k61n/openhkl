@@ -9,8 +9,6 @@
 #include <core/NSXTest.h>
 #include <core/Octree.h>
 
-const double tolerance = 1e-5;
-
 NSX_INIT_TEST
 
 void collision_test() {
