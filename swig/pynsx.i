@@ -18,8 +18,6 @@
 %feature("director") ISigmaIntegrator;
 %feature("director") ShapeIntegrator;
 
-%include "pynsx_doc.i"
-
 %include "warnings.i"
 
 %include "typemaps.i"
