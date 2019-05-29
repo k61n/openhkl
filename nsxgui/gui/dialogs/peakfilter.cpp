@@ -229,7 +229,7 @@ void PeakFilter::accept()
 
     if (!filtered_peaks.empty()) {
 
-      gSession->selectedExperiment()->peaks()->appendPeaks(filtered_peaks);
+      gSession->selectedExperiment()->peaks()->selectedPeakLists(0)->addFilteredPeaks("filtered", filtered_peaks);
 
       QString message = "Applied peak filters on selected peaks. Remains ";
       message += QString::number(filtered_peaks.size());

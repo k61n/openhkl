@@ -35,6 +35,7 @@ public:
     sigmaIntensity,
     numor,
     unitCell,
+    d,
     count
   };
 

@@ -3,7 +3,7 @@
 #include "nsxgui/gui/models/experimentmodel.h"
 #include "nsxgui/gui/models/session.h"
 #include <QCR/engine/logger.h>
-#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QTreeView>
 
 //-------------------------------------------------------------------------------------------------
@@ -12,25 +12,33 @@
 TabPeaks::TabPeaks()
     : QcrWidget{"peaks"}
 {
-    auto* layout = new QHBoxLayout(this);
-
-    view = new PeaksTableView;
-    layout->addWidget(view);
-
-    setRemake([this](){
-        if (gSession->selectedExperimentNum() >= 0) {
-            if (!gSession->selectedExperiment()->peaks()->allPeaks().empty()) {
-                PeaksTableModel* model =
-                        new PeaksTableModel("tablePeaks",
-                                            gSession->selectedExperiment()->experiment(),
-                                            gSession->selectedExperiment()->peaks()->allPeaks());
-                view->setModel(model);
-            } else {
-                PeaksTableModel* model = new PeaksTableModel("emptyTable",
-                                                             gSession->selectedExperiment()->experiment());
-                view->setModel(model);
-            }
-        }
+    filtered = new QcrTabWidget("filteredPeaks");
+    foundPeaksLists = new QcrComboBox("foundLists", new QcrCell<int>(0), [](){
+        if (gSession->selectedExperimentNum() < 0)
+            return QStringList{};
+        return gSession->selectedExperiment()->peaks()->peaklistNames();
     });
+    QVBoxLayout* layout = new QVBoxLayout(this);
+    layout->addWidget(foundPeaksLists);
+    layout->addWidget(filtered);
+
+    connect(foundPeaksLists, SIGNAL(currentIndexChanged), this, SLOT(slotSelectedListChanged));
 }
 
+void TabPeaks::slotSelectedListChanged(int i)
+{
+    filtered->clear();
+    PeakListsModel* model = gSession->selectedExperiment()->peaks()->selectedPeakLists(i);
+    for (int j=0; j<model->numberFilteredLists(); j++) {
+        FilteredPeaksModel* peaks = model->getPeaksAt(j);
+        filtered->addTab(new ListTab(peaks), peaks->getName());
+    }
+}
+
+ListTab::ListTab(FilteredPeaksModel *filteredModel)
+    : QcrWidget{"adhoc_"+filteredModel->getName()}
+{
+    QVBoxLayout* layout = new QVBoxLayout(this);
+    view = new PeaksTableView;
+    layout->addWidget(view);
+}

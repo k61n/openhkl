@@ -11,6 +11,7 @@
 #include "nsxgui/gui/dialogs/shapelibrary.h"
 #include "nsxgui/gui/frames/refiner.h"
 #include "nsxgui/gui/frames/globaloffsets.h"
+#include "nsxgui/gui/dialogs/listnamedialog.h"
 
 #include <QInputDialog>
 #include <QDesktopServices>
@@ -80,7 +81,7 @@ Triggers::Triggers()
             gLogger->log("[ERROR] No peaks in selected experiment");
             return;
         }
-        gSession->selectedExperiment()->peaks()->autoAssignUnitCell();
+        //gSession->selectedExperiment()->peaks()->autoAssignUnitCell();
     });
     buildShapeLibrary.setTriggerHook([](){ new ShapeLibraryDialog; });
     refine.setTriggerHook([](){ new Refiner; });

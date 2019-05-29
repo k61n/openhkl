@@ -274,18 +274,18 @@ void AutoIndexer::run() {
 
   nsx::IndexerParameters params;
 
-  params.subdiv = nSubdivisions->value();
-  //; <- this is in the apps FrameAutoIndexer, and maxCellDim is gotten twice,
-  //     while minCellVolume not once...?
-  params.maxdim = maxCellDim->value();
-  params.nSolutions = nSolutions->value();
-  params.indexingTolerance = indexingTolerance->value();
-  params.nVertices = nVertices->value();
-  params.niggliReduction = only_niggli->isChecked();
-  params.niggliTolerance = niggli->value();
-  params.gruberTolerance = gruber->value();
-  //params.maxdim = maxCellDim->value();
-  params.minUnitCellVolume = minCellVolume->value();
+//  params.subdiv = nSubdivisions->value();
+//  //; <- this is in the apps FrameAutoIndexer, and maxCellDim is gotten twice,
+//  //     while minCellVolume not once...?
+//  params.maxdim = maxCellDim->value();
+//  params.nSolutions = nSolutions->value();
+//  params.indexingTolerance = indexingTolerance->value();
+//  params.nVertices = nVertices->value();
+//  params.niggliReduction = only_niggli->isChecked();
+//  params.niggliTolerance = niggli->value();
+//  params.gruberTolerance = gruber->value();
+//  //params.maxdim = maxCellDim->value();
+//  params.minUnitCellVolume = minCellVolume->value();
 
   try {
     indexer.autoIndex(params);

@@ -141,6 +141,9 @@ QVariant PeaksTableModel::headerData(int section,
     case Column::unitCell: {
       return QString("unit cell");
     }
+    case Column::d: {
+        return QString("d");
+    }
     default:
       return QVariant();
     }
@@ -167,6 +170,7 @@ QVariant PeaksTableModel::data(const QModelIndex &index, int role) const {
       hkl_error = miller_index.error();
     }
   }
+  double peak_d = 1.0/(_peaks[row]->q().rowVector().norm());
 
   double intensity = _peaks[row]->correctedIntensity().value();
   double sigma_intensity = _peaks[row]->correctedIntensity().sigma();
@@ -205,13 +209,17 @@ QVariant PeaksTableModel::data(const QModelIndex &index, int role) const {
     case Column::numor: {
       return _peaks[row]->data()->reader()->metadata().key<int>("Numor");
     }
-    case Column::unitCell:
+    case Column::unitCell: {
       auto unit_cell = _peaks[row]->unitCell();
       if (unit_cell) {
         return QString::fromStdString(unit_cell->name());
       } else {
         return QString("not set");
       }
+    }
+    case Column::d: {
+        return peak_d;
+    }
     }
     break;
   case Qt::ForegroundRole: {

@@ -16,6 +16,8 @@
 #include <build/core/include/core/CrystalTypes.h>
 #include <build/core/include/core/UnitCell.h>
 
+#include "nsxgui/gui/models/peaklists.h"
+
 class ExperimentData {
 public:
     ExperimentData() {}
@@ -30,20 +32,6 @@ public:
 private:
     QList<nsx::sptrDataSet> data_;
     int index_;
-};
-
-class PeaksModel {
-public:
-    PeaksModel();
-
-    void appendPeaks(nsx::PeakList);
-    void integratePeaks();
-    void buildShapeLibrary();
-    void autoAssignUnitCell();
-    nsx::PeakList selectedPeaks();
-    nsx::PeakList allPeaks();
-private:
-    std::vector<nsx::PeakList> peakLists_;
 };
 
 class UnitCellsModel {
