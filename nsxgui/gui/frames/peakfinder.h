@@ -11,7 +11,7 @@
 
 class FoundPeaks : public QcrWidget {
 public:
-    FoundPeaks(nsx::PeakList);
+    FoundPeaks(nsx::PeakList, const QString&);
     nsx::PeakList selectedPeaks();
 private:
     PeaksTableModel* tableModel;
@@ -33,6 +33,8 @@ private:
     QcrSpinBox* maxWidth;
     QComboBox* convolutionKernel;
     QTableWidget* convolutionParams;
+    QcrSpinBox* framesBegin;
+    QcrSpinBox* framesEnd;
     QComboBox* data;
     QcrSpinBox* frame;
     QcrCheckBox* applyThreshold;

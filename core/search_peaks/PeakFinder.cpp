@@ -63,7 +63,7 @@ namespace nsx {
 
 PeakFinder::PeakFinder()
     : _handler(nullptr), _peakScale(1.0), _current_label(0), _minSize(30),
-      _maxSize(10000), _maxFrames(10), _threshold(3.0) {
+      _maxSize(10000), _maxFrames(10), _threshold(3.0), _framesBegin(-1), _framesEnd(-1) {
   ConvolverFactory convolver_factory;
   _convolver.reset(convolver_factory.create("annular", {}));
 }
@@ -107,20 +107,24 @@ PeakList PeakFinder::find(DataList numors) {
 
 #pragma omp parallel
       {
-        int loop_begin = -1;
-        int loop_end = -1;
+        int loop_begin = _framesBegin;
+        int loop_end = _framesEnd;
+        if (loop_begin == -1)
+            loop_begin = 0;
+        if (loop_end == -1)
+            loop_end = numor->nFrames();
 
         std::map<int, Blob3D> local_blobs = {{}};
         EquivalenceList local_equivalences;
 
 // determine begining and ending index of current thread
-#pragma omp for
-        for (size_t i = 0; i < numor->nFrames(); ++i) {
-          if (loop_begin == -1) {
-            loop_begin = i;
-          }
-          loop_end = i + 1;
-        }
+//#pragma omp for
+//        for (size_t i = 0; i < numor->nFrames(); ++i) {
+//          if (loop_begin == -1) {
+//            loop_begin = i;
+//          }
+//          loop_end = i + 1;
+//        }
 
         // find blobs within the current frame range
         findPrimaryBlobs(numor, local_blobs, local_equivalences, loop_begin,
@@ -246,6 +250,14 @@ int PeakFinder::minSize() const { return _minSize; }
 void PeakFinder::setMaxSize(int size) { _maxSize = size; }
 
 int PeakFinder::maxSize() const { return _maxSize; }
+
+void PeakFinder::setFramesBegin(int framesBegin) { _framesBegin = framesBegin; }
+
+int PeakFinder::framesBegin() { return _framesBegin; }
+
+void PeakFinder::setFramesEnd(int framesEnd) { _framesEnd = framesEnd; }
+
+int PeakFinder::framesEnd() { return _framesEnd; }
 
 void PeakFinder::setConvolver(std::unique_ptr<Convolver> convolver) {
   _convolver = std::move(convolver);

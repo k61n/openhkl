@@ -32,6 +32,12 @@ public:
   void setMaxFrames(int maxComp);
   int maxFrames() const;
 
+  void setFramesBegin(int framesBegin);
+  int framesBegin();
+
+  void setFramesEnd(int framesEnd);
+  int framesEnd();
+
 #ifndef SWIG
   void setConvolver(std::unique_ptr<Convolver> convolver);
 #endif
@@ -72,6 +78,10 @@ private:
   int _maxSize;
 
   int _maxFrames;
+
+  int _framesBegin;
+
+  int _framesEnd;
 };
 
 } // end namespace nsx

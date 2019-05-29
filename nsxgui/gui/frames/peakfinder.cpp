@@ -45,8 +45,8 @@ QWidget* ItemDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem&
 
 //  ***********************************************************************************************
 
-FoundPeaks::FoundPeaks(nsx::PeakList peaks)
-    : QcrWidget{"foundPeaksTab"}
+FoundPeaks::FoundPeaks(nsx::PeakList peaks, const QString& name)
+    : QcrWidget{name}
 {
     tableModel =
             new PeaksTableModel("foundPeaksTable",
@@ -104,6 +104,8 @@ PeakFinder::PeakFinder()
             blobGrid->addWidget(new QLabel("maximum width"), 4, 0, 1, 1);
             blobGrid->addWidget(new QLabel("convolution kernel"), 5, 0, 1, 1);
             blobGrid->addWidget(new QLabel("convolution parameters"), 6, 0, 1, 1);
+            blobGrid->addWidget(new QLabel("begin finding blobs in frame"), 7, 0, 1, 1);
+            blobGrid->addWidget(new QLabel("end finding blobs in frame"), 8, 0, 1, 1);
             threshold = new QcrSpinBox("adhoc_threshold", new QcrCell<int>(2), 3);
             mergingScale = new QcrDoubleSpinBox("adhoc_mergingScale", new QcrCell<double>(1.000), 5, 3);
             minSize = new QcrSpinBox("adhoc_minSize", new QcrCell<int>(30), 5);
@@ -111,6 +113,8 @@ PeakFinder::PeakFinder()
             maxWidth = new QcrSpinBox("adhoc_maxWidth", new QcrCell<int>(10), 5);
             convolutionKernel = new QComboBox;
             convolutionParams = new QTableWidget(this);
+            framesBegin = new QcrSpinBox("adhoc_beginFrame", new QcrCell<int>(0), 3);
+            framesEnd = new QcrSpinBox("adhoc_endFrame", new QcrCell<int>(0), 3);
             blobGrid->addWidget(threshold, 0, 1, 1, 1);
             blobGrid->addWidget(mergingScale, 1, 1, 1, 1);
             blobGrid->addWidget(minSize, 2, 1, 1, 1);
@@ -118,6 +122,8 @@ PeakFinder::PeakFinder()
             blobGrid->addWidget(maxWidth, 4, 1, 1, 1);
             blobGrid->addWidget(convolutionKernel, 5, 1, 1, 1);
             blobGrid->addWidget(convolutionParams, 6, 1, 1, 1);
+            blobGrid->addWidget(framesBegin, 7, 1, 1, 1);
+            blobGrid->addWidget(framesEnd, 8, 1, 1, 1);
             leftTabLayout->addWidget(blobParams);
             QGroupBox* previewBox = new QGroupBox("Preview");
             QGridLayout* previewGrid = new QGridLayout(previewBox);
@@ -173,6 +179,9 @@ PeakFinder::PeakFinder()
             }
 
             data->setCurrentIndex(0);
+            framesEnd->setCellValue(datalist.at(0)->nFrames());
+            framesEnd->setMaximum(datalist.at(0)->nFrames());
+            framesBegin->setMaximum(datalist.at(0)->nFrames());
 
             convolutionKernel->clear();
             nsx::ConvolverFactory convolver_factory;
@@ -241,6 +250,8 @@ void PeakFinder::run()
     finder.setMinSize(minSize->value());
     finder.setMaxSize(maxSize->value());
     finder.setMaxFrames(maxWidth->value());
+    finder.setFramesBegin(framesBegin->value());
+    finder.setFramesEnd(framesEnd->value());
     std::string convolverType = convolutionKernel->currentText().toStdString();
     auto&& parameters = convolutionParameters();
     nsx::ConvolverFactory factory;
@@ -260,7 +271,7 @@ void PeakFinder::run()
     }
 
     //add Tab WidgetFoundPeaks
-    tab->addTab(new FoundPeaks(peaks), "Peaks");
+    tab->addTab(new FoundPeaks(peaks, "adhoc_findNum" + QString::number(tab->count())), "Peaks");
 }
 
 std::map<std::string, double> PeakFinder::convolutionParameters()
@@ -304,8 +315,6 @@ void PeakFinder::accept()
 
       auto &&found_peaks = widget_found_peaks->selectedPeaks();
 
-      gLogger->log("peaksWidget found...");
-
       if (found_peaks.empty()) {
         continue;
       }
@@ -317,7 +326,7 @@ void PeakFinder::accept()
 //        continue;
 //      }
 
-      gSession->selectedExperiment()->peaks()->appendPeaks(found_peaks);
+      gSession->selectedExperiment()->peaks()->addPeakListsModel("new list", found_peaks);
     }
 
     close();
