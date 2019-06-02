@@ -1,7 +1,5 @@
 import pynsx as nsx
 import numpy as np
-import ctypes as c
-import math
 import unittest
 
 tolerance = 1e-3
@@ -9,9 +7,9 @@ tolerance = 1e-3
 # todo: fix this test to accomodate the new DetectorEvent interface
 
 class TestCylindricalDetector(unittest.TestCase):
-    
+
     def test(self):
-        d = nsx.CylindricalDetector("D19-detector") 
+        d = nsx.CylindricalDetector("D19-detector")
         mm = 1e-3
         d.setDistance(764*mm)
         d.setAngularWidth(np.deg2rad(120.0))
@@ -36,7 +34,7 @@ class TestCylindricalDetector(unittest.TestCase):
 
         nu = state1.nu(pixel_position)
         self.assertLess(nu,tolerance)
-        
+
         th2 = state1.twoTheta(pixel_position)
         self.assertAlmostEqual(th2,0)
 
@@ -49,7 +47,7 @@ class TestCylindricalDetector(unittest.TestCase):
 
         nu = state2.nu(pixel_position)
         self.assertLess(nu,0.001,0)
-        
+
         th2 = state2.twoTheta(pixel_position)
         self.assertAlmostEqual(th2,np.deg2rad(90),0)
 
@@ -68,4 +66,3 @@ class TestCylindricalDetector(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

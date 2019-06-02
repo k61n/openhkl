@@ -1,6 +1,5 @@
 import pynsx as nsx
 import numpy as np
-import ctypes as c
 import unittest
 
 class TestNDTRee(unittest.TestCase):
@@ -8,15 +7,15 @@ class TestNDTRee(unittest.TestCase):
         # todo(Jonathan) take a close look here!!
 
         #todo : cant import 'using Ellipsoid3D = Ellipsoid<double, 3>'
-        tree = np.array([(0,0,0),(100,100,100)]) 
-        vects = np.array([])        
+        tree = np.array([(0,0,0),(100,100,100)])
+        vects = np.array([])
         radius =0.45
         vals = np.array([radius,radius,radius])
         center = np.array([0,0,0])
 
         # todo : not successfully converted-'std::set<const IShape<double, 3>*> test_set'
         # todo : not able to convert "std::vector<Ellipsoid3D*> shapes;"
-        
+
         # Lattice of non-intersecting spheres
         i = 1
         j = 1
@@ -24,29 +23,29 @@ class TestNDTRee(unittest.TestCase):
         for i in range(1,20):
             for j in range(1,20):
                 for k in range(1,20):
-                    center = np.array([i,j,k])    
+                    center = np.array([i,j,k])
                     # todo : Ellipsoid3D is not defined
-                    # shape = Ellipsoid3D(center,vals,vects) 
+                    # shape = Ellipsoid3D(center,vals,vects)
                     # shape.emplace_back(shape)
-                    # tree.addData(shape)                   
+                    # tree.addData(shape)
                     k=k+1
-                j=j+1 
+                j=j+1
             i = i+1
 
         # check that the data was inserted correctly
-        
+
         numChambers = 0
         for chamber in tree:
             numChambers = numChambers + 1
             #for shape in chamber. getData():
-                # test_set.insert(shape)                          
+                # test_set.insert(shape)
 
         # todo: tree.numChambers() dont work
         # self.assertAlmostEqual([numChambers,tree.numChambers()])
 
         # todo : check why 'test_set.size()' doesn't work
         # self.assertAlmostEqual(test_set.size(),19*19*19)
-        
+
         # todo : tree.getCollsions().size() doesn't work
         # check that they dont intersect
         # self.assertAlmostEqual([tree.getCollisions().size(),0])
@@ -58,7 +57,7 @@ class TestNDTRee(unittest.TestCase):
         # shape = Ellipsoid3D(center, vals, vects)
 
         # self.assertAlmostEqual(tree.getCollisions(Shape).size(),8)
-        
+
         # todo : what to do with 'shape = nullptr'
 
         # clear the list
@@ -96,7 +95,7 @@ class TestNDTRee(unittest.TestCase):
         for shape in shapes:
             num_intercept = 0
             for chamber in tree:
-                self.assertAlmostEqual([shape.intercept(chamber),chamber.intercept(shape)])        
+                self.assertAlmostEqual([shape.intercept(chamber),chamber.intercept(shape)])
                 if shape.intercept(chamber):
                     num_intercept = num_intercept + 1
 
@@ -106,7 +105,7 @@ class TestNDTRee(unittest.TestCase):
         # clear the list
         for shape in shapes:
             del shape
-    
+
     def test_case(Test_NDTree):
         # build up a NDTree with (0,0,0) as lower corner and (100,100,100) as upper corner
         tree = np.array([(0,0,0),(100,100,100)])
@@ -118,7 +117,7 @@ class TestNDTRee(unittest.TestCase):
 
         bb = np.array([0.0,0.0,0.0])
         maxStorage = 10
-        
+
         i = 0
         for i in range(0,maxStorage):
             # v1 = np.array([d1(gen),d1(gen),d1(gen)])
@@ -127,5 +126,3 @@ class TestNDTRee(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-  

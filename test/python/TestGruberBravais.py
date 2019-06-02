@@ -1,15 +1,13 @@
 import pynsx as nsx
 import numpy as np
-import ctypes as c
 import unittest
 import random
 
 gruber_tolerance = 1e-4
 niggli_tolerance = 1e-4
-tolerance = 1e-6
 
 class TestGruberBravais(unittest.TestCase):
-    
+
     def generateTestCases(self):
         A = 32.3232323232
         B = 43.23232323
@@ -78,11 +76,11 @@ class TestGruberBravais(unittest.TestCase):
         ["aP", [A, B, C, -D, -E, -F]],   # condition 44
         ]
         return cases
-     
+
     def getPerturbation(self):
         a = np.random.rand(6)
-        a = a*2*0.1*gruber_tolerance - 0.1*gruber_tolerance     
-        return a 
+        a = a*2*0.1*gruber_tolerance - 0.1*gruber_tolerance
+        return a
 
     # todo: cannot convert cell_from_paramas function into python
     def test_cell_from_parmas(self):
@@ -90,7 +88,7 @@ class TestGruberBravais(unittest.TestCase):
        condition = 1
        test_cases = self.generateTestCases()
 
-       for case in test_cases:      
+       for case in test_cases:
            expected_bravais = case[0]
            p = case[1]
 
@@ -106,9 +104,7 @@ class TestGruberBravais(unittest.TestCase):
                cell = nsx.UnitCell()
 
                # todo: fix Gruber::reduce (Jonathan)
-     
+
 
 if __name__ == '__main__':
     unittest.main()
-
-  

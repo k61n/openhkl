@@ -1,6 +1,5 @@
 import pynsx as nsx
-import numpy as np
-import ctypes as c
+# import numpy as np
 import unittest
 
 class TestPeakFinder(unittest.TestCase):
@@ -11,9 +10,9 @@ class TestPeakFinder(unittest.TestCase):
         peakFinder = nsx.PeakFinder()
         ph = nsx.ProgressHandler()
 
-        #peakFinder.setIntegrationConfidence(0.997)        
-        #peakFinder.setSearchConfidence(0.97)        
-        
+        #peakFinder.setIntegrationConfidence(0.997)
+        #peakFinder.setSearchConfidence(0.97)
+
         peakFinder.setMaxSize(10000)
         self.assertTrue(peakFinder.maxSize() == 10000)
 
@@ -21,9 +20,7 @@ class TestPeakFinder(unittest.TestCase):
         self.assertTrue(peakFinder.minSize() == 10)
 
         peakFinder.setMaxFrames(10)
-        self.assertTrue(peakFinder.maxFrames() == 10)        
-        
+        self.assertTrue(peakFinder.maxFrames() == 10)
+
 if __name__ == '__main__':
     unittest.main()
-
-  

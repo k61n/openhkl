@@ -1,28 +1,27 @@
 import pynsx as nsx
 import numpy as np
-import ctypes as c
 import unittest
 
 class TestILLAscii(unittest.TestCase):
 
     # todo: fix MetaDat::getKey() and DataSet::getInstrumentStates()
     def test(self):
-        
+
         experiment = nsx.Experiment("exp","D19");
         factory = nsx.DataReaderFactory()
         dataf = factory.create("", "D10_ascii_example", experiment.diffractometer())
         metadata = dataf.reader().metadata()
         dataf.open()
         v = dataf.frame(0)
-            
+
         # check the total no. of count in the frame 0
         self.assertAlmostEqual(v.sum(),65)
-        # check the value of monitor 
+        # check the value of monitor
 
-        monitor = metadata.key("monitor")        
+        monitor = metadata.key("monitor")
         #self.assertAlmostEqual(meta.getKey("monitor"),20000)
 
-        # todo : check if the following line is correct 
+        # todo : check if the following line is correct
         states = dataf.instrumentStates()
         deg = 3.14/180.0
 
@@ -47,5 +46,3 @@ class TestILLAscii(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-  

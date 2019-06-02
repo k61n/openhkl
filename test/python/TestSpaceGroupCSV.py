@@ -1,6 +1,5 @@
 import pynsx as nsx
-import numpy as np
-import ctypes as c
+# import numpy as np
 import unittest
 
 class TestSpaceGroupCSV(unittest.TestCase):
@@ -14,10 +13,7 @@ class TestSpaceGroupCSV(unittest.TestCase):
             # syntax error
             #counts([symbol]) = 0
             pass
-            
 
 
 if __name__ == '__main__':
     unittest.main()
-
-  

@@ -1,10 +1,9 @@
 import pynsx as nsx
 import numpy as np
 import unittest
-import sys
 
 class TestWorkFlow(unittest.TestCase):
-    
+
     def test(self):
         expt = nsx.Experiment('test', 'BioDiff2500')
         diff = expt.diffractometer()
@@ -37,11 +36,11 @@ class TestWorkFlow(unittest.TestCase):
 
         self.assertTrue(len(peaks) > 800)
         self.assertTrue(len(selected_peaks) > 650)
-               
+
         indexer = nsx.AutoIndexer(nsx.ProgressHandler())
 
         for peak in selected_peaks:
-            
+
             d = 1.0 / np.linalg.norm(peak.q().rowVector())
 
             if (d < 2.0):

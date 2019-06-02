@@ -1,6 +1,5 @@
-import pynsx as nsx
+# import pynsx as nsx
 import numpy as np
-import ctypes as c
 import unittest
 
 class TestGonio(unittest.TestCase):
@@ -15,14 +14,14 @@ class TestGonio(unittest.TestCase):
         #t.getAxis("x").setPhysical(True)
         #t.getAxis("y").setPhysical(True)
         #t.getAxis("z").setPhysical(True)
-        
+
         # transform (0,0,0)
         # result = t.Transform(np.array([0,0,0]),{1,2,3})
         # self.assertAlmostEqual(result[0],1,0)
         # self.assertAlmostEqual(result[1],3,0)
-        
+
         # Check that throws if the number of parameters is invalid
-        
+
         # todo : no conversion of BOOST_CHECK_THROW
         # BOOST_CHECK_THROW(t.transform(Vector3d(0,0,0),{1,2}),std::range_error);
         #a0 = t.getAxis(0)
@@ -37,11 +36,11 @@ class TestGonio(unittest.TestCase):
         # todo: Gonio is not defined
         # Gonio g("Busing level convention")
         # todo : whats the conversion of 'RotAxis::CW'
-        # g.addRotation("omega",np.array([0,0,1])) 
+        # g.addRotation("omega",np.array([0,0,1]))
         # g.addRotation("chi",np.array([0,1,0],RotAxis::CW))
-        # g.addRotation("phi",np.array([0,0,1],RotAxis::CW)) 
+        # g.addRotation("phi",np.array([0,0,1],RotAxis::CW))
 
-        # check that result of combined rotation is ok 
+        # check that result of combined rotation is ok
         deg = 3.14/180.0
         om = 12*deg
         chi = 24*deg
@@ -49,8 +48,6 @@ class TestGonio(unittest.TestCase):
         OM = np.array([(np.cos(om),np.sin(om),0),(-np.sin(om),np.cos(om),0),(0,0,1)])
         CH = np.array([(np.cos(chi),0,np.sin(chi)),(0,1,0),(-np.sin(chi),0,np.cos(chi))])
         PH = np.array([(np.cos(phi),np.sin(chi),0),(-np.sin(chi),np.cos(chi),0),(0,0,1)])
-                
+
 if __name__ == '__main__':
     unittest.main()
-
-  

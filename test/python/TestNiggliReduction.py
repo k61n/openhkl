@@ -1,10 +1,9 @@
 import pynsx as nsx
 import numpy as np
-import ctypes as c
 import unittest
 
 class TestNiggliReduction(unittest.TestCase):
-    
+
     def test(self):
         tolerance = 1e-6
         # An oblique cell representing an orthorhombic 2,1,3 cell
@@ -13,11 +12,11 @@ class TestNiggliReduction(unittest.TestCase):
         # o-----o-----o
         deg = 3.14/180
         cell = nsx.UnitCell(2.0,np.sqrt(17.0),3.0,90*deg,90*deg,np.arctan(1.0/4))
-        
-        g = np.array([]) 
+
+        g = np.array([])
         # todo : says UnitCell has no attribute named 'getMetrictensor'
         # g = cell.getMetricTensor()
-        
+
         # todo : 'g' is a 3d array and argument takes a double int var- size issue
         # n = nsx.NiggliReduction(g[],1e-3)
         # gprime = np.array([])
@@ -35,9 +34,6 @@ class TestNiggliReduction(unittest.TestCase):
         #self.assertAlmostEqual([cell.getBeta(),90*deg,tolerance])
         #self.assertAlmostEqual([cell.getGamma(),90*deg,tolerance])
 
-        
 
 if __name__ == '__main__':
     unittest.main()
-
-  

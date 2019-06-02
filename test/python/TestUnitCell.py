@@ -1,6 +1,5 @@
 import pynsx as nsx
 import numpy as np
-import ctypes as c
 import unittest
 
 class TestUnitCell(unittest.TestCase):
@@ -19,19 +18,17 @@ class TestUnitCell(unittest.TestCase):
     def testParameters(self):
         cell = self.cell
         ch = cell.character()
-        
+
         a,b,c,alpha = self.parameters
-        
+
         self.assertAlmostEqual(ch.a,a)
         self.assertAlmostEqual(ch.b,b)
         self.assertAlmostEqual(ch.c,c)
-        
+
         self.assertAlmostEqual(ch.alpha,alpha)
         self.assertAlmostEqual(ch.beta,alpha)
         self.assertAlmostEqual(ch.gamma,alpha)
-        
+
 
 if __name__ == '__main__':
     unittest.main()
-
-  
