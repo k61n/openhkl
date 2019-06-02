@@ -77,15 +77,13 @@ if(BUILD_NSX_APPS)
     add_subdirectory(main)
 endif()
 
-# additional tools
-# add_subdirectory(tools)
-
-# Directory with all the unit-tests.
-add_subdirectory(test)
+add_subdirectory(test/data)
+add_subdirectory(test/cpp)
 
 # swig + python tests
 if(NSX_PYTHON)
     add_subdirectory(swig)
+    add_subdirectory(test/python)
 endif()
 
 
