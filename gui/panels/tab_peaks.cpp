@@ -35,7 +35,18 @@ TabPeaks::TabPeaks() : QcrWidget {"peaks"}
     layout->addWidget(foundPeaksLists);
     layout->addWidget(filtered);
 
-    connect(foundPeaksLists, SIGNAL(currentIndexChanged), this, SLOT(slotSelectedListChanged));
+    foundPeaksLists->setHook([this](int i){ slotSelectedListChanged(i); });
+
+    setRemake([this](){
+        int numLists = foundPeaksLists->count();
+        if (numLists > 0) {
+            int selected = foundPeaksLists->getValue();
+            if (selected<0 || selected>=numLists)
+                foundPeaksLists->setCellValue(0);
+            else
+                foundPeaksLists->setCellValue(selected);
+        }
+    });
 }
 
 void TabPeaks::slotSelectedListChanged(int i)
@@ -53,5 +64,9 @@ ListTab::ListTab(FilteredPeaksModel* filteredModel)
 {
     QVBoxLayout* layout = new QVBoxLayout(this);
     view = new PeaksTableView;
+    PeaksTableModel* model = new PeaksTableModel("adhoc_" + filteredModel->getName() + "Model",
+                                                 gSession->selectedExperiment()->experiment(),
+                                                 filteredModel->getPeaks());
+    view->setModel(model);
     layout->addWidget(view);
 }

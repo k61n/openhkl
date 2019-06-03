@@ -25,6 +25,7 @@ FilteredPeaksModel::FilteredPeaksModel(const QString& name, nsx::PeakList list)
 PeakListsModel::PeakListsModel(const QString& name, nsx::PeakList list)
     : name_ {name}, allPeaks_ {list}
 {
+    addFilteredPeaks("all peaks", list);
 }
 
 FilteredPeaksModel* PeakListsModel::getPeaksAt(int i)
@@ -73,6 +74,17 @@ QStringList PeaksModel::peaklistNames()
         foundListsNames.append(peaklist->getName());
     }
     return foundListsNames;
+}
+
+QStringList PeaksModel::allFilteredListNames()
+{
+    QStringList filteredListNames;
+    for (PeakListsModel* model : peakLists_) {
+        QString prefix = model->getName();
+        for (int i=0; i<model->numberFilteredLists(); i++)
+            filteredListNames.append(prefix+"/" +model->getPeaksAt(i)->getName());
+    }
+    return filteredListNames;
 }
 
 

@@ -43,6 +43,6 @@ ListNameDialog::ListNameDialog(nsx::PeakList list)
 QString ListNameDialog::listName()
 {
     if (name_->getValue() == "")
-        return "not named peaklist";
+        return "no name peaklist";
     return name_->getValue();
 }

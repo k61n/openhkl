@@ -17,6 +17,7 @@
 #include "gui/models/experimentmodel.h"
 #include "gui/models/peakstable.h"
 #include "gui/models/session.h"
+#include "gui/dialogs/listnamedialog.h"
 
 #include "apps/models/MetaTypes.h"
 #include "apps/views/ProgressView.h"
@@ -331,7 +332,12 @@ void PeakFinder::accept()
         //        continue;
         //      }
 
-        gSession->selectedExperiment()->peaks()->addPeakListsModel("new list", found_peaks);
+        // listname dialog
+        std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(found_peaks));
+        if (!dlg->exec())
+            continue;
+
+        gSession->selectedExperiment()->peaks()->addPeakListsModel(dlg->listName(), found_peaks);
     }
 
     close();

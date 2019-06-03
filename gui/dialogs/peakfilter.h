@@ -61,6 +61,7 @@ private:
     QGroupBox* sparseGroup;
     QGroupBox* mergeGroup;
     QDialogButtonBox* buttons;
+    QcrComboBox* peakList;
 
     nsx::PeakList peaks_;
     PeaksTableModel* model_;

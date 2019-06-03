@@ -59,6 +59,7 @@ public:
     PeakListsModel* selectedPeakLists(int i);
     nsx::PeakList allPeaks();
     QStringList peaklistNames();
+    QStringList allFilteredListNames();
     int numberLists() { return peakLists_.size(); }
     void addPeakListsModel(const QString& name, nsx::PeakList);
 

@@ -16,6 +16,7 @@
 #include "gui/dialogs/peakfilter.h"
 #include "gui/mainwin.h"
 #include "gui/models/session.h"
+#include "gui/dialogs/listnamedialog.h"
 #include <QCR/engine/logger.h>
 
 #include "apps/models/MetaTypes.h"
@@ -41,6 +42,7 @@ PeakFilter::PeakFilter() : QDialog {gGui}
 
     peaks_ = gSession->selectedExperiment()->peaks()->allPeaks();
 
+    setAttribute(Qt::WA_DeleteOnClose);
     doLayout();
 }
 
@@ -141,16 +143,27 @@ void PeakFilter::doLayout()
         "adhoc_keepComplementary", "Keep the complementary selection", new QcrCell<bool>(false));
     settings->addWidget(keepComplementary);
     upperLayout->addLayout(settings);
+
+    QVBoxLayout* tablelayout = new QVBoxLayout;
+    peakList = new QcrComboBox("adhoc_peakListsPeakFilter", new QcrCell<int>(0),
+                               gSession->selectedExperiment()->peaks()->peaklistNames());
+    tablelayout->addWidget(peakList);
     model_ = new PeaksTableModel(
         "adhoc_filterModel", gSession->selectedExperiment()->experiment(), peaks_);
     peaksTable = new PeaksTableView;
     peaksTable->setModel(model_);
-    upperLayout->addWidget(peaksTable);
+    tablelayout->addWidget(peaksTable);
+    upperLayout->addLayout(tablelayout);
+
     whole->addLayout(upperLayout);
     buttons = new QDialogButtonBox(
         QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply, Qt::Horizontal);
     whole->addWidget(buttons);
 
+    peakList->setHook([this](int i){
+        peaks_ = gSession->selectedExperiment()->peaks()->selectedPeakLists(i)->getAllListPeaks();
+        model_->setPeaks(peaks_);
+    });
     connect(buttons, &QDialogButtonBox::clicked, this, &PeakFilter::slotActionClicked);
 
     show();
@@ -225,14 +238,16 @@ void PeakFilter::filterPeaks()
 
 void PeakFilter::accept()
 {
-    // TODO: add changes to peaksmodel
-
     auto& filtered_peaks = model_->peaks();
 
     if (!filtered_peaks.empty()) {
+        std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(filtered_peaks));
 
-        gSession->selectedExperiment()->peaks()->selectedPeakLists(0)->addFilteredPeaks(
-            "filtered", filtered_peaks);
+        if (!dlg->exec())
+            return;
+
+        gSession->selectedExperiment()->peaks()->selectedPeakLists(peakList->getValue())
+                ->addFilteredPeaks(dlg->listName(), filtered_peaks);
 
         QString message = "Applied peak filters on selected peaks. Remains ";
         message += QString::number(filtered_peaks.size());
