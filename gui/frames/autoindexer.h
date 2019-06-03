@@ -54,6 +54,7 @@ private:
     PeaksTableModel* model;
     QTableView* solutions;
     QDialogButtonBox* buttons;
+    QcrComboBox* listNames;
 
     std::vector<std::pair<nsx::sptrPeak3D, std::shared_ptr<nsx::UnitCell>>> _defaults;
     std::vector<std::pair<nsx::sptrUnitCell, double>> _solutions;

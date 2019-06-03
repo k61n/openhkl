@@ -18,7 +18,7 @@
 #include "gui/models/peakstable.h"
 #include "gui/models/session.h"
 #include "gui/dialogs/listnamedialog.h"
-
+#include <QCR/engine/mixin.h>
 #include "apps/models/MetaTypes.h"
 #include "apps/views/ProgressView.h"
 #include <QFileInfo>
@@ -96,130 +96,127 @@ nsx::PeakList FoundPeaks::selectedPeaks()
 
 PeakFinder::PeakFinder() : QcrFrame {"peakFinder"}
 {
-    setAttribute(Qt::WA_DeleteOnClose);
-    if (gSession->selectedExperimentNum() >= 0) {
-        if (gSession->selectedExperiment()->data()->allData().size() != 0) {
-            // Layout
-            QVBoxLayout* whole = new QVBoxLayout(this);
 
-            tab = new QcrTabWidget("adhoc_peakFinderSettings");
-            QcrWidget* settings = new QcrWidget("peakFinderTab");
-            QHBoxLayout* tabLayout = new QHBoxLayout(settings);
-            QVBoxLayout* leftTabLayout = new QVBoxLayout;
-            QGroupBox* blobParams = new QGroupBox("Blob parameter");
-            QGridLayout* blobGrid = new QGridLayout(blobParams);
-            blobGrid->addWidget(new QLabel("threshold"), 0, 0, 1, 1);
-            blobGrid->addWidget(new QLabel("merging scale"), 1, 0, 1, 1);
-            blobGrid->addWidget(new QLabel("minimum size"), 2, 0, 1, 1);
-            blobGrid->addWidget(new QLabel("maximum size"), 3, 0, 1, 1);
-            blobGrid->addWidget(new QLabel("maximum width"), 4, 0, 1, 1);
-            blobGrid->addWidget(new QLabel("convolution kernel"), 5, 0, 1, 1);
-            blobGrid->addWidget(new QLabel("convolution parameters"), 6, 0, 1, 1);
-            blobGrid->addWidget(new QLabel("begin finding blobs in frame"), 7, 0, 1, 1);
-            blobGrid->addWidget(new QLabel("end finding blobs in frame"), 8, 0, 1, 1);
-            threshold = new QcrSpinBox("adhoc_threshold", new QcrCell<int>(2), 3);
-            mergingScale =
-                new QcrDoubleSpinBox("adhoc_mergingScale", new QcrCell<double>(1.000), 5, 3);
-            minSize = new QcrSpinBox("adhoc_minSize", new QcrCell<int>(30), 5);
-            maxSize = new QcrSpinBox("adhoc_maxSize", new QcrCell<int>(10000), 5);
-            maxWidth = new QcrSpinBox("adhoc_maxWidth", new QcrCell<int>(10), 5);
-            convolutionKernel = new QComboBox;
-            convolutionParams = new QTableWidget(this);
-            framesBegin = new QcrSpinBox("adhoc_beginFrame", new QcrCell<int>(0), 3);
-            framesEnd = new QcrSpinBox("adhoc_endFrame", new QcrCell<int>(0), 3);
-            blobGrid->addWidget(threshold, 0, 1, 1, 1);
-            blobGrid->addWidget(mergingScale, 1, 1, 1, 1);
-            blobGrid->addWidget(minSize, 2, 1, 1, 1);
-            blobGrid->addWidget(maxSize, 3, 1, 1, 1);
-            blobGrid->addWidget(maxWidth, 4, 1, 1, 1);
-            blobGrid->addWidget(convolutionKernel, 5, 1, 1, 1);
-            blobGrid->addWidget(convolutionParams, 6, 1, 1, 1);
-            blobGrid->addWidget(framesBegin, 7, 1, 1, 1);
-            blobGrid->addWidget(framesEnd, 8, 1, 1, 1);
-            leftTabLayout->addWidget(blobParams);
-            QGroupBox* previewBox = new QGroupBox("Preview");
-            QGridLayout* previewGrid = new QGridLayout(previewBox);
-            previewGrid->addWidget(new QLabel("data"), 0, 0, 1, 1);
-            previewGrid->addWidget(new QLabel("frame"), 1, 0, 1, 1);
-            applyThreshold = new QcrCheckBox(
+    if (gSession->selectedExperimentNum() < 0) {
+        gLogger->log("[ERROR] No experiment selected");
+        return;
+    }
+    if (gSession->selectedExperiment()->data()->allData().size() == 0) {
+        gLogger->log("[ERROR] No data loaded for selected experiment");
+        return;
+    }
+    // Layout
+    setAttribute(Qt::WA_DeleteOnClose);
+    QVBoxLayout* whole = new QVBoxLayout(this);
+
+    tab = new QcrTabWidget("adhoc_peakFinderSettings");
+    QcrWidget* settings = new QcrWidget("peakFinderTab");
+    QHBoxLayout* tabLayout = new QHBoxLayout(settings);
+    QVBoxLayout* leftTabLayout = new QVBoxLayout;
+    QGroupBox* blobParams = new QGroupBox("Blob parameter");
+    QGridLayout* blobGrid = new QGridLayout(blobParams);
+    blobGrid->addWidget(new QLabel("threshold"), 0, 0, 1, 1);
+    blobGrid->addWidget(new QLabel("merging scale"), 1, 0, 1, 1);
+    blobGrid->addWidget(new QLabel("minimum size"), 2, 0, 1, 1);
+    blobGrid->addWidget(new QLabel("maximum size"), 3, 0, 1, 1);
+    blobGrid->addWidget(new QLabel("maximum width"), 4, 0, 1, 1);
+    blobGrid->addWidget(new QLabel("convolution kernel"), 5, 0, 1, 1);
+    blobGrid->addWidget(new QLabel("convolution parameters"), 6, 0, 1, 1);
+    blobGrid->addWidget(new QLabel("begin finding blobs in frame"), 7, 0, 1, 1);
+    blobGrid->addWidget(new QLabel("end finding blobs in frame"), 8, 0, 1, 1);
+    threshold = new QcrSpinBox("adhoc_threshold", new QcrCell<int>(2), 3);
+    mergingScale =
+            new QcrDoubleSpinBox("adhoc_mergingScale", new QcrCell<double>(1.000), 5, 3);
+    minSize = new QcrSpinBox("adhoc_minSize", new QcrCell<int>(30), 5);
+    maxSize = new QcrSpinBox("adhoc_maxSize", new QcrCell<int>(10000), 5);
+    maxWidth = new QcrSpinBox("adhoc_maxWidth", new QcrCell<int>(10), 5);
+    convolutionKernel = new QComboBox;
+    convolutionParams = new QTableWidget(this);
+    framesBegin = new QcrSpinBox("adhoc_beginFrame", new QcrCell<int>(0), 3);
+    framesEnd = new QcrSpinBox("adhoc_endFrame", new QcrCell<int>(0), 3);
+    blobGrid->addWidget(threshold, 0, 1, 1, 1);
+    blobGrid->addWidget(mergingScale, 1, 1, 1, 1);
+    blobGrid->addWidget(minSize, 2, 1, 1, 1);
+    blobGrid->addWidget(maxSize, 3, 1, 1, 1);
+    blobGrid->addWidget(maxWidth, 4, 1, 1, 1);
+    blobGrid->addWidget(convolutionKernel, 5, 1, 1, 1);
+    blobGrid->addWidget(convolutionParams, 6, 1, 1, 1);
+    blobGrid->addWidget(framesBegin, 7, 1, 1, 1);
+    blobGrid->addWidget(framesEnd, 8, 1, 1, 1);
+    leftTabLayout->addWidget(blobParams);
+    QGroupBox* previewBox = new QGroupBox("Preview");
+    QGridLayout* previewGrid = new QGridLayout(previewBox);
+    previewGrid->addWidget(new QLabel("data"), 0, 0, 1, 1);
+    previewGrid->addWidget(new QLabel("frame"), 1, 0, 1, 1);
+    applyThreshold = new QcrCheckBox(
                 "adhoc_applyThreshold", "apply threshold to preview", new QcrCell<bool>(false));
-            previewGrid->addWidget(applyThreshold, 2, 0, 1, 1);
-            data = new QComboBox;
-            frame = new QcrSpinBox("adhoc_frameNr", new QcrCell<int>(0), 3);
-            previewGrid->addWidget(data, 0, 1, 1, 1);
-            previewGrid->addWidget(frame, 1, 1, 1, 1);
-            leftTabLayout->addWidget(previewBox);
-            QGroupBox* integrationParams = new QGroupBox("Integration parameters");
-            QGridLayout* integGrid = new QGridLayout(integrationParams);
-            integGrid->addWidget(new QLabel("peak area"), 0, 0, 1, 1);
-            integGrid->addWidget(new QLabel("backgroung lower limit"), 1, 0, 1, 1);
-            integGrid->addWidget(new QLabel("background upper limit"), 2, 0, 1, 1);
-            peakArea = new QcrDoubleSpinBox("adhoc_area", new QcrCell<double>(3.0), 5, 2);
-            backgroundLowerLimit =
-                new QcrDoubleSpinBox("adhoc_lowLimit", new QcrCell<double>(4.0), 5, 2);
-            backgroundUpperLimit =
-                new QcrDoubleSpinBox("adhoc_upLimit", new QcrCell<double>(4.5), 5, 2);
-            integGrid->addWidget(peakArea, 0, 1, 1, 1);
-            integGrid->addWidget(backgroundLowerLimit, 1, 1, 1, 1);
-            integGrid->addWidget(backgroundUpperLimit, 2, 1, 1, 1);
-            leftTabLayout->addWidget(integrationParams);
-            leftTabLayout->addItem(
+    previewGrid->addWidget(applyThreshold, 2, 0, 1, 1);
+    data = new QComboBox;
+    frame = new QcrSpinBox("adhoc_frameNr", new QcrCell<int>(0), 3);
+    previewGrid->addWidget(data, 0, 1, 1, 1);
+    previewGrid->addWidget(frame, 1, 1, 1, 1);
+    leftTabLayout->addWidget(previewBox);
+    QGroupBox* integrationParams = new QGroupBox("Integration parameters");
+    QGridLayout* integGrid = new QGridLayout(integrationParams);
+    integGrid->addWidget(new QLabel("peak area"), 0, 0, 1, 1);
+    integGrid->addWidget(new QLabel("backgroung lower limit"), 1, 0, 1, 1);
+    integGrid->addWidget(new QLabel("background upper limit"), 2, 0, 1, 1);
+    peakArea = new QcrDoubleSpinBox("adhoc_area", new QcrCell<double>(3.0), 5, 2);
+    backgroundLowerLimit =
+            new QcrDoubleSpinBox("adhoc_lowLimit", new QcrCell<double>(4.0), 5, 2);
+    backgroundUpperLimit =
+            new QcrDoubleSpinBox("adhoc_upLimit", new QcrCell<double>(4.5), 5, 2);
+    integGrid->addWidget(peakArea, 0, 1, 1, 1);
+    integGrid->addWidget(backgroundLowerLimit, 1, 1, 1, 1);
+    integGrid->addWidget(backgroundUpperLimit, 2, 1, 1, 1);
+    leftTabLayout->addWidget(integrationParams);
+    leftTabLayout->addItem(
                 new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
-            tabLayout->addLayout(leftTabLayout);
-            preview = new QGraphicsView(this);
-            tabLayout->addWidget(preview);
-            tab->addTab(settings, "Settings");
-            whole->addWidget(tab);
-            buttons = new QDialogButtonBox(
+    tabLayout->addLayout(leftTabLayout);
+    preview = new QGraphicsView(this);
+    tabLayout->addWidget(preview);
+    tab->addTab(settings, "Settings");
+    whole->addWidget(tab);
+    buttons = new QDialogButtonBox(
                 QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply,
                 Qt::Horizontal, this);
-            connect(buttons, &QDialogButtonBox::clicked, this, &PeakFinder::doActions);
-            whole->addWidget(buttons);
+    connect(buttons, &QDialogButtonBox::clicked, this, &PeakFinder::doActions);
+    whole->addWidget(buttons);
 
-            // else
+    // else
 
-            // tab->tabBar()->tabButton(0, QTabBar::RightSide)->hide();
+    // tab->tabBar()->tabButton(0, QTabBar::RightSide)->hide();
 
-            //            ItemDelegate *convolution_parameters_delegate =
-            //                    new ItemDelegate();
-            //            convolutionParams->setItemDelegateForColumn(
-            //                        1, convolution_parameters_delegate);
+    //            ItemDelegate *convolution_parameters_delegate =
+    //                    new ItemDelegate();
+    //            convolutionParams->setItemDelegateForColumn(
+    //                        1, convolution_parameters_delegate);
 
-            nsx::DataList datalist = gSession->selectedExperiment()->data()->allDataVector();
-            for (nsx::sptrDataSet d : datalist) {
-                QFileInfo fileinfo(QString::fromStdString(d->filename()));
-                data->addItem(fileinfo.baseName(), QVariant::fromValue(d));
-            }
+    nsx::DataList datalist = gSession->selectedExperiment()->data()->allDataVector();
+    for (nsx::sptrDataSet d : datalist) {
+        QFileInfo fileinfo(QString::fromStdString(d->filename()));
+        data->addItem(fileinfo.baseName(), QVariant::fromValue(d));
+    }
 
-            data->setCurrentIndex(0);
-            framesEnd->setCellValue(datalist.at(0)->nFrames());
-            framesEnd->setMaximum(datalist.at(0)->nFrames());
-            framesBegin->setMaximum(datalist.at(0)->nFrames());
+    data->setCurrentIndex(0);
+    framesEnd->setCellValue(datalist.at(0)->nFrames());
+    framesEnd->setMaximum(datalist.at(0)->nFrames());
+    framesBegin->setMaximum(datalist.at(0)->nFrames());
 
-            convolutionKernel->clear();
-            nsx::ConvolverFactory convolver_factory;
-            for (auto&& convolution_kernel : convolver_factory.callbacks()) {
-                convolutionKernel->addItem(QString::fromStdString(convolution_kernel.first));
-            }
-            convolutionKernel->setCurrentText("annular");
+    convolutionKernel->clear();
+    nsx::ConvolverFactory convolver_factory;
+    for (auto&& convolution_kernel : convolver_factory.callbacks()) {
+        convolutionKernel->addItem(QString::fromStdString(convolution_kernel.first));
+    }
+    convolutionKernel->setCurrentText("annular");
 
-            QGraphicsScene* scene = new QGraphicsScene();
-            preview->setScene(scene);
-            // flip the image vertically to conform with DetectorScene
-            preview->scale(1, -1);
-            updateConvolutionParameters();
+    QGraphicsScene* scene = new QGraphicsScene();
+    preview->setScene(scene);
+    // flip the image vertically to conform with DetectorScene
+    preview->scale(1, -1);
+    updateConvolutionParameters();
 
-            show();
-        } else
-            breakUp();
-    } else
-        breakUp();
-}
-
-void PeakFinder::breakUp()
-{
-    gLogger->log("## Peak finding broken due to no selected Experiment or no data");
-    close();
+    show();
 }
 
 void PeakFinder::updateConvolutionParameters()

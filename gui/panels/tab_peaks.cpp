@@ -39,12 +39,22 @@ TabPeaks::TabPeaks() : QcrWidget {"peaks"}
 
     setRemake([this](){
         int numLists = foundPeaksLists->count();
+        int selected = foundPeaksLists->doGetValue();
+        if (selected < 0)
+            selected = 0;
+        PeakListsModel* model = gSession->selectedExperiment()->peaks()
+                ->selectedPeakLists(selected);
         if (numLists > 0) {
-            int selected = foundPeaksLists->getValue();
-            if (selected<0 || selected>=numLists)
-                foundPeaksLists->setCellValue(0);
-            else
-                foundPeaksLists->setCellValue(selected);
+            if (filtered->count() != model->numberFilteredLists()) {
+                int oldTabs = filtered->count();
+
+                for (int j = 0; j < model->numberFilteredLists(); j++) {
+                    FilteredPeaksModel* peaks = model->getPeaksAt(j);
+                    filtered->addTab(new ListTab(peaks), peaks->getName());
+                }
+                for (int t=0; t<oldTabs; t++)
+                    filtered->removeTab(0);
+            }
         }
     });
 }

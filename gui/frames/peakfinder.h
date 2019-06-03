@@ -60,9 +60,7 @@ private:
     QDialogButtonBox* buttons;
     QcrTabWidget* tab;
 
-    void breakUp();
     void accept();
-private slots:
     void doActions(QAbstractButton*);
 };
 
