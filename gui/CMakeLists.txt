@@ -14,4 +14,5 @@ target_link_libraries(${lib}
     Qt5::Widgets
     QCR
     apps
+    QCustomPlot
     )
