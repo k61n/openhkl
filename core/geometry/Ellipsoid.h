@@ -82,9 +82,6 @@ public:
     Eigen::Vector3d intersectionCenter(const Eigen::Vector3d& n, const Eigen::Vector3d& p) const;
     //! Returns the axis aligned bounding box of the ellipsoid
     const AABB& aabb() const;
-    //! Transform the ellipsoid to detector space, assuming it is currently in
-    //! q-space.
-    Ellipsoid toDetectorSpace(sptrDataSet data) const;
     //! Returns the value (x-center)*metric*(x-center)
     double r2(const Eigen::Vector3d x) const;
 

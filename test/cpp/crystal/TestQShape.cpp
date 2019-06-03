@@ -1,17 +1,38 @@
 #include "test/cpp/catch.hpp"
+
 #include <Eigen/Dense>
 
 #include "core/search_peaks/ConvolverFactory.h"
+#include "core/loader/IDataReader.h"
 #include "core/loader/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
-#include "core/instrument/Diffractometer.h"
 #include "core/experiment/Experiment.h"
 #include "core/peak/Peak3D.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "core/utils/ProgressHandler.h"
-#include "core/geometry/ReciprocalVector.h"
-#include "core/instrument/Sample.h"
-#include "core/utils/Units.h"
+
+nsx::Ellipsoid toDetectorSpace(const nsx::Ellipsoid e, const nsx::sptrDataSet data)
+{
+    auto events = data->events({nsx::ReciprocalVector(e.center())});
+
+    // something bad happened
+    if (events.size() != 1) {
+        throw std::runtime_error("could not transform ellipse from q space to detector space");
+    }
+
+    const auto& event = events[0];
+    auto position =
+        data->reader()->diffractometer()->detector()->pixelPosition(event._px, event._py);
+    auto state = data->interpolatedState(event._frame);
+
+    // Jacobian of map from detector coords to sample q space
+    Eigen::Matrix3d J = state.jacobianQ(event._px, event._py);
+    const Eigen::Matrix3d det_inv_cov = J.transpose() * e.metric() * J;
+
+    Eigen::Vector3d p(event._px, event._py, event._frame);
+    return nsx::Ellipsoid(p, det_inv_cov);
+}
+
 
 TEST_CASE("test/crystal/TestQShape.cpp", "") {
 
@@ -69,7 +90,7 @@ TEST_CASE("test/crystal/TestQShape.cpp", "") {
         auto qshape = peak->qShape();
         nsx::Ellipsoid new_shape;
         try {
-            new_shape = qshape.toDetectorSpace(dataf);
+            new_shape = toDetectorSpace(qshape, dataf);
         } catch (...) {
             continue;
         }
