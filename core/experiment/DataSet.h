@@ -88,11 +88,6 @@ public:
     //! Returns frame after transforming to account for detector gain and baseline
     Eigen::MatrixXd transformedFrame(std::size_t idx);
 
-    //! Returns a convolved frame
-    Eigen::MatrixXd convolvedFrame(
-        std::size_t idx, const std::string& convolver_type,
-        const std::map<std::string, double>& parameters);
-
     //! Gets the file handle.
     void open();
 

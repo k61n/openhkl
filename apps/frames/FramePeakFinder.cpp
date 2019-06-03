@@ -34,12 +34,13 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 
-#include "core/search_peaks/ConvolverFactory.h"
 #include "core/experiment/DataSet.h"
+#include "core/integration/PixelSumIntegrator.h"
+#include "core/loader/IDataReader.h"
 #include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
+#include "core/search_peaks/ConvolverFactory.h"
 #include "core/search_peaks/PeakFinder.h"
-#include "core/integration/PixelSumIntegrator.h"
 
 #include "apps/models/CollectedPeaksModel.h"
 #include "apps/delegates/DoubleItemDelegate.h"
@@ -407,8 +408,8 @@ void FramePeakFinder::preview()
     std::string convolver_type = _ui->convolution_kernels->currentText().toStdString();
     auto&& convolver_parameters = convolutionParameters();
 
-    Eigen::MatrixXd convolved_frame =
-        data->convolvedFrame(selected_frame, convolver_type, convolver_parameters);
+    Eigen::MatrixXd convolved_frame = nsx::convolvedFrame(
+        data->reader()->data(selected_frame), convolver_type, convolver_parameters);
 
     // apply threshold in preview
     if (_ui->apply_threshold->isChecked()) {

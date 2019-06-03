@@ -54,4 +54,13 @@ const std::map<std::string, ConvolverFactory::callback>& ConvolverFactory::callb
     return _callbacks;
 }
 
+Eigen::MatrixXd convolvedFrame(
+    Eigen::MatrixXi frame_data, const std::string& convolver_type,
+    const std::map<std::string, double>& parameters)
+{
+    ConvolverFactory convolver_factory;
+    auto convolver = convolver_factory.create(convolver_type, parameters);
+    return convolver->convolve(frame_data.cast<double>());
+}
+
 } // end namespace nsx

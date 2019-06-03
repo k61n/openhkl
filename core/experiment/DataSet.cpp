@@ -12,17 +12,6 @@
 //
 //  ***********************************************************************************************
 
-#include <cmath>
-#include <stdexcept>
-#include <utility>
-#include <vector>
-
-#include "blosc.h"
-
-#include "H5Cpp.h"
-
-#include <Eigen/Dense>
-
 #include "core/geometry/AABB.h"
 #include "core/loader/BloscFilter.h"
 #include "core/search_peaks/ConvolverFactory.h"
@@ -34,12 +23,20 @@
 #include "core/gonio/Gonio.h"
 #include "core/loader/IDataReader.h"
 #include "core/instrument/Monochromator.h"
+#include "core/mathematics/MathematicsTypes.h"
 #include "core/utils/Path.h"
 #include "core/peak/Peak3D.h"
 #include "core/utils/ProgressHandler.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/utils/Units.h" // deg
+
+#include <blosc.h>
+#include <H5Cpp.h>
+#include <cmath>
+#include <stdexcept>
+#include <utility>
+#include <vector>
 
 namespace nsx {
 
@@ -94,16 +91,6 @@ int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z)
 Eigen::MatrixXi DataSet::frame(std::size_t idx)
 {
     return _reader->data(idx);
-}
-
-Eigen::MatrixXd DataSet::convolvedFrame(
-    std::size_t idx, const std::string& convolver_type,
-    const std::map<std::string, double>& parameters)
-{
-    ConvolverFactory convolver_factory;
-    auto convolver = convolver_factory.create(convolver_type, parameters);
-    Eigen::MatrixXi frame_data = _reader->data(idx);
-    return convolver->convolve(frame_data.cast<double>());
 }
 
 void DataSet::open()
