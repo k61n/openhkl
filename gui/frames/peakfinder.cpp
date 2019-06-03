@@ -264,7 +264,6 @@ void PeakFinder::run()
     finder.setFramesBegin(framesBegin->value());
     finder.setFramesEnd(framesEnd->value());
     std::string convolverType = convolutionKernel->currentText().toStdString();
-    auto&& parameters = convolutionParameters();
     nsx::ConvolverFactory factory;
     nsx::Convolver* convolver = factory.create(convolverType, {});
     finder.setConvolver(std::unique_ptr<nsx::Convolver>(convolver));

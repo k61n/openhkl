@@ -34,7 +34,7 @@ Triggers::Triggers()
 {
     reset.setTriggerHook([]() { gGui->resetViews(); });
     quit.setTriggerHook([]() { gGui->deleteLater(); });
-    monochromaticSourceProperties.setTriggerHook([this]() {
+    monochromaticSourceProperties.setTriggerHook([]() {
         SubframeSetup* properties = gGui->dockProperties_->tabsframe;
         TabInstrument* tab = properties->instrument;
         int i = tab->indexOf(tab->monoSource);

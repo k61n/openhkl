@@ -50,7 +50,7 @@ public:
     /*virtual*/ int rowCount() const override { return _peaks.size(); }
     /*virtual*/ int columnCount() const override { return Column::count; }
     int highlighted() const override { return 0; } // unused
-    void onHighlight(int i) override {} // unused
+    void onHighlight(int) override {} // unused
     void reset();
     QVariant data(const QModelIndex& index, int role) const override;
     Qt::ItemFlags flags(const QModelIndex& index) const override;
@@ -85,7 +85,7 @@ class PeaksTableView : public QTableView {
     Q_OBJECT
 public:
     explicit PeaksTableView(QWidget* parent = 0);
-    void contextMenuEvent(QContextMenuEvent*);
+    void contextMenuEvent(QContextMenuEvent*) override;
     virtual void keyPressEvent(QKeyEvent* event) override;
 signals:
     void plotData(const QVector<double>&, const QVector<double>&, const QVector<double>&);
