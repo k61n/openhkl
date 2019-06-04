@@ -16,7 +16,9 @@ foreach(source_file ${test_sources})
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/data
             )
     else()
-        add_test(${base_name} ${base_name}
+        add_test(
+            NAME ${base_name}
+            COMMAND ${base_name}
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/data
             )
     endif()

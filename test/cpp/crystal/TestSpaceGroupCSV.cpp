@@ -1,25 +1,22 @@
 #include "test/cpp/catch.hpp"
 
-#include <fstream>
-#include <map>
-#include <string>
+#include <core/utils/CSV.h>
+#include <core/crystal/SpaceGroup.h>
 
-#include "core/utils/CSV.h"
-#include "core/crystal/SpaceGroup.h"
-#include "core/crystal/UnitCell.h"
+#include <fstream>
+#include <string>
 
 TEST_CASE("test/crystal/TestSpaceGroupCSV.cpp", "") {
 
     std::ifstream csv_file;
+    csv_file.open("crystallography.tsv", std::ifstream::in);
+    if (!csv_file.is_open()) {
+        std::cerr << "failed to open crystallography.tsv\n";
+        CHECK(false);
+        return;
+    }
 
     nsx::CSV csv_reader('\t', '#');
-
-    csv_file.open("crystallography.tsv", std::ifstream::in);
-
-    CHECK(csv_file.is_open());
-
-    // skip header
-    csv_reader.getRow(csv_file);
 
     while (!csv_file.eof()) {
         std::vector<std::string> row = csv_reader.getRow(csv_file);
