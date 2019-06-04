@@ -5,7 +5,7 @@
 #include <QPen>
 #include <QRectF>
 
-class DetectorScene;
+class XDetectorScene;
 class QGraphicsSceneHoverEvent;
 class QGraphicsSceneMouseEvent;
 class QGraphicsTextItem;
@@ -31,7 +31,7 @@ public:
     virtual void wheelEvent(QGraphicsSceneWheelEvent* event) override;
 
     virtual QRectF boundingRect() const = 0;
-    DetectorScene* getScene() const;
+    XDetectorScene* getScene() const;
     //! Set whether or not the item is deletable
     void setDeletable(bool deletable);
     //! Set whether or not the item is movable

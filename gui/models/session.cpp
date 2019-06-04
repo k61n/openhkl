@@ -14,6 +14,7 @@
 
 
 #include "gui/models/session.h"
+#include "gui/graphics/detectorscene.h"
 
 #include "core/loader/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
@@ -124,7 +125,10 @@ void Session::loadData()
             extension, filename.toStdString(), exp->diffractometer());
         exp->addData(data_ptr);
         selectedExperiment()->addData(data_ptr);
+        gGui->dockImage_->centralWidget->imageView->getScene()->
+                slotChangeSelectedData(data_ptr, 1);
     }
+
     gRoot->remakeAll();
 }
 

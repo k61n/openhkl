@@ -7,12 +7,12 @@
 
 class QWidget;
 
-class SimplePlot : public NSXPlot {
+class XSimplePlot : public NSXPlot {
     Q_OBJECT
 public:
     static NSXPlot* create(QWidget* parent);
 
-    explicit SimplePlot(QWidget* parent = 0);
+    explicit XSimplePlot(QWidget* parent = 0);
 
     // Getters and setters
     std::string getType() const;

@@ -3,7 +3,7 @@
 
 #include "gui/graphics/plottableitem.h"
 #include <Eigen/Dense>
-#include "core/crystal/CrystalTypes.h"
+#include "core/peak/PeakList.h"
 
 class QWidget;
 class NSXPlot;

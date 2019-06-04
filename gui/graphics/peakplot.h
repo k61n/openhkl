@@ -5,12 +5,12 @@
 
 class QWidget;
 
-class PeakPlot : public NSXPlot {
+class XPeakPlot : public NSXPlot {
     Q_OBJECT
 public:
     static NSXPlot* create(QWidget* parent);
 
-    explicit PeakPlot(QWidget* parent = 0);
+    explicit XPeakPlot(QWidget* parent = 0);
 
     std::string getType() const;
 };

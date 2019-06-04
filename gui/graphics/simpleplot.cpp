@@ -1,12 +1,12 @@
 
 #include "gui/graphics/simpleplot.h"
 
-NSXPlot* SimplePlot::create(QWidget* parent)
+NSXPlot* XSimplePlot::create(QWidget* parent)
 {
-    return new SimplePlot(parent);
+    return new XSimplePlot(parent);
 }
 
-SimplePlot::SimplePlot(QWidget* parent)
+XSimplePlot::XSimplePlot(QWidget* parent)
     : NSXPlot(parent)
 {
     plotLayout()->insertRow(0);
@@ -44,7 +44,7 @@ SimplePlot::SimplePlot(QWidget* parent)
     plotLayout()->addElement(0, 0, element);
 }
 
-std::string SimplePlot::getType() const
+std::string XSimplePlot::getType() const
 {
     return "simple";
 }

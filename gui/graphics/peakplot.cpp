@@ -1,12 +1,12 @@
 
 #include "gui/graphics/peakplot.h"
 
-NSXPlot* PeakPlot::create(QWidget* parent)
+NSXPlot* XPeakPlot::create(QWidget* parent)
 {
-    return new PeakPlot(parent);
+    return new XPeakPlot(parent);
 }
 
-PeakPlot::PeakPlot(QWidget* parent)
+XPeakPlot::XPeakPlot(QWidget* parent)
     : NSXPlot(parent)
 {
     plotLayout()->insertRow(0);
@@ -39,7 +39,7 @@ PeakPlot::PeakPlot(QWidget* parent)
     plotLayout()->addElement(0, 0, element);
 }
 
-std::string PeakPlot::getType() const
+std::string XPeakPlot::getType() const
 {
     return "peak";
 }

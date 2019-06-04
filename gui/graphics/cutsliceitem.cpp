@@ -2,6 +2,9 @@
 #include "gui/graphics/cutsliceitem.h"
 #include "gui/graphics/simpleplot.h"
 #include "gui/graphics/detectorscene.h"
+#include "core/detector/Detector.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/import/IDataReader.h"
 #include <Eigen/Dense>
 
 CutSliceItem::CutSliceItem(nsx::sptrDataSet data, bool horizontal)
@@ -13,7 +16,7 @@ CutSliceItem::~CutSliceItem() {}
 
 void CutSliceItem::plot(NSXPlot* plot)
 {
-    auto p = dynamic_cast<SimplePlot*>(plot);
+    auto p = dynamic_cast<XSimplePlot*>(plot);
     if (!p) {
         return;
     }
@@ -21,7 +24,7 @@ void CutSliceItem::plot(NSXPlot* plot)
     p->yAxis->setLabel("Intensity (counts)");
 
     // Set the pointer to the detector scene to the scene that holds the cutter
-    auto detPtr = dynamic_cast<DetectorScene*>(scene());
+    auto detPtr = dynamic_cast<XDetectorScene*>(scene());
     if (!detPtr) {
         return;
     }

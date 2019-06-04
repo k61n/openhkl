@@ -2,7 +2,7 @@
 #ifndef GUI_GRAPHICS_ELLIPSEITEM_H
 #define GUI_GRAPHICS_ELLIPSEITEM_H
 
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataTypes.h"
 #include "core/geometry/GeometryTypes.h"
 #include "gui/graphics/nsxgraphicsitem.h"
 #include <QPointF>

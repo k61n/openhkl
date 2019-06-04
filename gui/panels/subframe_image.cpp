@@ -32,10 +32,7 @@ ImageWidget::ImageWidget() : QcrWidget {"Image"}
     QVBoxLayout* rightLayout = new QVBoxLayout;
     QFrame* frameLayout = new QFrame(this);
     QHBoxLayout* leftLowerLayout = new QHBoxLayout(frameLayout);
-    imageScene = new QGraphicsScene;
-    imageScene->setBackgroundBrush(Qt::blue);
-    imageView = new QGraphicsView(imageScene);
-    imageView->show();
+    imageView = new DetectorView;
     leftLayout->addWidget(imageView);
     scrollbar = new QScrollBar(frameLayout);
     QSizePolicy sizePolicy6(QSizePolicy::Minimum, QSizePolicy::Fixed);

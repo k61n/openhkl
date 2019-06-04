@@ -4,7 +4,7 @@
 
 #include <QPen>
 #include <QPointF>
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataTypes.h"
 #include "gui/graphics/plottableitem.h"
 
 class QGraphicsSceneHoverEvent;

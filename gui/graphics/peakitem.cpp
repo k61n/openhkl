@@ -4,17 +4,16 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/geometry/Ellipsoid.h"
-#include "core/data/IDataReader.h"
+#include "core/import/IDataReader.h"
 #include "core/instrument/InstrumentState.h"
-#include "core/integration/IntegrationRegion.h"
-#include "core/data/MetaData.h"
+#include "core/import/MetaData.h"
 #include "core/crystal/MillerIndex.h"
-#include "core/crystal/Peak3D.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/peak/Peak3D.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/crystal/UnitCell.h"
 #include "core/utils/Units.h"
 
@@ -132,7 +131,7 @@ void PeakItem::showArea(bool flag)
 void PeakItem::plot(NSXPlot* plot)
 {
 
-    auto p = dynamic_cast<PeakPlot*>(plot);
+    auto p = dynamic_cast<XPeakPlot*>(plot);
     if (!p) {
         return;
     }

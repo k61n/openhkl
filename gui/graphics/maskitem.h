@@ -3,7 +3,7 @@
 #define GUI_GRAPHICS_MASKITEM_H
 
 #include "gui/graphics/nsxgraphicsitem.h"
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataTypes.h"
 #include "core/geometry/GeometryTypes.h"
 
 class QGraphicsSceneMouseEvent;
