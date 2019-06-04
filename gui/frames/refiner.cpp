@@ -17,7 +17,7 @@
 #include "gui/models/session.h"
 #include <QCR/engine/logger.h>
 
-#include "apps/models/MetaTypes.h"
+#include "gui/models/meta.h"
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>

@@ -10,9 +10,8 @@ target_include_directories(${lib}
 
 target_link_libraries(${lib}
     PRIVATE
-    Qt5::Network
-    Qt5::Widgets
+    ${QT_LIBRARIES}
     QCR
-    apps
     QCustomPlot
+    ${NSX_LIBRARY}
     )

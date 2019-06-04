@@ -19,7 +19,7 @@
 #include "gui/dialogs/listnamedialog.h"
 #include <QCR/engine/logger.h>
 
-#include "apps/models/MetaTypes.h"
+#include "gui/models/meta.h"
 
 #include "core/peak/PeakFilter.h"
 

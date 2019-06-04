@@ -19,8 +19,8 @@
 #include "gui/models/session.h"
 #include "gui/dialogs/listnamedialog.h"
 #include <QCR/engine/mixin.h>
-#include "apps/models/MetaTypes.h"
-#include "apps/views/ProgressView.h"
+#include "gui/models/meta.h"
+#include "gui/frames/progressview.h"
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>

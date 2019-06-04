@@ -16,7 +16,7 @@
 #include "gui/frames/globaloffsets.h"
 #include "gui/models/session.h"
 
-#include "apps/models/MetaTypes.h"
+#include "gui/models/meta.h"
 #include <QFileInfo>
 #include <QFormLayout>
 #include <QGroupBox>

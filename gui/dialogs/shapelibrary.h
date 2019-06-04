@@ -27,7 +27,7 @@
 #include "core/instrument/InstrumentTypes.h"
 #include "core/integration/Profile3D.h"
 
-#include "apps/ColorMap.h"
+#include "gui/models/colormap.h"
 #include <QCR/widgets/actions.h>
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>

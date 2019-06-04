@@ -26,8 +26,8 @@
 #include <QStatusBar>
 #include <QVBoxLayout>
 
-#include "apps/ColorMap.h"
-#include "apps/views/ProgressView.h"
+#include "gui/models/colormap.h"
+#include "gui/frames/progressview.h"
 #include "core/experiment/DataSet.h"
 #include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
