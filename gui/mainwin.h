@@ -34,12 +34,16 @@ public:
     class GuiState* state;
 
     void resetViews();
-    SubframeImage* dockImage_;
+    void onDataChanged();
+    void onExperimentChanged();
+    void onPeaksChanged();
+
 private:
     void refresh();
     void readSettings();
     void saveSettings() const;
 
+    SubframeImage* dockImage_;
     SubframePlot* dockPlot_;
     SubframeExperiments* dockExperiments_;
     SubframeProperties* dockProperties_;

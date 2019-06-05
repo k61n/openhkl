@@ -677,7 +677,6 @@ void XDetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
 void XDetectorScene::loadCurrentImage()
 {
-    gLogger->log("[1]");
     if (!_currentData) {
         return;
     }
@@ -690,12 +689,10 @@ void XDetectorScene::loadCurrentImage()
 
     // Full image size, front of the stack
     QRect& full = _zoomStack.front();
-    gLogger->log("[2]");
     if (_currentFrameIndex >= _currentData->nFrames()) {
         _currentFrameIndex = _currentData->nFrames() - 1;
     }
     _currentFrame = _currentData->frame(_currentFrameIndex);
-    gLogger->log("[3]");
     if (_image == nullptr) {
         _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(
             _currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
@@ -704,15 +701,13 @@ void XDetectorScene::loadCurrentImage()
         _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(
             _currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
     }
-    gLogger->log("[4]");
+
     // update the integration region pixmap
     if (_drawIntegrationRegion) {
-        gLogger->log("[5]");
         const int ncols = _currentData->nCols();
         const int nrows = _currentData->nRows();
         Eigen::MatrixXi mask(nrows, ncols);
         mask.setConstant(int(EventType::EXCLUDED));
-        gLogger->log("[6]");
         auto peaks = gSession->selectedExperiment()->peaks()->allPeaks();
         for (auto peak : peaks) {
             if (peak->enabled()) {
@@ -726,7 +721,6 @@ void XDetectorScene::loadCurrentImage()
                 }
             }
         }
-        gLogger->log("[7]");
         QImage region_img(ncols, nrows, QImage::Format_ARGB32);
 
         for (auto c = 0; c < ncols; ++c) {
@@ -744,7 +738,6 @@ void XDetectorScene::loadCurrentImage()
                 region_img.setPixel(c, r, color);
             }
         }
-        gLogger->log("[8]");
         if (!_integrationRegion) {
             _integrationRegion = addPixmap(QPixmap::fromImage(region_img));
             _integrationRegion->setZValue(-1);
@@ -752,7 +745,6 @@ void XDetectorScene::loadCurrentImage()
             _integrationRegion->setPixmap(QPixmap::fromImage(region_img));
         }
     }
-    gLogger->log("[9]");
     setSceneRect(_zoomStack.back());
     emit dataChanged();
 

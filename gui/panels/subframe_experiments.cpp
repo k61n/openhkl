@@ -25,30 +25,7 @@
 #include <QVBoxLayout>
 
 //  ***********************************************************************************************
-//! @class FilesModel (local scope)
-
-//! The model for FilesView
-
-class ExperimentsModel : public CheckTableModel { // < QAbstractTableModel < QAbstractItemModel
-public:
-    ExperimentsModel() : CheckTableModel {"experiments"} {}
-
-    enum { COL_CHECK = 1, COL_NAME, COL_INSTRUMENT, COL_ATTRS };
-
-private:
-    void setActivated(int i, bool on) final {}
-
-    int highlighted() const final;
-    void onHighlight(int i) final { gSession->selectExperiment(i); }
-    bool activated(int i) const final { return i == gSession->selectedExperimentNum(); }
-    Qt::CheckState state(int i) const final { return Qt::Unchecked; }
-
-    int columnCount() const final { return COL_ATTRS; }
-    int rowCount() const final { return gSession->numExperiments(); }
-    QVariant entry(int, int) const final;
-    QString tooltip(int, int) const final;
-    QVariant headerData(int, Qt::Orientation, int) const final;
-};
+//! @class ExperimentsModel
 
 int ExperimentsModel::highlighted() const
 {
@@ -94,18 +71,7 @@ QVariant ExperimentsModel::headerData(int col, Qt::Orientation ori, int role) co
 
 
 //  ***********************************************************************************************
-//! @class FilesView (local scope)
-
-//! Main item in `SubframeFiles`: View and control the list of `DataFile`s
-
-class ExperimentsView : public CheckTableView {
-public:
-    ExperimentsView();
-
-private:
-    ExperimentsModel* model() { return static_cast<ExperimentsModel*>(model_); }
-    void onData() override;
-};
+//! @class ExperimentsView
 
 ExperimentsView::ExperimentsView() : CheckTableView {new ExperimentsModel {}}
 {
@@ -127,11 +93,17 @@ void ExperimentsView::onData()
 
 
 //  ***********************************************************************************************
-//! @class SubframeFiles
+//! @class SubframeExperiments
 SubframeExperiments::SubframeExperiments() : QcrDockWidget {"Experiments"}
 {
-    setWidget(new ExperimentsView());
+    view = new ExperimentsView();
+    setWidget(view);
     connect(
         this, SIGNAL(visibilityChanged(bool)), &gGui->toggles->viewExperiment,
         SLOT(setChecked(bool)));
+}
+
+void SubframeExperiments::experimentChanged()
+{
+    view->onData();
 }

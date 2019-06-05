@@ -76,6 +76,24 @@ void MainWin::refresh()
     menus_->view_->setEnabled(true);
 }
 
+void MainWin::onDataChanged()
+{
+    dockImage_->centralWidget->dataChanged();
+    dockProperties_->tabsframe->dataChanged();
+    //dockPlot_->dataChanged();
+}
+
+void MainWin::onExperimentChanged()
+{
+    dockExperiments_->experimentChanged();
+    dockProperties_->tabsframe->experimentChanged();
+}
+
+void MainWin::onPeaksChanged()
+{
+    dockProperties_->tabsframe->peaksChanged();
+}
+
 void MainWin::resetViews()
 {
     restoreState(initialState_);

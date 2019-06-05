@@ -78,6 +78,7 @@ UnitCellProperty::UnitCellProperty() : QcrWidget {"unitCellProperty"}
     grid->addItem(
         new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 7, 1, 1);
     overallLayout->addWidget(cellParameters);
+    setRemake([](){ /*refresh the data from gSession*/ });
 }
 
 void UnitCellProperty::setZValue(int z)

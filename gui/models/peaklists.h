@@ -42,6 +42,7 @@ public:
     FilteredPeaksModel* getPeaksAt(int i);
     void addFilteredPeaks(const QString& name, nsx::PeakList peaks);
     int numberFilteredLists() { return filtered_.size(); }
+    void removeFilteredPeaks(int i);
 
 private:
     QString name_;
@@ -62,6 +63,7 @@ public:
     QStringList allFilteredListNames();
     int numberLists() { return peakLists_.size(); }
     void addPeakListsModel(const QString& name, nsx::PeakList);
+    void removePeakListsModel(int i);
 
 private:
     QList<PeakListsModel*> peakLists_;

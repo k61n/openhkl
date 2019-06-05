@@ -66,7 +66,7 @@ void Session::createExperiment()
         gLogger->log(QString::fromStdString(e.what()));
         return;
     }
-    gRoot->remakeAll();
+    onExperimentChanged();
 }
 
 void Session::removeExperiment()
@@ -86,15 +86,14 @@ void Session::removeExperiment()
         + QString::fromStdString(experiments.at(selected)->experiment()->name()) + "\"");
     experiments.removeAt(selected);
     selected = experiments.size() > 0 ? 0 : -1;
-    gRoot->remakeAll();
+    onExperimentChanged();
 }
 
-ExperimentModel* Session::selectExperiment(int select)
+void Session::selectExperiment(int select)
 {
     if (select < experiments.size() && select >= 0)
         selected = select;
-    gRoot->remakeAll();
-    return experiments.at(selected);
+    onExperimentChanged();
 }
 
 ExperimentModel* Session::selectedExperiment()
@@ -124,8 +123,6 @@ void Session::loadData()
             extension, filename.toStdString(), exp->diffractometer());
         exp->addData(data_ptr);
         selectedExperiment()->addData(data_ptr);
-        //gGui->dockImage_->centralWidget->imageView->getScene()->
-                //slotChangeSelectedData(data_ptr, 1);
     }
 
     gRoot->remakeAll();
@@ -191,4 +188,21 @@ void Session::loadRawData()
 
 //    exp->addData(data);
 //    selectedExperiment()->addData(data);
+}
+
+void Session::onDataChanged()
+{
+    gGui->onDataChanged();
+    onPeaksChanged();
+}
+
+void Session::onExperimentChanged()
+{
+    gGui->onExperimentChanged();
+    onDataChanged();
+}
+
+void Session::onPeaksChanged()
+{
+    gGui->onPeaksChanged();
 }

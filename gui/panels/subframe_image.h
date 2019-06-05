@@ -26,6 +26,7 @@
 class ImageWidget : public QcrWidget {
 public:
     ImageWidget();
+    void dataChanged();
     DetectorView* imageView;
 private:
     QcrSpinBox* max;

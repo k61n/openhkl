@@ -13,6 +13,8 @@
 //  ***********************************************************************************************
 
 #include "gui/models/peaklists.h"
+#include "gui/models/session.h"
+#include <QCR/engine/logger.h>
 
 FilteredPeaksModel::FilteredPeaksModel(const QString& name, nsx::PeakList list)
     : name_ {name}, filteredPeaks_ {list}
@@ -38,6 +40,18 @@ FilteredPeaksModel* PeakListsModel::getPeaksAt(int i)
 void PeakListsModel::addFilteredPeaks(const QString& name, nsx::PeakList peaks)
 {
     filtered_.append(new FilteredPeaksModel(name, peaks));
+    gSession->onPeaksChanged();
+}
+
+void PeakListsModel::removeFilteredPeaks(int i)
+{
+    if (i<0 || i>=filtered_.size()) {
+        gLogger->log("[ERROR] could not remove a filtered peak list");
+        return;
+    }
+    gLogger->log("[INFO] Removing filtered peak list " + filtered_.at(i)->getName());
+    filtered_.removeAt(i);
+    gSession->onPeaksChanged();
 }
 
 //  ***********************************************************************************************
@@ -85,6 +99,17 @@ QStringList PeaksModel::allFilteredListNames()
             filteredListNames.append(prefix+"/" +model->getPeaksAt(i)->getName());
     }
     return filteredListNames;
+}
+
+void PeaksModel::removePeakListsModel(int i)
+{
+    if (i<0 || i>=peakLists_.size()) {
+        gLogger->log("[ERROR]  could not remove peaklistsmodel");
+        return;
+    }
+    gLogger->log("[INFO] removing peaklistsmodel " + peakLists_.at(i)->getName());
+    peakLists_.removeAt(i);
+    gSession->onPeaksChanged();
 }
 
 

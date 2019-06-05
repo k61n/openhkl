@@ -15,7 +15,9 @@
 
 #include "gui/panels/subframe_image.h"
 #include "gui/mainwin.h"
+#include "gui/models/session.h"
 #include "gui/view/toggles.h"
+#include "gui/graphics/detectorscene.h"
 #include <QGraphicsView>
 #include <QHBoxLayout>
 #include <QScrollBar>
@@ -62,9 +64,38 @@ ImageWidget::ImageWidget() : QcrWidget {"Image"}
     slide->setTickPosition(QSlider::NoTicks);
     verticalLayout->addWidget(slide);
     rightLayout->addWidget(intensityLayout);
-    mode = new QcrComboBox("modus", new QcrCell<int>(0), {"nothing"});
+    mode = new QcrComboBox("modus", new QcrCell<int>(0), {"selection", "zoom", "line plot",
+                           "horizontal slice", "vertical slice", "rectangular mask",
+                           "ellipsoidal mask"});
     rightLayout->addWidget(mode);
     overallLayout->addLayout(rightLayout);
+
+    connect(slide, SIGNAL(valueChanged(int)), imageView->getScene(), SLOT(setMaxIntensity(int)));
+    connect(slide, &QSlider::valueChanged, [=](int i){ max->setCellValue(i); });
+    max->setHook([=](int i){ slide->setValue(i); });
+    connect(scrollbar, SIGNAL(valueChanged(int)),
+            imageView->getScene(), SLOT(slotChangeSelectedFrame(int)));
+    connect(scrollbar, &QScrollBar::valueChanged, [=](int i){ frame->setCellValue(i); });
+    frame->setHook([=](int i){ scrollbar->setValue(i); });
+    mode->setHook([=](int i){ imageView->getScene()->changeInteractionMode(i); });
+}
+
+void ImageWidget::dataChanged()
+{
+    if (gSession->selectedExperimentNum() >= 0) {
+        nsx::sptrDataSet dataset = gSession->selectedExperiment()->data()->selectedData();
+        if (dataset) {
+            int frames = dataset->nFrames();
+            scrollbar->setMaximum(frames);
+            scrollbar->setMinimum(0);
+            scrollbar->setSingleStep(1);
+            frame->setMaximum(frames);
+            frame->setMinimum(0);
+            frame->setSingleStep(1);
+            imageView->getScene()->slotChangeSelectedData(dataset, 0);
+            slide->setValue(max->getValue());
+        }
+    }
 }
 
 //  ***********************************************************************************************

@@ -35,6 +35,9 @@ public:
     TabInstrument* instrument;
 
     void setCurrent(int);
+    void dataChanged();
+    void experimentChanged();
+    void peaksChanged();
 };
 
 #endif // NSXGUI_GUI_PANELS_SUBFRAME_SETUP_H

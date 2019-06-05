@@ -26,7 +26,7 @@ class Session {
 public:
     Session();
     ExperimentModel* selectedExperiment();
-    ExperimentModel* selectExperiment(int);
+    void selectExperiment(int);
     int selectedExperimentNum() { return selected; }
     ExperimentModel* experimentAt(int i) { return experiments.at(i); }
     int numExperiments() { return experiments.size(); }
@@ -37,6 +37,10 @@ public:
     void loadData();
     void loadRawData();
     void removeData();
+
+    void onDataChanged();
+    void onExperimentChanged();
+    void onPeaksChanged();
 
 private:
     QList<ExperimentModel*> experiments;

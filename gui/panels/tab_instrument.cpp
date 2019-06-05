@@ -24,6 +24,12 @@ TabInstrument::TabInstrument() : QcrTabWidget {"instrument"}
     addTab((detector = new SubtabDetector), "Detector");
     addTab((monoSource = new SubtabMonochromatic), "Monochromatic source");
     addTab((sample = new SubtabSample), "Sample");
+
+    setRemake([=](){
+        detector->remake();
+        monoSource->remake();
+        sample->remake();
+    });
 }
 
 void TabInstrument::setCurrent(int index)

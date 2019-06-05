@@ -30,24 +30,26 @@ SubframeSetup::SubframeSetup() : QcrTabWidget {"property tabs"}
         setTabEnabled(i, true);
 
     show();
-
-    //    setHook([=](const int val){
-    //            ASSERT(val==this->currentIndex());
-    //            switch (val) {
-    //            case 1:   gSession->params.editableRange = EditableRange::BASELINE; break;
-    //            case 2:   gSession->params.editableRange = EditableRange::PEAKS;    break;
-    //            default:  gSession->params.editableRange = EditableRange::NONE;
-    //            }
-    //        });
-    //    setRemake([=](){
-    //            setTabEnabled(1, gSession->dataset.countFiles());
-    //            setTabEnabled(2, gSession->dataset.countFiles());
-    //            if (!currentWidget()->isEnabled())
-    //                setCellValue(0);
-    //        });
 }
 
 void SubframeSetup::setCurrent(int index)
 {
     QTabWidget::setCurrentIndex(index);
+}
+
+void SubframeSetup::dataChanged()
+{
+    data->remake();
+}
+
+void SubframeSetup::experimentChanged()
+{
+    instrument->remake();
+    unitcells->remake();
+}
+
+void SubframeSetup::peaksChanged()
+{
+    peaks->remake();
+    library->remake();
 }

@@ -26,7 +26,7 @@ void ExperimentData::addData(nsx::sptrDataSet data)
     data_.append(data);
     if ((index_ < 0) || (index_ >= data_.size()))
         index_ = 0;
-    gRoot->remakeAll();
+    gSession->onDataChanged();
 }
 
 void ExperimentData::removeSelectedData()
@@ -35,13 +35,14 @@ void ExperimentData::removeSelectedData()
         data_.removeAt(index_);
     if (index_ >= data_.size())
         index_--;
-    gRoot->remakeAll();
+    gSession->onDataChanged();
 }
 
 void ExperimentData::selectData(int i)
 {
     if (i >= 0 && i < data_.size())
         index_ = i;
+    gSession->onDataChanged();
 }
 
 nsx::sptrDataSet ExperimentData::selectedData()
