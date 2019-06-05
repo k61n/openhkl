@@ -67,7 +67,6 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "") {
     CHECK(found_peaks.size() >= 800);
 
     // at this stage we have the peaks, now we index
-    nsx::IndexerParameters params;
     nsx::AutoIndexer indexer(progressHandler);
 
     nsx::PeakFilter peak_filter;
@@ -77,22 +76,21 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "") {
 
     CHECK(selected_peaks.size() >= 600);
 
-    auto numIndexedPeaks = [&]() -> unsigned int {
-        unsigned int indexed_peaks = 0;
-
-        for (auto&& peak : selected_peaks) {
-            indexer.addPeak(peak);
-            ++indexed_peaks;
-        }
-        return indexed_peaks;
-    };
-
-    unsigned int indexed_peaks = numIndexedPeaks();
-
+    unsigned int indexed_peaks = 0;
+    for (auto&& peak : selected_peaks) {
+        indexer.addPeak(peak);
+        ++indexed_peaks;
+    }
     CHECK(indexed_peaks > 600);
+
+    nsx::IndexerParameters params;
     CHECK_NOTHROW(indexer.autoIndex(params));
 
-    CHECK(indexer.solutions().empty() == false);
+    if (indexer.solutions().empty()) {
+        std::cerr << "AutoIndexer::autoIndex found no solution\n";
+        CHECK(false);
+        return;
+    }
 
     auto soln = indexer.solutions().front();
 

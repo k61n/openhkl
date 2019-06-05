@@ -22,8 +22,7 @@
 
 namespace nsx {
 
-//! \class IndexerParameters
-//! \brief Struct to store parameters used by autoindexer.
+//! Struct to store parameters used by autoindexer.
 struct IndexerParameters {
     //! Expected maximum dimension of the unit cell, in angstroms
     double maxdim = 200.0;
@@ -53,8 +52,7 @@ struct IndexerParameters {
     double solutionCutoff = 10.0;
 };
 
-//! \class AutoIndexer
-//! \brief Class to automatically index a set of peaks
+//! Class to automatically index a set of peaks
 class AutoIndexer {
 
 public:
@@ -64,15 +62,13 @@ public:
 
     //! Performs the auto-indexing
     //! @param params the parameter of the auto-indexing algorithm
-    //! @return true if auto-indexing succeeded, false if failed
+    //! @return true if auto-indexing succeeded, false if failed // TODO fix this lie
     void autoIndex(const IndexerParameters& params);
 
     //! Add a peak for the auto-indexing procedure
     void addPeak(sptrPeak3D peak);
 
-    //! Returns the best solutions found for the auto-indexing
-    //! @return a list of the best solutions ordered by percentage of successfully
-    //! auto-indexed peaks
+    //! Returns list of the best solutions ordered by percentage of successfully indexed peaks
     const std::vector<RankedSolution>& solutions() const;
 
 private:
