@@ -32,9 +32,11 @@ public:
 private:
     QcrSpinBox* max;
     QcrSpinBox* frame;
+    QFrame* frameLayout;
     QcrComboBox* mode;
     QSlider* slide;
     QScrollBar* scrollbar;
+    QFrame* intensityLayout;
 };
 
 class SubframeImage : public QcrDockWidget {

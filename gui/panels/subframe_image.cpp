@@ -32,7 +32,7 @@ ImageWidget::ImageWidget() : QcrWidget {"Image"}
     QHBoxLayout* overallLayout = new QHBoxLayout(this);
     QVBoxLayout* leftLayout = new QVBoxLayout;
     QVBoxLayout* rightLayout = new QVBoxLayout;
-    QFrame* frameLayout = new QFrame(this);
+    frameLayout = new QFrame(this);
     QHBoxLayout* leftLowerLayout = new QHBoxLayout(frameLayout);
     imageView = new DetectorView;
     leftLayout->addWidget(imageView);
@@ -50,7 +50,7 @@ ImageWidget::ImageWidget() : QcrWidget {"Image"}
     leftLowerLayout->addWidget(frame);
     leftLayout->addWidget(frameLayout);
     overallLayout->addLayout(leftLayout);
-    QFrame* intensityLayout = new QFrame(this);
+    intensityLayout = new QFrame(this);
     QVBoxLayout* verticalLayout = new QVBoxLayout(intensityLayout);
     max = new QcrSpinBox("maxSpin", new QcrCell<int>(10), 3);
     verticalLayout->addWidget(max);
@@ -64,11 +64,14 @@ ImageWidget::ImageWidget() : QcrWidget {"Image"}
     slide->setTickPosition(QSlider::NoTicks);
     verticalLayout->addWidget(slide);
     rightLayout->addWidget(intensityLayout);
-    mode = new QcrComboBox("modus", new QcrCell<int>(0), {"selection", "zoom", "line plot",
+    mode = new QcrComboBox("adhoc_modus", new QcrCell<int>(1), {"selection", "zoom", "line plot",
                            "horizontal slice", "vertical slice", "rectangular mask",
                            "ellipsoidal mask"});
     rightLayout->addWidget(mode);
     overallLayout->addLayout(rightLayout);
+    mode->setEnabled(false);
+    intensityLayout->setEnabled(false);
+    frameLayout->setEnabled(false);
 
     connect(slide, SIGNAL(valueChanged(int)), imageView->getScene(), SLOT(setMaxIntensity(int)));
     connect(slide, &QSlider::valueChanged, [=](int i){ max->setCellValue(i); });
@@ -82,9 +85,16 @@ ImageWidget::ImageWidget() : QcrWidget {"Image"}
 
 void ImageWidget::dataChanged()
 {
+    mode->setEnabled(false);
+    intensityLayout->setEnabled(false);
+    frameLayout->setEnabled(false);
+    imageView->getScene()->resetScene();
     if (gSession->selectedExperimentNum() >= 0) {
         nsx::sptrDataSet dataset = gSession->selectedExperiment()->data()->selectedData();
         if (dataset) {
+            mode->setEnabled(true);
+            intensityLayout->setEnabled(true);
+            frameLayout->setEnabled(true);
             int frames = dataset->nFrames();
             scrollbar->setMaximum(frames);
             scrollbar->setMinimum(0);

@@ -71,8 +71,8 @@ Menus::Menus(QMenuBar* mbar) : mbar_ {mbar}
 
     options_ = mbar_->addMenu("&Options");
     QMenu* cursorMode = new QMenu {"&Cursor mode"};
-    cursorMode->addActions({&toggles->pixelPosition, &toggles->gammaNu, &toggles->twoTheta,
-                            &toggles->dSpacing, &toggles->millerIndices});
+    cursorMode->addActions({&triggers->pixelPosition, &triggers->gammaNu, &triggers->twoTheta,
+                            &triggers->dSpacing, &triggers->millerIndices});
     QMenu* setView = new QMenu {"&Set View"};
     setView->addActions(
         {&triggers->fromSample, &triggers->behindDetector, &toggles->logarithmicScale});

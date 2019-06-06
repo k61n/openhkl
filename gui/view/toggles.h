@@ -24,12 +24,7 @@ class Toggles {
 public:
     Toggles();
 
-    // Options/cursor modes
-    QcrToggle pixelPosition {"pixel position", "pixel position", false};
-    QcrToggle gammaNu {"gamma nu", "gamma nu", false};
-    QcrToggle twoTheta {"2 theta", "2 theta", false};
-    QcrToggle dSpacing {"d-spacing", "d-spacing", false};
-    QcrToggle millerIndices {"miller indices", "miller indices", false};
+
     // Options/setView
     QcrToggle logarithmicScale {"logarithmic scale", "logarithmic scale", false};
     // Options/peak

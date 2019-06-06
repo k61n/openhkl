@@ -69,6 +69,12 @@ public:
     QcrTrigger reset {"reset", "reset"};
     QcrTrigger fromSample {"from sample", "from sample"};
     QcrTrigger behindDetector {"behind detector", "behind detector"};
+    // Options/cursor modes
+    QcrTrigger pixelPosition {"pixel position", "pixel position"};
+    QcrTrigger gammaNu {"gamma nu", "gamma nu"};
+    QcrTrigger twoTheta {"2 theta", "2 theta"};
+    QcrTrigger dSpacing {"d-spacing", "d-spacing"};
+    QcrTrigger millerIndices {"miller indices", "miller indices"};
     // Export
     QcrTrigger exportPlot {"exportPlot", "export plot"};
 };

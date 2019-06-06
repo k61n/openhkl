@@ -99,4 +99,9 @@ Triggers::Triggers()
     sampleGoniometer.setTriggerHook([]() { new GlobalOffsets(offsetMode::SAMPLE); });
     fromSample.setTriggerHook([](){ gGui->changeView(1); });
     behindDetector.setTriggerHook([](){ gGui->changeView(0); });
+    pixelPosition.setTriggerHook([](){ gGui->cursormode(0); });
+    twoTheta.setTriggerHook([](){ gGui->cursormode(1); });
+    gammaNu.setTriggerHook([](){ gGui->cursormode(2); });
+    dSpacing.setTriggerHook([](){ gGui->cursormode(3); });
+    millerIndices.setTriggerHook([](){ gGui->cursormode(4); });
 }

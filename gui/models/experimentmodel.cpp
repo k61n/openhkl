@@ -75,6 +75,9 @@ InstrumentModel::InstrumentModel(const QString& name, const QString& sourceName)
 
 //  ***********************************************************************************************
 
+UnitCellsModel::UnitCellsModel()
+{}
+
 nsx::sptrUnitCell UnitCellsModel::selectedCell()
 {
     if (unitCells_.empty())
@@ -92,4 +95,5 @@ ExperimentModel::ExperimentModel(nsx::sptrExperiment experiment) : experiment_ {
     data_ = new ExperimentData;
     instrument_ = new InstrumentModel(QString::fromStdString(experiment_->name()), "sourceName");
     peaks_ = new PeaksModel;
+    units_ = new UnitCellsModel;
 }
