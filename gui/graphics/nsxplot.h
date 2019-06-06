@@ -4,7 +4,7 @@
 #include <string>
 #include "3rdparty/QCustomPlot/QCustomPlot.h"
 
-class PlottableGraphicsItem;
+class PlottableItem;
 
 class NSXPlot : public QCustomPlot {
     Q_OBJECT
@@ -25,7 +25,7 @@ public slots:
     //
     void mouseWheel();
     // Update the plot
-    virtual void update(PlottableGraphicsItem* item);
+    virtual void update(PlottableItem* item);
     void titleDoubleClick(QMouseEvent* event, QCPPlotTitle* title);
     // Double click on the legend
     void legendDoubleClick(QCPLegend* legend, QCPAbstractLegendItem* item);

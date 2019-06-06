@@ -67,6 +67,8 @@ public:
     QcrTrigger about {"about", "about"};
     // View
     QcrTrigger reset {"reset", "reset"};
+    QcrTrigger fromSample {"from sample", "from sample"};
+    QcrTrigger behindDetector {"behind detector", "behind detector"};
     // Export
     QcrTrigger exportPlot {"exportPlot", "export plot"};
 };

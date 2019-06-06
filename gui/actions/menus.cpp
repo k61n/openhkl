@@ -75,7 +75,7 @@ Menus::Menus(QMenuBar* mbar) : mbar_ {mbar}
                             &toggles->dSpacing, &toggles->millerIndices});
     QMenu* setView = new QMenu {"&Set View"};
     setView->addActions(
-        {&toggles->fromSample, &toggles->behindDetector, &toggles->logarithmicScale});
+        {&triggers->fromSample, &triggers->behindDetector, &toggles->logarithmicScale});
     QMenu* peakMenu = new QMenu {"&Peak"};
     peakMenu->addActions({&toggles->showLabels, &toggles->showAreas, &toggles->drawPeakArea});
     options_->addMenu(cursorMode);

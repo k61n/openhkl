@@ -17,12 +17,21 @@
 #define NSXGUI_GUI_PANELS_SUBFRAME_PLOT_H
 
 #include <QCR/widgets/views.h>
+#include "gui/graphics/nsxplot.h"
+#include "gui/graphics/plottableitem.h"
+#include <QHBoxLayout>
 
 //! Subframe of the main window, with tabs to control detector, fits, &c
 
 class SubframePlot : public QcrDockWidget {
 public:
     SubframePlot();
+    void plotData(QVector<double>&, QVector<double>&, QVector<double>&);
+    void updatePlot(PlottableItem* item);
+private:
+    NSXPlot* plot;
+    QHBoxLayout* anchor;
+    QcrWidget* centralWidget;
 };
 
 #endif // NSXGUI_GUI_PANELS_SUBFRAME_PLOT_H

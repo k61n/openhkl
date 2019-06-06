@@ -12,7 +12,7 @@ CutLineItem::~CutLineItem() {}
 
 void CutLineItem::plot(NSXPlot* plot)
 {
-    auto p = dynamic_cast<XSimplePlot*>(plot);
+    auto p = dynamic_cast<SimplePlot*>(plot);
     if (!p) {
         return;
     }
@@ -20,7 +20,7 @@ void CutLineItem::plot(NSXPlot* plot)
     p->yAxis->setLabel("Intensity (counts)");
 
     // Set the pointer to the detector scene to the scene that holds the cutter
-    auto detPtr = dynamic_cast<XDetectorScene*>(scene());
+    auto detPtr = dynamic_cast<DetectorScene*>(scene());
     if (!detPtr) {
         return;
     }

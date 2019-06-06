@@ -24,7 +24,7 @@ NSXPlot::NSXPlot(QWidget* parent)
     connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(setmenuRequested(QPoint)));
 }
 
-void NSXPlot::update(PlottableGraphicsItem* item) {Q_UNUSED(item)}
+void NSXPlot::update(PlottableItem* item) {Q_UNUSED(item)}
 
 std::string NSXPlot::getType() const
 {

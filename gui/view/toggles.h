@@ -31,8 +31,6 @@ public:
     QcrToggle dSpacing {"d-spacing", "d-spacing", false};
     QcrToggle millerIndices {"miller indices", "miller indices", false};
     // Options/setView
-    QcrToggle fromSample {"from sample", "from sample", false};
-    QcrToggle behindDetector {"behind detector", "behind detector", false};
     QcrToggle logarithmicScale {"logarithmic scale", "logarithmic scale", false};
     // Options/peak
     QcrToggle showLabels {"show labels", "show labels", false};

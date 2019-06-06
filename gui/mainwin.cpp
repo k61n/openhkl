@@ -53,6 +53,18 @@ MainWin::MainWin()
     addDockWidget(Qt::LeftDockWidgetArea, (dockLogger_ = new SubframeLogger));
 
     readSettings();
+
+    QVector<double> valueX;
+    QVector<double> valueY;
+    QVector<double> error;
+    for (int i=0; i<20; i++) {
+        valueX.append(i);
+        valueY.append((i^2/6)+(i/4));
+        error.append(0);
+    }
+
+    dockPlot_->plotData(valueX, valueY, error);
+
     show();
 }
 

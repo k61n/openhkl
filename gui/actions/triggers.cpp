@@ -97,4 +97,6 @@ Triggers::Triggers()
     refine.setTriggerHook([]() { new Refiner; });
     goniometer.setTriggerHook([]() { new GlobalOffsets(offsetMode::DETECTOR); });
     sampleGoniometer.setTriggerHook([]() { new GlobalOffsets(offsetMode::SAMPLE); });
+    fromSample.setTriggerHook([](){ gGui->changeView(1); });
+    behindDetector.setTriggerHook([](){ gGui->changeView(0); });
 }

@@ -4,14 +4,14 @@
 
 #include <QGraphicsView>
 
-class XDetectorScene;
+class DetectorScene;
 
 class DetectorView : public QGraphicsView {
     Q_OBJECT
 public:
     explicit DetectorView(QWidget* parent = 0);
     void resizeEvent(QResizeEvent* event);
-    XDetectorScene* getScene();
+    DetectorScene* getScene();
     void keyPressEvent(QKeyEvent* event);
 signals:
 public slots:
@@ -20,7 +20,7 @@ public slots:
 
 private:
     void copyViewToClipboard();
-    XDetectorScene* _scene;
+    DetectorScene* _scene;
 };
 
 #endif //GUI_GRAPHICS_DETECTORVIEW_H

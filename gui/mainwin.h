@@ -37,6 +37,7 @@ public:
     void onDataChanged();
     void onExperimentChanged();
     void onPeaksChanged();
+    void changeView(int option) { dockImage_->centralWidget->changeView(option); }
 
 private:
     void refresh();

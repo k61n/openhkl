@@ -30,7 +30,7 @@ typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rowM
 
 //! Master Scene containing the pixmap of the detector counts
 //! and overlayed graphics items (peaks, data cutters, masks ...)
-class XDetectorScene : public QGraphicsScene {
+class DetectorScene : public QGraphicsScene {
     Q_OBJECT
 public:
     enum MODE {
@@ -52,7 +52,7 @@ public:
         MILLER_INDICES = 4
     };
 
-    explicit XDetectorScene(QObject* parent = 0);
+    explicit DetectorScene(QObject* parent = 0);
 
     nsx::sptrDataSet getData() { return _currentData; }
     const rowMatrix& getCurrentFrame() const { return _currentFrame; }

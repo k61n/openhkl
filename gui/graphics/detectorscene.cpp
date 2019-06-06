@@ -36,7 +36,7 @@
 #include "gui/models/session.h"
 #include <QCR/engine/logger.h>
 
-XDetectorScene::XDetectorScene(QObject* parent)
+DetectorScene::DetectorScene(QObject* parent)
     : QGraphicsScene(parent)
     , _currentData(nullptr)
     , _currentFrameIndex(-1)
@@ -61,7 +61,7 @@ XDetectorScene::XDetectorScene(QObject* parent)
     , _selected_peak(nullptr)
 {}
 
-void XDetectorScene::clearPeakGraphicsItems()
+void DetectorScene::clearPeakGraphicsItems()
 {
     if (!_currentData) {
         return;
@@ -75,7 +75,7 @@ void XDetectorScene::clearPeakGraphicsItems()
     _peak_graphics_items.clear();
 }
 
-void XDetectorScene::resetPeakGraphicsItems()
+void DetectorScene::resetPeakGraphicsItems()
 {
     if (!_currentData) {
         return;
@@ -158,7 +158,7 @@ void XDetectorScene::resetPeakGraphicsItems()
     }
 }
 
-void XDetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
+void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
 {
     if (data != _currentData) {
         _currentData = data;
@@ -181,7 +181,7 @@ void XDetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
     slotChangeSelectedFrame(frame);
 }
 
-void XDetectorScene::slotChangeSelectedPeak(nsx::sptrPeak3D peak)
+void DetectorScene::slotChangeSelectedPeak(nsx::sptrPeak3D peak)
 {
     if (peak == _selected_peak) {
         return;
@@ -201,7 +201,7 @@ void XDetectorScene::slotChangeSelectedPeak(nsx::sptrPeak3D peak)
     update();
 }
 
-void XDetectorScene::slotChangeSelectedFrame(int frame)
+void DetectorScene::slotChangeSelectedFrame(int frame)
 {
     if (!_currentData) {
         return;
@@ -224,7 +224,7 @@ void XDetectorScene::slotChangeSelectedFrame(int frame)
     updateMasks();
 }
 
-void XDetectorScene::setMaxIntensity(int intensity)
+void DetectorScene::setMaxIntensity(int intensity)
 {
     if (_currentIntensity == intensity) {
         return;
@@ -241,7 +241,7 @@ void XDetectorScene::setMaxIntensity(int intensity)
     loadCurrentImage();
 }
 
-void XDetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     // If no data is loaded, do nothing
     if (!_currentData) {
@@ -292,7 +292,7 @@ void XDetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     }
 }
 
-void XDetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
+void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     CutterItem* cutter(nullptr);
     MaskItem* mask(nullptr);
@@ -390,7 +390,7 @@ void XDetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
     }
 }
 
-void XDetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     // If no data is loaded, do nothing
     if (!_currentData) {
@@ -507,7 +507,7 @@ void XDetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     }
 }
 
-void XDetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
+void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
 {
     // If no data, returns
     if (!_currentData) {
@@ -530,7 +530,7 @@ void XDetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
     }
 }
 
-void XDetectorScene::keyPressEvent(QKeyEvent* event)
+void DetectorScene::keyPressEvent(QKeyEvent* event)
 {
     // If no data, returns
     if (!_currentData)
@@ -595,7 +595,7 @@ void XDetectorScene::keyPressEvent(QKeyEvent* event)
     }
 }
 
-void XDetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
+void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 {
     if (!_currentData) {
         return;
@@ -675,7 +675,7 @@ void XDetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     QToolTip::showText(event->screenPos(), ttip);
 }
 
-void XDetectorScene::loadCurrentImage()
+void DetectorScene::loadCurrentImage()
 {
     if (!_currentData) {
         return;
@@ -753,7 +753,7 @@ void XDetectorScene::loadCurrentImage()
     }
 }
 
-void XDetectorScene::showPeakLabels(bool flag)
+void DetectorScene::showPeakLabels(bool flag)
 {
     for (auto p : _peak_graphics_items) {
         p.second->showLabel(flag);
@@ -761,7 +761,7 @@ void XDetectorScene::showPeakLabels(bool flag)
     update();
 }
 
-void XDetectorScene::showPeakAreas(bool flag)
+void DetectorScene::showPeakAreas(bool flag)
 {
     for (auto p : _peak_graphics_items) {
         p.second->showArea(flag);
@@ -769,7 +769,7 @@ void XDetectorScene::showPeakAreas(bool flag)
     update();
 }
 
-void XDetectorScene::drawIntegrationRegion(bool flag)
+void DetectorScene::drawIntegrationRegion(bool flag)
 {
     // clear the background if necessary
     if (_integrationRegion && flag == false) {
@@ -783,7 +783,7 @@ void XDetectorScene::drawIntegrationRegion(bool flag)
     loadCurrentImage();
 }
 
-void XDetectorScene::resetScene()
+void DetectorScene::resetScene()
 {
     clearPeakGraphicsItems();
     clear();
@@ -798,7 +798,7 @@ void XDetectorScene::resetScene()
 }
 
 std::vector<std::pair<QGraphicsItem*, nsx::IMask*>>::iterator
-XDetectorScene::findMask(QGraphicsItem* item)
+DetectorScene::findMask(QGraphicsItem* item)
 {
     return std::find_if(
         _masks.begin(), _masks.end(),

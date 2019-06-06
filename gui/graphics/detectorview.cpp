@@ -9,14 +9,14 @@
 #include "core/instrument/Diffractometer.h"
 
 DetectorView::DetectorView(QWidget* parent)
-    : QGraphicsView(parent), _scene(new XDetectorScene(this))
+    : QGraphicsView(parent), _scene(new DetectorScene(this))
 {
     setRenderHints(
         QPainter::Antialiasing | QPainter::SmoothPixmapTransform
         | QPainter::HighQualityAntialiasing);
     setScene(_scene);
     // Make sure that first views are rescaled, especially first created one
-    connect(_scene, &XDetectorScene::dataChanged, this, [&]() { fitInView(_scene->sceneRect()); });
+    connect(_scene, &DetectorScene::dataChanged, this, [&]() { fitInView(_scene->sceneRect()); });
     setMouseTracking(true);
     viewport()->setMouseTracking(true);
     setInteractive(true);
@@ -32,7 +32,7 @@ void DetectorView::resizeEvent(QResizeEvent* event)
     fitInView(_scene->sceneRect());
 }
 
-XDetectorScene* DetectorView::getScene()
+DetectorScene* DetectorView::getScene()
 {
     return _scene;
 }

@@ -16,14 +16,53 @@
 #include "gui/panels/subframe_plot.h"
 #include "gui/mainwin.h"
 #include "gui/view/toggles.h"
-#include <QTreeView>
+#include "gui/graphics/plotfactory.h"
 
 //-------------------------------------------------------------------------------------------------
 //! class SubframePlot
 
 SubframePlot::SubframePlot() : QcrDockWidget {"Plotter"}
 {
-    setWidget(new QTreeView);
-    connect(
-        this, SIGNAL(visibilityChanged(bool)), &gGui->toggles->viewPlotter, SLOT(setChecked(bool)));
+    centralWidget = new QcrWidget("adhoc_plotWidget");
+    anchor = new QHBoxLayout(centralWidget);
+    plot = new NSXPlot(this);
+    anchor->addWidget(plot);
+    setWidget(centralWidget);
+    connect(this, SIGNAL(visibilityChanged(bool)),
+            &gGui->toggles->viewPlotter, SLOT(setChecked(bool)));
+}
+
+void SubframePlot::plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e)
+{
+    if (plot->getType().compare("simple") != 0) {
+        anchor->removeWidget(plot);
+        delete plot;
+        PlotFactory* factory = PlotFactory::Instance();
+        plot = factory->create("simple", centralWidget);
+        plot->setObjectName("1D plotter");
+        plot->setFocusPolicy(Qt::StrongFocus);
+        anchor->addWidget(plot);
+    }
+    plot->graph(0)->setDataValueError(x, y, e);
+    plot->rescaleAxes();
+    plot->replot();
+}
+
+void SubframePlot::updatePlot(PlottableItem *item)
+{
+    if (!item)
+        return;
+
+    if (!item->isPlottable(plot)) {
+        anchor->removeWidget(plot);
+        delete plot;
+        PlotFactory* factory = PlotFactory::Instance();
+        plot = factory->create(item->getPlotType(), centralWidget);
+        plot->setObjectName("1D plotter");
+        plot->setFocusPolicy(Qt::StrongFocus);
+        anchor->addWidget(plot);
+    }
+
+    item->plot(plot);
+    //update();
 }

@@ -131,7 +131,7 @@ void PeakItem::showArea(bool flag)
 void PeakItem::plot(NSXPlot* plot)
 {
 
-    auto p = dynamic_cast<XPeakPlot*>(plot);
+    auto p = dynamic_cast<PeakPlot*>(plot);
     if (!p) {
         return;
     }
