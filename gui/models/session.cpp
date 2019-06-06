@@ -128,6 +128,21 @@ void Session::loadData()
     gRoot->remakeAll();
 }
 
+void Session::removeData()
+{
+    if (selected == -1) {
+        gLogger->log("[ERROR] No experiment to remove data from");
+        return;
+    }
+
+    if (!selectedExperiment()->data()->selectedData()) {
+        gLogger->log("[ERROR] No data to remove");
+        return;
+    }
+
+    selectedExperiment()->data()->removeSelectedData();
+}
+
 void Session::loadRawData()
 {
 //    QStringList qfilenames;

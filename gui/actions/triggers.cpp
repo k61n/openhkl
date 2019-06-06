@@ -73,6 +73,7 @@ Triggers::Triggers()
         properties->setCurrent(i);
     });
     loadData.setTriggerHook([]() { gSession->loadData(); });
+    removeData.setTriggerHook([](){ gSession->removeData(); });
     importRaw.setTriggerHook([]() { gSession->loadRawData(); });
     addExperiment.setTriggerHook([]() { gSession->createExperiment(); });
 
