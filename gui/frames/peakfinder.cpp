@@ -18,6 +18,7 @@
 #include "gui/models/peakstable.h"
 #include "gui/models/session.h"
 #include "gui/dialogs/listnamedialog.h"
+#include "gui/graphics/detectorscene.h"
 #include <QCR/engine/mixin.h>
 #include "gui/models/meta.h"
 #include "gui/frames/progressview.h"
@@ -35,6 +36,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "core/integration/PixelSumIntegrator.h"
+#include "core/import/IDataReader.h"
 
 class ItemDelegate : public QItemDelegate {
 public:
@@ -94,7 +96,9 @@ nsx::PeakList FoundPeaks::selectedPeaks()
 
 //  ***********************************************************************************************
 
-PeakFinder::PeakFinder() : QcrFrame {"peakFinder"}
+PeakFinder::PeakFinder()
+    : QcrFrame {"peakFinder"}
+    , pixmap(nullptr)
 {
 
     if (gSession->selectedExperimentNum() < 0) {
@@ -173,7 +177,7 @@ PeakFinder::PeakFinder() : QcrFrame {"peakFinder"}
     leftTabLayout->addItem(
                 new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
     tabLayout->addLayout(leftTabLayout);
-    preview = new QGraphicsView(this);
+    preview = new DetectorView(this);
     tabLayout->addWidget(preview);
     tab->addTab(settings, "Settings");
     whole->addWidget(tab);
@@ -202,6 +206,8 @@ PeakFinder::PeakFinder() : QcrFrame {"peakFinder"}
     framesEnd->setCellValue(datalist.at(0)->nFrames());
     framesEnd->setMaximum(datalist.at(0)->nFrames());
     framesBegin->setMaximum(datalist.at(0)->nFrames());
+    preview->getScene()->slotChangeSelectedData(datalist.at(0), 0);
+    preview->getScene()->setMaxIntensity(3000);
 
     convolutionKernel->clear();
     nsx::ConvolverFactory convolver_factory;
@@ -210,11 +216,27 @@ PeakFinder::PeakFinder() : QcrFrame {"peakFinder"}
     }
     convolutionKernel->setCurrentText("annular");
 
-    QGraphicsScene* scene = new QGraphicsScene();
-    preview->setScene(scene);
     // flip the image vertically to conform with DetectorScene
     preview->scale(1, -1);
     updateConvolutionParameters();
+    minSize->setHook([=](int i){ minSize->setCellValue(std::min(i, maxSize->value())); });
+    maxSize->setHook([=](int i){ maxSize->setCellValue(std::max(i, minSize->value())); });
+    peakArea->setHook([=](double d){
+        peakArea->setCellValue(std::min(d, backgroundLowerLimit->value()));
+    });
+    backgroundLowerLimit->setHook([=](double d){
+        d = std::max(d, peakArea->value());
+        backgroundLowerLimit->setCellValue(std::min(d, backgroundUpperLimit->value()));
+    });
+    backgroundUpperLimit->setHook([=](double d){
+        backgroundUpperLimit->setCellValue(std::max(d, backgroundLowerLimit->value()));
+    });
+    applyThreshold->setHook([=](bool){ refreshPreview(); });
+    frame->setHook([=](int){ refreshPreview(); });
+    connect(convolutionKernel, &QComboBox::currentTextChanged, [=](QString){
+        updateConvolutionParameters();
+        refreshPreview();
+    });
 
     show();
 }
@@ -264,6 +286,7 @@ void PeakFinder::run()
     std::string convolverType = convolutionKernel->currentText().toStdString();
     nsx::ConvolverFactory factory;
     nsx::Convolver* convolver = factory.create(convolverType, {});
+    convolver->setParameters(convolutionParameters());
     finder.setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
     nsx::PeakList peaks;
     try {
@@ -339,3 +362,41 @@ void PeakFinder::accept()
 
     close();
 }
+
+void PeakFinder::refreshPreview()
+{
+    nsx::sptrDataSet dataset = data->currentData().value<nsx::sptrDataSet>();
+    int selected = frame->value();
+    int nrows = dataset->nRows();
+    int ncols = dataset->nCols();
+    std::string convolvertype = convolutionKernel->currentText().toStdString();
+    std::map<std::string, double> convolverParams = convolutionParameters();
+    Eigen::MatrixXd convolvedFrame = nsx::convolvedFrame(dataset->reader()->data(selected),
+                                                         convolvertype, convolverParams);
+    if (applyThreshold->isChecked()) {
+        double thresholdVal = threshold->value();
+        for (int i=0; i<nrows; ++i) {
+            for (int j=0; j<ncols; ++j) {
+                convolvedFrame(i, j) = convolvedFrame(i, j) < thresholdVal ? 0 : 1;
+            }
+        }
+    }
+    double minVal = convolvedFrame.minCoeff();
+    double maxVal = convolvedFrame.maxCoeff();
+    if (maxVal-minVal <= 0.0)
+        maxVal = minVal+1.0;
+    convolvedFrame.array() -= minVal;
+    convolvedFrame.array() /= maxVal-minVal;
+    QRect rect(0, 0, ncols, nrows);
+    ColorMap* m = new ColorMap;
+    QImage image = m->matToImage(convolvedFrame.cast<double>(), rect, maxVal);
+    if (!pixmap) {
+        pixmap = preview->scene()->addPixmap(QPixmap::fromImage(image));
+    } else {
+        pixmap->setPixmap(QPixmap::fromImage(image));
+    }
+    preview->fitInView(preview->scene()->sceneRect());
+}
+
+
+

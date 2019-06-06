@@ -17,10 +17,10 @@
 #define NSXGUI_GUI_FRAMES_PEAKFINDER_H
 
 #include "gui/models/peakstable.h"
+#include "gui/graphics/detectorview.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 #include <QDialogButtonBox>
-#include <QGraphicsView>
 #include <QTableWidget>
 
 class FoundPeaks : public QcrWidget {
@@ -56,10 +56,12 @@ private:
     QcrDoubleSpinBox* peakArea;
     QcrDoubleSpinBox* backgroundLowerLimit;
     QcrDoubleSpinBox* backgroundUpperLimit;
-    QGraphicsView* preview;
+    DetectorView* preview;
     QDialogButtonBox* buttons;
     QcrTabWidget* tab;
+    QGraphicsPixmapItem* pixmap;
 
+    void refreshPreview();
     void accept();
     void doActions(QAbstractButton*);
 };
