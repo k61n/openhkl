@@ -34,6 +34,7 @@
 #include "gui/graphics/plottableitem.h"
 #include "gui/graphics/peakitem.h"
 #include "gui/models/session.h"
+#include "gui/mainwin.h"
 #include <QCR/engine/logger.h>
 
 DetectorScene::DetectorScene(QObject* parent)
@@ -272,7 +273,7 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
         auto p = dynamic_cast<PlottableItem*>(_lastClickedGI);
         if (p != nullptr) {
-            emit updatePlot(p);
+            gGui->updatePlot(p);
         }
     }
     // No button was pressed, just a mouse move
@@ -286,7 +287,7 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
         }
         auto p = dynamic_cast<PlottableItem*>(gItem);
         if (p) {
-            emit updatePlot(p);
+            gGui->updatePlot(p);
             QGraphicsScene::mouseMoveEvent(event);
         }
     }
@@ -475,10 +476,10 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     _lastClickedGI = nullptr;
                     removeItem(p);
                 } else {
-                    emit updatePlot(p);
+                    gGui->updatePlot(p);
                 }
             } else if (auto p = dynamic_cast<PlottableItem*>(_lastClickedGI)) {
-                emit updatePlot(p);
+                gGui->updatePlot(p);
             } else if (auto p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
                 // add a new mask
                 auto it = findMask(p);
@@ -526,7 +527,7 @@ void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
     auto q = dynamic_cast<CutterItem*>(item);
     if (q != nullptr) {
         q->wheelEvent(event);
-        emit updatePlot(q);
+        gGui->updatePlot(q);
     }
 }
 
@@ -749,7 +750,7 @@ void DetectorScene::loadCurrentImage()
     emit dataChanged();
 
     if (auto p = dynamic_cast<PlottableItem*>(_lastClickedGI)) {
-        emit updatePlot(p);
+        gGui->updatePlot(p);
     }
 }
 

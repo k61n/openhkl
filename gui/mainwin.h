@@ -38,6 +38,7 @@ public:
     void onExperimentChanged();
     void onPeaksChanged();
     void changeView(int option) { dockImage_->centralWidget->changeView(option); }
+    void updatePlot(PlottableItem* p) { dockPlot_->updatePlot(p); }
 
 private:
     void refresh();

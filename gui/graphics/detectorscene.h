@@ -90,7 +90,6 @@ public slots:
 signals:
     //! Signal emitted for all changes of the image
     void dataChanged();
-    void updatePlot(PlottableItem* cutter);
     void signalChangeSelectedData(nsx::sptrDataSet data);
     void signalChangeSelectedFrame(int selected_frame);
     void signalChangeSelectedPeak(nsx::sptrPeak3D peak);
