@@ -16,7 +16,7 @@
 #include "gui/panels/subframe_image.h"
 #include "gui/mainwin.h"
 #include "gui/models/session.h"
-#include "gui/view/toggles.h"
+#include "gui/actions/triggers.h"
 #include "gui/graphics/detectorscene.h"
 #include <QGraphicsView>
 #include <QHBoxLayout>
@@ -124,5 +124,5 @@ SubframeImage::SubframeImage() : QcrDockWidget {"Image"}
 {
     setWidget((centralWidget = new ImageWidget));
     connect(
-        this, SIGNAL(visibilityChanged(bool)), &gGui->toggles->viewImage, SLOT(setChecked(bool)));
+        this, SIGNAL(visibilityChanged(bool)), &gGui->triggers->viewImage, SLOT(setChecked(bool)));
 }

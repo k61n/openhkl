@@ -15,7 +15,7 @@
 
 #include "gui/panels/subframe_plot.h"
 #include "gui/mainwin.h"
-#include "gui/view/toggles.h"
+#include "gui/actions/triggers.h"
 #include "gui/graphics/plotfactory.h"
 
 //-------------------------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ SubframePlot::SubframePlot() : QcrDockWidget {"Plotter"}
     anchor->addWidget(plot);
     setWidget(centralWidget);
     connect(this, SIGNAL(visibilityChanged(bool)),
-            &gGui->toggles->viewPlotter, SLOT(setChecked(bool)));
+            &gGui->triggers->viewPlotter, SLOT(setChecked(bool)));
 }
 
 void SubframePlot::plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e)

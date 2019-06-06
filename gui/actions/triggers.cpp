@@ -30,10 +30,45 @@
 #include <QDesktopServices>
 #include <QInputDialog>
 
-Triggers::Triggers()
+Actions::Actions()
 {
-    reset.setTriggerHook([]() { gGui->resetViews(); });
+    setupData();
+    setupExperiment();
+    setupPeaks();
+    setupFiles();
+    setupInstrument();
+    setupOptions();
+    setupRest();
+}
+
+void Actions::setupFiles()
+{
+    addExperiment.setTriggerHook([]() { gSession->createExperiment(); });
     quit.setTriggerHook([]() { gGui->deleteLater(); });
+    removeExperiment.setTriggerHook([]() { gSession->removeExperiment(); });
+}
+
+void Actions::setupData()
+{
+    dataProperties.setTriggerHook([]() {
+        SubframeSetup* properties = gGui->dockProperties_->tabsframe;
+        int i = properties->indexOf(properties->data);
+        properties->setCurrent(i);
+    });
+    loadData.setTriggerHook([]() { gSession->loadData(); });
+    removeData.setTriggerHook([](){ gSession->removeData(); });
+    importRaw.setTriggerHook([]() { gSession->loadRawData(); });
+    findPeaks.setTriggerHook([]() { new PeakFinder; });
+    instrumentStates.setTriggerHook([]() { new InstrumentStates; });
+}
+
+void Actions::setupExperiment()
+{
+
+}
+
+void Actions::setupInstrument()
+{
     monochromaticSourceProperties.setTriggerHook([]() {
         SubframeSetup* properties = gGui->dockProperties_->tabsframe;
         TabInstrument* tab = properties->instrument;
@@ -62,24 +97,28 @@ Triggers::Triggers()
         properties->setCurrent(0);
         tab->setCurrent(i);
     });
+    goniometer.setTriggerHook([]() { new GlobalOffsets(offsetMode::DETECTOR); });
+    sampleGoniometer.setTriggerHook([]() { new GlobalOffsets(offsetMode::SAMPLE); });
+}
+
+void Actions::setupOptions()
+{
+    fromSample.setTriggerHook([](){ gGui->changeView(1); });
+    behindDetector.setTriggerHook([](){ gGui->changeView(0); });
+    pixelPosition.setTriggerHook([](){ gGui->cursormode(0); });
+    twoTheta.setTriggerHook([](){ gGui->cursormode(1); });
+    gammaNu.setTriggerHook([](){ gGui->cursormode(2); });
+    dSpacing.setTriggerHook([](){ gGui->cursormode(3); });
+    millerIndices.setTriggerHook([](){ gGui->cursormode(4); });
+}
+
+void Actions::setupPeaks()
+{
     peaksProperties.setTriggerHook([]() {
         SubframeSetup* properties = gGui->dockProperties_->tabsframe;
         int i = properties->indexOf(properties->peaks);
         properties->setCurrent(i);
     });
-    dataProperties.setTriggerHook([]() {
-        SubframeSetup* properties = gGui->dockProperties_->tabsframe;
-        int i = properties->indexOf(properties->data);
-        properties->setCurrent(i);
-    });
-    loadData.setTriggerHook([]() { gSession->loadData(); });
-    removeData.setTriggerHook([](){ gSession->removeData(); });
-    importRaw.setTriggerHook([]() { gSession->loadRawData(); });
-    addExperiment.setTriggerHook([]() { gSession->createExperiment(); });
-
-    removeExperiment.setTriggerHook([]() { gSession->removeExperiment(); });
-    findPeaks.setTriggerHook([]() { new PeakFinder; });
-    instrumentStates.setTriggerHook([]() { new InstrumentStates; });
     autoIndexer.setTriggerHook([]() { new AutoIndexer; });
     filterPeaks.setTriggerHook([]() { new PeakFilter; });
     userDefinedIndexer.setTriggerHook([]() { new UserDefinedUnitCellIndexer; });
@@ -96,13 +135,14 @@ Triggers::Triggers()
     });
     buildShapeLibrary.setTriggerHook([]() { new ShapeLibraryDialog; });
     refine.setTriggerHook([]() { new Refiner; });
-    goniometer.setTriggerHook([]() { new GlobalOffsets(offsetMode::DETECTOR); });
-    sampleGoniometer.setTriggerHook([]() { new GlobalOffsets(offsetMode::SAMPLE); });
-    fromSample.setTriggerHook([](){ gGui->changeView(1); });
-    behindDetector.setTriggerHook([](){ gGui->changeView(0); });
-    pixelPosition.setTriggerHook([](){ gGui->cursormode(0); });
-    twoTheta.setTriggerHook([](){ gGui->cursormode(1); });
-    gammaNu.setTriggerHook([](){ gGui->cursormode(2); });
-    dSpacing.setTriggerHook([](){ gGui->cursormode(3); });
-    millerIndices.setTriggerHook([](){ gGui->cursormode(4); });
+}
+
+void Actions::setupRest()
+{
+    reset.setTriggerHook([]() { gGui->resetViews(); });
+    viewExperiment.setHook([](bool check) { gGui->dockExperiments_->setVisible(check); });
+    viewImage.setHook([](bool check) { gGui->dockImage_->setVisible(check); });
+    viewLogger.setHook([](bool check) { gGui->dockLogger_->setVisible(check); });
+    viewPlotter.setHook([](bool check) { gGui->dockPlot_->setVisible(check); });
+    viewProperties.setHook([](bool check) { gGui->dockProperties_->setVisible(check); });
 }

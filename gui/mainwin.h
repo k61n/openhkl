@@ -30,8 +30,7 @@ public:
     MainWin();
     ~MainWin();
 
-    class Triggers* triggers;
-    class Toggles* toggles;
+    class Actions* triggers;
     class GuiState* state;
 
     void resetViews();
@@ -58,7 +57,6 @@ private:
 
     QByteArray initialState_;
 
-    friend class Triggers;
-    friend class Toggles;
+    friend class Actions;
 };
 #endif // NSXGUI_GUI_MAINWIN_H

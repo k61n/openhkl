@@ -17,7 +17,6 @@
 #include "gui/actions/triggers.h"
 #include "gui/mainwin.h"
 #include "gui/models/session.h"
-#include "gui/view/toggles.h"
 #include <QCR/widgets/tables.h>
 #include <QHBoxLayout>
 #include <QToolButton>
@@ -98,9 +97,8 @@ SubframeExperiments::SubframeExperiments() : QcrDockWidget {"Experiments"}
 {
     view = new ExperimentsView();
     setWidget(view);
-    connect(
-        this, SIGNAL(visibilityChanged(bool)), &gGui->toggles->viewExperiment,
-        SLOT(setChecked(bool)));
+    connect(this, SIGNAL(visibilityChanged(bool)),
+            &gGui->triggers->viewExperiment, SLOT(setChecked(bool)));
 }
 
 void SubframeExperiments::experimentChanged()

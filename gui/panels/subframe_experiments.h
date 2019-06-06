@@ -29,7 +29,7 @@ public:
     enum { COL_CHECK = 1, COL_NAME, COL_INSTRUMENT, COL_ATTRS };
 
 private:
-    void setActivated(int i, bool on) final {}
+    void setActivated(int, bool) final {}
 
     int highlighted() const final;
     void onHighlight(int i) final { gSession->selectExperiment(i); }
@@ -55,6 +55,7 @@ private:
 
 //! Part of the main window that controls the experiments.
 class SubframeExperiments : public QcrDockWidget {
+    Q_OBJECT
 public:
     SubframeExperiments();
     void experimentChanged();

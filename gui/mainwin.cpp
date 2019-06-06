@@ -16,7 +16,6 @@
 #include "gui/mainwin.h"
 #include "gui/actions/menus.h"
 #include "gui/actions/triggers.h"
-#include "gui/view/toggles.h"
 #include <QApplication>
 #include <QProgressBar>
 #include <QSettings>
@@ -36,8 +35,7 @@ MainWin::MainWin()
 {
     gGui = this;
 
-    triggers = new Triggers;
-    toggles = new Toggles;
+    triggers = new Actions;
     menus_ = new Menus(menuBar());
 
     setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);
@@ -60,7 +58,6 @@ MainWin::~MainWin()
 {
     saveSettings();
     delete triggers;
-    delete toggles;
     delete menus_;
     gGui = nullptr;
 }

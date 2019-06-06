@@ -21,9 +21,9 @@
 
 //! Collection of trigger actions, for use as member of MainWin.
 
-class Triggers {
+class Actions {
 public:
-    Triggers();
+    Actions();
     // Files:
     QcrTrigger addExperiment {"add Experiment", "add Experiment"};
     QcrTrigger removeExperiment {"remove Experiment", "remove Experiment"};
@@ -67,16 +67,34 @@ public:
     QcrTrigger about {"about", "about"};
     // View
     QcrTrigger reset {"reset", "reset"};
-    QcrTrigger fromSample {"from sample", "from sample"};
-    QcrTrigger behindDetector {"behind detector", "behind detector"};
-    // Options/cursor modes
+    QcrToggle viewExperiment {"adhoc_viewExperiment", "show experiment", true};
+    QcrToggle viewProperties {"adhoc_viewProperties", "show Properties", true};
+    QcrToggle viewLogger {"adhoc_viewLogger", "show Logger", true};
+    QcrToggle viewImage {"adhoc_viewImage", "show Image", true};
+    QcrToggle viewPlotter {"adhoc_viewPlotter", "show Plot", true};
+    // Options
     QcrTrigger pixelPosition {"pixel position", "pixel position"};
     QcrTrigger gammaNu {"gamma nu", "gamma nu"};
     QcrTrigger twoTheta {"2 theta", "2 theta"};
     QcrTrigger dSpacing {"d-spacing", "d-spacing"};
     QcrTrigger millerIndices {"miller indices", "miller indices"};
+    QcrTrigger fromSample {"from sample", "from sample"};
+    QcrTrigger behindDetector {"behind detector", "behind detector"};
+    QcrToggle showLabels {"show labels", "show labels", false};
+    QcrToggle showAreas {"show areas", "show areas", false};
+    QcrToggle drawPeakArea {"draw peak area", "draw peak integration area", false};
+    QcrToggle logarithmicScale {"logarithmic scale", "logarithmic scale", false};
     // Export
     QcrTrigger exportPlot {"exportPlot", "export plot"};
+
+private:
+    void setupFiles();
+    void setupData();
+    void setupInstrument();
+    void setupPeaks();
+    void setupExperiment();
+    void setupOptions();
+    void setupRest();
 };
 
 #endif // NSXGUI_GUI_ACTIONS_TRIGGERS_H

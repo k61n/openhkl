@@ -14,7 +14,7 @@
 
 #include "gui/panels/subframe_logger.h"
 #include "gui/mainwin.h"
-#include "gui/view/toggles.h"
+#include "gui/actions/triggers.h"
 #include <QCR/engine/logger.h>
 #include <QTreeView>
 
@@ -23,7 +23,7 @@ SubframeLogger::SubframeLogger() : QcrDockWidget {"Logger"}
     logText = new QTextEdit;
     setWidget(logText);
     connect(
-        this, SIGNAL(visibilityChanged(bool)), &gGui->toggles->viewLogger, SLOT(setChecked(bool)));
+        this, SIGNAL(visibilityChanged(bool)), &gGui->triggers->viewLogger, SLOT(setChecked(bool)));
     connect(gLogger, SIGNAL(sigLine(QString)), this, SLOT(slotPrintLog(QString)));
 }
 
