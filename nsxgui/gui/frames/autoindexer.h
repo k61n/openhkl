@@ -1,3 +1,17 @@
+//  ***********************************************************************************************
+//
+//  NSXTool: data reduction for neutron single-crystal diffraction
+//
+//! @file      nsxgui/gui/frames/autoindexer.h
+//! @brief     Defines ###CLASSES###
+//!
+//! @homepage  ###HOMEPAGE###
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
 
 #ifndef NSXGUI_GUI_FRAMES_AUTOINDEXER_H
 #define NSXGUI_GUI_FRAMES_AUTOINDEXER_H

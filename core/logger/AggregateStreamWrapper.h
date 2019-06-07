@@ -1,3 +1,17 @@
+//  ***********************************************************************************************
+//
+//  NSXTool: data reduction for neutron single-crystal diffraction
+//
+//! @file      core/logger/AggregateStreamWrapper.h
+//! @brief     Defines ###CLASSES###
+//!
+//! @homepage  ###HOMEPAGE###
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
 #ifndef CORE_LOGGER_AGGREGATESTREAMWRAPPER_H
 #define CORE_LOGGER_AGGREGATESTREAMWRAPPER_H
 
