@@ -10,30 +10,33 @@ NSX_INIT_TEST
 namespace nsx {
 class UnitTest_DataSet {
 public:
-  static int run();
+    static int run();
 };
 } // namespace nsx
 
-int nsx::UnitTest_DataSet::run() {
-  nsx::DataReaderFactory factory;
+int nsx::UnitTest_DataSet::run()
+{
+    nsx::DataReaderFactory factory;
 
-  nsx::Experiment experiment("test", "BioDiff2500");
+    nsx::Experiment experiment("test", "BioDiff2500");
 
-  nsx::sptrDataSet dataf(
-      factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
+    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
 
-  experiment.addData(dataf);
+    experiment.addData(dataf);
 
-  auto detectorStates = dataf->_reader->detectorStates();
-  auto sampleStates = dataf->_reader->sampleStates();
+    auto detectorStates = dataf->_reader->detectorStates();
+    auto sampleStates = dataf->_reader->sampleStates();
 
-  for (size_t i = 0; i < 100 * (dataf->nFrames() - 1); ++i) {
-    double frame = double(i) / 100.0;
-    auto state = dataf->interpolatedState(frame);
+    for (size_t i = 0; i < 100 * (dataf->nFrames() - 1); ++i) {
+        double frame = double(i) / 100.0;
+        auto state = dataf->interpolatedState(frame);
 
-    auto lframe = std::lround(std::floor(frame));
-  }
-  return 0;
+        auto lframe = std::lround(std::floor(frame));
+    }
+    return 0;
 }
 
-int main() { return nsx::UnitTest_DataSet::run(); }
+int main()
+{
+    return nsx::UnitTest_DataSet::run();
+}

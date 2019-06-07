@@ -12,9 +12,9 @@
 //
 //  ***********************************************************************************************
 
+#include <cstdio>
 #include <utility>
 #include <vector>
-#include <cstdio>
 
 #include "AABB.h"
 #include "ConvolverFactory.h"
@@ -118,7 +118,7 @@ PeakList PeakFinder::find(DataList numors)
 
     int i = 0;
     for (auto&& numor : numors) {
-        if (numors.size()>1)
+        if (numors.size() > 1)
             printf("  numor %i\n", i);
         PeakList numor_peaks;
 

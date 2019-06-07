@@ -13,7 +13,6 @@
 //  ***********************************************************************************************
 
 
-
 #ifndef NSXGUI_GUI_PANELS_TAB_UNITCELLS_H
 #define NSXGUI_GUI_PANELS_TAB_UNITCELLS_H
 

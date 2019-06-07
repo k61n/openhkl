@@ -15,85 +15,85 @@
 
 NSX_INIT_TEST
 
-int main() {
-  nsx::DataReaderFactory factory;
-  nsx::Experiment experiment("test", "BioDiff2500");
-  nsx::sptrDataSet dataf(
-      factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
-  experiment.addData(dataf);
+int main()
+{
+    nsx::DataReaderFactory factory;
+    nsx::Experiment experiment("test", "BioDiff2500");
+    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
+    experiment.addData(dataf);
 
-  nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
-  nsx::sptrPeakFinder peakFinder(new nsx::PeakFinder);
+    nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
+    nsx::sptrPeakFinder peakFinder(new nsx::PeakFinder);
 
-  auto callback = [progressHandler]() {
-    auto log = progressHandler->getLog();
-    for (auto &&msg : log) {
-      std::cout << msg << std::endl;
-    }
-  };
+    auto callback = [progressHandler]() {
+        auto log = progressHandler->getLog();
+        for (auto&& msg : log) {
+            std::cout << msg << std::endl;
+        }
+    };
 
-  progressHandler->setCallback(callback);
+    progressHandler->setCallback(callback);
 
-  nsx::DataList numors;
-  numors.push_back(dataf);
+    nsx::DataList numors;
+    numors.push_back(dataf);
 
-  // propagate changes to peak finder
-  peakFinder->setMinSize(30);
-  peakFinder->setMaxSize(10000);
-  peakFinder->setMaxFrames(10);
+    // propagate changes to peak finder
+    peakFinder->setMinSize(30);
+    peakFinder->setMaxSize(10000);
+    peakFinder->setMaxFrames(10);
 
-  nsx::ConvolverFactory convolver_factory;
-  auto convolver = convolver_factory.create("annular", {});
-  peakFinder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
+    nsx::ConvolverFactory convolver_factory;
+    auto convolver = convolver_factory.create("annular", {});
+    peakFinder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
 
-  peakFinder->setThreshold(15.0);
-  peakFinder->setPeakScale(1.0);
+    peakFinder->setThreshold(15.0);
+    peakFinder->setPeakScale(1.0);
 
-  peakFinder->setHandler(progressHandler);
+    peakFinder->setHandler(progressHandler);
 
-  auto found_peaks = peakFinder->find(numors);
+    auto found_peaks = peakFinder->find(numors);
 
-  try {
-    NSX_CHECK_ASSERT(static_cast<int>(found_peaks.size()) >= 0);
-  } catch (...) {
-    std::cout << "ERROR: exception in PeakFinder::find()" << std::endl;
-  }
-
-  NSX_CHECK_ASSERT(found_peaks.size() >= 800);
-
-  int good_shapes = 0;
-
-  for (auto peak : found_peaks) {
-    if (!peak->enabled()) {
-      continue;
-    }
-
-    auto qshape = peak->qShape();
-    nsx::Ellipsoid new_shape;
     try {
-      new_shape = qshape.toDetectorSpace(dataf);
+        NSX_CHECK_ASSERT(static_cast<int>(found_peaks.size()) >= 0);
     } catch (...) {
-      continue;
-    }
-    auto old_shape = peak->shape();
-
-    // note: some blobs are invalid, so we skip them
-    if (!(old_shape.metric().norm() < 1e3)) {
-      continue;
+        std::cout << "ERROR: exception in PeakFinder::find()" << std::endl;
     }
 
-    ++good_shapes;
+    NSX_CHECK_ASSERT(found_peaks.size() >= 800);
 
-    auto dx = new_shape.center() - old_shape.center();
+    int good_shapes = 0;
 
-    // transformation x -> q -> x should have sub-pixel accuracy
-    NSX_CHECK_SMALL(dx.norm(), 0.01);
+    for (auto peak : found_peaks) {
+        if (!peak->enabled()) {
+            continue;
+        }
 
-    double error = (new_shape.metric() - old_shape.metric()).norm();
-    NSX_CHECK_SMALL(error, 2e-2);
-  }
+        auto qshape = peak->qShape();
+        nsx::Ellipsoid new_shape;
+        try {
+            new_shape = qshape.toDetectorSpace(dataf);
+        } catch (...) {
+            continue;
+        }
+        auto old_shape = peak->shape();
 
-  NSX_CHECK_ASSERT(good_shapes > 600);
+        // note: some blobs are invalid, so we skip them
+        if (!(old_shape.metric().norm() < 1e3)) {
+            continue;
+        }
 
-  return 0;
+        ++good_shapes;
+
+        auto dx = new_shape.center() - old_shape.center();
+
+        // transformation x -> q -> x should have sub-pixel accuracy
+        NSX_CHECK_SMALL(dx.norm(), 0.01);
+
+        double error = (new_shape.metric() - old_shape.metric()).norm();
+        NSX_CHECK_SMALL(error, 2e-2);
+    }
+
+    NSX_CHECK_ASSERT(good_shapes > 600);
+
+    return 0;
 }

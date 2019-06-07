@@ -13,7 +13,6 @@
 //  ***********************************************************************************************
 
 
-
 #ifndef NSXGUI_GUI_PANELS_TAB_PEAKS_H
 #define NSXGUI_GUI_PANELS_TAB_PEAKS_H
 
