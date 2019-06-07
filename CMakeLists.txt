@@ -14,7 +14,7 @@ project(nsxtool)
 # Options
 ###########################################################################
 
-option(BUILD_NSX_APPS "Build nsx based application." OFF)
+option(BUILD_NSX_APPS "Build nsx based application." ON)
 option(BUILD_OPTIMIZED_DEBUG "Set optimization level -O1 or -Og for debug build" OFF)
 option(BUILD_COVERAGE_REPORT "Build code coverage report" OFF)
 option(BUILD_WITH_OPENMP "Build with OpenMP support" OFF)
@@ -59,7 +59,7 @@ endif()
 
 # Enable unit testing with ctest. This must be called before any calls to add_subdirectory
 enable_testing()
-  
+
 add_subdirectory(core)
 
 if (BUILD_NSX_APPS)
@@ -104,4 +104,3 @@ endif()
 if(ENABLE_CPACK)
  include(CPackSetup)
 endif()
-
