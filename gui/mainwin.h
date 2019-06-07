@@ -42,6 +42,7 @@ public:
     {
         dockImage_->centralWidget->imageView->getScene()->changeCursorMode(i);
     }
+    void exportPlot() { dockPlot_->exportPlot(); }
 
 private:
     void refresh();

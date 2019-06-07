@@ -67,3 +67,8 @@ void SubframePlot::updatePlot(PlottableItem* item)
     item->plot(plot);
     // update();
 }
+
+void SubframePlot::exportPlot()
+{
+    plot->exportToAscii();
+}

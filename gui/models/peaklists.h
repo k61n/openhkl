@@ -42,30 +42,36 @@ public:
     void addFilteredPeaks(const QString& name, nsx::PeakList peaks);
     int numberFilteredLists() { return filtered_.size(); }
     void removeFilteredPeaks(int i);
+    void selectList(int i);
+    FilteredPeaksModel* selectedFilteredList();
 
 private:
     QString name_;
     nsx::PeakList allPeaks_;
     QList<FilteredPeaksModel*> filtered_;
+    int selected;
 };
 
 class PeaksModel {
 public:
     PeaksModel();
 
+    void normalizeToMonitor();
     void integratePeaks();
     void buildShapeLibrary();
     void autoAssignUnitCell();
-    PeakListsModel* selectedPeakLists(int i);
+    void selectPeakLists(int i);
+    PeakListsModel* selectedPeakLists(int i = -1);
     nsx::PeakList allPeaks();
     QStringList peaklistNames();
     QStringList allFilteredListNames();
     int numberLists() { return peakLists_.size(); }
     void addPeakListsModel(const QString& name, nsx::PeakList);
-    void removePeakListsModel(int i);
+    void removePeakListsModel(int i = -1);
 
 private:
     QList<PeakListsModel*> peakLists_;
+    int selectedLists;
 };
 
 #endif // GUI_MODELS_PEAKLISTS_H

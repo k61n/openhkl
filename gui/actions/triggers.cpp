@@ -100,13 +100,16 @@ void Actions::setupInstrument()
 
 void Actions::setupOptions()
 {
-    fromSample.setTriggerHook([]() { gGui->changeView(1); });
-    behindDetector.setTriggerHook([]() { gGui->changeView(0); });
-    pixelPosition.setTriggerHook([]() { gGui->cursormode(0); });
-    twoTheta.setTriggerHook([]() { gGui->cursormode(1); });
-    gammaNu.setTriggerHook([]() { gGui->cursormode(2); });
-    dSpacing.setTriggerHook([]() { gGui->cursormode(3); });
-    millerIndices.setTriggerHook([]() { gGui->cursormode(4); });
+    fromSample.setTriggerHook([](){ gGui->changeView(1); });
+    behindDetector.setTriggerHook([](){ gGui->changeView(0); });
+    pixelPosition.setTriggerHook([](){ gGui->cursormode(0); });
+    twoTheta.setTriggerHook([](){ gGui->cursormode(1); });
+    gammaNu.setTriggerHook([](){ gGui->cursormode(2); });
+    dSpacing.setTriggerHook([](){ gGui->cursormode(3); });
+    millerIndices.setTriggerHook([](){ gGui->cursormode(4); });
+    logarithmicScale.setHook([](bool checked){
+        gGui->dockImage_->centralWidget->imageView->getScene()->setLogarithmic(checked);
+    });
 }
 
 void Actions::setupPeaks()
@@ -132,6 +135,11 @@ void Actions::setupPeaks()
     });
     buildShapeLibrary.setTriggerHook([]() { new ShapeLibraryDialog; });
     refine.setTriggerHook([]() { new Refiner; });
+    normalize.setTriggerHook([](){
+        if (gSession->selectedExperimentNum() < 0)
+            return;
+        gSession->selectedExperiment()->peaks()->normalizeToMonitor();
+    });
 }
 
 void Actions::setupRest()
@@ -142,4 +150,5 @@ void Actions::setupRest()
     viewLogger.setHook([](bool check) { gGui->dockLogger_->setVisible(check); });
     viewPlotter.setHook([](bool check) { gGui->dockPlot_->setVisible(check); });
     viewProperties.setHook([](bool check) { gGui->dockProperties_->setVisible(check); });
+    exportPlot.setTriggerHook([](){ gGui->exportPlot(); });
 }

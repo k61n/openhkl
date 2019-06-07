@@ -18,29 +18,36 @@
 #include "core/experiment/DataTypes.h"
 #include "core/loader/IDataReader.h"
 #include "gui/models/session.h"
-#include <QGridLayout>
+#include <QFormLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
 
 NumorProperty::NumorProperty() : QcrWidget {"numorProperty"}
 {
-    QGridLayout* gridLayout = new QGridLayout(this);
+    QFormLayout* formLayout = new QFormLayout(this);
     table = new QTableWidget(this);
-    QHBoxLayout* box = new QHBoxLayout();
 
     table->horizontalHeader()->setVisible(false);
     table->verticalHeader()->setVisible(false);
     table->setSelectionMode(QAbstractItemView::SingleSelection);
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    QLabel* dlabel = new QLabel("Data:", this);
-    box->addWidget(dlabel);
-
-    label = new QLabel(this);
-    box->addWidget(label);
-
-    gridLayout->addLayout(box, 0, 0, 1, 1);
-    gridLayout->addWidget(table, 1, 0, 1, 1);
+    numor = new QcrComboBox("adhoc_numors", new QcrCell<int>(0), [](){
+        if (gSession->selectedExperimentNum() < 0)
+            return QStringList{""};
+        QList<nsx::sptrDataSet> datalist = gSession->selectedExperiment()->data()->allData();
+        if (datalist.empty())
+            return QStringList{""};
+        QStringList namen;
+        for (auto& dataset : datalist)
+            namen.append(QString::fromStdString(dataset->filename()));
+        return namen;
+    });
+    numor->setHook([](int i){
+        gSession->selectedExperiment()->data()->selectData(i);
+    });
+    formLayout->addRow("Data:", numor);
+    formLayout->addRow(table);
 
     setRemake([this]() { onRemake(); });
     remake();
@@ -55,8 +62,6 @@ void NumorProperty::onRemake()
         auto data = exp->data()->selectedData();
 
         if (data) {
-            label->setText(QString::fromStdString(data->filename()));
-
             const auto& metadata = data->reader()->metadata();
             const auto& map = metadata.map();
 
@@ -95,5 +100,4 @@ void NumorProperty::clear()
 {
     table->removeColumn(1);
     table->removeColumn(0);
-    label->setText("");
 }

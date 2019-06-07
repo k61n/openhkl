@@ -26,7 +26,7 @@ public:
     SubframePlot();
     void plotData(QVector<double>&, QVector<double>&, QVector<double>&);
     void updatePlot(PlottableItem* item);
-
+    void exportPlot();
 private:
     NSXPlot* plot;
     QHBoxLayout* anchor;

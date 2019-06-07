@@ -16,6 +16,7 @@
 #define GUI_PROPERTIES_NUMORPROPERTY_H
 
 #include <QCR/widgets/views.h>
+#include <QCR/widgets/controls.h>
 #include <QTableWidget>
 
 class NumorProperty : public QcrWidget {
@@ -27,7 +28,7 @@ private:
     void onRemake();
     void clear();
     QTableWidget* table;
-    QLabel* label;
+    QcrComboBox* numor;
 };
 
 #endif // GUI_PROPERTIES_NUMORPROPERTY_H

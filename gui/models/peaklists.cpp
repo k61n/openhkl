@@ -15,6 +15,9 @@
 #include "gui/models/peaklists.h"
 #include "gui/models/session.h"
 #include <QCR/engine/logger.h>
+#include "core/peak/Peak3D.h"
+#include "core/import/IDataReader.h"
+#include <QInputDialog>
 
 FilteredPeaksModel::FilteredPeaksModel(const QString& name, nsx::PeakList list)
     : name_ {name}, filteredPeaks_ {list}
@@ -40,6 +43,7 @@ FilteredPeaksModel* PeakListsModel::getPeaksAt(int i)
 void PeakListsModel::addFilteredPeaks(const QString& name, nsx::PeakList peaks)
 {
     filtered_.append(new FilteredPeaksModel(name, peaks));
+    selected = 0;
     gSession->onPeaksChanged();
 }
 
@@ -51,7 +55,28 @@ void PeakListsModel::removeFilteredPeaks(int i)
     }
     gLogger->log("[INFO] Removing filtered peak list " + filtered_.at(i)->getName());
     filtered_.removeAt(i);
+    if (filtered_.empty()) {
+        selected = -1;
+    } else {
+        selected = 0;
+    }
     gSession->onPeaksChanged();
+}
+
+void PeakListsModel::selectList(int i)
+{
+    if (i<0 || i>=filtered_.size()) {
+        selected = 0;
+        return;
+    }
+    selected = i;
+}
+
+FilteredPeaksModel* PeakListsModel::selectedFilteredList()
+{
+    if (selected < 0 || filtered_.empty())
+        return nullptr;
+    return filtered_.at(selected);
 }
 
 //  ***********************************************************************************************
@@ -69,16 +94,30 @@ nsx::PeakList PeaksModel::allPeaks()
     return all;
 }
 
+void PeaksModel::selectPeakLists(int i)
+{
+    if (peakLists_.empty())
+        return;
+    if (i<0 || i>= peakLists_.size())
+        return;
+    selectedLists = i;
+}
+
 PeakListsModel* PeaksModel::selectedPeakLists(int i)
 {
-    if (i < 0 || i > peakLists_.size())
+    if (peakLists_.empty()) {
+        gLogger->log("[ERROR] No peaklist selected");
         return nullptr;
+    }
+    if (i < 0 || i > peakLists_.size())
+        return peakLists_.at(selectedLists);
     return peakLists_.at(i);
 }
 
 void PeaksModel::addPeakListsModel(const QString& name, nsx::PeakList list)
 {
     peakLists_.append(new PeakListsModel(name, list));
+    selectedLists = peakLists_.size()-1;
 }
 
 QStringList PeaksModel::peaklistNames()
@@ -102,15 +141,48 @@ QStringList PeaksModel::allFilteredListNames()
 
 void PeaksModel::removePeakListsModel(int i)
 {
+
     if (i < 0 || i >= peakLists_.size()) {
         gLogger->log("[ERROR]  could not remove peaklistsmodel");
         return;
     }
+
+    if (peakLists_.empty()) {
+        gLogger->log("[ERROR] No Peaklists to remove");
+        return;
+    }
+    if (i<0 || i>=peakLists_.size()) {
+        i = selectedLists;
+    }
     gLogger->log("[INFO] removing peaklistsmodel " + peakLists_.at(i)->getName());
     peakLists_.removeAt(i);
+    if (peakLists_.empty()) {
+        selectedLists = -1;
+    } else {
+        selectedLists = 0;
+    }
     gSession->onPeaksChanged();
 }
 
+void PeaksModel::normalizeToMonitor()
+{
+    if (peakLists_.empty())
+        return;
+    bool ok;
+    double factor = QInputDialog::getDouble(
+                nullptr, "Enter normalization factor", "", 1.0e4, 1.0e-9, 1.0e9, 3, &ok);
+    if (!ok)
+        return;
+    nsx::PeakList selectedPeaks = peakLists_.at(selectedLists)->selectedFilteredList()->getPeaks();
+    for (nsx::sptrPeak3D peak : selectedPeaks) {
+        nsx::sptrDataSet data = peak->data();
+        if (!data)
+            continue;
+        double monitor = data->reader()->metadata().key<double>("monitor");
+        peak->setScale(factor/monitor);
+    }
+    gSession->onPeaksChanged();
+}
 
 // void PeaksModel::autoAssignUnitCell()
 //{
