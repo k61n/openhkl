@@ -57,11 +57,17 @@ UnitCellProperty::UnitCellProperty() : QcrWidget {"unitCellProperty"}
     QGroupBox* cellParameters = new QGroupBox("Cell parameters", this);
     QGridLayout* grid = new QGridLayout(cellParameters);
     a = new QcrDoubleSpinBox("a", new QcrCell<double>(1.0000), 8, 4);
+    a->setButtonSymbols(QDoubleSpinBox::NoButtons);
     b = new QcrDoubleSpinBox("b", new QcrCell<double>(1.0000), 8, 4);
+    b->setButtonSymbols(QDoubleSpinBox::NoButtons);
     c = new QcrDoubleSpinBox("c", new QcrCell<double>(1.0000), 8, 4);
+    c->setButtonSymbols(QDoubleSpinBox::NoButtons);
     alpha = new QcrDoubleSpinBox("alpha", new QcrCell<double>(90.0000), 8, 4);
+    alpha->setButtonSymbols(QDoubleSpinBox::NoButtons);
     beta = new QcrDoubleSpinBox("beta", new QcrCell<double>(90.0000), 8, 4);
+    beta->setButtonSymbols(QDoubleSpinBox::NoButtons);
     gamma = new QcrDoubleSpinBox("gamma", new QcrCell<double>(90.0000), 8, 4);
+    gamma->setButtonSymbols(QDoubleSpinBox::NoButtons);
     grid->addWidget(a, 0, 2, 1, 1);
     grid->addWidget(b, 0, 4, 1, 1);
     grid->addWidget(c, 0, 6, 1, 1);

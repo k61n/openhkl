@@ -26,7 +26,7 @@
 TabPeaks::TabPeaks() : QcrWidget {"peaks"}
 {
     filtered = new QcrTabWidget("filteredPeaks");
-    foundPeaksLists = new QcrComboBox("foundLists", new QcrCell<int>(0), []() {
+    foundPeaksLists = new QcrComboBox("adhoc_foundLists", new QcrCell<int>(0), []() {
         if (gSession->selectedExperimentNum() < 0)
             return QStringList {};
         return gSession->selectedExperiment()->peaks()->peaklistNames();
@@ -42,18 +42,25 @@ TabPeaks::TabPeaks() : QcrWidget {"peaks"}
         int selected = foundPeaksLists->doGetValue();
         if (selected < 0)
             selected = 0;
-        PeakListsModel* model =
-            gSession->selectedExperiment()->peaks()->selectedPeakLists(selected);
-        if (numLists > 0) {
-            if (filtered->count() != model->numberFilteredLists()) {
-                int oldTabs = filtered->count();
 
-                for (int j = 0; j < model->numberFilteredLists(); j++) {
-                    FilteredPeaksModel* peaks = model->getPeaksAt(j);
-                    filtered->addTab(new ListTab(peaks), peaks->getName());
+        if (gSession->selectedExperimentNum() >= 0) {
+            PeakListsModel* model = gSession->selectedExperiment()->peaks()
+                    ->selectedPeakLists(selected);
+            if (numLists > 0) {
+                if (!model) {
+                    filtered->clear();
+                    return;
                 }
-                for (int t = 0; t < oldTabs; t++)
-                    filtered->removeTab(0);
+                if (filtered->count() != model->numberFilteredLists()) {
+                    int oldTabs = filtered->count();
+
+                    for (int j = 0; j < model->numberFilteredLists(); j++) {
+                        FilteredPeaksModel* peaks = model->getPeaksAt(j);
+                        filtered->addTab(new ListTab(peaks), peaks->getName());
+                    }
+                    for (int t=0; t<oldTabs; t++)
+                        filtered->removeTab(0);
+                }
             }
         }
     });

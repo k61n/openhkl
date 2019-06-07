@@ -23,20 +23,25 @@
 
 DetectorProperty::DetectorProperty() : QcrWidget {"detectorProperty"}
 {
+    QAbstractSpinBox::ButtonSymbols symbols = QAbstractSpinBox::NoButtons;
     width = new QcrDoubleSpinBox("adhoc_width", new QcrCell<double>(0.00), 4, 2);
     width->setReadOnly(true);
+    width->setButtonSymbols(symbols);
     height = new QcrDoubleSpinBox("adhoc_height", new QcrCell<double>(0.00), 4, 2);
     height->setReadOnly(true);
+    height->setButtonSymbols(symbols);
     distance = new QcrDoubleSpinBox("adhoc_distance", new QcrCell<double>(0.00), 4, 2);
     distance->setReadOnly(true);
+    distance->setButtonSymbols(symbols);
     rows = new QcrSpinBox("adhoc_rows", new QcrCell<int>(0), 4);
     rows->setReadOnly(true);
+    rows->setButtonSymbols(symbols);
     columns = new QcrSpinBox("adhoc_columns", new QcrCell<int>(0), 4);
     columns->setReadOnly(true);
+    columns->setButtonSymbols(symbols);
     // groupBox Parameters
     QGroupBox* groupBox = new QGroupBox("Parameters", this);
-    QGridLayout* gridLayout_2 = new QGridLayout(groupBox);
-    QGridLayout* gridLayout = new QGridLayout;
+    QGridLayout* gridLayout = new QGridLayout(groupBox);
     // Labels
     gridLayout->addWidget(new QLabel("Width"), 0, 0, 1, 1);
     gridLayout->addWidget(new QLabel("Height"), 0, 2, 1, 1);
@@ -49,7 +54,6 @@ DetectorProperty::DetectorProperty() : QcrWidget {"detectorProperty"}
     gridLayout->addWidget(rows, 1, 1, 1, 1);
     gridLayout->addWidget(columns, 1, 3, 1, 1);
     gridLayout->addWidget(distance, 2, 1, 1, 1);
-    gridLayout_2->addLayout(gridLayout, 0, 0, 1, 1);
     // groupBox Goniometer
     QGroupBox* group_2 = new QGroupBox("Goniometer", this);
     QVBoxLayout* layout = new QVBoxLayout(group_2);

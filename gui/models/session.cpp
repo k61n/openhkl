@@ -122,8 +122,6 @@ void Session::loadData()
         exp->addData(data_ptr);
         selectedExperiment()->addData(data_ptr);
     }
-
-    onDataChanged();
 }
 
 void Session::removeData()

@@ -20,6 +20,7 @@
 #include <QDialogButtonBox>
 #include <QListWidget>
 #include <QTableWidget>
+#include "gui/graphics/nsxplot.h"
 
 enum class offsetMode { DETECTOR, SAMPLE };
 
@@ -38,6 +39,7 @@ private:
     QTableWidget* offsets;
     QDialogButtonBox* buttons;
     offsetMode mode_;
+    NSXPlot* plot;
 };
 
 #endif // GUI_FRAMES_GLOBALOFFSETS_H

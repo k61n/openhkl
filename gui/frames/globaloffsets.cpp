@@ -88,7 +88,8 @@ void GlobalOffsets::layout()
 
     above->addWidget(offsets);
     whole->addLayout(above);
-    whole->addWidget(new QLabel("in the future, here is a sxplot..."));
+    plot = new NSXPlot(this);
+    whole->addWidget(plot);
     buttons = new QDialogButtonBox(
         QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply, Qt::Horizontal);
     whole->addWidget(buttons);
@@ -112,6 +113,9 @@ void GlobalOffsets::fit()
     for (auto item : selected_items)
         selected_data.push_back(item->data(Qt::UserRole).value<nsx::sptrDataSet>());
 
+    QVector<double> xValues;
+    QVector<double> yValues;
+
     if (mode_ == offsetMode::DETECTOR) {
         // Fit the detector offsets with the selected data
         const nsx::Detector* detector =
@@ -122,6 +126,8 @@ void GlobalOffsets::fit()
         // The fit failed for whatever reason, return
         if (!fit_results.success)
             gLogger->log("[ERROR] Could not fit the detector offsets.");
+            return;
+        }
 
         int comp(0);
         for (auto&& offset : fit_results.offsets) {
@@ -129,6 +135,11 @@ void GlobalOffsets::fit()
             offset_item->setData(Qt::DisplayRole, offset / nsx::deg);
             offsets->setItem(comp++, 1, offset_item);
         }
+        const auto& costFunction = fit_results.cost_function;
+        std::vector<double> iterationsval(costFunction.size());
+        std::iota(iterationsval.begin(), iterationsval.end(), 0);
+        xValues = QVector<double>::fromStdVector(iterationsval);
+        yValues = QVector<double>::fromStdVector(costFunction);
     } else if (mode_ == offsetMode::SAMPLE) {
         const auto& sample =
             gSession->selectedExperiment()->experiment()->diffractometer()->sample();
@@ -145,47 +156,40 @@ void GlobalOffsets::fit()
             offset_item->setData(Qt::DisplayRole, offset / nsx::deg);
             offsets->setItem(comp++, 1, offset_item);
         }
+        const auto& costFunction = fit_results.cost_function;
+        std::vector<double> iterationsval(costFunction.size());
+        std::iota(iterationsval.begin(), iterationsval.end(), 0);
+        xValues = QVector<double>::fromStdVector(iterationsval);
+        yValues = QVector<double>::fromStdVector(costFunction);
     } else {
         gLogger->log("[ERROR] invalide offset mode. Should be DETECTOR or SAMPLE");
+        return;
     }
 
-    //    plot->clearGraphs();
+        plot->clearGraphs();
 
-    //    QPen pen;
-    //    pen.setColor(QColor("black"));
-    //    pen.setWidth(2.0);
+        QPen pen;
+        pen.setColor(QColor("black"));
+        pen.setWidth(2.0);
 
-    //    plot->addGraph();
-    //    plot->graph(0)->setPen(pen);
+        plot->addGraph();
+        plot->graph(0)->setPen(pen);
 
-    //    // Get the cost function for this batch
-    //    const auto &cost_function = fit_results.cost_function;
+        // Get the cost function for this batch
+        plot->graph(0)->addData(xValues, yValues);
+        plot->xAxis->setLabel("# iterations");
+        plot->yAxis->setLabel("Cost function");
+        plot->setNotAntialiasedElements(QCP::aeAll);
 
-    //    std::vector<double> iterationsval(cost_function.size());
-    //    std::iota(iterationsval.begin(), iterationsval.end(), 0);
-
-    //    QVector<double> x_values = QVector<double>::fromStdVector(iterationsval);
-    //    QVector<double> y_values = QVector<double>::fromStdVector(cost_function);
-
-    //    plot->graph(0)->addData(x_values, y_values);
-
-    //    plot->xAxis->setLabel("# iterations");
-    //    plot->yAxis->setLabel("Cost function");
-
-    //    plot->setNotAntialiasedElements(QCP::aeAll);
-
-    //    QFont font;
-    //    font.setStyleStrategy(QFont::NoAntialias);
-    //    plot->xAxis->setTickLabelFont(font);
-    //    plot->yAxis->setTickLabelFont(font);
-
-    //    plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom |
-    //                               QCP::iSelectAxes | QCP::iSelectLegend |
-    //                               QCP::iSelectPlottables);
-
-    //    plot->rescaleAxes();
-
-    //    plot->replot();
+        QFont font;
+        font.setStyleStrategy(QFont::NoAntialias);
+        plot->xAxis->setTickLabelFont(font);
+        plot->yAxis->setTickLabelFont(font);
+        plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom |
+                                   QCP::iSelectAxes | QCP::iSelectLegend |
+                                   QCP::iSelectPlottables);
+        plot->rescaleAxes();
+        plot->replot();
 }
 
 void GlobalOffsets::actionClicked(QAbstractButton* button)

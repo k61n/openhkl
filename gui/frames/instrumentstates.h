@@ -24,9 +24,13 @@ public:
     InstrumentStates();
 
 private:
+    void selectedDataChanged(int selectedData);
+    void selectedFrameChanged(int selectedFrame);
+
     QcrSpinBox* frameIndex;
     QSlider* frameSlider;
     QListWidget* data;
+    QLabel* refinedLabel;
     QcrDoubleSpinBox* samplePosX;
     QcrDoubleSpinBox* samplePosY;
     QcrDoubleSpinBox* samplePosZ;

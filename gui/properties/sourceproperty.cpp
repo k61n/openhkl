@@ -17,11 +17,11 @@
 #include "base/utils/Units.h"
 #include "gui/models/session.h"
 #include <QCR/engine/cell.h>
-#include <QGridLayout>
+#include <QFormLayout>
 
 SourceProperty::SourceProperty() : QcrWidget("sourceProperty")
 {
-    QGridLayout* grid = new QGridLayout(this);
+    QFormLayout* form = new QFormLayout(this);
 
     type = new QcrComboBox("sourcetype", new QcrCell<int>(0), {"Neutron"});
     type->setEnabled(false);
@@ -39,28 +39,20 @@ SourceProperty::SourceProperty() : QcrWidget("sourceProperty")
     monochromators->setEnabled(true);
 
     wavelength = new QcrDoubleSpinBox("wavelength", new QcrCell<double>(0.00), 5, 2);
-
+    wavelength->setButtonSymbols(QDoubleSpinBox::NoButtons);
     fwhm = new QcrDoubleSpinBox("fwhm", new QcrCell<double>(0.00), 5, 2);
-
+    fwhm->setButtonSymbols(QDoubleSpinBox::NoButtons);
     width = new QcrDoubleSpinBox("width", new QcrCell<double>(0.00), 5, 2);
-
+    width->setButtonSymbols(QDoubleSpinBox::NoButtons);
     height = new QcrDoubleSpinBox("height", new QcrCell<double>(0.00), 5, 2);
-
-    grid->addWidget(type, 0, 1, 1, 1);
-    grid->addWidget(monochromators, 1, 1, 1, 1);
-    grid->addWidget(wavelength, 2, 1, 1, 1);
-    grid->addWidget(fwhm, 3, 1, 1, 1);
-    grid->addWidget(width, 4, 1, 1, 1);
-    grid->addWidget(height, 5, 1, 1, 1);
-
-    grid->addWidget(new QLabel("Type:"), 0, 0, 1, 1);
-    grid->addWidget(new QLabel("Monochromators:"), 1, 0, 1, 1);
-    grid->addWidget(new QLabel("Wavelength (ang):"), 2, 0, 1, 1);
-    grid->addWidget(new QLabel("FWHM (ang):"), 3, 0, 1, 1);
-    grid->addWidget(new QLabel("Width (mm):"), 4, 0, 1, 1);
-    grid->addWidget(new QLabel("Height (mm):"), 5, 0, 1, 1);
-    grid->addItem(
-        new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum), 6, 3, 1, 1);
+    height->setButtonSymbols(QDoubleSpinBox::NoButtons);
+    form->addRow("Type:", type);
+    form->addRow("Monochromators:", monochromators);
+    form->addRow("Wavelength (ang):", wavelength);
+    form->addRow("FWHM (ang):", fwhm);
+    form->addRow("Width (mm):", width);
+    form->addRow("Height (mm):", height);
+    form->addItem(new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
 
     setRemake([this]() { onRemake(); });
     remake();

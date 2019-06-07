@@ -16,7 +16,7 @@
 #include "gui/properties/sampleshapeproperties.h"
 #include "base/utils/Units.h"
 #include "gui/models/session.h"
-#include <QGridLayout>
+#include <QFormLayout>
 #include <QGroupBox>
 #include <QHeaderView>
 #include <QVBoxLayout>
@@ -30,7 +30,8 @@ SampleShapeProperties::SampleShapeProperties() : QcrWidget {"sampleShapeProperti
     sampleGoniometer = new QTableWidget(this);
     box->addWidget(sampleGoniometer);
     // ShapeProperty
-    QGridLayout* grid = new QGridLayout();
+    QGroupBox* shape = new QGroupBox("Shape", this);
+    QFormLayout* form = new QFormLayout(shape);
     loadMovieButton = new QcrTextTriggerButton("adhoc_movieButton", "Load crystal movie");
     movie = new QcrLineEdit("adhoc_movie", "");
     movie->setReadOnly(true);
@@ -42,21 +43,15 @@ SampleShapeProperties::SampleShapeProperties() : QcrWidget {"sampleShapeProperti
     edges->setReadOnly(true);
     vertices = new QcrLineEdit("adhoc_vertices", "");
     vertices->setReadOnly(true);
-    grid->addWidget(loadMovieButton, 0, 0, 1, 1);
-    grid->addWidget(movie, 0, 1, 1, 1);
-    grid->addWidget(volume, 1, 1, 1, 1);
-    grid->addWidget(faces, 2, 1, 1, 1);
-    grid->addWidget(edges, 3, 1, 1, 1);
-    grid->addWidget(vertices, 4, 1, 1, 1);
-    grid->addWidget(new QLabel("Volume"), 1, 0, 1, 1);
-    grid->addWidget(new QLabel("Faces"), 2, 0, 1, 1);
-    grid->addWidget(new QLabel("Edges"), 3, 0, 1, 1);
-    grid->addWidget(new QLabel("Vertices"), 4, 0, 1, 1);
+    form->addRow(loadMovieButton, movie);
+    form->addRow("Volume", volume);
+    form->addRow("Faces", faces);
+    form->addRow("Edges", edges);
+    form->addRow("Vertices", vertices);
     // move together
     overallLayout->addWidget(new QLabel("Sample"));
     overallLayout->addWidget(sampleProperty);
-    overallLayout->addWidget(new QLabel("Shape"));
-    overallLayout->addLayout(grid);
+    overallLayout->addWidget(shape);
 
     setRemake([this]() { onRemake(); });
 }
