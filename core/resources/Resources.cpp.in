@@ -9,8 +9,7 @@
 
 namespace nsx {
 
-std::map<std::pair<std::string,std::string>,resource_function> default_resources = {
-};
+std::map<std::pair<std::string,std::string>,resource_function> default_resources = {};
 
 void mergeResources(YAML::Node& node1, YAML::Node& node2) {
 
@@ -60,7 +59,7 @@ YAML::Node findResource(const std::pair<std::string,std::string>& resource)
     auto user_resource_path = buildPath({user_resource_dir,resource.second+".yml"});
 
     if (fileExists(user_resource_path)) {
-    
+
         std::ifstream fin(user_resource_path);
         YAML::Node user_yaml = YAML::Load(fin);
         fin.close();
@@ -68,29 +67,29 @@ YAML::Node findResource(const std::pair<std::string,std::string>& resource)
         if (resource_yaml.IsNull()) {
             return user_yaml;
         }
-        
+
         mergeResources(resource_yaml,user_yaml);
-        
+
     } else {
-        
+
         if (resource_yaml.IsNull()) {
             throw std::runtime_error("Unknown resource: "+resource.first+" - "+resource.second);
         }
-        
+
         makeDirectory(user_resource_dir);
         std::ofstream fout(user_resource_path);
         fout << resource_yaml;
         fout.close();
-        
+
     }
-    
+
     return resource_yaml;
 }
 
 std::set<std::string> getResourcesName(const std::string& resource_type)
 {
     std::set<std::string> resources_name;
-    
+
     for (auto p : default_resources) {
         if (p.first.first.compare(resource_type)==0) {
             resources_name.insert(p.first.second);

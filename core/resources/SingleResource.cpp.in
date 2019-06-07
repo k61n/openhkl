@@ -8,7 +8,6 @@ const std::vector<std::string>& resource_@NSX_RESOURCE_TYPE@_@NSX_RESOURCE_NAME@
 {
     static std::vector<std::string> data = {
     };
-
     return data;
 }
 
