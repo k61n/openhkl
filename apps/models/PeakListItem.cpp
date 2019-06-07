@@ -3,29 +3,34 @@
 #include "PeakListItem.h"
 #include "PeakListPropertyWidget.h"
 
-PeakListItem::PeakListItem(const nsx::PeakList &peaks)
-    : InspectableTreeItem(), _peaks(peaks) {
-  setText("Peaks");
+PeakListItem::PeakListItem(const nsx::PeakList& peaks) : InspectableTreeItem(), _peaks(peaks)
+{
+    setText("Peaks");
 
-  setEditable(true);
+    setEditable(true);
 
-  setDragEnabled(true);
-  setDropEnabled(true);
+    setDragEnabled(true);
+    setDropEnabled(true);
 
-  setSelectable(false);
+    setSelectable(false);
 
-  setCheckable(true);
+    setCheckable(true);
 }
 
-QWidget *PeakListItem::inspectItem() {
-  return new PeakListPropertyWidget(this);
+QWidget* PeakListItem::inspectItem()
+{
+    return new PeakListPropertyWidget(this);
 }
 
-void PeakListItem::removePeak(nsx::sptrPeak3D peak) {
-  auto it = std::find(_peaks.begin(), _peaks.end(), peak);
-  if (it != _peaks.end()) {
-    _peaks.erase(it);
-  }
+void PeakListItem::removePeak(nsx::sptrPeak3D peak)
+{
+    auto it = std::find(_peaks.begin(), _peaks.end(), peak);
+    if (it != _peaks.end()) {
+        _peaks.erase(it);
+    }
 }
 
-nsx::PeakList &PeakListItem::peaks() { return _peaks; }
+nsx::PeakList& PeakListItem::peaks()
+{
+    return _peaks;
+}

@@ -17226,80 +17226,82 @@ static double g_CMRmap_rgb[256 * 3] = {
     255.0,
 };
 
-ColorMap ColorMap::getColorMap(const std::string &name) {
-  if (name == "BlueWhite")
-    return ColorMap(g_BlueWhite_rgb);
-  if (name == "Blues")
-    return ColorMap(g_Blues_rgb);
-  if (name == "viridis")
-    return ColorMap(g_viridis_rgb);
-  if (name == "inferno")
-    return ColorMap(g_inferno_rgb);
-  if (name == "plasma")
-    return ColorMap(g_plasma_rgb);
-  if (name == "magma")
-    return ColorMap(g_magma_rgb);
-  if (name == "afmhot")
-    return ColorMap(g_afmhot_rgb);
-  if (name == "cool")
-    return ColorMap(g_cool_rgb);
-  if (name == "copper")
-    return ColorMap(g_copper_rgb);
-  if (name == "gist_heat")
-    return ColorMap(g_gist_heat_rgb);
-  if (name == "hot")
-    return ColorMap(g_hot_rgb);
-  if (name == "summer")
-    return ColorMap(g_summer_rgb);
-  if (name == "winter")
-    return ColorMap(g_winter_rgb);
-  if (name == "gist_earth")
-    return ColorMap(g_gist_earth_rgb);
-  if (name == "ocean")
-    return ColorMap(g_ocean_rgb);
-  if (name == "brg")
-    return ColorMap(g_brg_rgb);
-  if (name == "gnuplot")
-    return ColorMap(g_gnuplot_rgb);
-  if (name == "rainbow")
-    return ColorMap(g_rainbow_rgb);
-  if (name == "jet")
-    return ColorMap(g_jet_rgb);
-  if (name == "hsv")
-    return ColorMap(g_hsv_rgb);
-  if (name == "gist_rainbow")
-    return ColorMap(g_gist_rainbow_rgb);
-  if (name == "nipy_spectral")
-    return ColorMap(g_nipy_spectral_rgb);
-  if (name == "CMRmap")
-    return ColorMap(g_CMRmap_rgb);
-  return getColorMap(getColorMapNames().front());
+ColorMap ColorMap::getColorMap(const std::string& name)
+{
+    if (name == "BlueWhite")
+        return ColorMap(g_BlueWhite_rgb);
+    if (name == "Blues")
+        return ColorMap(g_Blues_rgb);
+    if (name == "viridis")
+        return ColorMap(g_viridis_rgb);
+    if (name == "inferno")
+        return ColorMap(g_inferno_rgb);
+    if (name == "plasma")
+        return ColorMap(g_plasma_rgb);
+    if (name == "magma")
+        return ColorMap(g_magma_rgb);
+    if (name == "afmhot")
+        return ColorMap(g_afmhot_rgb);
+    if (name == "cool")
+        return ColorMap(g_cool_rgb);
+    if (name == "copper")
+        return ColorMap(g_copper_rgb);
+    if (name == "gist_heat")
+        return ColorMap(g_gist_heat_rgb);
+    if (name == "hot")
+        return ColorMap(g_hot_rgb);
+    if (name == "summer")
+        return ColorMap(g_summer_rgb);
+    if (name == "winter")
+        return ColorMap(g_winter_rgb);
+    if (name == "gist_earth")
+        return ColorMap(g_gist_earth_rgb);
+    if (name == "ocean")
+        return ColorMap(g_ocean_rgb);
+    if (name == "brg")
+        return ColorMap(g_brg_rgb);
+    if (name == "gnuplot")
+        return ColorMap(g_gnuplot_rgb);
+    if (name == "rainbow")
+        return ColorMap(g_rainbow_rgb);
+    if (name == "jet")
+        return ColorMap(g_jet_rgb);
+    if (name == "hsv")
+        return ColorMap(g_hsv_rgb);
+    if (name == "gist_rainbow")
+        return ColorMap(g_gist_rainbow_rgb);
+    if (name == "nipy_spectral")
+        return ColorMap(g_nipy_spectral_rgb);
+    if (name == "CMRmap")
+        return ColorMap(g_CMRmap_rgb);
+    return getColorMap(getColorMapNames().front());
 }
 
-std::vector<std::string> ColorMap::getColorMapNames() {
-  std::vector<std::string> names;
-  names.push_back("BlueWhite");
-  names.push_back("Blues");
-  names.push_back("viridis");
-  names.push_back("inferno");
-  names.push_back("plasma");
-  names.push_back("magma");
-  names.push_back("afmhot");
-  names.push_back("cool");
-  names.push_back("copper");
-  names.push_back("gist_heat");
-  names.push_back("hot");
-  names.push_back("summer");
-  names.push_back("winter");
-  names.push_back("gist_earth");
-  names.push_back("ocean");
-  names.push_back("brg");
-  names.push_back("gnuplot");
-  names.push_back("rainbow");
-  names.push_back("jet");
-  names.push_back("hsv");
-  names.push_back("gist_rainbow");
-  names.push_back("nipy_spectral");
-  names.push_back("CMRmap");
-  return names;
+std::vector<std::string> ColorMap::getColorMapNames()
+{
+    std::vector<std::string> names;
+    names.push_back("BlueWhite");
+    names.push_back("Blues");
+    names.push_back("viridis");
+    names.push_back("inferno");
+    names.push_back("plasma");
+    names.push_back("magma");
+    names.push_back("afmhot");
+    names.push_back("cool");
+    names.push_back("copper");
+    names.push_back("gist_heat");
+    names.push_back("hot");
+    names.push_back("summer");
+    names.push_back("winter");
+    names.push_back("gist_earth");
+    names.push_back("ocean");
+    names.push_back("brg");
+    names.push_back("gnuplot");
+    names.push_back("rainbow");
+    names.push_back("jet");
+    names.push_back("hsv");
+    names.push_back("gist_rainbow");
+    names.push_back("nipy_spectral");
+    names.push_back("CMRmap");
+    return names;
 }

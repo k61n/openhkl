@@ -6,11 +6,11 @@ class UnitCellItem;
 
 class UnitCellsItem : public TreeItem {
 public:
-  explicit UnitCellsItem();
+    explicit UnitCellsItem();
 
-  nsx::UnitCellList unitCells();
+    nsx::UnitCellList unitCells();
 
-  void removeUnusedUnitCells();
+    void removeUnusedUnitCells();
 
-  UnitCellItem *selectedUnitCellItem();
+    UnitCellItem* selectedUnitCellItem();
 };

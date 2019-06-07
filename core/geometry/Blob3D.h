@@ -50,72 +50,72 @@ namespace nsx {
  */
 class Blob3D {
 public:
-  //! Initialize an empty blob
-  Blob3D();
+    //! Initialize an empty blob
+    Blob3D();
 
-  //! Initialize a blob with a point of mass m at x,y,z
-  Blob3D(double x, double y, double z, double m);
+    //! Initialize a blob with a point of mass m at x,y,z
+    Blob3D(double x, double y, double z, double m);
 
-  //! Copy constructor
-  Blob3D(const Blob3D &);
-  Blob3D(Blob3D &&) = default;
+    //! Copy constructor
+    Blob3D(const Blob3D&);
+    Blob3D(Blob3D&&) = default;
 
-  //! Assignment
-  Blob3D &operator=(const Blob3D &);
+    //! Assignment
+    Blob3D& operator=(const Blob3D&);
 
-  //! Add point to the Blob
-  void addPoint(double x, double y, double z, double m);
+    //! Add point to the Blob
+    void addPoint(double x, double y, double z, double m);
 
-  //! Merge a second blob
-  void merge(const Blob3D &);
+    //! Merge a second blob
+    void merge(const Blob3D&);
 
-  //! Return the total mass
-  double getMass() const;
+    //! Return the total mass
+    double getMass() const;
 
-  //! Return the number of points
-  int getComponents() const;
+    //! Return the number of points
+    int getComponents() const;
 
-  //! Return the minimumMass
-  double getMinimumMass() const;
+    //! Return the minimumMass
+    double getMinimumMass() const;
 
-  //! Return the minimumMass
-  double getMaximumMass() const;
+    //! Return the minimumMass
+    double getMaximumMass() const;
 
-  //! Return the center of Mass
-  Eigen::Vector3d center() const;
+    //! Return the center of Mass
+    Eigen::Vector3d center() const;
 
-  //! Get the ellipsoid parameters
-  void toEllipsoid(double scale, Eigen::Vector3d &center,
-                   Eigen::Vector3d &eigenvalues,
-                   Eigen::Matrix3d &eigenvectors) const;
+    //! Get the ellipsoid parameters
+    void toEllipsoid(
+        double scale, Eigen::Vector3d& center, Eigen::Vector3d& eigenvalues,
+        Eigen::Matrix3d& eigenvectors) const;
 
-  //! Print
-  void printSelf(std::ostream &os) const;
+    //! Print
+    void printSelf(std::ostream& os) const;
 
-  //! Get covariance matrix of the blob
-  Eigen::Matrix3d covariance() const;
+    //! Get covariance matrix of the blob
+    Eigen::Matrix3d covariance() const;
 
 private:
-  //! Zeroth moment (total mass)
-  double _m0;
+    //! Zeroth moment (total mass)
+    double _m0;
 
-  //! First moments
-  Eigen::Vector3d _m1;
+    //! First moments
+    Eigen::Vector3d _m1;
 
-  //! Second moments
-  Eigen::Matrix3d _m2;
+    //! Second moments
+    Eigen::Matrix3d _m2;
 
-  //! Number of points contributing
-  unsigned int _npoints;
+    //! Number of points contributing
+    unsigned int _npoints;
 
-  //! Minimum mass value
-  double _minValue;
+    //! Minimum mass value
+    double _minValue;
 
-  //! Maximum mass value
-  double _maxValue;
+    //! Maximum mass value
+    double _maxValue;
 };
 
 #ifndef SWIG
-std::ostream &operator<<(std::ostream &os, const Blob3D &b);
+std::ostream& operator<<(std::ostream& os, const Blob3D& b);
 #endif
 } // end namespace nsx

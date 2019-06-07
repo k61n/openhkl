@@ -1,62 +1,48 @@
 
 #include "nsxgui/gui/actions/menus.h"
-#include "nsxgui/gui/view/toggles.h"
 #include "nsxgui/gui/actions/triggers.h"
 #include "nsxgui/gui/mainwin.h"
+#include "nsxgui/gui/view/toggles.h"
 #include <QAction>
 #include <QMenu>
 
 //! Initialize the menu bar.
-Menus::Menus(QMenuBar* mbar)
-    : mbar_{mbar}
+Menus::Menus(QMenuBar* mbar) : mbar_ {mbar}
 {
     Triggers* triggers = gGui->triggers;
     Toggles* toggles = gGui->toggles;
     mbar->setNativeMenuBar(true);
 
-    actionsToMenu("&File",
-    { &triggers->addExperiment,
-      &triggers->removeExperiment,
-      separator(),
-      &triggers->quit });
+    actionsToMenu(
+        "&File",
+        {&triggers->addExperiment, &triggers->removeExperiment, separator(), &triggers->quit});
 
-    QMenu* detector = new QMenu{"&Detector"};
-    detector->addActions({ &triggers->detectorProperties,
-                           &triggers->goniometer});
-    QMenu* sample = new QMenu{"&Sample"};
-    sample->addActions({ &triggers->sampleProperties,
-                       &triggers->sampleGoniometer,
-                         &triggers->isotopesDatabase});
+    QMenu* detector = new QMenu {"&Detector"};
+    detector->addActions({&triggers->detectorProperties, &triggers->goniometer});
+    QMenu* sample = new QMenu {"&Sample"};
+    sample->addActions(
+        {&triggers->sampleProperties, &triggers->sampleGoniometer, &triggers->isotopesDatabase});
     sample->addSeparator()->setText("Shape");
-    sample->addActions({&triggers->shapeProperties,
-                        &triggers->shapeLoadMovie});
-    QMenu* instrument = new QMenu{"&Instrument"};
+    sample->addActions({&triggers->shapeProperties, &triggers->shapeLoadMovie});
+    QMenu* instrument = new QMenu {"&Instrument"};
     instrument->addMenu(detector);
     instrument->addMenu(sample);
     instrument->addSeparator()->setText("Monochromatic source");
     instrument->addAction(&triggers->monochromaticSourceProperties);
 
-    QMenu* data = new QMenu{"&Data"};
-    data->addActions({ &triggers->loadData,
-                     &triggers->removeData,
-                     &triggers->dataProperties,
-                     &triggers->convertHDF5,
-                     &triggers->importRaw,
-                     &triggers->instrumentStates,
-                     &triggers->findPeaks});
-    QMenu* indexing = new QMenu{"&indexing"};
-    indexing->addActions({&triggers->autoIndexer, &triggers->userDefinedIndexer,
-                         &triggers->assignUnitCell});
-    QMenu* peaks = new QMenu{"&Peaks"};
+    QMenu* data = new QMenu {"&Data"};
+    data->addActions({&triggers->loadData, &triggers->removeData, &triggers->dataProperties,
+                      &triggers->convertHDF5, &triggers->importRaw, &triggers->instrumentStates,
+                      &triggers->findPeaks});
+    QMenu* indexing = new QMenu {"&indexing"};
+    indexing->addActions(
+        {&triggers->autoIndexer, &triggers->userDefinedIndexer, &triggers->assignUnitCell});
+    QMenu* peaks = new QMenu {"&Peaks"};
     peaks->addAction(&triggers->filterPeaks);
     peaks->addMenu(indexing);
-    peaks->addActions({&triggers->refine,
-                      &triggers->buildShapeLibrary,
-                      &triggers->integratepeaks,
-                      &triggers->normalize,
-                      &triggers->correctAbsorption,
-                      &triggers->show3d,
-                      &triggers->peaksProperties});
+    peaks->addActions({&triggers->refine, &triggers->buildShapeLibrary, &triggers->integratepeaks,
+                       &triggers->normalize, &triggers->correctAbsorption, &triggers->show3d,
+                       &triggers->peaksProperties});
     experiment_ = mbar_->addMenu("&Experiments");
     experiment_->addMenu(instrument);
     experiment_->addMenu(data);
@@ -70,52 +56,36 @@ Menus::Menus(QMenuBar* mbar)
     actionsToMenu("&Export", {&triggers->exportPlot});
 
     options_ = mbar_->addMenu("&Options");
-    QMenu* cursorMode = new QMenu{"&Cursor mode"};
-    cursorMode->addActions({    &toggles->pixelPosition,
-                                &toggles->gammaNu,
-                                &toggles->twoTheta,
-                                &toggles->dSpacing,
-                                &toggles->millerIndices
-                           });
-    QMenu* setView = new QMenu{"&Set View"};
-    setView->addActions({
-                            &toggles->fromSample,
-                            &toggles->behindDetector,
-                            &toggles->logarithmicScale
-                        });
-    QMenu* peakMenu = new QMenu{"&Peak"};
-    peakMenu->addActions({
-                             &toggles->showLabels,
-                             &toggles->showAreas,
-                             &toggles->drawPeakArea
-                         });
+    QMenu* cursorMode = new QMenu {"&Cursor mode"};
+    cursorMode->addActions({&toggles->pixelPosition, &toggles->gammaNu, &toggles->twoTheta,
+                            &toggles->dSpacing, &toggles->millerIndices});
+    QMenu* setView = new QMenu {"&Set View"};
+    setView->addActions(
+        {&toggles->fromSample, &toggles->behindDetector, &toggles->logarithmicScale});
+    QMenu* peakMenu = new QMenu {"&Peak"};
+    peakMenu->addActions({&toggles->showLabels, &toggles->showAreas, &toggles->drawPeakArea});
     options_->addMenu(cursorMode);
     options_->addMenu(setView);
     options_->addMenu(peakMenu);
 
-    actionsToMenu("&View",{
-                  &triggers->reset,
-                  separator(),
-                  &toggles->viewExperiment,
-                  &toggles->viewImage,
-                  &toggles->viewLogger,
-                  &toggles->viewPlotter,
-                  &toggles->viewProperties});
+    actionsToMenu(
+        "&View",
+        {&triggers->reset, separator(), &toggles->viewExperiment, &toggles->viewImage,
+         &toggles->viewLogger, &toggles->viewPlotter, &toggles->viewProperties});
 
-    actionsToMenu("&Help",
-    {&triggers->about});
+    actionsToMenu("&Help", {&triggers->about});
 }
 
 QAction* Menus::separator() const
 {
-    QAction* ret = new QAction{mbar_};
+    QAction* ret = new QAction {mbar_};
     ret->setSeparator(true);
     return ret;
 }
 
 QMenu* Menus::actionsToMenu(const char* menuName, QList<QAction*> actions)
 {
-    QMenu* menu = new QMenu { menuName };
+    QMenu* menu = new QMenu {menuName};
     mbar_->addMenu(menu);
     menu->addActions(actions);
     QString prefix = QString("%1: ").arg(menu->title().remove('&'));

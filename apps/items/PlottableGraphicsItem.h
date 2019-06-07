@@ -16,18 +16,17 @@ class SXPlot;
 
 class PlottableGraphicsItem : public SXGraphicsItem {
 public:
-  PlottableGraphicsItem(QGraphicsItem *parent = 0, bool deletable = true,
-                        bool movable = false);
-  virtual ~PlottableGraphicsItem();
+    PlottableGraphicsItem(QGraphicsItem* parent = 0, bool deletable = true, bool movable = false);
+    virtual ~PlottableGraphicsItem();
 
-  virtual void plot(SXPlot *plot) = 0;
+    virtual void plot(SXPlot* plot) = 0;
 
-  // Getters and setters
+    // Getters and setters
 
-  //! Returns the type of plot related to the item
-  virtual std::string getPlotType() const = 0;
+    //! Returns the type of plot related to the item
+    virtual std::string getPlotType() const = 0;
 
-  // Other methods
+    // Other methods
 
-  bool isPlottable(SXPlot *plot) const;
+    bool isPlottable(SXPlot* plot) const;
 };

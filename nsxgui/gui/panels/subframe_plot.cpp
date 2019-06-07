@@ -7,10 +7,9 @@
 //-------------------------------------------------------------------------------------------------
 //! class SubframePlot
 
-SubframePlot::SubframePlot()
-    :QcrDockWidget{"Plotter"}
+SubframePlot::SubframePlot() : QcrDockWidget {"Plotter"}
 {
     setWidget(new QTreeView);
-    connect(this, SIGNAL( visibilityChanged(bool) ), &gGui->toggles->viewPlotter ,
-            SLOT( setChecked(bool)) );
+    connect(
+        this, SIGNAL(visibilityChanged(bool)), &gGui->toggles->viewPlotter, SLOT(setChecked(bool)));
 }

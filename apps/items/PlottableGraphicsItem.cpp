@@ -6,15 +6,17 @@
 #include "PlottableGraphicsItem.h"
 #include "SXPlot.h"
 
-PlottableGraphicsItem::PlottableGraphicsItem(QGraphicsItem *parent,
-                                             bool deletable, bool movable)
-    : SXGraphicsItem(parent, deletable, movable) {}
+PlottableGraphicsItem::PlottableGraphicsItem(QGraphicsItem* parent, bool deletable, bool movable)
+    : SXGraphicsItem(parent, deletable, movable)
+{
+}
 
 PlottableGraphicsItem::~PlottableGraphicsItem() {}
 
-bool PlottableGraphicsItem::isPlottable(SXPlot *plot) const {
-  if (!plot)
-    return false;
-  else
-    return (getPlotType().compare(plot->getType()) == 0);
+bool PlottableGraphicsItem::isPlottable(SXPlot* plot) const
+{
+    if (!plot)
+        return false;
+    else
+        return (getPlotType().compare(plot->getType()) == 0);
 }

@@ -46,64 +46,64 @@ namespace nsx {
 class ILLDataReader : public IDataReader {
 
 public:
-  ILLDataReader() = delete;
+    ILLDataReader() = delete;
 
-  //! Copy constructor
-  ILLDataReader(const ILLDataReader &other) = delete;
+    //! Copy constructor
+    ILLDataReader(const ILLDataReader& other) = delete;
 
-  //! Default constructor
-  ILLDataReader(const std::string &filename, Diffractometer *diffractometer);
+    //! Default constructor
+    ILLDataReader(const std::string& filename, Diffractometer* diffractometer);
 
-  //! Destructor
-  ~ILLDataReader() = default;
+    //! Destructor
+    ~ILLDataReader() = default;
 
-  //! Assignment operator
-  ILLDataReader &operator=(const ILLDataReader &other) = delete;
+    //! Assignment operator
+    ILLDataReader& operator=(const ILLDataReader& other) = delete;
 
-  // Other methods
-  void open() final;
+    // Other methods
+    void open() final;
 
-  void close() final;
+    void close() final;
 
-  //! Read a single frame
-  Eigen::MatrixXi data(size_t frame) final;
+    //! Read a single frame
+    Eigen::MatrixXi data(size_t frame) final;
 
 private:
-  static std::size_t BlockSize;
+    static std::size_t BlockSize;
 
-  //! Invoke seekg to beginning the line number, at position pos. First line is
-  //! 1
-  void goToLine(std::stringstream &buffer, int number, int pos);
+    //! Invoke seekg to beginning the line number, at position pos. First line is
+    //! 1
+    void goToLine(std::stringstream& buffer, int number, int pos);
 
-  //! Read the control block containing all float parameters.
-  void readControlFBlock(std::stringstream &);
+    //! Read the control block containing all float parameters.
+    void readControlFBlock(std::stringstream&);
 
-  //! Read the control block containing all Integer Metadata.
-  void readControlIBlock(std::stringstream &);
+    //! Read the control block containing all Integer Metadata.
+    void readControlIBlock(std::stringstream&);
 
-  //! Read the file header containing the numor, user, instr, local contact,
-  //! date and time This is all fixed format.
-  void readHeader(std::stringstream &);
+    //! Read the file header containing the numor, user, instr, local contact,
+    //! date and time This is all fixed format.
+    void readHeader(std::stringstream&);
 
-  //! Reads MetaData from a chain of characters as written in legacy ILL format
-  //! return a MetaData Object
-  void readMetadata(const char *buf);
+    //! Reads MetaData from a chain of characters as written in legacy ILL format
+    //! return a MetaData Object
+    void readMetadata(const char* buf);
 
-  std::size_t _dataPoints;
+    std::size_t _dataPoints;
 
-  std::size_t _nAngles;
+    std::size_t _nAngles;
 
-  std::size_t _headerSize;
+    std::size_t _headerSize;
 
-  std::size_t _skipChar;
+    std::size_t _skipChar;
 
-  std::size_t _dataLength;
+    std::size_t _dataLength;
 
-  boost::interprocess::mapped_region _map;
+    boost::interprocess::mapped_region _map;
 
-  const char *_mapAddress;
+    const char* _mapAddress;
 
-  std::size_t _currentLine;
+    std::size_t _currentLine;
 };
 
 } // end namespace nsx

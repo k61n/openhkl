@@ -6,12 +6,12 @@
 
 class AboutBox : public QDialog {
 public:
-	AboutBox();
+    AboutBox();
 };
 
 class HelpBox : public QDialog {
 public:
-	HelpBox();
+    HelpBox();
 };
 
 #endif // MESSAGE_BOXES_H

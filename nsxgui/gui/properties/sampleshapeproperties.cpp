@@ -1,22 +1,21 @@
 
 #include "nsxgui/gui/properties/sampleshapeproperties.h"
 #include "nsxgui/gui/models/session.h"
-#include <core/Units.h>
-#include <QVBoxLayout>
-#include <QGroupBox>
 #include <QGridLayout>
+#include <QGroupBox>
 #include <QHeaderView>
+#include <QVBoxLayout>
+#include <core/Units.h>
 
-SampleShapeProperties::SampleShapeProperties()
-    : QcrWidget{"sampleShapeProperties"}
+SampleShapeProperties::SampleShapeProperties() : QcrWidget {"sampleShapeProperties"}
 {
     QVBoxLayout* overallLayout = new QVBoxLayout(this);
-    //SampleProperty
+    // SampleProperty
     QGroupBox* sampleProperty = new QGroupBox("Goniometer", this);
     QVBoxLayout* box = new QVBoxLayout(sampleProperty);
     sampleGoniometer = new QTableWidget(this);
     box->addWidget(sampleGoniometer);
-    //ShapeProperty
+    // ShapeProperty
     QGridLayout* grid = new QGridLayout();
     loadMovieButton = new QcrTextTriggerButton("adhoc_movieButton", "Load crystal movie");
     movie = new QcrLineEdit("adhoc_movie", "");
@@ -39,31 +38,32 @@ SampleShapeProperties::SampleShapeProperties()
     grid->addWidget(new QLabel("Faces"), 2, 0, 1, 1);
     grid->addWidget(new QLabel("Edges"), 3, 0, 1, 1);
     grid->addWidget(new QLabel("Vertices"), 4, 0, 1, 1);
-    //move together
+    // move together
     overallLayout->addWidget(new QLabel("Sample"));
     overallLayout->addWidget(sampleProperty);
     overallLayout->addWidget(new QLabel("Shape"));
     overallLayout->addLayout(grid);
 
-    setRemake([this](){ onRemake(); });
+    setRemake([this]() { onRemake(); });
 }
 
 void SampleShapeProperties::onRemake()
 {
-    if (gSession->selectedExperimentNum()>=0){
-        //SampleProperty
-        const auto &sample = gSession->selectedExperiment()->experiment()->diffractometer()->sample();
-        const auto &sample_gonio = sample.gonio();
+    if (gSession->selectedExperimentNum() >= 0) {
+        // SampleProperty
+        const auto& sample =
+            gSession->selectedExperiment()->experiment()->diffractometer()->sample();
+        const auto& sample_gonio = sample.gonio();
         size_t n_sample_gonio_axes = sample_gonio.nAxes();
 
         sampleGoniometer->setEditTriggers(QAbstractItemView::NoEditTriggers);
         sampleGoniometer->setRowCount(n_sample_gonio_axes);
 
         sampleGoniometer->setColumnCount(2);
-        QTableWidgetItem *__qtablewidgetitem = new QTableWidgetItem();
+        QTableWidgetItem* __qtablewidgetitem = new QTableWidgetItem();
         __qtablewidgetitem->setText("Name");
         sampleGoniometer->setHorizontalHeaderItem(0, __qtablewidgetitem);
-        QTableWidgetItem *__qtablewidgetitem1 = new QTableWidgetItem();
+        QTableWidgetItem* __qtablewidgetitem1 = new QTableWidgetItem();
         __qtablewidgetitem1->setText("Type");
         sampleGoniometer->setHorizontalHeaderItem(1, __qtablewidgetitem1);
         sampleGoniometer->horizontalHeader()->setStretchLastSection(true);
@@ -71,33 +71,31 @@ void SampleShapeProperties::onRemake()
 
         for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
 
-            const auto &axis = sample_gonio.axis(i);
+            const auto& axis = sample_gonio.axis(i);
 
             std::ostringstream os;
             os << axis;
 
-            QTableWidgetItem *item0 = new QTableWidgetItem();
+            QTableWidgetItem* item0 = new QTableWidgetItem();
             item0->setData(Qt::DisplayRole, QString(axis.name().c_str()));
-            item0->setBackgroundColor(axis.physical() ? QColor("#FFDDDD")
-                                                      : QColor("#DDFFDD"));
+            item0->setBackgroundColor(axis.physical() ? QColor("#FFDDDD") : QColor("#DDFFDD"));
             sampleGoniometer->setItem(i, 0, item0);
 
             sampleGoniometer->setItem(i, 1, new QTableWidgetItem(QString(os.str().c_str())));
         }
 
-        //Shape
-        const auto &hull = sample.shape();
+        // Shape
+        const auto& hull = sample.shape();
 
-        volume->setCellValue(QString::number(hull.volume() / nsx::mm3) +
-                                     " mm^3");
+        volume->setCellValue(QString::number(hull.volume() / nsx::mm3) + " mm^3");
         faces->setCellValue(QString::number(hull.nFaces()));
         edges->setCellValue(QString::number(hull.nEdges()));
         vertices->setCellValue(QString::number(hull.nVertices()));
     } else {
-        //SampleProperty
+        // SampleProperty
         sampleGoniometer->removeColumn(1);
         sampleGoniometer->removeColumn(0);
-        //Shape
+        // Shape
         volume->setCellValue("");
         faces->setCellValue("");
         edges->setCellValue("");

@@ -1,15 +1,14 @@
 
 #include "nsxgui/gui/properties/numorproperty.h"
 #include "nsxgui/gui/models/session.h"
-#include <build/core/include/core/DataSet.h>
-#include <build/core/include/core/IDataReader.h>
-#include <build/core/include/core/DataTypes.h>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <build/core/include/core/DataSet.h>
+#include <build/core/include/core/DataTypes.h>
+#include <build/core/include/core/IDataReader.h>
 
-NumorProperty::NumorProperty()
-    : QcrWidget{"numorProperty"}
+NumorProperty::NumorProperty() : QcrWidget {"numorProperty"}
 {
     QGridLayout* gridLayout = new QGridLayout(this);
     table = new QTableWidget(this);
@@ -29,7 +28,7 @@ NumorProperty::NumorProperty()
     gridLayout->addLayout(box, 0, 0, 1, 1);
     gridLayout->addWidget(table, 1, 0, 1, 1);
 
-    setRemake([this](){ onRemake(); });
+    setRemake([this]() { onRemake(); });
     remake();
 }
 
@@ -37,25 +36,24 @@ void NumorProperty::onRemake()
 {
     clear();
 
-    if (gSession->selectedExperimentNum()>=0) {
+    if (gSession->selectedExperimentNum() >= 0) {
         ExperimentModel* exp = gSession->selectedExperiment();
         auto data = exp->data()->selectedData();
 
         if (data) {
             label->setText(QString::fromStdString(data->filename()));
 
-            const auto &metadata = data->reader()->metadata();
-            const auto &map = metadata.map();
+            const auto& metadata = data->reader()->metadata();
+            const auto& map = metadata.map();
 
             table->setColumnCount(2);
             table->setRowCount(map.size());
 
             int numberLines = 0;
-            for (auto element :
-                 map) // Only int, double and string metadata are displayed.
+            for (auto element : map) // Only int, double and string metadata are displayed.
             {
-                QTableWidgetItem *col0 = new QTableWidgetItem();
-                QTableWidgetItem *col1 = new QTableWidgetItem();
+                QTableWidgetItem* col0 = new QTableWidgetItem();
+                QTableWidgetItem* col1 = new QTableWidgetItem();
                 col0->setData(Qt::EditRole, QString(element.first));
 
                 if (element.second.is<int>()) {
@@ -63,8 +61,9 @@ void NumorProperty::onRemake()
                 } else if (element.second.is<double>()) {
                     col1->setData(Qt::EditRole, element.second.as<double>());
                 } else if (element.second.is<std::string>()) {
-                    col1->setData(Qt::EditRole, QString(QString::fromStdString(
-                                                            element.second.as<std::string>())));
+                    col1->setData(
+                        Qt::EditRole,
+                        QString(QString::fromStdString(element.second.as<std::string>())));
                 } else {
                     delete col0;
                     delete col1;
@@ -76,7 +75,6 @@ void NumorProperty::onRemake()
             table->horizontalHeader()->setStretchLastSection(true);
         }
     }
-
 }
 
 void NumorProperty::clear()

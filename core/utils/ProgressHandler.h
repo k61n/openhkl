@@ -11,33 +11,33 @@ namespace nsx {
 //! thread safe class to handle progress and status messages
 class ProgressHandler {
 public:
-  ProgressHandler();
-  ~ProgressHandler();
+    ProgressHandler();
+    ~ProgressHandler();
 
-  void setCallback(std::function<void()> callback);
+    void setCallback(std::function<void()> callback);
 
-  void setProgress(int progress);
-  int getProgress();
+    void setProgress(int progress);
+    int getProgress();
 
-  void setStatus(const char *status);
-  const std::string getStatus();
+    void setStatus(const char* status);
+    const std::string getStatus();
 
-  void log(const char *message);
-  void log(const std::string &message);
-  std::vector<std::string> getLog();
+    void log(const char* message);
+    void log(const std::string& message);
+    std::vector<std::string> getLog();
 
-  void abort();
-  bool aborted();
+    void abort();
+    bool aborted();
 
 private:
-  std::mutex _mutex;
-  std::string _status;
-  std::vector<std::string> _log;
-  int _progress;
+    std::mutex _mutex;
+    std::string _status;
+    std::vector<std::string> _log;
+    int _progress;
 
-  std::atomic_bool _aborted;
+    std::atomic_bool _aborted;
 
-  std::function<void(void)> _callback;
+    std::function<void(void)> _callback;
 };
 
 } // end namespace nsx

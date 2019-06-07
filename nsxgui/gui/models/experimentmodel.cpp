@@ -1,16 +1,16 @@
 
 #include "nsxgui/gui/models/experimentmodel.h"
 #include "nsxgui/gui/models/session.h"
-#include <core/Peak3D.h>
 #include <QCR/engine/logger.h>
 #include <QCR/engine/mixin.h>
+#include <core/Peak3D.h>
 //  ***********************************************************************************************
 //! @class ExperimentData
 
 void ExperimentData::addData(nsx::sptrDataSet data)
 {
     data_.append(data);
-    if ( (index_<0) || (index_>=data_.size()) )
+    if ((index_ < 0) || (index_ >= data_.size()))
         index_ = 0;
     gRoot->remakeAll();
 }
@@ -26,13 +26,13 @@ void ExperimentData::removeSelectedData()
 
 void ExperimentData::selectData(int i)
 {
-    if ( i>=0 && i<data_.size())
+    if (i >= 0 && i < data_.size())
         index_ = i;
 }
 
 nsx::sptrDataSet ExperimentData::selectedData()
 {
-    if (data_.size()>0 && index_<data_.size() && index_>=0)
+    if (data_.size() > 0 && index_ < data_.size() && index_ >= 0)
         return data_.at(index_);
     return nullptr;
 }
@@ -47,7 +47,7 @@ nsx::DataList ExperimentData::allDataVector()
 
 void ExperimentData::convertToHDF5()
 {
-    //TODO: implement the function
+    // TODO: implement the function
 }
 
 //  ***********************************************************************************************
@@ -55,7 +55,7 @@ void ExperimentData::convertToHDF5()
 
 InstrumentModel::InstrumentModel(const QString& name, const QString& sourceName)
 {
-    //TODO: implement constructor
+    // TODO: implement constructor
 }
 
 //  ***********************************************************************************************
@@ -72,8 +72,7 @@ nsx::sptrUnitCell UnitCellsModel::selectedCell()
 //  ***********************************************************************************************
 //! @class ExperimentModel
 
-ExperimentModel::ExperimentModel(nsx::sptrExperiment experiment)
-	: experiment_{experiment}
+ExperimentModel::ExperimentModel(nsx::sptrExperiment experiment) : experiment_ {experiment}
 {
     data_ = new ExperimentData;
     instrument_ = new InstrumentModel(QString::fromStdString(experiment_->name()), "sourceName");

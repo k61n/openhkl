@@ -8,13 +8,12 @@
 
 #include <core/PeakFilter.h>
 
-#include <QVBoxLayout>
-#include <QHBoxLayout>
 #include <QDialogButtonBox>
+#include <QHBoxLayout>
 #include <QSpacerItem>
+#include <QVBoxLayout>
 
-PeakFilter::PeakFilter()
-    : QDialog{gGui}
+PeakFilter::PeakFilter() : QDialog {gGui}
 {
     if (gSession->selectedExperimentNum() < 0) {
         gLogger->log("## No experiment selected");
@@ -63,7 +62,7 @@ void PeakFilter::doLayout()
     byUnitCell->setCheckable(true);
     byUnitCell->setChecked(false);
     QHBoxLayout* byLayout = new QHBoxLayout(byUnitCell);
-    unitCell = new QcrComboBox("adhoc_unitCell", new QcrCell<int>(0), QStringList{});
+    unitCell = new QcrComboBox("adhoc_unitCell", new QcrCell<int>(0), QStringList {});
     byLayout->addWidget(new QLabel("Unit cell"));
     byLayout->addWidget(unitCell);
     tolerance = new QcrDoubleSpinBox("adhoc_tolerance", new QcrCell<double>(0.2), 10, 6);
@@ -99,7 +98,7 @@ void PeakFilter::doLayout()
     settings->addWidget(rangeBox);
 
     sapcegroupExtincted =
-            new QcrCheckBox("adhoc_extincted", "Space-group extincted", new QcrCell<bool>(false));
+        new QcrCheckBox("adhoc_extincted", "Space-group extincted", new QcrCell<bool>(false));
     settings->addWidget(sapcegroupExtincted);
     sparseGroup = new QGroupBox("Sparse dataset");
     sparseGroup->setCheckable(true);
@@ -121,101 +120,90 @@ void PeakFilter::doLayout()
     mergebox->addItem(new QSpacerItem(20, 40, QSizePolicy::Expanding, QSizePolicy::Minimum));
     settings->addWidget(mergeGroup);
 
-    removeOverlapping =
-            new QcrCheckBox("adhoc_removeOverlapping",
-                            "Remove overlapping peaks",
-                            new QcrCell<bool>(false));
+    removeOverlapping = new QcrCheckBox(
+        "adhoc_removeOverlapping", "Remove overlapping peaks", new QcrCell<bool>(false));
     settings->addWidget(removeOverlapping);
-    keepComplementary =
-            new QcrCheckBox("adhoc_keepComplementary",
-                            "Keep the complementary selection",
-                            new QcrCell<bool>(false));
+    keepComplementary = new QcrCheckBox(
+        "adhoc_keepComplementary", "Keep the complementary selection", new QcrCell<bool>(false));
     settings->addWidget(keepComplementary);
     upperLayout->addLayout(settings);
-    model_ = new PeaksTableModel("adhoc_filterModel", gSession->selectedExperiment()->experiment(),
-                                 peaks_);
+    model_ = new PeaksTableModel(
+        "adhoc_filterModel", gSession->selectedExperiment()->experiment(), peaks_);
     peaksTable = new PeaksTableView;
     peaksTable->setModel(model_);
     upperLayout->addWidget(peaksTable);
     whole->addLayout(upperLayout);
-    buttons = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel
-                                   |QDialogButtonBox::Apply, Qt::Horizontal);
+    buttons = new QDialogButtonBox(
+        QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply, Qt::Horizontal);
     whole->addWidget(buttons);
 
-    connect(buttons, &QDialogButtonBox::clicked, this,
-            &PeakFilter::slotActionClicked);
+    connect(buttons, &QDialogButtonBox::clicked, this, &PeakFilter::slotActionClicked);
 
     show();
 }
 
 void PeakFilter::filterPeaks()
 {
-    //TODO: filter peaks
+    // TODO: filter peaks
 
     nsx::PeakList filtered_peaks = peaks_;
 
     nsx::PeakFilter peak_filter;
 
     if (stateBox->isChecked()) {
-      filtered_peaks =
-          peak_filter.selected(filtered_peaks, selected->isChecked());
-      filtered_peaks =
-          peak_filter.masked(filtered_peaks, masked->isChecked());
-      filtered_peaks =
-          peak_filter.predicted(filtered_peaks, predicted->isChecked());
+        filtered_peaks = peak_filter.selected(filtered_peaks, selected->isChecked());
+        filtered_peaks = peak_filter.masked(filtered_peaks, masked->isChecked());
+        filtered_peaks = peak_filter.predicted(filtered_peaks, predicted->isChecked());
     }
 
     if (indexedPeak->isChecked()) {
-      filtered_peaks = peak_filter.indexed(filtered_peaks);
+        filtered_peaks = peak_filter.indexed(filtered_peaks);
     }
 
     if (byUnitCell->isChecked()) {
-      if (unitCell->count() > 0) {
-        auto unit_cell =
-            unitCell->itemData(unitCell->currentIndex(), Qt::UserRole)
-                .value<nsx::sptrUnitCell>();
-        filtered_peaks = peak_filter.indexed(filtered_peaks, *unit_cell,
-                                             tolerance->value());
-      }
+        if (unitCell->count() > 0) {
+            auto unit_cell = unitCell->itemData(unitCell->currentIndex(), Qt::UserRole)
+                                 .value<nsx::sptrUnitCell>();
+            filtered_peaks = peak_filter.indexed(filtered_peaks, *unit_cell, tolerance->value());
+        }
     }
 
     if (strengthBox->isChecked()) {
-      double smin = strengthMin->value();
-      double smax = strengthMax->value();
+        double smin = strengthMin->value();
+        double smax = strengthMax->value();
 
-      filtered_peaks = peak_filter.strength(filtered_peaks, smin, smax);
+        filtered_peaks = peak_filter.strength(filtered_peaks, smin, smax);
     }
 
     if (rangeBox->isChecked()) {
-      double d_min = drangeMin->value();
-      double d_max = drangeMax->value();
+        double d_min = drangeMin->value();
+        double d_max = drangeMax->value();
 
-      filtered_peaks = peak_filter.dRange(filtered_peaks, d_min, d_max);
+        filtered_peaks = peak_filter.dRange(filtered_peaks, d_min, d_max);
     }
 
     if (sapcegroupExtincted->isChecked()) {
-      filtered_peaks = peak_filter.extincted(filtered_peaks);
+        filtered_peaks = peak_filter.extincted(filtered_peaks);
     }
 
     if (sparseGroup->isChecked()) {
-      size_t min_num_peaks = static_cast<size_t>(minNumberPeaks->value());
+        size_t min_num_peaks = static_cast<size_t>(minNumberPeaks->value());
 
-      filtered_peaks = peak_filter.sparseDataSet(filtered_peaks, min_num_peaks);
+        filtered_peaks = peak_filter.sparseDataSet(filtered_peaks, min_num_peaks);
     }
 
     if (mergeGroup->isChecked()) {
-      double significance_level = significanceLevel->value();
+        double significance_level = significanceLevel->value();
 
-      filtered_peaks =
-          peak_filter.mergedPeaksSignificance(filtered_peaks, significance_level);
+        filtered_peaks = peak_filter.mergedPeaksSignificance(filtered_peaks, significance_level);
     }
 
     if (removeOverlapping->isChecked()) {
-      filtered_peaks = peak_filter.overlapping(filtered_peaks);
+        filtered_peaks = peak_filter.overlapping(filtered_peaks);
     }
 
     if (keepComplementary->isChecked()) {
-      filtered_peaks = peak_filter.complementary(peaks_, filtered_peaks);
+        filtered_peaks = peak_filter.complementary(peaks_, filtered_peaks);
     }
 
     model_->setPeaks(filtered_peaks);
@@ -223,42 +211,45 @@ void PeakFilter::filterPeaks()
 
 void PeakFilter::accept()
 {
-    //TODO: add changes to peaksmodel
+    // TODO: add changes to peaksmodel
 
-    auto &filtered_peaks = model_->peaks();
+    auto& filtered_peaks = model_->peaks();
 
     if (!filtered_peaks.empty()) {
 
-      gSession->selectedExperiment()->peaks()->selectedPeakLists(0)->addFilteredPeaks("filtered", filtered_peaks);
+        gSession->selectedExperiment()->peaks()->selectedPeakLists(0)->addFilteredPeaks(
+            "filtered", filtered_peaks);
 
-      QString message = "Applied peak filters on selected peaks. Remains ";
-      message += QString::number(filtered_peaks.size());
-      message += " out of ";
-      message += QString::number( peaks_.size());
-      message += " peaks";
-      gLogger->log(message);
+        QString message = "Applied peak filters on selected peaks. Remains ";
+        message += QString::number(filtered_peaks.size());
+        message += " out of ";
+        message += QString::number(peaks_.size());
+        message += " peaks";
+        gLogger->log(message);
     }
 
     QDialog::accept();
 }
 
-void PeakFilter::slotActionClicked(QAbstractButton *button)
+void PeakFilter::slotActionClicked(QAbstractButton* button)
 {
     auto button_role = buttons->standardButton(button);
 
     switch (button_role) {
     case QDialogButtonBox::StandardButton::Apply: {
-      filterPeaks();
-      break;
+        filterPeaks();
+        break;
     }
     case QDialogButtonBox::StandardButton::Cancel: {
-      reject();
-      break;
+        reject();
+        break;
     }
     case QDialogButtonBox::StandardButton::Ok: {
-      accept();
-      break;
+        accept();
+        break;
     }
-    default: { return; }
+    default: {
+        return;
+    }
     }
 }

@@ -3,27 +3,28 @@
 #define SHAPELIBRARY_H
 
 #include <QDialog>
-#include <QGraphicsView>
-#include <QTableView>
 #include <QDialogButtonBox>
+#include <QGraphicsView>
 #include <QGroupBox>
+#include <QTableView>
 
 #include <core/CrystalTypes.h>
 #include <core/DataTypes.h>
 #include <core/InstrumentTypes.h>
 #include <core/Profile3D.h>
 
-#include <QCR/widgets/views.h>
-#include <QCR/widgets/controls.h>
-#include <QCR/widgets/actions.h>
 #include "apps/ColorMap.h"
+#include <QCR/widgets/actions.h>
+#include <QCR/widgets/controls.h>
+#include <QCR/widgets/views.h>
 
 class ShapeLibraryDialog : public QDialog {
     Q_OBJECT
 public:
     ShapeLibraryDialog();
-    const nsx::Profile3D &profile() { return _profile; }
+    const nsx::Profile3D& profile() { return _profile; }
     nsx::sptrShapeLibrary library() const { return _library; }
+
 private:
     void layout();
     void calculate();
@@ -67,4 +68,4 @@ private:
     QDialogButtonBox* buttons;
 };
 
-#endif //SHAPELIBRARY_H
+#endif // SHAPELIBRARY_H

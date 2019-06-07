@@ -1,14 +1,15 @@
 #include "NSXQFrame.h"
 
-NSXQFrame::NSXQFrame() : QFrame(nullptr) {
-  // The frame is destroyed when closed
-  setAttribute(Qt::WA_DeleteOnClose, true);
+NSXQFrame::NSXQFrame() : QFrame(nullptr)
+{
+    // The frame is destroyed when closed
+    setAttribute(Qt::WA_DeleteOnClose, true);
 
-  setWindowFlags(Qt::Window);
+    setWindowFlags(Qt::Window);
 
-  setFrameStyle(QFrame::Box | QFrame::Plain);
+    setFrameStyle(QFrame::Box | QFrame::Plain);
 
-  setMouseTracking(true);
+    setMouseTracking(true);
 
-  setFocusPolicy(Qt::StrongFocus);
+    setFocusPolicy(Qt::StrongFocus);
 }

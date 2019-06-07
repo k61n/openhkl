@@ -2,17 +2,16 @@
 #include "nsxgui/gui/panels/subframe_image.h"
 #include "nsxgui/gui/mainwin.h"
 #include "nsxgui/gui/view/toggles.h"
-#include <QTreeView>
 #include <QGraphicsView>
 #include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QSplitter>
 #include <QScrollBar>
+#include <QSplitter>
+#include <QTreeView>
+#include <QVBoxLayout>
 
 //-------------------------------------------------------------------------------------------------
 
-ImageWidget::ImageWidget()
-    : QcrWidget{"Image"}
+ImageWidget::ImageWidget() : QcrWidget {"Image"}
 {
     QHBoxLayout* overallLayout = new QHBoxLayout(this);
     QVBoxLayout* leftLayout = new QVBoxLayout;
@@ -59,10 +58,9 @@ ImageWidget::ImageWidget()
 
 //  ***********************************************************************************************
 
-SubframeImage::SubframeImage()
-    :QcrDockWidget{"Image"}
+SubframeImage::SubframeImage() : QcrDockWidget {"Image"}
 {
     setWidget((centralWidget = new ImageWidget));
-    connect(this, SIGNAL( visibilityChanged(bool) ), &gGui->toggles->viewImage,
-            SLOT( setChecked(bool)) );
+    connect(
+        this, SIGNAL(visibilityChanged(bool)), &gGui->toggles->viewImage, SLOT(setChecked(bool)));
 }

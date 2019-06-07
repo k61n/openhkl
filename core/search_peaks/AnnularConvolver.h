@@ -43,21 +43,21 @@ namespace nsx {
 class AnnularConvolver : public Convolver {
 
 public:
-  AnnularConvolver();
+    AnnularConvolver();
 
-  AnnularConvolver(const AnnularConvolver &other) = default;
+    AnnularConvolver(const AnnularConvolver& other) = default;
 
-  AnnularConvolver(const std::map<std::string, double> &parameters);
+    AnnularConvolver(const std::map<std::string, double>& parameters);
 
-  ~AnnularConvolver() = default;
+    ~AnnularConvolver() = default;
 
-  AnnularConvolver &operator=(const AnnularConvolver &other) = default;
+    AnnularConvolver& operator=(const AnnularConvolver& other) = default;
 
-  Convolver *clone() const override;
+    Convolver* clone() const override;
 
-  virtual std::pair<size_t, size_t> kernelSize() const override;
+    virtual std::pair<size_t, size_t> kernelSize() const override;
 
-  RealMatrix convolve(const RealMatrix &image) override;
+    RealMatrix convolve(const RealMatrix& image) override;
 };
 
 } // end namespace nsx

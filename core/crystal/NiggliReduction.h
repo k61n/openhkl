@@ -42,36 +42,36 @@ namespace nsx {
 //! tolerance (epsilon).
 class NiggliReduction {
 public:
-  //! Niggli reduction of the metric tensor g, with relative error epsilon
-  //! The relative error is multiplied internally by the average unit dimension
-  //! of g
-  NiggliReduction(const Eigen::Matrix3d &g, double epsilon);
-  //! Reduce the unit-cell and output the reduced metric tensor and the
-  //! transformation matrix
-  void reduce(Eigen::Matrix3d &newg, Eigen::Matrix3d &P);
-  //! Change the maximum allowed number of iterations
-  static void setIterMax(unsigned int max);
+    //! Niggli reduction of the metric tensor g, with relative error epsilon
+    //! The relative error is multiplied internally by the average unit dimension
+    //! of g
+    NiggliReduction(const Eigen::Matrix3d& g, double epsilon);
+    //! Reduce the unit-cell and output the reduced metric tensor and the
+    //! transformation matrix
+    void reduce(Eigen::Matrix3d& newg, Eigen::Matrix3d& P);
+    //! Change the maximum allowed number of iterations
+    static void setIterMax(unsigned int max);
 
 private:
-  //! Number of iteration max allowed in the reduction procedure.
-  static unsigned int _itermax;
-  //! Relative error
-  double _epsilon;
-  //! TransformG with current C-matrix transformation
-  void transformG();
-  //! Update the Niggli parameters
-  void updateParameters();
-  //! Current metric tensor
-  Eigen::Matrix3d _g;
-  //! Current transformation matrix
-  Eigen::Matrix3d _P;
-  //! Store transformation matrix
-  Eigen::Matrix3d _CMat;
-  //! Niggli parameters
-  double _A, _B, _C, _zeta, _eta, _xi;
-  //! Internal variables storing 1 0 or -1 for each angle (acute, right, or
-  //! obtuse)
-  int _l, _m, _n;
+    //! Number of iteration max allowed in the reduction procedure.
+    static unsigned int _itermax;
+    //! Relative error
+    double _epsilon;
+    //! TransformG with current C-matrix transformation
+    void transformG();
+    //! Update the Niggli parameters
+    void updateParameters();
+    //! Current metric tensor
+    Eigen::Matrix3d _g;
+    //! Current transformation matrix
+    Eigen::Matrix3d _P;
+    //! Store transformation matrix
+    Eigen::Matrix3d _CMat;
+    //! Niggli parameters
+    double _A, _B, _C, _zeta, _eta, _xi;
+    //! Internal variables storing 1 0 or -1 for each angle (acute, right, or
+    //! obtuse)
+    int _l, _m, _n;
 };
 
 } // end namespace nsx

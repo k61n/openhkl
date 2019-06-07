@@ -2,13 +2,13 @@
 #ifndef PEAKFILTER_H
 #define PEAKFILTER_H
 
-#include <QCR/widgets/views.h>
-#include <QCR/widgets/controls.h>
-#include "nsxgui/gui/models/peakstable.h"
 #include "nsxgui/gui/models/experimentmodel.h"
+#include "nsxgui/gui/models/peakstable.h"
+#include <QCR/widgets/controls.h>
+#include <QCR/widgets/views.h>
 
-#include <QGroupBox>
 #include <QDialogButtonBox>
+#include <QGroupBox>
 
 class PeakFilter : public QDialog {
 public:
@@ -17,7 +17,7 @@ public:
 
 public slots:
     void accept() override;
-    void slotActionClicked(QAbstractButton *button);
+    void slotActionClicked(QAbstractButton* button);
     void slotUnitCellChanged(int index);
 
 private:
@@ -53,4 +53,4 @@ private:
 };
 
 
-#endif //PEAKFILTER_H
+#endif // PEAKFILTER_H

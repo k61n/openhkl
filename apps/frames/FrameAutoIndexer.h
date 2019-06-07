@@ -16,48 +16,46 @@ class ExperimentItem;
 class QAbstractButton;
 
 class FrameAutoIndexer : public NSXQFrame {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  static FrameAutoIndexer *create(ExperimentItem *experiment_item,
-                                  const nsx::PeakList &peaks);
+    static FrameAutoIndexer* create(ExperimentItem* experiment_item, const nsx::PeakList& peaks);
 
-  static FrameAutoIndexer *Instance();
+    static FrameAutoIndexer* Instance();
 
-  ~FrameAutoIndexer();
+    ~FrameAutoIndexer();
 
 private slots:
 
-  void slotActionClicked(QAbstractButton *button);
+    void slotActionClicked(QAbstractButton* button);
 
-  void slotTabEdited(int index);
+    void slotTabEdited(int index);
 
-  void slotTabRemoved(int index);
+    void slotTabRemoved(int index);
 
-  void selectSolution(int);
-
-private:
-  FrameAutoIndexer(ExperimentItem *experiment_item, const nsx::PeakList &peaks);
-
-  void accept();
-
-  void buildSolutionsTable();
-
-  void resetUnitCell();
-
-  void run();
+    void selectSolution(int);
 
 private:
-  static FrameAutoIndexer *_instance;
+    FrameAutoIndexer(ExperimentItem* experiment_item, const nsx::PeakList& peaks);
 
-  Ui::FrameAutoIndexer *_ui;
+    void accept();
 
-  ExperimentItem *_experiment_item;
+    void buildSolutionsTable();
 
-  CollectedPeaksModel *_peaks_model;
+    void resetUnitCell();
 
-  std::vector<std::pair<nsx::sptrPeak3D, std::shared_ptr<nsx::UnitCell>>>
-      _defaults;
+    void run();
 
-  std::vector<std::pair<nsx::sptrUnitCell, double>> _solutions;
+private:
+    static FrameAutoIndexer* _instance;
+
+    Ui::FrameAutoIndexer* _ui;
+
+    ExperimentItem* _experiment_item;
+
+    CollectedPeaksModel* _peaks_model;
+
+    std::vector<std::pair<nsx::sptrPeak3D, std::shared_ptr<nsx::UnitCell>>> _defaults;
+
+    std::vector<std::pair<nsx::sptrUnitCell, double>> _solutions;
 };

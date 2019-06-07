@@ -10,6 +10,7 @@
 class InstrumentStates : public QcrFrame {
 public:
     InstrumentStates();
+
 private:
     QcrSpinBox* frameIndex;
     QSlider* frameSlider;
@@ -54,4 +55,3 @@ private:
 };
 
 #endif // INSTRUMENTSTATES_H
-

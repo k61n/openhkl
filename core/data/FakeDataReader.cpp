@@ -14,20 +14,24 @@
 
 namespace nsx {
 
-FakeDataReader::FakeDataReader(const std::string &filename,
-                               Diffractometer *diffractometer)
-    : HDF5MetaDataReader(filename, diffractometer) {
-  _frames.resize(_nFrames);
+FakeDataReader::FakeDataReader(const std::string& filename, Diffractometer* diffractometer)
+    : HDF5MetaDataReader(filename, diffractometer)
+{
+    _frames.resize(_nFrames);
 
-  for (size_t i = 0; i < _nFrames; ++i) {
-    _frames[i].resize(_nRows, _nCols);
-  }
+    for (size_t i = 0; i < _nFrames; ++i) {
+        _frames[i].resize(_nRows, _nCols);
+    }
 }
 
-Eigen::MatrixXi FakeDataReader::data(size_t frame) { return _frames[frame]; }
+Eigen::MatrixXi FakeDataReader::data(size_t frame)
+{
+    return _frames[frame];
+}
 
-void FakeDataReader::setData(size_t frame, const Eigen::MatrixXi &data) {
-  _frames[frame] = data;
+void FakeDataReader::setData(size_t frame, const Eigen::MatrixXi& data)
+{
+    _frames[frame] = data;
 }
 
 } // end namespace nsx

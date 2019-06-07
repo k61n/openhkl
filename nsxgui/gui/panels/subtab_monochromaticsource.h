@@ -2,12 +2,13 @@
 #ifndef SUBTAB_MONOCHROMATICSOURCE_H
 #define SUBTAB_MONOCHROMATICSOURCE_H
 
-#include <QCR/widgets/views.h>
 #include "nsxgui/gui/properties/sourceproperty.h"
+#include <QCR/widgets/views.h>
 
 class SubtabMonochromatic : public QcrWidget {
 public:
     SubtabMonochromatic();
+
 private:
     SourceProperty* property;
 };

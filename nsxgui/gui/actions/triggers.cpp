@@ -1,78 +1,74 @@
 #include "nsxgui/gui/actions/triggers.h"
+#include "nsxgui/gui/dialogs/listnamedialog.h"
+#include "nsxgui/gui/dialogs/peakfilter.h"
+#include "nsxgui/gui/dialogs/shapelibrary.h"
+#include "nsxgui/gui/frames/autoindexer.h"
+#include "nsxgui/gui/frames/globaloffsets.h"
+#include "nsxgui/gui/frames/instrumentstates.h"
+#include "nsxgui/gui/frames/peakfinder.h"
+#include "nsxgui/gui/frames/refiner.h"
+#include "nsxgui/gui/frames/userdefinedunitcellindexer.h"
 #include "nsxgui/gui/mainwin.h"
 #include "nsxgui/gui/models/session.h" //for gSession
-#include "nsxgui/gui/panels/tab_instrument.h"
 #include "nsxgui/gui/panels/subframe_setup.h"
-#include "nsxgui/gui/frames/instrumentstates.h"
-#include "nsxgui/gui/frames/autoindexer.h"
-#include "nsxgui/gui/frames/peakfinder.h"
-#include "nsxgui/gui/dialogs/peakfilter.h"
-#include "nsxgui/gui/frames/userdefinedunitcellindexer.h"
-#include "nsxgui/gui/dialogs/shapelibrary.h"
-#include "nsxgui/gui/frames/refiner.h"
-#include "nsxgui/gui/frames/globaloffsets.h"
-#include "nsxgui/gui/dialogs/listnamedialog.h"
+#include "nsxgui/gui/panels/tab_instrument.h"
 
-#include <QInputDialog>
 #include <QDesktopServices>
+#include <QInputDialog>
 
 Triggers::Triggers()
 {
-    reset.setTriggerHook([](){ gGui->resetViews(); });
-    quit.setTriggerHook([](){ gGui->deleteLater(); });
-    monochromaticSourceProperties.setTriggerHook([this](){
+    reset.setTriggerHook([]() { gGui->resetViews(); });
+    quit.setTriggerHook([]() { gGui->deleteLater(); });
+    monochromaticSourceProperties.setTriggerHook([this]() {
         SubframeSetup* properties = gGui->dockProperties_->tabsframe;
         TabInstrument* tab = properties->instrument;
         int i = tab->indexOf(tab->monoSource);
         properties->setCurrent(0);
         tab->setCurrent(i);
     });
-    shapeProperties.setTriggerHook([](){
-                         SubframeSetup* properties = gGui->dockProperties_->tabsframe;
-                         TabInstrument* tab = properties->instrument;
-                         int i =tab->indexOf(tab->sample);
-                         properties->setCurrent(0);
-                         tab->setCurrent(i);
-                     });
-    sampleProperties.setTriggerHook([](){
-                         SubframeSetup* properties = gGui->dockProperties_->tabsframe;
-                        TabInstrument* tab = properties->instrument;
-                         int i = tab->indexOf(tab->sample);
-                         properties->setCurrent(0);
-                        tab->setCurrent(i);
-                     });
-    detectorProperties.setTriggerHook([](){
-                         SubframeSetup* properties = gGui->dockProperties_->tabsframe;
-                         TabInstrument* tab = properties->instrument;
-                         int i = tab->indexOf(tab->detector);
-                         properties->setCurrent(0);
-                         tab->setCurrent(i);
-                     });
-    peaksProperties.setTriggerHook([](){
-                         SubframeSetup* properties = gGui->dockProperties_->tabsframe;
-                         int i = properties->indexOf(properties->peaks);
-                         properties->setCurrent(i);
-                     });
-    dataProperties.setTriggerHook([](){
-                         SubframeSetup* properties = gGui->dockProperties_->tabsframe;
-                         int i = properties->indexOf(properties->data);
-                         properties->setCurrent(i);
-                     });
-    loadData.setTriggerHook([](){ gSession->loadData(); });
-    importRaw.setTriggerHook([](){ gSession->loadRawData(); });
-    addExperiment.setTriggerHook([](){ gSession->createExperiment(); });
+    shapeProperties.setTriggerHook([]() {
+        SubframeSetup* properties = gGui->dockProperties_->tabsframe;
+        TabInstrument* tab = properties->instrument;
+        int i = tab->indexOf(tab->sample);
+        properties->setCurrent(0);
+        tab->setCurrent(i);
+    });
+    sampleProperties.setTriggerHook([]() {
+        SubframeSetup* properties = gGui->dockProperties_->tabsframe;
+        TabInstrument* tab = properties->instrument;
+        int i = tab->indexOf(tab->sample);
+        properties->setCurrent(0);
+        tab->setCurrent(i);
+    });
+    detectorProperties.setTriggerHook([]() {
+        SubframeSetup* properties = gGui->dockProperties_->tabsframe;
+        TabInstrument* tab = properties->instrument;
+        int i = tab->indexOf(tab->detector);
+        properties->setCurrent(0);
+        tab->setCurrent(i);
+    });
+    peaksProperties.setTriggerHook([]() {
+        SubframeSetup* properties = gGui->dockProperties_->tabsframe;
+        int i = properties->indexOf(properties->peaks);
+        properties->setCurrent(i);
+    });
+    dataProperties.setTriggerHook([]() {
+        SubframeSetup* properties = gGui->dockProperties_->tabsframe;
+        int i = properties->indexOf(properties->data);
+        properties->setCurrent(i);
+    });
+    loadData.setTriggerHook([]() { gSession->loadData(); });
+    importRaw.setTriggerHook([]() { gSession->loadRawData(); });
+    addExperiment.setTriggerHook([]() { gSession->createExperiment(); });
 
-    removeExperiment.setTriggerHook([](){
-        gSession->removeExperiment();
-    });
-    findPeaks.setTriggerHook([](){
-        new PeakFinder;
-    });
-    instrumentStates.setTriggerHook([](){ new InstrumentStates; });
-    autoIndexer.setTriggerHook([](){ new AutoIndexer; });
-    filterPeaks.setTriggerHook([](){ new PeakFilter; });
-    userDefinedIndexer.setTriggerHook([](){ new UserDefinedUnitCellIndexer; });
-    assignUnitCell.setTriggerHook([](){
+    removeExperiment.setTriggerHook([]() { gSession->removeExperiment(); });
+    findPeaks.setTriggerHook([]() { new PeakFinder; });
+    instrumentStates.setTriggerHook([]() { new InstrumentStates; });
+    autoIndexer.setTriggerHook([]() { new AutoIndexer; });
+    filterPeaks.setTriggerHook([]() { new PeakFilter; });
+    userDefinedIndexer.setTriggerHook([]() { new UserDefinedUnitCellIndexer; });
+    assignUnitCell.setTriggerHook([]() {
         if (gSession->selectedExperimentNum() < 0) {
             gLogger->log("[ERROR] No experiment selected");
             return;
@@ -81,10 +77,10 @@ Triggers::Triggers()
             gLogger->log("[ERROR] No peaks in selected experiment");
             return;
         }
-        //gSession->selectedExperiment()->peaks()->autoAssignUnitCell();
+        // gSession->selectedExperiment()->peaks()->autoAssignUnitCell();
     });
-    buildShapeLibrary.setTriggerHook([](){ new ShapeLibraryDialog; });
-    refine.setTriggerHook([](){ new Refiner; });
-    goniometer.setTriggerHook([](){ new GlobalOffsets(offsetMode::DETECTOR); });
-    sampleGoniometer.setTriggerHook([](){ new GlobalOffsets(offsetMode::SAMPLE); });
+    buildShapeLibrary.setTriggerHook([]() { new ShapeLibraryDialog; });
+    refine.setTriggerHook([]() { new Refiner; });
+    goniometer.setTriggerHook([]() { new GlobalOffsets(offsetMode::DETECTOR); });
+    sampleGoniometer.setTriggerHook([]() { new GlobalOffsets(offsetMode::SAMPLE); });
 }

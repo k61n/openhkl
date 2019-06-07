@@ -1,43 +1,43 @@
 
 #include "nsxgui/gui/frames/peakfinder.h"
 #include "nsxgui/gui/models/experimentmodel.h"
-#include "nsxgui/gui/models/session.h"
 #include "nsxgui/gui/models/peakstable.h"
+#include "nsxgui/gui/models/session.h"
 
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QGroupBox>
-#include <QGridLayout>
-#include <QSpacerItem>
-#include <QItemDelegate>
+#include "apps/models/MetaTypes.h"
+#include "apps/views/ProgressView.h"
 #include <QFileInfo>
-#include <QTableWidgetItem>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QHBoxLayout>
 #include <QHeaderView>
+#include <QItemDelegate>
+#include <QSpacerItem>
+#include <QTableWidgetItem>
+#include <QVBoxLayout>
 #include <core/ConvolverFactory.h>
 #include <core/DataSet.h>
 #include <core/Peak3D.h>
 #include <core/PeakFinder.h>
 #include <core/PixelSumIntegrator.h>
-#include "apps/models/MetaTypes.h"
-#include "apps/views/ProgressView.h"
 
 class ItemDelegate : public QItemDelegate {
 public:
-  virtual QWidget *createEditor(QWidget *parent,
-                                const QStyleOptionViewItem &option,
-                                const QModelIndex &index) const override;
+    virtual QWidget* createEditor(
+        QWidget* parent, const QStyleOptionViewItem& option,
+        const QModelIndex& index) const override;
 };
 
-QWidget* ItemDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option,
-                                    const QModelIndex& index) const
+QWidget* ItemDelegate::createEditor(
+    QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     Q_UNUSED(option)
     Q_UNUSED(index)
 
-    QLineEdit *lineEdit = new QLineEdit(parent);
+    QLineEdit* lineEdit = new QLineEdit(parent);
 
     // Set validator
-    QDoubleValidator *validator = new QDoubleValidator(lineEdit);
+    QDoubleValidator* validator = new QDoubleValidator(lineEdit);
     lineEdit->setValidator(validator);
 
     return lineEdit;
@@ -45,19 +45,16 @@ QWidget* ItemDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem&
 
 //  ***********************************************************************************************
 
-FoundPeaks::FoundPeaks(nsx::PeakList peaks, const QString& name)
-    : QcrWidget{name}
+FoundPeaks::FoundPeaks(nsx::PeakList peaks, const QString& name) : QcrWidget {name}
 {
     tableModel =
-            new PeaksTableModel("foundPeaksTable",
-                                gSession->selectedExperiment()->experiment(),
-                                peaks);
+        new PeaksTableModel("foundPeaksTable", gSession->selectedExperiment()->experiment(), peaks);
     QVBoxLayout* vertical = new QVBoxLayout(this);
     PeaksTableView* peaksTable = new PeaksTableView(this);
     peaksTable->setModel(tableModel);
     vertical->addWidget(peaksTable);
     keepSelectedPeaks =
-            new QcrCheckBox("adhoc_keepPeaks", "keep selected peaks", new QcrCell<bool>(false));
+        new QcrCheckBox("adhoc_keepPeaks", "keep selected peaks", new QcrCell<bool>(false));
     vertical->addWidget(keepSelectedPeaks);
 }
 
@@ -82,13 +79,12 @@ nsx::PeakList FoundPeaks::selectedPeaks()
 
 //  ***********************************************************************************************
 
-PeakFinder::PeakFinder()
-    : QcrFrame{"peakFinder"}
+PeakFinder::PeakFinder() : QcrFrame {"peakFinder"}
 {
     setAttribute(Qt::WA_DeleteOnClose);
-    if (gSession->selectedExperimentNum() >= 0){
-        if (gSession->selectedExperiment()->data()->allData().size() != 0){
-            //Layout
+    if (gSession->selectedExperimentNum() >= 0) {
+        if (gSession->selectedExperiment()->data()->allData().size() != 0) {
+            // Layout
             QVBoxLayout* whole = new QVBoxLayout(this);
 
             tab = new QcrTabWidget("adhoc_peakFinderSettings");
@@ -107,7 +103,8 @@ PeakFinder::PeakFinder()
             blobGrid->addWidget(new QLabel("begin finding blobs in frame"), 7, 0, 1, 1);
             blobGrid->addWidget(new QLabel("end finding blobs in frame"), 8, 0, 1, 1);
             threshold = new QcrSpinBox("adhoc_threshold", new QcrCell<int>(2), 3);
-            mergingScale = new QcrDoubleSpinBox("adhoc_mergingScale", new QcrCell<double>(1.000), 5, 3);
+            mergingScale =
+                new QcrDoubleSpinBox("adhoc_mergingScale", new QcrCell<double>(1.000), 5, 3);
             minSize = new QcrSpinBox("adhoc_minSize", new QcrCell<int>(30), 5);
             maxSize = new QcrSpinBox("adhoc_maxSize", new QcrCell<int>(10000), 5);
             maxWidth = new QcrSpinBox("adhoc_maxWidth", new QcrCell<int>(10), 5);
@@ -129,8 +126,8 @@ PeakFinder::PeakFinder()
             QGridLayout* previewGrid = new QGridLayout(previewBox);
             previewGrid->addWidget(new QLabel("data"), 0, 0, 1, 1);
             previewGrid->addWidget(new QLabel("frame"), 1, 0, 1, 1);
-            applyThreshold = new QcrCheckBox("adhoc_applyThreshold", "apply threshold to preview",
-                                             new QcrCell<bool>(false));
+            applyThreshold = new QcrCheckBox(
+                "adhoc_applyThreshold", "apply threshold to preview", new QcrCell<bool>(false));
             previewGrid->addWidget(applyThreshold, 2, 0, 1, 1);
             data = new QComboBox;
             frame = new QcrSpinBox("adhoc_frameNr", new QcrCell<int>(0), 3);
@@ -143,34 +140,35 @@ PeakFinder::PeakFinder()
             integGrid->addWidget(new QLabel("backgroung lower limit"), 1, 0, 1, 1);
             integGrid->addWidget(new QLabel("background upper limit"), 2, 0, 1, 1);
             peakArea = new QcrDoubleSpinBox("adhoc_area", new QcrCell<double>(3.0), 5, 2);
-            backgroundLowerLimit = new QcrDoubleSpinBox("adhoc_lowLimit", new QcrCell<double>(4.0), 5, 2);
-            backgroundUpperLimit = new QcrDoubleSpinBox("adhoc_upLimit", new QcrCell<double>(4.5), 5, 2);
+            backgroundLowerLimit =
+                new QcrDoubleSpinBox("adhoc_lowLimit", new QcrCell<double>(4.0), 5, 2);
+            backgroundUpperLimit =
+                new QcrDoubleSpinBox("adhoc_upLimit", new QcrCell<double>(4.5), 5, 2);
             integGrid->addWidget(peakArea, 0, 1, 1, 1);
             integGrid->addWidget(backgroundLowerLimit, 1, 1, 1, 1);
             integGrid->addWidget(backgroundUpperLimit, 2, 1, 1, 1);
             leftTabLayout->addWidget(integrationParams);
-            leftTabLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
+            leftTabLayout->addItem(
+                new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
             tabLayout->addLayout(leftTabLayout);
             preview = new QGraphicsView(this);
             tabLayout->addWidget(preview);
             tab->addTab(settings, "Settings");
             whole->addWidget(tab);
-            buttons = new QDialogButtonBox(QDialogButtonBox::Ok|
-                                                             QDialogButtonBox::Cancel|
-                                                             QDialogButtonBox::Apply,
-                                                             Qt::Horizontal, this);
-            connect(buttons, &QDialogButtonBox::clicked, this,
-                    &PeakFinder::doActions);
+            buttons = new QDialogButtonBox(
+                QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply,
+                Qt::Horizontal, this);
+            connect(buttons, &QDialogButtonBox::clicked, this, &PeakFinder::doActions);
             whole->addWidget(buttons);
 
-            //else
+            // else
 
-            //tab->tabBar()->tabButton(0, QTabBar::RightSide)->hide();
+            // tab->tabBar()->tabButton(0, QTabBar::RightSide)->hide();
 
-//            ItemDelegate *convolution_parameters_delegate =
-//                    new ItemDelegate();
-//            convolutionParams->setItemDelegateForColumn(
-//                        1, convolution_parameters_delegate);
+            //            ItemDelegate *convolution_parameters_delegate =
+            //                    new ItemDelegate();
+            //            convolutionParams->setItemDelegateForColumn(
+            //                        1, convolution_parameters_delegate);
 
             nsx::DataList datalist = gSession->selectedExperiment()->data()->allDataVector();
             for (nsx::sptrDataSet d : datalist) {
@@ -185,13 +183,12 @@ PeakFinder::PeakFinder()
 
             convolutionKernel->clear();
             nsx::ConvolverFactory convolver_factory;
-            for (auto &&convolution_kernel : convolver_factory.callbacks()) {
-                convolutionKernel->addItem(
-                            QString::fromStdString(convolution_kernel.first));
+            for (auto&& convolution_kernel : convolver_factory.callbacks()) {
+                convolutionKernel->addItem(QString::fromStdString(convolution_kernel.first));
             }
             convolutionKernel->setCurrentText("annular");
 
-            QGraphicsScene *scene = new QGraphicsScene();
+            QGraphicsScene* scene = new QGraphicsScene();
             preview->setScene(scene);
             // flip the image vertically to conform with DetectorScene
             preview->scale(1, -1);
@@ -218,9 +215,9 @@ void PeakFinder::updateConvolutionParameters()
     const std::map<std::string, double>& params = kernel->parameters();
     convolutionParams->clear();
     convolutionParams->setColumnCount(2);
-    int currentRow=0;
+    int currentRow = 0;
     typedef std::map<std::string, double>::const_iterator mapIterator;
-    for (mapIterator it = params.begin(); it!=params.end(); ++it) {
+    for (mapIterator it = params.begin(); it != params.end(); ++it) {
         convolutionParams->insertRow(currentRow);
         QString name = QString::fromStdString(it->first);
         QTableWidgetItem* pname = new QTableWidgetItem();
@@ -234,14 +231,14 @@ void PeakFinder::updateConvolutionParameters()
         gLogger->log("Name: " + name + " value: " + val + " row: " + row);
         currentRow++;
     }
-    //convolutionParams->horizontalHeader()->setStretchLastSection(true);
+    // convolutionParams->horizontalHeader()->setStretchLastSection(true);
 }
 
 void PeakFinder::run()
 {
     nsx::sptrProgressHandler progHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler);
     nsx::DataList datalist;
-    for (int i=0; i<data->count(); ++i)
+    for (int i = 0; i < data->count(); ++i)
         datalist.push_back(data->itemData(i, Qt::UserRole).value<nsx::sptrDataSet>());
     nsx::PeakFinder finder;
     ProgressView progressView(nullptr);
@@ -265,40 +262,36 @@ void PeakFinder::run()
     }
     for (auto d : datalist) {
         nsx::PixelSumIntegrator integrator(true, true);
-        integrator.integrate(peaks, d, peakArea->value(),
-                             backgroundLowerLimit->value(),
-                             backgroundUpperLimit->value());
+        integrator.integrate(
+            peaks, d, peakArea->value(), backgroundLowerLimit->value(),
+            backgroundUpperLimit->value());
     }
 
-    //add Tab WidgetFoundPeaks
+    // add Tab WidgetFoundPeaks
     tab->addTab(new FoundPeaks(peaks, "adhoc_findNum" + QString::number(tab->count())), "Peaks");
 }
 
 std::map<std::string, double> PeakFinder::convolutionParameters()
 {
-   std::map<std::string, double> parameters;
-   for (int i=0; i<convolutionParams->rowCount(); ++i) {
-       std::string pname = convolutionParams->item(i,0)->text().toStdString();
-       double pvalue = convolutionParams->item(i,1)->text().toDouble();
-       parameters.insert(std::make_pair(pname, pvalue));
-   }
-   return parameters;
+    std::map<std::string, double> parameters;
+    for (int i = 0; i < convolutionParams->rowCount(); ++i) {
+        std::string pname = convolutionParams->item(i, 0)->text().toStdString();
+        double pvalue = convolutionParams->item(i, 1)->text().toDouble();
+        parameters.insert(std::make_pair(pname, pvalue));
+    }
+    return parameters;
 }
 
 void PeakFinder::doActions(QAbstractButton* button)
 {
     auto buttonRole = buttons->standardButton(button);
     switch (buttonRole) {
-    case QDialogButtonBox::StandardButton::Apply:
-        run();
-        break;
-    case QDialogButtonBox::StandardButton::Cancel:
-        close();
-        break;
-    case QDialogButtonBox::StandardButton::Ok:
-        accept();
-        break;
-    default: { return; }
+    case QDialogButtonBox::StandardButton::Apply: run(); break;
+    case QDialogButtonBox::StandardButton::Cancel: close(); break;
+    case QDialogButtonBox::StandardButton::Ok: accept(); break;
+    default: {
+        return;
+    }
     }
 }
 
@@ -307,26 +300,25 @@ void PeakFinder::accept()
     gLogger->log("@accept");
     for (auto i = 0; i < tab->count(); ++i) {
 
-      auto widget_found_peaks =
-          dynamic_cast<FoundPeaks *>(tab->widget(i));
-      if (!widget_found_peaks) {
-        continue;
-      }
+        auto widget_found_peaks = dynamic_cast<FoundPeaks*>(tab->widget(i));
+        if (!widget_found_peaks) {
+            continue;
+        }
 
-      auto &&found_peaks = widget_found_peaks->selectedPeaks();
+        auto&& found_peaks = widget_found_peaks->selectedPeaks();
 
-      if (found_peaks.empty()) {
-        continue;
-      }
+        if (found_peaks.empty()) {
+            continue;
+        }
 
-//      auto checkbox = dynamic_cast<QCheckBox *>(
-//          tab->tabBar()->tabButton(i, QTabBar::LeftSide));
+        //      auto checkbox = dynamic_cast<QCheckBox *>(
+        //          tab->tabBar()->tabButton(i, QTabBar::LeftSide));
 
-//      if (!checkbox->isChecked()) {
-//        continue;
-//      }
+        //      if (!checkbox->isChecked()) {
+        //        continue;
+        //      }
 
-      gSession->selectedExperiment()->peaks()->addPeakListsModel("new list", found_peaks);
+        gSession->selectedExperiment()->peaks()->addPeakListsModel("new list", found_peaks);
     }
 
     close();

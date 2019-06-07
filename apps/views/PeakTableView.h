@@ -50,45 +50,44 @@ class QWidget;
 class PeakCustomPlot;
 
 class PeakTableView : public QTableView {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  explicit PeakTableView(QWidget *parent = 0);
+    explicit PeakTableView(QWidget* parent = 0);
 
-  void contextMenuEvent(QContextMenuEvent *);
+    void contextMenuEvent(QContextMenuEvent*);
 
-  virtual void keyPressEvent(QKeyEvent *event) override;
+    virtual void keyPressEvent(QKeyEvent* event) override;
 
 signals:
-  void plotData(const QVector<double> &, const QVector<double> &,
-                const QVector<double> &);
-  void plotPeak(nsx::sptrPeak3D);
-  void autoIndexed();
-  void updateShapeLibrary(nsx::sptrShapeLibrary);
+    void plotData(const QVector<double>&, const QVector<double>&, const QVector<double>&);
+    void plotPeak(nsx::sptrPeak3D);
+    void autoIndexed();
+    void updateShapeLibrary(nsx::sptrShapeLibrary);
 
 public slots:
-  //! Normalize to monitor.
-  void normalizeToMonitor();
-  //! Plot as function of parameter. Needs to be a numeric type
-  void plotAs(const std::string &key);
+    //! Normalize to monitor.
+    void normalizeToMonitor();
+    //! Plot as function of parameter. Needs to be a numeric type
+    void plotAs(const std::string& key);
 
-  void selectPeak(QModelIndex index);
+    void selectPeak(QModelIndex index);
 
-  void clearSelectedPeaks();
-  void selectAllPeaks();
-  void selectValidPeaks();
-  void selectUnindexedPeaks();
+    void clearSelectedPeaks();
+    void selectAllPeaks();
+    void selectValidPeaks();
+    void selectUnindexedPeaks();
 
-  void togglePeaksSelection();
+    void togglePeaksSelection();
 
 private slots:
 
-  void togglePeakSelection(QModelIndex index);
+    void togglePeakSelection(QModelIndex index);
 
 private:
-  void sortByHKL(bool up);
-  void sortByIntensity(bool up);
-  void sortByNumor(bool up);
-  void sortBySelected(bool up);
-  void sortByTransmission(bool up);
-  void constructTable();
+    void sortByHKL(bool up);
+    void sortByIntensity(bool up);
+    void sortByNumor(bool up);
+    void sortBySelected(bool up);
+    void sortByTransmission(bool up);
+    void constructTable();
 };

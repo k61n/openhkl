@@ -11,9 +11,9 @@
 #include <QList>
 #include <vector>
 
+#include <build/core/include/core/CrystalTypes.h>
 #include <build/core/include/core/Experiment.h>
 #include <build/core/include/core/InstrumentTypes.h>
-#include <build/core/include/core/CrystalTypes.h>
 #include <build/core/include/core/UnitCell.h>
 
 #include "nsxgui/gui/models/peaklists.h"
@@ -41,6 +41,7 @@ public:
     void appendUnitCell(nsx::sptrUnitCell cell) { unitCells_.append(cell); }
     nsx::sptrUnitCell selectedCell();
     QList<nsx::sptrUnitCell> allUnitCells() { return unitCells_; }
+
 private:
     QList<nsx::sptrUnitCell> unitCells_;
     int selected_;
@@ -55,6 +56,7 @@ public:
     void openIsotopesDatabase();
     const QString& instrumentName() { return instrumentName_; }
     const QString& sourceName() { return sourceName_; }
+
 private:
     QString instrumentName_;
     QString sourceName_;
@@ -63,19 +65,20 @@ private:
 class ExperimentModel {
 public:
     ExperimentModel(nsx::sptrExperiment);
-	~ExperimentModel();
-	nsx::sptrExperiment experiment() { return experiment_; }
+    ~ExperimentModel();
+    nsx::sptrExperiment experiment() { return experiment_; }
     ExperimentData* data() { return data_; }
     InstrumentModel* instrument() { return instrument_; }
     void addData(nsx::sptrDataSet data) { data_->addData(data); }
     PeaksModel* peaks() { return peaks_; }
     UnitCellsModel* unitCells() { return units_; }
+
 private:
-	nsx::sptrExperiment experiment_;
+    nsx::sptrExperiment experiment_;
     ExperimentData* data_;
     InstrumentModel* instrument_;
     PeaksModel* peaks_;
     UnitCellsModel* units_;
 };
 
-#endif //EXPERIMENTMODEL_H
+#endif // EXPERIMENTMODEL_H

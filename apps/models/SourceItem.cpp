@@ -7,20 +7,24 @@
 #include "SourceItem.h"
 #include "SourcePropertyWidget.h"
 
-SourceItem::SourceItem(const char *name) : InspectableTreeItem() {
-  setText(name);
+SourceItem::SourceItem(const char* name) : InspectableTreeItem()
+{
+    setText(name);
 
-  QIcon icon(":/resources/sourceIcon.png");
-  setIcon(icon);
+    QIcon icon(":/resources/sourceIcon.png");
+    setIcon(icon);
 
-  setEditable(false);
+    setEditable(false);
 
-  setDragEnabled(false);
-  setDropEnabled(false);
+    setDragEnabled(false);
+    setDropEnabled(false);
 
-  setSelectable(false);
+    setSelectable(false);
 
-  setCheckable(false);
+    setCheckable(false);
 }
 
-QWidget *SourceItem::inspectItem() { return new SourcePropertyWidget(this); }
+QWidget* SourceItem::inspectItem()
+{
+    return new SourcePropertyWidget(this);
+}

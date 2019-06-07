@@ -16,6 +16,7 @@ public:
     QMenu* experiment_;
     QMenu* help_;
     QMenu* view_;
+
 private:
     QMenuBar* mbar_;
     QAction* separator() const;

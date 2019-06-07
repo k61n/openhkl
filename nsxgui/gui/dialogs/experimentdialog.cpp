@@ -1,11 +1,11 @@
 
 #include "nsxgui/gui/dialogs/experimentdialog.h"
 #include "nsxgui/gui/mainwin.h"
-#include <build/core/include/core/Resources.h>
-#include <build/core/include/core/Path.h>
-#include <QHBoxLayout>
-#include <QGridLayout>
 #include <QDialogButtonBox>
+#include <QGridLayout>
+#include <QHBoxLayout>
+#include <build/core/include/core/Path.h>
+#include <build/core/include/core/Resources.h>
 
 namespace {
 
@@ -13,14 +13,13 @@ QStringList allInstrumentNames()
 {
     auto resources_name = nsx::getResourcesName("instruments");
 
-    QDir diffractometersDirectory(
-        QString::fromStdString(nsx::applicationDataPath()));
+    QDir diffractometersDirectory(QString::fromStdString(nsx::applicationDataPath()));
     diffractometersDirectory.cd("instruments");
 
     QStringList user_diffractometer_files =
         diffractometersDirectory.entryList({"*.yml"}, QDir::Files, QDir::Name);
-    for (auto &&diffractometer : user_diffractometer_files) {
-      resources_name.insert(QFileInfo(diffractometer).baseName().toStdString());
+    for (auto&& diffractometer : user_diffractometer_files) {
+        resources_name.insert(QFileInfo(diffractometer).baseName().toStdString());
     }
 
     QStringList list;
@@ -32,11 +31,10 @@ QStringList allInstrumentNames()
 
 }
 
-ExperimentDialog::ExperimentDialog()
-    : QcrModalDialog{"experimentDialog", gGui, "new Experiment"}
+ExperimentDialog::ExperimentDialog() : QcrModalDialog {"experimentDialog", gGui, "new Experiment"}
 {
     resize(500, 130);
-    setMinimumSize(500,130);
+    setMinimumSize(500, 130);
     setMaximumSize(500, 130);
     QGridLayout* gridLayout = new QGridLayout(this);
     QHBoxLayout* horizontalLayout = new QHBoxLayout;
@@ -53,7 +51,7 @@ ExperimentDialog::ExperimentDialog()
     gridLayout->addLayout(horizontalLayout_2, 0, 1, 1, 1);
     QDialogButtonBox* buttonBox = new QDialogButtonBox(this);
     buttonBox->setOrientation(Qt::Horizontal);
-    buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
+    buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
     buttonBox->setCenterButtons(false);
     gridLayout->addWidget(buttonBox, 1, 1, 1, 1);
 

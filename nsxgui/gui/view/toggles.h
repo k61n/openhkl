@@ -10,21 +10,21 @@ class Toggles {
 public:
     Toggles();
 
-//Options/cursor modes
+    // Options/cursor modes
     QcrToggle pixelPosition {"pixel position", "pixel position", false};
     QcrToggle gammaNu {"gamma nu", "gamma nu", false};
     QcrToggle twoTheta {"2 theta", "2 theta", false};
     QcrToggle dSpacing {"d-spacing", "d-spacing", false};
     QcrToggle millerIndices {"miller indices", "miller indices", false};
-//Options/setView
+    // Options/setView
     QcrToggle fromSample {"from sample", "from sample", false};
     QcrToggle behindDetector {"behind detector", "behind detector", false};
     QcrToggle logarithmicScale {"logarithmic scale", "logarithmic scale", false};
-//Options/peak
+    // Options/peak
     QcrToggle showLabels {"show labels", "show labels", false};
     QcrToggle showAreas {"show areas", "show areas", false};
     QcrToggle drawPeakArea {"draw peak area", "draw peak integration area", false};
-//View
+    // View
     QcrToggle viewExperiment {"adhoc_viewExperiment", "show experiment", true};
     QcrToggle viewProperties {"adhoc_viewProperties", "show Properties", true};
     QcrToggle viewLogger {"adhoc_viewLogger", "show Logger", true};

@@ -53,40 +53,40 @@ namespace nsx {
 class BrillouinZone {
 
 public:
-  //! Create a Brillouin zone out of the given (row) basis matrix B.
-  BrillouinZone(const Eigen::Matrix3d &B, double eps = 1e-6);
-  //! Check if a reciprocal vector is inside the Brillouin zone.
-  bool inside(const Eigen::RowVector3d &q) const;
-  //! Return the vertices of the polytope.
-  const std::vector<Eigen::RowVector3d> &vertices() const;
-  //! Return the list of plane normals (q values for Bragg planes).
-  const std::vector<Eigen::RowVector3d> &normals() const;
-  //! Return a convex hull representation.
-  ConvexHull convexHull() const;
+    //! Create a Brillouin zone out of the given (row) basis matrix B.
+    BrillouinZone(const Eigen::Matrix3d& B, double eps = 1e-6);
+    //! Check if a reciprocal vector is inside the Brillouin zone.
+    bool inside(const Eigen::RowVector3d& q) const;
+    //! Return the vertices of the polytope.
+    const std::vector<Eigen::RowVector3d>& vertices() const;
+    //! Return the list of plane normals (q values for Bragg planes).
+    const std::vector<Eigen::RowVector3d>& normals() const;
+    //! Return a convex hull representation.
+    ConvexHull convexHull() const;
 
-  //! Return radius of largest sphere contained in the zone.
-  double innerRadius() const;
-  //! Return radius of smallest sphere containing the zone.
-  double outerRadius() const;
+    //! Return radius of largest sphere contained in the zone.
+    double innerRadius() const;
+    //! Return radius of smallest sphere containing the zone.
+    double outerRadius() const;
 
 private:
-  //! List of lattice vectors defining the Bragg planes of the Brillouin zone
-  std::vector<Eigen::RowVector3d> _qs;
-  //! Parameter to control numerical stability
-  double _eps;
-  //! The basis matrix (row vectors)
-  Eigen::Matrix3d _B;
-  //! List of vertices generating the Brillouin zone as a convex hull
-  std::vector<Eigen::RowVector3d> _vertices;
-  //! squared radius of the smallest sphere containing the zone
-  double _r2;
+    //! List of lattice vectors defining the Bragg planes of the Brillouin zone
+    std::vector<Eigen::RowVector3d> _qs;
+    //! Parameter to control numerical stability
+    double _eps;
+    //! The basis matrix (row vectors)
+    Eigen::Matrix3d _B;
+    //! List of vertices generating the Brillouin zone as a convex hull
+    std::vector<Eigen::RowVector3d> _vertices;
+    //! squared radius of the smallest sphere containing the zone
+    double _r2;
 
-  //! Calculate bounding planes of the Brillouin zone
-  void compute();
-  //! Remove extraneous bounding planes
-  void clean_qs();
-  //! Compute the bounding vertices
-  void compute_vertices();
+    //! Calculate bounding planes of the Brillouin zone
+    void compute();
+    //! Remove extraneous bounding planes
+    void clean_qs();
+    //! Compute the bounding vertices
+    void compute_vertices();
 };
 
 } // end namespace nsx

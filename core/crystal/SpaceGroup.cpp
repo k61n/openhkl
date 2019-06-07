@@ -113,12 +113,12 @@ const std::vector<SpaceGroupSymmetry> SpaceGroup::symmetry_table = {
     {"C m m a", " x+1/2,y+1/2,z; -x,-y+1/2,z; -x,y+1/2,-z; -x,-y,-z"},
     {"C c c a", " x+1/2,y+1/2,z; -x+1/2,-y,z; -x,y,-z+1/2; -x,-y,-z"},
     {"F m m m", " x+1/2,y+1/2,z; x+1/2,y,z+1/2; -x,-y,z; -x,y,-z; -x,-y,-z"},
-    {"F d d d", " x+1/2,y+1/2,z; x+1/2,y,z+1/2; -x+3/4,-y+3/4,z; "
-                "-x+3/4,y,-z+3/4; -x,-y,-z"},
+    {"F d d d",
+     " x+1/2,y+1/2,z; x+1/2,y,z+1/2; -x+3/4,-y+3/4,z; "
+     "-x+3/4,y,-z+3/4; -x,-y,-z"},
     {"I m m m", " x+1/2,y+1/2,z+1/2; -x,-y,z; -x,y,-z; -x,-y,-z"},
     {"I b a m", " x+1/2,y+1/2,z+1/2; -x,-y,z; -x+1/2,y+1/2,-z; -x,-y,-z"},
-    {"I b c a",
-     " x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; -x,-y,-z"},
+    {"I b c a", " x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; -x,-y,-z"},
     {"I m m a", " x+1/2,y+1/2,z+1/2; -x,-y+1/2,z; -x,y+1/2,-z; -x,-y,-z"},
     {"P 4", " -x,-y,z; -y,x,z"},
     {"P 41", " -x,-y,z+1/2; -y,x,z+1/4"},
@@ -133,8 +133,7 @@ const std::vector<SpaceGroupSymmetry> SpaceGroup::symmetry_table = {
     {"P 4/n", " -x+1/2,-y+1/2,z; -y+1/2,x,z; -x,-y,-z"},
     {"P 42/n", " -x+1/2,-y+1/2,z; -y,x+1/2,z+1/2; -x,-y,-z"},
     {"I 4/m", " x+1/2,y+1/2,z+1/2; -x,-y,z; -y,x,z; -x,-y,-z"},
-    {"I 41/a",
-     " x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -y+3/4,x+1/4,z+1/4; -x,-y,-z"},
+    {"I 41/a", " x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -y+3/4,x+1/4,z+1/4; -x,-y,-z"},
     {"P 4 2 2", " -x,-y,z; -y,x,z; -x,y,-z"},
     {"P 4 21 2", " -x,-y,z; -y+1/2,x+1/2,z; -x+1/2,y+1/2,-z"},
     {"P 41 2 2", " -x,-y,z+1/2; -y,x,z+1/4; -x,y,-z"},
@@ -144,8 +143,9 @@ const std::vector<SpaceGroupSymmetry> SpaceGroup::symmetry_table = {
     {"P 43 2 2", " -x,-y,z+1/2; -y,x,z+3/4; -x,y,-z"},
     {"P 43 21 2", " -x,-y,z+1/2; -y+1/2,x+1/2,z+3/4; -x+1/2,y+1/2,-z+3/4"},
     {"I 4 2 2", " x+1/2,y+1/2,z+1/2; -x,-y,z; -y,x,z; -x,y,-z"},
-    {"I 41 2 2", " x+1/2,y+1/2,z+1/2; -x+1/2,-y+1/2,z+1/2; -y,x+1/2,z+1/4; "
-                 "-x+1/2,y,-z+3/4"},
+    {"I 41 2 2",
+     " x+1/2,y+1/2,z+1/2; -x+1/2,-y+1/2,z+1/2; -y,x+1/2,z+1/4; "
+     "-x+1/2,y,-z+3/4"},
     {"P 4 m m", " -x,-y,z; -y,x,z; x,-y,z"},
     {"P 4 b m", " -x,-y,z; -y,x,z; x+1/2,-y+1/2,z"},
     {"P 42 c m", " -x,-y,z; -y,x,z+1/2; x,-y,z+1/2"},
@@ -156,10 +156,8 @@ const std::vector<SpaceGroupSymmetry> SpaceGroup::symmetry_table = {
     {"P 42 b c", " -x,-y,z; -y,x,z+1/2; x+1/2,-y+1/2,z"},
     {"I 4 m m", " x+1/2,y+1/2,z+1/2; -x,-y,z; -y,x,z; x,-y,z"},
     {"I 4 c m", " x+1/2,y+1/2,z+1/2; -x,-y,z; -y,x,z; x,-y,z+1/2"},
-    {"I 41 m d",
-     " x+1/2,y+1/2,z+1/2; -x+1/2,-y+1/2,z+1/2; -y,x+1/2,z+1/4; x,-y,z"},
-    {"I 41 c d",
-     " x+1/2,y+1/2,z+1/2; -x+1/2,-y+1/2,z+1/2; -y,x+1/2,z+1/4; x,-y,z+1/2"},
+    {"I 41 m d", " x+1/2,y+1/2,z+1/2; -x+1/2,-y+1/2,z+1/2; -y,x+1/2,z+1/4; x,-y,z"},
+    {"I 41 c d", " x+1/2,y+1/2,z+1/2; -x+1/2,-y+1/2,z+1/2; -y,x+1/2,z+1/4; x,-y,z+1/2"},
     {"P -4 2 m", " -x,-y,z; y,-x,-z; -x,y,-z"},
     {"P -4 2 c", " -x,-y,z; y,-x,-z; -x,y,-z+1/2"},
     {"P -4 21 m", " -x,-y,z; y,-x,-z; -x+1/2,y+1/2,-z"},
@@ -183,20 +181,19 @@ const std::vector<SpaceGroupSymmetry> SpaceGroup::symmetry_table = {
     {"P 42/m m c", " -x,-y,z; -y,x,z+1/2; -x,y,-z; -x,-y,-z"},
     {"P 42/m c m", " -x,-y,z; -y,x,z+1/2; -x,y,-z+1/2; -x,-y,-z"},
     {"P 42/n b c", " -x+1/2,-y+1/2,z; -y+1/2,x,z+1/2; -x+1/2,y,-z; -x,-y,-z"},
-    {"P 42/n n m",
-     " -x+1/2,-y+1/2,z; -y+1/2,x,z+1/2; -x+1/2,y,-z+1/2; -x,-y,-z"},
+    {"P 42/n n m", " -x+1/2,-y+1/2,z; -y+1/2,x,z+1/2; -x+1/2,y,-z+1/2; -x,-y,-z"},
     {"P 42/m b c", " -x,-y,z; -y,x,z+1/2; -x+1/2,y+1/2,-z; -x,-y,-z"},
-    {"P 42/m n m",
-     " -x,-y,z; -y+1/2,x+1/2,z+1/2; -x+1/2,y+1/2,-z+1/2; -x,-y,-z"},
+    {"P 42/m n m", " -x,-y,z; -y+1/2,x+1/2,z+1/2; -x+1/2,y+1/2,-z+1/2; -x,-y,-z"},
     {"P 42/n m c", " -x+1/2,-y+1/2,z; -y+1/2,x,z+1/2; -x,y+1/2,-z; -x,-y,-z"},
-    {"P 42/n c m",
-     " -x+1/2,-y+1/2,z; -y+1/2,x,z+1/2; -x,y+1/2,-z+1/2; -x,-y,-z"},
+    {"P 42/n c m", " -x+1/2,-y+1/2,z; -y+1/2,x,z+1/2; -x,y+1/2,-z+1/2; -x,-y,-z"},
     {"I 4/m m m", " x+1/2,y+1/2,z+1/2; -x,-y,z; -y,x,z; -x,y,-z; -x,-y,-z"},
     {"I 4/m c m", " x+1/2,y+1/2,z+1/2; -x,-y,z; -y,x,z; -x,y,-z+1/2; -x,-y,-z"},
-    {"I 41/a m d", " x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -y+1/4,x+3/4,z+1/4; "
-                   "-x+1/2,y,-z+1/2; -x,-y,-z"},
-    {"I 41/a c d", " x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -y+1/4,x+3/4,z+1/4; "
-                   "-x+1/2,y,-z; -x,-y,-z"},
+    {"I 41/a m d",
+     " x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -y+1/4,x+3/4,z+1/4; "
+     "-x+1/2,y,-z+1/2; -x,-y,-z"},
+    {"I 41/a c d",
+     " x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -y+1/4,x+3/4,z+1/4; "
+     "-x+1/2,y,-z; -x,-y,-z"},
     {"P 3", " -y,x-y,z"},
     {"P 31", " -y,x-y,z+1/3"},
     {"P 32", " -y,x-y,z+2/3"},
@@ -256,404 +253,419 @@ const std::vector<SpaceGroupSymmetry> SpaceGroup::symmetry_table = {
     {"I 21 3", " x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; z,x,y"},
     {"P m -3", " -x,-y,z; -x,y,-z; z,x,y; -x,-y,-z"},
     {"P n -3", " -x+1/2,-y+1/2,z; -x+1/2,y,-z+1/2; z,x,y; -x,-y,-z"},
-    {"F m -3",
-     " x+1/2,y+1/2,z; x+1/2,y,z+1/2; -x,-y,z; -x,y,-z; z,x,y; -x,-y,-z"},
-    {"F d -3", " x+1/2,y+1/2,z; x+1/2,y,z+1/2; -x+1/4,-y+1/4,z; "
-               "-x+1/4,y,-z+1/4; z,x,y; -x,-y,-z"},
+    {"F m -3", " x+1/2,y+1/2,z; x+1/2,y,z+1/2; -x,-y,z; -x,y,-z; z,x,y; -x,-y,-z"},
+    {"F d -3",
+     " x+1/2,y+1/2,z; x+1/2,y,z+1/2; -x+1/4,-y+1/4,z; "
+     "-x+1/4,y,-z+1/4; z,x,y; -x,-y,-z"},
     {"I m -3", " x+1/2,y+1/2,z+1/2; -x,-y,z; -x,y,-z; z,x,y; -x,-y,-z"},
     {"P a -3", " -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; z,x,y; -x,-y,-z"},
-    {"I a -3",
-     " x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; z,x,y; -x,-y,-z"},
+    {"I a -3", " x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; z,x,y; -x,-y,-z"},
     {"P 4 3 2", " -x,-y,z; -x,y,-z; z,x,y; y,x,-z"},
     {"P 42 3 2", " -x,-y,z; -x,y,-z; z,x,y; y+1/2,x+1/2,-z+1/2"},
-    {"F 4 3 2",
-     " x+1/2,y+1/2,z; x+1/2,y,z+1/2; -x,-y,z; -x,y,-z; z,x,y; y,x,-z"},
-    {"F 41 3 2", " x+1/2,y+1/2,z; x+1/2,y,z+1/2; -x,-y+1/2,z+1/2; "
-                 "-x+1/2,y+1/2,-z; z,x,y; y+3/4,x+1/4,-z+3/4"},
+    {"F 4 3 2", " x+1/2,y+1/2,z; x+1/2,y,z+1/2; -x,-y,z; -x,y,-z; z,x,y; y,x,-z"},
+    {"F 41 3 2",
+     " x+1/2,y+1/2,z; x+1/2,y,z+1/2; -x,-y+1/2,z+1/2; "
+     "-x+1/2,y+1/2,-z; z,x,y; y+3/4,x+1/4,-z+3/4"},
     {"I 4 3 2", " x+1/2,y+1/2,z+1/2; -x,-y,z; -x,y,-z; z,x,y; y,x,-z"},
-    {"P 43 3 2",
-     " -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; z,x,y; y+1/4,x+3/4,-z+3/4"},
-    {"P 41 3 2",
-     " -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; z,x,y; y+3/4,x+1/4,-z+1/4"},
-    {"I 41 3 2", " x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; z,x,y; "
-                 "y+3/4,x+1/4,-z+1/4"},
+    {"P 43 3 2", " -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; z,x,y; y+1/4,x+3/4,-z+3/4"},
+    {"P 41 3 2", " -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; z,x,y; y+3/4,x+1/4,-z+1/4"},
+    {"I 41 3 2",
+     " x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; z,x,y; "
+     "y+3/4,x+1/4,-z+1/4"},
     {"P -4 3 m", " -x,-y,z; -x,y,-z; z,x,y; y,x,z"},
-    {"F -4 3 m",
-     " x+1/2,y+1/2,z; x+1/2,y,z+1/2; -x,-y,z; -x,y,-z; z,x,y; y,x,z"},
+    {"F -4 3 m", " x+1/2,y+1/2,z; x+1/2,y,z+1/2; -x,-y,z; -x,y,-z; z,x,y; y,x,z"},
     {"I -4 3 m", " x+1/2,y+1/2,z+1/2; -x,-y,z; -x,y,-z; z,x,y; y,x,z"},
     {"P -4 3 n", " -x,-y,z; -x,y,-z; z,x,y; y+1/2,x+1/2,z+1/2"},
-    {"F -4 3 c", " x+1/2,y+1/2,z; x+1/2,y,z+1/2; -x,-y,z; -x,y,-z; z,x,y; "
-                 "y+1/2,x+1/2,z+1/2"},
-    {"I -4 3 d", " x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; z,x,y; "
-                 "y+1/4,x+1/4,z+1/4"},
+    {"F -4 3 c",
+     " x+1/2,y+1/2,z; x+1/2,y,z+1/2; -x,-y,z; -x,y,-z; z,x,y; "
+     "y+1/2,x+1/2,z+1/2"},
+    {"I -4 3 d",
+     " x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; z,x,y; "
+     "y+1/4,x+1/4,z+1/4"},
     {"P m -3 m", " -x,-y,z; -x,y,-z; z,x,y; y,x,-z; -x,-y,-z"},
-    {"P n -3 n",
-     " -x+1/2,-y+1/2,z; -x+1/2,y,-z+1/2; z,x,y; y,x,-z+1/2; -x,-y,-z"},
+    {"P n -3 n", " -x+1/2,-y+1/2,z; -x+1/2,y,-z+1/2; z,x,y; y,x,-z+1/2; -x,-y,-z"},
     {"P m -3 n", " -x,-y,z; -x,y,-z; z,x,y; y+1/2,x+1/2,-z+1/2; -x,-y,-z"},
-    {"P n -3 m",
-     " -x+1/2,-y+1/2,z; -x+1/2,y,-z+1/2; z,x,y; y+1/2,x+1/2,-z; -x,-y,-z"},
-    {"F m -3 m", " x+1/2,y+1/2,z; x+1/2,y,z+1/2; -x,-y,z; -x,y,-z; z,x,y; "
-                 "y,x,-z; -x,-y,-z"},
-    {"F m -3 c", " x+1/2,y+1/2,z; x+1/2,y,z+1/2; -x,-y,z; -x,y,-z; z,x,y; "
-                 "y+1/2,x+1/2,-z+1/2; -x,-y,-z"},
-    {"F d -3 m", " x+1/2,y+1/2,z; "
-                 "x+1/2,y,z+1/2;-x+3/4,-y+1/4,z+1/2;-x+1/4,y+1/2,-z+3/"
-                 "4;z,x,y;y+3/4,x+1/4,-z+1/2;-x,-y,-z"},
-    {"F d -3 c", " x+1/2,y+1/2,z; "
-                 "x+1/2,y,z+1/2;-x+1/4,-y+3/4,z+1/2;-x+3/4,y+1/2,-z+1/"
-                 "4;z,x,y;y+3/4,x+1/4,-z;-x,-y,-z"},
-    {"I m -3 m",
-     " x+1/2,y+1/2,z+1/2; -x,-y,z; -x,y,-z; z,x,y; y,x,-z; -x,-y,-z"},
-    {"I a -3 d", " x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; z,x,y; "
-                 "y+3/4,x+1/4,-z+1/4; -x,-y,-z"}};
+    {"P n -3 m", " -x+1/2,-y+1/2,z; -x+1/2,y,-z+1/2; z,x,y; y+1/2,x+1/2,-z; -x,-y,-z"},
+    {"F m -3 m",
+     " x+1/2,y+1/2,z; x+1/2,y,z+1/2; -x,-y,z; -x,y,-z; z,x,y; "
+     "y,x,-z; -x,-y,-z"},
+    {"F m -3 c",
+     " x+1/2,y+1/2,z; x+1/2,y,z+1/2; -x,-y,z; -x,y,-z; z,x,y; "
+     "y+1/2,x+1/2,-z+1/2; -x,-y,-z"},
+    {"F d -3 m",
+     " x+1/2,y+1/2,z; "
+     "x+1/2,y,z+1/2;-x+3/4,-y+1/4,z+1/2;-x+1/4,y+1/2,-z+3/"
+     "4;z,x,y;y+3/4,x+1/4,-z+1/2;-x,-y,-z"},
+    {"F d -3 c",
+     " x+1/2,y+1/2,z; "
+     "x+1/2,y,z+1/2;-x+1/4,-y+3/4,z+1/2;-x+3/4,y+1/2,-z+1/"
+     "4;z,x,y;y+3/4,x+1/4,-z;-x,-y,-z"},
+    {"I m -3 m", " x+1/2,y+1/2,z+1/2; -x,-y,z; -x,y,-z; z,x,y; y,x,-z; -x,-y,-z"},
+    {"I a -3 d",
+     " x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; z,x,y; "
+     "y+3/4,x+1/4,-z+1/4; -x,-y,-z"}};
 
-std::vector<std::string> SpaceGroup::symbols() {
-  std::vector<std::string> symbols;
-  symbols.reserve(symmetry_table.size());
-  auto get_symbol = [](const SpaceGroupSymmetry &s) -> std::string {
-    return s.first;
-  };
-  std::transform(symmetry_table.begin(), symmetry_table.end(),
-                 std::back_inserter(symbols), get_symbol);
-  return symbols;
+std::vector<std::string> SpaceGroup::symbols()
+{
+    std::vector<std::string> symbols;
+    symbols.reserve(symmetry_table.size());
+    auto get_symbol = [](const SpaceGroupSymmetry& s) -> std::string { return s.first; };
+    std::transform(
+        symmetry_table.begin(), symmetry_table.end(), std::back_inserter(symbols), get_symbol);
+    return symbols;
 }
 
-SpaceGroup::SpaceGroup() {
-  auto p = symmetry_table[0];
+SpaceGroup::SpaceGroup()
+{
+    auto p = symmetry_table[0];
 
-  _symbol = p.first;
+    _symbol = p.first;
 
-  _generators = p.second;
+    _generators = p.second;
 
-  reduceSymbol();
+    reduceSymbol();
 
-  generateGroupElements();
+    generateGroupElements();
 }
 
-SpaceGroup::SpaceGroup(std::string symbol) {
-  _symbol = compress(trim(symbol));
-  reduceSymbol();
+SpaceGroup::SpaceGroup(std::string symbol)
+{
+    _symbol = compress(trim(symbol));
+    reduceSymbol();
 
-  auto find_symbol = [this](const std::pair<std::string, std::string> &s) {
-    return s.first.compare(this->_symbol) == 0;
-  };
-  auto it =
-      std::find_if(symmetry_table.begin(), symmetry_table.end(), find_symbol);
+    auto find_symbol = [this](const std::pair<std::string, std::string>& s) {
+        return s.first.compare(this->_symbol) == 0;
+    };
+    auto it = std::find_if(symmetry_table.begin(), symmetry_table.end(), find_symbol);
 
-  if (it == symmetry_table.end()) {
-    throw std::runtime_error("Unknown space group: " + _symbol);
-  }
-
-  _generators = trim(it->second);
-  generateGroupElements();
-}
-
-SpaceGroup &SpaceGroup::operator=(const SpaceGroup &other) {
-  if (this != &other) {
-    _symbol = other._symbol;
-    _generators = other._generators;
-    _groupElements = other._groupElements;
-  }
-  return *this;
-}
-
-char SpaceGroup::bravaisType() const {
-  std::vector<int> nrot(13, 0);
-  int nPureTrans(0);
-  const int isCentro = isCentrosymmetric() ? 2 : 1;
-
-  for (auto &&g : _groupElements) {
-    assert(g.getAxisOrder() + 6 >= 0);
-    size_t idx = size_t(g.getAxisOrder() + 6);
-    ++nrot[idx];
-    if (g.isPureTranslation()) {
-      nPureTrans++;
+    if (it == symmetry_table.end()) {
+        throw std::runtime_error("Unknown space group: " + _symbol);
     }
-  }
-  const int fact = (1 + nPureTrans) * isCentro;
 
-  // Cubic
-  if ((nrot[3] + nrot[9]) == 8 * fact) {
-    return 'c';
-  }
-  // Hexagonal
-  if ((nrot[0] + nrot[12]) == 2 * fact) {
-    return 'h';
-  }
-  // Trigonal
-  if ((nrot[3] + nrot[9]) == 2 * fact) {
-    return 'h';
-  }
-  // Tetragonal
-  if ((nrot[2] + nrot[10]) == 2 * fact) {
-    return 't';
-  }
-  // Orthorhombic
-  if ((nrot[4] + nrot[8]) == 3 * fact) {
-    return 'o';
-  }
-  // Monoclinic
-  if ((nrot[4] + nrot[8]) == fact) {
-    return 'm';
-  }
-  // Triclinic, only remaining case
-  return 'a';
+    _generators = trim(it->second);
+    generateGroupElements();
 }
 
-double SpaceGroup::fractionExtinct(const MillerIndexList &hkls) const {
-  unsigned int extinct = 0;
-  unsigned int total = hkls.size();
-
-  for (auto &&hkl : hkls) {
-    if (isExtinct(hkl)) {
-      ++extinct;
+SpaceGroup& SpaceGroup::operator=(const SpaceGroup& other)
+{
+    if (this != &other) {
+        _symbol = other._symbol;
+        _generators = other._generators;
+        _groupElements = other._groupElements;
     }
-  }
-  return static_cast<double>(extinct) / static_cast<double>(total);
+    return *this;
 }
 
-std::string SpaceGroup::bravaisTypeSymbol() const {
-  std::string bravais;
-  bravais += bravaisType();
-  bravais += _symbol[0];
+char SpaceGroup::bravaisType() const
+{
+    std::vector<int> nrot(13, 0);
+    int nPureTrans(0);
+    const int isCentro = isCentrosymmetric() ? 2 : 1;
 
-  return bravais;
-}
-
-int SpaceGroup::id() const {
-  auto find_symbol = [this](const std::pair<std::string, std::string> &s) {
-    return s.first.compare(this->_symbol) == 0;
-  };
-  auto it =
-      std::find_if(symmetry_table.begin(), symmetry_table.end(), find_symbol);
-  return std::distance(symmetry_table.begin(), it);
-}
-
-bool SpaceGroup::isCentrosymmetric() const {
-  for (auto &&g : _groupElements) {
-    if (g.getAxisOrder() == -1) {
-      return true;
-    }
-  }
-  return false;
-}
-
-const std::string &SpaceGroup::symbol() const { return _symbol; }
-
-const std::string &SpaceGroup::generators() const { return _generators; }
-
-const SymOpList &SpaceGroup::groupElements() const { return _groupElements; }
-
-void SpaceGroup::generateGroupElements() {
-  _groupElements.clear();
-  SymOpList generators;
-  std::vector<std::string> gens = split(_generators, ";");
-  generators.reserve(gens.size() + 1);
-  generators.emplace_back(SymOp(affineTransformation::Identity()));
-
-  for (auto &&g : gens) {
-    auto &&gen = SymOp(g);
-    generators.emplace_back(gen);
-  }
-
-  _groupElements.emplace_back(SymOp(affineTransformation::Identity()));
-  unsigned int oldSize = 0;
-
-  while (oldSize != _groupElements.size()) {
-    oldSize = _groupElements.size();
-    for (unsigned int i = 0; i < _groupElements.size(); ++i) {
-      for (auto &&g : generators) {
-        auto newElement = _groupElements[i] * g;
-        auto it =
-            std::find(_groupElements.begin(), _groupElements.end(), newElement);
-        if (it == _groupElements.end()) {
-          _groupElements.push_back(newElement);
+    for (auto&& g : _groupElements) {
+        assert(g.getAxisOrder() + 6 >= 0);
+        size_t idx = size_t(g.getAxisOrder() + 6);
+        ++nrot[idx];
+        if (g.isPureTranslation()) {
+            nPureTrans++;
         }
-      }
     }
-  }
+    const int fact = (1 + nPureTrans) * isCentro;
+
+    // Cubic
+    if ((nrot[3] + nrot[9]) == 8 * fact) {
+        return 'c';
+    }
+    // Hexagonal
+    if ((nrot[0] + nrot[12]) == 2 * fact) {
+        return 'h';
+    }
+    // Trigonal
+    if ((nrot[3] + nrot[9]) == 2 * fact) {
+        return 'h';
+    }
+    // Tetragonal
+    if ((nrot[2] + nrot[10]) == 2 * fact) {
+        return 't';
+    }
+    // Orthorhombic
+    if ((nrot[4] + nrot[8]) == 3 * fact) {
+        return 'o';
+    }
+    // Monoclinic
+    if ((nrot[4] + nrot[8]) == fact) {
+        return 'm';
+    }
+    // Triclinic, only remaining case
+    return 'a';
 }
 
-bool SpaceGroup::isExtinct(const MillerIndex &hkl) const {
-  // todo(jonathan): improve this routine? need a journal reference
-  // check that this produces results consistent with
-  // http://www.ccp14.ac.uk/ccp/web-mirrors/powdcell/a_v/v_1/powder/details/extinct.htm
+double SpaceGroup::fractionExtinct(const MillerIndexList& hkls) const
+{
+    unsigned int extinct = 0;
+    unsigned int total = hkls.size();
 
-  Eigen::Vector3d hkld = hkl.rowVector().transpose().cast<double>();
-
-  for (auto &&element : _groupElements) {
-    if (element.hasTranslation()) {
-      Eigen::Vector3d t = element.getTranslationPart();
-      double scalar = t.dot(hkld);
-      std::complex<double> prefactor =
-          1.0 + std::exp(std::complex<double>(0, 2 * M_PI) * scalar);
-      if (std::abs(prefactor) < 1e-3) {
-        // if (std::abs(std::remainder(scalar,1.0))>1e-3)
-        Eigen::Vector3d rhkl = element.getRotationPart() * hkld;
-        if (std::abs(rhkl(0) - hkld(0)) < 1e-3 &&
-            std::abs(rhkl(1) - hkld(1)) < 1e-3 &&
-            std::abs(rhkl(2) - hkld(2)) < 1e-3) {
-          return true;
+    for (auto&& hkl : hkls) {
+        if (isExtinct(hkl)) {
+            ++extinct;
         }
-      }
     }
-  }
-  return false;
+    return static_cast<double>(extinct) / static_cast<double>(total);
 }
 
-void SpaceGroup::print(std::ostream &os) const {
-  os << "Symmetry elements of space group " << _symbol << std::endl;
-  for (auto &&g : _groupElements) {
-    os << g << " ; ";
-  }
-  os << std::endl;
+std::string SpaceGroup::bravaisTypeSymbol() const
+{
+    std::string bravais;
+    bravais += bravaisType();
+    bravais += _symbol[0];
+
+    return bravais;
 }
 
-std::ostream &operator<<(std::ostream &os, const SpaceGroup &sg) {
-  sg.print(os);
-  return os;
+int SpaceGroup::id() const
+{
+    auto find_symbol = [this](const std::pair<std::string, std::string>& s) {
+        return s.first.compare(this->_symbol) == 0;
+    };
+    auto it = std::find_if(symmetry_table.begin(), symmetry_table.end(), find_symbol);
+    return std::distance(symmetry_table.begin(), it);
 }
 
-bool SpaceGroup::isEquivalent(const MillerIndex &hkl1, const MillerIndex &hkl2,
-                              bool friedel) const {
-  const auto &elements = groupElements();
-  const double eps = 1e-6;
-
-  const Eigen::RowVector3d &hkl1d = hkl1.rowVector().cast<double>();
-  const Eigen::RowVector3d &hkl2d = hkl2.rowVector().cast<double>();
-
-  // note: since rotation preserves the norm, we can reject early:
-  const double norm_1 = hkl1d.squaredNorm();
-  const double norm_2 = hkl2d.squaredNorm();
-
-  if (std::abs(norm_1 - norm_2) > eps) {
+bool SpaceGroup::isCentrosymmetric() const
+{
+    for (auto&& g : _groupElements) {
+        if (g.getAxisOrder() == -1) {
+            return true;
+        }
+    }
     return false;
-  }
-
-  for (auto &&element : elements) {
-    // todo(jonathan): check that this edit is correct!
-    const Eigen::Matrix3d rotation = element.getRotationPart().transpose();
-    const Eigen::RowVector3d rotated = hkl1d * rotation;
-
-    if (std::max((rotated - hkl1d).maxCoeff(), (hkl1d - rotated).maxCoeff()) <
-        eps) {
-      return true;
-    }
-
-    if (friedel && std::max((rotated + hkl1d).maxCoeff(),
-                            (-hkl1d - rotated).maxCoeff()) < eps) {
-      return true;
-    }
-  }
-  return false;
 }
 
-bool SpaceGroup::isFriedelEquivalent(const MillerIndex &hkl1,
-                                     const MillerIndex &hkl2) const {
-  const auto &elements = _groupElements;
-  Eigen::RowVector3d rotated;
-
-  const Eigen::RowVector3d &hkl1d = hkl1.rowVector().cast<double>();
-  const Eigen::RowVector3d &hkl2d = hkl2.rowVector().cast<double>();
-
-  for (const auto &element : elements) {
-    // todo(jonathan): check that this edit is correct!
-    // rotated = element.getMatrix()*Eigen::Vector3d(h1,k1,l1);
-    rotated = hkl1d * element.getRotationPart().transpose();
-
-    if (std::abs(rotated[0] - hkl2d[0]) < 1e-6 &&
-        std::abs(rotated[1] - hkl2d[1]) < 1e-6 &&
-        std::abs(rotated[2] - hkl2d[2]) < 1e-6) {
-      return true;
-    }
-    // compare against Friedel reflection
-    if (std::abs(rotated[0] + hkl2d[0]) < 1e-6 &&
-        std::abs(rotated[1] + hkl2d[1]) < 1e-6 &&
-        std::abs(rotated[2] + hkl2d[2]) < 1e-6) {
-      return true;
-    }
-  }
-  return false;
+const std::string& SpaceGroup::symbol() const
+{
+    return _symbol;
 }
 
-void SpaceGroup::reduceSymbol() {
-  // This is the only get when the separate 1 has to be kept
-  if (_symbol == "P 1")
-    return;
-  else if (_symbol == "P 3 1 m")
-    return;
-  else if (_symbol == "P 3 m 1")
-    return;
-  else if (_symbol == "P -3 1 m")
-    return;
-  else if (_symbol == "P -3 m 1")
-    return;
-  else if (_symbol == "P 3 1 c")
-    return;
-  else if (_symbol == "P 3 c 1")
-    return;
-  else if (_symbol == "P -3 1 c")
-    return;
-  else if (_symbol == "P -3 c 1")
-    return;
-  else if (_symbol == "P 32 2 1")
-    return;
-  else if (_symbol == "P 32 1 2")
-    return;
-  else if (_symbol == "P 31 1 2")
-    return;
-  else if (_symbol == "P 31 2 1")
-    return;
-  else if (_symbol == "P 3 1 2")
-    return;
-  else if (_symbol == "P 3 2 1")
-    return;
-
-  // Otherwise throw away every separate 1 to produce the short name for Bravais
-  // see https://en.wikipedia.org/wiki/List_of_space_groups
-  std::istringstream iss(_symbol);
-  std::string token;
-  std::vector<std::string> tokens;
-  while (std::getline(iss, token, ' ')) {
-    if (token.compare("1") == 0)
-      continue;
-    tokens.push_back(token);
-  }
-
-  _symbol = join(tokens, " ");
+const std::string& SpaceGroup::generators() const
+{
+    return _generators;
 }
 
-std::vector<PeakList> SpaceGroup::findEquivalences(const PeakList &peaks,
-                                                   bool friedel) const {
+const SymOpList& SpaceGroup::groupElements() const
+{
+    return _groupElements;
+}
 
-  std::vector<PeakList> peak_equivs;
+void SpaceGroup::generateGroupElements()
+{
+    _groupElements.clear();
+    SymOpList generators;
+    std::vector<std::string> gens = split(_generators, ";");
+    generators.reserve(gens.size() + 1);
+    generators.emplace_back(SymOp(affineTransformation::Identity()));
 
-  for (auto peak : peaks) {
-    bool found_equivalence = false;
-    auto cell = peak->unitCell();
-
-    PeakFilter peak_filter;
-    PeakList same_cell_peaks = peak_filter.unitCell(peaks, cell);
-
-    MillerIndex miller_index1(peak->q(), *cell);
-
-    for (size_t i = 0; i < peak_equivs.size() && !found_equivalence; ++i) {
-      MillerIndex miller_index2(peak_equivs[i][0]->q(), *cell);
-
-      if ((friedel && isFriedelEquivalent(miller_index1, miller_index2)) ||
-          (!friedel && isEquivalent(miller_index1, miller_index2))) {
-        found_equivalence = true;
-        peak_equivs[i].push_back(peak);
-        continue;
-      }
+    for (auto&& g : gens) {
+        auto&& gen = SymOp(g);
+        generators.emplace_back(gen);
     }
 
-    // didn't find an equivalence?
-    if (!found_equivalence) {
-      peak_equivs.emplace_back(PeakList({peak}));
+    _groupElements.emplace_back(SymOp(affineTransformation::Identity()));
+    unsigned int oldSize = 0;
+
+    while (oldSize != _groupElements.size()) {
+        oldSize = _groupElements.size();
+        for (unsigned int i = 0; i < _groupElements.size(); ++i) {
+            for (auto&& g : generators) {
+                auto newElement = _groupElements[i] * g;
+                auto it = std::find(_groupElements.begin(), _groupElements.end(), newElement);
+                if (it == _groupElements.end()) {
+                    _groupElements.push_back(newElement);
+                }
+            }
+        }
     }
-  }
-  return peak_equivs;
+}
+
+bool SpaceGroup::isExtinct(const MillerIndex& hkl) const
+{
+    // todo(jonathan): improve this routine? need a journal reference
+    // check that this produces results consistent with
+    // http://www.ccp14.ac.uk/ccp/web-mirrors/powdcell/a_v/v_1/powder/details/extinct.htm
+
+    Eigen::Vector3d hkld = hkl.rowVector().transpose().cast<double>();
+
+    for (auto&& element : _groupElements) {
+        if (element.hasTranslation()) {
+            Eigen::Vector3d t = element.getTranslationPart();
+            double scalar = t.dot(hkld);
+            std::complex<double> prefactor =
+                1.0 + std::exp(std::complex<double>(0, 2 * M_PI) * scalar);
+            if (std::abs(prefactor) < 1e-3) {
+                // if (std::abs(std::remainder(scalar,1.0))>1e-3)
+                Eigen::Vector3d rhkl = element.getRotationPart() * hkld;
+                if (std::abs(rhkl(0) - hkld(0)) < 1e-3 && std::abs(rhkl(1) - hkld(1)) < 1e-3
+                    && std::abs(rhkl(2) - hkld(2)) < 1e-3) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+void SpaceGroup::print(std::ostream& os) const
+{
+    os << "Symmetry elements of space group " << _symbol << std::endl;
+    for (auto&& g : _groupElements) {
+        os << g << " ; ";
+    }
+    os << std::endl;
+}
+
+std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg)
+{
+    sg.print(os);
+    return os;
+}
+
+bool SpaceGroup::isEquivalent(const MillerIndex& hkl1, const MillerIndex& hkl2, bool friedel) const
+{
+    const auto& elements = groupElements();
+    const double eps = 1e-6;
+
+    const Eigen::RowVector3d& hkl1d = hkl1.rowVector().cast<double>();
+    const Eigen::RowVector3d& hkl2d = hkl2.rowVector().cast<double>();
+
+    // note: since rotation preserves the norm, we can reject early:
+    const double norm_1 = hkl1d.squaredNorm();
+    const double norm_2 = hkl2d.squaredNorm();
+
+    if (std::abs(norm_1 - norm_2) > eps) {
+        return false;
+    }
+
+    for (auto&& element : elements) {
+        // todo(jonathan): check that this edit is correct!
+        const Eigen::Matrix3d rotation = element.getRotationPart().transpose();
+        const Eigen::RowVector3d rotated = hkl1d * rotation;
+
+        if (std::max((rotated - hkl1d).maxCoeff(), (hkl1d - rotated).maxCoeff()) < eps) {
+            return true;
+        }
+
+        if (friedel
+            && std::max((rotated + hkl1d).maxCoeff(), (-hkl1d - rotated).maxCoeff()) < eps) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool SpaceGroup::isFriedelEquivalent(const MillerIndex& hkl1, const MillerIndex& hkl2) const
+{
+    const auto& elements = _groupElements;
+    Eigen::RowVector3d rotated;
+
+    const Eigen::RowVector3d& hkl1d = hkl1.rowVector().cast<double>();
+    const Eigen::RowVector3d& hkl2d = hkl2.rowVector().cast<double>();
+
+    for (const auto& element : elements) {
+        // todo(jonathan): check that this edit is correct!
+        // rotated = element.getMatrix()*Eigen::Vector3d(h1,k1,l1);
+        rotated = hkl1d * element.getRotationPart().transpose();
+
+        if (std::abs(rotated[0] - hkl2d[0]) < 1e-6 && std::abs(rotated[1] - hkl2d[1]) < 1e-6
+            && std::abs(rotated[2] - hkl2d[2]) < 1e-6) {
+            return true;
+        }
+        // compare against Friedel reflection
+        if (std::abs(rotated[0] + hkl2d[0]) < 1e-6 && std::abs(rotated[1] + hkl2d[1]) < 1e-6
+            && std::abs(rotated[2] + hkl2d[2]) < 1e-6) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void SpaceGroup::reduceSymbol()
+{
+    // This is the only get when the separate 1 has to be kept
+    if (_symbol == "P 1")
+        return;
+    else if (_symbol == "P 3 1 m")
+        return;
+    else if (_symbol == "P 3 m 1")
+        return;
+    else if (_symbol == "P -3 1 m")
+        return;
+    else if (_symbol == "P -3 m 1")
+        return;
+    else if (_symbol == "P 3 1 c")
+        return;
+    else if (_symbol == "P 3 c 1")
+        return;
+    else if (_symbol == "P -3 1 c")
+        return;
+    else if (_symbol == "P -3 c 1")
+        return;
+    else if (_symbol == "P 32 2 1")
+        return;
+    else if (_symbol == "P 32 1 2")
+        return;
+    else if (_symbol == "P 31 1 2")
+        return;
+    else if (_symbol == "P 31 2 1")
+        return;
+    else if (_symbol == "P 3 1 2")
+        return;
+    else if (_symbol == "P 3 2 1")
+        return;
+
+    // Otherwise throw away every separate 1 to produce the short name for Bravais
+    // see https://en.wikipedia.org/wiki/List_of_space_groups
+    std::istringstream iss(_symbol);
+    std::string token;
+    std::vector<std::string> tokens;
+    while (std::getline(iss, token, ' ')) {
+        if (token.compare("1") == 0)
+            continue;
+        tokens.push_back(token);
+    }
+
+    _symbol = join(tokens, " ");
+}
+
+std::vector<PeakList> SpaceGroup::findEquivalences(const PeakList& peaks, bool friedel) const
+{
+
+    std::vector<PeakList> peak_equivs;
+
+    for (auto peak : peaks) {
+        bool found_equivalence = false;
+        auto cell = peak->unitCell();
+
+        PeakFilter peak_filter;
+        PeakList same_cell_peaks = peak_filter.unitCell(peaks, cell);
+
+        MillerIndex miller_index1(peak->q(), *cell);
+
+        for (size_t i = 0; i < peak_equivs.size() && !found_equivalence; ++i) {
+            MillerIndex miller_index2(peak_equivs[i][0]->q(), *cell);
+
+            if ((friedel && isFriedelEquivalent(miller_index1, miller_index2))
+                || (!friedel && isEquivalent(miller_index1, miller_index2))) {
+                found_equivalence = true;
+                peak_equivs[i].push_back(peak);
+                continue;
+            }
+        }
+
+        // didn't find an equivalence?
+        if (!found_equivalence) {
+            peak_equivs.emplace_back(PeakList({peak}));
+        }
+    }
+    return peak_equivs;
 }
 
 } // end namespace nsx

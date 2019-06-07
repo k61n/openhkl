@@ -15,14 +15,14 @@ class SessionModel;
 class WidgetFoundPeaks : public QWidget {
 
 public:
-  WidgetFoundPeaks(ExperimentItem *experiment_item, const nsx::PeakList &peaks);
+    WidgetFoundPeaks(ExperimentItem* experiment_item, const nsx::PeakList& peaks);
 
-  ~WidgetFoundPeaks();
+    ~WidgetFoundPeaks();
 
-  nsx::PeakList selectedPeaks() const;
+    nsx::PeakList selectedPeaks() const;
 
 private:
-  Ui::WidgetFoundPeaks *_ui;
+    Ui::WidgetFoundPeaks* _ui;
 
-  ExperimentItem *_experiment_item;
+    ExperimentItem* _experiment_item;
 };

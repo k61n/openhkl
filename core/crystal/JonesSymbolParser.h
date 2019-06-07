@@ -16,7 +16,6 @@ namespace nsx {
 //!  1, 0, 0, 0
 //!  0, 0, 1, 0.5,
 //!  0, 0, 0, 1
-Eigen::Transform<double, 3, Eigen::Affine>
-parseJonesSymbol(const std::string &jonesSymbol);
+Eigen::Transform<double, 3, Eigen::Affine> parseJonesSymbol(const std::string& jonesSymbol);
 
 } // end namespace nsx

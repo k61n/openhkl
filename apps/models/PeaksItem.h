@@ -10,35 +10,35 @@ class PeakListItem;
 class PeaksItem : public InspectableTreeItem {
 
 public:
-  explicit PeaksItem();
+    explicit PeaksItem();
 
-  virtual QWidget *inspectItem() override;
+    virtual QWidget* inspectItem() override;
 
-  nsx::PeakList allPeaks();
+    nsx::PeakList allPeaks();
 
-  nsx::PeakList selectedPeaks();
+    nsx::PeakList selectedPeaks();
 
-  void openAutoIndexingFrame();
+    void openAutoIndexingFrame();
 
-  void openPeakFilterDialog();
+    void openPeakFilterDialog();
 
-  void removeUnitCell(nsx::sptrUnitCell unit_cell);
+    void removeUnitCell(nsx::sptrUnitCell unit_cell);
 
-  void integratePeaks();
+    void integratePeaks();
 
-  void findSpaceGroup();
+    void findSpaceGroup();
 
-  void showPeaksOpenGL();
+    void showPeaksOpenGL();
 
-  void absorptionCorrection();
+    void absorptionCorrection();
 
-  void buildShapeLibrary();
+    void buildShapeLibrary();
 
-  void refine();
+    void refine();
 
-  void autoAssignUnitCell();
+    void autoAssignUnitCell();
 
-  void openUserDefinedUnitCellIndexerFrame();
+    void openUserDefinedUnitCellIndexerFrame();
 
-  void normalizeToMonitor();
+    void normalizeToMonitor();
 };

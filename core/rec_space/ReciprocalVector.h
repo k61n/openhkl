@@ -12,41 +12,41 @@ namespace nsx {
 //! dealing with vectors in algorithms dedicated to crystallographic data.
 class ReciprocalVector {
 public:
-  //! Default constructor
-  ReciprocalVector() = default;
+    //! Default constructor
+    ReciprocalVector() = default;
 
-  //! Copy constructor
-  ReciprocalVector(const ReciprocalVector &other) = default;
+    //! Copy constructor
+    ReciprocalVector(const ReciprocalVector& other) = default;
 
-  //! Constructor from its 3 components
-  explicit ReciprocalVector(double x, double y, double z);
+    //! Constructor from its 3 components
+    explicit ReciprocalVector(double x, double y, double z);
 
-  //! Construct a ReciprocalVector from an Eigen row vector
-  explicit ReciprocalVector(const Eigen::RowVector3d &rvector);
+    //! Construct a ReciprocalVector from an Eigen row vector
+    explicit ReciprocalVector(const Eigen::RowVector3d& rvector);
 
-  //! Assignment operator
-  ReciprocalVector &operator=(const ReciprocalVector &other) = default;
+    //! Assignment operator
+    ReciprocalVector& operator=(const ReciprocalVector& other) = default;
 
-  //! Destructor
-  ~ReciprocalVector() = default;
+    //! Destructor
+    ~ReciprocalVector() = default;
 
-  //! Cast operator to an Eigen row vector
-  const Eigen::RowVector3d &rowVector() const;
+    //! Cast operator to an Eigen row vector
+    const Eigen::RowVector3d& rowVector() const;
 
-  //! Return the value of an element of the vector
-  double operator[](int index) const;
+    //! Return the value of an element of the vector
+    double operator[](int index) const;
 
-  //! Return a reference to an element of the vector
-  const double &operator[](int index);
+    //! Return a reference to an element of the vector
+    const double& operator[](int index);
 
-  //! Print information about a ReciprocalVector to a stream
-  void print(std::ostream &os) const;
+    //! Print information about a ReciprocalVector to a stream
+    void print(std::ostream& os) const;
 
 private:
-  Eigen::RowVector3d _rvector;
+    Eigen::RowVector3d _rvector;
 };
 
 //! Overload operator<< with ReciprocalVector type
-std::ostream &operator<<(std::ostream &os, const ReciprocalVector &rvector);
+std::ostream& operator<<(std::ostream& os, const ReciprocalVector& rvector);
 
 } // end namespace nsx

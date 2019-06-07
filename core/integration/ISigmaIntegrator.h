@@ -47,13 +47,13 @@ class DataSet;
 //! RETREAT.
 class ISigmaIntegrator : public PixelSumIntegrator {
 public:
-  ISigmaIntegrator(sptrShapeLibrary library, double radius, double nframes);
-  bool compute(sptrPeak3D peak, const IntegrationRegion &region) override;
+    ISigmaIntegrator(sptrShapeLibrary library, double radius, double nframes);
+    bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
 
 private:
-  sptrShapeLibrary _library;
-  double _radius;
-  double _nframes;
+    sptrShapeLibrary _library;
+    double _radius;
+    double _nframes;
 };
 
 } // end namespace nsx

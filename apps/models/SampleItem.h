@@ -9,11 +9,11 @@ class UnitCellItem;
 
 class SampleItem : public InspectableTreeItem {
 public:
-  explicit SampleItem();
+    explicit SampleItem();
 
-  QWidget *inspectItem() override;
+    QWidget* inspectItem() override;
 
-  void openIsotopesDatabase();
+    void openIsotopesDatabase();
 
-  void openSampleGlobalOffsetsFrame();
+    void openSampleGlobalOffsetsFrame();
 };

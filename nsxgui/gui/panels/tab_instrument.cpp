@@ -4,14 +4,12 @@
 //-------------------------------------------------------------------------------------------------
 //! @class TabInstrument
 
-TabInstrument::TabInstrument()
-    :QcrTabWidget{"instrument"}
+TabInstrument::TabInstrument() : QcrTabWidget {"instrument"}
 {
-    //layout
+    // layout
     addTab((detector = new SubtabDetector), "Detector");
     addTab((monoSource = new SubtabMonochromatic), "Monochromatic source");
     addTab((sample = new SubtabSample), "Sample");
-
 }
 
 void TabInstrument::setCurrent(int index)

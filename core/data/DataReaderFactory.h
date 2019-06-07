@@ -48,18 +48,17 @@ class Diffractometer;
 class DataReaderFactory {
 
 public:
-  //! Callback type of the factory
-  using callback = std::function<std::shared_ptr<DataSet>(const std::string &,
-                                                          Diffractometer *)>;
+    //! Callback type of the factory
+    using callback = std::function<std::shared_ptr<DataSet>(const std::string&, Diffractometer*)>;
 
-  DataReaderFactory();
+    DataReaderFactory();
 
-  std::shared_ptr<DataSet> create(const std::string &extension,
-                                  const std::string &filename,
-                                  Diffractometer *diffractometer) const;
+    std::shared_ptr<DataSet> create(
+        const std::string& extension, const std::string& filename,
+        Diffractometer* diffractometer) const;
 
 private:
-  std::map<std::string, callback> _callbacks;
+    std::map<std::string, callback> _callbacks;
 };
 
 } // end namespace nsx

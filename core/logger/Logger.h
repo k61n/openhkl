@@ -1,9 +1,9 @@
 #pragma once
 
 #include <functional>
+#include <iostream>
 #include <memory>
 #include <sstream>
-#include <iostream>
 
 #include "IStreamWrapper.h"
 
@@ -11,28 +11,29 @@ namespace nsx {
 
 class Logger {
 public:
-  // Note: necessary to delete this for MSVC
-  Logger() = delete;
-  Logger(IStreamWrapper *wrapper);
-  // Note: necessary to delete this for MSVC build
-  Logger(const Logger &other) = delete;
-  Logger(Logger &&other) = default;
+    // Note: necessary to delete this for MSVC
+    Logger() = delete;
+    Logger(IStreamWrapper* wrapper);
+    // Note: necessary to delete this for MSVC build
+    Logger(const Logger& other) = delete;
+    Logger(Logger&& other) = default;
 
-  ~Logger();
+    ~Logger();
 
-  template <typename T> Logger &operator<<(T &&x);
+    template <typename T> Logger& operator<<(T&& x);
 
 private:
-  std::unique_ptr<IStreamWrapper> _wrapper;
-  std::string _msg;
+    std::unique_ptr<IStreamWrapper> _wrapper;
+    std::string _msg;
 };
 
-template <typename T> Logger &Logger::operator<<(T &&x) {
-  std::cout << x << std::endl;
-  std::stringstream str;
-  str << " " << x;
-  _msg += str.str();
-  return *this;
+template <typename T> Logger& Logger::operator<<(T&& x)
+{
+    std::cout << x << std::endl;
+    std::stringstream str;
+    str << " " << x;
+    _msg += str.str();
+    return *this;
 }
 
 std::string currentTime();

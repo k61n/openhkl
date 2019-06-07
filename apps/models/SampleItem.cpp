@@ -7,43 +7,47 @@
 #include "SamplePropertyWidget.h"
 #include "SampleShapeItem.h"
 
-SampleItem::SampleItem() : InspectableTreeItem() {
-  setText("Sample");
+SampleItem::SampleItem() : InspectableTreeItem()
+{
+    setText("Sample");
 
-  QIcon icon(":/resources/gonioIcon.png");
+    QIcon icon(":/resources/gonioIcon.png");
 
-  setIcon(icon);
+    setIcon(icon);
 
-  setEditable(false);
+    setEditable(false);
 
-  setDragEnabled(false);
-  setDropEnabled(false);
+    setDragEnabled(false);
+    setDropEnabled(false);
 
-  setSelectable(false);
+    setSelectable(false);
 
-  setCheckable(false);
+    setCheckable(false);
 
-  SampleShapeItem *shape = new SampleShapeItem();
-  appendRow(shape);
+    SampleShapeItem* shape = new SampleShapeItem();
+    appendRow(shape);
 }
 
-QWidget *SampleItem::inspectItem() { return new SamplePropertyWidget(this); }
-
-void SampleItem::openIsotopesDatabase() {
-  // dialog will automatically be deleted before we return from this method
-  std::unique_ptr<DialogIsotopesDatabase> dialog_ptr(
-      new DialogIsotopesDatabase());
-
-  if (!dialog_ptr->exec()) {
-    return;
-  }
+QWidget* SampleItem::inspectItem()
+{
+    return new SamplePropertyWidget(this);
 }
 
-void SampleItem::openSampleGlobalOffsetsFrame() {
-  FrameSampleGlobalOffsets *frame =
-      FrameSampleGlobalOffsets::create(experimentItem());
+void SampleItem::openIsotopesDatabase()
+{
+    // dialog will automatically be deleted before we return from this method
+    std::unique_ptr<DialogIsotopesDatabase> dialog_ptr(new DialogIsotopesDatabase());
 
-  frame->show();
+    if (!dialog_ptr->exec()) {
+        return;
+    }
+}
 
-  frame->raise();
+void SampleItem::openSampleGlobalOffsetsFrame()
+{
+    FrameSampleGlobalOffsets* frame = FrameSampleGlobalOffsets::create(experimentItem());
+
+    frame->show();
+
+    frame->raise();
 }

@@ -14,19 +14,19 @@ class PeaksPropertyWidget;
 class PeaksItem;
 
 class PeaksPropertyWidget : public QWidget {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit PeaksPropertyWidget(PeaksItem *caller, QWidget *parent = 0);
+    explicit PeaksPropertyWidget(PeaksItem* caller, QWidget* parent = 0);
 
-  ~PeaksPropertyWidget();
+    ~PeaksPropertyWidget();
 
-  CollectedPeaksModel *model();
+    CollectedPeaksModel* model();
 
 private:
-  PeaksItem *_peaks_item;
+    PeaksItem* _peaks_item;
 
-  Ui::PeaksPropertyWidget *ui;
+    Ui::PeaksPropertyWidget* ui;
 
-  CollectedPeaksModel *_peaks_model;
+    CollectedPeaksModel* _peaks_model;
 };

@@ -11,28 +11,28 @@ class NoteBook;
 
 class QtStreamWrapper : public QObject, public nsx::IStreamWrapper {
 
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  //! Constructor
-  QtStreamWrapper(NoteBook *notebook,
-                  std::function<std::string()> prefix = nullptr,
-                  std::function<std::string()> suffix = nullptr);
+    //! Constructor
+    QtStreamWrapper(
+        NoteBook* notebook, std::function<std::string()> prefix = nullptr,
+        std::function<std::string()> suffix = nullptr);
 
-  //! Destructor
-  virtual ~QtStreamWrapper();
+    //! Destructor
+    virtual ~QtStreamWrapper();
 
-  //! Write a message to the stream
-  virtual void print(const std::string &message) override;
+    //! Write a message to the stream
+    virtual void print(const std::string& message) override;
 
-  virtual void printPrefix() override;
+    virtual void printPrefix() override;
 
-  virtual void printSuffix() override;
+    virtual void printSuffix() override;
 
 signals:
 
-  void sendLogMessage(const std::string &message);
+    void sendLogMessage(const std::string& message);
 
 private:
-  std::ostringstream _os;
+    std::ostringstream _os;
 };

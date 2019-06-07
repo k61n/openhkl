@@ -2,12 +2,13 @@
 #ifndef UNITCELLPROPERTY_H
 #define UNITCELLPROPERTY_H
 
-#include <QCR/widgets/views.h>
 #include <QCR/widgets/controls.h>
+#include <QCR/widgets/views.h>
 
 class UnitCellProperty : public QcrWidget {
 public:
     UnitCellProperty();
+
 private:
     void setUnitCellName();
     void getLatticeParams();
@@ -34,4 +35,4 @@ private:
     QcrDoubleSpinBox* gamma;
 };
 
-#endif //UNITCELLPROPERTY_H
+#endif // UNITCELLPROPERTY_H

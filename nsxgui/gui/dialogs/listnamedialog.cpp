@@ -6,11 +6,10 @@
 #include <QVBoxLayout>
 
 ListNameDialog::ListNameDialog(nsx::PeakList list)
-    : QcrModalDialog{"adhoc_ListNameDialog", gGui, "List name dialog"}
-    , list_{list}
+    : QcrModalDialog {"adhoc_ListNameDialog", gGui, "List name dialog"}, list_ {list}
 {
     resize(500, 130);
-    setMinimumSize(500,130);
+    setMinimumSize(500, 130);
     setMaximumSize(500, 130);
 
     QVBoxLayout* whole = new QVBoxLayout(this);
@@ -19,9 +18,8 @@ ListNameDialog::ListNameDialog(nsx::PeakList list)
     line->addWidget(new QLabel("Peaklist name: "));
     line->addWidget(name_);
     whole->addLayout(line);
-    QDialogButtonBox* buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok|
-                                                       QDialogButtonBox::Cancel,
-                                                       Qt::Horizontal);
+    QDialogButtonBox* buttonbox =
+        new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal);
     whole->addWidget(buttonbox);
 
     QObject::connect(buttonbox, SIGNAL(accepted()), this, SLOT(accept()));

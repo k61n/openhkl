@@ -13,16 +13,15 @@ class ExperimentItem;
 
 class TreeItem : public QStandardItem {
 public:
-  explicit TreeItem();
+    explicit TreeItem();
 
-  virtual ~TreeItem();
+    virtual ~TreeItem();
 
-  virtual void setData(const QVariant &value,
-                       int role = Qt::UserRole + 1) override;
+    virtual void setData(const QVariant& value, int role = Qt::UserRole + 1) override;
 
-  virtual SessionModel *model() const;
+    virtual SessionModel* model() const;
 
-  nsx::sptrExperiment experiment();
+    nsx::sptrExperiment experiment();
 
-  ExperimentItem *experimentItem() const;
+    ExperimentItem* experimentItem() const;
 };

@@ -1,14 +1,14 @@
 
 #include "nsxgui/gui/panels/subframe_experiments.h"
-#include "nsxgui/gui/view/toggles.h"
 #include "nsxgui/gui/actions/triggers.h"
 #include "nsxgui/gui/mainwin.h"
 #include "nsxgui/gui/models/session.h"
+#include "nsxgui/gui/view/toggles.h"
 #include <QCR/widgets/tables.h>
 #include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QTreeView>
 #include <QToolButton>
+#include <QTreeView>
+#include <QVBoxLayout>
 
 //  ***********************************************************************************************
 //! @class FilesModel (local scope)
@@ -17,21 +17,19 @@
 
 class ExperimentsModel : public CheckTableModel { // < QAbstractTableModel < QAbstractItemModel
 public:
-    ExperimentsModel() : CheckTableModel{"experiments"} {}
+    ExperimentsModel() : CheckTableModel {"experiments"} {}
 
-    enum {COL_CHECK=1, COL_NAME, COL_INSTRUMENT, COL_ATTRS};
+    enum { COL_CHECK = 1, COL_NAME, COL_INSTRUMENT, COL_ATTRS };
 
 private:
     void setActivated(int i, bool on) final {}
 
     int highlighted() const final;
     void onHighlight(int i) final { gSession->selectExperiment(i); }
-    bool activated(int i) const final { return i==gSession->selectedExperimentNum(); }
-    Qt::CheckState state(int i) const final {
-        return Qt::Unchecked; }
+    bool activated(int i) const final { return i == gSession->selectedExperimentNum(); }
+    Qt::CheckState state(int i) const final { return Qt::Unchecked; }
 
-    int columnCount() const final {
-        return COL_ATTRS; }
+    int columnCount() const final { return COL_ATTRS; }
     int rowCount() const final { return gSession->numExperiments(); }
     QVariant entry(int, int) const final;
     QString tooltip(int, int) const final;
@@ -48,11 +46,11 @@ int ExperimentsModel::highlighted() const
 
 QVariant ExperimentsModel::entry(int row, int col) const
 {
-    if(col == COL_NAME)
+    if (col == COL_NAME)
         return QString::fromStdString(gSession->experimentAt(row)->experiment()->name());
-    if(col == COL_INSTRUMENT) {
-        return QString::fromStdString(gSession->experimentAt(row)->experiment()->
-                                      diffractometer()->name());
+    if (col == COL_INSTRUMENT) {
+        return QString::fromStdString(
+            gSession->experimentAt(row)->experiment()->diffractometer()->name());
     }
     return {};
 }
@@ -60,7 +58,7 @@ QVariant ExperimentsModel::entry(int row, int col) const
 QString ExperimentsModel::tooltip(int row, int col) const
 {
     nsx::sptrExperiment exp = gSession->experimentAt(row)->experiment();
-    if(col == 2)
+    if (col == 2)
         return QString("Experiment %1 on instrument %2")
             .arg(QString::fromStdString(exp->name()))
             .arg(QString::fromStdString(exp->diffractometer()->name()));
@@ -69,13 +67,13 @@ QString ExperimentsModel::tooltip(int row, int col) const
 
 QVariant ExperimentsModel::headerData(int col, Qt::Orientation ori, int role) const
 {
-    if (ori!=Qt::Horizontal)
+    if (ori != Qt::Horizontal)
         return {};
     if (role != Qt::DisplayRole)
         return {};
-    if (col==COL_NAME)
+    if (col == COL_NAME)
         return "experiment";
-    if (col==COL_INSTRUMENT)
+    if (col == COL_INSTRUMENT)
         return "instrument";
     return {};
 }
@@ -89,12 +87,13 @@ QVariant ExperimentsModel::headerData(int col, Qt::Orientation ori, int role) co
 class ExperimentsView : public CheckTableView {
 public:
     ExperimentsView();
+
 private:
     ExperimentsModel* model() { return static_cast<ExperimentsModel*>(model_); }
     void onData() override;
 };
 
-ExperimentsView::ExperimentsView() : CheckTableView{new ExperimentsModel{}}
+ExperimentsView::ExperimentsView() : CheckTableView {new ExperimentsModel {}}
 {
     setSelectionMode(QAbstractItemView::NoSelection);
     onData();
@@ -104,9 +103,9 @@ void ExperimentsView::onData()
 {
     setHeaderHidden(false);
     setColumnWidth(0, 0);
-    setColumnWidth(1,  3*dWidth());
-    for (int i=2; i<model_->columnCount(); ++i)
-        setColumnWidth(i, 7.*dWidth());
+    setColumnWidth(1, 3 * dWidth());
+    for (int i = 2; i < model_->columnCount(); ++i)
+        setColumnWidth(i, 7. * dWidth());
     model_->refreshModel();
     emit model_->layoutChanged();
     updateScroll();
@@ -115,11 +114,10 @@ void ExperimentsView::onData()
 
 //  ***********************************************************************************************
 //! @class SubframeFiles
-SubframeExperiments::SubframeExperiments()
-    : QcrDockWidget{"Experiments"}
+SubframeExperiments::SubframeExperiments() : QcrDockWidget {"Experiments"}
 {
     setWidget(new ExperimentsView());
-    connect(this, SIGNAL( visibilityChanged(bool) ), &gGui->toggles->viewExperiment ,
-            SLOT( setChecked(bool)) );
+    connect(
+        this, SIGNAL(visibilityChanged(bool)), &gGui->toggles->viewExperiment,
+        SLOT(setChecked(bool)));
 }
-

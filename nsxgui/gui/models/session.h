@@ -2,15 +2,15 @@
 #ifndef SESSION_H
 #define SESSION_H
 
+#include "nsxgui/gui/models/experimentmodel.h"
 #include <QList>
 #include <build/core/include/core/DataTypes.h>
-#include "nsxgui/gui/models/experimentmodel.h"
 
 extern class Session* gSession; //!< global handle for Session
 
 class Session {
 public:
-	Session();
+    Session();
     ExperimentModel* selectedExperiment();
     ExperimentModel* selectExperiment(int);
     int selectedExperimentNum() { return selected; }
@@ -29,4 +29,4 @@ private:
     int selected = -1;
 };
 
-#endif //SESSION_H
+#endif // SESSION_H

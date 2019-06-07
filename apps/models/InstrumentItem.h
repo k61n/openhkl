@@ -12,15 +12,15 @@ class SourceItem;
 
 class InstrumentItem : public TreeItem {
 public:
-  explicit InstrumentItem(const char *name, const char *source_name);
+    explicit InstrumentItem(const char* name, const char* source_name);
 
 public:
-  DetectorItem *detectorItem();
-  SampleItem *sampleItem();
-  SourceItem *sourceItem();
+    DetectorItem* detectorItem();
+    SampleItem* sampleItem();
+    SourceItem* sourceItem();
 
 private:
-  DetectorItem *_detector;
-  SampleItem *_sample;
-  SourceItem *_source;
+    DetectorItem* _detector;
+    SampleItem* _sample;
+    SourceItem* _source;
 };

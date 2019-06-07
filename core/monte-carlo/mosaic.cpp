@@ -31,323 +31,325 @@
 
 namespace {
 
-double xor128(void) {
-  static uint32_t x = 123456789;
-  static uint32_t y = 362436069;
-  static uint32_t z = 521288629;
-  static uint32_t w = 88675123;
-  uint32_t t;
-  t = x ^ (x << 11);
-  x = y;
-  y = z;
-  z = w;
-  w = w ^ (w >> 19) ^ (t ^ (t >> 8));
-  return w / 4294967295.0;
+double xor128(void)
+{
+    static uint32_t x = 123456789;
+    static uint32_t y = 362436069;
+    static uint32_t z = 521288629;
+    static uint32_t w = 88675123;
+    uint32_t t;
+    t = x ^ (x << 11);
+    x = y;
+    y = z;
+    z = w;
+    w = w ^ (w >> 19) ^ (t ^ (t >> 8));
+    return w / 4294967295.0;
 }
 
 } // namespace
 
 namespace nsx {
 
-double ellipsoids_overlap(const nsx::Ellipsoid &ell1,
-                          const nsx::Ellipsoid &ell2) {
-  const auto &bb = ell1.aabb();
-  const Eigen::Vector3d &lb1 = bb.lower();
-  const Eigen::Vector3d &ub1 = bb.upper();
+double ellipsoids_overlap(const nsx::Ellipsoid& ell1, const nsx::Ellipsoid& ell2)
+{
+    const auto& bb = ell1.aabb();
+    const Eigen::Vector3d& lb1 = bb.lower();
+    const Eigen::Vector3d& ub1 = bb.upper();
 
-  std::default_random_engine gen;
-  std::uniform_real_distribution<double> d1(lb1[0], ub1[0]);
-  std::uniform_real_distribution<double> d2(lb1[1], ub1[1]);
-  std::uniform_real_distribution<double> d3(lb1[2], ub1[2]);
+    std::default_random_engine gen;
+    std::uniform_real_distribution<double> d1(lb1[0], ub1[0]);
+    std::uniform_real_distribution<double> d2(lb1[1], ub1[1]);
+    std::uniform_real_distribution<double> d3(lb1[2], ub1[2]);
 
-  int inside1{0};
-  int inside2{0};
-  for (int i = 0; i < 100000; ++i) {
-    Eigen::Vector3d point(d1(gen), d2(gen), d3(gen));
+    int inside1 {0};
+    int inside2 {0};
+    for (int i = 0; i < 100000; ++i) {
+        Eigen::Vector3d point(d1(gen), d2(gen), d3(gen));
 
-    if (ell1.isInside(point)) {
-      ++inside1;
-      if (ell2.isInside(point))
-        ++inside2;
+        if (ell1.isInside(point)) {
+            ++inside1;
+            if (ell2.isInside(point))
+                ++inside2;
+        }
     }
-  }
 
-  double overlap = 4.0 * M_PI * ell1.aabb().extents().prod() *
-                   static_cast<double>(inside2) / static_cast<double>(inside1) /
-                   3.0;
+    double overlap = 4.0 * M_PI * ell1.aabb().extents().prod() * static_cast<double>(inside2)
+        / static_cast<double>(inside1) / 3.0;
 
-  return overlap;
+    return overlap;
 }
 
-Mosaic::Mosaic(const std::string &instr, double l, double dl, double dMonSam,
-               double mu)
-    : _sample(nullptr), _l(l), _dl(dl), _dMonSam(dMonSam),
-      _mu(mu * UnitsManager::get("deg")),
-      _diffractometer(Diffractometer::create(instr)) {}
-
-void Mosaic::setSample(Sample *sample) { _sample = sample; }
-
-void Mosaic::setMosaicity(double mosaicity) {
-  _mu = mosaicity * UnitsManager::get("deg");
+Mosaic::Mosaic(const std::string& instr, double l, double dl, double dMonSam, double mu)
+    : _sample(nullptr)
+    , _l(l)
+    , _dl(dl)
+    , _dMonSam(dMonSam)
+    , _mu(mu * UnitsManager::get("deg"))
+    , _diffractometer(Diffractometer::create(instr))
+{
 }
 
-bool Mosaic::run(const std::vector<std::string> &numors, unsigned int n,
-                 double &overlap) {
-  double cmu = cos(_mu);
-  double oneMinuscmu = 1.0 - cmu;
+void Mosaic::setSample(Sample* sample)
+{
+    _sample = sample;
+}
 
-  double sigmal = _dl / 2.0 / sqrt(2.0 * log(2.0));
+void Mosaic::setMosaicity(double mosaicity)
+{
+    _mu = mosaicity * UnitsManager::get("deg");
+}
 
-  // Build a look up table for a gaussian distribution around l with fwhm=dl
-  Eigen::VectorXd lambdas(1000);
-  int nlambdas = lambdas.size();
-  for (int i = 0; i < nlambdas; ++i) {
-    double x =
-        -3 * sigmal +
-        (static_cast<double>(i) / static_cast<double>(nlambdas)) * 6.0 * sigmal;
-    lambdas[i] =
-        1.0 / sqrt(2.0 * M_PI) / sigmal * exp(-0.5 * x * x / sigmal / sigmal);
-  }
+bool Mosaic::run(const std::vector<std::string>& numors, unsigned int n, double& overlap)
+{
+    double cmu = cos(_mu);
+    double oneMinuscmu = 1.0 - cmu;
 
-  double lmin = _l - sigmal;
-  double lmax = _l + sigmal;
+    double sigmal = _dl / 2.0 / sqrt(2.0 * log(2.0));
 
-  // todo: width,height should not be hard-coded!!
-  double monHeight = 1 * UnitsManager::get("mm");
-  double monWidth = 1 * UnitsManager::get("mm");
+    // Build a look up table for a gaussian distribution around l with fwhm=dl
+    Eigen::VectorXd lambdas(1000);
+    int nlambdas = lambdas.size();
+    for (int i = 0; i < nlambdas; ++i) {
+        double x =
+            -3 * sigmal + (static_cast<double>(i) / static_cast<double>(nlambdas)) * 6.0 * sigmal;
+        lambdas[i] = 1.0 / sqrt(2.0 * M_PI) / sigmal * exp(-0.5 * x * x / sigmal / sigmal);
+    }
 
-  // Read the numors
-  std::vector<sptrDataSet> datas;
-  for (const auto &num : numors) {
-    auto reader =
-        std::shared_ptr<IDataReader>(new ILLDataReader(num, _diffractometer));
-    datas.emplace_back(new DataSet(reader));
-  }
+    double lmin = _l - sigmal;
+    double lmax = _l + sigmal;
 
-  // Create and get the unit cell of the sample
-  auto uc = std::make_shared<UnitCell>();
+    // todo: width,height should not be hard-coded!!
+    double monHeight = 1 * UnitsManager::get("mm");
+    double monWidth = 1 * UnitsManager::get("mm");
 
-  // Loop over the datas
-  for (auto d : datas) {
-    const auto &metadata = d->reader()->metadata();
+    // Read the numors
+    std::vector<sptrDataSet> datas;
+    for (const auto& num : numors) {
+        auto reader = std::shared_ptr<IDataReader>(new ILLDataReader(num, _diffractometer));
+        datas.emplace_back(new DataSet(reader));
+    }
 
-    // Fetch h,k,l from the current data
-    Eigen::Vector3d hkl;
-    hkl[0] = metadata.key<double>("qH");
-    hkl[1] = metadata.key<double>("qK");
-    hkl[2] = metadata.key<double>("qL");
+    // Create and get the unit cell of the sample
+    auto uc = std::make_shared<UnitCell>();
 
-    // Fetch the UB matrix from the current data
-    Eigen::Matrix3d ub;
-    ub(0, 0) = metadata.key<double>("ub(1,1)");
-    ub(0, 1) = metadata.key<double>("ub(1,2)");
-    ub(0, 2) = metadata.key<double>("ub(1,3)");
-    ub(1, 0) = metadata.key<double>("ub(2,1)");
-    ub(1, 1) = metadata.key<double>("ub(2,2)");
-    ub(1, 2) = metadata.key<double>("ub(2,3)");
-    ub(2, 0) = metadata.key<double>("ub(3,1)");
-    ub(2, 1) = metadata.key<double>("ub(3,2)");
-    ub(2, 2) = metadata.key<double>("ub(3,3)");
+    // Loop over the datas
+    for (auto d : datas) {
+        const auto& metadata = d->reader()->metadata();
 
-    Eigen::Vector3d zvect = ub * hkl;
-    double znorm = zvect.norm();
-    double znorm2 = znorm * znorm;
+        // Fetch h,k,l from the current data
+        Eigen::Vector3d hkl;
+        hkl[0] = metadata.key<double>("qH");
+        hkl[1] = metadata.key<double>("qK");
+        hkl[2] = metadata.key<double>("qL");
 
-    uc->setReciprocalBasis(ub.transpose());
+        // Fetch the UB matrix from the current data
+        Eigen::Matrix3d ub;
+        ub(0, 0) = metadata.key<double>("ub(1,1)");
+        ub(0, 1) = metadata.key<double>("ub(1,2)");
+        ub(0, 2) = metadata.key<double>("ub(1,3)");
+        ub(1, 0) = metadata.key<double>("ub(2,1)");
+        ub(1, 1) = metadata.key<double>("ub(2,2)");
+        ub(1, 2) = metadata.key<double>("ub(2,3)");
+        ub(2, 0) = metadata.key<double>("ub(3,1)");
+        ub(2, 1) = metadata.key<double>("ub(3,2)");
+        ub(2, 2) = metadata.key<double>("ub(3,3)");
 
-    // Get the U matrix (actually tU in NSXTool convention)
-    // todo: should this take transpose isntead??
-    Eigen::Matrix3d umat = uc->orientation();
+        Eigen::Vector3d zvect = ub * hkl;
+        double znorm = zvect.norm();
+        double znorm2 = znorm * znorm;
 
-    // The convex hull of the sample is rotated by u
-    ConvexHull &hull = _sample->shape();
+        uc->setReciprocalBasis(ub.transpose());
 
-    Blob3D blob;
+        // Get the U matrix (actually tU in NSXTool convention)
+        // todo: should this take transpose isntead??
+        Eigen::Matrix3d umat = uc->orientation();
 
-    std::vector<int> countsPerFrame(d->nFrames(), 0);
-    for (unsigned int z = 0; z < d->nFrames(); ++z) {
-      const auto &state = d->instrumentStates()[z];
+        // The convex hull of the sample is rotated by u
+        ConvexHull& hull = _sample->shape();
 
-      // ComponentState sampleState=d->sampleState(z);
-      // ComponentState detectorState=d->getDetectorState(z);
+        Blob3D blob;
 
-      Eigen::Matrix3d omchiphi = state.sampleOrientationMatrix();
+        std::vector<int> countsPerFrame(d->nFrames(), 0);
+        for (unsigned int z = 0; z < d->nFrames(); ++z) {
+            const auto& state = d->instrumentStates()[z];
 
-      Eigen::Vector3d qvect = omchiphi * zvect;
+            // ComponentState sampleState=d->sampleState(z);
+            // ComponentState detectorState=d->getDetectorState(z);
 
-      std::cout << qvect.transpose() << std::endl;
+            Eigen::Matrix3d omchiphi = state.sampleOrientationMatrix();
 
-      // Construct an orthonormal basis u,v,w with w // to q vect and u within
-      // xy plane
-      Eigen::Vector3d w = qvect.normalized();
-      Eigen::Vector3d u(-w[1], w[0], 0.0);
-      u.normalize();
-      Eigen::Vector3d v = w.cross(u);
+            Eigen::Vector3d qvect = omchiphi * zvect;
 
-      std::vector<Triangle> faces = hull.createFaceCache(omchiphi * umat);
-      double ymin = std::numeric_limits<double>::infinity();
-      double xmin = std::numeric_limits<double>::infinity();
-      double xmax = -std::numeric_limits<double>::infinity();
-      double zmin = std::numeric_limits<double>::infinity();
-      double zmax = -std::numeric_limits<double>::infinity();
-      for (auto &f : faces) {
-        if (f._A[1] < ymin)
-          ymin = f._A[1];
-        if (f._B[1] < ymin)
-          ymin = f._B[1];
-        if (f._C[1] < ymin)
-          ymin = f._C[1];
-        if (f._A[0] > xmax)
-          xmax = f._A[0];
-        if (f._B[0] > xmax)
-          xmax = f._B[0];
-        if (f._C[0] > xmax)
-          xmax = f._C[0];
-        if (f._A[0] < xmin)
-          xmin = f._A[0];
-        if (f._B[0] < xmin)
-          xmin = f._B[0];
-        if (f._C[0] < xmin)
-          xmin = f._C[0];
-        if (f._A[2] > zmax)
-          zmax = f._A[2];
-        if (f._B[2] > zmax)
-          zmax = f._B[2];
-        if (f._C[2] > zmax)
-          zmax = f._C[2];
-        if (f._A[2] < zmin)
-          zmin = f._A[2];
-        if (f._B[2] < zmin)
-          zmin = f._B[2];
-        if (f._C[2] < zmin)
-          zmin = f._C[2];
-      }
+            std::cout << qvect.transpose() << std::endl;
 
-      for (unsigned int i = 0; i < n; ++i) {
-        //				std::cout<<monWidth<<"
-        //"<<monHeight<<std::endl; 				monWidth = 0.01;
-        //monHeight = 0.01;
-        double xrand = (-0.5 + xor128()) * monWidth;
-        double zrand = (-0.5 + xor128()) * monHeight;
+            // Construct an orthonormal basis u,v,w with w // to q vect and u within
+            // xy plane
+            Eigen::Vector3d w = qvect.normalized();
+            Eigen::Vector3d u(-w[1], w[0], 0.0);
+            u.normalize();
+            Eigen::Vector3d v = w.cross(u);
 
-        Eigen::Vector3d from(xrand, -_dMonSam, zrand);
+            std::vector<Triangle> faces = hull.createFaceCache(omchiphi * umat);
+            double ymin = std::numeric_limits<double>::infinity();
+            double xmin = std::numeric_limits<double>::infinity();
+            double xmax = -std::numeric_limits<double>::infinity();
+            double zmin = std::numeric_limits<double>::infinity();
+            double zmax = -std::numeric_limits<double>::infinity();
+            for (auto& f : faces) {
+                if (f._A[1] < ymin)
+                    ymin = f._A[1];
+                if (f._B[1] < ymin)
+                    ymin = f._B[1];
+                if (f._C[1] < ymin)
+                    ymin = f._C[1];
+                if (f._A[0] > xmax)
+                    xmax = f._A[0];
+                if (f._B[0] > xmax)
+                    xmax = f._B[0];
+                if (f._C[0] > xmax)
+                    xmax = f._C[0];
+                if (f._A[0] < xmin)
+                    xmin = f._A[0];
+                if (f._B[0] < xmin)
+                    xmin = f._B[0];
+                if (f._C[0] < xmin)
+                    xmin = f._C[0];
+                if (f._A[2] > zmax)
+                    zmax = f._A[2];
+                if (f._B[2] > zmax)
+                    zmax = f._B[2];
+                if (f._C[2] > zmax)
+                    zmax = f._C[2];
+                if (f._A[2] < zmin)
+                    zmin = f._A[2];
+                if (f._B[2] < zmin)
+                    zmin = f._B[2];
+                if (f._C[2] < zmin)
+                    zmin = f._C[2];
+            }
 
-        Eigen::Vector3d to(xmin + xor128() * (xmax - xmin), ymin,
-                           zmin + xor128() * (zmax - zmin));
+            for (unsigned int i = 0; i < n; ++i) {
+                //				std::cout<<monWidth<<"
+                //"<<monHeight<<std::endl; 				monWidth = 0.01;
+                // monHeight = 0.01;
+                double xrand = (-0.5 + xor128()) * monWidth;
+                double zrand = (-0.5 + xor128()) * monHeight;
 
-        unsigned int nIntersections{0};
+                Eigen::Vector3d from(xrand, -_dMonSam, zrand);
 
-        double times[2];
+                Eigen::Vector3d to(
+                    xmin + xor128() * (xmax - xmin), ymin, zmin + xor128() * (zmax - zmin));
 
-        for (const auto &triangle : faces) {
-          //					if
-          //(triangle.isOutsideBB(to[0],to[2]))
-          //continue;
+                unsigned int nIntersections {0};
 
-          if (triangle.rayIntersect(from, to - from, times[nIntersections])) {
-            if (++nIntersections == 2)
-              break;
-          }
+                double times[2];
+
+                for (const auto& triangle : faces) {
+                    //					if
+                    //(triangle.isOutsideBB(to[0],to[2]))
+                    // continue;
+
+                    if (triangle.rayIntersect(from, to - from, times[nIntersections])) {
+                        if (++nIntersections == 2)
+                            break;
+                    }
+                }
+
+                if (nIntersections != 2)
+                    continue;
+
+                if (times[0] > times[1])
+                    std::swap(times[0], times[1]);
+
+                double lpm = xor128() * (times[1] - times[0]);
+                Eigen::Vector3d ki = (times[0] + lpm) * (to - from);
+                to = from + ki;
+
+                double ca = cmu + xor128() * oneMinuscmu;
+                double sa = sqrt(1.0 - ca * ca);
+
+                double cb, sb, fact;
+                do {
+                    cb = 2.0 * xor128() - 1.0;
+                    sb = 2.0 * xor128() - 1.0;
+                    fact = cb * cb + sb * sb;
+
+                } while (fact >= 1.0);
+
+                fact = sqrt(fact);
+                cb /= fact;
+                sb /= fact;
+
+                Eigen::Vector3d qvect1 = sa * cb * u + sa * sb * v + ca * w;
+                qvect1 *= znorm;
+
+                double sangle = -ki.dot(qvect1) / ki.norm() / znorm2;
+                double ll = 2.0 * sangle;
+                if (ll < lmin || ll > lmax)
+                    continue;
+
+                Eigen::Vector3d kf;
+                kf = ki / (ki.norm() * ll) + qvect1;
+
+                auto ev = _diffractometer->detector()->constructEvent(
+                    nsx::DirectVector(state.samplePosition), nsx::ReciprocalVector(kf));
+                // bool
+                // test=_diffractometer->detector()->receiveKf(px,py,kf,to,time,detectorState.getValues());
+                if (ev._tof > 0) {
+                    int lbin = static_cast<int>((ll - _l + 3.0 * sigmal) * nlambdas / sigmal / 6.0);
+                    if (lbin < 0 || lbin >= nlambdas)
+                        continue;
+
+                    blob.addPoint(ev._px, ev._py, z, lambdas[lbin]);
+                    countsPerFrame[z]++;
+                }
+            }
         }
 
-        if (nIntersections != 2)
-          continue;
+        std::cout << blob << std::endl;
 
-        if (times[0] > times[1])
-          std::swap(times[0], times[1]);
+        if (blob.getComponents() == 0)
+            return false;
 
-        double lpm = xor128() * (times[1] - times[0]);
-        Eigen::Vector3d ki = (times[0] + lpm) * (to - from);
-        to = from + ki;
+        Eigen::Vector3d center;
+        Eigen::Vector3d eigenvalues;
+        Eigen::Matrix3d eigenvectors;
+        blob.toEllipsoid(0.997, center, eigenvalues, eigenvectors);
+        Ellipsoid ellmc(center, eigenvalues, eigenvectors);
 
-        double ca = cmu + xor128() * oneMinuscmu;
-        double sa = sqrt(1.0 - ca * ca);
-
-        double cb, sb, fact;
-        do {
-          cb = 2.0 * xor128() - 1.0;
-          sb = 2.0 * xor128() - 1.0;
-          fact = cb * cb + sb * sb;
-
-        } while (fact >= 1.0);
-
-        fact = sqrt(fact);
-        cb /= fact;
-        sb /= fact;
-
-        Eigen::Vector3d qvect1 = sa * cb * u + sa * sb * v + ca * w;
-        qvect1 *= znorm;
-
-        double sangle = -ki.dot(qvect1) / ki.norm() / znorm2;
-        double ll = 2.0 * sangle;
-        if (ll < lmin || ll > lmax)
-          continue;
-
-        Eigen::Vector3d kf;
-        kf = ki / (ki.norm() * ll) + qvect1;
-
-        auto ev = _diffractometer->detector()->constructEvent(
-            nsx::DirectVector(state.samplePosition), nsx::ReciprocalVector(kf));
-        // bool
-        // test=_diffractometer->detector()->receiveKf(px,py,kf,to,time,detectorState.getValues());
-        if (ev._tof > 0) {
-          int lbin = static_cast<int>((ll - _l + 3.0 * sigmal) * nlambdas /
-                                      sigmal / 6.0);
-          if (lbin < 0 || lbin >= nlambdas)
-            continue;
-
-          blob.addPoint(ev._px, ev._py, z, lambdas[lbin]);
-          countsPerFrame[z]++;
+        // d->readInMemory();
+        std::vector<int*> temp(d->nFrames());
+        for (unsigned int i = 0; i < d->nFrames(); ++i) {
+            const Eigen::MatrixXi& counts = d->frame(i);
+            temp[i] = const_cast<int*>(counts.data());
         }
-      }
+        //
+        // int median = d->getBackgroundLevel() + 1;
+        // blob3DCollection blobs;
+
+        PeakFinder peak_finder;
+        auto peaks = peak_finder.find({d});
+
+        // blobs=findBlobs3D<int>(temp,d->getDiffractometer()->getDetector()->getNRows(),d->getDiffractometer()->getDetector()->getNCols(),3.0*median,30,10000,0.997,0);
+
+        for (auto& p : peaks) {
+            auto shape = p->shape();
+            Ellipsoid ellexp = shape;
+            ellexp.translate(center - shape.center());
+            //    		std::cout<<eigenvectors<<std::endl;
+            //    		std::cout<<eigenvectors1<<std::endl;
+            std::cout << ellexp.aabb().extents() << std::endl;
+            std::cout << ellmc.aabb().extents() << std::endl;
+            std::cout << "exp = " << 4.0 * M_PI * ellexp.aabb().extents().prod() / 3.0 << std::endl;
+            std::cout << "mc = " << 4.0 * M_PI * ellmc.aabb().extents().prod() / 3.0 << std::endl;
+            overlap = ellipsoids_overlap(ellexp, ellmc);
+        }
+
+        for (auto v : countsPerFrame)
+            std::cout << v << std::endl;
     }
 
-    std::cout << blob << std::endl;
-
-    if (blob.getComponents() == 0)
-      return false;
-
-    Eigen::Vector3d center;
-    Eigen::Vector3d eigenvalues;
-    Eigen::Matrix3d eigenvectors;
-    blob.toEllipsoid(0.997, center, eigenvalues, eigenvectors);
-    Ellipsoid ellmc(center, eigenvalues, eigenvectors);
-
-    // d->readInMemory();
-    std::vector<int *> temp(d->nFrames());
-    for (unsigned int i = 0; i < d->nFrames(); ++i) {
-      const Eigen::MatrixXi &counts = d->frame(i);
-      temp[i] = const_cast<int *>(counts.data());
-    }
-    //
-    // int median = d->getBackgroundLevel() + 1;
-    // blob3DCollection blobs;
-
-    PeakFinder peak_finder;
-    auto peaks = peak_finder.find({d});
-
-    // blobs=findBlobs3D<int>(temp,d->getDiffractometer()->getDetector()->getNRows(),d->getDiffractometer()->getDetector()->getNCols(),3.0*median,30,10000,0.997,0);
-
-    for (auto &p : peaks) {
-      auto shape = p->shape();
-      Ellipsoid ellexp = shape;
-      ellexp.translate(center - shape.center());
-      //    		std::cout<<eigenvectors<<std::endl;
-      //    		std::cout<<eigenvectors1<<std::endl;
-      std::cout << ellexp.aabb().extents() << std::endl;
-      std::cout << ellmc.aabb().extents() << std::endl;
-      std::cout << "exp = " << 4.0 * M_PI * ellexp.aabb().extents().prod() / 3.0
-                << std::endl;
-      std::cout << "mc = " << 4.0 * M_PI * ellmc.aabb().extents().prod() / 3.0
-                << std::endl;
-      overlap = ellipsoids_overlap(ellexp, ellmc);
-    }
-
-    for (auto v : countsPerFrame)
-      std::cout << v << std::endl;
-  }
-
-  return true;
+    return true;
 }
 
 Mosaic::~Mosaic() {}

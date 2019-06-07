@@ -9,13 +9,13 @@ class NumorPropertyWidget;
 class NumorItem;
 
 class NumorPropertyWidget : public QWidget {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit NumorPropertyWidget(NumorItem *caller, QWidget *parent = 0);
-  ~NumorPropertyWidget();
+    explicit NumorPropertyWidget(NumorItem* caller, QWidget* parent = 0);
+    ~NumorPropertyWidget();
 
 private:
-  Ui::NumorPropertyWidget *ui;
-  NumorItem *_numorItem;
+    Ui::NumorPropertyWidget* ui;
+    NumorItem* _numorItem;
 };

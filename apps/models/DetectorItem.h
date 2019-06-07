@@ -6,8 +6,8 @@ class QWidget;
 
 class DetectorItem : public InspectableTreeItem {
 public:
-  explicit DetectorItem();
-  QWidget *inspectItem() override;
+    explicit DetectorItem();
+    QWidget* inspectItem() override;
 
-  void openDetectorGlobalOffsetsFrame();
+    void openDetectorGlobalOffsetsFrame();
 };

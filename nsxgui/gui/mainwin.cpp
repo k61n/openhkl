@@ -1,15 +1,15 @@
 
-#include <QString>
+#include "nsxgui/gui/mainwin.h"
+#include "nsxgui/gui/actions/menus.h"
+#include "nsxgui/gui/actions/triggers.h"
+#include "nsxgui/gui/view/toggles.h"
 #include <QApplication>
 #include <QProgressBar>
 #include <QSettings>
 #include <QSplitter>
 #include <QStatusBar>
+#include <QString>
 #include <QTimer>
-#include "nsxgui/gui/mainwin.h"
-#include "nsxgui/gui/actions/menus.h"
-#include "nsxgui/gui/actions/triggers.h"
-#include "nsxgui/gui/view/toggles.h"
 
 #include <iostream>
 
@@ -29,8 +29,8 @@ MainWin::MainWin()
     setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);
     setAttribute(Qt::WA_DeleteOnClose, true);
 
-    //layout
-    setContentsMargins(5,5,5,5);
+    // layout
+    setContentsMargins(5, 5, 5, 5);
 
     addDockWidget(Qt::RightDockWidgetArea, (dockImage_ = new SubframeImage));
     addDockWidget(Qt::RightDockWidgetArea, (dockPlot_ = new SubframePlot));

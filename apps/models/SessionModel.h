@@ -9,40 +9,40 @@ class ExperimentItem;
 
 class SessionModel : public QStandardItemModel {
 
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit SessionModel();
+    explicit SessionModel();
 
-  ~SessionModel();
+    ~SessionModel();
 
-  nsx::PeakList peaks(nsx::sptrDataSet data) const;
+    nsx::PeakList peaks(nsx::sptrDataSet data) const;
 
-  void selectData(nsx::sptrDataSet data);
+    void selectData(nsx::sptrDataSet data);
 
-  ExperimentItem *selectExperiment(nsx::sptrDataSet data);
+    ExperimentItem* selectExperiment(nsx::sptrDataSet data);
 
 signals:
 
-  void plotData(nsx::sptrDataSet);
+    void plotData(nsx::sptrDataSet);
 
-  void inspectWidget(QWidget *);
+    void inspectWidget(QWidget*);
 
-  void updatePeaks();
+    void updatePeaks();
 
-  void signalSelectedDataChanged(nsx::sptrDataSet, int frame);
+    void signalSelectedDataChanged(nsx::sptrDataSet, int frame);
 
-  void signalSelectedPeakChanged(nsx::sptrPeak3D peak);
+    void signalSelectedPeakChanged(nsx::sptrPeak3D peak);
 
-  void signalEnabledPeakChanged(nsx::sptrPeak3D peak);
+    void signalEnabledPeakChanged(nsx::sptrPeak3D peak);
 
-  void signalMaskedPeaksChanged(const nsx::PeakList &peaks);
+    void signalMaskedPeaksChanged(const nsx::PeakList& peaks);
 
-  void signalUnitCellRemoved(nsx::sptrUnitCell unit_cell);
+    void signalUnitCellRemoved(nsx::sptrUnitCell unit_cell);
 
 public slots:
 
-  void createNewExperiment();
+    void createNewExperiment();
 
-  void onItemChanged(QStandardItem *item);
+    void onItemChanged(QStandardItem* item);
 };

@@ -3,12 +3,13 @@
 #ifndef TAB_UNITCELLS_H
 #define TAB_UNITCELLS_H
 
-#include <QCR/widgets/views.h>
 #include "nsxgui/gui/properties/unitcellproperty.h"
+#include <QCR/widgets/views.h>
 
 class TabUnitcells : public QcrWidget {
 public:
     TabUnitcells();
+
 private:
     UnitCellProperty* property;
 };

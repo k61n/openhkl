@@ -7,8 +7,7 @@
 //-------------------------------------------------------------------------------------------------
 //! @class TabUnitcells
 
-TabUnitcells::TabUnitcells()
-    : QcrWidget{"unit cells"}
+TabUnitcells::TabUnitcells() : QcrWidget {"unit cells"}
 {
     auto* layout = new QHBoxLayout;
     layout->addWidget((property = new UnitCellProperty));

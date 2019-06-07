@@ -68,175 +68,175 @@ struct Vertex;
 class ConvexHull {
 
 public:
-  //! Checks whether three vertices are coplanar
-  static bool isCoplanar(Vertex *v0, Vertex *v1, Vertex *v2);
+    //! Checks whether three vertices are coplanar
+    static bool isCoplanar(Vertex* v0, Vertex* v1, Vertex* v2);
 
-  //! Default constructor
-  ConvexHull();
+    //! Default constructor
+    ConvexHull();
 
-  //! Destructor
-  ~ConvexHull();
+    //! Destructor
+    ~ConvexHull();
 
-  //! Copy Convex Hull
-  ConvexHull(const ConvexHull &);
+    //! Copy Convex Hull
+    ConvexHull(const ConvexHull&);
 
-  //! Assignment
-  ConvexHull &operator=(const ConvexHull &);
+    //! Assignment
+    ConvexHull& operator=(const ConvexHull&);
 
-  //! Reset, eliminate all vertices, edges and faces
-  void reset();
+    //! Reset, eliminate all vertices, edges and faces
+    void reset();
 
-  //! Adds a new vertex to the list of points to be processed later when calling
-  //! updateHull method.
-  Vertex *addVertex(const Eigen::Vector3d &coords);
+    //! Adds a new vertex to the list of points to be processed later when calling
+    //! updateHull method.
+    Vertex* addVertex(const Eigen::Vector3d& coords);
 
-  //! Remove vertex
-  bool removeVertex(const Eigen::Vector3d &coords, double tolerance);
+    //! Remove vertex
+    bool removeVertex(const Eigen::Vector3d& coords, double tolerance);
 
-  //! Updates the hull. The first time it is called two seed-triangles with
-  //! opposite orientation will be created on which the next hull faces will be
-  //! built upon. Original name: ConstructHull
-  void updateHull();
+    //! Updates the hull. The first time it is called two seed-triangles with
+    //! opposite orientation will be created on which the next hull faces will be
+    //! built upon. Original name: ConstructHull
+    void updateHull();
 
-  //! Returns the vertices of the hull
-  const std::map<int, Vertex *> &vertices() const;
+    //! Returns the vertices of the hull
+    const std::map<int, Vertex*>& vertices() const;
 
-  //! Returns the number of vertices of the hull
-  size_t nVertices() const;
+    //! Returns the number of vertices of the hull
+    size_t nVertices() const;
 
-  //! Returns the edges of the hull
-  const std::map<int, Edge *> &edges() const;
+    //! Returns the edges of the hull
+    const std::map<int, Edge*>& edges() const;
 
-  //! Returns the number of edges of the hull
-  size_t nEdges() const;
+    //! Returns the number of edges of the hull
+    size_t nEdges() const;
 
-  //! Returns the faces of the hull
-  const std::map<int, Face *> &faces() const;
+    //! Returns the faces of the hull
+    const std::map<int, Face*>& faces() const;
 
-  //! Returns the number of faces of the hull
-  size_t nFaces() const;
+    //! Returns the number of faces of the hull
+    size_t nFaces() const;
 
-  //! Returns the center of gravity of the hull.
-  Eigen::Vector3d center() const;
+    //! Returns the center of gravity of the hull.
+    Eigen::Vector3d center() const;
 
-  //! Translates the hull
-  void translate(double x, double y, double z) const;
+    //! Translates the hull
+    void translate(double x, double y, double z) const;
 
-  //! Translates the hull to its center
-  void translateToCenter() const;
+    //! Translates the hull to its center
+    void translateToCenter() const;
 
-  //! Isotropic scaling of the Hull
-  void scale(double factor) const;
+    //! Isotropic scaling of the Hull
+    void scale(double factor) const;
 
-  //! Rotate the this ConvexHull
-  void rotate(const Eigen::Matrix3d &rotation) const;
+    //! Rotate the this ConvexHull
+    void rotate(const Eigen::Matrix3d& rotation) const;
 
-  //! Returns the volume of the hull. The volume is computed by summing the
-  //! volumes of all the tethrahedrons made by each face of the convex hull and
-  //! any internal point of the hull. A reasonable choice for the internal point
-  //! is the center of gravity of the hull as, by definition of a convex object,
-  //! its center is within the hull.
-  double volume() const;
+    //! Returns the volume of the hull. The volume is computed by summing the
+    //! volumes of all the tethrahedrons made by each face of the convex hull and
+    //! any internal point of the hull. A reasonable choice for the internal point
+    //! is the center of gravity of the hull as, by definition of a convex object,
+    //! its center is within the hull.
+    double volume() const;
 
-  //! Send some informations on an output stream.
-  void print(std::ostream &os) const;
+    //! Send some informations on an output stream.
+    void print(std::ostream& os) const;
 
-  //! Checks that this Hull satisfies the Euler condition
-  bool checkEulerConditions() const;
+    //! Checks that this Hull satisfies the Euler condition
+    bool checkEulerConditions() const;
 
-  //! Returns the Triangles that builds this ConvexHull if the Hull was to be
-  //! rotated by the rotation matrix: rotation Triangles objects are very light
-  //! object that can be used for further analysis such as Monte-Carlo based
-  //! absorption correction.
-  std::vector<Triangle> createFaceCache(
-      const Eigen::Matrix3d &rotation = Eigen::Matrix3d::Identity()) const;
+    //! Returns the Triangles that builds this ConvexHull if the Hull was to be
+    //! rotated by the rotation matrix: rotation Triangles objects are very light
+    //! object that can be used for further analysis such as Monte-Carlo based
+    //! absorption correction.
+    std::vector<Triangle>
+    createFaceCache(const Eigen::Matrix3d& rotation = Eigen::Matrix3d::Identity()) const;
 
-  //! Return whether a vertex is contained in the hull
-  bool contains(const Eigen::Vector3d &v) const;
+    //! Return whether a vertex is contained in the hull
+    bool contains(const Eigen::Vector3d& v) const;
 
-  //! Get AABB of the convex hull
-  AABB aabb() const;
-
-private:
-  //! Initializes the hull. The initialization consists in defines two triangles
-  //! with opposite orientations that will serve as seeds for the faces of the
-  //! hull to be built later
-  void initalizeHull();
-
-  //! Finds a set of three vertices that are not coplanar
-  bool findInitialVertices(int &ri, int &rj, int &rk) const;
-
-  //! Processes a vertex to see whether it will be a vertex of the hull or ill
-  //! be discarded. Original name: addOne
-  void processVertex(Vertex *v);
-
-  //! Builds a null Face (that points to no edges and vertices)
-  //! Original name: makeNullFace
-  Face *buildNullFace();
-
-  //! Builds a null Edge (that points to no vertices)
-  //! Original name: makeNullEdge
-  Edge *buildNullEdge();
-
-  //! Builds a new hull face from three vertices. If fold is not nullptr then
-  //! its edges will be used to defie the one of the new face to build. Original
-  //! name: MakeFace
-  Face *buildFace(Vertex *v0, Vertex *v1, Vertex *v2, Face *fold);
-
-  //! Builds a new hull face from the edges of an existing face and a new
-  //! vertex. Original name: MakeConeFace
-  Face *buildConeFace(Edge *e, Vertex *v);
-
-  //! Orientates a face of the hull given a reference edge and vertex
-  //! Original name: makeCcw
-  void orientate(Face *f, Edge *e, Vertex *v);
-
-  //! Cleans the edges of the hull that are not visible anymore
-  void cleanEdges();
-
-  //! Cleans the faces of the hull that are not visible anymore
-  void cleanFaces();
-
-  //! Cleans the vertices of the hull that are not visible anymore
-  void cleanVertices();
-
-  //! Cleans the edges, faces and vertices of the hull that are not visible
-  //! anymore
-  void cleanUp();
+    //! Get AABB of the convex hull
+    AABB aabb() const;
 
 private:
-  //! A boolean that indicates whether or not the two seed-triangles of the hull
-  //! have been already created
-  bool _initialized;
+    //! Initializes the hull. The initialization consists in defines two triangles
+    //! with opposite orientations that will serve as seeds for the faces of the
+    //! hull to be built later
+    void initalizeHull();
 
-  //! The list of the vertices of the hull. This is the std implementation of
-  //! the double-linked chain.
-  std::map<int, Vertex *> _vertices;
+    //! Finds a set of three vertices that are not coplanar
+    bool findInitialVertices(int& ri, int& rj, int& rk) const;
 
-  //! The list of the edges of the hull. This is the std implementation of the
-  //! double-linked chain.
-  std::map<int, Edge *> _edges;
+    //! Processes a vertex to see whether it will be a vertex of the hull or ill
+    //! be discarded. Original name: addOne
+    void processVertex(Vertex* v);
 
-  //! The list of the faces of the hull. This is the std implementation of the
-  //! double-linked chain.
-  std::map<int, Face *> _faces;
+    //! Builds a null Face (that points to no edges and vertices)
+    //! Original name: makeNullFace
+    Face* buildNullFace();
 
-  //! Cached bounding planes of the hull.
-  std::vector<std::pair<Eigen::Vector3d, double>> _planes;
+    //! Builds a null Edge (that points to no vertices)
+    //! Original name: makeNullEdge
+    Edge* buildNullEdge();
 
-  //! Cached inner squared raddi
-  double _innerR2;
+    //! Builds a new hull face from three vertices. If fold is not nullptr then
+    //! its edges will be used to defie the one of the new face to build. Original
+    //! name: MakeFace
+    Face* buildFace(Vertex* v0, Vertex* v1, Vertex* v2, Face* fold);
 
-  //! Cached outer squared raddi
-  double _outerR2;
+    //! Builds a new hull face from the edges of an existing face and a new
+    //! vertex. Original name: MakeConeFace
+    Face* buildConeFace(Edge* e, Vertex* v);
 
-  int _vertex_id;
+    //! Orientates a face of the hull given a reference edge and vertex
+    //! Original name: makeCcw
+    void orientate(Face* f, Edge* e, Vertex* v);
 
-  int _edge_id;
+    //! Cleans the edges of the hull that are not visible anymore
+    void cleanEdges();
 
-  int _face_id;
+    //! Cleans the faces of the hull that are not visible anymore
+    void cleanFaces();
+
+    //! Cleans the vertices of the hull that are not visible anymore
+    void cleanVertices();
+
+    //! Cleans the edges, faces and vertices of the hull that are not visible
+    //! anymore
+    void cleanUp();
+
+private:
+    //! A boolean that indicates whether or not the two seed-triangles of the hull
+    //! have been already created
+    bool _initialized;
+
+    //! The list of the vertices of the hull. This is the std implementation of
+    //! the double-linked chain.
+    std::map<int, Vertex*> _vertices;
+
+    //! The list of the edges of the hull. This is the std implementation of the
+    //! double-linked chain.
+    std::map<int, Edge*> _edges;
+
+    //! The list of the faces of the hull. This is the std implementation of the
+    //! double-linked chain.
+    std::map<int, Face*> _faces;
+
+    //! Cached bounding planes of the hull.
+    std::vector<std::pair<Eigen::Vector3d, double>> _planes;
+
+    //! Cached inner squared raddi
+    double _innerR2;
+
+    //! Cached outer squared raddi
+    double _outerR2;
+
+    int _vertex_id;
+
+    int _edge_id;
+
+    int _face_id;
 };
 
-std::ostream &operator<<(std::ostream &os, const ConvexHull &chull);
+std::ostream& operator<<(std::ostream& os, const ConvexHull& chull);
 
 } // end namespace nsx

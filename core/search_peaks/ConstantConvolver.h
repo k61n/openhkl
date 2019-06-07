@@ -11,22 +11,22 @@ namespace nsx {
 class ConstantConvolver : public AtomicConvolver {
 
 public:
-  ConstantConvolver();
+    ConstantConvolver();
 
-  ConstantConvolver(const ConstantConvolver &other) = default;
+    ConstantConvolver(const ConstantConvolver& other) = default;
 
-  ConstantConvolver(const std::map<std::string, double> &parameters);
+    ConstantConvolver(const std::map<std::string, double>& parameters);
 
-  ~ConstantConvolver() = default;
+    ~ConstantConvolver() = default;
 
-  ConstantConvolver &operator=(const ConstantConvolver &other) = default;
+    ConstantConvolver& operator=(const ConstantConvolver& other) = default;
 
-  Convolver *clone() const override;
+    Convolver* clone() const override;
 
-  virtual std::pair<size_t, size_t> kernelSize() const override;
+    virtual std::pair<size_t, size_t> kernelSize() const override;
 
 private:
-  RealMatrix _matrix(int nrows, int ncols) const override;
+    RealMatrix _matrix(int nrows, int ncols) const override;
 };
 
 } // end namespace nsx

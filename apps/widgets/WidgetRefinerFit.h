@@ -13,23 +13,23 @@ class WidgetRefinerFit;
 
 class WidgetRefinerFit : public QWidget {
 
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  WidgetRefinerFit(const std::map<nsx::sptrDataSet, nsx::Refiner> &refiners);
+    WidgetRefinerFit(const std::map<nsx::sptrDataSet, nsx::Refiner>& refiners);
 
-  ~WidgetRefinerFit();
+    ~WidgetRefinerFit();
 
 private slots:
 
-  void slotSelectedDataChanged(int selected_data);
+    void slotSelectedDataChanged(int selected_data);
 
-  void slotSelectedBatchChanged(int selected_batch);
+    void slotSelectedBatchChanged(int selected_batch);
 
-  void slotSelectedFrameChanged(int selected_frame);
+    void slotSelectedFrameChanged(int selected_frame);
 
 private:
-  Ui::WidgetRefinerFit *_ui;
+    Ui::WidgetRefinerFit* _ui;
 
-  std::map<nsx::sptrDataSet, nsx::Refiner> _refiners;
+    std::map<nsx::sptrDataSet, nsx::Refiner> _refiners;
 };

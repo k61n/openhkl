@@ -7,12 +7,12 @@ class EmptyPropertyWidget;
 }
 
 class EmptyPropertyWidget : public QWidget {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit EmptyPropertyWidget(QWidget *parent = 0);
-  ~EmptyPropertyWidget();
+    explicit EmptyPropertyWidget(QWidget* parent = 0);
+    ~EmptyPropertyWidget();
 
 private:
-  Ui::EmptyPropertyWidget *ui;
+    Ui::EmptyPropertyWidget* ui;
 };

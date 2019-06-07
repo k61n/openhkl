@@ -14,17 +14,16 @@ class DialogMCAbsorption;
 class ExperimentItem;
 
 class DialogMCAbsorption : public QDialog {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit DialogMCAbsorption(ExperimentItem *experiment_item,
-                              QWidget *parent = 0);
-  ~DialogMCAbsorption();
+    explicit DialogMCAbsorption(ExperimentItem* experiment_item, QWidget* parent = 0);
+    ~DialogMCAbsorption();
 
 private slots:
-  void on_pushButton_run_pressed();
+    void on_pushButton_run_pressed();
 
 private:
-  Ui::DialogMCAbsorption *ui;
-  ExperimentItem *_experiment_item;
+    Ui::DialogMCAbsorption* ui;
+    ExperimentItem* _experiment_item;
 };

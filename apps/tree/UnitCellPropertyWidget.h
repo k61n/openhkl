@@ -16,39 +16,39 @@ class QString;
 class UnitCellItem;
 
 class UnitCellPropertyWidget : public QWidget {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit UnitCellPropertyWidget(UnitCellItem *caller, QWidget *parent = 0);
-  ~UnitCellPropertyWidget();
+    explicit UnitCellPropertyWidget(UnitCellItem* caller, QWidget* parent = 0);
+    ~UnitCellPropertyWidget();
 
 private slots:
 
-  void setUnitCellName();
+    void setUnitCellName();
 
-  void getLatticeParams();
+    void getLatticeParams();
 
-  void setLatticeParams();
+    void setLatticeParams();
 
-  void setChemicalFormula();
+    void setChemicalFormula();
 
-  void setSpaceGroup(QString sg);
+    void setSpaceGroup(QString sg);
 
-  void setZValue(int z);
+    void setZValue(int z);
 
-  void setMassDensity() const;
+    void setMassDensity() const;
 
-  void activateSpaceGroupCompletion(QString sg);
+    void activateSpaceGroupCompletion(QString sg);
 
-  void setIndexingTolerance(double);
+    void setIndexingTolerance(double);
 
-  void update(QStandardItem *item = nullptr);
-
-private:
-  void updateCellParameters();
+    void update(QStandardItem* item = nullptr);
 
 private:
-  UnitCellItem *_unitCellItem;
+    void updateCellParameters();
 
-  Ui::UnitCellPropertyWidget *ui;
+private:
+    UnitCellItem* _unitCellItem;
+
+    Ui::UnitCellPropertyWidget* ui;
 };

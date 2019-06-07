@@ -9,14 +9,14 @@
 
 class PeakListItem : public InspectableTreeItem {
 public:
-  explicit PeakListItem(const nsx::PeakList &peaks);
+    explicit PeakListItem(const nsx::PeakList& peaks);
 
-  QWidget *inspectItem();
+    QWidget* inspectItem();
 
-  nsx::PeakList &peaks();
+    nsx::PeakList& peaks();
 
-  void removePeak(nsx::sptrPeak3D peak);
+    void removePeak(nsx::sptrPeak3D peak);
 
 private:
-  nsx::PeakList _peaks;
+    nsx::PeakList _peaks;
 };

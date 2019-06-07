@@ -2,17 +2,18 @@
 #ifndef PEAKFINDER_H
 #define PEAKFINDER_H
 
-#include <QCR/widgets/views.h>
-#include <QCR/widgets/controls.h>
 #include "nsxgui/gui/models/peakstable.h"
-#include <QTableWidget>
-#include <QGraphicsView>
+#include <QCR/widgets/controls.h>
+#include <QCR/widgets/views.h>
 #include <QDialogButtonBox>
+#include <QGraphicsView>
+#include <QTableWidget>
 
 class FoundPeaks : public QcrWidget {
 public:
     FoundPeaks(nsx::PeakList, const QString&);
     nsx::PeakList selectedPeaks();
+
 private:
     PeaksTableModel* tableModel;
     QcrCheckBox* keepSelectedPeaks;
@@ -51,4 +52,4 @@ private slots:
     void doActions(QAbstractButton*);
 };
 
-#endif //PEAKFINDER_H
+#endif // PEAKFINDER_H

@@ -8,6 +8,7 @@
 class NumorProperty : public QcrWidget {
 public:
     NumorProperty();
+
 private:
     void onChanged();
     void onRemake();
@@ -16,4 +17,4 @@ private:
     QLabel* label;
 };
 
-#endif //NUMORPROPERTY_H
+#endif // NUMORPROPERTY_H

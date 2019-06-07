@@ -16,91 +16,78 @@ class QObject;
 class SessionModel;
 
 class CollectedPeaksModel : public QAbstractTableModel {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  enum Column {
-    h,
-    k,
-    l,
-    px,
-    py,
-    frame,
-    intensity,
-    sigmaIntensity,
-    numor,
-    unitCell,
-    count
-  };
+    enum Column { h, k, l, px, py, frame, intensity, sigmaIntensity, numor, unitCell, count };
 
-  explicit CollectedPeaksModel(SessionModel *session,
-                               nsx::sptrExperiment experiment,
-                               QObject *parent = 0);
+    explicit CollectedPeaksModel(
+        SessionModel* session, nsx::sptrExperiment experiment, QObject* parent = 0);
 
-  CollectedPeaksModel(SessionModel *session, nsx::sptrExperiment experiment,
-                      const nsx::PeakList &peaks, QObject *parent = 0);
+    CollectedPeaksModel(
+        SessionModel* session, nsx::sptrExperiment experiment, const nsx::PeakList& peaks,
+        QObject* parent = 0);
 
-  ~CollectedPeaksModel() = default;
+    ~CollectedPeaksModel() = default;
 
-  virtual int rowCount(const QModelIndex &parent) const override;
+    virtual int rowCount(const QModelIndex& parent) const override;
 
-  virtual int columnCount(const QModelIndex &parent) const override;
+    virtual int columnCount(const QModelIndex& parent) const override;
 
-  void reset();
+    void reset();
 
-  QVariant data(const QModelIndex &index, int role) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
 
-  Qt::ItemFlags flags(const QModelIndex &index) const override;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
 
-  QVariant headerData(int section, Qt::Orientation orientation,
-                      int role) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
-  void setPeaks(const nsx::PeakList &peaks);
+    void setPeaks(const nsx::PeakList& peaks);
 
-  const nsx::PeakList &peaks() const;
+    const nsx::PeakList& peaks() const;
 
-  bool indexIsValid(const QModelIndex &index) const;
+    bool indexIsValid(const QModelIndex& index) const;
 
-  void sort(int column, Qt::SortOrder order) override;
+    void sort(int column, Qt::SortOrder order) override;
 
-  void normalizeToMonitor(double factor);
+    void normalizeToMonitor(double factor);
 
-  QModelIndexList unindexedPeaks();
+    QModelIndexList unindexedPeaks();
 
-  QModelIndexList selectedPeaks();
+    QModelIndexList selectedPeaks();
 
-  nsx::sptrExperiment experiment();
+    nsx::sptrExperiment experiment();
 
-  void selectPeak(const QModelIndex &index);
+    void selectPeak(const QModelIndex& index);
 
-  SessionModel *session();
+    SessionModel* session();
 
-  void togglePeakSelection(QModelIndex peak_index);
+    void togglePeakSelection(QModelIndex peak_index);
 
 public slots:
 
-  void slotChangeEnabledPeak(nsx::sptrPeak3D peak);
+    void slotChangeEnabledPeak(nsx::sptrPeak3D peak);
 
-  void slotChangeMaskedPeaks(const nsx::PeakList &peaks);
+    void slotChangeMaskedPeaks(const nsx::PeakList& peaks);
 
-  void slotRemoveUnitCell(const nsx::sptrUnitCell unit_cell);
+    void slotRemoveUnitCell(const nsx::sptrUnitCell unit_cell);
 
-  void setUnitCell(const nsx::sptrUnitCell &unitCell,
-                   QModelIndexList selectedPeaks = QModelIndexList());
+    void setUnitCell(
+        const nsx::sptrUnitCell& unitCell, QModelIndexList selectedPeaks = QModelIndexList());
 
-  void sortEquivalents();
+    void sortEquivalents();
 
 signals:
 
-  void signalSelectedPeakChanged(nsx::sptrPeak3D peak);
+    void signalSelectedPeakChanged(nsx::sptrPeak3D peak);
 
-  void unitCellUpdated();
-
-private:
-  void setSession(SessionModel *session);
+    void unitCellUpdated();
 
 private:
-  SessionModel *_session;
+    void setSession(SessionModel* session);
 
-  nsx::sptrExperiment _experiment;
-  nsx::PeakList _peaks;
+private:
+    SessionModel* _session;
+
+    nsx::sptrExperiment _experiment;
+    nsx::PeakList _peaks;
 };

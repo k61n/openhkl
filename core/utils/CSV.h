@@ -40,17 +40,18 @@ namespace nsx {
 //! @brief Simple CSV parser
 class CSV {
 public:
-  CSV(char delim = ',', char quotchar = '"');
-  ~CSV();
+    CSV(char delim = ',', char quotchar = '"');
+    ~CSV();
 
-  std::vector<std::string> getRow(std::istream &stream);
+    std::vector<std::string> getRow(std::istream& stream);
 
 private:
-  char _delim;
-  char _quotchar;
+    char _delim;
+    char _quotchar;
 
-  std::string getToken(std::istream &stream,
-                       char &delim); //!<< Get next token, write delimeter type
+    std::string getToken(
+        std::istream& stream,
+        char& delim); //!<< Get next token, write delimeter type
 };
 
 } // end namespace nsx

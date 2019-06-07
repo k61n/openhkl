@@ -52,13 +52,13 @@ namespace nsx {
 //! XML files.
 class UnitsManager : public Singleton<UnitsManager, Constructor, Destructor> {
 public:
-  //! Get the value of a given unit with respect to the internal reference unit.
-  //! Throws std::invalid_argument if not present
-  static double get(const std::string &units);
+    //! Get the value of a given unit with respect to the internal reference unit.
+    //! Throws std::invalid_argument if not present
+    static double get(const std::string& units);
 
 private:
-  //! Store pairs of symbols and values.
-  static std::unordered_map<std::string, double> _unitsMap;
+    //! Store pairs of symbols and values.
+    static std::unordered_map<std::string, double> _unitsMap;
 };
 
 // Prefixes

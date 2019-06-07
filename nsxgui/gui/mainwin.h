@@ -1,10 +1,10 @@
 #ifndef MAINWIN_H
 #define MAINWIN_H
 
-#include "nsxgui/gui/panels/subframe_image.h"
-#include "nsxgui/gui/panels/subframe_plot.h"
 #include "nsxgui/gui/panels/subframe_experiments.h"
+#include "nsxgui/gui/panels/subframe_image.h"
 #include "nsxgui/gui/panels/subframe_logger.h"
+#include "nsxgui/gui/panels/subframe_plot.h"
 #include "nsxgui/gui/panels/subframe_properties.h"
 #include <QCR/widgets/views.h>
 
@@ -22,7 +22,7 @@ public:
     void resetViews();
 
 private:
-	void refresh();
+    void refresh();
     void readSettings();
     void saveSettings() const;
 

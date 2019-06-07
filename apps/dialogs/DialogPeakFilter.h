@@ -17,39 +17,38 @@ class CollectedPeaksModel;
 class ExperimentItem;
 
 class DialogPeakFilter : public QDialog {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  static DialogPeakFilter *create(ExperimentItem *experiment_tree,
-                                  const nsx::PeakList &peaks,
-                                  QWidget *parent = nullptr);
+    static DialogPeakFilter*
+    create(ExperimentItem* experiment_tree, const nsx::PeakList& peaks, QWidget* parent = nullptr);
 
-  static DialogPeakFilter *Instance();
+    static DialogPeakFilter* Instance();
 
-  virtual ~DialogPeakFilter();
+    virtual ~DialogPeakFilter();
 
 public slots:
 
-  virtual void accept() override;
+    virtual void accept() override;
 
-  void slotActionClicked(QAbstractButton *button);
+    void slotActionClicked(QAbstractButton* button);
 
-  void slotUnitCellChanged(int index);
-
-private:
-  DialogPeakFilter(ExperimentItem *experiment_tree, const nsx::PeakList &peaks,
-                   QWidget *parent = nullptr);
-
-  void filterPeaks();
+    void slotUnitCellChanged(int index);
 
 private:
-  static DialogPeakFilter *_instance;
+    DialogPeakFilter(
+        ExperimentItem* experiment_tree, const nsx::PeakList& peaks, QWidget* parent = nullptr);
 
-  Ui::DialogPeakFilter *_ui;
+    void filterPeaks();
 
-  ExperimentItem *_experiment_item;
+private:
+    static DialogPeakFilter* _instance;
 
-  CollectedPeaksModel *_peaks_model;
+    Ui::DialogPeakFilter* _ui;
 
-  nsx::PeakList _peaks;
+    ExperimentItem* _experiment_item;
+
+    CollectedPeaksModel* _peaks_model;
+
+    nsx::PeakList _peaks;
 };

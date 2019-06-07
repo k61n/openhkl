@@ -1,32 +1,30 @@
 
 #include "nsxgui/gui/properties/unitcellproperty.h"
 
-#include <QCR/engine/cell.h>
 #include "nsxgui/gui/models/session.h"
-#include <QGroupBox>
+#include <QCR/engine/cell.h>
+#include <QCompleter>
 #include <QFormLayout>
 #include <QGridLayout>
-#include <QSpacerItem>
+#include <QGroupBox>
 #include <QHBoxLayout>
+#include <QSpacerItem>
 #include <QVBoxLayout>
-#include <QCompleter>
 #include <core/SpaceGroup.h>
 #include <core/UnitCell.h>
 
-UnitCellProperty::UnitCellProperty()
-    : QcrWidget{"unitCellProperty"}
+UnitCellProperty::UnitCellProperty() : QcrWidget {"unitCellProperty"}
 {
     QVBoxLayout* overallLayout = new QVBoxLayout(this);
     QHBoxLayout* horizontalLayout = new QHBoxLayout;
     QFormLayout* formLayout = new QFormLayout;
     name = new QcrLineEdit("unitCellName", "");
     QStringList spacegroups;
-    for (auto &&sg : nsx::SpaceGroup::symbols()) {
-      spacegroups.append(QString::fromStdString(sg));
+    for (auto&& sg : nsx::SpaceGroup::symbols()) {
+        spacegroups.append(QString::fromStdString(sg));
     }
     spaceGroup = new QcrComboBox("spaceGroup", new QcrCell<int>(0), spacegroups);
-    QCompleter *completer =
-        new QCompleter(spaceGroup->model(), spaceGroup);
+    QCompleter* completer = new QCompleter(spaceGroup->model(), spaceGroup);
     spaceGroup->setCompleter(completer);
     completer->setCompletionMode(QCompleter::PopupCompletion);
     completer->setCaseSensitivity(Qt::CaseSensitive);
@@ -39,7 +37,8 @@ UnitCellProperty::UnitCellProperty()
     formLayout->addRow("z", z);
     formLayout->addRow("Indexing Tolerance", indexingTolerance);
     horizontalLayout->addLayout(formLayout);
-    horizontalLayout->addItem(new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
+    horizontalLayout->addItem(
+        new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
     overallLayout->addLayout(horizontalLayout);
 
     QGroupBox* cellParameters = new QGroupBox("Cell parameters", this);
@@ -62,7 +61,8 @@ UnitCellProperty::UnitCellProperty()
     grid->addWidget(new QLabel(QString((QChar)0x03B1)), 1, 0, 1, 1);
     grid->addWidget(new QLabel(QString((QChar)0x03B2)), 1, 3, 1, 1);
     grid->addWidget(new QLabel(QString((QChar)0x03B3)), 1, 5, 1, 1);
-    grid->addItem(new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 7, 1, 1);
+    grid->addItem(
+        new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 7, 1, 1);
     overallLayout->addWidget(cellParameters);
 }
 
@@ -71,5 +71,5 @@ void UnitCellProperty::setZValue(int z)
     auto unit_cell = gSession->selectedExperiment()->unitCells()->selectedCell();
 
     unit_cell->setZ(z);
-    //setMassDensity();
+    // setMassDensity();
 }

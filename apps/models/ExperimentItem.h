@@ -19,34 +19,34 @@ class UnitCellsItem;
 
 class ExperimentItem : public TreeItem {
 public:
-  explicit ExperimentItem(nsx::sptrExperiment experiment);
+    explicit ExperimentItem(nsx::sptrExperiment experiment);
 
-  virtual ~ExperimentItem();
+    virtual ~ExperimentItem();
 
-  nsx::sptrExperiment experiment() { return _experiment; }
+    nsx::sptrExperiment experiment() { return _experiment; }
 
-  InstrumentItem *instrumentItem();
+    InstrumentItem* instrumentItem();
 
-  PeaksItem *peaksItem();
+    PeaksItem* peaksItem();
 
-  DataItem *dataItem();
+    DataItem* dataItem();
 
-  UnitCellsItem *unitCellsItem();
+    UnitCellsItem* unitCellsItem();
 
-  LibraryItem *libraryItem();
+    LibraryItem* libraryItem();
 
-  void writeLogFiles();
+    void writeLogFiles();
 
 private:
-  nsx::sptrExperiment _experiment;
+    nsx::sptrExperiment _experiment;
 
-  InstrumentItem *_instr;
+    InstrumentItem* _instr;
 
-  DataItem *_data;
+    DataItem* _data;
 
-  UnitCellsItem *_unitCells;
+    UnitCellsItem* _unitCells;
 
-  PeaksItem *_peaks;
+    PeaksItem* _peaks;
 
-  LibraryItem *_library;
+    LibraryItem* _library;
 };

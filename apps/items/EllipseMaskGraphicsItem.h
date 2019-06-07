@@ -19,46 +19,45 @@ class QWidget;
  */
 class EllipseMaskGraphicsItem : public SXGraphicsItem {
 public:
-  // Constructs a mask
-  EllipseMaskGraphicsItem(nsx::sptrDataSet data, nsx::AABB *aabb);
-  //! The destructor
-  ~EllipseMaskGraphicsItem();
+    // Constructs a mask
+    EllipseMaskGraphicsItem(nsx::sptrDataSet data, nsx::AABB* aabb);
+    //! The destructor
+    ~EllipseMaskGraphicsItem();
 
-  // Events
+    // Events
 
-  //! The mouse move event.
-  //! If the item is selected when the event is triggered then the item will be
-  //! moved on the scene Otherwise, that means that the item is being drawn and
-  //! then the move event corresponds to a resize
-  void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-  //! Handles a mouse wheel event
-  void wheelEvent(QGraphicsSceneWheelEvent *event);
+    //! The mouse move event.
+    //! If the item is selected when the event is triggered then the item will be
+    //! moved on the scene Otherwise, that means that the item is being drawn and
+    //! then the move event corresponds to a resize
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+    //! Handles a mouse wheel event
+    void wheelEvent(QGraphicsSceneWheelEvent* event);
 
-  // Getters and setters
+    // Getters and setters
 
-  //! Returns the bounding rectangle of the mask
-  QRectF boundingRect() const;
-  nsx::AABB *getAABB();
-  //! Sets the starting corner of the mask
-  void setFrom(const QPointF &pos);
-  //! Sets the ending corner of the mask
-  void setTo(const QPointF &pos);
+    //! Returns the bounding rectangle of the mask
+    QRectF boundingRect() const;
+    nsx::AABB* getAABB();
+    //! Sets the starting corner of the mask
+    void setFrom(const QPointF& pos);
+    //! Sets the ending corner of the mask
+    void setTo(const QPointF& pos);
 
-  // Other methods
+    // Other methods
 
-  //! Paint the slice
-  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget);
+    //! Paint the slice
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
 
 protected:
-  //! The data on which the cutter will act upon
-  nsx::sptrDataSet _data;
-  //! The AABB of the peak
-  nsx::AABB *_aabb;
-  QPointF _from;
-  QPointF _to;
-  QGraphicsTextItem *_text;
+    //! The data on which the cutter will act upon
+    nsx::sptrDataSet _data;
+    //! The AABB of the peak
+    nsx::AABB* _aabb;
+    QPointF _from;
+    QPointF _to;
+    QGraphicsTextItem* _text;
 
 private:
-  void updateAABB();
+    void updateAABB();
 };

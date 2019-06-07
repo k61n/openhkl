@@ -4,12 +4,12 @@
 
 #pragma once
 
-#include <QCR/widgets/views.h>
 #include "nsxgui/gui/panels/subframe_setup.h"
+#include <QCR/widgets/views.h>
 
 class SubframeProperties : public QcrDockWidget {
 public:
-	SubframeProperties();
+    SubframeProperties();
     SubframeSetup* tabsframe;
 };
 

@@ -1,14 +1,13 @@
 
 #include "nsxgui/gui/panels/subtab_monochromaticsource.h"
 #include "nsxgui/gui/properties/sourceproperty.h"
-#include <QTreeView>
 #include <QHBoxLayout>
+#include <QTreeView>
 
 //-------------------------------------------------------------------------------------------------
 //! @class SubtabMonochromatic
 
-SubtabMonochromatic::SubtabMonochromatic()
-    : QcrWidget{"monochromatic source"}
+SubtabMonochromatic::SubtabMonochromatic() : QcrWidget {"monochromatic source"}
 {
     auto* layout = new QHBoxLayout;
     layout->addWidget((property = new SourceProperty));

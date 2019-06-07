@@ -7,11 +7,11 @@
 class QWidget;
 
 class PeakPlot : public SXPlot {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  static SXPlot *create(QWidget *parent);
+    static SXPlot* create(QWidget* parent);
 
-  explicit PeakPlot(QWidget *parent = 0);
+    explicit PeakPlot(QWidget* parent = 0);
 
-  std::string getType() const;
+    std::string getType() const;
 };

@@ -1,26 +1,26 @@
 #include "nsxgui/gui/models/peaklists.h"
 
-FilteredPeaksModel::FilteredPeaksModel(const QString &name, nsx::PeakList list)
-    : name_{name}
-    , filteredPeaks_{list}
-{}
+FilteredPeaksModel::FilteredPeaksModel(const QString& name, nsx::PeakList list)
+    : name_ {name}, filteredPeaks_ {list}
+{
+}
 
 //  ***********************************************************************************************
 //! @class PeakListsModel
 
-PeakListsModel::PeakListsModel(const QString &name, nsx::PeakList list)
-    : name_{name}
-    , allPeaks_{list}
-{}
+PeakListsModel::PeakListsModel(const QString& name, nsx::PeakList list)
+    : name_ {name}, allPeaks_ {list}
+{
+}
 
 FilteredPeaksModel* PeakListsModel::getPeaksAt(int i)
 {
-    if (i<0 || i>filtered_.size())
+    if (i < 0 || i > filtered_.size())
         return nullptr;
     return filtered_.at(i);
 }
 
-void PeakListsModel::addFilteredPeaks(const QString &name, nsx::PeakList peaks)
+void PeakListsModel::addFilteredPeaks(const QString& name, nsx::PeakList peaks)
 {
     filtered_.append(new FilteredPeaksModel(name, peaks));
 }
@@ -28,13 +28,12 @@ void PeakListsModel::addFilteredPeaks(const QString &name, nsx::PeakList peaks)
 //  ***********************************************************************************************
 //! @class PeaksModel
 
-PeaksModel::PeaksModel()
-{}
+PeaksModel::PeaksModel() {}
 
 nsx::PeakList PeaksModel::allPeaks()
 {
     nsx::PeakList all;
-    for (auto &peakList : peakLists_) {
+    for (auto& peakList : peakLists_) {
         nsx::PeakList peaks = peakList->getAllListPeaks();
         all.insert(all.end(), peaks.begin(), peaks.end());
     }
@@ -43,12 +42,12 @@ nsx::PeakList PeaksModel::allPeaks()
 
 PeakListsModel* PeaksModel::selectedPeakLists(int i)
 {
-    if (i<0 || i>peakLists_.size())
+    if (i < 0 || i > peakLists_.size())
         return nullptr;
     return peakLists_.at(i);
 }
 
-void PeaksModel::addPeakListsModel(const QString &name, nsx::PeakList list)
+void PeaksModel::addPeakListsModel(const QString& name, nsx::PeakList list)
 {
     peakLists_.append(new PeakListsModel(name, list));
 }
@@ -63,9 +62,9 @@ QStringList PeaksModel::peaklistNames()
 }
 
 
-//void PeaksModel::autoAssignUnitCell()
+// void PeaksModel::autoAssignUnitCell()
 //{
-    // maybe move to gSession
+// maybe move to gSession
 
 //    nsx::PeakList peaks = allPeaks(); //selectedPeaks();
 
@@ -102,5 +101,5 @@ QStringList PeaksModel::peaklistNames()
 //    }
 //    gLogger->log("Done auto assigning unit cells");
 
-    //emit model()->itemChanged(this);
+// emit model()->itemChanged(this);
 //}

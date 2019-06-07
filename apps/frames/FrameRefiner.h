@@ -18,34 +18,32 @@ class QAbstractButton;
 class QWidget;
 
 class FrameRefiner : public NSXQFrame {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  static FrameRefiner *create(ExperimentItem *experiment_item,
-                              const nsx::PeakList &peaks);
+    static FrameRefiner* create(ExperimentItem* experiment_item, const nsx::PeakList& peaks);
 
-  static FrameRefiner *Instance();
+    static FrameRefiner* Instance();
 
-  ~FrameRefiner();
+    ~FrameRefiner();
 
 private slots:
 
-  void slotActionClicked(QAbstractButton *button);
+    void slotActionClicked(QAbstractButton* button);
 
-  void slotTabRemoved(int index);
-
-private:
-  explicit FrameRefiner(ExperimentItem *experiment_item,
-                        const nsx::PeakList &peaks);
-
-  void accept();
-
-  void refine();
+    void slotTabRemoved(int index);
 
 private:
-  static FrameRefiner *_instance;
+    explicit FrameRefiner(ExperimentItem* experiment_item, const nsx::PeakList& peaks);
 
-  Ui::FrameRefiner *_ui;
+    void accept();
 
-  ExperimentItem *_experiment_item;
+    void refine();
+
+private:
+    static FrameRefiner* _instance;
+
+    Ui::FrameRefiner* _ui;
+
+    ExperimentItem* _experiment_item;
 };

@@ -3,19 +3,18 @@
 #include "nsxgui/gui/models/experimentmodel.h"
 #include "nsxgui/gui/models/session.h"
 #include <QCR/engine/logger.h>
-#include <QVBoxLayout>
 #include <QTreeView>
+#include <QVBoxLayout>
 
 //-------------------------------------------------------------------------------------------------
 //! @class TabPeaks
 
-TabPeaks::TabPeaks()
-    : QcrWidget{"peaks"}
+TabPeaks::TabPeaks() : QcrWidget {"peaks"}
 {
     filtered = new QcrTabWidget("filteredPeaks");
-    foundPeaksLists = new QcrComboBox("foundLists", new QcrCell<int>(0), [](){
+    foundPeaksLists = new QcrComboBox("foundLists", new QcrCell<int>(0), []() {
         if (gSession->selectedExperimentNum() < 0)
-            return QStringList{};
+            return QStringList {};
         return gSession->selectedExperiment()->peaks()->peaklistNames();
     });
     QVBoxLayout* layout = new QVBoxLayout(this);
@@ -29,14 +28,14 @@ void TabPeaks::slotSelectedListChanged(int i)
 {
     filtered->clear();
     PeakListsModel* model = gSession->selectedExperiment()->peaks()->selectedPeakLists(i);
-    for (int j=0; j<model->numberFilteredLists(); j++) {
+    for (int j = 0; j < model->numberFilteredLists(); j++) {
         FilteredPeaksModel* peaks = model->getPeaksAt(j);
         filtered->addTab(new ListTab(peaks), peaks->getName());
     }
 }
 
-ListTab::ListTab(FilteredPeaksModel *filteredModel)
-    : QcrWidget{"adhoc_"+filteredModel->getName()}
+ListTab::ListTab(FilteredPeaksModel* filteredModel)
+    : QcrWidget {"adhoc_" + filteredModel->getName()}
 {
     QVBoxLayout* layout = new QVBoxLayout(this);
     view = new PeaksTableView;

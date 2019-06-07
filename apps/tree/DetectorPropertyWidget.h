@@ -10,19 +10,18 @@ class DetectorItem;
 
 class DetectorPropertyWidget : public QWidget {
 
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit DetectorPropertyWidget(DetectorItem *caller,
-                                  QWidget *parent = nullptr);
+    explicit DetectorPropertyWidget(DetectorItem* caller, QWidget* parent = nullptr);
 
-  ~DetectorPropertyWidget();
-
-private:
-  void onSampleToDectorDistanceChanged(double distance);
+    ~DetectorPropertyWidget();
 
 private:
-  Ui::DetectorPropertyWidget *_ui;
+    void onSampleToDectorDistanceChanged(double distance);
 
-  DetectorItem *_detectorItem;
+private:
+    Ui::DetectorPropertyWidget* _ui;
+
+    DetectorItem* _detectorItem;
 };

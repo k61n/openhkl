@@ -7,9 +7,10 @@
 
 namespace nsx {
 
-AxisFactory::AxisFactory() {
-  registerCallback("rotation", &RotAxis::create);
-  registerCallback("translation", &TransAxis::create);
+AxisFactory::AxisFactory()
+{
+    registerCallback("rotation", &RotAxis::create);
+    registerCallback("translation", &TransAxis::create);
 }
 
 AxisFactory::~AxisFactory() {}
