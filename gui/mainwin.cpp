@@ -23,6 +23,7 @@
 #include <QStatusBar>
 #include <QString>
 #include <QTimer>
+#include <QCloseEvent>
 
 #include <iostream>
 
@@ -55,12 +56,7 @@ MainWin::MainWin()
 }
 
 MainWin::~MainWin()
-{
-    saveSettings();
-    delete triggers;
-    delete menus_;
-    gGui = nullptr;
-}
+{}
 
 void MainWin::refresh()
 {
@@ -112,4 +108,12 @@ void MainWin::readSettings()
     s.beginGroup("MainWindow");
     restoreGeometry(s.value("geometry").toByteArray());
     restoreState(s.value("state").toByteArray());
+}
+
+void MainWin::closeEvent(QCloseEvent *event) {
+    saveSettings();
+    delete triggers;
+    delete menus_;
+    gGui = nullptr;
+    event->accept();
 }

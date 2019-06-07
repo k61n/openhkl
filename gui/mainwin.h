@@ -47,6 +47,7 @@ private:
     void refresh();
     void readSettings();
     void saveSettings() const;
+    void closeEvent(QCloseEvent *event) override;
 
     SubframeImage* dockImage_;
     SubframePlot* dockPlot_;

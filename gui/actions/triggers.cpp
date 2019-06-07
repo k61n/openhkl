@@ -44,7 +44,7 @@ Actions::Actions()
 void Actions::setupFiles()
 {
     addExperiment.setTriggerHook([]() { gSession->createExperiment(); });
-    quit.setTriggerHook([]() { gGui->deleteLater(); });
+    quit.setTriggerHook([]() { gGui->close(); });
     removeExperiment.setTriggerHook([]() { gSession->removeExperiment(); });
 }
 
