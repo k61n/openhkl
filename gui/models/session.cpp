@@ -123,7 +123,7 @@ void Session::loadData()
         selectedExperiment()->addData(data_ptr);
     }
 
-    gRoot->remakeAll();
+    onDataChanged();
 }
 
 void Session::removeData()
@@ -137,7 +137,8 @@ void Session::removeData()
         gLogger->log("[ERROR] No data to remove");
         return;
     }
-
+    std::string numorname = selectedExperiment()->data()->selectedData()->filename();
+    selectedExperiment()->experiment()->removeData(numorname);
     selectedExperiment()->data()->removeSelectedData();
 }
 
