@@ -21,8 +21,6 @@
 
 TEST_CASE("test/crystal/TestFFTIndexing.cpp", "") {
 
-    CHECK(false); return; // TODO: restore test (segfault on o, endless on l)
-
     nsx::DataReaderFactory factory;
 
     nsx::Experiment experiment("test", "BioDiff2500");
