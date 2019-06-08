@@ -79,7 +79,7 @@ endif()
 # add_subdirectory(tools)
 
 # Directory with all the unit-tests.
-add_subdirectory(tests)
+add_subdirectory(test)
 
 # swig + python tests
 if(NSX_PYTHON)
