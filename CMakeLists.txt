@@ -47,7 +47,6 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 include(CheckDependencies)
-include(GetSubdirectories) # defines MACRO get_subdirectories
 include(SetCompilerFlags)
 include(SetLinkerFlags)
 include(ConfigureInstall)

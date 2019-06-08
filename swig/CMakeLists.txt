@@ -4,13 +4,10 @@ endif()
 
 set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
-GET_SUBDIRECTORIES(NSX_SUBDIRS ${CMAKE_SOURCE_DIR}/core)
-
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_BINARY_DIR}/core/generated)
 include_directories(${PYTHON_INCLUDE_DIRS})
-include_directories(${NSX_SUBDIRS})
 
 set_property(SOURCE pynsx.i PROPERTY CPLUSPLUS ON)
 set_property(SOURCE pynsx.i PROPERTY SWIG_MODULE_NAME pynsx)
