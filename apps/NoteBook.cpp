@@ -17,7 +17,7 @@
 #include <QMenu>
 #include <QPrinter>
 
-#include "NoteBook.h"
+#include "apps/NoteBook.h"
 
 NoteBook::NoteBook(QWidget* parent) : QTextEdit(parent)
 {

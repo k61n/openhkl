@@ -18,16 +18,16 @@
 
 #include "H5Cpp.h"
 
-#include "BloscFilter.h"
-#include "Detector.h"
-#include "Diffractometer.h"
-#include "Gonio.h"
-#include "IDataReader.h"
-#include "MathematicsTypes.h"
-#include "Path.h"
-#include "Sample.h"
-#include "Source.h"
-#include "Units.h"
+#include "core/data/BloscFilter.h"
+#include "core/detector/Detector.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/axes/Gonio.h"
+#include "core/data/IDataReader.h"
+#include "core/mathematics/MathematicsTypes.h"
+#include "core/utils/Path.h"
+#include "core/instrument/Sample.h"
+#include "core/instrument/Source.h"
+#include "core/utils/Units.h"
 
 namespace nsx {
 

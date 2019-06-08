@@ -8,8 +8,8 @@
 #include <boost/random/uniform_real.hpp>
 
 #include "aabb.h"
-#include "hcoords.h"
-#include "hmatrix.h"
+#include "devtools/ndtree/hcoords.h"
+#include "devtools/ndtree/hmatrix.h"
 #include "ndtree.h"
 
 using namespace nsx::Geometry;

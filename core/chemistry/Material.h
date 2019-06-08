@@ -19,8 +19,8 @@
 #include <ostream>
 #include <string>
 
-#include "ChemistryTypes.h"
-#include "IsotopeDatabaseManager.h"
+#include "core/chemistry/ChemistryTypes.h"
+#include "core/chemistry/IsotopeDatabaseManager.h"
 
 namespace nsx {
 

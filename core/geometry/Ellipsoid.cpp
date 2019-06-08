@@ -14,15 +14,15 @@
 
 #include <array>
 
-#include "AABB.h"
-#include "DataSet.h"
-#include "Detector.h"
-#include "DetectorEvent.h"
-#include "Diffractometer.h"
-#include "Ellipsoid.h"
-#include "GeometryTypes.h"
-#include "IDataReader.h"
-#include "ReciprocalVector.h"
+#include "core/geometry/AABB.h"
+#include "core/data/DataSet.h"
+#include "core/detector/Detector.h"
+#include "core/detector/DetectorEvent.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/geometry/Ellipsoid.h"
+#include "core/geometry/GeometryTypes.h"
+#include "core/data/IDataReader.h"
+#include "core/rec_space/ReciprocalVector.h"
 
 namespace nsx {
 

@@ -20,8 +20,8 @@
 #include <stdexcept>
 #include <string>
 
-#include "DataTypes.h"
-#include "Variant.h"
+#include "core/data/DataTypes.h"
+#include "core/utils/Variant.h"
 
 namespace nsx {
 

@@ -16,7 +16,7 @@
 
 #include <string>
 
-#include "SXPlot.h"
+#include "apps/plot/SXPlot.h"
 
 class QWidget;
 

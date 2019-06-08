@@ -27,8 +27,8 @@
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
-#include "Axis.h"
-#include "GeometryTypes.h"
+#include "core/axes/Axis.h"
+#include "core/geometry/GeometryTypes.h"
 
 namespace nsx {
 

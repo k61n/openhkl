@@ -18,8 +18,8 @@
 #include <Eigen/Dense>
 #include <deque>
 
-#include "DetectorEvent.h"
-#include "PeakCoordinateSystem.h"
+#include "core/detector/DetectorEvent.h"
+#include "core/crystal/PeakCoordinateSystem.h"
 
 namespace nsx {
 

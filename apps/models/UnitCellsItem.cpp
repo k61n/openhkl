@@ -16,14 +16,14 @@
 
 #include <QIcon>
 
-#include <core/CrystalTypes.h>
-#include <core/Peak3D.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/crystal/Peak3D.h"
 
-#include "ExperimentItem.h"
-#include "MetaTypes.h"
-#include "PeaksItem.h"
-#include "UnitCellItem.h"
-#include "UnitCellsItem.h"
+#include "apps/models/ExperimentItem.h"
+#include "apps/models/MetaTypes.h"
+#include "apps/models/PeaksItem.h"
+#include "apps/models/UnitCellItem.h"
+#include "apps/models/UnitCellsItem.h"
 
 UnitCellsItem::UnitCellsItem() : TreeItem()
 {

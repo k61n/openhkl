@@ -15,13 +15,13 @@
 #include <QIcon>
 #include <QString>
 
-#include <core/Diffractometer.h>
-#include <core/Source.h>
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Source.h"
 
-#include "DetectorItem.h"
-#include "InstrumentItem.h"
-#include "SampleItem.h"
-#include "SourceItem.h"
+#include "apps/models/DetectorItem.h"
+#include "apps/models/InstrumentItem.h"
+#include "apps/models/SampleItem.h"
+#include "apps/models/SourceItem.h"
 
 InstrumentItem::InstrumentItem(const char* name, const char* source_name) : TreeItem()
 {

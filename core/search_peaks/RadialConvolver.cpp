@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "RadialConvolver.h"
+#include "core/search_peaks/RadialConvolver.h"
 
 namespace nsx {
 

@@ -18,27 +18,27 @@
 
 #include <Eigen/Dense>
 
-#include <core/DataSet.h>
-#include <core/Detector.h>
-#include <core/Diffractometer.h>
-#include <core/Experiment.h>
-#include <core/Gonio.h>
-#include <core/IDataReader.h>
-#include <core/InstrumentState.h>
-#include <core/MCAbsorption.h>
-#include <core/Material.h>
-#include <core/Monochromator.h>
-#include <core/Peak3D.h>
-#include <core/ReciprocalVector.h>
-#include <core/Sample.h>
-#include <core/Source.h>
-#include <core/UnitCell.h>
-#include <core/Units.h>
+#include "core/data/DataSet.h"
+#include "core/detector/Detector.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Experiment.h"
+#include "core/axes/Gonio.h"
+#include "core/data/IDataReader.h"
+#include "core/instrument/InstrumentState.h"
+#include "core/monte-carlo/MCAbsorption.h"
+#include "core/chemistry/Material.h"
+#include "core/instrument/Monochromator.h"
+#include "core/crystal/Peak3D.h"
+#include "core/rec_space/ReciprocalVector.h"
+#include "core/instrument/Sample.h"
+#include "core/instrument/Source.h"
+#include "core/crystal/UnitCell.h"
+#include "core/utils/Units.h"
 
-#include "DialogMCAbsorption.h"
-#include "ExperimentItem.h"
-#include "InstrumentItem.h"
-#include "UnitCellsItem.h"
+#include "apps/dialogs/DialogMCAbsorption.h"
+#include "apps/models/ExperimentItem.h"
+#include "apps/models/InstrumentItem.h"
+#include "apps/models/UnitCellsItem.h"
 
 #include "ui_DialogMCAbsorption.h"
 

@@ -15,9 +15,9 @@
 #include <stdexcept>
 #include <string>
 
-#include "CylindricalDetector.h"
-#include "DetectorFactory.h"
-#include "FlatDetector.h"
+#include "core/detector/CylindricalDetector.h"
+#include "core/detector/DetectorFactory.h"
+#include "core/detector/FlatDetector.h"
 
 namespace nsx {
 

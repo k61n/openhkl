@@ -15,16 +15,16 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "DataSet.h"
-#include "DataTypes.h"
-#include "Detector.h"
-#include "DetectorFactory.h"
-#include "FitParameters.h"
-#include "Gonio.h"
-#include "IDataReader.h"
-#include "Logger.h"
-#include "Minimizer.h"
-#include "Units.h"
+#include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
+#include "core/detector/Detector.h"
+#include "core/detector/DetectorFactory.h"
+#include "core/fitting/FitParameters.h"
+#include "core/axes/Gonio.h"
+#include "core/data/IDataReader.h"
+#include "core/logger/Logger.h"
+#include "core/fitting/Minimizer.h"
+#include "core/utils/Units.h"
 
 namespace nsx {
 

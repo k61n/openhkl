@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "InspectableTreeItem.h"
+#include "apps/models/InspectableTreeItem.h"
 
 class QWidget;
 

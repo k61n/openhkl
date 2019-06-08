@@ -17,10 +17,10 @@
 
 #include <Eigen/Eigenvalues>
 
-#include "BrillouinZone.h"
-#include "DataSet.h"
-#include "NiggliReduction.h"
-#include "ReciprocalVector.h"
+#include "core/crystal/BrillouinZone.h"
+#include "core/data/DataSet.h"
+#include "core/crystal/NiggliReduction.h"
+#include "core/rec_space/ReciprocalVector.h"
 
 /**
  * @brief Update a list of Q-vectors by removing the duplicates.

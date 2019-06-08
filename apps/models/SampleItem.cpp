@@ -15,11 +15,11 @@
 #include <QIcon>
 #include <algorithm>
 
-#include "DialogIsotopesDatabase.h"
-#include "FrameSampleGlobalOffsets.h"
-#include "SampleItem.h"
-#include "SamplePropertyWidget.h"
-#include "SampleShapeItem.h"
+#include "apps/dialogs/DialogIsotopesDatabase.h"
+#include "apps/frames/FrameSampleGlobalOffsets.h"
+#include "apps/models/SampleItem.h"
+#include "apps/tree/SamplePropertyWidget.h"
+#include "apps/models/SampleShapeItem.h"
 
 SampleItem::SampleItem() : InspectableTreeItem()
 {

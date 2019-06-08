@@ -17,19 +17,19 @@
 #include <QFileInfo>
 #include <QPen>
 
-#include <core/DataSet.h>
-#include <core/Diffractometer.h>
-#include <core/Experiment.h>
-#include <core/Gonio.h>
-#include <core/Logger.h>
-#include <core/Sample.h>
-#include <core/Units.h>
+#include "core/data/DataSet.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Experiment.h"
+#include "core/axes/Gonio.h"
+#include "core/logger/Logger.h"
+#include "core/instrument/Sample.h"
+#include "core/utils/Units.h"
 
-#include "DataItem.h"
-#include "DoubleItemDelegate.h"
-#include "ExperimentItem.h"
-#include "FrameSampleGlobalOffsets.h"
-#include "MetaTypes.h"
+#include "apps/models/DataItem.h"
+#include "apps/delegates/DoubleItemDelegate.h"
+#include "apps/models/ExperimentItem.h"
+#include "apps/frames/FrameSampleGlobalOffsets.h"
+#include "apps/models/MetaTypes.h"
 
 #include "ui_FrameSampleGlobalOffsets.h"
 

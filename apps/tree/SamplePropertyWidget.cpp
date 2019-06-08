@@ -14,16 +14,16 @@
 
 #include <sstream>
 
-#include <core/Axis.h>
-#include <core/Diffractometer.h>
-#include <core/Gonio.h>
-#include <core/Sample.h>
-#include <core/TransAxis.h>
-#include <core/Units.h>
+#include "core/axes/Axis.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/axes/Gonio.h"
+#include "core/instrument/Sample.h"
+#include "core/axes/TransAxis.h"
+#include "core/utils/Units.h"
 
-#include "SampleItem.h"
-#include "SamplePropertyWidget.h"
-#include "UnitCellItem.h"
+#include "apps/models/SampleItem.h"
+#include "apps/tree/SamplePropertyWidget.h"
+#include "apps/models/UnitCellItem.h"
 
 #include "ui_SamplePropertyWidget.h"
 

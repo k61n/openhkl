@@ -16,9 +16,9 @@
 #include <sstream>
 #include <stdexcept>
 
-#include "DoubleToFraction.h"
-#include "JonesSymbolParser.h"
-#include "SymOp.h"
+#include "core/utils/DoubleToFraction.h"
+#include "core/crystal/JonesSymbolParser.h"
+#include "core/crystal/SymOp.h"
 
 namespace nsx {
 

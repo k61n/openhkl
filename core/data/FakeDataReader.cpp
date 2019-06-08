@@ -16,15 +16,15 @@
 
 #include "blosc.h"
 
-#include "BloscFilter.h"
-#include "Detector.h"
-#include "Diffractometer.h"
-#include "EigenToVector.h"
-#include "FakeDataReader.h"
-#include "Gonio.h"
-#include "Sample.h"
-#include "Source.h"
-#include "Units.h"
+#include "core/data/BloscFilter.h"
+#include "core/detector/Detector.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/data/EigenToVector.h"
+#include "core/data/FakeDataReader.h"
+#include "core/axes/Gonio.h"
+#include "core/instrument/Sample.h"
+#include "core/instrument/Source.h"
+#include "core/utils/Units.h"
 
 namespace nsx {
 

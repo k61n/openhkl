@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "IMask.h"
+#include "core/geometry/IMask.h"
 
 namespace nsx {
 

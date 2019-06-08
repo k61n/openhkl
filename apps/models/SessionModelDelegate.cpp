@@ -15,9 +15,9 @@
 #include <QApplication>
 #include <QStyleOptionButton>
 
-#include "SessionModel.h"
-#include "SessionModelDelegate.h"
-#include "UnitCellsItem.h"
+#include "apps/models/SessionModel.h"
+#include "apps/models/SessionModelDelegate.h"
+#include "apps/models/UnitCellsItem.h"
 
 SessionModelDelegate::SessionModelDelegate() {}
 

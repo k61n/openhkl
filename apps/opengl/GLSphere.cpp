@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "GLSphere.h"
+#include "apps/opengl/GLSphere.h"
 
 GLSphere::GLSphere(const char* name) : GLActor(name) {}
 void GLSphere::GLCode()

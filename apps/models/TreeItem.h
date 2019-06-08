@@ -17,10 +17,10 @@
 #include <QStandardItem>
 #include <QVariant>
 
-#include <core/Experiment.h>
-#include <core/InstrumentTypes.h>
+#include "core/instrument/Experiment.h"
+#include "core/instrument/InstrumentTypes.h"
 
-#include "SessionModel.h"
+#include "apps/models/SessionModel.h"
 
 class QWidget;
 class ExperimentItem;

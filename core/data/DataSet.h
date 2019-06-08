@@ -22,13 +22,13 @@
 
 #include <Eigen/Dense>
 
-#include "CrystalTypes.h"
-#include "DataTypes.h"
-#include "GeometryTypes.h"
-#include "IMask.h"
-#include "InstrumentTypes.h"
-#include "InterpolatedState.h"
-#include "UtilsTypes.h"
+#include "core/crystal/CrystalTypes.h"
+#include "core/data/DataTypes.h"
+#include "core/geometry/GeometryTypes.h"
+#include "core/geometry/IMask.h"
+#include "core/instrument/InstrumentTypes.h"
+#include "core/instrument/InterpolatedState.h"
+#include "core/utils/UtilsTypes.h"
 
 namespace nsx {
 

@@ -19,7 +19,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "Singleton.h"
+#include "core/utils/Singleton.h"
 
 namespace nsx {
 

@@ -21,13 +21,13 @@
 
 #include <Eigen/Dense>
 
-#include "CrystalTypes.h"
-#include "DataTypes.h"
-#include "Ellipsoid.h"
-#include "GeometryTypes.h"
-#include "IPeakIntegrator.h"
-#include "InstrumentTypes.h"
-#include "Intensity.h"
+#include "core/crystal/CrystalTypes.h"
+#include "core/data/DataTypes.h"
+#include "core/geometry/Ellipsoid.h"
+#include "core/geometry/GeometryTypes.h"
+#include "core/integration/IPeakIntegrator.h"
+#include "core/instrument/InstrumentTypes.h"
+#include "core/crystal/Intensity.h"
 
 namespace nsx {
 

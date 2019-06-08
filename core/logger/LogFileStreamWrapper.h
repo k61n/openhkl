@@ -18,7 +18,7 @@
 #include <fstream>
 #include <string>
 
-#include "IStreamWrapper.h"
+#include "core/logger/IStreamWrapper.h"
 
 namespace nsx {
 

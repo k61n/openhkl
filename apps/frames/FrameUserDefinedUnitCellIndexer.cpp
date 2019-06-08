@@ -16,25 +16,25 @@
 #include <QStandardItem>
 #include <QStandardItemModel>
 
-#include <core/CrystalTypes.h>
-#include <core/Diffractometer.h>
-#include <core/Experiment.h>
-#include <core/Logger.h>
-#include <core/Monochromator.h>
-#include <core/Peak3D.h>
-#include <core/ReciprocalVector.h>
-#include <core/Source.h>
-#include <core/Units.h>
-#include <core/UserDefinedUnitCellIndexer.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Experiment.h"
+#include "core/logger/Logger.h"
+#include "core/instrument/Monochromator.h"
+#include "core/crystal/Peak3D.h"
+#include "core/rec_space/ReciprocalVector.h"
+#include "core/instrument/Source.h"
+#include "core/utils/Units.h"
+#include "core/auto_indexing/UserDefinedUnitCellIndexer.h"
 
-#include "CollectedPeaksModel.h"
-#include "ExperimentItem.h"
-#include "FrameUserDefinedUnitCellIndexer.h"
-#include "PeaksItem.h"
-#include "SessionModel.h"
-#include "UnitCellItem.h"
-#include "UnitCellsItem.h"
-#include "WidgetUnitCell.h"
+#include "apps/models/CollectedPeaksModel.h"
+#include "apps/models/ExperimentItem.h"
+#include "apps/frames/FrameUserDefinedUnitCellIndexer.h"
+#include "apps/models/PeaksItem.h"
+#include "apps/models/SessionModel.h"
+#include "apps/models/UnitCellItem.h"
+#include "apps/models/UnitCellsItem.h"
+#include "apps/widgets/WidgetUnitCell.h"
 
 #include "ui_FrameUserDefinedUnitCellIndexer.h"
 

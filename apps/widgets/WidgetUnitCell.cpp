@@ -12,10 +12,10 @@
 //
 //  ***********************************************************************************************
 
-#include <core/UnitCell.h>
-#include <core/Units.h>
+#include "core/crystal/UnitCell.h"
+#include "core/utils/Units.h"
 
-#include "WidgetUnitCell.h"
+#include "apps/widgets/WidgetUnitCell.h"
 
 #include "ui_WidgetUnitCell.h"
 

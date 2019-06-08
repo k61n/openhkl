@@ -14,12 +14,12 @@
 
 #include <limits>
 
-#include "AABB.h"
-#include "ConvexHull.h"
-#include "Edge.h"
-#include "Face.h"
-#include "Triangle.h"
-#include "Vertex.h"
+#include "core/geometry/AABB.h"
+#include "core/geometry/ConvexHull.h"
+#include "core/geometry/Edge.h"
+#include "core/geometry/Face.h"
+#include "core/geometry/Triangle.h"
+#include "core/geometry/Vertex.h"
 
 namespace nsx {
 

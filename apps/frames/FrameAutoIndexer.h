@@ -17,9 +17,9 @@
 #include <utility>
 #include <vector>
 
-#include <core/CrystalTypes.h>
+#include "core/crystal/CrystalTypes.h"
 
-#include "NSXQFrame.h"
+#include "apps/frames/NSXQFrame.h"
 
 namespace Ui {
 class FrameAutoIndexer;

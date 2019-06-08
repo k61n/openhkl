@@ -16,13 +16,13 @@
 #include <stdexcept>
 #include <utility>
 
-#include "DataSet.h"
-#include "Diffractometer.h"
-#include "Experiment.h"
-#include "IDataReader.h"
-#include "MetaData.h"
-#include "Monochromator.h"
-#include "Source.h"
+#include "core/data/DataSet.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Experiment.h"
+#include "core/data/IDataReader.h"
+#include "core/data/MetaData.h"
+#include "core/instrument/Monochromator.h"
+#include "core/instrument/Source.h"
 
 namespace nsx {
 

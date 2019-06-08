@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "Triangle.h"
+#include "core/geometry/Triangle.h"
 
 namespace nsx {
 

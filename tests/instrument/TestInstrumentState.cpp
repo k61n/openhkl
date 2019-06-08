@@ -1,9 +1,9 @@
-#include <core/DataReaderFactory.h>
-#include <core/DataSet.h>
-#include <core/Experiment.h>
-#include <core/IDataReader.h>
-#include <core/InstrumentState.h>
-#include <core/NSXTest.h>
+#include "core/data/DataReaderFactory.h"
+#include "core/data/DataSet.h"
+#include "core/instrument/Experiment.h"
+#include "core/data/IDataReader.h"
+#include "core/instrument/InstrumentState.h"
+#include "core/utils/NSXTest.h"
 
 NSX_INIT_TEST
 

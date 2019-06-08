@@ -16,7 +16,7 @@
 
 #include <Eigen/Dense>
 
-#include "DirectVector.h"
+#include "core/geometry/DirectVector.h"
 
 namespace nsx {
 

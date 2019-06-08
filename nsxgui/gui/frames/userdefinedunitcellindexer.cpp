@@ -19,16 +19,16 @@
 #include "nsxgui/gui/models/session.h"
 #include <QCR/engine/logger.h>
 
-#include <core/CrystalTypes.h>
-#include <core/Diffractometer.h>
-#include <core/Experiment.h>
-#include <core/Logger.h>
-#include <core/Monochromator.h>
-#include <core/Peak3D.h>
-#include <core/ReciprocalVector.h>
-#include <core/Source.h>
-#include <core/Units.h>
-#include <core/UserDefinedUnitCellIndexer.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Experiment.h"
+#include "core/logger/Logger.h"
+#include "core/instrument/Monochromator.h"
+#include "core/crystal/Peak3D.h"
+#include "core/rec_space/ReciprocalVector.h"
+#include "core/instrument/Source.h"
+#include "core/utils/Units.h"
+#include "core/auto_indexing/UserDefinedUnitCellIndexer.h"
 
 #include <QGridLayout>
 #include <QGroupBox>

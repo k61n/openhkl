@@ -21,17 +21,17 @@
 
 #include <boost/interprocess/file_mapping.hpp>
 
-#include "Component.h"
-#include "Detector.h"
-#include "Diffractometer.h"
-#include "Gonio.h"
-#include "ILLDataReader.h"
-#include "MatrixParser.h"
-#include "Parser.h"
-#include "Sample.h"
-#include "Source.h"
-#include "StringIO.h"
-#include "Units.h"
+#include "core/instrument/Component.h"
+#include "core/detector/Detector.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/axes/Gonio.h"
+#include "core/data/ILLDataReader.h"
+#include "core/data/MatrixParser.h"
+#include "core/data/Parser.h"
+#include "core/instrument/Sample.h"
+#include "core/instrument/Source.h"
+#include "core/utils/StringIO.h"
+#include "core/utils/Units.h"
 
 namespace nsx {
 

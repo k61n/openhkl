@@ -128,12 +128,12 @@
   <customwidget>
    <class>ScientificNotationSpinBox</class>
    <extends>QDoubleSpinBox</extends>
-   <header>ScientificNotationSpinBox.h</header>
+   <header>apps/widgets/ScientificNotationSpinBox.h</header>
   </customwidget>
   <customwidget>
    <class>NSXQFrame</class>
    <extends>QFrame</extends>
-   <header>NSXQFrame.h</header>
+   <header>apps/frames/NSXQFrame.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

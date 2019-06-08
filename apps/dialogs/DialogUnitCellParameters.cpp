@@ -12,10 +12,10 @@
 //
 //  ***********************************************************************************************
 
-#include <core/UnitCell.h>
-#include <core/Units.h>
+#include "core/crystal/UnitCell.h"
+#include "core/utils/Units.h"
 
-#include "DialogUnitCellParameters.h"
+#include "apps/dialogs/DialogUnitCellParameters.h"
 #include "ui_DialogUnitCellParameters.h"
 
 DialogUnitCellParameters::DialogUnitCellParameters(nsx::sptrUnitCell unitCell, QWidget* parent)

@@ -21,11 +21,11 @@
 
 #include <Eigen/SparseCore>
 
-#include "CrystalTypes.h"
-#include "FitParameters.h"
-#include "InstrumentTypes.h"
-#include "ReciprocalVector.h"
-#include "UnitCell.h"
+#include "core/crystal/CrystalTypes.h"
+#include "core/fitting/FitParameters.h"
+#include "core/instrument/InstrumentTypes.h"
+#include "core/rec_space/ReciprocalVector.h"
+#include "core/crystal/UnitCell.h"
 
 namespace nsx {
 

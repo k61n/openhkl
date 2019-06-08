@@ -12,9 +12,9 @@
 //
 //  ***********************************************************************************************
 
-#include "PlotFactory.h"
-#include "PeakPlot.h"
-#include "SimplePlot.h"
+#include "apps/plot/PlotFactory.h"
+#include "apps/plot/PeakPlot.h"
+#include "apps/plot/SimplePlot.h"
 
 PlotFactory::PlotFactory()
 {

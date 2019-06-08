@@ -22,7 +22,7 @@
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_vector.h>
 
-#include "FitParameters.h"
+#include "core/fitting/FitParameters.h"
 
 namespace nsx {
 struct MinimizerGSL;

@@ -12,19 +12,19 @@
 //
 //  ***********************************************************************************************
 
-#include <core/Logger.h>
-#include <core/ProgressHandler.h>
-#include <core/ShapeLibrary.h>
-#include <core/UnitCell.h>
+#include "core/logger/Logger.h"
+#include "core/utils/ProgressHandler.h"
+#include "core/integration/ShapeLibrary.h"
+#include "core/crystal/UnitCell.h"
 
-#include "CollectedPeaksModel.h"
-#include "DataItem.h"
-#include "DialogPredictPeaks.h"
-#include "ExperimentItem.h"
-#include "LibraryItem.h"
-#include "MetaTypes.h"
-#include "PeakListItem.h"
-#include "PeaksItem.h"
+#include "apps/models/CollectedPeaksModel.h"
+#include "apps/models/DataItem.h"
+#include "apps/dialogs/DialogPredictPeaks.h"
+#include "apps/models/ExperimentItem.h"
+#include "apps/models/LibraryItem.h"
+#include "apps/models/MetaTypes.h"
+#include "apps/models/PeakListItem.h"
+#include "apps/models/PeaksItem.h"
 #include "ui_DialogPredictPeaks.h"
 
 DialogPredictPeaks* DialogPredictPeaks::_instance = nullptr;

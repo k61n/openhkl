@@ -17,15 +17,15 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "DataSet.h"
-#include "GruberReduction.h"
-#include "Logger.h"
-#include "MillerIndex.h"
-#include "Minimizer.h"
-#include "NiggliReduction.h"
-#include "ReciprocalVector.h"
-#include "UnitCell.h"
-#include "Units.h"
+#include "core/data/DataSet.h"
+#include "core/crystal/GruberReduction.h"
+#include "core/logger/Logger.h"
+#include "core/crystal/MillerIndex.h"
+#include "core/fitting/Minimizer.h"
+#include "core/crystal/NiggliReduction.h"
+#include "core/rec_space/ReciprocalVector.h"
+#include "core/crystal/UnitCell.h"
+#include "core/utils/Units.h"
 
 namespace nsx {
 

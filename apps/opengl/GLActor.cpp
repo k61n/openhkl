@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "GLActor.h"
+#include "apps/opengl/GLActor.h"
 
 GLActor::GLActor(const char* name) : _pos(0, 0, 0), _name(name)
 {

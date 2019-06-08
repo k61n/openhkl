@@ -12,9 +12,9 @@
 //
 //  ***********************************************************************************************
 
-#include <core/UnitCell.h>
+#include "core/crystal/UnitCell.h"
 
-#include "GLReciprocalLattice.h"
+#include "apps/opengl/GLReciprocalLattice.h"
 
 GLReciprocalLattice::GLReciprocalLattice(const char* name) : GLActor(name) {}
 

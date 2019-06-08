@@ -17,15 +17,15 @@
 
 #include "blosc.h"
 
-#include "BloscFilter.h"
-#include "Detector.h"
-#include "Diffractometer.h"
-#include "EigenToVector.h"
-#include "Gonio.h"
-#include "HDF5MetaDataReader.h"
-#include "Sample.h"
-#include "Source.h"
-#include "Units.h"
+#include "core/data/BloscFilter.h"
+#include "core/detector/Detector.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/data/EigenToVector.h"
+#include "core/axes/Gonio.h"
+#include "core/data/HDF5MetaDataReader.h"
+#include "core/instrument/Sample.h"
+#include "core/instrument/Source.h"
+#include "core/utils/Units.h"
 
 namespace nsx {
 

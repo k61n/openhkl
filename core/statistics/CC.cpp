@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include "CC.h"
-#include "MergedData.h"
+#include "core/statistics/CC.h"
+#include "core/data/MergedData.h"
 
 namespace nsx {
 

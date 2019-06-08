@@ -17,7 +17,7 @@
 
 #include <vector>
 
-#include "RefinementBatch.h"
+#include "core/refine/RefinementBatch.h"
 
 namespace nsx {
 

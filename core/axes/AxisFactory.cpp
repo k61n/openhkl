@@ -15,9 +15,9 @@
 #include <stdexcept>
 #include <string>
 
-#include "AxisFactory.h"
-#include "RotAxis.h"
-#include "TransAxis.h"
+#include "core/axes/AxisFactory.h"
+#include "core/axes/RotAxis.h"
+#include "core/axes/TransAxis.h"
 
 namespace nsx {
 

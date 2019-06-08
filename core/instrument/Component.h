@@ -22,9 +22,9 @@
 
 #include <Eigen/Dense>
 
-#include "DirectVector.h"
-#include "Gonio.h"
-#include "InstrumentTypes.h"
+#include "core/geometry/DirectVector.h"
+#include "core/axes/Gonio.h"
+#include "core/instrument/InstrumentTypes.h"
 
 namespace nsx {
 

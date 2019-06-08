@@ -3,7 +3,7 @@
 #include <memory.h>
 #include <math.h>
 
-#include "zpr.h"
+#include "devtools/ellipsoidOpenGL/zpr.h"
 
 /* This code was originally C++ :-) */
 

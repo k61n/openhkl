@@ -16,7 +16,7 @@
 #include <stdexcept>
 #include <utility>
 
-#include "AtomicConvolver.h"
+#include "core/search_peaks/AtomicConvolver.h"
 
 namespace nsx {
 

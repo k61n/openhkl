@@ -18,7 +18,7 @@
 #include <sstream>
 #include <vector>
 
-#include "StringIO.h"
+#include "core/utils/StringIO.h"
 
 namespace nsx {
 

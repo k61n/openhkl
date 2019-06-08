@@ -3,11 +3,11 @@
 #include <random>
 #include <vector>
 
-#include <core/NSXTest.h>
-#include <core/ReciprocalVector.h>
-#include <core/UnitCell.h>
-#include <core/Units.h>
-#include <core/UserDefinedUnitCellIndexer.h>
+#include "core/utils/NSXTest.h"
+#include "core/rec_space/ReciprocalVector.h"
+#include "core/crystal/UnitCell.h"
+#include "core/utils/Units.h"
+#include "core/auto_indexing/UserDefinedUnitCellIndexer.h"
 
 NSX_INIT_TEST
 

@@ -21,23 +21,23 @@
 #include <QIcon>
 #include <QString>
 
-#include <core/CrystalTypes.h>
-#include <core/DataSet.h>
-#include <core/Detector.h>
-#include <core/Diffractometer.h>
-#include <core/IDataReader.h>
-#include <core/InstrumentState.h>
-#include <core/Logger.h>
-#include <core/MetaData.h>
-#include <core/MillerIndex.h>
-#include <core/Peak3D.h>
-#include <core/PeakFilter.h>
-#include <core/ReciprocalVector.h>
-#include <core/UnitCell.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/data/DataSet.h"
+#include "core/detector/Detector.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/data/IDataReader.h"
+#include "core/instrument/InstrumentState.h"
+#include "core/logger/Logger.h"
+#include "core/data/MetaData.h"
+#include "core/crystal/MillerIndex.h"
+#include "core/crystal/Peak3D.h"
+#include "core/crystal/PeakFilter.h"
+#include "core/rec_space/ReciprocalVector.h"
+#include "core/crystal/UnitCell.h"
 
-#include "CollectedPeaksModel.h"
-#include "ProgressView.h"
-#include "SessionModel.h"
+#include "apps/models/CollectedPeaksModel.h"
+#include "apps/views/ProgressView.h"
+#include "apps/models/SessionModel.h"
 
 struct PeakFactors {
 

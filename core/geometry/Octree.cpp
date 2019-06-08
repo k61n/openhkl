@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include "Octree.h"
-#include "Ellipsoid.h"
+#include "core/geometry/Octree.h"
+#include "core/geometry/Ellipsoid.h"
 
 namespace nsx {
 

@@ -25,8 +25,8 @@
 #include <stdexcept>
 #include <string>
 
-#include "Path.h"
-#include "StringIO.h"
+#include "core/utils/Path.h"
+#include "core/utils/StringIO.h"
 
 namespace nsx {
 

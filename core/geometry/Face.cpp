@@ -16,9 +16,9 @@
 
 #include <Eigen/Dense>
 
-#include "Edge.h"
-#include "Face.h"
-#include "Vertex.h"
+#include "core/geometry/Edge.h"
+#include "core/geometry/Face.h"
+#include "core/geometry/Vertex.h"
 
 namespace nsx {
 

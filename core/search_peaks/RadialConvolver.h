@@ -50,7 +50,7 @@
 // background. This make the kernel effective for peak-finding in images which
 // have a non-homogeneous background.
 
-#include "AtomicConvolver.h"
+#include "core/search_peaks/AtomicConvolver.h"
 
 namespace nsx {
 

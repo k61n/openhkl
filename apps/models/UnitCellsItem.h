@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "TreeItem.h"
+#include "apps/models/TreeItem.h"
 
 class UnitCellItem;
 

@@ -2,12 +2,12 @@
 
 #include <Eigen/Dense>
 
-#include <core/DirectVector.h>
-#include <core/FlatDetector.h>
-#include <core/Gonio.h>
-#include <core/InstrumentState.h>
-#include <core/NSXTest.h>
-#include <core/Units.h>
+#include "core/geometry/DirectVector.h"
+#include "core/detector/FlatDetector.h"
+#include "core/axes/Gonio.h"
+#include "core/instrument/InstrumentState.h"
+#include "core/utils/NSXTest.h"
+#include "core/utils/Units.h"
 
 NSX_INIT_TEST
 

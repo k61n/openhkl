@@ -17,7 +17,7 @@
 #include <QMimeData>
 #include <QModelIndex>
 
-#include "CopyPasteTableView.h"
+#include "apps/widgets/CopyPasteTableView.h"
 
 CopyPasteTableView::CopyPasteTableView(QWidget* parent) : QTableView(parent) {}
 

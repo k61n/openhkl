@@ -16,9 +16,9 @@
 
 #include <QJsonObject>
 
-#include <core/InstrumentTypes.h>
+#include "core/instrument/InstrumentTypes.h"
 
-#include "TreeItem.h"
+#include "apps/models/TreeItem.h"
 
 class DetectorItem;
 class SampleItem;

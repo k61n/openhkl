@@ -15,15 +15,15 @@
 #include <QComboBox>
 #include <QDoubleSpinBox>
 
-#include <core/Diffractometer.h>
-#include <core/InstrumentTypes.h>
-#include <core/Logger.h>
-#include <core/Monochromator.h>
-#include <core/Source.h>
-#include <core/Units.h>
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentTypes.h"
+#include "core/logger/Logger.h"
+#include "core/instrument/Monochromator.h"
+#include "core/instrument/Source.h"
+#include "core/utils/Units.h"
 
-#include "SourceItem.h"
-#include "SourcePropertyWidget.h"
+#include "apps/models/SourceItem.h"
+#include "apps/tree/SourcePropertyWidget.h"
 
 #include "ui_SourcePropertyWidget.h"
 

@@ -16,7 +16,7 @@
 
 #include <QImage>
 
-#include "ColorMap.h"
+#include "apps/ColorMap.h"
 
 ColorMap::ColorMap(const double* rgb) : _rgb(256 * 3, 0), _log_rgb(256 * 3, 0)
 

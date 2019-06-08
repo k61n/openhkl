@@ -19,9 +19,9 @@
 
 #include <yaml-cpp/yaml.h>
 
-#include "Axis.h"
-#include "Factory.h"
-#include "Singleton.h"
+#include "core/axes/Axis.h"
+#include "core/utils/Factory.h"
+#include "core/utils/Singleton.h"
 
 namespace nsx {
 

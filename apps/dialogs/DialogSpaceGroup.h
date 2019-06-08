@@ -22,9 +22,9 @@
 
 #include <QDialog>
 
-#include <core/DataSet.h>
-#include <core/DataTypes.h>
-#include <core/SpaceGroup.h>
+#include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
+#include "core/crystal/SpaceGroup.h"
 
 class QModelIndex;
 class QWidget;

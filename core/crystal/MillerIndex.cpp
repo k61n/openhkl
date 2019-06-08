@@ -16,10 +16,10 @@
 
 #include <Eigen/Dense>
 
-#include "MillerIndex.h"
-#include "Peak3D.h"
-#include "ReciprocalVector.h"
-#include "UnitCell.h"
+#include "core/crystal/MillerIndex.h"
+#include "core/crystal/Peak3D.h"
+#include "core/rec_space/ReciprocalVector.h"
+#include "core/crystal/UnitCell.h"
 
 namespace nsx {
 

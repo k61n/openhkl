@@ -14,9 +14,9 @@
 
 #pragma once
 
-#include <core/InstrumentTypes.h>
+#include "core/instrument/InstrumentTypes.h"
 
-#include "TreeItem.h"
+#include "apps/models/TreeItem.h"
 
 //! Interface for tree Items for which
 //! one wants to show internal properties

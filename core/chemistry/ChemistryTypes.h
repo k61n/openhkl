@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-#include "Variant.h"
+#include "core/utils/Variant.h"
 
 namespace nsx {
 

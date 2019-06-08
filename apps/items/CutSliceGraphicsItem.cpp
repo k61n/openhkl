@@ -23,15 +23,15 @@
 
 #include <Eigen/Dense>
 
-#include <core/DataSet.h>
-#include <core/Detector.h>
-#include <core/Diffractometer.h>
-#include <core/IDataReader.h>
+#include "core/data/DataSet.h"
+#include "core/detector/Detector.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/data/IDataReader.h"
 
-#include "CutSliceGraphicsItem.h"
-#include "DetectorScene.h"
-#include "SXPlot.h"
-#include "SimplePlot.h"
+#include "apps/items/CutSliceGraphicsItem.h"
+#include "apps/models/DetectorScene.h"
+#include "apps/plot/SXPlot.h"
+#include "apps/plot/SimplePlot.h"
 
 CutSliceGraphicsItem::CutSliceGraphicsItem(nsx::sptrDataSet data, bool horizontal)
     : CutterGraphicsItem(data), _horizontal(horizontal)

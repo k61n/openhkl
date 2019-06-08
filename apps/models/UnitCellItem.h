@@ -14,10 +14,10 @@
 
 #pragma once
 
-#include "InspectableTreeItem.h"
+#include "apps/models/InspectableTreeItem.h"
 
-#include <core/CrystalTypes.h>
-#include <core/InstrumentTypes.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/instrument/InstrumentTypes.h"
 
 class QWidget;
 

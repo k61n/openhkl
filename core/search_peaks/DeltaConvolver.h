@@ -15,7 +15,7 @@
 #ifndef CORE_SEARCH_PEAKS_DELTACONVOLVER_H
 #define CORE_SEARCH_PEAKS_DELTACONVOLVER_H
 
-#include "AtomicConvolver.h"
+#include "core/search_peaks/AtomicConvolver.h"
 
 namespace nsx {
 

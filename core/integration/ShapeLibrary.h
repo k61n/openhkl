@@ -20,12 +20,12 @@
 #include <map>
 #include <vector>
 
-#include "CrystalTypes.h"
-#include "DataTypes.h"
-#include "DetectorEvent.h"
-#include "MillerIndex.h"
-#include "Profile1D.h"
-#include "Profile3D.h"
+#include "core/crystal/CrystalTypes.h"
+#include "core/data/DataTypes.h"
+#include "core/detector/DetectorEvent.h"
+#include "core/crystal/MillerIndex.h"
+#include "core/integration/Profile1D.h"
+#include "core/integration/Profile3D.h"
 
 namespace nsx {
 

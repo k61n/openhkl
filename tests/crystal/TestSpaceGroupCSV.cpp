@@ -2,10 +2,10 @@
 #include <map>
 #include <string>
 
-#include <core/CSV.h>
-#include <core/NSXTest.h>
-#include <core/SpaceGroup.h>
-#include <core/UnitCell.h>
+#include "core/utils/CSV.h"
+#include "core/utils/NSXTest.h"
+#include "core/crystal/SpaceGroup.h"
+#include "core/crystal/UnitCell.h"
 
 NSX_INIT_TEST
 

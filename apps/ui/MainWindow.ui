@@ -1744,7 +1744,7 @@ QDockWidget::title {
   <customwidget>
    <class>NoteBook</class>
    <extends>QTextEdit</extends>
-   <header>NoteBook.h</header>
+   <header>apps/NoteBook.h</header>
   </customwidget>
   <customwidget>
    <class>ExperimentTree</class>

@@ -15,9 +15,9 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "Detector.h"
-#include "DetectorFactory.h"
-#include "Gonio.h"
+#include "core/detector/Detector.h"
+#include "core/detector/DetectorFactory.h"
+#include "core/axes/Gonio.h"
 
 namespace nsx {
 

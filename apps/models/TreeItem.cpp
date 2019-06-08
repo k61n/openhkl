@@ -14,8 +14,8 @@
 
 #include <QStandardItem>
 
-#include "ExperimentItem.h"
-#include "TreeItem.h"
+#include "apps/models/ExperimentItem.h"
+#include "apps/models/TreeItem.h"
 
 TreeItem::TreeItem() : QStandardItem() {}
 

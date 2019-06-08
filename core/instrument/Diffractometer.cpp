@@ -12,15 +12,15 @@
 //
 //  ***********************************************************************************************
 
-#include "Diffractometer.h"
+#include "core/instrument/Diffractometer.h"
 
-#include "Detector.h"
-#include "DetectorFactory.h"
-#include "Gonio.h"
-#include "Path.h"
+#include "core/detector/Detector.h"
+#include "core/detector/DetectorFactory.h"
+#include "core/axes/Gonio.h"
+#include "core/utils/Path.h"
 #include "Resources.h"
-#include "Sample.h"
-#include "Source.h"
+#include "core/instrument/Sample.h"
+#include "core/instrument/Source.h"
 
 namespace nsx {
 

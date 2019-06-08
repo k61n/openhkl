@@ -18,10 +18,10 @@
 #include <QString>
 #include <QStringList>
 
-#include <core/Path.h>
-#include <core/Resources.h>
+#include "core/utils/Path.h"
+#include "Resources.h"
 
-#include "DialogExperiment.h"
+#include "apps/dialogs/DialogExperiment.h"
 #include "ui_DialogExperiment.h"
 
 DialogExperiment::DialogExperiment(QWidget* parent) : QDialog(parent), ui(new Ui::DialogExperiment)

@@ -20,12 +20,12 @@
 
 #include <Eigen/Dense>
 
-#include "BrillouinZone.h"
-#include "GeometryTypes.h"
-#include "IntegrationRegion.h"
-#include "Intensity.h"
-#include "ProgressHandler.h"
-#include "UtilsTypes.h"
+#include "core/crystal/BrillouinZone.h"
+#include "core/geometry/GeometryTypes.h"
+#include "core/integration/IntegrationRegion.h"
+#include "core/crystal/Intensity.h"
+#include "core/utils/ProgressHandler.h"
+#include "core/utils/UtilsTypes.h"
 
 namespace nsx {
 

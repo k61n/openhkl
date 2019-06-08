@@ -12,13 +12,13 @@
 //
 //  ***********************************************************************************************
 
-#include <core/Experiment.h>
-#include <core/Peak3D.h>
+#include "core/instrument/Experiment.h"
+#include "core/crystal/Peak3D.h"
 
-#include "CollectedPeaksModel.h"
-#include "ExperimentItem.h"
-#include "SessionModel.h"
-#include "WidgetFoundPeaks.h"
+#include "apps/models/CollectedPeaksModel.h"
+#include "apps/models/ExperimentItem.h"
+#include "apps/models/SessionModel.h"
+#include "apps/widgets/WidgetFoundPeaks.h"
 
 #include "ui_WidgetFoundPeaks.h"
 

@@ -19,8 +19,8 @@
 
 #include <Eigen/Dense>
 
-#include "CrystalTypes.h"
-#include "ReciprocalVector.h"
+#include "core/crystal/CrystalTypes.h"
+#include "core/rec_space/ReciprocalVector.h"
 
 namespace nsx {
 

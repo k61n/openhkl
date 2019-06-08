@@ -16,7 +16,7 @@
 #include <sstream>
 #include <stdexcept>
 
-#include "Path.h"
+#include "core/utils/Path.h"
 #include "Resources.h"
 
 namespace nsx {

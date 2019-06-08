@@ -17,10 +17,10 @@
 
 #include <Eigen/Core>
 
-#include "ConvexHull.h"
-#include "Ellipsoid.h"
-#include "GeometryTypes.h"
-#include "PeakData.h"
+#include "core/geometry/ConvexHull.h"
+#include "core/geometry/Ellipsoid.h"
+#include "core/geometry/GeometryTypes.h"
+#include "core/crystal/PeakData.h"
 
 namespace nsx {
 

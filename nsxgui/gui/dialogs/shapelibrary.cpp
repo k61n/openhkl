@@ -28,14 +28,14 @@
 
 #include "apps/ColorMap.h"
 #include "apps/views/ProgressView.h"
-#include <core/DataSet.h>
-#include <core/Logger.h>
-#include <core/Peak3D.h>
-#include <core/PeakCoordinateSystem.h>
-#include <core/PeakFilter.h>
-#include <core/Profile3D.h>
-#include <core/ShapeIntegrator.h>
-#include <core/ShapeLibrary.h>
+#include "core/data/DataSet.h"
+#include "core/logger/Logger.h"
+#include "core/crystal/Peak3D.h"
+#include "core/crystal/PeakCoordinateSystem.h"
+#include "core/crystal/PeakFilter.h"
+#include "core/integration/Profile3D.h"
+#include "core/integration/ShapeIntegrator.h"
+#include "core/integration/ShapeLibrary.h"
 
 
 ShapeLibraryDialog::ShapeLibraryDialog() : QDialog {}

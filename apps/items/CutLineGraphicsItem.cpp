@@ -26,13 +26,13 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
-#include <core/DataSet.h>
-#include <core/Detector.h>
+#include "core/data/DataSet.h"
+#include "core/detector/Detector.h"
 
-#include "CutLineGraphicsItem.h"
-#include "DetectorScene.h"
-#include "SXPlot.h"
-#include "SimplePlot.h"
+#include "apps/items/CutLineGraphicsItem.h"
+#include "apps/models/DetectorScene.h"
+#include "apps/plot/SXPlot.h"
+#include "apps/plot/SimplePlot.h"
 
 CutLineGraphicsItem::CutLineGraphicsItem(nsx::sptrDataSet data)
     : CutterGraphicsItem(data), _nPoints(10)

@@ -24,7 +24,7 @@
 
 #include <Eigen/Dense>
 
-#include "GeometryTypes.h"
+#include "core/geometry/GeometryTypes.h"
 
 namespace nsx {
 

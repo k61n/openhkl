@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "ConstantConvolver.h"
+#include "core/search_peaks/ConstantConvolver.h"
 
 namespace nsx {
 

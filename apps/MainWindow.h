@@ -21,12 +21,12 @@
 #include <QMenu>
 #include <QProgressBar>
 
-#include <core/CrystalTypes.h>
-#include <core/DataSet.h>
-#include <core/DataTypes.h>
-#include <core/UtilsTypes.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
+#include "core/utils/UtilsTypes.h"
 
-#include "ProgressView.h"
+#include "apps/views/ProgressView.h"
 
 class QListWidgetItem;
 class PlottableGraphicsItem;

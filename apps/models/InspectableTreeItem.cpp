@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "InspectableTreeItem.h"
+#include "apps/models/InspectableTreeItem.h"
 
 InspectableTreeItem::InspectableTreeItem() : TreeItem() {}
 

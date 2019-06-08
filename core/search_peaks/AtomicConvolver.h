@@ -26,8 +26,8 @@
 
 #include <Eigen/Dense>
 
-#include "Convolver.h"
-#include "MathematicsTypes.h"
+#include "core/search_peaks/Convolver.h"
+#include "core/mathematics/MathematicsTypes.h"
 
 namespace nsx {
 

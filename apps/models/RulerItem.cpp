@@ -19,7 +19,7 @@
 #include <QPainter>
 #include <QPen>
 
-#include "RulerItem.h"
+#include "apps/models/RulerItem.h"
 
 RulerItem::RulerItem(QGraphicsItem* parent) : QGraphicsItem(parent)
 {

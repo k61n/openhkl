@@ -20,16 +20,16 @@
 #include <QString>
 #include <QStringList>
 
-#include <core/DataReaderFactory.h>
-#include <core/DataSet.h>
-#include <core/Diffractometer.h>
-#include <core/InstrumentTypes.h>
-#include <core/Logger.h>
-#include <core/Path.h>
-#include <core/Resources.h>
+#include "core/data/DataReaderFactory.h"
+#include "core/data/DataSet.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentTypes.h"
+#include "core/logger/Logger.h"
+#include "core/utils/Path.h"
+#include "Resources.h"
 
-#include "DataItem.h"
-#include "DialogHDF5Converter.h"
+#include "apps/models/DataItem.h"
+#include "apps/dialogs/DialogHDF5Converter.h"
 #include "ui_DialogHDF5Converter.h"
 
 DialogHDF5Converter::DialogHDF5Converter(const nsx::DataList& numors, QWidget* parent)

@@ -22,12 +22,12 @@
 
 #include <Eigen/Dense>
 
-#include "Component.h"
-#include "DataTypes.h"
-#include "DetectorEvent.h"
-#include "DirectVector.h"
-#include "Enums.h"
-#include "GeometryTypes.h"
+#include "core/instrument/Component.h"
+#include "core/data/DataTypes.h"
+#include "core/detector/DetectorEvent.h"
+#include "core/geometry/DirectVector.h"
+#include "core/utils/Enums.h"
+#include "core/geometry/GeometryTypes.h"
 
 namespace nsx {
 

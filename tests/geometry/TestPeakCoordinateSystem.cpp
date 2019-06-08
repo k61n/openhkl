@@ -6,17 +6,17 @@
 
 #include <Eigen/Dense>
 
-#include <core/NSXTest.h>
+#include "core/utils/NSXTest.h"
 
-#include <core/CrystalTypes.h>
-#include <core/DataReaderFactory.h>
-#include <core/DataSet.h>
-#include <core/Detector.h>
-#include <core/DetectorEvent.h>
-#include <core/Diffractometer.h>
-#include <core/Experiment.h>
-#include <core/Peak3D.h>
-#include <core/PeakCoordinateSystem.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/data/DataReaderFactory.h"
+#include "core/data/DataSet.h"
+#include "core/detector/Detector.h"
+#include "core/detector/DetectorEvent.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Experiment.h"
+#include "core/crystal/Peak3D.h"
+#include "core/crystal/PeakCoordinateSystem.h"
 
 NSX_INIT_TEST
 

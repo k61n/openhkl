@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "EigenToVector.h"
+#include "core/data/EigenToVector.h"
 
 namespace nsx {
 

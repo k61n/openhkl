@@ -252,18 +252,18 @@
   <customwidget>
    <class>CopyPasteTableView</class>
    <extends>QTableView</extends>
-   <header>CopyPasteTableView.h</header>
+   <header>apps/widgets/CopyPasteTableView.h</header>
   </customwidget>
   <customwidget>
    <class>NSXQFrame</class>
    <extends>QFrame</extends>
-   <header>NSXQFrame.h</header>
+   <header>apps/frames/NSXQFrame.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>SXPlot</class>
    <extends>QWidget</extends>
-   <header>SXPlot.h</header>
+   <header>apps/plot/SXPlot.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

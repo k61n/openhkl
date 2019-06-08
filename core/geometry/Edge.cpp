@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include "Edge.h"
-#include "Vertex.h"
+#include "core/geometry/Edge.h"
+#include "core/geometry/Vertex.h"
 
 namespace nsx {
 

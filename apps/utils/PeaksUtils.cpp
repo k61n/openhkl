@@ -14,9 +14,9 @@
 
 #include <limits>
 
-#include <core/Peak3D.h>
+#include "core/crystal/Peak3D.h"
 
-#include "PeaksUtils.h"
+#include "apps/utils/PeaksUtils.h"
 
 std::pair<double, double> dRange(const nsx::PeakList& peaks)
 {

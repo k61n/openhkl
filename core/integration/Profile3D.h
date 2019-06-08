@@ -19,7 +19,7 @@
 
 #include <Eigen/Dense>
 
-#include "AABB.h"
+#include "core/geometry/AABB.h"
 
 namespace nsx {
 

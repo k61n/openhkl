@@ -19,8 +19,8 @@
 
 #include <Eigen/Dense>
 
-#include "NiggliCharacter.h"
-#include "UnitCell.h"
+#include "core/crystal/NiggliCharacter.h"
+#include "core/crystal/UnitCell.h"
 
 namespace nsx {
 

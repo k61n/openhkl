@@ -17,10 +17,10 @@
 
 #include <Eigen/Geometry>
 
-#include "DirectVector.h"
-#include "Gonio.h"
-#include "RotAxis.h"
-#include "Units.h"
+#include "core/geometry/DirectVector.h"
+#include "core/axes/Gonio.h"
+#include "core/axes/RotAxis.h"
+#include "core/utils/Units.h"
 
 namespace nsx {
 

@@ -24,8 +24,8 @@
 #include <QHBoxLayout>
 #include <QSpacerItem>
 #include <QVBoxLayout>
-#include <core/SpaceGroup.h>
-#include <core/UnitCell.h>
+#include "core/crystal/SpaceGroup.h"
+#include "core/crystal/UnitCell.h"
 
 UnitCellProperty::UnitCellProperty() : QcrWidget {"unitCellProperty"}
 {

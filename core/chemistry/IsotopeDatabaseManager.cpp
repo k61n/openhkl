@@ -14,11 +14,11 @@
 
 #include <stdexcept>
 
-#include "IsotopeDatabaseManager.h"
-#include "Path.h"
+#include "core/chemistry/IsotopeDatabaseManager.h"
+#include "core/utils/Path.h"
 #include "Resources.h"
-#include "Units.h"
-#include "YAMLType.h"
+#include "core/utils/Units.h"
+#include "core/utils/YAMLType.h"
 
 namespace nsx {
 

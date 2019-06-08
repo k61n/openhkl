@@ -18,30 +18,30 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-#include <core/CC.h>
-#include <core/DataSet.h>
-#include <core/Diffractometer.h>
-#include <core/Logger.h>
-#include <core/MergedData.h>
-#include <core/Peak3D.h>
-#include <core/PeakFilter.h>
-#include <core/RFactor.h>
-#include <core/ResolutionShell.h>
-#include <core/Source.h>
-#include <core/UnitCell.h>
+#include "core/statistics/CC.h"
+#include "core/data/DataSet.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/logger/Logger.h"
+#include "core/data/MergedData.h"
+#include "core/crystal/Peak3D.h"
+#include "core/crystal/PeakFilter.h"
+#include "core/statistics/RFactor.h"
+#include "core/crystal/ResolutionShell.h"
+#include "core/instrument/Source.h"
+#include "core/crystal/UnitCell.h"
 
-#include "DataItem.h"
-#include "DetectorItem.h"
-#include "ExperimentItem.h"
-#include "FrameStatistics.h"
-#include "InstrumentItem.h"
-#include "LibraryItem.h"
-#include "PeaksItem.h"
-#include "SampleItem.h"
-#include "SessionModel.h"
-#include "SourceItem.h"
-#include "TreeItem.h"
-#include "UnitCellsItem.h"
+#include "apps/models/DataItem.h"
+#include "apps/models/DetectorItem.h"
+#include "apps/models/ExperimentItem.h"
+#include "apps/frames/FrameStatistics.h"
+#include "apps/models/InstrumentItem.h"
+#include "apps/models/LibraryItem.h"
+#include "apps/models/PeaksItem.h"
+#include "apps/models/SampleItem.h"
+#include "apps/models/SessionModel.h"
+#include "apps/models/SourceItem.h"
+#include "apps/models/TreeItem.h"
+#include "apps/models/UnitCellsItem.h"
 
 ExperimentItem::ExperimentItem(nsx::sptrExperiment experiment) : TreeItem(), _experiment(experiment)
 {

@@ -21,9 +21,9 @@
 #include <Eigen/Eigenvalues>
 #include <Eigen/Geometry>
 
-#include "AABB.h"
-#include "DataTypes.h"
-#include "GeometryTypes.h"
+#include "core/geometry/AABB.h"
+#include "core/data/DataTypes.h"
+#include "core/geometry/GeometryTypes.h"
 
 namespace nsx {
 

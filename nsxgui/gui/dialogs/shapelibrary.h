@@ -22,10 +22,10 @@
 #include <QGroupBox>
 #include <QTableView>
 
-#include <core/CrystalTypes.h>
-#include <core/DataTypes.h>
-#include <core/InstrumentTypes.h>
-#include <core/Profile3D.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/data/DataTypes.h"
+#include "core/instrument/InstrumentTypes.h"
+#include "core/integration/Profile3D.h"
 
 #include "apps/ColorMap.h"
 #include <QCR/widgets/actions.h>

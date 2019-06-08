@@ -17,7 +17,7 @@
 
 #include <vector>
 
-#include "CrystalTypes.h"
+#include "core/crystal/CrystalTypes.h"
 
 namespace nsx {
 

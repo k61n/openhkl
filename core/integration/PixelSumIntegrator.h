@@ -17,7 +17,7 @@
 
 #include <Eigen/Dense>
 
-#include "MeanBackgroundIntegrator.h"
+#include "core/integration/MeanBackgroundIntegrator.h"
 
 namespace nsx {
 

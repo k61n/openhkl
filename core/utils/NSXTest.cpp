@@ -14,7 +14,7 @@
 
 #include <cstdlib>
 
-#include "NSXTest.h"
+#include "core/utils/NSXTest.h"
 
 namespace nsx {
 

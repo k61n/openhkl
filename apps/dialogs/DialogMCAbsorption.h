@@ -17,7 +17,7 @@
 #include <QDialog>
 
 #include "models/SessionModel.h"
-#include <core/InstrumentTypes.h>
+#include "core/instrument/InstrumentTypes.h"
 
 class QWidget;
 

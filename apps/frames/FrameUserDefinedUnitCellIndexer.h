@@ -17,10 +17,10 @@
 #include <utility>
 #include <vector>
 
-#include <core/CrystalTypes.h>
-#include <core/UserDefinedUnitCellIndexer.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/auto_indexing/UserDefinedUnitCellIndexer.h"
 
-#include "NSXQFrame.h"
+#include "apps/frames/NSXQFrame.h"
 
 namespace Ui {
 class FrameUserDefinedUnitCellIndexer;

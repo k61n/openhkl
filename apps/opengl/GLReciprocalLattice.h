@@ -14,9 +14,9 @@
 
 #pragma once
 
-#include <core/CrystalTypes.h>
+#include "core/crystal/CrystalTypes.h"
 
-#include "GLActor.h"
+#include "apps/opengl/GLActor.h"
 
 class GLReciprocalLattice : public GLActor {
 

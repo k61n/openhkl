@@ -13,12 +13,12 @@
 //  ***********************************************************************************************
 
 
-#include "session.h"
+#include "nsxgui/gui/models/session.h"
 
-#include <core/DataReaderFactory.h>
-#include <core/DataSet.h>
-#include <core/IDataReader.h>
-#include <core/RawDataReader.h>
+#include "core/data/DataReaderFactory.h"
+#include "core/data/DataSet.h"
+#include "core/data/IDataReader.h"
+#include "core/data/RawDataReader.h"
 
 #include "apps/dialogs/DialogRawData.h"
 #include "nsxgui/gui/dialogs/experimentdialog.h"

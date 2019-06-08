@@ -2,15 +2,15 @@
 
 #include <Eigen/Dense>
 
-#include <core/DataSet.h>
-#include <core/DetectorEvent.h>
-#include <core/Ellipsoid.h>
-#include <core/Experiment.h>
-#include <core/FakeDataReader.h>
-#include <core/Peak3D.h>
-#include <core/ReciprocalVector.h>
-#include <core/SpaceGroup.h>
-#include <core/UnitCell.h>
+#include "core/data/DataSet.h"
+#include "core/detector/DetectorEvent.h"
+#include "core/geometry/Ellipsoid.h"
+#include "core/instrument/Experiment.h"
+#include "core/data/FakeDataReader.h"
+#include "core/crystal/Peak3D.h"
+#include "core/rec_space/ReciprocalVector.h"
+#include "core/crystal/SpaceGroup.h"
+#include "core/crystal/UnitCell.h"
 
 //! Correct the generated image by adding baseline, gain, and optional Poisson
 //! noise

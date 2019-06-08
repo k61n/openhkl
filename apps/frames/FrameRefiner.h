@@ -16,11 +16,11 @@
 
 #include <map>
 
-#include <core/CrystalTypes.h>
-#include <core/DataTypes.h>
-#include <core/Refiner.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/data/DataTypes.h"
+#include "core/refine/Refiner.h"
 
-#include "NSXQFrame.h"
+#include "apps/frames/NSXQFrame.h"
 
 namespace Ui {
 class FrameRefiner;

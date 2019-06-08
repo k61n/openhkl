@@ -19,8 +19,8 @@
 
 #include <Eigen/Dense>
 
-#include "CrystalTypes.h"
-#include "MergedPeak.h"
+#include "core/crystal/CrystalTypes.h"
+#include "core/crystal/MergedPeak.h"
 
 namespace nsx {
 

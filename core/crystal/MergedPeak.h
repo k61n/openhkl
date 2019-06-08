@@ -17,10 +17,10 @@
 
 #include <Eigen/Dense>
 
-#include "CrystalTypes.h"
-#include "Intensity.h"
-#include "MillerIndex.h"
-#include "SpaceGroup.h"
+#include "core/crystal/CrystalTypes.h"
+#include "core/crystal/Intensity.h"
+#include "core/crystal/MillerIndex.h"
+#include "core/crystal/SpaceGroup.h"
 
 namespace nsx {
 

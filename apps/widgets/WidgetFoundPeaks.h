@@ -16,8 +16,8 @@
 
 #include <QWidget>
 
-#include <core/CrystalTypes.h>
-#include <core/InstrumentTypes.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/instrument/InstrumentTypes.h"
 
 namespace Ui {
 class WidgetFoundPeaks;

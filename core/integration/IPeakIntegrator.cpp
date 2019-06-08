@@ -12,15 +12,15 @@
 //
 //  ***********************************************************************************************
 
-#include "IPeakIntegrator.h"
-#include "BrillouinZone.h"
-#include "DataSet.h"
-#include "Intensity.h"
-#include "Logger.h"
-#include "Peak3D.h"
-#include "ProgressHandler.h"
-#include "UnitCell.h"
-#include "UtilsTypes.h"
+#include "core/integration/IPeakIntegrator.h"
+#include "core/crystal/BrillouinZone.h"
+#include "core/data/DataSet.h"
+#include "core/crystal/Intensity.h"
+#include "core/logger/Logger.h"
+#include "core/crystal/Peak3D.h"
+#include "core/utils/ProgressHandler.h"
+#include "core/crystal/UnitCell.h"
+#include "core/utils/UtilsTypes.h"
 
 namespace nsx {
 

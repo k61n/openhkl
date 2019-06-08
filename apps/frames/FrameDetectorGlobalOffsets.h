@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "NSXQFrame.h"
+#include "apps/frames/NSXQFrame.h"
 
 namespace Ui {
 class FrameDetectorGlobalOffsets;

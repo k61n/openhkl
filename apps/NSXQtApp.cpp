@@ -12,12 +12,12 @@
 //
 //  ***********************************************************************************************
 
-#include <core/Logger.h>
-#include <core/Version.h>
+#include "core/logger/Logger.h"
+#include "Version.h"
 
 #include <QApplication>
 
-#include "NSXQtApp.h"
+#include "apps/NSXQtApp.h"
 
 NSXQtApp::NSXQtApp(int& argc, char* argv[]) : QApplication(argc, argv)
 {

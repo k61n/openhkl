@@ -1,8 +1,8 @@
 #include <string>
 
-#include <core/NSXTest.h>
-#include <core/Path.h>
-#include <core/StringIO.h>
+#include "core/utils/NSXTest.h"
+#include "core/utils/Path.h"
+#include "core/utils/StringIO.h"
 
 NSX_INIT_TEST
 

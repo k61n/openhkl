@@ -2,8 +2,8 @@
 
 #include <Eigen/Dense>
 
-#include <core/AABB.h>
-#include <core/NSXTest.h>
+#include "core/geometry/AABB.h"
+#include "core/utils/NSXTest.h"
 
 const double tolerance = 1e-5;
 

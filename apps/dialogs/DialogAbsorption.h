@@ -22,8 +22,8 @@
 #include <QDialog>
 #include <QString>
 
-#include <core/GeometryTypes.h>
-#include <core/InstrumentTypes.h>
+#include "core/geometry/GeometryTypes.h"
+#include "core/instrument/InstrumentTypes.h"
 
 namespace Ui {
 class DialogAbsorption;

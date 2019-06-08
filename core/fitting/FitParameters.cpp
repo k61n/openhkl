@@ -17,7 +17,7 @@
 #include <Eigen/Dense>
 #include <Eigen/SparseQR>
 
-#include "FitParameters.h"
+#include "core/fitting/FitParameters.h"
 
 // DEBUGGING
 #include <iostream>

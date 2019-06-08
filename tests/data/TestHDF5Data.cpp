@@ -1,9 +1,9 @@
 #include <Eigen/Dense>
 
-#include <core/DataReaderFactory.h>
-#include <core/DataSet.h>
-#include <core/Diffractometer.h>
-#include <core/NSXTest.h>
+#include "core/data/DataReaderFactory.h"
+#include "core/data/DataSet.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/utils/NSXTest.h"
 
 NSX_INIT_TEST
 

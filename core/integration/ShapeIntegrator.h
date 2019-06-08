@@ -17,8 +17,8 @@
 
 #include <Eigen/Dense>
 
-#include "PixelSumIntegrator.h"
-#include "ShapeLibrary.h"
+#include "core/integration/PixelSumIntegrator.h"
+#include "core/integration/ShapeLibrary.h"
 
 namespace nsx {
 

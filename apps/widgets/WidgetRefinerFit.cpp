@@ -14,10 +14,10 @@
 
 #include <QFileInfo>
 
-#include <core/DataSet.h>
+#include "core/data/DataSet.h"
 
-#include "MetaTypes.h"
-#include "WidgetRefinerFit.h"
+#include "apps/models/MetaTypes.h"
+#include "apps/widgets/WidgetRefinerFit.h"
 
 #include "ui_WidgetRefinerFit.h"
 

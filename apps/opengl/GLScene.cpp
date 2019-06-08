@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include "GLScene.h"
-#include "GLActor.h"
+#include "apps/opengl/GLScene.h"
+#include "apps/opengl/GLActor.h"
 
 GLScene::GLScene() : _current(0) {}
 GLScene::~GLScene() {}

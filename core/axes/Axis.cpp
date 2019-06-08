@@ -15,10 +15,10 @@
 #include <limits>
 #include <stdexcept>
 
-#include "Axis.h"
-#include "AxisFactory.h"
-#include "Units.h"
-#include "YAMLType.h"
+#include "core/axes/Axis.h"
+#include "core/axes/AxisFactory.h"
+#include "core/utils/Units.h"
+#include "core/utils/YAMLType.h"
 
 namespace nsx {
 

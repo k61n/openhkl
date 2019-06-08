@@ -16,7 +16,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "NiggliReduction.h"
+#include "core/crystal/NiggliReduction.h"
 
 namespace nsx {
 

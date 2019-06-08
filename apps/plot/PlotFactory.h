@@ -16,10 +16,10 @@
 
 #include <string>
 
-#include <core/Factory.h>
-#include <core/Singleton.h>
+#include "core/utils/Factory.h"
+#include "core/utils/Singleton.h"
 
-#include "SXPlot.h"
+#include "apps/plot/SXPlot.h"
 
 class QWidget;
 

@@ -20,9 +20,9 @@
 
 #include <yaml-cpp/yaml.h>
 
-#include "Detector.h"
-#include "Sample.h"
-#include "Source.h"
+#include "core/detector/Detector.h"
+#include "core/instrument/Sample.h"
+#include "core/instrument/Source.h"
 
 namespace nsx {
 

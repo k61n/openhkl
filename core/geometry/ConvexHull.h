@@ -22,8 +22,8 @@
 
 #include <Eigen/Dense>
 
-#include "AABB.h"
-#include "Triangle.h"
+#include "core/geometry/AABB.h"
+#include "core/geometry/Triangle.h"
 
 namespace nsx {
 

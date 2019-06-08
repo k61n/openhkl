@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include "Monochromator.h"
-#include "Units.h"
+#include "core/instrument/Monochromator.h"
+#include "core/utils/Units.h"
 
 namespace nsx {
 

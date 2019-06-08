@@ -18,8 +18,8 @@
 
 #include <QWidget>
 
-#include <core/DataTypes.h>
-#include <core/Refiner.h>
+#include "core/data/DataTypes.h"
+#include "core/refine/Refiner.h"
 
 namespace Ui {
 class WidgetRefinerFit;

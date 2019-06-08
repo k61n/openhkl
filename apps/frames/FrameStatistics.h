@@ -16,11 +16,11 @@
 
 #include <map>
 
-#include <core/CrystalTypes.h>
-#include <core/MergedData.h>
-#include <core/SpaceGroup.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/data/MergedData.h"
+#include "core/crystal/SpaceGroup.h"
 
-#include "NSXQFrame.h"
+#include "apps/frames/NSXQFrame.h"
 
 namespace Ui {
 class FrameStatistics;

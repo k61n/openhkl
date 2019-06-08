@@ -21,9 +21,9 @@
 #include <QAbstractTableModel>
 #include <QModelIndexList>
 
-#include <core/CrystalTypes.h>
-#include <core/DataTypes.h>
-#include <core/InstrumentTypes.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/data/DataTypes.h"
+#include "core/instrument/InstrumentTypes.h"
 
 class QObject;
 

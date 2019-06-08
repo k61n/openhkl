@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "DeltaConvolver.h"
+#include "core/search_peaks/DeltaConvolver.h"
 
 namespace nsx {
 

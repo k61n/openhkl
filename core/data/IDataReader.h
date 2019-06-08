@@ -20,9 +20,9 @@
 
 #include <Eigen/Dense>
 
-#include "InstrumentState.h"
-#include "InstrumentTypes.h"
-#include "MetaData.h"
+#include "core/instrument/InstrumentState.h"
+#include "core/instrument/InstrumentTypes.h"
+#include "core/data/MetaData.h"
 
 namespace nsx {
 

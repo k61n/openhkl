@@ -16,13 +16,13 @@
 
 #include <QDialog>
 
-#include <core/CrystalTypes.h>
-#include <core/DataTypes.h>
-#include <core/InstrumentTypes.h>
-#include <core/Profile3D.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/data/DataTypes.h"
+#include "core/instrument/InstrumentTypes.h"
+#include "core/integration/Profile3D.h"
 
-#include "ColorMap.h"
-#include "ExperimentItem.h"
+#include "apps/ColorMap.h"
+#include "apps/models/ExperimentItem.h"
 
 namespace Ui {
 class DialogShapeLibrary;

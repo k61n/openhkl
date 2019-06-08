@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "DialogCalibrateDistance.h"
+#include "apps/dialogs/DialogCalibrateDistance.h"
 #include "ui_DialogCalibrateDistance.h"
 
 DialogCalibrateDistance::DialogCalibrateDistance(QWidget* parent)

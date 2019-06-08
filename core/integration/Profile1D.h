@@ -19,7 +19,7 @@
 
 #include <Eigen/Dense>
 
-#include "Intensity.h"
+#include "core/crystal/Intensity.h"
 
 namespace nsx {
 

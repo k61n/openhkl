@@ -12,12 +12,12 @@
 //
 //  ***********************************************************************************************
 
-#include "InterpolatedState.h"
-#include "Component.h"
-#include "Detector.h"
-#include "Diffractometer.h"
-#include "Logger.h"
-#include "MatrixOperations.h"
+#include "core/instrument/InterpolatedState.h"
+#include "core/instrument/Component.h"
+#include "core/detector/Detector.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/logger/Logger.h"
+#include "core/mathematics/MatrixOperations.h"
 
 namespace nsx {
 

@@ -5,14 +5,14 @@
 
 #include <Eigen/Dense>
 
-#include <core/CSV.h>
-#include <core/Component.h>
-#include <core/GruberReduction.h>
-#include <core/NSXTest.h>
-#include <core/NiggliReduction.h>
-#include <core/SpaceGroup.h>
-#include <core/UnitCell.h>
-#include <core/Units.h>
+#include "core/utils/CSV.h"
+#include "core/instrument/Component.h"
+#include "core/crystal/GruberReduction.h"
+#include "core/utils/NSXTest.h"
+#include "core/crystal/NiggliReduction.h"
+#include "core/crystal/SpaceGroup.h"
+#include "core/crystal/UnitCell.h"
+#include "core/utils/Units.h"
 
 const double niggli_tolerance = 1e-9;
 const double gruber_tolerance = 1e-5;

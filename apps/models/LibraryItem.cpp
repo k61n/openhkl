@@ -12,23 +12,23 @@
 //
 //  ***********************************************************************************************
 
-#include <core/DataSet.h>
-#include <core/Diffractometer.h>
-#include <core/Logger.h>
-#include <core/ProgressHandler.h>
-#include <core/Sample.h>
-#include <core/ShapeLibrary.h>
+#include "core/data/DataSet.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/logger/Logger.h"
+#include "core/utils/ProgressHandler.h"
+#include "core/instrument/Sample.h"
+#include "core/integration/ShapeLibrary.h"
 
-#include "DataItem.h"
-#include "DialogPredictPeaks.h"
-#include "ExperimentItem.h"
-#include "InstrumentItem.h"
-#include "LibraryItem.h"
-#include "MetaTypes.h"
-#include "PeakListItem.h"
-#include "PeaksItem.h"
-#include "ProgressView.h"
-#include "UnitCellsItem.h"
+#include "apps/models/DataItem.h"
+#include "apps/dialogs/DialogPredictPeaks.h"
+#include "apps/models/ExperimentItem.h"
+#include "apps/models/InstrumentItem.h"
+#include "apps/models/LibraryItem.h"
+#include "apps/models/MetaTypes.h"
+#include "apps/models/PeakListItem.h"
+#include "apps/models/PeaksItem.h"
+#include "apps/views/ProgressView.h"
+#include "apps/models/UnitCellsItem.h"
 
 LibraryItem::LibraryItem() : TreeItem(), _library(nullptr)
 {

@@ -17,10 +17,10 @@
 #include <memory>
 #include <string>
 
-#include <core/DataTypes.h>
-#include <core/GeometryTypes.h>
+#include "core/data/DataTypes.h"
+#include "core/geometry/GeometryTypes.h"
 
-#include "CutterGraphicsItem.h"
+#include "apps/items/CutterGraphicsItem.h"
 
 class QGraphicsSceneMouseEvent;
 class QGraphicsSceneWheelEvent;

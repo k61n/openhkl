@@ -24,17 +24,17 @@
 #include <QMouseEvent>
 #include <QStandardItemModel>
 
-#include <core/DataSet.h>
-#include <core/IDataReader.h>
-#include <core/Logger.h>
-#include <core/MetaData.h>
-#include <core/Peak3D.h>
-#include <core/ProgressHandler.h>
-#include <core/UnitCell.h>
+#include "core/data/DataSet.h"
+#include "core/data/IDataReader.h"
+#include "core/logger/Logger.h"
+#include "core/data/MetaData.h"
+#include "core/crystal/Peak3D.h"
+#include "core/utils/ProgressHandler.h"
+#include "core/crystal/UnitCell.h"
 
-#include "CollectedPeaksModel.h"
-#include "PeakTableView.h"
-#include "SessionModel.h"
+#include "apps/models/CollectedPeaksModel.h"
+#include "apps/views/PeakTableView.h"
+#include "apps/models/SessionModel.h"
 
 PeakTableView::PeakTableView(QWidget* parent) : QTableView(parent)
 {

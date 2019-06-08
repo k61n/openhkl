@@ -7,19 +7,19 @@
 #include <Eigen/Dense>
 #include <Eigen/QR>
 
-#include <core/Component.h>
-#include <core/FlatDetector.h>
-#include <core/Gonio.h>
-#include <core/GruberReduction.h>
-#include <core/Monochromator.h>
-#include <core/NSXTest.h>
-#include <core/NiggliReduction.h>
-#include <core/Peak3D.h>
-#include <core/Sample.h>
-#include <core/Source.h>
-#include <core/SpaceGroup.h>
-#include <core/UnitCell.h>
-#include <core/Units.h>
+#include "core/instrument/Component.h"
+#include "core/detector/FlatDetector.h"
+#include "core/axes/Gonio.h"
+#include "core/crystal/GruberReduction.h"
+#include "core/instrument/Monochromator.h"
+#include "core/utils/NSXTest.h"
+#include "core/crystal/NiggliReduction.h"
+#include "core/crystal/Peak3D.h"
+#include "core/instrument/Sample.h"
+#include "core/instrument/Source.h"
+#include "core/crystal/SpaceGroup.h"
+#include "core/crystal/UnitCell.h"
+#include "core/utils/Units.h"
 
 const double gruber_tolerance = 1e-4;
 const double niggli_tolerance = 1e-4;

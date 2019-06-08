@@ -19,7 +19,7 @@
 #include <string>
 #include <utility>
 
-#include "MathematicsTypes.h"
+#include "core/mathematics/MathematicsTypes.h"
 
 namespace nsx {
 

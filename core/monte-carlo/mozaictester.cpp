@@ -12,13 +12,13 @@
 //
 //  ***********************************************************************************************
 
-#include "mozaictester.h"
+#include "core/monte-carlo/mozaictester.h"
 #include <iostream>
 #include <random>
 #include <vector>
 
-#include "Blob3D.h"
-#include "Logger.h"
+#include "core/geometry/Blob3D.h"
+#include "core/logger/Logger.h"
 
 namespace {
 

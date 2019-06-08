@@ -17,7 +17,7 @@
 #include "nsxgui/gui/models/session.h"
 #include <QCR/engine/logger.h>
 #include <QCR/engine/mixin.h>
-#include <core/Peak3D.h>
+#include "core/crystal/Peak3D.h"
 //  ***********************************************************************************************
 //! @class ExperimentData
 

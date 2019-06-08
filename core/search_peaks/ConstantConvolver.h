@@ -19,7 +19,7 @@
 // (rows*cols). Convolving with this kernel has the effect of taking the average
 // value of the frame.
 
-#include "AtomicConvolver.h"
+#include "core/search_peaks/AtomicConvolver.h"
 
 namespace nsx {
 

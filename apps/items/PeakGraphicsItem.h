@@ -18,10 +18,10 @@
 
 #include <string>
 
-#include <core/CrystalTypes.h>
-#include <core/GeometryTypes.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/geometry/GeometryTypes.h"
 
-#include "PlottableGraphicsItem.h"
+#include "apps/items/PlottableGraphicsItem.h"
 
 class QWidget;
 class SXPlot;

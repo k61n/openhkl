@@ -19,9 +19,9 @@
 
 #include <yaml-cpp/yaml.h>
 
-#include "Detector.h"
-#include "Factory.h"
-#include "Singleton.h"
+#include "core/detector/Detector.h"
+#include "core/utils/Factory.h"
+#include "core/utils/Singleton.h"
 
 namespace nsx {
 

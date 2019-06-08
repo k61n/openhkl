@@ -18,8 +18,8 @@
 #include <set>
 #include <vector>
 
-#include "CrystalTypes.h"
-#include "IMergedPeakStatistic.h"
+#include "core/crystal/CrystalTypes.h"
+#include "core/statistics/IMergedPeakStatistic.h"
 
 namespace nsx {
 

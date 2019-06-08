@@ -19,7 +19,7 @@
 
 #include <Eigen/Geometry>
 
-#include "Axis.h"
+#include "core/axes/Axis.h"
 
 namespace nsx {
 

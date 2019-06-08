@@ -15,9 +15,9 @@
 #ifndef CORE_INSTRUMENT_INTERPOLATEDSTATE_H
 #define CORE_INSTRUMENT_INTERPOLATEDSTATE_H
 
-#include "DirectVector.h"
-#include "InstrumentState.h"
-#include "ReciprocalVector.h"
+#include "core/geometry/DirectVector.h"
+#include "core/instrument/InstrumentState.h"
+#include "core/rec_space/ReciprocalVector.h"
 
 #include <Eigen/Core>
 

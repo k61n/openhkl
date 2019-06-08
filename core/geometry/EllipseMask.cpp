@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "EllipseMask.h"
+#include "core/geometry/EllipseMask.h"
 
 namespace nsx {
 

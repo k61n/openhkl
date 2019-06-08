@@ -17,8 +17,8 @@
 
 #include <Eigen/Dense>
 
-#include "IPeakIntegrator.h"
-#include "ShapeLibrary.h"
+#include "core/integration/IPeakIntegrator.h"
+#include "core/integration/ShapeLibrary.h"
 
 namespace nsx {
 

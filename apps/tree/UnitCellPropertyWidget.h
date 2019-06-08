@@ -18,7 +18,7 @@
 
 #include <QWidget>
 
-#include <core/CrystalTypes.h>
+#include "core/crystal/CrystalTypes.h"
 
 namespace Ui {
 class UnitCellPropertyWidget;

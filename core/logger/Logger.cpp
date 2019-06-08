@@ -17,9 +17,9 @@
 #include <fstream>
 #include <iostream>
 
-#include "AggregateStreamWrapper.h"
-#include "LogFileStreamWrapper.h"
-#include "Logger.h"
+#include "core/logger/AggregateStreamWrapper.h"
+#include "core/logger/LogFileStreamWrapper.h"
+#include "core/logger/Logger.h"
 
 namespace nsx {
 

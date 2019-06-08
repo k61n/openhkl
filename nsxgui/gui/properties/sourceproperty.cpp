@@ -17,7 +17,7 @@
 #include "nsxgui/gui/models/session.h"
 #include <QCR/engine/cell.h>
 #include <QGridLayout>
-#include <core/Units.h>
+#include "core/utils/Units.h"
 
 SourceProperty::SourceProperty() : QcrWidget("sourceProperty")
 {

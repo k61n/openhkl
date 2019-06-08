@@ -27,20 +27,20 @@
 #include <QString>
 #include <QTreeView>
 
-#include <core/CrystalTypes.h>
-#include <core/DataSet.h>
-#include <core/Diffractometer.h>
-#include <core/Logger.h>
-#include <core/MillerIndex.h>
-#include <core/Peak3D.h>
-#include <core/PeakFilter.h>
-#include <core/RFactor.h>
-#include <core/ReciprocalVector.h>
-#include <core/Sample.h>
-#include <core/SpaceGroup.h>
-#include <core/UnitCell.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/data/DataSet.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/logger/Logger.h"
+#include "core/crystal/MillerIndex.h"
+#include "core/crystal/Peak3D.h"
+#include "core/crystal/PeakFilter.h"
+#include "core/statistics/RFactor.h"
+#include "core/rec_space/ReciprocalVector.h"
+#include "core/instrument/Sample.h"
+#include "core/crystal/SpaceGroup.h"
+#include "core/crystal/UnitCell.h"
 
-#include "DialogSpaceGroup.h"
+#include "apps/dialogs/DialogSpaceGroup.h"
 #include "ui_DialogSpaceGroup.h"
 
 DialogSpaceGroup::DialogSpaceGroup(const nsx::PeakList& peaks, QWidget* parent)

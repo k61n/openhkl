@@ -17,7 +17,7 @@
 
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/modal_dialogs.h>
-#include <core/CrystalTypes.h>
+#include "core/crystal/CrystalTypes.h"
 
 class ListNameDialog : public QcrModalDialog {
 public:

@@ -4,10 +4,10 @@
 
 #include <Eigen/Dense>
 
-#include <core/AABB.h>
-#include <core/Ellipsoid.h>
-#include <core/NSXTest.h>
-#include <core/Octree.h>
+#include "core/geometry/AABB.h"
+#include "core/geometry/Ellipsoid.h"
+#include "core/utils/NSXTest.h"
+#include "core/geometry/Octree.h"
 
 NSX_INIT_TEST
 

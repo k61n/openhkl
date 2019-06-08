@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "GLActor.h"
+#include "apps/opengl/GLActor.h"
 
 class GLSphere : public GLActor {
 public:

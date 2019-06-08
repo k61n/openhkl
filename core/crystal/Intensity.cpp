@@ -15,7 +15,7 @@
 #include <cassert>
 #include <cmath>
 
-#include "Intensity.h"
+#include "core/crystal/Intensity.h"
 
 namespace nsx {
 

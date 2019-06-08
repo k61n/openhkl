@@ -12,9 +12,9 @@
 //
 //  ***********************************************************************************************
 
-#include "Source.h"
-#include "Monochromator.h"
-#include "Units.h"
+#include "core/instrument/Source.h"
+#include "core/instrument/Monochromator.h"
+#include "core/utils/Units.h"
 
 namespace nsx {
 

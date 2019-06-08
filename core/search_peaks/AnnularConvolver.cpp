@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include "AnnularConvolver.h"
-#include "RadialConvolver.h"
+#include "core/search_peaks/AnnularConvolver.h"
+#include "core/search_peaks/RadialConvolver.h"
 
 namespace nsx {
 

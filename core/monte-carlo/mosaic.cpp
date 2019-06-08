@@ -17,24 +17,24 @@
 #include <random>
 #include <vector>
 
-#include "mosaic.h"
+#include "core/monte-carlo/mosaic.h"
 
-#include "Blob3D.h"
+#include "core/geometry/Blob3D.h"
 
-#include "ConvexHull.h"
-#include "DataSet.h"
-#include "Detector.h"
-#include "Diffractometer.h"
-#include "Ellipsoid.h"
-#include "Gonio.h"
-#include "ILLDataReader.h"
-#include "Peak3D.h"
-#include "PeakFinder.h"
-#include "Sample.h"
-#include "Source.h"
-#include "Triangle.h"
-#include "UnitCell.h"
-#include "Units.h"
+#include "core/geometry/ConvexHull.h"
+#include "core/data/DataSet.h"
+#include "core/detector/Detector.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/geometry/Ellipsoid.h"
+#include "core/axes/Gonio.h"
+#include "core/data/ILLDataReader.h"
+#include "core/crystal/Peak3D.h"
+#include "core/search_peaks/PeakFinder.h"
+#include "core/instrument/Sample.h"
+#include "core/instrument/Source.h"
+#include "core/geometry/Triangle.h"
+#include "core/crystal/UnitCell.h"
+#include "core/utils/Units.h"
 
 namespace {
 

@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "StdStreamWrapper.h"
+#include "core/logger/StdStreamWrapper.h"
 
 namespace nsx {
 

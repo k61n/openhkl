@@ -16,18 +16,18 @@
 #include <utility>
 #include <vector>
 
-#include "AABB.h"
-#include "ConvolverFactory.h"
-#include "DataSet.h"
-#include "Diffractometer.h"
-#include "Experiment.h"
-#include "IDataReader.h"
-#include "Logger.h"
-#include "MathematicsTypes.h"
-#include "Octree.h"
-#include "Peak3D.h"
-#include "PeakFinder.h"
-#include "Sample.h"
+#include "core/geometry/AABB.h"
+#include "core/search_peaks/ConvolverFactory.h"
+#include "core/data/DataSet.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Experiment.h"
+#include "core/data/IDataReader.h"
+#include "core/logger/Logger.h"
+#include "core/mathematics/MathematicsTypes.h"
+#include "core/geometry/Octree.h"
+#include "core/crystal/Peak3D.h"
+#include "core/search_peaks/PeakFinder.h"
+#include "core/instrument/Sample.h"
 
 using EquivalencePair = std::pair<int, int>;
 using EquivalenceList = std::vector<EquivalencePair>;

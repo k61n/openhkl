@@ -20,7 +20,7 @@
 #include <memory>
 #include <sstream>
 
-#include "IStreamWrapper.h"
+#include "core/logger/IStreamWrapper.h"
 
 namespace nsx {
 

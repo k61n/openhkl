@@ -16,16 +16,16 @@
 
 #include <QJsonArray>
 
-#include <core/AABB.h>
-#include <core/BoxMask.h>
-#include <core/DataSet.h>
-#include <core/Experiment.h>
-#include <core/Logger.h>
+#include "core/geometry/AABB.h"
+#include "core/geometry/BoxMask.h"
+#include "core/data/DataSet.h"
+#include "core/instrument/Experiment.h"
+#include "core/logger/Logger.h"
 
-#include "ExperimentItem.h"
-#include "MetaTypes.h"
-#include "NumorItem.h"
-#include "NumorPropertyWidget.h"
+#include "apps/models/ExperimentItem.h"
+#include "apps/models/MetaTypes.h"
+#include "apps/models/NumorItem.h"
+#include "apps/tree/NumorPropertyWidget.h"
 
 NumorItem::NumorItem(nsx::sptrDataSet data) : InspectableTreeItem(), _data(data)
 {

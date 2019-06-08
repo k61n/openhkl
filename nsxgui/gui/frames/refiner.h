@@ -20,7 +20,7 @@
 #include <QCR/widgets/views.h>
 #include <QDialogButtonBox>
 #include <QListWidget>
-#include <core/Refiner.h>
+#include "core/refine/Refiner.h"
 
 class Refiner : public QcrFrame {
 public:

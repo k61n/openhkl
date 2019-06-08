@@ -20,24 +20,24 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
-#include <core/DataSet.h>
-#include <core/Detector.h>
-#include <core/Diffractometer.h>
-#include <core/Ellipsoid.h>
-#include <core/IDataReader.h>
-#include <core/InstrumentState.h>
-#include <core/IntegrationRegion.h>
-#include <core/MetaData.h>
-#include <core/MillerIndex.h>
-#include <core/Peak3D.h>
-#include <core/ReciprocalVector.h>
-#include <core/UnitCell.h>
-#include <core/Units.h>
+#include "core/data/DataSet.h"
+#include "core/detector/Detector.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/geometry/Ellipsoid.h"
+#include "core/data/IDataReader.h"
+#include "core/instrument/InstrumentState.h"
+#include "core/integration/IntegrationRegion.h"
+#include "core/data/MetaData.h"
+#include "core/crystal/MillerIndex.h"
+#include "core/crystal/Peak3D.h"
+#include "core/rec_space/ReciprocalVector.h"
+#include "core/crystal/UnitCell.h"
+#include "core/utils/Units.h"
 
-#include "DetectorScene.h"
-#include "PeakGraphicsItem.h"
-#include "PeakPlot.h"
-#include "SXPlot.h"
+#include "apps/models/DetectorScene.h"
+#include "apps/items/PeakGraphicsItem.h"
+#include "apps/plot/PeakPlot.h"
+#include "apps/plot/SXPlot.h"
 
 bool PeakGraphicsItem::_show_label = false;
 bool PeakGraphicsItem::_show_center = false;

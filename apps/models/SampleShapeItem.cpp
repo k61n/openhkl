@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include "SampleShapeItem.h"
-#include "SampleShapePropertyWidget.h"
+#include "apps/models/SampleShapeItem.h"
+#include "apps/tree/SampleShapePropertyWidget.h"
 
 SampleShapeItem::SampleShapeItem() : InspectableTreeItem()
 {

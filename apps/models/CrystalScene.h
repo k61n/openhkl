@@ -19,7 +19,7 @@
 #include <QPixmap>
 #include <QString>
 
-#include <core/GeometryTypes.h>
+#include "core/geometry/GeometryTypes.h"
 
 class QGraphicsPixmapItem;
 class QGraphicsTextItem;

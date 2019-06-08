@@ -14,7 +14,7 @@
 
 #include <algorithm>
 
-#include "AggregateStreamWrapper.h"
+#include "core/logger/AggregateStreamWrapper.h"
 
 namespace nsx {
 

@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "PeakPlot.h"
+#include "apps/plot/PeakPlot.h"
 
 SXPlot* PeakPlot::create(QWidget* parent)
 {

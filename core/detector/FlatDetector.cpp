@@ -14,12 +14,12 @@
 
 #include <Eigen/Dense>
 
-#include "FlatDetector.h"
-#include "Gonio.h"
-#include "ReciprocalVector.h"
-#include "RotAxis.h"
-#include "TransAxis.h"
-#include "Units.h"
+#include "core/detector/FlatDetector.h"
+#include "core/axes/Gonio.h"
+#include "core/rec_space/ReciprocalVector.h"
+#include "core/axes/RotAxis.h"
+#include "core/axes/TransAxis.h"
+#include "core/utils/Units.h"
 
 namespace nsx {
 

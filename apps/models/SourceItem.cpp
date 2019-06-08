@@ -14,12 +14,12 @@
 
 #include <QIcon>
 
-#include <core/Diffractometer.h>
-#include <core/Experiment.h>
-#include <core/Source.h>
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Experiment.h"
+#include "core/instrument/Source.h"
 
-#include "SourceItem.h"
-#include "SourcePropertyWidget.h"
+#include "apps/models/SourceItem.h"
+#include "apps/tree/SourcePropertyWidget.h"
 
 SourceItem::SourceItem(const char* name) : InspectableTreeItem()
 {

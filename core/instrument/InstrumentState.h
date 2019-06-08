@@ -19,9 +19,9 @@
 
 #include <Eigen/Core>
 
-#include "DirectVector.h"
-#include "InstrumentTypes.h"
-#include "ReciprocalVector.h"
+#include "core/geometry/DirectVector.h"
+#include "core/instrument/InstrumentTypes.h"
+#include "core/rec_space/ReciprocalVector.h"
 
 namespace nsx {
 

@@ -10,11 +10,11 @@
 
 #include <Eigen/Dense>
 
-#include "zpr.h"
+#include "devtools/ellipsoidOpenGL/zpr.h"
 
-#include "Blob3D.h"
+#include "core/geometry/Blob3D.h"
 #include "BlobFinder.h"
-#include "Ellipsoid.h"
+#include "core/geometry/Ellipsoid.h"
 #include "MMILLAsciiReader.h"
 #include "NDTree.h"
 

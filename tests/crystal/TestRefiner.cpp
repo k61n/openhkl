@@ -5,25 +5,25 @@
 
 #include <Eigen/Dense>
 
-#include <core/AutoIndexer.h>
-#include <core/ConvolverFactory.h>
-#include <core/CrystalTypes.h>
-#include <core/DataReaderFactory.h>
-#include <core/DataSet.h>
-#include <core/Diffractometer.h>
+#include "core/auto_indexing/AutoIndexer.h"
+#include "core/search_peaks/ConvolverFactory.h"
+#include "core/crystal/CrystalTypes.h"
+#include "core/data/DataReaderFactory.h"
+#include "core/data/DataSet.h"
+#include "core/instrument/Diffractometer.h"
 
-#include <core/Experiment.h>
-#include <core/Gonio.h>
-#include <core/InstrumentState.h>
-#include <core/NSXTest.h>
-#include <core/Peak3D.h>
-#include <core/PeakFilter.h>
-#include <core/PeakFinder.h>
-#include <core/ProgressHandler.h>
-#include <core/ReciprocalVector.h>
-#include <core/Refiner.h>
-#include <core/Sample.h>
-#include <core/Units.h>
+#include "core/instrument/Experiment.h"
+#include "core/axes/Gonio.h"
+#include "core/instrument/InstrumentState.h"
+#include "core/utils/NSXTest.h"
+#include "core/crystal/Peak3D.h"
+#include "core/crystal/PeakFilter.h"
+#include "core/search_peaks/PeakFinder.h"
+#include "core/utils/ProgressHandler.h"
+#include "core/rec_space/ReciprocalVector.h"
+#include "core/refine/Refiner.h"
+#include "core/instrument/Sample.h"
+#include "core/utils/Units.h"
 
 NSX_INIT_TEST
 

@@ -439,7 +439,7 @@
   <customwidget>
    <class>NSXQFrame</class>
    <extends>QFrame</extends>
-   <header>NSXQFrame.h</header>
+   <header>apps/frames/NSXQFrame.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

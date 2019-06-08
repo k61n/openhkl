@@ -22,29 +22,29 @@
 #include <QStandardItem>
 #include <QString>
 
-#include <core/DataReaderFactory.h>
-#include <core/DataSet.h>
-#include <core/Experiment.h>
-#include <core/IDataReader.h>
-#include <core/Logger.h>
-#include <core/Peak3D.h>
-#include <core/PeakFinder.h>
-#include <core/PixelSumIntegrator.h>
-#include <core/ProgressHandler.h>
-#include <core/RawDataReader.h>
+#include "core/data/DataReaderFactory.h"
+#include "core/data/DataSet.h"
+#include "core/instrument/Experiment.h"
+#include "core/data/IDataReader.h"
+#include "core/logger/Logger.h"
+#include "core/crystal/Peak3D.h"
+#include "core/search_peaks/PeakFinder.h"
+#include "core/integration/PixelSumIntegrator.h"
+#include "core/utils/ProgressHandler.h"
+#include "core/data/RawDataReader.h"
 
-#include "DataItem.h"
-#include "DialogHDF5Converter.h"
-#include "DialogRawData.h"
-#include "ExperimentItem.h"
-#include "FrameInstrumentStates.h"
-#include "FramePeakFinder.h"
-#include "MainWindow.h"
-#include "MetaTypes.h"
-#include "NumorItem.h"
-#include "PeakListItem.h"
-#include "PeaksItem.h"
-#include "ProgressView.h"
+#include "apps/models/DataItem.h"
+#include "apps/dialogs/DialogHDF5Converter.h"
+#include "apps/dialogs/DialogRawData.h"
+#include "apps/models/ExperimentItem.h"
+#include "apps/frames/FrameInstrumentStates.h"
+#include "apps/frames/FramePeakFinder.h"
+#include "apps/MainWindow.h"
+#include "apps/models/MetaTypes.h"
+#include "apps/models/NumorItem.h"
+#include "apps/models/PeakListItem.h"
+#include "apps/models/PeaksItem.h"
+#include "apps/views/ProgressView.h"
 
 DataItem::DataItem() : TreeItem()
 {

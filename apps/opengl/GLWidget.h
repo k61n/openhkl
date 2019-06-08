@@ -16,8 +16,8 @@
 
 #include <QGLWidget>
 
-#include "GLScene.h"
-#include "GLTrackball.h"
+#include "apps/opengl/GLScene.h"
+#include "apps/opengl/GLTrackball.h"
 
 class GLWidget : public QGLWidget {
     Q_OBJECT

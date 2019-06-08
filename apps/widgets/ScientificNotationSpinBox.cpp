@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "ScientificNotationSpinBox.h"
+#include "apps/widgets/ScientificNotationSpinBox.h"
 
 #include <limits>
 

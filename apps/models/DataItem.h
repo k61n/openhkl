@@ -14,11 +14,11 @@
 
 #pragma once
 
-#include <core/DataTypes.h>
-#include <core/InstrumentTypes.h>
-#include <core/PeakFinder.h>
+#include "core/data/DataTypes.h"
+#include "core/instrument/InstrumentTypes.h"
+#include "core/search_peaks/PeakFinder.h"
 
-#include "TreeItem.h"
+#include "apps/models/TreeItem.h"
 
 class MainWindow;
 class NumorItem;

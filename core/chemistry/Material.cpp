@@ -17,10 +17,10 @@
 #include <numeric>
 #include <stdexcept>
 
-#include "ChemicalFormulaParser.h"
-#include "IsotopeDatabaseManager.h"
-#include "Material.h"
-#include "Units.h"
+#include "core/chemistry/ChemicalFormulaParser.h"
+#include "core/chemistry/IsotopeDatabaseManager.h"
+#include "core/chemistry/Material.h"
+#include "core/utils/Units.h"
 
 namespace nsx {
 

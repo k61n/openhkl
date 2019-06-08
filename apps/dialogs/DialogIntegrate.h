@@ -19,7 +19,7 @@
 
 #include <QDialog>
 
-#include <core/CrystalTypes.h>
+#include "core/crystal/CrystalTypes.h"
 
 namespace Ui {
 class DialogIntegrate;

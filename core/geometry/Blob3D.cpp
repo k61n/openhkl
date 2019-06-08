@@ -18,7 +18,7 @@
 
 #include <Eigen/Eigenvalues>
 
-#include "Blob3D.h"
+#include "core/geometry/Blob3D.h"
 
 static const double minimum_blob_mass = 1e-15;
 

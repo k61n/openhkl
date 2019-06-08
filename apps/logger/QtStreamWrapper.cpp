@@ -18,12 +18,12 @@
 #include <QString>
 #include <QTextEdit>
 
-#include <core/AggregateStreamWrapper.h>
-#include <core/LogFileStreamWrapper.h>
-#include <core/Logger.h>
+#include "core/logger/AggregateStreamWrapper.h"
+#include "core/logger/LogFileStreamWrapper.h"
+#include "core/logger/Logger.h"
 
-#include "NoteBook.h"
-#include "QtStreamWrapper.h"
+#include "apps/NoteBook.h"
+#include "apps/logger/QtStreamWrapper.h"
 
 QtStreamWrapper::QtStreamWrapper(
     NoteBook* notebook, std::function<std::string()> prefix, std::function<std::string()> suffix)

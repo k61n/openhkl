@@ -2,9 +2,9 @@
 
 #include <Eigen/Dense>
 
-#include <core/BrillouinZone.h>
-#include <core/NSXTest.h>
-#include <core/UnitCell.h>
+#include "core/crystal/BrillouinZone.h"
+#include "core/utils/NSXTest.h"
+#include "core/crystal/UnitCell.h"
 
 const double tolerance = 1e-9;
 

@@ -15,7 +15,7 @@
 #include <cmath>
 #include <iostream>
 
-#include "RotAxis.h"
+#include "core/axes/RotAxis.h"
 
 namespace nsx {
 

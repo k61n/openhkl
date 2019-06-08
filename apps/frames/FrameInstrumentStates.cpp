@@ -14,10 +14,10 @@
 
 #include <QFileInfo>
 
-#include <core/DataSet.h>
+#include "core/data/DataSet.h"
 
-#include "FrameInstrumentStates.h"
-#include "MetaTypes.h"
+#include "apps/frames/FrameInstrumentStates.h"
+#include "apps/models/MetaTypes.h"
 
 #include "ui_FrameInstrumentStates.h"
 

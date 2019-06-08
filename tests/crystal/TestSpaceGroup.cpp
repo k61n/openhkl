@@ -1,11 +1,11 @@
 #include <map>
 #include <string>
 
-#include <core/CrystalTypes.h>
-#include <core/MillerIndex.h>
-#include <core/NSXTest.h>
-#include <core/SpaceGroup.h>
-#include <core/UnitCell.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/crystal/MillerIndex.h"
+#include "core/utils/NSXTest.h"
+#include "core/crystal/SpaceGroup.h"
+#include "core/crystal/UnitCell.h"
 
 NSX_INIT_TEST
 

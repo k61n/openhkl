@@ -21,9 +21,9 @@
 #include <QMenu>
 #include <QTableView>
 
-#include <core/CrystalTypes.h>
+#include "core/crystal/CrystalTypes.h"
 
-#include <MainWindow.h>
+#include "apps/MainWindow.h"
 
 class QContextMenuEvent;
 class QMouseEvent;

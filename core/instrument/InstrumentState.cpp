@@ -16,17 +16,17 @@
 
 #include <Eigen/Dense>
 
-#include "Component.h"
-#include "Detector.h"
-#include "DetectorEvent.h"
-#include "Diffractometer.h"
-#include "FitParameters.h"
-#include "Gonio.h"
-#include "InstrumentState.h"
-#include "Logger.h"
-#include "MatrixOperations.h"
-#include "Minimizer.h"
-#include "Sample.h"
+#include "core/instrument/Component.h"
+#include "core/detector/Detector.h"
+#include "core/detector/DetectorEvent.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/fitting/FitParameters.h"
+#include "core/axes/Gonio.h"
+#include "core/instrument/InstrumentState.h"
+#include "core/logger/Logger.h"
+#include "core/mathematics/MatrixOperations.h"
+#include "core/fitting/Minimizer.h"
+#include "core/instrument/Sample.h"
 
 namespace nsx {
 

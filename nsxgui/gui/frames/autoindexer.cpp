@@ -17,9 +17,9 @@
 #include "nsxgui/gui/frames/unitcellwidget.h"
 #include "nsxgui/gui/models/session.h"
 
-#include <core/AutoIndexer.h>
-#include <core/ProgressHandler.h>
-#include <core/Units.h>
+#include "core/auto_indexing/AutoIndexer.h"
+#include "core/utils/ProgressHandler.h"
+#include "core/utils/Units.h"
 
 #include <QDialogButtonBox>
 #include <QGridLayout>

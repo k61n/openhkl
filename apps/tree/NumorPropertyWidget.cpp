@@ -14,13 +14,13 @@
 
 #include <QWidget>
 
-#include <core/DataSet.h>
-#include <core/IDataReader.h>
-#include <core/MetaData.h>
+#include "core/data/DataSet.h"
+#include "core/data/IDataReader.h"
+#include "core/data/MetaData.h"
 
-#include "MetaTypes.h"
-#include "NumorItem.h"
-#include "NumorPropertyWidget.h"
+#include "apps/models/MetaTypes.h"
+#include "apps/models/NumorItem.h"
+#include "apps/tree/NumorPropertyWidget.h"
 
 #include "ui_NumorPropertyWidget.h"
 

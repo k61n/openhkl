@@ -17,9 +17,9 @@
 #include <QStandardItem>
 #include <QWidget>
 
-#include "CollectedPeaksModel.h"
+#include "apps/models/CollectedPeaksModel.h"
 
-#include "PeakTableView.h"
+#include "apps/views/PeakTableView.h"
 
 namespace Ui {
 class PeaksPropertyWidget;

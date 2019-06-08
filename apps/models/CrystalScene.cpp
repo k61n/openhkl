@@ -20,16 +20,16 @@
 #include <QMouseEvent>
 #include <QWidget>
 
-#include <core/ConvexHull.h>
-#include <core/Triangle.h>
-#include <core/Units.h>
+#include "core/geometry/ConvexHull.h"
+#include "core/geometry/Triangle.h"
+#include "core/utils/Units.h"
 
-#include "CrystalFaceItem.h"
-#include "CrystalNodeItem.h"
-#include "CrystalScene.h"
-#include "DialogCalibrateDistance.h"
-#include "PinItem.h"
-#include "RulerItem.h"
+#include "apps/models/CrystalFaceItem.h"
+#include "apps/models/CrystalNodeItem.h"
+#include "apps/models/CrystalScene.h"
+#include "apps/dialogs/DialogCalibrateDistance.h"
+#include "apps/models/PinItem.h"
+#include "apps/models/RulerItem.h"
 
 CrystalScene::CrystalScene(nsx::ConvexHull* hull, QWidget* parent)
     : QGraphicsScene(parent), pixmapitem(0), _ruler(0), _pin(0), _hull(hull), _text(nullptr)

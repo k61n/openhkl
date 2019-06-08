@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "MergedData.h"
+#include "core/data/MergedData.h"
 
 namespace nsx {
 

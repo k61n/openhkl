@@ -25,11 +25,11 @@
 #include <QRect>
 #include <QStack>
 
-#include <core/CrystalTypes.h>
-#include <core/DataTypes.h>
-#include <core/IMask.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/data/DataTypes.h"
+#include "core/geometry/IMask.h"
 
-#include "ColorMap.h"
+#include "apps/ColorMap.h"
 #include "models/SessionModel.h"
 
 class QImage;

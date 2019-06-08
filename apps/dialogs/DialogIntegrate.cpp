@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include "DialogIntegrate.h"
-#include "PeaksUtils.h"
+#include "apps/dialogs/DialogIntegrate.h"
+#include "apps/utils/PeaksUtils.h"
 #include "ui_DialogIntegrate.h"
 
 DialogIntegrate::DialogIntegrate(const nsx::PeakList& peaks, QWidget* parent)

@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 #include "nsxgui/gui/frames/unitcellwidget.h"
-#include <core/UnitCell.h>
+#include "core/crystal/UnitCell.h"
 
 UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& name)
     : QcrWidget {name}, unitCell_ {cell}

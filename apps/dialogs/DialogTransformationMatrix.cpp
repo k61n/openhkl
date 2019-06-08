@@ -12,9 +12,9 @@
 //
 //  ***********************************************************************************************
 
-#include <core/UnitCell.h>
+#include "core/crystal/UnitCell.h"
 
-#include "DialogTransformationMatrix.h"
+#include "apps/dialogs/DialogTransformationMatrix.h"
 #include "ui_DialogTransformationMatrix.h"
 
 DialogTransformationMatrix::DialogTransformationMatrix(nsx::sptrUnitCell unitCell, QWidget* parent)

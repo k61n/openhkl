@@ -17,11 +17,11 @@
 
 #include <Eigen/Dense>
 
-#include "GeometryTypes.h"
-#include "IPeakIntegrator.h"
-#include "MeanBackgroundIntegrator.h"
-#include "PixelSumIntegrator.h"
-#include "ShapeLibrary.h"
+#include "core/geometry/GeometryTypes.h"
+#include "core/integration/IPeakIntegrator.h"
+#include "core/integration/MeanBackgroundIntegrator.h"
+#include "core/integration/PixelSumIntegrator.h"
+#include "core/integration/ShapeLibrary.h"
 
 namespace nsx {
 

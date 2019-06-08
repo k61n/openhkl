@@ -20,18 +20,18 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-#include <core/DataSet.h>
-#include <core/Logger.h>
-#include <core/Peak3D.h>
-#include <core/PeakFilter.h>
-#include <core/UnitCell.h>
+#include "core/data/DataSet.h"
+#include "core/logger/Logger.h"
+#include "core/crystal/Peak3D.h"
+#include "core/crystal/PeakFilter.h"
+#include "core/crystal/UnitCell.h"
 
-#include "CollectedPeaksModel.h"
-#include "DialogPeakFilter.h"
-#include "ExperimentItem.h"
-#include "MetaTypes.h"
-#include "PeakListItem.h"
-#include "PeaksItem.h"
+#include "apps/models/CollectedPeaksModel.h"
+#include "apps/dialogs/DialogPeakFilter.h"
+#include "apps/models/ExperimentItem.h"
+#include "apps/models/MetaTypes.h"
+#include "apps/models/PeakListItem.h"
+#include "apps/models/PeaksItem.h"
 #include "ui_DialogPeakFilter.h"
 
 DialogPeakFilter* DialogPeakFilter::_instance = nullptr;

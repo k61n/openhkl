@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "NSXQFrame.h"
+#include "apps/frames/NSXQFrame.h"
 
 NSXQFrame::NSXQFrame() : QFrame(nullptr)
 {

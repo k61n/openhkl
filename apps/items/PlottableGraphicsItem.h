@@ -18,7 +18,7 @@
 #include <QPen>
 #include <QRectF>
 
-#include "SXGraphicsItem.h"
+#include "apps/items/SXGraphicsItem.h"
 
 class QGraphicsSceneHoverEvent;
 class QGraphicsSceneMouseEvent;

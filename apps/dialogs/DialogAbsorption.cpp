@@ -21,15 +21,15 @@
 #include <QFileInfo>
 #include <QMessageBox>
 
-#include <core/Diffractometer.h>
-#include <core/Experiment.h>
-#include <core/Gonio.h>
-#include <core/Logger.h>
-#include <core/RotAxis.h>
-#include <core/Sample.h>
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Experiment.h"
+#include "core/axes/Gonio.h"
+#include "core/logger/Logger.h"
+#include "core/axes/RotAxis.h"
+#include "core/instrument/Sample.h"
 
-#include "CrystalScene.h"
-#include "DialogAbsorption.h"
+#include "apps/models/CrystalScene.h"
+#include "apps/dialogs/DialogAbsorption.h"
 
 #include "ui_DialogAbsorption.h"
 

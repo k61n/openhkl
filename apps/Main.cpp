@@ -19,12 +19,12 @@
 #include <QSplashScreen>
 #include <QTimer>
 
-#include <core/AggregateStreamWrapper.h>
-#include <core/Logger.h>
-#include <core/StdStreamWrapper.h>
+#include "core/logger/AggregateStreamWrapper.h"
+#include "core/logger/Logger.h"
+#include "core/logger/StdStreamWrapper.h"
 
-#include "MainWindow.h"
-#include "NSXQtApp.h"
+#include "apps/MainWindow.h"
+#include "apps/NSXQtApp.h"
 
 int main(int argc, char* argv[])
 {

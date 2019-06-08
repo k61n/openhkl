@@ -14,8 +14,8 @@
 
 #include <QWidget>
 
-#include "SXPlot.h"
-#include "SimplePlot.h"
+#include "apps/plot/SXPlot.h"
+#include "apps/plot/SimplePlot.h"
 
 SXPlot* SimplePlot::create(QWidget* parent)
 {

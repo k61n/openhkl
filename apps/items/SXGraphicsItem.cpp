@@ -16,9 +16,9 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsSceneMouseEvent>
 
-#include "DetectorScene.h"
-#include "SXGraphicsItem.h"
-#include "SXPlot.h"
+#include "apps/models/DetectorScene.h"
+#include "apps/items/SXGraphicsItem.h"
+#include "apps/plot/SXPlot.h"
 
 SXGraphicsItem::SXGraphicsItem(QGraphicsItem* parent, bool deletable, bool movable)
     : QGraphicsItem(parent)

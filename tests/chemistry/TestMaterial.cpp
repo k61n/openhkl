@@ -1,8 +1,8 @@
 #include <stdexcept>
 
-#include <core/Material.h>
-#include <core/NSXTest.h>
-#include <core/Units.h>
+#include "core/chemistry/Material.h"
+#include "core/utils/NSXTest.h"
+#include "core/utils/Units.h"
 
 const double tolerance = 1.0e-9;
 

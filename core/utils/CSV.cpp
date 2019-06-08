@@ -14,7 +14,7 @@
 
 #include <cassert>
 
-#include "CSV.h"
+#include "core/utils/CSV.h"
 
 namespace nsx {
 

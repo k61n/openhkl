@@ -15,10 +15,10 @@
 #include <QApplication>
 #include <QPushButton>
 
-#include <core/Logger.h>
-#include <core/ProgressHandler.h>
+#include "core/logger/Logger.h"
+#include "core/utils/ProgressHandler.h"
 
-#include "ProgressView.h"
+#include "apps/views/ProgressView.h"
 
 ProgressView::ProgressView(QWidget* parent) : QProgressDialog(parent)
 {

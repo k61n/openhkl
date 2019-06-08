@@ -14,13 +14,13 @@
 
 #include <stdexcept>
 
-#include "DataSet.h"
-#include "FitParameters.h"
-#include "Gonio.h"
-#include "IDataReader.h"
-#include "Logger.h"
-#include "Minimizer.h"
-#include "Sample.h"
+#include "core/data/DataSet.h"
+#include "core/fitting/FitParameters.h"
+#include "core/axes/Gonio.h"
+#include "core/data/IDataReader.h"
+#include "core/logger/Logger.h"
+#include "core/fitting/Minimizer.h"
+#include "core/instrument/Sample.h"
 
 namespace nsx {
 

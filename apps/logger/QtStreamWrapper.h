@@ -19,7 +19,7 @@
 
 #include <QObject>
 
-#include <core/IStreamWrapper.h>
+#include "core/logger/IStreamWrapper.h"
 
 class NoteBook;
 

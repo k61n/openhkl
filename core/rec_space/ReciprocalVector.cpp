@@ -14,7 +14,7 @@
 
 #include <Eigen/Dense>
 
-#include "ReciprocalVector.h"
+#include "core/rec_space/ReciprocalVector.h"
 
 namespace nsx {
 

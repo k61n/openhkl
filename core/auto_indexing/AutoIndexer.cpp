@@ -14,19 +14,19 @@
 
 #include <string>
 
-#include "AutoIndexer.h"
-#include "DataSet.h"
-#include "FFTIndexing.h"
-#include "FitParameters.h"
-#include "GruberReduction.h"
-#include "MillerIndex.h"
-#include "Minimizer.h"
-#include "NiggliReduction.h"
-#include "Peak3D.h"
-#include "PeakFilter.h"
-#include "ProgressHandler.h"
-#include "ReciprocalVector.h"
-#include "UnitCell.h"
+#include "core/auto_indexing/AutoIndexer.h"
+#include "core/data/DataSet.h"
+#include "core/auto_indexing/FFTIndexing.h"
+#include "core/fitting/FitParameters.h"
+#include "core/crystal/GruberReduction.h"
+#include "core/crystal/MillerIndex.h"
+#include "core/fitting/Minimizer.h"
+#include "core/crystal/NiggliReduction.h"
+#include "core/crystal/Peak3D.h"
+#include "core/crystal/PeakFilter.h"
+#include "core/utils/ProgressHandler.h"
+#include "core/rec_space/ReciprocalVector.h"
+#include "core/crystal/UnitCell.h"
 
 namespace nsx {
 

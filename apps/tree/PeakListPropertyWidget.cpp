@@ -16,18 +16,18 @@
 
 #include <QSortFilterProxyModel>
 
-#include <core/DataSet.h>
-#include <core/DataTypes.h>
-#include <core/Diffractometer.h>
-#include <core/Sample.h>
+#include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Sample.h"
 
-#include "ExperimentItem.h"
-#include "InstrumentItem.h"
-#include "PeakListItem.h"
-#include "PeakListPropertyWidget.h"
-#include "PeakTableView.h"
-#include "SampleItem.h"
-#include "UnitCellItem.h"
+#include "apps/models/ExperimentItem.h"
+#include "apps/models/InstrumentItem.h"
+#include "apps/models/PeakListItem.h"
+#include "apps/tree/PeakListPropertyWidget.h"
+#include "apps/views/PeakTableView.h"
+#include "apps/models/SampleItem.h"
+#include "apps/models/UnitCellItem.h"
 
 #include "ui_PeakListPropertyWidget.h"
 

@@ -3,8 +3,8 @@
 
 #include <Eigen/Dense>
 
-#include <core/JonesSymbolParser.h>
-#include <core/NSXTest.h>
+#include "core/crystal/JonesSymbolParser.h"
+#include "core/utils/NSXTest.h"
 
 #include <iostream>
 

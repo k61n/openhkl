@@ -20,17 +20,17 @@
 #include <stdexcept>
 #include <string>
 
-#include "Component.h"
-#include "Detector.h"
-#include "Diffractometer.h"
-#include "EigenToVector.h"
-#include "Gonio.h"
-#include "Monochromator.h"
-#include "Parser.h"
-#include "RawDataReader.h"
-#include "Sample.h"
-#include "Source.h"
-#include "Units.h"
+#include "core/instrument/Component.h"
+#include "core/detector/Detector.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/data/EigenToVector.h"
+#include "core/axes/Gonio.h"
+#include "core/instrument/Monochromator.h"
+#include "core/data/Parser.h"
+#include "core/data/RawDataReader.h"
+#include "core/instrument/Sample.h"
+#include "core/instrument/Source.h"
+#include "core/utils/Units.h"
 
 namespace nsx {
 

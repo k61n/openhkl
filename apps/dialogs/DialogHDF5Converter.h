@@ -16,7 +16,7 @@
 
 #include <QDialog>
 
-#include <core/DataTypes.h>
+#include "core/data/DataTypes.h"
 
 class QAbstractButton;
 

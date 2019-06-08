@@ -18,10 +18,10 @@
 #include <memory>
 #include <string>
 
-#include <core/DataTypes.h>
+#include "core/data/DataTypes.h"
 
 #include "../ColorMap.h"
-#include "NSXQFrame.h"
+#include "apps/frames/NSXQFrame.h"
 
 namespace Ui {
 class FramePeakFinder;

@@ -17,8 +17,8 @@
 
 #include <yaml-cpp/yaml.h>
 
-#include "Detector.h"
-#include "GeometryTypes.h"
+#include "core/detector/Detector.h"
+#include "core/geometry/GeometryTypes.h"
 
 namespace nsx {
 

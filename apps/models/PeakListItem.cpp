@@ -14,8 +14,8 @@
 
 #include <QIcon>
 
-#include "PeakListItem.h"
-#include "PeakListPropertyWidget.h"
+#include "apps/models/PeakListItem.h"
+#include "apps/tree/PeakListPropertyWidget.h"
 
 PeakListItem::PeakListItem(const nsx::PeakList& peaks) : InspectableTreeItem(), _peaks(peaks)
 {

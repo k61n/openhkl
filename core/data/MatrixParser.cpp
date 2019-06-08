@@ -15,7 +15,7 @@
 #include <sstream>
 #include <stdexcept>
 
-#include "MatrixParser.h"
+#include "core/data/MatrixParser.h"
 
 namespace nsx {
 

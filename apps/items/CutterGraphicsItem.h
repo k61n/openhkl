@@ -17,9 +17,9 @@
 #include <QPen>
 #include <QPointF>
 
-#include <core/DataTypes.h>
+#include "core/data/DataTypes.h"
 
-#include "PlottableGraphicsItem.h"
+#include "apps/items/PlottableGraphicsItem.h"
 
 class QGraphicsSceneHoverEvent;
 class QGraphicsSceneMouseEvent;

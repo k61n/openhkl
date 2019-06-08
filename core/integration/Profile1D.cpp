@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "Profile1D.h"
+#include "core/integration/Profile1D.h"
 
 #include <cmath>
 

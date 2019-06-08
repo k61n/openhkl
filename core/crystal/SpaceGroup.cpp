@@ -18,13 +18,13 @@
 #include <stdexcept>
 #include <vector>
 
-#include "CrystalTypes.h"
-#include "Peak3D.h"
-#include "PeakFilter.h"
-#include "ReciprocalVector.h"
-#include "SpaceGroup.h"
-#include "StringIO.h"
-#include "UnitCell.h"
+#include "core/crystal/CrystalTypes.h"
+#include "core/crystal/Peak3D.h"
+#include "core/crystal/PeakFilter.h"
+#include "core/rec_space/ReciprocalVector.h"
+#include "core/crystal/SpaceGroup.h"
+#include "core/utils/StringIO.h"
+#include "core/crystal/UnitCell.h"
 
 namespace nsx {
 

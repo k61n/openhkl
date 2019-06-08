@@ -23,7 +23,7 @@
 #include <build/core/include/core/Experiment.h>
 #include <build/core/include/core/InstrumentTypes.h>
 
-#include "TreeItem.h"
+#include "apps/models/TreeItem.h"
 
 class DataItem;
 class LibraryItem;

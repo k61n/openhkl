@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "SliceRectGraphicsItem.h"
+#include "apps/items/SliceRectGraphicsItem.h"
 
 SliceRectGraphicsItem::SliceRectGraphicsItem(
     qreal x, qreal y, qreal width, qreal height, QGraphicsItem* parent)

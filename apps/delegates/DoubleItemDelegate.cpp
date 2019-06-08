@@ -15,7 +15,7 @@
 #include <QDoubleValidator>
 #include <QLineEdit>
 
-#include "DoubleItemDelegate.h"
+#include "apps/delegates/DoubleItemDelegate.h"
 
 QWidget* DoubleItemDelegate::createEditor(
     QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const

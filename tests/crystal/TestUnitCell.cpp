@@ -1,11 +1,11 @@
 #include <random>
 
-#include <core/MillerIndex.h>
-#include <core/Minimizer.h>
-#include <core/NSXTest.h>
-#include <core/SpaceGroup.h>
-#include <core/UnitCell.h>
-#include <core/Units.h>
+#include "core/crystal/MillerIndex.h"
+#include "core/fitting/Minimizer.h"
+#include "core/utils/NSXTest.h"
+#include "core/crystal/SpaceGroup.h"
+#include "core/crystal/UnitCell.h"
+#include "core/utils/Units.h"
 
 const double tolerance = 1e-6;
 

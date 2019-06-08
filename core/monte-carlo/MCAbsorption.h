@@ -19,7 +19,7 @@
 #include <random>
 #include <vector>
 
-#include "ConvexHull.h"
+#include "core/geometry/ConvexHull.h"
 
 namespace nsx {
 

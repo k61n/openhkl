@@ -22,13 +22,13 @@
 #include <QMessageBox>
 #include <QPixmap>
 
-#include <core/Diffractometer.h>
-#include <core/Experiment.h>
-#include <core/Gonio.h>
-#include <core/RotAxis.h>
-#include <core/Sample.h>
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Experiment.h"
+#include "core/axes/Gonio.h"
+#include "core/axes/RotAxis.h"
+#include "core/instrument/Sample.h"
 
-#include "AbsorptionWidget.h"
+#include "apps/views/AbsorptionWidget.h"
 #include "ui_AbsorptionWidget.h"
 
 AbsorptionWidget::AbsorptionWidget(nsx::Experiment* experiment, QWidget* parent)

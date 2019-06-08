@@ -1,11 +1,11 @@
 #include <Eigen/Dense>
 
-#include <core/Axis.h>
-#include <core/DirectVector.h>
-#include <core/Gonio.h>
-#include <core/NSXTest.h>
-#include <core/Sample.h>
-#include <core/Units.h>
+#include "core/axes/Axis.h"
+#include "core/geometry/DirectVector.h"
+#include "core/axes/Gonio.h"
+#include "core/utils/NSXTest.h"
+#include "core/instrument/Sample.h"
+#include "core/utils/Units.h"
 
 const double tolerance = 1e-6;
 

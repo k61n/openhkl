@@ -18,10 +18,10 @@
 
 #include <QJsonObject>
 
-#include <core/DataTypes.h>
-#include <core/InstrumentTypes.h>
+#include "core/data/DataTypes.h"
+#include "core/instrument/InstrumentTypes.h"
 
-#include "InspectableTreeItem.h"
+#include "apps/models/InspectableTreeItem.h"
 
 class QWidget;
 

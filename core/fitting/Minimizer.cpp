@@ -22,7 +22,7 @@
 
 #include <Eigen/Dense>
 
-#include "Minimizer.h"
+#include "core/fitting/Minimizer.h"
 
 namespace nsx {
 

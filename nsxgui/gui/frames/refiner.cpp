@@ -24,11 +24,11 @@
 #include <QHBoxLayout>
 #include <QSpacerItem>
 #include <QVBoxLayout>
-#include <core/CrystalTypes.h>
-#include <core/DataSet.h>
-#include <core/DataTypes.h>
-#include <core/Peak3D.h>
-#include <core/Refiner.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
+#include "core/crystal/Peak3D.h"
+#include "core/refine/Refiner.h"
 
 Refiner::Refiner() : QcrFrame {"RefinerFrame"}
 {

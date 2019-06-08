@@ -2,15 +2,15 @@
 
 #include <Eigen/Dense>
 
-#include <core/DataReaderFactory.h>
-#include <core/DataSet.h>
-#include <core/Diffractometer.h>
-#include <core/Experiment.h>
-#include <core/IDataReader.h>
-#include <core/MetaData.h>
-#include <core/NSXTest.h>
-#include <core/PeakFinder.h>
-#include <core/ProgressHandler.h>
+#include "core/data/DataReaderFactory.h"
+#include "core/data/DataSet.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Experiment.h"
+#include "core/data/IDataReader.h"
+#include "core/data/MetaData.h"
+#include "core/utils/NSXTest.h"
+#include "core/search_peaks/PeakFinder.h"
+#include "core/utils/ProgressHandler.h"
 
 NSX_INIT_TEST
 

@@ -20,8 +20,8 @@
 
 #include <yaml-cpp/yaml.h>
 
-#include "Component.h"
-#include "Monochromator.h"
+#include "core/instrument/Component.h"
+#include "core/instrument/Monochromator.h"
 
 namespace nsx {
 

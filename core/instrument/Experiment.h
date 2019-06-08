@@ -20,9 +20,9 @@
 #include <string>
 #include <vector>
 
-#include "DataTypes.h"
-#include "Diffractometer.h"
-#include "InstrumentTypes.h"
+#include "core/data/DataTypes.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentTypes.h"
 
 namespace nsx {
 

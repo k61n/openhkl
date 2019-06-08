@@ -16,7 +16,7 @@
 
 #include <QPainter>
 
-#include "CrystalFaceItem.h"
+#include "apps/models/CrystalFaceItem.h"
 
 CrystalFaceItem::CrystalFaceItem(QGraphicsItem* parent) : QGraphicsItem(parent)
 {

@@ -18,13 +18,13 @@
 #include <QPainter>
 #include <QToolTip>
 
-#include <core/DataSet.h>
-#include <core/Detector.h>
-#include <core/Diffractometer.h>
-#include <core/IDataReader.h>
+#include "core/data/DataSet.h"
+#include "core/detector/Detector.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/data/IDataReader.h"
 
-#include "DetectorGraphicsView.h"
-#include "DetectorScene.h"
+#include "apps/views/DetectorGraphicsView.h"
+#include "apps/models/DetectorScene.h"
 
 DetectorGraphicsView::DetectorGraphicsView(QWidget* parent)
     : QGraphicsView(parent), _scene(new DetectorScene(this))

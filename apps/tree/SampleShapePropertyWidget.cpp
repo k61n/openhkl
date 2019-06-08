@@ -14,20 +14,20 @@
 
 #include <QMessageBox>
 
-#include <core/DataSet.h>
-#include <core/Diffractometer.h>
-#include <core/Gonio.h>
-#include <core/Logger.h>
-#include <core/MCAbsorption.h>
-#include <core/Material.h>
-#include <core/Peak3D.h>
-#include <core/Sample.h>
-#include <core/Source.h>
-#include <core/Units.h>
+#include "core/data/DataSet.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/axes/Gonio.h"
+#include "core/logger/Logger.h"
+#include "core/monte-carlo/MCAbsorption.h"
+#include "core/chemistry/Material.h"
+#include "core/crystal/Peak3D.h"
+#include "core/instrument/Sample.h"
+#include "core/instrument/Source.h"
+#include "core/utils/Units.h"
 
-#include "DialogAbsorption.h"
-#include "SampleShapeItem.h"
-#include "SampleShapePropertyWidget.h"
+#include "apps/dialogs/DialogAbsorption.h"
+#include "apps/models/SampleShapeItem.h"
+#include "apps/tree/SampleShapePropertyWidget.h"
 
 #include "ui_SampleShapePropertyWidget.h"
 

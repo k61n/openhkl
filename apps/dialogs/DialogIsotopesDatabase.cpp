@@ -17,11 +17,11 @@
 #include <QStandardItem>
 #include <QStandardItemModel>
 
-#include <core/ChemistryTypes.h>
-#include <core/IsotopeDatabaseManager.h>
-#include <core/Units.h>
+#include "core/chemistry/ChemistryTypes.h"
+#include "core/chemistry/IsotopeDatabaseManager.h"
+#include "core/utils/Units.h"
 
-#include "DialogIsotopesDatabase.h"
+#include "apps/dialogs/DialogIsotopesDatabase.h"
 
 #include "ui_DialogIsotopesDatabase.h"
 

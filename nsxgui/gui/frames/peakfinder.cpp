@@ -29,11 +29,11 @@
 #include <QSpacerItem>
 #include <QTableWidgetItem>
 #include <QVBoxLayout>
-#include <core/ConvolverFactory.h>
-#include <core/DataSet.h>
-#include <core/Peak3D.h>
-#include <core/PeakFinder.h>
-#include <core/PixelSumIntegrator.h>
+#include "core/search_peaks/ConvolverFactory.h"
+#include "core/data/DataSet.h"
+#include "core/crystal/Peak3D.h"
+#include "core/search_peaks/PeakFinder.h"
+#include "core/integration/PixelSumIntegrator.h"
 
 class ItemDelegate : public QItemDelegate {
 public:

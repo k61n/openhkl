@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include "BoxMask.h"
-#include "Ellipsoid.h"
+#include "core/geometry/BoxMask.h"
+#include "core/geometry/Ellipsoid.h"
 
 namespace nsx {
 

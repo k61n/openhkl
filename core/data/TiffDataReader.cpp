@@ -12,10 +12,10 @@
 //
 //  ***********************************************************************************************
 
-#include "TiffDataReader.h"
-#include "Detector.h"
-#include "Diffractometer.h"
-#include "Sample.h"
+#include "core/data/TiffDataReader.h"
+#include "core/detector/Detector.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Sample.h"
 
 namespace nsx {
 

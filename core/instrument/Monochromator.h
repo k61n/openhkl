@@ -15,7 +15,7 @@
 #ifndef CORE_INSTRUMENT_MONOCHROMATOR_H
 #define CORE_INSTRUMENT_MONOCHROMATOR_H
 
-#include "ReciprocalVector.h"
+#include "core/rec_space/ReciprocalVector.h"
 
 #include <string>
 

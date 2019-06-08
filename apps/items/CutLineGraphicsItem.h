@@ -18,9 +18,9 @@
 
 #include <QGraphicsItem>
 
-#include <core/DataTypes.h>
+#include "core/data/DataTypes.h"
 
-#include "CutterGraphicsItem.h"
+#include "apps/items/CutterGraphicsItem.h"
 
 class QGraphicsSceneWheelEvent;
 class QWidget;

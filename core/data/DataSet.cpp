@@ -23,23 +23,23 @@
 
 #include <Eigen/Dense>
 
-#include "AABB.h"
-#include "BloscFilter.h"
-#include "ConvolverFactory.h"
-#include "DataSet.h"
-#include "Detector.h"
-#include "DetectorEvent.h"
-#include "Diffractometer.h"
-#include "Ellipsoid.h"
-#include "Gonio.h"
-#include "IDataReader.h"
-#include "Monochromator.h"
-#include "Path.h"
-#include "Peak3D.h"
-#include "ProgressHandler.h"
-#include "Sample.h"
-#include "Source.h"
-#include "Units.h" // deg
+#include "core/geometry/AABB.h"
+#include "core/data/BloscFilter.h"
+#include "core/search_peaks/ConvolverFactory.h"
+#include "core/data/DataSet.h"
+#include "core/detector/Detector.h"
+#include "core/detector/DetectorEvent.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/geometry/Ellipsoid.h"
+#include "core/axes/Gonio.h"
+#include "core/data/IDataReader.h"
+#include "core/instrument/Monochromator.h"
+#include "core/utils/Path.h"
+#include "core/crystal/Peak3D.h"
+#include "core/utils/ProgressHandler.h"
+#include "core/instrument/Sample.h"
+#include "core/instrument/Source.h"
+#include "core/utils/Units.h" // deg
 
 namespace nsx {
 

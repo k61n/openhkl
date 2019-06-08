@@ -17,20 +17,20 @@
 #include <QLayout>
 #include <QStatusBar>
 
-#include <core/DataSet.h>
-#include <core/Logger.h>
-#include <core/Peak3D.h>
-#include <core/PeakCoordinateSystem.h>
-#include <core/PeakFilter.h>
-#include <core/Profile3D.h>
-#include <core/ShapeIntegrator.h>
-#include <core/ShapeLibrary.h>
+#include "core/data/DataSet.h"
+#include "core/logger/Logger.h"
+#include "core/crystal/Peak3D.h"
+#include "core/crystal/PeakCoordinateSystem.h"
+#include "core/crystal/PeakFilter.h"
+#include "core/integration/Profile3D.h"
+#include "core/integration/ShapeIntegrator.h"
+#include "core/integration/ShapeLibrary.h"
 
-#include "CollectedPeaksModel.h"
-#include "ExperimentItem.h"
-#include "ProgressView.h"
+#include "apps/models/CollectedPeaksModel.h"
+#include "apps/models/ExperimentItem.h"
+#include "apps/views/ProgressView.h"
 
-#include "DialogShapeLibrary.h"
+#include "apps/dialogs/DialogShapeLibrary.h"
 #include "ui_DialogShapeLibrary.h"
 
 DialogShapeLibrary::DialogShapeLibrary(

@@ -12,14 +12,14 @@
 //
 //  ***********************************************************************************************
 
-#include "IntegrationRegion.h"
-#include "BrillouinZone.h"
-#include "ConvexHull.h"
-#include "Detector.h"
-#include "Diffractometer.h"
-#include "Ellipsoid.h"
-#include "Peak3D.h"
-#include "UnitCell.h"
+#include "core/integration/IntegrationRegion.h"
+#include "core/crystal/BrillouinZone.h"
+#include "core/geometry/ConvexHull.h"
+#include "core/detector/Detector.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/geometry/Ellipsoid.h"
+#include "core/crystal/Peak3D.h"
+#include "core/crystal/UnitCell.h"
 
 namespace nsx {
 

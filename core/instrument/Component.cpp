@@ -14,10 +14,10 @@
 
 #include <iostream>
 
-#include "Component.h"
-#include "Gonio.h"
-#include "Units.h"
-#include "YAMLType.h"
+#include "core/instrument/Component.h"
+#include "core/axes/Gonio.h"
+#include "core/utils/Units.h"
+#include "core/utils/YAMLType.h"
 
 namespace nsx {
 

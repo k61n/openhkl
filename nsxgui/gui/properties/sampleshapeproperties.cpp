@@ -19,7 +19,7 @@
 #include <QGroupBox>
 #include <QHeaderView>
 #include <QVBoxLayout>
-#include <core/Units.h>
+#include "core/utils/Units.h"
 
 SampleShapeProperties::SampleShapeProperties() : QcrWidget {"sampleShapeProperties"}
 {

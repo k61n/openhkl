@@ -12,9 +12,9 @@
 //
 //  ***********************************************************************************************
 
-#include <core/Logger.h>
+#include "core/logger/Logger.h"
 
-#include "DialogRawData.h"
+#include "apps/dialogs/DialogRawData.h"
 #include "ui_DialogRawData.h"
 
 DialogRawData::DialogRawData(QWidget* parent) : QDialog(parent), ui(new Ui::DialogRawData)

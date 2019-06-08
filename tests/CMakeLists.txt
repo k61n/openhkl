@@ -4,7 +4,9 @@ file(GLOB_RECURSE test_headers "*.h")
 foreach(source_file ${test_sources})
   get_filename_component(base_name ${source_file} NAME_WE)
   add_executable(${base_name} ${source_file} ${test_headers})
-  target_include_directories(${base_name} PRIVATE ${CMAKE_BINARY_DIR}/core/include)
+  target_include_directories(${base_name}
+      PRIVATE
+      ${CMAKE_SOURCE_DIR})
   target_link_libraries(${base_name} ${Boost_LIBRARIES} nsx)
 
   if(${NSX_VALGRIND})

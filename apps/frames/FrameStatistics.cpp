@@ -22,24 +22,24 @@
 #include <QTableView>
 #include <QVector>
 
-#include <core/CC.h>
-#include <core/DataSet.h>
-#include <core/IDataReader.h>
-#include <core/Logger.h>
-#include <core/MetaData.h>
-#include <core/MillerIndex.h>
-#include <core/Peak3D.h>
-#include <core/RFactor.h>
-#include <core/ResolutionShell.h>
+#include "core/statistics/CC.h"
+#include "core/data/DataSet.h"
+#include "core/data/IDataReader.h"
+#include "core/logger/Logger.h"
+#include "core/data/MetaData.h"
+#include "core/crystal/MillerIndex.h"
+#include "core/crystal/Peak3D.h"
+#include "core/statistics/RFactor.h"
+#include "core/crystal/ResolutionShell.h"
 
-#include "CollectedPeaksModel.h"
-#include "DoubleItemDelegate.h"
-#include "ExperimentItem.h"
-#include "FrameStatistics.h"
-#include "PeaksItem.h"
-#include "PeaksUtils.h"
-#include "SXPlot.h"
-#include "WidgetRefinerFit.h"
+#include "apps/models/CollectedPeaksModel.h"
+#include "apps/delegates/DoubleItemDelegate.h"
+#include "apps/models/ExperimentItem.h"
+#include "apps/frames/FrameStatistics.h"
+#include "apps/models/PeaksItem.h"
+#include "apps/utils/PeaksUtils.h"
+#include "apps/plot/SXPlot.h"
+#include "apps/widgets/WidgetRefinerFit.h"
 
 #include "ui_FrameStatistics.h"
 

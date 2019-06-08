@@ -18,20 +18,20 @@
 #include <QCompleter>
 #include <QStandardItem>
 
-#include <core/ChemistryTypes.h>
-#include <core/DataSet.h>
-#include <core/Gonio.h>
-#include <core/Logger.h>
-#include <core/Material.h>
-#include <core/Peak3D.h>
-#include <core/SpaceGroup.h>
-#include <core/UnitCell.h>
-#include <core/Units.h>
+#include "core/chemistry/ChemistryTypes.h"
+#include "core/data/DataSet.h"
+#include "core/axes/Gonio.h"
+#include "core/logger/Logger.h"
+#include "core/chemistry/Material.h"
+#include "core/crystal/Peak3D.h"
+#include "core/crystal/SpaceGroup.h"
+#include "core/crystal/UnitCell.h"
+#include "core/utils/Units.h"
 
-#include "MetaTypes.h"
-#include "SessionModel.h"
-#include "UnitCellItem.h"
-#include "UnitCellPropertyWidget.h"
+#include "apps/models/MetaTypes.h"
+#include "apps/models/SessionModel.h"
+#include "apps/models/UnitCellItem.h"
+#include "apps/tree/UnitCellPropertyWidget.h"
 
 #include "ui_UnitCellPropertyWidget.h"
 

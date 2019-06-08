@@ -14,13 +14,13 @@
 
 #include <stdexcept>
 
-#include "DataReaderFactory.h"
-#include "DataSet.h"
-#include "FakeDataReader.h"
-#include "HDF5DataReader.h"
-#include "ILLDataReader.h"
-#include "RawDataReader.h"
-#include "TiffDataReader.h"
+#include "core/data/DataReaderFactory.h"
+#include "core/data/DataSet.h"
+#include "core/data/FakeDataReader.h"
+#include "core/data/HDF5DataReader.h"
+#include "core/data/ILLDataReader.h"
+#include "core/data/RawDataReader.h"
+#include "core/data/TiffDataReader.h"
 
 namespace nsx {
 

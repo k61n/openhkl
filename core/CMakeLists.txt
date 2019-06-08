@@ -1,19 +1,20 @@
 include(MakeResources)
 
-get_subdirectories(core_SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
-
 # note: *.c needed for blosc files in data directory
 file(GLOB_RECURSE core_SOURCES *.cpp *.c)
 
-# Get the core headers
 file(GLOB_RECURSE core_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
-
-include_directories(${core_SUBDIRS}
-    ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
 add_library(${NSX_LIBRARY} ${NSX_LIB_TYPE} ${core_SOURCES} ${core_RESOURCES_CPP})
 
+target_include_directories(
+    ${NSX_LIBRARY}
+    PRIVATE
+    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/generated)
+
 target_link_libraries(${NSX_LIBRARY}
+    PUBLIC
     ${HDF5_LIBRARIES}
     ${BLOSC_LIBRARY}
     ${Boost_LIBRARIES}

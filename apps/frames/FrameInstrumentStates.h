@@ -14,9 +14,9 @@
 
 #pragma once
 
-#include <core/DataTypes.h>
+#include "core/data/DataTypes.h"
 
-#include "NSXQFrame.h"
+#include "apps/frames/NSXQFrame.h"
 
 namespace Ui {
 class FrameInstrumentStates;

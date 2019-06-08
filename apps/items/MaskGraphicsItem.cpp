@@ -23,11 +23,11 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
-#include <core/AABB.h>
-#include <core/DataSet.h>
+#include "core/geometry/AABB.h"
+#include "core/data/DataSet.h"
 
-#include "DetectorScene.h"
-#include "MaskGraphicsItem.h"
+#include "apps/models/DetectorScene.h"
+#include "apps/items/MaskGraphicsItem.h"
 
 MaskGraphicsItem::MaskGraphicsItem(nsx::sptrDataSet data, nsx::AABB* aabb)
     : SXGraphicsItem(nullptr, true, true), _data(data), _aabb(aabb), _from(0, 0), _to(0, 0)

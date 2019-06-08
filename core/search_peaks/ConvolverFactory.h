@@ -17,7 +17,7 @@
 
 #include <functional>
 
-#include "Convolver.h"
+#include "core/search_peaks/Convolver.h"
 
 namespace nsx {
 

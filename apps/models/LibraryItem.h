@@ -18,10 +18,10 @@
 
 #include <QJsonObject>
 
-#include <core/GeometryTypes.h>
-#include <core/ShapeLibrary.h>
+#include "core/geometry/GeometryTypes.h"
+#include "core/integration/ShapeLibrary.h"
 
-#include "TreeItem.h"
+#include "apps/models/TreeItem.h"
 
 class QWidget;
 

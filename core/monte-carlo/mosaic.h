@@ -17,7 +17,7 @@
 
 #include <vector>
 
-#include "Sample.h"
+#include "core/instrument/Sample.h"
 
 namespace nsx {
 

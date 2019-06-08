@@ -14,8 +14,8 @@
 
 #include <math.h>
 
-#include "EnhancedAnnularConvolver.h"
-#include "RadialConvolver.h"
+#include "core/search_peaks/EnhancedAnnularConvolver.h"
+#include "core/search_peaks/RadialConvolver.h"
 
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES

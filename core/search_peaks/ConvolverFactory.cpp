@@ -12,12 +12,12 @@
 //
 //  ***********************************************************************************************
 
-#include "ConvolverFactory.h"
-#include "AnnularConvolver.h"
-#include "ConstantConvolver.h"
-#include "DeltaConvolver.h"
-#include "EnhancedAnnularConvolver.h"
-#include "RadialConvolver.h"
+#include "core/search_peaks/ConvolverFactory.h"
+#include "core/search_peaks/AnnularConvolver.h"
+#include "core/search_peaks/ConstantConvolver.h"
+#include "core/search_peaks/DeltaConvolver.h"
+#include "core/search_peaks/EnhancedAnnularConvolver.h"
+#include "core/search_peaks/RadialConvolver.h"
 
 namespace nsx {
 

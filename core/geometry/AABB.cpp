@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include "AABB.h"
-#include "Ellipsoid.h"
+#include "core/geometry/AABB.h"
+#include "core/geometry/Ellipsoid.h"
 
 namespace nsx {
 

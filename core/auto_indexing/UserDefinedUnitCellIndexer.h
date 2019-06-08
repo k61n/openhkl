@@ -22,11 +22,11 @@
 
 #include <Eigen/Dense>
 
-#include "Any.h"
-#include "CrystalTypes.h"
-#include "ReciprocalVector.h"
-#include "UnitCell.h"
-#include "Units.h"
+#include "core/utils/Any.h"
+#include "core/crystal/CrystalTypes.h"
+#include "core/rec_space/ReciprocalVector.h"
+#include "core/crystal/UnitCell.h"
+#include "core/utils/Units.h"
 
 namespace nsx {
 

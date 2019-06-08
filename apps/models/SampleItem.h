@@ -14,10 +14,10 @@
 
 #pragma once
 
-#include <core/CrystalTypes.h>
-#include <core/InstrumentTypes.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/instrument/InstrumentTypes.h"
 
-#include "InspectableTreeItem.h"
+#include "apps/models/InspectableTreeItem.h"
 
 class UnitCellItem;
 

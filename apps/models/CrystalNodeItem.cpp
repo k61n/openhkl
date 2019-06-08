@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "CrystalNodeItem.h"
+#include "apps/models/CrystalNodeItem.h"
 
 CrystalNodeItem::CrystalNodeItem(QGraphicsItem* parent) : QGraphicsItem(parent)
 {

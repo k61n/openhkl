@@ -15,9 +15,9 @@
 #ifndef CORE_GEOMETRY_ELLIPSEMASK_H
 #define CORE_GEOMETRY_ELLIPSEMASK_H
 
-#include "AABB.h"
-#include "Ellipsoid.h"
-#include "IMask.h"
+#include "core/geometry/AABB.h"
+#include "core/geometry/Ellipsoid.h"
+#include "core/geometry/IMask.h"
 
 namespace nsx {
 

@@ -17,11 +17,11 @@
 
 #include <Eigen/Core>
 
-#include "CrystalTypes.h"
-#include "DetectorEvent.h"
-#include "Ellipsoid.h"
-#include "InstrumentTypes.h"
-#include "InterpolatedState.h"
+#include "core/crystal/CrystalTypes.h"
+#include "core/detector/DetectorEvent.h"
+#include "core/geometry/Ellipsoid.h"
+#include "core/instrument/InstrumentTypes.h"
+#include "core/instrument/InterpolatedState.h"
 
 namespace nsx {
 

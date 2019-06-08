@@ -12,16 +12,16 @@
 //
 //  ***********************************************************************************************
 
-#include <core/Logger.h>
-#include <core/Peak3D.h>
+#include "core/logger/Logger.h"
+#include "core/crystal/Peak3D.h"
 
-#include "CollectedPeaksModel.h"
-#include "DoubleItemDelegate.h"
-#include "ExperimentItem.h"
-#include "FrameRefiner.h"
-#include "PeaksItem.h"
-#include "SXPlot.h"
-#include "WidgetRefinerFit.h"
+#include "apps/models/CollectedPeaksModel.h"
+#include "apps/delegates/DoubleItemDelegate.h"
+#include "apps/models/ExperimentItem.h"
+#include "apps/frames/FrameRefiner.h"
+#include "apps/models/PeaksItem.h"
+#include "apps/plot/SXPlot.h"
+#include "apps/widgets/WidgetRefinerFit.h"
 
 #include "ui_FrameRefiner.h"
 

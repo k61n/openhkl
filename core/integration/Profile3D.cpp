@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include "Profile3D.h"
-#include "Ellipsoid.h"
+#include "core/integration/Profile3D.h"
+#include "core/geometry/Ellipsoid.h"
 
 namespace nsx {
 

@@ -12,14 +12,14 @@
 //
 //  ***********************************************************************************************
 
-#include "ShapeIntegrator.h"
-#include "DataSet.h"
-#include "Ellipsoid.h"
-#include "Intensity.h"
-#include "MillerIndex.h"
-#include "Peak3D.h"
-#include "PeakCoordinateSystem.h"
-#include "Profile1D.h"
+#include "core/integration/ShapeIntegrator.h"
+#include "core/data/DataSet.h"
+#include "core/geometry/Ellipsoid.h"
+#include "core/crystal/Intensity.h"
+#include "core/crystal/MillerIndex.h"
+#include "core/crystal/Peak3D.h"
+#include "core/crystal/PeakCoordinateSystem.h"
+#include "core/integration/Profile1D.h"
 
 namespace nsx {
 

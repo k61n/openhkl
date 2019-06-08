@@ -1,7 +1,7 @@
 #include <Eigen/Dense>
 
-#include <core/NSXTest.h>
-#include <core/TransAxis.h>
+#include "core/utils/NSXTest.h"
+#include "core/axes/TransAxis.h"
 
 const double tolerance = 1e-6;
 
