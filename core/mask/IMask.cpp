@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/geometry/IMask.cpp
+//! @file      core/mask/IMask.cpp
 //! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "core/geometry/IMask.h"
+#include "core/mask/IMask.h"
 
 namespace nsx {
 

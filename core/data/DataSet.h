@@ -25,7 +25,7 @@
 #include "core/crystal/CrystalTypes.h"
 #include "core/data/DataTypes.h"
 #include "core/geometry/GeometryTypes.h"
-#include "core/geometry/IMask.h"
+#include "core/mask/IMask.h"
 #include "core/instrument/InstrumentTypes.h"
 #include "core/instrument/InterpolatedState.h"
 #include "core/utils/UtilsTypes.h"

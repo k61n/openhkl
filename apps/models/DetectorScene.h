@@ -27,7 +27,7 @@
 
 #include "core/crystal/CrystalTypes.h"
 #include "core/data/DataTypes.h"
-#include "core/geometry/IMask.h"
+#include "core/mask/IMask.h"
 
 #include "apps/ColorMap.h"
 #include "models/SessionModel.h"

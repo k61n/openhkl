@@ -22,11 +22,11 @@
 #include <QToolTip>
 
 #include "core/geometry/AABB.h"
-#include "core/geometry/BoxMask.h"
+#include "core/mask/BoxMask.h"
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/geometry/EllipseMask.h"
+#include "core/mask/EllipseMask.h"
 #include "core/axes/Gonio.h"
 #include "core/data/IDataReader.h"
 #include "core/instrument/InstrumentState.h"

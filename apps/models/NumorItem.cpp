@@ -17,7 +17,7 @@
 #include <QJsonArray>
 
 #include "core/geometry/AABB.h"
-#include "core/geometry/BoxMask.h"
+#include "core/mask/BoxMask.h"
 #include "core/data/DataSet.h"
 #include "core/instrument/Experiment.h"
 #include "core/logger/Logger.h"

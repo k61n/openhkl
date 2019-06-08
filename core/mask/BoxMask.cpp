@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/geometry/BoxMask.cpp
+//! @file      core/mask/BoxMask.cpp
 //! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/geometry/BoxMask.h"
+#include "core/mask/BoxMask.h"
 #include "core/geometry/Ellipsoid.h"
 
 namespace nsx {
