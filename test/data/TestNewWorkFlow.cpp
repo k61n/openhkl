@@ -27,8 +27,6 @@
 
 TEST_CASE("test/data/TestNewWorkFlow.cpp", "") {
 
-    CHECK(false); return; // TODO: restore test (takes too long on l)
-
     nsx::DataReaderFactory factory;
 
     nsx::Experiment experiment("test", "BioDiff2500");
