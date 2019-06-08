@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/geometry/Triangle.cpp
+//! @file      core/hull/Triangle.cpp
 //! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/geometry/Triangle.h"
+#include "core/hull/Triangle.h"
 
 namespace nsx {
 

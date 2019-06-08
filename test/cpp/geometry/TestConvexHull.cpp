@@ -3,9 +3,9 @@
 #include <stdexcept>
 
 #include "core/geometry/AABB.h"
-#include "core/geometry/ConvexHull.h"
-#include "core/geometry/Face.h"
-#include "core/geometry/Vertex.h"
+#include "core/hull/ConvexHull.h"
+#include "core/hull/Face.h"
+#include "core/hull/Vertex.h"
 
 const double tolerance = 1e-9;
 //! Check that the Hull satisfies the convexity condition. This consists in

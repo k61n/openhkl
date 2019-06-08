@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/geometry/Face.cpp
+//! @file      core/hull/Face.cpp
 //! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -16,9 +16,9 @@
 
 #include <Eigen/Dense>
 
-#include "core/geometry/Edge.h"
-#include "core/geometry/Face.h"
-#include "core/geometry/Vertex.h"
+#include "core/hull/Edge.h"
+#include "core/hull/Face.h"
+#include "core/hull/Vertex.h"
 
 namespace nsx {
 

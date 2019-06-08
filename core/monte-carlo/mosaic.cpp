@@ -21,7 +21,7 @@
 
 #include "core/geometry/Blob3D.h"
 
-#include "core/geometry/ConvexHull.h"
+#include "core/hull/ConvexHull.h"
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
@@ -32,7 +32,7 @@
 #include "core/search_peaks/PeakFinder.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/geometry/Triangle.h"
+#include "core/hull/Triangle.h"
 #include "core/crystal/UnitCell.h"
 #include "core/utils/Units.h"
 

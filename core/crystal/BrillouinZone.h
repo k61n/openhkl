@@ -19,7 +19,7 @@
 
 #include <Eigen/Dense>
 
-#include "core/geometry/ConvexHull.h"
+#include "core/hull/ConvexHull.h"
 #include "core/data/DataTypes.h"
 
 namespace nsx {

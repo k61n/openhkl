@@ -6,7 +6,7 @@
 #include <Eigen/Dense>
 
 #include "core/chemistry/ChemistryTypes.h"
-#include "core/geometry/ConvexHull.h"
+#include "core/hull/ConvexHull.h"
 #include "core/monte-carlo/MCAbsorption.h"
 #include "core/chemistry/Material.h"
 #include "core/utils/Units.h"

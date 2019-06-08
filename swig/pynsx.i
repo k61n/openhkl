@@ -127,17 +127,17 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/crystal/NiggliReduction.h"
 #include "core/crystal/GruberReduction.h"
 #include "core/crystal/SymOp.h"
-#include "core/geometry/Vertex.h"
-#include "core/geometry/Triangle.h"
+#include "core/hull/Vertex.h"
+#include "core/hull/Triangle.h"
 
 #include "core/geometry/Ellipsoid.h"
-#include "core/geometry/Face.h"
+#include "core/hull/Face.h"
 #include "core/monte-carlo/MCAbsorption.h"
-#include "core/geometry/ConvexHull.h"
+#include "core/hull/ConvexHull.h"
 #include "core/crystal/BrillouinZone.h"
 
 #include "core/geometry/AABB.h"
-#include "core/geometry/Edge.h"
+#include "core/hull/Edge.h"
 #include "core/geometry/Blob3D.h"
 
 
@@ -491,14 +491,14 @@ namespace nsx {
 %include "core/crystal/SymOp.h"
 %template(SymOpList) std::vector<nsx::SymOp>;
 
-%include "core/geometry/Vertex.h"
-%include "core/geometry/Triangle.h"
+%include "core/hull/Vertex.h"
+%include "core/hull/Triangle.h"
 %include "core/geometry/Ellipsoid.h"
-%include "core/geometry/Face.h"
+%include "core/hull/Face.h"
 %include "core/monte-carlo/MCAbsorption.h"
-%include "core/geometry/ConvexHull.h"
+%include "core/hull/ConvexHull.h"
 %include "core/geometry/AABB.h"
-%include "core/geometry/Edge.h"
+%include "core/hull/Edge.h"
 %include "core/geometry/Blob3D.h"
 
 %include "core/crystal/BrillouinZone.h"

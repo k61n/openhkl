@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/geometry/ConvexHull.cpp
+//! @file      core/hull/ConvexHull.cpp
 //! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -15,11 +15,11 @@
 #include <limits>
 
 #include "core/geometry/AABB.h"
-#include "core/geometry/ConvexHull.h"
-#include "core/geometry/Edge.h"
-#include "core/geometry/Face.h"
-#include "core/geometry/Triangle.h"
-#include "core/geometry/Vertex.h"
+#include "core/hull/ConvexHull.h"
+#include "core/hull/Edge.h"
+#include "core/hull/Face.h"
+#include "core/hull/Triangle.h"
+#include "core/hull/Vertex.h"
 
 namespace nsx {
 
