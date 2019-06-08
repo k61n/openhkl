@@ -1,3 +1,4 @@
+#include "test/catch.hpp"
 #include <cmath>
 
 #include <Eigen/Dense>
@@ -10,39 +11,38 @@ const double tolerance = 1e-9;
 // note: validation data obtained from web, see e.g.
 // http://lampx.tugraz.at/~hadley/ss1/bzones/
 // https://en.wikipedia.org/wiki/Brillouin_zone
-
-
 // validation function
 void validate_zone(const Eigen::Matrix3d& B, int nverts, int nfaces)
 {
     nsx::BrillouinZone zone(B, 1e-3);
     nsx::ConvexHull hull = zone.convexHull();
 
-    NSX_CHECK_EQUAL(hull.nVertices(), nverts);
-    NSX_CHECK_EQUAL(zone.vertices().size(), nverts);
-    NSX_CHECK_EQUAL(2 * zone.normals().size(), nfaces);
+    CHECK(hull.nVertices() == nverts);
+    CHECK(zone.vertices().size() == nverts);
+    CHECK(2 * zone.normals().size() == nfaces);
 
     for (auto n : zone.normals()) {
-        NSX_CHECK_ASSERT(zone.inside(0.5 * n));
-        NSX_CHECK_ASSERT(zone.inside(-0.5 * n));
+        CHECK(zone.inside(0.5 * n));
+        CHECK(zone.inside(-0.5 * n));
 
-        NSX_CHECK_ASSERT(hull.contains(0.49 * n) == true);
-        NSX_CHECK_ASSERT(hull.contains(0.51 * n) == false);
+        CHECK(hull.contains(0.49 * n) == true);
+        CHECK(hull.contains(0.51 * n) == false);
 
-        NSX_CHECK_ASSERT(zone.inside(0.51 * n) == false);
-        NSX_CHECK_ASSERT(zone.inside(-0.51 * n) == false);
+        CHECK(zone.inside(0.51 * n) == false);
+        CHECK(zone.inside(-0.51 * n) == false);
     }
 
     for (auto v : zone.vertices()) {
-        NSX_CHECK_ASSERT(zone.inside(v));
-        NSX_CHECK_ASSERT(zone.inside(-v));
+        CHECK(zone.inside(v));
+        CHECK(zone.inside(-v));
 
-        NSX_CHECK_ASSERT(zone.inside(1.01 * v) == false);
-        NSX_CHECK_ASSERT(zone.inside(-1.01 * v) == false);
+        CHECK(zone.inside(1.01 * v) == false);
+        CHECK(zone.inside(-1.01 * v) == false);
     }
 
-    NSX_CHECK_CLOSE(hull.volume(), std::fabs(B.determinant()), 1e-8);
+    CHECK(hull.volume() == Approx(std::fabs(B.determinant())).epsilon(1e-8));
 }
+
 TEST_CASE("test/geometry/TestBrillouinZone.cpp", "") {
 
     const double deg = M_PI / 180.0;
@@ -99,6 +99,4 @@ TEST_CASE("test/geometry/TestBrillouinZone.cpp", "") {
     // cP
     // cF
     // cI
-
-    return 0;
 }

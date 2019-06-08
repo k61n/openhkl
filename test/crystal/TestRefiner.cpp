@@ -1,3 +1,4 @@
+#include "test/catch.hpp"
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -63,7 +64,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "") {
     peakFinder->setHandler(progressHandler);
 
     auto found_peaks = peakFinder->find(numors);
-    NSX_CHECK_ASSERT(found_peaks.size() >= 800);
+    CHECK(found_peaks.size() >= 800);
 
     // at this stage we have the peaks, now we index
     nsx::IndexerParameters params;
@@ -74,7 +75,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "") {
     selected_peaks = peak_filter.enabled(found_peaks, true);
     selected_peaks = peak_filter.dRange(selected_peaks, 2.0, 100.0);
 
-    NSX_CHECK_ASSERT(selected_peaks.size() >= 600);
+    CHECK(selected_peaks.size() >= 600);
 
     auto numIndexedPeaks = [&]() -> unsigned int {
         unsigned int indexed_peaks = 0;
@@ -88,15 +89,15 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "") {
 
     unsigned int indexed_peaks = numIndexedPeaks();
 
-    NSX_CHECK_ASSERT(indexed_peaks > 600);
-    NSX_CHECK_NO_THROW(indexer.autoIndex(params));
+    CHECK(indexed_peaks > 600);
+    CHECK_NOTHROW(indexer.autoIndex(params));
 
-    NSX_CHECK_ASSERT(indexer.solutions().empty() == false);
+    CHECK(indexer.solutions().empty() == false);
 
     auto soln = indexer.solutions().front();
 
     // correctly indexed at least 98% of peaks
-    NSX_CHECK_ASSERT(soln.second > 98.0);
+    CHECK(soln.second > 98.0);
 
     nsx::PeakList peaks;
 
@@ -105,7 +106,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "") {
 
     // set constraints
     auto constrained_cell = cell->applyNiggliConstraints();
-    NSX_CHECK_SMALL((cell->reciprocalBasis() - constrained_cell.reciprocalBasis()).norm(), 1e-6);
+    CHECK(std::abs((cell->reciprocalBasis() - constrained_cell.reciprocalBasis()).norm()) < 1e-6);
 
     for (auto&& peak : found_peaks) {
         peak->setUnitCell(cell);
@@ -116,10 +117,10 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "") {
 
     nsx::Refiner refiner(states, cell, peaks, 1);
 
-    NSX_CHECK_ASSERT(refiner.batches().size() == 1);
+    CHECK(refiner.batches().size() == 1);
 
     for (auto&& batch : refiner.batches()) {
-        NSX_CHECK_ASSERT(batch.peaks().size() > 200);
+        CHECK(batch.peaks().size() > 200);
     }
 
     refiner.refineUB();
@@ -127,6 +128,5 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "") {
 
     std::cout << "peaks to refine: " << peaks.size() << std::endl;
 
-    NSX_CHECK_ASSERT(refiner.refine(500));
-    return 0;
+    CHECK(refiner.refine(500));
 }

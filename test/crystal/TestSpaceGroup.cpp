@@ -1,3 +1,5 @@
+#include "test/catch.hpp"
+
 #include <map>
 #include <string>
 
@@ -69,92 +71,90 @@ TEST_CASE("test/crystal/TestSpaceGroup.cpp", "") {
         {"I m -3 m", 96},   {"I a -3 d", 96},
     };
 
-    NSX_CHECK_EQUAL(nsx::SpaceGroup::symbols().size(), static_cast<size_t>(230));
+    CHECK(nsx::SpaceGroup::symbols().size() == static_cast<size_t>(230));
 
     nsx::SpaceGroup sg_pnma("P n m a");
     // Check that string generator strings are OK s
-    NSX_CHECK_EQUAL(sg_pnma.generators().compare("-x+1/2,-y,z+1/2; -x,y+1/2,-z; -x,-y,-z"), 0);
+    CHECK(sg_pnma.generators().compare("-x+1/2,-y,z+1/2; -x,y+1/2,-z; -x,-y,-z") == 0);
 
     for (const auto& p : nElementsPerSpaceGroup) {
         nsx::SpaceGroup sg(p.first);
-        NSX_CHECK_EQUAL(sg.groupElements().size(), static_cast<size_t>(p.second));
+        CHECK(sg.groupElements().size() == static_cast<size_t>(p.second));
     }
 
     // Test extinction conditions
     nsx::SpaceGroup sg("F d -3 m");
-    NSX_CHECK_ASSERT(sg.isExtinct({0, 0, 1}));
-    NSX_CHECK_ASSERT(sg.isExtinct({0, 0, 2}));
-    NSX_CHECK_ASSERT(sg.isExtinct({0, 0, 3}));
-    NSX_CHECK_ASSERT(!sg.isExtinct({0, 0, 4}));
-    NSX_CHECK_ASSERT(sg.isExtinct({1, 1, 2}));
-    NSX_CHECK_ASSERT(!sg.isExtinct({1, 1, 3}));
-    NSX_CHECK_ASSERT(sg.isExtinct({0, 2, 4}));
-    NSX_CHECK_ASSERT(!sg.isExtinct({0, 2, 6}));
+    CHECK(sg.isExtinct({0, 0, 1}));
+    CHECK(sg.isExtinct({0, 0, 2}));
+    CHECK(sg.isExtinct({0, 0, 3}));
+    CHECK(!sg.isExtinct({0, 0, 4}));
+    CHECK(sg.isExtinct({1, 1, 2}));
+    CHECK(!sg.isExtinct({1, 1, 3}));
+    CHECK(sg.isExtinct({0, 2, 4}));
+    CHECK(!sg.isExtinct({0, 2, 6}));
 
     // Test extinction conditions
     nsx::SpaceGroup sg2("I 41/a");
-    NSX_CHECK_ASSERT(!sg2.isExtinct({1, 2, 1}));
-    NSX_CHECK_ASSERT(sg2.isExtinct({1, 2, 2}));
-    NSX_CHECK_ASSERT(sg2.isExtinct({1, 2, 0}));
-    NSX_CHECK_ASSERT(!sg2.isExtinct({2, 2, 0}));
-    NSX_CHECK_ASSERT(sg2.isExtinct({0, 1, 2}));
-    NSX_CHECK_ASSERT(!sg2.isExtinct({0, 2, 2}));
-    NSX_CHECK_ASSERT(!sg2.isExtinct({1, 1, 2}));
-    NSX_CHECK_ASSERT(sg2.isExtinct({1, 1, 3}));
-    NSX_CHECK_ASSERT(sg2.isExtinct({0, 0, 2}));
-    NSX_CHECK_ASSERT(sg2.isExtinct({1, -1, 0}));
-    NSX_CHECK_ASSERT(!sg2.isExtinct({2, -2, 0}));
+    CHECK(!sg2.isExtinct({1, 2, 1}));
+    CHECK(sg2.isExtinct({1, 2, 2}));
+    CHECK(sg2.isExtinct({1, 2, 0}));
+    CHECK(!sg2.isExtinct({2, 2, 0}));
+    CHECK(sg2.isExtinct({0, 1, 2}));
+    CHECK(!sg2.isExtinct({0, 2, 2}));
+    CHECK(!sg2.isExtinct({1, 1, 2}));
+    CHECK(sg2.isExtinct({1, 1, 3}));
+    CHECK(sg2.isExtinct({0, 0, 2}));
+    CHECK(sg2.isExtinct({1, -1, 0}));
+    CHECK(!sg2.isExtinct({2, -2, 0}));
 
     nsx::SpaceGroup sg3("I m -3 m");
-    NSX_CHECK_ASSERT(sg3.bravaisType() == 'c');
+    CHECK(sg3.bravaisType() == 'c');
 
     nsx::SpaceGroup sg4("P n m a");
-    NSX_CHECK_ASSERT(sg4.bravaisType() == 'o');
+    CHECK(sg4.bravaisType() == 'o');
 
     nsx::SpaceGroup sg5("F d -3 m");
-    NSX_CHECK_ASSERT(sg5.bravaisType() == 'c');
+    CHECK(sg5.bravaisType() == 'c');
 
     nsx::SpaceGroup sg6("C 2/m");
-    NSX_CHECK_ASSERT(sg6.bravaisType() == 'm');
+    CHECK(sg6.bravaisType() == 'm');
 
     nsx::SpaceGroup sg7("P 21/c");
-    NSX_CHECK_ASSERT(sg7.bravaisType() == 'm');
+    CHECK(sg7.bravaisType() == 'm');
 
     nsx::SpaceGroup sg8("P 4 m m");
-    NSX_CHECK_ASSERT(sg8.bravaisType() == 't');
+    CHECK(sg8.bravaisType() == 't');
 
     nsx::SpaceGroup sg9("P 4/m m m");
-    NSX_CHECK_ASSERT(sg9.bravaisType() == 't');
+    CHECK(sg9.bravaisType() == 't');
 
     nsx::SpaceGroup sg10("P 63/m m c");
-    NSX_CHECK_ASSERT(sg10.bravaisType() == 'h');
+    CHECK(sg10.bravaisType() == 'h');
 
     nsx::SpaceGroup sg11("P 3 2 1");
-    NSX_CHECK_ASSERT(sg11.bravaisType() == 'h');
+    CHECK(sg11.bravaisType() == 'h');
 
     nsx::SpaceGroup sg12("P -1");
-    NSX_CHECK_ASSERT(sg12.bravaisType() == 'a');
+    CHECK(sg12.bravaisType() == 'a');
 
     nsx::SpaceGroup sg13("R -3 c");
-    NSX_CHECK_ASSERT(sg13.bravaisType() == 'h');
+    CHECK(sg13.bravaisType() == 'h');
 
     // Test extinction conditions
     nsx::SpaceGroup sg14("P 21 21 21");
-    NSX_CHECK_ASSERT(sg14.isExtinct({3, 0, 0}));
-    NSX_CHECK_ASSERT(sg14.isExtinct({0, 3, 0}));
-    NSX_CHECK_ASSERT(sg14.isExtinct({0, 0, 3}));
-    NSX_CHECK_ASSERT(!sg14.isExtinct({2, 0, 0}));
-    NSX_CHECK_ASSERT(!sg14.isExtinct({0, 2, 0}));
-    NSX_CHECK_ASSERT(!sg14.isExtinct({0, 0, 2}));
+    CHECK(sg14.isExtinct({3, 0, 0}));
+    CHECK(sg14.isExtinct({0, 3, 0}));
+    CHECK(sg14.isExtinct({0, 0, 3}));
+    CHECK(!sg14.isExtinct({2, 0, 0}));
+    CHECK(!sg14.isExtinct({0, 2, 0}));
+    CHECK(!sg14.isExtinct({0, 0, 2}));
 
     // Test extinction conditions
     nsx::SpaceGroup sg15("P 2 2 21");
-    NSX_CHECK_ASSERT(!sg15.isExtinct({2, 0, 0}));
-    NSX_CHECK_ASSERT(!sg15.isExtinct({0, 2, 0}));
-    NSX_CHECK_ASSERT(!sg15.isExtinct({0, 0, 2}));
-    NSX_CHECK_ASSERT(!sg15.isExtinct({3, 0, 0}));
-    NSX_CHECK_ASSERT(!sg15.isExtinct({0, 3, 0}));
-    NSX_CHECK_ASSERT(sg15.isExtinct({0, 0, 3}));
-
-    return 0;
+    CHECK(!sg15.isExtinct({2, 0, 0}));
+    CHECK(!sg15.isExtinct({0, 2, 0}));
+    CHECK(!sg15.isExtinct({0, 0, 2}));
+    CHECK(!sg15.isExtinct({3, 0, 0}));
+    CHECK(!sg15.isExtinct({0, 3, 0}));
+    CHECK(sg15.isExtinct({0, 0, 3}));
 }

@@ -1,3 +1,4 @@
+#include "test/catch.hpp"
 #include <stdexcept>
 
 #include <Eigen/Dense>
@@ -26,21 +27,21 @@ TEST_CASE("test/data/TestILLAsciiQScan.cpp", "") {
 
         metadata = dataf->reader()->metadata();
 
-        NSX_CHECK_ASSERT(metadata.key<int>("nbang") == 4);
+        CHECK(metadata.key<int>("nbang") == 4);
 
         dataf->open();
         v = dataf->frame(0);
     } catch (std::exception& e) {
-        NSX_FAIL(std::string("caught exception: ") + e.what());
+        FAIL(std::string("caught exception: ") + e.what());
     } catch (...) {
-        NSX_FAIL("unknown exception");
+        FAIL("unknown exception");
     }
 
     // Check the total number of count in the frame 0
-    NSX_CHECK_EQUAL(v.sum(), 5.90800000e+03);
+    CHECK(v.sum() == 5.90800000e+03);
 
     // Check the value of the monitor
-    NSX_CHECK_CLOSE(metadata.key<double>("monitor"), 3.74130000e+04, tolerance);
+    CHECK(metadata.key<double>("monitor") == Approx(3.74130000e+04).epsilon(tolerance));
 
     dataf->close();
 }

@@ -1,5 +1,8 @@
-#include <memory>
+#include "test/catch.hpp"
 
+// TODO: contains no checks!
+
+#include <memory>
 #include <Eigen/Dense>
 
 #include "core/chemistry/ChemistryTypes.h"
@@ -56,6 +59,4 @@ TEST_CASE("test/chemistry/TestMCAbsorption.cpp", "") {
 
     // Compute the transmission factor
     mca.run(10000, Eigen::Vector3d(0, 1, 0), Eigen::Matrix3d::Identity());
-
-    return 0;
 }

@@ -1,9 +1,9 @@
+#include "test/catch.hpp"
 #include <Eigen/Dense>
 
 #include "core/data/DataReaderFactory.h"
 #include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
-
 TEST_CASE("test/data/TestHDF5Data.cpp", "") {
 
     nsx::DataReaderFactory factory;
@@ -15,7 +15,7 @@ TEST_CASE("test/data/TestHDF5Data.cpp", "") {
     Eigen::MatrixXi v = dataf->frame(0);
 
     // Check the total number of count in the frame 0
-    NSX_CHECK_EQUAL(v.sum(), 1282584565);
+    CHECK(v.sum() == 1282584565);
 
     dataf->close();
 }

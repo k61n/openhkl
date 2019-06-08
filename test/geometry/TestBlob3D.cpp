@@ -1,9 +1,9 @@
+#include "test/catch.hpp"
 #include <cmath>
 
 #include <Eigen/Dense>
 
 #include "core/geometry/Blob3D.h"
-
 const double tolerance = 1e-5;
 
 TEST_CASE("test/geometry/TestBlob3D.cpp", "") {
@@ -28,23 +28,23 @@ TEST_CASE("test/geometry/TestBlob3D.cpp", "") {
             }
         }
     }
-    NSX_CHECK_CLOSE(tot, 1.0, tolerance);
-    NSX_CHECK_CLOSE(tot, blob.getMass(), tolerance);
+    CHECK(tot == Approx(1.0).epsilon(tolerance));
+    CHECK(tot == Approx(blob.getMass()).epsilon(tolerance));
     Eigen::Vector3d center, eigVal;
     Eigen::Matrix3d eigVec;
     double scale = 1.0;
     blob.toEllipsoid(scale, center, eigVal, eigVec);
     // Check that the center is OK
-    NSX_CHECK_CLOSE(center(0), c_x, tolerance);
-    NSX_CHECK_CLOSE(center(1), c_y, tolerance);
-    NSX_CHECK_CLOSE(center(2), c_z, tolerance);
+    CHECK(center(0) == Approx(c_x).epsilon(tolerance));
+    CHECK(center(1) == Approx(c_y).epsilon(tolerance));
+    CHECK(center(2) == Approx(c_z).epsilon(tolerance));
     // Check the semi_axes
-    NSX_CHECK_CLOSE(eigVal(0), sqrt(sx2), tolerance);
-    NSX_CHECK_CLOSE(eigVal(1), sqrt(sy2), tolerance);
-    NSX_CHECK_CLOSE(eigVal(2), sqrt(sz2), tolerance);
+    CHECK(eigVal(0) == Approx(sqrt(sx2)).epsilon(tolerance));
+    CHECK(eigVal(1) == Approx(sqrt(sy2)).epsilon(tolerance));
+    CHECK(eigVal(2) == Approx(sqrt(sz2)).epsilon(tolerance));
 
     // Check the eigenVectors
-    NSX_CHECK_CLOSE(std::abs((eigVec.col(0))(0)), 1.0, tolerance);
-    NSX_CHECK_CLOSE(std::abs((eigVec.col(1))(1)), 1.0, tolerance);
-    NSX_CHECK_CLOSE(std::abs((eigVec.col(2))(2)), 1.0, tolerance);
+    CHECK(std::abs((eigVec.col(0))(0)) == Approx(1.0).epsilon(tolerance));
+    CHECK(std::abs((eigVec.col(1))(1)) == Approx(1.0).epsilon(tolerance));
+    CHECK(std::abs((eigVec.col(2))(2)) == Approx(1.0).epsilon(tolerance));
 }

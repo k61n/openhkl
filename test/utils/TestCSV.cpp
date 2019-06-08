@@ -1,9 +1,9 @@
+#include "test/catch.hpp"
 #include <sstream>
 #include <string>
 #include <vector>
 
 #include "core/utils/CSV.h"
-
 TEST_CASE("test/utils/TestCSV.cpp", "") {
 
     std::string csv_file =
@@ -19,8 +19,6 @@ TEST_CASE("test/utils/TestCSV.cpp", "") {
 
     while (!stream.eof()) {
         row = csv.getRow(stream);
-        NSX_CHECK_ASSERT(row.size() == 4);
+        CHECK(row.size() == 4);
     }
-
-    return 0;
 }

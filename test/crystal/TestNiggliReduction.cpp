@@ -1,3 +1,4 @@
+#include "test/catch.hpp"
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -77,23 +78,21 @@ TEST_CASE("test/crystal/TestNiggliReduction.cpp", "") {
         uc.transform(P);
 
         Eigen::Vector3d calc_niggli_a = uc.basis().col(0);
-        NSX_CHECK_CLOSE(calc_niggli_a[0], niggli_a[0], tolerance);
-        NSX_CHECK_CLOSE(calc_niggli_a[1], niggli_a[1], tolerance);
-        NSX_CHECK_CLOSE(calc_niggli_a[2], niggli_a[2], tolerance);
+        CHECK(calc_niggli_a[0] == Approx(niggli_a[0]).epsilon(tolerance));
+        CHECK(calc_niggli_a[1] == Approx(niggli_a[1]).epsilon(tolerance));
+        CHECK(calc_niggli_a[2] == Approx(niggli_a[2]).epsilon(tolerance));
 
         Eigen::Vector3d calc_niggli_b = uc.basis().col(1);
-        NSX_CHECK_CLOSE(calc_niggli_b[0], niggli_b[0], tolerance);
-        NSX_CHECK_CLOSE(calc_niggli_b[1], niggli_b[1], tolerance);
-        NSX_CHECK_CLOSE(calc_niggli_b[2], niggli_b[2], tolerance);
+        CHECK(calc_niggli_b[0] == Approx(niggli_b[0]).epsilon(tolerance));
+        CHECK(calc_niggli_b[1] == Approx(niggli_b[1]).epsilon(tolerance));
+        CHECK(calc_niggli_b[2] == Approx(niggli_b[2]).epsilon(tolerance));
 
         Eigen::Vector3d calc_niggli_c = uc.basis().col(2);
-        NSX_CHECK_CLOSE(calc_niggli_c[0], niggli_c[0], tolerance);
-        NSX_CHECK_CLOSE(calc_niggli_c[1], niggli_c[1], tolerance);
-        NSX_CHECK_CLOSE(calc_niggli_c[2], niggli_c[2], tolerance);
+        CHECK(calc_niggli_c[0] == Approx(niggli_c[0]).epsilon(tolerance));
+        CHECK(calc_niggli_c[1] == Approx(niggli_c[1]).epsilon(tolerance));
+        CHECK(calc_niggli_c[2] == Approx(niggli_c[2]).epsilon(tolerance));
     }
 
     primitiveCellsFile.close();
     niggliCellsFile.close();
-
-    return 0;
 }

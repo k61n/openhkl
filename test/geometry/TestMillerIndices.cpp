@@ -1,9 +1,8 @@
+#include "test/catch.hpp"
 #include <Eigen/Dense>
 
 #include "core/crystal/MillerIndex.h"
-
 TEST_CASE("test/geometry/TestMillerIndices.cpp", "") {
-
 
     Eigen::RowVector3i v1(1, 2, 3);
 
@@ -13,7 +12,5 @@ TEST_CASE("test/geometry/TestMillerIndices.cpp", "") {
 
     x = 100;
 
-    NSX_CHECK_EQUAL(hkl1[0], 100);
-
-    return 0;
+    CHECK(hkl1[0] == 100);
 }

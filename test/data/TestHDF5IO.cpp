@@ -1,3 +1,4 @@
+#include "test/catch.hpp"
 #include <vector>
 
 #include <Eigen/Dense>
@@ -30,15 +31,15 @@ TEST_CASE("test/data/TestHDF5IO.cpp", "") {
         // read data back in and check that it agrees!
         dataf = factory.create("h5", "D10_hdf5_example.h5", diffractometer);
 
-        NSX_CHECK_ASSERT(dataf != nullptr);
+        CHECK(dataf != nullptr);
 
         for (size_t i = 0; i < dataf->nFrames(); ++i) {
-            NSX_CHECK_ASSERT(dataf->frame(i) == frames[i]);
+            CHECK(dataf->frame(i) == frames[i]);
         }
         dataf->close();
     } catch (std::exception& e) {
-        NSX_FAIL(std::string("saveHDF5() threw exception: ") + e.what());
+        FAIL(std::string("saveHDF5() threw exception: ") + e.what());
     } catch (...) {
-        NSX_FAIL("saveHDF5() threw unknown exception");
+        FAIL("saveHDF5() threw unknown exception");
     }
 }

@@ -1,7 +1,6 @@
+#include "test/catch.hpp"
 #include "core/search_peaks/DeltaConvolver.h"
 #include "core/mathematics/MathematicsTypes.h"
-
-
 // Generate a image to use for testing the Fourier transform
 nsx::RealMatrix generateImage(int rows, int cols)
 {
@@ -25,8 +24,9 @@ double computeError(int nrows, int ncols)
     double error = (difference * difference.transpose()).sum() / nrows / ncols;
     return std::sqrt(error);
 }
+
 TEST_CASE("test/peak_find/TestDeltaConvolver.cpp", "") {
 
     double error = computeError(30, 20);
-    NSX_CHECK_ASSERT(error < 1e-10);
+    CHECK(error < 1e-10);
 }

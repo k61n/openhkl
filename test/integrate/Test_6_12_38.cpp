@@ -1,3 +1,4 @@
+#include "test/catch.hpp"
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -55,7 +56,7 @@ TEST_CASE("test/integrate/Test_6_12_38.cpp", "") {
     peak->setSelected(true);
 
     Eigen::Vector3d q1 = peak->q().rowVector();
-    NSX_CHECK_SMALL((q1 - q0).norm() / q0.norm(), 1e-1);
+    CHECK(std::abs((q1 - q0).norm() / q0.norm()) < 1e-1);
 
     std::cout << q0.transpose() << std::endl;
     std::cout << q1.transpose() << std::endl;
@@ -65,7 +66,5 @@ TEST_CASE("test/integrate/Test_6_12_38.cpp", "") {
     nsx::PixelSumIntegrator integrator(false, false);
     integrator.integrate(peaks, dataf, 2.7, 3.0, 4.0);
 
-    NSX_CHECK_ASSERT(peak->enabled() == true);
-
-    return 0;
+    CHECK(peak->enabled() == true);
 }

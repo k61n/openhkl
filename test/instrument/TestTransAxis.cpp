@@ -1,3 +1,4 @@
+#include "test/catch.hpp"
 #include <Eigen/Dense>
 
 #include "core/axes/TransAxis.h"
@@ -11,9 +12,7 @@ TEST_CASE("test/instrument/TestTransAxis.cpp", "") {
     // Translate the vector 0,1,2 by 0.4
     Eigen::Vector3d v = t.transform(Eigen::Vector3d(0, 1, 2), 0.4);
 
-    NSX_CHECK_CLOSE(v[0], 0.4, tolerance);
-    NSX_CHECK_CLOSE(v[1], 1.0, tolerance);
-    NSX_CHECK_CLOSE(v[2], 2.0, tolerance);
-
-    return 0;
+    CHECK(v[0] == Approx(0.4).epsilon(tolerance));
+    CHECK(v[1] == Approx(1.0).epsilon(tolerance));
+    CHECK(v[2] == Approx(2.0).epsilon(tolerance));
 }

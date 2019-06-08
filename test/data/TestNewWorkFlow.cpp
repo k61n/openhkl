@@ -1,8 +1,9 @@
+#include "test/catch.hpp"
+
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
-
 #include <Eigen/Dense>
 
 #include "core/auto_indexing/AutoIndexer.h"
@@ -25,6 +26,8 @@
 #include "core/utils/Units.h"
 
 TEST_CASE("test/data/TestNewWorkFlow.cpp", "") {
+
+    CHECK(false); return; // TODO: restore test (takes too long on l)
 
     nsx::DataReaderFactory factory;
 
@@ -65,12 +68,12 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "") {
     auto found_peaks = peakFinder->find(numors);
 
     try {
-        NSX_CHECK_ASSERT(static_cast<int>(found_peaks.size()) >= 0);
+        CHECK(static_cast<int>(found_peaks.size()) >= 0);
     } catch (...) {
         std::cout << "ERROR: exception in PeakFinder::find()" << std::endl;
     }
 
-    NSX_CHECK_ASSERT(found_peaks.size() >= 800);
+    CHECK(found_peaks.size() >= 800);
 
     nsx::PixelSumIntegrator integrator(false, false);
     integrator.setHandler(progressHandler);
@@ -102,14 +105,14 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "") {
 
     unsigned int indexed_peaks = numIndexedPeaks();
 
-    NSX_CHECK_ASSERT(indexed_peaks > 500);
-    NSX_CHECK_NO_THROW(indexer.autoIndex(params));
-    NSX_CHECK_ASSERT(indexer.solutions().size() > 1);
+    CHECK(indexed_peaks > 500);
+    CHECK_NOTHROW(indexer.autoIndex(params));
+    CHECK(indexer.solutions().size() > 1);
 
     auto soln = indexer.solutions().front();
 
     // correctly indexed at least 92% of peaks
-    NSX_CHECK_ASSERT(soln.second > 92.0);
+    CHECK(soln.second > 92.0);
 
     // set unit cell
     auto cell = soln.first;
@@ -126,7 +129,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "") {
 
     indexed_peaks = numIndexedPeaks();
     std::cout << indexed_peaks << std::endl;
-    NSX_CHECK_ASSERT(indexed_peaks > 500);
+    CHECK(indexed_peaks > 500);
 
     int n_selected = 0;
 
@@ -136,7 +139,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "") {
         q_vectors.push_back(peak->q());
         auto events = dataf->events(q_vectors);
 
-        // NSX_CHECK_ASSERT(events.size() >= 1);
+        // CHECK(events.size() >= 1);
 
         if (events.size() == 0) {
             continue;
@@ -161,16 +164,14 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "") {
         Eigen::RowVector3d q0 = nsx::Peak3D(dataf, nsx::Ellipsoid(p0, 1.0)).q().rowVector();
         Eigen::RowVector3d q1 = nsx::Peak3D(dataf, nsx::Ellipsoid(p1, 1.0)).q().rowVector();
 
-        NSX_CHECK_CLOSE(p0(0), p1(0), 3.0);
-        NSX_CHECK_CLOSE(p0(1), p1(1), 3.0);
-        NSX_CHECK_CLOSE(p0(2), p1(2), 3.0);
+        CHECK(p0(0) == Approx(p1(0)).epsilon(3.0));
+        CHECK(p0(1) == Approx(p1(1)).epsilon(3.0));
+        CHECK(p0(2) == Approx(p1(2)).epsilon(3.0));
 
-        NSX_CHECK_CLOSE(q0(0), q1(0), 2.0);
-        NSX_CHECK_CLOSE(q0(1), q1(1), 2.0);
-        NSX_CHECK_CLOSE(q0(2), q1(2), 2.0);
+        CHECK(q0(0) == Approx(q1(0)).epsilon(2.0));
+        CHECK(q0(1) == Approx(q1(1)).epsilon(2.0));
+        CHECK(q0(2) == Approx(q1(2)).epsilon(2.0));
     }
 
-    NSX_CHECK_GREATER_THAN(n_selected, 600);
-
-    return 0;
+    CHECK(n_selected > 600);
 }

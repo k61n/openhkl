@@ -1,3 +1,4 @@
+#include "test/catch.hpp"
 #include <string>
 #include <vector>
 
@@ -6,7 +7,6 @@
 
 #include "core/fitting/FitParameters.h"
 #include "core/fitting/Minimizer.h"
-
 TEST_CASE("test/mathematics/TestConstrainedMinimizer.cpp", "") {
 
     Eigen::VectorXd y, wt, x;
@@ -72,17 +72,15 @@ TEST_CASE("test/mathematics/TestConstrainedMinimizer.cpp", "") {
     nsx::Minimizer min;
     min.initialize(params, 40);
     min.set_f(residual_fn);
-    NSX_CHECK_ASSERT(min.fit(100));
+    CHECK(min.fit(100));
 
-    NSX_CHECK_SMALL((constraint * x).norm(), 1e-6);
+    CHECK(std::abs((constraint * x).norm()) < 1e-6);
 
-    NSX_CHECK_CLOSE(x(0), 4.008, 1e-1);
-    NSX_CHECK_CLOSE(x(1), 0.4008, 1e-1);
-    NSX_CHECK_CLOSE(x(2), 0.50125, 1e-1);
+    CHECK(x(0) == Approx(4.008).epsilon(1e-1));
+    CHECK(x(1) == Approx(0.4008).epsilon(1e-1));
+    CHECK(x(2) == Approx(0.50125).epsilon(1e-1));
 
     for (auto i = 3; i < x.size(); ++i) {
-        NSX_CHECK_SMALL(x(i), 1e-6);
+        CHECK(std::abs(x(i)) < 1e-6);
     }
-
-    return 0;
 }

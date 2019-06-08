@@ -1,3 +1,4 @@
+#include "test/catch.hpp"
 #include <iostream>
 #include <limits>
 #include <random>
@@ -7,8 +8,6 @@
 #include "core/crystal/UnitCell.h"
 #include "core/utils/Units.h"
 #include "core/auto_indexing/UserDefinedUnitCellIndexer.h"
-
-
 Eigen::Matrix3d make_rotation(Eigen::Vector3d angles)
 {
     const double com = std::cos(angles(0));
@@ -29,6 +28,7 @@ Eigen::Matrix3d make_rotation(Eigen::Vector3d angles)
 
     return om * ch * ph;
 }
+
 TEST_CASE("test/auto-indexer/TestUserDefinedUnitCellIndexer.cpp", "") {
 
     const double a = 10.0;
@@ -87,6 +87,4 @@ TEST_CASE("test/auto-indexer/TestUserDefinedUnitCellIndexer.cpp", "") {
     auto indexer = nsx::UserDefinedUnitCellIndexer(parameters);
 
     //    indexer.run(q_vectors);
-
-    return 0;
 }

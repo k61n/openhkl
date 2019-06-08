@@ -1,3 +1,4 @@
+#include "test/catch.hpp"
 #include <cmath>
 
 #include <Eigen/Dense>
@@ -13,13 +14,11 @@ TEST_CASE("test/geometry/TestProfile3D.cpp", "") {
 
     nsx::Profile3D profile(bb, 10, 10, 10);
 
-    NSX_CHECK_ASSERT(profile.addValue({0., 0., 0.}, 1.0) == true);
-    NSX_CHECK_ASSERT(profile.addValue({1., 2., 3.}, 1.0) == false);
+    CHECK(profile.addValue({0., 0., 0.}, 1.0) == true);
+    CHECK(profile.addValue({1., 2., 3.}, 1.0) == false);
 
-    NSX_CHECK_ASSERT(profile.addValue({3., 3., 3.}, 1.0) == false);
-    NSX_CHECK_ASSERT(profile.addValue({0.5, 1.0, 1.5}, 1.0) == true);
+    CHECK(profile.addValue({3., 3., 3.}, 1.0) == false);
+    CHECK(profile.addValue({0.5, 1.0, 1.5}, 1.0) == true);
 
-    NSX_CHECK_ASSERT(profile.addSubdividedValue({0.5, 1.0, 1.5}, 1.0, 5) == 125);
-
-    return 0;
+    CHECK(profile.addSubdividedValue({0.5, 1.0, 1.5}, 1.0, 5) == 125);
 }

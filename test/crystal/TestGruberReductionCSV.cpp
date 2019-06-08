@@ -1,3 +1,4 @@
+#include "test/catch.hpp"
 #include <fstream>
 #include <string>
 #include <utility>
@@ -27,7 +28,7 @@ TEST_CASE("test/crystal/TestGruberReductionCSV.cpp", "") {
     database.open("crystallography.tsv", std::fstream::in);
     nsx::CSV csv_reader('\t', '#');
 
-    NSX_CHECK_ASSERT(database.is_open());
+    CHECK(database.is_open());
 
     unsigned int total, correct;
 
@@ -87,7 +88,7 @@ TEST_CASE("test/crystal/TestGruberReductionCSV.cpp", "") {
         try {
             gruber.reduce(gruber_P, centering, bravaisType);
         } catch (std::exception& e) {
-            NSX_CHECK_ASSERT(false);
+            CHECK(false);
         }
 
         gruberCell.setBravaisType(bravaisType);
@@ -99,9 +100,7 @@ TEST_CASE("test/crystal/TestGruberReductionCSV.cpp", "") {
                     << row[4] << '\t' << row[5] << '\t' << row[6] << '\t' << row[7] << '\n';
         }
 
-        NSX_CHECK_ASSERT(gruberCell.bravaisTypeSymbol()[0] == bravais[0]);
-        NSX_CHECK_ASSERT(gruberCell.bravaisTypeSymbol()[1] == bravais[1]);
+        CHECK(gruberCell.bravaisTypeSymbol()[0] == bravais[0]);
+        CHECK(gruberCell.bravaisTypeSymbol()[1] == bravais[1]);
     }
-
-    return 0;
 }

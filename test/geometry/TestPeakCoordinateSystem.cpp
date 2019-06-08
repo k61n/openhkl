@@ -1,3 +1,4 @@
+#include "test/catch.hpp"
 #include <array>
 #include <fstream>
 #include <iostream>
@@ -5,7 +6,6 @@
 #include <vector>
 
 #include <Eigen/Dense>
-
 
 #include "core/crystal/CrystalTypes.h"
 #include "core/data/DataReaderFactory.h"
@@ -16,7 +16,6 @@
 #include "core/instrument/Experiment.h"
 #include "core/crystal/Peak3D.h"
 #include "core/crystal/PeakCoordinateSystem.h"
-
 
 void run_test(const char* filename, const char* instrument)
 {
@@ -64,11 +63,11 @@ void run_test(const char* filename, const char* instrument)
         Eigen::Vector3d y2 = J * Eigen::Vector3d(0, dt, 0);
         Eigen::Vector3d y3 = J * Eigen::Vector3d(0, 0, dt);
 
-        NSX_CHECK_SMALL(e0.norm(), 1e-8);
+        CHECK(std::abs(e0.norm()) < 1e-8);
         std::cout << e0.transpose() << std::endl;
-        NSX_CHECK_SMALL((e1 - y1).norm() / e1.norm(), 1e-1);
-        NSX_CHECK_SMALL((e2 - y2).norm() / e2.norm(), 1e-1);
-        NSX_CHECK_SMALL((e3 - y3).norm() / e3.norm(), 1e-1);
+        CHECK(std::abs((e1 - y1).norm() / e1.norm()) < 1e-1);
+        CHECK(std::abs((e2 - y2).norm() / e2.norm()) < 1e-1);
+        CHECK(std::abs((e3 - y3).norm() / e3.norm()) < 1e-1);
 
         auto sigmaD = frame.estimateDivergence();
         auto sigmaM = frame.estimateMosaicity();
@@ -77,25 +76,23 @@ void run_test(const char* filename, const char* instrument)
 
         peak->setShape(detector_shape);
 
-        NSX_CHECK_CLOSE(frame.estimateDivergence(), sigmaD, 1e-6);
-        NSX_CHECK_CLOSE(frame.estimateMosaicity(), sigmaM, 1e-6);
+        CHECK(frame.estimateDivergence() == Approx(sigmaD).epsilon(1e-6));
+        CHECK(frame.estimateMosaicity()  == Approx(sigmaM).epsilon(1e-6));
 
         auto standard_shape = frame.standardShape();
         Eigen::Matrix3d cov = standard_shape.inverseMetric();
 
-        NSX_CHECK_CLOSE(cov(0, 0), sigmaD * sigmaD, 1e-4);
-        NSX_CHECK_CLOSE(cov(1, 1), sigmaD * sigmaD, 1e-4);
-        NSX_CHECK_CLOSE(cov(2, 2), sigmaM * sigmaM, 1e-4);
+        CHECK(cov(0, 0) == Approx(sigmaD * sigmaD).epsilon(1e-4));
+        CHECK(cov(1, 1) == Approx(sigmaD * sigmaD).epsilon(1e-4));
+        CHECK(cov(2, 2) == Approx(sigmaM * sigmaM).epsilon(1e-4));
 
-        NSX_CHECK_SMALL(cov(0, 1), 1e-8);
-        NSX_CHECK_SMALL(cov(0, 2), 1e-8);
-        NSX_CHECK_SMALL(cov(1, 2), 1e-8);
+        CHECK(std::abs(cov(0, 1)) < 1e-8);
+        CHECK(std::abs(cov(0, 2)) < 1e-8);
+        CHECK(std::abs(cov(1, 2)) < 1e-8);
     }
 }
-TEST_CASE("test/geometry/TestPeakCoordinateSystem.cpp", "") {
 
+TEST_CASE("test/geometry/TestPeakCoordinateSystem.cpp", "") {
     run_test("gal3.hdf", "BioDiff2500");
     run_test("d19_test.hdf", "D19");
-
-    return 0;
 }

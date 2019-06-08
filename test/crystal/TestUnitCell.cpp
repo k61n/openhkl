@@ -1,3 +1,4 @@
+#include "test/catch.hpp"
 #include <random>
 
 #include "core/crystal/MillerIndex.h"
@@ -17,64 +18,64 @@ TEST_CASE("test/crystal/TestUnitCell.cpp", "") {
     nsx::UnitCell cell(a, b, c, alpha, alpha, alpha);
     auto cc = cell.character();
 
-    NSX_CHECK_CLOSE(cc.a, a, tolerance);
-    NSX_CHECK_CLOSE(cc.b, b, tolerance);
-    NSX_CHECK_CLOSE(cc.c, c, tolerance);
-    NSX_CHECK_CLOSE(cc.alpha, alpha, tolerance);
-    NSX_CHECK_CLOSE(cc.beta, alpha, tolerance);
-    NSX_CHECK_CLOSE(cc.gamma, alpha, tolerance);
+    CHECK(cc.a == Approx(a).epsilon(tolerance));
+    CHECK(cc.b == Approx(b).epsilon(tolerance));
+    CHECK(cc.c == Approx(c).epsilon(tolerance));
+    CHECK(cc.alpha == Approx(alpha).epsilon(tolerance));
+    CHECK(cc.beta == Approx(alpha).epsilon(tolerance));
+    CHECK(cc.gamma == Approx(alpha).epsilon(tolerance));
 
-    NSX_CHECK_CLOSE(cell.volume(), a * b * c, tolerance);
+    CHECK(cell.volume() == Approx(a * b * c).epsilon(tolerance));
 
     const Eigen::Matrix3d& A = cell.basis();
-    NSX_CHECK_CLOSE(A(0, 0), a, tolerance);
-    NSX_CHECK_SMALL(A(1, 0), tolerance);
-    NSX_CHECK_SMALL(A(2, 0), tolerance);
-    NSX_CHECK_SMALL(A(0, 1), tolerance);
-    NSX_CHECK_CLOSE(A(1, 1), b, tolerance);
-    NSX_CHECK_SMALL(A(2, 1), tolerance);
-    NSX_CHECK_SMALL(A(0, 2), tolerance);
-    NSX_CHECK_SMALL(A(1, 2), tolerance);
-    NSX_CHECK_CLOSE(A(2, 2), c, tolerance);
+    CHECK(A(0, 0) == Approx(a).epsilon(tolerance));
+    CHECK(std::abs(A(1, 0)) < tolerance);
+    CHECK(std::abs(A(2, 0)) < tolerance);
+    CHECK(std::abs(A(0, 1)) < tolerance);
+    CHECK(A(1, 1) == Approx(b).epsilon(tolerance));
+    CHECK(std::abs(A(2, 1)) < tolerance);
+    CHECK(std::abs(A(0, 2)) < tolerance);
+    CHECK(std::abs(A(1, 2)) < tolerance);
+    CHECK(A(2, 2) == Approx(c).epsilon(tolerance));
 
     const Eigen::Matrix3d& B = cell.reciprocalBasis();
-    NSX_CHECK_CLOSE(B(0, 0), 1 / a, tolerance);
-    NSX_CHECK_SMALL(B(1, 0), tolerance);
-    NSX_CHECK_SMALL(B(2, 0), tolerance);
-    NSX_CHECK_SMALL(B(0, 1), tolerance);
-    NSX_CHECK_CLOSE(B(1, 1), 1 / b, tolerance);
-    NSX_CHECK_SMALL(B(2, 1), tolerance);
-    NSX_CHECK_SMALL(B(0, 2), tolerance);
-    NSX_CHECK_SMALL(B(1, 2), tolerance);
-    NSX_CHECK_CLOSE(B(2, 2), 1 / c, tolerance);
+    CHECK(B(0, 0) == Approx(1 / a).epsilon(tolerance));
+    CHECK(std::abs(B(1, 0)) < tolerance);
+    CHECK(std::abs(B(2, 0)) < tolerance);
+    CHECK(std::abs(B(0, 1)) < tolerance);
+    CHECK(B(1, 1) == Approx(1 / b).epsilon(tolerance));
+    CHECK(std::abs(B(2, 1)) < tolerance);
+    CHECK(std::abs(B(0, 2)) < tolerance);
+    CHECK(std::abs(B(1, 2)) < tolerance);
+    CHECK(B(2, 2) == Approx(1 / c).epsilon(tolerance));
 
     const Eigen::Matrix3d& G = cell.metric();
-    NSX_CHECK_CLOSE(G(0, 0), a * a, tolerance);
-    NSX_CHECK_SMALL(G(1, 0), tolerance);
-    NSX_CHECK_SMALL(G(2, 0), tolerance);
-    NSX_CHECK_SMALL(G(0, 1), tolerance);
-    NSX_CHECK_CLOSE(G(1, 1), b * b, tolerance);
-    NSX_CHECK_SMALL(G(2, 1), tolerance);
-    NSX_CHECK_SMALL(G(0, 2), tolerance);
-    NSX_CHECK_SMALL(G(1, 2), tolerance);
-    NSX_CHECK_CLOSE(G(2, 2), c * c, tolerance);
+    CHECK(G(0, 0) == Approx(a * a).epsilon(tolerance));
+    CHECK(std::abs(G(1, 0)) < tolerance);
+    CHECK(std::abs(G(2, 0)) < tolerance);
+    CHECK(std::abs(G(0, 1)) < tolerance);
+    CHECK(G(1, 1) == Approx(b * b).epsilon(tolerance));
+    CHECK(std::abs(G(2, 1)) < tolerance);
+    CHECK(std::abs(G(0, 2)) < tolerance);
+    CHECK(std::abs(G(1, 2)) < tolerance);
+    CHECK(G(2, 2) == Approx(c * c).epsilon(tolerance));
 
     cell.setLatticeCentring(nsx::LatticeCentring::I);
     cell.setBravaisType(nsx::BravaisType::Tetragonal);
     // Check angle calculations
     nsx::UnitCell cell4(10, 10, 10, 90 * nsx::deg, 98 * nsx::deg, 90 * nsx::deg);
-    NSX_CHECK_CLOSE(cell4.angle({1, 0, 0}, {0, 0, 1}), 82.0 * nsx::deg, tolerance);
+    CHECK(cell4.angle({1, 0, 0}, {0, 0, 1}) == Approx(82.0 * nsx::deg).epsilon(tolerance));
 
     // Check equivalence
     cell4.setSpaceGroup(nsx::SpaceGroup("P 4/m m m"));
 
     auto space_group = cell4.spaceGroup();
 
-    NSX_CHECK_ASSERT(
+    CHECK(
         space_group.isEquivalent(nsx::MillerIndex(2, 0, 0), nsx::MillerIndex(0, 2, 0)));
-    NSX_CHECK_ASSERT(
+    CHECK(
         space_group.isEquivalent(nsx::MillerIndex(2, 3, 2), nsx::MillerIndex(3, 2, -2)));
-    NSX_CHECK_ASSERT(
+    CHECK(
         !space_group.isEquivalent(nsx::MillerIndex(2, 3, 2), nsx::MillerIndex(3, 2, -3)));
 
     // test covariance
@@ -82,7 +83,7 @@ TEST_CASE("test/crystal/TestUnitCell.cpp", "") {
     AA << 2.0, 1.0, 1.0, -0.5, 2.5, 0.7, 0.1, 0.2, 1.8;
 
     cell = nsx::UnitCell(AA);
-    NSX_CHECK_CLOSE(cell.volume(), std::fabs(AA.determinant()), 1e-10);
+    CHECK(cell.volume() == Approx(std::fabs(AA.determinant())).epsilon(1e-10));
 
     // computed covariance matrix
     Eigen::Matrix<double, 6, 6> cov;
@@ -167,39 +168,39 @@ TEST_CASE("test/crystal/TestUnitCell.cpp", "") {
 
     // because of the way UnitCell computes sigmas,
     // for ABCDEF the sigma should be almost exact
-    NSX_CHECK_CLOSE(sigma.g00, sigma_expected.g00, 1e-3);
-    NSX_CHECK_CLOSE(sigma.g01, sigma_expected.g01, 1e-3);
-    NSX_CHECK_CLOSE(sigma.g02, sigma_expected.g02, 1e-3);
-    NSX_CHECK_CLOSE(sigma.g11, sigma_expected.g11, 1e-3);
-    NSX_CHECK_CLOSE(sigma.g12, sigma_expected.g12, 1e-3);
-    NSX_CHECK_CLOSE(sigma.g22, sigma_expected.g22, 1e-3);
+    CHECK(sigma.g00 == Approx(sigma_expected.g00).epsilon(1e-3));
+    CHECK(sigma.g01 == Approx(sigma_expected.g01).epsilon(1e-3));
+    CHECK(sigma.g02 == Approx(sigma_expected.g02).epsilon(1e-3));
+    CHECK(sigma.g11 == Approx(sigma_expected.g11).epsilon(1e-3));
+    CHECK(sigma.g12 == Approx(sigma_expected.g12).epsilon(1e-3));
+    CHECK(sigma.g22 == Approx(sigma_expected.g22).epsilon(1e-3));
 
     // the sigmas of parameters a,b,c,alpha,beta,gamma are
     // computed by first order propagation of errors, so we do
     // not expect them to be so close to the true value
-    NSX_CHECK_CLOSE(sigma.a, sigma_expected.a, 1e-1);
-    NSX_CHECK_CLOSE(sigma.b, sigma_expected.b, 1e-1);
-    NSX_CHECK_CLOSE(sigma.c, sigma_expected.c, 1e-1);
-    NSX_CHECK_CLOSE(sigma.alpha, sigma_expected.alpha, 1.0);
-    NSX_CHECK_CLOSE(sigma.beta, sigma_expected.beta, 1.0);
-    NSX_CHECK_CLOSE(sigma.gamma, sigma_expected.gamma, 1.0);
+    CHECK(sigma.a == Approx(sigma_expected.a).epsilon(1e-1));
+    CHECK(sigma.b == Approx(sigma_expected.b).epsilon(1e-1));
+    CHECK(sigma.c == Approx(sigma_expected.c).epsilon(1e-1));
+    CHECK(sigma.alpha == Approx(sigma_expected.alpha).epsilon(1.0));
+    CHECK(sigma.beta == Approx(sigma_expected.beta).epsilon(1.0));
+    CHECK(sigma.gamma == Approx(sigma_expected.gamma).epsilon(1.0));
 
     // test niggli constraints
     cell.setParameters(55.03, 58.60, 66.89, 1.569, 1.57, 1.571);
     int num = cell.reduce(false, 1e-2, 5e-3);
-    NSX_CHECK_EQUAL(num, 32);
+    CHECK(num == 32);
     auto new_cell = cell.applyNiggliConstraints();
     ch = new_cell.character();
 
-    NSX_CHECK_CLOSE(ch.a, 55.03, 1e-3);
-    NSX_CHECK_CLOSE(ch.b, 58.60, 1e-3);
-    NSX_CHECK_CLOSE(ch.c, 66.89, 1e-3);
+    CHECK(ch.a == Approx(55.03).epsilon(1e-3));
+    CHECK(ch.b == Approx(58.60).epsilon(1e-3));
+    CHECK(ch.c == Approx(66.89).epsilon(1e-3));
 
-    NSX_CHECK_CLOSE(ch.alpha, M_PI / 2.0, 1e-6);
-    NSX_CHECK_CLOSE(ch.beta, M_PI / 2.0, 1e-6);
-    NSX_CHECK_CLOSE(ch.gamma, M_PI / 2.0, 1e-6);
+    CHECK(ch.alpha == Approx(M_PI / 2.0).epsilon(1e-6));
+    CHECK(ch.beta == Approx(M_PI / 2.0).epsilon(1e-6));
+    CHECK(ch.gamma == Approx(M_PI / 2.0).epsilon(1e-6));
 
-    NSX_CHECK_EQUAL(new_cell.equivalent(cell, 1e-3), true);
+    CHECK(new_cell.equivalent(cell, 1e-3) == true);
 
     const double deg = M_PI / 180.0;
     nsx::NiggliCharacter nch;
@@ -211,23 +212,23 @@ TEST_CASE("test/crystal/TestUnitCell.cpp", "") {
     cell = nsx::UnitCell(5.557, 5.77, 16.138, 96.314 * deg, 90.0 * deg, 90.0 * deg);
     cell.reduce(true, 1e-2, 1e-3);
     nch = cell.niggliCharacter();
-    NSX_CHECK_EQUAL(nch.number, 35);
-    NSX_CHECK_NO_THROW(cell = cell.applyNiggliConstraints());
+    CHECK(nch.number == 35);
+    CHECK_NOTHROW(cell = cell.applyNiggliConstraints());
 
     // Niggli + Gruber
     cell = nsx::UnitCell(5.557, 5.77, 16.138, 96.314 * deg, 90.0 * deg, 90.0 * deg);
     cell.reduce(false, 1e-2, 1e-3);
     nch = cell.niggliCharacter();
-    NSX_CHECK_EQUAL(nch.number, 35);
-    NSX_CHECK_NO_THROW(cell = cell.applyNiggliConstraints());
+    CHECK(nch.number == 35);
+    CHECK_NOTHROW(cell = cell.applyNiggliConstraints());
 
     ch = cell.character();
-    NSX_CHECK_CLOSE(ch.a, 5.76, 1.0);
-    NSX_CHECK_CLOSE(ch.b, 5.55, 1.0);
-    NSX_CHECK_CLOSE(ch.c, 16.12, 1.0);
-    NSX_CHECK_CLOSE(ch.alpha, 90.0 * deg, 1.0);
-    NSX_CHECK_CLOSE(ch.beta, 96.3 * deg, 1.0);
-    NSX_CHECK_CLOSE(ch.gamma, 90.0 * deg, 1.0);
+    CHECK(ch.a == Approx(5.76).epsilon(1.0));
+    CHECK(ch.b == Approx(5.55).epsilon(1.0));
+    CHECK(ch.c == Approx(16.12).epsilon(1.0));
+    CHECK(ch.alpha == Approx(90.0 * deg).epsilon(1.0));
+    CHECK(ch.beta == Approx(96.3 * deg).epsilon(1.0));
+    CHECK(ch.gamma == Approx(90.0 * deg).epsilon(1.0));
 
     // simulated data
     std::vector<Eigen::RowVector3d> q;
@@ -275,17 +276,15 @@ TEST_CASE("test/crystal/TestUnitCell.cpp", "") {
     nsx::Minimizer min;
     min.initialize(params, 3 * q.size());
     min.set_f(residual);
-    NSX_CHECK_EQUAL(min.fit(100), true);
+    CHECK(min.fit(100) == true);
 
     // new character of fitted cell
     ch = cell.fromParameters(U, u, x).character();
 
-    NSX_CHECK_CLOSE(ch.a, 5.76, 1.0);
-    NSX_CHECK_CLOSE(ch.b, 5.55, 1.0);
-    NSX_CHECK_CLOSE(ch.c, 16.12, 1.0);
-    NSX_CHECK_CLOSE(ch.alpha, 90.0 * deg, 1.0);
-    NSX_CHECK_CLOSE(ch.beta, 96.3 * deg, 1.0);
-    NSX_CHECK_CLOSE(ch.gamma, 90.0 * deg, 1.0);
-
-    return 0;
+    CHECK(ch.a == Approx(5.76).epsilon(1.0));
+    CHECK(ch.b == Approx(5.55).epsilon(1.0));
+    CHECK(ch.c == Approx(16.12).epsilon(1.0));
+    CHECK(ch.alpha == Approx(90.0 * deg).epsilon(1.0));
+    CHECK(ch.beta == Approx(96.3 * deg).epsilon(1.0));
+    CHECK(ch.gamma == Approx(90.0 * deg).epsilon(1.0));
 }

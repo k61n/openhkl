@@ -1,10 +1,10 @@
+#include "test/catch.hpp"
 #include <string>
 #include <vector>
 
 #include "core/utils/ProgressHandler.h"
-
-
 using namespace nsx;
+
 TEST_CASE("test/utils/TestProgressHandler.cpp", "") {
 
     ProgressHandler handler;
@@ -17,26 +17,26 @@ TEST_CASE("test/utils/TestProgressHandler.cpp", "") {
     handler.setCallback([&count]() { ++count; });
 
     handler.setProgress(50);
-    NSX_CHECK_ASSERT(handler.getProgress() == 50);
-    NSX_CHECK_ASSERT(count == 1); // modified by callback
+    CHECK(handler.getProgress() == 50);
+    CHECK(count == 1); // modified by callback
 
     handler.setStatus("progress handler test");
-    NSX_CHECK_ASSERT(handler.getStatus() == "progress handler test");
+    CHECK(handler.getStatus() == "progress handler test");
 
     handler.log("progress handler log 1");
     handler.log("progress handler log 2");
     std::vector<std::string> log = handler.getLog();
-    NSX_CHECK_ASSERT(log.size() == 2);
-    NSX_CHECK_ASSERT(log[0] == "progress handler log 1");
-    NSX_CHECK_ASSERT(log[1] == "progress handler log 2");
+    CHECK(log.size() == 2);
+    CHECK(log[0] == "progress handler log 1");
+    CHECK(log[1] == "progress handler log 2");
 
-    NSX_CHECK_ASSERT(handler.getLog().size() == 0);
+    CHECK(handler.getLog().size() == 0);
 
     handler.log(std::string("string log"));
-    NSX_CHECK_ASSERT(handler.getLog()[0] == "string log");
+    CHECK(handler.getLog()[0] == "string log");
 
     handler.abort();
-    NSX_CHECK_ASSERT(handler.aborted() == true);
+    CHECK(handler.aborted() == true);
 
     // check correct behaviour under abort
     bool aborted = false;
@@ -46,7 +46,5 @@ TEST_CASE("test/utils/TestProgressHandler.cpp", "") {
     } catch (std::exception& e) {
         aborted = true;
     }
-    NSX_CHECK_ASSERT(aborted == true);
-
-    return 0;
+    CHECK(aborted == true);
 }

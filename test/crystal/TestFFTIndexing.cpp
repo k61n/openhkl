@@ -1,3 +1,5 @@
+#include "test/catch.hpp"
+
 #include <Eigen/Dense>
 
 #include "core/auto_indexing/AutoIndexer.h"
@@ -18,6 +20,8 @@
 #include "core/crystal/UnitCell.h"
 
 TEST_CASE("test/crystal/TestFFTIndexing.cpp", "") {
+
+    CHECK(false); return; // TODO: restore test (segfault on o, endless on l)
 
     nsx::DataReaderFactory factory;
 
@@ -72,14 +76,14 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "") {
 
             nsx::MillerIndex hkl(peak->q(), uc);
 
-            NSX_CHECK_ASSERT(hkl.error().norm() < 1e-10);
+            CHECK(hkl.error().norm() < 1e-10);
 
         } catch (...) {
             // invalid shape, nothing to do
         }
     }
 
-    NSX_CHECK_ASSERT(peaks.size() >= 5900);
+    CHECK(peaks.size() >= 5900);
 
     nsx::AutoIndexer indexer;
 
@@ -87,12 +91,12 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "") {
         indexer.addPeak(peak);
     }
 
-    NSX_CHECK_NO_THROW(indexer.autoIndex(params));
+    CHECK_NOTHROW(indexer.autoIndex(params));
 
     auto solutions = indexer.solutions();
 
-    NSX_CHECK_ASSERT(solutions.size() > 1);
-    NSX_CHECK_ASSERT(solutions.front().second > 99.9);
+    CHECK(solutions.size() > 1);
+    CHECK(solutions.front().second > 99.9);
 
     auto fit_uc = solutions.front().first;
 
@@ -100,7 +104,5 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "") {
     Eigen::Matrix3d E = fit_A.inverse() * A;
 
     // square because of the orientation issue
-    NSX_CHECK_ASSERT((E * E - Eigen::Matrix3d::Identity()).norm() < 1e-10);
-
-    return 0;
+    CHECK((E * E - Eigen::Matrix3d::Identity()).norm() < 1e-10);
 }

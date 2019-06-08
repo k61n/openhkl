@@ -1,5 +1,6 @@
-#include <array>
+#include "test/catch.hpp"
 
+#include <array>
 #include <Eigen/Dense>
 
 #include "core/data/DataReaderFactory.h"
@@ -14,7 +15,6 @@
 #include "core/rec_space/ReciprocalVector.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-
 
 void run_test(const char* filename, const char* instrument)
 {
@@ -69,18 +69,17 @@ void run_test(const char* filename, const char* instrument)
         NJ.col(1) = dq2 / dt;
         NJ.col(2) = dq3 / dt;
 
-        NSX_CHECK_SMALL((dq1 - Jq * Eigen::Vector3d(dt, 0, 0)).norm() / dq1.norm(), 1e-3);
-        NSX_CHECK_SMALL((dq2 - Jq * Eigen::Vector3d(0, dt, 0)).norm() / dq2.norm(), 1e-3);
-        NSX_CHECK_SMALL((dq3 - Jq * Eigen::Vector3d(0, 0, dt)).norm() / dq3.norm(), 1e-3);
+        CHECK(std::abs((dq1 - Jq * Eigen::Vector3d(dt, 0, 0)).norm() / dq1.norm()) < 1e-3);
+        CHECK(std::abs((dq2 - Jq * Eigen::Vector3d(0, dt, 0)).norm() / dq2.norm()) < 1e-3);
+        CHECK(std::abs((dq3 - Jq * Eigen::Vector3d(0, 0, dt)).norm() / dq3.norm()) < 1e-3);
 
         // test numerical vs. analytic Jacobian
-        NSX_CHECK_SMALL((NJ - Jq).norm() / Jq.norm(), 1e-5);
+        CHECK(std::abs((NJ - Jq).norm() / Jq.norm()) < 1e-5);
     }
 }
+
 TEST_CASE("test/instrument/TestInterpolatedState.cpp", "") {
 
     run_test("gal3.hdf", "BioDiff2500");
     run_test("d19_test.hdf", "D19");
-
-    return 0;
 }

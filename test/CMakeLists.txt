@@ -1,27 +1,27 @@
-file(GLOB_RECURSE test_sources "*.cpp")
-file(GLOB_RECURSE test_headers "*.h")
+file(GLOB_RECURSE test_sources "*/*.cpp")
+
+add_library(catch2 catch2.cpp)
+target_include_directories(catch2 PRIVATE ${CMAKE_SOURCE_DIR})
 
 foreach(source_file ${test_sources})
-  get_filename_component(base_name ${source_file} NAME_WE)
-  add_executable(${base_name} ${source_file} ${test_headers})
-  target_include_directories(${base_name}
-      PRIVATE
-      ${CMAKE_SOURCE_DIR})
-  target_link_libraries(${base_name} ${Boost_LIBRARIES} nsx)
+    get_filename_component(base_name ${source_file} NAME_WE)
+    add_executable(${base_name} ${source_file})
+    target_include_directories(${base_name} PRIVATE ${CMAKE_SOURCE_DIR})
+    target_link_libraries(${base_name} ${Boost_LIBRARIES} nsx catch2)
 
-  if(${NSX_VALGRIND})
-    add_test(
-      NAME ${base_name}
-      COMMAND valgrind --error-exitcode=3 --leak-check=full --suppressions=${CMAKE_CURRENT_BINARY_DIR}/suppressions --gen-suppressions=all $<TARGET_FILE:${base_name}>
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    )
-  else()
-    add_test(${base_name} ${base_name})
-  endif()
+    if(${NSX_VALGRIND})
+        add_test(
+            NAME ${base_name}
+            COMMAND valgrind --error-exitcode=3 --leak-check=full --suppressions=${CMAKE_CURRENT_BINARY_DIR}/suppressions --gen-suppressions=all $<TARGET_FILE:${base_name}>
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            )
+    else()
+        add_test(${base_name} ${base_name})
+    endif()
 
-  if(NSX_TIDY)
-    add_tidy_target(${base_name})
-  endif()
+    if(NSX_TIDY)
+        add_tidy_target(${base_name})
+    endif()
 
 endforeach(source_file)
 
@@ -61,16 +61,17 @@ configure_file(valgrind/suppressions suppressions COPYONLY)
 # add python tests
 if(NSX_PYTHON)
 
-  SET (CTEST_ENVIRONMENT
-  "PYTHONPATH=${CMAKE_BINARY_DIR}/swig"
-  )
+    SET (CTEST_ENVIRONMENT
+        "PYTHONPATH=${CMAKE_BINARY_DIR}/swig"
+        )
 
-  file(GLOB_RECURSE python_tests *.py)
+    file(GLOB_RECURSE python_tests *.py)
 
-  foreach(python_script ${python_tests})
-    get_filename_component(base_name ${python_script} NAME)
-    add_test(NAME ${base_name} COMMAND ${PYTHON_EXECUTABLE} ${python_script})
-    set_tests_properties(${base_name} PROPERTIES ENVIRONMENT "PYTHONPATH=${CMAKE_BINARY_DIR}/swig")
-  endforeach(python_script)
+    foreach(python_script ${python_tests})
+        get_filename_component(base_name ${python_script} NAME)
+        add_test(NAME ${base_name} COMMAND ${PYTHON_EXECUTABLE} ${python_script})
+        set_tests_properties(${base_name} PROPERTIES
+            ENVIRONMENT "PYTHONPATH=${CMAKE_BINARY_DIR}/swig")
+    endforeach(python_script)
 
 endif(NSX_PYTHON)

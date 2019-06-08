@@ -1,3 +1,5 @@
+#include "test/catch.hpp"
+
 #include <fstream>
 #include <map>
 #include <string>
@@ -14,7 +16,7 @@ TEST_CASE("test/crystal/TestSpaceGroupCSV.cpp", "") {
 
     csv_file.open("crystallography.tsv", std::ifstream::in);
 
-    NSX_CHECK_ASSERT(csv_file.is_open());
+    CHECK(csv_file.is_open());
 
     // skip header
     csv_reader.getRow(csv_file);
@@ -26,12 +28,10 @@ TEST_CASE("test/crystal/TestSpaceGroupCSV.cpp", "") {
         if (csv_file.eof() && row.size() < 8)
             continue;
 
-        NSX_CHECK_ASSERT(row.size() == 8);
+        CHECK(row.size() == 8);
 
         std::cout << row[0] << std::endl;
 
-        NSX_CHECK_NO_THROW(nsx::SpaceGroup sg(row[0]));
+        CHECK_NOTHROW(nsx::SpaceGroup{row[0]});
     }
-
-    return 0;
 }

@@ -1,3 +1,4 @@
+#include "test/catch.hpp"
 #include <Eigen/Dense>
 
 #include "core/search_peaks/ConvolverFactory.h"
@@ -51,12 +52,12 @@ TEST_CASE("test/crystal/TestQShape.cpp", "") {
     auto found_peaks = peakFinder->find(numors);
 
     try {
-        NSX_CHECK_ASSERT(static_cast<int>(found_peaks.size()) >= 0);
+        CHECK(static_cast<int>(found_peaks.size()) >= 0);
     } catch (...) {
         std::cout << "ERROR: exception in PeakFinder::find()" << std::endl;
     }
 
-    NSX_CHECK_ASSERT(found_peaks.size() >= 800);
+    CHECK(found_peaks.size() >= 800);
 
     int good_shapes = 0;
 
@@ -84,13 +85,11 @@ TEST_CASE("test/crystal/TestQShape.cpp", "") {
         auto dx = new_shape.center() - old_shape.center();
 
         // transformation x -> q -> x should have sub-pixel accuracy
-        NSX_CHECK_SMALL(dx.norm(), 0.01);
+        CHECK(std::abs(dx.norm()) < 0.01);
 
         double error = (new_shape.metric() - old_shape.metric()).norm();
-        NSX_CHECK_SMALL(error, 2e-2);
+        CHECK(std::abs(error) < 2e-2);
     }
 
-    NSX_CHECK_ASSERT(good_shapes > 600);
-
-    return 0;
+    CHECK(good_shapes > 600);
 }
