@@ -4,7 +4,6 @@
 
 #include "core/utils/Enums.h"
 #include "core/data/MatrixParser.h"
-#include "core/utils/NSXTest.h"
 
 NSX_INIT_TEST
 

@@ -14,7 +14,6 @@
 #include "core/geometry/DirectVector.h"
 #include "core/geometry/Ellipsoid.h"
 #include "core/instrument/Experiment.h"
-#include "core/utils/NSXTest.h"
 #include "core/crystal/Peak3D.h"
 #include "core/crystal/PeakFilter.h"
 #include "core/search_peaks/PeakFinder.h"

@@ -6,7 +6,6 @@
 #include "core/geometry/ConvexHull.h"
 #include "core/monte-carlo/MCAbsorption.h"
 #include "core/chemistry/Material.h"
-#include "core/utils/NSXTest.h"
 #include "core/utils/Units.h"
 
 NSX_INIT_TEST

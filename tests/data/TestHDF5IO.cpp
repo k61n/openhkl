@@ -5,7 +5,6 @@
 #include "core/data/DataReaderFactory.h"
 #include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/utils/NSXTest.h"
 #include "core/utils/Units.h"
 
 NSX_INIT_TEST

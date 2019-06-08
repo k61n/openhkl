@@ -3,7 +3,6 @@
 #include "core/instrument/Experiment.h"
 #include "core/data/IDataReader.h"
 #include "core/instrument/InstrumentState.h"
-#include "core/utils/NSXTest.h"
 
 NSX_INIT_TEST
 

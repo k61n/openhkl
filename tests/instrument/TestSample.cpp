@@ -3,7 +3,6 @@
 #include "core/axes/Axis.h"
 #include "core/geometry/DirectVector.h"
 #include "core/axes/Gonio.h"
-#include "core/utils/NSXTest.h"
 #include "core/instrument/Sample.h"
 #include "core/utils/Units.h"
 

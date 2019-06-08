@@ -6,7 +6,6 @@
 #include "core/detector/FlatDetector.h"
 #include "core/axes/Gonio.h"
 #include "core/instrument/InstrumentState.h"
-#include "core/utils/NSXTest.h"
 #include "core/utils/Units.h"
 
 NSX_INIT_TEST

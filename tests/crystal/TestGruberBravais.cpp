@@ -12,7 +12,6 @@
 #include "core/axes/Gonio.h"
 #include "core/crystal/GruberReduction.h"
 #include "core/instrument/Monochromator.h"
-#include "core/utils/NSXTest.h"
 #include "core/crystal/NiggliReduction.h"
 #include "core/crystal/Peak3D.h"
 #include "core/instrument/Sample.h"

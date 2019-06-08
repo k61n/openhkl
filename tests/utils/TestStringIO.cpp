@@ -1,7 +1,6 @@
 #include <string>
 #include <vector>
 
-#include "core/utils/NSXTest.h"
 #include "core/utils/StringIO.h"
 
 NSX_INIT_TEST

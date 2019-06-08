@@ -4,7 +4,6 @@
 
 #include <Eigen/Dense>
 
-#include "core/utils/NSXTest.h"
 #include "core/crystal/NiggliReduction.h"
 #include "core/crystal/UnitCell.h"
 #include "core/utils/Units.h"

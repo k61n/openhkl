@@ -1,6 +1,5 @@
 #include <string>
 
-#include "core/utils/NSXTest.h"
 #include "core/utils/Variant.h"
 
 NSX_INIT_TEST

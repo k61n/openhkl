@@ -2,7 +2,6 @@
 
 #include "core/crystal/MillerIndex.h"
 #include "core/fitting/Minimizer.h"
-#include "core/utils/NSXTest.h"
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/UnitCell.h"
 #include "core/utils/Units.h"

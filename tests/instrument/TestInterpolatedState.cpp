@@ -10,7 +10,6 @@
 #include "core/data/IDataReader.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InterpolatedState.h"
-#include "core/utils/NSXTest.h"
 #include "core/utils/ProgressHandler.h"
 #include "core/rec_space/ReciprocalVector.h"
 #include "core/instrument/Sample.h"

@@ -7,7 +7,6 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/data/IDataReader.h"
 #include "core/data/MetaData.h"
-#include "core/utils/NSXTest.h"
 #include "core/utils/Units.h"
 
 const double tolerance = 1e-2;

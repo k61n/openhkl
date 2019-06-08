@@ -8,7 +8,6 @@
 #include "core/instrument/Experiment.h"
 #include "core/data/IDataReader.h"
 #include "core/data/MetaData.h"
-#include "core/utils/NSXTest.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "core/utils/ProgressHandler.h"
 

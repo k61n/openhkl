@@ -6,7 +6,6 @@
 
 #include <Eigen/Dense>
 
-#include "core/utils/NSXTest.h"
 
 #include "core/crystal/CrystalTypes.h"
 #include "core/data/DataReaderFactory.h"

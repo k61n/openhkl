@@ -4,7 +4,6 @@
 #include "core/geometry/AABB.h"
 #include "core/geometry/ConvexHull.h"
 #include "core/geometry/Face.h"
-#include "core/utils/NSXTest.h"
 #include "core/geometry/Vertex.h"
 
 const double tolerance = 1e-9;

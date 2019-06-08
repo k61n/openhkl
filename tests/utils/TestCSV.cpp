@@ -3,7 +3,6 @@
 #include <vector>
 
 #include "core/utils/CSV.h"
-#include "core/utils/NSXTest.h"
 
 NSX_INIT_TEST
 

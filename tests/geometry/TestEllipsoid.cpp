@@ -2,7 +2,6 @@
 
 #include "core/geometry/AABB.h"
 #include "core/geometry/Ellipsoid.h"
-#include "core/utils/NSXTest.h"
 
 const double eps = 1e-8;
 

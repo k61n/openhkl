@@ -1,7 +1,6 @@
 #include <Eigen/Dense>
 
 #include "core/crystal/MillerIndex.h"
-#include "core/utils/NSXTest.h"
 
 NSX_INIT_TEST
 

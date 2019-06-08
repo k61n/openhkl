@@ -1,6 +1,5 @@
 #include <string>
 
-#include "core/utils/NSXTest.h"
 #include "core/utils/Path.h"
 #include "core/utils/StringIO.h"
 

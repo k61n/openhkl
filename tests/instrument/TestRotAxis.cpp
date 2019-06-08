@@ -1,6 +1,5 @@
 #include <Eigen/Dense>
 
-#include "core/utils/NSXTest.h"
 #include "core/axes/RotAxis.h"
 #include "core/utils/Units.h"
 

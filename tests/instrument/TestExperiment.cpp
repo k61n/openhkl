@@ -3,7 +3,6 @@
 #include "core/data/DataReaderFactory.h"
 #include "core/data/DataSet.h"
 #include "core/instrument/Experiment.h"
-#include "core/utils/NSXTest.h"
 
 NSX_INIT_TEST
 

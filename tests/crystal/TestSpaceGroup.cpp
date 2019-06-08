@@ -3,7 +3,6 @@
 
 #include "core/crystal/CrystalTypes.h"
 #include "core/crystal/MillerIndex.h"
-#include "core/utils/NSXTest.h"
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/UnitCell.h"
 

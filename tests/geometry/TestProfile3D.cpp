@@ -3,7 +3,6 @@
 #include <Eigen/Dense>
 
 #include "core/geometry/AABB.h"
-#include "core/utils/NSXTest.h"
 #include "core/integration/Profile3D.h"
 
 NSX_INIT_TEST

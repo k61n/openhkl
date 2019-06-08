@@ -1,7 +1,6 @@
 #include <stdexcept>
 #include <string>
 
-#include "core/utils/NSXTest.h"
 #include "core/crystal/SymOp.h"
 
 NSX_INIT_TEST

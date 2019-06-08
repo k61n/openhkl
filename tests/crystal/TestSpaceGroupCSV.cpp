@@ -3,7 +3,6 @@
 #include <string>
 
 #include "core/utils/CSV.h"
-#include "core/utils/NSXTest.h"
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/UnitCell.h"
 

@@ -4,7 +4,6 @@
 #include <Eigen/Dense>
 
 #include "core/crystal/JonesSymbolParser.h"
-#include "core/utils/NSXTest.h"
 
 #include <iostream>
 

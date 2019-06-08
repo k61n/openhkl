@@ -3,7 +3,6 @@
 #include <random>
 #include <vector>
 
-#include "core/utils/NSXTest.h"
 #include "core/rec_space/ReciprocalVector.h"
 #include "core/crystal/UnitCell.h"
 #include "core/utils/Units.h"

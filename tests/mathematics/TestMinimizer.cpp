@@ -5,7 +5,6 @@
 
 #include "core/fitting/FitParameters.h"
 #include "core/fitting/Minimizer.h"
-#include "core/utils/NSXTest.h"
 
 NSX_INIT_TEST
 

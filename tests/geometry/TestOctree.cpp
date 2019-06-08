@@ -6,7 +6,6 @@
 
 #include "core/geometry/AABB.h"
 #include "core/geometry/Ellipsoid.h"
-#include "core/utils/NSXTest.h"
 #include "core/geometry/Octree.h"
 
 NSX_INIT_TEST

@@ -1,6 +1,5 @@
 #include "core/search_peaks/DeltaConvolver.h"
 #include "core/mathematics/MathematicsTypes.h"
-#include "core/utils/NSXTest.h"
 
 NSX_INIT_TEST
 
