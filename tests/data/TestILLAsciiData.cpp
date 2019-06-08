@@ -15,7 +15,6 @@ const double tolerance = 1e-2;
 
 namespace nsx {
 
-NSX_INIT_TEST
 
 class UnitTest_DataSet {
 public:
@@ -66,8 +65,7 @@ int UnitTest_DataSet::run()
 }
 
 } // end namespace nsx
+TEST_CASE("test/data/TestILLAsciiData.cpp", "") {
 
-int main()
-{
     nsx::UnitTest_DataSet::run();
 }

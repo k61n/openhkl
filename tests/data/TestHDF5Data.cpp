@@ -4,10 +4,8 @@
 #include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/data/TestHDF5Data.cpp", "") {
 
-int main()
-{
     nsx::DataReaderFactory factory;
 
     nsx::Diffractometer* diffractometer = nsx::Diffractometer::create("BioDiff2500");

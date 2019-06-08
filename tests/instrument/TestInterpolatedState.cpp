@@ -15,7 +15,6 @@
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 
-NSX_INIT_TEST
 
 void run_test(const char* filename, const char* instrument)
 {
@@ -78,9 +77,8 @@ void run_test(const char* filename, const char* instrument)
         NSX_CHECK_SMALL((NJ - Jq).norm() / Jq.norm(), 1e-5);
     }
 }
+TEST_CASE("test/instrument/TestInterpolatedState.cpp", "") {
 
-int main()
-{
     run_test("gal3.hdf", "BioDiff2500");
     run_test("d19_test.hdf", "D19");
 

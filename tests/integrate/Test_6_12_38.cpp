@@ -25,10 +25,8 @@
 #include "core/crystal/UnitCell.h"
 #include "core/utils/Units.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/integrate/Test_6_12_38.cpp", "") {
 
-int main()
-{
     nsx::DataReaderFactory factory;
 
     nsx::Experiment experiment("test", "BioDiff2500");

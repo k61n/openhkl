@@ -9,10 +9,8 @@
 
 const double tolerance = 1e-6;
 
-NSX_INIT_TEST
+TEST_CASE("test/mathematics/TestJonesSymbolParser.cpp", "") {
 
-int main()
-{
     Eigen::Transform<double, 3, Eigen::Affine> matrix;
 
     NSX_CHECK_NO_THROW(matrix = nsx::parseJonesSymbol(" x+4y-z+1/2,-x + y -3z +2,-x-y-z +3\t"));

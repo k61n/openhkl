@@ -6,10 +6,8 @@
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/UnitCell.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/crystal/TestSpaceGroup.cpp", "") {
 
-int main()
-{
     std::map<std::string, unsigned int> nElementsPerSpaceGroup = {
         {"P 1", 1},         {"P -1", 2},        {"P 2", 2},         {"P 21", 2},
         {"C 2", 4},         {"P m", 2},         {"P c", 2},         {"C m", 4},

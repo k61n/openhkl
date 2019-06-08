@@ -8,12 +8,10 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/utils/Units.h"
 
-NSX_INIT_TEST
 
 const double tolerance = 1e-3;
+TEST_CASE("test/instrument/TestFlatDetector.cpp", "") {
 
-int main()
-{
     nsx::FlatDetector d("D10-detector");
     d.setDistance(380 * nsx::mm);
     d.setWidth(80 * nsx::mm);

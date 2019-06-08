@@ -3,10 +3,8 @@
 
 #include "core/utils/StringIO.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/utils/TestStringIO.cpp", "") {
 
-int main()
-{
     std::string str_to_trim("   blabla    ");
 
     NSX_CHECK_NOT_EQUAL(str_to_trim, "blabla");

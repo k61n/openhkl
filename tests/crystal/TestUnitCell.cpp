@@ -8,10 +8,8 @@
 
 const double tolerance = 1e-6;
 
-NSX_INIT_TEST
+TEST_CASE("test/crystal/TestUnitCell.cpp", "") {
 
-int main()
-{
     double a = 6.32;
     double b = 7.22;
     double c = 3.44;

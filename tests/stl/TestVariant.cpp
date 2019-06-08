@@ -2,10 +2,8 @@
 
 #include "core/utils/Variant.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/stl/TestVariant.cpp", "") {
 
-int main()
-{
 
     // Default constructor
     nsx::Variant<int, double, std::string> v1;

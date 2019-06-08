@@ -4,10 +4,8 @@
 
 const double tolerance = 1e-6;
 
-NSX_INIT_TEST
+TEST_CASE("test/instrument/TestTransAxis.cpp", "") {
 
-int main()
-{
     nsx::TransAxis t("x", Eigen::Vector3d(1, 0, 0));
 
     // Translate the vector 0,1,2 by 0.4

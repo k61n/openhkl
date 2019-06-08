@@ -17,10 +17,8 @@
 #include "core/integration/ShapeLibrary.h"
 #include "core/crystal/UnitCell.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/crystal/TestFFTIndexing.cpp", "") {
 
-int main()
-{
     nsx::DataReaderFactory factory;
 
     nsx::Experiment experiment("test", "BioDiff2500");

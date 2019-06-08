@@ -17,7 +17,6 @@
 #include "core/crystal/Peak3D.h"
 #include "core/crystal/PeakCoordinateSystem.h"
 
-NSX_INIT_TEST
 
 void run_test(const char* filename, const char* instrument)
 {
@@ -93,9 +92,8 @@ void run_test(const char* filename, const char* instrument)
         NSX_CHECK_SMALL(cov(1, 2), 1e-8);
     }
 }
+TEST_CASE("test/geometry/TestPeakCoordinateSystem.cpp", "") {
 
-int main()
-{
     run_test("gal3.hdf", "BioDiff2500");
     run_test("d19_test.hdf", "D19");
 

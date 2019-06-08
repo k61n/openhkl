@@ -8,7 +8,6 @@
 #include "core/utils/Units.h"
 #include "core/auto_indexing/UserDefinedUnitCellIndexer.h"
 
-NSX_INIT_TEST
 
 Eigen::Matrix3d make_rotation(Eigen::Vector3d angles)
 {
@@ -30,9 +29,8 @@ Eigen::Matrix3d make_rotation(Eigen::Vector3d angles)
 
     return om * ch * ph;
 }
+TEST_CASE("test/auto-indexer/TestUserDefinedUnitCellIndexer.cpp", "") {
 
-int main()
-{
     const double a = 10.0;
     const double b = 10.0;
     const double c = 10.0;

@@ -16,10 +16,8 @@
 const double niggli_tolerance = 1e-9;
 const double gruber_tolerance = 1e-5;
 
-NSX_INIT_TEST
+TEST_CASE("test/crystal/TestGruberReductionCSV.cpp", "") {
 
-int main()
-{
     // using vectord = vector<double>;
     std::ofstream outfile;
 

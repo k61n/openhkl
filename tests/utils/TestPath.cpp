@@ -3,10 +3,8 @@
 #include "core/utils/Path.h"
 #include "core/utils/StringIO.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/utils/TestPath.cpp", "") {
 
-int main(int argc, char** argv)
-{
     // Test nsx::fileSeparator
     auto file_sep = nsx::fileSeparator();
     std::string path = file_sep + "usr" + file_sep + "local" + file_sep + "file.txt";

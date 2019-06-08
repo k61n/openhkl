@@ -11,10 +11,8 @@
 #include "core/search_peaks/PeakFinder.h"
 #include "core/utils/ProgressHandler.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/peak_find/TestPeakFinder.cpp", "") {
 
-int main()
-{
     nsx::Experiment experiment("exp", "D10");
 
     nsx::DataList numors;

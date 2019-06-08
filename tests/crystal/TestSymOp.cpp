@@ -3,10 +3,8 @@
 
 #include "core/crystal/SymOp.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/crystal/TestSymOp.cpp", "") {
 
-int main()
-{
     nsx::SymOp op1("x,y,z");
     NSX_CHECK_EQUAL(op1.getAxisOrder(), 1);
 

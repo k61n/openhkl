@@ -3,18 +3,15 @@
 #include <stdexcept>
 
 
-NSX_INIT_TEST
 
 class MyException : public std::exception {
 public:
     using std::exception::exception;
 };
+TEST_CASE("test/utils/TestNSXTest.cpp", "") {
 
-int main()
-{
 
-    NSX_INIT_TEST
-
+    
     // Check assertion
 
     NSX_CHECK_ASSERT(true == true);

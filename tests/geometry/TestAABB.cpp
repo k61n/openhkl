@@ -6,10 +6,8 @@
 
 const double tolerance = 1e-5;
 
-NSX_INIT_TEST
+TEST_CASE("test/geometry/TestAABB.cpp", "") {
 
-int main()
-{
     nsx::AABB bb;
     bb.setLower(Eigen::Vector3d(0, 0, 0));
     bb.setUpper(Eigen::Vector3d(1, 2, 3));

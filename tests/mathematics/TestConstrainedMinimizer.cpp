@@ -7,10 +7,8 @@
 #include "core/fitting/FitParameters.h"
 #include "core/fitting/Minimizer.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/mathematics/TestConstrainedMinimizer.cpp", "") {
 
-int main()
-{
     Eigen::VectorXd y, wt, x;
     const int num_points = 400;
     const int num_dummy = 2000;

@@ -3,10 +3,8 @@
 
 const double tolerance = 1e-6;
 
-NSX_INIT_TEST
+TEST_CASE("test/chemistry/TestIsotopeDatabase.cpp", "") {
 
-int main()
-{
     nsx::IsotopeDatabaseManager* imgr = nsx::IsotopeDatabaseManager::Instance();
     nsx::UnitsManager* um = nsx::UnitsManager::Instance();
 

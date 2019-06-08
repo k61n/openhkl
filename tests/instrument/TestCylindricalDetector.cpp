@@ -7,12 +7,10 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/utils/Units.h"
 
-NSX_INIT_TEST
 
 const double tolerance = 1e-3;
+TEST_CASE("test/instrument/TestCylindricalDetector.cpp", "") {
 
-int main()
-{
 
     nsx::CylindricalDetector d("D19-detector");
     d.setDistance(764 * nsx::mm);

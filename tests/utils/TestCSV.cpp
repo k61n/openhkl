@@ -4,10 +4,8 @@
 
 #include "core/utils/CSV.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/utils/TestCSV.cpp", "") {
 
-int main()
-{
     std::string csv_file =
         //    ",,,\n"
         //    "a, b, c, d\n"

@@ -8,10 +8,8 @@
 #include "core/chemistry/Material.h"
 #include "core/utils/Units.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/chemistry/TestMCAbsorption.cpp", "") {
 
-int main()
-{
     // Build an isotopically pure methane material
     std::unique_ptr<nsx::Material> helium(new nsx::Material("He[3]"));
 

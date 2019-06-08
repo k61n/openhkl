@@ -5,10 +5,8 @@
 #include "core/utils/Enums.h"
 #include "core/data/MatrixParser.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/utils/TestMatrixParser.cpp", "") {
 
-int main()
-{
     Eigen::MatrixXi m;
     m.resize(3, 4);
     std::string s("1 2 3 4 5 6 7 8 9 10 11 12");

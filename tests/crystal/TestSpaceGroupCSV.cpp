@@ -6,10 +6,8 @@
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/UnitCell.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/crystal/TestSpaceGroupCSV.cpp", "") {
 
-int main()
-{
     std::ifstream csv_file;
 
     nsx::CSV csv_reader('\t', '#');

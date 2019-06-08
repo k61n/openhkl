@@ -2,10 +2,8 @@
 
 #include "core/crystal/MillerIndex.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/geometry/TestMillerIndices.cpp", "") {
 
-int main()
-{
 
     Eigen::RowVector3i v1(1, 2, 3);
 

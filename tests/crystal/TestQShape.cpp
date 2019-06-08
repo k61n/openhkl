@@ -12,10 +12,8 @@
 #include "core/instrument/Sample.h"
 #include "core/utils/Units.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/crystal/TestQShape.cpp", "") {
 
-int main()
-{
     nsx::DataReaderFactory factory;
     nsx::Experiment experiment("test", "BioDiff2500");
     nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.diffractometer()));

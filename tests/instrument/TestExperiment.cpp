@@ -4,10 +4,8 @@
 #include "core/data/DataSet.h"
 #include "core/instrument/Experiment.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/instrument/TestExperiment.cpp", "") {
 
-int main()
-{
     nsx::Experiment exp("my-exp", "D10");
     nsx::sptrDataSet data;
 

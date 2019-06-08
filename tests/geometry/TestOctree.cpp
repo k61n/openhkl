@@ -8,7 +8,6 @@
 #include "core/geometry/Ellipsoid.h"
 #include "core/geometry/Octree.h"
 
-NSX_INIT_TEST
 
 void collision_test()
 {
@@ -181,9 +180,8 @@ void split_test()
         delete ellipsoid;
     }
 }
+TEST_CASE("test/geometry/TestOctree.cpp", "") {
 
-int main()
-{
     unsigned int maxStorage(10);
 
     // Build up a NDTree with (0,0,0) as lower corner and (100,100,100) as upper

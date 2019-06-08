@@ -11,7 +11,6 @@ const double tolerance = 1e-9;
 // http://lampx.tugraz.at/~hadley/ss1/bzones/
 // https://en.wikipedia.org/wiki/Brillouin_zone
 
-NSX_INIT_TEST
 
 // validation function
 void validate_zone(const Eigen::Matrix3d& B, int nverts, int nfaces)
@@ -44,9 +43,8 @@ void validate_zone(const Eigen::Matrix3d& B, int nverts, int nfaces)
 
     NSX_CHECK_CLOSE(hull.volume(), std::fabs(B.determinant()), 1e-8);
 }
+TEST_CASE("test/geometry/TestBrillouinZone.cpp", "") {
 
-int main()
-{
     const double deg = M_PI / 180.0;
     nsx::UnitCell uc;
 

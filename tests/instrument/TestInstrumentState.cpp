@@ -4,7 +4,6 @@
 #include "core/data/IDataReader.h"
 #include "core/instrument/InstrumentState.h"
 
-NSX_INIT_TEST
 
 namespace nsx {
 class UnitTest_DataSet {
@@ -34,8 +33,7 @@ int nsx::UnitTest_DataSet::run()
     }
     return 0;
 }
+TEST_CASE("test/instrument/TestInstrumentState.cpp", "") {
 
-int main()
-{
     return nsx::UnitTest_DataSet::run();
 }

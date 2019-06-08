@@ -8,9 +8,7 @@
 
 const double tolerance = 1e-6;
 
-NSX_INIT_TEST
+TEST_CASE("test/instrument/TestSample.cpp", "") {
 
-int main()
-{
     return 0;
 }

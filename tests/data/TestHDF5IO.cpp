@@ -7,10 +7,8 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/utils/Units.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/data/TestHDF5IO.cpp", "") {
 
-int main()
-{
     nsx::DataReaderFactory factory;
     nsx::Diffractometer* diffractometer;
     nsx::sptrDataSet dataf;

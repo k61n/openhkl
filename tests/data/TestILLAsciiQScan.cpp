@@ -11,10 +11,8 @@
 
 const double tolerance = 1e-2;
 
-NSX_INIT_TEST
+TEST_CASE("test/data/TestILLAsciiQScan.cpp", "") {
 
-int main()
-{
     nsx::DataReaderFactory factory;
     nsx::Diffractometer* diffractometer;
     nsx::sptrDataSet dataf;

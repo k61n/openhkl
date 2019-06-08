@@ -6,10 +6,8 @@
 #include "core/fitting/FitParameters.h"
 #include "core/fitting/Minimizer.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/mathematics/TestMinimizer.cpp", "") {
 
-int main()
-{
     Eigen::VectorXd y, wt, x;
     int nvalues = 40;
     const int num_points = 40;

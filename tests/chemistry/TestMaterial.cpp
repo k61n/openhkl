@@ -5,10 +5,8 @@
 
 const double tolerance = 1.0e-9;
 
-NSX_INIT_TEST
+TEST_CASE("test/chemistry/TestMaterial.cpp", "") {
 
-int main()
-{
     NSX_CHECK_THROW(nsx::Material junk("X"), std::runtime_error);
 
     nsx::Material methane("CH4");

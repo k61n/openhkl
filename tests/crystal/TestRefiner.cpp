@@ -24,10 +24,8 @@
 #include "core/instrument/Sample.h"
 #include "core/utils/Units.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/crystal/TestRefiner.cpp", "") {
 
-int main()
-{
     nsx::DataReaderFactory factory;
 
     nsx::Experiment experiment("test", "BioDiff2500");

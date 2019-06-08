@@ -24,10 +24,8 @@
 #include "core/integration/ShapeLibrary.h"
 #include "core/utils/Units.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/data/TestNewWorkFlow.cpp", "") {
 
-int main()
-{
     nsx::DataReaderFactory factory;
 
     nsx::Experiment experiment("test", "BioDiff2500");

@@ -5,10 +5,8 @@
 #include "core/geometry/AABB.h"
 #include "core/integration/Profile3D.h"
 
-NSX_INIT_TEST
+TEST_CASE("test/geometry/TestProfile3D.cpp", "") {
 
-int main()
-{
     nsx::AABB bb;
     bb.setLower(Eigen::Vector3d(0, 0, 0));
     bb.setUpper(Eigen::Vector3d(1, 2, 3));
