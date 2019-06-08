@@ -26,10 +26,10 @@
 #include <QModelIndexList>
 #include <QTableView>
 
-#include <build/core/include/core/CrystalTypes.h>
-#include <build/core/include/core/DataTypes.h>
-#include <build/core/include/core/GeometryTypes.h>
-#include <build/core/include/core/InstrumentTypes.h>
+#include "core/crystal/CrystalTypes.h"
+#include "core/data/DataTypes.h"
+#include "core/geometry/GeometryTypes.h"
+#include "core/instrument/InstrumentTypes.h"
 
 #include <QCR/widgets/tables.h>
 

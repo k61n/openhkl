@@ -20,8 +20,8 @@
 #include <QJsonObject>
 #include <QStandardItemModel>
 
-#include <build/core/include/core/Experiment.h>
-#include <build/core/include/core/InstrumentTypes.h>
+#include "core/instrument/Experiment.h"
+#include "core/instrument/InstrumentTypes.h"
 
 #include "apps/models/TreeItem.h"
 

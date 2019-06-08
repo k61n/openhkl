@@ -19,7 +19,7 @@
 #include <QGroupBox>
 #include <QHeaderView>
 #include <QTableWidget>
-#include <build/core/include/core/Detector.h>
+#include "core/detector/Detector.h"
 
 DetectorProperty::DetectorProperty() : QcrWidget {"detectorProperty"}
 {

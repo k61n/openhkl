@@ -18,7 +18,7 @@
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QHBoxLayout>
-#include <build/core/include/core/Path.h>
+#include "core/utils/Path.h"
 #include <build/core/include/core/Resources.h>
 
 namespace {

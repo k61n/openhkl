@@ -5,9 +5,7 @@ add_library(${lib} ${sources})
 
 target_include_directories(${lib}
     PRIVATE
-    ${CMAKE_BINARY_DIR} # for manifest.h
     ${CMAKE_SOURCE_DIR}
-    ${CMAKE_BINARY_DIR}/core/include
     )
 
 target_link_libraries(${lib}

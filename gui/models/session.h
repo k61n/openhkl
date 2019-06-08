@@ -18,7 +18,7 @@
 
 #include "gui/models/experimentmodel.h"
 #include <QList>
-#include <build/core/include/core/DataTypes.h>
+#include "core/data/DataTypes.h"
 
 extern class Session* gSession; //!< global handle for Session
 

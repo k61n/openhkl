@@ -18,9 +18,9 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
-#include <build/core/include/core/DataSet.h>
-#include <build/core/include/core/DataTypes.h>
-#include <build/core/include/core/IDataReader.h>
+#include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
+#include "core/data/IDataReader.h"
 
 NumorProperty::NumorProperty() : QcrWidget {"numorProperty"}
 {
