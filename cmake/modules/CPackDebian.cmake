@@ -6,7 +6,7 @@ set(CPACK_DEBIAN_PACKAGE_NAME "${CPACK_PACKAGE_NAME}")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER Eric Pellegrini <pellegrini@ill.fr>)
 
 # Architecture: (mandatory)
-if (NOT CPACK_DEBIAN_PACKAGE_ARCHITECTURE)
+if(NOT CPACK_DEBIAN_PACKAGE_ARCHITECTURE)
     # There is no such thing as i686 architecture on debian, you should use i386 instead
     # $ dpkg --print-architecture
     find_program(DPKG_CMD dpkg)

@@ -31,11 +31,11 @@
 #  YAML_LIBRARIES  = Link these to use YAML
 #  YAML_LFLAGS     = Linker flags (optional)
 
-if (NOT YAML_FOUND)
+if(NOT YAML_FOUND)
 
-  if (NOT YAML_ROOT_DIR)
+  if(NOT YAML_ROOT_DIR)
     set (YAML_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
-  endif (NOT YAML_ROOT_DIR)
+  endif(NOT YAML_ROOT_DIR)
 
   ##_____________________________________________________________________________
   ## Check for the header files
@@ -57,31 +57,31 @@ if (NOT YAML_FOUND)
 
   find_package_handle_standard_args (YAML DEFAULT_MSG YAML_LIBRARIES YAML_INCLUDES)
 
-  if (YAML_INCLUDES AND YAML_LIBRARIES)
+  if(YAML_INCLUDES AND YAML_LIBRARIES)
     set (YAML_FOUND TRUE)
-  else (YAML_INCLUDES AND YAML_LIBRARIES)
+  else(YAML_INCLUDES AND YAML_LIBRARIES)
     set (YAML_FOUND FALSE)
-    if (NOT YAML_FIND_QUIETLY)
-      if (NOT YAML_INCLUDES)
+    if(NOT YAML_FIND_QUIETLY)
+      if(NOT YAML_INCLUDES)
 	message (STATUS "Unable to find YAML header files!")
-      endif (NOT YAML_INCLUDES)
-      if (NOT YAML_LIBRARIES)
+      endif(NOT YAML_INCLUDES)
+      if(NOT YAML_LIBRARIES)
 	message (STATUS "Unable to find YAML library files!")
-      endif (NOT YAML_LIBRARIES)
-    endif (NOT YAML_FIND_QUIETLY)
-  endif (YAML_INCLUDES AND YAML_LIBRARIES)
+      endif(NOT YAML_LIBRARIES)
+    endif(NOT YAML_FIND_QUIETLY)
+  endif(YAML_INCLUDES AND YAML_LIBRARIES)
 
-  if (YAML_FOUND)
-    if (NOT YAML_FIND_QUIETLY)
+  if(YAML_FOUND)
+    if(NOT YAML_FIND_QUIETLY)
       message (STATUS "Found YAML:")
       message (STATUS "  libraries: ${YAML_LIBRARIES}")
       message (STATUS "  headers: ${YAML_INCLUDES}")
-    endif (NOT YAML_FIND_QUIETLY)
-  else (YAML_FOUND)
-    if (YAML_FIND_REQUIRED)
+    endif(NOT YAML_FIND_QUIETLY)
+  else(YAML_FOUND)
+    if(YAML_FIND_REQUIRED)
       message (FATAL_ERROR "Could not find YAML!")
-    endif (YAML_FIND_REQUIRED)
-  endif (YAML_FOUND)
+    endif(YAML_FIND_REQUIRED)
+  endif(YAML_FOUND)
 
   ## Compatibility setting
   set (YAML_CPP_FOUND ${YAML_FOUND})
@@ -95,5 +95,5 @@ if (NOT YAML_FOUND)
     YAML_LIBRARIES
     )
 
-endif (NOT YAML_FOUND)
+endif(NOT YAML_FOUND)
 

@@ -14,7 +14,7 @@ elseif(NOT Boost_FOUND)
 endif()
 
 ###### Find OPENMP
-if (BUILD_WITH_OPENMP)
+if(BUILD_WITH_OPENMP)
     find_package(OpenMP REQUIRED)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
@@ -44,7 +44,7 @@ endif()
 
 include_directories(SYSTEM "${HDF5_INCLUDE_DIRS}")
 
-if (HDF5_INCLUDE_DIRS AND HDF5_LIBRARIES)
+if(HDF5_INCLUDE_DIRS AND HDF5_LIBRARIES)
     message("HDF5 found:")
     message("  versions: ${HDF5_VERSION}")
     message("  libraries: ${HDF5_LIBRARIES}")
@@ -69,7 +69,7 @@ if(NSX_PYTHON)
         )
 
     ## process the output from the execution of the command
-    if (NOT NUMPY_FIND_RESULT)
+    if(NOT NUMPY_FIND_RESULT)
         set (NUMPY_INCLUDES ${NUMPY_FIND_OUTPUT})
         message(STATUS "numpy includes ${NUMPY_INCLUDES}")
         include_directories(SYSTEM ${NUMPY_INCLUDES})
@@ -84,7 +84,7 @@ if(NSX_PYTHON)
         OUTPUT_VARIABLE PYTHON_SITE
         OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-    if (NOT PYTHON_SITE_RESULT)
+    if(NOT PYTHON_SITE_RESULT)
         message(STATUS "python package destination is ${PYTHON_SITE}")
     else()
         message(FATAL_ERROR "could NOT determine python package directory")

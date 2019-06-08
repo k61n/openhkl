@@ -20,7 +20,7 @@ elseif(WIN32)
 endif()
 
 # determine if compiler is GNU/clang variety
-if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+if( CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(COMPILER_IS_GNU TRUE)
     set(COMPILER_IS_CLANG FALSE)
     execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
@@ -53,7 +53,7 @@ endif()
 
 
 # disable annoying warnings during msvc build
-if (COMPILER_IS_MSVC)
+if(COMPILER_IS_MSVC)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4348 /wd4127 /MP")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4348 /wd4127 /MP")
 endif()
@@ -80,9 +80,9 @@ endif()
 
 # gcc specific
 if(COMPILER_IS_GNU)
-    if (GCC_VERSION VERSION_GREATER 4.9)
+    if(GCC_VERSION VERSION_GREATER 4.9)
         add_compile_options(-Werror=delete-incomplete)
-        if (BUILD_OPTIMIZED_DEBUG)
+        if(BUILD_OPTIMIZED_DEBUG)
             add_compile_options(-Og)
         endif()
     endif()
@@ -95,7 +95,7 @@ if(BUILD_OPTIMIZED_DEBUG AND NOT COMPILER_IS_GNU)
 endif()
 
 # code sanitizer
-if (NSX_SANITIZE)
+if(NSX_SANITIZE)
     message("The sanitize options are: thread, memory, undefined, dataflow, cfi, safe-stack")
     message(STATUS "The sanitize option '${NSX_SANITIZER}' has been selected")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=${NSX_SANITIZER} -fsanitize-recover=all")
@@ -104,7 +104,7 @@ endif()
 
 message("Finished configuring compiler")
 
-if ( CMAKE_BUILD_TYPE STREQUAL "Release")
+if( CMAKE_BUILD_TYPE STREQUAL "Release")
     message(STATUS "The build flags are ${CMAKE_CXX_FLAGS_RELEASE} ${CMAKE_CXX_FLAGS}")
 elseif(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
     message(STATUS "The build flags are ${CMAKE_CXX_FLAGS_MINSIZEREL} ${CMAKE_CXX_FLAGS}")

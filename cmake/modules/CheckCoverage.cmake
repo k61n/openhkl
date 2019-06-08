@@ -54,15 +54,15 @@ endif()
 # it will scan the working directory for coverage info, ignoring the directories in ignore_directories
 function(add_coverage_target targetname ignore_directories)
 
-    if (NOT CMAKE_GCOV_FOUND)
+    if(NOT CMAKE_GCOV_FOUND)
         message(FATAL_ERROR "gcov not found! aborting")
     endif()
 
-    if (NOT CMAKE_LCOV_FOUND)
+    if(NOT CMAKE_LCOV_FOUND)
         message(FATAL_ERROR "lcov not found! aborting")
     endif()
 
-    if (NOT CMAKE_GENHTML_FOUND)
+    if(NOT CMAKE_GENHTML_FOUND)
         message(FATAL_ERROR "genhtml not found! aborting")
     endif()
 

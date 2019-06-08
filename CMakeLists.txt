@@ -66,7 +66,7 @@ enable_testing()
 
 add_subdirectory(core)
 
-if (BUILD_NSX_APPS)
+if(BUILD_NSX_APPS)
     find_package(QCR MODULE REQUIRED)
     message(STATUS "libQCR: FOUND=${QCR_FOUND}, VERSION=${QCR_VERSION}, LIB=${QCR_LIBRARIES}")
     include(SetupQt)

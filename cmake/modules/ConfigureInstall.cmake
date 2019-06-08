@@ -1,4 +1,4 @@
-if (APPLE)
+if(APPLE)
     set(NSX_LIB_TYPE SHARED)
 
     set(NSX_INSTALL_DIR "")
@@ -22,7 +22,7 @@ elseif(UNIX)
 
 endif()
 
-if (NSX_BUILD_STATIC)
+if(NSX_BUILD_STATIC)
     set(NSX_LIB_TYPE STATIC)
 endif()
 
