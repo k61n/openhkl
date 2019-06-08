@@ -162,13 +162,13 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "") {
         Eigen::RowVector3d q0 = nsx::Peak3D(dataf, nsx::Ellipsoid(p0, 1.0)).q().rowVector();
         Eigen::RowVector3d q1 = nsx::Peak3D(dataf, nsx::Ellipsoid(p1, 1.0)).q().rowVector();
 
-        CHECK(p0(0) == Approx(p1(0)).epsilon(3.0));
-        CHECK(p0(1) == Approx(p1(1)).epsilon(3.0));
-        CHECK(p0(2) == Approx(p1(2)).epsilon(3.0));
+        CHECK(p0(0) == Approx(p1(0)).epsilon(3e-2));
+        CHECK(p0(1) == Approx(p1(1)).epsilon(3e-2));
+        CHECK(p0(2) == Approx(p1(2)).epsilon(3e-2));
 
-        CHECK(q0(0) == Approx(q1(0)).epsilon(2.0));
-        CHECK(q0(1) == Approx(q1(1)).epsilon(2.0));
-        CHECK(q0(2) == Approx(q1(2)).epsilon(2.0));
+        CHECK(q0(0) == Approx(q1(0)).epsilon(2e-2));
+        CHECK(q0(1) == Approx(q1(1)).epsilon(2e-2));
+        CHECK(q0(2) == Approx(q1(2)).epsilon(2e-2));
     }
 
     CHECK(n_selected > 600);
