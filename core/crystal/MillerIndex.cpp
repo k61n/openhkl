@@ -17,7 +17,7 @@
 #include <Eigen/Dense>
 
 #include "core/crystal/MillerIndex.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 #include "core/rec_space/ReciprocalVector.h"
 #include "core/crystal/UnitCell.h"
 

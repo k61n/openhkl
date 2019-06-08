@@ -17,7 +17,7 @@
 #include <QIcon>
 
 #include "core/crystal/CrystalTypes.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 
 #include "apps/models/ExperimentItem.h"
 #include "apps/models/MetaTypes.h"

@@ -28,7 +28,7 @@
 #include "core/logger/Logger.h"
 #include "core/data/MetaData.h"
 #include "core/crystal/MillerIndex.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 #include "core/statistics/RFactor.h"
 #include "core/crystal/ResolutionShell.h"
 

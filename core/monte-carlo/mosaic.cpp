@@ -28,7 +28,7 @@
 #include "core/geometry/Ellipsoid.h"
 #include "core/axes/Gonio.h"
 #include "core/data/ILLDataReader.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"

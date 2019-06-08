@@ -27,7 +27,7 @@
 #include "core/crystal/CrystalTypes.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 #include "core/refine/Refiner.h"
 
 Refiner::Refiner() : QcrFrame {"RefinerFrame"}

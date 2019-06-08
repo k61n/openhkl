@@ -99,30 +99,30 @@ using Eigen::Quaterniond;
 #include "core/data/MatrixParser.h"
 #include "core/utils/ProgressHandler.h"
 
-#include "core/crystal/PeakCoordinateSystem.h"
+#include "core/peak/PeakCoordinateSystem.h"
 #include "core/refine/RefinementBatch.h"
 #include "core/refine/Refiner.h"
 #include "core/auto_indexing/AutoIndexer.h"
 #include "core/crystal/Intensity.h"
-#include "core/integration/IPeakIntegrator.h"
+#include "core/peak/IPeakIntegrator.h"
 #include "core/integration/MeanBackgroundIntegrator.h"
 #include "core/integration/Profile3DIntegrator.h"
 #include "core/integration/Profile1DIntegrator.h"
 #include "core/integration/ISigmaIntegrator.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/integration/ShapeIntegrator.h"
-#include "core/integration/IntegrationRegion.h"
-#include "core/crystal/PeakData.h"
+#include "core/peak/IntegrationRegion.h"
+#include "core/peak/PeakData.h"
 #include "core/crystal/UnitCell.h"
 #include "core/crystal/ResolutionShell.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/CC.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
 #include "core/auto_indexing/FFTIndexing.h"
 
-#include "core/crystal/MergedPeak.h"
+#include "core/peak/MergedPeak.h"
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/NiggliReduction.h"
 #include "core/crystal/GruberReduction.h"
@@ -215,7 +215,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/geometry/Blob3D.h"
 
 #include "core/auto_indexing/FFTIndexing.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/UnitCell.h"
 #include "core/crystal/GruberReduction.h"
@@ -246,9 +246,9 @@ using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 #include "core/data/HDF5DataReader.h"
 #include "core/data/DataSet.h"
 #include "core/search_peaks/PeakFinder.h"
-#include "core/data/MergedData.h"
+#include "core/peak/MergedData.h"
 
-#include "core/crystal/PeakFilter.h"
+#include "core/peak/PeakFilter.h"
 
 #include "core/crystal/MillerIndex.h"
 #include "core/integration/Profile1D.h"
@@ -385,31 +385,31 @@ namespace nsx {
 %include "core/auto_indexing/FFTIndexing.h"
 
 
-%include "core/crystal/PeakData.h"
-%include "core/integration/IntegrationRegion.h"
+%include "core/peak/PeakData.h"
+%include "core/peak/IntegrationRegion.h"
 %include "core/crystal/Intensity.h"
 %template(IntensityList) std::vector<nsx::Intensity>;
 %include "core/integration/Profile3D.h"
 %include "core/integration/Profile1D.h"
-%include "core/integration/IPeakIntegrator.h"
+%include "core/peak/IPeakIntegrator.h"
 %include "core/integration/MeanBackgroundIntegrator.h"
 %include "core/integration/Profile3DIntegrator.h"
 %include "core/integration/Profile1DIntegrator.h"
 %include "core/integration/ISigmaIntegrator.h"
 %include "core/integration/PixelSumIntegrator.h"
-%include "core/crystal/Peak3D.h"
+%include "core/peak/Peak3D.h"
 %include "core/integration/Profile1D.h"
 %include "core/integration/ShapeLibrary.h"
 %include "core/integration/ShapeIntegrator.h"
-%include "core/integration/IntegrationRegion.h"
-%include "core/crystal/PeakData.h"
+%include "core/peak/IntegrationRegion.h"
+%include "core/peak/PeakData.h"
 %include "core/crystal/Intensity.h"
-%include "core/crystal/Peak3D.h"
+%include "core/peak/Peak3D.h"
 
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
 %template(PeakShell) std::vector<std::vector<std::shared_ptr<nsx::Peak3D>>>;
 
-%include "core/crystal/PeakFilter.h"
+%include "core/peak/PeakFilter.h"
 
 %template(ConvolverParameters) std::map<std::string,double>;
 %include "core/search_peaks/Convolver.h"
@@ -434,7 +434,7 @@ namespace nsx {
 %include "core/data/DataSet.h"
 
 
-%include "core/data/MergedData.h"
+%include "core/peak/MergedData.h"
 
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
 
@@ -456,7 +456,7 @@ namespace nsx {
 %include "core/data/MatrixParser.h"
 %include "core/utils/ProgressHandler.h"
 
-%include "core/crystal/PeakCoordinateSystem.h"
+%include "core/peak/PeakCoordinateSystem.h"
 %include "core/refine/RefinementBatch.h"
 %include "core/refine/Refiner.h"
 
@@ -464,8 +464,8 @@ namespace nsx {
 
 %include "core/crystal/Intensity.h"
 
-%include "core/integration/IntegrationRegion.h"
-%include "core/crystal/PeakData.h"
+%include "core/peak/IntegrationRegion.h"
+%include "core/peak/PeakData.h"
 
 
 %include "core/crystal/UnitCell.h"
@@ -475,7 +475,7 @@ namespace nsx {
 %include "core/statistics/CC.h"
 %include "core/statistics/CC.h"
 
-%include "core/crystal/Peak3D.h"
+%include "core/peak/Peak3D.h"
 
 %include "core/crystal/MillerIndex.h"
 %template(MillerIndexList) std::vector<nsx::MillerIndex>;
@@ -484,7 +484,7 @@ namespace nsx {
 %include "core/integration/ShapeLibrary.h"
 
 %include "core/auto_indexing/FFTIndexing.h"
-%include "core/crystal/MergedPeak.h"
+%include "core/peak/MergedPeak.h"
 %include "core/crystal/SpaceGroup.h"
 %include "core/crystal/NiggliReduction.h"
 %include "core/crystal/GruberReduction.h"

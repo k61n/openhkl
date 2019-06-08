@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/crystal/PeakData.h
+//! @file      core/peak/PeakData.h
 //! @brief     Defines ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -19,7 +19,7 @@
 #include <deque>
 
 #include "core/detector/DetectorEvent.h"
-#include "core/crystal/PeakCoordinateSystem.h"
+#include "core/peak/PeakCoordinateSystem.h"
 
 namespace nsx {
 

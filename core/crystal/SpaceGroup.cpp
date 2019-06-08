@@ -19,8 +19,8 @@
 #include <vector>
 
 #include "core/crystal/CrystalTypes.h"
-#include "core/crystal/Peak3D.h"
-#include "core/crystal/PeakFilter.h"
+#include "core/peak/Peak3D.h"
+#include "core/peak/PeakFilter.h"
 #include "core/rec_space/ReciprocalVector.h"
 #include "core/crystal/SpaceGroup.h"
 #include "core/utils/StringIO.h"

@@ -14,8 +14,8 @@
 #include "core/detector/DetectorEvent.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Experiment.h"
-#include "core/crystal/Peak3D.h"
-#include "core/crystal/PeakCoordinateSystem.h"
+#include "core/peak/Peak3D.h"
+#include "core/peak/PeakCoordinateSystem.h"
 
 void run_test(const char* filename, const char* instrument)
 {

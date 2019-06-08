@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/crystal/PeakData.cpp
+//! @file      core/peak/PeakData.cpp
 //! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -13,14 +13,14 @@
 //  ***********************************************************************************************
 
 
-#include "core/crystal/PeakData.h"
+#include "core/peak/PeakData.h"
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/geometry/DirectVector.h"
 #include "core/instrument/InstrumentState.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 #include "core/rec_space/ReciprocalVector.h"
 
 namespace nsx {

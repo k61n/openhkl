@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/crystal/Peak3D.h
+//! @file      core/peak/Peak3D.h
 //! @brief     Defines ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -25,7 +25,7 @@
 #include "core/data/DataTypes.h"
 #include "core/geometry/Ellipsoid.h"
 #include "core/geometry/GeometryTypes.h"
-#include "core/integration/IPeakIntegrator.h"
+#include "core/peak/IPeakIntegrator.h"
 #include "core/instrument/InstrumentTypes.h"
 #include "core/crystal/Intensity.h"
 

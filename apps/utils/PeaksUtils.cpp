@@ -14,7 +14,7 @@
 
 #include <limits>
 
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 
 #include "apps/utils/PeaksUtils.h"
 

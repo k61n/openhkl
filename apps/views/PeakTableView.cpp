@@ -28,7 +28,7 @@
 #include "core/data/IDataReader.h"
 #include "core/logger/Logger.h"
 #include "core/data/MetaData.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 #include "core/utils/ProgressHandler.h"
 #include "core/crystal/UnitCell.h"
 

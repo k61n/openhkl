@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/data/MergedData.h
+//! @file      core/peak/MergedData.h
 //! @brief     Defines ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -20,7 +20,7 @@
 #include <Eigen/Dense>
 
 #include "core/crystal/CrystalTypes.h"
-#include "core/crystal/MergedPeak.h"
+#include "core/peak/MergedPeak.h"
 
 namespace nsx {
 

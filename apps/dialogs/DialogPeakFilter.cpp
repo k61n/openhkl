@@ -22,8 +22,8 @@
 
 #include "core/data/DataSet.h"
 #include "core/logger/Logger.h"
-#include "core/crystal/Peak3D.h"
-#include "core/crystal/PeakFilter.h"
+#include "core/peak/Peak3D.h"
+#include "core/peak/PeakFilter.h"
 #include "core/crystal/UnitCell.h"
 
 #include "apps/models/CollectedPeaksModel.h"

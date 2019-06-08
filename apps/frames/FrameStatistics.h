@@ -17,7 +17,7 @@
 #include <map>
 
 #include "core/crystal/CrystalTypes.h"
-#include "core/data/MergedData.h"
+#include "core/peak/MergedData.h"
 #include "core/crystal/SpaceGroup.h"
 
 #include "apps/frames/NSXQFrame.h"

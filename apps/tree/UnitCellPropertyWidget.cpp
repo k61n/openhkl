@@ -23,7 +23,7 @@
 #include "core/axes/Gonio.h"
 #include "core/logger/Logger.h"
 #include "core/chemistry/Material.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/UnitCell.h"
 #include "core/utils/Units.h"

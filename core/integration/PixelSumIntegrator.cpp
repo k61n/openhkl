@@ -18,7 +18,7 @@
 #include "core/geometry/Ellipsoid.h"
 #include "core/crystal/Intensity.h"
 #include "core/integration/MeanBackgroundIntegrator.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 
 namespace nsx {
 

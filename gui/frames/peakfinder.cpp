@@ -31,7 +31,7 @@
 #include <QVBoxLayout>
 #include "core/search_peaks/ConvolverFactory.h"
 #include "core/data/DataSet.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "core/integration/PixelSumIntegrator.h"
 

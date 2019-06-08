@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/integration/IntegrationRegion.cpp
+//! @file      core/peak/IntegrationRegion.cpp
 //! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,13 +12,13 @@
 //
 //  ***********************************************************************************************
 
-#include "core/integration/IntegrationRegion.h"
+#include "core/peak/IntegrationRegion.h"
 #include "core/crystal/BrillouinZone.h"
 #include "core/hull/ConvexHull.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/geometry/Ellipsoid.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 #include "core/crystal/UnitCell.h"
 
 namespace nsx {

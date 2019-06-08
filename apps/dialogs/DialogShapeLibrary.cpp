@@ -19,9 +19,9 @@
 
 #include "core/data/DataSet.h"
 #include "core/logger/Logger.h"
-#include "core/crystal/Peak3D.h"
-#include "core/crystal/PeakCoordinateSystem.h"
-#include "core/crystal/PeakFilter.h"
+#include "core/peak/Peak3D.h"
+#include "core/peak/PeakCoordinateSystem.h"
+#include "core/peak/PeakFilter.h"
 #include "core/integration/Profile3D.h"
 #include "core/integration/ShapeIntegrator.h"
 #include "core/integration/ShapeLibrary.h"

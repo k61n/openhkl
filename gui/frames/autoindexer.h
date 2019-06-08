@@ -21,7 +21,7 @@
 #include <QCR/widgets/views.h>
 #include <QDialogButtonBox>
 #include <QTableView>
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 
 class AutoIndexer : public QcrFrame {
 public:

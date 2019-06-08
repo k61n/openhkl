@@ -7,7 +7,7 @@
 #include "core/geometry/Ellipsoid.h"
 #include "core/instrument/Experiment.h"
 #include "core/data/FakeDataReader.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 #include "core/rec_space/ReciprocalVector.h"
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/UnitCell.h"

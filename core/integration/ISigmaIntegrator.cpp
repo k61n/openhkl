@@ -16,8 +16,8 @@
 #include "core/data/DataSet.h"
 #include "core/geometry/Ellipsoid.h"
 #include "core/crystal/Intensity.h"
-#include "core/crystal/Peak3D.h"
-#include "core/crystal/PeakCoordinateSystem.h"
+#include "core/peak/Peak3D.h"
+#include "core/peak/PeakCoordinateSystem.h"
 #include "core/integration/ShapeLibrary.h"
 
 namespace nsx {

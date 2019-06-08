@@ -17,7 +17,7 @@
 
 #include <Eigen/Eigenvalues>
 
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 #include "core/rec_space/ReciprocalVector.h"
 #include "core/crystal/ResolutionShell.h"
 

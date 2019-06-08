@@ -16,7 +16,7 @@
 
 #include "core/crystal/CrystalTypes.h"
 #include "core/instrument/InstrumentTypes.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 
 #include "apps/models/InspectableTreeItem.h"
 #include "apps/models/SessionModel.h"

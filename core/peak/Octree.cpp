@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/geometry/Octree.cpp
+//! @file      core/peak/Octree.cpp
 //! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/geometry/Octree.h"
+#include "core/peak/Octree.h"
 #include "core/geometry/Ellipsoid.h"
 
 namespace nsx {

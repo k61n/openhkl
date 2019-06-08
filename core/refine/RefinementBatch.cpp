@@ -19,8 +19,8 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/crystal/MillerIndex.h"
 #include "core/fitting/Minimizer.h"
-#include "core/crystal/Peak3D.h"
-#include "core/crystal/PeakFilter.h"
+#include "core/peak/Peak3D.h"
+#include "core/peak/PeakFilter.h"
 #include "core/refine/Refiner.h"
 #include "core/crystal/UnitCell.h"
 

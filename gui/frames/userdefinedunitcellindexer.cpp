@@ -24,7 +24,7 @@
 #include "core/instrument/Experiment.h"
 #include "core/logger/Logger.h"
 #include "core/instrument/Monochromator.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 #include "core/rec_space/ReciprocalVector.h"
 #include "core/instrument/Source.h"
 #include "core/utils/Units.h"

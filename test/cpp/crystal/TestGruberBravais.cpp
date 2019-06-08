@@ -14,7 +14,7 @@
 #include "core/crystal/GruberReduction.h"
 #include "core/instrument/Monochromator.h"
 #include "core/crystal/NiggliReduction.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/crystal/SpaceGroup.h"

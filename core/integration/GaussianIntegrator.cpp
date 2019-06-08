@@ -19,7 +19,7 @@
 #include "core/crystal/Intensity.h"
 #include "core/logger/Logger.h"
 #include "core/fitting/Minimizer.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 
 #include <Eigen/Cholesky>
 

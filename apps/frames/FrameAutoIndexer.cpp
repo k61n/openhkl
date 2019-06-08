@@ -14,7 +14,7 @@
 
 #include "core/auto_indexing/AutoIndexer.h"
 #include "core/logger/Logger.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 #include "core/crystal/UnitCell.h"
 #include "core/utils/Units.h"
 

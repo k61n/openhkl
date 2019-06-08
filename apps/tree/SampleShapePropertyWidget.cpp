@@ -20,7 +20,7 @@
 #include "core/logger/Logger.h"
 #include "core/monte-carlo/MCAbsorption.h"
 #include "core/chemistry/Material.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/utils/Units.h"

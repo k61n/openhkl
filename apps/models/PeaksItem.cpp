@@ -30,7 +30,7 @@
 #include "core/logger/Logger.h"
 #include "core/integration/MeanBackgroundIntegrator.h"
 #include "core/data/MetaData.h"
-#include "core/crystal/PeakFilter.h"
+#include "core/peak/PeakFilter.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/integration/Profile1DIntegrator.h"
 #include "core/integration/Profile3DIntegrator.h"

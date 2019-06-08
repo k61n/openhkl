@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/crystal/MergedPeak.cpp
+//! @file      core/peak/MergedPeak.cpp
 //! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -21,9 +21,9 @@
 
 #include "core/data/DataSet.h"
 #include "core/logger/Logger.h"
-#include "core/crystal/MergedPeak.h"
+#include "core/peak/MergedPeak.h"
 #include "core/crystal/MillerIndex.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 #include "core/rec_space/ReciprocalVector.h"
 #include "core/crystal/UnitCell.h"
 

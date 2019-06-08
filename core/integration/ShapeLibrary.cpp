@@ -23,7 +23,7 @@
 #include "core/data/IDataReader.h"
 #include "core/logger/Logger.h"
 #include "core/fitting/Minimizer.h"
-#include "core/crystal/Peak3D.h"
+#include "core/peak/Peak3D.h"
 #include "core/integration/ShapeLibrary.h"
 #include "core/instrument/Source.h"
 #include "core/crystal/UnitCell.h"

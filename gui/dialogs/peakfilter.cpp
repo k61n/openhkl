@@ -20,7 +20,7 @@
 
 #include "apps/models/MetaTypes.h"
 
-#include "core/crystal/PeakFilter.h"
+#include "core/peak/PeakFilter.h"
 
 #include <QDialogButtonBox>
 #include <QHBoxLayout>

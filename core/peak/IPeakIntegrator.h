@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/integration/IPeakIntegrator.h
+//! @file      core/peak/IPeakIntegrator.h
 //! @brief     Defines ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -22,7 +22,7 @@
 
 #include "core/crystal/BrillouinZone.h"
 #include "core/geometry/GeometryTypes.h"
-#include "core/integration/IntegrationRegion.h"
+#include "core/peak/IntegrationRegion.h"
 #include "core/crystal/Intensity.h"
 #include "core/utils/ProgressHandler.h"
 #include "core/utils/UtilsTypes.h"
