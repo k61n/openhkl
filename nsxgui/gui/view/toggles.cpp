@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      nsxgui/gui/view/toggles.cpp
-//! @brief     Defines ###CLASSES###
+//! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
