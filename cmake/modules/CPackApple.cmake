@@ -1,9 +1,0 @@
-if(NOT NSX_PYTHON)
-    message(FATAL_ERROR "NSX_PYTHON option must be set to ON for deploying om MacOS")
-endif()
-
-set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${NSXTOOL_VERSION}-${NSXTOOL_ARCHITECTURE}")
-
-set(CPACK_BINARY_DRAGNDROP ON)
-
-set(CPACK_GENERATOR "DragNDrop")

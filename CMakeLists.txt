@@ -22,7 +22,6 @@ option(BUILD_COVERAGE_REPORT "Build code coverage report" OFF)
 option(BUILD_WITH_OPENMP "Build with OpenMP support" OFF)
 option(NSX_BUILD_STATIC "Link core statically" OFF)
 option(NSX_VALGRIND "Run tests with valgrind" OFF)
-option(ENABLE_CPACK "Enable CPack package generation" OFF)
 option(NSX_SANITIZE "Compile with clang's -fsanitize (must also set NSX_SANITIZER variable)" OFF)
 option(NSX_TIDY "Add clang-tidy custom target" OFF)
 option(NSX_PYTHON "Generate Python bindings" ON)
@@ -98,13 +97,4 @@ if(BUILD_COVERAGE_REPORT)
 
     #list(APPEND ignore_dirs "'*/tests/*'")
     add_coverage_target(coverage "${ignore_dirs}")
-endif()
-
-
-###########################################################################
-# CPack settings
-###########################################################################
-
-if(ENABLE_CPACK)
-    include(CPackSetup)
 endif()

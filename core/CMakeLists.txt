@@ -28,12 +28,6 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/copy-core-headers.cmake
      endforeach()")
 add_custom_target(copy-nsx-headers COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/copy-core-headers.cmake)
 
-if(ENABLE_CPACK)
-    if(APPLE)
-        set_target_properties(${NSX_LIBRARY} PROPERTIES INSTALL_RPATH "@loader_path/../Frameworks;@loader_path/../lib")
-    endif()
-endif()
-
 # Install section, installing libraries
 install(TARGETS ${NSX_LIBRARY} DESTINATION ${NSX_INSTALL_DIR}lib COMPONENT LIB)
 install(FILES ${core_HEADERS} DESTINATION ${NSX_INSTALL_DIR}include/core COMPONENT DEV)
