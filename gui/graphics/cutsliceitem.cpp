@@ -3,8 +3,9 @@
 #include "gui/graphics/simpleplot.h"
 #include "gui/graphics/detectorscene.h"
 #include "core/detector/Detector.h"
+#include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/import/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include <Eigen/Dense>
 
 CutSliceItem::CutSliceItem(nsx::sptrDataSet data, bool horizontal)

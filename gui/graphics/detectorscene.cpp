@@ -13,7 +13,7 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/import/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/logger/Logger.h"
 #include "core/mask/BoxMask.h"
 #include "core/mask/EllipseMask.h"
@@ -488,7 +488,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     _currentData->addMask(it->second);
                     _lastClickedGI = nullptr;
                 }
-                maskPeaks(_currentData.get(), peaks);
+                _currentData->maskPeaks(peaks);
                 update();
                 updateMasks();
 //                gSession->onMaskedPeaksChanged(peaks);
@@ -499,7 +499,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     _currentData->addMask(it->second);
                     _lastClickedGI = nullptr;
                 }
-                maskPeaks(_currentData.get(), peaks);
+                _currentData->maskPeaks(peaks);
                 update();
                 updateMasks();
 //                gSession->onMaskedPeaksChanged(peaks);
@@ -565,7 +565,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
                     auto peaks = gSession->selectedExperiment()->peaks()->allPeaks();
-                    maskPeaks(_currentData.get(), peaks);
+                    _currentData->maskPeaks(peaks);
                     update();
                     updateMasks();
 //                    gSession->onMaskedPeaksChanged(peaks);
@@ -576,7 +576,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
                     auto peaks = gSession->selectedExperiment()->peaks()->allPeaks();
-                    maskPeaks(_currentData.get(), peaks);
+                    _currentData->maskPeaks(peaks);
                     update();
                     updateMasks();
 //                    gSession->onMaskedPeaksChanged(peaks);

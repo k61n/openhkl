@@ -5,7 +5,8 @@
 #include <QKeyEvent>
 #include <QApplication>
 #include <QClipboard>
-#include "core/import/IDataReader.h"
+#include "core/experiment/DataSet.h"
+#include "core/loader/IDataReader.h"
 #include "core/instrument/Diffractometer.h"
 
 DetectorView::DetectorView(QWidget* parent)

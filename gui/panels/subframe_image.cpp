@@ -18,6 +18,7 @@
 #include "gui/models/session.h"
 #include "gui/actions/triggers.h"
 #include "gui/graphics/detectorscene.h"
+#include "core/experiment/DataSet.h"
 #include <QGraphicsView>
 #include <QHBoxLayout>
 #include <QScrollBar>
