@@ -19,6 +19,6 @@
 
 namespace nsx {
 
-const std::vector<std::string>& resource_@NSX_RESOURCE_TYPE@_@NSX_RESOURCE_NAME@();
+const std::vector<std::string>& resource_instruments_D9_large_lifting_arm();
 
 } // namespace nsx

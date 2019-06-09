@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-#include "Version.h"
 #include "core/logger/Logger.h"
 
 #include <QApplication>
@@ -21,7 +20,7 @@
 
 NSXQtApp::NSXQtApp(int& argc, char* argv[]) : QApplication(argc, argv)
 {
-    this->setApplicationDisplayName(QString::fromStdString("NSXQt " + nsx::__version__));
+    this->setApplicationDisplayName(QString::fromStdString("NSXQt Version?"));// TODO restore version
     this->setApplicationName("nsxqt");
 }
 

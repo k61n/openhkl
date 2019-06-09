@@ -18,10 +18,28 @@
 
 #include "core/resources/Resources.h"
 #include "core/utils/Path.h"
+#include "SingleResourceBioDiff2500.h"
+#include "SingleResourceBioDiff5000.h"
+#include "SingleResourceD10.h"
+#include "SingleResourceD19.h"
+#include "SingleResourceD9.h"
+#include "SingleResourceD9_large.h"
+#include "SingleResourceD9_large_lifting_arm.h"
+#include "SingleResourceD9_lifting_arm.h"
+#include "SingleResourceI16.h"
 
 namespace nsx {
 
-std::map<std::pair<std::string,std::string>,resource_function> default_resources = {};
+std::map<std::pair<std::string,std::string>,resource_function> default_resources = {{{"instruments","BioDiff2500"},&resource_instruments_BioDiff2500},
+{{"instruments","BioDiff5000"},&resource_instruments_BioDiff5000},
+{{"instruments","D10"},&resource_instruments_D10},
+{{"instruments","D19"},&resource_instruments_D19},
+{{"instruments","D9"},&resource_instruments_D9},
+{{"instruments","D9_large"},&resource_instruments_D9_large},
+{{"instruments","D9_large_lifting_arm"},&resource_instruments_D9_large_lifting_arm},
+{{"instruments","D9_lifting_arm"},&resource_instruments_D9_lifting_arm},
+{{"instruments","I16"},&resource_instruments_I16},
+};
 
 void mergeResources(YAML::Node& node1, YAML::Node& node2) {
 

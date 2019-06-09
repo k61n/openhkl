@@ -75,8 +75,6 @@ using Eigen::Matrix3d;
 using Eigen::Matrix;
 using Eigen::Quaterniond;
 
-#include "Version.h"
-
 #include "core/utils/Any.h"
 
 #include "core/chemistry/Material.h"
@@ -313,8 +311,6 @@ using namespace nsx;
 %template(vectorVector3d) std::vector<Eigen::Vector3d>;
 %template(vectorRowVector3d) std::vector<Eigen::RowVector3d>;
 
-%include "Version.h"
-
 %include "core/chemistry/ChemistryTypes.h"
 %include "core/experiment/CrystalTypes.h"
 %include "core/experiment/DataTypes.h"
@@ -377,8 +373,8 @@ using namespace nsx;
 %include "core/instrument/InterpolatedState.h"
 
 namespace nsx {
-   class DataReaderFactory; 
-   class ConvolverFactory; 
+   class DataReaderFactory;
+   class ConvolverFactory;
    struct tVector;
 }
 

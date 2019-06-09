@@ -10,8 +10,6 @@ add_library(
     apps
     ${NSXQT_SOURCES}
     ${NSXQT_RCS}
-    ${NSXQT_RESOURCES_CPP}
-    ${NSXQT_BUNDLE_RESOURCES}
     ${NSXQT_HEADERS}
     ${NSXQT_UI_HEADERS})
 

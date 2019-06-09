@@ -30,7 +30,6 @@
 #include <QThread>
 #include <QTransform>
 
-#include "Version.h"
 #include "core/crystal/GruberReduction.h"
 #include "core/crystal/NiggliReduction.h"
 #include "core/crystal/SpaceGroup.h"
