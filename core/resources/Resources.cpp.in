@@ -16,8 +16,8 @@
 #include <sstream>
 #include <stdexcept>
 
+#include "core/resources/Resources.h"
 #include "core/utils/Path.h"
-#include "Resources.h"
 
 namespace nsx {
 

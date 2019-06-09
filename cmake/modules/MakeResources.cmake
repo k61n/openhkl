@@ -5,7 +5,6 @@
 add_executable(make_single_resource ${CMAKE_SOURCE_DIR}/cmake/scripts/make_single_resource.cpp)
 add_executable(update_resources ${CMAKE_SOURCE_DIR}/cmake/scripts/update_resources.cpp)
 
-configure_file(${CMAKE_SOURCE_DIR}/core/resources/Resources.h.in ${CMAKE_CURRENT_BINARY_DIR}/generated/Resources.h)
 configure_file(${CMAKE_SOURCE_DIR}/core/resources/Resources.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/tmp/Resources.cpp)
 
 set(core_RESOURCES_CPP ${CMAKE_CURRENT_BINARY_DIR}/generated/Resources.cpp)
@@ -28,7 +27,7 @@ foreach (NSX_RESOURCE ${NSX_RESOURCES})
     )
 endforeach()
 
-file(WRITE ${CMAKE_BINARY_DIR}/core/generate-nsx-resources.cmake 
+file(WRITE ${CMAKE_BINARY_DIR}/core/generate-nsx-resources.cmake
  "execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/tmp/Resources.cpp ${CMAKE_CURRENT_BINARY_DIR}/generated/Resources.cpp)
   foreach (NSX_RESOURCE ${NSX_RESOURCES})
     get_filename_component(NSX_RESOURCE_NAME \${NSX_RESOURCE} NAME_WE)
@@ -49,4 +48,3 @@ configure_file(${CMAKE_SOURCE_DIR}/core/Version.h.in ${CMAKE_CURRENT_BINARY_DIR}
 set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/generated/Version.h PROPERTIES GENERATED TRUE)
 
 file(GLOB core_GENERATED_HEADERS ${CMAKE_CURRENT_BINARY_DIR}/generated/*.h)
-

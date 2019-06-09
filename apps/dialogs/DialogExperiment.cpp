@@ -18,7 +18,7 @@
 #include <QString>
 #include <QStringList>
 
-#include "Resources.h"
+#include "core/resources/Resources.h"
 #include "core/utils/Path.h"
 
 #include "apps/dialogs/DialogExperiment.h"

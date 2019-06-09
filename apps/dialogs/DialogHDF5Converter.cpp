@@ -20,7 +20,7 @@
 #include <QString>
 #include <QStringList>
 
-#include "Resources.h"
+#include "core/resources/Resources.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentTypes.h"
