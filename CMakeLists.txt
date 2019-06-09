@@ -13,7 +13,8 @@ project(nsxtool VERSION 0.1.0)
 # Options
 ###########################################################################
 
-option(BUILD_NSX_APPS "Build nsx based application." ON)
+option(BUILD_NSX_GUI "Build nsx based GUI application." ON)
+option(BUILD_NSX_OLD_APPS "Build old GUI." ON)
 option(BUILD_OPTIMIZED_DEBUG "Set optimization level -O1 or -Og for debug build" OFF)
 option(BUILD_COVERAGE_REPORT "Build code coverage report" OFF)
 option(BUILD_WITH_OPENMP "Build with OpenMP support" OFF)
@@ -58,14 +59,16 @@ enable_testing()
 
 add_subdirectory(core)
 
-if(BUILD_NSX_APPS)
+if(BUILD_NSX_GUI)
     find_package(QCR MODULE REQUIRED)
     message(STATUS "libQCR: FOUND=${QCR_FOUND}, VERSION=${QCR_VERSION}, LIB=${QCR_LIBRARIES}")
     include(SetupQt)
     add_subdirectory(3rdparty/QCustomPlot)
-    add_subdirectory(apps)
     add_subdirectory(gui)
     add_subdirectory(main)
+    if(BUILD_NSX_OLD_APPS)
+        add_subdirectory(apps)
+    endif()
 endif()
 
 add_subdirectory(test/data)
