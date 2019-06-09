@@ -25,8 +25,8 @@
 #include <QSpacerItem>
 #include <QVBoxLayout>
 #include "core/crystal/CrystalTypes.h"
-#include "core/data/DataSet.h"
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataSet.h"
+#include "core/experiment/DataTypes.h"
 #include "core/peak/Peak3D.h"
 #include "core/refine/Refiner.h"
 

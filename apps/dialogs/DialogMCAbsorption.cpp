@@ -18,10 +18,10 @@
 
 #include <Eigen/Dense>
 
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/instrument/Experiment.h"
+#include "core/experiment/Experiment.h"
 #include "core/axes/Gonio.h"
 #include "core/data/IDataReader.h"
 #include "core/instrument/InstrumentState.h"

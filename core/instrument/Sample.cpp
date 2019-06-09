@@ -14,7 +14,7 @@
 
 #include <stdexcept>
 
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/fitting/FitParameters.h"
 #include "core/axes/Gonio.h"
 #include "core/data/IDataReader.h"

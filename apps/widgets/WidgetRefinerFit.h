@@ -18,7 +18,7 @@
 
 #include <QWidget>
 
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataTypes.h"
 #include "core/refine/Refiner.h"
 
 namespace Ui {

@@ -26,7 +26,7 @@
 #include <QStack>
 
 #include "core/crystal/CrystalTypes.h"
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataTypes.h"
 #include "core/mask/IMask.h"
 
 #include "apps/ColorMap.h"

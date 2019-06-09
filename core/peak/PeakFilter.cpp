@@ -18,7 +18,7 @@
 #include <map>
 #include <set>
 
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/peak/MergedData.h"
 #include "core/crystal/MillerIndex.h"

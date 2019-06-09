@@ -14,7 +14,7 @@
 
 
 #include "core/peak/PeakData.h"
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/instrument/Diffractometer.h"

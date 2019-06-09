@@ -22,7 +22,7 @@
 #include <QMessageBox>
 
 #include "core/instrument/Diffractometer.h"
-#include "core/instrument/Experiment.h"
+#include "core/experiment/Experiment.h"
 #include "core/axes/Gonio.h"
 #include "core/logger/Logger.h"
 #include "core/axes/RotAxis.h"

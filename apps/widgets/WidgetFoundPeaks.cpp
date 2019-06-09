@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/instrument/Experiment.h"
+#include "core/experiment/Experiment.h"
 #include "core/peak/Peak3D.h"
 
 #include "apps/models/CollectedPeaksModel.h"

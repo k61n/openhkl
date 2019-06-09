@@ -22,7 +22,7 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/utils/Units.h"
 
 GlobalOffsets::GlobalOffsets(offsetMode mode) : QcrFrame {"adhoc_detectorOffsets"}

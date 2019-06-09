@@ -21,7 +21,7 @@
 #include <vector>
 
 #include "core/crystal/CrystalTypes.h"
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/crystal/MillerIndex.h"
 #include "core/integration/Profile1D.h"

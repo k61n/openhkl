@@ -1,8 +1,8 @@
 #include "test/cpp/catch.hpp"
 
 #include "core/data/DataReaderFactory.h"
-#include "core/data/DataSet.h"
-#include "core/instrument/Experiment.h"
+#include "core/experiment/DataSet.h"
+#include "core/experiment/Experiment.h"
 #include "core/data/IDataReader.h"
 #include "core/instrument/InstrumentState.h"
 

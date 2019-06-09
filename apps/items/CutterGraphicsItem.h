@@ -17,7 +17,7 @@
 #include <QPen>
 #include <QPointF>
 
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataTypes.h"
 
 #include "apps/items/PlottableGraphicsItem.h"
 

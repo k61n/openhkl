@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/data/DataSet.cpp
+//! @file      core/experiment/DataSet.cpp
 //! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -26,7 +26,7 @@
 #include "core/geometry/AABB.h"
 #include "core/data/BloscFilter.h"
 #include "core/search_peaks/ConvolverFactory.h"
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/instrument/Diffractometer.h"

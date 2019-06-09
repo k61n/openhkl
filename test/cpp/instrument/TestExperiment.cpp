@@ -3,8 +3,8 @@
 #include <stdexcept>
 
 #include "core/data/DataReaderFactory.h"
-#include "core/data/DataSet.h"
-#include "core/instrument/Experiment.h"
+#include "core/experiment/DataSet.h"
+#include "core/experiment/Experiment.h"
 
 TEST_CASE("test/instrument/TestExperiment.cpp", "") {
 

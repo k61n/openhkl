@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataTypes.h"
 
 #include "apps/frames/NSXQFrame.h"
 

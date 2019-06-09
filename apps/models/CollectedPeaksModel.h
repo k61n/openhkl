@@ -22,7 +22,7 @@
 #include <QModelIndexList>
 
 #include "core/crystal/CrystalTypes.h"
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataTypes.h"
 #include "core/instrument/InstrumentTypes.h"
 
 class QObject;

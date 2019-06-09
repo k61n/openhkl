@@ -22,8 +22,8 @@
 #include <QString>
 
 #include "core/data/DataReaderFactory.h"
-#include "core/data/DataSet.h"
-#include "core/instrument/Experiment.h"
+#include "core/experiment/DataSet.h"
+#include "core/experiment/Experiment.h"
 #include "core/integration/GaussianIntegrator.h"
 #include "core/data/IDataReader.h"
 #include "core/integration/ISigmaIntegrator.h"

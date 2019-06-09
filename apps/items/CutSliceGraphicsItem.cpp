@@ -23,7 +23,7 @@
 
 #include <Eigen/Dense>
 
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/data/IDataReader.h"

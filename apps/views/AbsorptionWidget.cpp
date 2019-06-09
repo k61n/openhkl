@@ -23,7 +23,7 @@
 #include <QPixmap>
 
 #include "core/instrument/Diffractometer.h"
-#include "core/instrument/Experiment.h"
+#include "core/experiment/Experiment.h"
 #include "core/axes/Gonio.h"
 #include "core/axes/RotAxis.h"
 #include "core/instrument/Sample.h"

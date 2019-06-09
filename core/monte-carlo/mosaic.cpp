@@ -22,7 +22,7 @@
 #include "core/geometry/Blob3D.h"
 
 #include "core/hull/ConvexHull.h"
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/geometry/Ellipsoid.h"

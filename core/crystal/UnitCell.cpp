@@ -17,7 +17,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/crystal/GruberReduction.h"
 #include "core/logger/Logger.h"
 #include "core/crystal/MillerIndex.h"

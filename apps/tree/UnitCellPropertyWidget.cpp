@@ -19,7 +19,7 @@
 #include <QStandardItem>
 
 #include "core/chemistry/ChemistryTypes.h"
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/axes/Gonio.h"
 #include "core/logger/Logger.h"
 #include "core/chemistry/Material.h"

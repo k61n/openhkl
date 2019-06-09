@@ -19,7 +19,7 @@
 #include <QJsonObject>
 
 #include "core/statistics/CC.h"
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/logger/Logger.h"
 #include "core/peak/MergedData.h"

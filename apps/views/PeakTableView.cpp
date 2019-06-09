@@ -24,7 +24,7 @@
 #include <QMouseEvent>
 #include <QStandardItemModel>
 
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/data/IDataReader.h"
 #include "core/logger/Logger.h"
 #include "core/data/MetaData.h"

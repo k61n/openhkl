@@ -146,7 +146,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
 #include "core/detector/DetectorEvent.h"
 
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/integration/Profile3D.h"
 #include "core/data/MetaData.h"
 #include "core/data/ILLDataReader.h"
@@ -185,7 +185,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/monte-carlo/mosaic.h"
 
 #include "core/axes/Axis.h"
-#include "core/instrument/Experiment.h"
+#include "core/experiment/Experiment.h"
 
 #include "core/instrument/Component.h"
 #include "core/axes/AxisFactory.h"
@@ -244,7 +244,7 @@ using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 #include "core/data/DataReaderFactory.h"
 #include "core/data/ILLDataReader.h"
 #include "core/data/HDF5DataReader.h"
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "core/peak/MergedData.h"
 
@@ -317,7 +317,7 @@ using namespace nsx;
 
 %include "core/chemistry/ChemistryTypes.h"
 %include "core/crystal/CrystalTypes.h"
-%include "core/data/DataTypes.h"
+%include "core/experiment/DataTypes.h"
 %include "core/geometry/GeometryTypes.h"
 %include "core/instrument/InstrumentTypes.h"
 %include "core/mathematics/MathematicsTypes.h"
@@ -431,7 +431,7 @@ namespace nsx {
 %include "core/data/HDF5MetaDataReader.h"
 %include "core/data/HDF5DataReader.h"
 %include "core/integration/Profile3D.h"
-%include "core/data/DataSet.h"
+%include "core/experiment/DataSet.h"
 
 
 %include "core/peak/MergedData.h"
@@ -504,7 +504,7 @@ namespace nsx {
 %include "core/crystal/BrillouinZone.h"
 
 %include "core/integration/Profile3D.h"
-%include "core/data/DataSet.h"
+%include "core/experiment/DataSet.h"
 %include "core/data/MetaData.h"
 %include "core/data/ILLDataReader.h"
 %include "core/data/IDataReader.h"
@@ -543,7 +543,7 @@ namespace nsx {
 
 
 %include "core/axes/Axis.h"
-%include "core/instrument/Experiment.h"
+%include "core/experiment/Experiment.h"
 %include "core/axes/AxisFactory.h"
 %include "core/axes/RotAxis.h"
 

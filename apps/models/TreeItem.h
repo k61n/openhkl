@@ -17,7 +17,7 @@
 #include <QStandardItem>
 #include <QVariant>
 
-#include "core/instrument/Experiment.h"
+#include "core/experiment/Experiment.h"
 #include "core/instrument/InstrumentTypes.h"
 
 #include "apps/models/SessionModel.h"

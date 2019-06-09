@@ -21,7 +21,7 @@
 #include <QStringList>
 
 #include "core/data/DataReaderFactory.h"
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentTypes.h"
 #include "core/logger/Logger.h"

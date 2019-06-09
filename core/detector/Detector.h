@@ -23,7 +23,7 @@
 #include <Eigen/Dense>
 
 #include "core/instrument/Component.h"
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/geometry/DirectVector.h"
 #include "core/utils/Enums.h"

@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/integration/Profile3DIntegrator.h"
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/geometry/Ellipsoid.h"
 #include "core/crystal/Intensity.h"
 #include "core/peak/Peak3D.h"

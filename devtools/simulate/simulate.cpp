@@ -2,10 +2,10 @@
 
 #include <Eigen/Dense>
 
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/geometry/Ellipsoid.h"
-#include "core/instrument/Experiment.h"
+#include "core/experiment/Experiment.h"
 #include "core/data/FakeDataReader.h"
 #include "core/peak/Peak3D.h"
 #include "core/rec_space/ReciprocalVector.h"

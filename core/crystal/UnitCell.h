@@ -22,7 +22,7 @@
 
 #include <Eigen/Dense>
 
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataTypes.h"
 #include "core/geometry/GeometryTypes.h"
 #include "core/chemistry/Material.h"
 #include "core/crystal/NiggliCharacter.h"

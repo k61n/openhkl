@@ -2,7 +2,7 @@
 #include <Eigen/Dense>
 
 #include "core/data/DataReaderFactory.h"
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 TEST_CASE("test/data/TestHDF5Data.cpp", "") {
 

@@ -17,7 +17,7 @@
 #include <QInputDialog>
 
 #include "core/instrument/Diffractometer.h"
-#include "core/instrument/Experiment.h"
+#include "core/experiment/Experiment.h"
 #include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/instrument/Sample.h"

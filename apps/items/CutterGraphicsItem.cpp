@@ -18,7 +18,7 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsSceneMouseEvent>
 
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 
 #include "apps/items/CutterGraphicsItem.h"
 

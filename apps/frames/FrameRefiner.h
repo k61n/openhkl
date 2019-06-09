@@ -17,7 +17,7 @@
 #include <map>
 
 #include "core/crystal/CrystalTypes.h"
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataTypes.h"
 #include "core/refine/Refiner.h"
 
 #include "apps/frames/NSXQFrame.h"

@@ -19,7 +19,7 @@
 
 #include <gsl/gsl_cdf.h>
 
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/logger/Logger.h"
 #include "core/peak/MergedPeak.h"
 #include "core/crystal/MillerIndex.h"

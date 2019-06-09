@@ -15,7 +15,7 @@
 #include <QIcon>
 
 #include "core/instrument/Diffractometer.h"
-#include "core/instrument/Experiment.h"
+#include "core/experiment/Experiment.h"
 #include "core/instrument/Source.h"
 
 #include "apps/models/SourceItem.h"

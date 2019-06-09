@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/data/DataSet.h
+//! @file      core/experiment/DataSet.h
 //! @brief     Defines ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -23,7 +23,7 @@
 #include <Eigen/Dense>
 
 #include "core/crystal/CrystalTypes.h"
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataTypes.h"
 #include "core/geometry/GeometryTypes.h"
 #include "core/mask/IMask.h"
 #include "core/instrument/InstrumentTypes.h"

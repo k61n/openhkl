@@ -22,8 +22,8 @@
 #include <QProgressBar>
 
 #include "core/crystal/CrystalTypes.h"
-#include "core/data/DataSet.h"
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataSet.h"
+#include "core/experiment/DataTypes.h"
 #include "core/utils/UtilsTypes.h"
 
 #include "apps/views/ProgressView.h"

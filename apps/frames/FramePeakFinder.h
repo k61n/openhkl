@@ -18,7 +18,7 @@
 #include <memory>
 #include <string>
 
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataTypes.h"
 
 #include "../ColorMap.h"
 #include "apps/frames/NSXQFrame.h"

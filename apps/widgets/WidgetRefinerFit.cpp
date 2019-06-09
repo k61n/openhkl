@@ -14,7 +14,7 @@
 
 #include <QFileInfo>
 
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 
 #include "apps/models/MetaTypes.h"
 #include "apps/widgets/WidgetRefinerFit.h"

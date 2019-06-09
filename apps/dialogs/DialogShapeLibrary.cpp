@@ -17,7 +17,7 @@
 #include <QLayout>
 #include <QStatusBar>
 
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"

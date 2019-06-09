@@ -15,8 +15,8 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "core/data/DataSet.h"
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataSet.h"
+#include "core/experiment/DataTypes.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorFactory.h"
 #include "core/fitting/FitParameters.h"

@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataTypes.h"
 #include "core/instrument/InstrumentTypes.h"
 #include "core/search_peaks/PeakFinder.h"
 

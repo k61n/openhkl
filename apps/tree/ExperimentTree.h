@@ -23,7 +23,7 @@
 #include <QStandardItemModel>
 #include <QTreeView>
 
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataTypes.h"
 
 class ExperimentItem;
 class MainWindow;

@@ -15,7 +15,7 @@
 #include <string>
 
 #include "core/auto_indexing/AutoIndexer.h"
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/auto_indexing/FFTIndexing.h"
 #include "core/fitting/FitParameters.h"
 #include "core/crystal/GruberReduction.h"

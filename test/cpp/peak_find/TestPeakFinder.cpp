@@ -4,9 +4,9 @@
 #include <Eigen/Dense>
 
 #include "core/data/DataReaderFactory.h"
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/instrument/Experiment.h"
+#include "core/experiment/Experiment.h"
 #include "core/data/IDataReader.h"
 #include "core/data/MetaData.h"
 #include "core/search_peaks/PeakFinder.h"

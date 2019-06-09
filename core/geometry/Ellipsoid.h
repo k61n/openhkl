@@ -22,7 +22,7 @@
 #include <Eigen/Geometry>
 
 #include "core/geometry/AABB.h"
-#include "core/data/DataTypes.h"
+#include "core/experiment/DataTypes.h"
 #include "core/geometry/GeometryTypes.h"
 
 namespace nsx {

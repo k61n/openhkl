@@ -15,7 +15,7 @@
 #include <algorithm>
 #include <limits>
 
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/crystal/MillerIndex.h"
 #include "core/fitting/Minimizer.h"

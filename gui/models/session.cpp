@@ -16,7 +16,7 @@
 #include "gui/models/session.h"
 
 #include "core/data/DataReaderFactory.h"
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/data/IDataReader.h"
 #include "core/data/RawDataReader.h"
 

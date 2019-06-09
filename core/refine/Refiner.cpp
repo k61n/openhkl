@@ -16,7 +16,7 @@
 #include <iterator>
 
 #include "core/crystal/CrystalTypes.h"
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/crystal/MillerIndex.h"

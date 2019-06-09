@@ -23,7 +23,7 @@
 
 #include "core/geometry/AABB.h"
 #include "core/mask/BoxMask.h"
-#include "core/data/DataSet.h"
+#include "core/experiment/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/mask/EllipseMask.h"
