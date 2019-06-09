@@ -15,8 +15,6 @@
 #ifndef CORE_DETECTOR_DETECTOR_H
 #define CORE_DETECTOR_DETECTOR_H
 
-
-
 #include <Eigen/Dense>
 
 #include "core/detector/DetectorEvent.h"
@@ -33,25 +31,18 @@ struct DetectorGonioFit {
     std::vector<double> cost_function;
 };
 
-//! \brief Base class for Detectors.
+//! Base class for Detectors.
 class Detector : public Component {
 public:
     //! Static constructor of a Detector from a property tree node
     static Detector* create(const YAML::Node& node);
 
-    //! Construct a Detector
     Detector();
-    //! Construct a Detector from another Detector
-    Detector(const Detector& other) = default;
-    //! Construct a Detector with a given name
     Detector(const std::string& name);
-    //! Constructs a sample from a property tree node
     Detector(const YAML::Node& node);
-    //! Returns a pointer to a copy of the Detector
-    virtual Detector* clone() const = 0;
-    // Destructor
     virtual ~Detector() = 0;
-    Detector& operator=(const Detector& other) = default;
+
+    virtual Detector* clone() const = 0;
 
     //! Returns the sample to detector distance (meters)
     double distance() const;
@@ -76,7 +67,7 @@ public:
     //!  Get the maximum col index
     int maxCol() const;
 
-    //! Returns true whether a given pixel is inside the detector
+    //! Returns true if a given pixel is inside the detector
     bool hasPixel(double px, double py) const;
 
     //! Returns the height of the detector (meters)
@@ -121,11 +112,9 @@ public:
     //! identically zero and is kept only for convenience.
     virtual Eigen::Matrix3d jacobian(double x, double y) const = 0;
 
-    //! Returns the detector baseline. Measured count = gain * (neutron count) +
-    //! baseline
+    //! Returns the detector baseline. Measured count = gain * (neutron count) + baseline
     double baseline() const;
-    //! Returns the detector gain. Measured count = gain * (neutron count) +
-    //! baseline
+    //! Returns the detector gain. Measured count = gain * (neutron count) + baseline
     double gain() const;
 
     DetectorGonioFit fitGonioOffsets(
