@@ -21,13 +21,6 @@ target_link_libraries(${NSX_LIBRARY}
     ${TIFF_LIBRARY}
     ${GSL_LIBRARIES})
 
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/copy-core-headers.cmake
-    "foreach (path ${core_HEADERS} ${core_GENERATED_HEADERS})
-         get_filename_component(filename \${path} NAME)
-         configure_file(\${path} ${CMAKE_CURRENT_BINARY_DIR}/include/core/\${filename} COPYONLY)
-     endforeach()")
-add_custom_target(copy-nsx-headers COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/copy-core-headers.cmake)
-
 # Install section, installing libraries
 install(TARGETS ${NSX_LIBRARY} DESTINATION ${NSX_INSTALL_DIR}lib COMPONENT LIB)
 install(FILES ${core_HEADERS} DESTINATION ${NSX_INSTALL_DIR}include/core COMPONENT DEV)
