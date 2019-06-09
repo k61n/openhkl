@@ -10,7 +10,7 @@
 #include <QGraphicsScene>
 #include <QRect>
 #include <QStack>
-#include "core/peak/PeakList.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataTypes.h"
 #include "core/mask/IMask.h"
 #include "gui/models/colormap.h"

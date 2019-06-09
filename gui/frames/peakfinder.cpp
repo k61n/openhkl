@@ -36,7 +36,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "core/integration/PixelSumIntegrator.h"
-#include "core/import/IDataReader.h"
+#include "core/loader/IDataReader.h"
 
 class ItemDelegate : public QItemDelegate {
 public:
@@ -397,6 +397,3 @@ void PeakFinder::refreshPreview()
     }
     preview->fitInView(preview->scene()->sceneRect());
 }
-
-
-
