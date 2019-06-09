@@ -132,11 +132,10 @@ std::string buildPath(const std::vector<std::string>& paths, const std::string& 
 {
     std::string path = join(paths, fileSeparator());
 
-    if (root.empty()) {
+    if (root.empty())
         return path;
-    } else {
+    else
         return root + fileSeparator() + path;
-    }
 }
 
 std::string applicationDataPath()

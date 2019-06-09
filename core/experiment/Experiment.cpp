@@ -110,9 +110,9 @@ void Experiment::addData(sptrDataSet data)
 
     auto& mono = _diffractometer->source().selectedMonochromator();
 
-    if (_data.empty()) {
+    if (_data.empty())
         mono.setWavelength(wav);
-    } else {
+    else {
         if (std::abs(wav - mono.wavelength()) > 1e-5)
             throw std::runtime_error("trying to mix data with different wavelengths");
     }

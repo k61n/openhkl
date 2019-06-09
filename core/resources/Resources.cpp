@@ -53,25 +53,23 @@ void mergeResources(YAML::Node& node1, YAML::Node& node2)
             std::string key = it->first.as<std::string>();
             YAML::Node temp_node1 = node1[key];
             YAML::Node temp_node2 = it->second;
-            if (temp_node1) {
+            if (temp_node1)
                 mergeResources(temp_node1, temp_node2);
-            } else {
+            else
                 node1[key] = temp_node2;
-            }
         }
     } else if (node1.IsSequence()) {
         for (size_t i = 0; i < node2.size(); ++i) {
             YAML::Node temp_node1 = node1[i];
             YAML::Node temp_node2 = node2[i];
-            if (temp_node1) {
+            if (temp_node1)
                 mergeResources(temp_node1, temp_node2);
-            } else {
+            else
                 node1.push_back(temp_node2);
-            }
         }
-    } else if (node1.IsScalar()) {
+    } else if (node1.IsScalar())
         node1 = node2;
-    }
+
 }
 
 YAML::Node findResource(const std::pair<std::string, std::string>& resource)

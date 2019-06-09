@@ -27,11 +27,11 @@ void CopyPasteTableView::keyPressEvent(QKeyEvent* event)
     QModelIndexList selectedRows = selectionModel()->selectedRows();
     // at least one entire row selected
     if (!selectedRows.isEmpty()) {
-        if (event->key() == Qt::Key_Insert) {
+        if (event->key() == Qt::Key_Insert)
             model()->insertRows(selectedRows.at(0).row(), selectedRows.size());
-        } else if (event->key() == Qt::Key_Delete) {
+        else if (event->key() == Qt::Key_Delete)
             model()->removeRows(selectedRows.at(0).row(), selectedRows.size());
-        }
+
     }
 
     // at least one cell selected

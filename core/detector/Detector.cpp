@@ -85,38 +85,36 @@ Detector::Detector(const YAML::Node& node) : Component(node)
     }
 
     // detector gain
-    if (node["gain"]) {
+    if (node["gain"])
         _gain = node["gain"].as<double>();
-    } else {
+    else
         _gain = 1.0;
-    }
 
     // detector baseline
-    if (node["baseline"]) {
+    if (node["baseline"])
         _baseline = node["baseline"].as<double>();
-    } else {
+    else
         _baseline = 0.0;
-    }
 
     std::string dataOrder = node["data_ordering"].as<std::string>();
 
-    if (dataOrder.compare("TopLeftColMajor") == 0) {
+    if (dataOrder.compare("TopLeftColMajor") == 0)
         _dataorder = DataOrder::TopLeftColMajor;
-    } else if (dataOrder.compare("TopLeftRowMajor") == 0) {
+    else if (dataOrder.compare("TopLeftRowMajor") == 0)
         _dataorder = DataOrder::TopLeftRowMajor;
-    } else if (dataOrder.compare("TopRightColMajor") == 0) {
+ else if (dataOrder.compare("TopRightColMajor") == 0)
         _dataorder = DataOrder::TopRightColMajor;
-    } else if (dataOrder.compare("TopRightRowMajor") == 0) {
+    else if (dataOrder.compare("TopRightRowMajor") == 0)
         _dataorder = DataOrder::TopRightRowMajor;
-    } else if (dataOrder.compare("BottomLeftColMajor") == 0) {
+ else if (dataOrder.compare("BottomLeftColMajor") == 0)
         _dataorder = DataOrder::BottomLeftColMajor;
-    } else if (dataOrder.compare("BottomLeftRowMajor") == 0) {
+    else if (dataOrder.compare("BottomLeftRowMajor") == 0)
         _dataorder = DataOrder::BottomLeftRowMajor;
-    } else if (dataOrder.compare("BottomRightColMajor") == 0) {
+ else if (dataOrder.compare("BottomRightColMajor") == 0)
         _dataorder = DataOrder::BottomRightColMajor;
-    } else if (dataOrder.compare("BottomRightRowMajor") == 0) {
+    else if (dataOrder.compare("BottomRightRowMajor") == 0)
         _dataorder = DataOrder::BottomRightRowMajor;
-    } else {
+ else {
         throw std::runtime_error(
             "Detector class: Data ordering mode not valid, can not build detector");
     }

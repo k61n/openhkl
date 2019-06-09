@@ -155,11 +155,10 @@ void AutoIndexer::rankSolutions()
     std::sort(
         _solutions.begin(), _solutions.end(),
         [](const RankedSolution& s1, const RankedSolution& s2) -> bool {
-            if (s1.second == s2.second) {
+            if (s1.second == s2.second)
                 return (s1.first->volume() < s2.first->volume());
-            } else {
+            else
                 return (s1.second > s2.second);
-            }
         });
 }
 

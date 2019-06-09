@@ -116,11 +116,10 @@ struct BuildCompoundFromElement {
 
         for (auto isotope : element) {
             auto it = output.find(isotope.first);
-            if (it == output.end()) {
+            if (it == output.end())
                 output.insert(std::make_pair(isotope.first, isotope.second * stoichiometry));
-            } else {
+            else
                 it->second += isotope.second * stoichiometry;
-            }
         }
 
         return true;
@@ -156,11 +155,10 @@ struct BuidMaterialFromCompounds {
                 auto it = output.find(isotope.first);
                 double ratio = compound.second;
                 double amount = ratio * isotope.second;
-                if (it == output.end()) {
+                if (it == output.end())
                     output.insert(std::make_pair(isotope.first, amount));
-                } else {
+                else
                     it->second += amount;
-                }
             }
         }
 

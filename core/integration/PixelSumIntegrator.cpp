@@ -129,9 +129,9 @@ bool PixelSumIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
         if (ev_type == IntegrationRegion::EventType::PEAK) {
             intensity_per_frame[bin] += counts[i];
             n_peak_points_per_frame[bin] += 1;
-        } else if (ev_type == IntegrationRegion::EventType::BACKGROUND) {
+        } else if (ev_type == IntegrationRegion::EventType::BACKGROUND)
             n_bkg_points_per_frame[bin] += 1;
-        }
+
     }
 
     for (int i = 0; i < nframes; ++i) {

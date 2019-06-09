@@ -144,11 +144,10 @@ void FrameRefiner::refine()
         for (auto peak : selected_peaks) {
             if (peak->data() != d)
                 continue;
-            if (peak->predicted()) {
+            if (peak->predicted())
                 predicted_peaks.push_back(peak);
-            } else {
+            else
                 reference_peaks.push_back(peak);
-            }
         }
 
         nsx::info() << reference_peaks.size() << " splitted into " << n_batches

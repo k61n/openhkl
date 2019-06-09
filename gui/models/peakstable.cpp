@@ -224,11 +224,10 @@ QVariant PeaksTableModel::data(const QModelIndex& index, int role) const
         }
         case Column::unitCell: {
             auto unit_cell = _peaks[row]->unitCell();
-            if (unit_cell) {
+            if (unit_cell)
                 return QString::fromStdString(unit_cell->name());
-            } else {
+            else
                 return QString("not set");
-            }
         }
         case Column::d: {
             return peak_d;
@@ -237,11 +236,10 @@ QVariant PeaksTableModel::data(const QModelIndex& index, int role) const
         break;
     case Qt::ForegroundRole: {
 
-        if (_peaks[row]->enabled()) {
+        if (_peaks[row]->enabled())
             return QBrush(Qt::black);
-        } else {
+        else
             return QBrush(Qt::red);
-        }
 
         break;
     }
@@ -522,9 +520,9 @@ void PeaksTableView::keyPressEvent(QKeyEvent* event)
             if (current_index == previous_index)
                 setCurrentIndex(model()->index(model()->rowCount() - 1, 0));
             selectPeak(currentIndex());
-        } else if (key == Qt::Key_Return || key == Qt::Key_Space) {
+        } else if (key == Qt::Key_Return || key == Qt::Key_Space)
             togglePeakSelection(currentIndex());
-        }
+
     }
 }
 

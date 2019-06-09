@@ -467,9 +467,9 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                 } else {
                     gGui->updatePlot(p);
                 }
-            } else if (auto p = dynamic_cast<PlottableItem*>(_lastClickedGI)) {
+            } else if (auto p = dynamic_cast<PlottableItem*>(_lastClickedGI))
                 gGui->updatePlot(p);
-            } else if (auto p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
+            else if (auto p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
                 // add a new mask
                 auto it = findMask(p);
                 if (it != _masks.end()) {
@@ -630,9 +630,9 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     case MILLER_INDICES: {
 
         auto experiment_item = gSession->selectedExperiment();
-        if (!experiment_item) {
+        if (!experiment_item)
             ttip = QString("No experiment found");
-        } else {
+        else {
             auto selected_unit_cell_item = experiment_item->unitCells()->selectedCell();
             if (selected_unit_cell_item) {
                 auto q = state.sampleQ(pos);

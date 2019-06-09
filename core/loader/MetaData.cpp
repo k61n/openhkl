@@ -69,9 +69,9 @@ Variant<int, double, std::string> MetaData::key(const std::string& key) const
         throw std::runtime_error("Could not locate key " + key + " in the set of available keys");
     const char* ptr = (*it).c_str();
     auto it2 = _map.find(ptr);
-    if (it2 != _map.end()) {
+    if (it2 != _map.end())
         return it2->second;
-    } else
+    else
         throw std::runtime_error("Could not locate key " + key + " in the set of available keys");
 }
 

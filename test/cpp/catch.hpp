@@ -2003,22 +2003,20 @@ template <> struct StringMaker<double> {
 template <typename T> struct StringMaker<T*> {
     template <typename U> static std::string convert(U* p)
     {
-        if (p) {
+        if (p)
             return ::Catch::Detail::rawMemoryToString(p);
-        } else {
+        else
             return "nullptr";
-        }
     }
 };
 
 template <typename R, typename C> struct StringMaker<R C::*> {
     static std::string convert(R C::*p)
     {
-        if (p) {
+        if (p)
             return ::Catch::Detail::rawMemoryToString(p);
-        } else {
+        else
             return "nullptr";
-        }
     }
 };
 
@@ -2104,11 +2102,10 @@ template <typename T> struct StringMaker<std::optional<T>> {
     static std::string convert(const std::optional<T>& optional)
     {
         ReusableStringStream rss;
-        if (optional.has_value()) {
+        if (optional.has_value())
             rss << ::Catch::Detail::stringify(*optional);
-        } else {
+        else
             rss << "{ }";
-        }
         return rss.str();
     }
 };
@@ -2158,9 +2155,9 @@ template <> struct StringMaker<std::monostate> {
 template <typename... Elements> struct StringMaker<std::variant<Elements...>> {
     static std::string convert(const std::variant<Elements...>& variant)
     {
-        if (variant.valueless_by_exception()) {
+        if (variant.valueless_by_exception())
             return "{valueless variant}";
-        } else {
+        else {
             return std::visit(
                 [](const auto& value) { return ::Catch::Detail::stringify(value); }, variant);
         }
@@ -7295,18 +7292,18 @@ public:
             while (m_end < line().size() && line()[m_end] != '\n')
                 ++m_end;
 
-            if (m_end < m_pos + width) {
+            if (m_end < m_pos + width)
                 m_len = m_end - m_pos;
-            } else {
+            else {
                 size_t len = width;
                 while (len > 0 && !isBoundary(m_pos + len))
                     --len;
                 while (len > 0 && isWhitespace(line()[m_pos + len - 1]))
                     --len;
 
-                if (len > 0) {
+                if (len > 0)
                     m_len = len;
-                } else {
+                else {
                     m_suffix = true;
                     m_len = width - 1;
                 }
@@ -7698,9 +7695,9 @@ public:
 
     auto operator++() -> TokenStream&
     {
-        if (m_tokenBuffer.size() >= 2) {
+        if (m_tokenBuffer.size() >= 2)
             m_tokenBuffer.erase(m_tokenBuffer.begin());
-        } else {
+        else {
             if (it != itEnd)
                 ++it;
             loadBuffer();
@@ -9513,11 +9510,10 @@ std::string ExceptionTranslatorRegistry::translateActiveException() const
 
 std::string ExceptionTranslatorRegistry::tryTranslators() const
 {
-    if (m_translators.empty()) {
+    if (m_translators.empty())
         std::rethrow_exception(std::current_exception());
-    } else {
+    else
         return m_translators[0]->translate(m_translators.begin() + 1, m_translators.end());
-    }
 }
 
 #else // ^^ Exceptions are enabled // Exceptions are disabled vv
@@ -10335,11 +10331,10 @@ Floating::WithinAbsMatcher WithinAbs(double target, double margin)
 
 std::string Catch::Matchers::Generic::Detail::finalizeDescription(const std::string& desc)
 {
-    if (desc.empty()) {
+    if (desc.empty())
         return "matches undescribed predicate";
-    } else {
+    else
         return "matches predicate: \"" + desc + '"';
-    }
 }
 // end catch_matchers_generic.cpp
 // start catch_matchers_string.cpp
@@ -11666,11 +11661,10 @@ void RunContext::handleExpr(
     bool result = expr.getResult() != negated;
 
     if (result) {
-        if (!m_includeSuccessfulResults) {
+        if (!m_includeSuccessfulResults)
             assertionPassed();
-        } else {
+        else
             reportExpr(info, ResultWas::Ok, &expr, negated);
-        }
     } else {
         reportExpr(info, ResultWas::ExpressionFailed, &expr, negated);
         populateReaction(reaction);
@@ -13648,19 +13642,17 @@ std::string StringMaker<std::string_view>::convert(std::string_view str)
 
 std::string StringMaker<char const*>::convert(char const* str)
 {
-    if (str) {
+    if (str)
         return ::Catch::Detail::stringify(std::string {str});
-    } else {
+    else
         return {"{null string}"};
-    }
 }
 std::string StringMaker<char*>::convert(char* str)
 {
-    if (str) {
+    if (str)
         return ::Catch::Detail::stringify(std::string {str});
-    } else {
+    else
         return {"{null string}"};
-    }
 }
 
 #ifdef CATCH_CONFIG_WCHAR
@@ -13682,19 +13674,17 @@ std::string StringMaker<std::wstring_view>::convert(std::wstring_view str)
 
 std::string StringMaker<wchar_t const*>::convert(wchar_t const* str)
 {
-    if (str) {
+    if (str)
         return ::Catch::Detail::stringify(std::wstring {str});
-    } else {
+    else
         return {"{null string}"};
-    }
 }
 std::string StringMaker<wchar_t*>::convert(wchar_t* str)
 {
-    if (str) {
+    if (str)
         return ::Catch::Detail::stringify(std::wstring {str});
-    } else {
+    else
         return {"{null string}"};
-    }
 }
 #endif
 
@@ -13739,17 +13729,17 @@ std::string StringMaker<bool>::convert(bool b)
 
 std::string StringMaker<signed char>::convert(signed char value)
 {
-    if (value == '\r') {
+    if (value == '\r')
         return "'\\r'";
-    } else if (value == '\f') {
+    else if (value == '\f')
         return "'\\f'";
-    } else if (value == '\n') {
+ else if (value == '\n')
         return "'\\n'";
-    } else if (value == '\t') {
+    else if (value == '\t')
         return "'\\t'";
-    } else if ('\0' <= value && value < ' ') {
+ else if ('\0' <= value && value < ' ')
         return ::Catch::Detail::stringify(static_cast<unsigned int>(value));
-    } else {
+    else {
         char chstr[] = "' '";
         chstr[1] = value;
         return chstr;
@@ -14359,9 +14349,9 @@ namespace {
 // - green: Passed [both/all] N tests cases with M assertions.
 void printTotals(std::ostream& out, const Totals& totals)
 {
-    if (totals.testCases.total() == 0) {
+    if (totals.testCases.total() == 0)
         out << "No tests ran.";
-    } else if (totals.testCases.failed == totals.testCases.total()) {
+    else if (totals.testCases.failed == totals.testCases.total()) {
         Colour colour(Colour::ResultError);
         const std::string qualify_assertions_failed =
             totals.assertions.failed == totals.assertions.total()
@@ -15179,9 +15169,9 @@ struct SummaryColumn {
 
 void ConsoleReporter::printTotals(Totals const& totals)
 {
-    if (totals.testCases.total() == 0) {
+    if (totals.testCases.total() == 0)
         stream << Colour(Colour::Warning) << "No tests ran\n";
-    } else if (totals.assertions.total() > 0 && totals.testCases.allPassed()) {
+    else if (totals.assertions.total() > 0 && totals.testCases.allPassed()) {
         stream << Colour(Colour::ResultSuccess) << "All tests passed";
         stream << " (" << pluralise(totals.assertions.passed, "assertion") << " in "
                << pluralise(totals.testCases.passed, "test case") << ')' << '\n';
@@ -15755,11 +15745,11 @@ bool XmlReporter::assertionEnded(AssertionStats const& assertionStats)
     if (includeResults || result.getResultType() == ResultWas::Warning) {
         // Print any info messages in <Info> tags.
         for (auto const& msg : assertionStats.infoMessages) {
-            if (msg.type == ResultWas::Info && includeResults) {
+            if (msg.type == ResultWas::Info && includeResults)
                 m_xml.scopedElement("Info").writeText(msg.message);
-            } else if (msg.type == ResultWas::Warning) {
+            else if (msg.type == ResultWas::Warning)
                 m_xml.scopedElement("Warning").writeText(msg.message);
-            }
+
         }
     }
 

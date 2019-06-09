@@ -125,11 +125,10 @@ void IPeakIntegrator::integrate(
             if (result && !integrated[peak]) {
                 regions[peak].data().computeStandard();
                 try {
-                    if (compute(peak, regions[peak])) {
+                    if (compute(peak, regions[peak]))
                         peak->updateIntegration(*this, peak_end, bkg_begin, bkg_end);
-                    } else {
+                    else
                         peak->setSelected(false);
-                    }
                 } catch (std::exception& e) {
                     // integration failed...
                     nsx::info() << "integration failed: " << e.what();

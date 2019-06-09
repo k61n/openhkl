@@ -251,11 +251,10 @@ QVariant ScientificNotationSpinBox::validateAndInterpret(
     switch (len) {
     case 0:
         // Length 0 is always 'Intermediate', except for min=max
-        if (max != min) {
+        if (max != min)
             state = QValidator::Intermediate;
-        } else {
+        else
             state = QValidator::Invalid;
-        }
         goto end;
     case 1:
         // if only char is '+' or '-'
@@ -379,19 +378,18 @@ QVariant ScientificNotationSpinBox::validateAndInterpret(
             }
         }
         // when max and min is the same the only non-Invalid input is max (or min)
-        else if (max == min) {
+        else if (max == min)
             state = QValidator::Invalid;
-        } else {
+        else {
             // value out of valid range (coves only special cases)
-            if ((num >= 0 && num > max) || (num < 0 && num < min)) {
+            if ((num >= 0 && num > max) || (num < 0 && num < min))
                 state = QValidator::Invalid;
-            } else {
+            else {
                 // invalid range, further test with 'isIntermediateValue'
-                if (isIntermediateValue(copy)) {
+                if (isIntermediateValue(copy))
                     state = QValidator::Intermediate;
-                } else {
+                else
                     state = QValidator::Invalid;
-                }
             }
         }
     }

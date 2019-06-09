@@ -401,11 +401,10 @@ void UserDefinedUnitCellIndexer::rankUnitCells()
     std::sort(
         _solutions.begin(), _solutions.end(),
         [](const indexer_solution& s1, const indexer_solution& s2) -> bool {
-            if (std::fabs(s1.second - s2.second) < 1.0e-6) {
+            if (std::fabs(s1.second - s2.second) < 1.0e-6)
                 return (s1.first->volume() < s2.first->volume());
-            } else {
+            else
                 return (s1.second > s2.second);
-            }
         });
 }
 

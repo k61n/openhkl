@@ -97,11 +97,10 @@ void CutLineGraphicsItem::paint(
     Q_UNUSED(widget);
 
     // Color depending on selection
-    if (option->state & QStyle::State_Selected) {
+    if (option->state & QStyle::State_Selected)
         _pen.setStyle(Qt::DashLine);
-    } else {
+    else
         _pen.setStyle(Qt::SolidLine);
-    }
     painter->setRenderHint(QPainter::HighQualityAntialiasing);
     painter->setPen(_pen);
     qreal w = _to.x() - _from.x();

@@ -368,21 +368,19 @@ void ConvexHull::processVertex(Vertex* v)
     // note: omitted it++ is intentional
     for (auto it = _edges.begin(); it != _edges.end();) {
         auto e = it->second;
-        if (e->_faces[0]) {
+        if (e->_faces[0])
             visible1 = e->_faces[0]->_visible;
-        } else {
+        else
             visible1 = false;
-        }
-        if (e->_faces[1]) {
+        if (e->_faces[1])
             visible2 = e->_faces[1]->_visible;
-        } else {
+        else
             visible2 = false;
-        }
-        if (visible1 && visible2) {
+        if (visible1 && visible2)
             e->_delete = true;
-        } else if (visible1 || visible2) {
+        else if (visible1 || visible2)
             e->_newFace = buildConeFace(e, v);
-        }
+
         ++it;
     }
 }
@@ -431,11 +429,10 @@ void ConvexHull::orientate(Face* f, Edge* e, Vertex* v)
     Face* fv;
 
     if (e->_faces[0]) {
-        if (e->_faces[0]->_visible) {
+        if (e->_faces[0]->_visible)
             fv = e->_faces[0];
-        } else {
+        else
             fv = e->_faces[1];
-        }
     } else {
         fv = e->_faces[1];
     }
@@ -482,11 +479,10 @@ void ConvexHull::cleanEdges()
     for (auto& p : _edges) {
         Edge* e = p.second;
         if (e->_newFace) {
-            if (e->_faces[0]->_visible) {
+            if (e->_faces[0]->_visible)
                 e->_faces[0] = e->_newFace;
-            } else {
+            else
                 e->_faces[1] = e->_newFace;
-            }
             e->_newFace = nullptr;
         }
     }

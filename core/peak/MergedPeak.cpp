@@ -123,11 +123,10 @@ std::pair<MergedPeak, MergedPeak> MergedPeak::split() const
         auto idx = random_idx[i];
         auto p = _peaks[idx];
 
-        if ((i % 2) == parity) {
+        if ((i % 2) == parity)
             p1.addPeak(p);
-        } else {
+        else
             p2.addPeak(p);
-        }
     }
     return std::make_pair(p1, p2);
 }

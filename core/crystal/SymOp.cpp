@@ -97,9 +97,9 @@ std::string SymOp::getJonesSymbol() const
             if (std::abs(_matrix(i, j) - 1.0) < 1.0e-3) {
                 if (!first)
                     os << "+";
-            } else if (std::abs(_matrix(i, j) + 1) < 1.0e-3) {
+            } else if (std::abs(_matrix(i, j) + 1) < 1.0e-3)
                 os << "-";
-            } else {
+            else {
                 if (!first && _matrix(i, j) > 0.0)
                     os << "+";
                 os << _matrix(i, j);

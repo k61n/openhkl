@@ -248,22 +248,22 @@ void FrameStatistics::saveMergedPeaks()
 {
     QString format = _ui->merged_peaks_format->currentText();
 
-    if (format.compare("ShelX") == 0) {
+    if (format.compare("ShelX") == 0)
         saveToShelX(_ui->merged_peaks);
-    } else if (format.compare("FullProf") == 0) {
+    else if (format.compare("FullProf") == 0)
         saveToFullProf(_ui->merged_peaks);
-    }
+
 }
 
 void FrameStatistics::saveUnmergedPeaks()
 {
     QString format = _ui->unmerged_peaks_format->currentText();
 
-    if (format.compare("ShelX") == 0) {
+    if (format.compare("ShelX") == 0)
         saveToShelX(_ui->unmerged_peaks);
-    } else if (format.compare("FullProf") == 0) {
+    else if (format.compare("FullProf") == 0)
         saveToFullProf(_ui->unmerged_peaks);
-    }
+
 }
 
 void FrameStatistics::saveToShelX(QTableView* table)

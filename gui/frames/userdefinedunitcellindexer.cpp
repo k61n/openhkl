@@ -64,11 +64,10 @@ void UserDefinedUnitCellIndexer::layout()
     defaults_.reserve(peaks.size());
     for (auto peak : peaks) {
         auto unit_cell = peak->unitCell();
-        if (unit_cell) {
+        if (unit_cell)
             defaults_.push_back(std::make_pair(peak, std::make_shared<nsx::UnitCell>(*unit_cell)));
-        } else {
+        else
             defaults_.push_back(std::make_pair(peak, nullptr));
-        }
     }
     // layout
     QVBoxLayout* whole = new QVBoxLayout(this);

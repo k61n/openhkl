@@ -249,9 +249,9 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
     // return.
     QStandardItem* item = dynamic_cast<SessionModel*>(model())->itemFromIndex(index);
     if (auto ptr = dynamic_cast<DataItem*>(item)) {
-        if (ptr->model()->rowCount(ptr->index()) == 0) {
+        if (ptr->model()->rowCount(ptr->index()) == 0)
             ptr->importData();
-        } else {
+        else {
             for (auto i = 0; i < ptr->model()->rowCount(ptr->index()); ++i) {
                 auto ci = ptr->child(i);
                 Qt::CheckState new_state =
@@ -259,9 +259,9 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
                 ci->setCheckState(new_state);
             }
         }
-    } else if (auto ptr = dynamic_cast<NumorItem*>(item)) {
+    } else if (auto ptr = dynamic_cast<NumorItem*>(item))
         session()->selectData(ptr->data(Qt::UserRole).value<nsx::sptrDataSet>());
-    }
+
 }
 
 void ExperimentTree::keyPressEvent(QKeyEvent* event)
@@ -289,9 +289,9 @@ void ExperimentTree::onSingleClick(const QModelIndex& index)
     // Inspect this item if it is inspectable
     InspectableTreeItem* item = dynamic_cast<InspectableTreeItem*>(
         dynamic_cast<SessionModel*>(model())->itemFromIndex(index));
-    if (item) {
+    if (item)
         emit inspectWidget(item->inspectItem());
-    } else {
+    else {
         QWidget* widget = new QWidget();
         emit inspectWidget(widget);
     }

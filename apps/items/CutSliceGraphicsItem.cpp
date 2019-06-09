@@ -116,17 +116,15 @@ void CutSliceGraphicsItem::paint(
 {
     Q_UNUSED(widget);
 
-    if (_horizontal) {
+    if (_horizontal)
         painter->setBrush(QBrush(QColor(0, 255, 0, 50)));
-    } else {
+    else
         painter->setBrush(QBrush(QColor(0, 0, 255, 50)));
-    }
     // Color depending on selection
-    if (option->state & QStyle::State_Selected) {
+    if (option->state & QStyle::State_Selected)
         _pen.setStyle(Qt::DashLine);
-    } else {
+    else
         _pen.setStyle(Qt::SolidLine);
-    }
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(_pen);
     qreal w = std::abs(_to.x() - _from.x());

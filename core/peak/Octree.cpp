@@ -120,11 +120,10 @@ std::set<Octree::collision_pair> Octree::getCollisions() const
 
                 // collision detected
                 if (a->collide(*b)) {
-                    if (a < b) {
+                    if (a < b)
                         collisions.emplace(collision_pair(a, b));
-                    } else {
+                    else
                         collisions.emplace(collision_pair(b, a));
-                    }
                 }
             }
         }

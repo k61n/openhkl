@@ -70,11 +70,11 @@ void NumorProperty::onRemake()
                 QTableWidgetItem* col1 = new QTableWidgetItem();
                 col0->setData(Qt::EditRole, QString(element.first));
 
-                if (element.second.is<int>()) {
+                if (element.second.is<int>())
                     col1->setData(Qt::EditRole, element.second.as<int>());
-                } else if (element.second.is<double>()) {
+                else if (element.second.is<double>())
                     col1->setData(Qt::EditRole, element.second.as<double>());
-                } else if (element.second.is<std::string>()) {
+ else if (element.second.is<std::string>()) {
                     col1->setData(
                         Qt::EditRole,
                         QString(QString::fromStdString(element.second.as<std::string>())));

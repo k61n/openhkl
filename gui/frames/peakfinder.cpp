@@ -379,10 +379,9 @@ void PeakFinder::refreshPreview()
     QRect rect(0, 0, ncols, nrows);
     ColorMap* m = new ColorMap;
     QImage image = m->matToImage(convolvedFrame.cast<double>(), rect, maxVal);
-    if (!pixmap) {
+    if (!pixmap)
         pixmap = preview->scene()->addPixmap(QPixmap::fromImage(image));
-    } else {
+    else
         pixmap->setPixmap(QPixmap::fromImage(image));
-    }
     preview->fitInView(preview->scene()->sceneRect());
 }

@@ -328,9 +328,9 @@ public:
     {
         static_assert(IsOneOf<T, Args...>::value, "T must be one of Args");
 
-        if (_typeid == typeid(T)) {
+        if (_typeid == typeid(T))
             return *reinterpret_cast<const T*>(_storage);
-        } else {
+        else {
             throw std::runtime_error(
                 "error: can not cast Variant from " + std::string(_typeid.name()) + " to "
                 + std::string(typeid(T).name()));

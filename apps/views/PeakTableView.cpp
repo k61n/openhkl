@@ -87,9 +87,9 @@ void PeakTableView::keyPressEvent(QKeyEvent* event)
             if (current_index == previous_index)
                 setCurrentIndex(model()->index(model()->rowCount() - 1, 0));
             selectPeak(currentIndex());
-        } else if (key == Qt::Key_Return || key == Qt::Key_Space) {
+        } else if (key == Qt::Key_Return || key == Qt::Key_Space)
             togglePeakSelection(currentIndex());
-        }
+
     }
 }
 

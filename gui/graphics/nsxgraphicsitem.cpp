@@ -107,9 +107,9 @@ void NSXGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     if (!_movable || !isVisible() || !isSelected())
         return;
 
-    if (_firstMove) {
+    if (_firstMove)
         _firstMove = false;
-    } else {
+    else {
         // The translation vector
         QPointF dr = event->lastScenePos() - _lastPos;
         QRectF itemRect = sceneBoundingRect();

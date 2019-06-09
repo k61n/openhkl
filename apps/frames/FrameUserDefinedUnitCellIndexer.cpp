@@ -113,11 +113,10 @@ FrameUserDefinedUnitCellIndexer::FrameUserDefinedUnitCellIndexer(
     _defaults.reserve(peaks.size());
     for (auto peak : peaks) {
         auto unit_cell = peak->unitCell();
-        if (unit_cell) {
+        if (unit_cell)
             _defaults.push_back(std::make_pair(peak, std::make_shared<nsx::UnitCell>(*unit_cell)));
-        } else {
+        else
             _defaults.push_back(std::make_pair(peak, nullptr));
-        }
     }
 
     connect(_ui->tabs->tabBar(), SIGNAL(tabBarDoubleClicked(int)), this, SLOT(slotTabEdited(int)));

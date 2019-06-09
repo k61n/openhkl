@@ -46,11 +46,10 @@ PeakList PeakFilter::mergedPeaksSignificance(const PeakList& peaks, double signi
 
         auto it = peaks_per_unit_cell.find(unit_cell);
 
-        if (it == peaks_per_unit_cell.end()) {
+        if (it == peaks_per_unit_cell.end())
             peaks_per_unit_cell.insert(std::make_pair(unit_cell, PeakList({peak})));
-        } else {
+        else
             it->second.push_back(peak);
-        }
     }
 
     PeakList bad_peaks;
@@ -105,11 +104,10 @@ PeakList PeakFilter::sparseDataSet(const PeakList& peaks, size_t min_num_peaks)
             continue;
 
         auto it = peaks_per_dataset.find(data);
-        if (it == peaks_per_dataset.end()) {
+        if (it == peaks_per_dataset.end())
             peaks_per_dataset.insert(std::make_pair(data, PeakList({peak})));
-        } else {
+        else
             it->second.push_back(peak);
-        }
     }
 
     // Keep the peaks that belong to datasets with a number of peaks >
@@ -139,11 +137,10 @@ PeakList PeakFilter::extincted(const PeakList& peaks)
 
         auto it = peaks_per_unit_cell.find(unit_cell);
 
-        if (it == peaks_per_unit_cell.end()) {
+        if (it == peaks_per_unit_cell.end())
             peaks_per_unit_cell.insert(std::make_pair(unit_cell, PeakList({peak})));
-        } else {
+        else
             it->second.push_back(peak);
-        }
     }
 
     PeakList extincted_peaks;

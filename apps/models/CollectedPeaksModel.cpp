@@ -288,20 +288,18 @@ QVariant CollectedPeaksModel::data(const QModelIndex& index, int role) const
         }
         case Column::unitCell:
             auto unit_cell = _peaks[row]->unitCell();
-            if (unit_cell) {
+            if (unit_cell)
                 return QString::fromStdString(unit_cell->name());
-            } else {
+            else
                 return QString("not set");
-            }
         }
         break;
     case Qt::ForegroundRole: {
 
-        if (_peaks[row]->enabled()) {
+        if (_peaks[row]->enabled())
             return QBrush(Qt::black);
-        } else {
+        else
             return QBrush(Qt::red);
-        }
 
         break;
     }

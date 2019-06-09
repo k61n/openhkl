@@ -107,11 +107,10 @@ double MCAbsorption::run(
         transmission += exp(-(_mu_scattering + _mu_absorption) * lpm);
     }
 
-    if (nHits == 0) {
+    if (nHits == 0)
         transmission = 1.0;
-    } else {
+    else
         transmission /= nHits;
-    }
 
     return transmission;
 }

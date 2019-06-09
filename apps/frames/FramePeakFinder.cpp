@@ -423,11 +423,10 @@ void FramePeakFinder::preview()
     QImage image =
         _colormap->matToImage(convolved_frame.cast<double>(), rect, convolved_frame.maxCoeff());
 
-    if (!_pixmap) {
+    if (!_pixmap)
         _pixmap = _ui->preview->scene()->addPixmap(QPixmap::fromImage(image));
-    } else {
+    else
         _pixmap->setPixmap(QPixmap::fromImage(image));
-    }
 
     _ui->preview->fitInView(_ui->preview->scene()->sceneRect());
 }

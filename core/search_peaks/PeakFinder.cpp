@@ -36,11 +36,10 @@ namespace {
 
 void registerEquivalence(int a, int b, EquivalenceList& equivalences)
 {
-    if (a < b) {
+    if (a < b)
         equivalences.emplace_back(EquivalenceList::value_type(b, a));
-    } else {
+    else
         equivalences.emplace_back(EquivalenceList::value_type(a, b));
-    }
 }
 
 bool sortEquivalences(const EquivalencePair& pa, const EquivalencePair& pb)
@@ -346,11 +345,10 @@ void PeakFinder::eliminateBlobs(std::map<int, Blob3D>& blobs) const
         ++dummy;
 
         Blob3D& p = it->second;
-        if (p.getComponents() < _minSize || p.getComponents() > _maxSize) {
+        if (p.getComponents() < _minSize || p.getComponents() > _maxSize)
             it = blobs.erase(it);
-        } else {
+        else
             it++;
-        }
         // update progress handler
         if ((dummy & magic) == 0 && _handler) {
             double total_dist = std::distance(blobs.begin(), blobs.end());
@@ -510,13 +508,13 @@ void PeakFinder::findPrimaryBlobs(
                     break;
                 case 7: // All three
                     label = left;
-                    if ((top == left) && (top != previous)) {
+                    if ((top == left) && (top != previous))
                         registerEquivalence(top, previous, equivalences);
-                    } else if ((top == previous) && (top != left)) {
+                    else if ((top == previous) && (top != left))
                         registerEquivalence(top, left, equivalences);
-                    } else if ((left == previous) && (left != top)) {
+ else if ((left == previous) && (left != top))
                         registerEquivalence(left, top, equivalences);
-                    } else if ((left != previous) && (left != top) && (top != previous)) {
+                    else if ((left != previous) && (left != top) && (top != previous)) {
                         registerEquivalence(top, previous, equivalences);
                         registerEquivalence(top, left, equivalences);
                         registerEquivalence(left, previous, equivalences);
@@ -530,9 +528,9 @@ void PeakFinder::findPrimaryBlobs(
                 index2D++;
                 auto value = frame_data(row, col);
                 // Create a new blob if necessary
-                if (newlabel) {
+                if (newlabel)
                     blobs.insert(std::make_pair(label, Blob3D(col, row, idx, value)));
-                } else {
+                else {
                     auto it = blobs.find(label);
                     it->second.addPoint(col, row, idx, value);
                 }

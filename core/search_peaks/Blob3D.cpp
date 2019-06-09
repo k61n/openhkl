@@ -76,11 +76,11 @@ void Blob3D::addPoint(double x, double y, double z, double m)
     _m2 += m * v * v.transpose();
     ++_npoints;
 
-    if (m < _minValue) {
+    if (m < _minValue)
         _minValue = m;
-    } else if (m > _maxValue) {
+    else if (m > _maxValue)
         _maxValue = m;
-    }
+
 }
 
 void Blob3D::merge(const Blob3D& b)

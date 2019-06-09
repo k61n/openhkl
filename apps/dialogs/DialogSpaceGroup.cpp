@@ -60,9 +60,9 @@ DialogSpaceGroup::DialogSpaceGroup(const nsx::PeakList& peaks, QWidget* parent)
         if (!current_peak_cell)
             continue;
 
-        if (!_cell) {
+        if (!_cell)
             _cell = current_peak_cell;
-        } else {
+        else {
             if (_cell != current_peak_cell)
                 throw std::runtime_error("Only one unit cell is supported at this time");
         }

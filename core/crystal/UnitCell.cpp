@@ -66,9 +66,9 @@ UnitCell UnitCell::interpolate(const UnitCell& uc1, const UnitCell& uc2, double 
     Eigen::MatrixXd kernel;
 
     // no constraints
-    if (uc1._niggli.number == 31 || uc1._niggli.number == 44) {
+    if (uc1._niggli.number == 31 || uc1._niggli.number == 44)
         kernel.setIdentity(6, 6);
-    } else {
+    else {
         // matrix of Niggli character constraints, taken from the table 9.2.5.1
         Eigen::MatrixXd C = uc._niggli.C;
         // compute kernel of Niggli constraints
@@ -304,9 +304,9 @@ UnitCell UnitCell::interpolate(sptrDataSet data, double frame)
     Eigen::MatrixXd kernel;
 
     // no constraints
-    if (_niggli.number == 31 || _niggli.number == 44) {
+    if (_niggli.number == 31 || _niggli.number == 44)
         kernel.setIdentity(6, 6);
-    } else {
+    else {
         // matrix of Niggli character constraints, taken from the table 9.2.5.1
         Eigen::MatrixXd C = uc._niggli.C;
         // compute kernel of Niggli constraints
@@ -806,9 +806,9 @@ int UnitCell::reduce(bool niggli_only, double niggliTolerance, double gruberTole
         // continue;
     }
 
-    if (niggli_only) {
+    if (niggli_only)
         _NP = Eigen::Matrix3d::Identity();
-    } else {
+    else {
         transform(P);
         _NP = P;
     }
@@ -935,9 +935,9 @@ UnitCell UnitCell::fromParameters(
     Eigen::MatrixXd kernel;
 
     // no constraints
-    if (_niggli.number == 31 || _niggli.number == 44) {
+    if (_niggli.number == 31 || _niggli.number == 44)
         kernel.setIdentity(6, 6);
-    } else {
+    else {
         // matrix of Niggli character constraints, taken from the table 9.2.5.1
         Eigen::MatrixXd C = _niggli.C;
         // compute kernel of Niggli constraints
@@ -986,9 +986,9 @@ void UnitCell::setParameterCovariance(const Eigen::MatrixXd& cov)
     Eigen::MatrixXd kernel;
 
     // no constraints?
-    if (_niggli.number == 31 || _niggli.number == 44) {
+    if (_niggli.number == 31 || _niggli.number == 44)
         kernel.setIdentity(6, 6);
-    } else {
+    else {
         // matrix of Niggli character constraints, taken from the table 9.2.5.1
         Eigen::MatrixXd C = _niggli.C;
         // compute kernel of Niggli constraints
