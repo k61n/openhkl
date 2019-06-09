@@ -15,17 +15,9 @@
 #ifndef CORE_AUTO_INDEXING_USERDEFINEDUNITCELLINDEXER_H
 #define CORE_AUTO_INDEXING_USERDEFINEDUNITCELLINDEXER_H
 
-#include <map>
-#include <string>
-#include <utility>
-#include <vector>
 
-#include <Eigen/Dense>
 
 #include "core/crystal/UnitCell.h"
-#include "core/experiment/CrystalTypes.h"
-#include "core/geometry/ReciprocalVector.h"
-#include "core/utils/Any.h"
 #include "core/utils/Units.h"
 
 namespace nsx {

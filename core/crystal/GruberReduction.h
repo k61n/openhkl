@@ -15,11 +15,8 @@
 #ifndef CORE_CRYSTAL_GRUBERREDUCTION_H
 #define CORE_CRYSTAL_GRUBERREDUCTION_H
 
-#include <string>
 
-#include <Eigen/Dense>
 
-#include "core/crystal/NiggliCharacter.h"
 #include "core/crystal/UnitCell.h"
 
 namespace nsx {

@@ -15,9 +15,7 @@
 #ifndef CORE_INSTRUMENT_INSTRUMENTSTATE_H
 #define CORE_INSTRUMENT_INSTRUMENTSTATE_H
 
-#include <vector>
 
-#include <Eigen/Core>
 
 #include "core/geometry/DirectVector.h"
 #include "core/geometry/ReciprocalVector.h"

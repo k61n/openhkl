@@ -15,10 +15,7 @@
 #ifndef CORE_HULL_FACE_H
 #define CORE_HULL_FACE_H
 
-#include <ostream>
-#include <vector>
 
-#include <Eigen/Dense>
 
 namespace nsx {
 

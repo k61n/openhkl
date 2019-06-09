@@ -15,16 +15,10 @@
 #ifndef CORE_CRYSTAL_SPACEGROUP_H
 #define CORE_CRYSTAL_SPACEGROUP_H
 
-#include <array>
-#include <ostream>
-#include <string>
-#include <vector>
 
-#include <Eigen/Dense>
 
 #include "core/crystal/MillerIndex.h"
 #include "core/crystal/SymOp.h"
-#include "core/experiment/CrystalTypes.h"
 
 namespace nsx {
 

@@ -15,14 +15,7 @@
 #ifndef CORE_GEOMETRY_AABB_H
 #define CORE_GEOMETRY_AABB_H
 
-#include <initializer_list>
-#include <iostream>
-#include <limits>
-#include <stdexcept>
-#include <utility>
-#include <vector>
 
-#include <Eigen/Dense>
 
 #include "core/geometry/GeometryTypes.h"
 

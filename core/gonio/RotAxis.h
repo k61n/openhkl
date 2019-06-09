@@ -15,10 +15,7 @@
 #ifndef CORE_GONIO_ROTAXIS_H
 #define CORE_GONIO_ROTAXIS_H
 
-#include <yaml-cpp/yaml.h>
 
-#include <Eigen/Dense>
-#include <Eigen/Geometry>
 
 #include "core/gonio/Axis.h"
 

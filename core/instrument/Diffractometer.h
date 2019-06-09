@@ -15,10 +15,7 @@
 #ifndef CORE_INSTRUMENT_DIFFRACTOMETER_H
 #define CORE_INSTRUMENT_DIFFRACTOMETER_H
 
-#include <memory>
-#include <string>
 
-#include <yaml-cpp/yaml.h>
 
 #include "core/detector/Detector.h"
 #include "core/instrument/Sample.h"

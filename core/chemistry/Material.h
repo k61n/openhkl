@@ -15,11 +15,7 @@
 #ifndef CORE_CHEMISTRY_MATERIAL_H
 #define CORE_CHEMISTRY_MATERIAL_H
 
-#include <map>
-#include <ostream>
-#include <string>
 
-#include "core/chemistry/ChemistryTypes.h"
 #include "core/chemistry/IsotopeDatabaseManager.h"
 
 namespace nsx {

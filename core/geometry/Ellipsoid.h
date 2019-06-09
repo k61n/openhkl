@@ -15,15 +15,10 @@
 #ifndef CORE_GEOMETRY_ELLIPSOID_H
 #define CORE_GEOMETRY_ELLIPSOID_H
 
-#include <cmath>
 
-#include <Eigen/Dense>
-#include <Eigen/Eigenvalues>
-#include <Eigen/Geometry>
 
 #include "core/experiment/DataTypes.h"
 #include "core/geometry/AABB.h"
-#include "core/geometry/GeometryTypes.h"
 
 namespace nsx {
 

@@ -15,9 +15,7 @@
 #ifndef CORE_CRYSTAL_SYMOP_H
 #define CORE_CRYSTAL_SYMOP_H
 
-#include <ostream>
 
-#include <Eigen/Dense>
 
 #include "core/experiment/CrystalTypes.h"
 

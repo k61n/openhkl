@@ -17,9 +17,7 @@
 
 //! \file
 
-#include <string>
 
-#include <Eigen/Dense>
 
 namespace nsx {
 

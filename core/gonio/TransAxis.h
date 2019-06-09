@@ -15,9 +15,7 @@
 #ifndef CORE_GONIO_TRANSAXIS_H
 #define CORE_GONIO_TRANSAXIS_H
 
-#include <yaml-cpp/yaml.h>
 
-#include <Eigen/Geometry>
 
 #include "core/gonio/Axis.h"
 

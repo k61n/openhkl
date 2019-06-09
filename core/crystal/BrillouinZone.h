@@ -15,11 +15,8 @@
 #ifndef CORE_CRYSTAL_BRILLOUINZONE_H
 #define CORE_CRYSTAL_BRILLOUINZONE_H
 
-#include <vector>
 
-#include <Eigen/Dense>
 
-#include "core/experiment/DataTypes.h"
 #include "core/hull/ConvexHull.h"
 
 namespace nsx {

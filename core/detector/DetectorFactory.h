@@ -15,11 +15,8 @@
 #ifndef CORE_DETECTOR_DETECTORFACTORY_H
 #define CORE_DETECTOR_DETECTORFACTORY_H
 
-#include <string>
 
-#include <yaml-cpp/yaml.h>
 
-#include "core/detector/Detector.h"
 #include "core/utils/Factory.h"
 #include "core/utils/Singleton.h"
 

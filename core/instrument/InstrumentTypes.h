@@ -20,10 +20,8 @@
 
 namespace nsx {
 
-class Component;
 class DetectorEvent;
 class Experiment;
-class Gonio;
 class InstrumentState;
 class RotAxis;
 class TransAxis;

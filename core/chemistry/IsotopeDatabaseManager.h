@@ -15,17 +15,11 @@
 #ifndef CORE_CHEMISTRY_ISOTOPEDATABASEMANAGER_H
 #define CORE_CHEMISTRY_ISOTOPEDATABASEMANAGER_H
 
-#include <complex>
-#include <map>
-#include <ostream>
-#include <stdexcept>
-#include <string>
 
 #include <yaml-cpp/yaml.h>
 
 #include "core/chemistry/ChemistryTypes.h"
 #include "core/utils/Singleton.h"
-#include "core/utils/Variant.h"
 
 namespace nsx {
 

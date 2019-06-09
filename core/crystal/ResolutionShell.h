@@ -15,7 +15,6 @@
 #ifndef CORE_CRYSTAL_RESOLUTIONSHELL_H
 #define CORE_CRYSTAL_RESOLUTIONSHELL_H
 
-#include <vector>
 
 #include "core/experiment/CrystalTypes.h"
 

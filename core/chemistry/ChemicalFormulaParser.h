@@ -17,17 +17,11 @@
 
 #define BOOST_SPIRIT_USE_PHOENIX_V3
 
-#include <map>
-#include <string>
-#include <vector>
 
 #include <boost/fusion/adapted/std_pair.hpp>
-#include <boost/range/adaptors.hpp>
-#include <boost/range/numeric.hpp>
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/spirit/include/qi.hpp>
 
-#include "core/chemistry/ChemistryTypes.h"
 #include "core/chemistry/IsotopeDatabaseManager.h"
 
 namespace nsx {

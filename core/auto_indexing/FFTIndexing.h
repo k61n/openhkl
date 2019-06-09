@@ -15,14 +15,9 @@
 #ifndef CORE_AUTO_INDEXING_FFTINDEXING_H
 #define CORE_AUTO_INDEXING_FFTINDEXING_H
 
-#include <functional>
-#include <utility>
-#include <vector>
 
-#include <Eigen/Dense>
 
 #include "core/geometry/GeometryTypes.h"
-#include "core/utils/Units.h"
 
 namespace nsx {
 

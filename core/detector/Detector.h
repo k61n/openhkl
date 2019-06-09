@@ -15,17 +15,12 @@
 #ifndef CORE_DETECTOR_DETECTOR_H
 #define CORE_DETECTOR_DETECTOR_H
 
-#include <string>
-#include <vector>
 
-#include <yaml-cpp/yaml.h>
 
 #include <Eigen/Dense>
 
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/DataTypes.h"
-#include "core/geometry/DirectVector.h"
-#include "core/geometry/GeometryTypes.h"
 #include "core/gonio/Component.h"
 #include "core/utils/Enums.h"
 

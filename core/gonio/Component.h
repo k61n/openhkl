@@ -15,16 +15,11 @@
 #ifndef CORE_GONIO_COMPONENT_H
 #define CORE_GONIO_COMPONENT_H
 
-#include <map>
-#include <string>
 
-#include <yaml-cpp/yaml.h>
 
-#include <Eigen/Dense>
 
 #include "core/geometry/DirectVector.h"
 #include "core/gonio/Gonio.h"
-#include "core/instrument/InstrumentTypes.h"
 
 namespace nsx {
 

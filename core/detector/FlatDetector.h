@@ -15,10 +15,8 @@
 #ifndef CORE_DETECTOR_FLATDETECTOR_H
 #define CORE_DETECTOR_FLATDETECTOR_H
 
-#include <yaml-cpp/yaml.h>
 
 #include "core/detector/Detector.h"
-#include "core/geometry/GeometryTypes.h"
 
 namespace nsx {
 

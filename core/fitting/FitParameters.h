@@ -15,12 +15,9 @@
 #ifndef CORE_FITTING_FITPARAMETERS_H
 #define CORE_FITTING_FITPARAMETERS_H
 
-#include <vector>
 
-#include <gsl/gsl_matrix.h>
 #include <gsl/gsl_vector.h>
 
-#include <Eigen/Core>
 #include <Eigen/SparseCore>
 
 namespace nsx {

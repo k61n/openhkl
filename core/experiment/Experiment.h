@@ -15,14 +15,8 @@
 #ifndef CORE_EXPERIMENT_EXPERIMENT_H
 #define CORE_EXPERIMENT_EXPERIMENT_H
 
-#include <map>
-#include <memory>
-#include <string>
-#include <vector>
 
-#include "core/experiment/DataTypes.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/instrument/InstrumentTypes.h"
 
 namespace nsx {
 

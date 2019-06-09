@@ -15,12 +15,9 @@
 #ifndef CORE_GONIO_AXIS_H
 #define CORE_GONIO_AXIS_H
 
-#include <iostream>
-#include <string>
 
 #include <yaml-cpp/yaml.h>
 
-#include <Eigen/Dense>
 #include <Eigen/Geometry>
 
 namespace nsx {

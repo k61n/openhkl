@@ -15,15 +15,10 @@
 #ifndef CORE_HULL_CONVEXHULL_H
 #define CORE_HULL_CONVEXHULL_H
 
-#include <cmath>
-#include <iterator>
 #include <map>
-#include <stdexcept>
 
-#include <Eigen/Dense>
 
 #include "core/geometry/AABB.h"
-#include "core/hull/Triangle.h"
 
 namespace nsx {
 

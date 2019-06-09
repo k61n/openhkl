@@ -15,9 +15,7 @@
 #ifndef CORE_GONIO_AXISFACTORY_H
 #define CORE_GONIO_AXISFACTORY_H
 
-#include <string>
 
-#include <yaml-cpp/yaml.h>
 
 #include "core/gonio/Axis.h"
 #include "core/utils/Factory.h"

@@ -15,10 +15,6 @@
 #ifndef CORE_CRYSTAL_UNITCELL_H
 #define CORE_CRYSTAL_UNITCELL_H
 
-#include <map>
-#include <memory>
-#include <string>
-#include <vector>
 
 #include <Eigen/Dense>
 
@@ -26,7 +22,6 @@
 #include "core/crystal/NiggliCharacter.h"
 #include "core/crystal/SpaceGroup.h"
 #include "core/experiment/DataTypes.h"
-#include "core/geometry/GeometryTypes.h"
 
 namespace nsx {
 

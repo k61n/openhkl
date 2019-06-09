@@ -25,22 +25,15 @@
 
 namespace nsx {
 
-class BasicFrameIterator;
 class DataSet;
 class IDataReader;
 class IFrameIterator;
-class IFrameInterval;
-class MetaData;
 class PeakFinder;
-class ThreadedFrameIterator;
 
 using sptrDataSet = std::shared_ptr<DataSet>;
 using sptrPeakFinder = std::shared_ptr<PeakFinder>;
 
-using uptrIDataReader = std::unique_ptr<IDataReader>;
-using uptrIFrameIterator = std::unique_ptr<IFrameIterator>;
 
-using wptrDataSet = std::weak_ptr<DataSet>;
 
 using DataList = std::vector<sptrDataSet>;
 

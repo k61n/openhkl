@@ -15,9 +15,7 @@
 #ifndef CORE_CRYSTAL_MILLERINDEX_H
 #define CORE_CRYSTAL_MILLERINDEX_H
 
-#include <iostream>
 
-#include <Eigen/Dense>
 
 #include "core/experiment/CrystalTypes.h"
 #include "core/geometry/ReciprocalVector.h"

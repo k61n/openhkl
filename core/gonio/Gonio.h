@@ -15,17 +15,8 @@
 #ifndef CORE_GONIO_GONIO_H
 #define CORE_GONIO_GONIO_H
 
-#include <map>
-#include <memory>
-#include <set>
-#include <string>
-#include <utility>
-#include <vector>
 
-#include <yaml-cpp/yaml.h>
 
-#include <Eigen/Dense>
-#include <Eigen/Geometry>
 
 #include "core/geometry/GeometryTypes.h"
 #include "core/gonio/Axis.h"
