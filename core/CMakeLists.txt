@@ -32,7 +32,3 @@ add_custom_target(copy-nsx-headers COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_B
 install(TARGETS ${NSX_LIBRARY} DESTINATION ${NSX_INSTALL_DIR}lib COMPONENT LIB)
 install(FILES ${core_HEADERS} DESTINATION ${NSX_INSTALL_DIR}include/core COMPONENT DEV)
 install(FILES ${core_GENERATED_HEADERS} DESTINATION ${NSX_INSTALL_DIR}include/core COMPONENT DEV)
-
-if(NSX_TIDY)
-    add_tidy_target(${NSX_LIBRARY})
-endif()

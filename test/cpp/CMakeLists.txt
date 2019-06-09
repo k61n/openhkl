@@ -23,10 +23,6 @@ foreach(source_file ${test_sources})
             )
     endif()
 
-    if(NSX_TIDY)
-        add_tidy_target(${base_name})
-    endif()
-
 endforeach(source_file)
 
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
