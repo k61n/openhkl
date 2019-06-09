@@ -42,9 +42,8 @@ RealMatrix RadialConvolver::_matrix(int nrows, int ncols) const
     const double r_out = _parameters.at("r_out");
 
     // sanity checks
-    if (r_in < 0 || r_out < r_in) {
+    if (r_in < 0 || r_out < r_in)
         throw std::runtime_error("Radial convolver called with invalid parameters");
-    }
 
     RealMatrix kernel = RealMatrix::Zero(nrows, ncols);
 
@@ -57,9 +56,8 @@ RealMatrix RadialConvolver::_matrix(int nrows, int ncols) const
 
             double dist2 = x * x + y * y;
 
-            if (dist2 >= r_in * r_in && dist2 < r_out * r_out) {
+            if (dist2 >= r_in * r_in && dist2 < r_out * r_out)
                 kernel(i, j) = 1.0;
-            }
         }
     }
 

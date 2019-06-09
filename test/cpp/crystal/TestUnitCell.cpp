@@ -110,9 +110,8 @@ TEST_CASE("test/crystal/TestUnitCell.cpp", "")
         // random perturbation to character
         double d[6];
 
-        for (auto i = 0; i < 6; ++i) {
+        for (auto i = 0; i < 6; ++i)
             d[i] = get_random();
-        }
 
         // update covariance matrix
         for (auto i = 0; i < 6; ++i) {
@@ -266,9 +265,8 @@ TEST_CASE("test/crystal/TestUnitCell.cpp", "")
         params.addParameter(&x(i));
     }
     // add u to fit
-    for (auto i = 0; i < 3; ++i) {
+    for (auto i = 0; i < 3; ++i)
         params.addParameter(&u(i));
-    }
 
     // try to fit the perturbed cell
     nsx::Minimizer min;

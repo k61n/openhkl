@@ -25,9 +25,8 @@ FrameInstrumentStates* FrameInstrumentStates::_instance = nullptr;
 
 FrameInstrumentStates* FrameInstrumentStates::create(const nsx::DataList& data)
 {
-    if (!_instance) {
+    if (!_instance)
         _instance = new FrameInstrumentStates(data);
-    }
 
     return _instance;
 }
@@ -65,9 +64,8 @@ FrameInstrumentStates::~FrameInstrumentStates()
 {
     delete _ui;
 
-    if (_instance) {
+    if (_instance)
         _instance = nullptr;
-    }
 }
 
 void FrameInstrumentStates::slotActionClicked(QAbstractButton* button)

@@ -29,13 +29,11 @@ ISigmaIntegrator::ISigmaIntegrator(sptrShapeLibrary library, double radius, doub
 
 bool ISigmaIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 {
-    if (!_library) {
+    if (!_library)
         return false;
-    }
 
-    if (!peak) {
+    if (!peak)
         return false;
-    }
 
     // first get mean background
     PixelSumIntegrator::compute(peak, region);
@@ -46,9 +44,8 @@ bool ISigmaIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
     const auto& counts = region.data().counts();
 
     // TODO: should this be hard-coded??
-    if (events.size() < 29) {
+    if (events.size() < 29)
         throw std::runtime_error("ISigmaIntegrator::compute(): too few data points in peak");
-    }
 
     std::vector<Intensity> mean_profile;
     Profile1D profile;
@@ -93,9 +90,8 @@ bool ISigmaIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
     }
 
     // something went wrong (nans?)
-    if (best_idx < 0) {
+    if (best_idx < 0)
         return false;
-    }
 
     const double M = profile.counts()[best_idx];
     const int n = profile.npoints()[best_idx];
@@ -105,9 +101,8 @@ bool ISigmaIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 
     double sigma = _integratedIntensity.sigma();
 
-    if (std::isnan(sigma) || sigma <= 0.0) {
+    if (std::isnan(sigma) || sigma <= 0.0)
         return false;
-    }
 
     // TODO: rocking curve!
 

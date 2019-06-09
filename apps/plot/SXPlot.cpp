@@ -142,9 +142,8 @@ void SXPlot::exportToAscii()
 
     QCPDataMap* data = graph(0)->data();
     int current = 0;
-    for (auto point : *data) {
+    for (auto point : *data)
         result(current++, 0) = point.key;
-    }
     for (int i = 0; i < ngraphs; ++i) {
         QCPDataMap* data = graph(i)->data();
         int current = 0;

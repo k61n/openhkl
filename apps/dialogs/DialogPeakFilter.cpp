@@ -39,9 +39,8 @@ DialogPeakFilter* DialogPeakFilter::_instance = nullptr;
 DialogPeakFilter* DialogPeakFilter::create(
     ExperimentItem* experiment_item, const nsx::PeakList& peaks, QWidget* parent)
 {
-    if (!_instance) {
+    if (!_instance)
         _instance = new DialogPeakFilter(experiment_item, peaks, parent);
-    }
 
     return _instance;
 }
@@ -100,13 +99,11 @@ DialogPeakFilter::DialogPeakFilter(
         dmin = std::min(dmin, d);
         dmax = std::max(dmax, d);
         auto unit_cell = peak->unitCell();
-        if (!unit_cell) {
+        if (!unit_cell)
             continue;
-        }
         auto it = unit_cells.find(unit_cell);
-        if (it == unit_cells.end()) {
+        if (it == unit_cells.end())
             unit_cells.insert(unit_cell);
-        }
     }
 
     _ui->dMin->setValue(dmin);
@@ -130,15 +127,13 @@ DialogPeakFilter::DialogPeakFilter(
 
 DialogPeakFilter::~DialogPeakFilter()
 {
-    if (_peaks_model) {
+    if (_peaks_model)
         delete _peaks_model;
-    }
 
     delete _ui;
 
-    if (_instance) {
+    if (_instance)
         _instance = nullptr;
-    }
 }
 
 void DialogPeakFilter::slotUnitCellChanged(int index)
@@ -184,9 +179,8 @@ void DialogPeakFilter::filterPeaks()
         filtered_peaks = peak_filter.predicted(filtered_peaks, _ui->predicted->isChecked());
     }
 
-    if (_ui->indexed->isChecked()) {
+    if (_ui->indexed->isChecked())
         filtered_peaks = peak_filter.indexed(filtered_peaks);
-    }
 
     if (_ui->indexedByUnitCell->isChecked()) {
         if (_ui->unitCells->count() > 0) {
@@ -211,9 +205,8 @@ void DialogPeakFilter::filterPeaks()
         filtered_peaks = peak_filter.dRange(filtered_peaks, d_min, d_max);
     }
 
-    if (_ui->extincted->isChecked()) {
+    if (_ui->extincted->isChecked())
         filtered_peaks = peak_filter.extincted(filtered_peaks);
-    }
 
     if (_ui->sparseDataSets->isChecked()) {
         size_t min_num_peaks = static_cast<size_t>(_ui->minNumPeaks->value());
@@ -227,13 +220,11 @@ void DialogPeakFilter::filterPeaks()
         filtered_peaks = peak_filter.mergedPeaksSignificance(filtered_peaks, significance_level);
     }
 
-    if (_ui->overlapping->isChecked()) {
+    if (_ui->overlapping->isChecked())
         filtered_peaks = peak_filter.overlapping(filtered_peaks);
-    }
 
-    if (_ui->complementary->isChecked()) {
+    if (_ui->complementary->isChecked())
         filtered_peaks = peak_filter.complementary(_peaks, filtered_peaks);
-    }
 
     _peaks_model->setPeaks(filtered_peaks);
 }

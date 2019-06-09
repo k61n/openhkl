@@ -53,20 +53,16 @@ AtomicConvolver::~AtomicConvolver()
 
 void AtomicConvolver::reset()
 {
-    if (_forwardPlan) {
+    if (_forwardPlan)
         fftw_destroy_plan(_forwardPlan);
-    }
-    if (_backwardPlan) {
+    if (_backwardPlan)
         fftw_destroy_plan(_backwardPlan);
-    }
 
-    if (_realData) {
+    if (_realData)
         fftw_free(_realData);
-    }
 
-    if (_transformedData) {
+    if (_transformedData)
         fftw_free(_transformedData);
-    }
 
     _n_rows = 0;
 
@@ -122,9 +118,8 @@ RealMatrix AtomicConvolver::convolve(const RealMatrix& image)
     int nrows = image.rows();
     int ncols = image.cols();
 
-    if (nrows != _n_rows || ncols != _n_cols) {
+    if (nrows != _n_rows || ncols != _n_cols)
         updateKernel(nrows, ncols);
-    }
 
     // factor needed to get correct inverse transform
     double factor = 1.0 / ((double)(nrows * ncols));
@@ -152,9 +147,8 @@ RealMatrix AtomicConvolver::convolve(const RealMatrix& image)
 RealMatrix AtomicConvolver::matrix(int nrows, int ncols) const
 {
     // sanity checks
-    if (nrows < 0 || ncols < 0) {
+    if (nrows < 0 || ncols < 0)
         throw std::runtime_error("Invalid dimensions for kernel matrix");
-    }
 
     return _matrix(nrows, ncols);
 }

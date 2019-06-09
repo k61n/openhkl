@@ -66,9 +66,8 @@ void GLTrackball::IssueRotation() const
 {
 
     // Translate if offset is defined
-    if (_hasOffset) {
+    if (_hasOffset)
         glTranslated(_modelCenter[0], _modelCenter[1], _modelCenter[2]);
-    }
     // Rotate with respect to the centre
     glMultMatrixd(_rotationmatrix.data());
     // Translate back

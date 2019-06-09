@@ -71,9 +71,8 @@ void DataItem::removeSelectedData()
     for (int i = 0; i < rowCount(); ++i) {
         auto numor_item = dynamic_cast<NumorItem*>(child(i));
         if (numor_item) {
-            if (numor_item->checkState() == Qt::Checked) {
+            if (numor_item->checkState() == Qt::Checked)
                 selected_numor_items.push_back(numor_item);
-            }
         }
     }
 
@@ -84,9 +83,8 @@ void DataItem::removeSelectedData()
 
     for (auto peak : all_peaks) {
         auto data = peak->data();
-        if (!data) {
+        if (!data)
             continue;
-        }
         used_data.insert(data);
     }
 
@@ -115,9 +113,8 @@ void DataItem::importData()
         auto exp = experiment();
 
         // If the experience already stores the current numor, skip it
-        if (exp->hasData(filename.toStdString())) {
+        if (exp->hasData(filename.toStdString()))
             return; // nullptr;
-        }
 
         nsx::sptrDataSet data_ptr;
 
@@ -143,21 +140,18 @@ void DataItem::importRawData()
     qfilenames = QFileDialog::getOpenFileNames(
         nullptr, "select raw data", "", "", nullptr, QFileDialog::Option::DontUseNativeDialog);
 
-    if (qfilenames.empty()) {
+    if (qfilenames.empty())
         return;
-    }
 
     std::vector<std::string> filenames;
 
-    for (auto& filename : qfilenames) {
+    for (auto& filename : qfilenames)
         filenames.push_back(filename.toStdString());
-    }
 
     DialogRawData dialog;
 
-    if (!dialog.exec()) {
+    if (!dialog.exec())
         return;
-    }
 
     // Get the basename of the current numor
     QFileInfo fileinfo(qfilenames[0]);
@@ -165,9 +159,8 @@ void DataItem::importRawData()
     auto exp = experiment();
 
     // If the experience already stores the current numor, skip it
-    if (exp->hasData(filenames[0])) {
+    if (exp->hasData(filenames[0]))
         return;
-    }
 
     std::shared_ptr<nsx::DataSet> data;
     std::shared_ptr<nsx::IDataReader> reader;
@@ -186,9 +179,8 @@ void DataItem::importRawData()
         auto diff = exp->diffractometer();
         reader.reset(new nsx::RawDataReader(filenames[0], diff));
         auto raw_data_reader = std::dynamic_pointer_cast<nsx::RawDataReader>(reader);
-        for (size_t i = 1; i < filenames.size(); ++i) {
+        for (size_t i = 1; i < filenames.size(); ++i)
             raw_data_reader->addFrame(filenames[i]);
-        }
         data = std::make_shared<nsx::DataSet>(reader);
     } catch (std::exception& e) {
         nsx::error() << "reading numor:" << filenames[0].c_str() << e.what();
@@ -226,9 +218,8 @@ nsx::DataList DataItem::allData()
 {
     nsx::DataList data;
     for (int i = 0; i < rowCount(); ++i) {
-        if (auto numor_item = dynamic_cast<NumorItem*>(child(i))) {
+        if (auto numor_item = dynamic_cast<NumorItem*>(child(i)))
             data.push_back(numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>());
-        }
     }
     return data;
 }
@@ -238,9 +229,8 @@ nsx::DataList DataItem::selectedData()
     nsx::DataList selectedNumors;
     for (int i = 0; i < rowCount(); ++i) {
         if (child(i)->checkState() == Qt::Checked) {
-            if (auto numor_item = dynamic_cast<NumorItem*>(child(i))) {
+            if (auto numor_item = dynamic_cast<NumorItem*>(child(i)))
                 selectedNumors.push_back(numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>());
-            }
         }
     }
     return selectedNumors;
@@ -258,9 +248,8 @@ void DataItem::convertToHDF5()
     // dialog will automatically be deleted before we return from this method
     std::unique_ptr<DialogHDF5Converter> dialog_ptr(new DialogHDF5Converter(selected_data));
 
-    if (!dialog_ptr->exec()) {
+    if (!dialog_ptr->exec())
         return;
-    }
 }
 
 void DataItem::openInstrumentStatesDialog()

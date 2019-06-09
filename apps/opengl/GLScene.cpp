@@ -46,9 +46,8 @@ void GLScene::render(QGLWidget* w)
 
 void GLScene::renderForPicking()
 {
-    for (QHash<int, GLActor*>::const_iterator it = _actors.begin(); it != _actors.end(); ++it) {
+    for (QHash<int, GLActor*>::const_iterator it = _actors.begin(); it != _actors.end(); ++it)
         it.value()->drawforPicking(it.key());
-    }
 }
 
 GLActor* GLScene::picking(int r, int g, int b)

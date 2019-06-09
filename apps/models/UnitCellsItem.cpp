@@ -46,13 +46,11 @@ UnitCellItem* UnitCellsItem::selectedUnitCellItem()
 {
     for (auto i = 0; i < rowCount(); ++i) {
         auto unit_cell_item = dynamic_cast<UnitCellItem*>(child(i));
-        if (!unit_cell_item) {
+        if (!unit_cell_item)
             continue;
-        }
 
-        if (unit_cell_item->checkState() == Qt::Checked) {
+        if (unit_cell_item->checkState() == Qt::Checked)
             return unit_cell_item;
-        }
     }
 
     return nullptr;
@@ -65,9 +63,8 @@ nsx::UnitCellList UnitCellsItem::unitCells()
 
     for (int i = 0; i < rowCount(); ++i) {
         UnitCellItem* ucItem = dynamic_cast<UnitCellItem*>(child(i));
-        if (ucItem) {
+        if (ucItem)
             unitCells.push_back(ucItem->data(Qt::UserRole).value<nsx::sptrUnitCell>());
-        }
     }
 
     return unitCells;
@@ -83,13 +80,11 @@ void UnitCellsItem::removeUnusedUnitCells()
 
     for (auto peak : all_peaks) {
         auto unit_cell = peak->unitCell();
-        if (!unit_cell) {
+        if (!unit_cell)
             continue;
-        }
         auto it = unit_cells.find(unit_cell);
-        if (it == unit_cells.end()) {
+        if (it == unit_cells.end())
             unit_cells.insert(unit_cell);
-        }
     }
 
     for (int i = rowCount() - 1; i >= 0; --i) {
@@ -97,9 +92,8 @@ void UnitCellsItem::removeUnusedUnitCells()
         if (unit_cell_item) {
             auto it =
                 unit_cells.find(unit_cell_item->data(Qt::UserRole).value<nsx::sptrUnitCell>());
-            if (it == unit_cells.end()) {
+            if (it == unit_cells.end())
                 removeRow(i);
-            }
         }
     }
 }

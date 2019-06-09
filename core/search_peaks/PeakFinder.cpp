@@ -45,12 +45,10 @@ void registerEquivalence(int a, int b, EquivalenceList& equivalences)
 
 bool sortEquivalences(const EquivalencePair& pa, const EquivalencePair& pb)
 {
-    if (pa.first < pb.first) {
+    if (pa.first < pb.first)
         return true;
-    }
-    if (pa.first > pb.first) {
+    if (pa.first > pb.first)
         return false;
-    }
     return (pa.second < pb.second);
 }
 
@@ -61,9 +59,8 @@ std::map<int, int> removeDuplicates(EquivalenceList& equivalences)
 
     std::map<int, int> mequiv;
 
-    for (auto it = beg; it != last; ++it) {
+    for (auto it = beg; it != last; ++it)
         mequiv.insert(*it);
-    }
     return mequiv;
 }
 
@@ -71,9 +68,8 @@ void reassignEquivalences(std::map<int, int>& equivalences)
 {
     for (auto it = equivalences.begin(); it != equivalences.end(); ++it) {
         auto found = equivalences.find(it->second);
-        if (found != equivalences.end()) {
+        if (found != equivalences.end())
             it->second = found->second;
-        }
     }
 }
 
@@ -172,9 +168,8 @@ PeakList PeakFinder::find(DataList numors)
                 printf("PeakFinder::find: blob loop\n");
                 {
                     // merge the blobs into the global set
-                    for (auto&& blob : local_blobs) {
+                    for (auto&& blob : local_blobs)
                         blobs.insert(blob);
-                    }
                 }
             }
 
@@ -189,9 +184,8 @@ PeakList PeakFinder::find(DataList numors)
         }
         // Warning if error
         catch (std::exception& e) {
-            if (_handler) {
+            if (_handler)
                 _handler->log(std::string("Peak finder caused an exception: ") + e.what());
-            }
             // pass exception back to callee
             throw e;
         }
@@ -224,18 +218,15 @@ PeakList PeakFinder::find(DataList numors)
             const auto extents = p->shape().aabb().extents();
 
             // peak too small or too large
-            if (extents.maxCoeff() > 1e5 || extents.minCoeff() < 1e-5) {
+            if (extents.maxCoeff() > 1e5 || extents.minCoeff() < 1e-5)
                 p->setSelected(false);
-            }
 
-            if (extents(2) > _maxFrames) {
+            if (extents(2) > _maxFrames)
                 p->setSelected(false);
-            }
 
             // peak's bounding box not completely contained in detector image
-            if (!dAABB.contains(p->shape().aabb())) {
+            if (!dAABB.contains(p->shape().aabb()))
                 p->setSelected(false);
-            }
 
             p->setPredicted(false);
             numor_peaks.push_back(p);
@@ -257,9 +248,8 @@ PeakList PeakFinder::find(DataList numors)
         }
 
         numor->close();
-        if (_handler) {
+        if (_handler)
             _handler->log("Found " + std::to_string(numor_peaks.size()) + " peaks.");
-        }
     }
     printf("\n");
 
@@ -385,9 +375,8 @@ void PeakFinder::mergeCollidingBlobs(sptrDataSet data, std::map<int, Blob3D>& bl
         EquivalenceList equivalences;
         num_blobs = blobs.size();
 
-        if (_handler) {
+        if (_handler)
             _handler->log("number of blobs is " + std::to_string(num_blobs));
-        }
 
         // determine which additional blobs should be merged due to collisions /
         // intersection
@@ -584,9 +573,8 @@ void PeakFinder::findCollisions(
     int dummy = 0;
     int magic = 0.2 * std::distance(blobs.begin(), blobs.end());
 
-    if (magic < 1) {
+    if (magic < 1)
         magic = 1;
-    }
 
     for (auto it = blobs.begin(); it != blobs.end();) {
         ++dummy;
@@ -660,9 +648,8 @@ void PeakFinder::findCollisions(
     };
     std::sort(xyz_sorted_ellipsoids.begin(), xyz_sorted_ellipsoids.end(), cmp);
 
-    for (auto it : xyz_sorted_ellipsoids) {
+    for (auto it : xyz_sorted_ellipsoids)
         oct.addData(it);
-    }
 
     auto collisions = oct.getCollisions();
 
@@ -670,9 +657,8 @@ void PeakFinder::findCollisions(
     dummy = 0;
     magic = 0.02 * std::distance(collisions.begin(), collisions.end());
 
-    if (magic < 1) {
+    if (magic < 1)
         magic = 1;
-    }
 
     for (auto&& it = collisions.begin(); it != collisions.end(); ++it) {
 
@@ -697,18 +683,16 @@ void PeakFinder::findCollisions(
     }
 
     // free memory stored in unordered map
-    for (auto&& it : boxes) {
+    for (auto&& it : boxes)
         delete it.first;
-    }
 }
 
 void PeakFinder::mergeEquivalentBlobs(
     std::map<int, Blob3D>& blobs, EquivalenceList& equivalences) const
 {
     // initialize progress handler if necessary
-    if (_handler) {
+    if (_handler)
         _handler->setProgress(0);
-    }
 
     // Sort the equivalences pair by ascending order of the first element
     // and if equal by ascending order of their second element.
@@ -722,9 +706,8 @@ void PeakFinder::mergeEquivalentBlobs(
     // dummy for calling progress updater
     int dummy = 0;
     int magic = 0.02 * std::distance(blobs.begin(), blobs.end());
-    if (magic == 0) {
+    if (magic == 0)
         magic = 1;
-    }
 
     // Iterate on blobs and merge equivalences
     for (auto it = blobs.begin(); it != blobs.end();) {
@@ -753,9 +736,8 @@ void PeakFinder::mergeEquivalentBlobs(
     }
 
     // finalize update handler
-    if (_handler) {
+    if (_handler)
         _handler->log("After merging, " + std::to_string(blobs.size()) + " blobs remain.");
-    }
 }
 
 } // namespace nsx

@@ -81,20 +81,17 @@ Octree::Octree(const Octree* parent, unsigned int sector)
 bool Octree::addData(const Ellipsoid* ellipsoid)
 {
     // Ellipsoid does not overlap with this branch
-    if (!this->collide((*ellipsoid).aabb())) {
+    if (!this->collide((*ellipsoid).aabb()))
         return false;
-    }
 
     // AABB overlap with this node
     if (hasChildren()) {
-        for (auto&& child : _children) {
+        for (auto&& child : _children)
             child.addData(ellipsoid);
-        }
     } else {
         _data.push_back(ellipsoid);
-        if (_data.size() > _MAX_STORAGE) {
+        if (_data.size() > _MAX_STORAGE)
             split();
-        }
     }
     return true;
 }
@@ -146,23 +143,20 @@ std::set<const Ellipsoid*> Octree::getCollisions(const Ellipsoid& given) const
     recursiveCollisions =
         [&given, &recursiveCollisions](const Octree* tree, CollisionSet& collisions) -> void {
         // ellipsoid's box does not intercept tree
-        if (!tree->collide(given.aabb())) {
+        if (!tree->collide(given.aabb()))
             return;
-        }
 
         // tree has children
         if (tree->hasChildren()) {
-            for (auto&& child : tree->_children) {
+            for (auto&& child : tree->_children)
                 recursiveCollisions(&child, collisions);
-            }
             return;
         }
 
         // otherwise, tree has no children
         for (auto&& ellipsoid : tree->_data) {
-            if (ellipsoid->collide(given)) {
+            if (ellipsoid->collide(given))
                 collisions.emplace(ellipsoid);
-            }
         }
     };
 
@@ -173,25 +167,22 @@ std::set<const Ellipsoid*> Octree::getCollisions(const Ellipsoid& given) const
 bool Octree::isInsideObject(const Eigen::Vector3d& vector)
 {
     // chamber's box does not intercept tree
-    if (!isInside(vector)) {
+    if (!isInside(vector))
         return false;
-    }
 
     // tree has children
     if (hasChildren()) {
         for (auto&& child : _children) {
-            if (child.isInsideObject(vector)) {
+            if (child.isInsideObject(vector))
                 return true;
-            }
         }
         return false;
     }
 
     // otherwise, tree has no children
     for (auto&& ellipsoid : _data) {
-        if (ellipsoid->isInside(vector)) {
+        if (ellipsoid->isInside(vector))
             return true;
-        }
     }
 
     // no collision found
@@ -202,9 +193,8 @@ void Octree::getVoxels(std::vector<AABB*>& voxels)
 {
     voxels.push_back(this);
     if (hasChildren()) {
-        for (unsigned int i = 0; i < _MULTIPLICITY; ++i) {
+        for (unsigned int i = 0; i < _MULTIPLICITY; ++i)
             _children[i].getVoxels(voxels);
-        }
     }
 }
 
@@ -216,9 +206,8 @@ void Octree::printSelf(std::ostream& os) const
         os << "... and has " << _data.size() << " data" << std::endl;
     } else {
         os << " has children :" << std::endl;
-        for (size_t i = 0; i < _MULTIPLICITY; ++i) {
+        for (size_t i = 0; i < _MULTIPLICITY; ++i)
             _children[i].printSelf(os);
-        }
     }
 }
 
@@ -226,33 +215,28 @@ void Octree::removeData(const Ellipsoid* data)
 {
     if (hasData()) {
         auto it = std::find(_data.begin(), _data.end(), data);
-        if (it != _data.end()) {
+        if (it != _data.end())
             _data.erase(it);
-        }
     }
     if (hasChildren()) {
-        for (unsigned int i = 0; i < _MULTIPLICITY; ++i) {
+        for (unsigned int i = 0; i < _MULTIPLICITY; ++i)
             _children[i].removeData(data);
-        }
     }
 }
 
 void Octree::setMaxDepth(unsigned int maxDepth)
 {
-    if (maxDepth == 0) {
+    if (maxDepth == 0)
         throw std::invalid_argument("Depth of the Octree must be at least 1");
-    }
-    if (maxDepth > 10) {
+    if (maxDepth > 10)
         throw std::invalid_argument("Depth of Octree > 10 consume too much memory");
-    }
     _MAX_DEPTH = maxDepth;
 }
 
 void Octree::setMaxStorage(unsigned int maxStorage)
 {
-    if (maxStorage == 0) {
+    if (maxStorage == 0)
         throw std::invalid_argument("MaxStorage of Octree must be at least 1");
-    }
     _MAX_STORAGE = maxStorage;
 }
 
@@ -260,21 +244,18 @@ void Octree::split()
 {
     // The node is already at the maximum depth: not allowed to split anymore.
     // Do nothing singe _data has already been added to parent node.
-    if (_depth > _MAX_DEPTH) {
+    if (_depth > _MAX_DEPTH)
         return;
-    }
 
     _children.clear();
     _children.reserve(_MULTIPLICITY);
 
     // Split the current node into 2^D subnodes
-    for (unsigned int i = 0; i < _MULTIPLICITY; ++i) {
+    for (unsigned int i = 0; i < _MULTIPLICITY; ++i)
         _children.emplace_back(this, i);
-    }
     for (auto ptr = _data.begin(); ptr != _data.end(); ++ptr) {
-        for (auto&& child : _children) {
+        for (auto&& child : _children)
             child.addData(*ptr);
-        }
     }
     _data.clear();
 }
@@ -300,9 +281,8 @@ OctreeIterator::OctreeIterator() : _node(nullptr) {}
 OctreeIterator::OctreeIterator(const Octree& node) : _node(&node)
 {
     // find the leftmost leaf
-    while (_node->hasChildren()) {
+    while (_node->hasChildren())
         _node = &_node->_children[0];
-    }
 }
 
 OctreeIterator& OctreeIterator::operator=(const OctreeIterator& other)
@@ -343,9 +323,8 @@ OctreeIterator& OctreeIterator::operator++()
     if (_node->_idx < _node->_parent->_children.size() - 1) {
         _node = &_node->_parent->_children[_node->_idx + 1];
 
-        while (_node->hasChildren()) {
+        while (_node->hasChildren())
             _node = &_node->_children[0];
-        }
 
         return *this;
     }
@@ -354,9 +333,8 @@ OctreeIterator& OctreeIterator::operator++()
     _node = _node->_parent;
 
     // reached the root: at end
-    if (_node && _node->_parent == nullptr) {
+    if (_node && _node->_parent == nullptr)
         _node = nullptr;
-    }
 
     return ++(*this);
 }
@@ -372,9 +350,8 @@ unsigned int Octree::numChambers() const
 {
     if (hasChildren()) {
         unsigned int count = 0;
-        for (auto&& child : _children) {
+        for (auto&& child : _children)
             count += child.numChambers();
-        }
         return count;
     }
     return 1;

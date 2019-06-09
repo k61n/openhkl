@@ -40,9 +40,8 @@ void RFactor::calculate(const MergedData& data)
         const double n = double(peak.redundancy());
 
         // skip if there are fewer than two peaks
-        if (n < 1.999) {
+        if (n < 1.999)
             continue;
-        }
 
         const double Iave = peak.intensity().value();
         const double Fmeas = std::sqrt(n / (n - 1));

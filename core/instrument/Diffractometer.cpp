@@ -29,9 +29,8 @@ Diffractometer* Diffractometer::create(const std::string& name)
 
     YAML::Node instrumentDefinition = findResource({"instruments", name});
 
-    if (!instrumentDefinition["instrument"]) {
+    if (!instrumentDefinition["instrument"])
         throw std::runtime_error("Invalid instrument definition: missing 'instrument root node'");
-    }
 
     Diffractometer* diffractometer;
 

@@ -92,9 +92,8 @@ void PeaksItem::removeUnitCell(nsx::sptrUnitCell unit_cell)
     auto all_peaks = allPeaks();
 
     for (auto peak : all_peaks) {
-        if (peak->unitCell() != unit_cell) {
+        if (peak->unitCell() != unit_cell)
             continue;
-        }
         peak->setUnitCell(nullptr);
     }
 
@@ -108,13 +107,11 @@ nsx::PeakList PeaksItem::selectedPeaks()
     for (auto i = 0; i < rowCount(); ++i) {
         auto& list = dynamic_cast<PeakListItem&>(*child(i));
 
-        if (list.checkState() != Qt::Checked) {
+        if (list.checkState() != Qt::Checked)
             continue;
-        }
 
-        for (auto&& peak : list.peaks()) {
+        for (auto&& peak : list.peaks())
             peaks.push_back(peak);
-        }
     }
     return peaks;
 }
@@ -125,17 +122,15 @@ void PeaksItem::normalizeToMonitor()
     double factor = QInputDialog::getDouble(
         nullptr, "Enter normalization factor", "", 1.0e4, 1.0e-9, 1.0e9, 3, &ok);
 
-    if (!ok) {
+    if (!ok)
         return;
-    }
 
     auto selected_peaks = selectedPeaks();
 
     for (auto peak : selected_peaks) {
         auto data = peak->data();
-        if (!data) {
+        if (!data)
             continue;
-        }
 
         double monitor = data->reader()->metadata().key<double>("monitor");
 
@@ -150,9 +145,8 @@ nsx::PeakList PeaksItem::allPeaks()
     for (auto i = 0; i < rowCount(); ++i) {
         auto& list = dynamic_cast<PeakListItem&>(*child(i));
 
-        for (auto&& peak : list.peaks()) {
+        for (auto&& peak : list.peaks())
             peaks.push_back(peak);
-        }
     }
     return peaks;
 }
@@ -163,9 +157,8 @@ void PeaksItem::integratePeaks()
     auto&& selected_peaks = selectedPeaks();
     auto& library = exp_item->libraryItem()->library();
 
-    if (!library) {
+    if (!library)
         throw std::runtime_error("Error: cannot integrate weak peaks without a shape library!");
-    }
 
     nsx::info() << "Reintegrating peaks...";
 
@@ -190,9 +183,8 @@ void PeaksItem::integratePeaks()
         return new nsx::GaussianIntegrator(dialog->fitCenter(), dialog->fitCov());
     };
 
-    for (const auto& pair : integrator_map) {
+    for (const auto& pair : integrator_map)
         integrator_names.push_back(pair.first);
-    }
 
     dialog->setIntegrators(integrator_names);
 
@@ -231,9 +223,8 @@ void PeaksItem::integratePeaks()
 void PeaksItem::findSpaceGroup()
 {
     std::unique_ptr<DialogSpaceGroup> dialog(new DialogSpaceGroup(selectedPeaks()));
-    if (!dialog->exec()) {
+    if (!dialog->exec())
         return;
-    }
     emit model()->itemChanged(this);
 }
 
@@ -258,9 +249,8 @@ void PeaksItem::absorptionCorrection()
 {
     // todo: check that this is correct!
     std::unique_ptr<DialogMCAbsorption> dialog(new DialogMCAbsorption(experimentItem()));
-    if (!dialog->exec()) {
+    if (!dialog->exec())
         return;
-    }
 }
 
 void PeaksItem::buildShapeLibrary()
@@ -294,15 +284,13 @@ void PeaksItem::buildShapeLibrary()
         new DialogShapeLibrary(experimentItem(), unit_cell, peaks));
 
     // rejected
-    if (!dialog->exec()) {
+    if (!dialog->exec())
         return;
-    }
 
     auto new_library = dialog->library();
 
-    if (!new_library) {
+    if (!new_library)
         return;
-    }
 
     exp_item->libraryItem()->library() = new_library;
     nsx::info() << "Update profiles of " << peaks.size() << " peaks";
@@ -370,9 +358,8 @@ void PeaksItem::autoAssignUnitCell()
     }
 
     for (auto peak : peaks) {
-        if (!peak->enabled()) {
+        if (!peak->enabled())
             continue;
-        }
 
         Eigen::RowVector3d hkl;
         bool assigned = false;
@@ -387,9 +374,8 @@ void PeaksItem::autoAssignUnitCell()
         }
 
         // could not assign unit cell
-        if (assigned == false) {
+        if (assigned == false)
             peak->setSelected(false);
-        }
     }
     nsx::debug() << "Done auto assigning unit cells";
 

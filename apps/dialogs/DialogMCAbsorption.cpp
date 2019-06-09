@@ -53,9 +53,8 @@ DialogMCAbsorption::DialogMCAbsorption(ExperimentItem* experiment_item, QWidget*
 
     if (cells.size() > 0) {
         ui->unitCells->setEnabled(true);
-        for (unsigned int i = 0; i < cells.size(); ++i) {
+        for (unsigned int i = 0; i < cells.size(); ++i)
             ui->unitCells->addItem("Crystal" + QString::number(i + 1));
-        }
     }
     ui->progressBar_MCStatus->setValue(0);
 }
@@ -67,9 +66,8 @@ DialogMCAbsorption::~DialogMCAbsorption()
 
 void DialogMCAbsorption::on_pushButton_run_pressed()
 {
-    if (!ui->unitCells->isEnabled()) {
+    if (!ui->unitCells->isEnabled())
         return;
-    }
 
     auto experiment = _experiment_item->experiment();
 

@@ -78,14 +78,12 @@ bool MatrixParser::operator()(
     size_t index(0);
     std::stringstream ss;
     ss.write(begin, buffer_size);
-    while (index < n_elements && ss >> c) {
+    while (index < n_elements && ss >> c)
         data(index++) = c;
-    }
 
     for (size_t i = 0; i < n_rows; ++i) {
-        for (size_t j = 0; j < n_cols; ++j) {
+        for (size_t j = 0; j < n_cols; ++j)
             matrix(i, j) = data(i * s1 + j * s2 + offset);
-        }
     }
 
     return ss.eof() && index == n_elements;

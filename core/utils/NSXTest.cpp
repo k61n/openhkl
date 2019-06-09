@@ -27,9 +27,8 @@ NSXTest::~NSXTest()
               << " failures -- " << _n_skipped << " skipped.";
     std::cout << std::endl;
 
-    if (_n_failures > 0) {
+    if (_n_failures > 0)
         std::exit(1);
-    }
 }
 
 void NSXTest::testCheckAssert(

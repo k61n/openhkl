@@ -45,9 +45,8 @@ void CopyPasteTableView::keyPressEvent(QKeyEvent* event)
             QItemSelectionRange range = selectionModel()->selection().first();
             for (auto i = range.top(); i <= range.bottom(); ++i) {
                 QStringList rowContents;
-                for (auto j = range.left(); j <= range.right(); ++j) {
+                for (auto j = range.left(); j <= range.right(); ++j)
                     rowContents << model()->index(i, j).data().toString();
-                }
                 text += rowContents.join("\t");
                 text += "\n";
             }

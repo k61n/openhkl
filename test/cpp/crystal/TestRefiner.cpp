@@ -40,9 +40,8 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
 
     auto callback = [progressHandler]() {
         auto log = progressHandler->getLog();
-        for (auto&& msg : log) {
+        for (auto&& msg : log)
             std::cout << msg << std::endl;
-        }
     };
 
     progressHandler->setCallback(callback);
@@ -118,9 +117,8 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
 
     CHECK(refiner.batches().size() == 1);
 
-    for (auto&& batch : refiner.batches()) {
+    for (auto&& batch : refiner.batches())
         CHECK(batch.peaks().size() > 200);
-    }
 
     refiner.refineUB();
     refiner.refineSamplePosition();

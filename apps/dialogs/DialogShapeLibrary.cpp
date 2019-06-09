@@ -51,9 +51,8 @@ DialogShapeLibrary::DialogShapeLibrary(
     ui->kabsch->setCheckable(true);
 
     // get list of datasets
-    for (auto p : _peaks) {
+    for (auto p : _peaks)
         _data.insert(p->data());
-    }
 
     connect(ui->calculate, SIGNAL(released()), this, SLOT(calculate()));
     connect(ui->build, SIGNAL(released()), this, SLOT(build()));
@@ -127,20 +126,17 @@ void DialogShapeLibrary::build()
     nsx::PeakList fit_peaks;
 
     for (auto peak : _peaks) {
-        if (!peak->enabled()) {
+        if (!peak->enabled())
             continue;
-        }
         double d = 1.0 / peak->q().rowVector().norm();
 
-        if (d > ui->dMax->value() || d < ui->dMin->value()) {
+        if (d > ui->dMax->value() || d < ui->dMin->value())
             continue;
-        }
 
         auto inten = peak->correctedIntensity();
 
-        if (inten.value() <= ui->Isigma->value() * inten.sigma()) {
+        if (inten.value() <= ui->Isigma->value() * inten.sigma())
             continue;
-        }
         fit_peaks.push_back(peak);
     }
 
@@ -149,9 +145,8 @@ void DialogShapeLibrary::build()
     auto nz = ui->nz->value();
 
     // update the frame slider if necessary
-    if (ui->drawFrame->maximum() != nz) {
+    if (ui->drawFrame->maximum() != nz)
         ui->drawFrame->setMaximum(nz - 1);
-    }
 
     nsx::AABB aabb;
 
@@ -218,9 +213,8 @@ void DialogShapeLibrary::calculate()
 
     for (auto i = 0; i < nx; ++i) {
         for (auto j = 0; j < ny; ++j) {
-            for (auto k = 0; k < nz; ++k) {
+            for (auto k = 0; k < nz; ++k)
                 _maximum = std::max(_maximum, _profile(i, j, k));
-            }
         }
     }
 
@@ -235,9 +229,8 @@ void DialogShapeLibrary::calculate()
 
 void DialogShapeLibrary::drawFrame(int value)
 {
-    if (value < 0 || value >= _profile.shape()[2]) {
+    if (value < 0 || value >= _profile.shape()[2])
         throw std::runtime_error("DialogShapeLibrary::drawFrame(): invalid frame value");
-    }
 
     auto shape = _profile.shape();
     auto scene = ui->preview->scene();

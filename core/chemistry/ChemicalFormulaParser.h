@@ -65,9 +65,8 @@ struct ValidateIsotopeContents {
     {
         double sumRatio(0.0);
         for (const auto& p : mixture) {
-            if (p.second < 0.0 || p.second > 1.0) {
+            if (p.second < 0.0 || p.second > 1.0)
                 return false;
-            }
             sumRatio += p.second;
         }
         return (std::abs(1.0 - sumRatio) < 1.0e-6);
@@ -88,13 +87,11 @@ struct BuildElementFromIsotopeMixture {
 
         double sumRatio(0.0);
         for (const auto& p : mixture) {
-            if (p.second < 0.0 || p.second > 1.0) {
+            if (p.second < 0.0 || p.second > 1.0)
                 return false;
-            }
             std::string isotopeSymbol = imgr->property<std::string>(p.first, "symbol");
-            if (isotopeSymbol.compare(elementSymbol) != 0) {
+            if (isotopeSymbol.compare(elementSymbol) != 0)
                 return false;
-            }
             sumRatio += p.second;
         }
         if (std::abs(1.0 - sumRatio) < 1.0e-6) {
@@ -138,9 +135,8 @@ struct ValidateCompoundContents {
     {
         double sumRatio(0.0);
         for (const auto& p : mixture) {
-            if (p.second < 0.0 || p.second > 1.0) {
+            if (p.second < 0.0 || p.second > 1.0)
                 return false;
-            }
             sumRatio += p.second;
         }
         return (std::abs(1.0 - sumRatio) < 1.0e-6);

@@ -31,16 +31,14 @@ void StdStreamWrapper::print(const std::string& message)
 
 void StdStreamWrapper::printPrefix()
 {
-    if (_prefix) {
+    if (_prefix)
         _stream << _prefix();
-    }
 }
 
 void StdStreamWrapper::printSuffix()
 {
-    if (_suffix) {
+    if (_suffix)
         _stream << _suffix();
-    }
     _stream.flush();
 }
 

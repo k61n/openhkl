@@ -60,33 +60,29 @@ const Eigen::RowVector3i& MillerIndex::rowVector() const
 
 int MillerIndex::operator[](int index) const
 {
-    if (index < 0 || index > 2) {
+    if (index < 0 || index > 2)
         throw std::runtime_error("Invalid index for a 3D vector");
-    }
     return _hkl[index];
 }
 
 int& MillerIndex::operator[](int index)
 {
-    if (index < 0 || index > 2) {
+    if (index < 0 || index > 2)
         throw std::runtime_error("Invalid index for a 3D vector");
-    }
     return _hkl[index];
 }
 
 int MillerIndex::operator()(int index) const
 {
-    if (index < 0 || index > 2) {
+    if (index < 0 || index > 2)
         throw std::runtime_error("Invalid index for a 3D vector");
-    }
     return _hkl[index];
 }
 
 int& MillerIndex::operator()(int index)
 {
-    if (index < 0 || index > 2) {
+    if (index < 0 || index > 2)
         throw std::runtime_error("Invalid index for a 3D vector");
-    }
     return _hkl[index];
 }
 
@@ -104,9 +100,8 @@ std::ostream& operator<<(std::ostream& os, const MillerIndex& hkl)
 bool MillerIndex::operator<(const MillerIndex& other) const
 {
     for (int i = 0; i < 3; i++) {
-        if (_hkl(i) != other._hkl(i)) {
+        if (_hkl(i) != other._hkl(i))
             return _hkl(i) < other._hkl(i);
-        }
     }
     return false;
 }

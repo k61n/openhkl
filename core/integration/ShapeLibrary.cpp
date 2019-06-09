@@ -36,9 +36,8 @@ static PeakList buildPeaksFromMillerIndices(
     std::vector<ReciprocalVector> qs;
     PeakList peaks;
 
-    for (auto idx : hkls) {
+    for (auto idx : hkls)
         qs.emplace_back(idx.rowVector().cast<double>() * BU);
-    }
 
     auto events = data->events(qs);
 
@@ -223,9 +222,8 @@ bool ShapeLibrary::addPeak(sptrPeak3D peak, Profile3D&& profile, Profile1D&& int
     Eigen::VectorXd w = solver.eigenvalues();
 
     // peak has one axis too small. Negated expression to handle nans
-    if (!(w.minCoeff() > 1e-2)) {
+    if (!(w.minCoeff() > 1e-2))
         return false;
-    }
     _profiles[peak].first = std::move(profile);
     _profiles[peak].second = std::move(integrated_profile);
     return true;
@@ -269,9 +267,8 @@ void ShapeLibrary::updateFit(int num_iterations)
             Eigen::Matrix3d delta = cov - pred_cov;
 
             for (int i = 0; i < 3; ++i) {
-                for (int j = i; j < 3; ++j) {
+                for (int j = i; j < 3; ++j)
                     r(k++) = delta(i,j);
-                }
             }
         }
 
@@ -339,13 +336,11 @@ ShapeLibrary::meanProfile1D(const DetectorEvent& ev, double radius, double nfram
     for (auto peak : neighbors) {
         const auto& profile = _profiles.find(peak)->second.second.profile();
 
-        if (mean_profile.size() == 0) {
+        if (mean_profile.size() == 0)
             mean_profile.resize(profile.size());
-        }
 
-        for (size_t i = 0; i < mean_profile.size(); ++i) {
+        for (size_t i = 0; i < mean_profile.size(); ++i)
             mean_profile[i] += profile[i] * inv_N;
-        }
     }
     return mean_profile;
 }
@@ -359,18 +354,15 @@ PeakList ShapeLibrary::findNeighbors(const DetectorEvent& ev, double radius, dou
         auto peak = pair.first;
         Eigen::Vector3d dc = center - peak->shape().center();
         // too far away on detector
-        if (dc(0) * dc(0) + dc(1) * dc(1) > radius * radius) {
+        if (dc(0) * dc(0) + dc(1) * dc(1) > radius * radius)
             continue;
-        }
         // too far away in frame number
-        if (std::fabs(dc(2)) > nframes) {
+        if (std::fabs(dc(2)) > nframes)
             continue;
-        }
         neighbors.push_back(peak);
     }
-    if (neighbors.size() == 0) {
+    if (neighbors.size() == 0)
         throw std::runtime_error("Error, no neighboring profiles found.");
-    }
     return neighbors;
 }
 

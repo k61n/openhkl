@@ -32,9 +32,8 @@ QStringList allInstrumentNames()
 
     QStringList user_diffractometer_files =
         diffractometersDirectory.entryList({"*.yml"}, QDir::Files, QDir::Name);
-    for (auto&& diffractometer : user_diffractometer_files) {
+    for (auto&& diffractometer : user_diffractometer_files)
         resources_name.insert(QFileInfo(diffractometer).baseName().toStdString());
-    }
 
     QStringList list;
     for (auto res : resources_name)

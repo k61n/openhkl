@@ -55,9 +55,8 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
 
     std::vector<nsx::ReciprocalVector> qs;
 
-    for (auto index : reflections) {
+    for (auto index : reflections)
         qs.emplace_back(index.rowVector().cast<double>() * BU);
-    }
 
     auto events = data->events(qs);
 
@@ -86,9 +85,8 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
 
     nsx::AutoIndexer indexer;
 
-    for (auto peak : peaks) {
+    for (auto peak : peaks)
         indexer.addPeak(peak);
-    }
 
     CHECK_NOTHROW(indexer.autoIndex(params));
 

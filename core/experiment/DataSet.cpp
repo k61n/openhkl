@@ -52,9 +52,8 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader)
     , _background(0.0)
     , _reader(reader)
 {
-    if (!fileExists(_filename)) {
+    if (!fileExists(_filename))
         throw std::runtime_error("IData, file: " + _filename + " does not exist");
-    }
 
     auto diffractometer = _reader->diffractometer();
 
@@ -68,9 +67,8 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader)
     // Getting Scan parameters for the detector
     _states.reserve(_nFrames);
 
-    for (unsigned int i = 0; i < _nFrames; ++i) {
+    for (unsigned int i = 0; i < _nFrames; ++i)
         _states.push_back(_reader->state(i));
-    }
 }
 
 DataSet::~DataSet()
@@ -81,9 +79,8 @@ DataSet::~DataSet()
 int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z)
 {
     // Check that the voxel is inside the limit of the data
-    if (z >= _nFrames || y >= _ncols || x >= _nrows) {
+    if (z >= _nFrames || y >= _ncols || x >= _nrows)
         return 0;
-    }
     return frame(z)(x, y);
 }
 
@@ -183,9 +180,8 @@ void DataSet::saveHDF5(const std::string& filename) // const
                                   // speed/compression for diffraction data
 
     r = register_blosc(&version, &date);
-    if (r <= 0) {
+    if (r <= 0)
         throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
-    }
 
     // caught by valgrind memcheck
     free(version);
@@ -311,9 +307,8 @@ void DataSet::addMask(IMask* mask)
 void DataSet::removeMask(IMask* mask)
 {
     auto&& p = _masks.find(mask);
-    if (p != _masks.end()) {
+    if (p != _masks.end())
         _masks.erase(mask);
-    }
 }
 
 const std::set<IMask*>& DataSet::masks()
@@ -325,9 +320,8 @@ void DataSet::maskPeaks(PeakList& peaks) const
 {
     for (auto peak : peaks) {
         // peak belongs to another dataset
-        if (peak->data().get() != this) {
+        if (peak->data().get() != this)
             continue;
-        }
 
         peak->setMasked(false);
         for (auto&& m : _masks) {
@@ -366,9 +360,8 @@ std::vector<DetectorEvent> DataSet::events(const std::vector<ReciprocalVector>& 
         bool s1 = compute_sign(q_vect, state1);
 
         // does not cross Ewald sphere, or crosses more than once
-        if (s0 == s1) {
+        if (s0 == s1)
             continue;
-        }
 
         // now use bisection method to compute intersection to good accuracy
         while (f1 - f0 > 1e-10) {

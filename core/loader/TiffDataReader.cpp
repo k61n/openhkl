@@ -26,9 +26,8 @@ TiffDataReader::TiffDataReader(const std::string& filename, Diffractometer* diff
 
     _file = TIFFOpen(filename.c_str(), "r");
 
-    if (!_file) {
+    if (!_file)
         throw std::runtime_error("Could not read " + filename + " as tif file");
-    }
 
     TIFFGetField(_file, TIFFTAG_IMAGEWIDTH, &w);
     TIFFGetField(_file, TIFFTAG_IMAGELENGTH, &h);
@@ -60,9 +59,8 @@ TiffDataReader::TiffDataReader(const std::string& filename, Diffractometer* diff
 
 void TiffDataReader::open()
 {
-    if (_isOpened) {
+    if (_isOpened)
         return;
-    }
 
     try {
         _file = TIFFOpen(_metadata.key<std::string>("filename").c_str(), "r");
@@ -74,17 +72,15 @@ void TiffDataReader::open()
 
 void TiffDataReader::close()
 {
-    if (_isOpened) {
+    if (_isOpened)
         TIFFClose(_file);
-    }
     _isOpened = false;
 }
 
 Eigen::MatrixXi TiffDataReader::data(std::size_t /*frame*/)
 {
-    if (!_isOpened) {
+    if (!_isOpened)
         open();
-    }
 
     if (_bits == 16) {
 
@@ -101,9 +97,8 @@ Eigen::MatrixXi TiffDataReader::data(std::size_t /*frame*/)
         Eigen::Matrix<uint32, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> data32(
             _nRows, _nCols);
         // Read line per line
-        for (unsigned short int i = 0; i < _nRows; ++i) {
+        for (unsigned short int i = 0; i < _nRows; ++i)
             TIFFReadScanline(_file, (char*)&data32(i, 0), i);
-        }
         // Not very nice, but need to copy the 32bits data to int
         return data32.cast<int>();
     }

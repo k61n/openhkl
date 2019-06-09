@@ -41,9 +41,8 @@ RealMatrix ConstantConvolver::_matrix(int nrows, int ncols) const
     const int box_size = static_cast<int>(_parameters.at("box_size"));
 
     // sanity checks
-    if (box_size <= 0) {
+    if (box_size <= 0)
         throw std::runtime_error("Constant kernel called with invalid parameters");
-    }
 
     const double norm_factor = static_cast<double>(box_size * box_size);
 

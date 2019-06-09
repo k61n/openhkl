@@ -154,9 +154,8 @@ void DialogAbsorption::readInfoFile(const std::string& filename)
         _filepath = dir.absolutePath().toStdString();
         //
         getline(file, line);
-        if (line.find("camera:") != std::string::npos) {
+        if (line.find("camera:") != std::string::npos)
             getline(file, line);
-        }
         while (!file.eof()) {
             line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
             std::stringstream is(line);
@@ -190,9 +189,8 @@ void DialogAbsorption::on_button_openFile_pressed()
     QString fileName =
         dialog.getOpenFileName(this, "Select Video file", "", tr("Video file (*.info)"));
     // No file selected, do nothing
-    if (fileName.isEmpty()) {
+    if (fileName.isEmpty())
         return;
-    }
     readInfoFile(fileName.toStdString());
 }
 

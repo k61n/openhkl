@@ -74,9 +74,8 @@ ILLDataReader::ILLDataReader(const std::string& filename, Diffractometer* diffra
 
     size_t predicted_file_size = _headerSize + _nFrames * (_skipChar + _dataLength);
 
-    if (predicted_file_size != actual_file_size) {
+    if (predicted_file_size != actual_file_size)
         throw std::runtime_error("Error when reading " + filename + ". The file is corrupted.");
-    }
 
     // Gets the value of the monitor for the first frame
     std::vector<int> vi;
@@ -267,9 +266,8 @@ void ILLDataReader::open()
 
 void ILLDataReader::close()
 {
-    if (!_isOpened) {
+    if (!_isOpened)
         return;
-    }
     _map = boost::move(boost::interprocess::mapped_region());
     _isOpened = false;
 }
@@ -315,9 +313,8 @@ void ILLDataReader::readControlIBlock(std::stringstream& buffer)
     goToLine(buffer, 13, 0);
 
     // Read the metadata keys
-    for (size_t i = 0; i < tot; ++i) {
+    for (size_t i = 0; i < tot; ++i)
         buffer >> Ientries[i];
-    }
 
     // Goto the line containing values
     goToLine(buffer, int(13 + lines), 0);
@@ -325,9 +322,8 @@ void ILLDataReader::readControlIBlock(std::stringstream& buffer)
     for (size_t i = 0; i < tot; ++i) {
         buffer >> value;
         // Skip any 0 values in this block
-        if (value != 0) {
+        if (value != 0)
             _metadata.add<int>(Ientries[i], value);
-        }
     }
     _currentLine = 13 + 2 * lines;
 }
@@ -381,9 +377,8 @@ void ILLDataReader::readControlFBlock(std::stringstream& buffer)
     for (size_t i = 0; i < size_t(nTot); ++i) {
         buffer >> value;
         // Ignore spare member blocks.
-        if (keys[i].compare("(spare)")) {
+        if (keys[i].compare("(spare)"))
             _metadata.add<double>(keys[i], value);
-        }
     }
     _currentLine += size_t(fullLines + missing);
 }
@@ -436,9 +431,8 @@ void ILLDataReader::readMetadata(const char* buf)
     std::string s(buf);
     std::size_t endMetadata = s.find("SSSSSSSS");
 
-    if (endMetadata == std::string::npos) {
+    if (endMetadata == std::string::npos)
         throw std::runtime_error("Could not find end of metadata block");
-    }
 
     // Number of characters up to the "SSSS...." line
     _headerSize = endMetadata;

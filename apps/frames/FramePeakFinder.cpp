@@ -59,9 +59,8 @@ FramePeakFinder* FramePeakFinder::_instance = nullptr;
 
 FramePeakFinder* FramePeakFinder::create(ExperimentItem* experiment_item, const nsx::DataList& data)
 {
-    if (!_instance) {
+    if (!_instance)
         _instance = new FramePeakFinder(experiment_item, data);
-    }
 
     return _instance;
 }
@@ -94,9 +93,8 @@ FramePeakFinder::FramePeakFinder(ExperimentItem* experiment_item, const nsx::Dat
 
     _ui->convolution_kernels->clear();
     nsx::ConvolverFactory convolver_factory;
-    for (auto&& convolution_kernel : convolver_factory.callbacks()) {
+    for (auto&& convolution_kernel : convolver_factory.callbacks())
         _ui->convolution_kernels->addItem(QString::fromStdString(convolution_kernel.first));
-    }
     _ui->convolution_kernels->setCurrentText("annular");
 
     QGraphicsScene* scene = new QGraphicsScene();
@@ -147,17 +145,15 @@ FramePeakFinder::~FramePeakFinder()
 {
     delete _ui;
 
-    if (_instance) {
+    if (_instance)
         _instance = nullptr;
-    }
 }
 
 void FramePeakFinder::slotTabRemoved(int index)
 {
     auto tab = dynamic_cast<WidgetFoundPeaks*>(_ui->tabs->widget(index));
-    if (!tab) {
+    if (!tab)
         return;
-    }
 
     _ui->tabs->removeTab(index);
 
@@ -168,9 +164,8 @@ void FramePeakFinder::slotTabEdited(int index)
 {
     auto found_peaks_tab = dynamic_cast<WidgetFoundPeaks*>(_ui->tabs->widget(index));
 
-    if (!found_peaks_tab) {
+    if (!found_peaks_tab)
         return;
-    }
 
     QInputDialog dialog(this);
     dialog.setLabelText("");
@@ -178,22 +173,19 @@ void FramePeakFinder::slotTabEdited(int index)
     auto pos = mapToGlobal(_ui->tabs->pos());
 
     int width(0);
-    for (auto i = 0; i < index; ++i) {
+    for (auto i = 0; i < index; ++i)
         width += _ui->tabs->tabBar()->tabRect(index).width();
-    }
 
     int height = _ui->tabs->tabBar()->tabRect(index).height();
 
     dialog.move(pos.x() + width, pos.y() + height);
 
-    if (dialog.exec() == QDialog::Rejected) {
+    if (dialog.exec() == QDialog::Rejected)
         return;
-    }
 
     QString tab_name = dialog.textValue();
-    if (tab_name.isEmpty()) {
+    if (tab_name.isEmpty())
         return;
-    }
 
     _ui->tabs->setTabText(index, tab_name);
 }
@@ -213,22 +205,19 @@ void FramePeakFinder::accept()
     for (auto i = 0; i < _ui->tabs->count(); ++i) {
 
         auto widget_found_peaks = dynamic_cast<WidgetFoundPeaks*>(_ui->tabs->widget(i));
-        if (!widget_found_peaks) {
+        if (!widget_found_peaks)
             continue;
-        }
 
         auto&& found_peaks = widget_found_peaks->selectedPeaks();
 
-        if (found_peaks.empty()) {
+        if (found_peaks.empty())
             continue;
-        }
 
         auto checkbox =
             dynamic_cast<QCheckBox*>(_ui->tabs->tabBar()->tabButton(i, QTabBar::LeftSide));
 
-        if (!checkbox->isChecked()) {
+        if (!checkbox->isChecked())
             continue;
-        }
 
         auto item = new PeakListItem(found_peaks);
         item->setText(_ui->tabs->tabText(i));
@@ -252,9 +241,8 @@ void FramePeakFinder::run()
     auto progressHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler);
 
     nsx::DataList data;
-    for (int i = 0; i < _ui->selected_data->count(); ++i) {
+    for (int i = 0; i < _ui->selected_data->count(); ++i)
         data.push_back(_ui->selected_data->itemData(i, Qt::UserRole).value<nsx::sptrDataSet>());
-    }
 
     nsx::PeakFinder peak_finder;
 
@@ -416,9 +404,8 @@ void FramePeakFinder::preview()
         double threshold_value = _ui->threshold->value();
 
         for (int i = 0; i < nrows; ++i) {
-            for (int j = 0; j < ncols; ++j) {
+            for (int j = 0; j < ncols; ++j)
                 convolved_frame(i, j) = convolved_frame(i, j) < threshold_value ? 0 : 1;
-            }
         }
     }
 
@@ -427,9 +414,8 @@ void FramePeakFinder::preview()
     double maxVal = convolved_frame.maxCoeff();
 
     // avoid division by zero
-    if (maxVal - minVal <= 0.0) {
+    if (maxVal - minVal <= 0.0)
         maxVal = minVal + 1.0;
-    }
     convolved_frame.array() -= minVal;
     convolved_frame.array() /= maxVal - minVal;
 

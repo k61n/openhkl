@@ -74,9 +74,8 @@ int register_blosc(char** version, char** date)
 #endif
 
     retval = H5Zregister(&filter_class);
-    if (retval < 0) {
+    if (retval < 0)
         PUSH_ERR("register_blosc", H5E_CANTREGISTER, "Can't register Blosc filter");
-    }
     *version = strdup(BLOSC_VERSION_STRING);
     *date = strdup(BLOSC_VERSION_DATE);
     return 1; /* lib is available */
@@ -150,9 +149,8 @@ herr_t blosc_set_local(hid_t dcpl, hid_t type, hid_t space)
 
     /* Get the size of the chunk */
     bufsize = typesize;
-    for (i = 0; i < ndims; i++) {
+    for (i = 0; i < ndims; i++)
         bufsize *= chunkdims[i];
-    }
     values[3] = bufsize;
 
 #ifdef BLOSC_DEBUG

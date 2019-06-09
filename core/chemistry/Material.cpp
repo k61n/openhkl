@@ -29,9 +29,8 @@ Material::Material(const std::string& formula) : _formula(formula), _isotopes(),
     ChemicalFormulaParser<std::string::const_iterator> parser;
     bool success = boost::spirit::qi::phrase_parse(
         formula.begin(), formula.end(), parser, boost::spirit::qi::blank, _isotopes);
-    if (!success) {
+    if (!success)
         throw std::runtime_error("Invalid input formula");
-    }
 }
 
 Material* Material::clone() const
@@ -56,9 +55,8 @@ double Material::massDensity() const
 
 void Material::setMassDensity(double massDensity)
 {
-    if (massDensity <= 0.0) {
+    if (massDensity <= 0.0)
         throw std::runtime_error("Invalid mass density");
-    }
     _massDensity = massDensity;
 }
 
@@ -87,9 +85,8 @@ isotopeContents Material::massFractions() const
         molarMass += massFractions[p.first];
     }
 
-    for (auto& p : massFractions) {
+    for (auto& p : massFractions)
         p.second /= molarMass;
-    }
 
     return massFractions;
 }
@@ -114,9 +111,8 @@ double Material::muIncoherent() const
     IsotopeDatabaseManager* imgr = IsotopeDatabaseManager::Instance();
 
     double scatteringMuFactor = 0.0;
-    for (const auto& p : atomicNumberDensity()) {
+    for (const auto& p : atomicNumberDensity())
         scatteringMuFactor += p.second * imgr->property<double>(p.first, "xs_incoherent");
-    }
     return scatteringMuFactor;
 }
 
@@ -136,9 +132,8 @@ double Material::muAbsorption(double lambda) const
 void Material::print(std::ostream& os) const
 {
     os << "Formula = " << _formula << std::endl;
-    for (const auto& p : _isotopes) {
+    for (const auto& p : _isotopes)
         os << "Isotope " << p.first << " --- " << p.second << std::endl;
-    }
 }
 
 std::ostream& operator<<(std::ostream& os, const Material& material)

@@ -44,17 +44,15 @@ CutLineGraphicsItem::~CutLineGraphicsItem() {}
 void CutLineGraphicsItem::plot(SXPlot* plot)
 {
     auto p = dynamic_cast<SimplePlot*>(plot);
-    if (!p) {
+    if (!p)
         return;
-    }
     p->xAxis->setLabel("Interpolation point");
     p->yAxis->setLabel("Intensity (counts)");
 
     // Set the pointer to the detector scene to the scene that holds the cutter
     auto detPtr = dynamic_cast<DetectorScene*>(scene());
-    if (!detPtr) {
+    if (!detPtr)
         return;
-    }
     QVector<double> x(_nPoints);
     QVector<double> y(_nPoints);
     QVector<double> e(_nPoints);
@@ -123,16 +121,13 @@ void CutLineGraphicsItem::setNPoints(int nPoints)
 
 void CutLineGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent* event)
 {
-    if (!isVisible()) {
+    if (!isVisible())
         return;
-    }
-    if (!isSelected()) {
+    if (!isSelected())
         return;
-    }
     _nPoints += event->delta() > 0 ? 1 : -1;
-    if (_nPoints <= 0) {
+    if (_nPoints <= 0)
         _nPoints = 1;
-    }
 }
 
 std::string CutLineGraphicsItem::getPlotType() const

@@ -184,9 +184,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), _ui(new Ui::MainW
         _ui->experimentTree, SIGNAL(inspectWidget(QWidget*)), this,
         SLOT(setInspectorWidget(QWidget*)));
 
-    for (auto&& action : _ui->menuColor_map->actions()) {
+    for (auto&& action : _ui->menuColor_map->actions())
         _ui->menuColor_map->removeAction(action);
-    }
 
     auto names = ColorMap::getColorMapNames();
 
@@ -416,9 +415,8 @@ void MainWindow::setInspectorWidget(QWidget* w)
 {
     // Ensure that previous Property Widget is deleted.
     auto widget = _ui->dockWidget_Property->widget();
-    if (widget) {
+    if (widget)
         delete widget;
-    }
 
     // Assign current property Widget
     _ui->dockWidget_Property->setWidget(w);

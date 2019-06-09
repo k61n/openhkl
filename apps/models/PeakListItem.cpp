@@ -39,9 +39,8 @@ QWidget* PeakListItem::inspectItem()
 void PeakListItem::removePeak(nsx::sptrPeak3D peak)
 {
     auto it = std::find(_peaks.begin(), _peaks.end(), peak);
-    if (it != _peaks.end()) {
+    if (it != _peaks.end())
         _peaks.erase(it);
-    }
 }
 
 nsx::PeakList& PeakListItem::peaks()

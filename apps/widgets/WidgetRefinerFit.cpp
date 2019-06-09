@@ -86,9 +86,8 @@ void WidgetRefinerFit::slotSelectedBatchChanged(int selected_batch)
 
     // If no data is selected, return
     auto current_data_item = _ui->selected_data->currentItem();
-    if (!current_data_item) {
+    if (!current_data_item)
         return;
-    }
 
     // If no refiner is set for this data, return
     auto data = current_data_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
@@ -143,9 +142,8 @@ void WidgetRefinerFit::slotSelectedFrameChanged(int selected_frame)
     auto current_item = _ui->selected_data->currentItem();
 
     // No data selected, return
-    if (!current_item) {
+    if (!current_item)
         return;
-    }
 
     auto data = current_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
 

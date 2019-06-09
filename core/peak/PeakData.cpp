@@ -46,9 +46,8 @@ void PeakData::computeStandard()
 
     _coords.resize(_events.size());
 
-    for (size_t i = 0; i < _events.size(); ++i) {
+    for (size_t i = 0; i < _events.size(); ++i)
         _coords[i] = _system.transform(_events[i]);
-    }
 }
 
 void PeakData::addEvent(const DetectorEvent& ev, double count)

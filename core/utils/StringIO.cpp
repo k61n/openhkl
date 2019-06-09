@@ -29,14 +29,12 @@ std::string trim(const std::string& input_string)
     size_t pos;
 
     pos = output_string.find_last_not_of(" \n\r\t");
-    if (pos != std::string::npos) {
+    if (pos != std::string::npos)
         output_string.erase(pos + 1);
-    }
 
     pos = output_string.find_first_not_of(" \n\r\t");
-    if (pos != std::string::npos) {
+    if (pos != std::string::npos)
         output_string.erase(0, pos);
-    }
 
     return output_string;
 }
@@ -72,9 +70,8 @@ std::string compress(const std::string& input_string)
 
 std::string join(const std::vector<std::string>& tokens, std::string delimiter)
 {
-    if (tokens.empty()) {
+    if (tokens.empty())
         return "";
-    }
 
     std::ostringstream ss;
     std::copy(

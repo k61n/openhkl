@@ -87,9 +87,8 @@ static void residuals(
 
 bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 {
-    if (!peak) {
+    if (!peak)
         return false;
-    }
 
     const size_t N = region.data().events().size();
 
@@ -127,15 +126,13 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     params.addParameter(&I);
 
     if (_fitCenter) {
-        for (size_t i = 0; i < 3; ++i) {
+        for (size_t i = 0; i < 3; ++i)
             params.addParameter(&x0(i));
-        }
     }
 
     if (_fitCov) {
-        for (size_t i = 0; i < 6; ++i) {
+        for (size_t i = 0; i < 6; ++i)
             params.addParameter(&a(i));
-        }
     }
 
     auto f = [&](Eigen::VectorXd& r) -> int {
@@ -152,31 +149,26 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
 
     try {
         bool success = min.fit(100);
-        if (!success) {
+        if (!success)
             return false;
-        }
     } catch (std::exception& e) {
         nsx::error() << "Gaussian fit failed: " << e.what();
         return false;
     }
 
     // consistency check: center should still be in dataset!
-    if (x0(0) < 0 || x0(0) >= peak->data()->nCols()) {
+    if (x0(0) < 0 || x0(0) >= peak->data()->nCols())
         return false;
-    }
-    if (x0(1) < 0 || x0(1) >= peak->data()->nRows()) {
+    if (x0(1) < 0 || x0(1) >= peak->data()->nRows())
         return false;
-    }
-    if (x0(2) < 0 || x0(2) >= peak->data()->nFrames()) {
+    if (x0(2) < 0 || x0(2) >= peak->data()->nFrames())
         return false;
-    }
 
     // consistency check: covariance matrix should be positive definite
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(from_cholesky(a));
 
-    if (solver.eigenvalues().minCoeff() <= 0) {
+    if (solver.eigenvalues().minCoeff() <= 0)
         return false;
-    }
 
     const auto& covar = min.covariance();
     _meanBackground = {B, covar(0, 0)};

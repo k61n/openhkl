@@ -31,9 +31,8 @@ Gonio::Gonio(const std::string& name) : _name(name) {}
 Gonio::Gonio(const Gonio& other) : _name(other._name)
 {
     _axes.reserve(other._axes.size());
-    for (auto&& ax : other._axes) {
+    for (auto&& ax : other._axes)
         _axes.emplace_back(std::unique_ptr<Axis>(ax->clone()));
-    }
 }
 
 Gonio::Gonio(const YAML::Node& node)
@@ -41,9 +40,8 @@ Gonio::Gonio(const YAML::Node& node)
     _name = node["name"] ? node["name"].as<std::string>() : "";
 
     // Sets the axis of the detector goniometer from the XML node
-    for (auto&& axisItem : node["axis"]) {
+    for (auto&& axisItem : node["axis"])
         _axes.emplace_back(std::unique_ptr<Axis>(Axis::create(axisItem)));
-    }
 }
 
 Gonio& Gonio::operator=(const Gonio& other)
@@ -51,9 +49,8 @@ Gonio& Gonio::operator=(const Gonio& other)
     if (this != &other) {
         _name = other._name;
         _axes.reserve(other._axes.size());
-        for (auto&& ax : other._axes) {
+        for (auto&& ax : other._axes)
             _axes.emplace_back(std::unique_ptr<Axis>(ax->clone()));
-        }
     }
 
     return *this;
@@ -68,18 +65,16 @@ size_t Gonio::nAxes() const
 
 Axis& Gonio::axis(size_t index)
 {
-    if (index >= _axes.size()) {
+    if (index >= _axes.size())
         throw std::runtime_error("Invalid axis id.");
-    }
 
     return *_axes[index];
 }
 
 const Axis& Gonio::axis(size_t index) const
 {
-    if (index >= _axes.size()) {
+    if (index >= _axes.size())
         throw std::runtime_error("Invalid axis id.");
-    }
 
     return *_axes[index];
 }
@@ -87,9 +82,8 @@ const Axis& Gonio::axis(size_t index) const
 Eigen::Transform<double, 3, Eigen::Affine>
 Gonio::affineMatrix(const std::vector<double>& state) const
 {
-    if (static_cast<size_t>(state.size()) != _axes.size()) {
+    if (static_cast<size_t>(state.size()) != _axes.size())
         throw std::range_error("Trying to set Gonio " + _name + " with wrong number of parameters");
-    }
 
     Eigen::Transform<double, 3, Eigen::Affine> result =
         Eigen::Transform<double, 3, Eigen::Affine>::Identity();

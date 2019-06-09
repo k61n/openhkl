@@ -113,9 +113,8 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
 
     _detectorStates.resize(_nFrames);
 
-    for (unsigned int i = 0; i < _nFrames; ++i) {
+    for (unsigned int i = 0; i < _nFrames; ++i)
         _detectorStates[i] = eigenToVector(dm.col(i));
-    }
 
     const auto& sample_gonio = _diffractometer->sample().gonio();
     size_t n_sample_gonio_axes = sample_gonio.nAxes();
@@ -154,26 +153,23 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
     dm *= deg;
 
     _sampleStates.resize(_nFrames);
-    for (unsigned int i = 0; i < _nFrames; ++i) {
+    for (unsigned int i = 0; i < _nFrames; ++i)
         _sampleStates[i] = eigenToVector(dm.col(i));
-    }
 
     _file->close();
 }
 
 void HDF5MetaDataReader::open()
 {
-    if (_isOpened) {
+    if (_isOpened)
         return;
-    }
 
     try {
         _file = std::unique_ptr<H5::H5File>(
             new H5::H5File(_metadata.key<std::string>("filename").c_str(), H5F_ACC_RDONLY));
     } catch (...) {
-        if (_file) {
+        if (_file)
             _file.reset();
-        }
         throw;
     }
 
@@ -184,9 +180,8 @@ void HDF5MetaDataReader::open()
     // Register blosc filter dynamically with HDF5
     char *version, *date;
     int r = register_blosc(&version, &date);
-    if (r <= 0) {
+    if (r <= 0)
         throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
-    }
 
     // Create new data set
     try {
@@ -222,9 +217,8 @@ void HDF5MetaDataReader::open()
 
 void HDF5MetaDataReader::close()
 {
-    if (!_isOpened) {
+    if (!_isOpened)
         return;
-    }
 
     _file->close();
     _space->close();

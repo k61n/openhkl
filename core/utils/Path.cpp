@@ -45,9 +45,8 @@ std::string fileBasename(const std::string& input_path)
 
     auto pos = output_path.find_last_of(fileSeparator());
 
-    if (pos != std::string::npos) {
+    if (pos != std::string::npos)
         output_path.erase(0, pos + 1);
-    }
     return output_path;
 }
 
@@ -74,9 +73,8 @@ std::string fileDirname(const std::string& input_path)
 
     auto pos = output_path.find_last_of(fileSeparator());
 
-    if (pos != std::string::npos) {
+    if (pos != std::string::npos)
         output_path.erase(pos, output_path.size() - 1);
-    }
 
     return output_path;
 }
@@ -105,9 +103,8 @@ std::string homeDirectory()
     const char* home_envvar = getenv("HOME");
 
     // Build the home directory from HOME environment variable
-    if (home_envvar) {
+    if (home_envvar)
         return std::string(home_envvar);
-    }
     // If HOME is not defined (on Windows it may happen) define the home
     // directory from USERPROFILE environment variable
     else {

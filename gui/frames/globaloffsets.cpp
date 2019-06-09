@@ -108,9 +108,8 @@ void GlobalOffsets::fit()
     }
 
     nsx::DataList selected_data;
-    for (auto item : selected_items) {
+    for (auto item : selected_items)
         selected_data.push_back(item->data(Qt::UserRole).value<nsx::sptrDataSet>());
-    }
 
     if (mode_ == offsetMode::DETECTOR) {
         // Fit the detector offsets with the selected data
@@ -120,9 +119,8 @@ void GlobalOffsets::fit()
             detector->fitGonioOffsets(selected_data, iterations->value(), tolerance->value());
 
         // The fit failed for whatever reason, return
-        if (!fit_results.success) {
+        if (!fit_results.success)
             gLogger->log("[ERROR] Could not fit the detector offsets.");
-        }
 
         int comp(0);
         for (auto&& offset : fit_results.offsets) {
@@ -137,9 +135,8 @@ void GlobalOffsets::fit()
             sample.fitGonioOffsets(selected_data, iterations->value(), tolerance->value());
 
         // The fit failed for whatever reason, return
-        if (!fit_results.success) {
+        if (!fit_results.success)
             gLogger->log("[ERROR] Could not fit the sample offsets.");
-        }
 
         int comp(0);
         for (auto&& offset : fit_results.offsets) {

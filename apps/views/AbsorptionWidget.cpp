@@ -52,9 +52,8 @@ void AbsorptionWidget::on_pushButton_clicked()
     QString fileName =
         dialog.getOpenFileName(this, "Select Video file", "", tr("Video file (*.info)"));
     // No file selected, do nothing
-    if (fileName.isEmpty()) {
+    if (fileName.isEmpty())
         return;
-    }
     readInfoFile(fileName.toStdString());
 }
 
@@ -67,9 +66,8 @@ void AbsorptionWidget::readInfoFile(const std::string& filename)
         // First read instrument name and validate with diffractometer name
         std::string _instrumentName, date;
         file >> _instrumentName >> date;
-        if (_instrumentName.compare(_experiment->diffractometer()->name()) != 0) {
+        if (_instrumentName.compare(_experiment->diffractometer()->name()) != 0)
             QMessageBox::critical(this, tr("NSXTool"), tr("Unknown instrument name"));
-        }
 
         std::string line;
         // Skip two line (comment)
@@ -128,9 +126,8 @@ void AbsorptionWidget::readInfoFile(const std::string& filename)
 
 void AbsorptionWidget::loadImage(unsigned int i)
 {
-    if (i >= _imageList.size()) {
+    if (i >= _imageList.size())
         return;
-    }
     QPixmap pix;
     QString file = QString::fromStdString(_imageList[i].second);
     pix.load(QString::fromStdString(_imageList[i].second));

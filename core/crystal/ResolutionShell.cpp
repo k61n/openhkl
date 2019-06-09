@@ -60,9 +60,8 @@ void ResolutionShell::addPeak(const sptrPeak3D& peak)
 
 const DShell& ResolutionShell::shell(size_t i) const
 {
-    if (i >= _shells.size()) {
+    if (i >= _shells.size())
         throw std::runtime_error("ResolutionShell::shell index out of bounds");
-    }
     return _shells[i];
 }
 

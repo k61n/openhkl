@@ -44,13 +44,11 @@ std::string DialogIntegrate::integrator() const
 
 void DialogIntegrate::setIntegrators(const std::vector<std::string>& names)
 {
-    while (_ui->method->count()) {
+    while (_ui->method->count())
         _ui->method->removeItem(0);
-    }
 
-    for (const auto& name : names) {
+    for (const auto& name : names)
         _ui->method->addItem(name.c_str());
-    }
 }
 
 DialogIntegrate::~DialogIntegrate()

@@ -118,9 +118,8 @@ void RawDataReader::setParameters(const RawDataReaderParameters& parameters)
 void RawDataReader::swapEndian()
 {
 
-    if (!_parameters.swap_endian) {
+    if (!_parameters.swap_endian)
         return;
-    }
 
     for (unsigned int i = 0; i < _nRows * _nCols; ++i) {
         for (unsigned int byte = 0; byte < _parameters.bpp / 2; ++byte) {
@@ -139,9 +138,8 @@ Eigen::MatrixXi RawDataReader::data(size_t frame)
     std::ifstream file;
     file.open(filename, std::ios_base::binary | std::ios_base::in);
 
-    if (!file.is_open()) {
+    if (!file.is_open())
         throw std::runtime_error("could not open data file " + filename);
-    }
 
     file.seekg(0, std::ios_base::end);
 

@@ -37,9 +37,8 @@ std::vector<FFTIndexing::tVector> FFTIndexing::findOnSphere(
 
     for (const auto& v : qvects) {
         double norm = v.rowVector().squaredNorm();
-        if (norm > qMax) {
+        if (norm > qMax)
             qMax = norm;
-        }
     }
 
     qMax = sqrt(qMax); // max norm of all vectors

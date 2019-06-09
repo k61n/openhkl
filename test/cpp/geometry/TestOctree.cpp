@@ -37,9 +37,8 @@ void collision_test()
     unsigned int numChambers = 0;
     for (auto&& chamber : tree) {
         numChambers += 1;
-        for (auto&& ellipsoid : chamber.getData()) {
+        for (auto&& ellipsoid : chamber.getData())
             test_set.insert(ellipsoid);
-        }
     }
 
     CHECK(numChambers == tree.numChambers());
@@ -62,9 +61,8 @@ void collision_test()
     ellipsoid = nullptr;
 
     // clear the list
-    for (auto ellipsoid : ellipsoids) {
+    for (auto ellipsoid : ellipsoids)
         delete ellipsoid;
-    }
 }
 
 void collision_test_2()
@@ -97,9 +95,8 @@ void collision_test_2()
     unsigned int numChambers = 0;
     for (auto&& chamber : tree) {
         numChambers += 1;
-        for (auto&& ellipsoid : chamber.getData()) {
+        for (auto&& ellipsoid : chamber.getData())
             test_set.insert(ellipsoid);
-        }
     }
 
     CHECK(numChambers == tree.numChambers());
@@ -121,9 +118,8 @@ void collision_test_2()
     ellipsoid = nullptr;
 
     // clear the list
-    for (auto ellipsoid : ellipsoids) {
+    for (auto ellipsoid : ellipsoids)
         delete ellipsoid;
-    }
 }
 
 void split_test()
@@ -148,17 +144,15 @@ void split_test()
     ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 37.5, 12.5), vals, vects));
     ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 37.5, 37.5), vals, vects));
 
-    for (auto&& ellipsoid : ellipsoids) {
+    for (auto&& ellipsoid : ellipsoids)
         tree.addData(ellipsoid);
-    }
 
     // check that it split properly
     CHECK(tree.numChambers() == 8);
 
     // check that the data was inserted correctly
-    for (auto&& chamber : tree) {
+    for (auto&& chamber : tree)
         CHECK(chamber.getData().size() == 1);
-    }
 
     // check that the collisions with chambers make sense
     for (auto&& ellipsoid : ellipsoids) {
@@ -176,9 +170,8 @@ void split_test()
     }
 
     // clear the list
-    for (auto ellipsoid : ellipsoids) {
+    for (auto ellipsoid : ellipsoids)
         delete ellipsoid;
-    }
 }
 
 TEST_CASE("test/geometry/TestOctree.cpp", "")

@@ -38,9 +38,8 @@ static void error_handler(const char* reason, const char* file, int line, int gs
 void callback_helper(const size_t /*iter*/, void* /*data*/, const gsl_multifit_nlinear_workspace* w)
 {
     double r = 0.0;
-    for (size_t i = 0; i < w->f->size; ++i) {
+    for (size_t i = 0; i < w->f->size; ++i)
         r += gsl_vector_get(w->f, i) * gsl_vector_get(w->f, i);
-    }
 }
 
 //! Helper class to wrap GSL data structures. Used only in implementation of
@@ -105,9 +104,8 @@ void Minimizer::initialize(FitParameters& params, int values)
 
     const auto nfree = _params.nfree();
 
-    for (size_t i = 0; i < _numValues; ++i) {
+    for (size_t i = 0; i < _numValues; ++i)
         _wt(i) = 1.0;
-    }
 
     _jacobian.resize(_numValues, nfree);
     _covariance.resize(nfree, nfree);
@@ -119,9 +117,8 @@ void Minimizer::initialize(FitParameters& params, int values)
     _gsl->covariance = gsl_matrix_alloc(nfree, nfree);
 
     // initialize the weights to 1
-    for (size_t i = 0; i < _numValues; ++i) {
+    for (size_t i = 0; i < _numValues; ++i)
         gsl_vector_set(_gsl->wt, i, 1.0);
-    }
 
     _gsl->workspace =
         gsl_multifit_nlinear_alloc(gsl_multifit_nlinear_trust, &_gsl->fdfParams, _numValues, nfree);
@@ -129,16 +126,14 @@ void Minimizer::initialize(FitParameters& params, int values)
 
 bool Minimizer::fit(int max_iter)
 {
-    if (!_gsl->workspace || !_f) {
+    if (!_gsl->workspace || !_f)
         return false;
-    }
 
     const auto nfree = _params.nfree();
 
     // too few data points to fit
-    if (_numValues < nfree) {
+    if (_numValues < nfree)
         return false;
-    }
 
     // function which computes vector of residuals
     _gsl->fdf.f = &Minimizer::gsl_f_wrapper;

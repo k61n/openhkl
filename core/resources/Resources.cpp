@@ -45,9 +45,8 @@ std::map<std::pair<std::string, std::string>, resource_function> default_resourc
 void mergeResources(YAML::Node& node1, YAML::Node& node2)
 {
 
-    if (node1.Type() != node2.Type()) {
+    if (node1.Type() != node2.Type())
         throw std::runtime_error("Can not merge node of different type");
-    }
 
     if (node1.IsMap()) {
         for (auto it = node2.begin(); it != node2.end(); ++it) {
@@ -81,9 +80,8 @@ YAML::Node findResource(const std::pair<std::string, std::string>& resource)
     auto it = default_resources.find(resource);
     if (it != default_resources.end()) {
         std::stringstream ss;
-        for (auto line : it->second()) {
+        for (auto line : it->second())
             ss << line << std::endl;
-        }
         resource_yaml = YAML::Load(ss);
     }
 
@@ -96,9 +94,8 @@ YAML::Node findResource(const std::pair<std::string, std::string>& resource)
         YAML::Node user_yaml = YAML::Load(fin);
         fin.close();
 
-        if (resource_yaml.IsNull()) {
+        if (resource_yaml.IsNull())
             return user_yaml;
-        }
 
         mergeResources(resource_yaml, user_yaml);
 
@@ -123,9 +120,8 @@ std::set<std::string> getResourcesName(const std::string& resource_type)
     std::set<std::string> resources_name;
 
     for (auto p : default_resources) {
-        if (p.first.first.compare(resource_type) == 0) {
+        if (p.first.first.compare(resource_type) == 0)
             resources_name.insert(p.first.second);
-        }
     }
 
     return resources_name;

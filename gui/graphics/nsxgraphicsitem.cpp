@@ -104,9 +104,8 @@ void NSXGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent* event)
 void NSXGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
 
-    if (!_movable || !isVisible() || !isSelected()) {
+    if (!_movable || !isVisible() || !isSelected())
         return;
-    }
 
     if (_firstMove) {
         _firstMove = false;

@@ -16,9 +16,8 @@ nsx::Ellipsoid toDetectorSpace(const nsx::Ellipsoid e, const nsx::sptrDataSet da
     auto events = data->events({nsx::ReciprocalVector(e.center())});
 
     // something bad happened
-    if (events.size() != 1) {
+    if (events.size() != 1)
         throw std::runtime_error("could not transform ellipse from q space to detector space");
-    }
 
     const auto& event = events[0];
     auto position =
@@ -47,9 +46,8 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
 
     auto callback = [progressHandler]() {
         auto log = progressHandler->getLog();
-        for (auto&& msg : log) {
+        for (auto&& msg : log)
             std::cout << msg << std::endl;
-        }
     };
 
     progressHandler->setCallback(callback);
@@ -84,9 +82,8 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
     int good_shapes = 0;
 
     for (auto peak : found_peaks) {
-        if (!peak->enabled()) {
+        if (!peak->enabled())
             continue;
-        }
 
         auto qshape = peak->qShape();
         nsx::Ellipsoid new_shape;
@@ -98,9 +95,8 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
         auto old_shape = peak->shape();
 
         // note: some blobs are invalid, so we skip them
-        if (!(old_shape.metric().norm() < 1e3)) {
+        if (!(old_shape.metric().norm() < 1e3))
             continue;
-        }
 
         ++good_shapes;
 

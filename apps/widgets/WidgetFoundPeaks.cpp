@@ -49,9 +49,8 @@ nsx::PeakList WidgetFoundPeaks::selectedPeaks() const
         found_peaks.reserve(peaks.size());
         for (auto peak : peaks) {
             if (_ui->keep_selected_peaks->isChecked()) {
-                if (peak->selected()) {
+                if (peak->selected())
                     found_peaks.push_back(peak);
-                }
             } else {
                 found_peaks.push_back(peak);
             }

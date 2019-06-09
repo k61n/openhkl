@@ -184,9 +184,8 @@ void PeakFilter::filterPeaks()
         filtered_peaks = peak_filter.predicted(filtered_peaks, predicted->isChecked());
     }
 
-    if (indexedPeak->isChecked()) {
+    if (indexedPeak->isChecked())
         filtered_peaks = peak_filter.indexed(filtered_peaks);
-    }
 
     if (byUnitCell->isChecked()) {
         if (unitCell->count() > 0) {
@@ -210,9 +209,8 @@ void PeakFilter::filterPeaks()
         filtered_peaks = peak_filter.dRange(filtered_peaks, d_min, d_max);
     }
 
-    if (sapcegroupExtincted->isChecked()) {
+    if (sapcegroupExtincted->isChecked())
         filtered_peaks = peak_filter.extincted(filtered_peaks);
-    }
 
     if (sparseGroup->isChecked()) {
         size_t min_num_peaks = static_cast<size_t>(minNumberPeaks->value());
@@ -226,13 +224,11 @@ void PeakFilter::filterPeaks()
         filtered_peaks = peak_filter.mergedPeaksSignificance(filtered_peaks, significance_level);
     }
 
-    if (removeOverlapping->isChecked()) {
+    if (removeOverlapping->isChecked())
         filtered_peaks = peak_filter.overlapping(filtered_peaks);
-    }
 
-    if (keepComplementary->isChecked()) {
+    if (keepComplementary->isChecked())
         filtered_peaks = peak_filter.complementary(peaks_, filtered_peaks);
-    }
 
     model_->setPeaks(filtered_peaks);
 }

@@ -111,9 +111,8 @@ FlatDetector::constructEvent(const DirectVector& from, const ReciprocalVector& k
     double px, py, tof;
 
     double x = _distance - from[1];
-    if (std::fabs(direction[1]) < 1e-10 || std::fabs(x) < 1e-10) {
+    if (std::fabs(direction[1]) < 1e-10 || std::fabs(x) < 1e-10)
         return no_event;
-    }
 
     tof = x / direction[1];
     Eigen::Vector3d v = from.vector() + direction * tof;
@@ -121,9 +120,8 @@ FlatDetector::constructEvent(const DirectVector& from, const ReciprocalVector& k
     px = 0.5 * (_nCols * (2 * v[0] / _width + 1) - 1);
     py = 0.5 * (_nRows * (2 * v[2] / _height + 1) - 1);
 
-    if (px < 0 || px > _nCols || py < 0 || py > _nRows) {
+    if (px < 0 || px > _nCols || py < 0 || py > _nRows)
         return no_event;
-    }
 
     return {px, py, 0.0, tof};
 }

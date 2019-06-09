@@ -114,9 +114,8 @@ void CollectedPeaksModel::slotChangeMaskedPeaks(const nsx::PeakList& peaks)
     for (auto peak : peaks) {
 
         auto it = std::find(_peaks.begin(), _peaks.end(), peak);
-        if (it == _peaks.end()) {
+        if (it == _peaks.end())
             continue;
-        }
 
         int row = std::distance(_peaks.begin(), it);
 
@@ -147,9 +146,8 @@ const nsx::PeakList& CollectedPeaksModel::peaks() const
 void CollectedPeaksModel::slotChangeEnabledPeak(nsx::sptrPeak3D peak)
 {
     auto it = std::find(_peaks.begin(), _peaks.end(), peak);
-    if (it == _peaks.end()) {
+    if (it == _peaks.end())
         return;
-    }
 
     int row = std::distance(_peaks.begin(), it);
 
@@ -182,18 +180,16 @@ void CollectedPeaksModel::reset()
 
 Qt::ItemFlags CollectedPeaksModel::flags(const QModelIndex& index) const
 {
-    if (!indexIsValid(index)) {
+    if (!indexIsValid(index))
         return Qt::ItemIsEnabled;
-    }
 
     return QAbstractTableModel::flags(index);
 }
 
 QVariant CollectedPeaksModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (role != Qt::DisplayRole) {
+    if (role != Qt::DisplayRole)
         return QVariant();
-    }
 
     if (orientation == Qt::Horizontal) {
         switch (section) {
@@ -236,9 +232,8 @@ QVariant CollectedPeaksModel::headerData(int section, Qt::Orientation orientatio
 
 QVariant CollectedPeaksModel::data(const QModelIndex& index, int role) const
 {
-    if (!indexIsValid(index)) {
+    if (!indexIsValid(index))
         return QVariant();
-    }
 
     Eigen::RowVector3i hkl = {0, 0, 0};
     Eigen::RowVector3d hkl_error = {0.0, 0.0, 0.0};
@@ -430,9 +425,8 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
     }
     std::sort(_peaks.begin(), _peaks.end(), compareFn);
 
-    if (order == Qt::DescendingOrder) {
+    if (order == Qt::DescendingOrder)
         std::reverse(_peaks.begin(), _peaks.end());
-    }
     emit layoutChanged();
 }
 
@@ -487,9 +481,8 @@ void CollectedPeaksModel::setUnitCell(
     const nsx::sptrUnitCell& unitCell, QModelIndexList selectedPeaks)
 {
     if (selectedPeaks.isEmpty()) {
-        for (int i = 0; i < rowCount(QModelIndex()); ++i) {
+        for (int i = 0; i < rowCount(QModelIndex()); ++i)
             selectedPeaks << index(i, 0);
-        }
     }
     for (auto&& index : selectedPeaks) {
         auto peak = _peaks[index.row()];
@@ -519,9 +512,8 @@ QModelIndexList CollectedPeaksModel::unindexedPeaks()
 
     for (int i = 0; i < rowCount(QModelIndex()); ++i) {
         auto peak = _peaks[i];
-        if (!peak->unitCell()) {
+        if (!peak->unitCell())
             list.append(index(i, 0));
-        }
     }
     return list;
 }
@@ -532,9 +524,8 @@ QModelIndexList CollectedPeaksModel::selectedPeaks()
 
     for (int i = 0; i < rowCount(QModelIndex()); ++i) {
         auto peak = _peaks[i];
-        if (peak->enabled()) {
+        if (peak->enabled())
             list.append(index(i, 0));
-        }
     }
     return list;
 }

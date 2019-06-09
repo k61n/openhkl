@@ -41,9 +41,8 @@ void Session::createExperiment()
     // DialogExperiment could throw an exception if it fails to read the resource files
     try {
         dlg = std::unique_ptr<ExperimentDialog>(new ExperimentDialog());
-        if (!dlg->exec()) {
+        if (!dlg->exec())
             return;
-        }
         if (dlg->experimentName().isEmpty()) {
             gLogger->log("[WARNING] Failed adding new experiment due to empty experiment name");
             return;
@@ -112,9 +111,8 @@ void Session::loadData()
         auto exp = selectedExperiment()->experiment();
 
         // If the experiment already stores the current numor, skip it
-        if (exp->hasData(filename.toStdString())) {
+        if (exp->hasData(filename.toStdString()))
             return; // nullptr;
-        }
 
         nsx::sptrDataSet data_ptr;
 

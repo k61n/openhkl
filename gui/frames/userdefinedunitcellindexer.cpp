@@ -240,9 +240,8 @@ void UserDefinedUnitCellIndexer::slotSelectSolution(int index)
 
     auto peaks = peaks_model->peaks();
 
-    for (auto r : selected_rows) {
+    for (auto r : selected_rows)
         peaks[r.row()]->setUnitCell(selected_unit_cell);
-    }
 
     UnitCellWidget* widget_unit_cell = new UnitCellWidget(
         selected_unit_cell, "adhoc_" + QString::fromStdString(selected_unit_cell->name()));
@@ -262,9 +261,8 @@ void UserDefinedUnitCellIndexer::slotTabEdited(int index)
 {
     auto unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabwidget->widget(index));
 
-    if (!unit_cell_tab) {
+    if (!unit_cell_tab)
         return;
-    }
 
     QInputDialog dialog(this);
     dialog.setLabelText("");
@@ -272,22 +270,19 @@ void UserDefinedUnitCellIndexer::slotTabEdited(int index)
     auto pos = mapToGlobal(tabwidget->pos());
 
     int width(0);
-    for (auto i = 0; i < index; ++i) {
+    for (auto i = 0; i < index; ++i)
         width += tabwidget->tabBar()->tabRect(index).width();
-    }
 
     int height = tabwidget->tabBar()->tabRect(index).height();
 
     dialog.move(pos.x() + width, pos.y() + height);
 
-    if (dialog.exec() == QDialog::Rejected) {
+    if (dialog.exec() == QDialog::Rejected)
         return;
-    }
 
     QString unit_cell_name = dialog.textValue();
-    if (unit_cell_name.isEmpty()) {
+    if (unit_cell_name.isEmpty())
         return;
-    }
 
     tabwidget->setTabText(index, unit_cell_name);
     unit_cell_tab->unitCell()->setName(unit_cell_name.toStdString());
@@ -304,9 +299,8 @@ void UserDefinedUnitCellIndexer::slotTabEdited(int index)
 void UserDefinedUnitCellIndexer::slotTabRemoved(int index)
 {
     auto unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabwidget->widget(index));
-    if (!unit_cell_tab) {
+    if (!unit_cell_tab)
         return;
-    }
 
     tabwidget->removeTab(index);
 
@@ -316,16 +310,14 @@ void UserDefinedUnitCellIndexer::slotTabRemoved(int index)
 void UserDefinedUnitCellIndexer::resetPeaks()
 {
     // Restore for each peak the initial unit cell
-    for (auto p : defaults_) {
+    for (auto p : defaults_)
         p.first->setUnitCell(p.second);
-    }
 
     for (auto i = tabwidget->count() - 1; i > 0; i--) {
 
         auto tab = dynamic_cast<UnitCellWidget*>(tabwidget->widget(i));
-        if (!tab) {
+        if (!tab)
             continue;
-        }
         tabwidget->removeTab(i);
         delete tab;
     }
@@ -357,9 +349,8 @@ void UserDefinedUnitCellIndexer::index()
 
     nsx::PeakList selected_peaks;
     selected_peaks.reserve(selected_rows.size());
-    for (auto r : selected_rows) {
+    for (auto r : selected_rows)
         selected_peaks.push_back(peaks[r.row()]);
-    }
 
     nsx::UserDefinedUnitCellIndexerParameters parameters;
 
@@ -453,9 +444,8 @@ void UserDefinedUnitCellIndexer::accept()
 
     for (auto i = 0; i < tabwidget->count(); ++i) {
         auto unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabwidget->widget(i));
-        if (!unit_cell_tab) {
+        if (!unit_cell_tab)
             continue;
-        }
         unit_cells->appendUnitCell(unit_cell_tab->unitCell());
     }
 

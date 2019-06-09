@@ -31,17 +31,14 @@ namespace nsx {
 
 UnitCell UnitCell::interpolate(const UnitCell& uc1, const UnitCell& uc2, double t)
 {
-    if (uc1._niggli != uc2._niggli) {
+    if (uc1._niggli != uc2._niggli)
         throw std::runtime_error("Inconsistent Niggli type");
-    }
 
-    if (uc1._bravaisType != uc2._bravaisType) {
+    if (uc1._bravaisType != uc2._bravaisType)
         throw std::runtime_error("Inconsistent Bravais type");
-    }
 
-    if (uc1._centring != uc2._centring) {
+    if (uc1._centring != uc2._centring)
         throw std::runtime_error("Inconsistent centring type");
-    }
 
     const double s = 1.0 - t;
 
@@ -94,9 +91,8 @@ UnitCell UnitCell::interpolate(const UnitCell& uc1, const UnitCell& uc2, double 
     Eigen::VectorXd ch(6);
     ch.setZero();
     // parameters defining lattice chatacer
-    for (auto i = 0; i < nparams; ++i) {
+    for (auto i = 0; i < nparams; ++i)
         ch += parameters(i) * kernel.col(i);
-    }
 
     uc.setBasis(u_matrix * uc._a * uc._NP);
 
@@ -213,9 +209,8 @@ void UnitCell::initState(sptrDataSet data)
 {
 
     auto it = _states.find(data);
-    if (it != _states.end()) {
+    if (it != _states.end())
         return;
-    }
 
     std::vector<UnitCellState> states;
     auto n_frames = data->nFrames();
@@ -224,24 +219,21 @@ void UnitCell::initState(sptrDataSet data)
     auto u_matrix = orientation();
     auto ch = character();
 
-    for (size_t i = 0; i < n_frames; ++i) {
+    for (size_t i = 0; i < n_frames; ++i)
         states.push_back({u_matrix, ch});
-    }
 }
 
 UnitCellState& UnitCell::state(sptrDataSet data, size_t frame)
 {
 
     auto it = _states.find(data);
-    if (it == _states.end()) {
+    if (it == _states.end())
         initState(data);
-    }
 
     auto&& states = _states[data];
 
-    if (frame > (states.size() - 1) || frame < 0) {
+    if (frame > (states.size() - 1) || frame < 0)
         throw std::runtime_error("UnitCell::setState: Invalid frame number");
-    }
 
     return states[frame];
 }
@@ -249,15 +241,13 @@ UnitCellState& UnitCell::state(sptrDataSet data, size_t frame)
 void UnitCell::setState(sptrDataSet data, size_t frame, const UnitCellState& state)
 {
     auto it = _states.find(data);
-    if (it == _states.end()) {
+    if (it == _states.end())
         initState(data);
-    }
 
     auto&& states = _states[data];
 
-    if (frame > (states.size() - 1) || frame < 0) {
+    if (frame > (states.size() - 1) || frame < 0)
         throw std::runtime_error("UnitCell::setState: Invalid frame number");
-    }
 
     states[frame] = state;
 }
@@ -265,17 +255,15 @@ void UnitCell::setState(sptrDataSet data, size_t frame, const UnitCellState& sta
 UnitCell UnitCell::interpolate(sptrDataSet data, double frame)
 {
     auto it = _states.find(data);
-    if (it == _states.end()) {
+    if (it == _states.end())
         throw std::runtime_error("No unit cells states stored for this dataset.");
-    }
 
     auto&& states = it->second;
 
     auto n_frames = data->nFrames();
 
-    if (n_frames != states.size()) {
+    if (n_frames != states.size())
         throw std::runtime_error("Inconsistent state");
-    }
 
     if (frame > (n_frames - 1) || frame < 0) {
         throw std::runtime_error(
@@ -341,9 +329,8 @@ UnitCell UnitCell::interpolate(sptrDataSet data, double frame)
     Eigen::VectorXd ch(6);
     ch.setZero();
     // parameters defining lattice character
-    for (auto i = 0; i < nparams; ++i) {
+    for (auto i = 0; i < nparams; ++i)
         ch += parameters(i) * kernel.col(i);
-    }
 
     uc.setBasis(u_matrix * uc._a * uc._NP);
 
@@ -434,15 +421,12 @@ void UnitCell::setMetric(double g00, double g01, double g02, double g11, double 
     c = std::sqrt(g22);
 
     // more checking
-    if (std::fabs(g12) > b * c) {
+    if (std::fabs(g12) > b * c)
         g12 = (std::signbit(g12) ? -1 : 1) * b * c;
-    }
-    if (std::fabs(g02) > a * c) {
+    if (std::fabs(g02) > a * c)
         g02 = (std::signbit(g02) ? -1 : 1) * a * c;
-    }
-    if (std::fabs(g01) > a * b) {
+    if (std::fabs(g01) > a * b)
         g01 = (std::signbit(g01) ? -1 : 1) * a * b;
-    }
 
     alpha = std::acos(g12 / b / c);
     beta = std::acos(g02 / a / c);
@@ -531,9 +515,8 @@ UnitCell::generateReflectionsInShell(double dmin, double dmax, double wavelength
             for (int l = -hkl_max; l <= hkl_max; ++l) {
 
                 // Always skip the (0,0,0) which is irrelevant
-                if (h == 0 && k == 0 && l == 0) {
+                if (h == 0 && k == 0 && l == 0)
                     continue;
-                }
 
                 MillerIndex hkl(h, k, l);
                 Eigen::RowVector3d q = hkl.rowVector().cast<double>() * _b_transposed;
@@ -542,24 +525,20 @@ UnitCell::generateReflectionsInShell(double dmin, double dmax, double wavelength
                 const double sin_theta = wavelength / (2.0 * d);
 
                 // unphysical, so skip
-                if (sin_theta > 1.0 && sin_theta < 0.0) {
+                if (sin_theta > 1.0 && sin_theta < 0.0)
                     continue;
-                }
 
                 // scattering angle too large
-                if (d < dmin) {
+                if (d < dmin)
                     continue;
-                }
 
                 // scattering angle too small
-                if (d > dmax) {
+                if (d > dmax)
                     continue;
-                }
 
                 // skip those HKL which are forbidden by the space group
-                if (_space_group.isExtinct(hkl)) {
+                if (_space_group.isExtinct(hkl))
                     continue;
-                }
 
                 hkls.emplace_back(hkl);
             }
@@ -686,9 +665,8 @@ void UnitCell::setNiggli(const NiggliCharacter& niggli)
 UnitCell UnitCell::applyNiggliConstraints() const
 {
     // no constraints for these cases to early return
-    if (_niggli.number == 31 || _niggli.number == 44) {
+    if (_niggli.number == 31 || _niggli.number == 44)
         return *this;
-    }
 
     // geometric mean of side-lengths of unit cell & reciprocal unit cell
     // we use these to scale the residuals in the fitting function below
@@ -708,9 +686,8 @@ UnitCell UnitCell::applyNiggliConstraints() const
         Eigen::Matrix3d B = uc.reciprocalBasis();
 
         for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 3; ++j) {
+            for (int j = 0; j < 3; ++j)
                 residuals(3 * i + j) = (B(i, j) - _b_transposed(i, j)) / b;
-            }
         }
         return 0;
     };
@@ -718,13 +695,11 @@ UnitCell UnitCell::applyNiggliConstraints() const
     nsx::Minimizer min;
     FitParameters params;
 
-    for (auto i = 0; i < 3; ++i) {
+    for (auto i = 0; i < 3; ++i)
         params.addParameter(&uOffset(i));
-    }
 
-    for (auto i = 0; i < p.size(); ++i) {
+    for (auto i = 0; i < p.size(); ++i)
         params.addParameter(&p(i));
-    }
 
     min.initialize(params, 9);
     min.set_f(functor);
@@ -741,9 +716,8 @@ UnitCell UnitCell::applyNiggliConstraints() const
     // check if the new UC is close to the old one
     const double delta = (new_uc.reciprocalBasis() - _b_transposed).norm() / _b_transposed.norm();
 
-    if (delta < 0.1) {
+    if (delta < 0.1)
         return new_uc;
-    }
     throw std::runtime_error("ERROR: could not apply symmetry constraints to unit cell");
 }
 
@@ -879,19 +853,16 @@ bool UnitCell::equivalent(const UnitCell& other, double tolerance) const
     }
 
     // Returns true if T and S are inverse
-    if ((T * S - Eigen::Matrix3d::Identity()).norm() > tolerance) {
+    if ((T * S - Eigen::Matrix3d::Identity()).norm() > tolerance)
         return false;
-    }
 
     // check that B2 = T B1
-    if ((B2 - T * B1).norm() > tolerance * B2.norm()) {
+    if ((B2 - T * B1).norm() > tolerance * B2.norm())
         return false;
-    }
 
     // check that B1 = S * B2
-    if ((B1 - S * B2).norm() > tolerance * B1.norm()) {
+    if ((B1 - S * B2).norm() > tolerance * B1.norm())
         return false;
-    }
 
     return true;
 }
@@ -907,9 +878,8 @@ Eigen::Matrix3d UnitCell::orientation() const
     Eigen::Matrix3d R = Q.transpose() * _a;
 
     for (auto i = 0; i < 3; ++i) {
-        if (R(i, i) < 0) {
+        if (R(i, i) < 0)
             Q.col(i) *= -1.0;
-        }
     }
     return Q;
 }
@@ -921,9 +891,8 @@ Eigen::Matrix3d UnitCell::niggliOrientation() const
     Eigen::Matrix3d R = Q.transpose() * NA;
 
     for (auto i = 0; i < 3; ++i) {
-        if (R(i, i) < 0) {
+        if (R(i, i) < 0)
             Q.col(i) *= -1.0;
-        }
     }
     return Q;
 }
@@ -938,9 +907,8 @@ Eigen::VectorXd UnitCell::parameters() const
     ch << G(0, 0), G(1, 1), G(2, 2), G(1, 2), G(0, 2), G(0, 1);
 
     // no constraints to be applied:
-    if (_niggli.number == 31 || _niggli.number == 44) {
+    if (_niggli.number == 31 || _niggli.number == 44)
         return ch;
-    }
 
     // matrix of Niggli character constraints, taken from the table 9.2.5.1
     Eigen::MatrixXd C = _niggli.C;
@@ -984,9 +952,8 @@ UnitCell UnitCell::fromParameters(
     Eigen::VectorXd ch(6);
     ch.setZero();
     // parameters defining lattice chatacer
-    for (auto i = 0; i < nparams; ++i) {
+    for (auto i = 0; i < nparams; ++i)
         ch += parameters(i) * kernel.col(i);
-    }
 
     // create new unit cell
     UnitCell uc(*this);
@@ -1044,9 +1011,8 @@ void UnitCell::setParameterCovariance(const Eigen::MatrixXd& cov)
     J.setZero();
 
     // Jacobian entries for a,b,c
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 3; ++i)
         J(i, i) = 1 / 2.0 / abc[i];
-    }
 
     // Jacobian entries for alpha,beta,gamma
     // e.g. alpha = acos(b*c/D)
@@ -1097,9 +1063,8 @@ std::vector<std::string> UnitCell::compatibleSpaceGroups() const
 
     for (auto&& symbol : SpaceGroup::symbols()) {
         SpaceGroup sg(symbol);
-        if (sg.bravaisTypeSymbol().compare(cell_bravais_type) == 0) {
+        if (sg.bravaisTypeSymbol().compare(cell_bravais_type) == 0)
             compatible_space_groups.push_back(symbol);
-        }
     }
 
     return compatible_space_groups;

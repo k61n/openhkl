@@ -32,9 +32,8 @@ SourceProperty::SourceProperty() : QcrWidget("sourceProperty")
         if (!exp)
             return list;
         const auto& monos = exp->experiment()->diffractometer()->source().monochromators();
-        for (auto&& m : monos) {
+        for (auto&& m : monos)
             list.append(QString::fromStdString(m.name()));
-        }
         return list;
     });
     monochromators->setEnabled(true);

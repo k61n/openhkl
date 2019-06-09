@@ -60,9 +60,8 @@ RefinementBatch::RefinementBatch(
         Eigen::Matrix3d U = solver.eigenvectors();
         Eigen::Matrix3d D;
         D.setZero();
-        for (auto i = 0; i < 3; ++i) {
+        for (auto i = 0; i < 3; ++i)
             D(i, i) = std::sqrt(solver.eigenvalues()[i]);
-        }
         _wts.emplace_back(U.transpose() * D * U);
     }
 
@@ -73,18 +72,16 @@ RefinementBatch::RefinementBatch(
 
     _states.reserve(states.size());
     for (size_t i = 0; i < states.size(); ++i) {
-        if (!contains(i)) {
+        if (!contains(i))
             continue;
-        }
         _states.push_back(states[i]);
     }
 }
 
 void RefinementBatch::refineUB()
 {
-    for (int i = 0; i < _cellParameters.size(); ++i) {
+    for (int i = 0; i < _cellParameters.size(); ++i)
         _params.addParameter(&_cellParameters(i));
-    }
 }
 
 void RefinementBatch::refineDetectorOffset()
@@ -152,9 +149,8 @@ bool RefinementBatch::refine(unsigned int max_iter)
     min.setfTol(1e-10);
     min.setgTol(1e-10);
 
-    if (_constraints.size() > 0) {
+    if (_constraints.size() > 0)
         _params.setKernel(constraintKernel());
-    }
 
     _cost_function.clear();
     _cost_function.shrink_to_fit();
@@ -162,9 +158,8 @@ bool RefinementBatch::refine(unsigned int max_iter)
     min.initialize(_params, _peaks.size() * 3);
     min.set_f([&](Eigen::VectorXd& fvec) { return residuals(fvec); });
     bool success = min.fit(max_iter);
-    for (auto state : _states) {
+    for (auto state : _states)
         state.get().refined = success;
-    }
 
     *_cell = _cell->fromParameters(_u0, _uOffsets, _cellParameters);
 
@@ -233,9 +228,8 @@ Eigen::MatrixXd RefinementBatch::constraintKernel() const
 
     // columns corresponding to the free parameters
     for (auto idx = 0; idx < nparams; ++idx) {
-        if (!is_free[idx]) {
+        if (!is_free[idx])
             continue;
-        }
         std::vector<double> column(nparams, 0.0);
         column[idx] = 1.0;
         columns.push_back(column);
@@ -245,9 +239,8 @@ Eigen::MatrixXd RefinementBatch::constraintKernel() const
     Eigen::MatrixXd K(nparams, columns.size());
 
     for (size_t j = 0; j < columns.size(); ++j) {
-        for (auto i = 0; i < nparams; ++i) {
+        for (auto i = 0; i < nparams; ++i)
             K(i, j) = columns[j][i];
-        }
     }
 
     return K;

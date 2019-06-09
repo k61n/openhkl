@@ -38,9 +38,8 @@ PeakListPropertyWidget::PeakListPropertyWidget(PeakListItem* caller, QWidget* pa
 
     nsx::PeakList peaks;
 
-    for (auto peak : _caller->peaks()) {
+    for (auto peak : _caller->peaks())
         peaks.push_back(peak);
-    }
 
     _peaks_model = new CollectedPeaksModel(_caller->model(), _caller->experiment(), peaks);
 

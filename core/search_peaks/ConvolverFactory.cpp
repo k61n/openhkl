@@ -42,9 +42,8 @@ Convolver* ConvolverFactory::create(
     const auto it = _callbacks.find(convolver_type);
 
     // could not find key
-    if (it == _callbacks.end()) {
+    if (it == _callbacks.end())
         throw std::runtime_error(convolver_type + " is not registered as a valid convolver");
-    }
 
     return (it->second)(parameters);
 }

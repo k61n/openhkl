@@ -120,9 +120,8 @@ void Refiner::actionClicked(QAbstractButton* button)
 void Refiner::tabRemoved(int index)
 {
     auto refiner_fit_tab = dynamic_cast<RefinerFitWidget*>(tabs->widget(index));
-    if (!refiner_fit_tab) {
+    if (!refiner_fit_tab)
         return;
-    }
     tabs->removeTab(index);
     delete refiner_fit_tab;
 }
@@ -140,9 +139,8 @@ void Refiner::refine()
     auto peaks_model = dynamic_cast<PeaksTableModel*>(peaks->model());
     auto&& allPeaks = peaks_model->peaks();
     nsx::PeakList selected_peaks;
-    for (auto r : selected_rows) {
+    for (auto r : selected_rows)
         selected_peaks.push_back(allPeaks[r.row()]);
-    }
 
     auto unit_cell = selected_peaks[0]->unitCell();
 
@@ -157,9 +155,8 @@ void Refiner::refine()
 
     std::set<nsx::sptrDataSet> data;
     // get list of datasets
-    for (auto p : allPeaks) {
+    for (auto p : allPeaks)
         data.insert(p->data());
-    }
 
     for (auto d : data) {
 
@@ -168,9 +165,8 @@ void Refiner::refine()
         // Keep the peak that belong to this data and split them between the found
         // and predicted ones
         for (auto peak : selected_peaks) {
-            if (peak->data() != d) {
+            if (peak->data() != d)
                 continue;
-            }
             if (peak->predicted()) {
                 predicted_peaks.push_back(peak);
             } else {
@@ -452,9 +448,8 @@ void RefinerFitWidget::selectedBatchChanged(int selected_batch)
 
     // If no data is selected, return
     auto current_data_item = selectedData->currentItem();
-    if (!current_data_item) {
+    if (!current_data_item)
         return;
-    }
 
     // If no refiner is set for this data, return
     auto data = current_data_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
@@ -509,9 +504,8 @@ void RefinerFitWidget::selectedFrameChanged(int selected_frame)
     auto current_item = selectedData->currentItem();
 
     // No data selected, return
-    if (!current_item) {
+    if (!current_item)
         return;
-    }
 
     auto data = current_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
 

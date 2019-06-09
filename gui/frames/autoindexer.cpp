@@ -153,9 +153,8 @@ void AutoIndexer::layout()
 void AutoIndexer::slotTabRemoved(int index)
 {
     auto unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabs->widget(index));
-    if (!unit_cell_tab) {
+    if (!unit_cell_tab)
         return;
-    }
 
     tabs->removeTab(index);
 
@@ -166,9 +165,8 @@ void AutoIndexer::slotTabEdited(int index)
 {
     auto unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabs->widget(index));
 
-    if (!unit_cell_tab) {
+    if (!unit_cell_tab)
         return;
-    }
 
     QInputDialog dialog(this);
     dialog.setLabelText("");
@@ -176,22 +174,19 @@ void AutoIndexer::slotTabEdited(int index)
     auto pos = mapToGlobal(tabs->pos());
 
     int width(0);
-    for (auto i = 0; i < index; ++i) {
+    for (auto i = 0; i < index; ++i)
         width += tabs->tabBar()->tabRect(index).width();
-    }
 
     int height = tabs->tabBar()->tabRect(index).height();
 
     dialog.move(pos.x() + width, pos.y() + height);
 
-    if (dialog.exec() == QDialog::Rejected) {
+    if (dialog.exec() == QDialog::Rejected)
         return;
-    }
 
     QString unit_cell_name = dialog.textValue();
-    if (unit_cell_name.isEmpty()) {
+    if (unit_cell_name.isEmpty())
         return;
-    }
 
     tabs->setTabText(index, unit_cell_name);
     unit_cell_tab->unitCell()->setName(unit_cell_name.toStdString());
@@ -233,16 +228,14 @@ void AutoIndexer::slotActionClicked(QAbstractButton* button)
 void AutoIndexer::resetUnitCell()
 {
     // Restore for each peak the initial unit cell
-    for (auto p : _defaults) {
+    for (auto p : _defaults)
         p.first->setUnitCell(p.second);
-    }
 
     for (auto i = tabs->count() - 1; i > 0; i--) {
 
         auto tab = dynamic_cast<UnitCellWidget*>(tabs->widget(i));
-        if (!tab) {
+        if (!tab)
             continue;
-        }
         tabs->removeTab(i);
         delete tab;
     }
@@ -259,9 +252,8 @@ void AutoIndexer::accept()
 
     for (auto i = 0; i < tabs->count(); ++i) {
         auto unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabs->widget(i));
-        if (!unit_cell_tab) {
+        if (!unit_cell_tab)
             continue;
-        }
         unit_cells_item->appendUnitCell(unit_cell_tab->unitCell());
     }
 
@@ -286,9 +278,8 @@ void AutoIndexer::run()
 
     handler->setCallback([handler]() {
         auto log = handler->getLog();
-        for (auto&& msg : log) {
+        for (auto&& msg : log)
             gLogger->log("[INFO] " + QString::fromStdString(msg));
-        }
     });
 
     handler->log("Test log");
@@ -300,9 +291,8 @@ void AutoIndexer::run()
 
     auto allPeaks = model->peaks();
 
-    for (auto r : selected_rows) {
+    for (auto r : selected_rows)
         indexer.addPeak(allPeaks[r.row()]);
-    }
 
     nsx::IndexerParameters params;
 
@@ -396,9 +386,8 @@ void AutoIndexer::selectSolution(int index)
 
     auto allPeaks = model->peaks();
 
-    for (auto r : selected_rows) {
+    for (auto r : selected_rows)
         allPeaks[r.row()]->setUnitCell(selected_unit_cell);
-    }
 
     UnitCellWidget* widget_unit_cell =
         new UnitCellWidget(selected_unit_cell, QString::fromStdString(selected_unit_cell->name()));

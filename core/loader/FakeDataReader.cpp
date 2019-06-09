@@ -33,9 +33,8 @@ FakeDataReader::FakeDataReader(const std::string& filename, Diffractometer* diff
 {
     _frames.resize(_nFrames);
 
-    for (size_t i = 0; i < _nFrames; ++i) {
+    for (size_t i = 0; i < _nFrames; ++i)
         _frames[i].resize(_nRows, _nCols);
-    }
 }
 
 Eigen::MatrixXi FakeDataReader::data(size_t frame)

@@ -39,9 +39,8 @@ Eigen::Transform<double, 3, Eigen::Affine> parseJonesSymbol(const std::string& j
     // Split the Jones symbol according to ",". This must provide 3 symbols one
     // for each axis
     auto symbols = split(jonesSymbol, ",");
-    if (symbols.size() != 3) {
+    if (symbols.size() != 3)
         throw std::runtime_error("Invalid Jones-Faithful symbol");
-    }
 
     // The regex for the rotational part (e.g. 2x-y+4z)
     std::regex rotation_re("(?:(?:([+-])(\\d*))([xyz]))");
@@ -59,15 +58,13 @@ Eigen::Transform<double, 3, Eigen::Affine> parseJonesSymbol(const std::string& j
         auto symbol = symbols[i];
         auto sit = std::remove_if(symbol.begin(), symbol.end(), check_white_space);
         symbol.erase(sit, symbol.end());
-        if (symbol.empty()) {
+        if (symbol.empty())
             throw std::runtime_error("Invalid Jones-Faithful symbol");
-        }
 
         // If the first character of the symbol is either a number or a letter (xyz)
         // then add a + for having a consistent regex for the rotational part
-        if (std::isalnum(symbol[0])) {
+        if (std::isalnum(symbol[0]))
             symbol.insert(0, "+");
-        }
 
         // Find all the matches for the rotational part
         auto rotation_expr_begin = std::sregex_iterator(
@@ -88,9 +85,8 @@ Eigen::Transform<double, 3, Eigen::Affine> parseJonesSymbol(const std::string& j
             rotation_match = *m_it;
 
             double factor = sign[rotation_match[1].str()];
-            if (rotation_match[2].length() != 0) {
+            if (rotation_match[2].length() != 0)
                 factor *= std::atof(rotation_match[2].str().c_str());
-            }
             // Update the column with the current rotation match
             matrix.linear().row(i) += factor * axis[rotation_match[3].str()];
         }

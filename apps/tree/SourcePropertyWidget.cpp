@@ -36,9 +36,8 @@ SourcePropertyWidget::SourcePropertyWidget(SourceItem* caller, QWidget* parent)
 
     const auto& monos = source.monochromators();
 
-    for (auto&& m : monos) {
+    for (auto&& m : monos)
         _ui->monochromators->addItem(QString::fromStdString(m.name()));
-    }
 
     connect(
         _ui->monochromators, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),

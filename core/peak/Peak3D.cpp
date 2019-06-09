@@ -200,9 +200,8 @@ ReciprocalVector Peak3D::q() const
 //! detector space shape.
 Ellipsoid Peak3D::qShape() const
 {
-    if (!_data) {
+    if (!_data)
         throw std::runtime_error("Attempted to compute q-shape of peak not attached to data");
-    }
 
     Eigen::Vector3d p = _shape.center();
     auto state = _data->interpolatedState(p[2]);
@@ -219,9 +218,8 @@ Ellipsoid Peak3D::qShape() const
 
 ReciprocalVector Peak3D::qPredicted() const
 {
-    if (!_unitCell) {
+    if (!_unitCell)
         return {};
-    }
     auto index = MillerIndex(q(), *_unitCell);
     return ReciprocalVector(_unitCell->fromIndex(index.rowVector().cast<double>()));
 }
@@ -230,9 +228,8 @@ DetectorEvent Peak3D::predictCenter(double frame) const
 {
     const DetectorEvent no_event = {0, 0, -1, -1};
 
-    if (!_unitCell) {
+    if (!_unitCell)
         return no_event;
-    }
 
     auto index = MillerIndex(q(), *_unitCell);
     auto state = _data->interpolatedState(frame);

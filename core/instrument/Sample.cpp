@@ -74,9 +74,8 @@ Sample::fitGonioOffsets(const DataList& dataset, size_t n_iterations, double tol
     for (auto data : dataset) {
         auto&& states = data->instrumentStates();
         for (auto state : states) {
-            if (!state.refined) {
+            if (!state.refined)
                 continue;
-            }
             ++n_selected_states;
         }
     }
@@ -132,9 +131,8 @@ Sample::fitGonioOffsets(const DataList& dataset, size_t n_iterations, double tol
 
     // Pass by address the parameters to be fitted to the parameter store
     nsx::FitParameters parameters;
-    for (auto& v : fitted_offsets) {
+    for (auto& v : fitted_offsets)
         parameters.addParameter(&v);
-    }
 
     // Sets the Minimizer with the parameters store and the size of the residual
     // vector

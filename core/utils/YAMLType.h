@@ -35,9 +35,8 @@ template <typename T> struct convert<std::complex<T>> {
 
     static bool decode(const Node& node, std::complex<T>& rhs)
     {
-        if (!node.IsSequence() || node.size() != 2) {
+        if (!node.IsSequence() || node.size() != 2)
             return false;
-        }
 
         rhs.real(node[0].as<T>());
         rhs.imag(node[1].as<T>());
@@ -58,9 +57,8 @@ template <> struct convert<Eigen::Vector3d> {
 
     static bool decode(const Node& node, Eigen::Vector3d& rhs)
     {
-        if (!node.IsSequence() || node.size() != 3) {
+        if (!node.IsSequence() || node.size() != 3)
             return false;
-        }
 
         rhs[0] = node[0].as<double>();
         rhs[1] = node[1].as<double>();
@@ -81,9 +79,8 @@ template <> struct convert<Eigen::Vector2d> {
 
     static bool decode(const Node& node, Eigen::Vector2d& rhs)
     {
-        if (!node.IsSequence() || node.size() != 2) {
+        if (!node.IsSequence() || node.size() != 2)
             return false;
-        }
 
         rhs[0] = node[0].as<double>();
         rhs[1] = node[1].as<double>();

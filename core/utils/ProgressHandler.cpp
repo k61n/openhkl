@@ -35,9 +35,8 @@ void ProgressHandler::setCallback(std::function<void()> callback)
 
 void ProgressHandler::setProgress(int progress)
 {
-    if (_callback) {
+    if (_callback)
         _callback();
-    }
 
     std::lock_guard<std::mutex> lock(_mutex);
 
@@ -50,9 +49,8 @@ void ProgressHandler::setProgress(int progress)
         _progress = progress;
     }
 
-    if (aborted()) {
+    if (aborted())
         throw std::runtime_error("Exception: job was aborted!");
-    }
 }
 
 int ProgressHandler::getProgress()

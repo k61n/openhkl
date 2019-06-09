@@ -29,9 +29,8 @@ FrameRefiner* FrameRefiner::_instance = nullptr;
 
 FrameRefiner* FrameRefiner::create(ExperimentItem* experiment_item, const nsx::PeakList& peaks)
 {
-    if (!_instance) {
+    if (!_instance)
         _instance = new FrameRefiner(experiment_item, peaks);
-    }
 
     return _instance;
 }
@@ -66,17 +65,15 @@ FrameRefiner::~FrameRefiner()
 {
     delete _ui;
 
-    if (_instance) {
+    if (_instance)
         _instance = nullptr;
-    }
 }
 
 void FrameRefiner::slotTabRemoved(int index)
 {
     auto refiner_fit_tab = dynamic_cast<WidgetRefinerFit*>(_ui->tabs->widget(index));
-    if (!refiner_fit_tab) {
+    if (!refiner_fit_tab)
         return;
-    }
 
     _ui->tabs->removeTab(index);
 
@@ -119,9 +116,8 @@ void FrameRefiner::refine()
     auto peaks_model = dynamic_cast<CollectedPeaksModel*>(_ui->peaks->model());
     auto&& peaks = peaks_model->peaks();
     nsx::PeakList selected_peaks;
-    for (auto r : selected_rows) {
+    for (auto r : selected_rows)
         selected_peaks.push_back(peaks[r.row()]);
-    }
 
     auto unit_cell = selected_peaks[0]->unitCell();
 
@@ -136,9 +132,8 @@ void FrameRefiner::refine()
 
     std::set<nsx::sptrDataSet> data;
     // get list of datasets
-    for (auto p : peaks) {
+    for (auto p : peaks)
         data.insert(p->data());
-    }
 
     for (auto d : data) {
 
@@ -147,9 +142,8 @@ void FrameRefiner::refine()
         // Keep the peak that belong to this data and split them between the found
         // and predicted ones
         for (auto peak : selected_peaks) {
-            if (peak->data() != d) {
+            if (peak->data() != d)
                 continue;
-            }
             if (peak->predicted()) {
                 predicted_peaks.push_back(peak);
             } else {

@@ -218,13 +218,11 @@ void CrystalScene::setRotationAngle(double angle)
     _pin->getCenter(yc, zc, _rotationAngle);
     for (QList<QGraphicsItem*>::iterator it = list.begin(); it != list.end(); it++) {
         CrystalNodeItem* temp = dynamic_cast<CrystalNodeItem*>(*it);
-        if (temp) {
+        if (temp)
             temp->rotate(angle, yc);
-        }
         CrystalFaceItem* temp2 = dynamic_cast<CrystalFaceItem*>(*it);
-        if (temp2) {
+        if (temp2)
             temp2->rotate(angle, yc);
-        }
     }
     _pin->rotate(angle);
 }

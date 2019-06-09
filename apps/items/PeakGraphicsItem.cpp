@@ -154,9 +154,8 @@ void PeakGraphicsItem::plot(SXPlot* plot)
 {
 
     auto p = dynamic_cast<PeakPlot*>(plot);
-    if (!p) {
+    if (!p)
         return;
-    }
 
     const auto& rockingCurve = _peak->rockingCurve();
     const int N = int(rockingCurve.size());
@@ -214,9 +213,8 @@ void PeakGraphicsItem::plot(SXPlot* plot)
     double monitor = _peak->data()->reader()->metadata().key<double>("monitor");
     info += "Monitor " + QString::number(monitor * scale) + " counts";
     QCPPlotTitle* title = dynamic_cast<QCPPlotTitle*>(p->plotLayout()->element(0, 0));
-    if (title != nullptr) {
+    if (title != nullptr)
         title->setText(info);
-    }
     p->rescaleAxes();
     p->replot();
 }

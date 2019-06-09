@@ -37,9 +37,8 @@ void FitParameters::setValues(const gsl_vector* v)
     assert(v->size == nfree());
     Eigen::VectorXd p0(nfree());
 
-    for (size_t i = 0; i < nfree(); ++i) {
+    for (size_t i = 0; i < nfree(); ++i)
         p0(i) = gsl_vector_get(v, i);
-    }
 
     const auto& p1 = _constrained ? _K * p0 : p0;
 
@@ -53,22 +52,19 @@ void FitParameters::writeValues(gsl_vector* v) const
     assert(v->size == nfree());
     Eigen::VectorXd p1(nparams());
 
-    for (size_t i = 0; i < _params.size(); ++i) {
+    for (size_t i = 0; i < _params.size(); ++i)
         p1(i) = *_params[i];
-    }
 
     const auto& p0 = _constrained ? _P * p1 : p1;
 
-    for (size_t i = 0; i < nfree(); ++i) {
+    for (size_t i = 0; i < nfree(); ++i)
         gsl_vector_set(v, i, p0(i));
-    }
 }
 
 size_t FitParameters::nfree() const
 {
-    if (!_constrained) {
+    if (!_constrained)
         return _params.size();
-    }
     return _params.size() == 0 ? 0 : _K.cols();
 }
 
@@ -131,9 +127,8 @@ const Eigen::MatrixXd& FitParameters::kernel() const
 {
     static Eigen::MatrixXd id;
 
-    if (_constrained) {
+    if (_constrained)
         return _K;
-    }
 
     id.setIdentity(_params.size(), _params.size());
     return id;

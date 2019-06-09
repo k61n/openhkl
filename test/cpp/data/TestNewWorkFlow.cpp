@@ -40,9 +40,8 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     auto callback = [progressHandler]() {
         auto log = progressHandler->getLog();
-        for (auto&& msg : log) {
+        for (auto&& msg : log)
             std::cout << msg << std::endl;
-        }
     };
 
     progressHandler->setCallback(callback);
@@ -92,9 +91,8 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
         for (auto&& peak : selected_peaks) {
             double d = 1.0 / peak->q().rowVector().norm();
 
-            if (d < 2.0) {
+            if (d < 2.0)
                 continue;
-            }
 
             indexer.addPeak(peak);
             ++indexed_peaks;
@@ -115,9 +113,8 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     // set unit cell
     auto cell = soln.first;
-    for (auto&& peak : found_peaks) {
+    for (auto&& peak : found_peaks)
         peak->setUnitCell(cell);
-    }
 
     // reintegrate peaks
     integrator.integrate(found_peaks, dataf, 3.0, 4.0, 5.0);
@@ -140,9 +137,8 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
         // CHECK(events.size() >= 1);
 
-        if (events.size() == 0) {
+        if (events.size() == 0)
             continue;
-        }
 
         ++n_selected;
 

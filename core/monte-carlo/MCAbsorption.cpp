@@ -58,9 +58,8 @@ double MCAbsorption::run(
 
     TrianglesList faces = _convex_hull.createFaceCache(sampleOrientation);
 
-    if (faces.empty()) {
+    if (faces.empty())
         throw std::runtime_error("No sample defined.");
-    }
 
     Eigen::Vector3d dir(0, 1, 0);
 
@@ -80,19 +79,16 @@ double MCAbsorption::run(
 
         for (const auto& triangle : faces) {
             if (triangle.rayIntersect(point, dir, times[nIntersections])) {
-                if (++nIntersections == 2) {
+                if (++nIntersections == 2)
                     break;
-                }
             }
         }
 
-        if (nIntersections != 2) {
+        if (nIntersections != 2)
             continue;
-        }
 
-        if (times[0] > times[1]) {
+        if (times[0] > times[1])
             std::swap(times[0], times[1]);
-        }
 
         double lpm = (0.5 + random()) * (times[1] - times[0]);
         point += lpm * dir + times[0] * dir;

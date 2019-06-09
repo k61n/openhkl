@@ -84,9 +84,8 @@ void PeaksModel::addPeakListsModel(const QString& name, nsx::PeakList list)
 QStringList PeaksModel::peaklistNames()
 {
     QStringList foundListsNames;
-    for (auto& peaklist : peakLists_) {
+    for (auto& peaklist : peakLists_)
         foundListsNames.append(peaklist->getName());
-    }
     return foundListsNames;
 }
 

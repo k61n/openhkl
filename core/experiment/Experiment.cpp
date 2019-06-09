@@ -89,9 +89,8 @@ void Experiment::addData(sptrDataSet data)
     auto filename = data->filename();
 
     // Add the data only if it does not exist in the current data map
-    if (_data.find(filename) != _data.end()) {
+    if (_data.find(filename) != _data.end())
         return;
-    }
 
     const auto& metadata = data->reader()->metadata();
 
@@ -129,9 +128,8 @@ bool Experiment::hasData(const std::string& name) const
 void Experiment::removeData(const std::string& name)
 {
     auto it = _data.find(name);
-    if (it != _data.end()) {
+    if (it != _data.end())
         _data.erase(it);
-    }
 }
 
 } // namespace nsx

@@ -58,13 +58,11 @@ QVariant NumorItem::data(int role) const
 
 void NumorItem::exportHDF5(const std::string& filename) const
 {
-    if (filename.empty()) {
+    if (filename.empty())
         return;
-    }
 
-    if (filename.compare(_data->filename()) == 0) {
+    if (filename.compare(_data->filename()) == 0)
         return;
-    }
 
     try {
         _data->saveHDF5(filename);

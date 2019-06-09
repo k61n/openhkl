@@ -87,9 +87,8 @@ public:
 
     Any& operator=(const Any& other)
     {
-        if (_immutability && (_type_index != other._type_index)) {
+        if (_immutability && (_type_index != other._type_index))
             throw std::runtime_error("This Any object is type immutable.");
-        }
         delete _variant;
         _type_index = other._type_index;
         _variant = other._variant->clone();
@@ -98,9 +97,8 @@ public:
 
     Any& operator=(Any& other)
     {
-        if (_immutability && (_type_index != other._type_index)) {
+        if (_immutability && (_type_index != other._type_index))
             throw std::runtime_error("This Any object is type immutable.");
-        }
         delete _variant;
         _type_index = other._type_index;
         _variant = other._variant->clone();
@@ -109,9 +107,8 @@ public:
 
     Any& operator=(Any&& other)
     {
-        if (_immutability && (_type_index != other._type_index)) {
+        if (_immutability && (_type_index != other._type_index))
             throw std::runtime_error("This Any object is type immutable.");
-        }
         delete _variant;
         _type_index = other._type_index;
         _variant = other._variant;
@@ -121,9 +118,8 @@ public:
 
     template <typename T> Any& operator=(const T& value)
     {
-        if (_immutability && (_type_index != typeid(T))) {
+        if (_immutability && (_type_index != typeid(T)))
             throw std::runtime_error("This Any object is type immutable.");
-        }
         delete _variant;
         _variant = new Variant<T>(value);
         return *this;
@@ -131,9 +127,8 @@ public:
 
     template <typename T> Any& operator=(T& value)
     {
-        if (_immutability && (_type_index != typeid(T))) {
+        if (_immutability && (_type_index != typeid(T)))
             throw std::runtime_error("This Any object is type immutable.");
-        }
         delete _variant;
         _variant = new Variant<T>(value);
         return *this;
@@ -141,9 +136,8 @@ public:
 
     template <typename T> Any& operator=(T&& value)
     {
-        if (_immutability && (_type_index != typeid(T))) {
+        if (_immutability && (_type_index != typeid(T)))
             throw std::runtime_error("This Any object is type immutable.");
-        }
         delete _variant;
         _type_index = typeid(T);
         _variant = new Variant<T>(std::forward<T>(value));
@@ -152,17 +146,15 @@ public:
 
     template <typename V> V& as()
     {
-        if (_type_index != typeid(V)) {
+        if (_type_index != typeid(V))
             throw std::runtime_error("Invalid type");
-        }
         return dynamic_cast<Variant<V>*>(_variant)->get();
     }
 
     template <typename V> V as() const
     {
-        if (_type_index != typeid(V)) {
+        if (_type_index != typeid(V))
             throw std::runtime_error("Invalid type");
-        }
         return dynamic_cast<Variant<V>*>(_variant)->get();
     }
 

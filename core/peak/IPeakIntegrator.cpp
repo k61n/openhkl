@@ -88,13 +88,11 @@ void IPeakIntegrator::integrate(
         auto lo = bb.lower();
         auto hi = bb.upper();
 
-        if (lo[0] < 0 || lo[1] < 0 || lo[2] < 0) {
+        if (lo[0] < 0 || lo[1] < 0 || lo[2] < 0)
             peak->setSelected(false);
-        }
 
-        if (hi[0] >= data->nCols() || hi[1] >= data->nRows() || hi[2] >= data->nFrames()) {
+        if (hi[0] >= data->nCols() || hi[1] >= data->nRows() || hi[2] >= data->nFrames())
             peak->setSelected(false);
-        }
     }
 
     // only integrate the peaks with valid integration regions

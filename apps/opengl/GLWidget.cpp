@@ -98,9 +98,8 @@ void GLWidget::mousePressEvent(QMouseEvent* event)
         int g = color[1];
         int b = color[2];
         GLActor* o = _scene.picking(r, g, b);
-        if (o) {
+        if (o)
             updateGL();
-        }
     } else
         ball.initRotationFrom(event->x(), event->y());
 }
@@ -120,9 +119,8 @@ void GLWidget::mouseMoveEvent(QMouseEvent* event)
         int g = color[1];
         int b = color[2];
         GLActor* o = _scene.picking(r, g, b);
-        if (o) {
+        if (o)
             updateGL();
-        }
     }
 }
 

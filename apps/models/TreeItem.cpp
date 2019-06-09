@@ -39,15 +39,13 @@ ExperimentItem* TreeItem::experimentItem() const
 
     while (p != nullptr) {
         exp_item = dynamic_cast<ExperimentItem*>(p);
-        if (exp_item != nullptr) {
+        if (exp_item != nullptr)
             break;
-        }
         p = p->parent();
     }
 
-    if (exp_item == nullptr) {
+    if (exp_item == nullptr)
         throw std::runtime_error("TreeItem: no experiment in tree!");
-    }
 
     return exp_item;
 }

@@ -97,15 +97,13 @@ TEST_CASE("test/chemistry/TestMaterial.cpp", "")
     nsx::Material deuterium1("H[2]");
     nsx::Material deuterium2("D");
 
-    for (auto p : deuterium1.isotopes()) {
+    for (auto p : deuterium1.isotopes())
         CHECK(p.second == Approx(deuterium2.isotopes().at(p.first)).epsilon(tolerance));
-    }
 
     // Check Tritum T shortcut
     nsx::Material tritium1("H[3]");
     nsx::Material tritium2("T");
 
-    for (auto p : tritium1.isotopes()) {
+    for (auto p : tritium1.isotopes())
         CHECK(p.second == Approx(tritium2.isotopes().at(p.first)).epsilon(tolerance));
-    }
 }

@@ -205,9 +205,8 @@ PeakFinder::PeakFinder() : QcrFrame {"peakFinder"}, pixmap(nullptr)
 
     convolutionKernel->clear();
     nsx::ConvolverFactory convolver_factory;
-    for (auto&& convolution_kernel : convolver_factory.callbacks()) {
+    for (auto&& convolution_kernel : convolver_factory.callbacks())
         convolutionKernel->addItem(QString::fromStdString(convolution_kernel.first));
-    }
     convolutionKernel->setCurrentText("annular");
 
     // flip the image vertically to conform with DetectorScene
@@ -328,15 +327,13 @@ void PeakFinder::accept()
     for (auto i = 0; i < tab->count(); ++i) {
 
         auto widget_found_peaks = dynamic_cast<FoundPeaks*>(tab->widget(i));
-        if (!widget_found_peaks) {
+        if (!widget_found_peaks)
             continue;
-        }
 
         auto&& found_peaks = widget_found_peaks->selectedPeaks();
 
-        if (found_peaks.empty()) {
+        if (found_peaks.empty())
             continue;
-        }
 
         //      auto checkbox = dynamic_cast<QCheckBox *>(
         //          tab->tabBar()->tabButton(i, QTabBar::LeftSide));
@@ -369,9 +366,8 @@ void PeakFinder::refreshPreview()
     if (applyThreshold->isChecked()) {
         double thresholdVal = threshold->value();
         for (int i = 0; i < nrows; ++i) {
-            for (int j = 0; j < ncols; ++j) {
+            for (int j = 0; j < ncols; ++j)
                 convolvedFrame(i, j) = convolvedFrame(i, j) < thresholdVal ? 0 : 1;
-            }
         }
     }
     double minVal = convolvedFrame.minCoeff();

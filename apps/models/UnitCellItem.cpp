@@ -120,9 +120,8 @@ void UnitCellItem::openSpaceGroupDialog()
 
     std::unique_ptr<DialogSpaceGroup> dialog(new DialogSpaceGroup(selected_peaks));
 
-    if (!dialog->exec()) {
+    if (!dialog->exec())
         return;
-    }
 
     auto group = dialog->getSelectedGroup();
 
@@ -138,9 +137,8 @@ void UnitCellItem::openIndexingToleranceDialog()
     bool ok;
     double tolerance = QInputDialog::getDouble(
         nullptr, "Enter indexing tolerance", "", _unit_cell->indexingTolerance(), 0.0, 1.0, 6, &ok);
-    if (ok) {
+    if (ok)
         _unit_cell->setIndexingTolerance(tolerance);
-    }
 
     emitDataChanged();
 }

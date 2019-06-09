@@ -44,9 +44,8 @@ bool MergedPeak::addPeak(const sptrPeak3D& peak)
         determineRepresentativeHKL();
     } else {
         MillerIndex hkl(q, cell);
-        if (!_grp.isEquivalent(_hkl, hkl, _friedel)) {
+        if (!_grp.isEquivalent(_hkl, hkl, _friedel))
             return false;
-        }
     }
     // add peak to list
     _peaks.push_back(peak);
@@ -81,26 +80,23 @@ void MergedPeak::determineRepresentativeHKL()
         const Eigen::Matrix3d rotation = g.getRotationPart().transpose();
         equivs.emplace_back(best_hkl * rotation);
 
-        if (_friedel) {
+        if (_friedel)
             equivs.emplace_back(-best_hkl * rotation);
-        }
     }
 
     auto compare_fn = [=](const Eigen::RowVector3d& a, const Eigen::RowVector3d& b) -> bool {
         const double eps = 1e-5;
         for (auto i = 0; i < 3; ++i) {
-            if (std::abs(a(i) - b(i)) > eps) {
+            if (std::abs(a(i) - b(i)) > eps)
                 return a(i) > b(i);
-            }
         }
         return false;
     };
 
     best_hkl = *std::min_element(equivs.begin(), equivs.end(), compare_fn);
 
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 3; ++i)
         _hkl(i) = int(std::lround(best_hkl(i)));
-    }
 }
 
 const PeakList& MergedPeak::peaks() const
@@ -113,9 +109,8 @@ std::pair<MergedPeak, MergedPeak> MergedPeak::split() const
     // make copy of peak list
     std::vector<size_t> random_idx(_peaks.size());
 
-    for (unsigned int j = 0; j < _peaks.size(); ++j) {
+    for (unsigned int j = 0; j < _peaks.size(); ++j)
         random_idx[j] = j;
-    }
 
     // randomly reorder
     std::random_shuffle(random_idx.begin(), random_idx.end());
@@ -142,12 +137,10 @@ bool operator<(const MergedPeak& p, const MergedPeak& q)
     const auto& a = p.index();
     const auto& b = q.index();
 
-    if (a(0) != b(0)) {
+    if (a(0) != b(0))
         return a(0) < b(0);
-    }
-    if (a(1) != b(1)) {
+    if (a(1) != b(1))
         return a(1) < b(1);
-    }
     return a(2) < b(2);
 }
 
@@ -162,9 +155,8 @@ double MergedPeak::chi2() const
     const double I_merge = intensity().value();
 
     // if there is no redundancy, we cannot compute chi2
-    if (redundancy() < 1.99) {
+    if (redundancy() < 1.99)
         return 0.0;
-    }
 
     double chi_sq = 0.0;
 
@@ -189,9 +181,8 @@ double MergedPeak::pValue() const
     const double k = redundancy() - 1.0;
 
     // if there is only one observation, we cannot compute a p-value
-    if (k < 0.9) {
+    if (k < 0.9)
         return 0.0;
-    }
 
     const double x = chi2();
     return gsl_cdf_chisq_P(x, k);

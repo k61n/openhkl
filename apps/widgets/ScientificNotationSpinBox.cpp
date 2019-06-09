@@ -83,9 +83,8 @@ QString ScientificNotationSpinBox::textFromValue(double value) const
     // convert to string -> Using exponetial display with internal decimals
     QString str = locale().toString(value, 'e', dispDecimals);
     // remove thousand sign
-    if (qAbs(value) >= 1000.0) {
+    if (qAbs(value) >= 1000.0)
         str.remove(thousand);
-    }
     return str;
 }
 
@@ -157,18 +156,16 @@ bool ScientificNotationSpinBox::isIntermediateValue(const QString& str) const
     // separator on left or contains '+'
     else if (dotindex == 0 || (dotindex == 1 && str.at(0) == QLatin1Char('+'))) {
         // '+' at negative max
-        if (negative) {
+        if (negative)
             return false;
-        }
         doleft = false;
         right = str.mid(dotindex + 1).toLongLong();
     }
     // contains '-'
     else if (dotindex == 1 && str.at(0) == QLatin1Char('-')) {
         // '-' at positiv max
-        if (!negative) {
+        if (!negative)
             return false;
-        }
         doleft = false;
         right = str.mid(dotindex + 1).toLongLong();
     } else {
@@ -187,9 +184,8 @@ bool ScientificNotationSpinBox::isIntermediateValue(const QString& str) const
     }
 
     qint64 match = min_left;
-    if (doleft && !isIntermediateValueHelper(left, min_left, max_left, &match)) {
+    if (doleft && !isIntermediateValueHelper(left, min_left, max_left, &match))
         return false;
-    }
     if (doright) {
         if (!doleft) {
             if (min_left == max_left) {
@@ -206,12 +202,10 @@ bool ScientificNotationSpinBox::isIntermediateValue(const QString& str) const
                 return ret;
             }
         }
-        if (match != min_left) {
+        if (match != min_left)
             min_right = negative ? dec : 0;
-        }
-        if (match != max_left) {
+        if (match != max_left)
             max_right = negative ? 0 : dec;
-        }
         qint64 tmpl = negative ? max_right : min_right;
         qint64 tmpr = negative ? min_right : max_right;
         const bool ret = isIntermediateValueHelper(right, tmpl, tmpr);
@@ -374,9 +368,8 @@ QVariant ScientificNotationSpinBox::validateAndInterpret(
         }
 
         // no thousand sign, but still invalid for unknown reason
-        if (!ok) {
+        if (!ok)
             state = QValidator::Invalid;
-        }
         // number valid and within valid range
         else if (num >= min && num <= max) {
             if (notAcceptable) {
@@ -405,9 +398,8 @@ QVariant ScientificNotationSpinBox::validateAndInterpret(
 
 end:
     // if something went wrong, set num to something valid
-    if (state != QValidator::Acceptable) {
+    if (state != QValidator::Acceptable)
         num = max > 0 ? min : max;
-    }
 
     // save (private) cache values
     cachedText = prefix() + copy + suffix();

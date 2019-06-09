@@ -47,9 +47,8 @@ size_t MergedData::totalSize() const
 {
     size_t total = 0;
 
-    for (const auto& peak : _peaks) {
+    for (const auto& peak : _peaks)
         total += peak.redundancy();
-    }
     return total;
 }
 

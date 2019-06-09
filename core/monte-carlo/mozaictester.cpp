@@ -403,9 +403,8 @@ Eigen::MatrixXd MozaicTester::run(double h, double k, double l, int n)
         int pz = floor((from[2] + _hDet / 2.0) * _nRows / _hDet);
         int px = floor((from[0] + _wDet / 2.0) * _nCols / _wDet);
 
-        if (px > 0 && px < _nCols && pz > 0 && pz < _nRows) {
+        if (px > 0 && px < _nCols && pz > 0 && pz < _nRows)
             bb.addPoint(pz, px, 0.0, 1);
-        }
     }
     std::cout << bb.getMass() << std::endl;
     return detector;

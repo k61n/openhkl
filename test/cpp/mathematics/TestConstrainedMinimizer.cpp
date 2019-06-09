@@ -49,9 +49,8 @@ TEST_CASE("test/mathematics/TestConstrainedMinimizer.cpp", "")
 
     nsx::FitParameters params;
 
-    for (auto i = 0; i < x.size(); ++i) {
+    for (auto i = 0; i < x.size(); ++i)
         params.addParameter(&x(i));
-    }
 
     Eigen::SparseMatrix<double> constraint;
     constraint.setZero();
@@ -81,7 +80,6 @@ TEST_CASE("test/mathematics/TestConstrainedMinimizer.cpp", "")
     CHECK(x(1) == Approx(0.4008).epsilon(1e-1));
     CHECK(x(2) == Approx(0.50125).epsilon(1e-1));
 
-    for (auto i = 3; i < x.size(); ++i) {
+    for (auto i = 3; i < x.size(); ++i)
         CHECK(std::abs(x(i)) < 1e-6);
-    }
 }

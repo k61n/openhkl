@@ -52,9 +52,8 @@ void SampleItem::openIsotopesDatabase()
     // dialog will automatically be deleted before we return from this method
     std::unique_ptr<DialogIsotopesDatabase> dialog_ptr(new DialogIsotopesDatabase());
 
-    if (!dialog_ptr->exec()) {
+    if (!dialog_ptr->exec())
         return;
-    }
 }
 
 void SampleItem::openSampleGlobalOffsetsFrame()

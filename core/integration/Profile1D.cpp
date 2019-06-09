@@ -27,17 +27,15 @@ Profile1D::Profile1D(const Intensity& mean_background, double sigma_max, size_t 
 {
     const double dr3 = sigma_max * sigma_max * sigma_max / num;
 
-    for (size_t i = 0; i < num + 1; ++i) {
+    for (size_t i = 0; i < num + 1; ++i)
         _endpoints[i] = std::pow(i * dr3, 2.0 / 3.0);
-    }
 }
 
 void Profile1D::addPoint(double r2, double M)
 {
     // outside of allowable range
-    if (r2 < 0 || r2 > _endpoints.back()) {
+    if (r2 < 0 || r2 > _endpoints.back())
         return;
-    }
 
     for (size_t i = 0; i < _counts.size(); ++i) {
         if (r2 <= _endpoints[i + 1]) {

@@ -94,20 +94,17 @@ ExperimentItem* SessionModel::selectExperiment(nsx::sptrDataSet data)
 
     for (auto i = 0; i < rowCount(); ++i) {
         experiment_item = dynamic_cast<ExperimentItem*>(item(i));
-        if (!experiment_item) {
+        if (!experiment_item)
             continue;
-        }
 
         auto data_item = experiment_item->dataItem();
         for (auto j = 0; j < data_item->rowCount(); ++j) {
             auto numor_item = dynamic_cast<NumorItem*>(data_item->child(j));
-            if (!numor_item) {
+            if (!numor_item)
                 continue;
-            }
 
-            if (numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>() == data) {
+            if (numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>() == data)
                 return experiment_item;
-            }
         }
     }
 
@@ -135,9 +132,8 @@ nsx::PeakList SessionModel::peaks(nsx::sptrDataSet data) const
         auto&& peaks = exp_item->peaksItem()->selectedPeaks();
 
         for (auto peak : peaks) {
-            if (data == nullptr || peak->data() == data) {
+            if (data == nullptr || peak->data() == data)
                 list.push_back(peak);
-            }
         }
     }
     return list;
@@ -153,14 +149,12 @@ void SessionModel::createNewExperiment()
         dlg = std::unique_ptr<DialogExperiment>(new DialogExperiment());
 
         // The user pressed cancel, return
-        if (!dlg->exec()) {
+        if (!dlg->exec())
             return;
-        }
 
         // If no experiment name is provided, pop up a warning
-        if (dlg->getExperimentName().isEmpty()) {
+        if (dlg->getExperimentName().isEmpty())
             throw std::runtime_error("Empty experiment name");
-        }
     } catch (std::exception& e) {
         nsx::error() << e.what();
         return;

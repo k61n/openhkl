@@ -73,9 +73,8 @@ std::unordered_map<std::string, double> UnitsManager::_unitsMap = {{"m", m},
 double UnitsManager::get(const std::string& units)
 {
     auto it = _unitsMap.find(units);
-    if (it == _unitsMap.end()) {
+    if (it == _unitsMap.end())
         throw std::invalid_argument("Unit " + units + " not registered in the database");
-    }
     return it->second;
 }
 

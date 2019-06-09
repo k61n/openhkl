@@ -22,9 +22,8 @@ namespace nsx {
 GruberReduction::GruberReduction(const Eigen::Matrix3d& g, double epsilon)
     : _g(g), _epsilon(epsilon)
 {
-    if (epsilon <= 0 || epsilon > 1) {
+    if (epsilon <= 0 || epsilon > 1)
         throw std::runtime_error("Gruber reduction: epsilon must be in the range ]0,1]");
-    }
     // Multiply tolerance by approximate squared Unit-cell length
     _epsilon *= std::pow(g.determinant(), 1.0 / 3.0);
 }
@@ -78,15 +77,12 @@ NiggliCharacter GruberReduction::classify()
     const bool typeI = [=]() -> bool {
         const double eps = std::sqrt(_epsilon);
 
-        if (fabs(D) < eps) {
+        if (fabs(D) < eps)
             return false;
-        }
-        if (fabs(E) < eps) {
+        if (fabs(E) < eps)
             return false;
-        }
-        if (fabs(F) < eps) {
+        if (fabs(F) < eps)
             return false;
-        }
         return D * E * F > 0;
     }();
 
@@ -95,9 +91,8 @@ NiggliCharacter GruberReduction::classify()
     for (auto i = 1; i <= 44; ++i) {
         n.set(i, s, t);
 
-        if (typeI != n.typeI) {
+        if (typeI != n.typeI)
             continue;
-        }
 
         Eigen::VectorXd d = n.C * x;
 
@@ -107,9 +102,8 @@ NiggliCharacter GruberReduction::classify()
         const double score = std::max(max, min);
 
         // satisfied the conditions within tolerance
-        if (score < _epsilon) {
+        if (score < _epsilon)
             return n;
-        }
     }
 
     // note: we should never reach this code
@@ -118,9 +112,8 @@ NiggliCharacter GruberReduction::classify()
 
 bool NiggliCharacter::set(int priority, double s, double t)
 {
-    if (priority < 1 || priority > 44) {
+    if (priority < 1 || priority > 44)
         return false;
-    }
 
     P.resize(3, 3);
 

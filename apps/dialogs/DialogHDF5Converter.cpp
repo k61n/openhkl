@@ -100,9 +100,8 @@ void DialogHDF5Converter::convert()
 
         auto hdf5_filename = QDir(outputDirectory).filePath(basename + ".h5").toStdString();
 
-        if (hdf5_filename.compare(numor_filename) == 0) {
+        if (hdf5_filename.compare(numor_filename) == 0)
             return;
-        }
 
         try {
             numor->saveHDF5(hdf5_filename);
@@ -118,7 +117,6 @@ void DialogHDF5Converter::browseOutputDirectory()
 {
     QString outputDirectory = QFileDialog::getExistingDirectory(
         this, "Enter output directory", ".", QFileDialog::ShowDirsOnly);
-    if (!outputDirectory.isEmpty()) {
+    if (!outputDirectory.isEmpty())
         _ui->outputDirectory->setText(outputDirectory);
-    }
 }

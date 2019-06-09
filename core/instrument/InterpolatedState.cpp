@@ -29,9 +29,8 @@ InterpolatedState::InterpolatedState(Diffractometer* diffractometer)
 InterpolatedState::InterpolatedState(const InstrumentState& s1, const InstrumentState& s2, double t)
     : InstrumentState(const_cast<Diffractometer*>(s1.diffractometer())), axis(), stepSize()
 {
-    if (s1.diffractometer() != s2.diffractometer()) {
+    if (s1.diffractometer() != s2.diffractometer())
         throw std::runtime_error("Cannot interpolate states between different diffractometers");
-    }
 
     const double s = 1 - t;
 

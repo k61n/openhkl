@@ -48,9 +48,8 @@ UnitCellPropertyWidget::UnitCellPropertyWidget(UnitCellItem* unit_cell_item, QWi
     ui->labelbeta->setText(QString((QChar)0x03B2));
     ui->labelgamma->setText(QString((QChar)0x03B3));
 
-    for (auto&& sg : nsx::SpaceGroup::symbols()) {
+    for (auto&& sg : nsx::SpaceGroup::symbols())
         ui->spaceGroup->addItem(QString::fromStdString(sg));
-    }
 
     QCompleter* completer = new QCompleter(ui->spaceGroup->model(), ui->spaceGroup);
     ui->spaceGroup->setCompleter(completer);
@@ -125,9 +124,8 @@ void UnitCellPropertyWidget::setMassDensity() const
     auto unit_cell = _unitCellItem->data(Qt::UserRole).value<nsx::sptrUnitCell>();
 
     auto material = unit_cell->material();
-    if (!material) {
+    if (!material)
         return;
-    }
 
     double mm = material->molarMass();
     mm *= ui->z->value() / nsx::avogadro;
@@ -210,9 +208,8 @@ void UnitCellPropertyWidget::update(QStandardItem* item)
     ui->z->setValue(unit_cell->z());
 
     auto material = unit_cell->material();
-    if (material) {
+    if (material)
         ui->chemicalFormula->setText(QString::fromStdString(material->formula()));
-    }
 
     ui->spaceGroup->setCurrentText(QString::fromStdString(unit_cell->spaceGroup().symbol()));
 

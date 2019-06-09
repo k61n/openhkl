@@ -33,9 +33,8 @@ bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
     auto uc = peak->unitCell();
     auto data = peak->data();
 
-    if (!uc || !data) {
+    if (!uc || !data)
         throw std::runtime_error("ShapeIntegrator: Peak must have unit cell and data attached");
-    }
 
     PixelSumIntegrator::compute(peak, region);
 
@@ -64,9 +63,8 @@ bool ShapeIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
             profile.addValue(frame.transform(ev), dI);
         }
     }
-    if (profile.normalize()) {
+    if (profile.normalize())
         _library->addPeak(peak, std::move(profile), std::move(integrated_profile));
-    }
     return true;
 }
 

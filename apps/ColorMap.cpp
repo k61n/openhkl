@@ -32,9 +32,8 @@ ColorMap::ColorMap(const double* rgb) : _rgb(256 * 3, 0), _log_rgb(256 * 3, 0)
         const unsigned int b = std::min(a + 1, 255u);
         const double eps = t - a;
 
-        for (unsigned int j = 0; j < 3; ++j) {
+        for (unsigned int j = 0; j < 3; ++j)
             _log_rgb[3 * i + j] = (1 - eps) * _rgb[3 * a + j] + eps * _rgb[3 * b + j];
-        }
     }
 }
 
@@ -48,13 +47,11 @@ QImage
 ColorMap::matToImage(const Eigen::ArrayXXd& source, const QRect& rect, double colorMax, bool log)
 {
     // invalid rectangle: early return
-    if (rect.left() < 0 || rect.top() < 0) {
+    if (rect.left() < 0 || rect.top() < 0)
         return QImage();
-    }
 
-    if (std::abs(colorMax) < 1.0e-9) {
+    if (std::abs(colorMax) < 1.0e-9)
         return QImage();
-    }
 
     const int rows = int(source.rows());
     const int cols = int(source.cols());

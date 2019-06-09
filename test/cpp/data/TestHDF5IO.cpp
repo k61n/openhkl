@@ -22,9 +22,8 @@ TEST_CASE("test/data/TestHDF5IO.cpp", "")
         dataf = factory.create("", "D10_ascii_example", diffractometer);
         dataf->open();
 
-        for (size_t i = 0; i < dataf->nFrames(); ++i) {
+        for (size_t i = 0; i < dataf->nFrames(); ++i)
             frames.push_back(dataf->frame(i));
-        }
 
         dataf->saveHDF5("D10_hdf5_example.h5");
         dataf->close();
@@ -34,9 +33,8 @@ TEST_CASE("test/data/TestHDF5IO.cpp", "")
 
         CHECK(dataf != nullptr);
 
-        for (size_t i = 0; i < dataf->nFrames(); ++i) {
+        for (size_t i = 0; i < dataf->nFrames(); ++i)
             CHECK(dataf->frame(i) == frames[i]);
-        }
         dataf->close();
     } catch (std::exception& e) {
         FAIL(std::string("saveHDF5() threw exception: ") + e.what());

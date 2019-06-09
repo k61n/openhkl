@@ -59,9 +59,8 @@ PeakTableView::PeakTableView(QWidget* parent) : QTableView(parent)
 
 void PeakTableView::selectPeak(QModelIndex index)
 {
-    if (!index.isValid()) {
+    if (!index.isValid())
         return;
-    }
 
     CollectedPeaksModel* peaks_model = dynamic_cast<CollectedPeaksModel*>(model());
 
@@ -81,14 +80,12 @@ void PeakTableView::keyPressEvent(QKeyEvent* event)
     if (event->modifiers() == Qt::NoModifier) {
 
         if (key == Qt::Key_Down || key == Qt::Key_Tab || key == Qt::Key_PageDown) {
-            if (current_index == previous_index) {
+            if (current_index == previous_index)
                 setCurrentIndex(model()->index(0, 0));
-            }
             selectPeak(currentIndex());
         } else if (key == Qt::Key_Up || key == Qt::Key_Backspace || key == Qt::Key_PageDown) {
-            if (current_index == previous_index) {
+            if (current_index == previous_index)
                 setCurrentIndex(model()->index(model()->rowCount() - 1, 0));
-            }
             selectPeak(currentIndex());
         } else if (key == Qt::Key_Return || key == Qt::Key_Space) {
             togglePeakSelection(currentIndex());
@@ -99,9 +96,8 @@ void PeakTableView::keyPressEvent(QKeyEvent* event)
 void PeakTableView::togglePeakSelection(QModelIndex index)
 {
     auto peaks_model = dynamic_cast<CollectedPeaksModel*>(model());
-    if (peaks_model == nullptr) {
+    if (peaks_model == nullptr)
         return;
-    }
 
     peaks_model->togglePeakSelection(index);
 }
@@ -109,14 +105,12 @@ void PeakTableView::togglePeakSelection(QModelIndex index)
 void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
 {
     auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
-    if (peaksModel == nullptr) {
+    if (peaksModel == nullptr)
         return;
-    }
 
     auto peaks = peaksModel->peaks();
-    if (peaks.empty()) {
+    if (peaks.empty())
         return;
-    }
     // Show all peaks as selected when context menu is requested
     auto menu = new QMenu(this);
     //
@@ -178,19 +172,16 @@ void PeakTableView::normalizeToMonitor()
     double factor =
         QInputDialog::getDouble(this, "Enter normalization factor", "", 1, 1, 100000000, 1, &ok);
 
-    if (!ok) {
+    if (!ok)
         return;
-    }
 
     auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
-    if (peaksModel == nullptr) {
+    if (peaksModel == nullptr)
         return;
-    }
 
     auto peaks = peaksModel->peaks();
-    if (peaks.empty()) {
+    if (peaks.empty())
         return;
-    }
 
     peaksModel->normalizeToMonitor(factor);
 
@@ -200,9 +191,8 @@ void PeakTableView::normalizeToMonitor()
     selectRow(index.row());
 
     // If no row selected do nothing else.
-    if (!index.isValid()) {
+    if (!index.isValid())
         return;
-    }
     nsx::sptrPeak3D peak = peaks[index.row()];
     emit plotPeak(peak);
 }
@@ -210,19 +200,16 @@ void PeakTableView::normalizeToMonitor()
 void PeakTableView::plotAs(const std::string& key)
 {
     QModelIndexList indexList = selectionModel()->selectedIndexes();
-    if (!indexList.size()) {
+    if (!indexList.size())
         return;
-    }
 
     auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
-    if (peaksModel == nullptr) {
+    if (peaksModel == nullptr)
         return;
-    }
 
     auto peaks = peaksModel->peaks();
-    if (peaks.empty()) {
+    if (peaks.empty())
         return;
-    }
 
     int nPoints = indexList.size();
 
@@ -242,14 +229,12 @@ void PeakTableView::plotAs(const std::string& key)
 void PeakTableView::selectUnindexedPeaks()
 {
     auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
-    if (peaksModel == nullptr) {
+    if (peaksModel == nullptr)
         return;
-    }
     QModelIndexList unindexedPeaks = peaksModel->unindexedPeaks();
 
-    for (QModelIndex index : unindexedPeaks) {
+    for (QModelIndex index : unindexedPeaks)
         selectRow(index.row());
-    }
 }
 
 void PeakTableView::selectAllPeaks()
@@ -275,12 +260,10 @@ void PeakTableView::togglePeaksSelection()
 void PeakTableView::selectValidPeaks()
 {
     auto peaksModel = dynamic_cast<CollectedPeaksModel*>(model());
-    if (peaksModel == nullptr) {
+    if (peaksModel == nullptr)
         return;
-    }
     QModelIndexList validPeaksIndexes = peaksModel->selectedPeaks();
 
-    for (QModelIndex index : validPeaksIndexes) {
+    for (QModelIndex index : validPeaksIndexes)
         selectRow(index.row());
-    }
 }

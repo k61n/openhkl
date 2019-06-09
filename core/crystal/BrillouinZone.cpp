@@ -46,9 +46,8 @@ void remove_duplicates(std::vector<Eigen::RowVector3d>& q_vectors, bool reflect,
             }
         }
 
-        if (!duplicate) {
+        if (!duplicate)
             unique_q_vectors.emplace_back(v);
-        }
     }
     std::swap(q_vectors, unique_q_vectors);
 }
@@ -75,15 +74,13 @@ BrillouinZone::BrillouinZone(const Eigen::Matrix3d& B, double eps)
 bool BrillouinZone::inside(const Eigen::RowVector3d& q) const
 {
     // first-pass check: the point is outside of the bounding sphere
-    if (q.squaredNorm() > (1 + _eps) * _r2) {
+    if (q.squaredNorm() > (1 + _eps) * _r2)
         return false;
-    }
 
     // second-pass check: the point is inside the convex hull
     for (auto&& q1 : _qs) {
-        if (std::fabs(q1.dot(q) / q1.dot(q1)) > 0.5 + _eps) {
+        if (std::fabs(q1.dot(q) / q1.dot(q1)) > 0.5 + _eps)
             return false;
-        }
     }
     return true;
 }
@@ -112,9 +109,8 @@ void BrillouinZone::clean_qs()
                 ++intersections;
             }
         }
-        if (intersections == 1) {
+        if (intersections == 1)
             new_qs.emplace_back(_qs[i]);
-        }
     }
 
     std::swap(new_qs, _qs);
@@ -162,15 +158,13 @@ void BrillouinZone::compute()
                 auto hkl2 = h * h + k * k + l * l;
 
                 // hkl < 1 => reject the hkl null-vector
-                if (hkl2 < 1 || hkl2 > bound2) {
+                if (hkl2 < 1 || hkl2 > bound2)
                     continue;
-                }
 
                 Eigen::RowVector3d q = Eigen::RowVector3d(h, k, l) * _B;
 
-                if (inside(0.5 * q)) {
+                if (inside(0.5 * q))
                     _qs.emplace_back(std::move(q));
-                }
             }
         }
     }
@@ -183,9 +177,8 @@ void BrillouinZone::compute_vertices()
     std::vector<Eigen::RowVector3d> normals = _qs;
 
     // add reflections, necessary for the code below
-    for (auto&& q : _qs) {
+    for (auto&& q : _qs)
         normals.emplace_back(-q);
-    }
 
     const auto n = normals.size();
 
@@ -218,17 +211,15 @@ void BrillouinZone::compute_vertices()
 
                 // rank != 3 => planes either do not intersect, or do not intersect at a
                 // unique point
-                if (QR.rank() != 3) {
+                if (QR.rank() != 3)
                     continue;
-                }
 
                 // Gets the point of intersection
                 auto x = QR.solve(b);
 
                 // check if it is inside the Brillouin Zone
-                if (!inside((1.0 - _eps) * x.transpose())) {
+                if (!inside((1.0 - _eps) * x.transpose()))
                     continue;
-                }
                 _vertices.emplace_back(x);
             }
         }
@@ -257,9 +248,8 @@ const std::vector<Eigen::RowVector3d>& BrillouinZone::normals() const
 ConvexHull BrillouinZone::convexHull() const
 {
     ConvexHull hull;
-    for (auto v : _vertices) {
+    for (auto v : _vertices)
         hull.addVertex(v.transpose());
-    }
     hull.updateHull();
     return hull;
 }
@@ -268,9 +258,8 @@ double BrillouinZone::innerRadius() const
 {
     double r2 = _qs[0].squaredNorm();
 
-    for (auto q : _qs) {
+    for (auto q : _qs)
         r2 = std::min(r2, q.squaredNorm());
-    }
     return std::sqrt(r2 / 4.0);
 }
 

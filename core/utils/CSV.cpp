@@ -70,9 +70,8 @@ std::string CSV::getToken(std::istream& stream, char& delim)
                 pos = stream.tellg();
 
                 // reached end of file
-                if (size - pos < 2) {
+                if (size - pos < 2)
                     in_string = false;
-                }
                 // else check for triple quote
                 else {
                     stream.get(n1);

@@ -33,32 +33,28 @@ AggregateStreamWrapper::~AggregateStreamWrapper()
 
 void AggregateStreamWrapper::print(const std::string& message)
 {
-    for (auto w : _wrappers) {
+    for (auto w : _wrappers)
         w->print(message);
-    }
 }
 
 void AggregateStreamWrapper::addWrapper(IStreamWrapper* wrapper)
 {
     auto it = std::find(_wrappers.begin(), _wrappers.end(), wrapper);
 
-    if (it == _wrappers.end()) {
+    if (it == _wrappers.end())
         _wrappers.emplace_back(wrapper);
-    }
 }
 
 void AggregateStreamWrapper::printPrefix()
 {
-    for (auto w : _wrappers) {
+    for (auto w : _wrappers)
         w->printPrefix();
-    }
 }
 
 void AggregateStreamWrapper::printSuffix()
 {
-    for (auto w : _wrappers) {
+    for (auto w : _wrappers)
         w->printSuffix();
-    }
 }
 
 } // namespace nsx

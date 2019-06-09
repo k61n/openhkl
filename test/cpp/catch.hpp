@@ -2729,9 +2729,8 @@ public:
         ResultDisposition::Flags resultDisposition);
     ~AssertionHandler()
     {
-        if (!m_completed) {
+        if (!m_completed)
             m_resultCapture.handleIncomplete(m_assertionInfo);
-        }
     }
 
     template <typename T> void handleExpr(ExprLhs<T> const& expr)
@@ -3837,9 +3836,8 @@ template <typename T> struct ContainsElementMatcher : MatcherBase<std::vector<T>
     bool match(std::vector<T> const& v) const override
     {
         for (auto const& el : v) {
-            if (el == m_comparator) {
+            if (el == m_comparator)
                 return true;
-            }
         }
         return false;
     }
@@ -3869,9 +3867,8 @@ template <typename T> struct ContainsMatcher : MatcherBase<std::vector<T>> {
                     break;
                 }
             }
-            if (!present) {
+            if (!present)
                 return false;
-            }
         }
         return true;
     }
@@ -3953,9 +3950,8 @@ template <typename T> struct UnorderedEqualsMatcher : MatcherBase<std::vector<T>
     {
         // Note: This is a reimplementation of std::is_permutation,
         //       because I don't want to include <algorithm> inside the common path
-        if (m_target.size() != vec.size()) {
+        if (m_target.size() != vec.size())
             return false;
-        }
         return std::is_permutation(m_target.begin(), m_target.end(), vec.begin());
     }
 
@@ -4260,9 +4256,8 @@ public:
 
     bool next() override
     {
-        if (m_current >= m_generators.size()) {
+        if (m_current >= m_generators.size())
             return false;
-        }
         const bool current_status = m_generators[m_current].next();
         if (!current_status) {
             ++m_current;
@@ -4314,9 +4309,8 @@ auto generate(SourceLineInfo const& lineInfo, L const& generatorExpression)
     using UnderlyingType = typename decltype(generatorExpression())::type;
 
     IGeneratorTracker& tracker = acquireGeneratorTracker(lineInfo);
-    if (!tracker.hasGenerator()) {
+    if (!tracker.hasGenerator())
         tracker.setGenerator(pf::make_unique<Generators<UnderlyingType>>(generatorExpression()));
-    }
 
     auto const& generator = static_cast<IGenerator<UnderlyingType> const&>(*tracker.getGenerator());
     return generator.get();
@@ -4362,16 +4356,14 @@ public:
     bool next() override
     {
         ++m_returned;
-        if (m_returned >= m_target) {
+        if (m_returned >= m_target)
             return false;
-        }
 
         const auto success = m_generator.next();
         // If the underlying generator does not contain enough values
         // then we cut short as well
-        if (!success) {
+        if (!success)
             m_returned = m_target;
-        }
         return success;
     }
 };
@@ -4406,9 +4398,8 @@ public:
     bool next() override
     {
         bool success = m_generator.next();
-        if (!success) {
+        if (!success)
             return false;
-        }
         while (!m_predicate(m_generator.get()) && (success = m_generator.next()) == true)
             ;
         return success;
@@ -4499,9 +4490,8 @@ public:
     bool next() override
     {
         const auto success = m_generator.next();
-        if (success) {
+        if (success)
             m_cache = m_function(m_generator.get());
-        }
         return success;
     }
 };
@@ -4558,9 +4548,8 @@ public:
     {
         m_chunk.clear();
         for (size_t idx = 0; idx < m_chunk_size; ++idx) {
-            if (!m_generator.next()) {
+            if (!m_generator.next())
                 return false;
-            }
             m_chunk.push_back(m_generator.get());
         }
         return true;
@@ -9505,9 +9494,8 @@ std::string ExceptionTranslatorRegistry::translateActiveException() const
         // here, but they fill-in current_exception properly, so
         // at worst the output should be a little weird, instead of
         // causing a crash.
-        if (std::current_exception() == nullptr) {
+        if (std::current_exception() == nullptr)
             return "Non C++ exception. Possibly a CLR exception.";
-        }
         return tryTranslators();
 #endif
     } catch (TestFailureException&) {
@@ -9588,9 +9576,8 @@ static SignalDefs signalDefs[] = {
 LONG CALLBACK FatalConditionHandler::handleVectoredException(PEXCEPTION_POINTERS ExceptionInfo)
 {
     for (auto const& def : signalDefs) {
-        if (ExceptionInfo->ExceptionRecord->ExceptionCode == def.id) {
+        if (ExceptionInfo->ExceptionRecord->ExceptionCode == def.id)
             reportFatal(def.name);
-        }
     }
     // If its not an exception we care about, pass it along.
     // This stops us from eating debugger breaks etc.
@@ -9677,9 +9664,8 @@ FatalConditionHandler::FatalConditionHandler()
 
     sa.sa_handler = handleSignal;
     sa.sa_flags = SA_ONSTACK;
-    for (std::size_t i = 0; i < sizeof(signalDefs) / sizeof(SignalDefs); ++i) {
+    for (std::size_t i = 0; i < sizeof(signalDefs) / sizeof(SignalDefs); ++i)
         sigaction(signalDefs[i].id, &sa, &oldSigActions[i]);
-    }
 }
 
 FatalConditionHandler::~FatalConditionHandler()
@@ -9691,9 +9677,8 @@ void FatalConditionHandler::reset()
 {
     if (isSet) {
         // Set signals back to previous values -- hopefully nobody overwrote them in the meantime
-        for (std::size_t i = 0; i < sizeof(signalDefs) / sizeof(SignalDefs); ++i) {
+        for (std::size_t i = 0; i < sizeof(signalDefs) / sizeof(SignalDefs); ++i)
             sigaction(signalDefs[i].id, &oldSigActions[i], nullptr);
-        }
         // Return the old stack
         sigaltstack(&oldSigStack, nullptr);
         isSet = false;
@@ -10027,9 +10012,8 @@ std::size_t listTests(Config const& config)
     TestSpec testSpec = config.testSpec();
     if (config.hasTestFilters())
         Catch::cout() << "Matching test cases:\n";
-    else {
+    else
         Catch::cout() << "All available test cases:\n";
-    }
 
     auto matchedTestCases = filterTests(getAllTestCasesSorted(config), testSpec, config);
     for (auto const& testCaseInfo : matchedTestCases) {
@@ -10095,9 +10079,8 @@ std::size_t listTags(Config const& config)
     TestSpec testSpec = config.testSpec();
     if (config.hasTestFilters())
         Catch::cout() << "Tags for matching test cases:\n";
-    else {
+    else
         Catch::cout() << "All available tags:\n";
-    }
 
     std::map<std::string, TagInfo> tagCounts;
 
@@ -10253,9 +10236,8 @@ template <typename FP> bool almostEqualUlps(FP lhs, FP rhs, int maxUlpDiff)
 {
     // Comparison with NaN should always be false.
     // This way we can rule it out before getting into the ugly details
-    if (Catch::isnan(lhs) || Catch::isnan(rhs)) {
+    if (Catch::isnan(lhs) || Catch::isnan(rhs))
         return false;
-    }
 
     auto lc = convert(lhs);
     auto rc = convert(rhs);
@@ -10449,9 +10431,8 @@ RegexMatcher::RegexMatcher(std::string regex, CaseSensitive::Choice caseSensitiv
 bool RegexMatcher::match(std::string const& matchee) const
 {
     auto flags = std::regex::ECMAScript; // ECMAScript is the default syntax option anyway
-    if (m_caseSensitivity == CaseSensitive::Choice::No) {
+    if (m_caseSensitivity == CaseSensitive::Choice::No)
         flags |= std::regex::icase;
-    }
     auto reg = std::regex(m_regex, flags);
     return std::regex_match(matchee, reg);
 }
@@ -10547,9 +10528,8 @@ ScopedMessage::ScopedMessage(ScopedMessage&& old) : m_info(old.m_info), m_moved(
 
 ScopedMessage::~ScopedMessage()
 {
-    if (!uncaught_exceptions() && !m_moved) {
+    if (!uncaught_exceptions() && !m_moved)
         getResultCapture().popScopedMessage(m_info);
-    }
 }
 
 Capturer::Capturer(
@@ -10804,14 +10784,12 @@ RedirectedStreams::~RedirectedStreams()
 #if defined(_MSC_VER)
 TempFile::TempFile()
 {
-    if (tmpnam_s(m_buffer)) {
+    if (tmpnam_s(m_buffer))
         CATCH_RUNTIME_ERROR("Could not get a temp filename");
-    }
     if (fopen_s(&m_file, m_buffer, "w")) {
         char buffer[100];
-        if (strerror_s(buffer, errno)) {
+        if (strerror_s(buffer, errno))
             CATCH_RUNTIME_ERROR("Could not translate errno to a string");
-        }
         CATCH_RUNTIME_ERROR(
             "Could not open the temp file: '" << m_buffer << "' because: " << buffer);
     }
@@ -10820,9 +10798,8 @@ TempFile::TempFile()
 TempFile::TempFile()
 {
     m_file = std::tmpfile();
-    if (!m_file) {
+    if (!m_file)
         CATCH_RUNTIME_ERROR("Could not create a temp file.");
-    }
 }
 
 #endif
@@ -10848,9 +10825,8 @@ std::string TempFile::getContents()
     std::stringstream sstr;
     char buffer[100] = {};
     std::rewind(m_file);
-    while (std::fgets(buffer, sizeof(buffer), m_file)) {
+    while (std::fgets(buffer, sizeof(buffer), m_file))
         sstr << buffer;
-    }
     return sstr.str();
 }
 
@@ -11303,9 +11279,8 @@ struct GeneratorTracker : TestCaseTracking::TrackerBase, IGeneratorTracker {
             currentTracker.addChild(tracker);
         }
 
-        if (!ctx.completedCycle() && !tracker->isComplete()) {
+        if (!ctx.completedCycle() && !tracker->isComplete())
             tracker->open();
-        }
 
         return *tracker;
     }
@@ -11925,9 +11900,8 @@ IStreamingReporterPtr createReporter(std::string const& reporterName, IConfigPtr
 
 IStreamingReporterPtr makeReporter(std::shared_ptr<Config> const& config)
 {
-    if (Catch::getRegistryHub().getReporterRegistry().getListeners().empty()) {
+    if (Catch::getRegistryHub().getReporterRegistry().getListeners().empty())
         return createReporter(config->getReporterName(), config);
-    }
 
     // On older platforms, returning std::unique_ptr<ListeningReporter>
     // when the return type is std::unique_ptr<IStreamingReporter>
@@ -11937,9 +11911,8 @@ IStreamingReporterPtr makeReporter(std::shared_ptr<Config> const& config)
     auto ret = std::unique_ptr<IStreamingReporter>(new ListeningReporter);
     auto& multi = static_cast<ListeningReporter&>(*ret);
     auto const& listeners = Catch::getRegistryHub().getReporterRegistry().getListeners();
-    for (auto const& listener : listeners) {
+    for (auto const& listener : listeners)
         multi.addListener(listener->create(Catch::ReporterConfig(config)));
-    }
     multi.addReporter(createReporter(config->getReporterName(), config));
     return ret;
 }
@@ -11972,9 +11945,8 @@ Catch::Totals runTests(std::shared_ptr<Config> const& config)
 
         bool first = true;
         for (const auto& input : config->getTestsOrTags()) {
-            if (!first) {
+            if (!first)
                 testConfig << ' ';
-            }
             first = false;
             testConfig << input;
         }
@@ -12001,9 +11973,8 @@ void applyFilenamesAsTags(Catch::IConfig const& config)
         }
 
         auto lastDot = filename.find_last_of('.');
-        if (lastDot != std::string::npos) {
+        if (lastDot != std::string::npos)
             filename.erase(lastDot);
-        }
 
         tags.push_back(std::move(filename));
         setTags(testCase, tags);
@@ -12160,9 +12131,8 @@ int Session::runInternal()
     if (m_startupExceptions)
         return 1;
 
-    if (m_configData.showHelp || m_configData.libIdentify) {
+    if (m_configData.showHelp || m_configData.libIdentify)
         return 0;
-    }
 
     CATCH_TRY
     {
@@ -12822,9 +12792,8 @@ TestCase makeTestCase(
                 // Merged hide tags like `[.approvals]` should be added as
                 // `[.][approvals]`. The `[.]` is added at later point, so
                 // we only strip the prefix
-                if (startsWith(tag, '.') && tag.size() > 1) {
+                if (startsWith(tag, '.') && tag.size() > 1)
                     tag.erase(0, 1);
-                }
                 tags.push_back(tag);
                 tag.clear();
                 inTag = false;
@@ -12832,9 +12801,8 @@ TestCase makeTestCase(
                 tag += c;
         }
     }
-    if (isHidden) {
+    if (isHidden)
         tags.push_back(".");
-    }
 
     TestCaseInfo info(nameAndTags.name, _className, desc, tags, _lineInfo);
     return TestCase(_testCase, std::move(info));
@@ -12889,9 +12857,8 @@ std::string TestCaseInfo::tagsAsString() const
     std::string ret;
     // '[' and ']' per tag
     std::size_t full_size = 2 * tags.size();
-    for (const auto& tag : tags) {
+    for (const auto& tag : tags)
         full_size += tag.size();
-    }
     ret.reserve(full_size);
     for (const auto& tag : tags) {
         ret.push_back('[');
@@ -13534,9 +13501,8 @@ auto estimateClockResolution() -> uint64_t
         // If we have been calibrating for over 3 seconds -- the clock
         // is terrible and we should move on.
         // TBD: How to signal that the measured resolution is probably wrong?
-        if (ticks > startTime + 3 * nanosecondsInSecond) {
+        if (ticks > startTime + 3 * nanosecondsInSecond)
             return sum / (i + 1u);
-        }
     }
 
     // We're just taking the mean, here. To do better we could take the std. dev and exclude
@@ -13635,9 +13601,8 @@ std::string rawMemoryToString(const void* object, std::size_t size)
 
 template <typename T> std::string fpToString(T value, int precision)
 {
-    if (Catch::isnan(value)) {
+    if (Catch::isnan(value))
         return "nan";
-    }
 
     ReusableStringStream rss;
     rss << std::setprecision(precision) << std::fixed << value;
@@ -13659,9 +13624,8 @@ template <typename T> std::string fpToString(T value, int precision)
 
 std::string StringMaker<std::string>::convert(const std::string& str)
 {
-    if (!getCurrentContext().getConfig()->showInvisibles()) {
+    if (!getCurrentContext().getConfig()->showInvisibles())
         return '"' + str + '"';
-    }
 
     std::string s("\"");
     for (char c : str) {
@@ -13704,9 +13668,8 @@ std::string StringMaker<std::wstring>::convert(const std::wstring& wstr)
 {
     std::string s;
     s.reserve(wstr.size());
-    for (auto c : wstr) {
+    for (auto c : wstr)
         s += (c <= 0xff) ? static_cast<char>(c) : '?';
-    }
     return ::Catch::Detail::stringify(s);
 }
 
@@ -13747,9 +13710,8 @@ std::string StringMaker<long long>::convert(long long value)
 {
     ReusableStringStream rss;
     rss << value;
-    if (value > Detail::hexThreshold) {
+    if (value > Detail::hexThreshold)
         rss << " (0x" << std::hex << value << ')';
-    }
     return rss.str();
 }
 
@@ -13765,9 +13727,8 @@ std::string StringMaker<unsigned long long>::convert(unsigned long long value)
 {
     ReusableStringStream rss;
     rss << value;
-    if (value > Detail::hexThreshold) {
+    if (value > Detail::hexThreshold)
         rss << " (0x" << std::hex << value << ')';
-    }
     return rss.str();
 }
 
@@ -13953,9 +13914,8 @@ std::ostream& operator<<(std::ostream& os, Version const& version)
 {
     os << version.majorVersion << '.' << version.minorVersion << '.' << version.patchNumber;
     // branchName is never null -> 0th char is \0 if it is empty
-    if (version.branchName[0]) {
+    if (version.branchName[0])
         os << '-' << version.branchName << '.' << version.buildNumber;
-    }
     return os;
 }
 
@@ -14015,29 +13975,23 @@ namespace {
 
 size_t trailingBytes(unsigned char c)
 {
-    if ((c & 0xE0) == 0xC0) {
+    if ((c & 0xE0) == 0xC0)
         return 2;
-    }
-    if ((c & 0xF0) == 0xE0) {
+    if ((c & 0xF0) == 0xE0)
         return 3;
-    }
-    if ((c & 0xF8) == 0xF0) {
+    if ((c & 0xF8) == 0xF0)
         return 4;
-    }
     CATCH_INTERNAL_ERROR("Invalid multibyte utf-8 start byte encountered");
 }
 
 uint32_t headerValue(unsigned char c)
 {
-    if ((c & 0xE0) == 0xC0) {
+    if ((c & 0xE0) == 0xC0)
         return c & 0x1F;
-    }
-    if ((c & 0xF0) == 0xE0) {
+    if ((c & 0xF0) == 0xE0)
         return c & 0x0F;
-    }
-    if ((c & 0xF8) == 0xF0) {
+    if ((c & 0xF8) == 0xF0)
         return c & 0x07;
-    }
     CATCH_INTERNAL_ERROR("Invalid multibyte utf-8 start byte encountered");
 }
 
@@ -14136,9 +14090,8 @@ void XmlEncode::encodeTo(std::ostream& os) const
             }
 
             // If we got here, this is in fact a valid(ish) utf-8 sequence
-            for (std::size_t n = 0; n < encBytes; ++n) {
+            for (std::size_t n = 0; n < encBytes; ++n)
                 os << m_str[idx + n];
-            }
             idx += encBytes - 1;
             break;
         }
@@ -14159,9 +14112,8 @@ XmlWriter::ScopedElement::ScopedElement(ScopedElement&& other) noexcept : m_writ
 }
 XmlWriter::ScopedElement& XmlWriter::ScopedElement::operator=(ScopedElement&& other) noexcept
 {
-    if (m_writer) {
+    if (m_writer)
         m_writer->endElement();
-    }
     m_writer = other.m_writer;
     other.m_writer = nullptr;
     return *this;
@@ -14553,9 +14505,8 @@ private:
 
     void printOriginalExpression() const
     {
-        if (result.hasExpression()) {
+        if (result.hasExpression())
             stream << ' ' << result.getExpression();
-        }
     }
 
     void printReconstructedExpression() const
@@ -15052,9 +15003,8 @@ void ConsoleReporter::sectionEnded(SectionStats const& _sectionStats)
         stream << getFormattedDuration(_sectionStats.durationInSeconds)
                << " s: " << _sectionStats.sectionInfo.name << std::endl;
     }
-    if (m_headerPrinted) {
+    if (m_headerPrinted)
         m_headerPrinted = false;
-    }
     StreamingReporterBase::sectionEnded(_sectionStats);
 }
 
@@ -15605,113 +15555,99 @@ std::set<Verbosity> ListeningReporter::getSupportedVerbosities()
 
 void ListeningReporter::noMatchingTestCases(std::string const& spec)
 {
-    for (auto const& listener : m_listeners) {
+    for (auto const& listener : m_listeners)
         listener->noMatchingTestCases(spec);
-    }
     m_reporter->noMatchingTestCases(spec);
 }
 
 void ListeningReporter::benchmarkStarting(BenchmarkInfo const& benchmarkInfo)
 {
-    for (auto const& listener : m_listeners) {
+    for (auto const& listener : m_listeners)
         listener->benchmarkStarting(benchmarkInfo);
-    }
     m_reporter->benchmarkStarting(benchmarkInfo);
 }
 void ListeningReporter::benchmarkEnded(BenchmarkStats const& benchmarkStats)
 {
-    for (auto const& listener : m_listeners) {
+    for (auto const& listener : m_listeners)
         listener->benchmarkEnded(benchmarkStats);
-    }
     m_reporter->benchmarkEnded(benchmarkStats);
 }
 
 void ListeningReporter::testRunStarting(TestRunInfo const& testRunInfo)
 {
-    for (auto const& listener : m_listeners) {
+    for (auto const& listener : m_listeners)
         listener->testRunStarting(testRunInfo);
-    }
     m_reporter->testRunStarting(testRunInfo);
 }
 
 void ListeningReporter::testGroupStarting(GroupInfo const& groupInfo)
 {
-    for (auto const& listener : m_listeners) {
+    for (auto const& listener : m_listeners)
         listener->testGroupStarting(groupInfo);
-    }
     m_reporter->testGroupStarting(groupInfo);
 }
 
 void ListeningReporter::testCaseStarting(TestCaseInfo const& testInfo)
 {
-    for (auto const& listener : m_listeners) {
+    for (auto const& listener : m_listeners)
         listener->testCaseStarting(testInfo);
-    }
     m_reporter->testCaseStarting(testInfo);
 }
 
 void ListeningReporter::sectionStarting(SectionInfo const& sectionInfo)
 {
-    for (auto const& listener : m_listeners) {
+    for (auto const& listener : m_listeners)
         listener->sectionStarting(sectionInfo);
-    }
     m_reporter->sectionStarting(sectionInfo);
 }
 
 void ListeningReporter::assertionStarting(AssertionInfo const& assertionInfo)
 {
-    for (auto const& listener : m_listeners) {
+    for (auto const& listener : m_listeners)
         listener->assertionStarting(assertionInfo);
-    }
     m_reporter->assertionStarting(assertionInfo);
 }
 
 // The return value indicates if the messages buffer should be cleared:
 bool ListeningReporter::assertionEnded(AssertionStats const& assertionStats)
 {
-    for (auto const& listener : m_listeners) {
+    for (auto const& listener : m_listeners)
         static_cast<void>(listener->assertionEnded(assertionStats));
-    }
     return m_reporter->assertionEnded(assertionStats);
 }
 
 void ListeningReporter::sectionEnded(SectionStats const& sectionStats)
 {
-    for (auto const& listener : m_listeners) {
+    for (auto const& listener : m_listeners)
         listener->sectionEnded(sectionStats);
-    }
     m_reporter->sectionEnded(sectionStats);
 }
 
 void ListeningReporter::testCaseEnded(TestCaseStats const& testCaseStats)
 {
-    for (auto const& listener : m_listeners) {
+    for (auto const& listener : m_listeners)
         listener->testCaseEnded(testCaseStats);
-    }
     m_reporter->testCaseEnded(testCaseStats);
 }
 
 void ListeningReporter::testGroupEnded(TestGroupStats const& testGroupStats)
 {
-    for (auto const& listener : m_listeners) {
+    for (auto const& listener : m_listeners)
         listener->testGroupEnded(testGroupStats);
-    }
     m_reporter->testGroupEnded(testGroupStats);
 }
 
 void ListeningReporter::testRunEnded(TestRunStats const& testRunStats)
 {
-    for (auto const& listener : m_listeners) {
+    for (auto const& listener : m_listeners)
         listener->testRunEnded(testRunStats);
-    }
     m_reporter->testRunEnded(testRunStats);
 }
 
 void ListeningReporter::skipTest(TestCaseInfo const& testInfo)
 {
-    for (auto const& listener : m_listeners) {
+    for (auto const& listener : m_listeners)
         listener->skipTest(testInfo);
-    }
     m_reporter->skipTest(testInfo);
 }
 

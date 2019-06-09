@@ -115,9 +115,8 @@ double Blob3D::getMaximumMass() const
 
 Eigen::Vector3d Blob3D::center() const
 {
-    if (_m0 < minimum_blob_mass) {
+    if (_m0 < minimum_blob_mass)
         throw std::runtime_error("No mass in Blob");
-    }
     return _m1 / _m0;
 }
 
@@ -133,9 +132,8 @@ void Blob3D::toEllipsoid(
     double scale, Eigen::Vector3d& c, Eigen::Vector3d& eigenvalues,
     Eigen::Matrix3d& eigenvectors) const
 {
-    if (_m0 < minimum_blob_mass) {
+    if (_m0 < minimum_blob_mass)
         throw std::runtime_error("No mass in Blob");
-    }
 
     // Center of the ellipsoid
     c = center();

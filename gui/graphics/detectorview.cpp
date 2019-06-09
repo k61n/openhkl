@@ -66,9 +66,8 @@ void DetectorView::copyViewToClipboard()
 
 void DetectorView::keyPressEvent(QKeyEvent* event)
 {
-    if (event->matches(QKeySequence::Copy)) {
+    if (event->matches(QKeySequence::Copy))
         copyViewToClipboard();
-    }
     QGraphicsView::keyPressEvent(event);
 }
 

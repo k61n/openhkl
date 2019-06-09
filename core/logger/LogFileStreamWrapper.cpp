@@ -36,16 +36,14 @@ void LogFileStreamWrapper::print(const std::string& message)
 
 void LogFileStreamWrapper::printPrefix()
 {
-    if (_prefix) {
+    if (_prefix)
         _stream << _prefix();
-    }
 }
 
 void LogFileStreamWrapper::printSuffix()
 {
-    if (_suffix) {
+    if (_suffix)
         _stream << _suffix();
-    }
     _stream.flush();
 }
 

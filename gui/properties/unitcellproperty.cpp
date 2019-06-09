@@ -34,9 +34,8 @@ UnitCellProperty::UnitCellProperty() : QcrWidget {"unitCellProperty"}
     QFormLayout* formLayout = new QFormLayout;
     name = new QcrLineEdit("unitCellName", "");
     QStringList spacegroups;
-    for (auto&& sg : nsx::SpaceGroup::symbols()) {
+    for (auto&& sg : nsx::SpaceGroup::symbols())
         spacegroups.append(QString::fromStdString(sg));
-    }
     spaceGroup = new QcrComboBox("spaceGroup", new QcrCell<int>(0), spacegroups);
     QCompleter* completer = new QCompleter(spaceGroup->model(), spaceGroup);
     spaceGroup->setCompleter(completer);

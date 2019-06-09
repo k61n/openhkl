@@ -68,21 +68,18 @@ static void updateFit(
 
 bool Profile3DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 {
-    if (!_library) {
+    if (!_library)
         return false;
-    }
 
-    if (!peak) {
+    if (!peak)
         return false;
-    }
 
     const auto& events = region.data().events();
     const auto& counts = region.data().counts();
 
     // TODO: should this be hard-coded??
-    if (events.size() < 29) {
+    if (events.size() < 29)
         throw std::runtime_error("Profile3DIntegrator::compute(): too few data points in peak");
-    }
 
     // dummy value for initial guess
     _meanBackground = Intensity(1.0, 1.0);
@@ -140,16 +137,14 @@ bool Profile3DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
             break;
         }
 
-        if (I1 < 0.0 || (I1 < (1 + tolerance) * I0 && I0 < (1 + tolerance) * I1)) {
+        if (I1 < 0.0 || (I1 < (1 + tolerance) * I0 && I0 < (1 + tolerance) * I1))
             break;
-        }
     }
 
     double sigma = _integratedIntensity.sigma();
 
-    if (std::isnan(sigma) || sigma <= 0.0) {
+    if (std::isnan(sigma) || sigma <= 0.0)
         return false;
-    }
 
     // TODO: rocking curve!
 

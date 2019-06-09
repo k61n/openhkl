@@ -32,21 +32,18 @@ Profile3D::Profile3D() : _shape(0, 0, 0), _profile()
 Profile3D::Profile3D(const AABB& aabb, int nx, int ny, int nz)
     : _aabb(aabb), _dx(), _shape(nx, ny, nz), _count(0), _profile(nx * ny * nz, 0.0)
 {
-    if (nx < 1 || ny < 1 || nz < 1) {
+    if (nx < 1 || ny < 1 || nz < 1)
         throw std::runtime_error("Profile3D: size must be positive!");
-    }
 
     _dx = aabb.upper() - aabb.lower();
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 3; ++i)
         _dx(i) /= _shape[i];
-    }
 }
 
 double Profile3D::at(size_t i, size_t j, size_t k) const
 {
-    if (i >= _shape[0] || j >= _shape[1] || k >= _shape[2]) {
+    if (i >= _shape[0] || j >= _shape[1] || k >= _shape[2])
         throw std::runtime_error("Profile3D::at() index out of bounds");
-    }
     return _profile[i + _shape[0] * (j + _shape[1] * k)];
 }
 
@@ -75,9 +72,8 @@ bool Profile3D::addValue(const Eigen::Vector3d& x, double y)
     for (int i = 0; i < 3; ++i) {
         idx[i] = int((x(i) - lb(i)) / _dx[i]);
         // point is out of bounds!
-        if (idx[i] < 0 || idx[i] >= _shape[i]) {
+        if (idx[i] < 0 || idx[i] >= _shape[i])
             return false;
-        }
     }
     _profile[idx[0] + _shape[0] * (idx[1] + _shape[1] * idx[2])] += y;
     ++_count;
@@ -133,9 +129,8 @@ double Profile3D::predict(const Eigen::Vector3d& x) const
     for (int i = 0; i < 3; ++i) {
         idx[i] = int((x(i) - lb(i)) / _dx[i]);
         // point is out of bounds!
-        if (idx[i] < 0 || idx[i] >= _shape[i]) {
+        if (idx[i] < 0 || idx[i] >= _shape[i])
             return 0.0;
-        }
     }
     return _profile[idx[0] + _shape[0] * (idx[1] + _shape[1] * idx[2])];
 }
@@ -144,17 +139,14 @@ bool Profile3D::normalize()
 {
     double sum = 0.0;
 
-    for (const auto& value : _profile) {
+    for (const auto& value : _profile)
         sum += value;
-    }
 
-    if (sum == 0.0 || std::isnan(sum)) {
+    if (sum == 0.0 || std::isnan(sum))
         return false;
-    }
 
-    for (auto& value : _profile) {
+    for (auto& value : _profile)
         value /= sum;
-    }
     return true;
 }
 
@@ -163,29 +155,25 @@ void Profile3D::addProfile(const Profile3D& other, double weight)
     // special case: current profile is empty
     if (_profile.empty()) {
         *this = other;
-        for (auto& p : _profile) {
+        for (auto& p : _profile)
             p *= weight;
-        }
         return;
     }
 
-    if (_shape != other._shape) {
+    if (_shape != other._shape)
         throw std::runtime_error("Profile3D: cannot add profiles of different dimensions");
-    }
 
     double dx = _aabb.extents().squaredNorm();
     auto dlb = _aabb.lower() - other._aabb.lower();
     auto dub = _aabb.upper() - other._aabb.upper();
 
-    if (dlb.squaredNorm() > 1e-6 * dx || dub.squaredNorm() > 1e-6 * dx) {
+    if (dlb.squaredNorm() > 1e-6 * dx || dub.squaredNorm() > 1e-6 * dx)
         throw std::runtime_error("Profile3D: cannot add profiles with different bounding boxes");
-    }
 
     assert(_profile.size() == other._profile.size());
 
-    for (size_t i = 0; i < _profile.size(); ++i) {
+    for (size_t i = 0; i < _profile.size(); ++i)
         _profile[i] += weight * other._profile[i];
-    }
     _count += other._count;
 }
 

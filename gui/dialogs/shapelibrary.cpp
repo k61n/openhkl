@@ -52,9 +52,8 @@ ShapeLibraryDialog::ShapeLibraryDialog() : QDialog {}
     }
     _peaks = gSession->selectedExperiment()->peaks()->allPeaks();
     //_unitCell = gSession->selectedExperiment()->unitCells()->allUnitCells().at(0);
-    for (auto p : _peaks) {
+    for (auto p : _peaks)
         _data.insert(p->data());
-    }
     layout();
 }
 
@@ -181,9 +180,8 @@ void ShapeLibraryDialog::calculate()
 
     for (auto i = 0; i < nxval; ++i) {
         for (auto j = 0; j < nyval; ++j) {
-            for (auto k = 0; k < nzval; ++k) {
+            for (auto k = 0; k < nzval; ++k)
                 _maximum = std::max(_maximum, _profile(i, j, k));
-            }
         }
     }
 
@@ -201,20 +199,17 @@ void ShapeLibraryDialog::build()
     nsx::PeakList fit_peaks;
 
     for (auto peak : _peaks) {
-        if (!peak->enabled()) {
+        if (!peak->enabled())
             continue;
-        }
         double d = 1.0 / peak->q().rowVector().norm();
 
-        if (d > maxD->value() || d < minD->value()) {
+        if (d > maxD->value() || d < minD->value())
             continue;
-        }
 
         auto inten = peak->correctedIntensity();
 
-        if (inten.value() <= minISigma->value() * inten.sigma()) {
+        if (inten.value() <= minISigma->value() * inten.sigma())
             continue;
-        }
         fit_peaks.push_back(peak);
     }
 
@@ -223,9 +218,8 @@ void ShapeLibraryDialog::build()
     auto nzval = nz->value();
 
     // update the frame slider if necessary
-    if (drawFrame->maximum() != nzval) {
+    if (drawFrame->maximum() != nzval)
         drawFrame->setMaximum(nzval - 1);
-    }
 
     nsx::AABB aabb;
 
@@ -277,9 +271,8 @@ void ShapeLibraryDialog::build()
 
 void ShapeLibraryDialog::drawframe(int value)
 {
-    if (value < 0 || value >= _profile.shape()[2]) {
+    if (value < 0 || value >= _profile.shape()[2])
         throw std::runtime_error("DialogShapeLibrary::drawFrame(): invalid frame value");
-    }
 
     auto shape = _profile.shape();
     auto scene = graphics->scene();

@@ -52,9 +52,8 @@ Ellipsoid::Ellipsoid(
     const Eigen::Vector3d& center, const Eigen::Vector3d& radii, const Eigen::Matrix3d& axes)
 {
     Eigen::Matrix3d D = Eigen::Matrix3d::Identity();
-    for (auto i = 0; i < 3; ++i) {
+    for (auto i = 0; i < 3; ++i)
         D(i, i) = 1.0 / (radii[i] * radii[i]);
-    }
 
     // By definition, we have A.U = U.D where A is the metric tensor, U is the
     // matric of columned eigen-vectors and D the diagonal matrix of corresponding
@@ -76,9 +75,8 @@ Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, double radius)
 bool Ellipsoid::collide(const AABB& aabb) const
 {
     // trivial check: center of ellipsoid is inside AABB
-    if (aabb.isInside(_center)) {
+    if (aabb.isInside(_center))
         return true;
-    }
 
     const std::vector<Eigen::Vector3d> normals = {
         Eigen::Vector3d(1, 0, 0),
@@ -101,13 +99,11 @@ bool Ellipsoid::collide(const AABB& aabb) const
         auto b = n1 * n1.dot(dx);
 
         // check face touching lower bound of BB
-        if (collideFace(lb, a, b, n2)) {
+        if (collideFace(lb, a, b, n2))
             return true;
-        }
         // check face touching upper bound of BB
-        if (collideFace(ub, -a, -b, n2)) {
+        if (collideFace(ub, -a, -b, n2))
             return true;
-        }
     }
     return false;
 }
@@ -118,9 +114,8 @@ bool Ellipsoid::collide(const AABB& aabb) const
 bool Ellipsoid::collide(const Ellipsoid& other) const
 {
     // quick test using AABB, also needed for numerical stability
-    if (!_aabb.collide(other._aabb)) {
+    if (!_aabb.collide(other._aabb))
         return false;
-    }
 
     // Gets roots of characteristic equation
     const auto& AI = homogeneousMatrixInverse();
@@ -132,9 +127,8 @@ bool Ellipsoid::collide(const Ellipsoid& other) const
 
     // if there exists a real negative root then the ellipsoids are separated
     for (auto i = 0; i < 4; ++i) {
-        if (std::fabs(imag(roots(i))) < eps && real(roots(i)) < 0.0) {
+        if (std::fabs(imag(roots(i))) < eps && real(roots(i)) < 0.0)
             return false;
-        }
     }
     return true;
 }
@@ -183,9 +177,8 @@ double Ellipsoid::volume() const
 void Ellipsoid::updateAABB()
 {
     Eigen::Vector3d a;
-    for (auto i = 0; i < 3; ++i) {
+    for (auto i = 0; i < 3; ++i)
         a(i) = std::sqrt(_inverseMetric(i, i));
-    }
     Eigen::Vector3d lb(_center - a);
     Eigen::Vector3d ub(_center + a);
     _aabb = AABB(lb, ub);
@@ -221,9 +214,8 @@ Eigen::Vector3d Ellipsoid::radii() const
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(_metric);
     Eigen::Vector3d vals = solver.eigenvalues();
 
-    for (auto i = 0; i < 3; ++i) {
+    for (auto i = 0; i < 3; ++i)
         vals(i) = 1.0 / std::sqrt(vals(i));
-    }
     return vals;
 }
 
@@ -238,12 +230,10 @@ const Eigen::Matrix3d& Ellipsoid::inverseMetric() const
 // (x(t)-x0).dot(A(x(t)-x0)) where x(t) = a + t(b-a).
 bool Ellipsoid::collideSegment(const Eigen::Vector3d& a, const Eigen::Vector3d& b) const
 {
-    if (isInside(a)) {
+    if (isInside(a))
         return true;
-    }
-    if (isInside(b)) {
+    if (isInside(b))
         return true;
-    }
 
     // endpoints do not intersect ellipsoid, so now we look for the critical point
     const Eigen::Vector3d ba = b - a;
@@ -251,9 +241,8 @@ bool Ellipsoid::collideSegment(const Eigen::Vector3d& a, const Eigen::Vector3d& 
     const double t = -(a - _center).dot(Aba) / ba.dot(Aba);
 
     // critical point occurs outside the segment
-    if (t < 0 || t > 1) {
+    if (t < 0 || t > 1)
         return false;
-    }
     // critical point is inside the segment; check whether it is in the ellipsoid
     return isInside(a + t * ba);
 }
@@ -271,9 +260,8 @@ bool Ellipsoid::collideFace(
     const double lagrange = (d - n.dot(_center)) / nAn;
 
     // ellipsoid does not even intersect the plane containing the face
-    if (lagrange * lagrange * nAn > 1.0) {
+    if (lagrange * lagrange * nAn > 1.0)
         return false;
-    }
 
     // x is the point where (x-x0).dot(A*(x-x0)) attains its minimum on the plane
     const Eigen::Vector3d x(_center + lagrange * _inverseMetric * n);
@@ -283,23 +271,18 @@ bool Ellipsoid::collideFace(
     const double s = b.dot(x - o) / b.dot(b);
 
     // minimum is in the face
-    if (t >= 0 && s >= 0 && t <= 1 && s <= 1) {
+    if (t >= 0 && s >= 0 && t <= 1 && s <= 1)
         return true;
-    }
 
     // last possible case: minimum is attained on some boundary segment
-    if (collideSegment(o, o + a)) {
+    if (collideSegment(o, o + a))
         return true;
-    }
-    if (collideSegment(o, o + b)) {
+    if (collideSegment(o, o + b))
         return true;
-    }
-    if (collideSegment(o + a, o + a + b)) {
+    if (collideSegment(o + a, o + a + b))
         return true;
-    }
-    if (collideSegment(o + b, o + a + b)) {
+    if (collideSegment(o + b, o + a + b))
         return true;
-    }
     return false;
 }
 

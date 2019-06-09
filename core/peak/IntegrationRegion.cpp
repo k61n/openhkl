@@ -68,9 +68,8 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
     auto lower = aabb.lower();
     auto upper = aabb.upper();
 
-    if (z < lower[2] || z > upper[2]) {
+    if (z < lower[2] || z > upper[2])
         return;
-    }
 
     long xmin = std::lround(std::floor(lower[0]));
     long ymin = std::lround(std::floor(lower[1]));
@@ -87,9 +86,8 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
         for (auto y = ymin; y < ymax; ++y) {
             EventType val = EventType(mask(y, x));
             // once forbidden, always forbidden...
-            if (val == EventType::FORBIDDEN) {
+            if (val == EventType::FORBIDDEN)
                 continue;
-            }
 
             DetectorEvent ev(x, y, z);
             auto ev_type = classify(ev);
@@ -98,9 +96,8 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
             case EventType::FORBIDDEN: val = EventType::FORBIDDEN; break;
             case EventType::PEAK: val = EventType::PEAK; break;
             case EventType::BACKGROUND:
-                if (val == EventType::EXCLUDED) {
+                if (val == EventType::EXCLUDED)
                     val = EventType::BACKGROUND;
-                }
                 break;
             default: break;
             }
@@ -115,15 +112,12 @@ IntegrationRegion::EventType IntegrationRegion::classify(const DetectorEvent& ev
     p -= _shape.center();
     const double rr = p.dot(_shape.metric() * p);
 
-    if (rr <= _peakEnd * _peakEnd) {
+    if (rr <= _peakEnd * _peakEnd)
         return EventType::PEAK;
-    }
-    if (rr > _bkgEnd * _bkgEnd) {
+    if (rr > _bkgEnd * _bkgEnd)
         return EventType::EXCLUDED;
-    }
-    if (rr >= _bkgBegin * _bkgBegin) {
+    if (rr >= _bkgBegin * _bkgBegin)
         return EventType::BACKGROUND;
-    }
     return EventType::FORBIDDEN;
 }
 
@@ -134,13 +128,11 @@ bool IntegrationRegion::advanceFrame(
     auto lower = aabb.lower();
     auto upper = aabb.upper();
 
-    if (frame < lower[2]) {
+    if (frame < lower[2])
         return false;
-    }
 
-    if (frame > upper[2]) {
+    if (frame > upper[2])
         return true;
-    }
 
     long xmin = std::max(0L, std::lround(lower[0]));
     long ymin = std::max(0L, std::lround(lower[1]));
@@ -151,20 +143,17 @@ bool IntegrationRegion::advanceFrame(
     for (auto x = xmin; x < xmax; ++x) {
         for (auto y = ymin; y < ymax; ++y) {
             EventType mask_type = EventType(mask(y, x));
-            if (mask_type == EventType::FORBIDDEN) {
+            if (mask_type == EventType::FORBIDDEN)
                 continue;
-            }
             DetectorEvent ev(x, y, frame);
             Eigen::Vector3d p(x, y, frame);
             auto event_type = classify(ev);
 
-            if (event_type == EventType::PEAK) {
+            if (event_type == EventType::PEAK)
                 _data.addEvent(ev, image(y, x));
-            }
 
-            if (event_type == EventType::BACKGROUND && mask_type == EventType::BACKGROUND) {
+            if (event_type == EventType::BACKGROUND && mask_type == EventType::BACKGROUND)
                 _data.addEvent(ev, image(y, x));
-            }
 
             // check if point is in Brillouin zone (or AABB if no UC available)
             // if (_hull.contains(p)) {

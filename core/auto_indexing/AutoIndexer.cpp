@@ -53,9 +53,8 @@ void AutoIndexer::autoIndex(const IndexerParameters& params)
     // refine the constrained unit cells in order to get the uncertainties
     // refineConstraints();
 
-    if (_handler) {
+    if (_handler)
         _handler->log("Done refining solutions, building solution table.");
-    }
 
     // finally, rank the solutions
     rankSolutions();
@@ -94,9 +93,8 @@ void AutoIndexer::computeFFTSolutions()
 
     // Check that a minimum number of peaks have been selected for indexing
     if (qvects.size() < 10) {
-        if (_handler) {
+        if (_handler)
             _handler->log("AutoIndexer: too few peaks to index!");
-        }
         throw std::runtime_error("Too few peaks to autoindex");
     }
 
@@ -126,9 +124,8 @@ void AutoIndexer::computeFFTSolutions()
 
                 // If the unit cell volume is below the user-defined minimum volume,
                 // skip it
-                if (cell->volume() < _params.minUnitCellVolume) {
+                if (cell->volume() < _params.minUnitCellVolume)
                     continue;
-                }
 
                 bool equivalent = false;
 
@@ -141,9 +138,8 @@ void AutoIndexer::computeFFTSolutions()
                     }
                 }
                 // cell is equivalent to a previous one in the list
-                if (equivalent) {
+                if (equivalent)
                     continue;
-                }
                 // Add this solution to the list of solution with a scored to be defined
                 // futher
                 _solutions.push_back(std::make_pair(cell, -1.0));
@@ -203,17 +199,15 @@ void AutoIndexer::refineSolutions()
             Eigen::Matrix3d D;
             D.setZero();
 
-            for (auto i = 0; i < 3; ++i) {
+            for (auto i = 0; i < 3; ++i)
                 D(i, i) = std::sqrt(solver.eigenvalues()[i]);
-            }
 
             wt.emplace_back(U.transpose() * D * U);
         }
 
         // The number of peaks must be at least for a proper minimization
-        if (success < 10) {
+        if (success < 10)
             continue;
-        }
 
         // Lambda to compute residuals
         auto residuals = [&B, &hkls, &qs](Eigen::VectorXd& f) -> int {
@@ -232,9 +226,8 @@ void AutoIndexer::refineSolutions()
         // Pass by address the parameters to be fitted to the parameter store
         FitParameters params;
         for (int r = 0; r < 3; ++r) {
-            for (int c = 0; c < 3; ++c) {
+            for (int c = 0; c < 3; ++c)
                 params.addParameter(&B(r, c));
-            }
         }
 
         // Sets the Minimizer with the parameters store and the size of the residual
@@ -247,9 +240,8 @@ void AutoIndexer::refineSolutions()
         minimizer.setgTol(1e-15);
 
         // fails to fit
-        if (!minimizer.fit(500)) {
+        if (!minimizer.fit(500))
             continue;
-        }
 
         // Update the cell with the fitter one and reduce it
         try {
@@ -258,9 +250,8 @@ void AutoIndexer::refineSolutions()
             cell->reduce(_params.niggliReduction, _params.niggliTolerance, _params.gruberTolerance);
             *cell = cell->applyNiggliConstraints();
         } catch (std::exception& e) {
-            if (_handler) {
+            if (_handler)
                 _handler->log("exception: " + std::string(e.what()));
-            }
             continue;
         }
 

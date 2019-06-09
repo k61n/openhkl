@@ -36,45 +36,35 @@ using indexer_solution = std::pair<sptrUnitCell, double>;
 
 void UserDefinedUnitCellIndexerParameters::checkParameters() const
 {
-    if (wavelength <= 0.0) {
+    if (wavelength <= 0.0)
         throw std::runtime_error("Invalid wavelength. Must be > 0.");
-    }
 
-    if (a <= 0.0) {
+    if (a <= 0.0)
         throw std::runtime_error("Invalid a value. Must be > 0.");
-    }
 
-    if (b <= 0.0) {
+    if (b <= 0.0)
         throw std::runtime_error("Invalid b value. Must be > 0.");
-    }
 
-    if (c <= 0.0) {
+    if (c <= 0.0)
         throw std::runtime_error("Invalid c value. Must be > 0.");
-    }
 
-    if (std::fabs(niggli_tolerance - 1.0) > 1.0) {
+    if (std::fabs(niggli_tolerance - 1.0) > 1.0)
         throw std::runtime_error("Invalid Niggli tolerance. Must be in [0,1].");
-    }
 
-    if (std::fabs(gruber_tolerance - 1.0) > 1.0) {
+    if (std::fabs(gruber_tolerance - 1.0) > 1.0)
         throw std::runtime_error("Invalid Gruber tolerance. Must be in [0,1].");
-    }
 
-    if (std::fabs(indexing_tolerance - 1.0) > 1.0) {
+    if (std::fabs(indexing_tolerance - 1.0) > 1.0)
         throw std::runtime_error("Invalid indexing tolerance. Must be in [0,1].");
-    }
 
-    if (std::fabs(indexing_threshold - 1.0) > 1.0) {
+    if (std::fabs(indexing_threshold - 1.0) > 1.0)
         throw std::runtime_error("Invalid indexing tolerance. Must be in [0,1].");
-    }
 
-    if (n_solutions < 1) {
+    if (n_solutions < 1)
         throw std::runtime_error("Invalid number of solutions. Must be >= 1.");
-    }
 
-    if (max_n_q_vectors < 1) {
+    if (max_n_q_vectors < 1)
         throw std::runtime_error("Invalid number of q vectors. Must be in [10,500].");
-    }
 }
 
 UserDefinedUnitCellIndexer::UserDefinedUnitCellIndexer() : _parameters(), _solutions() {}
@@ -152,9 +142,8 @@ void UserDefinedUnitCellIndexer::index()
             return v1.second.norm() < v2.second.norm();
         });
 
-    if (_parameters.max_n_q_vectors < predicted_q_vectors.size()) {
+    if (_parameters.max_n_q_vectors < predicted_q_vectors.size())
         predicted_q_vectors.resize(_parameters.max_n_q_vectors);
-    }
 
     _solutions.clear();
     _solutions.shrink_to_fit();
@@ -197,9 +186,8 @@ void UserDefinedUnitCellIndexer::index()
                 auto uit_k = q_vectors_mmap.upper_bound(qk_norm * (1.0 + distance_tolerance));
 
                 double det_b_triplet = b_triplet.determinant();
-                if (det_b_triplet < 1.0e-6) {
+                if (det_b_triplet < 1.0e-6)
                     continue;
-                }
 
                 std::array<size_t, 3> indexes {{i, j, k}};
 
@@ -221,9 +209,8 @@ void UserDefinedUnitCellIndexer::index()
                             bu_triplet.row(2) = it_k->second;
 
                             double det_bu_triplet = bu_triplet.determinant();
-                            if (det_bu_triplet < 1.0e-6) {
+                            if (det_bu_triplet < 1.0e-6)
                                 continue;
-                            }
 
                             // The two triplets does not match in volume, skip
                             if (std::fabs((det_bu_triplet - det_b_triplet) / det_b_triplet)
@@ -237,17 +224,15 @@ void UserDefinedUnitCellIndexer::index()
 
                                 for (size_t tj = 0; tj < 3; ++tj) {
 
-                                    if (ti == tj) {
+                                    if (ti == tj)
                                         continue;
-                                    }
 
                                     const double q1j_norm = b_triplet.row(tj).norm();
 
                                     for (size_t tk = 0; tk < 3; ++tk) {
 
-                                        if (ti == tk || tj == tk) {
+                                        if (ti == tk || tj == tk)
                                             continue;
-                                        }
 
                                         const double q1k_norm = b_triplet.row(tk).norm();
 
@@ -264,9 +249,8 @@ void UserDefinedUnitCellIndexer::index()
 
                                             for (size_t tjj = 0; tjj < 3; ++tjj) {
 
-                                                if (tii == tjj) {
+                                                if (tii == tjj)
                                                     continue;
-                                                }
 
                                                 const double q2j_norm = bu_triplet.row(tjj).norm();
 
@@ -279,9 +263,8 @@ void UserDefinedUnitCellIndexer::index()
 
                                                 for (size_t tkk = 0; tkk < 3; ++tkk) {
 
-                                                    if (tii == tkk || tjj == tkk) {
+                                                    if (tii == tkk || tjj == tkk)
                                                         continue;
-                                                    }
 
                                                     const double q2k_norm =
                                                         bu_triplet.row(tkk).norm();
@@ -351,9 +334,8 @@ void UserDefinedUnitCellIndexer::index()
                                                     auto BtUt = matching_hkls.inverse()
                                                         * matching_q_vectors;
 
-                                                    if (BtUt.determinant() < 0) {
+                                                    if (BtUt.determinant() < 0)
                                                         continue;
-                                                    }
 
                                                     auto unit_cell = std::shared_ptr<UnitCell>(
                                                         new UnitCell(BtUt, true));
@@ -376,9 +358,8 @@ void UserDefinedUnitCellIndexer::index()
                                                         n_indexed_q_vectors
                                                         / static_cast<double>(
                                                               q_vectors_mmap.size());
-                                                    if (quality < _parameters.indexing_threshold) {
+                                                    if (quality < _parameters.indexing_threshold)
                                                         continue;
-                                                    }
 
                                                     // The predicted and experimental triplets
                                                     // match, keep that solution
@@ -468,9 +449,8 @@ void UserDefinedUnitCellIndexer::refineUnitCells()
         // Pass by address the parameters to be fitted to the parameter store
         FitParameters params;
         for (int r = 0; r < 3; ++r) {
-            for (int c = 0; c < 3; ++c) {
+            for (int c = 0; c < 3; ++c)
                 params.addParameter(&B(r, c));
-            }
         }
 
         // Sets the Minimizer with the parameters store and the size of the residual
@@ -483,9 +463,8 @@ void UserDefinedUnitCellIndexer::refineUnitCells()
         minimizer.setgTol(1e-15);
 
         // fails to fit
-        if (!minimizer.fit(500)) {
+        if (!minimizer.fit(500))
             continue;
-        }
 
         // Update the cell with the fitter one and reduce it
         try {

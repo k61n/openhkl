@@ -33,15 +33,13 @@ bool MeanBackgroundIntegrator::compute(sptrPeak3D peak, const IntegrationRegion&
     const auto& counts = region.data().counts();
 
     // TODO: should this be hard-coded??
-    if (events.size() < 20) {
+    if (events.size() < 20)
         throw std::runtime_error("MeanBackgroundIntegrator::compute(): too few data points");
-    }
 
     // compute initial mean background and error
     for (auto i = 0; i < counts.size(); ++i) {
-        if (region.classify(events[i]) != IntegrationRegion::EventType::BACKGROUND) {
+        if (region.classify(events[i]) != IntegrationRegion::EventType::BACKGROUND)
             continue;
-        }
         sum_bkg += counts[i];
         sum_bkg2 += counts[i] * counts[i];
         nbkg++;
@@ -72,9 +70,8 @@ bool MeanBackgroundIntegrator::compute(sptrPeak3D peak, const IntegrationRegion&
         var_bkg = (sum_bkg2 - nbkg * mean_bkg * mean_bkg) / (nbkg - 1);
         sigma_bkg = std::sqrt(var_bkg);
 
-        if (std::fabs((old_mean - mean_bkg) / mean_bkg) < 1e-9) {
+        if (std::fabs((old_mean - mean_bkg) / mean_bkg) < 1e-9)
             break;
-        }
     }
     // note 1: assuming Poisson
     // note 2: the variance is the variance of the _estimated_ mean

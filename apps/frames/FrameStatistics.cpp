@@ -48,9 +48,8 @@ FrameStatistics* FrameStatistics::_instance = nullptr;
 FrameStatistics*
 FrameStatistics::create(const nsx::PeakList& peaks, const nsx::SpaceGroup& space_group)
 {
-    if (!_instance) {
+    if (!_instance)
         _instance = new FrameStatistics(peaks, space_group);
-    }
 
     return _instance;
 }
@@ -116,9 +115,8 @@ FrameStatistics::~FrameStatistics()
 {
     delete _ui;
 
-    if (_instance) {
+    if (_instance)
         _instance = nullptr;
-    }
 }
 
 void FrameStatistics::slotActionClicked(QAbstractButton* button)
@@ -188,9 +186,8 @@ void FrameStatistics::saveStatistics()
     QString filename = QFileDialog::getSaveFileName(
         this, tr("Save statistics"), ".", tr("Text file (*.dat *.txt)"));
 
-    if (filename.isEmpty()) {
+    if (filename.isEmpty())
         return;
-    }
 
     std::fstream file(filename.toStdString(), std::ios::out);
     if (!file.is_open()) {
@@ -275,9 +272,8 @@ void FrameStatistics::saveToShelX(QTableView* table)
     QString filename = QFileDialog::getSaveFileName(
         this, tr("Save peaks to ShelX"), ".", tr("ShelX hkl file (*.hkl)"));
 
-    if (filename.isEmpty()) {
+    if (filename.isEmpty())
         return;
-    }
 
     std::fstream file(filename.toStdString(), std::ios::out);
     if (!file.is_open()) {
@@ -312,9 +308,8 @@ void FrameStatistics::saveToFullProf(QTableView* table)
     QString filename = QFileDialog::getSaveFileName(
         this, tr("Save peaks to FullProf"), ".", tr("ShelX hkl file (*.hkl)"));
 
-    if (filename.isEmpty()) {
+    if (filename.isEmpty())
         return;
-    }
 
     std::fstream file(filename.toStdString(), std::ios::out);
     if (!file.is_open()) {
@@ -361,9 +356,8 @@ void FrameStatistics::update()
 
     _merged_data = nsx::MergedData(_space_group, include_friedel);
 
-    for (auto peak : _peaks) {
+    for (auto peak : _peaks)
         _merged_data.addPeak(peak);
-    }
 
     updateStatisticsTab();
     updateMergedPeaksTab();
@@ -380,9 +374,8 @@ void FrameStatistics::updateStatisticsTab()
     bool include_friedel = _ui->friedel->isChecked();
 
     nsx::ResolutionShell resolution_shells(dmin, dmax, n_shells);
-    for (auto peak : _peaks) {
+    for (auto peak : _peaks)
         resolution_shells.addPeak(peak);
-    }
 
     auto model = dynamic_cast<QStandardItemModel*>(_ui->statistics->model());
 
@@ -397,9 +390,8 @@ void FrameStatistics::updateStatisticsTab()
 
         nsx::MergedData merged_data_per_shell(_space_group, include_friedel);
 
-        for (auto&& peak : resolution_shells.shell(i).peaks) {
+        for (auto&& peak : resolution_shells.shell(i).peaks)
             merged_data_per_shell.addPeak(peak);
-        }
 
         nsx::CC cc;
         cc.calculate(merged_data_per_shell);

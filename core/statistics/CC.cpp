@@ -23,9 +23,8 @@ void CC::calculate(const MergedData& data)
 {
     std::vector<MergedPeak> peaks;
 
-    for (auto&& peak : data.peaks()) {
+    for (auto&& peak : data.peaks())
         peaks.push_back(peak);
-    }
     calculate(peaks);
 }
 
@@ -36,9 +35,8 @@ void CC::calculate(const std::vector<MergedPeak>& peaks)
     _nPeaks = 0;
 
     for (auto&& peak : peaks) {
-        if (peak.redundancy() < 2) {
+        if (peak.redundancy() < 2)
             continue;
-        }
 
         auto split = peak.split();
         MergedPeak& p1 = split.first;

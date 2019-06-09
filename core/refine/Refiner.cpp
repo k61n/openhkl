@@ -64,49 +64,42 @@ Refiner::Refiner(
 
 void Refiner::refineDetectorOffset()
 {
-    for (auto&& batch : _batches) {
+    for (auto&& batch : _batches)
         batch.refineDetectorOffset();
-    }
 }
 
 void Refiner::refineSamplePosition()
 {
-    for (auto&& batch : _batches) {
+    for (auto&& batch : _batches)
         batch.refineSamplePosition();
-    }
 }
 
 void Refiner::refineSampleOrientation()
 {
-    for (auto&& batch : _batches) {
+    for (auto&& batch : _batches)
         batch.refineSampleOrientation();
-    }
 }
 
 void Refiner::refineKi()
 {
-    for (auto&& batch : _batches) {
+    for (auto&& batch : _batches)
         batch.refineKi();
-    }
 }
 
 void Refiner::refineUB()
 {
-    for (auto&& batch : _batches) {
+    for (auto&& batch : _batches)
         batch.refineUB();
-    }
 }
 
 bool Refiner::refine(unsigned int max_iter)
 {
-    if (_batches.size() == 0) {
+    if (_batches.size() == 0)
         return false;
-    }
 
     for (auto&& batch : _batches) {
-        if (!batch.refine(max_iter)) {
+        if (!batch.refine(max_iter))
             return false;
-        }
     }
     return true;
 }
@@ -142,9 +135,8 @@ int Refiner::updatePredictions(PeakList& peaks) const
         }
 
         // no appropriate batch
-        if (b == nullptr) {
+        if (b == nullptr)
             continue;
-        }
 
         auto batch_cell = b->cell();
 

@@ -67,16 +67,14 @@ PeakList PeakFilter::mergedPeaksSignificance(const PeakList& peaks, double signi
         filtered_peaks =
             peak_filter.indexed(filtered_peaks, *unit_cell, unit_cell->indexingTolerance());
 
-        for (auto peak : filtered_peaks) {
+        for (auto peak : filtered_peaks)
             merged.addPeak(peak);
-        }
 
         for (auto&& merged_peak : merged.peaks()) {
             // p value too high: reject peaks
             if (merged_peak.pValue() > significance_level) {
-                for (auto&& p : merged_peak.peaks()) {
+                for (auto&& p : merged_peak.peaks())
                     bad_peaks.push_back(p);
-                }
             }
         }
     }
@@ -103,9 +101,8 @@ PeakList PeakFilter::sparseDataSet(const PeakList& peaks, size_t min_num_peaks)
     std::map<sptrDataSet, PeakList> peaks_per_dataset;
     for (auto peak : peaks) {
         auto data = peak->data();
-        if (!data) {
+        if (!data)
             continue;
-        }
 
         auto it = peaks_per_dataset.find(data);
         if (it == peaks_per_dataset.end()) {
@@ -118,13 +115,11 @@ PeakList PeakFilter::sparseDataSet(const PeakList& peaks, size_t min_num_peaks)
     // Keep the peaks that belong to datasets with a number of peaks >
     // min_num_peaks
     for (auto p : peaks_per_dataset) {
-        if (p.second.size() < min_num_peaks) {
+        if (p.second.size() < min_num_peaks)
             continue;
-        }
 
-        for (auto peak : p.second) {
+        for (auto peak : p.second)
             filtered_peaks.push_back(peak);
-        }
     }
 
     return filtered_peaks;
@@ -168,9 +163,8 @@ PeakList PeakFilter::extincted(const PeakList& peaks)
 
             MillerIndex hkl(peak->q(), *(p.first));
 
-            if (group.isExtinct(hkl)) {
+            if (group.isExtinct(hkl))
                 extincted_peaks.push_back(peak);
-            }
         }
     }
 
@@ -215,9 +209,8 @@ PeakList PeakFilter::overlapping(const PeakList& peaks)
     // build octree
     Octree tree(lower, upper);
 
-    for (unsigned int i = 0; i < peaks.size(); ++i) {
+    for (unsigned int i = 0; i < peaks.size(); ++i)
         tree.addData(&ellipsoids[i]);
-    }
 
     collisions = tree.getCollisions();
 
@@ -250,9 +243,8 @@ PeakList PeakFilter::complementary(const PeakList& peaks, const PeakList& other_
 
     for (auto peak : peaks) {
         auto it = std::find(other_peaks.begin(), other_peaks.end(), peak);
-        if (it == other_peaks.end()) {
+        if (it == other_peaks.end())
             filtered_peaks.push_back(peak);
-        }
     }
 
     return filtered_peaks;
@@ -298,9 +290,8 @@ PeakList PeakFilter::indexed(const PeakList& peaks, const UnitCell& cell, double
     for (auto peak : peaks) {
 
         MillerIndex miller_index(peak->q(), cell);
-        if (miller_index.indexed(tolerance)) {
+        if (miller_index.indexed(tolerance))
             filtered_peaks.push_back(peak);
-        }
     }
 
     return filtered_peaks;
@@ -314,13 +305,11 @@ PeakList PeakFilter::indexed(const PeakList& peaks) const
 
         auto cell = peak->unitCell();
 
-        if (!cell) {
+        if (!cell)
             continue;
-        }
         MillerIndex miller_index(peak->q(), *cell);
-        if (miller_index.indexed(cell->indexingTolerance())) {
+        if (miller_index.indexed(cell->indexingTolerance()))
             filtered_peaks.push_back(peak);
-        }
     }
 
     return filtered_peaks;
@@ -331,9 +320,8 @@ PeakList PeakFilter::unitCell(const PeakList& peaks, sptrUnitCell unit_cell) con
     PeakList filtered_peaks;
 
     for (auto peak : peaks) {
-        if (peak->unitCell() == unit_cell) {
+        if (peak->unitCell() == unit_cell)
             filtered_peaks.push_back(peak);
-        }
     }
 
     return filtered_peaks;
@@ -350,15 +338,13 @@ PeakList PeakFilter::strength(const PeakList& peaks, double min, double max) con
         double intensity = corrected_intensity.value();
         double sigma = corrected_intensity.sigma();
 
-        if (sigma < 1.0e-6) {
+        if (sigma < 1.0e-6)
             continue;
-        }
 
         double i_over_sigma = intensity / sigma;
 
-        if (i_over_sigma >= min && i_over_sigma <= max) {
+        if (i_over_sigma >= min && i_over_sigma <= max)
             filtered_peaks.push_back(peak);
-        }
     }
 
     return filtered_peaks;
@@ -385,9 +371,8 @@ PeakList PeakFilter::dRange(const PeakList& peaks, double dmin, double dmax) con
 
         double d = 1.0 / q.rowVector().norm();
 
-        if (d >= dmin && d <= dmax) {
+        if (d >= dmin && d <= dmax)
             filtered_peaks.push_back(peak);
-        }
     }
 
     return filtered_peaks;
@@ -399,9 +384,8 @@ PeakList PeakFilter::hasUnitCell(const PeakList& peaks) const
 
     for (auto peak : peaks) {
         auto cell = peak->unitCell();
-        if (cell != nullptr) {
+        if (cell != nullptr)
             filtered_peaks.push_back(peak);
-        }
     }
 
     return filtered_peaks;

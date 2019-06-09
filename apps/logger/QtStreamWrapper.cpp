@@ -43,16 +43,14 @@ void QtStreamWrapper::print(const std::string& message)
 
 void QtStreamWrapper::printPrefix()
 {
-    if (_prefix) {
+    if (_prefix)
         _os << _prefix();
-    }
 }
 
 void QtStreamWrapper::printSuffix()
 {
-    if (_suffix) {
+    if (_suffix)
         _os << _suffix();
-    }
     emit sendLogMessage(_os.str());
     _os.clear();
 }

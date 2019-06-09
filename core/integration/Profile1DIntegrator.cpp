@@ -42,9 +42,8 @@ static void updateFit(
 
     for (size_t i = 0; i < n; ++i) {
         // avoid case where dn[i] = 0
-        if (dn[i] == 0) {
+        if (dn[i] == 0)
             continue;
-        }
 
         const double p = dp[i];
         const double n = dn[i];
@@ -81,21 +80,18 @@ static void updateFit(
 
 bool Profile1DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
 {
-    if (!_library) {
+    if (!_library)
         return false;
-    }
 
-    if (!peak) {
+    if (!peak)
         return false;
-    }
 
     const auto& events = region.data().events();
     const auto& counts = region.data().counts();
 
     // TODO: should this be hard-coded??
-    if (events.size() < 29) {
+    if (events.size() < 29)
         throw std::runtime_error("Profile1DIntegrator::compute(): too few data points in peak");
-    }
 
     std::vector<Intensity> mean_profile;
     Profile1D profile(0.0, region.peakEnd());
@@ -138,15 +134,13 @@ bool Profile1DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
     Intensity I = 1e-6;
     Intensity B = 1.0;
 
-    for (auto i = 0; i < 10 && I.value() > 0; ++i) {
+    for (auto i = 0; i < 10 && I.value() > 0; ++i)
         updateFit(I, B, dp, dm, dn);
-    }
 
     double sigma = I.sigma();
 
-    if (std::isnan(sigma) || sigma <= 0.0) {
+    if (std::isnan(sigma) || sigma <= 0.0)
         return false;
-    }
 
     _integratedIntensity = I;
     _meanBackground = B;

@@ -38,9 +38,8 @@ void run_test(const char* filename, const char* instrument)
 
     for (auto dx : fractions) {
         for (auto dy : fractions) {
-            for (auto df : fractions) {
+            for (auto df : fractions)
                 coords.emplace_back(Eigen::Vector3d(dx * ncols, dy * nrows, df * nframes));
-            }
         }
     }
 

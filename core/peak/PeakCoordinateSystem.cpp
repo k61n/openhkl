@@ -23,9 +23,8 @@ namespace nsx {
 
 PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak) : _peak(peak)
 {
-    if (!_peak) {
+    if (!_peak)
         throw std::runtime_error("Cannot construct PeakCoordinateSystem from null Peak3d");
-    }
 
     _event = DetectorEvent(peak->shape().center());
     _state = peak->data()->interpolatedState(_event._frame);

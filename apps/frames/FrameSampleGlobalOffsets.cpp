@@ -37,9 +37,8 @@ FrameSampleGlobalOffsets* FrameSampleGlobalOffsets::_instance = nullptr;
 
 FrameSampleGlobalOffsets* FrameSampleGlobalOffsets::create(ExperimentItem* experiment_item)
 {
-    if (!_instance) {
+    if (!_instance)
         _instance = new FrameSampleGlobalOffsets(experiment_item);
-    }
 
     return _instance;
 }
@@ -89,9 +88,8 @@ FrameSampleGlobalOffsets::~FrameSampleGlobalOffsets()
 {
     delete _ui;
 
-    if (_instance) {
+    if (_instance)
         _instance = nullptr;
-    }
 }
 
 void FrameSampleGlobalOffsets::slotActionClicked(QAbstractButton* button)
@@ -128,9 +126,8 @@ void FrameSampleGlobalOffsets::fit()
     }
 
     nsx::DataList selected_data;
-    for (auto item : selected_items) {
+    for (auto item : selected_items)
         selected_data.push_back(item->data(Qt::UserRole).value<nsx::sptrDataSet>());
-    }
 
     // Fit the sample offsets with the selected data
     const auto& sample = _experiment_item->experiment()->diffractometer()->sample();
@@ -138,9 +135,8 @@ void FrameSampleGlobalOffsets::fit()
         sample.fitGonioOffsets(selected_data, _ui->n_iterations->value(), _ui->tolerance->value());
 
     // The fit failed for whatever reason, return
-    if (!fit_results.success) {
+    if (!fit_results.success)
         nsx::error() << "Could not fit the sample offsets.";
-    }
 
     int comp(0);
     for (auto&& offset : fit_results.offsets) {

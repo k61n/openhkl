@@ -102,15 +102,12 @@ ConvexHull& ConvexHull::operator=(const ConvexHull& other)
 
 void ConvexHull::reset()
 {
-    for (auto p : _vertices) {
+    for (auto p : _vertices)
         delete p.second;
-    }
-    for (auto p : _edges) {
+    for (auto p : _edges)
         delete p.second;
-    }
-    for (auto p : _faces) {
+    for (auto p : _faces)
         delete p.second;
-    }
 
     _vertices.clear();
     _edges.clear();
@@ -153,9 +150,8 @@ Vertex* ConvexHull::addVertex(const Eigen::Vector3d& coords)
 {
     for (auto p : _vertices) {
         Vertex* v = p.second;
-        if ((coords - v->_coords).norm() / coords.norm() < 1.0e-6) {
+        if ((coords - v->_coords).norm() / coords.norm() < 1.0e-6)
             throw std::runtime_error("Duplicate vertex (within 1.0e6 tolerance).");
-        }
     }
 
     Vertex* new_vertex = new Vertex(_vertex_id++, coords);
@@ -168,9 +164,8 @@ bool ConvexHull::removeVertex(const Eigen::Vector3d& coords, double tolerance)
 {
     for (auto it = _vertices.begin(); it != _vertices.end(); ++it) {
         Vertex* v = it->second;
-        if ((v->_coords - coords).squaredNorm() < tolerance) {
+        if ((v->_coords - coords).squaredNorm() < tolerance)
             _vertices.erase(it);
-        }
         return true;
     }
     return false;
@@ -190,9 +185,8 @@ Edge* ConvexHull::buildNullEdge()
 
 bool ConvexHull::findInitialVertices(int& ri, int& rj, int& rk) const
 {
-    if (_vertices.size() < 3) {
+    if (_vertices.size() < 3)
         throw std::runtime_error("Can not set the initial polytope with less than 3 vertices.");
-    }
 
     for (auto it1 = _vertices.begin(); it1 != _vertices.end(); ++it1) {
         Vertex* vi = it1->second;
@@ -218,9 +212,8 @@ void ConvexHull::initalizeHull()
 
     // Find 3 non colinear vertices
     int ri, rj, rk;
-    if (!findInitialVertices(ri, rj, rk)) {
+    if (!findInitialVertices(ri, rj, rk))
         throw std::runtime_error("All vertices are coplanar 1.");
-    }
 
     Vertex* v0 = _vertices[ri];
     Vertex* v1 = _vertices[rj];
@@ -310,9 +303,8 @@ void ConvexHull::updateHull()
         _initialized = true;
     }
 
-    if (_vertices.size() < 4) {
+    if (_vertices.size() < 4)
         throw std::runtime_error("Not enough vertices to build a convex hull.");
-    }
 
     // note: omitted it++ is intentional
     for (auto it = _vertices.begin(); it != _vertices.end();) {
@@ -347,9 +339,8 @@ void ConvexHull::updateHull()
         _innerR2 = std::min(_innerR2, d * d);
 
         // update outer radius
-        for (auto i = 0; i < 3; ++i) {
+        for (auto i = 0; i < 3; ++i)
             _outerR2 = std::max(_outerR2, f->_vertices[i]->_coords.squaredNorm());
-        }
     }
 }
 
@@ -451,9 +442,8 @@ void ConvexHull::orientate(Face* f, Edge* e, Vertex* v)
 
     size_t idx;
     for (idx = 0; idx < 3; ++idx) {
-        if (fv->_vertices[idx] == e->_vertices[0]) {
+        if (fv->_vertices[idx] == e->_vertices[0])
             break;
-        }
     }
 
     // Orient f the same as fv
@@ -559,9 +549,8 @@ void ConvexHull::cleanUp()
 
 AABB ConvexHull::aabb() const
 {
-    if (_vertices.empty()) {
+    if (_vertices.empty())
         return {};
-    }
 
     Eigen::Vector3d lower(
         std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity(),
@@ -572,12 +561,10 @@ AABB ConvexHull::aabb() const
     for (auto p : _vertices) {
         Vertex* v = p.second;
         for (auto i = 0; i < 3; ++i) {
-            if (v->_coords(i) < lower(i)) {
+            if (v->_coords(i) < lower(i))
                 lower(i) = v->_coords(i);
-            }
-            if (v->_coords(i) > upper(i)) {
+            if (v->_coords(i) > upper(i))
                 upper(i) = v->_coords(i);
-            }
         }
     }
 
@@ -587,9 +574,8 @@ AABB ConvexHull::aabb() const
 Eigen::Vector3d ConvexHull::center() const
 {
     Eigen::Vector3d center = Eigen::Vector3d::Zero();
-    for (auto p : _vertices) {
+    for (auto p : _vertices)
         center += p.second->_coords;
-    }
     center /= _vertices.size();
 
     return center;
@@ -661,30 +647,25 @@ bool ConvexHull::checkEulerConditions() const
     unsigned int nEdges = _edges.size();
     unsigned int nFaces = _faces.size();
 
-    if (nVertices < 4) {
+    if (nVertices < 4)
         return false;
-    }
 
-    if ((nVertices - nEdges + nFaces) != 2) {
+    if ((nVertices - nEdges + nFaces) != 2)
         return false;
-    }
 
-    if (nFaces != (2 * nVertices - 4)) {
+    if (nFaces != (2 * nVertices - 4))
         return false;
-    }
 
-    if ((2 * nEdges) != (3 * nFaces)) {
+    if ((2 * nEdges) != (3 * nFaces))
         return false;
-    }
 
     return true;
 }
 
 std::vector<Triangle> ConvexHull::createFaceCache(const Eigen::Matrix3d& rotation) const
 {
-    if (_vertices.size() < 4) {
+    if (_vertices.size() < 4)
         throw std::runtime_error("Hull is flat or undefined, can not construct faces information");
-    }
 
     std::vector<Triangle> triangles;
     triangles.reserve(_faces.size());
@@ -720,22 +701,18 @@ bool ConvexHull::contains(const Eigen::Vector3d& v) const
 
     const double r2 = v.squaredNorm();
 
-    if (r2 > _outerR2) {
+    if (r2 > _outerR2)
         return false;
-    }
 
-    if (r2 <= _innerR2) {
+    if (r2 <= _innerR2)
         return true;
-    }
 
     for (const auto& pair : _planes) {
         double dot = 0.0;
-        for (size_t i = 0; i < 3; ++i) {
+        for (size_t i = 0; i < 3; ++i)
             dot += v(i) * pair.first(i);
-        }
-        if (dot > pair.second) {
+        if (dot > pair.second)
             return false;
-        }
     }
     return true;
 }

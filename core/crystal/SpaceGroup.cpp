@@ -323,9 +323,8 @@ SpaceGroup::SpaceGroup(std::string symbol)
     };
     auto it = std::find_if(symmetry_table.begin(), symmetry_table.end(), find_symbol);
 
-    if (it == symmetry_table.end()) {
+    if (it == symmetry_table.end())
         throw std::runtime_error("Unknown space group: " + _symbol);
-    }
 
     _generators = trim(it->second);
     generateGroupElements();
@@ -351,36 +350,29 @@ char SpaceGroup::bravaisType() const
         assert(g.getAxisOrder() + 6 >= 0);
         size_t idx = size_t(g.getAxisOrder() + 6);
         ++nrot[idx];
-        if (g.isPureTranslation()) {
+        if (g.isPureTranslation())
             nPureTrans++;
-        }
     }
     const int fact = (1 + nPureTrans) * isCentro;
 
     // Cubic
-    if ((nrot[3] + nrot[9]) == 8 * fact) {
+    if ((nrot[3] + nrot[9]) == 8 * fact)
         return 'c';
-    }
     // Hexagonal
-    if ((nrot[0] + nrot[12]) == 2 * fact) {
+    if ((nrot[0] + nrot[12]) == 2 * fact)
         return 'h';
-    }
     // Trigonal
-    if ((nrot[3] + nrot[9]) == 2 * fact) {
+    if ((nrot[3] + nrot[9]) == 2 * fact)
         return 'h';
-    }
     // Tetragonal
-    if ((nrot[2] + nrot[10]) == 2 * fact) {
+    if ((nrot[2] + nrot[10]) == 2 * fact)
         return 't';
-    }
     // Orthorhombic
-    if ((nrot[4] + nrot[8]) == 3 * fact) {
+    if ((nrot[4] + nrot[8]) == 3 * fact)
         return 'o';
-    }
     // Monoclinic
-    if ((nrot[4] + nrot[8]) == fact) {
+    if ((nrot[4] + nrot[8]) == fact)
         return 'm';
-    }
     // Triclinic, only remaining case
     return 'a';
 }
@@ -419,9 +411,8 @@ int SpaceGroup::id() const
 bool SpaceGroup::isCentrosymmetric() const
 {
     for (auto&& g : _groupElements) {
-        if (g.getAxisOrder() == -1) {
+        if (g.getAxisOrder() == -1)
             return true;
-        }
     }
     return false;
 }
@@ -463,9 +454,8 @@ void SpaceGroup::generateGroupElements()
             for (auto&& g : generators) {
                 auto newElement = _groupElements[i] * g;
                 auto it = std::find(_groupElements.begin(), _groupElements.end(), newElement);
-                if (it == _groupElements.end()) {
+                if (it == _groupElements.end())
                     _groupElements.push_back(newElement);
-                }
             }
         }
     }
@@ -501,9 +491,8 @@ bool SpaceGroup::isExtinct(const MillerIndex& hkl) const
 void SpaceGroup::print(std::ostream& os) const
 {
     os << "Symmetry elements of space group " << _symbol << std::endl;
-    for (auto&& g : _groupElements) {
+    for (auto&& g : _groupElements)
         os << g << " ; ";
-    }
     os << std::endl;
 }
 
@@ -525,18 +514,16 @@ bool SpaceGroup::isEquivalent(const MillerIndex& hkl1, const MillerIndex& hkl2, 
     const double norm_1 = hkl1d.squaredNorm();
     const double norm_2 = hkl2d.squaredNorm();
 
-    if (std::abs(norm_1 - norm_2) > eps) {
+    if (std::abs(norm_1 - norm_2) > eps)
         return false;
-    }
 
     for (auto&& element : elements) {
         // todo(jonathan): check that this edit is correct!
         const Eigen::Matrix3d rotation = element.getRotationPart().transpose();
         const Eigen::RowVector3d rotated = hkl1d * rotation;
 
-        if (std::max((rotated - hkl1d).maxCoeff(), (hkl1d - rotated).maxCoeff()) < eps) {
+        if (std::max((rotated - hkl1d).maxCoeff(), (hkl1d - rotated).maxCoeff()) < eps)
             return true;
-        }
 
         if (friedel
             && std::max((rotated + hkl1d).maxCoeff(), (-hkl1d - rotated).maxCoeff()) < eps) {
@@ -646,9 +633,8 @@ std::vector<PeakList> SpaceGroup::findEquivalences(const PeakList& peaks, bool f
         }
 
         // didn't find an equivalence?
-        if (!found_equivalence) {
+        if (!found_equivalence)
             peak_equivs.emplace_back(PeakList({peak}));
-        }
     }
     return peak_equivs;
 }

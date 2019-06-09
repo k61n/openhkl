@@ -66,9 +66,8 @@ void PeaksTableModel::slotChangeMaskedPeaks(const nsx::PeakList& peaks)
     for (auto peak : peaks) {
 
         auto it = std::find(_peaks.begin(), _peaks.end(), peak);
-        if (it == _peaks.end()) {
+        if (it == _peaks.end())
             continue;
-        }
 
         int row = std::distance(_peaks.begin(), it);
 
@@ -93,9 +92,8 @@ void PeaksTableModel::setPeaks(const nsx::PeakList& peaks)
 void PeaksTableModel::slotChangeEnabledPeak(nsx::sptrPeak3D peak)
 {
     auto it = std::find(_peaks.begin(), _peaks.end(), peak);
-    if (it == _peaks.end()) {
+    if (it == _peaks.end())
         return;
-    }
 
     int row = std::distance(_peaks.begin(), it);
 
@@ -114,18 +112,16 @@ void PeaksTableModel::reset()
 
 Qt::ItemFlags PeaksTableModel::flags(const QModelIndex& index) const
 {
-    if (!indexIsValid(index)) {
+    if (!indexIsValid(index))
         return Qt::ItemIsEnabled;
-    }
 
     return QAbstractTableModel::flags(index);
 }
 
 QVariant PeaksTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (role != Qt::DisplayRole) {
+    if (role != Qt::DisplayRole)
         return QVariant();
-    }
 
     if (orientation == Qt::Horizontal) {
         switch (section) {
@@ -171,9 +167,8 @@ QVariant PeaksTableModel::headerData(int section, Qt::Orientation orientation, i
 
 QVariant PeaksTableModel::data(const QModelIndex& index, int role) const
 {
-    if (!indexIsValid(index)) {
+    if (!indexIsValid(index))
         return QVariant();
-    }
 
     Eigen::RowVector3i hkl = {0, 0, 0};
     Eigen::RowVector3d hkl_error = {0.0, 0.0, 0.0};
@@ -370,9 +365,8 @@ void PeaksTableModel::sort(int column, Qt::SortOrder order)
     }
     std::sort(_peaks.begin(), _peaks.end(), compareFn);
 
-    if (order == Qt::DescendingOrder) {
+    if (order == Qt::DescendingOrder)
         std::reverse(_peaks.begin(), _peaks.end());
-    }
     emit layoutChanged();
 }
 
@@ -426,9 +420,8 @@ void PeaksTableModel::sortEquivalents()
 void PeaksTableModel::setUnitCell(const nsx::sptrUnitCell& unitCell, QModelIndexList selectedPeaks)
 {
     if (selectedPeaks.isEmpty()) {
-        for (int i = 0; i < rowCount(); ++i) {
+        for (int i = 0; i < rowCount(); ++i)
             selectedPeaks << index(i, 0);
-        }
     }
     for (auto&& index : selectedPeaks) {
         auto peak = _peaks[index.row()];
@@ -457,9 +450,8 @@ QModelIndexList PeaksTableModel::unindexedPeaks()
 
     for (int i = 0; i < rowCount(); ++i) {
         auto peak = _peaks[i];
-        if (!peak->unitCell()) {
+        if (!peak->unitCell())
             list.append(index(i, 0));
-        }
     }
     return list;
 }
@@ -470,9 +462,8 @@ QModelIndexList PeaksTableModel::selectedPeaks()
 
     for (int i = 0; i < rowCount(); ++i) {
         auto peak = _peaks[i];
-        if (peak->enabled()) {
+        if (peak->enabled())
             list.append(index(i, 0));
-        }
     }
     return list;
 }
@@ -503,9 +494,8 @@ PeaksTableView::PeaksTableView(QWidget* parent) : QTableView(parent)
 
 void PeaksTableView::selectPeak(QModelIndex index)
 {
-    if (!index.isValid()) {
+    if (!index.isValid())
         return;
-    }
 
     PeaksTableModel* peaks_model = dynamic_cast<PeaksTableModel*>(model());
 
@@ -525,14 +515,12 @@ void PeaksTableView::keyPressEvent(QKeyEvent* event)
     if (event->modifiers() == Qt::NoModifier) {
 
         if (key == Qt::Key_Down || key == Qt::Key_Tab || key == Qt::Key_PageDown) {
-            if (current_index == previous_index) {
+            if (current_index == previous_index)
                 setCurrentIndex(model()->index(0, 0));
-            }
             selectPeak(currentIndex());
         } else if (key == Qt::Key_Up || key == Qt::Key_Backspace || key == Qt::Key_PageDown) {
-            if (current_index == previous_index) {
+            if (current_index == previous_index)
                 setCurrentIndex(model()->index(model()->rowCount() - 1, 0));
-            }
             selectPeak(currentIndex());
         } else if (key == Qt::Key_Return || key == Qt::Key_Space) {
             togglePeakSelection(currentIndex());
@@ -543,9 +531,8 @@ void PeaksTableView::keyPressEvent(QKeyEvent* event)
 void PeaksTableView::togglePeakSelection(QModelIndex index)
 {
     auto peaks_model = dynamic_cast<PeaksTableModel*>(model());
-    if (peaks_model == nullptr) {
+    if (peaks_model == nullptr)
         return;
-    }
 
     peaks_model->togglePeakSelection(index);
 }
@@ -553,14 +540,12 @@ void PeaksTableView::togglePeakSelection(QModelIndex index)
 void PeaksTableView::contextMenuEvent(QContextMenuEvent* event)
 {
     auto peaksModel = dynamic_cast<PeaksTableModel*>(model());
-    if (peaksModel == nullptr) {
+    if (peaksModel == nullptr)
         return;
-    }
 
     auto peaks = peaksModel->peaks();
-    if (peaks.empty()) {
+    if (peaks.empty())
         return;
-    }
     // Show all peaks as selected when context menu is requested
     auto menu = new QMenu(this);
     //
@@ -622,19 +607,16 @@ void PeaksTableView::normalizeToMonitor()
     double factor =
         QInputDialog::getDouble(this, "Enter normalization factor", "", 1, 1, 100000000, 1, &ok);
 
-    if (!ok) {
+    if (!ok)
         return;
-    }
 
     auto peaksModel = dynamic_cast<PeaksTableModel*>(model());
-    if (peaksModel == nullptr) {
+    if (peaksModel == nullptr)
         return;
-    }
 
     auto peaks = peaksModel->peaks();
-    if (peaks.empty()) {
+    if (peaks.empty())
         return;
-    }
 
     peaksModel->normalizeToMonitor(factor);
 
@@ -644,9 +626,8 @@ void PeaksTableView::normalizeToMonitor()
     selectRow(index.row());
 
     // If no row selected do nothing else.
-    if (!index.isValid()) {
+    if (!index.isValid())
         return;
-    }
     nsx::sptrPeak3D peak = peaks[index.row()];
     emit plotPeak(peak);
 }
@@ -654,19 +635,16 @@ void PeaksTableView::normalizeToMonitor()
 void PeaksTableView::plotAs(const std::string& key)
 {
     QModelIndexList indexList = selectionModel()->selectedIndexes();
-    if (!indexList.size()) {
+    if (!indexList.size())
         return;
-    }
 
     auto peaksModel = dynamic_cast<PeaksTableModel*>(model());
-    if (peaksModel == nullptr) {
+    if (peaksModel == nullptr)
         return;
-    }
 
     auto peaks = peaksModel->peaks();
-    if (peaks.empty()) {
+    if (peaks.empty())
         return;
-    }
 
     int nPoints = indexList.size();
 
@@ -686,14 +664,12 @@ void PeaksTableView::plotAs(const std::string& key)
 void PeaksTableView::selectUnindexedPeaks()
 {
     auto peaksModel = dynamic_cast<PeaksTableModel*>(model());
-    if (peaksModel == nullptr) {
+    if (peaksModel == nullptr)
         return;
-    }
     QModelIndexList unindexedPeaks = peaksModel->unindexedPeaks();
 
-    for (QModelIndex index : unindexedPeaks) {
+    for (QModelIndex index : unindexedPeaks)
         selectRow(index.row());
-    }
 }
 
 void PeaksTableView::togglePeaksSelection()
@@ -709,12 +685,10 @@ void PeaksTableView::togglePeaksSelection()
 void PeaksTableView::selectValidPeaks()
 {
     auto peaksModel = dynamic_cast<PeaksTableModel*>(model());
-    if (peaksModel == nullptr) {
+    if (peaksModel == nullptr)
         return;
-    }
     QModelIndexList validPeaksIndexes = peaksModel->selectedPeaks();
 
-    for (QModelIndex index : validPeaksIndexes) {
+    for (QModelIndex index : validPeaksIndexes)
         selectRow(index.row());
-    }
 }

@@ -32,9 +32,8 @@ DialogPredictPeaks* DialogPredictPeaks::_instance = nullptr;
 DialogPredictPeaks* DialogPredictPeaks::create(
     ExperimentItem* experiment_item, const nsx::UnitCellList& unit_cells, QWidget* parent)
 {
-    if (!_instance) {
+    if (!_instance)
         _instance = new DialogPredictPeaks(experiment_item, unit_cells, parent);
-    }
 
     return _instance;
 }
@@ -72,15 +71,13 @@ DialogPredictPeaks::DialogPredictPeaks(
 
 DialogPredictPeaks::~DialogPredictPeaks()
 {
-    if (_peaks_model) {
+    if (_peaks_model)
         delete _peaks_model;
-    }
 
     delete _ui;
 
-    if (_instance) {
+    if (_instance)
         _instance = nullptr;
-    }
 }
 
 void DialogPredictPeaks::slotActionClicked(QAbstractButton* button)
@@ -155,9 +152,8 @@ void DialogPredictPeaks::predictPeaks()
             *library, d, unit_cell, d_min, d_max, radius, n_frames, min_neighbors,
             peak_interpolation);
 
-        for (auto peak : predicted) {
+        for (auto peak : predicted)
             predicted_peaks.push_back(peak);
-        }
 
         nsx::info() << "Added " << predicted.size() << " predicted peaks.";
     }

@@ -34,9 +34,8 @@ NumorPropertyWidget::NumorPropertyWidget(NumorItem* caller, QWidget* parent)
     ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     auto data = caller->data(Qt::UserRole).value<nsx::sptrDataSet>();
-    if (!data) {
+    if (!data)
         return;
-    }
 
     ui->label_Data->setText(QString::fromStdString(data->filename()));
 

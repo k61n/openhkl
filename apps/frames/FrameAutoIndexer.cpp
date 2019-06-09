@@ -34,9 +34,8 @@ FrameAutoIndexer* FrameAutoIndexer::_instance = nullptr;
 FrameAutoIndexer*
 FrameAutoIndexer::create(ExperimentItem* experiment_item, const nsx::PeakList& peaks)
 {
-    if (!_instance) {
+    if (!_instance)
         _instance = new FrameAutoIndexer(experiment_item, peaks);
-    }
 
     return _instance;
 }
@@ -105,23 +104,20 @@ FrameAutoIndexer::FrameAutoIndexer(ExperimentItem* experiment_item, const nsx::P
 
 FrameAutoIndexer::~FrameAutoIndexer()
 {
-    if (_peaks_model) {
+    if (_peaks_model)
         delete _peaks_model;
-    }
 
     delete _ui;
 
-    if (_instance) {
+    if (_instance)
         _instance = nullptr;
-    }
 }
 
 void FrameAutoIndexer::slotTabRemoved(int index)
 {
     auto unit_cell_tab = dynamic_cast<WidgetUnitCell*>(_ui->tabs->widget(index));
-    if (!unit_cell_tab) {
+    if (!unit_cell_tab)
         return;
-    }
 
     _ui->tabs->removeTab(index);
 
@@ -132,9 +128,8 @@ void FrameAutoIndexer::slotTabEdited(int index)
 {
     auto unit_cell_tab = dynamic_cast<WidgetUnitCell*>(_ui->tabs->widget(index));
 
-    if (!unit_cell_tab) {
+    if (!unit_cell_tab)
         return;
-    }
 
     QInputDialog dialog(this);
     dialog.setLabelText("");
@@ -142,22 +137,19 @@ void FrameAutoIndexer::slotTabEdited(int index)
     auto pos = mapToGlobal(_ui->tabs->pos());
 
     int width(0);
-    for (auto i = 0; i < index; ++i) {
+    for (auto i = 0; i < index; ++i)
         width += _ui->tabs->tabBar()->tabRect(index).width();
-    }
 
     int height = _ui->tabs->tabBar()->tabRect(index).height();
 
     dialog.move(pos.x() + width, pos.y() + height);
 
-    if (dialog.exec() == QDialog::Rejected) {
+    if (dialog.exec() == QDialog::Rejected)
         return;
-    }
 
     QString unit_cell_name = dialog.textValue();
-    if (unit_cell_name.isEmpty()) {
+    if (unit_cell_name.isEmpty())
         return;
-    }
 
     _ui->tabs->setTabText(index, unit_cell_name);
     unit_cell_tab->unitCell()->setName(unit_cell_name.toStdString());
@@ -200,16 +192,14 @@ void FrameAutoIndexer::slotActionClicked(QAbstractButton* button)
 void FrameAutoIndexer::resetUnitCell()
 {
     // Restore for each peak the initial unit cell
-    for (auto p : _defaults) {
+    for (auto p : _defaults)
         p.first->setUnitCell(p.second);
-    }
 
     for (auto i = _ui->tabs->count() - 1; i > 0; i--) {
 
         auto tab = dynamic_cast<WidgetUnitCell*>(_ui->tabs->widget(i));
-        if (!tab) {
+        if (!tab)
             continue;
-        }
         _ui->tabs->removeTab(i);
         delete tab;
     }
@@ -227,9 +217,8 @@ void FrameAutoIndexer::accept()
 
     for (auto i = 0; i < _ui->tabs->count(); ++i) {
         auto unit_cell_tab = dynamic_cast<WidgetUnitCell*>(_ui->tabs->widget(i));
-        if (!unit_cell_tab) {
+        if (!unit_cell_tab)
             continue;
-        }
         auto unit_cell_item = new UnitCellItem(unit_cell_tab->unitCell());
         unit_cells_item->appendRow(unit_cell_item);
     }
@@ -254,9 +243,8 @@ void FrameAutoIndexer::run()
 
     handler->setCallback([=]() {
         auto log = handler->getLog();
-        for (auto&& msg : log) {
+        for (auto&& msg : log)
             nsx::info() << msg.c_str();
-        }
     });
 
     nsx::AutoIndexer indexer(handler);
@@ -266,9 +254,8 @@ void FrameAutoIndexer::run()
 
     auto peaks = _peaks_model->peaks();
 
-    for (auto r : selected_rows) {
+    for (auto r : selected_rows)
         indexer.addPeak(peaks[r.row()]);
-    }
 
     nsx::IndexerParameters params;
 
@@ -362,9 +349,8 @@ void FrameAutoIndexer::selectSolution(int index)
 
     auto peaks = _peaks_model->peaks();
 
-    for (auto r : selected_rows) {
+    for (auto r : selected_rows)
         peaks[r.row()]->setUnitCell(selected_unit_cell);
-    }
 
     WidgetUnitCell* widget_unit_cell = new WidgetUnitCell(selected_unit_cell);
     _ui->tabs->addTab(widget_unit_cell, QString::fromStdString(selected_unit_cell->name()));

@@ -57,28 +57,24 @@ DialogSpaceGroup::DialogSpaceGroup(const nsx::PeakList& peaks, QWidget* parent)
     _peaks = peak_filter.enabled(peaks, true);
     for (auto peak : _peaks) {
         auto current_peak_cell = peak->unitCell();
-        if (!current_peak_cell) {
+        if (!current_peak_cell)
             continue;
-        }
 
         if (!_cell) {
             _cell = current_peak_cell;
         } else {
-            if (_cell != current_peak_cell) {
+            if (_cell != current_peak_cell)
                 throw std::runtime_error("Only one unit cell is supported at this time");
-            }
         }
     }
 
-    if (!_cell) {
+    if (!_cell)
         throw std::runtime_error("No unit cell defined for the selected peaks");
-    }
 
     _peaks = peak_filter.indexed(_peaks, *_cell, _cell->indexingTolerance());
 
-    if (_peaks.size() == 0) {
+    if (_peaks.size() == 0)
         throw std::runtime_error("Need at least one peak to find space group!");
-    }
 
     evaluateSpaceGroups();
 
@@ -106,9 +102,8 @@ void DialogSpaceGroup::evaluateSpaceGroups()
 
     nsx::info() << "Retrieving reflection list for space group calculation...";
 
-    for (auto peak : _peaks) {
+    for (auto peak : _peaks)
         hkls.emplace_back(nsx::MillerIndex(peak->q(), *_cell).rowVector());
-    }
 
     _groups.clear();
 
