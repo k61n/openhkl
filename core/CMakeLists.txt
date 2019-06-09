@@ -12,7 +12,7 @@ target_include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
 target_link_libraries(${NSX_LIBRARY}
-    PUBLIC
+    PRIVATE
     ${HDF5_LIBRARIES}
     ${BLOSC_LIBRARY}
     ${Boost_LIBRARIES}

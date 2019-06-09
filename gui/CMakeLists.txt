@@ -10,7 +10,6 @@ target_include_directories(${lib}
 
 target_link_libraries(${lib}
     PRIVATE
-    ${QT_LIBRARIES}
     QCR
     QCustomPlot
     ${NSX_LIBRARY}
