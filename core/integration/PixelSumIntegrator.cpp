@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/integration/PixelSumIntegrator.h"
-#include "core/geometry/Blob3D.h"
+#include "core/search_peaks/Blob3D.h"
 #include "core/experiment/DataSet.h"
 #include "core/geometry/Ellipsoid.h"
 #include "core/crystal/Intensity.h"

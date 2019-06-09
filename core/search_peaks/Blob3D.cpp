@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/geometry/Blob3D.cpp
+//! @file      core/search_peaks/Blob3D.cpp
 //! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -18,7 +18,7 @@
 
 #include <Eigen/Eigenvalues>
 
-#include "core/geometry/Blob3D.h"
+#include "core/search_peaks/Blob3D.h"
 
 static const double minimum_blob_mass = 1e-15;
 

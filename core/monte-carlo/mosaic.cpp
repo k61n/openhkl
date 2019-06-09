@@ -19,7 +19,7 @@
 
 #include "core/monte-carlo/mosaic.h"
 
-#include "core/geometry/Blob3D.h"
+#include "core/search_peaks/Blob3D.h"
 
 #include "core/hull/ConvexHull.h"
 #include "core/experiment/DataSet.h"

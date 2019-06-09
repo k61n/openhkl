@@ -3,7 +3,7 @@
 
 #include <Eigen/Dense>
 
-#include "core/geometry/Blob3D.h"
+#include "core/search_peaks/Blob3D.h"
 const double tolerance = 1e-5;
 
 TEST_CASE("test/geometry/TestBlob3D.cpp", "") {

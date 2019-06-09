@@ -17,7 +17,7 @@
 #include <random>
 #include <vector>
 
-#include "core/geometry/Blob3D.h"
+#include "core/search_peaks/Blob3D.h"
 #include "core/logger/Logger.h"
 
 namespace {

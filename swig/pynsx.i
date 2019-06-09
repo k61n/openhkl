@@ -138,7 +138,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
 #include "core/geometry/AABB.h"
 #include "core/hull/Edge.h"
-#include "core/geometry/Blob3D.h"
+#include "core/search_peaks/Blob3D.h"
 
 
 #include "core/geometry/DirectVector.h"
@@ -212,7 +212,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
 #include "core/geometry/AABB.h"
 #include "core/geometry/Ellipsoid.h"
-#include "core/geometry/Blob3D.h"
+#include "core/search_peaks/Blob3D.h"
 
 #include "core/auto_indexing/FFTIndexing.h"
 #include "core/peak/Peak3D.h"
@@ -342,7 +342,7 @@ using namespace nsx;
 
 %include "core/geometry/AABB.h"
 %include "core/geometry/Ellipsoid.h"
-%include "core/geometry/Blob3D.h"
+%include "core/search_peaks/Blob3D.h"
 
 %include "core/utils/Any.h"
 %extend nsx::Any {
@@ -499,7 +499,7 @@ namespace nsx {
 %include "core/hull/ConvexHull.h"
 %include "core/geometry/AABB.h"
 %include "core/hull/Edge.h"
-%include "core/geometry/Blob3D.h"
+%include "core/search_peaks/Blob3D.h"
 
 %include "core/crystal/BrillouinZone.h"
 
