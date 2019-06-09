@@ -14,8 +14,6 @@
 
 //! @brief Declaring classes PeaksTableModel and PeaksTableView
 
-#pragma once
-
 #ifndef GUI_MODELS_PEAKSTABLE_H
 #define GUI_MODELS_PEAKSTABLE_H
 

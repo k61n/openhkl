@@ -12,7 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#pragma once
+#ifndef GUI_FRAMES_PROGRESSVIEW_H
+#define GUI_FRAMES_PROGRESSVIEW_H
 
 #include <memory>
 
@@ -40,3 +41,4 @@ private:
     QTimer* _timer;
 };
 
+#endif // GUI_FRAMES_PROGRESSVIEW_H

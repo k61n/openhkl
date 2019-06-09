@@ -12,7 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#pragma once
+#ifndef GUI_MODELS_META_H
+#define GUI_MODELS_META_H
 
 #include <QMetaType>
 
@@ -22,3 +23,5 @@
 Q_DECLARE_METATYPE(nsx::PeakList)
 Q_DECLARE_METATYPE(nsx::sptrUnitCell)
 Q_DECLARE_METATYPE(nsx::sptrDataSet)
+
+#endif // GUI_MODELS_META_H

@@ -12,7 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#pragma once
+#ifndef GUI_MODELS_COLORMAP_H
+#define GUI_MODELS_COLORMAP_H
 
 #include <cmath>
 #include <string>
@@ -56,3 +57,5 @@ private:
     std::vector<double> _rgb;
     std::vector<double> _log_rgb;
 };
+
+#endif // GUI_MODELS_COLORMAP_H

@@ -16,8 +16,6 @@
 #ifndef GUI_PANELS_SUBFRAME_PROPERTIES_H
 #define GUI_PANELS_SUBFRAME_PROPERTIES_H
 
-#pragma once
-
 #include "gui/panels/subframe_setup.h"
 #include <QCR/widgets/views.h>
 

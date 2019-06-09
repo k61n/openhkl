@@ -12,7 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#pragma once
+#ifndef GUI_GRAPHICS_PLOTFACTORY_H
+#define GUI_GRAPHICS_PLOTFACTORY_H
 
 #include <string>
 
@@ -32,3 +33,5 @@ private:
     PlotFactory();
     ~PlotFactory();
 };
+
+#endif // GUI_GRAPHICS_PLOTFACTORY_H
