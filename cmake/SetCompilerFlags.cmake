@@ -6,19 +6,6 @@ enable_language(C)
 
 set(CMAKE_CXX_STANDARD 14)
 
-#---Setup details depending on the major platform type----------------------------------------------
-if(CMAKE_SYSTEM_NAME MATCHES Linux)
-    set(NSXTOOL_ARCHITECTURE linux)
-elseif(APPLE)
-    set(NSXTOOL_ARCHITECTURE macosx)
-elseif(WIN32)
-    if(${CMAKE_SIZEOF_VOID_P} EQUAL 8)
-        set(NSXTOOL_ARCHITECTURE win64)
-    else()
-        set(NSXTOOL_ARCHITECTURE win32)
-    endif()
-endif()
-
 # determine if compiler is GNU/clang variety
 if( CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(COMPILER_IS_GNU TRUE)
@@ -51,13 +38,6 @@ else()
     message(WARNING "C++ compiler not recognized; build may fail")
 endif()
 
-
-# disable annoying warnings during msvc build
-if(COMPILER_IS_MSVC)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4348 /wd4127 /MP")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4348 /wd4127 /MP")
-endif()
-
 # special configuration for GNU/clang
 if(COMPILER_IS_GNU_OR_CLANG)
     add_compile_options(-Wall -Wextra -Wpedantic -Wno-sign-compare)
@@ -65,6 +45,8 @@ if(COMPILER_IS_GNU_OR_CLANG)
     add_definitions(-DEIGEN_FFTW_DEFAULT)
     add_definitions(-D_USE_MATH_DEFINES)
 elseif(COMPILER_IS_MSVC)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4348 /wd4127 /MP")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4348 /wd4127 /MP")
     add_definitions(/D_USE_MATH_DEFINES)
     add_compile_options(/W2) # reasonable warning level
     add_definitions(/DH5_BUILT_AS_DYNAMIC_LIB)
@@ -88,12 +70,6 @@ if(COMPILER_IS_GNU)
     endif()
 endif()
 
-
-# optional optimized debug for GCC
-if(BUILD_OPTIMIZED_DEBUG AND NOT COMPILER_IS_GNU)
-    message(WARNING "BUILD_OPTIMIZED_DEBUG=ON has no effect on builds with ${CMAKE_CXX_COMPILER_ID}")
-endif()
-
 # code sanitizer
 if(NSX_SANITIZE)
     message("The sanitize options are: thread, memory, undefined, dataflow, cfi, safe-stack")
@@ -103,15 +79,3 @@ if(NSX_SANITIZE)
 endif()
 
 message("Finished configuring compiler")
-
-if( CMAKE_BUILD_TYPE STREQUAL "Release")
-    message(STATUS "The build flags are ${CMAKE_CXX_FLAGS_RELEASE} ${CMAKE_CXX_FLAGS}")
-elseif(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
-    message(STATUS "The build flags are ${CMAKE_CXX_FLAGS_MINSIZEREL} ${CMAKE_CXX_FLAGS}")
-elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-    message(STATUS "The build flags are ${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${CMAKE_CXX_FLAGS}")
-elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    message(STATUS "The build flags are ${CMAKE_CXX_FLAGS_DEBUG} ${CMAKE_CXX_FLAGS}")
-else()
-    message(WARNING "Build type is not recognized")
-endif()
