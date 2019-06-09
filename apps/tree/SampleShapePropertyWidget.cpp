@@ -16,7 +16,7 @@
 
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/axes/Gonio.h"
+#include "core/gonio/Gonio.h"
 #include "core/logger/Logger.h"
 #include "core/monte-carlo/MCAbsorption.h"
 #include "core/chemistry/Material.h"

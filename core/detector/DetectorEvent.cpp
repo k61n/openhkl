@@ -17,7 +17,7 @@
 
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorFactory.h"
-#include "core/axes/Gonio.h"
+#include "core/gonio/Gonio.h"
 
 namespace nsx {
 

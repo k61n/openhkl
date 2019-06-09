@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/axes/TransAxis.cpp
+//! @file      core/gonio/TransAxis.cpp
 //! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/axes/TransAxis.h"
+#include "core/gonio/TransAxis.h"
 
 namespace nsx {
 

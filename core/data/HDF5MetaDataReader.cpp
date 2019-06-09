@@ -21,7 +21,7 @@
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/data/EigenToVector.h"
-#include "core/axes/Gonio.h"
+#include "core/gonio/Gonio.h"
 #include "core/data/HDF5MetaDataReader.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"

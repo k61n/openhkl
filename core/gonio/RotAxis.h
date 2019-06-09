@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/axes/RotAxis.h
+//! @file      core/gonio/RotAxis.h
 //! @brief     Defines ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -20,7 +20,7 @@
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
-#include "core/axes/Axis.h"
+#include "core/gonio/Axis.h"
 
 namespace nsx {
 

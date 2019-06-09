@@ -8,9 +8,9 @@
 #include <Eigen/Dense>
 #include <Eigen/QR>
 
-#include "core/instrument/Component.h"
+#include "core/gonio/Component.h"
 #include "core/detector/FlatDetector.h"
-#include "core/axes/Gonio.h"
+#include "core/gonio/Gonio.h"
 #include "core/crystal/GruberReduction.h"
 #include "core/instrument/Monochromator.h"
 #include "core/crystal/NiggliReduction.h"

@@ -21,7 +21,7 @@
 #include "core/data/BloscFilter.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/axes/Gonio.h"
+#include "core/gonio/Gonio.h"
 #include "core/data/IDataReader.h"
 #include "core/mathematics/MathematicsTypes.h"
 #include "core/utils/Path.h"

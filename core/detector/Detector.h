@@ -22,7 +22,7 @@
 
 #include <Eigen/Dense>
 
-#include "core/instrument/Component.h"
+#include "core/gonio/Component.h"
 #include "core/experiment/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/geometry/DirectVector.h"

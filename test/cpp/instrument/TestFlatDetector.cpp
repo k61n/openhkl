@@ -5,7 +5,7 @@
 
 #include "core/geometry/DirectVector.h"
 #include "core/detector/FlatDetector.h"
-#include "core/axes/Gonio.h"
+#include "core/gonio/Gonio.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/utils/Units.h"
 const double tolerance = 1e-3;

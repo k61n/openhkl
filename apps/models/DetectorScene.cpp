@@ -27,7 +27,7 @@
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/mask/EllipseMask.h"
-#include "core/axes/Gonio.h"
+#include "core/gonio/Gonio.h"
 #include "core/data/IDataReader.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/IntegrationRegion.h"

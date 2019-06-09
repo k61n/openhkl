@@ -161,7 +161,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/data/DataReaderFactory.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorFactory.h"
-#include "core/axes/TransAxis.h"
+#include "core/gonio/TransAxis.h"
 #include "core/instrument/Sample.h"
 #include "core/detector/FlatDetector.h"
 #include "core/instrument/Source.h"
@@ -171,7 +171,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/detector/CylindricalDetector.h"
-#include "core/axes/Gonio.h"
+#include "core/gonio/Gonio.h"
 
 #include "core/search_peaks/Convolver.h"
 #include "core/search_peaks/AtomicConvolver.h"
@@ -184,21 +184,21 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
 #include "core/monte-carlo/mosaic.h"
 
-#include "core/axes/Axis.h"
+#include "core/gonio/Axis.h"
 #include "core/experiment/Experiment.h"
 
-#include "core/instrument/Component.h"
-#include "core/axes/AxisFactory.h"
-#include "core/axes/RotAxis.h"
+#include "core/gonio/Component.h"
+#include "core/gonio/AxisFactory.h"
+#include "core/gonio/RotAxis.h"
 
 #include "core/utils/Singleton.h"
 #include "core/utils/Factory.h"
 
 #include "core/utils/Enums.h"
 
-#include "core/axes/Axis.h"
-#include "core/axes/RotAxis.h"
-#include "core/axes/TransAxis.h"
+#include "core/gonio/Axis.h"
+#include "core/gonio/RotAxis.h"
+#include "core/gonio/TransAxis.h"
 
 #include "core/instrument/Monochromator.h"
 
@@ -332,11 +332,11 @@ using namespace nsx;
 %template(ReciprocalVectorList) std::vector<nsx::ReciprocalVector>;
 %template(ReciprocalVectorQueue) std::deque<nsx::ReciprocalVector>;
 
-%include "core/axes/Axis.h"
-%include "core/axes/RotAxis.h"
-%include "core/axes/TransAxis.h"
-%include "core/axes/Gonio.h"
-%include "core/instrument/Component.h"
+%include "core/gonio/Axis.h"
+%include "core/gonio/RotAxis.h"
+%include "core/gonio/TransAxis.h"
+%include "core/gonio/Gonio.h"
+%include "core/gonio/Component.h"
 %include "core/instrument/Monochromator.h"
 %include "core/instrument/Source.h"
 
@@ -527,7 +527,7 @@ namespace nsx {
 
 %include "core/detector/Detector.h"
 %include "core/detector/DetectorFactory.h"
-%include "core/axes/TransAxis.h"
+%include "core/gonio/TransAxis.h"
 %include "core/instrument/Sample.h"
 %include "core/detector/FlatDetector.h"
 %include "core/instrument/Source.h"
@@ -542,10 +542,10 @@ namespace nsx {
 %template(InstrumentStateList) std::vector<nsx::InstrumentState>;
 
 
-%include "core/axes/Axis.h"
+%include "core/gonio/Axis.h"
 %include "core/experiment/Experiment.h"
-%include "core/axes/AxisFactory.h"
-%include "core/axes/RotAxis.h"
+%include "core/gonio/AxisFactory.h"
+%include "core/gonio/RotAxis.h"
 
 %include "core/auto_indexing/AutoIndexer.h"
 

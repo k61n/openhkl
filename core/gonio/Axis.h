@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/axes/Axis.h
+//! @file      core/gonio/Axis.h
 //! @brief     Defines ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###

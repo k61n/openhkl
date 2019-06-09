@@ -14,7 +14,7 @@
 #include "core/instrument/Diffractometer.h"
 
 #include "core/experiment/Experiment.h"
-#include "core/axes/Gonio.h"
+#include "core/gonio/Gonio.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakFilter.h"

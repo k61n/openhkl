@@ -1,7 +1,7 @@
 #include "test/cpp/catch.hpp"
 #include <Eigen/Dense>
 
-#include "core/axes/TransAxis.h"
+#include "core/gonio/TransAxis.h"
 
 const double tolerance = 1e-6;
 

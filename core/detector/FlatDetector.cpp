@@ -15,10 +15,10 @@
 #include <Eigen/Dense>
 
 #include "core/detector/FlatDetector.h"
-#include "core/axes/Gonio.h"
+#include "core/gonio/Gonio.h"
 #include "core/rec_space/ReciprocalVector.h"
-#include "core/axes/RotAxis.h"
-#include "core/axes/TransAxis.h"
+#include "core/gonio/RotAxis.h"
+#include "core/gonio/TransAxis.h"
 #include "core/utils/Units.h"
 
 namespace nsx {

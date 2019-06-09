@@ -21,7 +21,7 @@
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/experiment/Experiment.h"
-#include "core/axes/Gonio.h"
+#include "core/gonio/Gonio.h"
 #include "core/logger/Logger.h"
 #include "core/utils/Units.h"
 

@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/axes/Gonio.cpp
+//! @file      core/gonio/Gonio.cpp
 //! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -18,8 +18,8 @@
 #include <Eigen/Geometry>
 
 #include "core/geometry/DirectVector.h"
-#include "core/axes/Gonio.h"
-#include "core/axes/RotAxis.h"
+#include "core/gonio/Gonio.h"
+#include "core/gonio/RotAxis.h"
 #include "core/utils/Units.h"
 
 namespace nsx {

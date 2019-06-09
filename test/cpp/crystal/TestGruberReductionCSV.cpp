@@ -7,7 +7,7 @@
 #include <Eigen/Dense>
 
 #include "core/utils/CSV.h"
-#include "core/instrument/Component.h"
+#include "core/gonio/Component.h"
 #include "core/crystal/GruberReduction.h"
 #include "core/crystal/NiggliReduction.h"
 #include "core/crystal/SpaceGroup.h"

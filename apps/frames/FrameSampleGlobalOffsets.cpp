@@ -20,7 +20,7 @@
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/experiment/Experiment.h"
-#include "core/axes/Gonio.h"
+#include "core/gonio/Gonio.h"
 #include "core/logger/Logger.h"
 #include "core/instrument/Sample.h"
 #include "core/utils/Units.h"

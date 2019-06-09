@@ -24,8 +24,8 @@
 
 #include "core/instrument/Diffractometer.h"
 #include "core/experiment/Experiment.h"
-#include "core/axes/Gonio.h"
-#include "core/axes/RotAxis.h"
+#include "core/gonio/Gonio.h"
+#include "core/gonio/RotAxis.h"
 #include "core/instrument/Sample.h"
 
 #include "apps/views/AbsorptionWidget.h"

@@ -21,7 +21,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/data/EigenToVector.h"
 #include "core/data/FakeDataReader.h"
-#include "core/axes/Gonio.h"
+#include "core/gonio/Gonio.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/utils/Units.h"

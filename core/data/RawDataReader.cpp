@@ -20,11 +20,11 @@
 #include <stdexcept>
 #include <string>
 
-#include "core/instrument/Component.h"
+#include "core/gonio/Component.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/data/EigenToVector.h"
-#include "core/axes/Gonio.h"
+#include "core/gonio/Gonio.h"
 #include "core/instrument/Monochromator.h"
 #include "core/data/Parser.h"
 #include "core/data/RawDataReader.h"

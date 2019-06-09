@@ -20,7 +20,7 @@
 
 #include <yaml-cpp/yaml.h>
 
-#include "core/instrument/Component.h"
+#include "core/gonio/Component.h"
 #include "core/hull/ConvexHull.h"
 #include "core/experiment/DataTypes.h"
 

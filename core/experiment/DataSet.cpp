@@ -31,7 +31,7 @@
 #include "core/detector/DetectorEvent.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/geometry/Ellipsoid.h"
-#include "core/axes/Gonio.h"
+#include "core/gonio/Gonio.h"
 #include "core/data/IDataReader.h"
 #include "core/instrument/Monochromator.h"
 #include "core/utils/Path.h"
