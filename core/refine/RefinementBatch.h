@@ -21,7 +21,7 @@
 
 #include <Eigen/SparseCore>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/fitting/FitParameters.h"
 #include "core/instrument/InstrumentTypes.h"
 #include "core/rec_space/ReciprocalVector.h"

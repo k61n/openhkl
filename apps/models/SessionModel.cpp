@@ -36,7 +36,7 @@
 #include <QVector>
 
 #include "core/statistics/CC.h"
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/data/DataReaderFactory.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"

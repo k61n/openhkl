@@ -18,7 +18,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakFilter.h"
 #include "core/rec_space/ReciprocalVector.h"

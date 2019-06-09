@@ -27,7 +27,7 @@
 #include <QString>
 #include <QTreeView>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/logger/Logger.h"

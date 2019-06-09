@@ -25,7 +25,7 @@
 #include <QList>
 #include <vector>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/InstrumentTypes.h"
 #include "core/crystal/UnitCell.h"

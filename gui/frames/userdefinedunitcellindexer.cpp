@@ -19,7 +19,7 @@
 #include "gui/models/session.h"
 #include <QCR/engine/logger.h>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/experiment/Experiment.h"
 #include "core/logger/Logger.h"

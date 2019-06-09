@@ -21,7 +21,7 @@
 #include <QMenu>
 #include <QProgressBar>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/DataTypes.h"
 #include "core/utils/UtilsTypes.h"

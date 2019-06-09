@@ -16,7 +16,7 @@
 
 #include <map>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataTypes.h"
 #include "core/refine/Refiner.h"
 

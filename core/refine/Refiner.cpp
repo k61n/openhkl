@@ -15,7 +15,7 @@
 #include <algorithm>
 #include <iterator>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataSet.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/instrument/InstrumentState.h"

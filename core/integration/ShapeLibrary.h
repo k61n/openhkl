@@ -20,7 +20,7 @@
 #include <map>
 #include <vector>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/crystal/MillerIndex.h"

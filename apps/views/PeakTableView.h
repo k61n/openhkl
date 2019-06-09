@@ -21,7 +21,7 @@
 #include <QMenu>
 #include <QTableView>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 
 #include "apps/MainWindow.h"
 

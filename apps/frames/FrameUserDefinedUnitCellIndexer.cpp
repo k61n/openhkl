@@ -16,7 +16,7 @@
 #include <QStandardItem>
 #include <QStandardItemModel>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/experiment/Experiment.h"
 #include "core/logger/Logger.h"

@@ -19,7 +19,7 @@
 
 #include <Eigen/Dense>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 
 namespace nsx {
 

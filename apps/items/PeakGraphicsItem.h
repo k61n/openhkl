@@ -18,7 +18,7 @@
 
 #include <string>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/geometry/GeometryTypes.h"
 
 #include "apps/items/PlottableGraphicsItem.h"

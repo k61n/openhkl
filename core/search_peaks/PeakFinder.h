@@ -19,7 +19,7 @@
 
 #include "core/geometry/Blob3D.h"
 #include "core/search_peaks/Convolver.h"
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataTypes.h"
 #include "core/geometry/GeometryTypes.h"
 #include "core/utils/UtilsTypes.h"

@@ -17,7 +17,7 @@
 
 #include <Eigen/Core>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/geometry/Ellipsoid.h"
 #include "core/instrument/InstrumentTypes.h"

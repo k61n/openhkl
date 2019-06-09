@@ -17,7 +17,7 @@
 #include <utility>
 #include <vector>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/auto_indexing/UserDefinedUnitCellIndexer.h"
 
 #include "apps/frames/NSXQFrame.h"

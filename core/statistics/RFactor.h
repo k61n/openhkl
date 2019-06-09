@@ -18,7 +18,7 @@
 #include <set>
 #include <vector>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/statistics/IMergedPeakStatistic.h"
 
 namespace nsx {

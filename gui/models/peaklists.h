@@ -17,7 +17,7 @@
 #define NSXGUI_GUI_MODELS_PEAKLISTS_H
 
 #include <QList>
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 
 class FilteredPeaksModel {
 public:

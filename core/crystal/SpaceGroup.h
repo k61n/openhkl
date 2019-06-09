@@ -22,7 +22,7 @@
 
 #include <Eigen/Dense>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/crystal/MillerIndex.h"
 #include "core/crystal/SymOp.h"
 

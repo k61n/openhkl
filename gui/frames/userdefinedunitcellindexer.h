@@ -21,7 +21,7 @@
 #include <QCR/widgets/views.h>
 #include <QDialogButtonBox>
 #include <QTableView>
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/auto_indexing/UserDefinedUnitCellIndexer.h"
 
 class UserDefinedUnitCellIndexer : public QcrFrame {

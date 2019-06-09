@@ -18,7 +18,7 @@
 
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 
 class UnitCellWidget : public QcrWidget {
     Q_OBJECT

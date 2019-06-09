@@ -18,7 +18,7 @@
 
 #include <QDialog>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 
 namespace Ui {
 class DialogTransformationMatrix;

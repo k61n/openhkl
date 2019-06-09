@@ -15,7 +15,7 @@
 
 #include "gui/models/peakstable.h"
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"

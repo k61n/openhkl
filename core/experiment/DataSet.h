@@ -22,7 +22,7 @@
 
 #include <Eigen/Dense>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataTypes.h"
 #include "core/geometry/GeometryTypes.h"
 #include "core/mask/IMask.h"

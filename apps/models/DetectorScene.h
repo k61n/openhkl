@@ -25,7 +25,7 @@
 #include <QRect>
 #include <QStack>
 
-#include "core/crystal/CrystalTypes.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataTypes.h"
 #include "core/mask/IMask.h"
 
