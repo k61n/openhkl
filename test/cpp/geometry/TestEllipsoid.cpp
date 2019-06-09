@@ -1,8 +1,11 @@
 #include "test/cpp/catch.hpp"
-#include <Eigen/Dense>
 
 #include "core/geometry/AABB.h"
 #include "core/geometry/Ellipsoid.h"
+
+#include <Eigen/Dense>
+#include <iostream>
+
 const double eps = 1e-8;
 
 TEST_CASE("test/geometry/TestEllipsoid.cpp", "")

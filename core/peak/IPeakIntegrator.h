@@ -22,6 +22,7 @@
 
 #include "core/crystal/BrillouinZone.h"
 #include "core/crystal/Intensity.h"
+#include "core/experiment/DataTypes.h"
 #include "core/geometry/GeometryTypes.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/utils/ProgressHandler.h"

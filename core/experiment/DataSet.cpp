@@ -26,7 +26,6 @@
 #include "core/loader/IDataReader.h"
 #include "core/mathematics/MathematicsTypes.h"
 #include "core/peak/Peak3D.h"
-#include "core/search_peaks/ConvolverFactory.h"
 #include "core/utils/Path.h"
 #include "core/utils/ProgressHandler.h"
 #include "core/utils/Units.h" // deg

@@ -14,13 +14,10 @@
 
 #include <array>
 
-#include "core/experiment/DataSet.h"
 #include "core/geometry/AABB.h"
 #include "core/geometry/Ellipsoid.h"
 #include "core/geometry/GeometryTypes.h"
 #include "core/geometry/ReciprocalVector.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/loader/IDataReader.h"
 
 namespace nsx {
 

@@ -15,9 +15,6 @@
 #ifndef CORE_GEOMETRY_ELLIPSOID_H
 #define CORE_GEOMETRY_ELLIPSOID_H
 
-
-
-#include "core/experiment/DataTypes.h"
 #include "core/geometry/AABB.h"
 
 namespace nsx {
