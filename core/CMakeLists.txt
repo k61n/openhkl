@@ -17,6 +17,3 @@ target_link_libraries(${NSX_LIBRARY}
     ${YAML_LIBRARIES}
     ${TIFF_LIBRARY}
     ${GSL_LIBRARIES})
-
-# Install section, installing libraries
-install(TARGETS ${NSX_LIBRARY} DESTINATION ${NSX_INSTALL_DIR}lib COMPONENT LIB)
