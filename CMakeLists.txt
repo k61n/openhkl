@@ -46,7 +46,15 @@ include(CheckDependencies)
 include(SetCompilerFlags)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(DEFAULT_BUILD_SHARED_LIBS ON)
-include(SetLinkerFlags)
+
+# Linker flags.
+if(APPLE)
+    set(NSXQT_LINK_FLAGS "-Wl,-rpath,@loader_path/../../core/")
+elseif(UNIX)
+    set(NSXQT_LINK_FLAGS "-Wl,-rpath,@loader_path/../lib")
+else(WIN32)
+    set(NSXQT_LINK_FLAGS "/ENTRY:mainCRTStartup")
+endif()
 
 if(BUILD_COVERAGE_REPORT)
     include(CheckCoverage)
