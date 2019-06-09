@@ -76,4 +76,4 @@ private:
     void updateAABB();
 };
 
-#endif //GUI_GRAPHICS_ELLIPSEITEM_H
+#endif // GUI_GRAPHICS_ELLIPSEITEM_H

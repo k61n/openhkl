@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_DATA_IDATAREADER_H
-#define CORE_DATA_IDATAREADER_H
+#ifndef CORE_LOADER_IDATAREADER_H
+#define CORE_LOADER_IDATAREADER_H
 
 #include <string>
 #include <vector>
@@ -125,4 +125,4 @@ protected:
 
 } // end namespace nsx
 
-#endif // CORE_DATA_IDATAREADER_H
+#endif // CORE_LOADER_IDATAREADER_H

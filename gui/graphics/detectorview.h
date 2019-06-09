@@ -37,4 +37,4 @@ private:
     DetectorScene* _scene;
 };
 
-#endif //GUI_GRAPHICS_DETECTORVIEW_H
+#endif // GUI_GRAPHICS_DETECTORVIEW_H

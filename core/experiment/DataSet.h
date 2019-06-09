@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_DATA_DATASET_H
-#define CORE_DATA_DATASET_H
+#ifndef CORE_EXPERIMENT_DATASET_H
+#define CORE_EXPERIMENT_DATASET_H
 
 #include <memory>
 #include <mutex>
@@ -141,4 +141,4 @@ private:
 
 } // end namespace nsx
 
-#endif // CORE_DATA_DATASET_H
+#endif // CORE_EXPERIMENT_DATASET_H

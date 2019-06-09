@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_AXES_AXIS_H
-#define CORE_AXES_AXIS_H
+#ifndef CORE_GONIO_AXIS_H
+#define CORE_GONIO_AXIS_H
 
 #include <iostream>
 #include <string>
@@ -104,4 +104,4 @@ std::ostream& operator<<(std::ostream& os, const Axis& axis);
 
 } // end namespace nsx
 
-#endif // CORE_AXES_AXIS_H
+#endif // CORE_GONIO_AXIS_H

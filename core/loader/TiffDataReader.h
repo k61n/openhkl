@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_DATA_TIFFDATAREADER_H
-#define CORE_DATA_TIFFDATAREADER_H
+#ifndef CORE_LOADER_TIFFDATAREADER_H
+#define CORE_LOADER_TIFFDATAREADER_H
 
 #include <tiffio.h>
 
@@ -51,4 +51,4 @@ private:
 
 } // end namespace nsx
 
-#endif // CORE_DATA_TIFFDATAREADER_H
+#endif // CORE_LOADER_TIFFDATAREADER_H

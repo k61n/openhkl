@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_CRYSTAL_PEAKDATA_H
-#define CORE_CRYSTAL_PEAKDATA_H
+#ifndef CORE_PEAK_PEAKDATA_H
+#define CORE_PEAK_PEAKDATA_H
 
 #include <Eigen/Dense>
 #include <deque>
@@ -50,4 +50,4 @@ private:
 
 } // end namespace nsx
 
-#endif // CORE_CRYSTAL_PEAKDATA_H
+#endif // CORE_PEAK_PEAKDATA_H

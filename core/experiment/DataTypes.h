@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_DATA_DATATYPES_H
-#define CORE_DATA_DATATYPES_H
+#ifndef CORE_EXPERIMENT_DATATYPES_H
+#define CORE_EXPERIMENT_DATATYPES_H
 
 #include <functional>
 #include <map>
@@ -51,4 +51,4 @@ using MetaDataKeySet = std::set<std::string>;
 
 } // end namespace nsx
 
-#endif // CORE_DATA_DATATYPES_H
+#endif // CORE_EXPERIMENT_DATATYPES_H

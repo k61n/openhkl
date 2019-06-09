@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_GEOMETRY_TRIANGLE_H
-#define CORE_GEOMETRY_TRIANGLE_H
+#ifndef CORE_HULL_TRIANGLE_H
+#define CORE_HULL_TRIANGLE_H
 
 #include <Eigen/Dense>
 
@@ -49,4 +49,4 @@ struct Triangle {
 
 } // end namespace nsx
 
-#endif // CORE_GEOMETRY_TRIANGLE_H
+#endif // CORE_HULL_TRIANGLE_H

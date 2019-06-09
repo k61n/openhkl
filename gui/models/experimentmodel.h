@@ -19,8 +19,8 @@
 //
 //*************************************************************************************************
 
-#ifndef NSXGUI_GUI_MODELS_EXPERIMENTMODEL_H
-#define NSXGUI_GUI_MODELS_EXPERIMENTMODEL_H
+#ifndef GUI_MODELS_EXPERIMENTMODEL_H
+#define GUI_MODELS_EXPERIMENTMODEL_H
 
 #include <QList>
 #include <vector>
@@ -95,4 +95,4 @@ private:
     UnitCellsModel* units_;
 };
 
-#endif // NSXGUI_GUI_MODELS_EXPERIMENTMODEL_H
+#endif // GUI_MODELS_EXPERIMENTMODEL_H

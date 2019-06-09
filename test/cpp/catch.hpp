@@ -8,8 +8,8 @@
  *  Distributed under the Boost Software License, Version 1.0. (See accompanying
  *  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
-#ifndef TWOBLUECUBES_SINGLE_INCLUDE_CATCH_HPP_INCLUDED
-#define TWOBLUECUBES_SINGLE_INCLUDE_CATCH_HPP_INCLUDED
+#ifndef TEST_CPP_CATCH_HPP
+#define TEST_CPP_CATCH_HPP
 // start catch.hpp
 
 
@@ -15368,5 +15368,5 @@ using Catch::Detail::Approx;
 
 // end catch_reenable_warnings.h
 // end catch.hpp
-#endif // TWOBLUECUBES_SINGLE_INCLUDE_CATCH_HPP_INCLUDED
+#endif // TEST_CPP_CATCH_HPP
 

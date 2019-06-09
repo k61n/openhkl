@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_GEOMETRY_VERTEX_H
-#define CORE_GEOMETRY_VERTEX_H
+#ifndef CORE_HULL_VERTEX_H
+#define CORE_HULL_VERTEX_H
 
 #include <ostream>
 
@@ -60,4 +60,4 @@ std::ostream& operator<<(std::ostream& os, const Vertex& vertex);
 
 } // end namespace nsx
 
-#endif // CORE_GEOMETRY_VERTEX_H
+#endif // CORE_HULL_VERTEX_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_DATA_METADATA_H
-#define CORE_DATA_METADATA_H
+#ifndef CORE_LOADER_METADATA_H
+#define CORE_LOADER_METADATA_H
 
 #include <map>
 #include <set>
@@ -107,4 +107,4 @@ template <typename _type> _type MetaData::key(const char* name) const
 
 } // end namespace nsx
 
-#endif // CORE_DATA_METADATA_H
+#endif // CORE_LOADER_METADATA_H

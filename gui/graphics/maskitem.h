@@ -74,4 +74,4 @@ private:
     void updateAABB();
 };
 
-#endif //GUI_GRAPHICS_MASKITEM_H
+#endif // GUI_GRAPHICS_MASKITEM_H

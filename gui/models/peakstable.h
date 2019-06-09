@@ -16,8 +16,8 @@
 
 #pragma once
 
-#ifndef NSXGUI_GUI_MODELS_PEAKSTABLE_H
-#define NSXGUI_GUI_MODELS_PEAKSTABLE_H
+#ifndef GUI_MODELS_PEAKSTABLE_H
+#define GUI_MODELS_PEAKSTABLE_H
 
 #include <memory>
 #include <string>
@@ -115,4 +115,4 @@ private:
     void constructTable();
 };
 
-#endif // NSXGUI_GUI_MODELS_PEAKSTABLE_H
+#endif // GUI_MODELS_PEAKSTABLE_H

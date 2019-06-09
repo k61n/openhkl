@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 
-#ifndef NSXGUI_GUI_ACTIONS_TRIGGERS_H
-#define NSXGUI_GUI_ACTIONS_TRIGGERS_H
+#ifndef GUI_ACTIONS_TRIGGERS_H
+#define GUI_ACTIONS_TRIGGERS_H
 
 #include <QAction>
 #include <QCR/widgets/actions.h>
@@ -97,4 +97,4 @@ private:
     void setupRest();
 };
 
-#endif // NSXGUI_GUI_ACTIONS_TRIGGERS_H
+#endif // GUI_ACTIONS_TRIGGERS_H

@@ -52,4 +52,4 @@ private:
     void copyViewToClipboard();
 };
 
-#endif //GUI_GRAPHICS_NSXPLOT_H
+#endif // GUI_GRAPHICS_NSXPLOT_H

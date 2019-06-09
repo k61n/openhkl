@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_AXES_AXISFACTORY_H
-#define CORE_AXES_AXISFACTORY_H
+#ifndef CORE_GONIO_AXISFACTORY_H
+#define CORE_GONIO_AXISFACTORY_H
 
 #include <string>
 
@@ -37,4 +37,4 @@ private:
 
 } // end namespace nsx
 
-#endif // CORE_AXES_AXISFACTORY_H
+#endif // CORE_GONIO_AXISFACTORY_H

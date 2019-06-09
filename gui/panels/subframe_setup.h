@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 
-#ifndef NSXGUI_GUI_PANELS_SUBFRAME_SETUP_H
-#define NSXGUI_GUI_PANELS_SUBFRAME_SETUP_H
+#ifndef GUI_PANELS_SUBFRAME_SETUP_H
+#define GUI_PANELS_SUBFRAME_SETUP_H
 
 #include "gui/panels/tab_data.h"
 #include "gui/panels/tab_instrument.h"
@@ -40,4 +40,4 @@ public:
     void peaksChanged();
 };
 
-#endif // NSXGUI_GUI_PANELS_SUBFRAME_SETUP_H
+#endif // GUI_PANELS_SUBFRAME_SETUP_H

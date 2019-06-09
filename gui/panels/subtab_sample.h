@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 
-#ifndef NSXGUI_GUI_PANELS_SUBTAB_SAMPLE_H
-#define NSXGUI_GUI_PANELS_SUBTAB_SAMPLE_H
+#ifndef GUI_PANELS_SUBTAB_SAMPLE_H
+#define GUI_PANELS_SUBTAB_SAMPLE_H
 
 #include "gui/properties/sampleshapeproperties.h"
 #include <QCR/widgets/views.h>
@@ -27,4 +27,4 @@ private:
     SampleShapeProperties* property;
 };
 
-#endif // NSXGUI_GUI_PANELS_SUBTAB_SAMPLE_H
+#endif // GUI_PANELS_SUBTAB_SAMPLE_H

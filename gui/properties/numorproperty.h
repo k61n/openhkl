@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 
-#ifndef NSXGUI_GUI_PROPERTIES_NUMORPROPERTY_H
-#define NSXGUI_GUI_PROPERTIES_NUMORPROPERTY_H
+#ifndef GUI_PROPERTIES_NUMORPROPERTY_H
+#define GUI_PROPERTIES_NUMORPROPERTY_H
 
 #include <QCR/widgets/views.h>
 #include <QTableWidget>
@@ -31,4 +31,4 @@ private:
     QLabel* label;
 };
 
-#endif // NSXGUI_GUI_PROPERTIES_NUMORPROPERTY_H
+#endif // GUI_PROPERTIES_NUMORPROPERTY_H

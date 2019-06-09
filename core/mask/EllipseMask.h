@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_GEOMETRY_ELLIPSEMASK_H
-#define CORE_GEOMETRY_ELLIPSEMASK_H
+#ifndef CORE_MASK_ELLIPSEMASK_H
+#define CORE_MASK_ELLIPSEMASK_H
 
 #include "core/geometry/AABB.h"
 #include "core/geometry/Ellipsoid.h"
@@ -47,4 +47,4 @@ private:
 
 } // end namespace nsx
 
-#endif // CORE_GEOMETRY_ELLIPSEMASK_H
+#endif // CORE_MASK_ELLIPSEMASK_H

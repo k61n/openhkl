@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 
-#ifndef NSXGUI_GUI_PANELS_SUBTAB_DETECTOR_H
-#define NSXGUI_GUI_PANELS_SUBTAB_DETECTOR_H
+#ifndef GUI_PANELS_SUBTAB_DETECTOR_H
+#define GUI_PANELS_SUBTAB_DETECTOR_H
 
 #include "gui/properties/detectorproperty.h"
 #include <QCR/widgets/views.h>
@@ -27,4 +27,4 @@ private:
     DetectorProperty* property;
 };
 
-#endif // NSXGUI_GUI_PANELS_SUBTAB_DETECTOR_H
+#endif // GUI_PANELS_SUBTAB_DETECTOR_H

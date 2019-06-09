@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 
-#ifndef NSXGUI_GUI_PANELS_SUBTAB_MONOCHROMATICSOURCE_H
-#define NSXGUI_GUI_PANELS_SUBTAB_MONOCHROMATICSOURCE_H
+#ifndef GUI_PANELS_SUBTAB_MONOCHROMATICSOURCE_H
+#define GUI_PANELS_SUBTAB_MONOCHROMATICSOURCE_H
 
 #include "gui/properties/sourceproperty.h"
 #include <QCR/widgets/views.h>
@@ -27,4 +27,4 @@ private:
     SourceProperty* property;
 };
 
-#endif // NSXGUI_GUI_PANELS_SUBTAB_MONOCHROMATICSOURCE_H
+#endif // GUI_PANELS_SUBTAB_MONOCHROMATICSOURCE_H

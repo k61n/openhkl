@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 
-#ifndef NSXGUI_GUI_DIALOGS_SHAPELIBRARY_H
-#define NSXGUI_GUI_DIALOGS_SHAPELIBRARY_H
+#ifndef GUI_DIALOGS_SHAPELIBRARY_H
+#define GUI_DIALOGS_SHAPELIBRARY_H
 
 #include <QDialog>
 #include <QDialogButtonBox>
@@ -82,4 +82,4 @@ private:
     QDialogButtonBox* buttons;
 };
 
-#endif // NSXGUI_GUI_DIALOGS_SHAPELIBRARY_H
+#endif // GUI_DIALOGS_SHAPELIBRARY_H

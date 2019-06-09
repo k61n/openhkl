@@ -60,4 +60,4 @@ private:
     QGraphicsRectItem* _area;
 };
 
-#endif //GUI_GRAPHICS_PEAKITEM_H
+#endif // GUI_GRAPHICS_PEAKITEM_H

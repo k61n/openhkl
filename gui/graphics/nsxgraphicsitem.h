@@ -76,4 +76,4 @@ protected:
     QGraphicsTextItem* _label_gi;
 };
 
-#endif //GUI_GRAPHICS_NSXGRAPHICSITEM_H
+#endif // GUI_GRAPHICS_NSXGRAPHICSITEM_H

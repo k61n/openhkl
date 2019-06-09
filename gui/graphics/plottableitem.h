@@ -46,4 +46,4 @@ public:
     bool isPlottable(NSXPlot* plot) const;
 };
 
-#endif //GUI_GRAPHICS_PLOTTABLEITEM_H
+#endif // GUI_GRAPHICS_PLOTTABLEITEM_H

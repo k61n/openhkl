@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 
-#ifndef NSXGUI_GUI_FRAMES_UNITCELLWIDGET_H
-#define NSXGUI_GUI_FRAMES_UNITCELLWIDGET_H
+#ifndef GUI_FRAMES_UNITCELLWIDGET_H
+#define GUI_FRAMES_UNITCELLWIDGET_H
 
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
@@ -30,4 +30,4 @@ private:
     nsx::sptrUnitCell unitCell_;
 };
 
-#endif // NSXGUI_GUI_FRAMES_UNITCELLWIDGET_H
+#endif // GUI_FRAMES_UNITCELLWIDGET_H

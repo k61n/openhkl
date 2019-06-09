@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INSTRUMENT_COMPONENT_H
-#define CORE_INSTRUMENT_COMPONENT_H
+#ifndef CORE_GONIO_COMPONENT_H
+#define CORE_GONIO_COMPONENT_H
 
 #include <map>
 #include <string>
@@ -72,4 +72,4 @@ protected:
 
 } // end namespace nsx
 
-#endif // CORE_INSTRUMENT_COMPONENT_H
+#endif // CORE_GONIO_COMPONENT_H

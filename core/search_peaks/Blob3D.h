@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_GEOMETRY_BLOB3D_H
-#define CORE_GEOMETRY_BLOB3D_H
+#ifndef CORE_SEARCH_PEAKS_BLOB3D_H
+#define CORE_SEARCH_PEAKS_BLOB3D_H
 
 #include <iostream>
 
@@ -104,4 +104,4 @@ std::ostream& operator<<(std::ostream& os, const Blob3D& b);
 #endif
 } // end namespace nsx
 
-#endif // CORE_GEOMETRY_BLOB3D_H
+#endif // CORE_SEARCH_PEAKS_BLOB3D_H

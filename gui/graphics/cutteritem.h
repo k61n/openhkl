@@ -70,4 +70,4 @@ protected:
     QPointF _to;
 };
 
-#endif //GUI_GRAPHICS_CUTTERITEM_H
+#endif // GUI_GRAPHICS_CUTTERITEM_H

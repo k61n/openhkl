@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSXGUI_GUI_DIALOGS_LISTNAMEDIALOG_H
-#define NSXGUI_GUI_DIALOGS_LISTNAMEDIALOG_H
+#ifndef GUI_DIALOGS_LISTNAMEDIALOG_H
+#define GUI_DIALOGS_LISTNAMEDIALOG_H
 
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/modal_dialogs.h>
@@ -30,4 +30,4 @@ private:
     nsx::PeakList list_;
 };
 
-#endif // NSXGUI_GUI_DIALOGS_LISTNAMEDIALOG_H
+#endif // GUI_DIALOGS_LISTNAMEDIALOG_H

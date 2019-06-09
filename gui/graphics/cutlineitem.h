@@ -44,4 +44,4 @@ private:
     int _nPoints;
 };
 
-#endif //GUI_GRAPHICS_CUTLINEITEM_H
+#endif // GUI_GRAPHICS_CUTLINEITEM_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_REC_SPACE_RECIPROCALVECTOR_H
-#define CORE_REC_SPACE_RECIPROCALVECTOR_H
+#ifndef CORE_GEOMETRY_RECIPROCALVECTOR_H
+#define CORE_GEOMETRY_RECIPROCALVECTOR_H
 
 #include <iostream>
 
@@ -59,4 +59,4 @@ std::ostream& operator<<(std::ostream& os, const ReciprocalVector& rvector);
 
 } // end namespace nsx
 
-#endif // CORE_REC_SPACE_RECIPROCALVECTOR_H
+#endif // CORE_GEOMETRY_RECIPROCALVECTOR_H

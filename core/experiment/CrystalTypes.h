@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_CRYSTAL_CRYSTALTYPES_H
-#define CORE_CRYSTAL_CRYSTALTYPES_H
+#ifndef CORE_EXPERIMENT_CRYSTALTYPES_H
+#define CORE_EXPERIMENT_CRYSTALTYPES_H
 
 #include <memory>
 #include <set>
@@ -59,4 +59,4 @@ using AutoIndexingSoluce = std::pair<UnitCell, double>;
 
 } // end namespace nsx
 
-#endif // CORE_CRYSTAL_CRYSTALTYPES_H
+#endif // CORE_EXPERIMENT_CRYSTALTYPES_H

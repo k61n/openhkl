@@ -32,4 +32,4 @@ public:
     std::string getType() const;
 };
 
-#endif //GUI_GRAPHICS_SIMPLEPLOT_H
+#endif // GUI_GRAPHICS_SIMPLEPLOT_H

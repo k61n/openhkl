@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_DATA_HDF5METADATAREADER_H
-#define CORE_DATA_HDF5METADATAREADER_H
+#ifndef CORE_LOADER_HDF5METADATAREADER_H
+#define CORE_LOADER_HDF5METADATAREADER_H
 
 
 #include <string>
@@ -53,4 +53,4 @@ protected:
 
 } // end namespace nsx
 
-#endif // CORE_DATA_HDF5METADATAREADER_H
+#endif // CORE_LOADER_HDF5METADATAREADER_H

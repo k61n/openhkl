@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 
-#ifndef NSXGUI_GUI_PANELS_SUBFRAME_EXPERIMENTS_H
-#define NSXGUI_GUI_PANELS_SUBFRAME_EXPERIMENTS_H
+#ifndef GUI_PANELS_SUBFRAME_EXPERIMENTS_H
+#define GUI_PANELS_SUBFRAME_EXPERIMENTS_H
 
 #include <QCR/widgets/views.h>
 #include <QCR/widgets/tables.h>
@@ -63,4 +63,4 @@ private:
     ExperimentsView* view;
 };
 
-#endif // NSXGUI_GUI_PANELS_SUBFRAME_EXPERIMENTS_H
+#endif // GUI_PANELS_SUBFRAME_EXPERIMENTS_H

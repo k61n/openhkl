@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_GEOMETRY_BOXMASK_H
-#define CORE_GEOMETRY_BOXMASK_H
+#ifndef CORE_MASK_BOXMASK_H
+#define CORE_MASK_BOXMASK_H
 
 #include "core/geometry/AABB.h"
 #include "core/mask/IMask.h"
@@ -44,4 +44,4 @@ private:
 
 } // end namespace nsx
 
-#endif // CORE_GEOMETRY_BOXMASK_H
+#endif // CORE_MASK_BOXMASK_H

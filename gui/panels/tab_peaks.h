@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 
-#ifndef NSXGUI_GUI_PANELS_TAB_PEAKS_H
-#define NSXGUI_GUI_PANELS_TAB_PEAKS_H
+#ifndef GUI_PANELS_TAB_PEAKS_H
+#define GUI_PANELS_TAB_PEAKS_H
 
 #include "gui/models/peaklists.h"
 #include "gui/models/peakstable.h"
@@ -41,4 +41,4 @@ private:
     QcrTabWidget* filtered;
 };
 
-#endif // NSXGUI_GUI_PANELS_TAB_PEAKS_H
+#endif // GUI_PANELS_TAB_PEAKS_H

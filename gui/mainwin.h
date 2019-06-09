@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSXGUI_GUI_MAINWIN_H
-#define NSXGUI_GUI_MAINWIN_H
+#ifndef GUI_MAINWIN_H
+#define GUI_MAINWIN_H
 
 #include "gui/panels/subframe_experiments.h"
 #include "gui/panels/subframe_image.h"
@@ -59,4 +59,4 @@ private:
 
     friend class Actions;
 };
-#endif // NSXGUI_GUI_MAINWIN_H
+#endif // GUI_MAINWIN_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_CRYSTAL_MERGEDPEAK_H
-#define CORE_CRYSTAL_MERGEDPEAK_H
+#ifndef CORE_PEAK_MERGEDPEAK_H
+#define CORE_PEAK_MERGEDPEAK_H
 
 #include <Eigen/Dense>
 
@@ -79,4 +79,4 @@ bool operator<(const MergedPeak& p, const MergedPeak& q);
 
 } // end namespace nsx
 
-#endif // CORE_CRYSTAL_MERGEDPEAK_H
+#endif // CORE_PEAK_MERGEDPEAK_H

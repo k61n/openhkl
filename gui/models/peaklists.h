@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 
-#ifndef NSXGUI_GUI_MODELS_PEAKLISTS_H
-#define NSXGUI_GUI_MODELS_PEAKLISTS_H
+#ifndef GUI_MODELS_PEAKLISTS_H
+#define GUI_MODELS_PEAKLISTS_H
 
 #include <QList>
 #include "core/experiment/CrystalTypes.h"
@@ -69,4 +69,4 @@ private:
     QList<PeakListsModel*> peakLists_;
 };
 
-#endif // NSXGUI_GUI_MODELS_PEAKLISTS_H
+#endif // GUI_MODELS_PEAKLISTS_H

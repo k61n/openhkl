@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 
-#ifndef NSXGUI_GUI_DIALOGS_MESSAGE_BOXES_H
-#define NSXGUI_GUI_DIALOGS_MESSAGE_BOXES_H
+#ifndef GUI_DIALOGS_MESSAGE_BOXES_H
+#define GUI_DIALOGS_MESSAGE_BOXES_H
 
 #include <QDialog>
 
@@ -28,4 +28,4 @@ public:
     HelpBox();
 };
 
-#endif // NSXGUI_GUI_DIALOGS_MESSAGE_BOXES_H
+#endif // GUI_DIALOGS_MESSAGE_BOXES_H

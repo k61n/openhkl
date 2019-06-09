@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INTEGRATION_IPEAKINTEGRATOR_H
-#define CORE_INTEGRATION_IPEAKINTEGRATOR_H
+#ifndef CORE_PEAK_IPEAKINTEGRATOR_H
+#define CORE_PEAK_IPEAKINTEGRATOR_H
 
 #include <map>
 #include <vector>
@@ -70,4 +70,4 @@ protected:
 
 } // end namespace nsx
 
-#endif // CORE_INTEGRATION_IPEAKINTEGRATOR_H
+#endif // CORE_PEAK_IPEAKINTEGRATOR_H

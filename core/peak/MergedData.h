@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_DATA_MERGEDDATA_H
-#define CORE_DATA_MERGEDDATA_H
+#ifndef CORE_PEAK_MERGEDDATA_H
+#define CORE_PEAK_MERGEDDATA_H
 
 #include <set>
 
@@ -56,4 +56,4 @@ private:
 
 } // end namespace nsx
 
-#endif // CORE_DATA_MERGEDDATA_H
+#endif // CORE_PEAK_MERGEDDATA_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_CRYSTAL_PEAKFILTER_H
-#define CORE_CRYSTAL_PEAKFILTER_H
+#ifndef CORE_PEAK_PEAKFILTER_H
+#define CORE_PEAK_PEAKFILTER_H
 
 #include "core/experiment/CrystalTypes.h"
 
@@ -72,4 +72,4 @@ public:
 
 } // end namespace nsx
 
-#endif // CORE_CRYSTAL_PEAKFILTER_H
+#endif // CORE_PEAK_PEAKFILTER_H

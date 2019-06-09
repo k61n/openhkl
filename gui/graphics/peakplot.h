@@ -30,4 +30,4 @@ public:
 };
 
 
-#endif //GUI_GRAPHICS_PEAKPLOT_H
+#endif // GUI_GRAPHICS_PEAKPLOT_H

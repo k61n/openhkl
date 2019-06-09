@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_REFININE_PARAMETERS_REFINER_H
-#define CORE_REFININE_PARAMETERS_REFINER_H
+#ifndef CORE_REFINE_REFINER_H
+#define CORE_REFINE_REFINER_H
 
 #include <vector>
 
@@ -56,4 +56,4 @@ private:
 
 } // end namespace nsx
 
-#endif // CORE_REFININE_PARAMETERS_REFINER_H
+#endif // CORE_REFINE_REFINER_H

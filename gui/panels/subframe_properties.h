@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 
-#ifndef NSXGUI_GUI_PANELS_SUBFRAME_PROPERTIES_H
-#define NSXGUI_GUI_PANELS_SUBFRAME_PROPERTIES_H
+#ifndef GUI_PANELS_SUBFRAME_PROPERTIES_H
+#define GUI_PANELS_SUBFRAME_PROPERTIES_H
 
 #pragma once
 
@@ -27,4 +27,4 @@ public:
     SubframeSetup* tabsframe;
 };
 
-#endif // NSXGUI_GUI_PANELS_SUBFRAME_PROPERTIES_H
+#endif // GUI_PANELS_SUBFRAME_PROPERTIES_H

@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 
-#ifndef NSXGUI_GUI_PROPERTIES_SAMPLESHAPEPROPERTIES_H
-#define NSXGUI_GUI_PROPERTIES_SAMPLESHAPEPROPERTIES_H
+#ifndef GUI_PROPERTIES_SAMPLESHAPEPROPERTIES_H
+#define GUI_PROPERTIES_SAMPLESHAPEPROPERTIES_H
 
 #include <QCR/widgets/actions.h>
 #include <QCR/widgets/controls.h>
@@ -41,4 +41,4 @@ private:
     QTableWidget* sampleGoniometer;
 };
 
-#endif // NSXGUI_GUI_PROPERTIES_SAMPLESHAPEPROPERTIES_H
+#endif // GUI_PROPERTIES_SAMPLESHAPEPROPERTIES_H

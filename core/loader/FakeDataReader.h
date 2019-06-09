@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_DATA_FAKEDATAREADER_H
-#define CORE_DATA_FAKEDATAREADER_H
+#ifndef CORE_LOADER_FAKEDATAREADER_H
+#define CORE_LOADER_FAKEDATAREADER_H
 
 
 #include <string>
@@ -54,4 +54,4 @@ private:
 
 } // end namespace nsx
 
-#endif // CORE_DATA_FAKEDATAREADER_H
+#endif // CORE_LOADER_FAKEDATAREADER_H

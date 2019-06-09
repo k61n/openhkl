@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSXGUI_GUI_FRAMES_REFINER_H
-#define NSXGUI_GUI_FRAMES_REFINER_H
+#ifndef GUI_FRAMES_REFINER_H
+#define GUI_FRAMES_REFINER_H
 
 #include "gui/models/peakstable.h"
 #include <QCR/widgets/controls.h>
@@ -91,4 +91,4 @@ private:
     QListWidget* selectedData;
 };
 
-#endif // NSXGUI_GUI_FRAMES_REFINER_H
+#endif // GUI_FRAMES_REFINER_H

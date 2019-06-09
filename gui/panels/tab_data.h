@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 
-#ifndef NSXGUI_GUI_PANELS_TAB_DATA_H
-#define NSXGUI_GUI_PANELS_TAB_DATA_H
+#ifndef GUI_PANELS_TAB_DATA_H
+#define GUI_PANELS_TAB_DATA_H
 
 #include "gui/properties/numorproperty.h"
 #include <QCR/widgets/views.h>
@@ -27,4 +27,4 @@ private:
     NumorProperty* property;
 };
 
-#endif // NSXGUI_GUI_PANELS_TAB_DATA_H
+#endif // GUI_PANELS_TAB_DATA_H

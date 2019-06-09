@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 
-#ifndef NSXGUI_GUI_FRAMES_PEAKFINDER_H
-#define NSXGUI_GUI_FRAMES_PEAKFINDER_H
+#ifndef GUI_FRAMES_PEAKFINDER_H
+#define GUI_FRAMES_PEAKFINDER_H
 
 #include "gui/models/peakstable.h"
 #include "gui/graphics/detectorview.h"
@@ -66,4 +66,4 @@ private:
     void doActions(QAbstractButton*);
 };
 
-#endif // NSXGUI_GUI_FRAMES_PEAKFINDER_H
+#endif // GUI_FRAMES_PEAKFINDER_H

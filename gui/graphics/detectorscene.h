@@ -142,4 +142,4 @@ private:
     nsx::sptrPeak3D _selected_peak;
 };
 
-#endif //GUI_GRAPHICS_DETECTORSCENE_H
+#endif // GUI_GRAPHICS_DETECTORSCENE_H

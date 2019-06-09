@@ -59,4 +59,4 @@ private:
     bool _horizontal;
 };
 
-#endif //GUI_GRAPHICS_CUTSLICEITEM_H
+#endif // GUI_GRAPHICS_CUTSLICEITEM_H

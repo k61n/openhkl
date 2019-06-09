@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_DATA_EIGENTOVECTOR_H
-#define CORE_DATA_EIGENTOVECTOR_H
+#ifndef CORE_LOADER_EIGENTOVECTOR_H
+#define CORE_LOADER_EIGENTOVECTOR_H
 
 #include <vector>
 
@@ -25,4 +25,4 @@ std::vector<double> eigenToVector(const Eigen::VectorXd& ev);
 
 } // end namespace nsx
 
-#endif // CORE_DATA_EIGENTOVECTOR_H
+#endif // CORE_LOADER_EIGENTOVECTOR_H

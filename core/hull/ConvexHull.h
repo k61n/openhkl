@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_GEOMETRY_CONVEXHULL_H
-#define CORE_GEOMETRY_CONVEXHULL_H
+#ifndef CORE_HULL_CONVEXHULL_H
+#define CORE_HULL_CONVEXHULL_H
 
 #include <cmath>
 #include <iterator>
@@ -223,4 +223,4 @@ std::ostream& operator<<(std::ostream& os, const ConvexHull& chull);
 
 } // end namespace nsx
 
-#endif // CORE_GEOMETRY_CONVEXHULL_H
+#endif // CORE_HULL_CONVEXHULL_H
