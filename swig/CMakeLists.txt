@@ -5,8 +5,6 @@ endif()
 set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
 include_directories(${CMAKE_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${CMAKE_BINARY_DIR}/core/generated)
 include_directories(${PYTHON_INCLUDE_DIRS})
 
 set_property(SOURCE pynsx.i PROPERTY CPLUSPLUS ON)

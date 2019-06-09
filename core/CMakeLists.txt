@@ -1,15 +1,12 @@
 # note: *.c needed for blosc files in data directory
 file(GLOB_RECURSE core_SOURCES *.cpp *.c)
 
-file(GLOB_RECURSE core_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
-
 add_library(${NSX_LIBRARY} ${NSX_LIB_TYPE} ${core_SOURCES})
 
 target_include_directories(
     ${NSX_LIBRARY}
     PRIVATE
-    ${CMAKE_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}/generated)
+    ${CMAKE_SOURCE_DIR})
 
 target_link_libraries(${NSX_LIBRARY}
     PRIVATE
@@ -23,5 +20,3 @@ target_link_libraries(${NSX_LIBRARY}
 
 # Install section, installing libraries
 install(TARGETS ${NSX_LIBRARY} DESTINATION ${NSX_INSTALL_DIR}lib COMPONENT LIB)
-install(FILES ${core_HEADERS} DESTINATION ${NSX_INSTALL_DIR}include/core COMPONENT DEV)
-install(FILES ${core_GENERATED_HEADERS} DESTINATION ${NSX_INSTALL_DIR}include/core COMPONENT DEV)
