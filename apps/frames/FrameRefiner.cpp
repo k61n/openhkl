@@ -15,10 +15,10 @@
 #include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 
-#include "apps/models/CollectedPeaksModel.h"
 #include "apps/delegates/DoubleItemDelegate.h"
-#include "apps/models/ExperimentItem.h"
 #include "apps/frames/FrameRefiner.h"
+#include "apps/models/CollectedPeaksModel.h"
+#include "apps/models/ExperimentItem.h"
 #include "apps/models/PeaksItem.h"
 #include "apps/plot/SXPlot.h"
 #include "apps/widgets/WidgetRefinerFit.h"

@@ -16,17 +16,17 @@
 
 #include <Eigen/Core>
 
-#include "core/experiment/DataSet.h"
+#include "core/crystal/UnitCell.h"
 #include "core/detector/Detector.h"
-#include "core/instrument/Diffractometer.h"
+#include "core/experiment/DataSet.h"
+#include "core/fitting/Minimizer.h"
 #include "core/geometry/Ellipsoid.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Source.h"
+#include "core/integration/ShapeLibrary.h"
 #include "core/loader/IDataReader.h"
 #include "core/logger/Logger.h"
-#include "core/fitting/Minimizer.h"
 #include "core/peak/Peak3D.h"
-#include "core/integration/ShapeLibrary.h"
-#include "core/instrument/Source.h"
-#include "core/crystal/UnitCell.h"
 
 namespace nsx {
 

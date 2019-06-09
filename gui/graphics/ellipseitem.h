@@ -19,8 +19,8 @@
 #include "core/experiment/DataTypes.h"
 #include "core/geometry/GeometryTypes.h"
 #include "gui/graphics/nsxgraphicsitem.h"
-#include <QPointF>
 #include <QGraphicsTextItem>
+#include <QPointF>
 
 class QGraphicsSceneMouseEvent;
 class QGraphicsSceneWheelEvent;

@@ -19,13 +19,13 @@
 #include <QStandardItem>
 
 #include "core/chemistry/ChemistryTypes.h"
+#include "core/chemistry/Material.h"
+#include "core/crystal/SpaceGroup.h"
+#include "core/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
 #include "core/gonio/Gonio.h"
 #include "core/logger/Logger.h"
-#include "core/chemistry/Material.h"
 #include "core/peak/Peak3D.h"
-#include "core/crystal/SpaceGroup.h"
-#include "core/crystal/UnitCell.h"
 #include "core/utils/Units.h"
 
 #include "apps/models/MetaTypes.h"

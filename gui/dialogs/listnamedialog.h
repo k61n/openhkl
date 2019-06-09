@@ -15,9 +15,9 @@
 #ifndef GUI_DIALOGS_LISTNAMEDIALOG_H
 #define GUI_DIALOGS_LISTNAMEDIALOG_H
 
+#include "core/experiment/CrystalTypes.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/modal_dialogs.h>
-#include "core/experiment/CrystalTypes.h"
 
 class ListNameDialog : public QcrModalDialog {
 public:

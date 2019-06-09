@@ -25,10 +25,10 @@
 #include <QList>
 #include <vector>
 
+#include "core/crystal/UnitCell.h"
 #include "core/experiment/CrystalTypes.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/InstrumentTypes.h"
-#include "core/crystal/UnitCell.h"
 
 #include "gui/models/peaklists.h"
 

@@ -18,8 +18,8 @@
 #include <Eigen/Eigenvalues>
 
 #include "core/crystal/BrillouinZone.h"
-#include "core/experiment/DataSet.h"
 #include "core/crystal/NiggliReduction.h"
+#include "core/experiment/DataSet.h"
 #include "core/geometry/ReciprocalVector.h"
 
 /**

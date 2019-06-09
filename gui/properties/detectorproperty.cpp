@@ -14,12 +14,12 @@
 
 
 #include "gui/properties/detectorproperty.h"
+#include "core/detector/Detector.h"
 #include "gui/models/session.h"
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHeaderView>
 #include <QTableWidget>
-#include "core/detector/Detector.h"
 
 DetectorProperty::DetectorProperty() : QcrWidget {"detectorProperty"}
 {

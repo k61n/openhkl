@@ -17,12 +17,12 @@
 #include <utility>
 
 #include "core/experiment/DataSet.h"
-#include "core/instrument/Diffractometer.h"
 #include "core/experiment/Experiment.h"
-#include "core/loader/IDataReader.h"
-#include "core/loader/MetaData.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Source.h"
+#include "core/loader/IDataReader.h"
+#include "core/loader/MetaData.h"
 
 namespace nsx {
 

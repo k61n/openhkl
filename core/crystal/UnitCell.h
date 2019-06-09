@@ -22,11 +22,11 @@
 
 #include <Eigen/Dense>
 
-#include "core/experiment/DataTypes.h"
-#include "core/geometry/GeometryTypes.h"
 #include "core/chemistry/Material.h"
 #include "core/crystal/NiggliCharacter.h"
 #include "core/crystal/SpaceGroup.h"
+#include "core/experiment/DataTypes.h"
+#include "core/geometry/GeometryTypes.h"
 
 namespace nsx {
 

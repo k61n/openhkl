@@ -16,14 +16,14 @@
 #include "gui/frames/globaloffsets.h"
 #include "gui/models/session.h"
 
+#include "core/experiment/DataSet.h"
+#include "core/utils/Units.h"
 #include "gui/models/meta.h"
 #include <QFileInfo>
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include "core/experiment/DataSet.h"
-#include "core/utils/Units.h"
 
 GlobalOffsets::GlobalOffsets(offsetMode mode) : QcrFrame {"adhoc_detectorOffsets"}
 {

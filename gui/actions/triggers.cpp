@@ -56,16 +56,13 @@ void Actions::setupData()
         properties->setCurrent(i);
     });
     loadData.setTriggerHook([]() { gSession->loadData(); });
-    removeData.setTriggerHook([](){ gSession->removeData(); });
+    removeData.setTriggerHook([]() { gSession->removeData(); });
     importRaw.setTriggerHook([]() { gSession->loadRawData(); });
     findPeaks.setTriggerHook([]() { new PeakFinder; });
     instrumentStates.setTriggerHook([]() { new InstrumentStates; });
 }
 
-void Actions::setupExperiment()
-{
-
-}
+void Actions::setupExperiment() {}
 
 void Actions::setupInstrument()
 {
@@ -103,13 +100,13 @@ void Actions::setupInstrument()
 
 void Actions::setupOptions()
 {
-    fromSample.setTriggerHook([](){ gGui->changeView(1); });
-    behindDetector.setTriggerHook([](){ gGui->changeView(0); });
-    pixelPosition.setTriggerHook([](){ gGui->cursormode(0); });
-    twoTheta.setTriggerHook([](){ gGui->cursormode(1); });
-    gammaNu.setTriggerHook([](){ gGui->cursormode(2); });
-    dSpacing.setTriggerHook([](){ gGui->cursormode(3); });
-    millerIndices.setTriggerHook([](){ gGui->cursormode(4); });
+    fromSample.setTriggerHook([]() { gGui->changeView(1); });
+    behindDetector.setTriggerHook([]() { gGui->changeView(0); });
+    pixelPosition.setTriggerHook([]() { gGui->cursormode(0); });
+    twoTheta.setTriggerHook([]() { gGui->cursormode(1); });
+    gammaNu.setTriggerHook([]() { gGui->cursormode(2); });
+    dSpacing.setTriggerHook([]() { gGui->cursormode(3); });
+    millerIndices.setTriggerHook([]() { gGui->cursormode(4); });
 }
 
 void Actions::setupPeaks()

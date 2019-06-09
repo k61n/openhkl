@@ -2,11 +2,12 @@
 
 #include <stdexcept>
 
-#include "core/loader/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
+#include "core/loader/DataReaderFactory.h"
 
-TEST_CASE("test/instrument/TestExperiment.cpp", "") {
+TEST_CASE("test/instrument/TestExperiment.cpp", "")
+{
 
     nsx::Experiment exp("my-exp", "D10");
     nsx::sptrDataSet data;

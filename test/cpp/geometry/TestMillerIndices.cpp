@@ -2,7 +2,8 @@
 #include <Eigen/Dense>
 
 #include "core/crystal/MillerIndex.h"
-TEST_CASE("test/geometry/TestMillerIndices.cpp", "") {
+TEST_CASE("test/geometry/TestMillerIndices.cpp", "")
+{
 
     Eigen::RowVector3i v1(1, 2, 3);
 

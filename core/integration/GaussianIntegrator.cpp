@@ -13,12 +13,12 @@
 //  ***********************************************************************************************
 
 #include "core/integration/GaussianIntegrator.h"
-#include "core/experiment/DataSet.h"
-#include "core/geometry/Ellipsoid.h"
-#include "core/fitting/FitParameters.h"
 #include "core/crystal/Intensity.h"
-#include "core/logger/Logger.h"
+#include "core/experiment/DataSet.h"
+#include "core/fitting/FitParameters.h"
 #include "core/fitting/Minimizer.h"
+#include "core/geometry/Ellipsoid.h"
+#include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 
 #include <Eigen/Cholesky>

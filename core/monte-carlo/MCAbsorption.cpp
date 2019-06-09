@@ -16,8 +16,8 @@
 #include <stdexcept>
 
 #include "core/hull/ConvexHull.h"
-#include "core/monte-carlo/MCAbsorption.h"
 #include "core/hull/Triangle.h"
+#include "core/monte-carlo/MCAbsorption.h"
 
 namespace nsx {
 

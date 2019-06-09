@@ -16,18 +16,18 @@
 #ifndef GUI_GRAPHICS_DETECTORSCENE_H
 #define GUI_GRAPHICS_DETECTORSCENE_H
 
-#include <utility>
-#include <vector>
-#include <map>
+#include "core/experiment/CrystalTypes.h"
+#include "core/experiment/DataTypes.h"
+#include "core/mask/IMask.h"
+#include "gui/models/colormap.h"
 #include <Eigen/Dense>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
 #include <QRect>
 #include <QStack>
-#include "core/experiment/CrystalTypes.h"
-#include "core/experiment/DataTypes.h"
-#include "core/mask/IMask.h"
-#include "gui/models/colormap.h"
+#include <map>
+#include <utility>
+#include <vector>
 
 class QImage;
 class QGraphicsSceneWheelEvent;
@@ -58,13 +58,7 @@ public:
     };
 
     //! Which mode is the cursor diplaying
-    enum CURSORMODE {
-        PIXEL = 0,
-        THETA = 1,
-        GAMMA_NU = 2,
-        D_SPACING = 3,
-        MILLER_INDICES = 4
-    };
+    enum CURSORMODE { PIXEL = 0, THETA = 1, GAMMA_NU = 2, D_SPACING = 3, MILLER_INDICES = 4 };
 
     explicit DetectorScene(QObject* parent = 0);
 
@@ -72,7 +66,9 @@ public:
     const rowMatrix& getCurrentFrame() const { return _currentFrame; }
     void setLogarithmic(bool checked) { _logarithmic = checked; }
     void setColorMap(const std::string& name)
-         { _colormap = std::unique_ptr<ColorMap>(new ColorMap(name)); }
+    {
+        _colormap = std::unique_ptr<ColorMap>(new ColorMap(name));
+    }
     //! Load image from current Data and frame
     void loadCurrentImage();
     void clearPeakGraphicsItems();

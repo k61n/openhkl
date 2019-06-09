@@ -6,7 +6,8 @@
 
 const double tolerance = 1.0e-9;
 
-TEST_CASE("test/chemistry/TestMaterial.cpp", "") {
+TEST_CASE("test/chemistry/TestMaterial.cpp", "")
+{
 
     CHECK_THROWS_AS(nsx::Material("X"), std::runtime_error);
 
@@ -28,12 +29,18 @@ TEST_CASE("test/chemistry/TestMaterial.cpp", "") {
     nsx::isotopeContents massFractions = methane.massFractions();
     // Set the molar in g_per_mol
     double methaneMolarMass = nsx::kilo * methane.molarMass();
-    CHECK(massFractions.at("C[12]") == Approx(12.00000000 * 0.98900 / methaneMolarMass).epsilon(tolerance));
-    CHECK(massFractions.at("C[13]") == Approx(13.00335484 * 0.01100 / methaneMolarMass).epsilon(tolerance));
     CHECK(
-        massFractions.at("H[1]") == Approx(4.00000000 * 1.007825032 * 0.99985 / methaneMolarMass).epsilon(tolerance));
+        massFractions.at("C[12]")
+        == Approx(12.00000000 * 0.98900 / methaneMolarMass).epsilon(tolerance));
     CHECK(
-        massFractions.at("H[2]") == Approx(4.00000000 * 2.014101778 * 0.00015 / methaneMolarMass).epsilon(tolerance));
+        massFractions.at("C[13]")
+        == Approx(13.00335484 * 0.01100 / methaneMolarMass).epsilon(tolerance));
+    CHECK(
+        massFractions.at("H[1]")
+        == Approx(4.00000000 * 1.007825032 * 0.99985 / methaneMolarMass).epsilon(tolerance));
+    CHECK(
+        massFractions.at("H[2]")
+        == Approx(4.00000000 * 2.014101778 * 0.00015 / methaneMolarMass).epsilon(tolerance));
 
     nsx::Material water("H2O");
     isotopes = water.isotopes();
@@ -49,15 +56,24 @@ TEST_CASE("test/chemistry/TestMaterial.cpp", "") {
     double waterMolarMass = water.molarMass();
     nsx::isotopeContents atomicDensity = water.atomicNumberDensity();
     CHECK(
-        atomicDensity.at("O[16]") == Approx(nsx::avogadro * 0.99762 * water.massDensity() / waterMolarMass).epsilon(tolerance));
+        atomicDensity.at("O[16]")
+        == Approx(nsx::avogadro * 0.99762 * water.massDensity() / waterMolarMass)
+               .epsilon(tolerance));
     CHECK(
-        atomicDensity.at("O[17]") == Approx(nsx::avogadro * 0.00038 * water.massDensity() / waterMolarMass).epsilon(tolerance));
+        atomicDensity.at("O[17]")
+        == Approx(nsx::avogadro * 0.00038 * water.massDensity() / waterMolarMass)
+               .epsilon(tolerance));
     CHECK(
-        atomicDensity.at("O[18]") == Approx(nsx::avogadro * 0.002 * water.massDensity() / waterMolarMass).epsilon(tolerance));
+        atomicDensity.at("O[18]")
+        == Approx(nsx::avogadro * 0.002 * water.massDensity() / waterMolarMass).epsilon(tolerance));
     CHECK(
-        atomicDensity.at("H[1]") == Approx(nsx::avogadro * 2.0 * 0.999850 * water.massDensity() / waterMolarMass).epsilon(tolerance));
+        atomicDensity.at("H[1]")
+        == Approx(nsx::avogadro * 2.0 * 0.999850 * water.massDensity() / waterMolarMass)
+               .epsilon(tolerance));
     CHECK(
-        atomicDensity.at("H[2]") == Approx(nsx::avogadro * 2.0 * 0.000150 * water.massDensity() / waterMolarMass).epsilon(tolerance));
+        atomicDensity.at("H[2]")
+        == Approx(nsx::avogadro * 2.0 * 0.000150 * water.massDensity() / waterMolarMass)
+               .epsilon(tolerance));
 
     double dO16 = atomicDensity.at("O[16]");
     double dO17 = atomicDensity.at("O[17]");
@@ -65,12 +81,17 @@ TEST_CASE("test/chemistry/TestMaterial.cpp", "") {
     double dH1 = atomicDensity.at("H[1]");
     double dH2 = atomicDensity.at("H[2]");
     CHECK(
-        water.muIncoherent() == Approx(nsx::barn * (dO16 * 0.0 + dO17 * 0.004 + dO18 * 0.0 + dH1 * 80.270 + dH2 * 2.05)).epsilon(tolerance));
+        water.muIncoherent()
+        == Approx(nsx::barn * (dO16 * 0.0 + dO17 * 0.004 + dO18 * 0.0 + dH1 * 80.270 + dH2 * 2.05))
+               .epsilon(tolerance));
     CHECK(
-        water.muAbsorption(4.8 * nsx::ang) == Approx(nsx::barn
-            * (dO16 * 0.0001 + dO17 * 0.23599999999999999 + dO18 * 0.00016000000000000001
-               + dH1 * 0.33260000000000001 + dH2 * 0.00051900000000000004)
-            * 4.8 / 1.798).epsilon(tolerance));
+        water.muAbsorption(4.8 * nsx::ang)
+        == Approx(
+               nsx::barn
+               * (dO16 * 0.0001 + dO17 * 0.23599999999999999 + dO18 * 0.00016000000000000001
+                  + dH1 * 0.33260000000000001 + dH2 * 0.00051900000000000004)
+               * 4.8 / 1.798)
+               .epsilon(tolerance));
 
     // Check deuterium D shortcut
     nsx::Material deuterium1("H[2]");

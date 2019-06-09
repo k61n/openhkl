@@ -15,12 +15,12 @@
 #ifndef GUI_FRAMES_REFINER_H
 #define GUI_FRAMES_REFINER_H
 
+#include "core/refine/Refiner.h"
 #include "gui/models/peakstable.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 #include <QDialogButtonBox>
 #include <QListWidget>
-#include "core/refine/Refiner.h"
 
 class Refiner : public QcrFrame {
 public:

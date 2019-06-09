@@ -17319,4 +17319,3 @@ std::vector<std::string> ColorMap::getColorMapNames()
     names.push_back("CMRmap");
     return names;
 }
-

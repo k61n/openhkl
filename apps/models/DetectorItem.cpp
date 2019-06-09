@@ -14,9 +14,9 @@
 
 #include <QIcon>
 
+#include "apps/frames/FrameDetectorGlobalOffsets.h"
 #include "apps/models/DetectorItem.h"
 #include "apps/tree/DetectorPropertyWidget.h"
-#include "apps/frames/FrameDetectorGlobalOffsets.h"
 
 DetectorItem::DetectorItem() : InspectableTreeItem()
 {

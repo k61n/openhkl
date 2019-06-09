@@ -15,12 +15,12 @@
 #ifndef GUI_MAINWIN_H
 #define GUI_MAINWIN_H
 
+#include "gui/graphics/detectorscene.h"
 #include "gui/panels/subframe_experiments.h"
 #include "gui/panels/subframe_image.h"
 #include "gui/panels/subframe_logger.h"
 #include "gui/panels/subframe_plot.h"
 #include "gui/panels/subframe_properties.h"
-#include "gui/graphics/detectorscene.h"
 #include <QCR/widgets/views.h>
 
 extern class MainWin* gGui; //!< global pointer to the main window
@@ -39,7 +39,8 @@ public:
     void onPeaksChanged();
     void changeView(int option) { dockImage_->centralWidget->changeView(option); }
     void updatePlot(PlottableItem* p) { dockPlot_->updatePlot(p); }
-    void cursormode(int i) {
+    void cursormode(int i)
+    {
         dockImage_->centralWidget->imageView->getScene()->changeCursorMode(i);
     }
 

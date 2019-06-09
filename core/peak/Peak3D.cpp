@@ -16,18 +16,18 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "core/experiment/DataSet.h"
-#include "core/detector/Detector.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/geometry/GeometryTypes.h"
-#include "core/loader/IDataReader.h"
-#include "core/instrument/InstrumentState.h"
 #include "core/crystal/MillerIndex.h"
-#include "core/peak/Peak3D.h"
+#include "core/crystal/UnitCell.h"
+#include "core/detector/Detector.h"
+#include "core/experiment/DataSet.h"
+#include "core/geometry/GeometryTypes.h"
 #include "core/geometry/ReciprocalVector.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/crystal/UnitCell.h"
+#include "core/loader/IDataReader.h"
+#include "core/peak/Peak3D.h"
 #include "core/utils/Units.h"
 
 namespace nsx {

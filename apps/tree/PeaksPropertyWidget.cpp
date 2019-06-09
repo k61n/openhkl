@@ -23,11 +23,11 @@
 
 #include "apps/models/ExperimentItem.h"
 #include "apps/models/InstrumentItem.h"
-#include "apps/views/PeakTableView.h"
 #include "apps/models/PeaksItem.h"
-#include "apps/tree/PeaksPropertyWidget.h"
 #include "apps/models/SampleItem.h"
 #include "apps/models/UnitCellItem.h"
+#include "apps/tree/PeaksPropertyWidget.h"
+#include "apps/views/PeakTableView.h"
 
 #include "ui_PeaksPropertyWidget.h"
 

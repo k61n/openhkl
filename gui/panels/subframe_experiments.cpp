@@ -97,8 +97,9 @@ SubframeExperiments::SubframeExperiments() : QcrDockWidget {"Experiments"}
 {
     view = new ExperimentsView();
     setWidget(view);
-    connect(this, SIGNAL(visibilityChanged(bool)),
-            &gGui->triggers->viewExperiment, SLOT(setChecked(bool)));
+    connect(
+        this, SIGNAL(visibilityChanged(bool)), &gGui->triggers->viewExperiment,
+        SLOT(setChecked(bool)));
 }
 
 void SubframeExperiments::experimentChanged()

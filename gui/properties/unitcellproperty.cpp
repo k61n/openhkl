@@ -15,6 +15,8 @@
 
 #include "gui/properties/unitcellproperty.h"
 
+#include "core/crystal/SpaceGroup.h"
+#include "core/crystal/UnitCell.h"
 #include "gui/models/session.h"
 #include <QCR/engine/cell.h>
 #include <QCompleter>
@@ -24,8 +26,6 @@
 #include <QHBoxLayout>
 #include <QSpacerItem>
 #include <QVBoxLayout>
-#include "core/crystal/SpaceGroup.h"
-#include "core/crystal/UnitCell.h"
 
 UnitCellProperty::UnitCellProperty() : QcrWidget {"unitCellProperty"}
 {
@@ -78,7 +78,7 @@ UnitCellProperty::UnitCellProperty() : QcrWidget {"unitCellProperty"}
     grid->addItem(
         new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 7, 1, 1);
     overallLayout->addWidget(cellParameters);
-    setRemake([](){ /*refresh the data from gSession*/ });
+    setRemake([]() { /*refresh the data from gSession*/ });
 }
 
 void UnitCellProperty::setZValue(int z)

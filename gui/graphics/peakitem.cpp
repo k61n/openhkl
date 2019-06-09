@@ -14,22 +14,22 @@
 
 
 #include "gui/graphics/peakitem.h"
+#include "core/crystal/MillerIndex.h"
+#include "core/crystal/UnitCell.h"
+#include "core/detector/Detector.h"
+#include "core/experiment/DataSet.h"
+#include "core/geometry/Ellipsoid.h"
+#include "core/geometry/ReciprocalVector.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentState.h"
+#include "core/loader/IDataReader.h"
+#include "core/loader/MetaData.h"
+#include "core/peak/Peak3D.h"
+#include "core/utils/Units.h"
 #include "gui/graphics/peakplot.h"
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
-#include "core/experiment/DataSet.h"
-#include "core/detector/Detector.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/geometry/Ellipsoid.h"
-#include "core/loader/IDataReader.h"
-#include "core/instrument/InstrumentState.h"
-#include "core/loader/MetaData.h"
-#include "core/crystal/MillerIndex.h"
-#include "core/peak/Peak3D.h"
-#include "core/geometry/ReciprocalVector.h"
-#include "core/crystal/UnitCell.h"
-#include "core/utils/Units.h"
 
 bool PeakItem::_show_label = false;
 bool PeakItem::_show_center = false;
@@ -113,8 +113,7 @@ QRectF PeakItem::boundingRect() const
     return QRectF(-width / 2.0, -height / 2.0, width, height);
 }
 
-void PeakItem::paint(
-    QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void PeakItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(widget)
 

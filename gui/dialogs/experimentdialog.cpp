@@ -14,11 +14,11 @@
 
 
 #include "gui/dialogs/experimentdialog.h"
+#include "core/utils/Path.h"
 #include "gui/mainwin.h"
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QHBoxLayout>
-#include "core/utils/Path.h"
 #include <build/core/include/core/Resources.h>
 
 namespace {

@@ -14,13 +14,13 @@
 
 #include "core/instrument/Diffractometer.h"
 
+#include "Resources.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorFactory.h"
 #include "core/gonio/Gonio.h"
-#include "core/utils/Path.h"
-#include "Resources.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
+#include "core/utils/Path.h"
 
 namespace nsx {
 

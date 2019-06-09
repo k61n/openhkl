@@ -14,8 +14,8 @@
 
 
 #include "gui/graphics/maskitem.h"
-#include "core/geometry/AABB.h"
 #include "core/experiment/DataSet.h"
+#include "core/geometry/AABB.h"
 
 #include <Eigen/Dense>
 #include <QGraphicsSceneWheelEvent>
@@ -35,8 +35,7 @@ MaskItem::MaskItem(nsx::sptrDataSet data, nsx::AABB* aabb)
 
 MaskItem::~MaskItem() {}
 
-void MaskItem::paint(
-    QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void MaskItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(widget);
 

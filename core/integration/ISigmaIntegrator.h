@@ -18,10 +18,10 @@
 #include <Eigen/Dense>
 
 #include "core/geometry/GeometryTypes.h"
-#include "core/peak/IPeakIntegrator.h"
 #include "core/integration/MeanBackgroundIntegrator.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/integration/ShapeLibrary.h"
+#include "core/peak/IPeakIntegrator.h"
 
 namespace nsx {
 

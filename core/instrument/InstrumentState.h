@@ -20,8 +20,8 @@
 #include <Eigen/Core>
 
 #include "core/geometry/DirectVector.h"
-#include "core/instrument/InstrumentTypes.h"
 #include "core/geometry/ReciprocalVector.h"
+#include "core/instrument/InstrumentTypes.h"
 
 namespace nsx {
 

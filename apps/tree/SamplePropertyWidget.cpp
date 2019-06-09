@@ -15,15 +15,15 @@
 #include <sstream>
 
 #include "core/gonio/Axis.h"
-#include "core/instrument/Diffractometer.h"
 #include "core/gonio/Gonio.h"
-#include "core/instrument/Sample.h"
 #include "core/gonio/TransAxis.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Sample.h"
 #include "core/utils/Units.h"
 
 #include "apps/models/SampleItem.h"
-#include "apps/tree/SamplePropertyWidget.h"
 #include "apps/models/UnitCellItem.h"
+#include "apps/tree/SamplePropertyWidget.h"
 
 #include "ui_SamplePropertyWidget.h"
 

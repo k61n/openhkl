@@ -14,14 +14,20 @@
 
 
 #include "gui/frames/peakfinder.h"
+#include "core/experiment/DataSet.h"
+#include "core/integration/PixelSumIntegrator.h"
+#include "core/loader/IDataReader.h"
+#include "core/peak/Peak3D.h"
+#include "core/search_peaks/ConvolverFactory.h"
+#include "core/search_peaks/PeakFinder.h"
+#include "gui/dialogs/listnamedialog.h"
+#include "gui/frames/progressview.h"
+#include "gui/graphics/detectorscene.h"
 #include "gui/models/experimentmodel.h"
+#include "gui/models/meta.h"
 #include "gui/models/peakstable.h"
 #include "gui/models/session.h"
-#include "gui/dialogs/listnamedialog.h"
-#include "gui/graphics/detectorscene.h"
 #include <QCR/engine/mixin.h>
-#include "gui/models/meta.h"
-#include "gui/frames/progressview.h"
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -31,12 +37,6 @@
 #include <QSpacerItem>
 #include <QTableWidgetItem>
 #include <QVBoxLayout>
-#include "core/search_peaks/ConvolverFactory.h"
-#include "core/experiment/DataSet.h"
-#include "core/peak/Peak3D.h"
-#include "core/search_peaks/PeakFinder.h"
-#include "core/integration/PixelSumIntegrator.h"
-#include "core/loader/IDataReader.h"
 
 class ItemDelegate : public QItemDelegate {
 public:
@@ -96,9 +96,7 @@ nsx::PeakList FoundPeaks::selectedPeaks()
 
 //  ***********************************************************************************************
 
-PeakFinder::PeakFinder()
-    : QcrFrame {"peakFinder"}
-    , pixmap(nullptr)
+PeakFinder::PeakFinder() : QcrFrame {"peakFinder"}, pixmap(nullptr)
 {
 
     if (gSession->selectedExperimentNum() < 0) {
@@ -129,8 +127,7 @@ PeakFinder::PeakFinder()
     blobGrid->addWidget(new QLabel("begin finding blobs in frame"), 7, 0, 1, 1);
     blobGrid->addWidget(new QLabel("end finding blobs in frame"), 8, 0, 1, 1);
     threshold = new QcrSpinBox("adhoc_threshold", new QcrCell<int>(2), 3);
-    mergingScale =
-            new QcrDoubleSpinBox("adhoc_mergingScale", new QcrCell<double>(1.000), 5, 3);
+    mergingScale = new QcrDoubleSpinBox("adhoc_mergingScale", new QcrCell<double>(1.000), 5, 3);
     minSize = new QcrSpinBox("adhoc_minSize", new QcrCell<int>(30), 5);
     maxSize = new QcrSpinBox("adhoc_maxSize", new QcrCell<int>(10000), 5);
     maxWidth = new QcrSpinBox("adhoc_maxWidth", new QcrCell<int>(10), 5);
@@ -153,7 +150,7 @@ PeakFinder::PeakFinder()
     previewGrid->addWidget(new QLabel("data"), 0, 0, 1, 1);
     previewGrid->addWidget(new QLabel("frame"), 1, 0, 1, 1);
     applyThreshold = new QcrCheckBox(
-                "adhoc_applyThreshold", "apply threshold to preview", new QcrCell<bool>(false));
+        "adhoc_applyThreshold", "apply threshold to preview", new QcrCell<bool>(false));
     previewGrid->addWidget(applyThreshold, 2, 0, 1, 1);
     data = new QComboBox;
     frame = new QcrSpinBox("adhoc_frameNr", new QcrCell<int>(0), 3);
@@ -166,24 +163,21 @@ PeakFinder::PeakFinder()
     integGrid->addWidget(new QLabel("backgroung lower limit"), 1, 0, 1, 1);
     integGrid->addWidget(new QLabel("background upper limit"), 2, 0, 1, 1);
     peakArea = new QcrDoubleSpinBox("adhoc_area", new QcrCell<double>(3.0), 5, 2);
-    backgroundLowerLimit =
-            new QcrDoubleSpinBox("adhoc_lowLimit", new QcrCell<double>(4.0), 5, 2);
-    backgroundUpperLimit =
-            new QcrDoubleSpinBox("adhoc_upLimit", new QcrCell<double>(4.5), 5, 2);
+    backgroundLowerLimit = new QcrDoubleSpinBox("adhoc_lowLimit", new QcrCell<double>(4.0), 5, 2);
+    backgroundUpperLimit = new QcrDoubleSpinBox("adhoc_upLimit", new QcrCell<double>(4.5), 5, 2);
     integGrid->addWidget(peakArea, 0, 1, 1, 1);
     integGrid->addWidget(backgroundLowerLimit, 1, 1, 1, 1);
     integGrid->addWidget(backgroundUpperLimit, 2, 1, 1, 1);
     leftTabLayout->addWidget(integrationParams);
-    leftTabLayout->addItem(
-                new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    leftTabLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
     tabLayout->addLayout(leftTabLayout);
     preview = new DetectorView(this);
     tabLayout->addWidget(preview);
     tab->addTab(settings, "Settings");
     whole->addWidget(tab);
     buttons = new QDialogButtonBox(
-                QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply,
-                Qt::Horizontal, this);
+        QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply, Qt::Horizontal,
+        this);
     connect(buttons, &QDialogButtonBox::clicked, this, &PeakFinder::doActions);
     whole->addWidget(buttons);
 
@@ -219,21 +213,20 @@ PeakFinder::PeakFinder()
     // flip the image vertically to conform with DetectorScene
     preview->scale(1, -1);
     updateConvolutionParameters();
-    minSize->setHook([=](int i){ minSize->setCellValue(std::min(i, maxSize->value())); });
-    maxSize->setHook([=](int i){ maxSize->setCellValue(std::max(i, minSize->value())); });
-    peakArea->setHook([=](double d){
-        peakArea->setCellValue(std::min(d, backgroundLowerLimit->value()));
-    });
-    backgroundLowerLimit->setHook([=](double d){
+    minSize->setHook([=](int i) { minSize->setCellValue(std::min(i, maxSize->value())); });
+    maxSize->setHook([=](int i) { maxSize->setCellValue(std::max(i, minSize->value())); });
+    peakArea->setHook(
+        [=](double d) { peakArea->setCellValue(std::min(d, backgroundLowerLimit->value())); });
+    backgroundLowerLimit->setHook([=](double d) {
         d = std::max(d, peakArea->value());
         backgroundLowerLimit->setCellValue(std::min(d, backgroundUpperLimit->value()));
     });
-    backgroundUpperLimit->setHook([=](double d){
+    backgroundUpperLimit->setHook([=](double d) {
         backgroundUpperLimit->setCellValue(std::max(d, backgroundLowerLimit->value()));
     });
-    applyThreshold->setHook([=](bool){ refreshPreview(); });
-    frame->setHook([=](int){ refreshPreview(); });
-    connect(convolutionKernel, &QComboBox::currentTextChanged, [=](QString){
+    applyThreshold->setHook([=](bool) { refreshPreview(); });
+    frame->setHook([=](int) { refreshPreview(); });
+    connect(convolutionKernel, &QComboBox::currentTextChanged, [=](QString) {
         updateConvolutionParameters();
         refreshPreview();
     });
@@ -371,22 +364,22 @@ void PeakFinder::refreshPreview()
     int ncols = dataset->nCols();
     std::string convolvertype = convolutionKernel->currentText().toStdString();
     std::map<std::string, double> convolverParams = convolutionParameters();
-    Eigen::MatrixXd convolvedFrame = nsx::convolvedFrame(dataset->reader()->data(selected),
-                                                         convolvertype, convolverParams);
+    Eigen::MatrixXd convolvedFrame =
+        nsx::convolvedFrame(dataset->reader()->data(selected), convolvertype, convolverParams);
     if (applyThreshold->isChecked()) {
         double thresholdVal = threshold->value();
-        for (int i=0; i<nrows; ++i) {
-            for (int j=0; j<ncols; ++j) {
+        for (int i = 0; i < nrows; ++i) {
+            for (int j = 0; j < ncols; ++j) {
                 convolvedFrame(i, j) = convolvedFrame(i, j) < thresholdVal ? 0 : 1;
             }
         }
     }
     double minVal = convolvedFrame.minCoeff();
     double maxVal = convolvedFrame.maxCoeff();
-    if (maxVal-minVal <= 0.0)
-        maxVal = minVal+1.0;
+    if (maxVal - minVal <= 0.0)
+        maxVal = minVal + 1.0;
     convolvedFrame.array() -= minVal;
-    convolvedFrame.array() /= maxVal-minVal;
+    convolvedFrame.array() /= maxVal - minVal;
     QRect rect(0, 0, ncols, nrows);
     ColorMap* m = new ColorMap;
     QImage image = m->matToImage(convolvedFrame.cast<double>(), rect, maxVal);

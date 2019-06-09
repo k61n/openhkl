@@ -1,9 +1,9 @@
 #include "test/cpp/catch.hpp"
 
+#include <Eigen/Dense>
 #include <cmath>
 #include <random>
 #include <vector>
-#include <Eigen/Dense>
 
 #include "core/geometry/AABB.h"
 #include "core/geometry/Ellipsoid.h"
@@ -181,7 +181,8 @@ void split_test()
     }
 }
 
-TEST_CASE("test/geometry/TestOctree.cpp", "") {
+TEST_CASE("test/geometry/TestOctree.cpp", "")
+{
 
     unsigned int maxStorage(10);
 

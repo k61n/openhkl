@@ -18,8 +18,8 @@
 #include "apps/dialogs/DialogIsotopesDatabase.h"
 #include "apps/frames/FrameSampleGlobalOffsets.h"
 #include "apps/models/SampleItem.h"
-#include "apps/tree/SamplePropertyWidget.h"
 #include "apps/models/SampleShapeItem.h"
+#include "apps/tree/SamplePropertyWidget.h"
 
 SampleItem::SampleItem() : InspectableTreeItem()
 {

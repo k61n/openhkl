@@ -14,9 +14,9 @@
 
 
 #include "gui/panels/subframe_properties.h"
+#include "gui/actions/triggers.h"
 #include "gui/mainwin.h"
 #include "gui/panels/subframe_setup.h"
-#include "gui/actions/triggers.h"
 
 SubframeProperties::SubframeProperties() : QcrDockWidget {"Properties"}
 {

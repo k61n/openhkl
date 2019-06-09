@@ -16,9 +16,9 @@
 #ifndef GUI_PANELS_SUBFRAME_EXPERIMENTS_H
 #define GUI_PANELS_SUBFRAME_EXPERIMENTS_H
 
-#include <QCR/widgets/views.h>
-#include <QCR/widgets/tables.h>
 #include "gui/models/session.h"
+#include <QCR/widgets/tables.h>
+#include <QCR/widgets/views.h>
 
 //! The model for ExperimentsView
 
@@ -48,6 +48,7 @@ class ExperimentsView : public CheckTableView {
 public:
     ExperimentsView();
     void onData() override;
+
 private:
     ExperimentsModel* model() { return static_cast<ExperimentsModel*>(model_); }
 };
@@ -59,6 +60,7 @@ class SubframeExperiments : public QcrDockWidget {
 public:
     SubframeExperiments();
     void experimentChanged();
+
 private:
     ExperimentsView* view;
 };

@@ -20,16 +20,16 @@
 #include <stdexcept>
 #include <string>
 
-#include "core/gonio/Component.h"
 #include "core/detector/Detector.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/loader/EigenToVector.h"
+#include "core/gonio/Component.h"
 #include "core/gonio/Gonio.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/instrument/Monochromator.h"
-#include "core/loader/Parser.h"
-#include "core/loader/RawDataReader.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
+#include "core/loader/EigenToVector.h"
+#include "core/loader/Parser.h"
+#include "core/loader/RawDataReader.h"
 #include "core/utils/Units.h"
 
 namespace nsx {

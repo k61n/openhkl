@@ -1,16 +1,17 @@
 #include "test/cpp/catch.hpp"
 
-#include <cmath>
 #include <Eigen/Dense>
+#include <cmath>
 
-#include "core/geometry/DirectVector.h"
 #include "core/detector/FlatDetector.h"
+#include "core/geometry/DirectVector.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/utils/Units.h"
 const double tolerance = 1e-3;
 
-TEST_CASE("test/instrument/TestFlatDetector.cpp", "") {
+TEST_CASE("test/instrument/TestFlatDetector.cpp", "")
+{
 
     nsx::FlatDetector d("D10-detector");
     d.setDistance(380 * nsx::mm);

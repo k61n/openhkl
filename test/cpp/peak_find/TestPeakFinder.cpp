@@ -1,18 +1,19 @@
 #include "test/cpp/catch.hpp"
 
-#include <vector>
 #include <Eigen/Dense>
+#include <vector>
 
-#include "core/loader/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
-#include "core/instrument/Diffractometer.h"
 #include "core/experiment/Experiment.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/loader/DataReaderFactory.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/MetaData.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "core/utils/ProgressHandler.h"
 
-TEST_CASE("test/peak_find/TestPeakFinder.cpp", "") {
+TEST_CASE("test/peak_find/TestPeakFinder.cpp", "")
+{
 
     nsx::Experiment experiment("exp", "D10");
 

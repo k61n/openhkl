@@ -17,18 +17,18 @@
 #include <QFileInfo>
 #include <QPen>
 
-#include "core/experiment/DataSet.h"
 #include "core/detector/Detector.h"
-#include "core/instrument/Diffractometer.h"
+#include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/gonio/Gonio.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/logger/Logger.h"
 #include "core/utils/Units.h"
 
-#include "apps/models/DataItem.h"
 #include "apps/delegates/DoubleItemDelegate.h"
-#include "apps/models/ExperimentItem.h"
 #include "apps/frames/FrameDetectorGlobalOffsets.h"
+#include "apps/models/DataItem.h"
+#include "apps/models/ExperimentItem.h"
 #include "apps/models/MetaTypes.h"
 
 #include "ui_FrameDetectorGlobalOffsets.h"

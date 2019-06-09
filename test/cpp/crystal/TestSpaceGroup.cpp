@@ -4,7 +4,8 @@
 #include <map>
 #include <string>
 
-TEST_CASE("test/crystal/TestSpaceGroup.cpp", "") {
+TEST_CASE("test/crystal/TestSpaceGroup.cpp", "")
+{
 
     std::map<std::string, unsigned int> nElementsPerSpaceGroup = {
         {"P 1", 1},         {"P -1", 2},        {"P 2", 2},         {"P 21", 2},

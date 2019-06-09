@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 #include "gui/panels/subframe_logger.h"
-#include "gui/mainwin.h"
 #include "gui/actions/triggers.h"
+#include "gui/mainwin.h"
 #include <QCR/engine/logger.h>
 #include <QTreeView>
 

@@ -14,8 +14,8 @@
 
 
 #include "gui/graphics/cutteritem.h"
-#include <cmath>
 #include <QGraphicsSceneMouseEvent>
+#include <cmath>
 
 CutterItem::CutterItem(nsx::sptrDataSet data)
     : PlottableItem(nullptr, true, true), _data(data), _from(0, 0), _to(0, 0)

@@ -77,7 +77,7 @@ void MainWin::onDataChanged()
 {
     dockImage_->centralWidget->dataChanged();
     dockProperties_->tabsframe->dataChanged();
-    //dockPlot_->dataChanged();
+    // dockPlot_->dataChanged();
 }
 
 void MainWin::onExperimentChanged()

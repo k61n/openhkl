@@ -6,7 +6,8 @@
 
 const double tolerance = 1e-6;
 
-TEST_CASE("test/instrument/TestRotAxis.cpp", "") {
+TEST_CASE("test/instrument/TestRotAxis.cpp", "")
+{
 
     // Empty Rotation axis initialize to (0,0,1)
     nsx::RotAxis a("omega", Eigen::Vector3d(0, 0, 1));

@@ -43,7 +43,8 @@ void validate_zone(const Eigen::Matrix3d& B, int nverts, int nfaces)
     CHECK(hull.volume() == Approx(std::fabs(B.determinant())).epsilon(1e-8));
 }
 
-TEST_CASE("test/geometry/TestBrillouinZone.cpp", "") {
+TEST_CASE("test/geometry/TestBrillouinZone.cpp", "")
+{
 
     const double deg = M_PI / 180.0;
     nsx::UnitCell uc;

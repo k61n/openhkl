@@ -17,14 +17,14 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "core/experiment/DataSet.h"
 #include "core/crystal/GruberReduction.h"
-#include "core/logger/Logger.h"
 #include "core/crystal/MillerIndex.h"
-#include "core/fitting/Minimizer.h"
 #include "core/crystal/NiggliReduction.h"
-#include "core/geometry/ReciprocalVector.h"
 #include "core/crystal/UnitCell.h"
+#include "core/experiment/DataSet.h"
+#include "core/fitting/Minimizer.h"
+#include "core/geometry/ReciprocalVector.h"
+#include "core/logger/Logger.h"
 #include "core/utils/Units.h"
 
 namespace nsx {

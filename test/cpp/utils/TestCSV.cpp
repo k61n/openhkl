@@ -8,7 +8,8 @@
 
 // Test the CSV parser, which in turn seems to be needed for testing only.
 
-TEST_CASE("test/utils/TestCSV-default_separators", "") {
+TEST_CASE("test/utils/TestCSV-default_separators", "")
+{
 
     std::string csv_file =
         ",,,\n"
@@ -27,12 +28,12 @@ TEST_CASE("test/utils/TestCSV-default_separators", "") {
     std::cout << "Test 1 ok\n\n";
 }
 
-TEST_CASE("test/utils/TestCSV-user_defined_separators", "") {
+TEST_CASE("test/utils/TestCSV-user_defined_separators", "")
+{
 
-    std::string csv_file =
-        "a\tb\tc\td\n"
-        "a\tb\tc\t'd\te'\n"
-        "a\tb\tc\td'\t'f";
+    std::string csv_file = "a\tb\tc\td\n"
+                           "a\tb\tc\t'd\te'\n"
+                           "a\tb\tc\td'\t'f";
 
     std::istringstream stream(csv_file);
     nsx::CSV csv('\t', '\'');

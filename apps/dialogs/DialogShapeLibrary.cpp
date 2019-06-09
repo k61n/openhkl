@@ -18,13 +18,13 @@
 #include <QStatusBar>
 
 #include "core/experiment/DataSet.h"
+#include "core/integration/Profile3D.h"
+#include "core/integration/ShapeIntegrator.h"
+#include "core/integration/ShapeLibrary.h"
 #include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"
 #include "core/peak/PeakFilter.h"
-#include "core/integration/Profile3D.h"
-#include "core/integration/ShapeIntegrator.h"
-#include "core/integration/ShapeLibrary.h"
 
 #include "apps/models/CollectedPeaksModel.h"
 #include "apps/models/ExperimentItem.h"

@@ -20,10 +20,10 @@
 #include <map>
 #include <vector>
 
+#include "core/crystal/MillerIndex.h"
+#include "core/detector/DetectorEvent.h"
 #include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataTypes.h"
-#include "core/detector/DetectorEvent.h"
-#include "core/crystal/MillerIndex.h"
 #include "core/integration/Profile1D.h"
 #include "core/integration/Profile3D.h"
 

@@ -14,13 +14,11 @@
 
 
 #include "gui/graphics/cutlineitem.h"
-#include "gui/graphics/simpleplot.h"
 #include "gui/graphics/detectorscene.h"
+#include "gui/graphics/simpleplot.h"
 #include <Eigen/Dense>
 
-CutLineItem::CutLineItem(nsx::sptrDataSet data)
-    : CutterItem(data), _nPoints(10)
-{}
+CutLineItem::CutLineItem(nsx::sptrDataSet data) : CutterItem(data), _nPoints(10) {}
 
 CutLineItem::~CutLineItem() {}
 
@@ -76,8 +74,7 @@ void CutLineItem::plot(NSXPlot* plot)
     p->replot();
 }
 
-void CutLineItem::paint(
-    QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void CutLineItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(widget);
 

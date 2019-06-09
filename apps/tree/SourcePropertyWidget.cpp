@@ -17,9 +17,9 @@
 
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentTypes.h"
-#include "core/logger/Logger.h"
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Source.h"
+#include "core/logger/Logger.h"
 #include "core/utils/Units.h"
 
 #include "apps/models/SourceItem.h"

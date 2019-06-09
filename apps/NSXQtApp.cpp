@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include "core/logger/Logger.h"
 #include "Version.h"
+#include "core/logger/Logger.h"
 
 #include <QApplication>
 

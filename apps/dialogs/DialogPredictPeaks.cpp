@@ -12,14 +12,14 @@
 //
 //  ***********************************************************************************************
 
+#include "core/crystal/UnitCell.h"
+#include "core/integration/ShapeLibrary.h"
 #include "core/logger/Logger.h"
 #include "core/utils/ProgressHandler.h"
-#include "core/integration/ShapeLibrary.h"
-#include "core/crystal/UnitCell.h"
 
+#include "apps/dialogs/DialogPredictPeaks.h"
 #include "apps/models/CollectedPeaksModel.h"
 #include "apps/models/DataItem.h"
-#include "apps/dialogs/DialogPredictPeaks.h"
 #include "apps/models/ExperimentItem.h"
 #include "apps/models/LibraryItem.h"
 #include "apps/models/MetaTypes.h"

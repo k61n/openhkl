@@ -15,14 +15,14 @@
 #include <algorithm>
 #include <limits>
 
-#include "core/experiment/DataSet.h"
-#include "core/instrument/InstrumentState.h"
 #include "core/crystal/MillerIndex.h"
+#include "core/crystal/UnitCell.h"
+#include "core/experiment/DataSet.h"
 #include "core/fitting/Minimizer.h"
+#include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakFilter.h"
 #include "core/refine/Refiner.h"
-#include "core/crystal/UnitCell.h"
 
 const static double g_eps = 1e-5;
 

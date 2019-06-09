@@ -25,9 +25,9 @@
 #include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataTypes.h"
 #include "core/geometry/GeometryTypes.h"
-#include "core/mask/IMask.h"
 #include "core/instrument/InstrumentTypes.h"
 #include "core/instrument/InterpolatedState.h"
+#include "core/mask/IMask.h"
 #include "core/utils/UtilsTypes.h"
 
 namespace nsx {

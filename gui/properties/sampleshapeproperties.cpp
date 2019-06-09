@@ -14,12 +14,12 @@
 
 
 #include "gui/properties/sampleshapeproperties.h"
+#include "core/utils/Units.h"
 #include "gui/models/session.h"
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHeaderView>
 #include <QVBoxLayout>
-#include "core/utils/Units.h"
 
 SampleShapeProperties::SampleShapeProperties() : QcrWidget {"sampleShapeProperties"}
 {

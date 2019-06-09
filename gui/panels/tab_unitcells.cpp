@@ -26,5 +26,5 @@ TabUnitcells::TabUnitcells() : QcrWidget {"unit cells"}
     auto* layout = new QHBoxLayout;
     layout->addWidget((property = new UnitCellProperty));
     setLayout(layout);
-    setRemake([=](){ property->remake(); });
+    setRemake([=]() { property->remake(); });
 }

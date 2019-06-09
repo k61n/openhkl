@@ -5,7 +5,8 @@
 #include "core/utils/Path.h"
 #include "core/utils/StringIO.h"
 
-TEST_CASE("test/utils/TestPath.cpp", "") {
+TEST_CASE("test/utils/TestPath.cpp", "")
+{
 
     // Test nsx::fileSeparator
     auto file_sep = nsx::fileSeparator();
@@ -55,5 +56,4 @@ TEST_CASE("test/utils/TestPath.cpp", "") {
 #else
     CHECK(dirname == "/usr/local");
 #endif
-
 }

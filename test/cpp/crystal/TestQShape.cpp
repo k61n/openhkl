@@ -2,12 +2,12 @@
 
 #include <Eigen/Dense>
 
-#include "core/search_peaks/ConvolverFactory.h"
-#include "core/loader/IDataReader.h"
-#include "core/loader/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
+#include "core/loader/DataReaderFactory.h"
+#include "core/loader/IDataReader.h"
 #include "core/peak/Peak3D.h"
+#include "core/search_peaks/ConvolverFactory.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "core/utils/ProgressHandler.h"
 
@@ -34,7 +34,8 @@ nsx::Ellipsoid toDetectorSpace(const nsx::Ellipsoid e, const nsx::sptrDataSet da
 }
 
 
-TEST_CASE("test/crystal/TestQShape.cpp", "") {
+TEST_CASE("test/crystal/TestQShape.cpp", "")
+{
 
     nsx::DataReaderFactory factory;
     nsx::Experiment experiment("test", "BioDiff2500");

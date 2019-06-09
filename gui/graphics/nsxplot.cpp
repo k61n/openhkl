@@ -14,14 +14,13 @@
 
 
 #include "gui/graphics/nsxplot.h"
-#include <fstream>
+#include <Eigen/Dense>
 #include <QApplication>
 #include <QKeyEvent>
 #include <QPainter>
-#include <Eigen/Dense>
+#include <fstream>
 
-NSXPlot::NSXPlot(QWidget* parent)
-    : QCustomPlot(parent)
+NSXPlot::NSXPlot(QWidget* parent) : QCustomPlot(parent)
 {
     legend->setSelectableParts(QCPLegend::spItems);
     connect(this, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress()));

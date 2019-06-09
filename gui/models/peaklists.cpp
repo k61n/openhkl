@@ -45,7 +45,7 @@ void PeakListsModel::addFilteredPeaks(const QString& name, nsx::PeakList peaks)
 
 void PeakListsModel::removeFilteredPeaks(int i)
 {
-    if (i<0 || i>=filtered_.size()) {
+    if (i < 0 || i >= filtered_.size()) {
         gLogger->log("[ERROR] could not remove a filtered peak list");
         return;
     }
@@ -95,15 +95,15 @@ QStringList PeaksModel::allFilteredListNames()
     QStringList filteredListNames;
     for (PeakListsModel* model : peakLists_) {
         QString prefix = model->getName();
-        for (int i=0; i<model->numberFilteredLists(); i++)
-            filteredListNames.append(prefix+"/" +model->getPeaksAt(i)->getName());
+        for (int i = 0; i < model->numberFilteredLists(); i++)
+            filteredListNames.append(prefix + "/" + model->getPeaksAt(i)->getName());
     }
     return filteredListNames;
 }
 
 void PeaksModel::removePeakListsModel(int i)
 {
-    if (i<0 || i>=peakLists_.size()) {
+    if (i < 0 || i >= peakLists_.size()) {
         gLogger->log("[ERROR]  could not remove peaklistsmodel");
         return;
     }

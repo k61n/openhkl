@@ -20,9 +20,9 @@
 
 #include <yaml-cpp/yaml.h>
 
+#include "core/experiment/DataTypes.h"
 #include "core/gonio/Component.h"
 #include "core/hull/ConvexHull.h"
-#include "core/experiment/DataTypes.h"
 
 namespace nsx {
 

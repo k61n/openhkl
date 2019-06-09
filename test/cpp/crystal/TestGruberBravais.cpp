@@ -8,24 +8,25 @@
 #include <Eigen/Dense>
 #include <Eigen/QR>
 
-#include "core/gonio/Component.h"
-#include "core/detector/FlatDetector.h"
-#include "core/gonio/Gonio.h"
 #include "core/crystal/GruberReduction.h"
-#include "core/instrument/Monochromator.h"
 #include "core/crystal/NiggliReduction.h"
-#include "core/peak/Peak3D.h"
-#include "core/instrument/Sample.h"
-#include "core/instrument/Source.h"
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/UnitCell.h"
+#include "core/detector/FlatDetector.h"
+#include "core/gonio/Component.h"
+#include "core/gonio/Gonio.h"
+#include "core/instrument/Monochromator.h"
+#include "core/instrument/Sample.h"
+#include "core/instrument/Source.h"
+#include "core/peak/Peak3D.h"
 #include "core/utils/Units.h"
 
 const double gruber_tolerance = 1e-4;
 const double niggli_tolerance = 1e-4;
 const double tolerance = 1e-6;
 
-TEST_CASE("test/crystal/TestGruberBravais.cpp", "") {
+TEST_CASE("test/crystal/TestGruberBravais.cpp", "")
+{
 
     double A, B, C, D, E, F;
 

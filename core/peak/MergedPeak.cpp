@@ -19,13 +19,13 @@
 
 #include <gsl/gsl_cdf.h>
 
+#include "core/crystal/MillerIndex.h"
+#include "core/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/logger/Logger.h"
 #include "core/peak/MergedPeak.h"
-#include "core/crystal/MillerIndex.h"
 #include "core/peak/Peak3D.h"
-#include "core/geometry/ReciprocalVector.h"
-#include "core/crystal/UnitCell.h"
 
 namespace nsx {
 

@@ -16,11 +16,11 @@
 
 #include "core/experiment/DataSet.h"
 #include "core/fitting/FitParameters.h"
+#include "core/fitting/Minimizer.h"
 #include "core/gonio/Gonio.h"
+#include "core/instrument/Sample.h"
 #include "core/loader/IDataReader.h"
 #include "core/logger/Logger.h"
-#include "core/fitting/Minimizer.h"
-#include "core/instrument/Sample.h"
 
 namespace nsx {
 

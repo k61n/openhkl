@@ -16,12 +16,12 @@
 
 #include <QInputDialog>
 
-#include "core/instrument/Diffractometer.h"
+#include "core/crystal/UnitCell.h"
 #include "core/experiment/Experiment.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Sample.h"
 #include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
-#include "core/instrument/Sample.h"
-#include "core/crystal/UnitCell.h"
 
 #include "apps/dialogs/DialogSpaceGroup.h"
 #include "apps/dialogs/DialogTransformationMatrix.h"
@@ -30,8 +30,8 @@
 #include "apps/models/MetaTypes.h"
 #include "apps/models/PeaksItem.h"
 #include "apps/models/UnitCellItem.h"
-#include "apps/tree/UnitCellPropertyWidget.h"
 #include "apps/models/UnitCellsItem.h"
+#include "apps/tree/UnitCellPropertyWidget.h"
 
 UnitCellItem::UnitCellItem(nsx::sptrUnitCell unit_cell)
     : InspectableTreeItem(), _unit_cell(unit_cell)

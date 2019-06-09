@@ -2,16 +2,17 @@
 
 // TODO: contains no checks!
 
-#include <memory>
 #include <Eigen/Dense>
+#include <memory>
 
 #include "core/chemistry/ChemistryTypes.h"
+#include "core/chemistry/Material.h"
 #include "core/hull/ConvexHull.h"
 #include "core/monte-carlo/MCAbsorption.h"
-#include "core/chemistry/Material.h"
 #include "core/utils/Units.h"
 
-TEST_CASE("test/chemistry/TestMCAbsorption.cpp", "") {
+TEST_CASE("test/chemistry/TestMCAbsorption.cpp", "")
+{
 
     // Build an isotopically pure methane material
     std::unique_ptr<nsx::Material> helium(new nsx::Material("He[3]"));

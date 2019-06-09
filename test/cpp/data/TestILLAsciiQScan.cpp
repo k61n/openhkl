@@ -3,16 +3,17 @@
 
 #include <Eigen/Dense>
 
-#include "core/loader/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/loader/DataReaderFactory.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/MetaData.h"
 #include "core/utils/Units.h"
 
 const double tolerance = 1e-2;
 
-TEST_CASE("test/data/TestILLAsciiQScan.cpp", "") {
+TEST_CASE("test/data/TestILLAsciiQScan.cpp", "")
+{
 
     nsx::DataReaderFactory factory;
     nsx::Diffractometer* diffractometer;

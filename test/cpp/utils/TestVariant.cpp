@@ -3,7 +3,8 @@
 
 #include "core/utils/Variant.h"
 
-TEST_CASE("test/utils/TestVariant.cpp", "") {
+TEST_CASE("test/utils/TestVariant.cpp", "")
+{
 
     // Default constructor
     nsx::Variant<int, double, std::string> v1;

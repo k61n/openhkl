@@ -22,10 +22,10 @@
 
 #include <Eigen/Dense>
 
-#include "core/gonio/Component.h"
 #include "core/geometry/DirectVector.h"
-#include "core/utils/Enums.h"
 #include "core/geometry/GeometryTypes.h"
+#include "core/gonio/Component.h"
+#include "core/utils/Enums.h"
 
 namespace nsx {
 

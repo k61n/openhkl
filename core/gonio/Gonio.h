@@ -27,8 +27,8 @@
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
-#include "core/gonio/Axis.h"
 #include "core/geometry/GeometryTypes.h"
+#include "core/gonio/Axis.h"
 
 namespace nsx {
 

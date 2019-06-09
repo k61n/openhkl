@@ -1,20 +1,20 @@
 #include "test/cpp/catch.hpp"
 
-#include <array>
 #include <Eigen/Dense>
+#include <array>
 
-#include "core/loader/DataReaderFactory.h"
-#include "core/experiment/DataSet.h"
 #include "core/detector/Detector.h"
-#include "core/instrument/Diffractometer.h"
+#include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
-#include "core/loader/IDataReader.h"
+#include "core/geometry/ReciprocalVector.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InterpolatedState.h"
-#include "core/utils/ProgressHandler.h"
-#include "core/geometry/ReciprocalVector.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
+#include "core/loader/DataReaderFactory.h"
+#include "core/loader/IDataReader.h"
+#include "core/utils/ProgressHandler.h"
 
 void run_test(const char* filename, const char* instrument)
 {
@@ -78,7 +78,8 @@ void run_test(const char* filename, const char* instrument)
     }
 }
 
-TEST_CASE("test/instrument/TestInterpolatedState.cpp", "") {
+TEST_CASE("test/instrument/TestInterpolatedState.cpp", "")
+{
 
     run_test("gal3.hdf", "BioDiff2500");
     run_test("d19_test.hdf", "D19");

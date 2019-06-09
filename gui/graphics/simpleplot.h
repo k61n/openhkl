@@ -16,8 +16,8 @@
 #ifndef GUI_GRAPHICS_SIMPLEPLOT_H
 #define GUI_GRAPHICS_SIMPLEPLOT_H
 
-#include <string>
 #include "gui/graphics/nsxplot.h"
+#include <string>
 
 class QWidget;
 

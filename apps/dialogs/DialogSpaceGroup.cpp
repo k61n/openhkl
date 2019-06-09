@@ -27,18 +27,18 @@
 #include <QString>
 #include <QTreeView>
 
+#include "core/crystal/MillerIndex.h"
+#include "core/crystal/SpaceGroup.h"
+#include "core/crystal/UnitCell.h"
 #include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataSet.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/instrument/Sample.h"
 #include "core/logger/Logger.h"
-#include "core/crystal/MillerIndex.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakFilter.h"
 #include "core/statistics/RFactor.h"
-#include "core/geometry/ReciprocalVector.h"
-#include "core/instrument/Sample.h"
-#include "core/crystal/SpaceGroup.h"
-#include "core/crystal/UnitCell.h"
 
 #include "apps/dialogs/DialogSpaceGroup.h"
 #include "ui_DialogSpaceGroup.h"

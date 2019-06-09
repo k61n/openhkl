@@ -16,15 +16,14 @@
 #include "gui/graphics/detectorview.h"
 #include "gui/graphics/detectorscene.h"
 
-#include <QKeyEvent>
+#include "core/experiment/DataSet.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/loader/IDataReader.h"
 #include <QApplication>
 #include <QClipboard>
-#include "core/experiment/DataSet.h"
-#include "core/loader/IDataReader.h"
-#include "core/instrument/Diffractometer.h"
+#include <QKeyEvent>
 
-DetectorView::DetectorView(QWidget* parent)
-    : QGraphicsView(parent), _scene(new DetectorScene(this))
+DetectorView::DetectorView(QWidget* parent) : QGraphicsView(parent), _scene(new DetectorScene(this))
 {
     setRenderHints(
         QPainter::Antialiasing | QPainter::SmoothPixmapTransform

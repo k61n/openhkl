@@ -22,9 +22,9 @@
 
 #include <Eigen/Dense>
 
-#include "core/experiment/CrystalTypes.h"
 #include "core/crystal/MillerIndex.h"
 #include "core/crystal/SymOp.h"
+#include "core/experiment/CrystalTypes.h"
 
 namespace nsx {
 

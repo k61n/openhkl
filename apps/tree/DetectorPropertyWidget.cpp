@@ -16,11 +16,11 @@
 #include <QSpinBox>
 
 #include "core/detector/Detector.h"
-#include "core/instrument/Diffractometer.h"
 #include "core/geometry/DirectVector.h"
 #include "core/gonio/Gonio.h"
 #include "core/gonio/RotAxis.h"
 #include "core/gonio/TransAxis.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/utils/Units.h"
 
 #include "apps/models/DetectorItem.h"

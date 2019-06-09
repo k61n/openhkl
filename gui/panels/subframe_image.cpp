@@ -14,11 +14,11 @@
 
 
 #include "gui/panels/subframe_image.h"
-#include "gui/mainwin.h"
-#include "gui/models/session.h"
+#include "core/experiment/DataSet.h"
 #include "gui/actions/triggers.h"
 #include "gui/graphics/detectorscene.h"
-#include "core/experiment/DataSet.h"
+#include "gui/mainwin.h"
+#include "gui/models/session.h"
 #include <QGraphicsView>
 #include <QHBoxLayout>
 #include <QScrollBar>
@@ -65,9 +65,10 @@ ImageWidget::ImageWidget() : QcrWidget {"Image"}
     slide->setTickPosition(QSlider::NoTicks);
     verticalLayout->addWidget(slide);
     rightLayout->addWidget(intensityLayout);
-    mode = new QcrComboBox("adhoc_modus", new QcrCell<int>(1), {"selection", "zoom", "line plot",
-                           "horizontal slice", "vertical slice", "rectangular mask",
-                           "ellipsoidal mask"});
+    mode = new QcrComboBox(
+        "adhoc_modus", new QcrCell<int>(1),
+        {"selection", "zoom", "line plot", "horizontal slice", "vertical slice", "rectangular mask",
+         "ellipsoidal mask"});
     rightLayout->addWidget(mode);
     overallLayout->addLayout(rightLayout);
     mode->setEnabled(false);
@@ -75,13 +76,14 @@ ImageWidget::ImageWidget() : QcrWidget {"Image"}
     frameLayout->setEnabled(false);
 
     connect(slide, SIGNAL(valueChanged(int)), imageView->getScene(), SLOT(setMaxIntensity(int)));
-    connect(slide, &QSlider::valueChanged, [=](int i){ max->setCellValue(i); });
-    max->setHook([=](int i){ slide->setValue(i); });
-    connect(scrollbar, SIGNAL(valueChanged(int)),
-            imageView->getScene(), SLOT(slotChangeSelectedFrame(int)));
-    connect(scrollbar, &QScrollBar::valueChanged, [=](int i){ frame->setCellValue(i); });
-    frame->setHook([=](int i){ scrollbar->setValue(i); });
-    mode->setHook([=](int i){ imageView->getScene()->changeInteractionMode(i); });
+    connect(slide, &QSlider::valueChanged, [=](int i) { max->setCellValue(i); });
+    max->setHook([=](int i) { slide->setValue(i); });
+    connect(
+        scrollbar, SIGNAL(valueChanged(int)), imageView->getScene(),
+        SLOT(slotChangeSelectedFrame(int)));
+    connect(scrollbar, &QScrollBar::valueChanged, [=](int i) { frame->setCellValue(i); });
+    frame->setHook([=](int i) { scrollbar->setValue(i); });
+    mode->setHook([=](int i) { imageView->getScene()->changeInteractionMode(i); });
 }
 
 void ImageWidget::dataChanged()
@@ -112,8 +114,8 @@ void ImageWidget::dataChanged()
 void ImageWidget::changeView(int option)
 {
     QTransform trans;
-    trans.scale(-1, -1); //fromDetector (default; 0)
-    if (option == 1) //fromSample
+    trans.scale(-1, -1); // fromDetector (default; 0)
+    if (option == 1) // fromSample
         trans.scale(1, -1);
     imageView->setTransform(trans);
     imageView->fitScene();

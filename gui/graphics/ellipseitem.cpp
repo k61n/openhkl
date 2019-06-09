@@ -14,8 +14,8 @@
 
 
 #include "gui/graphics/ellipseitem.h"
-#include "core/geometry/AABB.h"
 #include "core/experiment/DataSet.h"
+#include "core/geometry/AABB.h"
 
 #include <QGraphicsSceneWheelEvent>
 #include <QPainter>

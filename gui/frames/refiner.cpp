@@ -17,6 +17,11 @@
 #include "gui/models/session.h"
 #include <QCR/engine/logger.h>
 
+#include "core/experiment/CrystalTypes.h"
+#include "core/experiment/DataSet.h"
+#include "core/experiment/DataTypes.h"
+#include "core/peak/Peak3D.h"
+#include "core/refine/Refiner.h"
 #include "gui/models/meta.h"
 #include <QFileInfo>
 #include <QGridLayout>
@@ -24,11 +29,6 @@
 #include <QHBoxLayout>
 #include <QSpacerItem>
 #include <QVBoxLayout>
-#include "core/experiment/CrystalTypes.h"
-#include "core/experiment/DataSet.h"
-#include "core/experiment/DataTypes.h"
-#include "core/peak/Peak3D.h"
-#include "core/refine/Refiner.h"
 
 Refiner::Refiner() : QcrFrame {"RefinerFrame"}
 {

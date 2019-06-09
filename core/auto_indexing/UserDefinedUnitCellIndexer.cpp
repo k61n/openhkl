@@ -20,15 +20,15 @@
 
 #include <Eigen/QR>
 
-#include "core/fitting/FitParameters.h"
-#include "core/logger/Logger.h"
+#include "core/auto_indexing/UserDefinedUnitCellIndexer.h"
 #include "core/crystal/MillerIndex.h"
+#include "core/crystal/UnitCell.h"
+#include "core/fitting/FitParameters.h"
 #include "core/fitting/Minimizer.h"
+#include "core/geometry/ReciprocalVector.h"
+#include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakFilter.h"
-#include "core/geometry/ReciprocalVector.h"
-#include "core/crystal/UnitCell.h"
-#include "core/auto_indexing/UserDefinedUnitCellIndexer.h"
 
 namespace nsx {
 

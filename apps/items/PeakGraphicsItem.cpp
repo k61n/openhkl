@@ -20,22 +20,22 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
-#include "core/experiment/DataSet.h"
-#include "core/detector/Detector.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/geometry/Ellipsoid.h"
-#include "core/loader/IDataReader.h"
-#include "core/instrument/InstrumentState.h"
-#include "core/peak/IntegrationRegion.h"
-#include "core/loader/MetaData.h"
 #include "core/crystal/MillerIndex.h"
-#include "core/peak/Peak3D.h"
-#include "core/geometry/ReciprocalVector.h"
 #include "core/crystal/UnitCell.h"
+#include "core/detector/Detector.h"
+#include "core/experiment/DataSet.h"
+#include "core/geometry/Ellipsoid.h"
+#include "core/geometry/ReciprocalVector.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentState.h"
+#include "core/loader/IDataReader.h"
+#include "core/loader/MetaData.h"
+#include "core/peak/IntegrationRegion.h"
+#include "core/peak/Peak3D.h"
 #include "core/utils/Units.h"
 
-#include "apps/models/DetectorScene.h"
 #include "apps/items/PeakGraphicsItem.h"
+#include "apps/models/DetectorScene.h"
 #include "apps/plot/PeakPlot.h"
 #include "apps/plot/SXPlot.h"
 

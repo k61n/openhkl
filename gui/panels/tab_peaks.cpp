@@ -35,15 +35,15 @@ TabPeaks::TabPeaks() : QcrWidget {"peaks"}
     layout->addWidget(foundPeaksLists);
     layout->addWidget(filtered);
 
-    foundPeaksLists->setHook([this](int i){ slotSelectedListChanged(i); });
+    foundPeaksLists->setHook([this](int i) { slotSelectedListChanged(i); });
 
-    setRemake([this](){
+    setRemake([this]() {
         int numLists = foundPeaksLists->count();
         int selected = foundPeaksLists->doGetValue();
         if (selected < 0)
             selected = 0;
-        PeakListsModel* model = gSession->selectedExperiment()->peaks()
-                ->selectedPeakLists(selected);
+        PeakListsModel* model =
+            gSession->selectedExperiment()->peaks()->selectedPeakLists(selected);
         if (numLists > 0) {
             if (filtered->count() != model->numberFilteredLists()) {
                 int oldTabs = filtered->count();
@@ -52,7 +52,7 @@ TabPeaks::TabPeaks() : QcrWidget {"peaks"}
                     FilteredPeaksModel* peaks = model->getPeaksAt(j);
                     filtered->addTab(new ListTab(peaks), peaks->getName());
                 }
-                for (int t=0; t<oldTabs; t++)
+                for (int t = 0; t < oldTabs; t++)
                     filtered->removeTab(0);
             }
         }
@@ -74,9 +74,9 @@ ListTab::ListTab(FilteredPeaksModel* filteredModel)
 {
     QVBoxLayout* layout = new QVBoxLayout(this);
     view = new PeaksTableView;
-    PeaksTableModel* model = new PeaksTableModel("adhoc_" + filteredModel->getName() + "Model",
-                                                 gSession->selectedExperiment()->experiment(),
-                                                 filteredModel->getPeaks());
+    PeaksTableModel* model = new PeaksTableModel(
+        "adhoc_" + filteredModel->getName() + "Model", gSession->selectedExperiment()->experiment(),
+        filteredModel->getPeaks());
     view->setModel(model);
     layout->addWidget(view);
 }

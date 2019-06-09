@@ -9,7 +9,8 @@
 
 const double tolerance = 1e-6;
 
-TEST_CASE("test/mathematics/TestJonesSymbolParser.cpp", "") {
+TEST_CASE("test/mathematics/TestJonesSymbolParser.cpp", "")
+{
 
     Eigen::Transform<double, 3, Eigen::Affine> matrix;
 

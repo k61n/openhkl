@@ -21,19 +21,19 @@
 
 #include "core/search_peaks/Blob3D.h"
 
-#include "core/hull/ConvexHull.h"
-#include "core/experiment/DataSet.h"
+#include "core/crystal/UnitCell.h"
 #include "core/detector/Detector.h"
-#include "core/instrument/Diffractometer.h"
+#include "core/experiment/DataSet.h"
 #include "core/geometry/Ellipsoid.h"
 #include "core/gonio/Gonio.h"
+#include "core/hull/ConvexHull.h"
+#include "core/hull/Triangle.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Sample.h"
+#include "core/instrument/Source.h"
 #include "core/loader/ILLDataReader.h"
 #include "core/peak/Peak3D.h"
 #include "core/search_peaks/PeakFinder.h"
-#include "core/instrument/Sample.h"
-#include "core/instrument/Source.h"
-#include "core/hull/Triangle.h"
-#include "core/crystal/UnitCell.h"
 #include "core/utils/Units.h"
 
 namespace {

@@ -21,9 +21,9 @@
 #include <Eigen/Dense>
 
 #include "core/crystal/BrillouinZone.h"
+#include "core/crystal/Intensity.h"
 #include "core/geometry/GeometryTypes.h"
 #include "core/peak/IntegrationRegion.h"
-#include "core/crystal/Intensity.h"
 #include "core/utils/ProgressHandler.h"
 #include "core/utils/UtilsTypes.h"
 

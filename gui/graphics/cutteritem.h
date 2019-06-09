@@ -16,10 +16,10 @@
 #ifndef GUI_GRAPHICS_CUTTERITEM_H
 #define GUI_GRAPHICS_CUTTERITEM_H
 
-#include <QPen>
-#include <QPointF>
 #include "core/experiment/DataTypes.h"
 #include "gui/graphics/plottableitem.h"
+#include <QPen>
+#include <QPointF>
 
 class QGraphicsSceneHoverEvent;
 class QGraphicsSceneMouseEvent;

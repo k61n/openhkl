@@ -16,10 +16,10 @@
 #ifndef GUI_PANELS_SUBFRAME_IMAGE_H
 #define GUI_PANELS_SUBFRAME_IMAGE_H
 
+#include "gui/graphics/detectorview.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 #include <QGraphicsView>
-#include "gui/graphics/detectorview.h"
 
 //! Subframe of the main window, with tabs to control detector, fits, &c
 
@@ -29,6 +29,7 @@ public:
     void dataChanged();
     void changeView(int option);
     DetectorView* imageView;
+
 private:
     QcrSpinBox* max;
     QcrSpinBox* frame;

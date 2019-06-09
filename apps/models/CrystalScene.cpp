@@ -24,10 +24,10 @@
 #include "core/hull/Triangle.h"
 #include "core/utils/Units.h"
 
+#include "apps/dialogs/DialogCalibrateDistance.h"
 #include "apps/models/CrystalFaceItem.h"
 #include "apps/models/CrystalNodeItem.h"
 #include "apps/models/CrystalScene.h"
-#include "apps/dialogs/DialogCalibrateDistance.h"
 #include "apps/models/PinItem.h"
 #include "apps/models/RulerItem.h"
 

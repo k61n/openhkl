@@ -15,19 +15,19 @@
 
 #include "gui/models/peakstable.h"
 
+#include "core/crystal/MillerIndex.h"
+#include "core/crystal/UnitCell.h"
+#include "core/detector/Detector.h"
 #include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataSet.h"
-#include "core/detector/Detector.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/loader/IDataReader.h"
 #include "core/instrument/InstrumentState.h"
-#include "core/logger/Logger.h"
+#include "core/loader/IDataReader.h"
 #include "core/loader/MetaData.h"
-#include "core/crystal/MillerIndex.h"
+#include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakFilter.h"
-#include "core/geometry/ReciprocalVector.h"
-#include "core/crystal/UnitCell.h"
 
 #include <QAction>
 #include <QHeaderView>

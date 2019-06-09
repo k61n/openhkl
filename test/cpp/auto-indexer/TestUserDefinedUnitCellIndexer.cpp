@@ -4,10 +4,10 @@
 #include <random>
 #include <vector>
 
-#include "core/geometry/ReciprocalVector.h"
-#include "core/crystal/UnitCell.h"
-#include "core/utils/Units.h"
 #include "core/auto_indexing/UserDefinedUnitCellIndexer.h"
+#include "core/crystal/UnitCell.h"
+#include "core/geometry/ReciprocalVector.h"
+#include "core/utils/Units.h"
 Eigen::Matrix3d make_rotation(Eigen::Vector3d angles)
 {
     const double com = std::cos(angles(0));
@@ -29,7 +29,8 @@ Eigen::Matrix3d make_rotation(Eigen::Vector3d angles)
     return om * ch * ph;
 }
 
-TEST_CASE("test/auto-indexer/TestUserDefinedUnitCellIndexer.cpp", "") {
+TEST_CASE("test/auto-indexer/TestUserDefinedUnitCellIndexer.cpp", "")
+{
 
     const double a = 10.0;
     const double b = 10.0;

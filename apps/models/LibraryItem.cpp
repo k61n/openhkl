@@ -14,21 +14,21 @@
 
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/logger/Logger.h"
-#include "core/utils/ProgressHandler.h"
 #include "core/instrument/Sample.h"
 #include "core/integration/ShapeLibrary.h"
+#include "core/logger/Logger.h"
+#include "core/utils/ProgressHandler.h"
 
-#include "apps/models/DataItem.h"
 #include "apps/dialogs/DialogPredictPeaks.h"
+#include "apps/models/DataItem.h"
 #include "apps/models/ExperimentItem.h"
 #include "apps/models/InstrumentItem.h"
 #include "apps/models/LibraryItem.h"
 #include "apps/models/MetaTypes.h"
 #include "apps/models/PeakListItem.h"
 #include "apps/models/PeaksItem.h"
-#include "apps/views/ProgressView.h"
 #include "apps/models/UnitCellsItem.h"
+#include "apps/views/ProgressView.h"
 
 LibraryItem::LibraryItem() : TreeItem(), _library(nullptr)
 {

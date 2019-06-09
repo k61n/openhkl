@@ -22,10 +22,10 @@
 #include <QMessageBox>
 #include <QPixmap>
 
-#include "core/instrument/Diffractometer.h"
 #include "core/experiment/Experiment.h"
 #include "core/gonio/Gonio.h"
 #include "core/gonio/RotAxis.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 
 #include "apps/views/AbsorptionWidget.h"

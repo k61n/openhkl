@@ -21,15 +21,15 @@
 
 #include <boost/interprocess/file_mapping.hpp>
 
-#include "core/gonio/Component.h"
 #include "core/detector/Detector.h"
-#include "core/instrument/Diffractometer.h"
+#include "core/gonio/Component.h"
 #include "core/gonio/Gonio.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Sample.h"
+#include "core/instrument/Source.h"
 #include "core/loader/ILLDataReader.h"
 #include "core/loader/MatrixParser.h"
 #include "core/loader/Parser.h"
-#include "core/instrument/Sample.h"
-#include "core/instrument/Source.h"
 #include "core/utils/StringIO.h"
 #include "core/utils/Units.h"
 

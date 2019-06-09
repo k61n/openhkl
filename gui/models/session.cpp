@@ -16,8 +16,8 @@
 #include "gui/models/session.h"
 #include "gui/graphics/detectorscene.h"
 
-#include "core/loader/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
+#include "core/loader/DataReaderFactory.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
 
@@ -145,64 +145,66 @@ void Session::removeData()
 
 void Session::loadRawData()
 {
-//    QStringList qfilenames;
-//    qfilenames = QcrFileDialog::getOpenFileNames(
-//        nullptr, "select raw data", "", "", nullptr, QFileDialog::Option::DontUseNativeDialog);
+    //    QStringList qfilenames;
+    //    qfilenames = QcrFileDialog::getOpenFileNames(
+    //        nullptr, "select raw data", "", "", nullptr,
+    //        QFileDialog::Option::DontUseNativeDialog);
 
-//    if (qfilenames.empty()) {
-//        return;
-//    }
+    //    if (qfilenames.empty()) {
+    //        return;
+    //    }
 
-//    std::vector<std::string> filenames;
+    //    std::vector<std::string> filenames;
 
-//    for (auto& filename : qfilenames) {
-//        filenames.push_back(filename.toStdString());
-//    }
+    //    for (auto& filename : qfilenames) {
+    //        filenames.push_back(filename.toStdString());
+    //    }
 
-//    DialogRawData dialog;
+    //    DialogRawData dialog;
 
-//    if (!dialog.exec()) {
-//        return;
-//    }
-//    auto exp = selectedExperiment()->experiment();
+    //    if (!dialog.exec()) {
+    //        return;
+    //    }
+    //    auto exp = selectedExperiment()->experiment();
 
-//    // If the experience already stores the current numor, skip it
-//    if (exp->hasData(filenames[0])) {
-//        return;
-//    }
+    //    // If the experience already stores the current numor, skip it
+    //    if (exp->hasData(filenames[0])) {
+    //        return;
+    //    }
 
-//    std::shared_ptr<nsx::DataSet> data;
-//    std::shared_ptr<nsx::IDataReader> reader;
+    //    std::shared_ptr<nsx::DataSet> data;
+    //    std::shared_ptr<nsx::IDataReader> reader;
 
-//    nsx::RawDataReaderParameters parameters;
+    //    nsx::RawDataReaderParameters parameters;
 
-//    parameters.wavelength = dialog.wavelength();
-//    parameters.delta_omega = dialog.deltaOmega();
-//    parameters.delta_chi = dialog.deltaChi();
-//    parameters.delta_phi = dialog.deltaPhi();
-//    parameters.row_major = dialog.rowMajor();
-//    parameters.swap_endian = dialog.swapEndian();
-//    parameters.bpp = dialog.bpp();
+    //    parameters.wavelength = dialog.wavelength();
+    //    parameters.delta_omega = dialog.deltaOmega();
+    //    parameters.delta_chi = dialog.deltaChi();
+    //    parameters.delta_phi = dialog.deltaPhi();
+    //    parameters.row_major = dialog.rowMajor();
+    //    parameters.swap_endian = dialog.swapEndian();
+    //    parameters.bpp = dialog.bpp();
 
-//    try {
-//        auto diff = exp->diffractometer();
-//        reader.reset(new nsx::RawDataReader(filenames[0], diff));
-//        auto raw_data_reader = std::dynamic_pointer_cast<nsx::RawDataReader>(reader);
-//        for (size_t i = 1; i < filenames.size(); ++i) {
-//            raw_data_reader->addFrame(filenames[i]);
-//        }
-//        data = std::make_shared<nsx::DataSet>(reader);
-//    } catch (std::exception& e) {
-//        gLogger->log(
-//            "reading numor " + qfilenames.at(0) + " failed: " + QString::fromStdString(e.what()));
-//        return;
-//    } catch (...) {
-//        gLogger->log("reading numor " + qfilenames.at(0) + " failed, reason not known");
-//        return;
-//    }
+    //    try {
+    //        auto diff = exp->diffractometer();
+    //        reader.reset(new nsx::RawDataReader(filenames[0], diff));
+    //        auto raw_data_reader = std::dynamic_pointer_cast<nsx::RawDataReader>(reader);
+    //        for (size_t i = 1; i < filenames.size(); ++i) {
+    //            raw_data_reader->addFrame(filenames[i]);
+    //        }
+    //        data = std::make_shared<nsx::DataSet>(reader);
+    //    } catch (std::exception& e) {
+    //        gLogger->log(
+    //            "reading numor " + qfilenames.at(0) + " failed: " +
+    //            QString::fromStdString(e.what()));
+    //        return;
+    //    } catch (...) {
+    //        gLogger->log("reading numor " + qfilenames.at(0) + " failed, reason not known");
+    //        return;
+    //    }
 
-//    exp->addData(data);
-//    selectedExperiment()->addData(data);
+    //    exp->addData(data);
+    //    selectedExperiment()->addData(data);
 }
 
 void Session::onDataChanged()

@@ -17,9 +17,9 @@
 
 #include <Eigen/Core>
 
-#include "core/hull/ConvexHull.h"
 #include "core/geometry/Ellipsoid.h"
 #include "core/geometry/GeometryTypes.h"
+#include "core/hull/ConvexHull.h"
 #include "core/peak/PeakData.h"
 
 namespace nsx {

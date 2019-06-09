@@ -7,25 +7,26 @@
 #include <Eigen/Dense>
 
 #include "core/auto_indexing/AutoIndexer.h"
-#include "core/search_peaks/ConvolverFactory.h"
 #include "core/experiment/CrystalTypes.h"
-#include "core/loader/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/loader/DataReaderFactory.h"
+#include "core/search_peaks/ConvolverFactory.h"
 
 #include "core/experiment/Experiment.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/InstrumentState.h"
+#include "core/instrument/Sample.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakFilter.h"
+#include "core/refine/Refiner.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "core/utils/ProgressHandler.h"
-#include "core/geometry/ReciprocalVector.h"
-#include "core/refine/Refiner.h"
-#include "core/instrument/Sample.h"
 #include "core/utils/Units.h"
 
-TEST_CASE("test/crystal/TestRefiner.cpp", "") {
+TEST_CASE("test/crystal/TestRefiner.cpp", "")
+{
 
     nsx::DataReaderFactory factory;
 

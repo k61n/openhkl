@@ -5,7 +5,8 @@
 
 const double tolerance = 1e-6;
 
-TEST_CASE("test/instrument/TestTransAxis.cpp", "") {
+TEST_CASE("test/instrument/TestTransAxis.cpp", "")
+{
 
     nsx::TransAxis t("x", Eigen::Vector3d(1, 0, 0));
 

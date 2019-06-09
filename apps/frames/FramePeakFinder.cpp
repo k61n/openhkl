@@ -42,14 +42,14 @@
 #include "core/search_peaks/ConvolverFactory.h"
 #include "core/search_peaks/PeakFinder.h"
 
-#include "apps/models/CollectedPeaksModel.h"
 #include "apps/delegates/DoubleItemDelegate.h"
-#include "apps/models/ExperimentItem.h"
 #include "apps/frames/FramePeakFinder.h"
+#include "apps/models/CollectedPeaksModel.h"
+#include "apps/models/ExperimentItem.h"
 #include "apps/models/MetaTypes.h"
 #include "apps/models/PeakListItem.h"
-#include "apps/views/PeakTableView.h"
 #include "apps/models/PeaksItem.h"
+#include "apps/views/PeakTableView.h"
 #include "apps/views/ProgressView.h"
 #include "apps/widgets/WidgetFoundPeaks.h"
 

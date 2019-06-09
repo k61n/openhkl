@@ -20,8 +20,7 @@ NSXPlot* PeakPlot::create(QWidget* parent)
     return new PeakPlot(parent);
 }
 
-PeakPlot::PeakPlot(QWidget* parent)
-    : NSXPlot(parent)
+PeakPlot::PeakPlot(QWidget* parent) : NSXPlot(parent)
 {
     plotLayout()->insertRow(0);
     QPen pen;
@@ -57,4 +56,3 @@ std::string PeakPlot::getType() const
 {
     return "peak";
 }
-

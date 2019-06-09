@@ -20,14 +20,14 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
+#include "core/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
 #include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakFilter.h"
-#include "core/crystal/UnitCell.h"
 
-#include "apps/models/CollectedPeaksModel.h"
 #include "apps/dialogs/DialogPeakFilter.h"
+#include "apps/models/CollectedPeaksModel.h"
 #include "apps/models/ExperimentItem.h"
 #include "apps/models/MetaTypes.h"
 #include "apps/models/PeakListItem.h"

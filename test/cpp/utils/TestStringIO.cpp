@@ -5,7 +5,8 @@
 
 #include "core/utils/StringIO.h"
 
-TEST_CASE("test/utils/TestStringIO.cpp", "") {
+TEST_CASE("test/utils/TestStringIO.cpp", "")
+{
 
     std::string str_to_trim("   blabla    ");
 
@@ -31,12 +32,16 @@ TEST_CASE("test/utils/TestStringIO.cpp", "") {
     std::vector<std::string> to_be_joined2({"good morning", "everybody", "!"});
     CHECK(nsx::join(to_be_joined2, " ") == "good morning everybody !");
 
-    CHECK(nsx::split("hello how are you ?", " ") !=
-          std::vector<std::string>({"hello", "how", "are", "you"}));
-    CHECK(nsx::split("hello how are you ?", " ") ==
-          std::vector<std::string>({"hello", "how", "are", "you", "?"}));
-    CHECK(nsx::split("hello ; how    ; are; you ;?", ";") ==
-          std::vector<std::string>({"hello", "how", "are", "you", "?"}));
-    CHECK(nsx::split("hello ; how    ; are; you ;?", " ") !=
-          std::vector<std::string>({"hello", "how", "are", "you", "?"}));
+    CHECK(
+        nsx::split("hello how are you ?", " ")
+        != std::vector<std::string>({"hello", "how", "are", "you"}));
+    CHECK(
+        nsx::split("hello how are you ?", " ")
+        == std::vector<std::string>({"hello", "how", "are", "you", "?"}));
+    CHECK(
+        nsx::split("hello ; how    ; are; you ;?", ";")
+        == std::vector<std::string>({"hello", "how", "are", "you", "?"}));
+    CHECK(
+        nsx::split("hello ; how    ; are; you ;?", " ")
+        != std::vector<std::string>({"hello", "how", "are", "you", "?"}));
 }

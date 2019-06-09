@@ -6,7 +6,8 @@
 #include "core/geometry/AABB.h"
 #include "core/integration/Profile3D.h"
 
-TEST_CASE("test/geometry/TestProfile3D.cpp", "") {
+TEST_CASE("test/geometry/TestProfile3D.cpp", "")
+{
 
     nsx::AABB bb;
     bb.setLower(Eigen::Vector3d(0, 0, 0));

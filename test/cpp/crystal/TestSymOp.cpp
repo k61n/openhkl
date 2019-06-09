@@ -4,7 +4,8 @@
 
 #include "core/crystal/SymOp.h"
 
-TEST_CASE("test/crystal/TestSymOp.cpp", "") {
+TEST_CASE("test/crystal/TestSymOp.cpp", "")
+{
 
     nsx::SymOp op1("x,y,z");
     CHECK(op1.getAxisOrder() == 1);

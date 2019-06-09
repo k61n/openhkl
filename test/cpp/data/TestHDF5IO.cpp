@@ -3,12 +3,13 @@
 
 #include <Eigen/Dense>
 
-#include "core/loader/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/loader/DataReaderFactory.h"
 #include "core/utils/Units.h"
 
-TEST_CASE("test/data/TestHDF5IO.cpp", "") {
+TEST_CASE("test/data/TestHDF5IO.cpp", "")
+{
 
     nsx::DataReaderFactory factory;
     nsx::Diffractometer* diffractometer;

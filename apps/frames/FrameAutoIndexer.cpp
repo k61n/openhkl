@@ -13,14 +13,14 @@
 //  ***********************************************************************************************
 
 #include "core/auto_indexing/AutoIndexer.h"
+#include "core/crystal/UnitCell.h"
 #include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
-#include "core/crystal/UnitCell.h"
 #include "core/utils/Units.h"
 
+#include "apps/frames/FrameAutoIndexer.h"
 #include "apps/models/CollectedPeaksModel.h"
 #include "apps/models/ExperimentItem.h"
-#include "apps/frames/FrameAutoIndexer.h"
 #include "apps/models/UnitCellItem.h"
 #include "apps/models/UnitCellsItem.h"
 #include "apps/widgets/WidgetUnitCell.h"

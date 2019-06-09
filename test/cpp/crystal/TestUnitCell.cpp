@@ -2,14 +2,15 @@
 #include <random>
 
 #include "core/crystal/MillerIndex.h"
-#include "core/fitting/Minimizer.h"
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/UnitCell.h"
+#include "core/fitting/Minimizer.h"
 #include "core/utils/Units.h"
 
 const double tolerance = 1e-6;
 
-TEST_CASE("test/crystal/TestUnitCell.cpp", "") {
+TEST_CASE("test/crystal/TestUnitCell.cpp", "")
+{
 
     double a = 6.32;
     double b = 7.22;
@@ -71,12 +72,9 @@ TEST_CASE("test/crystal/TestUnitCell.cpp", "") {
 
     auto space_group = cell4.spaceGroup();
 
-    CHECK(
-        space_group.isEquivalent(nsx::MillerIndex(2, 0, 0), nsx::MillerIndex(0, 2, 0)));
-    CHECK(
-        space_group.isEquivalent(nsx::MillerIndex(2, 3, 2), nsx::MillerIndex(3, 2, -2)));
-    CHECK(
-        !space_group.isEquivalent(nsx::MillerIndex(2, 3, 2), nsx::MillerIndex(3, 2, -3)));
+    CHECK(space_group.isEquivalent(nsx::MillerIndex(2, 0, 0), nsx::MillerIndex(0, 2, 0)));
+    CHECK(space_group.isEquivalent(nsx::MillerIndex(2, 3, 2), nsx::MillerIndex(3, 2, -2)));
+    CHECK(!space_group.isEquivalent(nsx::MillerIndex(2, 3, 2), nsx::MillerIndex(3, 2, -3)));
 
     // test covariance
     Eigen::Matrix3d AA;

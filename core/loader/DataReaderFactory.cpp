@@ -14,8 +14,8 @@
 
 #include <stdexcept>
 
-#include "core/loader/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
+#include "core/loader/DataReaderFactory.h"
 #include "core/loader/FakeDataReader.h"
 #include "core/loader/HDF5DataReader.h"
 #include "core/loader/ILLDataReader.h"

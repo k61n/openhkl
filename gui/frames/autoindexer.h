@@ -16,12 +16,12 @@
 #ifndef GUI_FRAMES_AUTOINDEXER_H
 #define GUI_FRAMES_AUTOINDEXER_H
 
+#include "core/peak/Peak3D.h"
 #include "gui/models/peakstable.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 #include <QDialogButtonBox>
 #include <QTableView>
-#include "core/peak/Peak3D.h"
 
 class AutoIndexer : public QcrFrame {
 public:

@@ -14,9 +14,9 @@
 
 
 #include "gui/dialogs/peakfilter.h"
+#include "gui/dialogs/listnamedialog.h"
 #include "gui/mainwin.h"
 #include "gui/models/session.h"
-#include "gui/dialogs/listnamedialog.h"
 #include <QCR/engine/logger.h>
 
 #include "gui/models/meta.h"
@@ -145,8 +145,9 @@ void PeakFilter::doLayout()
     upperLayout->addLayout(settings);
 
     QVBoxLayout* tablelayout = new QVBoxLayout;
-    peakList = new QcrComboBox("adhoc_peakListsPeakFilter", new QcrCell<int>(0),
-                               gSession->selectedExperiment()->peaks()->peaklistNames());
+    peakList = new QcrComboBox(
+        "adhoc_peakListsPeakFilter", new QcrCell<int>(0),
+        gSession->selectedExperiment()->peaks()->peaklistNames());
     tablelayout->addWidget(peakList);
     model_ = new PeaksTableModel(
         "adhoc_filterModel", gSession->selectedExperiment()->experiment(), peaks_);
@@ -160,7 +161,7 @@ void PeakFilter::doLayout()
         QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply, Qt::Horizontal);
     whole->addWidget(buttons);
 
-    peakList->setHook([this](int i){
+    peakList->setHook([this](int i) {
         peaks_ = gSession->selectedExperiment()->peaks()->selectedPeakLists(i)->getAllListPeaks();
         model_->setPeaks(peaks_);
     });
@@ -246,8 +247,10 @@ void PeakFilter::accept()
         if (!dlg->exec())
             return;
 
-        gSession->selectedExperiment()->peaks()->selectedPeakLists(peakList->getValue())
-                ->addFilteredPeaks(dlg->listName(), filtered_peaks);
+        gSession->selectedExperiment()
+            ->peaks()
+            ->selectedPeakLists(peakList->getValue())
+            ->addFilteredPeaks(dlg->listName(), filtered_peaks);
 
         QString message = "Applied peak filters on selected peaks. Remains ";
         message += QString::number(filtered_peaks.size());

@@ -34,22 +34,22 @@
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "core/utils/Units.h"
-#include <QGraphicsSceneMouseEvent>
-#include <QKeyEvent>
-#include <QMenu>
-#include <QPixmap>
-#include <QToolTip>
 #include "gui/graphics/cutlineitem.h"
 #include "gui/graphics/cutsliceitem.h"
 #include "gui/graphics/cutteritem.h"
 #include "gui/graphics/ellipseitem.h"
 #include "gui/graphics/maskitem.h"
 #include "gui/graphics/nsxgraphicsitem.h"
-#include "gui/graphics/plottableitem.h"
 #include "gui/graphics/peakitem.h"
-#include "gui/models/session.h"
+#include "gui/graphics/plottableitem.h"
 #include "gui/mainwin.h"
+#include "gui/models/session.h"
 #include <QCR/engine/logger.h>
+#include <QGraphicsSceneMouseEvent>
+#include <QKeyEvent>
+#include <QMenu>
+#include <QPixmap>
+#include <QToolTip>
 
 DetectorScene::DetectorScene(QObject* parent)
     : QGraphicsScene(parent)
@@ -74,7 +74,8 @@ DetectorScene::DetectorScene(QObject* parent)
     , _selected_peak_gi(nullptr)
     , _peak_graphics_items()
     , _selected_peak(nullptr)
-{}
+{
+}
 
 void DetectorScene::clearPeakGraphicsItems()
 {
@@ -430,7 +431,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
             auto peak = peak_item->peak();
 
-//            gSession->onSelectedPeakChanged(peak);
+            //            gSession->onSelectedPeakChanged(peak);
 
         } else if (_mode == ZOOM) {
 
@@ -505,7 +506,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                 _currentData->maskPeaks(peaks);
                 update();
                 updateMasks();
-//                gSession->onMaskedPeaksChanged(peaks);
+                //                gSession->onMaskedPeaksChanged(peaks);
             } else if (auto p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
                 auto it = findMask(p);
                 if (it != _masks.end()) {
@@ -516,7 +517,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                 _currentData->maskPeaks(peaks);
                 update();
                 updateMasks();
-//                gSession->onMaskedPeaksChanged(peaks);
+                //                gSession->onMaskedPeaksChanged(peaks);
             }
         }
     }
@@ -582,7 +583,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                     _currentData->maskPeaks(peaks);
                     update();
                     updateMasks();
-//                    gSession->onMaskedPeaksChanged(peaks);
+                    //                    gSession->onMaskedPeaksChanged(peaks);
                 }
             } else if (auto p = dynamic_cast<EllipseMaskItem*>(item)) {
                 auto it = findMask(p);
@@ -593,7 +594,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                     _currentData->maskPeaks(peaks);
                     update();
                     updateMasks();
-//                    gSession->onMaskedPeaksChanged(peaks);
+                    //                    gSession->onMaskedPeaksChanged(peaks);
                 }
             }
             if (p == _lastClickedGI) {
@@ -671,7 +672,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
             auto selected_unit_cell_item = experiment_item->unitCells()->selectedCell();
             if (selected_unit_cell_item) {
                 auto q = state.sampleQ(pos);
-                auto miller_indices = nsx::MillerIndex(q, * selected_unit_cell_item);
+                auto miller_indices = nsx::MillerIndex(q, *selected_unit_cell_item);
 
                 Eigen::RowVector3d hkl =
                     miller_indices.rowVector().cast<double>() + miller_indices.error();
@@ -729,7 +730,7 @@ void DetectorScene::loadCurrentImage()
                 // IntegrationRegion constructor can throw if the region is invalid
                 try {
                     auto region = nsx::IntegrationRegion(
-                                peak, peak->peakEnd(), peak->bkgBegin(), peak->bkgEnd());
+                        peak, peak->peakEnd(), peak->bkgBegin(), peak->bkgEnd());
                     region.updateMask(mask, _currentFrameIndex);
                 } catch (...) {
                     peak->setSelected(false);

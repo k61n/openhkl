@@ -13,12 +13,12 @@
 //  ***********************************************************************************************
 
 #include "core/integration/Profile3DIntegrator.h"
+#include "core/crystal/Intensity.h"
 #include "core/experiment/DataSet.h"
 #include "core/geometry/Ellipsoid.h"
-#include "core/crystal/Intensity.h"
+#include "core/integration/ShapeLibrary.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"
-#include "core/integration/ShapeLibrary.h"
 
 namespace nsx {
 

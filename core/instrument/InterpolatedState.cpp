@@ -13,11 +13,11 @@
 //  ***********************************************************************************************
 
 #include "core/instrument/InterpolatedState.h"
-#include "core/gonio/Component.h"
 #include "core/detector/Detector.h"
+#include "core/gonio/Component.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/logger/Logger.h"
 #include "core/instrument/MatrixOperations.h"
+#include "core/logger/Logger.h"
 
 namespace nsx {
 

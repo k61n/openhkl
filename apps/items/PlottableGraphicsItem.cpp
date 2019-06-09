@@ -16,8 +16,8 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsSceneMouseEvent>
 
-#include "apps/models/DetectorScene.h"
 #include "apps/items/PlottableGraphicsItem.h"
+#include "apps/models/DetectorScene.h"
 #include "apps/plot/SXPlot.h"
 
 PlottableGraphicsItem::PlottableGraphicsItem(QGraphicsItem* parent, bool deletable, bool movable)

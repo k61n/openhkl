@@ -19,8 +19,8 @@
 
 #include <Eigen/Dense>
 
-#include "core/hull/ConvexHull.h"
 #include "core/experiment/DataTypes.h"
+#include "core/hull/ConvexHull.h"
 
 namespace nsx {
 

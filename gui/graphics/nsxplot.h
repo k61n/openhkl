@@ -15,8 +15,8 @@
 #ifndef GUI_GRAPHICS_NSXPLOT_H
 #define GUI_GRAPHICS_NSXPLOT_H
 
-#include <string>
 #include "3rdparty/QCustomPlot/QCustomPlot.h"
+#include <string>
 
 class PlottableItem;
 

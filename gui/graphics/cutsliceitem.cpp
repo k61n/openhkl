@@ -14,12 +14,12 @@
 
 
 #include "gui/graphics/cutsliceitem.h"
-#include "gui/graphics/simpleplot.h"
-#include "gui/graphics/detectorscene.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/loader/IDataReader.h"
+#include "gui/graphics/detectorscene.h"
+#include "gui/graphics/simpleplot.h"
 #include <Eigen/Dense>
 
 CutSliceItem::CutSliceItem(nsx::sptrDataSet data, bool horizontal)
@@ -104,8 +104,7 @@ bool CutSliceItem::isHorizontal() const
     return _horizontal;
 }
 
-void CutSliceItem::paint(
-    QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void CutSliceItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(widget);
 

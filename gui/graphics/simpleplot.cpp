@@ -20,8 +20,7 @@ NSXPlot* SimplePlot::create(QWidget* parent)
     return new SimplePlot(parent);
 }
 
-SimplePlot::SimplePlot(QWidget* parent)
-    : NSXPlot(parent)
+SimplePlot::SimplePlot(QWidget* parent) : NSXPlot(parent)
 {
     plotLayout()->insertRow(0);
     addGraph();
@@ -62,4 +61,3 @@ std::string SimplePlot::getType() const
 {
     return "simple";
 }
-

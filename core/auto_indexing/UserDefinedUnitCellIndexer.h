@@ -22,10 +22,10 @@
 
 #include <Eigen/Dense>
 
-#include "core/utils/Any.h"
+#include "core/crystal/UnitCell.h"
 #include "core/experiment/CrystalTypes.h"
 #include "core/geometry/ReciprocalVector.h"
-#include "core/crystal/UnitCell.h"
+#include "core/utils/Any.h"
 #include "core/utils/Units.h"
 
 namespace nsx {

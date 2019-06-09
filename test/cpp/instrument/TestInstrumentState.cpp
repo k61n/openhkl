@@ -1,10 +1,10 @@
 #include "test/cpp/catch.hpp"
 
-#include "core/loader/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
-#include "core/loader/IDataReader.h"
 #include "core/instrument/InstrumentState.h"
+#include "core/loader/DataReaderFactory.h"
+#include "core/loader/IDataReader.h"
 
 namespace nsx {
 class UnitTest_DataSet {
@@ -34,7 +34,8 @@ int nsx::UnitTest_DataSet::run()
     return 0;
 }
 
-TEST_CASE("test/instrument/TestInstrumentState.cpp", "") {
+TEST_CASE("test/instrument/TestInstrumentState.cpp", "")
+{
 
     nsx::UnitTest_DataSet::run();
 }

@@ -14,10 +14,10 @@
 
 
 #include "gui/models/experimentmodel.h"
+#include "core/peak/Peak3D.h"
 #include "gui/models/session.h"
 #include <QCR/engine/logger.h>
 #include <QCR/engine/mixin.h>
-#include "core/peak/Peak3D.h"
 //  ***********************************************************************************************
 //! @class ExperimentData
 
@@ -75,8 +75,7 @@ InstrumentModel::InstrumentModel(const QString& name, const QString& sourceName)
 
 //  ***********************************************************************************************
 
-UnitCellsModel::UnitCellsModel()
-{}
+UnitCellsModel::UnitCellsModel() {}
 
 nsx::sptrUnitCell UnitCellsModel::selectedCell()
 {

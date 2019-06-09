@@ -22,23 +22,23 @@
 #include <QTableView>
 #include <QVector>
 
-#include "core/statistics/CC.h"
+#include "core/crystal/MillerIndex.h"
+#include "core/crystal/ResolutionShell.h"
 #include "core/experiment/DataSet.h"
 #include "core/loader/IDataReader.h"
-#include "core/logger/Logger.h"
 #include "core/loader/MetaData.h"
-#include "core/crystal/MillerIndex.h"
+#include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
+#include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
-#include "core/crystal/ResolutionShell.h"
 
-#include "apps/models/CollectedPeaksModel.h"
 #include "apps/delegates/DoubleItemDelegate.h"
-#include "apps/models/ExperimentItem.h"
 #include "apps/frames/FrameStatistics.h"
+#include "apps/models/CollectedPeaksModel.h"
+#include "apps/models/ExperimentItem.h"
 #include "apps/models/PeaksItem.h"
-#include "apps/utils/PeaksUtils.h"
 #include "apps/plot/SXPlot.h"
+#include "apps/utils/PeaksUtils.h"
 #include "apps/widgets/WidgetRefinerFit.h"
 
 #include "ui_FrameStatistics.h"

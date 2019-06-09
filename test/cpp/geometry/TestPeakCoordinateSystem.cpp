@@ -7,13 +7,13 @@
 
 #include <Eigen/Dense>
 
-#include "core/experiment/CrystalTypes.h"
-#include "core/loader/DataReaderFactory.h"
-#include "core/experiment/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"
-#include "core/instrument/Diffractometer.h"
+#include "core/experiment/CrystalTypes.h"
+#include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/loader/DataReaderFactory.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"
 
@@ -77,7 +77,7 @@ void run_test(const char* filename, const char* instrument)
         peak->setShape(detector_shape);
 
         CHECK(frame.estimateDivergence() == Approx(sigmaD).epsilon(1e-6));
-        CHECK(frame.estimateMosaicity()  == Approx(sigmaM).epsilon(1e-6));
+        CHECK(frame.estimateMosaicity() == Approx(sigmaM).epsilon(1e-6));
 
         auto standard_shape = frame.standardShape();
         Eigen::Matrix3d cov = standard_shape.inverseMetric();
@@ -92,7 +92,8 @@ void run_test(const char* filename, const char* instrument)
     }
 }
 
-TEST_CASE("test/geometry/TestPeakCoordinateSystem.cpp", "") {
+TEST_CASE("test/geometry/TestPeakCoordinateSystem.cpp", "")
+{
     run_test("gal3.hdf", "BioDiff2500");
     run_test("d19_test.hdf", "D19");
 }

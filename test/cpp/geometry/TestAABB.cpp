@@ -6,7 +6,8 @@
 #include "core/geometry/AABB.h"
 const double tolerance = 1e-5;
 
-TEST_CASE("test/geometry/TestAABB.cpp", "") {
+TEST_CASE("test/geometry/TestAABB.cpp", "")
+{
 
     nsx::AABB bb;
     bb.setLower(Eigen::Vector3d(0, 0, 0));

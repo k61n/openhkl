@@ -16,8 +16,8 @@
 #ifndef GUI_MODELS_PEAKLISTS_H
 #define GUI_MODELS_PEAKLISTS_H
 
-#include <QList>
 #include "core/experiment/CrystalTypes.h"
+#include <QList>
 
 class FilteredPeaksModel {
 public:

@@ -83,4 +83,3 @@ ColorMap::matToImage(const Eigen::ArrayXXd& source, const QRect& rect, double co
 
     return dest;
 }
-

@@ -16,11 +16,11 @@
 
 #include <QJsonArray>
 
-#include "core/geometry/AABB.h"
-#include "core/mask/BoxMask.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
+#include "core/geometry/AABB.h"
 #include "core/logger/Logger.h"
+#include "core/mask/BoxMask.h"
 
 #include "apps/models/ExperimentItem.h"
 #include "apps/models/MetaTypes.h"

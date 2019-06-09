@@ -12,27 +12,27 @@
 //
 //  ***********************************************************************************************
 
-#include "core/geometry/AABB.h"
-#include "core/loader/BloscFilter.h"
-#include "core/search_peaks/ConvolverFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"
-#include "core/instrument/Diffractometer.h"
+#include "core/geometry/AABB.h"
 #include "core/geometry/Ellipsoid.h"
 #include "core/gonio/Gonio.h"
-#include "core/loader/IDataReader.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/instrument/Monochromator.h"
-#include "core/mathematics/MathematicsTypes.h"
-#include "core/utils/Path.h"
-#include "core/peak/Peak3D.h"
-#include "core/utils/ProgressHandler.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
+#include "core/loader/BloscFilter.h"
+#include "core/loader/IDataReader.h"
+#include "core/mathematics/MathematicsTypes.h"
+#include "core/peak/Peak3D.h"
+#include "core/search_peaks/ConvolverFactory.h"
+#include "core/utils/Path.h"
+#include "core/utils/ProgressHandler.h"
 #include "core/utils/Units.h" // deg
 
-#include <blosc.h>
 #include <H5Cpp.h>
+#include <blosc.h>
 #include <cmath>
 #include <stdexcept>
 #include <utility>

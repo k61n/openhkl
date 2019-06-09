@@ -16,9 +16,9 @@
 #ifndef GUI_GRAPHICS_MASKITEM_H
 #define GUI_GRAPHICS_MASKITEM_H
 
-#include "gui/graphics/nsxgraphicsitem.h"
 #include "core/experiment/DataTypes.h"
 #include "core/geometry/GeometryTypes.h"
+#include "gui/graphics/nsxgraphicsitem.h"
 
 class QGraphicsSceneMouseEvent;
 class QGraphicsSceneWheelEvent;

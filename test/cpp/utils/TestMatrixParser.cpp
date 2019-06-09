@@ -3,9 +3,10 @@
 
 #include <Eigen/Dense>
 
-#include "core/utils/Enums.h"
 #include "core/loader/MatrixParser.h"
-TEST_CASE("test/utils/TestMatrixParser.cpp", "") {
+#include "core/utils/Enums.h"
+TEST_CASE("test/utils/TestMatrixParser.cpp", "")
+{
 
     Eigen::MatrixXi m;
     m.resize(3, 4);

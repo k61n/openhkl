@@ -17,8 +17,8 @@
 
 #include <Eigen/Core>
 
-#include "core/experiment/CrystalTypes.h"
 #include "core/detector/DetectorEvent.h"
+#include "core/experiment/CrystalTypes.h"
 #include "core/geometry/Ellipsoid.h"
 #include "core/instrument/InstrumentTypes.h"
 #include "core/instrument/InterpolatedState.h"

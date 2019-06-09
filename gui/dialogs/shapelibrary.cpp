@@ -26,16 +26,16 @@
 #include <QStatusBar>
 #include <QVBoxLayout>
 
-#include "gui/models/colormap.h"
-#include "gui/frames/progressview.h"
 #include "core/experiment/DataSet.h"
+#include "core/integration/Profile3D.h"
+#include "core/integration/ShapeIntegrator.h"
+#include "core/integration/ShapeLibrary.h"
 #include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"
 #include "core/peak/PeakFilter.h"
-#include "core/integration/Profile3D.h"
-#include "core/integration/ShapeIntegrator.h"
-#include "core/integration/ShapeLibrary.h"
+#include "gui/frames/progressview.h"
+#include "gui/models/colormap.h"
 
 
 ShapeLibraryDialog::ShapeLibraryDialog() : QDialog {}

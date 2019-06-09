@@ -5,7 +5,8 @@
 #include "core/utils/ProgressHandler.h"
 using namespace nsx;
 
-TEST_CASE("test/utils/TestProgressHandler.cpp", "") {
+TEST_CASE("test/utils/TestProgressHandler.cpp", "")
+{
 
     ProgressHandler handler;
 

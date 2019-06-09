@@ -14,13 +14,13 @@
 
 
 #include "gui/properties/numorproperty.h"
+#include "core/experiment/DataSet.h"
+#include "core/experiment/DataTypes.h"
+#include "core/loader/IDataReader.h"
 #include "gui/models/session.h"
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
-#include "core/experiment/DataSet.h"
-#include "core/experiment/DataTypes.h"
-#include "core/loader/IDataReader.h"
 
 NumorProperty::NumorProperty() : QcrWidget {"numorProperty"}
 {

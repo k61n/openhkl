@@ -97,4 +97,3 @@ void ProgressView::abort()
     nsx::info() << "Job was aborted.";
     _timer->stop();
 }
-

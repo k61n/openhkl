@@ -6,7 +6,8 @@
 
 #include "core/fitting/FitParameters.h"
 #include "core/fitting/Minimizer.h"
-TEST_CASE("test/mathematics/TestMinimizer.cpp", "") {
+TEST_CASE("test/mathematics/TestMinimizer.cpp", "")
+{
 
     Eigen::VectorXd y, wt, x;
     int nvalues = 40;

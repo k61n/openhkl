@@ -15,8 +15,8 @@
 #include <Eigen/Dense>
 
 #include "core/detector/FlatDetector.h"
-#include "core/gonio/Gonio.h"
 #include "core/geometry/ReciprocalVector.h"
+#include "core/gonio/Gonio.h"
 #include "core/gonio/RotAxis.h"
 #include "core/gonio/TransAxis.h"
 #include "core/utils/Units.h"

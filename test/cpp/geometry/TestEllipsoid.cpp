@@ -5,7 +5,8 @@
 #include "core/geometry/Ellipsoid.h"
 const double eps = 1e-8;
 
-TEST_CASE("test/geometry/TestEllipsoid.cpp", "") {
+TEST_CASE("test/geometry/TestEllipsoid.cpp", "")
+{
 
     Eigen::Vector3d center(10, 10, 10);
     Eigen::Vector3d semi_axes(3, 3, 4);
@@ -80,7 +81,8 @@ TEST_CASE("test/geometry/TestEllipsoid.cpp", "") {
             for (auto k = -N; k < N; ++k) {
                 Eigen::Vector3d u(center(0) + i * dx, center(1) + j * dx, center(2) + k * dx);
 
-                // TODO restore test CHECK(f.isInside(u), (u - center).transpose() * f.metric() * (u - center) < 1.0);
+                // TODO restore test CHECK(f.isInside(u), (u - center).transpose() * f.metric() * (u
+                // - center) < 1.0);
 
                 if (f.isInside(u)) {
                     ++count;
@@ -175,7 +177,7 @@ TEST_CASE("test/geometry/TestEllipsoid.cpp", "") {
 
     // check collision with line segments
     CHECK(el.collideSegment(Eigen::Vector3d(3, -3, 0), Eigen::Vector3d(3, -100, 0)));
-    CHECK(el.collideSegment(Eigen::Vector3d(5, -5, 0), Eigen::Vector3d(1, -1,   0)));
+    CHECK(el.collideSegment(Eigen::Vector3d(5, -5, 0), Eigen::Vector3d(1, -1, 0)));
 
     // this test fails with the old incorrect collision
     CHECK(el.aabb().collide(box) == true);

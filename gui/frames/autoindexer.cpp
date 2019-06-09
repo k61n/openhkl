@@ -58,27 +58,32 @@ void AutoIndexer::layout()
     tabs = new QcrTabWidget("autoIndexerTabs");
     settings = new QcrWidget("Settings");
     QVBoxLayout* vertical = new QVBoxLayout(settings);
-    listNames = new QcrComboBox("adhoc_filteredPeaklistsNames",
-                                new QcrCell<int>(0),
-                                gSession->selectedExperiment()->peaks()->allFilteredListNames());
+    listNames = new QcrComboBox(
+        "adhoc_filteredPeaklistsNames", new QcrCell<int>(0),
+        gSession->selectedExperiment()->peaks()->allFilteredListNames());
     vertical->addWidget(listNames);
     model = new PeaksTableModel(
         "adhoc_autoIndexerPeakTable", gSession->selectedExperiment()->experiment());
-    listNames->setHook([this](int i){
+    listNames->setHook([this](int i) {
         QStringList filterednames = gSession->selectedExperiment()->peaks()->allFilteredListNames();
         QStringList foundnames = gSession->selectedExperiment()->peaks()->peaklistNames();
         QString selectedName = filterednames.at(i);
         int offset = 0;
-        for (int l=0; l<foundnames.size(); l++) {
+        for (int l = 0; l < foundnames.size(); l++) {
             QString list = foundnames.at(l);
             if (selectedName.startsWith(list)) {
-                int index = i-offset;
-                model->setPeaks(gSession->selectedExperiment()->
-                                peaks()->selectedPeakLists(l)->getPeaksAt(index)->getPeaks());
+                int index = i - offset;
+                model->setPeaks(gSession->selectedExperiment()
+                                    ->peaks()
+                                    ->selectedPeakLists(l)
+                                    ->getPeaksAt(index)
+                                    ->getPeaks());
                 return;
             }
-            offset += gSession->selectedExperiment()->peaks()->selectedPeakLists(l)->
-                    numberFilteredLists();
+            offset += gSession->selectedExperiment()
+                          ->peaks()
+                          ->selectedPeakLists(l)
+                          ->numberFilteredLists();
         }
     });
     peaks = new PeaksTableView;

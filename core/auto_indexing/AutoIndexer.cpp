@@ -13,18 +13,18 @@
 //  ***********************************************************************************************
 
 #include "core/auto_indexing/AutoIndexer.h"
-#include "core/experiment/DataSet.h"
 #include "core/auto_indexing/FFTIndexing.h"
-#include "core/fitting/FitParameters.h"
 #include "core/crystal/GruberReduction.h"
 #include "core/crystal/MillerIndex.h"
-#include "core/fitting/Minimizer.h"
 #include "core/crystal/NiggliReduction.h"
+#include "core/crystal/UnitCell.h"
+#include "core/experiment/DataSet.h"
+#include "core/fitting/FitParameters.h"
+#include "core/fitting/Minimizer.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakFilter.h"
 #include "core/utils/ProgressHandler.h"
-#include "core/geometry/ReciprocalVector.h"
-#include "core/crystal/UnitCell.h"
 
 #include <iostream>
 #include <string>

@@ -26,8 +26,8 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
-#include "core/experiment/DataSet.h"
 #include "core/detector/Detector.h"
+#include "core/experiment/DataSet.h"
 
 #include "apps/items/CutLineGraphicsItem.h"
 #include "apps/models/DetectorScene.h"

@@ -6,7 +6,8 @@
 #include "core/search_peaks/Blob3D.h"
 const double tolerance = 1e-5;
 
-TEST_CASE("test/geometry/TestBlob3D.cpp", "") {
+TEST_CASE("test/geometry/TestBlob3D.cpp", "")
+{
 
     nsx::Blob3D blob;
     // Create a set of points for a 3D Gaussian.
