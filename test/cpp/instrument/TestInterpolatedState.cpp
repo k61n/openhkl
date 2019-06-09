@@ -3,12 +3,12 @@
 #include <array>
 #include <Eigen/Dense>
 
-#include "core/data/DataReaderFactory.h"
+#include "core/loader/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/experiment/Experiment.h"
-#include "core/data/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InterpolatedState.h"
 #include "core/utils/ProgressHandler.h"

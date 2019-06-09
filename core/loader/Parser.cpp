@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/data/Parser.cpp
+//! @file      core/loader/Parser.cpp
 //! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -14,7 +14,7 @@
 
 #include <boost/spirit/include/qi.hpp>
 
-#include "core/data/Parser.h"
+#include "core/loader/Parser.h"
 
 namespace nsx {
 

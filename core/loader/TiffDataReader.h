@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/data/TiffDataReader.h
+//! @file      core/loader/TiffDataReader.h
 //! @brief     Defines ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -17,7 +17,7 @@
 
 #include <tiffio.h>
 
-#include "core/data/IDataReader.h"
+#include "core/loader/IDataReader.h"
 
 namespace nsx {
 

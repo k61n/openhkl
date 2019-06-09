@@ -4,7 +4,7 @@
 #include <Eigen/Dense>
 
 #include "core/utils/Enums.h"
-#include "core/data/MatrixParser.h"
+#include "core/loader/MatrixParser.h"
 TEST_CASE("test/utils/TestMatrixParser.cpp", "") {
 
     Eigen::MatrixXi m;

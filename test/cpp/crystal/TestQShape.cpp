@@ -2,7 +2,7 @@
 #include <Eigen/Dense>
 
 #include "core/search_peaks/ConvolverFactory.h"
-#include "core/data/DataReaderFactory.h"
+#include "core/loader/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/experiment/Experiment.h"

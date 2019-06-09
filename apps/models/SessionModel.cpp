@@ -37,7 +37,7 @@
 
 #include "core/statistics/CC.h"
 #include "core/experiment/CrystalTypes.h"
-#include "core/data/DataReaderFactory.h"
+#include "core/loader/DataReaderFactory.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/geometry/Ellipsoid.h"

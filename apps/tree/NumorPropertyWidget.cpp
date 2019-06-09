@@ -15,8 +15,8 @@
 #include <QWidget>
 
 #include "core/experiment/DataSet.h"
-#include "core/data/IDataReader.h"
-#include "core/data/MetaData.h"
+#include "core/loader/IDataReader.h"
+#include "core/loader/MetaData.h"
 
 #include "apps/models/MetaTypes.h"
 #include "apps/models/NumorItem.h"

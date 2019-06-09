@@ -1,7 +1,7 @@
 #include "test/cpp/catch.hpp"
 #include <Eigen/Dense>
 
-#include "core/data/DataReaderFactory.h"
+#include "core/loader/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 TEST_CASE("test/data/TestHDF5Data.cpp", "") {

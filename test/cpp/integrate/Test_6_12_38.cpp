@@ -8,7 +8,7 @@
 
 #include "core/auto_indexing/AutoIndexer.h"
 #include "core/experiment/CrystalTypes.h"
-#include "core/data/DataReaderFactory.h"
+#include "core/loader/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/instrument/Diffractometer.h"

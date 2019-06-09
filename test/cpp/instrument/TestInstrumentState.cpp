@@ -1,9 +1,9 @@
 #include "test/cpp/catch.hpp"
 
-#include "core/data/DataReaderFactory.h"
+#include "core/loader/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
-#include "core/data/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/instrument/InstrumentState.h"
 
 namespace nsx {

@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/data/TiffDataReader.cpp
+//! @file      core/loader/TiffDataReader.cpp
 //! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/data/TiffDataReader.h"
+#include "core/loader/TiffDataReader.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"

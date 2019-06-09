@@ -24,9 +24,9 @@
 
 #include "core/statistics/CC.h"
 #include "core/experiment/DataSet.h"
-#include "core/data/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/logger/Logger.h"
-#include "core/data/MetaData.h"
+#include "core/loader/MetaData.h"
 #include "core/crystal/MillerIndex.h"
 #include "core/peak/Peak3D.h"
 #include "core/statistics/RFactor.h"

@@ -27,7 +27,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/geometry/Ellipsoid.h"
 #include "core/gonio/Gonio.h"
-#include "core/data/ILLDataReader.h"
+#include "core/loader/ILLDataReader.h"
 #include "core/peak/Peak3D.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "core/instrument/Sample.h"

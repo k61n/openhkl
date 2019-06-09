@@ -21,7 +21,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/geometry/Ellipsoid.h"
 #include "core/geometry/GeometryTypes.h"
-#include "core/data/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/geometry/ReciprocalVector.h"
 
 namespace nsx {

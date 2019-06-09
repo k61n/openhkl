@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/data/MatrixParser.cpp
+//! @file      core/loader/MatrixParser.cpp
 //! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -15,7 +15,7 @@
 #include <sstream>
 #include <stdexcept>
 
-#include "core/data/MatrixParser.h"
+#include "core/loader/MatrixParser.h"
 
 namespace nsx {
 

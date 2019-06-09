@@ -20,7 +20,7 @@
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/geometry/GeometryTypes.h"
-#include "core/data/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/crystal/MillerIndex.h"
 #include "core/peak/Peak3D.h"

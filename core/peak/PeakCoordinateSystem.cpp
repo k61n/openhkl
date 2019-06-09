@@ -16,7 +16,7 @@
 #include "core/experiment/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/data/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/peak/Peak3D.h"
 
 namespace nsx {

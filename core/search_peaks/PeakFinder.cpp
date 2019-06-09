@@ -21,7 +21,7 @@
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/experiment/Experiment.h"
-#include "core/data/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/logger/Logger.h"
 #include "core/mathematics/MathematicsTypes.h"
 #include "core/peak/Octree.h"

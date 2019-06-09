@@ -15,10 +15,10 @@
 
 #include "gui/models/session.h"
 
-#include "core/data/DataReaderFactory.h"
+#include "core/loader/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
-#include "core/data/IDataReader.h"
-#include "core/data/RawDataReader.h"
+#include "core/loader/IDataReader.h"
+#include "core/loader/RawDataReader.h"
 
 #include "apps/dialogs/DialogRawData.h"
 #include "gui/dialogs/experimentdialog.h"

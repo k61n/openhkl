@@ -23,7 +23,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/experiment/Experiment.h"
 #include "core/gonio/Gonio.h"
-#include "core/data/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/monte-carlo/MCAbsorption.h"
 #include "core/chemistry/Material.h"

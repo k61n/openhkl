@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/data/IDataReader.h
+//! @file      core/loader/IDataReader.h
 //! @brief     Defines ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -22,7 +22,7 @@
 
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InstrumentTypes.h"
-#include "core/data/MetaData.h"
+#include "core/loader/MetaData.h"
 
 namespace nsx {
 

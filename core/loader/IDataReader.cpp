@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/data/IDataReader.cpp
+//! @file      core/loader/IDataReader.cpp
 //! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -18,11 +18,11 @@
 
 #include "H5Cpp.h"
 
-#include "core/data/BloscFilter.h"
+#include "core/loader/BloscFilter.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/gonio/Gonio.h"
-#include "core/data/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/mathematics/MathematicsTypes.h"
 #include "core/utils/Path.h"
 #include "core/instrument/Sample.h"

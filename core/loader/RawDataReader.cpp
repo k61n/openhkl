@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/data/RawDataReader.cpp
+//! @file      core/loader/RawDataReader.cpp
 //! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -23,11 +23,11 @@
 #include "core/gonio/Component.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/data/EigenToVector.h"
+#include "core/loader/EigenToVector.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Monochromator.h"
-#include "core/data/Parser.h"
-#include "core/data/RawDataReader.h"
+#include "core/loader/Parser.h"
+#include "core/loader/RawDataReader.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/utils/Units.h"

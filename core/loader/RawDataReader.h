@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/data/RawDataReader.h
+//! @file      core/loader/RawDataReader.h
 //! @brief     Defines ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -22,7 +22,7 @@
 
 #include <Eigen/Dense>
 
-#include "core/data/IDataReader.h"
+#include "core/loader/IDataReader.h"
 
 namespace nsx {
 

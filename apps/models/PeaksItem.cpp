@@ -21,20 +21,20 @@
 #include <QStandardItem>
 #include <QString>
 
-#include "core/data/DataReaderFactory.h"
+#include "core/loader/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/integration/GaussianIntegrator.h"
-#include "core/data/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/integration/ISigmaIntegrator.h"
 #include "core/logger/Logger.h"
 #include "core/integration/MeanBackgroundIntegrator.h"
-#include "core/data/MetaData.h"
+#include "core/loader/MetaData.h"
 #include "core/peak/PeakFilter.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/integration/Profile1DIntegrator.h"
 #include "core/integration/Profile3DIntegrator.h"
-#include "core/data/RawDataReader.h"
+#include "core/loader/RawDataReader.h"
 #include "core/instrument/Sample.h"
 #include "core/crystal/UnitCell.h"
 

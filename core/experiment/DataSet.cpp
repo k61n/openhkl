@@ -24,7 +24,7 @@
 #include <Eigen/Dense>
 
 #include "core/geometry/AABB.h"
-#include "core/data/BloscFilter.h"
+#include "core/loader/BloscFilter.h"
 #include "core/search_peaks/ConvolverFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/detector/Detector.h"
@@ -32,7 +32,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/geometry/Ellipsoid.h"
 #include "core/gonio/Gonio.h"
-#include "core/data/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/instrument/Monochromator.h"
 #include "core/utils/Path.h"
 #include "core/peak/Peak3D.h"

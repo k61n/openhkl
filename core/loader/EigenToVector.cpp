@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/data/EigenToVector.h
-//! @brief     Defines ###CLASSES###
+//! @file      core/loader/EigenToVector.cpp
+//! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,17 +12,18 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_DATA_EIGENTOVECTOR_H
-#define CORE_DATA_EIGENTOVECTOR_H
-
-#include <vector>
-
-#include <Eigen/Dense>
+#include "core/loader/EigenToVector.h"
 
 namespace nsx {
 
-std::vector<double> eigenToVector(const Eigen::VectorXd& ev);
+std::vector<double> eigenToVector(const Eigen::VectorXd& ev)
+{
+    const size_t size(ev.size());
+    std::vector<double> v(size);
+    for (size_t i = 0; i < size; ++i) {
+        v[i] = ev(i);
+    }
+    return v;
+}
 
 } // end namespace nsx
-
-#endif // CORE_DATA_EIGENTOVECTOR_H
