@@ -21,7 +21,6 @@ option(BUILD_WITH_OPENMP "Build with OpenMP support" OFF)
 option(NSX_VALGRIND "Run tests with valgrind" OFF)
 option(NSX_SANITIZE "Compile with clang's -fsanitize (must also set NSX_SANITIZER variable)" OFF)
 option(NSX_PYTHON "Generate Python bindings" ON)
-#set(CMAKE_VERBOSE_MAKEFILE ON)
 
 ###########################################################################
 # Scripts controlling build setup and dependencies
@@ -31,7 +30,6 @@ if(UNIX AND NOT APPLE)
     set(LINUX TRUE)
 endif()
 set(NSX_LIBRARY nsx)
-set(NSXQT_EXECUTABLE nsxqt)
 
 # Set a default build type if none was specified
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -47,7 +45,6 @@ include(SetCompilerFlags)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(DEFAULT_BUILD_SHARED_LIBS ON)
 
-# Linker flags.
 if(APPLE)
     set(NSXQT_LINK_FLAGS "-Wl,-rpath,@loader_path/../../core/")
 elseif(UNIX)
@@ -59,7 +56,6 @@ endif()
 if(BUILD_COVERAGE_REPORT)
     include(CheckCoverage)
 endif()
-
 
 # Enable unit testing with ctest. This must be called before any calls to add_subdirectory
 enable_testing()
@@ -81,14 +77,11 @@ endif()
 add_subdirectory(test/data)
 add_subdirectory(test/cpp)
 
-# swig + python tests
 if(NSX_PYTHON)
     add_subdirectory(swig)
     add_subdirectory(test/python)
 endif()
 
-
-# code coverage report
 if(BUILD_COVERAGE_REPORT)
     list(APPEND ignore_dirs "'/usr/include/*'")
     list(APPEND ignore_dirs "'/usr/lib/*'")
