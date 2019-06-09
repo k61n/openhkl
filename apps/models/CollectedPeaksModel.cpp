@@ -32,7 +32,7 @@
 #include "core/crystal/MillerIndex.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakFilter.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/crystal/UnitCell.h"
 
 #include "apps/models/CollectedPeaksModel.h"

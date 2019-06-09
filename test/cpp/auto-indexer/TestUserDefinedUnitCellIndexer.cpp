@@ -4,7 +4,7 @@
 #include <random>
 #include <vector>
 
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/crystal/UnitCell.h"
 #include "core/utils/Units.h"
 #include "core/auto_indexing/UserDefinedUnitCellIndexer.h"

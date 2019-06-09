@@ -21,7 +21,7 @@
 
 #include "core/geometry/DirectVector.h"
 #include "core/instrument/InstrumentTypes.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 
 namespace nsx {
 

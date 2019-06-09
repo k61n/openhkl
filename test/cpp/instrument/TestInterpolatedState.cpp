@@ -12,7 +12,7 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InterpolatedState.h"
 #include "core/utils/ProgressHandler.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 

@@ -22,7 +22,7 @@
 #include "core/geometry/Ellipsoid.h"
 #include "core/geometry/GeometryTypes.h"
 #include "core/data/IDataReader.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 
 namespace nsx {
 

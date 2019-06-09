@@ -39,7 +39,7 @@
 #include "core/experiment/Experiment.h"
 #include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/crystal/UnitCell.h"
 
 #include "apps/models/DataItem.h"

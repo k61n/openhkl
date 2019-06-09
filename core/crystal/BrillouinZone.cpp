@@ -20,7 +20,7 @@
 #include "core/crystal/BrillouinZone.h"
 #include "core/experiment/DataSet.h"
 #include "core/crystal/NiggliReduction.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 
 /**
  * @brief Update a list of Q-vectors by removing the duplicates.

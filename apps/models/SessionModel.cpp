@@ -52,7 +52,7 @@
 #include "core/search_peaks/PeakFinder.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/utils/ProgressHandler.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/crystal/SpaceGroup.h"

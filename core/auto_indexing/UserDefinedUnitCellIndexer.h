@@ -24,7 +24,7 @@
 
 #include "core/utils/Any.h"
 #include "core/experiment/CrystalTypes.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/crystal/UnitCell.h"
 #include "core/utils/Units.h"
 

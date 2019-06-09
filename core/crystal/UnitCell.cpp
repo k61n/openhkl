@@ -23,7 +23,7 @@
 #include "core/crystal/MillerIndex.h"
 #include "core/fitting/Minimizer.h"
 #include "core/crystal/NiggliReduction.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/crystal/UnitCell.h"
 #include "core/utils/Units.h"
 

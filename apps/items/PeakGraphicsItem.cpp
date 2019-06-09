@@ -30,7 +30,7 @@
 #include "core/data/MetaData.h"
 #include "core/crystal/MillerIndex.h"
 #include "core/peak/Peak3D.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/crystal/UnitCell.h"
 #include "core/utils/Units.h"
 

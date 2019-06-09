@@ -24,7 +24,7 @@
 #include "core/peak/MergedPeak.h"
 #include "core/crystal/MillerIndex.h"
 #include "core/peak/Peak3D.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/crystal/UnitCell.h"
 
 namespace nsx {

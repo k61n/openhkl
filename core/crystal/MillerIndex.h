@@ -20,7 +20,7 @@
 #include <Eigen/Dense>
 
 #include "core/experiment/CrystalTypes.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 
 namespace nsx {
 

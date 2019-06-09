@@ -20,7 +20,7 @@
 #include "core/search_peaks/PeakFinder.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/utils/ProgressHandler.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/instrument/Sample.h"
 #include "core/integration/ShapeLibrary.h"
 #include "core/crystal/UnitCell.h"

@@ -21,7 +21,7 @@
 #include "core/geometry/DirectVector.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 
 namespace nsx {
 

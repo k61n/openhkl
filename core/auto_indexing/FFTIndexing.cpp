@@ -21,7 +21,7 @@
 #include <unsupported/Eigen/FFT>
 
 #include "core/auto_indexing/FFTIndexing.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/utils/Units.h"
 
 namespace nsx {

@@ -17,7 +17,7 @@
 
 #include "core/geometry/DirectVector.h"
 #include "core/instrument/InstrumentState.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 
 #include <Eigen/Core>
 

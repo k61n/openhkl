@@ -142,7 +142,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
 
 #include "core/geometry/DirectVector.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 
 #include "core/detector/DetectorEvent.h"
 
@@ -328,7 +328,7 @@ using namespace nsx;
 %include "core/geometry/DirectVector.h"
 %template(DirectVectorList) std::vector<nsx::DirectVector>;
 
-%include "core/rec_space/ReciprocalVector.h"
+%include "core/geometry/ReciprocalVector.h"
 %template(ReciprocalVectorList) std::vector<nsx::ReciprocalVector>;
 %template(ReciprocalVectorQueue) std::deque<nsx::ReciprocalVector>;
 

@@ -24,7 +24,7 @@
 #include "core/experiment/CrystalTypes.h"
 #include "core/fitting/FitParameters.h"
 #include "core/instrument/InstrumentTypes.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/crystal/UnitCell.h"
 
 namespace nsx {

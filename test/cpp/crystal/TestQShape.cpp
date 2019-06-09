@@ -9,7 +9,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "core/utils/ProgressHandler.h"
-#include "core/rec_space/ReciprocalVector.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/instrument/Sample.h"
 #include "core/utils/Units.h"
 
