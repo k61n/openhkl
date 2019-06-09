@@ -47,6 +47,7 @@ endif()
 
 include(CheckDependencies)
 include(SetCompilerFlags)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 include(SetLinkerFlags)
 include(ConfigureInstall)
 
