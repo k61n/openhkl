@@ -16,8 +16,6 @@
 #define CORE_GONIO_COMPONENT_H
 
 
-
-
 #include "core/geometry/DirectVector.h"
 #include "core/gonio/Gonio.h"
 

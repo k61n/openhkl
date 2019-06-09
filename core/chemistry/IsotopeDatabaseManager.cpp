@@ -14,8 +14,8 @@
 
 #include <stdexcept>
 
-#include "core/resources/Resources.h"
 #include "core/chemistry/IsotopeDatabaseManager.h"
+#include "core/resources/Resources.h"
 #include "core/utils/Path.h"
 #include "core/utils/Units.h"
 #include "core/utils/YAMLType.h"

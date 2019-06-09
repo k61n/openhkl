@@ -16,7 +16,6 @@
 #define CORE_EXPERIMENT_DATASET_H
 
 
-
 #include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataTypes.h"
 #include "core/instrument/InterpolatedState.h"

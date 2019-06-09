@@ -20,12 +20,12 @@
 #include <QString>
 #include <QStringList>
 
-#include "core/resources/Resources.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentTypes.h"
 #include "core/loader/DataReaderFactory.h"
 #include "core/logger/Logger.h"
+#include "core/resources/Resources.h"
 #include "core/utils/Path.h"
 
 #include "apps/dialogs/DialogHDF5Converter.h"

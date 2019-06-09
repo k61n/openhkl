@@ -16,7 +16,6 @@
 #define CORE_CRYSTAL_BRILLOUINZONE_H
 
 
-
 #include "core/hull/ConvexHull.h"
 
 namespace nsx {

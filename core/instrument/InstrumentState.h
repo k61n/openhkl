@@ -16,7 +16,6 @@
 #define CORE_INSTRUMENT_INSTRUMENTSTATE_H
 
 
-
 #include "core/geometry/DirectVector.h"
 #include "core/geometry/ReciprocalVector.h"
 #include "core/instrument/InstrumentTypes.h"

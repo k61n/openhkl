@@ -38,9 +38,6 @@ struct Triangle;
 struct Vertex;
 
 
-
-
-
 using sptrShapeLibrary = std::shared_ptr<ShapeLibrary>;
 
 using TrianglesList = std::vector<Triangle>;

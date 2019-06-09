@@ -16,7 +16,6 @@
 #define CORE_CRYSTAL_SYMOP_H
 
 
-
 #include "core/experiment/CrystalTypes.h"
 
 namespace nsx {

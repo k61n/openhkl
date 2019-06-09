@@ -26,9 +26,9 @@
 
 namespace nsx {
 
-using resource_function=std::function<const std::vector<std::string>&()>;
+using resource_function = std::function<const std::vector<std::string>&()>;
 
-YAML::Node findResource(const std::pair<std::string,std::string>& resource);
+YAML::Node findResource(const std::pair<std::string, std::string>& resource);
 
 void mergeResources(YAML::Node& node1, YAML::Node& node2);
 

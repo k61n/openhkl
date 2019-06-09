@@ -34,7 +34,6 @@ using sptrDataSet = std::shared_ptr<DataSet>;
 using sptrPeakFinder = std::shared_ptr<PeakFinder>;
 
 
-
 using DataList = std::vector<sptrDataSet>;
 
 using FrameIteratorCallback = std::function<IFrameIterator*(DataSet&, int)>;

@@ -18,7 +18,6 @@
 //! \file
 
 
-
 namespace nsx {
 
 //! Centering type of the Bravais lattice

@@ -16,7 +16,6 @@
 #define CORE_GONIO_TRANSAXIS_H
 
 
-
 #include "core/gonio/Axis.h"
 
 namespace nsx {

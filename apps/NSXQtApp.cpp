@@ -20,7 +20,8 @@
 
 NSXQtApp::NSXQtApp(int& argc, char* argv[]) : QApplication(argc, argv)
 {
-    this->setApplicationDisplayName(QString::fromStdString("NSXQt Version?"));// TODO restore version
+    this->setApplicationDisplayName(
+        QString::fromStdString("NSXQt Version?")); // TODO restore version
     this->setApplicationName("nsxqt");
 }
 

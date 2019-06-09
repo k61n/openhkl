@@ -16,9 +16,6 @@
 #define CORE_DETECTOR_DETECTOREVENT_H
 
 
-
-
-
 namespace nsx {
 
 //! Lightweight class for detector events.

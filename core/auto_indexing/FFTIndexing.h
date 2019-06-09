@@ -16,7 +16,6 @@
 #define CORE_AUTO_INDEXING_FFTINDEXING_H
 
 
-
 #include "core/geometry/GeometryTypes.h"
 
 namespace nsx {

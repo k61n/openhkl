@@ -16,7 +16,6 @@
 #define CORE_HULL_FACE_H
 
 
-
 namespace nsx {
 
 struct Edge;

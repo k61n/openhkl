@@ -16,7 +16,6 @@
 #define CORE_CRYSTAL_MILLERINDEX_H
 
 
-
 #include "core/experiment/CrystalTypes.h"
 #include "core/geometry/ReciprocalVector.h"
 

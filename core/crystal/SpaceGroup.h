@@ -16,7 +16,6 @@
 #define CORE_CRYSTAL_SPACEGROUP_H
 
 
-
 #include "core/crystal/MillerIndex.h"
 #include "core/crystal/SymOp.h"
 

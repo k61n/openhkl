@@ -16,8 +16,6 @@
 #include <sstream>
 #include <stdexcept>
 
-#include "core/resources/Resources.h"
-#include "core/utils/Path.h"
 #include "SingleResourceBioDiff2500.h"
 #include "SingleResourceBioDiff5000.h"
 #include "SingleResourceD10.h"
@@ -27,43 +25,47 @@
 #include "SingleResourceD9_large_lifting_arm.h"
 #include "SingleResourceD9_lifting_arm.h"
 #include "SingleResourceI16.h"
+#include "core/resources/Resources.h"
+#include "core/utils/Path.h"
 
 namespace nsx {
 
-std::map<std::pair<std::string,std::string>,resource_function> default_resources = {{{"instruments","BioDiff2500"},&resource_instruments_BioDiff2500},
-{{"instruments","BioDiff5000"},&resource_instruments_BioDiff5000},
-{{"instruments","D10"},&resource_instruments_D10},
-{{"instruments","D19"},&resource_instruments_D19},
-{{"instruments","D9"},&resource_instruments_D9},
-{{"instruments","D9_large"},&resource_instruments_D9_large},
-{{"instruments","D9_large_lifting_arm"},&resource_instruments_D9_large_lifting_arm},
-{{"instruments","D9_lifting_arm"},&resource_instruments_D9_lifting_arm},
-{{"instruments","I16"},&resource_instruments_I16},
+std::map<std::pair<std::string, std::string>, resource_function> default_resources = {
+    {{"instruments", "BioDiff2500"}, &resource_instruments_BioDiff2500},
+    {{"instruments", "BioDiff5000"}, &resource_instruments_BioDiff5000},
+    {{"instruments", "D10"}, &resource_instruments_D10},
+    {{"instruments", "D19"}, &resource_instruments_D19},
+    {{"instruments", "D9"}, &resource_instruments_D9},
+    {{"instruments", "D9_large"}, &resource_instruments_D9_large},
+    {{"instruments", "D9_large_lifting_arm"}, &resource_instruments_D9_large_lifting_arm},
+    {{"instruments", "D9_lifting_arm"}, &resource_instruments_D9_lifting_arm},
+    {{"instruments", "I16"}, &resource_instruments_I16},
 };
 
-void mergeResources(YAML::Node& node1, YAML::Node& node2) {
+void mergeResources(YAML::Node& node1, YAML::Node& node2)
+{
 
     if (node1.Type() != node2.Type()) {
         throw std::runtime_error("Can not merge node of different type");
     }
 
     if (node1.IsMap()) {
-        for (auto it = node2.begin();it!=node2.end();++it) {
+        for (auto it = node2.begin(); it != node2.end(); ++it) {
             std::string key = it->first.as<std::string>();
-            YAML::Node temp_node1=node1[key];
-            YAML::Node temp_node2=it->second;
+            YAML::Node temp_node1 = node1[key];
+            YAML::Node temp_node2 = it->second;
             if (temp_node1) {
-                mergeResources(temp_node1,temp_node2);
+                mergeResources(temp_node1, temp_node2);
             } else {
                 node1[key] = temp_node2;
             }
         }
     } else if (node1.IsSequence()) {
-        for (size_t i = 0; i < node2.size();++i) {
-            YAML::Node temp_node1=node1[i];
-            YAML::Node temp_node2=node2[i];
+        for (size_t i = 0; i < node2.size(); ++i) {
+            YAML::Node temp_node1 = node1[i];
+            YAML::Node temp_node2 = node2[i];
             if (temp_node1) {
-                mergeResources(temp_node1,temp_node2);
+                mergeResources(temp_node1, temp_node2);
             } else {
                 node1.push_back(temp_node2);
             }
@@ -73,7 +75,7 @@ void mergeResources(YAML::Node& node1, YAML::Node& node2) {
     }
 }
 
-YAML::Node findResource(const std::pair<std::string,std::string>& resource)
+YAML::Node findResource(const std::pair<std::string, std::string>& resource)
 {
     YAML::Node resource_yaml;
     auto it = default_resources.find(resource);
@@ -85,8 +87,8 @@ YAML::Node findResource(const std::pair<std::string,std::string>& resource)
         resource_yaml = YAML::Load(ss);
     }
 
-    auto user_resource_dir = buildPath({applicationDataPath(),resource.first});
-    auto user_resource_path = buildPath({user_resource_dir,resource.second+".yml"});
+    auto user_resource_dir = buildPath({applicationDataPath(), resource.first});
+    auto user_resource_path = buildPath({user_resource_dir, resource.second + ".yml"});
 
     if (fileExists(user_resource_path)) {
 
@@ -98,19 +100,19 @@ YAML::Node findResource(const std::pair<std::string,std::string>& resource)
             return user_yaml;
         }
 
-        mergeResources(resource_yaml,user_yaml);
+        mergeResources(resource_yaml, user_yaml);
 
     } else {
 
         if (resource_yaml.IsNull()) {
-            throw std::runtime_error("Unknown resource: "+resource.first+" - "+resource.second);
+            throw std::runtime_error(
+                "Unknown resource: " + resource.first + " - " + resource.second);
         }
 
         makeDirectory(user_resource_dir);
         std::ofstream fout(user_resource_path);
         fout << resource_yaml;
         fout.close();
-
     }
 
     return resource_yaml;
@@ -121,7 +123,7 @@ std::set<std::string> getResourcesName(const std::string& resource_type)
     std::set<std::string> resources_name;
 
     for (auto p : default_resources) {
-        if (p.first.first.compare(resource_type)==0) {
+        if (p.first.first.compare(resource_type) == 0) {
             resources_name.insert(p.first.second);
         }
     }
