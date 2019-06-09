@@ -24,7 +24,7 @@
 #include "core/gonio/Gonio.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/logger/Logger.h"
-#include "core/mathematics/MatrixOperations.h"
+#include "core/instrument/MatrixOperations.h"
 #include "core/fitting/Minimizer.h"
 #include "core/instrument/Sample.h"
 

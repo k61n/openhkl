@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/mathematics/MatrixOperations.cpp
+//! @file      core/instrument/MatrixOperations.cpp
 //! @brief     Implements ###CLASSES###
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/mathematics/MatrixOperations.h"
+#include "core/instrument/MatrixOperations.h"
 #include <unsupported/Eigen/MatrixFunctions>
 
 namespace nsx {

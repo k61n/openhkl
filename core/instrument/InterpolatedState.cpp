@@ -17,7 +17,7 @@
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/logger/Logger.h"
-#include "core/mathematics/MatrixOperations.h"
+#include "core/instrument/MatrixOperations.h"
 
 namespace nsx {
 
