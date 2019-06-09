@@ -233,4 +233,4 @@ int SymOp::translationIsIntegralMultiple(const SymOp& other) const
         return 0;
 }
 
-} // end namespace nsx
+} // namespace nsx

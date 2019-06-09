@@ -57,6 +57,6 @@ private:
     double _expectedRmerge, _expectedRmeas, _expectedRpim;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_STATISTICS_RFACTOR_H

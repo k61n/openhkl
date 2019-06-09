@@ -69,4 +69,4 @@ void Component::setName(const std::string& name)
     _name = name;
 }
 
-} // end namespace nsx
+} // namespace nsx

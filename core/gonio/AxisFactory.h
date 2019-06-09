@@ -33,6 +33,6 @@ private:
     ~AxisFactory();
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_GONIO_AXISFACTORY_H

@@ -156,4 +156,4 @@ void IPeakIntegrator::setHandler(sptrProgressHandler handler)
     _handler = handler;
 }
 
-} // end namespace nsx
+} // namespace nsx

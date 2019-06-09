@@ -317,4 +317,4 @@ double Ellipsoid::r2(const Eigen::Vector3d x) const
     return (x - _center).dot(_metric * (x - _center));
 }
 
-} // end namespace nsx
+} // namespace nsx

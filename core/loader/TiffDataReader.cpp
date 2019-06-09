@@ -109,4 +109,4 @@ Eigen::MatrixXi TiffDataReader::data(std::size_t /*frame*/)
     }
 }
 
-} // end namespace nsx
+} // namespace nsx

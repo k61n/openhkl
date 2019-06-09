@@ -40,6 +40,6 @@ private:
     bool _fitCovariance;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_INTEGRATION_PIXELSUMINTEGRATOR_H

@@ -113,4 +113,4 @@ void Source::addMonochromator(Monochromator mono)
     _monochromators.push_back(mono);
 }
 
-} // end namespace nsx
+} // namespace nsx

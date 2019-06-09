@@ -103,4 +103,4 @@ bool IsotopeDatabaseManager::hasProperty(
     return (pit != iit->second.end());
 }
 
-} // end namespace nsx
+} // namespace nsx

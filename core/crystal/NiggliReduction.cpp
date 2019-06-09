@@ -205,4 +205,4 @@ void NiggliReduction::transformG()
     return;
 }
 
-} // end namespace nsx
+} // namespace nsx

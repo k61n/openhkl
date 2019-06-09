@@ -75,6 +75,6 @@ private:
     double _zeta;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_PEAK_PEAKCOORDINATESYSTEM_H

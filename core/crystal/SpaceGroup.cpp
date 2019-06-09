@@ -653,4 +653,4 @@ std::vector<PeakList> SpaceGroup::findEquivalences(const PeakList& peaks, bool f
     return peak_equivs;
 }
 
-} // end namespace nsx
+} // namespace nsx

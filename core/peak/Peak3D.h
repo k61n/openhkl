@@ -152,6 +152,6 @@ private:
     std::vector<Intensity> _rockingCurve;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_PEAK_PEAK3D_H

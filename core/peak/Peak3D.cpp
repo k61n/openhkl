@@ -271,4 +271,4 @@ double Peak3D::bkgEnd() const
     return _bkgEnd;
 }
 
-} // end namespace nsx
+} // namespace nsx

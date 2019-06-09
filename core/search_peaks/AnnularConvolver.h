@@ -75,6 +75,6 @@ public:
     RealMatrix convolve(const RealMatrix& image) override;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_SEARCH_PEAKS_ANNULARCONVOLVER_H

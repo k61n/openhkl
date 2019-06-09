@@ -67,6 +67,6 @@ private:
     bool _constrained;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_FITTING_FITPARAMETERS_H

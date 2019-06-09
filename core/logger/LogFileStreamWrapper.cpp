@@ -49,4 +49,4 @@ void LogFileStreamWrapper::printSuffix()
     _stream.flush();
 }
 
-} // end namespace nsx
+} // namespace nsx

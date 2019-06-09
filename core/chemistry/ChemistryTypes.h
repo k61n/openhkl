@@ -32,6 +32,6 @@ using compoundList = std::vector<std::pair<isotopeContents, double>>;
 using isotopeProperties =
     std::map<std::string, Variant<bool, int, double, std::complex<double>, std::string>>;
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_CHEMISTRY_CHEMISTRYTYPES_H

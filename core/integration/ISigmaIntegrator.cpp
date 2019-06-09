@@ -114,4 +114,4 @@ bool ISigmaIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
     return true;
 }
 
-} // end namespace nsx
+} // namespace nsx

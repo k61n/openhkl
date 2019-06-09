@@ -113,4 +113,4 @@ void setError(std::function<Logger()> error)
     g_error = error;
 }
 
-} // end namespace nsx
+} // namespace nsx

@@ -85,4 +85,4 @@ void Triangle::rotate(const Eigen::Matrix<double, 3, 3>& rot)
     calculate();
 }
 
-} // end namespace nsx
+} // namespace nsx

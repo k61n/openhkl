@@ -430,4 +430,4 @@ std::shared_ptr<IDataReader> DataSet::reader() const
     return _reader;
 }
 
-} // end namespace nsx
+} // namespace nsx

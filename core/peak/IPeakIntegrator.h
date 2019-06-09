@@ -69,6 +69,6 @@ protected:
     sptrProgressHandler _handler;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_PEAK_IPEAKINTEGRATOR_H

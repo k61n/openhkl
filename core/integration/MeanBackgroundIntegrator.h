@@ -31,6 +31,6 @@ public:
     bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H

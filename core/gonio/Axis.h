@@ -99,6 +99,6 @@ protected:
 
 std::ostream& operator<<(std::ostream& os, const Axis& axis);
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_GONIO_AXIS_H

@@ -75,6 +75,6 @@ private:
     RealMatrix _matrix(int nrows, int ncols) const override;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_SEARCH_PEAKS_RADIALCONVOLVER_H

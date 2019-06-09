@@ -79,4 +79,4 @@ std::ostream& operator<<(std::ostream& os, const Face& face)
     return os;
 }
 
-} // end namespace nsx
+} // namespace nsx

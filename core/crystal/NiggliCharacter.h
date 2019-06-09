@@ -64,6 +64,6 @@ struct NiggliCharacter {
     bool set(int priority, double s, double t);
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_CRYSTAL_NIGGLICHARACTER_H

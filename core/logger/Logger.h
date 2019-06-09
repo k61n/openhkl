@@ -62,6 +62,6 @@ void setInfo(std::function<Logger()> info);
 Logger error();
 void setError(std::function<Logger()> error);
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_LOGGER_LOGGER_H

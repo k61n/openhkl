@@ -46,6 +46,6 @@ Eigen::MatrixXd convolvedFrame(
     Eigen::MatrixXi frame_data, const std::string& convolver_type,
     const std::map<std::string, double>& parameters);
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_SEARCH_PEAKS_CONVOLVERFACTORY_H

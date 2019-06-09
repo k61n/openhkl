@@ -30,6 +30,6 @@ std::string join(const std::vector<std::string>& tokens, std::string delimiter =
 
 std::vector<std::string> split(const std::string& input_string, const std::string& delimiter = " ");
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_UTILS_STRINGIO_H

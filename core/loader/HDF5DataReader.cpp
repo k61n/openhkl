@@ -49,4 +49,4 @@ Eigen::MatrixXi HDF5DataReader::data(size_t frame)
     return Eigen::MatrixXi(m);
 }
 
-} // end namespace nsx
+} // namespace nsx

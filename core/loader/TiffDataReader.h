@@ -49,6 +49,6 @@ private:
     TIFF* _file;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_LOADER_TIFFDATAREADER_H

@@ -316,4 +316,4 @@ double Minimizer::meanSquaredError() const
     return mse / (size - _params.nfree());
 }
 
-} // end namespace nsx
+} // namespace nsx

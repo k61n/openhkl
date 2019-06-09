@@ -29,4 +29,4 @@ DetectorFactory::DetectorFactory()
 
 DetectorFactory::~DetectorFactory() {}
 
-} // end namespace nsx
+} // namespace nsx

@@ -134,4 +134,4 @@ void Experiment::removeData(const std::string& name)
     }
 }
 
-} // end namespace nsx
+} // namespace nsx

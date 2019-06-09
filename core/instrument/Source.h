@@ -66,6 +66,6 @@ protected:
     size_t _selectedMonochromator;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_INSTRUMENT_SOURCE_H

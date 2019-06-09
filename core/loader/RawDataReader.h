@@ -103,6 +103,6 @@ Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> RawDataReader::matrixFromData(
     }
 }
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_LOADER_RAWDATAREADER_H

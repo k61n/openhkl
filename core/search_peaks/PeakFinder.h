@@ -97,6 +97,6 @@ private:
     int _framesEnd;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_SEARCH_PEAKS_PEAKFINDER_H

@@ -68,4 +68,4 @@ void PeakData::reset()
     std::swap(_coords, crds);
 }
 
-} // end namespace nsx
+} // namespace nsx

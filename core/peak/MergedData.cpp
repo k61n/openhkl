@@ -63,4 +63,4 @@ void MergedData::clear()
     _peaks.clear();
 }
 
-} // end namespace nsx
+} // namespace nsx

@@ -556,4 +556,4 @@ void UserDefinedUnitCellIndexer::run()
     nsx::info() << _solutions.size() << "unit cells found";
 }
 
-} // end namespace nsx
+} // namespace nsx

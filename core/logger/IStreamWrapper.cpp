@@ -24,4 +24,4 @@ IStreamWrapper::IStreamWrapper(
 
 IStreamWrapper::~IStreamWrapper() {}
 
-} // end namespace nsx
+} // namespace nsx

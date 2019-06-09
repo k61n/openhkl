@@ -48,4 +48,4 @@ interpolateRotation(const Eigen::Matrix3d& U0, const Eigen::Matrix3d& U1, const 
     return q0.slerp(t, q1).toRotationMatrix();
 }
 
-} // end namespace nsx
+} // namespace nsx

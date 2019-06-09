@@ -147,4 +147,4 @@ bool PixelSumIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     return true;
 }
 
-} // end namespace nsx
+} // namespace nsx

@@ -84,4 +84,4 @@ unsigned int CC::nPeaks() const
     return _nPeaks;
 }
 
-} // end namespace nsx
+} // namespace nsx

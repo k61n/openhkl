@@ -51,6 +51,6 @@ protected:
     std::unique_ptr<H5::DataSpace> _memspace;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_LOADER_HDF5METADATAREADER_H

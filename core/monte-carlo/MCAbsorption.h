@@ -60,6 +60,6 @@ private:
     double _source_y_pos;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_MONTE_CARLO_MCABSORPTION_H

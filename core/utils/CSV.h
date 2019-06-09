@@ -39,6 +39,6 @@ private:
         char& delim); //!<< Get next token, write delimeter type
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_UTILS_CSV_H

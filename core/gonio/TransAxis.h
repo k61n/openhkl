@@ -44,6 +44,6 @@ public:
     std::ostream& printSelf(std::ostream& os) const override;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_GONIO_TRANSAXIS_H

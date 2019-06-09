@@ -39,6 +39,6 @@ private:
     double _nframes;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_INTEGRATION_PROFILE1DINTEGRATOR_H

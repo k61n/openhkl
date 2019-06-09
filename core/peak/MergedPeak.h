@@ -77,6 +77,6 @@ private:
 bool operator<(const MergedPeak& p, const MergedPeak& q);
 #endif
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_PEAK_MERGEDPEAK_H

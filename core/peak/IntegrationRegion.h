@@ -70,6 +70,6 @@ private:
     ConvexHull _hull;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_PEAK_INTEGRATIONREGION_H

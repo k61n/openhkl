@@ -51,6 +51,6 @@ private:
     Intensity _meanBkg;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_INTEGRATION_PROFILE1D_H

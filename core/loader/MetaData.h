@@ -105,6 +105,6 @@ template <typename _type> _type MetaData::key(const char* name) const
     return key<_type>(std::string(name));
 }
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_LOADER_METADATA_H

@@ -173,4 +173,4 @@ Eigen::Matrix3d Blob3D::covariance() const
     return cov;
 }
 
-} // end namespace nsx
+} // namespace nsx

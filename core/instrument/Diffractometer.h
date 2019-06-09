@@ -94,6 +94,6 @@ protected:
     Source _source;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_INSTRUMENT_DIFFRACTOMETER_H

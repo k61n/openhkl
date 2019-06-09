@@ -196,6 +196,6 @@ private:
     const Octree* _node;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_PEAK_OCTREE_H

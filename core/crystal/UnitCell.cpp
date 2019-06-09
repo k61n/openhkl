@@ -1105,4 +1105,4 @@ std::vector<std::string> UnitCell::compatibleSpaceGroups() const
     return compatible_space_groups;
 }
 
-} // end namespace nsx
+} // namespace nsx

@@ -148,4 +148,4 @@ void Diffractometer::setSource(const Source& source)
     _source = source;
 }
 
-} // end namespace nsx
+} // namespace nsx

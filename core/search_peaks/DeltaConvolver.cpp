@@ -41,4 +41,4 @@ RealMatrix DeltaConvolver::_matrix(int nrows, int ncols) const
     return kernel;
 }
 
-} // end namespace nsx
+} // namespace nsx

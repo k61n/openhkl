@@ -148,4 +148,4 @@ ReciprocalVector Monochromator::ki() const
     return ReciprocalVector(0.0, 1.0 / _wavelength, 0.0);
 }
 
-} // end namespace nsx
+} // namespace nsx

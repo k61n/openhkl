@@ -76,6 +76,6 @@ private:
 std::ostream& operator<<(std::ostream& os, const Material& material);
 #endif
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_CHEMISTRY_MATERIAL_H

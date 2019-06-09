@@ -226,4 +226,4 @@ const AABB& Profile3D::aabb() const
     return _aabb;
 }
 
-} // end namespace nsx
+} // namespace nsx

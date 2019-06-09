@@ -84,6 +84,6 @@ private:
     std::size_t _currentLine;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_LOADER_ILLDATAREADER_H

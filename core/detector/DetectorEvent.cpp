@@ -31,4 +31,4 @@ DetectorEvent::DetectorEvent(Eigen::Vector3d x, double tof)
 {
 }
 
-} // end namespace nsx
+} // namespace nsx

@@ -90,6 +90,6 @@ private:
     std::shared_ptr<ProgressHandler> _handler;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_AUTO_INDEXING_AUTOINDEXER_H

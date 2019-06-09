@@ -32,6 +32,6 @@ using InstrumentStateList = std::vector<InstrumentState>;
 
 using DetectorState = std::vector<double>;
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_INSTRUMENT_INSTRUMENTTYPES_H

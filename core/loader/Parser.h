@@ -27,6 +27,6 @@ void readIntsFromChar(const char* begin, const char* end, std::vector<int>& v);
 //! spirit
 void readDoublesFromChar(const char* begin, const char* end, std::vector<double>& v);
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_LOADER_PARSER_H

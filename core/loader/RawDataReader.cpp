@@ -172,4 +172,4 @@ Eigen::MatrixXi RawDataReader::data(size_t frame)
     }
 }
 
-} // end namespace nsx
+} // namespace nsx

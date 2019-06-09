@@ -44,4 +44,4 @@ void StdStreamWrapper::printSuffix()
     _stream.flush();
 }
 
-} // end namespace nsx
+} // namespace nsx

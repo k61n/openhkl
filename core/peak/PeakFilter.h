@@ -70,6 +70,6 @@ public:
     PeakList sparseDataSet(const PeakList& peaks, size_t min_num_peaks);
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_PEAK_PEAKFILTER_H

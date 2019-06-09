@@ -68,6 +68,6 @@ protected:
     Direction _dir;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_GONIO_ROTAXIS_H

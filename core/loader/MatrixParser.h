@@ -95,6 +95,6 @@ public:
     bool operator()(DataOrder dataOrder, const std::string& buffer, Eigen::MatrixXi& matrix) const;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_LOADER_MATRIXPARSER_H

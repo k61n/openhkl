@@ -89,4 +89,4 @@ Intensity Intensity::operator/(const Intensity& other) const
     return Intensity(_value * d, d * d * (_sigma2 + _value * other._sigma2));
 }
 
-} // end namespace nsx
+} // namespace nsx

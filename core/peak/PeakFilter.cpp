@@ -407,4 +407,4 @@ PeakList PeakFilter::hasUnitCell(const PeakList& peaks) const
     return filtered_peaks;
 }
 
-} // end namespace nsx
+} // namespace nsx

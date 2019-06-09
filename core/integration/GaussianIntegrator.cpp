@@ -214,4 +214,4 @@ std::vector<double> GaussianIntegrator::profile(sptrPeak3D peak, const Integrati
     return result;
 }
 
-} // end namespace nsx
+} // namespace nsx

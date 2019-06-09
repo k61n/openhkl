@@ -159,4 +159,4 @@ RealMatrix AtomicConvolver::matrix(int nrows, int ncols) const
     return _matrix(nrows, ncols);
 }
 
-} // end namespace nsx
+} // namespace nsx

@@ -91,6 +91,6 @@ template <> struct convert<Eigen::Vector2d> {
     }
 };
 
-} // end namespace YAML
+} // namespace YAML
 
 #endif // CORE_UTILS_YAMLTYPE_H

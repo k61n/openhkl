@@ -61,6 +61,6 @@ public:
     Eigen::Matrix3d jacobian(double px, double py) const override;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_DETECTOR_CYLINDRICALDETECTOR_H

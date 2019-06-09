@@ -52,6 +52,6 @@ private:
     std::vector<Eigen::MatrixXi> _frames;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_LOADER_FAKEDATAREADER_H

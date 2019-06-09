@@ -42,6 +42,6 @@ private:
     std::vector<IStreamWrapper*> _wrappers;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_LOGGER_AGGREGATESTREAMWRAPPER_H

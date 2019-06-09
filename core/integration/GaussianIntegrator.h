@@ -36,6 +36,6 @@ private:
     bool _fitCov;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_INTEGRATION_GAUSSIANINTEGRATOR_H

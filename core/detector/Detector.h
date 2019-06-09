@@ -148,6 +148,6 @@ private:
     double _gain;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_DETECTOR_DETECTOR_H

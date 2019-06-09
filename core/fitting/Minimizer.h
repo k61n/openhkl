@@ -116,6 +116,6 @@ private:
     FitParameters _params;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_FITTING_MINIMIZER_H

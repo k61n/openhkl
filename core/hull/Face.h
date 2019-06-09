@@ -60,6 +60,6 @@ struct Face {
 
 std::ostream& operator<<(std::ostream& os, const Face& face);
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_HULL_FACE_H

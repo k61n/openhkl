@@ -148,4 +148,4 @@ Eigen::Matrix3d FlatDetector::jacobian(double /*px*/, double /*py*/) const
     return J;
 }
 
-} // end namespace nsx
+} // namespace nsx

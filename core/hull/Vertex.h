@@ -57,6 +57,6 @@ struct Vertex {
 
 std::ostream& operator<<(std::ostream& os, const Vertex& vertex);
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_HULL_VERTEX_H

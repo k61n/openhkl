@@ -26,4 +26,4 @@ std::vector<double> eigenToVector(const Eigen::VectorXd& ev)
     return v;
 }
 
-} // end namespace nsx
+} // namespace nsx

@@ -197,4 +197,4 @@ double MergedPeak::pValue() const
     return gsl_cdf_chisq_P(x, k);
 }
 
-} // end namespace nsx
+} // namespace nsx

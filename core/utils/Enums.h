@@ -28,6 +28,6 @@ enum class DataOrder : size_t {
     BottomRightRowMajor = 7
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_UTILS_ENUMS_H

@@ -95,6 +95,6 @@ private:
     PeakList _peaks;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_AUTO_INDEXING_USERDEFINEDUNITCELLINDEXER_H

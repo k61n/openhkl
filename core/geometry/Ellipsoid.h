@@ -90,6 +90,6 @@ private:
     AABB _aabb;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_GEOMETRY_ELLIPSOID_H

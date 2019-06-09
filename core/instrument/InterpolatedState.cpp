@@ -84,4 +84,4 @@ double InterpolatedState::lorentzFactor(double px, double py) const
     return lorentz;
 }
 
-} // end namespace nsx
+} // namespace nsx

@@ -111,4 +111,4 @@ DirectVector Gonio::transform(const DirectVector& v, const std::vector<double>& 
     return DirectVector((result * d_vector.homogeneous()));
 }
 
-} // end namespace nsx
+} // namespace nsx

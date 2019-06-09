@@ -68,4 +68,4 @@ RealMatrix EnhancedAnnularConvolver::convolve(const RealMatrix& image)
     return result;
 }
 
-} // end namespace nsx
+} // namespace nsx

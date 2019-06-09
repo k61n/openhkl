@@ -29,4 +29,4 @@ AxisFactory::AxisFactory()
 
 AxisFactory::~AxisFactory() {}
 
-} // end namespace nsx
+} // namespace nsx

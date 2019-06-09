@@ -216,6 +216,6 @@ private:
 
 std::ostream& operator<<(std::ostream& os, const ConvexHull& chull);
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_HULL_CONVEXHULL_H

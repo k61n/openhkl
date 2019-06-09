@@ -131,6 +131,6 @@ private:
     std::shared_ptr<IDataReader> _reader;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_EXPERIMENT_DATASET_H

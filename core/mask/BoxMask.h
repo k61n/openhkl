@@ -42,6 +42,6 @@ private:
     AABB _aabb;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_MASK_BOXMASK_H

@@ -200,4 +200,4 @@ const ConvexHull& IntegrationRegion::hull() const
     return _hull;
 }
 
-} // end namespace nsx
+} // namespace nsx

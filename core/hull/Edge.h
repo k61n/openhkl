@@ -57,6 +57,6 @@ struct Edge {
 
 std::ostream& operator<<(std::ostream& os, const Edge& edge);
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_HULL_EDGE_H

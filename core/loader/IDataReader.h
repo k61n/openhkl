@@ -123,6 +123,6 @@ protected:
     bool _isOpened;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_LOADER_IDATAREADER_H

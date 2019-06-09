@@ -88,4 +88,4 @@ int NSXTest::nTests() const
     return _n_failures + _n_successes + _n_skipped;
 }
 
-} // end namespace nsx
+} // namespace nsx

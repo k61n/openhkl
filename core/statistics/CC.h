@@ -41,6 +41,6 @@ private:
     unsigned int _nPeaks;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_STATISTICS_CC_H

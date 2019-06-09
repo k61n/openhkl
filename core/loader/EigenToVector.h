@@ -23,6 +23,6 @@ namespace nsx {
 
 std::vector<double> eigenToVector(const Eigen::VectorXd& ev);
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_LOADER_EIGENTOVECTOR_H

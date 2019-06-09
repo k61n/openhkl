@@ -68,6 +68,6 @@ private:
 
 std::ostream& operator<<(std::ostream& os, const SymOp& sym);
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_CRYSTAL_SYMOP_H

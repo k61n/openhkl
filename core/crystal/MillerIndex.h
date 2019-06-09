@@ -83,6 +83,6 @@ private:
 //! Overload operator<< with MillerIndex type
 std::ostream& operator<<(std::ostream& os, const MillerIndex& hkl);
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_CRYSTAL_MILLERINDEX_H

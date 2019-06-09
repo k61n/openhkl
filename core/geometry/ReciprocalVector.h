@@ -56,6 +56,6 @@ private:
 //! Overload operator<< with ReciprocalVector type
 std::ostream& operator<<(std::ostream& os, const ReciprocalVector& rvector);
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_GEOMETRY_RECIPROCALVECTOR_H

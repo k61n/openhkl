@@ -22,6 +22,6 @@ namespace nsx {
 // Convert number into nominator and denominator
 void doubleToFraction(double number, int nmax, long& nom, long& dnom);
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_UTILS_DOUBLETOFRACTION_H

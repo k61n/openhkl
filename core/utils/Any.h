@@ -180,6 +180,6 @@ private:
     bool _immutability = false;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_UTILS_ANY_H

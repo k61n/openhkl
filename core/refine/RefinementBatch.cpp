@@ -258,4 +258,4 @@ bool RefinementBatch::contains(double f) const
     return (f > _fmin) && (f < _fmax);
 }
 
-} // end namespace nsx
+} // namespace nsx

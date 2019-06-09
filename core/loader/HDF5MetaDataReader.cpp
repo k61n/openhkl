@@ -237,4 +237,4 @@ void HDF5MetaDataReader::close()
     _isOpened = false;
 }
 
-} // end namespace nsx
+} // namespace nsx

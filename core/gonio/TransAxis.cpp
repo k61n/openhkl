@@ -61,4 +61,4 @@ std::ostream& TransAxis::printSelf(std::ostream& os) const
     return os;
 }
 
-} // end namespace nsx
+} // namespace nsx

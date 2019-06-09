@@ -34,4 +34,4 @@ IMask* EllipseMask::clone() const
     return new EllipseMask(*this);
 }
 
-} // end namespace nsx
+} // namespace nsx

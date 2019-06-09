@@ -71,4 +71,4 @@ size_t ResolutionShell::nShells() const
     return _shells.size();
 }
 
-} // end namespace nsx
+} // namespace nsx

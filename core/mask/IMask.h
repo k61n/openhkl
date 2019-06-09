@@ -37,6 +37,6 @@ protected:
     IMask& operator=(const IMask& other) = default;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_MASK_IMASK_H

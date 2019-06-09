@@ -147,4 +147,4 @@ std::ostream& operator<<(std::ostream& os, const Material& material)
     return os;
 }
 
-} // end namespace nsx
+} // namespace nsx

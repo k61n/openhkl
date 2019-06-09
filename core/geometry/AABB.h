@@ -87,6 +87,6 @@ protected:
 
 std::ostream& operator<<(std::ostream& os, const AABB& aabb);
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_GEOMETRY_AABB_H

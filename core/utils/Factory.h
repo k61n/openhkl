@@ -109,6 +109,6 @@ bool Factory<base, keytype, args...>::hasCallback(const keytype& key)
     return (it != _map.end());
 }
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_UTILS_FACTORY_H

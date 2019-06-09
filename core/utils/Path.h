@@ -49,6 +49,6 @@ bool fileExists(const std::string& filename);
 
 std::string diffractometersPath();
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_UTILS_PATH_H

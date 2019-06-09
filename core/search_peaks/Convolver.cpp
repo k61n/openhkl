@@ -47,4 +47,4 @@ void Convolver::setParameters(const std::map<std::string, double>& parameters)
     }
 }
 
-} // end namespace nsx
+} // namespace nsx

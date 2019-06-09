@@ -89,6 +89,6 @@ private:
 
 std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg);
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_CRYSTAL_SPACEGROUP_H

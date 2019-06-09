@@ -56,6 +56,6 @@ private:
 //! Overload operator<< with DirectVector type
 std::ostream& operator<<(std::ostream& os, const DirectVector& dvector);
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_GEOMETRY_DIRECTVECTOR_H

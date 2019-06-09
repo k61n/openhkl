@@ -107,4 +107,4 @@ bool ProgressHandler::aborted()
     return _aborted;
 }
 
-} // end namespace nsx
+} // namespace nsx

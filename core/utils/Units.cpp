@@ -79,4 +79,4 @@ double UnitsManager::get(const std::string& units)
     return it->second;
 }
 
-} // end namespace nsx
+} // namespace nsx

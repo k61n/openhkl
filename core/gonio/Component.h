@@ -65,6 +65,6 @@ protected:
     DirectVector _position;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_GONIO_COMPONENT_H

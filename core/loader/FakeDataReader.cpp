@@ -48,4 +48,4 @@ void FakeDataReader::setData(size_t frame, const Eigen::MatrixXi& data)
     _frames[frame] = data;
 }
 
-} // end namespace nsx
+} // namespace nsx

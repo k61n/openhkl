@@ -42,6 +42,6 @@ using FrameIteratorCallback = std::function<IFrameIterator*(DataSet&, int)>;
 using MetaDataMap = std::map<const char*, Variant<int, double, std::string>>;
 using MetaDataKeySet = std::set<std::string>;
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_EXPERIMENT_DATATYPES_H

@@ -41,6 +41,6 @@ private:
     std::ofstream _stream;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_LOGGER_LOGFILESTREAMWRAPPER_H

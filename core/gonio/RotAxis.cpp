@@ -100,4 +100,4 @@ std::ostream& RotAxis::printSelf(std::ostream& os) const
     return os;
 }
 
-} // end namespace nsx
+} // namespace nsx

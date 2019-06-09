@@ -651,4 +651,4 @@ bool NiggliCharacter::set(int priority, double s, double t)
     return false;
 }
 
-} // end namespace nsx
+} // namespace nsx

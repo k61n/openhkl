@@ -56,6 +56,6 @@ public:
     void operator()(T* p) { delete p; }
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_UTILS_SINGLETON_H

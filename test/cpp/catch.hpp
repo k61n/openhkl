@@ -485,7 +485,7 @@ struct RegistrarForTagAliases {
     RegistrarForTagAliases(char const* alias, char const* tag, SourceLineInfo const& lineInfo);
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 #define CATCH_REGISTER_TAG_ALIAS(alias, spec)                                                      \
     CATCH_INTERNAL_SUPPRESS_GLOBALS_WARNINGS                                                       \
@@ -1144,7 +1144,7 @@ struct AutoReg : NonCopyable {
     ~AutoReg();
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 #if defined(CATCH_CONFIG_DISABLE)
 #define INTERNAL_CATCH_TESTCASE_NO_REGISTRATION(TestName, ...) static void TestName()
@@ -1617,7 +1617,7 @@ inline bool isFalseTest(int flags)
 }
 bool shouldSuppressFailure(int flags);
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_result_type.h
 namespace Catch {
@@ -1633,7 +1633,7 @@ struct AssertionInfo {
     // AssertionInfo() = delete;
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_assertioninfo.h
 // start catch_decomposer.h
@@ -2611,7 +2611,7 @@ struct Decomposer {
     auto operator<=(bool value) -> ExprLhs<bool> { return ExprLhs<bool> {value}; }
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 #ifdef _MSC_VER
 #pragma warning(pop)
@@ -2846,7 +2846,7 @@ public:
     }
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_message.h
 #if !defined(CATCH_CONFIG_DISABLE)
@@ -3077,7 +3077,7 @@ struct SectionEndInfo {
     double durationInSeconds;
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_section_info.h
 // start catch_timer.h
@@ -3124,7 +3124,7 @@ private:
     Timer m_timer;
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 #define INTERNAL_CATCH_SECTION(...)                                                                \
     CATCH_INTERNAL_SUPPRESS_UNUSED_WARNINGS                                                        \
@@ -3178,7 +3178,7 @@ public:
     auto needsMoreIterations() -> bool;
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 #define BENCHMARK(name) for (Catch::BenchmarkLooper looper(name); looper; looper.increment())
 
@@ -3459,18 +3459,18 @@ private:
     double m_scale;
     double m_value;
 };
-} // end namespace Detail
+} // namespace Detail
 
 namespace literals {
 Detail::Approx operator"" _a(long double val);
 Detail::Approx operator"" _a(unsigned long long val);
-} // end namespace literals
+} // namespace literals
 
 template <> struct StringMaker<Catch::Detail::Approx> {
     static std::string convert(Catch::Detail::Approx const& value);
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_approx.h
 // start catch_string_manip.h
@@ -5240,7 +5240,7 @@ struct ITagAliasRegistry {
     static ITagAliasRegistry const& get();
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_interfaces_tag_alias_registry.h
 namespace Catch {
@@ -5402,7 +5402,7 @@ private:
     bool m_hasTestFilters = false;
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_config.hpp
 // start catch_assertionresult.h
@@ -5447,7 +5447,7 @@ public:
     AssertionResultData m_resultData;
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_assertionresult.h
 // start catch_option.hpp
@@ -5504,7 +5504,7 @@ private:
     alignas(alignof(T)) char storage[sizeof(T)];
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_option.hpp
 #include <iosfwd>
@@ -5708,7 +5708,7 @@ struct IReporterRegistry {
     virtual Listeners const& getListeners() const = 0;
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_interfaces_reporter.h
 #include <algorithm>
@@ -5973,7 +5973,7 @@ struct TestEventListenerBase : StreamingReporterBase<TestEventListenerBase> {
     bool assertionEnded(AssertionStats const&) override;
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_reporter_bases.hpp
 // start catch_console_colour.h
@@ -6032,7 +6032,7 @@ private:
 
 std::ostream& operator<<(std::ostream& os, Colour const&);
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_console_colour.h
 // start catch_reporter_registrars.hpp
@@ -6127,7 +6127,7 @@ struct CompactReporter : StreamingReporterBase<CompactReporter> {
     void testRunEnded(TestRunStats const& _testRunStats) override;
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_reporter_compact.h
 // start catch_reporter_console.h
@@ -6195,7 +6195,7 @@ private:
     bool m_headerPrinted = false;
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
@@ -6340,7 +6340,7 @@ public:
     bool m_okToFail = false;
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_reporter_junit.h
 // start catch_reporter_xml.h
@@ -6387,7 +6387,7 @@ private:
     int m_sectionDepth = 0;
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_reporter_xml.h
 
@@ -6632,7 +6632,7 @@ void Approx::setEpsilon(double newEpsilon)
     m_epsilon = newEpsilon;
 }
 
-} // end namespace Detail
+} // namespace Detail
 
 namespace literals {
 Detail::Approx operator"" _a(long double val)
@@ -6643,14 +6643,14 @@ Detail::Approx operator"" _a(unsigned long long val)
 {
     return Detail::Approx(val);
 }
-} // end namespace literals
+} // namespace literals
 
 std::string StringMaker<Catch::Detail::Approx>::convert(Catch::Detail::Approx const& value)
 {
     return value.toString();
 }
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_approx.cpp
 // start catch_assertionhandler.cpp
 
@@ -6895,7 +6895,7 @@ private:
     bool m_includeSuccessfulResults;
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_run_context.h
 namespace Catch {
@@ -7116,7 +7116,7 @@ StringRef AssertionResult::getTestMacroName() const
     return m_info.macroName;
 }
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_assertionresult.cpp
 // start catch_benchmark.cpp
 
@@ -7146,7 +7146,7 @@ auto BenchmarkLooper::needsMoreIterations() -> bool
     return false;
 }
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_benchmark.cpp
 // start catch_capture_matchers.cpp
 
@@ -8520,7 +8520,7 @@ namespace Catch {
 
 clara::Parser makeCommandLineParser(ConfigData& config);
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_commandline.h
 #include <ctime>
@@ -8679,7 +8679,7 @@ clara::Parser makeCommandLineParser(ConfigData& config)
     return cli;
 }
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_commandline.cpp
 // start catch_common.cpp
 
@@ -8860,7 +8860,7 @@ IStream const* Config::openStream()
     return Catch::makeStream(m_data.outputFilename);
 }
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_config.cpp
 // start catch_console_colour.cpp
 
@@ -8984,7 +8984,7 @@ IColourImpl* platformColourInstance()
 }
 
 } // end anon namespace
-} // end namespace Catch
+} // namespace Catch
 
 #elif defined(CATCH_CONFIG_COLOUR_ANSI) //////////////////////////////////////
 
@@ -9058,7 +9058,7 @@ IColourImpl* platformColourInstance()
 }
 
 } // end anon namespace
-} // end namespace Catch
+} // namespace Catch
 
 #else // not Windows or ANSI ///////////////////////////////////////////////
 
@@ -9069,7 +9069,7 @@ static IColourImpl* platformColourInstance()
     return NoColourImpl::instance();
 }
 
-} // end namespace Catch
+} // namespace Catch
 
 #endif // Windows/ ANSI/ None
 
@@ -9108,7 +9108,7 @@ std::ostream& operator<<(std::ostream& os, Colour const&)
     return os;
 }
 
-} // end namespace Catch
+} // namespace Catch
 
 #if defined(__clang__)
 #pragma clang diagnostic pop
@@ -9832,7 +9832,7 @@ public: // IStreamingReporter
     bool isMulti() const override;
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_reporter_listening.h
 namespace Catch {
@@ -9934,7 +9934,7 @@ bool IStreamingReporter::isMulti() const
 IReporterFactory::~IReporterFactory() = default;
 IReporterRegistry::~IReporterRegistry() = default;
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_interfaces_reporter.cpp
 // start catch_interfaces_runner.cpp
 
@@ -10006,7 +10006,7 @@ std::size_t listReporters();
 
 Option<std::size_t> list(std::shared_ptr<Config> const& config);
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_list.h
 // start catch_text.h
@@ -10163,7 +10163,7 @@ Option<std::size_t> list(std::shared_ptr<Config> const& config)
     return listedCount;
 }
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_list.cpp
 // start catch_matchers.cpp
 
@@ -10213,7 +10213,7 @@ template <typename T> std::string to_string(T const& t)
     return rss.str();
 #endif
 }
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_to_string.hpp
 #include <cstdint>
@@ -10497,7 +10497,7 @@ StdString::RegexMatcher Matches(std::string const& regex, CaseSensitive::Choice 
 
 namespace Catch {
 bool uncaught_exceptions();
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_uncaught_exceptions.h
 #include <cassert>
@@ -10627,7 +10627,7 @@ void Capturer::captureValue(size_t index, std::string const& value)
     m_captured++;
 }
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_message.cpp
 // start catch_output_redirect.cpp
 
@@ -10737,7 +10737,7 @@ private:
 
 #endif
 
-} // end namespace Catch
+} // namespace Catch
 
 #endif // TWOBLUECUBES_CATCH_OUTPUT_REDIRECT_H
 // end catch_output_redirect.h
@@ -10920,7 +10920,7 @@ bool isnan(double d)
 }
 #endif
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_polyfills.cpp
 // start catch_random_number_generator.cpp
 
@@ -11002,7 +11002,7 @@ std::string extractClassName(StringRef const& classOrQualifiedMethodName);
 
 ///////////////////////////////////////////////////////////////////////////
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_test_case_registry_impl.h
 // start catch_reporter_registry.h
@@ -11046,7 +11046,7 @@ struct TagAlias {
     SourceLineInfo lineInfo;
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_tag_alias.h
 #include <map>
@@ -11064,7 +11064,7 @@ private:
     std::map<std::string, TagAlias> m_registry;
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_tag_alias_registry.h
 // start catch_startup_exception_registry.h
@@ -11083,7 +11083,7 @@ private:
     std::vector<std::exception_ptr> m_exceptions;
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_startup_exception_registry.h
 // start catch_singletons.hpp
@@ -11201,7 +11201,7 @@ std::string translateActiveException()
     return getRegistryHub().getExceptionTranslatorRegistry().translateActiveException();
 }
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_registry_hub.cpp
 // start catch_reporter_registry.cpp
 
@@ -11265,7 +11265,7 @@ bool shouldSuppressFailure(int flags)
     return (flags & ResultDisposition::SuppressFail) != 0;
 }
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_result_type.cpp
 // start catch_run_context.cpp
 
@@ -11813,7 +11813,7 @@ Section::operator bool() const
     return m_sectionIncluded;
 }
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_section.cpp
 // start catch_section_info.cpp
 
@@ -11824,7 +11824,7 @@ SectionInfo::SectionInfo(SourceLineInfo const& _lineInfo, std::string const& _na
 {
 }
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_section_info.cpp
 // start catch_session.cpp
 
@@ -11875,7 +11875,7 @@ private:
     bool m_startupExceptions = false;
 };
 
-} // end namespace Catch
+} // namespace Catch
 
 // end catch_session.h
 // start catch_version.h
@@ -12193,7 +12193,7 @@ int Session::runInternal()
 #endif
 }
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_session.cpp
 // start catch_singletons.cpp
 
@@ -12246,7 +12246,7 @@ std::vector<std::exception_ptr> const& StartupExceptionRegistry::getExceptions()
     return m_exceptions;
 }
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_startup_exception_registry.cpp
 // start catch_stream.cpp
 
@@ -12749,7 +12749,7 @@ ITagAliasRegistry const& ITagAliasRegistry::get()
     return getRegistryHub().getTagAliasRegistry();
 }
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_tag_alias_registry.cpp
 // start catch_test_case_info.cpp
 
@@ -12934,7 +12934,7 @@ TestCaseInfo const& TestCase::getTestCaseInfo() const
     return *this;
 }
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_test_case_info.cpp
 // start catch_test_case_registry_impl.cpp
 
@@ -13048,7 +13048,7 @@ std::string extractClassName(StringRef const& classOrQualifiedMethodName)
     return className;
 }
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_test_case_registry_impl.cpp
 // start catch_test_case_tracker.cpp
 
@@ -13847,7 +13847,7 @@ std::string ratio_string<std::milli>::symbol()
     return "m";
 }
 
-} // end namespace Catch
+} // namespace Catch
 
 #if defined(__clang__)
 #pragma clang diagnostic pop
@@ -13930,7 +13930,7 @@ bool uncaught_exceptions()
     return std::uncaught_exception();
 #endif
 }
-} // end namespace Catch
+} // namespace Catch
 // end catch_uncaught_exceptions.cpp
 // start catch_version.cpp
 
@@ -14358,7 +14358,7 @@ bool TestEventListenerBase::assertionEnded(AssertionStats const&)
     return false;
 }
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_reporter_bases.cpp
 // start catch_reporter_compact.cpp
 
@@ -14669,7 +14669,7 @@ CompactReporter::~CompactReporter() {}
 
 CATCH_REGISTER_REPORTER("compact", CompactReporter)
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_reporter_compact.cpp
 // start catch_reporter_console.cpp
 
@@ -15311,7 +15311,7 @@ void ConsoleReporter::printTestFilters()
 
 CATCH_REGISTER_REPORTER("console", ConsoleReporter)
 
-} // end namespace Catch
+} // namespace Catch
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
@@ -15567,7 +15567,7 @@ void JunitReporter::writeAssertion(AssertionStats const& stats)
 
 CATCH_REGISTER_REPORTER("junit", JunitReporter)
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_reporter_junit.cpp
 // start catch_reporter_listening.cpp
 
@@ -15720,7 +15720,7 @@ bool ListeningReporter::isMulti() const
     return true;
 }
 
-} // end namespace Catch
+} // namespace Catch
 // end catch_reporter_listening.cpp
 // start catch_reporter_xml.cpp
 
@@ -15932,7 +15932,7 @@ void XmlReporter::testRunEnded(TestRunStats const& testRunStats)
 
 CATCH_REGISTER_REPORTER("xml", XmlReporter)
 
-} // end namespace Catch
+} // namespace Catch
 
 #if defined(_MSC_VER)
 #pragma warning(pop)

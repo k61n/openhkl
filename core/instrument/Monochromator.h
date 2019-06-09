@@ -90,6 +90,6 @@ private:
     double _height;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_INSTRUMENT_MONOCHROMATOR_H

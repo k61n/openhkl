@@ -40,6 +40,6 @@ public:
     double _tof;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_DETECTOR_DETECTOREVENT_H

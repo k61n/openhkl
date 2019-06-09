@@ -102,6 +102,6 @@ protected:
     Diffractometer* _diffractometer;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_INSTRUMENT_INSTRUMENTSTATE_H

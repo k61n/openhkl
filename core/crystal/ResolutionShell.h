@@ -52,6 +52,6 @@ private:
     std::vector<DShell> _shells;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_CRYSTAL_RESOLUTIONSHELL_H

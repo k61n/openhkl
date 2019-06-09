@@ -63,4 +63,4 @@ Eigen::MatrixXd convolvedFrame(
     return convolver->convolve(frame_data.cast<double>());
 }
 
-} // end namespace nsx
+} // namespace nsx

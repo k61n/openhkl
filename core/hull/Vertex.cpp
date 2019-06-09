@@ -36,4 +36,4 @@ std::ostream& operator<<(std::ostream& os, const Vertex& vertex)
     return os;
 }
 
-} // end namespace nsx
+} // namespace nsx

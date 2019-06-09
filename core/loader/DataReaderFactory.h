@@ -47,6 +47,6 @@ private:
     std::map<std::string, callback> _callbacks;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_LOADER_DATAREADERFACTORY_H

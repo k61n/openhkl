@@ -40,6 +40,6 @@ public:
     Eigen::MatrixXi data(size_t frame) final;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_LOADER_HDF5DATAREADER_H

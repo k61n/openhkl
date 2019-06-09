@@ -176,4 +176,4 @@ Eigen::Matrix3d CylindricalDetector::jacobian(double px, double py) const
     return J;
 }
 
-} // end namespace nsx
+} // namespace nsx

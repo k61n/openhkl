@@ -380,4 +380,4 @@ unsigned int Octree::numChambers() const
     return 1;
 }
 
-} // end namespace nsx
+} // namespace nsx

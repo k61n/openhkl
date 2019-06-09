@@ -61,6 +61,6 @@ public:
     virtual Eigen::Matrix3d jacobian(double x, double y) const override;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_DETECTOR_FLATDETECTOR_H

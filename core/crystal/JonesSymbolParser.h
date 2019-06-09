@@ -33,6 +33,6 @@ namespace nsx {
 //!  0, 0, 0, 1
 Eigen::Transform<double, 3, Eigen::Affine> parseJonesSymbol(const std::string& jonesSymbol);
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_CRYSTAL_JONESSYMBOLPARSER_H

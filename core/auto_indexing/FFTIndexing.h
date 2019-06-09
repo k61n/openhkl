@@ -43,6 +43,6 @@ private:
     double _amax;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_AUTO_INDEXING_FFTINDEXING_H

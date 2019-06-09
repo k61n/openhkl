@@ -153,4 +153,4 @@ void FitParameters::setKernel(const Eigen::MatrixXd& ker)
     _constrained = true;
 }
 
-} // end namespace nsx
+} // namespace nsx

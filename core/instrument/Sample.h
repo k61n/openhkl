@@ -68,6 +68,6 @@ private:
     ConvexHull _sampleShape;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_INSTRUMENT_SAMPLE_H

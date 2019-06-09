@@ -70,6 +70,6 @@ private:
     void compute_vertices();
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_CRYSTAL_BRILLOUINZONE_H

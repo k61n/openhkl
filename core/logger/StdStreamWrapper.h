@@ -40,6 +40,6 @@ private:
     std::ostream& _stream;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_LOGGER_STDSTREAMWRAPPER_H

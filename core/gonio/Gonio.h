@@ -74,6 +74,6 @@ private:
     std::vector<std::unique_ptr<Axis>> _axes;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_GONIO_GONIO_H

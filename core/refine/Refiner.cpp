@@ -170,4 +170,4 @@ int Refiner::updatePredictions(PeakList& peaks) const
     return updated;
 }
 
-} // end namespace nsx
+} // namespace nsx

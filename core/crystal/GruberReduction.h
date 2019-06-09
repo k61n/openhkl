@@ -43,6 +43,6 @@ private:
     double _epsilon;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_CRYSTAL_GRUBERREDUCTION_H

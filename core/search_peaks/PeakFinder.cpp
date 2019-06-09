@@ -758,4 +758,4 @@ void PeakFinder::mergeEquivalentBlobs(
     }
 }
 
-} // end namespace nsx
+} // namespace nsx

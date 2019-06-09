@@ -76,6 +76,6 @@ protected:
     std::vector<std::complex<double>> _transformedKernel;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_SEARCH_PEAKS_ATOMICCONVOLVER_H

@@ -93,4 +93,4 @@ void doubleToFraction(double number, int nmax, long& nom, long& dnom)
     return;
 }
 
-} // end namespace nsx
+} // namespace nsx

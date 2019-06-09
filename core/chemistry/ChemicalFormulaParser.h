@@ -266,6 +266,6 @@ private:
     boost::spirit::qi::rule<Iterator, isotopeContents()> _start;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_CHEMISTRY_CHEMICALFORMULAPARSER_H

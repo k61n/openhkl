@@ -103,4 +103,4 @@ void Profile1D::reset()
     std::fill(_npoints.begin(), _npoints.end(), 0);
 }
 
-} // end namespace nsx
+} // namespace nsx

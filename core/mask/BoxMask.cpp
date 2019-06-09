@@ -29,4 +29,4 @@ IMask* BoxMask::clone() const
     return new BoxMask(*this);
 }
 
-} // end namespace nsx
+} // namespace nsx

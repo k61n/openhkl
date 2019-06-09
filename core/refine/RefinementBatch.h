@@ -96,6 +96,6 @@ private:
     std::vector<double> _cost_function;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_REFINE_REFINEMENTBATCH_H

@@ -41,6 +41,6 @@ private:
     int _nx, _ny, _nz;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_INTEGRATION_SHAPEINTEGRATOR_H

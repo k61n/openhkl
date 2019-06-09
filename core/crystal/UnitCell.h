@@ -319,6 +319,6 @@ private:
 //! Print to a stream
 std::ostream& operator<<(std::ostream&, const UnitCell&);
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_CRYSTAL_UNITCELL_H

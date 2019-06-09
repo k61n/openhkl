@@ -85,4 +85,4 @@ void RFactor::calculate(const MergedData& data)
     }
 }
 
-} // end namespace nsx
+} // namespace nsx

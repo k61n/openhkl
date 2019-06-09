@@ -49,6 +49,6 @@ using UnitCellList = std::vector<sptrUnitCell>;
 using SpaceGroupSymmetry = std::pair<std::string, std::string>;
 
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_EXPERIMENT_CRYSTALTYPES_H

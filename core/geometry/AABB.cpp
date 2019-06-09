@@ -120,4 +120,4 @@ std::ostream& operator<<(std::ostream& os, const AABB& aabb)
     return aabb.printSelf(os);
 }
 
-} // end namespace nsx
+} // namespace nsx

@@ -57,6 +57,6 @@ T IsotopeDatabaseManager::property(const std::string& isotope, const std::string
     return _isotopes.at(isotope).at(property).as<T>();
 }
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_CHEMISTRY_ISOTOPEDATABASEMANAGER_H

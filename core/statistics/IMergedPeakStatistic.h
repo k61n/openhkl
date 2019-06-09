@@ -33,6 +33,6 @@ public:
     double value() const;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_STATISTICS_IMERGEDPEAKSTATISTIC_H

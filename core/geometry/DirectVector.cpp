@@ -56,4 +56,4 @@ std::ostream& operator<<(std::ostream& os, const DirectVector& dvector)
     return os;
 }
 
-} // end namespace nsx
+} // namespace nsx

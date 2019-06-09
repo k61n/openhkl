@@ -75,4 +75,4 @@ sptrShapeLibrary ShapeIntegrator::library() const
     return _library;
 }
 
-} // end namespace nsx
+} // namespace nsx

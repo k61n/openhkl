@@ -83,4 +83,4 @@ bool MeanBackgroundIntegrator::compute(sptrPeak3D peak, const IntegrationRegion&
     return true;
 }
 
-} // end namespace nsx
+} // namespace nsx

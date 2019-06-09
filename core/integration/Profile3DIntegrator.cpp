@@ -156,4 +156,4 @@ bool Profile3DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
     return true;
 }
 
-} // end namespace nsx
+} // namespace nsx

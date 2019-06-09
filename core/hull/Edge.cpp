@@ -46,4 +46,4 @@ std::ostream& operator<<(std::ostream& os, const Edge& edge)
     return os;
 }
 
-} // end namespace nsx
+} // namespace nsx

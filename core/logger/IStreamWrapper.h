@@ -47,6 +47,6 @@ protected:
     std::function<std::string()> _suffix;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_LOGGER_ISTREAMWRAPPER_H

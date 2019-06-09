@@ -431,7 +431,7 @@ template <typename T> T NSXTest::safeFloatingDivision(T f1, T f2)
     return f1 / f2;
 }
 
-} // end namespace nsx
+} // namespace nsx
 
 #define NSX_CHECK_THROW(expression, error)                                                         \
     try {                                                                                          \

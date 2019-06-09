@@ -47,6 +47,6 @@ public:
 #endif
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_INSTRUMENT_INTERPOLATEDSTATE_H

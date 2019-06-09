@@ -123,6 +123,6 @@ private:
     double _bkgEnd;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_INTEGRATION_SHAPELIBRARY_H

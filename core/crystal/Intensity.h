@@ -60,6 +60,6 @@ private:
     double _sigma2;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_CRYSTAL_INTENSITY_H

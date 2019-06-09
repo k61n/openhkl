@@ -140,4 +140,4 @@ const std::vector<std::vector<double>>& IDataReader::detectorStates() const
     return _detectorStates;
 }
 
-} // end namespace nsx
+} // namespace nsx

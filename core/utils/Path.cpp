@@ -172,4 +172,4 @@ bool fileExists(const std::string& filename)
     return fs.good();
 }
 
-} // end namespace nsx
+} // namespace nsx

@@ -138,4 +138,4 @@ int MillerIndex::l() const
     return _hkl[2];
 }
 
-} // end namespace nsx
+} // namespace nsx

@@ -350,6 +350,6 @@ private:
     std::type_index _typeid;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_UTILS_VARIANT_H

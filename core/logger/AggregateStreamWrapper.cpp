@@ -61,4 +61,4 @@ void AggregateStreamWrapper::printSuffix()
     }
 }
 
-} // end namespace nsx
+} // namespace nsx

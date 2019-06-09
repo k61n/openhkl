@@ -48,6 +48,6 @@ private:
     std::deque<Eigen::Vector3d> _coords;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_PEAK_PEAKDATA_H

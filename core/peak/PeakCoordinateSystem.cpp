@@ -138,4 +138,4 @@ double PeakCoordinateSystem::estimateMosaicity() const
     return std::sqrt(C(2, 2));
 }
 
-} // end namespace nsx
+} // namespace nsx

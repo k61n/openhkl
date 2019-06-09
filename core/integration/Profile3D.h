@@ -68,6 +68,6 @@ private:
     std::vector<double> _profile;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_INTEGRATION_PROFILE3D_H

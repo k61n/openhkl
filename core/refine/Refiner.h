@@ -54,6 +54,6 @@ private:
     std::vector<RefinementBatch> _batches;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_REFINE_REFINER_H

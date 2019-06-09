@@ -40,6 +40,6 @@ private:
     double _nframes;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_INTEGRATION_ISIGMAINTEGRATOR_H

@@ -55,6 +55,6 @@ protected:
     std::map<std::string, double> _parameters;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_SEARCH_PEAKS_CONVOLVER_H

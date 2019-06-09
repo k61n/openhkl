@@ -156,4 +156,4 @@ Sample::fitGonioOffsets(const DataList& dataset, size_t n_iterations, double tol
     return {true, std::move(fitted_offsets), std::move(cost_function)};
 }
 
-} // end namespace nsx
+} // namespace nsx

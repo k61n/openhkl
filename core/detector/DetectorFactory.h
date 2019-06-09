@@ -32,6 +32,6 @@ private:
     ~DetectorFactory();
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_DETECTOR_DETECTORFACTORY_H

@@ -55,6 +55,6 @@ private:
     std::function<void(void)> _callback;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_UTILS_PROGRESSHANDLER_H

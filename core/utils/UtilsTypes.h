@@ -32,6 +32,6 @@ using ConstraintSet = std::set<ConstraintTuple>;
 using FinishedCallback = std::function<void(bool)>;
 using TaskCallback = std::function<bool(void)>;
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_UTILS_UTILSTYPES_H

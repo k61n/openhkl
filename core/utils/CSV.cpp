@@ -106,4 +106,4 @@ std::string CSV::getToken(std::istream& stream, char& delim)
     return tok;
 }
 
-} // end namespace nsx
+} // namespace nsx

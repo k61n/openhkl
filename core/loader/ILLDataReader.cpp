@@ -471,4 +471,4 @@ void ILLDataReader::readMetadata(const char* buf)
     }
 }
 
-} // end namespace nsx
+} // namespace nsx

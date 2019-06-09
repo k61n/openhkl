@@ -45,6 +45,6 @@ private:
     bool _2d;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_MASK_ELLIPSEMASK_H

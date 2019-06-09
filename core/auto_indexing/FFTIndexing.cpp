@@ -129,4 +129,4 @@ std::vector<FFTIndexing::tVector> FFTIndexing::findOnSphere(
     return result;
 }
 
-} // end namespace nsx
+} // namespace nsx

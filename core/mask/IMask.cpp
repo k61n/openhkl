@@ -20,4 +20,4 @@ namespace nsx {
 
 IMask::~IMask() = default;
 
-} // end namespace nsx
+} // namespace nsx

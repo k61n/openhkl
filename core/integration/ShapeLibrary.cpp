@@ -434,4 +434,4 @@ bool ShapeLibrary::detectorCoords() const
     return _detectorCoords;
 }
 
-} // end namespace nsx
+} // namespace nsx

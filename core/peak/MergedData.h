@@ -54,6 +54,6 @@ private:
     MergedPeakSet _peaks;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_PEAK_MERGEDDATA_H

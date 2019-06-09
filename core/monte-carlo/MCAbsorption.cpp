@@ -120,4 +120,4 @@ double MCAbsorption::run(
     return transmission;
 }
 
-} // end namespace nsx
+} // namespace nsx

@@ -97,4 +97,4 @@ operator()(DataOrder dataOrder, const std::string& buffer, Eigen::MatrixXi& matr
     return this->operator()(dataOrder, buffer.c_str(), buffer.size(), matrix);
 }
 
-} // end namespace nsx
+} // namespace nsx

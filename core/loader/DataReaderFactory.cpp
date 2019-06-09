@@ -58,4 +58,4 @@ std::shared_ptr<DataSet> DataReaderFactory::create(
     return (it->second)(filename, diffractometer);
 }
 
-} // end namespace nsx
+} // namespace nsx

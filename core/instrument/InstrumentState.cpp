@@ -129,4 +129,4 @@ Diffractometer* InstrumentState::diffractometer()
     return _diffractometer;
 }
 
-} // end namespace nsx
+} // namespace nsx

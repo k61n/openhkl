@@ -47,6 +47,6 @@ struct Triangle {
     double _xmin, _zmin, _xmax, _zmax;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_HULL_TRIANGLE_H

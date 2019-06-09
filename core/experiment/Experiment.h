@@ -70,6 +70,6 @@ private:
     std::map<std::string, sptrDataSet> _data;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_EXPERIMENT_EXPERIMENT_H

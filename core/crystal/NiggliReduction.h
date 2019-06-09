@@ -60,6 +60,6 @@ private:
     int _l, _m, _n;
 };
 
-} // end namespace nsx
+} // namespace nsx
 
 #endif // CORE_CRYSTAL_NIGGLIREDUCTION_H
