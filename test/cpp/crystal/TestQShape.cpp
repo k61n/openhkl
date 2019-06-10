@@ -4,7 +4,7 @@
 
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
-#include "core/loader/DataReaderFactory.h"
+#include "core/experiment/DataReaderFactory.h"
 #include "core/loader/IDataReader.h"
 #include "core/peak/Peak3D.h"
 #include "core/convolve/ConvolverFactory.h"

@@ -24,6 +24,7 @@ namespace nsx {
 class Diffractometer;
 
 //! Class storing the state of the experiment at a given moment of time.
+//!
 //! State refers to any parameters which might change during the experiment:
 //! sample orientation, sample position, etc. States are initially loaded
 //! as metadata but can also be refined as part of the data treatment.

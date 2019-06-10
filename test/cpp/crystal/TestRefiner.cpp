@@ -10,7 +10,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/loader/DataReaderFactory.h"
+#include "core/experiment/DataReaderFactory.h"
 #include "core/convolve/ConvolverFactory.h"
 
 #include "core/experiment/Experiment.h"

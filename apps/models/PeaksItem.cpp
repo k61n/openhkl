@@ -31,7 +31,7 @@
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/integration/Profile1DIntegrator.h"
 #include "core/integration/Profile3DIntegrator.h"
-#include "core/loader/DataReaderFactory.h"
+#include "core/experiment/DataReaderFactory.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/MetaData.h"
 #include "core/loader/RawDataReader.h"

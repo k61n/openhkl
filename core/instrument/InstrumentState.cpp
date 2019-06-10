@@ -12,21 +12,15 @@
 //
 //  ***********************************************************************************************
 
-#include <algorithm>
-
-#include <Eigen/Dense>
+#include "core/instrument/InstrumentState.h"
 
 #include "core/detector/Detector.h"
-#include "core/detector/DetectorEvent.h"
-#include "core/fitting/FitParameters.h"
-#include "core/fitting/Minimizer.h"
-#include "core/gonio/Component.h"
-#include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/instrument/InstrumentState.h"
-#include "core/instrument/MatrixOperations.h"
 #include "core/instrument/Sample.h"
 #include "core/logger/Logger.h"
+
+#include <algorithm>
+#include <Eigen/Dense>
 
 namespace nsx {
 
@@ -67,15 +61,13 @@ ReciprocalVector InstrumentState::sampleQ(const DirectVector& detector_position)
 double InstrumentState::gamma(const DirectVector& detector_position) const
 {
     Eigen::RowVector3d kf = kfLab(detector_position).rowVector();
-    double gamma = std::atan2(kf[0], kf[1]);
-    return gamma;
+    return std::atan2(kf[0], kf[1]);
 }
 
 double InstrumentState::nu(const DirectVector& detector_position) const
 {
     Eigen::RowVector3d kf = kfLab(detector_position).rowVector();
-    double nu = std::asin(kf[2] / kf.norm());
-    return nu;
+    return std::asin(kf[2] / kf.norm());
 }
 
 double InstrumentState::twoTheta(const DirectVector& detector_position) const

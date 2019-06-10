@@ -153,7 +153,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/loader/TiffDataReader.h"
 #include "core/loader/BloscFilter.h"
 #include "core/search_peaks/PeakFinder.h"
-#include "core/loader/DataReaderFactory.h"
+#include "core/experiment/DataReaderFactory.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorFactory.h"
 #include "core/gonio/TransAxis.h"
@@ -224,7 +224,7 @@ using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 
 #include "core/loader/MetaData.h"
 #include "core/loader/IDataReader.h"
-#include "core/loader/DataReaderFactory.h"
+#include "core/experiment/DataReaderFactory.h"
 #include "core/loader/ILLDataReader.h"
 #include "core/loader/HDF5DataReader.h"
 #include "core/experiment/DataSet.h"
@@ -393,7 +393,7 @@ namespace nsx {
 
 %include "core/loader/MetaData.h"
 %include "core/loader/IDataReader.h"
-%include "core/loader/DataReaderFactory.h"
+%include "core/experiment/DataReaderFactory.h"
 %include "core/loader/ILLDataReader.h"
 %include "core/loader/HDF5MetaDataReader.h"
 %include "core/loader/HDF5DataReader.h"
@@ -478,7 +478,7 @@ namespace nsx {
 %include "core/loader/RawDataReader.h"
 %include "core/loader/TiffDataReader.h"
 %include "core/loader/BloscFilter.h"
-%include "core/loader/DataReaderFactory.h"
+%include "core/experiment/DataReaderFactory.h"
 
 %include "core/detector/Detector.h"
 %include "core/detector/DetectorFactory.h"

@@ -17,7 +17,7 @@
 #include "core/instrument/Sample.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/integration/ShapeLibrary.h"
-#include "core/loader/DataReaderFactory.h"
+#include "core/experiment/DataReaderFactory.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakFilter.h"
 #include "core/convolve/ConvolverFactory.h"
