@@ -24,10 +24,10 @@ class PlotFactory : public nsx::Factory<NSXPlot, std::string, QWidget*>,
                     public nsx::Singleton<PlotFactory, nsx::Constructor, nsx::Destructor> {
 
 private:
-    friend class nsx::Constructor<PlotFactory>;
-    friend class nsx::Destructor<PlotFactory>;
     PlotFactory();
     ~PlotFactory();
+    friend class nsx::Constructor<PlotFactory>;
+    friend class nsx::Destructor<PlotFactory>;
 };
 
 #endif // GUI_GRAPHICS_PLOTFACTORY_H

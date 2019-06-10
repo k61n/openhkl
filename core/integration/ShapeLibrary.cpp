@@ -175,7 +175,6 @@ static void covariance_helper(
     Eigen::Matrix3d& result, const FitData& f, const Eigen::Matrix3d& sigmaD,
     const Eigen::Matrix3d& sigmaM, const Eigen::Matrix3d& sigmaS)
 {
-    static constexpr double deg2 = (M_PI / 180) * (M_PI / 180);
     Eigen::Matrix3d E;
     E.setIdentity();
 

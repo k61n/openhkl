@@ -23,7 +23,6 @@
 
 const double gruber_tolerance = 1e-4;
 const double niggli_tolerance = 1e-4;
-const double tolerance = 1e-6;
 
 TEST_CASE("test/crystal/TestGruberBravais.cpp", "")
 {

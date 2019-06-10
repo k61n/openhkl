@@ -45,7 +45,6 @@ private:
     std::vector<double> _counts;
     std::vector<int> _npoints;
     std::vector<double> _endpoints;
-    double _sigmaMax;
     Intensity _meanBkg;
 };
 

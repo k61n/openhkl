@@ -40,8 +40,6 @@ public:
 
 private:
     Ellipsoid _ellipsoid;
-
-    bool _2d;
 };
 
 } // namespace nsx

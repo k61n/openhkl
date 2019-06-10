@@ -54,7 +54,6 @@ static void residuals(
     assert(n == res.size());
 
     const Eigen::Matrix3d A = from_cholesky(a);
-    const double factor = std::sqrt(A.determinant() / 8 / M_PI / M_PI / M_PI);
 
     double u = 0, v = 0, uu = 0, vv = 0, uv = 0;
 

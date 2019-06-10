@@ -6,12 +6,10 @@
 #include "core/crystal/BrillouinZone.h"
 #include "core/crystal/UnitCell.h"
 
-const double tolerance = 1e-9;
-
 // note: validation data obtained from web, see e.g.
 // http://lampx.tugraz.at/~hadley/ss1/bzones/
 // https://en.wikipedia.org/wiki/Brillouin_zone
-// validation function
+
 void validate_zone(const Eigen::Matrix3d& B, int nverts, int nfaces)
 {
     nsx::BrillouinZone zone(B, 1e-3);

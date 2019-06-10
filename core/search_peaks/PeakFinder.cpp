@@ -79,12 +79,12 @@ namespace nsx {
 
 PeakFinder::PeakFinder()
     : _handler(nullptr)
+    , _threshold(3.0)
     , _peakScale(1.0)
     , _current_label(0)
     , _minSize(30)
     , _maxSize(10000)
     , _maxFrames(10)
-    , _threshold(3.0)
     , _framesBegin(-1)
     , _framesEnd(-1)
 {

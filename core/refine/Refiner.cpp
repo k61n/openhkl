@@ -29,7 +29,8 @@ namespace nsx {
 
 Refiner::Refiner(
     InstrumentStateList& states, sptrUnitCell cell, const PeakList& peaks, int nbatches)
-    : _batches(), _cell(cell)
+    : _cell(cell)
+    , _batches()
 {
 
     PeakFilter peak_filter;

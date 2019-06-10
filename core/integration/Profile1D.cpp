@@ -22,7 +22,6 @@ Profile1D::Profile1D(const Intensity& mean_background, double sigma_max, size_t 
     : _counts(num, 0.0)
     , _npoints(num, 0)
     , _endpoints(num + 1)
-    , _sigmaMax(sigma_max)
     , _meanBkg(mean_background)
 {
     const double dr3 = sigma_max * sigma_max * sigma_max / num;
