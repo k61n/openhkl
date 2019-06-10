@@ -24,6 +24,7 @@
 #include "core/loader/IDataReader.h"
 #include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
+#include "core/peak/PeakCoordinateSystem.h"
 
 #include <stdexcept>
 
@@ -229,9 +230,9 @@ bool ShapeLibrary::addPeak(sptrPeak3D peak, Profile3D&& profile, Profile1D&& int
     return true;
 }
 
-void ShapeLibrary::updateFit(int num_iterations)
+void ShapeLibrary::updateFit(int /*num_iterations*/)
 {
-#if 0
+#if 0 // TODO restore
 
     std::vector<std::pair<Eigen::Matrix3d, FitData>> fit_data;
     std::vector<std::pair<int, int>> fit_constraints;

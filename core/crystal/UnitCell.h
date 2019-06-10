@@ -15,12 +15,12 @@
 #ifndef CORE_CRYSTAL_UNITCELL_H
 #define CORE_CRYSTAL_UNITCELL_H
 
-#include <Eigen/Dense>
-
 #include "core/chemistry/Material.h"
 #include "core/crystal/NiggliCharacter.h"
 #include "core/crystal/SpaceGroup.h"
 #include "core/experiment/DataTypes.h"
+
+#include <Eigen/Dense>
 
 namespace nsx {
 

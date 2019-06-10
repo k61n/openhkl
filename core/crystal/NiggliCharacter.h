@@ -15,6 +15,8 @@
 #ifndef CORE_CRYSTAL_NIGGLICHARACTER_H
 #define CORE_CRYSTAL_NIGGLICHARACTER_H
 
+#include <Eigen/Dense>
+
 namespace nsx {
 
 //! Centering type of the Bravais lattice
@@ -31,8 +33,7 @@ enum class BravaisType : char {
     Trigonal = 'h'
 };
 
-// todo: refactor into LatticeCharacter
-//! \class NiggliCharacter
+// TODO refactor into LatticeCharacter
 //! Helper struct used to store the classified type of the Niggli cell
 struct NiggliCharacter {
     int number = 31; //!< number according to tables

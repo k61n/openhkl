@@ -15,7 +15,6 @@
 #include "core/crystal/SpaceGroup.h"
 
 #include "core/crystal/UnitCell.h"
-#include "core/experiment/CrystalTypes.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakFilter.h"
 #include "core/utils/StringIO.h"
@@ -526,9 +525,8 @@ bool SpaceGroup::isEquivalent(const MillerIndex& hkl1, const MillerIndex& hkl2, 
             return true;
 
         if (friedel
-            && std::max((rotated + hkl1d).maxCoeff(), (-hkl1d - rotated).maxCoeff()) < eps) {
+            && std::max((rotated + hkl1d).maxCoeff(), (-hkl1d - rotated).maxCoeff()) < eps)
             return true;
-        }
     }
     return false;
 }
@@ -547,14 +545,12 @@ bool SpaceGroup::isFriedelEquivalent(const MillerIndex& hkl1, const MillerIndex&
         rotated = hkl1d * element.getRotationPart().transpose();
 
         if (std::abs(rotated[0] - hkl2d[0]) < 1e-6 && std::abs(rotated[1] - hkl2d[1]) < 1e-6
-            && std::abs(rotated[2] - hkl2d[2]) < 1e-6) {
+            && std::abs(rotated[2] - hkl2d[2]) < 1e-6)
             return true;
-        }
         // compare against Friedel reflection
         if (std::abs(rotated[0] + hkl2d[0]) < 1e-6 && std::abs(rotated[1] + hkl2d[1]) < 1e-6
-            && std::abs(rotated[2] + hkl2d[2]) < 1e-6) {
+            && std::abs(rotated[2] + hkl2d[2]) < 1e-6)
             return true;
-        }
     }
     return false;
 }
@@ -607,36 +603,5 @@ void SpaceGroup::reduceSymbol()
     _symbol = join(tokens, " ");
 }
 
-std::vector<PeakList> SpaceGroup::findEquivalences(const PeakList& peaks, bool friedel) const
-{
-
-    std::vector<PeakList> peak_equivs;
-
-    for (auto peak : peaks) {
-        bool found_equivalence = false;
-        auto cell = peak->unitCell();
-
-        PeakFilter peak_filter;
-        PeakList same_cell_peaks = peak_filter.unitCell(peaks, cell);
-
-        MillerIndex miller_index1(peak->q(), *cell);
-
-        for (size_t i = 0; i < peak_equivs.size() && !found_equivalence; ++i) {
-            MillerIndex miller_index2(peak_equivs[i][0]->q(), *cell);
-
-            if ((friedel && isFriedelEquivalent(miller_index1, miller_index2))
-                || (!friedel && isEquivalent(miller_index1, miller_index2))) {
-                found_equivalence = true;
-                peak_equivs[i].push_back(peak);
-                continue;
-            }
-        }
-
-        // didn't find an equivalence?
-        if (!found_equivalence)
-            peak_equivs.emplace_back(PeakList({peak}));
-    }
-    return peak_equivs;
-}
 
 } // namespace nsx

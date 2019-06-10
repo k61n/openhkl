@@ -17,10 +17,10 @@
 
 #include "core/crystal/UnitCell.h"
 #include "core/detector/DetectorEvent.h"
-#include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataTypes.h"
 #include "core/integration/Profile1D.h"
 #include "core/integration/Profile3D.h"
+#include "core/peak/Peak3D.h"
 
 #include <memory>
 #include <Eigen/Dense>

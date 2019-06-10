@@ -18,6 +18,7 @@
 #include "core/crystal/UnitCell.h"
 #include "core/fitting/FitParameters.h"
 #include "core/instrument/InstrumentTypes.h"
+#include "core/peak/Peak3D.h"
 
 namespace nsx {
 

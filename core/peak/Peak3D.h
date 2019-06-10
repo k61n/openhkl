@@ -15,14 +15,20 @@
 #ifndef CORE_PEAK_PEAK3D_H
 #define CORE_PEAK_PEAK3D_H
 
+#include "core/crystal/Intensity.h"
+#include "core/crystal/SpaceGroup.h"
 #include "core/crystal/UnitCell.h"
-#include "core/peak/IPeakIntegrator.h"
+#include "core/detector/DetectorEvent.h"
+#include "core/geometry/Ellipsoid.h"
+
+#include <memory>
+#include <vector>
 
 namespace nsx {
 
-//! \class Peak3D
-//! Data type used to store integrated peaks, including their shape and
-//! location.
+class IPeakIntegrator;
+
+//! Data type used to store integrated peaks, including their shape and location.
 class Peak3D {
 
 public:
@@ -30,8 +36,6 @@ public:
     Peak3D(sptrDataSet data);
     //! Create peak belonging to data with given shape
     Peak3D(sptrDataSet data, const Ellipsoid& shape);
-
-    Peak3D(sptrDataSet data, const Peak3D& other) = delete;
 
     //! Comparison operator used to sort peaks
     friend bool operator<(const Peak3D& p1, const Peak3D& p2);
@@ -140,6 +144,14 @@ private:
     //! Peak profile along frame (rotation) axis
     std::vector<Intensity> _rockingCurve;
 };
+
+using sptrPeak3D = std::shared_ptr<Peak3D>;
+using PeakList = std::vector<sptrPeak3D>;
+
+//! Sort peak into a list of equivalent peaks, using the space group symmetry,
+//! optionally including Friedel pairs (if this is not already a symmetry of the space group)
+std::vector<PeakList> findEquivalences(
+    const SpaceGroup& group, const PeakList& peak_list, bool friedel);
 
 } // namespace nsx
 

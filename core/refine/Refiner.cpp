@@ -18,7 +18,6 @@
 #include "core/crystal/MillerIndex.h"
 #include "core/crystal/UnitCell.h"
 #include "core/detector/DetectorEvent.h"
-#include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"

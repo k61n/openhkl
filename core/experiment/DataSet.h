@@ -15,7 +15,7 @@
 #ifndef CORE_EXPERIMENT_DATASET_H
 #define CORE_EXPERIMENT_DATASET_H
 
-#include "core/experiment/CrystalTypes.h"
+#include "core/peak/Peak3D.h"
 #include "core/experiment/DataTypes.h"
 #include "core/instrument/InterpolatedState.h"
 #include "core/mask/IMask.h"

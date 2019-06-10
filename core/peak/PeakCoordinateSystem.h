@@ -15,18 +15,16 @@
 #ifndef CORE_PEAK_PEAKCOORDINATESYSTEM_H
 #define CORE_PEAK_PEAKCOORDINATESYSTEM_H
 
-#include <Eigen/Core>
-
 #include "core/detector/DetectorEvent.h"
-#include "core/experiment/CrystalTypes.h"
 #include "core/geometry/Ellipsoid.h"
 #include "core/instrument/InterpolatedState.h"
+#include "core/peak/Peak3D.h"
+
+#include <Eigen/Core>
 
 namespace nsx {
 
-//! \class PeakCoordinateSystem
-//! This class implements the per-peak coordinate system described by
-//! Kabsch (1988, 2010)
+//! This class implements the per-peak coordinate system described by Kabsch (1988, 2010).
 //!
 //! Following Kabsch 1988, we introduce about each peak a new coordinate system
 //! which is supposed to undo the effects of detector geometry and distortion

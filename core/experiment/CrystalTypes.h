@@ -15,16 +15,6 @@
 #ifndef CORE_EXPERIMENT_CRYSTALTYPES_H
 #define CORE_EXPERIMENT_CRYSTALTYPES_H
 
-#include <memory>
-#include <vector>
-
-namespace nsx {
-
-class Peak3D;
-
-using sptrPeak3D = std::shared_ptr<Peak3D>;
-using PeakList = std::vector<sptrPeak3D>;
-
-} // namespace nsx
+#include "core/peak/Peak3D.h"
 
 #endif // CORE_EXPERIMENT_CRYSTALTYPES_H

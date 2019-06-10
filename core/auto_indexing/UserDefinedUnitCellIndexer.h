@@ -16,6 +16,7 @@
 #define CORE_AUTO_INDEXING_USERDEFINEDUNITCELLINDEXER_H
 
 #include "core/crystal/UnitCell.h"
+#include "core/peak/Peak3D.h"
 #include "core/utils/Units.h"
 
 namespace nsx {

@@ -15,7 +15,7 @@
 #ifndef CORE_CRYSTAL_RESOLUTIONSHELL_H
 #define CORE_CRYSTAL_RESOLUTIONSHELL_H
 
-#include "core/experiment/CrystalTypes.h"
+#include "core/peak/Peak3D.h"
 
 namespace nsx {
 
@@ -31,13 +31,10 @@ struct DShell {
     PeakList peaks;
 };
 
-//! \class ResolutionShell
-//! Class to split a set of peaks into a number of shells based on
-//! resolution.
+//! Class to split a set of peaks into a number of shells based on resolution.
 class ResolutionShell {
 public:
-    //! Construct the given number of cells with abolute minimum dmin and absolute
-    //! maximum dmax.
+    //! Construct the given number of cells with abolute minimum dmin and absolute maximum dmax.
     ResolutionShell(double dmin, double dmax, size_t num_shells);
     //! Add a peak to the list of shells.
     //! It will automatically be added to the appropriate shell.

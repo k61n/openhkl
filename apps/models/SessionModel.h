@@ -18,6 +18,7 @@
 
 #include "core/crystal/UnitCell.h"
 #include "core/experiment/DataTypes.h"
+#include "core/peak/Peak3D.h"
 
 class ExperimentItem;
 
