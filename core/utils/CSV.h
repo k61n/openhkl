@@ -20,8 +20,7 @@
 
 namespace nsx {
 
-//! @class CSV
-//! @brief Simple CSV parser
+//! Simple CSV parser
 class CSV {
 public:
     CSV(char delim = ',', char quotchar = '"');
@@ -33,9 +32,7 @@ private:
     char _delim;
     char _quotchar;
 
-    std::string getToken(
-        std::istream& stream,
-        char& delim); //!<< Get next token, write delimeter type
+    std::string getToken(std::istream& stream, char& delim);
 };
 
 } // namespace nsx

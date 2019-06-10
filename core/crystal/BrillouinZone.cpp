@@ -22,15 +22,14 @@
 #include "core/experiment/DataSet.h"
 #include "core/geometry/ReciprocalVector.h"
 
-/**
- * @brief Update a list of Q-vectors by removing the duplicates.
- *  Two Q-Vectors are defined as duplicates if the norm of their difference is
- *under a given tolerance.
- *  @param q_vectors the set of q_vectors from which duplicates will be removed
- *  @param reflect if true the opposite of each vectors are also checked for
- *duplication
- *  @param eps the tolerance under which two vectors are defined as duplicate
- **/
+//! Update a list of Q-vectors by removing the duplicates.
+//!
+//! Two Q-Vectors are defined as duplicates if the norm of their difference is under
+//! a given tolerance.
+//! @param q_vectors the set of q_vectors from which duplicates will be removed
+//! @param reflect   if true the opposite of each vectors are also checked for duplication
+//! @param eps       the tolerance under which two vectors are defined as duplicate
+
 void remove_duplicates(std::vector<Eigen::RowVector3d>& q_vectors, bool reflect, double eps)
 {
     const double eps2 = eps * eps;
