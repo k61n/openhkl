@@ -254,12 +254,12 @@ double Detector::pixelWidth() const
     return _width / _nCols;
 }
 
-DetectorGonioFit
-Detector::fitGonioOffsets(const DataList& dataset, size_t n_iterations, double tolerance) const
+GonioFit Detector::fitGonioOffsets(
+    const DataList& dataset, size_t n_iterations, double tolerance) const
 {
-    const auto& detector_gonio = gonio();
+    const Gonio& mygonio = gonio();
 
-    size_t n_axes = detector_gonio.nAxes();
+    size_t n_axes = mygonio.nAxes();
 
     std::vector<double> fitted_offsets(n_axes, 0.0);
 
@@ -285,7 +285,7 @@ Detector::fitGonioOffsets(const DataList& dataset, size_t n_iterations, double t
         return {false, std::move(fitted_offsets), {}};
     }
 
-    std::vector<Eigen::RowVector3d> selected_nis;
+    std::vector<Eigen::RowVector3d> myorientations;
 
     std::vector<std::vector<double>> selected_states;
     selected_states.reserve(n_selected_states);
@@ -295,7 +295,7 @@ Detector::fitGonioOffsets(const DataList& dataset, size_t n_iterations, double t
         for (size_t i = 0; i < states.size(); ++i) {
             auto state = states[i];
             if (state.refined)
-                selected_nis.push_back(state.ni.normalized());
+                myorientations.push_back(state.ni.normalized());
         }
     }
 
@@ -303,18 +303,17 @@ Detector::fitGonioOffsets(const DataList& dataset, size_t n_iterations, double t
     cost_function.reserve(n_iterations);
 
     // Lambda to compute residuals
-    auto residuals = [detector_gonio, &fitted_offsets, selected_nis,
+    auto residuals = [mygonio, &fitted_offsets, myorientations,
                       &cost_function](Eigen::VectorXd& f) -> int {
         int n_obs = f.size();
 
         Eigen::Matrix3d fitted_detector_orientation =
-            detector_gonio.affineMatrix(fitted_offsets).rotation().transpose();
+            mygonio.affineMatrix(fitted_offsets).rotation().transpose();
 
-        // Just duplicate the 0-residual to reach a "sufficient" amout of data
-        // points
+        // Just duplicate the 0-residual to reach a "sufficient" amout of data points
         for (int i = 0; i < n_obs; ++i) {
             f(i) = std::abs(
-                selected_nis[i].dot(Eigen::RowVector3d(0, 1, 0) * fitted_detector_orientation)
+                myorientations[i].dot(Eigen::RowVector3d(0, 1, 0) * fitted_detector_orientation)
                 - 1.0);
         }
 
@@ -328,8 +327,7 @@ Detector::fitGonioOffsets(const DataList& dataset, size_t n_iterations, double t
     for (auto& v : fitted_offsets)
         parameters.addParameter(&v);
 
-    // Sets the Minimizer with the parameters store and the size of the residual
-    // vector
+    // Sets the Minimizer with the parameters store and the size of the residual vector
     nsx::Minimizer minimizer;
     // Hack to do the fit with GSL for having enough data points
     minimizer.initialize(parameters, n_selected_states);

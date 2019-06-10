@@ -20,17 +20,11 @@
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/DataTypes.h"
 #include "core/geometry/ReciprocalVector.h"
+#include "core/gofi/GonioFit.h"
 #include "core/gonio/Component.h"
 #include "core/utils/Enums.h"
 
 namespace nsx {
-
-//! Helper struct for storing the result of the sample gonio fit
-struct DetectorGonioFit {
-    bool success;
-    std::vector<double> offsets;
-    std::vector<double> cost_function;
-};
 
 //! Base class for Detectors.
 class Detector : public Component {
@@ -118,7 +112,7 @@ public:
     //! Returns the detector gain. Measured count = gain * (neutron count) + baseline
     double gain() const;
 
-    DetectorGonioFit fitGonioOffsets(
+    GonioFit fitGonioOffsets(
         const DataList& dataset, size_t n_iterations = 1000, double tolerance = 1.0e-6) const;
 
 protected:
