@@ -27,7 +27,7 @@ struct Edge;
 struct Face;
 struct Vertex;
 
-//! Convex hull, to approximate the sample shape.
+//! Convex hull, used for various purposes (?)
 //!
 //! This class implements an templated object-oriented adaptation of the 3D
 //! incremental convex hull algorithm whose implementation in C has been
