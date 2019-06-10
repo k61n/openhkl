@@ -19,7 +19,6 @@
 #include "core/crystal/MillerIndex.h"
 #include "core/crystal/UnitCell.h"
 #include "core/geometry/ReciprocalVector.h"
-#include "core/peak/Peak3D.h"
 
 namespace nsx {
 
