@@ -19,7 +19,7 @@
 
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
-#include "core/gofi/GonioFit.h"
+#include "core/experiment/GonioFit.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/logger/Logger.h"

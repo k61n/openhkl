@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/experiment/DataSet.h"
-#include "core/gofi/GonioFit.h"
+#include "core/experiment/GonioFit.h"
 #include "core/utils/Units.h"
 
 #include "gui/frames/globaloffsets.h"
