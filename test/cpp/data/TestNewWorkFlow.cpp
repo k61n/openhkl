@@ -20,7 +20,7 @@
 #include "core/loader/DataReaderFactory.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakFilter.h"
-#include "core/search_peaks/ConvolverFactory.h"
+#include "core/convolve/ConvolverFactory.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "core/utils/ProgressHandler.h"
 #include "core/utils/Units.h"

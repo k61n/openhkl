@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/search_peaks/EnhancedAnnularConvolver.cpp
+//! @file      core/convolve/EnhancedAnnularConvolver.cpp
 //! @brief     Implements class EnhancedAnnularConvolver
 //!
 //! @homepage  ###HOMEPAGE###
@@ -14,8 +14,8 @@
 
 #include <math.h>
 
-#include "core/search_peaks/EnhancedAnnularConvolver.h"
-#include "core/search_peaks/RadialConvolver.h"
+#include "core/convolve/EnhancedAnnularConvolver.h"
+#include "core/convolve/RadialConvolver.h"
 
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES

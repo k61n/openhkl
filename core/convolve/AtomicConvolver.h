@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/search_peaks/AtomicConvolver.h
+//! @file      core/convolve/AtomicConvolver.h
 //! @brief     Defines class AtomicConvolver
 //!
 //! @homepage  ###HOMEPAGE###
@@ -19,7 +19,7 @@
 
 #include <fftw3.h>
 
-#include "core/search_peaks/Convolver.h"
+#include "core/convolve/Convolver.h"
 
 namespace nsx {
 

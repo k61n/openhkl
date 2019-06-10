@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/search_peaks/Convolver.h
+//! @file      core/convolve/Convolver.h
 //! @brief     Defines class Convolver
 //!
 //! @homepage  ###HOMEPAGE###

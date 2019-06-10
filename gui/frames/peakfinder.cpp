@@ -18,7 +18,7 @@
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/loader/IDataReader.h"
 #include "core/peak/Peak3D.h"
-#include "core/search_peaks/ConvolverFactory.h"
+#include "core/convolve/ConvolverFactory.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "gui/dialogs/listnamedialog.h"
 #include "gui/frames/progressview.h"

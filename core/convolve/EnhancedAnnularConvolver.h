@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/search_peaks/EnhancedAnnularConvolver.h
+//! @file      core/convolve/EnhancedAnnularConvolver.h
 //! @brief     Defines class EnhancedAnnularConvolver
 //!
 //! @homepage  ###HOMEPAGE###
@@ -50,7 +50,7 @@
 // background. This make the kernel effective for peak-finding in images which
 // have a non-homogeneous background.
 
-#include "core/search_peaks/Convolver.h"
+#include "core/convolve/Convolver.h"
 
 namespace nsx {
 

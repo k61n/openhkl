@@ -17,7 +17,7 @@
 
 #include "core/experiment/DataSet.h"
 #include "core/search_peaks/Blob3D.h"
-#include "core/search_peaks/Convolver.h"
+#include "core/convolve/Convolver.h"
 #include "core/utils/ProgressHandler.h"
 
 namespace nsx {

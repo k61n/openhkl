@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/search_peaks/ConstantConvolver.cpp
+//! @file      core/convolve/ConstantConvolver.cpp
 //! @brief     Implements class ConstantConvolver
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/search_peaks/ConstantConvolver.h"
+#include "core/convolve/ConstantConvolver.h"
 
 namespace nsx {
 

@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/search_peaks/AnnularConvolver.h
-//! @brief     Defines class AnnularConvolver
+//! @file      core/convolve/RadialConvolver.h
+//! @brief     Defines class RadialConvolver
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_SEARCH_PEAKS_ANNULARCONVOLVER_H
-#define CORE_SEARCH_PEAKS_ANNULARCONVOLVER_H
+#ifndef CORE_SEARCH_PEAKS_RADIALCONVOLVER_H
+#define CORE_SEARCH_PEAKS_RADIALCONVOLVER_H
 
 // Convolver description: the kernel is non-zero in a circular and annular
 // region, as follows
@@ -50,31 +50,31 @@
 // background. This make the kernel effective for peak-finding in images which
 // have a non-homogeneous background.
 
-#include "core/search_peaks/Convolver.h"
+#include "core/convolve/AtomicConvolver.h"
 
 namespace nsx {
 
-//! Annular convolution kernel used for local background subtraction.
-class AnnularConvolver : public Convolver {
+class RadialConvolver : public AtomicConvolver {
 
 public:
-    AnnularConvolver();
+    RadialConvolver();
 
-    AnnularConvolver(const AnnularConvolver& other) = default;
+    RadialConvolver(const RadialConvolver& other) = default;
 
-    AnnularConvolver(const std::map<std::string, double>& parameters);
+    RadialConvolver(const std::map<std::string, double>& parameters);
 
-    ~AnnularConvolver() = default;
+    ~RadialConvolver() = default;
 
-    AnnularConvolver& operator=(const AnnularConvolver& other) = default;
+    RadialConvolver& operator=(const RadialConvolver& other) = default;
 
     Convolver* clone() const override;
 
     virtual std::pair<size_t, size_t> kernelSize() const override;
 
-    RealMatrix convolve(const RealMatrix& image) override;
+private:
+    RealMatrix _matrix(int nrows, int ncols) const override;
 };
 
 } // namespace nsx
 
-#endif // CORE_SEARCH_PEAKS_ANNULARCONVOLVER_H
+#endif // CORE_SEARCH_PEAKS_RADIALCONVOLVER_H

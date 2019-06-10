@@ -1,4 +1,4 @@
-#include "core/search_peaks/DeltaConvolver.h"
+#include "core/convolve/DeltaConvolver.h"
 #include "test/cpp/catch.hpp"
 
 // Generate a image to use for testing the Fourier transform

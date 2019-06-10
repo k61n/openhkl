@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/search_peaks/RadialConvolver.cpp
+//! @file      core/convolve/RadialConvolver.cpp
 //! @brief     Implements class RadialConvolver
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/search_peaks/RadialConvolver.h"
+#include "core/convolve/RadialConvolver.h"
 
 namespace nsx {
 

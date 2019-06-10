@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/search_peaks/ConstantConvolver.h
+//! @file      core/convolve/ConstantConvolver.h
 //! @brief     Defines class ConstantConvolver
 //!
 //! @homepage  ###HOMEPAGE###
@@ -19,7 +19,7 @@
 // (rows*cols). Convolving with this kernel has the effect of taking the average
 // value of the frame.
 
-#include "core/search_peaks/AtomicConvolver.h"
+#include "core/convolve/AtomicConvolver.h"
 
 namespace nsx {
 
