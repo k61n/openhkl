@@ -96,7 +96,7 @@ using Eigen::Quaterniond;
 #include "core/peak/PeakCoordinateSystem.h"
 #include "core/refine/RefinementBatch.h"
 #include "core/refine/Refiner.h"
-#include "core/auto_indexing/AutoIndexer.h"
+#include "core/indexing/AutoIndexer.h"
 #include "core/crystal/Intensity.h"
 #include "core/peak/IPeakIntegrator.h"
 #include "core/integration/MeanBackgroundIntegrator.h"
@@ -114,7 +114,7 @@ using Eigen::Quaterniond;
 #include "core/peak/Peak3D.h"
 using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
-#include "core/auto_indexing/FFTIndexing.h"
+#include "core/indexing/FFTIndexing.h"
 
 #include "core/peak/MergedPeak.h"
 #include "core/crystal/DoubleToFraction.h"
@@ -168,14 +168,14 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/detector/CylindricalDetector.h"
 #include "core/gonio/Gonio.h"
 
-#include "core/search_peaks/Convolver.h"
-#include "core/search_peaks/AtomicConvolver.h"
-#include "core/search_peaks/DeltaConvolver.h"
-#include "core/search_peaks/AnnularConvolver.h"
-#include "core/search_peaks/EnhancedAnnularConvolver.h"
-#include "core/search_peaks/ConstantConvolver.h"
-#include "core/search_peaks/ConvolverFactory.h"
-#include "core/search_peaks/RadialConvolver.h"
+#include "core/convolve/Convolver.h"
+#include "core/convolve/ConvolverFactory.h"
+#include "core/convolve/AnnularConvolver.h"
+#include "core/convolve/AtomicConvolver.h"
+#include "core/convolve/ConstantConvolver.h"
+#include "core/convolve/DeltaConvolver.h"
+#include "core/convolve/EnhancedAnnularConvolver.h"
+#include "core/convolve/RadialConvolver.h"
 
 #include "core/gonio/Axis.h"
 #include "core/experiment/Experiment.h"
@@ -207,7 +207,6 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/geometry/Ellipsoid.h"
 #include "core/search_peaks/Blob3D.h"
 
-#include "core/auto_indexing/FFTIndexing.h"
 #include "core/peak/Peak3D.h"
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/UnitCell.h"
@@ -222,15 +221,6 @@ using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 
 #include "core/utils/Singleton.h"
-
-#include "core/search_peaks/Convolver.h"
-#include "core/search_peaks/AtomicConvolver.h"
-#include "core/search_peaks/ConvolverFactory.h"
-#include "core/search_peaks/DeltaConvolver.h"
-#include "core/search_peaks/AnnularConvolver.h"
-#include "core/search_peaks/EnhancedAnnularConvolver.h"
-#include "core/search_peaks/ConstantConvolver.h"
-#include "core/search_peaks/RadialConvolver.h"
 
 #include "core/loader/MetaData.h"
 #include "core/loader/IDataReader.h"
@@ -362,7 +352,7 @@ namespace nsx {
    struct tVector;
 }
 
-%include "core/auto_indexing/FFTIndexing.h"
+%include "core/indexing/FFTIndexing.h"
 
 
 %include "core/peak/PeakData.h"
@@ -392,15 +382,14 @@ namespace nsx {
 %include "core/peak/PeakFilter.h"
 
 %template(ConvolverParameters) std::map<std::string,double>;
-%include "core/search_peaks/Convolver.h"
-%include "core/search_peaks/ConvolverFactory.h"
-%include "core/search_peaks/ConstantConvolver.h"
-%include "core/search_peaks/DeltaConvolver.h"
-%include "core/search_peaks/AnnularConvolver.h"
-%include "core/search_peaks/EnhancedAnnularConvolver.h"
-%include "core/search_peaks/RadialConvolver.h"
-%include "core/search_peaks/Convolver.h"
-%include "core/search_peaks/AtomicConvolver.h"
+%include "core/convolve/Convolver.h"
+%include "core/convolve/ConvolverFactory.h"
+%include "core/convolve/AnnularConvolver.h"
+%include "core/convolve/AtomicConvolver.h"
+%include "core/convolve/ConstantConvolver.h"
+%include "core/convolve/DeltaConvolver.h"
+%include "core/convolve/EnhancedAnnularConvolver.h"
+%include "core/convolve/RadialConvolver.h"
 
 %include "core/loader/MetaData.h"
 %include "core/loader/IDataReader.h"
@@ -458,7 +447,6 @@ namespace nsx {
 %include "core/integration/Profile1D.h"
 %include "core/integration/ShapeLibrary.h"
 
-%include "core/auto_indexing/FFTIndexing.h"
 %include "core/peak/MergedPeak.h"
 %include "core/crystal/DoubleToFraction.h"
 %include "core/crystal/SpaceGroup.h"
@@ -492,15 +480,6 @@ namespace nsx {
 %include "core/loader/BloscFilter.h"
 %include "core/loader/DataReaderFactory.h"
 
-%include "core/search_peaks/Convolver.h"
-%include "core/search_peaks/AtomicConvolver.h"
-%include "core/search_peaks/ConstantConvolver.h"
-%include "core/search_peaks/DeltaConvolver.h"
-%include "core/search_peaks/AnnularConvolver.h"
-%include "core/search_peaks/EnhancedAnnularConvolver.h"
-%include "core/search_peaks/RadialConvolver.h"
-%include "core/search_peaks/ConvolverFactory.h"
-
 %include "core/detector/Detector.h"
 %include "core/detector/DetectorFactory.h"
 %include "core/gonio/TransAxis.h"
@@ -523,7 +502,7 @@ namespace nsx {
 %include "core/gonio/AxisFactory.h"
 %include "core/gonio/RotAxis.h"
 
-%include "core/auto_indexing/AutoIndexer.h"
+%include "core/indexing/AutoIndexer.h"
 
 %include "core/utils/Singleton.h"
 
