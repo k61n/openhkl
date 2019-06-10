@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/crystal/ResolutionShell.h
+//! @file      core/peak/ResolutionShell.h
 //! @brief     Defines class ResolutionShell
 //!
 //! @homepage  ###HOMEPAGE###

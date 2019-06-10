@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/integration/ISigmaIntegrator.h"
-#include "core/crystal/Intensity.h"
+#include "core/integration/Intensity.h"
 #include "core/experiment/DataSet.h"
 #include "core/geometry/Ellipsoid.h"
 #include "core/integration/ShapeLibrary.h"

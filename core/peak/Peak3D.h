@@ -15,7 +15,7 @@
 #ifndef CORE_PEAK_PEAK3D_H
 #define CORE_PEAK_PEAK3D_H
 
-#include "core/crystal/Intensity.h"
+#include "core/integration/Intensity.h"
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/UnitCell.h"
 #include "core/detector/DetectorEvent.h"

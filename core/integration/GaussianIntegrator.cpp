@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/integration/GaussianIntegrator.h"
-#include "core/crystal/Intensity.h"
+#include "core/integration/Intensity.h"
 #include "core/experiment/DataSet.h"
 #include "core/fitting/FitParameters.h"
 #include "core/fitting/Minimizer.h"

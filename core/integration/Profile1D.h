@@ -17,7 +17,7 @@
 
 #include <vector>
 
-#include "core/crystal/Intensity.h"
+#include "core/integration/Intensity.h"
 
 namespace nsx {
 
