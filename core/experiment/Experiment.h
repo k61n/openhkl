@@ -15,16 +15,14 @@
 #ifndef CORE_EXPERIMENT_EXPERIMENT_H
 #define CORE_EXPERIMENT_EXPERIMENT_H
 
+#include "core/experiment/DataTypes.h"
 #include "core/instrument/Diffractometer.h"
 
 namespace nsx {
 
-//! Experiment class, a data type containing a diffractometer and data
-//! sets.
+//! Experiment class, a data type containing a diffractometer and data sets.
 class Experiment {
 public:
-    // Constructors & Destructors
-    //! Default constructor (deleted)
     Experiment() = delete;
     Experiment(const Experiment& other);
 
@@ -33,11 +31,10 @@ public:
     ~Experiment() = default;
     Experiment& operator=(const Experiment& other);
 
-    //! Returns a non-const pointerh  to the diffractometer related to the
-    //! experiment
+    //! Returns a non-const pointer to the diffractometer related to the experiment
     Diffractometer* diffractometer();
 
-    //! Returns a const pointerh  to the diffractometer related to the experiment
+    //! Returns a const pointer to the diffractometer related to the experiment
     const Diffractometer* diffractometer() const;
 
     //! Gets a reference to the data

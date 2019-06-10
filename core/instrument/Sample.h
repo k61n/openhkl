@@ -15,8 +15,7 @@
 #ifndef CORE_INSTRUMENT_SAMPLE_H
 #define CORE_INSTRUMENT_SAMPLE_H
 
-#include "core/experiment/DataTypes.h"
-#include "core/gonio/Component.h"
+#include "core/gonio/Component.h" // inheriting from
 #include "core/hull/ConvexHull.h"
 
 namespace nsx {
@@ -41,8 +40,7 @@ public:
     //! Sets the sample shape described as a convex hull
     void setShape(const ConvexHull& shape);
 
-    //! Returns a non-const reference to the convex hull describing the sample
-    //! shape
+    //! Returns a non-const reference to the convex hull describing the sample shape
     ConvexHull& shape();
 
     //! Returns a const reference to the convex hull describing the sample shape
