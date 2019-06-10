@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/gofi/GonioFit.h
-//! @brief     Defines struct GonioFit
+//! @brief     Defines struct GonioFit and declares functions fit...GonioOffset
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -15,6 +15,9 @@
 #ifndef CORE_GOFI_GONIOFIT_H
 #define CORE_GOFI_GONIOFIT_H
 
+#include "core/experiment/DataTypes.h"
+#include "core/gonio/Gonio.h"
+#include <cstddef>
 #include <vector>
 
 namespace nsx {
@@ -25,6 +28,9 @@ struct GonioFit {
     std::vector<double> offsets;
     std::vector<double> cost_function;
 };
+
+GonioFit fitDetectorGonioOffsets(
+    const Gonio& mygonio, const DataList& dataset, size_t n_iterations, double tolerance);
 
 } // namespace nsx
 

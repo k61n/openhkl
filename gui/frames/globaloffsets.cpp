@@ -12,13 +12,14 @@
 //
 //  ***********************************************************************************************
 
+#include "core/experiment/DataSet.h"
+#include "core/gofi/GonioFit.h"
+#include "core/utils/Units.h"
 
 #include "gui/frames/globaloffsets.h"
+#include "gui/models/meta.h"
 #include "gui/models/session.h"
 
-#include "core/experiment/DataSet.h"
-#include "core/utils/Units.h"
-#include "gui/models/meta.h"
 #include <QFileInfo>
 #include <QFormLayout>
 #include <QGroupBox>
@@ -113,10 +114,10 @@ void GlobalOffsets::fit()
 
     if (mode_ == offsetMode::DETECTOR) {
         // Fit the detector offsets with the selected data
-        const auto* detector =
+        const nsx::Detector* detector =
             gSession->selectedExperiment()->experiment()->diffractometer()->detector();
-        auto fit_results =
-            detector->fitGonioOffsets(selected_data, iterations->value(), tolerance->value());
+        const nsx::GonioFit fit_results = fitDetectorGonioOffsets(
+            detector->gonio(), selected_data, iterations->value(), tolerance->value());
 
         // The fit failed for whatever reason, return
         if (!fit_results.success)
@@ -124,7 +125,7 @@ void GlobalOffsets::fit()
 
         int comp(0);
         for (auto&& offset : fit_results.offsets) {
-            QTableWidgetItem* offset_item = new QTableWidgetItem();
+            QTableWidgetItem* offset_item = new QTableWidgetItem;
             offset_item->setData(Qt::DisplayRole, offset / nsx::deg);
             offsets->setItem(comp++, 1, offset_item);
         }
@@ -140,7 +141,7 @@ void GlobalOffsets::fit()
 
         int comp(0);
         for (auto&& offset : fit_results.offsets) {
-            QTableWidgetItem* offset_item = new QTableWidgetItem();
+            QTableWidgetItem* offset_item = new QTableWidgetItem;
             offset_item->setData(Qt::DisplayRole, offset / nsx::deg);
             offsets->setItem(comp++, 1, offset_item);
         }

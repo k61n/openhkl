@@ -17,12 +17,8 @@
 
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorFactory.h"
-#include "core/experiment/DataSet.h"
 #include "core/experiment/DataTypes.h"
-#include "core/fitting/FitParameters.h"
-#include "core/fitting/Minimizer.h"
 #include "core/gonio/Gonio.h"
-#include "core/logger/Logger.h"
 #include "core/utils/Units.h"
 
 namespace nsx {
@@ -252,98 +248,6 @@ double Detector::pixelHeight() const
 double Detector::pixelWidth() const
 {
     return _width / _nCols;
-}
-
-GonioFit Detector::fitGonioOffsets(
-    const DataList& dataset, size_t n_iterations, double tolerance) const
-{
-    const Gonio& mygonio = gonio();
-
-    size_t n_axes = mygonio.nAxes();
-
-    std::vector<double> fitted_offsets(n_axes, 0.0);
-
-    // No data provided, return zero offsets
-    if (dataset.empty()) {
-        nsx::info() << "No data provided, offsets set to zero";
-        return {false, std::move(fitted_offsets), {}};
-    }
-
-    size_t n_selected_states(0);
-    for (auto data : dataset) {
-        auto&& states = data->instrumentStates();
-        for (auto state : states) {
-            if (!state.refined)
-                continue;
-            ++n_selected_states;
-        }
-    }
-
-    if (n_selected_states < n_axes) {
-        nsx::info() << "No or not enough refined states found in the dataset for a "
-                       "reliable fit, offsets set to zero";
-        return {false, std::move(fitted_offsets), {}};
-    }
-
-    std::vector<Eigen::RowVector3d> myorientations;
-
-    std::vector<std::vector<double>> selected_states;
-    selected_states.reserve(n_selected_states);
-
-    for (auto data : dataset) {
-        auto&& states = data->instrumentStates();
-        for (size_t i = 0; i < states.size(); ++i) {
-            auto state = states[i];
-            if (state.refined)
-                myorientations.push_back(state.ni.normalized());
-        }
-    }
-
-    std::vector<double> cost_function;
-    cost_function.reserve(n_iterations);
-
-    // Lambda to compute residuals
-    auto residuals = [mygonio, &fitted_offsets, myorientations,
-                      &cost_function](Eigen::VectorXd& f) -> int {
-        int n_obs = f.size();
-
-        Eigen::Matrix3d fitted_detector_orientation =
-            mygonio.affineMatrix(fitted_offsets).rotation().transpose();
-
-        // Just duplicate the 0-residual to reach a "sufficient" amout of data points
-        for (int i = 0; i < n_obs; ++i) {
-            f(i) = std::abs(
-                myorientations[i].dot(Eigen::RowVector3d(0, 1, 0) * fitted_detector_orientation)
-                - 1.0);
-        }
-
-        cost_function.push_back(0.5 * f.norm());
-
-        return 0;
-    };
-
-    // Pass by address the parameters to be fitted to the parameter store
-    nsx::FitParameters parameters;
-    for (auto& v : fitted_offsets)
-        parameters.addParameter(&v);
-
-    // Sets the Minimizer with the parameters store and the size of the residual vector
-    nsx::Minimizer minimizer;
-    // Hack to do the fit with GSL for having enough data points
-    minimizer.initialize(parameters, n_selected_states);
-    minimizer.set_f(residuals);
-    minimizer.setxTol(tolerance);
-    minimizer.setfTol(tolerance);
-    minimizer.setgTol(tolerance);
-
-    auto success = minimizer.fit(n_iterations);
-
-    if (!success) {
-        nsx::error() << "Failed to fit detector orientation offsets";
-        return {false, std::move(fitted_offsets), {}};
-    }
-
-    return {true, std::move(fitted_offsets), std::move(cost_function)};
 }
 
 } // namespace nsx
