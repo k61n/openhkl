@@ -311,7 +311,6 @@ using namespace nsx;
 %include "core/experiment/DataTypes.h"
 %include "core/geometry/GeometryTypes.h"
 %include "core/instrument/InstrumentTypes.h"
-%include "core/utils/UtilsTypes.h"
 
 %template(UnitCellList) std::vector<nsx::sptrUnitCell>;
 

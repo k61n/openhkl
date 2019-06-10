@@ -24,7 +24,6 @@
 #include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/DataTypes.h"
-#include "core/utils/UtilsTypes.h"
 
 #include "apps/views/ProgressView.h"
 

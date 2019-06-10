@@ -19,8 +19,6 @@
 #include "core/experiment/DataSet.h"
 #include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
-#include "core/utils/ProgressHandler.h"
-#include "core/utils/UtilsTypes.h"
 
 namespace nsx {
 

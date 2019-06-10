@@ -16,7 +16,7 @@
 #define CORE_AUTO_INDEXING_AUTOINDEXER_H
 
 #include "core/experiment/CrystalTypes.h"
-#include "core/utils/UtilsTypes.h"
+#include "core/utils/ProgressHandler.h"
 
 namespace nsx {
 

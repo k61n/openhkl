@@ -19,7 +19,6 @@
 #include "core/experiment/DataTypes.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/utils/ProgressHandler.h"
-#include "core/utils/UtilsTypes.h"
 
 namespace nsx {
 
