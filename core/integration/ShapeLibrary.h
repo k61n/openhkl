@@ -15,6 +15,7 @@
 #ifndef CORE_INTEGRATION_SHAPELIBRARY_H
 #define CORE_INTEGRATION_SHAPELIBRARY_H
 
+#include "core/crystal/UnitCell.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataTypes.h"

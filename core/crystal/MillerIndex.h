@@ -18,7 +18,12 @@
 #include "core/experiment/CrystalTypes.h"
 #include "core/geometry/ReciprocalVector.h"
 
+#include <vector>
+#include <Eigen/Dense>
+
 namespace nsx {
+
+class UnitCell;
 
 //! Class to define the Miller indices (a.k.a hkl index)
 //!

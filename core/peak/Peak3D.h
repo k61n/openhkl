@@ -15,6 +15,7 @@
 #ifndef CORE_PEAK_PEAK3D_H
 #define CORE_PEAK_PEAK3D_H
 
+#include "core/crystal/UnitCell.h"
 #include "core/peak/IPeakIntegrator.h"
 
 namespace nsx {

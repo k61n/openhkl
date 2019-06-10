@@ -307,6 +307,7 @@ using namespace nsx;
 %template(vectorRowVector3d) std::vector<Eigen::RowVector3d>;
 
 %include "core/chemistry/ChemistryTypes.h"
+%include "core/crystal/UnitCell.h"
 %include "core/experiment/CrystalTypes.h"
 %include "core/experiment/DataTypes.h"
 %include "core/instrument/InstrumentTypes.h"

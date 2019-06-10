@@ -17,7 +17,6 @@
 #include <stdexcept>
 
 #include "core/crystal/MillerIndex.h"
-#include "core/crystal/UnitCell.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/DataSet.h"
 #include "core/geometry/ReciprocalVector.h"

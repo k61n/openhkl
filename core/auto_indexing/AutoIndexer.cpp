@@ -17,7 +17,6 @@
 #include "core/crystal/GruberReduction.h"
 #include "core/crystal/MillerIndex.h"
 #include "core/crystal/NiggliReduction.h"
-#include "core/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
 #include "core/fitting/FitParameters.h"
 #include "core/fitting/Minimizer.h"

@@ -12,13 +12,11 @@
 //
 //  ***********************************************************************************************
 
-#include <cmath>
-
-#include <Eigen/Dense>
-
 #include "core/crystal/MillerIndex.h"
 #include "core/crystal/UnitCell.h"
-#include "core/geometry/ReciprocalVector.h"
+
+#include <cmath>
+#include <Eigen/Dense>
 
 namespace nsx {
 

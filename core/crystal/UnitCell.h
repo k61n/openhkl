@@ -24,7 +24,8 @@
 
 namespace nsx {
 
-//! \class UnitCellCharacter
+class MillerIndex;
+
 //! Structure to encapsulate lattice cell character.
 struct UnitCellCharacter {
     //! Component (0,0) of the metric tensor
@@ -60,7 +61,6 @@ struct UnitCellCharacter {
     UnitCellCharacter(double g00_, double g01_, double g02_, double g11_, double g12_, double g22_);
 };
 
-//! \class UnitCellState
 //! Structure to encapsulate the state of the unit cell for a given
 //! dataset at a given frame.
 struct UnitCellState {
@@ -69,7 +69,6 @@ struct UnitCellState {
     UnitCellCharacter character;
 };
 
-//! \class UnitCell
 //! Class to define a crystallographic unit-cell.
 //!
 //! Provide functionalities to transform vectors of the direct lattice or
@@ -317,6 +316,9 @@ private:
 
 //! Print to a stream
 std::ostream& operator<<(std::ostream&, const UnitCell&);
+
+using sptrUnitCell = std::shared_ptr<UnitCell>;
+using UnitCellList = std::vector<sptrUnitCell>;
 
 } // namespace nsx
 

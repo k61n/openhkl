@@ -16,7 +16,7 @@
 
 #include <QStandardItemModel>
 
-#include "core/experiment/CrystalTypes.h"
+#include "core/crystal/UnitCell.h"
 #include "core/experiment/DataTypes.h"
 
 class ExperimentItem;

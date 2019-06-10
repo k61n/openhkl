@@ -16,9 +16,12 @@
 #define CORE_AUTO_INDEXING_AUTOINDEXER_H
 
 #include "core/experiment/CrystalTypes.h"
+#include "core/crystal/UnitCell.h"
 #include "core/utils/ProgressHandler.h"
 
 namespace nsx {
+
+using RankedSolution = std::pair<sptrUnitCell, double>;
 
 //! Struct to store parameters used by autoindexer.
 struct IndexerParameters {

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_GOFI_GONIOFIT_H
-#define CORE_GOFI_GONIOFIT_H
+#ifndef CORE_EXPERIMENT_GONIOFIT_H
+#define CORE_EXPERIMENT_GONIOFIT_H
 
 #include "core/experiment/DataTypes.h"
 #include "core/gonio/Gonio.h"
@@ -36,4 +36,4 @@ GonioFit fitSampleGonioOffsets(
 
 } // namespace nsx
 
-#endif // CORE_GOFI_GONIOFIT_H
+#endif // CORE_EXPERIMENT_GONIOFIT_H

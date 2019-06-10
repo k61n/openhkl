@@ -17,6 +17,7 @@
 #include <QMetaType>
 
 #include "core/experiment/CrystalTypes.h"
+#include "core/crystal/UnitCell.h"
 #include "core/experiment/DataTypes.h"
 
 Q_DECLARE_METATYPE(nsx::PeakList)
