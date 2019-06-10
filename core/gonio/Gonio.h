@@ -20,9 +20,9 @@
 
 namespace nsx {
 
-//! Class Gonio.
-//! Base class for all goniometers (system of several rotation axis). Any number
-//! of axis can be used. The rotation is applied in reverse order of the given
+//! Base class for all goniometers (system of several rotation axis).
+//!
+//! Any number of axis can be used. The rotation is applied in reverse order of the given
 //! order. For example, when defining a goniometer with 3 axes a,b,c, it is
 //! supposed that in such collection of axes, b is attached to the a shaft and c
 //! is attached to the b shaft. Such gonio will rotate a vector v into a.b.c.v.

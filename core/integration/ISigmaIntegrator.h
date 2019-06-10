@@ -19,8 +19,7 @@
 
 namespace nsx {
 
-//! Compute the integrated intensity via the I/sigma method used in
-//! RETREAT.
+//! Compute the integrated intensity via the I/sigma method used in RETREAT.
 class ISigmaIntegrator : public PixelSumIntegrator {
 public:
     ISigmaIntegrator(sptrShapeLibrary library, double radius, double nframes);

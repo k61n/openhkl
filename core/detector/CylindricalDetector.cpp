@@ -78,7 +78,6 @@ void CylindricalDetector::setAngularHeight(double angle)
 void CylindricalDetector::setAngularWidth(double angle)
 {
     _angularWidth = angle;
-    // R.dTheta
     _width = _angularWidth * _distance;
 }
 
@@ -100,15 +99,14 @@ DirectVector CylindricalDetector::pixelPosition(double px, double py) const
     double gamma = (x / (_nCols - 1.0) - 0.5) * _angularWidth;
     Eigen::Vector3d result;
     result[0] = _distance * sin(gamma);
-    // Angle
     result[1] = _distance * cos(gamma);
     // take the center of the bin
     result[2] = (y / (_nRows - 1.0) - 0.5) * _height;
     return DirectVector(result);
 }
 
-DetectorEvent
-CylindricalDetector::constructEvent(const DirectVector& from, const ReciprocalVector& kf) const
+DetectorEvent CylindricalDetector::constructEvent(
+    const DirectVector& from, const ReciprocalVector& kf) const
 {
     const DetectorEvent no_event = {0, 0, -1, -1};
     double px, py, tof;
@@ -147,7 +145,7 @@ CylindricalDetector::constructEvent(const DirectVector& from, const ReciprocalVe
     return {px, py, 0.0, tof};
 }
 
-Eigen::Matrix3d CylindricalDetector::jacobian(double px, double py) const
+Eigen::Matrix3d CylindricalDetector::jacobian(double px, double /*py*/) const
 {
     Eigen::Matrix3d J;
     J.setZero();

@@ -15,10 +15,11 @@
 #ifndef CORE_HULL_CONVEXHULL_H
 #define CORE_HULL_CONVEXHULL_H
 
-#include <map>
-
-
 #include "core/geometry/AABB.h"
+#include "core/hull/Triangle.h"
+
+#include <map>
+#include <vector>
 
 namespace nsx {
 
@@ -26,7 +27,8 @@ struct Edge;
 struct Face;
 struct Vertex;
 
-//! Class ConvexHull.
+//! Convex hull, to approximate the sample shape.
+//!
 //! This class implements an templated object-oriented adaptation of the 3D
 //! incremental convex hull algorithm whose implementation in C has been
 //! described in: o'Rourke, Joseph. Computational geometry in C. Cambridge
@@ -39,13 +41,8 @@ struct Vertex;
 //! When a point is added to the hull, this one is extended by building new
 //! faces that link the point to the edges of the visible faces of the hull from
 //! that point. After that step, the hull is updated by removing the faces (and
-//! their corresponding edges) that has been completety "buried" by the hull
-//! growth.
-//!
-//! Some of the methods names have been renamed regarding to the C
-//! implementation because we felt more comfortable with during those names in
-//! the curse of the implementation. In such case the original name will be
-//! recalled when documenting those methods.
+//! their corresponding edges) that has been completety "buried" by the hull growth.
+
 class ConvexHull {
 
 public:
@@ -54,10 +51,7 @@ public:
     ConvexHull();
     ~ConvexHull();
 
-    //! Copy Convex Hull
     ConvexHull(const ConvexHull&);
-
-    //! Assignment
     ConvexHull& operator=(const ConvexHull&);
 
     //! Reset, eliminate all vertices, edges and faces

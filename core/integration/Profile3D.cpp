@@ -65,7 +65,7 @@ const double& Profile3D::operator()(size_t i, size_t j, size_t k) const
 
 bool Profile3D::addValue(const Eigen::Vector3d& x, double y)
 {
-    const auto& ub = _aabb.upper();
+    // TODO check that there is no harm from this being unused: const auto& ub = _aabb.upper();
     const auto& lb = _aabb.lower();
     int idx[3];
 
