@@ -19,7 +19,7 @@
 
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
-#include "core/gonio/Gonio.h"
+#include "core/gofi/GonioFit.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/logger/Logger.h"
@@ -131,8 +131,8 @@ void FrameSampleGlobalOffsets::fit()
 
     // Fit the sample offsets with the selected data
     const auto& sample = _experiment_item->experiment()->diffractometer()->sample();
-    auto fit_results =
-        sample.fitGonioOffsets(selected_data, _ui->n_iterations->value(), _ui->tolerance->value());
+    auto fit_results = fitSampleGonioOffsets(
+        sample.gonio(), selected_data, _ui->n_iterations->value(), _ui->tolerance->value());
 
     // The fit failed for whatever reason, return
     if (!fit_results.success)

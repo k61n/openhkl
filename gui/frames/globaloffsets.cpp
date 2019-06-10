@@ -132,8 +132,8 @@ void GlobalOffsets::fit()
     } else if (mode_ == offsetMode::SAMPLE) {
         const auto& sample =
             gSession->selectedExperiment()->experiment()->diffractometer()->sample();
-        auto fit_results =
-            sample.fitGonioOffsets(selected_data, iterations->value(), tolerance->value());
+        auto fit_results = fitSampleGonioOffsets(
+            sample.gonio(), selected_data, iterations->value(), tolerance->value());
 
         // The fit failed for whatever reason, return
         if (!fit_results.success)

@@ -30,7 +30,9 @@ struct GonioFit {
 };
 
 GonioFit fitDetectorGonioOffsets(
-    const Gonio& mygonio, const DataList& dataset, size_t n_iterations, double tolerance);
+    const Gonio& gonio, const DataList& dataset, size_t n_iterations, double tolerance);
+GonioFit fitSampleGonioOffsets(
+    const Gonio& gonio, const DataList& dataset, size_t n_iterations, double tolerance);
 
 } // namespace nsx
 

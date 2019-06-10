@@ -16,14 +16,12 @@
 #define CORE_INSTRUMENT_SAMPLE_H
 
 #include "core/experiment/DataTypes.h"
-#include "core/gofi/GonioFit.h"
 #include "core/gonio/Component.h"
 #include "core/hull/ConvexHull.h"
 
 namespace nsx {
 
-//! Class used to describe an experiment sample, consisting of a unit
-//! cell and material.
+//! Class used to describe an experiment sample, consisting of a unit cell and material.
 class Sample : public Component {
 public:
     //! Static constructor of a Sample from a property tree node
@@ -49,9 +47,6 @@ public:
 
     //! Returns a const reference to the convex hull describing the sample shape
     const ConvexHull& shape() const;
-
-    GonioFit fitGonioOffsets(
-        const DataList& dataset, size_t n_iterations = 1000, double tolerance = 1.0e-6) const;
 
 private:
     ConvexHull _sampleShape;
