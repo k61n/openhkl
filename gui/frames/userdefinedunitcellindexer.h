@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #ifndef GUI_FRAMES_USERDEFINEDUNITCELLINDEXER_H
 #define GUI_FRAMES_USERDEFINEDUNITCELLINDEXER_H
 

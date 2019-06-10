@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #ifndef GUI_PROPERTIES_UNITCELLPROPERTY_H
 #define GUI_PROPERTIES_UNITCELLPROPERTY_H
 

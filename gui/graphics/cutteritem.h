@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #ifndef GUI_GRAPHICS_CUTTERITEM_H
 #define GUI_GRAPHICS_CUTTERITEM_H
 

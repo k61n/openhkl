@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #ifndef GUI_PROPERTIES_SAMPLESHAPEPROPERTIES_H
 #define GUI_PROPERTIES_SAMPLESHAPEPROPERTIES_H
 

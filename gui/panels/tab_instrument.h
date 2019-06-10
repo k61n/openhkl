@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #ifndef GUI_PANELS_TAB_INSTRUMENT_H
 #define GUI_PANELS_TAB_INSTRUMENT_H
 

@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #ifndef GUI_DIALOGS_MESSAGE_BOXES_H
 #define GUI_DIALOGS_MESSAGE_BOXES_H
 

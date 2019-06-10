@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #ifndef GUI_GRAPHICS_SIMPLEPLOT_H
 #define GUI_GRAPHICS_SIMPLEPLOT_H
 

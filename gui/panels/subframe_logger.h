@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #ifndef GUI_PANELS_SUBFRAME_LOGGER_H
 #define GUI_PANELS_SUBFRAME_LOGGER_H
 

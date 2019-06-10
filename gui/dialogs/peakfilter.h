@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #ifndef GUI_DIALOGS_PEAKFILTER_H
 #define GUI_DIALOGS_PEAKFILTER_H
 

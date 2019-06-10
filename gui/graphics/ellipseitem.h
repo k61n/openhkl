@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #ifndef GUI_GRAPHICS_ELLIPSEITEM_H
 #define GUI_GRAPHICS_ELLIPSEITEM_H
 

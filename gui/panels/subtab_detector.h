@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #ifndef GUI_PANELS_SUBTAB_DETECTOR_H
 #define GUI_PANELS_SUBTAB_DETECTOR_H
 
