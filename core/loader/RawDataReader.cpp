@@ -65,8 +65,10 @@ void RawDataReader::addFrame(const std::string& filename)
 
     dm.resize(n_sample_gonio_axes);
 
-    int omega, phi, chi;
-    for (size_t i = 0, omega = -1, phi = -1, chi = -1; i < n_sample_gonio_axes; ++i) {
+    int omega = -1;
+    int phi = -1;
+    int chi = -1;
+    for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
         const std::string axis_name = sample_gonio.axis(i).name();
         omega = axis_name == "omega" ? int(i) : omega;
         chi = axis_name == "chi" ? int(i) : chi;
