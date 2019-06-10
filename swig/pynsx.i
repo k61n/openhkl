@@ -177,8 +177,6 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/search_peaks/ConvolverFactory.h"
 #include "core/search_peaks/RadialConvolver.h"
 
-#include "core/monte-carlo/mosaic.h"
-
 #include "core/gonio/Axis.h"
 #include "core/experiment/Experiment.h"
 
@@ -405,8 +403,6 @@ namespace nsx {
 %include "core/search_peaks/RadialConvolver.h"
 %include "core/search_peaks/Convolver.h"
 %include "core/search_peaks/AtomicConvolver.h"
-
-%include "core/monte-carlo/mosaic.h"
 
 %include "core/loader/MetaData.h"
 %include "core/loader/IDataReader.h"
