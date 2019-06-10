@@ -286,8 +286,8 @@ bool Ellipsoid::collideFace(
     return false;
 }
 
-Eigen::Vector3d
-Ellipsoid::intersectionCenter(const Eigen::Vector3d& n, const Eigen::Vector3d& p) const
+Eigen::Vector3d Ellipsoid::intersectionCenter(
+    const Eigen::Vector3d& n, const Eigen::Vector3d& p) const
 {
     const auto& AI = _inverseMetric;
     const auto AIn = AI * n;

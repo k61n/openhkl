@@ -12,10 +12,6 @@
 //
 //  ***********************************************************************************************
 
-#include <cstdio>
-#include <utility>
-#include <vector>
-
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/geometry/AABB.h"
@@ -23,14 +19,19 @@
 #include "core/instrument/Sample.h"
 #include "core/loader/IDataReader.h"
 #include "core/logger/Logger.h"
-#include "core/mathematics/MathematicsTypes.h"
 #include "core/peak/Octree.h"
 #include "core/peak/Peak3D.h"
 #include "core/search_peaks/ConvolverFactory.h"
 #include "core/search_peaks/PeakFinder.h"
 
+#include <cstdio>
+#include <utility>
+#include <vector>
+#include <Eigen/Dense>
+
 using EquivalencePair = std::pair<int, int>;
 using EquivalenceList = std::vector<EquivalencePair>;
+using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
 namespace {
 

@@ -16,9 +16,11 @@
 #define CORE_SEARCH_PEAKS_CONVOLVER_H
 
 #include <map>
-#include "core/mathematics/MathematicsTypes.h"
+#include <Eigen/Dense>
 
 namespace nsx {
+
+using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
 class Convolver {
 

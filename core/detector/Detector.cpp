@@ -22,7 +22,6 @@
 #include "core/fitting/FitParameters.h"
 #include "core/fitting/Minimizer.h"
 #include "core/gonio/Gonio.h"
-#include "core/loader/IDataReader.h"
 #include "core/logger/Logger.h"
 #include "core/utils/Units.h"
 
@@ -293,7 +292,6 @@ Detector::fitGonioOffsets(const DataList& dataset, size_t n_iterations, double t
 
     for (auto data : dataset) {
         auto&& states = data->instrumentStates();
-        auto&& detector_states = data->reader()->detectorStates();
         for (size_t i = 0; i < states.size(); ++i) {
             auto state = states[i];
             if (state.refined)

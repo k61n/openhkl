@@ -24,7 +24,6 @@
 #include "core/instrument/Source.h"
 #include "core/loader/BloscFilter.h"
 #include "core/loader/IDataReader.h"
-#include "core/mathematics/MathematicsTypes.h"
 #include "core/peak/Peak3D.h"
 #include "core/utils/Path.h"
 #include "core/utils/ProgressHandler.h"
@@ -36,6 +35,7 @@
 #include <stdexcept>
 #include <utility>
 #include <vector>
+#include <Eigen/Dense> // IntMatrix
 
 namespace nsx {
 
@@ -199,6 +199,7 @@ void DataSet::saveHDF5(const std::string& filename) // const
     offset[1] = 0;
     offset[2] = 0;
 
+    using IntMatrix = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
     for (offset[0] = 0; offset[0] < _nFrames; offset[0] += count[0]) {
         space.selectHyperslab(H5S_SELECT_SET, count, offset, nullptr, nullptr);
         // HDF5 requires row-major storage, so copy frame into a row-major matrix
