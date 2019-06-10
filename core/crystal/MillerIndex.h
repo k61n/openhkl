@@ -81,6 +81,8 @@ private:
 //! Overload operator<< with MillerIndex type
 std::ostream& operator<<(std::ostream& os, const MillerIndex& hkl);
 
+using MillerIndexList = std::vector<MillerIndex>;
+
 } // namespace nsx
 
 #endif // CORE_CRYSTAL_MILLERINDEX_H

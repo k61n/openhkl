@@ -29,7 +29,6 @@ class Peak3D;
 class SymOp;
 class UnitCell;
 
-using MillerIndexList = std::vector<MillerIndex>;
 using affineTransformation = Eigen::Transform<double, 3, Eigen::Affine>;
 using sptrPeak3D = std::shared_ptr<Peak3D>;
 using sptrUnitCell = std::shared_ptr<UnitCell>;

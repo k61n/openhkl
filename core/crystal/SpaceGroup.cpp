@@ -12,18 +12,19 @@
 //
 //  ***********************************************************************************************
 
-#include <algorithm>
-#include <iterator>
-#include <sstream>
-#include <stdexcept>
-#include <vector>
-
 #include "core/crystal/SpaceGroup.h"
+
 #include "core/crystal/UnitCell.h"
 #include "core/experiment/CrystalTypes.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakFilter.h"
 #include "core/utils/StringIO.h"
+
+#include <algorithm>
+#include <iterator>
+#include <sstream>
+#include <stdexcept>
+#include <vector>
 
 namespace nsx {
 
