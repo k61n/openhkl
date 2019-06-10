@@ -17,6 +17,8 @@
 
 #include "core/geometry/AABB.h"
 
+#include <Eigen/Dense>
+
 namespace nsx {
 
 //! 3D Ellipsoid, stored as center and covariance matrix

@@ -17,16 +17,19 @@
 
 #include "core/geometry/GeometryTypes.h"
 
+#include <vector>
+#include <Eigen/Dense>
+
 namespace nsx {
 
-/*! Axis-Aligned Bounding-Box in D dimension.
- *
- * AABB are used to bound objects in a simple-way since
- * their axes are aligned with the coordinates of the world.
- * Used for fast collision detection test, as well as a
- * way to iterate quickly over region of interest in data
- * from images or volumes.
- */
+//! Axis-Aligned Bounding-Box in D dimension.
+//!
+//! AABB are used to bound objects in a simple-way since
+//! their axes are aligned with the coordinates of the world.
+//! Used for fast collision detection test, as well as a
+//! way to iterate quickly over region of interest in data
+//! from images or volumes.
+
 class AABB {
 
 public:

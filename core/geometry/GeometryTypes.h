@@ -16,9 +16,6 @@
 #define CORE_GEOMETRY_GEOMETRYTYPES_H
 
 #include <memory>
-#include <vector>
-
-#include <Eigen/Dense>
 
 namespace nsx {
 
@@ -33,13 +30,9 @@ struct Face;
 struct Triangle;
 struct Vertex;
 
-
 using sptrShapeLibrary = std::shared_ptr<ShapeLibrary>;
 
-
 enum class Direction { CW = 1, CCW = 2 };
-
-enum class PointType { REGION = 1, BACKGROUND = 2, EXCLUDED = 3 };
 
 } // namespace nsx
 
