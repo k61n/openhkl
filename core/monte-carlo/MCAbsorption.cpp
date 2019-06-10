@@ -21,6 +21,8 @@
 
 namespace nsx {
 
+using TrianglesList = std::vector<Triangle>;
+
 MCAbsorption::MCAbsorption(
     const ConvexHull& convex_hull, double source_width, double source_height, double source_y_pos)
     : _convex_hull(convex_hull)
