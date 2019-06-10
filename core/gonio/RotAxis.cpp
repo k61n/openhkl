@@ -19,6 +19,8 @@
 
 namespace nsx {
 
+enum class Direction { CW = 1, CCW = 2 };
+
 Axis* RotAxis::create(const YAML::Node& node)
 {
     return new RotAxis(node);

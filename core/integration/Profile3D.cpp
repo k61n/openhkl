@@ -122,7 +122,7 @@ const Eigen::Vector3i& Profile3D::shape() const
 
 double Profile3D::predict(const Eigen::Vector3d& x) const
 {
-    const auto& ub = _aabb.upper();
+    // const auto& ub = _aabb.upper();
     const auto& lb = _aabb.lower();
     int idx[3];
 

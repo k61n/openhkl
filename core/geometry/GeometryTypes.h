@@ -32,8 +32,6 @@ struct Vertex;
 
 using sptrShapeLibrary = std::shared_ptr<ShapeLibrary>;
 
-enum class Direction { CW = 1, CCW = 2 };
-
 } // namespace nsx
 
 #endif // CORE_GEOMETRY_GEOMETRYTYPES_H
