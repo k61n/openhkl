@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/instrument/MatrixOperations.h
-//! @brief     Defines ###THINGS###
+//! @brief     Declares functions that operate on matrices
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -23,8 +23,8 @@ void removeColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove);
 
 void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove);
 
-Eigen::Matrix3d
-interpolateRotation(const Eigen::Matrix3d& U0, const Eigen::Matrix3d& U1, const double t);
+Eigen::Matrix3d interpolateRotation(
+    const Eigen::Matrix3d& U0, const Eigen::Matrix3d& U1, const double t);
 
 } // namespace nsx
 

@@ -22,8 +22,8 @@ namespace nsx {
 class ProgressHandler;
 
 using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
-
 using ConstraintTuple = std::tuple<unsigned int, unsigned int, double>;
+
 } // namespace nsx
 
 #endif // CORE_UTILS_UTILSTYPES_H

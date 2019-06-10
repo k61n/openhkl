@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/loader/Parser.h
-//! @brief     Defines ###THINGS###
+//! @brief     Declares functions that read vectors of numbers
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -21,8 +21,7 @@ namespace nsx {
 //! This is faster than the C atoi() function.
 void readIntsFromChar(const char* begin, const char* end, std::vector<int>& v);
 
-//! Method to read a vector of double values from two char pointers, using
-//! spirit
+//! Method to read a vector of double values from two char pointers, using spirit
 void readDoublesFromChar(const char* begin, const char* end, std::vector<double>& v);
 
 } // namespace nsx
