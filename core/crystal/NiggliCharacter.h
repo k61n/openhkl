@@ -36,7 +36,7 @@ enum class BravaisType : char {
 
 // todo: refactor into LatticeCharacter
 //! \class NiggliCharacter
-//! \brief Helper struct used to store the classified type of the Niggli cell
+//! Helper struct used to store the classified type of the Niggli cell
 struct NiggliCharacter {
     int number = 31; //!< number according to tables
     bool typeI = true; //!< true if type I, else type II

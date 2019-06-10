@@ -21,7 +21,7 @@ namespace nsx {
 
 class Diffractometer;
 
-//! \brief Class to predict peak profiles (intensity distribution) using
+//! Class to predict peak profiles (intensity distribution) using
 //! Monte-Carlo integration.
 class Mosaic {
 

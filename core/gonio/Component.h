@@ -21,7 +21,7 @@
 
 namespace nsx {
 
-//! \brief Interface for the components of an instrument (e.g. detector,
+//! Interface for the components of an instrument (e.g. detector,
 //! goniometer, source ...).
 class Component {
 

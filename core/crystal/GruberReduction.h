@@ -21,7 +21,7 @@
 namespace nsx {
 
 //! \class GruberReduction
-//! \brief Classify and reduce a lattice according to the 44 types in the
+//! Classify and reduce a lattice according to the 44 types in the
 //! international tables.
 class GruberReduction {
 public:

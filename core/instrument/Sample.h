@@ -28,7 +28,7 @@ struct SampleGonioFit {
     std::vector<double> cost_function;
 };
 
-//! \brief Class used to describe an experiment sample, consisting of a unit
+//! Class used to describe an experiment sample, consisting of a unit
 //! cell and material.
 class Sample : public Component {
 public:

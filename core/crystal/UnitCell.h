@@ -26,7 +26,7 @@
 namespace nsx {
 
 //! \class UnitCellCharacter
-//! \brief Structure to encapsulate lattice cell character.
+//! Structure to encapsulate lattice cell character.
 struct UnitCellCharacter {
     //! Component (0,0) of the metric tensor
     double g00;
@@ -62,7 +62,7 @@ struct UnitCellCharacter {
 };
 
 //! \class UnitCellState
-//! \brief Structure to encapsulate the state of the unit cell for a given
+//! Structure to encapsulate the state of the unit cell for a given
 //! dataset at a given frame.
 struct UnitCellState {
 
@@ -71,7 +71,7 @@ struct UnitCellState {
 };
 
 //! \class UnitCell
-//! \brief Class to define a crystallographic unit-cell.
+//! Class to define a crystallographic unit-cell.
 //!
 //! Provide functionalities to transform vectors of the direct lattice or
 //! reciprocal lattice from unit-cell coordinates to a right-handed coordinates
@@ -251,16 +251,16 @@ public:
     //! Niggli cell.
     Eigen::Matrix3d niggliOrientation() const;
 
-    //! \brief Return parameters of the unit cell in an internal format.
+    //! Return parameters of the unit cell in an internal format.
     Eigen::VectorXd parameters() const;
 
-    //! \brief Set the uncertainty in the cell parameters.
+    //! Set the uncertainty in the cell parameters.
     //! We use the parameter uncertainty and propagation of error to estimate the
     //! uncertainty in the cell parameters
     // \f$a\f$,\f$b\f$,\f$c\f$,\f$\alpha\f$,\f$\beta\f$,\f$\gamma\f$.
     void setParameterCovariance(const Eigen::MatrixXd& cov);
 
-    //! \brief Construct a new unit cell from a reference orientation, an
+    //! Construct a new unit cell from a reference orientation, an
     //! orientation offset, and a set of parameters.
     UnitCell fromParameters(
         const Eigen::Matrix3d& U0, const Eigen::Vector3d& uOffset,

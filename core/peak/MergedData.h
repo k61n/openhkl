@@ -19,7 +19,7 @@
 
 namespace nsx {
 
-//! \brief Class to handle merged datasets.
+//! Class to handle merged datasets.
 class MergedData {
 public:
     //! Construct merged dataset with given spacegroup. Paramter \p friedel

@@ -18,7 +18,7 @@
 #include "core/integration/PixelSumIntegrator.h"
 namespace nsx {
 
-//! \brief Compute the integrated intensity via the I/sigma method used in
+//! Compute the integrated intensity via the I/sigma method used in
 //! RETREAT.
 class ISigmaIntegrator : public PixelSumIntegrator {
 public:

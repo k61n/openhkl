@@ -18,7 +18,7 @@
 #include "core/experiment/DataTypes.h"
 namespace nsx {
 
-/*! \brief Class to store MetaData of a DataSet stored by a map of key/value
+/*! Class to store MetaData of a DataSet stored by a map of key/value
  * pair
  *
  *  MetaData class allow to store metadata associated with a data file  into a

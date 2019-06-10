@@ -32,7 +32,7 @@ PeakList predictPeaks(
     ShapeLibrary library, sptrDataSet data, sptrUnitCell, double dmin, double dmax, double radius,
     double nframes, int min_neighbors, PeakInterpolation interpolation);
 
-//! \brief Class to store a library of peak shapes, to be used for peak
+//! Class to store a library of peak shapes, to be used for peak
 //! prediction and integration.
 //!
 //! The library stores a list of reference peaks. For each reference peak, the

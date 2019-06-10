@@ -20,7 +20,7 @@
 
 namespace nsx {
 
-//! \brief Interface used to provide access to detector images and metadata.
+//! Interface used to provide access to detector images and metadata.
 class IDataReader {
 
 public:

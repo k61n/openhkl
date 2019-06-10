@@ -19,7 +19,7 @@
 
 namespace nsx {
 
-//! \brief Peak integration using naive background estimation and subtraction.
+//! Peak integration using naive background estimation and subtraction.
 class PixelSumIntegrator : public MeanBackgroundIntegrator {
 public:
     //! Construct the pixel sum integrator

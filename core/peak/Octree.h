@@ -28,7 +28,7 @@ constexpr int getPow(int factor)
     return factor > 1 ? 2 * getPow(factor - 1) : 2;
 }
 
-/*! \brief A template class to handle binary trees in D dimensions
+/*! A template class to handle binary trees in D dimensions
  *
  * Octree is used to partition space in D dimensions and employed for fast
  * sorting or collision detections of AABB objects. NdTree derived from AABB
@@ -45,7 +45,7 @@ constexpr int getPow(int factor)
 
 class OctreeIterator;
 
-//! \brief This class is used to speed up collision detection.
+//! This class is used to speed up collision detection.
 class Octree : public AABB {
 public:
     //! The Octree iterator class is made friend with Octree in order to access

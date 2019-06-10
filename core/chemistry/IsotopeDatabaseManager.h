@@ -23,7 +23,7 @@
 
 namespace nsx {
 
-//! \brief Class to manage the YAML-based isotope database.
+//! Class to manage the YAML-based isotope database.
 class IsotopeDatabaseManager : public Singleton<IsotopeDatabaseManager, Constructor, Destructor> {
 
 public:

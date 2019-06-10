@@ -80,7 +80,7 @@
 
 namespace nsx {
 
-//! \brief Utility class to parse real or complex matrices from plain ASCII
+//! Utility class to parse real or complex matrices from plain ASCII
 //! text.
 class MatrixParser {
 

@@ -24,7 +24,7 @@ namespace nsx {
 struct MinimizerGSL;
 
 //! \class Minimizer
-//! \brief Class to wrap the GSL non-linear least squares minimization routines.
+//! Class to wrap the GSL non-linear least squares minimization routines.
 //! This class supports both numerical and analytic derivatives.
 class Minimizer {
 public:

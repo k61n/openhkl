@@ -19,7 +19,7 @@
 
 namespace nsx {
 
-//! \brief Class to integrate peaks using 1d profile fitting.
+//! Class to integrate peaks using 1d profile fitting.
 class Profile1DIntegrator : public IPeakIntegrator {
 public:
     //! Construct integrator with given library, peak search radius, and frame

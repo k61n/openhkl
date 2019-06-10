@@ -107,7 +107,7 @@ static Eigen::Matrix3d from_cholesky(const std::array<double, 6>& components)
     return L * L.transpose();
 }
 
-//! \brief Helper struct used internally by the shape library.
+//! Helper struct used internally by the shape library.
 struct FitData {
     //! Sample orientation matrix
     Eigen::Matrix3d Rs;

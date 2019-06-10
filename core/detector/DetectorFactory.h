@@ -21,7 +21,7 @@
 
 namespace nsx {
 
-//! \brief Factory class for producing different detector geometries.
+//! Factory class for producing different detector geometries.
 class DetectorFactory : public Factory<Detector, std::string, const YAML::Node&>,
                         public Singleton<DetectorFactory, Constructor, Destructor> {
 private:

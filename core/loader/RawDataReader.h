@@ -30,7 +30,7 @@ struct RawDataReaderParameters {
     size_t bpp = 2;
 };
 
-//! \brief Class to detector counts from raw binary data.
+//! Class to detector counts from raw binary data.
 class RawDataReader : public IDataReader {
 
 public:

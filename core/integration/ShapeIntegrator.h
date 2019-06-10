@@ -20,7 +20,7 @@
 
 namespace nsx {
 
-//! \brief Peak integrator class used to build a shape library for profile
+//! Peak integrator class used to build a shape library for profile
 //! fitting.
 class ShapeIntegrator : public PixelSumIntegrator {
 public:

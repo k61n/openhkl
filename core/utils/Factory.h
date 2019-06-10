@@ -24,7 +24,7 @@ namespace nsx {
 
 //! generic factory class templated on the return type, the key and accepts any number
 //! and/or type of parameters using variadic templates for the callback.
- */
+
 template <typename returnType, typename keytype, typename... args> class Factory {
     typedef std::function<returnType*(args...)> callback;
     typedef std::map<keytype, callback> callbackmap;

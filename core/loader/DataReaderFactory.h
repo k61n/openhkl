@@ -17,7 +17,7 @@
 
 namespace nsx {
 
-/** \brief DataReaderFactory. All IData formats must register their "create"
+/** DataReaderFactory. All IData formats must register their "create"
  * method with the factory in order to choose the correct DataReader at runtime.
  * Reader selection is based on the extension of the datafile.
  *

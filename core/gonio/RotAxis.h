@@ -20,7 +20,7 @@
 
 namespace nsx {
 
-//! \brief Class defining a rotation axis.
+//! Class defining a rotation axis.
 //!
 //! Allows to define a rotation axis in 3D space , constructed by a direction
 //! vector and a rotation direction (CW or CCW). The direction vector needs not

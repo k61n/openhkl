@@ -22,7 +22,7 @@ struct Edge;
 struct Vertex;
 
 /* !
- * \brief Class Face.
+ * Class Face.
  * This class implements the Face object used in the incremental convex hull
  * algorithm.
  */

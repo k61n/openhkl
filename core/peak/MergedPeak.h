@@ -20,10 +20,10 @@
 namespace nsx {
 
 //! \class MergedPeak
-//! \brief Class to handle calculation of merged data
+//! Class to handle calculation of merged data
 class MergedPeak {
 public:
-    //! \brief Construct a merged peak with the given spacegroup.
+    //! Construct a merged peak with the given spacegroup.
     //!
     //! The resulting peak has intensity given by the average intensity of the
     //! input peaks. The parameter \p friedel specifies whether to also include

@@ -21,7 +21,7 @@
 namespace nsx {
 
 //! \class Material
-//! \brief Class to represent the sample material type.
+//! Class to represent the sample material type.
 class Material {
 
 public:

@@ -20,7 +20,7 @@
 namespace nsx {
 
 //! \class Peak3D
-//! \brief Data type used to store integrated peaks, including their shape and
+//! Data type used to store integrated peaks, including their shape and
 //! location.
 class Peak3D {
 

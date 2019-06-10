@@ -21,7 +21,7 @@
 namespace nsx {
 
 //! \class FFTIndexing
-//! \brief Class used for Fast-Fourier transform autoindexing.
+//! Class used for Fast-Fourier transform autoindexing.
 class FFTIndexing {
 public:
     //! Type to store vector together with quality.

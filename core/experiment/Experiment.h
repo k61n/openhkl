@@ -20,7 +20,7 @@
 
 namespace nsx {
 
-//! \brief Experiment class, a data type containing a diffractometer and data
+//! Experiment class, a data type containing a diffractometer and data
 //! sets.
 class Experiment {
 public:

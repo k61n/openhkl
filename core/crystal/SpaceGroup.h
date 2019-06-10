@@ -22,7 +22,7 @@
 namespace nsx {
 
 //! \class SpaceGroup
-//! \brief Class to enumerate and construct the 3d spacegroups.
+//! Class to enumerate and construct the 3d spacegroups.
 class SpaceGroup {
 private:
     //! Returns the list of spacegroup symmetry generators associated to each

@@ -20,7 +20,7 @@
 
 namespace nsx {
 
-//! \brief Class to define a vector defined in reciprocal space.
+//! Class to define a vector defined in reciprocal space.
 //!
 //! This class allows to enforce dimensional and C++-type consistency when
 //! dealing with vectors in algorithms dedicated to crystallographic data.

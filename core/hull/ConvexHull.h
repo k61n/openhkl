@@ -26,7 +26,7 @@ struct Edge;
 struct Face;
 struct Vertex;
 
-//! \brief Class ConvexHull.
+//! Class ConvexHull.
 //! This class implements an templated object-oriented adaptation of the 3D
 //! incremental convex hull algorithm whose implementation in C has been
 //! described in: o'Rourke, Joseph. Computational geometry in C. Cambridge

@@ -19,7 +19,7 @@
 
 namespace nsx {
 
-//! \brief Class to store a 3d peak profile
+//! Class to store a 3d peak profile
 class Profile3D {
 public:
     Profile3D();

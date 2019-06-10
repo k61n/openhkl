@@ -21,7 +21,7 @@
 namespace nsx {
 
 //! \class BrillouinZone
-//! \brief Class to calculate first Brillouin zone of a lattice and to convert
+//! Class to calculate first Brillouin zone of a lattice and to convert
 //! it to a convex hull representation. The first Brillouin zone of a lattice is
 //! defined to be the set of all vectors which are closer to the origin than to
 //! any other lattice point. From this definition, it comes that it is a convex

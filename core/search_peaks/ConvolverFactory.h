@@ -19,7 +19,7 @@
 
 namespace nsx {
 
-//! \brief Factory class for the different image filters.
+//! Factory class for the different image filters.
 class ConvolverFactory {
 
 public:

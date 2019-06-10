@@ -25,7 +25,7 @@
 namespace nsx {
 
 //! \class PeakCoordinateSystem
-//! \brief This class implements the per-peak coordinate system described by
+//! This class implements the per-peak coordinate system described by
 //! Kabsch (1988, 2010)
 //!
 //! Following Kabsch 1988, we introduce about each peak a new coordinate system

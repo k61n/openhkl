@@ -19,7 +19,7 @@
 
 namespace nsx {
 
-//! \brief Class used to compute the various R factors.
+//! Class used to compute the various R factors.
 class RFactor : public IMergedPeakStatistic {
 public:
     RFactor()

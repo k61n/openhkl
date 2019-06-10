@@ -21,7 +21,7 @@
 namespace nsx {
 
 //! \class DShell
-//! \brief Utility structure to store a list of peaks with resolution in the
+//! Utility structure to store a list of peaks with resolution in the
 //! range [dmin, dmax].
 struct DShell {
     //! Minimum value of d, i.e. maximum resolution
@@ -33,7 +33,7 @@ struct DShell {
 };
 
 //! \class ResolutionShell
-//! \brief Class to split a set of peaks into a number of shells based on
+//! Class to split a set of peaks into a number of shells based on
 //! resolution.
 class ResolutionShell {
 public:

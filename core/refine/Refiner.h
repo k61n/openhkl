@@ -20,7 +20,7 @@
 namespace nsx {
 
 //! \class Refiner
-//! \brief Class used to refine lattice and instrument parameters.
+//! Class used to refine lattice and instrument parameters.
 class Refiner {
 public:
     //! Construct an instance to refine the given cell based on the given peak

@@ -54,7 +54,7 @@
 
 namespace nsx {
 
-//! \brief More sophisticated version of local background subtraction.
+//! More sophisticated version of local background subtraction.
 class EnhancedAnnularConvolver : public Convolver {
 
 public:

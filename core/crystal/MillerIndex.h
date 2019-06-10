@@ -21,7 +21,7 @@
 
 namespace nsx {
 
-//! \brief Class to define the Miller indices (a.k.a hkl index)
+//! Class to define the Miller indices (a.k.a hkl index)
 //!
 //! This class allows to enforce dimensional and C++-type consistency when
 //! dealing with vectors in algorithms dedicated to crystallographic data.

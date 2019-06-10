@@ -20,7 +20,7 @@
 
 namespace nsx {
 
-/*! \brief Axis-Aligned Bounding-Box in D dimension.
+/*! Axis-Aligned Bounding-Box in D dimension.
  *
  * AABB are used to bound objects in a simple-way since
  * their axes are aligned with the coordinates of the world.

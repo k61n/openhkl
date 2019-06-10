@@ -20,7 +20,7 @@
 
 namespace nsx {
 
-//! \brief Class used to construct a peak integration region.
+//! Class used to construct a peak integration region.
 class IntegrationRegion {
 public:
     //! Classify the type of detector event with respect to the current
