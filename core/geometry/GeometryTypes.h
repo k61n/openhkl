@@ -15,14 +15,6 @@
 #ifndef CORE_GEOMETRY_GEOMETRYTYPES_H
 #define CORE_GEOMETRY_GEOMETRYTYPES_H
 
-#include <memory>
-
-namespace nsx {
-
-class ShapeLibrary;
-
-using sptrShapeLibrary = std::shared_ptr<ShapeLibrary>;
-
-} // namespace nsx
+#include "core/integration/ShapeLibrary.h"
 
 #endif // CORE_GEOMETRY_GEOMETRYTYPES_H

@@ -18,11 +18,17 @@
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataTypes.h"
-#include "core/geometry/GeometryTypes.h"
 #include "core/integration/Profile1D.h"
 #include "core/integration/Profile3D.h"
 
+#include <memory>
+#include <Eigen/Dense>
+
 namespace nsx {
+
+class ShapeLibrary;
+
+using sptrShapeLibrary = std::shared_ptr<ShapeLibrary>;
 
 enum class PeakInterpolation { NoInterpolation = 0, InverseDistance = 1, Intensity = 2 };
 

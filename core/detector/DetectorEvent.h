@@ -15,6 +15,8 @@
 #ifndef CORE_DETECTOR_DETECTOREVENT_H
 #define CORE_DETECTOR_DETECTOREVENT_H
 
+#include <Eigen/Dense>
+
 namespace nsx {
 
 //! Lightweight class for detector events.
