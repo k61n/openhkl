@@ -75,8 +75,6 @@ using Eigen::Matrix3d;
 using Eigen::Matrix;
 using Eigen::Quaterniond;
 
-#include "core/utils/Any.h"
-
 #include "core/chemistry/Material.h"
 #include "core/chemistry/IsotopeDatabaseManager.h"
 
