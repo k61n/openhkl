@@ -44,7 +44,6 @@
 #include "core/logger/AggregateStreamWrapper.h"
 #include "core/logger/LogFileStreamWrapper.h"
 #include "core/logger/Logger.h"
-#include "core/mathematics/MathematicsTypes.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakFilter.h"
 #include "core/search_peaks/PeakFinder.h"

@@ -25,7 +25,6 @@
 #include "core/instrument/Source.h"
 #include "core/loader/BloscFilter.h"
 #include "core/loader/IDataReader.h"
-#include "core/mathematics/MathematicsTypes.h"
 #include "core/utils/Path.h"
 #include "core/utils/Units.h"
 

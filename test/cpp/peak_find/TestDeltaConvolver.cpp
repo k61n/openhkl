@@ -1,4 +1,3 @@
-#include "core/mathematics/MathematicsTypes.h"
 #include "core/search_peaks/DeltaConvolver.h"
 #include "test/cpp/catch.hpp"
 

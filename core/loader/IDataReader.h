@@ -32,7 +32,6 @@ namespace nsx {
 class IDataReader {
 
 public:
-    //! Construct data reader from given filename and diffractometer
     IDataReader(const std::string& filename, Diffractometer* diffractometer);
     virtual ~IDataReader() = 0;
 
