@@ -83,7 +83,7 @@ using Eigen::Quaterniond;
 
 #include "core/loader/EigenToVector.h"
 #include "core/utils/CSV.h"
-#include "core/utils/Enums.h"
+#include "core/detector/DataOrder.h"
 #include "core/utils/Units.h"
 
 #include "core/utils/Path.h"
@@ -187,7 +187,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/utils/Singleton.h"
 #include "core/utils/Factory.h"
 
-#include "core/utils/Enums.h"
+#include "core/detector/DataOrder.h"
 
 #include "core/gonio/Axis.h"
 #include "core/gonio/RotAxis.h"
@@ -413,7 +413,7 @@ namespace nsx {
 
 %include "core/loader/EigenToVector.h"
 %include "core/utils/CSV.h"
-%include "core/utils/Enums.h"
+%include "core/detector/DataOrder.h"
 %include "core/utils/Path.h"
 
 %include "core/loader/Parser.h"

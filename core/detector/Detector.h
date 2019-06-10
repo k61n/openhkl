@@ -19,7 +19,7 @@
 
 #include "core/detector/DetectorEvent.h"
 #include "core/geometry/ReciprocalVector.h"
-#include "core/utils/Enums.h"
+#include "core/detector/DataOrder.h"
 
 #include <Eigen/Dense>
 

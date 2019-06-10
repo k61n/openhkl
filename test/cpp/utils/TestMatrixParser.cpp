@@ -4,7 +4,7 @@
 #include <Eigen/Dense>
 
 #include "core/loader/MatrixParser.h"
-#include "core/utils/Enums.h"
+#include "core/detector/DataOrder.h"
 
 TEST_CASE("test/utils/TestMatrixParser.cpp", "")
 {
