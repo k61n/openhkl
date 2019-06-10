@@ -17,7 +17,7 @@
 #include <map>
 
 #include "core/crystal/SpaceGroup.h"
-#include "core/experiment/CrystalTypes.h"
+#include "core/peak/Peak3D.h"
 #include "core/peak/MergedData.h"
 
 #include "apps/frames/NSXQFrame.h"

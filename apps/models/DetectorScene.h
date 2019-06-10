@@ -19,7 +19,7 @@
 #include <QRect>
 #include <QStack>
 
-#include "core/experiment/CrystalTypes.h"
+#include "core/peak/Peak3D.h"
 #include "core/experiment/DataTypes.h"
 #include "core/mask/IMask.h"
 

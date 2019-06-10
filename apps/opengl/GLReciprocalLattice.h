@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "core/experiment/CrystalTypes.h"
+#include "core/peak/Peak3D.h"
 
 #include "apps/opengl/GLActor.h"
 

@@ -7,7 +7,7 @@
 #include <Eigen/Dense>
 
 #include "core/auto_indexing/AutoIndexer.h"
-#include "core/experiment/CrystalTypes.h"
+#include "core/peak/Peak3D.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/loader/DataReaderFactory.h"

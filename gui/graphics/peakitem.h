@@ -15,7 +15,7 @@
 #ifndef GUI_GRAPHICS_PEAKITEM_H
 #define GUI_GRAPHICS_PEAKITEM_H
 
-#include "core/experiment/CrystalTypes.h"
+#include "core/peak/Peak3D.h"
 #include "gui/graphics/plottableitem.h"
 
 #include <Eigen/Dense>

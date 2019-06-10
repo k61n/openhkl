@@ -17,7 +17,7 @@
 #include "gui/models/session.h"
 #include <QCR/engine/logger.h>
 
-#include "core/experiment/CrystalTypes.h"
+#include "core/peak/Peak3D.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/DataTypes.h"
 #include "core/peak/Peak3D.h"

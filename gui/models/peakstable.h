@@ -17,7 +17,7 @@
 
 #include <QTableView>
 
-#include "core/experiment/CrystalTypes.h"
+#include "core/peak/Peak3D.h"
 #include "core/integration/ShapeLibrary.h"
 #include "core/instrument/InstrumentTypes.h"
 

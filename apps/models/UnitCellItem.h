@@ -16,7 +16,7 @@
 
 #include "apps/models/InspectableTreeItem.h"
 
-#include "core/experiment/CrystalTypes.h"
+#include "core/peak/Peak3D.h"
 #include "core/instrument/InstrumentTypes.h"
 
 class QWidget;

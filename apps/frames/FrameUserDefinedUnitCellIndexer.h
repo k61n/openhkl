@@ -18,7 +18,7 @@
 #include <vector>
 
 #include "core/auto_indexing/UserDefinedUnitCellIndexer.h"
-#include "core/experiment/CrystalTypes.h"
+#include "core/peak/Peak3D.h"
 
 #include "apps/frames/NSXQFrame.h"
 

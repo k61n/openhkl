@@ -30,7 +30,7 @@
 #include "core/crystal/MillerIndex.h"
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/UnitCell.h"
-#include "core/experiment/CrystalTypes.h"
+#include "core/peak/Peak3D.h"
 #include "core/experiment/DataSet.h"
 #include "core/geometry/ReciprocalVector.h"
 #include "core/instrument/Diffractometer.h"

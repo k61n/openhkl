@@ -17,6 +17,6 @@
 #include <functional>
 #include <utility>
 
-#include "core/experiment/CrystalTypes.h"
+#include "core/peak/Peak3D.h"
 
 std::pair<double, double> dRange(const nsx::PeakList& peaks);

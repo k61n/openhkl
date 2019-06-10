@@ -35,7 +35,7 @@
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/UnitCell.h"
 #include "core/detector/Detector.h"
-#include "core/experiment/CrystalTypes.h"
+#include "core/peak/Peak3D.h"
 #include "core/geometry/AABB.h"
 #include "core/geometry/Ellipsoid.h"
 #include "core/instrument/Diffractometer.h"

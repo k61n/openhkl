@@ -17,7 +17,7 @@
 #include <utility>
 #include <vector>
 
-#include "core/experiment/CrystalTypes.h"
+#include "core/peak/Peak3D.h"
 
 #include "apps/frames/NSXQFrame.h"
 

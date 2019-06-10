@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "core/experiment/CrystalTypes.h"
+#include "core/peak/Peak3D.h"
 #include "core/instrument/InstrumentTypes.h"
 
 #include "apps/models/InspectableTreeItem.h"

@@ -21,7 +21,7 @@
 #include <QAbstractTableModel>
 #include <QModelIndexList>
 
-#include "core/experiment/CrystalTypes.h"
+#include "core/peak/Peak3D.h"
 #include "core/experiment/DataTypes.h"
 #include "core/instrument/InstrumentTypes.h"
 

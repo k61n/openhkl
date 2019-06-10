@@ -20,7 +20,7 @@
 #include <QCR/engine/logger.h>
 
 #include "core/auto_indexing/UserDefinedUnitCellIndexer.h"
-#include "core/experiment/CrystalTypes.h"
+#include "core/peak/Peak3D.h"
 #include "core/experiment/Experiment.h"
 #include "core/geometry/ReciprocalVector.h"
 #include "core/instrument/Diffractometer.h"
