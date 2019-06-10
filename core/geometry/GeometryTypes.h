@@ -16,7 +16,7 @@
 #define CORE_GEOMETRY_GEOMETRYTYPES_H
 
 #include <memory>
-#include <unordered_map>
+//@ #include <unordered_map>
 #include <vector>
 
 #include <Eigen/Dense>
@@ -24,13 +24,13 @@
 namespace nsx {
 
 class AABB;
-class Blob3D;
+//@ class Blob3D;
 class ConvexHull;
 class DirectVector;
 class Ellipsoid;
 class ReciprocalVector;
 class ShapeLibrary;
-class Profile3D;
+//@ class Profile3D;
 
 struct Edge;
 struct Face;

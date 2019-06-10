@@ -14,11 +14,11 @@
 
 #pragma once
 
-#include <map>
-#include <utility>
-#include <vector>
+//@ #include <map>
+//@ #include <utility>
+//@ #include <vector>
 
-#include <Eigen/Dense>
+//@ #include <Eigen/Dense>
 
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>

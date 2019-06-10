@@ -17,7 +17,7 @@
 #define GUI_PANELS_SUBTAB_SAMPLE_H
 
 #include "gui/properties/sampleshapeproperties.h"
-#include <QCR/widgets/views.h>
+//@ #include <QCR/widgets/views.h>
 
 class SubtabSample : public QcrWidget {
 public:

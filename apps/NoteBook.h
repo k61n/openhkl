@@ -14,15 +14,15 @@
 
 #pragma once
 
-#include <sstream>
-#include <string>
-#include <unordered_map>
+//@ #include <sstream>
+//@ #include <string>
+//@ #include <unordered_map>
 
-#include <QFileInfo>
+//@ #include <QFileInfo>
 #include <QImageReader>
 #include <QMimeData>
 #include <QTextEdit>
-#include <QUrl>
+//@ #include <QUrl>
 
 /*
  * A QtextEdit inherited class in which image and text can be dragged and

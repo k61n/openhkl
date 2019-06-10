@@ -17,9 +17,9 @@
 #define GUI_GRAPHICS_SIMPLEPLOT_H
 
 #include "gui/graphics/nsxplot.h"
-#include <string>
+//@ #include <string>
 
-class QWidget;
+//@ class QWidget;
 
 class SimplePlot : public NSXPlot {
     Q_OBJECT

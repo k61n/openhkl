@@ -19,14 +19,14 @@
 #include "core/experiment/DataTypes.h"
 #include "core/geometry/GeometryTypes.h"
 #include "gui/graphics/nsxgraphicsitem.h"
-#include <QGraphicsTextItem>
-#include <QPointF>
+//@ #include <QGraphicsTextItem>
+//@ #include <QPointF>
 
-class QGraphicsSceneMouseEvent;
-class QGraphicsSceneWheelEvent;
-class QPainter;
-class QStyleOptionGraphicsItem;
-class QWidget;
+//@ class QGraphicsSceneMouseEvent;
+//@ class QGraphicsSceneWheelEvent;
+//@ class QPainter;
+//@ class QStyleOptionGraphicsItem;
+//@ class QWidget;
 
 /*! Creates a mask that will be used to unselect/select peaks whether their
  * intercept or not the mask

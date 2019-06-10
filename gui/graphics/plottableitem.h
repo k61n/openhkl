@@ -15,18 +15,18 @@
 #ifndef GUI_GRAPHICS_PLOTTABLEITEM_H
 #define GUI_GRAPHICS_PLOTTABLEITEM_H
 
-#include <QGraphicsItem>
-#include <QPen>
-#include <QRectF>
+//@ #include <QGraphicsItem>
+//@ #include <QPen>
+//@ #include <QRectF>
 
 #include "gui/graphics/nsxgraphicsitem.h"
 
-class QGraphicsSceneHoverEvent;
-class QGraphicsSceneMouseEvent;
-class QGraphicsTextItem;
-class QGraphicsSceneWheelEvent;
-class QKeyEvent;
-class QWidget;
+//@ class QGraphicsSceneHoverEvent;
+//@ class QGraphicsSceneMouseEvent;
+//@ class QGraphicsTextItem;
+//@ class QGraphicsSceneWheelEvent;
+//@ class QKeyEvent;
+//@ class QWidget;
 class NSXPlot;
 
 class PlottableItem : public NSXGraphicsItem {

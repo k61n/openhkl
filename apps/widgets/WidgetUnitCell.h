@@ -16,7 +16,7 @@
 
 #include <QWidget>
 
-#include "core/experiment/CrystalTypes.h"
+//@ #include "core/experiment/CrystalTypes.h"
 
 namespace Ui {
 class WidgetUnitCell;

@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "core/instrument/InstrumentTypes.h"
+//@ #include "core/instrument/InstrumentTypes.h"
 
 #include "apps/models/InspectableTreeItem.h"
 

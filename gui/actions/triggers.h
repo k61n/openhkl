@@ -16,7 +16,7 @@
 #ifndef GUI_ACTIONS_TRIGGERS_H
 #define GUI_ACTIONS_TRIGGERS_H
 
-#include <QAction>
+//@ #include <QAction>
 #include <QCR/widgets/actions.h>
 
 //! Collection of trigger actions, for use as member of MainWin.

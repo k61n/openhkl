@@ -21,7 +21,7 @@
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 #include <QDialogButtonBox>
-#include <QTableView>
+//@ #include <QTableView>
 
 class AutoIndexer : public QcrFrame {
 public:

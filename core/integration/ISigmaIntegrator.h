@@ -15,17 +15,17 @@
 #ifndef CORE_INTEGRATION_ISIGMAINTEGRATOR_H
 #define CORE_INTEGRATION_ISIGMAINTEGRATOR_H
 
-#include <Eigen/Dense>
+//@ #include <Eigen/Dense>
 
-#include "core/geometry/GeometryTypes.h"
-#include "core/integration/MeanBackgroundIntegrator.h"
+//@ #include "core/geometry/GeometryTypes.h"
+//@ #include "core/integration/MeanBackgroundIntegrator.h"
 #include "core/integration/PixelSumIntegrator.h"
-#include "core/integration/ShapeLibrary.h"
-#include "core/peak/IPeakIntegrator.h"
+//@ #include "core/integration/ShapeLibrary.h"
+//@ #include "core/peak/IPeakIntegrator.h"
 
 namespace nsx {
 
-class DataSet;
+//@ class DataSet;
 
 //! \brief Compute the integrated intensity via the I/sigma method used in
 //! RETREAT.

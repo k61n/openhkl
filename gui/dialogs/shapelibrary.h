@@ -16,15 +16,15 @@
 #ifndef GUI_DIALOGS_SHAPELIBRARY_H
 #define GUI_DIALOGS_SHAPELIBRARY_H
 
-#include <QDialog>
+//@ #include <QDialog>
 #include <QDialogButtonBox>
 #include <QGraphicsView>
-#include <QGroupBox>
+//@ #include <QGroupBox>
 #include <QTableView>
 
 #include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataTypes.h"
-#include "core/instrument/InstrumentTypes.h"
+//@ #include "core/instrument/InstrumentTypes.h"
 #include "core/integration/Profile3D.h"
 
 #include "gui/models/colormap.h"

@@ -19,7 +19,7 @@
 #include "gui/graphics/detectorview.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
-#include <QGraphicsView>
+//@ #include <QGraphicsView>
 
 //! Subframe of the main window, with tabs to control detector, fits, &c
 

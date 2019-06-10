@@ -15,13 +15,13 @@
 #ifndef CORE_LOADER_METADATA_H
 #define CORE_LOADER_METADATA_H
 
-#include <map>
-#include <set>
-#include <stdexcept>
-#include <string>
+//@ #include <map>
+//@ #include <set>
+//@ #include <stdexcept>
+//@ #include <string>
 
 #include "core/experiment/DataTypes.h"
-#include "core/utils/Variant.h"
+//@ #include "core/utils/Variant.h"
 
 namespace nsx {
 

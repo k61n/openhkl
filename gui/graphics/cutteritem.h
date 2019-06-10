@@ -18,12 +18,12 @@
 
 #include "core/experiment/DataTypes.h"
 #include "gui/graphics/plottableitem.h"
-#include <QPen>
-#include <QPointF>
+//@ #include <QPen>
+//@ #include <QPointF>
 
-class QGraphicsSceneHoverEvent;
-class QGraphicsSceneMouseEvent;
-class QWidget;
+//@ class QGraphicsSceneHoverEvent;
+//@ class QGraphicsSceneMouseEvent;
+//@ class QWidget;
 
 class CutterItem : public PlottableItem {
 public:

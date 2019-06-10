@@ -17,7 +17,7 @@
 #define GUI_PANELS_SUBFRAME_PROPERTIES_H
 
 #include "gui/panels/subframe_setup.h"
-#include <QCR/widgets/views.h>
+//@ #include <QCR/widgets/views.h>
 
 class SubframeProperties : public QcrDockWidget {
 public:

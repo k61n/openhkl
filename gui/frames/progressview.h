@@ -15,9 +15,9 @@
 #ifndef GUI_FRAMES_PROGRESSVIEW_H
 #define GUI_FRAMES_PROGRESSVIEW_H
 
-#include <memory>
+//@ #include <memory>
 
-#include <QObject>
+//@ #include <QObject>
 #include <QProgressDialog>
 #include <QTimer>
 

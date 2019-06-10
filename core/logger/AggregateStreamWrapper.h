@@ -15,7 +15,7 @@
 #ifndef CORE_LOGGER_AGGREGATESTREAMWRAPPER_H
 #define CORE_LOGGER_AGGREGATESTREAMWRAPPER_H
 
-#include <functional>
+//@ #include <functional>
 #include <vector>
 
 #include "core/logger/IStreamWrapper.h"

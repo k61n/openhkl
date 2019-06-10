@@ -17,10 +17,10 @@
 
 #include "core/experiment/CrystalTypes.h"
 #include "gui/graphics/plottableitem.h"
-#include <Eigen/Dense>
+//@ #include <Eigen/Dense>
 
-class QWidget;
-class NSXPlot;
+//@ class QWidget;
+//@ class NSXPlot;
 
 class PeakItem : public PlottableItem {
 public:

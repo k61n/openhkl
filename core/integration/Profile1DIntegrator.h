@@ -15,14 +15,14 @@
 #ifndef CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
 #define CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
 
-#include <Eigen/Dense>
+//@ #include <Eigen/Dense>
 
-#include "core/integration/ShapeLibrary.h"
+//@ #include "core/integration/ShapeLibrary.h"
 #include "core/peak/IPeakIntegrator.h"
 
 namespace nsx {
 
-class DataSet;
+//@ class DataSet;
 
 //! \brief Class to integrate peaks using 1d profile fitting.
 class Profile1DIntegrator : public IPeakIntegrator {

@@ -15,10 +15,10 @@
 #ifndef CORE_UTILS_UTILSTYPES_H
 #define CORE_UTILS_UTILSTYPES_H
 
-#include <functional>
-#include <memory>
+//@ #include <functional>
+//@ #include <memory>
 #include <set>
-#include <tuple>
+//@ #include <tuple>
 
 namespace nsx {
 
@@ -27,10 +27,10 @@ class ProgressHandler;
 using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
 
 using ConstraintTuple = std::tuple<unsigned int, unsigned int, double>;
-using ConstraintSet = std::set<ConstraintTuple>;
+//@ using ConstraintSet = std::set<ConstraintTuple>;
 
-using FinishedCallback = std::function<void(bool)>;
-using TaskCallback = std::function<bool(void)>;
+//@ using FinishedCallback = std::function<void(bool)>;
+//@ using TaskCallback = std::function<bool(void)>;
 
 } // namespace nsx
 

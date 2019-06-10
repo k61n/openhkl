@@ -17,12 +17,12 @@
 #define GUI_FRAMES_USERDEFINEDUNITCELLINDEXER_H
 
 #include "core/auto_indexing/UserDefinedUnitCellIndexer.h"
-#include "core/experiment/CrystalTypes.h"
+//@ #include "core/experiment/CrystalTypes.h"
 #include "gui/models/peakstable.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 #include <QDialogButtonBox>
-#include <QTableView>
+//@ #include <QTableView>
 
 class UserDefinedUnitCellIndexer : public QcrFrame {
 public:

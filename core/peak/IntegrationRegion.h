@@ -15,10 +15,10 @@
 #ifndef CORE_PEAK_INTEGRATIONREGION_H
 #define CORE_PEAK_INTEGRATIONREGION_H
 
-#include <Eigen/Core>
+//@ #include <Eigen/Core>
 
-#include "core/geometry/Ellipsoid.h"
-#include "core/geometry/GeometryTypes.h"
+//@ #include "core/geometry/Ellipsoid.h"
+//@ #include "core/geometry/GeometryTypes.h"
 #include "core/hull/ConvexHull.h"
 #include "core/peak/PeakData.h"
 

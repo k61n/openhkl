@@ -17,7 +17,7 @@
 #define GUI_PANELS_SUBTAB_DETECTOR_H
 
 #include "gui/properties/detectorproperty.h"
-#include <QCR/widgets/views.h>
+//@ #include <QCR/widgets/views.h>
 
 class SubtabDetector : public QcrWidget {
 public:

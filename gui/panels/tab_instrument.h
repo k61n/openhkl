@@ -19,7 +19,7 @@
 #include "gui/panels/subtab_detector.h"
 #include "gui/panels/subtab_monochromaticsource.h"
 #include "gui/panels/subtab_sample.h"
-#include <QCR/widgets/controls.h>
+//@ #include <QCR/widgets/controls.h>
 
 class TabInstrument : public QcrTabWidget {
 public:

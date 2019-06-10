@@ -15,22 +15,22 @@
 #ifndef CORE_PEAK_IPEAKINTEGRATOR_H
 #define CORE_PEAK_IPEAKINTEGRATOR_H
 
-#include <map>
-#include <vector>
+//@ #include <map>
+//@ #include <vector>
 
-#include <Eigen/Dense>
+//@ #include <Eigen/Dense>
 
-#include "core/crystal/BrillouinZone.h"
+//@ #include "core/crystal/BrillouinZone.h"
 #include "core/crystal/Intensity.h"
 #include "core/experiment/DataTypes.h"
-#include "core/geometry/GeometryTypes.h"
+//@ #include "core/geometry/GeometryTypes.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/utils/ProgressHandler.h"
 #include "core/utils/UtilsTypes.h"
 
 namespace nsx {
 
-class DataSet;
+//@ class DataSet;
 
 //! \class IPeakIntegrator
 //! \brief This is a helper class to handle per-frame integration of a peak.

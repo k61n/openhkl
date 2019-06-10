@@ -16,11 +16,11 @@
 #define RESOURCES_HH
 
 #include <functional>
-#include <map>
-#include <set>
-#include <string>
-#include <utility>
-#include <vector>
+//@ #include <map>
+//@ #include <set>
+//@ #include <string>
+//@ #include <utility>
+//@ #include <vector>
 
 #include <yaml-cpp/yaml.h>
 

@@ -15,14 +15,14 @@
 #ifndef GUI_GRAPHICS_PLOTFACTORY_H
 #define GUI_GRAPHICS_PLOTFACTORY_H
 
-#include <string>
+//@ #include <string>
 
 #include "core/utils/Factory.h"
 #include "core/utils/Singleton.h"
 
 #include "gui/graphics/nsxplot.h"
 
-class QWidget;
+//@ class QWidget;
 
 class PlotFactory : public nsx::Factory<NSXPlot, std::string, QWidget*>,
                     public nsx::Singleton<PlotFactory, nsx::Constructor, nsx::Destructor> {

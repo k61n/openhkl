@@ -15,16 +15,16 @@
 #ifndef CORE_REFINE_REFINEMENTBATCH_H
 #define CORE_REFINE_REFINEMENTBATCH_H
 
-#include <functional>
-#include <map>
-#include <vector>
+//@ #include <functional>
+//@ #include <map>
+//@ #include <vector>
 
-#include <Eigen/SparseCore>
+//@ #include <Eigen/SparseCore>
 
 #include "core/crystal/UnitCell.h"
-#include "core/experiment/CrystalTypes.h"
+//@ #include "core/experiment/CrystalTypes.h"
 #include "core/fitting/FitParameters.h"
-#include "core/geometry/ReciprocalVector.h"
+//@ #include "core/geometry/ReciprocalVector.h"
 #include "core/instrument/InstrumentTypes.h"
 
 namespace nsx {

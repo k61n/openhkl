@@ -15,13 +15,13 @@
 #ifndef CORE_INTEGRATION_GAUSSIANINTEGRATOR_H
 #define CORE_INTEGRATION_GAUSSIANINTEGRATOR_H
 
-#include <Eigen/Dense>
+//@ #include <Eigen/Dense>
 
 #include "core/peak/IPeakIntegrator.h"
 
 namespace nsx {
 
-class DataSet;
+//@ class DataSet;
 
 //! \brief Compute integrated intensity by fitting to an analytic 3d Gaussian.
 class GaussianIntegrator : public IPeakIntegrator {

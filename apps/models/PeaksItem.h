@@ -14,12 +14,12 @@
 
 #pragma once
 
-#include "core/experiment/DataTypes.h"
-#include "core/instrument/InstrumentTypes.h"
+//@ #include "core/experiment/DataTypes.h"
+//@ #include "core/instrument/InstrumentTypes.h"
 
 #include "apps/models/InspectableTreeItem.h"
 
-class PeakListItem;
+//@ class PeakListItem;
 
 class PeaksItem : public InspectableTreeItem {
 

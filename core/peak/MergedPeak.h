@@ -15,12 +15,12 @@
 #ifndef CORE_PEAK_MERGEDPEAK_H
 #define CORE_PEAK_MERGEDPEAK_H
 
-#include <Eigen/Dense>
+//@ #include <Eigen/Dense>
 
 #include "core/crystal/Intensity.h"
-#include "core/crystal/MillerIndex.h"
+//@ #include "core/crystal/MillerIndex.h"
 #include "core/crystal/SpaceGroup.h"
-#include "core/experiment/CrystalTypes.h"
+//@ #include "core/experiment/CrystalTypes.h"
 
 namespace nsx {
 

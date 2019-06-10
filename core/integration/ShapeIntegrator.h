@@ -15,14 +15,14 @@
 #ifndef CORE_INTEGRATION_SHAPEINTEGRATOR_H
 #define CORE_INTEGRATION_SHAPEINTEGRATOR_H
 
-#include <Eigen/Dense>
+//@ #include <Eigen/Dense>
 
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/integration/ShapeLibrary.h"
 
 namespace nsx {
 
-class DataSet;
+//@ class DataSet;
 
 //! \brief Peak integrator class used to build a shape library for profile
 //! fitting.

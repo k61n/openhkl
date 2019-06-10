@@ -17,21 +17,21 @@
 #ifndef GUI_MODELS_PEAKSTABLE_H
 #define GUI_MODELS_PEAKSTABLE_H
 
-#include <memory>
-#include <string>
-#include <vector>
+//@ #include <memory>
+//@ #include <string>
+//@ #include <vector>
 
-#include <QModelIndexList>
+//@ #include <QModelIndexList>
 #include <QTableView>
 
 #include "core/experiment/CrystalTypes.h"
-#include "core/experiment/DataTypes.h"
+//@ #include "core/experiment/DataTypes.h"
 #include "core/geometry/GeometryTypes.h"
 #include "core/instrument/InstrumentTypes.h"
 
 #include <QCR/widgets/tables.h>
 
-class QObject;
+//@ class QObject;
 
 class PeaksTableModel : public TableModel {
     Q_OBJECT

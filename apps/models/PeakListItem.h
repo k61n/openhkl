@@ -14,12 +14,12 @@
 
 #pragma once
 
-#include "core/experiment/CrystalTypes.h"
-#include "core/instrument/InstrumentTypes.h"
+//@ #include "core/experiment/CrystalTypes.h"
+//@ #include "core/instrument/InstrumentTypes.h"
 #include "core/peak/Peak3D.h"
 
 #include "apps/models/InspectableTreeItem.h"
-#include "apps/models/SessionModel.h"
+//@ #include "apps/models/SessionModel.h"
 
 class PeakListItem : public InspectableTreeItem {
 public:

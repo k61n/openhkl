@@ -15,10 +15,10 @@
 #ifndef CORE_INSTRUMENT_SAMPLE_H
 #define CORE_INSTRUMENT_SAMPLE_H
 
-#include <string>
-#include <vector>
+//@ #include <string>
+//@ #include <vector>
 
-#include <yaml-cpp/yaml.h>
+//@ #include <yaml-cpp/yaml.h>
 
 #include "core/experiment/DataTypes.h"
 #include "core/gonio/Component.h"

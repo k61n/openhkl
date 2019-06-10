@@ -16,7 +16,7 @@
 #ifndef GUI_PANELS_SUBFRAME_PLOT_H
 #define GUI_PANELS_SUBFRAME_PLOT_H
 
-#include "gui/graphics/nsxplot.h"
+//@ #include "gui/graphics/nsxplot.h"
 #include "gui/graphics/plottableitem.h"
 #include <QCR/widgets/views.h>
 #include <QHBoxLayout>

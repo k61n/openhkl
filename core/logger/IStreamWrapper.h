@@ -16,11 +16,11 @@
 #define CORE_LOGGER_ISTREAMWRAPPER_H
 
 #include <functional>
-#include <string>
+//@ #include <string>
 
 namespace nsx {
 
-class Logger;
+//@ class Logger;
 
 class IStreamWrapper {
 public:

@@ -15,7 +15,7 @@
 #ifndef CORE_UTILS_DOUBLETOFRACTION_H
 #define CORE_UTILS_DOUBLETOFRACTION_H
 
-#include <cmath>
+//@ #include <cmath>
 
 namespace nsx {
 

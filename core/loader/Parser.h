@@ -15,7 +15,7 @@
 #ifndef CORE_LOADER_PARSER_H
 #define CORE_LOADER_PARSER_H
 
-#include <vector>
+//@ #include <vector>
 
 namespace nsx {
 

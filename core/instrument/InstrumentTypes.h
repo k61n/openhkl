@@ -24,13 +24,13 @@ class DetectorEvent;
 class Experiment;
 class InstrumentState;
 class RotAxis;
-class TransAxis;
+//@ class TransAxis;
 
 using sptrExperiment = std::shared_ptr<Experiment>;
 
 using InstrumentStateList = std::vector<InstrumentState>;
 
-using DetectorState = std::vector<double>;
+//@ using DetectorState = std::vector<double>;
 
 } // namespace nsx
 

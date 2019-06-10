@@ -15,9 +15,9 @@
 #ifndef CORE_SEARCH_PEAKS_BLOB3D_H
 #define CORE_SEARCH_PEAKS_BLOB3D_H
 
-#include <iostream>
+//@ #include <iostream>
 
-#include <Eigen/Dense>
+//@ #include <Eigen/Dense>
 
 namespace nsx {
 
