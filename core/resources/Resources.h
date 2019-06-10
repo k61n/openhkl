@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef RESOURCES_HH
-#define RESOURCES_HH
+#ifndef CORE_RESOURCES_RESOURCES_H
+#define CORE_RESOURCES_RESOURCES_H
 
 #include <functional>
 #include <yaml-cpp/yaml.h>
@@ -30,4 +30,4 @@ std::set<std::string> getResourcesName(const std::string& resource_type);
 
 } // namespace nsx
 
-#endif // RESOURCES_HH
+#endif // CORE_RESOURCES_RESOURCES_H

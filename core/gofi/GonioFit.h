@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/crystal/DoubleToFraction.h
-//! @brief     Defines function doubleToFraction
+//! @file      core/gofi/GonioFit.h
+//! @brief     Defines struct GonioFit
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,14 +12,20 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_CRYSTAL_DOUBLETOFRACTION_H
-#define CORE_CRYSTAL_DOUBLETOFRACTION_H
+#ifndef CORE_GOFI_GONIOFIT_H
+#define CORE_GOFI_GONIOFIT_H
+
+#include <vector>
 
 namespace nsx {
 
-// Convert number into nominator and denominator
-void doubleToFraction(double number, int nmax, long& nom, long& dnom);
+//! Helper struct for storing the result of a gonio fit
+struct GonioFit {
+    bool success;
+    std::vector<double> offsets;
+    std::vector<double> cost_function;
+};
 
 } // namespace nsx
 
-#endif // CORE_CRYSTAL_DOUBLETOFRACTION_H
+#endif // CORE_GOFI_GONIOFIT_H
