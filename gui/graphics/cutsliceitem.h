@@ -18,14 +18,6 @@
 
 #include "gui/graphics/cutteritem.h"
 
-//@ class QGraphicsSceneMouseEvent;
-//@ class QGraphicsSceneWheelEvent;
-//@ class QPainter;
-//@ class QStyleOptionGraphicsItem;
-//@ class QWidget;
-
-//@ class NSXPlot;
-
 class CutSliceItem : public CutterItem {
 public:
     // Constructors and destructor

@@ -15,8 +15,6 @@
 #ifndef CORE_UTILS_DOUBLETOFRACTION_H
 #define CORE_UTILS_DOUBLETOFRACTION_H
 
-//@ #include <cmath>
-
 namespace nsx {
 
 // Convert number into nominator and denominator

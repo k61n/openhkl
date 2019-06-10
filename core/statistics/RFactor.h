@@ -15,15 +15,9 @@
 #ifndef CORE_STATISTICS_RFACTOR_H
 #define CORE_STATISTICS_RFACTOR_H
 
-//@ #include <set>
-//@ #include <vector>
-
-//@ #include "core/experiment/CrystalTypes.h"
 #include "core/statistics/IMergedPeakStatistic.h"
 
 namespace nsx {
-
-//@ class MergedData;
 
 //! \brief Class used to compute the various R factors.
 class RFactor : public IMergedPeakStatistic {

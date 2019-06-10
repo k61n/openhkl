@@ -15,8 +15,6 @@
 #ifndef CORE_REFINE_REFINER_H
 #define CORE_REFINE_REFINER_H
 
-//@ #include <vector>
-
 #include "core/refine/RefinementBatch.h"
 
 namespace nsx {

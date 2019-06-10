@@ -14,8 +14,6 @@
 
 #pragma once
 
-//@ #include "core/instrument/InstrumentTypes.h"
-
 #include "apps/models/InspectableTreeItem.h"
 
 class SourceItem : public InspectableTreeItem {

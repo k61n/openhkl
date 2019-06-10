@@ -15,8 +15,6 @@
 #ifndef CORE_LOADER_PARSER_H
 #define CORE_LOADER_PARSER_H
 
-//@ #include <vector>
-
 namespace nsx {
 
 //! Method to read a vector of int values from two char pointers, using spirit

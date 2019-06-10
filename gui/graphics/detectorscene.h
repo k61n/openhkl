@@ -20,22 +20,10 @@
 #include "core/experiment/DataTypes.h"
 #include "core/mask/IMask.h"
 #include "gui/models/colormap.h"
-//@ #include <Eigen/Dense>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
-//@ #include <QRect>
 #include <QStack>
-//@ #include <map>
-//@ #include <utility>
-//@ #include <vector>
-
-//@ class QImage;
-//@ class QGraphicsSceneWheelEvent;
 class PeakItem;
-//@ class CutterItem;
-//@ class MaskItem;
-//@ class EllipseMaskItem;
-//@ class PlottableItem;
 class NSXGraphicsItem;
 
 // For the plotting part, better to have RowMajor matrix to use QImage scanline

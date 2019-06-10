@@ -14,12 +14,6 @@
 
 #pragma once
 
-//@ #include <QJsonObject>
-
-//@ #include "core/instrument/InstrumentTypes.h"
-
-//@ #include "apps/models/TreeItem.h"
-
 class DetectorItem;
 class SampleItem;
 class SourceItem;

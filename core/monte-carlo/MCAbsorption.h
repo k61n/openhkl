@@ -15,12 +15,7 @@
 #ifndef CORE_MONTE_CARLO_MCABSORPTION_H
 #define CORE_MONTE_CARLO_MCABSORPTION_H
 
-//@ #include <functional>
 #include <random>
-//@ #include <vector>
-
-//@ #include "core/hull/ConvexHull.h"
-
 namespace nsx {
 
 //! Class used to compute absorption correction by Monte-Carlo integration.

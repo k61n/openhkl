@@ -17,12 +17,9 @@
 
 #include <Eigen/Dense>
 
-//@ #include "core/integration/ShapeLibrary.h"
 #include "core/peak/IPeakIntegrator.h"
 
 namespace nsx {
-
-//@ class DataSet;
 
 //! \brief Peak integrator using 3d profile fitting, as described by Kabsch
 //! (1988, 2010).

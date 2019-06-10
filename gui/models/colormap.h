@@ -15,16 +15,9 @@
 #ifndef GUI_MODELS_COLORMAP_H
 #define GUI_MODELS_COLORMAP_H
 
-//@ #include <cmath>
-//@ #include <string>
-//@ #include <vector>
-
 #include <Eigen/Dense>
 
-//@ #include <QColor>
 #include <QImage>
-//@ #include <QRect>
-
 class ColorMap {
 public:
     ColorMap(const std::string& name);

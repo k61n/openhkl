@@ -17,11 +17,7 @@
 
 #include "core/geometry/ReciprocalVector.h"
 
-//@ #include <string>
-
 #include <yaml-cpp/yaml.h>
-
-//@ #include <Eigen/Dense>
 
 namespace nsx {
 

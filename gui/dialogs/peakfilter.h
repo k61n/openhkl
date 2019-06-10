@@ -16,14 +16,9 @@
 #ifndef GUI_DIALOGS_PEAKFILTER_H
 #define GUI_DIALOGS_PEAKFILTER_H
 
-//@ #include "gui/models/experimentmodel.h"
 #include "gui/models/peakstable.h"
 #include <QCR/widgets/controls.h>
-//@ #include <QCR/widgets/views.h>
-
 #include <QDialogButtonBox>
-//@ #include <QGroupBox>
-
 class PeakFilter : public QDialog {
 public:
     PeakFilter();

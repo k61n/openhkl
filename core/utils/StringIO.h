@@ -15,9 +15,6 @@
 #ifndef CORE_UTILS_STRINGIO_H
 #define CORE_UTILS_STRINGIO_H
 
-//@ #include <string>
-//@ #include <vector>
-
 namespace nsx {
 
 std::string clear_spaces(const std::string& input_string);

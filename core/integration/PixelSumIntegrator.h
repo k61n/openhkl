@@ -15,13 +15,9 @@
 #ifndef CORE_INTEGRATION_PIXELSUMINTEGRATOR_H
 #define CORE_INTEGRATION_PIXELSUMINTEGRATOR_H
 
-//@ #include <Eigen/Dense>
-
 #include "core/integration/MeanBackgroundIntegrator.h"
 
 namespace nsx {
-
-//@ class DataSet;
 
 //! \brief Peak integration using naive background estimation and subtraction.
 class PixelSumIntegrator : public MeanBackgroundIntegrator {

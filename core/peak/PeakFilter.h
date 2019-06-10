@@ -15,8 +15,6 @@
 #ifndef CORE_PEAK_PEAKFILTER_H
 #define CORE_PEAK_PEAKFILTER_H
 
-//@ #include "core/experiment/CrystalTypes.h"
-
 namespace nsx {
 
 //! \class PeakFilter

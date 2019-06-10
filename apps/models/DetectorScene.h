@@ -14,12 +14,6 @@
 
 #pragma once
 
-//@ #include <map>
-//@ #include <utility>
-//@ #include <vector>
-
-//@ #include <Eigen/Dense>
-
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
 #include <QRect>

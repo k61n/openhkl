@@ -17,8 +17,6 @@
 
 #include <vector>
 
-//@ #include <Eigen/Dense>
-
 #include "core/crystal/Intensity.h"
 
 namespace nsx {

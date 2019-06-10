@@ -16,9 +16,6 @@
 #define CORE_SEARCH_PEAKS_CONVOLVER_H
 
 #include <map>
-//@ #include <string>
-//@ #include <utility>
-
 #include "core/mathematics/MathematicsTypes.h"
 
 namespace nsx {

@@ -16,15 +16,9 @@
 
 #include <QWidget>
 
-//@ #include "core/experiment/CrystalTypes.h"
-//@ #include "core/instrument/InstrumentTypes.h"
-
 namespace Ui {
 class WidgetFoundPeaks;
 }
-
-//@ class ExperimentItem;
-//@ class SessionModel;
 
 class WidgetFoundPeaks : public QWidget {
 

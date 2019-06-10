@@ -15,16 +15,7 @@
 #ifndef CORE_LOADER_DATAREADERFACTORY_H
 #define CORE_LOADER_DATAREADERFACTORY_H
 
-//@ #include <functional>
-//@ #include <map>
-//@ #include <memory>
-//@ #include <string>
-
 namespace nsx {
-
-//@ class IDataReader;
-//@ class DataSet;
-//@ class Diffractometer;
 
 /** \brief DataReaderFactory. All IData formats must register their "create"
  * method with the factory in order to choose the correct DataReader at runtime.

@@ -17,16 +17,7 @@
 
 #include <QGraphicsItem>
 #include <QPen>
-//@ #include <QRectF>
-
 class DetectorScene;
-//@ class QGraphicsSceneHoverEvent;
-//@ class QGraphicsSceneMouseEvent;
-//@ class QGraphicsTextItem;
-//@ class QGraphicsSceneWheelEvent;
-//@ class QKeyEvent;
-//@ class QWidget;
-
 class NSXGraphicsItem : public QGraphicsItem {
 public:
     // Construct a SX graphics item

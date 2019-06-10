@@ -17,8 +17,6 @@
 
 #include "gui/graphics/nsxplot.h"
 
-//@ class QWidget;
-
 class PeakPlot : public NSXPlot {
     Q_OBJECT
 public:

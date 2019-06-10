@@ -14,14 +14,10 @@
 
 #pragma once
 
-//@ #include <string>
-
 #include "core/utils/Factory.h"
 #include "core/utils/Singleton.h"
 
 #include "apps/plot/SXPlot.h"
-
-//@ class QWidget;
 
 class PlotFactory : public nsx::Factory<SXPlot, std::string, QWidget*>,
                     public nsx::Singleton<PlotFactory, nsx::Constructor, nsx::Destructor> {

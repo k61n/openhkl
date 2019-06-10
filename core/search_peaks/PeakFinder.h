@@ -15,11 +15,6 @@
 #ifndef CORE_SEARCH_PEAKS_PEAKFINDER_H
 #define CORE_SEARCH_PEAKS_PEAKFINDER_H
 
-//@ #include <memory>
-
-//@ #include "core/experiment/CrystalTypes.h"
-//@ #include "core/experiment/DataTypes.h"
-//@ #include "core/geometry/GeometryTypes.h"
 #include "core/search_peaks/Blob3D.h"
 #include "core/search_peaks/Convolver.h"
 #include "core/utils/UtilsTypes.h"

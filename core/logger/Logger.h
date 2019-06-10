@@ -15,7 +15,6 @@
 #ifndef CORE_LOGGER_LOGGER_H
 #define CORE_LOGGER_LOGGER_H
 
-//@ #include <functional>
 #include <iostream>
 #include <memory>
 #include <sstream>

@@ -15,11 +15,7 @@
 #ifndef CORE_INSTRUMENT_INTERPOLATEDSTATE_H
 #define CORE_INSTRUMENT_INTERPOLATEDSTATE_H
 
-//@ #include "core/geometry/DirectVector.h"
-//@ #include "core/geometry/ReciprocalVector.h"
 #include "core/instrument/InstrumentState.h"
-
-//@ #include <Eigen/Core>
 
 namespace nsx {
 

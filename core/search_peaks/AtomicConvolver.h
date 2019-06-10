@@ -15,18 +15,10 @@
 #ifndef CORE_SEARCH_PEAKS_ATOMICCONVOLVER_H
 #define CORE_SEARCH_PEAKS_ATOMICCONVOLVER_H
 
-//@ #include <complex>
-//@ #include <map>
-//@ #include <ostream>
-//@ #include <stdexcept>
-//@ #include <string>
 #include <vector>
 
 #include <fftw3.h>
 
-//@ #include <Eigen/Dense>
-
-//@ #include "core/mathematics/MathematicsTypes.h"
 #include "core/search_peaks/Convolver.h"
 
 namespace nsx {

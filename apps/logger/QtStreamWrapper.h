@@ -14,11 +14,6 @@
 
 #pragma once
 
-//@ #include <sstream>
-//@ #include <string>
-
-//@ #include <QObject>
-
 #include "core/logger/IStreamWrapper.h"
 
 class NoteBook;

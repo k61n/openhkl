@@ -16,11 +16,7 @@
 #define CORE_UTILS_VARIANT_H
 
 #include <iostream>
-//@ #include <stdexcept>
-//@ #include <type_traits>
 #include <typeindex>
-//@ #include <typeinfo>
-
 namespace nsx {
 
 //! Template meta-class for fetching the type of the first template argument of

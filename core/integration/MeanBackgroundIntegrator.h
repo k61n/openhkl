@@ -16,13 +16,9 @@
 #define CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H
 
 
-//@ #include <Eigen/Dense>
-
 #include "core/peak/IPeakIntegrator.h"
 
 namespace nsx {
-
-//@ class DataSet;
 
 //! \brief Compute the mean background near a peak.
 class MeanBackgroundIntegrator : public IPeakIntegrator {

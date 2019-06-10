@@ -15,8 +15,6 @@
 #ifndef CORE_SEARCH_PEAKS_CONVOLVERFACTORY_H
 #define CORE_SEARCH_PEAKS_CONVOLVERFACTORY_H
 
-//@ #include <functional>
-
 #include "core/search_peaks/Convolver.h"
 
 namespace nsx {

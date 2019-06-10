@@ -14,8 +14,6 @@
 
 #pragma once
 
-//@ #include <string>
-
 #include "QCustomPlot.h"
 
 class PlottableGraphicsItem;

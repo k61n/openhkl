@@ -15,13 +15,7 @@
 #ifndef CORE_PEAK_OCTREE_H
 #define CORE_PEAK_OCTREE_H
 
-//@ #include <cmath>
-//@ #include <initializer_list>
 #include <set>
-//@ #include <vector>
-
-//@ #include <Eigen/Dense>
-
 #include "core/geometry/AABB.h"
 
 namespace nsx {
@@ -59,13 +53,7 @@ public:
     friend class OctreeIterator;
 
     // These typedefs insure compatibility with STL
-//@     using size_type = size_t;
-//@     using difference_type = ptrdiff_t;
     using iterator = OctreeIterator;
-//@     using value_type = double;
-//@     using pointer = double*;
-//@     using reference = double&;
-
     //! Pair of Ellipsoid*
     using collision_pair = std::pair<const Ellipsoid*, const Ellipsoid*>;
 

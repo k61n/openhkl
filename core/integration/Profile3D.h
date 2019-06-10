@@ -15,10 +15,6 @@
 #ifndef CORE_INTEGRATION_PROFILE3D_H
 #define CORE_INTEGRATION_PROFILE3D_H
 
-//@ #include <vector>
-
-//@ #include <Eigen/Dense>
-
 #include "core/geometry/AABB.h"
 
 namespace nsx {

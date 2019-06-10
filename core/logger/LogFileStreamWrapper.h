@@ -16,8 +16,6 @@
 #define CORE_LOGGER_LOGFILESTREAMWRAPPER_H
 
 #include <fstream>
-//@ #include <string>
-
 #include "core/logger/IStreamWrapper.h"
 
 namespace nsx {

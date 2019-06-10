@@ -20,12 +20,6 @@
 #include "core/geometry/GeometryTypes.h"
 #include "gui/graphics/nsxgraphicsitem.h"
 
-//@ class QGraphicsSceneMouseEvent;
-//@ class QGraphicsSceneWheelEvent;
-//@ class QPainter;
-//@ class QStyleOptionGraphicsItem;
-//@ class QWidget;
-
 /*! Creates a mask that will be used to unselect/select peaks whether their
  * intercept or not the mask
  */

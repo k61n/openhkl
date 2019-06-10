@@ -16,10 +16,7 @@
 #ifndef GUI_MODELS_SESSION_H
 #define GUI_MODELS_SESSION_H
 
-//@ #include "core/experiment/DataTypes.h"
 #include "gui/models/experimentmodel.h"
-//@ #include <QList>
-
 extern class Session* gSession; //!< global handle for Session
 
 class Session {

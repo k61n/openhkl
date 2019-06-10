@@ -15,18 +15,6 @@
 #ifndef CORE_PEAK_PEAK3D_H
 #define CORE_PEAK_PEAK3D_H
 
-//@ #include <map>
-//@ #include <memory>
-//@ #include <vector>
-
-//@ #include <Eigen/Dense>
-
-//@ #include "core/crystal/Intensity.h"
-//@ #include "core/experiment/CrystalTypes.h"
-//@ #include "core/experiment/DataTypes.h"
-//@ #include "core/geometry/Ellipsoid.h"
-//@ #include "core/geometry/GeometryTypes.h"
-//@ #include "core/instrument/InstrumentTypes.h"
 #include "core/peak/IPeakIntegrator.h"
 
 namespace nsx {

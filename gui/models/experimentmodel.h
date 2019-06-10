@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/models/experimentmodel.h
-//! @brief     Defines ###CLASSES###
+//! @brief     Defines classes ExperimentData, InstrumentModel, and ExperimentModel
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,21 +12,10 @@
 //
 //  ***********************************************************************************************
 
-//*************************************************************************************************
-//
-//! @file nsxgui/gui/models/experimentmodel.h
-//! @brief defines classes ExperimentData, InstrumentModel, and ExperimentModel
-//
-//*************************************************************************************************
-
 #ifndef GUI_MODELS_EXPERIMENTMODEL_H
 #define GUI_MODELS_EXPERIMENTMODEL_H
 
-//@ #include <QList>
-//@ #include <vector>
-
 #include "core/crystal/UnitCell.h"
-//@ #include "core/experiment/CrystalTypes.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/InstrumentTypes.h"
 

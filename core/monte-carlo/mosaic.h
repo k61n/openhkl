@@ -15,8 +15,6 @@
 #ifndef CORE_MONTE_CARLO_MOSAIC_H
 #define CORE_MONTE_CARLO_MOSAIC_H
 
-//@ #include <vector>
-
 #include "core/instrument/Sample.h"
 
 namespace nsx {

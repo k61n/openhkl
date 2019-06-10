@@ -17,10 +17,6 @@
 
 #include "gui/graphics/cutteritem.h"
 
-//@ class QGraphicsSceneWheelEvent;
-//@ class QWidget;
-//@ class NSXPlot;
-
 class CutLineItem : public CutterItem {
 public:
     explicit CutLineItem(nsx::sptrDataSet data);

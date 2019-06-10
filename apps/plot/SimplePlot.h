@@ -14,12 +14,6 @@
 
 #pragma once
 
-//@ #include <string>
-
-//@ #include "apps/plot/SXPlot.h"
-
-//@ class QWidget;
-
 class SimplePlot : public SXPlot {
     Q_OBJECT
 public:

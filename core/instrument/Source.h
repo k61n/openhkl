@@ -15,11 +15,6 @@
 #ifndef CORE_INSTRUMENT_SOURCE_H
 #define CORE_INSTRUMENT_SOURCE_H
 
-//@ #include <string>
-//@ #include <vector>
-
-//@ #include <yaml-cpp/yaml.h>
-
 #include "core/gonio/Component.h"
 #include "core/instrument/Monochromator.h"
 

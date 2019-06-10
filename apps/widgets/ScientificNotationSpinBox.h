@@ -15,11 +15,7 @@
 #pragma once
 
 #include <QDoubleSpinBox>
-//@ #include <QDoubleValidator>
 #include <QLineEdit>
-//@ #include <QString>
-//@ #include <QVariant>
-
 static bool
 isIntermediateValueHelper(qint64 num, qint64 minimum, qint64 maximum, qint64* match = 0);
 

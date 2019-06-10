@@ -15,18 +15,10 @@
 #ifndef CORE_LOADER_IDATAREADER_H
 #define CORE_LOADER_IDATAREADER_H
 
-//@ #include <string>
-//@ #include <vector>
-
-//@ #include <Eigen/Dense>
-
 #include "core/instrument/InstrumentState.h"
-//@ #include "core/instrument/InstrumentTypes.h"
 #include "core/loader/MetaData.h"
 
 namespace nsx {
-
-//@ class Diffractometer;
 
 //! \brief Interface used to provide access to detector images and metadata.
 class IDataReader {

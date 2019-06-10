@@ -15,14 +15,7 @@
 #ifndef CORE_LOADER_ILLDATAREADER_H
 #define CORE_LOADER_ILLDATAREADER_H
 
-//@ #include <map>
-//@ #include <sstream>
-//@ #include <string>
-//@ #include <vector>
-
 #include <boost/interprocess/mapped_region.hpp>
-
-//@ #include <Eigen/Dense>
 
 #include "core/loader/IDataReader.h"
 

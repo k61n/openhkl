@@ -15,14 +15,7 @@
 #ifndef CORE_LOADER_METADATA_H
 #define CORE_LOADER_METADATA_H
 
-//@ #include <map>
-//@ #include <set>
-//@ #include <stdexcept>
-//@ #include <string>
-
 #include "core/experiment/DataTypes.h"
-//@ #include "core/utils/Variant.h"
-
 namespace nsx {
 
 /*! \brief Class to store MetaData of a DataSet stored by a map of key/value

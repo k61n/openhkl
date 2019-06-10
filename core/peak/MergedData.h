@@ -15,16 +15,9 @@
 #ifndef CORE_PEAK_MERGEDDATA_H
 #define CORE_PEAK_MERGEDDATA_H
 
-//@ #include <set>
-
-//@ #include <Eigen/Dense>
-
-//@ #include "core/experiment/CrystalTypes.h"
 #include "core/peak/MergedPeak.h"
 
 namespace nsx {
-
-//@ class DataSet;
 
 //! \brief Class to handle merged datasets.
 class MergedData {

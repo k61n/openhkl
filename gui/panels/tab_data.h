@@ -17,8 +17,6 @@
 #define GUI_PANELS_TAB_DATA_H
 
 #include "gui/properties/numorproperty.h"
-//@ #include <QCR/widgets/views.h>
-
 class TabData : public QcrWidget {
 public:
     TabData();
