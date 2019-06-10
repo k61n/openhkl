@@ -13,11 +13,12 @@
 //  ***********************************************************************************************
 
 #include "core/indexing/AutoIndexer.h"
+
 #include "core/indexing/FFTIndexing.h"
 #include "core/crystal/GruberReduction.h"
 #include "core/crystal/MillerIndex.h"
 #include "core/crystal/NiggliReduction.h"
-#include "core/experiment/DataSet.h"
+#include "core/experiment/DataSet.h" // peak->data()->interpolatedState
 #include "core/fitting/FitParameters.h"
 #include "core/fitting/Minimizer.h"
 #include "core/geometry/ReciprocalVector.h"
