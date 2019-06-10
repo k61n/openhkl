@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/crystal/SpaceGroup.cpp
-//! @brief     Implements ###CLASSES###
+//! @brief     Implements class SpaceGroup
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

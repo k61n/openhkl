@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      apps/models/CrystalFaceItem.cpp
-//! @brief     Implements ###CLASSES###
+//! @brief     Implements class CrystalFaceItem
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

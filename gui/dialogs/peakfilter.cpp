@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/dialogs/peakfilter.cpp
-//! @brief     Implements ###CLASSES###
+//! @brief     Implements class PeakFilter
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

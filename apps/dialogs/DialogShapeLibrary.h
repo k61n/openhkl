@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      apps/dialogs/DialogShapeLibrary.h
-//! @brief     Defines ###CLASSES###
+//! @brief     Defines class DialogShapeLibrary
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

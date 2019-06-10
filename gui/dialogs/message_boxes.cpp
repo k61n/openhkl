@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/dialogs/message_boxes.cpp
-//! @brief     Implements ###CLASSES###
+//! @brief     Implements classes AboutBox, HelpBox
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/models/peaklists.h
-//! @brief     Defines ###CLASSES###
+//! @brief     Defines classes FilteredPeaksModel, PeakListsModel, PeaksModel
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

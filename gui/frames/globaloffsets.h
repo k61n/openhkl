@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/frames/globaloffsets.h
-//! @brief     Defines ###CLASSES###
+//! @brief     Defines classes offsetMode, GlobalOffsets
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

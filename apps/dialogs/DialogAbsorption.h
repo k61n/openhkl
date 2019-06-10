@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      apps/dialogs/DialogAbsorption.h
-//! @brief     Defines ###CLASSES###
+//! @brief     Defines class DialogAbsorption
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

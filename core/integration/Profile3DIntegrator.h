@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/integration/Profile3DIntegrator.h
-//! @brief     Defines ###CLASSES###
+//! @brief     Defines class Profile3DIntegrator
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

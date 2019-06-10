@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      apps/widgets/ScientificNotationSpinBox.h
-//! @brief     Defines ###CLASSES###
+//! @brief     Defines class ScientificNotationSpinBox
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

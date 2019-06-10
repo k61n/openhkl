@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      apps/dialogs/DialogHDF5Converter.cpp
-//! @brief     Implements ###CLASSES###
+//! @brief     Implements class DialogHDF5Converter
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

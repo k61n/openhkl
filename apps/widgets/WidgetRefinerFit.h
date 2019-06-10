@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      apps/widgets/WidgetRefinerFit.h
-//! @brief     Defines ###CLASSES###
+//! @brief     Defines class WidgetRefinerFit
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

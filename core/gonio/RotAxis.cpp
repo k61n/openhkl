@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/gonio/RotAxis.cpp
-//! @brief     Implements ###CLASSES###
+//! @brief     Implements classes RotAxis, Direction
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

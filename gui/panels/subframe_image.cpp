@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/panels/subframe_image.cpp
-//! @brief     Implements ###CLASSES###
+//! @brief     Implements classes ImageWidget, SubframeImage
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

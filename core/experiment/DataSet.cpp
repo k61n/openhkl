@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/experiment/DataSet.cpp
-//! @brief     Implements ###CLASSES###
+//! @brief     Implements class DataSet
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

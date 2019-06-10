@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      apps/frames/FrameAutoIndexer.cpp
-//! @brief     Implements ###CLASSES###
+//! @brief     Implements class FrameAutoIndexer
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

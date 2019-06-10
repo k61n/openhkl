@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/dialogs/experimentdialog.cpp
-//! @brief     Implements ###CLASSES###
+//! @brief     Implements class ExperimentDialog
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

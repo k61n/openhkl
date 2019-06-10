@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      apps/tree/UnitCellPropertyWidget.cpp
-//! @brief     Implements ###CLASSES###
+//! @brief     Implements class UnitCellPropertyWidget
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

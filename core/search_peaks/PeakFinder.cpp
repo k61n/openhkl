@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/search_peaks/PeakFinder.cpp
-//! @brief     Implements ###CLASSES###
+//! @brief     Implements class PeakFinder
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

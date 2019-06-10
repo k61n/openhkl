@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/utils/Singleton.h
-//! @brief     Defines ###CLASSES###
+//! @brief     Defines classes Singleton, Constructor, Destructor
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
