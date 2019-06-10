@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/models/meta.h
-//! @brief     Defines ###THINGS###
+//! @brief     Declares some Qt meta types
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
