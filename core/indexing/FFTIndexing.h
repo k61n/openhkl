@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/auto_indexing/FFTIndexing.h
+//! @file      core/indexing/FFTIndexing.h
 //! @brief     Defines class FFTIndexing
 //!
 //! @homepage  ###HOMEPAGE###

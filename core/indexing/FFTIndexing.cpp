@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/auto_indexing/FFTIndexing.cpp
+//! @file      core/indexing/FFTIndexing.cpp
 //! @brief     Implements class FFTIndexing
 //!
 //! @homepage  ###HOMEPAGE###
@@ -20,7 +20,7 @@
 
 #include <unsupported/Eigen/FFT>
 
-#include "core/auto_indexing/FFTIndexing.h"
+#include "core/indexing/FFTIndexing.h"
 #include "core/geometry/ReciprocalVector.h"
 #include "core/utils/Units.h"
 

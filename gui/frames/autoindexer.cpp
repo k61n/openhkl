@@ -17,7 +17,7 @@
 #include "gui/frames/unitcellwidget.h"
 #include "gui/models/session.h"
 
-#include "core/auto_indexing/AutoIndexer.h"
+#include "core/indexing/AutoIndexer.h"
 #include "core/utils/ProgressHandler.h"
 #include "core/utils/Units.h"
 

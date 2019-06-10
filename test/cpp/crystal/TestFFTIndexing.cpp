@@ -2,7 +2,7 @@
 
 #include <Eigen/Dense>
 
-#include "core/auto_indexing/AutoIndexer.h"
+#include "core/indexing/AutoIndexer.h"
 #include "core/crystal/UnitCell.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/peak/Peak3D.h"

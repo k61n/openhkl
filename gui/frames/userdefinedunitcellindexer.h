@@ -15,7 +15,7 @@
 #ifndef GUI_FRAMES_USERDEFINEDUNITCELLINDEXER_H
 #define GUI_FRAMES_USERDEFINEDUNITCELLINDEXER_H
 
-#include "core/auto_indexing/UserDefinedUnitCellIndexer.h"
+#include "core/indexing/UserDefinedIndexer.h"
 #include "gui/models/peakstable.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>

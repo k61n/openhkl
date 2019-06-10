@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/auto_indexing/AutoIndexer.cpp
+//! @file      core/indexing/AutoIndexer.cpp
 //! @brief     Implements class AutoIndexer
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include "core/auto_indexing/AutoIndexer.h"
-#include "core/auto_indexing/FFTIndexing.h"
+#include "core/indexing/AutoIndexer.h"
+#include "core/indexing/FFTIndexing.h"
 #include "core/crystal/GruberReduction.h"
 #include "core/crystal/MillerIndex.h"
 #include "core/crystal/NiggliReduction.h"
