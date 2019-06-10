@@ -97,7 +97,7 @@ using Eigen::Quaterniond;
 #include "core/refine/RefinementBatch.h"
 #include "core/refine/Refiner.h"
 #include "core/indexing/AutoIndexer.h"
-#include "core/integration/Intensity.h"
+#include "core/peak/Intensity.h"
 #include "core/peak/IPeakIntegrator.h"
 #include "core/integration/MeanBackgroundIntegrator.h"
 #include "core/integration/Profile3DIntegrator.h"
@@ -212,7 +212,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/crystal/UnitCell.h"
 #include "core/crystal/GruberReduction.h"
 
-#include "core/integration/Intensity.h"
+#include "core/peak/Intensity.h"
 
 using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 
@@ -357,7 +357,7 @@ namespace nsx {
 
 %include "core/peak/PeakData.h"
 %include "core/peak/IntegrationRegion.h"
-%include "core/integration/Intensity.h"
+%include "core/peak/Intensity.h"
 %template(IntensityList) std::vector<nsx::Intensity>;
 %include "core/integration/Profile3D.h"
 %include "core/integration/Profile1D.h"
@@ -373,7 +373,7 @@ namespace nsx {
 %include "core/integration/ShapeIntegrator.h"
 %include "core/peak/IntegrationRegion.h"
 %include "core/peak/PeakData.h"
-%include "core/integration/Intensity.h"
+%include "core/peak/Intensity.h"
 %include "core/peak/Peak3D.h"
 
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
@@ -426,7 +426,7 @@ namespace nsx {
 
 %template(RefinementBatchList) std::vector<nsx::RefinementBatch>;
 
-%include "core/integration/Intensity.h"
+%include "core/peak/Intensity.h"
 
 %include "core/peak/IntegrationRegion.h"
 %include "core/peak/PeakData.h"

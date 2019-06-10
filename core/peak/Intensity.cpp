@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/integration/Intensity.cpp
+//! @file      core/peak/Intensity.cpp
 //! @brief     Implements class Intensity
 //!
 //! @homepage  ###HOMEPAGE###
@@ -15,7 +15,7 @@
 #include <cassert>
 #include <cmath>
 
-#include "core/integration/Intensity.h"
+#include "core/peak/Intensity.h"
 
 namespace nsx {
 

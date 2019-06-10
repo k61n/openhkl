@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/integration/ShapeIntegrator.h"
-#include "core/integration/Intensity.h"
+#include "core/peak/Intensity.h"
 #include "core/crystal/MillerIndex.h"
 #include "core/experiment/DataSet.h"
 #include "core/geometry/Ellipsoid.h"

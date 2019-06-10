@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/integration/PixelSumIntegrator.h"
-#include "core/integration/Intensity.h"
+#include "core/peak/Intensity.h"
 #include "core/experiment/DataSet.h"
 #include "core/geometry/Ellipsoid.h"
 #include "core/integration/MeanBackgroundIntegrator.h"

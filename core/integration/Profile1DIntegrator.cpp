@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/integration/Profile1DIntegrator.h"
-#include "core/integration/Intensity.h"
+#include "core/peak/Intensity.h"
 #include "core/experiment/DataSet.h"
 #include "core/geometry/Ellipsoid.h"
 #include "core/integration/ShapeLibrary.h"

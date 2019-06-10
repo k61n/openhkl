@@ -15,7 +15,7 @@
 #ifndef CORE_PEAK_IPEAKINTEGRATOR_H
 #define CORE_PEAK_IPEAKINTEGRATOR_H
 
-#include "core/integration/Intensity.h"
+#include "core/peak/Intensity.h"
 #include "core/experiment/DataTypes.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/utils/ProgressHandler.h"

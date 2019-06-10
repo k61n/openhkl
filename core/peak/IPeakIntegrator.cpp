@@ -14,7 +14,7 @@
 
 #include "core/peak/IPeakIntegrator.h"
 #include "core/crystal/BrillouinZone.h"
-#include "core/integration/Intensity.h"
+#include "core/peak/Intensity.h"
 #include "core/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
 #include "core/logger/Logger.h"
