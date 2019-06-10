@@ -1,6 +1,6 @@
 #include "test/cpp/catch.hpp"
 
-#include <core/crystal/SpaceGroup.h>
+#include "core/crystal/SpaceGroup.h"
 #include <map>
 #include <string>
 
