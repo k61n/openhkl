@@ -15,7 +15,6 @@
 #ifndef CORE_CHEMISTRY_MATERIAL_H
 #define CORE_CHEMISTRY_MATERIAL_H
 
-
 #include "core/chemistry/IsotopeDatabaseManager.h"
 
 namespace nsx {

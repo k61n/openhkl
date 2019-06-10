@@ -15,7 +15,6 @@
 #ifndef CORE_DETECTOR_DETECTORFACTORY_H
 #define CORE_DETECTOR_DETECTORFACTORY_H
 
-
 #include "core/utils/Factory.h"
 #include "core/utils/Singleton.h"
 

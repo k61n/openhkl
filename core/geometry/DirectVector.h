@@ -15,7 +15,6 @@
 #ifndef CORE_GEOMETRY_DIRECTVECTOR_H
 #define CORE_GEOMETRY_DIRECTVECTOR_H
 
-
 #include <Eigen/Dense>
 
 namespace nsx {

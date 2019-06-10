@@ -15,7 +15,6 @@
 #ifndef CORE_CRYSTAL_UNITCELL_H
 #define CORE_CRYSTAL_UNITCELL_H
 
-
 #include <Eigen/Dense>
 
 #include "core/chemistry/Material.h"

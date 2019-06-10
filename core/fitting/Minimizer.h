@@ -15,7 +15,6 @@
 #ifndef CORE_FITTING_MINIMIZER_H
 #define CORE_FITTING_MINIMIZER_H
 
-
 #include <gsl/gsl_matrix.h>
 
 #include "core/fitting/FitParameters.h"

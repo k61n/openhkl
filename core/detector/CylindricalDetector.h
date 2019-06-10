@@ -15,7 +15,6 @@
 #ifndef CORE_DETECTOR_CYLINDRICALDETECTOR_H
 #define CORE_DETECTOR_CYLINDRICALDETECTOR_H
 
-
 #include "core/detector/Detector.h"
 
 namespace nsx {

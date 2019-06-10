@@ -15,7 +15,6 @@
 #ifndef CORE_AUTO_INDEXING_AUTOINDEXER_H
 #define CORE_AUTO_INDEXING_AUTOINDEXER_H
 
-
 #include "core/experiment/CrystalTypes.h"
 #include "core/utils/UtilsTypes.h"
 

@@ -15,7 +15,6 @@
 #ifndef CORE_GONIO_ROTAXIS_H
 #define CORE_GONIO_ROTAXIS_H
 
-
 #include "core/gonio/Axis.h"
 
 namespace nsx {

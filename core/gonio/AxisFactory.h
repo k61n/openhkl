@@ -15,7 +15,6 @@
 #ifndef CORE_GONIO_AXISFACTORY_H
 #define CORE_GONIO_AXISFACTORY_H
 
-
 #include "core/gonio/Axis.h"
 #include "core/utils/Factory.h"
 #include "core/utils/Singleton.h"

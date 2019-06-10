@@ -15,7 +15,6 @@
 #ifndef CORE_GEOMETRY_RECIPROCALVECTOR_H
 #define CORE_GEOMETRY_RECIPROCALVECTOR_H
 
-
 #include <Eigen/Dense>
 
 namespace nsx {

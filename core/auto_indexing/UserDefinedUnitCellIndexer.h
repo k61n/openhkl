@@ -15,7 +15,6 @@
 #ifndef CORE_AUTO_INDEXING_USERDEFINEDUNITCELLINDEXER_H
 #define CORE_AUTO_INDEXING_USERDEFINEDUNITCELLINDEXER_H
 
-
 #include "core/crystal/UnitCell.h"
 #include "core/utils/Units.h"
 

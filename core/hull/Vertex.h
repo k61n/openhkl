@@ -15,7 +15,6 @@
 #ifndef CORE_HULL_VERTEX_H
 #define CORE_HULL_VERTEX_H
 
-
 #include <Eigen/Dense>
 
 namespace nsx {

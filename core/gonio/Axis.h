@@ -15,7 +15,6 @@
 #ifndef CORE_GONIO_AXIS_H
 #define CORE_GONIO_AXIS_H
 
-
 #include <yaml-cpp/yaml.h>
 
 #include <Eigen/Geometry>

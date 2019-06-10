@@ -15,7 +15,6 @@
 #ifndef CORE_CRYSTAL_GRUBERREDUCTION_H
 #define CORE_CRYSTAL_GRUBERREDUCTION_H
 
-
 #include "core/crystal/UnitCell.h"
 
 namespace nsx {

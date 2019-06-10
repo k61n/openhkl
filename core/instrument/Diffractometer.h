@@ -15,7 +15,6 @@
 #ifndef CORE_INSTRUMENT_DIFFRACTOMETER_H
 #define CORE_INSTRUMENT_DIFFRACTOMETER_H
 
-
 #include "core/detector/Detector.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"

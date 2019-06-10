@@ -15,7 +15,6 @@
 #ifndef CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H
 #define CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H
 
-
 #include "core/peak/IPeakIntegrator.h"
 
 namespace nsx {

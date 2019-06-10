@@ -15,7 +15,6 @@
 #ifndef CORE_EXPERIMENT_EXPERIMENT_H
 #define CORE_EXPERIMENT_EXPERIMENT_H
 
-
 #include "core/instrument/Diffractometer.h"
 
 namespace nsx {

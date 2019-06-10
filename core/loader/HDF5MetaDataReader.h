@@ -15,7 +15,6 @@
 #ifndef CORE_LOADER_HDF5METADATAREADER_H
 #define CORE_LOADER_HDF5METADATAREADER_H
 
-
 #include "H5Cpp.h"
 #include "core/loader/IDataReader.h"
 
