@@ -12,12 +12,11 @@
 //
 //  ***********************************************************************************************
 
-#include <array>
+#include "core/geometry/Ellipsoid.h"
 
 #include "core/geometry/AABB.h"
-#include "core/geometry/Ellipsoid.h"
-#include "core/integration/ShapeLibrary.h"
-#include "core/geometry/ReciprocalVector.h"
+
+#include <array>
 
 namespace nsx {
 
