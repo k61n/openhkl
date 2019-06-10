@@ -15,21 +15,21 @@
 #ifndef CORE_SEARCH_PEAKS_BLOB3D_H
 #define CORE_SEARCH_PEAKS_BLOB3D_H
 
+#include <iostream> // needed in no-swig case (?)
+#include <Eigen/Dense>
+
 namespace nsx {
 
-/**
- * \class Blob3D
- * Class Blob3D.
- * Blob3D are used to store region of interest in a 3D image.
- * A Blob is constructed by adding points in the image with coordinates x,y,z
- * and an associated mass that represents any scalar field such as intensity.
- * Blob objects records the total mass, the mass-weighted first and second
- * moments as new points are added to the blob. Knowledge about individual
- * points is lost, i.e Blob can only increase in size.Blobs can be merged and
- * maintain zero, first and second momentum. Blob3D can be transformed into an
- * Ellipsoid, by diagonalizing the variance tensor.
- *
- */
+//! A region of interest in a 3D image.
+//!
+//! A Blob is constructed by adding points in the image with coordinates x,y,z
+//! and an associated mass that represents any scalar field such as intensity.
+//! Blob objects records the total mass, the mass-weighted first and second
+//! moments as new points are added to the blob. Knowledge about individual
+//! points is lost, i.e Blob can only increase in size.Blobs can be merged and
+//! maintain zero, first and second momentum. Blob3D can be transformed into an
+//! Ellipsoid, by diagonalizing the variance tensor.
+
 class Blob3D {
 public:
     //! Initialize an empty blob

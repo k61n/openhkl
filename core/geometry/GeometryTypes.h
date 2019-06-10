@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/geometry/GeometryTypes.h
-//! @brief     Defines classes Direction, PointType
+//! @brief     Defines things
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -35,9 +35,6 @@ struct Vertex;
 
 
 using sptrShapeLibrary = std::shared_ptr<ShapeLibrary>;
-
-using EquivalencePair = std::pair<int, int>;
-using EquivalenceList = std::vector<EquivalencePair>;
 
 
 enum class Direction { CW = 1, CCW = 2 };

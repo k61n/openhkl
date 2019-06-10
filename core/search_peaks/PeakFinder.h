@@ -15,11 +15,15 @@
 #ifndef CORE_SEARCH_PEAKS_PEAKFINDER_H
 #define CORE_SEARCH_PEAKS_PEAKFINDER_H
 
+#include "core/experiment/DataSet.h"
 #include "core/search_peaks/Blob3D.h"
 #include "core/search_peaks/Convolver.h"
 #include "core/utils/ProgressHandler.h"
 
 namespace nsx {
+
+using EquivalencePair = std::pair<int, int>;
+using EquivalenceList = std::vector<EquivalencePair>;
 
 //! Class to handle peak search in datasets
 class PeakFinder {

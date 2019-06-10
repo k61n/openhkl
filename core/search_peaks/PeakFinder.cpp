@@ -12,6 +12,8 @@
 //
 //  ***********************************************************************************************
 
+#include "core/search_peaks/PeakFinder.h"
+
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/geometry/AABB.h"
@@ -22,28 +24,25 @@
 #include "core/peak/Octree.h"
 #include "core/peak/Peak3D.h"
 #include "core/search_peaks/ConvolverFactory.h"
-#include "core/search_peaks/PeakFinder.h"
 
 #include <cstdio>
 #include <utility>
 #include <vector>
 #include <Eigen/Dense>
 
-using EquivalencePair = std::pair<int, int>;
-using EquivalenceList = std::vector<EquivalencePair>;
 using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
 namespace {
 
-void registerEquivalence(int a, int b, EquivalenceList& equivalences)
+void registerEquivalence(int a, int b, nsx::EquivalenceList& equivalences)
 {
     if (a < b)
-        equivalences.emplace_back(EquivalenceList::value_type(b, a));
+        equivalences.emplace_back(nsx::EquivalenceList::value_type(b, a));
     else
-        equivalences.emplace_back(EquivalenceList::value_type(a, b));
+        equivalences.emplace_back(nsx::EquivalenceList::value_type(a, b));
 }
 
-bool sortEquivalences(const EquivalencePair& pa, const EquivalencePair& pb)
+bool sortEquivalences(const nsx::EquivalencePair& pa, const nsx::EquivalencePair& pb)
 {
     if (pa.first < pb.first)
         return true;
@@ -52,7 +51,7 @@ bool sortEquivalences(const EquivalencePair& pa, const EquivalencePair& pb)
     return (pa.second < pb.second);
 }
 
-std::map<int, int> removeDuplicates(EquivalenceList& equivalences)
+std::map<int, int> removeDuplicates(nsx::EquivalenceList& equivalences)
 {
     auto beg = equivalences.begin();
     auto last = std::unique(equivalences.begin(), equivalences.end());
@@ -145,7 +144,7 @@ PeakList PeakFinder::find(DataList numors)
                     loop_end = numor->nFrames();
 
                 std::map<int, Blob3D> local_blobs = {{}};
-                EquivalenceList local_equivalences;
+                nsx::EquivalenceList local_equivalences;
 
                 // determine begining and ending index of current thread
                 //#pragma omp for
@@ -371,7 +370,7 @@ void PeakFinder::mergeCollidingBlobs(sptrDataSet data, std::map<int, Blob3D>& bl
     size_t num_blobs;
 
     do {
-        EquivalenceList equivalences;
+        nsx::EquivalenceList equivalences;
         num_blobs = blobs.size();
 
         if (_handler)
@@ -389,7 +388,7 @@ void PeakFinder::mergeCollidingBlobs(sptrDataSet data, std::map<int, Blob3D>& bl
 }
 
 void PeakFinder::findPrimaryBlobs(
-    sptrDataSet data, std::map<int, Blob3D>& blobs, EquivalenceList& equivalences, size_t begin,
+    sptrDataSet data, std::map<int, Blob3D>& blobs, nsx::EquivalenceList& equivalences, size_t begin,
     size_t end)
 {
     // update via handler if necessary
@@ -551,7 +550,7 @@ void PeakFinder::findPrimaryBlobs(
 }
 
 void PeakFinder::findCollisions(
-    sptrDataSet data, std::map<int, Blob3D>& blobs, EquivalenceList& equivalences) const
+    sptrDataSet data, std::map<int, Blob3D>& blobs, nsx::EquivalenceList& equivalences) const
 {
     // Clear the equivalence vectors for reuse purpose
     equivalences.clear();
@@ -687,7 +686,7 @@ void PeakFinder::findCollisions(
 }
 
 void PeakFinder::mergeEquivalentBlobs(
-    std::map<int, Blob3D>& blobs, EquivalenceList& equivalences) const
+    std::map<int, Blob3D>& blobs, nsx::EquivalenceList& equivalences) const
 {
     // initialize progress handler if necessary
     if (_handler)
