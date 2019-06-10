@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/gonio/AxisFactory.cpp
-//! @brief     Implements ###THINGS###
+//! @brief     Implements class AxisFactory
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
