@@ -121,10 +121,9 @@ std::size_t DataSet::nRows() const
 
 InterpolatedState DataSet::interpolatedState(double frame) const
 {
-    if (frame > (_states.size() - 1) || frame < 0) {
+    if (frame > (_states.size() - 1) || frame < 0)
         throw std::runtime_error(
             "Error when interpolating state: invalid frame value: " + std::to_string(frame));
-    }
 
     const std::size_t idx = std::size_t(std::lround(std::floor(frame)));
     const std::size_t next = std::min(idx + 1, _states.size() - 1);
@@ -223,10 +222,8 @@ void DataSet::saveHDF5(const std::string& filename) // const
     for (size_t i = 0; i < n_detector_gonio_axes; ++i) {
         const auto& axis = detector_gonio.axis(i);
         Eigen::VectorXd values(_nFrames);
-        for (size_t j = 0; j < _nFrames; ++j) {
-            auto&& v = detectorStates[j];
-            values(j) = v[i] / deg;
-        }
+        for (size_t j = 0; j < _nFrames; ++j)
+            values(j) = detectorStates[j][i] / deg;
         H5::DataSet detectorScan(
             detectorGroup.createDataSet(axis.name(), H5::PredType::NATIVE_DOUBLE, scanSpace));
         detectorScan.write(&values(0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
@@ -239,15 +236,12 @@ void DataSet::saveHDF5(const std::string& filename) // const
 
     const auto& sample_gonio = _reader->diffractometer()->sample().gonio();
     size_t n_sample_gonio_axes = sample_gonio.nAxes();
-    ;
 
     for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
         const auto& axis = sample_gonio.axis(i);
         Eigen::VectorXd values(_nFrames);
-        for (size_t j = 0; j < _nFrames; ++j) {
-            auto&& v = sampleStates[j];
-            values(j) = v[i] / deg;
-        }
+        for (size_t j = 0; j < _nFrames; ++j)
+            values(j) = sampleStates[j][i] / deg;
         H5::DataSet sampleScan(
             sampleGroup.createDataSet(axis.name(), H5::PredType::NATIVE_DOUBLE, scanSpace));
         sampleScan.write(&values(0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
@@ -307,8 +301,7 @@ void DataSet::addMask(IMask* mask)
 
 void DataSet::removeMask(IMask* mask)
 {
-    auto&& p = _masks.find(mask);
-    if (p != _masks.end())
+    if (_masks.find(mask) != _masks.end())
         _masks.erase(mask);
 }
 
@@ -346,8 +339,7 @@ std::vector<DetectorEvent> DataSet::events(const std::vector<ReciprocalVector>& 
         return kf.squaredNorm() < ki.squaredNorm();
     };
 
-    // lfor each sample q, determine the rotation that makes it intersect the
-    // Ewald sphere
+    // lfor each sample q, determine the rotation that makes it intersect the Ewald sphere
     for (const ReciprocalVector& sample_q : sample_qs) {
         const Eigen::RowVector3d& q_vect = sample_q.rowVector();
 
