@@ -96,6 +96,8 @@ private:
     int _framesEnd;
 };
 
+using sptrPeakFinder = std::shared_ptr<PeakFinder>;
+
 } // namespace nsx
 
 #endif // CORE_SEARCH_PEAKS_PEAKFINDER_H

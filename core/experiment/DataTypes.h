@@ -24,9 +24,6 @@ class DataSet;
 using sptrDataSet = std::shared_ptr<DataSet>;
 using DataList = std::vector<sptrDataSet>;
 
-class PeakFinder;
-using sptrPeakFinder = std::shared_ptr<PeakFinder>;
-
 } // namespace nsx
 
 #endif // CORE_EXPERIMENT_DATATYPES_H
