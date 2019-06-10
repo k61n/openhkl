@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/experiment/DataTypes.h
-//! @brief     Defines ###THINGS###
+//! @brief     Declares classes, defines data types
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -32,12 +32,8 @@ class PeakFinder;
 
 using sptrDataSet = std::shared_ptr<DataSet>;
 using sptrPeakFinder = std::shared_ptr<PeakFinder>;
-
-
 using DataList = std::vector<sptrDataSet>;
-
 using FrameIteratorCallback = std::function<IFrameIterator*(DataSet&, int)>;
-
 using MetaDataMap = std::map<const char*, Variant<int, double, std::string>>;
 using MetaDataKeySet = std::set<std::string>;
 

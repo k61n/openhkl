@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/utils/StringIO.cpp
-//! @brief     Implements ###THINGS###
+//! @brief     Implements functions that transform strings
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

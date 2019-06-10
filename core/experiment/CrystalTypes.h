@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/experiment/CrystalTypes.h
-//! @brief     Defines ###THINGS###
+//! @brief     Declares classes, defines data types
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -30,24 +30,15 @@ class SymOp;
 class UnitCell;
 
 using MillerIndexList = std::vector<MillerIndex>;
-
 using affineTransformation = Eigen::Transform<double, 3, Eigen::Affine>;
-
-
 using sptrPeak3D = std::shared_ptr<Peak3D>;
 using sptrUnitCell = std::shared_ptr<UnitCell>;
-
 using RankedSolution = std::pair<sptrUnitCell, double>;
-
 using PeakList = std::vector<sptrPeak3D>;
-
 using MergedPeakSet = std::set<MergedPeak>;
-
 using SymOpList = std::vector<SymOp>;
 using UnitCellList = std::vector<sptrUnitCell>;
-
 using SpaceGroupSymmetry = std::pair<std::string, std::string>;
-
 
 } // namespace nsx
 
