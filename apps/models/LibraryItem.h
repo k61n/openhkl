@@ -18,7 +18,7 @@
 
 #include <QJsonObject>
 
-#include "core/geometry/GeometryTypes.h"
+#include "core/integration/ShapeLibrary.h"
 #include "core/integration/ShapeLibrary.h"
 
 #include "apps/models/TreeItem.h"

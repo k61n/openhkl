@@ -16,7 +16,7 @@
 
 #include "core/geometry/AABB.h"
 #include "core/geometry/Ellipsoid.h"
-#include "core/geometry/GeometryTypes.h"
+#include "core/integration/ShapeLibrary.h"
 #include "core/geometry/ReciprocalVector.h"
 
 namespace nsx {

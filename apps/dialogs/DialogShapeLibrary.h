@@ -18,7 +18,7 @@
 
 #include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataTypes.h"
-#include "core/geometry/GeometryTypes.h"
+#include "core/integration/ShapeLibrary.h"
 #include "core/instrument/InstrumentTypes.h"
 #include "core/integration/Profile3D.h"
 

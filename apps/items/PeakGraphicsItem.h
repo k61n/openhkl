@@ -19,7 +19,7 @@
 #include <string>
 
 #include "core/experiment/CrystalTypes.h"
-#include "core/geometry/GeometryTypes.h"
+#include "core/integration/ShapeLibrary.h"
 
 #include "apps/items/PlottableGraphicsItem.h"
 

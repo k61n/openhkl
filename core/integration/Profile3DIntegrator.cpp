@@ -23,7 +23,7 @@
 namespace nsx {
 
 Profile3DIntegrator::Profile3DIntegrator(
-    sptrShapeLibrary library, double radius, double nframes, bool detector_space)
+    sptrShapeLibrary library, double radius, double nframes, bool /*detector_space*/)
     : _library(library), _radius(radius), _nframes(nframes)
 {
 }

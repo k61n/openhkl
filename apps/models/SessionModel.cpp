@@ -41,7 +41,7 @@
 #include "core/detector/Detector.h"
 #include "core/experiment/CrystalTypes.h"
 #include "core/geometry/Ellipsoid.h"
-#include "core/geometry/GeometryTypes.h"
+#include "core/integration/ShapeLibrary.h"
 #include "core/geometry/ReciprocalVector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"

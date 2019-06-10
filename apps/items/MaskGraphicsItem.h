@@ -18,7 +18,7 @@
 #include <string>
 
 #include "core/experiment/DataTypes.h"
-#include "core/geometry/GeometryTypes.h"
+#include "core/integration/ShapeLibrary.h"
 
 #include "apps/items/CutterGraphicsItem.h"
 
