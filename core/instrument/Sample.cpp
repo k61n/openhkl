@@ -57,8 +57,8 @@ const ConvexHull& Sample::shape() const
     return _sampleShape;
 }
 
-SampleGonioFit
-Sample::fitGonioOffsets(const DataList& dataset, size_t n_iterations, double tolerance) const
+SampleGonioFit Sample::fitGonioOffsets(
+    const DataList& dataset, size_t n_iterations, double tolerance) const
 {
     const auto& sample_gonio = gonio();
     size_t n_axes = sample_gonio.nAxes();
