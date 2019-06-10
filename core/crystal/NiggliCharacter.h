@@ -15,9 +15,6 @@
 #ifndef CORE_CRYSTAL_NIGGLICHARACTER_H
 #define CORE_CRYSTAL_NIGGLICHARACTER_H
 
-//! \file
-
-
 namespace nsx {
 
 //! Centering type of the Bravais lattice
