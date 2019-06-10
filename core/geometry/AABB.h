@@ -15,12 +15,12 @@
 #ifndef CORE_GEOMETRY_AABB_H
 #define CORE_GEOMETRY_AABB_H
 
-#include "core/geometry/GeometryTypes.h"
-
 #include <vector>
 #include <Eigen/Dense>
 
 namespace nsx {
+
+class Ellipsoid; // cross dependence requires forward declaration
 
 //! Axis-Aligned Bounding-Box in D dimension.
 //!

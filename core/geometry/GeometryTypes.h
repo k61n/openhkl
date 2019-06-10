@@ -19,7 +19,6 @@
 
 namespace nsx {
 
-class Ellipsoid;
 class ShapeLibrary;
 
 using sptrShapeLibrary = std::shared_ptr<ShapeLibrary>;

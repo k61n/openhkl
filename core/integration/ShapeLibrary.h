@@ -18,6 +18,7 @@
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataTypes.h"
+#include "core/geometry/GeometryTypes.h"
 #include "core/integration/Profile1D.h"
 #include "core/integration/Profile3D.h"
 

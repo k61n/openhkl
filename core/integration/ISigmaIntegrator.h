@@ -15,6 +15,7 @@
 #ifndef CORE_INTEGRATION_ISIGMAINTEGRATOR_H
 #define CORE_INTEGRATION_ISIGMAINTEGRATOR_H
 
+#include "core/geometry/GeometryTypes.h"
 #include "core/integration/PixelSumIntegrator.h"
 
 namespace nsx {

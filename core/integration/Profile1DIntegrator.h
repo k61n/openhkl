@@ -15,6 +15,7 @@
 #ifndef CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
 #define CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
 
+#include "core/geometry/GeometryTypes.h"
 #include "core/peak/IPeakIntegrator.h"
 
 namespace nsx {

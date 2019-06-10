@@ -21,6 +21,7 @@
 
 #include "core/experiment/CrystalTypes.h"
 #include "core/experiment/DataTypes.h"
+#include "core/geometry/GeometryTypes.h"
 #include "core/integration/Profile3D.h"
 
 #include "gui/models/colormap.h"

@@ -22,6 +22,7 @@
 #include <QTableView>
 
 #include "core/experiment/CrystalTypes.h"
+#include "core/geometry/GeometryTypes.h"
 
 #include "apps/MainWindow.h"
 
