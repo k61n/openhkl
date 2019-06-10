@@ -17,7 +17,11 @@
 
 #include "core/experiment/CrystalTypes.h"
 
+#include <Eigen/Dense>
+
 namespace nsx {
+
+using affineTransformation = Eigen::Transform<double, 3, Eigen::Affine>;
 
 //! Class to represent a symmetry operation of a spacegroup.
 class SymOp {

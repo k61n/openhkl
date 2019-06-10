@@ -18,6 +18,8 @@
 #include "core/experiment/CrystalTypes.h"
 #include "gui/graphics/plottableitem.h"
 
+#include <Eigen/Dense>
+
 class PeakItem : public PlottableItem {
 public:
     PeakItem(nsx::sptrPeak3D peak, int frame);
