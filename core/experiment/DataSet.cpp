@@ -13,17 +13,15 @@
 //  ***********************************************************************************************
 
 #include "core/experiment/DataSet.h"
+
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"
-#include "core/geometry/AABB.h"
-#include "core/geometry/Ellipsoid.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/loader/BloscFilter.h"
-#include "core/peak/Peak3D.h"
 #include "core/utils/Path.h"
 #include "core/utils/ProgressHandler.h"
 #include "core/utils/Units.h" // deg
