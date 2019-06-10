@@ -15,7 +15,6 @@
 
 #include "gui/graphics/maskitem.h"
 #include "core/experiment/DataSet.h"
-#include "core/geometry/AABB.h"
 
 #include <Eigen/Dense>
 #include <QGraphicsSceneWheelEvent>

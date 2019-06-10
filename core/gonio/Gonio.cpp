@@ -17,7 +17,6 @@
 
 #include <Eigen/Geometry>
 
-#include "core/geometry/DirectVector.h"
 #include "core/gonio/Gonio.h"
 #include "core/gonio/RotAxis.h"
 #include "core/utils/Units.h"

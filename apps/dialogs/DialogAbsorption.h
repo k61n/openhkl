@@ -22,8 +22,11 @@
 #include <QDialog>
 #include <QString>
 
-#include "core/geometry/GeometryTypes.h"
 #include "core/instrument/InstrumentTypes.h"
+
+namespace nsx {
+class ConvexHull;
+}
 
 namespace Ui {
 class DialogAbsorption;

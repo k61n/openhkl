@@ -15,7 +15,7 @@
 #ifndef CORE_GONIO_GONIO_H
 #define CORE_GONIO_GONIO_H
 
-#include "core/geometry/GeometryTypes.h"
+#include "core/geometry/DirectVector.h"
 #include "core/gonio/Axis.h"
 
 namespace nsx {

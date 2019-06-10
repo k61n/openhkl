@@ -19,15 +19,8 @@
 
 namespace nsx {
 
-class AABB;
-class ConvexHull;
-class DirectVector;
 class Ellipsoid;
 class ShapeLibrary;
-struct Edge;
-struct Face;
-struct Triangle;
-struct Vertex;
 
 using sptrShapeLibrary = std::shared_ptr<ShapeLibrary>;
 
