@@ -16,6 +16,7 @@
 #define GUI_PANELS_TAB_UNITCELLS_H
 
 #include "gui/properties/unitcellproperty.h"
+
 class TabUnitcells : public QcrWidget {
 public:
     TabUnitcells();

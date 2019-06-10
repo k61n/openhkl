@@ -16,6 +16,7 @@
 #define GUI_MODELS_SESSION_H
 
 #include "gui/models/experimentmodel.h"
+
 extern class Session* gSession; //!< global handle for Session
 
 class Session {

@@ -5,6 +5,7 @@
 
 #include "core/loader/MatrixParser.h"
 #include "core/utils/Enums.h"
+
 TEST_CASE("test/utils/TestMatrixParser.cpp", "")
 {
 

@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "core/utils/ProgressHandler.h"
+
 using namespace nsx;
 
 TEST_CASE("test/utils/TestProgressHandler.cpp", "")

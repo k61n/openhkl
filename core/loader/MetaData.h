@@ -16,6 +16,7 @@
 #define CORE_LOADER_METADATA_H
 
 #include "core/experiment/DataTypes.h"
+
 namespace nsx {
 
 /*! Class to store MetaData of a DataSet stored by a map of key/value

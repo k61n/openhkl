@@ -4,6 +4,7 @@
 #include <Eigen/Dense>
 
 #include "core/geometry/AABB.h"
+
 const double tolerance = 1e-5;
 
 TEST_CASE("test/geometry/TestAABB.cpp", "")

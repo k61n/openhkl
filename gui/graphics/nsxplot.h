@@ -16,6 +16,7 @@
 #define GUI_GRAPHICS_NSXPLOT_H
 
 #include "3rdparty/QCustomPlot/QCustomPlot.h"
+
 class PlottableItem;
 
 class NSXPlot : public QCustomPlot {

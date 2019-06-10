@@ -17,6 +17,7 @@
 #include "core/peak/Peak3D.h"
 
 #include "apps/models/InspectableTreeItem.h"
+
 class PeakListItem : public InspectableTreeItem {
 public:
     explicit PeakListItem(const nsx::PeakList& peaks);

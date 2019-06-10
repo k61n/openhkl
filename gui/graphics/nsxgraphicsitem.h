@@ -17,6 +17,7 @@
 
 #include <QGraphicsItem>
 #include <QPen>
+
 class DetectorScene;
 class NSXGraphicsItem : public QGraphicsItem {
 public:

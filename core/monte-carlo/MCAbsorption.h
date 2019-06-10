@@ -16,6 +16,7 @@
 #define CORE_MONTE_CARLO_MCABSORPTION_H
 
 #include <random>
+
 namespace nsx {
 
 //! Class used to compute absorption correction by Monte-Carlo integration.

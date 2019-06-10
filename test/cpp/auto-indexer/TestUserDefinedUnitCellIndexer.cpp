@@ -8,6 +8,7 @@
 #include "core/crystal/UnitCell.h"
 #include "core/geometry/ReciprocalVector.h"
 #include "core/utils/Units.h"
+
 Eigen::Matrix3d make_rotation(Eigen::Vector3d angles)
 {
     const double com = std::cos(angles(0));

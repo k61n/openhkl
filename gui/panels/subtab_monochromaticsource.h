@@ -16,6 +16,7 @@
 #define GUI_PANELS_SUBTAB_MONOCHROMATICSOURCE_H
 
 #include "gui/properties/sourceproperty.h"
+
 class SubtabMonochromatic : public QcrWidget {
 public:
     SubtabMonochromatic();

@@ -18,6 +18,7 @@
 #include "gui/graphics/detectorview.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
+
 //! Subframe of the main window, with tabs to control detector, fits, &c
 
 class ImageWidget : public QcrWidget {

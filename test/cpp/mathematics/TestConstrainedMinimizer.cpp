@@ -7,6 +7,7 @@
 
 #include "core/fitting/FitParameters.h"
 #include "core/fitting/Minimizer.h"
+
 TEST_CASE("test/mathematics/TestConstrainedMinimizer.cpp", "")
 {
 

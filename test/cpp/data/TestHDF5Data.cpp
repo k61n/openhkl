@@ -4,6 +4,7 @@
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/loader/DataReaderFactory.h"
+
 TEST_CASE("test/data/TestHDF5Data.cpp", "")
 {
 

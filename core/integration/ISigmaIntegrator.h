@@ -16,6 +16,7 @@
 #define CORE_INTEGRATION_ISIGMAINTEGRATOR_H
 
 #include "core/integration/PixelSumIntegrator.h"
+
 namespace nsx {
 
 //! Compute the integrated intensity via the I/sigma method used in

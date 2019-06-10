@@ -18,6 +18,7 @@
 #include "gui/models/session.h"
 #include <QCR/engine/logger.h>
 #include <QCR/engine/mixin.h>
+
 //  ***********************************************************************************************
 //! @class ExperimentData
 

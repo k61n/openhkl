@@ -18,6 +18,7 @@
 #include <Eigen/Dense>
 
 #include <QImage>
+
 class ColorMap {
 public:
     ColorMap(const std::string& name);

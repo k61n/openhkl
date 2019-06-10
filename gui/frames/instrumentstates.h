@@ -18,6 +18,7 @@
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 #include <QListWidget>
+
 class InstrumentStates : public QcrFrame {
 public:
     InstrumentStates();

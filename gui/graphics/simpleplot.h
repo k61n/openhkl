@@ -16,6 +16,7 @@
 #define GUI_GRAPHICS_SIMPLEPLOT_H
 
 #include "gui/graphics/nsxplot.h"
+
 class SimplePlot : public NSXPlot {
     Q_OBJECT
 public:

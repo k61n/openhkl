@@ -20,6 +20,7 @@
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 #include <QDialogButtonBox>
+
 class UserDefinedUnitCellIndexer : public QcrFrame {
 public:
     UserDefinedUnitCellIndexer();

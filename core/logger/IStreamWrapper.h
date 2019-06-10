@@ -16,6 +16,7 @@
 #define CORE_LOGGER_ISTREAMWRAPPER_H
 
 #include <functional>
+
 namespace nsx {
 
 class IStreamWrapper {

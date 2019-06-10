@@ -20,6 +20,7 @@
 #include "gui/panels/tab_peaklibrary.h"
 #include "gui/panels/tab_peaks.h"
 #include "gui/panels/tab_unitcells.h"
+
 //! Subframe of the main window, with tabs to control detector, fits, &c
 
 class SubframeSetup : public QcrTabWidget {

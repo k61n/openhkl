@@ -2,6 +2,7 @@
 #include <Eigen/Dense>
 
 #include "core/crystal/MillerIndex.h"
+
 TEST_CASE("test/geometry/TestMillerIndices.cpp", "")
 {
 

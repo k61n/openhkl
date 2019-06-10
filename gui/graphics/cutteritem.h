@@ -17,6 +17,7 @@
 
 #include "core/experiment/DataTypes.h"
 #include "gui/graphics/plottableitem.h"
+
 class CutterItem : public PlottableItem {
 public:
     // Constructors and destructor

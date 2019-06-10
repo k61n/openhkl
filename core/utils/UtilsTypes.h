@@ -16,6 +16,7 @@
 #define CORE_UTILS_UTILSTYPES_H
 
 #include <set>
+
 namespace nsx {
 
 class ProgressHandler;

@@ -18,6 +18,7 @@
 #include "core/experiment/DataTypes.h"
 #include "core/geometry/GeometryTypes.h"
 #include "gui/graphics/nsxgraphicsitem.h"
+
 /*! Creates a mask that will be used to unselect/select peaks whether their
  * intercept or not the mask
  */

@@ -17,6 +17,7 @@
 
 #include "core/crystal/Intensity.h"
 #include "core/crystal/SpaceGroup.h"
+
 namespace nsx {
 
 //! \class MergedPeak

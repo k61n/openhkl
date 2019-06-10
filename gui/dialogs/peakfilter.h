@@ -18,6 +18,7 @@
 #include "gui/models/peakstable.h"
 #include <QCR/widgets/controls.h>
 #include <QDialogButtonBox>
+
 class PeakFilter : public QDialog {
 public:
     PeakFilter();

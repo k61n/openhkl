@@ -22,6 +22,7 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
 #include <QStack>
+
 class PeakItem;
 class NSXGraphicsItem;
 

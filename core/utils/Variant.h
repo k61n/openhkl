@@ -17,6 +17,7 @@
 
 #include <iostream>
 #include <typeindex>
+
 namespace nsx {
 
 //! Template meta-class for fetching the type of the first template argument of
