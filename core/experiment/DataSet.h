@@ -124,8 +124,6 @@ private:
 
     double _background;
 
-    FrameIteratorCallback _iteratorCallback;
-
     std::shared_ptr<IDataReader> _reader;
 };
 
