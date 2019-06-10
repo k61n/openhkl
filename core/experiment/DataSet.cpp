@@ -23,7 +23,6 @@
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/loader/BloscFilter.h"
-#include "core/loader/IDataReader.h"
 #include "core/peak/Peak3D.h"
 #include "core/utils/Path.h"
 #include "core/utils/ProgressHandler.h"

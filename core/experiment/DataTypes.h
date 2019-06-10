@@ -15,7 +15,6 @@
 #ifndef CORE_EXPERIMENT_DATATYPES_H
 #define CORE_EXPERIMENT_DATATYPES_H
 
-#include <functional>
 #include <map>
 #include <memory>
 #include <set>
@@ -26,12 +25,12 @@
 namespace nsx {
 
 class DataSet;
-class IDataReader;
-class PeakFinder;
-
 using sptrDataSet = std::shared_ptr<DataSet>;
-using sptrPeakFinder = std::shared_ptr<PeakFinder>;
 using DataList = std::vector<sptrDataSet>;
+
+class PeakFinder;
+using sptrPeakFinder = std::shared_ptr<PeakFinder>;
+
 using MetaDataMap = std::map<const char*, Variant<int, double, std::string>>;
 using MetaDataKeySet = std::set<std::string>;
 
