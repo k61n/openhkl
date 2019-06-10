@@ -23,7 +23,6 @@ class AABB;
 class ConvexHull;
 class DirectVector;
 class Ellipsoid;
-class ReciprocalVector;
 class ShapeLibrary;
 struct Edge;
 struct Face;

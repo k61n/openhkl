@@ -15,11 +15,10 @@
 #ifndef CORE_AUTO_INDEXING_FFTINDEXING_H
 #define CORE_AUTO_INDEXING_FFTINDEXING_H
 
-#include "core/geometry/GeometryTypes.h"
+#include "core/geometry/ReciprocalVector.h"
 
 namespace nsx {
 
-//! \class FFTIndexing
 //! Class used for Fast-Fourier transform autoindexing.
 class FFTIndexing {
 public:

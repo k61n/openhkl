@@ -19,6 +19,7 @@
 
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/DataTypes.h"
+#include "core/geometry/ReciprocalVector.h"
 #include "core/gonio/Component.h"
 #include "core/utils/Enums.h"
 
