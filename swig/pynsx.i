@@ -82,12 +82,10 @@ using Eigen::Quaterniond;
 #include "core/fitting/Minimizer.h"
 
 #include "core/loader/EigenToVector.h"
-#include "core/utils/System.h"
 #include "core/utils/CSV.h"
 #include "core/utils/Enums.h"
 #include "core/utils/Units.h"
 
-#include "core/utils/DoubleToFraction.h"
 #include "core/utils/Path.h"
 
 #include "core/loader/Parser.h"
@@ -119,6 +117,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/auto_indexing/FFTIndexing.h"
 
 #include "core/peak/MergedPeak.h"
+#include "core/crystal/DoubleToFraction.h"
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/NiggliReduction.h"
 #include "core/crystal/GruberReduction.h"
@@ -338,14 +337,6 @@ using namespace nsx;
 %include "core/geometry/Ellipsoid.h"
 %include "core/search_peaks/Blob3D.h"
 
-%include "core/utils/Any.h"
-%extend nsx::Any {
-     %template(Anyi) Any<int>;
-     %template(Anyd) Any<double>;
-     %template(Anyb) Any<bool>;
-     %template(Anys) Any<std::string>;
-}
-
 %include "core/chemistry/Material.h"
 %include "core/chemistry/IsotopeDatabaseManager.h"
 %template(propertyi) nsx::IsotopeDatabaseManager::property<int>;
@@ -427,7 +418,6 @@ namespace nsx {
 %include "core/integration/Profile3D.h"
 %include "core/experiment/DataSet.h"
 
-
 %include "core/peak/MergedData.h"
 
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
@@ -440,10 +430,8 @@ namespace nsx {
 %include "core/fitting/Minimizer.h"
 
 %include "core/loader/EigenToVector.h"
-%include "core/utils/System.h"
 %include "core/utils/CSV.h"
 %include "core/utils/Enums.h"
-%include "core/utils/DoubleToFraction.h"
 %include "core/utils/Path.h"
 
 %include "core/loader/Parser.h"
@@ -479,6 +467,7 @@ namespace nsx {
 
 %include "core/auto_indexing/FFTIndexing.h"
 %include "core/peak/MergedPeak.h"
+%include "core/crystal/DoubleToFraction.h"
 %include "core/crystal/SpaceGroup.h"
 %include "core/crystal/NiggliReduction.h"
 %include "core/crystal/GruberReduction.h"
