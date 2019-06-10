@@ -19,7 +19,6 @@
 
 namespace nsx {
 
-//! \class SymOp
 //! Class to represent a symmetry operation of a spacegroup.
 class SymOp {
 
@@ -32,9 +31,7 @@ public:
     SymOp(const affineTransformation& symmetryOperation);
     SymOp(const SymOp& other);
     ~SymOp();
-    //! Assignment
     SymOp& operator=(const SymOp& other);
-    //! Comparison
     bool operator==(const SymOp& other) const;
     //! Compose symmetry operations
     SymOp operator*(const SymOp& other) const;
@@ -65,6 +62,8 @@ private:
 };
 
 std::ostream& operator<<(std::ostream& os, const SymOp& sym);
+
+using SymOpList = std::vector<SymOp>;
 
 } // namespace nsx
 

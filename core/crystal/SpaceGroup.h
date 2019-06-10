@@ -20,12 +20,13 @@
 
 namespace nsx {
 
+using SpaceGroupSymmetry = std::pair<std::string, std::string>;
+
 //! \class SpaceGroup
 //! Class to enumerate and construct the 3d spacegroups.
 class SpaceGroup {
 private:
-    //! Returns the list of spacegroup symmetry generators associated to each
-    //! spacegroup
+    //! Returns the list of spacegroup symmetry generators associated to each spacegroup
     static const std::vector<SpaceGroupSymmetry> symmetry_table;
 
 public:
@@ -63,10 +64,9 @@ public:
     bool isEquivalent(
         const MillerIndex& miller_index1, const MillerIndex& miller_index2,
         bool friedel = false) const;
-    //! Returns whether two sets of indices are related by a symmetry up to Friedel
-    //! reflection
-    bool
-    isFriedelEquivalent(const MillerIndex& miller_index1, const MillerIndex& miller_index2) const;
+    //! Returns whether two sets of indices are related by a symmetry up to Friedel reflection
+    bool isFriedelEquivalent(
+        const MillerIndex& miller_index1, const MillerIndex& miller_index2) const;
     //! Sort peak into a list of equivalent peaks, using the space group symmetry,
     //! optinally including Friedel pairs (if this is not already a symmetry of
     //! the space group)

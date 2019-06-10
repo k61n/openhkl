@@ -18,9 +18,10 @@
 #include "core/crystal/Intensity.h"
 #include "core/crystal/SpaceGroup.h"
 
+#include <set>
+
 namespace nsx {
 
-//! \class MergedPeak
 //! Class to handle calculation of merged data
 class MergedPeak {
 public:
@@ -41,8 +42,7 @@ public:
     //! Returns the merged intensity of the peak.
     Intensity intensity() const;
 
-    //! Returns the redundancy (number of symmetry-equivalent observations) of the
-    //! merged peak.
+    //! Returns the redundancy (number of symmetry-equivalent observations) of the merged peak.
     size_t redundancy() const;
 
     //! Compute the chi-squared statistic of a merged peak.
@@ -72,6 +72,8 @@ private:
 #ifndef SWIG
 bool operator<(const MergedPeak& p, const MergedPeak& q);
 #endif
+
+using MergedPeakSet = std::set<MergedPeak>;
 
 } // namespace nsx
 
