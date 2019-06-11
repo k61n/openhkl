@@ -4,8 +4,8 @@
 
 #include <Eigen/Dense>
 
-#include "core/fitting/FitParameters.h"
-#include "core/fitting/Minimizer.h"
+#include "base/fit/FitParameters.h"
+#include "base/fit/Minimizer.h"
 
 TEST_CASE("test/mathematics/TestMinimizer.cpp", "")
 {

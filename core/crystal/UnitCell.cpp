@@ -22,7 +22,7 @@
 #include "core/crystal/NiggliReduction.h"
 #include "core/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
-#include "core/fitting/Minimizer.h"
+#include "base/fit/Minimizer.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "base/logger/Logger.h"
 #include "base/utils/Units.h"

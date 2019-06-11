@@ -19,8 +19,8 @@
 #include "core/crystal/MillerIndex.h"
 #include "core/crystal/NiggliReduction.h"
 #include "core/experiment/DataSet.h" // peak->data()->interpolatedState
-#include "core/fitting/FitParameters.h"
-#include "core/fitting/Minimizer.h"
+#include "base/fit/FitParameters.h"
+#include "base/fit/Minimizer.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "core/peak/Peak3D.h"
 #include "core/merge_and_filter/PeakFilter.h"

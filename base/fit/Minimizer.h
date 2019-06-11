@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/fitting/Minimizer.h
+//! @file      base/fit/Minimizer.h
 //! @brief     Defines class Minimizer
 //!
 //! @homepage  ###HOMEPAGE###
@@ -17,7 +17,7 @@
 
 #include <gsl/gsl_matrix.h>
 
-#include "core/fitting/FitParameters.h"
+#include "base/fit/FitParameters.h"
 
 namespace nsx {
 struct MinimizerGSL;

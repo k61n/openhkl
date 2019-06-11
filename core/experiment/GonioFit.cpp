@@ -15,8 +15,8 @@
 #include "core/experiment/GonioFit.h"
 
 #include "core/experiment/DataSet.h"
-#include "core/fitting/FitParameters.h"
-#include "core/fitting/Minimizer.h"
+#include "base/fit/FitParameters.h"
+#include "base/fit/Minimizer.h"
 #include "core/loader/IDataReader.h"
 #include "base/logger/Logger.h"
 

@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/fitting/FitParameters.cpp
+//! @file      base/fit/FitParameters.cpp
 //! @brief     Implements class FitParameters
 //!
 //! @homepage  ###HOMEPAGE###
@@ -17,7 +17,7 @@
 #include <Eigen/Dense>
 #include <Eigen/SparseQR>
 
-#include "core/fitting/FitParameters.h"
+#include "base/fit/FitParameters.h"
 
 // DEBUGGING
 #include <iostream>

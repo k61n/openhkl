@@ -18,7 +18,7 @@
 #include "core/crystal/MillerIndex.h"
 #include "core/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
-#include "core/fitting/Minimizer.h"
+#include "base/fit/Minimizer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
 #include "core/merge_and_filter/PeakFilter.h"

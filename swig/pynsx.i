@@ -78,8 +78,8 @@ using Eigen::Quaterniond;
 #include "core/chemistry/Material.h"
 #include "core/chemistry/IsotopeDatabaseManager.h"
 
-#include "core/fitting/FitParameters.h"
-#include "core/fitting/Minimizer.h"
+#include "base/fit/FitParameters.h"
+#include "base/fit/Minimizer.h"
 
 #include "core/loader/EigenToVector.h"
 #include "base/utils/CSV.h"
@@ -408,8 +408,8 @@ namespace nsx {
 
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;
 
-%include "core/fitting/FitParameters.h"
-%include "core/fitting/Minimizer.h"
+%include "base/fit/FitParameters.h"
+%include "base/fit/Minimizer.h"
 
 %include "core/loader/EigenToVector.h"
 %include "base/utils/CSV.h"

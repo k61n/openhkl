@@ -17,7 +17,7 @@
 #include "core/crystal/UnitCell.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/DataSet.h"
-#include "core/fitting/Minimizer.h"
+#include "base/fit/Minimizer.h"
 #include "base/geometry/Ellipsoid.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Source.h"

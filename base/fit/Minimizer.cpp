@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/fitting/Minimizer.cpp
+//! @file      base/fit/Minimizer.cpp
 //! @brief     Implements class Minimizer
 //!
 //! @homepage  ###HOMEPAGE###
@@ -22,7 +22,7 @@
 
 #include <Eigen/Dense>
 
-#include "core/fitting/Minimizer.h"
+#include "base/fit/Minimizer.h"
 
 namespace nsx {
 
