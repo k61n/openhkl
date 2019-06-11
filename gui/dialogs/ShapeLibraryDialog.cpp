@@ -33,7 +33,7 @@
 #include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/quantify/PeakCoordinateSystem.h"
-#include "core/merge_and_filter/PeakFilter.h"
+#include "core/analyse/PeakFilter.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/models/ColorMap.h"
 

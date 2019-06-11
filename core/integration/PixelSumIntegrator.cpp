@@ -18,7 +18,7 @@
 #include "base/geometry/Ellipsoid.h"
 #include "core/integration/MeanBackgroundIntegrator.h"
 #include "core/peak/Peak3D.h"
-#include "core/search_peaks/Blob3D.h"
+#include "core/analyse/Blob3D.h"
 
 namespace nsx {
 

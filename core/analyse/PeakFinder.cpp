@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/search_peaks/PeakFinder.h"
+#include "core/analyse/PeakFinder.h"
 
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
@@ -21,7 +21,7 @@
 #include "core/instrument/Sample.h"
 #include "core/raw/IDataReader.h"
 #include "base/logger/Logger.h"
-#include "core/merge_and_filter/Octree.h"
+#include "core/analyse/Octree.h"
 #include "core/peak/Peak3D.h"
 #include "core/convolve/ConvolverFactory.h"
 

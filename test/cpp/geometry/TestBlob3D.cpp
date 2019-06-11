@@ -3,7 +3,7 @@
 
 #include <Eigen/Dense>
 
-#include "core/search_peaks/Blob3D.h"
+#include "core/analyse/Blob3D.h"
 
 const double tolerance = 1e-5;
 

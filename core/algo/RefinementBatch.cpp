@@ -21,7 +21,7 @@
 #include "base/fit/Minimizer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
-#include "core/merge_and_filter/PeakFilter.h"
+#include "core/analyse/PeakFilter.h"
 #include "core/algo/Refiner.h"
 
 const static double g_eps = 1e-5;

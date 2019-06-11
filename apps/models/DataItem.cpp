@@ -30,7 +30,7 @@
 #include "core/loader/RawDataReader.h"
 #include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
-#include "core/search_peaks/PeakFinder.h"
+#include "core/analyse/PeakFinder.h"
 #include "base/utils/ProgressHandler.h"
 
 #include "apps/MainWindow.h"

@@ -24,7 +24,7 @@
 #include "core/experiment/DataSet.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "base/logger/Logger.h"
-#include "core/merge_and_filter/MergedPeak.h"
+#include "core/analyse/MergedPeak.h"
 #include "core/peak/Peak3D.h"
 
 namespace nsx {

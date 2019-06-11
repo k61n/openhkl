@@ -15,7 +15,7 @@
 #ifndef CORE_STATISTICS_CC_H
 #define CORE_STATISTICS_CC_H
 
-#include "core/merge_and_filter/MergedPeak.h"
+#include "core/analyse/MergedPeak.h"
 
 namespace nsx {
 class MergedData;

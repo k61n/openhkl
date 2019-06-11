@@ -27,7 +27,7 @@
 #include "core/raw/MetaData.h"
 #include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
-#include "core/merge_and_filter/PeakFilter.h"
+#include "core/analyse/PeakFilter.h"
 
 #include <QAction>
 #include <QHeaderView>

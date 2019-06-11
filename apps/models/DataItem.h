@@ -16,7 +16,7 @@
 
 #include "core/experiment/DataTypes.h"
 #include "core/instrument/InstrumentTypes.h"
-#include "core/search_peaks/PeakFinder.h"
+#include "core/analyse/PeakFinder.h"
 
 #include "apps/models/TreeItem.h"
 

@@ -16,7 +16,7 @@
 #define CORE_SEARCH_PEAKS_PEAKFINDER_H
 
 #include "core/experiment/DataSet.h"
-#include "core/search_peaks/Blob3D.h"
+#include "core/analyse/Blob3D.h"
 #include "core/convolve/Convolver.h"
 #include "base/utils/ProgressHandler.h"
 

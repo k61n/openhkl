@@ -15,7 +15,7 @@
 #ifndef CORE_PEAK_MERGEDDATA_H
 #define CORE_PEAK_MERGEDDATA_H
 
-#include "core/merge_and_filter/MergedPeak.h"
+#include "core/analyse/MergedPeak.h"
 
 namespace nsx {
 

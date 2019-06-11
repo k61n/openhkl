@@ -116,7 +116,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
 #include "core/algo/FFTIndexing.h"
 
-#include "core/merge_and_filter/MergedPeak.h"
+#include "core/analyse/MergedPeak.h"
 #include "tables/crystal/DoubleToFraction.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/NiggliReduction.h"
@@ -133,7 +133,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
 #include "base/geometry/AABB.h"
 #include "base/hull/Edge.h"
-#include "core/search_peaks/Blob3D.h"
+#include "core/analyse/Blob3D.h"
 
 
 #include "base/geometry/DirectVector.h"
@@ -152,7 +152,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/loader/RawDataReader.h"
 #include "core/loader/TiffDataReader.h"
 #include "core/parser/BloscFilter.h"
-#include "core/search_peaks/PeakFinder.h"
+#include "core/analyse/PeakFinder.h"
 #include "core/algo/DataReaderFactory.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorFactory.h"
@@ -205,7 +205,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
 #include "base/geometry/AABB.h"
 #include "base/geometry/Ellipsoid.h"
-#include "core/search_peaks/Blob3D.h"
+#include "core/analyse/Blob3D.h"
 
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/SpaceGroup.h"
@@ -228,10 +228,10 @@ using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 #include "core/loader/ILLDataReader.h"
 #include "core/loader/HDF5DataReader.h"
 #include "core/experiment/DataSet.h"
-#include "core/search_peaks/PeakFinder.h"
-#include "core/merge_and_filter/MergedData.h"
+#include "core/analyse/PeakFinder.h"
+#include "core/analyse/MergedData.h"
 
-#include "core/merge_and_filter/PeakFilter.h"
+#include "core/analyse/PeakFilter.h"
 
 #include "tables/crystal/MillerIndex.h"
 #include "core/shape/Profile1D.h"
@@ -320,7 +320,7 @@ using namespace nsx;
 
 %include "base/geometry/AABB.h"
 %include "base/geometry/Ellipsoid.h"
-%include "core/search_peaks/Blob3D.h"
+%include "core/analyse/Blob3D.h"
 
 %include "tables/chemistry/Material.h"
 %include "tables/chemistry/IsotopeDatabaseManager.h"
@@ -379,7 +379,7 @@ namespace nsx {
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
 %template(PeakShell) std::vector<std::vector<std::shared_ptr<nsx::Peak3D>>>;
 
-%include "core/merge_and_filter/PeakFilter.h"
+%include "core/analyse/PeakFilter.h"
 
 %template(ConvolverParameters) std::map<std::string,double>;
 %include "core/convolve/Convolver.h"
@@ -400,11 +400,11 @@ namespace nsx {
 %include "core/shape/Profile3D.h"
 %include "core/experiment/DataSet.h"
 
-%include "core/merge_and_filter/MergedData.h"
+%include "core/analyse/MergedData.h"
 
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
 
-%include "core/search_peaks/PeakFinder.h"
+%include "core/analyse/PeakFinder.h"
 
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;
 
@@ -447,7 +447,7 @@ namespace nsx {
 %include "core/shape/Profile1D.h"
 %include "core/shape/ShapeLibrary.h"
 
-%include "core/merge_and_filter/MergedPeak.h"
+%include "core/analyse/MergedPeak.h"
 %include "tables/crystal/DoubleToFraction.h"
 %include "tables/crystal/SpaceGroup.h"
 %include "tables/crystal/NiggliReduction.h"
@@ -463,7 +463,7 @@ namespace nsx {
 %include "base/hull/ConvexHull.h"
 %include "base/geometry/AABB.h"
 %include "base/hull/Edge.h"
-%include "core/search_peaks/Blob3D.h"
+%include "core/analyse/Blob3D.h"
 
 %include "tables/crystal/BrillouinZone.h"
 

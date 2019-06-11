@@ -18,7 +18,7 @@
 
 #include "tables/crystal/SpaceGroup.h"
 #include "core/peak/Peak3D.h"
-#include "core/merge_and_filter/MergedData.h"
+#include "core/analyse/MergedData.h"
 
 #include "apps/frames/NSXQFrame.h"
 

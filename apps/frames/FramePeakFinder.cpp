@@ -40,7 +40,7 @@
 #include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/convolve/ConvolverFactory.h"
-#include "core/search_peaks/PeakFinder.h"
+#include "core/analyse/PeakFinder.h"
 
 #include "apps/delegates/DoubleItemDelegate.h"
 #include "apps/frames/FramePeakFinder.h"

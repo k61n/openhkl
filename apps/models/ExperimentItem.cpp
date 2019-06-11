@@ -24,9 +24,9 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Source.h"
 #include "base/logger/Logger.h"
-#include "core/merge_and_filter/MergedData.h"
+#include "core/analyse/MergedData.h"
 #include "core/peak/Peak3D.h"
-#include "core/merge_and_filter/PeakFilter.h"
+#include "core/analyse/PeakFilter.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
 

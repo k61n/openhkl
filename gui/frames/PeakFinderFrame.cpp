@@ -19,7 +19,7 @@
 #include "core/raw/IDataReader.h"
 #include "core/peak/Peak3D.h"
 #include "core/convolve/ConvolverFactory.h"
-#include "core/search_peaks/PeakFinder.h"
+#include "core/analyse/PeakFinder.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"

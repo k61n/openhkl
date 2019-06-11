@@ -9,7 +9,7 @@
 #include "core/algo/DataReaderFactory.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
-#include "core/search_peaks/PeakFinder.h"
+#include "core/analyse/PeakFinder.h"
 #include "base/utils/ProgressHandler.h"
 
 TEST_CASE("test/peak_find/TestPeakFinder.cpp", "")

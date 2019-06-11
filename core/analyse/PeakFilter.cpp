@@ -25,10 +25,10 @@
 #include "base/geometry/ReciprocalVector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
-#include "core/merge_and_filter/MergedData.h"
-#include "core/merge_and_filter/Octree.h"
+#include "core/analyse/MergedData.h"
+#include "core/analyse/Octree.h"
 #include "core/peak/Peak3D.h"
-#include "core/merge_and_filter/PeakFilter.h"
+#include "core/analyse/PeakFilter.h"
 
 namespace nsx {
 

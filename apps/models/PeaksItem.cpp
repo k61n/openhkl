@@ -36,7 +36,7 @@
 #include "core/raw/MetaData.h"
 #include "core/loader/RawDataReader.h"
 #include "base/logger/Logger.h"
-#include "core/merge_and_filter/PeakFilter.h"
+#include "core/analyse/PeakFilter.h"
 
 #include "apps/MainWindow.h"
 #include "apps/dialogs/DialogIntegrate.h"
