@@ -21,7 +21,7 @@
 #include <stdexcept>
 
 const char* database =
-#include "core/chemistry/isotopes.yml2c"
+#include "data/chemistry/isotopes.yml2c"
     ;
 
 namespace nsx {
