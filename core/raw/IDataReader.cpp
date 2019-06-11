@@ -14,7 +14,7 @@
 
 #include <cassert>
 
-#include "blosc.h"
+#include <blosc.h>
 
 #include "H5Cpp.h"
 

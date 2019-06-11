@@ -15,7 +15,7 @@
 #include <memory>
 #include <stdexcept>
 
-#include "blosc.h"
+#include <blosc.h>
 
 #include "core/detector/Detector.h"
 #include "core/gonio/Gonio.h"
