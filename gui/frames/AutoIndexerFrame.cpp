@@ -152,7 +152,7 @@ void AutoIndexer::layout()
 
 void AutoIndexer::slotTabRemoved(int index)
 {
-    auto unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabs->widget(index));
+    UnitCellWidget* unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabs->widget(index));
     if (!unit_cell_tab)
         return;
 
@@ -163,7 +163,7 @@ void AutoIndexer::slotTabRemoved(int index)
 
 void AutoIndexer::slotTabEdited(int index)
 {
-    auto unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabs->widget(index));
+    UnitCellWidget* unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabs->widget(index));
 
     if (!unit_cell_tab)
         return;
@@ -171,10 +171,10 @@ void AutoIndexer::slotTabEdited(int index)
     QInputDialog dialog(this);
     dialog.setLabelText("");
     dialog.setWindowTitle(tr("Set unit cell name"));
-    auto pos = mapToGlobal(tabs->pos());
+    QPoint pos = mapToGlobal(tabs->pos());
 
     int width(0);
-    for (auto i = 0; i < index; ++i)
+    for (int i = 0; i < index; ++i)
         width += tabs->tabBar()->tabRect(index).width();
 
     int height = tabs->tabBar()->tabRect(index).height();
@@ -231,9 +231,9 @@ void AutoIndexer::resetUnitCell()
     for (auto p : _defaults)
         p.first->setUnitCell(p.second);
 
-    for (auto i = tabs->count() - 1; i > 0; i--) {
+    for (int i = tabs->count() - 1; i > 0; i--) {
 
-        auto tab = dynamic_cast<UnitCellWidget*>(tabs->widget(i));
+        UnitCellWidget* tab = dynamic_cast<UnitCellWidget*>(tabs->widget(i));
         if (!tab)
             continue;
         tabs->removeTab(i);
@@ -248,10 +248,10 @@ void AutoIndexer::resetUnitCell()
 
 void AutoIndexer::accept()
 {
-    auto unit_cells_item = gSession->selectedExperiment()->unitCells();
+    UnitCellsModel* unit_cells_item = gSession->selectedExperiment()->unitCells();
 
-    for (auto i = 0; i < tabs->count(); ++i) {
-        auto unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabs->widget(i));
+    for (int i = 0; i < tabs->count(); ++i) {
+        UnitCellWidget* unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabs->widget(i));
         if (!unit_cell_tab)
             continue;
         unit_cells_item->appendUnitCell(unit_cell_tab->unitCell());
@@ -264,9 +264,9 @@ void AutoIndexer::accept()
 
 void AutoIndexer::run()
 {
-    auto selection_model = peaks->selectionModel();
+    QItemSelectionModel* selection_model = peaks->selectionModel();
 
-    auto selected_rows = selection_model->selectedRows();
+    QModelIndexList selected_rows = selection_model->selectedRows();
 
     if (selected_rows.empty()) {
         gLogger->log("[ERROR] No peaks selected for auto-indexing");
@@ -277,8 +277,8 @@ void AutoIndexer::run()
     std::shared_ptr<nsx::ProgressHandler> handler(new nsx::ProgressHandler());
 
     handler->setCallback([handler]() {
-        auto log = handler->getLog();
-        for (auto&& msg : log)
+        std::vector<std::string> log = handler->getLog();
+        for (std::string msg : log)
             gLogger->log("[INFO] " + QString::fromStdString(msg));
     });
 
@@ -289,9 +289,9 @@ void AutoIndexer::run()
     // Clear the current solution list
     _solutions.clear();
 
-    auto allPeaks = model->peaks();
+    const nsx::PeakList& allPeaks = model->peaks();
 
-    for (auto r : selected_rows)
+    for (QModelIndex r : selected_rows)
         indexer.addPeak(allPeaks[r.row()]);
 
     nsx::IndexerParameters params;
@@ -336,11 +336,11 @@ void AutoIndexer::buildSolutionsTable()
 
     // Display solutions
     for (unsigned int i = 0; i < _solutions.size(); ++i) {
-        auto& cell = _solutions[i].first;
+        nsx::sptrUnitCell cell = _solutions[i].first;
         double quality = _solutions[i].second;
 
-        auto ch = cell->character();
-        auto sigma = cell->characterSigmas();
+        nsx::UnitCellCharacter ch = cell->character();
+        nsx::UnitCellCharacter sigma = cell->characterSigmas();
 
         QStandardItem* col1 = new QStandardItem(
             QString::number(ch.a, 'f', 3) + "(" + QString::number(sigma.a * 1000, 'f', 0) + ")");
@@ -376,17 +376,17 @@ void AutoIndexer::buildSolutionsTable()
 
 void AutoIndexer::selectSolution(int index)
 {
-    auto selected_unit_cell = _solutions[index].first;
+    nsx::sptrUnitCell selected_unit_cell = _solutions[index].first;
 
-    auto selection_model = peaks->selectionModel();
+    QItemSelectionModel* selection_model = peaks->selectionModel();
 
-    auto selected_rows = selection_model->selectedRows();
+    QModelIndexList selected_rows = selection_model->selectedRows();
 
     selected_unit_cell->setName("new unit cell");
 
-    auto allPeaks = model->peaks();
+    const nsx::PeakList& allPeaks = model->peaks();
 
-    for (auto r : selected_rows)
+    for (QModelIndex r : selected_rows)
         allPeaks[r.row()]->setUnitCell(selected_unit_cell);
 
     UnitCellWidget* widget_unit_cell =

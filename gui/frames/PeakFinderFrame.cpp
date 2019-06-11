@@ -77,13 +77,13 @@ FoundPeaks::FoundPeaks(nsx::PeakList peaks, const QString& name) : QcrWidget {na
 
 nsx::PeakList FoundPeaks::selectedPeaks()
 {
-    auto& foundPeaks = tableModel->peaks();
+    const nsx::PeakList& foundPeaks = tableModel->peaks();
     gLogger->log("selectedPeaks");
     nsx::PeakList peaks;
 
     if (!foundPeaks.empty()) {
         peaks.reserve(foundPeaks.size());
-        for (auto peak : foundPeaks) {
+        for (nsx::sptrPeak3D peak : foundPeaks) {
             if (keepSelectedPeaks->isChecked()) {
                 if (peak->selected())
                     peaks.push_back(peak);
@@ -286,7 +286,7 @@ void PeakFinder::run()
     } catch (std::exception& e) {
         return;
     }
-    for (auto d : datalist) {
+    for (nsx::sptrDataSet d : datalist) {
         nsx::PixelSumIntegrator integrator(true, true);
         integrator.integrate(
             peaks, d, peakArea->value(), backgroundLowerLimit->value(),
@@ -324,13 +324,13 @@ void PeakFinder::doActions(QAbstractButton* button)
 void PeakFinder::accept()
 {
     gLogger->log("@accept");
-    for (auto i = 0; i < tab->count(); ++i) {
+    for (int i = 0; i < tab->count(); ++i) {
 
-        auto widget_found_peaks = dynamic_cast<FoundPeaks*>(tab->widget(i));
+        FoundPeaks* widget_found_peaks = dynamic_cast<FoundPeaks*>(tab->widget(i));
         if (!widget_found_peaks)
             continue;
 
-        auto&& found_peaks = widget_found_peaks->selectedPeaks();
+        nsx::PeakList found_peaks = widget_found_peaks->selectedPeaks();
 
         if (found_peaks.empty())
             continue;

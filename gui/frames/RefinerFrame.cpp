@@ -119,7 +119,7 @@ void Refiner::actionClicked(QAbstractButton* button)
 
 void Refiner::tabRemoved(int index)
 {
-    auto refiner_fit_tab = dynamic_cast<RefinerFitWidget*>(tabs->widget(index));
+    RefinerFitWidget* refiner_fit_tab = dynamic_cast<RefinerFitWidget*>(tabs->widget(index));
     if (!refiner_fit_tab)
         return;
     tabs->removeTab(index);
@@ -129,42 +129,42 @@ void Refiner::tabRemoved(int index)
 void Refiner::refine()
 {
     // Check and construct the peak selection
-    auto selection_model = peaks->selectionModel();
+    QItemSelectionModel* selection_model = peaks->selectionModel();
     QModelIndexList selected_rows = selection_model->selectedRows();
     if (selected_rows.size() < 100) {
         gLogger->log("[ERROR] No or not enough peaks selected for refining");
         return;
     }
 
-    auto peaks_model = dynamic_cast<PeaksTableModel*>(peaks->model());
-    auto&& allPeaks = peaks_model->peaks();
+    PeaksTableModel* peaks_model = dynamic_cast<PeaksTableModel*>(peaks->model());
+    nsx::PeakList allPeaks = peaks_model->peaks();
     nsx::PeakList selected_peaks;
-    for (auto r : selected_rows)
+    for (QModelIndex r : selected_rows)
         selected_peaks.push_back(allPeaks[r.row()]);
 
-    auto unit_cell = selected_peaks[0]->unitCell();
+    nsx::sptrUnitCell unit_cell = selected_peaks[0]->unitCell();
 
     if (!unit_cell) {
         gLogger->log("[ERROR] No unit cell set for the selected peaks");
         return;
     }
 
-    auto&& n_batches = numberBatches->value();
+    int n_batches = numberBatches->value();
 
     std::map<nsx::sptrDataSet, nsx::Refiner> refiners;
 
     std::set<nsx::sptrDataSet> data;
     // get list of datasets
-    for (auto p : allPeaks)
+    for (nsx::sptrPeak3D p : allPeaks)
         data.insert(p->data());
 
-    for (auto d : data) {
+    for (nsx::sptrDataSet d : data) {
 
         nsx::PeakList reference_peaks, predicted_peaks;
 
         // Keep the peak that belong to this data and split them between the found
         // and predicted ones
-        for (auto peak : selected_peaks) {
+        for (nsx::sptrPeak3D peak : selected_peaks) {
             if (peak->data() != d)
                 continue;
             if (peak->predicted())
@@ -224,7 +224,7 @@ void Refiner::refine()
 
     if (!refiners.empty()) {
         if (tabs->count() == 2) {
-            auto refiner_fit_tab = tabs->widget(1);
+            QWidget* refiner_fit_tab = tabs->widget(1);
             tabs->removeTab(1);
             delete refiner_fit_tab;
         }
@@ -254,7 +254,7 @@ RefinerFitWidget::RefinerFitWidget(const std::map<nsx::sptrDataSet, nsx::Refiner
     layout();
 
     for (auto p : refiners) {
-        auto data = p.first;
+        nsx::sptrDataSet data = p.first;
         QFileInfo fileinfo(QString::fromStdString(data->filename()));
 
         QListWidgetItem* item = new QListWidgetItem(fileinfo.baseName());
@@ -419,17 +419,17 @@ void RefinerFitWidget::selectedDataChanged(int selected_data)
 {
     Q_UNUSED(selected_data)
 
-    auto current_item = selectedData->currentItem();
+    QListWidgetItem* current_item = selectedData->currentItem();
 
-    auto data = current_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
+    nsx::sptrDataSet data = current_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
 
     auto&& refiner = _refiners.at(data);
-    auto&& batches = refiner.batches();
+    const std::vector<nsx::RefinementBatch>& batches = refiner.batches();
 
     batch->setMinimum(0);
     batch->setMaximum(batches.size() - 1);
 
-    auto max_frame = data->nFrames() - 1;
+    size_t max_frame = data->nFrames() - 1;
 
     frame->setMinimum(0);
     frame->setMaximum(max_frame);
@@ -446,16 +446,16 @@ void RefinerFitWidget::selectedBatchChanged(int selected_batch)
     //    plot->clearGraphs();
 
     // If no data is selected, return
-    auto current_data_item = selectedData->currentItem();
+    QListWidgetItem* current_data_item = selectedData->currentItem();
     if (!current_data_item)
         return;
 
     // If no refiner is set for this data, return
-    auto data = current_data_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
+    nsx::sptrDataSet data = current_data_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
 
     // If no batches are set for this refiner, return
     auto&& refiner = _refiners.at(data);
-    auto&& batches = refiner.batches();
+    const std::vector<nsx::RefinementBatch>& batches = refiner.batches();
 
     QPen pen;
     pen.setColor(QColor("black"));
@@ -465,8 +465,8 @@ void RefinerFitWidget::selectedBatchChanged(int selected_batch)
     //    plot->graph(0)->setPen(pen);
 
     // Get the cost function for this batch
-    auto&& batch = batches[selected_batch];
-    auto&& cost_function = batch.costFunction();
+    nsx::RefinementBatch batch = batches[selected_batch];
+    const std::vector<double> cost_function = batch.costFunction();
 
     std::vector<double> iterations(cost_function.size());
     std::iota(iterations.begin(), iterations.end(), 0);
@@ -500,17 +500,17 @@ void RefinerFitWidget::selectedFrameChanged(int selected_frame)
     frame->setCellValue(selected_frame);
     // slider->setValue(selected_frame);
 
-    auto current_item = selectedData->currentItem();
+    QListWidgetItem* current_item = selectedData->currentItem();
 
     // No data selected, return
     if (!current_item)
         return;
 
-    auto data = current_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
+    nsx::sptrDataSet data = current_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
 
-    auto&& instrument_states = data->instrumentStates();
+    const nsx::InstrumentStateList& instrument_states = data->instrumentStates();
 
-    const auto& selected_state = instrument_states[selected_frame];
+    const nsx::InstrumentState& selected_state = instrument_states[selected_frame];
     // QLabel box...
     //    QFont font;
     //    font.setBold(true);
@@ -537,7 +537,7 @@ void RefinerFitWidget::selectedFrameChanged(int selected_frame)
     niY->setCellValue(ni[1]);
     niZ->setCellValue(ni[2]);
 
-    const auto& wavelengthval = selected_state.wavelength;
+    const double wavelengthval = selected_state.wavelength;
     wavelength->setCellValue(wavelengthval);
 
     double wavelength_offset = wavelengthval * (ni.norm() - 1.0);

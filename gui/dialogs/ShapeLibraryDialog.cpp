@@ -52,8 +52,8 @@ ShapeLibraryDialog::ShapeLibraryDialog() : QDialog {}
     }
     _peaks = gSession->selectedExperiment()->peaks()->allPeaks();
     //_unitCell = gSession->selectedExperiment()->unitCells()->allUnitCells().at(0);
-    for (auto p : _peaks)
-        _data.insert(p->data());
+    for (auto peak : _peaks)
+        _data.insert(peak->data());
     layout();
 }
 
@@ -136,7 +136,7 @@ void ShapeLibraryDialog::layout()
 
     for (auto peak : _peaks) {
         nsx::PeakCoordinateSystem coord(peak);
-        auto shape = peak->shape();
+        const nsx::Ellipsoid& shape = peak->shape();
         Eigen::Matrix3d J = coord.jacobian();
         cov += J * shape.inverseMetric() * J.transpose();
     }
@@ -144,7 +144,7 @@ void ShapeLibraryDialog::layout()
     sigmaD->setCellValue(std::sqrt(0.5 * (cov(0, 0) + cov(1, 1))));
     sigmaM->setCellValue(std::sqrt(cov(2, 2)));
 
-    auto peaks_model = new PeaksTableModel(
+    PeaksTableModel* peaks_model = new PeaksTableModel(
         "adhoc_shapeTable", gSession->selectedExperiment()->experiment(), _peaks);
     table->setModel(peaks_model);
     table->verticalHeader()->show();
@@ -169,18 +169,18 @@ void ShapeLibraryDialog::calculate()
         return;
     }
 
-    auto nxval = nx->value();
-    auto nyval = ny->value();
-    auto nzval = nz->value();
+    int nxval = nx->value();
+    int nyval = ny->value();
+    int nzval = nz->value();
 
     nsx::DetectorEvent ev(x->value(), y->value(), frame->value());
     // update maximum value, used for drawing
     _profile = _library->meanProfile(ev, radius->value(), nframes->value());
     _maximum = 0;
 
-    for (auto i = 0; i < nxval; ++i) {
-        for (auto j = 0; j < nyval; ++j) {
-            for (auto k = 0; k < nzval; ++k)
+    for (int i = 0; i < nxval; ++i) {
+        for (int j = 0; j < nyval; ++j) {
+            for (int k = 0; k < nzval; ++k)
                 _maximum = std::max(_maximum, _profile(i, j, k));
         }
     }
@@ -206,16 +206,16 @@ void ShapeLibraryDialog::build()
         if (d > maxD->value() || d < minD->value())
             continue;
 
-        auto inten = peak->correctedIntensity();
+        nsx::Intensity inten = peak->correctedIntensity();
 
         if (inten.value() <= minISigma->value() * inten.sigma())
             continue;
         fit_peaks.push_back(peak);
     }
 
-    auto nxval = nx->value();
-    auto nyval = ny->value();
-    auto nzval = nz->value();
+    int nxval = nx->value();
+    int nyval = ny->value();
+    int nzval = nz->value();
 
     // update the frame slider if necessary
     if (drawFrame->maximum() != nzval)
@@ -225,11 +225,11 @@ void ShapeLibraryDialog::build()
 
     bool kabsch_coords = kabsch->isChecked();
 
-    auto peakScale = peakscale->value();
+    double peakScale = peakscale->value();
 
     if (kabsch_coords) {
-        auto sigmaDval = sigmaD->value();
-        auto sigmaMval = sigmaM->value();
+        double sigmaDval = sigmaD->value();
+        double sigmaMval = sigmaM->value();
         Eigen::Vector3d sigma(sigmaDval, sigmaDval, sigmaMval);
         aabb.setLower(-peakScale * sigma);
         aabb.setUpper(peakScale * sigma);
@@ -244,15 +244,15 @@ void ShapeLibraryDialog::build()
     ProgressView view(this);
     view.watch(handler);
 
-    auto bkgBegin = backgroundbegin->value();
-    auto bkgEnd = backgroundend->value();
+    double bkgBegin = backgroundbegin->value();
+    double bkgEnd = backgroundend->value();
     _library =
         nsx::sptrShapeLibrary(new nsx::ShapeLibrary(!kabsch_coords, peakScale, bkgBegin, bkgEnd));
 
     nsx::ShapeIntegrator integrator(_library, aabb, nxval, nyval, nzval);
     integrator.setHandler(handler);
 
-    for (auto data : _data) {
+    for (nsx::sptrDataSet data : _data) {
         gLogger->log(
             "[INFO]Fitting profiles in dataset " + QString::fromStdString(data->filename()));
         integrator.integrate(
@@ -274,8 +274,8 @@ void ShapeLibraryDialog::drawframe(int value)
     if (value < 0 || value >= _profile.shape()[2])
         throw std::runtime_error("DialogShapeLibrary::drawFrame(): invalid frame value");
 
-    auto shape = _profile.shape();
-    auto scene = graphics->scene();
+    const Eigen::Vector3i shape = _profile.shape();
+    QGraphicsScene* scene = graphics->scene();
 
     if (!scene) {
         scene = new QGraphicsScene();
@@ -284,10 +284,10 @@ void ShapeLibraryDialog::drawframe(int value)
 
     QImage img(shape[0], shape[1], QImage::Format_ARGB32);
 
-    for (auto i = 0; i < shape[0]; ++i) {
-        for (auto j = 0; j < shape[1]; ++j) {
+    for (int i = 0; i < shape[0]; ++i) {
+        for (int j = 0; j < shape[1]; ++j) {
             const double value = _profile.at(i, j, drawFrame->value());
-            auto color = _cmap.color(value, _maximum);
+            QRgb color = _cmap.color(value, _maximum);
             img.setPixel(i, j, color);
         }
     }
@@ -299,13 +299,13 @@ void ShapeLibraryDialog::drawframe(int value)
 
 void ShapeLibraryDialog::selectTargetPeak(int row)
 {
-    auto model = dynamic_cast<PeaksTableModel*>(table->model());
+    PeaksTableModel* model = dynamic_cast<PeaksTableModel*>(table->model());
 
-    auto& peaks = model->peaks();
+    const nsx::PeakList& peaks = model->peaks();
 
-    auto selected_peak = peaks[row];
+    nsx::sptrPeak3D selected_peak = peaks[row];
 
-    auto&& center = selected_peak->shape().center();
+    const Eigen::Vector3d& center = selected_peak->shape().center();
 
     x->setCellValue(center[0]);
     y->setCellValue(center[1]);

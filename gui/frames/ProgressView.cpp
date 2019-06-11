@@ -78,9 +78,9 @@ void ProgressView::updateProgress()
     if (progress < 0)
         nsx::info() << "Status:" << _handler->getStatus().c_str() << " " << _handler->getProgress();
 
-    auto log = _handler->getLog();
+    std::vector<std::string> log = _handler->getLog();
 
-    for (auto& msg : log)
+    for (std::string msg : log)
         nsx::info() << msg.c_str();
 }
 

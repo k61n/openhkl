@@ -18,7 +18,7 @@
 UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& name)
     : QcrWidget {name}, unitCell_ {cell}
 {
-    auto character = unitCell_->character();
+    nsx::UnitCellCharacter character = unitCell_->character();
     // layout...
     QVBoxLayout* whole = new QVBoxLayout(this);
     QGroupBox* unitcellparams = new QGroupBox("Unit cell parameters", this);

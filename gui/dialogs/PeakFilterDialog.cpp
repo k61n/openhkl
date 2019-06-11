@@ -189,7 +189,8 @@ void PeakFilter::filterPeaks()
 
     if (byUnitCell->isChecked()) {
         if (unitCell->count() > 0) {
-            auto unit_cell = unitCell->itemData(unitCell->currentIndex(), Qt::UserRole)
+            nsx::sptrUnitCell unit_cell =
+                    unitCell->itemData(unitCell->currentIndex(), Qt::UserRole)
                                  .value<nsx::sptrUnitCell>();
             filtered_peaks = peak_filter.indexed(filtered_peaks, *unit_cell, tolerance->value());
         }
@@ -235,7 +236,7 @@ void PeakFilter::filterPeaks()
 
 void PeakFilter::accept()
 {
-    auto& filtered_peaks = model_->peaks();
+    const nsx::PeakList& filtered_peaks = model_->peaks();
 
     if (!filtered_peaks.empty()) {
         std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(filtered_peaks));

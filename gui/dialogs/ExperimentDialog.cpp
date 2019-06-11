@@ -25,14 +25,14 @@ namespace {
 
 QStringList allInstrumentNames()
 {
-    auto resources_name = nsx::getResourcesName("instruments");
+    std::set<std::string> resources_name = nsx::getResourcesName("instruments");
 
     QDir diffractometersDirectory(QString::fromStdString(nsx::applicationDataPath()));
     diffractometersDirectory.cd("instruments");
 
     QStringList user_diffractometer_files =
         diffractometersDirectory.entryList({"*.yml"}, QDir::Files, QDir::Name);
-    for (auto&& diffractometer : user_diffractometer_files)
+    for (QString& diffractometer : user_diffractometer_files)
         resources_name.insert(QFileInfo(diffractometer).baseName().toStdString());
 
     QStringList list;
@@ -42,7 +42,7 @@ QStringList allInstrumentNames()
     return list;
 }
 
-}
+} // namespace
 
 ExperimentDialog::ExperimentDialog() : QcrModalDialog {"experimentDialog", gGui, "new Experiment"}
 {

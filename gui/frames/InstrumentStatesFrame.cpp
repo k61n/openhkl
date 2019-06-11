@@ -258,8 +258,8 @@ InstrumentStates::InstrumentStates() : QcrFrame {"instrumentStates"}
 void InstrumentStates::selectedDataChanged(int selectedData)
 {
     Q_UNUSED(selectedData)
-    auto currentItem = data->currentItem();
-    auto currentData = currentItem->data(Qt::UserRole).value<nsx::sptrDataSet>();
+    QListWidgetItem* currentItem = data->currentItem();
+    nsx::sptrDataSet currentData = currentItem->data(Qt::UserRole).value<nsx::sptrDataSet>();
     frameIndex->setMinimum(0);
     frameIndex->setMaximum(currentData->nFrames() - 1);
     frameIndex->setCellValue(0);
@@ -268,9 +268,9 @@ void InstrumentStates::selectedDataChanged(int selectedData)
 
 void InstrumentStates::selectedFrameChanged(int selectedFrame)
 {
-    auto currentData = data->currentItem()->data(Qt::UserRole).value<nsx::sptrDataSet>();
-    auto&& instrumentStates = currentData->instrumentStates();
-    auto selectedState = instrumentStates[selectedFrame];
+    nsx::sptrDataSet currentData = data->currentItem()->data(Qt::UserRole).value<nsx::sptrDataSet>();
+    const nsx::InstrumentStateList& instrumentStates = currentData->instrumentStates();
+    nsx::InstrumentState selectedState = instrumentStates[selectedFrame];
 
     QFont font;
     font.setBold(true);
@@ -279,12 +279,12 @@ void InstrumentStates::selectedFrameChanged(int selectedFrame)
     refinedLabel->setFont(font);
     refinedLabel->setText(selectedState.refined ? "Refined" : "Not refined");
 
-    auto&& samplePosition = selectedState.samplePosition;
+    const auto& samplePosition = selectedState.samplePosition;
     samplePosX->setCellValue(samplePosition[0]);
     samplePosY->setCellValue(samplePosition[1]);
     samplePosZ->setCellValue(samplePosition[2]);
 
-    auto&& sampleOri = selectedState.sampleOrientation.normalized().toRotationMatrix();
+    const auto& sampleOri = selectedState.sampleOrientation.normalized().toRotationMatrix();
     sampleOri_00->setCellValue(sampleOri(0,0));
     sampleOri_01->setCellValue(sampleOri(0,1));
     sampleOri_02->setCellValue(sampleOri(0,2));
@@ -295,7 +295,7 @@ void InstrumentStates::selectedFrameChanged(int selectedFrame)
     sampleOri_21->setCellValue(sampleOri(2,1));
     sampleOri_22->setCellValue(sampleOri(2,2));
 
-    auto&& sampleOffset = selectedState.sampleOrientationOffset.normalized().toRotationMatrix();
+    const auto& sampleOffset = selectedState.sampleOrientationOffset.normalized().toRotationMatrix();
     sampleOff_00->setCellValue(sampleOffset(0,0));
     sampleOff_01->setCellValue(sampleOffset(0,1));
     sampleOff_02->setCellValue(sampleOffset(0,2));
