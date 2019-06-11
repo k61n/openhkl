@@ -107,13 +107,13 @@ public:
     //! Returns the q vector of the peak, transformed into sample coordinates.
     ReciprocalVector q() const;
     //! Returns the predicted q vector of the peak, based on Miller index.
-    ReciprocalVector qPredicted() const;
+    // unused --- ReciprocalVector qPredicted() const;
     //! Returns the data set to which this peak belongs
     sptrDataSet data() const { return _data; }
     //! Sets raw intensity count (from image), with no corrections
     void setRawIntensity(const Intensity& i);
     //! Returns peak center at the given frame
-    //DetectorEvent predictCenter(double frame) const;
+    // unused --- DetectorEvent predictCenter(double frame) const;
 
 #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW

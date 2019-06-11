@@ -55,14 +55,15 @@ Peak3D::Peak3D(sptrDataSet data, const Ellipsoid& shape) : Peak3D(data)
 
 void Peak3D::setShape(const Ellipsoid& shape)
 {
-    // shape should be consistent with data
-    if (_data) {
-        Eigen::Vector3d c = shape.center();
-        if (c[2] < 0.0 || c[2] > _data->nFrames() - 1 || c[0] < 0.0 || c[0] > _data->nCols() - 1
-            || c[1] < 0.0 || c[1] > _data->nRows() - 1) {
-            throw std::runtime_error("Peak3D::setShape(): peak center out of bounds");
-        }
-    }
+// TODO: restore this assertion elsewhere
+//    // shape should be consistent with data
+//    if (_data) {
+//        Eigen::Vector3d c = shape.center();
+//        if (c[2] < 0.0 || c[2] > _data->nFrames() - 1 || c[0] < 0.0 || c[0] > _data->nCols() - 1
+//            || c[1] < 0.0 || c[1] > _data->nRows() - 1) {
+//            throw std::runtime_error("Peak3D::setShape(): peak center out of bounds");
+//        }
+//    }
     _shape = shape;
 }
 
@@ -170,9 +171,8 @@ void Peak3D::updateIntegration(
 
 void Peak3D::setRawIntensity(const Intensity& i)
 {
-    // note: the scaling factor is taken to be consistent with
-    // Peak3D::getRawIntensity()
-    _rawIntensity = i; // / data()->getSampleStepSize();
+    // note: the scaling factor is taken to be consistent with Peak3D::getRawIntensity()
+    _rawIntensity = i; // TODO: restore normalization ??: / data()->getSampleStepSize();
 }
 
 ReciprocalVector Peak3D::q() const
@@ -195,6 +195,9 @@ ReciprocalVector Peak3D::q() const
 //!
 //! This method can throw if there is no valid q-shape corresponding to the
 //! detector space shape.
+
+// found unused except in TestQShape (JWu 11jun19)
+
 Ellipsoid Peak3D::qShape() const
 {
     if (!_data)
@@ -213,13 +216,14 @@ Ellipsoid Peak3D::qShape() const
     return Ellipsoid(q0, q_inv_cov);
 }
 
-ReciprocalVector Peak3D::qPredicted() const
-{
-    if (!_unitCell)
-        return {};
-    auto index = MillerIndex(q(), *_unitCell);
-    return ReciprocalVector(_unitCell->fromIndex(index.rowVector().cast<double>()));
-}
+// found unused (JWu 11jun19)
+//ReciprocalVector Peak3D::qPredicted() const
+//{
+//    if (!_unitCell)
+//        return {};
+//    auto index = MillerIndex(q(), *_unitCell);
+//    return ReciprocalVector(_unitCell->fromIndex(index.rowVector().cast<double>()));
+//}
 
 // found unused (JWu 11jun19)
 //DetectorEvent Peak3D::predictCenter(double frame) const
