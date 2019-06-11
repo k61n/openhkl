@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/integration/Profile1D.cpp
+//! @file      core/shape/Profile1D.cpp
 //! @brief     Implements class Profile1D
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/integration/Profile1D.h"
+#include "core/shape/Profile1D.h"
 
 #include <cmath>
 

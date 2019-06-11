@@ -4,7 +4,7 @@
 #include <Eigen/Dense>
 
 #include "base/geometry/AABB.h"
-#include "core/integration/Profile3D.h"
+#include "core/shape/Profile3D.h"
 
 TEST_CASE("test/geometry/TestProfile3D.cpp", "")
 {

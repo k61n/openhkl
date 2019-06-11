@@ -114,7 +114,7 @@ using Eigen::Quaterniond;
 #include "core/peak/Peak3D.h"
 using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
-#include "core/indexing/FFTIndexing.h"
+#include "core/algo/FFTIndexing.h"
 
 #include "core/merge_and_filter/MergedPeak.h"
 #include "core/crystal/DoubleToFraction.h"
@@ -142,7 +142,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/detector/DetectorEvent.h"
 
 #include "core/experiment/DataSet.h"
-#include "core/integration/Profile3D.h"
+#include "core/shape/Profile3D.h"
 #include "core/loader/MetaData.h"
 #include "core/loader/ILLDataReader.h"
 #include "core/loader/IDataReader.h"
@@ -234,8 +234,8 @@ using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 #include "core/merge_and_filter/PeakFilter.h"
 
 #include "core/crystal/MillerIndex.h"
-#include "core/integration/Profile1D.h"
-#include "core/integration/ShapeLibrary.h"
+#include "core/shape/Profile1D.h"
+#include "core/shape/ShapeLibrary.h"
 using sptrShapeLibrary = std::shared_ptr<nsx::ShapeLibrary>;
 
 #include "core/statistics/CC.h"
@@ -352,15 +352,15 @@ namespace nsx {
    struct tVector;
 }
 
-%include "core/indexing/FFTIndexing.h"
+%include "core/algo/FFTIndexing.h"
 
 
 %include "core/quantify/PeakData.h"
 %include "core/quantify/IntegrationRegion.h"
 %include "core/quantify/Intensity.h"
 %template(IntensityList) std::vector<nsx::Intensity>;
-%include "core/integration/Profile3D.h"
-%include "core/integration/Profile1D.h"
+%include "core/shape/Profile3D.h"
+%include "core/shape/Profile1D.h"
 %include "core/quantify/IPeakIntegrator.h"
 %include "core/integration/MeanBackgroundIntegrator.h"
 %include "core/integration/Profile3DIntegrator.h"
@@ -368,8 +368,8 @@ namespace nsx {
 %include "core/integration/ISigmaIntegrator.h"
 %include "core/integration/PixelSumIntegrator.h"
 %include "core/peak/Peak3D.h"
-%include "core/integration/Profile1D.h"
-%include "core/integration/ShapeLibrary.h"
+%include "core/shape/Profile1D.h"
+%include "core/shape/ShapeLibrary.h"
 %include "core/integration/ShapeIntegrator.h"
 %include "core/quantify/IntegrationRegion.h"
 %include "core/quantify/PeakData.h"
@@ -397,7 +397,7 @@ namespace nsx {
 %include "core/loader/ILLDataReader.h"
 %include "core/loader/HDF5MetaDataReader.h"
 %include "core/loader/HDF5DataReader.h"
-%include "core/integration/Profile3D.h"
+%include "core/shape/Profile3D.h"
 %include "core/experiment/DataSet.h"
 
 %include "core/merge_and_filter/MergedData.h"
@@ -444,8 +444,8 @@ namespace nsx {
 %include "core/crystal/MillerIndex.h"
 %template(MillerIndexList) std::vector<nsx::MillerIndex>;
 
-%include "core/integration/Profile1D.h"
-%include "core/integration/ShapeLibrary.h"
+%include "core/shape/Profile1D.h"
+%include "core/shape/ShapeLibrary.h"
 
 %include "core/merge_and_filter/MergedPeak.h"
 %include "core/crystal/DoubleToFraction.h"
@@ -467,7 +467,7 @@ namespace nsx {
 
 %include "core/crystal/BrillouinZone.h"
 
-%include "core/integration/Profile3D.h"
+%include "core/shape/Profile3D.h"
 %include "core/experiment/DataSet.h"
 %include "core/loader/MetaData.h"
 %include "core/loader/ILLDataReader.h"

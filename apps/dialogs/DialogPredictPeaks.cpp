@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/crystal/UnitCell.h"
-#include "core/integration/ShapeLibrary.h"
+#include "core/shape/ShapeLibrary.h"
 #include "base/logger/Logger.h"
 #include "base/utils/ProgressHandler.h"
 

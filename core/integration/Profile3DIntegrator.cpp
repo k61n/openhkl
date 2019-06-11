@@ -16,7 +16,7 @@
 #include "core/quantify/Intensity.h"
 #include "core/experiment/DataSet.h"
 #include "base/geometry/Ellipsoid.h"
-#include "core/integration/ShapeLibrary.h"
+#include "core/shape/ShapeLibrary.h"
 #include "core/peak/Peak3D.h"
 #include "core/quantify/PeakCoordinateSystem.h"
 

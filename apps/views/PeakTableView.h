@@ -22,7 +22,7 @@
 #include <QTableView>
 
 #include "core/peak/Peak3D.h"
-#include "core/integration/ShapeLibrary.h"
+#include "core/shape/ShapeLibrary.h"
 
 #include "apps/MainWindow.h"
 

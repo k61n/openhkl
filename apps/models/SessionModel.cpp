@@ -41,7 +41,7 @@
 #include "core/detector/Detector.h"
 #include "core/peak/Peak3D.h"
 #include "base/geometry/Ellipsoid.h"
-#include "core/integration/ShapeLibrary.h"
+#include "core/shape/ShapeLibrary.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"

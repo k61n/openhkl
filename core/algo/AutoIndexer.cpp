@@ -14,7 +14,7 @@
 
 #include "core/algo/AutoIndexer.h"
 
-#include "core/indexing/FFTIndexing.h"
+#include "core/algo/FFTIndexing.h"
 #include "core/crystal/GruberReduction.h"
 #include "core/crystal/MillerIndex.h"
 #include "core/crystal/NiggliReduction.h"

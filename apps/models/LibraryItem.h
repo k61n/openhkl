@@ -18,8 +18,8 @@
 
 #include <QJsonObject>
 
-#include "core/integration/ShapeLibrary.h"
-#include "core/integration/ShapeLibrary.h"
+#include "core/shape/ShapeLibrary.h"
+#include "core/shape/ShapeLibrary.h"
 
 #include "apps/models/TreeItem.h"
 

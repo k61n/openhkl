@@ -18,9 +18,9 @@
 
 #include "core/peak/Peak3D.h"
 #include "core/experiment/DataTypes.h"
-#include "core/integration/ShapeLibrary.h"
+#include "core/shape/ShapeLibrary.h"
 #include "core/instrument/InstrumentTypes.h"
-#include "core/integration/Profile3D.h"
+#include "core/shape/Profile3D.h"
 
 #include "apps/ColorMap.h"
 #include "apps/models/ExperimentItem.h"

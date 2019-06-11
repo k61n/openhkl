@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/integration/ShapeLibrary.h
+//! @file      core/shape/ShapeLibrary.h
 //! @brief     Defines classes PeakInterpolation, ShapeLibrary
 //!
 //! @homepage  ###HOMEPAGE###
@@ -18,8 +18,8 @@
 #include "core/crystal/UnitCell.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/DataTypes.h"
-#include "core/integration/Profile1D.h"
-#include "core/integration/Profile3D.h"
+#include "core/shape/Profile1D.h"
+#include "core/shape/Profile3D.h"
 #include "core/peak/Peak3D.h"
 
 #include <memory>

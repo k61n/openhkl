@@ -15,7 +15,7 @@
 #ifndef CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
 #define CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
 
-#include "core/integration/ShapeLibrary.h"
+#include "core/shape/ShapeLibrary.h"
 #include "core/quantify/IPeakIntegrator.h"
 
 namespace nsx {

@@ -18,7 +18,7 @@
 #include <QTableView>
 
 #include "core/peak/Peak3D.h"
-#include "core/integration/ShapeLibrary.h"
+#include "core/shape/ShapeLibrary.h"
 #include "core/instrument/InstrumentTypes.h"
 
 #include <QCR/widgets/tables.h>
