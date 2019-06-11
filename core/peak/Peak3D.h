@@ -15,11 +15,12 @@
 #ifndef CORE_PEAK_PEAK3D_H
 #define CORE_PEAK_PEAK3D_H
 
+#include "base/geometry/Ellipsoid.h"
 #include "core/quantify/Intensity.h"
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/UnitCell.h"
 #include "core/detector/DetectorEvent.h"
-#include "base/geometry/Ellipsoid.h"
+#include "core/experiment/DataTypes.h"
 
 #include <memory>
 #include <vector>

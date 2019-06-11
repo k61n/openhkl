@@ -21,83 +21,12 @@
 #include "core/crystal/MillerIndex.h"
 #include "core/crystal/NiggliReduction.h"
 #include "core/crystal/UnitCell.h"
-#include "core/experiment/DataSet.h"
 #include "base/fit/Minimizer.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "base/logger/Logger.h"
 #include "base/utils/Units.h"
 
 namespace nsx {
-
-UnitCell UnitCell::interpolate(const UnitCell& uc1, const UnitCell& uc2, double t)
-{
-    if (uc1._niggli != uc2._niggli)
-        throw std::runtime_error("Inconsistent Niggli type");
-
-    if (uc1._bravaisType != uc2._bravaisType)
-        throw std::runtime_error("Inconsistent Bravais type");
-
-    if (uc1._centring != uc2._centring)
-        throw std::runtime_error("Inconsistent centring type");
-
-    const double s = 1.0 - t;
-
-    const Eigen::Quaterniond uc1_u_quat(uc1.orientation());
-    const Eigen::Quaterniond uc2_u_quat(uc2.orientation());
-
-    Eigen::Quaterniond u_quat = uc1_u_quat.slerp(t, uc2_u_quat);
-    u_quat.normalize();
-    const Eigen::Matrix3d u_matrix = u_quat.toRotationMatrix();
-
-    auto&& uc1_params = uc1.character();
-    auto&& uc2_params = uc2.character();
-
-    const double g00 = s * uc1_params.g00 + t * uc2_params.g00;
-    const double g01 = s * uc1_params.g01 + t * uc2_params.g01;
-    const double g02 = s * uc1_params.g02 + t * uc2_params.g02;
-    const double g11 = s * uc1_params.g11 + t * uc2_params.g11;
-    const double g12 = s * uc1_params.g12 + t * uc2_params.g12;
-    const double g22 = s * uc1_params.g22 + t * uc2_params.g22;
-
-    // create new unit cell
-    UnitCell uc(uc1);
-    uc.setMetric(g00, g01, g02, g11, g12, g22);
-
-    Eigen::MatrixXd kernel;
-
-    // no constraints
-    if (uc1._niggli.number == 31 || uc1._niggli.number == 44)
-        kernel.setIdentity(6, 6);
-    else {
-        // matrix of Niggli character constraints, taken from the table 9.2.5.1
-        Eigen::MatrixXd C = uc._niggli.C;
-        // compute kernel of Niggli constraints
-        Eigen::FullPivLU<Eigen::MatrixXd> lu(C);
-        kernel = lu.kernel();
-    }
-
-    auto&& uc_params = uc.character();
-    Eigen::VectorXd parameters(6);
-    parameters(0) = uc_params.g00;
-    parameters(5) = uc_params.g01;
-    parameters(4) = uc_params.g02;
-    parameters(1) = uc_params.g11;
-    parameters(3) = uc_params.g12;
-    parameters(2) = uc_params.g22;
-
-    const int nparams = kernel.cols();
-
-    // lattice character
-    Eigen::VectorXd ch(6);
-    ch.setZero();
-    // parameters defining lattice chatacer
-    for (auto i = 0; i < nparams; ++i)
-        ch += parameters(i) * kernel.col(i);
-
-    uc.setBasis(u_matrix * uc._a * uc._NP);
-
-    return uc;
-}
 
 UnitCellCharacter::UnitCellCharacter()
     : g00(0.0)
@@ -174,7 +103,6 @@ UnitCell::UnitCell(const UnitCell& other)
     , _indexingTolerance(other._indexingTolerance)
     , _niggli(other._niggli)
     , _characterSigmas(other._characterSigmas)
-    , _states(other._states)
 {
     _material.reset(other._material ? other._material->clone() : nullptr);
 }
@@ -200,141 +128,8 @@ UnitCell& UnitCell::operator=(const UnitCell& other)
         _indexingTolerance = other._indexingTolerance;
         _niggli = other._niggli;
         _characterSigmas = other._characterSigmas;
-        _states = other._states;
     }
     return *this;
-}
-
-void UnitCell::initState(sptrDataSet data)
-{
-
-    auto it = _states.find(data);
-    if (it != _states.end())
-        return;
-
-    std::vector<UnitCellState> states;
-    auto n_frames = data->nFrames();
-    states.reserve(n_frames);
-
-    auto u_matrix = orientation();
-    auto ch = character();
-
-    for (size_t i = 0; i < n_frames; ++i)
-        states.push_back({u_matrix, ch});
-}
-
-UnitCellState& UnitCell::state(sptrDataSet data, size_t frame)
-{
-
-    auto it = _states.find(data);
-    if (it == _states.end())
-        initState(data);
-
-    auto&& states = _states[data];
-
-    if (frame > (states.size() - 1) || frame < 0)
-        throw std::runtime_error("UnitCell::setState: Invalid frame number");
-
-    return states[frame];
-}
-
-void UnitCell::setState(sptrDataSet data, size_t frame, const UnitCellState& state)
-{
-    auto it = _states.find(data);
-    if (it == _states.end())
-        initState(data);
-
-    auto&& states = _states[data];
-
-    if (frame > (states.size() - 1) || frame < 0)
-        throw std::runtime_error("UnitCell::setState: Invalid frame number");
-
-    states[frame] = state;
-}
-
-UnitCell UnitCell::interpolate(sptrDataSet data, double frame)
-{
-    auto it = _states.find(data);
-    if (it == _states.end())
-        throw std::runtime_error("No unit cells states stored for this dataset.");
-
-    auto&& states = it->second;
-
-    auto n_frames = data->nFrames();
-
-    if (n_frames != states.size())
-        throw std::runtime_error("Inconsistent state");
-
-    if (frame > (n_frames - 1) || frame < 0) {
-        throw std::runtime_error(
-            "Error when interpolating state: invalid frame value: " + std::to_string(frame));
-    }
-
-    const std::size_t idx = std::size_t(std::lround(std::floor(frame)));
-    const std::size_t next = std::min(idx + 1, n_frames - 1);
-
-    auto&& state1 = states[idx];
-    auto&& state2 = states[next];
-
-    const double t = frame - idx;
-
-    const Eigen::Quaterniond uc1_u_quat(state1.orientation);
-    const Eigen::Quaterniond uc2_u_quat(state2.orientation);
-
-    Eigen::Quaterniond u_quat = uc1_u_quat.slerp(t, uc2_u_quat);
-    u_quat.normalize();
-    const Eigen::Matrix3d u_matrix = u_quat.toRotationMatrix();
-
-    auto&& character1 = state1.character;
-    auto&& character2 = state2.character;
-
-    const double s = 1.0 - t;
-
-    const double g00 = s * character1.g00 + t * character2.g00;
-    const double g01 = s * character1.g01 + t * character2.g01;
-    const double g02 = s * character1.g02 + t * character2.g02;
-    const double g11 = s * character1.g11 + t * character2.g11;
-    const double g12 = s * character1.g12 + t * character2.g12;
-    const double g22 = s * character1.g22 + t * character2.g22;
-
-    // create new unit cell
-    UnitCell uc(*this);
-    uc.setMetric(g00, g01, g02, g11, g12, g22);
-
-    Eigen::MatrixXd kernel;
-
-    // no constraints
-    if (_niggli.number == 31 || _niggli.number == 44)
-        kernel.setIdentity(6, 6);
-    else {
-        // matrix of Niggli character constraints, taken from the table 9.2.5.1
-        Eigen::MatrixXd C = uc._niggli.C;
-        // compute kernel of Niggli constraints
-        Eigen::FullPivLU<Eigen::MatrixXd> lu(C);
-        kernel = lu.kernel();
-    }
-
-    auto&& uc_params = uc.character();
-    Eigen::VectorXd parameters(6);
-    parameters(0) = uc_params.g00;
-    parameters(5) = uc_params.g01;
-    parameters(4) = uc_params.g02;
-    parameters(1) = uc_params.g11;
-    parameters(3) = uc_params.g12;
-    parameters(2) = uc_params.g22;
-
-    const int nparams = kernel.cols();
-
-    // lattice character
-    Eigen::VectorXd ch(6);
-    ch.setZero();
-    // parameters defining lattice character
-    for (auto i = 0; i < nparams; ++i)
-        ch += parameters(i) * kernel.col(i);
-
-    uc.setBasis(u_matrix * uc._a * uc._NP);
-
-    return uc;
 }
 
 void UnitCell::setParameters(double a, double b, double c, double alpha, double beta, double gamma)

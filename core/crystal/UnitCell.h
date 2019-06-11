@@ -18,7 +18,6 @@
 #include "core/chemistry/Material.h"
 #include "core/crystal/NiggliCharacter.h"
 #include "core/crystal/SpaceGroup.h"
-#include "core/experiment/DataTypes.h"
 
 #include <Eigen/Dense>
 
@@ -27,6 +26,7 @@ namespace nsx {
 class MillerIndex;
 
 //! Structure to encapsulate lattice cell character.
+
 struct UnitCellCharacter {
     //! Component (0,0) of the metric tensor
     double g00;
@@ -61,14 +61,6 @@ struct UnitCellCharacter {
     UnitCellCharacter(double g00_, double g01_, double g02_, double g11_, double g12_, double g22_);
 };
 
-//! Structure to encapsulate the state of the unit cell for a given
-//! dataset at a given frame.
-struct UnitCellState {
-
-    Eigen::Matrix3d orientation;
-    UnitCellCharacter character;
-};
-
 //! Class to define a crystallographic unit-cell.
 //!
 //! Provide functionalities to transform vectors of the direct lattice or
@@ -77,10 +69,9 @@ struct UnitCellState {
 //! beta, gamma. The UnitCell parameters a,b,c are given in \f$ \AA \f$  and
 //! angle alpha, beta, gamma are given in degrees. The a axis is chosen as
 //! pointing along the x-direction, and the b-axis is in the xy-plane.
+
 class UnitCell {
 public:
-    static UnitCell interpolate(const UnitCell& uc1, const UnitCell& uc2, double t);
-
     //! Empty UnitCell, initialiazed to right-handed orthonormal system
     UnitCell();
 
@@ -268,19 +259,6 @@ public:
     //! the cell
     std::vector<std::string> compatibleSpaceGroups() const;
 
-    //! Initialize this unit cell state for a given data
-    void initState(sptrDataSet data);
-
-    //! Sets the state of this unit cell for a given data and unit cell
-    void setState(sptrDataSet data, size_t frame, const UnitCellState& state);
-
-    //! Returns a non-const reference to the state of this unit cell for a given
-    //! data at a given frame
-    UnitCellState& state(sptrDataSet data, size_t frame);
-
-    //! Returns the interpolated unit cell between two states
-    UnitCell interpolate(sptrDataSet data, double frame);
-
 #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 #endif
@@ -310,8 +288,6 @@ private:
     NiggliCharacter _niggli;
 
     UnitCellCharacter _characterSigmas;
-
-    std::map<sptrDataSet, std::vector<UnitCellState>> _states;
 };
 
 //! Print to a stream

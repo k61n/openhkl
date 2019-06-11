@@ -19,7 +19,6 @@
 
 #include "core/crystal/BrillouinZone.h"
 #include "core/crystal/NiggliReduction.h"
-#include "core/experiment/DataSet.h"
 #include "base/geometry/ReciprocalVector.h"
 
 //! Update a list of Q-vectors by removing the duplicates.
