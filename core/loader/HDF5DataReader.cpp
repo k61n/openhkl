@@ -15,7 +15,7 @@
 #include "core/loader/HDF5DataReader.h"
 
 #include "core/instrument/Diffractometer.h"
-#include "core/parser/BloscFilter.h"
+#include "base/parser/BloscFilter.h"
 
 #include <memory>
 

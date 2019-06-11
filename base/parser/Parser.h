@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/parser/Parser.h
+//! @file      base/parser/Parser.h
 //! @brief     Declares functions that read vectors of numbers
 //!
 //! @homepage  ###HOMEPAGE###

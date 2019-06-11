@@ -17,7 +17,7 @@
 
 #include <hdf5.h>
 
-#include "core/parser/BloscFilter.h"
+#include "base/parser/BloscFilter.h"
 
 #if H5Epush_vers == 2
 /* 1.8.x */

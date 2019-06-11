@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/parser/Parser.cpp
+//! @file      base/parser/Parser.cpp
 //! @brief     Defines functions that read vectors of numbers
 //!
 //! @homepage  ###HOMEPAGE###
@@ -14,7 +14,7 @@
 
 #include <boost/spirit/include/qi.hpp>
 
-#include "core/parser/Parser.h"
+#include "base/parser/Parser.h"
 
 namespace nsx {
 

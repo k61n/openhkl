@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/parser/BloscFilter.h
+//! @file      base/parser/BloscFilter.h
 //! @brief     Defines blosc related things
 //!
 //! @homepage  ###HOMEPAGE###

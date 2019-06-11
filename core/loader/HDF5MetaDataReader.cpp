@@ -18,8 +18,8 @@
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
-#include "core/parser/BloscFilter.h"
-#include "core/parser/EigenToVector.h"
+#include "base/parser/BloscFilter.h"
+#include "base/parser/EigenToVector.h"
 #include "base/utils/Units.h"
 
 #include <memory>

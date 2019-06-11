@@ -1,4 +1,5 @@
-file(GLOB_RECURSE sources *.cpp)
+file(GLOB_RECURSE sources *.cpp *.c) # note: *.c needed for blosc
+
 add_library(nsxbase ${sources})
 
 target_include_directories(nsxbase PRIVATE ${CMAKE_SOURCE_DIR})

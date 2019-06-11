@@ -1,5 +1,4 @@
-# note: *.c needed for blosc files in data directory
-file(GLOB_RECURSE sources *.cpp *.c)
+file(GLOB_RECURSE sources *.cpp)
 
 add_library(${NSX_LIBRARY} ${sources})
 

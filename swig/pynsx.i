@@ -81,14 +81,14 @@ using Eigen::Quaterniond;
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
 
-#include "core/parser/EigenToVector.h"
+#include "base/parser/EigenToVector.h"
 #include "base/utils/CSV.h"
 #include "core/detector/DataOrder.h"
 #include "base/utils/Units.h"
 
 #include "base/utils/Path.h"
 
-#include "core/parser/Parser.h"
+#include "base/parser/Parser.h"
 //#include "base/utils/YAMLType.h"
 #include "core/detector/MatrixParser.h"
 #include "base/utils/ProgressHandler.h"
@@ -151,7 +151,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
 #include "core/loader/RawDataReader.h"
 #include "core/loader/TiffDataReader.h"
-#include "core/parser/BloscFilter.h"
+#include "base/parser/BloscFilter.h"
 #include "core/analyse/PeakFinder.h"
 #include "core/algo/DataReaderFactory.h"
 #include "core/detector/Detector.h"
@@ -411,12 +411,12 @@ namespace nsx {
 %include "base/fit/FitParameters.h"
 %include "base/fit/Minimizer.h"
 
-%include "core/parser/EigenToVector.h"
+%include "base/parser/EigenToVector.h"
 %include "base/utils/CSV.h"
 %include "core/detector/DataOrder.h"
 %include "base/utils/Path.h"
 
-%include "core/parser/Parser.h"
+%include "base/parser/Parser.h"
 %include "core/detector/MatrixParser.h"
 %include "base/utils/ProgressHandler.h"
 
@@ -477,7 +477,7 @@ namespace nsx {
 
 %include "core/loader/RawDataReader.h"
 %include "core/loader/TiffDataReader.h"
-%include "core/parser/BloscFilter.h"
+%include "base/parser/BloscFilter.h"
 %include "core/algo/DataReaderFactory.h"
 
 %include "core/detector/Detector.h"
