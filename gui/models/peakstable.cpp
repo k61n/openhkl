@@ -39,15 +39,17 @@
 //!@class PeaksTableModel
 
 PeaksTableModel::PeaksTableModel(
-    const QString& name, nsx::sptrExperiment experiment, const nsx::PeakList& peaks,
-    QObject* parent)
-    : TableModel {name}, _experiment {experiment}, _peaks {peaks}
+    const QString& name, nsx::sptrExperiment experiment, const nsx::PeakList& peaks)
+    : TableModel {name}
+    , _experiment {experiment}
+    , _peaks {peaks}
 {
 }
 
 PeaksTableModel::PeaksTableModel(
-    const QString& name, nsx::sptrExperiment experiment, QObject* parent)
-    : TableModel {name}, _experiment {experiment}
+    const QString& name, nsx::sptrExperiment experiment)
+    : TableModel {name}
+    , _experiment {experiment}
 {
 }
 

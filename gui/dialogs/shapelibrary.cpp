@@ -145,7 +145,7 @@ void ShapeLibraryDialog::layout()
     sigmaM->setCellValue(std::sqrt(cov(2, 2)));
 
     auto peaks_model = new PeaksTableModel(
-        "adhoc_shapeTable", gSession->selectedExperiment()->experiment(), _peaks, this);
+        "adhoc_shapeTable", gSession->selectedExperiment()->experiment(), _peaks);
     table->setModel(peaks_model);
     table->verticalHeader()->show();
 

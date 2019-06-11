@@ -70,6 +70,8 @@ void ExperimentData::convertToHDF5()
 //! @class InstrumentModel
 
 InstrumentModel::InstrumentModel(const QString& name, const QString& sourceName)
+    : instrumentName_{name}
+    , sourceName_{sourceName}
 {
     // TODO: implement constructor
 }

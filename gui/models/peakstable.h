@@ -29,10 +29,9 @@ public:
     enum Column { h, k, l, px, py, frame, intensity, sigmaIntensity, numor, unitCell, d, count };
 
     explicit PeaksTableModel(
-        const QString& name, nsx::sptrExperiment experiment, QObject* parent = 0);
+        const QString& name, nsx::sptrExperiment experiment);
     PeaksTableModel(
-        const QString& name, nsx::sptrExperiment experiment, const nsx::PeakList& peaks,
-        QObject* parent = 0);
+        const QString& name, nsx::sptrExperiment experiment, const nsx::PeakList& peaks);
     ~PeaksTableModel() = default;
 
     /*virtual*/ int rowCount() const override { return _peaks.size(); }
