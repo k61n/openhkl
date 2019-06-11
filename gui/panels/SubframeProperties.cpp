@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      main/main.cpp
-//! @brief     Implements ###CLASSES###
+//! @file      gui/panels/SubframeProperties.cpp
+//! @brief     Implements class SubframeProperties
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -13,27 +13,15 @@
 //  ***********************************************************************************************
 
 
+#include "gui/panels/SubframeProperties.h"
+#include "gui/actions/Triggers.h"
 #include "gui/MainWin.h"
-#include "gui/models/Session.h"
-#include <QApplication>
-#include <QCR/engine/console.h>
-#include <QCR/engine/logger.h>
+#include "gui/panels/SubframeSetup.h"
 
-
-int main(int argc, char* argv[])
+SubframeProperties::SubframeProperties() : QcrDockWidget {"Properties"}
 {
-
-    QApplication app(argc, argv);
-
-    app.setApplicationName("nsxgui");
-    app.setApplicationVersion("1.0");
-    app.setOrganizationName("nsx");
-
-    Logger logger {"nsxgui.log"};
-    Console console;
-    Session session;
-
-    new MainWin {};
-
-    return app.exec();
+    setWidget((tabsframe = new SubframeSetup));
+    connect(
+        this, SIGNAL(visibilityChanged(bool)), &gGui->triggers->viewProperties,
+        SLOT(setChecked(bool)));
 }
