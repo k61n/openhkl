@@ -21,7 +21,7 @@
 
 #include "gui/models/meta.h"
 
-#include "core/peak/PeakFilter.h"
+#include "core/merge_and_filter/PeakFilter.h"
 
 #include <QDialogButtonBox>
 #include <QHBoxLayout>

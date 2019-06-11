@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/peak/Octree.h
+//! @file      core/merge_and_filter/Octree.h
 //! @brief     Defines classes Octree, OctreeIterator
 //!
 //! @homepage  ###HOMEPAGE###

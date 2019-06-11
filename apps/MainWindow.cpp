@@ -45,7 +45,7 @@
 #include "core/logger/LogFileStreamWrapper.h"
 #include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
-#include "core/peak/PeakFilter.h"
+#include "core/merge_and_filter/PeakFilter.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "core/utils/Path.h"
 #include "core/utils/ProgressHandler.h"

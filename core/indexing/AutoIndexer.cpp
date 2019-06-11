@@ -23,7 +23,7 @@
 #include "core/fitting/Minimizer.h"
 #include "core/geometry/ReciprocalVector.h"
 #include "core/peak/Peak3D.h"
-#include "core/peak/PeakFilter.h"
+#include "core/merge_and_filter/PeakFilter.h"
 #include "core/utils/ProgressHandler.h"
 
 #include <iostream>

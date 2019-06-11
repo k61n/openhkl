@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/peak/IntegrationRegion.h
+//! @file      core/quantify/IntegrationRegion.h
 //! @brief     Defines class IntegrationRegion
 //!
 //! @homepage  ###HOMEPAGE###
@@ -16,7 +16,7 @@
 #define CORE_PEAK_INTEGRATIONREGION_H
 
 #include "core/hull/ConvexHull.h"
-#include "core/peak/PeakData.h"
+#include "core/quantify/PeakData.h"
 
 namespace nsx {
 

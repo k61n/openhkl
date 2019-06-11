@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/peak/Intensity.h
+//! @file      core/quantify/Intensity.h
 //! @brief     Defines class Intensity
 //!
 //! @homepage  ###HOMEPAGE###

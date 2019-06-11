@@ -7,7 +7,7 @@
 
 #include "core/geometry/AABB.h"
 #include "core/geometry/Ellipsoid.h"
-#include "core/peak/Octree.h"
+#include "core/merge_and_filter/Octree.h"
 
 void collision_test()
 {

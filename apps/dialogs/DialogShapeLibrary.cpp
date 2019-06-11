@@ -23,8 +23,8 @@
 #include "core/integration/ShapeLibrary.h"
 #include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
-#include "core/peak/PeakCoordinateSystem.h"
-#include "core/peak/PeakFilter.h"
+#include "core/quantify/PeakCoordinateSystem.h"
+#include "core/merge_and_filter/PeakFilter.h"
 
 #include "apps/models/CollectedPeaksModel.h"
 #include "apps/models/ExperimentItem.h"

@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/peak/MergedData.cpp
+//! @file      core/merge_and_filter/MergedData.cpp
 //! @brief     Implements class MergedData
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/peak/MergedData.h"
+#include "core/merge_and_filter/MergedData.h"
 
 namespace nsx {
 

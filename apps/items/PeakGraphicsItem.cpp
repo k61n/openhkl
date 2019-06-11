@@ -30,7 +30,7 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/MetaData.h"
-#include "core/peak/IntegrationRegion.h"
+#include "core/quantify/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "core/utils/Units.h"
 

@@ -93,20 +93,20 @@ using Eigen::Quaterniond;
 #include "core/loader/MatrixParser.h"
 #include "core/utils/ProgressHandler.h"
 
-#include "core/peak/PeakCoordinateSystem.h"
+#include "core/quantify/PeakCoordinateSystem.h"
 #include "core/refine/RefinementBatch.h"
 #include "core/refine/Refiner.h"
 #include "core/indexing/AutoIndexer.h"
-#include "core/peak/Intensity.h"
-#include "core/peak/IPeakIntegrator.h"
+#include "core/quantify/Intensity.h"
+#include "core/quantify/IPeakIntegrator.h"
 #include "core/integration/MeanBackgroundIntegrator.h"
 #include "core/integration/Profile3DIntegrator.h"
 #include "core/integration/Profile1DIntegrator.h"
 #include "core/integration/ISigmaIntegrator.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/integration/ShapeIntegrator.h"
-#include "core/peak/IntegrationRegion.h"
-#include "core/peak/PeakData.h"
+#include "core/quantify/IntegrationRegion.h"
+#include "core/quantify/PeakData.h"
 #include "core/crystal/UnitCell.h"
 #include "core/statistics/ResolutionShell.h"
 #include "core/statistics/RFactor.h"
@@ -116,7 +116,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
 #include "core/indexing/FFTIndexing.h"
 
-#include "core/peak/MergedPeak.h"
+#include "core/merge_and_filter/MergedPeak.h"
 #include "core/crystal/DoubleToFraction.h"
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/NiggliReduction.h"
@@ -212,7 +212,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/crystal/UnitCell.h"
 #include "core/crystal/GruberReduction.h"
 
-#include "core/peak/Intensity.h"
+#include "core/quantify/Intensity.h"
 
 using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 
@@ -229,9 +229,9 @@ using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 #include "core/loader/HDF5DataReader.h"
 #include "core/experiment/DataSet.h"
 #include "core/search_peaks/PeakFinder.h"
-#include "core/peak/MergedData.h"
+#include "core/merge_and_filter/MergedData.h"
 
-#include "core/peak/PeakFilter.h"
+#include "core/merge_and_filter/PeakFilter.h"
 
 #include "core/crystal/MillerIndex.h"
 #include "core/integration/Profile1D.h"
@@ -355,13 +355,13 @@ namespace nsx {
 %include "core/indexing/FFTIndexing.h"
 
 
-%include "core/peak/PeakData.h"
-%include "core/peak/IntegrationRegion.h"
-%include "core/peak/Intensity.h"
+%include "core/quantify/PeakData.h"
+%include "core/quantify/IntegrationRegion.h"
+%include "core/quantify/Intensity.h"
 %template(IntensityList) std::vector<nsx::Intensity>;
 %include "core/integration/Profile3D.h"
 %include "core/integration/Profile1D.h"
-%include "core/peak/IPeakIntegrator.h"
+%include "core/quantify/IPeakIntegrator.h"
 %include "core/integration/MeanBackgroundIntegrator.h"
 %include "core/integration/Profile3DIntegrator.h"
 %include "core/integration/Profile1DIntegrator.h"
@@ -371,15 +371,15 @@ namespace nsx {
 %include "core/integration/Profile1D.h"
 %include "core/integration/ShapeLibrary.h"
 %include "core/integration/ShapeIntegrator.h"
-%include "core/peak/IntegrationRegion.h"
-%include "core/peak/PeakData.h"
-%include "core/peak/Intensity.h"
+%include "core/quantify/IntegrationRegion.h"
+%include "core/quantify/PeakData.h"
+%include "core/quantify/Intensity.h"
 %include "core/peak/Peak3D.h"
 
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
 %template(PeakShell) std::vector<std::vector<std::shared_ptr<nsx::Peak3D>>>;
 
-%include "core/peak/PeakFilter.h"
+%include "core/merge_and_filter/PeakFilter.h"
 
 %template(ConvolverParameters) std::map<std::string,double>;
 %include "core/convolve/Convolver.h"
@@ -400,7 +400,7 @@ namespace nsx {
 %include "core/integration/Profile3D.h"
 %include "core/experiment/DataSet.h"
 
-%include "core/peak/MergedData.h"
+%include "core/merge_and_filter/MergedData.h"
 
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
 
@@ -420,16 +420,16 @@ namespace nsx {
 %include "core/loader/MatrixParser.h"
 %include "core/utils/ProgressHandler.h"
 
-%include "core/peak/PeakCoordinateSystem.h"
+%include "core/quantify/PeakCoordinateSystem.h"
 %include "core/refine/RefinementBatch.h"
 %include "core/refine/Refiner.h"
 
 %template(RefinementBatchList) std::vector<nsx::RefinementBatch>;
 
-%include "core/peak/Intensity.h"
+%include "core/quantify/Intensity.h"
 
-%include "core/peak/IntegrationRegion.h"
-%include "core/peak/PeakData.h"
+%include "core/quantify/IntegrationRegion.h"
+%include "core/quantify/PeakData.h"
 
 
 %include "core/crystal/UnitCell.h"
@@ -447,7 +447,7 @@ namespace nsx {
 %include "core/integration/Profile1D.h"
 %include "core/integration/ShapeLibrary.h"
 
-%include "core/peak/MergedPeak.h"
+%include "core/merge_and_filter/MergedPeak.h"
 %include "core/crystal/DoubleToFraction.h"
 %include "core/crystal/SpaceGroup.h"
 %include "core/crystal/NiggliReduction.h"

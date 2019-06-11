@@ -28,7 +28,7 @@
 #include "core/geometry/ReciprocalVector.h"
 #include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
-#include "core/peak/PeakFilter.h"
+#include "core/merge_and_filter/PeakFilter.h"
 
 namespace nsx {
 

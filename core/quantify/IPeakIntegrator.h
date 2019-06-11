@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/peak/IPeakIntegrator.h
+//! @file      core/quantify/IPeakIntegrator.h
 //! @brief     Defines class IPeakIntegrator
 //!
 //! @homepage  ###HOMEPAGE###
@@ -15,9 +15,9 @@
 #ifndef CORE_PEAK_IPEAKINTEGRATOR_H
 #define CORE_PEAK_IPEAKINTEGRATOR_H
 
-#include "core/peak/Intensity.h"
+#include "core/quantify/Intensity.h"
 #include "core/experiment/DataTypes.h"
-#include "core/peak/IntegrationRegion.h"
+#include "core/quantify/IntegrationRegion.h"
 #include "core/utils/ProgressHandler.h"
 
 namespace nsx {

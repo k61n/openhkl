@@ -24,7 +24,7 @@
 #include "core/loader/IDataReader.h"
 #include "core/logger/Logger.h"
 #include "core/peak/Peak3D.h"
-#include "core/peak/PeakCoordinateSystem.h"
+#include "core/quantify/PeakCoordinateSystem.h"
 
 #include <stdexcept>
 

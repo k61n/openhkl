@@ -21,7 +21,7 @@
 #include "core/instrument/Sample.h"
 #include "core/loader/IDataReader.h"
 #include "core/logger/Logger.h"
-#include "core/peak/Octree.h"
+#include "core/merge_and_filter/Octree.h"
 #include "core/peak/Peak3D.h"
 #include "core/convolve/ConvolverFactory.h"
 

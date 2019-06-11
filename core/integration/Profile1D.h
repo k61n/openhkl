@@ -17,7 +17,7 @@
 
 #include <vector>
 
-#include "core/peak/Intensity.h"
+#include "core/quantify/Intensity.h"
 
 namespace nsx {
 
