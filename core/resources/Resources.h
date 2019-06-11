@@ -19,7 +19,7 @@
 
 namespace nsx {
 
-YAML::Node findResource(const std::pair<std::string, std::string>& resource);
+YAML::Node findResource(const std::string& instrument_name);
 
 std::set<std::string> getResourcesName(const std::string& resource_type);
 

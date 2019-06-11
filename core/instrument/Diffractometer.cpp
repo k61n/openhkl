@@ -26,13 +26,9 @@ namespace nsx {
 
 Diffractometer* Diffractometer::create(const std::string& name)
 {
-    YAML::Node instrumentDefinition = findResource({"instruments", name});
-
-    if (!instrumentDefinition["instrument"])
-        throw std::runtime_error("Invalid instrument definition: missing 'instrument root node'");
+    YAML::Node instrumentDefinition = findResource(name);
 
     Diffractometer* diffractometer;
-
     try {
         diffractometer = new Diffractometer(instrumentDefinition["instrument"]);
     } catch (std::exception& e) {
