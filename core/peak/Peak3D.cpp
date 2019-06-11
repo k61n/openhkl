@@ -221,29 +221,30 @@ ReciprocalVector Peak3D::qPredicted() const
     return ReciprocalVector(_unitCell->fromIndex(index.rowVector().cast<double>()));
 }
 
-DetectorEvent Peak3D::predictCenter(double frame) const
-{
-    const DetectorEvent no_event = {0, 0, -1, -1};
-
-    if (!_unitCell)
-        return no_event;
-
-    auto index = MillerIndex(q(), *_unitCell);
-    auto state = _data->interpolatedState(frame);
-    Eigen::RowVector3d q_hkl = _unitCell->fromIndex(index.rowVector().cast<double>());
-    Eigen::RowVector3d ki = state.ki().rowVector();
-    Eigen::RowVector3d kf = q_hkl * state.sampleOrientationMatrix().transpose() + ki;
-
-    const double alpha = ki.norm() / kf.norm();
-
-    Eigen::RowVector3d kf1 = alpha * kf;
-    Eigen::RowVector3d kf2 = -alpha * kf;
-
-    Eigen::RowVector3d pred_kf = (kf1 - kf).norm() < (kf2 - kf).norm() ? kf1 : kf2;
-
-    return _data->reader()->diffractometer()->detector()->constructEvent(
-        DirectVector(state.samplePosition), ReciprocalVector(pred_kf * state.detectorOrientation));
-}
+// found unused (JWu 11jun19)
+//DetectorEvent Peak3D::predictCenter(double frame) const
+//{
+//    const DetectorEvent no_event = {0, 0, -1, -1};
+//
+//    if (!_unitCell)
+//        return no_event;
+//
+//    auto index = MillerIndex(q(), *_unitCell);
+//    auto state = _data->interpolatedState(frame);
+//    Eigen::RowVector3d q_hkl = _unitCell->fromIndex(index.rowVector().cast<double>());
+//    Eigen::RowVector3d ki = state.ki().rowVector();
+//    Eigen::RowVector3d kf = q_hkl * state.sampleOrientationMatrix().transpose() + ki;
+//
+//    const double alpha = ki.norm() / kf.norm();
+//
+//    Eigen::RowVector3d kf1 = alpha * kf;
+//    Eigen::RowVector3d kf2 = -alpha * kf;
+//
+//    Eigen::RowVector3d pred_kf = (kf1 - kf).norm() < (kf2 - kf).norm() ? kf1 : kf2;
+//
+//    return _data->reader()->diffractometer()->detector()->constructEvent(
+//        DirectVector(state.samplePosition), ReciprocalVector(pred_kf * state.detectorOrientation));
+//}
 
 Intensity Peak3D::meanBackground() const
 {
