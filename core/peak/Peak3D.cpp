@@ -159,13 +159,10 @@ void Peak3D::updateIntegration(
     const IPeakIntegrator& integrator, double peakEnd, double bkgBegin, double bkgEnd)
 {
     _rockingCurve = integrator.rockingCurve();
-    // testing
-    //_meanBackground = integrator.meanBackground();
-    //_rawIntensity = integrator.peakIntensity();
     _meanBackground = integrator.meanBackground();
     _rawIntensity = integrator.integratedIntensity();
-    // testing!!
-    //_shape = integrator.fitShape();
+    //_rawIntensity = integrator.peakIntensity(); // TODO: test, reactivate ???
+    //_shape = integrator.fitShape(); // TODO: test, reactivate ???
     _peakEnd = peakEnd;
     _bkgBegin = bkgBegin;
     _bkgEnd = bkgEnd;
