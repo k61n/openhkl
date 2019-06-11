@@ -98,7 +98,7 @@ using Eigen::Quaterniond;
 #include "core/algo/Refiner.h"
 #include "core/algo/AutoIndexer.h"
 #include "core/quantify/Intensity.h"
-#include "core/quantify/IPeakIntegrator.h"
+#include "core/peak/IPeakIntegrator.h"
 #include "core/integration/MeanBackgroundIntegrator.h"
 #include "core/integration/Profile3DIntegrator.h"
 #include "core/integration/Profile1DIntegrator.h"
@@ -231,7 +231,7 @@ using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 #include "core/search_peaks/PeakFinder.h"
 #include "core/merge_and_filter/MergedData.h"
 
-#include "core/merge_and_filter/PeakFilter.h"
+#include "core/peak/PeakFilter.h"
 
 #include "core/crystal/MillerIndex.h"
 #include "core/shape/Profile1D.h"
@@ -361,7 +361,7 @@ namespace nsx {
 %template(IntensityList) std::vector<nsx::Intensity>;
 %include "core/shape/Profile3D.h"
 %include "core/shape/Profile1D.h"
-%include "core/quantify/IPeakIntegrator.h"
+%include "core/peak/IPeakIntegrator.h"
 %include "core/integration/MeanBackgroundIntegrator.h"
 %include "core/integration/Profile3DIntegrator.h"
 %include "core/integration/Profile1DIntegrator.h"
@@ -379,7 +379,7 @@ namespace nsx {
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
 %template(PeakShell) std::vector<std::vector<std::shared_ptr<nsx::Peak3D>>>;
 
-%include "core/merge_and_filter/PeakFilter.h"
+%include "core/peak/PeakFilter.h"
 
 %template(ConvolverParameters) std::map<std::string,double>;
 %include "core/convolve/Convolver.h"

@@ -22,8 +22,8 @@
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/loader/IDataReader.h"
-#include "core/quantify/IPeakIntegrator.h"
-#include "core/merge_and_filter/PeakFilter.h"
+#include "core/peak/IPeakIntegrator.h"
+#include "core/peak/PeakFilter.h"
 #include "base/utils/Units.h"
 
 #include <algorithm>

@@ -21,7 +21,7 @@
 #include "core/shape/ShapeLibrary.h"
 #include "core/algo/DataReaderFactory.h"
 #include "core/peak/Peak3D.h"
-#include "core/merge_and_filter/PeakFilter.h"
+#include "core/peak/PeakFilter.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"

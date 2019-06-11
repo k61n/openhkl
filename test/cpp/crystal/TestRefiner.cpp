@@ -19,7 +19,7 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
 #include "core/peak/Peak3D.h"
-#include "core/merge_and_filter/PeakFilter.h"
+#include "core/peak/PeakFilter.h"
 #include "core/algo/Refiner.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "base/utils/ProgressHandler.h"
