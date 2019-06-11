@@ -26,7 +26,6 @@ namespace nsx {
 
 Diffractometer* Diffractometer::create(const std::string& name)
 {
-
     YAML::Node instrumentDefinition = findResource({"instruments", name});
 
     if (!instrumentDefinition["instrument"])
@@ -57,11 +56,6 @@ Diffractometer::Diffractometer(const Diffractometer& other)
 Diffractometer* Diffractometer::clone() const
 {
     return new Diffractometer(*this);
-}
-
-Diffractometer::Diffractometer(const std::string& name)
-    : _name(name), _detector(nullptr), _sample(), _source()
-{
 }
 
 Diffractometer::Diffractometer(const YAML::Node& node)

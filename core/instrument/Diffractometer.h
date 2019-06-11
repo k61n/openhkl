@@ -21,22 +21,20 @@
 
 namespace nsx {
 
-//! Class describing a general diffractometer, consisting of a sample, source,
-//! and detector.
+//! A diffractometer setup, consisting of a sample, source, and detector.
+
 class Diffractometer {
 
 public:
     static Diffractometer* create(const std::string& name);
 
-public:
     Diffractometer(const YAML::Node& node);
+    virtual ~Diffractometer();
 
-    //! Constructs a diffractometer from another one
     Diffractometer(const Diffractometer& other);
+    Diffractometer& operator=(const Diffractometer& other);
 
     Diffractometer* clone() const;
-    virtual ~Diffractometer();
-    Diffractometer& operator=(const Diffractometer& other);
 
     //! Returns the name of this diffractometer
     const std::string& name() const;
