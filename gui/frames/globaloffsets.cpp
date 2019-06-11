@@ -120,11 +120,11 @@ void GlobalOffsets::fit()
         // Fit the detector offsets with the selected data
         const nsx::Detector* detector =
             gSession->selectedExperiment()->experiment()->diffractometer()->detector();
-        const nsx::GonioFit fit_results = fitDetectorGonioOffsets(
+        const nsx::GonioFit fit_results = nsx::fitDetectorGonioOffsets(
             detector->gonio(), selected_data, iterations->value(), tolerance->value());
 
         // The fit failed for whatever reason, return
-        if (!fit_results.success)
+        if (!fit_results.success) {
             gLogger->log("[ERROR] Could not fit the detector offsets.");
             return;
         }
@@ -147,8 +147,10 @@ void GlobalOffsets::fit()
             sample.gonio(), selected_data, iterations->value(), tolerance->value());
 
         // The fit failed for whatever reason, return
-        if (!fit_results.success)
+        if (!fit_results.success) {
             gLogger->log("[ERROR] Could not fit the sample offsets.");
+            return;
+        }
 
         int comp(0);
         for (auto&& offset : fit_results.offsets) {

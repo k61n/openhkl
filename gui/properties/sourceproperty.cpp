@@ -28,10 +28,11 @@ SourceProperty::SourceProperty() : QcrWidget("sourceProperty")
 
     monochromators = new QcrComboBox("monochromators", new QcrCell<int>(0), [this]() {
         QStringList list;
-        ExperimentModel* exp = gSession->selectedExperiment();
-        if (!exp)
+        int exp = gSession->selectedExperimentNum();
+        if (exp < 0)
             return list;
-        const auto& monos = exp->experiment()->diffractometer()->source().monochromators();
+        const auto& monos = gSession->selectedExperiment()->experiment()->diffractometer()
+                ->source().monochromators();
         for (auto&& m : monos)
             list.append(QString::fromStdString(m.name()));
         return list;

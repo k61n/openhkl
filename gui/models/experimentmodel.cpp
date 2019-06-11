@@ -97,3 +97,9 @@ ExperimentModel::ExperimentModel(nsx::sptrExperiment experiment) : experiment_ {
     peaks_ = new PeaksModel;
     units_ = new UnitCellsModel;
 }
+
+void ExperimentModel::removeSelectedData()
+{
+    peaks_->removePeaks(data_->selectedData());
+    data_->removeSelectedData();
+}

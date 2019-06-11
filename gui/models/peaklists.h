@@ -25,6 +25,7 @@ public:
     QString getName() { return name_; }
     void setName(const QString& name) { name_ = name; }
     nsx::PeakList getPeaks() { return filteredPeaks_; }
+    void removePeaks(nsx::sptrDataSet removedData);
 
 private:
     QString name_;
@@ -44,8 +45,10 @@ public:
     void removeFilteredPeaks(int i);
     void selectList(int i);
     FilteredPeaksModel* selectedFilteredList();
+    void removePeaks(nsx::sptrDataSet removedData);
 
 private:
+    void remakePeakLists();
     QString name_;
     nsx::PeakList allPeaks_;
     QList<FilteredPeaksModel*> filtered_;
@@ -68,8 +71,10 @@ public:
     int numberLists() { return peakLists_.size(); }
     void addPeakListsModel(const QString& name, nsx::PeakList);
     void removePeakListsModel(int i = -1);
+    void removePeaks(nsx::sptrDataSet removedData);
 
 private:
+    void remakePeakLists();
     QList<PeakListsModel*> peakLists_;
     int selectedLists;
 };

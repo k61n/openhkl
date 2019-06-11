@@ -28,7 +28,7 @@ TabPeaks::TabPeaks() : QcrWidget {"peaks"}
     filtered = new QcrTabWidget("filteredPeaks");
     foundPeaksLists = new QcrComboBox("adhoc_foundLists", new QcrCell<int>(0), []() {
         if (gSession->selectedExperimentNum() < 0)
-            return QStringList {};
+            return QStringList {""};
         return gSession->selectedExperiment()->peaks()->peaklistNames();
     });
     QVBoxLayout* layout = new QVBoxLayout(this);

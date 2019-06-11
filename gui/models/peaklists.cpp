@@ -15,13 +15,25 @@
 #include "gui/models/peaklists.h"
 #include "gui/models/session.h"
 #include <QCR/engine/logger.h>
+#include "core/experiment/DataSet.h"
 #include "core/peak/Peak3D.h"
-#include "core/import/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include <QInputDialog>
 
 FilteredPeaksModel::FilteredPeaksModel(const QString& name, nsx::PeakList list)
     : name_ {name}, filteredPeaks_ {list}
 {
+}
+
+void FilteredPeaksModel::removePeaks(nsx::sptrDataSet removedData)
+{
+    nsx::PeakList newList;
+    for (nsx::sptrPeak3D peak : filteredPeaks_) {
+        if (peak->data() != removedData) {
+            newList.push_back(peak);
+        }
+    }
+    filteredPeaks_ = newList;
 }
 
 //  ***********************************************************************************************
@@ -63,6 +75,13 @@ void PeakListsModel::removeFilteredPeaks(int i)
     gSession->onPeaksChanged();
 }
 
+void PeakListsModel::removePeaks(nsx::sptrDataSet removedData)
+{
+    for (FilteredPeaksModel* fpm : filtered_)
+        fpm->removePeaks(removedData);
+    remakePeakLists();
+}
+
 void PeakListsModel::selectList(int i)
 {
     if (i<0 || i>=filtered_.size()) {
@@ -77,6 +96,14 @@ FilteredPeaksModel* PeakListsModel::selectedFilteredList()
     if (selected < 0 || filtered_.empty())
         return nullptr;
     return filtered_.at(selected);
+}
+
+void PeakListsModel::remakePeakLists()
+{
+    for (int i = filtered_.size()-1; i>=0; i--) {
+        if (filtered_.at(i)->getPeaks().empty())
+            removeFilteredPeaks(i);
+    }
 }
 
 //  ***********************************************************************************************
@@ -164,6 +191,13 @@ void PeaksModel::removePeakListsModel(int i)
     gSession->onPeaksChanged();
 }
 
+void PeaksModel::removePeaks(nsx::sptrDataSet removedData)
+{
+    for (PeakListsModel* plm : peakLists_)
+        plm->removePeaks(removedData);
+    remakePeakLists();
+}
+
 void PeaksModel::normalizeToMonitor()
 {
     if (peakLists_.empty())
@@ -180,6 +214,16 @@ void PeaksModel::normalizeToMonitor()
             continue;
         double monitor = data->reader()->metadata().key<double>("monitor");
         peak->setScale(factor/monitor);
+    }
+    gSession->onPeaksChanged();
+}
+
+void PeaksModel::remakePeakLists()
+{
+    for (int i = peakLists_.size()-1; i>=0; i--) {
+        if (peakLists_.at(i)->numberFilteredLists() == 0) {
+            removePeakListsModel(i);
+        }
     }
     gSession->onPeaksChanged();
 }

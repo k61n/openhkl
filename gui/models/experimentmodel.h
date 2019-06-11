@@ -75,6 +75,7 @@ public:
     void addData(nsx::sptrDataSet data) { data_->addData(data); }
     PeaksModel* peaks() { return peaks_; }
     UnitCellsModel* unitCells() { return units_; }
+    void removeSelectedData();
 
 private:
     nsx::sptrExperiment experiment_;

@@ -138,7 +138,7 @@ void Session::removeData()
     }
     std::string numorname = selectedExperiment()->data()->selectedData()->filename();
     selectedExperiment()->experiment()->removeData(numorname);
-    selectedExperiment()->data()->removeSelectedData();
+    selectedExperiment()->removeSelectedData();
 }
 
 void Session::loadRawData()
