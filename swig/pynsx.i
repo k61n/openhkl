@@ -81,16 +81,16 @@ using Eigen::Quaterniond;
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
 
-#include "core/loader/EigenToVector.h"
+#include "core/parser/EigenToVector.h"
 #include "base/utils/CSV.h"
 #include "core/detector/DataOrder.h"
 #include "base/utils/Units.h"
 
 #include "base/utils/Path.h"
 
-#include "core/loader/Parser.h"
+#include "core/parser/Parser.h"
 //#include "base/utils/YAMLType.h"
-#include "core/loader/MatrixParser.h"
+#include "core/detector/MatrixParser.h"
 #include "base/utils/ProgressHandler.h"
 
 #include "core/quantify/PeakCoordinateSystem.h"
@@ -143,15 +143,15 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
 #include "core/experiment/DataSet.h"
 #include "core/shape/Profile3D.h"
-#include "core/loader/MetaData.h"
+#include "core/raw/MetaData.h"
 #include "core/loader/ILLDataReader.h"
-#include "core/loader/IDataReader.h"
+#include "core/raw/IDataReader.h"
 #include "core/loader/HDF5DataReader.h"
 #include "core/loader/HDF5MetaDataReader.h"
 
 #include "core/loader/RawDataReader.h"
 #include "core/loader/TiffDataReader.h"
-#include "core/loader/BloscFilter.h"
+#include "core/parser/BloscFilter.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "core/algo/DataReaderFactory.h"
 #include "core/detector/Detector.h"
@@ -222,8 +222,8 @@ using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 
 #include "base/utils/Singleton.h"
 
-#include "core/loader/MetaData.h"
-#include "core/loader/IDataReader.h"
+#include "core/raw/MetaData.h"
+#include "core/raw/IDataReader.h"
 #include "core/algo/DataReaderFactory.h"
 #include "core/loader/ILLDataReader.h"
 #include "core/loader/HDF5DataReader.h"
@@ -391,8 +391,8 @@ namespace nsx {
 %include "core/convolve/EnhancedAnnularConvolver.h"
 %include "core/convolve/RadialConvolver.h"
 
-%include "core/loader/MetaData.h"
-%include "core/loader/IDataReader.h"
+%include "core/raw/MetaData.h"
+%include "core/raw/IDataReader.h"
 %include "core/algo/DataReaderFactory.h"
 %include "core/loader/ILLDataReader.h"
 %include "core/loader/HDF5MetaDataReader.h"
@@ -411,13 +411,13 @@ namespace nsx {
 %include "base/fit/FitParameters.h"
 %include "base/fit/Minimizer.h"
 
-%include "core/loader/EigenToVector.h"
+%include "core/parser/EigenToVector.h"
 %include "base/utils/CSV.h"
 %include "core/detector/DataOrder.h"
 %include "base/utils/Path.h"
 
-%include "core/loader/Parser.h"
-%include "core/loader/MatrixParser.h"
+%include "core/parser/Parser.h"
+%include "core/detector/MatrixParser.h"
 %include "base/utils/ProgressHandler.h"
 
 %include "core/quantify/PeakCoordinateSystem.h"
@@ -469,15 +469,15 @@ namespace nsx {
 
 %include "core/shape/Profile3D.h"
 %include "core/experiment/DataSet.h"
-%include "core/loader/MetaData.h"
+%include "core/raw/MetaData.h"
 %include "core/loader/ILLDataReader.h"
-%include "core/loader/IDataReader.h"
+%include "core/raw/IDataReader.h"
 %include "core/loader/HDF5MetaDataReader.h"
 %include "core/loader/HDF5DataReader.h"
 
 %include "core/loader/RawDataReader.h"
 %include "core/loader/TiffDataReader.h"
-%include "core/loader/BloscFilter.h"
+%include "core/parser/BloscFilter.h"
 %include "core/algo/DataReaderFactory.h"
 
 %include "core/detector/Detector.h"

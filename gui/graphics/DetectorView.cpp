@@ -18,7 +18,7 @@
 
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/loader/IDataReader.h"
+#include "core/raw/IDataReader.h"
 #include <QApplication>
 #include <QClipboard>
 #include <QKeyEvent>

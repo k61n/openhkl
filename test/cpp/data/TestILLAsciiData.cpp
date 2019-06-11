@@ -8,8 +8,8 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/algo/DataReaderFactory.h"
-#include "core/loader/IDataReader.h"
-#include "core/loader/MetaData.h"
+#include "core/raw/IDataReader.h"
+#include "core/raw/MetaData.h"
 #include "base/utils/Units.h"
 
 const double tolerance = 1e-2;

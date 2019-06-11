@@ -17,7 +17,7 @@
 #include "core/experiment/DataSet.h"
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
-#include "core/loader/IDataReader.h"
+#include "core/raw/IDataReader.h"
 #include "base/logger/Logger.h"
 
 namespace nsx {

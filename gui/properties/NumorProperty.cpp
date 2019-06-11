@@ -16,7 +16,7 @@
 #include "gui/properties/NumorProperty.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/DataTypes.h"
-#include "core/loader/IDataReader.h"
+#include "core/raw/IDataReader.h"
 #include "gui/models/Session.h"
 #include <QFormLayout>
 #include <QHBoxLayout>

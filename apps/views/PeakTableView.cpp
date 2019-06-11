@@ -26,8 +26,8 @@
 
 #include "tables/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
-#include "core/loader/IDataReader.h"
-#include "core/loader/MetaData.h"
+#include "core/raw/IDataReader.h"
+#include "core/raw/MetaData.h"
 #include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "base/utils/ProgressHandler.h"

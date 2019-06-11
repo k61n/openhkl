@@ -21,8 +21,8 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Source.h"
-#include "core/loader/IDataReader.h"
-#include "core/loader/MetaData.h"
+#include "core/raw/IDataReader.h"
+#include "core/raw/MetaData.h"
 
 namespace nsx {
 

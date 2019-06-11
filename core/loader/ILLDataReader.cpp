@@ -28,8 +28,8 @@
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/loader/ILLDataReader.h"
-#include "core/loader/MatrixParser.h"
-#include "core/loader/Parser.h"
+#include "core/detector/MatrixParser.h"
+#include "core/parser/Parser.h"
 #include "base/utils/StringIO.h"
 #include "base/utils/Units.h"
 

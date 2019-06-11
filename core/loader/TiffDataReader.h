@@ -17,7 +17,7 @@
 
 #include <tiffio.h>
 
-#include "core/loader/IDataReader.h"
+#include "core/raw/IDataReader.h"
 
 namespace nsx {
 

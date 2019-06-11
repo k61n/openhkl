@@ -18,7 +18,7 @@
 
 #include "core/experiment/DataSet.h"
 #include "core/algo/DataReaderFactory.h"
-#include "core/loader/IDataReader.h"
+#include "core/raw/IDataReader.h"
 #include "core/loader/RawDataReader.h"
 
 #include "gui/dialogs/ExperimentDialog.h"

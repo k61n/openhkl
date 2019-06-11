@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/loader/MatrixParser.h
+//! @file      core/detector/MatrixParser.h
 //! @brief     Defines class MatrixParser
 //!
 //! @homepage  ###HOMEPAGE###

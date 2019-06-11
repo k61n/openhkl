@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/loader/MetaData.cpp
+//! @file      core/raw/MetaData.cpp
 //! @brief     Implements class MetaData
 //!
 //! @homepage  ###HOMEPAGE###
@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 
-#include "core/loader/MetaData.h"
+#include "core/raw/MetaData.h"
 
 namespace nsx {
 

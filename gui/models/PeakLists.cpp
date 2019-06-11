@@ -17,7 +17,7 @@
 #include <QCR/engine/logger.h>
 #include "core/experiment/DataSet.h"
 #include "core/peak/Peak3D.h"
-#include "core/loader/IDataReader.h"
+#include "core/raw/IDataReader.h"
 #include <QInputDialog>
 
 FilteredPeaksModel::FilteredPeaksModel(const QString& name, nsx::PeakList list)

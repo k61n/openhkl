@@ -21,7 +21,7 @@
 #include "base/geometry/Ellipsoid.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Source.h"
-#include "core/loader/IDataReader.h"
+#include "core/raw/IDataReader.h"
 #include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/quantify/PeakCoordinateSystem.h"

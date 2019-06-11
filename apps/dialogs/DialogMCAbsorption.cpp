@@ -30,7 +30,7 @@
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/loader/IDataReader.h"
+#include "core/raw/IDataReader.h"
 #include "core/monte-carlo/MCAbsorption.h"
 #include "core/peak/Peak3D.h"
 #include "base/utils/Units.h"

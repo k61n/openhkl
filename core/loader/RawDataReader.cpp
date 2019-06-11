@@ -27,8 +27,8 @@
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/loader/EigenToVector.h"
-#include "core/loader/Parser.h"
+#include "core/parser/EigenToVector.h"
+#include "core/parser/Parser.h"
 #include "core/loader/RawDataReader.h"
 #include "base/utils/Units.h"
 

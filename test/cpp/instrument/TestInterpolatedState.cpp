@@ -13,7 +13,7 @@
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/algo/DataReaderFactory.h"
-#include "core/loader/IDataReader.h"
+#include "core/raw/IDataReader.h"
 #include "base/utils/ProgressHandler.h"
 
 void run_test(const char* filename, const char* instrument)

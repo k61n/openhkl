@@ -21,7 +21,7 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/loader/IDataReader.h"
+#include "core/raw/IDataReader.h"
 #include "core/peak/IPeakIntegrator.h"
 #include "core/peak/PeakFilter.h"
 #include "base/utils/Units.h"

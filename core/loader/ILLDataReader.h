@@ -17,7 +17,7 @@
 
 #include <boost/interprocess/mapped_region.hpp>
 
-#include "core/loader/IDataReader.h"
+#include "core/raw/IDataReader.h"
 
 namespace nsx {
 

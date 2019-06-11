@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/loader/EigenToVector.h
+//! @file      core/parser/EigenToVector.h
 //! @brief     Declares function eigenToVector
 //!
 //! @homepage  ###HOMEPAGE###

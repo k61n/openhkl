@@ -16,7 +16,7 @@
 #define CORE_LOADER_HDF5METADATAREADER_H
 
 #include "H5Cpp.h"
-#include "core/loader/IDataReader.h"
+#include "core/raw/IDataReader.h"
 
 namespace nsx {
 

@@ -18,7 +18,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/experiment/DataTypes.h"
 #include "core/instrument/InterpolatedState.h"
-#include "core/loader/IDataReader.h"
+#include "core/raw/IDataReader.h"
 #include "core/mask/IMask.h"
 
 namespace nsx {

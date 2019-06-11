@@ -33,7 +33,7 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/loader/IDataReader.h"
+#include "core/raw/IDataReader.h"
 #include "base/logger/Logger.h"
 #include "core/mask/BoxMask.h"
 #include "core/mask/EllipseMask.h"

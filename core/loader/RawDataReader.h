@@ -15,7 +15,7 @@
 #ifndef CORE_LOADER_RAWDATAREADER_H
 #define CORE_LOADER_RAWDATAREADER_H
 
-#include "core/loader/IDataReader.h"
+#include "core/raw/IDataReader.h"
 
 namespace nsx {
 

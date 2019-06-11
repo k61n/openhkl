@@ -7,8 +7,8 @@
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/algo/DataReaderFactory.h"
-#include "core/loader/IDataReader.h"
-#include "core/loader/MetaData.h"
+#include "core/raw/IDataReader.h"
+#include "core/raw/MetaData.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "base/utils/ProgressHandler.h"
 

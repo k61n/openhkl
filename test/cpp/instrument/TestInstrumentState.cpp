@@ -4,7 +4,7 @@
 #include "core/experiment/Experiment.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/algo/DataReaderFactory.h"
-#include "core/loader/IDataReader.h"
+#include "core/raw/IDataReader.h"
 
 namespace nsx {
 class UnitTest_DataSet {
