@@ -15,8 +15,6 @@
 #ifndef CORE_CHEMISTRY_ISOTOPEDATABASEMANAGER_H
 #define CORE_CHEMISTRY_ISOTOPEDATABASEMANAGER_H
 
-#include <yaml-cpp/yaml.h>
-
 #include "core/chemistry/ChemistryTypes.h"
 #include "base/utils/Singleton.h"
 

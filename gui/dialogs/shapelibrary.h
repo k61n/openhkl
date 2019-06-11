@@ -28,6 +28,7 @@
 #include <QCR/widgets/actions.h>
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
+#include <set>
 
 class ShapeLibraryDialog : public QDialog {
     Q_OBJECT

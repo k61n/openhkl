@@ -89,7 +89,7 @@ using Eigen::Quaterniond;
 #include "base/utils/Path.h"
 
 #include "core/loader/Parser.h"
-#include "base/utils/YAMLType.h"
+//#include "base/utils/YAMLType.h"
 #include "core/loader/MatrixParser.h"
 #include "base/utils/ProgressHandler.h"
 

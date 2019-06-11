@@ -12,13 +12,15 @@
 //
 //  ***********************************************************************************************
 
-#include <stdexcept>
-
 #include "core/chemistry/IsotopeDatabaseManager.h"
+
 #include "core/resources/Resources.h"
 #include "base/utils/Path.h"
 #include "base/utils/Units.h"
 #include "base/utils/YAMLType.h"
+
+#include <yaml-cpp/yaml.h>
+#include <stdexcept>
 
 namespace nsx {
 

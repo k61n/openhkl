@@ -15,13 +15,13 @@
 #ifndef CORE_CHEMISTRY_CHEMISTRYTYPES_H
 #define CORE_CHEMISTRY_CHEMISTRYTYPES_H
 
-#include <complex>
-#include <map>
-
 #include "base/utils/Variant.h"
 
-namespace nsx {
+#include <complex>
+#include <map>
+#include <vector>
 
+namespace nsx {
 
 enum class ChemicalPropertyType { String = 1, Int = 2, Double = 3, Complex = 4, Bool = 5 };
 
