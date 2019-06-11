@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/quantify/PeakCoordinateSystem.h"
+#include "core/peak/PeakCoordinateSystem.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"

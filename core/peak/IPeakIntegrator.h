@@ -15,9 +15,9 @@
 #ifndef CORE_PEAK_IPEAKINTEGRATOR_H
 #define CORE_PEAK_IPEAKINTEGRATOR_H
 
-#include "core/quantify/Intensity.h"
+#include "core/peak/Intensity.h"
 #include "core/experiment/DataTypes.h"
-#include "core/quantify/IntegrationRegion.h"
+#include "core/peak/IntegrationRegion.h"
 #include "base/utils/ProgressHandler.h"
 
 namespace nsx {

@@ -37,7 +37,7 @@
 #include "base/logger/Logger.h"
 #include "core/mask/BoxMask.h"
 #include "core/mask/EllipseMask.h"
-#include "core/quantify/IntegrationRegion.h"
+#include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "base/utils/Units.h"
 

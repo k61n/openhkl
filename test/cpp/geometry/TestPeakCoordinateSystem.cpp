@@ -15,7 +15,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/algo/DataReaderFactory.h"
 #include "core/peak/Peak3D.h"
-#include "core/quantify/PeakCoordinateSystem.h"
+#include "core/peak/PeakCoordinateSystem.h"
 
 void run_test(const char* filename, const char* instrument)
 {

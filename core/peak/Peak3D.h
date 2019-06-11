@@ -16,7 +16,7 @@
 #define CORE_PEAK_PEAK3D_H
 
 #include "base/geometry/Ellipsoid.h"
-#include "core/quantify/Intensity.h"
+#include "core/peak/Intensity.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
 #include "core/detector/DetectorEvent.h"

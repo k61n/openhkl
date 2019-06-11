@@ -16,7 +16,7 @@
 #define CORE_PEAK_INTEGRATIONREGION_H
 
 #include "base/hull/ConvexHull.h"
-#include "core/quantify/PeakData.h"
+#include "core/peak/PeakData.h"
 
 namespace nsx {
 

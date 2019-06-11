@@ -15,7 +15,7 @@
 #ifndef CORE_PEAK_MERGEDPEAK_H
 #define CORE_PEAK_MERGEDPEAK_H
 
-#include "core/quantify/Intensity.h"
+#include "core/peak/Intensity.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "core/peak/Peak3D.h"
 

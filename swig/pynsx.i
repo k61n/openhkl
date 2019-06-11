@@ -93,11 +93,11 @@ using Eigen::Quaterniond;
 #include "core/detector/MatrixParser.h"
 #include "base/utils/ProgressHandler.h"
 
-#include "core/quantify/PeakCoordinateSystem.h"
+#include "core/peak/PeakCoordinateSystem.h"
 #include "core/algo/RefinementBatch.h"
 #include "core/algo/Refiner.h"
 #include "core/algo/AutoIndexer.h"
-#include "core/quantify/Intensity.h"
+#include "core/peak/Intensity.h"
 #include "core/peak/IPeakIntegrator.h"
 #include "core/integration/MeanBackgroundIntegrator.h"
 #include "core/integration/Profile3DIntegrator.h"
@@ -105,8 +105,8 @@ using Eigen::Quaterniond;
 #include "core/integration/ISigmaIntegrator.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/integration/ShapeIntegrator.h"
-#include "core/quantify/IntegrationRegion.h"
-#include "core/quantify/PeakData.h"
+#include "core/peak/IntegrationRegion.h"
+#include "core/peak/PeakData.h"
 #include "tables/crystal/UnitCell.h"
 #include "core/statistics/ResolutionShell.h"
 #include "core/statistics/RFactor.h"
@@ -212,7 +212,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "tables/crystal/UnitCell.h"
 #include "tables/crystal/GruberReduction.h"
 
-#include "core/quantify/Intensity.h"
+#include "core/peak/Intensity.h"
 
 using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 
@@ -355,9 +355,9 @@ namespace nsx {
 %include "core/algo/FFTIndexing.h"
 
 
-%include "core/quantify/PeakData.h"
-%include "core/quantify/IntegrationRegion.h"
-%include "core/quantify/Intensity.h"
+%include "core/peak/PeakData.h"
+%include "core/peak/IntegrationRegion.h"
+%include "core/peak/Intensity.h"
 %template(IntensityList) std::vector<nsx::Intensity>;
 %include "core/shape/Profile3D.h"
 %include "core/shape/Profile1D.h"
@@ -371,9 +371,9 @@ namespace nsx {
 %include "core/shape/Profile1D.h"
 %include "core/shape/ShapeLibrary.h"
 %include "core/integration/ShapeIntegrator.h"
-%include "core/quantify/IntegrationRegion.h"
-%include "core/quantify/PeakData.h"
-%include "core/quantify/Intensity.h"
+%include "core/peak/IntegrationRegion.h"
+%include "core/peak/PeakData.h"
+%include "core/peak/Intensity.h"
 %include "core/peak/Peak3D.h"
 
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
@@ -420,16 +420,16 @@ namespace nsx {
 %include "core/detector/MatrixParser.h"
 %include "base/utils/ProgressHandler.h"
 
-%include "core/quantify/PeakCoordinateSystem.h"
+%include "core/peak/PeakCoordinateSystem.h"
 %include "core/algo/RefinementBatch.h"
 %include "core/algo/Refiner.h"
 
 %template(RefinementBatchList) std::vector<nsx::RefinementBatch>;
 
-%include "core/quantify/Intensity.h"
+%include "core/peak/Intensity.h"
 
-%include "core/quantify/IntegrationRegion.h"
-%include "core/quantify/PeakData.h"
+%include "core/peak/IntegrationRegion.h"
+%include "core/peak/PeakData.h"
 
 
 %include "tables/crystal/UnitCell.h"

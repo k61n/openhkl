@@ -13,12 +13,12 @@
 //  ***********************************************************************************************
 
 #include "core/integration/ISigmaIntegrator.h"
-#include "core/quantify/Intensity.h"
+#include "core/peak/Intensity.h"
 #include "core/experiment/DataSet.h"
 #include "base/geometry/Ellipsoid.h"
 #include "core/shape/ShapeLibrary.h"
 #include "core/peak/Peak3D.h"
-#include "core/quantify/PeakCoordinateSystem.h"
+#include "core/peak/PeakCoordinateSystem.h"
 
 namespace nsx {
 

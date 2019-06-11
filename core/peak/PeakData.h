@@ -18,7 +18,7 @@
 #include <Eigen/Dense>
 #include <deque>
 
-#include "core/quantify/PeakCoordinateSystem.h"
+#include "core/peak/PeakCoordinateSystem.h"
 
 namespace nsx {
 

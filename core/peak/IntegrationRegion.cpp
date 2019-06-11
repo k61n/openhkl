@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/quantify/IntegrationRegion.h"
+#include "core/peak/IntegrationRegion.h"
 #include "tables/crystal/BrillouinZone.h"
 #include "tables/crystal/UnitCell.h"
 #include "core/detector/Detector.h"

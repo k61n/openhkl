@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 
-#include "core/quantify/PeakData.h"
+#include "core/peak/PeakData.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/DataSet.h"
