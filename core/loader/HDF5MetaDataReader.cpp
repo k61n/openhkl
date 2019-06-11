@@ -12,20 +12,18 @@
 //
 //  ***********************************************************************************************
 
-#include <memory>
-#include <stdexcept>
-
-#include <blosc.h>
+#include "core/loader/HDF5MetaDataReader.h"
 
 #include "core/detector/Detector.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
-#include "core/instrument/Source.h"
 #include "core/parser/BloscFilter.h"
 #include "core/parser/EigenToVector.h"
-#include "core/loader/HDF5MetaDataReader.h"
 #include "base/utils/Units.h"
+
+#include <memory>
+#include <stdexcept>
 
 namespace nsx {
 

@@ -12,21 +12,17 @@
 //
 //  ***********************************************************************************************
 
-#include <cassert>
-
-#include <blosc.h>
-
-#include "H5Cpp.h"
+#include "core/raw/IDataReader.h"
 
 #include "core/detector/Detector.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/parser/BloscFilter.h"
-#include "core/raw/IDataReader.h"
 #include "base/utils/Path.h"
 #include "base/utils/Units.h"
+
+#include <cassert>
 
 namespace nsx {
 

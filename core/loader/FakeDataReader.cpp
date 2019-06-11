@@ -12,19 +12,11 @@
 //
 //  ***********************************************************************************************
 
-#include <memory>
-
-#include <blosc.h>
-
-#include "core/detector/Detector.h"
-#include "core/gonio/Gonio.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/instrument/Sample.h"
-#include "core/instrument/Source.h"
-#include "core/parser/BloscFilter.h"
-#include "core/parser/EigenToVector.h"
 #include "core/loader/FakeDataReader.h"
-#include "base/utils/Units.h"
+
+#include "core/instrument/Diffractometer.h"
+
+#include <memory>
 
 namespace nsx {
 

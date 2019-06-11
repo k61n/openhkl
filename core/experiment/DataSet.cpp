@@ -27,7 +27,6 @@
 #include "base/utils/Units.h" // deg
 
 #include <H5Cpp.h>
-#include <blosc.h>
 #include <cmath>
 #include <stdexcept>
 #include <utility>
