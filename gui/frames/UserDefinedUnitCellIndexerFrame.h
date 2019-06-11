@@ -16,7 +16,7 @@
 #define GUI_FRAMES_USERDEFINEDUNITCELLINDEXERFRAME_H
 
 #include "core/algo/UserDefinedIndexer.h"
-#include "gui/models/peakstable.h"
+#include "gui/models/PeaksTable.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 #include <QDialogButtonBox>

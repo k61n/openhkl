@@ -22,7 +22,7 @@
 #include "core/experiment/DataTypes.h"
 #include "core/peak/Peak3D.h"
 #include "core/algo/Refiner.h"
-#include "gui/models/meta.h"
+#include "gui/models/Meta.h"
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
