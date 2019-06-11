@@ -15,15 +15,15 @@
 #include "core/resources/Resources.h"
 
 #include "base/utils/Path.h"
-#include "SingleResourceBioDiff2500.h"
-#include "SingleResourceBioDiff5000.h"
-#include "SingleResourceD10.h"
-#include "SingleResourceD19.h"
-#include "SingleResourceD9.h"
-#include "SingleResourceD9_large.h"
-#include "SingleResourceD9_large_lifting_arm.h"
-#include "SingleResourceD9_lifting_arm.h"
-#include "SingleResourceI16.h"
+#include "BioDiff2500.h"
+#include "BioDiff5000.h"
+#include "D10.h"
+#include "D19.h"
+#include "D9.h"
+#include "D9_large.h"
+#include "D9_large_lifting_arm.h"
+#include "D9_lifting_arm.h"
+#include "I16.h"
 
 #include <fstream>
 #include <sstream>
