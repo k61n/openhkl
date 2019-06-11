@@ -16,7 +16,7 @@
 #include <QStandardItem>
 #include <QStandardItemModel>
 
-#include "core/indexing/UserDefinedIndexer.h"
+#include "core/algo/UserDefinedIndexer.h"
 #include "core/peak/Peak3D.h"
 #include "core/experiment/Experiment.h"
 #include "base/geometry/ReciprocalVector.h"

@@ -23,7 +23,7 @@
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentTypes.h"
-#include "core/experiment/DataReaderFactory.h"
+#include "core/algo/DataReaderFactory.h"
 #include "base/logger/Logger.h"
 #include "core/instrument/HardwareParameters.h"
 #include "base/utils/Path.h"

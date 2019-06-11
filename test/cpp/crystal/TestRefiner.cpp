@@ -6,11 +6,11 @@
 
 #include <Eigen/Dense>
 
-#include "core/indexing/AutoIndexer.h"
+#include "core/algo/AutoIndexer.h"
 #include "core/peak/Peak3D.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/experiment/DataReaderFactory.h"
+#include "core/algo/DataReaderFactory.h"
 #include "core/convolve/ConvolverFactory.h"
 
 #include "core/experiment/Experiment.h"
@@ -20,7 +20,7 @@
 #include "core/instrument/Sample.h"
 #include "core/peak/Peak3D.h"
 #include "core/merge_and_filter/PeakFilter.h"
-#include "core/refine/Refiner.h"
+#include "core/algo/Refiner.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"

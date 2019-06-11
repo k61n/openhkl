@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/experiment/DataReaderFactory.cpp
+//! @file      core/algo/DataReaderFactory.cpp
 //! @brief     Implements class DataReaderFactory
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/experiment/DataReaderFactory.h"
+#include "core/algo/DataReaderFactory.h"
 
 #include "core/loader/FakeDataReader.h"
 #include "core/loader/HDF5DataReader.h"

@@ -48,7 +48,7 @@
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/integration/PixelSumIntegrator.h"
-#include "core/experiment/DataReaderFactory.h"
+#include "core/algo/DataReaderFactory.h"
 #include "base/logger/Logger.h"
 #include "core/merge_and_filter/MergedData.h"
 #include "core/merge_and_filter/MergedPeak.h"

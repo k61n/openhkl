@@ -21,7 +21,7 @@
 #include "core/experiment/DataSet.h"
 #include "core/experiment/DataTypes.h"
 #include "core/peak/Peak3D.h"
-#include "core/refine/Refiner.h"
+#include "core/algo/Refiner.h"
 #include "gui/models/meta.h"
 #include <QFileInfo>
 #include <QGridLayout>

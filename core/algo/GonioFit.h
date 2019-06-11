@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/experiment/GonioFit.h
+//! @file      core/algo/GonioFit.h
 //! @brief     Defines struct GonioFit and declares functions fit...GonioOffset
 //!
 //! @homepage  ###HOMEPAGE###

@@ -17,7 +17,7 @@
 #include <utility>
 #include <vector>
 
-#include "core/indexing/UserDefinedIndexer.h"
+#include "core/algo/UserDefinedIndexer.h"
 #include "core/peak/Peak3D.h"
 
 #include "apps/frames/NSXQFrame.h"

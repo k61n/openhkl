@@ -16,7 +16,7 @@
 
 #include <QWidget>
 
-#include "core/refine/Refiner.h"
+#include "core/algo/Refiner.h"
 
 namespace Ui {
 class WidgetRefinerFit;

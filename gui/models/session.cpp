@@ -17,7 +17,7 @@
 #include "gui/graphics/detectorscene.h"
 
 #include "core/experiment/DataSet.h"
-#include "core/experiment/DataReaderFactory.h"
+#include "core/algo/DataReaderFactory.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
 

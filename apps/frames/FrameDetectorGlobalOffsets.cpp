@@ -21,7 +21,7 @@
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/gonio/Gonio.h"
-#include "core/experiment/GonioFit.h"
+#include "core/algo/GonioFit.h"
 #include "core/instrument/Diffractometer.h"
 #include "base/logger/Logger.h"
 #include "base/utils/Units.h"

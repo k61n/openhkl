@@ -6,7 +6,7 @@
 
 #include <Eigen/Dense>
 
-#include "core/indexing/AutoIndexer.h"
+#include "core/algo/AutoIndexer.h"
 #include "core/crystal/UnitCell.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/peak/Peak3D.h"
@@ -19,7 +19,7 @@
 #include "core/instrument/Sample.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/integration/ShapeLibrary.h"
-#include "core/experiment/DataReaderFactory.h"
+#include "core/algo/DataReaderFactory.h"
 #include "core/peak/Peak3D.h"
 #include "core/merge_and_filter/PeakFilter.h"
 #include "core/search_peaks/PeakFinder.h"

@@ -4,7 +4,7 @@
 #include <random>
 #include <vector>
 
-#include "core/indexing/UserDefinedIndexer.h"
+#include "core/algo/UserDefinedIndexer.h"
 #include "core/crystal/UnitCell.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Units.h"

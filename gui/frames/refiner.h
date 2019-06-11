@@ -15,7 +15,7 @@
 #ifndef GUI_FRAMES_REFINER_H
 #define GUI_FRAMES_REFINER_H
 
-#include "core/refine/Refiner.h"
+#include "core/algo/Refiner.h"
 #include "gui/models/peakstable.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>

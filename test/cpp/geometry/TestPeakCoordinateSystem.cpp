@@ -13,7 +13,7 @@
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/experiment/DataReaderFactory.h"
+#include "core/algo/DataReaderFactory.h"
 #include "core/peak/Peak3D.h"
 #include "core/quantify/PeakCoordinateSystem.h"
 

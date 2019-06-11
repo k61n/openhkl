@@ -18,7 +18,7 @@
 
 #include "core/peak/Peak3D.h"
 #include "core/experiment/DataTypes.h"
-#include "core/refine/Refiner.h"
+#include "core/algo/Refiner.h"
 
 #include "apps/frames/NSXQFrame.h"
 

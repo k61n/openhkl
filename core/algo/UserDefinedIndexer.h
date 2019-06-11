@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/indexing/UserDefinedIndexer.h
+//! @file      core/algo/UserDefinedIndexer.h
 //! @brief     Defines class UserDefinedUnitCellIndexer
 //!
 //! @homepage  ###HOMEPAGE###

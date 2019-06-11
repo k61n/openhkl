@@ -94,9 +94,9 @@ using Eigen::Quaterniond;
 #include "base/utils/ProgressHandler.h"
 
 #include "core/quantify/PeakCoordinateSystem.h"
-#include "core/refine/RefinementBatch.h"
-#include "core/refine/Refiner.h"
-#include "core/indexing/AutoIndexer.h"
+#include "core/algo/RefinementBatch.h"
+#include "core/algo/Refiner.h"
+#include "core/algo/AutoIndexer.h"
 #include "core/quantify/Intensity.h"
 #include "core/quantify/IPeakIntegrator.h"
 #include "core/integration/MeanBackgroundIntegrator.h"
@@ -153,7 +153,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/loader/TiffDataReader.h"
 #include "core/loader/BloscFilter.h"
 #include "core/search_peaks/PeakFinder.h"
-#include "core/experiment/DataReaderFactory.h"
+#include "core/algo/DataReaderFactory.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorFactory.h"
 #include "core/gonio/TransAxis.h"
@@ -224,7 +224,7 @@ using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 
 #include "core/loader/MetaData.h"
 #include "core/loader/IDataReader.h"
-#include "core/experiment/DataReaderFactory.h"
+#include "core/algo/DataReaderFactory.h"
 #include "core/loader/ILLDataReader.h"
 #include "core/loader/HDF5DataReader.h"
 #include "core/experiment/DataSet.h"
@@ -393,7 +393,7 @@ namespace nsx {
 
 %include "core/loader/MetaData.h"
 %include "core/loader/IDataReader.h"
-%include "core/experiment/DataReaderFactory.h"
+%include "core/algo/DataReaderFactory.h"
 %include "core/loader/ILLDataReader.h"
 %include "core/loader/HDF5MetaDataReader.h"
 %include "core/loader/HDF5DataReader.h"
@@ -421,8 +421,8 @@ namespace nsx {
 %include "base/utils/ProgressHandler.h"
 
 %include "core/quantify/PeakCoordinateSystem.h"
-%include "core/refine/RefinementBatch.h"
-%include "core/refine/Refiner.h"
+%include "core/algo/RefinementBatch.h"
+%include "core/algo/Refiner.h"
 
 %template(RefinementBatchList) std::vector<nsx::RefinementBatch>;
 
@@ -478,7 +478,7 @@ namespace nsx {
 %include "core/loader/RawDataReader.h"
 %include "core/loader/TiffDataReader.h"
 %include "core/loader/BloscFilter.h"
-%include "core/experiment/DataReaderFactory.h"
+%include "core/algo/DataReaderFactory.h"
 
 %include "core/detector/Detector.h"
 %include "core/detector/DetectorFactory.h"
@@ -502,7 +502,7 @@ namespace nsx {
 %include "core/gonio/AxisFactory.h"
 %include "core/gonio/RotAxis.h"
 
-%include "core/indexing/AutoIndexer.h"
+%include "core/algo/AutoIndexer.h"
 
 %include "base/utils/Singleton.h"
 

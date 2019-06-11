@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/refine/Refiner.h
+//! @file      core/algo/Refiner.h
 //! @brief     Defines class Refiner
 //!
 //! @homepage  ###HOMEPAGE###
@@ -15,7 +15,7 @@
 #ifndef CORE_REFINE_REFINER_H
 #define CORE_REFINE_REFINER_H
 
-#include "core/refine/RefinementBatch.h"
+#include "core/algo/RefinementBatch.h"
 
 namespace nsx {
 

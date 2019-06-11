@@ -25,7 +25,7 @@
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/integration/PixelSumIntegrator.h"
-#include "core/experiment/DataReaderFactory.h"
+#include "core/algo/DataReaderFactory.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "base/logger/Logger.h"

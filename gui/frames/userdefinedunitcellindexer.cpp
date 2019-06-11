@@ -19,7 +19,7 @@
 #include "gui/models/session.h"
 #include <QCR/engine/logger.h>
 
-#include "core/indexing/UserDefinedIndexer.h"
+#include "core/algo/UserDefinedIndexer.h"
 #include "core/peak/Peak3D.h"
 #include "core/experiment/Experiment.h"
 #include "base/geometry/ReciprocalVector.h"
