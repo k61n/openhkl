@@ -17,7 +17,7 @@
 #include "core/quantify/Intensity.h"
 #include "core/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
-#include "core/logger/Logger.h"
+#include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 
 namespace nsx {

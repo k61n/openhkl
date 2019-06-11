@@ -23,7 +23,7 @@
 #include "core/detector/Detector.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
-#include "core/geometry/ReciprocalVector.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
@@ -33,7 +33,7 @@
 #include "core/loader/IDataReader.h"
 #include "core/monte-carlo/MCAbsorption.h"
 #include "core/peak/Peak3D.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 
 #include "apps/dialogs/DialogMCAbsorption.h"
 #include "apps/models/ExperimentItem.h"

@@ -22,8 +22,8 @@
 #include "core/experiment/GonioFit.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
-#include "core/logger/Logger.h"
-#include "core/utils/Units.h"
+#include "base/logger/Logger.h"
+#include "base/utils/Units.h"
 
 #include "apps/delegates/DoubleItemDelegate.h"
 #include "apps/frames/FrameSampleGlobalOffsets.h"

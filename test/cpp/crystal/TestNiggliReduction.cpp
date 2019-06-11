@@ -7,7 +7,7 @@
 
 #include "core/crystal/NiggliReduction.h"
 #include "core/crystal/UnitCell.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 
 const double tolerance = 1e-6;
 

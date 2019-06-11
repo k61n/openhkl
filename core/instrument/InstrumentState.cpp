@@ -17,7 +17,7 @@
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
-#include "core/logger/Logger.h"
+#include "base/logger/Logger.h"
 
 #include <algorithm>
 #include <Eigen/Dense>

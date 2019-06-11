@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/logger/Logger.h"
+#include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 
 #include "apps/delegates/DoubleItemDelegate.h"

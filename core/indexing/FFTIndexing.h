@@ -15,7 +15,7 @@
 #ifndef CORE_AUTO_INDEXING_FFTINDEXING_H
 #define CORE_AUTO_INDEXING_FFTINDEXING_H
 
-#include "core/geometry/ReciprocalVector.h"
+#include "base/geometry/ReciprocalVector.h"
 
 namespace nsx {
 

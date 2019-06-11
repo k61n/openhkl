@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "core/utils/StringIO.h"
+#include "base/utils/StringIO.h"
 
 TEST_CASE("test/utils/TestStringIO.cpp", "")
 {

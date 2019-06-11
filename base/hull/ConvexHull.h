@@ -15,8 +15,8 @@
 #ifndef CORE_HULL_CONVEXHULL_H
 #define CORE_HULL_CONVEXHULL_H
 
-#include "core/geometry/AABB.h"
-#include "core/hull/Triangle.h"
+#include "base/geometry/AABB.h"
+#include "base/hull/Triangle.h"
 
 #include <map>
 #include <vector>

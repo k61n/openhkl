@@ -17,7 +17,7 @@
 
 #include "core/peak/Peak3D.h"
 #include "core/crystal/UnitCell.h"
-#include "core/utils/ProgressHandler.h"
+#include "base/utils/ProgressHandler.h"
 
 namespace nsx {
 

@@ -15,12 +15,12 @@
 #include <Eigen/Dense>
 
 #include "core/detector/CylindricalDetector.h"
-#include "core/geometry/DirectVector.h"
-#include "core/geometry/ReciprocalVector.h"
+#include "base/geometry/DirectVector.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "core/gonio/Gonio.h"
 #include "core/gonio/RotAxis.h"
 #include "core/gonio/TransAxis.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 
 namespace nsx {
 

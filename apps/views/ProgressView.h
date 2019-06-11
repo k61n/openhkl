@@ -20,7 +20,7 @@
 #include <QProgressDialog>
 #include <QTimer>
 
-#include "core/utils/ProgressHandler.h"
+#include "base/utils/ProgressHandler.h"
 
 class ProgressView : public QProgressDialog {
     Q_OBJECT

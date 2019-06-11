@@ -37,9 +37,9 @@
 
 #include "core/crystal/UnitCell.h"
 #include "core/experiment/Experiment.h"
-#include "core/geometry/ReciprocalVector.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/logger/Logger.h"
+#include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 
 #include "QCustomPlot.h"

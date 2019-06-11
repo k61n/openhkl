@@ -18,7 +18,7 @@
 #include "core/quantify/Intensity.h"
 #include "core/experiment/DataTypes.h"
 #include "core/quantify/IntegrationRegion.h"
-#include "core/utils/ProgressHandler.h"
+#include "base/utils/ProgressHandler.h"
 
 namespace nsx {
 

@@ -18,7 +18,7 @@
 #include "core/fitting/FitParameters.h"
 #include "core/fitting/Minimizer.h"
 #include "core/loader/IDataReader.h"
-#include "core/logger/Logger.h"
+#include "base/logger/Logger.h"
 
 namespace nsx {
 

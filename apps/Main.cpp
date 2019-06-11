@@ -19,9 +19,9 @@
 #include <QSplashScreen>
 #include <QTimer>
 
-#include "core/logger/AggregateStreamWrapper.h"
-#include "core/logger/Logger.h"
-#include "core/logger/StdStreamWrapper.h"
+#include "base/logger/AggregateStreamWrapper.h"
+#include "base/logger/Logger.h"
+#include "base/logger/StdStreamWrapper.h"
 
 #include "apps/MainWindow.h"
 #include "apps/NSXQtApp.h"

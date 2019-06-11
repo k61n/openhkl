@@ -82,16 +82,16 @@ using Eigen::Quaterniond;
 #include "core/fitting/Minimizer.h"
 
 #include "core/loader/EigenToVector.h"
-#include "core/utils/CSV.h"
+#include "base/utils/CSV.h"
 #include "core/detector/DataOrder.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 
-#include "core/utils/Path.h"
+#include "base/utils/Path.h"
 
 #include "core/loader/Parser.h"
-#include "core/utils/YAMLType.h"
+#include "base/utils/YAMLType.h"
 #include "core/loader/MatrixParser.h"
-#include "core/utils/ProgressHandler.h"
+#include "base/utils/ProgressHandler.h"
 
 #include "core/quantify/PeakCoordinateSystem.h"
 #include "core/refine/RefinementBatch.h"
@@ -122,22 +122,22 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/crystal/NiggliReduction.h"
 #include "core/crystal/GruberReduction.h"
 #include "core/crystal/SymOp.h"
-#include "core/hull/Vertex.h"
-#include "core/hull/Triangle.h"
+#include "base/hull/Vertex.h"
+#include "base/hull/Triangle.h"
 
-#include "core/geometry/Ellipsoid.h"
-#include "core/hull/Face.h"
+#include "base/geometry/Ellipsoid.h"
+#include "base/hull/Face.h"
 #include "core/monte-carlo/MCAbsorption.h"
-#include "core/hull/ConvexHull.h"
+#include "base/hull/ConvexHull.h"
 #include "core/crystal/BrillouinZone.h"
 
-#include "core/geometry/AABB.h"
-#include "core/hull/Edge.h"
+#include "base/geometry/AABB.h"
+#include "base/hull/Edge.h"
 #include "core/search_peaks/Blob3D.h"
 
 
-#include "core/geometry/DirectVector.h"
-#include "core/geometry/ReciprocalVector.h"
+#include "base/geometry/DirectVector.h"
+#include "base/geometry/ReciprocalVector.h"
 
 #include "core/detector/DetectorEvent.h"
 
@@ -184,8 +184,8 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/gonio/AxisFactory.h"
 #include "core/gonio/RotAxis.h"
 
-#include "core/utils/Singleton.h"
-#include "core/utils/Factory.h"
+#include "base/utils/Singleton.h"
+#include "base/utils/Factory.h"
 
 #include "core/detector/DataOrder.h"
 
@@ -203,8 +203,8 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
 #include "core/instrument/Sample.h"
 
-#include "core/geometry/AABB.h"
-#include "core/geometry/Ellipsoid.h"
+#include "base/geometry/AABB.h"
+#include "base/geometry/Ellipsoid.h"
 #include "core/search_peaks/Blob3D.h"
 
 #include "core/peak/Peak3D.h"
@@ -220,7 +220,7 @@ using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
 
 using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 
-#include "core/utils/Singleton.h"
+#include "base/utils/Singleton.h"
 
 #include "core/loader/MetaData.h"
 #include "core/loader/IDataReader.h"
@@ -303,10 +303,10 @@ using namespace nsx;
 
 %template(UnitCellList) std::vector<nsx::sptrUnitCell>;
 
-%include "core/geometry/DirectVector.h"
+%include "base/geometry/DirectVector.h"
 %template(DirectVectorList) std::vector<nsx::DirectVector>;
 
-%include "core/geometry/ReciprocalVector.h"
+%include "base/geometry/ReciprocalVector.h"
 %template(ReciprocalVectorList) std::vector<nsx::ReciprocalVector>;
 %template(ReciprocalVectorQueue) std::deque<nsx::ReciprocalVector>;
 
@@ -318,8 +318,8 @@ using namespace nsx;
 %include "core/instrument/Monochromator.h"
 %include "core/instrument/Source.h"
 
-%include "core/geometry/AABB.h"
-%include "core/geometry/Ellipsoid.h"
+%include "base/geometry/AABB.h"
+%include "base/geometry/Ellipsoid.h"
 %include "core/search_peaks/Blob3D.h"
 
 %include "core/chemistry/Material.h"
@@ -342,7 +342,7 @@ using namespace nsx;
 %include "core/detector/FlatDetector.h"
 %include "core/instrument/Diffractometer.h"
 %include "core/instrument/Sample.h"
-%include "core/utils/Singleton.h"
+%include "base/utils/Singleton.h"
 %include "core/instrument/InstrumentState.h"
 %include "core/instrument/InterpolatedState.h"
 
@@ -412,13 +412,13 @@ namespace nsx {
 %include "core/fitting/Minimizer.h"
 
 %include "core/loader/EigenToVector.h"
-%include "core/utils/CSV.h"
+%include "base/utils/CSV.h"
 %include "core/detector/DataOrder.h"
-%include "core/utils/Path.h"
+%include "base/utils/Path.h"
 
 %include "core/loader/Parser.h"
 %include "core/loader/MatrixParser.h"
-%include "core/utils/ProgressHandler.h"
+%include "base/utils/ProgressHandler.h"
 
 %include "core/quantify/PeakCoordinateSystem.h"
 %include "core/refine/RefinementBatch.h"
@@ -455,14 +455,14 @@ namespace nsx {
 %include "core/crystal/SymOp.h"
 %template(SymOpList) std::vector<nsx::SymOp>;
 
-%include "core/hull/Vertex.h"
-%include "core/hull/Triangle.h"
-%include "core/geometry/Ellipsoid.h"
-%include "core/hull/Face.h"
+%include "base/hull/Vertex.h"
+%include "base/hull/Triangle.h"
+%include "base/geometry/Ellipsoid.h"
+%include "base/hull/Face.h"
 %include "core/monte-carlo/MCAbsorption.h"
-%include "core/hull/ConvexHull.h"
-%include "core/geometry/AABB.h"
-%include "core/hull/Edge.h"
+%include "base/hull/ConvexHull.h"
+%include "base/geometry/AABB.h"
+%include "base/hull/Edge.h"
 %include "core/search_peaks/Blob3D.h"
 
 %include "core/crystal/BrillouinZone.h"
@@ -504,7 +504,7 @@ namespace nsx {
 
 %include "core/indexing/AutoIndexer.h"
 
-%include "core/utils/Singleton.h"
+%include "base/utils/Singleton.h"
 
 %newobject new_double;
 double* new_double();

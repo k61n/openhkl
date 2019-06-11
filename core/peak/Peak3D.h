@@ -19,7 +19,7 @@
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/UnitCell.h"
 #include "core/detector/DetectorEvent.h"
-#include "core/geometry/Ellipsoid.h"
+#include "base/geometry/Ellipsoid.h"
 
 #include <memory>
 #include <vector>

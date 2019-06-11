@@ -19,7 +19,7 @@
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/peak/Peak3D.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 
 const double gruber_tolerance = 1e-4;
 const double niggli_tolerance = 1e-4;

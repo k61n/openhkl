@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/logger/AggregateStreamWrapper.h
-//! @brief     Defines class AggregateStreamWrapper
+//! @file      core/logger/StdStreamWrapper.h
+//! @brief     Defines class StdStreamWrapper
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,25 +12,24 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOGGER_AGGREGATESTREAMWRAPPER_H
-#define CORE_LOGGER_AGGREGATESTREAMWRAPPER_H
+#ifndef CORE_LOGGER_STDSTREAMWRAPPER_H
+#define CORE_LOGGER_STDSTREAMWRAPPER_H
 
-#include <vector>
+#include <ostream>
 
-#include "core/logger/IStreamWrapper.h"
+#include "base/logger/IStreamWrapper.h"
 
 namespace nsx {
 
-class AggregateStreamWrapper : public IStreamWrapper {
+class StdStreamWrapper : public IStreamWrapper {
 public:
-    AggregateStreamWrapper(
-        std::function<std::string()> prefix = nullptr,
+    //! Constructor
+    StdStreamWrapper(
+        std::ostream& stream, std::function<std::string()> prefix = nullptr,
         std::function<std::string()> suffix = nullptr);
+    virtual ~StdStreamWrapper();
 
-    virtual ~AggregateStreamWrapper();
-
-    void addWrapper(IStreamWrapper* wrapper);
-
+    //! Write a message to the stream
     virtual void print(const std::string& message) override;
 
     virtual void printPrefix() override;
@@ -38,9 +37,9 @@ public:
     virtual void printSuffix() override;
 
 private:
-    std::vector<IStreamWrapper*> _wrappers;
+    std::ostream& _stream;
 };
 
 } // namespace nsx
 
-#endif // CORE_LOGGER_AGGREGATESTREAMWRAPPER_H
+#endif // CORE_LOGGER_STDSTREAMWRAPPER_H

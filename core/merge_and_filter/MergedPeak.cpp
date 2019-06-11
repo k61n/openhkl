@@ -22,8 +22,8 @@
 #include "core/crystal/MillerIndex.h"
 #include "core/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
-#include "core/geometry/ReciprocalVector.h"
-#include "core/logger/Logger.h"
+#include "base/geometry/ReciprocalVector.h"
+#include "base/logger/Logger.h"
 #include "core/merge_and_filter/MergedPeak.h"
 #include "core/peak/Peak3D.h"
 

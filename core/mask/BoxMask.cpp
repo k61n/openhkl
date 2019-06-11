@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/mask/BoxMask.h"
-#include "core/geometry/Ellipsoid.h"
+#include "base/geometry/Ellipsoid.h"
 
 namespace nsx {
 

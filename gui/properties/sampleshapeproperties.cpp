@@ -14,7 +14,7 @@
 
 
 #include "gui/properties/sampleshapeproperties.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 #include "gui/models/session.h"
 #include <QGridLayout>
 #include <QGroupBox>

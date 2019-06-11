@@ -18,7 +18,7 @@
 #include "core/gonio/Component.h" // inheriting from
 
 #include "core/detector/DetectorEvent.h"
-#include "core/geometry/ReciprocalVector.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "core/detector/DataOrder.h"
 
 #include <Eigen/Dense>

@@ -9,7 +9,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/search_peaks/PeakFinder.h"
-#include "core/utils/ProgressHandler.h"
+#include "base/utils/ProgressHandler.h"
 
 nsx::Ellipsoid toDetectorSpace(const nsx::Ellipsoid e, const nsx::sptrDataSet data)
 {

@@ -23,7 +23,7 @@
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Source.h"
-#include "core/logger/Logger.h"
+#include "base/logger/Logger.h"
 #include "core/merge_and_filter/MergedData.h"
 #include "core/peak/Peak3D.h"
 #include "core/merge_and_filter/PeakFilter.h"

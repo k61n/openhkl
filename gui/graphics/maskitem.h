@@ -16,7 +16,7 @@
 #define GUI_GRAPHICS_MASKITEM_H
 
 #include "core/experiment/DataTypes.h"
-#include "core/geometry/AABB.h"
+#include "base/geometry/AABB.h"
 #include "gui/graphics/nsxgraphicsitem.h"
 
 /*! Creates a mask that will be used to unselect/select peaks whether their

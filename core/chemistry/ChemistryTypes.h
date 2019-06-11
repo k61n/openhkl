@@ -18,7 +18,7 @@
 #include <complex>
 #include <map>
 
-#include "core/utils/Variant.h"
+#include "base/utils/Variant.h"
 
 namespace nsx {
 

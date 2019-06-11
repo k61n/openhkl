@@ -1,7 +1,7 @@
 #include "test/cpp/catch.hpp"
 #include <string>
 
-#include "core/utils/Variant.h"
+#include "base/utils/Variant.h"
 
 TEST_CASE("test/utils/TestVariant.cpp", "")
 {

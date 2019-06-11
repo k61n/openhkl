@@ -23,9 +23,9 @@
 #include "core/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
 #include "core/fitting/Minimizer.h"
-#include "core/geometry/ReciprocalVector.h"
-#include "core/logger/Logger.h"
-#include "core/utils/Units.h"
+#include "base/geometry/ReciprocalVector.h"
+#include "base/logger/Logger.h"
+#include "base/utils/Units.h"
 
 namespace nsx {
 

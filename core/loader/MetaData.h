@@ -15,7 +15,7 @@
 #ifndef CORE_LOADER_METADATA_H
 #define CORE_LOADER_METADATA_H
 
-#include "core/utils/Variant.h"
+#include "base/utils/Variant.h"
 
 #include <memory>
 #include <map>

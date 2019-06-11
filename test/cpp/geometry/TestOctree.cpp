@@ -5,8 +5,8 @@
 #include <random>
 #include <vector>
 
-#include "core/geometry/AABB.h"
-#include "core/geometry/Ellipsoid.h"
+#include "base/geometry/AABB.h"
+#include "base/geometry/Ellipsoid.h"
 #include "core/merge_and_filter/Octree.h"
 
 void collision_test()

@@ -1,5 +1,5 @@
 #include "core/chemistry/IsotopeDatabaseManager.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 #include "test/cpp/catch.hpp"
 
 const double tolerance = 1e-6;

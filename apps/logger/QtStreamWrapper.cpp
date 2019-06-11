@@ -18,9 +18,9 @@
 #include <QString>
 #include <QTextEdit>
 
-#include "core/logger/AggregateStreamWrapper.h"
-#include "core/logger/LogFileStreamWrapper.h"
-#include "core/logger/Logger.h"
+#include "base/logger/AggregateStreamWrapper.h"
+#include "base/logger/LogFileStreamWrapper.h"
+#include "base/logger/Logger.h"
 
 #include "apps/NoteBook.h"
 #include "apps/logger/QtStreamWrapper.h"

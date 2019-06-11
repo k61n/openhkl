@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/hull/Triangle.h"
+#include "base/hull/Triangle.h"
 
 namespace nsx {
 

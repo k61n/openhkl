@@ -19,7 +19,7 @@
 #include "core/gonio/TransAxis.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 
 #include "apps/models/SampleItem.h"
 #include "apps/models/UnitCellItem.h"

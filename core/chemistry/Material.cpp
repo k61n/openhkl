@@ -20,7 +20,7 @@
 #include "core/chemistry/ChemicalFormulaParser.h"
 #include "core/chemistry/IsotopeDatabaseManager.h"
 #include "core/chemistry/Material.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 
 namespace nsx {
 

@@ -14,7 +14,7 @@
 #include "core/convolve/ConvolverFactory.h"
 
 #include "core/experiment/Experiment.h"
-#include "core/geometry/ReciprocalVector.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
@@ -22,8 +22,8 @@
 #include "core/merge_and_filter/PeakFilter.h"
 #include "core/refine/Refiner.h"
 #include "core/search_peaks/PeakFinder.h"
-#include "core/utils/ProgressHandler.h"
-#include "core/utils/Units.h"
+#include "base/utils/ProgressHandler.h"
+#include "base/utils/Units.h"
 
 TEST_CASE("test/crystal/TestRefiner.cpp", "")
 {

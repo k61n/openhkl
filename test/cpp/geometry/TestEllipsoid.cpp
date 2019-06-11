@@ -1,7 +1,7 @@
 #include "test/cpp/catch.hpp"
 
-#include "core/geometry/AABB.h"
-#include "core/geometry/Ellipsoid.h"
+#include "base/geometry/AABB.h"
+#include "base/geometry/Ellipsoid.h"
 
 #include <Eigen/Dense>
 #include <iostream>

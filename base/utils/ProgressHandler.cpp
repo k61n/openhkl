@@ -15,7 +15,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "core/utils/ProgressHandler.h"
+#include "base/utils/ProgressHandler.h"
 
 namespace nsx {
 

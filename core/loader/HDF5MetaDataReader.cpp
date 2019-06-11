@@ -25,7 +25,7 @@
 #include "core/loader/BloscFilter.h"
 #include "core/loader/EigenToVector.h"
 #include "core/loader/HDF5MetaDataReader.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 
 namespace nsx {
 

@@ -16,7 +16,7 @@
 
 #include "core/crystal/MillerIndex.h"
 #include "core/experiment/DataSet.h"
-#include "core/geometry/ReciprocalVector.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
@@ -24,7 +24,7 @@
 #include "core/loader/IDataReader.h"
 #include "core/quantify/IPeakIntegrator.h"
 #include "core/merge_and_filter/PeakFilter.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 
 #include <algorithm>
 #include <cmath>

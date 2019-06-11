@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/geometry/ReciprocalVector.cpp
-//! @brief     Implements class ReciprocalVector
+//! @file      core/geometry/DirectVector.cpp
+//! @brief     Implements class DirectVector
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,43 +12,45 @@
 //
 //  ***********************************************************************************************
 
+#include <stdexcept>
+
 #include <Eigen/Dense>
 
-#include "core/geometry/ReciprocalVector.h"
+#include "base/geometry/DirectVector.h"
 
 namespace nsx {
 
-ReciprocalVector::ReciprocalVector(double x, double y, double z) : _rvector(x, y, z) {}
+DirectVector::DirectVector(double x, double y, double z) : _dvector(x, y, z) {}
 
-ReciprocalVector::ReciprocalVector(const Eigen::RowVector3d& rvector) : _rvector(rvector) {}
+DirectVector::DirectVector(const Eigen::Vector3d& dvector) : _dvector(dvector) {}
 
-const Eigen::RowVector3d& ReciprocalVector::rowVector() const
+const Eigen::Vector3d& DirectVector::vector() const
 {
-    return _rvector;
+    return _dvector;
 }
 
-double ReciprocalVector::operator[](int index) const
+double DirectVector::operator[](int index) const
 {
     if (index < 0 || index > 2)
         throw std::runtime_error("Invalid index for a 3D vector");
-    return _rvector[index];
+    return _dvector[index];
 }
 
-const double& ReciprocalVector::operator[](int index)
+const double& DirectVector::operator[](int index)
 {
     if (index < 0 || index > 2)
         throw std::runtime_error("Invalid index for a 3D vector");
-    return _rvector[index];
+    return _dvector[index];
 }
 
-void ReciprocalVector::print(std::ostream& os) const
+void DirectVector::print(std::ostream& os) const
 {
-    os << _rvector;
+    os << _dvector;
 }
 
-std::ostream& operator<<(std::ostream& os, const ReciprocalVector& rvector)
+std::ostream& operator<<(std::ostream& os, const DirectVector& dvector)
 {
-    rvector.print(os);
+    dvector.print(os);
     return os;
 }
 

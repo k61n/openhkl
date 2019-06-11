@@ -3,7 +3,7 @@
 
 #include <Eigen/Dense>
 
-#include "core/geometry/AABB.h"
+#include "base/geometry/AABB.h"
 
 const double tolerance = 1e-5;
 

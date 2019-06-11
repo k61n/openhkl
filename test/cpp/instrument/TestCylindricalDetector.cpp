@@ -6,7 +6,7 @@
 #include "core/detector/CylindricalDetector.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/InstrumentState.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 
 const double tolerance = 1e-3;
 

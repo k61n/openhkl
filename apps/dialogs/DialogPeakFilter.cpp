@@ -22,7 +22,7 @@
 
 #include "core/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
-#include "core/logger/Logger.h"
+#include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/merge_and_filter/PeakFilter.h"
 

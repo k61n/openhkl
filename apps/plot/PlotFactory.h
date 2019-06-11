@@ -14,8 +14,8 @@
 
 #pragma once
 
-#include "core/utils/Factory.h"
-#include "core/utils/Singleton.h"
+#include "base/utils/Factory.h"
+#include "base/utils/Singleton.h"
 
 #include "apps/plot/SXPlot.h"
 

@@ -15,7 +15,7 @@
 #include "core/integration/Profile3DIntegrator.h"
 #include "core/quantify/Intensity.h"
 #include "core/experiment/DataSet.h"
-#include "core/geometry/Ellipsoid.h"
+#include "base/geometry/Ellipsoid.h"
 #include "core/integration/ShapeLibrary.h"
 #include "core/peak/Peak3D.h"
 #include "core/quantify/PeakCoordinateSystem.h"

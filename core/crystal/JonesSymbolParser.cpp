@@ -21,7 +21,7 @@
 #include <string>
 
 #include "core/crystal/JonesSymbolParser.h"
-#include "core/utils/StringIO.h"
+#include "base/utils/StringIO.h"
 
 namespace nsx {
 

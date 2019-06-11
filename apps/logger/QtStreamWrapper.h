@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "core/logger/IStreamWrapper.h"
+#include "base/logger/IStreamWrapper.h"
 
 class NoteBook;
 

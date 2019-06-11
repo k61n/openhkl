@@ -2,10 +2,10 @@
 #include <fstream>
 #include <stdexcept>
 
-#include "core/geometry/AABB.h"
-#include "core/hull/ConvexHull.h"
-#include "core/hull/Face.h"
-#include "core/hull/Vertex.h"
+#include "base/geometry/AABB.h"
+#include "base/hull/ConvexHull.h"
+#include "base/hull/Face.h"
+#include "base/hull/Vertex.h"
 
 const double tolerance = 1e-9;
 //! Check that the Hull satisfies the convexity condition. This consists in

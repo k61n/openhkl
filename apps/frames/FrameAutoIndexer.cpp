@@ -14,9 +14,9 @@
 
 #include "core/indexing/AutoIndexer.h"
 #include "core/crystal/UnitCell.h"
-#include "core/logger/Logger.h"
+#include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 
 #include "apps/frames/FrameAutoIndexer.h"
 #include "apps/models/CollectedPeaksModel.h"

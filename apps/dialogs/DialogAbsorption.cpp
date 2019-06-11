@@ -26,7 +26,7 @@
 #include "core/gonio/RotAxis.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
-#include "core/logger/Logger.h"
+#include "base/logger/Logger.h"
 
 #include "apps/dialogs/DialogAbsorption.h"
 #include "apps/models/CrystalScene.h"

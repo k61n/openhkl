@@ -16,9 +16,9 @@
 
 #include "core/chemistry/IsotopeDatabaseManager.h"
 #include "core/resources/Resources.h"
-#include "core/utils/Path.h"
-#include "core/utils/Units.h"
-#include "core/utils/YAMLType.h"
+#include "base/utils/Path.h"
+#include "base/utils/Units.h"
+#include "base/utils/YAMLType.h"
 
 namespace nsx {
 

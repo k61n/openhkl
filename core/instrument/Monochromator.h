@@ -15,7 +15,7 @@
 #ifndef CORE_INSTRUMENT_MONOCHROMATOR_H
 #define CORE_INSTRUMENT_MONOCHROMATOR_H
 
-#include "core/geometry/ReciprocalVector.h"
+#include "base/geometry/ReciprocalVector.h"
 
 #include <yaml-cpp/yaml.h>
 

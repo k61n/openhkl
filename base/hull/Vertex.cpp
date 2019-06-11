@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/hull/Vertex.h"
+#include "base/hull/Vertex.h"
 
 namespace nsx {
 

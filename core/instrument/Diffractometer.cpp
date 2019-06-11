@@ -20,7 +20,7 @@
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/resources/Resources.h"
-#include "core/utils/Path.h"
+#include "base/utils/Path.h"
 
 namespace nsx {
 

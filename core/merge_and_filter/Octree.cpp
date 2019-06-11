@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/merge_and_filter/Octree.h"
-#include "core/geometry/Ellipsoid.h"
+#include "base/geometry/Ellipsoid.h"
 
 namespace nsx {
 

@@ -15,7 +15,7 @@
 #ifndef CORE_MASK_BOXMASK_H
 #define CORE_MASK_BOXMASK_H
 
-#include "core/geometry/AABB.h"
+#include "base/geometry/AABB.h"
 #include "core/mask/IMask.h"
 
 namespace nsx {

@@ -15,7 +15,7 @@
 #include "core/crystal/SpaceGroup.h"
 
 #include "core/crystal/UnitCell.h"
-#include "core/utils/StringIO.h"
+#include "base/utils/StringIO.h"
 
 #include <algorithm>
 #include <iterator>

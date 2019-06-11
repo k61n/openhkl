@@ -15,7 +15,7 @@
 
 #include "gui/dialogs/experimentdialog.h"
 #include "core/resources/Resources.h"
-#include "core/utils/Path.h"
+#include "base/utils/Path.h"
 #include "gui/mainwin.h"
 #include <QDialogButtonBox>
 #include <QGridLayout>

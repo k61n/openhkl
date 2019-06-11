@@ -16,7 +16,7 @@
 #include "core/quantify/Intensity.h"
 #include "core/crystal/MillerIndex.h"
 #include "core/experiment/DataSet.h"
-#include "core/geometry/Ellipsoid.h"
+#include "base/geometry/Ellipsoid.h"
 #include "core/integration/Profile1D.h"
 #include "core/peak/Peak3D.h"
 #include "core/quantify/PeakCoordinateSystem.h"

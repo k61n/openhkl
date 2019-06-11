@@ -15,8 +15,8 @@
 #include <QApplication>
 #include <QPushButton>
 
-#include "core/logger/Logger.h"
-#include "core/utils/ProgressHandler.h"
+#include "base/logger/Logger.h"
+#include "base/utils/ProgressHandler.h"
 
 #include "gui/frames/progressview.h"
 

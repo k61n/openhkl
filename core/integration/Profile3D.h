@@ -15,7 +15,7 @@
 #ifndef CORE_INTEGRATION_PROFILE3D_H
 #define CORE_INTEGRATION_PROFILE3D_H
 
-#include "core/geometry/AABB.h"
+#include "base/geometry/AABB.h"
 
 namespace nsx {
 

@@ -17,7 +17,7 @@
 
 #include "core/crystal/UnitCell.h"
 #include "core/peak/Peak3D.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 
 namespace nsx {
 

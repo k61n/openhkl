@@ -16,8 +16,8 @@
 
 #include "core/gonio/Component.h"
 #include "core/gonio/Gonio.h"
-#include "core/utils/Units.h"
-#include "core/utils/YAMLType.h"
+#include "base/utils/Units.h"
+#include "base/utils/YAMLType.h"
 
 namespace nsx {
 

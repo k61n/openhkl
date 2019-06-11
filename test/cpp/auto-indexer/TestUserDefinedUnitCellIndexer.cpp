@@ -6,8 +6,8 @@
 
 #include "core/indexing/UserDefinedIndexer.h"
 #include "core/crystal/UnitCell.h"
-#include "core/geometry/ReciprocalVector.h"
-#include "core/utils/Units.h"
+#include "base/geometry/ReciprocalVector.h"
+#include "base/utils/Units.h"
 
 Eigen::Matrix3d make_rotation(Eigen::Vector3d angles)
 {

@@ -8,8 +8,8 @@
 #include "core/peak/Peak3D.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
-#include "core/geometry/DirectVector.h"
-#include "core/geometry/ReciprocalVector.h"
+#include "base/geometry/DirectVector.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/integration/ShapeLibrary.h"
@@ -17,7 +17,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/merge_and_filter/PeakFilter.h"
 #include "core/search_peaks/PeakFinder.h"
-#include "core/utils/ProgressHandler.h"
+#include "base/utils/ProgressHandler.h"
 
 TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
 {

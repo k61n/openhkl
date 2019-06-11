@@ -30,8 +30,8 @@
 #include "core/loader/ILLDataReader.h"
 #include "core/loader/MatrixParser.h"
 #include "core/loader/Parser.h"
-#include "core/utils/StringIO.h"
-#include "core/utils/Units.h"
+#include "base/utils/StringIO.h"
+#include "base/utils/Units.h"
 
 namespace nsx {
 

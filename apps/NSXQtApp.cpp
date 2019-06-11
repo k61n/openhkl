@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/logger/Logger.h"
+#include "base/logger/Logger.h"
 
 #include <QApplication>
 

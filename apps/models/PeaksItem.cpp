@@ -35,7 +35,7 @@
 #include "core/loader/IDataReader.h"
 #include "core/loader/MetaData.h"
 #include "core/loader/RawDataReader.h"
-#include "core/logger/Logger.h"
+#include "base/logger/Logger.h"
 #include "core/merge_and_filter/PeakFilter.h"
 
 #include "apps/MainWindow.h"

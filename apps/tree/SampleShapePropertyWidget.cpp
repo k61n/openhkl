@@ -20,10 +20,10 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/logger/Logger.h"
+#include "base/logger/Logger.h"
 #include "core/monte-carlo/MCAbsorption.h"
 #include "core/peak/Peak3D.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 
 #include "apps/dialogs/DialogAbsorption.h"
 #include "apps/models/SampleShapeItem.h"

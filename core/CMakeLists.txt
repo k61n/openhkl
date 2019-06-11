@@ -1,7 +1,7 @@
 # note: *.c needed for blosc files in data directory
-file(GLOB_RECURSE core_SOURCES *.cpp *.c)
+file(GLOB_RECURSE sources *.cpp *.c)
 
-add_library(${NSX_LIBRARY} ${NSX_LIB_TYPE} ${core_SOURCES})
+add_library(${NSX_LIBRARY} ${sources})
 
 target_include_directories(
     ${NSX_LIBRARY}
@@ -9,11 +9,12 @@ target_include_directories(
     ${CMAKE_SOURCE_DIR})
 
 target_link_libraries(${NSX_LIBRARY}
+    PUBLIC
+    nsxbase
     PRIVATE
     ${HDF5_LIBRARIES}
     ${BLOSC_LIBRARY}
     ${Boost_LIBRARIES}
     ${FFTW_LIBRARIES}
-    ${YAML_LIBRARIES}
     ${TIFF_LIBRARY}
     ${GSL_LIBRARIES})

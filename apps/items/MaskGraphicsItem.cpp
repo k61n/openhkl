@@ -24,7 +24,7 @@
 #include <QWidget>
 
 #include "core/experiment/DataSet.h"
-#include "core/geometry/AABB.h"
+#include "base/geometry/AABB.h"
 
 #include "apps/items/MaskGraphicsItem.h"
 #include "apps/models/DetectorScene.h"

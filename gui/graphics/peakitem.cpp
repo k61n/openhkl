@@ -18,14 +18,14 @@
 #include "core/crystal/UnitCell.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/DataSet.h"
-#include "core/geometry/Ellipsoid.h"
-#include "core/geometry/ReciprocalVector.h"
+#include "base/geometry/Ellipsoid.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/MetaData.h"
 #include "core/peak/Peak3D.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 #include "gui/graphics/peakplot.h"
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>

@@ -28,9 +28,9 @@
 #include "core/experiment/DataSet.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/MetaData.h"
-#include "core/logger/Logger.h"
+#include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
-#include "core/utils/ProgressHandler.h"
+#include "base/utils/ProgressHandler.h"
 
 #include "apps/models/CollectedPeaksModel.h"
 #include "apps/models/SessionModel.h"

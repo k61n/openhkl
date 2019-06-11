@@ -20,9 +20,9 @@
 #include <QMouseEvent>
 #include <QWidget>
 
-#include "core/hull/ConvexHull.h"
-#include "core/hull/Triangle.h"
-#include "core/utils/Units.h"
+#include "base/hull/ConvexHull.h"
+#include "base/hull/Triangle.h"
+#include "base/utils/Units.h"
 
 #include "apps/dialogs/DialogCalibrateDistance.h"
 #include "apps/models/CrystalFaceItem.h"

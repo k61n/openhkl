@@ -18,8 +18,8 @@
 
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
-#include "core/geometry/AABB.h"
-#include "core/logger/Logger.h"
+#include "base/geometry/AABB.h"
+#include "base/logger/Logger.h"
 #include "core/mask/BoxMask.h"
 
 #include "apps/models/ExperimentItem.h"

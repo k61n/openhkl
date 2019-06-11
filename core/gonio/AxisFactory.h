@@ -16,8 +16,8 @@
 #define CORE_GONIO_AXISFACTORY_H
 
 #include "core/gonio/Axis.h"
-#include "core/utils/Factory.h"
-#include "core/utils/Singleton.h"
+#include "base/utils/Factory.h"
+#include "base/utils/Singleton.h"
 
 namespace nsx {
 

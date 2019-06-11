@@ -19,8 +19,8 @@
 #include "core/instrument/InstrumentTypes.h"
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Source.h"
-#include "core/logger/Logger.h"
-#include "core/utils/Units.h"
+#include "base/logger/Logger.h"
+#include "base/utils/Units.h"
 
 #include "apps/models/SourceItem.h"
 #include "apps/tree/SourcePropertyWidget.h"

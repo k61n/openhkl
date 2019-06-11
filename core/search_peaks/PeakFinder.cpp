@@ -16,11 +16,11 @@
 
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
-#include "core/geometry/AABB.h"
+#include "base/geometry/AABB.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/loader/IDataReader.h"
-#include "core/logger/Logger.h"
+#include "base/logger/Logger.h"
 #include "core/merge_and_filter/Octree.h"
 #include "core/peak/Peak3D.h"
 #include "core/convolve/ConvolverFactory.h"

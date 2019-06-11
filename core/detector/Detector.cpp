@@ -17,7 +17,7 @@
 
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorFactory.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 
 namespace nsx {
 

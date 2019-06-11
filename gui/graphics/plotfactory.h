@@ -15,8 +15,8 @@
 #ifndef GUI_GRAPHICS_PLOTFACTORY_H
 #define GUI_GRAPHICS_PLOTFACTORY_H
 
-#include "core/utils/Factory.h"
-#include "core/utils/Singleton.h"
+#include "base/utils/Factory.h"
+#include "base/utils/Singleton.h"
 
 #include "gui/graphics/nsxplot.h"
 

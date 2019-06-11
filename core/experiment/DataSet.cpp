@@ -22,9 +22,9 @@
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/loader/BloscFilter.h"
-#include "core/utils/Path.h"
-#include "core/utils/ProgressHandler.h"
-#include "core/utils/Units.h" // deg
+#include "base/utils/Path.h"
+#include "base/utils/ProgressHandler.h"
+#include "base/utils/Units.h" // deg
 
 #include <H5Cpp.h>
 #include <blosc.h>

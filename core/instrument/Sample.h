@@ -16,7 +16,7 @@
 #define CORE_INSTRUMENT_SAMPLE_H
 
 #include "core/gonio/Component.h" // inheriting from
-#include "core/hull/ConvexHull.h"
+#include "base/hull/ConvexHull.h"
 
 namespace nsx {
 

@@ -10,7 +10,7 @@
 #include "core/loader/IDataReader.h"
 #include "core/loader/MetaData.h"
 #include "core/search_peaks/PeakFinder.h"
-#include "core/utils/ProgressHandler.h"
+#include "base/utils/ProgressHandler.h"
 
 TEST_CASE("test/peak_find/TestPeakFinder.cpp", "")
 {

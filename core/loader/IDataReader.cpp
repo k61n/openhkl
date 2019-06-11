@@ -25,8 +25,8 @@
 #include "core/instrument/Source.h"
 #include "core/loader/BloscFilter.h"
 #include "core/loader/IDataReader.h"
-#include "core/utils/Path.h"
-#include "core/utils/Units.h"
+#include "base/utils/Path.h"
+#include "base/utils/Units.h"
 
 namespace nsx {
 

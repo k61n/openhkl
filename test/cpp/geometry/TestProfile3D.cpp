@@ -3,7 +3,7 @@
 
 #include <Eigen/Dense>
 
-#include "core/geometry/AABB.h"
+#include "base/geometry/AABB.h"
 #include "core/integration/Profile3D.h"
 
 TEST_CASE("test/geometry/TestProfile3D.cpp", "")

@@ -18,8 +18,8 @@
 #include "gui/models/session.h"
 
 #include "core/indexing/AutoIndexer.h"
-#include "core/utils/ProgressHandler.h"
-#include "core/utils/Units.h"
+#include "base/utils/ProgressHandler.h"
+#include "base/utils/Units.h"
 
 #include <QDialogButtonBox>
 #include <QGridLayout>

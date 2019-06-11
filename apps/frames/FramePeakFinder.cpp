@@ -37,7 +37,7 @@
 #include "core/experiment/DataSet.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/loader/IDataReader.h"
-#include "core/logger/Logger.h"
+#include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/search_peaks/PeakFinder.h"

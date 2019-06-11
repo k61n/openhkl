@@ -15,7 +15,7 @@
 #ifndef CORE_GEOMETRY_ELLIPSOID_H
 #define CORE_GEOMETRY_ELLIPSOID_H
 
-#include "core/geometry/AABB.h"
+#include "base/geometry/AABB.h"
 
 #include <Eigen/Dense>
 

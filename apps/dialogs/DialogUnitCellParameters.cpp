@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/crystal/UnitCell.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 
 #include "apps/dialogs/DialogUnitCellParameters.h"
 #include "ui_DialogUnitCellParameters.h"

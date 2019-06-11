@@ -4,10 +4,10 @@
 #include <cmath>
 
 #include "core/detector/FlatDetector.h"
-#include "core/geometry/DirectVector.h"
+#include "base/geometry/DirectVector.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/InstrumentState.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 
 const double tolerance = 1e-3;
 

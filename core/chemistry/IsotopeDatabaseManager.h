@@ -18,7 +18,7 @@
 #include <yaml-cpp/yaml.h>
 
 #include "core/chemistry/ChemistryTypes.h"
-#include "core/utils/Singleton.h"
+#include "base/utils/Singleton.h"
 
 namespace nsx {
 

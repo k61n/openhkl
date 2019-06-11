@@ -26,7 +26,7 @@
 #include "SingleResourceD9_lifting_arm.h"
 #include "SingleResourceI16.h"
 #include "core/resources/Resources.h"
-#include "core/utils/Path.h"
+#include "base/utils/Path.h"
 
 namespace nsx {
 

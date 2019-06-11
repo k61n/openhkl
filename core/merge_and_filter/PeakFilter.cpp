@@ -22,7 +22,7 @@
 #include "core/crystal/SpaceGroup.h"
 #include "core/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
-#include "core/geometry/ReciprocalVector.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/merge_and_filter/MergedData.h"

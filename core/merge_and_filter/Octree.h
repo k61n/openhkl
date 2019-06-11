@@ -16,7 +16,7 @@
 #define CORE_PEAK_OCTREE_H
 
 #include <set>
-#include "core/geometry/AABB.h"
+#include "base/geometry/AABB.h"
 
 namespace nsx {
 

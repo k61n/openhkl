@@ -17,7 +17,7 @@
 #include "core/gonio/Component.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/MatrixOperations.h"
-#include "core/logger/Logger.h"
+#include "base/logger/Logger.h"
 
 namespace nsx {
 

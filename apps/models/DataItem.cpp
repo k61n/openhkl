@@ -28,10 +28,10 @@
 #include "core/experiment/DataReaderFactory.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
-#include "core/logger/Logger.h"
+#include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/search_peaks/PeakFinder.h"
-#include "core/utils/ProgressHandler.h"
+#include "base/utils/ProgressHandler.h"
 
 #include "apps/MainWindow.h"
 #include "apps/dialogs/DialogHDF5Converter.h"

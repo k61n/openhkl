@@ -45,14 +45,6 @@ include(SetCompilerFlags)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(DEFAULT_BUILD_SHARED_LIBS ON)
 
-if(APPLE)
-    set(NSXQT_LINK_FLAGS "-Wl,-rpath,@loader_path/../../core/")
-elseif(UNIX)
-    set(NSXQT_LINK_FLAGS "-Wl,-rpath,@loader_path/../lib")
-else(WIN32)
-    set(NSXQT_LINK_FLAGS "/ENTRY:mainCRTStartup")
-endif()
-
 if(BUILD_COVERAGE_REPORT)
     include(CheckCoverage)
 endif()
@@ -60,6 +52,7 @@ endif()
 # Enable unit testing with ctest. This must be called before any calls to add_subdirectory
 enable_testing()
 
+add_subdirectory(base)
 add_subdirectory(core)
 
 if(BUILD_NSX_GUI)

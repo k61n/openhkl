@@ -24,9 +24,9 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentTypes.h"
 #include "core/experiment/DataReaderFactory.h"
-#include "core/logger/Logger.h"
+#include "base/logger/Logger.h"
 #include "core/resources/Resources.h"
-#include "core/utils/Path.h"
+#include "base/utils/Path.h"
 
 #include "apps/dialogs/DialogHDF5Converter.h"
 #include "apps/models/DataItem.h"

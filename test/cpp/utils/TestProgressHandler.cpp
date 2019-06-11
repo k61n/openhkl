@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-#include "core/utils/ProgressHandler.h"
+#include "base/utils/ProgressHandler.h"
 
 using namespace nsx;
 

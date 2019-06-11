@@ -19,7 +19,7 @@
 
 #include "core/chemistry/ChemistryTypes.h"
 #include "core/chemistry/IsotopeDatabaseManager.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 
 #include "apps/dialogs/DialogIsotopesDatabase.h"
 

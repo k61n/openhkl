@@ -7,9 +7,9 @@
 
 #include "core/chemistry/ChemistryTypes.h"
 #include "core/chemistry/Material.h"
-#include "core/hull/ConvexHull.h"
+#include "base/hull/ConvexHull.h"
 #include "core/monte-carlo/MCAbsorption.h"
-#include "core/utils/Units.h"
+#include "base/utils/Units.h"
 
 TEST_CASE("test/chemistry/TestMCAbsorption.cpp", "")
 {

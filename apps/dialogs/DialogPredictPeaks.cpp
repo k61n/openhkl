@@ -14,8 +14,8 @@
 
 #include "core/crystal/UnitCell.h"
 #include "core/integration/ShapeLibrary.h"
-#include "core/logger/Logger.h"
-#include "core/utils/ProgressHandler.h"
+#include "base/logger/Logger.h"
+#include "base/utils/ProgressHandler.h"
 
 #include "apps/dialogs/DialogPredictPeaks.h"
 #include "apps/models/CollectedPeaksModel.h"

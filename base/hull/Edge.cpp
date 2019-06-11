@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include "core/hull/Edge.h"
-#include "core/hull/Vertex.h"
+#include "base/hull/Edge.h"
+#include "base/hull/Vertex.h"
 
 namespace nsx {
 
