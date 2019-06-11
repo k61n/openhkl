@@ -19,7 +19,7 @@
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/resources/Resources.h"
+#include "core/instrument/HardwareParameters.h"
 #include "base/utils/Path.h"
 
 namespace nsx {

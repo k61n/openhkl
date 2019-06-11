@@ -25,7 +25,7 @@
 #include "core/instrument/InstrumentTypes.h"
 #include "core/experiment/DataReaderFactory.h"
 #include "base/logger/Logger.h"
-#include "core/resources/Resources.h"
+#include "core/instrument/HardwareParameters.h"
 #include "base/utils/Path.h"
 
 #include "apps/dialogs/DialogHDF5Converter.h"
