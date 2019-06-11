@@ -14,7 +14,7 @@
 
 #include "core/peak/Peak3D.h"
 
-#include "core/crystal/MillerIndex.h"
+#include "tables/crystal/MillerIndex.h"
 #include "core/experiment/DataSet.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "core/instrument/Diffractometer.h"

@@ -4,8 +4,8 @@
 #include <stdexcept>
 #include <string>
 
-#include "core/chemistry/ChemicalFormulaParser.h"
-#include "core/chemistry/ChemistryTypes.h"
+#include "tables/chemistry/ChemicalFormulaParser.h"
+#include "tables/chemistry/ChemistryTypes.h"
 
 // This had to be included here to avoid lengthy compile error with boost::spirit
 #include <boost/spirit/include/phoenix_fusion.hpp>

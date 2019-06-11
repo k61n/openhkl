@@ -19,8 +19,8 @@
 
 #include <gsl/gsl_cdf.h>
 
-#include "core/crystal/MillerIndex.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "base/logger/Logger.h"

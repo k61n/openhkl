@@ -16,7 +16,7 @@
 
 #include <QStandardItemModel>
 
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/UnitCell.h"
 #include "core/experiment/DataTypes.h"
 #include "core/peak/Peak3D.h"
 

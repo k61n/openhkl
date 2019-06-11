@@ -15,7 +15,7 @@
 #ifndef GUI_MODELS_EXPERIMENTMODEL_H
 #define GUI_MODELS_EXPERIMENTMODEL_H
 
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/UnitCell.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/InstrumentTypes.h"
 

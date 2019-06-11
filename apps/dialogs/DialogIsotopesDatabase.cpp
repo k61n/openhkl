@@ -17,8 +17,8 @@
 #include <QStandardItem>
 #include <QStandardItemModel>
 
-#include "core/chemistry/ChemistryTypes.h"
-#include "core/chemistry/IsotopeDatabaseManager.h"
+#include "tables/chemistry/ChemistryTypes.h"
+#include "tables/chemistry/IsotopeDatabaseManager.h"
 #include "base/utils/Units.h"
 
 #include "apps/dialogs/DialogIsotopesDatabase.h"

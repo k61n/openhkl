@@ -16,7 +16,7 @@
 
 #include <QInputDialog>
 
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/UnitCell.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"

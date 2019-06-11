@@ -75,8 +75,8 @@ using Eigen::Matrix3d;
 using Eigen::Matrix;
 using Eigen::Quaterniond;
 
-#include "core/chemistry/Material.h"
-#include "core/chemistry/IsotopeDatabaseManager.h"
+#include "tables/chemistry/Material.h"
+#include "tables/chemistry/IsotopeDatabaseManager.h"
 
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
@@ -107,7 +107,7 @@ using Eigen::Quaterniond;
 #include "core/integration/ShapeIntegrator.h"
 #include "core/quantify/IntegrationRegion.h"
 #include "core/quantify/PeakData.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/UnitCell.h"
 #include "core/statistics/ResolutionShell.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/CC.h"
@@ -117,11 +117,11 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/algo/FFTIndexing.h"
 
 #include "core/merge_and_filter/MergedPeak.h"
-#include "core/crystal/DoubleToFraction.h"
-#include "core/crystal/SpaceGroup.h"
-#include "core/crystal/NiggliReduction.h"
-#include "core/crystal/GruberReduction.h"
-#include "core/crystal/SymOp.h"
+#include "tables/crystal/DoubleToFraction.h"
+#include "tables/crystal/SpaceGroup.h"
+#include "tables/crystal/NiggliReduction.h"
+#include "tables/crystal/GruberReduction.h"
+#include "tables/crystal/SymOp.h"
 #include "base/hull/Vertex.h"
 #include "base/hull/Triangle.h"
 
@@ -129,7 +129,7 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "base/hull/Face.h"
 #include "core/monte-carlo/MCAbsorption.h"
 #include "base/hull/ConvexHull.h"
-#include "core/crystal/BrillouinZone.h"
+#include "tables/crystal/BrillouinZone.h"
 
 #include "base/geometry/AABB.h"
 #include "base/hull/Edge.h"
@@ -208,9 +208,9 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "core/search_peaks/Blob3D.h"
 
 #include "core/peak/Peak3D.h"
-#include "core/crystal/SpaceGroup.h"
-#include "core/crystal/UnitCell.h"
-#include "core/crystal/GruberReduction.h"
+#include "tables/crystal/SpaceGroup.h"
+#include "tables/crystal/UnitCell.h"
+#include "tables/crystal/GruberReduction.h"
 
 #include "core/quantify/Intensity.h"
 
@@ -233,7 +233,7 @@ using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 
 #include "core/peak/PeakFilter.h"
 
-#include "core/crystal/MillerIndex.h"
+#include "tables/crystal/MillerIndex.h"
 #include "core/shape/Profile1D.h"
 #include "core/shape/ShapeLibrary.h"
 using sptrShapeLibrary = std::shared_ptr<nsx::ShapeLibrary>;
@@ -296,8 +296,8 @@ using namespace nsx;
 %template(vectorVector3d) std::vector<Eigen::Vector3d>;
 %template(vectorRowVector3d) std::vector<Eigen::RowVector3d>;
 
-%include "core/chemistry/ChemistryTypes.h"
-%include "core/crystal/UnitCell.h"
+%include "tables/chemistry/ChemistryTypes.h"
+%include "tables/crystal/UnitCell.h"
 %include "core/experiment/DataTypes.h"
 %include "core/instrument/InstrumentTypes.h"
 
@@ -322,8 +322,8 @@ using namespace nsx;
 %include "base/geometry/Ellipsoid.h"
 %include "core/search_peaks/Blob3D.h"
 
-%include "core/chemistry/Material.h"
-%include "core/chemistry/IsotopeDatabaseManager.h"
+%include "tables/chemistry/Material.h"
+%include "tables/chemistry/IsotopeDatabaseManager.h"
 %template(propertyi) nsx::IsotopeDatabaseManager::property<int>;
 %template(propertyd) nsx::IsotopeDatabaseManager::property<double>;
 %template(propertys) nsx::IsotopeDatabaseManager::property<std::string>;
@@ -432,7 +432,7 @@ namespace nsx {
 %include "core/quantify/PeakData.h"
 
 
-%include "core/crystal/UnitCell.h"
+%include "tables/crystal/UnitCell.h"
 %include "core/statistics/ResolutionShell.h"
 
 %include "core/statistics/RFactor.h"
@@ -441,18 +441,18 @@ namespace nsx {
 
 %include "core/peak/Peak3D.h"
 
-%include "core/crystal/MillerIndex.h"
+%include "tables/crystal/MillerIndex.h"
 %template(MillerIndexList) std::vector<nsx::MillerIndex>;
 
 %include "core/shape/Profile1D.h"
 %include "core/shape/ShapeLibrary.h"
 
 %include "core/merge_and_filter/MergedPeak.h"
-%include "core/crystal/DoubleToFraction.h"
-%include "core/crystal/SpaceGroup.h"
-%include "core/crystal/NiggliReduction.h"
-%include "core/crystal/GruberReduction.h"
-%include "core/crystal/SymOp.h"
+%include "tables/crystal/DoubleToFraction.h"
+%include "tables/crystal/SpaceGroup.h"
+%include "tables/crystal/NiggliReduction.h"
+%include "tables/crystal/GruberReduction.h"
+%include "tables/crystal/SymOp.h"
 %template(SymOpList) std::vector<nsx::SymOp>;
 
 %include "base/hull/Vertex.h"
@@ -465,7 +465,7 @@ namespace nsx {
 %include "base/hull/Edge.h"
 %include "core/search_peaks/Blob3D.h"
 
-%include "core/crystal/BrillouinZone.h"
+%include "tables/crystal/BrillouinZone.h"
 
 %include "core/shape/Profile3D.h"
 %include "core/experiment/DataSet.h"

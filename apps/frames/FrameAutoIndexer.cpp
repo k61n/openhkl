@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/algo/AutoIndexer.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/UnitCell.h"
 #include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "base/utils/Units.h"

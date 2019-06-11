@@ -15,9 +15,9 @@
 #include "core/algo/AutoIndexer.h"
 
 #include "core/algo/FFTIndexing.h"
-#include "core/crystal/GruberReduction.h"
-#include "core/crystal/MillerIndex.h"
-#include "core/crystal/NiggliReduction.h"
+#include "tables/crystal/GruberReduction.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/NiggliReduction.h"
 #include "core/experiment/DataSet.h" // peak->data()->interpolatedState
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"

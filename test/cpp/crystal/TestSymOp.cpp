@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "core/crystal/SymOp.h"
+#include "tables/crystal/SymOp.h"
 
 TEST_CASE("test/crystal/TestSymOp.cpp", "")
 {

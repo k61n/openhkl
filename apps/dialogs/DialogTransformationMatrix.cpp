@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/UnitCell.h"
 
 #include "apps/dialogs/DialogTransformationMatrix.h"
 #include "ui_DialogTransformationMatrix.h"

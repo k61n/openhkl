@@ -35,7 +35,7 @@
 #include <QString>
 #include <QVector>
 
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/UnitCell.h"
 #include "core/experiment/Experiment.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "core/instrument/Diffractometer.h"

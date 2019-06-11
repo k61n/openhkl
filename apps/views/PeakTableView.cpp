@@ -24,7 +24,7 @@
 #include <QMouseEvent>
 #include <QStandardItemModel>
 
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/MetaData.h"

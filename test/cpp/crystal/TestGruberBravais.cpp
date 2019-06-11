@@ -8,10 +8,10 @@
 #include <Eigen/Dense>
 #include <Eigen/QR>
 
-#include "core/crystal/GruberReduction.h"
-#include "core/crystal/NiggliReduction.h"
-#include "core/crystal/SpaceGroup.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/GruberReduction.h"
+#include "tables/crystal/NiggliReduction.h"
+#include "tables/crystal/SpaceGroup.h"
+#include "tables/crystal/UnitCell.h"
 #include "core/detector/FlatDetector.h"
 #include "core/gonio/Component.h"
 #include "core/gonio/Gonio.h"

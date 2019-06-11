@@ -1,4 +1,4 @@
-#include "core/chemistry/IsotopeDatabaseManager.h"
+#include "tables/chemistry/IsotopeDatabaseManager.h"
 #include "base/utils/Units.h"
 #include "test/cpp/catch.hpp"
 

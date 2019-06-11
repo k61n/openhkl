@@ -11,6 +11,7 @@ target_include_directories(
 target_link_libraries(${NSX_LIBRARY}
     PUBLIC
     nsxbase
+    nsxtables
     PRIVATE
     ${HDF5_LIBRARIES}
     ${BLOSC_LIBRARY}

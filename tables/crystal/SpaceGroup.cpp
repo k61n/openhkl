@@ -12,9 +12,9 @@
 //
 //  ***********************************************************************************************
 
-#include "core/crystal/SpaceGroup.h"
+#include "tables/crystal/SpaceGroup.h"
 
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/UnitCell.h"
 #include "base/utils/StringIO.h"
 
 #include <algorithm>

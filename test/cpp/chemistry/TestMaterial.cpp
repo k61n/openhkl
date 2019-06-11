@@ -1,7 +1,7 @@
 #include "test/cpp/catch.hpp"
 #include <stdexcept>
 
-#include "core/chemistry/Material.h"
+#include "tables/chemistry/Material.h"
 #include "base/utils/Units.h"
 
 const double tolerance = 1.0e-9;

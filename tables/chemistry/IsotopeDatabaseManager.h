@@ -15,7 +15,7 @@
 #ifndef CORE_CHEMISTRY_ISOTOPEDATABASEMANAGER_H
 #define CORE_CHEMISTRY_ISOTOPEDATABASEMANAGER_H
 
-#include "core/chemistry/ChemistryTypes.h"
+#include "tables/chemistry/ChemistryTypes.h"
 #include "base/utils/Singleton.h"
 
 namespace nsx {

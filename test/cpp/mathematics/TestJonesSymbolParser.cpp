@@ -4,7 +4,7 @@
 
 #include <Eigen/Dense>
 
-#include "core/crystal/JonesSymbolParser.h"
+#include "tables/crystal/JonesSymbolParser.h"
 #include <iostream>
 
 const double tolerance = 1e-6;

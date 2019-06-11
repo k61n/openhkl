@@ -15,8 +15,8 @@
 
 #include "gui/properties/UnitCellProperty.h"
 
-#include "core/crystal/SpaceGroup.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/SpaceGroup.h"
+#include "tables/crystal/UnitCell.h"
 #include "gui/models/Session.h"
 #include <QCR/engine/cell.h>
 #include <QCompleter>

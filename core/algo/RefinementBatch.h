@@ -15,7 +15,7 @@
 #ifndef CORE_REFINE_REFINEMENTBATCH_H
 #define CORE_REFINE_REFINEMENTBATCH_H
 
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/UnitCell.h"
 #include "base/fit/FitParameters.h"
 #include "core/instrument/InstrumentTypes.h"
 #include "core/peak/Peak3D.h"

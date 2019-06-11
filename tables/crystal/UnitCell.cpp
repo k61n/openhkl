@@ -17,10 +17,10 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "core/crystal/GruberReduction.h"
-#include "core/crystal/MillerIndex.h"
-#include "core/crystal/NiggliReduction.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/GruberReduction.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/NiggliReduction.h"
+#include "tables/crystal/UnitCell.h"
 #include "base/fit/Minimizer.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "base/logger/Logger.h"

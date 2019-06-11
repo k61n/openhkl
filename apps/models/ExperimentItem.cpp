@@ -19,7 +19,7 @@
 #include <QJsonObject>
 
 #include "core/statistics/ResolutionShell.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Source.h"

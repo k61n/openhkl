@@ -1,7 +1,7 @@
 #include "test/cpp/catch.hpp"
 #include <Eigen/Dense>
 
-#include "core/crystal/MillerIndex.h"
+#include "tables/crystal/MillerIndex.h"
 
 TEST_CASE("test/geometry/TestMillerIndices.cpp", "")
 {

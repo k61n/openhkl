@@ -14,7 +14,7 @@
 
 #include "core/shape/ShapeLibrary.h"
 
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/UnitCell.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/DataSet.h"
 #include "base/fit/Minimizer.h"

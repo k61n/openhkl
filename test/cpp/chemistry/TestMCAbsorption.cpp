@@ -5,8 +5,8 @@
 #include <Eigen/Dense>
 #include <memory>
 
-#include "core/chemistry/ChemistryTypes.h"
-#include "core/chemistry/Material.h"
+#include "tables/chemistry/ChemistryTypes.h"
+#include "tables/chemistry/Material.h"
 #include "base/hull/ConvexHull.h"
 #include "core/monte-carlo/MCAbsorption.h"
 #include "base/utils/Units.h"

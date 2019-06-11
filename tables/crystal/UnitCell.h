@@ -15,9 +15,9 @@
 #ifndef CORE_CRYSTAL_UNITCELL_H
 #define CORE_CRYSTAL_UNITCELL_H
 
-#include "core/chemistry/Material.h"
-#include "core/crystal/NiggliCharacter.h"
-#include "core/crystal/SpaceGroup.h"
+#include "tables/chemistry/Material.h"
+#include "tables/crystal/NiggliCharacter.h"
+#include "tables/crystal/SpaceGroup.h"
 
 #include <Eigen/Dense>
 

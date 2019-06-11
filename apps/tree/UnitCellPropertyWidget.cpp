@@ -18,10 +18,10 @@
 #include <QCompleter>
 #include <QStandardItem>
 
-#include "core/chemistry/ChemistryTypes.h"
-#include "core/chemistry/Material.h"
-#include "core/crystal/SpaceGroup.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/chemistry/ChemistryTypes.h"
+#include "tables/chemistry/Material.h"
+#include "tables/crystal/SpaceGroup.h"
+#include "tables/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
 #include "core/gonio/Gonio.h"
 #include "base/logger/Logger.h"

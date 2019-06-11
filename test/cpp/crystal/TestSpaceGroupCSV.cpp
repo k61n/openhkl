@@ -1,6 +1,6 @@
 #include "test/cpp/catch.hpp"
 
-#include "core/crystal/SpaceGroup.h"
+#include "tables/crystal/SpaceGroup.h"
 #include "base/utils/CSV.h"
 
 #include <fstream>

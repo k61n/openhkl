@@ -1,9 +1,9 @@
 #include "test/cpp/catch.hpp"
 #include <random>
 
-#include "core/crystal/MillerIndex.h"
-#include "core/crystal/SpaceGroup.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/SpaceGroup.h"
+#include "tables/crystal/UnitCell.h"
 #include "base/fit/Minimizer.h"
 #include "base/utils/Units.h"
 

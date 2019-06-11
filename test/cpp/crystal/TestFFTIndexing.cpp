@@ -3,7 +3,7 @@
 #include <Eigen/Dense>
 
 #include "core/algo/AutoIndexer.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/UnitCell.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/peak/Peak3D.h"
 #include "core/experiment/DataSet.h"

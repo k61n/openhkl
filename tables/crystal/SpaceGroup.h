@@ -15,8 +15,8 @@
 #ifndef CORE_CRYSTAL_SPACEGROUP_H
 #define CORE_CRYSTAL_SPACEGROUP_H
 
-#include "core/crystal/MillerIndex.h"
-#include "core/crystal/SymOp.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/SymOp.h"
 
 namespace nsx {
 

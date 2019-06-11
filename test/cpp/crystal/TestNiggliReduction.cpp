@@ -5,8 +5,8 @@
 
 #include <Eigen/Dense>
 
-#include "core/crystal/NiggliReduction.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/NiggliReduction.h"
+#include "tables/crystal/UnitCell.h"
 #include "base/utils/Units.h"
 
 const double tolerance = 1e-6;

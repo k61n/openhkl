@@ -16,7 +16,7 @@
 #define CORE_AUTO_INDEXING_AUTOINDEXER_H
 
 #include "core/peak/Peak3D.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/UnitCell.h"
 #include "base/utils/ProgressHandler.h"
 
 namespace nsx {

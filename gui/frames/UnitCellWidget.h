@@ -15,7 +15,7 @@
 #ifndef GUI_FRAMES_UNITCELLWIDGET_H
 #define GUI_FRAMES_UNITCELLWIDGET_H
 
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/UnitCell.h"
 
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>

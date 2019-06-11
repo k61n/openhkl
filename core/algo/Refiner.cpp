@@ -15,8 +15,8 @@
 #include <algorithm>
 #include <iterator>
 
-#include "core/crystal/MillerIndex.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/UnitCell.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/InstrumentState.h"

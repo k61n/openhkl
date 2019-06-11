@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include "core/crystal/MillerIndex.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/UnitCell.h"
 
 #include <cmath>
 #include <Eigen/Dense>

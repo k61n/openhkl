@@ -17,9 +17,9 @@
 #include <numeric>
 #include <stdexcept>
 
-#include "core/chemistry/ChemicalFormulaParser.h"
-#include "core/chemistry/IsotopeDatabaseManager.h"
-#include "core/chemistry/Material.h"
+#include "tables/chemistry/ChemicalFormulaParser.h"
+#include "tables/chemistry/IsotopeDatabaseManager.h"
+#include "tables/chemistry/Material.h"
 #include "base/utils/Units.h"
 
 namespace nsx {

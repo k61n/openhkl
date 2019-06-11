@@ -17,8 +17,8 @@
 
 #include "base/geometry/Ellipsoid.h"
 #include "core/quantify/Intensity.h"
-#include "core/crystal/SpaceGroup.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/SpaceGroup.h"
+#include "tables/crystal/UnitCell.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/DataTypes.h"
 

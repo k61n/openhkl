@@ -14,7 +14,7 @@
 
 #include <QMessageBox>
 
-#include "core/chemistry/Material.h"
+#include "tables/chemistry/Material.h"
 #include "core/experiment/DataSet.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"

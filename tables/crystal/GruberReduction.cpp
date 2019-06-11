@@ -15,7 +15,7 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "core/crystal/GruberReduction.h"
+#include "tables/crystal/GruberReduction.h"
 
 namespace nsx {
 

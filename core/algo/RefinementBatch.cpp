@@ -15,8 +15,8 @@
 #include <algorithm>
 #include <limits>
 
-#include "core/crystal/MillerIndex.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
 #include "base/fit/Minimizer.h"
 #include "core/instrument/InstrumentState.h"

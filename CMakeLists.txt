@@ -53,6 +53,7 @@ endif()
 enable_testing()
 
 add_subdirectory(base)
+add_subdirectory(tables)
 add_subdirectory(core)
 
 if(BUILD_NSX_GUI)

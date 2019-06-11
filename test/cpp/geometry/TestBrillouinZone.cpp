@@ -3,8 +3,8 @@
 
 #include <Eigen/Dense>
 
-#include "core/crystal/BrillouinZone.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/BrillouinZone.h"
+#include "tables/crystal/UnitCell.h"
 
 // note: validation data obtained from web, see e.g.
 // http://lampx.tugraz.at/~hadley/ss1/bzones/

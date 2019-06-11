@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "core/algo/UserDefinedIndexer.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/UnitCell.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Units.h"
 

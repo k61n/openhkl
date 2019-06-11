@@ -21,8 +21,8 @@
 #include <Eigen/QR>
 
 #include "core/algo/UserDefinedIndexer.h"
-#include "core/crystal/MillerIndex.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/UnitCell.h"
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
 #include "base/geometry/ReciprocalVector.h"

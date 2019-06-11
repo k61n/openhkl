@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 #include "core/quantify/IntegrationRegion.h"
-#include "core/crystal/BrillouinZone.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/BrillouinZone.h"
+#include "tables/crystal/UnitCell.h"
 #include "core/detector/Detector.h"
 #include "base/geometry/Ellipsoid.h"
 #include "base/hull/ConvexHull.h"

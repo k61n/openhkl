@@ -21,7 +21,7 @@
 #include <QStandardItem>
 #include <QString>
 
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Sample.h"

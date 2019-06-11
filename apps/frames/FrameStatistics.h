@@ -16,7 +16,7 @@
 
 #include <map>
 
-#include "core/crystal/SpaceGroup.h"
+#include "tables/crystal/SpaceGroup.h"
 #include "core/peak/Peak3D.h"
 #include "core/merge_and_filter/MergedData.h"
 

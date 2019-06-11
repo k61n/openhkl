@@ -18,9 +18,9 @@
 #include <map>
 #include <set>
 
-#include "core/crystal/MillerIndex.h"
-#include "core/crystal/SpaceGroup.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/SpaceGroup.h"
+#include "tables/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "core/instrument/Diffractometer.h"

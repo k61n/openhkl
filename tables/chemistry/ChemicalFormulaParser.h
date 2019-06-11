@@ -22,7 +22,7 @@
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/spirit/include/qi.hpp>
 
-#include "core/chemistry/IsotopeDatabaseManager.h"
+#include "tables/chemistry/IsotopeDatabaseManager.h"
 
 namespace nsx {
 

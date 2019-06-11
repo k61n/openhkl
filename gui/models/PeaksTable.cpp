@@ -15,8 +15,8 @@
 
 #include "gui/models/PeaksTable.h"
 
-#include "core/crystal/MillerIndex.h"
-#include "core/crystal/UnitCell.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/UnitCell.h"
 #include "core/detector/Detector.h"
 #include "core/peak/Peak3D.h"
 #include "core/experiment/DataSet.h"

@@ -14,7 +14,7 @@
 
 #include "core/integration/ShapeIntegrator.h"
 #include "core/quantify/Intensity.h"
-#include "core/crystal/MillerIndex.h"
+#include "tables/crystal/MillerIndex.h"
 #include "core/experiment/DataSet.h"
 #include "base/geometry/Ellipsoid.h"
 #include "core/shape/Profile1D.h"
