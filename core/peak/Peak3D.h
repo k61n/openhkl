@@ -151,8 +151,9 @@ using PeakList = std::vector<sptrPeak3D>;
 
 //! Sort peak into a list of equivalent peaks, using the space group symmetry,
 //! optionally including Friedel pairs (if this is not already a symmetry of the space group)
-std::vector<PeakList> findEquivalences(
-    const SpaceGroup& group, const PeakList& peak_list, bool friedel);
+// --- unused
+//std::vector<PeakList> findEquivalences(
+//    const SpaceGroup& group, const PeakList& peak_list, bool friedel);
 
 } // namespace nsx
 

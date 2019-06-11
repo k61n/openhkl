@@ -53,7 +53,7 @@
 #include "core/merge_and_filter/MergedData.h"
 #include "core/merge_and_filter/MergedPeak.h"
 #include "core/peak/Peak3D.h"
-#include "core/peak/PeakFilter.h"
+#include "core/merge_and_filter/PeakFilter.h"
 #include "core/search_peaks/PeakFinder.h"
 #include "core/statistics/CC.h"
 #include "base/utils/ProgressHandler.h"

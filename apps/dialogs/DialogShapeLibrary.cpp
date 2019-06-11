@@ -24,7 +24,7 @@
 #include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/quantify/PeakCoordinateSystem.h"
-#include "core/peak/PeakFilter.h"
+#include "core/merge_and_filter/PeakFilter.h"
 
 #include "apps/models/CollectedPeaksModel.h"
 #include "apps/models/ExperimentItem.h"

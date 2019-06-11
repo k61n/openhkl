@@ -231,7 +231,7 @@ using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
 #include "core/search_peaks/PeakFinder.h"
 #include "core/merge_and_filter/MergedData.h"
 
-#include "core/peak/PeakFilter.h"
+#include "core/merge_and_filter/PeakFilter.h"
 
 #include "tables/crystal/MillerIndex.h"
 #include "core/shape/Profile1D.h"
@@ -379,7 +379,7 @@ namespace nsx {
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
 %template(PeakShell) std::vector<std::vector<std::shared_ptr<nsx::Peak3D>>>;
 
-%include "core/peak/PeakFilter.h"
+%include "core/merge_and_filter/PeakFilter.h"
 
 %template(ConvolverParameters) std::map<std::string,double>;
 %include "core/convolve/Convolver.h"

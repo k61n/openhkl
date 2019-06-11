@@ -37,7 +37,7 @@
 #include "core/instrument/Sample.h"
 #include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
-#include "core/peak/PeakFilter.h"
+#include "core/merge_and_filter/PeakFilter.h"
 #include "core/statistics/RFactor.h"
 
 #include "apps/dialogs/DialogSpaceGroup.h"
