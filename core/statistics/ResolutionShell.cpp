@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/peak/ResolutionShell.cpp
+//! @file      core/statistics/ResolutionShell.cpp
 //! @brief     Implements class ResolutionShell
 //!
 //! @homepage  ###HOMEPAGE###
@@ -17,7 +17,7 @@
 
 #include <Eigen/Eigenvalues>
 
-#include "core/peak/ResolutionShell.h"
+#include "core/statistics/ResolutionShell.h"
 #include "core/geometry/ReciprocalVector.h"
 #include "core/peak/Peak3D.h"
 

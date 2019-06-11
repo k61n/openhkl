@@ -1,6 +1,0 @@
-# this is important for ILL ascii data files
-* binary
-*.cpp text
-*.c text
-*.hpp text
-*.h text

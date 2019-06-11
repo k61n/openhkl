@@ -18,7 +18,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-#include "core/peak/ResolutionShell.h"
+#include "core/statistics/ResolutionShell.h"
 #include "core/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"

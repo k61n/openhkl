@@ -108,7 +108,7 @@ using Eigen::Quaterniond;
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/PeakData.h"
 #include "core/crystal/UnitCell.h"
-#include "core/peak/ResolutionShell.h"
+#include "core/statistics/ResolutionShell.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/CC.h"
 #include "core/peak/Peak3D.h"
@@ -433,7 +433,7 @@ namespace nsx {
 
 
 %include "core/crystal/UnitCell.h"
-%include "core/peak/ResolutionShell.h"
+%include "core/statistics/ResolutionShell.h"
 
 %include "core/statistics/RFactor.h"
 %include "core/statistics/CC.h"

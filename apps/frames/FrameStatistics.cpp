@@ -23,7 +23,7 @@
 #include <QVector>
 
 #include "core/crystal/MillerIndex.h"
-#include "core/peak/ResolutionShell.h"
+#include "core/statistics/ResolutionShell.h"
 #include "core/experiment/DataSet.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/MetaData.h"
