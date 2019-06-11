@@ -16,7 +16,7 @@
 #define CORE_MASK_ELLIPSEMASK_H
 
 #include "base/geometry/Ellipsoid.h"
-#include "core/mask/IMask.h"
+#include "base/mask/IMask.h"
 
 namespace nsx {
 

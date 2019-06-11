@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "core/mask/IMask.h"
+#include "base/mask/IMask.h"
 
 namespace nsx {
 

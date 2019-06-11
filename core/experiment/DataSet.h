@@ -19,7 +19,7 @@
 #include "core/experiment/DataTypes.h"
 #include "core/instrument/InterpolatedState.h"
 #include "core/raw/IDataReader.h"
-#include "core/mask/IMask.h"
+#include "base/mask/IMask.h"
 
 namespace nsx {
 

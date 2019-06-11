@@ -20,7 +20,7 @@
 #include "core/experiment/Experiment.h"
 #include "base/geometry/AABB.h"
 #include "base/logger/Logger.h"
-#include "core/mask/BoxMask.h"
+#include "base/mask/BoxMask.h"
 
 #include "apps/models/ExperimentItem.h"
 #include "apps/models/MetaTypes.h"

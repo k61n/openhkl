@@ -16,7 +16,7 @@
 #define CORE_MASK_BOXMASK_H
 
 #include "base/geometry/AABB.h"
-#include "core/mask/IMask.h"
+#include "base/mask/IMask.h"
 
 namespace nsx {
 

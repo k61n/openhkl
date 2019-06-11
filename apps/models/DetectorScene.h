@@ -21,7 +21,7 @@
 
 #include "core/peak/Peak3D.h"
 #include "core/experiment/DataTypes.h"
-#include "core/mask/IMask.h"
+#include "base/mask/IMask.h"
 
 #include "apps/ColorMap.h"
 #include "models/SessionModel.h"
