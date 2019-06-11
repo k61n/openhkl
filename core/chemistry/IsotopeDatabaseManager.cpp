@@ -14,13 +14,15 @@
 
 #include "core/chemistry/IsotopeDatabaseManager.h"
 
-#include "core/resources/Resources.h"
 #include "base/utils/Path.h"
 #include "base/utils/Units.h"
 #include "base/utils/YAMLType.h"
 
-#include <yaml-cpp/yaml.h>
 #include <stdexcept>
+
+const char* database =
+#include "core/chemistry/isotopes.yml2c"
+    ;
 
 namespace nsx {
 
@@ -33,7 +35,7 @@ std::map<std::string, ChemicalPropertyType> IsotopeDatabaseManager::PropertyType
 
 IsotopeDatabaseManager::IsotopeDatabaseManager()
 {
-    YAML::Node isotopes_database = findResource({"databases", "Isotopes"});
+    YAML::Node isotopes_database = YAML::Load(database);
 
     for (const auto& propertyNode : isotopes_database["Properties"]) {
         std::pair<std::string, std::string> prop = std::make_pair(

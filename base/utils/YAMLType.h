@@ -16,6 +16,7 @@
 #define CORE_UTILS_YAMLTYPE_H
 
 #include <Eigen/Dense>
+#include <yaml-cpp/yaml.h>
 
 namespace YAML {
 
