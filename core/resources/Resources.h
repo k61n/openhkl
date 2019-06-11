@@ -15,16 +15,11 @@
 #ifndef CORE_RESOURCES_RESOURCES_H
 #define CORE_RESOURCES_RESOURCES_H
 
-#include <functional>
 #include <yaml-cpp/yaml.h>
 
 namespace nsx {
 
-using resource_function = std::function<const std::vector<std::string>&()>;
-
 YAML::Node findResource(const std::pair<std::string, std::string>& resource);
-
-void mergeResources(YAML::Node& node1, YAML::Node& node2);
 
 std::set<std::string> getResourcesName(const std::string& resource_type);
 
