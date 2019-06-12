@@ -93,6 +93,7 @@ using Eigen::Quaterniond;
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Singleton.h"
 #include "base/utils/Units.h"
+
 #include "core/algo/AutoIndexer.h"
 #include "core/algo/DataReaderFactory.h"
 #include "core/algo/FFTIndexing.h"
@@ -158,6 +159,7 @@ using Eigen::Quaterniond;
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
+
 #include "tables/chemistry/IsotopeDatabaseManager.h"
 #include "tables/chemistry/Material.h"
 #include "tables/crystal/BrillouinZone.h"
@@ -266,12 +268,6 @@ using namespace nsx;
 %include "core/instrument/InstrumentState.h"
 %include "core/instrument/InterpolatedState.h"
 
-namespace nsx {
-   class DataReaderFactory;
-   class ConvolverFactory;
-   struct tVector;
-}
-
 %include "core/algo/FFTIndexing.h"
 
 
@@ -346,18 +342,13 @@ namespace nsx {
 %template(RefinementBatchList) std::vector<nsx::RefinementBatch>;
 
 %include "core/peak/Intensity.h"
-
 %include "core/peak/IntegrationRegion.h"
 %include "core/peak/PeakData.h"
-
-
 %include "tables/crystal/UnitCell.h"
 %include "core/statistics/ResolutionShell.h"
-
 %include "core/statistics/RFactor.h"
 %include "core/statistics/CC.h"
 %include "core/statistics/CC.h"
-
 %include "tables/crystal/MillerIndex.h"
 %template(MillerIndexList) std::vector<nsx::MillerIndex>;
 
