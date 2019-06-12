@@ -32,19 +32,18 @@ private:
 public:
     //! Returns the list of spacegroup symbols
     static std::vector<std::string> symbols();
+
     SpaceGroup();
     //! Construct a space group from its IT symbol. Lookup in the IUCR table
     SpaceGroup(std::string symbol);
-    //! Copy
     SpaceGroup(const SpaceGroup& other) = default;
-    //! Assignment
     SpaceGroup& operator=(const SpaceGroup& other);
-    //! Gets the IT symbol for this space group
+
+    //! Resturns the IT symbol for this space group
     const std::string& symbol() const;
-    //! Gets the string containing the generators (in the Jones notation),
-    //! separated bt ";' character
+    //! Resturns the string containing the generators (in Jones notation), separated by ";"
     const std::string& generators() const;
-    //! Gets a vector containing the Symmetry operations for this space group
+    //! Resturns a vector containing the Symmetry operations for this space group
     const SymOpList& groupElements() const;
     //! Determine whether a h,k,l reflection is forbidden
     bool isExtinct(const MillerIndex& hkl) const;

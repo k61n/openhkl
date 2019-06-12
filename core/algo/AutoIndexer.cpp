@@ -15,16 +15,12 @@
 #include "core/algo/AutoIndexer.h"
 
 #include "core/algo/FFTIndexing.h"
-#include "tables/crystal/GruberReduction.h"
 #include "tables/crystal/MillerIndex.h"
-#include "tables/crystal/NiggliReduction.h"
 #include "core/experiment/DataSet.h" // peak->data()->interpolatedState
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
 #include "base/geometry/ReciprocalVector.h"
-#include "core/peak/Peak3D.h"
 #include "core/analyse/PeakFilter.h"
-#include "base/utils/ProgressHandler.h"
 
 #include <iostream>
 #include <string>

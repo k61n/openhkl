@@ -97,7 +97,6 @@ using Eigen::Quaterniond;
 #include "tables/chemistry/IsotopeDatabaseManager.h"
 #include "tables/chemistry/Material.h"
 #include "tables/crystal/BrillouinZone.h"
-#include "tables/crystal/DoubleToFraction.h"
 #include "tables/crystal/GruberReduction.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/NiggliReduction.h"
@@ -254,18 +253,17 @@ using namespace nsx;
 %include "tables/chemistry/Material.h"
 %include "tables/chemistry/IsotopeDatabaseManager.h"
 
+%include "tables/crystal/SymOp.h"
+%template(SymOpList) std::vector<nsx::SymOp>;
+%include "tables/crystal/MillerIndex.h"
+%template(MillerIndexList) std::vector<nsx::MillerIndex>;
+%include "tables/crystal/SpaceGroup.h"
+%include "tables/crystal/NiggliReduction.h"
 %include "tables/crystal/UnitCell.h"
 %template(UnitCellList) std::vector<nsx::sptrUnitCell>;
 %template(scored_uc) std::pair<std::shared_ptr<nsx::UnitCell>, double>;
 %template(indexer_solutions) std::vector<std::pair<std::shared_ptr<nsx::UnitCell>,double>>;
-%include "tables/crystal/MillerIndex.h"
-%template(MillerIndexList) std::vector<nsx::MillerIndex>;
-%include "tables/crystal/DoubleToFraction.h"
-%include "tables/crystal/SpaceGroup.h"
-%include "tables/crystal/NiggliReduction.h"
 %include "tables/crystal/GruberReduction.h"
-%include "tables/crystal/SymOp.h"
-%template(SymOpList) std::vector<nsx::SymOp>;
 %include "tables/crystal/BrillouinZone.h"
 
 %include "core/gonio/Axis.h"

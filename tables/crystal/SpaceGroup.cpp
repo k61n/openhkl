@@ -18,10 +18,7 @@
 #include "base/utils/StringIO.h"
 
 #include <algorithm>
-#include <iterator>
 #include <sstream>
-#include <stdexcept>
-#include <vector>
 
 namespace nsx {
 
