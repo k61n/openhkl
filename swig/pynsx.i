@@ -311,10 +311,10 @@ using namespace nsx;
 %include "core/loader/RawDataReader.h"
 %include "core/loader/TiffDataReader.h"
 
+%include "core/peak/Intensity.h"
 %include "core/peak/Peak3D.h"
 %include "core/peak/PeakCoordinateSystem.h"
 %include "core/peak/PeakData.h"
-%include "core/peak/Intensity.h"
 %include "core/peak/IntegrationRegion.h"
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
 
