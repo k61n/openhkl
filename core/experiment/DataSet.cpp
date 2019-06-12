@@ -27,11 +27,6 @@
 #include "base/utils/Units.h" // deg
 
 #include <H5Cpp.h>
-#include <cmath>
-#include <stdexcept>
-#include <utility>
-#include <vector>
-#include <Eigen/Dense> // IntMatrix
 
 namespace nsx {
 

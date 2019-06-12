@@ -16,10 +16,14 @@
 #define CORE_EXPERIMENT_DATASET_H
 
 #include "core/peak/Peak3D.h"
-#include "core/experiment/DataTypes.h"
 #include "core/instrument/InterpolatedState.h"
 #include "core/raw/IDataReader.h"
 #include "base/mask/IMask.h"
+
+#include <set>
+#include <string>
+#include <vector>
+#include <Eigen/Dense>
 
 namespace nsx {
 
