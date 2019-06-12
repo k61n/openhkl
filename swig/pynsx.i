@@ -94,6 +94,17 @@ using Eigen::Quaterniond;
 #include "base/utils/Singleton.h"
 #include "base/utils/Units.h"
 
+#include "tables/chemistry/IsotopeDatabaseManager.h"
+#include "tables/chemistry/Material.h"
+#include "tables/crystal/BrillouinZone.h"
+#include "tables/crystal/DoubleToFraction.h"
+#include "tables/crystal/GruberReduction.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/NiggliReduction.h"
+#include "tables/crystal/SpaceGroup.h"
+#include "tables/crystal/SymOp.h"
+#include "tables/crystal/UnitCell.h"
+
 #include "core/algo/AutoIndexer.h"
 #include "core/algo/DataReaderFactory.h"
 #include "core/algo/FFTIndexing.h"
@@ -159,17 +170,6 @@ using Eigen::Quaterniond;
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
-
-#include "tables/chemistry/IsotopeDatabaseManager.h"
-#include "tables/chemistry/Material.h"
-#include "tables/crystal/BrillouinZone.h"
-#include "tables/crystal/DoubleToFraction.h"
-#include "tables/crystal/GruberReduction.h"
-#include "tables/crystal/MillerIndex.h"
-#include "tables/crystal/NiggliReduction.h"
-#include "tables/crystal/SpaceGroup.h"
-#include "tables/crystal/SymOp.h"
-#include "tables/crystal/UnitCell.h"
 
 using namespace nsx;
 
@@ -313,15 +313,13 @@ using namespace nsx;
 %include "core/peak/PeakData.h"
 %include "core/peak/Intensity.h"
 %include "core/peak/IntegrationRegion.h"
-%template(IntensityList) std::vector<nsx::Intensity>;
 %include "core/peak/IPeakIntegrator.h"
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
-%template(PeakShell) std::vector<std::vector<std::shared_ptr<nsx::Peak3D>>>;
 
-%include "core/experiment/Experiment.h"
 %include "core/experiment/DataSet.h"
 %include "core/experiment/DataTypes.h"
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
+%include "core/experiment/Experiment.h"
 
 %template(ConvolverParameters) std::map<std::string,double>;
 %include "core/convolve/Convolver.h"
