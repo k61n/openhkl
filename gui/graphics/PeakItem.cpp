@@ -40,7 +40,7 @@ PeakItem::PeakItem(nsx::sptrPeak3D peak, int frame)
     setVisible(true);
 
     QString peak_label;
-    auto unit_cell = _peak->unitCell();
+    nsx::sptrUnitCell unit_cell = _peak->unitCell();
     if (unit_cell) {
         nsx::MillerIndex miller_index(_peak->q(), *unit_cell);
         if (miller_index.indexed(unit_cell->indexingTolerance())) {
