@@ -302,34 +302,26 @@ using namespace nsx;
 %include "core/raw/MetaData.h"
 %include "core/raw/IDataReader.h"
 
+%include "core/loader/ILLDataReader.h"
+%include "core/loader/HDF5MetaDataReader.h"
+%include "core/loader/HDF5DataReader.h"
+%include "core/loader/RawDataReader.h"
+%include "core/loader/TiffDataReader.h"
+
 %include "core/peak/Peak3D.h"
+%include "core/peak/PeakCoordinateSystem.h"
 %include "core/peak/PeakData.h"
-%include "core/peak/IntegrationRegion.h"
 %include "core/peak/Intensity.h"
+%include "core/peak/IntegrationRegion.h"
 %template(IntensityList) std::vector<nsx::Intensity>;
 %include "core/peak/IPeakIntegrator.h"
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
 %template(PeakShell) std::vector<std::vector<std::shared_ptr<nsx::Peak3D>>>;
 
+%include "core/experiment/Experiment.h"
+%include "core/experiment/DataSet.h"
 %include "core/experiment/DataTypes.h"
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
-
-%include "core/algo/FFTIndexing.h"
-
-%include "core/shape/Profile3D.h"
-%include "core/shape/Profile1D.h"
-%include "core/shape/ShapeLibrary.h"
-
-%include "core/integration/MeanBackgroundIntegrator.h"
-%include "core/integration/Profile3DIntegrator.h"
-%include "core/integration/Profile1DIntegrator.h"
-%include "core/integration/ISigmaIntegrator.h"
-%include "core/integration/PixelSumIntegrator.h"
-%include "core/integration/ShapeIntegrator.h"
-
-
-%include "core/analyse/PeakFilter.h"
-%include "core/analyse/Blob3D.h"
 
 %template(ConvolverParameters) std::map<std::string,double>;
 %include "core/convolve/Convolver.h"
@@ -341,60 +333,39 @@ using namespace nsx;
 %include "core/convolve/EnhancedAnnularConvolver.h"
 %include "core/convolve/RadialConvolver.h"
 
-%include "core/algo/DataReaderFactory.h"
-%include "core/loader/ILLDataReader.h"
-%include "core/loader/HDF5MetaDataReader.h"
-%include "core/loader/HDF5DataReader.h"
 %include "core/shape/Profile3D.h"
-%include "core/experiment/DataSet.h"
-
-%include "core/analyse/MergedData.h"
-
-
-%include "core/analyse/PeakFinder.h"
-
-%template(MergedPeakSet) std::set<nsx::MergedPeak>;
-
-
-%include "core/peak/PeakCoordinateSystem.h"
-%include "core/algo/RefinementBatch.h"
-%include "core/algo/Refiner.h"
-
-%template(RefinementBatchList) std::vector<nsx::RefinementBatch>;
-
-%include "core/peak/Intensity.h"
-%include "core/peak/IntegrationRegion.h"
-%include "core/peak/PeakData.h"
-%include "core/statistics/ResolutionShell.h"
-%include "core/statistics/RFactor.h"
-%include "core/statistics/CC.h"
-%include "core/statistics/CC.h"
-
 %include "core/shape/Profile1D.h"
 %include "core/shape/ShapeLibrary.h"
 
 %include "core/analyse/MergedPeak.h"
-
-%include "core/monte-carlo/MCAbsorption.h"
 %include "core/analyse/Blob3D.h"
+%include "core/analyse/PeakFilter.h"
+%include "core/analyse/Blob3D.h"
+%include "core/analyse/MergedData.h"
+%template(MergedPeakSet) std::set<nsx::MergedPeak>;
+%include "core/analyse/PeakFinder.h"
 
-
-%include "core/shape/Profile3D.h"
-%include "core/experiment/DataSet.h"
-%include "core/raw/MetaData.h"
-%include "core/loader/ILLDataReader.h"
-%include "core/raw/IDataReader.h"
-%include "core/loader/HDF5MetaDataReader.h"
-%include "core/loader/HDF5DataReader.h"
-
-%include "core/loader/RawDataReader.h"
-%include "core/loader/TiffDataReader.h"
 %include "core/algo/DataReaderFactory.h"
-
-
+%include "core/algo/RefinementBatch.h"
+%include "core/algo/Refiner.h"
+%include "core/algo/FFTIndexing.h"
 %include "core/algo/AutoIndexer.h"
 
-%include "core/experiment/Experiment.h"
+%include "core/integration/MeanBackgroundIntegrator.h"
+%include "core/integration/Profile3DIntegrator.h"
+%include "core/integration/Profile1DIntegrator.h"
+%include "core/integration/ISigmaIntegrator.h"
+%include "core/integration/PixelSumIntegrator.h"
+%include "core/integration/ShapeIntegrator.h"
+
+%template(RefinementBatchList) std::vector<nsx::RefinementBatch>;
+
+%include "core/monte-carlo/MCAbsorption.h"
+
+%include "core/statistics/ResolutionShell.h"
+%include "core/statistics/RFactor.h"
+%include "core/statistics/CC.h"
+%include "core/statistics/CC.h"
 
 %newobject new_double;
 double* new_double();
