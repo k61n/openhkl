@@ -112,7 +112,6 @@ using Eigen::Quaterniond;
 #include "core/statistics/RFactor.h"
 #include "core/statistics/CC.h"
 #include "core/peak/Peak3D.h"
-using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 
 #include "core/algo/FFTIndexing.h"
 
@@ -207,7 +206,6 @@ using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
 #include "base/geometry/Ellipsoid.h"
 #include "core/analyse/Blob3D.h"
 
-#include "core/peak/Peak3D.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
 #include "tables/crystal/GruberReduction.h"
@@ -355,6 +353,7 @@ namespace nsx {
 %include "core/algo/FFTIndexing.h"
 
 
+%include "core/peak/Peak3D.h"
 %include "core/peak/PeakData.h"
 %include "core/peak/IntegrationRegion.h"
 %include "core/peak/Intensity.h"
@@ -367,14 +366,12 @@ namespace nsx {
 %include "core/integration/Profile1DIntegrator.h"
 %include "core/integration/ISigmaIntegrator.h"
 %include "core/integration/PixelSumIntegrator.h"
-%include "core/peak/Peak3D.h"
 %include "core/shape/Profile1D.h"
 %include "core/shape/ShapeLibrary.h"
 %include "core/integration/ShapeIntegrator.h"
 %include "core/peak/IntegrationRegion.h"
 %include "core/peak/PeakData.h"
 %include "core/peak/Intensity.h"
-%include "core/peak/Peak3D.h"
 
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
 %template(PeakShell) std::vector<std::vector<std::shared_ptr<nsx::Peak3D>>>;
@@ -438,8 +435,6 @@ namespace nsx {
 %include "core/statistics/RFactor.h"
 %include "core/statistics/CC.h"
 %include "core/statistics/CC.h"
-
-%include "core/peak/Peak3D.h"
 
 %include "tables/crystal/MillerIndex.h"
 %template(MillerIndexList) std::vector<nsx::MillerIndex>;
