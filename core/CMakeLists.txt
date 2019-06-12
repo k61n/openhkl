@@ -12,6 +12,7 @@ target_link_libraries(${NSX_LIBRARY}
     nsxbase
     nsxtables
     PRIVATE
+    ${XSection_LIBRARIES}
     ${HDF5_LIBRARIES}
     ${BLOSC_LIBRARY}
     ${Boost_LIBRARIES}

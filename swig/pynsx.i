@@ -94,8 +94,8 @@ using Eigen::Quaterniond;
 #include "base/utils/Singleton.h"
 #include "base/utils/Units.h"
 
-#include "tables/chemistry/IsotopeDatabaseManager.h"
-#include "tables/chemistry/Material.h"
+#include <xsection/IsotopeDatabaseManager.h>
+#include <xsection/Material.h>
 
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/NiggliReduction.h"
@@ -252,9 +252,9 @@ using namespace nsx;
 %include "base/fit/FitParameters.h"
 %include "base/fit/Minimizer.h"
 
-%include "tables/chemistry/ChemistryTypes.h"
-%include "tables/chemistry/Material.h"
-%include "tables/chemistry/IsotopeDatabaseManager.h"
+%include <xsection/ChemistryTypes.h>
+%include <xsection/Material.h>
+%include <xsection/IsotopeDatabaseManager.h>
 
 %include "tables/crystal/SymOp.h"
 %template(SymOpList) std::vector<nsx::SymOp>;
