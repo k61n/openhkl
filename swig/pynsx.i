@@ -100,10 +100,10 @@ using Eigen::Quaterniond;
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/NiggliReduction.h"
 #include "tables/crystal/SymOp.h"
-#include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
 #include "tables/crystal/BrillouinZone.h"
 #include "tables/crystal/GruberReduction.h"
+#include "tables/crystal/SpaceGroup.h"
 
 #include "core/algo/AutoIndexer.h"
 #include "core/algo/DataReaderFactory.h"
@@ -267,6 +267,9 @@ using namespace nsx;
 %template(indexer_solutions) std::vector<std::pair<std::shared_ptr<nsx::UnitCell>,double>>;
 %include "tables/crystal/GruberReduction.h"
 %include "tables/crystal/BrillouinZone.h"
+
+%include "tables/crystal/UnitCell.h"
+%include "tables/crystal/SpaceGroup.h"
 
 %include "core/gonio/Axis.h"
 %include "core/gonio/Gonio.h"
