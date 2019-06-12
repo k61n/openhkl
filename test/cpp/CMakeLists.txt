@@ -7,7 +7,7 @@ foreach(source_file ${test_sources})
     get_filename_component(base_name ${source_file} NAME_WE)
     add_executable(${base_name} ${source_file})
     target_include_directories(${base_name} PRIVATE ${CMAKE_SOURCE_DIR})
-    target_link_libraries(${base_name} ${Boost_LIBRARIES} nsx catch2)
+    target_link_libraries(${base_name} catch2 nsxcore)
 
     if(${NSX_VALGRIND})
         add_test(

@@ -25,4 +25,4 @@ else()
     swig_add_module(pynsx python pynsx.i)
 endif()
 
-swig_link_libraries(pynsx nsx ${PYTHON_LIBRARIES})
+swig_link_libraries(pynsx ${PYTHON_LIBRARIES} nsxcore)

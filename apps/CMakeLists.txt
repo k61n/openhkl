@@ -20,7 +20,8 @@ target_include_directories(
 
 target_link_libraries(
     apps
+    nsxcore
     ${QT_LIBRARIES}
     QCustomPlot
     ${OPENGL_LIBRARIES}
-    ${NSX_LIBRARY})
+    )

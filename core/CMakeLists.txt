@@ -1,21 +1,24 @@
+set(lib nsxcore)
+
 file(GLOB_RECURSE sources *.cpp)
 
-add_library(${NSX_LIBRARY} ${sources})
+add_library(${lib} ${sources})
 
 target_include_directories(
-    ${NSX_LIBRARY}
+    ${lib}
     PRIVATE
     ${CMAKE_SOURCE_DIR})
 
-target_link_libraries(${NSX_LIBRARY}
+target_link_libraries(${lib}
     PUBLIC
     nsxbase
     nsxtables
     PRIVATE
-    ${XSection_LIBRARIES}
     ${HDF5_LIBRARIES}
     ${BLOSC_LIBRARY}
     ${Boost_LIBRARIES}
     ${FFTW_LIBRARIES}
     ${TIFF_LIBRARY}
-    ${GSL_LIBRARIES})
+    ${GSL_LIBRARIES}
+    ${XSection_LIBRARIES}
+    )
