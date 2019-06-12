@@ -264,7 +264,6 @@ using namespace nsx;
 %include "tables/crystal/NiggliReduction.h"
 %include "tables/crystal/UnitCell.h"
 %template(UnitCellList) std::vector<nsx::sptrUnitCell>;
-%template(scored_uc) std::pair<std::shared_ptr<nsx::UnitCell>, double>;
 %template(indexer_solutions) std::vector<std::pair<std::shared_ptr<nsx::UnitCell>,double>>;
 %include "tables/crystal/GruberReduction.h"
 %include "tables/crystal/BrillouinZone.h"
