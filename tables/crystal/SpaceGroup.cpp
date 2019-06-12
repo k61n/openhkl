@@ -20,9 +20,9 @@
 #include <algorithm>
 #include <sstream>
 
-namespace nsx {
+namespace {
 
-const std::vector<SpaceGroupSymmetry> SpaceGroup::symmetry_table = {
+const std::vector<std::pair<std::string, std::string>> symmetry_table = {
     {"P 1", " x,y,z"},
     {"P -1", " -x,-y,-z"},
     {"P 2", " -x,y,-z"},
@@ -284,11 +284,16 @@ const std::vector<SpaceGroupSymmetry> SpaceGroup::symmetry_table = {
      " x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; z,x,y; "
      "y+3/4,x+1/4,-z+1/4; -x,-y,-z"}};
 
+} // namespace
+
+
+namespace nsx {
+
 std::vector<std::string> SpaceGroup::symbols()
 {
     std::vector<std::string> symbols;
     symbols.reserve(symmetry_table.size());
-    auto get_symbol = [](const SpaceGroupSymmetry& s) -> std::string { return s.first; };
+    auto get_symbol = [](const std::pair<std::string, std::string>& s) -> std::string { return s.first; };
     std::transform(
         symmetry_table.begin(), symmetry_table.end(), std::back_inserter(symbols), get_symbol);
     return symbols;

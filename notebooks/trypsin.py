@@ -105,6 +105,8 @@ def autoindex(peaks):
     ch = uc.character()
     print('a: ', ch.a, 'b: ', ch.b, 'c: ', ch.c)
     print('alpha: ', ch.alpha, 'beta: ', ch.beta, 'gamma: ', ch.gamma)
+    print('UC DEBUG: ', uc)
+    print('Spacegroup DEBUG: ', uc.spaceGroup())
     print('Spacegroup: ', uc.spaceGroup().symbol())
     return uc
 

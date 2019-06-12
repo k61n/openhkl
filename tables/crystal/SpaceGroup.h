@@ -20,14 +20,8 @@
 
 namespace nsx {
 
-using SpaceGroupSymmetry = std::pair<std::string, std::string>;
-
 //! Class to enumerate and construct the 3d spacegroups.
 class SpaceGroup {
-private:
-    //! Returns the list of spacegroup symmetry generators associated to each spacegroup
-    static const std::vector<SpaceGroupSymmetry> symmetry_table;
-
 public:
     //! Returns the list of spacegroup symbols
     static std::vector<std::string> symbols();
@@ -35,14 +29,15 @@ public:
     SpaceGroup();
     //! Construct a space group from its IT symbol. Lookup in the IUCR table
     SpaceGroup(std::string symbol);
+
     SpaceGroup(const SpaceGroup& other) = default;
     SpaceGroup& operator=(const SpaceGroup& other);
 
-    //! Resturns the IT symbol for this space group
+    //! Returns the IT symbol for this space group
     const std::string& symbol() const;
-    //! Resturns the string containing the generators (in Jones notation), separated by ";"
+    //! Returns the string containing the generators (in Jones notation), separated by ";"
     const std::string& generators() const;
-    //! Resturns a vector containing the Symmetry operations for this space group
+    //! Returns a vector containing the Symmetry operations for this space group
     const SymOpList& groupElements() const;
     //! Determine whether a h,k,l reflection is forbidden
     bool isExtinct(const MillerIndex& hkl) const;
