@@ -17,8 +17,7 @@
 
 namespace nsx {
 
-//! Class to store the intensity of a given peak alongside with its
-//! variance
+//! Class to store the intensity of a given peak alongside with its variance
 class Intensity {
 public:
     //! Constructs an Intensity from its value and variance.

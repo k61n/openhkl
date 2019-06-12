@@ -100,10 +100,10 @@ using Eigen::Quaterniond;
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/NiggliReduction.h"
 #include "tables/crystal/SymOp.h"
+#include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
 #include "tables/crystal/BrillouinZone.h"
 #include "tables/crystal/GruberReduction.h"
-#include "tables/crystal/SpaceGroup.h"
 
 #include "core/algo/AutoIndexer.h"
 #include "core/algo/DataReaderFactory.h"
