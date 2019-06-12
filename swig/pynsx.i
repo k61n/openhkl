@@ -96,13 +96,14 @@ using Eigen::Quaterniond;
 
 #include "tables/chemistry/IsotopeDatabaseManager.h"
 #include "tables/chemistry/Material.h"
-#include "tables/crystal/BrillouinZone.h"
-#include "tables/crystal/GruberReduction.h"
+
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/NiggliReduction.h"
-#include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/SymOp.h"
+#include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
+#include "tables/crystal/BrillouinZone.h"
+#include "tables/crystal/GruberReduction.h"
 
 #include "core/algo/AutoIndexer.h"
 #include "core/algo/DataReaderFactory.h"
@@ -221,6 +222,9 @@ using namespace nsx;
 %template(vectorVector3d) std::vector<Eigen::Vector3d>;
 %template(vectorRowVector3d) std::vector<Eigen::RowVector3d>;
 
+// Include hierarchy from bottom to top:
+//   no %-included file must depend on files that have not been %-included before.
+
 %include "base/utils/CSV.h"
 %include "base/utils/Path.h"
 %include "base/utils/ProgressHandler.h"
@@ -249,7 +253,6 @@ using namespace nsx;
 %include "base/fit/Minimizer.h"
 
 %include "tables/chemistry/ChemistryTypes.h"
-%include "tables/crystal/UnitCell.h"
 %include "tables/chemistry/Material.h"
 %include "tables/chemistry/IsotopeDatabaseManager.h"
 

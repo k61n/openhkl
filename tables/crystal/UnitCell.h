@@ -268,7 +268,7 @@ private:
     //! _NP is the transformation such that _A*_NP.inverse() is the Niggli cell
     Eigen::Matrix3d _NP;
 
-    std::unique_ptr<Material> _material;
+    std::unique_ptr<Material> _material {nullptr};
 
     LatticeCentring _centring;
 

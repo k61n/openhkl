@@ -26,9 +26,8 @@ public:
     //! Returns the list of spacegroup symbols
     static std::vector<std::string> symbols();
 
-    SpaceGroup();
     //! Construct a space group from its IT symbol. Lookup in the IUCR table
-    SpaceGroup(std::string symbol);
+    SpaceGroup(std::string symbol = "P 1");
 
     SpaceGroup(const SpaceGroup& other) = default;
     SpaceGroup& operator=(const SpaceGroup& other);
@@ -62,8 +61,6 @@ public:
         const MillerIndex& miller_index1, const MillerIndex& miller_index2) const;
 
 private:
-    void reduceSymbol();
-
     void generateGroupElements();
 
 private:
