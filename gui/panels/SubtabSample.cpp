@@ -23,7 +23,7 @@
 
 SubtabSample::SubtabSample() : QcrWidget {"sample"}
 {
-    auto* layout = new QHBoxLayout;
+    QHBoxLayout* layout = new QHBoxLayout;
     layout->addWidget((property = new SampleShapeProperties));
     setLayout(layout);
 }

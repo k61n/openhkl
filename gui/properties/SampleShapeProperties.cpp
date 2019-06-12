@@ -60,9 +60,9 @@ void SampleShapeProperties::onRemake()
 {
     if (gSession->selectedExperimentNum() >= 0) {
         // SampleProperty
-        const auto& sample =
+        const nsx::Sample& sample =
             gSession->selectedExperiment()->experiment()->diffractometer()->sample();
-        const auto& sample_gonio = sample.gonio();
+        const nsx::Gonio& sample_gonio = sample.gonio();
         size_t n_sample_gonio_axes = sample_gonio.nAxes();
 
         sampleGoniometer->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -80,7 +80,7 @@ void SampleShapeProperties::onRemake()
 
         for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
 
-            const auto& axis = sample_gonio.axis(i);
+            const nsx::Axis& axis = sample_gonio.axis(i);
 
             std::ostringstream os;
             os << axis;
@@ -94,7 +94,7 @@ void SampleShapeProperties::onRemake()
         }
 
         // Shape
-        const auto& hull = sample.shape();
+        const nsx::ConvexHull& hull = sample.shape();
 
         volume->setCellValue(QString::number(hull.volume() / nsx::mm3) + " mm^3");
         faces->setCellValue(QString::number(hull.nFaces()));

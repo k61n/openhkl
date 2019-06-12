@@ -30,9 +30,10 @@ SourceProperty::SourceProperty() : QcrWidget("sourceProperty")
         int exp = gSession->selectedExperimentNum();
         if (exp < 0)
             return list;
-        const auto& monos = gSession->selectedExperiment()->experiment()->diffractometer()
-                ->source().monochromators();
-        for (auto&& m : monos)
+        const std::vector<nsx::Monochromator>& monos =
+                gSession->selectedExperiment()->experiment()->
+                diffractometer()->source().monochromators();
+        for (nsx::Monochromator m : monos)
             list.append(QString::fromStdString(m.name()));
         return list;
     });
@@ -84,10 +85,10 @@ void SourceProperty::clear()
 
 void SourceProperty::onMonoChanged(int index)
 {
-    auto& source = gSession->selectedExperiment()->experiment()->diffractometer()->source();
+    nsx::Source& source = gSession->selectedExperiment()->experiment()->diffractometer()->source();
     source.setSelectedMonochromator(index);
 
-    const auto& mono = source.selectedMonochromator();
+    const nsx::Monochromator& mono = source.selectedMonochromator();
 
     wavelength->setCellValue(mono.wavelength());
     fwhm->setCellValue(mono.fullWidthHalfMaximum());
@@ -97,21 +98,21 @@ void SourceProperty::onMonoChanged(int index)
 
 void SourceProperty::onWavelength(double wavelength)
 {
-    auto& source = gSession->selectedExperiment()->experiment()->diffractometer()->source();
-    auto& mono = source.selectedMonochromator();
+    nsx::Source& source = gSession->selectedExperiment()->experiment()->diffractometer()->source();
+    nsx::Monochromator& mono = source.selectedMonochromator();
     mono.setWavelength(wavelength);
 }
 
 void SourceProperty::onWidth(double width)
 {
-    auto& source = gSession->selectedExperiment()->experiment()->diffractometer()->source();
-    auto& mono = source.selectedMonochromator();
+    nsx::Source& source = gSession->selectedExperiment()->experiment()->diffractometer()->source();
+    nsx::Monochromator& mono = source.selectedMonochromator();
     mono.setWidth(width * nsx::mm);
 }
 
 void SourceProperty::onHeight(double height)
 {
-    auto& source = gSession->selectedExperiment()->experiment()->diffractometer()->source();
-    auto& mono = source.selectedMonochromator();
+    nsx::Source& source = gSession->selectedExperiment()->experiment()->diffractometer()->source();
+    nsx::Monochromator& mono = source.selectedMonochromator();
     mono.setHeight(height * nsx::mm);
 }

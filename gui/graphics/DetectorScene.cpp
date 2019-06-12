@@ -100,9 +100,9 @@ void DetectorScene::resetPeakGraphicsItems()
     if (gSession->selectedExperimentNum() >= 0) {
         nsx::PeakList peaks = gSession->selectedExperiment()->peaks()->allPeaks();
 
-        for (auto peak : peaks) {
+        for (nsx::sptrPeak3D peak : peaks) {
 
-            auto peak_ellipsoid = peak->shape();
+            nsx::Ellipsoid peak_ellipsoid = peak->shape();
 
             peak_ellipsoid.scale(peak->peakEnd());
 
@@ -112,8 +112,7 @@ void DetectorScene::resetPeakGraphicsItems()
 
             Eigen::Vector3d upper = aabb.upper();
 
-            // If the current frame of the scene is out of the peak bounds do not paint
-            // it
+            // If the current frame of the scene is out of the peak bounds do not paint it
             if (_currentFrameIndex < lower[2] || _currentFrameIndex > upper[2])
                 continue;
 
@@ -138,7 +137,7 @@ void DetectorScene::resetPeakGraphicsItems()
 
     if (_selected_peak) {
 
-        const nsx::Ellipsoid& selected_peak_ellipsoid = _selected_peak->shape();
+        nsx::Ellipsoid selected_peak_ellipsoid = _selected_peak->shape();
 
         selected_peak_ellipsoid.scale(_selected_peak->peakEnd());
 

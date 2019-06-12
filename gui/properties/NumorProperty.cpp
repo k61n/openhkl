@@ -39,7 +39,7 @@ NumorProperty::NumorProperty() : QcrWidget {"numorProperty"}
         if (datalist.empty())
             return QStringList{""};
         QStringList namen;
-        for (auto& dataset : datalist)
+        for (nsx::sptrDataSet dataset : datalist)
             namen.append(QString::fromStdString(dataset->filename()));
         return namen;
     });
@@ -59,11 +59,11 @@ void NumorProperty::onRemake()
 
     if (gSession->selectedExperimentNum() >= 0) {
         ExperimentModel* exp = gSession->selectedExperiment();
-        auto data = exp->data()->selectedData();
+        nsx::sptrDataSet data = exp->data()->selectedData();
 
         if (data) {
-            const auto& metadata = data->reader()->metadata();
-            const auto& map = metadata.map();
+            const nsx::MetaData& metadata = data->reader()->metadata();
+            const nsx::MetaDataMap& map = metadata.map();
 
             table->setColumnCount(2);
             table->setRowCount(map.size());
@@ -79,10 +79,9 @@ void NumorProperty::onRemake()
                     col1->setData(Qt::EditRole, element.second.as<int>());
                 else if (element.second.is<double>())
                     col1->setData(Qt::EditRole, element.second.as<double>());
- else if (element.second.is<std::string>()) {
-                    col1->setData(
-                        Qt::EditRole,
-                        QString(QString::fromStdString(element.second.as<std::string>())));
+                else if (element.second.is<std::string>()) {
+                    col1->setData(Qt::EditRole,
+                        QString::fromStdString(element.second.as<std::string>()));
                 } else {
                     delete col0;
                     delete col1;

@@ -23,7 +23,7 @@
 
 SubtabDetector::SubtabDetector() : QcrWidget {"detector"}
 {
-    auto* layout = new QHBoxLayout;
+    QHBoxLayout* layout = new QHBoxLayout;
     layout->addWidget((property = new DetectorProperty));
     setLayout(layout);
 }

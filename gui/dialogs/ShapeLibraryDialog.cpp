@@ -52,7 +52,7 @@ ShapeLibraryDialog::ShapeLibraryDialog() : QDialog {}
     }
     _peaks = gSession->selectedExperiment()->peaks()->allPeaks();
     //_unitCell = gSession->selectedExperiment()->unitCells()->allUnitCells().at(0);
-    for (auto peak : _peaks)
+    for (nsx::sptrPeak3D peak : _peaks)
         _data.insert(peak->data());
     layout();
 }
@@ -134,7 +134,7 @@ void ShapeLibraryDialog::layout()
     Eigen::Matrix3d cov;
     cov.setZero();
 
-    for (auto peak : _peaks) {
+    for (nsx::sptrPeak3D peak : _peaks) {
         nsx::PeakCoordinateSystem coord(peak);
         const nsx::Ellipsoid& shape = peak->shape();
         Eigen::Matrix3d J = coord.jacobian();
@@ -198,7 +198,7 @@ void ShapeLibraryDialog::build()
 {
     nsx::PeakList fit_peaks;
 
-    for (auto peak : _peaks) {
+    for (nsx::sptrPeak3D peak : _peaks) {
         if (!peak->enabled())
             continue;
         double d = 1.0 / peak->q().rowVector().norm();

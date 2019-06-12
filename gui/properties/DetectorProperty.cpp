@@ -81,7 +81,7 @@ void DetectorProperty::onRemake()
         rows->setCellValue(detector->nRows());
         columns->setCellValue(detector->nCols());
 
-        const auto& detector_gonio = detector->gonio();
+        const nsx::Gonio& detector_gonio = detector->gonio();
         size_t n_detector_gonio_axes = detector_gonio.nAxes();
         axes->setEditTriggers(QAbstractItemView::NoEditTriggers);
         axes->setRowCount(n_detector_gonio_axes);
@@ -95,7 +95,7 @@ void DetectorProperty::onRemake()
         axes->horizontalHeader()->setStretchLastSection(true);
         axes->verticalHeader()->setVisible(false);
         for (size_t i = 0; i < n_detector_gonio_axes; ++i) {
-            const auto& axis = detector_gonio.axis(i);
+            const nsx::Axis& axis = detector_gonio.axis(i);
 
             std::ostringstream os;
             os << axis;

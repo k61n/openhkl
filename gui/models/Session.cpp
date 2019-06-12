@@ -54,8 +54,8 @@ void Session::createExperiment()
     }
 
     try {
-        auto experimentName = dlg->experimentName().toStdString();
-        auto instrumentName = dlg->instrumentName().toStdString();
+        std::string experimentName = dlg->experimentName().toStdString();
+        std::string instrumentName = dlg->instrumentName().toStdString();
         nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName, instrumentName));
 
         ExperimentModel* expt = new ExperimentModel(expPtr);
@@ -109,7 +109,7 @@ void Session::loadData()
         "Data files(*.h5 *.hdf5 *.hdf *.fake *.nxs *.raw *.tif *.tiff);;all files (*.* *)");
     for (QString filename : filenames) {
         QFileInfo fileinfo(filename);
-        auto exp = selectedExperiment()->experiment();
+        nsx::sptrExperiment exp = selectedExperiment()->experiment();
 
         // If the experiment already stores the current numor, skip it
         if (exp->hasData(filename.toStdString()))
@@ -162,7 +162,7 @@ void Session::loadRawData()
     if (!dialog.exec()) {
         return;
     }
-    auto exp = selectedExperiment()->experiment();
+    nsx::sptrExperiment exp = selectedExperiment()->experiment();
 
     // If the experience already stores the current numor, skip it
     if (exp->hasData(filenames[0])) {
@@ -183,9 +183,10 @@ void Session::loadRawData()
     parameters.bpp = dialog.bpp();
 
     try {
-        auto diff = exp->diffractometer();
+        nsx::Diffractometer* diff = exp->diffractometer();
         reader.reset(new nsx::RawDataReader(filenames[0], diff));
-        auto raw_data_reader = std::dynamic_pointer_cast<nsx::RawDataReader>(reader);
+        std::shared_ptr<nsx::RawDataReader> raw_data_reader =
+                std::dynamic_pointer_cast<nsx::RawDataReader>(reader);
         for (size_t i = 1; i < filenames.size(); ++i) {
             raw_data_reader->addFrame(filenames[i]);
         }

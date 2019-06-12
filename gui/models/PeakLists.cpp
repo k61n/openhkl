@@ -114,7 +114,7 @@ PeaksModel::PeaksModel() {}
 nsx::PeakList PeaksModel::allPeaks()
 {
     nsx::PeakList all;
-    for (auto& peakList : peakLists_) {
+    for (PeakListsModel* peakList : peakLists_) {
         nsx::PeakList peaks = peakList->getAllListPeaks();
         all.insert(all.end(), peaks.begin(), peaks.end());
     }
@@ -150,7 +150,7 @@ void PeaksModel::addPeakListsModel(const QString& name, nsx::PeakList list)
 QStringList PeaksModel::peaklistNames()
 {
     QStringList foundListsNames;
-    for (auto& peaklist : peakLists_)
+    for (PeakListsModel* peaklist : peakLists_)
         foundListsNames.append(peaklist->getName());
     return foundListsNames;
 }

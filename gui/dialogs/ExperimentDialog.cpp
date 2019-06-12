@@ -36,7 +36,7 @@ QStringList allInstrumentNames()
         resources_name.insert(QFileInfo(diffractometer).baseName().toStdString());
 
     QStringList list;
-    for (auto res : resources_name)
+    for (std::string res : resources_name)
         list.append(QString::fromStdString(res));
 
     return list;

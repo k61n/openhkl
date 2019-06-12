@@ -23,7 +23,7 @@
 
 TabData::TabData() : QcrWidget {"data"}
 {
-    auto* layout = new QHBoxLayout;
+    QHBoxLayout* layout = new QHBoxLayout;
     layout->addWidget((property = new NumorProperty));
     setLayout(layout);
 }

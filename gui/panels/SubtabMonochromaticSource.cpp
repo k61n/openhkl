@@ -23,7 +23,7 @@
 
 SubtabMonochromatic::SubtabMonochromatic() : QcrWidget {"monochromatic source"}
 {
-    auto* layout = new QHBoxLayout;
+    QHBoxLayout* layout = new QHBoxLayout;
     layout->addWidget((property = new SourceProperty));
     setLayout(layout);
 }
