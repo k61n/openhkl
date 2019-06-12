@@ -58,10 +58,10 @@ peak_list = nsx.PeakList()
 for peak in peaks:
     peak_list.push_back(peak)
 
-print("integrator ...")
+print("integrate1 begin")
 integrator = nsx.PixelSumIntegrator(False, False)
 integrator.integrate(peak_list, data, 3.0, 3.0, 6.0)
-print("... integrator")
+print("... integrate1 done")
 
 ################################################################################
 ## Set some detector parameters
@@ -105,8 +105,6 @@ def autoindex(peaks):
     ch = uc.character()
     print('a: ', ch.a, 'b: ', ch.b, 'c: ', ch.c)
     print('alpha: ', ch.alpha, 'beta: ', ch.beta, 'gamma: ', ch.gamma)
-    print('UC DEBUG: ', uc)
-    print('Spacegroup DEBUG: ', uc.spaceGroup())
     print('Spacegroup: ', uc.spaceGroup().symbol())
     return uc
 
@@ -268,9 +266,11 @@ bkgEnd = 4.5
 shape_library = nsx.ShapeLibrary(kabsch_coords, peak_scale, bkgBegin, bkgEnd)
 integrator = nsx.ShapeIntegrator(shape_library, aabb, nx, ny, nz)
 
+print("integrate2 begin")
 integrator.integrate(
     fit_peaks, data, shape_library.peakScale(),
     shape_library.bkgBegin(), shape_library.bkgEnd())
+print("... integrate2 done")
 
 shape_library = integrator.library()
 
@@ -297,18 +297,23 @@ dmin = 1.5
 dmax = 50
 peak_filter = nsx.PeakFilter()
 integration_peaks = peak_filter.dRange(predicted_peaks, dmin, dmax)
+
+print("integrate3 begin")
 integrator.integrate(predicted_peaks, data, 3.0, 3.0, 6.0)
+print("... integrate3 done")
 
 ################################################################################
 ## Filter peaks
 ################################################################################
 
+print("filtering begin")
 peak_filter = nsx.PeakFilter()
 filtered_peaks = peak_filter.enabled(integration_peaks, True)
 filtered_peaks = peak_filter.hasUnitCell(filtered_peaks)
 cell = filtered_peaks[0].unitCell()
 filtered_peaks = peak_filter.unitCell(filtered_peaks, cell)
 filtered_peaks = peak_filter.indexed(filtered_peaks, cell, cell.indexingTolerance())
+print("... filtering done")
 
 ################################################################################
 ## Plot the selected peaks in a 3D opengl view
@@ -355,6 +360,7 @@ x_offset = 0
 y_offset = 0
 
 # process for selected hkl series
+print("process hkl, begin loop")
 for k, val in enumerate(points):
 
     #set all hkl parameters
@@ -447,6 +453,8 @@ for k, val in enumerate(points):
     # set the y_offset for the following plots
     y_offset += (int(center[0][0] + y_range) - int(center[0][0] - y_range) ) * y_scale +2
 
+print("... process hkl, loop done")
+
 # ploting of the data
 ax.draw()
 widget.show()
@@ -493,6 +501,7 @@ stats = []
 
 num_good = 0
 
+print("compute shell information, begin loop ...")
 for peak in predicted_peaks:
     inten = peak.correctedIntensity()
 
@@ -517,6 +526,8 @@ for peak in predicted_peaks:
 
     shells.addPeak(peak)
     num_good += 1
+
+print("... compute shell information, loop done")
 
 for i in range(nshells):
     shell = shells.shell(i)
@@ -546,6 +557,7 @@ upper_d   = 50.
 merged_data = nsx.MergedData(nsx.SpaceGroup("P 21 21 21"), True)
 
 # add the strong peaks
+print("add the strong peaks ...")
 for peak in fit_peaks:
     if not peak.selected():
         continue
@@ -561,6 +573,7 @@ for peak in fit_peaks:
     merged_data.addPeak(peak)
 
 # add the predicted peaks
+print("add the predicted peaks ...")
 for peak in predicted_peaks:
     if not peak.selected():
         continue
@@ -615,6 +628,7 @@ sca_header += temp+' '+''.join(symbol.split()).lower()+'\n'
 ################################################################################
 sca_data = []
 
+print("prepare phenix output, begin loop ...")
 for peak in merged_data.peaks():
 
     # get the indexes, intensity and sigma
@@ -649,6 +663,9 @@ for peak in merged_data.peaks():
             temp += ' ' + ''.join([' ']*(length - 1 - len(num))) + num
 
     sca_data.append(temp)
+
+print("... prepare phenix output, loop done")
+
 sca_data = '\n'.join(sca_data)
 sca_data += '\n'
 
