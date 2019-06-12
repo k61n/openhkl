@@ -313,13 +313,14 @@ using namespace nsx;
 %include "core/peak/PeakData.h"
 %include "core/peak/Intensity.h"
 %include "core/peak/IntegrationRegion.h"
-%include "core/peak/IPeakIntegrator.h"
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
 
 %include "core/experiment/DataSet.h"
 %include "core/experiment/DataTypes.h"
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
 %include "core/experiment/Experiment.h"
+
+%include "core/peak/IPeakIntegrator.h"
 
 %template(ConvolverParameters) std::map<std::string,double>;
 %include "core/convolve/Convolver.h"
