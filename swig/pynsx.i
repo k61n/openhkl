@@ -248,10 +248,6 @@ using namespace nsx;
 
 %include "tables/chemistry/Material.h"
 %include "tables/chemistry/IsotopeDatabaseManager.h"
-%template(propertyi) nsx::IsotopeDatabaseManager::property<int>;
-%template(propertyd) nsx::IsotopeDatabaseManager::property<double>;
-%template(propertys) nsx::IsotopeDatabaseManager::property<std::string>;
-%template(propertyb) nsx::IsotopeDatabaseManager::property<bool>;
 
 %template(scored_uc) std::pair<std::shared_ptr<nsx::UnitCell>, double>;
 %template(indexer_solutions) std::vector<std::pair<std::shared_ptr<nsx::UnitCell>,double>>;
