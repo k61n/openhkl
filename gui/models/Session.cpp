@@ -33,6 +33,7 @@ Session* gSession;
 Session::Session()
 {
     gSession = this;
+    loadDirectory = QDir::homePath();
 }
 
 void Session::createExperiment()
@@ -105,8 +106,15 @@ void Session::loadData()
 {
     QStringList filenames;
     filenames = QcrFileDialog::getOpenFileNames(
-        gGui, "import data", QDir::homePath(),
+        gGui, "import data", loadDirectory,
         "Data files(*.h5 *.hdf5 *.hdf *.fake *.nxs *.raw *.tif *.tiff);;all files (*.* *)");
+
+    if (filenames.empty())
+        return;
+
+    QFileInfo info(filenames.at(0));
+    loadDirectory = info.absolutePath();
+
     for (QString filename : filenames) {
         QFileInfo fileinfo(filename);
         nsx::sptrExperiment exp = selectedExperiment()->experiment();
@@ -145,11 +153,14 @@ void Session::loadRawData()
 {
     QStringList qfilenames;
     qfilenames = QcrFileDialog::getOpenFileNames(
-        nullptr, "select raw data", "", "", nullptr, QFileDialog::Option::DontUseNativeDialog);
+        nullptr, "select raw data", loadDirectory, "", nullptr, QFileDialog::Option::DontUseNativeDialog);
 
     if (qfilenames.empty()) {
         return;
     }
+
+    QFileInfo info(qfilenames.at(0));
+    loadDirectory = info.absolutePath();
 
     std::vector<std::string> filenames;
 

@@ -42,6 +42,7 @@ public:
 private:
     QList<ExperimentModel*> experiments;
     int selected = -1;
+    QString loadDirectory;
 };
 
 #endif // GUI_MODELS_SESSION_H
