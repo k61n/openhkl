@@ -20,6 +20,7 @@
 #include "core/algo/DataReaderFactory.h"
 #include "core/raw/IDataReader.h"
 #include "core/loader/RawDataReader.h"
+#include "core/instrument/HardwareParameters.h"
 
 #include "gui/dialogs/ExperimentDialog.h"
 #include "gui/dialogs/RawDataDialog.h"
@@ -39,23 +40,24 @@ Session::Session()
 void Session::createExperiment()
 {
     std::unique_ptr<ExperimentDialog> dlg;
-
+    QString expname;
     // DialogExperiment could throw an exception if it fails to read the resource files
     try {
         dlg = std::unique_ptr<ExperimentDialog>(new ExperimentDialog());
         if (!dlg->exec())
             return;
-        if (dlg->experimentName().isEmpty()) {
-            gLogger->log("[WARNING] Failed adding new experiment due to empty experiment name");
-            return;
-        }
+
+        if (dlg->experimentName().isEmpty())
+            expname = QDateTime::currentDateTime().toString();
+        else
+            expname = dlg->experimentName();
     } catch (std::exception& e) {
         gLogger->log(QString::fromStdString(e.what()));
         return;
     }
 
     try {
-        std::string experimentName = dlg->experimentName().toStdString();
+        std::string experimentName = expname.toStdString();
         std::string instrumentName = dlg->instrumentName().toStdString();
         nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName, instrumentName));
 
@@ -67,6 +69,17 @@ void Session::createExperiment()
         gLogger->log(QString::fromStdString(e.what()));
         return;
     }
+    onExperimentChanged();
+}
+
+void Session::createDefaultExperiment()
+{
+    std::string experimentName = QDateTime::currentDateTime().toString().toStdString();
+    std::set<std::string> instruments = nsx::getResourcesName("instruments");
+    nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName, *instruments.begin()));
+    ExperimentModel* expmodel = new ExperimentModel(expPtr);
+    experiments.push_back(expmodel);
+    selected = experiments.size() -1;
     onExperimentChanged();
 }
 
@@ -104,8 +117,10 @@ ExperimentModel* Session::selectedExperiment()
 
 void Session::loadData()
 {
-    QStringList filenames;
-    filenames = QcrFileDialog::getOpenFileNames(
+    if (selected < 0)
+        createDefaultExperiment();
+
+    QStringList filenames = QcrFileDialog::getOpenFileNames(
         gGui, "import data", loadDirectory,
         "Data files(*.h5 *.hdf5 *.hdf *.fake *.nxs *.raw *.tif *.tiff);;all files (*.* *)");
 
@@ -151,6 +166,9 @@ void Session::removeData()
 
 void Session::loadRawData()
 {
+    if (selected < 0)
+        createDefaultExperiment();
+
     QStringList qfilenames;
     qfilenames = QcrFileDialog::getOpenFileNames(
         nullptr, "select raw data", loadDirectory, "", nullptr, QFileDialog::Option::DontUseNativeDialog);

@@ -29,6 +29,7 @@ public:
     int numExperiments() { return experiments.size(); }
 
     void createExperiment();
+    void createDefaultExperiment();
     void removeExperiment();
 
     void loadData();
