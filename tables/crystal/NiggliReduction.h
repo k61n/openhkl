@@ -19,7 +19,6 @@
 
 namespace nsx {
 
-//! \class NiggliReduction
 //! Class to handle reduction of a general unit cell to a Niggli cell.
 //! Implementation of primitive unit-cell reduction using the method described
 //! in : "Numerically stable algorithms for the computation of reduced Unit

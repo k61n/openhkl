@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding: utf-8
 
 # run this script in the directory that contains the raw data file trypsin.hdf
@@ -59,7 +59,6 @@ for peak in peaks:
     peak_list.push_back(peak)
 
 print("integrator ...")
-sys.exit(0)
 integrator = nsx.PixelSumIntegrator(False, False)
 integrator.integrate(peak_list, data, 3.0, 3.0, 6.0)
 print("... integrator")
@@ -106,6 +105,8 @@ def autoindex(peaks):
     ch = uc.character()
     print('a: ', ch.a, 'b: ', ch.b, 'c: ', ch.c)
     print('alpha: ', ch.alpha, 'beta: ', ch.beta, 'gamma: ', ch.gamma)
+    print('UC DEBUG: ', uc)
+    print('Spacegroup DEBUG: ', uc.spaceGroup())
     print('Spacegroup: ', uc.spaceGroup().symbol())
     return uc
 

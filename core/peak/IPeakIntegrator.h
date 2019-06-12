@@ -22,7 +22,6 @@
 
 namespace nsx {
 
-//! \class IPeakIntegrator
 //! This is a helper class to handle per-frame integration of a peak.
 class IPeakIntegrator {
 public:

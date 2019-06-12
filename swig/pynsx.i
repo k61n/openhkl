@@ -1,6 +1,9 @@
 %module(directors="1") "pynsx"
 
+%include "cpointer.i"
 %include "exception.i"
+%include "typemaps.i"
+%include "warnings.i"
 
 %exception {
   try {
@@ -18,17 +21,14 @@
 %feature("director") ISigmaIntegrator;
 %feature("director") ShapeIntegrator;
 
-%include "warnings.i"
-
-%include "typemaps.i"
-%include "cpointer.i"
-
-%include "std_shared_ptr.i"
-%include "std_string.i"
-%include "std_vector.i"
-%include "std_deque.i"
-%include "std_set.i"
-%include "std_pair.i"
+%include <std_deque.i>
+%include <std_map.i>
+%include <std_pair.i>
+%include <std_set.i>
+%include <std_shared_ptr.i>
+%include <std_string.i>
+%include <std_vector.i>
+%include <typemaps.i>
 
 %template(vector_1d)  std::vector<double>;
 %template(vector_2d)  std::vector<std::vector<double>>;
@@ -36,21 +36,19 @@
 %template(vector_2i) std::vector<std::vector<int>>;
 %template(vector_string) std::vector<std::string>;
 
-%shared_ptr(nsx::Peak3D)
-%shared_ptr(nsx::Diffractometer)
 %shared_ptr(nsx::DataSet)
-%shared_ptr(nsx::IDataReader)
+%shared_ptr(nsx::Diffractometer)
+%shared_ptr(nsx::Experiment)
 %shared_ptr(nsx::HDF5DataReader)
 %shared_ptr(nsx::HDF5MetaDataReader)
+%shared_ptr(nsx::IDataReader)
 %shared_ptr(nsx::ILLDataReader)
-
-%shared_ptr(nsx::RawDataReader)
-%shared_ptr(nsx::TiffDataReader)
-%shared_ptr(nsx::Experiment)
+%shared_ptr(nsx::Peak3D)
 %shared_ptr(nsx::ProgressHandler)
-
-%shared_ptr(nsx::UnitCell)
+%shared_ptr(nsx::RawDataReader)
 %shared_ptr(nsx::ShapeLibrary)
+%shared_ptr(nsx::TiffDataReader)
+%shared_ptr(nsx::UnitCell)
 
 %{
 #pragma GCC diagnostic ignored "-Wpedantic"
@@ -75,171 +73,103 @@ using Eigen::Matrix3d;
 using Eigen::Matrix;
 using Eigen::Quaterniond;
 
-#include "tables/chemistry/Material.h"
-#include "tables/chemistry/IsotopeDatabaseManager.h"
-
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
-
+#include "base/geometry/AABB.h"
+#include "base/geometry/DirectVector.h"
+#include "base/geometry/Ellipsoid.h"
+#include "base/geometry/ReciprocalVector.h"
+#include "base/hull/ConvexHull.h"
+#include "base/hull/Edge.h"
+#include "base/hull/Face.h"
+#include "base/hull/Triangle.h"
+#include "base/hull/Vertex.h"
+#include "base/parser/BloscFilter.h"
 #include "base/parser/EigenToVector.h"
+#include "base/parser/Parser.h"
 #include "base/utils/CSV.h"
-#include "core/detector/DataOrder.h"
+#include "base/utils/Factory.h"
+#include "base/utils/Path.h"
+#include "base/utils/ProgressHandler.h"
+#include "base/utils/Singleton.h"
 #include "base/utils/Units.h"
 
-#include "base/utils/Path.h"
+#include "tables/chemistry/IsotopeDatabaseManager.h"
+#include "tables/chemistry/Material.h"
 
-#include "base/parser/Parser.h"
-//#include "base/utils/YAMLType.h"
-#include "core/detector/MatrixParser.h"
-#include "base/utils/ProgressHandler.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/NiggliReduction.h"
+#include "tables/crystal/SymOp.h"
+#include "tables/crystal/UnitCell.h"
+#include "tables/crystal/BrillouinZone.h"
+#include "tables/crystal/GruberReduction.h"
+#include "tables/crystal/SpaceGroup.h"
 
-#include "core/peak/PeakCoordinateSystem.h"
+#include "core/algo/AutoIndexer.h"
+#include "core/algo/DataReaderFactory.h"
+#include "core/algo/FFTIndexing.h"
 #include "core/algo/RefinementBatch.h"
 #include "core/algo/Refiner.h"
-#include "core/algo/AutoIndexer.h"
-#include "core/peak/Intensity.h"
-#include "core/peak/IPeakIntegrator.h"
-#include "core/integration/MeanBackgroundIntegrator.h"
-#include "core/integration/Profile3DIntegrator.h"
-#include "core/integration/Profile1DIntegrator.h"
-#include "core/integration/ISigmaIntegrator.h"
-#include "core/integration/PixelSumIntegrator.h"
-#include "core/integration/ShapeIntegrator.h"
-#include "core/peak/IntegrationRegion.h"
-#include "core/peak/PeakData.h"
-#include "tables/crystal/UnitCell.h"
-#include "core/statistics/ResolutionShell.h"
-#include "core/statistics/RFactor.h"
-#include "core/statistics/CC.h"
-#include "core/peak/Peak3D.h"
-using sptrPeak3D = std::shared_ptr<nsx::Peak3D>;
-
-#include "core/algo/FFTIndexing.h"
-
-#include "core/analyse/MergedPeak.h"
-#include "tables/crystal/DoubleToFraction.h"
-#include "tables/crystal/SpaceGroup.h"
-#include "tables/crystal/NiggliReduction.h"
-#include "tables/crystal/GruberReduction.h"
-#include "tables/crystal/SymOp.h"
-#include "base/hull/Vertex.h"
-#include "base/hull/Triangle.h"
-
-#include "base/geometry/Ellipsoid.h"
-#include "base/hull/Face.h"
-#include "core/monte-carlo/MCAbsorption.h"
-#include "base/hull/ConvexHull.h"
-#include "tables/crystal/BrillouinZone.h"
-
-#include "base/geometry/AABB.h"
-#include "base/hull/Edge.h"
 #include "core/analyse/Blob3D.h"
-
-
-#include "base/geometry/DirectVector.h"
-#include "base/geometry/ReciprocalVector.h"
-
-#include "core/detector/DetectorEvent.h"
-
-#include "core/experiment/DataSet.h"
-#include "core/shape/Profile3D.h"
-#include "core/raw/MetaData.h"
-#include "core/loader/ILLDataReader.h"
-#include "core/raw/IDataReader.h"
-#include "core/loader/HDF5DataReader.h"
-#include "core/loader/HDF5MetaDataReader.h"
-
-#include "core/loader/RawDataReader.h"
-#include "core/loader/TiffDataReader.h"
-#include "base/parser/BloscFilter.h"
+#include "core/analyse/MergedPeak.h"
+#include "core/analyse/PeakFilter.h"
 #include "core/analyse/PeakFinder.h"
-#include "core/algo/DataReaderFactory.h"
-#include "core/detector/Detector.h"
-#include "core/detector/DetectorFactory.h"
-#include "core/gonio/TransAxis.h"
-#include "core/instrument/Sample.h"
-#include "core/detector/FlatDetector.h"
-#include "core/instrument/Source.h"
-#include "core/instrument/InstrumentState.h"
-#include "core/instrument/InterpolatedState.h"
-
-#include "core/instrument/Monochromator.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/detector/CylindricalDetector.h"
-#include "core/gonio/Gonio.h"
-
-#include "core/convolve/Convolver.h"
-#include "core/convolve/ConvolverFactory.h"
 #include "core/convolve/AnnularConvolver.h"
 #include "core/convolve/AtomicConvolver.h"
 #include "core/convolve/ConstantConvolver.h"
+#include "core/convolve/Convolver.h"
+#include "core/convolve/ConvolverFactory.h"
 #include "core/convolve/DeltaConvolver.h"
 #include "core/convolve/EnhancedAnnularConvolver.h"
 #include "core/convolve/RadialConvolver.h"
-
-#include "core/gonio/Axis.h"
-#include "core/experiment/Experiment.h"
-
-#include "core/gonio/Component.h"
-#include "core/gonio/AxisFactory.h"
-#include "core/gonio/RotAxis.h"
-
-#include "base/utils/Singleton.h"
-#include "base/utils/Factory.h"
-
+#include "core/detector/CylindricalDetector.h"
 #include "core/detector/DataOrder.h"
-
+#include "core/detector/Detector.h"
+#include "core/detector/DetectorEvent.h"
+#include "core/detector/DetectorFactory.h"
+#include "core/detector/FlatDetector.h"
+#include "core/detector/MatrixParser.h"
+#include "core/experiment/DataSet.h"
+#include "core/experiment/Experiment.h"
 #include "core/gonio/Axis.h"
+#include "core/gonio/AxisFactory.h"
+#include "core/gonio/Component.h"
+#include "core/gonio/Gonio.h"
+#include "core/gonio/RotAxis.h"
 #include "core/gonio/RotAxis.h"
 #include "core/gonio/TransAxis.h"
-
-#include "core/instrument/Monochromator.h"
-
-#include "core/detector/Detector.h"
-#include "core/detector/CylindricalDetector.h"
-#include "core/detector/FlatDetector.h"
-
-#include "core/instrument/Source.h"
-
-#include "core/instrument/Sample.h"
-
-#include "base/geometry/AABB.h"
-#include "base/geometry/Ellipsoid.h"
-#include "core/analyse/Blob3D.h"
-
-#include "core/peak/Peak3D.h"
-#include "tables/crystal/SpaceGroup.h"
-#include "tables/crystal/UnitCell.h"
-#include "tables/crystal/GruberReduction.h"
-
-#include "core/peak/Intensity.h"
-
-using sptrUnitCell = std::shared_ptr<nsx::UnitCell>;
-
 #include "core/instrument/Diffractometer.h"
-
-using sptrDiffractometer = std::shared_ptr<nsx::Diffractometer>;
-
-#include "base/utils/Singleton.h"
-
-#include "core/raw/MetaData.h"
-#include "core/raw/IDataReader.h"
-#include "core/algo/DataReaderFactory.h"
-#include "core/loader/ILLDataReader.h"
+#include "core/instrument/InstrumentState.h"
+#include "core/instrument/InterpolatedState.h"
+#include "core/instrument/Monochromator.h"
+#include "core/instrument/Sample.h"
+#include "core/instrument/Source.h"
+#include "core/integration/ISigmaIntegrator.h"
+#include "core/integration/MeanBackgroundIntegrator.h"
+#include "core/integration/PixelSumIntegrator.h"
+#include "core/integration/Profile1DIntegrator.h"
+#include "core/integration/Profile3DIntegrator.h"
+#include "core/integration/ShapeIntegrator.h"
 #include "core/loader/HDF5DataReader.h"
-#include "core/experiment/DataSet.h"
-#include "core/analyse/PeakFinder.h"
-#include "core/analyse/MergedData.h"
-
-#include "core/analyse/PeakFilter.h"
-
-#include "tables/crystal/MillerIndex.h"
+#include "core/loader/HDF5MetaDataReader.h"
+#include "core/loader/ILLDataReader.h"
+#include "core/loader/RawDataReader.h"
+#include "core/loader/TiffDataReader.h"
+#include "core/monte-carlo/MCAbsorption.h"
+#include "core/peak/IPeakIntegrator.h"
+#include "core/peak/IntegrationRegion.h"
+#include "core/peak/Intensity.h"
+#include "core/peak/Peak3D.h"
+#include "core/peak/PeakCoordinateSystem.h"
+#include "core/peak/PeakData.h"
+#include "core/raw/IDataReader.h"
+#include "core/raw/MetaData.h"
 #include "core/shape/Profile1D.h"
+#include "core/shape/Profile3D.h"
 #include "core/shape/ShapeLibrary.h"
-using sptrShapeLibrary = std::shared_ptr<nsx::ShapeLibrary>;
-
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
+#include "core/statistics/ResolutionShell.h"
 
 using namespace nsx;
 
@@ -251,10 +181,6 @@ using namespace nsx;
 %init %{
     import_array();
 %}
-
-%include <typemaps.i>
-%include <std_vector.i>
-%include <std_map.i>
 
 // eigen.i is found in ../swig/ and contains specific definitions to convert
 // Eigen matrices into Numpy arrays.
@@ -296,12 +222,12 @@ using namespace nsx;
 %template(vectorVector3d) std::vector<Eigen::Vector3d>;
 %template(vectorRowVector3d) std::vector<Eigen::RowVector3d>;
 
-%include "tables/chemistry/ChemistryTypes.h"
-%include "tables/crystal/UnitCell.h"
-%include "core/experiment/DataTypes.h"
-%include "core/instrument/InstrumentTypes.h"
+// Include hierarchy from bottom to top:
+//   no %-included file must depend on files that have not been %-included before.
 
-%template(UnitCellList) std::vector<nsx::sptrUnitCell>;
+%include "base/utils/CSV.h"
+%include "base/utils/Path.h"
+%include "base/utils/ProgressHandler.h"
 
 %include "base/geometry/DirectVector.h"
 %template(DirectVectorList) std::vector<nsx::DirectVector>;
@@ -310,76 +236,94 @@ using namespace nsx;
 %template(ReciprocalVectorList) std::vector<nsx::ReciprocalVector>;
 %template(ReciprocalVectorQueue) std::deque<nsx::ReciprocalVector>;
 
-%include "core/gonio/Axis.h"
-%include "core/gonio/RotAxis.h"
-%include "core/gonio/TransAxis.h"
-%include "core/gonio/Gonio.h"
-%include "core/gonio/Component.h"
-%include "core/instrument/Monochromator.h"
-%include "core/instrument/Source.h"
-
 %include "base/geometry/AABB.h"
 %include "base/geometry/Ellipsoid.h"
-%include "core/analyse/Blob3D.h"
 
+%include "base/hull/ConvexHull.h"
+%include "base/hull/Edge.h"
+%include "base/hull/Vertex.h"
+%include "base/hull/Triangle.h"
+%include "base/hull/Face.h"
+
+%include "base/parser/BloscFilter.h"
+%include "base/parser/EigenToVector.h"
+%include "base/parser/Parser.h"
+
+%include "base/fit/FitParameters.h"
+%include "base/fit/Minimizer.h"
+
+%include "tables/chemistry/ChemistryTypes.h"
 %include "tables/chemistry/Material.h"
 %include "tables/chemistry/IsotopeDatabaseManager.h"
-%template(propertyi) nsx::IsotopeDatabaseManager::property<int>;
-%template(propertyd) nsx::IsotopeDatabaseManager::property<double>;
-%template(propertys) nsx::IsotopeDatabaseManager::property<std::string>;
-%template(propertyb) nsx::IsotopeDatabaseManager::property<bool>;
 
-%template(scored_uc) std::pair<std::shared_ptr<nsx::UnitCell>, double>;
+%include "tables/crystal/SymOp.h"
+%template(SymOpList) std::vector<nsx::SymOp>;
+%include "tables/crystal/MillerIndex.h"
+%template(MillerIndexList) std::vector<nsx::MillerIndex>;
+%include "tables/crystal/SpaceGroup.h"
+%include "tables/crystal/NiggliReduction.h"
+%include "tables/crystal/UnitCell.h"
+%template(UnitCellList) std::vector<nsx::sptrUnitCell>;
 %template(indexer_solutions) std::vector<std::pair<std::shared_ptr<nsx::UnitCell>,double>>;
+%include "tables/crystal/GruberReduction.h"
+%include "tables/crystal/BrillouinZone.h"
 
-%include "core/instrument/InstrumentTypes.h"
+%include "tables/crystal/UnitCell.h"
+%include "tables/crystal/SpaceGroup.h"
+
+%include "core/gonio/Axis.h"
+%include "core/gonio/Gonio.h"
+%include "core/gonio/Component.h"
+%include "core/gonio/AxisFactory.h"
+%include "core/gonio/TransAxis.h"
+%include "core/gonio/RotAxis.h"
+
 %include "core/detector/Detector.h"
+%include "core/detector/CylindricalDetector.h"
+%include "core/detector/FlatDetector.h"
+%include "core/detector/DataOrder.h"
+%include "core/detector/MatrixParser.h"
+%include "core/detector/DetectorFactory.h"
 %include "core/detector/DetectorEvent.h"
 %template(DetectorEventQueue) std::deque<nsx::DetectorEvent>;
 %template(DetectorEventList) std::vector<nsx::DetectorEvent>;
-%template(DoubleQueue) std::deque<double>;
-%include "core/detector/CylindricalDetector.h"
-%include "core/detector/FlatDetector.h"
+
+%include "core/instrument/InstrumentTypes.h"
+%include "core/instrument/Monochromator.h"
+%include "core/instrument/Source.h"
 %include "core/instrument/Diffractometer.h"
 %include "core/instrument/Sample.h"
-%include "base/utils/Singleton.h"
 %include "core/instrument/InstrumentState.h"
 %include "core/instrument/InterpolatedState.h"
+%include "core/instrument/Source.h"
+%include "core/instrument/InstrumentState.h"
+%include "core/instrument/InterpolatedState.h"
+%include "core/instrument/Monochromator.h"
+%include "core/instrument/Diffractometer.h"
+%template(InstrumentStateList) std::vector<nsx::InstrumentState>;
 
-namespace nsx {
-   class DataReaderFactory;
-   class ConvolverFactory;
-   struct tVector;
-}
+%include "core/raw/MetaData.h"
+%include "core/raw/IDataReader.h"
 
-%include "core/algo/FFTIndexing.h"
+%include "core/loader/ILLDataReader.h"
+%include "core/loader/HDF5MetaDataReader.h"
+%include "core/loader/HDF5DataReader.h"
+%include "core/loader/RawDataReader.h"
+%include "core/loader/TiffDataReader.h"
 
-
-%include "core/peak/PeakData.h"
-%include "core/peak/IntegrationRegion.h"
-%include "core/peak/Intensity.h"
-%template(IntensityList) std::vector<nsx::Intensity>;
-%include "core/shape/Profile3D.h"
-%include "core/shape/Profile1D.h"
-%include "core/peak/IPeakIntegrator.h"
-%include "core/integration/MeanBackgroundIntegrator.h"
-%include "core/integration/Profile3DIntegrator.h"
-%include "core/integration/Profile1DIntegrator.h"
-%include "core/integration/ISigmaIntegrator.h"
-%include "core/integration/PixelSumIntegrator.h"
 %include "core/peak/Peak3D.h"
-%include "core/shape/Profile1D.h"
-%include "core/shape/ShapeLibrary.h"
-%include "core/integration/ShapeIntegrator.h"
-%include "core/peak/IntegrationRegion.h"
+%include "core/peak/PeakCoordinateSystem.h"
 %include "core/peak/PeakData.h"
 %include "core/peak/Intensity.h"
-%include "core/peak/Peak3D.h"
-
+%include "core/peak/IntegrationRegion.h"
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
-%template(PeakShell) std::vector<std::vector<std::shared_ptr<nsx::Peak3D>>>;
 
-%include "core/analyse/PeakFilter.h"
+%include "core/experiment/DataSet.h"
+%include "core/experiment/DataTypes.h"
+%template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
+%include "core/experiment/Experiment.h"
+
+%include "core/peak/IPeakIntegrator.h"
 
 %template(ConvolverParameters) std::map<std::string,double>;
 %include "core/convolve/Convolver.h"
@@ -391,120 +335,39 @@ namespace nsx {
 %include "core/convolve/EnhancedAnnularConvolver.h"
 %include "core/convolve/RadialConvolver.h"
 
-%include "core/raw/MetaData.h"
-%include "core/raw/IDataReader.h"
-%include "core/algo/DataReaderFactory.h"
-%include "core/loader/ILLDataReader.h"
-%include "core/loader/HDF5MetaDataReader.h"
-%include "core/loader/HDF5DataReader.h"
 %include "core/shape/Profile3D.h"
-%include "core/experiment/DataSet.h"
-
-%include "core/analyse/MergedData.h"
-
-%template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
-
-%include "core/analyse/PeakFinder.h"
-
-%template(MergedPeakSet) std::set<nsx::MergedPeak>;
-
-%include "base/fit/FitParameters.h"
-%include "base/fit/Minimizer.h"
-
-%include "base/parser/EigenToVector.h"
-%include "base/utils/CSV.h"
-%include "core/detector/DataOrder.h"
-%include "base/utils/Path.h"
-
-%include "base/parser/Parser.h"
-%include "core/detector/MatrixParser.h"
-%include "base/utils/ProgressHandler.h"
-
-%include "core/peak/PeakCoordinateSystem.h"
-%include "core/algo/RefinementBatch.h"
-%include "core/algo/Refiner.h"
-
-%template(RefinementBatchList) std::vector<nsx::RefinementBatch>;
-
-%include "core/peak/Intensity.h"
-
-%include "core/peak/IntegrationRegion.h"
-%include "core/peak/PeakData.h"
-
-
-%include "tables/crystal/UnitCell.h"
-%include "core/statistics/ResolutionShell.h"
-
-%include "core/statistics/RFactor.h"
-%include "core/statistics/CC.h"
-%include "core/statistics/CC.h"
-
-%include "core/peak/Peak3D.h"
-
-%include "tables/crystal/MillerIndex.h"
-%template(MillerIndexList) std::vector<nsx::MillerIndex>;
-
 %include "core/shape/Profile1D.h"
 %include "core/shape/ShapeLibrary.h"
 
 %include "core/analyse/MergedPeak.h"
-%include "tables/crystal/DoubleToFraction.h"
-%include "tables/crystal/SpaceGroup.h"
-%include "tables/crystal/NiggliReduction.h"
-%include "tables/crystal/GruberReduction.h"
-%include "tables/crystal/SymOp.h"
-%template(SymOpList) std::vector<nsx::SymOp>;
-
-%include "base/hull/Vertex.h"
-%include "base/hull/Triangle.h"
-%include "base/geometry/Ellipsoid.h"
-%include "base/hull/Face.h"
-%include "core/monte-carlo/MCAbsorption.h"
-%include "base/hull/ConvexHull.h"
-%include "base/geometry/AABB.h"
-%include "base/hull/Edge.h"
 %include "core/analyse/Blob3D.h"
+%include "core/analyse/PeakFilter.h"
+%include "core/analyse/Blob3D.h"
+%include "core/analyse/MergedData.h"
+%template(MergedPeakSet) std::set<nsx::MergedPeak>;
+%include "core/analyse/PeakFinder.h"
 
-%include "tables/crystal/BrillouinZone.h"
-
-%include "core/shape/Profile3D.h"
-%include "core/experiment/DataSet.h"
-%include "core/raw/MetaData.h"
-%include "core/loader/ILLDataReader.h"
-%include "core/raw/IDataReader.h"
-%include "core/loader/HDF5MetaDataReader.h"
-%include "core/loader/HDF5DataReader.h"
-
-%include "core/loader/RawDataReader.h"
-%include "core/loader/TiffDataReader.h"
-%include "base/parser/BloscFilter.h"
 %include "core/algo/DataReaderFactory.h"
-
-%include "core/detector/Detector.h"
-%include "core/detector/DetectorFactory.h"
-%include "core/gonio/TransAxis.h"
-%include "core/instrument/Sample.h"
-%include "core/detector/FlatDetector.h"
-%include "core/instrument/Source.h"
-%include "core/instrument/InstrumentState.h"
-%include "core/instrument/InterpolatedState.h"
-
-%include "core/instrument/Monochromator.h"
-%include "core/instrument/Diffractometer.h"
-%include "core/detector/CylindricalDetector.h"
-
-
-%template(InstrumentStateList) std::vector<nsx::InstrumentState>;
-
-
-%include "core/gonio/Axis.h"
-%include "core/experiment/Experiment.h"
-%include "core/gonio/AxisFactory.h"
-%include "core/gonio/RotAxis.h"
-
+%include "core/algo/RefinementBatch.h"
+%include "core/algo/Refiner.h"
+%include "core/algo/FFTIndexing.h"
 %include "core/algo/AutoIndexer.h"
 
-%include "base/utils/Singleton.h"
+%include "core/integration/MeanBackgroundIntegrator.h"
+%include "core/integration/Profile3DIntegrator.h"
+%include "core/integration/Profile1DIntegrator.h"
+%include "core/integration/ISigmaIntegrator.h"
+%include "core/integration/PixelSumIntegrator.h"
+%include "core/integration/ShapeIntegrator.h"
+
+%template(RefinementBatchList) std::vector<nsx::RefinementBatch>;
+
+%include "core/monte-carlo/MCAbsorption.h"
+
+%include "core/statistics/ResolutionShell.h"
+%include "core/statistics/RFactor.h"
+%include "core/statistics/CC.h"
+%include "core/statistics/CC.h"
 
 %newobject new_double;
 double* new_double();

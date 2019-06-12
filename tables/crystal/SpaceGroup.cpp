@@ -18,14 +18,11 @@
 #include "base/utils/StringIO.h"
 
 #include <algorithm>
-#include <iterator>
 #include <sstream>
-#include <stdexcept>
-#include <vector>
 
-namespace nsx {
+namespace {
 
-const std::vector<SpaceGroupSymmetry> SpaceGroup::symmetry_table = {
+const std::vector<std::pair<std::string, std::string>> symmetry_table = {
     {"P 1", " x,y,z"},
     {"P -1", " -x,-y,-z"},
     {"P 2", " -x,y,-z"},
@@ -287,33 +284,73 @@ const std::vector<SpaceGroupSymmetry> SpaceGroup::symmetry_table = {
      " x+1/2,y+1/2,z+1/2; -x+1/2,-y,z+1/2; -x,y+1/2,-z+1/2; z,x,y; "
      "y+3/4,x+1/4,-z+1/4; -x,-y,-z"}};
 
+void reduceSymbol(std::string& symbol)
+{
+    // Only in the following cases we keep the "1"s:
+    if (symbol == "P 1")
+        return;
+    else if (symbol == "P 3 1 m")
+        return;
+    else if (symbol == "P 3 m 1")
+        return;
+    else if (symbol == "P -3 1 m")
+        return;
+    else if (symbol == "P -3 m 1")
+        return;
+    else if (symbol == "P 3 1 c")
+        return;
+    else if (symbol == "P 3 c 1")
+        return;
+    else if (symbol == "P -3 1 c")
+        return;
+    else if (symbol == "P -3 c 1")
+        return;
+    else if (symbol == "P 32 2 1")
+        return;
+    else if (symbol == "P 32 1 2")
+        return;
+    else if (symbol == "P 31 1 2")
+        return;
+    else if (symbol == "P 31 2 1")
+        return;
+    else if (symbol == "P 3 1 2")
+        return;
+    else if (symbol == "P 3 2 1")
+        return;
+
+    // Otherwise throw away every "1" to produce the short name for Bravais
+    // see https://en.wikipedia.org/wiki/List_of_space_groups
+    std::istringstream iss(symbol);
+    std::string token;
+    std::vector<std::string> tokens;
+    while (std::getline(iss, token, ' ')) {
+        if (token.compare("1") == 0)
+            continue;
+        tokens.push_back(token);
+    }
+
+    symbol = nsx::join(tokens, " ");
+}
+
+} // namespace
+
+
+namespace nsx {
+
 std::vector<std::string> SpaceGroup::symbols()
 {
     std::vector<std::string> symbols;
     symbols.reserve(symmetry_table.size());
-    auto get_symbol = [](const SpaceGroupSymmetry& s) -> std::string { return s.first; };
     std::transform(
-        symmetry_table.begin(), symmetry_table.end(), std::back_inserter(symbols), get_symbol);
+        symmetry_table.begin(), symmetry_table.end(), std::back_inserter(symbols),
+        [](const std::pair<std::string, std::string>& s) -> std::string { return s.first; } );
     return symbols;
-}
-
-SpaceGroup::SpaceGroup()
-{
-    auto p = symmetry_table[0];
-
-    _symbol = p.first;
-
-    _generators = p.second;
-
-    reduceSymbol();
-
-    generateGroupElements();
 }
 
 SpaceGroup::SpaceGroup(std::string symbol)
 {
     _symbol = compress(trim(symbol));
-    reduceSymbol();
+    reduceSymbol(_symbol);
 
     auto find_symbol = [this](const std::pair<std::string, std::string>& s) {
         return s.first.compare(this->_symbol) == 0;
@@ -552,54 +589,5 @@ bool SpaceGroup::isFriedelEquivalent(const MillerIndex& hkl1, const MillerIndex&
     }
     return false;
 }
-
-void SpaceGroup::reduceSymbol()
-{
-    // This is the only get when the separate 1 has to be kept
-    if (_symbol == "P 1")
-        return;
-    else if (_symbol == "P 3 1 m")
-        return;
-    else if (_symbol == "P 3 m 1")
-        return;
-    else if (_symbol == "P -3 1 m")
-        return;
-    else if (_symbol == "P -3 m 1")
-        return;
-    else if (_symbol == "P 3 1 c")
-        return;
-    else if (_symbol == "P 3 c 1")
-        return;
-    else if (_symbol == "P -3 1 c")
-        return;
-    else if (_symbol == "P -3 c 1")
-        return;
-    else if (_symbol == "P 32 2 1")
-        return;
-    else if (_symbol == "P 32 1 2")
-        return;
-    else if (_symbol == "P 31 1 2")
-        return;
-    else if (_symbol == "P 31 2 1")
-        return;
-    else if (_symbol == "P 3 1 2")
-        return;
-    else if (_symbol == "P 3 2 1")
-        return;
-
-    // Otherwise throw away every separate 1 to produce the short name for Bravais
-    // see https://en.wikipedia.org/wiki/List_of_space_groups
-    std::istringstream iss(_symbol);
-    std::string token;
-    std::vector<std::string> tokens;
-    while (std::getline(iss, token, ' ')) {
-        if (token.compare("1") == 0)
-            continue;
-        tokens.push_back(token);
-    }
-
-    _symbol = join(tokens, " ");
-}
-
 
 } // namespace nsx

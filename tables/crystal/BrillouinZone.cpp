@@ -21,6 +21,8 @@
 #include "tables/crystal/NiggliReduction.h"
 #include "base/geometry/ReciprocalVector.h"
 
+namespace {
+
 //! Update a list of Q-vectors by removing the duplicates.
 //!
 //! Two Q-Vectors are defined as duplicates if the norm of their difference is under
@@ -49,6 +51,8 @@ void remove_duplicates(std::vector<Eigen::RowVector3d>& q_vectors, bool reflect,
     }
     std::swap(q_vectors, unique_q_vectors);
 }
+
+} // namespace
 
 namespace nsx {
 

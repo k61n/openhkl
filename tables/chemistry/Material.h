@@ -19,7 +19,6 @@
 
 namespace nsx {
 
-//! \class Material
 //! Class to represent the sample material type.
 class Material {
 

@@ -103,10 +103,10 @@ public:
     //! Sets Bravais type
     void setBravaisType(BravaisType bravais);
 
-    //! Gets Bravais type symbol
+    //! Returns Bravais type symbol
     std::string bravaisTypeSymbol() const;
 
-    //! Gets a list of reflections with d value in the range [dmin, dmax]
+    //! Returns a list of reflections with d value in the range [dmin, dmax]
     std::vector<MillerIndex>
     generateReflectionsInShell(double dmin, double dmax, double wavelength) const;
 
@@ -116,15 +116,13 @@ public:
     //! Sets the Niggli character of the cell
     void setNiggli(const NiggliCharacter& niggli);
 
-    //! Gets the Niggli character of the cell
+    //! Returns the Niggli character of the cell
     const NiggliCharacter& niggliCharacter() const;
 
-    //! Returns the basis for the Niggli cell (assuming cell has already been
-    //! reduced)
+    //! Returns the basis for the Niggli cell (assuming cell has already been reduced)
     Eigen::Matrix3d niggliBasis() const;
 
-    //! Returns the basis for the Niggli cell (assuming cell has already been
-    //! reduced)
+    //! Returns the basis for the Niggli cell (assuming cell has already been reduced)
     Eigen::Matrix3d reciprocalNiggliBasis() const;
 
     //! Apply constraint from the Niggli character
@@ -136,7 +134,7 @@ public:
     //! Print into a stream
     void printSelf(std::ostream& os) const;
 
-    //! Gets the Z value for the unit cell
+    //! Returns the Z value for the unit cell
     unsigned int z() const;
 
     //! Sets the Z value for the unit cell
@@ -168,13 +166,13 @@ public:
     //! Sets name of the unit cell
     void setName(const std::string& name);
 
-    //! Gets name of the unit cell
+    //! Returns name of the unit cell
     const std::string& name() const;
 
     //! Sets the integer tolerance for this unit cell
     void setIndexingTolerance(double tolerance);
 
-    //! Gets the integer tolerance for this unit cell
+    //! Returns the integer tolerance for this unit cell
     double indexingTolerance() const;
 
     //! Returns the real-space basis
@@ -255,8 +253,7 @@ public:
         const Eigen::Matrix3d& U0, const Eigen::Vector3d& uOffset,
         const Eigen::VectorXd& parameters) const;
 
-    //! Returns list of space groups which are compatible with the Bravais type of
-    //! the cell
+    //! Returns list of space groups which are compatible with the Bravais type of the cell
     std::vector<std::string> compatibleSpaceGroups() const;
 
 #ifndef SWIG
@@ -271,7 +268,7 @@ private:
     //! _NP is the transformation such that _A*_NP.inverse() is the Niggli cell
     Eigen::Matrix3d _NP;
 
-    std::unique_ptr<Material> _material;
+    std::unique_ptr<Material> _material {nullptr};
 
     LatticeCentring _centring;
 

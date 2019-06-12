@@ -13,7 +13,6 @@
 //  ***********************************************************************************************
 
 #include "core/statistics/CC.h"
-#include "core/analyse/MergedData.h"
 
 namespace nsx {
 
