@@ -16,9 +16,9 @@
 #define CORE_STATISTICS_CC_H
 
 #include "core/analyse/MergedPeak.h"
+#include "core/analyse/MergedData.h"
 
 namespace nsx {
-class MergedData;
 
 //! Class to handle calculation of correlation coefficients (CChalf and CC*)
 class CC {
