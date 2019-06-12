@@ -19,7 +19,6 @@
 
 namespace nsx {
 
-//! \class Refiner
 //! Class used to refine lattice and instrument parameters.
 class Refiner {
 public:

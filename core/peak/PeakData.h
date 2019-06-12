@@ -22,7 +22,6 @@
 
 namespace nsx {
 
-//! \class PeakData
 //! Helper class used by integration routines.
 class PeakData {
 public:

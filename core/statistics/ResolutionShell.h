@@ -19,7 +19,6 @@
 
 namespace nsx {
 
-//! \class DShell
 //! Utility structure to store a list of peaks with resolution in the
 //! range [dmin, dmax].
 struct DShell {

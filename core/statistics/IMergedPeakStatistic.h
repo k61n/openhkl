@@ -19,7 +19,6 @@ namespace nsx {
 
 class MergedData;
 
-//! \class IMergedPeakStatistic
 //! Interface for statistics of merged peaks (e.g. R factors, correlation
 //! coefficient, chi-squared).
 class IMergedPeakStatistic {

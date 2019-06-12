@@ -17,7 +17,6 @@
 
 namespace nsx {
 
-//! \class PeakFilter
 //! Class to remove "bad" peaks based on various critera.
 class PeakFilter {
 public:

@@ -22,7 +22,6 @@ namespace nsx {
 
 using SpaceGroupSymmetry = std::pair<std::string, std::string>;
 
-//! \class SpaceGroup
 //! Class to enumerate and construct the 3d spacegroups.
 class SpaceGroup {
 private:
