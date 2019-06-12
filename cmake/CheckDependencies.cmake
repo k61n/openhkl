@@ -110,3 +110,5 @@ include_directories(SYSTEM ${FFTW_INCLUDE_DIR})
 ###### Find GSL
 find_package(GSL 2.3 REQUIRED)
 include_directories(SYSTEM ${GSL_INCLUDE_DIR})
+
+find_package(XSection REQUIRED)
