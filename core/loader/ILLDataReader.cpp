@@ -45,7 +45,8 @@ ILLDataReader::ILLDataReader(const std::string& filename, Diffractometer* diffra
         boost::interprocess::file_mapping filemap(filename.c_str(), boost::interprocess::read_only);
         _map = boost::interprocess::mapped_region(filemap, boost::interprocess::read_only);
     } catch (std::exception& e) {
-        throw std::runtime_error(std::string("ILLDataReader() caught exception: ") + e.what());
+        throw std::runtime_error("ILLDataReader failed to open file '"
+                                 + filename + "': " + e.what());
     }
 
     // Gets the actual file size
