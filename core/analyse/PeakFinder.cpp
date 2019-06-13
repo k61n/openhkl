@@ -108,7 +108,6 @@ PeakFinder::PeakFinder()
 PeakList PeakFinder::find(DataList numors)
 {
     printf("PeakFinder::find ... with %li numors\n", numors.size());
-    std::size_t npeaks = 0;
     PeakList peaks;
 
     int i = 0;
@@ -231,7 +230,6 @@ PeakList PeakFinder::find(DataList numors)
             numor_peaks.push_back(p);
             peaks.push_back(p);
 
-            npeaks++;
             ++count;
 
             if (_handler) {
