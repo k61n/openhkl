@@ -111,6 +111,15 @@ void Actions::setupOptions()
     logarithmicScale.setHook([](bool checked){
         gGui->dockImage_->centralWidget->imageView->getScene()->setLogarithmic(checked);
     });
+    showLabels.setHook([](bool checked) {
+        gGui->dockImage_->centralWidget->imageView->getScene()->showPeakLabels(checked);
+    });
+    showAreas.setHook([](bool checked) {
+        gGui->dockImage_->centralWidget->imageView->getScene()->showPeakAreas(checked);
+    });
+    drawPeakArea.setHook([](bool checked) {
+        gGui->dockImage_->centralWidget->imageView->getScene()->drawIntegrationRegion(checked);
+    });
 }
 
 void Actions::setupPeaks()

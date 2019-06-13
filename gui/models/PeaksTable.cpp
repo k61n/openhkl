@@ -15,6 +15,7 @@
 
 #include "gui/models/PeaksTable.h"
 
+#include "gui/MainWin.h"
 #include "core/detector/Detector.h"
 #include "core/peak/Peak3D.h"
 #include "core/experiment/DataSet.h"
@@ -657,7 +658,7 @@ void PeaksTableView::plotAs(const std::string& key)
         y[i] = p->correctedIntensity().value();
         e[i] = p->correctedIntensity().sigma();
     }
-    emit plotData(x, y, e);
+    gGui->plotData(x, y, e);
 }
 
 void PeaksTableView::selectUnindexedPeaks()
