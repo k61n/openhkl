@@ -97,7 +97,7 @@ endif(NSX_PYTHON)
 find_package(Blosc REQUIRED)
 include_directories(SYSTEM ${BLOSC_INCLUDES})
 
-find_package(YAML REQUIRED)
+find_package(YAMLCPP REQUIRED)
 include_directories(SYSTEM ${YAML_INCLUDES})
 
 ###### Find TIFF
@@ -110,3 +110,5 @@ include_directories(SYSTEM ${FFTW_INCLUDE_DIR})
 ###### Find GSL
 find_package(GSL 2.3 REQUIRED)
 include_directories(SYSTEM ${GSL_INCLUDE_DIR})
+
+find_package(XSection REQUIRED)

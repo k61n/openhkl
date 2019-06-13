@@ -29,7 +29,6 @@ option(NSX_PYTHON "Generate Python bindings" ON)
 if(UNIX AND NOT APPLE)
     set(LINUX TRUE)
 endif()
-set(NSX_LIBRARY nsx)
 
 # Set a default build type if none was specified
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)

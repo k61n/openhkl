@@ -12,37 +12,21 @@
 //
 //  ***********************************************************************************************
 
-#include <cstring>
-#include <stdexcept>
-#include <utility>
-
 #include "core/convolve/AtomicConvolver.h"
+
+#include <iostream>
+
+#define ASSERT(cond) if (!(cond)) { std::cerr<< "assertion failed: " #cond << "\n"; exit(1); }
 
 namespace nsx {
 
 AtomicConvolver::AtomicConvolver()
     : Convolver()
-    , _n_rows(0)
-    , _n_cols(0)
-    , _halfCols(0)
-    , _forwardPlan(nullptr)
-    , _backwardPlan(nullptr)
-    , _realData(nullptr)
-    , _transformedData(nullptr)
-    , _transformedKernel()
 {
 }
 
 AtomicConvolver::AtomicConvolver(const std::map<std::string, double>& parameters)
     : Convolver(parameters)
-    , _n_rows(0)
-    , _n_cols(0)
-    , _halfCols(0)
-    , _forwardPlan(nullptr)
-    , _backwardPlan(nullptr)
-    , _realData(nullptr)
-    , _transformedData(nullptr)
-    , _transformedKernel()
 {
 }
 
@@ -53,30 +37,20 @@ AtomicConvolver::~AtomicConvolver()
 
 void AtomicConvolver::reset()
 {
-    if (_forwardPlan)
-        fftw_destroy_plan(_forwardPlan);
-    if (_backwardPlan)
-        fftw_destroy_plan(_backwardPlan);
+    if (!_realData)
+        return;
 
-    if (_realData)
-        fftw_free(_realData);
+    fftw_destroy_plan(_forwardPlan);
+    fftw_destroy_plan(_backwardPlan);
 
-    if (_transformedData)
-        fftw_free(_transformedData);
-
-    _n_rows = 0;
-
-    _n_cols = 0;
-
-    _halfCols = 0;
-
-    _forwardPlan = _backwardPlan = nullptr;
-
+    fftw_free(_realData);
     _realData = nullptr;
 
-    _transformedData = nullptr;
+    fftw_free(_transformedData);
 
-    _transformedKernel.resize(0);
+    _transformedKernel.clear();
+
+    fftw_cleanup(); // TODO check whether this can be removed
 }
 
 void AtomicConvolver::updateKernel(int nrows, int ncols)
@@ -85,7 +59,6 @@ void AtomicConvolver::updateKernel(int nrows, int ncols)
 
     _n_rows = nrows;
     _n_cols = ncols;
-
     RealMatrix kernel = _matrix(nrows, ncols);
 
     // Used by FFTW; check documentation for details
@@ -94,7 +67,6 @@ void AtomicConvolver::updateKernel(int nrows, int ncols)
     // Use fftw_malloc instead of fftw_alloc_* to support older version of fftw3
     _realData = (double*)fftw_malloc(nrows * ncols * sizeof(double));
     _transformedData = (fftw_complex*)fftw_malloc(nrows * _halfCols * sizeof(fftw_complex));
-
     _transformedKernel.resize(nrows * _halfCols);
 
     // Create plans
@@ -105,11 +77,10 @@ void AtomicConvolver::updateKernel(int nrows, int ncols)
     std::memcpy(_realData, kernel.data(), nrows * ncols * sizeof(double));
     fftw_execute(_forwardPlan);
 
-    // Store transformed kernel as vector of complexes (convenient for
-    // convolution)
+    // Store transformed kernel as vector of complexes (convenient for convolution)
     for (int i = 0; i < nrows * _halfCols; ++i) {
         _transformedKernel[i] =
-            std::complex<double>(_transformedData[i][0], _transformedData[i][1]);
+            std::complex<double>{_transformedData[i][0], _transformedData[i][1]};
     }
 }
 
@@ -130,10 +101,10 @@ RealMatrix AtomicConvolver::convolve(const RealMatrix& image)
 
     // multiply fourier modes component-by-component
     for (int i = 0; i < nrows * _halfCols; ++i) {
-        auto result = factor * _transformedKernel[i]
-            * std::complex<double>(_transformedData[i][0], _transformedData[i][1]);
-        _transformedData[i][0] = result.real();
-        _transformedData[i][1] = result.imag();
+        std::complex<double> tmp = factor * _transformedKernel[i];
+        tmp *= std::complex<double>{_transformedData[i][0], _transformedData[i][1]};
+        _transformedData[i][0] = tmp.real();
+        _transformedData[i][1] = tmp.imag();
     }
 
     // Perform inverse transform: _realData now stores the convolution

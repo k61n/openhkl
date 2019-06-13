@@ -18,7 +18,7 @@
 
 #include <Eigen/Dense>
 
-#include "tables/chemistry/Material.h"
+#include <xsection/Material.h>
 #include "tables/crystal/UnitCell.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/DataSet.h"

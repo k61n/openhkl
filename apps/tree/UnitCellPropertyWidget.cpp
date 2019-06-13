@@ -18,8 +18,8 @@
 #include <QCompleter>
 #include <QStandardItem>
 
-#include "tables/chemistry/ChemistryTypes.h"
-#include "tables/chemistry/Material.h"
+#include <xsection/ChemistryTypes.h>
+#include <xsection/Material.h>
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
 #include "core/experiment/DataSet.h"
