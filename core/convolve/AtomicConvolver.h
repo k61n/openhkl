@@ -50,15 +50,13 @@ private:
 
 protected:
     int _n_rows;
-
     int _n_cols;
-
     int _halfCols;
 
     fftw_plan _forwardPlan;
     fftw_plan _backwardPlan;
 
-    double* _realData;
+    double* _realData {nullptr};
     fftw_complex* _transformedData;
 
     std::vector<std::complex<double>> _transformedKernel;
