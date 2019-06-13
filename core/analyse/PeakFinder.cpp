@@ -250,14 +250,6 @@ void PeakFinder::findPrimaryBlobs(
     // used to pass to progress handler
     double progress = 0.0;
 
-    // this is the filter function to be applied to each frame
-    auto convolve_frame = [&](const RealMatrix& input) -> RealMatrix {
-        RealMatrix output;
-#pragma omp critical
-        output = _convolver->convolve(input);
-        return output;
-    };
-
     // Map of Blobs (key : label, value : blob)
     blobs.clear();
 
@@ -289,15 +281,13 @@ void PeakFinder::findPrimaryBlobs(
     // #pragma omp for schedule(dynamic, DYNAMIC_CHUNK)
     for (size_t idx = begin; idx < end; ++idx) {
 
-#pragma omp atomic
         ++nframes;
 
         RealMatrix frame_data;
 
-#pragma omp critical
         frame_data = data->frame(idx).cast<double>();
 
-        auto filtered_frame = convolve_frame(frame_data);
+        RealMatrix filtered_frame = _convolver->convolve(frame_data);
 
         // Go the the beginning of data
         index2D = 0;
@@ -324,7 +314,6 @@ void PeakFinder::findPrimaryBlobs(
 
                 switch (code) {
                 case 0:
-#pragma omp critical
                     label = ++_current_label;
                     newlabel = true;
                     break;
