@@ -15,12 +15,10 @@
 #ifndef GUI_GRAPHICS_DETECTORSCENE_H
 #define GUI_GRAPHICS_DETECTORSCENE_H
 
-#include "core/experiment/DataTypes.h"
 #include "base/mask/IMask.h"
+#include "core/experiment/DataTypes.h"
 #include "core/peak/Peak3D.h"
-
 #include "gui/models/ColorMap.h"
-
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
 #include <QStack>

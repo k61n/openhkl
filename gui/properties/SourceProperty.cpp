@@ -12,8 +12,9 @@
 //
 //  ***********************************************************************************************
 
-#include "base/utils/Units.h"
 #include "gui/properties/SourceProperty.h"
+
+#include "base/utils/Units.h"
 #include "gui/models/Session.h"
 #include <QCR/engine/cell.h>
 #include <QFormLayout>

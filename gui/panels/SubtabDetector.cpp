@@ -14,6 +14,7 @@
 
 
 #include "gui/panels/SubtabDetector.h"
+
 #include "gui/properties/DetectorProperty.h"
 #include <QHBoxLayout>
 #include <QTreeView>

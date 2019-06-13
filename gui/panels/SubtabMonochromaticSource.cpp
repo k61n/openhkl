@@ -14,6 +14,7 @@
 
 
 #include "gui/panels/SubtabMonochromaticSource.h"
+
 #include "gui/properties/SourceProperty.h"
 #include <QHBoxLayout>
 #include <QTreeView>

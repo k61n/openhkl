@@ -14,6 +14,7 @@
 
 
 #include "gui/panels/SubframeImage.h"
+
 #include "core/experiment/DataSet.h"
 #include "gui/actions/Triggers.h"
 #include "gui/graphics/DetectorScene.h"

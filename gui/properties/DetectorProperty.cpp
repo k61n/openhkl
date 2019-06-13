@@ -14,6 +14,7 @@
 
 
 #include "gui/properties/DetectorProperty.h"
+
 #include "core/detector/Detector.h"
 #include "gui/models/Session.h"
 #include <QGridLayout>

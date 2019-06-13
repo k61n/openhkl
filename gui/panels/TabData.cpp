@@ -14,6 +14,7 @@
 
 
 #include "gui/panels/TabData.h"
+
 #include "gui/properties/NumorProperty.h"
 #include <QHBoxLayout>
 #include <QTreeView>

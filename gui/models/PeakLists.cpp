@@ -13,11 +13,12 @@
 //  ***********************************************************************************************
 
 #include "gui/models/PeakLists.h"
+
 #include "gui/models/Session.h"
-#include <QCR/engine/logger.h>
 #include "core/experiment/DataSet.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
+#include <QCR/engine/logger.h>
 #include <QInputDialog>
 
 FilteredPeaksModel::FilteredPeaksModel(const QString& name, nsx::PeakList list)

@@ -17,19 +17,17 @@
 
 #include "gui/frames/UnitCellWidget.h"
 #include "gui/models/Session.h"
-#include <QCR/engine/logger.h>
-
+#include "core/peak/Peak3D.h"
 #include "core/algo/UserDefinedIndexer.h"
 #include "core/peak/Peak3D.h"
 #include "core/experiment/Experiment.h"
-#include "base/geometry/ReciprocalVector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Source.h"
 #include "base/logger/Logger.h"
-#include "core/peak/Peak3D.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Units.h"
-
+#include <QCR/engine/logger.h>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHeaderView>
@@ -37,7 +35,6 @@
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QVBoxLayout>
-
 
 UserDefinedUnitCellIndexer::UserDefinedUnitCellIndexer()
     : QcrFrame {"adhoc_userDefined"}, indexer_ {}

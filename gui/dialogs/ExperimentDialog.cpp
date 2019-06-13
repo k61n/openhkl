@@ -14,8 +14,9 @@
 
 
 #include "gui/dialogs/ExperimentDialog.h"
-#include "core/instrument/HardwareParameters.h"
+
 #include "base/utils/Path.h"
+#include "core/instrument/HardwareParameters.h"
 #include "gui/MainWin.h"
 #include <QDialogButtonBox>
 #include <QGridLayout>

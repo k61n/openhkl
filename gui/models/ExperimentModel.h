@@ -18,7 +18,6 @@
 #include "tables/crystal/UnitCell.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/InstrumentTypes.h"
-
 #include "gui/models/PeakLists.h"
 
 class ExperimentData {

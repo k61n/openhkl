@@ -12,9 +12,9 @@
 //
 //  ***********************************************************************************************
 
+#include "gui/properties/SampleShapeProperties.h"
 
 #include "base/utils/Units.h"
-#include "gui/properties/SampleShapeProperties.h"
 #include "gui/models/Session.h"
 #include <QFormLayout>
 #include <QGroupBox>

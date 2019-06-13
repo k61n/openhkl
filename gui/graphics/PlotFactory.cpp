@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "gui/graphics/PlotFactory.h"
+
 #include "gui/graphics/PeakPlot.h"
 #include "gui/graphics/SimplePlot.h"
 

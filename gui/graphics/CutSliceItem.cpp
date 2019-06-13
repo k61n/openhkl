@@ -14,12 +14,13 @@
 
 
 #include "gui/graphics/CutSliceItem.h"
+
+#include "gui/graphics/DetectorScene.h"
+#include "gui/graphics/SimplePlot.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/raw/IDataReader.h"
-#include "gui/graphics/DetectorScene.h"
-#include "gui/graphics/SimplePlot.h"
 #include <Eigen/Dense>
 
 CutSliceItem::CutSliceItem(nsx::sptrDataSet data, bool horizontal)

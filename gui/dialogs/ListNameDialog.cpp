@@ -14,6 +14,7 @@
 
 
 #include "gui/dialogs/ListNameDialog.h"
+
 #include "gui/MainWin.h"
 #include <QDialogButtonBox>
 #include <QHBoxLayout>

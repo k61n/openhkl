@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "gui/actions/Triggers.h"
+
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/dialogs/PeakFilterDialog.h"
 #include "gui/dialogs/ShapeLibraryDialog.h"

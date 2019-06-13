@@ -14,8 +14,8 @@
 
 
 #include "gui/graphics/MaskItem.h"
-#include "core/experiment/DataSet.h"
 
+#include "core/experiment/DataSet.h"
 #include <Eigen/Dense>
 #include <QGraphicsSceneWheelEvent>
 #include <QPainter>

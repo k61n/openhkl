@@ -14,6 +14,7 @@
 
 
 #include "gui/graphics/CutterItem.h"
+
 #include <QGraphicsSceneMouseEvent>
 #include <cmath>
 

@@ -14,6 +14,7 @@
 
 
 #include "gui/frames/PeakFinderFrame.h"
+
 #include "core/experiment/DataSet.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/raw/IDataReader.h"

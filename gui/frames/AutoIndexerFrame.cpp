@@ -14,13 +14,12 @@
 
 
 #include "gui/frames/AutoIndexerFrame.h"
+
 #include "gui/frames/UnitCellWidget.h"
 #include "gui/models/Session.h"
-
-#include "core/algo/AutoIndexer.h"
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
-
+#include "core/algo/AutoIndexer.h"
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QGroupBox>

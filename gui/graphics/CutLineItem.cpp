@@ -14,6 +14,7 @@
 
 
 #include "gui/graphics/CutLineItem.h"
+
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/SimplePlot.h"
 #include <Eigen/Dense>

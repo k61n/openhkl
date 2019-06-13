@@ -14,6 +14,7 @@
 
 
 #include "gui/panels/SubtabSample.h"
+
 #include "gui/properties/SampleShapeProperties.h"
 #include <QHBoxLayout>
 #include <QTreeView>

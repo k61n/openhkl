@@ -14,6 +14,7 @@
 
 
 #include "gui/panels/TabPeaks.h"
+
 #include "gui/models/ExperimentModel.h"
 #include "gui/models/Session.h"
 #include <QCR/engine/logger.h>

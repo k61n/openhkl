@@ -14,6 +14,7 @@
 
 
 #include "gui/panels/TabPeakLibrary.h"
+
 #include <QHBoxLayout>
 #include <QTreeView>
 

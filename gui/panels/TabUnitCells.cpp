@@ -14,6 +14,7 @@
 
 
 #include "gui/panels/TabUnitCells.h"
+
 #include "gui/properties/UnitCellProperty.h"
 #include <QHBoxLayout>
 #include <QTreeView>

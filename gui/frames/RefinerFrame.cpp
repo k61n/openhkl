@@ -14,15 +14,15 @@
 
 
 #include "gui/frames/RefinerFrame.h"
-#include "gui/models/Session.h"
-#include <QCR/engine/logger.h>
 
+#include "gui/models/Session.h"
+#include "gui/models/Meta.h"
 #include "core/peak/Peak3D.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/DataTypes.h"
 #include "core/peak/Peak3D.h"
 #include "core/algo/Refiner.h"
-#include "gui/models/Meta.h"
+#include <QCR/engine/logger.h>
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>

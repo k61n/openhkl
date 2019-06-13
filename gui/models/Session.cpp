@@ -14,17 +14,16 @@
 
 
 #include "gui/models/Session.h"
-#include "gui/graphics/DetectorScene.h"
 
+#include "gui/graphics/DetectorScene.h"
+#include "gui/dialogs/ExperimentDialog.h"
+#include "gui/dialogs/RawDataDialog.h"
+#include "gui/MainWin.h"
 #include "core/experiment/DataSet.h"
 #include "core/algo/DataReaderFactory.h"
 #include "core/raw/IDataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/instrument/HardwareParameters.h"
-
-#include "gui/dialogs/ExperimentDialog.h"
-#include "gui/dialogs/RawDataDialog.h"
-#include "gui/MainWin.h"
 #include <QCR/engine/logger.h>
 #include <QCR/engine/mixin.h>
 #include <QCR/widgets/modal_dialogs.h>

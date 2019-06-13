@@ -12,13 +12,13 @@
 //
 //  ***********************************************************************************************
 
-#include <QApplication>
-#include <QPushButton>
+#include "gui/frames/ProgressView.h"
 
 #include "base/logger/Logger.h"
 #include "base/utils/ProgressHandler.h"
+#include <QApplication>
+#include <QPushButton>
 
-#include "gui/frames/ProgressView.h"
 
 ProgressView::ProgressView(QWidget* parent) : QProgressDialog(parent)
 {

@@ -17,7 +17,6 @@
 
 #include "core/peak/Peak3D.h"
 #include "gui/graphics/PlottableItem.h"
-
 #include <Eigen/Dense>
 
 class PeakItem : public PlottableItem {

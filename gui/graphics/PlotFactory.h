@@ -17,7 +17,6 @@
 
 #include "base/utils/Factory.h"
 #include "base/utils/Singleton.h"
-
 #include "gui/graphics/SXPlot.h"
 
 class PlotFactory : public nsx::Factory<NSXPlot, std::string, QWidget*>,

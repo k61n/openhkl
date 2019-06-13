@@ -15,6 +15,8 @@
 #ifndef GUI_DIALOGS_MESSAGEBOXES_H
 #define GUI_DIALOGS_MESSAGEBOXES_H
 
+#include <QDialog>
+
 class AboutBox : public QDialog {
 public:
     AboutBox();
