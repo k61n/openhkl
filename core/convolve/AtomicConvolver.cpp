@@ -46,7 +46,7 @@ void AtomicConvolver::reset()
     fftw_free(_realData);
     _realData = nullptr;
 
-    fftw_free(_transformedData);x
+    fftw_free(_transformedData);
 
     _transformedKernel.clear();
 
@@ -101,8 +101,8 @@ RealMatrix AtomicConvolver::convolve(const RealMatrix& image)
 
     // multiply fourier modes component-by-component
     for (int i = 0; i < nrows * _halfCols; ++i) {
-        std::complex<double> tmp = factor * _transformedKernel[i]
-            * std::complex<double>{_transformedData[i][0], _transformedData[i][1]};
+        std::complex<double> tmp = factor * _transformedKernel[i];
+        tmp *= std::complex<double>{_transformedData[i][0], _transformedData[i][1]};
         _transformedData[i][0] = tmp.real();
         _transformedData[i][1] = tmp.imag();
     }

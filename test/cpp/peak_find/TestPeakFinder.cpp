@@ -4,7 +4,6 @@
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/algo/DataReaderFactory.h"
-#include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
 #include "core/analyse/PeakFinder.h"
 #include "base/utils/ProgressHandler.h"

@@ -49,8 +49,8 @@ private:
     void reset();
 
 protected:
-    int _n_rows;
-    int _n_cols;
+    int _n_rows {0};
+    int _n_cols {0};
     int _halfCols;
 
     fftw_plan _forwardPlan;
