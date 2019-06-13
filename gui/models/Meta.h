@@ -16,6 +16,9 @@
 #define GUI_MODELS_META_H
 
 #include "tables/crystal/UnitCell.h"
+#include "core/peak/Peak3D.h"
+#include "core/experiment/DataTypes.h"
+#include <QMetaType>
 
 Q_DECLARE_METATYPE(nsx::PeakList)
 Q_DECLARE_METATYPE(nsx::sptrUnitCell)

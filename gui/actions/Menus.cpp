@@ -27,7 +27,7 @@ Menus::Menus(QMenuBar* mbar) : mbar_ {mbar}
     mbar->setNativeMenuBar(true);
 
     actionsToMenu(
-        "&File",
+        "&Start",
         {&actions->addExperiment, &actions->removeExperiment, separator(), &actions->quit});
 
     QMenu* detector = new QMenu {"&Detector"};
@@ -56,10 +56,10 @@ Menus::Menus(QMenuBar* mbar) : mbar_ {mbar}
     peaks->addActions({&actions->refine, &actions->buildShapeLibrary, &actions->integratepeaks,
                        &actions->normalize, &actions->correctAbsorption, &actions->show3d,
                        &actions->peaksProperties});
-    experiment_ = mbar_->addMenu("&Experiments");
-    experiment_->addMenu(instrument);
+    experiment_ = mbar_->addMenu("&Experiment");
     experiment_->addMenu(data);
     experiment_->addMenu(peaks);
+    experiment_->addMenu(instrument);
     experiment_->addSeparator()->setText("reference peak library");
     experiment_->addAction(&actions->predictPeaks);
     experiment_->addSeparator()->setText("unit cells");
@@ -72,7 +72,7 @@ Menus::Menus(QMenuBar* mbar) : mbar_ {mbar}
     QMenu* cursorMode = new QMenu {"&Cursor mode"};
     cursorMode->addActions({&actions->pixelPosition, &actions->gammaNu, &actions->twoTheta,
                             &actions->dSpacing, &actions->millerIndices});
-    QMenu* setView = new QMenu {"&Set View"};
+    QMenu* setView = new QMenu {"&Set Image View"};
     setView->addActions(
         {&actions->fromSample, &actions->behindDetector, &actions->logarithmicScale});
     QMenu* peakMenu = new QMenu {"&Peak"};
@@ -86,7 +86,8 @@ Menus::Menus(QMenuBar* mbar) : mbar_ {mbar}
         {&actions->reset, separator(), &actions->viewExperiment, &actions->viewImage,
          &actions->viewLogger, &actions->viewPlotter, &actions->viewProperties});
 
-    actionsToMenu("&Help", {&actions->about});
+    actionsToMenu("&Help", {&actions->about, &actions->helpExperiment, &actions->helpData,
+                  &actions->helpPeakFinder, &actions->helpPeakFilter});
 }
 
 QAction* Menus::separator() const

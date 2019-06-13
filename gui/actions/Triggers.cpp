@@ -27,7 +27,7 @@
 #include "gui/models/Session.h" //for gSession
 #include "gui/panels/SubframeSetup.h"
 #include "gui/panels/TabInstrument.h"
-
+#include <QDate>
 #include <QDesktopServices>
 #include <QInputDialog>
 
@@ -152,4 +152,48 @@ void Actions::setupRest()
     viewPlotter.setHook([](bool check) { gGui->dockPlot_->setVisible(check); });
     viewProperties.setHook([](bool check) { gGui->dockProperties_->setVisible(check); });
     exportPlot.setTriggerHook([](){ gGui->exportPlot(); });
+    about.setTriggerHook([]() {
+        QMessageBox::about(gGui, "About NSXTool",
+                           QString(
+                           "<h4>%1 version %2</h4>"
+                           "<p>Copyright: Forschungszentrum Jülich GmbH %3</p>"
+                           "<p>NSXTool is work in progress.<br>"
+                           "It must not be used in production without consent of the developers."
+                           "<br>Information on the proper form of citation will follow.<br></p>"
+                           "<p>The initial authors were Laurent Chapon (ILL),"
+                           " Eric Pellegrini (ILL) and Jonathan M. Fisher (FZJ JCNS MLZ).</p>"
+                           "<p>Current development team is done by Janike Katter, "
+                           "Alexander Schober, Joachim Wuttke (all FZJ JCNS MLZ).</p>")
+                                                     .arg(qApp->applicationName())
+                                                     .arg(qApp->applicationVersion())
+                                                     .arg(QDate::currentDate().toString("yyyy")));
+    });
+    helpExperiment.setTriggerHook([]() {
+        QMessageBox::information(gGui, "Experiment Help",
+                                 QString(
+                                     "<h4>Experiments</h4>"
+                                     "<p>Before loading your data, it is possible to create an "
+                                     "experiment in the <i>Start</i> menu.<br>"
+                                     "If you do not want to create an experiment before loading "
+                                     "the data, a default experiment with date and time as name "
+                                     "and the BioDiff 2500 as instrument will be created.</p>"
+                                     ));
+    });
+    helpData.setTriggerHook([]() {
+        QMessageBox::information(gGui, "Data Help",
+                                 QString(
+                                     "<h4>Data</h4>"
+                                     "<h5>Loading data</h5>"
+                                     "<p>You have two ways of loading data into NSXTool: <br>"
+                                     ">loading raw data<br>"
+                                     ">loading addited data<br>"
+                                     "For loading raw data, you can find the trigger in the menu "
+                                     "<i>Experiment->Data->import raw data</i>.<br>"
+                                     "Other data you can load with <i>Experiment->Data->load data"
+                                     "</i></p>"
+                                     "<h5>Removing data</h5>"
+                                     "<p>You can remove the selected data with <i>Experiment->"
+                                     "Data->remove data</i></p>"
+                                     ));
+    });
 }

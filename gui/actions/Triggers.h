@@ -63,6 +63,10 @@ public:
     QcrTrigger predictPeaks {"predict peaks", "predict peaks"};
     // Help
     QcrTrigger about {"about", "about"};
+    QcrTrigger helpExperiment {"experiment help", "experiment"};
+    QcrTrigger helpData {"data help", "data"};
+    QcrTrigger helpPeakFinder {"peak finding help", "peak finding"};
+    QcrTrigger helpPeakFilter {"peakFilterHelp", "peak filtering"};
     // View
     QcrTrigger reset {"reset", "reset"};
     QcrToggle viewExperiment {"adhoc_viewExperiment", "show experiment", true};
