@@ -15,11 +15,10 @@
 #ifndef CORE_SEARCH_PEAKS_ATOMICCONVOLVER_H
 #define CORE_SEARCH_PEAKS_ATOMICCONVOLVER_H
 
-#include <vector>
+#include "core/convolve/Convolver.h"
 
 #include <fftw3.h>
-
-#include "core/convolve/Convolver.h"
+#include <vector>
 
 namespace nsx {
 
@@ -56,13 +55,10 @@ protected:
 
     int _halfCols;
 
-    // used directly with FFTW3
     fftw_plan _forwardPlan;
-
     fftw_plan _backwardPlan;
 
     double* _realData;
-
     fftw_complex* _transformedData;
 
     std::vector<std::complex<double>> _transformedKernel;

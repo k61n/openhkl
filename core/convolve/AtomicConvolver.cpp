@@ -65,7 +65,6 @@ void AtomicConvolver::reset()
         fftw_free(_transformedData);
 
     _n_rows = 0;
-
     _n_cols = 0;
 
     _halfCols = 0;
@@ -73,7 +72,6 @@ void AtomicConvolver::reset()
     _forwardPlan = _backwardPlan = nullptr;
 
     _realData = nullptr;
-
     _transformedData = nullptr;
 
     _transformedKernel.resize(0);
@@ -105,8 +103,7 @@ void AtomicConvolver::updateKernel(int nrows, int ncols)
     std::memcpy(_realData, kernel.data(), nrows * ncols * sizeof(double));
     fftw_execute(_forwardPlan);
 
-    // Store transformed kernel as vector of complexes (convenient for
-    // convolution)
+    // Store transformed kernel as vector of complexes (convenient for convolution)
     for (int i = 0; i < nrows * _halfCols; ++i) {
         _transformedKernel[i] =
             std::complex<double>(_transformedData[i][0], _transformedData[i][1]);
