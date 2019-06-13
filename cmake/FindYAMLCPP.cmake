@@ -44,7 +44,7 @@ if(NOT YAML_FOUND)
     HINTS ${YAML_ROOT_DIR} ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES include
     )
-    
+
   ##_____________________________________________________________________________
   ## Check for the library
 
@@ -54,7 +54,7 @@ if(NOT YAML_FOUND)
 
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found
-
+  include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args (YAML DEFAULT_MSG YAML_LIBRARIES YAML_INCLUDES)
 
   if(YAML_INCLUDES AND YAML_LIBRARIES)
@@ -96,4 +96,3 @@ if(NOT YAML_FOUND)
     )
 
 endif(NOT YAML_FOUND)
-

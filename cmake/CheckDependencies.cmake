@@ -97,7 +97,7 @@ endif(NSX_PYTHON)
 find_package(Blosc REQUIRED)
 include_directories(SYSTEM ${BLOSC_INCLUDES})
 
-find_package(YAML REQUIRED)
+find_package(YAMLCPP REQUIRED)
 include_directories(SYSTEM ${YAML_INCLUDES})
 
 ###### Find TIFF
