@@ -32,6 +32,10 @@
 
 using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
+//  ***********************************************************************************************
+//  local functions
+//  ***********************************************************************************************
+
 namespace {
 
 void registerEquivalence(int a, int b, nsx::EquivalenceList& equivalences)
@@ -76,6 +80,10 @@ void reassignEquivalences(std::map<int, int>& equivalences)
 
 namespace nsx {
 
+//  ***********************************************************************************************
+//  PeakFinder trivia
+//  ***********************************************************************************************
+
 PeakFinder::PeakFinder()
     : _handler(nullptr)
     , _threshold(3.0)
@@ -91,171 +99,6 @@ PeakFinder::PeakFinder()
     ConvolverFactory convolver_factory;
     _convolver.reset(convolver_factory.create("annular", {}));
     printf("PeakFinder::ctor done\n");
-}
-
-/*
- * blob finding stages:
- *
- * initialize
- * iterate through frames
- *    add to collection if new label
- *    register equivalences
- * merge equivalent blobs
- * register collisions
- * merge colliding blobs
- *
- */
-PeakList PeakFinder::find(DataList numors)
-{
-    printf("PeakFinder::find ... with %li numors\n", numors.size());
-    PeakList peaks;
-
-    int i = 0;
-    for (auto&& numor : numors) {
-        if (numors.size() > 1)
-            printf("  numor %i\n", i);
-        PeakList numor_peaks;
-
-        auto dectector = numor->reader()->diffractometer()->detector();
-        int nrows = dectector->nRows();
-        int ncols = dectector->nCols();
-        int nframes = numor->nFrames();
-
-        // The blobs found for this numor
-        std::map<int, Blob3D> blobs;
-
-        try {
-            if (_handler) {
-                _handler->log("min comp is " + std::to_string(_minSize));
-                _handler->log("max comp is " + std::to_string(_maxSize));
-                _handler->log("search scale is " + std::to_string(_peakScale));
-            }
-
-            _current_label = 0;
-
-// #pragma omp parallel
-            {
-                int loop_begin = _framesBegin;
-                int loop_end = _framesEnd;
-                if (loop_begin == -1)
-                    loop_begin = 0;
-                if (loop_end == -1)
-                    loop_end = numor->nFrames();
-
-                std::map<int, Blob3D> local_blobs = {{}};
-                nsx::EquivalenceList local_equivalences;
-
-                // determine begining and ending index of current thread
-                //#pragma omp for
-                //        for (size_t i = 0; i < numor->nFrames(); ++i) {
-                //          if (loop_begin == -1) {
-                //            loop_begin = i;
-                //          }
-                //          loop_end = i + 1;
-                //        }
-
-                // find blobs within the current frame range
-                printf("PeakFinder::find: findPrimary\n");
-                findPrimaryBlobs(numor, local_blobs, local_equivalences, loop_begin, loop_end);
-
-                // merge adjacent blobs
-                printf("PeakFinder::find: mergeBlobs\n");
-                mergeEquivalentBlobs(local_blobs, local_equivalences);
-
-// #pragma omp critical
-                printf("PeakFinder::find: blob loop\n");
-                {
-                    // merge the blobs into the global set
-                    for (auto&& blob : local_blobs)
-                        blobs.insert(blob);
-                }
-            }
-
-            mergeCollidingBlobs(numor, blobs);
-
-            if (_handler) {
-                _handler->setStatus("Blob finding complete.");
-                _handler->log("Blob finding complete.");
-                _handler->log("Found " + std::to_string(blobs.size()) + " blobs");
-                _handler->setProgress(100);
-            }
-        }
-        // Warning if error
-        catch (std::exception& e) {
-            if (_handler)
-                _handler->log(std::string("Peak finder caused an exception: ") + e.what());
-            // pass exception back to callee
-            throw e;
-        }
-
-        if (_handler) {
-            _handler->setStatus("Computing bounding boxes...");
-            _handler->setProgress(0);
-        }
-
-        int count = 0;
-
-        auto&& kernel_size = _convolver->kernelSize();
-        auto&& x_offset = kernel_size.first;
-        auto&& y_offset = kernel_size.second;
-
-        // AABB used for rejecting peaks which overlaps with detector boundaries
-        AABB dAABB(
-            Eigen::Vector3d(x_offset, y_offset, 0),
-            Eigen::Vector3d(ncols - x_offset, nrows - y_offset, nframes - 1));
-
-        for (auto& blob : blobs) {
-
-            Eigen::Vector3d center, eigenvalues;
-            Eigen::Matrix3d eigenvectors;
-
-            blob.second.toEllipsoid(1.0, center, eigenvalues, eigenvectors);
-            auto shape = Ellipsoid(center, eigenvalues, eigenvectors);
-
-            auto p = sptrPeak3D(new Peak3D(numor, shape));
-            const auto extents = p->shape().aabb().extents();
-
-            // peak too small or too large
-            if (extents.maxCoeff() > 1e5 || extents.minCoeff() < 1e-5)
-                p->setSelected(false);
-
-            if (extents(2) > _maxFrames)
-                p->setSelected(false);
-
-            // peak's bounding box not completely contained in detector image
-            if (!dAABB.contains(p->shape().aabb()))
-                p->setSelected(false);
-
-            p->setPredicted(false);
-            numor_peaks.push_back(p);
-            peaks.push_back(p);
-
-            ++count;
-
-            if (_handler) {
-                double progress = count * 100.0 / blobs.size();
-                _handler->setProgress(progress);
-            }
-        }
-
-        if (_handler) {
-            _handler->setStatus(
-                ("Integrating " + std::to_string(numor_peaks.size()) + " peaks...").c_str());
-            _handler->setProgress(0);
-        }
-
-        numor->close();
-        if (_handler)
-            _handler->log("Found " + std::to_string(numor_peaks.size()) + " peaks.");
-    }
-    printf("\n");
-
-    if (_handler) {
-        _handler->setStatus("Peak finding completed.");
-        _handler->setProgress(100);
-    }
-    printf("exit PeakFinder::find\n");
-    return peaks;
 }
 
 void PeakFinder::setHandler(const sptrProgressHandler& handler)
@@ -327,6 +170,10 @@ void PeakFinder::setThreshold(double value)
 {
     _threshold = value;
 }
+
+//  ***********************************************************************************************
+//  PeakFinder algorithm
+//  ***********************************************************************************************
 
 void PeakFinder::eliminateBlobs(std::map<int, Blob3D>& blobs) const
 {
@@ -735,6 +582,171 @@ void PeakFinder::mergeEquivalentBlobs(
     // finalize update handler
     if (_handler)
         _handler->log("After merging, " + std::to_string(blobs.size()) + " blobs remain.");
+}
+
+/*
+ * blob finding stages:
+ *
+ * initialize
+ * iterate through frames
+ *    add to collection if new label
+ *    register equivalences
+ * merge equivalent blobs
+ * register collisions
+ * merge colliding blobs
+ *
+ */
+PeakList PeakFinder::find(DataList numors)
+{
+    printf("PeakFinder::find ... with %li numors\n", numors.size());
+    PeakList ret;
+
+    int i = 0;
+    for (auto&& numor : numors) {
+        if (numors.size() > 1)
+            printf("  numor %i\n", i);
+        PeakList numor_peaks;
+
+        auto dectector = numor->reader()->diffractometer()->detector();
+        int nrows = dectector->nRows();
+        int ncols = dectector->nCols();
+        int nframes = numor->nFrames();
+
+        // The blobs found for this numor
+        std::map<int, Blob3D> blobs;
+
+        try {
+            if (_handler) {
+                _handler->log("min comp is " + std::to_string(_minSize));
+                _handler->log("max comp is " + std::to_string(_maxSize));
+                _handler->log("search scale is " + std::to_string(_peakScale));
+            }
+
+            _current_label = 0;
+
+// #pragma omp parallel
+            {
+                int loop_begin = _framesBegin;
+                int loop_end = _framesEnd;
+                if (loop_begin == -1)
+                    loop_begin = 0;
+                if (loop_end == -1)
+                    loop_end = numor->nFrames();
+
+                std::map<int, Blob3D> local_blobs = {{}};
+                nsx::EquivalenceList local_equivalences;
+
+                // determine begining and ending index of current thread
+                //#pragma omp for
+                //        for (size_t i = 0; i < numor->nFrames(); ++i) {
+                //          if (loop_begin == -1) {
+                //            loop_begin = i;
+                //          }
+                //          loop_end = i + 1;
+                //        }
+
+                // find blobs within the current frame range
+                printf("PeakFinder::find: findPrimary\n");
+                findPrimaryBlobs(numor, local_blobs, local_equivalences, loop_begin, loop_end);
+
+                // merge adjacent blobs
+                printf("PeakFinder::find: mergeBlobs\n");
+                mergeEquivalentBlobs(local_blobs, local_equivalences);
+
+// #pragma omp critical
+                printf("PeakFinder::find: blob loop\n");
+                {
+                    // merge the blobs into the global set
+                    for (auto&& blob : local_blobs)
+                        blobs.insert(blob);
+                }
+            }
+
+            mergeCollidingBlobs(numor, blobs);
+
+            if (_handler) {
+                _handler->setStatus("Blob finding complete.");
+                _handler->log("Blob finding complete.");
+                _handler->log("Found " + std::to_string(blobs.size()) + " blobs");
+                _handler->setProgress(100);
+            }
+        }
+        // Warning if error
+        catch (std::exception& e) {
+            if (_handler)
+                _handler->log(std::string("Peak finder caused an exception: ") + e.what());
+            // pass exception back to callee
+            throw e;
+        }
+
+        if (_handler) {
+            _handler->setStatus("Computing bounding boxes...");
+            _handler->setProgress(0);
+        }
+
+        int count = 0;
+
+        auto&& kernel_size = _convolver->kernelSize();
+        auto&& x_offset = kernel_size.first;
+        auto&& y_offset = kernel_size.second;
+
+        // AABB used for rejecting peaks which overlaps with detector boundaries
+        AABB dAABB(
+            Eigen::Vector3d(x_offset, y_offset, 0),
+            Eigen::Vector3d(ncols - x_offset, nrows - y_offset, nframes - 1));
+
+        for (auto& blob : blobs) {
+
+            Eigen::Vector3d center, eigenvalues;
+            Eigen::Matrix3d eigenvectors;
+
+            blob.second.toEllipsoid(1.0, center, eigenvalues, eigenvectors);
+            auto shape = Ellipsoid(center, eigenvalues, eigenvectors);
+
+            auto p = sptrPeak3D(new Peak3D(numor, shape));
+            const auto extents = p->shape().aabb().extents();
+
+            // peak too small or too large
+            if (extents.maxCoeff() > 1e5 || extents.minCoeff() < 1e-5)
+                p->setSelected(false);
+
+            if (extents(2) > _maxFrames)
+                p->setSelected(false);
+
+            // peak's bounding box not completely contained in detector image
+            if (!dAABB.contains(p->shape().aabb()))
+                p->setSelected(false);
+
+            p->setPredicted(false);
+            numor_peaks.push_back(p);
+            ret.push_back(p);
+
+            ++count;
+
+            if (_handler) {
+                double progress = count * 100.0 / blobs.size();
+                _handler->setProgress(progress);
+            }
+        }
+
+        if (_handler) {
+            _handler->setStatus(
+                ("Integrating " + std::to_string(numor_peaks.size()) + " peaks...").c_str());
+            _handler->setProgress(0);
+        }
+
+        numor->close();
+        if (_handler)
+            _handler->log("Found " + std::to_string(numor_peaks.size()) + " peaks.");
+    }
+    printf("\n");
+
+    if (_handler) {
+        _handler->setStatus("Peak finding completed.");
+        _handler->setProgress(100);
+    }
+    printf("exit PeakFinder::find\n");
+    return ret;
 }
 
 } // namespace nsx
