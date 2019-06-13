@@ -14,16 +14,16 @@
 
 #include "core/analyse/PeakFinder.h"
 
-#include "core/experiment/DataSet.h"
-#include "core/experiment/Experiment.h"
 #include "base/geometry/AABB.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/instrument/Sample.h"
-#include "core/raw/IDataReader.h"
 #include "base/logger/Logger.h"
 #include "core/analyse/Octree.h"
-#include "core/peak/Peak3D.h"
 #include "core/convolve/ConvolverFactory.h"
+#include "core/experiment/DataSet.h"
+#include "core/experiment/Experiment.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Sample.h"
+#include "core/peak/Peak3D.h"
+#include "core/raw/IDataReader.h"
 
 #include <cstdio>
 #include <utility>
@@ -134,7 +134,7 @@ PeakList PeakFinder::find(DataList numors)
 
             _current_label = 0;
 
-#pragma omp parallel
+// #pragma omp parallel
             {
                 int loop_begin = _framesBegin;
                 int loop_end = _framesEnd;
@@ -163,7 +163,7 @@ PeakList PeakFinder::find(DataList numors)
                 printf("PeakFinder::find: mergeBlobs\n");
                 mergeEquivalentBlobs(local_blobs, local_equivalences);
 
-#pragma omp critical
+// #pragma omp critical
                 printf("PeakFinder::find: blob loop\n");
                 {
                     // merge the blobs into the global set
@@ -256,6 +256,7 @@ PeakList PeakFinder::find(DataList numors)
         _handler->setStatus("Peak finding completed.");
         _handler->setProgress(100);
     }
+    printf("exit PeakFinder::find\n");
     return peaks;
 }
 
