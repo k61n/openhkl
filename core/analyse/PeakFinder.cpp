@@ -615,68 +615,55 @@ PeakList PeakFinder::find(DataList numors)
         // The blobs found for this numor
         std::map<int, Blob3D> blobs;
 
-        try {
-            if (_handler) {
-                _handler->log("min comp is " + std::to_string(_minSize));
-                _handler->log("max comp is " + std::to_string(_maxSize));
-                _handler->log("search scale is " + std::to_string(_peakScale));
-            }
-
-            _current_label = 0;
-
-// #pragma omp parallel
-            {
-                int loop_begin = _framesBegin;
-                int loop_end = _framesEnd;
-                if (loop_begin == -1)
-                    loop_begin = 0;
-                if (loop_end == -1)
-                    loop_end = numor->nFrames();
-
-                std::map<int, Blob3D> local_blobs = {{}};
-                nsx::EquivalenceList local_equivalences;
-
-                // determine begining and ending index of current thread
-                //#pragma omp for
-                //        for (size_t i = 0; i < numor->nFrames(); ++i) {
-                //          if (loop_begin == -1) {
-                //            loop_begin = i;
-                //          }
-                //          loop_end = i + 1;
-                //        }
-
-                // find blobs within the current frame range
-                printf("PeakFinder::find: findPrimary\n");
-                findPrimaryBlobs(numor, local_blobs, local_equivalences, loop_begin, loop_end);
-
-                // merge adjacent blobs
-                printf("PeakFinder::find: mergeBlobs\n");
-                mergeEquivalentBlobs(local_blobs, local_equivalences);
-
-// #pragma omp critical
-                printf("PeakFinder::find: blob loop\n");
-                {
-                    // merge the blobs into the global set
-                    for (auto&& blob : local_blobs)
-                        blobs.insert(blob);
-                }
-            }
-
-            mergeCollidingBlobs(numor, blobs);
-
-            if (_handler) {
-                _handler->setStatus("Blob finding complete.");
-                _handler->log("Blob finding complete.");
-                _handler->log("Found " + std::to_string(blobs.size()) + " blobs");
-                _handler->setProgress(100);
-            }
+        if (_handler) {
+            _handler->log("min comp is " + std::to_string(_minSize));
+            _handler->log("max comp is " + std::to_string(_maxSize));
+            _handler->log("search scale is " + std::to_string(_peakScale));
         }
-        // Warning if error
-        catch (std::exception& e) {
-            if (_handler)
-                _handler->log(std::string("Peak finder caused an exception: ") + e.what());
-            // pass exception back to callee
-            throw e;
+
+        _current_label = 0;
+
+        int loop_begin = _framesBegin;
+        int loop_end = _framesEnd;
+        if (loop_begin == -1)
+            loop_begin = 0;
+        if (loop_end == -1)
+            loop_end = numor->nFrames();
+
+        std::map<int, Blob3D> local_blobs = {{}};
+        nsx::EquivalenceList local_equivalences;
+
+        // determine begining and ending index of current thread
+        //#pragma omp for
+        //        for (size_t i = 0; i < numor->nFrames(); ++i) {
+        //          if (loop_begin == -1) {
+        //            loop_begin = i;
+        //          }
+        //          loop_end = i + 1;
+        //        }
+
+        // find blobs within the current frame range
+        printf("PeakFinder::find: findPrimary\n");
+        findPrimaryBlobs(numor, local_blobs, local_equivalences, loop_begin, loop_end);
+
+        // merge adjacent blobs
+        printf("PeakFinder::find: mergeBlobs\n");
+        mergeEquivalentBlobs(local_blobs, local_equivalences);
+
+        printf("PeakFinder::find: blob loop\n");
+        {
+            // merge the blobs into the global set
+            for (auto&& blob : local_blobs)
+                blobs.insert(blob);
+        }
+
+        mergeCollidingBlobs(numor, blobs);
+
+        if (_handler) {
+            _handler->setStatus("Blob finding complete.");
+            _handler->log("Blob finding complete.");
+            _handler->log("Found " + std::to_string(blobs.size()) + " blobs");
+            _handler->setProgress(100);
         }
 
         if (_handler) {
