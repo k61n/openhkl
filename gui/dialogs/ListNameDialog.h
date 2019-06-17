@@ -19,6 +19,7 @@
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/modal_dialogs.h>
 
+//! Dialog to name a specific peak list
 class ListNameDialog : public QcrModalDialog {
 public:
     ListNameDialog(nsx::PeakList);

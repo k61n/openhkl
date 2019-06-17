@@ -134,7 +134,7 @@ void PeaksModel::selectPeakLists(int i)
 PeakListsModel* PeaksModel::selectedPeakLists(int i)
 {
     if (peakLists_.empty()) {
-        gLogger->log("[ERROR] No peaklist selected");
+        gLogger->log("[ERROR] No peaklist available");
         return nullptr;
     }
     if (i < 0 || i > peakLists_.size())
@@ -146,6 +146,7 @@ void PeaksModel::addPeakListsModel(const QString& name, nsx::PeakList list)
 {
     peakLists_.append(new PeakListsModel(name, list));
     selectedLists = peakLists_.size()-1;
+    gSession->onPeaksChanged();
 }
 
 QStringList PeaksModel::peaklistNames()

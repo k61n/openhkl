@@ -18,7 +18,6 @@
 #include <QMenuBar>
 
 //! Submenus and menu entries of the MainWin menu bar.
-
 class Menus {
 public:
     Menus() = delete;

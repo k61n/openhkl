@@ -17,8 +17,7 @@
 
 #include <QCR/widgets/actions.h>
 
-//! Collection of trigger actions, for use as member of MainWin.
-
+//! Collection of trigger and toggle actions, for use as member of MainWin.
 class Actions {
 public:
     Actions();
