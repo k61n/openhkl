@@ -28,7 +28,9 @@ Menus::Menus(QMenuBar* mbar) : mbar_ {mbar}
 
     actionsToMenu(
         "&Start",
-        {&actions->addExperiment, &actions->removeExperiment, separator(), &actions->quit});
+        {&actions->addExperiment, &actions->removeExperiment, separator(),
+         &actions->loadData, &actions->importRaw, &actions->removeData,
+         separator(), &actions->quit});
 
     QMenu* detector = new QMenu {"&Detector"};
     detector->addActions({&actions->detectorProperties, &actions->goniometer});
@@ -38,37 +40,43 @@ Menus::Menus(QMenuBar* mbar) : mbar_ {mbar}
     sample->addSeparator()->setText("Shape");
     sample->addActions({&actions->shapeProperties, &actions->shapeLoadMovie});
     QMenu* instrument = new QMenu {"&Instrument"};
+    instrument->addAction(&actions->instrumentStates);
     instrument->addMenu(detector);
     instrument->addMenu(sample);
     instrument->addSeparator()->setText("Monochromatic source");
     instrument->addAction(&actions->monochromaticSourceProperties);
 
     QMenu* data = new QMenu {"&Data"};
-    data->addActions({&actions->loadData, &actions->removeData, &actions->dataProperties,
-                      &actions->convertHDF5, &actions->importRaw, &actions->instrumentStates,
-                      &actions->findPeaks});
+    data->addActions({&actions->loadData,
+                      &actions->importRaw,
+                      &actions->removeData,
+                      &actions->dataProperties,
+                      &actions->convertHDF5});
     QMenu* indexing = new QMenu {"&indexing"};
     indexing->addActions(
         {&actions->autoIndexer, &actions->userDefinedIndexer, &actions->assignUnitCell});
     QMenu* peaks = new QMenu {"&Peaks"};
-    peaks->addAction(&actions->filterPeaks);
+    peaks->addActions({&actions->findPeaks, &actions->filterPeaks});
     peaks->addMenu(indexing);
-    peaks->addActions({&actions->refine, &actions->buildShapeLibrary, &actions->integratepeaks,
-                       &actions->normalize, &actions->correctAbsorption, &actions->show3d,
+    peaks->addActions({&actions->refine,
+                       &actions->buildShapeLibrary,
+                       &actions->integratepeaks,
+                       &actions->normalize,
+                       &actions->correctAbsorption,
+                       &actions->predictPeaks,
+                       &actions->show3d,
                        &actions->peaksProperties});
     experiment_ = mbar_->addMenu("&Experiment");
     experiment_->addMenu(data);
     experiment_->addMenu(peaks);
     experiment_->addMenu(instrument);
-    experiment_->addSeparator()->setText("reference peak library");
-    experiment_->addAction(&actions->predictPeaks);
     experiment_->addSeparator()->setText("unit cells");
     experiment_->addAction(&actions->removeUnusedUnitCells);
 
 
     actionsToMenu("&Export", {&actions->exportPlot});
 
-    options_ = mbar_->addMenu("&Options");
+    options_ = new QMenu{"&Detector View"};
     QMenu* cursorMode = new QMenu {"&Cursor mode"};
     cursorMode->addActions({&actions->pixelPosition, &actions->gammaNu, &actions->twoTheta,
                             &actions->dSpacing, &actions->millerIndices});
@@ -81,10 +89,18 @@ Menus::Menus(QMenuBar* mbar) : mbar_ {mbar}
     options_->addMenu(setView);
     options_->addMenu(peakMenu);
 
-    actionsToMenu(
-        "&View",
-        {&actions->reset, separator(), &actions->viewExperiment, &actions->viewImage,
-         &actions->viewLogger, &actions->viewPlotter, &actions->viewProperties});
+    view_ = new QMenu("&Main Window");
+    view_->addActions({&actions->reset,
+                       separator(),
+                       &actions->viewExperiment,
+                       &actions->viewImage,
+                       &actions->viewLogger,
+                       &actions->viewPlotter,
+                       &actions->viewProperties});
+
+    QMenu* viewsMenu = mbar_->addMenu("&Views");
+    viewsMenu->addMenu(options_);
+    viewsMenu->addMenu(view_);
 
     actionsToMenu("&Help", {&actions->about, &actions->helpExperiment, &actions->helpData,
                   &actions->helpPeakFinder, &actions->helpPeakFilter});
