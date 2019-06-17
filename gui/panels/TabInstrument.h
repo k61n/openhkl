@@ -15,16 +15,16 @@
 #ifndef GUI_PANELS_TABINSTRUMENT_H
 #define GUI_PANELS_TABINSTRUMENT_H
 
-#include "gui/panels/SubtabDetector.h"
-#include "gui/panels/SubtabMonochromaticSource.h"
-#include "gui/panels/SubtabSample.h"
+#include "gui/properties/DetectorProperty.h"
+#include "gui/properties/SampleShapeProperties.h"
+#include "gui/properties/SourceProperty.h"
 
 class TabInstrument : public QcrTabWidget {
 public:
     TabInstrument();
-    SubtabDetector* detector;
-    SubtabMonochromatic* monoSource;
-    SubtabSample* sample;
+    DetectorProperty* detector;
+    SourceProperty* monoSource;
+    SampleShapeProperties* sample;
 
     void setCurrent(int);
 };

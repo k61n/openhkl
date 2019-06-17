@@ -18,6 +18,7 @@
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 
+//! Property widget for unit cell
 class UnitCellProperty : public QcrWidget {
 public:
     UnitCellProperty();

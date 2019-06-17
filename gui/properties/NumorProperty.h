@@ -19,6 +19,7 @@
 #include <QCR/widgets/controls.h>
 #include <QTableWidget>
 
+//! Property widget of the numor
 class NumorProperty : public QcrWidget {
 public:
     NumorProperty();

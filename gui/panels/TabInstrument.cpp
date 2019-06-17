@@ -21,9 +21,9 @@
 TabInstrument::TabInstrument() : QcrTabWidget {"instrument"}
 {
     // layout
-    addTab((detector = new SubtabDetector), "Detector");
-    addTab((monoSource = new SubtabMonochromatic), "Monochromatic source");
-    addTab((sample = new SubtabSample), "Sample");
+    addTab((detector = new DetectorProperty), "Detector");
+    addTab((monoSource = new SourceProperty), "Monochromatic source");
+    addTab((sample = new SampleShapeProperties), "Sample");
 
     setRemake([=]() {
         detector->remake();

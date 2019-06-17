@@ -35,8 +35,8 @@ SubframeSetup::SubframeSetup() : QcrTabWidget {"property tabs"}
     setMinimumSize(270, 320);
 
     addTab((instrument = new TabInstrument), "Instrument"); // 0
-    addTab((data = new TabData), "Data"); // 1
-    addTab((unitcells = new TabUnitcells), "Unit cells"); // 2
+    addTab((data = new NumorProperty), "Data"); // 1
+    addTab((unitcells = new UnitCellProperty), "Unit cells"); // 2
     addTab((peaks = new TabPeaks), "Peaks"); // 3
     addTab((library = new TabPeaklibrary), "Peaklibrary"); // 4
 
