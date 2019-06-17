@@ -21,12 +21,12 @@ namespace nsx {
 
 struct RawDataReaderParameters {
 
-    double wavelength = 1.0;
-    double delta_omega = 1.0;
-    double delta_chi = 1.0;
-    double delta_phi = 1.0;
-    bool row_major = false;
-    bool swap_endian = false;
+    double wavelength = 2.665;
+    double delta_omega = 0.4;
+    double delta_chi = 0.0;
+    double delta_phi = 0.0;
+    bool row_major = true;
+    bool swap_endian = true;
     size_t bpp = 2;
 };
 
@@ -49,6 +49,9 @@ public:
     ~RawDataReader() = default;
 
     void addFrame(const std::string& filename);
+
+    //! All frames are added, update the parameters
+    void end();
 
     //! Open the file(s)
     void open() final;

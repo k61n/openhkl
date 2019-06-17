@@ -218,6 +218,8 @@ void Session::loadRawData()
         for (size_t i = 1; i < filenames.size(); ++i) {
             raw_data_reader->addFrame(filenames[i]);
         }
+        raw_data_reader->setParameters(parameters);
+        raw_data_reader->end();
         data = std::make_shared<nsx::DataSet>(reader);
     } catch (std::exception& e) {
         gLogger->log(
