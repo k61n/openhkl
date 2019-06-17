@@ -14,6 +14,7 @@
 
 #include "gui/actions/Triggers.h"
 
+#include "gui/dialogs/HDF5ConverterDialog.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/dialogs/PeakFilterDialog.h"
 #include "gui/dialogs/ShapeLibraryDialog.h"
@@ -61,6 +62,12 @@ void Actions::setupData()
     importRaw.setTriggerHook([]() { gSession->loadRawData(); });
     findPeaks.setTriggerHook([]() { new PeakFinder; });
     instrumentStates.setTriggerHook([]() { new InstrumentStates; });
+    convertHDF5.setTriggerHook([]() {
+        if (gSession->selectedExperimentNum()<0)
+            return;
+        HDF5ConverterDialog* dlg = new HDF5ConverterDialog;
+        dlg->show();
+    });
 }
 
 void Actions::setupExperiment() {}
