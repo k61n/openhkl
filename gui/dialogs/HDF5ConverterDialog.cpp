@@ -7,7 +7,7 @@
 #include <QHBoxLayout>
 
 HDF5ConverterDialog::HDF5ConverterDialog()
-    : QcrModalDialog("adhoc_convertHdf", gGui, "Convert to HDF5")
+    : QDialog{}
 {
     QVBoxLayout* wholeLayout = new QVBoxLayout(this);
     QHBoxLayout* firstLine = new QHBoxLayout;

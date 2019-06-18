@@ -18,6 +18,7 @@
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/dialogs/PeakFilterDialog.h"
 #include "gui/dialogs/ShapeLibraryDialog.h"
+#include "gui/dialogs/IsotopesDatabaseDialog.h"
 #include "gui/frames/AutoIndexerFrame.h"
 #include "gui/frames/GlobalOffsetsFrame.h"
 #include "gui/frames/InstrumentStatesFrame.h"
@@ -66,7 +67,7 @@ void Actions::setupData()
         if (gSession->selectedExperimentNum()<0)
             return;
         HDF5ConverterDialog* dlg = new HDF5ConverterDialog;
-        dlg->show();
+        dlg->exec();
     });
 }
 
@@ -104,6 +105,10 @@ void Actions::setupInstrument()
     });
     goniometer.setTriggerHook([]() { new GlobalOffsets(offsetMode::DETECTOR); });
     sampleGoniometer.setTriggerHook([]() { new GlobalOffsets(offsetMode::SAMPLE); });
+    isotopesDatabase.setTriggerHook([](){
+        IsotopesDatabaseDialog* iso = new IsotopesDatabaseDialog;
+        iso->exec();
+    });
 }
 
 void Actions::setupOptions()

@@ -15,14 +15,14 @@
 #ifndef GUI_DIALOGS_HDF5CONVERTERDIALOG_H
 #define GUI_DIALOGS_HDF5CONVERTERDIALOG_H
 
-#include <QCR/widgets/modal_dialogs.h>
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/actions.h>
 #include <QProgressBar>
+#include <QDialog>
 #include <QDialogButtonBox>
 
 //! Dialog to convert selected numors to HDF5 format
-class HDF5ConverterDialog : public QcrModalDialog {
+class HDF5ConverterDialog : public QDialog {
 public:
     HDF5ConverterDialog();
 
