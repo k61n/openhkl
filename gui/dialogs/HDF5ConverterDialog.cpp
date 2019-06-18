@@ -5,6 +5,8 @@
 #include "core/experiment/DataSet.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QDir>
+#include <QFileDialog>
 
 HDF5ConverterDialog::HDF5ConverterDialog()
     : QDialog{}

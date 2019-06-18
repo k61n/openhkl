@@ -23,6 +23,8 @@ public:
 
 private:
     QTableView* isotopeDatabaseView;
+    void cellClicked(const QModelIndex& index);
+    void sortingChanged(int, Qt::SortOrder);
 };
 
 #endif //GUI_DIALOGS_ISOTOPESDATABASEDIALOG_H

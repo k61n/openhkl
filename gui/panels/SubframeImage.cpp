@@ -111,7 +111,7 @@ void ImageWidget::changeView(int option)
     QTransform trans;
     trans.scale(-1, -1); // fromDetector (default; 0)
     if (option == 1) // fromSample
-        trans.scale(1, -1);
+        trans.scale(-1, 1);
     imageView->setTransform(trans);
     imageView->fitScene();
 }
