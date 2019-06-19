@@ -4,7 +4,7 @@ endif()
 
 set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR} ${XSection_INCLUDE_DIR})
 include_directories(${PYTHON_INCLUDE_DIRS})
 
 set_property(SOURCE pynsx.i PROPERTY CPLUSPLUS ON)
@@ -25,4 +25,4 @@ else()
     swig_add_module(pynsx python pynsx.i)
 endif()
 
-swig_link_libraries(pynsx ${PYTHON_LIBRARIES} nsxcore)
+swig_link_libraries(pynsx ${PYTHON_LIBRARIES} nsxcore ${XSection_LIBRARIES})
