@@ -12,6 +12,6 @@ target_include_directories(${lib}
 target_link_libraries(${lib}
     PRIVATE
     nsxcore
-    QCR
+    ${QCR_LIBRARIES}
     QCustomPlot
     )
