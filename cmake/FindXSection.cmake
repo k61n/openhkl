@@ -11,7 +11,7 @@
 # Copyright 2015-2018 Joachim Wuttke, Forschungszentrum Jülich.
 # Redistribution permitted.
 
-find_path(XSection_INCLUDE_DIR lmmin.h)
+find_path(XSection_INCLUDE_DIR xsection/ChemicalFormulaParser.h)
 find_library(XSection_LIBRARIES NAMES xsection XSection)
 
 include(FindPackageHandleStandardArgs)
