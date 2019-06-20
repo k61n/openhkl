@@ -33,6 +33,7 @@ deb_stable_clang:
     - apt-get -y update
     - apt-get -y upgrade
     - apt-get -y install cmake clang libsnappy-dev liblz4-dev libblosc-dev libgsl-dev libfftw3-dev libeigen3-dev libhdf5-dev libyaml-cpp-dev libtiff-dev libboost-dev python3 python3-numpy python3-unittest2 python3-random2 python3-distutils libpython3-dev swig git
+    - git clone https://jugit.fz-juelich.de/mlz/libQCR.git
     - git clone https://jugit.fz-juelich.de/mlz/xsection.git
   stage: build
   script: *scr
@@ -69,6 +70,7 @@ suse_current:
     - zypper -n up
     - zypper -n dup
     - zypper -n in cmake gcc-c++ perl pkgconf snappy-devel lz4-devel blosc-devel gsl-devel fftw3-devel eigen3-devel hdf5-devel yaml-cpp-devel tiff-devel boost-devel python3 python3-numpy python3-unittest2 python3-random2 python3-distutils libpython3-devel swig
+    - git clone https://jugit.fz-juelich.de/mlz/libQCR.git
     - git clone https://jugit.fz-juelich.de/mlz/xsection.git
   stage: build
   script: *scr
@@ -90,6 +92,7 @@ centos7:
     - ln -s /usr/bin/cmake3 /usr/bin/cmake
     - ln -s /usr/bin/ctest3 /usr/bin/ctest
     - ln -s /usr/bin/cpack3 /usr/bin/cpack
+    - git clone https://jugit.fz-juelich.de/mlz/libQCR.git
     - git clone https://jugit.fz-juelich.de/mlz/xsection.git
   stage: build
   script: *scr
