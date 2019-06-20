@@ -1,3 +1,4 @@
+set(OpenGL_GL_PREFERENCE LEGACY)
 find_package(OpenGL REQUIRED)
 message(STATUS "Found OpenGL:")
 message(STATUS "  libraries: ${OPENGL_LIBRARIES}")
