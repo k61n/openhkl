@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/utils/YAMLType.h
+//! @file      base/utils/YAMLType.h
 //! @brief     Defines templated functions for YAML import and export
 //!
 //! @homepage  ###HOMEPAGE###

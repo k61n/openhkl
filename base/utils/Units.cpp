@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/utils/Units.cpp
+//! @file      base/utils/Units.cpp
 //! @brief     Implements class UnitsManager
 //!
 //! @homepage  ###HOMEPAGE###

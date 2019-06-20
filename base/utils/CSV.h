@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/utils/CSV.h
+//! @file      base/utils/CSV.h
 //! @brief     Defines class CSV
 //!
 //! @homepage  ###HOMEPAGE###

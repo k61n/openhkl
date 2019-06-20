@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/crystal/NiggliReduction.cpp
+//! @file      tables/crystal/NiggliReduction.cpp
 //! @brief     Implements class NiggliReduction
 //!
 //! @homepage  ###HOMEPAGE###

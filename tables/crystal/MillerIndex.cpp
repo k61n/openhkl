@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/crystal/MillerIndex.cpp
+//! @file      tables/crystal/MillerIndex.cpp
 //! @brief     Implements class MillerIndex
 //!
 //! @homepage  ###HOMEPAGE###

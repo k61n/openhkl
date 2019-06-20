@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/crystal/SymOp.cpp
+//! @file      tables/crystal/SymOp.cpp
 //! @brief     Implements class SymOp
 //!
 //! @homepage  ###HOMEPAGE###

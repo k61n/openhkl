@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/geometry/AABB.h
+//! @file      base/geometry/AABB.h
 //! @brief     Defines class AABB
 //!
 //! @homepage  ###HOMEPAGE###

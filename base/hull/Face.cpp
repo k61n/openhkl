@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/hull/Face.cpp
+//! @file      base/hull/Face.cpp
 //! @brief     Implements struct Face
 //!
 //! @homepage  ###HOMEPAGE###

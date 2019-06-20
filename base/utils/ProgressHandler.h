@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/utils/ProgressHandler.h
+//! @file      base/utils/ProgressHandler.h
 //! @brief     Defines class ProgressHandler
 //!
 //! @homepage  ###HOMEPAGE###

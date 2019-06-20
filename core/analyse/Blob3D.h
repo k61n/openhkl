@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/search_peaks/Blob3D.h
+//! @file      core/analyse/Blob3D.h
 //! @brief     Defines class Blob3D
 //!
 //! @homepage  ###HOMEPAGE###

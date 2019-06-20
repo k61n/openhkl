@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/mask/BoxMask.cpp
+//! @file      base/mask/BoxMask.cpp
 //! @brief     Implements class BoxMask
 //!
 //! @homepage  ###HOMEPAGE###

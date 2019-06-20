@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/crystal/NiggliCharacter.h
+//! @file      tables/crystal/NiggliCharacter.h
 //! @brief     Defines struct NiggliCharacter
 //!
 //! @homepage  ###HOMEPAGE###

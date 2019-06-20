@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/geometry/Ellipsoid.h
+//! @file      base/geometry/Ellipsoid.h
 //! @brief     Defines class Ellipsoid
 //!
 //! @homepage  ###HOMEPAGE###

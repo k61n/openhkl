@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/crystal/DoubleToFraction.cpp
+//! @file      tables/crystal/DoubleToFraction.cpp
 //! @brief     Implements function doubleToFraction
 //!
 //! @homepage  ###HOMEPAGE###

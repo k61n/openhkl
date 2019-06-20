@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/utils/Factory.h
+//! @file      base/utils/Factory.h
 //! @brief     Defines class Factory
 //!
 //! @homepage  ###HOMEPAGE###

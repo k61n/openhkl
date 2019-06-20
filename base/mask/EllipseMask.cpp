@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/mask/EllipseMask.cpp
+//! @file      base/mask/EllipseMask.cpp
 //! @brief     Implements class EllipseMask
 //!
 //! @homepage  ###HOMEPAGE###

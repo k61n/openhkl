@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/geometry/ReciprocalVector.cpp
+//! @file      base/geometry/ReciprocalVector.cpp
 //! @brief     Implements class ReciprocalVector
 //!
 //! @homepage  ###HOMEPAGE###

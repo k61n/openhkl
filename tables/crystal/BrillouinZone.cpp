@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/crystal/BrillouinZone.cpp
+//! @file      tables/crystal/BrillouinZone.cpp
 //! @brief     Implements class BrillouinZone
 //!
 //! @homepage  ###HOMEPAGE###

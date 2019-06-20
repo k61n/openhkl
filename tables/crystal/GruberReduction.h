@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/crystal/GruberReduction.h
+//! @file      tables/crystal/GruberReduction.h
 //! @brief     Defines class GruberReduction
 //!
 //! @homepage  ###HOMEPAGE###

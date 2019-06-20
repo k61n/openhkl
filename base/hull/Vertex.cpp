@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/hull/Vertex.cpp
+//! @file      base/hull/Vertex.cpp
 //! @brief     Implements struct Vertex
 //!
 //! @homepage  ###HOMEPAGE###

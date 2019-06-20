@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/graphics/ColorMap.cpp
+//! @file      gui/models/ColorMap.cpp
 //! @brief     Implements class ColorMap
 //!
 //! @homepage  ###HOMEPAGE###

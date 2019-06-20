@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/utils/Path.cpp
+//! @file      base/utils/Path.cpp
 //! @brief     Implements functions that operate on paths
 //!
 //! @homepage  ###HOMEPAGE###

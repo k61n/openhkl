@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/mask/IMask.h
+//! @file      base/mask/IMask.h
 //! @brief     Defines class IMask
 //!
 //! @homepage  ###HOMEPAGE###

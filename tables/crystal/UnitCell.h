@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/crystal/UnitCell.h
+//! @file      tables/crystal/UnitCell.h
 //! @brief     Defines class UnitCell
 //!
 //! @homepage  ###HOMEPAGE###

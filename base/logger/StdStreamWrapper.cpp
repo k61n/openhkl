@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/logger/StdStreamWrapper.cpp
+//! @file      base/logger/StdStreamWrapper.cpp
 //! @brief     Implements class StdStreamWrapper
 //!
 //! @homepage  ###HOMEPAGE###

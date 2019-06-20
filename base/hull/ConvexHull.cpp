@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/hull/ConvexHull.cpp
+//! @file      base/hull/ConvexHull.cpp
 //! @brief     Implements class ConvexHull
 //!
 //! @homepage  ###HOMEPAGE###

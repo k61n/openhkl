@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/hull/Triangle.cpp
+//! @file      base/hull/Triangle.cpp
 //! @brief     Implements struct Triangle
 //!
 //! @homepage  ###HOMEPAGE###

@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/quantify/IntegrationRegion.h
+//! @file      core/peak/IntegrationRegion.h
 //! @brief     Defines class IntegrationRegion
 //!
 //! @homepage  ###HOMEPAGE###

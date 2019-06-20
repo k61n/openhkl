@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/quantify/PeakCoordinateSystem.cpp
+//! @file      core/peak/PeakCoordinateSystem.cpp
 //! @brief     Implements class PeakCoordinateSystem
 //!
 //! @homepage  ###HOMEPAGE###

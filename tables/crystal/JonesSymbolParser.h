@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/crystal/JonesSymbolParser.h
+//! @file      tables/crystal/JonesSymbolParser.h
 //! @brief     Defines function parseJonesSymbol
 //!
 //! @homepage  ###HOMEPAGE###

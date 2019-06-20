@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/hull/Edge.h
+//! @file      base/hull/Edge.h
 //! @brief     Defines struct Edge
 //!
 //! @homepage  ###HOMEPAGE###

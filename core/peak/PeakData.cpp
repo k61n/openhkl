@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/quantify/PeakData.cpp
+//! @file      core/peak/PeakData.cpp
 //! @brief     Implements class PeakData
 //!
 //! @homepage  ###HOMEPAGE###

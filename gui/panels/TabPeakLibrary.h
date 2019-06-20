@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/panels/TabPeaklibrary.h
+//! @file      gui/panels/TabPeakLibrary.h
 //! @brief     Defines class TabPeaklibrary
 //!
 //! @homepage  ###HOMEPAGE###

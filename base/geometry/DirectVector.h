@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/geometry/DirectVector.h
+//! @file      base/geometry/DirectVector.h
 //! @brief     Defines class DirectVector
 //!
 //! @homepage  ###HOMEPAGE###

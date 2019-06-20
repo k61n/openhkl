@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/utils/Variant.h
+//! @file      base/utils/Variant.h
 //! @brief     Defines class Variant
 //!
 //! @homepage  ###HOMEPAGE###
