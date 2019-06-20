@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INTEGRATION_PROFILE1D_H
-#define CORE_INTEGRATION_PROFILE1D_H
+#ifndef CORE_SHAPE_PROFILE1D_H
+#define CORE_SHAPE_PROFILE1D_H
 
 #include <vector>
 
@@ -50,4 +50,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_INTEGRATION_PROFILE1D_H
+#endif // CORE_SHAPE_PROFILE1D_H

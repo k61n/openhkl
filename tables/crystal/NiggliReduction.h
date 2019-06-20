@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_CRYSTAL_NIGGLIREDUCTION_H
-#define CORE_CRYSTAL_NIGGLIREDUCTION_H
+#ifndef TABLES_CRYSTAL_NIGGLIREDUCTION_H
+#define TABLES_CRYSTAL_NIGGLIREDUCTION_H
 
 #include <Eigen/Dense>
 
@@ -61,4 +61,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_CRYSTAL_NIGGLIREDUCTION_H
+#endif // TABLES_CRYSTAL_NIGGLIREDUCTION_H

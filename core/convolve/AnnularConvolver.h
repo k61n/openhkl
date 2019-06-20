@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_SEARCH_PEAKS_ANNULARCONVOLVER_H
-#define CORE_SEARCH_PEAKS_ANNULARCONVOLVER_H
+#ifndef CORE_CONVOLVE_ANNULARCONVOLVER_H
+#define CORE_CONVOLVE_ANNULARCONVOLVER_H
 
 // Convolver description: the kernel is non-zero in a circular and annular
 // region, as follows
@@ -77,4 +77,4 @@ public:
 
 } // namespace nsx
 
-#endif // CORE_SEARCH_PEAKS_ANNULARCONVOLVER_H
+#endif // CORE_CONVOLVE_ANNULARCONVOLVER_H

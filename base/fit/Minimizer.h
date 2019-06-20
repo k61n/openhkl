@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_FITTING_MINIMIZER_H
-#define CORE_FITTING_MINIMIZER_H
+#ifndef BASE_FIT_MINIMIZER_H
+#define BASE_FIT_MINIMIZER_H
 
 #include <gsl/gsl_matrix.h>
 
@@ -115,4 +115,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_FITTING_MINIMIZER_H
+#endif // BASE_FIT_MINIMIZER_H

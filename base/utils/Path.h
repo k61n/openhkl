@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_UTILS_PATH_H
-#define CORE_UTILS_PATH_H
+#ifndef BASE_UTILS_PATH_H
+#define BASE_UTILS_PATH_H
 
 #include <vector>
 
@@ -49,4 +49,4 @@ std::string diffractometersPath();
 
 } // namespace nsx
 
-#endif // CORE_UTILS_PATH_H
+#endif // BASE_UTILS_PATH_H

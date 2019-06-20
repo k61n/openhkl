@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_FITTING_FITPARAMETERS_H
-#define CORE_FITTING_FITPARAMETERS_H
+#ifndef BASE_FIT_FITPARAMETERS_H
+#define BASE_FIT_FITPARAMETERS_H
 
 #include <gsl/gsl_vector.h>
 
@@ -67,4 +67,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_FITTING_FITPARAMETERS_H
+#endif // BASE_FIT_FITPARAMETERS_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_PEAK_OCTREE_H
-#define CORE_PEAK_OCTREE_H
+#ifndef CORE_ANALYSE_OCTREE_H
+#define CORE_ANALYSE_OCTREE_H
 
 #include <set>
 #include "base/geometry/AABB.h"
@@ -186,4 +186,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_PEAK_OCTREE_H
+#endif // CORE_ANALYSE_OCTREE_H

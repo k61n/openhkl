@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOGGER_AGGREGATESTREAMWRAPPER_H
-#define CORE_LOGGER_AGGREGATESTREAMWRAPPER_H
+#ifndef BASE_LOGGER_AGGREGATESTREAMWRAPPER_H
+#define BASE_LOGGER_AGGREGATESTREAMWRAPPER_H
 
 #include <vector>
 
@@ -43,4 +43,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_LOGGER_AGGREGATESTREAMWRAPPER_H
+#endif // BASE_LOGGER_AGGREGATESTREAMWRAPPER_H

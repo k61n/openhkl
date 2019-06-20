@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_CRYSTAL_INTENSITY_H
-#define CORE_CRYSTAL_INTENSITY_H
+#ifndef CORE_PEAK_INTENSITY_H
+#define CORE_PEAK_INTENSITY_H
 
 namespace nsx {
 
@@ -60,4 +60,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_CRYSTAL_INTENSITY_H
+#endif // CORE_PEAK_INTENSITY_H

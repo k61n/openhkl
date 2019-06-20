@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_SEARCH_PEAKS_CONSTANTCONVOLVER_H
-#define CORE_SEARCH_PEAKS_CONSTANTCONVOLVER_H
+#ifndef CORE_CONVOLVE_CONSTANTCONVOLVER_H
+#define CORE_CONVOLVE_CONSTANTCONVOLVER_H
 
 // Convolver description: this kernel is constant with the value 1 /
 // (rows*cols). Convolving with this kernel has the effect of taking the average
@@ -46,4 +46,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_SEARCH_PEAKS_CONSTANTCONVOLVER_H
+#endif // CORE_CONVOLVE_CONSTANTCONVOLVER_H

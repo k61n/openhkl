@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_GEOMETRY_AABB_H
-#define CORE_GEOMETRY_AABB_H
+#ifndef BASE_GEOMETRY_AABB_H
+#define BASE_GEOMETRY_AABB_H
 
 #include <vector>
 #include <Eigen/Dense>
@@ -90,4 +90,4 @@ std::ostream& operator<<(std::ostream& os, const AABB& aabb);
 
 } // namespace nsx
 
-#endif // CORE_GEOMETRY_AABB_H
+#endif // BASE_GEOMETRY_AABB_H

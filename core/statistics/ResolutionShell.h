@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_CRYSTAL_RESOLUTIONSHELL_H
-#define CORE_CRYSTAL_RESOLUTIONSHELL_H
+#ifndef CORE_STATISTICS_RESOLUTIONSHELL_H
+#define CORE_STATISTICS_RESOLUTIONSHELL_H
 
 #include "core/peak/Peak3D.h"
 
@@ -49,4 +49,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_CRYSTAL_RESOLUTIONSHELL_H
+#endif // CORE_STATISTICS_RESOLUTIONSHELL_H

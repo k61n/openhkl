@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_MASK_IMASK_H
-#define CORE_MASK_IMASK_H
+#ifndef BASE_MASK_IMASK_H
+#define BASE_MASK_IMASK_H
 
 namespace nsx {
 
@@ -39,4 +39,4 @@ protected:
 
 } // namespace nsx
 
-#endif // CORE_MASK_IMASK_H
+#endif // BASE_MASK_IMASK_H

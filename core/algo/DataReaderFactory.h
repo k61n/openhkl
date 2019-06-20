@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOADER_DATAREADERFACTORY_H
-#define CORE_LOADER_DATAREADERFACTORY_H
+#ifndef CORE_ALGO_DATAREADERFACTORY_H
+#define CORE_ALGO_DATAREADERFACTORY_H
 
 #include "core/experiment/DataSet.h"
 #include <memory>
@@ -43,4 +43,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_LOADER_DATAREADERFACTORY_H
+#endif // CORE_ALGO_DATAREADERFACTORY_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_SEARCH_PEAKS_DELTACONVOLVER_H
-#define CORE_SEARCH_PEAKS_DELTACONVOLVER_H
+#ifndef CORE_CONVOLVE_DELTACONVOLVER_H
+#define CORE_CONVOLVE_DELTACONVOLVER_H
 
 #include "core/convolve/AtomicConvolver.h"
 
@@ -42,4 +42,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_SEARCH_PEAKS_DELTACONVOLVER_H
+#endif // CORE_CONVOLVE_DELTACONVOLVER_H

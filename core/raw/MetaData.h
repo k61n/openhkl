@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOADER_METADATA_H
-#define CORE_LOADER_METADATA_H
+#ifndef CORE_RAW_METADATA_H
+#define CORE_RAW_METADATA_H
 
 #include "base/utils/Variant.h"
 
@@ -107,4 +107,4 @@ template <typename _type> _type MetaData::key(const char* name) const
 
 } // namespace nsx
 
-#endif // CORE_LOADER_METADATA_H
+#endif // CORE_RAW_METADATA_H

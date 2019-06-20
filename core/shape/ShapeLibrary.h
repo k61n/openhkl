@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INTEGRATION_SHAPELIBRARY_H
-#define CORE_INTEGRATION_SHAPELIBRARY_H
+#ifndef CORE_SHAPE_SHAPELIBRARY_H
+#define CORE_SHAPE_SHAPELIBRARY_H
 
 #include "tables/crystal/UnitCell.h"
 #include "core/detector/DetectorEvent.h"
@@ -127,4 +127,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_INTEGRATION_SHAPELIBRARY_H
+#endif // CORE_SHAPE_SHAPELIBRARY_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_SEARCH_PEAKS_ATOMICCONVOLVER_H
-#define CORE_SEARCH_PEAKS_ATOMICCONVOLVER_H
+#ifndef CORE_CONVOLVE_ATOMICCONVOLVER_H
+#define CORE_CONVOLVE_ATOMICCONVOLVER_H
 
 #include "core/convolve/Convolver.h"
 
@@ -64,4 +64,4 @@ protected:
 
 } // namespace nsx
 
-#endif // CORE_SEARCH_PEAKS_ATOMICCONVOLVER_H
+#endif // CORE_CONVOLVE_ATOMICCONVOLVER_H

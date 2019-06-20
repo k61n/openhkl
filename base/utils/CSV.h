@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_UTILS_CSV_H
-#define CORE_UTILS_CSV_H
+#ifndef BASE_UTILS_CSV_H
+#define BASE_UTILS_CSV_H
 
 #include <iostream>
 #include <vector>
@@ -37,4 +37,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_UTILS_CSV_H
+#endif // BASE_UTILS_CSV_H

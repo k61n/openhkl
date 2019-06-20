@@ -91,4 +91,4 @@ private:
     QListWidget* selectedData;
 };
 
-#endif // GUI_FRAMES_REFINER_H
+#endif // GUI_FRAMES_REFINERFRAME_H

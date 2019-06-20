@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_SEARCH_PEAKS_PEAKFINDER_H
-#define CORE_SEARCH_PEAKS_PEAKFINDER_H
+#ifndef CORE_ANALYSE_PEAKFINDER_H
+#define CORE_ANALYSE_PEAKFINDER_H
 
 #include "core/experiment/DataSet.h"
 #include "core/analyse/Blob3D.h"
@@ -100,4 +100,4 @@ using sptrPeakFinder = std::shared_ptr<PeakFinder>;
 
 } // namespace nsx
 
-#endif // CORE_SEARCH_PEAKS_PEAKFINDER_H
+#endif // CORE_ANALYSE_PEAKFINDER_H

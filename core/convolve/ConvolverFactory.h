@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_SEARCH_PEAKS_CONVOLVERFACTORY_H
-#define CORE_SEARCH_PEAKS_CONVOLVERFACTORY_H
+#ifndef CORE_CONVOLVE_CONVOLVERFACTORY_H
+#define CORE_CONVOLVE_CONVOLVERFACTORY_H
 
 #include "core/convolve/Convolver.h"
 
@@ -46,4 +46,4 @@ Eigen::MatrixXd convolvedFrame(
 
 } // namespace nsx
 
-#endif // CORE_SEARCH_PEAKS_CONVOLVERFACTORY_H
+#endif // CORE_CONVOLVE_CONVOLVERFACTORY_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_REFINE_REFINEMENTBATCH_H
-#define CORE_REFINE_REFINEMENTBATCH_H
+#ifndef CORE_ALGO_REFINEMENTBATCH_H
+#define CORE_ALGO_REFINEMENTBATCH_H
 
 #include "tables/crystal/UnitCell.h"
 #include "base/fit/FitParameters.h"
@@ -90,4 +90,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_REFINE_REFINEMENTBATCH_H
+#endif // CORE_ALGO_REFINEMENTBATCH_H

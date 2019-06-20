@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_UTILS_SINGLETON_H
-#define CORE_UTILS_SINGLETON_H
+#ifndef BASE_UTILS_SINGLETON_H
+#define BASE_UTILS_SINGLETON_H
 
 #include <memory>
 
@@ -52,4 +52,4 @@ public:
 
 } // namespace nsx
 
-#endif // CORE_UTILS_SINGLETON_H
+#endif // BASE_UTILS_SINGLETON_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_AUTO_INDEXING_USERDEFINEDUNITCELLINDEXER_H
-#define CORE_AUTO_INDEXING_USERDEFINEDUNITCELLINDEXER_H
+#ifndef CORE_ALGO_USERDEFINEDINDEXER_H
+#define CORE_ALGO_USERDEFINEDINDEXER_H
 
 #include "tables/crystal/UnitCell.h"
 #include "core/peak/Peak3D.h"
@@ -96,4 +96,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_AUTO_INDEXING_USERDEFINEDUNITCELLINDEXER_H
+#endif // CORE_ALGO_USERDEFINEDINDEXER_H

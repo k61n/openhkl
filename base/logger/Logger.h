@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOGGER_LOGGER_H
-#define CORE_LOGGER_LOGGER_H
+#ifndef BASE_LOGGER_LOGGER_H
+#define BASE_LOGGER_LOGGER_H
 
 #include <iostream>
 #include <memory>
@@ -63,4 +63,4 @@ void setError(std::function<Logger()> error);
 
 } // namespace nsx
 
-#endif // CORE_LOGGER_LOGGER_H
+#endif // BASE_LOGGER_LOGGER_H

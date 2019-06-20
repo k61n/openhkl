@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_GEOMETRY_ELLIPSOID_H
-#define CORE_GEOMETRY_ELLIPSOID_H
+#ifndef BASE_GEOMETRY_ELLIPSOID_H
+#define BASE_GEOMETRY_ELLIPSOID_H
 
 #include "base/geometry/AABB.h"
 
@@ -94,4 +94,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_GEOMETRY_ELLIPSOID_H
+#endif // BASE_GEOMETRY_ELLIPSOID_H

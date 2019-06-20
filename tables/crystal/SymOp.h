@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_CRYSTAL_SYMOP_H
-#define CORE_CRYSTAL_SYMOP_H
+#ifndef TABLES_CRYSTAL_SYMOP_H
+#define TABLES_CRYSTAL_SYMOP_H
 
 #include <vector>
 #include <Eigen/Dense>
@@ -70,4 +70,4 @@ using SymOpList = std::vector<SymOp>;
 
 } // namespace nsx
 
-#endif // CORE_CRYSTAL_SYMOP_H
+#endif // TABLES_CRYSTAL_SYMOP_H

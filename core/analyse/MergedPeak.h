@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_PEAK_MERGEDPEAK_H
-#define CORE_PEAK_MERGEDPEAK_H
+#ifndef CORE_ANALYSE_MERGEDPEAK_H
+#define CORE_ANALYSE_MERGEDPEAK_H
 
 #include "core/peak/Intensity.h"
 #include "tables/crystal/SpaceGroup.h"
@@ -78,4 +78,4 @@ using MergedPeakSet = std::set<MergedPeak>;
 
 } // namespace nsx
 
-#endif // CORE_PEAK_MERGEDPEAK_H
+#endif // CORE_ANALYSE_MERGEDPEAK_H

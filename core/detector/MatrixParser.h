@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOADER_MATRIXPARSER_H
-#define CORE_LOADER_MATRIXPARSER_H
+#ifndef CORE_DETECTOR_MATRIXPARSER_H
+#define CORE_DETECTOR_MATRIXPARSER_H
 
 #include <Eigen/Dense>
 
@@ -97,4 +97,4 @@ public:
 
 } // namespace nsx
 
-#endif // CORE_LOADER_MATRIXPARSER_H
+#endif // CORE_DETECTOR_MATRIXPARSER_H

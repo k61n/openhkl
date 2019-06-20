@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_REFINE_REFINER_H
-#define CORE_REFINE_REFINER_H
+#ifndef CORE_ALGO_REFINER_H
+#define CORE_ALGO_REFINER_H
 
 #include "core/algo/RefinementBatch.h"
 
@@ -53,4 +53,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_REFINE_REFINER_H
+#endif // CORE_ALGO_REFINER_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_HULL_EDGE_H
-#define CORE_HULL_EDGE_H
+#ifndef BASE_HULL_EDGE_H
+#define BASE_HULL_EDGE_H
 
 #include <ostream>
 
@@ -59,4 +59,4 @@ std::ostream& operator<<(std::ostream& os, const Edge& edge);
 
 } // namespace nsx
 
-#endif // CORE_HULL_EDGE_H
+#endif // BASE_HULL_EDGE_H

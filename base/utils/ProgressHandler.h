@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_UTILS_PROGRESSHANDLER_H
-#define CORE_UTILS_PROGRESSHANDLER_H
+#ifndef BASE_UTILS_PROGRESSHANDLER_H
+#define BASE_UTILS_PROGRESSHANDLER_H
 
 #include <atomic>
 #include <functional>
@@ -59,4 +59,4 @@ using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
 
 } // namespace nsx
 
-#endif // CORE_UTILS_PROGRESSHANDLER_H
+#endif // BASE_UTILS_PROGRESSHANDLER_H

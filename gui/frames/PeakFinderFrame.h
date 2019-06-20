@@ -65,4 +65,4 @@ private:
     void doActions(QAbstractButton*);
 };
 
-#endif // GUI_FRAMES_PEAKFINDER_H
+#endif // GUI_FRAMES_PEAKFINDERFRAME_H

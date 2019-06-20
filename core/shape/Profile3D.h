@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INTEGRATION_PROFILE3D_H
-#define CORE_INTEGRATION_PROFILE3D_H
+#ifndef CORE_SHAPE_PROFILE3D_H
+#define CORE_SHAPE_PROFILE3D_H
 
 #include "base/geometry/AABB.h"
 
@@ -66,4 +66,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_INTEGRATION_PROFILE3D_H
+#endif // CORE_SHAPE_PROFILE3D_H

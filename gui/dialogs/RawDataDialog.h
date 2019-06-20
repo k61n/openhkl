@@ -42,4 +42,4 @@ private:
     QDialogButtonBox* buttons;
 };
 
-#endif //GUI_DIALOGS_RAWDATADIALOG_H
+#endif // GUI_DIALOGS_RAWDATADIALOG_H

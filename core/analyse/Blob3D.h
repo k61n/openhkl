@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_SEARCH_PEAKS_BLOB3D_H
-#define CORE_SEARCH_PEAKS_BLOB3D_H
+#ifndef CORE_ANALYSE_BLOB3D_H
+#define CORE_ANALYSE_BLOB3D_H
 
 #include <iostream> // needed in no-swig case (?)
 #include <Eigen/Dense>
@@ -100,4 +100,4 @@ std::ostream& operator<<(std::ostream& os, const Blob3D& b);
 #endif
 } // namespace nsx
 
-#endif // CORE_SEARCH_PEAKS_BLOB3D_H
+#endif // CORE_ANALYSE_BLOB3D_H

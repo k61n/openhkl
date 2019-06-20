@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOADER_PARSER_H
-#define CORE_LOADER_PARSER_H
+#ifndef BASE_PARSER_PARSER_H
+#define BASE_PARSER_PARSER_H
 
 namespace nsx {
 
@@ -26,4 +26,4 @@ void readDoublesFromChar(const char* begin, const char* end, std::vector<double>
 
 } // namespace nsx
 
-#endif // CORE_LOADER_PARSER_H
+#endif // BASE_PARSER_PARSER_H

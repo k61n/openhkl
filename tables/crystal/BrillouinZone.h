@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_CRYSTAL_BRILLOUINZONE_H
-#define CORE_CRYSTAL_BRILLOUINZONE_H
+#ifndef TABLES_CRYSTAL_BRILLOUINZONE_H
+#define TABLES_CRYSTAL_BRILLOUINZONE_H
 
 #include "base/hull/ConvexHull.h"
 
@@ -71,4 +71,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_CRYSTAL_BRILLOUINZONE_H
+#endif // TABLES_CRYSTAL_BRILLOUINZONE_H

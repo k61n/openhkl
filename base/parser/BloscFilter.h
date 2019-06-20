@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOADER_BLOSCFILTER_H
-#define CORE_LOADER_BLOSCFILTER_H
+#ifndef BASE_PARSER_BLOSCFILTER_H
+#define BASE_PARSER_BLOSCFILTER_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,4 +35,4 @@ int register_blosc(char** version, char** date);
 }
 #endif
 
-#endif // CORE_LOADER_BLOSCFILTER_H
+#endif // BASE_PARSER_BLOSCFILTER_H

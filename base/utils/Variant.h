@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_UTILS_VARIANT_H
-#define CORE_UTILS_VARIANT_H
+#ifndef BASE_UTILS_VARIANT_H
+#define BASE_UTILS_VARIANT_H
 
 #include <iostream>
 #include <typeindex>
@@ -349,4 +349,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_UTILS_VARIANT_H
+#endif // BASE_UTILS_VARIANT_H

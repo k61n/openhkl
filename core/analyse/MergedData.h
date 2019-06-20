@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_PEAK_MERGEDDATA_H
-#define CORE_PEAK_MERGEDDATA_H
+#ifndef CORE_ANALYSE_MERGEDDATA_H
+#define CORE_ANALYSE_MERGEDDATA_H
 
 #include "core/analyse/MergedPeak.h"
 
@@ -49,4 +49,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_PEAK_MERGEDDATA_H
+#endif // CORE_ANALYSE_MERGEDDATA_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_CRYSTAL_SPACEGROUP_H
-#define CORE_CRYSTAL_SPACEGROUP_H
+#ifndef TABLES_CRYSTAL_SPACEGROUP_H
+#define TABLES_CRYSTAL_SPACEGROUP_H
 
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/SymOp.h"
@@ -75,4 +75,4 @@ std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg);
 
 } // namespace nsx
 
-#endif // CORE_CRYSTAL_SPACEGROUP_H
+#endif // TABLES_CRYSTAL_SPACEGROUP_H

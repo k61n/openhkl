@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_CRYSTAL_GRUBERREDUCTION_H
-#define CORE_CRYSTAL_GRUBERREDUCTION_H
+#ifndef TABLES_CRYSTAL_GRUBERREDUCTION_H
+#define TABLES_CRYSTAL_GRUBERREDUCTION_H
 
 #include "tables/crystal/UnitCell.h"
 
@@ -42,4 +42,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_CRYSTAL_GRUBERREDUCTION_H
+#endif // TABLES_CRYSTAL_GRUBERREDUCTION_H

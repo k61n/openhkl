@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_MASK_ELLIPSEMASK_H
-#define CORE_MASK_ELLIPSEMASK_H
+#ifndef BASE_MASK_ELLIPSEMASK_H
+#define BASE_MASK_ELLIPSEMASK_H
 
 #include "base/geometry/Ellipsoid.h"
 #include "base/mask/IMask.h"
@@ -44,4 +44,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_MASK_ELLIPSEMASK_H
+#endif // BASE_MASK_ELLIPSEMASK_H

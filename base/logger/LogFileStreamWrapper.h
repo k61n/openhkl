@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOGGER_LOGFILESTREAMWRAPPER_H
-#define CORE_LOGGER_LOGFILESTREAMWRAPPER_H
+#ifndef BASE_LOGGER_LOGFILESTREAMWRAPPER_H
+#define BASE_LOGGER_LOGFILESTREAMWRAPPER_H
 
 #include <fstream>
 #include "base/logger/IStreamWrapper.h"
@@ -41,4 +41,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_LOGGER_LOGFILESTREAMWRAPPER_H
+#endif // BASE_LOGGER_LOGFILESTREAMWRAPPER_H

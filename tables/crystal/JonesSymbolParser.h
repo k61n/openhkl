@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_CRYSTAL_JONESSYMBOLPARSER_H
-#define CORE_CRYSTAL_JONESSYMBOLPARSER_H
+#ifndef TABLES_CRYSTAL_JONESSYMBOLPARSER_H
+#define TABLES_CRYSTAL_JONESSYMBOLPARSER_H
 
 #include <Eigen/Dense>
 
@@ -35,4 +35,4 @@ Eigen::Transform<double, 3, Eigen::Affine> parseJonesSymbol(const std::string& j
 
 } // namespace nsx
 
-#endif // CORE_CRYSTAL_JONESSYMBOLPARSER_H
+#endif // TABLES_CRYSTAL_JONESSYMBOLPARSER_H

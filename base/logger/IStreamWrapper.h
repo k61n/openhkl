@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOGGER_ISTREAMWRAPPER_H
-#define CORE_LOGGER_ISTREAMWRAPPER_H
+#ifndef BASE_LOGGER_ISTREAMWRAPPER_H
+#define BASE_LOGGER_ISTREAMWRAPPER_H
 
 #include <functional>
 
@@ -46,4 +46,4 @@ protected:
 
 } // namespace nsx
 
-#endif // CORE_LOGGER_ISTREAMWRAPPER_H
+#endif // BASE_LOGGER_ISTREAMWRAPPER_H

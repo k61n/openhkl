@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_AUTO_INDEXING_FFTINDEXING_H
-#define CORE_AUTO_INDEXING_FFTINDEXING_H
+#ifndef CORE_ALGO_FFTINDEXING_H
+#define CORE_ALGO_FFTINDEXING_H
 
 #include "base/geometry/ReciprocalVector.h"
 
@@ -42,4 +42,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_AUTO_INDEXING_FFTINDEXING_H
+#endif // CORE_ALGO_FFTINDEXING_H

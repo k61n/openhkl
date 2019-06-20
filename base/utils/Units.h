@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_UTILS_UNITS_H
-#define CORE_UTILS_UNITS_H
+#ifndef BASE_UTILS_UNITS_H
+#define BASE_UTILS_UNITS_H
 
 #include <cmath>
 #include <unordered_map>
@@ -184,4 +184,4 @@ static const double R = 8.3144621 * J / mole / K;
 
 } // namespace nsx
 
-#endif // CORE_UTILS_UNITS_H
+#endif // BASE_UTILS_UNITS_H

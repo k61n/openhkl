@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOGGER_STDSTREAMWRAPPER_H
-#define CORE_LOGGER_STDSTREAMWRAPPER_H
+#ifndef BASE_LOGGER_STDSTREAMWRAPPER_H
+#define BASE_LOGGER_STDSTREAMWRAPPER_H
 
 #include <ostream>
 
@@ -42,4 +42,4 @@ private:
 
 } // namespace nsx
 
-#endif // CORE_LOGGER_STDSTREAMWRAPPER_H
+#endif // BASE_LOGGER_STDSTREAMWRAPPER_H

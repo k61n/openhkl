@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOADER_IDATAREADER_H
-#define CORE_LOADER_IDATAREADER_H
+#ifndef CORE_RAW_IDATAREADER_H
+#define CORE_RAW_IDATAREADER_H
 
 #include "core/instrument/InstrumentState.h"
 #include "core/raw/MetaData.h"
@@ -116,4 +116,4 @@ protected:
 
 } // namespace nsx
 
-#endif // CORE_LOADER_IDATAREADER_H
+#endif // CORE_RAW_IDATAREADER_H
