@@ -38,7 +38,7 @@ deb_testing_clang:
   stage: build
   script: *scr
 
-suse_current:
+suse_gcc:
   tags: *unix
   image: opensuse/tumbleweed
   # rolling release with infinite life time
@@ -57,7 +57,7 @@ suse_current:
 # suse_stable:
 #  opensuse:leap, unsupported here because it is at cmake 3.5, while libcerf requires 3.6
 
-centos7:
+centos7_clang:
   tags: *unix
   image: centos:centos7
   before_script:
