@@ -366,22 +366,22 @@ void UnitCell::setZ(unsigned int Z)
     _Z = Z;
 }
 
-Material* UnitCell::material()
+xsection::Material* UnitCell::material()
 {
     return _material.get();
 }
 
-const Material* UnitCell::material() const
+const xsection::Material* UnitCell::material() const
 {
     return _material.get();
 }
 
-void UnitCell::setMaterial(std::unique_ptr<Material> material)
+void UnitCell::setMaterial(std::unique_ptr<xsection::Material> material)
 {
     _material = std::move(material);
 }
 
-void UnitCell::setMaterial(const Material& material)
+void UnitCell::setMaterial(const xsection::Material& material)
 {
     _material.reset(material.clone());
 }

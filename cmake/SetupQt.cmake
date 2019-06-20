@@ -4,7 +4,7 @@ message(STATUS "Found OpenGL:")
 message(STATUS "  libraries: ${OPENGL_LIBRARIES}")
 message(STATUS "  headers: ${OPENGL_INCLUDE_DIR}")
 
-find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets OpenGL PrintSupport)
+find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets OpenGL PrintSupport)
 
 set(QT_USE_QTOPENGL TRUE)
 

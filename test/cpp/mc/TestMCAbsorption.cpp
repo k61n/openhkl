@@ -5,7 +5,6 @@
 #include <Eigen/Dense>
 #include <memory>
 
-#include <xsection/ChemistryTypes.h>
 #include <xsection/Material.h>
 #include "base/hull/ConvexHull.h"
 #include "core/monte-carlo/MCAbsorption.h"
@@ -15,7 +14,7 @@ TEST_CASE("test/chemistry/TestMCAbsorption.cpp", "")
 {
 
     // Build an isotopically pure methane material
-    std::unique_ptr<nsx::Material> helium(new nsx::Material("He[3]"));
+    std::unique_ptr<xsection::Material> helium(new xsection::Material("He[3]"));
 
     // Create a cubic convex hull
     nsx::ConvexHull chull;
@@ -43,7 +42,7 @@ TEST_CASE("test/chemistry/TestMCAbsorption.cpp", "")
     mca.run(10, Eigen::Vector3d(0, 1, 0), Eigen::Matrix3d::Identity());
 
     // Build an isotopically pure methane material
-    std::unique_ptr<nsx::Material> methane(new nsx::Material("CH4"));
+    std::unique_ptr<xsection::Material> methane(new xsection::Material("CH4"));
     double mm = methane->molarMass();
     double volume = chull.volume();
     methane->setMassDensity(mm / volume);

@@ -12,18 +12,15 @@
 //
 //  ***********************************************************************************************
 
-#include <sstream>
-
-#include <QStandardItem>
-#include <QStandardItemModel>
-
-#include <xsection/ChemistryTypes.h>
-#include <xsection/IsotopeDatabaseManager.h>
-#include "base/utils/Units.h"
-
 #include "apps/dialogs/DialogIsotopesDatabase.h"
 
 #include "ui_DialogIsotopesDatabase.h"
+#include "base/utils/Units.h"
+
+#include <xsection/IsotopeDatabaseManager.h>
+#include <QStandardItem>
+#include <QStandardItemModel>
+#include <sstream>
 
 DialogIsotopesDatabase::DialogIsotopesDatabase(QWidget* parent)
     : QDialog(parent), ui(new Ui::DialogIsotopesDatabase)
@@ -33,7 +30,7 @@ DialogIsotopesDatabase::DialogIsotopesDatabase(QWidget* parent)
     // Make sure that the user can not edit the content of the table
     ui->isotopeDatabaseView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    nsx::IsotopeDatabaseManager* imgr = nsx::IsotopeDatabaseManager::Instance();
+    xsection::IsotopeDatabaseManager* imgr = xsection::IsotopeDatabaseManager::Instance();
 
     const auto& properties = imgr->properties();
 
@@ -60,17 +57,17 @@ DialogIsotopesDatabase::DialogIsotopesDatabase(QWidget* parent)
             std::string pUnit = prop.second.second;
             QStandardItem* item = new QStandardItem();
             if (imgr->hasProperty(isotopeName, pName)) {
-                switch (nsx::IsotopeDatabaseManager::PropertyTypes.at(pType)) {
-                case nsx::ChemicalPropertyType::Int: {
+                switch (xsection::IsotopeDatabaseManager::PropertyTypes.at(pType)) {
+                case xsection::ChemicalPropertyType::Int: {
                     item->setText(QString::number(imgr->property<int>(isotopeName, pName)));
                     break;
                 }
-                case nsx::ChemicalPropertyType::Double: {
+                case xsection::ChemicalPropertyType::Double: {
                     auto value = imgr->property<double>(isotopeName, pName) / um->get(pUnit);
                     item->setText(QString::number(value));
                     break;
                 }
-                case nsx::ChemicalPropertyType::Complex: {
+                case xsection::ChemicalPropertyType::Complex: {
                     auto value =
                         imgr->property<std::complex<double>>(isotopeName, pName) / um->get(pUnit);
                     std::ostringstream os;
@@ -78,7 +75,7 @@ DialogIsotopesDatabase::DialogIsotopesDatabase(QWidget* parent)
                     item->setText(QString::fromStdString(os.str()));
                     break;
                 }
-                case nsx::ChemicalPropertyType::Bool: {
+                case xsection::ChemicalPropertyType::Bool: {
                     item->setText(QString::number(imgr->property<bool>(isotopeName, pName)));
                     break;
                 }

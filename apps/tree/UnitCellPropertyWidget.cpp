@@ -18,7 +18,6 @@
 #include <QCompleter>
 #include <QStandardItem>
 
-#include <xsection/ChemistryTypes.h>
 #include <xsection/Material.h>
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
@@ -156,7 +155,7 @@ void UnitCellPropertyWidget::setChemicalFormula()
     try {
         _unitCellItem->data(Qt::UserRole)
             .value<nsx::sptrUnitCell>()
-            ->setMaterial(std::unique_ptr<nsx::Material>(new nsx::Material(formula.toStdString())));
+            ->setMaterial(std::unique_ptr<xsection::Material>(new xsection::Material(formula.toStdString())));
     } catch (std::exception& e) {
         nsx::error() << e.what();
     }

@@ -141,18 +141,18 @@ public:
     void setZ(unsigned int Z);
 
     //! Returns a pointer to the material of this unit cell
-    Material* material();
+    xsection::Material* material();
 
     //! Returns a const pointer to the material of this unit cell
-    const Material* material() const;
+    const xsection::Material* material() const;
 
 #ifndef SWIG
     //! Sets the Material for the unit cell
-    void setMaterial(std::unique_ptr<Material> material);
+    void setMaterial(std::unique_ptr<xsection::Material> material);
 #endif
 
     //! Sets the Material for the unit cell
-    void setMaterial(const Material& material);
+    void setMaterial(const xsection::Material& material);
 
     //! Sets space group from its symbol.
     void setSpaceGroup(const SpaceGroup& space_group);
@@ -268,7 +268,7 @@ private:
     //! _NP is the transformation such that _A*_NP.inverse() is the Niggli cell
     Eigen::Matrix3d _NP;
 
-    std::unique_ptr<Material> _material {nullptr};
+    std::unique_ptr<xsection::Material> _material {nullptr};
 
     LatticeCentring _centring;
 
