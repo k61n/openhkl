@@ -4,7 +4,7 @@ stages:
 deb_testing_gcc:
   tags: &unix
   - Linux
-  image: debian:stable
+  image: debian:testing
   before_script: &debian_gcc
     - apt-get -y update
     - apt-get -y upgrade
