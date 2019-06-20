@@ -9,9 +9,13 @@ deb_stable_gcc:
     - apt-get -y update
     - apt-get -y upgrade
     - apt-get -y install cmake g++ libsnappy-dev liblz4-dev libblosc-dev libgsl-dev libfftw3-dev libeigen3-dev libhdf5-dev libyaml-cpp-dev libtiff-dev libboost-dev python3 python3-numpy python3-unittest2 python3-random2 python3-distutils libpython3-dev swig git
+    - git clone https://jugit.fz-juelich.de/mlz/libQCR.git
     - git clone https://jugit.fz-juelich.de/mlz/xsection.git
   stage: build
   script: &scr
+    - pwd && ls
+    - cd libQCR && mkdir build && cd build
+    - cmake .. && make -j3 && ctest && make install && cd ../..
     - pwd && ls
     - cd xsection && mkdir build && cd build
     - cmake .. && make -j3 && ctest && make install && cd ../..
