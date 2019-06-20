@@ -15,7 +15,7 @@ deb_stable_gcc:
   script: &scr
     - pwd && ls
     - cd libQCR && mkdir build && cd build
-    - cmake .. && make -j3 && ctest && make install
+    - cmake .. && make && ctest && make install
     - cd ../.. && pwd && ls
     - cd xsection && mkdir build && cd build
     - cmake .. && make -j3 && ctest && make install
