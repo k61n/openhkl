@@ -1,0 +1,7 @@
+== some pre-release milestones ==
+
+21jun2019, tag "CI1": one gitlab CI target (deb_testing_clang) passes, with 62 tests
+
+19nov2018, tag "relaunch2019": starting point for the second development team
+
+20jun2018, tag "eureka": first preview given to instrument scientists for evaluation
