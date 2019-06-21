@@ -18,6 +18,7 @@
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/modal_dialogs.h>
 
+//! Dialog to get the experiment and instrument names
 class ExperimentDialog : public QcrModalDialog {
 public:
     ExperimentDialog();

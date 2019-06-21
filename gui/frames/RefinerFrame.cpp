@@ -14,15 +14,15 @@
 
 
 #include "gui/frames/RefinerFrame.h"
-#include "gui/models/Session.h"
-#include <QCR/engine/logger.h>
 
+#include "gui/models/Session.h"
+#include "gui/models/Meta.h"
 #include "core/peak/Peak3D.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/DataTypes.h"
 #include "core/peak/Peak3D.h"
 #include "core/algo/Refiner.h"
-#include "gui/models/Meta.h"
+#include <QCR/engine/logger.h>
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -423,7 +423,7 @@ void RefinerFitWidget::selectedDataChanged(int selected_data)
 
     nsx::sptrDataSet data = current_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
 
-    auto&& refiner = _refiners.at(data);
+    nsx::Refiner refiner = _refiners.at(data);
     const std::vector<nsx::RefinementBatch>& batches = refiner.batches();
 
     batch->setMinimum(0);
@@ -454,7 +454,7 @@ void RefinerFitWidget::selectedBatchChanged(int selected_batch)
     nsx::sptrDataSet data = current_data_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
 
     // If no batches are set for this refiner, return
-    auto&& refiner = _refiners.at(data);
+    nsx::Refiner refiner = _refiners.at(data);
     const std::vector<nsx::RefinementBatch>& batches = refiner.batches();
 
     QPen pen;

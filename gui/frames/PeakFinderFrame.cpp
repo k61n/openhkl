@@ -14,6 +14,7 @@
 
 
 #include "gui/frames/PeakFinderFrame.h"
+
 #include "core/experiment/DataSet.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/raw/IDataReader.h"
@@ -346,8 +347,17 @@ void PeakFinder::accept()
         std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(found_peaks));
         if (!dlg->exec())
             continue;
-
-        gSession->selectedExperiment()->peaks()->addPeakListsModel(dlg->listName(), found_peaks);
+        QString peaklistname = dlg->listName();
+        int numValid = 0;
+        int numPeaks = found_peaks.size();
+        for (nsx::sptrPeak3D peak : found_peaks) {
+            if (peak->enabled())
+                numValid++;
+        }
+        int numNotValid = numPeaks - numValid;
+        peaklistname += " (" + QString::number(numPeaks) + " | valid: " + QString::number(numValid);
+        peaklistname += " | not valid: " + QString::number(numNotValid) + ")";
+        gSession->selectedExperiment()->peaks()->addPeakListsModel(peaklistname, found_peaks);
     }
 
     close();

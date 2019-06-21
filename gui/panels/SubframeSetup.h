@@ -15,19 +15,19 @@
 #ifndef GUI_PANELS_SUBFRAMESETUP_H
 #define GUI_PANELS_SUBFRAMESETUP_H
 
-#include "gui/panels/TabData.h"
 #include "gui/panels/TabInstrument.h"
 #include "gui/panels/TabPeakLibrary.h"
 #include "gui/panels/TabPeaks.h"
-#include "gui/panels/TabUnitCells.h"
+#include "gui/properties/UnitCellProperty.h"
+#include "gui/properties/NumorProperty.h"
 
 //! Subframe of the main window, with tabs to control detector, fits, &c
 
 class SubframeSetup : public QcrTabWidget {
 public:
     SubframeSetup();
-    TabData* data;
-    TabUnitcells* unitcells;
+    NumorProperty* data;
+    UnitCellProperty* unitcells;
     TabPeaklibrary* library;
     TabPeaks* peaks;
     TabInstrument* instrument;

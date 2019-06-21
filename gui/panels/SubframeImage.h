@@ -29,7 +29,6 @@ public:
     DetectorView* imageView;
 
 private:
-    QcrSpinBox* max;
     QcrSpinBox* frame;
     QFrame* frameLayout;
     QcrComboBox* mode;

@@ -14,19 +14,20 @@
 
 
 #include "gui/graphics/PeakItem.h"
-#include "tables/crystal/MillerIndex.h"
-#include "tables/crystal/UnitCell.h"
-#include "core/detector/Detector.h"
-#include "core/experiment/DataSet.h"
+
+#include "gui/graphics/PeakPlot.h"
+#include "base/utils/Units.h"
 #include "base/geometry/Ellipsoid.h"
 #include "base/geometry/ReciprocalVector.h"
+#include "core/detector/Detector.h"
+#include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
 #include "core/peak/Peak3D.h"
-#include "base/utils/Units.h"
-#include "gui/graphics/PeakPlot.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/UnitCell.h"
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
@@ -40,7 +41,7 @@ PeakItem::PeakItem(nsx::sptrPeak3D peak, int frame)
     setVisible(true);
 
     QString peak_label;
-    auto unit_cell = _peak->unitCell();
+    nsx::sptrUnitCell unit_cell = _peak->unitCell();
     if (unit_cell) {
         nsx::MillerIndex miller_index(_peak->q(), *unit_cell);
         if (miller_index.indexed(unit_cell->indexingTolerance())) {
@@ -77,17 +78,17 @@ PeakItem::PeakItem(nsx::sptrPeak3D peak, int frame)
     _center_gi->setZValue(-1);
     _center_gi->setVisible(_show_center);
 
-    auto peak_ellipsoid = _peak->shape();
+    nsx::Ellipsoid peak_ellipsoid = _peak->shape();
 
     peak_ellipsoid.scale(_peak->peakEnd());
 
-    auto& aabb = peak_ellipsoid.aabb();
+    const nsx::AABB& aabb = peak_ellipsoid.aabb();
 
     _lower = aabb.lower();
 
     _upper = aabb.upper();
 
-    auto center =
+    Eigen::Vector3d center =
         peak_ellipsoid.intersectionCenter({0.0, 0.0, 1.0}, {0.0, 0.0, static_cast<double>(frame)});
 
     setPos(center[0], center[1]);
@@ -144,11 +145,11 @@ void PeakItem::showArea(bool flag)
 void PeakItem::plot(NSXPlot* plot)
 {
 
-    auto p = dynamic_cast<PeakPlot*>(plot);
+    PeakPlot* p = dynamic_cast<PeakPlot*>(plot);
     if (!p)
         return;
 
-    const auto& rockingCurve = _peak->rockingCurve();
+    const std::vector<nsx::Intensity>& rockingCurve = _peak->rockingCurve();
     const int N = int(rockingCurve.size());
 
     // Transform to QDouble
@@ -169,7 +170,7 @@ void PeakItem::plot(NSXPlot* plot)
     // Now update text info:
     QString info;
 
-    if (auto cell = _peak->unitCell()) {
+    if (nsx::sptrUnitCell cell = _peak->unitCell()) {
         nsx::MillerIndex miller_index(_peak->q(), *cell);
         if (miller_index.indexed(cell->indexingTolerance())) {
             info = "(h,k,l):" + QString::number(miller_index[0]) + ","
@@ -181,9 +182,9 @@ void PeakItem::plot(NSXPlot* plot)
         info = "no unit cell";
     }
 
-    auto c = _peak->shape().center();
-    auto state = _peak->data()->interpolatedState(c[2]);
-    auto position =
+    const Eigen::Vector3d c = _peak->shape().center();
+    nsx::InterpolatedState state = _peak->data()->interpolatedState(c[2]);
+    nsx::DirectVector position =
         _peak->data()->reader()->diffractometer()->detector()->pixelPosition(c[0], c[1]);
     double g = state.gamma(position);
     double n = state.nu(position);
@@ -191,14 +192,14 @@ void PeakItem::plot(NSXPlot* plot)
     n /= nsx::deg;
     info += " " + QString(QChar(0x03B3)) + "," + QString(QChar(0x03BD)) + ":"
         + QString::number(g, 'f', 2) + "," + QString::number(n, 'f', 2) + "\n";
-    double intensity = _peak->correctedIntensity().value();
-    auto corr_int = _peak->correctedIntensity();
-    double sI = _peak->correctedIntensity().sigma();
+    nsx::Intensity corr_int = _peak->correctedIntensity();
+    double intensity = corr_int.value();
+    double sI = corr_int.sigma();
     info += "Intensity (" + QString(QChar(0x03C3)) + "I): " + QString::number(intensity) + " ("
         + QString::number(sI, 'f', 2) + ")\n";
     info += "Cor. int. (" + QString(QChar(0x03C3))
-        + "I): " + QString::number(corr_int.value(), 'f', 2) + " ("
-        + QString::number(corr_int.sigma(), 'f', 2) + ")\n";
+        + "I): " + QString::number(intensity, 'f', 2) + " ("
+        + QString::number(sI, 'f', 2) + ")\n";
 
     double scale = _peak->scale();
     double monitor = _peak->data()->reader()->metadata().key<double>("monitor");

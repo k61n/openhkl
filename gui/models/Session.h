@@ -29,6 +29,7 @@ public:
     int numExperiments() { return experiments.size(); }
 
     void createExperiment();
+    void createDefaultExperiment();
     void removeExperiment();
 
     void loadData();
@@ -42,6 +43,7 @@ public:
 private:
     QList<ExperimentModel*> experiments;
     int selected = -1;
+    QString loadDirectory;
 };
 
 #endif // GUI_MODELS_SESSION_H

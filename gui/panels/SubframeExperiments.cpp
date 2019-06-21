@@ -14,6 +14,7 @@
 
 
 #include "gui/panels/SubframeExperiments.h"
+
 #include "gui/actions/Triggers.h"
 #include "gui/MainWin.h"
 #include "gui/models/Session.h"

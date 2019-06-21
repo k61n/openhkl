@@ -14,6 +14,7 @@
 
 
 #include "gui/panels/TabPeakLibrary.h"
+
 #include <QHBoxLayout>
 #include <QTreeView>
 
@@ -22,7 +23,7 @@
 
 TabPeaklibrary::TabPeaklibrary() : QcrWidget {"peak library"}
 {
-    auto* layout = new QHBoxLayout;
+    QHBoxLayout* layout = new QHBoxLayout;
     layout->addWidget(new QTreeView);
     setLayout(layout);
 }

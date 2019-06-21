@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "gui/panels/SubframeLogger.h"
+
 #include "gui/actions/Triggers.h"
 #include "gui/MainWin.h"
 #include <QCR/engine/logger.h>

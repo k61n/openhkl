@@ -15,13 +15,11 @@
 #ifndef GUI_MODELS_PEAKSTABLE_H
 #define GUI_MODELS_PEAKSTABLE_H
 
-#include <QTableView>
-
 #include "core/peak/Peak3D.h"
 #include "core/shape/ShapeLibrary.h"
 #include "core/instrument/InstrumentTypes.h"
-
 #include <QCR/widgets/tables.h>
+#include <QTableView>
 
 class PeaksTableModel : public TableModel {
     Q_OBJECT

@@ -15,20 +15,20 @@
 
 #include "gui/models/PeaksTable.h"
 
-#include "tables/crystal/MillerIndex.h"
-#include "tables/crystal/UnitCell.h"
+#include "gui/MainWin.h"
 #include "core/detector/Detector.h"
 #include "core/peak/Peak3D.h"
 #include "core/experiment/DataSet.h"
-#include "base/geometry/ReciprocalVector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
-#include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/analyse/PeakFilter.h"
-
+#include "base/geometry/ReciprocalVector.h"
+#include "base/logger/Logger.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/UnitCell.h"
 #include <QAction>
 #include <QHeaderView>
 #include <QInputDialog>
@@ -65,7 +65,7 @@ void PeaksTableModel::slotRemoveUnitCell(const nsx::sptrUnitCell unit_cell)
 
 void PeaksTableModel::slotChangeMaskedPeaks(const nsx::PeakList& peaks)
 {
-    for (auto peak : peaks) {
+    for (nsx::sptrPeak3D peak : peaks) {
 
         auto it = std::find(_peaks.begin(), _peaks.end(), peak);
         if (it == _peaks.end())
@@ -177,7 +177,7 @@ QVariant PeaksTableModel::data(const QModelIndex& index, int role) const
 
     int row = index.row();
     int column = index.column();
-    auto cell = _peaks[row]->unitCell();
+    nsx::sptrUnitCell cell = _peaks[row]->unitCell();
     if (cell) {
         nsx::MillerIndex miller_index(_peaks[row]->q(), *cell);
         if (miller_index.indexed(cell->indexingTolerance())) {
@@ -190,7 +190,7 @@ QVariant PeaksTableModel::data(const QModelIndex& index, int role) const
     double intensity = _peaks[row]->correctedIntensity().value();
     double sigma_intensity = _peaks[row]->correctedIntensity().sigma();
 
-    auto peak_center = _peaks[row]->shape().center();
+    const Eigen::Vector3d& peak_center = _peaks[row]->shape().center();
 
     switch (role) {
 
@@ -225,7 +225,7 @@ QVariant PeaksTableModel::data(const QModelIndex& index, int role) const
             return _peaks[row]->data()->reader()->metadata().key<int>("Numor");
         }
         case Column::unitCell: {
-            auto unit_cell = _peaks[row]->unitCell();
+            nsx::sptrUnitCell unit_cell = _peaks[row]->unitCell();
             if (unit_cell)
                 return QString::fromStdString(unit_cell->name());
             else
@@ -264,8 +264,8 @@ void PeaksTableModel::sort(int column, Qt::SortOrder order)
     switch (column) {
     case Column::h: {
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto cell1 = p1->unitCell();
-            auto cell2 = p2->unitCell();
+            nsx::sptrUnitCell cell1 = p1->unitCell();
+            nsx::sptrUnitCell cell2 = p2->unitCell();
             if (cell1 && cell2) {
                 nsx::MillerIndex miller_index1(p1->q(), *cell1);
                 nsx::MillerIndex miller_index2(p2->q(), *cell2);
@@ -278,8 +278,8 @@ void PeaksTableModel::sort(int column, Qt::SortOrder order)
     }
     case Column::k: {
         compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto cell1 = p1->unitCell();
-            auto cell2 = p2->unitCell();
+            nsx::sptrUnitCell cell1 = p1->unitCell();
+            nsx::sptrUnitCell cell2 = p2->unitCell();
             if (cell1 && cell2) {
                 nsx::MillerIndex miller_index1(p1->q(), *cell1);
                 nsx::MillerIndex miller_index2(p2->q(), *cell2);
@@ -292,8 +292,8 @@ void PeaksTableModel::sort(int column, Qt::SortOrder order)
     }
     case Column::l: {
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto cell1 = p1->unitCell();
-            auto cell2 = p2->unitCell();
+            nsx::sptrUnitCell cell1 = p1->unitCell();
+            nsx::sptrUnitCell cell2 = p2->unitCell();
             if (cell1 && cell2) {
                 nsx::MillerIndex miller_index1(p1->q(), *cell1);
                 nsx::MillerIndex miller_index2(p2->q(), *cell2);
@@ -306,40 +306,40 @@ void PeaksTableModel::sort(int column, Qt::SortOrder order)
     }
     case Column::px: {
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto center1 = p1->shape().center();
-            auto center2 = p2->shape().center();
+            const Eigen::Vector3d& center1 = p1->shape().center();
+            const Eigen::Vector3d& center2 = p2->shape().center();
             return (center1[0] < center2[0]);
         };
         break;
     }
     case Column::py: {
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto center1 = p1->shape().center();
-            auto center2 = p2->shape().center();
+            const Eigen::Vector3d& center1 = p1->shape().center();
+            const Eigen::Vector3d& center2 = p2->shape().center();
             return (center1[1] < center2[1]);
         };
         break;
     }
     case Column::frame: {
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto center1 = p1->shape().center();
-            auto center2 = p2->shape().center();
+            const Eigen::Vector3d& center1 = p1->shape().center();
+            const Eigen::Vector3d& center2 = p2->shape().center();
             return (center1[2] < center2[2]);
         };
         break;
     }
     case Column::intensity: {
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto intensity1 = p1->correctedIntensity().value();
-            auto intensity2 = p2->correctedIntensity().value();
+            double intensity1 = p1->correctedIntensity().value();
+            double intensity2 = p2->correctedIntensity().value();
             return (intensity1 < intensity2);
         };
         break;
     }
     case Column::sigmaIntensity: {
         compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto sigma_intensity1 = p1->correctedIntensity().sigma();
-            auto sigma_intensity2 = p2->correctedIntensity().sigma();
+            double sigma_intensity1 = p1->correctedIntensity().sigma();
+            double sigma_intensity2 = p2->correctedIntensity().sigma();
             return (sigma_intensity1 < sigma_intensity2);
         };
         break;
@@ -354,8 +354,8 @@ void PeaksTableModel::sort(int column, Qt::SortOrder order)
     }
     case Column::unitCell: {
         compareFn = [&](nsx::sptrPeak3D p1, const nsx::sptrPeak3D p2) {
-            auto uc1 = p1->unitCell();
-            auto uc2 = p2->unitCell();
+            nsx::sptrUnitCell uc1 = p1->unitCell();
+            nsx::sptrUnitCell uc2 = p2->unitCell();
             std::string uc1Name = uc1 ? uc1->name() : "";
             std::string uc2Name = uc2 ? uc2->name() : "";
             return (uc2Name < uc1Name);
@@ -374,7 +374,7 @@ void PeaksTableModel::togglePeakSelection(QModelIndex peak_index)
 {
     int row = peak_index.row();
 
-    auto peak = _peaks[row];
+    nsx::sptrPeak3D peak = _peaks[row];
 
     peak->setSelected(!(peak->selected()));
 
@@ -388,7 +388,7 @@ void PeaksTableModel::togglePeakSelection(QModelIndex peak_index)
 
 void PeaksTableModel::selectPeak(const QModelIndex& index)
 {
-    auto selected_peak = _peaks[index.row()];
+    nsx::sptrPeak3D selected_peak = _peaks[index.row()];
 
     emit signalSelectedPeakChanged(selected_peak);
 }
@@ -402,7 +402,7 @@ void PeaksTableModel::sortEquivalents()
 {
     // todo: investigate this method. Likely incorrect if there are multiple unit
     // cells.
-    auto cell = _peaks[0]->unitCell();
+    nsx::sptrUnitCell cell = _peaks[0]->unitCell();
 
     // If no unit cell defined for the peak collection, return.
     if (!cell) {
@@ -423,8 +423,8 @@ void PeaksTableModel::setUnitCell(const nsx::sptrUnitCell& unitCell, QModelIndex
         for (int i = 0; i < rowCount(); ++i)
             selectedPeaks << index(i, 0);
     }
-    for (auto&& index : selectedPeaks) {
-        auto peak = _peaks[index.row()];
+    for (QModelIndex index : selectedPeaks) {
+        nsx::sptrPeak3D peak = _peaks[index.row()];
         peak->setUnitCell(unitCell);
     }
     emit layoutChanged();
@@ -433,7 +433,7 @@ void PeaksTableModel::setUnitCell(const nsx::sptrUnitCell& unitCell, QModelIndex
 
 void PeaksTableModel::normalizeToMonitor(double factor)
 {
-    for (auto&& peak : _peaks) {
+    for (nsx::sptrPeak3D peak : _peaks) {
         double monitor = peak->data()->reader()->metadata().key<double>("monitor");
         peak->setScale(factor / monitor);
     }
@@ -449,7 +449,7 @@ QModelIndexList PeaksTableModel::unindexedPeaks()
     QModelIndexList list;
 
     for (int i = 0; i < rowCount(); ++i) {
-        auto peak = _peaks[i];
+        nsx::sptrPeak3D peak = _peaks[i];
         if (!peak->unitCell())
             list.append(index(i, 0));
     }
@@ -461,7 +461,7 @@ QModelIndexList PeaksTableModel::selectedPeaks()
     QModelIndexList list;
 
     for (int i = 0; i < rowCount(); ++i) {
-        auto peak = _peaks[i];
+        nsx::sptrPeak3D peak = _peaks[i];
         if (peak->enabled())
             list.append(index(i, 0));
     }
@@ -504,13 +504,13 @@ void PeaksTableView::selectPeak(QModelIndex index)
 
 void PeaksTableView::keyPressEvent(QKeyEvent* event)
 {
-    auto previous_index = currentIndex();
+    QModelIndex previous_index = currentIndex();
 
     QTableView::keyPressEvent(event);
 
-    auto current_index = currentIndex();
+    QModelIndex current_index = currentIndex();
 
-    auto key = event->key();
+    int key = event->key();
 
     if (event->modifiers() == Qt::NoModifier) {
 
@@ -530,7 +530,7 @@ void PeaksTableView::keyPressEvent(QKeyEvent* event)
 
 void PeaksTableView::togglePeakSelection(QModelIndex index)
 {
-    auto peaks_model = dynamic_cast<PeaksTableModel*>(model());
+    PeaksTableModel* peaks_model = dynamic_cast<PeaksTableModel*>(model());
     if (peaks_model == nullptr)
         return;
 
@@ -539,21 +539,21 @@ void PeaksTableView::togglePeakSelection(QModelIndex index)
 
 void PeaksTableView::contextMenuEvent(QContextMenuEvent* event)
 {
-    auto peaksModel = dynamic_cast<PeaksTableModel*>(model());
+    PeaksTableModel* peaksModel = dynamic_cast<PeaksTableModel*>(model());
     if (peaksModel == nullptr)
         return;
 
-    auto peaks = peaksModel->peaks();
+    const nsx::PeakList& peaks = peaksModel->peaks();
     if (peaks.empty())
         return;
     // Show all peaks as selected when context menu is requested
-    auto menu = new QMenu(this);
+    QMenu* menu = new QMenu(this);
     //
     QAction* sortbyEquivalence = new QAction("Sort by equivalences", menu);
     menu->addAction(sortbyEquivalence);
     connect(sortbyEquivalence, SIGNAL(triggered()), peaksModel, SLOT(sortEquivalents()));
 
-    auto normalize = new QAction("Normalize to monitor", menu);
+    QAction* normalize = new QAction("Normalize to monitor", menu);
     menu->addSeparator();
     menu->addAction(normalize);
 
@@ -562,9 +562,9 @@ void PeaksTableView::contextMenuEvent(QContextMenuEvent* event)
 
     if (indexList.size()) {
         QMenu* plotasmenu = menu->addMenu("Plot as");
-        const auto& metadata = peaks[indexList[0].row()]->data()->reader()->metadata();
-        const auto& keys = metadata.keys();
-        for (const auto& key : keys) {
+        const nsx::MetaData& metadata = peaks[indexList[0].row()]->data()->reader()->metadata();
+        const nsx::MetaDataKeySet& keys = metadata.keys();
+        for (const std::string& key : keys) {
             try {
                 // Ensure metadata is a Numeric type
                 metadata.key<double>(key);
@@ -578,11 +578,11 @@ void PeaksTableView::contextMenuEvent(QContextMenuEvent* event)
     }
     menu->addSeparator();
     QMenu* selectionMenu = menu->addMenu("Selection");
-    auto selectAllPeaks = new QAction("all peaks", menu);
-    auto selectValidPeaks = new QAction("valid peaks", menu);
-    auto selectUnindexedPeaks = new QAction("unindexed peaks", menu);
-    auto clearSelectedPeaks = new QAction("clear selection", menu);
-    auto togglePeaksSelection = new QAction("toggle", menu);
+    QAction* selectAllPeaks = new QAction("all peaks", menu);
+    QAction* selectValidPeaks = new QAction("valid peaks", menu);
+    QAction* selectUnindexedPeaks = new QAction("unindexed peaks", menu);
+    QAction* clearSelectedPeaks = new QAction("clear selection", menu);
+    QAction* togglePeaksSelection = new QAction("toggle", menu);
     selectionMenu->addAction(selectAllPeaks);
     selectionMenu->addAction(selectValidPeaks);
     selectionMenu->addAction(selectUnindexedPeaks);
@@ -610,11 +610,11 @@ void PeaksTableView::normalizeToMonitor()
     if (!ok)
         return;
 
-    auto peaksModel = dynamic_cast<PeaksTableModel*>(model());
+    PeaksTableModel* peaksModel = dynamic_cast<PeaksTableModel*>(model());
     if (peaksModel == nullptr)
         return;
 
-    auto peaks = peaksModel->peaks();
+    nsx::PeakList peaks = peaksModel->peaks();
     if (peaks.empty())
         return;
 
@@ -638,11 +638,11 @@ void PeaksTableView::plotAs(const std::string& key)
     if (!indexList.size())
         return;
 
-    auto peaksModel = dynamic_cast<PeaksTableModel*>(model());
+    PeaksTableModel* peaksModel = dynamic_cast<PeaksTableModel*>(model());
     if (peaksModel == nullptr)
         return;
 
-    auto peaks = peaksModel->peaks();
+    nsx::PeakList peaks = peaksModel->peaks();
     if (peaks.empty())
         return;
 
@@ -658,12 +658,12 @@ void PeaksTableView::plotAs(const std::string& key)
         y[i] = p->correctedIntensity().value();
         e[i] = p->correctedIntensity().sigma();
     }
-    emit plotData(x, y, e);
+    gGui->plotData(x, y, e);
 }
 
 void PeaksTableView::selectUnindexedPeaks()
 {
-    auto peaksModel = dynamic_cast<PeaksTableModel*>(model());
+    PeaksTableModel* peaksModel = dynamic_cast<PeaksTableModel*>(model());
     if (peaksModel == nullptr)
         return;
     QModelIndexList unindexedPeaks = peaksModel->unindexedPeaks();
@@ -684,7 +684,7 @@ void PeaksTableView::togglePeaksSelection()
 
 void PeaksTableView::selectValidPeaks()
 {
-    auto peaksModel = dynamic_cast<PeaksTableModel*>(model());
+    PeaksTableModel* peaksModel = dynamic_cast<PeaksTableModel*>(model());
     if (peaksModel == nullptr)
         return;
     QModelIndexList validPeaksIndexes = peaksModel->selectedPeaks();

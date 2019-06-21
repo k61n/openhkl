@@ -14,6 +14,7 @@
 
 
 #include "gui/MainWin.h"
+
 #include "gui/actions/Menus.h"
 #include "gui/actions/Triggers.h"
 #include <QApplication>

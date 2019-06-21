@@ -17,19 +17,17 @@
 
 #include "gui/frames/UnitCellWidget.h"
 #include "gui/models/Session.h"
-#include <QCR/engine/logger.h>
-
+#include "core/peak/Peak3D.h"
 #include "core/algo/UserDefinedIndexer.h"
 #include "core/peak/Peak3D.h"
 #include "core/experiment/Experiment.h"
-#include "base/geometry/ReciprocalVector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Source.h"
 #include "base/logger/Logger.h"
-#include "core/peak/Peak3D.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Units.h"
-
+#include <QCR/engine/logger.h>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHeaderView>
@@ -37,7 +35,6 @@
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QVBoxLayout>
-
 
 UserDefinedUnitCellIndexer::UserDefinedUnitCellIndexer()
     : QcrFrame {"adhoc_userDefined"}, indexer_ {}
@@ -60,10 +57,10 @@ UserDefinedUnitCellIndexer::UserDefinedUnitCellIndexer()
 void UserDefinedUnitCellIndexer::layout()
 {
     // defaults_
-    auto peaks = gSession->selectedExperiment()->peaks()->allPeaks();
+    nsx::PeakList peaks = gSession->selectedExperiment()->peaks()->allPeaks();
     defaults_.reserve(peaks.size());
-    for (auto peak : peaks) {
-        auto unit_cell = peak->unitCell();
+    for (nsx::sptrPeak3D peak : peaks) {
+        nsx::sptrUnitCell unit_cell = peak->unitCell();
         if (unit_cell)
             defaults_.push_back(std::make_pair(peak, std::make_shared<nsx::UnitCell>(*unit_cell)));
         else
@@ -157,7 +154,7 @@ void UserDefinedUnitCellIndexer::layout()
     whole->addWidget(tabwidget);
     whole->addWidget(buttons);
     // parameters
-    auto&& unitCellParameters = indexer_.parameters();
+    const nsx::UserDefinedUnitCellIndexerParameters& unitCellParameters = indexer_.parameters();
     a->setCellValue(unitCellParameters.a);
     alpha->setCellValue(unitCellParameters.alpha / nsx::deg);
     b->setCellValue(unitCellParameters.b);
@@ -227,19 +224,19 @@ void UserDefinedUnitCellIndexer::slotActionClicked(QAbstractButton* button)
 
 void UserDefinedUnitCellIndexer::slotSelectSolution(int index)
 {
-    auto selected_unit_cell = solutions_[index].first;
+    nsx::sptrUnitCell selected_unit_cell = solutions_[index].first;
 
-    auto selection_model = peaktable->selectionModel();
+    QItemSelectionModel* selection_model = peaktable->selectionModel();
 
-    auto selected_rows = selection_model->selectedRows();
+    QModelIndexList selected_rows = selection_model->selectedRows();
 
     selected_unit_cell->setName("new unit cell");
 
-    auto peaks_model = dynamic_cast<PeaksTableModel*>(peaktable->model());
+    PeaksTableModel* peaks_model = dynamic_cast<PeaksTableModel*>(peaktable->model());
 
-    auto peaks = peaks_model->peaks();
+    const nsx::PeakList& peaks = peaks_model->peaks();
 
-    for (auto r : selected_rows)
+    for (QModelIndex r : selected_rows)
         peaks[r.row()]->setUnitCell(selected_unit_cell);
 
     UnitCellWidget* widget_unit_cell = new UnitCellWidget(
@@ -258,7 +255,7 @@ void UserDefinedUnitCellIndexer::slotSelectSolution(int index)
 
 void UserDefinedUnitCellIndexer::slotTabEdited(int index)
 {
-    auto unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabwidget->widget(index));
+    UnitCellWidget* unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabwidget->widget(index));
 
     if (!unit_cell_tab)
         return;
@@ -266,10 +263,10 @@ void UserDefinedUnitCellIndexer::slotTabEdited(int index)
     QInputDialog dialog(this);
     dialog.setLabelText("");
     dialog.setWindowTitle(tr("Set unit cell name"));
-    auto pos = mapToGlobal(tabwidget->pos());
+    QPoint pos = mapToGlobal(tabwidget->pos());
 
     int width(0);
-    for (auto i = 0; i < index; ++i)
+    for (int i = 0; i < index; ++i)
         width += tabwidget->tabBar()->tabRect(index).width();
 
     int height = tabwidget->tabBar()->tabRect(index).height();
@@ -286,7 +283,7 @@ void UserDefinedUnitCellIndexer::slotTabEdited(int index)
     tabwidget->setTabText(index, unit_cell_name);
     unit_cell_tab->unitCell()->setName(unit_cell_name.toStdString());
 
-    auto peaks_model = dynamic_cast<PeaksTableModel*>(peaktable->model());
+    PeaksTableModel* peaks_model = dynamic_cast<PeaksTableModel*>(peaktable->model());
 
     QModelIndex topleft_index = peaks_model->index(0, 0);
     QModelIndex bottomright_index =
@@ -297,7 +294,7 @@ void UserDefinedUnitCellIndexer::slotTabEdited(int index)
 
 void UserDefinedUnitCellIndexer::slotTabRemoved(int index)
 {
-    auto unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabwidget->widget(index));
+    UnitCellWidget* unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabwidget->widget(index));
     if (!unit_cell_tab)
         return;
 
@@ -312,16 +309,15 @@ void UserDefinedUnitCellIndexer::resetPeaks()
     for (auto p : defaults_)
         p.first->setUnitCell(p.second);
 
-    for (auto i = tabwidget->count() - 1; i > 0; i--) {
-
-        auto tab = dynamic_cast<UnitCellWidget*>(tabwidget->widget(i));
+    for (int i = tabwidget->count() - 1; i > 0; i--) {
+        UnitCellWidget* tab = dynamic_cast<UnitCellWidget*>(tabwidget->widget(i));
         if (!tab)
             continue;
         tabwidget->removeTab(i);
         delete tab;
     }
 
-    auto peaks_model = dynamic_cast<PeaksTableModel*>(peaktable->model());
+    PeaksTableModel* peaks_model = dynamic_cast<PeaksTableModel*>(peaktable->model());
 
     // Update the peak table view
     QModelIndex topLeft = peaks_model->index(0, 0);
@@ -334,21 +330,21 @@ void UserDefinedUnitCellIndexer::resetPeaks()
 void UserDefinedUnitCellIndexer::index()
 {
     gLogger->log("[INFO] Begin indexing");
-    auto selection_model = peaktable->selectionModel();
+    QItemSelectionModel* selection_model = peaktable->selectionModel();
 
-    auto selected_rows = selection_model->selectedRows();
+    QModelIndexList selected_rows = selection_model->selectedRows();
 
     if (selected_rows.empty()) {
         nsx::error() << "No peaks selected for auto-indexing";
         return;
     }
 
-    auto peaks_model = dynamic_cast<PeaksTableModel*>(peaktable->model());
-    auto peaks = peaks_model->peaks();
+    PeaksTableModel* peaks_model = dynamic_cast<PeaksTableModel*>(peaktable->model());
+    const nsx::PeakList& peaks = peaks_model->peaks();
 
     nsx::PeakList selected_peaks;
     selected_peaks.reserve(selected_rows.size());
-    for (auto r : selected_rows)
+    for (QModelIndex r : selected_rows)
         selected_peaks.push_back(peaks[r.row()]);
 
     nsx::UserDefinedUnitCellIndexerParameters parameters;
@@ -396,12 +392,12 @@ void UserDefinedUnitCellIndexer::buildUnitCellsTable()
     // Display solutions
     for (size_t i = 0; i < solutions_.size(); ++i) {
 
-        auto&& unit_cell = solutions_[i].first;
+        nsx::sptrUnitCell unit_cell = solutions_[i].first;
 
         const double quality = solutions_[i].second;
 
-        auto ch = unit_cell->character();
-        auto sigma = unit_cell->characterSigmas();
+        nsx::UnitCellCharacter ch = unit_cell->character();
+        nsx::UnitCellCharacter sigma = unit_cell->characterSigmas();
 
         QStandardItem* col1 = new QStandardItem(
             QString::number(ch.a, 'f', 3) + "(" + QString::number(sigma.a * 1000, 'f', 0) + ")");
@@ -439,10 +435,10 @@ void UserDefinedUnitCellIndexer::buildUnitCellsTable()
 
 void UserDefinedUnitCellIndexer::accept()
 {
-    auto unit_cells = gSession->selectedExperiment()->unitCells();
+    UnitCellsModel* unit_cells = gSession->selectedExperiment()->unitCells();
 
-    for (auto i = 0; i < tabwidget->count(); ++i) {
-        auto unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabwidget->widget(i));
+    for (int i = 0; i < tabwidget->count(); ++i) {
+        UnitCellWidget* unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabwidget->widget(i));
         if (!unit_cell_tab)
             continue;
         unit_cells->appendUnitCell(unit_cell_tab->unitCell());

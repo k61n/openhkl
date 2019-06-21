@@ -12,14 +12,13 @@
 //
 //  ***********************************************************************************************
 
-#include "core/experiment/DataSet.h"
-#include "core/algo/GonioFit.h"
-#include "base/utils/Units.h"
-
 #include "gui/frames/GlobalOffsetsFrame.h"
+
 #include "gui/models/Meta.h"
 #include "gui/models/Session.h"
-
+#include "base/utils/Units.h"
+#include "core/experiment/DataSet.h"
+#include "core/algo/GonioFit.h"
 #include <QFileInfo>
 #include <QFormLayout>
 #include <QGroupBox>

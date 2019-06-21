@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/panels/SubtabSample.h
-//! @brief     Defines class SubtabSample
+//! @file      gui/dialogs/IsotopesDatabaseDialog.h
+//! @brief     Defines class IsotopesDatabaseDialog
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -11,18 +11,20 @@
 //! @authors   see CITATION, MAINTAINER
 //
 //  ***********************************************************************************************
+#ifndef GUI_DIALOGS_ISOTOPESDATABASEDIALOG_H
+#define GUI_DIALOGS_ISOTOPESDATABASEDIALOG_H
 
-#ifndef GUI_PANELS_SUBTABSAMPLE_H
-#define GUI_PANELS_SUBTABSAMPLE_H
+#include <QDialog>
+#include <QTableView>
 
-#include "gui/properties/SampleShapeProperties.h"
-
-class SubtabSample : public QcrWidget {
+class IsotopesDatabaseDialog : public QDialog {
 public:
-    SubtabSample();
+    IsotopesDatabaseDialog();
 
 private:
-    SampleShapeProperties* property;
+    QTableView* isotopeDatabaseView;
+    void cellClicked(const QModelIndex& index);
+    void sortingChanged(int, Qt::SortOrder);
 };
 
-#endif // GUI_PANELS_SUBTABSAMPLE_H
+#endif //GUI_DIALOGS_ISOTOPESDATABASEDIALOG_H

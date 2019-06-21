@@ -34,7 +34,7 @@ UnitCellProperty::UnitCellProperty() : QcrWidget {"unitCellProperty"}
     QFormLayout* formLayout = new QFormLayout;
     name = new QcrLineEdit("unitCellName", "");
     QStringList spacegroups;
-    for (auto&& sg : nsx::SpaceGroup::symbols())
+    for (std::string sg : nsx::SpaceGroup::symbols())
         spacegroups.append(QString::fromStdString(sg));
     spaceGroup = new QcrComboBox("spaceGroup", new QcrCell<int>(0), spacegroups);
     QCompleter* completer = new QCompleter(spaceGroup->model(), spaceGroup);
@@ -88,7 +88,7 @@ UnitCellProperty::UnitCellProperty() : QcrWidget {"unitCellProperty"}
 
 void UnitCellProperty::setZValue(int z)
 {
-    auto unit_cell = gSession->selectedExperiment()->unitCells()->selectedCell();
+    nsx::sptrUnitCell unit_cell = gSession->selectedExperiment()->unitCells()->selectedCell();
 
     unit_cell->setZ(z);
     // setMassDensity();

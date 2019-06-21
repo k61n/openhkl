@@ -12,11 +12,10 @@
 //
 //  ***********************************************************************************************
 
-#include <cmath>
+#include "gui/models/ColorMap.h"
 
 #include <QImage>
-
-#include "gui/models/ColorMap.h"
+#include <cmath>
 
 ColorMap::ColorMap(const double* rgb) : _rgb(256 * 3, 0), _log_rgb(256 * 3, 0)
 

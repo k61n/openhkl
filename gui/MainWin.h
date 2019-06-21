@@ -24,6 +24,7 @@
 
 extern class MainWin* gGui; //!< global pointer to the main window
 
+//! Main window of the application
 class MainWin : public QcrMainWindow {
 public:
     MainWin();
@@ -32,17 +33,25 @@ public:
     class Actions* triggers;
     class GuiState* state;
 
+    //! reset window geometry to initial state
     void resetViews();
     void onDataChanged();
     void onExperimentChanged();
     void onPeaksChanged();
+    //! change the detector image view
     void changeView(int option) { dockImage_->centralWidget->changeView(option); }
+    //! update the plot, plot the plottable item p
     void updatePlot(PlottableItem* p) { dockPlot_->updatePlot(p); }
+    //! change the cursor tooltip on the detector scene
     void cursormode(int i)
     {
         dockImage_->centralWidget->imageView->getScene()->changeCursorMode(i);
     }
+    //! export current plot to ASCII
     void exportPlot() { dockPlot_->exportPlot(); }
+    //! plot the x and y data, e is the error to y
+    void plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e)
+    {   dockPlot_->plotData(x, y, e);   }
 
 private:
     void refresh();

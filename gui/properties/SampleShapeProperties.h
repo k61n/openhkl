@@ -20,6 +20,7 @@
 #include <QCR/widgets/views.h>
 #include <QTableWidget>
 
+//! Property widget for the sample and its shape
 class SampleShapeProperties : public QcrWidget {
 public:
     SampleShapeProperties();

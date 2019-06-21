@@ -16,7 +16,6 @@
 #define GUI_MODELS_COLORMAP_H
 
 #include <Eigen/Dense>
-
 #include <QImage>
 
 class ColorMap {

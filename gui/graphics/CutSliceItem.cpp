@@ -14,12 +14,13 @@
 
 
 #include "gui/graphics/CutSliceItem.h"
+
+#include "gui/graphics/DetectorScene.h"
+#include "gui/graphics/SimplePlot.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/raw/IDataReader.h"
-#include "gui/graphics/DetectorScene.h"
-#include "gui/graphics/SimplePlot.h"
 #include <Eigen/Dense>
 
 CutSliceItem::CutSliceItem(nsx::sptrDataSet data, bool horizontal)
@@ -31,19 +32,19 @@ CutSliceItem::~CutSliceItem() {}
 
 void CutSliceItem::plot(NSXPlot* plot)
 {
-    auto p = dynamic_cast<SimplePlot*>(plot);
+    SimplePlot* p = dynamic_cast<SimplePlot*>(plot);
     if (!p)
         return;
     p->xAxis->setLabel("Frame (a.u.)");
     p->yAxis->setLabel("Intensity (counts)");
 
     // Set the pointer to the detector scene to the scene that holds the cutter
-    auto detPtr = dynamic_cast<DetectorScene*>(scene());
+    DetectorScene* detPtr = dynamic_cast<DetectorScene*>(scene());
     if (!detPtr)
         return;
 
-    auto data = detPtr->getData();
-    auto det = data->reader()->diffractometer()->detector();
+    nsx::sptrDataSet data = detPtr->getData();
+    const nsx::Detector* det = data->reader()->diffractometer()->detector();
 
     int nrows = det->nRows();
     int ncols = det->nCols();

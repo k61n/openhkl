@@ -15,19 +15,30 @@
 
 #include "gui/panels/SubframeSetup.h"
 
+#include "gui/models/Session.h"
+
+namespace {
+
+enum class tab {
+    INSTRUMENT,
+    DATA,
+    UNITCELLS,
+    PEAKS,
+    LIBRARY
+};
+
+} // namespace
+
 SubframeSetup::SubframeSetup() : QcrTabWidget {"property tabs"}
 {
     setTabPosition(QTabWidget::North);
     setMinimumSize(270, 320);
 
     addTab((instrument = new TabInstrument), "Instrument"); // 0
-    addTab((data = new TabData), "Data"); // 1
-    addTab((unitcells = new TabUnitcells), "Unit cells"); // 2
+    addTab((data = new NumorProperty), "Data"); // 1
+    addTab((unitcells = new UnitCellProperty), "Unit cells"); // 2
     addTab((peaks = new TabPeaks), "Peaks"); // 3
     addTab((library = new TabPeaklibrary), "Peaklibrary"); // 4
-
-    for (int i = 0; i < 4; i++)
-        setTabEnabled(i, true);
 
     show();
 }
@@ -39,17 +50,32 @@ void SubframeSetup::setCurrent(int index)
 
 void SubframeSetup::dataChanged()
 {
-    data->remake();
+    bool enabled = gSession->selectedExperimentNum() >= 0;
+    if (enabled)
+        enabled = !gSession->selectedExperiment()->data()->allData().empty();
+    setTabEnabled((int)tab::DATA, enabled);
+    if (enabled)
+        data->remake();
 }
 
 void SubframeSetup::experimentChanged()
 {
+    bool enabled = gSession->selectedExperimentNum() >= 0;
+    setTabEnabled((int)tab::INSTRUMENT, enabled);
+    setTabEnabled((int)tab::UNITCELLS, enabled);
     instrument->remake();
     unitcells->remake();
 }
 
 void SubframeSetup::peaksChanged()
 {
-    peaks->remake();
-    library->remake();
+    bool enabled = gSession->selectedExperimentNum() >= 0;
+    if (enabled)
+        enabled = gSession->selectedExperiment()->peaks()->numberLists() > 0;
+    setTabEnabled((int)tab::PEAKS, enabled);
+    setTabEnabled((int)tab::LIBRARY, enabled);
+    if (enabled) {
+        peaks->remake();
+        library->remake();
+    }
 }

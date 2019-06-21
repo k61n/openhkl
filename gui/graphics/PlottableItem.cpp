@@ -14,6 +14,7 @@
 
 
 #include "gui/graphics/PlottableItem.h"
+
 #include "gui/graphics/SXPlot.h"
 
 PlottableItem::PlottableItem(QGraphicsItem* parent, bool deletable, bool movable)

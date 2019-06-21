@@ -14,6 +14,7 @@
 
 
 #include "gui/panels/SubframeImage.h"
+
 #include "core/experiment/DataSet.h"
 #include "gui/actions/Triggers.h"
 #include "gui/graphics/DetectorScene.h"
@@ -32,7 +33,6 @@ ImageWidget::ImageWidget() : QcrWidget {"Image"}
 {
     QHBoxLayout* overallLayout = new QHBoxLayout(this);
     QVBoxLayout* leftLayout = new QVBoxLayout;
-    QVBoxLayout* rightLayout = new QVBoxLayout;
     frameLayout = new QFrame(this);
     QHBoxLayout* leftLowerLayout = new QHBoxLayout(frameLayout);
     imageView = new DetectorView;
@@ -47,40 +47,36 @@ ImageWidget::ImageWidget() : QcrWidget {"Image"}
     scrollbar->setFocusPolicy(Qt::WheelFocus);
     scrollbar->setOrientation(Qt::Horizontal);
     leftLowerLayout->addWidget(scrollbar);
-    frame = new QcrSpinBox("frame", new QcrCell<int>(10), 3);
+    frame = new QcrSpinBox("frame", new QcrCell<int>(1), 3);
     leftLowerLayout->addWidget(frame);
     leftLayout->addWidget(frameLayout);
-    overallLayout->addLayout(leftLayout);
     intensityLayout = new QFrame(this);
-    QVBoxLayout* verticalLayout = new QVBoxLayout(intensityLayout);
-    max = new QcrSpinBox("maxSpin", new QcrCell<int>(10), 3);
-    verticalLayout->addWidget(max);
+    QHBoxLayout* horizontalLayout = new QHBoxLayout(intensityLayout);
     slide = new QSlider(intensityLayout);
     slide->setMouseTracking(true);
     slide->setAutoFillBackground(false);
     slide->setMinimum(1);
     slide->setMaximum(10000);
+    slide->setValue(5000);
+    imageView->getScene()->setMaxIntensity(5000);
     slide->setSingleStep(1);
-    slide->setOrientation(Qt::Vertical);
+    slide->setOrientation(Qt::Horizontal);
     slide->setTickPosition(QSlider::NoTicks);
-    verticalLayout->addWidget(slide);
-    rightLayout->addWidget(intensityLayout);
+    horizontalLayout->addWidget(slide);
     mode = new QcrComboBox(
         "adhoc_modus", new QcrCell<int>(1),
-        {"selection", "zoom", "line plot", "horizontal slice", "vertical slice", "rectangular mask",
-         "ellipsoidal mask"});
-    rightLayout->addWidget(mode);
-    overallLayout->addLayout(rightLayout);
+        {"selection", "zoom", "line plot", "horizontal slice", "vertical slice",
+         "rectangular mask", "ellipsoidal mask"});
+    horizontalLayout->addWidget(mode);
+    leftLayout->addWidget(intensityLayout);
+    overallLayout->addLayout(leftLayout);
     mode->setEnabled(false);
     intensityLayout->setEnabled(false);
     frameLayout->setEnabled(false);
 
     connect(slide, SIGNAL(valueChanged(int)), imageView->getScene(), SLOT(setMaxIntensity(int)));
-    connect(slide, &QSlider::valueChanged, [=](int i) { max->setCellValue(i); });
-    max->setHook([=](int i) { slide->setValue(i); });
-    connect(
-        scrollbar, SIGNAL(valueChanged(int)), imageView->getScene(),
-        SLOT(slotChangeSelectedFrame(int)));
+    connect(scrollbar, SIGNAL(valueChanged(int)),
+            imageView->getScene(), SLOT(slotChangeSelectedFrame(int)));
     connect(scrollbar, &QScrollBar::valueChanged, [=](int i) { frame->setCellValue(i); });
     frame->setHook([=](int i) { scrollbar->setValue(i); });
     mode->setHook([=](int i) { imageView->getScene()->changeInteractionMode(i); });
@@ -106,7 +102,6 @@ void ImageWidget::dataChanged()
             frame->setMinimum(0);
             frame->setSingleStep(1);
             imageView->getScene()->slotChangeSelectedData(dataset, 0);
-            slide->setValue(max->getValue());
         }
     }
 }
@@ -116,7 +111,7 @@ void ImageWidget::changeView(int option)
     QTransform trans;
     trans.scale(-1, -1); // fromDetector (default; 0)
     if (option == 1) // fromSample
-        trans.scale(1, -1);
+        trans.scale(-1, 1);
     imageView->setTransform(trans);
     imageView->fitScene();
 }

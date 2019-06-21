@@ -18,6 +18,7 @@
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 
+//! Property widget of the monochromatic source
 class SourceProperty : public QcrWidget {
 public:
     SourceProperty();

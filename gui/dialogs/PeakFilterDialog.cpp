@@ -14,15 +14,13 @@
 
 
 #include "gui/dialogs/PeakFilterDialog.h"
+
+#include "core/analyse/PeakFilter.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/MainWin.h"
 #include "gui/models/Session.h"
-#include <QCR/engine/logger.h>
-
 #include "gui/models/Meta.h"
-
-#include "core/analyse/PeakFilter.h"
-
+#include <QCR/engine/logger.h>
 #include <QDialogButtonBox>
 #include <QHBoxLayout>
 #include <QSpacerItem>

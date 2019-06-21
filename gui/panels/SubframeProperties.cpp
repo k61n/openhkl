@@ -14,6 +14,7 @@
 
 
 #include "gui/panels/SubframeProperties.h"
+
 #include "gui/actions/Triggers.h"
 #include "gui/MainWin.h"
 #include "gui/panels/SubframeSetup.h"

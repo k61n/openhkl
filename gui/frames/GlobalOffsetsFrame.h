@@ -15,12 +15,12 @@
 #ifndef GUI_FRAMES_GLOBALOFFSETSFRAME_H
 #define GUI_FRAMES_GLOBALOFFSETSFRAME_H
 
+#include "gui/graphics/SXPlot.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 #include <QDialogButtonBox>
 #include <QListWidget>
 #include <QTableWidget>
-#include "gui/graphics/SXPlot.h"
 
 enum class offsetMode { DETECTOR, SAMPLE };
 

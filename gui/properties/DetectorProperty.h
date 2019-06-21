@@ -19,6 +19,7 @@
 #include <QCR/widgets/views.h>
 #include <QTableWidget>
 
+//! Property widget of the detector
 class DetectorProperty : public QcrWidget {
 public:
     DetectorProperty();

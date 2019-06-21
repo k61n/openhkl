@@ -15,25 +15,6 @@
 
 #include "gui/graphics/DetectorScene.h"
 
-#include "tables/crystal/MillerIndex.h"
-#include "tables/crystal/SpaceGroup.h"
-#include "tables/crystal/UnitCell.h"
-#include "core/detector/Detector.h"
-#include "core/experiment/DataSet.h"
-#include "base/geometry/AABB.h"
-#include "base/geometry/ReciprocalVector.h"
-#include "core/gonio/Gonio.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/instrument/InstrumentState.h"
-#include "core/instrument/Sample.h"
-#include "core/instrument/Source.h"
-#include "core/raw/IDataReader.h"
-#include "base/logger/Logger.h"
-#include "base/mask/BoxMask.h"
-#include "base/mask/EllipseMask.h"
-#include "core/peak/IntegrationRegion.h"
-#include "core/peak/Peak3D.h"
-#include "base/utils/Units.h"
 #include "gui/graphics/CutLineItem.h"
 #include "gui/graphics/CutSliceItem.h"
 #include "gui/graphics/CutterItem.h"
@@ -44,6 +25,25 @@
 #include "gui/graphics/PlottableItem.h"
 #include "gui/MainWin.h"
 #include "gui/models/Session.h"
+#include "base/geometry/AABB.h"
+#include "base/geometry/ReciprocalVector.h"
+#include "base/logger/Logger.h"
+#include "base/mask/BoxMask.h"
+#include "base/mask/EllipseMask.h"
+#include "base/utils/Units.h"
+#include "core/peak/IntegrationRegion.h"
+#include "core/peak/Peak3D.h"
+#include "core/detector/Detector.h"
+#include "core/experiment/DataSet.h"
+#include "core/gonio/Gonio.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentState.h"
+#include "core/instrument/Sample.h"
+#include "core/instrument/Source.h"
+#include "core/raw/IDataReader.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/SpaceGroup.h"
+#include "tables/crystal/UnitCell.h"
 #include <QCR/engine/logger.h>
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
@@ -98,22 +98,21 @@ void DetectorScene::resetPeakGraphicsItems()
     clearPeakGraphicsItems();
 
     if (gSession->selectedExperimentNum() >= 0) {
-        auto peaks = gSession->selectedExperiment()->peaks()->allPeaks();
+        nsx::PeakList peaks = gSession->selectedExperiment()->peaks()->allPeaks();
 
-        for (auto&& peak : peaks) {
+        for (nsx::sptrPeak3D peak : peaks) {
 
-            auto peak_ellipsoid = peak->shape();
+            nsx::Ellipsoid peak_ellipsoid = peak->shape();
 
             peak_ellipsoid.scale(peak->peakEnd());
 
-            auto& aabb = peak_ellipsoid.aabb();
+            const nsx::AABB& aabb = peak_ellipsoid.aabb();
 
-            auto lower = aabb.lower();
+            Eigen::Vector3d lower = aabb.lower();
 
-            auto upper = aabb.upper();
+            Eigen::Vector3d upper = aabb.upper();
 
-            // If the current frame of the scene is out of the peak bounds do not paint
-            // it
+            // If the current frame of the scene is out of the peak bounds do not paint it
             if (_currentFrameIndex < lower[2] || _currentFrameIndex > upper[2])
                 continue;
 
@@ -138,20 +137,20 @@ void DetectorScene::resetPeakGraphicsItems()
 
     if (_selected_peak) {
 
-        auto selected_peak_ellipsoid = _selected_peak->shape();
+        nsx::Ellipsoid selected_peak_ellipsoid = _selected_peak->shape();
 
         selected_peak_ellipsoid.scale(_selected_peak->peakEnd());
 
         double frame_index = static_cast<double>(_currentFrameIndex);
 
-        auto& aabb = selected_peak_ellipsoid.aabb();
+        const nsx::AABB& aabb = selected_peak_ellipsoid.aabb();
 
-        auto&& lower = aabb.lower();
-        auto&& upper = aabb.upper();
+        const Eigen::Vector3d& lower = aabb.lower();
+        const Eigen::Vector3d& upper = aabb.upper();
 
         if (frame_index >= lower[2] && frame_index <= upper[2]) {
 
-            auto center = selected_peak_ellipsoid.intersectionCenter(
+            Eigen::Vector3d center = selected_peak_ellipsoid.intersectionCenter(
                 {0.0, 0.0, 1.0}, {0.0, 0.0, static_cast<double>(_currentFrameIndex)});
 
             _selected_peak_gi = new QGraphicsRectItem(nullptr);
@@ -177,7 +176,7 @@ void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
 
         _currentData->open();
 
-        auto det = _currentData->reader()->diffractometer()->detector();
+        nsx::Detector* det = _currentData->reader()->diffractometer()->detector();
 
         _currentFrameIndex = -1;
 
@@ -200,9 +199,9 @@ void DetectorScene::slotChangeSelectedPeak(nsx::sptrPeak3D peak)
 
     _selected_peak = peak;
 
-    auto data = peak->data();
+    nsx::sptrDataSet data = peak->data();
 
-    auto peak_ellipsoid = peak->shape();
+    const nsx::Ellipsoid& peak_ellipsoid = peak->shape();
 
     // Get frame number to adjust the data
     size_t frame = size_t(std::lround(peak_ellipsoid.aabb().center()[2]));
@@ -272,19 +271,19 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
         _lastClickedGI->mouseMoveEvent(event);
 
-        auto p = dynamic_cast<PlottableItem*>(_lastClickedGI);
+        PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI);
         if (p != nullptr)
             gGui->updatePlot(p);
     }
     // No button was pressed, just a mouse move
     else if (event->button() == Qt::NoButton) {
-        auto lastPos = event->lastScenePos();
-        auto point = lastPos.toPoint();
+        QPointF lastPos = event->lastScenePos();
+        QPoint point = lastPos.toPoint();
         QTransform trans;
         QGraphicsItem* gItem = itemAt(point, trans);
         if (!gItem)
             return;
-        auto p = dynamic_cast<PlottableItem*>(gItem);
+        PlottableItem* p = dynamic_cast<PlottableItem*>(gItem);
         if (p) {
             gGui->updatePlot(p);
             QGraphicsScene::mouseMoveEvent(event);
@@ -307,7 +306,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
     // The left button was pressed
     if (event->buttons() & Qt::LeftButton) {
         // Get the graphics item on which the user has clicked
-        auto item = itemAt(event->lastScenePos(), QTransform());
+        QGraphicsItem* item = itemAt(event->lastScenePos(), QTransform());
 
         if (event->modifiers() == Qt::ControlModifier) {
             item->setSelected(!item->isSelected());
@@ -315,7 +314,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         }
         // If the item is a NSXTools GI and is selected it will become the current
         // active GI
-        if (auto p = dynamic_cast<NSXGraphicsItem*>(item)) {
+        if (NSXGraphicsItem* p = dynamic_cast<NSXGraphicsItem*>(item)) {
             if (p->isSelected()) {
                 _lastClickedGI = p;
                 return;
@@ -402,14 +401,14 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             return;
 
         if (_mode == SELECT) {
-            auto item = itemAt(event->lastScenePos(), QTransform());
+            QGraphicsItem* item = itemAt(event->lastScenePos(), QTransform());
 
-            auto peak_item = dynamic_cast<PeakItem*>(item);
+            PeakItem* peak_item = dynamic_cast<PeakItem*>(item);
 
             if (!peak_item)
                 return;
 
-            auto peak = peak_item->peak();
+            nsx::sptrPeak3D peak = peak_item->peak();
 
             //            gSession->onSelectedPeakChanged(peak);
 
@@ -457,19 +456,15 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
         } else {
 
-            auto peaks = gSession->selectedExperiment()->peaks()->allPeaks();
+            nsx::PeakList peaks = gSession->selectedExperiment()->peaks()->allPeaks();
 
-            if (auto p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
-                if (true) {
-                    // delete p....
-                    _lastClickedGI = nullptr;
-                    removeItem(p);
-                } else {
-                    gGui->updatePlot(p);
-                }
-            } else if (auto p = dynamic_cast<PlottableItem*>(_lastClickedGI))
+            if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
+                // delete p....
+                _lastClickedGI = nullptr;
+                removeItem(p);
+            } else if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI))
                 gGui->updatePlot(p);
-            else if (auto p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
+            else if (MaskItem* p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
                 // add a new mask
                 auto it = findMask(p);
                 if (it != _masks.end()) {
@@ -481,7 +476,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                 update();
                 updateMasks();
                 //                gSession->onMaskedPeaksChanged(peaks);
-            } else if (auto p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
+            } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
                 auto it = findMask(p);
                 if (it != _masks.end()) {
                     it->second = new nsx::EllipseMask(*p->getAABB());
@@ -503,14 +498,14 @@ void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
     if (!_currentData)
         return;
     // Get the graphics item on which the user has performed the wheel event
-    auto item = itemAt(event->scenePos(), QTransform());
-    auto p = dynamic_cast<NSXGraphicsItem*>(item);
+    QGraphicsItem* item = itemAt(event->scenePos(), QTransform());
+    NSXGraphicsItem* p = dynamic_cast<NSXGraphicsItem*>(item);
 
     if (p == nullptr)
         return;
     if (!(p->isSelected()))
         return;
-    auto q = dynamic_cast<CutterItem*>(item);
+    CutterItem* q = dynamic_cast<CutterItem*>(item);
     if (q != nullptr) {
         q->wheelEvent(event);
         gGui->updatePlot(q);
@@ -527,8 +522,8 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
     if (event->key() == Qt::Key_Delete) {
         QList<QGraphicsItem*> items = selectedItems();
         int nPeaksUnselected = int(_peak_graphics_items.size());
-        for (auto item : items) {
-            auto p = dynamic_cast<NSXGraphicsItem*>(item);
+        for (QGraphicsItem* item : items) {
+            NSXGraphicsItem* p = dynamic_cast<NSXGraphicsItem*>(item);
 
             if (p == nullptr)
                 continue;
@@ -538,27 +533,27 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 continue;
             // If the item is a peak graphics item, remove its corresponding peak from
             // the data, update the set of peak graphics items and update the scene
-            if (auto p = dynamic_cast<PeakItem*>(item))
+            if (PeakItem* p = dynamic_cast<PeakItem*>(item))
                 p->peak()->setSelected(false);
             // If the item is a mask graphics item, remove its corresponding mask from
             // the data, update the QList of mask graphics items and update the scene
-            else if (auto p = dynamic_cast<MaskItem*>(item)) {
+            else if (MaskItem* p = dynamic_cast<MaskItem*>(item)) {
                 auto it = findMask(p);
                 if (it != _masks.end()) {
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
-                    auto peaks = gSession->selectedExperiment()->peaks()->allPeaks();
+                    nsx::PeakList peaks = gSession->selectedExperiment()->peaks()->allPeaks();
                     _currentData->maskPeaks(peaks);
                     update();
                     updateMasks();
                     //                    gSession->onMaskedPeaksChanged(peaks);
                 }
-            } else if (auto p = dynamic_cast<EllipseMaskItem*>(item)) {
+            } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(item)) {
                 auto it = findMask(p);
                 if (it != _masks.end()) {
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
-                    auto peaks = gSession->selectedExperiment()->peaks()->allPeaks();
+                    nsx::PeakList peaks = gSession->selectedExperiment()->peaks()->allPeaks();
                     _currentData->maskPeaks(peaks);
                     update();
                     updateMasks();
@@ -581,8 +576,8 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 {
     if (!_currentData)
         return;
-    auto instr = _currentData->reader()->diffractometer();
-    auto det = instr->detector();
+    nsx::Diffractometer* instr = _currentData->reader()->diffractometer();
+    nsx::Detector* det = instr->detector();
 
     int nrows = int(det->nRows());
     int ncols = int(det->nCols());
@@ -596,12 +591,13 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
     nsx::InstrumentState state = _currentData->interpolatedState(_currentFrameIndex);
 
-    const auto& mono = instr->source().selectedMonochromator();
+    const nsx::Monochromator& mono = instr->source().selectedMonochromator();
     double wave = mono.wavelength();
 
     QString ttip;
 
-    auto pos = _currentData->reader()->diffractometer()->detector()->pixelPosition(col, row);
+    nsx::DirectVector pos =
+            _currentData->reader()->diffractometer()->detector()->pixelPosition(col, row);
 
     double gamma = state.gamma(pos);
     double nu = state.nu(pos);
@@ -629,14 +625,14 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     }
     case MILLER_INDICES: {
 
-        auto experiment_item = gSession->selectedExperiment();
+        ExperimentModel* experiment_item = gSession->selectedExperiment();
         if (!experiment_item)
             ttip = QString("No experiment found");
         else {
-            auto selected_unit_cell_item = experiment_item->unitCells()->selectedCell();
-            if (selected_unit_cell_item) {
-                auto q = state.sampleQ(pos);
-                auto miller_indices = nsx::MillerIndex(q, *selected_unit_cell_item);
+            nsx::sptrUnitCell selectedUnitCell = experiment_item->unitCells()->selectedCell();
+            if (selectedUnitCell) {
+                nsx::ReciprocalVector q = state.sampleQ(pos);
+                nsx::MillerIndex miller_indices(q, *selectedUnitCell);
 
                 Eigen::RowVector3d hkl =
                     miller_indices.rowVector().cast<double>() + miller_indices.error();
@@ -686,12 +682,12 @@ void DetectorScene::loadCurrentImage()
         const int nrows = _currentData->nRows();
         Eigen::MatrixXi mask(nrows, ncols);
         mask.setConstant(int(EventType::EXCLUDED));
-        auto peaks = gSession->selectedExperiment()->peaks()->allPeaks();
-        for (auto peak : peaks) {
+        nsx::PeakList peaks = gSession->selectedExperiment()->peaks()->allPeaks();
+        for (nsx::sptrPeak3D peak : peaks) {
             if (peak->enabled()) {
                 // IntegrationRegion constructor can throw if the region is invalid
                 try {
-                    auto region = nsx::IntegrationRegion(
+                    nsx::IntegrationRegion region(
                         peak, peak->peakEnd(), peak->bkgBegin(), peak->bkgEnd());
                     region.updateMask(mask, _currentFrameIndex);
                 } catch (...) {
@@ -701,8 +697,8 @@ void DetectorScene::loadCurrentImage()
         }
         QImage region_img(ncols, nrows, QImage::Format_ARGB32);
 
-        for (auto c = 0; c < ncols; ++c) {
-            for (auto r = 0; r < nrows; ++r) {
+        for (int c = 0; c < ncols; ++c) {
+            for (int r = 0; r < nrows; ++r) {
                 EventType ev = EventType(mask(r, c));
                 unsigned int color;
 
@@ -726,7 +722,7 @@ void DetectorScene::loadCurrentImage()
     setSceneRect(_zoomStack.back());
     emit dataChanged();
 
-    if (auto p = dynamic_cast<PlottableItem*>(_lastClickedGI))
+    if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI))
         gGui->updatePlot(p);
 }
 

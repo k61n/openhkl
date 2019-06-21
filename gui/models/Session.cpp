@@ -14,16 +14,16 @@
 
 
 #include "gui/models/Session.h"
-#include "gui/graphics/DetectorScene.h"
 
+#include "gui/graphics/DetectorScene.h"
+#include "gui/dialogs/ExperimentDialog.h"
+#include "gui/dialogs/RawDataDialog.h"
+#include "gui/MainWin.h"
 #include "core/experiment/DataSet.h"
 #include "core/algo/DataReaderFactory.h"
 #include "core/raw/IDataReader.h"
 #include "core/loader/RawDataReader.h"
-
-#include "gui/dialogs/ExperimentDialog.h"
-#include "gui/dialogs/RawDataDialog.h"
-#include "gui/MainWin.h"
+#include "core/instrument/HardwareParameters.h"
 #include <QCR/engine/logger.h>
 #include <QCR/engine/mixin.h>
 #include <QCR/widgets/modal_dialogs.h>
@@ -33,29 +33,31 @@ Session* gSession;
 Session::Session()
 {
     gSession = this;
+    loadDirectory = QDir::homePath();
 }
 
 void Session::createExperiment()
 {
     std::unique_ptr<ExperimentDialog> dlg;
-
+    QString expname;
     // DialogExperiment could throw an exception if it fails to read the resource files
     try {
         dlg = std::unique_ptr<ExperimentDialog>(new ExperimentDialog());
         if (!dlg->exec())
             return;
-        if (dlg->experimentName().isEmpty()) {
-            gLogger->log("[WARNING] Failed adding new experiment due to empty experiment name");
-            return;
-        }
+
+        if (dlg->experimentName().isEmpty())
+            expname = QDateTime::currentDateTime().toString();
+        else
+            expname = dlg->experimentName();
     } catch (std::exception& e) {
         gLogger->log(QString::fromStdString(e.what()));
         return;
     }
 
     try {
-        auto experimentName = dlg->experimentName().toStdString();
-        auto instrumentName = dlg->instrumentName().toStdString();
+        std::string experimentName = expname.toStdString();
+        std::string instrumentName = dlg->instrumentName().toStdString();
         nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName, instrumentName));
 
         ExperimentModel* expt = new ExperimentModel(expPtr);
@@ -66,6 +68,17 @@ void Session::createExperiment()
         gLogger->log(QString::fromStdString(e.what()));
         return;
     }
+    onExperimentChanged();
+}
+
+void Session::createDefaultExperiment()
+{
+    std::string experimentName = QDateTime::currentDateTime().toString().toStdString();
+    std::set<std::string> instruments = nsx::getResourcesName("instruments");
+    nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName, *instruments.begin()));
+    ExperimentModel* expmodel = new ExperimentModel(expPtr);
+    experiments.push_back(expmodel);
+    selected = experiments.size() -1;
     onExperimentChanged();
 }
 
@@ -103,13 +116,22 @@ ExperimentModel* Session::selectedExperiment()
 
 void Session::loadData()
 {
-    QStringList filenames;
-    filenames = QcrFileDialog::getOpenFileNames(
-        gGui, "import data", QDir::homePath(),
+    if (selected < 0)
+        createDefaultExperiment();
+
+    QStringList filenames = QcrFileDialog::getOpenFileNames(
+        gGui, "import data", loadDirectory,
         "Data files(*.h5 *.hdf5 *.hdf *.fake *.nxs *.raw *.tif *.tiff);;all files (*.* *)");
+
+    if (filenames.empty())
+        return;
+
+    QFileInfo info(filenames.at(0));
+    loadDirectory = info.absolutePath();
+
     for (QString filename : filenames) {
         QFileInfo fileinfo(filename);
-        auto exp = selectedExperiment()->experiment();
+        nsx::sptrExperiment exp = selectedExperiment()->experiment();
 
         // If the experiment already stores the current numor, skip it
         if (exp->hasData(filename.toStdString()))
@@ -143,13 +165,19 @@ void Session::removeData()
 
 void Session::loadRawData()
 {
+    if (selected < 0)
+        createDefaultExperiment();
+
     QStringList qfilenames;
     qfilenames = QcrFileDialog::getOpenFileNames(
-        nullptr, "select raw data", "", "", nullptr, QFileDialog::Option::DontUseNativeDialog);
+        nullptr, "select raw data", loadDirectory, "", nullptr, QFileDialog::Option::DontUseNativeDialog);
 
     if (qfilenames.empty()) {
         return;
     }
+
+    QFileInfo info(qfilenames.at(0));
+    loadDirectory = info.absolutePath();
 
     std::vector<std::string> filenames;
 
@@ -162,7 +190,7 @@ void Session::loadRawData()
     if (!dialog.exec()) {
         return;
     }
-    auto exp = selectedExperiment()->experiment();
+    nsx::sptrExperiment exp = selectedExperiment()->experiment();
 
     // If the experience already stores the current numor, skip it
     if (exp->hasData(filenames[0])) {
@@ -183,12 +211,15 @@ void Session::loadRawData()
     parameters.bpp = dialog.bpp();
 
     try {
-        auto diff = exp->diffractometer();
+        nsx::Diffractometer* diff = exp->diffractometer();
         reader.reset(new nsx::RawDataReader(filenames[0], diff));
-        auto raw_data_reader = std::dynamic_pointer_cast<nsx::RawDataReader>(reader);
+        std::shared_ptr<nsx::RawDataReader> raw_data_reader =
+                std::dynamic_pointer_cast<nsx::RawDataReader>(reader);
         for (size_t i = 1; i < filenames.size(); ++i) {
             raw_data_reader->addFrame(filenames[i]);
         }
+        raw_data_reader->setParameters(parameters);
+        raw_data_reader->end();
         data = std::make_shared<nsx::DataSet>(reader);
     } catch (std::exception& e) {
         gLogger->log(

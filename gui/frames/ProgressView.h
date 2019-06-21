@@ -15,10 +15,9 @@
 #ifndef GUI_FRAMES_PROGRESSVIEW_H
 #define GUI_FRAMES_PROGRESSVIEW_H
 
+#include "base/utils/ProgressHandler.h"
 #include <QProgressDialog>
 #include <QTimer>
-
-#include "base/utils/ProgressHandler.h"
 
 class ProgressView : public QProgressDialog {
     Q_OBJECT

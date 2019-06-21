@@ -14,8 +14,8 @@
 
 
 #include "gui/graphics/DetectorView.h"
-#include "gui/graphics/DetectorScene.h"
 
+#include "gui/graphics/DetectorScene.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/raw/IDataReader.h"
@@ -78,7 +78,7 @@ void DetectorView::fitScene()
 
 void DetectorView::fixDetectorAspectRatio(bool value)
 {
-    const auto* detector = _scene->getData()->reader()->diffractometer()->detector();
+    const nsx::Detector* detector = _scene->getData()->reader()->diffractometer()->detector();
 
     if (value) {
         int h = this->height();

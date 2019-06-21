@@ -13,11 +13,12 @@
 //  ***********************************************************************************************
 
 #include "gui/models/PeakLists.h"
+
 #include "gui/models/Session.h"
-#include <QCR/engine/logger.h>
 #include "core/experiment/DataSet.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
+#include <QCR/engine/logger.h>
 #include <QInputDialog>
 
 FilteredPeaksModel::FilteredPeaksModel(const QString& name, nsx::PeakList list)
@@ -114,7 +115,7 @@ PeaksModel::PeaksModel() {}
 nsx::PeakList PeaksModel::allPeaks()
 {
     nsx::PeakList all;
-    for (auto& peakList : peakLists_) {
+    for (PeakListsModel* peakList : peakLists_) {
         nsx::PeakList peaks = peakList->getAllListPeaks();
         all.insert(all.end(), peaks.begin(), peaks.end());
     }
@@ -133,7 +134,7 @@ void PeaksModel::selectPeakLists(int i)
 PeakListsModel* PeaksModel::selectedPeakLists(int i)
 {
     if (peakLists_.empty()) {
-        gLogger->log("[ERROR] No peaklist selected");
+        gLogger->log("[ERROR] No peaklist available");
         return nullptr;
     }
     if (i < 0 || i > peakLists_.size())
@@ -145,12 +146,13 @@ void PeaksModel::addPeakListsModel(const QString& name, nsx::PeakList list)
 {
     peakLists_.append(new PeakListsModel(name, list));
     selectedLists = peakLists_.size()-1;
+    gSession->onPeaksChanged();
 }
 
 QStringList PeaksModel::peaklistNames()
 {
     QStringList foundListsNames;
-    for (auto& peaklist : peakLists_)
+    for (PeakListsModel* peaklist : peakLists_)
         foundListsNames.append(peaklist->getName());
     return foundListsNames;
 }

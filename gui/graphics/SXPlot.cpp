@@ -14,6 +14,7 @@
 
 
 #include "gui/graphics/SXPlot.h"
+
 #include <Eigen/Dense>
 #include <QApplication>
 #include <QKeyEvent>

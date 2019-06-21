@@ -95,6 +95,11 @@ void RawDataReader::open() {}
 
 void RawDataReader::close() {}
 
+void RawDataReader::end()
+{
+    _metadata.add<int>("npdone", int(_filenames.size()));
+}
+
 const RawDataReaderParameters& RawDataReader::parameters() const
 {
     return _parameters;
@@ -110,7 +115,6 @@ void RawDataReader::setParameters(const RawDataReaderParameters& parameters)
 
     _metadata.add<std::string>("Instrument", _diffractometer->name());
     _metadata.add<double>("wavelength", _parameters.wavelength);
-    _metadata.add<int>("npdone", int(_filenames.size()));
     _metadata.add<double>("monitor", 0.0);
     _metadata.add<int>("Numor", 0.0);
 
@@ -134,7 +138,6 @@ void RawDataReader::swapEndian()
 
 Eigen::MatrixXi RawDataReader::data(size_t frame)
 {
-
     std::string filename = _filenames.at(frame);
 
     std::ifstream file;

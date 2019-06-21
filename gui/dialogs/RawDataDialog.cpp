@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "gui/dialogs/RawDataDialog.h"
+
 #include "gui/MainWin.h"
 #include <QFormLayout>
 

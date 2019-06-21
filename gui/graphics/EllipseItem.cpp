@@ -14,8 +14,8 @@
 
 
 #include "gui/graphics/EllipseItem.h"
-#include "core/experiment/DataSet.h"
 
+#include "core/experiment/DataSet.h"
 #include <QGraphicsSceneWheelEvent>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>

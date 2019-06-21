@@ -15,19 +15,17 @@
 #ifndef GUI_DIALOGS_SHAPELIBRARYDIALOG_H
 #define GUI_DIALOGS_SHAPELIBRARYDIALOG_H
 
-#include <QDialogButtonBox>
-#include <QGraphicsView>
-#include <QTableView>
-
 #include "core/peak/Peak3D.h"
 #include "core/experiment/DataTypes.h"
 #include "core/shape/ShapeLibrary.h"
 #include "core/shape/Profile3D.h"
-
 #include "gui/models/ColorMap.h"
 #include <QCR/widgets/actions.h>
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
+#include <QDialogButtonBox>
+#include <QGraphicsView>
+#include <QTableView>
 #include <set>
 
 class ShapeLibraryDialog : public QDialog {

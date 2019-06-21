@@ -14,6 +14,7 @@
 
 
 #include "gui/graphics/CutLineItem.h"
+
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/SimplePlot.h"
 #include <Eigen/Dense>
@@ -24,14 +25,14 @@ CutLineItem::~CutLineItem() {}
 
 void CutLineItem::plot(NSXPlot* plot)
 {
-    auto p = dynamic_cast<SimplePlot*>(plot);
+    SimplePlot* p = dynamic_cast<SimplePlot*>(plot);
     if (!p)
         return;
     p->xAxis->setLabel("Interpolation point");
     p->yAxis->setLabel("Intensity (counts)");
 
     // Set the pointer to the detector scene to the scene that holds the cutter
-    auto detPtr = dynamic_cast<DetectorScene*>(scene());
+    DetectorScene* detPtr = dynamic_cast<DetectorScene*>(scene());
     if (!detPtr)
         return;
     QVector<double> x(_nPoints);

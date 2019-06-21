@@ -14,11 +14,21 @@
 
 
 #include "gui/dialogs/ShapeLibraryDialog.h"
+
 #include "gui/models/ExperimentModel.h"
 #include "gui/models/PeaksTable.h"
 #include "gui/models/Session.h"
+#include "gui/frames/ProgressView.h"
+#include "gui/models/ColorMap.h"
+#include "base/logger/Logger.h"
+#include "core/experiment/DataSet.h"
+#include "core/shape/Profile3D.h"
+#include "core/integration/ShapeIntegrator.h"
+#include "core/shape/ShapeLibrary.h"
+#include "core/peak/Peak3D.h"
+#include "core/peak/PeakCoordinateSystem.h"
+#include "core/analyse/PeakFilter.h"
 #include <QCR/engine/logger.h>
-
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -26,16 +36,7 @@
 #include <QStatusBar>
 #include <QVBoxLayout>
 
-#include "core/experiment/DataSet.h"
-#include "core/shape/Profile3D.h"
-#include "core/integration/ShapeIntegrator.h"
-#include "core/shape/ShapeLibrary.h"
-#include "base/logger/Logger.h"
-#include "core/peak/Peak3D.h"
-#include "core/peak/PeakCoordinateSystem.h"
-#include "core/analyse/PeakFilter.h"
-#include "gui/frames/ProgressView.h"
-#include "gui/models/ColorMap.h"
+
 
 
 ShapeLibraryDialog::ShapeLibraryDialog() : QDialog {}
@@ -52,7 +53,7 @@ ShapeLibraryDialog::ShapeLibraryDialog() : QDialog {}
     }
     _peaks = gSession->selectedExperiment()->peaks()->allPeaks();
     //_unitCell = gSession->selectedExperiment()->unitCells()->allUnitCells().at(0);
-    for (auto peak : _peaks)
+    for (nsx::sptrPeak3D peak : _peaks)
         _data.insert(peak->data());
     layout();
 }
@@ -134,7 +135,7 @@ void ShapeLibraryDialog::layout()
     Eigen::Matrix3d cov;
     cov.setZero();
 
-    for (auto peak : _peaks) {
+    for (nsx::sptrPeak3D peak : _peaks) {
         nsx::PeakCoordinateSystem coord(peak);
         const nsx::Ellipsoid& shape = peak->shape();
         Eigen::Matrix3d J = coord.jacobian();
@@ -198,7 +199,7 @@ void ShapeLibraryDialog::build()
 {
     nsx::PeakList fit_peaks;
 
-    for (auto peak : _peaks) {
+    for (nsx::sptrPeak3D peak : _peaks) {
         if (!peak->enabled())
             continue;
         double d = 1.0 / peak->q().rowVector().norm();
