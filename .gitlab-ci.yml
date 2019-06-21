@@ -38,24 +38,28 @@ deb_testing_clang:
   stage: build
   script: *scr
 
-suse_clang:
-  tags: *unix
-  image: opensuse/tumbleweed
-  # rolling release with infinite life time
-  before_script:
-    - zypper -n patch || echo "do it again"
-    - zypper -n patch
-    - zypper -n ref
-    - zypper -n up
-    - zypper -n dup
-    - zypper -n in git cmake clang perl pkgconf libqt5-qtbase-devel blosc-devel gsl-devel fftw3-devel eigen3-devel hdf5-devel yaml-cpp-devel libtiff-devel-32bit boost-devel python3 python3-numpy python3-unittest2 python3-random2 python3-distutils-extra python3-devel swig
-    - git clone https://jugit.fz-juelich.de/mlz/libQCR.git
-    - git clone https://jugit.fz-juelich.de/mlz/xsection.git
-  stage: build
-  script: *scr
-
-# suse_stable:
-#  opensuse:leap, unsupported here because it is at cmake 3.5, while libcerf requires 3.6
+# suse_clang:
+#
+#   NOTE [JWu21jun19]:
+#   We suspend Suse support because of bug in libhdf5:
+#     ldd on that lib shows an entry 'z' instead of the full path to the zlib.
+#   Should we ever need to support Suse, then of course we could easily work around
+#     this bug by explicitly calling FindZLIB, and adding ZLIB_LIBRARIES to the core link list.
+#
+#   tags: *unix
+#   image: opensuse/tumbleweed
+#   # rolling release with infinite life time
+#   before_script:
+#     - zypper -n patch || echo "do it again"
+#     - zypper -n patch
+#     - zypper -n ref
+#     - zypper -n up
+#     - zypper -n dup
+#     - zypper -n in git cmake clang perl pkgconf libqt5-qtbase-devel blosc-devel gsl-devel fftw3-devel eigen3-devel hdf5-devel yaml-cpp-devel libtiff-devel-32bit boost-devel python3 python3-numpy python3-unittest2 python3-random2 python3-distutils-extra python3-devel swig
+#     - git clone https://jugit.fz-juelich.de/mlz/libQCR.git
+#     - git clone https://jugit.fz-juelich.de/mlz/xsection.git
+#   stage: build
+#   script: *scr
 
 centos7_clang:
   tags: *unix
