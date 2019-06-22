@@ -17,6 +17,8 @@
 
 namespace nsx {
 
+//! Describes how 2D images are mapped into 1D.
+
 enum class DataOrder : size_t {
     TopLeftColMajor = 0,
     TopLeftRowMajor = 1,
