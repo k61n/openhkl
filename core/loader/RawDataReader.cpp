@@ -20,6 +20,9 @@
 #include <stdexcept>
 #include <string>
 
+#include "base/parser/EigenToVector.h"
+#include "base/parser/Parser.h"
+#include "base/utils/Units.h"
 #include "core/detector/Detector.h"
 #include "core/gonio/Component.h"
 #include "core/gonio/Gonio.h"
@@ -27,10 +30,7 @@
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "base/parser/EigenToVector.h"
-#include "base/parser/Parser.h"
 #include "core/loader/RawDataReader.h"
-#include "base/utils/Units.h"
 
 namespace nsx {
 
@@ -167,10 +167,10 @@ Eigen::MatrixXi RawDataReader::data(size_t frame)
     swapEndian();
 
     switch (_parameters.bpp) {
-    case 1: return matrixFromData<uint8_t>().cast<int>();
-    case 2: return matrixFromData<uint16_t>().cast<int>();
-    case 3: return matrixFromData<uint32_t>().cast<int>();
-    default: throw std::runtime_error("bpp unsupported: " + std::to_string(_parameters.bpp));
+        case 1: return matrixFromData<uint8_t>().cast<int>();
+        case 2: return matrixFromData<uint16_t>().cast<int>();
+        case 3: return matrixFromData<uint32_t>().cast<int>();
+        default: throw std::runtime_error("bpp unsupported: " + std::to_string(_parameters.bpp));
     }
 }
 

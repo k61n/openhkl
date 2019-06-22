@@ -28,14 +28,14 @@ class QAbstractButton;
 class FrameInstrumentStates : public NSXQFrame {
     Q_OBJECT
 
-public:
+ public:
     static FrameInstrumentStates* create(const nsx::DataList& data);
 
     static FrameInstrumentStates* Instance();
 
     ~FrameInstrumentStates();
 
-private slots:
+ private slots:
 
     void slotActionClicked(QAbstractButton* button);
 
@@ -43,10 +43,10 @@ private slots:
 
     void slotSelectedFrameChanged(int selected_frame);
 
-private:
+ private:
     explicit FrameInstrumentStates(const nsx::DataList& data);
 
-private:
+ private:
     static FrameInstrumentStates* _instance;
 
     Ui::FrameInstrumentStates* _ui;

@@ -58,7 +58,7 @@ namespace nsx {
 //!       two convolvers relate to each other.
 
 class RadialConvolver : public AtomicConvolver {
-public:
+ public:
     RadialConvolver();
 
     RadialConvolver(const RadialConvolver& other) = default;
@@ -73,7 +73,7 @@ public:
 
     virtual std::pair<size_t, size_t> kernelSize() const override;
 
-private:
+ private:
     RealMatrix _matrix(int nrows, int ncols) const override;
 };
 

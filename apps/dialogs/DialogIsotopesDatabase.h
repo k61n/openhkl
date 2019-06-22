@@ -26,11 +26,11 @@ class DialogIsotopesDatabase;
 class DialogIsotopesDatabase : public QDialog {
     Q_OBJECT
 
-public:
+ public:
     explicit DialogIsotopesDatabase(QWidget* parent = 0);
 
     ~DialogIsotopesDatabase();
 
-private:
+ private:
     Ui::DialogIsotopesDatabase* ui;
 };

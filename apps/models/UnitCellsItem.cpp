@@ -17,7 +17,6 @@
 #include <QIcon>
 
 #include "core/peak/Peak3D.h"
-#include "core/peak/Peak3D.h"
 
 #include "apps/models/ExperimentItem.h"
 #include "apps/models/MetaTypes.h"

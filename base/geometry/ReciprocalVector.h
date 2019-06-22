@@ -25,7 +25,7 @@ namespace nsx {
 //! dealing with vectors in algorithms dedicated to crystallographic data.
 
 class ReciprocalVector {
-public:
+ public:
     ReciprocalVector() = default;
     ReciprocalVector(const ReciprocalVector& other) = default;
 
@@ -49,7 +49,7 @@ public:
     //! Print information about a ReciprocalVector to a stream
     void print(std::ostream& os) const;
 
-private:
+ private:
     Eigen::RowVector3d _rvector;
 };
 

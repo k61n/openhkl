@@ -16,12 +16,12 @@
 
 #include <QInputDialog>
 
-#include "tables/crystal/UnitCell.h"
+#include "base/logger/Logger.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
-#include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
+#include "tables/crystal/UnitCell.h"
 
 #include "apps/dialogs/DialogSpaceGroup.h"
 #include "apps/dialogs/DialogTransformationMatrix.h"
@@ -57,18 +57,18 @@ UnitCellItem::~UnitCellItem() {}
 QVariant UnitCellItem::data(int role) const
 {
     switch (role) {
-    case (Qt::DecorationRole): {
-        return QIcon(":/resources/unitCellIcon.png");
-    }
-    case (Qt::EditRole): {
-        return QString::fromStdString(_unit_cell->name());
-    }
-    case (Qt::DisplayRole): {
-        return QString::fromStdString(_unit_cell->name());
-    }
-    case (Qt::UserRole): {
-        return QVariant::fromValue(_unit_cell);
-    }
+        case (Qt::DecorationRole): {
+            return QIcon(":/resources/unitCellIcon.png");
+        }
+        case (Qt::EditRole): {
+            return QString::fromStdString(_unit_cell->name());
+        }
+        case (Qt::DisplayRole): {
+            return QString::fromStdString(_unit_cell->name());
+        }
+        case (Qt::UserRole): {
+            return QVariant::fromValue(_unit_cell);
+        }
     }
     return InspectableTreeItem::data(role);
 }
@@ -76,14 +76,14 @@ QVariant UnitCellItem::data(int role) const
 void UnitCellItem::setData(const QVariant& value, int role)
 {
     switch (role) {
-    case (Qt::DisplayRole): {
-        _unit_cell->setName(value.toString().toStdString());
-        break;
-    }
-    case (Qt::EditRole): {
-        _unit_cell->setName(value.toString().toStdString());
-        break;
-    }
+        case (Qt::DisplayRole): {
+            _unit_cell->setName(value.toString().toStdString());
+            break;
+        }
+        case (Qt::EditRole): {
+            _unit_cell->setName(value.toString().toStdString());
+            break;
+        }
     }
     InspectableTreeItem::setData(value, role);
 }

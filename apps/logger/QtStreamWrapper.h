@@ -21,7 +21,7 @@ class NoteBook;
 class QtStreamWrapper : public QObject, public nsx::IStreamWrapper {
     Q_OBJECT
 
-public:
+ public:
     //! Constructor
     QtStreamWrapper(
         NoteBook* notebook, std::function<std::string()> prefix = nullptr,
@@ -37,10 +37,10 @@ public:
 
     virtual void printSuffix() override;
 
-signals:
+ signals:
 
     void sendLogMessage(const std::string& message);
 
-private:
+ private:
     std::ostringstream _os;
 };

@@ -16,9 +16,9 @@
 
 #include <map>
 
-#include "tables/crystal/SpaceGroup.h"
-#include "core/peak/Peak3D.h"
 #include "core/analyse/MergedData.h"
+#include "core/peak/Peak3D.h"
+#include "tables/crystal/SpaceGroup.h"
 
 #include "apps/frames/NSXQFrame.h"
 
@@ -36,14 +36,14 @@ class QWidget;
 class FrameStatistics : public NSXQFrame {
     Q_OBJECT
 
-public:
+ public:
     static FrameStatistics* create(const nsx::PeakList& peaks, const nsx::SpaceGroup& space_group);
 
     static FrameStatistics* Instance();
 
     ~FrameStatistics();
 
-private slots:
+ private slots:
 
     void update();
 
@@ -55,7 +55,7 @@ private slots:
 
     void slotActionClicked(QAbstractButton* button);
 
-private:
+ private:
     explicit FrameStatistics(const nsx::PeakList& peaks, const nsx::SpaceGroup& space_group);
 
     void plotStatistics(int column);
@@ -70,7 +70,7 @@ private:
 
     void updateStatisticsTab();
 
-private:
+ private:
     static FrameStatistics* _instance;
 
     Ui::FrameStatistics* _ui;

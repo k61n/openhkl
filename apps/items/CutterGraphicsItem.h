@@ -26,7 +26,7 @@ class QGraphicsSceneMouseEvent;
 class QWidget;
 
 class CutterGraphicsItem : public PlottableGraphicsItem {
-public:
+ public:
     // Constructors and destructor
 
     //! Constructs a data cutter
@@ -61,7 +61,7 @@ public:
     //! Paint the contents of the item [pure virtual]
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) = 0;
 
-protected:
+ protected:
     //! The data on which the cutter will act upon
     nsx::sptrDataSet _data;
     //! The top left coordinates of the slice

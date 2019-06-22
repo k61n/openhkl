@@ -22,10 +22,10 @@
 #include <QDialogButtonBox>
 
 class UserDefinedUnitCellIndexer : public QcrFrame {
-public:
+ public:
     UserDefinedUnitCellIndexer();
 
-private:
+ private:
     void layout();
     void accept();
     void buildUnitCellsTable();

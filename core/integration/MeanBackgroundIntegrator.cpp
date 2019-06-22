@@ -13,9 +13,9 @@
 //  ***********************************************************************************************
 
 #include "core/integration/MeanBackgroundIntegrator.h"
-#include "core/peak/Intensity.h"
-#include "core/experiment/DataSet.h"
 #include "base/geometry/Ellipsoid.h"
+#include "core/experiment/DataSet.h"
+#include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 
 namespace nsx {

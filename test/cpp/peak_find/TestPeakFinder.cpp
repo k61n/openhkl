@@ -1,12 +1,12 @@
 #include "test/cpp/catch.hpp"
 
+#include "base/utils/ProgressHandler.h"
+#include "core/algo/DataReaderFactory.h"
+#include "core/analyse/PeakFinder.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/algo/DataReaderFactory.h"
 #include "core/raw/MetaData.h"
-#include "core/analyse/PeakFinder.h"
-#include "base/utils/ProgressHandler.h"
 
 TEST_CASE("test/peak_find/TestPeakFinder.cpp", "")
 {

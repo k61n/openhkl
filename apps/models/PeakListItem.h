@@ -19,7 +19,7 @@
 #include "apps/models/InspectableTreeItem.h"
 
 class PeakListItem : public InspectableTreeItem {
-public:
+ public:
     explicit PeakListItem(const nsx::PeakList& peaks);
 
     QWidget* inspectItem();
@@ -28,6 +28,6 @@ public:
 
     void removePeak(nsx::sptrPeak3D peak);
 
-private:
+ private:
     nsx::PeakList _peaks;
 };

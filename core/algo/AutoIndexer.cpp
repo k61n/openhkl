@@ -14,13 +14,13 @@
 
 #include "core/algo/AutoIndexer.h"
 
-#include "core/algo/FFTIndexing.h"
-#include "tables/crystal/MillerIndex.h"
-#include "core/experiment/DataSet.h" // peak->data()->interpolatedState
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
 #include "base/geometry/ReciprocalVector.h"
+#include "core/algo/FFTIndexing.h"
 #include "core/analyse/PeakFilter.h"
+#include "core/experiment/DataSet.h" // peak->data()->interpolatedState
+#include "tables/crystal/MillerIndex.h"
 
 #include <iostream>
 #include <string>

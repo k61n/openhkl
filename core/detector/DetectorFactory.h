@@ -24,7 +24,7 @@ namespace nsx {
 
 class DetectorFactory : public Factory<Detector, std::string, const YAML::Node&>,
                         public Singleton<DetectorFactory, Constructor, Destructor> {
-private:
+ private:
     friend class Constructor<DetectorFactory>;
     friend class Destructor<DetectorFactory>;
     DetectorFactory();

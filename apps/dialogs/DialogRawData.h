@@ -24,7 +24,7 @@ class DialogRawData;
 class DialogRawData : public QDialog {
     Q_OBJECT
 
-public:
+ public:
     explicit DialogRawData(QWidget* parent = 0);
     ~DialogRawData();
 
@@ -39,6 +39,6 @@ public:
 
     void setWavelength(double new_wavelength);
 
-private:
+ private:
     Ui::DialogRawData* ui;
 };

@@ -20,7 +20,7 @@
 #include "gui/properties/SourceProperty.h"
 
 class TabInstrument : public QcrTabWidget {
-public:
+ public:
     TabInstrument();
     DetectorProperty* detector;
     SourceProperty* monoSource;

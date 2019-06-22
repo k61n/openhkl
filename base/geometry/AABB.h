@@ -15,8 +15,8 @@
 #ifndef BASE_GEOMETRY_AABB_H
 #define BASE_GEOMETRY_AABB_H
 
-#include <vector>
 #include <Eigen/Dense>
+#include <vector>
 
 namespace nsx {
 
@@ -30,7 +30,7 @@ class Ellipsoid; // cross dependence requires forward declaration
 //! iterate quickly over region of interest in data from images or volumes.
 
 class AABB {
-public:
+ public:
     AABB();
     AABB(const AABB& other);
     //! Constructs a AABB object from two Eigen vectors representing respectively
@@ -77,7 +77,7 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 #endif
 
-protected:
+ protected:
     //! The lower bound point
     Eigen::Vector3d _lowerBound;
     //! The upper bound point

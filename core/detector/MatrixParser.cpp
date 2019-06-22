@@ -29,47 +29,47 @@ bool MatrixParser::operator()(
     int s1, s2, offset;
 
     switch (dataOrder) {
-    case (DataOrder::TopLeftColMajor):
-        s1 = -1;
-        s2 = n_rows;
-        offset = n_rows - 1;
-        break;
-    case (DataOrder::TopLeftRowMajor):
-        s1 = -n_cols;
-        s2 = 1;
-        offset = n_cols * (n_rows - 1);
-        break;
-    case (DataOrder::TopRightColMajor):
-        s1 = -1;
-        s2 = -n_rows;
-        offset = n_rows * n_cols - 1;
-        break;
-    case (DataOrder::TopRightRowMajor):
-        s1 = -n_cols;
-        s2 = -1;
-        offset = n_rows * n_cols - 1;
-        break;
-    case (DataOrder::BottomLeftColMajor):
-        s1 = 1;
-        s2 = n_rows;
-        offset = 0;
-        break;
-    case (DataOrder::BottomLeftRowMajor):
-        s1 = n_cols;
-        s2 = 1;
-        offset = 0;
-        break;
-    case (DataOrder::BottomRightColMajor):
-        s1 = 1;
-        s2 = -n_rows;
-        offset = n_rows * (n_cols - 1);
-        break;
-    case (DataOrder::BottomRightRowMajor):
-        s1 = n_cols;
-        s2 = -1;
-        offset = n_cols - 1;
-        break;
-    default: throw std::runtime_error("Invalid data order");
+        case (DataOrder::TopLeftColMajor):
+            s1 = -1;
+            s2 = n_rows;
+            offset = n_rows - 1;
+            break;
+        case (DataOrder::TopLeftRowMajor):
+            s1 = -n_cols;
+            s2 = 1;
+            offset = n_cols * (n_rows - 1);
+            break;
+        case (DataOrder::TopRightColMajor):
+            s1 = -1;
+            s2 = -n_rows;
+            offset = n_rows * n_cols - 1;
+            break;
+        case (DataOrder::TopRightRowMajor):
+            s1 = -n_cols;
+            s2 = -1;
+            offset = n_rows * n_cols - 1;
+            break;
+        case (DataOrder::BottomLeftColMajor):
+            s1 = 1;
+            s2 = n_rows;
+            offset = 0;
+            break;
+        case (DataOrder::BottomLeftRowMajor):
+            s1 = n_cols;
+            s2 = 1;
+            offset = 0;
+            break;
+        case (DataOrder::BottomRightColMajor):
+            s1 = 1;
+            s2 = -n_rows;
+            offset = n_rows * (n_cols - 1);
+            break;
+        case (DataOrder::BottomRightRowMajor):
+            s1 = n_cols;
+            s2 = -1;
+            offset = n_cols - 1;
+            break;
+        default: throw std::runtime_error("Invalid data order");
     }
 
     Eigen::VectorXi data(n_elements);

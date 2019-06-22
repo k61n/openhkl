@@ -26,15 +26,15 @@ class SampleShapeItem;
 class SampleShapePropertyWidget : public QWidget {
     Q_OBJECT
 
-public:
+ public:
     explicit SampleShapePropertyWidget(SampleShapeItem* caller, QWidget* parent = 0);
     ~SampleShapePropertyWidget();
 
-private slots:
+ private slots:
     void on_pushButton_LoadMovie_clicked();
     void setHullProperties();
 
-private:
+ private:
     SampleShapeItem* _caller;
     Ui::SampleShapePropertyWidget* ui;
 };

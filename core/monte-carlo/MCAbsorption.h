@@ -22,7 +22,7 @@ namespace nsx {
 //! Computes absorption correction by Monte-Carlo integration.
 
 class MCAbsorption {
-public:
+ public:
     //! Define absorption Engine with a rectangular source of WxH
     MCAbsorption(
         const ConvexHull& convex_hull, double source_width, double source_height,
@@ -41,7 +41,7 @@ public:
     run(unsigned int nIterations, const Eigen::Vector3d& outV,
         const Eigen::Matrix3d& sampleOrientation) const;
 
-private:
+ private:
     //! Description of the sample in terms of individual oriented triangles
     ConvexHull _convex_hull;
 

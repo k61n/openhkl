@@ -24,7 +24,7 @@
   */
 
 class PinItem : public QGraphicsItem {
-public:
+ public:
     PinItem(QGraphicsItem* parent = 0);
     void initiate(double posy, double angle);
     //! Method called when point is moved in another frame
@@ -38,7 +38,7 @@ public:
     bool iscalibrated() const;
     void getCenter(double& y, double& z, double angle);
 
-private:
+ private:
     double _p1y, _p2y;
     double _angle;
     double _currentangle;

@@ -15,15 +15,15 @@
 #ifndef GUI_GRAPHICS_MASKITEM_H
 #define GUI_GRAPHICS_MASKITEM_H
 
-#include "core/experiment/DataTypes.h"
 #include "base/geometry/AABB.h"
+#include "core/experiment/DataTypes.h"
 #include "gui/graphics/SXGraphicsItem.h"
 
 /*! Creates a mask that will be used to unselect/select peaks whether their
  * intercept or not the mask
  */
 class MaskItem : public NSXGraphicsItem {
-public:
+ public:
     // Constructs a mask
     MaskItem(nsx::sptrDataSet data, nsx::AABB* aabb);
     //! The destructor
@@ -54,7 +54,7 @@ public:
     //! Paint the slice
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
 
-protected:
+ protected:
     //! The data on which the cutter will act upon
     nsx::sptrDataSet _data;
     //! The AABB of the peak
@@ -63,7 +63,7 @@ protected:
     QPointF _to;
     QGraphicsTextItem* _text;
 
-private:
+ private:
     void updateAABB();
 };
 

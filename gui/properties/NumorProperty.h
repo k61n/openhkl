@@ -15,16 +15,16 @@
 #ifndef GUI_PROPERTIES_NUMORPROPERTY_H
 #define GUI_PROPERTIES_NUMORPROPERTY_H
 
-#include <QCR/widgets/views.h>
 #include <QCR/widgets/controls.h>
+#include <QCR/widgets/views.h>
 #include <QTableWidget>
 
 //! Property widget of the numor
 class NumorProperty : public QcrWidget {
-public:
+ public:
     NumorProperty();
 
-private:
+ private:
     void onChanged();
     void onRemake();
     void clear();

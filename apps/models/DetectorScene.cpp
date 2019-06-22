@@ -21,25 +21,25 @@
 #include <QPixmap>
 #include <QToolTip>
 
-#include "tables/crystal/MillerIndex.h"
-#include "tables/crystal/SpaceGroup.h"
-#include "tables/crystal/UnitCell.h"
-#include "core/detector/Detector.h"
-#include "core/experiment/DataSet.h"
 #include "base/geometry/AABB.h"
 #include "base/geometry/ReciprocalVector.h"
+#include "base/logger/Logger.h"
+#include "base/mask/BoxMask.h"
+#include "base/mask/EllipseMask.h"
+#include "base/utils/Units.h"
+#include "core/detector/Detector.h"
+#include "core/experiment/DataSet.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/raw/IDataReader.h"
-#include "base/logger/Logger.h"
-#include "base/mask/BoxMask.h"
-#include "base/mask/EllipseMask.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
-#include "base/utils/Units.h"
+#include "core/raw/IDataReader.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/SpaceGroup.h"
+#include "tables/crystal/UnitCell.h"
 
 #include "apps/ColorMap.h"
 #include "apps/items/CutLineGraphicsItem.h"
@@ -361,51 +361,51 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
             }
         }
         switch (_mode) {
-        case SELECT: {
-            break;
-        }
-        case ZOOM: {
-            _zoomstart = event->lastScenePos().toPoint();
-            _zoomend = _zoomstart;
-            _zoomrect = addRect(QRect(_zoomstart, _zoomend));
+            case SELECT: {
+                break;
+            }
+            case ZOOM: {
+                _zoomstart = event->lastScenePos().toPoint();
+                _zoomend = _zoomstart;
+                _zoomrect = addRect(QRect(_zoomstart, _zoomend));
 
-            pen1 = QPen(QBrush(QColor("gray")), 1.0);
-            pen1.setWidth(1);
-            pen1.setCosmetic(true);
-            _zoomrect->setPen(pen1);
-            _zoomrect->setBrush(QBrush(QColor(255, 0, 0, 30)));
-            break;
-        }
-        case HORIZONTALSLICE: {
-            cutter = new CutSliceGraphicsItem(_currentData, true);
-            break;
-        }
-        case VERTICALSLICE: {
-            cutter = new CutSliceGraphicsItem(_currentData, false);
-            break;
-        }
-        case LINE: {
-            cutter = new CutLineGraphicsItem(_currentData);
-            break;
-        }
-        case MASK: {
-            mask = new MaskGraphicsItem(_currentData, new nsx::AABB);
-            mask->setFrom(event->lastScenePos());
-            mask->setTo(event->lastScenePos());
-            addItem(mask);
-            _lastClickedGI = mask;
-            _masks.emplace_back(mask, nullptr);
-            break;
-        }
-        case ELLIPSE_MASK: {
-            ellipse_mask = new EllipseMaskGraphicsItem(_currentData, new nsx::AABB);
-            ellipse_mask->setFrom(event->lastScenePos());
-            ellipse_mask->setTo(event->lastScenePos());
-            addItem(ellipse_mask);
-            _lastClickedGI = ellipse_mask;
-            _masks.emplace_back(ellipse_mask, nullptr);
-            break;
-        }
+                pen1 = QPen(QBrush(QColor("gray")), 1.0);
+                pen1.setWidth(1);
+                pen1.setCosmetic(true);
+                _zoomrect->setPen(pen1);
+                _zoomrect->setBrush(QBrush(QColor(255, 0, 0, 30)));
+                break;
+            }
+            case HORIZONTALSLICE: {
+                cutter = new CutSliceGraphicsItem(_currentData, true);
+                break;
+            }
+            case VERTICALSLICE: {
+                cutter = new CutSliceGraphicsItem(_currentData, false);
+                break;
+            }
+            case LINE: {
+                cutter = new CutLineGraphicsItem(_currentData);
+                break;
+            }
+            case MASK: {
+                mask = new MaskGraphicsItem(_currentData, new nsx::AABB);
+                mask->setFrom(event->lastScenePos());
+                mask->setTo(event->lastScenePos());
+                addItem(mask);
+                _lastClickedGI = mask;
+                _masks.emplace_back(mask, nullptr);
+                break;
+            }
+            case ELLIPSE_MASK: {
+                ellipse_mask = new EllipseMaskGraphicsItem(_currentData, new nsx::AABB);
+                ellipse_mask->setFrom(event->lastScenePos());
+                ellipse_mask->setTo(event->lastScenePos());
+                addItem(ellipse_mask);
+                _lastClickedGI = ellipse_mask;
+                _masks.emplace_back(ellipse_mask, nullptr);
+                break;
+            }
         }
         if (cutter != nullptr) {
             cutter->setFrom(event->lastScenePos());
@@ -641,49 +641,51 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     double th2 = state.twoTheta(pos);
 
     switch (_cursorMode) {
-    case PIXEL: {
-        ttip = QString("(%1,%2) I:%3").arg(col).arg(row).arg(intensity);
-        break;
-    }
-    case GAMMA_NU: {
-        ttip = QString("(%1,%2) I: %3")
-                   .arg(gamma / nsx::deg, 0, 'f', 3)
-                   .arg(nu / nsx::deg, 0, 'f', 3)
-                   .arg(intensity);
-        break;
-    }
-    case THETA: {
-        ttip = QString("(%1) I: %2").arg(th2 / nsx::deg, 0, 'f', 3).arg(intensity);
-        break;
-    }
-    case D_SPACING: {
-        ttip = QString("(%1) I: %2").arg(wave / (2 * sin(0.5 * th2)), 0, 'f', 3).arg(intensity);
-        break;
-    }
-    case MILLER_INDICES: {
-        auto experiment_item = _session->selectExperiment(_currentData);
-        if (!experiment_item)
-            ttip = QString("No experiment found");
-        else {
-            auto selected_unit_cell_item = experiment_item->unitCellsItem()->selectedUnitCellItem();
-            if (selected_unit_cell_item) {
-                auto q = state.sampleQ(pos);
-                auto miller_indices = nsx::MillerIndex(
-                    q, *(selected_unit_cell_item->data(Qt::UserRole).value<nsx::sptrUnitCell>()));
-
-                Eigen::RowVector3d hkl =
-                    miller_indices.rowVector().cast<double>() + miller_indices.error();
-                ttip = QString("(%1,%2,%3) I: %4")
-                           .arg(hkl[0], 0, 'f', 2)
-                           .arg(hkl[1], 0, 'f', 2)
-                           .arg(hkl[2], 0, 'f', 2)
-                           .arg(intensity);
-            } else {
-                ttip = QString("No unit cell selected");
-            }
+        case PIXEL: {
+            ttip = QString("(%1,%2) I:%3").arg(col).arg(row).arg(intensity);
+            break;
         }
-        break;
-    }
+        case GAMMA_NU: {
+            ttip = QString("(%1,%2) I: %3")
+                       .arg(gamma / nsx::deg, 0, 'f', 3)
+                       .arg(nu / nsx::deg, 0, 'f', 3)
+                       .arg(intensity);
+            break;
+        }
+        case THETA: {
+            ttip = QString("(%1) I: %2").arg(th2 / nsx::deg, 0, 'f', 3).arg(intensity);
+            break;
+        }
+        case D_SPACING: {
+            ttip = QString("(%1) I: %2").arg(wave / (2 * sin(0.5 * th2)), 0, 'f', 3).arg(intensity);
+            break;
+        }
+        case MILLER_INDICES: {
+            auto experiment_item = _session->selectExperiment(_currentData);
+            if (!experiment_item)
+                ttip = QString("No experiment found");
+            else {
+                auto selected_unit_cell_item =
+                    experiment_item->unitCellsItem()->selectedUnitCellItem();
+                if (selected_unit_cell_item) {
+                    auto q = state.sampleQ(pos);
+                    auto miller_indices = nsx::MillerIndex(
+                        q,
+                        *(selected_unit_cell_item->data(Qt::UserRole).value<nsx::sptrUnitCell>()));
+
+                    Eigen::RowVector3d hkl =
+                        miller_indices.rowVector().cast<double>() + miller_indices.error();
+                    ttip = QString("(%1,%2,%3) I: %4")
+                               .arg(hkl[0], 0, 'f', 2)
+                               .arg(hkl[1], 0, 'f', 2)
+                               .arg(hkl[2], 0, 'f', 2)
+                               .arg(intensity);
+                } else {
+                    ttip = QString("No unit cell selected");
+                }
+            }
+            break;
+        }
     }
     QToolTip::showText(event->screenPos(), ttip);
 }
@@ -752,9 +754,9 @@ void DetectorScene::loadCurrentImage()
                 unsigned int color;
 
                 switch (ev) {
-                case EventType::PEAK: color = green; break;
-                case EventType::BACKGROUND: color = yellow; break;
-                default: color = transparent; break;
+                    case EventType::PEAK: color = green; break;
+                    case EventType::BACKGROUND: color = yellow; break;
+                    default: color = transparent; break;
                 }
 
                 // todo: what about unselected peaks?

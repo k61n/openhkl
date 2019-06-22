@@ -22,7 +22,7 @@ namespace nsx {
 //! A cylindrical or banana detector.
 
 class CylindricalDetector : public Detector {
-public:
+ public:
     //! Static constructor of a CylindricalDetector from a property tree node
     static Detector* create(const YAML::Node& node);
 
@@ -55,8 +55,8 @@ public:
 
     //! Determine whether detector at rest can receive a scattering event with
     //! direction given by Kf. px and py are detector position if true.
-    DetectorEvent constructEvent(
-        const DirectVector& from, const ReciprocalVector& kf) const override;
+    DetectorEvent
+    constructEvent(const DirectVector& from, const ReciprocalVector& kf) const override;
 
     Eigen::Matrix3d jacobian(double px, double py) const override;
 };

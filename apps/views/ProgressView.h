@@ -25,17 +25,17 @@
 class ProgressView : public QProgressDialog {
     Q_OBJECT
 
-public:
+ public:
     ProgressView(QWidget* parent);
     ~ProgressView();
 
     void watch(nsx::sptrProgressHandler handler);
 
-public slots:
+ public slots:
     void updateProgress();
     void abort();
 
-private:
+ private:
     nsx::sptrProgressHandler _handler;
     QTimer* _timer;
 };

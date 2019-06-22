@@ -14,15 +14,15 @@
 
 #include "gui/frames/InstrumentStatesFrame.h"
 
-#include "gui/models/Session.h"
-#include "gui/models/Meta.h"
 #include "core/experiment/DataSet.h"
+#include "gui/models/Meta.h"
+#include "gui/models/Session.h"
 #include <QDialogButtonBox>
+#include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <QFileInfo>
 
 InstrumentStates::InstrumentStates() : QcrFrame {"instrumentStates"}
 {
@@ -249,7 +249,7 @@ InstrumentStates::InstrumentStates() : QcrFrame {"instrumentStates"}
     QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok, Qt::Horizontal, this);
     overallLayout->addWidget(buttonBox);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &InstrumentStates::close);
-    frameIndex->setHook([=](int i){ selectedFrameChanged(i); });
+    frameIndex->setHook([=](int i) { selectedFrameChanged(i); });
     connect(data, &QListWidget::currentRowChanged, this, &InstrumentStates::selectedDataChanged);
     selectedFrameChanged(0);
     show();
@@ -276,7 +276,7 @@ void InstrumentStates::selectedFrameChanged(int selectedFrame)
     QFont font;
     font.setBold(true);
     refinedLabel->setStyleSheet(
-                selectedState.refined ? "QLabel {color : blue;}" : "QLabel {color : red;}");
+        selectedState.refined ? "QLabel {color : blue;}" : "QLabel {color : red;}");
     refinedLabel->setFont(font);
     refinedLabel->setText(selectedState.refined ? "Refined" : "Not refined");
 
@@ -286,38 +286,38 @@ void InstrumentStates::selectedFrameChanged(int selectedFrame)
     samplePosZ->setCellValue(samplePosition[2]);
 
     const auto& sampleOri = selectedState.sampleOrientation.normalized().toRotationMatrix();
-    sampleOri_00->setCellValue(sampleOri(0,0));
-    sampleOri_01->setCellValue(sampleOri(0,1));
-    sampleOri_02->setCellValue(sampleOri(0,2));
-    sampleOri_10->setCellValue(sampleOri(1,0));
-    sampleOri_11->setCellValue(sampleOri(1,1));
-    sampleOri_12->setCellValue(sampleOri(1,2));
-    sampleOri_20->setCellValue(sampleOri(2,0));
-    sampleOri_21->setCellValue(sampleOri(2,1));
-    sampleOri_22->setCellValue(sampleOri(2,2));
+    sampleOri_00->setCellValue(sampleOri(0, 0));
+    sampleOri_01->setCellValue(sampleOri(0, 1));
+    sampleOri_02->setCellValue(sampleOri(0, 2));
+    sampleOri_10->setCellValue(sampleOri(1, 0));
+    sampleOri_11->setCellValue(sampleOri(1, 1));
+    sampleOri_12->setCellValue(sampleOri(1, 2));
+    sampleOri_20->setCellValue(sampleOri(2, 0));
+    sampleOri_21->setCellValue(sampleOri(2, 1));
+    sampleOri_22->setCellValue(sampleOri(2, 2));
 
     const auto& sampleOffset =
         selectedState.sampleOrientationOffset.normalized().toRotationMatrix();
-    sampleOff_00->setCellValue(sampleOffset(0,0));
-    sampleOff_01->setCellValue(sampleOffset(0,1));
-    sampleOff_02->setCellValue(sampleOffset(0,2));
-    sampleOff_10->setCellValue(sampleOffset(1,0));
-    sampleOff_11->setCellValue(sampleOffset(1,1));
-    sampleOff_12->setCellValue(sampleOffset(1,2));
-    sampleOff_20->setCellValue(sampleOffset(2,0));
-    sampleOff_21->setCellValue(sampleOffset(2,1));
-    sampleOff_22->setCellValue(sampleOffset(2,2));
+    sampleOff_00->setCellValue(sampleOffset(0, 0));
+    sampleOff_01->setCellValue(sampleOffset(0, 1));
+    sampleOff_02->setCellValue(sampleOffset(0, 2));
+    sampleOff_10->setCellValue(sampleOffset(1, 0));
+    sampleOff_11->setCellValue(sampleOffset(1, 1));
+    sampleOff_12->setCellValue(sampleOffset(1, 2));
+    sampleOff_20->setCellValue(sampleOffset(2, 0));
+    sampleOff_21->setCellValue(sampleOffset(2, 1));
+    sampleOff_22->setCellValue(sampleOffset(2, 2));
 
     const auto& detectorOri = selectedState.detectorOrientation;
-    detectorOri_00->setCellValue(detectorOri(0,0));
-    detectorOri_01->setCellValue(detectorOri(0,1));
-    detectorOri_02->setCellValue(detectorOri(0,2));
-    detectorOri_10->setCellValue(detectorOri(1,0));
-    detectorOri_11->setCellValue(detectorOri(1,1));
-    detectorOri_12->setCellValue(detectorOri(1,2));
-    detectorOri_20->setCellValue(detectorOri(2,0));
-    detectorOri_21->setCellValue(detectorOri(2,1));
-    detectorOri_22->setCellValue(detectorOri(2,2));
+    detectorOri_00->setCellValue(detectorOri(0, 0));
+    detectorOri_01->setCellValue(detectorOri(0, 1));
+    detectorOri_02->setCellValue(detectorOri(0, 2));
+    detectorOri_10->setCellValue(detectorOri(1, 0));
+    detectorOri_11->setCellValue(detectorOri(1, 1));
+    detectorOri_12->setCellValue(detectorOri(1, 2));
+    detectorOri_20->setCellValue(detectorOri(2, 0));
+    detectorOri_21->setCellValue(detectorOri(2, 1));
+    detectorOri_22->setCellValue(detectorOri(2, 2));
 
     const auto& ni = selectedState.ni;
     beamX->setCellValue(ni[0]);

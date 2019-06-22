@@ -19,9 +19,9 @@
 #include <QRect>
 #include <QStack>
 
-#include "core/peak/Peak3D.h"
-#include "core/experiment/DataTypes.h"
 #include "base/mask/IMask.h"
+#include "core/experiment/DataTypes.h"
+#include "core/peak/Peak3D.h"
 
 #include "apps/ColorMap.h"
 #include "models/SessionModel.h"
@@ -44,7 +44,7 @@ typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rowM
 class DetectorScene : public QGraphicsScene {
     Q_OBJECT
 
-public:
+ public:
     enum MODE {
         SELECT = 0,
         ZOOM = 1,
@@ -77,7 +77,7 @@ public:
 
     void clearPeakGraphicsItems();
 
-protected:
+ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
 
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
@@ -88,7 +88,7 @@ protected:
 
     void wheelEvent(QGraphicsSceneWheelEvent* event);
 
-public slots:
+ public slots:
 
     void resetScene();
 
@@ -120,7 +120,7 @@ public slots:
 
     int currentFrame() const;
 
-signals:
+ signals:
     //! Signal emitted for all changes of the image
     void dataChanged();
 
@@ -132,7 +132,7 @@ signals:
 
     void signalChangeSelectedPeak(nsx::sptrPeak3D peak);
 
-private:
+ private:
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
 

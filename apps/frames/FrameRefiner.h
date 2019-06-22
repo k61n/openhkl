@@ -16,9 +16,9 @@
 
 #include <map>
 
-#include "core/peak/Peak3D.h"
-#include "core/experiment/DataTypes.h"
 #include "core/algo/Refiner.h"
+#include "core/experiment/DataTypes.h"
+#include "core/peak/Peak3D.h"
 
 #include "apps/frames/NSXQFrame.h"
 
@@ -35,27 +35,27 @@ class QWidget;
 class FrameRefiner : public NSXQFrame {
     Q_OBJECT
 
-public:
+ public:
     static FrameRefiner* create(ExperimentItem* experiment_item, const nsx::PeakList& peaks);
 
     static FrameRefiner* Instance();
 
     ~FrameRefiner();
 
-private slots:
+ private slots:
 
     void slotActionClicked(QAbstractButton* button);
 
     void slotTabRemoved(int index);
 
-private:
+ private:
     explicit FrameRefiner(ExperimentItem* experiment_item, const nsx::PeakList& peaks);
 
     void accept();
 
     void refine();
 
-private:
+ private:
     static FrameRefiner* _instance;
 
     Ui::FrameRefiner* _ui;

@@ -21,17 +21,17 @@
 
 #include <boost/interprocess/file_mapping.hpp>
 
+#include "base/parser/Parser.h"
+#include "base/utils/StringIO.h"
+#include "base/utils/Units.h"
 #include "core/detector/Detector.h"
+#include "core/detector/MatrixParser.h"
 #include "core/gonio/Component.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/loader/ILLDataReader.h"
-#include "core/detector/MatrixParser.h"
-#include "base/parser/Parser.h"
-#include "base/utils/StringIO.h"
-#include "base/utils/Units.h"
 
 namespace nsx {
 
@@ -45,8 +45,8 @@ ILLDataReader::ILLDataReader(const std::string& filename, Diffractometer* diffra
         boost::interprocess::file_mapping filemap(filename.c_str(), boost::interprocess::read_only);
         _map = boost::interprocess::mapped_region(filemap, boost::interprocess::read_only);
     } catch (std::exception& e) {
-        throw std::runtime_error("ILLDataReader failed to open file '"
-                                 + filename + "': " + e.what());
+        throw std::runtime_error(
+            "ILLDataReader failed to open file '" + filename + "': " + e.what());
     }
 
     // Gets the actual file size

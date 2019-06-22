@@ -31,14 +31,14 @@ class PeaksItem;
 class PeaksPropertyWidget : public QWidget {
     Q_OBJECT
 
-public:
+ public:
     explicit PeaksPropertyWidget(PeaksItem* caller, QWidget* parent = 0);
 
     ~PeaksPropertyWidget();
 
     CollectedPeaksModel* model();
 
-private:
+ private:
     PeaksItem* _peaks_item;
 
     Ui::PeaksPropertyWidget* ui;

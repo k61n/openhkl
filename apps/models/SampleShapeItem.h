@@ -19,7 +19,7 @@
 #include "apps/models/InspectableTreeItem.h"
 
 class SampleShapeItem : public InspectableTreeItem {
-public:
+ public:
     SampleShapeItem();
     ~SampleShapeItem() = default;
     QWidget* inspectItem();

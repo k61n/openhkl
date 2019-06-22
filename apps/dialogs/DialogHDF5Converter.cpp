@@ -20,13 +20,13 @@
 #include <QString>
 #include <QStringList>
 
+#include "base/logger/Logger.h"
+#include "base/utils/Path.h"
+#include "core/algo/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/instrument/InstrumentTypes.h"
-#include "core/algo/DataReaderFactory.h"
-#include "base/logger/Logger.h"
 #include "core/instrument/HardwareParameters.h"
-#include "base/utils/Path.h"
+#include "core/instrument/InstrumentTypes.h"
 
 #include "apps/dialogs/DialogHDF5Converter.h"
 #include "apps/models/DataItem.h"
@@ -56,21 +56,21 @@ void DialogHDF5Converter::slotActionClicked(QAbstractButton* button)
     auto button_role = _ui->cancelOK->standardButton(button);
 
     switch (button_role) {
-    case QDialogButtonBox::StandardButton::Apply: {
-        convert();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Cancel: {
-        reject();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Ok: {
-        accept();
-        break;
-    }
-    default: {
-        return;
-    }
+        case QDialogButtonBox::StandardButton::Apply: {
+            convert();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Cancel: {
+            reject();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Ok: {
+            accept();
+            break;
+        }
+        default: {
+            return;
+        }
     }
 }
 

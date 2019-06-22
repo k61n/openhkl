@@ -15,12 +15,12 @@
 #include <QDoubleSpinBox>
 #include <QSpinBox>
 
-#include "core/detector/Detector.h"
 #include "base/geometry/DirectVector.h"
+#include "base/utils/Units.h"
+#include "core/detector/Detector.h"
 #include "core/gonio/Gonio.h"
 #include "core/gonio/RotAxis.h"
 #include "core/instrument/Diffractometer.h"
-#include "base/utils/Units.h"
 
 #include "apps/models/DetectorItem.h"
 #include "apps/tree/DetectorPropertyWidget.h"

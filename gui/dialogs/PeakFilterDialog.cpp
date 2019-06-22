@@ -15,10 +15,10 @@
 #include "gui/dialogs/PeakFilterDialog.h"
 
 #include "core/analyse/PeakFilter.h"
-#include "gui/dialogs/ListNameDialog.h"
 #include "gui/MainWin.h"
-#include "gui/models/Session.h"
+#include "gui/dialogs/ListNameDialog.h"
 #include "gui/models/Meta.h"
+#include "gui/models/Session.h"
 #include <QCR/engine/logger.h>
 #include <QDialogButtonBox>
 #include <QHBoxLayout>
@@ -186,9 +186,8 @@ void PeakFilter::filterPeaks()
 
     if (byUnitCell->isChecked()) {
         if (unitCell->count() > 0) {
-            nsx::sptrUnitCell unit_cell =
-                    unitCell->itemData(unitCell->currentIndex(), Qt::UserRole)
-                                 .value<nsx::sptrUnitCell>();
+            nsx::sptrUnitCell unit_cell = unitCell->itemData(unitCell->currentIndex(), Qt::UserRole)
+                                              .value<nsx::sptrUnitCell>();
             filtered_peaks = peak_filter.indexed(filtered_peaks, *unit_cell, tolerance->value());
         }
     }
@@ -262,20 +261,20 @@ void PeakFilter::slotActionClicked(QAbstractButton* button)
     auto button_role = buttons->standardButton(button);
 
     switch (button_role) {
-    case QDialogButtonBox::StandardButton::Apply: {
-        filterPeaks();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Cancel: {
-        reject();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Ok: {
-        accept();
-        break;
-    }
-    default: {
-        return;
-    }
+        case QDialogButtonBox::StandardButton::Apply: {
+            filterPeaks();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Cancel: {
+            reject();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Ok: {
+            accept();
+            break;
+        }
+        default: {
+            return;
+        }
     }
 }

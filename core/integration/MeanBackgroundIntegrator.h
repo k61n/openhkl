@@ -22,7 +22,7 @@ namespace nsx {
 //! Compute the mean background near a peak.
 
 class MeanBackgroundIntegrator : public IPeakIntegrator {
-public:
+ public:
     MeanBackgroundIntegrator();
     bool compute(sptrPeak3D, const IntegrationRegion& region) override;
 };

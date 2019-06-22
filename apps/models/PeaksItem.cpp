@@ -21,7 +21,9 @@
 #include <QStandardItem>
 #include <QString>
 
-#include "tables/crystal/UnitCell.h"
+#include "base/logger/Logger.h"
+#include "core/algo/DataReaderFactory.h"
+#include "core/analyse/PeakFilter.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Sample.h"
@@ -31,12 +33,10 @@
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/integration/Profile1DIntegrator.h"
 #include "core/integration/Profile3DIntegrator.h"
-#include "core/algo/DataReaderFactory.h"
+#include "core/loader/RawDataReader.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
-#include "core/loader/RawDataReader.h"
-#include "base/logger/Logger.h"
-#include "core/analyse/PeakFilter.h"
+#include "tables/crystal/UnitCell.h"
 
 #include "apps/MainWindow.h"
 #include "apps/dialogs/DialogIntegrate.h"

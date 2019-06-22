@@ -34,7 +34,7 @@ class ExperimentItem;
 class DialogPeakFilter : public QDialog {
     Q_OBJECT
 
-public:
+ public:
     static DialogPeakFilter*
     create(ExperimentItem* experiment_tree, const nsx::PeakList& peaks, QWidget* parent = nullptr);
 
@@ -42,7 +42,7 @@ public:
 
     virtual ~DialogPeakFilter();
 
-public slots:
+ public slots:
 
     virtual void accept() override;
 
@@ -50,13 +50,13 @@ public slots:
 
     void slotUnitCellChanged(int index);
 
-private:
+ private:
     DialogPeakFilter(
         ExperimentItem* experiment_tree, const nsx::PeakList& peaks, QWidget* parent = nullptr);
 
     void filterPeaks();
 
-private:
+ private:
     static DialogPeakFilter* _instance;
 
     Ui::DialogPeakFilter* _ui;

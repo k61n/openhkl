@@ -26,12 +26,12 @@ class WidgetRefinerFit;
 class WidgetRefinerFit : public QWidget {
     Q_OBJECT
 
-public:
+ public:
     WidgetRefinerFit(const std::map<nsx::sptrDataSet, nsx::Refiner>& refiners);
 
     ~WidgetRefinerFit();
 
-private slots:
+ private slots:
 
     void slotSelectedDataChanged(int selected_data);
 
@@ -39,7 +39,7 @@ private slots:
 
     void slotSelectedFrameChanged(int selected_frame);
 
-private:
+ private:
     Ui::WidgetRefinerFit* _ui;
 
     std::map<nsx::sptrDataSet, nsx::Refiner> _refiners;

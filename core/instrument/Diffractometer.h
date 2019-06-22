@@ -24,7 +24,7 @@ namespace nsx {
 //! A diffractometer setup, consisting of a sample, source, and detector.
 
 class Diffractometer {
-public:
+ public:
     static Diffractometer* create(const std::string& name);
 
     Diffractometer(const YAML::Node& node);
@@ -70,7 +70,7 @@ public:
     //! Sets the source of this diffractometer
     void setSource(const Source& source);
 
-protected:
+ protected:
     Diffractometer();
 
     //! Constructs a diffractometer with a given name

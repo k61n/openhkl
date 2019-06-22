@@ -35,12 +35,12 @@
 #include <QString>
 #include <QVector>
 
-#include "tables/crystal/UnitCell.h"
-#include "core/experiment/Experiment.h"
 #include "base/geometry/ReciprocalVector.h"
-#include "core/instrument/Diffractometer.h"
 #include "base/logger/Logger.h"
+#include "core/experiment/Experiment.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/peak/Peak3D.h"
+#include "tables/crystal/UnitCell.h"
 
 #include "QCustomPlot.h"
 #include "apps/MainWindow.h"

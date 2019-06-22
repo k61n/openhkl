@@ -23,8 +23,8 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
-#include "core/experiment/DataSet.h"
 #include "base/geometry/AABB.h"
+#include "core/experiment/DataSet.h"
 
 #include "apps/items/EllipseMaskGraphicsItem.h"
 #include "apps/models/DetectorScene.h"

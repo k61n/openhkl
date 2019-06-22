@@ -20,7 +20,7 @@ class PlottableGraphicsItem;
 
 class SXPlot : public QCustomPlot {
     Q_OBJECT
-public:
+ public:
     static SXPlot* create(QWidget* parent);
 
     explicit SXPlot(QWidget* parent = 0);
@@ -31,7 +31,7 @@ public:
 
     virtual std::string getType() const;
 
-public slots:
+ public slots:
     //
     void mousePress();
     //
@@ -46,6 +46,6 @@ public slots:
     // Export the graphs into column ASCII format
     void exportToAscii();
 
-private:
+ private:
     void copyViewToClipboard();
 };

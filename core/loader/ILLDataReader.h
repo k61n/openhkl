@@ -15,7 +15,7 @@
 #ifndef CORE_LOADER_ILLDATAREADER_H
 #define CORE_LOADER_ILLDATAREADER_H
 
-#include "core/raw/IDataReader.h" \\ inherits from
+#include "core/raw/IDataReader.h" // inherits from
 
 #include <boost/interprocess/mapped_region.hpp>
 
@@ -24,7 +24,7 @@ namespace nsx {
 //! IDataReader for the ILL ascii data format.
 
 class ILLDataReader : public IDataReader {
-public:
+ public:
     ILLDataReader() = delete;
     ILLDataReader(const ILLDataReader& other) = delete;
     ILLDataReader(const std::string& filename, Diffractometer* diffractometer);
@@ -39,7 +39,7 @@ public:
     //! Read a single frame
     Eigen::MatrixXi data(size_t frame) final;
 
-private:
+ private:
     static std::size_t BlockSize;
 
     //! Invoke seekg to beginning the line number, at position pos. First line is

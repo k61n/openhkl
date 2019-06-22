@@ -19,20 +19,19 @@
 #include <QJsonObject>
 
 #include "core/shape/ShapeLibrary.h"
-#include "core/shape/ShapeLibrary.h"
 
 #include "apps/models/TreeItem.h"
 
 class QWidget;
 
 class LibraryItem : public TreeItem {
-public:
+ public:
     explicit LibraryItem();
 
     void incorporateCalculatedPeaks();
 
     nsx::sptrShapeLibrary& library() { return _library; }
 
-private:
+ private:
     nsx::sptrShapeLibrary _library;
 };

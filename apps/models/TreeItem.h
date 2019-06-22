@@ -26,7 +26,7 @@ class QWidget;
 class ExperimentItem;
 
 class TreeItem : public QStandardItem {
-public:
+ public:
     explicit TreeItem();
 
     virtual ~TreeItem();

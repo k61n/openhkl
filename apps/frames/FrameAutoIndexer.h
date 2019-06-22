@@ -33,14 +33,14 @@ class QAbstractButton;
 class FrameAutoIndexer : public NSXQFrame {
     Q_OBJECT
 
-public:
+ public:
     static FrameAutoIndexer* create(ExperimentItem* experiment_item, const nsx::PeakList& peaks);
 
     static FrameAutoIndexer* Instance();
 
     ~FrameAutoIndexer();
 
-private slots:
+ private slots:
 
     void slotActionClicked(QAbstractButton* button);
 
@@ -50,7 +50,7 @@ private slots:
 
     void selectSolution(int);
 
-private:
+ private:
     FrameAutoIndexer(ExperimentItem* experiment_item, const nsx::PeakList& peaks);
 
     void accept();
@@ -61,7 +61,7 @@ private:
 
     void run();
 
-private:
+ private:
     static FrameAutoIndexer* _instance;
 
     Ui::FrameAutoIndexer* _ui;

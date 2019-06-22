@@ -15,7 +15,7 @@
 #ifndef CORE_LOADER_RAWDATAREADER_H
 #define CORE_LOADER_RAWDATAREADER_H
 
-#include "core/raw/IDataReader.h" \\ inherits from
+#include "core/raw/IDataReader.h" // inherits from
 
 namespace nsx {
 
@@ -34,7 +34,7 @@ struct RawDataReaderParameters {
 //! IDataReader for raw binary data.
 
 class RawDataReader : public IDataReader {
-public:
+ public:
     RawDataReader() = delete;
     RawDataReader(const RawDataReader& other) = delete;
 
@@ -69,10 +69,10 @@ public:
     //! Swap enddianness of the data
     void swapEndian();
 
-private:
+ private:
     template <typename T_> Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> matrixFromData() const;
 
-private:
+ private:
     std::vector<std::string> _filenames;
 
     RawDataReaderParameters _parameters;

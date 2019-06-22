@@ -27,7 +27,7 @@ class QWidget;
 class SXPlot;
 
 class CutSliceGraphicsItem : public CutterGraphicsItem {
-public:
+ public:
     // Constructors and destructor
 
     //! Construct a data slicer
@@ -54,7 +54,7 @@ public:
     //! Paint the slice
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
 
-private:
+ private:
     //! Horizontal or vertical integration
     bool _horizontal;
 };

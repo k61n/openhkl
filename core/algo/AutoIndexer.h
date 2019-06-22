@@ -15,9 +15,9 @@
 #ifndef CORE_ALGO_AUTOINDEXER_H
 #define CORE_ALGO_AUTOINDEXER_H
 
+#include "base/utils/ProgressHandler.h"
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/UnitCell.h"
-#include "base/utils/ProgressHandler.h"
 
 namespace nsx {
 
@@ -55,7 +55,7 @@ struct IndexerParameters {
 
 //! Class to automatically index a set of peaks
 class AutoIndexer {
-public:
+ public:
     //! Constructor
     //! @param handler the handler that will monitor the progresses
     AutoIndexer(const std::shared_ptr<ProgressHandler>& handler = nullptr);
@@ -71,7 +71,7 @@ public:
     //! Returns list of the best solutions ordered by percentage of successfully indexed peaks
     const std::vector<RankedSolution>& solutions() const;
 
-private:
+ private:
     void computeFFTSolutions();
 
     void refineSolutions();

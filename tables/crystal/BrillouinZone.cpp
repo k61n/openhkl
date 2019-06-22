@@ -17,9 +17,9 @@
 
 #include <Eigen/Eigenvalues>
 
+#include "base/geometry/ReciprocalVector.h"
 #include "tables/crystal/BrillouinZone.h"
 #include "tables/crystal/NiggliReduction.h"
-#include "base/geometry/ReciprocalVector.h"
 
 namespace {
 //! Update a list of Q-vectors by removing the duplicates.

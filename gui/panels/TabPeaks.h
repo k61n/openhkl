@@ -21,21 +21,21 @@
 #include <QCR/widgets/views.h>
 
 class ListTab : public QcrWidget {
-public:
+ public:
     ListTab(FilteredPeaksModel* filteredModel);
 
-private:
+ private:
     PeaksTableView* view;
 };
 
 class TabPeaks : public QcrWidget {
     Q_OBJECT
-public:
+ public:
     TabPeaks();
-private slots:
+ private slots:
     void slotSelectedListChanged(int i);
 
-private:
+ private:
     QcrComboBox* foundPeaksLists;
     QcrTabWidget* filtered;
 };

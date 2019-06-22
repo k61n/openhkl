@@ -16,14 +16,15 @@
 
 #include <iostream>
 
-#define ASSERT(cond) if (!(cond)) { std::cerr<< "assertion failed: " #cond << "\n"; exit(1); }
+#define ASSERT(cond)                                                                               \
+    if (!(cond)) {                                                                                 \
+        std::cerr << "assertion failed: " #cond << "\n";                                           \
+        exit(1);                                                                                   \
+    }
 
 namespace nsx {
 
-AtomicConvolver::AtomicConvolver()
-    : Convolver()
-{
-}
+AtomicConvolver::AtomicConvolver() : Convolver() {}
 
 AtomicConvolver::AtomicConvolver(const std::map<std::string, double>& parameters)
     : Convolver(parameters)
@@ -80,7 +81,7 @@ void AtomicConvolver::updateKernel(int nrows, int ncols)
     // Store transformed kernel as vector of complexes (convenient for convolution)
     for (int i = 0; i < nrows * _halfCols; ++i) {
         _transformedKernel[i] =
-            std::complex<double>{_transformedData[i][0], _transformedData[i][1]};
+            std::complex<double> {_transformedData[i][0], _transformedData[i][1]};
     }
 }
 
@@ -102,7 +103,7 @@ RealMatrix AtomicConvolver::convolve(const RealMatrix& image)
     // multiply fourier modes component-by-component
     for (int i = 0; i < nrows * _halfCols; ++i) {
         std::complex<double> tmp = factor * _transformedKernel[i];
-        tmp *= std::complex<double>{_transformedData[i][0], _transformedData[i][1]};
+        tmp *= std::complex<double> {_transformedData[i][0], _transformedData[i][1]};
         _transformedData[i][0] = tmp.real();
         _transformedData[i][1] = tmp.imag();
     }

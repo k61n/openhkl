@@ -30,7 +30,7 @@ namespace nsx {
 
 template <typename T, template <class> class Constructor, template <class> class Destructor>
 class Singleton {
-public:
+ public:
     //! return an instance of the class to be singletonized
     static T* Instance()
     {
@@ -42,13 +42,13 @@ public:
 
 //! actually constructs the unique instance of the class to be singletonized
 template <class T> class Constructor {
-public:
+ public:
     static T* construct() { return new T; }
 };
 
 //! actually destroys the unique instance of the class to be singletonized
 template <class T> class Destructor {
-public:
+ public:
     void operator()(T* p) { delete p; }
 };
 

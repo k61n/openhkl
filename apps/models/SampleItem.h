@@ -14,15 +14,15 @@
 
 #pragma once
 
-#include "core/peak/Peak3D.h"
 #include "core/instrument/InstrumentTypes.h"
+#include "core/peak/Peak3D.h"
 
 #include "apps/models/InspectableTreeItem.h"
 
 class UnitCellItem;
 
 class SampleItem : public InspectableTreeItem {
-public:
+ public:
     explicit SampleItem();
 
     QWidget* inspectItem() override;

@@ -19,13 +19,13 @@
 #include <QTableView>
 
 class IsotopesDatabaseDialog : public QDialog {
-public:
+ public:
     IsotopesDatabaseDialog();
 
-private:
+ private:
     QTableView* isotopeDatabaseView;
     void cellClicked(const QModelIndex& index);
     void sortingChanged(int, Qt::SortOrder);
 };
 
-#endif //GUI_DIALOGS_ISOTOPESDATABASEDIALOG_H
+#endif // GUI_DIALOGS_ISOTOPESDATABASEDIALOG_H

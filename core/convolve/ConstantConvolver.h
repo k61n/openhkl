@@ -24,7 +24,7 @@ namespace nsx {
 //! The kernel has the constant value 1 / (rows*cols).
 
 class ConstantConvolver : public AtomicConvolver {
-public:
+ public:
     ConstantConvolver();
 
     ConstantConvolver(const ConstantConvolver& other) = default;
@@ -39,7 +39,7 @@ public:
 
     virtual std::pair<size_t, size_t> kernelSize() const override;
 
-private:
+ private:
     RealMatrix _matrix(int nrows, int ncols) const override;
 };
 

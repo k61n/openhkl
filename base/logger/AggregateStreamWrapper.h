@@ -22,7 +22,7 @@
 namespace nsx {
 
 class AggregateStreamWrapper : public IStreamWrapper {
-public:
+ public:
     AggregateStreamWrapper(
         std::function<std::string()> prefix = nullptr,
         std::function<std::string()> suffix = nullptr);
@@ -37,7 +37,7 @@ public:
 
     virtual void printSuffix() override;
 
-private:
+ private:
     std::vector<IStreamWrapper*> _wrappers;
 };
 

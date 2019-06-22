@@ -14,11 +14,11 @@
 
 #include "gui/frames/AutoIndexerFrame.h"
 
-#include "gui/frames/UnitCellWidget.h"
-#include "gui/models/Session.h"
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
 #include "core/algo/AutoIndexer.h"
+#include "gui/frames/UnitCellWidget.h"
+#include "gui/models/Session.h"
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -200,26 +200,26 @@ void AutoIndexer::slotActionClicked(QAbstractButton* button)
     auto button_role = buttons->standardButton(button);
 
     switch (button_role) {
-    case QDialogButtonBox::StandardButton::Reset: {
-        resetUnitCell();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Apply: {
-        run();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Cancel: {
-        resetUnitCell();
-        close();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Ok: {
-        accept();
-        break;
-    }
-    default: {
-        return;
-    }
+        case QDialogButtonBox::StandardButton::Reset: {
+            resetUnitCell();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Apply: {
+            run();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Cancel: {
+            resetUnitCell();
+            close();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Ok: {
+            accept();
+            break;
+        }
+        default: {
+            return;
+        }
     }
 }
 

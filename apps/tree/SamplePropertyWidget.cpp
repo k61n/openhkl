@@ -14,11 +14,11 @@
 
 #include <sstream>
 
+#include "base/utils/Units.h"
 #include "core/gonio/Axis.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
-#include "base/utils/Units.h"
 
 #include "apps/models/SampleItem.h"
 #include "apps/models/UnitCellItem.h"

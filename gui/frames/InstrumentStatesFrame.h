@@ -20,10 +20,10 @@
 #include <QListWidget>
 
 class InstrumentStates : public QcrFrame {
-public:
+ public:
     InstrumentStates();
 
-private:
+ private:
     void selectedDataChanged(int selectedData);
     void selectedFrameChanged(int selectedFrame);
 

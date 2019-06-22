@@ -17,8 +17,8 @@
 
 #include "base/geometry/ReciprocalVector.h"
 
-#include <vector>
 #include <Eigen/Dense>
+#include <vector>
 
 namespace nsx {
 
@@ -30,7 +30,7 @@ class UnitCell;
 //! dealing with vectors in algorithms dedicated to crystallographic data.
 
 class MillerIndex {
-public:
+ public:
     MillerIndex() = default;
     MillerIndex(const MillerIndex& other) = default;
 
@@ -78,7 +78,7 @@ public:
     //! direct l output for python
     int l() const;
 
-private:
+ private:
     Eigen::RowVector3i _hkl;
     Eigen::RowVector3d _error;
 };

@@ -18,17 +18,17 @@
 #include <map>
 #include <set>
 
+#include "base/geometry/ReciprocalVector.h"
+#include "core/analyse/MergedData.h"
+#include "core/analyse/Octree.h"
+#include "core/analyse/PeakFilter.h"
+#include "core/experiment/DataSet.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Sample.h"
+#include "core/peak/Peak3D.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
-#include "core/experiment/DataSet.h"
-#include "base/geometry/ReciprocalVector.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/instrument/Sample.h"
-#include "core/analyse/MergedData.h"
-#include "core/analyse/Octree.h"
-#include "core/peak/Peak3D.h"
-#include "core/analyse/PeakFilter.h"
 
 namespace nsx {
 

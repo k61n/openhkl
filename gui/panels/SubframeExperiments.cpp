@@ -14,8 +14,8 @@
 
 #include "gui/panels/SubframeExperiments.h"
 
-#include "gui/actions/Triggers.h"
 #include "gui/MainWin.h"
+#include "gui/actions/Triggers.h"
 #include "gui/models/Session.h"
 #include <QCR/widgets/tables.h>
 #include <QHBoxLayout>

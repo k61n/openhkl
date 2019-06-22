@@ -13,12 +13,12 @@
 //  ***********************************************************************************************
 
 #include "core/integration/PixelSumIntegrator.h"
-#include "core/peak/Intensity.h"
-#include "core/experiment/DataSet.h"
 #include "base/geometry/Ellipsoid.h"
-#include "core/integration/MeanBackgroundIntegrator.h"
-#include "core/peak/Peak3D.h"
 #include "core/analyse/Blob3D.h"
+#include "core/experiment/DataSet.h"
+#include "core/integration/MeanBackgroundIntegrator.h"
+#include "core/peak/Intensity.h"
+#include "core/peak/Peak3D.h"
 
 namespace nsx {
 

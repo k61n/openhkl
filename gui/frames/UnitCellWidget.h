@@ -21,11 +21,11 @@
 
 class UnitCellWidget : public QcrWidget {
     Q_OBJECT
-public:
+ public:
     UnitCellWidget(nsx::sptrUnitCell, const QString&);
     nsx::sptrUnitCell unitCell() const { return unitCell_; }
 
-private:
+ private:
     nsx::sptrUnitCell unitCell_;
 };
 

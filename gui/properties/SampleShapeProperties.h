@@ -22,10 +22,10 @@
 
 //! Property widget for the sample and its shape
 class SampleShapeProperties : public QcrWidget {
-public:
+ public:
     SampleShapeProperties();
 
-private:
+ private:
     void onRemake();
     void clear();
     void facesChanged();

@@ -15,13 +15,13 @@
 #ifndef BASE_LOGGER_LOGFILESTREAMWRAPPER_H
 #define BASE_LOGGER_LOGFILESTREAMWRAPPER_H
 
-#include <fstream>
 #include "base/logger/IStreamWrapper.h"
+#include <fstream>
 
 namespace nsx {
 
 class LogFileStreamWrapper : public IStreamWrapper {
-public:
+ public:
     //! Constructor
     LogFileStreamWrapper(
         const std::string& logfile, std::function<std::string()> prefix = nullptr,
@@ -35,7 +35,7 @@ public:
 
     virtual void printSuffix() override;
 
-private:
+ private:
     std::ofstream _stream;
 };
 

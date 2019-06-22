@@ -19,7 +19,7 @@
 
 //! Submenus and menu entries of the MainWin menu bar.
 class Menus {
-public:
+ public:
     Menus() = delete;
     Menus(QMenuBar*);
     QMenu* file_;
@@ -29,7 +29,7 @@ public:
     QMenu* help_;
     QMenu* view_;
 
-private:
+ private:
     QMenuBar* mbar_;
     QAction* separator() const;
     QMenu* actionsToMenu(const char* menuName, QList<QAction*> actions);

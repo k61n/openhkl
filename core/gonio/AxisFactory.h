@@ -15,9 +15,9 @@
 #ifndef CORE_GONIO_AXISFACTORY_H
 #define CORE_GONIO_AXISFACTORY_H
 
-#include "core/gonio/Axis.h"
 #include "base/utils/Factory.h"
 #include "base/utils/Singleton.h"
+#include "core/gonio/Axis.h"
 
 namespace nsx {
 
@@ -25,7 +25,7 @@ namespace nsx {
 
 class AxisFactory : public Factory<Axis, std::string, const YAML::Node&>,
                     public Singleton<AxisFactory, Constructor, Destructor> {
-private:
+ private:
     friend class Constructor<AxisFactory>;
     friend class Destructor<AxisFactory>;
     AxisFactory();

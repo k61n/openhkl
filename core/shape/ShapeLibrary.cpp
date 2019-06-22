@@ -14,17 +14,17 @@
 
 #include "core/shape/ShapeLibrary.h"
 
-#include "tables/crystal/UnitCell.h"
-#include "core/detector/Detector.h"
-#include "core/experiment/DataSet.h"
 #include "base/fit/Minimizer.h"
 #include "base/geometry/Ellipsoid.h"
+#include "base/logger/Logger.h"
+#include "core/detector/Detector.h"
+#include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Source.h"
-#include "core/raw/IDataReader.h"
-#include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"
+#include "core/raw/IDataReader.h"
+#include "tables/crystal/UnitCell.h"
 
 #include <stdexcept>
 
@@ -390,25 +390,25 @@ Eigen::Matrix3d ShapeLibrary::meanCovariance(
 
         double weight;
         switch (interpolation) {
-        case (PeakInterpolation::NoInterpolation): {
-            weight = 1.0;
-            break;
-        }
-        case (PeakInterpolation::InverseDistance): {
-            Eigen::RowVector3d dq = reference_peak->q().rowVector() - peak->q().rowVector();
-            weight = 1.0 / dq.norm();
-            break;
-        }
-        case (PeakInterpolation::Intensity): {
-            auto corrected_intensity = peak->correctedIntensity();
-            double intensity = corrected_intensity.value();
-            double sigma = corrected_intensity.sigma();
-            weight = intensity / sigma;
-            break;
-        }
-        default: {
-            throw std::runtime_error("Invalid peak interpolation");
-        }
+            case (PeakInterpolation::NoInterpolation): {
+                weight = 1.0;
+                break;
+            }
+            case (PeakInterpolation::InverseDistance): {
+                Eigen::RowVector3d dq = reference_peak->q().rowVector() - peak->q().rowVector();
+                weight = 1.0 / dq.norm();
+                break;
+            }
+            case (PeakInterpolation::Intensity): {
+                auto corrected_intensity = peak->correctedIntensity();
+                double intensity = corrected_intensity.value();
+                double sigma = corrected_intensity.sigma();
+                weight = intensity / sigma;
+                break;
+            }
+            default: {
+                throw std::runtime_error("Invalid peak interpolation");
+            }
         }
 
         cov += weight * (J * peak->shape().inverseMetric() * J.transpose());

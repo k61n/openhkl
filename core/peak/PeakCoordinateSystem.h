@@ -15,8 +15,8 @@
 #ifndef CORE_PEAK_PEAKCOORDINATESYSTEM_H
 #define CORE_PEAK_PEAKCOORDINATESYSTEM_H
 
-#include "core/detector/DetectorEvent.h"
 #include "base/geometry/Ellipsoid.h"
+#include "core/detector/DetectorEvent.h"
 #include "core/instrument/InterpolatedState.h"
 #include "core/peak/Peak3D.h"
 
@@ -36,7 +36,7 @@ namespace nsx {
 //! crucial for shape prediction and profile fitting.
 
 class PeakCoordinateSystem {
-public:
+ public:
     //! Construct the coordinate system about the given peak.
     PeakCoordinateSystem(sptrPeak3D peak);
     //! Transform from detector coordinates in to peak coordinates.
@@ -54,7 +54,7 @@ public:
     //! Transform the detector shape into standard coordinates
     Ellipsoid standardShape() const;
 
-private:
+ private:
     //! Reference peak about which the coordinate system is based
     sptrPeak3D _peak;
     //! DetectorEvent corresponding to peak center

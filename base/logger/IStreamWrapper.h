@@ -20,7 +20,7 @@
 namespace nsx {
 
 class IStreamWrapper {
-public:
+ public:
     //! Constructor
     IStreamWrapper(
         std::function<std::string()> prefix = nullptr,
@@ -38,7 +38,7 @@ public:
 
     virtual void printSuffix() = 0;
 
-protected:
+ protected:
     std::function<std::string()> _prefix;
 
     std::function<std::string()> _suffix;

@@ -15,9 +15,9 @@
 #include "gui/panels/SubframeImage.h"
 
 #include "core/experiment/DataSet.h"
+#include "gui/MainWin.h"
 #include "gui/actions/Triggers.h"
 #include "gui/graphics/DetectorScene.h"
-#include "gui/MainWin.h"
 #include "gui/models/Session.h"
 #include <QGraphicsView>
 #include <QHBoxLayout>
@@ -64,8 +64,8 @@ ImageWidget::ImageWidget() : QcrWidget {"Image"}
     horizontalLayout->addWidget(slide);
     mode = new QcrComboBox(
         "adhoc_modus", new QcrCell<int>(1),
-        {"selection", "zoom", "line plot", "horizontal slice", "vertical slice",
-         "rectangular mask", "ellipsoidal mask"});
+        {"selection", "zoom", "line plot", "horizontal slice", "vertical slice", "rectangular mask",
+         "ellipsoidal mask"});
     horizontalLayout->addWidget(mode);
     leftLayout->addWidget(intensityLayout);
     overallLayout->addLayout(leftLayout);
@@ -74,8 +74,9 @@ ImageWidget::ImageWidget() : QcrWidget {"Image"}
     frameLayout->setEnabled(false);
 
     connect(slide, SIGNAL(valueChanged(int)), imageView->getScene(), SLOT(setMaxIntensity(int)));
-    connect(scrollbar, SIGNAL(valueChanged(int)),
-            imageView->getScene(), SLOT(slotChangeSelectedFrame(int)));
+    connect(
+        scrollbar, SIGNAL(valueChanged(int)), imageView->getScene(),
+        SLOT(slotChangeSelectedFrame(int)));
     connect(scrollbar, &QScrollBar::valueChanged, [=](int i) { frame->setCellValue(i); });
     frame->setHook([=](int i) { scrollbar->setValue(i); });
     mode->setHook([=](int i) { imageView->getScene()->changeInteractionMode(i); });

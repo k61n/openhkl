@@ -6,24 +6,23 @@
 #include <string>
 #include <vector>
 
-#include "core/algo/AutoIndexer.h"
-#include "core/detector/DetectorEvent.h"
-#include "core/peak/Peak3D.h"
-#include "core/experiment/DataSet.h"
-#include "core/experiment/Experiment.h"
 #include "base/geometry/DirectVector.h"
 #include "base/geometry/ReciprocalVector.h"
+#include "base/utils/ProgressHandler.h"
+#include "base/utils/Units.h"
+#include "core/algo/AutoIndexer.h"
+#include "core/algo/DataReaderFactory.h"
+#include "core/analyse/PeakFilter.h"
+#include "core/analyse/PeakFinder.h"
+#include "core/convolve/ConvolverFactory.h"
+#include "core/detector/DetectorEvent.h"
+#include "core/experiment/DataSet.h"
+#include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/integration/PixelSumIntegrator.h"
-#include "core/shape/ShapeLibrary.h"
-#include "core/algo/DataReaderFactory.h"
 #include "core/peak/Peak3D.h"
-#include "core/analyse/PeakFilter.h"
-#include "core/convolve/ConvolverFactory.h"
-#include "core/analyse/PeakFinder.h"
-#include "base/utils/ProgressHandler.h"
-#include "base/utils/Units.h"
+#include "core/shape/ShapeLibrary.h"
 
 TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 {

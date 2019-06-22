@@ -21,19 +21,18 @@
 #include <QIcon>
 #include <QString>
 
-#include "tables/crystal/MillerIndex.h"
-#include "tables/crystal/UnitCell.h"
-#include "core/detector/Detector.h"
-#include "core/peak/Peak3D.h"
-#include "core/experiment/DataSet.h"
 #include "base/geometry/ReciprocalVector.h"
+#include "base/logger/Logger.h"
+#include "core/analyse/PeakFilter.h"
+#include "core/detector/Detector.h"
+#include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
+#include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
-#include "base/logger/Logger.h"
-#include "core/peak/Peak3D.h"
-#include "core/analyse/PeakFilter.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/UnitCell.h"
 
 #include "apps/models/CollectedPeaksModel.h"
 #include "apps/models/SessionModel.h"
@@ -191,37 +190,37 @@ QVariant CollectedPeaksModel::headerData(int section, Qt::Orientation orientatio
 
     if (orientation == Qt::Horizontal) {
         switch (section) {
-        case Column::h: {
-            return QString("h");
-        }
-        case Column::k: {
-            return QString("k");
-        }
-        case Column::l: {
-            return QString("l");
-        }
-        case Column::px: {
-            return QString("pixel x");
-        }
-        case Column::py: {
-            return QString("pixel y");
-        }
-        case Column::frame: {
-            return QString("frame");
-        }
-        case Column::intensity: {
-            return QString("intensity");
-        }
-        case Column::sigmaIntensity: {
-            return QString(QChar(0x03C3)) + "(intensity)";
-        }
-        case Column::numor: {
-            return QString("numor");
-        }
-        case Column::unitCell: {
-            return QString("unit cell");
-        }
-        default: return QVariant();
+            case Column::h: {
+                return QString("h");
+            }
+            case Column::k: {
+                return QString("k");
+            }
+            case Column::l: {
+                return QString("l");
+            }
+            case Column::px: {
+                return QString("pixel x");
+            }
+            case Column::py: {
+                return QString("pixel y");
+            }
+            case Column::frame: {
+                return QString("frame");
+            }
+            case Column::intensity: {
+                return QString("intensity");
+            }
+            case Column::sigmaIntensity: {
+                return QString(QChar(0x03C3)) + "(intensity)";
+            }
+            case Column::numor: {
+                return QString("numor");
+            }
+            case Column::unitCell: {
+                return QString("unit cell");
+            }
+            default: return QVariant();
         }
     } else {
         return QVariant(section + 1);
@@ -253,59 +252,59 @@ QVariant CollectedPeaksModel::data(const QModelIndex& index, int role) const
     auto peak_center = _peaks[row]->shape().center();
 
     switch (role) {
-    case Qt::DisplayRole:
+        case Qt::DisplayRole:
 
-        switch (column) {
-        case Column::h: {
-            return hkl(0);
-        }
-        case Column::k: {
-            return hkl(1);
-        }
-        case Column::l: {
-            return hkl(2);
-        }
-        case Column::px: {
-            return peak_center(0);
-        }
-        case Column::py: {
-            return peak_center(1);
-        }
-        case Column::frame: {
-            return peak_center(2);
-        }
-        case Column::intensity: {
-            return intensity;
-        }
-        case Column::sigmaIntensity: {
-            return sigma_intensity;
-        }
-        case Column::numor: {
-            return _peaks[row]->data()->reader()->metadata().key<int>("Numor");
-        }
-        case Column::unitCell:
-            auto unit_cell = _peaks[row]->unitCell();
-            if (unit_cell)
-                return QString::fromStdString(unit_cell->name());
+            switch (column) {
+                case Column::h: {
+                    return hkl(0);
+                }
+                case Column::k: {
+                    return hkl(1);
+                }
+                case Column::l: {
+                    return hkl(2);
+                }
+                case Column::px: {
+                    return peak_center(0);
+                }
+                case Column::py: {
+                    return peak_center(1);
+                }
+                case Column::frame: {
+                    return peak_center(2);
+                }
+                case Column::intensity: {
+                    return intensity;
+                }
+                case Column::sigmaIntensity: {
+                    return sigma_intensity;
+                }
+                case Column::numor: {
+                    return _peaks[row]->data()->reader()->metadata().key<int>("Numor");
+                }
+                case Column::unitCell:
+                    auto unit_cell = _peaks[row]->unitCell();
+                    if (unit_cell)
+                        return QString::fromStdString(unit_cell->name());
+                    else
+                        return QString("not set");
+            }
+            break;
+        case Qt::ForegroundRole: {
+            if (_peaks[row]->enabled())
+                return QBrush(Qt::black);
             else
-                return QString("not set");
-        }
-        break;
-    case Qt::ForegroundRole: {
-        if (_peaks[row]->enabled())
-            return QBrush(Qt::black);
-        else
-            return QBrush(Qt::red);
+                return QBrush(Qt::red);
 
-        break;
-    }
-    case Qt::ToolTipRole:
-        switch (column) {
-        case Column::h: return hkl[0] + hkl_error[0];
-        case Column::k: return hkl[1] + hkl_error[1];
-        case Column::l: return hkl[2] + hkl_error[2];
+            break;
         }
-        break;
+        case Qt::ToolTipRole:
+            switch (column) {
+                case Column::h: return hkl[0] + hkl_error[0];
+                case Column::k: return hkl[1] + hkl_error[1];
+                case Column::l: return hkl[2] + hkl_error[2];
+            }
+            break;
     }
     return QVariant::Invalid;
 }
@@ -316,106 +315,106 @@ void CollectedPeaksModel::sort(int column, Qt::SortOrder order)
         [](nsx::sptrPeak3D, nsx::sptrPeak3D) { return false; };
 
     switch (column) {
-    case Column::h: {
-        compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto cell1 = p1->unitCell();
-            auto cell2 = p2->unitCell();
-            if (cell1 && cell2) {
-                nsx::MillerIndex miller_index1(p1->q(), *cell1);
-                nsx::MillerIndex miller_index2(p2->q(), *cell2);
-                return (miller_index1[0] < miller_index2[0]);
-            } else {
-                return ((cell1 != nullptr) < (cell2 != nullptr));
-            }
-        };
-        break;
-    }
-    case Column::k: {
-        compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto cell1 = p1->unitCell();
-            auto cell2 = p2->unitCell();
-            if (cell1 && cell2) {
-                nsx::MillerIndex miller_index1(p1->q(), *cell1);
-                nsx::MillerIndex miller_index2(p2->q(), *cell2);
-                return (miller_index1[1] < miller_index2[1]);
-            } else {
-                return ((cell1 != nullptr) < (cell2 != nullptr));
-            }
-        };
-        break;
-    }
-    case Column::l: {
-        compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto cell1 = p1->unitCell();
-            auto cell2 = p2->unitCell();
-            if (cell1 && cell2) {
-                nsx::MillerIndex miller_index1(p1->q(), *cell1);
-                nsx::MillerIndex miller_index2(p2->q(), *cell2);
-                return (miller_index1[2] < miller_index2[2]);
-            } else {
-                return ((cell1 != nullptr) < (cell2 != nullptr));
-            }
-        };
-        break;
-    }
-    case Column::px: {
-        compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto center1 = p1->shape().center();
-            auto center2 = p2->shape().center();
-            return (center1[0] < center2[0]);
-        };
-        break;
-    }
-    case Column::py: {
-        compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto center1 = p1->shape().center();
-            auto center2 = p2->shape().center();
-            return (center1[1] < center2[1]);
-        };
-        break;
-    }
-    case Column::frame: {
-        compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto center1 = p1->shape().center();
-            auto center2 = p2->shape().center();
-            return (center1[2] < center2[2]);
-        };
-        break;
-    }
-    case Column::intensity: {
-        compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto intensity1 = p1->correctedIntensity().value();
-            auto intensity2 = p2->correctedIntensity().value();
-            return (intensity1 < intensity2);
-        };
-        break;
-    }
-    case Column::sigmaIntensity: {
-        compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            auto sigma_intensity1 = p1->correctedIntensity().sigma();
-            auto sigma_intensity2 = p2->correctedIntensity().sigma();
-            return (sigma_intensity1 < sigma_intensity2);
-        };
-        break;
-    }
-    case Column::numor: {
-        compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-            int numor1 = p1->data()->reader()->metadata().key<int>("Numor");
-            int numor2 = p2->data()->reader()->metadata().key<int>("Numor");
-            return (numor1 < numor2);
-        };
-        break;
-    }
-    case Column::unitCell: {
-        compareFn = [&](nsx::sptrPeak3D p1, const nsx::sptrPeak3D p2) {
-            auto uc1 = p1->unitCell();
-            auto uc2 = p2->unitCell();
-            std::string uc1Name = uc1 ? uc1->name() : "";
-            std::string uc2Name = uc2 ? uc2->name() : "";
-            return (uc2Name < uc1Name);
-        };
-        break;
-    }
+        case Column::h: {
+            compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
+                auto cell1 = p1->unitCell();
+                auto cell2 = p2->unitCell();
+                if (cell1 && cell2) {
+                    nsx::MillerIndex miller_index1(p1->q(), *cell1);
+                    nsx::MillerIndex miller_index2(p2->q(), *cell2);
+                    return (miller_index1[0] < miller_index2[0]);
+                } else {
+                    return ((cell1 != nullptr) < (cell2 != nullptr));
+                }
+            };
+            break;
+        }
+        case Column::k: {
+            compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
+                auto cell1 = p1->unitCell();
+                auto cell2 = p2->unitCell();
+                if (cell1 && cell2) {
+                    nsx::MillerIndex miller_index1(p1->q(), *cell1);
+                    nsx::MillerIndex miller_index2(p2->q(), *cell2);
+                    return (miller_index1[1] < miller_index2[1]);
+                } else {
+                    return ((cell1 != nullptr) < (cell2 != nullptr));
+                }
+            };
+            break;
+        }
+        case Column::l: {
+            compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
+                auto cell1 = p1->unitCell();
+                auto cell2 = p2->unitCell();
+                if (cell1 && cell2) {
+                    nsx::MillerIndex miller_index1(p1->q(), *cell1);
+                    nsx::MillerIndex miller_index2(p2->q(), *cell2);
+                    return (miller_index1[2] < miller_index2[2]);
+                } else {
+                    return ((cell1 != nullptr) < (cell2 != nullptr));
+                }
+            };
+            break;
+        }
+        case Column::px: {
+            compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
+                auto center1 = p1->shape().center();
+                auto center2 = p2->shape().center();
+                return (center1[0] < center2[0]);
+            };
+            break;
+        }
+        case Column::py: {
+            compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
+                auto center1 = p1->shape().center();
+                auto center2 = p2->shape().center();
+                return (center1[1] < center2[1]);
+            };
+            break;
+        }
+        case Column::frame: {
+            compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
+                auto center1 = p1->shape().center();
+                auto center2 = p2->shape().center();
+                return (center1[2] < center2[2]);
+            };
+            break;
+        }
+        case Column::intensity: {
+            compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
+                auto intensity1 = p1->correctedIntensity().value();
+                auto intensity2 = p2->correctedIntensity().value();
+                return (intensity1 < intensity2);
+            };
+            break;
+        }
+        case Column::sigmaIntensity: {
+            compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
+                auto sigma_intensity1 = p1->correctedIntensity().sigma();
+                auto sigma_intensity2 = p2->correctedIntensity().sigma();
+                return (sigma_intensity1 < sigma_intensity2);
+            };
+            break;
+        }
+        case Column::numor: {
+            compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
+                int numor1 = p1->data()->reader()->metadata().key<int>("Numor");
+                int numor2 = p2->data()->reader()->metadata().key<int>("Numor");
+                return (numor1 < numor2);
+            };
+            break;
+        }
+        case Column::unitCell: {
+            compareFn = [&](nsx::sptrPeak3D p1, const nsx::sptrPeak3D p2) {
+                auto uc1 = p1->unitCell();
+                auto uc2 = p2->unitCell();
+                std::string uc1Name = uc1 ? uc1->name() : "";
+                std::string uc2Name = uc2 ? uc2->name() : "";
+                return (uc2Name < uc1Name);
+            };
+            break;
+        }
     }
     std::sort(_peaks.begin(), _peaks.end(), compareFn);
 

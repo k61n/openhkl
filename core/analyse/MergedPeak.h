@@ -16,8 +16,8 @@
 #define CORE_ANALYSE_MERGEDPEAK_H
 
 #include "core/peak/Intensity.h"
-#include "tables/crystal/SpaceGroup.h"
 #include "core/peak/Peak3D.h"
+#include "tables/crystal/SpaceGroup.h"
 
 #include <set>
 
@@ -26,7 +26,7 @@ namespace nsx {
 //! A PeakList, and crystallographic information (SpaceGroup, MillerIndex, ...).
 
 class MergedPeak {
-public:
+ public:
     //! Construct a merged peak with the given spacegroup.
     //!
     //! The resulting peak has intensity given by the average intensity of the
@@ -59,7 +59,7 @@ public:
     //! split the merged peak randomly into two, for calculation of CC
     std::pair<MergedPeak, MergedPeak> split() const;
 
-private:
+ private:
     //! Update the hkl that represents the set of equivalences.
     void determineRepresentativeHKL();
     void update();

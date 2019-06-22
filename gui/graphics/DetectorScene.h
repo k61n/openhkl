@@ -34,7 +34,7 @@ typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rowM
 //! and overlayed graphics items (peaks, data cutters, masks ...)
 class DetectorScene : public QGraphicsScene {
     Q_OBJECT
-public:
+ public:
     enum MODE {
         SELECT = 0,
         ZOOM = 1,
@@ -61,14 +61,14 @@ public:
     void loadCurrentImage();
     void clearPeakGraphicsItems();
 
-protected:
+ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
     void keyPressEvent(QKeyEvent* event);
     void wheelEvent(QGraphicsSceneWheelEvent* event);
 
-public slots:
+ public slots:
     void resetScene();
     void resetPeakGraphicsItems();
     void setMaxIntensity(int);
@@ -85,14 +85,14 @@ public slots:
     void updateMasks() { _lastClickedGI = nullptr; }
     int currentFrame() const { return _currentFrameIndex; }
 
-signals:
+ signals:
     //! Signal emitted for all changes of the image
     void dataChanged();
     void signalChangeSelectedData(nsx::sptrDataSet data);
     void signalChangeSelectedFrame(int selected_frame);
     void signalChangeSelectedPeak(nsx::sptrPeak3D peak);
 
-private:
+ private:
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
     // find the iterator corresponding to given graphics item

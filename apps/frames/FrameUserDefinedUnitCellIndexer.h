@@ -33,7 +33,7 @@ class QAbstractButton;
 class FrameUserDefinedUnitCellIndexer : public NSXQFrame {
     Q_OBJECT
 
-public:
+ public:
     static FrameUserDefinedUnitCellIndexer*
     create(ExperimentItem* experiment_item, const nsx::PeakList& peaks);
 
@@ -41,7 +41,7 @@ public:
 
     ~FrameUserDefinedUnitCellIndexer();
 
-private slots:
+ private slots:
 
     void slotActionClicked(QAbstractButton* button);
 
@@ -51,7 +51,7 @@ private slots:
 
     void slotSelectSolution(int);
 
-private:
+ private:
     explicit FrameUserDefinedUnitCellIndexer(
         ExperimentItem* experiment_item, const nsx::PeakList& peaks);
 
@@ -63,7 +63,7 @@ private:
 
     void resetPeaks();
 
-private:
+ private:
     static FrameUserDefinedUnitCellIndexer* _instance;
 
     Ui::FrameUserDefinedUnitCellIndexer* _ui;

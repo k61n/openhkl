@@ -39,22 +39,22 @@ class CrystalScene;
 class DialogAbsorption : public QDialog {
     Q_OBJECT
 
-public:
+ public:
     explicit DialogAbsorption(nsx::sptrExperiment experiment, QWidget* parent = nullptr);
     const std::string& getMovieFilename() const;
     ~DialogAbsorption();
-signals:
+ signals:
     //! Emitted when the image is changed in the movie
     void loadImage(QString image);
     void angleText(QString text);
     void exportHull(const nsx::ConvexHull& hull);
-public slots:
+ public slots:
     void initializeSlider(int i);
-private slots:
+ private slots:
     void on_button_openFile_pressed();
     void setupInitialButtons();
 
-private:
+ private:
     Ui::DialogAbsorption* ui;
     //! Link to the experiment
     nsx::sptrExperiment _experiment;

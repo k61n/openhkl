@@ -22,12 +22,13 @@
 //! Subframe of the main window, with tabs to control detector, fits, &c
 
 class SubframePlot : public QcrDockWidget {
-public:
+ public:
     SubframePlot();
     void plotData(QVector<double>&, QVector<double>&, QVector<double>&);
     void updatePlot(PlottableItem* item);
     void exportPlot();
-private:
+
+ private:
     NSXPlot* plot;
     QHBoxLayout* anchor;
     QcrWidget* centralWidget;

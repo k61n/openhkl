@@ -26,7 +26,7 @@ namespace nsx {
 //! Thread-safe class to handle progress and status messages.
 
 class ProgressHandler {
-public:
+ public:
     ProgressHandler();
     ~ProgressHandler();
 
@@ -45,7 +45,7 @@ public:
     void abort();
     bool aborted();
 
-private:
+ private:
     std::mutex _mutex;
     std::string _status;
     std::vector<std::string> _log;

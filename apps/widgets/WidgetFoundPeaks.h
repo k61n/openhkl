@@ -22,14 +22,14 @@ class WidgetFoundPeaks;
 }
 
 class WidgetFoundPeaks : public QWidget {
-public:
+ public:
     WidgetFoundPeaks(ExperimentItem* experiment_item, const nsx::PeakList& peaks);
 
     ~WidgetFoundPeaks();
 
     nsx::PeakList selectedPeaks() const;
 
-private:
+ private:
     Ui::WidgetFoundPeaks* _ui;
 
     ExperimentItem* _experiment_item;

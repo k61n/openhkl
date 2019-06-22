@@ -17,9 +17,9 @@
 #include <QApplication>
 
 class NSXQtApp : public QApplication {
-public:
+ public:
     NSXQtApp(int& argc, char* argv[]);
 
-private:
+ private:
     bool notify(QObject* receiver, QEvent* event);
 };

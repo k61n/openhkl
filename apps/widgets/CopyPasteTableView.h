@@ -18,9 +18,9 @@
 #include <QTableView>
 
 class CopyPasteTableView : public QTableView {
-public:
+ public:
     CopyPasteTableView(QWidget* parent = nullptr);
 
-protected:
+ protected:
     void keyPressEvent(QKeyEvent* event);
 };

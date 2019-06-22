@@ -85,21 +85,21 @@ void FrameRefiner::slotActionClicked(QAbstractButton* button)
     auto button_role = _ui->actions->standardButton(button);
 
     switch (button_role) {
-    case QDialogButtonBox::StandardButton::Apply: {
-        refine();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Cancel: {
-        close();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Ok: {
-        accept();
-        break;
-    }
-    default: {
-        return;
-    }
+        case QDialogButtonBox::StandardButton::Apply: {
+            refine();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Cancel: {
+            close();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Ok: {
+            accept();
+            break;
+        }
+        default: {
+            return;
+        }
     }
 }
 

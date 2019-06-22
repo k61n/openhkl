@@ -14,12 +14,12 @@
 
 #include "gui/frames/PeakFinderFrame.h"
 
+#include "core/analyse/PeakFinder.h"
+#include "core/convolve/ConvolverFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/integration/PixelSumIntegrator.h"
-#include "core/raw/IDataReader.h"
 #include "core/peak/Peak3D.h"
-#include "core/convolve/ConvolverFactory.h"
-#include "core/analyse/PeakFinder.h"
+#include "core/raw/IDataReader.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
@@ -39,7 +39,7 @@
 #include <QVBoxLayout>
 
 class ItemDelegate : public QItemDelegate {
-public:
+ public:
     virtual QWidget* createEditor(
         QWidget* parent, const QStyleOptionViewItem& option,
         const QModelIndex& index) const override;
@@ -312,12 +312,12 @@ void PeakFinder::doActions(QAbstractButton* button)
 {
     auto buttonRole = buttons->standardButton(button);
     switch (buttonRole) {
-    case QDialogButtonBox::StandardButton::Apply: run(); break;
-    case QDialogButtonBox::StandardButton::Cancel: close(); break;
-    case QDialogButtonBox::StandardButton::Ok: accept(); break;
-    default: {
-        return;
-    }
+        case QDialogButtonBox::StandardButton::Apply: run(); break;
+        case QDialogButtonBox::StandardButton::Cancel: close(); break;
+        case QDialogButtonBox::StandardButton::Ok: accept(); break;
+        default: {
+            return;
+        }
     }
 }
 

@@ -69,16 +69,16 @@ bool DialogRawData::rowMajor()
 int DialogRawData::bpp()
 {
     switch (ui->dataFormat->currentIndex()) {
-    case 0:
-        // 8-bit
-        return 1;
-    case 1:
-        // 16-bit
-        return 2;
-    case 2:
-        // 32-bit
-        return 4;
-    default: nsx::error() << "unrecognized data format!!"; return -1;
+        case 0:
+            // 8-bit
+            return 1;
+        case 1:
+            // 16-bit
+            return 2;
+        case 2:
+            // 32-bit
+            return 4;
+        default: nsx::error() << "unrecognized data format!!"; return -1;
     }
 }
 

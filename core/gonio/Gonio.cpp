@@ -77,8 +77,8 @@ const Axis& Gonio::axis(size_t index) const
     return *_axes[index];
 }
 
-Eigen::Transform<double, 3, Eigen::Affine> Gonio::affineMatrix(
-    const std::vector<double>& state) const
+Eigen::Transform<double, 3, Eigen::Affine>
+Gonio::affineMatrix(const std::vector<double>& state) const
 {
     if (static_cast<size_t>(state.size()) != _axes.size())
         throw std::range_error("Trying to set Gonio " + _name + " with wrong number of parameters");

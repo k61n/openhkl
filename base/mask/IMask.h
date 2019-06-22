@@ -22,14 +22,14 @@ class Ellipsoid;
 //! Pure virtual base class for detector mask.
 
 class IMask {
-public:
+ public:
     virtual ~IMask() = 0;
 
     virtual bool collide(const Ellipsoid& e) const = 0;
 
     virtual IMask* clone() const = 0;
 
-protected:
+ protected:
     IMask() = default;
 
     IMask(const IMask& other) = default;

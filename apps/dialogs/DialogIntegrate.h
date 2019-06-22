@@ -29,7 +29,7 @@ class DialogIntegrate;
 class DialogIntegrate : public QDialog {
     Q_OBJECT
 
-public:
+ public:
     DialogIntegrate(const nsx::PeakList& peaks, QWidget* parent = 0);
     ~DialogIntegrate();
 
@@ -48,6 +48,6 @@ public:
 
     std::string integrator() const;
 
-private:
+ private:
     Ui::DialogIntegrate* _ui;
 };

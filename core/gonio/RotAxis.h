@@ -25,7 +25,7 @@ namespace nsx {
 //! TODO (#24): The direction flag (CW/CCW) is not needed, confusing, and should be removed.
 
 class RotAxis : public Axis {
-public:
+ public:
     //! Axis direction (clockwise, counter-clockwise)
     enum class Direction { CW, CCW };
 
@@ -61,7 +61,7 @@ public:
 
     std::ostream& printSelf(std::ostream& os) const override;
 
-protected:
+ protected:
     //! Rotation direction
     Direction _dir;
 };

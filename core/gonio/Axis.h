@@ -15,8 +15,8 @@
 #ifndef CORE_GONIO_AXIS_H
 #define CORE_GONIO_AXIS_H
 
-#include <yaml-cpp/yaml.h>
 #include <Eigen/Geometry>
+#include <yaml-cpp/yaml.h>
 
 namespace nsx {
 
@@ -29,7 +29,7 @@ namespace nsx {
 //! the homogeneous Matrix.
 
 class Axis {
-public:
+ public:
     static Axis* create(const YAML::Node& node);
     Axis();
     Axis(const Axis& other);
@@ -78,7 +78,7 @@ public:
 
     virtual std::ostream& printSelf(std::ostream& os) const = 0;
 
-protected:
+ protected:
     //! Label of the axis.
     std::string _name;
     //! Axis direction, a normalized vector.

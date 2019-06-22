@@ -22,7 +22,7 @@
 namespace nsx {
 
 class StdStreamWrapper : public IStreamWrapper {
-public:
+ public:
     //! Constructor
     StdStreamWrapper(
         std::ostream& stream, std::function<std::string()> prefix = nullptr,
@@ -36,7 +36,7 @@ public:
 
     virtual void printSuffix() override;
 
-private:
+ private:
     std::ostream& _stream;
 };
 

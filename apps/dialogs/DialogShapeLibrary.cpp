@@ -16,14 +16,14 @@
 #include <QLayout>
 #include <QStatusBar>
 
-#include "core/experiment/DataSet.h"
-#include "core/shape/Profile3D.h"
-#include "core/integration/ShapeIntegrator.h"
-#include "core/shape/ShapeLibrary.h"
 #include "base/logger/Logger.h"
+#include "core/analyse/PeakFilter.h"
+#include "core/experiment/DataSet.h"
+#include "core/integration/ShapeIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"
-#include "core/analyse/PeakFilter.h"
+#include "core/shape/Profile3D.h"
+#include "core/shape/ShapeLibrary.h"
 
 #include "apps/models/CollectedPeaksModel.h"
 #include "apps/models/ExperimentItem.h"

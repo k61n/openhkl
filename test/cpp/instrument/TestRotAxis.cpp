@@ -1,8 +1,8 @@
 #include "test/cpp/catch.hpp"
 #include <Eigen/Dense>
 
-#include "core/gonio/RotAxis.h"
 #include "base/utils/Units.h"
+#include "core/gonio/RotAxis.h"
 
 const double tolerance = 1e-6;
 

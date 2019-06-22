@@ -22,7 +22,7 @@ namespace nsx {
 //! Stores a 3d peak profile
 
 class Profile3D {
-public:
+ public:
     Profile3D();
     //! Construct with given bounding box and number of bins
     Profile3D(const AABB& aabb, int nx, int ny, int nz);
@@ -57,7 +57,7 @@ public:
     //! Returns the shape of the underlying data
     const Eigen::Vector3i& shape() const;
 
-private:
+ private:
     AABB _aabb;
     Eigen::Vector3d _dx;
     Eigen::Vector3i _shape;

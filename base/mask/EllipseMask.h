@@ -23,7 +23,7 @@ namespace nsx {
 //! Ellipsoidal detector IMask.
 
 class EllipseMask : public IMask {
-public:
+ public:
     EllipseMask() = delete;
 
     EllipseMask(const EllipseMask& other) = default;
@@ -38,7 +38,7 @@ public:
 
     bool collide(const Ellipsoid& ellipsoid) const override;
 
-private:
+ private:
     Ellipsoid _ellipsoid;
 };
 

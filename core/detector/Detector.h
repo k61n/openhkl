@@ -17,9 +17,9 @@
 
 #include "core/gonio/Component.h" // inheriting from
 
-#include "core/detector/DetectorEvent.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "core/detector/DataOrder.h"
+#include "core/detector/DetectorEvent.h"
 
 #include <Eigen/Dense>
 
@@ -28,7 +28,7 @@ namespace nsx {
 //! Pure virtual base class for detectors of different geometry.
 
 class Detector : public Component {
-public:
+ public:
     //! Static constructor of a Detector from a property tree node
     static Detector* create(const YAML::Node& node);
 
@@ -87,8 +87,8 @@ public:
 
     //! Returns the detector event (pixel x, pixel y, time of flight) associated
     //! with a given kf. Returns with _negative_ tof if no such event is possible.
-    virtual DetectorEvent constructEvent(
-        const DirectVector& from, const ReciprocalVector& kf) const = 0;
+    virtual DetectorEvent
+    constructEvent(const DirectVector& from, const ReciprocalVector& kf) const = 0;
 
     //! Returns the position of a given pixel in detector space. This takes into
     //! account the detector motions in detector space.
@@ -112,7 +112,7 @@ public:
     //! Returns the detector gain. Measured count = gain * (neutron count) + baseline
     double gain() const;
 
-protected:
+ protected:
     //! Detector height
     double _height;
     //! Detector width
@@ -132,7 +132,7 @@ protected:
     //! Distance from origin to detector
     double _distance;
 
-private:
+ private:
     DataOrder _dataorder;
     //! Detector baseline. Default is 0.0
     double _baseline;

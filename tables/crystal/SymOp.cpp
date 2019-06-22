@@ -16,9 +16,9 @@
 #include <sstream>
 #include <stdexcept>
 
+#include "tables/crystal/DoubleToFraction.h"
 #include "tables/crystal/JonesSymbolParser.h"
 #include "tables/crystal/SymOp.h"
-#include "tables/crystal/DoubleToFraction.h"
 
 namespace nsx {
 
@@ -129,40 +129,40 @@ int SymOp::getAxisOrder() const
     int trace = static_cast<int>(_matrix.linear().trace());
 
     switch (trace) {
-    case (-3):
-        if (det == -1)
-            order = -1;
-        break;
-    case (-2):
-        if (det == -1)
-            order = -6;
-        break;
-    case (-1):
-        if (det == -1)
-            order = -4;
-        if (det == 1)
-            order = 2;
-        break;
-    case (0):
-        if (det == -1)
-            order = -3;
-        if (det == 1)
-            order = 3;
-        break;
-    case (1):
-        if (det == -1)
-            order = -2;
-        if (det == 1)
-            order = 4;
-        break;
-    case (2):
-        if (det == 1)
-            order = 6;
-        break;
-    case (3):
-        if (det == 1)
-            order = 1;
-        break;
+        case (-3):
+            if (det == -1)
+                order = -1;
+            break;
+        case (-2):
+            if (det == -1)
+                order = -6;
+            break;
+        case (-1):
+            if (det == -1)
+                order = -4;
+            if (det == 1)
+                order = 2;
+            break;
+        case (0):
+            if (det == -1)
+                order = -3;
+            if (det == 1)
+                order = 3;
+            break;
+        case (1):
+            if (det == -1)
+                order = -2;
+            if (det == 1)
+                order = 4;
+            break;
+        case (2):
+            if (det == 1)
+                order = 6;
+            break;
+        case (3):
+            if (det == 1)
+                order = 1;
+            break;
     }
 
     if (order == 0)

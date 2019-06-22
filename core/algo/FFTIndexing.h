@@ -22,7 +22,7 @@ namespace nsx {
 //! Class used for Fast-Fourier transform autoindexing.
 
 class FFTIndexing {
-public:
+ public:
     //! Type to store vector together with quality.
     using tVector = std::pair<Eigen::RowVector3d, double>;
     //! Constructor. Note that the success of FFT indexing is very sensitive to
@@ -36,7 +36,7 @@ public:
         unsigned int nsolutions) const;
     virtual ~FFTIndexing() = default;
 
-private:
+ private:
     int _nSubdiv;
     double _amax;
 };

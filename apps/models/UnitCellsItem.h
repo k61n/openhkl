@@ -19,7 +19,7 @@
 class UnitCellItem;
 
 class UnitCellsItem : public TreeItem {
-public:
+ public:
     explicit UnitCellsItem();
 
     nsx::UnitCellList unitCells();

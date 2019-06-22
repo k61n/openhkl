@@ -20,19 +20,19 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
-#include "tables/crystal/MillerIndex.h"
-#include "tables/crystal/UnitCell.h"
-#include "core/detector/Detector.h"
-#include "core/experiment/DataSet.h"
 #include "base/geometry/Ellipsoid.h"
 #include "base/geometry/ReciprocalVector.h"
+#include "base/utils/Units.h"
+#include "core/detector/Detector.h"
+#include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
-#include "core/raw/IDataReader.h"
-#include "core/raw/MetaData.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
-#include "base/utils/Units.h"
+#include "core/raw/IDataReader.h"
+#include "core/raw/MetaData.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/UnitCell.h"
 
 #include "apps/items/PeakGraphicsItem.h"
 #include "apps/models/DetectorScene.h"

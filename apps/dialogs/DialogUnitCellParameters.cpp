@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include "tables/crystal/UnitCell.h"
 #include "base/utils/Units.h"
+#include "tables/crystal/UnitCell.h"
 
 #include "apps/dialogs/DialogUnitCellParameters.h"
 #include "ui_DialogUnitCellParameters.h"

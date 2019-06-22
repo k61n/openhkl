@@ -15,8 +15,8 @@
 #ifndef CORE_CONVOLVE_CONVOLVER_H
 #define CORE_CONVOLVE_CONVOLVER_H
 
-#include <map>
 #include <Eigen/Dense>
+#include <map>
 
 namespace nsx {
 
@@ -25,7 +25,7 @@ using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::
 //! Pure virtual base class of all convolvers (= image filters).
 
 class Convolver {
-public:
+ public:
     Convolver();
 
     Convolver(const std::map<std::string, double>& parameters);
@@ -51,7 +51,7 @@ public:
 
     virtual std::pair<size_t, size_t> kernelSize() const = 0;
 
-protected:
+ protected:
     std::map<std::string, double> _parameters;
 };
 

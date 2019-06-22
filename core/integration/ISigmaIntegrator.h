@@ -15,19 +15,19 @@
 #ifndef CORE_INTEGRATION_ISIGMAINTEGRATOR_H
 #define CORE_INTEGRATION_ISIGMAINTEGRATOR_H
 
-#include "core/shape/ShapeLibrary.h"
 #include "core/integration/PixelSumIntegrator.h"
+#include "core/shape/ShapeLibrary.h"
 
 namespace nsx {
 
 //! Compute the integrated intensity via the I/sigma method used in RETREAT.
 
 class ISigmaIntegrator : public PixelSumIntegrator {
-public:
+ public:
     ISigmaIntegrator(sptrShapeLibrary library, double radius, double nframes);
     bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
 
-private:
+ private:
     sptrShapeLibrary _library;
     double _radius;
     double _nframes;

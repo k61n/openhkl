@@ -22,7 +22,7 @@ namespace nsx {
 //! Translational axis of an abstract goniometer.
 
 class TransAxis : public Axis {
-public:
+ public:
     //! Static constructor for a TransAxis
     static Axis* create(const YAML::Node& node);
     TransAxis();

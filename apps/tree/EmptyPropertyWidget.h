@@ -24,10 +24,10 @@ class EmptyPropertyWidget;
 class EmptyPropertyWidget : public QWidget {
     Q_OBJECT
 
-public:
+ public:
     explicit EmptyPropertyWidget(QWidget* parent = 0);
     ~EmptyPropertyWidget();
 
-private:
+ private:
     Ui::EmptyPropertyWidget* ui;
 };

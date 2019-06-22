@@ -17,13 +17,7 @@
 #include "gui/models/Session.h"
 
 namespace {
-enum class tab {
-    INSTRUMENT,
-    DATA,
-    UNITCELLS,
-    PEAKS,
-    LIBRARY
-};
+enum class tab { INSTRUMENT, DATA, UNITCELLS, PEAKS, LIBRARY };
 
 } // namespace
 

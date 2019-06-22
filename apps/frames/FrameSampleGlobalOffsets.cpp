@@ -17,13 +17,13 @@
 #include <QFileInfo>
 #include <QPen>
 
-#include "core/experiment/DataSet.h"
-#include "core/experiment/Experiment.h"
-#include "core/algo/GonioFit.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/instrument/Sample.h"
 #include "base/logger/Logger.h"
 #include "base/utils/Units.h"
+#include "core/algo/GonioFit.h"
+#include "core/experiment/DataSet.h"
+#include "core/experiment/Experiment.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Sample.h"
 
 #include "apps/delegates/DoubleItemDelegate.h"
 #include "apps/frames/FrameSampleGlobalOffsets.h"
@@ -97,21 +97,21 @@ void FrameSampleGlobalOffsets::slotActionClicked(QAbstractButton* button)
     auto button_role = _ui->actions->standardButton(button);
 
     switch (button_role) {
-    case QDialogButtonBox::StandardButton::Apply: {
-        fit();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Cancel: {
-        close();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Ok: {
-        close();
-        break;
-    }
-    default: {
-        return;
-    }
+        case QDialogButtonBox::StandardButton::Apply: {
+            fit();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Cancel: {
+            close();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Ok: {
+            close();
+            break;
+        }
+        default: {
+            return;
+        }
     }
 }
 

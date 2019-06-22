@@ -12,10 +12,10 @@
 //
 //  ***********************************************************************************************
 
-#include "tables/crystal/UnitCell.h"
-#include "core/shape/ShapeLibrary.h"
 #include "base/logger/Logger.h"
 #include "base/utils/ProgressHandler.h"
+#include "core/shape/ShapeLibrary.h"
+#include "tables/crystal/UnitCell.h"
 
 #include "apps/dialogs/DialogPredictPeaks.h"
 #include "apps/models/CollectedPeaksModel.h"
@@ -85,21 +85,21 @@ void DialogPredictPeaks::slotActionClicked(QAbstractButton* button)
     auto button_role = _ui->actions->standardButton(button);
 
     switch (button_role) {
-    case QDialogButtonBox::StandardButton::Apply: {
-        predictPeaks();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Cancel: {
-        reject();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Ok: {
-        accept();
-        break;
-    }
-    default: {
-        return;
-    }
+        case QDialogButtonBox::StandardButton::Apply: {
+            predictPeaks();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Cancel: {
+            reject();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Ok: {
+            accept();
+            break;
+        }
+        default: {
+            return;
+        }
     }
 }
 

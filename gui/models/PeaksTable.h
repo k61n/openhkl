@@ -15,19 +15,18 @@
 #ifndef GUI_MODELS_PEAKSTABLE_H
 #define GUI_MODELS_PEAKSTABLE_H
 
+#include "core/instrument/InstrumentTypes.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/ShapeLibrary.h"
-#include "core/instrument/InstrumentTypes.h"
 #include <QCR/widgets/tables.h>
 #include <QTableView>
 
 class PeaksTableModel : public TableModel {
     Q_OBJECT
-public:
+ public:
     enum Column { h, k, l, px, py, frame, intensity, sigmaIntensity, numor, unitCell, d, count };
 
-    explicit PeaksTableModel(
-        const QString& name, nsx::sptrExperiment experiment);
+    explicit PeaksTableModel(const QString& name, nsx::sptrExperiment experiment);
     PeaksTableModel(
         const QString& name, nsx::sptrExperiment experiment, const nsx::PeakList& peaks);
     ~PeaksTableModel() = default;
@@ -50,34 +49,34 @@ public:
     nsx::sptrExperiment experiment() { return _experiment; }
     void selectPeak(const QModelIndex& index);
     void togglePeakSelection(QModelIndex peak_index);
-public slots:
+ public slots:
     void slotChangeEnabledPeak(nsx::sptrPeak3D peak);
     void slotChangeMaskedPeaks(const nsx::PeakList& peaks);
     void slotRemoveUnitCell(const nsx::sptrUnitCell unit_cell);
     void setUnitCell(
         const nsx::sptrUnitCell& unitCell, QModelIndexList selectedPeaks = QModelIndexList());
     void sortEquivalents();
-signals:
+ signals:
     void signalSelectedPeakChanged(nsx::sptrPeak3D peak);
     void unitCellUpdated();
 
-private:
+ private:
     nsx::sptrExperiment _experiment;
     nsx::PeakList _peaks;
 };
 
 class PeaksTableView : public QTableView {
     Q_OBJECT
-public:
+ public:
     explicit PeaksTableView(QWidget* parent = 0);
     void contextMenuEvent(QContextMenuEvent*) override;
     virtual void keyPressEvent(QKeyEvent* event) override;
-signals:
+ signals:
     void plotData(const QVector<double>&, const QVector<double>&, const QVector<double>&);
     void plotPeak(nsx::sptrPeak3D);
     void autoIndexed();
     void updateShapeLibrary(nsx::sptrShapeLibrary);
-public slots:
+ public slots:
     //! Normalize to monitor.
     void normalizeToMonitor();
     //! Plot as function of parameter. Needs to be a numeric type
@@ -88,10 +87,10 @@ public slots:
     void selectValidPeaks();
     void selectUnindexedPeaks();
     void togglePeaksSelection();
-private slots:
+ private slots:
     void togglePeakSelection(QModelIndex index);
 
-private:
+ private:
     void sortByHKL(bool up);
     void sortByIntensity(bool up);
     void sortByNumor(bool up);

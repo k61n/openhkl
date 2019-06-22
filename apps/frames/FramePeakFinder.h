@@ -45,7 +45,7 @@ class QWidget;
 class FramePeakFinder : public NSXQFrame {
     Q_OBJECT
 
-public:
+ public:
     static FramePeakFinder* create(ExperimentItem* experiment_tree, const nsx::DataList& data);
 
     static FramePeakFinder* Instance();
@@ -58,7 +58,7 @@ public:
 
     virtual void resizeEvent(QResizeEvent*) override;
 
-private slots:
+ private slots:
 
     //! Update peak finder maximum blob size for a peak
     void changeMaxBlobSize();
@@ -100,7 +100,7 @@ private slots:
 
     void slotTabRemoved(int index);
 
-private:
+ private:
     FramePeakFinder(ExperimentItem* experiment_item, const nsx::DataList& data);
 
     void updateConvolutionParameters();
@@ -113,7 +113,7 @@ private:
 
     void accept();
 
-private:
+ private:
     static FramePeakFinder* _instance;
 
     Ui::FramePeakFinder* _ui;

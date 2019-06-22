@@ -4,10 +4,10 @@
 #include <random>
 #include <vector>
 
-#include "core/algo/UserDefinedIndexer.h"
-#include "tables/crystal/UnitCell.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Units.h"
+#include "core/algo/UserDefinedIndexer.h"
+#include "tables/crystal/UnitCell.h"
 
 Eigen::Matrix3d make_rotation(Eigen::Vector3d angles)
 {

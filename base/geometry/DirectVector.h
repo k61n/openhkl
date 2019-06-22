@@ -25,7 +25,7 @@ namespace nsx {
 //! dealing with vectors in algorithms dedicated to crystallographic data.
 
 class DirectVector {
-public:
+ public:
     DirectVector() = default;
     DirectVector(const DirectVector& other) = default;
 
@@ -49,7 +49,7 @@ public:
     //! Print information about a DirectVector to a stream
     void print(std::ostream& os) const;
 
-private:
+ private:
     Eigen::Vector3d _dvector;
 };
 

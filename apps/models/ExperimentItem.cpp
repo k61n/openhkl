@@ -18,17 +18,17 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-#include "core/statistics/ResolutionShell.h"
-#include "tables/crystal/UnitCell.h"
+#include "base/logger/Logger.h"
+#include "core/analyse/MergedData.h"
+#include "core/analyse/PeakFilter.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Source.h"
-#include "base/logger/Logger.h"
-#include "core/analyse/MergedData.h"
 #include "core/peak/Peak3D.h"
-#include "core/analyse/PeakFilter.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
+#include "core/statistics/ResolutionShell.h"
+#include "tables/crystal/UnitCell.h"
 
 #include "apps/frames/FrameStatistics.h"
 #include "apps/models/DataItem.h"

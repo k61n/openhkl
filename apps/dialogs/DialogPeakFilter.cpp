@@ -20,11 +20,11 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-#include "tables/crystal/UnitCell.h"
-#include "core/experiment/DataSet.h"
 #include "base/logger/Logger.h"
-#include "core/peak/Peak3D.h"
 #include "core/analyse/PeakFilter.h"
+#include "core/experiment/DataSet.h"
+#include "core/peak/Peak3D.h"
+#include "tables/crystal/UnitCell.h"
 
 #include "apps/dialogs/DialogPeakFilter.h"
 #include "apps/models/CollectedPeaksModel.h"
@@ -148,21 +148,21 @@ void DialogPeakFilter::slotActionClicked(QAbstractButton* button)
     auto button_role = _ui->actions->standardButton(button);
 
     switch (button_role) {
-    case QDialogButtonBox::StandardButton::Apply: {
-        filterPeaks();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Cancel: {
-        reject();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Ok: {
-        accept();
-        break;
-    }
-    default: {
-        return;
-    }
+        case QDialogButtonBox::StandardButton::Apply: {
+            filterPeaks();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Cancel: {
+            reject();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Ok: {
+            accept();
+            break;
+        }
+        default: {
+            return;
+        }
     }
 }
 

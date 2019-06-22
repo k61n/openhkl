@@ -27,7 +27,7 @@ class QAbstractButton;
 class FrameSampleGlobalOffsets : public NSXQFrame {
     Q_OBJECT
 
-public:
+ public:
     static FrameSampleGlobalOffsets* create(ExperimentItem* experiment_item);
 
     static FrameSampleGlobalOffsets* Instance();
@@ -38,16 +38,16 @@ public:
 
     ~FrameSampleGlobalOffsets();
 
-private slots:
+ private slots:
 
     void slotActionClicked(QAbstractButton* button);
 
-private:
+ private:
     FrameSampleGlobalOffsets(ExperimentItem* experiment_item);
 
     void fit();
 
-private:
+ private:
     static FrameSampleGlobalOffsets* _instance;
 
     Ui::FrameSampleGlobalOffsets* _ui;

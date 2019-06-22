@@ -18,7 +18,7 @@
 
 class PeakPlot : public SXPlot {
     Q_OBJECT
-public:
+ public:
     static SXPlot* create(QWidget* parent);
 
     explicit PeakPlot(QWidget* parent = 0);

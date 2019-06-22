@@ -16,11 +16,11 @@
 
 #include <QJsonArray>
 
-#include "core/experiment/DataSet.h"
-#include "core/experiment/Experiment.h"
 #include "base/geometry/AABB.h"
 #include "base/logger/Logger.h"
 #include "base/mask/BoxMask.h"
+#include "core/experiment/DataSet.h"
+#include "core/experiment/Experiment.h"
 
 #include "apps/models/ExperimentItem.h"
 #include "apps/models/MetaTypes.h"
@@ -49,9 +49,9 @@ NumorItem::~NumorItem() {}
 QVariant NumorItem::data(int role) const
 {
     switch (role) {
-    case (Qt::UserRole): {
-        return QVariant::fromValue(_data);
-    }
+        case (Qt::UserRole): {
+            return QVariant::fromValue(_data);
+        }
     }
     return InspectableTreeItem::data(role);
 }

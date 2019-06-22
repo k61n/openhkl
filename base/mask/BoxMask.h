@@ -23,7 +23,7 @@ namespace nsx {
 //! Detector IMask, constructed from an AABB (axis-aligned bounding box).
 
 class BoxMask : public IMask {
-public:
+ public:
     BoxMask() = delete;
 
     BoxMask(const BoxMask& other) = default;
@@ -38,7 +38,7 @@ public:
 
     bool collide(const Ellipsoid& ellipsoid) const override;
 
-private:
+ private:
     AABB _aabb;
 };
 

@@ -3,12 +3,12 @@
 
 #include <Eigen/Dense>
 
+#include "base/utils/Units.h"
+#include "core/algo/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/algo/DataReaderFactory.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
-#include "base/utils/Units.h"
 
 const double tolerance = 1e-2;
 

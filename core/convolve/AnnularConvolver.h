@@ -56,7 +56,7 @@ namespace nsx {
 //! have a non-homogeneous background.
 
 class AnnularConvolver : public Convolver {
-public:
+ public:
     AnnularConvolver();
 
     AnnularConvolver(const AnnularConvolver& other) = default;

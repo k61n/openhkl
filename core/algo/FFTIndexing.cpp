@@ -20,9 +20,9 @@
 
 #include <unsupported/Eigen/FFT>
 
-#include "core/algo/FFTIndexing.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Units.h"
+#include "core/algo/FFTIndexing.h"
 
 namespace nsx {
 

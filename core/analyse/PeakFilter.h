@@ -15,12 +15,14 @@
 #ifndef CORE_ANALYSE_PEAKFILTER_H
 #define CORE_ANALYSE_PEAKFILTER_H
 
+#include "core/peak/Peak3D.h" // PeakList
+
 namespace nsx {
 
 //! Class to remove "bad" peaks based on various critera.
 
 class PeakFilter {
-public:
+ public:
     //! Filter peaks that are complementary to the given peaks
     PeakList complementary(const PeakList& peaks, const PeakList& other_peaks) const;
 

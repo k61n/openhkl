@@ -24,22 +24,22 @@
  * */
 class NoteBook : public QTextEdit {
     Q_OBJECT
-public:
+ public:
     NoteBook(QWidget* parent = 0);
     virtual ~NoteBook();
 
     bool canInsertFromMimeData(const QMimeData* source) const;
     void insertFromMimeData(const QMimeData* source);
 
-public slots:
+ public slots:
 
     void printLogMessage(const std::string& message);
 
-private:
+ private:
     void dropImage(const QUrl& url, const QImage& image);
     void dropTextFile(const QUrl& url);
 
-public slots:
+ public slots:
     void customMenuRequested(QPoint pos);
     void write2pdf();
 };

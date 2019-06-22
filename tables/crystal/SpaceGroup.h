@@ -23,7 +23,7 @@ namespace nsx {
 //! Class to enumerate and construct the 3d spacegroups.
 
 class SpaceGroup {
-public:
+ public:
     //! Returns the list of spacegroup symbols
     static std::vector<std::string> symbols();
 
@@ -58,13 +58,13 @@ public:
         const MillerIndex& miller_index1, const MillerIndex& miller_index2,
         bool friedel = false) const;
     //! Returns whether two sets of indices are related by a symmetry up to Friedel reflection
-    bool isFriedelEquivalent(
-        const MillerIndex& miller_index1, const MillerIndex& miller_index2) const;
+    bool
+    isFriedelEquivalent(const MillerIndex& miller_index1, const MillerIndex& miller_index2) const;
 
-private:
+ private:
     void generateGroupElements();
 
-private:
+ private:
     std::string _symbol;
 
     std::string _generators;

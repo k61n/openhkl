@@ -16,16 +16,16 @@
 
 #include <QStandardItemModel>
 
-#include "tables/crystal/UnitCell.h"
 #include "core/experiment/DataTypes.h"
 #include "core/peak/Peak3D.h"
+#include "tables/crystal/UnitCell.h"
 
 class ExperimentItem;
 
 class SessionModel : public QStandardItemModel {
     Q_OBJECT
 
-public:
+ public:
     explicit SessionModel();
 
     ~SessionModel();
@@ -36,7 +36,7 @@ public:
 
     ExperimentItem* selectExperiment(nsx::sptrDataSet data);
 
-signals:
+ signals:
 
     void plotData(nsx::sptrDataSet);
 
@@ -54,7 +54,7 @@ signals:
 
     void signalUnitCellRemoved(nsx::sptrUnitCell unit_cell);
 
-public slots:
+ public slots:
 
     void createNewExperiment();
 

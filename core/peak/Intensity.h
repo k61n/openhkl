@@ -20,7 +20,7 @@ namespace nsx {
 //! Store intensity and variance of a given peak.
 
 class Intensity {
-public:
+ public:
     //! Constructs an Intensity from its value and variance.
     Intensity(double value = 0.0, double sigma2 = 0.0);
     Intensity(const Intensity& other);
@@ -54,7 +54,7 @@ public:
     //! Divide the intensity, taking error into account
     Intensity operator/(const Intensity& other) const;
 
-private:
+ private:
     double _value;
     double _sigma2;
 };

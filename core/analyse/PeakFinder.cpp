@@ -25,10 +25,10 @@
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 
+#include <Eigen/Dense>
 #include <cstdio>
 #include <utility>
 #include <vector>
-#include <Eigen/Dense>
 
 using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
@@ -311,49 +311,49 @@ void PeakFinder::findPrimaryBlobs(
                 code |= ((previous != 0) << 2);
 
                 switch (code) {
-                case 0:
-                    label = ++_current_label;
-                    newlabel = true;
-                    break;
-                case 1: // Only left pixel
-                    label = left;
-                    break;
-                case 2: // Only top pixel
-                    label = top;
-                    break;
-                case 3: // Top and left
-                    label = top;
-                    if (top != left)
-                        registerEquivalence(top, left, equivalences);
-                    break;
-                case 4: // Only previous
-                    label = previous;
-                    break;
-                case 5: // Left and previous
-                    label = left;
-                    if (left != previous)
-                        registerEquivalence(left, previous, equivalences);
-                    break;
-                case 6: // Top and previous
-                    label = top;
-                    if (top != previous)
-                        registerEquivalence(top, previous, equivalences);
-                    break;
-                case 7: // All three
-                    label = left;
-                    if ((top == left) && (top != previous))
-                        registerEquivalence(top, previous, equivalences);
-                    else if ((top == previous) && (top != left))
-                        registerEquivalence(top, left, equivalences);
- else if ((left == previous) && (left != top))
-                        registerEquivalence(left, top, equivalences);
-                    else if ((left != previous) && (left != top) && (top != previous)) {
-                        registerEquivalence(top, previous, equivalences);
-                        registerEquivalence(top, left, equivalences);
-                        registerEquivalence(left, previous, equivalences);
-                    }
-                    break;
-                default: break;
+                    case 0:
+                        label = ++_current_label;
+                        newlabel = true;
+                        break;
+                    case 1: // Only left pixel
+                        label = left;
+                        break;
+                    case 2: // Only top pixel
+                        label = top;
+                        break;
+                    case 3: // Top and left
+                        label = top;
+                        if (top != left)
+                            registerEquivalence(top, left, equivalences);
+                        break;
+                    case 4: // Only previous
+                        label = previous;
+                        break;
+                    case 5: // Left and previous
+                        label = left;
+                        if (left != previous)
+                            registerEquivalence(left, previous, equivalences);
+                        break;
+                    case 6: // Top and previous
+                        label = top;
+                        if (top != previous)
+                            registerEquivalence(top, previous, equivalences);
+                        break;
+                    case 7: // All three
+                        label = left;
+                        if ((top == left) && (top != previous))
+                            registerEquivalence(top, previous, equivalences);
+                        else if ((top == previous) && (top != left))
+                            registerEquivalence(top, left, equivalences);
+                        else if ((left == previous) && (left != top))
+                            registerEquivalence(left, top, equivalences);
+                        else if ((left != previous) && (left != top) && (top != previous)) {
+                            registerEquivalence(top, previous, equivalences);
+                            registerEquivalence(top, left, equivalences);
+                            registerEquivalence(left, previous, equivalences);
+                        }
+                        break;
+                    default: break;
                 }
                 // If none of the neighbors have labels, create new one
 

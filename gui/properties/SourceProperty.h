@@ -20,10 +20,10 @@
 
 //! Property widget of the monochromatic source
 class SourceProperty : public QcrWidget {
-public:
+ public:
     SourceProperty();
 
-private:
+ private:
     void onRemake();
     void clear();
     void onMonoChanged(int);

@@ -17,13 +17,13 @@
 #include "gui/actions/Menus.h"
 #include "gui/actions/Triggers.h"
 #include <QApplication>
+#include <QCloseEvent>
 #include <QProgressBar>
 #include <QSettings>
 #include <QSplitter>
 #include <QStatusBar>
 #include <QString>
 #include <QTimer>
-#include <QCloseEvent>
 
 #include <iostream>
 
@@ -55,8 +55,7 @@ MainWin::MainWin()
     show();
 }
 
-MainWin::~MainWin()
-{}
+MainWin::~MainWin() {}
 
 void MainWin::refresh()
 {
@@ -110,7 +109,8 @@ void MainWin::readSettings()
     restoreState(s.value("state").toByteArray());
 }
 
-void MainWin::closeEvent(QCloseEvent *event) {
+void MainWin::closeEvent(QCloseEvent* event)
+{
     saveSettings();
     delete triggers;
     delete menus_;

@@ -22,7 +22,7 @@ namespace nsx {
 //! Classifies and reduces a lattice according to the 44 types in the international tables.
 
 class GruberReduction {
-public:
+ public:
     //!! Construct algorithm with the metric tensor of the Cell, and a tolerance
     GruberReduction(const Eigen::Matrix3d& g, double epsilon);
     //! Find the conventional cell and output transformation matrix, centring type
@@ -32,7 +32,7 @@ public:
     //! tables. The return value contains all relevant information about the class.
     NiggliCharacter classify();
 
-private:
+ private:
     bool equal(double A, double B) const;
     Eigen::Matrix3d _g;
     double _epsilon;

@@ -14,8 +14,8 @@
 
 #include "gui/actions/Menus.h"
 
-#include "gui/actions/Triggers.h"
 #include "gui/MainWin.h"
+#include "gui/actions/Triggers.h"
 #include <QAction>
 #include <QMenu>
 
@@ -27,9 +27,8 @@ Menus::Menus(QMenuBar* mbar) : mbar_ {mbar}
 
     actionsToMenu(
         "&Start",
-        {&actions->addExperiment, &actions->removeExperiment, separator(),
-         &actions->loadData, &actions->importRaw, &actions->removeData,
-         separator(), &actions->quit});
+        {&actions->addExperiment, &actions->removeExperiment, separator(), &actions->loadData,
+         &actions->importRaw, &actions->removeData, separator(), &actions->quit});
 
     QMenu* detector = new QMenu {"&Detector"};
     detector->addActions({&actions->detectorProperties, &actions->goniometer});
@@ -46,25 +45,17 @@ Menus::Menus(QMenuBar* mbar) : mbar_ {mbar}
     instrument->addAction(&actions->monochromaticSourceProperties);
 
     QMenu* data = new QMenu {"&Data"};
-    data->addActions({&actions->loadData,
-                      &actions->importRaw,
-                      &actions->removeData,
-                      &actions->dataProperties,
-                      &actions->convertHDF5});
+    data->addActions({&actions->loadData, &actions->importRaw, &actions->removeData,
+                      &actions->dataProperties, &actions->convertHDF5});
     QMenu* indexing = new QMenu {"&indexing"};
     indexing->addActions(
         {&actions->autoIndexer, &actions->userDefinedIndexer, &actions->assignUnitCell});
     QMenu* peaks = new QMenu {"&Peaks"};
     peaks->addActions({&actions->findPeaks, &actions->filterPeaks});
     peaks->addMenu(indexing);
-    peaks->addActions({&actions->refine,
-                       &actions->buildShapeLibrary,
-                       &actions->integratepeaks,
-                       &actions->normalize,
-                       &actions->correctAbsorption,
-                       &actions->predictPeaks,
-                       &actions->show3d,
-                       &actions->peaksProperties});
+    peaks->addActions({&actions->refine, &actions->buildShapeLibrary, &actions->integratepeaks,
+                       &actions->normalize, &actions->correctAbsorption, &actions->predictPeaks,
+                       &actions->show3d, &actions->peaksProperties});
     experiment_ = mbar_->addMenu("&Experiment");
     experiment_->addMenu(data);
     experiment_->addMenu(peaks);
@@ -75,7 +66,7 @@ Menus::Menus(QMenuBar* mbar) : mbar_ {mbar}
 
     actionsToMenu("&Export", {&actions->exportPlot});
 
-    options_ = new QMenu{"&Detector View"};
+    options_ = new QMenu {"&Detector View"};
     QMenu* cursorMode = new QMenu {"&Cursor mode"};
     cursorMode->addActions({&actions->pixelPosition, &actions->gammaNu, &actions->twoTheta,
                             &actions->dSpacing, &actions->millerIndices});
@@ -89,20 +80,17 @@ Menus::Menus(QMenuBar* mbar) : mbar_ {mbar}
     options_->addMenu(peakMenu);
 
     view_ = new QMenu("&Main Window");
-    view_->addActions({&actions->reset,
-                       separator(),
-                       &actions->viewExperiment,
-                       &actions->viewImage,
-                       &actions->viewLogger,
-                       &actions->viewPlotter,
-                       &actions->viewProperties});
+    view_->addActions({&actions->reset, separator(), &actions->viewExperiment, &actions->viewImage,
+                       &actions->viewLogger, &actions->viewPlotter, &actions->viewProperties});
 
     QMenu* viewsMenu = mbar_->addMenu("&Views");
     viewsMenu->addMenu(options_);
     viewsMenu->addMenu(view_);
 
-    actionsToMenu("&Help", {&actions->about, &actions->helpExperiment, &actions->helpData,
-                  &actions->helpPeakFinder, &actions->helpPeakFilter});
+    actionsToMenu(
+        "&Help",
+        {&actions->about, &actions->helpExperiment, &actions->helpData, &actions->helpPeakFinder,
+         &actions->helpPeakFilter});
 }
 
 QAction* Menus::separator() const

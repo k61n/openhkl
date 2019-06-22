@@ -24,7 +24,7 @@ namespace nsx {
 //! 3D Ellipsoid, stored as center-and-covariance matrix.
 
 class Ellipsoid {
-public:
+ public:
     Ellipsoid();
     Ellipsoid(const Ellipsoid& other);
     //! Construct directly from metric tensor
@@ -83,7 +83,7 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 #endif
 
-private:
+ private:
     void updateAABB();
     Eigen::Vector3d _center;
     Eigen::Matrix3d _metric;

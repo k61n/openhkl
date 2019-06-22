@@ -1,15 +1,15 @@
 #include "test/cpp/catch.hpp"
 
+#include "core/algo/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/InstrumentState.h"
-#include "core/algo/DataReaderFactory.h"
 #include "core/raw/IDataReader.h"
 
 namespace nsx {
 
 class UnitTest_DataSet {
-public:
+ public:
     static int run();
 };
 

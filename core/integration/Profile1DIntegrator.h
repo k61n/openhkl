@@ -15,21 +15,21 @@
 #ifndef CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
 #define CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
 
-#include "core/shape/ShapeLibrary.h"
 #include "core/peak/IPeakIntegrator.h"
+#include "core/shape/ShapeLibrary.h"
 
 namespace nsx {
 
 //! Class to integrate peaks using 1d profile fitting.
 
 class Profile1DIntegrator : public IPeakIntegrator {
-public:
+ public:
     //! Construct integrator with given library, peak search radius, and frame bound
     Profile1DIntegrator(sptrShapeLibrary library, double radius, double nframes);
     //! Compute the integrated intensity of the given peakd
     bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
 
-private:
+ private:
     sptrShapeLibrary _library;
     double _radius;
     double _nframes;

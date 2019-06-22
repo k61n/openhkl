@@ -18,7 +18,7 @@
 #include "gui/graphics/CutterItem.h"
 
 class CutLineItem : public CutterItem {
-public:
+ public:
     explicit CutLineItem(nsx::sptrDataSet data);
 
     ~CutLineItem();
@@ -36,7 +36,7 @@ public:
     // Getters and setters
     std::string getPlotType() const;
 
-private:
+ private:
     int _nPoints;
 };
 

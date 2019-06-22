@@ -31,7 +31,7 @@ namespace nsx {
 //! by taking 3-fold intersections of the bounding planes.
 
 class BrillouinZone {
-public:
+ public:
     //! Create a Brillouin zone out of the given (row) basis matrix B.
     BrillouinZone(const Eigen::Matrix3d& B, double eps = 1e-6);
     //! Check if a reciprocal vector is inside the Brillouin zone.
@@ -48,7 +48,7 @@ public:
     //! Returns radius of smallest sphere containing the zone.
     double outerRadius() const;
 
-private:
+ private:
     //! List of lattice vectors defining the Bragg planes of the Brillouin zone
     std::vector<Eigen::RowVector3d> _qs;
     //! Parameter to control numerical stability

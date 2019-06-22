@@ -31,9 +31,11 @@ SourceProperty::SourceProperty() : QcrWidget("sourceProperty")
         int exp = gSession->selectedExperimentNum();
         if (exp < 0)
             return list;
-        const std::vector<nsx::Monochromator>& monos =
-                gSession->selectedExperiment()->experiment()->
-                diffractometer()->source().monochromators();
+        const std::vector<nsx::Monochromator>& monos = gSession->selectedExperiment()
+                                                           ->experiment()
+                                                           ->diffractometer()
+                                                           ->source()
+                                                           .monochromators();
         for (nsx::Monochromator m : monos)
             list.append(QString::fromStdString(m.name()));
         return list;

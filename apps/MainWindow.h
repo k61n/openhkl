@@ -21,9 +21,9 @@
 #include <QMenu>
 #include <QProgressBar>
 
-#include "core/peak/Peak3D.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/DataTypes.h"
+#include "core/peak/Peak3D.h"
 
 #include "apps/views/ProgressView.h"
 
@@ -41,7 +41,7 @@ class QProgressDialog;
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
-public:
+ public:
     MainWindow(QWidget* parent = nullptr);
 
     ~MainWindow();
@@ -50,10 +50,10 @@ public:
 
     void setColorMap(const std::string& name);
 
-signals:
+ signals:
     void plotDetectorData(nsx::DataSet*, int frame);
 
-private slots:
+ private slots:
     void on_actionAbout_triggered();
 
     void on_actionPixel_position_triggered();
@@ -74,13 +74,13 @@ private slots:
 
     void on_actionDraw_peak_integration_area_triggered(bool checked);
 
-public slots:
+ public slots:
 
     void plotData(const QVector<double>&, const QVector<double>&, const QVector<double>&);
 
     void setInspectorWidget(QWidget*);
 
-private slots:
+ private slots:
 
     void slotChangeSelectedData(nsx::sptrDataSet, int frame);
 
@@ -88,7 +88,7 @@ private slots:
 
     void slotChangeSelectedFrame(int selected_frame);
 
-private:
+ private:
     Ui::MainWindow* _ui;
 
     SessionModel* _session;

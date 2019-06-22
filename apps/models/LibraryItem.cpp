@@ -12,12 +12,12 @@
 //
 //  ***********************************************************************************************
 
+#include "base/logger/Logger.h"
+#include "base/utils/ProgressHandler.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/shape/ShapeLibrary.h"
-#include "base/logger/Logger.h"
-#include "base/utils/ProgressHandler.h"
 
 #include "apps/dialogs/DialogPredictPeaks.h"
 #include "apps/models/DataItem.h"

@@ -20,7 +20,7 @@
 
 class DetectorScene;
 class NSXGraphicsItem : public QGraphicsItem {
-public:
+ public:
     // Construct a SX graphics item
     NSXGraphicsItem(QGraphicsItem* parent = 0, bool deletable = false, bool movable = false);
     // Destructor
@@ -56,7 +56,7 @@ public:
     //! Show or do not show the label bound to the item
     void showLabel(bool);
 
-protected:
+ protected:
     bool _deletable;
     bool _hovered;
     bool _movable;

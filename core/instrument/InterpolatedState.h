@@ -26,7 +26,7 @@ namespace nsx {
 //! is needed to compute analytic derivatives of various functions.
 
 class InterpolatedState : public InstrumentState {
-public:
+ public:
     //! Default value needed for SWIG (note: nullptr does _not_ work)
     InterpolatedState(Diffractometer* diffractometer = nullptr);
     //! Construct by interpolation. The paramter t should be between 0 and 1.

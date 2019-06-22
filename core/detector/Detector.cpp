@@ -15,9 +15,9 @@
 #include <cmath>
 #include <stdexcept>
 
+#include "base/utils/Units.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorFactory.h"
-#include "base/utils/Units.h"
 
 namespace nsx {
 
@@ -95,19 +95,19 @@ Detector::Detector(const YAML::Node& node) : Component(node)
         _dataorder = DataOrder::TopLeftColMajor;
     else if (dataOrder.compare("TopLeftRowMajor") == 0)
         _dataorder = DataOrder::TopLeftRowMajor;
- else if (dataOrder.compare("TopRightColMajor") == 0)
+    else if (dataOrder.compare("TopRightColMajor") == 0)
         _dataorder = DataOrder::TopRightColMajor;
     else if (dataOrder.compare("TopRightRowMajor") == 0)
         _dataorder = DataOrder::TopRightRowMajor;
- else if (dataOrder.compare("BottomLeftColMajor") == 0)
+    else if (dataOrder.compare("BottomLeftColMajor") == 0)
         _dataorder = DataOrder::BottomLeftColMajor;
     else if (dataOrder.compare("BottomLeftRowMajor") == 0)
         _dataorder = DataOrder::BottomLeftRowMajor;
- else if (dataOrder.compare("BottomRightColMajor") == 0)
+    else if (dataOrder.compare("BottomRightColMajor") == 0)
         _dataorder = DataOrder::BottomRightColMajor;
     else if (dataOrder.compare("BottomRightRowMajor") == 0)
         _dataorder = DataOrder::BottomRightRowMajor;
- else {
+    else {
         throw std::runtime_error(
             "Detector class: Data ordering mode not valid, can not build detector");
     }

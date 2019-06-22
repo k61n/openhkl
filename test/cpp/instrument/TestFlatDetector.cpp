@@ -3,11 +3,11 @@
 #include <Eigen/Dense>
 #include <cmath>
 
-#include "core/detector/FlatDetector.h"
 #include "base/geometry/DirectVector.h"
+#include "base/utils/Units.h"
+#include "core/detector/FlatDetector.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/InstrumentState.h"
-#include "base/utils/Units.h"
 
 const double tolerance = 1e-3;
 

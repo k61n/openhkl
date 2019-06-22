@@ -18,7 +18,7 @@
 #include <Eigen/Geometry>
 
 class GLTrackball {
-public:
+ public:
     GLTrackball(int viewport_w, int viewport_h);
     ~GLTrackball();
     //! Call when the mouse button is pressed to initiate rotation
@@ -37,7 +37,7 @@ public:
     void reset();
     void setViewport(int w, int h);
 
-private:
+ private:
     //! Project a point on the trackball sphere from viewport coordinates x,y
     void projectOnSphere(int x, int y, Eigen::Vector3d& p);
     //! Generate a 3D point coordinates from coordinates on the viewport.

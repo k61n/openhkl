@@ -14,10 +14,10 @@
 
 #include "gui/graphics/DetectorView.h"
 
-#include "gui/graphics/DetectorScene.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/raw/IDataReader.h"
+#include "gui/graphics/DetectorScene.h"
 #include <QApplication>
 #include <QClipboard>
 #include <QKeyEvent>

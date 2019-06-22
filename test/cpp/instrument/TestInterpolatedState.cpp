@@ -3,18 +3,18 @@
 #include <Eigen/Dense>
 #include <array>
 
+#include "base/geometry/ReciprocalVector.h"
+#include "base/utils/ProgressHandler.h"
+#include "core/algo/DataReaderFactory.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
-#include "base/geometry/ReciprocalVector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InterpolatedState.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/algo/DataReaderFactory.h"
 #include "core/raw/IDataReader.h"
-#include "base/utils/ProgressHandler.h"
 
 void run_test(const char* filename, const char* instrument)
 {

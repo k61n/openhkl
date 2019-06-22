@@ -14,17 +14,17 @@
 
 #include "gui/graphics/PeakItem.h"
 
-#include "gui/graphics/PeakPlot.h"
-#include "base/utils/Units.h"
 #include "base/geometry/Ellipsoid.h"
 #include "base/geometry/ReciprocalVector.h"
+#include "base/utils/Units.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
+#include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
-#include "core/peak/Peak3D.h"
+#include "gui/graphics/PeakPlot.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 #include <QPainter>
@@ -193,9 +193,8 @@ void PeakItem::plot(NSXPlot* plot)
     double sI = corr_int.sigma();
     info += "Intensity (" + QString(QChar(0x03C3)) + "I): " + QString::number(intensity) + " ("
         + QString::number(sI, 'f', 2) + ")\n";
-    info += "Cor. int. (" + QString(QChar(0x03C3))
-        + "I): " + QString::number(intensity, 'f', 2) + " ("
-        + QString::number(sI, 'f', 2) + ")\n";
+    info += "Cor. int. (" + QString(QChar(0x03C3)) + "I): " + QString::number(intensity, 'f', 2)
+        + " (" + QString::number(sI, 'f', 2) + ")\n";
 
     double scale = _peak->scale();
     double monitor = _peak->data()->reader()->metadata().key<double>("monitor");

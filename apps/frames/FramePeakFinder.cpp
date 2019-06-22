@@ -34,13 +34,13 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 
+#include "base/logger/Logger.h"
+#include "core/analyse/PeakFinder.h"
+#include "core/convolve/ConvolverFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/integration/PixelSumIntegrator.h"
-#include "core/raw/IDataReader.h"
-#include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
-#include "core/convolve/ConvolverFactory.h"
-#include "core/analyse/PeakFinder.h"
+#include "core/raw/IDataReader.h"
 
 #include "apps/delegates/DoubleItemDelegate.h"
 #include "apps/frames/FramePeakFinder.h"
@@ -495,20 +495,20 @@ void FramePeakFinder::doActions(QAbstractButton* button)
     auto button_role = _ui->actions->standardButton(button);
 
     switch (button_role) {
-    case QDialogButtonBox::StandardButton::Apply: {
-        run();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Cancel: {
-        close();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Ok: {
-        accept();
-        break;
-    }
-    default: {
-        return;
-    }
+        case QDialogButtonBox::StandardButton::Apply: {
+            run();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Cancel: {
+            close();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Ok: {
+            accept();
+            break;
+        }
+        default: {
+            return;
+        }
     }
 }

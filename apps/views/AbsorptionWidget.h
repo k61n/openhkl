@@ -30,11 +30,11 @@ class AbsorptionWidget;
 class AbsorptionWidget : public QWidget {
     Q_OBJECT
 
-public:
+ public:
     explicit AbsorptionWidget(nsx::Experiment* experiment, QWidget* parent = nullptr);
     ~AbsorptionWidget();
 
-private:
+ private:
     Ui::AbsorptionWidget* ui;
     //! Link to the experiment
     nsx::Experiment* _experiment;
@@ -46,9 +46,9 @@ private:
     std::string _filepath;
     //! read info file containing video information
     void readInfoFile(const std::string& filename);
-public slots:
+ public slots:
     void loadImage(unsigned int i);
     void initializeSlider(int i);
-private slots:
+ private slots:
     void on_pushButton_clicked();
 };

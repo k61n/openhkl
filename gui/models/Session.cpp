@@ -14,15 +14,15 @@
 
 #include "gui/models/Session.h"
 
-#include "gui/graphics/DetectorScene.h"
+#include "core/algo/DataReaderFactory.h"
+#include "core/experiment/DataSet.h"
+#include "core/instrument/HardwareParameters.h"
+#include "core/loader/RawDataReader.h"
+#include "core/raw/IDataReader.h"
+#include "gui/MainWin.h"
 #include "gui/dialogs/ExperimentDialog.h"
 #include "gui/dialogs/RawDataDialog.h"
-#include "gui/MainWin.h"
-#include "core/experiment/DataSet.h"
-#include "core/algo/DataReaderFactory.h"
-#include "core/raw/IDataReader.h"
-#include "core/loader/RawDataReader.h"
-#include "core/instrument/HardwareParameters.h"
+#include "gui/graphics/DetectorScene.h"
 #include <QCR/engine/logger.h>
 #include <QCR/engine/mixin.h>
 #include <QCR/widgets/modal_dialogs.h>
@@ -77,7 +77,7 @@ void Session::createDefaultExperiment()
     nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName, *instruments.begin()));
     ExperimentModel* expmodel = new ExperimentModel(expPtr);
     experiments.push_back(expmodel);
-    selected = experiments.size() -1;
+    selected = experiments.size() - 1;
     onExperimentChanged();
 }
 
@@ -210,7 +210,7 @@ void Session::loadRawData()
         nsx::Diffractometer* diff = exp->diffractometer();
         reader.reset(new nsx::RawDataReader(filenames[0], diff));
         std::shared_ptr<nsx::RawDataReader> raw_data_reader =
-                std::dynamic_pointer_cast<nsx::RawDataReader>(reader);
+            std::dynamic_pointer_cast<nsx::RawDataReader>(reader);
         for (size_t i = 1; i < filenames.size(); ++i)
             raw_data_reader->addFrame(filenames[i]);
         raw_data_reader->setParameters(parameters);

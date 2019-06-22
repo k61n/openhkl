@@ -18,14 +18,14 @@
 #include <QCompleter>
 #include <QStandardItem>
 
-#include <xsection/Material.h>
-#include "tables/crystal/SpaceGroup.h"
-#include "tables/crystal/UnitCell.h"
+#include "base/logger/Logger.h"
+#include "base/utils/Units.h"
 #include "core/experiment/DataSet.h"
 #include "core/gonio/Gonio.h"
-#include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
-#include "base/utils/Units.h"
+#include "tables/crystal/SpaceGroup.h"
+#include "tables/crystal/UnitCell.h"
+#include <xsection/Material.h>
 
 #include "apps/models/MetaTypes.h"
 #include "apps/models/SessionModel.h"
@@ -155,8 +155,8 @@ void UnitCellPropertyWidget::setChemicalFormula()
     try {
         _unitCellItem->data(Qt::UserRole)
             .value<nsx::sptrUnitCell>()
-            ->setMaterial(std::unique_ptr<xsection::Material>(
-                              new xsection::Material(formula.toStdString())));
+            ->setMaterial(
+                std::unique_ptr<xsection::Material>(new xsection::Material(formula.toStdString())));
     } catch (std::exception& e) {
         nsx::error() << e.what();
     }

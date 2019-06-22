@@ -17,7 +17,7 @@
 #include "apps/models/InspectableTreeItem.h"
 
 class SourceItem : public InspectableTreeItem {
-public:
+ public:
     explicit SourceItem(const char* name);
     QWidget* inspectItem();
 };

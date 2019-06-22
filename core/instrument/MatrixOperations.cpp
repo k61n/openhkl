@@ -41,8 +41,8 @@ void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove)
     matrix.conservativeResize(numRows, numCols);
 }
 
-Eigen::Matrix3d interpolateRotation(
-    const Eigen::Matrix3d& U0, const Eigen::Matrix3d& U1, const double t)
+Eigen::Matrix3d
+interpolateRotation(const Eigen::Matrix3d& U0, const Eigen::Matrix3d& U1, const double t)
 {
     Eigen::Quaterniond q0(U0), q1(U1);
     return q0.slerp(t, q1).toRotationMatrix();

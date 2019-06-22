@@ -16,13 +16,13 @@
 
 #include "apps/models/InspectableTreeItem.h"
 
-#include "core/peak/Peak3D.h"
 #include "core/instrument/InstrumentTypes.h"
+#include "core/peak/Peak3D.h"
 
 class QWidget;
 
 class UnitCellItem : public InspectableTreeItem {
-public:
+ public:
     UnitCellItem(nsx::sptrUnitCell unit_cell);
     ~UnitCellItem();
 
@@ -33,13 +33,13 @@ public:
 
     void info() const;
 
-public slots:
+ public slots:
     void openIndexingToleranceDialog();
     void openTransformationMatrixDialog();
     void openChangeUnitCellDialog();
 
     void openSpaceGroupDialog();
 
-private:
+ private:
     nsx::sptrUnitCell _unit_cell;
 };

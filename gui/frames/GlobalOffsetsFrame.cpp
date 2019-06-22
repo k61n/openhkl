@@ -14,11 +14,11 @@
 
 #include "gui/frames/GlobalOffsetsFrame.h"
 
+#include "base/utils/Units.h"
+#include "core/algo/GonioFit.h"
+#include "core/experiment/DataSet.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Session.h"
-#include "base/utils/Units.h"
-#include "core/experiment/DataSet.h"
-#include "core/algo/GonioFit.h"
 #include <QFileInfo>
 #include <QFormLayout>
 #include <QGroupBox>
@@ -167,30 +167,30 @@ void GlobalOffsets::fit()
         return;
     }
 
-        plot->clearGraphs();
+    plot->clearGraphs();
 
-        QPen pen;
-        pen.setColor(QColor("black"));
-        pen.setWidth(2.0);
+    QPen pen;
+    pen.setColor(QColor("black"));
+    pen.setWidth(2.0);
 
-        plot->addGraph();
-        plot->graph(0)->setPen(pen);
+    plot->addGraph();
+    plot->graph(0)->setPen(pen);
 
-        // Get the cost function for this batch
-        plot->graph(0)->addData(xValues, yValues);
-        plot->xAxis->setLabel("# iterations");
-        plot->yAxis->setLabel("Cost function");
-        plot->setNotAntialiasedElements(QCP::aeAll);
+    // Get the cost function for this batch
+    plot->graph(0)->addData(xValues, yValues);
+    plot->xAxis->setLabel("# iterations");
+    plot->yAxis->setLabel("Cost function");
+    plot->setNotAntialiasedElements(QCP::aeAll);
 
-        QFont font;
-        font.setStyleStrategy(QFont::NoAntialias);
-        plot->xAxis->setTickLabelFont(font);
-        plot->yAxis->setTickLabelFont(font);
-        plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom |
-                                   QCP::iSelectAxes | QCP::iSelectLegend |
-                                   QCP::iSelectPlottables);
-        plot->rescaleAxes();
-        plot->replot();
+    QFont font;
+    font.setStyleStrategy(QFont::NoAntialias);
+    plot->xAxis->setTickLabelFont(font);
+    plot->yAxis->setTickLabelFont(font);
+    plot->setInteractions(
+        QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend
+        | QCP::iSelectPlottables);
+    plot->rescaleAxes();
+    plot->replot();
 }
 
 void GlobalOffsets::actionClicked(QAbstractButton* button)
@@ -198,20 +198,20 @@ void GlobalOffsets::actionClicked(QAbstractButton* button)
     auto button_role = buttons->standardButton(button);
 
     switch (button_role) {
-    case QDialogButtonBox::StandardButton::Apply: {
-        fit();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Cancel: {
-        close();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Ok: {
-        close();
-        break;
-    }
-    default: {
-        return;
-    }
+        case QDialogButtonBox::StandardButton::Apply: {
+            fit();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Cancel: {
+            close();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Ok: {
+            close();
+            break;
+        }
+        default: {
+            return;
+        }
     }
 }

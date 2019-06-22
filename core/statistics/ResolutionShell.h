@@ -32,7 +32,7 @@ struct DShell {
 //! Splits a set of peaks into a number of shells based on resolution.
 
 class ResolutionShell {
-public:
+ public:
     //! Construct the given number of cells with abolute minimum dmin and absolute maximum dmax.
     ResolutionShell(double dmin, double dmax, size_t num_shells);
     //! Add a peak to the list of shells.
@@ -43,7 +43,7 @@ public:
     //! Returns the number of shells.
     size_t nShells() const;
 
-private:
+ private:
     std::vector<DShell> _shells;
 };
 

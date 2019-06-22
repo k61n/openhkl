@@ -22,9 +22,9 @@
 
 #include <QDialog>
 
-#include "tables/crystal/SpaceGroup.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/DataTypes.h"
+#include "tables/crystal/SpaceGroup.h"
 
 class QModelIndex;
 class QWidget;
@@ -37,16 +37,16 @@ class DialogSpaceGroup;
 class DialogSpaceGroup : public QDialog {
     Q_OBJECT
 
-public:
+ public:
     explicit DialogSpaceGroup(const nsx::PeakList& peaks, QWidget* parent = 0);
     ~DialogSpaceGroup();
 
     std::string getSelectedGroup();
 
-private slots:
+ private slots:
     void on_tableView_doubleClicked(const QModelIndex& index);
 
-private:
+ private:
     void evaluateSpaceGroups();
     void buildTable();
 

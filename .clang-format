@@ -7,7 +7,7 @@ Standard: Cpp11
 BasedOnStyle: WebKit
 IndentWidth: 4
 
-AccessModifierOffset: -4
+AccessModifierOffset: -3
 AlignAfterOpenBracket: AlwaysBreak
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
@@ -34,7 +34,7 @@ ContinuationIndentWidth: 4
 Cpp11BracedListStyle: true
 DerivePointerAlignment: false
 FixNamespaceComments: false
-IndentCaseLabels: false
+IndentCaseLabels: true
 IndentWrappedFunctionNames: false
 MaxEmptyLinesToKeep: 2
 NamespaceIndentation: None

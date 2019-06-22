@@ -22,7 +22,7 @@ namespace nsx {
 //! Makes simulated data behave as if it were real. Used for testing purposes.
 
 class FakeDataReader : public HDF5MetaDataReader {
-public:
+ public:
     FakeDataReader() = delete;
 
     FakeDataReader(const FakeDataReader& other) = delete;
@@ -42,7 +42,7 @@ public:
     //! Sets the value of the data at the given frame
     void setData(size_t frame, const Eigen::MatrixXi& data);
 
-private:
+ private:
     //! Stored data frames. Could be real or simulated/faked.
     std::vector<Eigen::MatrixXi> _frames;
 };

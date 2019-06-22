@@ -27,7 +27,7 @@ class QWidget;
 class SXPlot;
 
 class CutLineGraphicsItem : public CutterGraphicsItem {
-public:
+ public:
     explicit CutLineGraphicsItem(nsx::sptrDataSet data);
 
     ~CutLineGraphicsItem();
@@ -45,6 +45,6 @@ public:
     // Getters and setters
     std::string getPlotType() const;
 
-private:
+ private:
     int _nPoints;
 };

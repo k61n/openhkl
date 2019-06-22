@@ -14,8 +14,8 @@
 
 #include "tables/crystal/SpaceGroup.h"
 
-#include "tables/crystal/UnitCell.h"
 #include "base/utils/StringIO.h"
+#include "tables/crystal/UnitCell.h"
 
 #include <algorithm>
 #include <sstream>
@@ -342,7 +342,7 @@ std::vector<std::string> SpaceGroup::symbols()
     symbols.reserve(symmetry_table.size());
     std::transform(
         symmetry_table.begin(), symmetry_table.end(), std::back_inserter(symbols),
-        [](const std::pair<std::string, std::string>& s) -> std::string { return s.first; } );
+        [](const std::pair<std::string, std::string>& s) -> std::string { return s.first; });
     return symbols;
 }
 
@@ -558,8 +558,7 @@ bool SpaceGroup::isEquivalent(const MillerIndex& hkl1, const MillerIndex& hkl2, 
         if (std::max((rotated - hkl1d).maxCoeff(), (hkl1d - rotated).maxCoeff()) < eps)
             return true;
 
-        if (friedel
-            && std::max((rotated + hkl1d).maxCoeff(), (-hkl1d - rotated).maxCoeff()) < eps)
+        if (friedel && std::max((rotated + hkl1d).maxCoeff(), (-hkl1d - rotated).maxCoeff()) < eps)
             return true;
     }
     return false;

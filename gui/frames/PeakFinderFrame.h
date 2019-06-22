@@ -23,23 +23,23 @@
 #include <QTableWidget>
 
 class FoundPeaks : public QcrWidget {
-public:
+ public:
     FoundPeaks(nsx::PeakList, const QString&);
     nsx::PeakList selectedPeaks();
 
-private:
+ private:
     PeaksTableModel* tableModel;
     QcrCheckBox* keepSelectedPeaks;
 };
 
 class PeakFinder : public QcrFrame {
-public:
+ public:
     PeakFinder();
     void updateConvolutionParameters();
     void run();
     std::map<std::string, double> convolutionParameters();
 
-private:
+ private:
     QcrSpinBox* threshold;
     QcrDoubleSpinBox* mergingScale;
     QcrSpinBox* minSize;

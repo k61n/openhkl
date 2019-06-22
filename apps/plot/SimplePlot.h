@@ -16,7 +16,7 @@
 
 class SimplePlot : public SXPlot {
     Q_OBJECT
-public:
+ public:
     static SXPlot* create(QWidget* parent);
 
     explicit SimplePlot(QWidget* parent = 0);

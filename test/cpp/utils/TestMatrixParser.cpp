@@ -3,8 +3,8 @@
 
 #include <Eigen/Dense>
 
-#include "core/detector/MatrixParser.h"
 #include "core/detector/DataOrder.h"
+#include "core/detector/MatrixParser.h"
 
 TEST_CASE("test/utils/TestMatrixParser.cpp", "")
 {

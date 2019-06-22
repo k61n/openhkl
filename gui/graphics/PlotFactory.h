@@ -21,7 +21,7 @@
 
 class PlotFactory : public nsx::Factory<NSXPlot, std::string, QWidget*>,
                     public nsx::Singleton<PlotFactory, nsx::Constructor, nsx::Destructor> {
-private:
+ private:
     PlotFactory();
     ~PlotFactory();
     friend class nsx::Constructor<PlotFactory>;

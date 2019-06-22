@@ -18,22 +18,22 @@
 
 #include <Eigen/Dense>
 
-#include <xsection/Material.h>
-#include "tables/crystal/UnitCell.h"
+#include "base/geometry/ReciprocalVector.h"
+#include "base/utils/Units.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
-#include "base/geometry/ReciprocalVector.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/raw/IDataReader.h"
 #include "core/monte-carlo/MCAbsorption.h"
 #include "core/peak/Peak3D.h"
-#include "base/utils/Units.h"
+#include "core/raw/IDataReader.h"
+#include "tables/crystal/UnitCell.h"
+#include <xsection/Material.h>
 
 #include "apps/dialogs/DialogMCAbsorption.h"
 #include "apps/models/ExperimentItem.h"

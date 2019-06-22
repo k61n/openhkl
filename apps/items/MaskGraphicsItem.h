@@ -32,7 +32,7 @@ class QWidget;
  * intercept or not the mask
  */
 class MaskGraphicsItem : public SXGraphicsItem {
-public:
+ public:
     // Constructs a mask
     MaskGraphicsItem(nsx::sptrDataSet data, nsx::AABB* aabb);
     //! The destructor
@@ -63,7 +63,7 @@ public:
     //! Paint the slice
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
 
-protected:
+ protected:
     //! The data on which the cutter will act upon
     nsx::sptrDataSet _data;
     //! The AABB of the peak
@@ -72,6 +72,6 @@ protected:
     QPointF _to;
     QGraphicsTextItem* _text;
 
-private:
+ private:
     void updateAABB();
 };

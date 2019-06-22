@@ -20,7 +20,7 @@
 class NSXPlot;
 
 class PlottableItem : public NSXGraphicsItem {
-public:
+ public:
     PlottableItem(QGraphicsItem* parent = 0, bool deletable = true, bool movable = false);
     virtual ~PlottableItem();
 

@@ -26,11 +26,11 @@ class NumorItem;
 class NumorPropertyWidget : public QWidget {
     Q_OBJECT
 
-public:
+ public:
     explicit NumorPropertyWidget(NumorItem* caller, QWidget* parent = 0);
     ~NumorPropertyWidget();
 
-private:
+ private:
     Ui::NumorPropertyWidget* ui;
     NumorItem* _numorItem;
 };

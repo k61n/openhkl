@@ -15,8 +15,8 @@
 #ifndef CORE_ANALYSE_OCTREE_H
 #define CORE_ANALYSE_OCTREE_H
 
-#include <set>
 #include "base/geometry/AABB.h"
+#include <set>
 
 namespace nsx {
 
@@ -36,7 +36,7 @@ class OctreeIterator;
 //! soft constraint on _MAX_STORAGE is broken.
 
 class Octree : public AABB {
-public:
+ public:
     friend class OctreeIterator;
 
     // These typedefs insure compatibility with STL
@@ -101,7 +101,7 @@ public:
 
     unsigned int numChambers() const;
 
-private:
+ private:
     //! Prevent defining tree with null world.
     Octree();
 
@@ -143,7 +143,7 @@ private:
 //! Iterator for Octree leaves/chambers.
 
 class OctreeIterator {
-public:
+ public:
     //! The default constructor. Used only for end condition.
     OctreeIterator();
 
@@ -164,7 +164,7 @@ public:
 
     OctreeIterator operator++(int);
 
-private:
+ private:
     const Octree* _node;
 };
 

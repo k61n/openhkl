@@ -15,10 +15,10 @@
 #ifndef CORE_ANALYSE_PEAKFINDER_H
 #define CORE_ANALYSE_PEAKFINDER_H
 
-#include "core/experiment/DataSet.h"
+#include "base/utils/ProgressHandler.h"
 #include "core/analyse/Blob3D.h"
 #include "core/convolve/Convolver.h"
-#include "base/utils/ProgressHandler.h"
+#include "core/experiment/DataSet.h"
 
 namespace nsx {
 
@@ -28,7 +28,7 @@ using EquivalenceList = std::vector<EquivalencePair>;
 //! Class to handle peak search in datasets
 
 class PeakFinder {
-public:
+ public:
     PeakFinder();
 
     PeakList find(DataList numors);
@@ -60,7 +60,7 @@ public:
 
     void setThreshold(double value);
 
-private:
+ private:
     void eliminateBlobs(std::map<int, Blob3D>& blobs) const;
 
     void findPrimaryBlobs(
@@ -74,7 +74,7 @@ private:
 
     void mergeEquivalentBlobs(std::map<int, Blob3D>& blobs, EquivalenceList& equivalences) const;
 
-private:
+ private:
     sptrProgressHandler _handler;
 
     std::unique_ptr<Convolver> _convolver;

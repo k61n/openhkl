@@ -31,7 +31,7 @@ namespace nsx {
 //! methods or by template accessor: e.g. Axis<0>(g)=RotAxis(UnitZ,CW).
 
 class Gonio {
-public:
+ public:
     Gonio();
     Gonio(const Gonio& other);
 
@@ -54,8 +54,8 @@ public:
 
     //! Returns the homogeneous matrix corresponding to this set of parameters.
     //! Throw if angles outside limits.
-    Eigen::Transform<double, 3, Eigen::Affine> affineMatrix(
-        const std::vector<double>& values) const;
+    Eigen::Transform<double, 3, Eigen::Affine>
+    affineMatrix(const std::vector<double>& values) const;
 
     //! Transform a point in 3D space, given a vector of parameters
     DirectVector transform(const DirectVector& v, const std::vector<double>& state) const;
@@ -64,7 +64,7 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 #endif
 
-private:
+ private:
     //! Given name of the gonio
     std::string _name;
     //! Sets of axis

@@ -19,7 +19,7 @@
 
 class PeakPlot : public NSXPlot {
     Q_OBJECT
-public:
+ public:
     static NSXPlot* create(QWidget* parent);
 
     explicit PeakPlot(QWidget* parent = 0);

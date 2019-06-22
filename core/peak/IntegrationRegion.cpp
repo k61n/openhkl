@@ -13,13 +13,13 @@
 //  ***********************************************************************************************
 
 #include "core/peak/IntegrationRegion.h"
-#include "tables/crystal/BrillouinZone.h"
-#include "tables/crystal/UnitCell.h"
-#include "core/detector/Detector.h"
 #include "base/geometry/Ellipsoid.h"
 #include "base/hull/ConvexHull.h"
+#include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/peak/Peak3D.h"
+#include "tables/crystal/BrillouinZone.h"
+#include "tables/crystal/UnitCell.h"
 
 namespace nsx {
 
@@ -93,13 +93,13 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
             auto ev_type = classify(ev);
 
             switch (ev_type) {
-            case EventType::FORBIDDEN: val = EventType::FORBIDDEN; break;
-            case EventType::PEAK: val = EventType::PEAK; break;
-            case EventType::BACKGROUND:
-                if (val == EventType::EXCLUDED)
-                    val = EventType::BACKGROUND;
-                break;
-            default: break;
+                case EventType::FORBIDDEN: val = EventType::FORBIDDEN; break;
+                case EventType::PEAK: val = EventType::PEAK; break;
+                case EventType::BACKGROUND:
+                    if (val == EventType::EXCLUDED)
+                        val = EventType::BACKGROUND;
+                    break;
+                default: break;
             }
             mask(y, x) = int(val);
         }

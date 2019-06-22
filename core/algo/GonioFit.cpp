@@ -14,11 +14,11 @@
 
 #include "core/algo/GonioFit.h"
 
-#include "core/experiment/DataSet.h"
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
-#include "core/raw/IDataReader.h"
 #include "base/logger/Logger.h"
+#include "core/experiment/DataSet.h"
+#include "core/raw/IDataReader.h"
 
 namespace nsx {
 
@@ -82,8 +82,7 @@ GonioFit fitSampleGonioOffsets(
             std::transform(
                 state.begin(), state.end(), fitted_offsets.begin(), real_values.begin(),
                 std::plus<double>());
-            Eigen::Matrix3d fitted_sample_orientation =
-                gonio.affineMatrix(real_values).rotation();
+            Eigen::Matrix3d fitted_sample_orientation = gonio.affineMatrix(real_values).rotation();
             f(i) = (fitted_sample_orientation - myorientations[i]).norm();
         }
 

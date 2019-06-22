@@ -20,10 +20,10 @@
 
 //! Property widget for unit cell
 class UnitCellProperty : public QcrWidget {
-public:
+ public:
     UnitCellProperty();
 
-private:
+ private:
     void setUnitCellName();
     void getLatticeParams();
     void setLatticeParams();

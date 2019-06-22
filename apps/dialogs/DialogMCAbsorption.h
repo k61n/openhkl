@@ -31,14 +31,14 @@ class ExperimentItem;
 class DialogMCAbsorption : public QDialog {
     Q_OBJECT
 
-public:
+ public:
     explicit DialogMCAbsorption(ExperimentItem* experiment_item, QWidget* parent = 0);
     ~DialogMCAbsorption();
 
-private slots:
+ private slots:
     void on_pushButton_run_pressed();
 
-private:
+ private:
     Ui::DialogMCAbsorption* ui;
     ExperimentItem* _experiment_item;
 };

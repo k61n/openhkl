@@ -19,15 +19,15 @@ class SampleItem;
 class SourceItem;
 
 class InstrumentItem : public TreeItem {
-public:
+ public:
     explicit InstrumentItem(const char* name, const char* source_name);
 
-public:
+ public:
     DetectorItem* detectorItem();
     SampleItem* sampleItem();
     SourceItem* sourceItem();
 
-private:
+ private:
     DetectorItem* _detector;
     SampleItem* _sample;
     SourceItem* _source;

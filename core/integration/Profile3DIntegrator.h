@@ -15,20 +15,20 @@
 #ifndef CORE_INTEGRATION_PROFILE3DINTEGRATOR_H
 #define CORE_INTEGRATION_PROFILE3DINTEGRATOR_H
 
-#include "core/shape/ShapeLibrary.h"
 #include "core/peak/IPeakIntegrator.h"
+#include "core/shape/ShapeLibrary.h"
 
 namespace nsx {
 
 //! Peak integrator using 3d profile fitting, as described by Kabsch (1988, 2010).
 
 class Profile3DIntegrator : public IPeakIntegrator {
-public:
+ public:
     Profile3DIntegrator(
         sptrShapeLibrary library, double radius, double nframes, bool detector_space);
     bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
 
-private:
+ private:
     sptrShapeLibrary _library;
     double _radius;
     double _nframes;

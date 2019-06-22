@@ -25,7 +25,7 @@ namespace nsx {
 //! Helper class used by integration routines.
 
 class PeakData {
-public:
+ public:
     //! Construct instance associated to the given peak
     PeakData(sptrPeak3D peak = nullptr);
     //! Returns the list of detector events associated to the peak
@@ -39,7 +39,7 @@ public:
     //! Clear the events
     void reset();
 
-private:
+ private:
     sptrPeak3D _peak;
     PeakCoordinateSystem _system;
     std::deque<DetectorEvent> _events;

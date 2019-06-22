@@ -22,7 +22,7 @@ class MergedData;
 //! Pure virtual base class for statistics of merged peaks. Only realised by RFactor.
 
 class IMergedPeakStatistic {
-public:
+ public:
     virtual ~IMergedPeakStatistic() = default;
     //! Calculate the statistic on a given merged data set.
     virtual void calculate(const MergedData& data) = 0;

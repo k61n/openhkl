@@ -26,12 +26,12 @@ class SampleItem;
 class SamplePropertyWidget : public QWidget {
     Q_OBJECT
 
-public:
+ public:
     explicit SamplePropertyWidget(SampleItem* caller, QWidget* parent = 0);
 
     ~SamplePropertyWidget();
 
-private:
+ private:
     Ui::SamplePropertyWidget* _ui;
 
     SampleItem* _sampleItem;

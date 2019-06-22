@@ -7,23 +7,23 @@
 #include <Eigen/Dense>
 
 #include "core/algo/AutoIndexer.h"
-#include "core/peak/Peak3D.h"
-#include "core/experiment/DataSet.h"
-#include "core/instrument/Diffractometer.h"
 #include "core/algo/DataReaderFactory.h"
 #include "core/convolve/ConvolverFactory.h"
+#include "core/experiment/DataSet.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/peak/Peak3D.h"
 
-#include "core/experiment/Experiment.h"
 #include "base/geometry/ReciprocalVector.h"
+#include "base/utils/ProgressHandler.h"
+#include "base/utils/Units.h"
+#include "core/algo/Refiner.h"
+#include "core/analyse/PeakFilter.h"
+#include "core/analyse/PeakFinder.h"
+#include "core/experiment/Experiment.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
 #include "core/peak/Peak3D.h"
-#include "core/analyse/PeakFilter.h"
-#include "core/algo/Refiner.h"
-#include "core/analyse/PeakFinder.h"
-#include "base/utils/ProgressHandler.h"
-#include "base/utils/Units.h"
 
 TEST_CASE("test/crystal/TestRefiner.cpp", "")
 {

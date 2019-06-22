@@ -20,12 +20,12 @@
 
 //! Dialog to get the experiment and instrument names
 class ExperimentDialog : public QcrModalDialog {
-public:
+ public:
     ExperimentDialog();
     QString experimentName();
     QString instrumentName();
 
-private:
+ private:
     QcrComboBox* instruments;
     QcrLineEdit* experiment;
 };

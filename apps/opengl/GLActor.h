@@ -27,7 +27,7 @@
 #include <QGLWidget>
 
 class GLActor {
-public:
+ public:
     GLActor(const char* name);
     void draw(QGLWidget* w);
     void drawforPicking(int color);
@@ -38,10 +38,10 @@ public:
     void setScale(double scale);
     virtual int pickableElements() = 0;
 
-private:
+ private:
     virtual void GLCode() = 0;
 
-protected:
+ protected:
     GLfloat _color[3];
     Eigen::Vector3d _pos;
     double _scale[3];

@@ -15,8 +15,8 @@
 #ifndef CORE_ANALYSE_BLOB3D_H
 #define CORE_ANALYSE_BLOB3D_H
 
-#include <iostream> // needed in no-swig case (?)
 #include <Eigen/Dense>
+#include <iostream> // needed in no-swig case (?)
 
 namespace nsx {
 
@@ -31,7 +31,7 @@ namespace nsx {
 //! Ellipsoid, by diagonalizing the variance tensor.
 
 class Blob3D {
-public:
+ public:
     //! Initialize an empty blob
     Blob3D();
 
@@ -75,7 +75,7 @@ public:
     //! Gets covariance matrix of the blob
     Eigen::Matrix3d covariance() const;
 
-private:
+ private:
     //! Zeroth moment (total mass)
     double _m0;
 

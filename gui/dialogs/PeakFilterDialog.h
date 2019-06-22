@@ -20,16 +20,16 @@
 #include <QDialogButtonBox>
 
 class PeakFilter : public QDialog {
-public:
+ public:
     PeakFilter();
     ~PeakFilter();
 
-public slots:
+ public slots:
     void accept() override;
     void slotActionClicked(QAbstractButton* button);
     void slotUnitCellChanged(int index);
 
-private:
+ private:
     void doLayout();
     void filterPeaks();
 

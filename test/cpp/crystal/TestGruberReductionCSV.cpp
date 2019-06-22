@@ -6,13 +6,13 @@
 
 #include <Eigen/Dense>
 
+#include "base/utils/CSV.h"
+#include "base/utils/Units.h"
+#include "core/gonio/Component.h"
 #include "tables/crystal/GruberReduction.h"
 #include "tables/crystal/NiggliReduction.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
-#include "core/gonio/Component.h"
-#include "base/utils/CSV.h"
-#include "base/utils/Units.h"
 
 const double niggli_tolerance = 1e-9;
 const double gruber_tolerance = 1e-5;

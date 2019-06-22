@@ -20,7 +20,7 @@
 #include <Eigen/Dense>
 
 class PeakItem : public PlottableItem {
-public:
+ public:
     PeakItem(nsx::sptrPeak3D peak, int frame);
 
     ~PeakItem() = default;
@@ -40,7 +40,7 @@ public:
 
     static void showArea(bool flag);
 
-private:
+ private:
     //! Pointer to the Peak3D object
     nsx::sptrPeak3D _peak;
 

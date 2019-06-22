@@ -17,7 +17,7 @@
 #include <QGraphicsItem>
 
 class RulerItem : public QGraphicsItem {
-public:
+ public:
     //! Constructor ...
     RulerItem(QGraphicsItem* parent = 0);
     ~RulerItem();
@@ -32,7 +32,7 @@ public:
     //! Overloaded bounding box
     QRectF boundingRect() const;
 
-public:
+ public:
     //! When first point is clicked, draw
     void startDrawingAt(const QPointF&);
     //! when ruler end is dragged
@@ -43,7 +43,7 @@ public:
     void setDistance(double val);
     double getConversion() const;
 
-private:
+ private:
     //! The base of the ruler
     QGraphicsLineItem* _base;
     //! The tip of the ruler

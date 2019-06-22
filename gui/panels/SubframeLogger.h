@@ -22,13 +22,13 @@
 
 class SubframeLogger : public QcrDockWidget {
     Q_OBJECT
-public:
+ public:
     SubframeLogger();
 
-private slots:
+ private slots:
     void slotPrintLog(const QString& line);
 
-private:
+ private:
     QTextEdit* logText;
 };
 

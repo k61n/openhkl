@@ -15,8 +15,8 @@
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
-#include <cmath>
 #include <Eigen/Dense>
+#include <cmath>
 
 namespace nsx {
 

@@ -23,10 +23,10 @@
 #include <QListWidget>
 
 class Refiner : public QcrFrame {
-public:
+ public:
     Refiner();
 
-private:
+ private:
     void layout();
     void accept();
     void refine();
@@ -46,10 +46,10 @@ private:
 };
 
 class RefinerFitWidget : public QcrWidget {
-public:
+ public:
     RefinerFitWidget(const std::map<nsx::sptrDataSet, nsx::Refiner>& refiners);
 
-private:
+ private:
     void selectedDataChanged(int selected_data);
     void selectedBatchChanged(int selected_batch);
     void selectedFrameChanged(int selected_frame);

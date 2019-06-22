@@ -16,9 +16,9 @@
 #define CORE_PEAK_PEAK3D_H
 
 #include "base/geometry/Ellipsoid.h"
+#include "core/experiment/DataTypes.h"
 #include "core/peak/Intensity.h"
 #include "tables/crystal/UnitCell.h"
-#include "core/experiment/DataTypes.h"
 
 #include <memory>
 #include <vector>
@@ -30,7 +30,7 @@ class IPeakIntegrator;
 //! Stores integrated peaks, including their shape and location.
 
 class Peak3D {
-public:
+ public:
     //! Create peak belonging to data without setting a position, shape, or intensity
     Peak3D(sptrDataSet data);
     //! Create peak belonging to data with given shape
@@ -117,7 +117,7 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 #endif
 
-private:
+ private:
     //! Shape describing the Peak zone
     Ellipsoid _shape;
     //! Raw intensity (count), background corrected
@@ -150,7 +150,7 @@ using PeakList = std::vector<sptrPeak3D>;
 //! Sort peak into a list of equivalent peaks, using the space group symmetry,
 //! optionally including Friedel pairs (if this is not already a symmetry of the space group)
 // --- unused
-//std::vector<PeakList> findEquivalences(
+// std::vector<PeakList> findEquivalences(
 //    const SpaceGroup& group, const PeakList& peak_list, bool friedel);
 
 } // namespace nsx

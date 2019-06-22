@@ -22,15 +22,15 @@
 #include <QTableView>
 #include <QVector>
 
-#include "tables/crystal/MillerIndex.h"
-#include "core/statistics/ResolutionShell.h"
+#include "base/logger/Logger.h"
 #include "core/experiment/DataSet.h"
+#include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
-#include "base/logger/Logger.h"
-#include "core/peak/Peak3D.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
+#include "core/statistics/ResolutionShell.h"
+#include "tables/crystal/MillerIndex.h"
 
 #include "apps/delegates/DoubleItemDelegate.h"
 #include "apps/frames/FrameStatistics.h"
@@ -124,13 +124,13 @@ void FrameStatistics::slotActionClicked(QAbstractButton* button)
     auto button_role = _ui->actions->standardButton(button);
 
     switch (button_role) {
-    case QDialogButtonBox::StandardButton::Ok: {
-        close();
-        break;
-    }
-    default: {
-        return;
-    }
+        case QDialogButtonBox::StandardButton::Ok: {
+            close();
+            break;
+        }
+        default: {
+            return;
+        }
     }
 }
 
@@ -395,8 +395,8 @@ void FrameStatistics::updateStatisticsTab()
         row.append(new QStandardItem(QString::number(d_upper)));
         row.append(new QStandardItem(QString::number(d_lower)));
         row.append(new QStandardItem(QString::number(merged_data_per_shell.totalSize())));
-        row.append(new QStandardItem(QString::number(
-                                         merged_data_per_shell.mergedPeakSet().size())));
+        row.append(
+            new QStandardItem(QString::number(merged_data_per_shell.mergedPeakSet().size())));
         row.append(new QStandardItem(QString::number(merged_data_per_shell.redundancy())));
         row.append(new QStandardItem(QString::number(rfactor.Rmeas())));
         row.append(new QStandardItem(QString::number(rfactor.expectedRmeas())));

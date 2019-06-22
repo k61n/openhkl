@@ -24,13 +24,13 @@
 #include <QMouseEvent>
 #include <QStandardItemModel>
 
-#include "tables/crystal/UnitCell.h"
+#include "base/logger/Logger.h"
+#include "base/utils/ProgressHandler.h"
 #include "core/experiment/DataSet.h"
+#include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
-#include "base/logger/Logger.h"
-#include "core/peak/Peak3D.h"
-#include "base/utils/ProgressHandler.h"
+#include "tables/crystal/UnitCell.h"
 
 #include "apps/models/CollectedPeaksModel.h"
 #include "apps/models/SessionModel.h"

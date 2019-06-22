@@ -248,31 +248,31 @@ QVariant ScientificNotationSpinBox::validateAndInterpret(
 
     // Test possible 'Intermediate' reasons
     switch (len) {
-    case 0:
-        // Length 0 is always 'Intermediate', except for min=max
-        if (max != min)
-            state = QValidator::Intermediate;
-        else
-            state = QValidator::Invalid;
-        goto end;
-    case 1:
-        // if only char is '+' or '-'
-        if (copy.at(0) == delimiter || (plus && copy.at(0) == QLatin1Char('+'))
-            || (minus && copy.at(0) == QLatin1Char('-'))) {
-            state = QValidator::Intermediate;
+        case 0:
+            // Length 0 is always 'Intermediate', except for min=max
+            if (max != min)
+                state = QValidator::Intermediate;
+            else
+                state = QValidator::Invalid;
             goto end;
-        }
-        break;
-    case 2:
-        // if only chars are '+' or '-' followed by Comma seperator (delimiter)
-        if (copy.at(1) == delimiter
-            && ((plus && copy.at(0) == QLatin1Char('+'))
-                || (minus && copy.at(0) == QLatin1Char('-')))) {
-            state = QValidator::Intermediate;
-            goto end;
-        }
-        break;
-    default: break;
+        case 1:
+            // if only char is '+' or '-'
+            if (copy.at(0) == delimiter || (plus && copy.at(0) == QLatin1Char('+'))
+                || (minus && copy.at(0) == QLatin1Char('-'))) {
+                state = QValidator::Intermediate;
+                goto end;
+            }
+            break;
+        case 2:
+            // if only chars are '+' or '-' followed by Comma seperator (delimiter)
+            if (copy.at(1) == delimiter
+                && ((plus && copy.at(0) == QLatin1Char('+'))
+                    || (minus && copy.at(0) == QLatin1Char('-')))) {
+                state = QValidator::Intermediate;
+                goto end;
+            }
+            break;
+        default: break;
     } // end switch
 
     // First char must not be thousand-char

@@ -22,16 +22,16 @@
 #include <QStandardItem>
 #include <QString>
 
+#include "base/logger/Logger.h"
+#include "base/utils/ProgressHandler.h"
+#include "core/algo/DataReaderFactory.h"
+#include "core/analyse/PeakFinder.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/integration/PixelSumIntegrator.h"
-#include "core/algo/DataReaderFactory.h"
-#include "core/raw/IDataReader.h"
 #include "core/loader/RawDataReader.h"
-#include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
-#include "core/analyse/PeakFinder.h"
-#include "base/utils/ProgressHandler.h"
+#include "core/raw/IDataReader.h"
 
 #include "apps/MainWindow.h"
 #include "apps/dialogs/DialogHDF5Converter.h"

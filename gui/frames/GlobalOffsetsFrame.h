@@ -25,10 +25,10 @@
 enum class offsetMode { DETECTOR, SAMPLE };
 
 class GlobalOffsets : public QcrFrame {
-public:
+ public:
     GlobalOffsets(offsetMode mode);
 
-private:
+ private:
     void layout();
     void fit();
     void actionClicked(QAbstractButton* button);

@@ -15,15 +15,15 @@
 #ifndef CORE_STATISTICS_CC_H
 #define CORE_STATISTICS_CC_H
 
-#include "core/analyse/MergedPeak.h"
 #include "core/analyse/MergedData.h"
+#include "core/analyse/MergedPeak.h"
 
 namespace nsx {
 
 //! Calculates correlation coefficients (CChalf and CC*).
 
 class CC {
-public:
+ public:
     CC();
     //! Calculate the statistic on the given set of merged peaks.
     void calculate(const std::vector<MergedPeak>& peaks);
@@ -36,7 +36,7 @@ public:
     //! Returns number of peaks
     unsigned int nPeaks() const;
 
-private:
+ private:
     double _CChalf;
     double _CCstar;
     unsigned int _nPeaks;

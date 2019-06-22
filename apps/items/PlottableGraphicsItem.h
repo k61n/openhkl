@@ -29,7 +29,7 @@ class QWidget;
 class SXPlot;
 
 class PlottableGraphicsItem : public SXGraphicsItem {
-public:
+ public:
     PlottableGraphicsItem(QGraphicsItem* parent = 0, bool deletable = true, bool movable = false);
     virtual ~PlottableGraphicsItem();
 

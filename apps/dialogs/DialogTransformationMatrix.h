@@ -30,18 +30,18 @@ class Widget;
 class DialogTransformationMatrix : public QDialog {
     Q_OBJECT
 
-signals:
+ signals:
     void getMatrix(const Eigen::Matrix3d& m);
 
-public:
+ public:
     explicit DialogTransformationMatrix(nsx::sptrUnitCell unitCell, QWidget* parent = 0);
     ~DialogTransformationMatrix();
 
-public slots:
+ public slots:
 
     virtual void accept() override;
 
-private:
+ private:
     Ui::DialogTransformationMatrix* ui;
     nsx::sptrUnitCell _unitCell;
 };

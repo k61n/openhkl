@@ -30,7 +30,7 @@ class DialogPredictPeaks;
 class DialogPredictPeaks : public QDialog {
     Q_OBJECT
 
-public:
+ public:
     static DialogPredictPeaks* create(
         ExperimentItem* experiment_tree, const nsx::UnitCellList& peaks, QWidget* parent = nullptr);
 
@@ -49,22 +49,22 @@ public:
 
     nsx::sptrUnitCell cell();
 
-public slots:
+ public slots:
 
     virtual void accept() override;
 
-private slots:
+ private slots:
 
     void slotActionClicked(QAbstractButton* button);
 
-private:
+ private:
     DialogPredictPeaks(
         ExperimentItem* experiment_tree, const nsx::UnitCellList& unit_cells,
         QWidget* parent = nullptr);
 
     void predictPeaks();
 
-private:
+ private:
     static DialogPredictPeaks* _instance;
 
     Ui::DialogPredictPeaks* _ui;

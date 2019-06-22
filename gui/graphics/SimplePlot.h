@@ -19,7 +19,7 @@
 
 class SimplePlot : public NSXPlot {
     Q_OBJECT
-public:
+ public:
     static NSXPlot* create(QWidget* parent);
 
     explicit SimplePlot(QWidget* parent = 0);

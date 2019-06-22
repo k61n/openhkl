@@ -31,25 +31,25 @@ class SessionModel;
 
 class ExperimentTree : public QTreeView {
     Q_OBJECT
-public:
+ public:
     explicit ExperimentTree(QWidget* parent);
 
     ~ExperimentTree();
 
     SessionModel* session();
 
-signals:
+ signals:
     void plotData(nsx::sptrDataSet);
     void inspectWidget(QWidget*);
     void resetScene();
 
-public slots:
+ public slots:
     void keyPressEvent(QKeyEvent* event);
     void onCustomMenuRequested(const QPoint& point);
     void onDoubleClick(const QModelIndex& index);
 
     void onSingleClick(const QModelIndex& index);
 
-private:
+ private:
     void openInstrumentStatesDialog();
 };

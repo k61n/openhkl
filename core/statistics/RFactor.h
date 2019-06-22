@@ -22,7 +22,7 @@ namespace nsx {
 //! IMergedPeakStatistic to compute various R factors.
 
 class RFactor : public IMergedPeakStatistic {
-public:
+ public:
     RFactor()
         : _Rmerge(0.0)
         , _Rmeas(0.0)
@@ -47,7 +47,7 @@ public:
     //! Expected Rpim, based on error estimates
     double expectedRpim() { return _expectedRpim; }
 
-private:
+ private:
     double _Rmerge, _Rmeas, _Rpim;
     double _expectedRmerge, _expectedRmeas, _expectedRpim;
 };

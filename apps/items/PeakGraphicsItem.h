@@ -27,7 +27,7 @@ class QWidget;
 class SXPlot;
 
 class PeakGraphicsItem : public PlottableGraphicsItem {
-public:
+ public:
     PeakGraphicsItem(nsx::sptrPeak3D peak, int frame);
 
     ~PeakGraphicsItem() = default;
@@ -47,7 +47,7 @@ public:
 
     static void showArea(bool flag);
 
-private:
+ private:
     //! Pointer to the Peak3D object
     nsx::sptrPeak3D _peak;
 

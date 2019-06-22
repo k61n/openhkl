@@ -14,9 +14,9 @@
 
 #include "gui/panels/SubframePlot.h"
 
+#include "gui/MainWin.h"
 #include "gui/actions/Triggers.h"
 #include "gui/graphics/PlotFactory.h"
-#include "gui/MainWin.h"
 
 //-------------------------------------------------------------------------------------------------
 //! class SubframePlot

@@ -24,7 +24,7 @@
 namespace nsx {
 
 class Logger {
-public:
+ public:
     // Note: necessary to delete this for MSVC
     Logger() = delete;
     Logger(IStreamWrapper* wrapper);
@@ -36,7 +36,7 @@ public:
 
     template <typename T> Logger& operator<<(T&& x);
 
-private:
+ private:
     std::unique_ptr<IStreamWrapper> _wrapper;
     std::string _msg;
 };

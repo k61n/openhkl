@@ -22,7 +22,7 @@ namespace nsx {
 //! Lightweight class for detector events.
 
 class DetectorEvent {
-public:
+ public:
     //! Constructor
     DetectorEvent(double px = 0, double py = 0, double frame = -1, double tof = -1);
 

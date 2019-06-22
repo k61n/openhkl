@@ -15,15 +15,15 @@
 #ifndef CORE_INSTRUMENT_SAMPLE_H
 #define CORE_INSTRUMENT_SAMPLE_H
 
-#include "core/gonio/Component.h" // inheriting from
 #include "base/hull/ConvexHull.h"
+#include "core/gonio/Component.h" // inheriting from
 
 namespace nsx {
 
 //! A sample, consisting of a `Gonio`meter (via Component) and a ConvexHull.
 
 class Sample : public Component {
-public:
+ public:
     //! Static constructor of a Sample from a property tree node
     static Sample* create(const YAML::Node& node);
     Sample();
@@ -47,7 +47,7 @@ public:
     //! Returns a const reference to the convex hull describing the sample shape
     const ConvexHull& shape() const;
 
-private:
+ private:
     ConvexHull _sampleShape;
 };
 

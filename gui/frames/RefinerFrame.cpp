@@ -14,13 +14,12 @@
 
 #include "gui/frames/RefinerFrame.h"
 
-#include "gui/models/Session.h"
-#include "gui/models/Meta.h"
-#include "core/peak/Peak3D.h"
+#include "core/algo/Refiner.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/DataTypes.h"
 #include "core/peak/Peak3D.h"
-#include "core/algo/Refiner.h"
+#include "gui/models/Meta.h"
+#include "gui/models/Session.h"
 #include <QCR/engine/logger.h>
 #include <QFileInfo>
 #include <QGridLayout>
@@ -98,21 +97,21 @@ void Refiner::actionClicked(QAbstractButton* button)
     auto button_role = buttons->standardButton(button);
 
     switch (button_role) {
-    case QDialogButtonBox::StandardButton::Apply: {
-        refine();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Cancel: {
-        close();
-        break;
-    }
-    case QDialogButtonBox::StandardButton::Ok: {
-        accept();
-        break;
-    }
-    default: {
-        return;
-    }
+        case QDialogButtonBox::StandardButton::Apply: {
+            refine();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Cancel: {
+            close();
+            break;
+        }
+        case QDialogButtonBox::StandardButton::Ok: {
+            accept();
+            break;
+        }
+        default: {
+            return;
+        }
     }
 }
 

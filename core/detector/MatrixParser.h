@@ -83,7 +83,7 @@ namespace nsx {
 //! Utility class to parse real or complex matrices from plain ASCII text.
 
 class MatrixParser {
-public:
+ public:
     MatrixParser() = default;
 
     ~MatrixParser() = default;

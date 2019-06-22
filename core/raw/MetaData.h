@@ -17,8 +17,8 @@
 
 #include "base/utils/Variant.h"
 
-#include <memory>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 
@@ -36,7 +36,7 @@ using MetaDataKeySet = std::set<std::string>;
 //! onwards, a parameter can be retrieved even if its type is unknown by the user
 //! using auto.
 class MetaData {
-public:
+ public:
     //! Constructor
     MetaData();
     ~MetaData();
@@ -67,7 +67,7 @@ public:
     //! Gets the full map of parameters
     const MetaDataMap& map() const;
 
-private:
+ private:
     //! Contains the map of all key/value pairs.
     MetaDataMap _map;
     //! Contains all available keys so far.

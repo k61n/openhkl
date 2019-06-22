@@ -19,14 +19,14 @@
 #include "apps/opengl/GLActor.h"
 
 class GLReciprocalLattice : public GLActor {
-public:
+ public:
     GLReciprocalLattice(const char* name);
     void setUnitCell(nsx::sptrUnitCell cell);
     void setPeriodicCells(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax);
     void setSingleCell();
     int pickableElements() { return 1; }
 
-private:
+ private:
     //! Pointer to the UnitCell
     nsx::sptrUnitCell _cell;
     int _xmin, _xmax, _ymin, _ymax, _zmin, _zmax;

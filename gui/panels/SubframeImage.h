@@ -22,13 +22,13 @@
 //! Subframe of the main window, with tabs to control detector, fits, &c
 
 class ImageWidget : public QcrWidget {
-public:
+ public:
     ImageWidget();
     void dataChanged();
     void changeView(int option);
     DetectorView* imageView;
 
-private:
+ private:
     QcrSpinBox* frame;
     QFrame* frameLayout;
     QcrComboBox* mode;
@@ -38,7 +38,7 @@ private:
 };
 
 class SubframeImage : public QcrDockWidget {
-public:
+ public:
     SubframeImage();
     ImageWidget* centralWidget;
 };

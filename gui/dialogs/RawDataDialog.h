@@ -16,11 +16,11 @@
 #define GUI_DIALOGS_RAWDATADIALOG_H
 
 #include <QCR/widgets/controls.h>
-#include <QDialogButtonBox>
 #include <QDialog>
+#include <QDialogButtonBox>
 
 class RawDataDialog : public QDialog {
-public:
+ public:
     RawDataDialog();
     double wavelength() { return wave->value(); }
     double deltaChi() { return chi->value(); }
@@ -31,7 +31,7 @@ public:
     int bpp();
     void setWavelength(double newWavelength) { wave->setCellValue(newWavelength); }
 
-private:
+ private:
     QcrComboBox* dataArrangement;
     QcrComboBox* dataFormat;
     QcrCheckBox* swapEndianness;

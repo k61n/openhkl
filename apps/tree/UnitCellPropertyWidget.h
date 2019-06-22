@@ -33,11 +33,11 @@ class UnitCellItem;
 class UnitCellPropertyWidget : public QWidget {
     Q_OBJECT
 
-public:
+ public:
     explicit UnitCellPropertyWidget(UnitCellItem* caller, QWidget* parent = 0);
     ~UnitCellPropertyWidget();
 
-private slots:
+ private slots:
 
     void setUnitCellName();
 
@@ -59,10 +59,10 @@ private slots:
 
     void update(QStandardItem* item = nullptr);
 
-private:
+ private:
     void updateCellParameters();
 
-private:
+ private:
     UnitCellItem* _unitCellItem;
 
     Ui::UnitCellPropertyWidget* ui;

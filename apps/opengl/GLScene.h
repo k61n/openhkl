@@ -23,7 +23,7 @@
 class GLActor;
 
 class GLScene {
-public:
+ public:
     GLScene();
     ~GLScene();
     GLActor* addActor(GLActor*);
@@ -33,7 +33,7 @@ public:
     void renderForPicking();
     GLActor* picking(int r, int g, int b);
 
-private:
+ private:
     QHash<int, GLActor*> _actors;
     int _current;
     int _selected;

@@ -21,11 +21,11 @@
 
 //! Property widget of the detector
 class DetectorProperty : public QcrWidget {
-public:
+ public:
     DetectorProperty();
     ~DetectorProperty();
 
-private:
+ private:
     void onValueChanged();
     void onRemake();
 

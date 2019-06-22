@@ -19,7 +19,7 @@
 #include <QStyleOptionViewItem>
 
 class DoubleItemDelegate : public QItemDelegate {
-public:
+ public:
     virtual QWidget* createEditor(
         QWidget* parent, const QStyleOptionViewItem& option,
         const QModelIndex& index) const override;

@@ -17,10 +17,10 @@
 #include "apps/opengl/GLActor.h"
 
 class GLSphere : public GLActor {
-public:
+ public:
     GLSphere(const char* name);
     int pickableElements() { return 1; }
 
-private:
+ private:
     virtual void GLCode();
 };

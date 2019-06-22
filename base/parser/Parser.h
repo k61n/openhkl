@@ -15,6 +15,8 @@
 #ifndef BASE_PARSER_PARSER_H
 #define BASE_PARSER_PARSER_H
 
+#include <vector>
+
 namespace nsx {
 
 //! Method to read a vector of int values from two char pointers, using spirit

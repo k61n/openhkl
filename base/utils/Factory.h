@@ -31,7 +31,7 @@ template <typename returnType, typename keytype, typename... args> class Factory
     typedef std::function<returnType*(args...)> callback;
     typedef std::map<keytype, callback> callbackmap;
 
-public:
+ public:
     Factory() {}
     virtual ~Factory() {}
 
@@ -53,7 +53,7 @@ public:
     //! Returns true if a given callback has been registered so far
     bool hasCallback(const keytype& key);
 
-protected:
+ protected:
     callbackmap _map;
 };
 

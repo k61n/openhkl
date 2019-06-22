@@ -26,15 +26,15 @@ class DetectorItem;
 class DetectorPropertyWidget : public QWidget {
     Q_OBJECT
 
-public:
+ public:
     explicit DetectorPropertyWidget(DetectorItem* caller, QWidget* parent = nullptr);
 
     ~DetectorPropertyWidget();
 
-private:
+ private:
     void onSampleToDectorDistanceChanged(double distance);
 
-private:
+ private:
     Ui::DetectorPropertyWidget* _ui;
 
     DetectorItem* _detectorItem;

@@ -21,9 +21,9 @@
 #include <QAbstractTableModel>
 #include <QModelIndexList>
 
-#include "core/peak/Peak3D.h"
 #include "core/experiment/DataTypes.h"
 #include "core/instrument/InstrumentTypes.h"
+#include "core/peak/Peak3D.h"
 
 class QObject;
 
@@ -31,7 +31,7 @@ class SessionModel;
 
 class CollectedPeaksModel : public QAbstractTableModel {
     Q_OBJECT
-public:
+ public:
     enum Column { h, k, l, px, py, frame, intensity, sigmaIntensity, numor, unitCell, count };
 
     explicit CollectedPeaksModel(
@@ -77,7 +77,7 @@ public:
 
     void togglePeakSelection(QModelIndex peak_index);
 
-public slots:
+ public slots:
 
     void slotChangeEnabledPeak(nsx::sptrPeak3D peak);
 
@@ -90,16 +90,16 @@ public slots:
 
     void sortEquivalents();
 
-signals:
+ signals:
 
     void signalSelectedPeakChanged(nsx::sptrPeak3D peak);
 
     void unitCellUpdated();
 
-private:
+ private:
     void setSession(SessionModel* session);
 
-private:
+ private:
     SessionModel* _session;
 
     nsx::sptrExperiment _experiment;

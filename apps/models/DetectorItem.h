@@ -19,7 +19,7 @@
 class QWidget;
 
 class DetectorItem : public InspectableTreeItem {
-public:
+ public:
     explicit DetectorItem();
     QWidget* inspectItem() override;
 

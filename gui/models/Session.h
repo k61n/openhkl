@@ -20,7 +20,7 @@
 extern class Session* gSession; //!< global handle for Session
 
 class Session {
-public:
+ public:
     Session();
     ExperimentModel* selectedExperiment();
     void selectExperiment(int);
@@ -40,7 +40,7 @@ public:
     void onExperimentChanged();
     void onPeaksChanged();
 
-private:
+ private:
     QList<ExperimentModel*> experiments;
     int selected = -1;
     QString loadDirectory;

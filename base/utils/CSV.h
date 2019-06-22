@@ -23,13 +23,13 @@ namespace nsx {
 //! Simple CSV parser.
 
 class CSV {
-public:
+ public:
     CSV(char delim = ',', char quotchar = '"');
     ~CSV();
 
     std::vector<std::string> getRow(std::istream& stream);
 
-private:
+ private:
     char _delim;
     char _quotchar;
 

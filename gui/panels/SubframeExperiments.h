@@ -22,12 +22,12 @@
 //! The model for ExperimentsView
 
 class ExperimentsModel : public CheckTableModel {
-public:
+ public:
     ExperimentsModel() : CheckTableModel {"experiments"} {}
 
     enum { COL_CHECK = 1, COL_NAME, COL_INSTRUMENT, COL_ATTRS };
 
-private:
+ private:
     void setActivated(int, bool) final {}
 
     int highlighted() const final;
@@ -44,11 +44,11 @@ private:
 
 //! Main item in `SubframeExperiments`: View and control the list of `Experiment`s
 class ExperimentsView : public CheckTableView {
-public:
+ public:
     ExperimentsView();
     void onData() override;
 
-private:
+ private:
     ExperimentsModel* model() { return static_cast<ExperimentsModel*>(model_); }
 };
 
@@ -56,11 +56,11 @@ private:
 //! Part of the main window that controls the experiments.
 class SubframeExperiments : public QcrDockWidget {
     Q_OBJECT
-public:
+ public:
     SubframeExperiments();
     void experimentChanged();
 
-private:
+ private:
     ExperimentsView* view;
 };
 

@@ -20,8 +20,8 @@
 #include <stdexcept>
 #include <string>
 
-#include "tables/crystal/JonesSymbolParser.h"
 #include "base/utils/StringIO.h"
+#include "tables/crystal/JonesSymbolParser.h"
 
 namespace nsx {
 

@@ -14,14 +14,14 @@
 
 #include "core/algo/UserDefinedIndexer.h"
 
-#include "tables/crystal/MillerIndex.h"
-#include "tables/crystal/UnitCell.h"
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "base/logger/Logger.h"
-#include "core/peak/Peak3D.h"
 #include "core/analyse/PeakFilter.h"
+#include "core/peak/Peak3D.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/UnitCell.h"
 
 #include <Eigen/QR>
 #include <array>

@@ -15,21 +15,20 @@
 #include <algorithm>
 #include <iterator>
 
-#include "tables/crystal/MillerIndex.h"
-#include "tables/crystal/UnitCell.h"
+#include "core/algo/Refiner.h"
+#include "core/analyse/PeakFilter.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
-#include "core/analyse/PeakFilter.h"
-#include "core/algo/Refiner.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/UnitCell.h"
 
 namespace nsx {
 
 Refiner::Refiner(
     InstrumentStateList& states, sptrUnitCell cell, const PeakList& peaks, int nbatches)
-    : _cell(cell)
-    , _batches()
+    : _cell(cell), _batches()
 {
     PeakFilter peak_filter;
     PeakList filtered_peaks;

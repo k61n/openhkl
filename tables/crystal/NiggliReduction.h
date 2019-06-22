@@ -27,7 +27,7 @@ namespace nsx {
 //! is the similar with Krivy & Gruber's algorithm but with the additional tolerance (epsilon).
 
 class NiggliReduction {
-public:
+ public:
     //! Niggli reduction of the metric tensor g, with relative error epsilon
     //! The relative error is multiplied internally by the average unit dimension
     //! of g
@@ -38,7 +38,7 @@ public:
     //! Change the maximum allowed number of iterations
     static void setIterMax(unsigned int max);
 
-private:
+ private:
     //! Number of iteration max allowed in the reduction procedure.
     static unsigned int _itermax;
     //! Relative error

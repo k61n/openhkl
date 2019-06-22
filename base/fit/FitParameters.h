@@ -24,7 +24,7 @@ namespace nsx {
 //! Encapsulates parameters to be passed to nsx::Minimizer.
 
 class FitParameters {
-public:
+ public:
     //! Add a parameter to be fit. The original value of the parameter is stored
     //! (see reset()). The return value is the index of the parameter.
     int addParameter(double* addr);
@@ -49,7 +49,7 @@ public:
     //! Reset parameter values to their original state.
     void reset();
 
-private:
+ private:
     //! Vector of addresses to fit parameters. Pointers are _not_ owned.
     std::vector<double*> _params;
     std::vector<double> _originalValues;

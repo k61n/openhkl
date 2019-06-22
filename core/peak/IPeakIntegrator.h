@@ -15,17 +15,17 @@
 #ifndef CORE_PEAK_IPEAKINTEGRATOR_H
 #define CORE_PEAK_IPEAKINTEGRATOR_H
 
-#include "core/peak/Intensity.h"
+#include "base/utils/ProgressHandler.h"
 #include "core/experiment/DataTypes.h"
 #include "core/peak/IntegrationRegion.h"
-#include "base/utils/ProgressHandler.h"
+#include "core/peak/Intensity.h"
 
 namespace nsx {
 
 //! Handles per-frame integration of a peak.
 
 class IPeakIntegrator {
-public:
+ public:
     IPeakIntegrator();
     virtual ~IPeakIntegrator();
     //! Compute the integrated intensity of the peak given the integration region.
@@ -34,8 +34,8 @@ public:
     //! \param peak_end Peak boundary (in sigma)
     //! \param bkg_begin Background beginning (in sigma)
     //! \param bkg_end Background end (in sigma)
-    void integrate(
-        PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end);
+    void
+    integrate(PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end);
     //! Returns the mean background.
     Intensity meanBackground() const;
     //! Returns the integrated intensity.
@@ -45,7 +45,7 @@ public:
     //! Sets the progress handler.
     void setHandler(sptrProgressHandler handler);
 
-protected:
+ protected:
     //! Mean local background of peak. The uncertainty is the uncertainty of the
     //! _estimate_ of the background.
     Intensity _meanBackground;

@@ -15,10 +15,10 @@
 #include <limits>
 #include <stdexcept>
 
-#include "core/gonio/Axis.h"
-#include "core/gonio/AxisFactory.h"
 #include "base/utils/Units.h"
 #include "base/utils/YAMLType.h"
+#include "core/gonio/Axis.h"
+#include "core/gonio/AxisFactory.h"
 
 namespace nsx {
 

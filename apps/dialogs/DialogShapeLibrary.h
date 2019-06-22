@@ -16,11 +16,11 @@
 
 #include <QDialog>
 
-#include "core/peak/Peak3D.h"
 #include "core/experiment/DataTypes.h"
-#include "core/shape/ShapeLibrary.h"
 #include "core/instrument/InstrumentTypes.h"
+#include "core/peak/Peak3D.h"
 #include "core/shape/Profile3D.h"
+#include "core/shape/ShapeLibrary.h"
 
 #include "apps/ColorMap.h"
 #include "apps/models/ExperimentItem.h"
@@ -35,7 +35,7 @@ class ExperimentItem;
 class DialogShapeLibrary : public QDialog {
     Q_OBJECT
 
-public:
+ public:
     explicit DialogShapeLibrary(
         ExperimentItem* experiment_item, nsx::sptrUnitCell unitCell, const nsx::PeakList& peaks,
         QWidget* parent = 0);
@@ -44,13 +44,13 @@ public:
     const nsx::Profile3D& profile();
     nsx::sptrShapeLibrary library() const;
 
-private slots:
+ private slots:
     void calculate();
     void build();
     void drawFrame(int value);
     void selectTargetPeak(int row);
 
-private:
+ private:
     Ui::DialogShapeLibrary* ui;
     nsx::sptrUnitCell _unitCell;
     nsx::PeakList _peaks;

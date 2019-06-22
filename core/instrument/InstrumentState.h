@@ -30,7 +30,7 @@ class Diffractometer;
 //! as metadata but can also be refined as part of the data treatment.
 
 class InstrumentState {
-public:
+ public:
     //! default value needed for SWIG (note: nullptr does _not_ work)
     InstrumentState(Diffractometer* diffractometer = nullptr);
     virtual ~InstrumentState() {}
@@ -64,7 +64,7 @@ public:
     //! Returns a const pointer to the diffractometer of the state
     const Diffractometer* diffractometer() const;
 
-public:
+ public:
     //! Detector orientation as read from metadata
     Eigen::Matrix3d detectorOrientation;
 
@@ -96,7 +96,7 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 #endif
 
-protected:
+ protected:
     //! Pointer to the diffractometer whose state this object stores.
     //! The actual resource is not owned by this object which just borrows it.
     Diffractometer* _diffractometer;

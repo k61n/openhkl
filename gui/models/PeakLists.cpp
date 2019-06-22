@@ -14,10 +14,10 @@
 
 #include "gui/models/PeakLists.h"
 
-#include "gui/models/Session.h"
 #include "core/experiment/DataSet.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
+#include "gui/models/Session.h"
 #include <QCR/engine/logger.h>
 #include <QInputDialog>
 
@@ -83,7 +83,7 @@ void PeakListsModel::removePeaks(nsx::sptrDataSet removedData)
 
 void PeakListsModel::selectList(int i)
 {
-    if (i<0 || i>=filtered_.size()) {
+    if (i < 0 || i >= filtered_.size()) {
         selected = 0;
         return;
     }
@@ -99,7 +99,7 @@ FilteredPeaksModel* PeakListsModel::selectedFilteredList()
 
 void PeakListsModel::remakePeakLists()
 {
-    for (int i = filtered_.size()-1; i>=0; i--) {
+    for (int i = filtered_.size() - 1; i >= 0; i--) {
         if (filtered_.at(i)->getPeaks().empty())
             removeFilteredPeaks(i);
     }
@@ -124,7 +124,7 @@ void PeaksModel::selectPeakLists(int i)
 {
     if (peakLists_.empty())
         return;
-    if (i<0 || i>= peakLists_.size())
+    if (i < 0 || i >= peakLists_.size())
         return;
     selectedLists = i;
 }
@@ -143,7 +143,7 @@ PeakListsModel* PeaksModel::selectedPeakLists(int i)
 void PeaksModel::addPeakListsModel(const QString& name, nsx::PeakList list)
 {
     peakLists_.append(new PeakListsModel(name, list));
-    selectedLists = peakLists_.size()-1;
+    selectedLists = peakLists_.size() - 1;
     gSession->onPeaksChanged();
 }
 
@@ -177,7 +177,7 @@ void PeaksModel::removePeakListsModel(int i)
         gLogger->log("[ERROR] No Peaklists to remove");
         return;
     }
-    if (i<0 || i>=peakLists_.size())
+    if (i < 0 || i >= peakLists_.size())
         i = selectedLists;
     gLogger->log("[INFO] removing peaklistsmodel " + peakLists_.at(i)->getName());
     peakLists_.removeAt(i);
@@ -201,7 +201,7 @@ void PeaksModel::normalizeToMonitor()
         return;
     bool ok;
     double factor = QInputDialog::getDouble(
-                nullptr, "Enter normalization factor", "", 1.0e4, 1.0e-9, 1.0e9, 3, &ok);
+        nullptr, "Enter normalization factor", "", 1.0e4, 1.0e-9, 1.0e9, 3, &ok);
     if (!ok)
         return;
     nsx::PeakList selectedPeaks = peakLists_.at(selectedLists)->selectedFilteredList()->getPeaks();
@@ -210,14 +210,14 @@ void PeaksModel::normalizeToMonitor()
         if (!data)
             continue;
         double monitor = data->reader()->metadata().key<double>("monitor");
-        peak->setScale(factor/monitor);
+        peak->setScale(factor / monitor);
     }
     gSession->onPeaksChanged();
 }
 
 void PeaksModel::remakePeakLists()
 {
-    for (int i = peakLists_.size()-1; i>=0; i--) {
+    for (int i = peakLists_.size() - 1; i >= 0; i--) {
         if (peakLists_.at(i)->numberFilteredLists() == 0)
             removePeakListsModel(i);
     }

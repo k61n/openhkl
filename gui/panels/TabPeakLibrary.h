@@ -18,7 +18,7 @@
 #include <QCR/widgets/views.h>
 
 class TabPeaklibrary : public QcrWidget {
-public:
+ public:
     TabPeaklibrary();
 };
 

@@ -21,12 +21,13 @@ namespace nsx {
 
 //! A set of `MergedPeak`s.
 
-class MergedPeakSet : public std::set<MergedPeak> {};
+class MergedPeakSet : public std::set<MergedPeak> {
+};
 
 //! Contains a set of `MergedPeak`s and crystallographic information (SpaceGroup and Friedel flag).
 
 class MergedData {
-public:
+ public:
     //! Construct merged dataset with given spacegroup. Paramter \p friedel
     //! determines whether to include the Friedel relation \f$q \mapsto -q\f$, if
     //! this is not already part of the space group symmetry.
@@ -46,7 +47,7 @@ public:
     //! Clear the merged data
     void clear();
 
-private:
+ private:
     SpaceGroup _group;
     bool _friedel;
     MergedPeakSet _mergedPeakSet;

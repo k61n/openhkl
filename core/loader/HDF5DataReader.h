@@ -15,14 +15,14 @@
 #ifndef CORE_LOADER_HDF5DATAREADER_H
 #define CORE_LOADER_HDF5DATAREADER_H
 
-#include "core/loader/HDF5MetaDataReader.h" \\ inherits from
+#include "core/loader/HDF5MetaDataReader.h" // inherits from
 
 namespace nsx {
 
 //! Read data from HDF5 format.
 
 class HDF5DataReader : public HDF5MetaDataReader {
-public:
+ public:
     HDF5DataReader() = delete;
 
     HDF5DataReader(const HDF5DataReader& other) = delete;

@@ -32,7 +32,7 @@ class RulerItem;
 
 class CrystalScene : public QGraphicsScene {
     Q_OBJECT
-public:
+ public:
     //! Enum describing the type of user interaction
     enum crystalSelectionMode {
         calibrateDistance = 1,
@@ -50,7 +50,7 @@ public:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
-public slots:
+ public slots:
     //! Load an image from full filename including directory
     void loadImage(QString filename);
     //!
@@ -67,11 +67,11 @@ public slots:
     void setRotationAngle(double);
     void triangulate();
     void changeBrigthness(int a);
-signals:
+ signals:
     void calibrateDistanceOK(double npixels, double distance);
     void calibrateCenterOK(double x, double y);
 
-private:
+ private:
     //! Position of the mouse at the beginning of a selection
     int _startxmouse, _startymouse;
     //! Selectrion mode

@@ -14,8 +14,8 @@
 
 #include "gui/panels/SubframeLogger.h"
 
-#include "gui/actions/Triggers.h"
 #include "gui/MainWin.h"
+#include "gui/actions/Triggers.h"
 #include <QCR/engine/logger.h>
 #include <QTreeView>
 

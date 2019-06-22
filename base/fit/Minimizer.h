@@ -28,7 +28,7 @@ struct MinimizerGSL;
 //! Supports both numerical and analytic derivatives.
 
 class Minimizer {
-public:
+ public:
     //! The signature of the function f which specifies the vector of residuals.
     using f_type = std::function<int(Eigen::VectorXd&)>;
     //! The signature of the function df which is the Jacobian of the residuals.
@@ -75,7 +75,7 @@ public:
     //! Returns the mean squared error with respect to the current minimizer values.
     double meanSquaredError() const;
 
-private:
+ private:
     //! Clean up the GSL workspace and allocated vectors.
     void cleanup();
     //! Private implementation details of the GSL wrapper

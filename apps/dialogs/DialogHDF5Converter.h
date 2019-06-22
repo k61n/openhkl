@@ -28,20 +28,20 @@ class DialogHDF5Converter;
 class DialogHDF5Converter : public QDialog {
     Q_OBJECT
 
-public:
+ public:
     explicit DialogHDF5Converter(const nsx::DataList& numors, QWidget* parent = 0);
     ~DialogHDF5Converter();
 
-private slots:
+ private slots:
 
     void slotActionClicked(QAbstractButton* button);
 
     void browseOutputDirectory();
 
-private:
+ private:
     void convert();
 
-private:
+ private:
     Ui::DialogHDF5Converter* _ui;
 
     nsx::DataList _numors;

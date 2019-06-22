@@ -73,13 +73,13 @@ void FrameInstrumentStates::slotActionClicked(QAbstractButton* button)
     auto button_role = _ui->actions->standardButton(button);
 
     switch (button_role) {
-    case QDialogButtonBox::StandardButton::Ok: {
-        close();
-        break;
-    }
-    default: {
-        return;
-    }
+        case QDialogButtonBox::StandardButton::Ok: {
+            close();
+            break;
+        }
+        default: {
+            return;
+        }
     }
 }
 

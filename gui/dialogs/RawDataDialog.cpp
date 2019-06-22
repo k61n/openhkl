@@ -17,17 +17,15 @@
 #include "gui/MainWin.h"
 #include <QFormLayout>
 
-RawDataDialog::RawDataDialog()
-    : QDialog(gGui)
+RawDataDialog::RawDataDialog() : QDialog(gGui)
 {
     QFormLayout* layout = new QFormLayout(this);
-    dataArrangement = new QcrComboBox("adhoc_dataarrangement",
-                                      new QcrCell<int>(0),
-                                      {"Column major", "Row major"});
+    dataArrangement = new QcrComboBox(
+        "adhoc_dataarrangement", new QcrCell<int>(0), {"Column major", "Row major"});
     layout->addRow("Data arrangement", dataArrangement);
-    dataFormat = new QcrComboBox("adhoc_dataformat",
-                                 new QcrCell<int>(0),
-                                 {"8 bit integer", "16 bit integer", "32 bit integer"});
+    dataFormat = new QcrComboBox(
+        "adhoc_dataformat", new QcrCell<int>(0),
+        {"8 bit integer", "16 bit integer", "32 bit integer"});
     layout->addRow("Data format", dataFormat);
     swapEndianness = new QcrCheckBox("adhoc_swap", "Swap endianness", new QcrCell<bool>(true));
     layout->addRow(swapEndianness);
@@ -39,8 +37,8 @@ RawDataDialog::RawDataDialog()
     layout->addRow("delta phi", phi);
     wave = new QcrDoubleSpinBox("adhoc_rawWavelength", new QcrCell<double>(0.0), 5, 3);
     layout->addRow("wavelength", wave);
-    buttons = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel,
-                                   Qt::Horizontal, this);
+    buttons =
+        new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this);
     layout->addRow(buttons);
 
     QObject::connect(buttons, SIGNAL(accepted()), this, SLOT(accept()));
@@ -63,14 +61,12 @@ bool RawDataDialog::rowMajor()
 int RawDataDialog::bpp()
 {
     switch (dataFormat->currentIndex()) {
-    case 0: //8 bit
-        return 1;
-    case 1: //16 bit
-        return 2;
-    case 2: //32 bit
-        return 4;
-    default:
-        gLogger->log("[ERROR] RawDataDialog: unrecognized data format!");
-        return -1;
+        case 0: // 8 bit
+            return 1;
+        case 1: // 16 bit
+            return 2;
+        case 2: // 32 bit
+            return 4;
+        default: gLogger->log("[ERROR] RawDataDialog: unrecognized data format!"); return -1;
     }
 }

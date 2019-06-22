@@ -17,14 +17,14 @@
 
 #include <tiffio.h>
 
-#include "core/raw/IDataReader.h" \\ inherits from
+#include "core/raw/IDataReader.h" // inherits from
 
 namespace nsx {
 
 //! IDataReader for detector image from Tiff file.
 
 class TiffDataReader : public IDataReader {
-public:
+ public:
     TiffDataReader() = delete;
 
     TiffDataReader(const TiffDataReader& other) = delete;
@@ -41,7 +41,7 @@ public:
 
     Eigen::MatrixXi data(std::size_t frame) final;
 
-private:
+ private:
     //! Type of encoding for each pixel.
     uint16 _bits;
 

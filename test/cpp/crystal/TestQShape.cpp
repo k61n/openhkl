@@ -2,14 +2,14 @@
 
 #include <Eigen/Dense>
 
+#include "base/utils/ProgressHandler.h"
+#include "core/algo/DataReaderFactory.h"
+#include "core/analyse/PeakFinder.h"
+#include "core/convolve/ConvolverFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
-#include "core/algo/DataReaderFactory.h"
-#include "core/raw/IDataReader.h"
 #include "core/peak/Peak3D.h"
-#include "core/convolve/ConvolverFactory.h"
-#include "core/analyse/PeakFinder.h"
-#include "base/utils/ProgressHandler.h"
+#include "core/raw/IDataReader.h"
 
 nsx::Ellipsoid toDetectorSpace(const nsx::Ellipsoid e, const nsx::sptrDataSet data)
 {

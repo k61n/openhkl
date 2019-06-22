@@ -18,13 +18,13 @@
 #include "gui/panels/TabInstrument.h"
 #include "gui/panels/TabPeakLibrary.h"
 #include "gui/panels/TabPeaks.h"
-#include "gui/properties/UnitCellProperty.h"
 #include "gui/properties/NumorProperty.h"
+#include "gui/properties/UnitCellProperty.h"
 
 //! Subframe of the main window, with tabs to control detector, fits, &c
 
 class SubframeSetup : public QcrTabWidget {
-public:
+ public:
     SubframeSetup();
     NumorProperty* data;
     UnitCellProperty* unitcells;

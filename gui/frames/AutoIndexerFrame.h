@@ -22,10 +22,10 @@
 #include <QDialogButtonBox>
 
 class AutoIndexer : public QcrFrame {
-public:
+ public:
     AutoIndexer();
 
-private:
+ private:
     void layout();
     void accept();
     void buildSolutionsTable();

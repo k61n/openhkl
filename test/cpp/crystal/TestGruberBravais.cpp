@@ -8,10 +8,7 @@
 #include <Eigen/Dense>
 #include <Eigen/QR>
 
-#include "tables/crystal/GruberReduction.h"
-#include "tables/crystal/NiggliReduction.h"
-#include "tables/crystal/SpaceGroup.h"
-#include "tables/crystal/UnitCell.h"
+#include "base/utils/Units.h"
 #include "core/detector/FlatDetector.h"
 #include "core/gonio/Component.h"
 #include "core/gonio/Gonio.h"
@@ -19,7 +16,10 @@
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/peak/Peak3D.h"
-#include "base/utils/Units.h"
+#include "tables/crystal/GruberReduction.h"
+#include "tables/crystal/NiggliReduction.h"
+#include "tables/crystal/SpaceGroup.h"
+#include "tables/crystal/UnitCell.h"
 
 const double gruber_tolerance = 1e-4;
 const double niggli_tolerance = 1e-4;

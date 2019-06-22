@@ -15,7 +15,7 @@
 #ifndef CORE_LOADER_HDF5METADATAREADER_H
 #define CORE_LOADER_HDF5METADATAREADER_H
 
-#include "core/raw/IDataReader.h" \\ inherits from
+#include "core/raw/IDataReader.h" // inherits from
 
 #include <H5Cpp.h>
 
@@ -24,7 +24,7 @@ namespace nsx {
 //! IDataReader for HDF5 files. Base class for HDF5DataReader and FakeDataReader.
 
 class HDF5MetaDataReader : public IDataReader {
-public:
+ public:
     HDF5MetaDataReader() = delete;
 
     HDF5MetaDataReader(const HDF5MetaDataReader& other) = delete;
@@ -39,7 +39,7 @@ public:
 
     virtual void close() override;
 
-protected:
+ protected:
     std::unique_ptr<H5::H5File> _file;
 
     std::unique_ptr<H5::DataSet> _dataset;

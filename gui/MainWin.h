@@ -26,7 +26,7 @@ extern class MainWin* gGui; //!< global pointer to the main window
 
 //! Main window of the application
 class MainWin : public QcrMainWindow {
-public:
+ public:
     MainWin();
     ~MainWin();
 
@@ -51,13 +51,15 @@ public:
     void exportPlot() { dockPlot_->exportPlot(); }
     //! plot the x and y data, e is the error to y
     void plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e)
-    {   dockPlot_->plotData(x, y, e);   }
+    {
+        dockPlot_->plotData(x, y, e);
+    }
 
-private:
+ private:
     void refresh();
     void readSettings();
     void saveSettings() const;
-    void closeEvent(QCloseEvent *event) override;
+    void closeEvent(QCloseEvent* event) override;
 
     SubframeImage* dockImage_;
     SubframePlot* dockPlot_;

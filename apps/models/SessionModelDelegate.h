@@ -19,7 +19,7 @@
 class SessionModelDelegate : public QStyledItemDelegate {
     Q_OBJECT
 
-public:
+ public:
     SessionModelDelegate();
 
     virtual void paint(

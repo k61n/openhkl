@@ -32,20 +32,18 @@ NumorProperty::NumorProperty() : QcrWidget {"numorProperty"}
     table->setSelectionMode(QAbstractItemView::SingleSelection);
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    numor = new QcrComboBox("adhoc_numors", new QcrCell<int>(0), [](){
+    numor = new QcrComboBox("adhoc_numors", new QcrCell<int>(0), []() {
         if (gSession->selectedExperimentNum() < 0)
-            return QStringList{""};
+            return QStringList {""};
         QList<nsx::sptrDataSet> datalist = gSession->selectedExperiment()->data()->allData();
         if (datalist.empty())
-            return QStringList{""};
+            return QStringList {""};
         QStringList namen;
         for (nsx::sptrDataSet dataset : datalist)
             namen.append(QString::fromStdString(dataset->filename()));
         return namen;
     });
-    numor->setHook([](int i){
-        gSession->selectedExperiment()->data()->selectData(i);
-    });
+    numor->setHook([](int i) { gSession->selectedExperiment()->data()->selectData(i); });
     formLayout->addRow("Data:", numor);
     formLayout->addRow(table);
 
@@ -80,8 +78,8 @@ void NumorProperty::onRemake()
                 else if (element.second.is<double>())
                     col1->setData(Qt::EditRole, element.second.as<double>());
                 else if (element.second.is<std::string>()) {
-                    col1->setData(Qt::EditRole,
-                        QString::fromStdString(element.second.as<std::string>()));
+                    col1->setData(
+                        Qt::EditRole, QString::fromStdString(element.second.as<std::string>()));
                 } else {
                     delete col0;
                     delete col1;

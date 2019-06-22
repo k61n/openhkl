@@ -14,10 +14,10 @@
 
 #include <iostream>
 
-#include "core/gonio/Component.h"
-#include "core/gonio/Gonio.h"
 #include "base/utils/Units.h"
 #include "base/utils/YAMLType.h"
+#include "core/gonio/Component.h"
+#include "core/gonio/Gonio.h"
 
 namespace nsx {
 

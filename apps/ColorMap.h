@@ -25,7 +25,7 @@
 #include <QRect>
 
 class ColorMap {
-public:
+ public:
     ColorMap(const std::string& name);
     ColorMap();
     ColorMap(const double* rgb);
@@ -52,7 +52,7 @@ public:
     static ColorMap getColorMap(const std::string& name);
     static std::vector<std::string> getColorMapNames();
 
-private:
+ private:
     std::vector<double> _rgb;
     std::vector<double> _log_rgb;
 };

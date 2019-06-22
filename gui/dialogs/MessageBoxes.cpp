@@ -14,7 +14,4 @@
 
 #include "gui/dialogs/MessageBoxes.h"
 
-AboutBox::AboutBox()
-    : QMessageBox{}
-{
-}
+AboutBox::AboutBox() : QMessageBox {} {}

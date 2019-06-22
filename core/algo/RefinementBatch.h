@@ -15,17 +15,17 @@
 #ifndef CORE_ALGO_REFINEMENTBATCH_H
 #define CORE_ALGO_REFINEMENTBATCH_H
 
-#include "tables/crystal/UnitCell.h"
 #include "base/fit/FitParameters.h"
 #include "core/instrument/InstrumentTypes.h"
 #include "core/peak/Peak3D.h"
+#include "tables/crystal/UnitCell.h"
 
 namespace nsx {
 
 //! Represents a batch of consecutive detector images.
 
 class RefinementBatch {
-public:
+ public:
     //! Default constructor. Should not be used but needed for swig
     RefinementBatch() = default;
     //! Construct batch with initial unit cell and list of peaks.
@@ -57,7 +57,7 @@ public:
     //! Returns the cost function
     const std::vector<double>& costFunction() const;
 
-private:
+ private:
     double _fmin;
 
     double _fmax;

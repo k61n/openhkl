@@ -26,7 +26,7 @@ namespace nsx {
 //! For use in the sigma/I integration method.
 
 class Profile1D {
-public:
+ public:
     //! Constructor. sigma_max indicates maximum number of standard deviations
     Profile1D(const Intensity& mean_background = {}, double sigma_max = 4.0, size_t num = 200);
     //! Add a data point to the bins.
@@ -43,7 +43,7 @@ public:
     //! Reset the profile to zero
     void reset();
 
-private:
+ private:
     std::vector<double> _counts;
     std::vector<int> _npoints;
     std::vector<double> _endpoints;

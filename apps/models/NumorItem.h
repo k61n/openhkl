@@ -26,7 +26,7 @@
 class QWidget;
 
 class NumorItem : public InspectableTreeItem {
-public:
+ public:
     explicit NumorItem(nsx::sptrDataSet data);
 
     ~NumorItem();
@@ -37,6 +37,6 @@ public:
 
     void exportHDF5(const std::string& filename) const;
 
-private:
+ private:
     nsx::sptrDataSet _data;
 };

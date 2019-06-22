@@ -23,7 +23,7 @@ namespace nsx {
 //! Experiment class, a data type containing a diffractometer and data sets.
 
 class Experiment {
-public:
+ public:
     Experiment() = delete;
     Experiment(const Experiment& other);
 
@@ -55,7 +55,7 @@ public:
     //! Remove a data from the experiment
     void removeData(const std::string& name);
 
-private:
+ private:
     //! The name of this experiment
     std::string _name;
 

@@ -23,7 +23,7 @@ namespace nsx {
 //! Pure virtual base class for the components of an instrument (Source, Sample, Detector).
 
 class Component {
-public:
+ public:
     Component() = default;
     Component(const Component& other);
 
@@ -50,7 +50,7 @@ public:
     //! Returns a non-const reference to the goniometer
     Gonio& gonio();
 
-protected:
+ protected:
     //! Name of the component
     std::string _name;
 

@@ -18,12 +18,12 @@
 #include <QMessageBox>
 
 class AboutBox : public QMessageBox {
-public:
+ public:
     AboutBox();
 };
 
 class HelpBox : public QDialog {
-public:
+ public:
     HelpBox();
 };
 

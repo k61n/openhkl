@@ -32,7 +32,7 @@ class PeaksItem;
 class UnitCellsItem;
 
 class ExperimentItem : public TreeItem {
-public:
+ public:
     explicit ExperimentItem(nsx::sptrExperiment experiment);
 
     virtual ~ExperimentItem();
@@ -51,7 +51,7 @@ public:
 
     void writeLogFiles();
 
-private:
+ private:
     nsx::sptrExperiment _experiment;
 
     InstrumentItem* _instr;

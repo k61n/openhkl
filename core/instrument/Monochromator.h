@@ -24,7 +24,7 @@ namespace nsx {
 //! Holds properties of a monochromator, used by Source.
 
 class Monochromator {
-public:
+ public:
     Monochromator();
 
     Monochromator(const std::string& name);
@@ -74,7 +74,7 @@ public:
     //! Gets the incoming wave vector
     ReciprocalVector ki() const;
 
-private:
+ private:
     std::string _name;
 
     double _wavelength;

@@ -15,15 +15,15 @@
 #ifndef CORE_EXPERIMENT_DATASET_H
 #define CORE_EXPERIMENT_DATASET_H
 
-#include "core/peak/Peak3D.h"
-#include "core/instrument/InterpolatedState.h"
-#include "core/raw/IDataReader.h"
 #include "base/mask/IMask.h"
+#include "core/instrument/InterpolatedState.h"
+#include "core/peak/Peak3D.h"
+#include "core/raw/IDataReader.h"
 
+#include <Eigen/Dense>
 #include <set>
 #include <string>
 #include <vector>
-#include <Eigen/Dense>
 
 namespace nsx {
 
@@ -32,7 +32,7 @@ namespace nsx {
 class DataSet {
     friend class UnitTest_DataSet;
 
-public:
+ public:
     DataSet() = delete;
 
     DataSet(const DataSet& other) = default;
@@ -108,7 +108,7 @@ public:
     //! Returns the data reader used to set this dataset
     std::shared_ptr<IDataReader> reader() const;
 
-private:
+ private:
     bool _isOpened;
 
     std::string _filename;

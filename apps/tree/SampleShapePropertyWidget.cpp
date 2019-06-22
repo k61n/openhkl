@@ -14,16 +14,16 @@
 
 #include <QMessageBox>
 
-#include <xsection/Material.h>
+#include "base/logger/Logger.h"
+#include "base/utils/Units.h"
 #include "core/experiment/DataSet.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "base/logger/Logger.h"
 #include "core/monte-carlo/MCAbsorption.h"
 #include "core/peak/Peak3D.h"
-#include "base/utils/Units.h"
+#include <xsection/Material.h>
 
 #include "apps/dialogs/DialogAbsorption.h"
 #include "apps/models/SampleShapeItem.h"

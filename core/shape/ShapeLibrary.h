@@ -15,15 +15,15 @@
 #ifndef CORE_SHAPE_SHAPELIBRARY_H
 #define CORE_SHAPE_SHAPELIBRARY_H
 
-#include "tables/crystal/UnitCell.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/DataTypes.h"
+#include "core/peak/Peak3D.h"
 #include "core/shape/Profile1D.h"
 #include "core/shape/Profile3D.h"
-#include "core/peak/Peak3D.h"
+#include "tables/crystal/UnitCell.h"
 
-#include <memory>
 #include <Eigen/Dense>
+#include <memory>
 
 namespace nsx {
 
@@ -49,7 +49,7 @@ PeakList predictPeaks(
 //! used in the profile-fitting integration methods.
 
 class ShapeLibrary {
-public:
+ public:
     //! Construct an empty library.
     //! \param detector_coords if true, store profiles in detector coordinates;
     //! otherwise store in Kabsch coordinates
@@ -94,7 +94,7 @@ public:
     //! Returns the background end used for the library
     double bkgEnd() const;
 
-private:
+ private:
     //! Predict the (detector space) covariance given the fit data
     Eigen::Matrix3d predictCovariance(const FitData& data) const;
 

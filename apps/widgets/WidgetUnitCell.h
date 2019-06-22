@@ -24,14 +24,14 @@ class WidgetUnitCell;
 class WidgetUnitCell : public QWidget {
     Q_OBJECT
 
-public:
+ public:
     WidgetUnitCell(nsx::sptrUnitCell);
 
     ~WidgetUnitCell();
 
     nsx::sptrUnitCell unitCell() const;
 
-private:
+ private:
     Ui::WidgetUnitCell* _ui;
 
     nsx::sptrUnitCell _unit_cell;

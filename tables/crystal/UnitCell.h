@@ -18,8 +18,8 @@
 #include "tables/crystal/NiggliCharacter.h"
 #include "tables/crystal/SpaceGroup.h"
 
-#include <xsection/Material.h>
 #include <Eigen/Dense>
+#include <xsection/Material.h>
 
 namespace nsx {
 
@@ -71,7 +71,7 @@ struct UnitCellCharacter {
 //! pointing along the x-direction, and the b-axis is in the xy-plane.
 
 class UnitCell {
-public:
+ public:
     //! Empty UnitCell, initialized to right-handed orthonormal system
     UnitCell();
 
@@ -259,7 +259,7 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 #endif
 
-private:
+ private:
     //! Real-space basis of column vectors
     Eigen::Matrix3d _a;
     //! Reciprocal-space basis of row vectors

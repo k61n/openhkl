@@ -16,9 +16,9 @@
 
 #include "base/geometry/DirectVector.h"
 #include "base/geometry/ReciprocalVector.h"
+#include "base/utils/Units.h"
 #include "core/gonio/Gonio.h"
 #include "core/gonio/RotAxis.h"
-#include "base/utils/Units.h"
 
 #include <Eigen/Dense>
 
@@ -105,8 +105,8 @@ DirectVector CylindricalDetector::pixelPosition(double px, double py) const
     return DirectVector(result);
 }
 
-DetectorEvent CylindricalDetector::constructEvent(
-    const DirectVector& from, const ReciprocalVector& kf) const
+DetectorEvent
+CylindricalDetector::constructEvent(const DirectVector& from, const ReciprocalVector& kf) const
 {
     const DetectorEvent no_event = {0, 0, -1, -1};
     double px, py, tof;

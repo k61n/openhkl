@@ -28,15 +28,15 @@ class Widget;
 class DialogUnitCellParameters : public QDialog {
     Q_OBJECT
 
-public:
+ public:
     explicit DialogUnitCellParameters(nsx::sptrUnitCell unitCell, QWidget* parent = 0);
     ~DialogUnitCellParameters();
 
-public slots:
+ public slots:
 
     void setUnitCellParameters();
 
-private:
+ private:
     Ui::DialogUnitCellParameters* ui;
     nsx::sptrUnitCell _unitCell;
 };

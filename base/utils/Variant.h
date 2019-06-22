@@ -129,7 +129,7 @@ template <> struct MoveStorage<> {
 //! Class that implements a variadic template variant class similar as
 //! std::variant class defined in C++17
 template <typename... Args> class Variant {
-public:
+ public:
     template <typename... OtherArgs> struct is_subset {
         static constexpr bool value = true;
     };
@@ -326,7 +326,7 @@ public:
 
     template <typename... OtherArgs> friend class Variant;
 
-private:
+ private:
     // size needed for stack storage
     static constexpr size_t _bufsize = MaxSizeOf<Args...>::value;
 

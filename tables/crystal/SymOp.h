@@ -15,8 +15,8 @@
 #ifndef TABLES_CRYSTAL_SYMOP_H
 #define TABLES_CRYSTAL_SYMOP_H
 
-#include <vector>
 #include <Eigen/Dense>
+#include <vector>
 
 namespace nsx {
 
@@ -25,7 +25,7 @@ using affineTransformation = Eigen::Transform<double, 3, Eigen::Affine>;
 //! A symmetry operation of a spacegroup.
 
 class SymOp {
-public:
+ public:
     //! Default constructor should not be used but is needed for swig.
     SymOp() = default;
     //! Construct a symmetry operation by parsing a generator.
@@ -60,7 +60,7 @@ public:
     //! this->getTranslationPart() == other.getTranslationPart()
     int translationIsIntegralMultiple(const SymOp& other) const;
 
-private:
+ private:
     affineTransformation _matrix;
 };
 

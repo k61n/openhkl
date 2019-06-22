@@ -34,7 +34,7 @@
 //! with set colors and respond to mouse interaction.
 
 class CrystalNodeItem : public QGraphicsItem {
-public:
+ public:
     explicit CrystalNodeItem(QGraphicsItem* parent = 0);
     //! Method called when point is first created
     void initiate(double posx, double posy, double yc, double angle);
@@ -48,9 +48,9 @@ public:
     void rotate(double angle, double yc);
     //! Get the position coordinates of this node
     void getCoordinates(double& x, double& y, double& z);
-signals:
+ signals:
 
-public slots:
-private:
+ public slots:
+ private:
     double _p1x, _p1y, _p1z, _angle;
 };

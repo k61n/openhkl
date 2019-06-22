@@ -18,7 +18,7 @@
 #include "gui/panels/SubframeSetup.h"
 
 class SubframeProperties : public QcrDockWidget {
-public:
+ public:
     SubframeProperties();
     SubframeSetup* tabsframe;
 };

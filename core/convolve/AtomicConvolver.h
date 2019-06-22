@@ -25,7 +25,7 @@ namespace nsx {
 //! Pure virtual base class for ConstantConvolver, DeltaConvolver, RadialConvolver.
 
 class AtomicConvolver : public Convolver {
-public:
+ public:
     AtomicConvolver();
 
     AtomicConvolver(const std::map<std::string, double>& parameters);
@@ -41,15 +41,15 @@ public:
     //! Convolve an image
     virtual RealMatrix convolve(const RealMatrix& image) override;
 
-protected:
+ protected:
     void updateKernel(int nrows, int ncols);
 
     virtual RealMatrix _matrix(int nrows, int cols) const = 0;
 
-private:
+ private:
     void reset();
 
-protected:
+ protected:
     int _n_rows {0};
     int _n_cols {0};
     int _halfCols;

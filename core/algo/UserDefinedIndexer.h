@@ -15,9 +15,9 @@
 #ifndef CORE_ALGO_USERDEFINEDINDEXER_H
 #define CORE_ALGO_USERDEFINEDINDEXER_H
 
-#include "tables/crystal/UnitCell.h"
-#include "core/peak/Peak3D.h"
 #include "base/utils/Units.h"
+#include "core/peak/Peak3D.h"
+#include "tables/crystal/UnitCell.h"
 
 namespace nsx {
 
@@ -55,7 +55,7 @@ struct UserDefinedUnitCellIndexerParameters {
 //! TODO: analyse and document (issue #28)
 
 class UserDefinedUnitCellIndexer {
-public:
+ public:
     UserDefinedUnitCellIndexer();
 
     UserDefinedUnitCellIndexer(const UserDefinedUnitCellIndexerParameters& parameters);
@@ -79,7 +79,7 @@ public:
 
     void setPeaks(const PeakList& peaks);
 
-private:
+ private:
     void index();
 
     void rankUnitCells();
@@ -88,7 +88,7 @@ private:
 
     void removeBadUnitCells();
 
-private:
+ private:
     UserDefinedUnitCellIndexerParameters _parameters;
 
     std::vector<std::pair<sptrUnitCell, double>> _solutions;

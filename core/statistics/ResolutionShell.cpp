@@ -17,9 +17,9 @@
 
 #include <Eigen/Eigenvalues>
 
-#include "core/statistics/ResolutionShell.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "core/peak/Peak3D.h"
+#include "core/statistics/ResolutionShell.h"
 
 namespace nsx {
 

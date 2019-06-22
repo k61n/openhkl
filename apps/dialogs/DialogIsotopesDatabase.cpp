@@ -14,13 +14,13 @@
 
 #include "apps/dialogs/DialogIsotopesDatabase.h"
 
-#include "ui_DialogIsotopesDatabase.h"
 #include "base/utils/Units.h"
+#include "ui_DialogIsotopesDatabase.h"
 
-#include <xsection/IsotopeDatabaseManager.h>
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <sstream>
+#include <xsection/IsotopeDatabaseManager.h>
 
 DialogIsotopesDatabase::DialogIsotopesDatabase(QWidget* parent)
     : QDialog(parent), ui(new Ui::DialogIsotopesDatabase)
@@ -58,30 +58,30 @@ DialogIsotopesDatabase::DialogIsotopesDatabase(QWidget* parent)
             QStandardItem* item = new QStandardItem();
             if (imgr->hasProperty(isotopeName, pName)) {
                 switch (xsection::IsotopeDatabaseManager::PropertyTypes.at(pType)) {
-                case xsection::ChemicalPropertyType::Int: {
-                    item->setText(QString::number(imgr->property<int>(isotopeName, pName)));
-                    break;
-                }
-                case xsection::ChemicalPropertyType::Double: {
-                    auto value = imgr->property<double>(isotopeName, pName) / um->get(pUnit);
-                    item->setText(QString::number(value));
-                    break;
-                }
-                case xsection::ChemicalPropertyType::Complex: {
-                    auto value =
-                        imgr->property<std::complex<double>>(isotopeName, pName) / um->get(pUnit);
-                    std::ostringstream os;
-                    os << value;
-                    item->setText(QString::fromStdString(os.str()));
-                    break;
-                }
-                case xsection::ChemicalPropertyType::Bool: {
-                    item->setText(QString::number(imgr->property<bool>(isotopeName, pName)));
-                    break;
-                }
-                default:
-                    item->setText(
-                        QString::fromStdString(imgr->property<std::string>(isotopeName, pName)));
+                    case xsection::ChemicalPropertyType::Int: {
+                        item->setText(QString::number(imgr->property<int>(isotopeName, pName)));
+                        break;
+                    }
+                    case xsection::ChemicalPropertyType::Double: {
+                        auto value = imgr->property<double>(isotopeName, pName) / um->get(pUnit);
+                        item->setText(QString::number(value));
+                        break;
+                    }
+                    case xsection::ChemicalPropertyType::Complex: {
+                        auto value = imgr->property<std::complex<double>>(isotopeName, pName)
+                            / um->get(pUnit);
+                        std::ostringstream os;
+                        os << value;
+                        item->setText(QString::fromStdString(os.str()));
+                        break;
+                    }
+                    case xsection::ChemicalPropertyType::Bool: {
+                        item->setText(QString::number(imgr->property<bool>(isotopeName, pName)));
+                        break;
+                    }
+                    default:
+                        item->setText(QString::fromStdString(
+                            imgr->property<std::string>(isotopeName, pName)));
                 }
             } else
                 item->setText("NaN");

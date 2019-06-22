@@ -15,13 +15,13 @@
 #ifndef GUI_MODELS_EXPERIMENTMODEL_H
 #define GUI_MODELS_EXPERIMENTMODEL_H
 
-#include "tables/crystal/UnitCell.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/InstrumentTypes.h"
 #include "gui/models/PeakLists.h"
+#include "tables/crystal/UnitCell.h"
 
 class ExperimentData {
-public:
+ public:
     ExperimentData() {}
     void convertToHDF5();
     void removeSelectedData();
@@ -31,26 +31,26 @@ public:
     nsx::sptrDataSet selectedData();
     void selectData(int);
 
-private:
+ private:
     QList<nsx::sptrDataSet> data_;
     int index_;
 };
 
 class UnitCellsModel {
-public:
+ public:
     UnitCellsModel();
 
     void appendUnitCell(nsx::sptrUnitCell cell) { unitCells_.append(cell); }
     nsx::sptrUnitCell selectedCell();
     QList<nsx::sptrUnitCell> allUnitCells() { return unitCells_; }
 
-private:
+ private:
     QList<nsx::sptrUnitCell> unitCells_;
     int selected_;
 };
 
 class InstrumentModel {
-public:
+ public:
     InstrumentModel(const QString&, const QString&);
 
     void detectorGlobalOffsets();
@@ -59,13 +59,13 @@ public:
     const QString& instrumentName() { return instrumentName_; }
     const QString& sourceName() { return sourceName_; }
 
-private:
+ private:
     QString instrumentName_;
     QString sourceName_;
 };
 
 class ExperimentModel {
-public:
+ public:
     ExperimentModel(nsx::sptrExperiment);
     ~ExperimentModel();
     nsx::sptrExperiment experiment() { return experiment_; }
@@ -76,7 +76,7 @@ public:
     UnitCellsModel* unitCells() { return units_; }
     void removeSelectedData();
 
-private:
+ private:
     nsx::sptrExperiment experiment_;
     ExperimentData* data_;
     InstrumentModel* instrument_;

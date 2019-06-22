@@ -19,7 +19,7 @@
 #include <QList>
 
 class FilteredPeaksModel {
-public:
+ public:
     FilteredPeaksModel(const QString& name, nsx::PeakList);
 
     QString getName() { return name_; }
@@ -27,13 +27,13 @@ public:
     nsx::PeakList getPeaks() { return filteredPeaks_; }
     void removePeaks(nsx::sptrDataSet removedData);
 
-private:
+ private:
     QString name_;
     nsx::PeakList filteredPeaks_;
 };
 
 class PeakListsModel {
-public:
+ public:
     PeakListsModel(const QString& name, nsx::PeakList list);
 
     QString getName() { return name_; }
@@ -47,7 +47,7 @@ public:
     FilteredPeaksModel* selectedFilteredList();
     void removePeaks(nsx::sptrDataSet removedData);
 
-private:
+ private:
     void remakePeakLists();
     QString name_;
     nsx::PeakList allPeaks_;
@@ -56,7 +56,7 @@ private:
 };
 
 class PeaksModel {
-public:
+ public:
     PeaksModel();
 
     void normalizeToMonitor();
@@ -73,7 +73,7 @@ public:
     void removePeakListsModel(int i = -1);
     void removePeaks(nsx::sptrDataSet removedData);
 
-private:
+ private:
     void remakePeakLists();
     QList<PeakListsModel*> peakLists_;
     int selectedLists;

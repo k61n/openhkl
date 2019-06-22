@@ -14,15 +14,14 @@
 
 #include "gui/dialogs/IsotopesDatabaseDialog.h"
 
-#include "gui/MainWin.h"
 #include "base/utils/Units.h"
-#include <xsection/IsotopeDatabaseManager.h>
-#include <QVBoxLayout>
-#include <QStandardItemModel>
+#include "gui/MainWin.h"
 #include <QHeaderView>
+#include <QStandardItemModel>
+#include <QVBoxLayout>
+#include <xsection/IsotopeDatabaseManager.h>
 
-IsotopesDatabaseDialog::IsotopesDatabaseDialog()
-    : QDialog{}
+IsotopesDatabaseDialog::IsotopesDatabaseDialog() : QDialog {}
 {
     QVBoxLayout* grid = new QVBoxLayout(this);
     isotopeDatabaseView = new QTableView;
@@ -33,11 +32,10 @@ IsotopesDatabaseDialog::IsotopesDatabaseDialog()
     QStandardItemModel* model = new QStandardItemModel(0, properties.size());
     unsigned int comp(1);
     for (const auto& property : properties) {
-        QString unit = QString("%1")
-                .arg(QString::fromStdString(property.first));
+        QString unit = QString("%1").arg(QString::fromStdString(property.first));
         QString unitlong = QString("%1 (%2)")
-                .arg(QString::fromStdString(property.first))
-                .arg(QString::fromStdString(property.second.first));
+                               .arg(QString::fromStdString(property.first))
+                               .arg(QString::fromStdString(property.second.first));
         QStandardItem* headerItem = new QStandardItem(unit);
         headerItem->setToolTip(unitlong);
         headerItem->setTextAlignment(Qt::AlignLeft);
@@ -49,8 +47,8 @@ IsotopesDatabaseDialog::IsotopesDatabaseDialog()
     unsigned int isotopeCount(0);
     for (const auto& isotope : isotopes) {
         std::string isotopeName = isotope.first;
-        model->setVerticalHeaderItem(isotopeCount,
-                                     new QStandardItem(QString::fromStdString(isotopeName)));
+        model->setVerticalHeaderItem(
+            isotopeCount, new QStandardItem(QString::fromStdString(isotopeName)));
         model->setItem(isotopeCount, 0, new QStandardItem(QString::fromStdString(isotopeName)));
         unsigned int propertyCount(1);
         for (const auto& prop : properties) {
@@ -60,34 +58,34 @@ IsotopesDatabaseDialog::IsotopesDatabaseDialog()
             QStandardItem* item = new QStandardItem;
             if (isotopesManager->hasProperty(isotopeName, pName)) {
                 switch (xsection::IsotopeDatabaseManager::PropertyTypes.at(pType)) {
-                case xsection::ChemicalPropertyType::Int: {
-                    item->setText(QString::number(
-                                      isotopesManager->property<int>(isotopeName, pName)));
-                    break;
-                }
-                case xsection::ChemicalPropertyType::Double: {
-                    double value = isotopesManager->property<double>(isotopeName, pName)/
-                            unitsMgr->get(pUnit);
-                    item->setText(QString::number(value));
-                    break;
-                }
-                case xsection::ChemicalPropertyType::Complex: {
-                    std::complex<double> value =
-                            isotopesManager->property<std::complex<double>>(isotopeName, pName)/
-                                                                           unitsMgr->get(pUnit);
-                    std::ostringstream os;
-                    os << value;
-                    item->setText(QString::fromStdString(os.str()));
-                    break;
-                }
-                case xsection::ChemicalPropertyType::Bool: {
-                    item->setText(QString::number(
-                                      isotopesManager->property<bool>(isotopeName, pName)));
-                    break;
-                }
-                default:
-                    item->setText(QString::fromStdString(
-                                      isotopesManager->property<std::string>(isotopeName, pName)));
+                    case xsection::ChemicalPropertyType::Int: {
+                        item->setText(
+                            QString::number(isotopesManager->property<int>(isotopeName, pName)));
+                        break;
+                    }
+                    case xsection::ChemicalPropertyType::Double: {
+                        double value = isotopesManager->property<double>(isotopeName, pName)
+                            / unitsMgr->get(pUnit);
+                        item->setText(QString::number(value));
+                        break;
+                    }
+                    case xsection::ChemicalPropertyType::Complex: {
+                        std::complex<double> value =
+                            isotopesManager->property<std::complex<double>>(isotopeName, pName)
+                            / unitsMgr->get(pUnit);
+                        std::ostringstream os;
+                        os << value;
+                        item->setText(QString::fromStdString(os.str()));
+                        break;
+                    }
+                    case xsection::ChemicalPropertyType::Bool: {
+                        item->setText(
+                            QString::number(isotopesManager->property<bool>(isotopeName, pName)));
+                        break;
+                    }
+                    default:
+                        item->setText(QString::fromStdString(
+                            isotopesManager->property<std::string>(isotopeName, pName)));
                 }
             } else
                 item->setText("NaN");
@@ -99,13 +97,14 @@ IsotopesDatabaseDialog::IsotopesDatabaseDialog()
     isotopeDatabaseView->setColumnHidden(0, true);
     grid->addWidget(isotopeDatabaseView);
     connect(isotopeDatabaseView, &QTableView::clicked, this, &IsotopesDatabaseDialog::cellClicked);
-    connect(isotopeDatabaseView->horizontalHeader(), &QHeaderView::sortIndicatorChanged,
-            this, &IsotopesDatabaseDialog::sortingChanged);
+    connect(
+        isotopeDatabaseView->horizontalHeader(), &QHeaderView::sortIndicatorChanged, this,
+        &IsotopesDatabaseDialog::sortingChanged);
     isotopeDatabaseView->show();
     resize(1000, 500);
 }
 
-void IsotopesDatabaseDialog::cellClicked(const QModelIndex &index)
+void IsotopesDatabaseDialog::cellClicked(const QModelIndex& index)
 {
     int row = index.row();
     int col = index.column();
@@ -113,9 +112,9 @@ void IsotopesDatabaseDialog::cellClicked(const QModelIndex &index)
     int totalRow = isotopeDatabaseView->model()->rowCount();
 
     QModelIndex up = isotopeDatabaseView->model()->index(row, 0);
-    QModelIndex down = isotopeDatabaseView->model()->index(row, totalCol-1);
+    QModelIndex down = isotopeDatabaseView->model()->index(row, totalCol - 1);
     QModelIndex left = isotopeDatabaseView->model()->index(0, col);
-    QModelIndex right = isotopeDatabaseView->model()->index(totalRow-1, col);
+    QModelIndex right = isotopeDatabaseView->model()->index(totalRow - 1, col);
 
     QItemSelection selection(up, down);
     selection.merge(QItemSelection(left, right), QItemSelectionModel::Select);
@@ -127,7 +126,7 @@ void IsotopesDatabaseDialog::sortingChanged(int index, Qt::SortOrder order)
     Q_UNUSED(index)
     Q_UNUSED(order)
     QStandardItemModel* model = dynamic_cast<QStandardItemModel*>(isotopeDatabaseView->model());
-    for (int i =0; i<model->rowCount(); i++) {
+    for (int i = 0; i < model->rowCount(); i++) {
         QString text = model->item(i, 0)->text();
         model->verticalHeaderItem(i)->setText(text);
     }

@@ -15,10 +15,10 @@
 #ifndef GUI_DIALOGS_SHAPELIBRARYDIALOG_H
 #define GUI_DIALOGS_SHAPELIBRARYDIALOG_H
 
-#include "core/peak/Peak3D.h"
 #include "core/experiment/DataTypes.h"
-#include "core/shape/ShapeLibrary.h"
+#include "core/peak/Peak3D.h"
 #include "core/shape/Profile3D.h"
+#include "core/shape/ShapeLibrary.h"
 #include "gui/models/ColorMap.h"
 #include <QCR/widgets/actions.h>
 #include <QCR/widgets/controls.h>
@@ -30,12 +30,12 @@
 
 class ShapeLibraryDialog : public QDialog {
     Q_OBJECT
-public:
+ public:
     ShapeLibraryDialog();
     const nsx::Profile3D& profile() { return _profile; }
     nsx::sptrShapeLibrary library() const { return _library; }
 
-private:
+ private:
     void layout();
     void calculate();
     void build();

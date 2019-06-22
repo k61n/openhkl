@@ -19,7 +19,7 @@
 
 //! Collection of trigger and toggle actions, for use as member of MainWin.
 class Actions {
-public:
+ public:
     Actions();
     // Files:
     QcrTrigger addExperiment {"add Experiment", "add Experiment"};
@@ -88,7 +88,7 @@ public:
     // Export
     QcrTrigger exportPlot {"exportPlot", "export plot"};
 
-private:
+ private:
     void setupFiles();
     void setupData();
     void setupInstrument();

@@ -22,7 +22,7 @@ namespace nsx {
 //! Used to refine lattice and instrument parameters.
 
 class Refiner {
-public:
+ public:
     //! Construct an instance to refine the given cell based on the given peak
     //! list, using the given number of frame batches. The peaks must belong to
     //! the same dataset.
@@ -46,7 +46,7 @@ public:
     //! Returns the individual peak/frame batches used during refinement.
     const std::vector<RefinementBatch>& batches() const;
 
-private:
+ private:
     sptrUnitCell _cell;
 
     std::vector<RefinementBatch> _batches;

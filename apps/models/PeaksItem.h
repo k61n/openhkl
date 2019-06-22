@@ -17,7 +17,7 @@
 #include "apps/models/InspectableTreeItem.h"
 
 class PeaksItem : public InspectableTreeItem {
-public:
+ public:
     explicit PeaksItem();
 
     virtual QWidget* inspectItem() override;
