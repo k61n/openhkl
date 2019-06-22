@@ -15,12 +15,14 @@
 #ifndef CORE_CONVOLVE_ATOMICCONVOLVER_H
 #define CORE_CONVOLVE_ATOMICCONVOLVER_H
 
-#include "core/convolve/Convolver.h"
+#include "core/convolve/Convolver.h" // inherits from
 
 #include <fftw3.h>
 #include <vector>
 
 namespace nsx {
+
+//! Pure virtual base class for ConstantConvolver, DeltaConvolver, RadialConvolver.
 
 class AtomicConvolver : public Convolver {
 

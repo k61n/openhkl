@@ -15,13 +15,13 @@
 #ifndef CORE_CONVOLVE_CONSTANTCONVOLVER_H
 #define CORE_CONVOLVE_CONSTANTCONVOLVER_H
 
-// Convolver description: this kernel is constant with the value 1 /
-// (rows*cols). Convolving with this kernel has the effect of taking the average
-// value of the frame.
-
-#include "core/convolve/AtomicConvolver.h"
+#include "core/convolve/AtomicConvolver.h" // inherits from
 
 namespace nsx {
+
+//! Convolver with constant kernel, to take the average value of the frame.
+
+//! The kernel has the constant value 1 / (rows*cols).
 
 class ConstantConvolver : public AtomicConvolver {
 
