@@ -35,7 +35,7 @@ public:
     //! according to the space group symmetry.
     bool addPeak(const sptrPeak3D& peak);
     //! Retern the set of merged peaks.
-    const MergedPeakSet& peaks() const;
+    const MergedPeakSet& mergedPeakSet() const;
 
     //! Returns redundancy = observations / symmetry-inequvialent peaks.
     double redundancy() const;
@@ -49,7 +49,7 @@ public:
 private:
     SpaceGroup _group;
     bool _friedel;
-    MergedPeakSet _peaks;
+    MergedPeakSet _mergedPeakSet;
 };
 
 } // namespace nsx
