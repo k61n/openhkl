@@ -24,8 +24,8 @@
 
 namespace nsx {
 
-//! This class implements the per-peak coordinate system described by Kabsch (1988, 2010).
-//!
+//! The per-peak coordinate system described by Kabsch (1988, 2010).
+
 //! Following Kabsch 1988, we introduce about each peak a new coordinate system
 //! which is supposed to undo the effects of detector geometry and distortion
 //! from the Lorentz factor. In this system, the peaks intensity distribution is
@@ -34,6 +34,7 @@ namespace nsx {
 //! This allows us to compare the shapes of peaks on different regions of the
 //! detector in a way that is independent of the detector geometry. This is
 //! crucial for shape prediction and profile fitting.
+
 class PeakCoordinateSystem {
 public:
     //! Construct the coordinate system about the given peak.

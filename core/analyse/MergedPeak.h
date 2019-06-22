@@ -23,7 +23,8 @@
 
 namespace nsx {
 
-//! Class to handle calculation of merged data
+//! A PeakList, and crystallographic information (SpaceGroup, MillerIndex, ...).
+
 class MergedPeak {
 public:
     //! Construct a merged peak with the given spacegroup.

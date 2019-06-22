@@ -15,11 +15,12 @@
 #ifndef CORE_STATISTICS_RFACTOR_H
 #define CORE_STATISTICS_RFACTOR_H
 
-#include "core/statistics/IMergedPeakStatistic.h"
+#include "core/statistics/IMergedPeakStatistic.h" // inherits from
 
 namespace nsx {
 
-//! Class used to compute the various R factors.
+//! IMergedPeakStatistic to compute various R factors.
+
 class RFactor : public IMergedPeakStatistic {
 public:
     RFactor()

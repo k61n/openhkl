@@ -21,7 +21,8 @@
 
 namespace nsx {
 
-//! Class describing a monochromator together with various of its properties.
+//! Holds properties of a monochromator, used by Source.
+
 class Monochromator {
 
 public:

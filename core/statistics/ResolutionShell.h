@@ -19,8 +19,7 @@
 
 namespace nsx {
 
-//! Utility structure to store a list of peaks with resolution in the
-//! range [dmin, dmax].
+//! Utility structure to store a list of peaks with resolution in the range [dmin, dmax].
 struct DShell {
     //! Minimum value of d, i.e. maximum resolution
     double dmin;
@@ -30,7 +29,8 @@ struct DShell {
     PeakList peaks;
 };
 
-//! Class to split a set of peaks into a number of shells based on resolution.
+//! Splits a set of peaks into a number of shells based on resolution.
+
 class ResolutionShell {
 public:
     //! Construct the given number of cells with abolute minimum dmin and absolute maximum dmax.

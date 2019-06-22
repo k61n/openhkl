@@ -23,7 +23,8 @@
 
 namespace nsx {
 
-//! thread safe class to handle progress and status messages
+//! Thread-safe class to handle progress and status messages.
+
 class ProgressHandler {
 public:
     ProgressHandler();

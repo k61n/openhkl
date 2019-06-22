@@ -21,7 +21,8 @@
 
 namespace nsx {
 
-//! Class to encapsulate parameters to be passed to nsx::Minimizer.
+//! Encapsulates parameters to be passed to nsx::Minimizer.
+
 class FitParameters {
 
 public:

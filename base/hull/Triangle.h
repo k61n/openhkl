@@ -19,8 +19,7 @@
 
 namespace nsx {
 
-//! Small helper class that stores information for fast computation
-// of intersection between lines and triangle in 3D.
+//! Small helper class for fast computation of intersection between lines and triangle in 3D.
 struct Triangle {
     Triangle() = delete;
     Triangle(const Eigen::Vector3d& p1, const Eigen::Vector3d& p2, const Eigen::Vector3d& p3);

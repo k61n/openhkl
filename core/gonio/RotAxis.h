@@ -19,11 +19,11 @@
 
 namespace nsx {
 
-//! Class defining a rotation axis.
-//!
-//! Allows to define a rotation axis in 3D space , constructed by a direction
-//! vector and a rotation direction (CW or CCW). The direction vector needs not
-//! be normalized.
+//! A rotation axis in 3D space, constructed by a vector and a direction (CW or CCW).
+
+//! The direction vector needs not be normalized.
+//! TODO (#24): The direction flag (CW/CCW) is not needed, confusing, and should be removed.
+
 class RotAxis : public Axis {
 public:
     //! Axis direction (clockwise, counter-clockwise)

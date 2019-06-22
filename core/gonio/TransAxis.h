@@ -19,7 +19,8 @@
 
 namespace nsx {
 
-//! Translational axis of an abstract goniometer
+//! Translational axis of an abstract goniometer.
+
 class TransAxis : public Axis {
 public:
     //! Static constructor for a TransAxis

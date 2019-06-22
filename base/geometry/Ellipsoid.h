@@ -21,7 +21,8 @@
 
 namespace nsx {
 
-//! 3D Ellipsoid, stored as center and covariance matrix
+//! 3D Ellipsoid, stored as center-and-covariance matrix.
+
 class Ellipsoid {
 
 public:
@@ -44,8 +45,7 @@ public:
     bool collide(const Ellipsoid& other) const;
     //! Returns true if ellipsoid collides with segment from a to b
     bool collideSegment(const Eigen::Vector3d& a, const Eigen::Vector3d& b) const;
-    //! Returns true if ellipsoid collides with face o (o+a) (o+a+b) (o+n) with
-    //! normal n
+    //! Returns true if ellipsoid collides with face o (o+a) (o+a+b) (o+n) with normal n
     bool collideFace(
         const Eigen::Vector3d& o, const Eigen::Vector3d& a, const Eigen::Vector3d& b,
         const Eigen::Vector3d& n) const;

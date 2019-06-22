@@ -22,7 +22,8 @@
 
 namespace nsx {
 
-//! Helper class to represent a batch of consecutive detector images.
+//! Represents a batch of consecutive detector images.
+
 class RefinementBatch {
 
 public:

@@ -133,8 +133,6 @@ using Eigen::Quaterniond;
 #include "core/gonio/Component.h"
 #include "core/gonio/Gonio.h"
 #include "core/gonio/RotAxis.h"
-#include "core/gonio/RotAxis.h"
-#include "core/gonio/TransAxis.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InterpolatedState.h"
@@ -268,7 +266,6 @@ using namespace nsx;
 %include "core/gonio/Gonio.h"
 %include "core/gonio/Component.h"
 %include "core/gonio/AxisFactory.h"
-%include "core/gonio/TransAxis.h"
 %include "core/gonio/RotAxis.h"
 
 %include "core/detector/Detector.h"

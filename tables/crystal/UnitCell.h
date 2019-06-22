@@ -15,10 +15,10 @@
 #ifndef TABLES_CRYSTAL_UNITCELL_H
 #define TABLES_CRYSTAL_UNITCELL_H
 
-#include <xsection/Material.h>
 #include "tables/crystal/NiggliCharacter.h"
 #include "tables/crystal/SpaceGroup.h"
 
+#include <xsection/Material.h>
 #include <Eigen/Dense>
 
 namespace nsx {
@@ -61,8 +61,8 @@ struct UnitCellCharacter {
     UnitCellCharacter(double g00_, double g01_, double g02_, double g11_, double g12_, double g22_);
 };
 
-//! Class to define a crystallographic unit-cell.
-//!
+//! Class to define a crystallographic unit cell.
+
 //! Provide functionalities to transform vectors of the direct lattice or
 //! reciprocal lattice from unit-cell coordinates to a right-handed coordinates
 //! system. The UnitCell is defined by the parameters a,b,c and angles alpha,
@@ -72,7 +72,7 @@ struct UnitCellCharacter {
 
 class UnitCell {
 public:
-    //! Empty UnitCell, initialiazed to right-handed orthonormal system
+    //! Empty UnitCell, initialized to right-handed orthonormal system
     UnitCell();
 
     //! Create unit cell from a basis
@@ -234,8 +234,7 @@ public:
 
     //! Returns the orientation matrix Q such that _A*_NP^{-1} = Q*R where R is
     //! upper triangular with positive entries on the diagonal. This is similar to
-    //! UnitCell::orientation() except that the orientation is computed for the
-    //! Niggli cell.
+    //! UnitCell::orientation() except that the orientation is computed for the Niggli cell.
     Eigen::Matrix3d niggliOrientation() const;
 
     //! Return parameters of the unit cell in an internal format.

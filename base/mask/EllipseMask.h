@@ -20,7 +20,8 @@
 
 namespace nsx {
 
-//! Ellipsoidal detector mask
+//! Ellipsoidal detector IMask.
+
 class EllipseMask : public IMask {
 
 public:

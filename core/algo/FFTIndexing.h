@@ -20,6 +20,7 @@
 namespace nsx {
 
 //! Class used for Fast-Fourier transform autoindexing.
+
 class FFTIndexing {
 public:
     //! Type to store vector together with quality.

@@ -20,6 +20,7 @@
 namespace nsx {
 
 //! Lightweight class for detector events.
+
 class DetectorEvent {
 public:
     //! Constructor

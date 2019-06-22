@@ -15,12 +15,14 @@
 #ifndef CORE_LOADER_HDF5METADATAREADER_H
 #define CORE_LOADER_HDF5METADATAREADER_H
 
-#include "H5Cpp.h"
-#include "core/raw/IDataReader.h"
+#include "core/raw/IDataReader.h" \\ inherits from
+
+#include <H5Cpp.h>
 
 namespace nsx {
 
-//! Read the experiment metadata from and HDF file.
+//! IDataReader for HDF5 files. Base class for HDF5DataReader and FakeDataReader.
+
 class HDF5MetaDataReader : public IDataReader {
 
 public:

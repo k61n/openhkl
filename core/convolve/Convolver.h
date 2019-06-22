@@ -22,6 +22,8 @@ namespace nsx {
 
 using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
+//! Pure virtual base class of all convolvers (= image filters).
+
 class Convolver {
 
 public:
@@ -37,10 +39,10 @@ public:
 
     virtual Convolver* clone() const = 0;
 
-    // Non-const getter for kernel parameter
+    //! Non-const getter for kernel parameter
     std::map<std::string, double>& parameters();
 
-    // Const getter for kernel parameter
+    //! Const getter for kernel parameter
     const std::map<std::string, double>& parameters() const;
 
     void setParameters(const std::map<std::string, double>& parameters);

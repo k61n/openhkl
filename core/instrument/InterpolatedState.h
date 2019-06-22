@@ -19,10 +19,12 @@
 
 namespace nsx {
 
-//! Class to store an interpolation between two instrument states.
+//! Stores an interpolation between two instrument states.
+
 //! In addition to the data fields stored in an InstrumentState, this class
 //! also stores information about the (angular) velocity and step size, which
 //! is needed to compute analytic derivatives of various functions.
+
 class InterpolatedState : public InstrumentState {
 public:
     //! Default value needed for SWIG (note: nullptr does _not_ work)

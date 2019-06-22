@@ -19,7 +19,8 @@
 
 namespace nsx {
 
-//! Class implementing a flat detector
+//! A flat detector.
+
 class FlatDetector : public Detector {
 public:
     //! Static constructor of a FlatDetector from a property tree node
@@ -54,8 +55,8 @@ public:
 
     //! Determine whether detector at rest can receive a scattering event with
     //! direction given by Kf. px and py are detector position if true.
-    virtual DetectorEvent
-    constructEvent(const DirectVector& from, const ReciprocalVector& kf) const override;
+    DetectorEvent constructEvent(
+        const DirectVector& from, const ReciprocalVector& kf) const override;
 
     virtual Eigen::Matrix3d jacobian(double x, double y) const override;
 };

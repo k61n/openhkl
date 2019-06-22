@@ -15,9 +15,11 @@
 #ifndef CORE_CONVOLVE_DELTACONVOLVER_H
 #define CORE_CONVOLVE_DELTACONVOLVER_H
 
-#include "core/convolve/AtomicConvolver.h"
+#include "core/convolve/AtomicConvolver.h" // inherits from
 
 namespace nsx {
+
+//! Convolver with Dirac-delta kernel.
 
 class DeltaConvolver : public AtomicConvolver {
 

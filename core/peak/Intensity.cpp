@@ -12,10 +12,9 @@
 //
 //  ***********************************************************************************************
 
-#include <cassert>
-#include <cmath>
-
 #include "core/peak/Intensity.h"
+
+#include <cmath>
 
 namespace nsx {
 

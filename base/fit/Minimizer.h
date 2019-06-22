@@ -15,15 +15,18 @@
 #ifndef BASE_FIT_MINIMIZER_H
 #define BASE_FIT_MINIMIZER_H
 
-#include <gsl/gsl_matrix.h>
-
 #include "base/fit/FitParameters.h"
 
+#include <gsl/gsl_matrix.h>
+
 namespace nsx {
+
 struct MinimizerGSL;
 
-//! Class to wrap the GSL non-linear least squares minimization routines.
-//! This class supports both numerical and analytic derivatives.
+//! Wraps the GSL non-linear least squares minimization routines.
+
+//! Supports both numerical and analytic derivatives.
+
 class Minimizer {
 public:
     //! The signature of the function f which specifies the vector of residuals.
@@ -67,11 +70,9 @@ public:
     //! Sets the function which computes the least-squares residuals.
     template <typename Fun_> void set_f(Fun_ functor) { _f = static_cast<f_type>(functor); }
     //! Sets the function computes the Jacobian of the residuals.
-    //! The default value is \p nullptr, in which case a numerical derivative is
-    //! used instead.
+    //! The default value is \p nullptr, in which case a numerical derivative is used instead.
     template <typename Fun_> void set_df(Fun_ functor) { _df = static_cast<df_type>(functor); }
-    //! Returns the mean squared error with respect to the current minimizer
-    //! values.
+    //! Returns the mean squared error with respect to the current minimizer values.
     double meanSquaredError() const;
 
 private:
@@ -82,8 +83,7 @@ private:
     //! GSL wrapper function. Static method because it needs access to private
     //! members
     static int gsl_f_wrapper(const gsl_vector*, void*, gsl_vector*);
-    //! GSL wrapper function. Static method because it needs access to private
-    //! members
+    //! GSL wrapper function. Static method because it needs access to private members
     static int gsl_df_wrapper(const gsl_vector*, void*, gsl_matrix*);
     //! Implementation detail: used to convert between Eigen and GSL vectors.
     Eigen::VectorXd _dfInputEigen;

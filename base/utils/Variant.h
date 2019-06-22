@@ -20,27 +20,25 @@
 
 namespace nsx {
 
-//! Template meta-class for fetching the type of the first template argument of
-//! a Variant
+//! Template meta-class for fetching the type of the first template argument of a Variant.
 template <typename... Args> struct FirstArg {
 };
 
-//! Template meta-class for fetching the type of the first template argument of
-//! a Variant
+//! Template meta-class for fetching the type of the first template argument of a Variant.
 template <typename T, typename... Args> struct FirstArg<T, Args...> {
     using type = T;
 };
 
-//! Template meta-class for computing the maximum size of the types of a Variant
+//! Template meta-class for computing the maximum size of the types of a Variant.
 template <typename... Args> struct MaxSizeOf;
 
-//! Template meta-class for computing the maximum size of the types of a Variant
+//! Template meta-class for computing the maximum size of the types of a Variant.
 template <typename T> struct MaxSizeOf<T> {
     static_assert(!std::is_reference<T>::value, "Variant does not support reference types");
     static constexpr size_t value = sizeof(T);
 };
 
-//! Template meta-class for computing the maximum size of the types of a Variant
+//! Template meta-class for computing the maximum size of the types of a Variant.
 template <typename T, typename... Args> struct MaxSizeOf<T, Args...> {
     static_assert(!std::is_reference<T>::value, "Variant does not support reference types");
     static constexpr size_t value = sizeof(T) > MaxSizeOf<Args...>::value
@@ -48,14 +46,12 @@ template <typename T, typename... Args> struct MaxSizeOf<T, Args...> {
         : MaxSizeOf<Args...>::value;
 };
 
-//! Template meta-class for determining whether one of the types of a Variant is
-//! of type T
+//! Template meta-class for determining whether one of the types of a Variant is of type T.
 template <typename... Args> struct IsOneOf {
     static constexpr bool value = false;
 };
 
-//! Template meta-class for determining whether one of the types of a Variant is
-//! of type T
+//! Template meta-class for determining whether one of the types of a Variant is of type T.
 template <typename T, typename S, typename... Args> struct IsOneOf<T, S, Args...> {
     static constexpr bool value = IsOneOf<T, Args...>::value;
 };

@@ -21,7 +21,8 @@
 
 namespace nsx {
 
-//! Factory class used to create axes (rotational, translational)
+//! Factory to create axes (rotational, translational).
+
 class AxisFactory : public Factory<Axis, std::string, const YAML::Node&>,
                     public Singleton<AxisFactory, Constructor, Destructor> {
 private:

@@ -24,10 +24,11 @@ namespace nsx {
 
 class UnitCell;
 
-//! Class to define the Miller indices (a.k.a hkl index)
-//!
+//! Class to define the Miller hkl indices.
+
 //! This class allows to enforce dimensional and C++-type consistency when
 //! dealing with vectors in algorithms dedicated to crystallographic data.
+
 class MillerIndex {
 public:
     MillerIndex() = default;

@@ -20,11 +20,12 @@
 
 namespace nsx {
 
-/** DataReaderFactory. All IData formats must register their "create"
- * method with the factory in order to choose the correct DataReader at runtime.
- * Reader selection is based on the extension of the datafile.
- *
- */
+//! Factory that gives access to the data readers from core/loader.
+
+//! All IData formats must register their "create" method with the factory in order
+//! to choose the correct DataReader at runtime. Reader selection is based on the
+//! extension of the datafile.
+
 class DataReaderFactory {
 
 public:

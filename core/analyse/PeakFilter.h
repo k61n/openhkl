@@ -18,6 +18,7 @@
 namespace nsx {
 
 //! Class to remove "bad" peaks based on various critera.
+
 class PeakFilter {
 public:
     //! Filter peaks that are complementary to the given peaks

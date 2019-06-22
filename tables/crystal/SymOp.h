@@ -22,7 +22,8 @@ namespace nsx {
 
 using affineTransformation = Eigen::Transform<double, 3, Eigen::Affine>;
 
-//! Class to represent a symmetry operation of a spacegroup.
+//! A symmetry operation of a spacegroup.
+
 class SymOp {
 
 public:

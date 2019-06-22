@@ -19,7 +19,8 @@
 
 namespace nsx {
 
-//! Class used to refine lattice and instrument parameters.
+//! Used to refine lattice and instrument parameters.
+
 class Refiner {
 public:
     //! Construct an instance to refine the given cell based on the given peak

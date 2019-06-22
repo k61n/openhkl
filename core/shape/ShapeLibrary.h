@@ -40,14 +40,14 @@ PeakList predictPeaks(
     ShapeLibrary library, sptrDataSet data, sptrUnitCell, double dmin, double dmax, double radius,
     double nframes, int min_neighbors, PeakInterpolation interpolation);
 
-//! Class to store a library of peak shapes, to be used for peak
-//! prediction and integration.
-//!
+//! Store a library of peak shapes, to be used for peak prediction and integration.
+
 //! The library stores a list of reference peaks. For each reference peak, the
 //! library stores the covariance matrix of the intensity distribution, as well
 //! as 3d- and 1d- integrated profiles. The covariance matrices are used to
 //! roughly predict the shapes of weak peaks, and the integrated profiles are
 //! used in the profile-fitting integration methods.
+
 class ShapeLibrary {
 
 public:

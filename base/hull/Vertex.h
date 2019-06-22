@@ -21,11 +21,8 @@ namespace nsx {
 
 struct Edge;
 
-/* !
- * Class Vertex.
- * This class implements the Vertex object used in the incremental convex hull
- * algorithm.
- */
+//! A vertex, used in the incremental convex hull algorithm.
+
 struct Vertex {
     Vertex();
     Vertex(int id);

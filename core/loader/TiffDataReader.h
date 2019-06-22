@@ -17,11 +17,12 @@
 
 #include <tiffio.h>
 
-#include "core/raw/IDataReader.h"
+#include "core/raw/IDataReader.h" \\ inherits from
 
 namespace nsx {
 
-//! Read detector image from Tiff file
+//! IDataReader for detector image from Tiff file.
+
 class TiffDataReader : public IDataReader {
 
 public:

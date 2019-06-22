@@ -15,13 +15,14 @@
 #ifndef CORE_LOADER_ILLDATAREADER_H
 #define CORE_LOADER_ILLDATAREADER_H
 
-#include <boost/interprocess/mapped_region.hpp>
+#include "core/raw/IDataReader.h" \\ inherits from
 
-#include "core/raw/IDataReader.h"
+#include <boost/interprocess/mapped_region.hpp>
 
 namespace nsx {
 
-//! ILL ascii data format
+//! IDataReader for the ILL ascii data format.
+
 class ILLDataReader : public IDataReader {
 
 public:

@@ -20,7 +20,8 @@
 
 namespace nsx {
 
-//! Simple CSV parser
+//! Simple CSV parser.
+
 class CSV {
 public:
     CSV(char delim = ',', char quotchar = '"');

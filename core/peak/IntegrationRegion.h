@@ -20,11 +20,11 @@
 
 namespace nsx {
 
-//! Class used to construct a peak integration region.
+//! Used to construct a peak integration region.
+
 class IntegrationRegion {
 public:
-    //! Classify the type of detector event with respect to the current
-    //! integration region
+    //! Classify the type of detector event with respect to the current integration region
     enum class EventType : int { BACKGROUND = 1, PEAK = 2, FORBIDDEN = -1, EXCLUDED = 0 };
 
     IntegrationRegion();
