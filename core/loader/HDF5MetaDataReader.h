@@ -21,7 +21,7 @@
 
 namespace nsx {
 
-//! Reads data from HDF5 file. Base class for HDF5DataReader and FakeDataReader.
+//! IDataReader for HDF5 files. Base class for HDF5DataReader and FakeDataReader.
 
 class HDF5MetaDataReader : public IDataReader {
 

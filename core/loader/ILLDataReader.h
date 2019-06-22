@@ -21,7 +21,7 @@
 
 namespace nsx {
 
-//! Reads the ILL ascii data format.
+//! IDataReader for the ILL ascii data format.
 
 class ILLDataReader : public IDataReader {
 
