@@ -51,6 +51,18 @@ endif()
 # Enable unit testing with ctest. This must be called before any calls to add_subdirectory
 enable_testing()
 
+if(NSX_PYTHON AND NOT MSVC)
+    # ensure that no code line has more than 100 chars
+    set(allsources "")
+    foreach(dir base tables core)
+        file(GLOB_RECURSE sources ${dir}/*.cpp ${dir}/*.h)
+        list(APPEND allsources ${sources})
+    endforeach()
+    add_test(NAME "CodeLineLength"
+        COMMAND ${PYTHON_EXECUTABLE}
+        ${CMAKE_SOURCE_DIR}/devtools/check-line-length.py 100 ${allsources})
+endif()
+
 add_subdirectory(base)
 add_subdirectory(tables)
 add_subdirectory(core)
