@@ -21,6 +21,7 @@
 namespace nsx {
 
 //! Class to enumerate and construct the 3d spacegroups.
+
 class SpaceGroup {
 public:
     //! Returns the list of spacegroup symbols

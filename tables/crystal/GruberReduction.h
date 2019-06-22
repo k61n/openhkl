@@ -19,19 +19,17 @@
 
 namespace nsx {
 
-//! Classify and reduce a lattice according to the 44 types in the
-//! international tables.
+//! Classifies and reduces a lattice according to the 44 types in the international tables.
+
 class GruberReduction {
 public:
     //!! Construct algorithm with the metric tensor of the Cell, and a tolerance
     GruberReduction(const Eigen::Matrix3d& g, double epsilon);
     //! Find the conventional cell and output transformation matrix, centring type
-    //! and Bravais lattice of the new cell. Return value is the condition which
-    //! matched (1-44)
+    //! and Bravais lattice of the new cell. Return value is the matched case number (1-44).
     int reduce(Eigen::Matrix3d& P, LatticeCentring& centring, BravaisType& bravais);
     //! Classify the lattice as one of the 44 types listed in the international
-    //! tables. The return value contains all relevant information about the
-    //! class.
+    //! tables. The return value contains all relevant information about the class.
     NiggliCharacter classify();
 
 private:

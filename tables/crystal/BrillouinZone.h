@@ -19,9 +19,8 @@
 
 namespace nsx {
 
-//! Class to calculate first Brillouin zone of a lattice and to convert
-//! it to a convex hull representation.
-//!
+//! Calculates first Brillouin zone of a lattice, and converts it to a ConvexHull representation.
+
 //! The first Brillouin zone of a lattice is
 //! defined to be the set of all vectors which are closer to the origin than to
 //! any other lattice point. From this definition, it comes that it is a convex
@@ -30,6 +29,7 @@ namespace nsx {
 //! Brillouin zone, one has to enumerate the finitely many q's which appear as
 //! normals to the faces of the zone. Then, the bouding vertices are determined
 //! by taking 3-fold intersections of the bounding planes.
+
 class BrillouinZone {
 
 public:
