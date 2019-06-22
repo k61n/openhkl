@@ -19,7 +19,8 @@
 
 namespace nsx {
 
-//! Class to handle merged datasets.
+//! Contains a set of `MergedPeak`s and crystallographic information (SpaceGroup and Friedel flag).
+
 class MergedData {
 public:
     //! Construct merged dataset with given spacegroup. Paramter \p friedel

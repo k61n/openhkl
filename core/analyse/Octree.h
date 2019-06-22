@@ -20,36 +20,23 @@
 
 namespace nsx {
 
-// Constant expression necessary to initialize
-// _children attribute in the Octree class
-// which requires a constant literal.
-constexpr int getPow(int factor)
-{
-    return factor > 1 ? 2 * getPow(factor - 1) : 2;
-}
-
-/*! A template class to handle binary trees in D dimensions
- *
- * Octree is used to partition space in D dimensions and employed for fast
- * sorting or collision detections of AABB objects. NdTree derived from AABB
- * since each voxel is a bounded object itself. The root node has dimensions of
- * the full world. The Octree instance does not own the AABB* objects: since
- * users deals with the lifetime of AABB* objects outside of the class, one must
- * ensure that these have a greater lifetime than that of NdTree. Octree define
- * a soft constraint on the the maximum number of AABB* objects that can be
- * stored in each leaf of the tree (_MAX_STORAGE), and a maximal depth for each
- * branch (_MAX_DEPTH). If the number of subdivisions reaches _MAX_DEPTH, the
- * soft constraint on _MAX_STORAGE is broken.
- *
- */
-
 class OctreeIterator;
 
-//! This class is used to speed up collision detection.
+//! A binary tree in D dimensions, used to speed up collision detection.
+
+//! Octree is used to partition space in D dimensions and employed for fast
+//! sorting or collision detections of AABB objects. NdTree derived from AABB
+//! since each voxel is a bounded object itself. The root node has dimensions of
+//! the full world. The Octree instance does not own the AABB* objects: since
+//! users deals with the lifetime of AABB* objects outside of the class, one must
+//! ensure that these have a greater lifetime than that of NdTree. Octree define
+//! a soft constraint on the the maximum number of AABB* objects that can be
+//! stored in each leaf of the tree (_MAX_STORAGE), and a maximal depth for each
+//! branch (_MAX_DEPTH). If the number of subdivisions reaches _MAX_DEPTH, the
+//! soft constraint on _MAX_STORAGE is broken.
+
 class Octree : public AABB {
 public:
-    //! The Octree iterator class is made friend with Octree in order to access
-    //! some of its private data
     friend class OctreeIterator;
 
     // These typedefs insure compatibility with STL
@@ -118,10 +105,6 @@ private:
     //! Prevent defining tree with null world.
     Octree();
 
-    /*! Construct a new Octree in the subregion i of
-     *  the parent tree. For example i goes from 1 to 8 for voxels
-     */
-
     //! Sets all children to nullptr
     void nullifyChildren();
 
@@ -157,7 +140,8 @@ private:
     unsigned int _idx = 0;
 };
 
-//! Iterator for octree leaves/chambers
+//! Iterator for Octree leaves/chambers.
+
 class OctreeIterator {
 public:
     //! The default constructor. Used only for end condition.

@@ -21,7 +21,7 @@
 namespace nsx {
 
 //! A region of interest in a 3D image.
-//!
+
 //! A Blob is constructed by adding points in the image with coordinates x,y,z
 //! and an associated mass that represents any scalar field such as intensity.
 //! Blob objects records the total mass, the mass-weighted first and second

@@ -22,7 +22,8 @@
 
 namespace nsx {
 
-//! Helper struct for storing the result of a gonio fit
+//! Stores the result of fitting parameters of a Gonio.
+
 struct GonioFit {
     bool success;
     std::vector<double> offsets;
