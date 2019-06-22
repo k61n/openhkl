@@ -246,7 +246,8 @@ Ellipsoid Peak3D::qShape() const
 //    Eigen::RowVector3d pred_kf = (kf1 - kf).norm() < (kf2 - kf).norm() ? kf1 : kf2;
 //
 //    return _data->reader()->diffractometer()->detector()->constructEvent(
-//        DirectVector(state.samplePosition), ReciprocalVector(pred_kf * state.detectorOrientation));
+//        DirectVector(state.samplePosition),
+//        ReciprocalVector(pred_kf * state.detectorOrientation));
 //}
 
 Intensity Peak3D::meanBackground() const
@@ -270,7 +271,8 @@ double Peak3D::bkgEnd() const
 }
 
 // found unused (JWu 11jun19)
-//std::vector<PeakList> findEquivalences(const SpaceGroup& group, const PeakList& peaks, bool friedel)
+//std::vector<PeakList> findEquivalences(
+//    const SpaceGroup& group, const PeakList& peaks, bool friedel)
 //{
 //    std::vector<PeakList> peak_equivs;
 //

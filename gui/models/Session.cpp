@@ -169,7 +169,8 @@ void Session::loadRawData()
 
     QStringList qfilenames;
     qfilenames = QcrFileDialog::getOpenFileNames(
-        nullptr, "select raw data", loadDirectory, "", nullptr, QFileDialog::Option::DontUseNativeDialog);
+        nullptr, "select raw data", loadDirectory, "", nullptr,
+        QFileDialog::Option::DontUseNativeDialog);
 
     if (qfilenames.empty())
         return;

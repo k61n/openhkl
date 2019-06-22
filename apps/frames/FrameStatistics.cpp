@@ -402,7 +402,8 @@ void FrameStatistics::updateStatisticsTab()
         row.append(new QStandardItem(QString::number(d_upper)));
         row.append(new QStandardItem(QString::number(d_lower)));
         row.append(new QStandardItem(QString::number(merged_data_per_shell.totalSize())));
-        row.append(new QStandardItem(QString::number(merged_data_per_shell.mergedPeakSet().size())));
+        row.append(new QStandardItem(QString::number(
+                                         merged_data_per_shell.mergedPeakSet().size())));
         row.append(new QStandardItem(QString::number(merged_data_per_shell.redundancy())));
         row.append(new QStandardItem(QString::number(rfactor.Rmeas())));
         row.append(new QStandardItem(QString::number(rfactor.expectedRmeas())));

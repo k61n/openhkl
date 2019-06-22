@@ -158,13 +158,12 @@ ILLDataReader::ILLDataReader(const std::string& filename, Diffractometer* diffra
 
     // This map will store the values over the frames of each physical axis of the
     // goniometers bound to the instrument (detector + sample + source) 3 cases:
-    //	1) a physical axis is not a scanned axis and its name is not defined in
-    // the metadata, then the corresponding values will 	   be a constant equal
-    // to 0 	2) a physical axis is not a scanned axis and its name is defined
-    // in the metadata, then the corresponding values will 	   be a constant
-    // equal to the metadata value
-    // 	3) a physical axis is one of the scanned axis, then the corresponding
-    // values will be fetched from the FFFFFF dta blocks
+    // 1) a physical axis is not a scanned axis and its name is not defined in
+    //    the metadata, then the corresponding values will be a constant equal to 0;
+    // 2) a physical axis is not a scanned axis and its name is defined in the metadata,
+    //    then the corresponding values will be a constant equal to the metadata value;
+    // 3) a physical axis is one of the scanned axis, then the corresponding
+    //    values will be fetched from the FFFFFF dta blocks
     std::map<unsigned int, std::vector<double>> gonioValues;
 
     // Loop over the physical axis of the instrument

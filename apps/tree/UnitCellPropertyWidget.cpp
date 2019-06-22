@@ -155,7 +155,8 @@ void UnitCellPropertyWidget::setChemicalFormula()
     try {
         _unitCellItem->data(Qt::UserRole)
             .value<nsx::sptrUnitCell>()
-            ->setMaterial(std::unique_ptr<xsection::Material>(new xsection::Material(formula.toStdString())));
+            ->setMaterial(std::unique_ptr<xsection::Material>(
+                              new xsection::Material(formula.toStdString())));
     } catch (std::exception& e) {
         nsx::error() << e.what();
     }
