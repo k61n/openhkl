@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "core/peak/PeakData.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"

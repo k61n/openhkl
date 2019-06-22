@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/panels/TabPeaks.h"
 
 #include "gui/models/ExperimentModel.h"

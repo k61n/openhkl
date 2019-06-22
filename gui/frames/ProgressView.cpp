@@ -19,7 +19,6 @@
 #include <QApplication>
 #include <QPushButton>
 
-
 ProgressView::ProgressView(QWidget* parent) : QProgressDialog(parent)
 {
     setModal(true);

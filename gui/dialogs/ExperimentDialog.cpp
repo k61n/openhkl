@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/dialogs/ExperimentDialog.h"
 
 #include "base/utils/Path.h"

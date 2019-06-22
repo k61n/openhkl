@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/graphics/DetectorView.h"
 
 #include "gui/graphics/DetectorScene.h"

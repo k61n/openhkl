@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/dialogs/PeakFilterDialog.h"
 
 #include "core/analyse/PeakFilter.h"

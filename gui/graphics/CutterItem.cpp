@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/graphics/CutterItem.h"
 
 #include <QGraphicsSceneMouseEvent>

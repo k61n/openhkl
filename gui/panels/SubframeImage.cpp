@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/panels/SubframeImage.h"
 
 #include "core/experiment/DataSet.h"

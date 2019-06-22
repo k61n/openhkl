@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/frames/InstrumentStatesFrame.h"
 
 #include "gui/models/Session.h"

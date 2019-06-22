@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/models/PeaksTable.h"
 
 #include "gui/MainWin.h"
@@ -34,7 +33,6 @@
 #include <QInputDialog>
 #include <QKeyEvent>
 #include <QMenu>
-
 
 //!@class PeaksTableModel
 

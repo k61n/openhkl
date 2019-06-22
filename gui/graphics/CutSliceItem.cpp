@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/graphics/CutSliceItem.h"
 
 #include "gui/graphics/DetectorScene.h"

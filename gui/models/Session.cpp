@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/models/Session.h"
 
 #include "gui/graphics/DetectorScene.h"

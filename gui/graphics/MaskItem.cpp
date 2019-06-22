@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/graphics/MaskItem.h"
 
 #include "core/experiment/DataSet.h"

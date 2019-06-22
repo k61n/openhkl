@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/graphics/SimplePlot.h"
 
 NSXPlot* SimplePlot::create(QWidget* parent)

@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/frames/AutoIndexerFrame.h"
 
 #include "gui/frames/UnitCellWidget.h"

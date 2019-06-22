@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/panels/SubframeProperties.h"
 
 #include "gui/actions/Triggers.h"

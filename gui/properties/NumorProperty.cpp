@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/properties/NumorProperty.h"
 
 #include "core/experiment/DataSet.h"

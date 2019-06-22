@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/graphics/PeakPlot.h"
 
 NSXPlot* PeakPlot::create(QWidget* parent)

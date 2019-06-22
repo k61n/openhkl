@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/properties/DetectorProperty.h"
 
 #include "core/detector/Detector.h"

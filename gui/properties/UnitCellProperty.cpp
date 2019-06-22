@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/properties/UnitCellProperty.h"
 
 #include "tables/crystal/SpaceGroup.h"

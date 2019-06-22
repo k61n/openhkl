@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/dialogs/ShapeLibraryDialog.h"
 
 #include "gui/models/ExperimentModel.h"
@@ -35,9 +34,6 @@
 #include <QHeaderView>
 #include <QStatusBar>
 #include <QVBoxLayout>
-
-
-
 
 ShapeLibraryDialog::ShapeLibraryDialog() : QDialog {}
 {

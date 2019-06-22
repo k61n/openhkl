@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/frames/PeakFinderFrame.h"
 
 #include "core/experiment/DataSet.h"

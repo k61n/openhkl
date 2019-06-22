@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #include "gui/graphics/EllipseItem.h"
 
 #include "core/experiment/DataSet.h"

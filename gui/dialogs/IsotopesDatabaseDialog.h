@@ -11,6 +11,7 @@
 //! @authors   see CITATION, MAINTAINER
 //
 //  ***********************************************************************************************
+
 #ifndef GUI_DIALOGS_ISOTOPESDATABASEDIALOG_H
 #define GUI_DIALOGS_ISOTOPESDATABASEDIALOG_H
 
