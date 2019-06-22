@@ -27,8 +27,8 @@ namespace nsx {
 using MetaDataMap = std::map<const char*, Variant<int, double, std::string>>;
 using MetaDataKeySet = std::set<std::string>;
 
-//! Class to store MetaData of a DataSet stored by a map of key/value pair.
-//!
+//! Stores arbitrary meta data of a DataSet.
+
 //! MetaData class allow to store metadata associated with a data file  into a
 //! map indexed by the string of the entry. Any parameter type can be stored,
 //! using the corresponding template argument. A specific key can be retrieved

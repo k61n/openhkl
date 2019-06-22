@@ -21,8 +21,10 @@
 
 namespace nsx {
 
-//! Class to produce a histogram of 1d integrated intensity profiles,
+//! Produces a histogram of 1d-integrated intensity profiles,
+
 //! For use in the sigma/I integration method.
+
 class Profile1D {
 public:
     //! Constructor. sigma_max indicates maximum number of standard deviations

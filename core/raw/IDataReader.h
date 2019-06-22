@@ -20,7 +20,8 @@
 
 namespace nsx {
 
-//! Interface used to provide access to detector images and metadata.
+//! Pure virtual base class of data readers that provide access to detector images and metadata.
+
 class IDataReader {
 
 public:

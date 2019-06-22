@@ -19,8 +19,8 @@ namespace nsx {
 
 class MergedData;
 
-//! Interface for statistics of merged peaks (e.g. R factors, correlation
-//! coefficient, chi-squared).
+//! Pure virtual base class for statistics of merged peaks. Only realised by RFactor.
+
 class IMergedPeakStatistic {
 public:
     virtual ~IMergedPeakStatistic() = default;

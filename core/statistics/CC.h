@@ -20,7 +20,8 @@
 
 namespace nsx {
 
-//! Class to handle calculation of correlation coefficients (CChalf and CC*)
+//! Calculates correlation coefficients (CChalf and CC*).
+
 class CC {
 public:
     CC();
