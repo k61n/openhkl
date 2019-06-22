@@ -20,8 +20,8 @@
 
 namespace nsx {
 
-//! Peak integrator using 3d profile fitting, as described by Kabsch
-//! (1988, 2010).
+//! Peak integrator using 3d profile fitting, as described by Kabsch (1988, 2010).
+
 class Profile3DIntegrator : public IPeakIntegrator {
 public:
     Profile3DIntegrator(

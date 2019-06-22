@@ -15,9 +15,11 @@
 #ifndef CORE_LOADER_RAWDATAREADER_H
 #define CORE_LOADER_RAWDATAREADER_H
 
-#include "core/raw/IDataReader.h"
+#include "core/raw/IDataReader.h" \\ inherits from
 
 namespace nsx {
+
+//! Minimal meta data set, to supplement binary raw data in RawDataReader.
 
 struct RawDataReaderParameters {
 
@@ -30,7 +32,8 @@ struct RawDataReaderParameters {
     size_t bpp = 2;
 };
 
-//! Class to detector counts from raw binary data.
+//! Reads detector counts from raw binary data.
+
 class RawDataReader : public IDataReader {
 
 public:

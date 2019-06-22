@@ -19,8 +19,8 @@
 
 namespace nsx {
 
-//! This class is used to make simulated/faked data behave as if it were real
-//! data. This is used to testing purposes.
+//! Makes simulated data behave as if it were real. Used for testing purposes.
+
 class FakeDataReader : public HDF5MetaDataReader {
 
 public:

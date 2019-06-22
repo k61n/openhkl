@@ -20,6 +20,7 @@
 namespace nsx {
 
 //! Compute integrated intensity by fitting to an analytic 3d Gaussian.
+
 class GaussianIntegrator : public IPeakIntegrator {
 public:
     GaussianIntegrator(bool fit_center, bool fit_cov);
