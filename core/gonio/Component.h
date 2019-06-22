@@ -57,9 +57,6 @@ protected:
 
     //! The goniometer attached to the component
     Gonio _gonio;
-
-    //! The position of the component at rest, i.e. not modified by the Gonio.
-    DirectVector _position;
 };
 
 } // namespace nsx

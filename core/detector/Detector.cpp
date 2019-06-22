@@ -197,12 +197,10 @@ double Detector::distance() const
 void Detector::setDistance(double d)
 {
     _distance = d;
-    _position = DirectVector(0.0, d, 0.0);
 }
 
 bool Detector::hasPixel(double px, double py) const
 {
-
     double dx = px - _minCol;
     double dy = py - _minRow;
 
@@ -217,10 +215,9 @@ unsigned int Detector::nCols() const
 
 void Detector::setNCols(unsigned int cols)
 {
-    if (cols == 0) {
+    if (cols == 0)
         throw std::range_error(
             "Detector " + Component::_name + " number of pixels (row,col) must be >0");
-    }
     _nCols = cols;
 }
 
@@ -231,10 +228,9 @@ unsigned int Detector::nRows() const
 
 void Detector::setNRows(unsigned int rows)
 {
-    if (rows == 0) {
+    if (rows == 0)
         throw std::range_error(
             "Detector " + Component::_name + " number of pixels (row,col) must be >0");
-    }
     _nRows = rows;
 }
 

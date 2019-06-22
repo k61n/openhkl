@@ -42,7 +42,6 @@ Component& Component::operator=(const Component& other)
 {
     if (this != &other) {
         _name = other._name;
-        _position = other._position;
         _gonio = Gonio(other._gonio);
     }
 
