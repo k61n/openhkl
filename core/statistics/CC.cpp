@@ -22,7 +22,7 @@ void CC::calculate(const MergedData& data)
 {
     std::vector<MergedPeak> peaks;
 
-    for (auto&& peak : data.peaks())
+    for (auto&& peak : data.mergedPeakSet())
         peaks.push_back(peak);
     calculate(peaks);
 }

@@ -23,7 +23,7 @@ namespace nsx {
 
 void RFactor::calculate(const MergedData& data)
 {
-    auto&& peaks = data.peaks();
+    auto&& peaks = data.mergedPeakSet();
 
     _Rmerge = 0;
     _Rmeas = 0;

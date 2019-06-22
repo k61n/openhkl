@@ -402,7 +402,7 @@ void FrameStatistics::updateStatisticsTab()
         row.append(new QStandardItem(QString::number(d_upper)));
         row.append(new QStandardItem(QString::number(d_lower)));
         row.append(new QStandardItem(QString::number(merged_data_per_shell.totalSize())));
-        row.append(new QStandardItem(QString::number(merged_data_per_shell.peaks().size())));
+        row.append(new QStandardItem(QString::number(merged_data_per_shell.mergedPeakSet().size())));
         row.append(new QStandardItem(QString::number(merged_data_per_shell.redundancy())));
         row.append(new QStandardItem(QString::number(rfactor.Rmeas())));
         row.append(new QStandardItem(QString::number(rfactor.expectedRmeas())));
@@ -428,7 +428,7 @@ void FrameStatistics::updateStatisticsTab()
     row.append(new QStandardItem(QString::number(dmax)));
     row.append(new QStandardItem(QString::number(dmin)));
     row.append(new QStandardItem(QString::number(_merged_data.totalSize())));
-    row.append(new QStandardItem(QString::number(_merged_data.peaks().size())));
+    row.append(new QStandardItem(QString::number(_merged_data.mergedPeakSet().size())));
     row.append(new QStandardItem(QString::number(_merged_data.redundancy())));
     row.append(new QStandardItem(QString::number(rfactor.Rmeas())));
     row.append(new QStandardItem(QString::number(rfactor.expectedRmeas())));
@@ -452,7 +452,7 @@ void FrameStatistics::updateMergedPeaksTab()
     auto model = dynamic_cast<QStandardItemModel*>(_ui->merged_peaks->model());
     model->removeRows(0, model->rowCount());
 
-    for (auto&& peak : _merged_data.peaks()) {
+    for (auto&& peak : _merged_data.mergedPeakSet()) {
 
         const auto hkl = peak.index();
 
@@ -489,7 +489,7 @@ void FrameStatistics::updateUnmergedPeaksTab()
     auto model = dynamic_cast<QStandardItemModel*>(_ui->unmerged_peaks->model());
     model->removeRows(0, model->rowCount());
 
-    for (auto&& peak : _merged_data.peaks()) {
+    for (auto&& peak : _merged_data.mergedPeakSet()) {
 
         for (auto unmerged_peak : peak.peaks()) {
 

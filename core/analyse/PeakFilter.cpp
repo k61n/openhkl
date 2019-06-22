@@ -69,7 +69,7 @@ PeakList PeakFilter::mergedPeaksSignificance(const PeakList& peaks, double signi
         for (auto peak : filtered_peaks)
             merged.addPeak(peak);
 
-        for (auto&& merged_peak : merged.peaks()) {
+        for (auto&& merged_peak : merged.mergedPeakSet()) {
             // p value too high: reject peaks
             if (merged_peak.pValue() > significance_level) {
                 for (auto&& p : merged_peak.peaks())
