@@ -19,8 +19,8 @@
 
 namespace nsx {
 
-//! More sophisticated version of local background subtraction.
-//!
+//! More sophisticated version of local background subtraction. TODO: analyse and document (#33)
+
 //! TODO: Legacy description was the same as for AnnularConvolver and RadialConvolver.
 //!       So most likely it was just copied and pasted and forgotten to update.
 //!       What this convolver really does, we have to find out.

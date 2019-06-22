@@ -12,15 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include <array>
-#include <limits>
-#include <map>
-#include <stdexcept>
-#include <utility>
-
-#include <Eigen/QR>
-
 #include "core/algo/UserDefinedIndexer.h"
+
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 #include "base/fit/FitParameters.h"
@@ -29,6 +22,13 @@
 #include "base/logger/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/analyse/PeakFilter.h"
+
+#include <Eigen/QR>
+#include <array>
+#include <limits>
+#include <map>
+#include <stdexcept>
+#include <utility>
 
 namespace nsx {
 

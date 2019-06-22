@@ -21,6 +21,8 @@
 
 namespace nsx {
 
+//! TODO: analyse and document (issue #28)
+
 struct UserDefinedUnitCellIndexerParameters {
 
     double distance_tolerance = 5.0e-2;
@@ -50,6 +52,8 @@ struct UserDefinedUnitCellIndexerParameters {
 
     void checkParameters() const;
 };
+
+//! TODO: analyse and document (issue #28)
 
 class UserDefinedUnitCellIndexer {
 
