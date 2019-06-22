@@ -22,7 +22,6 @@ namespace nsx {
 //! Computes absorption correction by Monte-Carlo integration.
 
 class MCAbsorption {
-
 public:
     //! Define absorption Engine with a rectangular source of WxH
     MCAbsorption(

@@ -23,7 +23,6 @@
 class ExperimentItem;
 
 class SessionModel : public QStandardItemModel {
-
     Q_OBJECT
 
 public:

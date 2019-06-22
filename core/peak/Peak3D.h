@@ -30,7 +30,6 @@ class IPeakIntegrator;
 //! Stores integrated peaks, including their shape and location.
 
 class Peak3D {
-
 public:
     //! Create peak belonging to data without setting a position, shape, or intensity
     Peak3D(sptrDataSet data);

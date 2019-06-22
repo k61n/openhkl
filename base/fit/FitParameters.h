@@ -24,7 +24,6 @@ namespace nsx {
 //! Encapsulates parameters to be passed to nsx::Minimizer.
 
 class FitParameters {
-
 public:
     //! Add a parameter to be fit. The original value of the parameter is stored
     //! (see reset()). The return value is the index of the parameter.

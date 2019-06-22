@@ -23,7 +23,6 @@ namespace nsx {
 //! Detector IMask, constructed from an AABB (axis-aligned bounding box).
 
 class BoxMask : public IMask {
-
 public:
     BoxMask() = delete;
 

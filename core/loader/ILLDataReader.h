@@ -24,7 +24,6 @@ namespace nsx {
 //! IDataReader for the ILL ascii data format.
 
 class ILLDataReader : public IDataReader {
-
 public:
     ILLDataReader() = delete;
     ILLDataReader(const ILLDataReader& other) = delete;

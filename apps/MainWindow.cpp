@@ -419,7 +419,6 @@ void MainWindow::setInspectorWidget(QWidget* w)
 
     // Assign current property Widget
     _ui->dockWidget_Property->setWidget(w);
-
 }
 
 void MainWindow::on_checkBox_AspectRatio_toggled(bool checked)

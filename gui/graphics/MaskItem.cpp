@@ -86,7 +86,6 @@ nsx::AABB* MaskItem::getAABB()
 
 void MaskItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-
     if (event->buttons() & Qt::LeftButton) {
         // If the mask is not selected, the move event corresponds to a modification
         // of the size of mask
@@ -112,7 +111,6 @@ void MaskItem::updateAABB()
 
 void MaskItem::wheelEvent(QGraphicsSceneWheelEvent* event)
 {
-
     // The item must be visible to be wheeled
     if (!isVisible())
         return;

@@ -22,7 +22,6 @@
 #include "base/geometry/ReciprocalVector.h"
 
 namespace {
-
 //! Update a list of Q-vectors by removing the duplicates.
 //!
 //! Two Q-Vectors are defined as duplicates if the norm of their difference is under
@@ -151,11 +150,8 @@ void BrillouinZone::compute()
 
     // No need to store the lower side of Q space
     for (int h = 0; h <= bound; ++h) {
-
         for (int k = -bound - 1; k <= bound; ++k) {
-
             for (int l = -bound - 1; l <= bound; ++l) {
-
                 // Compute the "squared-norm" of hkl integer vector
                 auto hkl2 = h * h + k * k + l * l;
 

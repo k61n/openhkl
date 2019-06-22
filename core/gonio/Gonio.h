@@ -31,7 +31,6 @@ namespace nsx {
 //! methods or by template accessor: e.g. Axis<0>(g)=RotAxis(UnitZ,CW).
 
 class Gonio {
-
 public:
     Gonio();
     Gonio(const Gonio& other);

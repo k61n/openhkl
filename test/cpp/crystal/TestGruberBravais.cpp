@@ -26,7 +26,6 @@ const double niggli_tolerance = 1e-4;
 
 TEST_CASE("test/crystal/TestGruberBravais.cpp", "")
 {
-
     double A, B, C, D, E, F;
 
     A = 32.3232323232;

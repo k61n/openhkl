@@ -129,7 +129,6 @@ template <> struct MoveStorage<> {
 //! Class that implements a variadic template variant class similar as
 //! std::variant class defined in C++17
 template <typename... Args> class Variant {
-
 public:
     template <typename... OtherArgs> struct is_subset {
         static constexpr bool value = true;
@@ -147,7 +146,6 @@ public:
     //! Construct by value
     template <typename T> Variant(T&& value) : _typeid(typeid(T))
     {
-
         using S = typename std::remove_const<typename std::remove_reference<T>::type>::type;
         static_assert(IsOneOf<S, Args...>::value, "");
 
@@ -208,7 +206,6 @@ public:
     //! Copy assignment operator from another const Variant
     Variant& operator=(const Variant& other)
     {
-
         if (this != &other) {
             // Destroy the current storage
             DestructStorage<Args...>(_typeid, _storage);
@@ -224,7 +221,6 @@ public:
     //! Copy assignment operator from another non-const Variant
     Variant& operator=(Variant& other)
     {
-
         if (this != &other) {
             // Destroy the current storage
             DestructStorage<Args...>(_typeid, _storage);
@@ -240,7 +236,6 @@ public:
     //! Move assignment operator from another Variant
     Variant& operator=(Variant&& other)
     {
-
         if (this != &other) {
             // Destroy the current storage
             DestructStorage<Args...>(_typeid, _storage);
@@ -301,7 +296,6 @@ public:
     //!  Assignment operator from universal reference
     template <typename T> Variant& operator=(T&& value)
     {
-
         using S = typename std::remove_const<typename std::remove_reference<T>::type>::type;
         static_assert(IsOneOf<S, Args...>::value, "");
 

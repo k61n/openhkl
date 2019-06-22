@@ -25,7 +25,6 @@ using affineTransformation = Eigen::Transform<double, 3, Eigen::Affine>;
 //! A symmetry operation of a spacegroup.
 
 class SymOp {
-
 public:
     //! Default constructor should not be used but is needed for swig.
     SymOp() = default;

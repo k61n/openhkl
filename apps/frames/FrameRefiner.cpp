@@ -136,7 +136,6 @@ void FrameRefiner::refine()
         data.insert(p->data());
 
     for (auto d : data) {
-
         nsx::PeakList reference_peaks, predicted_peaks;
 
         // Keep the peak that belong to this data and split them between the found

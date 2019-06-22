@@ -22,6 +22,7 @@
 class QWidget;
 
 namespace Ui {
+
 class DialogMCAbsorption;
 }
 

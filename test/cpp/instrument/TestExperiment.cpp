@@ -8,7 +8,6 @@
 
 TEST_CASE("test/instrument/TestExperiment.cpp", "")
 {
-
     nsx::Experiment exp("my-exp", "D10");
     nsx::sptrDataSet data;
 

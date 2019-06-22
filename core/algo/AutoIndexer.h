@@ -55,7 +55,6 @@ struct IndexerParameters {
 
 //! Class to automatically index a set of peaks
 class AutoIndexer {
-
 public:
     //! Constructor
     //! @param handler the handler that will monitor the progresses

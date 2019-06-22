@@ -24,6 +24,7 @@
 class QAbstractButton;
 
 namespace Ui {
+
 class DialogPeakFilter;
 }
 

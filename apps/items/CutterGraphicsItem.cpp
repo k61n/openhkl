@@ -36,7 +36,6 @@ CutterGraphicsItem::~CutterGraphicsItem() {}
 
 void CutterGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-
     if (event->buttons() & Qt::LeftButton) {
         // If the cutter is not selected, the move event corresponds to a
         // modification of the size of cutter

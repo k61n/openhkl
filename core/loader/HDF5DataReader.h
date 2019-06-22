@@ -22,7 +22,6 @@ namespace nsx {
 //! Read data from HDF5 format.
 
 class HDF5DataReader : public HDF5MetaDataReader {
-
 public:
     HDF5DataReader() = delete;
 

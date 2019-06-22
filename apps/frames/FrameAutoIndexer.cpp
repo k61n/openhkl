@@ -196,7 +196,6 @@ void FrameAutoIndexer::resetUnitCell()
         p.first->setUnitCell(p.second);
 
     for (auto i = _ui->tabs->count() - 1; i > 0; i--) {
-
         auto tab = dynamic_cast<WidgetUnitCell*>(_ui->tabs->widget(i));
         if (!tab)
             continue;

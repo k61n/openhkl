@@ -22,6 +22,7 @@
 #include "apps/views/PeakTableView.h"
 
 namespace Ui {
+
 class PeaksPropertyWidget;
 }
 

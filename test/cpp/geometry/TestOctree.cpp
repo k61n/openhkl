@@ -176,7 +176,6 @@ void split_test()
 
 TEST_CASE("test/geometry/TestOctree.cpp", "")
 {
-
     unsigned int maxStorage(10);
 
     // Build up a NDTree with (0,0,0) as lower corner and (100,100,100) as upper

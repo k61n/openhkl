@@ -21,7 +21,6 @@
 #include <sstream>
 
 namespace {
-
 const std::vector<std::pair<std::string, std::string>> symmetry_table = {
     {"P 1", " x,y,z"},
     {"P -1", " -x,-y,-z"},

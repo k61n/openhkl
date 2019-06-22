@@ -11,7 +11,6 @@ const double tolerance = 1e-6;
 
 TEST_CASE("test/mathematics/TestJonesSymbolParser.cpp", "")
 {
-
     Eigen::Transform<double, 3, Eigen::Affine> matrix;
 
     CHECK_NOTHROW(matrix = nsx::parseJonesSymbol(" x+4y-z+1/2,-x + y -3z +2,-x-y-z +3\t"));

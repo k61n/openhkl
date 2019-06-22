@@ -162,7 +162,6 @@ void UserDefinedUnitCellIndexer::index()
     // Triple loop over the predicted q vectors to build predicted q triplet (aka
     // qp)
     for (size_t i = 0; i < predicted_q_vectors.size() - 2; ++i) {
-
         b_triplet.row(0) = predicted_q_vectors[i].second;
 
         const double qi_norm = b_triplet.row(0).norm();
@@ -170,7 +169,6 @@ void UserDefinedUnitCellIndexer::index()
         auto uit_i = q_vectors_mmap.upper_bound(qi_norm * (1.0 + distance_tolerance));
 
         for (size_t j = i + 1; j < predicted_q_vectors.size() - 1; ++j) {
-
             b_triplet.row(1) = predicted_q_vectors[j].second;
 
             const double qj_norm = b_triplet.row(1).norm();
@@ -178,7 +176,6 @@ void UserDefinedUnitCellIndexer::index()
             auto uit_j = q_vectors_mmap.upper_bound(qj_norm * (1.0 + distance_tolerance));
 
             for (size_t k = j + 1; k < predicted_q_vectors.size(); ++k) {
-
                 b_triplet.row(2) = predicted_q_vectors[k].second;
 
                 const double qk_norm = b_triplet.row(2).norm();
@@ -196,16 +193,13 @@ void UserDefinedUnitCellIndexer::index()
                 // Triple loop over the experimental q vectors to build experimental q
                 // triplets which will be match over the predicted q-triplet (aka qe)
                 for (auto it_i = lit_i; it_i != uit_i; ++it_i) {
-
                     bu_triplet.row(0) = it_i->second;
                     ;
 
                     for (auto it_j = lit_j; it_j != uit_j; ++it_j) {
-
                         bu_triplet.row(1) = it_j->second;
 
                         for (auto it_k = lit_k; it_k != uit_k; ++it_k) {
-
                             bu_triplet.row(2) = it_k->second;
 
                             double det_bu_triplet = bu_triplet.determinant();
@@ -219,25 +213,21 @@ void UserDefinedUnitCellIndexer::index()
                             }
 
                             for (size_t ti = 0; ti < 3; ++ti) {
-
                                 const double q1i_norm = b_triplet.row(ti).norm();
 
                                 for (size_t tj = 0; tj < 3; ++tj) {
-
                                     if (ti == tj)
                                         continue;
 
                                     const double q1j_norm = b_triplet.row(tj).norm();
 
                                     for (size_t tk = 0; tk < 3; ++tk) {
-
                                         if (ti == tk || tj == tk)
                                             continue;
 
                                         const double q1k_norm = b_triplet.row(tk).norm();
 
                                         for (size_t tii = 0; tii < 3; ++tii) {
-
                                             const double q2i_norm = bu_triplet.row(tii).norm();
 
                                             // Try to match triplet1 and triplet2 i vectors, if the
@@ -248,7 +238,6 @@ void UserDefinedUnitCellIndexer::index()
                                             }
 
                                             for (size_t tjj = 0; tjj < 3; ++tjj) {
-
                                                 if (tii == tjj)
                                                     continue;
 
@@ -262,7 +251,6 @@ void UserDefinedUnitCellIndexer::index()
                                                 }
 
                                                 for (size_t tkk = 0; tkk < 3; ++tkk) {
-
                                                     if (tii == tkk || tjj == tkk)
                                                         continue;
 
@@ -411,7 +399,6 @@ void UserDefinedUnitCellIndexer::rankUnitCells()
 void UserDefinedUnitCellIndexer::refineUnitCells()
 {
     for (auto& p : _solutions) {
-
         auto unit_cell = p.first;
 
         PeakFilter peak_filter;
@@ -486,7 +473,6 @@ void UserDefinedUnitCellIndexer::refineUnitCells()
             //            std::cout<<character.beta<<std::endl;
             //            std::cout<<character.gamma<<std::endl;
             //            std::cout<<reduced_unit_cell.niggliCharacter().bravais<<std::endl;
-
         } catch (std::exception& e) {
             continue;
         }

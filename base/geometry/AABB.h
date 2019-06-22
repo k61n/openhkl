@@ -30,7 +30,6 @@ class Ellipsoid; // cross dependence requires forward declaration
 //! iterate quickly over region of interest in data from images or volumes.
 
 class AABB {
-
 public:
     AABB();
     AABB(const AABB& other);

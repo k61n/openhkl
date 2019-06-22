@@ -17,7 +17,6 @@
 #include "gui/models/Session.h"
 
 namespace {
-
 enum class tab {
     INSTRUMENT,
     DATA,

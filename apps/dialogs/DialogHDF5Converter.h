@@ -21,6 +21,7 @@
 class QAbstractButton;
 
 namespace Ui {
+
 class DialogHDF5Converter;
 }
 

@@ -43,7 +43,6 @@ void validate_zone(const Eigen::Matrix3d& B, int nverts, int nfaces)
 
 TEST_CASE("test/geometry/TestBrillouinZone.cpp", "")
 {
-
     const double deg = M_PI / 180.0;
     nsx::UnitCell uc;
 

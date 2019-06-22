@@ -6,7 +6,6 @@
 
 TEST_CASE("test/crystal/TestSymOp.cpp", "")
 {
-
     nsx::SymOp op1("x,y,z");
     CHECK(op1.getAxisOrder() == 1);
 

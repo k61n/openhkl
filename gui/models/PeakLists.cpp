@@ -168,7 +168,6 @@ QStringList PeaksModel::allFilteredListNames()
 
 void PeaksModel::removePeakListsModel(int i)
 {
-
     if (i < 0 || i >= peakLists_.size()) {
         gLogger->log("[ERROR]  could not remove peaklistsmodel");
         return;

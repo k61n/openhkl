@@ -27,7 +27,6 @@
 
 TEST_CASE("test/crystal/TestRefiner.cpp", "")
 {
-
     nsx::DataReaderFactory factory;
 
     nsx::Experiment experiment("test", "BioDiff2500");

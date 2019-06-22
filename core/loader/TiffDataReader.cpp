@@ -83,7 +83,6 @@ Eigen::MatrixXi TiffDataReader::data(std::size_t /*frame*/)
         open();
 
     if (_bits == 16) {
-
         Eigen::Matrix<uint16, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> data16(
             _nRows, _nCols);
         // Read line per line
@@ -91,9 +90,7 @@ Eigen::MatrixXi TiffDataReader::data(std::size_t /*frame*/)
             TIFFReadScanline(_file, (char*)&data16(i, 0), i);
         // Not very nice, but need to copy the 16bits data to int
         return data16.cast<int>();
-
     } else {
-
         Eigen::Matrix<uint32, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> data32(
             _nRows, _nCols);
         // Read line per line

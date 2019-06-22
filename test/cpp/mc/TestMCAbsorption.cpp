@@ -12,7 +12,6 @@
 
 TEST_CASE("test/chemistry/TestMCAbsorption.cpp", "")
 {
-
     // Build an isotopically pure methane material
     std::unique_ptr<xsection::Material> helium(new xsection::Material("He[3]"));
 

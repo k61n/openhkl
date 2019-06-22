@@ -41,7 +41,6 @@ PeakList PeakFilter::mergedPeaksSignificance(const PeakList& peaks, double signi
     std::map<nsx::sptrUnitCell, PeakList> peaks_per_unit_cell;
 
     for (auto peak : filtered_peaks) {
-
         auto unit_cell = peak->unitCell();
 
         auto it = peaks_per_unit_cell.find(unit_cell);
@@ -55,7 +54,6 @@ PeakList PeakFilter::mergedPeaksSignificance(const PeakList& peaks, double signi
     PeakList bad_peaks;
 
     for (auto p : peaks_per_unit_cell) {
-
         auto unit_cell = p.first;
 
         SpaceGroup group(unit_cell->spaceGroup());
@@ -93,7 +91,6 @@ PeakList PeakFilter::mergedPeaksSignificance(const PeakList& peaks, double signi
 
 PeakList PeakFilter::sparseDataSet(const PeakList& peaks, size_t min_num_peaks)
 {
-
     PeakList filtered_peaks;
 
     // Gather the peaks per dataset
@@ -132,7 +129,6 @@ PeakList PeakFilter::extincted(const PeakList& peaks)
     std::map<nsx::sptrUnitCell, PeakList> peaks_per_unit_cell;
 
     for (auto peak : filtered_peaks) {
-
         auto unit_cell = peak->unitCell();
 
         auto it = peaks_per_unit_cell.find(unit_cell);
@@ -146,7 +142,6 @@ PeakList PeakFilter::extincted(const PeakList& peaks)
     PeakList extincted_peaks;
 
     for (auto p : peaks_per_unit_cell) {
-
         PeakList indexed_peaks =
             peak_filter.indexed(p.second, *(p.first), p.first->indexingTolerance());
 
@@ -155,7 +150,6 @@ PeakList PeakFilter::extincted(const PeakList& peaks)
         MergedData merged(group, true);
 
         for (auto peak : indexed_peaks) {
-
             merged.addPeak(peak);
 
             MillerIndex hkl(peak->q(), *(p.first));
@@ -191,7 +185,6 @@ PeakList PeakFilter::overlapping(const PeakList& peaks)
     Eigen::Vector3d upper(-lower);
 
     for (auto peak : peaks) {
-
         auto&& ellipsoid = peak->shape();
         ellipsoids.emplace_back(ellipsoid);
 
@@ -285,7 +278,6 @@ PeakList PeakFilter::indexed(const PeakList& peaks, const UnitCell& cell, double
     PeakList filtered_peaks;
 
     for (auto peak : peaks) {
-
         MillerIndex miller_index(peak->q(), cell);
         if (miller_index.indexed(tolerance))
             filtered_peaks.push_back(peak);
@@ -299,7 +291,6 @@ PeakList PeakFilter::indexed(const PeakList& peaks) const
     PeakList filtered_peaks;
 
     for (auto peak : peaks) {
-
         auto cell = peak->unitCell();
 
         if (!cell)
@@ -329,7 +320,6 @@ PeakList PeakFilter::strength(const PeakList& peaks, double min, double max) con
     PeakList filtered_peaks;
 
     for (auto peak : peaks) {
-
         auto corrected_intensity = peak->correctedIntensity();
 
         double intensity = corrected_intensity.value();
@@ -363,7 +353,6 @@ PeakList PeakFilter::dRange(const PeakList& peaks, double dmin, double dmax) con
     PeakList filtered_peaks;
 
     for (auto peak : peaks) {
-
         auto q = peak->q();
 
         double d = 1.0 / q.rowVector().norm();

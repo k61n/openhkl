@@ -7,7 +7,6 @@
 
 TEST_CASE("test/data/TestHDF5Data.cpp", "")
 {
-
     nsx::DataReaderFactory factory;
 
     nsx::Diffractometer* diffractometer = nsx::Diffractometer::create("BioDiff2500");

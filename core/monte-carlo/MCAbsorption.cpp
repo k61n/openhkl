@@ -70,7 +70,6 @@ double MCAbsorption::run(
     unsigned int nHits(0);
 
     for (unsigned int i = 0; i < nIterations; ++i) {
-
         double w = random() * _source_width;
         double h = random() * _source_height;
         Eigen::Vector3d point(w, _source_y_pos, h);

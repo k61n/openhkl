@@ -64,7 +64,6 @@ void GLTrackball::generateRotationTo(int a, int b)
 
 void GLTrackball::IssueRotation() const
 {
-
     // Translate if offset is defined
     if (_hasOffset)
         glTranslated(_modelCenter[0], _modelCenter[1], _modelCenter[2]);

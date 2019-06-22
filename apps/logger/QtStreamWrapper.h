@@ -19,7 +19,6 @@
 class NoteBook;
 
 class QtStreamWrapper : public QObject, public nsx::IStreamWrapper {
-
     Q_OBJECT
 
 public:

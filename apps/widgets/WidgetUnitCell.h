@@ -17,11 +17,11 @@
 #include <QWidget>
 
 namespace Ui {
+
 class WidgetUnitCell;
 }
 
 class WidgetUnitCell : public QWidget {
-
     Q_OBJECT
 
 public:

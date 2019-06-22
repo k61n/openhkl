@@ -123,7 +123,6 @@ void RawDataReader::setParameters(const RawDataReaderParameters& parameters)
 
 void RawDataReader::swapEndian()
 {
-
     if (!_parameters.swap_endian)
         return;
 

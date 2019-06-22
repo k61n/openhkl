@@ -64,7 +64,6 @@ void PeaksTableModel::slotRemoveUnitCell(const nsx::sptrUnitCell unit_cell)
 void PeaksTableModel::slotChangeMaskedPeaks(const nsx::PeakList& peaks)
 {
     for (nsx::sptrPeak3D peak : peaks) {
-
         auto it = std::find(_peaks.begin(), _peaks.end(), peak);
         if (it == _peaks.end())
             continue;
@@ -191,7 +190,6 @@ QVariant PeaksTableModel::data(const QModelIndex& index, int role) const
     const Eigen::Vector3d& peak_center = _peaks[row]->shape().center();
 
     switch (role) {
-
     case Qt::DisplayRole:
 
         switch (column) {
@@ -235,7 +233,6 @@ QVariant PeaksTableModel::data(const QModelIndex& index, int role) const
         }
         break;
     case Qt::ForegroundRole: {
-
         if (_peaks[row]->enabled())
             return QBrush(Qt::black);
         else
@@ -511,7 +508,6 @@ void PeaksTableView::keyPressEvent(QKeyEvent* event)
     int key = event->key();
 
     if (event->modifiers() == Qt::NoModifier) {
-
         if (key == Qt::Key_Down || key == Qt::Key_Tab || key == Qt::Key_PageDown) {
             if (current_index == previous_index)
                 setCurrentIndex(model()->index(0, 0));
@@ -522,7 +518,6 @@ void PeaksTableView::keyPressEvent(QKeyEvent* event)
             selectPeak(currentIndex());
         } else if (key == Qt::Key_Return || key == Qt::Key_Space)
             togglePeakSelection(currentIndex());
-
     }
 }
 

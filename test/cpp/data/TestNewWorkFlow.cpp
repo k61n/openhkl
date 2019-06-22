@@ -27,7 +27,6 @@
 
 TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 {
-
     nsx::DataReaderFactory factory;
 
     nsx::Experiment experiment("test", "BioDiff2500");
@@ -130,7 +129,6 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     int n_selected = 0;
 
     for (auto peak : selected_peaks) {
-
         std::vector<nsx::ReciprocalVector> q_vectors;
         q_vectors.push_back(peak->q());
         auto events = dataf->events(q_vectors);

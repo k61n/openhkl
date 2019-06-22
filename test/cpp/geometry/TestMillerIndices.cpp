@@ -5,7 +5,6 @@
 
 TEST_CASE("test/geometry/TestMillerIndices.cpp", "")
 {
-
     Eigen::RowVector3i v1(1, 2, 3);
 
     nsx::MillerIndex hkl1(v1);

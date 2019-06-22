@@ -203,7 +203,6 @@ void FramePeakFinder::accept()
     auto peaks_item = _experiment_item->peaksItem();
 
     for (auto i = 0; i < _ui->tabs->count(); ++i) {
-
         auto widget_found_peaks = dynamic_cast<WidgetFoundPeaks*>(_ui->tabs->widget(i));
         if (!widget_found_peaks)
             continue;

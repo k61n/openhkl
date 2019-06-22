@@ -9,7 +9,6 @@
 
 TEST_CASE("test/mathematics/TestMinimizer.cpp", "")
 {
-
     Eigen::VectorXd y, wt, x;
     int nvalues = 40;
     const int num_points = 40;

@@ -37,7 +37,6 @@ using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::
 //  ***********************************************************************************************
 
 namespace {
-
 void registerEquivalence(int a, int b, nsx::EquivalenceList& equivalences)
 {
     if (a < b)
@@ -280,7 +279,6 @@ void PeakFinder::findPrimaryBlobs(
     // Iterate on all pixels in the image
     // #pragma omp for schedule(dynamic, DYNAMIC_CHUNK)
     for (size_t idx = begin; idx < end; ++idx) {
-
         ++nframes;
 
         RealMatrix frame_data;
@@ -494,7 +492,6 @@ void PeakFinder::findCollisions(
         magic = 1;
 
     for (auto&& it = collisions.begin(); it != collisions.end(); ++it) {
-
         auto&& bit1 = boxes.find(it->first);
         auto&& bit2 = boxes.find(it->second);
         registerEquivalence(bit1->second, bit2->second, equivalences);
@@ -672,7 +669,6 @@ PeakList PeakFinder::find(DataList numors)
             Eigen::Vector3d(ncols - x_offset, nrows - y_offset, nframes - 1));
 
         for (auto& blob : blobs) {
-
             Eigen::Vector3d center, eigenvalues;
             Eigen::Matrix3d eigenvectors;
 

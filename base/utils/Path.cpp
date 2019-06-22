@@ -81,7 +81,6 @@ std::string fileDirname(const std::string& input_path)
 
 void makeDirectory(const std::string& path, int mode)
 {
-
     auto components = split(path, fileSeparator());
 
     std::vector<std::string> intermediate_paths;

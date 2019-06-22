@@ -23,6 +23,7 @@ class ExperimentItem;
 class QAbstractButton;
 
 namespace Ui {
+
 class DialogPredictPeaks;
 }
 

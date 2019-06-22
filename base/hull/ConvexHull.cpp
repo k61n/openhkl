@@ -209,7 +209,6 @@ bool ConvexHull::findInitialVertices(int& ri, int& rj, int& rk) const
 
 void ConvexHull::initalizeHull()
 {
-
     // Find 3 non colinear vertices
     int ri, rj, rk;
     if (!findInitialVertices(ri, rj, rk))
@@ -387,7 +386,6 @@ void ConvexHull::processVertex(Vertex* v)
 
 Face* ConvexHull::buildConeFace(Edge* e, Vertex* v)
 {
-
     std::vector<Edge*> newEdges(2, nullptr);
 
     // Make two new edges (if they don't already exist)
@@ -425,7 +423,6 @@ Face* ConvexHull::buildConeFace(Edge* e, Vertex* v)
 
 void ConvexHull::orientate(Face* f, Edge* e, Vertex* v)
 {
-
     Face* fv;
 
     if (e->_faces[0]) {
@@ -694,7 +691,6 @@ std::ostream& operator<<(std::ostream& os, const ConvexHull& chull)
 // Make changes with caution, and remember to profile!
 bool ConvexHull::contains(const Eigen::Vector3d& v) const
 {
-
     const double r2 = v.squaredNorm();
 
     if (r2 > _outerR2)

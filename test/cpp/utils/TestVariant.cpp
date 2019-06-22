@@ -5,7 +5,6 @@
 
 TEST_CASE("test/utils/TestVariant.cpp", "")
 {
-
     // Default constructor
     nsx::Variant<int, double, std::string> v1;
     CHECK(v1.as<int>() == 0);

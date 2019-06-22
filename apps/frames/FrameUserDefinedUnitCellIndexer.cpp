@@ -254,7 +254,6 @@ void FrameUserDefinedUnitCellIndexer::resetPeaks()
         p.first->setUnitCell(p.second);
 
     for (auto i = _ui->tabs->count() - 1; i > 0; i--) {
-
         auto tab = dynamic_cast<WidgetUnitCell*>(_ui->tabs->widget(i));
         if (!tab)
             continue;
@@ -344,7 +343,6 @@ void FrameUserDefinedUnitCellIndexer::buildUnitCellsTable()
 
     // Display solutions
     for (size_t i = 0; i < _solutions.size(); ++i) {
-
         auto&& unit_cell = _solutions[i].first;
 
         const double quality = _solutions[i].second;

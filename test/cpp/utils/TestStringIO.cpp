@@ -7,7 +7,6 @@
 
 TEST_CASE("test/utils/TestStringIO.cpp", "")
 {
-
     std::string str_to_trim("   blabla    ");
 
     CHECK(str_to_trim != "blabla");

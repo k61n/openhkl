@@ -24,7 +24,6 @@ namespace nsx {
 //! IDataReader for detector image from Tiff file.
 
 class TiffDataReader : public IDataReader {
-
 public:
     TiffDataReader() = delete;
 

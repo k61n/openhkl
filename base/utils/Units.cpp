@@ -15,7 +15,6 @@
 #include "base/utils/Units.h"
 
 namespace {
-
 using namespace nsx;
 
 static std::unordered_map<std::string, double> unitsMap = {

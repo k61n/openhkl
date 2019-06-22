@@ -119,7 +119,6 @@ void CrystalScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         addItem(_ruler);
         update();
     } else if (mode == pickingPoint || mode == nodeSelected) {
-
         QGraphicsItem* temp = itemAt(pos.x(), pos.y(), QTransform());
         if (dynamic_cast<CrystalNodeItem*>(temp)) {
             mode = nodeSelected;
@@ -132,7 +131,6 @@ void CrystalScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
             n->initiate(pos.x(), pos.y(), yc, _rotationAngle);
             addItem(n);
         }
-
     } else if (mode == pickCenter) {
         if (!_pinCreated) {
             addItem(_pin);

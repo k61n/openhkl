@@ -78,7 +78,6 @@ void PeakTableView::keyPressEvent(QKeyEvent* event)
     auto key = event->key();
 
     if (event->modifiers() == Qt::NoModifier) {
-
         if (key == Qt::Key_Down || key == Qt::Key_Tab || key == Qt::Key_PageDown) {
             if (current_index == previous_index)
                 setCurrentIndex(model()->index(0, 0));
@@ -89,7 +88,6 @@ void PeakTableView::keyPressEvent(QKeyEvent* event)
             selectPeak(currentIndex());
         } else if (key == Qt::Key_Return || key == Qt::Key_Space)
             togglePeakSelection(currentIndex());
-
     }
 }
 

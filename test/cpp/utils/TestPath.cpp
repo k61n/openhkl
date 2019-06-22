@@ -7,7 +7,6 @@
 
 TEST_CASE("test/utils/TestPath.cpp", "")
 {
-
     // Test nsx::fileSeparator
     auto file_sep = nsx::fileSeparator();
     std::string path = file_sep + "usr" + file_sep + "local" + file_sep + "file.txt";

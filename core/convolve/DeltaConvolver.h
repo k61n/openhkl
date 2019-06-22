@@ -22,7 +22,6 @@ namespace nsx {
 //! Convolver with Dirac-delta kernel.
 
 class DeltaConvolver : public AtomicConvolver {
-
 public:
     DeltaConvolver();
 

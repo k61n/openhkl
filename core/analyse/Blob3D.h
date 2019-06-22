@@ -98,6 +98,7 @@ private:
 #ifndef SWIG
 std::ostream& operator<<(std::ostream& os, const Blob3D& b);
 #endif
+
 } // namespace nsx
 
 #endif // CORE_ANALYSE_BLOB3D_H

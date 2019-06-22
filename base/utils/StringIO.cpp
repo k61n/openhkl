@@ -41,7 +41,6 @@ std::string trim(const std::string& input_string)
 
 std::string clear_spaces(const std::string& input_string)
 {
-
     auto output_string(input_string);
 
     auto check_white_space = [](unsigned char const c) { return std::isspace(c); };

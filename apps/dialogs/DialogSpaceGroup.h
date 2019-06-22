@@ -30,6 +30,7 @@ class QModelIndex;
 class QWidget;
 
 namespace Ui {
+
 class DialogSpaceGroup;
 }
 

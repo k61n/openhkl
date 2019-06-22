@@ -40,7 +40,6 @@ SymOp& SymOp::operator=(const SymOp& other)
 
 bool SymOp::operator==(const SymOp& other) const
 {
-
     // If the rotation part of the symmetry operator of two
     // generators are not the same then the two generators are not equal.
     if (_matrix.linear() != other._matrix.linear())

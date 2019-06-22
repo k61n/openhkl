@@ -302,11 +302,8 @@ UnitCell::generateReflectionsInShell(double dmin, double dmax, double wavelength
     hkls.reserve(num_hkl * num_hkl * num_hkl);
 
     for (int h = -hkl_max; h <= hkl_max; ++h) {
-
         for (int k = -hkl_max; k <= hkl_max; ++k) {
-
             for (int l = -hkl_max; l <= hkl_max; ++l) {
-
                 // Always skip the (0,0,0) which is irrelevant
                 if (h == 0 && k == 0 && l == 0)
                     continue;

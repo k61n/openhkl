@@ -33,7 +33,6 @@ nsx::sptrExperiment TreeItem::experiment()
 
 ExperimentItem* TreeItem::experimentItem() const
 {
-
     ExperimentItem* exp_item = nullptr;
     QStandardItem* p = parent();
 

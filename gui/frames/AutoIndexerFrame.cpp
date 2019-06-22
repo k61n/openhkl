@@ -230,7 +230,6 @@ void AutoIndexer::resetUnitCell()
         p.first->setUnitCell(p.second);
 
     for (int i = tabs->count() - 1; i > 0; i--) {
-
         UnitCellWidget* tab = dynamic_cast<UnitCellWidget*>(tabs->widget(i));
         if (!tab)
             continue;

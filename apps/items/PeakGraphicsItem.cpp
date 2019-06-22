@@ -57,7 +57,6 @@ PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D peak, int frame)
         } else {
             peak_label = "not indexed";
         }
-
     } else {
         peak_label = "no unit cell";
     }
@@ -113,7 +112,6 @@ nsx::sptrPeak3D PeakGraphicsItem::peak() const
 
 QRectF PeakGraphicsItem::boundingRect() const
 {
-
     double width = _upper[0] - _lower[0];
 
     double height = _upper[1] - _lower[1];
@@ -152,7 +150,6 @@ void PeakGraphicsItem::showArea(bool flag)
 
 void PeakGraphicsItem::plot(SXPlot* plot)
 {
-
     auto p = dynamic_cast<PeakPlot*>(plot);
     if (!p)
         return;

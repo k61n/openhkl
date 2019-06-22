@@ -120,7 +120,6 @@ void IsotopesDatabaseDialog::cellClicked(const QModelIndex &index)
     QItemSelection selection(up, down);
     selection.merge(QItemSelection(left, right), QItemSelectionModel::Select);
     isotopeDatabaseView->selectionModel()->select(selection, QItemSelectionModel::Select);
-
 }
 
 void IsotopesDatabaseDialog::sortingChanged(int index, Qt::SortOrder order)

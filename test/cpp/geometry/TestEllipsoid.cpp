@@ -10,7 +10,6 @@ const double eps = 1e-8;
 
 TEST_CASE("test/geometry/TestEllipsoid.cpp", "")
 {
-
     Eigen::Vector3d center(10, 10, 10);
     Eigen::Vector3d semi_axes(3, 3, 4);
     Eigen::Matrix3d eigV;

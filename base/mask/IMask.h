@@ -22,7 +22,6 @@ class Ellipsoid;
 //! Pure virtual base class for detector mask.
 
 class IMask {
-
 public:
     virtual ~IMask() = 0;
 

@@ -98,7 +98,6 @@ nsx::PeakList FoundPeaks::selectedPeaks()
 
 PeakFinder::PeakFinder() : QcrFrame {"peakFinder"}, pixmap(nullptr)
 {
-
     if (gSession->selectedExperimentNum() < 0) {
         gLogger->log("[ERROR] No experiment selected");
         return;
@@ -326,7 +325,6 @@ void PeakFinder::accept()
 {
     gLogger->log("@accept");
     for (int i = 0; i < tab->count(); ++i) {
-
         FoundPeaks* widget_found_peaks = dynamic_cast<FoundPeaks*>(tab->widget(i));
         if (!widget_found_peaks)
             continue;

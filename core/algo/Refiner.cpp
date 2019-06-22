@@ -31,7 +31,6 @@ Refiner::Refiner(
     : _cell(cell)
     , _batches()
 {
-
     PeakFilter peak_filter;
     PeakList filtered_peaks;
     filtered_peaks = peak_filter.enabled(peaks, true);
@@ -122,12 +121,10 @@ int Refiner::updatePredictions(PeakList& peaks) const
     int updated = 0;
 
     for (auto&& peak : filtered_peaks) {
-
         // find appropriate batch
         const RefinementBatch* b = nullptr;
         double z = peak->shape().center()[2];
         for (auto&& batch : _batches) {
-
             if (batch.contains(z)) {
                 b = &batch;
                 break;

@@ -32,7 +32,6 @@ Eigen::Matrix3d make_rotation(Eigen::Vector3d angles)
 
 TEST_CASE("test/auto-indexer/TestUserDefinedUnitCellIndexer.cpp", "")
 {
-
     const double a = 10.0;
     const double b = 10.0;
     const double c = 10.0;
@@ -62,7 +61,6 @@ TEST_CASE("test/auto-indexer/TestUserDefinedUnitCellIndexer.cpp", "")
     std::vector<nsx::ReciprocalVector> q_vectors;
 
     for (auto hkl : hkls) {
-
         const double qx_err = distribution(generator);
         const double qy_err = distribution(generator);
         const double qz_err = distribution(generator);

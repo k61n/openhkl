@@ -25,7 +25,6 @@ namespace nsx {
 //! Pure virtual base class for ConstantConvolver, DeltaConvolver, RadialConvolver.
 
 class AtomicConvolver : public Convolver {
-
 public:
     AtomicConvolver();
 

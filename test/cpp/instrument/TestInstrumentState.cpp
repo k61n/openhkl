@@ -7,10 +7,12 @@
 #include "core/raw/IDataReader.h"
 
 namespace nsx {
+
 class UnitTest_DataSet {
 public:
     static int run();
 };
+
 } // namespace nsx
 
 int nsx::UnitTest_DataSet::run()
@@ -36,6 +38,5 @@ int nsx::UnitTest_DataSet::run()
 
 TEST_CASE("test/instrument/TestInstrumentState.cpp", "")
 {
-
     nsx::UnitTest_DataSet::run();
 }

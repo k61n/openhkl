@@ -19,7 +19,6 @@ const double gruber_tolerance = 1e-5;
 
 TEST_CASE("test/crystal/TestGruberReductionCSV.cpp", "")
 {
-
     // using vectord = vector<double>;
     std::ofstream outfile;
 
@@ -43,7 +42,6 @@ TEST_CASE("test/crystal/TestGruberReductionCSV.cpp", "")
     csv_reader.getRow(database);
 
     while (!database.eof()) {
-
         std::vector<std::string> row = csv_reader.getRow(database);
 
         if (row.size() < 8)

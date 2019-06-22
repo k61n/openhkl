@@ -40,7 +40,6 @@
 #include "apps/views/ProgressView.h"
 
 struct PeakFactors {
-
     double gamma;
     double nu;
     double lorentz;
@@ -112,7 +111,6 @@ void CollectedPeaksModel::slotRemoveUnitCell(const nsx::sptrUnitCell unit_cell)
 void CollectedPeaksModel::slotChangeMaskedPeaks(const nsx::PeakList& peaks)
 {
     for (auto peak : peaks) {
-
         auto it = std::find(_peaks.begin(), _peaks.end(), peak);
         if (it == _peaks.end())
             continue;
@@ -255,7 +253,6 @@ QVariant CollectedPeaksModel::data(const QModelIndex& index, int role) const
     auto peak_center = _peaks[row]->shape().center();
 
     switch (role) {
-
     case Qt::DisplayRole:
 
         switch (column) {
@@ -295,7 +292,6 @@ QVariant CollectedPeaksModel::data(const QModelIndex& index, int role) const
         }
         break;
     case Qt::ForegroundRole: {
-
         if (_peaks[row]->enabled())
             return QBrush(Qt::black);
         else

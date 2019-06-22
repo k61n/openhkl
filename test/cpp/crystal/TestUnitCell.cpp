@@ -11,7 +11,6 @@ const double tolerance = 1e-6;
 
 TEST_CASE("test/crystal/TestUnitCell.cpp", "")
 {
-
     double a = 6.32;
     double b = 7.22;
     double c = 3.44;

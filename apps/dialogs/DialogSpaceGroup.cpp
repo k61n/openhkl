@@ -113,7 +113,6 @@ void DialogSpaceGroup::evaluateSpaceGroups()
     auto compatible_space_groups = _cell->compatibleSpaceGroups();
 
     for (auto& symbol : compatible_space_groups) {
-
         nsx::SpaceGroup group = nsx::SpaceGroup(symbol);
 
         std::pair<std::string, double> entry =
@@ -157,7 +156,6 @@ void DialogSpaceGroup::buildTable()
 
     // Display solutions
     for (auto&& item : _groups) {
-
         const std::string& symbol = std::get<0>(item);
         double agreement = std::get<1>(item);
         nsx::SpaceGroup grp(symbol);

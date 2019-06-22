@@ -54,7 +54,6 @@ herr_t blosc_set_local(hid_t dcpl, hid_t type, hid_t space);
 /* Register the filter, passing on the HDF5 return value */
 int register_blosc(char** version, char** date)
 {
-
     int retval;
 
 #if H5Z_16API
@@ -91,7 +90,6 @@ int register_blosc(char** version, char** date)
 */
 herr_t blosc_set_local(hid_t dcpl, hid_t type, hid_t space)
 {
-
     int ndims;
     int i;
     herr_t r;
@@ -169,7 +167,6 @@ size_t blosc_filter(
     unsigned flags, size_t cd_nelmts, const unsigned cd_values[], size_t nbytes, size_t* buf_size,
     void** buf)
 {
-
     void* outbuf = NULL;
     int status = 0; /* Return code from Blosc routines */
     size_t typesize;
@@ -210,7 +207,6 @@ size_t blosc_filter(
 
     /* We're compressing */
     if (!(flags & H5Z_FLAG_REVERSE)) {
-
 #ifdef BLOSC_DEBUG
         fprintf(stderr, "Blosc: Compress %zd chunk w/buffer %zd\n", nbytes, outbuf_size);
 #endif
@@ -272,7 +268,6 @@ size_t blosc_filter(
             PUSH_ERR("blosc_filter", H5E_CALLBACK, "Blosc decompression error");
             goto failed;
         } /* if !status */
-
     } /* compressing vs decompressing */
 
     if (status != 0) {
@@ -285,5 +280,4 @@ size_t blosc_filter(
 failed:
     free(outbuf);
     return 0;
-
 } /* End filter function */

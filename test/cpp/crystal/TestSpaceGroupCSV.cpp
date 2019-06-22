@@ -8,7 +8,6 @@
 
 TEST_CASE("test/crystal/TestSpaceGroupCSV.cpp", "")
 {
-
     std::ifstream csv_file;
     csv_file.open("crystallography.tsv", std::ifstream::in);
     if (!csv_file.is_open()) {

@@ -22,7 +22,6 @@ namespace nsx {
 //! Factory for the different convolvers (i.e. image filters).
 
 class ConvolverFactory {
-
 public:
     using callback = std::function<Convolver*(const std::map<std::string, double>&)>;
 

@@ -23,6 +23,7 @@
 #include "apps/views/PeakTableView.h"
 
 namespace Ui {
+
 class PeakListPropertyWidget;
 }
 

@@ -10,7 +10,6 @@
 
 TEST_CASE("test/data/TestHDF5IO.cpp", "")
 {
-
     nsx::DataReaderFactory factory;
     nsx::Diffractometer* diffractometer;
     nsx::sptrDataSet dataf;

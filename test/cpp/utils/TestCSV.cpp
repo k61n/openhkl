@@ -10,7 +10,6 @@
 
 TEST_CASE("test/utils/TestCSV-default_separators", "")
 {
-
     std::string csv_file =
         ",,,\n"
         "a, b, c, d\n"
@@ -30,7 +29,6 @@ TEST_CASE("test/utils/TestCSV-default_separators", "")
 
 TEST_CASE("test/utils/TestCSV-user_defined_separators", "")
 {
-
     std::string csv_file = "a\tb\tc\td\n"
                            "a\tb\tc\t'd\te'\n"
                            "a\tb\tc\td'\t'f";

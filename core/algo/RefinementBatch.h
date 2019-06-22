@@ -25,7 +25,6 @@ namespace nsx {
 //! Represents a batch of consecutive detector images.
 
 class RefinementBatch {
-
 public:
     //! Default constructor. Should not be used but needed for swig
     RefinementBatch() = default;

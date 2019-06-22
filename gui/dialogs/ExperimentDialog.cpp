@@ -22,7 +22,6 @@
 #include <QHBoxLayout>
 
 namespace {
-
 QStringList allInstrumentNames()
 {
     std::set<std::string> resources_name = nsx::getResourcesName("instruments");

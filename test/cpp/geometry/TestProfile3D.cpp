@@ -8,7 +8,6 @@
 
 TEST_CASE("test/geometry/TestProfile3D.cpp", "")
 {
-
     nsx::AABB bb;
     bb.setLower(Eigen::Vector3d(0, 0, 0));
     bb.setUpper(Eigen::Vector3d(1, 2, 3));

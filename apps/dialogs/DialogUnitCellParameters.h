@@ -19,6 +19,7 @@
 #include "core/peak/Peak3D.h"
 
 namespace Ui {
+
 class DialogUnitCellParameters;
 }
 

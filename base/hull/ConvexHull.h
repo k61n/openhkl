@@ -44,7 +44,6 @@ struct Vertex;
 //! their corresponding edges) that has been completety "buried" by the hull growth.
 
 class ConvexHull {
-
 public:
     //! Checks whether three vertices are coplanar
     static bool isCoplanar(Vertex* v0, Vertex* v1, Vertex* v2);

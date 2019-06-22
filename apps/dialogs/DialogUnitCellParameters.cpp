@@ -46,7 +46,6 @@ DialogUnitCellParameters::~DialogUnitCellParameters()
 
 void DialogUnitCellParameters::setUnitCellParameters()
 {
-
     double a = ui->a->value();
     double b = ui->b->value();
     double c = ui->c->value();

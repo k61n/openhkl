@@ -45,7 +45,6 @@ void CutLineItem::plot(NSXPlot* plot)
     std::iota(x.begin(), x.end(), 0);
 
     for (int i = 0; i < _nPoints; ++i) {
-
         QPointF point = line.pointAt(i / static_cast<double>(_nPoints));
         int ipx = static_cast<int>(point.x());
         int ipy = static_cast<int>(point.y());

@@ -21,7 +21,6 @@
 
 TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
 {
-
     nsx::DataReaderFactory factory;
 
     nsx::Experiment experiment("test", "BioDiff2500");
@@ -75,7 +74,6 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
             nsx::MillerIndex hkl(peak->q(), uc);
 
             CHECK(hkl.error().norm() < 1e-10);
-
         } catch (...) {
             // invalid shape, nothing to do
         }

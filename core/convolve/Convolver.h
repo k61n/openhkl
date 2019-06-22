@@ -25,7 +25,6 @@ using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::
 //! Pure virtual base class of all convolvers (= image filters).
 
 class Convolver {
-
 public:
     Convolver();
 

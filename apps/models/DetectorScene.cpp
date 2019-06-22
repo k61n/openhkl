@@ -129,7 +129,6 @@ void DetectorScene::resetPeakGraphicsItems()
     auto peaks = _session->peaks(_currentData);
 
     for (auto&& peak : peaks) {
-
         auto peak_ellipsoid = peak->shape();
 
         peak_ellipsoid.scale(peak->peakEnd());
@@ -164,7 +163,6 @@ void DetectorScene::resetPeakGraphicsItems()
         it->second->setVisible(true);
 
     if (_selected_peak) {
-
         auto selected_peak_ellipsoid = _selected_peak->shape();
 
         selected_peak_ellipsoid.scale(_selected_peak->peakEnd());
@@ -177,7 +175,6 @@ void DetectorScene::resetPeakGraphicsItems()
         auto&& upper = aabb.upper();
 
         if (frame_index >= lower[2] && frame_index <= upper[2]) {
-
             auto center = selected_peak_ellipsoid.intersectionCenter(
                 {0.0, 0.0, 1.0}, {0.0, 0.0, static_cast<double>(_currentFrameIndex)});
 
@@ -298,7 +295,6 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
     // The left button was pressed
     if (event->buttons() & Qt::LeftButton) {
-
         if (event->modifiers() == Qt::ControlModifier)
             return;
 
@@ -365,7 +361,6 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
             }
         }
         switch (_mode) {
-
         case SELECT: {
             break;
         }
@@ -440,7 +435,6 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
     // The user released the left mouse button
     if (event->button() & Qt::LeftButton) {
-
         if (event->modifiers() == Qt::ControlModifier)
             return;
 
@@ -455,9 +449,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             auto peak = peak_item->peak();
 
             emit _session->signalSelectedPeakChanged(peak);
-
         } else if (_mode == ZOOM) {
-
             qreal top = _zoomrect->rect().top();
             qreal bot = _zoomrect->rect().bottom();
             qreal left = _zoomrect->rect().left();
@@ -497,9 +489,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             removeItem(_zoomrect);
             delete _zoomrect;
             emit dataChanged();
-
         } else {
-
             auto peaks = _session->peaks(_currentData);
 
             if (auto p = dynamic_cast<CutterGraphicsItem*>(_lastClickedGI)) {
@@ -671,7 +661,6 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
         break;
     }
     case MILLER_INDICES: {
-
         auto experiment_item = _session->selectExperiment(_currentData);
         if (!experiment_item)
             ttip = QString("No experiment found");
@@ -736,7 +725,6 @@ void DetectorScene::loadCurrentImage()
 
     // update the integration region pixmap
     if (_drawIntegrationRegion) {
-
         const int ncols = _currentData->nCols();
         const int nrows = _currentData->nRows();
         Eigen::MatrixXi mask(nrows, ncols);

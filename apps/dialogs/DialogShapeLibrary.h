@@ -26,6 +26,7 @@
 #include "apps/models/ExperimentItem.h"
 
 namespace Ui {
+
 class DialogShapeLibrary;
 }
 

@@ -23,7 +23,6 @@ namespace nsx {
 //! Ellipsoidal detector IMask.
 
 class EllipseMask : public IMask {
-
 public:
     EllipseMask() = delete;
 

@@ -49,7 +49,6 @@ DetectorPropertyWidget::DetectorPropertyWidget(DetectorItem* caller, QWidget* pa
     _ui->axes->verticalHeader()->setVisible(false);
 
     for (size_t i = 0; i < n_detector_gonio_axes; ++i) {
-
         const auto& axis = detector_gonio.axis(i);
 
         std::ostringstream os;

@@ -24,7 +24,6 @@ namespace nsx {
 //! The kernel has the constant value 1 / (rows*cols).
 
 class ConstantConvolver : public AtomicConvolver {
-
 public:
     ConstantConvolver();
 

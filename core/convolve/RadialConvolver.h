@@ -58,7 +58,6 @@ namespace nsx {
 //!       two convolvers relate to each other.
 
 class RadialConvolver : public AtomicConvolver {
-
 public:
     RadialConvolver();
 

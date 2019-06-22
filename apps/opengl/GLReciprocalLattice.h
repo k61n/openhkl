@@ -19,7 +19,6 @@
 #include "apps/opengl/GLActor.h"
 
 class GLReciprocalLattice : public GLActor {
-
 public:
     GLReciprocalLattice(const char* name);
     void setUnitCell(nsx::sptrUnitCell cell);

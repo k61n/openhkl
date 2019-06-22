@@ -28,7 +28,6 @@
 
 TEST_CASE("test/integrate/Test_6_12_38.cpp", "")
 {
-
     nsx::DataReaderFactory factory;
 
     nsx::Experiment experiment("test", "BioDiff2500");

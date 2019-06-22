@@ -8,7 +8,6 @@ using namespace nsx;
 
 TEST_CASE("test/utils/TestProgressHandler.cpp", "")
 {
-
     ProgressHandler handler;
 
     // check that it handles nullptr without exception

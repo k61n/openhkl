@@ -56,7 +56,6 @@ namespace nsx {
 //! have a non-homogeneous background.
 
 class AnnularConvolver : public Convolver {
-
 public:
     AnnularConvolver();
 

@@ -10,7 +10,6 @@
 
 TEST_CASE("test/mathematics/TestConstrainedMinimizer.cpp", "")
 {
-
     Eigen::VectorXd y, wt, x;
     const int num_points = 400;
     const int num_dummy = 2000;

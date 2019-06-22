@@ -23,7 +23,6 @@ namespace nsx {
 //! A set of `Monochromator`s, of which one is selected.
 
 class Source : public Component {
-
 public:
     //! Static constructor of a monochromatic source from a yaml tree node
     static Source* create(const YAML::Node& node);

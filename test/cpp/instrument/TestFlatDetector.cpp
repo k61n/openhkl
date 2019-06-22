@@ -13,7 +13,6 @@ const double tolerance = 1e-3;
 
 TEST_CASE("test/instrument/TestFlatDetector.cpp", "")
 {
-
     nsx::FlatDetector d("D10-detector");
     d.setDistance(380 * nsx::mm);
     d.setWidth(80 * nsx::mm);
@@ -70,9 +69,7 @@ TEST_CASE("test/instrument/TestFlatDetector.cpp", "")
     CHECK(std::abs(q[2]) < tolerance);
 
     for (int i = d.minRow() + 1; i < d.maxRow() - 1; i++) {
-
         for (int j = d.minCol() + 1; j < d.maxCol() - 1; j++) {
-
             CHECK(d.hasPixel(j, i));
 
             auto position = d.pixelPosition(j, i);

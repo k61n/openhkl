@@ -23,7 +23,6 @@ namespace nsx {
 //! Pure virtual base class of data readers that provide access to detector images and metadata.
 
 class IDataReader {
-
 public:
     IDataReader(const std::string& filename, Diffractometer* diffractometer);
     virtual ~IDataReader() = 0;

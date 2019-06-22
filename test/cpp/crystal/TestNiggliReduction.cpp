@@ -13,7 +13,6 @@ const double tolerance = 1e-6;
 
 TEST_CASE("test/crystal/TestNiggliReduction.cpp", "")
 {
-
     const unsigned int nCells = 783;
 
     std::ifstream primitiveCellsFile("lattices.dat");

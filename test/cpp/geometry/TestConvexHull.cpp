@@ -30,7 +30,6 @@ bool CheckConvexity(const nsx::ConvexHull& chull)
 
 TEST_CASE("test/geometry/TestConvexHull.cpp", "")
 {
-
     // Create an empty convex hull
     nsx::ConvexHull chull;
 

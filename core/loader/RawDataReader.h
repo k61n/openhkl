@@ -22,7 +22,6 @@ namespace nsx {
 //! Minimal meta data set, to supplement binary raw data in RawDataReader.
 
 struct RawDataReaderParameters {
-
     double wavelength = 2.665;
     double delta_omega = 0.4;
     double delta_chi = 0.0;
@@ -35,7 +34,6 @@ struct RawDataReaderParameters {
 //! IDataReader for raw binary data.
 
 class RawDataReader : public IDataReader {
-
 public:
     RawDataReader() = delete;
     RawDataReader(const RawDataReader& other) = delete;

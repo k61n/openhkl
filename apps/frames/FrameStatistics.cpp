@@ -213,7 +213,6 @@ void FrameStatistics::saveStatistics()
     auto model = dynamic_cast<QStandardItemModel*>(_ui->statistics->model());
 
     for (size_t i = 0; i < model->rowCount(); ++i) {
-
         file << std::fixed << std::setw(10) << std::setprecision(2)
              << model->index(i, 0).data().toDouble();
         file << std::fixed << std::setw(10) << std::setprecision(2)
@@ -252,7 +251,6 @@ void FrameStatistics::saveMergedPeaks()
         saveToShelX(_ui->merged_peaks);
     else if (format.compare("FullProf") == 0)
         saveToFullProf(_ui->merged_peaks);
-
 }
 
 void FrameStatistics::saveUnmergedPeaks()
@@ -263,12 +261,10 @@ void FrameStatistics::saveUnmergedPeaks()
         saveToShelX(_ui->unmerged_peaks);
     else if (format.compare("FullProf") == 0)
         saveToFullProf(_ui->unmerged_peaks);
-
 }
 
 void FrameStatistics::saveToShelX(QTableView* table)
 {
-
     QString filename = QFileDialog::getSaveFileName(
         this, tr("Save peaks to ShelX"), ".", tr("ShelX hkl file (*.hkl)"));
 
@@ -304,7 +300,6 @@ void FrameStatistics::saveToShelX(QTableView* table)
 
 void FrameStatistics::saveToFullProf(QTableView* table)
 {
-
     QString filename = QFileDialog::getSaveFileName(
         this, tr("Save peaks to FullProf"), ".", tr("ShelX hkl file (*.hkl)"));
 
@@ -329,7 +324,6 @@ void FrameStatistics::saveToFullProf(QTableView* table)
     auto model = dynamic_cast<QStandardItemModel*>(table->model());
 
     for (size_t i = 0; i < model->rowCount(); ++i) {
-
         // h
         file << std::fixed << std::setw(4) << model->index(i, 0).data().toInt();
         // k
@@ -384,7 +378,6 @@ void FrameStatistics::updateStatisticsTab()
     // Write per-shell statistics
 
     for (int i = n_shells - 1; i >= 0; --i) {
-
         const double d_lower = resolution_shells.shell(i).dmin;
         const double d_upper = resolution_shells.shell(i).dmax;
 
@@ -454,7 +447,6 @@ void FrameStatistics::updateMergedPeaksTab()
     model->removeRows(0, model->rowCount());
 
     for (auto&& peak : _merged_data.mergedPeakSet()) {
-
         const auto hkl = peak.index();
 
         const int h = hkl[0];
@@ -491,9 +483,7 @@ void FrameStatistics::updateUnmergedPeaksTab()
     model->removeRows(0, model->rowCount());
 
     for (auto&& peak : _merged_data.mergedPeakSet()) {
-
         for (auto unmerged_peak : peak.peaks()) {
-
             const auto& cell = *(unmerged_peak->unitCell());
             const auto& q = unmerged_peak->q();
 

@@ -147,7 +147,6 @@ void ExperimentTree::onCustomMenuRequested(const QPoint& point)
             QAction* find_peaks = menu->addAction("Find peaks in data");
             connect(find_peaks, &QAction::triggered, [=]() { ditem->findPeaks(); });
         } else if (auto pitem = dynamic_cast<PeaksItem*>(item)) {
-
             QAction* filter = menu->addAction("Filter peaks");
             connect(filter, triggered, [=]() { pitem->openPeakFilterDialog(); });
 
@@ -261,7 +260,6 @@ void ExperimentTree::onDoubleClick(const QModelIndex& index)
         }
     } else if (auto ptr = dynamic_cast<NumorItem*>(item))
         session()->selectData(ptr->data(Qt::UserRole).value<nsx::sptrDataSet>());
-
 }
 
 void ExperimentTree::keyPressEvent(QKeyEvent* event)

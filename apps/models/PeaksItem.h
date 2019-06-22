@@ -17,7 +17,6 @@
 #include "apps/models/InspectableTreeItem.h"
 
 class PeaksItem : public InspectableTreeItem {
-
 public:
     explicit PeaksItem();
 

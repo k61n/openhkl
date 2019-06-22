@@ -92,7 +92,6 @@ void DialogHDF5Converter::convert()
 
     int comp(0);
     for (auto numor : _numors) {
-
         auto&& numor_filename = numor->filename();
 
         QFileInfo fileinfo(QString::fromStdString(numor_filename));

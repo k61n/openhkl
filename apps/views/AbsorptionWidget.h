@@ -23,6 +23,7 @@
 #include "core/instrument/InstrumentTypes.h"
 
 namespace Ui {
+
 class AbsorptionWidget;
 }
 

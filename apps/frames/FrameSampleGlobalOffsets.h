@@ -17,6 +17,7 @@
 #include "apps/frames/NSXQFrame.h"
 
 namespace Ui {
+
 class FrameSampleGlobalOffsets;
 }
 

@@ -78,5 +78,4 @@ const MetaDataMap& MetaData::map() const
 {
     return _map;
 }
-
 } // End namespace nsx

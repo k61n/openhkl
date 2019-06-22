@@ -138,7 +138,6 @@ DialogPeakFilter::~DialogPeakFilter()
 
 void DialogPeakFilter::slotUnitCellChanged(int index)
 {
-
     auto unit_cell = _ui->unitCells->itemData(index, Qt::UserRole).value<nsx::sptrUnitCell>();
 
     _ui->indexingTolerance->setValue(unit_cell->indexingTolerance());
@@ -234,7 +233,6 @@ void DialogPeakFilter::accept()
     auto& filtered_peaks = _peaks_model->peaks();
 
     if (!filtered_peaks.empty()) {
-
         auto peak_list = new PeakListItem(filtered_peaks);
 
         peak_list->setText("Filtered peaks");

@@ -21,7 +21,6 @@
 namespace YAML {
 
 template <typename T> struct convert<std::complex<T>> {
-
     static Node encode(const std::complex<T>& rhs)
     {
         Node node;
@@ -42,7 +41,6 @@ template <typename T> struct convert<std::complex<T>> {
 };
 
 template <> struct convert<Eigen::Vector3d> {
-
     static Node encode(const Eigen::Vector3d& rhs)
     {
         Node node;
@@ -65,7 +63,6 @@ template <> struct convert<Eigen::Vector3d> {
 };
 
 template <> struct convert<Eigen::Vector2d> {
-
     static Node encode(const Eigen::Vector2d& rhs)
     {
         Node node;

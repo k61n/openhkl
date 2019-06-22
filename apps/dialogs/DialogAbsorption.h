@@ -25,10 +25,12 @@
 #include "core/instrument/InstrumentTypes.h"
 
 namespace nsx {
+
 class ConvexHull;
 }
 
 namespace Ui {
+
 class DialogAbsorption;
 }
 

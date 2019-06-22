@@ -17,11 +17,11 @@
 #include <QWidget>
 
 namespace Ui {
+
 class WidgetFoundPeaks;
 }
 
 class WidgetFoundPeaks : public QWidget {
-
 public:
     WidgetFoundPeaks(ExperimentItem* experiment_item, const nsx::PeakList& peaks);
 

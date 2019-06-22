@@ -23,7 +23,6 @@ namespace nsx {
 //! Pure virtual base class for the components of an instrument (Source, Sample, Detector).
 
 class Component {
-
 public:
     Component() = default;
     Component(const Component& other);

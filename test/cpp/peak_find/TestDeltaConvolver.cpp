@@ -27,7 +27,6 @@ double computeError(int nrows, int ncols)
 
 TEST_CASE("test/peak_find/TestDeltaConvolver.cpp", "")
 {
-
     double error = computeError(30, 20);
     CHECK(error < 1e-10);
 }

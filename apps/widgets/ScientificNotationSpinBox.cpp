@@ -79,7 +79,6 @@ void ScientificNotationSpinBox::stepUp()
  */
 QString ScientificNotationSpinBox::textFromValue(double value) const
 {
-
     // convert to string -> Using exponetial display with internal decimals
     QString str = locale().toString(value, 'e', dispDecimals);
     // remove thousand sign

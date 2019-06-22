@@ -19,11 +19,11 @@
 #include "core/algo/Refiner.h"
 
 namespace Ui {
+
 class WidgetRefinerFit;
 }
 
 class WidgetRefinerFit : public QWidget {
-
     Q_OBJECT
 
 public:

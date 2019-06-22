@@ -36,8 +36,7 @@ Eigen::Transform<double, 3, Eigen::Affine> parseJonesSymbol(const std::string& j
         {{"x", {1, 0, 0}}, {"y", {0, 1, 0}}, {"z", {0, 0, 1}}});
     std::map<std::string, double> sign({{"+", 1.0}, {"-", -1.0}});
 
-    // Split the Jones symbol according to ",". This must provide 3 symbols one
-    // for each axis
+    // Split the Jones symbol according to ",". This must provide 3 symbols one for each axis
     auto symbols = split(jonesSymbol, ",");
     if (symbols.size() != 3)
         throw std::runtime_error("Invalid Jones-Faithful symbol");
@@ -53,7 +52,6 @@ Eigen::Transform<double, 3, Eigen::Affine> parseJonesSymbol(const std::string& j
 
     // The symbols size must be 3. Hence this loop loops over the xyz axis.
     for (size_t i = 0; i < symbols.size(); ++i) {
-
         // Remove any space fro the current symbol
         auto symbol = symbols[i];
         auto sit = std::remove_if(symbol.begin(), symbol.end(), check_white_space);
@@ -72,10 +70,9 @@ Eigen::Transform<double, 3, Eigen::Affine> parseJonesSymbol(const std::string& j
         auto rotation_expr_end = std::sregex_iterator();
 
         // No matches found, throws
-        if (rotation_expr_begin == rotation_expr_end) {
+        if (rotation_expr_begin == rotation_expr_end)
             throw std::runtime_error(
                 "Invalid Jones-Faithful symbol: could not parse the rotation part");
-        }
 
         // Will store the current match for the rotational part (e.g. +3x)
         // rotation_match[1] stores "+" or "-"
@@ -96,17 +93,15 @@ Eigen::Transform<double, 3, Eigen::Affine> parseJonesSymbol(const std::string& j
         // The remainder of the symbol after having matched the rotational part must
         // be the translationa part
         if (!suffix.empty()) {
-
             // The translational match. Must ne of the form +/-n or +/-n/d (e.g. +3,
             // -1/2) translation_match[1] stores the numerator translation_match[2]
             // stores the denominator (if any)
             std::smatch translation_match;
             bool success = std::regex_match(suffix, translation_match, translation_re);
             // Could not match the translationa part, throws
-            if (!success) {
+            if (!success)
                 throw std::runtime_error("Invalid Jones-Faithful symbol: could not "
                                          "parse the translation part");
-            }
 
             double val = std::atof(translation_match[1].str().c_str());
             // Check that a denominator has been provided
@@ -127,4 +122,4 @@ Eigen::Transform<double, 3, Eigen::Affine> parseJonesSymbol(const std::string& j
     return matrix;
 }
 
-} /* namespace nsx */
+} // namespace nsx

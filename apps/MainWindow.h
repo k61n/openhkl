@@ -32,6 +32,7 @@ class PlottableGraphicsItem;
 class SessionModel;
 
 namespace Ui {
+
 class MainWindow;
 }
 

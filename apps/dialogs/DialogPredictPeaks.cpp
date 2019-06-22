@@ -145,7 +145,6 @@ void DialogPredictPeaks::predictPeaks()
 
     int current_numor = 0;
     for (auto d : data) {
-
         nsx::info() << "Predicting peaks for numor " << ++current_numor << " of " << data.size();
 
         auto&& predicted = nsx::predictPeaks(

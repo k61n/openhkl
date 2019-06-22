@@ -114,7 +114,6 @@ void IPeakIntegrator::integrate(
         }
 
         for (auto peak : peaks) {
-
             bool result = regions[peak].advanceFrame(current_frame, mask, idx);
             // this allows for partials at end of data
             result |= idx == data->nFrames() - 1;

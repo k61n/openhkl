@@ -79,7 +79,6 @@ void SampleShapeProperties::onRemake()
         sampleGoniometer->verticalHeader()->setVisible(false);
 
         for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
-
             const nsx::Axis& axis = sample_gonio.axis(i);
 
             std::ostringstream os;

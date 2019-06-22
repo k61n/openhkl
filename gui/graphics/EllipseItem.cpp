@@ -86,7 +86,6 @@ nsx::AABB* EllipseMaskItem::getAABB()
 
 void EllipseMaskItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-
     if (event->buttons() & Qt::LeftButton) {
         // If the mask is not selected, the move event corresponds to a modification
         // of the size of mask
@@ -112,7 +111,6 @@ void EllipseMaskItem::updateAABB()
 
 void EllipseMaskItem::wheelEvent(QGraphicsSceneWheelEvent* event)
 {
-
     // The item must be visible to be wheeled
     if (!isVisible())
         return;

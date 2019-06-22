@@ -17,13 +17,13 @@
 #include <QWidget>
 
 namespace Ui {
+
 class DetectorPropertyWidget;
 }
 
 class DetectorItem;
 
 class DetectorPropertyWidget : public QWidget {
-
     Q_OBJECT
 
 public:

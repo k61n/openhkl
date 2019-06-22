@@ -26,7 +26,6 @@ namespace nsx {
 //!       What this convolver really does, we have to find out.
 
 class EnhancedAnnularConvolver : public Convolver {
-
 public:
     EnhancedAnnularConvolver();
 

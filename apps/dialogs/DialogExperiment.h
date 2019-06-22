@@ -19,6 +19,7 @@
 class Widget;
 
 namespace Ui {
+
 class DialogExperiment;
 }
 

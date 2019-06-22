@@ -24,7 +24,6 @@ namespace nsx {
 //! A diffractometer setup, consisting of a sample, source, and detector.
 
 class Diffractometer {
-
 public:
     static Diffractometer* create(const std::string& name);
 

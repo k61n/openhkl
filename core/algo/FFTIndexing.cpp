@@ -71,7 +71,6 @@ std::vector<FFTIndexing::tVector> FFTIndexing::findOnSphere(
     const double increment = M_PI * (3. - sqrt(5.));
 
     for (size_t i = 0; i < n_vertices; ++i) {
-
         const double y = ((i * offset) - 1) + (offset / 2);
         const double r = sqrt(1 - y * y);
 

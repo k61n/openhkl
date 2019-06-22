@@ -390,7 +390,6 @@ void UserDefinedUnitCellIndexer::buildUnitCellsTable()
 
     // Display solutions
     for (size_t i = 0; i < solutions_.size(); ++i) {
-
         nsx::sptrUnitCell unit_cell = solutions_[i].first;
 
         const double quality = solutions_[i].second;

@@ -100,7 +100,6 @@ void DetectorScene::resetPeakGraphicsItems()
         nsx::PeakList peaks = gSession->selectedExperiment()->peaks()->allPeaks();
 
         for (nsx::sptrPeak3D peak : peaks) {
-
             nsx::Ellipsoid peak_ellipsoid = peak->shape();
 
             peak_ellipsoid.scale(peak->peakEnd());
@@ -135,7 +134,6 @@ void DetectorScene::resetPeakGraphicsItems()
         it->second->setVisible(true);
 
     if (_selected_peak) {
-
         nsx::Ellipsoid selected_peak_ellipsoid = _selected_peak->shape();
 
         selected_peak_ellipsoid.scale(_selected_peak->peakEnd());
@@ -148,7 +146,6 @@ void DetectorScene::resetPeakGraphicsItems()
         const Eigen::Vector3d& upper = aabb.upper();
 
         if (frame_index >= lower[2] && frame_index <= upper[2]) {
-
             Eigen::Vector3d center = selected_peak_ellipsoid.intersectionCenter(
                 {0.0, 0.0, 1.0}, {0.0, 0.0, static_cast<double>(_currentFrameIndex)});
 
@@ -253,7 +250,6 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
     // The left button was pressed
     if (event->buttons() & Qt::LeftButton) {
-
         if (event->modifiers() == Qt::ControlModifier)
             return;
 
@@ -320,7 +316,6 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
             }
         }
         switch (_mode) {
-
         case SELECT: {
             break;
         }
@@ -395,7 +390,6 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
     // The user released the left mouse button
     if (event->button() & Qt::LeftButton) {
-
         if (event->modifiers() == Qt::ControlModifier)
             return;
 
@@ -410,9 +404,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             nsx::sptrPeak3D peak = peak_item->peak();
 
             //            gSession->onSelectedPeakChanged(peak);
-
         } else if (_mode == ZOOM) {
-
             qreal top = _zoomrect->rect().top();
             qreal bot = _zoomrect->rect().bottom();
             qreal left = _zoomrect->rect().left();
@@ -452,9 +444,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             removeItem(_zoomrect);
             delete _zoomrect;
             emit dataChanged();
-
         } else {
-
             nsx::PeakList peaks = gSession->selectedExperiment()->peaks()->allPeaks();
 
             if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
@@ -623,7 +613,6 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
         break;
     }
     case MILLER_INDICES: {
-
         ExperimentModel* experiment_item = gSession->selectedExperiment();
         if (!experiment_item)
             ttip = QString("No experiment found");

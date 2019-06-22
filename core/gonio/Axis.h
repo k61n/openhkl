@@ -29,7 +29,6 @@ namespace nsx {
 //! the homogeneous Matrix.
 
 class Axis {
-
 public:
     static Axis* create(const YAML::Node& node);
     Axis();

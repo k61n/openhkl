@@ -12,7 +12,6 @@ const double tolerance = 1e-3;
 
 TEST_CASE("test/instrument/TestCylindricalDetector.cpp", "")
 {
-
     nsx::CylindricalDetector d("D19-detector");
     d.setDistance(764 * nsx::mm);
     d.setAngularWidth(120.0 * nsx::deg);

@@ -31,7 +31,6 @@ namespace nsx {
 //! by taking 3-fold intersections of the bounding planes.
 
 class BrillouinZone {
-
 public:
     //! Create a Brillouin zone out of the given (row) basis matrix B.
     BrillouinZone(const Eigen::Matrix3d& B, double eps = 1e-6);

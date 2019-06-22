@@ -120,7 +120,6 @@ bool PixelSumIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     std::vector<double> n_bkg_points_per_frame(nframes, 0.0);
 
     for (auto i = 0; i < counts.size(); ++i) {
-
         const auto& ev = events[i];
         auto ev_type = region.classify(ev);
 
@@ -131,7 +130,6 @@ bool PixelSumIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
             n_peak_points_per_frame[bin] += 1;
         } else if (ev_type == IntegrationRegion::EventType::BACKGROUND)
             n_bkg_points_per_frame[bin] += 1;
-
     }
 
     for (int i = 0; i < nframes; ++i) {
