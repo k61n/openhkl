@@ -171,30 +171,26 @@ void Session::loadRawData()
     qfilenames = QcrFileDialog::getOpenFileNames(
         nullptr, "select raw data", loadDirectory, "", nullptr, QFileDialog::Option::DontUseNativeDialog);
 
-    if (qfilenames.empty()) {
+    if (qfilenames.empty())
         return;
-    }
 
     QFileInfo info(qfilenames.at(0));
     loadDirectory = info.absolutePath();
 
     std::vector<std::string> filenames;
 
-    for (QString filename : qfilenames) {
+    for (QString filename : qfilenames)
         filenames.push_back(filename.toStdString());
-    }
 
     RawDataDialog dialog;
 
-    if (!dialog.exec()) {
+    if (!dialog.exec())
         return;
-    }
     nsx::sptrExperiment exp = selectedExperiment()->experiment();
 
     // If the experience already stores the current numor, skip it
-    if (exp->hasData(filenames[0])) {
+    if (exp->hasData(filenames[0]))
         return;
-    }
 
     std::shared_ptr<nsx::DataSet> data;
     std::shared_ptr<nsx::IDataReader> reader;
@@ -214,9 +210,8 @@ void Session::loadRawData()
         reader.reset(new nsx::RawDataReader(filenames[0], diff));
         std::shared_ptr<nsx::RawDataReader> raw_data_reader =
                 std::dynamic_pointer_cast<nsx::RawDataReader>(reader);
-        for (size_t i = 1; i < filenames.size(); ++i) {
+        for (size_t i = 1; i < filenames.size(); ++i)
             raw_data_reader->addFrame(filenames[i]);
-        }
         raw_data_reader->setParameters(parameters);
         raw_data_reader->end();
         data = std::make_shared<nsx::DataSet>(reader);

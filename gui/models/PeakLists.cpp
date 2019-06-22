@@ -30,9 +30,8 @@ void FilteredPeaksModel::removePeaks(nsx::sptrDataSet removedData)
 {
     nsx::PeakList newList;
     for (nsx::sptrPeak3D peak : filteredPeaks_) {
-        if (peak->data() != removedData) {
+        if (peak->data() != removedData)
             newList.push_back(peak);
-        }
     }
     filteredPeaks_ = newList;
 }
@@ -68,11 +67,10 @@ void PeakListsModel::removeFilteredPeaks(int i)
     }
     gLogger->log("[INFO] Removing filtered peak list " + filtered_.at(i)->getName());
     filtered_.removeAt(i);
-    if (filtered_.empty()) {
+    if (filtered_.empty())
         selected = -1;
-    } else {
+    else
         selected = 0;
-    }
     gSession->onPeaksChanged();
 }
 
@@ -180,16 +178,14 @@ void PeaksModel::removePeakListsModel(int i)
         gLogger->log("[ERROR] No Peaklists to remove");
         return;
     }
-    if (i<0 || i>=peakLists_.size()) {
+    if (i<0 || i>=peakLists_.size())
         i = selectedLists;
-    }
     gLogger->log("[INFO] removing peaklistsmodel " + peakLists_.at(i)->getName());
     peakLists_.removeAt(i);
-    if (peakLists_.empty()) {
+    if (peakLists_.empty())
         selectedLists = -1;
-    } else {
+    else
         selectedLists = 0;
-    }
     gSession->onPeaksChanged();
 }
 
@@ -223,9 +219,8 @@ void PeaksModel::normalizeToMonitor()
 void PeaksModel::remakePeakLists()
 {
     for (int i = peakLists_.size()-1; i>=0; i--) {
-        if (peakLists_.at(i)->numberFilteredLists() == 0) {
+        if (peakLists_.at(i)->numberFilteredLists() == 0)
             removePeakListsModel(i);
-        }
     }
     gSession->onPeaksChanged();
 }
