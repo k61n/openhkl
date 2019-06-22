@@ -12,15 +12,15 @@
 //
 //  ***********************************************************************************************
 
-#include <Eigen/Dense>
-
 #include "core/detector/CylindricalDetector.h"
+
 #include "base/geometry/DirectVector.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "core/gonio/Gonio.h"
 #include "core/gonio/RotAxis.h"
-#include "core/gonio/TransAxis.h"
 #include "base/utils/Units.h"
+
+#include <Eigen/Dense>
 
 namespace nsx {
 

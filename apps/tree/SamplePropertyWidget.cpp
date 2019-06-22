@@ -16,7 +16,6 @@
 
 #include "core/gonio/Axis.h"
 #include "core/gonio/Gonio.h"
-#include "core/gonio/TransAxis.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "base/utils/Units.h"
