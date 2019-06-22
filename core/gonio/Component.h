@@ -20,8 +20,8 @@
 
 namespace nsx {
 
-//! Interface for the components of an instrument (e.g. detector,
-//! goniometer, source ...).
+//! Pure virtual base class for the components of an instrument (Source, Sample, Detector).
+
 class Component {
 
 public:
