@@ -19,6 +19,10 @@
 
 namespace nsx {
 
+//! A set of `MergedPeak`s.
+
+class MergedPeakSet : public std::set<MergedPeak> {};
+
 //! Contains a set of `MergedPeak`s and crystallographic information (SpaceGroup and Friedel flag).
 
 class MergedData {

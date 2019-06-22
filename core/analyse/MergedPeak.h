@@ -75,8 +75,6 @@ private:
 bool operator<(const MergedPeak& p, const MergedPeak& q);
 #endif
 
-using MergedPeakSet = std::set<MergedPeak>;
-
 } // namespace nsx
 
 #endif // CORE_ANALYSE_MERGEDPEAK_H
