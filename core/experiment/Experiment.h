@@ -21,6 +21,7 @@
 namespace nsx {
 
 //! Experiment class, a data type containing a diffractometer and data sets.
+
 class Experiment {
 public:
     Experiment() = delete;

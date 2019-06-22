@@ -20,7 +20,8 @@
 
 namespace nsx {
 
-//! Class used to describe an experiment sample, consisting of a unit cell and material.
+//! A sample, consisting of a `Gonio`meter (via Component) and a ConvexHull.
+
 class Sample : public Component {
 public:
     //! Static constructor of a Sample from a property tree node

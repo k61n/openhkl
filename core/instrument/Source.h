@@ -20,7 +20,8 @@
 
 namespace nsx {
 
-//! Class encapsulating the source (incoming beam)
+//! A set of `Monochromator`s, of which one is selected.
+
 class Source : public Component {
 
 public:
