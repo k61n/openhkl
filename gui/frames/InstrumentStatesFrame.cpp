@@ -268,7 +268,8 @@ void InstrumentStates::selectedDataChanged(int selectedData)
 
 void InstrumentStates::selectedFrameChanged(int selectedFrame)
 {
-    nsx::sptrDataSet currentData = data->currentItem()->data(Qt::UserRole).value<nsx::sptrDataSet>();
+    nsx::sptrDataSet currentData =
+        data->currentItem()->data(Qt::UserRole).value<nsx::sptrDataSet>();
     const nsx::InstrumentStateList& instrumentStates = currentData->instrumentStates();
     nsx::InstrumentState selectedState = instrumentStates[selectedFrame];
 
@@ -295,7 +296,8 @@ void InstrumentStates::selectedFrameChanged(int selectedFrame)
     sampleOri_21->setCellValue(sampleOri(2,1));
     sampleOri_22->setCellValue(sampleOri(2,2));
 
-    const auto& sampleOffset = selectedState.sampleOrientationOffset.normalized().toRotationMatrix();
+    const auto& sampleOffset =
+        selectedState.sampleOrientationOffset.normalized().toRotationMatrix();
     sampleOff_00->setCellValue(sampleOffset(0,0));
     sampleOff_01->setCellValue(sampleOffset(0,1));
     sampleOff_02->setCellValue(sampleOffset(0,2));

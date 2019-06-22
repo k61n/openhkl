@@ -169,32 +169,29 @@ void Session::loadRawData()
 
     QStringList qfilenames;
     qfilenames = QcrFileDialog::getOpenFileNames(
-        nullptr, "select raw data", loadDirectory, "", nullptr, QFileDialog::Option::DontUseNativeDialog);
+        nullptr, "select raw data", loadDirectory, "", nullptr,
+        QFileDialog::Option::DontUseNativeDialog);
 
-    if (qfilenames.empty()) {
+    if (qfilenames.empty())
         return;
-    }
 
     QFileInfo info(qfilenames.at(0));
     loadDirectory = info.absolutePath();
 
     std::vector<std::string> filenames;
 
-    for (QString filename : qfilenames) {
+    for (QString filename : qfilenames)
         filenames.push_back(filename.toStdString());
-    }
 
     RawDataDialog dialog;
 
-    if (!dialog.exec()) {
+    if (!dialog.exec())
         return;
-    }
     nsx::sptrExperiment exp = selectedExperiment()->experiment();
 
     // If the experience already stores the current numor, skip it
-    if (exp->hasData(filenames[0])) {
+    if (exp->hasData(filenames[0]))
         return;
-    }
 
     std::shared_ptr<nsx::DataSet> data;
     std::shared_ptr<nsx::IDataReader> reader;

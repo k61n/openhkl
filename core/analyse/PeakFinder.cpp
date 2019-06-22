@@ -234,8 +234,8 @@ void PeakFinder::mergeCollidingBlobs(sptrDataSet data, std::map<int, Blob3D>& bl
 }
 
 void PeakFinder::findPrimaryBlobs(
-    sptrDataSet data, std::map<int, Blob3D>& blobs, nsx::EquivalenceList& equivalences, size_t begin,
-    size_t end)
+    sptrDataSet data, std::map<int, Blob3D>& blobs, nsx::EquivalenceList& equivalences,
+    size_t begin, size_t end)
 {
     // update via handler if necessary
     if (_handler) {
