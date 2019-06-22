@@ -15,14 +15,15 @@
 #ifndef CORE_PEAK_PEAKDATA_H
 #define CORE_PEAK_PEAKDATA_H
 
+#include "core/peak/PeakCoordinateSystem.h"
+
 #include <Eigen/Dense>
 #include <deque>
-
-#include "core/peak/PeakCoordinateSystem.h"
 
 namespace nsx {
 
 //! Helper class used by integration routines.
+
 class PeakData {
 public:
     //! Construct instance associated to the given peak

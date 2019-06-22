@@ -19,7 +19,8 @@
 
 namespace nsx {
 
-//! Class used to compute absorption correction by Monte-Carlo integration.
+//! Computes absorption correction by Monte-Carlo integration.
+
 class MCAbsorption {
 
 public:

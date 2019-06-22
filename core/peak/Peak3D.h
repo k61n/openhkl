@@ -17,9 +17,7 @@
 
 #include "base/geometry/Ellipsoid.h"
 #include "core/peak/Intensity.h"
-#include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
-#include "core/detector/DetectorEvent.h"
 #include "core/experiment/DataTypes.h"
 
 #include <memory>
@@ -29,7 +27,8 @@ namespace nsx {
 
 class IPeakIntegrator;
 
-//! Data type used to store integrated peaks, including their shape and location.
+//! Stores integrated peaks, including their shape and location.
+
 class Peak3D {
 
 public:
