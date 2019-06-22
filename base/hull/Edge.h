@@ -16,7 +16,6 @@
 #define BASE_HULL_EDGE_H
 
 #include <ostream>
-
 #include <vector>
 
 namespace nsx {
@@ -24,9 +23,8 @@ namespace nsx {
 struct Face;
 struct Vertex;
 
-//! Class Edge.
-//!
-//! This class implements the Edge object used in the incremental convex hull algorithm.
+//! An edge, used in the incremental convex hull algorithm.
+
 struct Edge {
     Edge();
 

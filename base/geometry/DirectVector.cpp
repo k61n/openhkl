@@ -12,11 +12,10 @@
 //
 //  ***********************************************************************************************
 
-#include <stdexcept>
+#include "base/geometry/DirectVector.h"
 
 #include <Eigen/Dense>
-
-#include "base/geometry/DirectVector.h"
+#include <stdexcept>
 
 namespace nsx {
 

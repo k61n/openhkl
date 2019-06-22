@@ -19,10 +19,11 @@
 
 namespace nsx {
 
-//! Class to define a vector defined in direct space.
-//!
+//! A vector in direct space.
+
 //! This class allows to enforce dimensional and C++-type consistency when
 //! dealing with vectors in algorithms dedicated to crystallographic data.
+
 class DirectVector {
 public:
     DirectVector() = default;

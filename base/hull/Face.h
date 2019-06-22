@@ -20,11 +20,8 @@ namespace nsx {
 struct Edge;
 struct Vertex;
 
-/* !
- * Class Face.
- * This class implements the Face object used in the incremental convex hull
- * algorithm.
- */
+//! A face, used in the incremental convex hull algorithm.
+
 struct Face {
     Face();
     Face(int id);

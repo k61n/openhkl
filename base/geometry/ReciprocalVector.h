@@ -19,10 +19,11 @@
 
 namespace nsx {
 
-//! Class to define a vector defined in reciprocal space.
-//!
+//! A vector in reciprocal space.
+
 //! This class allows to enforce dimensional and C++-type consistency when
 //! dealing with vectors in algorithms dedicated to crystallographic data.
+
 class ReciprocalVector {
 public:
     ReciprocalVector() = default;

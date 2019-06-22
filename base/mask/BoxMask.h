@@ -20,7 +20,8 @@
 
 namespace nsx {
 
-//! Construct a detector mask from an axis-aligned bounding box.
+//! Detector IMask, constructed from an AABB (axis-aligned bounding box).
+
 class BoxMask : public IMask {
 
 public:

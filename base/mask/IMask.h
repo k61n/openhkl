@@ -19,7 +19,8 @@ namespace nsx {
 
 class Ellipsoid;
 
-//! Abstract class for detector mask
+//! Pure virtual base class for detector mask.
+
 class IMask {
 
 public:
