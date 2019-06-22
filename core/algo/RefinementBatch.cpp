@@ -24,7 +24,7 @@
 #include "core/analyse/PeakFilter.h"
 #include "core/algo/Refiner.h"
 
-const static double g_eps = 1e-5;
+static const double g_eps = 1e-5;
 
 namespace nsx {
 
