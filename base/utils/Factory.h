@@ -36,19 +36,19 @@ template <typename returnType, typename keytype, typename... args> class Factory
     virtual ~Factory() {}
 
     //! register a new callback for constructing an object of type returnType
-    //@param key : key representing how the callback will be stored
-    //@param cb  : address of the function for the callback
+    //! @param key : key representing how the callback will be stored
+    //! @param cb  : address of the function for the callback
     void registerCallback(const keytype& key, callback cb);
     //! remove all entries registered in the factory
     void clear();
     //! create dynamically an object
-    //@param key : key representing how the callback is stored
-    //@param arg : parameters pack
+    //! @param key : key representing how the callback is stored
+    //! @param arg : parameters pack
     returnType* create(const keytype& key, args... arg);
     //! return the keys of the object currently registered in the factory
     std::vector<keytype> list() const;
     //! remove a key from the factory
-    //@param key : key representing how the callback is stored
+    //! @param key : key representing how the callback is stored
     std::size_t unregisterCallback(const keytype& key);
     //! Returns true if a given callback has been registered so far
     bool hasCallback(const keytype& key);

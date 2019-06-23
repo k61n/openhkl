@@ -51,7 +51,7 @@ PeakList predictPeaks(
 class ShapeLibrary {
  public:
     //! Construct an empty library.
-    //! \param detector_coords if true, store profiles in detector coordinates;
+    //! @param detector_coords if true, store profiles in detector coordinates;
     //! otherwise store in Kabsch coordinates
     ShapeLibrary(bool detector_coords, double peakScale, double bkgBegin, double bkgEnd);
 

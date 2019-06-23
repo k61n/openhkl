@@ -47,8 +47,8 @@ class Minimizer {
     Minimizer& operator=(const Minimizer& other) = delete;
 
     //! Initialize a GSL workspace with given number of parameters and values.
-    //! \param [in] params The number of parameters to fit.
-    //! \param [in] values The size of the residual vector.
+    //! @param [in] params The number of parameters to fit.
+    //! @param [in] values The size of the residual vector.
     void initialize(FitParameters& params, int values);
 
     //! Returns the GSL status string

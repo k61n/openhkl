@@ -49,14 +49,14 @@ class RotAxis : public Axis {
     //! Returns rotation direction: 0 for CCW and 1 for CW
     Direction rotationDirection() const;
     //! Gets the rotation matrix associated with this rotation
-    //@param angle : rotation angle in radians by default, use Units to convert
-    //@return rotation matrix
+    //! @param angle : rotation angle in radians by default, use Units to convert
+    //! @return rotation matrix
     Eigen::Matrix3d rotationMatrix(double angle) const;
     //! Returns the 4x4 Homogeous matrix corresponding to this transformation.
     Eigen::Transform<double, 3, Eigen::Affine> affineMatrix(double angle) const override;
     //! Gets the quaternion associated with this rotation
-    //@param angle : rotation angle in radians by default
-    //@return rotation matrix
+    //! @param angle : rotation angle in radians by default
+    //! @return rotation matrix
     Eigen::Quaterniond quaternion(double angle) const;
 
     std::ostream& printSelf(std::ostream& os) const override;
