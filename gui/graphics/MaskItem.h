@@ -19,9 +19,10 @@
 #include "core/experiment/DataTypes.h"
 #include "gui/graphics/SXGraphicsItem.h"
 
-/*! Creates a mask that will be used to unselect/select peaks whether their
- * intercept or not the mask
- */
+//! Creates a mask
+
+//! Creates a mask that will be used to unselect/select peaks whether their intercept or
+//! not the mask
 class MaskItem : public SXGraphicsItem {
  public:
     // Constructs a mask

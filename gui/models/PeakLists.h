@@ -18,6 +18,7 @@
 #include "core/peak/Peak3D.h"
 #include <QList>
 
+//! Controls a PeakList
 class FilteredPeaksModel {
  public:
     FilteredPeaksModel(const QString& name, nsx::PeakList);
@@ -32,6 +33,7 @@ class FilteredPeaksModel {
     nsx::PeakList filteredPeaks_;
 };
 
+//! Controls the the `FilteredPeaksModel`s
 class PeakListsModel {
  public:
     PeakListsModel(const QString& name, nsx::PeakList list);
@@ -55,6 +57,7 @@ class PeakListsModel {
     int selected;
 };
 
+//! Controls the `PeakListsModel`s
 class PeaksModel {
  public:
     PeaksModel();

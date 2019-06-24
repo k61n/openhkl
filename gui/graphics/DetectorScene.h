@@ -30,6 +30,8 @@ class SXGraphicsItem;
 // function and optimize cache hit.
 typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rowMatrix;
 
+//! Master scene of the detector image
+
 //! Master Scene containing the pixmap of the detector counts
 //! and overlayed graphics items (peaks, data cutters, masks ...)
 class DetectorScene : public QGraphicsScene {

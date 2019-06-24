@@ -18,6 +18,7 @@
 #include <Eigen/Dense>
 #include <QImage>
 
+//! A colormap for the DetectorScene
 class ColorMap {
  public:
     ColorMap(const std::string& name);
