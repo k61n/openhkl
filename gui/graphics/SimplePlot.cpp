@@ -14,12 +14,12 @@
 
 #include "gui/graphics/SimplePlot.h"
 
-NSXPlot* SimplePlot::create(QWidget* parent)
+SXPlot* SimplePlot::create(QWidget* parent)
 {
     return new SimplePlot(parent);
 }
 
-SimplePlot::SimplePlot(QWidget* parent) : NSXPlot(parent)
+SimplePlot::SimplePlot(QWidget* parent) : SXPlot(parent)
 {
     plotLayout()->insertRow(0);
     addGraph();

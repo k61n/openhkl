@@ -20,6 +20,7 @@
 #include "gui/models/PeakLists.h"
 #include "tables/crystal/UnitCell.h"
 
+//! Controls the `DataSet`s of the ExperimentModel
 class ExperimentData {
  public:
     ExperimentData() {}
@@ -36,6 +37,7 @@ class ExperimentData {
     int index_;
 };
 
+//! Controls the `UnitCell`s of the ExperimentModel
 class UnitCellsModel {
  public:
     UnitCellsModel();
@@ -49,6 +51,7 @@ class UnitCellsModel {
     int selected_;
 };
 
+//! Controls the instrument of the ExperimentModel
 class InstrumentModel {
  public:
     InstrumentModel(const QString&, const QString&);
@@ -64,6 +67,7 @@ class InstrumentModel {
     QString sourceName_;
 };
 
+//! Controls and handles the Experiment and its data, peaks, unitcells, instrument
 class ExperimentModel {
  public:
     ExperimentModel(nsx::sptrExperiment);

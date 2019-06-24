@@ -18,10 +18,9 @@
 #include "core/experiment/DataTypes.h"
 #include "gui/graphics/PlottableItem.h"
 
+//! Base class for data cutter items of the detector image
 class CutterItem : public PlottableItem {
  public:
-    // Constructors and destructor
-
     //! Constructs a data cutter
     CutterItem(nsx::sptrDataSet data);
     //! Destructor

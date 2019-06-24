@@ -40,7 +40,7 @@ void CutterItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
         }
         // Otherwise it is a standard move of the item
         else
-            NSXGraphicsItem::mouseMoveEvent(event);
+            SXGraphicsItem::mouseMoveEvent(event);
     }
 }
 

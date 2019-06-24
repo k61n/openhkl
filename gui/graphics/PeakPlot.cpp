@@ -14,12 +14,12 @@
 
 #include "gui/graphics/PeakPlot.h"
 
-NSXPlot* PeakPlot::create(QWidget* parent)
+SXPlot* PeakPlot::create(QWidget* parent)
 {
     return new PeakPlot(parent);
 }
 
-PeakPlot::PeakPlot(QWidget* parent) : NSXPlot(parent)
+PeakPlot::PeakPlot(QWidget* parent) : SXPlot(parent)
 {
     plotLayout()->insertRow(0);
     QPen pen;

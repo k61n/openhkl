@@ -25,7 +25,7 @@ SubframePlot::SubframePlot() : QcrDockWidget {"Plotter"}
 {
     centralWidget = new QcrWidget("adhoc_plotWidget");
     anchor = new QHBoxLayout(centralWidget);
-    plot = new NSXPlot(this);
+    plot = new SXPlot(this);
     anchor->addWidget(plot);
     setWidget(centralWidget);
     connect(

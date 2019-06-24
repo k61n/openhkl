@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/frames/UserDefinedUnitCellIndexerFrame.cpp
-//! @brief     Implements class UserDefinedUnitCellIndexer
+//! @brief     Implements class UserDefinedUnitCellIndexerFrame
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -34,8 +34,8 @@
 #include <QStandardItemModel>
 #include <QVBoxLayout>
 
-UserDefinedUnitCellIndexer::UserDefinedUnitCellIndexer()
-    : QcrFrame {"adhoc_userDefined"}, indexer_ {}
+UserDefinedUnitCellIndexerFrame::UserDefinedUnitCellIndexerFrame()
+    : QcrFrame{"adhoc_userDefined"}, indexer_{}
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -52,7 +52,7 @@ UserDefinedUnitCellIndexer::UserDefinedUnitCellIndexer()
     layout();
 }
 
-void UserDefinedUnitCellIndexer::layout()
+void UserDefinedUnitCellIndexerFrame::layout()
 {
     // defaults_
     nsx::PeakList peaks = gSession->selectedExperiment()->peaks()->allPeaks();
@@ -177,22 +177,23 @@ void UserDefinedUnitCellIndexer::layout()
     // connections
     connect(
         tabwidget->tabBar(), &QTabBar::tabBarDoubleClicked, this,
-        &UserDefinedUnitCellIndexer::slotTabEdited);
+        &UserDefinedUnitCellIndexerFrame::slotTabEdited);
     connect(
         tabwidget, &QcrTabWidget::tabCloseRequested, this,
-        &UserDefinedUnitCellIndexer::slotTabRemoved);
+        &UserDefinedUnitCellIndexerFrame::slotTabRemoved);
 
     connect(
         view->verticalHeader(), &QHeaderView::sectionDoubleClicked, this,
-        &UserDefinedUnitCellIndexer::slotSelectSolution);
+        &UserDefinedUnitCellIndexerFrame::slotSelectSolution);
 
     connect(
-        buttons, &QDialogButtonBox::clicked, this, &UserDefinedUnitCellIndexer::slotActionClicked);
+        buttons, &QDialogButtonBox::clicked, this,
+        &UserDefinedUnitCellIndexerFrame::slotActionClicked);
 
     show();
 }
 
-void UserDefinedUnitCellIndexer::slotActionClicked(QAbstractButton* button)
+void UserDefinedUnitCellIndexerFrame::slotActionClicked(QAbstractButton* button)
 {
     auto button_role = buttons->standardButton(button);
 
@@ -220,7 +221,7 @@ void UserDefinedUnitCellIndexer::slotActionClicked(QAbstractButton* button)
     }
 }
 
-void UserDefinedUnitCellIndexer::slotSelectSolution(int index)
+void UserDefinedUnitCellIndexerFrame::slotSelectSolution(int index)
 {
     nsx::sptrUnitCell selected_unit_cell = solutions_[index].first;
 
@@ -251,7 +252,7 @@ void UserDefinedUnitCellIndexer::slotSelectSolution(int index)
     emit peaks_model->dataChanged(topLeft, bottomRight);
 }
 
-void UserDefinedUnitCellIndexer::slotTabEdited(int index)
+void UserDefinedUnitCellIndexerFrame::slotTabEdited(int index)
 {
     UnitCellWidget* unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabwidget->widget(index));
 
@@ -290,7 +291,7 @@ void UserDefinedUnitCellIndexer::slotTabEdited(int index)
     emit peaks_model->dataChanged(topleft_index, bottomright_index);
 }
 
-void UserDefinedUnitCellIndexer::slotTabRemoved(int index)
+void UserDefinedUnitCellIndexerFrame::slotTabRemoved(int index)
 {
     UnitCellWidget* unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabwidget->widget(index));
     if (!unit_cell_tab)
@@ -301,7 +302,7 @@ void UserDefinedUnitCellIndexer::slotTabRemoved(int index)
     delete unit_cell_tab;
 }
 
-void UserDefinedUnitCellIndexer::resetPeaks()
+void UserDefinedUnitCellIndexerFrame::resetPeaks()
 {
     // Restore for each peak the initial unit cell
     for (auto p : defaults_)
@@ -325,7 +326,7 @@ void UserDefinedUnitCellIndexer::resetPeaks()
     emit peaks_model->dataChanged(topLeft, bottomRight);
 }
 
-void UserDefinedUnitCellIndexer::index()
+void UserDefinedUnitCellIndexerFrame::index()
 {
     gLogger->log("[INFO] Begin indexing");
     QItemSelectionModel* selection_model = peaktable->selectionModel();
@@ -372,7 +373,7 @@ void UserDefinedUnitCellIndexer::index()
     buildUnitCellsTable();
 }
 
-void UserDefinedUnitCellIndexer::buildUnitCellsTable()
+void UserDefinedUnitCellIndexerFrame::buildUnitCellsTable()
 {
     // Create table with 9 columns
     gLogger->log("[INFO] build unit cells table");
@@ -430,7 +431,7 @@ void UserDefinedUnitCellIndexer::buildUnitCellsTable()
     view->setModel(model);
 }
 
-void UserDefinedUnitCellIndexer::accept()
+void UserDefinedUnitCellIndexerFrame::accept()
 {
     UnitCellsModel* unit_cells = gSession->selectedExperiment()->unitCells();
 

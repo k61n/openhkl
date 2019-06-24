@@ -18,6 +18,7 @@
 #include <Eigen/Dense>
 #include <QImage>
 
+//! A colormap for the DetectorScene
 class ColorMap {
  public:
     ColorMap(const std::string& name);
@@ -43,7 +44,10 @@ class ColorMap {
     QImage
     matToImage(const Eigen::ArrayXXd& source, const QRect& rect, double colorMax, bool log = false);
 
+    //! Returns a specific ColorMap
+    //! @param name : the name of the ColorMap that is to be returned
     static ColorMap getColorMap(const std::string& name);
+    //! Returns all names of the ColorMaps
     static std::vector<std::string> getColorMapNames();
 
  private:

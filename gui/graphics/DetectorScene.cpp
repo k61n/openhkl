@@ -309,7 +309,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         }
         // If the item is a NSXTools GI and is selected it will become the current
         // active GI
-        if (NSXGraphicsItem* p = dynamic_cast<NSXGraphicsItem*>(item)) {
+        if (SXGraphicsItem* p = dynamic_cast<SXGraphicsItem*>(item)) {
             if (p->isSelected()) {
                 _lastClickedGI = p;
                 return;
@@ -488,7 +488,7 @@ void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
         return;
     // Get the graphics item on which the user has performed the wheel event
     QGraphicsItem* item = itemAt(event->scenePos(), QTransform());
-    NSXGraphicsItem* p = dynamic_cast<NSXGraphicsItem*>(item);
+    SXGraphicsItem* p = dynamic_cast<SXGraphicsItem*>(item);
 
     if (p == nullptr)
         return;
@@ -512,7 +512,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
         QList<QGraphicsItem*> items = selectedItems();
         int nPeaksUnselected = int(_peak_graphics_items.size());
         for (QGraphicsItem* item : items) {
-            NSXGraphicsItem* p = dynamic_cast<NSXGraphicsItem*>(item);
+            SXGraphicsItem* p = dynamic_cast<SXGraphicsItem*>(item);
 
             if (p == nullptr)
                 continue;

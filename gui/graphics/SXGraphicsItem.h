@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/graphics/SXGraphicsItem.h
-//! @brief     Defines class NSXGraphicsItem
+//! @brief     Defines class SXGraphicsItem
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -19,12 +19,14 @@
 #include <QPen>
 
 class DetectorScene;
-class NSXGraphicsItem : public QGraphicsItem {
+
+//! Base class of the graphics items used in for the detector image
+class SXGraphicsItem : public QGraphicsItem {
  public:
     // Construct a SX graphics item
-    NSXGraphicsItem(QGraphicsItem* parent = 0, bool deletable = false, bool movable = false);
+    SXGraphicsItem(QGraphicsItem* parent = 0, bool deletable = false, bool movable = false);
     // Destructor
-    virtual ~NSXGraphicsItem();
+    virtual ~SXGraphicsItem();
 
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
 

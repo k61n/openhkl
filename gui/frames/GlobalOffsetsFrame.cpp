@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/frames/GlobalOffsetsFrame.cpp
-//! @brief     Implements classes offsetMode, GlobalOffsets
+//! @brief     Implements classes offsetMode, GlobalOffsetsFrame
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -25,7 +25,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-GlobalOffsets::GlobalOffsets(offsetMode mode) : QcrFrame {"adhoc_detectorOffsets"}
+GlobalOffsetsFrame::GlobalOffsetsFrame(offsetMode mode) : QcrFrame {"adhoc_detectorOffsets"}
 {
     if (gSession->selectedExperimentNum() < 0) {
         gLogger->log("[ERROR] No experiment selected");
@@ -40,7 +40,7 @@ GlobalOffsets::GlobalOffsets(offsetMode mode) : QcrFrame {"adhoc_detectorOffsets
     layout();
 }
 
-void GlobalOffsets::layout()
+void GlobalOffsetsFrame::layout()
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -87,18 +87,18 @@ void GlobalOffsets::layout()
 
     above->addWidget(offsets);
     whole->addLayout(above);
-    plot = new NSXPlot(this);
+    plot = new SXPlot(this);
     whole->addWidget(plot);
     buttons = new QDialogButtonBox(
         QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply, Qt::Horizontal);
     whole->addWidget(buttons);
 
-    connect(buttons, &QDialogButtonBox::clicked, this, &GlobalOffsets::actionClicked);
+    connect(buttons, &QDialogButtonBox::clicked, this, &GlobalOffsetsFrame::actionClicked);
 
     show();
 }
 
-void GlobalOffsets::fit()
+void GlobalOffsetsFrame::fit()
 {
     QList<QListWidgetItem*> selected_items = selectedData->selectedItems();
 
@@ -193,7 +193,7 @@ void GlobalOffsets::fit()
     plot->replot();
 }
 
-void GlobalOffsets::actionClicked(QAbstractButton* button)
+void GlobalOffsetsFrame::actionClicked(QAbstractButton* button)
 {
     auto button_role = buttons->standardButton(button);
 

@@ -19,13 +19,14 @@
 #include "gui/graphics/PlottableItem.h"
 #include <Eigen/Dense>
 
+//! Plottable graphics item that represents a peak in the detector image
 class PeakItem : public PlottableItem {
  public:
     PeakItem(nsx::sptrPeak3D peak, int frame);
 
     ~PeakItem() = default;
 
-    void plot(NSXPlot* plot) override;
+    void plot(SXPlot* plot) override;
 
     QRectF boundingRect() const override;
 

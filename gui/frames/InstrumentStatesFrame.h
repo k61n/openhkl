@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/frames/InstrumentStatesFrame.h
-//! @brief     Defines class InstrumentStates
+//! @brief     Defines class InstrumentStatesFrame
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -19,9 +19,10 @@
 #include <QCR/widgets/views.h>
 #include <QListWidget>
 
-class InstrumentStates : public QcrFrame {
+//! Frame which shows the instrument states
+class InstrumentStatesFrame : public QcrFrame {
  public:
-    InstrumentStates();
+    InstrumentStatesFrame();
 
  private:
     void selectedDataChanged(int selectedData);

@@ -24,11 +24,13 @@
 #include <QStack>
 
 class PeakItem;
-class NSXGraphicsItem;
+class SXGraphicsItem;
 
 // For the plotting part, better to have RowMajor matrix to use QImage scanline
 // function and optimize cache hit.
 typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rowMatrix;
+
+//! Master scene of the detector image
 
 //! Master Scene containing the pixmap of the detector counts
 //! and overlayed graphics items (peaks, data cutters, masks ...)
@@ -116,7 +118,7 @@ class DetectorScene : public QGraphicsScene {
     bool _itemSelected;
     QGraphicsPixmapItem* _image;
     std::vector<std::pair<QGraphicsItem*, nsx::IMask*>> _masks;
-    NSXGraphicsItem* _lastClickedGI;
+    SXGraphicsItem* _lastClickedGI;
     bool _logarithmic;
     bool _drawIntegrationRegion;
     std::unique_ptr<ColorMap> _colormap;

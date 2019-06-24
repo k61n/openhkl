@@ -20,7 +20,7 @@
 #include <QStyleOptionGraphicsItem>
 
 EllipseMaskItem::EllipseMaskItem(nsx::sptrDataSet data, nsx::AABB* aabb)
-    : NSXGraphicsItem(nullptr, true, true), _data(data), _aabb(aabb), _from(0, 0), _to(0, 0)
+    : SXGraphicsItem(nullptr, true, true), _data(data), _aabb(aabb), _from(0, 0), _to(0, 0)
 {
     _pen.setWidth(1);
     _pen.setCosmetic(true);
@@ -95,7 +95,7 @@ void EllipseMaskItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
         }
         // Otherwise it is a standard move of the item
         else {
-            NSXGraphicsItem::mouseMoveEvent(event);
+            SXGraphicsItem::mouseMoveEvent(event);
             updateAABB();
         }
     }

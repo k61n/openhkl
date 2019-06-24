@@ -21,8 +21,7 @@
 #include "gui/properties/NumorProperty.h"
 #include "gui/properties/UnitCellProperty.h"
 
-//! Subframe of the main window, with tabs to control detector, fits, &c
-
+//! Part of the main window that contains the property tabs
 class SubframeSetup : public QcrTabWidget {
  public:
     SubframeSetup();

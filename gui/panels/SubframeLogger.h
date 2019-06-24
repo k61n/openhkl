@@ -18,8 +18,7 @@
 #include <QCR/widgets/views.h>
 #include <QTextEdit>
 
-//! Subframe of the main window, with tabs to control detector, fits, &c
-
+//! Subframe of the main window that shows the logger lines
 class SubframeLogger : public QcrDockWidget {
     Q_OBJECT
  public:

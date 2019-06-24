@@ -19,6 +19,7 @@
 #include "gui/properties/SampleShapeProperties.h"
 #include "gui/properties/SourceProperty.h"
 
+//! Tab of the SubframeSetup that contains the detector, source and sample property tabs
 class TabInstrument : public QcrTabWidget {
  public:
     TabInstrument();

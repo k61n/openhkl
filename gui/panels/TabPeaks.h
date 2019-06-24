@@ -20,6 +20,7 @@
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 
+//! Tab with one PeaksTable of the TabPeaks
 class ListTab : public QcrWidget {
  public:
     ListTab(FilteredPeaksModel* filteredModel);
@@ -28,6 +29,7 @@ class ListTab : public QcrWidget {
     PeaksTableView* view;
 };
 
+//! Tab of the SubframeSetup which contains the different peak lists
 class TabPeaks : public QcrWidget {
     Q_OBJECT
  public:

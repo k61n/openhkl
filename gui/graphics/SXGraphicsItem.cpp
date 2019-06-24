@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/graphics/SXGraphicsItem.cpp
-//! @brief     Implements class NSXGraphicsItem
+//! @brief     Implements class SXGraphicsItem
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -19,7 +19,7 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsSceneMouseEvent>
 
-NSXGraphicsItem::NSXGraphicsItem(QGraphicsItem* parent, bool deletable, bool movable)
+SXGraphicsItem::SXGraphicsItem(QGraphicsItem* parent, bool deletable, bool movable)
     : QGraphicsItem(parent)
     , _deletable(deletable)
     , _hovered(false)
@@ -38,9 +38,9 @@ NSXGraphicsItem::NSXGraphicsItem(QGraphicsItem* parent, bool deletable, bool mov
     setAcceptHoverEvents(true);
 }
 
-NSXGraphicsItem::~NSXGraphicsItem() {}
+SXGraphicsItem::~SXGraphicsItem() {}
 
-void NSXGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
+void SXGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
     Q_UNUSED(event);
     _hovered = true;
@@ -48,7 +48,7 @@ void NSXGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
     update();
 }
 
-void NSXGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
+void SXGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 {
     Q_UNUSED(event);
     _hovered = false;
@@ -56,7 +56,7 @@ void NSXGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
     update();
 }
 
-bool NSXGraphicsItem::isInScene(const QPointF& pos) const
+bool SXGraphicsItem::isInScene(const QPointF& pos) const
 {
     QRectF rect = scene()->sceneRect();
     return (
@@ -64,43 +64,43 @@ bool NSXGraphicsItem::isInScene(const QPointF& pos) const
         && pos.y() < rect.bottom());
 }
 
-void NSXGraphicsItem::setDeletable(bool deletable)
+void SXGraphicsItem::setDeletable(bool deletable)
 {
     _deletable = deletable;
 }
 
-void NSXGraphicsItem::setMovable(bool movable)
+void SXGraphicsItem::setMovable(bool movable)
 {
     _movable = movable;
     setFlag(QGraphicsItem::ItemIsMovable, _movable);
 }
 
-bool NSXGraphicsItem::isDeletable() const
+bool SXGraphicsItem::isDeletable() const
 {
     return _deletable;
 }
 
-bool NSXGraphicsItem::isMovable() const
+bool SXGraphicsItem::isMovable() const
 {
     return _movable;
 }
 
-void NSXGraphicsItem::showLabel(bool show)
+void SXGraphicsItem::showLabel(bool show)
 {
     _label_gi->setVisible(show);
 }
 
-void NSXGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
+void SXGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     Q_UNUSED(event)
 }
 
-void NSXGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent* event)
+void SXGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent* event)
 {
     Q_UNUSED(event)
 }
 
-void NSXGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+void SXGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     if (!_movable || !isVisible() || !isSelected())
         return;

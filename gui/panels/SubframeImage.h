@@ -19,8 +19,7 @@
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 
-//! Subframe of the main window, with tabs to control detector, fits, &c
-
+//! Part of the main window that contains the detector view
 class ImageWidget : public QcrWidget {
  public:
     ImageWidget();
@@ -37,6 +36,7 @@ class ImageWidget : public QcrWidget {
     QFrame* intensityLayout;
 };
 
+//! Dock widget of the main window that contains the ImageWidget
 class SubframeImage : public QcrDockWidget {
  public:
     SubframeImage();

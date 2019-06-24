@@ -29,7 +29,7 @@ CutSliceItem::CutSliceItem(nsx::sptrDataSet data, bool horizontal)
 
 CutSliceItem::~CutSliceItem() {}
 
-void CutSliceItem::plot(NSXPlot* plot)
+void CutSliceItem::plot(SXPlot* plot)
 {
     SimplePlot* p = dynamic_cast<SimplePlot*>(plot);
     if (!p)

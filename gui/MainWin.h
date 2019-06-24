@@ -35,8 +35,11 @@ class MainWin : public QcrMainWindow {
 
     //! reset window geometry to initial state
     void resetViews();
+    //! Refreshes the parts of the main window that depend on the data
     void onDataChanged();
+    //! Refreshes the parts of the main window that depend on the experiment
     void onExperimentChanged();
+    //! Refreshes the parts of the main window that depend on the peaks
     void onPeaksChanged();
     //! change the detector image view
     void changeView(int option) { dockImage_->centralWidget->changeView(option); }

@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/dialogs/PeakFilterDialog.cpp
-//! @brief     Implements class PeakFilter
+//! @brief     Implements class PeakFilterDialog
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -25,7 +25,7 @@
 #include <QSpacerItem>
 #include <QVBoxLayout>
 
-PeakFilter::PeakFilter() : QDialog {gGui}
+PeakFilterDialog::PeakFilterDialog() : QDialog {gGui}
 {
     if (gSession->selectedExperimentNum() < 0) {
         gLogger->log("## No experiment selected");
@@ -43,13 +43,13 @@ PeakFilter::PeakFilter() : QDialog {gGui}
     doLayout();
 }
 
-PeakFilter::~PeakFilter()
+PeakFilterDialog::~PeakFilterDialog()
 {
     if (model_)
         delete model_;
 }
 
-void PeakFilter::doLayout()
+void PeakFilterDialog::doLayout()
 {
     QVBoxLayout* whole = new QVBoxLayout(this);
 
@@ -162,12 +162,12 @@ void PeakFilter::doLayout()
         peaks_ = gSession->selectedExperiment()->peaks()->selectedPeakLists(i)->getAllListPeaks();
         model_->setPeaks(peaks_);
     });
-    connect(buttons, &QDialogButtonBox::clicked, this, &PeakFilter::slotActionClicked);
+    connect(buttons, &QDialogButtonBox::clicked, this, &PeakFilterDialog::slotActionClicked);
 
     show();
 }
 
-void PeakFilter::filterPeaks()
+void PeakFilterDialog::filterPeaks()
 {
     // TODO: filter peaks
 
@@ -230,7 +230,7 @@ void PeakFilter::filterPeaks()
     model_->setPeaks(filtered_peaks);
 }
 
-void PeakFilter::accept()
+void PeakFilterDialog::accept()
 {
     const nsx::PeakList& filtered_peaks = model_->peaks();
 
@@ -256,7 +256,7 @@ void PeakFilter::accept()
     QDialog::accept();
 }
 
-void PeakFilter::slotActionClicked(QAbstractButton* button)
+void PeakFilterDialog::slotActionClicked(QAbstractButton* button)
 {
     auto button_role = buttons->standardButton(button);
 

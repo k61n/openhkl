@@ -19,6 +19,7 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 
+//! Dialog to get the parameters to the selected raw data
 class RawDataDialog : public QDialog {
  public:
     RawDataDialog();

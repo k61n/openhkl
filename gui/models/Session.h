@@ -19,6 +19,7 @@
 
 extern class Session* gSession; //!< global handle for Session
 
+//! Class which handles the organization of the gui
 class Session {
  public:
     Session();

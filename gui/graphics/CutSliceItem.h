@@ -17,10 +17,9 @@
 
 #include "gui/graphics/CutterItem.h"
 
+//! Cutter item that cuts a horizontal or vertical slice
 class CutSliceItem : public CutterItem {
  public:
-    // Constructors and destructor
-
     //! Construct a data slicer
     CutSliceItem(nsx::sptrDataSet, bool horizontal = true);
     //! The destructor
@@ -39,7 +38,7 @@ class CutSliceItem : public CutterItem {
     // Other methods
 
     //! Plot the item
-    void plot(NSXPlot*) override;
+    void plot(SXPlot*) override;
     //! Return true if the slice is horizontal.
     bool isHorizontal() const;
     //! Paint the slice
