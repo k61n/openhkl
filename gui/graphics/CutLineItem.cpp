@@ -22,7 +22,7 @@ CutLineItem::CutLineItem(nsx::sptrDataSet data) : CutterItem(data), _nPoints(10)
 
 CutLineItem::~CutLineItem() {}
 
-void CutLineItem::plot(NSXPlot* plot)
+void CutLineItem::plot(SXPlot* plot)
 {
     SimplePlot* p = dynamic_cast<SimplePlot*>(plot);
     if (!p)

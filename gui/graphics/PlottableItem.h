@@ -17,14 +17,15 @@
 
 #include "gui/graphics/SXGraphicsItem.h"
 
-class NSXPlot;
+class SXPlot;
 
-class PlottableItem : public NSXGraphicsItem {
+//! Base class for all graphics items which can be plotted. Inherits from SXGraphicsItem
+class PlottableItem : public SXGraphicsItem {
  public:
     PlottableItem(QGraphicsItem* parent = 0, bool deletable = true, bool movable = false);
     virtual ~PlottableItem();
 
-    virtual void plot(NSXPlot* plot) = 0;
+    virtual void plot(SXPlot* plot) = 0;
 
     // Getters and setters
 
@@ -33,7 +34,7 @@ class PlottableItem : public NSXGraphicsItem {
 
     // Other methods
 
-    bool isPlottable(NSXPlot* plot) const;
+    bool isPlottable(SXPlot* plot) const;
 };
 
 #endif // GUI_GRAPHICS_PLOTTABLEITEM_H

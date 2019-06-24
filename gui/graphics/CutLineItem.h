@@ -17,13 +17,14 @@
 
 #include "gui/graphics/CutterItem.h"
 
+//! Cutter item that cuts the data as a line
 class CutLineItem : public CutterItem {
  public:
     explicit CutLineItem(nsx::sptrDataSet data);
 
     ~CutLineItem();
 
-    void plot(NSXPlot* plot) override;
+    void plot(SXPlot* plot) override;
 
     void wheelEvent(QGraphicsSceneWheelEvent* event) override;
 

@@ -17,10 +17,11 @@
 
 #include "gui/graphics/SXPlot.h"
 
-class SimplePlot : public NSXPlot {
+//! Specific plot type of the SXPlot
+class SimplePlot : public SXPlot {
     Q_OBJECT
  public:
-    static NSXPlot* create(QWidget* parent);
+    static SXPlot* create(QWidget* parent);
 
     explicit SimplePlot(QWidget* parent = 0);
 

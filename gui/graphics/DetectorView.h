@@ -19,6 +19,7 @@
 
 class DetectorScene;
 
+//! View and control the detector image
 class DetectorView : public QGraphicsView {
     Q_OBJECT
  public:

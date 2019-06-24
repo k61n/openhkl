@@ -17,13 +17,13 @@
 #include "gui/graphics/SXPlot.h"
 
 PlottableItem::PlottableItem(QGraphicsItem* parent, bool deletable, bool movable)
-    : NSXGraphicsItem(parent, deletable, movable)
+    : SXGraphicsItem(parent, deletable, movable)
 {
 }
 
 PlottableItem::~PlottableItem() {}
 
-bool PlottableItem::isPlottable(NSXPlot* plot) const
+bool PlottableItem::isPlottable(SXPlot* plot) const
 {
     if (!plot)
         return false;

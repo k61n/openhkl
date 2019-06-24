@@ -19,7 +19,7 @@
 #include "base/utils/Singleton.h"
 #include "gui/graphics/SXPlot.h"
 
-class PlotFactory : public nsx::Factory<NSXPlot, std::string, QWidget*>,
+class PlotFactory : public nsx::Factory<SXPlot, std::string, QWidget*>,
                     public nsx::Singleton<PlotFactory, nsx::Constructor, nsx::Destructor> {
  private:
     PlotFactory();

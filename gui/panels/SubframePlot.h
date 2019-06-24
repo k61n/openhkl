@@ -28,7 +28,7 @@ class SubframePlot : public QcrDockWidget {
     void exportPlot();
 
  private:
-    NSXPlot* plot;
+    SXPlot* plot;
     QHBoxLayout* anchor;
     QcrWidget* centralWidget;
 };

@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/graphics/SXPlot.h
-//! @brief     Defines class NSXPlot
+//! @brief     Defines class SXPlot
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -19,14 +19,15 @@
 
 class PlottableItem;
 
-class NSXPlot : public QCustomPlot {
+//! Base class of the plot types of the SubframePlot
+class SXPlot : public QCustomPlot {
     Q_OBJECT
  public:
-    static NSXPlot* create(QWidget* parent);
+    static SXPlot* create(QWidget* parent);
 
-    explicit NSXPlot(QWidget* parent = 0);
+    explicit SXPlot(QWidget* parent = 0);
     void keyPressEvent(QKeyEvent*);
-    virtual ~NSXPlot();
+    virtual ~SXPlot();
 
     // Getters and setters
 
@@ -37,14 +38,14 @@ class NSXPlot : public QCustomPlot {
     void mousePress();
     //
     void mouseWheel();
-    // Update the plot
+    //! Update the plot
     virtual void update(PlottableItem* item);
     void titleDoubleClick(QMouseEvent* event, QCPPlotTitle* title);
-    // Double click on the legend
+    //! Double click on the legend
     void legendDoubleClick(QCPLegend* legend, QCPAbstractLegendItem* item);
-    // Context menu
+    //! Context menu
     void setmenuRequested(QPoint);
-    // Export the graphs into column ASCII format
+    //! Export the graphs into column ASCII format
     void exportToAscii();
 
  private:

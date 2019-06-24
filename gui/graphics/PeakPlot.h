@@ -17,10 +17,11 @@
 
 #include "gui/graphics/SXPlot.h"
 
-class PeakPlot : public NSXPlot {
+//! Specific plot type of SXPlot
+class PeakPlot : public SXPlot {
     Q_OBJECT
  public:
-    static NSXPlot* create(QWidget* parent);
+    static SXPlot* create(QWidget* parent);
 
     explicit PeakPlot(QWidget* parent = 0);
 

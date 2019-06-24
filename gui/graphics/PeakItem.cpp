@@ -139,7 +139,7 @@ void PeakItem::showArea(bool flag)
     _show_center = flag;
 }
 
-void PeakItem::plot(NSXPlot* plot)
+void PeakItem::plot(SXPlot* plot)
 {
     PeakPlot* p = dynamic_cast<PeakPlot*>(plot);
     if (!p)

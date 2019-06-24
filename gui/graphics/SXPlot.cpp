@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/graphics/SXPlot.cpp
-//! @brief     Implements class NSXPlot
+//! @brief     Implements class SXPlot
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -20,7 +20,7 @@
 #include <QPainter>
 #include <fstream>
 
-NSXPlot::NSXPlot(QWidget* parent) : QCustomPlot(parent)
+SXPlot::SXPlot(QWidget* parent) : QCustomPlot(parent)
 {
     legend->setSelectableParts(QCPLegend::spItems);
     connect(this, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress()));
@@ -37,14 +37,14 @@ NSXPlot::NSXPlot(QWidget* parent) : QCustomPlot(parent)
     connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(setmenuRequested(QPoint)));
 }
 
-void NSXPlot::update(PlottableItem* item) {Q_UNUSED(item)}
+void SXPlot::update(PlottableItem* item) {Q_UNUSED(item)}
 
-std::string NSXPlot::getType() const
+std::string SXPlot::getType() const
 {
     return "";
 }
 
-void NSXPlot::copyViewToClipboard()
+void SXPlot::copyViewToClipboard()
 {
     // Create the image with the exact size of the shrunk scene
     QImage image(this->rect().size(), QImage::Format_ARGB32);
@@ -57,13 +57,13 @@ void NSXPlot::copyViewToClipboard()
     QApplication::clipboard()->setImage(image, QClipboard::Clipboard);
 }
 
-void NSXPlot::keyPressEvent(QKeyEvent* event)
+void SXPlot::keyPressEvent(QKeyEvent* event)
 {
     if (event->matches(QKeySequence::Copy))
         copyViewToClipboard();
 }
 
-void NSXPlot::mousePress()
+void SXPlot::mousePress()
 {
     if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
         axisRect()->setRangeDrag(xAxis->orientation());
@@ -73,7 +73,7 @@ void NSXPlot::mousePress()
         axisRect()->setRangeDrag(Qt::Horizontal | Qt::Vertical);
 }
 
-void NSXPlot::mouseWheel()
+void SXPlot::mouseWheel()
 {
     if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
         axisRect()->setRangeZoom(xAxis->orientation());
@@ -83,9 +83,9 @@ void NSXPlot::mouseWheel()
         axisRect()->setRangeZoom(Qt::Horizontal | Qt::Vertical);
 }
 
-NSXPlot::~NSXPlot() {}
+SXPlot::~SXPlot() {}
 
-void NSXPlot::titleDoubleClick(QMouseEvent* event, QCPPlotTitle* title)
+void SXPlot::titleDoubleClick(QMouseEvent* event, QCPPlotTitle* title)
 {
     Q_UNUSED(event)
     // Set the plot title by double clicking on it
@@ -98,7 +98,7 @@ void NSXPlot::titleDoubleClick(QMouseEvent* event, QCPPlotTitle* title)
     }
 }
 
-void NSXPlot::legendDoubleClick(QCPLegend* legend, QCPAbstractLegendItem* item)
+void SXPlot::legendDoubleClick(QCPLegend* legend, QCPAbstractLegendItem* item)
 {
     // Rename a graph by double clicking on its legend item
     Q_UNUSED(legend)
@@ -116,7 +116,7 @@ void NSXPlot::legendDoubleClick(QCPLegend* legend, QCPAbstractLegendItem* item)
     }
 }
 
-void NSXPlot::exportToAscii()
+void SXPlot::exportToAscii()
 {
     int ngraphs = this->graphCount();
 
@@ -154,7 +154,7 @@ void NSXPlot::exportToAscii()
     file.close();
 }
 
-void NSXPlot::setmenuRequested(QPoint pos)
+void SXPlot::setmenuRequested(QPoint pos)
 {
     // Add menu to export the graphs to ASCII if graphs are present
     if (this->graphCount()) {

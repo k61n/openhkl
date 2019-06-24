@@ -87,7 +87,7 @@ void GlobalOffsetsFrame::layout()
 
     above->addWidget(offsets);
     whole->addLayout(above);
-    plot = new NSXPlot(this);
+    plot = new SXPlot(this);
     whole->addWidget(plot);
     buttons = new QDialogButtonBox(
         QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply, Qt::Horizontal);

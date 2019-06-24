@@ -24,7 +24,7 @@
 #include <QStack>
 
 class PeakItem;
-class NSXGraphicsItem;
+class SXGraphicsItem;
 
 // For the plotting part, better to have RowMajor matrix to use QImage scanline
 // function and optimize cache hit.
@@ -116,7 +116,7 @@ class DetectorScene : public QGraphicsScene {
     bool _itemSelected;
     QGraphicsPixmapItem* _image;
     std::vector<std::pair<QGraphicsItem*, nsx::IMask*>> _masks;
-    NSXGraphicsItem* _lastClickedGI;
+    SXGraphicsItem* _lastClickedGI;
     bool _logarithmic;
     bool _drawIntegrationRegion;
     std::unique_ptr<ColorMap> _colormap;

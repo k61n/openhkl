@@ -22,7 +22,7 @@
 /*! Creates a mask that will be used to unselect/select peaks whether their
  * intercept or not the mask
  */
-class EllipseMaskItem : public NSXGraphicsItem {
+class EllipseMaskItem : public SXGraphicsItem {
  public:
     // Constructs a mask
     EllipseMaskItem(nsx::sptrDataSet data, nsx::AABB* aabb);

@@ -40,7 +40,7 @@ class GlobalOffsetsFrame : public QcrFrame {
     QTableWidget* offsets;
     QDialogButtonBox* buttons;
     offsetMode mode_;
-    NSXPlot* plot;
+    SXPlot* plot;
 };
 
 #endif // GUI_FRAMES_GLOBALOFFSETSFRAME_H
