@@ -26,7 +26,7 @@ SourceProperty::SourceProperty() : QcrWidget("sourceProperty")
     type = new QcrComboBox("sourcetype", new QcrCell<int>(0), {"Neutron"});
     type->setEnabled(false);
 
-    monochromators = new QcrComboBox("monochromators", new QcrCell<int>(0), [this]() {
+    monochromators = new QcrComboBox("monochromators", new QcrCell<int>(0), []() {
         QStringList list;
         int exp = gSession->selectedExperimentNum();
         if (exp < 0)

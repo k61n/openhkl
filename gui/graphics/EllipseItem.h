@@ -35,14 +35,14 @@ class EllipseMaskItem : public NSXGraphicsItem {
     //! If the item is selected when the event is triggered then the item will be
     //! moved on the scene Otherwise, that means that the item is being drawn and
     //! then the move event corresponds to a resize
-    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
     //! Handles a mouse wheel event
-    void wheelEvent(QGraphicsSceneWheelEvent* event);
+    void wheelEvent(QGraphicsSceneWheelEvent* event) override;
 
     // Getters and setters
 
     //! Returns the bounding rectangle of the mask
-    QRectF boundingRect() const;
+    QRectF boundingRect() const override;
     nsx::AABB* getAABB();
     //! Sets the starting corner of the mask
     void setFrom(const QPointF& pos);
@@ -52,7 +52,7 @@ class EllipseMaskItem : public NSXGraphicsItem {
     // Other methods
 
     //! Paint the slice
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
  protected:
     //! The data on which the cutter will act upon
