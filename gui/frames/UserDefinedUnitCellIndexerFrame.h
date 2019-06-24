@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/frames/UserDefinedUnitCellIndexerFrame.h
-//! @brief     Defines class UserDefinedUnitCellIndexer
+//! @brief     Defines class UserDefinedUnitCellIndexerFrame
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -21,9 +21,10 @@
 #include <QCR/widgets/views.h>
 #include <QDialogButtonBox>
 
-class UserDefinedUnitCellIndexer : public QcrFrame {
+//! Frame which shows the settings for the user defined unit cell indexer
+class UserDefinedUnitCellIndexerFrame : public QcrFrame {
  public:
-    UserDefinedUnitCellIndexer();
+    UserDefinedUnitCellIndexerFrame();
 
  private:
     void layout();

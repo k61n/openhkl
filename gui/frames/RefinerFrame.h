@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/frames/RefinerFrame.h
-//! @brief     Defines classes Refiner, RefinerFitWidget
+//! @brief     Defines classes RefinerFrame, RefinerFitWidget
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -22,9 +22,10 @@
 #include <QDialogButtonBox>
 #include <QListWidget>
 
-class Refiner : public QcrFrame {
+//! Frame which shows the settings for the refiner
+class RefinerFrame : public QcrFrame {
  public:
-    Refiner();
+    RefinerFrame();
 
  private:
     void layout();
@@ -45,6 +46,7 @@ class Refiner : public QcrFrame {
     QDialogButtonBox* buttons;
 };
 
+//! Tab of the RefinerFrame which shows the refiner fit after refining
 class RefinerFitWidget : public QcrWidget {
  public:
     RefinerFitWidget(const std::map<nsx::sptrDataSet, nsx::Refiner>& refiners);

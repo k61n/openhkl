@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/dialogs/PeakFilterDialog.h
-//! @brief     Defines class PeakFilter
+//! @brief     Defines class PeakFilterDialog
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -19,10 +19,11 @@
 #include <QCR/widgets/controls.h>
 #include <QDialogButtonBox>
 
-class PeakFilter : public QDialog {
+//! Dialog to filter a peak list
+class PeakFilterDialog : public QDialog {
  public:
-    PeakFilter();
-    ~PeakFilter();
+    PeakFilterDialog();
+    ~PeakFilterDialog();
 
  public slots:
     void accept() override;

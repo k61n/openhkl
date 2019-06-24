@@ -18,6 +18,7 @@
 #include <QDialog>
 #include <QTableView>
 
+//! Shows a table with isotopes and their properties
 class IsotopesDatabaseDialog : public QDialog {
  public:
     IsotopesDatabaseDialog();

@@ -17,6 +17,7 @@
 
 #include <QCR/widgets/views.h>
 
+//! Tab of the SubframeSetup that contains the peak library
 class TabPeaklibrary : public QcrWidget {
  public:
     TabPeaklibrary();

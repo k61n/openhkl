@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/frames/AutoIndexerFrame.cpp
-//! @brief     Implements class AutoIndexer
+//! @brief     Implements class AutoIndexerFrame
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -28,7 +28,7 @@
 #include <QStandardItemModel>
 #include <QVBoxLayout>
 
-AutoIndexer::AutoIndexer() : QcrFrame {"autoIndexer"}
+AutoIndexerFrame::AutoIndexerFrame() : QcrFrame {"autoIndexer"}
 {
     setAttribute(Qt::WA_DeleteOnClose, true);
     setWindowFlags(Qt::Window);
@@ -48,7 +48,7 @@ AutoIndexer::AutoIndexer() : QcrFrame {"autoIndexer"}
     layout();
 }
 
-void AutoIndexer::layout()
+void AutoIndexerFrame::layout()
 {
     nsx::IndexerParameters indexParams;
 
@@ -138,17 +138,17 @@ void AutoIndexer::layout()
     whole->addWidget(buttons);
 
     // connections
-    connect(tabs->tabBar(), &QTabBar::tabBarDoubleClicked, this, &AutoIndexer::slotTabEdited);
-    connect(tabs, &QcrTabWidget::tabCloseRequested, this, &AutoIndexer::slotTabRemoved);
+    connect(tabs->tabBar(), &QTabBar::tabBarDoubleClicked, this, &AutoIndexerFrame::slotTabEdited);
+    connect(tabs, &QcrTabWidget::tabCloseRequested, this, &AutoIndexerFrame::slotTabRemoved);
     connect(
         solutions->verticalHeader(), &QHeaderView::sectionDoubleClicked, this,
-        &AutoIndexer::selectSolution);
-    connect(buttons, &QDialogButtonBox::clicked, this, &AutoIndexer::slotActionClicked);
+        &AutoIndexerFrame::selectSolution);
+    connect(buttons, &QDialogButtonBox::clicked, this, &AutoIndexerFrame::slotActionClicked);
 
     show();
 }
 
-void AutoIndexer::slotTabRemoved(int index)
+void AutoIndexerFrame::slotTabRemoved(int index)
 {
     UnitCellWidget* unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabs->widget(index));
     if (!unit_cell_tab)
@@ -159,7 +159,7 @@ void AutoIndexer::slotTabRemoved(int index)
     delete unit_cell_tab;
 }
 
-void AutoIndexer::slotTabEdited(int index)
+void AutoIndexerFrame::slotTabEdited(int index)
 {
     UnitCellWidget* unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabs->widget(index));
 
@@ -195,7 +195,7 @@ void AutoIndexer::slotTabEdited(int index)
     emit model->dataChanged(topleft_index, bottomright_index);
 }
 
-void AutoIndexer::slotActionClicked(QAbstractButton* button)
+void AutoIndexerFrame::slotActionClicked(QAbstractButton* button)
 {
     auto button_role = buttons->standardButton(button);
 
@@ -223,7 +223,7 @@ void AutoIndexer::slotActionClicked(QAbstractButton* button)
     }
 }
 
-void AutoIndexer::resetUnitCell()
+void AutoIndexerFrame::resetUnitCell()
 {
     // Restore for each peak the initial unit cell
     for (auto p : _defaults)
@@ -243,7 +243,7 @@ void AutoIndexer::resetUnitCell()
     emit model->dataChanged(topLeft, bottomRight);
 }
 
-void AutoIndexer::accept()
+void AutoIndexerFrame::accept()
 {
     UnitCellsModel* unit_cells_item = gSession->selectedExperiment()->unitCells();
 
@@ -259,7 +259,7 @@ void AutoIndexer::accept()
     close();
 }
 
-void AutoIndexer::run()
+void AutoIndexerFrame::run()
 {
     QItemSelectionModel* selection_model = peaks->selectionModel();
 
@@ -317,7 +317,7 @@ void AutoIndexer::run()
     buildSolutionsTable();
 }
 
-void AutoIndexer::buildSolutionsTable()
+void AutoIndexerFrame::buildSolutionsTable()
 {
     // Create table with 9 columns
     QStandardItemModel* model = new QStandardItemModel(_solutions.size(), 9, this);
@@ -371,7 +371,7 @@ void AutoIndexer::buildSolutionsTable()
     solutions->setModel(model);
 }
 
-void AutoIndexer::selectSolution(int index)
+void AutoIndexerFrame::selectSolution(int index)
 {
     nsx::sptrUnitCell selected_unit_cell = _solutions[index].first;
 

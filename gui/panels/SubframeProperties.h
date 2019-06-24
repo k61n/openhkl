@@ -17,6 +17,7 @@
 
 #include "gui/panels/SubframeSetup.h"
 
+//! Part of the main window that contains the setup
 class SubframeProperties : public QcrDockWidget {
  public:
     SubframeProperties();

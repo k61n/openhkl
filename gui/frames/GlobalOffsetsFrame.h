@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/frames/GlobalOffsetsFrame.h
-//! @brief     Defines classes offsetMode, GlobalOffsets
+//! @brief     Defines classes offsetMode, GlobalOffsetsFrame
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -24,9 +24,10 @@
 
 enum class offsetMode { DETECTOR, SAMPLE };
 
-class GlobalOffsets : public QcrFrame {
+//! Frame which shows the global offsets of the detector or sample
+class GlobalOffsetsFrame : public QcrFrame {
  public:
-    GlobalOffsets(offsetMode mode);
+    GlobalOffsetsFrame(offsetMode mode);
 
  private:
     void layout();

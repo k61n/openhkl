@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/frames/PeakFinderFrame.h
-//! @brief     Defines classes FoundPeaks, PeakFinder
+//! @brief     Defines classes FoundPeaks, PeakFinderFrame
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -22,9 +22,11 @@
 #include <QDialogButtonBox>
 #include <QTableWidget>
 
+//! Tab of the PeakFinderFrame which contains the found peaks
 class FoundPeaks : public QcrWidget {
  public:
     FoundPeaks(nsx::PeakList, const QString&);
+    //! Returns the selected peaks as a PeakList
     nsx::PeakList selectedPeaks();
 
  private:
@@ -32,10 +34,13 @@ class FoundPeaks : public QcrWidget {
     QcrCheckBox* keepSelectedPeaks;
 };
 
-class PeakFinder : public QcrFrame {
+//! Frame which shows the settings to find peaks
+class PeakFinderFrame : public QcrFrame {
  public:
-    PeakFinder();
+    PeakFinderFrame();
+    //! Change the convolution parameters
     void updateConvolutionParameters();
+    //! Find peaks
     void run();
     std::map<std::string, double> convolutionParameters();
 

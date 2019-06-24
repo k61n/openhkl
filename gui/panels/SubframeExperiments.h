@@ -20,7 +20,6 @@
 #include <QCR/widgets/views.h>
 
 //! The model for ExperimentsView
-
 class ExperimentsModel : public CheckTableModel {
  public:
     ExperimentsModel() : CheckTableModel {"experiments"} {}

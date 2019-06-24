@@ -19,6 +19,7 @@
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 
+//! Tab of an indexer frame which shows the parameters of the selected unit cell
 class UnitCellWidget : public QcrWidget {
     Q_OBJECT
  public:

@@ -19,8 +19,7 @@
 #include <QCR/widgets/views.h>
 #include <QHBoxLayout>
 
-//! Subframe of the main window, with tabs to control detector, fits, &c
-
+//! Part of the main window that contains the plot
 class SubframePlot : public QcrDockWidget {
  public:
     SubframePlot();

@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/frames/AutoIndexerFrame.h
-//! @brief     Defines class AutoIndexer
+//! @brief     Defines class AutoIndexerFrame
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -21,9 +21,10 @@
 #include <QCR/widgets/views.h>
 #include <QDialogButtonBox>
 
-class AutoIndexer : public QcrFrame {
+//! Frame which shows the settings for the AutoIndexer
+class AutoIndexerFrame : public QcrFrame {
  public:
-    AutoIndexer();
+    AutoIndexerFrame();
 
  private:
     void layout();

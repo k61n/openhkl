@@ -61,8 +61,8 @@ void Actions::setupData()
     loadData.setTriggerHook([]() { gSession->loadData(); });
     removeData.setTriggerHook([]() { gSession->removeData(); });
     importRaw.setTriggerHook([]() { gSession->loadRawData(); });
-    findPeaks.setTriggerHook([]() { new PeakFinder; });
-    instrumentStates.setTriggerHook([]() { new InstrumentStates; });
+    findPeaks.setTriggerHook([]() { new PeakFinderFrame; });
+    instrumentStates.setTriggerHook([]() { new InstrumentStatesFrame; });
     convertHDF5.setTriggerHook([]() {
         if (gSession->selectedExperimentNum() < 0)
             return;
@@ -103,8 +103,8 @@ void Actions::setupInstrument()
         properties->setCurrent(0);
         tab->setCurrent(i);
     });
-    goniometer.setTriggerHook([]() { new GlobalOffsets(offsetMode::DETECTOR); });
-    sampleGoniometer.setTriggerHook([]() { new GlobalOffsets(offsetMode::SAMPLE); });
+    goniometer.setTriggerHook([]() { new GlobalOffsetsFrame(offsetMode::DETECTOR); });
+    sampleGoniometer.setTriggerHook([]() { new GlobalOffsetsFrame(offsetMode::SAMPLE); });
     isotopesDatabase.setTriggerHook([]() {
         IsotopesDatabaseDialog* iso = new IsotopesDatabaseDialog;
         iso->exec();
@@ -141,9 +141,9 @@ void Actions::setupPeaks()
         int i = properties->indexOf(properties->peaks);
         properties->setCurrent(i);
     });
-    autoIndexer.setTriggerHook([]() { new AutoIndexer; });
-    filterPeaks.setTriggerHook([]() { new PeakFilter; });
-    userDefinedIndexer.setTriggerHook([]() { new UserDefinedUnitCellIndexer; });
+    autoIndexer.setTriggerHook([]() { new AutoIndexerFrame; });
+    filterPeaks.setTriggerHook([]() { new PeakFilterDialog; });
+    userDefinedIndexer.setTriggerHook([]() { new UserDefinedUnitCellIndexerFrame; });
     assignUnitCell.setTriggerHook([]() {
         if (gSession->selectedExperimentNum() < 0) {
             gLogger->log("[ERROR] No experiment selected");
@@ -156,7 +156,7 @@ void Actions::setupPeaks()
         // gSession->selectedExperiment()->peaks()->autoAssignUnitCell();
     });
     buildShapeLibrary.setTriggerHook([]() { new ShapeLibraryDialog; });
-    refine.setTriggerHook([]() { new Refiner; });
+    refine.setTriggerHook([]() { new RefinerFrame; });
     normalize.setTriggerHook([]() {
         if (gSession->selectedExperimentNum() < 0)
             return;

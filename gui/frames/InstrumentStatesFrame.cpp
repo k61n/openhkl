@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/frames/InstrumentStatesFrame.cpp
-//! @brief     Implements class InstrumentStates
+//! @brief     Implements class InstrumentStatesFrame
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -24,7 +24,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-InstrumentStates::InstrumentStates() : QcrFrame {"instrumentStates"}
+InstrumentStatesFrame::InstrumentStatesFrame() : QcrFrame{"instrumentStates"}
 {
     if (gSession->selectedExperimentNum() < 0) {
         gLogger->log("[ERROR] No experiment selected");
@@ -255,12 +255,13 @@ InstrumentStates::InstrumentStates() : QcrFrame {"instrumentStates"}
         selectedFrameChanged(i);
         frameIndex->setCellValue(i);
     });
-    connect(data, &QListWidget::currentRowChanged, this, &InstrumentStates::selectedDataChanged);
+    connect(data, &QListWidget::currentRowChanged, 
+            this, &InstrumentStatesFrame::selectedDataChanged);
     selectedDataChanged(0);
     show();
 }
 
-void InstrumentStates::selectedDataChanged(int selectedData)
+void InstrumentStatesFrame::selectedDataChanged(int selectedData)
 {
     Q_UNUSED(selectedData)
     QListWidgetItem* currentItem = data->currentItem();
@@ -272,7 +273,7 @@ void InstrumentStates::selectedDataChanged(int selectedData)
     selectedFrameChanged(0);
 }
 
-void InstrumentStates::selectedFrameChanged(int selectedFrame)
+void InstrumentStatesFrame::selectedFrameChanged(int selectedFrame)
 {
     nsx::sptrDataSet currentData =
         data->currentItem()->data(Qt::UserRole).value<nsx::sptrDataSet>();

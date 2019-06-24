@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/frames/PeakFinderFrame.cpp
-//! @brief     Implements classes FoundPeaks, PeakFinder
+//! @brief     Implements classes FoundPeaks, PeakFinderFrame
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -96,7 +96,7 @@ nsx::PeakList FoundPeaks::selectedPeaks()
 
 //  ***********************************************************************************************
 
-PeakFinder::PeakFinder() : QcrFrame {"peakFinder"}, pixmap(nullptr)
+PeakFinderFrame::PeakFinderFrame() : QcrFrame {"peakFinder"}, pixmap(nullptr)
 {
     if (gSession->selectedExperimentNum() < 0) {
         gLogger->log("[ERROR] No experiment selected");
@@ -177,7 +177,7 @@ PeakFinder::PeakFinder() : QcrFrame {"peakFinder"}, pixmap(nullptr)
     buttons = new QDialogButtonBox(
         QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply, Qt::Horizontal,
         this);
-    connect(buttons, &QDialogButtonBox::clicked, this, &PeakFinder::doActions);
+    connect(buttons, &QDialogButtonBox::clicked, this, &PeakFinderFrame::doActions);
     whole->addWidget(buttons);
 
     // else
@@ -232,7 +232,7 @@ PeakFinder::PeakFinder() : QcrFrame {"peakFinder"}, pixmap(nullptr)
     show();
 }
 
-void PeakFinder::updateConvolutionParameters()
+void PeakFinderFrame::updateConvolutionParameters()
 {
     std::string kernelName = convolutionKernel->currentText().toStdString();
     nsx::ConvolverFactory convolutionKernelFactory;
@@ -259,7 +259,7 @@ void PeakFinder::updateConvolutionParameters()
     // convolutionParams->horizontalHeader()->setStretchLastSection(true);
 }
 
-void PeakFinder::run()
+void PeakFinderFrame::run()
 {
     nsx::sptrProgressHandler progHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler);
     nsx::DataList datalist;
@@ -297,7 +297,7 @@ void PeakFinder::run()
     tab->addTab(new FoundPeaks(peaks, "adhoc_findNum" + QString::number(tab->count())), "Peaks");
 }
 
-std::map<std::string, double> PeakFinder::convolutionParameters()
+std::map<std::string, double> PeakFinderFrame::convolutionParameters()
 {
     std::map<std::string, double> parameters;
     for (int i = 0; i < convolutionParams->rowCount(); ++i) {
@@ -308,7 +308,7 @@ std::map<std::string, double> PeakFinder::convolutionParameters()
     return parameters;
 }
 
-void PeakFinder::doActions(QAbstractButton* button)
+void PeakFinderFrame::doActions(QAbstractButton* button)
 {
     auto buttonRole = buttons->standardButton(button);
     switch (buttonRole) {
@@ -321,7 +321,7 @@ void PeakFinder::doActions(QAbstractButton* button)
     }
 }
 
-void PeakFinder::accept()
+void PeakFinderFrame::accept()
 {
     gLogger->log("@accept");
     for (int i = 0; i < tab->count(); ++i) {
@@ -361,7 +361,7 @@ void PeakFinder::accept()
     close();
 }
 
-void PeakFinder::refreshPreview()
+void PeakFinderFrame::refreshPreview()
 {
     nsx::sptrDataSet dataset = data->currentData().value<nsx::sptrDataSet>();
     int selected = frame->value();

@@ -28,6 +28,7 @@
 #include <QTableView>
 #include <set>
 
+//! Dialog for building the shape library
 class ShapeLibraryDialog : public QDialog {
     Q_OBJECT
  public:

@@ -21,6 +21,7 @@
 #include <QCR/widgets/tables.h>
 #include <QTableView>
 
+//! Table model for the PeaksTableView
 class PeaksTableModel : public TableModel {
     Q_OBJECT
  public:
@@ -31,21 +32,30 @@ class PeaksTableModel : public TableModel {
         const QString& name, nsx::sptrExperiment experiment, const nsx::PeakList& peaks);
     ~PeaksTableModel() = default;
 
-    /*virtual*/ int rowCount() const override { return _peaks.size(); }
-    /*virtual*/ int columnCount() const override { return Column::count; }
+    int rowCount() const override { return _peaks.size(); }
+    int columnCount() const override { return Column::count; }
     int highlighted() const override { return 0; } // unused
     void onHighlight(int) override {} // unused
+    //! Removes the PeakList that was displayed
     void reset();
     QVariant data(const QModelIndex& index, int role) const override;
     Qt::ItemFlags flags(const QModelIndex& index) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+    //! Sets the PeakList that is to be displayed in the PeaksTable
     void setPeaks(const nsx::PeakList& peaks);
+    //! Returns the currently displayed PeakList
     const nsx::PeakList& peaks() const { return _peaks; }
+    //! Returns whether the selected peak is valid
     bool indexIsValid(const QModelIndex& index) const;
     void sort(int column, Qt::SortOrder order) override;
+    //! Normalizes the peaks to monitor
+    //! @param factor : the factor for the normalization
     void normalizeToMonitor(double factor);
+    //! Returns all QModelIndexes that contain unindexed peaks
     QModelIndexList unindexedPeaks();
+    //! Returns all QModelIndexes the contain the selected peaks
     QModelIndexList selectedPeaks();
+    //! Returns the experiment to which the displayed peaks belong
     nsx::sptrExperiment experiment() { return _experiment; }
     void selectPeak(const QModelIndex& index);
     void togglePeakSelection(QModelIndex peak_index);
@@ -65,6 +75,7 @@ class PeaksTableModel : public TableModel {
     nsx::PeakList _peaks;
 };
 
+//! Table view to display a PeakList
 class PeaksTableView : public QTableView {
     Q_OBJECT
  public:

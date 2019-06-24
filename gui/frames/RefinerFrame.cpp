@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/frames/RefinerFrame.cpp
-//! @brief     Implements classes Refiner, RefinerFitWidget
+//! @brief     Implements classes RefinerFrame, RefinerFitWidget
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -28,7 +28,7 @@
 #include <QSpacerItem>
 #include <QVBoxLayout>
 
-Refiner::Refiner() : QcrFrame {"RefinerFrame"}
+RefinerFrame::RefinerFrame() : QcrFrame {"RefinerFrame"}
 {
     if (gSession->selectedExperimentNum() < 0) {
         gLogger->log("[ERROR] No experiment selected");
@@ -44,7 +44,7 @@ Refiner::Refiner() : QcrFrame {"RefinerFrame"}
     layout();
 }
 
-void Refiner::layout()
+void RefinerFrame::layout()
 {
     tabs = new QcrTabWidget("adhoc_refinerTabs");
     settings = new QcrWidget("adhoc_refinerSettings");
@@ -86,13 +86,13 @@ void Refiner::layout()
         QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply, Qt::Horizontal);
     layoutRefiner->addWidget(buttons);
 
-    connect(tabs, &QcrTabWidget::tabCloseRequested, this, &Refiner::tabRemoved);
-    connect(buttons, &QDialogButtonBox::clicked, this, &Refiner::actionClicked);
+    connect(tabs, &QcrTabWidget::tabCloseRequested, this, &RefinerFrame::tabRemoved);
+    connect(buttons, &QDialogButtonBox::clicked, this, &RefinerFrame::actionClicked);
 
     show();
 }
 
-void Refiner::actionClicked(QAbstractButton* button)
+void RefinerFrame::actionClicked(QAbstractButton* button)
 {
     auto button_role = buttons->standardButton(button);
 
@@ -115,7 +115,7 @@ void Refiner::actionClicked(QAbstractButton* button)
     }
 }
 
-void Refiner::tabRemoved(int index)
+void RefinerFrame::tabRemoved(int index)
 {
     RefinerFitWidget* refiner_fit_tab = dynamic_cast<RefinerFitWidget*>(tabs->widget(index));
     if (!refiner_fit_tab)
@@ -124,7 +124,7 @@ void Refiner::tabRemoved(int index)
     delete refiner_fit_tab;
 }
 
-void Refiner::refine()
+void RefinerFrame::refine()
 {
     // Check and construct the peak selection
     QItemSelectionModel* selection_model = peaks->selectionModel();
@@ -236,7 +236,7 @@ void Refiner::refine()
     emit peaks_model->dataChanged(topLeft, bottomRight);
 }
 
-void Refiner::accept()
+void RefinerFrame::accept()
 {
     //    auto peaks_item = _experiment_item->peaksItem();
     //    emit _experiment_item->model()->itemChanged(peaks_item);

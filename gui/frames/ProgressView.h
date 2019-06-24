@@ -19,6 +19,7 @@
 #include <QProgressDialog>
 #include <QTimer>
 
+//! Dialog which shows the current progress of a task
 class ProgressView : public QProgressDialog {
     Q_OBJECT
 
