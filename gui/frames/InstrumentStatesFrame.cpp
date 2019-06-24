@@ -250,7 +250,7 @@ InstrumentStatesFrame::InstrumentStatesFrame() : QcrFrame{"instrumentStates"}
     overallLayout->addLayout(horizLayout);
     QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok, Qt::Horizontal, this);
     overallLayout->addWidget(buttonBox);
-    connect(buttonBox, &QDialogButtonBox::accepted, this, &InstrumentStates::close);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &InstrumentStatesFrame::close);
     connect(frameSlider, &QSlider::valueChanged, [=](int i) {
         selectedFrameChanged(i);
         frameIndex->setCellValue(i);
