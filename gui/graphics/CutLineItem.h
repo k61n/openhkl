@@ -23,18 +23,18 @@ class CutLineItem : public CutterItem {
 
     ~CutLineItem();
 
-    void plot(NSXPlot* plot);
+    void plot(NSXPlot* plot) override;
 
-    void wheelEvent(QGraphicsSceneWheelEvent* event);
+    void wheelEvent(QGraphicsSceneWheelEvent* event) override;
 
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
     int getNPoints() const;
 
     void setNPoints(int nPoints);
 
     // Getters and setters
-    std::string getPlotType() const;
+    std::string getPlotType() const override;
 
  private:
     int _nPoints;

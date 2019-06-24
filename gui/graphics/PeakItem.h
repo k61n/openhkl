@@ -25,14 +25,14 @@ class PeakItem : public PlottableItem {
 
     ~PeakItem() = default;
 
-    void plot(NSXPlot* plot);
+    void plot(NSXPlot* plot) override;
 
-    QRectF boundingRect() const;
+    QRectF boundingRect() const override;
 
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
     //! Returns the type of plot related to the item
-    std::string getPlotType() const;
+    std::string getPlotType() const override;
 
     nsx::sptrPeak3D peak() const;
 
@@ -53,8 +53,6 @@ class PeakItem : public PlottableItem {
     Eigen::Vector3d _lower;
 
     Eigen::Vector3d _upper;
-
-    QGraphicsRectItem* _area;
 };
 
 #endif // GUI_GRAPHICS_PEAKITEM_H

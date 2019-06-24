@@ -29,21 +29,21 @@ class CutSliceItem : public CutterItem {
     // Events
 
     //! Handles a mouse wheel event
-    void wheelEvent(QGraphicsSceneWheelEvent* event);
+    void wheelEvent(QGraphicsSceneWheelEvent* event) override;
 
     // Getters and setters
 
     //! Returns the type of plot related to this item
-    std::string getPlotType() const;
+    std::string getPlotType() const override;
 
     // Other methods
 
     //! Plot the item
-    void plot(NSXPlot*);
+    void plot(NSXPlot*) override;
     //! Return true if the slice is horizontal.
     bool isHorizontal() const;
     //! Paint the slice
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
  private:
     //! Horizontal or vertical integration

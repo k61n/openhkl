@@ -57,9 +57,11 @@ InstrumentStates::InstrumentStates() : QcrFrame {"instrumentStates"}
     QHBoxLayout* hL = new QHBoxLayout;
     hL->addWidget(new QLabel("Frame"));
     frameIndex = new QcrSpinBox("adhoc_frameIndex", new QcrCell<int>(0), 3);
+    frameIndex->setReadOnly(true);
     hL->addWidget(frameIndex);
-    // frameSlider
+    frameSlider = new QSlider(Qt::Horizontal);
     vertical_1->addLayout(hL);
+    vertical_1->addWidget(frameSlider);
     horizLayout->addLayout(vertical_1);
     QVBoxLayout* vertical_2 = new QVBoxLayout;
     refinedLabel = new QLabel("Refined");
@@ -249,9 +251,12 @@ InstrumentStates::InstrumentStates() : QcrFrame {"instrumentStates"}
     QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok, Qt::Horizontal, this);
     overallLayout->addWidget(buttonBox);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &InstrumentStates::close);
-    frameIndex->setHook([=](int i) { selectedFrameChanged(i); });
+    connect(frameSlider, &QSlider::valueChanged, [=](int i) {
+        selectedFrameChanged(i);
+        frameIndex->setCellValue(i);
+    });
     connect(data, &QListWidget::currentRowChanged, this, &InstrumentStates::selectedDataChanged);
-    selectedFrameChanged(0);
+    selectedDataChanged(0);
     show();
 }
 
@@ -260,9 +265,10 @@ void InstrumentStates::selectedDataChanged(int selectedData)
     Q_UNUSED(selectedData)
     QListWidgetItem* currentItem = data->currentItem();
     nsx::sptrDataSet currentData = currentItem->data(Qt::UserRole).value<nsx::sptrDataSet>();
-    frameIndex->setMinimum(0);
-    frameIndex->setMaximum(currentData->nFrames() - 1);
     frameIndex->setCellValue(0);
+    frameSlider->setMinimum(0);
+    frameSlider->setMaximum(currentData->nFrames()-1);
+    frameSlider->setValue(0);
     selectedFrameChanged(0);
 }
 

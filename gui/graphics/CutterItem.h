@@ -33,12 +33,12 @@ class CutterItem : public PlottableItem {
     //! If the item is selected when the event is triggered then the item will be
     //! moved on the scene Otherwise, that means that the item is being drawn and
     //! then the move event corresponds to a resize
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
 
     // Getters and setters
 
     //! Returns the bounding rectangle of the item
-    QRectF boundingRect() const;
+    QRectF boundingRect() const override;
     //! Returns the data bound to the item
     nsx::sptrDataSet getData();
     //! Sets the top left corner of the item
@@ -48,11 +48,6 @@ class CutterItem : public PlottableItem {
 
     const QPointF& from() const { return _from; }
     const QPointF& to() const { return _to; }
-
-    // Other methods
-
-    //! Paint the contents of the item [pure virtual]
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) = 0;
 
  protected:
     //! The data on which the cutter will act upon
