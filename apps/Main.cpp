@@ -18,10 +18,8 @@
 #include <QPainter>
 #include <QSplashScreen>
 #include <QTimer>
-
-#include "base/logger/AggregateStreamWrapper.h"
-#include "base/logger/Logger.h"
-#include "base/logger/StdStreamWrapper.h"
+#include <QtGlobal>
+#include <QDebug>
 
 #include "apps/MainWindow.h"
 #include "apps/NSXQtApp.h"
@@ -38,7 +36,7 @@ int main(int argc, char* argv[])
 
     MainWindow main_window(nullptr);
 
-    nsx::info() << "NSXQt session started";
+    qInfo() << "NSXQt session started";
 
     main_window.showMaximized();
     main_window.show();

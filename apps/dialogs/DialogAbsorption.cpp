@@ -20,8 +20,9 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QtGlobal>
+#include <QDebug>
 
-#include "base/logger/Logger.h"
 #include "core/experiment/Experiment.h"
 #include "core/gonio/Gonio.h"
 #include "core/gonio/RotAxis.h"
@@ -170,8 +171,8 @@ void DialogAbsorption::readInfoFile(const std::string& filename)
         // Load front image of the movie
         emit loadImage(QString::fromStdString(_imageList[0].second));
     }
-    nsx::info() << "absorption correction file: " << filename;
-    nsx::info() << "found:" << _imageList.size() << " images";
+    qInfo() << "absorption correction file: " << QString::fromStdString(filename);
+    qInfo() << "found:" << _imageList.size() << " images";
     ui->button_calibrateDistance->setEnabled(true);
 }
 

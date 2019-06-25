@@ -17,8 +17,9 @@
 #include <QIcon>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QtGlobal>
+#include <QDebug>
 
-#include "base/logger/Logger.h"
 #include "core/analyse/MergedData.h"
 #include "core/analyse/PeakFilter.h"
 #include "core/experiment/DataSet.h"
@@ -120,7 +121,7 @@ void ExperimentItem::writeLogFiles()
     filtered_peaks = peak_filter.hasUnitCell(filtered_peaks);
 
     if (filtered_peaks.empty()) {
-        nsx::error() << "No valid peaks in the table";
+        qWarning() << "No valid peaks in the table";
         return;
     }
 

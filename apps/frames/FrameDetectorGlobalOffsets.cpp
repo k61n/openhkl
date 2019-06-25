@@ -16,8 +16,9 @@
 
 #include <QFileInfo>
 #include <QPen>
+#include <QtGlobal>
+#include <QDebug>
 
-#include "base/logger/Logger.h"
 #include "base/utils/Units.h"
 #include "core/algo/GonioFit.h"
 #include "core/detector/Detector.h"
@@ -123,7 +124,7 @@ void FrameDetectorGlobalOffsets::fit()
 
     // No item selected, just return
     if (selected_items.empty()) {
-        nsx::error() << "No data selected for the fit.";
+        qWarning() << "No data selected for the fit.";
         return;
     }
 
@@ -138,7 +139,7 @@ void FrameDetectorGlobalOffsets::fit()
 
     // The fit failed for whatever reason, return
     if (!fit_results.success)
-        nsx::error() << "Could not fit the detector offsets.";
+        qWarning() << "Could not fit the detector offsets.";
 
     int comp(0);
     for (auto&& offset : fit_results.offsets) {

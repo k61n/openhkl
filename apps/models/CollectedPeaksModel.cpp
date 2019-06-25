@@ -20,9 +20,10 @@
 
 #include <QIcon>
 #include <QString>
-
+#include <QtGlobal>
+#include <QDebug>
 #include "base/geometry/ReciprocalVector.h"
-#include "base/logger/Logger.h"
+
 #include "core/analyse/PeakFilter.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/DataSet.h"
@@ -459,7 +460,7 @@ void CollectedPeaksModel::sortEquivalents()
 
     // If no unit cell defined for the peak collection, return.
     if (!cell) {
-        nsx::error() << "No unit cell defined for the peaks";
+        qWarning() << "No unit cell defined for the peaks";
         return;
     }
 

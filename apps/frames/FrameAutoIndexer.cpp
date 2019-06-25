@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "base/logger/Logger.h"
+
 #include "base/utils/Units.h"
 #include "core/algo/AutoIndexer.h"
 #include "core/peak/Peak3D.h"
@@ -28,6 +28,8 @@
 #include "ui_FrameAutoIndexer.h"
 
 #include <QInputDialog>
+#include <QtGlobal>
+#include <QDebug>
 
 FrameAutoIndexer* FrameAutoIndexer::_instance = nullptr;
 
@@ -234,7 +236,7 @@ void FrameAutoIndexer::run()
     auto selected_rows = selection_model->selectedRows();
 
     if (selected_rows.empty()) {
-        nsx::error() << "No peaks selected for auto-indexing";
+        qWarning() << "No peaks selected for auto-indexing";
         return;
     }
 
@@ -243,7 +245,7 @@ void FrameAutoIndexer::run()
     handler->setCallback([=]() {
         auto log = handler->getLog();
         for (auto&& msg : log)
-            nsx::info() << msg.c_str();
+            qInfo() << msg.c_str();
     });
 
     nsx::AutoIndexer indexer(handler);
@@ -272,7 +274,7 @@ void FrameAutoIndexer::run()
     try {
         indexer.autoIndex(params);
     } catch (const std::exception& e) {
-        nsx::error() << "AutoIndex: " << e.what();
+        qWarning() << "AutoIndex: " << e.what();
         return;
     }
     _solutions = indexer.solutions();

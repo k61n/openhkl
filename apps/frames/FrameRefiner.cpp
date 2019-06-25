@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "base/logger/Logger.h"
+
 #include "core/peak/Peak3D.h"
 
 #include "apps/delegates/DoubleItemDelegate.h"
@@ -24,6 +24,9 @@
 #include "apps/widgets/WidgetRefinerFit.h"
 
 #include "ui_FrameRefiner.h"
+
+#include <QtGlobal>
+#include <QDebug>
 
 FrameRefiner* FrameRefiner::_instance = nullptr;
 
@@ -109,7 +112,7 @@ void FrameRefiner::refine()
     auto selection_model = _ui->peaks->selectionModel();
     QModelIndexList selected_rows = selection_model->selectedRows();
     if (selected_rows.size() < 100) {
-        nsx::error() << "No or not enough peaks selected for refining";
+        qWarning() << "No or not enough peaks selected for refining";
         return;
     }
 
@@ -122,7 +125,7 @@ void FrameRefiner::refine()
     auto unit_cell = selected_peaks[0]->unitCell();
 
     if (!unit_cell) {
-        nsx::error() << "No unit cell set for the selected peaks";
+        qWarning() << "No unit cell set for the selected peaks";
         return;
     }
 
@@ -149,7 +152,7 @@ void FrameRefiner::refine()
                 reference_peaks.push_back(peak);
         }
 
-        nsx::info() << reference_peaks.size() << " splitted into " << n_batches
+        qInfo() << reference_peaks.size() << " splitted into " << n_batches
                     << "refining batches.";
 
         std::vector<nsx::InstrumentState>& states = d->instrumentStates();
@@ -158,38 +161,40 @@ void FrameRefiner::refine()
 
         if (_ui->refine_ub->isChecked()) {
             refiner.refineUB();
-            nsx::info() << "Refining UB matrix";
+            qInfo() << "Refining UB matrix";
         }
 
         if (_ui->refine_sample_position->isChecked()) {
             refiner.refineSamplePosition();
-            nsx::info() << "Refinining sample position";
+            qInfo() << "Refinining sample position";
         }
 
         if (_ui->refine_detector_position->isChecked()) {
             refiner.refineDetectorOffset();
-            nsx::info() << "Refinining detector position";
+            qInfo() << "Refinining detector position";
         }
 
         if (_ui->refine_sample_orientation->isChecked()) {
             refiner.refineSampleOrientation();
-            nsx::info() << "Refinining sample orientation";
+            qInfo() << "Refinining sample orientation";
         }
 
         if (_ui->refine_ki->isChecked()) {
             refiner.refineKi();
-            nsx::info() << "Refining Ki";
+            qInfo() << "Refining Ki";
         }
 
         bool success = refiner.refine();
 
         if (success) {
-            nsx::info() << "Successfully refined parameters for numor " << d->filename();
+            qInfo() << "Successfully refined parameters for numor "
+                    << QString::fromStdString(d->filename());
             int updated = refiner.updatePredictions(predicted_peaks);
             refiners.emplace(d, std::move(refiner));
-            nsx::info() << "done; updated " << updated << " peaks";
+            qInfo() << "done; updated " << updated << " peaks";
         } else {
-            nsx::info() << "Failed to refine parameters for numor " << d->filename();
+            qInfo() << "Failed to refine parameters for numor "
+                    << QString::fromStdString(d->filename());
         }
     }
 

@@ -17,7 +17,8 @@
 #include <tuple>
 
 #include <Eigen/Core>
-
+#include <QtGlobal>
+#include <QDebug>
 #include <QImage>
 #include <QList>
 #include <QMessageBox>
@@ -28,7 +29,7 @@
 #include <QTreeView>
 
 #include "base/geometry/ReciprocalVector.h"
-#include "base/logger/Logger.h"
+
 #include "core/analyse/PeakFilter.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
@@ -99,14 +100,14 @@ void DialogSpaceGroup::evaluateSpaceGroups()
 
     nsx::MillerIndexList hkls;
 
-    nsx::info() << "Retrieving reflection list for space group calculation...";
+    qInfo() << "Retrieving reflection list for space group calculation...";
 
     for (auto peak : _peaks)
         hkls.emplace_back(nsx::MillerIndex(peak->q(), *_cell).rowVector());
 
     _groups.clear();
 
-    nsx::info() << "Evaluating " << symbols.size() << " space groups based on " << hkls.size()
+    qInfo() << "Evaluating " << symbols.size() << " space groups based on " << hkls.size()
                 << " peaks";
 
     auto compatible_space_groups = _cell->compatibleSpaceGroups();
@@ -139,7 +140,7 @@ void DialogSpaceGroup::evaluateSpaceGroups()
 
     std::sort(_groups.begin(), _groups.end(), compare_fn);
 
-    nsx::info() << "Done evaluating space groups.";
+    qInfo() << "Done evaluating space groups.";
 }
 
 void DialogSpaceGroup::buildTable()

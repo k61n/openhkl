@@ -19,8 +19,9 @@
 #include <QMessageBox>
 #include <QString>
 #include <QStringList>
+#include <QtGlobal>
+#include <QDebug>
 
-#include "base/logger/Logger.h"
 #include "base/utils/Path.h"
 #include "core/algo/DataReaderFactory.h"
 #include "core/experiment/DataSet.h"
@@ -105,7 +106,7 @@ void DialogHDF5Converter::convert()
         try {
             numor->saveHDF5(hdf5_filename);
         } catch (...) {
-            nsx::error() << "The filename " << hdf5_filename
+            qWarning() << "The filename " << QString::fromStdString(hdf5_filename)
                          << " could not be saved. Maybe a permission problem.";
         }
         _ui->progressBar_conversion->setValue(++comp);

@@ -21,8 +21,9 @@
 #include <QStandardItem>
 #include <QTableView>
 #include <QVector>
+#include <QtGlobal>
+#include <QDebug>
 
-#include "base/logger/Logger.h"
 #include "core/experiment/DataSet.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
@@ -191,7 +192,7 @@ void FrameStatistics::saveStatistics()
 
     std::fstream file(filename.toStdString(), std::ios::out);
     if (!file.is_open()) {
-        nsx::error() << "Error writing to this file, please check write permisions";
+        qWarning() << "Error writing to this file, please check write permisions";
         return;
     }
 
@@ -273,7 +274,7 @@ void FrameStatistics::saveToShelX(QTableView* table)
 
     std::fstream file(filename.toStdString(), std::ios::out);
     if (!file.is_open()) {
-        nsx::error() << "Error writing to this file, please check write permisions";
+        qWarning() << "Error writing to this file, please check write permisions";
         return;
     }
 
@@ -308,7 +309,7 @@ void FrameStatistics::saveToFullProf(QTableView* table)
 
     std::fstream file(filename.toStdString(), std::ios::out);
     if (!file.is_open()) {
-        nsx::error() << "Error writing to this file, please check write permisions";
+        qWarning() << "Error writing to this file, please check write permisions";
         return;
     }
 

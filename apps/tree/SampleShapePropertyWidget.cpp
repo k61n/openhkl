@@ -11,10 +11,9 @@
 //! @authors   see CITATION, MAINTAINER
 //
 //  ***********************************************************************************************
-
+#include <sstream>
 #include <QMessageBox>
 
-#include "base/logger/Logger.h"
 #include "base/utils/Units.h"
 #include "core/experiment/DataSet.h"
 #include "core/gonio/Gonio.h"
@@ -28,6 +27,8 @@
 #include "apps/dialogs/DialogAbsorption.h"
 #include "apps/models/SampleShapeItem.h"
 #include "apps/tree/SampleShapePropertyWidget.h"
+#include <QtGlobal>
+#include <QDebug>
 
 #include "ui_SampleShapePropertyWidget.h"
 
@@ -59,7 +60,9 @@ void SampleShapePropertyWidget::on_pushButton_LoadMovie_clicked()
             hull.rotate(mat);
             // Convert to m
             hull.scale(nsx::mm);
-            nsx::debug() << "Coordinates of the Hull at rest:" << hull;
+            std::ostringstream os;
+            os << hull;
+            qDebug() << "Coordinates of the Hull at rest:" << QString::fromStdString(os.str());
             setHullProperties();
         }
     }

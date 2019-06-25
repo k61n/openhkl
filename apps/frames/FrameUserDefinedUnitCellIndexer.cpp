@@ -15,9 +15,9 @@
 #include <QInputDialog>
 #include <QStandardItem>
 #include <QStandardItemModel>
-
+#include <QtGlobal>
+#include <QDebug>
 #include "base/geometry/ReciprocalVector.h"
-#include "base/logger/Logger.h"
 #include "base/utils/Units.h"
 #include "core/algo/UserDefinedIndexer.h"
 #include "core/experiment/Experiment.h"
@@ -277,7 +277,7 @@ void FrameUserDefinedUnitCellIndexer::index()
     auto selected_rows = selection_model->selectedRows();
 
     if (selected_rows.empty()) {
-        nsx::error() << "No peaks selected for auto-indexing";
+        qWarning() << "No peaks selected for auto-indexing";
         return;
     }
 

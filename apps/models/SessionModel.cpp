@@ -26,7 +26,8 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QKeyEvent>
-
+#include <QtGlobal>
+#include <QDebug>
 #include <QList>
 #include <QListIterator>
 #include <QMenu>
@@ -37,7 +38,7 @@
 
 #include "base/geometry/Ellipsoid.h"
 #include "base/geometry/ReciprocalVector.h"
-#include "base/logger/Logger.h"
+
 #include "base/utils/ProgressHandler.h"
 #include "core/algo/DataReaderFactory.h"
 #include "core/analyse/MergedData.h"
@@ -155,7 +156,7 @@ void SessionModel::createNewExperiment()
         if (dlg->getExperimentName().isEmpty())
             throw std::runtime_error("Empty experiment name");
     } catch (std::exception& e) {
-        nsx::error() << e.what();
+        qWarning() << e.what();
         return;
     }
 
@@ -170,7 +171,7 @@ void SessionModel::createNewExperiment()
         ExperimentItem* expt = new ExperimentItem(expPtr);
         appendRow(expt);
     } catch (const std::runtime_error& e) {
-        nsx::error() << e.what();
+        qWarning() << e.what();
         return;
     }
 }

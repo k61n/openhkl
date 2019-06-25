@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "base/logger/Logger.h"
+
 #include "base/utils/ProgressHandler.h"
 #include "core/shape/ShapeLibrary.h"
 #include "tables/crystal/UnitCell.h"
@@ -26,6 +26,9 @@
 #include "apps/models/PeakListItem.h"
 #include "apps/models/PeaksItem.h"
 #include "ui_DialogPredictPeaks.h"
+
+#include <QtGlobal>
+#include <QDebug>
 
 DialogPredictPeaks* DialogPredictPeaks::_instance = nullptr;
 
@@ -119,7 +122,7 @@ void DialogPredictPeaks::accept()
 
 void DialogPredictPeaks::predictPeaks()
 {
-    nsx::info() << "Started peak prediction...";
+    qInfo() << "Started peak prediction...";
 
     auto data_item = _experiment_item->dataItem();
     nsx::DataList data = data_item->selectedData();
@@ -145,7 +148,7 @@ void DialogPredictPeaks::predictPeaks()
 
     int current_numor = 0;
     for (auto d : data) {
-        nsx::info() << "Predicting peaks for numor " << ++current_numor << " of " << data.size();
+        qInfo() << "Predicting peaks for numor " << ++current_numor << " of " << data.size();
 
         auto&& predicted = nsx::predictPeaks(
             *library, d, unit_cell, d_min, d_max, radius, n_frames, min_neighbors,
@@ -154,10 +157,10 @@ void DialogPredictPeaks::predictPeaks()
         for (auto peak : predicted)
             predicted_peaks.push_back(peak);
 
-        nsx::info() << "Added " << predicted.size() << " predicted peaks.";
+        qInfo() << "Added " << predicted.size() << " predicted peaks.";
     }
 
-    nsx::info() << "Completed  peak prediction. Added " << predicted_peaks.size() << " peaks";
+    qInfo() << "Completed  peak prediction. Added " << predicted_peaks.size() << " peaks";
 
     _peaks_model->setPeaks(predicted_peaks);
 }
