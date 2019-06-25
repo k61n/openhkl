@@ -13,12 +13,14 @@
 //  ***********************************************************************************************
 
 #include "core/peak/IPeakIntegrator.h"
-#include "base/logger/Logger.h"
+
 #include "core/experiment/DataSet.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/BrillouinZone.h"
 #include "tables/crystal/UnitCell.h"
+#include <QtGlobal>
+#include <QDebug>
 
 namespace nsx {
 
@@ -47,15 +49,15 @@ const std::vector<Intensity>& IPeakIntegrator::rockingCurve() const
 void IPeakIntegrator::integrate(
     PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end)
 {
-    nsx::info() << "IPeakIntegrator::integrate start";
+    qInfo() << "IPeakIntegrator::integrate start";
     // integrate only those peaks that belong to the specified dataset
     auto it = std::remove_if(
         peaks.begin(), peaks.end(), [&](const sptrPeak3D& peak) { return peak->data() != data; });
-    nsx::debug() << "IPeakIntegrator::integrate DEB1";
+    qDebug() << "IPeakIntegrator::integrate DEB1";
     peaks.erase(it, peaks.end());
 
     std::string status = "Integrating " + std::to_string(peaks.size()) + " peaks...";
-    nsx::info() << status;
+    qInfo() << QString::fromStdString(status);
 
     if (_handler) {
         _handler->setStatus(status.c_str());
@@ -128,7 +130,7 @@ void IPeakIntegrator::integrate(
                         peak->setSelected(false);
                 } catch (std::exception& e) {
                     // integration failed...
-                    nsx::info() << "integration failed: " << e.what();
+                    qInfo() << "integration failed: " << e.what();
                     peak->setSelected(false);
                 }
                 // free memory (important!!)

@@ -19,12 +19,13 @@
 
 #include "base/fit/Minimizer.h"
 #include "base/geometry/ReciprocalVector.h"
-#include "base/logger/Logger.h"
 #include "base/utils/Units.h"
 #include "tables/crystal/GruberReduction.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/NiggliReduction.h"
 #include "tables/crystal/UnitCell.h"
+#include <QtGlobal>
+#include <QDebug>
 
 namespace nsx {
 
@@ -335,7 +336,7 @@ UnitCell::generateReflectionsInShell(double dmin, double dmax, double wavelength
         }
     }
 
-    nsx::info() << "Generated " << hkls.size() << " hkl in [" << dmin << "," << dmax << "] range";
+    qInfo() << "Generated " << hkls.size() << " hkl in [" << dmin << "," << dmax << "] range";
 
     return hkls;
 }
