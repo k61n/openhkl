@@ -15,7 +15,6 @@
 #include "core/analyse/PeakFinder.h"
 
 #include "base/geometry/AABB.h"
-#include "base/logger/Logger.h"
 #include "core/analyse/Octree.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/experiment/DataSet.h"

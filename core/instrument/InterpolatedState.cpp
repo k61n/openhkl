@@ -13,7 +13,6 @@
 //  ***********************************************************************************************
 
 #include "core/instrument/InterpolatedState.h"
-#include "base/logger/Logger.h"
 #include "core/detector/Detector.h"
 #include "core/gonio/Component.h"
 #include "core/instrument/Diffractometer.h"

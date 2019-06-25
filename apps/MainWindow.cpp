@@ -32,9 +32,6 @@
 
 #include "base/geometry/AABB.h"
 #include "base/geometry/Ellipsoid.h"
-#include "base/logger/AggregateStreamWrapper.h"
-#include "base/logger/LogFileStreamWrapper.h"
-#include "base/logger/Logger.h"
 #include "base/utils/Path.h"
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
@@ -62,7 +59,6 @@
 #include "apps/items/CutterGraphicsItem.h"
 #include "apps/items/PeakGraphicsItem.h"
 #include "apps/items/PlottableGraphicsItem.h"
-#include "apps/logger/QtStreamWrapper.h"
 #include "apps/models/CollectedPeaksModel.h"
 #include "apps/models/DetectorScene.h"
 #include "apps/models/SessionModel.h"
@@ -82,43 +78,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), _ui(new Ui::MainW
     _session = new SessionModel();
     _ui->experimentTree->setModel(_session);
     _ui->dview->getScene()->setSession(_session);
-
-    auto debug_log = [this]() -> nsx::Logger {
-        auto initialize = []() -> std::string { return "[DEBUG] " + nsx::currentTime(); };
-        auto finalize = []() -> std::string { return "\n"; };
-
-        nsx::AggregateStreamWrapper* wrapper = new nsx::AggregateStreamWrapper();
-        wrapper->addWrapper(new nsx::LogFileStreamWrapper("nsx_debug.txt", initialize, finalize));
-        wrapper->addWrapper(new QtStreamWrapper(this->_ui->noteBook, initialize));
-
-        return nsx::Logger(wrapper);
-    };
-
-    auto info_log = [this]() -> nsx::Logger {
-        auto initialize = []() -> std::string { return "[INFO]  " + nsx::currentTime(); };
-        auto finalize = []() -> std::string { return "\n"; };
-
-        nsx::AggregateStreamWrapper* wrapper = new nsx::AggregateStreamWrapper();
-        wrapper->addWrapper(new nsx::LogFileStreamWrapper("nsx_info.txt", initialize, finalize));
-        wrapper->addWrapper(new QtStreamWrapper(this->_ui->noteBook, initialize));
-
-        return nsx::Logger(wrapper);
-    };
-
-    auto error_log = [this]() -> nsx::Logger {
-        auto initialize = []() -> std::string { return "[ERROR]" + nsx::currentTime(); };
-        auto finalize = []() -> std::string { return "\n"; };
-
-        nsx::AggregateStreamWrapper* wrapper = new nsx::AggregateStreamWrapper();
-        wrapper->addWrapper(new nsx::LogFileStreamWrapper("nsx_error.txt", initialize, finalize));
-        wrapper->addWrapper(new QtStreamWrapper(this->_ui->noteBook, initialize));
-
-        return nsx::Logger(wrapper);
-    };
-
-    nsx::setDebug(debug_log);
-    nsx::setInfo(info_log);
-    nsx::setError(error_log);
 
     //
     _ui->frameLayout->setEnabled(false);

@@ -16,7 +16,6 @@
 #include <QPushButton>
 #include <QDebug>
 
-#include "base/logger/Logger.h"
 #include "base/utils/ProgressHandler.h"
 
 #include "apps/views/ProgressView.h"

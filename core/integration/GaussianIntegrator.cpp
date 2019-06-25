@@ -16,7 +16,6 @@
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
 #include "base/geometry/Ellipsoid.h"
-#include "base/logger/Logger.h"
 #include "core/experiment/DataSet.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"

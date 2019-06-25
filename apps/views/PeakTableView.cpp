@@ -24,7 +24,6 @@
 #include <QMouseEvent>
 #include <QStandardItemModel>
 
-#include "base/logger/Logger.h"
 #include "base/utils/ProgressHandler.h"
 #include "core/experiment/DataSet.h"
 #include "core/peak/Peak3D.h"
