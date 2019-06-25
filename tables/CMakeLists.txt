@@ -10,4 +10,5 @@ target_include_directories(
 target_link_libraries(nsxtables
     PUBLIC
     nsxbase
+    ${Qt5Core_LIBRARIES}
     )
