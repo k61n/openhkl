@@ -221,7 +221,9 @@ void DialogShapeLibrary::calculate()
     nsx::Ellipsoid e = _profile.ellipsoid();
 
     qInfo() << "Mean profile has inertia tensor";
-    //qInfo() << e.inverseMetric();
+    std::ostringstream os;
+    os << e.inverseMetric();
+    qInfo() << QString::fromStdString(os.str());
 
     // draw the updated frame
     drawFrame(ui->drawFrame->value());
