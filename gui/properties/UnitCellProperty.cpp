@@ -87,7 +87,7 @@ UnitCellProperty::UnitCellProperty() : QcrWidget {"unitCellProperty"}
 
 void UnitCellProperty::setZValue(int z)
 {
-    nsx::sptrUnitCell unit_cell = gSession->selectedExperiment()->unitCells()->selectedCell();
+    nsx::sptrUnitCell unit_cell = gSession->selectedExperiment()->getUnitCell();
 
     unit_cell->setZ(z);
     // setMassDensity();

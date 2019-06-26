@@ -46,7 +46,7 @@ UserDefinedUnitCellIndexerFrame::UserDefinedUnitCellIndexerFrame()
         return;
     }
 
-    if (gSession->selectedExperiment()->peaks()->allPeaks().empty()) {
+    if (gSession->selectedExperiment()->getPeakListNames().empty()) {
         gLogger->log("[WARNING] No peaks in selected experiment");
         return;
     }
@@ -57,7 +57,7 @@ UserDefinedUnitCellIndexerFrame::UserDefinedUnitCellIndexerFrame()
 void UserDefinedUnitCellIndexerFrame::layout()
 {
     // defaults_
-    nsx::PeakList peaks = gSession->selectedExperiment()->peaks()->allPeaks();
+    nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0);
     defaults_.reserve(peaks.size());
     for (nsx::sptrPeak3D peak : peaks) {
         nsx::sptrUnitCell unit_cell = peak->unitCell();
@@ -72,8 +72,7 @@ void UserDefinedUnitCellIndexerFrame::layout()
     tab = new QcrWidget("adhoc_tab");
     QVBoxLayout* settings = new QVBoxLayout(tab);
     PeaksTableModel* model = new PeaksTableModel(
-        "adhoc_tablePeaks", gSession->selectedExperiment()->experiment(),
-        gSession->selectedExperiment()->peaks()->allPeaks());
+        "adhoc_tablePeaks", gSession->selectedExperiment()->experiment(), peaks);
     peaktable = new PeaksTableView;
     peaktable->setModel(model);
     peaktable->selectAll();
@@ -435,13 +434,11 @@ void UserDefinedUnitCellIndexerFrame::buildUnitCellsTable()
 
 void UserDefinedUnitCellIndexerFrame::accept()
 {
-    UnitCellsModel* unit_cells = gSession->selectedExperiment()->unitCells();
-
     for (int i = 0; i < tabwidget->count(); ++i) {
         UnitCellWidget* unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabwidget->widget(i));
         if (!unit_cell_tab)
             continue;
-        unit_cells->appendUnitCell(unit_cell_tab->unitCell());
+        gSession->selectedExperiment()->addUnitCell(unit_cell_tab->unitCell());
     }
 
     // emit _experiment_item->model()->itemChanged(peaks_item);

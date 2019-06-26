@@ -35,7 +35,7 @@ RefinerFrame::RefinerFrame() : QcrFrame {"RefinerFrame"}
         return;
     }
 
-    if (gSession->selectedExperiment()->peaks()->allPeaks().empty()) {
+    if (gSession->selectedExperiment()->getPeakListNames().empty()) {
         gLogger->log("[ERROR] No peaks in selected experiment");
         return;
     }
@@ -51,7 +51,7 @@ void RefinerFrame::layout()
     QVBoxLayout* layoutSettings = new QVBoxLayout(settings);
     PeaksTableModel* model = new PeaksTableModel(
         "adhoc_refinerPeaks", gSession->selectedExperiment()->experiment(),
-        gSession->selectedExperiment()->peaks()->allPeaks());
+        gSession->selectedExperiment()->getPeaks(0, 0));
     peaks = new PeaksTableView;
     peaks->setModel(model);
     peaks->selectAll();

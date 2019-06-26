@@ -23,7 +23,6 @@
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
-#include "gui/models/ExperimentModel.h"
 #include "gui/models/Meta.h"
 #include "gui/models/PeaksTable.h"
 #include "gui/models/Session.h"
@@ -102,7 +101,7 @@ PeakFinderFrame::PeakFinderFrame() : QcrFrame {"peakFinder"}, pixmap(nullptr)
         gLogger->log("[ERROR] No experiment selected");
         return;
     }
-    if (gSession->selectedExperiment()->data()->allData().size() == 0) {
+    if (gSession->selectedExperiment()->getDataNames().empty()) {
         gLogger->log("[ERROR] No data loaded for selected experiment");
         return;
     }
@@ -189,7 +188,7 @@ PeakFinderFrame::PeakFinderFrame() : QcrFrame {"peakFinder"}, pixmap(nullptr)
     //            convolutionParams->setItemDelegateForColumn(
     //                        1, convolution_parameters_delegate);
 
-    nsx::DataList datalist = gSession->selectedExperiment()->data()->allDataVector();
+    QList<nsx::sptrDataSet> datalist = gSession->selectedExperiment()->allData();
     for (nsx::sptrDataSet d : datalist) {
         QFileInfo fileinfo(QString::fromStdString(d->filename()));
         data->addItem(fileinfo.baseName(), QVariant::fromValue(d));
@@ -355,7 +354,7 @@ void PeakFinderFrame::accept()
         int numNotValid = numPeaks - numValid;
         peaklistname += " (" + QString::number(numPeaks) + " | valid: " + QString::number(numValid);
         peaklistname += " | not valid: " + QString::number(numNotValid) + ")";
-        gSession->selectedExperiment()->peaks()->addPeakListsModel(peaklistname, found_peaks);
+        gSession->selectedExperiment()->addPeaks(found_peaks, peaklistname);
     }
 
     close();

@@ -44,7 +44,7 @@ void SubframeSetup::dataChanged()
 {
     bool enabled = gSession->selectedExperimentNum() >= 0;
     if (enabled)
-        enabled = !gSession->selectedExperiment()->data()->allData().empty();
+        enabled = !gSession->selectedExperiment()->getDataNames().empty();
     setTabEnabled((int)tab::DATA, enabled);
     if (enabled)
         data->remake();
@@ -63,7 +63,7 @@ void SubframeSetup::peaksChanged()
 {
     bool enabled = gSession->selectedExperimentNum() >= 0;
     if (enabled)
-        enabled = gSession->selectedExperiment()->peaks()->numberLists() > 0;
+        enabled = gSession->selectedExperiment()->getPeakListNames().size() > 0;
     setTabEnabled((int)tab::PEAKS, enabled);
     setTabEnabled((int)tab::LIBRARY, enabled);
     if (enabled) {

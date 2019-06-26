@@ -31,7 +31,7 @@ GlobalOffsetsFrame::GlobalOffsetsFrame(offsetMode mode) : QcrFrame {"adhoc_detec
         gLogger->log("[ERROR] No experiment selected");
         return;
     }
-    if (gSession->selectedExperiment()->data()->allData().empty()) {
+    if (gSession->selectedExperiment()->getDataNames().empty()) {
         gLogger->log("[ERROR] No data loaded to selected experiment");
         return;
     }
@@ -48,7 +48,7 @@ void GlobalOffsetsFrame::layout()
     QHBoxLayout* above = new QHBoxLayout;
     QVBoxLayout* left = new QVBoxLayout;
     selectedData = new QListWidget;
-    QList<nsx::sptrDataSet> all_data = gSession->selectedExperiment()->data()->allData();
+    QList<nsx::sptrDataSet> all_data = gSession->selectedExperiment()->allData();
     for (nsx::sptrDataSet data : all_data) {
         QFileInfo fileinfo(QString::fromStdString(data->filename()));
 

@@ -40,7 +40,7 @@ AutoIndexerFrame::AutoIndexerFrame() : QcrFrame {"autoIndexer"}
         gLogger->log("[WARNING] No experiment selected");
         return;
     }
-    if (gSession->selectedExperiment()->peaks()->allPeaks().empty()) {
+    if (gSession->selectedExperiment()->getPeakListNames().empty()) {
         gLogger->log("[WARNING] No peaks in the selected experiment");
         return;
     }
@@ -58,30 +58,26 @@ void AutoIndexerFrame::layout()
     QVBoxLayout* vertical = new QVBoxLayout(settings);
     listNames = new QcrComboBox(
         "adhoc_filteredPeaklistsNames", new QcrCell<int>(0),
-        gSession->selectedExperiment()->peaks()->allFilteredListNames());
+        gSession->selectedExperiment()->getPeakListNames());
     vertical->addWidget(listNames);
     model = new PeaksTableModel(
         "adhoc_autoIndexerPeakTable", gSession->selectedExperiment()->experiment());
     listNames->setHook([this](int i) {
-        QStringList filterednames = gSession->selectedExperiment()->peaks()->allFilteredListNames();
-        QStringList foundnames = gSession->selectedExperiment()->peaks()->peaklistNames();
+        QStringList filterednames = gSession->selectedExperiment()->getPeakListNames();
         QString selectedName = filterednames.at(i);
-        int offset = 0;
-        for (int l = 0; l < foundnames.size(); l++) {
-            QString list = foundnames.at(l);
-            if (selectedName.startsWith(list)) {
-                int index = i - offset;
-                model->setPeaks(gSession->selectedExperiment()
-                                    ->peaks()
-                                    ->selectedPeakLists(l)
-                                    ->getPeaksAt(index)
-                                    ->getPeaks());
+        int upper = 0;
+        int lower = 0;
+        for (int l = 0; l < filterednames.size(); l++) {
+            QString list = filterednames.at(l);
+            if (selectedName.compare(list) == 0) {
+                model->setPeaks(gSession->selectedExperiment()->getPeaks(upper, lower));
                 return;
             }
-            offset += gSession->selectedExperiment()
-                          ->peaks()
-                          ->selectedPeakLists(l)
-                          ->numberFilteredLists();
+            lower++;
+            if (list.endsWith("all Peaks")) {
+                upper++;
+                lower = 0;
+            }
         }
     });
     peaks = new PeaksTableView;
@@ -245,13 +241,11 @@ void AutoIndexerFrame::resetUnitCell()
 
 void AutoIndexerFrame::accept()
 {
-    UnitCellsModel* unit_cells_item = gSession->selectedExperiment()->unitCells();
-
     for (int i = 0; i < tabs->count(); ++i) {
         UnitCellWidget* unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabs->widget(i));
         if (!unit_cell_tab)
             continue;
-        unit_cells_item->appendUnitCell(unit_cell_tab->unitCell());
+        gSession->selectedExperiment()->addUnitCell(unit_cell_tab->unitCell());
     }
 
     // emit _experiment_item->model()->itemChanged(unit_cells_item);

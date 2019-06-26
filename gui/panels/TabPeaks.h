@@ -15,18 +15,17 @@
 #ifndef GUI_PANELS_TABPEAKS_H
 #define GUI_PANELS_TABPEAKS_H
 
-#include "gui/models/PeakLists.h"
 #include "gui/models/PeaksTable.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 
 //! Tab with one PeaksTable of the TabPeaks
 class ListTab : public QcrWidget {
- public:
-    ListTab(FilteredPeaksModel* filteredModel);
+// public:
+//    ListTab(FilteredPeaksModel* filteredModel);
 
- private:
-    PeaksTableView* view;
+// private:
+//    PeaksTableView* view;
 };
 
 //! Tab of the SubframeSetup which contains the different peak lists

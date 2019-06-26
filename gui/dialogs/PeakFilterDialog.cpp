@@ -32,12 +32,12 @@ PeakFilterDialog::PeakFilterDialog() : QDialog {gGui}
         return;
     }
 
-    if (gSession->selectedExperiment()->peaks()->allPeaks().empty()) {
+    if (gSession->selectedExperiment()->getPeakListNames().empty()) {
         gLogger->log("## No peaks to filter. Find peaks first.");
         return;
     }
 
-    peaks_ = gSession->selectedExperiment()->peaks()->allPeaks();
+    peaks_ = gSession->selectedExperiment()->getPeaks(0, 0);
 
     setAttribute(Qt::WA_DeleteOnClose);
     doLayout();
@@ -144,7 +144,7 @@ void PeakFilterDialog::doLayout()
     QVBoxLayout* tablelayout = new QVBoxLayout;
     peakList = new QcrComboBox(
         "adhoc_peakListsPeakFilter", new QcrCell<int>(0),
-        gSession->selectedExperiment()->peaks()->peaklistNames());
+        gSession->selectedExperiment()->getPeakListNames());
     tablelayout->addWidget(peakList);
     model_ = new PeaksTableModel(
         "adhoc_filterModel", gSession->selectedExperiment()->experiment(), peaks_);
@@ -159,7 +159,7 @@ void PeakFilterDialog::doLayout()
     whole->addWidget(buttons);
 
     peakList->setHook([this](int i) {
-        peaks_ = gSession->selectedExperiment()->peaks()->selectedPeakLists(i)->getAllListPeaks();
+        peaks_ = gSession->selectedExperiment()->getPeaks(0, i);
         model_->setPeaks(peaks_);
     });
     connect(buttons, &QDialogButtonBox::clicked, this, &PeakFilterDialog::slotActionClicked);
@@ -240,10 +240,10 @@ void PeakFilterDialog::accept()
         if (!dlg->exec())
             return;
 
-        gSession->selectedExperiment()
-            ->peaks()
-            ->selectedPeakLists(peakList->getValue())
-            ->addFilteredPeaks(dlg->listName(), filtered_peaks);
+        gSession->selectedExperiment()->addPeaks(filtered_peaks,
+                                                 dlg->listName(),
+                                                 peakList->getValue());
+
 
         QString message = "Applied peak filters on selected peaks. Remains ";
         message += QString::number(filtered_peaks.size());

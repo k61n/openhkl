@@ -89,7 +89,7 @@ void ImageWidget::dataChanged()
     frameLayout->setEnabled(false);
     imageView->getScene()->resetScene();
     if (gSession->selectedExperimentNum() >= 0) {
-        nsx::sptrDataSet dataset = gSession->selectedExperiment()->data()->selectedData();
+        nsx::sptrDataSet dataset = gSession->selectedExperiment()->getData(0);
         if (dataset) {
             mode->setEnabled(true);
             intensityLayout->setEnabled(true);

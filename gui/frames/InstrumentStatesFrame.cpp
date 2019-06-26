@@ -30,7 +30,7 @@ InstrumentStatesFrame::InstrumentStatesFrame() : QcrFrame{"instrumentStates"}
         gLogger->log("[ERROR] No experiment selected");
         return;
     }
-    QList<nsx::sptrDataSet> datalist = gSession->selectedExperiment()->data()->allData();
+    QList<nsx::sptrDataSet> datalist = gSession->selectedExperiment()->allData();
     if (datalist.empty()) {
         gLogger->log("[ERROR] No dataset found");
         return;
