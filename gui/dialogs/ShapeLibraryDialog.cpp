@@ -14,7 +14,6 @@
 
 #include "gui/dialogs/ShapeLibraryDialog.h"
 
-#include "base/logger/Logger.h"
 #include "core/analyse/PeakFilter.h"
 #include "core/experiment/DataSet.h"
 #include "core/integration/ShapeIntegrator.h"
@@ -34,6 +33,8 @@
 #include <QHeaderView>
 #include <QStatusBar>
 #include <QVBoxLayout>
+#include <QtGlobal>
+#include <QDebug>
 
 ShapeLibraryDialog::ShapeLibraryDialog() : QDialog {}
 {
@@ -185,7 +186,7 @@ void ShapeLibraryDialog::calculate()
     nsx::Ellipsoid e = _profile.ellipsoid();
 
     gLogger->log("Mean profile has inertia tensor");
-    // nsx::info() << e.inverseMetric();
+    // qInfo() << e.inverseMetric();
 
     // draw the updated frame
     drawframe(drawFrame->value());

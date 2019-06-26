@@ -13,16 +13,17 @@
 //  ***********************************************************************************************
 
 #include <memory>
+#include <sstream>
 
 #include <QInputDialog>
+#include <QtGlobal>
+#include <QDebug>
 
-#include "base/logger/Logger.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/UnitCell.h"
-
 #include "apps/dialogs/DialogSpaceGroup.h"
 #include "apps/dialogs/DialogTransformationMatrix.h"
 #include "apps/dialogs/DialogUnitCellParameters.h"
@@ -95,7 +96,9 @@ QWidget* UnitCellItem::inspectItem()
 
 void UnitCellItem::info() const
 {
-    nsx::debug() << "" << *(_unit_cell);
+    std::ostringstream os;
+    os << "" << *(_unit_cell);
+    qDebug() << QString::fromStdString(os.str());
 }
 
 void UnitCellItem::openChangeUnitCellDialog()

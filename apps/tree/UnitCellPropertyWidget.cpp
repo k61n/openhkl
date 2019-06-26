@@ -17,8 +17,8 @@
 
 #include <QCompleter>
 #include <QStandardItem>
-
-#include "base/logger/Logger.h"
+#include <QtGlobal>
+#include <QDebug>
 #include "base/utils/Units.h"
 #include "core/experiment/DataSet.h"
 #include "core/gonio/Gonio.h"
@@ -112,7 +112,7 @@ void UnitCellPropertyWidget::setLatticeParams()
             .value<nsx::sptrUnitCell>()
             ->setParameters(a, b, c, alpha * nsx::deg, beta * nsx::deg, gamma * nsx::deg);
     } catch (const std::exception& e) {
-        nsx::error() << e.what();
+        qWarning() << e.what();
     }
 
     setMassDensity();
@@ -158,7 +158,7 @@ void UnitCellPropertyWidget::setChemicalFormula()
             ->setMaterial(
                 std::unique_ptr<xsection::Material>(new xsection::Material(formula.toStdString())));
     } catch (std::exception& e) {
-        nsx::error() << e.what();
+        qWarning() << e.what();
     }
 
     setMassDensity();

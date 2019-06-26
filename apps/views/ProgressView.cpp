@@ -14,8 +14,8 @@
 
 #include <QApplication>
 #include <QPushButton>
+#include <QDebug>
 
-#include "base/logger/Logger.h"
 #include "base/utils/ProgressHandler.h"
 
 #include "apps/views/ProgressView.h"
@@ -76,12 +76,13 @@ void ProgressView::updateProgress()
     setValue(progress);
 
     if (progress < 0)
-        nsx::info() << "Status:" << _handler->getStatus().c_str() << " " << _handler->getProgress();
+        qInfo() << "Status:" << QString::fromStdString(_handler->getStatus())
+                << " " << _handler->getProgress();
 
     auto log = _handler->getLog();
 
     for (auto& msg : log)
-        nsx::info() << msg.c_str();
+        qInfo() << QString::fromStdString(msg);
 }
 
 void ProgressView::abort()
@@ -94,6 +95,6 @@ void ProgressView::abort()
     // call update to flush ouput log etc.
     updateProgress();
 
-    nsx::info() << "Job was aborted.";
+    qInfo() << "Job was aborted.";
     _timer->stop();
 }

@@ -21,8 +21,9 @@
 #include <QJsonArray>
 #include <QStandardItem>
 #include <QString>
+#include <QtGlobal>
+#include <QDebug>
 
-#include "base/logger/Logger.h"
 #include "base/utils/ProgressHandler.h"
 #include "core/algo/DataReaderFactory.h"
 #include "core/analyse/PeakFinder.h"
@@ -92,7 +93,7 @@ void DataItem::removeSelectedData()
         auto data = numor_item->data(Qt::UserRole).value<nsx::sptrDataSet>();
         auto it = used_data.find(data);
         if (it != used_data.end()) {
-            nsx::info() << "The numor " << numor_item->text().toStdString()
+            qInfo() << "The numor " << numor_item->text()
                         << " is currently used. Can not be removed";
             continue;
         }
@@ -183,10 +184,10 @@ void DataItem::importRawData()
             raw_data_reader->addFrame(filenames[i]);
         data = std::make_shared<nsx::DataSet>(reader);
     } catch (std::exception& e) {
-        nsx::error() << "reading numor:" << filenames[0].c_str() << e.what();
+        qWarning() << "reading numor:" << qfilenames.at(0) << QString::fromStdString(e.what());
         return;
     } catch (...) {
-        nsx::error() << "reading numor:" << filenames[0].c_str() << " reason not known:";
+        qWarning() << "reading numor:" << qfilenames.at(0) << " reason not known:";
         return;
     }
 
@@ -203,7 +204,7 @@ void DataItem::findPeaks()
     nsx::DataList data = selectedData();
 
     if (data.empty()) {
-        nsx::error() << "No numors selected for finding peaks";
+        qWarning() << "No numors selected for finding peaks";
         return;
     }
 
@@ -241,7 +242,7 @@ void DataItem::convertToHDF5()
     nsx::DataList selected_data = selectedData();
 
     if (selected_data.empty()) {
-        nsx::error() << "No numors selected for HDF5 conversion";
+        qWarning() << "No numors selected for HDF5 conversion";
         return;
     }
 
@@ -257,7 +258,7 @@ void DataItem::openInstrumentStatesDialog()
     nsx::DataList selected_data = selectedData();
 
     if (selected_data.empty()) {
-        nsx::error() << "No numors selected for exploring instrument states";
+        qWarning() << "No numors selected for exploring instrument states";
         return;
     }
 

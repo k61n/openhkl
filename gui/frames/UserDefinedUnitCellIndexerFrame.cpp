@@ -15,7 +15,7 @@
 #include "gui/frames/UserDefinedUnitCellIndexerFrame.h"
 
 #include "base/geometry/ReciprocalVector.h"
-#include "base/logger/Logger.h"
+
 #include "base/utils/Units.h"
 #include "core/algo/UserDefinedIndexer.h"
 #include "core/experiment/Experiment.h"
@@ -26,6 +26,8 @@
 #include "gui/frames/UnitCellWidget.h"
 #include "gui/models/Session.h"
 #include <QCR/engine/logger.h>
+#include <QtGlobal>
+#include <QDebug>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHeaderView>
@@ -334,7 +336,7 @@ void UserDefinedUnitCellIndexerFrame::index()
     QModelIndexList selected_rows = selection_model->selectedRows();
 
     if (selected_rows.empty()) {
-        nsx::error() << "No peaks selected for auto-indexing";
+        qWarning() << "No peaks selected for auto-indexing";
         return;
     }
 

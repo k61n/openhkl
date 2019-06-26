@@ -20,10 +20,10 @@
 #include <QMenu>
 #include <QPixmap>
 #include <QToolTip>
-
+#include <QtGlobal>
+#include <QDebug>
 #include "base/geometry/AABB.h"
 #include "base/geometry/ReciprocalVector.h"
-#include "base/logger/Logger.h"
 #include "base/mask/BoxMask.h"
 #include "base/mask/EllipseMask.h"
 #include "base/utils/Units.h"
@@ -606,7 +606,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
         // Computes the new number of peaks, and if it changes log it
         nPeaksUnselected -= _peak_graphics_items.size();
         if (nPeaksUnselected > 0)
-            nsx::info() << "Unselected " << nPeaksUnselected << " peaks";
+            qInfo() << "Unselected " << nPeaksUnselected << " peaks";
     }
 }
 

@@ -20,8 +20,9 @@
 #include <QMessageBox>
 #include <QStandardItem>
 #include <QString>
+#include <QtGlobal>
+#include <QDebug>
 
-#include "base/logger/Logger.h"
 #include "core/algo/DataReaderFactory.h"
 #include "core/analyse/PeakFilter.h"
 #include "core/experiment/DataSet.h"
@@ -160,7 +161,7 @@ void PeaksItem::integratePeaks()
     if (!library)
         throw std::runtime_error("Error: cannot integrate weak peaks without a shape library!");
 
-    nsx::info() << "Reintegrating peaks...";
+    qInfo() << "Reintegrating peaks...";
 
     auto dialog = new DialogIntegrate(selected_peaks);
 
@@ -189,7 +190,7 @@ void PeaksItem::integratePeaks()
     dialog->setIntegrators(integrator_names);
 
     if (!dialog->exec()) {
-        nsx::info() << "Peak integration canceled.";
+        qInfo() << "Peak integration canceled.";
         return;
     }
 
@@ -208,14 +209,14 @@ void PeaksItem::integratePeaks()
     auto peaks = peak_filter.dRange(selected_peaks, dmin, dmax);
 
     for (auto&& numor : numors) {
-        nsx::info() << "Integrating " << peaks.size() << " peaks";
+        qInfo() << "Integrating " << peaks.size() << " peaks";
         std::unique_ptr<nsx::IPeakIntegrator> integrator(integrator_map[dialog->integrator()]());
         integrator->setHandler(handler);
         integrator->integrate(
             peaks, numor, library->peakScale(), library->bkgBegin(), library->bkgEnd());
     }
 
-    nsx::info() << "Done reintegrating peaks";
+    qInfo() << "Done reintegrating peaks";
 
     emit model()->itemChanged(this);
 }
@@ -293,7 +294,7 @@ void PeaksItem::buildShapeLibrary()
         return;
 
     exp_item->libraryItem()->library() = new_library;
-    nsx::info() << "Update profiles of " << peaks.size() << " peaks";
+    qInfo() << "Update profiles of " << peaks.size() << " peaks";
 
     emit model()->itemChanged(this);
 }
@@ -353,7 +354,7 @@ void PeaksItem::autoAssignUnitCell()
     auto&& cells = unit_cells_item->unitCells();
 
     if (cells.size() < 1) {
-        nsx::info() << "There are no unit cells to assign";
+        qInfo() << "There are no unit cells to assign";
         return;
     }
 
@@ -377,7 +378,7 @@ void PeaksItem::autoAssignUnitCell()
         if (assigned == false)
             peak->setSelected(false);
     }
-    nsx::debug() << "Done auto assigning unit cells";
+    qDebug() << "Done auto assigning unit cells";
 
     emit model()->itemChanged(this);
 }

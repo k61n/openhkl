@@ -14,7 +14,6 @@
 
 #include "core/instrument/InstrumentState.h"
 
-#include "base/logger/Logger.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"

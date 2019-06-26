@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "base/logger/Logger.h"
+
 #include "base/utils/ProgressHandler.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
@@ -29,6 +29,8 @@
 #include "apps/models/PeaksItem.h"
 #include "apps/models/UnitCellsItem.h"
 #include "apps/views/ProgressView.h"
+#include <QtGlobal>
+#include <QDebug>
 
 LibraryItem::LibraryItem() : TreeItem(), _library(nullptr)
 {
@@ -48,11 +50,11 @@ LibraryItem::LibraryItem() : TreeItem(), _library(nullptr)
 void LibraryItem::incorporateCalculatedPeaks()
 {
     if (!_library) {
-        nsx::error() << "A library must be set for peak prediction";
+        qWarning() << "A library must be set for peak prediction";
         return;
     }
 
-    nsx::debug() << "Incorporating missing peaks into current data set...";
+    qDebug() << "Incorporating missing peaks into current data set...";
 
     auto experiment_item = dynamic_cast<ExperimentItem*>(parent());
 

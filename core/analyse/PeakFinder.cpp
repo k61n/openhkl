@@ -15,7 +15,6 @@
 #include "core/analyse/PeakFinder.h"
 
 #include "base/geometry/AABB.h"
-#include "base/logger/Logger.h"
 #include "core/analyse/Octree.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/experiment/DataSet.h"
@@ -24,8 +23,9 @@
 #include "core/instrument/Sample.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
-
 #include <Eigen/Dense>
+#include <QtGlobal>
+#include <QDebug>
 #include <cstdio>
 #include <utility>
 #include <vector>
@@ -94,10 +94,10 @@ PeakFinder::PeakFinder()
     , _framesBegin(-1)
     , _framesEnd(-1)
 {
-    printf("PeakFinder::ctor ...\n");
+    qDebug("PeakFinder::ctor ...\n");
     ConvolverFactory convolver_factory;
     _convolver.reset(convolver_factory.create("annular", {}));
-    printf("PeakFinder::ctor done\n");
+    qDebug("PeakFinder::ctor done\n");
 }
 
 void PeakFinder::setHandler(const sptrProgressHandler& handler)
@@ -584,13 +584,13 @@ void PeakFinder::mergeEquivalentBlobs(
  */
 PeakList PeakFinder::find(DataList numors)
 {
-    printf("PeakFinder::find ... with %li numors\n", numors.size());
+    qDebug("PeakFinder::find ... with %li numors\n", numors.size());
     PeakList ret;
 
     int i = 0;
     for (auto&& numor : numors) {
         if (numors.size() > 1)
-            printf("  numor %i\n", i);
+            qDebug("  numor %i\n", i);
         PeakList numor_peaks;
 
         auto dectector = numor->reader()->diffractometer()->detector();
@@ -629,14 +629,14 @@ PeakList PeakFinder::find(DataList numors)
         //        }
 
         // find blobs within the current frame range
-        printf("PeakFinder::find: findPrimary\n");
+        qDebug("PeakFinder::find: findPrimary\n");
         findPrimaryBlobs(numor, local_blobs, local_equivalences, loop_begin, loop_end);
 
         // merge adjacent blobs
-        printf("PeakFinder::find: mergeBlobs\n");
+        qDebug("PeakFinder::find: mergeBlobs\n");
         mergeEquivalentBlobs(local_blobs, local_equivalences);
 
-        printf("PeakFinder::find: blob loop\n");
+        qDebug("PeakFinder::find: blob loop\n");
         {
             // merge the blobs into the global set
             for (auto&& blob : local_blobs)
@@ -711,13 +711,13 @@ PeakList PeakFinder::find(DataList numors)
         if (_handler)
             _handler->log("Found " + std::to_string(numor_peaks.size()) + " peaks.");
     }
-    printf("\n");
+    qDebug("\n");
 
     if (_handler) {
         _handler->setStatus("Peak finding completed.");
         _handler->setProgress(100);
     }
-    printf("exit PeakFinder::find\n");
+    qDebug("exit PeakFinder::find\n");
     return ret;
 }
 

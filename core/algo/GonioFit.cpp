@@ -16,9 +16,10 @@
 
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
-#include "base/logger/Logger.h"
 #include "core/experiment/DataSet.h"
 #include "core/raw/IDataReader.h"
+#include <QtGlobal>
+#include <QDebug>
 
 namespace nsx {
 
@@ -30,7 +31,7 @@ GonioFit fitSampleGonioOffsets(
 
     // No data provided, return zero offsets
     if (dataset.empty()) {
-        nsx::info() << "No data provided, offsets set to zero";
+        qInfo() << "No data provided, offsets set to zero";
         return {false, std::move(fitted_offsets), {}};
     }
 
@@ -45,7 +46,7 @@ GonioFit fitSampleGonioOffsets(
     }
 
     if (n_selected_states < n_axes) {
-        nsx::info() << "No or not enough refined states found in the dataset for a "
+        qInfo() << "No or not enough refined states found in the dataset for a "
                        "reliable fit, offsets set to zero";
         return {false, std::move(fitted_offsets), {}};
     }
@@ -108,7 +109,7 @@ GonioFit fitSampleGonioOffsets(
     auto success = minimizer.fit(n_iterations);
 
     if (!success) {
-        nsx::error() << "Failed to fit sample orientation offsets";
+        qWarning() << "Failed to fit sample orientation offsets";
         return {false, std::move(fitted_offsets), {}};
     }
 
@@ -124,7 +125,7 @@ GonioFit fitDetectorGonioOffsets(
 
     // No data provided, return zero offsets
     if (dataset.empty()) {
-        nsx::info() << "No data provided, offsets set to zero";
+        qInfo() << "No data provided, offsets set to zero";
         return {false, std::move(fitted_offsets), {}};
     }
 
@@ -139,7 +140,7 @@ GonioFit fitDetectorGonioOffsets(
     }
 
     if (n_selected_states < n_axes) {
-        nsx::info() << "No or not enough refined states found in the dataset for a "
+        qInfo() << "No or not enough refined states found in the dataset for a "
                        "reliable fit, offsets set to zero";
         return {false, std::move(fitted_offsets), {}};
     }
@@ -198,7 +199,7 @@ GonioFit fitDetectorGonioOffsets(
     auto success = minimizer.fit(n_iterations);
 
     if (!success) {
-        nsx::error() << "Failed to fit detector orientation offsets";
+        qWarning() << "Failed to fit detector orientation offsets";
         return {false, std::move(fitted_offsets), {}};
     }
 

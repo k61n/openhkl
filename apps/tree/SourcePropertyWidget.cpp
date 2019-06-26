@@ -15,7 +15,6 @@
 #include <QComboBox>
 #include <QDoubleSpinBox>
 
-#include "base/logger/Logger.h"
 #include "base/utils/Units.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentTypes.h"

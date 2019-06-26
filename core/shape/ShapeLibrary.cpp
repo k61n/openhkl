@@ -16,7 +16,6 @@
 
 #include "base/fit/Minimizer.h"
 #include "base/geometry/Ellipsoid.h"
-#include "base/logger/Logger.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
@@ -25,6 +24,8 @@
 #include "core/peak/PeakCoordinateSystem.h"
 #include "core/raw/IDataReader.h"
 #include "tables/crystal/UnitCell.h"
+#include <QtGlobal>
+#include <QDebug>
 
 #include <stdexcept>
 
@@ -69,7 +70,7 @@ PeakList predictPeaks(
 
     PeakList peaks =
         buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell->reciprocalBasis());
-    nsx::info() << "Computing shapes of " << peaks.size() << " calculated peaks...";
+    qInfo() << "Computing shapes of " << peaks.size() << " calculated peaks...";
 
     PeakList predicted_peaks;
 
@@ -87,7 +88,7 @@ PeakList predictPeaks(
             Eigen::Vector3d center = peak->shape().center();
             peak->setShape(Ellipsoid(center, cov.inverse()));
         } catch (std::exception& e) {
-            // nsx::info() << e.what(); // TODO replace by less verbous reporting
+            // qInfo() << e.what(); // TODO replace by less verbous reporting
             continue;
         }
         predicted_peaks.push_back(peak);

@@ -17,13 +17,14 @@
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
 #include "base/geometry/ReciprocalVector.h"
-#include "base/logger/Logger.h"
 #include "core/analyse/PeakFilter.h"
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
 #include <Eigen/QR>
+#include <QtGlobal>
+#include <QDebug>
 #include <array>
 #include <limits>
 #include <map>
@@ -498,14 +499,14 @@ const std::vector<std::pair<sptrUnitCell, double>>& UserDefinedUnitCellIndexer::
 void UserDefinedUnitCellIndexer::run()
 {
     if (_peaks.empty()) {
-        nsx::error() << "No peaks vectors provided for indexing";
+        qWarning() << "No peaks vectors provided for indexing";
         return;
     }
 
     try {
         _parameters.checkParameters();
     } catch (const std::exception& e) {
-        nsx::error() << e.what();
+        qWarning() << e.what();
         return;
     }
 
@@ -517,7 +518,7 @@ void UserDefinedUnitCellIndexer::run()
 
     rankUnitCells();
 
-    nsx::info() << _solutions.size() << "unit cells found";
+    qInfo() << _solutions.size() << "unit cells found";
 }
 
 } // namespace nsx

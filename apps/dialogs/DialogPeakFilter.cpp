@@ -19,8 +19,9 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QtGlobal>
+#include <QDebug>
 
-#include "base/logger/Logger.h"
 #include "core/analyse/PeakFilter.h"
 #include "core/experiment/DataSet.h"
 #include "core/peak/Peak3D.h"
@@ -239,7 +240,7 @@ void DialogPeakFilter::accept()
 
         _experiment_item->peaksItem()->appendRow(peak_list);
 
-        nsx::info() << "Applied peak filters on selected peaks. Remains " << filtered_peaks.size()
+        qInfo() << "Applied peak filters on selected peaks. Remains " << filtered_peaks.size()
                     << " out of " << _peaks.size() << " peaks";
     }
 

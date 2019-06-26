@@ -16,12 +16,13 @@
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
 #include "base/geometry/Ellipsoid.h"
-#include "base/logger/Logger.h"
 #include "core/experiment/DataSet.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 
 #include <Eigen/Cholesky>
+#include <QtGlobal>
+#include <QDebug>
 
 namespace nsx {
 
@@ -151,7 +152,7 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
         if (!success)
             return false;
     } catch (std::exception& e) {
-        nsx::error() << "Gaussian fit failed: " << e.what();
+        qWarning() << "Gaussian fit failed: " << e.what();
         return false;
     }
 

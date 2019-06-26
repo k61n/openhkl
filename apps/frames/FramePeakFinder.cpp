@@ -33,8 +33,9 @@
 #include <QTabWidget>
 #include <QTableWidget>
 #include <QVBoxLayout>
+#include <QtGlobal>
+#include <QDebug>
 
-#include "base/logger/Logger.h"
 #include "core/analyse/PeakFinder.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/experiment/DataSet.h"
@@ -233,7 +234,7 @@ void FramePeakFinder::setColorMap(const std::string& name)
 
 void FramePeakFinder::run()
 {
-    nsx::info() << "Peak find algorithm: Searching peaks in " << _ui->selected_data->count()
+    qInfo() << "Peak find algorithm: Searching peaks in " << _ui->selected_data->count()
                 << " files";
 
     // reset progress handler
@@ -291,7 +292,7 @@ void FramePeakFinder::run()
     checkbox->setChecked(true);
     _ui->tabs->tabBar()->setTabButton(_ui->tabs->count() - 1, QTabBar::LeftSide, checkbox);
 
-    nsx::info() << "Peak search complete. Found " << peaks.size() << " peaks.";
+    qInfo() << "Peak search complete. Found " << peaks.size() << " peaks.";
 }
 
 std::map<std::string, double> FramePeakFinder::convolutionParameters() const

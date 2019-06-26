@@ -14,10 +14,11 @@
 
 #include "gui/frames/ProgressView.h"
 
-#include "base/logger/Logger.h"
 #include "base/utils/ProgressHandler.h"
 #include <QApplication>
 #include <QPushButton>
+#include <QtGlobal>
+#include <QDebug>
 
 ProgressView::ProgressView(QWidget* parent) : QProgressDialog(parent)
 {
@@ -75,12 +76,12 @@ void ProgressView::updateProgress()
     setValue(progress);
 
     if (progress < 0)
-        nsx::info() << "Status:" << _handler->getStatus().c_str() << " " << _handler->getProgress();
+        qInfo() << "Status:" << _handler->getStatus().c_str() << " " << _handler->getProgress();
 
     std::vector<std::string> log = _handler->getLog();
 
     for (std::string msg : log)
-        nsx::info() << msg.c_str();
+        qInfo() << msg.c_str();
 }
 
 void ProgressView::abort()
@@ -93,6 +94,6 @@ void ProgressView::abort()
     // call update to flush ouput log etc.
     updateProgress();
 
-    nsx::info() << "Job was aborted.";
+    qInfo() << "Job was aborted.";
     _timer->stop();
 }

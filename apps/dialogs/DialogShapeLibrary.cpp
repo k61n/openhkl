@@ -15,8 +15,9 @@
 #include <QHeaderView>
 #include <QLayout>
 #include <QStatusBar>
+#include <QtGlobal>
+#include <QDebug>
 
-#include "base/logger/Logger.h"
 #include "core/analyse/PeakFilter.h"
 #include "core/experiment/DataSet.h"
 #include "core/integration/ShapeIntegrator.h"
@@ -179,17 +180,17 @@ void DialogShapeLibrary::build()
     integrator.setHandler(handler);
 
     for (auto data : _data) {
-        nsx::info() << "Fitting profiles in dataset " << data->filename();
+        qInfo() << "Fitting profiles in dataset " << QString::fromStdString(data->filename());
         integrator.integrate(
             fit_peaks, data, _library->peakScale(), _library->bkgBegin(), _library->bkgEnd());
     }
-    nsx::info() << "Done fitting profiles";
+    qInfo() << "Done fitting profiles";
 
     _library = integrator.library();
 
-    nsx::info() << "Updating peak shape model...";
+    qInfo() << "Updating peak shape model...";
     _library->updateFit(1000);
-    nsx::info() << "Done, mean pearson is " << _library->meanPearson();
+    qInfo() << "Done, mean pearson is " << _library->meanPearson();
 
     calculate();
 }
@@ -197,7 +198,7 @@ void DialogShapeLibrary::build()
 void DialogShapeLibrary::calculate()
 {
     if (!_library) {
-        nsx::info() << "Error: must build shape library before calculating a mean profile";
+        qInfo() << "Error: must build shape library before calculating a mean profile";
         return;
     }
 
@@ -219,8 +220,10 @@ void DialogShapeLibrary::calculate()
 
     nsx::Ellipsoid e = _profile.ellipsoid();
 
-    nsx::info() << "Mean profile has inertia tensor";
-    nsx::info() << e.inverseMetric();
+    qInfo() << "Mean profile has inertia tensor";
+    std::ostringstream os;
+    os << e.inverseMetric();
+    qInfo() << QString::fromStdString(os.str());
 
     // draw the updated frame
     drawFrame(ui->drawFrame->value());

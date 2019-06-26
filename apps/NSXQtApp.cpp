@@ -12,10 +12,11 @@
 //
 //  ***********************************************************************************************
 
-#include "base/logger/Logger.h"
+
 
 #include <QApplication>
-
+#include <QtGlobal>
+#include <QDebug>
 #include "apps/NSXQtApp.h"
 
 NSXQtApp::NSXQtApp(int& argc, char* argv[]) : QApplication(argc, argv)
@@ -30,7 +31,7 @@ bool NSXQtApp::notify(QObject* receiver, QEvent* event)
     try {
         return QApplication::notify(receiver, event);
     } catch (std::exception& e) {
-        nsx::error() << e.what();
+        qWarning() << e.what();
         return false;
     }
 }
