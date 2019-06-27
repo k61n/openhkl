@@ -38,12 +38,12 @@
 
 PeaksTableModel::PeaksTableModel(
     const QString& name, nsx::sptrExperiment experiment, const nsx::PeakList& peaks)
-    : TableModel {name}, _experiment {experiment}, _peaks {peaks}
+    : QcrTableModel {name}, _experiment {experiment}, _peaks {peaks}
 {
 }
 
 PeaksTableModel::PeaksTableModel(const QString& name, nsx::sptrExperiment experiment)
-    : TableModel {name}, _experiment {experiment}
+    : QcrTableModel {name}, _experiment {experiment}
 {
 }
 

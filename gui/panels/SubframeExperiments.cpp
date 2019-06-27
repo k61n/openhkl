@@ -72,7 +72,7 @@ QVariant ExperimentsModel::headerData(int col, Qt::Orientation ori, int role) co
 //  ***********************************************************************************************
 //! @class ExperimentsView
 
-ExperimentsView::ExperimentsView() : CheckTableView {new ExperimentsModel {}}
+ExperimentsView::ExperimentsView() : QcrCheckTableView {new ExperimentsModel {}}
 {
     setSelectionMode(QAbstractItemView::NoSelection);
     onData();

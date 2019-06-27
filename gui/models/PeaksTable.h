@@ -22,7 +22,7 @@
 #include <QTableView>
 
 //! Table model for the PeaksTableView
-class PeaksTableModel : public TableModel {
+class PeaksTableModel : public QcrTableModel {
     Q_OBJECT
  public:
     enum Column { h, k, l, px, py, frame, intensity, sigmaIntensity, numor, unitCell, d, count };
