@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
     app.setApplicationVersion("1.0");
     app.setOrganizationName("nsx");
 
-    Logger logger {"nsxgui.log"};
+    QcrLogger logger {"nsxgui.log"};
     Console console;
     Session session;
 
