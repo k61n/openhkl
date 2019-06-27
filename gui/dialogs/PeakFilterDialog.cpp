@@ -158,8 +158,8 @@ void PeakFilterDialog::doLayout()
         QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply, Qt::Horizontal);
     whole->addWidget(buttons);
 
-    peakList->setHook([this](int i) {
-        peaks_ = gSession->selectedExperiment()->getPeaks(0, i);
+    peakList->setHook([this](int) {
+        peaks_ = gSession->selectedExperiment()->getPeaks(peakList->currentText());
         model_->setPeaks(peaks_);
     });
     connect(buttons, &QDialogButtonBox::clicked, this, &PeakFilterDialog::slotActionClicked);
@@ -169,8 +169,6 @@ void PeakFilterDialog::doLayout()
 
 void PeakFilterDialog::filterPeaks()
 {
-    // TODO: filter peaks
-
     nsx::PeakList filtered_peaks = peaks_;
 
     nsx::PeakFilter peak_filter;
@@ -242,7 +240,7 @@ void PeakFilterDialog::accept()
 
         gSession->selectedExperiment()->addPeaks(filtered_peaks,
                                                  dlg->listName(),
-                                                 peakList->getValue());
+                                                 peakList->currentText());
 
 
         QString message = "Applied peak filters on selected peaks. Remains ";

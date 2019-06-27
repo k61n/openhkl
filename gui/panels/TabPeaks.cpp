@@ -24,67 +24,54 @@
 
 TabPeaks::TabPeaks() : QcrWidget {"peaks"}
 {
-//    filtered = new QcrTabWidget("filteredPeaks");
-//    foundPeaksLists = new QcrComboBox("adhoc_foundLists", new QcrCell<int>(0), []() {
-//        if (gSession->selectedExperimentNum() < 0)
-//            return QStringList {""};
-//        return gSession->selectedExperiment()->getPeakListNames(0);
-//    });
-//    QVBoxLayout* layout = new QVBoxLayout(this);
-//    layout->addWidget(foundPeaksLists);
-//    layout->addWidget(filtered);
-//    foundPeaksLists->setHook([this](int i) { slotSelectedListChanged(i); });
-//    filtered->setHook(
-//        [](int i) { gSession->selectedExperiment()->selectPeaks(foundPeaksLists->getValue(), i); });
+    foundPeaksLists = new QcrComboBox("adhoc_foundLists", new QcrCell<int>(0), []() {
+        if (gSession->selectedExperimentNum() < 0)
+            return QStringList {""};
+        return gSession->selectedExperiment()->getPeakListNames(1);
+    });
+    QVBoxLayout* layout = new QVBoxLayout(this);
+    layout->addWidget(foundPeaksLists);
+    foundPeaksLists->setHook([this](int i) { selectedListChanged(i); });
 
-//    setRemake([this]() {
-//        int numLists = foundPeaksLists->count();
-//        int selected = foundPeaksLists->doGetValue();
-//        if (selected < 0)
-//            selected = 0;
-
-//        if (gSession->selectedExperimentNum() >= 0) {
-//            PeakListsModel* model =
-//                gSession->selectedExperiment()->peaks()->selectedPeakLists(selected);
-//            if (numLists > 0) {
-//                if (!model) {
-//                    filtered->clear();
-//                    return;
-//                }
-//                if (filtered->count() != model->numberFilteredLists()) {
-//                    int oldTabs = filtered->count();
-
-//                    for (int j = 0; j < model->numberFilteredLists(); j++) {
-//                        FilteredPeaksModel* peaks = model->getPeaksAt(j);
-//                        filtered->addTab(new ListTab(peaks), peaks->getName());
-//                    }
-//                    for (int t = 0; t < oldTabs; t++)
-//                        filtered->removeTab(0);
-//                }
-//            }
-//        }
-//    });
+    peaksTable = new PeaksTableView;
+    peaksTable->show();
+    if (gSession->selectedExperimentNum() > 0) {
+        if (!gSession->selectedExperiment()->getPeakListNames().empty()) {
+            PeaksTableModel* model =
+                    new PeaksTableModel("adhoc_tabpeaksmodel",
+                                        gSession->selectedExperiment()->experiment(),
+                                        gSession->selectedExperiment()->getPeaks(0));
+            peaksTable->setModel(model);
+        }
+    }
+    layout->addWidget(peaksTable);
 }
 
-void TabPeaks::slotSelectedListChanged(int i)
+void TabPeaks::selectedListChanged(int i)
 {
-//    filtered->clear();
-//    gSession->selectedExperiment()->peaks()->selectPeakLists(i);
-//    PeakListsModel* model = gSession->selectedExperiment()->peaks()->selectedPeakLists();
-//    for (int j = 0; j < model->numberFilteredLists(); j++) {
-//        FilteredPeaksModel* peaks = model->getPeaksAt(j);
-//        filtered->addTab(new ListTab(peaks), peaks->getName());
-//    }
+    Q_UNUSED(i)
+
+    QString selectedPeaks = foundPeaksLists->currentText();
+    gSession->selectedExperiment()->selectPeaks(selectedPeaks);
+    PeaksTableModel* model = dynamic_cast<PeaksTableModel*>(peaksTable->model());
+    if (!model) {
+        model = new PeaksTableModel("adhoc_tabpeaksmodel",
+                                    gSession->selectedExperiment()->experiment(),
+                                    gSession->selectedExperiment()->getPeaks(selectedPeaks));
+        peaksTable->setModel(model);
+        return;
+    }
+    model->setPeaks(gSession->selectedExperiment()->getPeaks(selectedPeaks));
 }
 
-//ListTab::ListTab(FilteredPeaksModel* filteredModel)
-//    : QcrWidget {"adhoc_" + filteredModel->getName()}
-//{
-//    QVBoxLayout* layout = new QVBoxLayout(this);
-//    view = new PeaksTableView;
-//    PeaksTableModel* model = new PeaksTableModel(
-//        "adhoc_" + filteredModel->getName() + "Model", gSession->selectedExperiment()->experiment(),
-//        filteredModel->getPeaks());
-//    view->setModel(model);
-//    layout->addWidget(view);
-//}
+void TabPeaks::selectedExperimentChanged()
+{
+    if (gSession->selectedExperimentNum() < 0)
+        return;
+    PeaksTableModel* model = new PeaksTableModel("adhoc_tabpeaksmodel",
+                                                 gSession->selectedExperiment()->experiment());
+    peaksTable->setModel(model);
+    if (gSession->selectedExperiment()->getPeakListNames().empty())
+        return;
+    model->setPeaks(gSession->selectedExperiment()->getPeaks(foundPeaksLists->currentText()));
+}

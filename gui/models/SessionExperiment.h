@@ -30,26 +30,26 @@ class SessionExperiment {
     QStringList getDataNames();
     nsx::sptrDataSet getData(int index=-1);
     QList<nsx::sptrDataSet> allData();
-    int getIndex(QString);
+    int getIndex(const QString&);
     void selectData(int selected) { dataIndex_ = selected; }
-    void addPeaks(nsx::PeakList peaks, QString listname, int index=-1);
+    void addPeaks(nsx::PeakList peaks, const QString& listname, const QString& uppername=QString());
     nsx::PeakList getPeaks(int upperindex=-1, int lowerindex=-1);
+    nsx::PeakList getPeaks(const QString& peakListName);
     QStringList getPeakListNames(int depth=1);
-    void removePeaks(int upperindex, int lowerindex=-1);
-    void selectPeaks(int upperindex, int lowerindex);
+    void removePeaks(const QString& listname=QString());
+    void selectPeaks(const QString& listname=QString());
     void addUnitCell(nsx::sptrUnitCell uc) { unitCells_.append(uc); }
     nsx::sptrUnitCell getUnitCell(int index=-1);
     void removeUnitCell(int index=-1);
     QStringList getUnitCellNames();
     void selectUnitCell(int select) { unitCellIndex_ = select; }
-    void changeInstrument(QString instrumentname);
+    void changeInstrument(const QString& instrumentname);
 
  private:
     nsx::sptrExperiment experiment_;
     QMap<QString, QMap<QString, nsx::PeakList>> peakLists_;
     QList<nsx::sptrUnitCell> unitCells_;
-    int listUpperIndex_ = -1;
-    int listLowerIndex_ = -1;
+    QString selectedList_;
     int unitCellIndex_ = -1;
     int dataIndex_ = -1;
 };

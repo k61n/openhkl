@@ -19,26 +19,18 @@
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 
-//! Tab with one PeaksTable of the TabPeaks
-class ListTab : public QcrWidget {
-// public:
-//    ListTab(FilteredPeaksModel* filteredModel);
-
-// private:
-//    PeaksTableView* view;
-};
-
 //! Tab of the SubframeSetup which contains the different peak lists
 class TabPeaks : public QcrWidget {
     Q_OBJECT
  public:
     TabPeaks();
- private slots:
-    void slotSelectedListChanged(int i);
+
+    void selectedListChanged(int i);
+    void selectedExperimentChanged();
 
  private:
     QcrComboBox* foundPeaksLists;
-    QcrTabWidget* filtered;
+    PeaksTableView* peaksTable;
 };
 
 #endif // GUI_PANELS_TABPEAKS_H

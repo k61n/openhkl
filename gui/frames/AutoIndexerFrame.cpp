@@ -62,23 +62,8 @@ void AutoIndexerFrame::layout()
     vertical->addWidget(listNames);
     model = new PeaksTableModel(
         "adhoc_autoIndexerPeakTable", gSession->selectedExperiment()->experiment());
-    listNames->setHook([this](int i) {
-        QStringList filterednames = gSession->selectedExperiment()->getPeakListNames();
-        QString selectedName = filterednames.at(i);
-        int upper = 0;
-        int lower = 0;
-        for (int l = 0; l < filterednames.size(); l++) {
-            QString list = filterednames.at(l);
-            if (selectedName.compare(list) == 0) {
-                model->setPeaks(gSession->selectedExperiment()->getPeaks(upper, lower));
-                return;
-            }
-            lower++;
-            if (list.endsWith("all Peaks")) {
-                upper++;
-                lower = 0;
-            }
-        }
+    listNames->setHook([=](int) {
+        model->setPeaks(gSession->selectedExperiment()->getPeaks(listNames->currentText()));
     });
     peaks = new PeaksTableView;
     peaks->setModel(model);

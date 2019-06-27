@@ -48,7 +48,7 @@ nsx::sptrDataSet SessionExperiment::getData(int index)
     return experiment_->data().at(selected);
 }
 
-int SessionExperiment::getIndex(QString dataname)
+int SessionExperiment::getIndex(const QString& dataname)
 {
     QStringList liste = getDataNames();
     return liste.indexOf(dataname);
@@ -63,17 +63,20 @@ QList<nsx::sptrDataSet> SessionExperiment::allData()
     return list;
 }
 
-void SessionExperiment::addPeaks(nsx::PeakList peaks, QString listname, int index)
+void SessionExperiment::addPeaks(nsx::PeakList peaks, const QString& listname,
+                                 const QString& uppername)
 {
-    if (index == -1) {
+    if (uppername.length()==0) {
         QMap<QString, nsx::PeakList> innerList;
         innerList.insert("all Peaks", peaks);
         peakLists_.insert(listname, innerList);
         return;
     }
+    QString upperlist = uppername;
+    if (uppername.contains('/'))
+        upperlist = uppername.split('/').at(0);
 
-    QString outerlistname = getPeakListNames(0).at(index);
-    peakLists_[outerlistname].insert(listname, peaks);
+    peakLists_[upperlist].insert(listname, peaks);
     gSession->onPeaksChanged();
 }
 
@@ -87,16 +90,32 @@ nsx::PeakList SessionExperiment::getPeaks(int upperindex, int lowerindex)
     QString outername;
     QString innername;
     if (upperindex == -1)
-        outername = getPeakListNames(0).at(listUpperIndex_);
+        return getPeaks(selectedList_);
     else
         outername = getPeakListNames(0).at(upperindex);
     QMap<QString, nsx::PeakList> innermap = peakLists_.value(outername);
     QStringList innernames = innermap.keys();
     if (lowerindex == -1)
-        innername = innernames.at(listLowerIndex_);
+        innername = innernames.at(0);
     else
         innername = innernames.at(lowerindex);
     return innermap.value(innername);
+}
+
+nsx::PeakList SessionExperiment::getPeaks(const QString& peakListName)
+{
+    QString searchedName;
+    QString filteredName;
+    if (!peakListName.contains("/")) {
+        filteredName = "all Peaks";
+        searchedName = peakListName;
+    } else {
+        QStringList listnames = peakListName.split("/");
+        filteredName = listnames.at(1);
+        searchedName = listnames.at(0);
+    }
+
+    return peakLists_.value(searchedName).value(filteredName);
 }
 
 QStringList SessionExperiment::getPeakListNames(int depth)
@@ -113,26 +132,31 @@ QStringList SessionExperiment::getPeakListNames(int depth)
     return allnames;
 }
 
-void SessionExperiment::removePeaks(int upperindex, int lowerindex)
+void SessionExperiment::removePeaks(const QString& listname)
 {
-    if (upperindex == -1) {
-        upperindex = listUpperIndex_;
-        lowerindex = listLowerIndex_;
+    QString toremove = listname;
+    if (listname.length() == 0) {
+        if (selectedList_.length() == 0)
+            toremove = getPeakListNames(1).at(0);
+        else
+            toremove = selectedList_;
     }
 
-    QString outname = getPeakListNames(0).at(upperindex);
-    if (lowerindex == -1) {
-        peakLists_.remove(outname);
+    if (!toremove.contains("/")) {
+        peakLists_.remove(toremove);
         return;
     }
-    QString innername = peakLists_.value(outname).keys().at(lowerindex);
-    peakLists_[outname].remove(innername);
+
+    QStringList names = toremove.split('/');
+    QString outername = names.at(0);
+    QString innername = names.at(1);
+    peakLists_[outername].remove(innername);
+
 }
 
-void SessionExperiment::selectPeaks(int upperindex, int lowerindex)
+void SessionExperiment::selectPeaks(const QString& listname)
 {
-    listUpperIndex_ = upperindex;
-    listLowerIndex_ = lowerindex;
+    selectedList_ = listname;
 }
 
 nsx::sptrUnitCell SessionExperiment::getUnitCell(int index)
@@ -158,7 +182,7 @@ QStringList SessionExperiment::getUnitCellNames()
     return names;
 }
 
-void SessionExperiment::changeInstrument(QString instrumentname)
+void SessionExperiment::changeInstrument(const QString& instrumentname)
 {
     if (!experiment_->data().empty())
         return;

@@ -57,6 +57,7 @@ void SubframeSetup::experimentChanged()
     setTabEnabled((int)tab::UNITCELLS, enabled);
     instrument->remake();
     unitcells->remake();
+    peaks->selectedExperimentChanged();
 }
 
 void SubframeSetup::peaksChanged()
@@ -67,7 +68,7 @@ void SubframeSetup::peaksChanged()
     setTabEnabled((int)tab::PEAKS, enabled);
     setTabEnabled((int)tab::LIBRARY, enabled);
     if (enabled) {
-        peaks->remake();
+        peaks->selectedListChanged(0);
         library->remake();
     }
 }
