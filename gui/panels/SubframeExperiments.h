@@ -20,9 +20,9 @@
 #include <QCR/widgets/views.h>
 
 //! The model for ExperimentsView
-class ExperimentsModel : public CheckTableModel {
+class ExperimentsModel : public QcrCheckTableModel {
  public:
-    ExperimentsModel() : CheckTableModel {"experiments"} {}
+    ExperimentsModel() : QcrCheckTableModel {"experiments"} {}
 
     enum { COL_CHECK = 1, COL_NAME, COL_INSTRUMENT, COL_ATTRS };
 
@@ -42,7 +42,7 @@ class ExperimentsModel : public CheckTableModel {
 };
 
 //! Main item in `SubframeExperiments`: View and control the list of `Experiment`s
-class ExperimentsView : public CheckTableView {
+class ExperimentsView : public QcrCheckTableView {
  public:
     ExperimentsView();
     void onData() override;
