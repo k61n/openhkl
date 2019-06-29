@@ -21,6 +21,7 @@
 #include "gui/panels/SubframeLogger.h"
 #include "gui/panels/SubframePlot.h"
 #include "gui/panels/SubframeProperties.h"
+#include <QCR/widgets/mainwindow.h>
 
 extern class MainWin* gGui; //!< global pointer to the main window
 
