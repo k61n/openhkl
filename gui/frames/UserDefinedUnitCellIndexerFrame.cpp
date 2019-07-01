@@ -26,7 +26,6 @@
 #include "gui/frames/UnitCellWidget.h"
 #include "gui/models/Session.h"
 #include <QCR/engine/logger.h>
-#include <QtGlobal>
 #include <QDebug>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -35,6 +34,7 @@
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QVBoxLayout>
+#include <QtGlobal>
 
 UserDefinedUnitCellIndexerFrame::UserDefinedUnitCellIndexerFrame()
     : QcrFrame{"adhoc_userDefined"}, indexer_{}

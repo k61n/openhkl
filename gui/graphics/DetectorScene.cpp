@@ -43,13 +43,13 @@
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
 #include <QCR/engine/logger.h>
+#include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
 #include <QMenu>
 #include <QPixmap>
 #include <QToolTip>
 #include <QtGlobal>
-#include <QDebug>
 
 DetectorScene::DetectorScene(QObject* parent)
     : QGraphicsScene(parent)

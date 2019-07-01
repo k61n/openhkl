@@ -22,11 +22,11 @@
 //-------------------------------------------------------------------------------------------------
 //! @class TabPeaks
 
-TabPeaks::TabPeaks() : QcrWidget {"peaks"}
+TabPeaks::TabPeaks() : QcrWidget{"peaks"}
 {
     foundPeaksLists = new QcrComboBox("adhoc_foundLists", new QcrCell<int>(0), []() {
         if (gSession->selectedExperimentNum() < 0)
-            return QStringList {""};
+            return QStringList{""};
         return gSession->selectedExperiment()->getPeakListNames(1);
     });
     QVBoxLayout* layout = new QVBoxLayout(this);
@@ -37,10 +37,9 @@ TabPeaks::TabPeaks() : QcrWidget {"peaks"}
     peaksTable->show();
     if (gSession->selectedExperimentNum() > 0) {
         if (!gSession->selectedExperiment()->getPeakListNames().empty()) {
-            PeaksTableModel* model =
-                    new PeaksTableModel("adhoc_tabpeaksmodel",
-                                        gSession->selectedExperiment()->experiment(),
-                                        gSession->selectedExperiment()->getPeaks(0));
+            PeaksTableModel* model = new PeaksTableModel(
+                "adhoc_tabpeaksmodel", gSession->selectedExperiment()->experiment(),
+                gSession->selectedExperiment()->getPeaks(0));
             peaksTable->setModel(model);
         }
     }
@@ -55,9 +54,9 @@ void TabPeaks::selectedListChanged(int i)
     gSession->selectedExperiment()->selectPeaks(selectedPeaks);
     PeaksTableModel* model = dynamic_cast<PeaksTableModel*>(peaksTable->model());
     if (!model) {
-        model = new PeaksTableModel("adhoc_tabpeaksmodel",
-                                    gSession->selectedExperiment()->experiment(),
-                                    gSession->selectedExperiment()->getPeaks(selectedPeaks));
+        model = new PeaksTableModel(
+            "adhoc_tabpeaksmodel", gSession->selectedExperiment()->experiment(),
+            gSession->selectedExperiment()->getPeaks(selectedPeaks));
         peaksTable->setModel(model);
         return;
     }
@@ -68,8 +67,8 @@ void TabPeaks::selectedExperimentChanged()
 {
     if (gSession->selectedExperimentNum() < 0)
         return;
-    PeaksTableModel* model = new PeaksTableModel("adhoc_tabpeaksmodel",
-                                                 gSession->selectedExperiment()->experiment());
+    PeaksTableModel* model =
+        new PeaksTableModel("adhoc_tabpeaksmodel", gSession->selectedExperiment()->experiment());
     peaksTable->setModel(model);
     if (gSession->selectedExperiment()->getPeakListNames().empty())
         return;

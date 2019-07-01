@@ -26,6 +26,7 @@
 #include "gui/models/PeaksTable.h"
 #include "gui/models/Session.h"
 #include <QCR/engine/logger.h>
+#include <QDebug>
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -33,9 +34,8 @@
 #include <QStatusBar>
 #include <QVBoxLayout>
 #include <QtGlobal>
-#include <QDebug>
 
-ShapeLibraryDialog::ShapeLibraryDialog() : QDialog {}
+ShapeLibraryDialog::ShapeLibraryDialog() : QDialog{}
 {
     setAttribute(Qt::WA_DeleteOnClose);
 

@@ -14,8 +14,8 @@
 
 #include "gui/models/SessionExperiment.h"
 
-#include "gui/models/Session.h"
 #include "core/instrument/HardwareParameters.h"
+#include "gui/models/Session.h"
 #include <QDateTime>
 #include <QStringList>
 
@@ -40,10 +40,8 @@ nsx::sptrDataSet SessionExperiment::getData(int index)
 {
     if (index == -1)
         index = dataIndex_;
-    if (experiment_->data().empty()) {
-        qWarning("No data in selected experiment");
+    if (experiment_->data().empty())
         return nullptr;
-    }
     std::string selected = getDataNames().at(index).toStdString();
     return experiment_->data().at(selected);
 }
@@ -63,10 +61,10 @@ QList<nsx::sptrDataSet> SessionExperiment::allData()
     return list;
 }
 
-void SessionExperiment::addPeaks(nsx::PeakList peaks, const QString& listname,
-                                 const QString& uppername)
+void SessionExperiment::addPeaks(
+    nsx::PeakList peaks, const QString& listname, const QString& uppername)
 {
-    if (uppername.length()==0) {
+    if (uppername.length() == 0) {
         QMap<QString, nsx::PeakList> innerList;
         innerList.insert("all Peaks", peaks);
         peakLists_.insert(listname, innerList);
@@ -151,7 +149,6 @@ void SessionExperiment::removePeaks(const QString& listname)
     QString outername = names.at(0);
     QString innername = names.at(1);
     peakLists_[outername].remove(innername);
-
 }
 
 void SessionExperiment::selectPeaks(const QString& listname)

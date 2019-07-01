@@ -25,7 +25,7 @@
 #include <QSpacerItem>
 #include <QVBoxLayout>
 
-PeakFilterDialog::PeakFilterDialog() : QDialog {gGui}
+PeakFilterDialog::PeakFilterDialog() : QDialog{gGui}
 {
     if (gSession->selectedExperimentNum() < 0) {
         gLogger->log("## No experiment selected");
@@ -75,7 +75,7 @@ void PeakFilterDialog::doLayout()
     byUnitCell->setCheckable(true);
     byUnitCell->setChecked(false);
     QHBoxLayout* byLayout = new QHBoxLayout(byUnitCell);
-    unitCell = new QcrComboBox("adhoc_unitCell", new QcrCell<int>(0), QStringList {});
+    unitCell = new QcrComboBox("adhoc_unitCell", new QcrCell<int>(0), QStringList{});
     byLayout->addWidget(new QLabel("Unit cell"));
     byLayout->addWidget(unitCell);
     tolerance = new QcrDoubleSpinBox("adhoc_tolerance", new QcrCell<double>(0.2), 10, 6);
@@ -238,9 +238,8 @@ void PeakFilterDialog::accept()
         if (!dlg->exec())
             return;
 
-        gSession->selectedExperiment()->addPeaks(filtered_peaks,
-                                                 dlg->listName(),
-                                                 peakList->currentText());
+        gSession->selectedExperiment()->addPeaks(
+            filtered_peaks, dlg->listName(), peakList->currentText());
 
 
         QString message = "Applied peak filters on selected peaks. Remains ";

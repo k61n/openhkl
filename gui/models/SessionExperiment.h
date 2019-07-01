@@ -28,19 +28,20 @@ class SessionExperiment {
 
     nsx::sptrExperiment experiment() { return experiment_; }
     QStringList getDataNames();
-    nsx::sptrDataSet getData(int index=-1);
+    nsx::sptrDataSet getData(int index = -1);
     QList<nsx::sptrDataSet> allData();
     int getIndex(const QString&);
     void selectData(int selected) { dataIndex_ = selected; }
-    void addPeaks(nsx::PeakList peaks, const QString& listname, const QString& uppername=QString());
-    nsx::PeakList getPeaks(int upperindex=-1, int lowerindex=-1);
+    void
+    addPeaks(nsx::PeakList peaks, const QString& listname, const QString& uppername = QString());
+    nsx::PeakList getPeaks(int upperindex = -1, int lowerindex = -1);
     nsx::PeakList getPeaks(const QString& peakListName);
-    QStringList getPeakListNames(int depth=1);
-    void removePeaks(const QString& listname=QString());
-    void selectPeaks(const QString& listname=QString());
+    QStringList getPeakListNames(int depth = 1);
+    void removePeaks(const QString& listname = QString());
+    void selectPeaks(const QString& listname = QString());
     void addUnitCell(nsx::sptrUnitCell uc) { unitCells_.append(uc); }
-    nsx::sptrUnitCell getUnitCell(int index=-1);
-    void removeUnitCell(int index=-1);
+    nsx::sptrUnitCell getUnitCell(int index = -1);
+    void removeUnitCell(int index = -1);
     QStringList getUnitCellNames();
     void selectUnitCell(int select) { unitCellIndex_ = select; }
     void changeInstrument(const QString& instrumentname);
@@ -54,4 +55,4 @@ class SessionExperiment {
     int dataIndex_ = -1;
 };
 
-#endif //GUI_MODELS_SESSIONEXPERIMENT_H
+#endif // GUI_MODELS_SESSIONEXPERIMENT_H

@@ -25,7 +25,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-GlobalOffsetsFrame::GlobalOffsetsFrame(offsetMode mode) : QcrFrame {"adhoc_detectorOffsets"}
+GlobalOffsetsFrame::GlobalOffsetsFrame(offsetMode mode) : QcrFrame{"adhoc_detectorOffsets"}
 {
     if (gSession->selectedExperimentNum() < 0) {
         gLogger->log("[ERROR] No experiment selected");
