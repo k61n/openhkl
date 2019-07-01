@@ -53,6 +53,7 @@ ShapeLibraryDialog::ShapeLibraryDialog() : QDialog {}
     }
     _peaks = gSession->selectedExperiment()->getPeaks(0);
     _unitCell = gSession->selectedExperiment()->getUnitCell(0);
+
     for (nsx::sptrPeak3D peak : _peaks)
         _data.insert(peak->data());
     layout();

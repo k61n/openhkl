@@ -35,7 +35,9 @@ class UnitCellProperty : public QcrWidget {
     void setIndexingTolerance(double);
     void update();
     void updateCellParameters();
+    void selectedCellChanged(int cell);
 
+    QcrComboBox* unitcells;
     QcrLineEdit* name;
     QcrLineEdit* chemicalFormula;
     QcrComboBox* spaceGroup;
