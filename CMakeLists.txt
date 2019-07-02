@@ -10,9 +10,12 @@ include(PreventInSourceBuilds)
 project(NSXTool VERSION 0.1.0)
 message(STATUS "Building ${PROJECT_NAME} ${PROJECT_VERSION}")
 
-###########################################################################
-# Options
-###########################################################################
+set(CMAKE_PROJECT_DESCRIPTION # for display in installer
+    "NSXTool - peak integration for neutron single crystal diffraction")
+
+###################################################################################################
+#  Options
+###################################################################################################
 
 option(BUILD_NSX_GUI "Build nsx based GUI application." ON)
 option(BUILD_NSX_OLD_APPS "Build old GUI." ON)
@@ -23,9 +26,9 @@ option(NSX_VALGRIND "Run tests with valgrind" OFF)
 option(NSX_SANITIZE "Compile with clang's -fsanitize (must also set NSX_SANITIZER variable)" OFF)
 option(NSX_PYTHON "Generate Python bindings" ON)
 
-###########################################################################
-# Scripts controlling build setup and dependencies
-###########################################################################
+###################################################################################################
+#  Build type and compiler flags
+###################################################################################################
 
 if(UNIX AND NOT APPLE)
     set(LINUX TRUE)
@@ -40,7 +43,6 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
         "MinSizeRel" "RelWithDebInfo")
 endif()
 
-include(CheckDependencies)
 include(SetCompilerFlags)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(DEFAULT_BUILD_SHARED_LIBS ON)
@@ -48,6 +50,33 @@ set(DEFAULT_BUILD_SHARED_LIBS ON)
 if(BUILD_COVERAGE_REPORT)
     include(CheckCoverage)
 endif()
+
+###################################################################################################
+#  Qt
+###################################################################################################
+
+set(OpenGL_GL_PREFERENCE LEGACY)
+set(QT_USE_QTOPENGL TRUE)
+find_package(OpenGL REQUIRED)
+message(STATUS "Found OpenGL:")
+message(STATUS "  libraries: ${OPENGL_LIBRARIES}")
+message(STATUS "  headers: ${OPENGL_INCLUDE_DIR}")
+
+find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL PrintSupport REQUIRED)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC OFF)
+set(CMAKE_AUTORCC ON)
+
+###################################################################################################
+#  Other dependencs
+###################################################################################################
+
+include(CheckDependencies)
+
+###################################################################################################
+#  Prepare for tests; static code analysis
+###################################################################################################
 
 # Enable unit testing with ctest. This must be called before any calls to add_subdirectory
 enable_testing()
@@ -64,7 +93,10 @@ if(NSX_PYTHON AND NOT MSVC)
         ${CMAKE_SOURCE_DIR}/devtools/check-line-length.py 100 ${allsources})
 endif()
 
-include(SetupQt)
+###################################################################################################
+#  Build components
+###################################################################################################
+
 add_subdirectory(base)
 add_subdirectory(tables)
 add_subdirectory(core)
