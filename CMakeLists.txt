@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.6 FATAL_ERROR) # 3.6+ required by IFW for VS2015+
-
+cmake_policy(VERSION 3.6)
 if(POLICY CMP0078)
   cmake_policy(SET CMP0078 NEW)
 endif()
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(PreventInSourceBuilds)
 
 project(NSXTool VERSION 0.1.0)
@@ -125,9 +125,6 @@ if(COVERAGE)
     list(APPEND ignore_dirs "'/usr/lib/*'")
     list(APPEND ignore_dirs "'${CMAKE_BINARY_DIR}/*'")
     list(APPEND ignore_dirs "'${CMAKE_SOURCE_DIR}/externals/*'")
-
-    message("coverage ignore dirs = ${ignore_dirs}")
-
     #list(APPEND ignore_dirs "'*/tests/*'")
     add_coverage_target(coverage "${ignore_dirs}")
 endif()
