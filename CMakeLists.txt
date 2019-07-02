@@ -69,7 +69,7 @@ set(CMAKE_AUTOUIC OFF)
 set(CMAKE_AUTORCC ON)
 
 ###################################################################################################
-#  Other dependencs
+#  Other dependences
 ###################################################################################################
 
 include(CheckDependencies)
@@ -81,7 +81,7 @@ include(CheckDependencies)
 # Enable unit testing with ctest. This must be called before any calls to add_subdirectory
 enable_testing()
 
-if(NSX_PYTHON AND NOT MSVC)
+if(NSX_PYTHON AND NOT MSVC AND BUILD_TESTING)
     # ensure that no code line has more than 100 chars
     set(allsources "")
     foreach(dir base tables core)
@@ -112,12 +112,16 @@ if(BUILD_NSX_GUI)
     endif()
 endif()
 
-add_subdirectory(test/data)
-add_subdirectory(test/cpp)
+if(BUILD_TESTING) # option defined by CTest and enabled by default
+    add_subdirectory(test/data)
+    add_subdirectory(test/cpp)
+endif()
 
 if(NSX_PYTHON)
     add_subdirectory(swig)
-    add_subdirectory(test/python)
+    if(BUILD_TESTING)
+        add_subdirectory(test/python)
+    endif()
 endif()
 
 if(COVERAGE)
