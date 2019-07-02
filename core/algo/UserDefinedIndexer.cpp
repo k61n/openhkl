@@ -518,7 +518,7 @@ void UserDefinedUnitCellIndexer::run()
 
     rankUnitCells();
 
-    qInfo() << _solutions.size() << "unit cells found";
+    qDebug() << _solutions.size() << "unit cells found";
 }
 
 } // namespace nsx

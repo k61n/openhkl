@@ -70,7 +70,7 @@ PeakList predictPeaks(
 
     PeakList peaks =
         buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell->reciprocalBasis());
-    qInfo() << "Computing shapes of " << peaks.size() << " calculated peaks...";
+    qDebug() << "Computing shapes of " << peaks.size() << " calculated peaks...";
 
     PeakList predicted_peaks;
 

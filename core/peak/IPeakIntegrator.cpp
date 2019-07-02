@@ -49,7 +49,7 @@ const std::vector<Intensity>& IPeakIntegrator::rockingCurve() const
 void IPeakIntegrator::integrate(
     PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end)
 {
-    qInfo() << "IPeakIntegrator::integrate start";
+    qDebug() << "IPeakIntegrator::integrate start";
     // integrate only those peaks that belong to the specified dataset
     auto it = std::remove_if(
         peaks.begin(), peaks.end(), [&](const sptrPeak3D& peak) { return peak->data() != data; });
@@ -57,7 +57,7 @@ void IPeakIntegrator::integrate(
     peaks.erase(it, peaks.end());
 
     std::string status = "Integrating " + std::to_string(peaks.size()) + " peaks...";
-    qInfo() << QString::fromStdString(status);
+    qDebug() << QString::fromStdString(status);
 
     if (_handler) {
         _handler->setStatus(status.c_str());
