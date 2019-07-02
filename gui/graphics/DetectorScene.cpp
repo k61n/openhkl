@@ -558,7 +558,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
         // Computes the new number of peaks, and if it changes log it
         nPeaksUnselected -= _peak_graphics_items.size();
         if (nPeaksUnselected > 0)
-            qInfo() << "Unselected " << nPeaksUnselected << " peaks";
+            qDebug() << "Unselected " << nPeaksUnselected << " peaks";
     }
 }
 

@@ -35,14 +35,7 @@ UnitCellProperty::UnitCellProperty() : QcrWidget {"unitCellProperty"}
         QStringList a;
         if (gSession->selectedExperimentNum()<0)
             return a;
-        if (gSession->selectedExperiment()->unitCells()->allUnitCells().empty())
-            return a;
-        QList<nsx::sptrUnitCell> cells = gSession->selectedExperiment()->unitCells()->allUnitCells();
-        for (nsx::sptrUnitCell cell : cells) {
-            std::string cellname = cell->name();
-            a.append(QString::fromStdString(cellname));
-        }
-        return a;
+        return gSession->selectedExperiment()->getUnitCellNames();
     });
     unitcells->setHook([=](int i) { selectedCellChanged(i); });
     name = new QcrLineEdit("unitCellName", "");
@@ -110,8 +103,8 @@ void UnitCellProperty::setZValue(int z)
 
 void UnitCellProperty::selectedCellChanged(int cell)
 {
-    nsx::sptrUnitCell selectedCell = gSession->selectedExperiment()->
-            unitCells()->allUnitCells().at(cell);
+    nsx::sptrUnitCell selectedCell = gSession->selectedExperiment()->getUnitCell(cell);
+    gSession->selectedExperiment()->selectUnitCell(cell);
     name->setCellValue(unitcells->currentText());
     //chemicalFormula->setCellValue(QString::fromStdString(selectedCell->material()->formula()));
     z->setCellValue(selectedCell->z());

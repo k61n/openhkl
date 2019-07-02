@@ -190,7 +190,7 @@ void ShapeLibraryDialog::calculate()
     nsx::Ellipsoid e = _profile.ellipsoid();
 
     gLogger->log("Mean profile has inertia tensor");
-    // qInfo() << e.inverseMetric();
+    // qDebug() << e.inverseMetric();
 
     // draw the updated frame
     drawframe(drawFrame->value());

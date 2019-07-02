@@ -76,12 +76,12 @@ void ProgressView::updateProgress()
     setValue(progress);
 
     if (progress < 0)
-        qInfo() << "Status:" << _handler->getStatus().c_str() << " " << _handler->getProgress();
+        qDebug() << "Status:" << _handler->getStatus().c_str() << " " << _handler->getProgress();
 
     std::vector<std::string> log = _handler->getLog();
 
     for (std::string msg : log)
-        qInfo() << msg.c_str();
+        qDebug() << msg.c_str();
 }
 
 void ProgressView::abort()
@@ -94,6 +94,6 @@ void ProgressView::abort()
     // call update to flush ouput log etc.
     updateProgress();
 
-    qInfo() << "Job was aborted.";
+    qDebug() << "Job was aborted.";
     _timer->stop();
 }

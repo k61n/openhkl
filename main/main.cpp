@@ -15,8 +15,10 @@
 #include "gui/MainWin.h"
 #include "gui/models/Session.h"
 #include <QApplication>
+#include <QLoggingCategory>
 #include <QCR/engine/console.h>
 #include <QCR/engine/logger.h>
+#include <QCR/services/msg_handler.h>
 
 int main(int argc, char* argv[])
 {
@@ -28,6 +30,8 @@ int main(int argc, char* argv[])
 
     QcrLogger logger {"nsxgui.log"};
     QcrConsole console;
+    QLoggingCategory::setFilterRules("*.debug=true\nqt.*.debug=false");
+    qInstallMessageHandler(messageHandler);
     Session session;
 
     new MainWin {};

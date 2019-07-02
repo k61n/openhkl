@@ -163,7 +163,7 @@ void Actions::setupPeaks()
             return;
         // gSession->selectedExperiment()->normalizeToMonitor();
     });
-    integratepeaks.setTriggerHook([]() { new IntegrateDialog; });
+    integratepeaks.setTriggerHook([]() { gSession->selectedExperiment()->integratePeaks(); });
 }
 
 void Actions::setupRest()

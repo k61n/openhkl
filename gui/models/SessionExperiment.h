@@ -45,6 +45,7 @@ class SessionExperiment {
     QStringList getUnitCellNames();
     void selectUnitCell(int select) { unitCellIndex_ = select; }
     void changeInstrument(const QString& instrumentname);
+    void integratePeaks();
 
  private:
     nsx::sptrExperiment experiment_;

@@ -14,9 +14,19 @@
 
 #include "gui/models/SessionExperiment.h"
 
+#include "core/analyse/PeakFilter.h"
 #include "core/instrument/HardwareParameters.h"
+#include "core/integration/GaussianIntegrator.h"
+#include "core/integration/ISigmaIntegrator.h"
+#include "core/integration/MeanBackgroundIntegrator.h"
+#include "core/integration/PixelSumIntegrator.h"
+#include "core/integration/Profile1DIntegrator.h"
+#include "core/integration/Profile3DIntegrator.h"
+#include "gui/dialogs/IntegrateDialog.h"
+#include "gui/frames/ProgressView.h"
 #include "gui/models/Session.h"
 #include <QDateTime>
+#include <QDebug>
 #include <QStringList>
 
 SessionExperiment::SessionExperiment()
@@ -186,4 +196,62 @@ void SessionExperiment::changeInstrument(const QString& instrumentname)
 
     std::string expname = experiment_->name();
     experiment_ = std::make_shared<nsx::Experiment>(expname, instrumentname.toStdString());
+}
+
+void SessionExperiment::integratePeaks()
+{
+    if (peakLists_.empty()) {
+        qWarning() << "No peaks to integrate";
+        return;
+    }
+
+    IntegrateDialog* dialog = new IntegrateDialog;
+
+    QMap<QString, std::function<nsx::IPeakIntegrator*()>> integratorMap;
+    integratorMap["Pixel sum integrator"] = [=]() {
+        return new nsx::PixelSumIntegrator(dialog->fitCenter(), dialog->fitCov());
+    };
+//    When a shape library is used, uncomment
+//    integratorMap["3d profile integrator"] = [=]() {
+//        return new nsx::Profile3DIntegrator(library, dialog->radius(),
+//                                            dialog->numberOfFrames(), false);
+//    };
+//    integratorMap["I/Sigma integrator"] = [=]() {
+//        return new nsx::ISigmaIntegrator(library, dialog->radius(), dialog->numberOfFrames());
+//    };
+//    integratorMap["1d profile integrator"] = [=]() {
+//        return new nsx::Profile1DIntegrator(library, dialog->radius(), dialog->numberOfFrames());
+//    };
+    integratorMap["Gaussian integrator"] = [=]() {
+        return new nsx::GaussianIntegrator(dialog->fitCenter(), dialog->fitCov());
+    };
+
+    dialog->setIntegrators(integratorMap.keys());
+    dialog->show();
+
+    if (!dialog->exec())
+        return;
+
+    const double dmin = dialog->minimumD();
+    const double dmax = dialog->maximumD();
+    QList<nsx::sptrDataSet> numors = allData();
+
+    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
+    ProgressView view(nullptr);
+    view.watch(handler);
+
+    nsx::PeakFilter filter;
+    nsx::PeakList peaks = filter.dRange(getPeaks(), dmin, dmax);
+
+    for (nsx::sptrDataSet numor : numors) {
+        qDebug() << "Integrationg " << peaks.size() << " peaks";
+        std::unique_ptr<nsx::IPeakIntegrator> integrator(integratorMap[dialog->integrator()]());
+        integrator->setHandler(handler);
+        integrator->integrate(peaks, numor,
+                         dialog->peakScale(), dialog->backgroundBegin(), dialog->backgroundScale());
+        //                      library->peakScale(), library->bkbBegin(), library->bkgEnd());
+    }
+
+    qDebug() << "Done reintegrating peaks";
+    dialog->deleteLater();
 }
