@@ -65,8 +65,8 @@ message(STATUS "  headers: ${OPENGL_INCLUDE_DIR}")
 find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL PrintSupport REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC OFF)
 set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC OFF)
 
 ###################################################################################################
 #  Other dependences
