@@ -4,10 +4,10 @@ file(GLOB_RECURSE sources *.cpp)
 
 add_library(${lib} ${sources})
 
-target_include_directories(
-    ${lib}
+target_include_directories(${lib}
     PRIVATE
-    ${CMAKE_SOURCE_DIR})
+    ${CMAKE_SOURCE_DIR}
+    )
 
 target_link_libraries(${lib}
     PUBLIC

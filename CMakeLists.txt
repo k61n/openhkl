@@ -7,7 +7,8 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 include(PreventInSourceBuilds)
 
-project(nsxtool VERSION 0.1.0)
+project(NSXTool VERSION 0.1.0)
+message(STATUS "Building ${PROJECT_NAME} ${PROJECT_VERSION}")
 
 ###########################################################################
 # Options

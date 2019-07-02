@@ -1,4 +1,4 @@
-set(lib gui)
+set(lib nsxgui)
 
 file(GLOB_RECURSE sources *.cpp)
 add_library(${lib} ${sources})
