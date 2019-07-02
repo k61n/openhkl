@@ -19,10 +19,10 @@
 
 IntegrateDialog::IntegrateDialog() : QDialog{}
 {
+    QStringList integratorList{"Gaussian integrator", "Pixel sum integrator"};
+    integratorNames = integratorList;
     QFormLayout* layout = new QFormLayout(this);
-    method = new QcrComboBox("adhoc_methods", new QcrCell<int>(0), {"background substraction",
-                             "3d gaussian fit", "3d profilt fit", "3d profilt fit (Kabsch)",
-                             "3d profilt fit (detector)", "I/sigma", "1d profile fit"});
+    method = new QcrComboBox("adhoc_methods", new QcrCell<int>(0), [=]() { return integrators(); });
     fitCen = new QcrCheckBox("adhoc_centerfit", "fit center (Gaussian, pixel sum)",
                              new QcrCell<bool>(false));
     fitCovariance = new QcrCheckBox("adhoc_covfit", "fit covariance (Gaussian, pixel sum)",
@@ -47,6 +47,9 @@ IntegrateDialog::IntegrateDialog() : QDialog{}
     layout->addRow("search radius", searchRadius);
     layout->addRow("number of frames", numFrames);
     layout->addRow(buttons);
+
+    connect(buttons, &QDialogButtonBox::accepted, this, &IntegrateDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, this, &IntegrateDialog::reject);
 
     show();
 }

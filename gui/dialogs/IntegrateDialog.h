@@ -32,9 +32,12 @@ class IntegrateDialog : public QDialog {
     bool fitCenter() { return fitCen->isChecked(); }
     bool fitCov() { return fitCovariance->isChecked(); }
     QString integrator() { return method->currentText(); }
-    void setIntegrators(QStringList integrators);
+    void setIntegrators(QStringList integr) { integratorNames = integr; }
 
  private:
+    QStringList integrators() { return integratorNames; }
+
+    QStringList integratorNames;
     QcrComboBox* method;
     QcrCheckBox* fitCen;
     QcrCheckBox* fitCovariance;
