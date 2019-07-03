@@ -16,6 +16,7 @@
 #define GUI_DIALOGS_INTEGRATEDIALOG_H
 
 #include <QDialog>
+#include <QFormLayout>
 #include <QCR/widgets/controls.h>
 
 class IntegrateDialog : public QDialog {
@@ -32,12 +33,10 @@ class IntegrateDialog : public QDialog {
     bool fitCenter() { return fitCen->isChecked(); }
     bool fitCov() { return fitCovariance->isChecked(); }
     QString integrator() { return method->currentText(); }
-    void setIntegrators(QStringList integr) { integratorNames = integr; }
+    void setIntegrators(QStringList integr);
 
  private:
-    QStringList integrators() { return integratorNames; }
-
-    QStringList integratorNames;
+    QFormLayout* layout;
     QcrComboBox* method;
     QcrCheckBox* fitCen;
     QcrCheckBox* fitCovariance;

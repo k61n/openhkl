@@ -19,10 +19,7 @@
 
 IntegrateDialog::IntegrateDialog() : QDialog{}
 {
-    QStringList integratorList{"Gaussian integrator", "Pixel sum integrator"};
-    integratorNames = integratorList;
-    QFormLayout* layout = new QFormLayout(this);
-    method = new QcrComboBox("adhoc_methods", new QcrCell<int>(0), [=]() { return integrators(); });
+    layout = new QFormLayout(this);
     fitCen = new QcrCheckBox("adhoc_centerfit", "fit center (Gaussian, pixel sum)",
                              new QcrCell<bool>(false));
     fitCovariance = new QcrCheckBox("adhoc_covfit", "fit covariance (Gaussian, pixel sum)",
@@ -36,7 +33,6 @@ IntegrateDialog::IntegrateDialog() : QDialog{}
     numFrames = new QcrDoubleSpinBox("adhoc_integrateNumFrames", new QcrCell<double>(0.0), 10, 5);
     QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Cancel|QDialogButtonBox::Ok,
                                                      Qt::Horizontal);
-    layout->addRow("Method", method);
     layout->addRow("", fitCen);
     layout->addRow("", fitCovariance);
     layout->addRow("Peak shape scale", shapeScale);
@@ -50,6 +46,10 @@ IntegrateDialog::IntegrateDialog() : QDialog{}
 
     connect(buttons, &QDialogButtonBox::accepted, this, &IntegrateDialog::accept);
     connect(buttons, &QDialogButtonBox::rejected, this, &IntegrateDialog::reject);
+}
 
-    show();
+void IntegrateDialog::setIntegrators(QStringList integr)
+{
+    method = new QcrComboBox("adhoc_methods", new QcrCell<int>(0), integr);
+    layout->insertRow(0, "Method", method);
 }

@@ -64,9 +64,12 @@ void ShapeLibraryDialog::layout()
     tabs = new QcrTabWidget("adhoc_ShapeLibraryTabs");
     libraryTab = new QcrWidget("adhoc_libraryTab");
     QFormLayout* form = new QFormLayout(libraryTab);
-    nx = new QcrSpinBox("adhoc_nx", new QcrCell<int>(0), 5);
-    ny = new QcrSpinBox("adhoc_ny", new QcrCell<int>(0), 5);
-    nz = new QcrSpinBox("adhoc_nz", new QcrCell<int>(0), 5);
+    nx = new QcrSpinBox("adhoc_nx", new QcrCell<int>(20), 5);
+    nx->setMinimum(5);
+    ny = new QcrSpinBox("adhoc_ny", new QcrCell<int>(20), 5);
+    ny->setMinimum(5);
+    nz = new QcrSpinBox("adhoc_nz", new QcrCell<int>(20), 5);
+    nz->setMinimum(5);
     form->addRow("nx", nx);
     form->addRow("ny", ny);
     form->addRow("nz", nz);
@@ -78,12 +81,12 @@ void ShapeLibraryDialog::layout()
     kabschform->addRow("sigmaD", sigmaD);
     kabschform->addRow("sigmaM", sigmaM);
     form->addRow(kabsch);
-    minISigma = new QcrDoubleSpinBox("adhoc_minISigma", new QcrCell<double>(0.0), 8, 2);
+    minISigma = new QcrDoubleSpinBox("adhoc_minISigma", new QcrCell<double>(3.0), 8, 2);
     minD = new QcrDoubleSpinBox("adhoc_minD", new QcrCell<double>(0.0), 8, 2);
-    maxD = new QcrDoubleSpinBox("adhoc_maxD", new QcrCell<double>(0.0), 8, 2);
-    peakscale = new QcrDoubleSpinBox("adhoc_peakscale", new QcrCell<double>(0.0), 8, 2);
-    backgroundbegin = new QcrDoubleSpinBox("adhoc_backgroundbegin", new QcrCell<double>(0.0), 8, 2);
-    backgroundend = new QcrDoubleSpinBox("adhoc_backgroundend", new QcrCell<double>(0.0), 8, 2);
+    maxD = new QcrDoubleSpinBox("adhoc_maxD", new QcrCell<double>(100.0), 8, 2);
+    peakscale = new QcrDoubleSpinBox("adhoc_peakscale", new QcrCell<double>(3.0), 8, 2);
+    backgroundbegin = new QcrDoubleSpinBox("adhoc_backgroundbegin", new QcrCell<double>(4.0), 8, 2);
+    backgroundend = new QcrDoubleSpinBox("adhoc_backgroundend", new QcrCell<double>(4.5), 8, 2);
     form->addRow("min I/Sigma", minISigma);
     form->addRow("min d", minD);
     form->addRow("max d", maxD);
@@ -91,6 +94,7 @@ void ShapeLibraryDialog::layout()
     form->addRow("background begin", backgroundbegin);
     form->addRow("background end", backgroundend);
     buildShapeLibrary = new QcrTextTriggerButton("adhoc_buildShapeLib", "Build shape library");
+    buildShapeLibrary->trigger()->setTriggerHook([=]() { build(); });
     form->addRow(buildShapeLibrary);
     tabs->addTab(libraryTab, "Library");
 
@@ -104,8 +108,10 @@ void ShapeLibraryDialog::layout()
     x = new QcrDoubleSpinBox("adhoc_X", new QcrCell<double>(0.0), 8, 2);
     y = new QcrDoubleSpinBox("adhoc_Y", new QcrCell<double>(0.0), 8, 2);
     frame = new QcrDoubleSpinBox("adhoc_frame", new QcrCell<double>(0.0), 8, 2);
-    radius = new QcrDoubleSpinBox("adhoc_radius", new QcrCell<double>(0.0), 8, 2);
-    nframes = new QcrDoubleSpinBox("adhoc_nFrames", new QcrCell<double>(0.0), 8, 2);
+    radius = new QcrDoubleSpinBox("adhoc_radius", new QcrCell<double>(1.0), 8, 2);
+    radius->setMinimum(1);
+    nframes = new QcrDoubleSpinBox("adhoc_nFrames", new QcrCell<double>(1.0), 8, 2);
+    nframes->setMinimum(1);
     horileftup->addRow("x", x);
     horileftup->addRow("y", y);
     horileftup->addRow("frame", frame);
@@ -114,12 +120,15 @@ void ShapeLibraryDialog::layout()
     horileft->addLayout(horileftup);
     calculateMeanProfile =
         new QcrTextTriggerButton("adhoc_calcMeanProfile", "Calculate Mean Profile");
+    calculateMeanProfile->trigger()->setTriggerHook([=]() { calculate(); });
     horileft->addWidget(calculateMeanProfile);
     horizontal->addLayout(horileft);
     graphics = new QGraphicsView;
     drawFrame = new QSlider(previewTab);
     drawFrame->setObjectName(QStringLiteral("drawFrame"));
     drawFrame->setOrientation(Qt::Horizontal);
+    drawFrame->setMinimum(1);
+    drawFrame->setValue(1);
     QVBoxLayout* graphicsview = new QVBoxLayout;
     graphicsview->addWidget(graphics);
     graphicsview->addWidget(drawFrame);
@@ -160,6 +169,8 @@ void ShapeLibraryDialog::layout()
     connect(
         table->verticalHeader(), &QHeaderView::sectionClicked, this,
         &ShapeLibraryDialog::selectTargetPeak);
+    connect(buttons, &QDialogButtonBox::accepted, this, &ShapeLibraryDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, this, &ShapeLibraryDialog::reject);
 
     show();
 }
@@ -189,8 +200,10 @@ void ShapeLibraryDialog::calculate()
 
     nsx::Ellipsoid e = _profile.ellipsoid();
 
-    gLogger->log("Mean profile has inertia tensor");
-    // qDebug() << e.inverseMetric();
+    qDebug() << "Mean profile has inertia tensor";
+    std::ostringstream os;
+    os << e.inverseMetric();
+    qDebug() << QString::fromStdString(os.str());
 
     // draw the updated frame
     drawframe(drawFrame->value());
@@ -268,13 +281,17 @@ void ShapeLibraryDialog::build()
     _library->updateFit(1000);
     gLogger->log("[INFO]Done, mean pearson is " + QString::number(_library->meanPearson()));
 
-    calculate();
+    //calculate();
 }
 
 void ShapeLibraryDialog::drawframe(int value)
 {
-    if (value < 0 || value >= _profile.shape()[2])
-        throw std::runtime_error("DialogShapeLibrary::drawFrame(): invalid frame value");
+    if (value < 0 || value >= _profile.shape()[2]) {
+        //throw std::runtime_error("DialogShapeLibrary::drawFrame(): invalid frame value");
+        qInfo() << "SLD: drawframe(): value = " << value;
+        qInfo() << "SLD: drawframe(): _profile.shape()[2] = " << _profile.shape()[2];
+        return;
+    }
 
     const Eigen::Vector3i shape = _profile.shape();
     QGraphicsScene* scene = graphics->scene();
@@ -312,4 +329,12 @@ void ShapeLibraryDialog::selectTargetPeak(int row)
     x->setCellValue(center[0]);
     y->setCellValue(center[1]);
     frame->setCellValue(center[2]);
+}
+
+void ShapeLibraryDialog::accept()
+{
+    if (_library)
+        gSession->selectedExperiment()->setLibrary(_library);
+
+    QDialog::accept();
 }

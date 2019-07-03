@@ -130,7 +130,7 @@ void IPeakIntegrator::integrate(
                         peak->setSelected(false);
                 } catch (std::exception& e) {
                     // integration failed...
-                    qInfo() << "integration failed: " << e.what();
+                    qDebug() << "integration failed: " << e.what();
                     peak->setSelected(false);
                 }
                 // free memory (important!!)

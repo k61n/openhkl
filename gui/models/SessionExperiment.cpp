@@ -211,17 +211,21 @@ void SessionExperiment::integratePeaks()
     integratorMap["Pixel sum integrator"] = [=]() {
         return new nsx::PixelSumIntegrator(dialog->fitCenter(), dialog->fitCov());
     };
-//    When a shape library is used, uncomment
-//    integratorMap["3d profile integrator"] = [=]() {
-//        return new nsx::Profile3DIntegrator(library, dialog->radius(),
-//                                            dialog->numberOfFrames(), false);
-//    };
-//    integratorMap["I/Sigma integrator"] = [=]() {
-//        return new nsx::ISigmaIntegrator(library, dialog->radius(), dialog->numberOfFrames());
-//    };
-//    integratorMap["1d profile integrator"] = [=]() {
-//        return new nsx::Profile1DIntegrator(library, dialog->radius(), dialog->numberOfFrames());
-//    };
+    if (library_) {
+        qInfo() << "Library available";
+        integratorMap["3d profile integrator"] = [=]() {
+            return new nsx::Profile3DIntegrator(library_, dialog->radius(),
+                                                dialog->numberOfFrames(), false);
+        };
+        integratorMap["I/Sigma integrator"] = [=]() {
+            return new nsx::ISigmaIntegrator(library_, dialog->radius(), dialog->numberOfFrames());
+        };
+        integratorMap["1d profile integrator"] = [=]() {
+            return new nsx::Profile1DIntegrator(library_, dialog->radius(),
+                                                dialog->numberOfFrames());
+        };
+    } else
+        qInfo() << "Library not available";
     integratorMap["Gaussian integrator"] = [=]() {
         return new nsx::GaussianIntegrator(dialog->fitCenter(), dialog->fitCov());
     };
@@ -247,9 +251,13 @@ void SessionExperiment::integratePeaks()
         qDebug() << "Integrationg " << peaks.size() << " peaks";
         std::unique_ptr<nsx::IPeakIntegrator> integrator(integratorMap[dialog->integrator()]());
         integrator->setHandler(handler);
-        integrator->integrate(peaks, numor,
-                         dialog->peakScale(), dialog->backgroundBegin(), dialog->backgroundScale());
-        //                      library->peakScale(), library->bkbBegin(), library->bkgEnd());
+        if (!library_) {
+            integrator->integrate(peaks, numor, dialog->peakScale(),
+                                  dialog->backgroundBegin(), dialog->backgroundScale());
+        } else {
+            integrator->integrate(peaks, numor, library_->peakScale(), library_->bkgBegin(),
+                                  library_->bkgEnd());
+        }
     }
 
     qDebug() << "Done reintegrating peaks";

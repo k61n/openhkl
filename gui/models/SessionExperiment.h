@@ -18,6 +18,7 @@
 #include "core/experiment/Experiment.h"
 #include "core/instrument/InstrumentTypes.h"
 #include "core/peak/Peak3D.h"
+#include "core/shape/ShapeLibrary.h"
 #include "tables/crystal/UnitCell.h"
 #include <QMap>
 
@@ -46,9 +47,12 @@ class SessionExperiment {
     void selectUnitCell(int select) { unitCellIndex_ = select; }
     void changeInstrument(const QString& instrumentname);
     void integratePeaks();
+    void setLibrary(nsx::sptrShapeLibrary shapeLibrary) { library_ = shapeLibrary; }
+    nsx::sptrShapeLibrary getLibrary() { return library_; }
 
  private:
     nsx::sptrExperiment experiment_;
+    nsx::sptrShapeLibrary library_;
     QMap<QString, QMap<QString, nsx::PeakList>> peakLists_;
     QList<nsx::sptrUnitCell> unitCells_;
     QString selectedList_;
