@@ -1,7 +1,7 @@
 stages:
   - build
 
-deb_test_clang:
+debT_clang:
   tags: &unix
   - Linux
   image: debian:testing
@@ -31,7 +31,7 @@ deb_test_clang:
     - make -j8
     - ctest -j8 --output-on-failure
 
-deb_testing_gcc:
+debT_gcc:
   tags: *unix
   image: debian:testing
   before_script: &debian_gcc
