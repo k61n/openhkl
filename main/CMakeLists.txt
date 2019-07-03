@@ -14,7 +14,7 @@ target_include_directories(${app}
     ${Qt5Widgets_INCLUDE_DIRS}
     )
 
-target_link_libraries(${app} PRIVATE nsxgui)
+target_link_libraries(${app} PRIVATE ${Qt5Widgets_LIBRARIES} nsxgui)
 
 if(WIN32)
     include(PackIFW)
