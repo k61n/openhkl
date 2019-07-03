@@ -78,8 +78,7 @@ include(CheckDependencies)
 #  Prepare for tests; static code analysis
 ###################################################################################################
 
-# Enable unit testing with ctest. This must be called before any calls to add_subdirectory
-enable_testing()
+include(CTest)
 
 if(NSX_PYTHON AND NOT MSVC AND BUILD_TESTING)
     # ensure that no code line has more than 100 chars
