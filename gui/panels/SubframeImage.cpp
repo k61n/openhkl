@@ -28,7 +28,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-ImageWidget::ImageWidget() : QcrWidget {"Image"}
+ImageWidget::ImageWidget() : QcrWidget{"Image"}
 {
     QHBoxLayout* overallLayout = new QHBoxLayout(this);
     QVBoxLayout* leftLayout = new QVBoxLayout;
@@ -89,7 +89,7 @@ void ImageWidget::dataChanged()
     frameLayout->setEnabled(false);
     imageView->getScene()->resetScene();
     if (gSession->selectedExperimentNum() >= 0) {
-        nsx::sptrDataSet dataset = gSession->selectedExperiment()->data()->selectedData();
+        nsx::sptrDataSet dataset = gSession->selectedExperiment()->getData(0);
         if (dataset) {
             mode->setEnabled(true);
             intensityLayout->setEnabled(true);
@@ -118,7 +118,7 @@ void ImageWidget::changeView(int option)
 
 //  ***********************************************************************************************
 
-SubframeImage::SubframeImage() : QcrDockWidget {"Image"}
+SubframeImage::SubframeImage() : QcrDockWidget{"Image"}
 {
     setWidget((centralWidget = new ImageWidget));
     connect(

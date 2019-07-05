@@ -56,13 +56,13 @@ void Session::createExperiment()
 
     try {
         std::string experimentName = expname.toStdString();
-        std::string instrumentName = dlg->instrumentName().toStdString();
-        nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName, instrumentName));
 
-        ExperimentModel* expt = new ExperimentModel(expPtr);
+        SessionExperiment* expt = new SessionExperiment;
+        expt->changeInstrument(dlg->instrumentName());
+        expt->experiment()->setName(experimentName);
         experiments.push_back(expt);
-        selected = experiments.size() - 1;
-        gLogger->log("Experiment \"" + QString::fromStdString(experimentName) + "\" added");
+        selectedExperiment_ = experiments.size() - 1;
+        gLogger->log("Experiment \"" + expname + "\" added");
     } catch (const std::runtime_error& e) {
         gLogger->log(QString::fromStdString(e.what()));
         return;
@@ -72,12 +72,8 @@ void Session::createExperiment()
 
 void Session::createDefaultExperiment()
 {
-    std::string experimentName = QDateTime::currentDateTime().toString().toStdString();
-    std::set<std::string> instruments = nsx::getResourcesName("instruments");
-    nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName, *instruments.begin()));
-    ExperimentModel* expmodel = new ExperimentModel(expPtr);
-    experiments.push_back(expmodel);
-    selected = experiments.size() - 1;
+    experiments.push_back(new SessionExperiment);
+    selectedExperiment_ = experiments.size() - 1;
     onExperimentChanged();
 }
 
@@ -87,7 +83,7 @@ void Session::removeExperiment()
         gLogger->log("[WARNING] nothing to remove");
         return;
     }
-    if (selected == -1) {
+    if (selectedExperiment_ == -1) {
         gLogger->log(
             "removing experiment \""
             + QString::fromStdString(experiments.at(0)->experiment()->name()) + "\"");
@@ -95,29 +91,26 @@ void Session::removeExperiment()
     }
     gLogger->log(
         "removing experiment \""
-        + QString::fromStdString(experiments.at(selected)->experiment()->name()) + "\"");
-    experiments.removeAt(selected);
-    selected = experiments.size() > 0 ? 0 : -1;
+        + QString::fromStdString(experiments.at(selectedExperiment_)->experiment()->name()) + "\"");
+    experiments.removeAt(selectedExperiment_);
+    selectedExperiment_ = experiments.size() > 0 ? 0 : -1;
     onExperimentChanged();
 }
 
 void Session::selectExperiment(int select)
 {
     if (select < experiments.size() && select >= 0)
-        selected = select;
+        selectedExperiment_ = select;
     onExperimentChanged();
 }
 
-ExperimentModel* Session::selectedExperiment()
+SessionExperiment* Session::selectedExperiment()
 {
-    return experiments.at(selected);
+    return experiments.at(selectedExperiment_);
 }
 
 void Session::loadData()
 {
-    if (selected < 0)
-        createDefaultExperiment();
-
     QStringList filenames = QcrFileDialog::getOpenFileNames(
         gGui, "import data", loadDirectory,
         "Data files(*.h5 *.hdf5 *.hdf *.fake *.nxs *.raw *.tif *.tiff);;all files (*.* *)");
@@ -127,6 +120,9 @@ void Session::loadData()
 
     QFileInfo info(filenames.at(0));
     loadDirectory = info.absolutePath();
+
+    if (selectedExperiment_ < 0)
+        createDefaultExperiment();
 
     for (QString filename : filenames) {
         QFileInfo fileinfo(filename);
@@ -142,29 +138,30 @@ void Session::loadData()
         data_ptr = nsx::DataReaderFactory().create(
             extension, filename.toStdString(), exp->diffractometer());
         exp->addData(data_ptr);
-        selectedExperiment()->addData(data_ptr);
     }
+    selectedExperiment()->selectData(selectedExperiment()->getIndex(filenames.at(0)));
+    onDataChanged();
 }
 
 void Session::removeData()
 {
-    if (selected == -1) {
+    if (selectedExperiment_ == -1) {
         gLogger->log("[ERROR] No experiment to remove data from");
         return;
     }
 
-    if (!selectedExperiment()->data()->selectedData()) {
+    if (selectedData == -1) {
         gLogger->log("[ERROR] No data to remove");
         return;
     }
-    std::string numorname = selectedExperiment()->data()->selectedData()->filename();
+    std::string numorname = selectedExperiment()->getData(selectedData)->filename();
     selectedExperiment()->experiment()->removeData(numorname);
-    selectedExperiment()->removeSelectedData();
+    onDataChanged();
 }
 
 void Session::loadRawData()
 {
-    if (selected < 0)
+    if (selectedExperiment_ < 0)
         createDefaultExperiment();
 
     QStringList qfilenames;
@@ -226,7 +223,8 @@ void Session::loadRawData()
     }
 
     exp->addData(data);
-    selectedExperiment()->addData(data);
+    selectedData = selectedExperiment()->getIndex(qfilenames.at(0));
+    onDataChanged();
 }
 
 void Session::onDataChanged()

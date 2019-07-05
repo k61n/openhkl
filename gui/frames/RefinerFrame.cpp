@@ -28,14 +28,14 @@
 #include <QSpacerItem>
 #include <QVBoxLayout>
 
-RefinerFrame::RefinerFrame() : QcrFrame {"RefinerFrame"}
+RefinerFrame::RefinerFrame() : QcrFrame{"RefinerFrame"}
 {
     if (gSession->selectedExperimentNum() < 0) {
         gLogger->log("[ERROR] No experiment selected");
         return;
     }
 
-    if (gSession->selectedExperiment()->peaks()->allPeaks().empty()) {
+    if (gSession->selectedExperiment()->getPeakListNames().empty()) {
         gLogger->log("[ERROR] No peaks in selected experiment");
         return;
     }
@@ -51,7 +51,7 @@ void RefinerFrame::layout()
     QVBoxLayout* layoutSettings = new QVBoxLayout(settings);
     PeaksTableModel* model = new PeaksTableModel(
         "adhoc_refinerPeaks", gSession->selectedExperiment()->experiment(),
-        gSession->selectedExperiment()->peaks()->allPeaks());
+        gSession->selectedExperiment()->getPeaks(0, 0));
     peaks = new PeaksTableView;
     peaks->setModel(model);
     peaks->selectAll();
@@ -246,7 +246,7 @@ void RefinerFrame::accept()
 //  ***********************************************************************************************
 
 RefinerFitWidget::RefinerFitWidget(const std::map<nsx::sptrDataSet, nsx::Refiner>& refiners)
-    : QcrWidget {"adhoc_refinerWidgetTab"}, _refiners {refiners}
+    : QcrWidget{"adhoc_refinerWidgetTab"}, _refiners{refiners}
 {
     layout();
 

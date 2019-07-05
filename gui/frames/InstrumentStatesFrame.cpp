@@ -30,7 +30,7 @@ InstrumentStatesFrame::InstrumentStatesFrame() : QcrFrame{"instrumentStates"}
         gLogger->log("[ERROR] No experiment selected");
         return;
     }
-    QList<nsx::sptrDataSet> datalist = gSession->selectedExperiment()->data()->allData();
+    QList<nsx::sptrDataSet> datalist = gSession->selectedExperiment()->allData();
     if (datalist.empty()) {
         gLogger->log("[ERROR] No dataset found");
         return;
@@ -255,8 +255,8 @@ InstrumentStatesFrame::InstrumentStatesFrame() : QcrFrame{"instrumentStates"}
         selectedFrameChanged(i);
         frameIndex->setCellValue(i);
     });
-    connect(data, &QListWidget::currentRowChanged, 
-            this, &InstrumentStatesFrame::selectedDataChanged);
+    connect(
+        data, &QListWidget::currentRowChanged, this, &InstrumentStatesFrame::selectedDataChanged);
     selectedDataChanged(0);
     show();
 }
@@ -268,7 +268,7 @@ void InstrumentStatesFrame::selectedDataChanged(int selectedData)
     nsx::sptrDataSet currentData = currentItem->data(Qt::UserRole).value<nsx::sptrDataSet>();
     frameIndex->setCellValue(0);
     frameSlider->setMinimum(0);
-    frameSlider->setMaximum(currentData->nFrames()-1);
+    frameSlider->setMaximum(currentData->nFrames() - 1);
     frameSlider->setValue(0);
     selectedFrameChanged(0);
 }

@@ -43,13 +43,13 @@
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
 #include <QCR/engine/logger.h>
+#include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
 #include <QMenu>
 #include <QPixmap>
 #include <QToolTip>
 #include <QtGlobal>
-#include <QDebug>
 
 DetectorScene::DetectorScene(QObject* parent)
     : QGraphicsScene(parent)
@@ -98,7 +98,7 @@ void DetectorScene::resetPeakGraphicsItems()
     clearPeakGraphicsItems();
 
     if (gSession->selectedExperimentNum() >= 0) {
-        nsx::PeakList peaks = gSession->selectedExperiment()->peaks()->allPeaks();
+        nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0);
 
         for (nsx::sptrPeak3D peak : peaks) {
             nsx::Ellipsoid peak_ellipsoid = peak->shape();
@@ -446,7 +446,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             delete _zoomrect;
             emit dataChanged();
         } else {
-            nsx::PeakList peaks = gSession->selectedExperiment()->peaks()->allPeaks();
+            nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0);
 
             if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
                 // delete p....
@@ -532,7 +532,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 if (it != _masks.end()) {
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
-                    nsx::PeakList peaks = gSession->selectedExperiment()->peaks()->allPeaks();
+                    nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0);
                     _currentData->maskPeaks(peaks);
                     update();
                     updateMasks();
@@ -543,7 +543,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 if (it != _masks.end()) {
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
-                    nsx::PeakList peaks = gSession->selectedExperiment()->peaks()->allPeaks();
+                    nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0);
                     _currentData->maskPeaks(peaks);
                     update();
                     updateMasks();
@@ -614,11 +614,11 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
             break;
         }
         case MILLER_INDICES: {
-            ExperimentModel* experiment_item = gSession->selectedExperiment();
+            SessionExperiment* experiment_item = gSession->selectedExperiment();
             if (!experiment_item)
                 ttip = QString("No experiment found");
             else {
-                nsx::sptrUnitCell selectedUnitCell = experiment_item->unitCells()->selectedCell();
+                nsx::sptrUnitCell selectedUnitCell = experiment_item->getUnitCell(0);
                 if (selectedUnitCell) {
                     nsx::ReciprocalVector q = state.sampleQ(pos);
                     nsx::MillerIndex miller_indices(q, *selectedUnitCell);
@@ -671,7 +671,7 @@ void DetectorScene::loadCurrentImage()
         const int nrows = _currentData->nRows();
         Eigen::MatrixXi mask(nrows, ncols);
         mask.setConstant(int(EventType::EXCLUDED));
-        nsx::PeakList peaks = gSession->selectedExperiment()->peaks()->allPeaks();
+        nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0);
         for (nsx::sptrPeak3D peak : peaks) {
             if (peak->enabled()) {
                 // IntegrationRegion constructor can throw if the region is invalid

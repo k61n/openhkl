@@ -25,19 +25,19 @@
 #include <QSpacerItem>
 #include <QVBoxLayout>
 
-PeakFilterDialog::PeakFilterDialog() : QDialog {gGui}
+PeakFilterDialog::PeakFilterDialog() : QDialog{gGui}
 {
     if (gSession->selectedExperimentNum() < 0) {
         gLogger->log("## No experiment selected");
         return;
     }
 
-    if (gSession->selectedExperiment()->peaks()->allPeaks().empty()) {
+    if (gSession->selectedExperiment()->getPeakListNames().empty()) {
         gLogger->log("## No peaks to filter. Find peaks first.");
         return;
     }
 
-    peaks_ = gSession->selectedExperiment()->peaks()->allPeaks();
+    peaks_ = gSession->selectedExperiment()->getPeaks(0, 0);
 
     setAttribute(Qt::WA_DeleteOnClose);
     doLayout();
@@ -75,7 +75,7 @@ void PeakFilterDialog::doLayout()
     byUnitCell->setCheckable(true);
     byUnitCell->setChecked(false);
     QHBoxLayout* byLayout = new QHBoxLayout(byUnitCell);
-    unitCell = new QcrComboBox("adhoc_unitCell", new QcrCell<int>(0), QStringList {});
+    unitCell = new QcrComboBox("adhoc_unitCell", new QcrCell<int>(0), QStringList{});
     byLayout->addWidget(new QLabel("Unit cell"));
     byLayout->addWidget(unitCell);
     tolerance = new QcrDoubleSpinBox("adhoc_tolerance", new QcrCell<double>(0.2), 10, 6);
@@ -144,7 +144,7 @@ void PeakFilterDialog::doLayout()
     QVBoxLayout* tablelayout = new QVBoxLayout;
     peakList = new QcrComboBox(
         "adhoc_peakListsPeakFilter", new QcrCell<int>(0),
-        gSession->selectedExperiment()->peaks()->peaklistNames());
+        gSession->selectedExperiment()->getPeakListNames());
     tablelayout->addWidget(peakList);
     model_ = new PeaksTableModel(
         "adhoc_filterModel", gSession->selectedExperiment()->experiment(), peaks_);
@@ -158,8 +158,8 @@ void PeakFilterDialog::doLayout()
         QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply, Qt::Horizontal);
     whole->addWidget(buttons);
 
-    peakList->setHook([this](int i) {
-        peaks_ = gSession->selectedExperiment()->peaks()->selectedPeakLists(i)->getAllListPeaks();
+    peakList->setHook([this](int) {
+        peaks_ = gSession->selectedExperiment()->getPeaks(peakList->currentText());
         model_->setPeaks(peaks_);
     });
     connect(buttons, &QDialogButtonBox::clicked, this, &PeakFilterDialog::slotActionClicked);
@@ -169,8 +169,6 @@ void PeakFilterDialog::doLayout()
 
 void PeakFilterDialog::filterPeaks()
 {
-    // TODO: filter peaks
-
     nsx::PeakList filtered_peaks = peaks_;
 
     nsx::PeakFilter peak_filter;
@@ -240,10 +238,9 @@ void PeakFilterDialog::accept()
         if (!dlg->exec())
             return;
 
-        gSession->selectedExperiment()
-            ->peaks()
-            ->selectedPeakLists(peakList->getValue())
-            ->addFilteredPeaks(dlg->listName(), filtered_peaks);
+        gSession->selectedExperiment()->addPeaks(
+            filtered_peaks, dlg->listName(), peakList->currentText());
+
 
         QString message = "Applied peak filters on selected peaks. Remains ";
         message += QString::number(filtered_peaks.size());
