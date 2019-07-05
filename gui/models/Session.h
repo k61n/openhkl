@@ -15,7 +15,7 @@
 #ifndef GUI_MODELS_SESSION_H
 #define GUI_MODELS_SESSION_H
 
-#include "gui/models/ExperimentModel.h"
+#include "gui/models/SessionExperiment.h"
 
 extern class Session* gSession; //!< global handle for Session
 
@@ -23,10 +23,10 @@ extern class Session* gSession; //!< global handle for Session
 class Session {
  public:
     Session();
-    ExperimentModel* selectedExperiment();
+    SessionExperiment* selectedExperiment();
     void selectExperiment(int);
-    int selectedExperimentNum() { return selected; }
-    ExperimentModel* experimentAt(int i) { return experiments.at(i); }
+    int selectedExperimentNum() { return selectedExperiment_; }
+    SessionExperiment* experimentAt(int i) { return experiments.at(i); }
     int numExperiments() { return experiments.size(); }
 
     void createExperiment();
@@ -42,8 +42,9 @@ class Session {
     void onPeaksChanged();
 
  private:
-    QList<ExperimentModel*> experiments;
-    int selected = -1;
+    QList<SessionExperiment*> experiments;
+    int selectedExperiment_ = -1;
+    int selectedData = -1;
     QString loadDirectory;
 };
 

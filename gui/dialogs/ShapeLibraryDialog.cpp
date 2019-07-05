@@ -23,10 +23,10 @@
 #include "core/shape/ShapeLibrary.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/models/ColorMap.h"
-#include "gui/models/ExperimentModel.h"
 #include "gui/models/PeaksTable.h"
 #include "gui/models/Session.h"
 #include <QCR/engine/logger.h>
+#include <QDebug>
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -34,9 +34,8 @@
 #include <QStatusBar>
 #include <QVBoxLayout>
 #include <QtGlobal>
-#include <QDebug>
 
-ShapeLibraryDialog::ShapeLibraryDialog() : QDialog {}
+ShapeLibraryDialog::ShapeLibraryDialog() : QDialog{}
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -44,12 +43,16 @@ ShapeLibraryDialog::ShapeLibraryDialog() : QDialog {}
         gLogger->log("[ERROR] No experiment selected");
         return;
     }
-    if (gSession->selectedExperiment()->peaks()->allPeaks().empty()) {
+    if (gSession->selectedExperiment()->getPeakListNames().empty()) {
         gLogger->log("[ERROR] No peaks in selected experiment");
         return;
     }
-    _peaks = gSession->selectedExperiment()->peaks()->allPeaks();
-    //_unitCell = gSession->selectedExperiment()->unitCells()->allUnitCells().at(0);
+    if (gSession->selectedExperiment()->getUnitCellNames().empty()) {
+        gLogger->log("[ERROR] No unitcells in selected experiment");
+        return;
+    }
+    _peaks = gSession->selectedExperiment()->getPeaks(0);
+    _unitCell = gSession->selectedExperiment()->getUnitCell(0);
     for (nsx::sptrPeak3D peak : _peaks)
         _data.insert(peak->data());
     layout();

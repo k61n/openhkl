@@ -149,18 +149,18 @@ void Actions::setupPeaks()
             gLogger->log("[ERROR] No experiment selected");
             return;
         }
-        if (gSession->selectedExperiment()->peaks()->allPeaks().empty()) {
+        if (gSession->selectedExperiment()->getPeakListNames().empty()) {
             gLogger->log("[ERROR] No peaks in selected experiment");
             return;
         }
-        // gSession->selectedExperiment()->peaks()->autoAssignUnitCell();
+        // gSession->selectedExperiment()->autoAssignUnitCell();
     });
     buildShapeLibrary.setTriggerHook([]() { new ShapeLibraryDialog; });
     refine.setTriggerHook([]() { new RefinerFrame; });
     normalize.setTriggerHook([]() {
         if (gSession->selectedExperimentNum() < 0)
             return;
-        gSession->selectedExperiment()->peaks()->normalizeToMonitor();
+        //gSession->selectedExperiment()->normalizeToMonitor();
     });
 }
 

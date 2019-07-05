@@ -22,7 +22,7 @@
 #include <QHBoxLayout>
 #include <QHeaderView>
 
-NumorProperty::NumorProperty() : QcrWidget {"numorProperty"}
+NumorProperty::NumorProperty() : QcrWidget{"numorProperty"}
 {
     QFormLayout* formLayout = new QFormLayout(this);
     table = new QTableWidget(this);
@@ -34,16 +34,10 @@ NumorProperty::NumorProperty() : QcrWidget {"numorProperty"}
 
     numor = new QcrComboBox("adhoc_numors", new QcrCell<int>(0), []() {
         if (gSession->selectedExperimentNum() < 0)
-            return QStringList {""};
-        QList<nsx::sptrDataSet> datalist = gSession->selectedExperiment()->data()->allData();
-        if (datalist.empty())
-            return QStringList {""};
-        QStringList namen;
-        for (nsx::sptrDataSet dataset : datalist)
-            namen.append(QString::fromStdString(dataset->filename()));
-        return namen;
+            return QStringList{""};
+        return gSession->selectedExperiment()->getDataNames();
     });
-    numor->setHook([](int i) { gSession->selectedExperiment()->data()->selectData(i); });
+    numor->setHook([](int i) { gSession->selectedExperiment()->selectData(i); });
     formLayout->addRow("Data:", numor);
     formLayout->addRow(table);
 
@@ -56,8 +50,8 @@ void NumorProperty::onRemake()
     clear();
 
     if (gSession->selectedExperimentNum() >= 0) {
-        ExperimentModel* exp = gSession->selectedExperiment();
-        nsx::sptrDataSet data = exp->data()->selectedData();
+        SessionExperiment* exp = gSession->selectedExperiment();
+        nsx::sptrDataSet data = exp->getData();
 
         if (data) {
             const nsx::MetaData& metadata = data->reader()->metadata();
