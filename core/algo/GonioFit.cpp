@@ -18,8 +18,8 @@
 #include "base/fit/Minimizer.h"
 #include "core/experiment/DataSet.h"
 #include "core/raw/IDataReader.h"
-#include <QtGlobal>
 #include <QDebug>
+#include <QtGlobal>
 
 namespace nsx {
 
@@ -47,7 +47,7 @@ GonioFit fitSampleGonioOffsets(
 
     if (n_selected_states < n_axes) {
         qInfo() << "No or not enough refined states found in the dataset for a "
-                       "reliable fit, offsets set to zero";
+                   "reliable fit, offsets set to zero";
         return {false, std::move(fitted_offsets), {}};
     }
 
@@ -141,7 +141,7 @@ GonioFit fitDetectorGonioOffsets(
 
     if (n_selected_states < n_axes) {
         qInfo() << "No or not enough refined states found in the dataset for a "
-                       "reliable fit, offsets set to zero";
+                   "reliable fit, offsets set to zero";
         return {false, std::move(fitted_offsets), {}};
     }
 

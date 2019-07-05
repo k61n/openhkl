@@ -27,12 +27,12 @@
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 #include <QAction>
+#include <QDebug>
 #include <QHeaderView>
 #include <QInputDialog>
 #include <QKeyEvent>
 #include <QMenu>
 #include <QtGlobal>
-#include <QDebug>
 
 //!@class PeaksTableModel
 

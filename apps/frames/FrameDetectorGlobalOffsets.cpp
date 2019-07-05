@@ -14,10 +14,10 @@
 
 #include <algorithm>
 
+#include <QDebug>
 #include <QFileInfo>
 #include <QPen>
 #include <QtGlobal>
-#include <QDebug>
 
 #include "base/utils/Units.h"
 #include "core/algo/GonioFit.h"

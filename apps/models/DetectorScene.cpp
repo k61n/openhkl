@@ -15,13 +15,6 @@
 #include <ctime>
 #include <vector>
 
-#include <QGraphicsSceneMouseEvent>
-#include <QKeyEvent>
-#include <QMenu>
-#include <QPixmap>
-#include <QToolTip>
-#include <QtGlobal>
-#include <QDebug>
 #include "base/geometry/AABB.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "base/mask/BoxMask.h"
@@ -40,6 +33,13 @@
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
+#include <QDebug>
+#include <QGraphicsSceneMouseEvent>
+#include <QKeyEvent>
+#include <QMenu>
+#include <QPixmap>
+#include <QToolTip>
+#include <QtGlobal>
 
 #include "apps/ColorMap.h"
 #include "apps/items/CutLineGraphicsItem.h"

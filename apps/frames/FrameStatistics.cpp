@@ -18,11 +18,11 @@
 #include <vector>
 
 #include <QComboBox>
+#include <QDebug>
 #include <QStandardItem>
 #include <QTableView>
 #include <QVector>
 #include <QtGlobal>
-#include <QDebug>
 
 #include "core/experiment/DataSet.h"
 #include "core/peak/Peak3D.h"

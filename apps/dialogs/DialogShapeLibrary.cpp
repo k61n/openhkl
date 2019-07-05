@@ -12,11 +12,11 @@
 //
 //  ***********************************************************************************************
 
+#include <QDebug>
 #include <QHeaderView>
 #include <QLayout>
 #include <QStatusBar>
 #include <QtGlobal>
-#include <QDebug>
 
 #include "core/analyse/PeakFilter.h"
 #include "core/experiment/DataSet.h"

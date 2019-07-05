@@ -18,11 +18,11 @@
 #include <limits>
 #include <vector>
 
+#include "base/geometry/ReciprocalVector.h"
+#include <QDebug>
 #include <QIcon>
 #include <QString>
 #include <QtGlobal>
-#include <QDebug>
-#include "base/geometry/ReciprocalVector.h"
 
 #include "core/analyse/PeakFilter.h"
 #include "core/detector/Detector.h"

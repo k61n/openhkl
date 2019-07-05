@@ -27,9 +27,9 @@
 
 #include "ui_FrameAutoIndexer.h"
 
+#include <QDebug>
 #include <QInputDialog>
 #include <QtGlobal>
-#include <QDebug>
 
 FrameAutoIndexer* FrameAutoIndexer::_instance = nullptr;
 

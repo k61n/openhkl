@@ -24,8 +24,8 @@
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 #include <Eigen/Dense>
-#include <QtGlobal>
 #include <QDebug>
+#include <QtGlobal>
 #include <cstdio>
 #include <utility>
 #include <vector>

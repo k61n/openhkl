@@ -15,15 +15,10 @@
 #include <memory>
 #include <sstream>
 
+#include <QDebug>
 #include <QInputDialog>
 #include <QtGlobal>
-#include <QDebug>
 
-#include "core/experiment/Experiment.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/instrument/Sample.h"
-#include "core/peak/Peak3D.h"
-#include "tables/crystal/UnitCell.h"
 #include "apps/dialogs/DialogSpaceGroup.h"
 #include "apps/dialogs/DialogTransformationMatrix.h"
 #include "apps/dialogs/DialogUnitCellParameters.h"
@@ -33,6 +28,11 @@
 #include "apps/models/UnitCellItem.h"
 #include "apps/models/UnitCellsItem.h"
 #include "apps/tree/UnitCellPropertyWidget.h"
+#include "core/experiment/Experiment.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/Sample.h"
+#include "core/peak/Peak3D.h"
+#include "tables/crystal/UnitCell.h"
 
 UnitCellItem::UnitCellItem(nsx::sptrUnitCell unit_cell)
     : InspectableTreeItem(), _unit_cell(unit_cell)

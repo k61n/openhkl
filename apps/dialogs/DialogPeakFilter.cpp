@@ -14,13 +14,13 @@
 
 #include <QAbstractButton>
 #include <QComboBox>
+#include <QDebug>
 #include <QDialogButtonBox>
 #include <QDoubleSpinBox>
 #include <QGroupBox>
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QtGlobal>
-#include <QDebug>
 
 #include "core/analyse/PeakFilter.h"
 #include "core/experiment/DataSet.h"
@@ -241,7 +241,7 @@ void DialogPeakFilter::accept()
         _experiment_item->peaksItem()->appendRow(peak_list);
 
         qInfo() << "Applied peak filters on selected peaks. Remains " << filtered_peaks.size()
-                    << " out of " << _peaks.size() << " peaks";
+                << " out of " << _peaks.size() << " peaks";
     }
 
     QDialog::accept();

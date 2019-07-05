@@ -16,12 +16,12 @@
 #include <fstream>
 #include <sstream>
 
+#include <QDebug>
 #include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QtGlobal>
-#include <QDebug>
 
 #include "core/experiment/Experiment.h"
 #include "core/gonio/Gonio.h"

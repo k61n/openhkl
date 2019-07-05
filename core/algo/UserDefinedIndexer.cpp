@@ -23,8 +23,8 @@
 #include "tables/crystal/UnitCell.h"
 
 #include <Eigen/QR>
-#include <QtGlobal>
 #include <QDebug>
+#include <QtGlobal>
 #include <array>
 #include <limits>
 #include <map>

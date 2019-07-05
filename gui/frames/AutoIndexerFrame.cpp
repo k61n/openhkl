@@ -28,7 +28,7 @@
 #include <QStandardItemModel>
 #include <QVBoxLayout>
 
-AutoIndexerFrame::AutoIndexerFrame() : QcrFrame{"autoIndexer"}
+AutoIndexerFrame::AutoIndexerFrame() : QcrFrame {"autoIndexer"}
 {
     setAttribute(Qt::WA_DeleteOnClose, true);
     setWindowFlags(Qt::Window);

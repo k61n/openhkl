@@ -29,8 +29,8 @@
 #include "apps/models/PeaksItem.h"
 #include "apps/models/UnitCellsItem.h"
 #include "apps/views/ProgressView.h"
-#include <QtGlobal>
 #include <QDebug>
+#include <QtGlobal>
 
 LibraryItem::LibraryItem() : TreeItem(), _library(nullptr)
 {

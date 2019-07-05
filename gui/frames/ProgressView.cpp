@@ -16,9 +16,9 @@
 
 #include "base/utils/ProgressHandler.h"
 #include <QApplication>
+#include <QDebug>
 #include <QPushButton>
 #include <QtGlobal>
-#include <QDebug>
 
 ProgressView::ProgressView(QWidget* parent) : QProgressDialog(parent)
 {

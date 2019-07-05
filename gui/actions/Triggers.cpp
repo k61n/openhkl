@@ -160,7 +160,7 @@ void Actions::setupPeaks()
     normalize.setTriggerHook([]() {
         if (gSession->selectedExperimentNum() < 0)
             return;
-        //gSession->selectedExperiment()->normalizeToMonitor();
+        // gSession->selectedExperiment()->normalizeToMonitor();
     });
 }
 

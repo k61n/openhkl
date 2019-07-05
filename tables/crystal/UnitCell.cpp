@@ -24,8 +24,8 @@
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/NiggliReduction.h"
 #include "tables/crystal/UnitCell.h"
-#include <QtGlobal>
 #include <QDebug>
+#include <QtGlobal>
 
 namespace nsx {
 

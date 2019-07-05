@@ -17,7 +17,6 @@
 #include <tuple>
 
 #include <Eigen/Core>
-#include <QtGlobal>
 #include <QDebug>
 #include <QImage>
 #include <QList>
@@ -27,6 +26,7 @@
 #include <QStandardItemModel>
 #include <QString>
 #include <QTreeView>
+#include <QtGlobal>
 
 #include "base/geometry/ReciprocalVector.h"
 
@@ -108,7 +108,7 @@ void DialogSpaceGroup::evaluateSpaceGroups()
     _groups.clear();
 
     qInfo() << "Evaluating " << symbols.size() << " space groups based on " << hkls.size()
-                << " peaks";
+            << " peaks";
 
     auto compatible_space_groups = _cell->compatibleSpaceGroups();
 

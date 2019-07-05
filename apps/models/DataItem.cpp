@@ -15,6 +15,7 @@
 #include <set>
 #include <vector>
 
+#include <QDebug>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QIcon>
@@ -22,7 +23,6 @@
 #include <QStandardItem>
 #include <QString>
 #include <QtGlobal>
-#include <QDebug>
 
 #include "base/utils/ProgressHandler.h"
 #include "core/algo/DataReaderFactory.h"
@@ -94,7 +94,7 @@ void DataItem::removeSelectedData()
         auto it = used_data.find(data);
         if (it != used_data.end()) {
             qInfo() << "The numor " << numor_item->text()
-                        << " is currently used. Can not be removed";
+                    << " is currently used. Can not be removed";
             continue;
         }
         removeRow(numor_item->row());

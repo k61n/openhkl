@@ -19,8 +19,8 @@
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/BrillouinZone.h"
 #include "tables/crystal/UnitCell.h"
-#include <QtGlobal>
 #include <QDebug>
+#include <QtGlobal>
 
 namespace nsx {
 

@@ -28,7 +28,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-ImageWidget::ImageWidget() : QcrWidget{"Image"}
+ImageWidget::ImageWidget() : QcrWidget {"Image"}
 {
     QHBoxLayout* overallLayout = new QHBoxLayout(this);
     QVBoxLayout* leftLayout = new QVBoxLayout;
@@ -118,7 +118,7 @@ void ImageWidget::changeView(int option)
 
 //  ***********************************************************************************************
 
-SubframeImage::SubframeImage() : QcrDockWidget{"Image"}
+SubframeImage::SubframeImage() : QcrDockWidget {"Image"}
 {
     setWidget((centralWidget = new ImageWidget));
     connect(

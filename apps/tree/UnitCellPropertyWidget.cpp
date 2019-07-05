@@ -15,16 +15,16 @@
 #include <memory>
 #include <stdexcept>
 
-#include <QCompleter>
-#include <QStandardItem>
-#include <QtGlobal>
-#include <QDebug>
 #include "base/utils/Units.h"
 #include "core/experiment/DataSet.h"
 #include "core/gonio/Gonio.h"
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
+#include <QCompleter>
+#include <QDebug>
+#include <QStandardItem>
+#include <QtGlobal>
 #include <xsection/Material.h>
 
 #include "apps/models/MetaTypes.h"

@@ -15,8 +15,8 @@
 #include "apps/dialogs/DialogRawData.h"
 #include "ui_DialogRawData.h"
 
-#include <QtGlobal>
 #include <QDebug>
+#include <QtGlobal>
 
 DialogRawData::DialogRawData(QWidget* parent) : QDialog(parent), ui(new Ui::DialogRawData)
 {

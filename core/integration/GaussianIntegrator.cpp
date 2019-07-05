@@ -21,8 +21,8 @@
 #include "core/peak/Peak3D.h"
 
 #include <Eigen/Cholesky>
-#include <QtGlobal>
 #include <QDebug>
+#include <QtGlobal>
 
 namespace nsx {
 

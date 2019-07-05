@@ -11,8 +11,8 @@
 //! @authors   see CITATION, MAINTAINER
 //
 //  ***********************************************************************************************
-#include <sstream>
 #include <QMessageBox>
+#include <sstream>
 
 #include "base/utils/Units.h"
 #include "core/experiment/DataSet.h"
@@ -27,8 +27,8 @@
 #include "apps/dialogs/DialogAbsorption.h"
 #include "apps/models/SampleShapeItem.h"
 #include "apps/tree/SampleShapePropertyWidget.h"
-#include <QtGlobal>
 #include <QDebug>
+#include <QtGlobal>
 
 #include "ui_SampleShapePropertyWidget.h"
 

@@ -61,7 +61,7 @@ QWidget* ItemDelegate::createEditor(
 
 //  ***********************************************************************************************
 
-FoundPeaks::FoundPeaks(nsx::PeakList peaks, const QString& name) : QcrWidget{name}
+FoundPeaks::FoundPeaks(nsx::PeakList peaks, const QString& name) : QcrWidget {name}
 {
     tableModel =
         new PeaksTableModel("foundPeaksTable", gSession->selectedExperiment()->experiment(), peaks);
@@ -95,7 +95,7 @@ nsx::PeakList FoundPeaks::selectedPeaks()
 
 //  ***********************************************************************************************
 
-PeakFinderFrame::PeakFinderFrame() : QcrFrame{"peakFinder"}, pixmap(nullptr)
+PeakFinderFrame::PeakFinderFrame() : QcrFrame {"peakFinder"}, pixmap(nullptr)
 {
     if (gSession->selectedExperimentNum() < 0) {
         gLogger->log("[ERROR] No experiment selected");

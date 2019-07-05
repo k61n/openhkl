@@ -24,7 +24,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-InstrumentStatesFrame::InstrumentStatesFrame() : QcrFrame{"instrumentStates"}
+InstrumentStatesFrame::InstrumentStatesFrame() : QcrFrame {"instrumentStates"}
 {
     if (gSession->selectedExperimentNum() < 0) {
         gLogger->log("[ERROR] No experiment selected");

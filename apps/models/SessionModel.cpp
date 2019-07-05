@@ -23,11 +23,10 @@
 
 #include <QAbstractItemView>
 #include <QDate>
+#include <QDebug>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QKeyEvent>
-#include <QtGlobal>
-#include <QDebug>
 #include <QList>
 #include <QListIterator>
 #include <QMenu>
@@ -35,6 +34,7 @@
 #include <QStandardItem>
 #include <QString>
 #include <QVector>
+#include <QtGlobal>
 
 #include "base/geometry/Ellipsoid.h"
 #include "base/geometry/ReciprocalVector.h"

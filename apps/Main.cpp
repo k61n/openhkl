@@ -14,12 +14,12 @@
 
 #include <fstream>
 
+#include <QDebug>
 #include <QDesktopWidget>
 #include <QPainter>
 #include <QSplashScreen>
 #include <QTimer>
 #include <QtGlobal>
-#include <QDebug>
 
 #include "apps/MainWindow.h"
 #include "apps/NSXQtApp.h"

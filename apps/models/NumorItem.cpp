@@ -14,9 +14,9 @@
 
 #include <string>
 
+#include <QDebug>
 #include <QJsonArray>
 #include <QtGlobal>
-#include <QDebug>
 
 #include "base/geometry/AABB.h"
 #include "base/mask/BoxMask.h"
@@ -69,7 +69,7 @@ void NumorItem::exportHDF5(const std::string& filename) const
         _data->saveHDF5(filename);
     } catch (...) {
         qWarning() << "The filename " << QString::fromStdString(filename)
-                     << " could not be saved. Maybe a permission problem.";
+                   << " could not be saved. Maybe a permission problem.";
     }
 }
 

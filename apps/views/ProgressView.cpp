@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 #include <QApplication>
-#include <QPushButton>
 #include <QDebug>
+#include <QPushButton>
 
 #include "base/utils/ProgressHandler.h"
 
@@ -76,8 +76,8 @@ void ProgressView::updateProgress()
     setValue(progress);
 
     if (progress < 0)
-        qInfo() << "Status:" << QString::fromStdString(_handler->getStatus())
-                << " " << _handler->getProgress();
+        qInfo() << "Status:" << QString::fromStdString(_handler->getStatus()) << " "
+                << _handler->getProgress();
 
     auto log = _handler->getLog();
 

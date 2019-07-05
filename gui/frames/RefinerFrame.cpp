@@ -28,7 +28,7 @@
 #include <QSpacerItem>
 #include <QVBoxLayout>
 
-RefinerFrame::RefinerFrame() : QcrFrame{"RefinerFrame"}
+RefinerFrame::RefinerFrame() : QcrFrame {"RefinerFrame"}
 {
     if (gSession->selectedExperimentNum() < 0) {
         gLogger->log("[ERROR] No experiment selected");
@@ -246,7 +246,7 @@ void RefinerFrame::accept()
 //  ***********************************************************************************************
 
 RefinerFitWidget::RefinerFitWidget(const std::map<nsx::sptrDataSet, nsx::Refiner>& refiners)
-    : QcrWidget{"adhoc_refinerWidgetTab"}, _refiners{refiners}
+    : QcrWidget {"adhoc_refinerWidgetTab"}, _refiners {refiners}
 {
     layout();
 

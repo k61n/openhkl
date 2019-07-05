@@ -13,11 +13,10 @@
 //  ***********************************************************************************************
 
 
-
-#include <QApplication>
-#include <QtGlobal>
-#include <QDebug>
 #include "apps/NSXQtApp.h"
+#include <QApplication>
+#include <QDebug>
+#include <QtGlobal>
 
 NSXQtApp::NSXQtApp(int& argc, char* argv[]) : QApplication(argc, argv)
 {

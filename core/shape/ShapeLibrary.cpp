@@ -24,8 +24,8 @@
 #include "core/peak/PeakCoordinateSystem.h"
 #include "core/raw/IDataReader.h"
 #include "tables/crystal/UnitCell.h"
-#include <QtGlobal>
 #include <QDebug>
+#include <QtGlobal>
 
 #include <stdexcept>
 

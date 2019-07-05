@@ -27,8 +27,8 @@
 #include "apps/models/PeaksItem.h"
 #include "ui_DialogPredictPeaks.h"
 
-#include <QtGlobal>
 #include <QDebug>
+#include <QtGlobal>
 
 DialogPredictPeaks* DialogPredictPeaks::_instance = nullptr;
 

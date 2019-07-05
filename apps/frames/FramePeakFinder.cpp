@@ -16,6 +16,7 @@
 
 #include <QCheckBox>
 #include <QComboBox>
+#include <QDebug>
 #include <QDialogButtonBox>
 #include <QDoubleSpinBox>
 #include <QFormLayout>
@@ -34,7 +35,6 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QtGlobal>
-#include <QDebug>
 
 #include "core/analyse/PeakFinder.h"
 #include "core/convolve/ConvolverFactory.h"
@@ -235,7 +235,7 @@ void FramePeakFinder::setColorMap(const std::string& name)
 void FramePeakFinder::run()
 {
     qInfo() << "Peak find algorithm: Searching peaks in " << _ui->selected_data->count()
-                << " files";
+            << " files";
 
     // reset progress handler
     auto progressHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler);

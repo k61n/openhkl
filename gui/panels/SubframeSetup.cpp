@@ -21,7 +21,7 @@ enum class tab { INSTRUMENT, DATA, UNITCELLS, PEAKS, LIBRARY };
 
 } // namespace
 
-SubframeSetup::SubframeSetup() : QcrTabWidget{"property tabs"}
+SubframeSetup::SubframeSetup() : QcrTabWidget {"property tabs"}
 {
     setTabPosition(QTabWidget::North);
     setMinimumSize(270, 320);

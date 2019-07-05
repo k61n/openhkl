@@ -12,11 +12,6 @@
 //
 //  ***********************************************************************************************
 
-#include <QInputDialog>
-#include <QStandardItem>
-#include <QStandardItemModel>
-#include <QtGlobal>
-#include <QDebug>
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Units.h"
 #include "core/algo/UserDefinedIndexer.h"
@@ -25,6 +20,11 @@
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Source.h"
 #include "core/peak/Peak3D.h"
+#include <QDebug>
+#include <QInputDialog>
+#include <QStandardItem>
+#include <QStandardItemModel>
+#include <QtGlobal>
 
 #include "apps/frames/FrameUserDefinedUnitCellIndexer.h"
 #include "apps/models/CollectedPeaksModel.h"

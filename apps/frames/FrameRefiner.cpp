@@ -25,8 +25,8 @@
 
 #include "ui_FrameRefiner.h"
 
-#include <QtGlobal>
 #include <QDebug>
+#include <QtGlobal>
 
 FrameRefiner* FrameRefiner::_instance = nullptr;
 
@@ -152,8 +152,7 @@ void FrameRefiner::refine()
                 reference_peaks.push_back(peak);
         }
 
-        qInfo() << reference_peaks.size() << " splitted into " << n_batches
-                    << "refining batches.";
+        qInfo() << reference_peaks.size() << " splitted into " << n_batches << "refining batches.";
 
         std::vector<nsx::InstrumentState>& states = d->instrumentStates();
 

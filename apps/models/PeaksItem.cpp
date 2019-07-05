@@ -14,6 +14,7 @@
 
 #include <memory>
 
+#include <QDebug>
 #include <QFileInfo>
 #include <QIcon>
 #include <QInputDialog>
@@ -21,7 +22,6 @@
 #include <QStandardItem>
 #include <QString>
 #include <QtGlobal>
-#include <QDebug>
 
 #include "core/algo/DataReaderFactory.h"
 #include "core/analyse/PeakFilter.h"

@@ -37,7 +37,7 @@
 #include <QtGlobal>
 
 UserDefinedUnitCellIndexerFrame::UserDefinedUnitCellIndexerFrame()
-    : QcrFrame{"adhoc_userDefined"}, indexer_{}
+    : QcrFrame {"adhoc_userDefined"}, indexer_ {}
 {
     setAttribute(Qt::WA_DeleteOnClose);
 

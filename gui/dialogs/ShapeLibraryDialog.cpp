@@ -35,7 +35,7 @@
 #include <QVBoxLayout>
 #include <QtGlobal>
 
-ShapeLibraryDialog::ShapeLibraryDialog() : QDialog{}
+ShapeLibraryDialog::ShapeLibraryDialog() : QDialog {}
 {
     setAttribute(Qt::WA_DeleteOnClose);
 

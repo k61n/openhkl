@@ -26,7 +26,7 @@
 #include <QSpacerItem>
 #include <QVBoxLayout>
 
-UnitCellProperty::UnitCellProperty() : QcrWidget{"unitCellProperty"}
+UnitCellProperty::UnitCellProperty() : QcrWidget {"unitCellProperty"}
 {
     QVBoxLayout* overallLayout = new QVBoxLayout(this);
     QHBoxLayout* horizontalLayout = new QHBoxLayout;

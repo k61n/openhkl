@@ -14,11 +14,11 @@
 
 #include <fstream>
 
+#include <QDebug>
 #include <QIcon>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QtGlobal>
-#include <QDebug>
 
 #include "core/analyse/MergedData.h"
 #include "core/analyse/PeakFilter.h"
