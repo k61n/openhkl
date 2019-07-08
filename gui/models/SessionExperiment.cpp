@@ -211,8 +211,11 @@ void SessionExperiment::integratePeaks()
     integratorMap["Pixel sum integrator"] = [=]() {
         return new nsx::PixelSumIntegrator(dialog->fitCenter(), dialog->fitCov());
     };
+    integratorMap["Gaussian integrator"] = [=]() {
+        return new nsx::GaussianIntegrator(dialog->fitCenter(), dialog->fitCov());
+    };
+
     if (library_) {
-        qInfo() << "Library available";
         integratorMap["3d profile integrator"] = [=]() {
             return new nsx::Profile3DIntegrator(library_, dialog->radius(),
                                                 dialog->numberOfFrames(), false);
@@ -224,11 +227,7 @@ void SessionExperiment::integratePeaks()
             return new nsx::Profile1DIntegrator(library_, dialog->radius(),
                                                 dialog->numberOfFrames());
         };
-    } else
-        qInfo() << "Library not available";
-    integratorMap["Gaussian integrator"] = [=]() {
-        return new nsx::GaussianIntegrator(dialog->fitCenter(), dialog->fitCov());
-    };
+    }
 
     dialog->setIntegrators(integratorMap.keys());
     dialog->show();
