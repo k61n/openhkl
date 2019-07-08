@@ -34,6 +34,8 @@ struct Edge {
 
     Edge& operator=(const Edge& other) = delete;
 
+    int _id;
+
     //! Send some information about this Edge on an output stream
     void print(std::ostream& os) const;
 
@@ -49,8 +51,7 @@ struct Edge {
 
     //! If true this Edge is marked to be deleted at the next clean up step
     bool _delete;
-
-    int _id;
+    
 };
 
 std::ostream& operator<<(std::ostream& os, const Edge& edge);
