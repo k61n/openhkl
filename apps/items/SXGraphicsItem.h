@@ -43,7 +43,6 @@ class SXGraphicsItem : public QGraphicsItem {
 
     virtual void wheelEvent(QGraphicsSceneWheelEvent* event) override;
 
-    virtual QRectF boundingRect() const = 0;
     DetectorScene* getScene() const;
     //! Set whether or not the item is deletable
     void setDeletable(bool deletable);
@@ -57,9 +56,6 @@ class SXGraphicsItem : public QGraphicsItem {
     virtual bool isInScene(const QPointF& pos) const;
     //! Returns whether or not the item is movable
     bool isMovable() const;
-    //! Paint the graphics item
-    virtual void
-    paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) = 0;
     //! Show or does not show the label bound to the item
     void showLabel(bool);
 

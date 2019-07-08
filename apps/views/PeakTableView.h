@@ -38,7 +38,7 @@ class PeakTableView : public QTableView {
  public:
     explicit PeakTableView(QWidget* parent = 0);
 
-    void contextMenuEvent(QContextMenuEvent*);
+    void contextMenuEvent(QContextMenuEvent*) override;
 
     virtual void keyPressEvent(QKeyEvent* event) override;
 

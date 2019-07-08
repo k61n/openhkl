@@ -29,7 +29,7 @@ class UnitCellItem : public InspectableTreeItem {
     virtual QVariant data(int role) const override;
     virtual void setData(const QVariant& value, int role) override;
 
-    QWidget* inspectItem();
+    QWidget* inspectItem() override;
 
     void info() const;
 

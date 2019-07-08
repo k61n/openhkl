@@ -441,8 +441,8 @@ QString ScientificNotationSpinBox::stripped(const QString& t, int* pos) const
     return text;
 }
 
-// reimplemented function, copied from qspinbox.cpp
-static bool isIntermediateValueHelper(qint64 num, qint64 min, qint64 max, qint64* match)
+// // reimplemented function, copied from qspinbox.cpp
+bool ScientificNotationSpinBox::isIntermediateValueHelper(qint64 num, qint64 min, qint64 max, qint64* match) const
 {
     if (num >= min && num <= max) {
         if (match)

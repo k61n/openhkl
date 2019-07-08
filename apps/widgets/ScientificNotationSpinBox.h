@@ -17,8 +17,6 @@
 #include <QDoubleSpinBox>
 #include <QLineEdit>
 
-static bool
-isIntermediateValueHelper(qint64 num, qint64 minimum, qint64 maximum, qint64* match = 0);
 
 class ScientificNotationSpinBox : public QDoubleSpinBox {
     Q_OBJECT
@@ -45,6 +43,7 @@ class ScientificNotationSpinBox : public QDoubleSpinBox {
     QString stripped(const QString& t, int* pos) const;
     double round(double value) const;
     void stepBy(int steps);
+    bool isIntermediateValueHelper(qint64 num, qint64 minimum, qint64 maximum, qint64* match = 0) const;
 
  public slots:
     void stepDown();

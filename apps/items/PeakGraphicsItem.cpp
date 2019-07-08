@@ -43,7 +43,7 @@ bool PeakGraphicsItem::_show_label = false;
 bool PeakGraphicsItem::_show_center = false;
 
 PeakGraphicsItem::PeakGraphicsItem(nsx::sptrPeak3D peak, int frame)
-    : PlottableGraphicsItem(nullptr, true, false), _peak(peak), _area(nullptr)
+    : PlottableGraphicsItem(nullptr, true, false), _peak(peak)
 {
     setVisible(true);
 

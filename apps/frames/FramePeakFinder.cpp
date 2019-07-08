@@ -259,8 +259,8 @@ void FramePeakFinder::run()
     // Get the current convolver type
     std::string convolver_type = _ui->convolution_kernels->currentText().toStdString();
 
-    // Get the corresponding parameters
-    auto&& parameters = convolutionParameters();
+    // TODO remove: Get the corresponding parameters
+    //auto&& parameters = convolutionParameters();
 
     nsx::ConvolverFactory convolver_factory;
     auto convolver = convolver_factory.create(convolver_type, {});

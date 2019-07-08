@@ -28,5 +28,5 @@ class SessionModelDelegate : public QStyledItemDelegate {
 
     virtual bool editorEvent(
         QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option,
-        const QModelIndex& index);
+        const QModelIndex& index) override;
 };

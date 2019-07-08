@@ -61,5 +61,4 @@ class PeakGraphicsItem : public PlottableGraphicsItem {
 
     Eigen::Vector3d _upper;
 
-    QGraphicsRectItem* _area;
 };
