@@ -26,11 +26,18 @@
 #include <QSpacerItem>
 #include <QVBoxLayout>
 
-UnitCellProperty::UnitCellProperty() : QcrWidget {"unitCellProperty"}
+UnitCellProperty::UnitCellProperty() : QcrWidget{"unitCellProperty"}
 {
     QVBoxLayout* overallLayout = new QVBoxLayout(this);
     QHBoxLayout* horizontalLayout = new QHBoxLayout;
     QFormLayout* formLayout = new QFormLayout;
+    unitcells = new QcrComboBox("adhoc_unitCellsNames", new QcrCell<int>(0), []() {
+        QStringList a;
+        if (gSession->selectedExperimentNum() < 0)
+            return a;
+        return gSession->selectedExperiment()->getUnitCellNames();
+    });
+    unitcells->setHook([=](int i) { selectedCellChanged(i); });
     name = new QcrLineEdit("unitCellName", "");
     QStringList spacegroups;
     for (std::string sg : nsx::SpaceGroup::symbols())
@@ -43,6 +50,7 @@ UnitCellProperty::UnitCellProperty() : QcrWidget {"unitCellProperty"}
     chemicalFormula = new QcrLineEdit("chemicalFormula", "");
     z = new QcrSpinBox("z", new QcrCell<int>(0), 3);
     indexingTolerance = new QcrDoubleSpinBox("indexingTolerance", new QcrCell<double>(0.00), 6, 4);
+    formLayout->addRow(unitcells);
     formLayout->addRow("Name:", name);
     formLayout->addRow("Spacegroup:", spaceGroup);
     formLayout->addRow("Chemical Formula:", chemicalFormula);
@@ -91,4 +99,21 @@ void UnitCellProperty::setZValue(int z)
 
     unit_cell->setZ(z);
     // setMassDensity();
+}
+
+void UnitCellProperty::selectedCellChanged(int cell)
+{
+    nsx::sptrUnitCell selectedCell = gSession->selectedExperiment()->getUnitCell(cell);
+    gSession->selectedExperiment()->selectUnitCell(cell);
+    name->setCellValue(unitcells->currentText());
+    // chemicalFormula->setCellValue(QString::fromStdString(selectedCell->material()->formula()));
+    z->setCellValue(selectedCell->z());
+    indexingTolerance->setCellValue(selectedCell->indexingTolerance());
+    nsx::UnitCellCharacter unitcharacter = selectedCell->character();
+    a->setCellValue(unitcharacter.a);
+    b->setCellValue(unitcharacter.b);
+    c->setCellValue(unitcharacter.c);
+    alpha->setCellValue(unitcharacter.alpha);
+    beta->setCellValue(unitcharacter.beta);
+    gamma->setCellValue(unitcharacter.gamma);
 }

@@ -42,6 +42,7 @@ class ShapeLibraryDialog : public QDialog {
     void build();
     void drawframe(int value);
     void selectTargetPeak(int row);
+    void accept();
 
     nsx::sptrShapeLibrary _library;
     nsx::sptrUnitCell _unitCell;

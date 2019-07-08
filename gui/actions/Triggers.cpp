@@ -16,6 +16,7 @@
 
 #include "gui/MainWin.h"
 #include "gui/dialogs/HDF5ConverterDialog.h"
+#include "gui/dialogs/IntegrateDialog.h"
 #include "gui/dialogs/IsotopesDatabaseDialog.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/dialogs/PeakFilterDialog.h"
@@ -162,6 +163,7 @@ void Actions::setupPeaks()
             return;
         // gSession->selectedExperiment()->normalizeToMonitor();
     });
+    integratepeaks.setTriggerHook([]() { gSession->selectedExperiment()->integratePeaks(); });
 }
 
 void Actions::setupRest()

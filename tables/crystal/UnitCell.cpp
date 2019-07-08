@@ -336,7 +336,7 @@ UnitCell::generateReflectionsInShell(double dmin, double dmax, double wavelength
         }
     }
 
-    qInfo() << "Generated " << hkls.size() << " hkl in [" << dmin << "," << dmax << "] range";
+    qDebug() << "Generated " << hkls.size() << " hkl in [" << dmin << "," << dmax << "] range";
 
     return hkls;
 }
