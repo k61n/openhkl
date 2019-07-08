@@ -20,7 +20,8 @@
 
 std::pair<double, double> dRange(const nsx::PeakList& peaks)
 {
-    std::pair<double, double> drange;
+    //TODO remove:
+    //std::pair<double, double> drange;
     double dmin = std::numeric_limits<double>::infinity();
     double dmax = -std::numeric_limits<double>::infinity();
 

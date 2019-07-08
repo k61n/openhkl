@@ -70,7 +70,7 @@ bool SessionModelDelegate::editorEvent(
 
     auto value = QStyledItemDelegate::editorEvent(event, model, option, index);
 
-    auto selected_unit_cell = unit_cells_item->child(index.row());
+    //auto selected_unit_cell = unit_cells_item->child(index.row());
 
     if (value) {
         if (event->type() == QEvent::MouseButtonRelease) {

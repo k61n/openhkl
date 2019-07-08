@@ -32,5 +32,6 @@ class WidgetFoundPeaks : public QWidget {
  private:
     Ui::WidgetFoundPeaks* _ui;
 
-    ExperimentItem* _experiment_item;
+   // TODO remove:
+   //  ExperimentItem* _experiment_item;
 };

@@ -45,20 +45,21 @@ struct PeakFactors {
     double lorentz;
 };
 
-static PeakFactors peakFactors(nsx::sptrPeak3D peak)
-{
-    auto coord = peak->shape().center();
-    auto state = peak->data()->interpolatedState(coord[2]);
-    auto position =
-        peak->data()->reader()->diffractometer()->detector()->pixelPosition(coord[0], coord[1]);
+//TODO remove:
+// static PeakFactors peakFactors(nsx::sptrPeak3D peak)
+// {
+//     auto coord = peak->shape().center();
+//     auto state = peak->data()->interpolatedState(coord[2]);
+//     auto position =
+//         peak->data()->reader()->diffractometer()->detector()->pixelPosition(coord[0], coord[1]);
 
-    PeakFactors peak_factors;
-    peak_factors.gamma = state.gamma(position);
-    peak_factors.nu = state.nu(position);
-    peak_factors.lorentz = state.lorentzFactor(coord[0], coord[1]);
+//     PeakFactors peak_factors;
+//     peak_factors.gamma = state.gamma(position);
+//     peak_factors.nu = state.nu(position);
+//     peak_factors.lorentz = state.lorentzFactor(coord[0], coord[1]);
 
-    return peak_factors;
-}
+//     return peak_factors;
+// }
 
 CollectedPeaksModel::CollectedPeaksModel(
     SessionModel* session, nsx::sptrExperiment experiment, QObject* parent)
