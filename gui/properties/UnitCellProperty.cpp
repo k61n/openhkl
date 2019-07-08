@@ -26,14 +26,14 @@
 #include <QSpacerItem>
 #include <QVBoxLayout>
 
-UnitCellProperty::UnitCellProperty() : QcrWidget {"unitCellProperty"}
+UnitCellProperty::UnitCellProperty() : QcrWidget{"unitCellProperty"}
 {
     QVBoxLayout* overallLayout = new QVBoxLayout(this);
     QHBoxLayout* horizontalLayout = new QHBoxLayout;
     QFormLayout* formLayout = new QFormLayout;
     unitcells = new QcrComboBox("adhoc_unitCellsNames", new QcrCell<int>(0), []() {
         QStringList a;
-        if (gSession->selectedExperimentNum()<0)
+        if (gSession->selectedExperimentNum() < 0)
             return a;
         return gSession->selectedExperiment()->getUnitCellNames();
     });
@@ -106,7 +106,7 @@ void UnitCellProperty::selectedCellChanged(int cell)
     nsx::sptrUnitCell selectedCell = gSession->selectedExperiment()->getUnitCell(cell);
     gSession->selectedExperiment()->selectUnitCell(cell);
     name->setCellValue(unitcells->currentText());
-    //chemicalFormula->setCellValue(QString::fromStdString(selectedCell->material()->formula()));
+    // chemicalFormula->setCellValue(QString::fromStdString(selectedCell->material()->formula()));
     z->setCellValue(selectedCell->z());
     indexingTolerance->setCellValue(selectedCell->indexingTolerance());
     nsx::UnitCellCharacter unitcharacter = selectedCell->character();

@@ -217,15 +217,15 @@ void SessionExperiment::integratePeaks()
 
     if (library_) {
         integratorMap["3d profile integrator"] = [=]() {
-            return new nsx::Profile3DIntegrator(library_, dialog->radius(),
-                                                dialog->numberOfFrames(), false);
+            return new nsx::Profile3DIntegrator(
+                library_, dialog->radius(), dialog->numberOfFrames(), false);
         };
         integratorMap["I/Sigma integrator"] = [=]() {
             return new nsx::ISigmaIntegrator(library_, dialog->radius(), dialog->numberOfFrames());
         };
         integratorMap["1d profile integrator"] = [=]() {
-            return new nsx::Profile1DIntegrator(library_, dialog->radius(),
-                                                dialog->numberOfFrames());
+            return new nsx::Profile1DIntegrator(
+                library_, dialog->radius(), dialog->numberOfFrames());
         };
     }
 
@@ -251,11 +251,12 @@ void SessionExperiment::integratePeaks()
         std::unique_ptr<nsx::IPeakIntegrator> integrator(integratorMap[dialog->integrator()]());
         integrator->setHandler(handler);
         if (!library_) {
-            integrator->integrate(peaks, numor, dialog->peakScale(),
-                                  dialog->backgroundBegin(), dialog->backgroundScale());
+            integrator->integrate(
+                peaks, numor, dialog->peakScale(), dialog->backgroundBegin(),
+                dialog->backgroundScale());
         } else {
-            integrator->integrate(peaks, numor, library_->peakScale(), library_->bkgBegin(),
-                                  library_->bkgEnd());
+            integrator->integrate(
+                peaks, numor, library_->peakScale(), library_->bkgBegin(), library_->bkgEnd());
         }
     }
 

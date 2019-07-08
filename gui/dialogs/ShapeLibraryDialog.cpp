@@ -35,7 +35,7 @@
 #include <QVBoxLayout>
 #include <QtGlobal>
 
-ShapeLibraryDialog::ShapeLibraryDialog() : QDialog {}
+ShapeLibraryDialog::ShapeLibraryDialog() : QDialog{}
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -281,13 +281,13 @@ void ShapeLibraryDialog::build()
     _library->updateFit(1000);
     gLogger->log("[INFO]Done, mean pearson is " + QString::number(_library->meanPearson()));
 
-    //calculate();
+    // calculate();
 }
 
 void ShapeLibraryDialog::drawframe(int value)
 {
     if (value < 0 || value >= _profile.shape()[2]) {
-        //throw std::runtime_error("DialogShapeLibrary::drawFrame(): invalid frame value");
+        // throw std::runtime_error("DialogShapeLibrary::drawFrame(): invalid frame value");
         qInfo() << "SLD: drawframe(): value = " << value;
         qInfo() << "SLD: drawframe(): _profile.shape()[2] = " << _profile.shape()[2];
         return;

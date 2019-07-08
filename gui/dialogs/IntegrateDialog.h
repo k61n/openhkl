@@ -15,9 +15,9 @@
 #ifndef GUI_DIALOGS_INTEGRATEDIALOG_H
 #define GUI_DIALOGS_INTEGRATEDIALOG_H
 
+#include <QCR/widgets/controls.h>
 #include <QDialog>
 #include <QFormLayout>
-#include <QCR/widgets/controls.h>
 
 class IntegrateDialog : public QDialog {
  public:
@@ -47,7 +47,6 @@ class IntegrateDialog : public QDialog {
     QcrDoubleSpinBox* maxD;
     QcrDoubleSpinBox* searchRadius;
     QcrDoubleSpinBox* numFrames;
-
 };
 
 #endif // GUI_DIALOGS_INTEGRATEDIALOG_H

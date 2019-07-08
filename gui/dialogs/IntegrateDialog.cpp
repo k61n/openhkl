@@ -14,16 +14,16 @@
 
 #include "gui/dialogs/IntegrateDialog.h"
 
-#include <QFormLayout>
 #include <QDialogButtonBox>
+#include <QFormLayout>
 
 IntegrateDialog::IntegrateDialog() : QDialog{}
 {
     layout = new QFormLayout(this);
-    fitCen = new QcrCheckBox("adhoc_centerfit", "fit center (Gaussian, pixel sum)",
-                             new QcrCell<bool>(false));
-    fitCovariance = new QcrCheckBox("adhoc_covfit", "fit covariance (Gaussian, pixel sum)",
-                                    new QcrCell<bool>(false));
+    fitCen = new QcrCheckBox(
+        "adhoc_centerfit", "fit center (Gaussian, pixel sum)", new QcrCell<bool>(false));
+    fitCovariance = new QcrCheckBox(
+        "adhoc_covfit", "fit covariance (Gaussian, pixel sum)", new QcrCell<bool>(false));
     shapeScale = new QcrDoubleSpinBox("adhoc_peakShapeScale", new QcrCell<double>(0.0), 10, 5);
     bkgBegin = new QcrDoubleSpinBox("adhoc_integrateBkgBegin", new QcrCell<double>(0.0), 10, 5);
     bkgScale = new QcrDoubleSpinBox("adhoc_integrateBkgScale", new QcrCell<double>(0.0), 10, 5);
@@ -31,8 +31,8 @@ IntegrateDialog::IntegrateDialog() : QDialog{}
     maxD = new QcrDoubleSpinBox("adhoc_integrateMaxD", new QcrCell<double>(0.0), 10, 5);
     searchRadius = new QcrDoubleSpinBox("adhoc_integrateRadius", new QcrCell<double>(0.0), 10, 5);
     numFrames = new QcrDoubleSpinBox("adhoc_integrateNumFrames", new QcrCell<double>(0.0), 10, 5);
-    QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Cancel|QDialogButtonBox::Ok,
-                                                     Qt::Horizontal);
+    QDialogButtonBox* buttons =
+        new QDialogButtonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal);
     layout->addRow("", fitCen);
     layout->addRow("", fitCovariance);
     layout->addRow("Peak shape scale", shapeScale);
