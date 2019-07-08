@@ -93,6 +93,7 @@ herr_t blosc_set_local(hid_t dcpl, hid_t type, hid_t space)
     int ndims;
     int i;
     herr_t r;
+    (void)space;
 
     unsigned int typesize, basetypesize;
     unsigned int bufsize;
@@ -175,8 +176,8 @@ size_t blosc_filter(
     int doshuffle = 1; /* Shuffle default */
     int compcode; /* Blosc compressor */
     int code;
-    char* compname = NULL;
-    char* complist;
+    const char* compname = NULL;
+    const char* complist;
     char errmsg[256];
 
     /* Filter params that are always set */

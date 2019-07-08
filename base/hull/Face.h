@@ -29,6 +29,8 @@ struct Face {
     ~Face() = default;
     Face& operator=(const Face& other) = delete;
 
+    int _id;
+    
     //! Returns the int signed volume of the tetrahedron formed by this Face and a
     //! vertex. It is equal respectively to 1 and -1  if the vertex is on the
     //! negative or positive side of this Face with the positive side determined
@@ -50,7 +52,6 @@ struct Face {
     //! Indicates whether or not this Face is visible
     bool _visible;
 
-    int _id;
 };
 
 std::ostream& operator<<(std::ostream& os, const Face& face);
