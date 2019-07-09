@@ -52,8 +52,7 @@ ReciprocalVector InstrumentState::kfLab(const DirectVector& detector_position) c
 
 ReciprocalVector InstrumentState::sampleQ(const DirectVector& detector_position) const
 {
-    Eigen::RowVector3d ki = ni / ni.norm() / wavelength;
-    auto qLab = kfLab(detector_position).rowVector() - ki;
+    Eigen::RowVector3d qLab(kfLab(detector_position).rowVector() - ki().rowVector());
     return ReciprocalVector(qLab * sampleOrientationMatrix());
 }
 
@@ -78,7 +77,7 @@ double InstrumentState::twoTheta(const DirectVector& detector_position) const
 
 ReciprocalVector InstrumentState::ki() const
 {
-    return ReciprocalVector(ni / ni.norm() / wavelength);
+    return ReciprocalVector((ni / ni.norm()) / wavelength);
 }
 
 Eigen::Matrix3d InstrumentState::sampleOrientationMatrix() const

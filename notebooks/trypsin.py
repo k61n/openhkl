@@ -7,7 +7,7 @@ import sys
 import pynsx as nsx
 import math
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from scipy.optimize import least_squares
 
 ################################################################################
@@ -19,12 +19,10 @@ biodiff = expt.diffractometer()
 reader = nsx.HDF5DataReader("trypsin.hdf", biodiff)
 data = nsx.DataSet(reader)
 expt.addData(data)
+detector = data.reader().diffractometer().detector()
 print("data loaded")
-
-## show the data
-#plt.figure(figsize=(20,10))
-#plt.imshow(np.log(data.frame(0)))
-#plt.show()
+print("sum of the first frame:", data.frame(0).sum())
+print("Are we good:", data.frame(0).sum() == 1282584565 )
 
 ################################################################################
 ## find the peaks and their position on the map
@@ -58,11 +56,51 @@ peak_list = nsx.PeakList()
 for peak in peaks:
     peak_list.push_back(peak)
 
+position = detector.pixelPosition(
+    peak_list[0].shape().center()[0][0], 
+    peak_list[0].shape().center()[1][0])
+
+state = data.interpolatedState(
+    peak_list[0].shape().center()[1][0])
+
+ki = state.ki().rowVector()
+
+qLab = state.kfLab(position).rowVector()
+
 print("integrate1 begin")
 integrator = nsx.PixelSumIntegrator(False, False)
 integrator.integrate(peak_list, data, 3.0, 3.0, 6.0)
-print("... integrate1 done")
 
+print("... integrate1 done")
+print(
+    "peak[0] Intensity", '\n',
+    peak_list[0].rawIntensity().value(), '\n',
+    peak_list[0].correctedIntensity().value())
+
+print(
+    "peak[0] Shape", '\n',
+    peak_list[0].shape().metric(),'\n',
+    peak_list[0].shape().center(),'\n',
+    peak_list[0].shape().aabb().lower(),'\n',
+    peak_list[0].shape().aabb().upper())
+
+print(
+    "detector position", '\n',
+    position.vector()[0], position.vector()[1], position.vector()[2], '\n')
+
+print(
+    "interpolated state", '\n',
+    state.axis, '\n',
+    state.stepSize, '\n',
+    ki, '\n',
+    qLab)
+
+print(
+    "peak[0] q", '\n',
+    peak_list[0].q().rowVector(), '\n',
+    1.0 / np.linalg.norm(peak_list[0].q().rowVector()))
+
+sys.exit()
 ################################################################################
 ## Set some detector parameters
 ################################################################################
