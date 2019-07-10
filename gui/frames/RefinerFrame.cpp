@@ -51,7 +51,7 @@ void RefinerFrame::layout()
     QVBoxLayout* layoutSettings = new QVBoxLayout(settings);
     PeaksTableModel* model = new PeaksTableModel(
         "adhoc_refinerPeaks", gSession->selectedExperiment()->experiment(),
-        gSession->selectedExperiment()->getPeaks(0, 0));
+        gSession->selectedExperiment()->getPeaks(0, 0)->peaks_);
     peaks = new PeaksTableView;
     peaks->setModel(model);
     peaks->selectAll();

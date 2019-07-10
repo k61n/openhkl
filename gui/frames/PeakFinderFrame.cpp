@@ -344,17 +344,9 @@ void PeakFinderFrame::accept()
         std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(found_peaks));
         if (!dlg->exec())
             continue;
-        QString peaklistname = dlg->listName();
-        int numValid = 0;
-        int numPeaks = found_peaks.size();
-        for (nsx::sptrPeak3D peak : found_peaks) {
-            if (peak->enabled())
-                numValid++;
-        }
-        int numNotValid = numPeaks - numValid;
-        peaklistname += " (" + QString::number(numPeaks) + " | valid: " + QString::number(numValid);
-        peaklistname += " | not valid: " + QString::number(numNotValid) + ")";
-        gSession->selectedExperiment()->addPeaks(found_peaks, peaklistname);
+        Peaks* peaks = new Peaks(found_peaks, dlg->listName(),
+                                 listtype::FOUND, convolutionKernel->currentText());
+        gSession->selectedExperiment()->addPeaks(peaks);
     }
 
     close();

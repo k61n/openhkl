@@ -98,7 +98,7 @@ void DetectorScene::resetPeakGraphicsItems()
     clearPeakGraphicsItems();
 
     if (gSession->selectedExperimentNum() >= 0) {
-        nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0);
+        nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
 
         for (nsx::sptrPeak3D peak : peaks) {
             nsx::Ellipsoid peak_ellipsoid = peak->shape();
@@ -173,12 +173,10 @@ void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
 
         _currentData->open();
 
-        nsx::Detector* det = _currentData->reader()->diffractometer()->detector();
-
         _currentFrameIndex = -1;
 
         _zoomStack.clear();
-        _zoomStack.push_back(QRect(0, 0, int(det->nCols()), int(det->nRows())));
+        _zoomStack.push_back(QRect(0, 0, int(_currentData->nCols()), int(_currentData->nRows())));
 
         if (_lastClickedGI != nullptr) {
             removeItem(_lastClickedGI);
@@ -446,7 +444,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             delete _zoomrect;
             emit dataChanged();
         } else {
-            nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0);
+            nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
 
             if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
                 // delete p....
@@ -532,7 +530,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 if (it != _masks.end()) {
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
-                    nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0);
+                    nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
                     _currentData->maskPeaks(peaks);
                     update();
                     updateMasks();
@@ -543,7 +541,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 if (it != _masks.end()) {
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
-                    nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0);
+                    nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
                     _currentData->maskPeaks(peaks);
                     update();
                     updateMasks();
@@ -671,7 +669,7 @@ void DetectorScene::loadCurrentImage()
         const int nrows = _currentData->nRows();
         Eigen::MatrixXi mask(nrows, ncols);
         mask.setConstant(int(EventType::EXCLUDED));
-        nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0);
+        nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
         for (nsx::sptrPeak3D peak : peaks) {
             if (peak->enabled()) {
                 // IntegrationRegion constructor can throw if the region is invalid

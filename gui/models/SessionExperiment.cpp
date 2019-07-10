@@ -15,6 +15,7 @@
 #include "gui/models/SessionExperiment.h"
 
 #include "core/analyse/PeakFilter.h"
+#include "core/experiment/DataSet.h"
 #include "core/instrument/HardwareParameters.h"
 #include "core/integration/GaussianIntegrator.h"
 #include "core/integration/ISigmaIntegrator.h"
@@ -28,6 +29,39 @@
 #include <QDateTime>
 #include <QDebug>
 #include <QStringList>
+
+Peaks::Peaks()
+    : name_{"empty"}, type_{listtype::PREDICTED}
+    , convolutionkernel_{"unknown"}, file_{"none"}
+{
+    nsx::PeakList liste;
+    peaks_ = liste;
+}
+
+Peaks::Peaks(nsx::PeakList peaks, const QString &name, listtype type, const QString &kernel)
+    : peaks_{peaks}, name_{name}, type_{type}, convolutionkernel_{kernel}, file_{"unknown"}
+{
+//    nsx::sptrDataSet data = peaks_[0]->data();
+//    file_ = QString::fromStdString(data->filename());
+}
+
+int Peaks::valid() {
+    valid_ = 0;
+    for (nsx::sptrPeak3D peak : peaks_) {
+        if (peak->enabled())
+            valid_++;
+    }
+    return valid_;
+}
+
+int Peaks::notValid() {
+    return numberPeaks()-valid();
+}
+
+int Peaks::numberPeaks() {
+    number_ = peaks_.size();
+    return number_;
+}
 
 SessionExperiment::SessionExperiment()
 {
@@ -71,59 +105,55 @@ QList<nsx::sptrDataSet> SessionExperiment::allData()
     return list;
 }
 
-void SessionExperiment::addPeaks(
-    nsx::PeakList peaks, const QString& listname, const QString& uppername)
+void SessionExperiment::addPeaks(Peaks* peaks, const QString& uppername)
 {
     if (uppername.length() == 0) {
-        QMap<QString, nsx::PeakList> innerList;
-        innerList.insert("all Peaks", peaks);
-        peakLists_.insert(listname, innerList);
+        QVector<Peaks*> inner;
+        QString listname = peaks->name_;
+        peaks->name_ = "all peaks";
+        inner.append(std::move(peaks));
+        peakLists_.insert(listname, inner);
         return;
     }
     QString upperlist = uppername;
     if (uppername.contains('/'))
         upperlist = uppername.split('/').at(0);
 
-    peakLists_[upperlist].insert(listname, peaks);
+    peakLists_[upperlist].append(std::move(peaks));
     gSession->onPeaksChanged();
 }
 
-nsx::PeakList SessionExperiment::getPeaks(int upperindex, int lowerindex)
+const Peaks* SessionExperiment::getPeaks(int upperindex, int lowerindex)
 {
-    if (peakLists_.empty()) {
-        nsx::PeakList emptyList;
-        return emptyList;
-    }
+    if (peakLists_.empty())
+        return nullptr;
 
     QString outername;
-    QString innername;
     if (upperindex == -1)
         return getPeaks(selectedList_);
     else
         outername = getPeakListNames(0).at(upperindex);
-    QMap<QString, nsx::PeakList> innermap = peakLists_.value(outername);
-    QStringList innernames = innermap.keys();
     if (lowerindex == -1)
-        innername = innernames.at(0);
-    else
-        innername = innernames.at(lowerindex);
-    return innermap.value(innername);
+        lowerindex = 0;
+    return peakLists_.value(outername).at(lowerindex);
 }
 
-nsx::PeakList SessionExperiment::getPeaks(const QString& peakListName)
+const Peaks* SessionExperiment::getPeaks(const QString& peakListName)
 {
     QString searchedName;
     QString filteredName;
+    int index = -1;
     if (!peakListName.contains("/")) {
-        filteredName = "all Peaks";
+        index = 0;
         searchedName = peakListName;
     } else {
         QStringList listnames = peakListName.split("/");
         filteredName = listnames.at(1);
         searchedName = listnames.at(0);
+        index = listNamesOf(searchedName).indexOf(filteredName);
     }
 
-    return peakLists_.value(searchedName).value(filteredName);
+    return peakLists_.value(searchedName).at(index);
 }
 
 QStringList SessionExperiment::getPeakListNames(int depth)
@@ -133,11 +163,20 @@ QStringList SessionExperiment::getPeakListNames(int depth)
         return outernames;
     QStringList allnames;
     for (QString outername : outernames) {
-        QStringList innernames = peakLists_.value(outername).keys();
-        for (QString innername : innernames)
-            allnames.append(outername + "/" + innername);
+        const QVector<Peaks*> inner = peakLists_.value(outername);
+        for (const Peaks* peaks : inner)
+            allnames.append(outername + "/" + peaks->name_);
     }
     return allnames;
+}
+
+QStringList SessionExperiment::listNamesOf(const QString &listname)
+{
+    QStringList namesInSearched;
+    const QVector<Peaks*> inner = peakLists_.value(listname);
+    for (const Peaks* peaks : inner)
+        namesInSearched.append(peaks->name_);
+    return namesInSearched;
 }
 
 void SessionExperiment::removePeaks(const QString& listname)
@@ -158,7 +197,8 @@ void SessionExperiment::removePeaks(const QString& listname)
     QStringList names = toremove.split('/');
     QString outername = names.at(0);
     QString innername = names.at(1);
-    peakLists_[outername].remove(innername);
+    int index = listNamesOf(outername).indexOf(innername);
+    peakLists_[outername].removeAt(index);
 }
 
 void SessionExperiment::selectPeaks(const QString& listname)
@@ -244,7 +284,7 @@ void SessionExperiment::integratePeaks()
     view.watch(handler);
 
     nsx::PeakFilter filter;
-    nsx::PeakList peaks = filter.dRange(getPeaks(), dmin, dmax);
+    nsx::PeakList peaks = filter.dRange(getPeaks()->peaks_, dmin, dmax);
 
     for (nsx::sptrDataSet numor : numors) {
         qDebug() << "Integrationg " << peaks.size() << " peaks";

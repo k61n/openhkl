@@ -39,7 +39,7 @@ TabPeaks::TabPeaks() : QcrWidget {"peaks"}
         if (!gSession->selectedExperiment()->getPeakListNames().empty()) {
             PeaksTableModel* model = new PeaksTableModel(
                 "adhoc_tabpeaksmodel", gSession->selectedExperiment()->experiment(),
-                gSession->selectedExperiment()->getPeaks(0));
+                gSession->selectedExperiment()->getPeaks(0)->peaks_);
             peaksTable->setModel(model);
         }
     }
@@ -53,14 +53,16 @@ void TabPeaks::selectedListChanged(int i)
     QString selectedPeaks = foundPeaksLists->currentText();
     gSession->selectedExperiment()->selectPeaks(selectedPeaks);
     PeaksTableModel* model = dynamic_cast<PeaksTableModel*>(peaksTable->model());
+    nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(selectedPeaks)->peaks_;
+    if (peaks.empty())
+        return;
     if (!model) {
         model = new PeaksTableModel(
-            "adhoc_tabpeaksmodel", gSession->selectedExperiment()->experiment(),
-            gSession->selectedExperiment()->getPeaks(selectedPeaks));
+            "adhoc_tabpeaksmodel", gSession->selectedExperiment()->experiment(), peaks);
         peaksTable->setModel(model);
         return;
     }
-    model->setPeaks(gSession->selectedExperiment()->getPeaks(selectedPeaks));
+    model->setPeaks(peaks);
 }
 
 void TabPeaks::selectedExperimentChanged()
@@ -72,5 +74,6 @@ void TabPeaks::selectedExperimentChanged()
     peaksTable->setModel(model);
     if (gSession->selectedExperiment()->getPeakListNames().empty())
         return;
-    model->setPeaks(gSession->selectedExperiment()->getPeaks(foundPeaksLists->currentText()));
+    model->setPeaks(
+                gSession->selectedExperiment()->getPeaks(foundPeaksLists->currentText())->peaks_);
 }
