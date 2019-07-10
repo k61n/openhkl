@@ -46,19 +46,7 @@ debS_gcc:
     - git clone https://jugit.fz-juelich.de/mlz/libQCR.git
     - git clone https://jugit.fz-juelich.de/mlz/xsection.git
   stage: build
-     script: *scr
-  script:
-    - pwd && ls
-    - cd libQCR && mkdir build && cd build
-    - cmake .. && make && ctest && make install
-    - cd ../.. && pwd && ls
-    - cd xsection && mkdir build && cd build
-    - cmake .. && make -j3 && ctest && make install
-    - cd ../.. && pwd && ls
-    - mkdir build
-    - cd build
-    - cmake ..
-    - make -j8
+  script: *scr
 
 # suse_clang:
 #
