@@ -335,6 +335,7 @@ using namespace nsx;
 %include "core/analyse/Blob3D.h"
 %include "core/analyse/MergedData.h"
 %include "core/analyse/PeakFinder.h"
+%template(MergedPeakSet) std::set<nsx::MergedPeak>;
 
 %include "core/algo/DataReaderFactory.h"
 %include "core/algo/RefinementBatch.h"

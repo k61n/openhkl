@@ -100,7 +100,6 @@ print(
     peak_list[0].q().rowVector(), '\n',
     1.0 / np.linalg.norm(peak_list[0].q().rowVector()))
 
-sys.exit()
 ################################################################################
 ## Set some detector parameters
 ################################################################################
@@ -261,16 +260,16 @@ for i in range(10):
         ch = b.cell().character()
         abc.append([ch.a, ch.b, ch.c])
 
-plt.plot(range(len(widths)), widths)
-plt.show()
+# plt.plot(range(len(widths)), widths)
+# plt.show()
 
-plt.plot(range(len(heights)), heights)
-plt.show()
+# plt.plot(range(len(heights)), heights)
+# plt.show()
 
-plt.plot([a[0] for a in abc])
-plt.plot([a[1] for a in abc])
-plt.plot([a[2] for a in abc])
-plt.show()
+# plt.plot([a[0] for a in abc])
+# plt.plot([a[1] for a in abc])
+# plt.plot([a[2] for a in abc])
+# plt.show()
 
 ################################################################################
 ## Correct the peak indexing and the reprocess the shape library and actual intensity
@@ -356,147 +355,151 @@ print("... filtering done")
 ################################################################################
 ## Plot the selected peaks in a 3D opengl view
 ################################################################################
+try:
+    from simpleplot.canvas.multi_canvas import MultiCanvasItem as mc
+    from PyQt5 import QtWidgets, QtGui, QtCore
+    from pprint import pprint
+    simplePlotInstalled = True
+except:
+    simplePlotInstalled = False
 
-from simpleplot.canvas.multi_canvas import MultiCanvasItem as mc
-from PyQt5 import QtWidgets, QtGui, QtCore
-from pprint import pprint
+if simplePlotInstalled:
+    # set up the widget
+    app = QtWidgets.QApplication(sys.argv)
+    widget          = QtWidgets.QWidget()
+    multi_canvas    = mc(
+        widget = widget,
+        grid        = [[True]],
+        element_types = [['3D']],
+        x_ratios    = [1],
+        y_ratios    = [1],
+        background  = "w",
+        highlightthickness = 0)
 
-# set up the widget
-app = QtWidgets.QApplication(sys.argv)
-widget          = QtWidgets.QWidget()
-multi_canvas    = mc(
-    widget = widget,
-    grid        = [[True]],
-    element_types = [['3D']],
-    x_ratios    = [1],
-    y_ratios    = [1],
-    background  = "w",
-    highlightthickness = 0)
+    base_colors = [[1.,1.,1., 1.],[1.,0.5,0., 1.]]
+    base_positions = [0.,1]
 
-base_colors = [[1.,1.,1., 1.],[1.,0.5,0., 1.]]
-base_positions = [0.,1]
+    ax = multi_canvas.getSubplot(0,0)
+    x_range = 30
+    y_range = 30
+    x_scale = 1
+    y_scale = 1
+    z_scale = 0.05
+    offset_scale= 5.
 
-ax = multi_canvas.getSubplot(0,0)
-x_range = 30
-y_range = 30
-x_scale = 1
-y_scale = 1
-z_scale = 0.05
-offset_scale= 5.
+    mul = 50
 
-mul = 50
-
-# Selected hkl peaks
-points = [2000,2001,2002]
-# for i in range(2000,3000):
-#     if predicted_peaks[i].selected():
-#         points.append(i)
-#         if len(points) > 50:
-#             break
-
-x_offset = 0
-y_offset = 0
-
-# process for selected hkl series
-print("process hkl, begin loop")
-for k, val in enumerate(points):
-
-    #set all hkl parameters
-    hkl =  nsx.MillerIndex(predicted_peaks[val].q(), predicted_peaks[val].unitCell())
-    h = hkl.h()
-    k = hkl.k()
-    l = hkl.l()
-    I = predicted_peaks[val].correctedIntensity()
-    intensity = I.value()
-    sigma = I.sigma()
-    print('Peak: ', val, h,k,l,intensity, sigma)
-
-    # set all bounding box parameters
-    elipsis = predicted_peaks[val].shape()
-    center  = elipsis.center()
-    region = nsx.IntegrationRegion(
-        predicted_peaks[val],
-        predicted_peaks[val].peakEnd(),
-        predicted_peaks[val].bkgBegin(),
-        predicted_peaks[val].bkgEnd() )
-    bounding_box = region.peakBB()
-    upper  = bounding_box.upper()
-    lower  = bounding_box.lower()
-    x_bound  = [lower[0][0] - center[0][0], upper[0][0] - center[0][0]]
-    y_bound  = [lower[1][0] - center[1][0], upper[1][0] - center[1][0]]
-    upper[2][0]  = min([upper[2][0], data.nFrames()-1])
-    lower[2][0]  = max([lower[2][0], 0])
-    frame_bound  = upper[2][0] - lower[2][0]
-    mul = int(frame_bound)
-    loop = [int(ll * frame_bound/mul + lower[2][0]) for ll in range(mul+1)]
+    # Selected hkl peaks
+    points = [2000,2001,2002]
+    # for i in range(2000,3000):
+    #     if predicted_peaks[i].selected():
+    #         points.append(i)
+    #         if len(points) > 50:
+    #             break
 
     x_offset = 0
-    surfaces = []
-    z_min = []
-    z_max = []
+    y_offset = 0
 
-    surfaces_base = []
-    z_min_base = []
-    z_max_base = []
+    # process for selected hkl series
+    print("process hkl, begin loop")
+    for k, val in enumerate(points):
 
-    for l,j in enumerate(loop):
-        to_plot = np.array(data.frame(j), dtype='float64')[
-            int(lower[1][0]): int(upper[1][0]),
-            int(lower[0][0]): int(upper[0][0])]
-        base =  np.array(data.frame(j), dtype='float64')[
-            int(center[1][0] - x_range): int(center[1][0] + x_range),
-            int(center[0][0] - y_range): int(center[0][0] + y_range)]
+        #set all hkl parameters
+        hkl =  nsx.MillerIndex(predicted_peaks[val].q(), predicted_peaks[val].unitCell())
+        h = hkl.h()
+        k = hkl.k()
+        l = hkl.l()
+        I = predicted_peaks[val].correctedIntensity()
+        intensity = I.value()
+        sigma = I.sigma()
+        print('Peak: ', val, h,k,l,intensity, sigma)
 
-        if not base.size == 0 and not to_plot.size == 0:
-            to_plot -= np.amin(base)
-            base -= np.amin(base)
-            to_plot *= z_scale
-            base *= z_scale
-            base[int(lower[1][0]) - int(center[1][0] - x_range): -(int(center[1][0]+x_range)-int(upper[1][0])),
-                int(lower[0][0]) - int(center[0][0] - y_range): -(int(center[0][0]+y_range)-int(upper[0][0]))] = np.amin(to_plot)
+        # set all bounding box parameters
+        elipsis = predicted_peaks[val].shape()
+        center  = elipsis.center()
+        region = nsx.IntegrationRegion(
+            predicted_peaks[val],
+            predicted_peaks[val].peakEnd(),
+            predicted_peaks[val].bkgBegin(),
+            predicted_peaks[val].bkgEnd() )
+        bounding_box = region.peakBB()
+        upper  = bounding_box.upper()
+        lower  = bounding_box.lower()
+        x_bound  = [lower[0][0] - center[0][0], upper[0][0] - center[0][0]]
+        y_bound  = [lower[1][0] - center[1][0], upper[1][0] - center[1][0]]
+        upper[2][0]  = min([upper[2][0], data.nFrames()-1])
+        lower[2][0]  = max([lower[2][0], 0])
+        frame_bound  = upper[2][0] - lower[2][0]
+        mul = int(frame_bound)
+        loop = [int(ll * frame_bound/mul + lower[2][0]) for ll in range(mul+1)]
 
-            z_min.append(np.amin(to_plot))
-            z_max.append(np.amax(to_plot))
-            z_min_base.append(np.amin(base))
-            z_max_base.append(np.amin(to_plot))
+        x_offset = 0
+        surfaces = []
+        z_min = []
+        z_max = []
 
-            x = (np.array([i + (int(lower[1][0])-int(center[1][0]-x_range)) for i in range(to_plot.shape[0]+1)]))*x_scale + x_offset
-            y = (np.array([i + (int(lower[0][0])-int(center[0][0]-x_range)) for i in range(to_plot.shape[1]+1)]))*y_scale + y_offset
+        surfaces_base = []
+        z_min_base = []
+        z_max_base = []
 
-            x_base = (np.array([i for i in range(base.shape[0])]))*x_scale + x_offset
-            y_base = (np.array([i for i in range(base.shape[1])]))*y_scale + y_offset
+        for l,j in enumerate(loop):
+            to_plot = np.array(data.frame(j), dtype='float64')[
+                int(lower[1][0]): int(upper[1][0]),
+                int(lower[0][0]): int(upper[0][0])]
+            base =  np.array(data.frame(j), dtype='float64')[
+                int(center[1][0] - x_range): int(center[1][0] + x_range),
+                int(center[0][0] - y_range): int(center[0][0] + y_range)]
 
-            surfaces.append(ax.addPlot(
-                'Surface',
-                x = x,
-                y = y,
-                z = to_plot ,
-                Name = 'bin'))
+            if not base.size == 0 and not to_plot.size == 0:
+                to_plot -= np.amin(base)
+                base -= np.amin(base)
+                to_plot *= z_scale
+                base *= z_scale
+                base[int(lower[1][0]) - int(center[1][0] - x_range): -(int(center[1][0]+x_range)-int(upper[1][0])),
+                    int(lower[0][0]) - int(center[0][0] - y_range): -(int(center[0][0]+y_range)-int(upper[0][0]))] = np.amin(to_plot)
 
-            surfaces_base.append(ax.addPlot(
-                'Surface',
-                x = x_base,
-                y = y_base,
-                z = base ,
-                Positions = base_positions,
-                Colors = base_colors,
-                Name = 'bin'))
+                z_min.append(np.amin(to_plot))
+                z_max.append(np.amax(to_plot))
+                z_min_base.append(np.amin(base))
+                z_max_base.append(np.amin(to_plot))
 
-            x_offset += base.shape[0]*x_scale + 2
+                x = (np.array([i + (int(lower[1][0])-int(center[1][0]-x_range)) for i in range(to_plot.shape[0]+1)]))*x_scale + x_offset
+                y = (np.array([i + (int(lower[0][0])-int(center[0][0]-x_range)) for i in range(to_plot.shape[1]+1)]))*y_scale + y_offset
 
-    # set the color limits for the surfaces
-    for surface in surfaces:
-        surface.shader_parameters['Bounds z'] = [[False, min(z_min), max(z_max)]]
+                x_base = (np.array([i for i in range(base.shape[0])]))*x_scale + x_offset
+                y_base = (np.array([i for i in range(base.shape[1])]))*y_scale + y_offset
 
-    # set the y_offset for the following plots
-    y_offset += (int(center[0][0] + y_range) - int(center[0][0] - y_range) ) * y_scale +2
+                surfaces.append(ax.addPlot(
+                    'Surface',
+                    x = x,
+                    y = y,
+                    z = to_plot ,
+                    Name = 'bin'))
 
-print("... process hkl, loop done")
+                surfaces_base.append(ax.addPlot(
+                    'Surface',
+                    x = x_base,
+                    y = y_base,
+                    z = base ,
+                    Positions = base_positions,
+                    Colors = base_colors,
+                    Name = 'bin'))
 
-# ploting of the data
-ax.draw()
-widget.show()
-sys.exit(app.exec_())
+                x_offset += base.shape[0]*x_scale + 2
+
+        # set the color limits for the surfaces
+        for surface in surfaces:
+            surface.shader_parameters['Bounds z'] = [[False, min(z_min), max(z_max)]]
+
+        # set the y_offset for the following plots
+        y_offset += (int(center[0][0] + y_range) - int(center[0][0] - y_range) ) * y_scale +2
+
+    print("... process hkl, loop done")
+
+    # ploting of the data
+    ax.draw()
+    widget.show()
+    sys.exit(app.exec_())
 
 ################################################################################
 ## Print the statistic informations for a given group of peaks
@@ -667,7 +670,7 @@ sca_header += temp+' '+''.join(symbol.split()).lower()+'\n'
 sca_data = []
 
 print("prepare phenix output, begin loop ...")
-for peak in merged_data.peaks():
+for peak in merged_data.mergedPeakSet():
 
     # get the indexes, intensity and sigma
     hkl =  peak.index()
