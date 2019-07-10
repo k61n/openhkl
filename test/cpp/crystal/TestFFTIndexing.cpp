@@ -68,7 +68,7 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
         try {
             peak->setShape(nsx::Ellipsoid(center, 1.0));
             peak->setSelected(true);
-            peaks.push_back(peak); 
+            peaks.push_back(peak);
 
             nsx::MillerIndex hkl(peak->q(), uc);
 
