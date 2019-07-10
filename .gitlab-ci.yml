@@ -1,10 +1,10 @@
 stages:
   - build
 
-debT_clang:
+debS_clang:
   tags: &unix
   - Linux
-  image: debian:testing
+  image: debian:stable
   before_script: &debian_clang
     - apt-get -y update
     - apt-get -y upgrade
@@ -31,9 +31,9 @@ debT_clang:
     - make -j8
     - ctest -j8 --output-on-failure
 
-debT_gcc:
+debS_gcc:
   tags: *unix
-  image: debian:testing
+  image: debian:stable
   before_script: &debian_gcc
     - apt-get -y update
     - apt-get -y upgrade
@@ -46,11 +46,7 @@ debT_gcc:
     - git clone https://jugit.fz-juelich.de/mlz/libQCR.git
     - git clone https://jugit.fz-juelich.de/mlz/xsection.git
   stage: build
-#   script: *scr
-#
-#  NOTE [JWu21jun19]:
-#  Tests are suspended since we know that several of them are broken under gcc
-#
+     script: *scr
   script:
     - pwd && ls
     - cd libQCR && mkdir build && cd build
