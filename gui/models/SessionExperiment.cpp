@@ -45,22 +45,21 @@ Peaks::Peaks(nsx::PeakList peaks, const QString &name, listtype type, const QStr
 //    file_ = QString::fromStdString(data->filename());
 }
 
-int Peaks::valid() {
-    valid_ = 0;
+int Peaks::valid() const {
+    int valid = 0;
     for (nsx::sptrPeak3D peak : peaks_) {
         if (peak->enabled())
-            valid_++;
+            valid++;
     }
-    return valid_;
+    return valid;
 }
 
-int Peaks::notValid() {
+int Peaks::notValid() const {
     return numberPeaks()-valid();
 }
 
-int Peaks::numberPeaks() {
-    number_ = peaks_.size();
-    return number_;
+int Peaks::numberPeaks() const {
+    return peaks_.size();
 }
 
 SessionExperiment::SessionExperiment()
@@ -113,6 +112,7 @@ void SessionExperiment::addPeaks(Peaks* peaks, const QString& uppername)
         peaks->name_ = "all peaks";
         inner.append(std::move(peaks));
         peakLists_.insert(listname, inner);
+        gSession->onPeaksChanged();
         return;
     }
     QString upperlist = uppername;
@@ -140,6 +140,8 @@ const Peaks* SessionExperiment::getPeaks(int upperindex, int lowerindex)
 
 const Peaks* SessionExperiment::getPeaks(const QString& peakListName)
 {
+    if (peakLists_.empty())
+        return nullptr;
     QString searchedName;
     QString filteredName;
     int index = -1;

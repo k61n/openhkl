@@ -31,18 +31,16 @@ class Peaks {
     Peaks(nsx::PeakList peaks, const QString& name, listtype type,
           const QString& kernel = QString());
 
-    int numberPeaks();
-    int valid();
-    int notValid();
+    int numberPeaks() const;
+    int valid() const;
+    int notValid() const;
 
     nsx::PeakList peaks_;
     QString name_;
     const listtype type_;
-    const QString convolutionkernel_;
-    const QString file_;
- private:
-    int number_;
-    int valid_;
+    QString convolutionkernel_;
+    QString file_;
+    QString parent;
 };
 
 //! Controls and handles the Experiment and its Peaks and UnitCells

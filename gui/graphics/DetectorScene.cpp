@@ -98,28 +98,31 @@ void DetectorScene::resetPeakGraphicsItems()
     clearPeakGraphicsItems();
 
     if (gSession->selectedExperimentNum() >= 0) {
-        nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
+        const Peaks* peaksdata = gSession->selectedExperiment()->getPeaks(0, 0);
+        if (peaksdata) {
+            nsx::PeakList peaks = peaksdata->peaks_;
 
-        for (nsx::sptrPeak3D peak : peaks) {
-            nsx::Ellipsoid peak_ellipsoid = peak->shape();
+            for (nsx::sptrPeak3D peak : peaks) {
+                nsx::Ellipsoid peak_ellipsoid = peak->shape();
 
-            peak_ellipsoid.scale(peak->peakEnd());
+                peak_ellipsoid.scale(peak->peakEnd());
 
-            const nsx::AABB& aabb = peak_ellipsoid.aabb();
+                const nsx::AABB& aabb = peak_ellipsoid.aabb();
 
-            Eigen::Vector3d lower = aabb.lower();
+                Eigen::Vector3d lower = aabb.lower();
 
-            Eigen::Vector3d upper = aabb.upper();
+                Eigen::Vector3d upper = aabb.upper();
 
-            // If the current frame of the scene is out of the peak bounds do not paint it
-            if (_currentFrameIndex < lower[2] || _currentFrameIndex > upper[2])
-                continue;
+                // If the current frame of the scene is out of the peak bounds do not paint it
+                if (_currentFrameIndex < lower[2] || _currentFrameIndex > upper[2])
+                    continue;
 
-            PeakItem* peak_gi = new PeakItem(peak, _currentFrameIndex);
+                PeakItem* peak_gi = new PeakItem(peak, _currentFrameIndex);
 
-            addItem(peak_gi);
+                addItem(peak_gi);
 
-            _peak_graphics_items.insert(std::make_pair(peak, peak_gi));
+                _peak_graphics_items.insert(std::make_pair(peak, peak_gi));
+            }
         }
     }
 

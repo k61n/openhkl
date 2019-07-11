@@ -16,6 +16,7 @@
 
 #include "gui/models/Session.h"
 #include <QCR/engine/logger.h>
+#include <QFormLayout>
 #include <QTreeView>
 #include <QVBoxLayout>
 
@@ -44,25 +45,68 @@ TabPeaks::TabPeaks() : QcrWidget {"peaks"}
         }
     }
     layout->addWidget(peaksTable);
+
+    type = new QLabel;
+    filename = new QLabel;
+    kernelname = new QLabel;
+    parentname = new QLabel;
+    numPeaks = new QLabel;
+    valid = new QLabel;
+    nonValid = new QLabel;
+
+    QHBoxLayout* metaBox = new QHBoxLayout;
+    QFormLayout* leftSide = new QFormLayout;
+    leftSide->addRow("listtype:", type);
+    leftSide->addRow("file:", filename);
+    leftSide->addRow("kernel:", kernelname);
+    leftSide->addRow("parent:  ", parentname);
+
+    QFormLayout* rightSide = new QFormLayout;
+    rightSide->addRow("peaks:", numPeaks);
+    rightSide->addRow("valid:", valid);
+    rightSide->addRow("not valid:", nonValid);
+    metaBox->addLayout(leftSide);
+    metaBox->addLayout(rightSide);
+
+    layout->addLayout(metaBox);
 }
 
 void TabPeaks::selectedListChanged(int i)
 {
-    Q_UNUSED(i)
-
-    QString selectedPeaks = foundPeaksLists->currentText();
+    QString selectedPeaks = gSession->selectedExperiment()->getPeakListNames(1).at(i);
     gSession->selectedExperiment()->selectPeaks(selectedPeaks);
     PeaksTableModel* model = dynamic_cast<PeaksTableModel*>(peaksTable->model());
-    nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(selectedPeaks)->peaks_;
-    if (peaks.empty())
+    const Peaks* peaks = gSession->selectedExperiment()->getPeaks(selectedPeaks);
+    if (!peaks)
         return;
     if (!model) {
         model = new PeaksTableModel(
-            "adhoc_tabpeaksmodel", gSession->selectedExperiment()->experiment(), peaks);
+            "adhoc_tabpeaksmodel", gSession->selectedExperiment()->experiment(), peaks->peaks_);
         peaksTable->setModel(model);
         return;
     }
-    model->setPeaks(peaks);
+    model->setPeaks(peaks->peaks_);
+    listtype listType = peaks->type_;
+    switch (listType) {
+    case listtype::FILTERED : {
+        type->setText("filtered");
+        break;
+    }
+    case listtype::FOUND : {
+        type->setText("found");
+        break;
+    }
+    case listtype::PREDICTED : {
+        type->setText("predicted");
+        break;
+    }
+    }
+    filename->setText(peaks->file_);
+    kernelname->setText(peaks->convolutionkernel_);
+    numPeaks->setText(QString::number(peaks->numberPeaks()));
+    valid->setText(QString::number(peaks->valid()));
+    nonValid->setText(QString::number(peaks->notValid()));
+    parentname->setText(peaks->parent);
 }
 
 void TabPeaks::selectedExperimentChanged()

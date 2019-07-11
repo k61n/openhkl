@@ -346,6 +346,7 @@ void PeakFinderFrame::accept()
             continue;
         Peaks* peaks = new Peaks(found_peaks, dlg->listName(),
                                  listtype::FOUND, convolutionKernel->currentText());
+        peaks->file_ = data->currentText();
         gSession->selectedExperiment()->addPeaks(peaks);
     }
 

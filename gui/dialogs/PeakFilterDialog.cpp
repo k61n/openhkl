@@ -239,6 +239,10 @@ void PeakFilterDialog::accept()
             return;
 
         Peaks* peaks = new Peaks(filtered_peaks, dlg->listName(), listtype::FILTERED, "unknown");
+        const Peaks* parent = gSession->selectedExperiment()->getPeaks(peakList->currentText());
+        peaks->parent = peakList->currentText();
+        peaks->convolutionkernel_ = parent->convolutionkernel_;
+        peaks->file_ = parent->file_;
         gSession->selectedExperiment()->addPeaks(peaks, peakList->currentText());
 
         QString message = "Applied peak filters on selected peaks. Remains ";
