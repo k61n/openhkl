@@ -37,7 +37,7 @@ PeakFilterDialog::PeakFilterDialog() : QDialog {gGui}
         return;
     }
 
-    peaks_ = gSession->selectedExperiment()->getPeaks(0, 0);
+    peaks_ = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
 
     setAttribute(Qt::WA_DeleteOnClose);
     doLayout();
@@ -159,7 +159,7 @@ void PeakFilterDialog::doLayout()
     whole->addWidget(buttons);
 
     peakList->setHook([this](int) {
-        peaks_ = gSession->selectedExperiment()->getPeaks(peakList->currentText());
+        peaks_ = gSession->selectedExperiment()->getPeaks(peakList->currentText())->peaks_;
         model_->setPeaks(peaks_);
     });
     connect(buttons, &QDialogButtonBox::clicked, this, &PeakFilterDialog::slotActionClicked);
@@ -238,9 +238,12 @@ void PeakFilterDialog::accept()
         if (!dlg->exec())
             return;
 
-        gSession->selectedExperiment()->addPeaks(
-            filtered_peaks, dlg->listName(), peakList->currentText());
-
+        Peaks* peaks = new Peaks(filtered_peaks, dlg->listName(), listtype::FILTERED, "unknown");
+        const Peaks* parent = gSession->selectedExperiment()->getPeaks(peakList->currentText());
+        peaks->parent = peakList->currentText();
+        peaks->convolutionkernel_ = parent->convolutionkernel_;
+        peaks->file_ = parent->file_;
+        gSession->selectedExperiment()->addPeaks(peaks, peakList->currentText());
 
         QString message = "Applied peak filters on selected peaks. Remains ";
         message += QString::number(filtered_peaks.size());

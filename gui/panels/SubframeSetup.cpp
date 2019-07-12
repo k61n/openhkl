@@ -17,7 +17,7 @@
 #include "gui/models/Session.h"
 
 namespace {
-enum class tab { INSTRUMENT, DATA, UNITCELLS, PEAKS, LIBRARY };
+enum class tab { INSTRUMENT, DATA, UNITCELLS, PEAKS };
 
 } // namespace
 
@@ -30,7 +30,6 @@ SubframeSetup::SubframeSetup() : QcrTabWidget {"property tabs"}
     addTab((data = new NumorProperty), "Data"); // 1
     addTab((unitcells = new UnitCellProperty), "Unit cells"); // 2
     addTab((peaks = new TabPeaks), "Peaks"); // 3
-    addTab((library = new TabPeaklibrary), "Peaklibrary"); // 4
 
     show();
 }
@@ -66,9 +65,6 @@ void SubframeSetup::peaksChanged()
     if (enabled)
         enabled = gSession->selectedExperiment()->getPeakListNames().size() > 0;
     setTabEnabled((int)tab::PEAKS, enabled);
-    setTabEnabled((int)tab::LIBRARY, enabled);
-    if (enabled) {
+    if (enabled)
         peaks->selectedListChanged(0);
-        library->remake();
-    }
 }

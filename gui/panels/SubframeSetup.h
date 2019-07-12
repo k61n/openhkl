@@ -16,7 +16,6 @@
 #define GUI_PANELS_SUBFRAMESETUP_H
 
 #include "gui/panels/TabInstrument.h"
-#include "gui/panels/TabPeakLibrary.h"
 #include "gui/panels/TabPeaks.h"
 #include "gui/properties/NumorProperty.h"
 #include "gui/properties/UnitCellProperty.h"
@@ -27,7 +26,6 @@ class SubframeSetup : public QcrTabWidget {
     SubframeSetup();
     NumorProperty* data;
     UnitCellProperty* unitcells;
-    TabPeaklibrary* library;
     TabPeaks* peaks;
     TabInstrument* instrument;
 

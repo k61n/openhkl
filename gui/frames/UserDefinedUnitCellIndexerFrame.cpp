@@ -57,7 +57,7 @@ UserDefinedUnitCellIndexerFrame::UserDefinedUnitCellIndexerFrame()
 void UserDefinedUnitCellIndexerFrame::layout()
 {
     // defaults_
-    nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0);
+    nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
     defaults_.reserve(peaks.size());
     for (nsx::sptrPeak3D peak : peaks) {
         nsx::sptrUnitCell unit_cell = peak->unitCell();

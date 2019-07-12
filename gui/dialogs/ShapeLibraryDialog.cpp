@@ -51,7 +51,7 @@ ShapeLibraryDialog::ShapeLibraryDialog() : QDialog{}
         gLogger->log("[ERROR] No unitcells in selected experiment");
         return;
     }
-    _peaks = gSession->selectedExperiment()->getPeaks(0);
+    _peaks = gSession->selectedExperiment()->getPeaks(0)->peaks_;
     _unitCell = gSession->selectedExperiment()->getUnitCell(0);
 
     for (nsx::sptrPeak3D peak : _peaks)

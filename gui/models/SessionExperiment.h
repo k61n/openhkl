@@ -22,6 +22,27 @@
 #include "tables/crystal/UnitCell.h"
 #include <QMap>
 
+enum class listtype { FOUND, FILTERED, PREDICTED };
+
+//! Container for a peaklist and its metadata
+class Peaks {
+ public:
+    Peaks();
+    Peaks(nsx::PeakList peaks, const QString& name, listtype type,
+          const QString& kernel = QString());
+
+    int numberPeaks() const;
+    int valid() const;
+    int notValid() const;
+
+    nsx::PeakList peaks_;
+    QString name_;
+    const listtype type_;
+    QString convolutionkernel_;
+    QString file_;
+    QString parent;
+};
+
 //! Controls and handles the Experiment and its Peaks and UnitCells
 class SessionExperiment {
  public:
@@ -33,11 +54,11 @@ class SessionExperiment {
     QList<nsx::sptrDataSet> allData();
     int getIndex(const QString&);
     void selectData(int selected) { dataIndex_ = selected; }
-    void
-    addPeaks(nsx::PeakList peaks, const QString& listname, const QString& uppername = QString());
-    nsx::PeakList getPeaks(int upperindex = -1, int lowerindex = -1);
-    nsx::PeakList getPeaks(const QString& peakListName);
+    void addPeaks(Peaks* peaks, const QString& uppername = QString());
+    const Peaks *getPeaks(int upperindex = -1, int lowerindex = -1);
+    const Peaks *getPeaks(const QString& peakListName);
     QStringList getPeakListNames(int depth = 1);
+    QStringList listNamesOf(const QString& listname);
     void removePeaks(const QString& listname = QString());
     void selectPeaks(const QString& listname = QString());
     void addUnitCell(nsx::sptrUnitCell uc) { unitCells_.append(uc); }
@@ -53,7 +74,7 @@ class SessionExperiment {
  private:
     nsx::sptrExperiment experiment_;
     nsx::sptrShapeLibrary library_;
-    QMap<QString, QMap<QString, nsx::PeakList>> peakLists_;
+    QMap<QString, QVector<Peaks*>> peakLists_;
     QList<nsx::sptrUnitCell> unitCells_;
     QString selectedList_;
     int unitCellIndex_ = -1;

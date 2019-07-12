@@ -31,6 +31,13 @@ class TabPeaks : public QcrWidget {
  private:
     QcrComboBox* foundPeaksLists;
     PeaksTableView* peaksTable;
+    QLabel* type;
+    QLabel* filename;
+    QLabel* kernelname;
+    QLabel* parentname;
+    QLabel* numPeaks;
+    QLabel* valid;
+    QLabel* nonValid;
 };
 
 #endif // GUI_PANELS_TABPEAKS_H
