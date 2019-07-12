@@ -27,6 +27,7 @@
 #include "gui/frames/InstrumentStatesFrame.h"
 #include "gui/frames/PeakFinderFrame.h"
 #include "gui/frames/RefinerFrame.h"
+#include "gui/frames/StatisticsFrame.h"
 #include "gui/frames/UserDefinedUnitCellIndexerFrame.h"
 #include "gui/models/Session.h" //for gSession
 #include "gui/panels/SubframeSetup.h"
@@ -166,6 +167,7 @@ void Actions::setupPeaks()
     });
     integratepeaks.setTriggerHook([]() { gSession->selectedExperiment()->integratePeaks(); });
     predictPeaks.setTriggerHook([]() { new PredictPeaksDialog; });
+    statistics.setTriggerHook([]() { new StatisticsFrame; });
 }
 
 void Actions::setupRest()
