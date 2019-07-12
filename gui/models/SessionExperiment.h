@@ -32,8 +32,8 @@ class Peaks {
           const QString& kernel = QString());
 
     int numberPeaks() const;
-    int valid() const;
-    int notValid() const;
+    int numberValid() const;
+    int numberInvalid() const;
 
     nsx::PeakList peaks_;
     QString name_;
@@ -61,6 +61,7 @@ class SessionExperiment {
     QStringList listNamesOf(const QString& listname);
     void removePeaks(const QString& listname = QString());
     void selectPeaks(const QString& listname = QString());
+    const QString& selectedListName() { return selectedList_; }
     void addUnitCell(nsx::sptrUnitCell uc) { unitCells_.append(uc); }
     nsx::sptrUnitCell getUnitCell(int index = -1);
     void removeUnitCell(int index = -1);

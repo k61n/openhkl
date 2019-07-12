@@ -45,7 +45,7 @@ Peaks::Peaks(nsx::PeakList peaks, const QString &name, listtype type, const QStr
 //    file_ = QString::fromStdString(data->filename());
 }
 
-int Peaks::valid() const {
+int Peaks::numberValid() const {
     int valid = 0;
     for (nsx::sptrPeak3D peak : peaks_) {
         if (peak->enabled())
@@ -54,8 +54,8 @@ int Peaks::valid() const {
     return valid;
 }
 
-int Peaks::notValid() const {
-    return numberPeaks()-valid();
+int Peaks::numberInvalid() const {
+    return numberPeaks()-numberValid();
 }
 
 int Peaks::numberPeaks() const {

@@ -20,6 +20,7 @@
 #include "gui/dialogs/IsotopesDatabaseDialog.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/dialogs/PeakFilterDialog.h"
+#include "gui/dialogs/PredictPeaksDialog.h"
 #include "gui/dialogs/ShapeLibraryDialog.h"
 #include "gui/frames/AutoIndexerFrame.h"
 #include "gui/frames/GlobalOffsetsFrame.h"
@@ -164,6 +165,7 @@ void Actions::setupPeaks()
         // gSession->selectedExperiment()->normalizeToMonitor();
     });
     integratepeaks.setTriggerHook([]() { gSession->selectedExperiment()->integratePeaks(); });
+    predictPeaks.setTriggerHook([]() { new PredictPeaksDialog; });
 }
 
 void Actions::setupRest()
