@@ -19,6 +19,7 @@
 #include <QCR/widgets/controls.h>
 #include <QDialog>
 
+//! Dialog for peak prediction
 class PredictPeaksDialog : public QDialog {
  public:
     PredictPeaksDialog();
@@ -32,11 +33,11 @@ class PredictPeaksDialog : public QDialog {
     QcrComboBox* interpolation;
     QcrDoubleSpinBox* dmin;
     QcrDoubleSpinBox* dmax;
-    QcrDoubleSpinBox* minisigma;
     QcrDoubleSpinBox* radius;
     QcrDoubleSpinBox* nFrames;
     QcrSpinBox* minNeighbors;
     PeaksTableView* preview;
+    PeaksTableModel* model;
     nsx::PeakList peaks;
 };
 

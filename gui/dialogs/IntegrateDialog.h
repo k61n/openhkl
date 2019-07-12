@@ -19,6 +19,7 @@
 #include <QDialog>
 #include <QFormLayout>
 
+//! Dialog for peak integration
 class IntegrateDialog : public QDialog {
  public:
     IntegrateDialog();

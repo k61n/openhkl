@@ -104,8 +104,8 @@ void TabPeaks::selectedListChanged(int i)
     filename->setText(peaks->file_);
     kernelname->setText(peaks->convolutionkernel_);
     numPeaks->setText(QString::number(peaks->numberPeaks()));
-    valid->setText(QString::number(peaks->valid()));
-    nonValid->setText(QString::number(peaks->notValid()));
+    valid->setText(QString::number(peaks->numberValid()));
+    nonValid->setText(QString::number(peaks->numberInvalid()));
     parentname->setText(peaks->parent);
 }
 
