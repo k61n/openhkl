@@ -26,7 +26,7 @@
 
 class StatisticsFrame : public QcrFrame {
  public:
-    StatisticsFrame();
+    StatisticsFrame(nsx::SpaceGroup group, nsx::PeakList list);
 
  private:
     void update();

@@ -37,7 +37,6 @@ PredictPeaksDialog::PredictPeaksDialog()
     }
 
     layout();
-    show();
 }
 
 void PredictPeaksDialog::layout()

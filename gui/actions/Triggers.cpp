@@ -166,8 +166,24 @@ void Actions::setupPeaks()
         // gSession->selectedExperiment()->normalizeToMonitor();
     });
     integratepeaks.setTriggerHook([]() { gSession->selectedExperiment()->integratePeaks(); });
-    predictPeaks.setTriggerHook([]() { new PredictPeaksDialog; });
-    statistics.setTriggerHook([]() { new StatisticsFrame; });
+    predictPeaks.setTriggerHook([]() {
+        PredictPeaksDialog* dgl = new PredictPeaksDialog;
+        if (!dgl->exec()) {
+            dgl->deleteLater();
+            return;
+        }
+        dgl->deleteLater();
+    });
+    statistics.setTriggerHook([]() {
+        if (gSession->selectedExperimentNum() < 0)
+            return;
+        if (gSession->selectedExperiment()->getUnitCellNames().empty())
+            return;
+        nsx::sptrUnitCell cell = gSession->selectedExperiment()->getUnitCell();
+        nsx::SpaceGroup group = cell->spaceGroup();
+        nsx::PeakList list = gSession->selectedExperiment()->getPeakList(cell);
+        new StatisticsFrame(group, list);
+    });
 }
 
 void Actions::setupRest()

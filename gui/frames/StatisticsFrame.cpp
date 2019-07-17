@@ -19,6 +19,7 @@
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
+#include "gui/models/Session.h"
 #include <QDialogButtonBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
@@ -26,7 +27,11 @@
 #include <fstream>
 #include <iomanip>
 
-StatisticsFrame::StatisticsFrame() : QcrFrame{"adhoc_Statistics"}
+StatisticsFrame::StatisticsFrame(nsx::SpaceGroup group, nsx::PeakList list)
+    : QcrFrame{"adhoc_Statistics"}
+    , peaks{list}
+    , space{group}
+    , mergedData{space, false}
 {
     QVBoxLayout* layout = new QVBoxLayout(this);
     tabs = new QcrTabWidget("adhoc_StatisticTabs");
@@ -77,7 +82,8 @@ StatisticsFrame::StatisticsFrame() : QcrFrame{"adhoc_Statistics"}
     mergedModel->setHorizontalHeaderLabels({"h", "k", "l", "I", "sigmaI", "chi2", "p"});
     mergedlayout->addWidget(mergedView);
     QHBoxLayout* mergedrow = new QHBoxLayout;
-    typesMerged = new QcrComboBox("adhoc_FileTypesMerged", new QcrCell<int>(0), {""});
+    typesMerged = new QcrComboBox(
+                "adhoc_FileTypesMerged", new QcrCell<int>(0), {"ShelX", "FullProf"});
     saveMerged = new QcrTextTriggerButton("adhoc_SaveMerged", "Save");
     mergedrow->addWidget(typesMerged);
     mergedrow->addWidget(saveMerged);
@@ -93,7 +99,8 @@ StatisticsFrame::StatisticsFrame() : QcrFrame{"adhoc_Statistics"}
         {"h", "k", "l", "I", "sigmaI", "x", "y", "frame", "numor"});
     unmergedlayout->addWidget(unmergedView);
     QHBoxLayout* unmergedrow = new QHBoxLayout;
-    typesUnmerged = new QcrComboBox("adhoc_FileTypesUnmerged", new QcrCell<int>(0), {""});
+    typesUnmerged = new QcrComboBox(
+                "adhoc_FileTypesUnmerged", new QcrCell<int>(0), {"ShelX", "FullProf"});
     saveUnmerged = new QcrTextTriggerButton("adhoc_SaveUnmerged", "Save");
     unmergedrow->addWidget(typesUnmerged);
     unmergedrow->addWidget(saveUnmerged);
@@ -109,17 +116,15 @@ StatisticsFrame::StatisticsFrame() : QcrFrame{"adhoc_Statistics"}
     setMouseTracking(true);
     setFocusPolicy(Qt::StrongFocus);
 
-    connect(button, &QDialogButtonBox::accepted, this, &StatisticsFrame::close);
-    connect(dmin, &QcrDoubleSpinBox::valueChanged, this, &StatisticsFrame::update);
-    connect(dmax, &QcrDoubleSpinBox::valueChanged, this, &StatisticsFrame::update);
-    connect(dshells, &QcrSpinBox::valueChanged, this, &StatisticsFrame::update);
-    connect(friedel, &QcrCheckBox::stateChanged, this, &StatisticsFrame::update);
-    connect(saveStats, &QcrTextTriggerButton::triggered, this, &StatisticsFrame::saveStatistics);
-    connect(saveMerged, &QcrTextTriggerButton::triggered, this, &StatisticsFrame::saveMergedPeaks);
-    connect(saveUnmerged, &QcrTextTriggerButton::triggered,
-            this, &StatisticsFrame::saveUnmergedPeaks);
-    connect(selectedStats, &QcrComboBox::currentIndexChanged,
-            this, &StatisticsFrame::plotStatistics);
+    QObject::connect(button, &QDialogButtonBox::accepted, this, &StatisticsFrame::close);
+    dmin->setHook([=](double) { update(); });
+    dmax->setHook([=](double) { update(); });
+    dshells->setHook([=](int) { update(); });
+    friedel->setHook([=](bool) { update(); });
+    saveStats->trigger()->setTriggerHook([=]() { saveStatistics(); });
+    saveMerged->trigger()->setTriggerHook([=]() { saveMergedPeaks(); });
+    saveUnmerged->trigger()->setTriggerHook([=]() { saveUnmergedPeaks(); });
+    selectedStats->setHook([=](int i) { plotStatistics(i); });
     update();
 
     show();
@@ -391,8 +396,8 @@ void StatisticsFrame::updateStatisticsTab()
     cc.calculate(mergedData);
 
     QList<QStandardItem*> row;
-    row.append(new QStandardItem(QString::number(dmax)));
-    row.append(new QStandardItem(QString::number(dmin)));
+    row.append(new QStandardItem(QString::number(max)));
+    row.append(new QStandardItem(QString::number(min)));
     row.append(new QStandardItem(QString::number(mergedData.totalSize())));
     row.append(new QStandardItem(QString::number(mergedData.mergedPeakSet().size())));
     row.append(new QStandardItem(QString::number(mergedData.redundancy())));
