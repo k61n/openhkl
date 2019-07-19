@@ -27,7 +27,7 @@
 #include "gui/frames/InstrumentStatesFrame.h"
 #include "gui/frames/PeakFinderFrame.h"
 #include "gui/frames/RefinerFrame.h"
-#include "gui/frames/StatisticsFrame.h"
+#include "gui/frames/MergedPeakInformationFrame.h"
 #include "gui/frames/UserDefinedUnitCellIndexerFrame.h"
 #include "gui/models/Session.h" //for gSession
 #include "gui/panels/SubframeSetup.h"
@@ -182,7 +182,7 @@ void Actions::setupPeaks()
         nsx::sptrUnitCell cell = gSession->selectedExperiment()->getUnitCell();
         nsx::SpaceGroup group = cell->spaceGroup();
         nsx::PeakList list = gSession->selectedExperiment()->getPeakList(cell);
-        new StatisticsFrame(group, list);
+        new MergedPeakInformationFrame(group, list);
     });
 }
 

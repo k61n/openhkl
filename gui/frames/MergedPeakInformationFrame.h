@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/frames/StatisticsFrame.h
-//! @brief     Defines class StatisticsFrame
+//! @file      gui/frames/MergedPeakInformationFrame.h
+//! @brief     Defines class MergedPeakInformationFrame
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_FRAMES_STATISTICSFRAME_H
-#define GUI_FRAMES_STATISTICSFRAME_H
+#ifndef GUI_FRAMES_MERGEDPEAKINFORMATIONFRAME_H
+#define GUI_FRAMES_MERGEDPEAKINFORMATIONFRAME_H
 
 #include "core/analyse/MergedData.h"
 #include "core/peak/Peak3D.h"
@@ -24,9 +24,9 @@
 #include <QCR/widgets/views.h>
 #include <QTableView>
 
-class StatisticsFrame : public QcrFrame {
+class MergedPeakInformationFrame : public QcrFrame {
  public:
-    StatisticsFrame(nsx::SpaceGroup group, nsx::PeakList list);
+    MergedPeakInformationFrame(nsx::SpaceGroup group, nsx::PeakList list);
 
  private:
     void update();
@@ -40,28 +40,21 @@ class StatisticsFrame : public QcrFrame {
     void updateUnmergedPeaksTab();
     void updateStatisticsTab();
 
-    nsx::PeakList peaks;
-    nsx::SpaceGroup space;
+    nsx::PeakList peakList;
+    nsx::SpaceGroup spaceGroup;
     nsx::MergedData mergedData;
 
-    QcrTabWidget* tabs;
-    QcrWidget* stats;
-    QTableView* viewStats;
+    QTableView* statisticsView;
     QcrDoubleSpinBox* dmin;
     QcrDoubleSpinBox* dmax;
     QcrSpinBox* dshells;
     QcrCheckBox* friedel;
-    QcrComboBox* selectedStats;
-    SXPlot* plot;
-    QcrTextTriggerButton* saveStats;
-    QcrWidget* merged;
+    QcrComboBox* plottableStatistics;
+    SXPlot* statisticsPlot;
     QTableView* mergedView;
-    QcrComboBox* typesMerged;
-    QcrTextTriggerButton* saveMerged;
-    QcrWidget* unmerged;
+    QcrComboBox* filetypesMerged;
     QTableView* unmergedView;
-    QcrComboBox* typesUnmerged;
-    QcrTextTriggerButton* saveUnmerged;
+    QcrComboBox* filetypesUnmerged;
 };
 
-#endif // GUI_FRAMES_STATISTICSFRAME_H
+#endif // GUI_FRAMES_MERGEDPEAKINFORMATIONFRAME_H

@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/frames/StatisticsFrame.cpp
-//! @brief     Implements class StatisticsFrame
+//! @file      gui/frames/MergedPeakInformationFrame.cpp
+//! @brief     Implements class MergedPeakInformationFrame
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/frames/StatisticsFrame.h"
+#include "gui/frames/MergedPeakInformationFrame.h"
 
 #include "core/analyse/MergedPeak.h"
 #include "core/experiment/DataSet.h"
@@ -27,28 +27,28 @@
 #include <fstream>
 #include <iomanip>
 
-StatisticsFrame::StatisticsFrame(nsx::SpaceGroup group, nsx::PeakList list)
+MergedPeakInformationFrame::MergedPeakInformationFrame(nsx::SpaceGroup group, nsx::PeakList list)
     : QcrFrame{"adhoc_Statistics"}
-    , peaks{list}
-    , space{group}
-    , mergedData{space, false}
+    , peakList{list}
+    , spaceGroup{group}
+    , mergedData{spaceGroup, false}
 {
     QVBoxLayout* layout = new QVBoxLayout(this);
-    tabs = new QcrTabWidget("adhoc_StatisticTabs");
+    QcrTabWidget* tabs = new QcrTabWidget("adhoc_StatisticTabs");
     layout->addWidget(tabs);
     QDialogButtonBox* button = new QDialogButtonBox(QDialogButtonBox::Ok, Qt::Horizontal);
     layout->addWidget(button);
 
     //statistics tab
-    stats = new QcrWidget("adhoc_TabStats");
-    QVBoxLayout* statsLayout = new QVBoxLayout(stats);
-    viewStats = new QTableView;
+    QcrWidget* statisticsTab = new QcrWidget("adhoc_TabStats");
+    QVBoxLayout* statsLayout = new QVBoxLayout(statisticsTab);
+    statisticsView = new QTableView;
     QStandardItemModel* statsModel = new QStandardItemModel(0, 13, this);
-    viewStats->setModel(statsModel);
+    statisticsView->setModel(statsModel);
     statsModel->setHorizontalHeaderLabels({"dmax", "dmin", "nobs", "nmerge", "redundancy", "Rmeas",
                                             "Rmeas(est.)", "Rmerge/Rsym", "Rmerge(est.)", "Rpim",
                                             "Rpim(est.)", "CChalf", "CC*"});
-    statsLayout->addWidget(viewStats);
+    statsLayout->addWidget(statisticsView);
     QHBoxLayout* statsDown = new QHBoxLayout;
     QFormLayout* downleft = new QFormLayout;
     dmin = new QcrDoubleSpinBox("adhoc_StatsDMin", new QcrCell<double>(1.5), 5, 2);
@@ -60,38 +60,39 @@ StatisticsFrame::StatisticsFrame(nsx::SpaceGroup group, nsx::PeakList list)
         QStandardItem* header_item = statsModel->horizontalHeaderItem(i);
         selStats.append(header_item->text());
     }
-    selectedStats = new QcrComboBox("adhoc_StatsPlottypes", new QcrCell<int>(0), selStats);
+    plottableStatistics = new QcrComboBox("adhoc_StatsPlottypes", new QcrCell<int>(0), selStats);
     downleft->addRow("Min d", dmin);
     downleft->addRow("Max d", dmax);
     downleft->addRow("# d-shells", dshells);
     downleft->addRow(friedel);
-    downleft->addRow("Plot", selectedStats);
+    downleft->addRow("Plot", plottableStatistics);
     statsDown->addLayout(downleft);
-    plot = new SXPlot;
-    statsDown->addWidget(plot);
+    statisticsPlot = new SXPlot;
+    statsDown->addWidget(statisticsPlot);
     statsLayout->addLayout(statsDown);
-    saveStats = new QcrTextTriggerButton("adhoc_SaveStats", "Save");
-    statsLayout->addWidget(saveStats);
+    QcrTextTriggerButton* saveStatisticsButton =
+            new QcrTextTriggerButton("adhoc_SaveStats", "Save");
+    statsLayout->addWidget(saveStatisticsButton);
 
     //merged tab
-    merged = new QcrWidget("adhoc_TabMerged");
-    QVBoxLayout* mergedlayout = new QVBoxLayout(merged);
+    QcrWidget* mergedPeaksTab = new QcrWidget("adhoc_TabMerged");
+    QVBoxLayout* mergedlayout = new QVBoxLayout(mergedPeaksTab);
     mergedView = new QTableView;
     QStandardItemModel* mergedModel = new QStandardItemModel(7, 0, this);
     mergedView->setModel(mergedModel);
     mergedModel->setHorizontalHeaderLabels({"h", "k", "l", "I", "sigmaI", "chi2", "p"});
     mergedlayout->addWidget(mergedView);
     QHBoxLayout* mergedrow = new QHBoxLayout;
-    typesMerged = new QcrComboBox(
+    filetypesMerged = new QcrComboBox(
                 "adhoc_FileTypesMerged", new QcrCell<int>(0), {"ShelX", "FullProf"});
-    saveMerged = new QcrTextTriggerButton("adhoc_SaveMerged", "Save");
-    mergedrow->addWidget(typesMerged);
+    QcrTextTriggerButton* saveMerged = new QcrTextTriggerButton("adhoc_SaveMerged", "Save");
+    mergedrow->addWidget(filetypesMerged);
     mergedrow->addWidget(saveMerged);
     mergedlayout->addLayout(mergedrow);
 
     //unmerged tab
-    unmerged = new QcrWidget("adhoc_TabUnmerged");
-    QVBoxLayout* unmergedlayout = new QVBoxLayout(unmerged);
+    QcrWidget* unmergedPeaksTab = new QcrWidget("adhoc_TabUnmerged");
+    QVBoxLayout* unmergedlayout = new QVBoxLayout(unmergedPeaksTab);
     unmergedView = new QTableView;
     QStandardItemModel* unmergedModel = new QStandardItemModel(9, 0, this);
     unmergedView->setModel(unmergedModel);
@@ -99,16 +100,16 @@ StatisticsFrame::StatisticsFrame(nsx::SpaceGroup group, nsx::PeakList list)
         {"h", "k", "l", "I", "sigmaI", "x", "y", "frame", "numor"});
     unmergedlayout->addWidget(unmergedView);
     QHBoxLayout* unmergedrow = new QHBoxLayout;
-    typesUnmerged = new QcrComboBox(
+    filetypesUnmerged = new QcrComboBox(
                 "adhoc_FileTypesUnmerged", new QcrCell<int>(0), {"ShelX", "FullProf"});
-    saveUnmerged = new QcrTextTriggerButton("adhoc_SaveUnmerged", "Save");
-    unmergedrow->addWidget(typesUnmerged);
+    QcrTextTriggerButton* saveUnmerged = new QcrTextTriggerButton("adhoc_SaveUnmerged", "Save");
+    unmergedrow->addWidget(filetypesUnmerged);
     unmergedrow->addWidget(saveUnmerged);
     unmergedlayout->addLayout(unmergedrow);
 
-    tabs->addTab(stats, "Statistics");
-    tabs->addTab(merged, "Merged hkls");
-    tabs->addTab(unmerged, "Unmerged hkls");
+    tabs->addTab(statisticsTab, "Statistics");
+    tabs->addTab(mergedPeaksTab, "Merged hkls");
+    tabs->addTab(unmergedPeaksTab, "Unmerged hkls");
 
     setAttribute(Qt::WA_DeleteOnClose, true);
     setWindowFlags(Qt::Window);
@@ -116,23 +117,23 @@ StatisticsFrame::StatisticsFrame(nsx::SpaceGroup group, nsx::PeakList list)
     setMouseTracking(true);
     setFocusPolicy(Qt::StrongFocus);
 
-    QObject::connect(button, &QDialogButtonBox::accepted, this, &StatisticsFrame::close);
+    QObject::connect(button, &QDialogButtonBox::accepted, this, &MergedPeakInformationFrame::close);
     dmin->setHook([=](double) { update(); });
     dmax->setHook([=](double) { update(); });
     dshells->setHook([=](int) { update(); });
     friedel->setHook([=](bool) { update(); });
-    saveStats->trigger()->setTriggerHook([=]() { saveStatistics(); });
+    saveStatisticsButton->trigger()->setTriggerHook([=]() { saveStatistics(); });
     saveMerged->trigger()->setTriggerHook([=]() { saveMergedPeaks(); });
     saveUnmerged->trigger()->setTriggerHook([=]() { saveUnmergedPeaks(); });
-    selectedStats->setHook([=](int i) { plotStatistics(i); });
+    plottableStatistics->setHook([=](int i) { plotStatistics(i); });
     update();
 
     show();
 }
 
-void StatisticsFrame::plotStatistics(int column)
+void MergedPeakInformationFrame::plotStatistics(int column)
 {
-    QStandardItemModel* statsModel = dynamic_cast<QStandardItemModel*>(viewStats->model());
+    QStandardItemModel* statsModel = dynamic_cast<QStandardItemModel*>(statisticsView->model());
     int nshells = statsModel->rowCount() - 1;
     std::vector<double> shells(nshells);
     std::iota(shells.begin(), shells.end(), 0);
@@ -149,26 +150,26 @@ void StatisticsFrame::plotStatistics(int column)
     pen.setColor(QColor("black"));
     pen.setWidth(2.0);
 
-    plot->clearGraphs();
-    plot->addGraph();
-    plot->graph(0)->setPen(pen);
-    plot->graph(0)->addData(xvals, yvals);
-    plot->xAxis->setLabel("shell");
-    plot->yAxis->setLabel(selectedStats->itemText(column));
-    plot->setNotAntialiasedElements(QCP::aeAll);
+    statisticsPlot->clearGraphs();
+    statisticsPlot->addGraph();
+    statisticsPlot->graph(0)->setPen(pen);
+    statisticsPlot->graph(0)->addData(xvals, yvals);
+    statisticsPlot->xAxis->setLabel("shell");
+    statisticsPlot->yAxis->setLabel(plottableStatistics->itemText(column));
+    statisticsPlot->setNotAntialiasedElements(QCP::aeAll);
 
     QFont font;
     font.setStyleStrategy(QFont::NoAntialias);
-    plot->xAxis->setTickLabelFont(font);
-    plot->yAxis->setTickLabelFont(font);
+    statisticsPlot->xAxis->setTickLabelFont(font);
+    statisticsPlot->yAxis->setTickLabelFont(font);
 
-    plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend
-                          | QCP::iSelectPlottables);
-    plot->rescaleAxes();
-    plot->replot();
+    statisticsPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes
+                                    | QCP::iSelectLegend | QCP::iSelectPlottables);
+    statisticsPlot->rescaleAxes();
+    statisticsPlot->replot();
 }
 
-void StatisticsFrame::saveStatistics()
+void MergedPeakInformationFrame::saveStatistics()
 {
     QString filename = QFileDialog::getSaveFileName(
         this, tr("Save statistics"), ".", tr("Text file (*.dat *.txt)"));
@@ -182,57 +183,49 @@ void StatisticsFrame::saveStatistics()
         return;
     }
 
-    file << std::setw(10) << "dmax";
-    file << std::setw(10) << "dmin";
-    file << std::setw(10) << "nobs";
-    file << std::setw(10) << "nmerged";
-    file << std::setw(11) << "redundancy";
-    file << std::setw(10) << "Rmeas";
-    file << std::setw(12) << "Rmeas(est.)";
-    file << std::setw(11) << "Rmerge/sym";
-    file << std::setw(13) << "Rmerge(est.)";
-    file << std::setw(10) << "Rpim";
-    file << std::setw(11) << "Rpim(est.)";
-    file << std::setw(10) << "CChalf";
-    file << std::setw(10) << "CC*";
-    file << std::endl;
+    file << std::setw(10) << "dmax" << std::setw(10) << "dmin" << std::setw(10) << "nobs"
+         << std::setw(10) << "nmerged" << std::setw(11) << "redundancy" << std::setw(10) << "Rmeas"
+         << std::setw(12) << "Rmeas(est.)" << std::setw(11) << "Rmerge/sym"
+         << std::setw(13) << "Rmerge(est.)" << std::setw(10) << "Rpim"
+         << std::setw(11) << "Rpim(est.)" << std::setw(10) << "CChalf" << std::setw(10) << "CC*"
+         << std::endl;
 
-    auto model = dynamic_cast<QStandardItemModel*>(viewStats->model());
+    auto model = dynamic_cast<QStandardItemModel*>(statisticsView->model());
 
     for (size_t i = 0; i < model->rowCount(); ++i) {
         file << std::fixed << std::setw(10) << std::setprecision(2)
-             << model->index(i, 0).data().toDouble();
-        file << std::fixed << std::setw(10) << std::setprecision(2)
-             << model->index(i, 1).data().toDouble();
-        file << std::fixed << std::setw(10) << model->index(i, 2).data().toInt();
-        file << std::fixed << std::setw(10) << model->index(i, 3).data().toInt();
-        file << std::fixed << std::setw(11) << std::setprecision(3)
-             << model->index(i, 4).data().toDouble();
-        file << std::fixed << std::setw(10) << std::setprecision(3)
-             << model->index(i, 5).data().toDouble();
-        file << std::fixed << std::setw(12) << std::setprecision(3)
-             << model->index(i, 6).data().toDouble();
-        file << std::fixed << std::setw(11) << std::setprecision(3)
-             << model->index(i, 7).data().toDouble();
-        file << std::fixed << std::setw(13) << std::setprecision(3)
-             << model->index(i, 8).data().toDouble();
-        file << std::fixed << std::setw(10) << std::setprecision(3)
-             << model->index(i, 9).data().toDouble();
-        file << std::fixed << std::setw(11) << std::setprecision(3)
-             << model->index(i, 10).data().toDouble();
-        file << std::fixed << std::setw(10) << std::setprecision(3)
-             << model->index(i, 11).data().toDouble();
-        file << std::fixed << std::setw(10) << std::setprecision(3)
-             << model->index(i, 12).data().toDouble();
-        file << std::endl;
+             << model->index(i, 0).data().toDouble()
+             << std::fixed << std::setw(10) << std::setprecision(2)
+             << model->index(i, 1).data().toDouble()
+             << std::fixed << std::setw(10) << model->index(i, 2).data().toInt()
+             << std::fixed << std::setw(10) << model->index(i, 3).data().toInt()
+             << std::fixed << std::setw(11) << std::setprecision(3)
+             << model->index(i, 4).data().toDouble()
+             << std::fixed << std::setw(10) << std::setprecision(3)
+             << model->index(i, 5).data().toDouble()
+             << std::fixed << std::setw(12) << std::setprecision(3)
+             << model->index(i, 6).data().toDouble()
+             << std::fixed << std::setw(11) << std::setprecision(3)
+             << model->index(i, 7).data().toDouble()
+             << std::fixed << std::setw(13) << std::setprecision(3)
+             << model->index(i, 8).data().toDouble()
+             << std::fixed << std::setw(10) << std::setprecision(3)
+             << model->index(i, 9).data().toDouble()
+             << std::fixed << std::setw(11) << std::setprecision(3)
+             << model->index(i, 10).data().toDouble()
+             << std::fixed << std::setw(10) << std::setprecision(3)
+             << model->index(i, 11).data().toDouble()
+             << std::fixed << std::setw(10) << std::setprecision(3)
+             << model->index(i, 12).data().toDouble()
+             << std::endl;
     }
 
     file.close();
 }
 
-void StatisticsFrame::saveMergedPeaks()
+void MergedPeakInformationFrame::saveMergedPeaks()
 {
-    QString format = typesMerged->currentText();
+    QString format = filetypesMerged->currentText();
 
     if (format.compare("ShelX") == 0)
         saveToShelX(mergedView);
@@ -240,9 +233,9 @@ void StatisticsFrame::saveMergedPeaks()
         saveToFullProf(mergedView);
 }
 
-void StatisticsFrame::saveUnmergedPeaks()
+void MergedPeakInformationFrame::saveUnmergedPeaks()
 {
-    QString format = typesUnmerged->currentText();
+    QString format = filetypesUnmerged->currentText();
 
     if (format.compare("ShelX") == 0)
         saveToShelX(unmergedView);
@@ -250,7 +243,7 @@ void StatisticsFrame::saveUnmergedPeaks()
         saveToFullProf(unmergedView);
 }
 
-void StatisticsFrame::saveToShelX(QTableView* table)
+void MergedPeakInformationFrame::saveToShelX(QTableView* table)
 {
     QString filename = QFileDialog::getSaveFileName(
         this, tr("Save peaks to ShelX"), ".", tr("ShelX hkl file (*.hkl)"));
@@ -267,25 +260,20 @@ void StatisticsFrame::saveToShelX(QTableView* table)
     auto model = dynamic_cast<QStandardItemModel*>(table->model());
 
     for (size_t i = 0; i < model->rowCount(); ++i) {
-        // h
-        file << std::fixed << std::setw(4) << model->index(i, 0).data().toInt();
-        // k
-        file << std::fixed << std::setw(4) << model->index(i, 1).data().toInt();
-        // l
-        file << std::fixed << std::setw(4) << model->index(i, 2).data().toInt();
-        // I
-        file << std::fixed << std::setw(8) << std::setprecision(2)
-             << model->index(i, 3).data().toDouble();
-        // sigma I
-        file << std::fixed << std::setw(8) << std::setprecision(2)
-             << model->index(i, 4).data().toDouble();
-        file << std::endl;
+        file << std::fixed << std::setw(4) << model->index(i, 0).data().toInt()
+             << std::fixed << std::setw(4) << model->index(i, 1).data().toInt()
+             << std::fixed << std::setw(4) << model->index(i, 2).data().toInt()
+             << std::fixed << std::setw(8) << std::setprecision(2)
+             << model->index(i, 3).data().toDouble()
+             << std::fixed << std::setw(8) << std::setprecision(2)
+             << model->index(i, 4).data().toDouble()
+             << std::endl;
     }
 
     file.close();
 }
 
-void StatisticsFrame::saveToFullProf(QTableView* table)
+void MergedPeakInformationFrame::saveToFullProf(QTableView* table)
 {
     QString filename = QFileDialog::getSaveFileName(
         this, tr("Save peaks to FullProf"), ".", tr("ShelX hkl file (*.hkl)"));
@@ -302,7 +290,7 @@ void StatisticsFrame::saveToFullProf(QTableView* table)
     file << "TITLE File written by ...\n";
     file << "(3i4,2F14.4,i5,4f8.2)\n";
 
-    double wavelength = peaks[0]->data()->reader()->metadata().key<double>("wavelength");
+    double wavelength = peakList[0]->data()->reader()->metadata().key<double>("wavelength");
 
     // wavelength
     file << std::fixed << std::setw(8) << std::setprecision(3) << wavelength;
@@ -311,56 +299,50 @@ void StatisticsFrame::saveToFullProf(QTableView* table)
     auto model = dynamic_cast<QStandardItemModel*>(table->model());
 
     for (size_t i = 0; i < model->rowCount(); ++i) {
-        // h
-        file << std::fixed << std::setw(4) << model->index(i, 0).data().toInt();
-        // k
-        file << std::fixed << std::setw(4) << model->index(i, 1).data().toInt();
-        // l
-        file << std::fixed << std::setw(4) << model->index(i, 2).data().toInt();
-        // I
-        file << std::fixed << std::setw(14) << std::setprecision(4)
-             << model->index(i, 3).data().toDouble();
-        // sigma I
-        file << std::fixed << std::setw(14) << std::setprecision(4)
-             << model->index(i, 4).data().toDouble();
-        // dummy
-        file << std::fixed << std::setw(5) << 1;
-        file << std::endl;
+        file << std::fixed << std::setw(4) << model->index(i, 0).data().toInt()
+             << std::fixed << std::setw(4) << model->index(i, 1).data().toInt()
+             << std::fixed << std::setw(4) << model->index(i, 2).data().toInt()
+             << std::fixed << std::setw(14) << std::setprecision(4)
+             << model->index(i, 3).data().toDouble()
+             << std::fixed << std::setw(14) << std::setprecision(4)
+             << model->index(i, 4).data().toDouble()
+             << std::fixed << std::setw(5) << 1
+             << std::endl;
     }
 
     file.close();
 }
 
-void StatisticsFrame::update()
+void MergedPeakInformationFrame::update()
 {
     bool inclFriedel = friedel->isChecked();
-    mergedData = nsx::MergedData(space, inclFriedel);
-    for (nsx::sptrPeak3D peak : peaks)
+    mergedData = nsx::MergedData(spaceGroup, inclFriedel);
+    for (nsx::sptrPeak3D peak : peakList)
         mergedData.addPeak(peak);
 
     updateStatisticsTab();
     updateMergedPeaksTab();
     updateUnmergedPeaksTab();
-    plotStatistics(selectedStats->currentIndex());
+    plotStatistics(plottableStatistics->currentIndex());
 }
 
-void StatisticsFrame::updateStatisticsTab()
+void MergedPeakInformationFrame::updateStatisticsTab()
 {
     double min = dmin->value();
     double max = dmax->value();
     int shells = dshells->value();
     bool inclFriedel = friedel->isChecked();
     nsx::ResolutionShell resolutionShell(min, max, shells);
-    for (nsx::sptrPeak3D peak : peaks)
+    for (nsx::sptrPeak3D peak : peakList)
         resolutionShell.addPeak(peak);
-    QStandardItemModel* model = dynamic_cast<QStandardItemModel*>(viewStats->model());
+    QStandardItemModel* model = dynamic_cast<QStandardItemModel*>(statisticsView->model());
     model->removeRows(0, model->rowCount());
 
     for (int i = shells - 1; i >= 0; --i) {
         const double d_lower = resolutionShell.shell(i).dmin;
         const double d_upper = resolutionShell.shell(i).dmax;
 
-        nsx::MergedData merged_data_per_shell(space, inclFriedel);
+        nsx::MergedData merged_data_per_shell(spaceGroup, inclFriedel);
 
         for (const nsx::sptrPeak3D& peak : resolutionShell.shell(i).peaks)
             merged_data_per_shell.addPeak(peak);
@@ -417,7 +399,7 @@ void StatisticsFrame::updateStatisticsTab()
     model->appendRow(row);
 }
 
-void StatisticsFrame::updateMergedPeaksTab()
+void MergedPeakInformationFrame::updateMergedPeaksTab()
 {
     QStandardItemModel* model = dynamic_cast<QStandardItemModel*>(mergedView->model());
     model->removeRows(0, model->rowCount());
@@ -452,7 +434,7 @@ void StatisticsFrame::updateMergedPeaksTab()
     }
 }
 
-void StatisticsFrame::updateUnmergedPeaksTab()
+void MergedPeakInformationFrame::updateUnmergedPeaksTab()
 {
     QStandardItemModel* model = dynamic_cast<QStandardItemModel*>(unmergedView->model());
     model->removeRows(0, model->rowCount());

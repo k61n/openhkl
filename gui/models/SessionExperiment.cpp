@@ -166,10 +166,8 @@ nsx::PeakList SessionExperiment::getPeakList(nsx::sptrUnitCell cell)
             if (peaks->type_ != listtype::FILTERED) {
                 nsx::PeakList list = peaks->peaks_;
                 for (nsx::sptrPeak3D p : list) {
-                    if (p->unitCell()){
-                        if (p->unitCell()->name() == cell->name()) {
+                    if (p->unitCell() && p->unitCell()->name() == cell->name()){
                             ret.push_back(p);
-                        }
                     }
                 }
             }
@@ -230,10 +228,13 @@ void SessionExperiment::selectPeaks(const QString& listname)
 
 nsx::sptrUnitCell SessionExperiment::getUnitCell(int index)
 {
-    if (index == -1)
-        index = unitCellIndex_;
-    if (index == -1)
-        index = 0;
+    if (index == -1) {
+        if (unitCellIndex_ == -1)
+            index = 0;
+        else
+            index = unitCellIndex_;
+    }
+
     return unitCells_.at(index);
 }
 
