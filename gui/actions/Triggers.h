@@ -53,6 +53,7 @@ class Actions {
     QcrTrigger refine {"refine", "refine lattice and instrument parameters"};
     QcrTrigger show3d {"show 3d", "show 3d"};
     QcrTrigger peaksProperties {"peaks properties", "properties"};
+    QcrTrigger statistics {"statistics", "Statistics"};
     // Experiments/Peaks/Indexing:
     QcrTrigger autoIndexer {"FFT", "FFT auto indexer"};
     QcrTrigger assignUnitCell {"assign unit cell", "assign unit cell"};

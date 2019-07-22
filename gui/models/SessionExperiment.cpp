@@ -158,6 +158,24 @@ const Peaks* SessionExperiment::getPeaks(const QString& peakListName)
     return peakLists_.value(searchedName).at(index);
 }
 
+nsx::PeakList SessionExperiment::getPeakList(nsx::sptrUnitCell cell)
+{
+    nsx::PeakList ret;
+    for (QVector<Peaks*> vec : peakLists_) {
+        for (Peaks* peaks : vec) {
+            if (peaks->type_ != listtype::FILTERED) {
+                nsx::PeakList list = peaks->peaks_;
+                for (nsx::sptrPeak3D p : list) {
+                    if (p->unitCell() && p->unitCell()->name() == cell->name()){
+                            ret.push_back(p);
+                    }
+                }
+            }
+        }
+    }
+    return ret;
+}
+
 QStringList SessionExperiment::getPeakListNames(int depth)
 {
     QStringList outernames = peakLists_.keys();
@@ -210,8 +228,13 @@ void SessionExperiment::selectPeaks(const QString& listname)
 
 nsx::sptrUnitCell SessionExperiment::getUnitCell(int index)
 {
-    if (index == -1)
-        return unitCells_.at(unitCellIndex_);
+    if (index == -1) {
+        if (unitCellIndex_ == -1)
+            index = 0;
+        else
+            index = unitCellIndex_;
+    }
+
     return unitCells_.at(index);
 }
 
@@ -274,8 +297,10 @@ void SessionExperiment::integratePeaks()
     dialog->setIntegrators(integratorMap.keys());
     dialog->show();
 
-    if (!dialog->exec())
+    if (!dialog->exec()) {
+        dialog->deleteLater();
         return;
+    }
 
     const double dmin = dialog->minimumD();
     const double dmax = dialog->maximumD();
