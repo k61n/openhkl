@@ -19,6 +19,7 @@
 #include "gui/dialogs/IntegrateDialog.h"
 #include "gui/dialogs/IsotopesDatabaseDialog.h"
 #include "gui/dialogs/ListNameDialog.h"
+#include "gui/dialogs/MCAbsorptionDialog.h"
 #include "gui/dialogs/PeakFilterDialog.h"
 #include "gui/dialogs/PredictPeaksDialog.h"
 #include "gui/dialogs/ShapeLibraryDialog.h"
@@ -184,6 +185,13 @@ void Actions::setupPeaks()
         nsx::PeakList list = gSession->selectedExperiment()->getPeakList(cell);
         qDebug() << "Space Group symbol: " << QString::fromStdString(group.symbol());
         new MergedPeakInformationFrame(group, list);
+    });
+    correctAbsorption.setTriggerHook([]() {
+        if (gSession->selectedExperimentNum() < 0)
+            return;
+        if (gSession->selectedExperiment()->getUnitCellNames().empty())
+            return;
+        new MCAbsorptionDialog;
     });
 }
 

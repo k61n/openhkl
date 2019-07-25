@@ -176,6 +176,22 @@ nsx::PeakList SessionExperiment::getPeakList(nsx::sptrUnitCell cell)
     return ret;
 }
 
+nsx::PeakList SessionExperiment::getPeakList(nsx::sptrDataSet data)
+{
+    nsx::PeakList ret;
+    for (QVector<Peaks*> vec : peakLists_) {
+        for (Peaks* peaks : vec) {
+            if (peaks->type_ != listtype::FILTERED
+                    && peaks->file_ == QString::fromStdString(data->filename())) {
+                for (nsx::sptrPeak3D p : peaks->peaks_) {
+                    ret.push_back(p);
+                }
+            }
+        }
+    }
+    return ret;
+}
+
 QStringList SessionExperiment::getPeakListNames(int depth)
 {
     QStringList outernames = peakLists_.keys();
