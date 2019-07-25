@@ -182,6 +182,7 @@ void Actions::setupPeaks()
         nsx::sptrUnitCell cell = gSession->selectedExperiment()->getUnitCell();
         nsx::SpaceGroup group = cell->spaceGroup();
         nsx::PeakList list = gSession->selectedExperiment()->getPeakList(cell);
+        qDebug() << "Space Group symbol: " << QString::fromStdString(group.symbol());
         new MergedPeakInformationFrame(group, list);
     });
 }

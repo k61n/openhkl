@@ -25,22 +25,16 @@ class UnitCellProperty : public QcrWidget {
 
  private:
     void setUnitCellName();
-    void getLatticeParams();
-    void setLatticeParams();
     void setChemicalFormula();
-    void setSpaceGroup(QString sg);
     void setZValue(int z);
     void setMassDensity() const;
-    void activateSpaceGroupCompletion(QString sg);
-    void setIndexingTolerance(double);
-    void update();
-    void updateCellParameters();
     void selectedCellChanged(int cell);
+    void printAllInformation();
 
     QcrComboBox* unitcells;
     QcrLineEdit* name;
     QcrLineEdit* chemicalFormula;
-    QcrComboBox* spaceGroup;
+    QcrLineEdit* spaceGroup;
     QcrSpinBox* z;
     QcrDoubleSpinBox* indexingTolerance;
     QcrDoubleSpinBox* a;
