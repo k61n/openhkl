@@ -15,10 +15,12 @@
 #include "gui/actions/Triggers.h"
 
 #include "gui/MainWin.h"
+#include "gui/dialogs/AbsorptionDialog.h"
 #include "gui/dialogs/HDF5ConverterDialog.h"
 #include "gui/dialogs/IntegrateDialog.h"
 #include "gui/dialogs/IsotopesDatabaseDialog.h"
 #include "gui/dialogs/ListNameDialog.h"
+#include "gui/dialogs/MCAbsorptionDialog.h"
 #include "gui/dialogs/PeakFilterDialog.h"
 #include "gui/dialogs/PredictPeaksDialog.h"
 #include "gui/dialogs/ShapeLibraryDialog.h"
@@ -112,6 +114,14 @@ void Actions::setupInstrument()
         IsotopesDatabaseDialog* iso = new IsotopesDatabaseDialog;
         iso->exec();
     });
+    shapeLoadMovie.setTriggerHook([]() {
+        if (gSession->selectedExperimentNum() < 0) {
+            qWarning() << "No selected experiment";
+            return;
+        }
+
+        new AbsorptionDialog;
+    });
 }
 
 void Actions::setupOptions()
@@ -182,7 +192,15 @@ void Actions::setupPeaks()
         nsx::sptrUnitCell cell = gSession->selectedExperiment()->getUnitCell();
         nsx::SpaceGroup group = cell->spaceGroup();
         nsx::PeakList list = gSession->selectedExperiment()->getPeakList(cell);
+        qDebug() << "Space Group symbol: " << QString::fromStdString(group.symbol());
         new MergedPeakInformationFrame(group, list);
+    });
+    correctAbsorption.setTriggerHook([]() {
+        if (gSession->selectedExperimentNum() < 0)
+            return;
+        if (gSession->selectedExperiment()->getUnitCellNames().empty())
+            return;
+        new MCAbsorptionDialog;
     });
 }
 

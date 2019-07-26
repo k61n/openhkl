@@ -24,11 +24,11 @@ int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
 
-    app.setApplicationName("nsxgui");
+    app.setApplicationName("NSXTool");
     app.setApplicationVersion("1.0");
     app.setOrganizationName("nsx");
 
-    QcrLogger logger {"nsxgui.log"};
+    QcrLogger logger {"NSXTool.log"};
     QcrConsole console;
     QLoggingCategory::setFilterRules("*.debug=true\nqt.*.debug=false");
     qInstallMessageHandler(messageHandler);

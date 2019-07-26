@@ -58,6 +58,7 @@ class SessionExperiment {
     const Peaks *getPeaks(int upperindex = -1, int lowerindex = -1);
     const Peaks *getPeaks(const QString& peakListName);
     nsx::PeakList getPeakList(nsx::sptrUnitCell cell);
+    nsx::PeakList getPeakList(nsx::sptrDataSet data);
     QStringList getPeakListNames(int depth = 1);
     QStringList listNamesOf(const QString& listname);
     void removePeaks(const QString& listname = QString());

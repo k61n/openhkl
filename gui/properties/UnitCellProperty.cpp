@@ -15,6 +15,7 @@
 #include "gui/properties/UnitCellProperty.h"
 
 #include "gui/models/Session.h"
+#include "base/utils/Units.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
 #include <QCR/engine/cell.h>
@@ -32,24 +33,31 @@ UnitCellProperty::UnitCellProperty() : QcrWidget{"unitCellProperty"}
     QHBoxLayout* horizontalLayout = new QHBoxLayout;
     QFormLayout* formLayout = new QFormLayout;
     unitcells = new QcrComboBox("adhoc_unitCellsNames", new QcrCell<int>(0), []() {
-        QStringList a;
+        QStringList a{""};
         if (gSession->selectedExperimentNum() < 0)
             return a;
-        return gSession->selectedExperiment()->getUnitCellNames();
+        a += gSession->selectedExperiment()->getUnitCellNames();
+        return a;
     });
     unitcells->setHook([=](int i) { selectedCellChanged(i); });
     name = new QcrLineEdit("unitCellName", "");
-    QStringList spacegroups;
-    for (std::string sg : nsx::SpaceGroup::symbols())
-        spacegroups.append(QString::fromStdString(sg));
-    spaceGroup = new QcrComboBox("spaceGroup", new QcrCell<int>(0), spacegroups);
-    QCompleter* completer = new QCompleter(spaceGroup->model(), spaceGroup);
-    spaceGroup->setCompleter(completer);
-    completer->setCompletionMode(QCompleter::PopupCompletion);
-    completer->setCaseSensitivity(Qt::CaseSensitive);
+    QObject::connect(name, &QcrLineEdit::editingFinished, [=]() {
+        gSession->selectedExperiment()->getUnitCell()->setName(name->getValue().toStdString());
+    });
+    spaceGroup = new QcrLineEdit("spaceGroup", "");
+    spaceGroup->setReadOnly(true);
     chemicalFormula = new QcrLineEdit("chemicalFormula", "");
+    QObject::connect(chemicalFormula, &QcrLineEdit::editingFinished, [=]() {
+        if (chemicalFormula->getValue().length() < 1)
+            return;
+        std::string formula = chemicalFormula->getValue().toStdString();
+        gSession->selectedExperiment()->getUnitCell()->setMaterial(
+                    std::make_unique<xsection::Material>(formula));
+        setMassDensity();
+    });
     z = new QcrSpinBox("z", new QcrCell<int>(0), 3);
     indexingTolerance = new QcrDoubleSpinBox("indexingTolerance", new QcrCell<double>(0.00), 6, 4);
+    indexingTolerance->setReadOnly(true);
     formLayout->addRow(unitcells);
     formLayout->addRow("Name:", name);
     formLayout->addRow("Spacegroup:", spaceGroup);
@@ -65,16 +73,22 @@ UnitCellProperty::UnitCellProperty() : QcrWidget{"unitCellProperty"}
     QGridLayout* grid = new QGridLayout(cellParameters);
     a = new QcrDoubleSpinBox("a", new QcrCell<double>(1.0000), 8, 4);
     a->setButtonSymbols(QDoubleSpinBox::NoButtons);
+    a->setReadOnly(true);
     b = new QcrDoubleSpinBox("b", new QcrCell<double>(1.0000), 8, 4);
     b->setButtonSymbols(QDoubleSpinBox::NoButtons);
+    b->setReadOnly(true);
     c = new QcrDoubleSpinBox("c", new QcrCell<double>(1.0000), 8, 4);
     c->setButtonSymbols(QDoubleSpinBox::NoButtons);
+    c->setReadOnly(true);
     alpha = new QcrDoubleSpinBox("alpha", new QcrCell<double>(90.0000), 8, 4);
     alpha->setButtonSymbols(QDoubleSpinBox::NoButtons);
+    alpha->setReadOnly(true);
     beta = new QcrDoubleSpinBox("beta", new QcrCell<double>(90.0000), 8, 4);
     beta->setButtonSymbols(QDoubleSpinBox::NoButtons);
+    beta->setReadOnly(true);
     gamma = new QcrDoubleSpinBox("gamma", new QcrCell<double>(90.0000), 8, 4);
     gamma->setButtonSymbols(QDoubleSpinBox::NoButtons);
+    gamma->setReadOnly(true);
     grid->addWidget(a, 0, 2, 1, 1);
     grid->addWidget(b, 0, 4, 1, 1);
     grid->addWidget(c, 0, 6, 1, 1);
@@ -90,7 +104,7 @@ UnitCellProperty::UnitCellProperty() : QcrWidget{"unitCellProperty"}
     grid->addItem(
         new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 7, 1, 1);
     overallLayout->addWidget(cellParameters);
-    setRemake([]() { /*refresh the data from gSession*/ });
+    setRemake([=]() { });
 }
 
 void UnitCellProperty::setZValue(int z)
@@ -98,15 +112,22 @@ void UnitCellProperty::setZValue(int z)
     nsx::sptrUnitCell unit_cell = gSession->selectedExperiment()->getUnitCell();
 
     unit_cell->setZ(z);
-    // setMassDensity();
+    setMassDensity();
 }
 
 void UnitCellProperty::selectedCellChanged(int cell)
 {
-    nsx::sptrUnitCell selectedCell = gSession->selectedExperiment()->getUnitCell(cell);
-    gSession->selectedExperiment()->selectUnitCell(cell);
+    if (cell == 0)
+        return;
+    nsx::sptrUnitCell selectedCell = gSession->selectedExperiment()->getUnitCell(cell-1);
+    gSession->selectedExperiment()->selectUnitCell(cell-1);
     name->setCellValue(unitcells->currentText());
-    // chemicalFormula->setCellValue(QString::fromStdString(selectedCell->material()->formula()));
+    xsection::Material* material = selectedCell->material();
+    if (!material)
+        chemicalFormula->setCellValue("");
+    else
+        chemicalFormula->setCellValue(QString::fromStdString(selectedCell->material()->formula()));
+    spaceGroup->setCellValue(QString::fromStdString(selectedCell->spaceGroup().symbol()));
     z->setCellValue(selectedCell->z());
     indexingTolerance->setCellValue(selectedCell->indexingTolerance());
     nsx::UnitCellCharacter unitcharacter = selectedCell->character();
@@ -116,4 +137,36 @@ void UnitCellProperty::selectedCellChanged(int cell)
     alpha->setCellValue(unitcharacter.alpha);
     beta->setCellValue(unitcharacter.beta);
     gamma->setCellValue(unitcharacter.gamma);
+    printAllInformation();
+}
+
+void UnitCellProperty::setMassDensity() const
+{
+    nsx::sptrUnitCell unit_cell = gSession->selectedExperiment()->getUnitCell();
+
+    xsection::Material* material = unit_cell->material();
+    if (!material)
+        return;
+
+    double mm = material->molarMass();
+    mm *= z->value() / nsx::avogadro;
+    double volume = unit_cell->volume() * nsx::ang3;
+    material->setMassDensity(mm / volume);
+}
+
+void UnitCellProperty::printAllInformation()
+{
+    qDebug() << "Unit Cell Information:";
+    nsx::sptrUnitCell cell = gSession->selectedExperiment()->getUnitCell();
+    qDebug() << "name: " << QString::fromStdString(cell->name());
+    qDebug() << "volume: " << cell->volume();
+    qDebug() << "z: " << cell->z();
+    xsection::Material* material = cell->material();
+    if (!material) {
+        qDebug() << "material: none";
+        return;
+    }
+    qDebug() << "material: " << QString::fromStdString(material->formula());
+    qDebug() << "molar mass: " << material->molarMass();
+    qDebug() << "- - - - - - - - - - - - - - - - - - - - - ";
 }

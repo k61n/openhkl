@@ -18,6 +18,7 @@
 #include "tables/crystal/UnitCell.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
+#include <QTableView>
 
 //! Tab of an indexer frame which shows the parameters of the selected unit cell
 class UnitCellWidget : public QcrWidget {
@@ -25,9 +26,16 @@ class UnitCellWidget : public QcrWidget {
  public:
     UnitCellWidget(nsx::sptrUnitCell, const QString&);
     nsx::sptrUnitCell unitCell() const { return unitCell_; }
+    bool spaceGroupSet() { return wasSpaceGroupSet; }
+    void setSpaceGroup();
 
  private:
+    void evaluateSpaceGroups();
+
     nsx::sptrUnitCell unitCell_;
+    QTableView* spaceGroupView;
+    bool wasSpaceGroupSet;
+    std::string spaceGroupOne;
 };
 
 #endif // GUI_FRAMES_UNITCELLWIDGET_H

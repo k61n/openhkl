@@ -230,6 +230,8 @@ void AutoIndexerFrame::accept()
         UnitCellWidget* unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabs->widget(i));
         if (!unit_cell_tab)
             continue;
+        if (!unit_cell_tab->spaceGroupSet())
+            unit_cell_tab->setSpaceGroup();
         gSession->selectedExperiment()->addUnitCell(unit_cell_tab->unitCell());
     }
 
