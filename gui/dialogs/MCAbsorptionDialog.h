@@ -21,10 +21,10 @@
 
 class MCAbsorptionDialog : public QDialog {
 
-public:
+ public:
     MCAbsorptionDialog();
 
-private:
+ private:
     void runMCAbsorption();
 
     QProgressBar* progressBar;

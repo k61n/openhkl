@@ -15,6 +15,7 @@
 #include "gui/actions/Triggers.h"
 
 #include "gui/MainWin.h"
+#include "gui/dialogs/AbsorptionDialog.h"
 #include "gui/dialogs/HDF5ConverterDialog.h"
 #include "gui/dialogs/IntegrateDialog.h"
 #include "gui/dialogs/IsotopesDatabaseDialog.h"
@@ -112,6 +113,14 @@ void Actions::setupInstrument()
     isotopesDatabase.setTriggerHook([]() {
         IsotopesDatabaseDialog* iso = new IsotopesDatabaseDialog;
         iso->exec();
+    });
+    shapeLoadMovie.setTriggerHook([]() {
+        if (gSession->selectedExperimentNum() < 0) {
+            qWarning() << "No selected experiment";
+            return;
+        }
+
+        new AbsorptionDialog;
     });
 }
 
