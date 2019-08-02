@@ -84,7 +84,7 @@ MergedPeakInformationFrame::MergedPeakInformationFrame(nsx::SpaceGroup group, ns
     mergedlayout->addWidget(mergedView);
     QHBoxLayout* mergedrow = new QHBoxLayout;
     filetypesMerged = new QcrComboBox(
-                "adhoc_FileTypesMerged", new QcrCell<int>(0), {"ShelX", "FullProf"});
+                "adhoc_FileTypesMerged", new QcrCell<int>(0), {"ShelX", "FullProf", "Phenix"});
     QcrTextTriggerButton* saveMerged = new QcrTextTriggerButton("adhoc_SaveMerged", "Save");
     mergedrow->addWidget(filetypesMerged);
     mergedrow->addWidget(saveMerged);
@@ -101,7 +101,7 @@ MergedPeakInformationFrame::MergedPeakInformationFrame(nsx::SpaceGroup group, ns
     unmergedlayout->addWidget(unmergedView);
     QHBoxLayout* unmergedrow = new QHBoxLayout;
     filetypesUnmerged = new QcrComboBox(
-                "adhoc_FileTypesUnmerged", new QcrCell<int>(0), {"ShelX", "FullProf"});
+                "adhoc_FileTypesUnmerged", new QcrCell<int>(0), {"ShelX", "FullProf", "Phenix"});
     QcrTextTriggerButton* saveUnmerged = new QcrTextTriggerButton("adhoc_SaveUnmerged", "Save");
     unmergedrow->addWidget(filetypesUnmerged);
     unmergedrow->addWidget(saveUnmerged);
@@ -212,17 +212,33 @@ void MergedPeakInformationFrame::saveMergedPeaks()
         exporter.saveToShelX(
             filename.toStdString(),
             &mergedData);
-    } else {
+
+    } else if (format.compare("FullProf") == 0){
         QString filename = QFileDialog::getSaveFileName(
             this, 
             tr("Save peaks to FullProf"), 
             ".", 
-            tr("ShelX hkl file (*.hkl)"));
+            tr("FullProf hkl file (*.hkl)"));
 
         if (filename.isEmpty())
             return;
 
         exporter.saveToFullProf(
+            filename.toStdString(),
+            &mergedData,
+            &peakList);
+
+    } else if (format.compare("Phenix") == 0){
+        QString filename = QFileDialog::getSaveFileName(
+            this, 
+            tr("Save peaks to Phenix sca"), 
+            ".", 
+            tr("Phenix sca file (*.sca)"));
+
+        if (filename.isEmpty())
+            return;
+
+        exporter.saveToSCA(
             filename.toStdString(),
             &mergedData,
             &peakList);
@@ -246,7 +262,8 @@ void MergedPeakInformationFrame::saveUnmergedPeaks()
         exporter.saveToShelX(
             filename.toStdString(),
             &peakList);
-    } else {
+
+    } else if (format.compare("FullProf") == 0){
         QString filename = QFileDialog::getSaveFileName(
             this, 
             tr("Save peaks to FullProf"), 
@@ -257,6 +274,20 @@ void MergedPeakInformationFrame::saveUnmergedPeaks()
             return;
 
         exporter.saveToFullProf(
+            filename.toStdString(),
+            &peakList);
+
+    } else if (format.compare("Phenix") == 0){
+        QString filename = QFileDialog::getSaveFileName(
+            this, 
+            tr("Save peaks to Phenix sca"), 
+            ".", 
+            tr("Phenix sca file (*.sca)"));
+
+        if (filename.isEmpty())
+            return;
+
+        exporter.saveToSCA(
             filename.toStdString(),
             &peakList);
     }
