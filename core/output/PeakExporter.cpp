@@ -22,7 +22,7 @@
 #include "tables/crystal/UnitCell.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
-
+#include "core/experiment/DataTypes.h"
 
 namespace nsx {
 
@@ -240,6 +240,137 @@ void PeakExporter::saveToFullProf(
             << "1"
 
             << std::endl;
+    }
+    file.close();
+}
+
+void PeakExporter::saveToSCA(std::string filename, nsx::PeakList* peakList)
+{
+    std::fstream file(filename, std::ios::out);
+
+    sptrUnitCell unitCell = peakList->at(0)->unitCell();
+    UnitCellCharacter character = unitCell->character();
+    std::string symbol = unitCell->spaceGroup().symbol();
+    std::for_each(symbol.begin(), symbol.end(), [](char & c){c = ::tolower(c);});
+    symbol.erase(std::remove(symbol.begin(), symbol.end(), ' '), symbol.end());
+
+    file << "    1\n\n";
+    file << std::fixed << std::setw(10) << std::setprecision(3)
+        << character.a
+        << std::fixed << std::setw(10) << std::setprecision(3)
+        << character.b
+        << std::fixed << std::setw(10) << std::setprecision(3)
+        << character.c
+        << std::fixed << std::setw(10) << std::setprecision(3)
+        << character.alpha * (180.0/3.141592653589793238463)
+        << std::fixed << std::setw(10) << std::setprecision(3)
+        << character.beta * (180.0/3.141592653589793238463)
+        << std::fixed << std::setw(10) << std::setprecision(3)
+        << character.gamma * (180.0/3.141592653589793238463)
+        << " " << symbol
+        << std::endl;
+
+    for (int i = 0; i < peakList->size(); i++){
+        std::shared_ptr<nsx::Peak3D> peak = peakList->at(i);
+        if (peak->selected()){
+            nsx::sptrUnitCell cell = peak->unitCell();
+            if (cell){
+                nsx::MillerIndex miller_index(peak->q(), *cell);
+                if (miller_index.indexed(cell->indexingTolerance())){
+                    const Eigen::RowVector3i& hkl = miller_index.rowVector();
+                    double intensity = peak->correctedIntensity().value();
+                    double sigma_intensity = peak->correctedIntensity().sigma();
+                    
+                    file << std::fixed << std::setw(4) 
+                        << hkl(0)
+                        << std::fixed << std::setw(4) 
+                        << hkl(1)
+                        << std::fixed << std::setw(4) 
+                        << hkl(2)<< " " << std::setprecision(1);
+                    
+                    if (abs(intensity) > 100000 - 1){
+                        file << std::fixed << std::setw(7) << std::setprecision(1)
+                            << std::scientific << intensity << " ";
+                    }else{
+                        file << std::fixed << std::setw(7)
+                            << intensity << " ";
+                    }
+
+                    if (abs(sigma_intensity) > 100000 - 1){
+                        file << std::fixed << std::setw(7) << std::setprecision(1)
+                            << std::scientific << sigma_intensity
+                            << std::endl;
+                    }else{
+                        file << std::fixed << std::setw(7)
+                            << sigma_intensity
+                            << std::endl;
+                    }
+
+        }}}
+    }
+    file.close();
+}
+
+void PeakExporter::saveToSCA(
+    std::string filename, nsx::MergedData* mergedData, 
+    nsx::PeakList* peakList)
+{
+    std::fstream file(filename, std::ios::out);
+
+    sptrUnitCell unitCell = peakList->at(0)->unitCell();
+    UnitCellCharacter character = unitCell->character();
+    std::string symbol = unitCell->spaceGroup().symbol();
+    std::for_each(symbol.begin(), symbol.end(), [](char & c){c = ::tolower(c);});
+    symbol.erase(std::remove(symbol.begin(), symbol.end(), ' '), symbol.end());
+
+    file << "    1\n\n";
+    file << std::fixed << std::setw(10) << std::setprecision(3)
+        << character.a
+        << std::fixed << std::setw(10) << std::setprecision(3)
+        << character.b
+        << std::fixed << std::setw(10) << std::setprecision(3)
+        << character.c
+        << std::fixed << std::setw(10) << std::setprecision(3)
+        << character.alpha * (180.0/3.141592653589793238463)
+        << std::fixed << std::setw(10) << std::setprecision(3)
+        << character.beta * (180.0/3.141592653589793238463)
+        << std::fixed << std::setw(10) << std::setprecision(3)
+        << character.gamma * (180.0/3.141592653589793238463)
+        << " " <<  symbol
+        << std::endl;
+
+    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()){
+        const auto hkl = peak.index();
+        nsx::Intensity I = peak.intensity();
+        const double intensity = I.value();
+        const double sigma_intensity = I.sigma();
+        
+        file << std::fixed << std::setw(4) 
+            << hkl(0)
+            << std::fixed << std::setw(4) 
+            << hkl(1)
+            << std::fixed << std::setw(4) 
+            << hkl(2)<< " " << std::setprecision(1);
+        
+        if (abs(intensity) > 100000 - 1){
+            file << std::fixed << std::setw(7) << std::setprecision(1)
+                << std::scientific << intensity << " ";
+        }else{
+            file << std::fixed << std::setw(7)
+                << intensity << " ";
+        }
+
+        if (abs(sigma_intensity) > 100000 - 1){
+            file << std::fixed << std::setw(7) << std::setprecision(1)
+                << std::scientific << sigma_intensity
+                << std::endl;
+        }else{
+            file << std::fixed << std::setw(7)
+                << sigma_intensity
+                << std::endl;
+        }
+
+        
     }
     file.close();
 }

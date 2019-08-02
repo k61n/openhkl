@@ -632,8 +632,10 @@ for peak in predicted_peaks:
 
 exporter = nsx.PeakExporter()
 exporter.saveStatistics('shell.txt', shells, nsx.SpaceGroup("P 21 21 21"), True)
-exporter.saveToShelX('ShelX_hkl.hkl', merged_data)
-exporter.saveToFullProf('FulProf_hkl.hkl', merged_data, fit_peaks)
+exporter.saveToShelX('ShelX_hkl_merged.hkl', merged_data)
+exporter.saveToFullProf('FulProf_hkl_merged.hkl', merged_data, fit_peaks)
+exporter.saveToSCA('SCA_hkl_peaks.sca', fit_peaks)
+exporter.saveToSCA('SCA_hkl_merged.sca', merged_data, fit_peaks)
 
 ################################################################################
 ## Get information about the unit cell and generate the header for the sca file

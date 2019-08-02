@@ -50,6 +50,15 @@ public:
         std::string filename, 
         nsx::MergedData* mergedData, 
         nsx::PeakList* peakList);
+    //! Saves the peak information to .sca file format given a peak list.
+    void saveToSCA(
+        std::string filename, 
+        nsx::PeakList* peakList);
+    //! Saves the peak information to .sca file format given a merged peak list.
+    void saveToSCA(
+        std::string filename, 
+        nsx::MergedData* mergedData, 
+        nsx::PeakList* peakList);
 
 private:
 };
