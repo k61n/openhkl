@@ -172,145 +172,94 @@ void MergedPeakInformationFrame::plotStatistics(int column)
 void MergedPeakInformationFrame::saveStatistics()
 {
     QString filename = QFileDialog::getSaveFileName(
-        this, tr("Save statistics"), ".", tr("Text file (*.dat *.txt)"));
+        this, 
+        tr("Save the shell info"), 
+        ".", 
+        tr("(*.txt)"));
 
     if (filename.isEmpty())
         return;
 
-    std::fstream file(filename.toStdString(), std::ios::out);
-    if (!file.is_open()) {
-        qWarning() << "Error writing to this file, please check write permisions";
-        return;
-    }
-
-    file << std::setw(10) << "dmax" << std::setw(10) << "dmin" << std::setw(10) << "nobs"
-         << std::setw(10) << "nmerged" << std::setw(11) << "redundancy" << std::setw(10) << "Rmeas"
-         << std::setw(12) << "Rmeas(est.)" << std::setw(11) << "Rmerge/sym"
-         << std::setw(13) << "Rmerge(est.)" << std::setw(10) << "Rpim"
-         << std::setw(11) << "Rpim(est.)" << std::setw(10) << "CChalf" << std::setw(10) << "CC*"
-         << std::endl;
-
-    auto model = dynamic_cast<QStandardItemModel*>(statisticsView->model());
-
-    for (size_t i = 0; i < model->rowCount(); ++i) {
-        file << std::fixed << std::setw(10) << std::setprecision(2)
-             << model->index(i, 0).data().toDouble()
-             << std::fixed << std::setw(10) << std::setprecision(2)
-             << model->index(i, 1).data().toDouble()
-             << std::fixed << std::setw(10) << model->index(i, 2).data().toInt()
-             << std::fixed << std::setw(10) << model->index(i, 3).data().toInt()
-             << std::fixed << std::setw(11) << std::setprecision(3)
-             << model->index(i, 4).data().toDouble()
-             << std::fixed << std::setw(10) << std::setprecision(3)
-             << model->index(i, 5).data().toDouble()
-             << std::fixed << std::setw(12) << std::setprecision(3)
-             << model->index(i, 6).data().toDouble()
-             << std::fixed << std::setw(11) << std::setprecision(3)
-             << model->index(i, 7).data().toDouble()
-             << std::fixed << std::setw(13) << std::setprecision(3)
-             << model->index(i, 8).data().toDouble()
-             << std::fixed << std::setw(10) << std::setprecision(3)
-             << model->index(i, 9).data().toDouble()
-             << std::fixed << std::setw(11) << std::setprecision(3)
-             << model->index(i, 10).data().toDouble()
-             << std::fixed << std::setw(10) << std::setprecision(3)
-             << model->index(i, 11).data().toDouble()
-             << std::fixed << std::setw(10) << std::setprecision(3)
-             << model->index(i, 12).data().toDouble()
-             << std::endl;
-    }
-
-    file.close();
+    double min = dmin->value();
+    double max = dmax->value();
+    int shells = dshells->value();
+    bool inclFriedel = friedel->isChecked();
+    nsx::ResolutionShell resolutionShell(min, max, shells);
+    for (nsx::sptrPeak3D peak : peakList)
+        resolutionShell.addPeak(peak);
+        
+    exporter.saveStatistics(
+        filename.toStdString(),
+        resolutionShell,
+        spaceGroup,
+        inclFriedel);
 }
 
 void MergedPeakInformationFrame::saveMergedPeaks()
 {
     QString format = filetypesMerged->currentText();
 
-    if (format.compare("ShelX") == 0)
-        saveToShelX(mergedView);
-    else
-        saveToFullProf(mergedView);
+    if (format.compare("ShelX") == 0){
+        QString filename = QFileDialog::getSaveFileName(
+            this, 
+            tr("Save peaks to ShelX"), 
+            ".", 
+            tr("ShelX hkl file (*.hkl)"));
+
+        if (filename.isEmpty())
+            return;
+
+        exporter.saveToShelX(
+            filename.toStdString(),
+            &mergedData);
+    } else {
+        QString filename = QFileDialog::getSaveFileName(
+            this, 
+            tr("Save peaks to FullProf"), 
+            ".", 
+            tr("ShelX hkl file (*.hkl)"));
+
+        if (filename.isEmpty())
+            return;
+
+        exporter.saveToFullProf(
+            filename.toStdString(),
+            &mergedData,
+            &peakList);
+    }
 }
 
 void MergedPeakInformationFrame::saveUnmergedPeaks()
 {
     QString format = filetypesUnmerged->currentText();
 
-    if (format.compare("ShelX") == 0)
-        saveToShelX(unmergedView);
-    else
-        saveToFullProf(unmergedView);
-}
+    if (format.compare("ShelX") == 0){
+        QString filename = QFileDialog::getSaveFileName(
+            this, 
+            tr("Save peaks to ShelX"), 
+            ".", 
+            tr("ShelX hkl file (*.hkl)"));
 
-void MergedPeakInformationFrame::saveToShelX(QTableView* table)
-{
-    QString filename = QFileDialog::getSaveFileName(
-        this, tr("Save peaks to ShelX"), ".", tr("ShelX hkl file (*.hkl)"));
+        if (filename.isEmpty())
+            return;
 
-    if (filename.isEmpty())
-        return;
+        exporter.saveToShelX(
+            filename.toStdString(),
+            &peakList);
+    } else {
+        QString filename = QFileDialog::getSaveFileName(
+            this, 
+            tr("Save peaks to FullProf"), 
+            ".", 
+            tr("ShelX hkl file (*.hkl)"));
 
-    std::fstream file(filename.toStdString(), std::ios::out);
-    if (!file.is_open()) {
-        qWarning() << "Error writing to this file, please check write permisions";
-        return;
+        if (filename.isEmpty())
+            return;
+
+        exporter.saveToFullProf(
+            filename.toStdString(),
+            &peakList);
     }
-
-    auto model = dynamic_cast<QStandardItemModel*>(table->model());
-
-    for (size_t i = 0; i < model->rowCount(); ++i) {
-        file << std::fixed << std::setw(4) << model->index(i, 0).data().toInt()
-             << std::fixed << std::setw(4) << model->index(i, 1).data().toInt()
-             << std::fixed << std::setw(4) << model->index(i, 2).data().toInt()
-             << std::fixed << std::setw(8) << std::setprecision(2)
-             << model->index(i, 3).data().toDouble()
-             << std::fixed << std::setw(8) << std::setprecision(2)
-             << model->index(i, 4).data().toDouble()
-             << std::endl;
-    }
-
-    file.close();
-}
-
-void MergedPeakInformationFrame::saveToFullProf(QTableView* table)
-{
-    QString filename = QFileDialog::getSaveFileName(
-        this, tr("Save peaks to FullProf"), ".", tr("ShelX hkl file (*.hkl)"));
-
-    if (filename.isEmpty())
-        return;
-
-    std::fstream file(filename.toStdString(), std::ios::out);
-    if (!file.is_open()) {
-        qWarning() << "Error writing to this file, please check write permisions";
-        return;
-    }
-
-    file << "TITLE File written by ...\n";
-    file << "(3i4,2F14.4,i5,4f8.2)\n";
-
-    double wavelength = peakList[0]->data()->reader()->metadata().key<double>("wavelength");
-
-    // wavelength
-    file << std::fixed << std::setw(8) << std::setprecision(3) << wavelength;
-    file << " 0 0" << std::endl;
-
-    auto model = dynamic_cast<QStandardItemModel*>(table->model());
-
-    for (size_t i = 0; i < model->rowCount(); ++i) {
-        file << std::fixed << std::setw(4) << model->index(i, 0).data().toInt()
-             << std::fixed << std::setw(4) << model->index(i, 1).data().toInt()
-             << std::fixed << std::setw(4) << model->index(i, 2).data().toInt()
-             << std::fixed << std::setw(14) << std::setprecision(4)
-             << model->index(i, 3).data().toDouble()
-             << std::fixed << std::setw(14) << std::setprecision(4)
-             << model->index(i, 4).data().toDouble()
-             << std::fixed << std::setw(5) << 1
-             << std::endl;
-    }
-
-    file.close();
 }
 
 void MergedPeakInformationFrame::update()
@@ -371,32 +320,32 @@ void MergedPeakInformationFrame::updateStatisticsTab()
         model->appendRow(row);
     }
 
-    nsx::RFactor rfactor;
-    rfactor.calculate(mergedData);
+    // nsx::RFactor rfactor;
+    // rfactor.calculate(mergedData);
 
-    nsx::CC cc;
-    cc.calculate(mergedData);
+    // nsx::CC cc;
+    // cc.calculate(mergedData);
 
-    QList<QStandardItem*> row;
-    row.append(new QStandardItem(QString::number(max)));
-    row.append(new QStandardItem(QString::number(min)));
-    row.append(new QStandardItem(QString::number(mergedData.totalSize())));
-    row.append(new QStandardItem(QString::number(mergedData.mergedPeakSet().size())));
-    row.append(new QStandardItem(QString::number(mergedData.redundancy())));
-    row.append(new QStandardItem(QString::number(rfactor.Rmeas())));
-    row.append(new QStandardItem(QString::number(rfactor.expectedRmeas())));
-    row.append(new QStandardItem(QString::number(rfactor.Rmerge())));
-    row.append(new QStandardItem(QString::number(rfactor.expectedRmerge())));
-    row.append(new QStandardItem(QString::number(rfactor.Rpim())));
-    row.append(new QStandardItem(QString::number(rfactor.expectedRpim())));
-    row.append(new QStandardItem(QString::number(cc.CChalf())));
-    row.append(new QStandardItem(QString::number(cc.CCstar())));
-    for (auto v : row) {
-        QFont font(v->font());
-        font.setBold(true);
-        v->setFont(font);
-    }
-    model->appendRow(row);
+    // QList<QStandardItem*> row;
+    // row.append(new QStandardItem(QString::number(max)));
+    // row.append(new QStandardItem(QString::number(min)));
+    // row.append(new QStandardItem(QString::number(mergedData.totalSize())));
+    // row.append(new QStandardItem(QString::number(mergedData.mergedPeakSet().size())));
+    // row.append(new QStandardItem(QString::number(mergedData.redundancy())));
+    // row.append(new QStandardItem(QString::number(rfactor.Rmeas())));
+    // row.append(new QStandardItem(QString::number(rfactor.expectedRmeas())));
+    // row.append(new QStandardItem(QString::number(rfactor.Rmerge())));
+    // row.append(new QStandardItem(QString::number(rfactor.expectedRmerge())));
+    // row.append(new QStandardItem(QString::number(rfactor.Rpim())));
+    // row.append(new QStandardItem(QString::number(rfactor.expectedRpim())));
+    // row.append(new QStandardItem(QString::number(cc.CChalf())));
+    // row.append(new QStandardItem(QString::number(cc.CCstar())));
+    // for (auto v : row) {
+    //     QFont font(v->font());
+    //     font.setBold(true);
+    //     v->setFont(font);
+    // }
+    // model->appendRow(row);
 }
 
 void MergedPeakInformationFrame::updateMergedPeaksTab()
