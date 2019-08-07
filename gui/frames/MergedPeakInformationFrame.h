@@ -17,6 +17,7 @@
 
 #include "core/analyse/MergedData.h"
 #include "core/peak/Peak3D.h"
+#include "core/output/PeakExporter.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "gui/graphics/SXPlot.h"
 #include <QCR/widgets/actions.h>
@@ -34,8 +35,6 @@ class MergedPeakInformationFrame : public QcrFrame {
     void saveMergedPeaks();
     void saveUnmergedPeaks();
     void plotStatistics(int column);
-    void saveToFullProf(QTableView* table);
-    void saveToShelX(QTableView* table);
     void updateMergedPeaksTab();
     void updateUnmergedPeaksTab();
     void updateStatisticsTab();
@@ -43,6 +42,7 @@ class MergedPeakInformationFrame : public QcrFrame {
     nsx::PeakList peakList;
     nsx::SpaceGroup spaceGroup;
     nsx::MergedData mergedData;
+    nsx::PeakExporter exporter;
 
     QTableView* statisticsView;
     QcrDoubleSpinBox* dmin;

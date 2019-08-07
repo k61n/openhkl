@@ -166,6 +166,8 @@ using Eigen::Quaterniond;
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
 
+#include "core/output/PeakExporter.h"
+
 using namespace nsx;
 
 %}
@@ -358,6 +360,8 @@ using namespace nsx;
 %include "core/statistics/RFactor.h"
 %include "core/statistics/CC.h"
 %include "core/statistics/CC.h"
+
+%include "core/output/PeakExporter.h"
 
 %newobject new_double;
 double* new_double();
