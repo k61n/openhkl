@@ -191,9 +191,9 @@ void Actions::setupPeaks()
             return;
         nsx::sptrUnitCell cell = gSession->selectedExperiment()->getUnitCell();
         nsx::SpaceGroup group = cell->spaceGroup();
-        nsx::PeakList list = gSession->selectedExperiment()->getPeakList(cell);
+        // nsx::PeakList list = gSession->selectedExperiment()->getUnitCell(cell);
         qDebug() << "Space Group symbol: " << QString::fromStdString(group.symbol());
-        new MergedPeakInformationFrame(group, list);
+        // new MergedPeakInformationFrame(group, list);
     });
     correctAbsorption.setTriggerHook([]() {
         if (gSession->selectedExperimentNum() < 0)

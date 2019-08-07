@@ -157,7 +157,7 @@ void UnitCellWidget::evaluateSpaceGroups()
     nsx::PeakList list;
     nsx::PeakFilter filter;
 
-    list = filter.enabled(gSession->selectedExperiment()->getPeakList(unitCell_), true);
+    // list = filter.enabled(gSession->selectedExperiment()->getUnitCell(unitCell_), true);
     list = filter.indexed(list, *unitCell_, unitCell_->indexingTolerance());
 
     nsx::MillerIndexList hkls;

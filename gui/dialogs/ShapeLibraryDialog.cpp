@@ -23,8 +23,10 @@
 #include "core/shape/ShapeLibrary.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/models/ColorMap.h"
-#include "gui/models/PeaksTable.h"
+#include "core/peak/Peak3D.h"
+#include "core/shape/ShapeLibrary.h"
 #include "gui/models/Session.h"
+
 #include <QCR/engine/logger.h>
 #include <QDebug>
 #include <QFormLayout>
@@ -51,7 +53,7 @@ ShapeLibraryDialog::ShapeLibraryDialog() : QDialog{}
         gLogger->log("[ERROR] No unitcells in selected experiment");
         return;
     }
-    _peaks = gSession->selectedExperiment()->getPeaks(0)->peaks_;
+    // _peaks = gSession->selectedExperiment()->getPeaks(0)->peaks_;
     _unitCell = gSession->selectedExperiment()->getUnitCell(0);
 
     for (nsx::sptrPeak3D peak : _peaks)

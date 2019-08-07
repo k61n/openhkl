@@ -62,11 +62,11 @@ void AutoIndexerFrame::layout()
     vertical->addWidget(listNames);
     model = new PeaksTableModel(
         "adhoc_autoIndexerPeakTable", gSession->selectedExperiment()->experiment());
-    listNames->setHook([=](int) {
-        model->setPeaks(gSession->selectedExperiment()->getPeaks(listNames->currentText())->peaks_);
-    });
-    peaks = new PeaksTableView;
-    peaks->setModel(model);
+    // listNames->setHook([=](int) {
+    //     model->setPeaks(gSession->selectedExperiment()->getPeaks(listNames->currentText())->peaks_);
+    // });
+    // peaks = new PeaksTableView;
+    // peaks->setModel(model);
     vertical->addWidget(peaks);
     QHBoxLayout* horizontal = new QHBoxLayout();
     QGroupBox* params = new QGroupBox("Parameters", this);

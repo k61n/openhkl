@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/graphics/PeakItem.cpp
-//! @brief     Implements class PeakItem
+//! @file      gui/graphics/PeakItemGraphic.cpp
+//! @brief     Implements class PeakItemGraphic
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/graphics/PeakItem.h"
+#include "gui/graphics/PeakItemGraphic.h"
 
 #include "base/geometry/Ellipsoid.h"
 #include "base/geometry/ReciprocalVector.h"
@@ -31,10 +31,10 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
-bool PeakItem::_show_label = false;
-bool PeakItem::_show_center = false;
+bool PeakItemGraphic::_show_label = false;
+bool PeakItemGraphic::_show_center = false;
 
-PeakItem::PeakItem(nsx::sptrPeak3D peak, int frame)
+PeakItemGraphic::PeakItemGraphic(nsx::sptrPeak3D peak, int frame)
     : PlottableItem(nullptr, true, false), _peak(peak)
 {
     setVisible(true);
@@ -97,12 +97,12 @@ PeakItem::PeakItem(nsx::sptrPeak3D peak, int frame)
     setZValue(2);
 }
 
-nsx::sptrPeak3D PeakItem::peak() const
+nsx::sptrPeak3D PeakItemGraphic::peak() const
 {
     return _peak;
 }
 
-QRectF PeakItem::boundingRect() const
+QRectF PeakItemGraphic::boundingRect() const
 {
     double width = _upper[0] - _lower[0];
 
@@ -111,7 +111,7 @@ QRectF PeakItem::boundingRect() const
     return QRectF(-width / 2.0, -height / 2.0, width, height);
 }
 
-void PeakItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void PeakItemGraphic::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(widget)
 
@@ -124,22 +124,22 @@ void PeakItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
     _center_gi->setVisible(_hovered || _show_center);
 }
 
-std::string PeakItem::getPlotType() const
+std::string PeakItemGraphic::getPlotType() const
 {
     return "peak";
 }
 
-void PeakItem::showLabel(bool flag)
+void PeakItemGraphic::showLabel(bool flag)
 {
     _show_label = flag;
 }
 
-void PeakItem::showArea(bool flag)
+void PeakItemGraphic::showArea(bool flag)
 {
     _show_center = flag;
 }
 
-void PeakItem::plot(SXPlot* plot)
+void PeakItemGraphic::plot(SXPlot* plot)
 {
     PeakPlot* p = dynamic_cast<PeakPlot*>(plot);
     if (!p)

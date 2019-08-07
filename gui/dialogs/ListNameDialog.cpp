@@ -19,8 +19,8 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-ListNameDialog::ListNameDialog(nsx::PeakList list)
-    : QcrModalDialog {"adhoc_ListNameDialog", gGui, "List name dialog"}, list_ {list}
+ListNameDialog::ListNameDialog()
+    : QcrModalDialog {"adhoc_ListNameDialog", gGui, "List name dialog"}
 {
     resize(500, 130);
     setMinimumSize(500, 130);

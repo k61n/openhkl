@@ -22,13 +22,12 @@
 //! Dialog to name a specific peak list
 class ListNameDialog : public QcrModalDialog {
  public:
-    ListNameDialog(nsx::PeakList);
+    ListNameDialog();
     QString listName();
-    nsx::PeakList peaklist() { return list_; }
 
  private:
     QcrLineEdit* name_;
-    nsx::PeakList list_;
+
 };
 
 #endif // GUI_DIALOGS_LISTNAMEDIALOG_H

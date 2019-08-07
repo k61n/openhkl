@@ -23,7 +23,7 @@
 #include <QGraphicsScene>
 #include <QStack>
 
-class PeakItem;
+class PeakItemGraphic;
 class SXGraphicsItem;
 
 // For the plotting part, better to have RowMajor matrix to use QImage scanline
@@ -124,7 +124,7 @@ class DetectorScene : public QGraphicsScene {
     std::unique_ptr<ColorMap> _colormap;
     QGraphicsPixmapItem* _integrationRegion;
     QGraphicsRectItem* _selected_peak_gi;
-    std::map<nsx::sptrPeak3D, PeakItem*> _peak_graphics_items;
+    std::map<nsx::sptrPeak3D, PeakItemGraphic*> _peak_graphics_items;
     nsx::sptrPeak3D _selected_peak;
 };
 

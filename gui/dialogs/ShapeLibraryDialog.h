@@ -20,6 +20,7 @@
 #include "core/shape/Profile3D.h"
 #include "core/shape/ShapeLibrary.h"
 #include "gui/models/ColorMap.h"
+#include "gui/models/PeakModel.h"
 #include <QCR/widgets/actions.h>
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>

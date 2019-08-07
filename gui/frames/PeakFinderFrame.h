@@ -16,7 +16,7 @@
 #define GUI_FRAMES_PEAKFINDERFRAME_H
 
 #include "gui/graphics/DetectorView.h"
-#include "gui/models/PeaksTable.h"
+#include "gui/views/PeakTableView.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 #include <QDialogButtonBox>

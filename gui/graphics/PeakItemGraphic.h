@@ -20,11 +20,11 @@
 #include <Eigen/Dense>
 
 //! Plottable graphics item that represents a peak in the detector image
-class PeakItem : public PlottableItem {
+class PeakItemGraphic : public PlottableItem {
  public:
-    PeakItem(nsx::sptrPeak3D peak, int frame);
+    PeakItemGraphic(nsx::sptrPeak3D peak, int frame);
 
-    ~PeakItem() = default;
+    ~PeakItemGraphic() = default;
 
     void plot(SXPlot* plot) override;
 

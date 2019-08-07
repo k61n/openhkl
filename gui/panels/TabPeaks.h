@@ -15,7 +15,8 @@
 #ifndef GUI_PANELS_TABPEAKS_H
 #define GUI_PANELS_TABPEAKS_H
 
-#include "gui/models/PeaksTable.h"
+#include "gui/views/PeakTableView.h"
+#include "gui/models/PeakModel.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 

@@ -61,7 +61,8 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     peakFinder->setHandler(progressHandler);
 
-    auto found_peaks = peakFinder->find(numors);
+    peakFinder->find(numors);
+    auto found_peaks = peakFinder->currentPeaks();
 
     try {
         CHECK(static_cast<int>(found_peaks.size()) >= 0);

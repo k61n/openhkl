@@ -49,11 +49,11 @@ void RefinerFrame::layout()
     tabs = new QcrTabWidget("adhoc_refinerTabs");
     settings = new QcrWidget("adhoc_refinerSettings");
     QVBoxLayout* layoutSettings = new QVBoxLayout(settings);
-    PeaksTableModel* model = new PeaksTableModel(
-        "adhoc_refinerPeaks", gSession->selectedExperiment()->experiment(),
-        gSession->selectedExperiment()->getPeaks(0, 0)->peaks_);
-    peaks = new PeaksTableView;
-    peaks->setModel(model);
+    // PeaksTableModel* model = new PeaksTableModel(
+    //     "adhoc_refinerPeaks", gSession->selectedExperiment()->experiment(),
+    //     gSession->selectedExperiment()->getPeaks(0, 0)->peaks_);
+    // peaks = new PeaksTableView;
+    // peaks->setModel(model);
     peaks->selectAll();
     layoutSettings->addWidget(peaks);
     QGroupBox* params = new QGroupBox("Refinable parameters");

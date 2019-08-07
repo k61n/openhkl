@@ -16,7 +16,8 @@
 #define GUI_FRAMES_REFINERFRAME_H
 
 #include "core/algo/Refiner.h"
-#include "gui/models/PeaksTable.h"
+#include "gui/views/PeakTableView.h"
+#include "gui/models/PeakModel.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 #include <QDialogButtonBox>

@@ -36,14 +36,14 @@ TabPeaks::TabPeaks() : QcrWidget {"peaks"}
 
     peaksTable = new PeaksTableView;
     peaksTable->show();
-    if (gSession->selectedExperimentNum() > 0) {
-        if (!gSession->selectedExperiment()->getPeakListNames().empty()) {
-            PeaksTableModel* model = new PeaksTableModel(
-                "adhoc_tabpeaksmodel", gSession->selectedExperiment()->experiment(),
-                gSession->selectedExperiment()->getPeaks(0)->peaks_);
-            peaksTable->setModel(model);
-        }
-    }
+    // if (gSession->selectedExperimentNum() > 0) {
+    //     if (!gSession->selectedExperiment()->getPeakListNames().empty()) {
+    //         PeaksTableModel* model = new PeaksTableModel(
+    //             "adhoc_tabpeaksmodel", gSession->selectedExperiment()->experiment(),
+    //             gSession->selectedExperiment()->getPeaks(0)->peaks_);
+    //         peaksTable->setModel(model);
+    //     }
+    // }
     layout->addWidget(peaksTable);
 
     type = new QLabel;
@@ -74,39 +74,39 @@ TabPeaks::TabPeaks() : QcrWidget {"peaks"}
 void TabPeaks::selectedListChanged(int i)
 {
     QString selectedPeaks = gSession->selectedExperiment()->getPeakListNames(1).at(i);
-    gSession->selectedExperiment()->selectPeaks(selectedPeaks);
-    PeaksTableModel* model = dynamic_cast<PeaksTableModel*>(peaksTable->model());
-    const Peaks* peaks = gSession->selectedExperiment()->getPeaks(selectedPeaks);
-    if (!peaks)
-        return;
-    if (!model) {
-        model = new PeaksTableModel(
-            "adhoc_tabpeaksmodel", gSession->selectedExperiment()->experiment(), peaks->peaks_);
-        peaksTable->setModel(model);
-        return;
-    }
-    model->setPeaks(peaks->peaks_);
-    listtype listType = peaks->type_;
-    switch (listType) {
-    case listtype::FILTERED : {
-        type->setText("filtered");
-        break;
-    }
-    case listtype::FOUND : {
-        type->setText("found");
-        break;
-    }
-    case listtype::PREDICTED : {
-        type->setText("predicted");
-        break;
-    }
-    }
-    filename->setText(peaks->file_);
-    kernelname->setText(peaks->convolutionkernel_);
-    numPeaks->setText(QString::number(peaks->numberPeaks()));
-    valid->setText(QString::number(peaks->numberValid()));
-    nonValid->setText(QString::number(peaks->numberInvalid()));
-    parentname->setText(peaks->parent);
+    // gSession->selectedExperiment()->selectPeaks(selectedPeaks);
+    // PeaksTableModel* model = dynamic_cast<PeaksTableModel*>(peaksTable->model());
+    // const Peaks* peaks = gSession->selectedExperiment()->getPeaks(selectedPeaks);
+    // if (!peaks)
+    //     return;
+    // if (!model) {
+    //     model = new PeaksTableModel(
+    //         "adhoc_tabpeaksmodel", gSession->selectedExperiment()->experiment(), peaks->peaks_);
+    //     peaksTable->setModel(model);
+    //     return;
+    // }
+    // model->setPeaks(peaks->peaks_);
+    // listtype listType = peaks->type_;
+    // switch (listType) {
+    // case listtype::FILTERED : {
+    //     type->setText("filtered");
+    //     break;
+    // }
+    // case listtype::FOUND : {
+    //     type->setText("found");
+    //     break;
+    // }
+    // case listtype::PREDICTED : {
+    //     type->setText("predicted");
+    //     break;
+    // }
+    // }
+    // filename->setText(peaks->file_);
+    // kernelname->setText(peaks->convolutionkernel_);
+    // numPeaks->setText(QString::number(peaks->numberPeaks()));
+    // valid->setText(QString::number(peaks->numberValid()));
+    // nonValid->setText(QString::number(peaks->numberInvalid()));
+    // parentname->setText(peaks->parent);
 }
 
 void TabPeaks::selectedExperimentChanged()
@@ -118,6 +118,6 @@ void TabPeaks::selectedExperimentChanged()
     peaksTable->setModel(model);
     if (gSession->selectedExperiment()->getPeakListNames().empty())
         return;
-    model->setPeaks(
-                gSession->selectedExperiment()->getPeaks(foundPeaksLists->currentText())->peaks_);
+    // model->setPeaks(
+    //             gSession->selectedExperiment()->getPeaks(foundPeaksLists->currentText())->peaks_);
 }

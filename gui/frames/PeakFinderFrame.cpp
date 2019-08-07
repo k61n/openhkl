@@ -24,8 +24,8 @@
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/models/Meta.h"
-#include "gui/models/PeaksTable.h"
 #include "gui/models/Session.h"
+
 #include <QCR/engine/mixin.h>
 #include <QFileInfo>
 #include <QGridLayout>
@@ -37,63 +37,27 @@
 #include <QTableWidgetItem>
 #include <QVBoxLayout>
 
-class ItemDelegate : public QItemDelegate {
- public:
-    virtual QWidget* createEditor(
-        QWidget* parent, const QStyleOptionViewItem& option,
-        const QModelIndex& index) const override;
-};
+// class ItemDelegate : public QItemDelegate {
+//  public:
+//     virtual QWidget* createEditor(
+//         QWidget* parent, const QStyleOptionViewItem& option,
+//         const QModelIndex& index) const override;
+// };
 
-QWidget* ItemDelegate::createEditor(
-    QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-    Q_UNUSED(option)
-    Q_UNUSED(index)
+// QWidget* ItemDelegate::createEditor(
+//     QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
+// {
+//     Q_UNUSED(option)
+//     Q_UNUSED(index)
 
-    QLineEdit* lineEdit = new QLineEdit(parent);
+//     QLineEdit* lineEdit = new QLineEdit(parent);
 
-    // Set validator
-    QDoubleValidator* validator = new QDoubleValidator(lineEdit);
-    lineEdit->setValidator(validator);
+//     // Set validator
+//     QDoubleValidator* validator = new QDoubleValidator(lineEdit);
+//     lineEdit->setValidator(validator);
 
-    return lineEdit;
-}
-
-//  ***********************************************************************************************
-
-FoundPeaks::FoundPeaks(nsx::PeakList peaks, const QString& name) : QcrWidget {name}
-{
-    tableModel =
-        new PeaksTableModel("foundPeaksTable", gSession->selectedExperiment()->experiment(), peaks);
-    QVBoxLayout* vertical = new QVBoxLayout(this);
-    PeaksTableView* peaksTable = new PeaksTableView(this);
-    peaksTable->setModel(tableModel);
-    vertical->addWidget(peaksTable);
-    keepSelectedPeaks =
-        new QcrCheckBox("adhoc_keepPeaks", "keep selected peaks", new QcrCell<bool>(false));
-    vertical->addWidget(keepSelectedPeaks);
-}
-
-nsx::PeakList FoundPeaks::selectedPeaks()
-{
-    const nsx::PeakList& foundPeaks = tableModel->peaks();
-    gLogger->log("selectedPeaks");
-    nsx::PeakList peaks;
-
-    if (!foundPeaks.empty()) {
-        peaks.reserve(foundPeaks.size());
-        for (nsx::sptrPeak3D peak : foundPeaks) {
-            if (keepSelectedPeaks->isChecked()) {
-                if (peak->selected())
-                    peaks.push_back(peak);
-            } else
-                peaks.push_back(peak);
-        }
-    }
-    return peaks;
-}
-
-//  ***********************************************************************************************
+//     return lineEdit;
+// }
 
 PeakFinderFrame::PeakFinderFrame() : QcrFrame {"peakFinder"}, pixmap(nullptr)
 {
@@ -264,36 +228,37 @@ void PeakFinderFrame::run()
     nsx::DataList datalist;
     for (int i = 0; i < data->count(); ++i)
         datalist.push_back(data->itemData(i, Qt::UserRole).value<nsx::sptrDataSet>());
-    nsx::PeakFinder finder;
+
+    nsx::PeakFinder* finder = gSession->selectedExperiment()->experiment()->peakFinder();
+
     ProgressView progressView(nullptr);
     progressView.watch(progHandler);
-    finder.setHandler(progHandler);
-    finder.setMinSize(minSize->value());
-    finder.setMaxSize(maxSize->value());
-    finder.setMaxFrames(maxWidth->value());
-    finder.setFramesBegin(framesBegin->value());
-    finder.setFramesEnd(framesEnd->value());
-    finder.setThreshold(threshold->value());
+    finder->setHandler(progHandler);
+    finder->setMinSize(minSize->value());
+    finder->setMaxSize(maxSize->value());
+    finder->setMaxFrames(maxWidth->value());
+    finder->setFramesBegin(framesBegin->value());
+    finder->setFramesEnd(framesEnd->value());
+    finder->setThreshold(threshold->value());
     std::string convolverType = convolutionKernel->currentText().toStdString();
     nsx::ConvolverFactory factory;
     nsx::Convolver* convolver = factory.create(convolverType, {});
     convolver->setParameters(convolutionParameters());
-    finder.setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
-    nsx::PeakList peaks;
+    finder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
+
     try {
-        peaks = finder.find(datalist);
+        finder->find(datalist);
+
+        
     } catch (std::exception& e) {
         return;
     }
-    for (nsx::sptrDataSet d : datalist) {
-        nsx::PixelSumIntegrator integrator(true, true);
-        integrator.integrate(
-            peaks, d, peakArea->value(), backgroundLowerLimit->value(),
-            backgroundUpperLimit->value());
-    }
-
-    // add Tab WidgetFoundPeaks
-    tab->addTab(new FoundPeaks(peaks, "adhoc_findNum" + QString::number(tab->count())), "Peaks");
+    // for (nsx::sptrDataSet d : datalist) {
+    //     nsx::PixelSumIntegrator integrator(true, true);
+    //     integrator.integrate(
+    //         peaks, d, peakArea->value(), backgroundLowerLimit->value(),
+    //         backgroundUpperLimit->value());
+    // }
 }
 
 std::map<std::string, double> PeakFinderFrame::convolutionParameters()
@@ -322,34 +287,18 @@ void PeakFinderFrame::doActions(QAbstractButton* button)
 
 void PeakFinderFrame::accept()
 {
-    gLogger->log("@accept");
-    for (int i = 0; i < tab->count(); ++i) {
-        FoundPeaks* widget_found_peaks = dynamic_cast<FoundPeaks*>(tab->widget(i));
-        if (!widget_found_peaks)
-            continue;
+    nsx::PeakFinder* finder = gSession->selectedExperiment()->experiment()->peakFinder();
 
-        nsx::PeakList found_peaks = widget_found_peaks->selectedPeaks();
+    if (!finder->currentPeaks()->empty()){
+        gLogger->log("@accept");
+        std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
+        dlg->exec();
+        if (!dlg->listName().isEmpty()){
+            gSession->selectedExperiment()->experiment()->acceptFoundPeaks(dlg->listName().toStdString());
+            gSession->selectedExperiment()->generatePeakModel(dlg->listName());
+        }
 
-        if (found_peaks.empty())
-            continue;
-
-        //      auto checkbox = dynamic_cast<QCheckBox *>(
-        //          tab->tabBar()->tabButton(i, QTabBar::LeftSide));
-
-        //      if (!checkbox->isChecked()) {
-        //        continue;
-        //      }
-
-        // listname dialog
-        std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(found_peaks));
-        if (!dlg->exec())
-            continue;
-        Peaks* peaks = new Peaks(found_peaks, dlg->listName(),
-                                 listtype::FOUND, convolutionKernel->currentText());
-        peaks->file_ = data->currentText();
-        gSession->selectedExperiment()->addPeaks(peaks);
     }
-
     close();
 }
 

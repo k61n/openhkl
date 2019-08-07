@@ -35,7 +35,7 @@
 #include "gui/graphics/CutterItem.h"
 #include "gui/graphics/EllipseItem.h"
 #include "gui/graphics/MaskItem.h"
-#include "gui/graphics/PeakItem.h"
+#include "gui/graphics/PeakItemGraphic.h"
 #include "gui/graphics/PlottableItem.h"
 #include "gui/graphics/SXGraphicsItem.h"
 #include "gui/models/Session.h"
@@ -92,121 +92,121 @@ void DetectorScene::clearPeakGraphicsItems()
 
 void DetectorScene::resetPeakGraphicsItems()
 {
-    if (!_currentData)
-        return;
+    // if (!_currentData)
+    //     return;
 
-    clearPeakGraphicsItems();
+    // clearPeakGraphicsItems();
 
-    if (gSession->selectedExperimentNum() >= 0) {
-        const Peaks* peaksdata = gSession->selectedExperiment()->getPeaks(0, 0);
-        if (peaksdata) {
-            nsx::PeakList peaks = peaksdata->peaks_;
+    // if (gSession->selectedExperimentNum() >= 0) {
+    //     const Peaks* peaksdata = gSession->selectedExperiment()->getPeaks(0, 0);
+    //     if (peaksdata) {
+    //         nsx::PeakList peaks = peaksdata->peaks_;
 
-            for (nsx::sptrPeak3D peak : peaks) {
-                nsx::Ellipsoid peak_ellipsoid = peak->shape();
+    //         for (nsx::sptrPeak3D peak : peaks) {
+    //             nsx::Ellipsoid peak_ellipsoid = peak->shape();
 
-                peak_ellipsoid.scale(peak->peakEnd());
+    //             peak_ellipsoid.scale(peak->peakEnd());
 
-                const nsx::AABB& aabb = peak_ellipsoid.aabb();
+    //             const nsx::AABB& aabb = peak_ellipsoid.aabb();
 
-                Eigen::Vector3d lower = aabb.lower();
+    //             Eigen::Vector3d lower = aabb.lower();
 
-                Eigen::Vector3d upper = aabb.upper();
+    //             Eigen::Vector3d upper = aabb.upper();
 
-                // If the current frame of the scene is out of the peak bounds do not paint it
-                if (_currentFrameIndex < lower[2] || _currentFrameIndex > upper[2])
-                    continue;
+    //             // If the current frame of the scene is out of the peak bounds do not paint it
+    //             if (_currentFrameIndex < lower[2] || _currentFrameIndex > upper[2])
+    //                 continue;
 
-                PeakItem* peak_gi = new PeakItem(peak, _currentFrameIndex);
+    //             PeakItemGraphic* peak_gi = new PeakItemGraphic(peak, _currentFrameIndex);
 
-                addItem(peak_gi);
+    //             addItem(peak_gi);
 
-                _peak_graphics_items.insert(std::make_pair(peak, peak_gi));
-            }
-        }
-    }
+    //             _peak_graphics_items.insert(std::make_pair(peak, peak_gi));
+    //         }
+    //     }
+    // }
 
-    if (_selected_peak_gi) {
-        removeItem(_selected_peak_gi);
-        delete _selected_peak_gi;
-        _selected_peak_gi = nullptr;
-    }
+    // if (_selected_peak_gi) {
+    //     removeItem(_selected_peak_gi);
+    //     delete _selected_peak_gi;
+    //     _selected_peak_gi = nullptr;
+    // }
 
-    auto it = _peak_graphics_items.find(_selected_peak);
+    // auto it = _peak_graphics_items.find(_selected_peak);
 
-    if (it != _peak_graphics_items.end())
-        it->second->setVisible(true);
+    // if (it != _peak_graphics_items.end())
+    //     it->second->setVisible(true);
 
-    if (_selected_peak) {
-        nsx::Ellipsoid selected_peak_ellipsoid = _selected_peak->shape();
+    // if (_selected_peak) {
+    //     nsx::Ellipsoid selected_peak_ellipsoid = _selected_peak->shape();
 
-        selected_peak_ellipsoid.scale(_selected_peak->peakEnd());
+    //     selected_peak_ellipsoid.scale(_selected_peak->peakEnd());
 
-        double frame_index = static_cast<double>(_currentFrameIndex);
+    //     double frame_index = static_cast<double>(_currentFrameIndex);
 
-        const nsx::AABB& aabb = selected_peak_ellipsoid.aabb();
+    //     const nsx::AABB& aabb = selected_peak_ellipsoid.aabb();
 
-        const Eigen::Vector3d& lower = aabb.lower();
-        const Eigen::Vector3d& upper = aabb.upper();
+    //     const Eigen::Vector3d& lower = aabb.lower();
+    //     const Eigen::Vector3d& upper = aabb.upper();
 
-        if (frame_index >= lower[2] && frame_index <= upper[2]) {
-            Eigen::Vector3d center = selected_peak_ellipsoid.intersectionCenter(
-                {0.0, 0.0, 1.0}, {0.0, 0.0, static_cast<double>(_currentFrameIndex)});
+    //     if (frame_index >= lower[2] && frame_index <= upper[2]) {
+    //         Eigen::Vector3d center = selected_peak_ellipsoid.intersectionCenter(
+    //             {0.0, 0.0, 1.0}, {0.0, 0.0, static_cast<double>(_currentFrameIndex)});
 
-            _selected_peak_gi = new QGraphicsRectItem(nullptr);
-            _selected_peak_gi->setPos(center[0], center[1]);
-            _selected_peak_gi->setRect(-10, -10, 20, 20);
+    //         _selected_peak_gi = new QGraphicsRectItem(nullptr);
+    //         _selected_peak_gi->setPos(center[0], center[1]);
+    //         _selected_peak_gi->setRect(-10, -10, 20, 20);
 
-            QPen pen;
-            pen.setColor(Qt::darkCyan);
-            pen.setStyle(Qt::DotLine);
-            _selected_peak_gi->setPen(pen);
-            _selected_peak_gi->setZValue(-1);
-            _selected_peak_gi->setAcceptHoverEvents(false);
+    //         QPen pen;
+    //         pen.setColor(Qt::darkCyan);
+    //         pen.setStyle(Qt::DotLine);
+    //         _selected_peak_gi->setPen(pen);
+    //         _selected_peak_gi->setZValue(-1);
+    //         _selected_peak_gi->setAcceptHoverEvents(false);
 
-            addItem(_selected_peak_gi);
-        }
-    }
+    //         addItem(_selected_peak_gi);
+    //     }
+    // }
 }
 
 void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
 {
-    if (data != _currentData) {
-        _currentData = data;
+    // if (data != _currentData) {
+    //     _currentData = data;
 
-        _currentData->open();
+    //     _currentData->open();
 
-        _currentFrameIndex = -1;
+    //     _currentFrameIndex = -1;
 
-        _zoomStack.clear();
-        _zoomStack.push_back(QRect(0, 0, int(_currentData->nCols()), int(_currentData->nRows())));
+    //     _zoomStack.clear();
+    //     _zoomStack.push_back(QRect(0, 0, int(_currentData->nCols()), int(_currentData->nRows())));
 
-        if (_lastClickedGI != nullptr) {
-            removeItem(_lastClickedGI);
-            _lastClickedGI = nullptr;
-        }
-    }
+    //     if (_lastClickedGI != nullptr) {
+    //         removeItem(_lastClickedGI);
+    //         _lastClickedGI = nullptr;
+    //     }
+    // }
 
-    slotChangeSelectedFrame(frame);
+    // slotChangeSelectedFrame(frame);
 }
 
 void DetectorScene::slotChangeSelectedPeak(nsx::sptrPeak3D peak)
 {
-    if (peak == _selected_peak)
-        return;
+    // if (peak == _selected_peak)
+    //     return;
 
-    _selected_peak = peak;
+    // _selected_peak = peak;
 
-    nsx::sptrDataSet data = peak->data();
+    // nsx::sptrDataSet data = peak->data();
 
-    const nsx::Ellipsoid& peak_ellipsoid = peak->shape();
+    // const nsx::Ellipsoid& peak_ellipsoid = peak->shape();
 
-    // Get frame number to adjust the data
-    size_t frame = size_t(std::lround(peak_ellipsoid.aabb().center()[2]));
+    // // Get frame number to adjust the data
+    // size_t frame = size_t(std::lround(peak_ellipsoid.aabb().center()[2]));
 
-    slotChangeSelectedData(data, frame);
+    // slotChangeSelectedData(data, frame);
 
-    update();
+    // update();
 }
 
 void DetectorScene::slotChangeSelectedFrame(int frame)
@@ -398,7 +398,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
         if (_mode == SELECT) {
             QGraphicsItem* item = itemAt(event->lastScenePos(), QTransform());
 
-            PeakItem* peak_item = dynamic_cast<PeakItem*>(item);
+            PeakItemGraphic* peak_item = dynamic_cast<PeakItemGraphic*>(item);
 
             if (!peak_item)
                 return;
@@ -446,40 +446,40 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             removeItem(_zoomrect);
             delete _zoomrect;
             emit dataChanged();
-        } else {
-            nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
+        } //else {
+            // nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
 
-            if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
-                // delete p....
-                _lastClickedGI = nullptr;
-                removeItem(p);
-            } else if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI))
-                gGui->updatePlot(p);
-            else if (MaskItem* p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
-                // add a new mask
-                auto it = findMask(p);
-                if (it != _masks.end()) {
-                    it->second = new nsx::BoxMask(*p->getAABB());
-                    _currentData->addMask(it->second);
-                    _lastClickedGI = nullptr;
-                }
-                _currentData->maskPeaks(peaks);
-                update();
-                updateMasks();
-                //                gSession->onMaskedPeaksChanged(peaks);
-            } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
-                auto it = findMask(p);
-                if (it != _masks.end()) {
-                    it->second = new nsx::EllipseMask(*p->getAABB());
-                    _currentData->addMask(it->second);
-                    _lastClickedGI = nullptr;
-                }
-                _currentData->maskPeaks(peaks);
-                update();
-                updateMasks();
-                //                gSession->onMaskedPeaksChanged(peaks);
-            }
-        }
+            // if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
+            //     // delete p....
+            //     _lastClickedGI = nullptr;
+            //     removeItem(p);
+            // } else if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI))
+            //     gGui->updatePlot(p);
+            // else if (MaskItem* p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
+            //     // add a new mask
+            //     auto it = findMask(p);
+            //     if (it != _masks.end()) {
+            //         it->second = new nsx::BoxMask(*p->getAABB());
+            //         _currentData->addMask(it->second);
+            //         _lastClickedGI = nullptr;
+            //     }
+            //     _currentData->maskPeaks(peaks);
+            //     update();
+            //     updateMasks();
+            //     //                gSession->onMaskedPeaksChanged(peaks);
+            // } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
+            //     auto it = findMask(p);
+            //     if (it != _masks.end()) {
+            //         it->second = new nsx::EllipseMask(*p->getAABB());
+            //         _currentData->addMask(it->second);
+            //         _lastClickedGI = nullptr;
+            //     }
+            //     _currentData->maskPeaks(peaks);
+            //     update();
+            //     updateMasks();
+            //     //                gSession->onMaskedPeaksChanged(peaks);
+            // }
+        // }
     }
 }
 
@@ -524,33 +524,33 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 continue;
             // If the item is a peak graphics item, remove its corresponding peak from
             // the data, update the set of peak graphics items and update the scene
-            if (PeakItem* p = dynamic_cast<PeakItem*>(item))
-                p->peak()->setSelected(false);
-            // If the item is a mask graphics item, remove its corresponding mask from
-            // the data, update the QList of mask graphics items and update the scene
-            else if (MaskItem* p = dynamic_cast<MaskItem*>(item)) {
-                auto it = findMask(p);
-                if (it != _masks.end()) {
-                    _currentData->removeMask(it->second);
-                    _masks.erase(it);
-                    nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
-                    _currentData->maskPeaks(peaks);
-                    update();
-                    updateMasks();
-                    //                    gSession->onMaskedPeaksChanged(peaks);
-                }
-            } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(item)) {
-                auto it = findMask(p);
-                if (it != _masks.end()) {
-                    _currentData->removeMask(it->second);
-                    _masks.erase(it);
-                    nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
-                    _currentData->maskPeaks(peaks);
-                    update();
-                    updateMasks();
-                    //                    gSession->onMaskedPeaksChanged(peaks);
-                }
-            }
+            // if (PeakItemGraphic* p = dynamic_cast<PeakItemGraphic*>(item))
+            //     p->peak()->setSelected(false);
+            // // If the item is a mask graphics item, remove its corresponding mask from
+            // // the data, update the QList of mask graphics items and update the scene
+            // else if (MaskItem* p = dynamic_cast<MaskItem*>(item)) {
+            //     auto it = findMask(p);
+            //     // if (it != _masks.end()) {
+            //     //     _currentData->removeMask(it->second);
+            //     //     _masks.erase(it);
+            //     //     nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
+            //     //     _currentData->maskPeaks(peaks);
+            //     //     update();
+            //     //     updateMasks();
+            //     //     //                    gSession->onMaskedPeaksChanged(peaks);
+            //     }
+            // } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(item)) {
+            //     auto it = findMask(p);
+            //     // if (it != _masks.end()) {
+            //     //     _currentData->removeMask(it->second);
+            //     //     _masks.erase(it);
+            //     //     nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
+            //     //     _currentData->maskPeaks(peaks);
+            //     //     update();
+            //     //     updateMasks();
+            //         //                    gSession->onMaskedPeaksChanged(peaks);
+            //     }
+            // }
             if (p == _lastClickedGI)
                 _lastClickedGI = nullptr;
             // Remove the item from the scene
@@ -667,53 +667,53 @@ void DetectorScene::loadCurrentImage()
     }
 
     // update the integration region pixmap
-    if (_drawIntegrationRegion) {
-        const int ncols = _currentData->nCols();
-        const int nrows = _currentData->nRows();
-        Eigen::MatrixXi mask(nrows, ncols);
-        mask.setConstant(int(EventType::EXCLUDED));
-        nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
-        for (nsx::sptrPeak3D peak : peaks) {
-            if (peak->enabled()) {
-                // IntegrationRegion constructor can throw if the region is invalid
-                try {
-                    nsx::IntegrationRegion region(
-                        peak, peak->peakEnd(), peak->bkgBegin(), peak->bkgEnd());
-                    region.updateMask(mask, _currentFrameIndex);
-                } catch (...) {
-                    peak->setSelected(false);
-                }
-            }
-        }
-        QImage region_img(ncols, nrows, QImage::Format_ARGB32);
+    // if (_drawIntegrationRegion) {
+    //     const int ncols = _currentData->nCols();
+    //     const int nrows = _currentData->nRows();
+    //     Eigen::MatrixXi mask(nrows, ncols);
+    //     mask.setConstant(int(EventType::EXCLUDED));
+    //     nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
+    //     for (nsx::sptrPeak3D peak : peaks) {
+    //         if (peak->enabled()) {
+    //             // IntegrationRegion constructor can throw if the region is invalid
+    //             try {
+    //                 nsx::IntegrationRegion region(
+    //                     peak, peak->peakEnd(), peak->bkgBegin(), peak->bkgEnd());
+    //                 region.updateMask(mask, _currentFrameIndex);
+    //             } catch (...) {
+    //                 peak->setSelected(false);
+    //             }
+    //         }
+    //     }
+    //     QImage region_img(ncols, nrows, QImage::Format_ARGB32);
 
-        for (int c = 0; c < ncols; ++c) {
-            for (int r = 0; r < nrows; ++r) {
-                EventType ev = EventType(mask(r, c));
-                unsigned int color;
+    //     for (int c = 0; c < ncols; ++c) {
+    //         for (int r = 0; r < nrows; ++r) {
+    //             EventType ev = EventType(mask(r, c));
+    //             unsigned int color;
 
-                switch (ev) {
-                    case EventType::PEAK: color = green; break;
-                    case EventType::BACKGROUND: color = yellow; break;
-                    default: color = transparent; break;
-                }
+    //             switch (ev) {
+    //                 case EventType::PEAK: color = green; break;
+    //                 case EventType::BACKGROUND: color = yellow; break;
+    //                 default: color = transparent; break;
+    //             }
 
-                // todo: what about unselected peaks?
-                region_img.setPixel(c, r, color);
-            }
-        }
-        if (!_integrationRegion) {
-            _integrationRegion = addPixmap(QPixmap::fromImage(region_img));
-            _integrationRegion->setZValue(-1);
-        } else {
-            _integrationRegion->setPixmap(QPixmap::fromImage(region_img));
-        }
-    }
-    setSceneRect(_zoomStack.back());
-    emit dataChanged();
+    //             // todo: what about unselected peaks?
+    //             region_img.setPixel(c, r, color);
+    //         }
+    //     }
+    //     if (!_integrationRegion) {
+    //         _integrationRegion = addPixmap(QPixmap::fromImage(region_img));
+    //         _integrationRegion->setZValue(-1);
+    //     } else {
+    //         _integrationRegion->setPixmap(QPixmap::fromImage(region_img));
+    //     }
+    // }
+    // setSceneRect(_zoomStack.back());
+    // emit dataChanged();
 
-    if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI))
-        gGui->updatePlot(p);
+    // if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI))
+    //     gGui->updatePlot(p);
 }
 
 void DetectorScene::showPeakLabels(bool flag)

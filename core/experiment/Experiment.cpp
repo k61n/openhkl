@@ -132,4 +132,65 @@ void Experiment::removeData(const std::string& name)
         _data.erase(it);
 }
 
+void Experiment::addPeakCollection(
+    const std::string name, 
+    const std::vector<std::shared_ptr<nsx::Peak3D>>* peaks) {
+    nsx::listtype type{listtype::FOUND};
+    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
+    ptr->populate(peaks);
+    
+    _peakCollections.insert(std::make_pair(name, std::move(ptr)));
+}
+
+bool Experiment::hasPeakCollection(const std::string& name) const {
+    auto peaks = _peakCollections.find(name);
+    return (peaks != _peakCollections.end());
+}
+
+PeakCollection* Experiment::getPeakCollection(const std::string name){
+    return _peakCollections[name].get();
+}
+
+void Experiment::removePeakCollection(const std::string& name) {
+    auto peaks = _peakCollections.find(name);
+    if (peaks != _peakCollections.end())
+        _peakCollections.erase(peaks);
+}
+
+std::vector<std::string> Experiment::getCollectionNames() const {
+    
+    std::vector<std::string> names;
+	for (
+        std::map<std::string,std::unique_ptr<PeakCollection>>::const_iterator it = _peakCollections.begin(); 
+        it != _peakCollections.end(); ++it) {
+		names.push_back(it->second->getName());
+	}
+    return names;
+
+}
+
+void Experiment::addUnitCell(const std::string& name, sptrUnitCell unit_cell) {
+    _unit_cells.insert(std::make_pair(name, unit_cell));
+}
+
+bool Experiment::hasUnitCell(const std::string& name) const {
+    auto unit_cell = _unit_cells.find(name);
+    return (unit_cell != _unit_cells.end());
+}
+
+sptrUnitCell Experiment::getUnitCell(const std::string& name) {
+    return _unit_cells[name];
+}
+
+void Experiment::removeUnitCell(const std::string& name) {
+    auto unit_cell = _unit_cells.find(name);
+    if (unit_cell != _unit_cells.end())
+        _unit_cells.erase(unit_cell);
+}
+
+void Experiment::acceptFoundPeaks(const std::string& name) {
+    addPeakCollection(name, _peak_finder.currentPeaks());
+}
+
+
 } // namespace nsx

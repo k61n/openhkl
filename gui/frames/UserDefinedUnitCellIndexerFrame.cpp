@@ -57,24 +57,24 @@ UserDefinedUnitCellIndexerFrame::UserDefinedUnitCellIndexerFrame()
 void UserDefinedUnitCellIndexerFrame::layout()
 {
     // defaults_
-    nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
-    defaults_.reserve(peaks.size());
-    for (nsx::sptrPeak3D peak : peaks) {
-        nsx::sptrUnitCell unit_cell = peak->unitCell();
-        if (unit_cell)
-            defaults_.push_back(std::make_pair(peak, std::make_shared<nsx::UnitCell>(*unit_cell)));
-        else
-            defaults_.push_back(std::make_pair(peak, nullptr));
-    }
+    // nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
+    // defaults_.reserve(peaks.size());
+    // for (nsx::sptrPeak3D peak : peaks) {
+    //     nsx::sptrUnitCell unit_cell = peak->unitCell();
+    //     if (unit_cell)
+    //         defaults_.push_back(std::make_pair(peak, std::make_shared<nsx::UnitCell>(*unit_cell)));
+    //     else
+    //         defaults_.push_back(std::make_pair(peak, nullptr));
+    // }
     // layout
     QVBoxLayout* whole = new QVBoxLayout(this);
     tabwidget = new QcrTabWidget("adhoc_unitCellIndexerTabs");
     tab = new QcrWidget("adhoc_tab");
     QVBoxLayout* settings = new QVBoxLayout(tab);
-    PeaksTableModel* model = new PeaksTableModel(
-        "adhoc_tablePeaks", gSession->selectedExperiment()->experiment(), peaks);
-    peaktable = new PeaksTableView;
-    peaktable->setModel(model);
+    // PeaksTableModel* model = new PeaksTableModel(
+    //     "adhoc_tablePeaks", gSession->selectedExperiment()->experiment(), peaks);
+    // peaktable = new PeaksTableView;
+    // peaktable->setModel(model);
     peaktable->selectAll();
     settings->addWidget(peaktable);
     QGroupBox* parameters = new QGroupBox("Parameters", tab);

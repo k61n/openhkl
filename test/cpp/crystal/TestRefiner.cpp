@@ -62,7 +62,9 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
 
     peakFinder->setHandler(progressHandler);
 
-    auto found_peaks = peakFinder->find(numors);
+    peakFinder->find(numors);
+    auto found_peaks = peakFinder->currentPeaks();
+    
     CHECK(found_peaks.size() >= 800);
 
     // at this stage we have the peaks, now we index

@@ -582,10 +582,10 @@ void PeakFinder::mergeEquivalentBlobs(
  * merge colliding blobs
  *
  */
-PeakList PeakFinder::find(DataList numors)
+void PeakFinder::find(DataList numors)
 {
     qDebug("PeakFinder::find ... with %li numors\n", numors.size());
-    PeakList ret;
+    _current_peaks.clear();
 
     int i = 0;
     for (auto&& numor : numors) {
@@ -691,7 +691,7 @@ PeakList PeakFinder::find(DataList numors)
 
             p->setPredicted(false);
             numor_peaks.push_back(p);
-            ret.push_back(p);
+            _current_peaks.push_back(p);
 
             ++count;
 
@@ -718,7 +718,6 @@ PeakList PeakFinder::find(DataList numors)
         _handler->setProgress(100);
     }
     qDebug("exit PeakFinder::find\n");
-    return ret;
 }
 
 } // namespace nsx

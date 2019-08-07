@@ -93,61 +93,61 @@ void PredictPeaksDialog::layout()
 
 void PredictPeaksDialog::accept()
 {
-    if (!peaks.empty()) {
-        std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(peaks));
+    // if (!peaks.empty()) {
+    //     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(peaks));
 
-        if (!dlg->exec()) {
-            QDialog::accept();
-            return;
-        }
+    //     if (!dlg->exec()) {
+    //         QDialog::accept();
+    //         return;
+    //     }
 
-        Peaks* pred = new Peaks(peaks, dlg->listName(), listtype::PREDICTED, "-");
-        const QString& selName = gSession->selectedExperiment()->selectedListName();
-        pred->file_ = QString::fromStdString(
-                    gSession->selectedExperiment()->allData().at(0)->filename());
+    //     Peaks* pred = new Peaks(peaks, dlg->listName(), listtype::PREDICTED, "-");
+    //     const QString& selName = gSession->selectedExperiment()->selectedListName();
+    //     pred->file_ = QString::fromStdString(
+    //                 gSession->selectedExperiment()->allData().at(0)->filename());
 
-        gSession->selectedExperiment()->addPeaks(pred, selName);
-    }
+    //     gSession->selectedExperiment()->addPeaks(pred, selName);
+    // }
 
     QDialog::accept();
 }
 
 void PredictPeaksDialog::predict()
 {
-    qDebug() << "Starting peak prediction...";
+    // qDebug() << "Starting peak prediction...";
 
-    QList<nsx::sptrDataSet> data = gSession->selectedExperiment()->allData();
+    // QList<nsx::sptrDataSet> data = gSession->selectedExperiment()->allData();
 
-    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
-    ProgressView progressView(nullptr);
-    progressView.watch(handler);
+    // nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
+    // ProgressView progressView(nullptr);
+    // progressView.watch(handler);
 
-    nsx::sptrShapeLibrary lib = gSession->selectedExperiment()->getLibrary();
-    nsx::sptrUnitCell cell = gSession->selectedExperiment()->getUnitCell(unitCells->currentIndex());
-    double mind = dmin->value();
-    double maxd = dmax->value();
-    double searchradius = radius->value();
-    double frames = nFrames->value();
-    int neighbors = minNeighbors->value();
-    int interpol = interpolation->currentIndex();
+    // nsx::sptrShapeLibrary lib = gSession->selectedExperiment()->getLibrary();
+    // nsx::sptrUnitCell cell = gSession->selectedExperiment()->getUnitCell(unitCells->currentIndex());
+    // double mind = dmin->value();
+    // double maxd = dmax->value();
+    // double searchradius = radius->value();
+    // double frames = nFrames->value();
+    // int neighbors = minNeighbors->value();
+    // int interpol = interpolation->currentIndex();
 
-    nsx::PeakInterpolation peak_interpolation = static_cast<nsx::PeakInterpolation>(interpol);
-    nsx::PeakList predictedPeaks;
+    // nsx::PeakInterpolation peak_interpolation = static_cast<nsx::PeakInterpolation>(interpol);
+    // nsx::PeakList predictedPeaks;
 
-    int current_numor = 0;
-    for (nsx::sptrDataSet d : data) {
-        qDebug() << "Predicting peaks for numor " << ++current_numor << " of " << data.size();
+    // int current_numor = 0;
+    // for (nsx::sptrDataSet d : data) {
+    //     qDebug() << "Predicting peaks for numor " << ++current_numor << " of " << data.size();
 
-        auto&& predicted = nsx::predictPeaks(
-            *lib, d, cell, mind, maxd, searchradius, frames, neighbors, peak_interpolation);
+    //     auto&& predicted = nsx::predictPeaks(
+    //         *lib, d, cell, mind, maxd, searchradius, frames, neighbors, peak_interpolation);
 
-        for (nsx::sptrPeak3D peak : predicted)
-            predictedPeaks.push_back(peak);
+    //     for (nsx::sptrPeak3D peak : predicted)
+    //         predictedPeaks.push_back(peak);
 
-        qDebug() << "Added " << predicted.size() << " predicted peaks.";
-    }
+    //     qDebug() << "Added " << predicted.size() << " predicted peaks.";
+    // }
 
-    peaks = predictedPeaks;
-    qDebug() << "Completed  peak prediction. Added " << predictedPeaks.size() << " peaks";
-    model->setPeaks(peaks);
+    // peaks = predictedPeaks;
+    // qDebug() << "Completed  peak prediction. Added " << predictedPeaks.size() << " peaks";
+    // model->setPeaks(peaks);
 }

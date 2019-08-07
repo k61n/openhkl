@@ -27,20 +27,20 @@
 
 PeakFilterDialog::PeakFilterDialog() : QDialog {gGui}
 {
-    if (gSession->selectedExperimentNum() < 0) {
-        gLogger->log("## No experiment selected");
-        return;
-    }
+    // if (gSession->selectedExperimentNum() < 0) {
+    //     gLogger->log("## No experiment selected");
+    //     return;
+    // }
 
-    if (gSession->selectedExperiment()->getPeakListNames().empty()) {
-        gLogger->log("## No peaks to filter. Find peaks first.");
-        return;
-    }
+    // if (gSession->selectedExperiment()->getPeakListNames().empty()) {
+    //     gLogger->log("## No peaks to filter. Find peaks first.");
+    //     return;
+    // }
 
-    peaks_ = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
+    // peaks_ = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
 
-    setAttribute(Qt::WA_DeleteOnClose);
-    doLayout();
+    // setAttribute(Qt::WA_DeleteOnClose);
+    // doLayout();
 }
 
 PeakFilterDialog::~PeakFilterDialog()
@@ -142,14 +142,14 @@ void PeakFilterDialog::doLayout()
     upperLayout->addLayout(settings);
 
     QVBoxLayout* tablelayout = new QVBoxLayout;
-    peakList = new QcrComboBox(
-        "adhoc_peakListsPeakFilter", new QcrCell<int>(0),
-        gSession->selectedExperiment()->getPeakListNames());
-    tablelayout->addWidget(peakList);
-    model_ = new PeaksTableModel(
-        "adhoc_filterModel", gSession->selectedExperiment()->experiment(), peaks_);
+    // peakList = new QcrComboBox(
+    //     "adhoc_peakListsPeakFilter", new QcrCell<int>(0),
+    //     gSession->selectedExperiment()->getPeakListNames());
+    // tablelayout->addWidget(peakList);
+    // model_ = new PeaksTableModel(
+    //     "adhoc_filterModel", gSession->selectedExperiment()->experiment(), peaks_);
     peaksTable = new PeaksTableView;
-    peaksTable->setModel(model_);
+    // peaksTable->setModel(model_);
     tablelayout->addWidget(peaksTable);
     upperLayout->addLayout(tablelayout);
 
@@ -158,10 +158,10 @@ void PeakFilterDialog::doLayout()
         QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply, Qt::Horizontal);
     whole->addWidget(buttons);
 
-    peakList->setHook([this](int) {
-        peaks_ = gSession->selectedExperiment()->getPeaks(peakList->currentText())->peaks_;
-        model_->setPeaks(peaks_);
-    });
+    // peakList->setHook([this](int) {
+    //     peaks_ = gSession->selectedExperiment()->getPeaks(peakList->currentText())->peaks_;
+    //     model_->setPeaks(peaks_);
+    // });
     connect(buttons, &QDialogButtonBox::clicked, this, &PeakFilterDialog::slotActionClicked);
 
     show();
@@ -230,28 +230,28 @@ void PeakFilterDialog::filterPeaks()
 
 void PeakFilterDialog::accept()
 {
-    const nsx::PeakList& filtered_peaks = model_->peaks();
+    // const nsx::PeakList& filtered_peaks = model_->peaks();
 
-    if (!filtered_peaks.empty()) {
-        std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(filtered_peaks));
+    // if (!filtered_peaks.empty()) {
+    //     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(filtered_peaks));
 
-        if (!dlg->exec())
-            return;
+    //     if (!dlg->exec())
+    //         return;
 
-        Peaks* peaks = new Peaks(filtered_peaks, dlg->listName(), listtype::FILTERED, "unknown");
-        const Peaks* parent = gSession->selectedExperiment()->getPeaks(peakList->currentText());
-        peaks->parent = peakList->currentText();
-        peaks->convolutionkernel_ = parent->convolutionkernel_;
-        peaks->file_ = parent->file_;
-        gSession->selectedExperiment()->addPeaks(peaks, peakList->currentText());
+    //     Peaks* peaks = new Peaks(filtered_peaks, dlg->listName(), listtype::FILTERED, "unknown");
+    //     const Peaks* parent = gSession->selectedExperiment()->getPeaks(peakList->currentText());
+    //     peaks->parent = peakList->currentText();
+    //     peaks->convolutionkernel_ = parent->convolutionkernel_;
+    //     peaks->file_ = parent->file_;
+    //     gSession->selectedExperiment()->addPeaks(peaks, peakList->currentText());
 
-        QString message = "Applied peak filters on selected peaks. Remains ";
-        message += QString::number(filtered_peaks.size());
-        message += " out of ";
-        message += QString::number(peaks_.size());
-        message += " peaks";
-        gLogger->log(message);
-    }
+    //     QString message = "Applied peak filters on selected peaks. Remains ";
+    //     message += QString::number(filtered_peaks.size());
+    //     message += " out of ";
+    //     message += QString::number(peaks_.size());
+    //     message += " peaks";
+    //     gLogger->log(message);
+    // }
 
     QDialog::accept();
 }

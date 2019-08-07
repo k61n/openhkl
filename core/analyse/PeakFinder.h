@@ -31,7 +31,9 @@ class PeakFinder {
  public:
     PeakFinder();
 
-    PeakList find(DataList numors);
+    void find(DataList numors);
+
+    PeakList* currentPeaks() {return &_current_peaks;};
 
     void setHandler(const sptrProgressHandler& handler);
 
@@ -94,6 +96,8 @@ class PeakFinder {
     int _framesBegin;
 
     int _framesEnd;
+
+    PeakList _current_peaks;
 };
 
 using sptrPeakFinder = std::shared_ptr<PeakFinder>;

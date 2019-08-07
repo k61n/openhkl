@@ -282,7 +282,6 @@ void DataSet::saveHDF5(const std::string& filename) // const
         }
     }
     file.close();
-    // blosc_destroy();
 }
 
 void DataSet::addMask(IMask* mask)

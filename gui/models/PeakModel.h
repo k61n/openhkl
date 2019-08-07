@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/models/PeaksTable.h
+//! @file      gui/models/PeakModel.h
 //! @brief     Defines classes PeaksTableModel and PeaksTableView
 //!
 //! @homepage  ###HOMEPAGE###
@@ -19,9 +19,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/shape/ShapeLibrary.h"
 #include <QCR/widgets/tables.h>
-#include <QTableView>
 
-//! Table model for the PeaksTableView
 class PeaksTableModel : public QcrTableModel {
     Q_OBJECT
  public:
@@ -75,39 +73,4 @@ class PeaksTableModel : public QcrTableModel {
     nsx::PeakList _peaks;
 };
 
-//! Table view to display a PeakList
-class PeaksTableView : public QTableView {
-    Q_OBJECT
- public:
-    explicit PeaksTableView(QWidget* parent = 0);
-    void contextMenuEvent(QContextMenuEvent*) override;
-    virtual void keyPressEvent(QKeyEvent* event) override;
- signals:
-    void plotData(const QVector<double>&, const QVector<double>&, const QVector<double>&);
-    void plotPeak(nsx::sptrPeak3D);
-    void autoIndexed();
-    void updateShapeLibrary(nsx::sptrShapeLibrary);
- public slots:
-    //! Normalize to monitor.
-    void normalizeToMonitor();
-    //! Plot as function of parameter. Needs to be a numeric type
-    void plotAs(const std::string& key);
-    void selectPeak(QModelIndex index);
-    void clearSelectedPeaks() { clearSelection(); }
-    void selectAllPeaks() { selectAll(); }
-    void selectValidPeaks();
-    void selectUnindexedPeaks();
-    void togglePeaksSelection();
- private slots:
-    void togglePeakSelection(QModelIndex index);
-
- private:
-    void sortByHKL(bool up);
-    void sortByIntensity(bool up);
-    void sortByNumor(bool up);
-    void sortBySelected(bool up);
-    void sortByTransmission(bool up);
-    void constructTable();
-};
-
-#endif // GUI_MODELS_PEAKSTABLE_H
+#endif

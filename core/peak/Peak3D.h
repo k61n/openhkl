@@ -35,6 +35,8 @@ class Peak3D {
     Peak3D(sptrDataSet data);
     //! Create peak belonging to data with given shape
     Peak3D(sptrDataSet data, const Ellipsoid& shape);
+    //! Creat the peak from another peak
+    Peak3D(std::shared_ptr<nsx::Peak3D> peak);
 
     //! Comparison operator used to sort peaks
     friend bool operator<(const Peak3D& p1, const Peak3D& p2);
@@ -78,7 +80,7 @@ class Peak3D {
 
     //! Sets the peak masking state
     void setMasked(bool masked);
-    //! eturn the peak masking state
+    //! Return the peak masking state
     bool masked() const;
 
     //! Returns true if peak is enable (selected and not masked)
@@ -144,8 +146,9 @@ class Peak3D {
     std::vector<Intensity> _rockingCurve;
 };
 
-using sptrPeak3D = std::shared_ptr<Peak3D>;
-using PeakList = std::vector<sptrPeak3D>;
+using sptrPeak3D    = std::shared_ptr<Peak3D>;
+using PeakList      = std::vector<sptrPeak3D>;
+using sptrPeakList  = std::shared_ptr<PeakList>;
 
 //! Sort peak into a list of equivalent peaks, using the space group symmetry,
 //! optionally including Friedel pairs (if this is not already a symmetry of the space group)
