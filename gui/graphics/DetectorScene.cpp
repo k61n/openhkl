@@ -171,23 +171,23 @@ void DetectorScene::resetPeakGraphicsItems()
 
 void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
 {
-    // if (data != _currentData) {
-    //     _currentData = data;
+    if (data != _currentData) {
+        _currentData = data;
 
-    //     _currentData->open();
+        _currentData->open();
 
-    //     _currentFrameIndex = -1;
+        _currentFrameIndex = -1;
 
-    //     _zoomStack.clear();
-    //     _zoomStack.push_back(QRect(0, 0, int(_currentData->nCols()), int(_currentData->nRows())));
+        _zoomStack.clear();
+        _zoomStack.push_back(QRect(0, 0, int(_currentData->nCols()), int(_currentData->nRows())));
 
-    //     if (_lastClickedGI != nullptr) {
-    //         removeItem(_lastClickedGI);
-    //         _lastClickedGI = nullptr;
-    //     }
-    // }
+        if (_lastClickedGI != nullptr) {
+            removeItem(_lastClickedGI);
+            _lastClickedGI = nullptr;
+        }
+    }
 
-    // slotChangeSelectedFrame(frame);
+    slotChangeSelectedFrame(frame);
 }
 
 void DetectorScene::slotChangeSelectedPeak(nsx::sptrPeak3D peak)

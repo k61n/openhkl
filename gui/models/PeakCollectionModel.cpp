@@ -114,35 +114,3 @@ QVariant PeakCollectionModel::headerData(int section, Qt::Orientation orientatio
         return QVariant(section + 1);
     }
 }
-
-// QModelIndex PeakCollectionModel::index(int row, int col, const QModelIndex &parent ) const
-// {
-//     if (row >= rowCount())
-//         return QModelIndex();
-//     if (col >= columnCount())
-//         return QModelIndex();
-//     if ( !(parent.isValid()) )
-//         return QModelIndex();
-
-//     QStandardItem *parentItem = static_cast<QStandardItem*>(parent.internalPointer());
-    
-//     if (!parentItem->hasChildren())
-//         return QModelIndex();
-
-//     return createIndex(row, col, _root_item->child(row));
-
-// }
-
-// QModelIndex PeakCollectionModel::parent(const QModelIndex &item) const
-// {
-//     if ( !(item.isValid()) )
-//         return QModelIndex();
- 
-//     QStandardItem *childItem = static_cast<QStandardItem*>(item.internalPointer());
-//     QStandardItem *parentItem = childItem->parent();
- 
-//     if ( parentItem == _root_item )
-//         return QModelIndex();
- 
-//     return createIndex( parentItem->row(), 0, parentItem );
-// }
