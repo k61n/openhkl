@@ -33,10 +33,14 @@ public:
     int columnCount() const;
     //! Retrieve the data of column and row
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    //! Get the peak collection pointer
+    nsx::PeakCollection* peakCollection() const {return _peak_collection;};
+    //! Returns the peak item at a given row
+    PeakItem* peakItemAt(int row) const;
 
 private:
     nsx::PeakCollection* _peak_collection;
-    std::vector<PeakItem> _peak_items;
+    std::vector<PeakItem*> _peak_items;
 
 };
 

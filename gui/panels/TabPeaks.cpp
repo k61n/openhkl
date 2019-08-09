@@ -19,61 +19,67 @@
 #include <QFormLayout>
 #include <QTreeView>
 #include <QVBoxLayout>
-
-//-------------------------------------------------------------------------------------------------
-//! @class TabPeaks
+#include <QStandardItemModel>
 
 TabPeaks::TabPeaks() : QcrWidget {"peaks"}
 {
-    foundPeaksLists = new QcrComboBox("adhoc_foundLists", new QcrCell<int>(0), []() {
-        if (gSession->selectedExperimentNum() < 0)
-            return QStringList {""};
-        return gSession->selectedExperiment()->getPeakListNames(1);
-    });
-    QVBoxLayout* layout = new QVBoxLayout(this);
-    layout->addWidget(foundPeaksLists);
-    foundPeaksLists->setHook([this](int i) { selectedListChanged(i); });
+    peak_list_combo = new QComboBox();
+    peak_table = new PeaksTableView;
 
-    peaksTable = new PeaksTableView;
-    peaksTable->show();
-    // if (gSession->selectedExperimentNum() > 0) {
-    //     if (!gSession->selectedExperiment()->getPeakListNames().empty()) {
-    //         PeaksTableModel* model = new PeaksTableModel(
-    //             "adhoc_tabpeaksmodel", gSession->selectedExperiment()->experiment(),
-    //             gSession->selectedExperiment()->getPeaks(0)->peaks_);
-    //         peaksTable->setModel(model);
-    //     }
-    // }
-    layout->addWidget(peaksTable);
+    QVBoxLayout* layout = new QVBoxLayout(this);
+    layout->addWidget(peak_list_combo);
+    layout->addWidget(peak_table);
 
     type = new QLabel;
-    filename = new QLabel;
-    kernelname = new QLabel;
-    parentname = new QLabel;
-    numPeaks = new QLabel;
+    file_name = new QLabel;
+    kernel_name = new QLabel;
+    parent_name = new QLabel;
+    peak_num = new QLabel;
     valid = new QLabel;
-    nonValid = new QLabel;
+    non_valid = new QLabel;
 
-    QHBoxLayout* metaBox = new QHBoxLayout;
-    QFormLayout* leftSide = new QFormLayout;
-    leftSide->addRow("listtype:", type);
-    leftSide->addRow("file:", filename);
-    leftSide->addRow("kernel:", kernelname);
-    leftSide->addRow("parent:  ", parentname);
+    QFormLayout* left_side = new QFormLayout;
+    left_side->addRow("Type:", type);
+    left_side->addRow("File:", file_name);
+    left_side->addRow("Kernel:", kernel_name);
+    left_side->addRow("Parent:  ", parent_name);
 
-    QFormLayout* rightSide = new QFormLayout;
-    rightSide->addRow("peaks:", numPeaks);
-    rightSide->addRow("valid:", valid);
-    rightSide->addRow("not valid:", nonValid);
-    metaBox->addLayout(leftSide);
-    metaBox->addLayout(rightSide);
+    QFormLayout* right_side = new QFormLayout;
+    right_side->addRow("Peaks:", peak_num);
+    right_side->addRow("Valid:", valid);
+    right_side->addRow("Not valid:", non_valid);
 
-    layout->addLayout(metaBox);
+    QHBoxLayout* meta_box = new QHBoxLayout;
+    meta_box->addLayout(left_side);
+    meta_box->addLayout(right_side);
+
+    layout->addLayout(meta_box);
+
+    // peaksTable->show();
+    // // if (gSession->selectedExperimentNum() > 0) {
+    // //     if (!gSession->selectedExperiment()->getPeakListNames().empty()) {
+    // //         PeaksTableModel* model = new PeaksTableModel(
+    // //             "adhoc_tabpeaksmodel", gSession->selectedExperiment()->experiment(),
+    // //             gSession->selectedExperiment()->getPeaks(0)->peaks_);
+    // //         peaksTable->setModel(model);
+    // //     }
+    // // }
+
+    QObject::connect(
+        peak_list_combo, SIGNAL(currentTextChanged(const QString&)), 
+        this, SLOT(changedPeakSelection(const QString&)));
 }
 
-void TabPeaks::selectedListChanged(int i)
+void TabPeaks::selectedPeaksChanged()
 {
-    QString selectedPeaks = gSession->selectedExperiment()->getPeakListNames(1).at(i);
+    PeakCollectionModel* model = gSession->selectedExperiment()->selected();
+
+    if (model == nullptr)
+        return;
+
+    peak_table->setModel(model);
+
+    // QString selectedPeaks = gSession->selectedExperiment()->getPeakListNames(1).at(i);
     // gSession->selectedExperiment()->selectPeaks(selectedPeaks);
     // PeaksTableModel* model = dynamic_cast<PeaksTableModel*>(peaksTable->model());
     // const Peaks* peaks = gSession->selectedExperiment()->getPeaks(selectedPeaks);
@@ -113,11 +119,24 @@ void TabPeaks::selectedExperimentChanged()
 {
     if (gSession->selectedExperimentNum() < 0)
         return;
-    PeaksTableModel* model =
-        new PeaksTableModel("adhoc_tabpeaksmodel", gSession->selectedExperiment()->experiment());
-    peaksTable->setModel(model);
-    if (gSession->selectedExperiment()->getPeakListNames().empty())
-        return;
-    // model->setPeaks(
-    //             gSession->selectedExperiment()->getPeaks(foundPeaksLists->currentText())->peaks_);
+
+    QStandardItemModel* list_model = 
+        gSession->selectedExperiment()->peakListModel();
+
+    // PeakCollectionModel* peak_model = 
+    //     gSession->selectedExperiment();
+    
+    peak_list_combo->setModel(list_model);
+    selectedPeaksChanged();
+
 }
+
+void TabPeaks::changedPeakSelection(const QString& name)
+{
+    std::cout << name.toStdString()<< std::endl;
+    gSession->selectedExperiment()->setSelected(name.toStdString());
+    selectedPeaksChanged();
+}
+
+
+

@@ -11,11 +11,19 @@
 //! @authors   see CITATION, MAINTAINER
 //
 //  ***********************************************************************************************
-
-#include "core/peak/Peak3D.h"
-#include "core/experiment/DataSet.h"
-// #include "core/peak/Peak3D.h"
 #include "gui/items/PeakItem.h"
+
+#include "base/geometry/ReciprocalVector.h"
+#include "core/analyse/PeakFilter.h"
+#include "core/detector/Detector.h"
+#include "core/experiment/DataSet.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentState.h"
+#include "core/peak/Peak3D.h"
+#include "core/raw/IDataReader.h"
+#include "core/raw/MetaData.h"
+#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/UnitCell.h"
 
 PeakItem::PeakItem(nsx::Peak3D* peak)
     :QStandardItem()
@@ -23,16 +31,18 @@ PeakItem::PeakItem(nsx::Peak3D* peak)
     _peak = peak;
 }
 
-QVariant PeakItem::data(
+QVariant PeakItem::peakData(
     const QModelIndex &index, 
     int role) const
 {
-    int col = index.column();
 
+    int col = index.column();
+    
     Eigen::RowVector3i hkl = {0, 0, 0};
     Eigen::RowVector3d hkl_error = {0.0, 0.0, 0.0};
 
     nsx::sptrUnitCell cell = _peak->unitCell();
+
     if (cell) {
         nsx::MillerIndex miller_index(_peak->q(), *cell);
         if (miller_index.indexed(cell->indexingTolerance())) {
@@ -40,11 +50,12 @@ QVariant PeakItem::data(
             hkl_error = miller_index.error();
         }
     }
-
+    
     double peak_d = 1.0 / (_peak->q().rowVector().norm());
     double intensity = _peak->correctedIntensity().value();
     double sigma_intensity = _peak->correctedIntensity().sigma();
     const Eigen::Vector3d& peak_center = _peak->shape().center();
+    
 
     switch (role) {
         case Qt::DisplayRole:
@@ -65,19 +76,19 @@ QVariant PeakItem::data(
                 case Column::py: {
                     return peak_center(1);
                 }
-                case Column::frame: {
+                case Column::Frame: {
                     return peak_center(2);
                 }
-                case Column::intensity: {
+                case Column::Intensity: {
                     return intensity;
                 }
-                case Column::sigmaIntensity: {
+                case Column::Sigma: {
                     return sigma_intensity;
                 }
-                case Column::numor: {
+                case Column::Numor: {
                     return _peak->data()->reader()->metadata().key<int>("Numor");
                 }
-                case Column::unitCell: {
+                case Column::uc: {
                     nsx::sptrUnitCell unit_cell = _peak->unitCell();
                     if (unit_cell)
                         return QString::fromStdString(unit_cell->name());
@@ -89,12 +100,10 @@ QVariant PeakItem::data(
                 }
             }
             break;
-        case Qt::ForegroundRole: {
-            if (_peak->enabled())
-                return QBrush(Qt::black);
-            else
-                return QBrush(Qt::red);
 
+        case Qt::ForegroundRole: {
+            if (!_peak->enabled())
+                return QBrush(Qt::red);
             break;
         }
         case Qt::ToolTipRole:

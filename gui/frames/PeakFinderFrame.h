@@ -17,57 +17,86 @@
 
 #include "gui/graphics/DetectorView.h"
 #include "gui/views/PeakTableView.h"
+
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
+
 #include <QDialogButtonBox>
 #include <QTableWidget>
+#include <QWidget>
+#include <QPushButton>
 
-//! Tab of the PeakFinderFrame which contains the found peaks
-class FoundPeaks : public QcrWidget {
- public:
-    FoundPeaks(nsx::PeakList, const QString&);
-    //! Returns the selected peaks as a PeakList
-    nsx::PeakList selectedPeaks();
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
- private:
-    PeaksTableModel* tableModel;
-    QcrCheckBox* keepSelectedPeaks;
-};
+#include <QSizePolicy>
+
 
 //! Frame which shows the settings to find peaks
 class PeakFinderFrame : public QcrFrame {
- public:
-    PeakFinderFrame();
-    //! Change the convolution parameters
-    void updateConvolutionParameters();
-    //! Find peaks
-    void run();
-    std::map<std::string, double> convolutionParameters();
+public:
+   PeakFinderFrame();
+   //! Change the convolution parameters
+   void updateConvolutionParameters();
+   //! Find peaks
+   void find();
+   // ! integrate found peaks
+   void integrate();
 
- private:
-    QcrSpinBox* threshold;
-    QcrDoubleSpinBox* mergingScale;
-    QcrSpinBox* minSize;
-    QcrSpinBox* maxSize;
-    QcrSpinBox* maxWidth;
-    QComboBox* convolutionKernel;
-    QTableWidget* convolutionParams;
-    QcrSpinBox* framesBegin;
-    QcrSpinBox* framesEnd;
-    QComboBox* data;
-    QcrSpinBox* frame;
-    QcrCheckBox* applyThreshold;
-    QcrDoubleSpinBox* peakArea;
-    QcrDoubleSpinBox* backgroundLowerLimit;
-    QcrDoubleSpinBox* backgroundUpperLimit;
-    DetectorView* preview;
-    QDialogButtonBox* buttons;
-    QcrTabWidget* tab;
-    QGraphicsPixmapItem* pixmap;
+private:
+   //! Set up the GUI size policies
+   void setSizePolicies();
+   //! Set up the blob finding GUI
+   void setBlobUp();
+   //! Set up the Preview GUI
+   void setPreviewUp();
+   //! Set up the Preview GUI
+   void setIntegrateUp();
+   //! Set up the detector figure up
+   void setFigureUp();
+   //! Set the execution buttons up
+   void setExecuteUp();
+   //! Set the parameters values up
+   void setParametersUp();
+   //!convolution parameter map
+   std::map<std::string, double> convolutionParameters();
 
-    void refreshPreview();
-    void accept();
-    void doActions(QAbstractButton*);
+private:
+   QHBoxLayout* main_layout;
+   QVBoxLayout* left_layout;
+
+   QcrSpinBox* _threshold_spin;
+   QcrDoubleSpinBox* _scale_spin;
+   QcrSpinBox* _min_size_spin;
+   QcrSpinBox* _max_size_spin;
+   QcrSpinBox* _max_width_spin;
+   QComboBox* _kernel_combo;
+   QTableWidget* _kernel_para_table;
+   QcrSpinBox* _start_frame_spin;
+   QcrSpinBox* _end_frame_spin;
+
+   QComboBox* data;
+   QcrSpinBox* frame;
+   QcrCheckBox* applyThreshold;
+   QcrDoubleSpinBox* peakArea;
+   QcrDoubleSpinBox* backgroundLowerLimit;
+   QcrDoubleSpinBox* backgroundUpperLimit;
+
+   DetectorView* preview;
+   QDialogButtonBox* buttons;
+   QGraphicsPixmapItem* pixmap;
+
+   QPushButton* _find_button;
+   QPushButton* _integrate_button;
+   QPushButton* _save_button;
+
+   QSizePolicy* _size_policy_widgets;
+   QSizePolicy* _size_policy_box;
+   QSizePolicy* _size_policy_figure;
+
+   void refreshPreview();
+   void accept();
+   void doActions(QAbstractButton*);
 };
 
 #endif // GUI_FRAMES_PEAKFINDERFRAME_H

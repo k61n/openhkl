@@ -29,7 +29,7 @@ class PeakCollection{
     PeakCollection(std::string name, nsx::listtype type);
 
     //! Returns the amount of invalid peaks
-    std::string getName() const;
+    std::string* name() {return &_name;};
 
     //! Populate the peaks
     void populate(const std::vector<std::shared_ptr<nsx::Peak3D>>* peak_list);

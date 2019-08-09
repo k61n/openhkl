@@ -17,15 +17,19 @@
 
 #include "core/experiment/Experiment.h"
 #include "core/instrument/InstrumentTypes.h"
-#include "core/peak/Peak3D.h"
+
 #include "core/shape/ShapeLibrary.h"
 #include "tables/crystal/UnitCell.h"
 
+#include "core/peak/Peak3D.h"
 #include "core/peak/PeakCollection.h"
 #include "gui/models/PeakCollectionModel.h"
 
+#include <QStandardItemModel>
+
 //! Controls and handles the Experiment and its Peaks and UnitCells
 class SessionExperiment {
+
 public:
    SessionExperiment();
 
@@ -39,15 +43,29 @@ public:
    void changeInstrument(const QString& instrumentname);
 
 public:
-   //! get the associated peaks
+   //! Get the associated peaks
    std::vector<nsx::Peak3D*>* getPeaks(
       const QString& peakListName, 
       int upperindex = -1, 
       int lowerindex = -1);
-   //! get the names of peaks present in the core (depth obsolete)
+   //! Get the names of peaks present in the core (depth obsolete)
    QStringList getPeakListNames(int depth = 1);
-   //! create a peak model based on the Peak collection in the core
-   PeakCollectionModel* generatePeakModel(const QString& peakListName);
+   //! Set the currently selected peakModel
+   void setSelected(std::string name);
+   //! get the currently selected peakModel
+   PeakCollectionModel* selected();
+   //! Generate a peak model based on the Peak collection in the core
+   void generatePeakModel(const QString& peakListName);
+   //! Get the peaklist model by name
+   PeakCollectionModel* peakModel(const QString& name);
+   //! Get the peaklist model by number
+   PeakCollectionModel* peakModel(int i) {return _peak_models.at(i);};
+   //! generate a peakListModel
+   void generatePeakListModel();
+   //! Get the Peak list model
+   QStandardItemModel* peakListModel() {return &_peak_list_model;};
+   //! Tell the gui that peaks have changed
+   void onPeaksChanged();
    //! Integrate the the peaks (obsolete)
    void integratePeaks();
 
@@ -64,22 +82,23 @@ public:
    void setLibrary(nsx::sptrShapeLibrary shapeLibrary) { _library = shapeLibrary; }
    nsx::sptrShapeLibrary getLibrary() { return _library; }
    
-
  private:
    //! Pointer to the core experiment
    nsx::sptrExperiment _experiment;
-
    //! Pointer to the core library
    nsx::sptrShapeLibrary _library;
-
    //! The list of models for the peaks
    QList<PeakCollectionModel*> _peak_models; 
-
+   //! The PeakListModel
+   QStandardItemModel _peak_list_model;
+   //! The selected list
+   PeakCollectionModel* _selected = nullptr;
    //! TODO update
    QList<nsx::sptrUnitCell> unitCells_;
    QString selectedList_;
    int unitCellIndex_ = -1;
    int dataIndex_ = -1;
+
 };
 
 #endif // GUI_MODELS_SESSIONEXPERIMENT_H

@@ -15,46 +15,57 @@
 #include "gui/models/PeakCollectionModel.h"
 
 PeakCollectionModel::PeakCollectionModel()
-    :QAbstractItemModel()
+    :QAbstractTableModel()
 {
 
 }
 
 PeakCollectionModel::PeakCollectionModel(QObject *parent)
-    :QAbstractItemModel(parent)
+    :QAbstractTableModel(parent)
 {
 
 }
 
 void PeakCollectionModel::setRoot(PeakCollectionItem* peak_collection)
 {
-   _root_item = peak_collection;
+    _root_item = peak_collection;
+    _name = _root_item->peakCollection()->name();
+
+    QModelIndex topleft_index = index(0, 0);
+    QModelIndex bottomright_index = index(rowCount() - 1, columnCount() - 1);
+    emit dataChanged(topleft_index, bottomright_index);
 
 }
 
 int PeakCollectionModel::rowCount(const QModelIndex & /*parent*/) const
 {
-   _root_item->childCount();
+   return _root_item->childCount();
 }
 
 int PeakCollectionModel::columnCount(const QModelIndex & /*parent*/) const
 {
-    _root_item->columnCount();
+    return _root_item->columnCount();
+}
+
+bool PeakCollectionModel::indexIsValid(const QModelIndex& index) const
+{
+    return index.isValid() && (index.row() < rowCount());
 }
 
 QVariant PeakCollectionModel::data(
     const QModelIndex &index, 
     int role = Qt::DisplayRole) const 
-{
+{   
+    if (!indexIsValid(index))
+        return QVariant();
     return _root_item->data(index, role);
 }
 
 Qt::ItemFlags PeakCollectionModel::flags(const QModelIndex& index) const
 {
-    if (checkIndex(index))
+    if (!indexIsValid(index))
         return Qt::ItemIsEnabled;
-
-    return QAbstractItemModel::flags(index);
+    return QAbstractTableModel::flags(index);
 }
 
 QVariant PeakCollectionModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -62,76 +73,76 @@ QVariant PeakCollectionModel::headerData(int section, Qt::Orientation orientatio
     if (role != Qt::DisplayRole)
         return QVariant();
 
-    // if (orientation == Qt::Horizontal) {
-    //     switch (section) {
-    //         case Column::h: {
-    //             return QString("h");
-    //         }
-    //         case Column::k: {
-    //             return QString("k");
-    //         }
-    //         case Column::l: {
-    //             return QString("l");
-    //         }
-    //         case Column::px: {
-    //             return QString("pixel x");
-    //         }
-    //         case Column::py: {
-    //             return QString("pixel y");
-    //         }
-    //         case Column::frame: {
-    //             return QString("frame");
-    //         }
-    //         case Column::intensity: {
-    //             return QString("intensity");
-    //         }
-    //         case Column::sigmaIntensity: {
-    //             return QString(QChar(0x03C3)) + "(intensity)";
-    //         }
-    //         case Column::numor: {
-    //             return QString("numor");
-    //         }
-    //         case Column::unitCell: {
-    //             return QString("unit cell");
-    //         }
-    //         case Column::d: {
-    //             return QString("d");
-    //         }
-    //         default: return QVariant();
-    //     }
-    // } else {
-    //     return QVariant(section + 1);
-    // }
+    if (orientation == Qt::Horizontal) {
+        switch (section) {
+            case Column::h: {
+                return QString("h");
+            }
+            case Column::k: {
+                return QString("k");
+            }
+            case Column::l: {
+                return QString("l");
+            }
+            case Column::px: {
+                return QString("x pixel");
+            }
+            case Column::py: {
+                return QString("y pixel");
+            }
+            case Column::Frame: {
+                return QString("Frame");
+            }
+            case Column::Intensity: {
+                return QString("Intensity");
+            }
+            case Column::Sigma: {
+                return QString(QChar(0x03C3)) + "(Int.)";
+            }
+            case Column::Numor: {
+                return QString("Numor");
+            }
+            case Column::uc: {
+                return QString("Unit cell");
+            }
+            case Column::d: {
+                return QString("d");
+            }
+            default: return QVariant();
+        }
+    } else {
+        return QVariant(section + 1);
+    }
 }
 
-QModelIndex PeakCollectionModel::index(int row, int col, const QModelIndex &parent ) const
-{
-    if (row >= rowCount())
-        return QModelIndex();
-    if (col >= columnCount())
-        return QModelIndex();
-    if ( !(parent.isValid()) )
-        return QModelIndex();
+// QModelIndex PeakCollectionModel::index(int row, int col, const QModelIndex &parent ) const
+// {
+//     if (row >= rowCount())
+//         return QModelIndex();
+//     if (col >= columnCount())
+//         return QModelIndex();
+//     if ( !(parent.isValid()) )
+//         return QModelIndex();
 
-    QStandardItem *parentItem = static_cast<QStandardItem*>(parent.internalPointer());
+//     QStandardItem *parentItem = static_cast<QStandardItem*>(parent.internalPointer());
     
-    if (!parentItem->hasChildren())
-        return QModelIndex();
+//     if (!parentItem->hasChildren())
+//         return QModelIndex();
 
-    return createIndex(row, col, _root_item->child(row));
+//     return createIndex(row, col, _root_item->child(row));
 
-}
+// }
 
-QModelIndex PeakCollectionModel::parent(const QModelIndex &item) const
-{
-    if ( !(item.isValid()) )
-        return QModelIndex();
+// QModelIndex PeakCollectionModel::parent(const QModelIndex &item) const
+// {
+//     if ( !(item.isValid()) )
+//         return QModelIndex();
  
-    QStandardItem *childItem = static_cast<QStandardItem*>(item.internalPointer());
-    QStandardItem *parentItem = childItem->parent();
+//     QStandardItem *childItem = static_cast<QStandardItem*>(item.internalPointer());
+//     QStandardItem *parentItem = childItem->parent();
  
-    if ( parentItem == _root_item )
-        return QModelIndex();
+//     if ( parentItem == _root_item )
+//         return QModelIndex();
  
-    return createIndex( parentItem->row(), 0, parentItem );
-}
+//     return createIndex( parentItem->row(), 0, parentItem );
+// }

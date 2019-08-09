@@ -237,6 +237,7 @@ void Session::onExperimentChanged()
 {
     gGui->onExperimentChanged();
     onDataChanged();
+    
 }
 
 void Session::onPeaksChanged()

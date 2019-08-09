@@ -27,11 +27,13 @@
 #include "gui/dialogs/IntegrateDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/models/Session.h"
+#include "gui/MainWin.h"
 #include "gui/items/PeakCollectionItem.h"
 
 #include <QDateTime>
 #include <QDebug>
 #include <QStringList>
+#include <QStandardItem>
 
 SessionExperiment::SessionExperiment()
 {
@@ -95,10 +97,32 @@ QList<nsx::sptrDataSet> SessionExperiment::allData()
 //     gSession->onPeaksChanged();
 // }
 
-PeakCollectionModel* SessionExperiment::generatePeakModel(const QString& peakListName)
+QStringList SessionExperiment::getPeakListNames(int depth)
+{
+    std::vector<std::string*> names = _experiment->getCollectionNames();
+    QStringList q_names;
+
+    for (std::string* name :names){
+        q_names<<QString::fromStdString(*name);
+    }
+
+    return q_names;
+}
+
+void SessionExperiment::setSelected(std::string name)
+{
+    _selected = peakModel(QString::fromStdString(name));
+}
+
+PeakCollectionModel* SessionExperiment::selected()
+{
+    return _selected;
+}
+
+void SessionExperiment::generatePeakModel(const QString& peakListName)
 {
     if( !_experiment->hasPeakCollection(peakListName.toStdString())){
-        return nullptr;
+        return;
     }
     nsx::PeakCollection* peak_collection = _experiment->getPeakCollection(
         peakListName.toStdString());
@@ -108,8 +132,30 @@ PeakCollectionModel* SessionExperiment::generatePeakModel(const QString& peakLis
     peak_collection_model->setRoot(peak_collection_item);
     _peak_models.append(peak_collection_model);
 
-    return peak_collection_model;
+    generatePeakListModel();
+}
 
+PeakCollectionModel* SessionExperiment::peakModel(const QString& name)
+{
+    std::string std_name = name.toStdString();
+    for (int i = 0; i < _peak_models.size(); ++i) {
+        if (*_peak_models.at(i)->name() == std_name)
+            return _peak_models.at(i);
+    }
+
+    return nullptr;
+}
+   
+void SessionExperiment::generatePeakListModel()
+{
+    _peak_list_model.clear();
+    std::vector<std::string*> names = _experiment->getCollectionNames();
+    for (std::string* name :names){
+        QStandardItem* item = new QStandardItem(QString::fromStdString(*name));
+        _peak_list_model.appendRow(item);
+    }
+
+    onPeaksChanged();
 }
 
 std::vector<nsx::Peak3D*>* SessionExperiment::getPeaks(
@@ -133,6 +179,7 @@ std::vector<nsx::Peak3D*>* SessionExperiment::getPeaks(
 
     return peaks;
 }
+
 
 // std::vector<nsx::Peak3D*> SessionExperiment::getPeaks(const QString& peakListName)
 // {
@@ -187,17 +234,7 @@ std::vector<nsx::Peak3D*>* SessionExperiment::getPeaks(
 //     return ret;
 // }
 
-QStringList SessionExperiment::getPeakListNames(int depth)
-{
-    std::vector<std::string> names = _experiment->getCollectionNames();
-    QStringList q_names;
 
-    for (std::string name :names){
-        q_names<<QString::fromStdString(name);
-    }
-
-    return q_names;
-}
 
 // QStringList SessionExperiment::listNamesOf(const QString &listname)
 // {
@@ -338,4 +375,9 @@ void SessionExperiment::integratePeaks()
 
     // qDebug() << "Done reintegrating peaks";
     // dialog->deleteLater();
+}
+
+void SessionExperiment::onPeaksChanged()
+{
+    gGui->onPeaksChanged();
 }

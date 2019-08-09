@@ -71,7 +71,7 @@ public:
    //! Remove a data from the experiment
    void removePeakCollection(const std::string& name);
    //! Get a list of loaded list names
-   std::vector<std::string> getCollectionNames() const;
+   std::vector<std::string*> getCollectionNames() const;
 
 public:
    //! Add some data to the experiment

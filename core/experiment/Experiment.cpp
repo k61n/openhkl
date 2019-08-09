@@ -157,13 +157,13 @@ void Experiment::removePeakCollection(const std::string& name) {
         _peakCollections.erase(peaks);
 }
 
-std::vector<std::string> Experiment::getCollectionNames() const {
+std::vector<std::string*> Experiment::getCollectionNames() const {
     
-    std::vector<std::string> names;
+    std::vector<std::string*> names;
 	for (
         std::map<std::string,std::unique_ptr<PeakCollection>>::const_iterator it = _peakCollections.begin(); 
         it != _peakCollections.end(); ++it) {
-		names.push_back(it->second->getName());
+		names.push_back(it->second->name());
 	}
     return names;
 

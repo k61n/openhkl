@@ -16,9 +16,9 @@
 #define GUI_MODELS_PEAKCOLLECTIONMODEL_H
 
 #include "gui/items/PeakCollectionItem.h"
-#include <QAbstractItemModel>
+#include <QAbstractTableModel>
 
-class PeakCollectionModel : public QAbstractItemModel {
+class PeakCollectionModel : public QAbstractTableModel {
     Q_OBJECT
 public:
     PeakCollectionModel();
@@ -28,10 +28,14 @@ public:
 public:
     //! Set the root item that will be used within the model
     void setRoot(PeakCollectionItem* peak_collection);
+    //! Retrieve the name
+    std::string* name() const {return _name;};
     //! Retrieve the row count
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     //!retrieve the column count
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
+    //! Returns whether the selected peak is valid
+    bool indexIsValid(const QModelIndex& index) const;
 
 public:
     //! Return the data of the item (Manages role interaction)
@@ -40,13 +44,12 @@ public:
     Qt::ItemFlags flags(const QModelIndex& index) const;
     //! Returns header information
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-    //! Return the index of the item 
-    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
-    //!return the parent of a model
-    QModelIndex parent(const QModelIndex &index) const;
+    //! Enumerator class for the model
+    enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Numor, uc, d, Count };
 
 private:
-    PeakCollectionItem* _root_item;
+    PeakCollectionItem* _root_item = nullptr;
+    std::string* _name;
 
 };
 

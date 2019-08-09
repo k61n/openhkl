@@ -18,21 +18,23 @@
 #include "core/peak/Peak3D.h"
 #include <QStandardItem>
 
-class PeakItem : public QStandardItem {
-
-public: 
-    PeakItem(nsx::Peak3D* peak);
-    ~PeakItem() = default;
-    //! Retrieve the data of column and row
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-
-private:
-    //! enumerator for the columns
-    enum Column { 
+enum Column { 
         h, k, l, px, py, frame, 
         intensity, sigmaIntensity, 
         numor, unitCell, d, count };
 
+class PeakItem : public QStandardItem {
+
+public: 
+    enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Numor, uc, d, Count };
+
+    PeakItem(nsx::Peak3D* peak);
+    ~PeakItem() = default;
+    //! Retrieve the data of column and row
+    QVariant peakData(const QModelIndex &index, int role ) const;
+
+private:
+    //! pointer to the data
     nsx::Peak3D* _peak;
 };
 

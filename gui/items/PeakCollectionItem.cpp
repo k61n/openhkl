@@ -22,15 +22,14 @@ PeakCollectionItem::PeakCollectionItem(nsx::PeakCollection* peak_collection)
     std::vector<nsx::Peak3D*>* peak_list = _peak_collection->getPeakList();
     for (nsx::Peak3D* peak : *peak_list)
     {
-        QStandardItem* item = new PeakItem(peak); 
-        appendRow(item);
+        PeakItem* item = new PeakItem(peak); 
+        _peak_items.push_back(item);
     }
-
 }
 
 int PeakCollectionItem::childCount() const
 {
-    return rowCount();
+    return _peak_items.size();
 }
 
 int PeakCollectionItem::columnCount() const
@@ -42,8 +41,11 @@ QVariant PeakCollectionItem::data(
     const QModelIndex &index, 
     int role) const
 {
-    int row = index.row();
-    return _peak_items[row].data(index, role);
-
+    return peakItemAt(index.row())->peakData(index, role);
 }
 
+PeakItem* PeakCollectionItem::peakItemAt(int row) const
+{
+    return _peak_items.at(row);
+    
+}
