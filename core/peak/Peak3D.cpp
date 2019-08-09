@@ -66,7 +66,8 @@ Peak3D::Peak3D(std::shared_ptr<nsx::Peak3D> peak)
     _transmission = peak->transmission();
     _data = peak->data();
     _rockingCurve = peak->rockingCurve();
-
+    _meanBackground = peak->meanBackground();
+    _rawIntensity = peak->rawIntensity();
 }
 
 void Peak3D::setShape(const Ellipsoid& shape)

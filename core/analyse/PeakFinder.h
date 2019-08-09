@@ -35,6 +35,8 @@ class PeakFinder {
 
     PeakList* currentPeaks() {return &_current_peaks;};
 
+    DataList  currentData() {return _current_data;};
+
     void setHandler(const sptrProgressHandler& handler);
 
     void setPeakScale(double scale) { _peakScale = scale; }
@@ -97,7 +99,11 @@ class PeakFinder {
 
     int _framesEnd;
 
-    PeakList _current_peaks;
+    nsx::PeakList _current_peaks;
+
+    nsx::DataList _current_data;
+
+    
 };
 
 using sptrPeakFinder = std::shared_ptr<PeakFinder>;

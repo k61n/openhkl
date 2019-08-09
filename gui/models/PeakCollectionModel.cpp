@@ -39,16 +39,23 @@ void PeakCollectionModel::setRoot(PeakCollectionItem* peak_collection)
 
 int PeakCollectionModel::rowCount(const QModelIndex & /*parent*/) const
 {
-   return _root_item->childCount();
+    if (!_root_item)
+        return 0;
+
+    return _root_item->childCount();
 }
 
 int PeakCollectionModel::columnCount(const QModelIndex & /*parent*/) const
 {
+    if (!_root_item)
+        return 0;
     return _root_item->columnCount();
 }
 
 bool PeakCollectionModel::indexIsValid(const QModelIndex& index) const
 {
+    if (!_root_item)
+        return false;
     return index.isValid() && (index.row() < rowCount());
 }
 

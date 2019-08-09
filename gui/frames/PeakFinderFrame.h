@@ -15,7 +15,11 @@
 #ifndef GUI_FRAMES_PEAKFINDERFRAME_H
 #define GUI_FRAMES_PEAKFINDERFRAME_H
 
+#include "core/peak/PeakCollection.h"
+
 #include "gui/graphics/DetectorView.h"
+#include "gui/views/PeakTableView.h"
+#include "gui/models/PeakCollectionModel.h"
 #include "gui/views/PeakTableView.h"
 
 #include <QCR/widgets/controls.h>
@@ -28,6 +32,7 @@
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QSplitter>
 
 #include <QSizePolicy>
 
@@ -54,16 +59,37 @@ private:
    void setIntegrateUp();
    //! Set up the detector figure up
    void setFigureUp();
+   //! Set the peak table view up
+   void setPeakTableUp();
    //! Set the execution buttons up
    void setExecuteUp();
    //! Set the parameters values up
    void setParametersUp();
-   //!convolution parameter map
-   std::map<std::string, double> convolutionParameters();
+
+   //! Refresh the preview
+   void refreshPreview();
+   //! Refresh the found peaks list
+   void refreshPeakTable();
+   //! Accept and save current list
+   void accept();
 
 private:
-   QHBoxLayout* main_layout;
-   QVBoxLayout* left_layout;
+   //! Convolution parameter map
+   std::map<std::string, double> convolutionParameters();
+   //! The temporary collection
+   PeakCollectionModel* _peak_collection_model = 
+      new PeakCollectionModel();
+   //! The temporary collection
+   PeakCollectionItem* _peak_collection_item;
+   //! The model for the found peaks
+   nsx::PeakCollection* _peak_collection = 
+      new nsx::PeakCollection( "temp", nsx::listtype::FOUND);
+
+private:
+   QHBoxLayout* _main_layout;
+
+   QVBoxLayout* _left_layout;
+   QSplitter* _right_element;
 
    QcrSpinBox* _threshold_spin;
    QcrDoubleSpinBox* _scale_spin;
@@ -75,16 +101,18 @@ private:
    QcrSpinBox* _start_frame_spin;
    QcrSpinBox* _end_frame_spin;
 
-   QComboBox* data;
-   QcrSpinBox* frame;
-   QcrCheckBox* applyThreshold;
-   QcrDoubleSpinBox* peakArea;
-   QcrDoubleSpinBox* backgroundLowerLimit;
-   QcrDoubleSpinBox* backgroundUpperLimit;
+   QComboBox* _data_combo;
+   QcrSpinBox* _frame_spin;
+   QcrCheckBox* _live_check;
 
-   DetectorView* preview;
-   QDialogButtonBox* buttons;
-   QGraphicsPixmapItem* pixmap;
+   QcrDoubleSpinBox* _peak_area;
+   QcrDoubleSpinBox* _bkg_lower;
+   QcrDoubleSpinBox* _bkg_upper;
+
+   DetectorView* _figure;
+   QGraphicsPixmapItem* _pixmap;
+
+   PeaksTableView* _peak_table;
 
    QPushButton* _find_button;
    QPushButton* _integrate_button;
@@ -92,11 +120,8 @@ private:
 
    QSizePolicy* _size_policy_widgets;
    QSizePolicy* _size_policy_box;
-   QSizePolicy* _size_policy_figure;
+   QSizePolicy* _size_policy_right;
 
-   void refreshPreview();
-   void accept();
-   void doActions(QAbstractButton*);
 };
 
 #endif // GUI_FRAMES_PEAKFINDERFRAME_H

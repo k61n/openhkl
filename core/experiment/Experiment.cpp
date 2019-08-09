@@ -30,6 +30,9 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     : _name(name), _data()
 {
     _diffractometer.reset(Diffractometer::create(diffractometerName));
+
+    _peak_finder = new nsx::PeakFinder();
+    _found_peak_integrator = new nsx::PixelSumIntegrator(true, true);
 }
 
 Experiment::Experiment(const Experiment& other)
@@ -37,6 +40,9 @@ Experiment::Experiment(const Experiment& other)
     _name = other._name;
     _data = other._data;
     _diffractometer.reset(other._diffractometer->clone());
+
+    _peak_finder = new nsx::PeakFinder();
+    _found_peak_integrator = new nsx::PixelSumIntegrator(true, true);
 }
 
 Experiment& Experiment::operator=(const Experiment& other)
@@ -166,7 +172,6 @@ std::vector<std::string*> Experiment::getCollectionNames() const {
 		names.push_back(it->second->name());
 	}
     return names;
-
 }
 
 void Experiment::addUnitCell(const std::string& name, sptrUnitCell unit_cell) {
@@ -189,8 +194,18 @@ void Experiment::removeUnitCell(const std::string& name) {
 }
 
 void Experiment::acceptFoundPeaks(const std::string& name) {
-    addPeakCollection(name, _peak_finder.currentPeaks());
+    addPeakCollection(name, _peak_finder->currentPeaks());
 }
 
+void Experiment::integrateFoundPeaks(
+    double peak_end, double bkg_begin, double bkg_end)
+{   
+    for (nsx::sptrDataSet data : _peak_finder->currentData())
+    {
+        _found_peak_integrator->integrate(
+            *_peak_finder->currentPeaks(), data, 
+            peak_end, bkg_begin,  bkg_end);
+    }
+}
 
 } // namespace nsx

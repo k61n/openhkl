@@ -586,6 +586,7 @@ void PeakFinder::find(DataList numors)
 {
     qDebug("PeakFinder::find ... with %li numors\n", numors.size());
     _current_peaks.clear();
+    _current_data = numors;
 
     int i = 0;
     for (auto&& numor : numors) {

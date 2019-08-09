@@ -21,6 +21,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCollection.h"
 #include "tables/crystal/UnitCell.h"
+#include "core/integration/PixelSumIntegrator.h"
 
 namespace nsx {
 
@@ -84,32 +85,31 @@ public:
    void removeUnitCell(const std::string& name);
 
 public:
-   //! get the address of the peak finder
-   nsx::PeakFinder* peakFinder() {return &_peak_finder;};
-   //! transfer current peaks as collection
+   //! Get the address of the peak finder
+   nsx::PeakFinder* peakFinder() {return _peak_finder;};
+   //! Transfer current peaks as collection
    void acceptFoundPeaks(const std::string& name);
+   //! Get the found peak integrator
+   nsx::PixelSumIntegrator* peakFoundIntegrator() {return _found_peak_integrator;};
+   //! Set the found peak integrator
+   void integrateFoundPeaks( double peak_end, double bkg_begin, double bkg_end);
 
 private:
    //! The name of this experiment
    std::string _name;
-
    //! A pointer to the detector assigned to this experiment
    std::unique_ptr<Diffractometer> _diffractometer;
-
    //! A map of the data related to the experiment. The keys are the basename of
    //! their corresponding file.
    std::map<std::string, sptrDataSet> _data;
-
    //! A map of the peaklists with their name as index
    std::map<std::string, std::unique_ptr<PeakCollection>> _peakCollections;
-
    //! A map of the unit cells with their name as index
    std::map<std::string, sptrUnitCell> _unit_cells;
-
    //! The Peak finder
-   nsx::PeakFinder _peak_finder;
-
+   nsx::PeakFinder* _peak_finder;// = new nsx::PeakFinder();
    //! The found peak integrator
+   nsx::PixelSumIntegrator* _found_peak_integrator;// = new nsx::PixelSumIntegrator(true, true);
 
    //! The peak predictor
 

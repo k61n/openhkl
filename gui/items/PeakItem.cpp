@@ -56,7 +56,6 @@ QVariant PeakItem::peakData(
     double sigma_intensity = _peak->correctedIntensity().sigma();
     const Eigen::Vector3d& peak_center = _peak->shape().center();
     
-
     switch (role) {
         case Qt::DisplayRole:
 

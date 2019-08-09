@@ -20,6 +20,7 @@
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
+
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
@@ -37,7 +38,8 @@
 #include <QTableWidgetItem>
 
 
-PeakFinderFrame::PeakFinderFrame() : QcrFrame {"peakFinder"}, pixmap(nullptr)
+
+PeakFinderFrame::PeakFinderFrame() : QcrFrame {"peakFinder"}, _pixmap(nullptr)
 {
     if (gSession->selectedExperimentNum() < 0) {
         gLogger->log("[ERROR] No experiment selected");
@@ -50,35 +52,40 @@ PeakFinderFrame::PeakFinderFrame() : QcrFrame {"peakFinder"}, pixmap(nullptr)
     // Layout
     setAttribute(Qt::WA_DeleteOnClose);
 
-    main_layout = new QHBoxLayout(this);
-    left_layout = new QVBoxLayout;
+    _main_layout = new QHBoxLayout(this);
+    _left_layout = new QVBoxLayout;
+    _right_element = new QSplitter(Qt::Vertical , this);
 
     setSizePolicies();
     setBlobUp();
     setPreviewUp();
     setIntegrateUp();
     setExecuteUp();
-    left_layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
-    main_layout->addLayout(left_layout);
+    _left_layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
     setFigureUp();
+    setPeakTableUp();
+    _right_element->setSizePolicy(*_size_policy_right);
     setParametersUp();
 
+    _main_layout->addLayout(_left_layout);
+    _main_layout->addWidget(_right_element);
+
     // flip the image vertically to conform with DetectorScene
-    preview->scale(1, -1);
+    _figure->scale(1, -1);
     updateConvolutionParameters();
     _min_size_spin->setHook([=](int i) { _min_size_spin->setCellValue(std::min(i, _max_size_spin->value())); });
     _max_size_spin->setHook([=](int i) { _max_size_spin->setCellValue(std::max(i, _min_size_spin->value())); });
-    peakArea->setHook(
-        [=](double d) { peakArea->setCellValue(std::min(d, backgroundLowerLimit->value())); });
-    backgroundLowerLimit->setHook([=](double d) {
-        d = std::max(d, peakArea->value());
-        backgroundLowerLimit->setCellValue(std::min(d, backgroundUpperLimit->value()));
+    _peak_area->setHook(
+        [=](double d) { _peak_area->setCellValue(std::min(d, _bkg_lower->value())); });
+    _bkg_lower->setHook([=](double d) {
+        d = std::max(d, _peak_area->value());
+        _bkg_lower->setCellValue(std::min(d, _bkg_upper->value()));
     });
-    backgroundUpperLimit->setHook([=](double d) {
-        backgroundUpperLimit->setCellValue(std::max(d, backgroundLowerLimit->value()));
+    _bkg_upper->setHook([=](double d) {
+        _bkg_upper->setCellValue(std::max(d, _bkg_lower->value()));
     });
-    applyThreshold->setHook([=](bool) { refreshPreview(); });
-    frame->setHook([=](int) { refreshPreview(); });
+    _live_check->setHook([=](bool) { refreshPreview(); });
+    _frame_spin->setHook([=](int) { refreshPreview(); });
     connect(_kernel_combo, &QComboBox::currentTextChanged, [=](QString) {
         updateConvolutionParameters();
         refreshPreview();
@@ -90,56 +97,60 @@ PeakFinderFrame::PeakFinderFrame() : QcrFrame {"peakFinder"}, pixmap(nullptr)
 void PeakFinderFrame::setSizePolicies()
 {
     _size_policy_widgets = new QSizePolicy();
-    _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Expanding);
+    _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Preferred);
     _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
     
     _size_policy_box = new QSizePolicy();
     _size_policy_box->setHorizontalPolicy(QSizePolicy::Preferred);
     _size_policy_box->setVerticalPolicy(QSizePolicy::Preferred);
+
+    _size_policy_right = new QSizePolicy();
+    _size_policy_right->setHorizontalPolicy(QSizePolicy::Expanding);
+    _size_policy_right->setVerticalPolicy(QSizePolicy::Expanding);
 }
 
 void PeakFinderFrame::setBlobUp()
 {
     QGroupBox* blob_para = new QGroupBox("Peak search parameter");
-    QGridLayout* blobGrid = new QGridLayout(blob_para);
+    QGridLayout* blob_grid = new QGridLayout(blob_para);
 
     blob_para->setSizePolicy(*_size_policy_box);
 
     QLabel* threshold_label = new QLabel("Threshold");
     threshold_label->setAlignment(Qt::AlignRight);
-    blobGrid->addWidget(threshold_label, 0, 0, 1, 1);
+    blob_grid->addWidget(threshold_label, 0, 0, 1, 1);
 
     QLabel* scale_label = new QLabel("Merging scale");
     scale_label->setAlignment(Qt::AlignRight);
-    blobGrid->addWidget(scale_label, 1, 0, 1, 1);
+    blob_grid->addWidget(scale_label, 1, 0, 1, 1);
 
     QLabel* min_size_label = new QLabel("Minimum size");
     min_size_label->setAlignment(Qt::AlignRight);
-    blobGrid->addWidget(min_size_label, 2, 0, 1, 1);
+    blob_grid->addWidget(min_size_label, 2, 0, 1, 1);
 
     QLabel* max_size_label = new QLabel("Maximum size");
     max_size_label->setAlignment(Qt::AlignRight);
-    blobGrid->addWidget(max_size_label, 3, 0, 1, 1);
+    blob_grid->addWidget(max_size_label, 3, 0, 1, 1);
 
     QLabel* max_width_label = new QLabel("Maximum width");
     max_width_label->setAlignment(Qt::AlignRight);
-    blobGrid->addWidget(max_width_label, 4, 0, 1, 1);
+    blob_grid->addWidget(max_width_label, 4, 0, 1, 1);
 
     QLabel* kernel_label = new QLabel("Kernel");
     kernel_label->setAlignment(Qt::AlignRight);
-    blobGrid->addWidget(kernel_label, 5, 0, 1, 1);
+    blob_grid->addWidget(kernel_label, 5, 0, 1, 1);
 
     QLabel* kernel_para_label = new QLabel("Parameters");
     kernel_para_label->setAlignment(Qt::AlignRight | Qt::AlignTop);
-    blobGrid->addWidget(kernel_para_label, 6, 0, 1, 1);
+    blob_grid->addWidget(kernel_para_label, 6, 0, 1, 1);
 
     QLabel* start_frame_label = new QLabel("Start frame");
     start_frame_label->setAlignment(Qt::AlignRight);
-    blobGrid->addWidget(start_frame_label, 7, 0, 1, 1);
+    blob_grid->addWidget(start_frame_label, 7, 0, 1, 1);
 
     QLabel* end_frame_label = new QLabel("End frame");
     end_frame_label->setAlignment(Qt::AlignRight);
-    blobGrid->addWidget(end_frame_label, 8, 0, 1, 1);
+    blob_grid->addWidget(end_frame_label, 8, 0, 1, 1);
     
     _threshold_spin = new QcrSpinBox(
         "adhoc__threshold_spin", 
@@ -193,37 +204,57 @@ void PeakFinderFrame::setBlobUp()
     _start_frame_spin->setSizePolicy(*_size_policy_widgets);
     _end_frame_spin->setSizePolicy(*_size_policy_widgets);
 
-    blobGrid->addWidget(_threshold_spin, 0, 1, 1, 1);
-    blobGrid->addWidget(_scale_spin, 1, 1, 1, 1);
-    blobGrid->addWidget(_min_size_spin, 2, 1, 1, 1);
-    blobGrid->addWidget(_max_size_spin, 3, 1, 1, 1);
-    blobGrid->addWidget(_max_width_spin, 4, 1, 1, 1);
-    blobGrid->addWidget(_kernel_combo, 5, 1, 1, 1);
-    blobGrid->addWidget(_kernel_para_table, 6, 1, 1, 1);
-    blobGrid->addWidget(_start_frame_spin, 7, 1, 1, 1);
-    blobGrid->addWidget(_end_frame_spin, 8, 1, 1, 1);
+    blob_grid->addWidget(_threshold_spin, 0, 1, 1, 1);
+    blob_grid->addWidget(_scale_spin, 1, 1, 1, 1);
+    blob_grid->addWidget(_min_size_spin, 2, 1, 1, 1);
+    blob_grid->addWidget(_max_size_spin, 3, 1, 1, 1);
+    blob_grid->addWidget(_max_width_spin, 4, 1, 1, 1);
+    blob_grid->addWidget(_kernel_combo, 5, 1, 1, 1);
+    blob_grid->addWidget(_kernel_para_table, 6, 1, 1, 1);
+    blob_grid->addWidget(_start_frame_spin, 7, 1, 1, 1);
+    blob_grid->addWidget(_end_frame_spin, 8, 1, 1, 1);
 
-    left_layout->addWidget(blob_para);
+    _left_layout->addWidget(blob_para);
 
 }
 
 void PeakFinderFrame::setPreviewUp()
 {
     QGroupBox* preview_box = new QGroupBox("Preview");
-    QGridLayout* previewGrid = new QGridLayout(preview_box);
+    QGridLayout* _preview_grid = new QGridLayout(preview_box);
 
     preview_box->setSizePolicy(*_size_policy_box);
 
-    previewGrid->addWidget(new QLabel("Data"), 0, 0, 1, 1);
-    previewGrid->addWidget(new QLabel("Frame"), 1, 0, 1, 1);
-    applyThreshold = new QcrCheckBox(
-        "adhoc_applyThreshold", "apply threshold to preview", new QcrCell<bool>(false));
-    previewGrid->addWidget(applyThreshold, 2, 0, 1, 1);
-    data = new QComboBox;
-    frame = new QcrSpinBox("adhoc_frameNr", new QcrCell<int>(0), 3);
-    previewGrid->addWidget(data, 0, 1, 1, 1);
-    previewGrid->addWidget(frame, 1, 1, 1, 1);
-    left_layout->addWidget(preview_box);
+    QLabel* data_label = new QLabel("Data");
+    data_label->setAlignment(Qt::AlignRight);
+    _preview_grid->addWidget(data_label, 0, 0, 1, 1);
+
+    QLabel* frame_label = new QLabel("Frame");
+    frame_label->setAlignment(Qt::AlignRight);
+    _preview_grid->addWidget(frame_label, 1, 0, 1, 1);
+
+    _data_combo = new QComboBox;
+    _frame_spin = new QcrSpinBox(
+        "adhoc_frameNr", 
+        new QcrCell<int>(0), 3);
+    _live_check = new QcrCheckBox(
+        "adhoc__live_check", 
+        "Apply threshold to preview", 
+        new QcrCell<bool>(false));
+
+    _data_combo->setMaximumWidth(1000);
+    _frame_spin->setMaximumWidth(1000);
+    _live_check->setMaximumWidth(1000);
+    
+    _data_combo->setSizePolicy(*_size_policy_widgets);
+    _frame_spin->setSizePolicy(*_size_policy_widgets);
+    _live_check->setSizePolicy(*_size_policy_widgets);
+
+    _preview_grid->addWidget(_data_combo, 0, 1, 1, 1);
+    _preview_grid->addWidget(_frame_spin, 1, 1, 1, 1);
+    _preview_grid->addWidget(_live_check, 2, 0, 1, 2);
+
+    _left_layout->addWidget(preview_box);
 }
 
 void PeakFinderFrame::setIntegrateUp()
@@ -237,23 +268,42 @@ void PeakFinderFrame::setIntegrateUp()
     integGrid->addWidget(new QLabel("Background lower limit"), 1, 0, 1, 1);
     integGrid->addWidget(new QLabel("Background upper limit"), 2, 0, 1, 1);
 
-    peakArea = new QcrDoubleSpinBox("adhoc_area", new QcrCell<double>(3.0), 5, 2);
-    backgroundLowerLimit = new QcrDoubleSpinBox("adhoc_lowLimit", new QcrCell<double>(4.0), 5, 2);
-    backgroundUpperLimit = new QcrDoubleSpinBox("adhoc_upLimit", new QcrCell<double>(4.5), 5, 2);
+    _peak_area = new QcrDoubleSpinBox("adhoc_area", new QcrCell<double>(3.0), 5, 2);
+    _bkg_lower = new QcrDoubleSpinBox("adhoc_lowLimit", new QcrCell<double>(4.0), 5, 2);
+    _bkg_upper = new QcrDoubleSpinBox("adhoc_upLimit", new QcrCell<double>(4.5), 5, 2);
 
-    integGrid->addWidget(peakArea, 0, 1, 1, 1);
-    integGrid->addWidget(backgroundLowerLimit, 1, 1, 1, 1);
-    integGrid->addWidget(backgroundUpperLimit, 2, 1, 1, 1);
+    integGrid->addWidget(_peak_area, 0, 1, 1, 1);
+    integGrid->addWidget(_bkg_lower, 1, 1, 1, 1);
+    integGrid->addWidget(_bkg_upper, 2, 1, 1, 1);
 
-    left_layout->addWidget(integration_para);
+    _left_layout->addWidget(integration_para);
     
 }
 
 void PeakFinderFrame::setFigureUp()
 {
-    preview = new DetectorView(this);
-    preview->setSizePolicy(*_size_policy_figure);
-    main_layout->addWidget(preview);
+    QGroupBox* figure_group = new QGroupBox("Peaks");
+    QGridLayout* figure_grid = new QGridLayout(figure_group);
+
+    figure_group->setSizePolicy(*_size_policy_right);
+
+    _figure = new DetectorView(this);
+    figure_grid->addWidget(_figure, 0,0,0,0);
+
+    _right_element->addWidget(figure_group);
+}
+
+void PeakFinderFrame::setPeakTableUp()
+{
+    QGroupBox* peak_group = new QGroupBox("Peaks");
+    QGridLayout* peak_grid = new QGridLayout(peak_group);
+
+    peak_group->setSizePolicy(*_size_policy_right);
+
+    _peak_table = new PeaksTableView(this);
+    peak_grid->addWidget(_peak_table, 0,0,0,0);
+
+    _right_element->addWidget(peak_group);
 }
 
 void PeakFinderFrame::setExecuteUp()
@@ -261,7 +311,7 @@ void PeakFinderFrame::setExecuteUp()
     QHBoxLayout* button_grid = new QHBoxLayout();
 
     _find_button = new QPushButton("Find peaks");
-    _integrate_button = new QPushButton("Interate");
+    _integrate_button = new QPushButton("Integrate");
     _save_button = new QPushButton("Save");
 
     button_grid->addWidget(_find_button);
@@ -278,7 +328,7 @@ void PeakFinderFrame::setExecuteUp()
         _save_button, &QPushButton::clicked, 
         this, &PeakFinderFrame::accept);
 
-    left_layout->addLayout(button_grid);
+    _left_layout->addLayout(button_grid);
 
 }
 
@@ -287,15 +337,15 @@ void PeakFinderFrame::setParametersUp()
     QList<nsx::sptrDataSet> datalist = gSession->selectedExperiment()->allData();
     for (nsx::sptrDataSet d : datalist) {
         QFileInfo fileinfo(QString::fromStdString(d->filename()));
-        data->addItem(fileinfo.baseName(), QVariant::fromValue(d));
+        _data_combo->addItem(fileinfo.baseName(), QVariant::fromValue(d));
     }
 
-    data->setCurrentIndex(0);
+    _data_combo->setCurrentIndex(0);
     _end_frame_spin->setCellValue(datalist.at(0)->nFrames());
     _end_frame_spin->setMaximum(datalist.at(0)->nFrames());
     _start_frame_spin->setMaximum(datalist.at(0)->nFrames());
-    preview->getScene()->slotChangeSelectedData(datalist.at(0), 0);
-    preview->getScene()->setMaxIntensity(3000);
+    _figure->getScene()->slotChangeSelectedData(datalist.at(0), 0);
+    _figure->getScene()->setMaxIntensity(3000);
 
     _kernel_combo->clear();
     nsx::ConvolverFactory convolver_factory;
@@ -335,8 +385,8 @@ void PeakFinderFrame::find()
 {
     nsx::sptrProgressHandler progHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler);
     nsx::DataList datalist;
-    for (int i = 0; i < data->count(); ++i)
-        datalist.push_back(data->itemData(i, Qt::UserRole).value<nsx::sptrDataSet>());
+    for (int i = 0; i < _data_combo->count(); ++i)
+        datalist.push_back(_data_combo->itemData(i, Qt::UserRole).value<nsx::sptrDataSet>());
 
     nsx::PeakFinder* finder = gSession->selectedExperiment()->experiment()->peakFinder();
 
@@ -359,33 +409,24 @@ void PeakFinderFrame::find()
 
     try {
         finder->find(datalist);
+        refreshPeakTable();
 
     } catch (std::exception& e) {
         return;
     }
-
+        
 }
 
 void PeakFinderFrame::integrate()
 {
-    nsx::sptrProgressHandler progHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler);
-    nsx::DataList datalist;
-    for (int i = 0; i < data->count(); ++i)
-        datalist.push_back(data->itemData(i, Qt::UserRole).value<nsx::sptrDataSet>());
+    nsx::sptrExperiment experiment = gSession->selectedExperiment()->experiment();
+    experiment->integrateFoundPeaks(
+        _peak_area->value(), 
+        _bkg_lower->value(),
+        _bkg_upper->value()
+    );
 
-    nsx::PeakFinder* finder = gSession->selectedExperiment()->experiment()->peakFinder();
-    nsx::PeakList* peaks_ptr = finder->currentPeaks();
-    nsx::PeakList peaks = *peaks_ptr;
-
-    if ((peaks.size() == 0))
-        return;
-
-    for (nsx::sptrDataSet d : datalist) {
-        nsx::PixelSumIntegrator integrator(true, true);
-        integrator.integrate(
-            peaks, d, peakArea->value(), backgroundLowerLimit->value(),
-            backgroundUpperLimit->value());
-    }
+    refreshPeakTable();
 }
 
 std::map<std::string, double> PeakFinderFrame::convolutionParameters()
@@ -397,18 +438,6 @@ std::map<std::string, double> PeakFinderFrame::convolutionParameters()
         parameters.insert(std::make_pair(pname, pvalue));
     }
     return parameters;
-}
-
-void PeakFinderFrame::doActions(QAbstractButton* button)
-{
-    auto buttonRole = buttons->standardButton(button);
-    switch (buttonRole) {
-        case QDialogButtonBox::StandardButton::Cancel: close(); break;
-        case QDialogButtonBox::StandardButton::Ok: accept(); break;
-        default: {
-            return;
-        }
-    }
 }
 
 void PeakFinderFrame::accept()
@@ -423,21 +452,21 @@ void PeakFinderFrame::accept()
             gSession->selectedExperiment()->experiment()->acceptFoundPeaks(dlg->listName().toStdString());
             gSession->selectedExperiment()->generatePeakModel(dlg->listName());
         }
-
     }
+    close();
 }
 
 void PeakFinderFrame::refreshPreview()
 {
-    nsx::sptrDataSet dataset = data->currentData().value<nsx::sptrDataSet>();
-    int selected = frame->value();
+    nsx::sptrDataSet dataset = _data_combo->currentData().value<nsx::sptrDataSet>();
+    int selected = _frame_spin->value();
     int nrows = dataset->nRows();
     int ncols = dataset->nCols();
     std::string convolvertype = _kernel_combo->currentText().toStdString();
     std::map<std::string, double> convolverParams = convolutionParameters();
     Eigen::MatrixXd convolvedFrame =
         nsx::convolvedFrame(dataset->reader()->data(selected), convolvertype, convolverParams);
-    if (applyThreshold->isChecked()) {
+    if (_live_check->isChecked()) {
         double thresholdVal = _threshold_spin->value();
         for (int i = 0; i < nrows; ++i) {
             for (int j = 0; j < ncols; ++j)
@@ -453,9 +482,26 @@ void PeakFinderFrame::refreshPreview()
     QRect rect(0, 0, ncols, nrows);
     ColorMap* m = new ColorMap;
     QImage image = m->matToImage(convolvedFrame.cast<double>(), rect, maxVal);
-    if (!pixmap)
-        pixmap = preview->scene()->addPixmap(QPixmap::fromImage(image));
+    if (!_pixmap)
+        _pixmap = _figure->scene()->addPixmap(QPixmap::fromImage(image));
     else
-        pixmap->setPixmap(QPixmap::fromImage(image));
-    preview->fitInView(preview->scene()->sceneRect());
+        _pixmap->setPixmap(QPixmap::fromImage(image));
+    _figure->fitInView(_figure->scene()->sceneRect());
+}
+
+void PeakFinderFrame::refreshPeakTable()
+{
+    std::vector<std::shared_ptr<nsx::Peak3D>>* peaks = 
+        gSession->selectedExperiment()->experiment()->peakFinder()->currentPeaks();
+    
+    if (!(peaks->size()>0)){
+        std::cout << peaks->size()<<std::endl;
+        return;
+    }
+
+    _peak_collection->populate(peaks);
+    _peak_collection_item = new PeakCollectionItem(_peak_collection);
+    _peak_collection_model->setRoot(_peak_collection_item);
+    _peak_table->setModel(_peak_collection_model);
+
 }

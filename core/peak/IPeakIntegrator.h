@@ -34,8 +34,10 @@ class IPeakIntegrator {
     //! @param peak_end Peak boundary (in sigma)
     //! @param bkg_begin Background beginning (in sigma)
     //! @param bkg_end Background end (in sigma)
-    void
-    integrate(PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end);
+    void integrate(
+       PeakList peaks, sptrDataSet data, 
+       double peak_end, double bkg_begin, 
+       double bkg_end);
     //! Returns the mean background.
     Intensity meanBackground() const;
     //! Returns the integrated intensity.
@@ -48,9 +50,9 @@ class IPeakIntegrator {
  protected:
     //! Mean local background of peak. The uncertainty is the uncertainty of the
     //! _estimate_ of the background.
-    Intensity _meanBackground;
+    nsx::Intensity _meanBackground;
     //! Net integrated intensity, after background correction.
-    Intensity _integratedIntensity;
+    nsx::Intensity _integratedIntensity;
     //! The rocking curve of the peak.
     std::vector<Intensity> _rockingCurve;
     //! Optional pointer to progress handler.
