@@ -3,6 +3,7 @@
 
 #include "core/experiment/DataSet.h"
 #include "gui/MainWin.h"
+#include "gui/models/Session.h"
 #include <QDir>
 #include <QFileDialog>
 #include <QHBoxLayout>

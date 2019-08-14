@@ -19,7 +19,7 @@
 #include <QTextEdit>
 
 //! Subframe of the main window that shows the logger lines
-class SubframeLogger : public QcrDockWidget {
+class SubframeLogger : public QcrWidget {
     Q_OBJECT
  public:
     SubframeLogger();

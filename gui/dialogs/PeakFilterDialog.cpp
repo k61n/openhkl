@@ -25,29 +25,25 @@
 #include <QSpacerItem>
 #include <QVBoxLayout>
 
-PeakFilterDialog::PeakFilterDialog() : QDialog {gGui}
+namespace {
+
+QStringList peakListNames()
 {
-    if (gSession->selectedExperimentNum() < 0) {
-        gLogger->log("## No experiment selected");
-        return;
-    }
+    if (gSession->selectedExperimentNum() >= 0)
+        return gSession->selectedExperiment()->getPeakListNames();
+    return {""};
+}
 
-    if (gSession->selectedExperiment()->getPeakListNames().empty()) {
-        gLogger->log("## No peaks to filter. Find peaks first.");
-        return;
-    }
+}
 
-    peaks_ = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
-
-    setAttribute(Qt::WA_DeleteOnClose);
+PeakFilterDialog::PeakFilterDialog() : QcrWidget {"filterScreen"}
+{
     doLayout();
+    refreshData();
 }
 
 PeakFilterDialog::~PeakFilterDialog()
-{
-    if (model_)
-        delete model_;
-}
+{}
 
 void PeakFilterDialog::doLayout()
 {
@@ -139,32 +135,42 @@ void PeakFilterDialog::doLayout()
     keepComplementary = new QcrCheckBox(
         "adhoc_keepComplementary", "Keep the complementary selection", new QcrCell<bool>(false));
     settings->addWidget(keepComplementary);
-    upperLayout->addLayout(settings);
+    upperLayout->addLayout(settings, 1);
 
     QVBoxLayout* tablelayout = new QVBoxLayout;
-    peakList = new QcrComboBox(
-        "adhoc_peakListsPeakFilter", new QcrCell<int>(0),
-        gSession->selectedExperiment()->getPeakListNames());
-    tablelayout->addWidget(peakList);
-    model_ = new PeaksTableModel(
-        "adhoc_filterModel", gSession->selectedExperiment()->experiment(), peaks_);
-    peaksTable = new PeaksTableView;
-    peaksTable->setModel(model_);
-    tablelayout->addWidget(peaksTable);
-    upperLayout->addLayout(tablelayout);
-
-    whole->addLayout(upperLayout);
-    buttons = new QDialogButtonBox(
-        QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply, Qt::Horizontal);
-    whole->addWidget(buttons);
-
+    peakList = new QcrComboBox("adhoc_peakListsPeakFilter", new QcrCell<int>(0), &peakListNames);
     peakList->setHook([this](int) {
+        if (gSession->selectedExperimentNum() < 0
+                || gSession->selectedExperiment()->getPeakListNames().empty())
+            return;
         peaks_ = gSession->selectedExperiment()->getPeaks(peakList->currentText())->peaks_;
         model_->setPeaks(peaks_);
     });
-    connect(buttons, &QDialogButtonBox::clicked, this, &PeakFilterDialog::slotActionClicked);
+    tablelayout->addWidget(peakList);
+    peaksTable = new PeaksTableView;
+    tablelayout->addWidget(peaksTable);
+    upperLayout->addLayout(tablelayout, 2);
 
-    show();
+    whole->addLayout(upperLayout);
+    buttons = new QDialogButtonBox(
+        QDialogButtonBox::Ok | QDialogButtonBox::Apply, Qt::Horizontal);
+    whole->addWidget(buttons);
+
+    connect(buttons, &QDialogButtonBox::clicked, this, &PeakFilterDialog::slotActionClicked);
+}
+
+void PeakFilterDialog::refreshData()
+{
+    if ((gSession->selectedExperimentNum() < 0) ||
+            (gSession->selectedExperiment()->getPeakListNames().empty()))
+        return;
+
+    if (!model_) {
+        model_ = new PeaksTableModel("peakFilterPeakModel",
+                                     gSession->selectedExperiment()->experiment(),
+                                     gSession->selectedExperiment()->getPeaks()->peaks_);
+        peaksTable->setModel(model_);
+    }
 }
 
 void PeakFilterDialog::filterPeaks()
@@ -252,8 +258,6 @@ void PeakFilterDialog::accept()
         message += " peaks";
         gLogger->log(message);
     }
-
-    QDialog::accept();
 }
 
 void PeakFilterDialog::slotActionClicked(QAbstractButton* button)
@@ -263,10 +267,6 @@ void PeakFilterDialog::slotActionClicked(QAbstractButton* button)
     switch (button_role) {
         case QDialogButtonBox::StandardButton::Apply: {
             filterPeaks();
-            break;
-        }
-        case QDialogButtonBox::StandardButton::Cancel: {
-            reject();
             break;
         }
         case QDialogButtonBox::StandardButton::Ok: {

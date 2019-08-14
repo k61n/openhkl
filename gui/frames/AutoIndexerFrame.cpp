@@ -28,24 +28,23 @@
 #include <QStandardItemModel>
 #include <QVBoxLayout>
 
-AutoIndexerFrame::AutoIndexerFrame() : QcrFrame {"autoIndexer"}
-{
-    setAttribute(Qt::WA_DeleteOnClose, true);
-    setWindowFlags(Qt::Window);
-    setFrameStyle(QFrame::Box | QFrame::Plain);
-    setMouseTracking(true);
-    setFocusPolicy(Qt::StrongFocus);
+namespace {
 
-    if (gSession->selectedExperimentNum() < 0) {
-        gLogger->log("[WARNING] No experiment selected");
-        return;
-    }
-    if (gSession->selectedExperiment()->getPeakListNames().empty()) {
-        gLogger->log("[WARNING] No peaks in the selected experiment");
-        return;
-    }
+QStringList peakListNames()
+{
+    if (gSession->selectedExperimentNum() >= 0)
+        return gSession->selectedExperiment()->getPeakListNames();
+    return {""};
+}
+
+}
+
+AutoIndexerFrame::AutoIndexerFrame() : QcrWidget {"autoIndexer"}
+{
+    setMouseTracking(true);
 
     layout();
+    refreshData();
 }
 
 void AutoIndexerFrame::layout()
@@ -57,16 +56,14 @@ void AutoIndexerFrame::layout()
     settings = new QcrWidget("Settings");
     QVBoxLayout* vertical = new QVBoxLayout(settings);
     listNames = new QcrComboBox(
-        "adhoc_filteredPeaklistsNames", new QcrCell<int>(0),
-        gSession->selectedExperiment()->getPeakListNames());
+        "adhoc_filteredPeaklistsNames", new QcrCell<int>(0), &peakListNames);
     vertical->addWidget(listNames);
-    model = new PeaksTableModel(
-        "adhoc_autoIndexerPeakTable", gSession->selectedExperiment()->experiment());
     listNames->setHook([=](int) {
+        if (listNames->currentText().compare("") == 0)
+            return;
         model->setPeaks(gSession->selectedExperiment()->getPeaks(listNames->currentText())->peaks_);
     });
     peaks = new PeaksTableView;
-    peaks->setModel(model);
     vertical->addWidget(peaks);
     QHBoxLayout* horizontal = new QHBoxLayout();
     QGroupBox* params = new QGroupBox("Parameters", this);
@@ -113,8 +110,7 @@ void AutoIndexerFrame::layout()
     tabs->addTab(settings, "Settings");
     whole->addWidget(tabs);
     buttons = new QDialogButtonBox(
-        QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel
-            | QDialogButtonBox::Reset,
+        QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Reset,
         Qt::Horizontal, this);
     whole->addWidget(buttons);
 
@@ -125,8 +121,17 @@ void AutoIndexerFrame::layout()
         solutions->verticalHeader(), &QHeaderView::sectionDoubleClicked, this,
         &AutoIndexerFrame::selectSolution);
     connect(buttons, &QDialogButtonBox::clicked, this, &AutoIndexerFrame::slotActionClicked);
+}
 
-    show();
+void AutoIndexerFrame::refreshData()
+{
+    if (gSession->selectedExperimentNum() < 0
+            || gSession->selectedExperiment()->getPeakListNames().empty())
+        return;
+    if (!model)
+        model = new PeaksTableModel("autoIndexerPeaksModel",
+                                    gSession->selectedExperiment()->experiment(),
+                                    gSession->selectedExperiment()->getPeaks()->peaks_);
 }
 
 void AutoIndexerFrame::slotTabRemoved(int index)
@@ -187,11 +192,6 @@ void AutoIndexerFrame::slotActionClicked(QAbstractButton* button)
         }
         case QDialogButtonBox::StandardButton::Apply: {
             run();
-            break;
-        }
-        case QDialogButtonBox::StandardButton::Cancel: {
-            resetUnitCell();
-            close();
             break;
         }
         case QDialogButtonBox::StandardButton::Ok: {
@@ -368,7 +368,7 @@ void AutoIndexerFrame::selectSolution(int index)
         allPeaks[r.row()]->setUnitCell(selected_unit_cell);
 
     UnitCellWidget* widget_unit_cell =
-        new UnitCellWidget(selected_unit_cell, QString::fromStdString(selected_unit_cell->name()));
+        new UnitCellWidget(selected_unit_cell, "unitCell" + QString::number(tabs->count()));
     tabs->addTab(widget_unit_cell, QString::fromStdString(selected_unit_cell->name()));
     QCheckBox* checkbox = new QCheckBox();
     checkbox->setChecked(true);

@@ -95,18 +95,9 @@ nsx::PeakList FoundPeaks::selectedPeaks()
 
 //  ***********************************************************************************************
 
-PeakFinderFrame::PeakFinderFrame() : QcrFrame {"peakFinder"}, pixmap(nullptr)
+PeakFinderFrame::PeakFinderFrame() : QcrWidget {"peakFinder"}, pixmap(nullptr)
 {
-    if (gSession->selectedExperimentNum() < 0) {
-        gLogger->log("[ERROR] No experiment selected");
-        return;
-    }
-    if (gSession->selectedExperiment()->getDataNames().empty()) {
-        gLogger->log("[ERROR] No data loaded for selected experiment");
-        return;
-    }
     // Layout
-    setAttribute(Qt::WA_DeleteOnClose);
     QVBoxLayout* whole = new QVBoxLayout(this);
 
     tab = new QcrTabWidget("adhoc_peakFinderSettings");
@@ -168,13 +159,13 @@ PeakFinderFrame::PeakFinderFrame() : QcrFrame {"peakFinder"}, pixmap(nullptr)
     integGrid->addWidget(backgroundUpperLimit, 2, 1, 1, 1);
     leftTabLayout->addWidget(integrationParams);
     leftTabLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
-    tabLayout->addLayout(leftTabLayout);
+    tabLayout->addLayout(leftTabLayout, 1);
     preview = new DetectorView(this);
-    tabLayout->addWidget(preview);
+    tabLayout->addWidget(preview, 2);
     tab->addTab(settings, "Settings");
     whole->addWidget(tab);
     buttons = new QDialogButtonBox(
-        QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply, Qt::Horizontal,
+        QDialogButtonBox::Ok | QDialogButtonBox::Apply, Qt::Horizontal,
         this);
     connect(buttons, &QDialogButtonBox::clicked, this, &PeakFinderFrame::doActions);
     whole->addWidget(buttons);
@@ -188,18 +179,18 @@ PeakFinderFrame::PeakFinderFrame() : QcrFrame {"peakFinder"}, pixmap(nullptr)
     //            convolutionParams->setItemDelegateForColumn(
     //                        1, convolution_parameters_delegate);
 
-    QList<nsx::sptrDataSet> datalist = gSession->selectedExperiment()->allData();
-    for (nsx::sptrDataSet d : datalist) {
-        QFileInfo fileinfo(QString::fromStdString(d->filename()));
-        data->addItem(fileinfo.baseName(), QVariant::fromValue(d));
-    }
+//    QList<nsx::sptrDataSet> datalist = gSession->selectedExperiment()->allData();
+//    for (nsx::sptrDataSet d : datalist) {
+//        QFileInfo fileinfo(QString::fromStdString(d->filename()));
+//        data->addItem(fileinfo.baseName(), QVariant::fromValue(d));
+//    }
 
-    data->setCurrentIndex(0);
-    framesEnd->setCellValue(datalist.at(0)->nFrames());
-    framesEnd->setMaximum(datalist.at(0)->nFrames());
-    framesBegin->setMaximum(datalist.at(0)->nFrames());
-    preview->getScene()->slotChangeSelectedData(datalist.at(0), 0);
-    preview->getScene()->setMaxIntensity(3000);
+//    data->setCurrentIndex(0);
+//    framesEnd->setCellValue(datalist.at(0)->nFrames());
+//    framesEnd->setMaximum(datalist.at(0)->nFrames());
+//    framesBegin->setMaximum(datalist.at(0)->nFrames());
+//    preview->getScene()->slotChangeSelectedData(datalist.at(0), 0);
+//    preview->getScene()->setMaxIntensity(3000);
 
     convolutionKernel->clear();
     nsx::ConvolverFactory convolver_factory;
@@ -227,8 +218,26 @@ PeakFinderFrame::PeakFinderFrame() : QcrFrame {"peakFinder"}, pixmap(nullptr)
         updateConvolutionParameters();
         refreshPreview();
     });
+}
 
-    show();
+void PeakFinderFrame::refreshData()
+{
+    if (gSession->selectedExperimentNum() < 0)
+        return;
+    if (gSession->selectedExperiment()->allData().empty())
+        return;
+    QList<nsx::sptrDataSet> datalist = gSession->selectedExperiment()->allData();
+    for (nsx::sptrDataSet d : datalist) {
+        QFileInfo fileinfo(QString::fromStdString(d->filename()));
+        data->addItem(fileinfo.baseName(), QVariant::fromValue(d));
+    }
+
+    data->setCurrentIndex(0);
+    framesEnd->setCellValue(datalist.at(0)->nFrames());
+    framesEnd->setMaximum(datalist.at(0)->nFrames());
+    framesBegin->setMaximum(datalist.at(0)->nFrames());
+    preview->getScene()->slotChangeSelectedData(datalist.at(0), 0);
+    preview->getScene()->setMaxIntensity(3000);
 }
 
 void PeakFinderFrame::updateConvolutionParameters()
@@ -293,16 +302,23 @@ void PeakFinderFrame::run()
     }
 
     // add Tab WidgetFoundPeaks
-    tab->addTab(new FoundPeaks(peaks, "adhoc_findNum" + QString::number(tab->count())), "Peaks");
+    int tabnum = tab->count();
+    tab->addTab(new FoundPeaks(peaks, "adhoc_findNum" + QString::number(tabnum)),
+                "Peaks " + QString::number(tabnum));
 }
 
 std::map<std::string, double> PeakFinderFrame::convolutionParameters()
 {
     std::map<std::string, double> parameters;
+    qDebug() << "1";
     for (int i = 0; i < convolutionParams->rowCount(); ++i) {
+        qDebug() << "2." << i;
         std::string pname = convolutionParams->item(i, 0)->text().toStdString();
+        qDebug() << "3." << i;
         double pvalue = convolutionParams->item(i, 1)->text().toDouble();
+        qDebug() << "4." << i;
         parameters.insert(std::make_pair(pname, pvalue));
+        qDebug() << "5." << i;
     }
     return parameters;
 }
@@ -312,7 +328,6 @@ void PeakFinderFrame::doActions(QAbstractButton* button)
     auto buttonRole = buttons->standardButton(button);
     switch (buttonRole) {
         case QDialogButtonBox::StandardButton::Apply: run(); break;
-        case QDialogButtonBox::StandardButton::Cancel: close(); break;
         case QDialogButtonBox::StandardButton::Ok: accept(); break;
         default: {
             return;
@@ -329,6 +344,7 @@ void PeakFinderFrame::accept()
             continue;
 
         nsx::PeakList found_peaks = widget_found_peaks->selectedPeaks();
+        tab->removeTab(i);
 
         if (found_peaks.empty())
             continue;
@@ -349,13 +365,13 @@ void PeakFinderFrame::accept()
         peaks->file_ = data->currentText();
         gSession->selectedExperiment()->addPeaks(peaks);
     }
-
-    close();
 }
 
 void PeakFinderFrame::refreshPreview()
 {
     nsx::sptrDataSet dataset = data->currentData().value<nsx::sptrDataSet>();
+    if (!dataset)
+        return;
     int selected = frame->value();
     int nrows = dataset->nRows();
     int ncols = dataset->nCols();

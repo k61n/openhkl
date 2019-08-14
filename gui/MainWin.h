@@ -15,13 +15,14 @@
 #ifndef GUI_MAINWIN_H
 #define GUI_MAINWIN_H
 
+#include "gui/dialogs/PeakFilterDialog.h"
+#include "gui/frames/AutoIndexerFrame.h"
+#include "gui/frames/PeakFinderFrame.h"
 #include "gui/graphics/DetectorScene.h"
-#include "gui/panels/SubframeExperiments.h"
-#include "gui/panels/SubframeImage.h"
-#include "gui/panels/SubframeLogger.h"
-#include "gui/panels/SubframePlot.h"
-#include "gui/panels/SubframeProperties.h"
+#include "gui/panels/SubframeExperiment.h"
+#include "gui/panels/SubframeHome.h"
 #include <QCR/widgets/mainwindow.h>
+#include <QStackedWidget>
 
 extern class MainWin* gGui; //!< global pointer to the main window
 
@@ -43,20 +44,20 @@ class MainWin : public QcrMainWindow {
     //! Refreshes the parts of the main window that depend on the peaks
     void onPeaksChanged();
     //! change the detector image view
-    void changeView(int option) { dockImage_->centralWidget->changeView(option); }
+    void changeView(int option) { experimentScreen_->image->changeView(option); }
     //! update the plot, plot the plottable item p
-    void updatePlot(PlottableItem* p) { dockPlot_->updatePlot(p); }
+    void updatePlot(PlottableItem* p) { experimentScreen_->plot->updatePlot(p); }
     //! change the cursor tooltip on the detector scene
     void cursormode(int i)
     {
-        dockImage_->centralWidget->imageView->getScene()->changeCursorMode(i);
+        experimentScreen_->image->imageView->getScene()->changeCursorMode(i);
     }
     //! export current plot to ASCII
-    void exportPlot() { dockPlot_->exportPlot(); }
+    void exportPlot() { experimentScreen_->plot->exportPlot(); }
     //! plot the x and y data, e is the error to y
     void plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e)
     {
-        dockPlot_->plotData(x, y, e);
+        experimentScreen_->plot->plotData(x, y, e);
     }
 
  private:
@@ -65,15 +66,17 @@ class MainWin : public QcrMainWindow {
     void saveSettings() const;
     void closeEvent(QCloseEvent* event) override;
 
-    SubframeImage* dockImage_;
-    SubframePlot* dockPlot_;
-    SubframeExperiments* dockExperiments_;
-    SubframeProperties* dockProperties_;
-    SubframeLogger* dockLogger_;
+    QStackedWidget* layoutStack_;
+    SubframeExperiment* experimentScreen_;
+    SubframeHome* homeScreen_;
+    PeakFinderFrame* finder_;
+    PeakFilterDialog* filter_;
+    AutoIndexerFrame* indexer_;
     class Menus* menus_;
 
     QByteArray initialState_;
 
     friend class Actions;
+    friend class SideBar;
 };
 #endif // GUI_MAINWIN_H

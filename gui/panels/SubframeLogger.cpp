@@ -19,12 +19,13 @@
 #include <QCR/engine/logger.h>
 #include <QTreeView>
 
-SubframeLogger::SubframeLogger() : QcrDockWidget {"Logger"}
+SubframeLogger::SubframeLogger() : QcrWidget {"Logger"}
 {
     logText = new QTextEdit;
-    setWidget(logText);
-    connect(
-        this, SIGNAL(visibilityChanged(bool)), &gGui->triggers->viewLogger, SLOT(setChecked(bool)));
+
+    QVBoxLayout* box = new QVBoxLayout(this);
+    box->addWidget(logText);
+
     connect(gLogger, SIGNAL(sigLine(QString)), this, SLOT(slotPrintLog(QString)));
 }
 

@@ -21,16 +21,11 @@
 //-------------------------------------------------------------------------------------------------
 //! class SubframePlot
 
-SubframePlot::SubframePlot() : QcrDockWidget {"Plotter"}
+SubframePlot::SubframePlot() : QcrWidget {"Plotter"}
 {
-    centralWidget = new QcrWidget("adhoc_plotWidget");
-    anchor = new QHBoxLayout(centralWidget);
+    anchor = new QHBoxLayout(this);
     plot = new SXPlot(this);
     anchor->addWidget(plot);
-    setWidget(centralWidget);
-    connect(
-        this, SIGNAL(visibilityChanged(bool)), &gGui->triggers->viewPlotter,
-        SLOT(setChecked(bool)));
 }
 
 void SubframePlot::plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e)

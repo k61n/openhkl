@@ -29,7 +29,7 @@ class Session {
     SessionExperiment* experimentAt(int i) { return experiments.at(i); }
     int numExperiments() { return experiments.size(); }
 
-    void createExperiment();
+    void createExperiment(QString experimentName);
     void createDefaultExperiment();
     void removeExperiment();
 

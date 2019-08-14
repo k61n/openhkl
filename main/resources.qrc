@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/homeIcon.svg</file>
+        <file>images/experimentIcon.png</file>
+        <file>images/findPeakIcon.png</file>
+        <file>images/findUnitCellIcon.png</file>
+        <file>images/filterIcon.svg</file>
+        <file>images/peakInformationIcon.svg</file>
+    </qresource>
+</RCC>

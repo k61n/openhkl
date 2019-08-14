@@ -35,7 +35,7 @@ class FoundPeaks : public QcrWidget {
 };
 
 //! Frame which shows the settings to find peaks
-class PeakFinderFrame : public QcrFrame {
+class PeakFinderFrame : public QcrWidget {
  public:
     PeakFinderFrame();
     //! Change the convolution parameters
@@ -43,6 +43,7 @@ class PeakFinderFrame : public QcrFrame {
     //! Find peaks
     void run();
     std::map<std::string, double> convolutionParameters();
+    void refreshData();
 
  private:
     QcrSpinBox* threshold;

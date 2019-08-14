@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/panels/SubframeProperties.cpp
-//! @brief     Implements class SubframeProperties
+//! @file      gui/panels/SubframeHome.h
+//! @brief     Defines class SubframeHome
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,13 +12,20 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/panels/SubframeProperties.h"
+#ifndef GUI_PANELS_SUBFRAMEHOME_H
+#define GUI_PANELS_SUBFRAMEHOME_H
 
-#include "gui/MainWin.h"
-#include "gui/actions/Triggers.h"
-#include "gui/panels/SubframeSetup.h"
+#include <QCR/widgets/controls.h>
+#include <QCR/widgets/views.h>
 
-SubframeProperties::SubframeProperties() : QcrDockWidget {"Properties"}
-{
-    setWidget((tabsframe = new SubframeSetup));
-}
+class SubframeHome : public QcrWidget {
+ public:
+    SubframeHome();
+
+ private:
+    void createAndLoad();
+    void createAndImportRaw();
+    QcrLineEdit* expName;
+};
+
+#endif // GUI_PANELS_SUBFRAMEHOME_H
