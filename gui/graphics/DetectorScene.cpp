@@ -19,6 +19,7 @@
 #include "base/mask/BoxMask.h"
 #include "base/mask/EllipseMask.h"
 #include "base/utils/Units.h"
+
 #include "core/detector/Detector.h"
 #include "core/experiment/DataSet.h"
 #include "core/gonio/Gonio.h"
@@ -29,19 +30,24 @@
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
+
 #include "gui/MainWin.h"
-#include "gui/graphics/CutLineItem.h"
-#include "gui/graphics/CutSliceItem.h"
-#include "gui/graphics/CutterItem.h"
-#include "gui/graphics/EllipseItem.h"
-#include "gui/graphics/MaskItem.h"
-#include "gui/graphics/PeakItemGraphic.h"
-#include "gui/graphics/PlottableItem.h"
-#include "gui/graphics/SXGraphicsItem.h"
+#include "gui/graphics_tools/CutLineItem.h"
+#include "gui/graphics_tools/CutSliceItem.h"
+#include "gui/graphics_tools/CutterItem.h"
+
+#include "gui/graphics_items/EllipseItem.h"
+#include "gui/graphics_items/MaskItem.h"
+#include "gui/graphics_items/PeakItemGraphic.h"
+#include "gui/graphics_items/PlottableItem.h"
+#include "gui/graphics_items/SXGraphicsItem.h"
+
 #include "gui/models/Session.h"
+
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
+
 #include <QCR/engine/logger.h>
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
@@ -77,54 +83,72 @@ DetectorScene::DetectorScene(QObject* parent)
 {
 }
 
-void DetectorScene::clearPeakGraphicsItems()
+void DetectorScene::linkPeakModel(PeakCollectionModel* source)
+{
+    if (!(_peak_model == nullptr))
+        unlinkPeakModel();
+    _peak_model = source;
+    connect(
+        _peak_model, &PeakCollectionModel::dataChanged,
+        this, &DetectorScene::peakModelDataChanged
+    );
+
+}
+
+PeakCollectionModel* DetectorScene::peakModel() const
+{
+    return _peak_model;
+}
+
+void DetectorScene::unlinkPeakModel()
+{
+    _peak_model = nullptr;
+}
+
+void DetectorScene::peakModelDataChanged()
+{
+    drawPeakitems();
+    update();
+}
+
+void DetectorScene::clearPeakItems()
 {
     if (!_currentData)
         return;
 
-    for (auto p : _peak_graphics_items) {
-        removeItem(p.second);
-        delete p.second;
+    for (PeakItemGraphic* p : _peak_graphics_items) {
+        removeItem(p);
     }
 
     _peak_graphics_items.clear();
 }
 
-void DetectorScene::resetPeakGraphicsItems()
+void DetectorScene::drawPeakitems()
 {
-    // if (!_currentData)
-    //     return;
+    if (_peak_model == nullptr || _peak_model->root() == nullptr)
+        return;
 
-    // clearPeakGraphicsItems();
+    clearPeakItems();
 
-    // if (gSession->selectedExperimentNum() >= 0) {
-    //     const Peaks* peaksdata = gSession->selectedExperiment()->getPeaks(0, 0);
-    //     if (peaksdata) {
-    //         nsx::PeakList peaks = peaksdata->peaks_;
+    std::vector<PeakItem*>* peak_items = _peak_model->root()->peakItems();
 
-    //         for (nsx::sptrPeak3D peak : peaks) {
-    //             nsx::Ellipsoid peak_ellipsoid = peak->shape();
+    for (PeakItem* peak_item : *peak_items) {
+        nsx::Ellipsoid peak_ellipsoid = peak_item->peak()->shape();
+        peak_ellipsoid.scale(peak_item->peak()->peakEnd());
+        const nsx::AABB& aabb = peak_ellipsoid.aabb();
+        Eigen::Vector3d lower = aabb.lower();
+        Eigen::Vector3d upper = aabb.upper();
 
-    //             peak_ellipsoid.scale(peak->peakEnd());
+        // If the current frame of the scene is out of the peak bounds do not paint it
+        if (_currentFrameIndex < lower[2] || _currentFrameIndex > upper[2])
+            continue;
 
-    //             const nsx::AABB& aabb = peak_ellipsoid.aabb();
+        PeakItemGraphic* peak_graphic = peak_item->peakGraphic();
+        peak_graphic->setCenter(_currentFrameIndex);
+        _peak_graphics_items.push_back(peak_graphic);
+        addItem(peak_graphic);
 
-    //             Eigen::Vector3d lower = aabb.lower();
-
-    //             Eigen::Vector3d upper = aabb.upper();
-
-    //             // If the current frame of the scene is out of the peak bounds do not paint it
-    //             if (_currentFrameIndex < lower[2] || _currentFrameIndex > upper[2])
-    //                 continue;
-
-    //             PeakItemGraphic* peak_gi = new PeakItemGraphic(peak, _currentFrameIndex);
-
-    //             addItem(peak_gi);
-
-    //             _peak_graphics_items.insert(std::make_pair(peak, peak_gi));
-    //         }
-    //     }
-    // }
+    }
 
     // if (_selected_peak_gi) {
     //     removeItem(_selected_peak_gi);
@@ -138,14 +162,10 @@ void DetectorScene::resetPeakGraphicsItems()
     //     it->second->setVisible(true);
 
     // if (_selected_peak) {
-    //     nsx::Ellipsoid selected_peak_ellipsoid = _selected_peak->shape();
-
-    //     selected_peak_ellipsoid.scale(_selected_peak->peakEnd());
-
+    //     nsx::Ellipsoid selected_peak_ellipsoid = _selected_peak_item->peak()->shape();
+    //     selected_peak_ellipsoid.scale(_selected_peak_item->peak()->peakEnd());
     //     double frame_index = static_cast<double>(_currentFrameIndex);
-
     //     const nsx::AABB& aabb = selected_peak_ellipsoid.aabb();
-
     //     const Eigen::Vector3d& lower = aabb.lower();
     //     const Eigen::Vector3d& upper = aabb.upper();
 
@@ -190,16 +210,16 @@ void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
     slotChangeSelectedFrame(frame);
 }
 
-void DetectorScene::slotChangeSelectedPeak(nsx::sptrPeak3D peak)
+void DetectorScene::slotChangeSelectedPeak(nsx::Peak3D* peak)
 {
     // if (peak == _selected_peak)
     //     return;
 
     // _selected_peak = peak;
 
-    // nsx::sptrDataSet data = peak->data();
+    // nsx::sptrDataSet data = peak_item->peak()->data();
 
-    // const nsx::Ellipsoid& peak_ellipsoid = peak->shape();
+    // const nsx::Ellipsoid& peak_ellipsoid = peak_item->peak()->shape();
 
     // // Get frame number to adjust the data
     // size_t frame = size_t(std::lround(peak_ellipsoid.aabb().center()[2]));
@@ -222,11 +242,11 @@ void DetectorScene::slotChangeSelectedFrame(int frame)
 
     _currentFrameIndex = frame;
 
-    resetPeakGraphicsItems();
-
+    clearPeakItems();
     loadCurrentImage();
-
     updateMasks();
+    drawPeakitems();
+    
 }
 
 void DetectorScene::setMaxIntensity(int intensity)
@@ -403,7 +423,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             if (!peak_item)
                 return;
 
-            nsx::sptrPeak3D peak = peak_item->peak();
+            nsx::Peak3D* peak = peak_item->peak();
 
             //            gSession->onSelectedPeakChanged(peak);
         } else if (_mode == ZOOM) {
@@ -673,15 +693,15 @@ void DetectorScene::loadCurrentImage()
     //     Eigen::MatrixXi mask(nrows, ncols);
     //     mask.setConstant(int(EventType::EXCLUDED));
     //     nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
-    //     for (nsx::sptrPeak3D peak : peaks) {
-    //         if (peak->enabled()) {
+    //     for (nsx::Peak3D* peak : peaks) {
+    //         if (peak_item->peak()->enabled()) {
     //             // IntegrationRegion constructor can throw if the region is invalid
     //             try {
     //                 nsx::IntegrationRegion region(
-    //                     peak, peak->peakEnd(), peak->bkgBegin(), peak->bkgEnd());
+    //                     peak, peak_item->peak()->peakEnd(), peak_item->peak()->bkgBegin(), peak_item->peak()->bkgEnd());
     //                 region.updateMask(mask, _currentFrameIndex);
     //             } catch (...) {
-    //                 peak->setSelected(false);
+    //                 peak_item->peak()->setSelected(false);
     //             }
     //         }
     //     }
@@ -719,14 +739,14 @@ void DetectorScene::loadCurrentImage()
 void DetectorScene::showPeakLabels(bool flag)
 {
     for (auto p : _peak_graphics_items)
-        p.second->showLabel(flag);
+        p->showLabel(flag);
     update();
 }
 
 void DetectorScene::showPeakAreas(bool flag)
 {
     for (auto p : _peak_graphics_items)
-        p.second->showArea(flag);
+        p->showArea(flag);
     update();
 }
 
@@ -746,7 +766,7 @@ void DetectorScene::drawIntegrationRegion(bool flag)
 
 void DetectorScene::resetScene()
 {
-    clearPeakGraphicsItems();
+    clearPeakItems();
     clear();
     _currentData = nullptr;
     _currentFrameIndex = 0;

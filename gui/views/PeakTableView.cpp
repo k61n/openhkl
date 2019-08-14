@@ -38,17 +38,14 @@ PeaksTableView::PeaksTableView(QWidget* parent) : QTableView(parent)
 {
     // setEditTriggers(QAbstractItemView::SelectedClicked);
 
-    // // Selection of a cell in the table select the whole line.
-    // setSelectionBehavior(QAbstractItemView::SelectRows);
-    // setSelectionMode(QAbstractItemView::ExtendedSelection);
+    // Selection of a cell in the table select the whole line.
+    setSelectionBehavior(QAbstractItemView::SelectRows);
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-    // setSortingEnabled(true);
-    // sortByColumn(0, Qt::AscendingOrder);
-    // horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
-    // verticalHeader()->show();
-
-    // setFocusPolicy(Qt::StrongFocus);
+    setSortingEnabled(true);
+    sortByColumn(0, Qt::AscendingOrder);
+    verticalHeader()->show();
+    setFocusPolicy(Qt::StrongFocus);
 
     // connect(this, SIGNAL(clicked(QModelIndex)), this, SLOT(selectPeak(QModelIndex)));
 

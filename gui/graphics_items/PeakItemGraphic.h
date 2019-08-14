@@ -12,19 +12,25 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_GRAPHICS_PEAKITEM_H
-#define GUI_GRAPHICS_PEAKITEM_H
+#ifndef GUI_GRAPHICS_ITEMS_PEAKITEM_H
+#define GUI_GRAPHICS_ITEMS_PEAKITEM_H
 
 #include "core/peak/Peak3D.h"
-#include "gui/graphics/PlottableItem.h"
+#include "gui/graphics_items/PlottableItem.h"
 #include <Eigen/Dense>
+
+#include <QColor>
 
 //! Plottable graphics item that represents a peak in the detector image
 class PeakItemGraphic : public PlottableItem {
  public:
-    PeakItemGraphic(nsx::sptrPeak3D peak, int frame);
-
+    PeakItemGraphic(nsx::Peak3D* peak);
     ~PeakItemGraphic() = default;
+
+    //! Redraw all the elements of the item
+    void redraw();
+    //! Set the center of the element
+    void setCenter(int frame);
 
     void plot(SXPlot* plot) override;
 
@@ -35,25 +41,33 @@ class PeakItemGraphic : public PlottableItem {
     //! Returns the type of plot related to the item
     std::string getPlotType() const override;
 
-    nsx::sptrPeak3D peak() const;
+    nsx::Peak3D* peak() const;
 
-    static void showLabel(bool flag);
+    void showLabel(bool flag);
 
-    static void showArea(bool flag);
+    void showArea(bool flag);
+
+    void setSize(int size);
+
+    void setColor(QColor color);
 
  private:
     //! Pointer to the Peak3D object
-    nsx::sptrPeak3D _peak;
+    nsx::Peak3D* _peak;
 
-    static bool _show_label;
+    bool _show_label;
 
-    static bool _show_center;
+    bool _show_center;
 
     QGraphicsEllipseItem* _center_gi;
 
     Eigen::Vector3d _lower;
 
     Eigen::Vector3d _upper;
+
+    Eigen::Vector2d _size;
+
+    QColor _color;
 };
 
-#endif // GUI_GRAPHICS_PEAKITEM_H
+#endif // GUI_GRAPHICS_ITEMS_PEAKITEM_H

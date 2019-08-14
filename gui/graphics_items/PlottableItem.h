@@ -12,10 +12,10 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_GRAPHICS_PLOTTABLEITEM_H
-#define GUI_GRAPHICS_PLOTTABLEITEM_H
+#ifndef GUI_GRAPHICS_ITEMS_PLOTTABLEITEM_H
+#define GUI_GRAPHICS_ITEMS_PLOTTABLEITEM_H
 
-#include "gui/graphics/SXGraphicsItem.h"
+#include "gui/graphics_items/SXGraphicsItem.h"
 
 class SXPlot;
 

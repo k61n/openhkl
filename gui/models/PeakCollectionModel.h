@@ -28,6 +28,8 @@ public:
 public:
     //! Set the root item that will be used within the model
     void setRoot(PeakCollectionItem* peak_collection);
+    //! Set the root item that will be used within the model
+    PeakCollectionItem* root() const {return _root_item;};
     //! Retrieve the name
     std::string* name() const {return _name;};
     //! Retrieve the row count
@@ -46,6 +48,8 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     //! Enumerator class for the model
     enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Numor, uc, d, Count };
+    //! The sorthing of the peaks
+    void sort(int column, Qt::SortOrder order) override;
 
 private:
     PeakCollectionItem* _root_item = nullptr;

@@ -15,7 +15,7 @@
 #ifndef GUI_GRAPHICS_CUTSLICEITEM_H
 #define GUI_GRAPHICS_CUTSLICEITEM_H
 
-#include "gui/graphics/CutterItem.h"
+#include "gui/graphics_tools/CutterItem.h"
 
 //! Cutter item that cuts a horizontal or vertical slice
 class CutSliceItem : public CutterItem {

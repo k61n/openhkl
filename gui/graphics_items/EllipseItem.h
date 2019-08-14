@@ -12,12 +12,12 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_GRAPHICS_ELLIPSEITEM_H
-#define GUI_GRAPHICS_ELLIPSEITEM_H
+#ifndef GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H
+#define GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H
 
 #include "base/geometry/AABB.h"
 #include "core/experiment/DataTypes.h"
-#include "gui/graphics/SXGraphicsItem.h"
+#include "gui/graphics_items/SXGraphicsItem.h"
 
 //! Creates an ellipse mask
 
@@ -68,4 +68,4 @@ class EllipseMaskItem : public SXGraphicsItem {
     void updateAABB();
 };
 
-#endif // GUI_GRAPHICS_ELLIPSEITEM_H
+#endif // GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H

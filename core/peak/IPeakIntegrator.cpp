@@ -24,8 +24,14 @@
 
 namespace nsx {
 
-IPeakIntegrator::IPeakIntegrator()
-    : _meanBackground(), _integratedIntensity(), _rockingCurve(), _handler(nullptr)
+IPeakIntegrator::IPeakIntegrator() : 
+    _meanBackground(), 
+    _integratedIntensity(), 
+    _rockingCurve(), 
+    _handler(nullptr),
+    _peak_end {3.0},
+    _bkg_begin {3.0},
+    _bkg_end {6.0}
 {
 }
 
@@ -49,6 +55,11 @@ const std::vector<Intensity>& IPeakIntegrator::rockingCurve() const
 void IPeakIntegrator::integrate(
     PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end)
 {
+
+    _peak_end = peak_end;
+    _bkg_begin = bkg_begin;
+    _bkg_end = bkg_end;
+
     qDebug() << "IPeakIntegrator::integrate start";
     // integrate only those peaks that belong to the specified dataset
     auto it = std::remove_if(

@@ -85,7 +85,7 @@ namespace nsx {
 
 PeakFinder::PeakFinder()
     : _handler(nullptr)
-    , _threshold(3.0)
+    , _threshold(80.0)
     , _peakScale(1.0)
     , _current_label(0)
     , _minSize(30)
@@ -96,7 +96,7 @@ PeakFinder::PeakFinder()
 {
     qDebug("PeakFinder::ctor ...\n");
     ConvolverFactory convolver_factory;
-    _convolver.reset(convolver_factory.create("annular", {}));
+    _convolver.reset(convolver_factory.create("annular", {{"r1", 5.}, {"r2", 10.}, {"r3", 15.}}));
     qDebug("PeakFinder::ctor done\n");
 }
 

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_GRAPHICS_SXGRAPHICSITEM_H
-#define GUI_GRAPHICS_SXGRAPHICSITEM_H
+#ifndef GUI_GRAPHICS_ITEMS_SXGRAPHICSITEM_H
+#define GUI_GRAPHICS_ITEMS_SXGRAPHICSITEM_H
 
 #include <QGraphicsItem>
 #include <QPen>

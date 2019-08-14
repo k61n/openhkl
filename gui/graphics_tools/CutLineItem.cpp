@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/graphics/CutLineItem.h"
+#include "gui/graphics_tools/CutLineItem.h"
 
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/SimplePlot.h"

@@ -15,7 +15,7 @@
 #ifndef GUI_GRAPHICS_CUTLINEITEM_H
 #define GUI_GRAPHICS_CUTLINEITEM_H
 
-#include "gui/graphics/CutterItem.h"
+#include "gui/graphics_tools/CutterItem.h"
 
 //! Cutter item that cuts the data as a line
 class CutLineItem : public CutterItem {

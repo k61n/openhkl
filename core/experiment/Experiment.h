@@ -96,7 +96,7 @@ public:
 
 private:
    //! The name of this experiment
-   std::string _name;
+   std::string _name = "No_name";
    //! A pointer to the detector assigned to this experiment
    std::unique_ptr<Diffractometer> _diffractometer;
    //! A map of the data related to the experiment. The keys are the basename of

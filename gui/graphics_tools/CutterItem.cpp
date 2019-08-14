@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/graphics/CutterItem.h"
+#include "gui/graphics_tools/CutterItem.h"
 
 #include <QGraphicsSceneMouseEvent>
 #include <cmath>

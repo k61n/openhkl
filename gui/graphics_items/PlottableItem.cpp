@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/graphics/PlottableItem.h"
+#include "gui/graphics_items/PlottableItem.h"
 
 #include "gui/graphics/SXPlot.h"
 

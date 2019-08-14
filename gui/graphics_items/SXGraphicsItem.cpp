@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/graphics/SXGraphicsItem.h"
+#include "gui/graphics_items/SXGraphicsItem.h"
 
 #include <QCursor>
 #include <QGraphicsScene>

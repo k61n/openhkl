@@ -17,7 +17,7 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 
-#include "gui/graphics/PinItem.h"
+#include "gui/graphics_items/PinItem.h"
 
 PinItem::PinItem(QGraphicsItem* parent) : QGraphicsItem(parent)
 {

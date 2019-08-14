@@ -77,6 +77,16 @@ void Session::createDefaultExperiment()
     onExperimentChanged();
 }
 
+QList<QString> Session::experimentNames() const
+{
+    QList<QString> names;
+
+    for (int i = 0 ; i < experiments.size(); i++) {
+        names.append(QString::fromStdString(experiments.at(i)->experiment()->name()));
+    }
+    return names;
+}
+
 void Session::removeExperiment()
 {
     if (experiments.size() == 0) {

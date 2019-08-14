@@ -57,6 +57,22 @@ class IPeakIntegrator {
     std::vector<Intensity> _rockingCurve;
     //! Optional pointer to progress handler.
     sptrProgressHandler _handler;
+    
+ private:
+    //! The integrator values
+    double _peak_end;
+    //! The integrator values
+    double _bkg_begin;
+    //! The integrator values
+    double _bkg_end;
+
+ public:
+    //! get the value
+    double peakEnd() const {return _peak_end;};
+    //! get the value
+    double backBegin() const {return _bkg_begin;};
+    //! get the value
+    double backEnd() const {return _bkg_end;};
 };
 
 } // namespace nsx

@@ -29,6 +29,7 @@ PeakItem::PeakItem(nsx::Peak3D* peak)
     :QStandardItem()
 {
     _peak = peak;
+    _peak_graphic = std::unique_ptr<PeakItemGraphic>(new PeakItemGraphic(peak));
 }
 
 QVariant PeakItem::peakData(

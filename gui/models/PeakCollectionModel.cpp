@@ -121,3 +121,12 @@ QVariant PeakCollectionModel::headerData(int section, Qt::Orientation orientatio
         return QVariant(section + 1);
     }
 }
+
+void PeakCollectionModel::sort(int column, Qt::SortOrder order)
+{
+    if (!_root_item)
+        return;
+    return _root_item->sort(column, order);
+    emit dataChanged(QModelIndex(), QModelIndex());
+}
+

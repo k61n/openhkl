@@ -12,12 +12,12 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_GRAPHICS_MASKITEM_H
-#define GUI_GRAPHICS_MASKITEM_H
+#ifndef GUI_GRAPHICS_ITEMS_MASKITEM_H
+#define GUI_GRAPHICS_ITEMS_MASKITEM_H
 
 #include "base/geometry/AABB.h"
 #include "core/experiment/DataTypes.h"
-#include "gui/graphics/SXGraphicsItem.h"
+#include "gui/graphics_items/SXGraphicsItem.h"
 
 //! Creates a mask
 
@@ -68,4 +68,4 @@ class MaskItem : public SXGraphicsItem {
     void updateAABB();
 };
 
-#endif // GUI_GRAPHICS_MASKITEM_H
+#endif // GUI_GRAPHICS_ITEMS_MASKITEM_H

@@ -28,6 +28,7 @@ class Session {
     int selectedExperimentNum() { return selectedExperiment_; }
     SessionExperiment* experimentAt(int i) { return experiments.at(i); }
     int numExperiments() { return experiments.size(); }
+    QList<QString> experimentNames() const;
 
     void createExperiment();
     void createDefaultExperiment();

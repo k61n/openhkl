@@ -35,8 +35,14 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     //! Get the peak collection pointer
     nsx::PeakCollection* peakCollection() const {return _peak_collection;};
+    //! Get the peak items pointer
+    std::vector<PeakItem*>* peakItems() {return &_peak_items;};
     //! Returns the peak item at a given row
     PeakItem* peakItemAt(int row) const;
+    //! The sorthing of the peaks
+    void sort(int column, Qt::SortOrder order);
+    //! Enumerator class for the model
+    enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Numor, uc, d, Count };
 
 private:
     nsx::PeakCollection* _peak_collection;

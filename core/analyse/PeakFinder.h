@@ -40,6 +40,7 @@ class PeakFinder {
     void setHandler(const sptrProgressHandler& handler);
 
     void setPeakScale(double scale) { _peakScale = scale; }
+    double peakScale() const { return _peakScale; }
 
     void setMinSize(int minComp);
     int minSize() const;
@@ -61,8 +62,10 @@ class PeakFinder {
 #endif
 
     void setConvolver(const Convolver& convolver);
+    nsx::Convolver* convolver() const {return _convolver.get();}
 
     void setThreshold(double value);
+    int threshold() const {return _threshold;};
 
  private:
     void eliminateBlobs(std::map<int, Blob3D>& blobs) const;

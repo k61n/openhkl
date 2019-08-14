@@ -21,11 +21,11 @@
 #include "gui/views/PeakTableView.h"
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/views/PeakTableView.h"
+#include "gui/utility/ColorButton.h"
 
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 
-#include <QDialogButtonBox>
 #include <QTableWidget>
 #include <QWidget>
 #include <QPushButton>
@@ -33,6 +33,9 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QSplitter>
+#include <QCheckBox>
+#include <QSpinBox>
+#include <QDoubleSpinBox>
 
 #include <QSizePolicy>
 
@@ -51,6 +54,8 @@ public:
 private:
    //! Set up the GUI size policies
    void setSizePolicies();
+   //! Set up the data selection GUI
+   void setDataUp();
    //! Set up the blob finding GUI
    void setBlobUp();
    //! Set up the Preview GUI
@@ -61,8 +66,6 @@ private:
    void setFigureUp();
    //! Set the peak table view up
    void setPeakTableUp();
-   //! Set the execution buttons up
-   void setExecuteUp();
    //! Set the parameters values up
    void setParametersUp();
 
@@ -70,12 +73,35 @@ private:
    void refreshPreview();
    //! Refresh the found peaks list
    void refreshPeakTable();
+   //! Refresh the found peaks visual properties
+   void refreshPeakVisual();
    //! Accept and save current list
    void accept();
+
+public:
+   //! Update the datalist as an experiment was changed
+   void setExperimentsUp();
+
+private:
+   //! Update the datalist as an experiment was changed
+   void updateDatasetList(int idx);
+   //! Update the dataset related parameters
+   void updateDatasetParameters(int idx);
+
+   //! Grab the finder parameters
+   void grabFinderParameters();
+   //! Set the finder parameters
+   void setFinderParameters();
+
+   //! Grab the Integration parameters
+   void grabIntegrationParameters();
+
 
 private:
    //! Convolution parameter map
    std::map<std::string, double> convolutionParameters();
+
+private:
    //! The temporary collection
    PeakCollectionModel* _peak_collection_model = 
       new PeakCollectionModel();
@@ -83,7 +109,9 @@ private:
    PeakCollectionItem* _peak_collection_item;
    //! The model for the found peaks
    nsx::PeakCollection* _peak_collection = 
-      new nsx::PeakCollection( "temp", nsx::listtype::FOUND);
+      new nsx::PeakCollection("temp", nsx::listtype::FOUND);
+   //! The loaded data list
+   QList<nsx::sptrDataSet> _data_list;
 
 private:
    QHBoxLayout* _main_layout;
@@ -91,26 +119,36 @@ private:
    QVBoxLayout* _left_layout;
    QSplitter* _right_element;
 
-   QcrSpinBox* _threshold_spin;
-   QcrDoubleSpinBox* _scale_spin;
-   QcrSpinBox* _min_size_spin;
-   QcrSpinBox* _max_size_spin;
-   QcrSpinBox* _max_width_spin;
+   QComboBox* _exp_combo;
+   QComboBox* _data_combo;
+   QCheckBox* _all_data;
+
+   QSpinBox* _threshold_spin;
+   QDoubleSpinBox* _scale_spin;
+   QSpinBox* _min_size_spin;
+   QSpinBox* _max_size_spin;
+   QSpinBox* _max_width_spin;
    QComboBox* _kernel_combo;
    QTableWidget* _kernel_para_table;
-   QcrSpinBox* _start_frame_spin;
-   QcrSpinBox* _end_frame_spin;
+   QSpinBox* _start_frame_spin;
+   QSpinBox* _end_frame_spin;
 
-   QComboBox* _data_combo;
-   QcrSpinBox* _frame_spin;
-   QcrCheckBox* _live_check;
+   QCheckBox* _draw_active;
+   QCheckBox* _draw_inactive;
+   QSpinBox* _width_active;
+   QSpinBox* _width_inactive;
+   ColorButton* _color_active;
+   ColorButton* _color_inactive;
+   QCheckBox* _live_check;
 
-   QcrDoubleSpinBox* _peak_area;
-   QcrDoubleSpinBox* _bkg_lower;
-   QcrDoubleSpinBox* _bkg_upper;
+   QDoubleSpinBox* _peak_area;
+   QDoubleSpinBox* _bkg_lower;
+   QDoubleSpinBox* _bkg_upper;
 
-   DetectorView* _figure;
+   DetectorView* _figure_view;
    QGraphicsPixmapItem* _pixmap;
+   QSpinBox* _figure_spin;
+   QScrollBar* _figure_scroll;
 
    PeaksTableView* _peak_table;
 
@@ -121,6 +159,7 @@ private:
    QSizePolicy* _size_policy_widgets;
    QSizePolicy* _size_policy_box;
    QSizePolicy* _size_policy_right;
+   QSizePolicy* _size_policy_fixed;
 
 };
 

@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/graphics/MaskItem.h"
+#include "gui/graphics_items/MaskItem.h"
 
 #include "core/experiment/DataSet.h"
 #include <Eigen/Dense>
