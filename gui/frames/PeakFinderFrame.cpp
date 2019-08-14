@@ -474,6 +474,10 @@ void PeakFinderFrame::setFigureUp()
         _figure_scroll, SIGNAL(valueChanged(int)), 
         _figure_spin, SLOT(setValue(int)));
 
+    connect(
+        _figure_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, 
+        this, &PeakFinderFrame::changeSelected);
+
     _right_element->addWidget(figure_group);
 }
 
@@ -800,17 +804,26 @@ void PeakFinderFrame::refreshPeakVisual()
 
         if (valid){
             graphic->showArea((_draw_active->checkState() == Qt::CheckState::Checked));
-            // graphic->showLabel(false);
+            graphic->showLabel(false);
             graphic->setSize(_width_active->value());
             graphic->setColor(_color_active->getColor());
         }else{
             graphic->showArea((_draw_inactive->checkState() == Qt::CheckState::Checked));
-            // graphic->showLabel(false);
+            graphic->showLabel(false);
             graphic->setSize(_width_inactive->value());
             graphic->setColor(_color_inactive->getColor());
         }
     }
 
     _figure_view->getScene()->update();
+
+}
+
+void PeakFinderFrame::changeSelected(PeakItemGraphic* peak_graphic)
+{   
+    int row = _peak_collection_item->returnRowOfVisualItem(peak_graphic);
+    QModelIndex index = _peak_collection_model->index(row, 0);
+    _peak_table->selectRow(row);
+    _peak_table->scrollTo(index, QAbstractItemView::PositionAtTop);
 
 }

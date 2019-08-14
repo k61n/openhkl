@@ -75,6 +75,8 @@ private:
    void refreshPeakTable();
    //! Refresh the found peaks visual properties
    void refreshPeakVisual();
+   //! Change the peak selected in the table
+   void changeSelected(PeakItemGraphic* peak_graphic);
    //! Accept and save current list
    void accept();
 

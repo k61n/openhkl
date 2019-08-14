@@ -43,6 +43,8 @@ public:
     void sort(int column, Qt::SortOrder order);
     //! Enumerator class for the model
     enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Numor, uc, d, Count };
+    //! Return the row according to the vis. peak item pointer
+    int returnRowOfVisualItem(PeakItemGraphic* peak_graphic) const;
 
 private:
     nsx::PeakCollection* _peak_collection;

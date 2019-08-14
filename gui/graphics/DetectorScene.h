@@ -111,6 +111,7 @@ signals:
    void signalChangeSelectedData(nsx::sptrDataSet data);
    void signalChangeSelectedFrame(int selected_frame);
    void signalChangeSelectedPeak(nsx::Peak3D* peak);
+   void signalSelectedPeakItemChanged(PeakItemGraphic* peak);
 
 private:
    //! Create the text of the tooltip depending on Scene Mode.

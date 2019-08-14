@@ -59,7 +59,6 @@ QVariant PeakCollectionItem::data(
 PeakItem* PeakCollectionItem::peakItemAt(int row) const
 {
     return _peak_items.at(row);
-    
 }
 
 void PeakCollectionItem::sort(int column, Qt::SortOrder order)
@@ -182,4 +181,13 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
 
     if (order == Qt::DescendingOrder)
         std::reverse(_peak_items.begin(), _peak_items.end());
+}
+
+int PeakCollectionItem::returnRowOfVisualItem(PeakItemGraphic* peak_graphic) const
+{
+    for (int i = 0; i < _peak_items.size(); i++){
+        if (peak_graphic ==_peak_items.at(i)->peakGraphic())
+            return i;
+    }
+    return 0;
 }

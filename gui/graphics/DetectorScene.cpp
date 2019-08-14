@@ -300,10 +300,13 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
         QGraphicsItem* gItem = itemAt(point, trans);
         if (!gItem)
             return;
-        PlottableItem* p = dynamic_cast<PlottableItem*>(gItem);
+
+        PeakItemGraphic* p = dynamic_cast<PeakItemGraphic*>(gItem);
+
         if (p) {
-            gGui->updatePlot(p);
-            QGraphicsScene::mouseMoveEvent(event);
+            emit signalSelectedPeakItemChanged(p);
+            // gGui->updatePlot(p);
+            // QGraphicsScene::mouseMoveEvent(event);
         }
     }
 }
