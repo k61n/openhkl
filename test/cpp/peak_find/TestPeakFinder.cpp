@@ -27,7 +27,8 @@ TEST_CASE("test/peak_find/TestPeakFinder.cpp", "")
     peakFinder.setHandler(handler);
     peakFinder.setPeakScale(1.0);
 
-    auto found_peaks = peakFinder.find(numors);
+    peakFinder.find(numors);
+    auto found_peaks = peakFinder.currentPeaks();
     CHECK(found_peaks.size() == 1);
 
     dataf->close();

@@ -52,6 +52,24 @@ Peak3D::Peak3D(sptrDataSet data, const Ellipsoid& shape) : Peak3D(data)
     setShape(shape);
 }
 
+Peak3D::Peak3D(std::shared_ptr<nsx::Peak3D> peak)
+{
+    setShape(peak->shape());
+    _peakEnd = peak->peakEnd();
+    _bkgBegin = peak->bkgBegin();
+    _bkgEnd = peak->bkgEnd();
+    _unitCell = peak->unitCell();
+    _scale = peak->scale();
+    _selected = peak->selected();
+    _masked = peak->masked();
+    _predicted = peak->predicted();
+    _transmission = peak->transmission();
+    _data = peak->data();
+    _rockingCurve = peak->rockingCurve();
+    _meanBackground = peak->meanBackground();
+    _rawIntensity = peak->rawIntensity();
+}
+
 void Peak3D::setShape(const Ellipsoid& shape)
 {
     // TODO: restore this assertion elsewhere

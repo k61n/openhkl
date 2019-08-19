@@ -66,5 +66,5 @@ void SubframeSetup::peaksChanged()
         enabled = gSession->selectedExperiment()->getPeakListNames().size() > 0;
     setTabEnabled((int)tab::PEAKS, enabled);
     if (enabled)
-        peaks->selectedListChanged(0);
+        peaks->selectedPeaksChanged();
 }

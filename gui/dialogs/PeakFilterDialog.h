@@ -15,7 +15,8 @@
 #ifndef GUI_DIALOGS_PEAKFILTERDIALOG_H
 #define GUI_DIALOGS_PEAKFILTERDIALOG_H
 
-#include "gui/models/PeaksTable.h"
+#include "gui/views/PeakTableView.h"
+#include "gui/models/PeakModel.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 #include <QDialogButtonBox>

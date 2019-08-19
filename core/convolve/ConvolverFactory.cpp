@@ -45,7 +45,9 @@ Convolver* ConvolverFactory::create(
     if (it == _callbacks.end())
         throw std::runtime_error(convolver_type + " is not registered as a valid convolver");
 
-    return (it->second)(parameters);
+    Convolver* temp = (it->second)(parameters);
+    temp->setType(it->first);
+    return temp;
 }
 
 const std::map<std::string, ConvolverFactory::callback>& ConvolverFactory::callbacks() const

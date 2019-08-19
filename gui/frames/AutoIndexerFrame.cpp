@@ -58,12 +58,13 @@ void AutoIndexerFrame::layout()
     listNames = new QcrComboBox(
         "adhoc_filteredPeaklistsNames", new QcrCell<int>(0), &peakListNames);
     vertical->addWidget(listNames);
-    listNames->setHook([=](int) {
-        if (listNames->currentText().compare("") == 0)
-            return;
-        model->setPeaks(gSession->selectedExperiment()->getPeaks(listNames->currentText())->peaks_);
-    });
-    peaks = new PeaksTableView;
+    model = new PeaksTableModel(
+        "adhoc_autoIndexerPeakTable", gSession->selectedExperiment()->experiment());
+    // listNames->setHook([=](int) {
+    //     model->setPeaks(gSession->selectedExperiment()->getPeaks(listNames->currentText())->peaks_);
+    // });
+    // peaks = new PeaksTableView;
+    // peaks->setModel(model);
     vertical->addWidget(peaks);
     QHBoxLayout* horizontal = new QHBoxLayout();
     QGroupBox* params = new QGroupBox("Parameters", this);

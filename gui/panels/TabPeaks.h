@@ -15,29 +15,37 @@
 #ifndef GUI_PANELS_TABPEAKS_H
 #define GUI_PANELS_TABPEAKS_H
 
-#include "gui/models/PeaksTable.h"
+#include "gui/views/PeakTableView.h"
+#include "gui/models/PeakModel.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 
+#include <QComboBox>
+
 //! Tab of the SubframeSetup which contains the different peak lists
 class TabPeaks : public QcrWidget {
-    Q_OBJECT
- public:
-    TabPeaks();
+   Q_OBJECT
+public:
+   TabPeaks();
+   void selectedPeaksChanged();
+   void selectedExperimentChanged();
 
-    void selectedListChanged(int i);
-    void selectedExperimentChanged();
+private:
+   QComboBox* peak_list_combo;
+   PeaksTableView* peak_table;
 
- private:
-    QcrComboBox* foundPeaksLists;
-    PeaksTableView* peaksTable;
-    QLabel* type;
-    QLabel* filename;
-    QLabel* kernelname;
-    QLabel* parentname;
-    QLabel* numPeaks;
-    QLabel* valid;
-    QLabel* nonValid;
+   QLabel* type;
+   QLabel* file_name;
+   QLabel* kernel_name;
+   QLabel* parent_name;
+   QLabel* peak_num;
+   QLabel* valid;
+   QLabel* non_valid;
+
+public slots:
+   void changedPeakSelection(const QString& name);
+
+
 };
 
 #endif // GUI_PANELS_TABPEAKS_H

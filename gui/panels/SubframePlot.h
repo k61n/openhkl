@@ -15,7 +15,7 @@
 #ifndef GUI_PANELS_SUBFRAMEPLOT_H
 #define GUI_PANELS_SUBFRAMEPLOT_H
 
-#include "gui/graphics/PlottableItem.h"
+#include "gui/graphics_items/PlottableItem.h"
 #include <QCR/widgets/views.h>
 #include <QHBoxLayout>
 

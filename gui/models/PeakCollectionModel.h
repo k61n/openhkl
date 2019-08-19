@@ -1,0 +1,60 @@
+//  ***********************************************************************************************
+//
+//  NSXTool: data reduction for neutron single-crystal diffraction
+//
+//! @file      gui/models/PeakCollectionModel.h
+//! @brief     Defines classes PeaksTableModel and PeaksTableView
+//!
+//! @homepage  ###HOMEPAGE###
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
+#ifndef GUI_MODELS_PEAKCOLLECTIONMODEL_H
+#define GUI_MODELS_PEAKCOLLECTIONMODEL_H
+
+#include "gui/items/PeakCollectionItem.h"
+#include <QAbstractTableModel>
+
+class PeakCollectionModel : public QAbstractTableModel {
+    Q_OBJECT
+public:
+    PeakCollectionModel();
+    PeakCollectionModel(QObject *parent);
+    ~PeakCollectionModel() = default;
+
+public:
+    //! Set the root item that will be used within the model
+    void setRoot(PeakCollectionItem* peak_collection);
+    //! Set the root item that will be used within the model
+    PeakCollectionItem* root() const {return _root_item;};
+    //! Retrieve the name
+    std::string* name() const {return _name;};
+    //! Retrieve the row count
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    //!retrieve the column count
+    int columnCount(const QModelIndex &parent = QModelIndex()) const;
+    //! Returns whether the selected peak is valid
+    bool indexIsValid(const QModelIndex& index) const;
+
+public:
+    //! Return the data of the item (Manages role interaction)
+    QVariant data(const QModelIndex& index, int role) const;
+    //! Manages the display and edition flags
+    Qt::ItemFlags flags(const QModelIndex& index) const;
+    //! Returns header information
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+    //! Enumerator class for the model
+    enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Numor, uc, d, Count };
+    //! The sorthing of the peaks
+    void sort(int column, Qt::SortOrder order) override;
+
+private:
+    PeakCollectionItem* _root_item = nullptr;
+    std::string* _name;
+
+};
+
+#endif // GUI_MODELS_PEAKCOLLECTIONMODEL_H

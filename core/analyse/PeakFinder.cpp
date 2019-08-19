@@ -85,7 +85,7 @@ namespace nsx {
 
 PeakFinder::PeakFinder()
     : _handler(nullptr)
-    , _threshold(3.0)
+    , _threshold(80.0)
     , _peakScale(1.0)
     , _current_label(0)
     , _minSize(30)
@@ -96,7 +96,7 @@ PeakFinder::PeakFinder()
 {
     qDebug("PeakFinder::ctor ...\n");
     ConvolverFactory convolver_factory;
-    _convolver.reset(convolver_factory.create("annular", {}));
+    _convolver.reset(convolver_factory.create("annular", {{"r1", 5.}, {"r2", 10.}, {"r3", 15.}}));
     qDebug("PeakFinder::ctor done\n");
 }
 
@@ -582,10 +582,11 @@ void PeakFinder::mergeEquivalentBlobs(
  * merge colliding blobs
  *
  */
-PeakList PeakFinder::find(DataList numors)
+void PeakFinder::find(DataList numors)
 {
     qDebug("PeakFinder::find ... with %li numors\n", numors.size());
-    PeakList ret;
+    _current_peaks.clear();
+    _current_data = numors;
 
     int i = 0;
     for (auto&& numor : numors) {
@@ -691,7 +692,7 @@ PeakList PeakFinder::find(DataList numors)
 
             p->setPredicted(false);
             numor_peaks.push_back(p);
-            ret.push_back(p);
+            _current_peaks.push_back(p);
 
             ++count;
 
@@ -718,7 +719,6 @@ PeakList PeakFinder::find(DataList numors)
         _handler->setProgress(100);
     }
     qDebug("exit PeakFinder::find\n");
-    return ret;
 }
 
 } // namespace nsx

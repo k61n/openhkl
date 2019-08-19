@@ -30,6 +30,9 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     : _name(name), _data()
 {
     _diffractometer.reset(Diffractometer::create(diffractometerName));
+
+    _peak_finder = new nsx::PeakFinder();
+    _found_peak_integrator = new nsx::PixelSumIntegrator(true, true);
 }
 
 Experiment::Experiment(const Experiment& other)
@@ -37,6 +40,9 @@ Experiment::Experiment(const Experiment& other)
     _name = other._name;
     _data = other._data;
     _diffractometer.reset(other._diffractometer->clone());
+
+    _peak_finder = new nsx::PeakFinder();
+    _found_peak_integrator = new nsx::PixelSumIntegrator(true, true);
 }
 
 Experiment& Experiment::operator=(const Experiment& other)
@@ -130,6 +136,76 @@ void Experiment::removeData(const std::string& name)
     auto it = _data.find(name);
     if (it != _data.end())
         _data.erase(it);
+}
+
+void Experiment::addPeakCollection(
+    const std::string name, 
+    const std::vector<std::shared_ptr<nsx::Peak3D>>* peaks) {
+    nsx::listtype type{listtype::FOUND};
+    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
+    ptr->populate(peaks);
+    
+    _peakCollections.insert(std::make_pair(name, std::move(ptr)));
+}
+
+bool Experiment::hasPeakCollection(const std::string& name) const {
+    auto peaks = _peakCollections.find(name);
+    return (peaks != _peakCollections.end());
+}
+
+PeakCollection* Experiment::getPeakCollection(const std::string name){
+    return _peakCollections[name].get();
+}
+
+void Experiment::removePeakCollection(const std::string& name) {
+    auto peaks = _peakCollections.find(name);
+    if (peaks != _peakCollections.end())
+        _peakCollections.erase(peaks);
+}
+
+std::vector<std::string*> Experiment::getCollectionNames() const {
+    
+    std::vector<std::string*> names;
+	for (
+        std::map<std::string,std::unique_ptr<PeakCollection>>::const_iterator it = _peakCollections.begin(); 
+        it != _peakCollections.end(); ++it) {
+		names.push_back(it->second->name());
+	}
+    return names;
+}
+
+void Experiment::addUnitCell(const std::string& name, sptrUnitCell unit_cell) {
+    _unit_cells.insert(std::make_pair(name, unit_cell));
+}
+
+bool Experiment::hasUnitCell(const std::string& name) const {
+    auto unit_cell = _unit_cells.find(name);
+    return (unit_cell != _unit_cells.end());
+}
+
+sptrUnitCell Experiment::getUnitCell(const std::string& name) {
+    return _unit_cells[name];
+}
+
+void Experiment::removeUnitCell(const std::string& name) {
+    auto unit_cell = _unit_cells.find(name);
+    if (unit_cell != _unit_cells.end())
+        _unit_cells.erase(unit_cell);
+}
+
+void Experiment::acceptFoundPeaks(const std::string& name) {
+    addPeakCollection(name, _peak_finder->currentPeaks());
+}
+
+void Experiment::integrateFoundPeaks(
+    double peak_end, double bkg_begin, double bkg_end)
+{   
+    for (nsx::sptrDataSet data : _peak_finder->currentData())
+    {
+        _found_peak_integrator->integrate(
+            *_peak_finder->currentPeaks(), data, 
+            peak_end, bkg_begin,  bkg_end);
+    }
 }
 
 } // namespace nsx
