@@ -18,16 +18,19 @@
 #include "gui/views/PeakTableView.h"
 #include "gui/models/PeakModel.h"
 #include <QCR/widgets/controls.h>
+#include <QCR/widgets/views.h>
 #include <QDialogButtonBox>
 
 //! Dialog to filter a peak list
-class PeakFilterDialog : public QDialog {
+class PeakFilterDialog : public QcrWidget {
  public:
     PeakFilterDialog();
     ~PeakFilterDialog();
 
+    void refreshData();
+
  public slots:
-    void accept() override;
+    void accept();
     void slotActionClicked(QAbstractButton* button);
     void slotUnitCellChanged(int index);
 

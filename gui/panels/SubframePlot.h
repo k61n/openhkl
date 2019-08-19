@@ -20,7 +20,7 @@
 #include <QHBoxLayout>
 
 //! Part of the main window that contains the plot
-class SubframePlot : public QcrDockWidget {
+class SubframePlot : public QcrWidget {
  public:
     SubframePlot();
     void plotData(QVector<double>&, QVector<double>&, QVector<double>&);

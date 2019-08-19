@@ -35,38 +35,13 @@ Session::Session()
     loadDirectory = QDir::homePath();
 }
 
-void Session::createExperiment()
+void Session::createExperiment(QString experimentName)
 {
-    std::unique_ptr<ExperimentDialog> dlg;
-    QString expname;
-    // DialogExperiment could throw an exception if it fails to read the resource files
-    try {
-        dlg = std::unique_ptr<ExperimentDialog>(new ExperimentDialog());
-        if (!dlg->exec())
-            return;
-
-        if (dlg->experimentName().isEmpty())
-            expname = QDateTime::currentDateTime().toString();
-        else
-            expname = dlg->experimentName();
-    } catch (std::exception& e) {
-        gLogger->log(QString::fromStdString(e.what()));
-        return;
-    }
-
-    try {
-        std::string experimentName = expname.toStdString();
-
         SessionExperiment* expt = new SessionExperiment;
-        expt->changeInstrument(dlg->instrumentName());
-        expt->experiment()->setName(experimentName);
+        expt->experiment()->setName(experimentName.toStdString());
         experiments.push_back(expt);
         selectedExperiment_ = experiments.size() - 1;
-        gLogger->log("Experiment \"" + expname + "\" added");
-    } catch (const std::runtime_error& e) {
-        gLogger->log(QString::fromStdString(e.what()));
-        return;
-    }
+        gLogger->log("Experiment \"" + experimentName + "\" added");
     onExperimentChanged();
 }
 

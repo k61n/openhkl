@@ -30,7 +30,7 @@ class Session {
     int numExperiments() { return experiments.size(); }
     QList<QString> experimentNames() const;
 
-    void createExperiment();
+    void createExperiment(QString experimentName);
     void createDefaultExperiment();
     void removeExperiment();
 

@@ -16,11 +16,13 @@
 
 #include "gui/actions/Menus.h"
 #include "gui/actions/Triggers.h"
+#include "gui/panels/SideBar.h"
 #include <QApplication>
 #include <QCloseEvent>
 #include <QProgressBar>
 #include <QSettings>
 #include <QSplitter>
+#include <QStackedLayout>
 #include <QStatusBar>
 #include <QString>
 #include <QTimer>
@@ -45,11 +47,23 @@ MainWin::MainWin()
     // layout
     setContentsMargins(5, 5, 5, 5);
 
-    addDockWidget(Qt::RightDockWidgetArea, (dockImage_ = new SubframeImage));
-    addDockWidget(Qt::RightDockWidgetArea, (dockPlot_ = new SubframePlot));
-    addDockWidget(Qt::LeftDockWidgetArea, (dockExperiments_ = new SubframeExperiments));
-    addDockWidget(Qt::LeftDockWidgetArea, (dockProperties_ = new SubframeProperties));
-    addDockWidget(Qt::LeftDockWidgetArea, (dockLogger_ = new SubframeLogger));
+    addToolBar(Qt::LeftToolBarArea, new SideBar(this));
+
+    homeScreen_ = new SubframeHome;
+    experimentScreen_ = new SubframeExperiment;
+    finder_ = new PeakFinderFrame;
+    filter_ = new PeakFilterDialog;
+    indexer_ = new AutoIndexerFrame;
+
+    layoutStack_ = new QStackedWidget;
+    layoutStack_->addWidget(homeScreen_);
+    layoutStack_->addWidget(experimentScreen_);
+    layoutStack_->addWidget(finder_);
+    layoutStack_->addWidget(filter_);
+    layoutStack_->addWidget(indexer_);
+    layoutStack_->setCurrentIndex(0);
+
+    setCentralWidget(layoutStack_);
 
     readSettings();
     show();
@@ -70,20 +84,20 @@ void MainWin::refresh()
 
 void MainWin::onDataChanged()
 {
-    dockImage_->centralWidget->dataChanged();
-    dockProperties_->tabsframe->dataChanged();
+    experimentScreen_->image->dataChanged();
+    experimentScreen_->properties->dataChanged();
     // dockPlot_->dataChanged();
 }
 
 void MainWin::onExperimentChanged()
 {
-    dockExperiments_->experimentChanged();
-    dockProperties_->tabsframe->experimentChanged();
+    homeScreen_->remake();
+    experimentScreen_->properties->experimentChanged();
 }
 
 void MainWin::onPeaksChanged()
 {
-    dockProperties_->tabsframe->peaksChanged();
+    experimentScreen_->properties->peaksChanged();
 }
 
 void MainWin::resetViews()

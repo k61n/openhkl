@@ -1,9 +1,9 @@
 set(app NSXTool)
 
 if(WIN32)
-    add_executable(${app} WIN32 main.cpp)
+    add_executable(${app} WIN32 main.cpp resources.qrc)
 else()
-    add_executable(${app} main.cpp)
+    add_executable(${app} main.cpp resources.qrc)
 endif()
 
 target_include_directories(${app}

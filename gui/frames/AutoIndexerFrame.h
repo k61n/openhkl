@@ -23,9 +23,11 @@
 #include <QDialogButtonBox>
 
 //! Frame which shows the settings for the AutoIndexer
-class AutoIndexerFrame : public QcrFrame {
+class AutoIndexerFrame : public QcrWidget {
  public:
     AutoIndexerFrame();
+
+    void refreshData();
 
  private:
     void layout();

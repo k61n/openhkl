@@ -51,18 +51,12 @@ Actions::Actions()
 
 void Actions::setupFiles()
 {
-    addExperiment.setTriggerHook([]() { gSession->createExperiment(); });
     quit.setTriggerHook([]() { gGui->close(); });
     removeExperiment.setTriggerHook([]() { gSession->removeExperiment(); });
 }
 
 void Actions::setupData()
 {
-    dataProperties.setTriggerHook([]() {
-        SubframeSetup* properties = gGui->dockProperties_->tabsframe;
-        int i = properties->indexOf(properties->data);
-        properties->setCurrent(i);
-    });
     loadData.setTriggerHook([]() { gSession->loadData(); });
     removeData.setTriggerHook([]() { gSession->removeData(); });
     importRaw.setTriggerHook([]() { gSession->loadRawData(); });
@@ -80,34 +74,6 @@ void Actions::setupExperiment() {}
 
 void Actions::setupInstrument()
 {
-    monochromaticSourceProperties.setTriggerHook([]() {
-        SubframeSetup* properties = gGui->dockProperties_->tabsframe;
-        TabInstrument* tab = properties->instrument;
-        int i = tab->indexOf(tab->monoSource);
-        properties->setCurrent(0);
-        tab->setCurrent(i);
-    });
-    shapeProperties.setTriggerHook([]() {
-        SubframeSetup* properties = gGui->dockProperties_->tabsframe;
-        TabInstrument* tab = properties->instrument;
-        int i = tab->indexOf(tab->sample);
-        properties->setCurrent(0);
-        tab->setCurrent(i);
-    });
-    sampleProperties.setTriggerHook([]() {
-        SubframeSetup* properties = gGui->dockProperties_->tabsframe;
-        TabInstrument* tab = properties->instrument;
-        int i = tab->indexOf(tab->sample);
-        properties->setCurrent(0);
-        tab->setCurrent(i);
-    });
-    detectorProperties.setTriggerHook([]() {
-        SubframeSetup* properties = gGui->dockProperties_->tabsframe;
-        TabInstrument* tab = properties->instrument;
-        int i = tab->indexOf(tab->detector);
-        properties->setCurrent(0);
-        tab->setCurrent(i);
-    });
     goniometer.setTriggerHook([]() { new GlobalOffsetsFrame(offsetMode::DETECTOR); });
     sampleGoniometer.setTriggerHook([]() { new GlobalOffsetsFrame(offsetMode::SAMPLE); });
     isotopesDatabase.setTriggerHook([]() {
@@ -134,26 +100,21 @@ void Actions::setupOptions()
     dSpacing.setTriggerHook([]() { gGui->cursormode(3); });
     millerIndices.setTriggerHook([]() { gGui->cursormode(4); });
     logarithmicScale.setHook([](bool checked) {
-        gGui->dockImage_->centralWidget->imageView->getScene()->setLogarithmic(checked);
+        gGui->experimentScreen_->image->imageView->getScene()->setLogarithmic(checked);
     });
     showLabels.setHook([](bool checked) {
-        gGui->dockImage_->centralWidget->imageView->getScene()->showPeakLabels(checked);
+        gGui->experimentScreen_->image->imageView->getScene()->showPeakLabels(checked);
     });
     showAreas.setHook([](bool checked) {
-        gGui->dockImage_->centralWidget->imageView->getScene()->showPeakAreas(checked);
+        gGui->experimentScreen_->image->imageView->getScene()->showPeakAreas(checked);
     });
     drawPeakArea.setHook([](bool checked) {
-        gGui->dockImage_->centralWidget->imageView->getScene()->drawIntegrationRegion(checked);
+        gGui->experimentScreen_->image->imageView->getScene()->drawIntegrationRegion(checked);
     });
 }
 
 void Actions::setupPeaks()
 {
-    peaksProperties.setTriggerHook([]() {
-        SubframeSetup* properties = gGui->dockProperties_->tabsframe;
-        int i = properties->indexOf(properties->peaks);
-        properties->setCurrent(i);
-    });
     autoIndexer.setTriggerHook([]() { new AutoIndexerFrame; });
     filterPeaks.setTriggerHook([]() { new PeakFilterDialog; });
     userDefinedIndexer.setTriggerHook([]() { new UserDefinedUnitCellIndexerFrame; });
@@ -207,11 +168,6 @@ void Actions::setupPeaks()
 void Actions::setupRest()
 {
     reset.setTriggerHook([]() { gGui->resetViews(); });
-    viewExperiment.setHook([](bool check) { gGui->dockExperiments_->setVisible(check); });
-    viewImage.setHook([](bool check) { gGui->dockImage_->setVisible(check); });
-    viewLogger.setHook([](bool check) { gGui->dockLogger_->setVisible(check); });
-    viewPlotter.setHook([](bool check) { gGui->dockPlot_->setVisible(check); });
-    viewProperties.setHook([](bool check) { gGui->dockProperties_->setVisible(check); });
     exportPlot.setTriggerHook([]() { gGui->exportPlot(); });
     about.setTriggerHook([]() {
         QMessageBox::about(

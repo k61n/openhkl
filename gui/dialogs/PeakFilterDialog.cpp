@@ -44,10 +44,7 @@ PeakFilterDialog::PeakFilterDialog() : QDialog {gGui}
 }
 
 PeakFilterDialog::~PeakFilterDialog()
-{
-    if (model_)
-        delete model_;
-}
+{}
 
 void PeakFilterDialog::doLayout()
 {
@@ -139,7 +136,7 @@ void PeakFilterDialog::doLayout()
     keepComplementary = new QcrCheckBox(
         "adhoc_keepComplementary", "Keep the complementary selection", new QcrCell<bool>(false));
     settings->addWidget(keepComplementary);
-    upperLayout->addLayout(settings);
+    upperLayout->addLayout(settings, 1);
 
     QVBoxLayout* tablelayout = new QVBoxLayout;
     // peakList = new QcrComboBox(
@@ -151,11 +148,11 @@ void PeakFilterDialog::doLayout()
     peaksTable = new PeaksTableView;
     // peaksTable->setModel(model_);
     tablelayout->addWidget(peaksTable);
-    upperLayout->addLayout(tablelayout);
+    upperLayout->addLayout(tablelayout, 2);
 
     whole->addLayout(upperLayout);
     buttons = new QDialogButtonBox(
-        QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply, Qt::Horizontal);
+        QDialogButtonBox::Ok | QDialogButtonBox::Apply, Qt::Horizontal);
     whole->addWidget(buttons);
 
     // peakList->setHook([this](int) {
@@ -163,8 +160,20 @@ void PeakFilterDialog::doLayout()
     //     model_->setPeaks(peaks_);
     // });
     connect(buttons, &QDialogButtonBox::clicked, this, &PeakFilterDialog::slotActionClicked);
+}
 
-    show();
+void PeakFilterDialog::refreshData()
+{
+    if ((gSession->selectedExperimentNum() < 0) ||
+            (gSession->selectedExperiment()->getPeakListNames().empty()))
+        return;
+
+    if (!model_) {
+        model_ = new PeaksTableModel("peakFilterPeakModel",
+                                     gSession->selectedExperiment()->experiment(),
+                                     gSession->selectedExperiment()->getPeaks()->peaks_);
+        peaksTable->setModel(model_);
+    }
 }
 
 void PeakFilterDialog::filterPeaks()
@@ -263,10 +272,6 @@ void PeakFilterDialog::slotActionClicked(QAbstractButton* button)
     switch (button_role) {
         case QDialogButtonBox::StandardButton::Apply: {
             filterPeaks();
-            break;
-        }
-        case QDialogButtonBox::StandardButton::Cancel: {
-            reject();
             break;
         }
         case QDialogButtonBox::StandardButton::Ok: {
