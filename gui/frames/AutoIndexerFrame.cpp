@@ -130,9 +130,10 @@ void AutoIndexerFrame::refreshData()
             || gSession->selectedExperiment()->getPeakListNames().empty())
         return;
     if (!model)
-        model = new PeaksTableModel("autoIndexerPeaksModel",
-                                    gSession->selectedExperiment()->experiment(),
-                                    gSession->selectedExperiment()->getPeaks()->peaks_);
+        return ;
+        // model = new PeaksTableModel("autoIndexerPeaksModel",
+        //                             gSession->selectedExperiment()->experiment(),
+        //                             gSession->selectedExperiment()->getPeaks()->peaks_);
 }
 
 void AutoIndexerFrame::slotTabRemoved(int index)

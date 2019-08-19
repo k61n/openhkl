@@ -25,7 +25,7 @@
 #include <QSpacerItem>
 #include <QVBoxLayout>
 
-PeakFilterDialog::PeakFilterDialog() : QDialog {gGui}
+PeakFilterDialog::PeakFilterDialog() : QcrWidget("peakFilter")
 {
     // if (gSession->selectedExperimentNum() < 0) {
     //     gLogger->log("## No experiment selected");
@@ -169,10 +169,11 @@ void PeakFilterDialog::refreshData()
         return;
 
     if (!model_) {
-        model_ = new PeaksTableModel("peakFilterPeakModel",
-                                     gSession->selectedExperiment()->experiment(),
-                                     gSession->selectedExperiment()->getPeaks()->peaks_);
-        peaksTable->setModel(model_);
+        return;
+        // model_ = new PeaksTableModel("peakFilterPeakModel",
+        //                              gSession->selectedExperiment()->experiment(),
+        //                              gSession->selectedExperiment()->getPeaks()->peaks_);
+        // peaksTable->setModel(model_);
     }
 }
 
@@ -262,7 +263,7 @@ void PeakFilterDialog::accept()
     //     gLogger->log(message);
     // }
 
-    QDialog::accept();
+    // QDialog::accept();
 }
 
 void PeakFilterDialog::slotActionClicked(QAbstractButton* button)

@@ -41,15 +41,17 @@
 
 
 //! Frame which shows the settings to find peaks
-class PeakFinderFrame : public QcrFrame {
+class PeakFinderFrame : public QWidget{
 public:
    PeakFinderFrame();
    //! Change the convolution parameters
    void updateConvolutionParameters();
    //! Find peaks
    void find();
-   // ! integrate found peaks
+   //! integrate found peaks
    void integrate();
+   //! Refresh all the panels
+   void refreshAll(); 
 
 private:
    //! Set up the GUI size policies
@@ -80,7 +82,7 @@ private:
    //! Accept and save current list
    void accept();
 
-public:
+private:
    //! Update the datalist as an experiment was changed
    void setExperimentsUp();
 

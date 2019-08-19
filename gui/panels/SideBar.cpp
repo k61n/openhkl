@@ -24,6 +24,7 @@ SideBar::SideBar(QWidget *parent)
     setMovable(false);
     setObjectName("NSXToolSidebar");
     setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+
     QAction* home = addAction(QIcon(":/images/homeIcon.svg"), "Home");
     QAction* experiment = addAction(QIcon(":/images/experimentIcon.png"), "Experiment");
     QAction* finder = addAction(QIcon(":/images/findPeakIcon.png"), "Find Peaks");
@@ -52,19 +53,19 @@ void SideBar::onExperiment()
 void SideBar::onFindPeaks()
 {
     gGui->layoutStack_->setCurrentIndex(2);
-    gGui->finder_->refreshData();
+    gGui->finder_->refreshAll();
 }
 
 void SideBar::onFilterPeaks()
 {
     gGui->layoutStack_->setCurrentIndex(3);
-    gGui->filter_->refreshData();
+    // gGui->filter_->refreshData();
 }
 
 void SideBar::onIndexer()
 {
     gGui->layoutStack_->setCurrentIndex(4);
-    gGui->indexer_->refreshData();
+    // gGui->indexer_->refreshData();
 }
 
 void SideBar::onInformation()

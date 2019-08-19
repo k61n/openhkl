@@ -44,16 +44,8 @@
 
 
 
-PeakFinderFrame::PeakFinderFrame() : QcrFrame {"peakFinder"}, _pixmap(nullptr)
+PeakFinderFrame::PeakFinderFrame() : QWidget(), _pixmap(nullptr)
 {
-    if (gSession->selectedExperimentNum() < 0) {
-        gLogger->log("[ERROR] No experiment selected");
-        return;
-    }
-    if (gSession->selectedExperiment()->getDataNames().empty()) {
-        gLogger->log("[ERROR] No data loaded for selected experiment");
-        return;
-    }
     // Layout
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -79,20 +71,14 @@ PeakFinderFrame::PeakFinderFrame() : QcrFrame {"peakFinder"}, _pixmap(nullptr)
     setFigureUp();
     setPeakTableUp();
     _right_element->setSizePolicy(*_size_policy_right);
-    setParametersUp();
 
     _main_layout->addWidget(scroll_area);
     _main_layout->addWidget(_right_element);
-
-    // flip the image vertically to conform with DetectorScene
-    _figure_view->scale(1, -1);
 
     connect(_kernel_combo, &QComboBox::currentTextChanged, [=](QString) {
         updateConvolutionParameters();
         refreshPreview();
     });
-
-    show();
 }
 
 void PeakFinderFrame::setSizePolicies()
@@ -499,38 +485,59 @@ void PeakFinderFrame::setPeakTableUp()
     _right_element->addWidget(peak_group);
 }
 
+void PeakFinderFrame::refreshAll()
+{
+    setParametersUp();
+    _figure_view->scale(1, -1);
+}
+
 void PeakFinderFrame::setParametersUp()
 {
+    refreshPeakTable();
     setExperimentsUp();
+
+    _kernel_combo->blockSignals(true);
 
     _kernel_combo->clear();
     nsx::ConvolverFactory convolver_factory;
     for (auto&& convolution_kernel_combo : convolver_factory.callbacks())
         _kernel_combo->addItem(QString::fromStdString(convolution_kernel_combo.first));
+
+    _kernel_combo->blockSignals(false);
+
     _kernel_combo->setCurrentText("annular");
 }
 
 void PeakFinderFrame::setExperimentsUp()
 {
+    _exp_combo->blockSignals(true);
+    
     _exp_combo->clear();
     QList<QString> exp_list = gSession->experimentNames();
     for (QString exp : exp_list) {
         _exp_combo->addItem(exp);
     }
+    _exp_combo->blockSignals(false);
+
     grabFinderParameters();
     grabIntegrationParameters();
     updateDatasetList(0);
+    
 }
 
 void PeakFinderFrame::updateDatasetList(int idx)
 {
+    _data_combo->blockSignals(true);
     _data_combo->clear();
     _data_list = gSession->experimentAt(idx)->allData();
     for (nsx::sptrDataSet data : _data_list) {
         QFileInfo fileinfo(QString::fromStdString(data->filename()));
         _data_combo->addItem(fileinfo.baseName());
     }
+    _data_combo->blockSignals(false);
+
     _data_combo->setCurrentIndex(0);
+    updateDatasetParameters(0);
 }
 
 void PeakFinderFrame::updateDatasetParameters(int idx)
@@ -574,6 +581,7 @@ void PeakFinderFrame::grabFinderParameters()
     const std::map<std::string, double>& params = convolver->parameters();
     typedef std::map<std::string, double>::const_iterator mapIterator;
 
+    _kernel_para_table->clear();
     _kernel_para_table->setRowCount(0);
     _kernel_para_table->setColumnCount(2);
     int currentRow = 0;
@@ -731,7 +739,6 @@ void PeakFinderFrame::accept()
             gSession->selectedExperiment()->generatePeakModel(dlg->listName());
         }
     }
-    close();
 }
 
 void PeakFinderFrame::refreshPreview()
