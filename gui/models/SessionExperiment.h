@@ -32,7 +32,7 @@ class SessionExperiment {
 
 public:
    SessionExperiment();
-
+   SessionExperiment(QString name, QString instrument);
 public:
    nsx::sptrExperiment experiment() { return _experiment; }
    QStringList getDataNames();
@@ -41,6 +41,7 @@ public:
    int getIndex(const QString&);
    void selectData(int selected) { dataIndex_ = selected; }
    void changeInstrument(const QString& instrumentname);
+   bool saved() const {return _saved;};
 
 public:
    //! Get the associated peaks
@@ -50,6 +51,8 @@ public:
       int lowerindex = -1);
    //! Get the names of peaks present in the core (depth obsolete)
    QStringList getPeakListNames(int depth = 1);
+   //! Get the number of peak lists
+   int numPeakCollections()const {return _experiment->numPeakCollections();};
    //! Set the currently selected peakModel
    void setSelected(std::string name);
    //! get the currently selected peakModel
@@ -82,6 +85,12 @@ public:
    void setLibrary(nsx::sptrShapeLibrary shapeLibrary) { _library = shapeLibrary; }
    nsx::sptrShapeLibrary getLibrary() { return _library; }
    
+public: 
+   //! The save method
+   bool saveToFile(QString path);
+   //! Save as
+   void saveAs(QString path) const {return;};
+
  private:
    //! Pointer to the core experiment
    nsx::sptrExperiment _experiment;
@@ -93,6 +102,10 @@ public:
    QStandardItemModel _peak_list_model;
    //! The selected list
    PeakCollectionModel* _selected = nullptr;
+   //! Is this session experiment saved
+   bool _saved = false;
+   //! Save path variable
+   std::string _save_path;
    //! TODO update
    QList<nsx::sptrUnitCell> unitCells_;
    QString selectedList_;

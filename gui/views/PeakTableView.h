@@ -15,10 +15,6 @@
 #ifndef GUI_MODELS_PEAKTABLEVIEW_H
 #define GUI_MODELS_PEAKTABLEVIEW_H
 
-#include "core/peak/Peak3D.h"
-#include "core/shape/ShapeLibrary.h"
-#include "gui/models/PeakModel.h"
-#include <QCR/widgets/tables.h>
 #include <QTableView>
 
 class PeaksTableView : public QTableView {

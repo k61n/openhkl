@@ -77,5 +77,15 @@ int PeakCollection::numberOfInvalid() const
     return numberOfPeaks()-numberOfValid();
 }
 
+std::map<std::string, float>* PeakCollection::meta() 
+{
+    _meta.clear();
+    _meta.insert(std::make_pair(std::string("num_peaks"),numberOfPeaks()));
+    _meta.insert(std::make_pair(std::string("num_valid"),numberOfValid()));
+    _meta.insert(std::make_pair(std::string("num_invalid"),numberOfInvalid()));
+    // _meta.insert(std::make_pair(std::string(),));
+    return &_meta;
+}
+
 
 } // namespace nsx

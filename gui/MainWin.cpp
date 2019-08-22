@@ -91,7 +91,7 @@ void MainWin::onDataChanged()
 
 void MainWin::onExperimentChanged()
 {
-    homeScreen_->remake();
+    // homeScreen_->remake();
     experimentScreen_->properties->experimentChanged();
 }
 

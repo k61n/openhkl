@@ -15,17 +15,46 @@
 #ifndef GUI_PANELS_SUBFRAMEHOME_H
 #define GUI_PANELS_SUBFRAMEHOME_H
 
-#include <QCR/widgets/controls.h>
-#include <QCR/widgets/views.h>
+#include "gui/models/ExperimentModel.h"
+#include "gui/views/ExperimentTableView.h"
 
-class SubframeHome : public QcrWidget {
+#include <memory>
+
+#include <QWidget>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+
+class SubframeHome : public QWidget {
  public:
     SubframeHome();
 
  private:
-    void createAndLoad();
-    void createAndImportRaw();
-    QcrLineEdit* expName;
+    void setLeftLayout(QHBoxLayout* main_layout);
+    void setRightLayout(QHBoxLayout* main_layout);
+
+private:
+    void createNew();
+    void loadFromFile(); 
+    void switchCurrentExperiment( const QModelIndex & index ) const;
+
+    void saveCurrent();
+    void saveAll();
+
+    void readSettings();
+    void saveSettings() const;
+
+private:
+    QPushButton* new_exp;
+    QPushButton* old_exp;
+
+    QPushButton* save_current;
+    QPushButton* save_all;
+
+    ExperimentTableView* _open_experiments_view;
+    std::unique_ptr<ExperimentModel> _open_experiments_model;
+
+    QList<QString> _slast_imports;
 };
 
 #endif // GUI_PANELS_SUBFRAMEHOME_H

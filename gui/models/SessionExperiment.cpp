@@ -43,6 +43,12 @@ SessionExperiment::SessionExperiment()
     _experiment = expPtr;
 }
 
+SessionExperiment::SessionExperiment(QString name, QString instrument)
+{
+    nsx::sptrExperiment expPtr(new nsx::Experiment(name.toStdString(), instrument.toStdString()));
+    _experiment = expPtr;
+}
+
 QStringList SessionExperiment::getDataNames()
 {
     std::map<std::string, nsx::sptrDataSet> datamap = _experiment->data();
@@ -380,4 +386,16 @@ void SessionExperiment::integratePeaks()
 void SessionExperiment::onPeaksChanged()
 {
     gGui->onPeaksChanged();
+}
+
+bool SessionExperiment::saveToFile(QString path)
+{
+    bool success = experiment()->saveToFile(path.toStdString());
+
+    if (success){
+        _save_path = path.toStdString();
+        _saved = true;
+    }
+
+    return success;
 }

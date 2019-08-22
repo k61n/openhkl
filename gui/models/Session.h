@@ -23,14 +23,16 @@ extern class Session* gSession; //!< global handle for Session
 class Session {
  public:
     Session();
+
     SessionExperiment* selectedExperiment();
     void selectExperiment(int);
     int selectedExperimentNum() { return selectedExperiment_; }
-    SessionExperiment* experimentAt(int i) { return experiments.at(i); }
-    int numExperiments() { return experiments.size(); }
+    SessionExperiment* experimentAt(int i) { return _experiments.at(i); }
+    int numExperiments() { return _experiments.size(); }
     QList<QString> experimentNames() const;
 
     void createExperiment(QString experimentName);
+    void createExperiment(QString experimentName, QString instrumentName);
     void createDefaultExperiment();
     void removeExperiment();
 
@@ -43,7 +45,7 @@ class Session {
     void onPeaksChanged();
 
  private:
-    QList<SessionExperiment*> experiments;
+    QList<SessionExperiment*> _experiments;
     int selectedExperiment_ = -1;
     int selectedData = -1;
     QString loadDirectory;

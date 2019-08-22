@@ -15,148 +15,165 @@
 #include "gui/panels/SubframeHome.h"
 
 #include "gui/models/Session.h"
-#include <QCR/widgets/actions.h>
-#include <QCR/widgets/tables.h>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
+#include "gui/dialogs/ExperimentDialog.h"
+
 #include <QSpacerItem>
+#include <QSettings>
+#include <QFileDialog>
 
-class ExperimentTableModel : public QcrTableModel {
- public:
-    ExperimentTableModel();
 
-    void onClicked(const QModelIndex& cell) override;
-    int columnCount() const final;
-    int rowCount() const final;
-    int highlighted() const final;
-    void onHighlight(int i) final;
-    QVariant data(const QModelIndex&, int) const final;
-};
-
-ExperimentTableModel::ExperimentTableModel()
-    : QcrTableModel{"homeExperimentsTable"}
+SubframeHome::SubframeHome()
+    : QWidget()
 {
+    QVBoxLayout* main_layout = new QVBoxLayout(this);
+
+    QSpacerItem* spacer_top = new QSpacerItem(
+        10, 50, QSizePolicy::Minimum, QSizePolicy::Fixed);
+    main_layout->addSpacerItem(spacer_top);
+    
+    QHBoxLayout* sub_layout = new QHBoxLayout();
+    QSpacerItem* spacer_left = new QSpacerItem(
+        50, 10, QSizePolicy::Fixed, QSizePolicy::Minimum);
+    sub_layout->addSpacerItem(spacer_left);
+
+    setLeftLayout(sub_layout);
+    setRightLayout(sub_layout);
+
+    QSpacerItem* spacer_right = new QSpacerItem(
+        10, 10, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    sub_layout->addSpacerItem(spacer_right);
+    main_layout->addLayout(sub_layout);
+
+    QSpacerItem* spacer_bot = new QSpacerItem(
+        10, 50, QSizePolicy::Minimum, QSizePolicy::Fixed);
+    main_layout->addSpacerItem(spacer_bot);
+
 }
 
-void ExperimentTableModel::onClicked(const QModelIndex &cell)
+void SubframeHome::setLeftLayout(QHBoxLayout* main_layout)
 {
-    gSession->selectExperiment(cell.row());
+    QVBoxLayout* left = new QVBoxLayout;
+
+    QHBoxLayout* left_top = new QHBoxLayout(); 
+
+    new_exp = new QPushButton();
+    new_exp->setIcon(QIcon(":/images/create_new.svg"));
+    new_exp->setText("Create new experiment");
+    new_exp->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    connect(
+        new_exp, &QPushButton::clicked,
+        this, &SubframeHome::createNew
+    );
+
+    old_exp = new QPushButton();
+    old_exp->setIcon(QIcon(":/images/load_from_folder.svg"));
+    old_exp->setText("Load from file");
+    old_exp->setMinimumWidth(new_exp->sizeHint().width());
+    old_exp->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
+    left_top->addWidget(new_exp);
+    left_top->addWidget(old_exp);
+
+    left->addLayout(left_top);
+
+    QSpacerItem* spacer_bottom = new QSpacerItem(
+        10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    left->addSpacerItem(spacer_bottom);
+
+    main_layout->addLayout(left);
 }
 
-int ExperimentTableModel::columnCount() const
+void SubframeHome::setRightLayout(QHBoxLayout* main_layout)
 {
-    return 1;
+    QVBoxLayout* right = new QVBoxLayout;
+    
+    _open_experiments_model = std::make_unique<ExperimentModel>();
+    _open_experiments_view = new ExperimentTableView();
+    _open_experiments_view->setModel(_open_experiments_model.get());
+    connect(
+        _open_experiments_view, &ExperimentTableView::doubleClicked,
+        this, &SubframeHome::switchCurrentExperiment
+    );
+
+    right->addWidget(_open_experiments_view);
+
+    QHBoxLayout* right_bot = new QHBoxLayout(); 
+
+    save_current = new QPushButton();
+    save_current->setIcon(QIcon(":/images/save.svg"));
+    save_current->setText("Save current");
+    save_current->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    connect(
+        save_current, &QPushButton::clicked,
+        this, &SubframeHome::saveCurrent
+    );
+
+    save_all = new QPushButton();
+    save_all->setIcon(QIcon(":/images/save.svg"));
+    save_all->setText("Save all");
+    save_all->setMinimumWidth(save_current->sizeHint().width());
+    save_all->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
+    right_bot->addWidget(save_current);
+    right_bot->addWidget(save_all);
+
+    right->addLayout(right_bot);
+
+    main_layout->addLayout(right);
 }
 
-int ExperimentTableModel::rowCount() const
+void SubframeHome::createNew()
 {
-    return gSession->numExperiments();
-}
+    std::unique_ptr<ExperimentDialog> exp_dialog(new ExperimentDialog);
+    exp_dialog->exec();
+    
+    if (exp_dialog->result()){
+        QString name = exp_dialog->experimentName();
+        QString type = exp_dialog->instrumentName();
+        gSession->createExperiment(name, type);
 
-int ExperimentTableModel::highlighted() const
-{
-    return gSession->selectedExperimentNum();
-}
-
-void ExperimentTableModel::onHighlight(int i)
-{
-    gSession->selectExperiment(i);
-}
-
-QVariant ExperimentTableModel::data(const QModelIndex& index, int role) const
-{
-    int row = index.row();
-    if (row < 0 || rowCount() <= row)
-        return {};
-    switch (role) {
-        case Qt::DisplayRole: {
-            return QString::fromStdString(gSession->experimentAt(row)->experiment()->name());
-        }
-        case Qt::ForegroundRole: {
-            return QColor(Qt::black);
-        }
-        case Qt::BackgroundRole: {
-            if (row == highlighted())
-                return QColor(Qt::green);
-            return QColor(Qt::white);
-        }
-        case Qt::ToolTipRole: {
-            QString tooltip = QString::fromStdString(gSession->experimentAt(row)->experiment()->name());
-            tooltip += " with data: " + gSession->experimentAt(row)->getDataNames().first();
-            return tooltip;
-        }
-        default: return {};
+        _open_experiments_model.reset();
+        _open_experiments_model = std::make_unique<ExperimentModel>();
+        _open_experiments_view->setModel(_open_experiments_model.get());
     }
 }
 
-// ------------------------------------------------------------------------------------------------
-
-class ExperimentTableView : public QcrTableView {
- public:
-    ExperimentTableView();
-
-    void onData() final;
-};
-
-ExperimentTableView::ExperimentTableView()
-    : QcrTableView{new ExperimentTableModel}
+void SubframeHome::loadFromFile()
 {
-    setSelectionMode(QAbstractItemView::NoSelection);
-    onData();
+    gSession->loadData();
 }
 
-void ExperimentTableView::onData()
+void SubframeHome::saveCurrent()
 {
-    setHeaderHidden(false);
-    setColumnWidth(0, 0);
-    setColumnWidth(1, 3 * dWidth());
-    for (int i = 2; i < model_->columnCount(); ++i)
-        setColumnWidth(i, 7. * dWidth());
-    model_->refreshModel();
-    emit model_->layoutChanged();
-    updateScroll();
+    QString fileName = QFileDialog::getSaveFileName(this,
+        tr("Save the current experiment"), "",
+        tr("Address Book (*.nsx);;All Files (*)"));
+    bool success = gSession->selectedExperiment()->saveToFile(fileName);
 }
 
-// ------------------------------------------------------------------------------------------------
-
-SubframeHome::SubframeHome()
-    : QcrWidget{"HomeScreen"}
+void SubframeHome::saveAll()
 {
-    QHBoxLayout* horiz = new QHBoxLayout(this);
 
-    QVBoxLayout* left = new QVBoxLayout;
-    left->addWidget(new QLabel("Open new experiment"));
-    expName = new QcrLineEdit("homeExperimentName", "default");
-    left->addWidget(expName);
-    QHBoxLayout* line = new QHBoxLayout;
-    QcrTextTriggerButton* createLoad =
-            new QcrTextTriggerButton("createAndLoadButton", "Create and load data");
-    createLoad->trigger()->setTriggerHook([=]() {
-        gSession->createExperiment(expName->text());
-        gSession->loadData();
-    });
-    createLoad->setToolTip("Create new Experiment and load hdf5 data");
-    QcrTextTriggerButton* createImport =
-            new QcrTextTriggerButton("createAndImportButton", "Create and import raw data");
-    createImport->trigger()->setTriggerHook([=]() {
-        gSession->createExperiment(expName->text());
-        gSession->loadRawData();
-    });
-    createImport->setToolTip("Create new Experiment and import raw data");
-    line->addWidget(createLoad);
-    line->addWidget(createImport);
-    left->addLayout(line);
-    left->addItem(new QSpacerItem(30, 30, QSizePolicy::Expanding, QSizePolicy::Expanding));
-    horiz->addLayout(left);
+}
 
-    QVBoxLayout* right = new QVBoxLayout;
-    right->addWidget(new QLabel("Open experiments"));
-    ExperimentTableView* view = new ExperimentTableView;
-    right->addWidget(view);
-    horiz->addLayout(right);
+void SubframeHome::switchCurrentExperiment( const QModelIndex & index ) const
+{
+    gSession->selectExperiment(index.row());
+    emit _open_experiments_model->dataChanged(QModelIndex(), QModelIndex());
+}
 
-    setRemake([=]() {
-        view->onData();
-        qDebug() << "home on data";
-    });
+void SubframeHome::saveSettings() const
+{
+    QSettings s;
+    s.beginGroup("lastLoaded");
+    // s.setValue("geometry", saveGeometry());
+    // s.setValue("state", saveState());
+}
+
+void SubframeHome::readSettings()
+{
+    QSettings s;
+    s.beginGroup("lastLoaded");
+    // restoreGeometry(s.value("geometry").toByteArray());
+    // restoreState(s.value("state").toByteArray());
 }

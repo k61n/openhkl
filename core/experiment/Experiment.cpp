@@ -24,6 +24,8 @@
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
 
+#include "core/output/ExperimentExporter.h"
+
 namespace nsx {
 
 Experiment::Experiment(const std::string& name, const std::string& diffractometerName)
@@ -207,5 +209,38 @@ void Experiment::integrateFoundPeaks(
             peak_end, bkg_begin,  bkg_end);
     }
 }
+
+bool Experiment::saveToFile(std::string path) const
+{
+    nsx::ExperimentExporter exporter;
+
+    bool success = exporter.createFile(path);
+
+    if (success){
+        std::map<std::string,DataSet*> data_sets;
+        for (
+            std::map<std::string,sptrDataSet>::const_iterator it = _data.begin(); 
+            it != _data.end(); ++it) {
+            data_sets.insert(std::make_pair(it->first,it->second.get()));
+        }
+        success = exporter.writeData(data_sets);
+    }
+
+    if (success){
+        std::map<std::string,PeakCollection*> peak_collections;
+        for (
+            std::map<std::string,std::unique_ptr<PeakCollection>>::const_iterator it = _peakCollections.begin(); 
+            it != _peakCollections.end(); ++it) {
+            peak_collections.insert(std::make_pair(it->first,it->second.get()));
+        }
+        success = exporter.writePeaks(peak_collections);
+    }
+
+    if (success)
+        success = exporter.finishWrite();
+
+    return success;
+}
+
 
 } // namespace nsx

@@ -15,19 +15,20 @@
 #ifndef GUI_DIALOGS_EXPERIMENTDIALOG_H
 #define GUI_DIALOGS_EXPERIMENTDIALOG_H
 
-#include <QCR/widgets/controls.h>
-#include <QCR/widgets/modal_dialogs.h>
+#include <QDialog>
+#include <QComboBox>
+#include <QLineEdit>
 
 //! Dialog to get the experiment and instrument names
-class ExperimentDialog : public QcrModalDialog {
+class ExperimentDialog : public QDialog {
  public:
     ExperimentDialog();
     QString experimentName();
     QString instrumentName();
 
  private:
-    QcrComboBox* instruments;
-    QcrLineEdit* experiment;
+    QComboBox* instruments;
+    QLineEdit* experiment;
 };
 
 #endif // GUI_DIALOGS_EXPERIMENTDIALOG_H

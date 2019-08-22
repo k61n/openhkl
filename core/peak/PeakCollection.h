@@ -49,7 +49,8 @@ class PeakCollection{
     //! Returns the amount of invalid peaks
     int numberOfInvalid() const;
 
-
+    //! Returns a fresh generated pointer to meta
+    std::map<std::string, float>* meta();
 
 private:
     std::vector<std::unique_ptr<nsx::Peak3D>> _peaks;

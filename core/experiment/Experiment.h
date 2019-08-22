@@ -47,6 +47,8 @@ class Experiment {
    const std::map<std::string, sptrDataSet>& data() const;
    //! Gets the pointer to a given data stored in the experiment
    sptrDataSet data(std::string name);
+   //! Get number of data
+   int numData() const {return  _data.size();};
 
    const std::string& name() const;
    // std::string getName() const;
@@ -73,6 +75,8 @@ public:
    void removePeakCollection(const std::string& name);
    //! Get a list of loaded list names
    std::vector<std::string*> getCollectionNames() const;
+   //! Get the number of peak lists
+   int numPeakCollections()const {return _peakCollections.size();};
 
 public:
    //! Add some data to the experiment
@@ -93,6 +97,12 @@ public:
    nsx::PixelSumIntegrator* peakFoundIntegrator() {return _found_peak_integrator;};
    //! Set the found peak integrator
    void integrateFoundPeaks( double peak_end, double bkg_begin, double bkg_end);
+
+public:
+   //! Save to file
+   bool saveToFile(std::string path) const;
+   //! Load from file
+   bool loadFromFile(std::string path) {return true;};
 
 private:
    //! The name of this experiment

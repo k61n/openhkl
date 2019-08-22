@@ -35,20 +35,29 @@ Session::Session()
     loadDirectory = QDir::homePath();
 }
 
+void Session::createExperiment(QString experimentName, QString instrumentName)
+{
+    SessionExperiment* experiment = new SessionExperiment(experimentName, instrumentName);
+    _experiments.append(experiment);
+    selectedExperiment_ = _experiments.size() - 1;
+    gLogger->log("Experiment \"" + experimentName + "\" added");
+    onExperimentChanged();
+}
+
 void Session::createExperiment(QString experimentName)
 {
-        SessionExperiment* expt = new SessionExperiment;
-        expt->experiment()->setName(experimentName.toStdString());
-        experiments.push_back(expt);
-        selectedExperiment_ = experiments.size() - 1;
-        gLogger->log("Experiment \"" + experimentName + "\" added");
+    SessionExperiment* experiment = new SessionExperiment;
+    experiment->experiment()->setName(experimentName.toStdString());
+    _experiments.append(experiment);
+    selectedExperiment_ = _experiments.size() - 1;
+    gLogger->log("Experiment \"" + experimentName + "\" added");
     onExperimentChanged();
 }
 
 void Session::createDefaultExperiment()
 {
-    experiments.push_back(new SessionExperiment);
-    selectedExperiment_ = experiments.size() - 1;
+    _experiments.push_back(new SessionExperiment);
+    selectedExperiment_ = _experiments.size() - 1;
     onExperimentChanged();
 }
 
@@ -56,42 +65,42 @@ QList<QString> Session::experimentNames() const
 {
     QList<QString> names;
 
-    for (int i = 0 ; i < experiments.size(); i++) {
-        names.append(QString::fromStdString(experiments.at(i)->experiment()->name()));
+    for (int i = 0 ; i < _experiments.size(); i++) {
+        names.append(QString::fromStdString(_experiments.at(i)->experiment()->name()));
     }
     return names;
 }
 
 void Session::removeExperiment()
 {
-    if (experiments.size() == 0) {
+    if (_experiments.size() == 0) {
         gLogger->log("[WARNING] nothing to remove");
         return;
     }
     if (selectedExperiment_ == -1) {
         gLogger->log(
             "removing experiment \""
-            + QString::fromStdString(experiments.at(0)->experiment()->name()) + "\"");
-        experiments.removeFirst();
+            + QString::fromStdString(_experiments.at(0)->experiment()->name()) + "\"");
+        _experiments.removeFirst();
     }
     gLogger->log(
         "removing experiment \""
-        + QString::fromStdString(experiments.at(selectedExperiment_)->experiment()->name()) + "\"");
-    experiments.removeAt(selectedExperiment_);
-    selectedExperiment_ = experiments.size() > 0 ? 0 : -1;
+        + QString::fromStdString(_experiments.at(selectedExperiment_)->experiment()->name()) + "\"");
+    _experiments.removeAt(selectedExperiment_);
+    selectedExperiment_ = _experiments.size() > 0 ? 0 : -1;
     onExperimentChanged();
 }
 
 void Session::selectExperiment(int select)
 {
-    if (select < experiments.size() && select >= 0)
+    if (select < _experiments.size() && select >= 0)
         selectedExperiment_ = select;
     onExperimentChanged();
 }
 
 SessionExperiment* Session::selectedExperiment()
 {
-    return experiments.at(selectedExperiment_);
+    return _experiments.at(selectedExperiment_);
 }
 
 void Session::loadData()
