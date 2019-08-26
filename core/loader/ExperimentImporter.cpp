@@ -1,0 +1,303 @@
+//  ***********************************************************************************************
+//
+//  NSXTool: data reduction for neutron single-crystal diffraction
+//
+//! @file      core/loader/ExperimentImporter.cpp
+//! @brief     Imports the Experiment saved by ExperimentExporter
+//!
+//! @homepage  ###HOMEPAGE###
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
+#include "core/loader/ExperimentImporter.h"
+
+#include "core/loader/ExperimentDataReader.h"
+#include "core/raw/IDataReader.h"
+#include "core/experiment/DataSet.h"
+#include "core/experiment/DataTypes.h"
+#include "core/peak/Peak3D.h"
+#include "base/geometry/Ellipsoid.h"
+#include "core/peak/Intensity.h"
+
+namespace nsx {
+
+bool ExperimentImporter::setFilePath(std::string path, Experiment* experiment)
+{
+
+    try {
+        _file_name = path;
+        H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
+
+        int num_att = file.getNumAttrs();
+        for (int i = 0; i < num_att; ++i) {
+            H5::Attribute attr = file.openAttribute(i);
+            H5::DataType attr_type = attr.getDataType();
+            std::string value;
+            attr.read(attr_type, value);
+
+            if (attr.getName() == "name"){
+                experiment->setName(value);
+            }else if (attr.getName() == "diffractometer"){
+                experiment->setDiffractometer(value);
+            }
+        }
+
+    } catch (H5::Exception& e) {
+        std::string what = e.getDetailMsg();
+        throw std::runtime_error(what);
+        return false;
+    }
+
+    return true;
+}
+
+bool ExperimentImporter::loadData(Experiment* experiment)
+{
+    
+    try {
+        H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
+        H5::Group data_collections(file.openGroup("/DataCollections"));
+        
+        hsize_t object_num = data_collections.getNumObjs();
+        for (int i =0 ; i < object_num; ++i){
+
+            std::shared_ptr<nsx::IDataReader> reader = std::shared_ptr<nsx::IDataReader>(
+                new nsx::ExperimentDataReader(
+                    _file_name,
+                    data_collections.getObjnameByIdx(i),
+                    experiment->diffractometer()));
+
+            nsx::sptrDataSet data = std::shared_ptr<nsx::DataSet>(
+                new nsx::DataSet(reader));
+
+            experiment->addData(data);
+        }
+
+    } catch (H5::Exception& e) {
+        std::string what = e.getDetailMsg();
+        throw std::runtime_error(what);
+        return false;
+    }
+
+    return true;
+}
+
+bool ExperimentImporter::loadPeaks(Experiment* experiment)
+{   
+    using Eigen_double = Eigen::Matrix<double, Eigen::Dynamic, Eigen::RowMajor>;
+    using Eigen_bool = Eigen::Matrix<bool, Eigen::Dynamic, Eigen::RowMajor>;
+
+    try{
+        H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
+        H5::Group peak_collections(file.openGroup("/PeakCollections"));
+        
+        hsize_t object_num = peak_collections.getNumObjs();
+        for (int i = 0 ; i < object_num; ++i){
+
+            std::string collection_name = peak_collections.getObjnameByIdx(i);
+            H5::Group peak_collection(file.openGroup(
+                "/PeakCollections/"+collection_name));
+
+            H5::Group peak_collection_meta(file.openGroup(
+                "/PeakCollections/"+collection_name+"/Meta"));
+            // Read the info group and store in metadata
+            int n_meta = peak_collection_meta.getNumAttrs();
+            int n_peaks = 0;
+            for (int j = 0; j < n_meta; ++j) {
+                H5::Attribute attr = peak_collection_meta.openAttribute(j);
+                H5::DataType typ = attr.getDataType();
+                if (attr.getName() == "num_peaks"){
+                    attr.read(typ, &n_peaks);
+                }
+            }
+            std::cout<<"Found "<<n_peaks<<" to import"<<std::endl;
+            std::cout<<"Preparing the dataspace"<<std::endl;
+            //prepare the loading
+            Eigen_double bkg_begin(n_peaks);
+            Eigen_double bkg_end(n_peaks);
+            Eigen_double peak_end(n_peaks);
+            Eigen_double scale(n_peaks);
+            Eigen_double transmission(n_peaks);
+            Eigen_double intensity(n_peaks);
+            Eigen_double sigma(n_peaks);
+            Eigen_double mean_bkg_val(n_peaks);
+            Eigen_double mean_bkg_sig(n_peaks);
+
+            std::map<std::string, Eigen_double*> double_keys;
+            double_keys.insert(std::make_pair("BkgBegin",&bkg_begin));
+            double_keys.insert(std::make_pair("BkgEnd",&bkg_end));
+            double_keys.insert(std::make_pair("PeakEnd",&peak_end));
+            double_keys.insert(std::make_pair("Scale",&scale));
+            double_keys.insert(std::make_pair("Transmission",&transmission));
+            double_keys.insert(std::make_pair("Intensity",&intensity));
+            double_keys.insert(std::make_pair("Sigma",&sigma));
+            double_keys.insert(std::make_pair("BkgIntensity",&mean_bkg_val));
+            double_keys.insert(std::make_pair("BkgSigma",&mean_bkg_sig));
+
+            Eigen_bool predicted(n_peaks);
+            Eigen_bool masked(n_peaks);
+            Eigen_bool selected(n_peaks);
+
+            std::map<std::string, Eigen_bool*> bool_keys;
+            bool_keys.insert(std::make_pair("Predicted",&predicted));
+            bool_keys.insert(std::make_pair("Masked",&masked));
+            bool_keys.insert(std::make_pair("Selected",&selected));
+
+            Eigen::Matrix<double,Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> center(n_peaks, 3);
+            Eigen::Matrix<double,Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> metric(3*n_peaks, 3);
+
+            std::vector<std::string> data_names;
+            std::vector<std::string> unit_cells;
+
+            std::cout<<"Loading doubles"<<std::endl;
+            //Load all doubles
+            for (std::map<std::string, Eigen_double*>::iterator it = double_keys.begin(); it != double_keys.end(); it++ ){
+                H5::DataSet data_set = peak_collection.openDataSet(it->first);
+                H5::DataSpace space(data_set.getSpace());
+                data_set.read(it->second->data(), H5::PredType::NATIVE_DOUBLE, space, space);
+            }
+
+            std::cout<<"Loading booleans"<<std::endl;
+            //Load all booleans
+            for (std::map<std::string, Eigen_bool*>::iterator it = bool_keys.begin(); it != bool_keys.end(); it++ ){
+                H5::DataSet data_set = peak_collection.openDataSet(it->first);
+                H5::DataSpace space(data_set.getSpace());
+                Eigen_bool* item = it->second;
+                data_set.read(item->data(), H5::PredType::NATIVE_HBOOL, space, space);
+            }
+
+            std::cout<<"Loading centers"<<std::endl;
+            // Load the centers
+            {
+                H5::DataSet data_set = peak_collection.openDataSet("Center");
+                H5::DataSpace space(data_set.getSpace());
+                data_set.read(center.data(), H5::PredType::NATIVE_DOUBLE, space, space);
+            }
+
+            std::cout<<"Loading metric"<<std::endl;
+            //Load the metrics
+            {
+                H5::DataSet data_set = peak_collection.openDataSet("Metric");
+                H5::DataSpace space(data_set.getSpace());
+                data_set.read(metric.data(), H5::PredType::NATIVE_DOUBLE, space, space);
+            }
+
+            std::cout<<"Loading data-set names"<<std::endl;
+            //Load the data_names
+            {
+                H5::StrType datatype(H5::PredType::C_S1, H5T_VARIABLE); 
+                H5::DataSet data_set = peak_collection.openDataSet("DataNames");
+                H5::DataType data_type = data_set.getDataType();
+                H5::DataSpace space(data_set.getSpace());
+
+                hsize_t dims_out[2];
+                space.getSimpleExtentDims(dims_out, nullptr);
+                char *char_data_names[dims_out[0]];
+                data_set.read((void*)char_data_names, datatype);
+
+                for (int ii = 0; ii < dims_out[0]; ++ii){
+                    std::string text;
+                    for (int jj = 0; jj < dims_out[1]-2; ++jj){
+                        text.append(std::string(1,char_data_names[ii][jj]));
+                    }
+                    data_names.push_back(text);
+                }
+            }
+
+            std::cout<<"Loading unit-cell names"<<std::endl;
+            //Load the unit cell strings
+            {
+                H5::StrType datatype(H5::PredType::C_S1, H5T_VARIABLE); 
+                H5::DataSet data_set = peak_collection.openDataSet("DataNames");
+                H5::DataType data_type = data_set.getDataType();
+                H5::DataSpace space(data_set.getSpace());
+
+                hsize_t dims_out[2];
+                space.getSimpleExtentDims(dims_out, nullptr);
+                char *char_unit_cells[dims_out[0]];
+                data_set.read((void*)char_unit_cells, datatype);
+
+                for (int ii = 0; ii < dims_out[0]; ++ii){
+                    std::string text;
+                    for (int jj = 0; jj < dims_out[1]-2; ++jj){
+                        text.append(std::string(1,char_unit_cells[ii][jj]));
+                    }
+                    unit_cells.push_back(text);
+                }
+            }
+
+            std::cout<<"Finished reading data from file"<<std::endl;
+
+            std::cout<<"Creating the vector of peaks"<<std::endl;
+            std::vector<std::shared_ptr<nsx::Peak3D>> peaks;
+
+            Eigen::Vector3d local_center;
+            Eigen::Matrix3d local_metric;
+            sptrDataSet data_pointer;
+            for (int k=0; k < n_peaks; ++k){
+
+                local_center = Eigen::Vector3d(
+                    center(k,0), center(k,1), center(k,2));
+                local_metric = metric.block(k*3,0,3,3);
+
+                nsx::Ellipsoid ellipsoid(
+                    local_center,
+                    local_metric);
+
+                data_pointer = experiment->dataShortName(std::string(data_names[k]));
+                std::shared_ptr<nsx::Peak3D> peak = std::make_shared<nsx::Peak3D>(data_pointer,ellipsoid);
+
+                nsx::Intensity peak_intensity(intensity[k], sigma[k]);
+                nsx::Intensity peak_mean_bkg(mean_bkg_val[k], mean_bkg_sig[k]);
+
+                peak->setManually(
+                    peak_intensity,peak_end[k], bkg_begin[k], bkg_end[k],
+                    scale[k], transmission[k], peak_mean_bkg, 
+                    predicted[k], selected[k], masked[k]
+                    );
+
+                peaks.push_back(peak);
+            }
+            std::cout<<"Finished creating the vector of peaks"<<std::endl;
+
+            experiment->addPeakCollection(collection_name, &peaks);
+
+            std::cout<<"Created the peak collection"<<std::endl;
+            
+        }
+
+    } catch (H5::Exception& e) {
+        std::string what = e.getDetailMsg();
+        throw std::runtime_error(what);
+        return false;
+    }
+    
+    return true;
+}
+
+bool ExperimentImporter::loadUnitCells(Experiment* experiment)
+{
+    try{
+
+    } catch (...){
+        return false;
+    }
+    
+    return true;
+}
+
+bool ExperimentImporter::finishLoad()
+{
+    try{
+
+    } catch (...){
+        return false;
+    }
+    
+    return true;
+}
+
+} // namespace nsx
