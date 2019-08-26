@@ -1,3 +1,20 @@
 {
-    "python.pythonPath": "/sbin/python"
+    "python.pythonPath": "/sbin/python",
+    "C_Cpp.default.cppStandard": "c++11",
+    "C_Cpp.default.cStandard": "c11",
+    "C_Cpp.default.includePath": [
+        "/home/alexander/projects/NSX_GitLab/nsxtool",
+        "/usr/include",
+        "/usr/local/include",
+        "/usr/include/eigen3"
+    ],
+    "cSpell.words": [
+        "Eigen",
+        "Forschungszentrum",
+        "Institut",
+        "Langevin",
+        "blosc",
+        "gonio",
+        "sptr"
+    ]
 }

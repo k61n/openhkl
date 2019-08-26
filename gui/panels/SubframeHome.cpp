@@ -70,6 +70,10 @@ void SubframeHome::setLeftLayout(QHBoxLayout* main_layout)
     old_exp->setText("Load from file");
     old_exp->setMinimumWidth(new_exp->sizeHint().width());
     old_exp->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    connect(
+        old_exp, &QPushButton::clicked,
+        this, &SubframeHome::loadFromFile
+    );
 
     left_top->addWidget(new_exp);
     left_top->addWidget(old_exp);
@@ -140,14 +144,20 @@ void SubframeHome::createNew()
 
 void SubframeHome::loadFromFile()
 {
-    gSession->loadData();
+    QString fileName = QFileDialog::getOpenFileName(this,
+        tr("Save the current experiment"), "",
+        tr("Address Book (*.nsx);;All Files (*)"));
+    gSession->loadExperimentFromFile(fileName);
+    _open_experiments_model.reset();
+    _open_experiments_model = std::make_unique<ExperimentModel>();
+    _open_experiments_view->setModel(_open_experiments_model.get());
 }
 
 void SubframeHome::saveCurrent()
 {
     QString fileName = QFileDialog::getSaveFileName(this,
         tr("Save the current experiment"), "",
-        tr("Address Book (*.nsx);;All Files (*)"));
+        tr("NSXTool file (*.nsx);;All Files (*)"));
     bool success = gSession->selectedExperiment()->saveToFile(fileName);
 }
 

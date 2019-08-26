@@ -44,6 +44,7 @@ public:
    bool saved() const {return _saved;};
 
 public:
+
    //! Get the associated peaks
    std::vector<nsx::Peak3D*>* getPeaks(
       const QString& peakListName, 
@@ -59,6 +60,8 @@ public:
    PeakCollectionModel* selected();
    //! Generate a peak model based on the Peak collection in the core
    void generatePeakModel(const QString& peakListName);
+   //! Generate a peak model based on the Peak collection in the core
+   void generatePeakModels();
    //! Get the peaklist model by name
    PeakCollectionModel* peakModel(const QString& name);
    //! Get the peaklist model by number
@@ -73,6 +76,7 @@ public:
    void integratePeaks();
 
 public:
+
    void addUnitCell(nsx::sptrUnitCell uc) { unitCells_.append(uc); }
    nsx::sptrUnitCell getUnitCell(int index = -1);
    void removeUnitCell(int index = -1);
@@ -80,18 +84,20 @@ public:
    void selectUnitCell(int select) { unitCellIndex_ = select; }
    QList<nsx::sptrUnitCell>* getUnitCellList(nsx::sptrUnitCell cell);
    
-   
 public:
+
    void setLibrary(nsx::sptrShapeLibrary shapeLibrary) { _library = shapeLibrary; }
    nsx::sptrShapeLibrary getLibrary() { return _library; }
    
 public: 
+
    //! The save method
    bool saveToFile(QString path);
    //! Save as
    void saveAs(QString path) const {return;};
 
  private:
+
    //! Pointer to the core experiment
    nsx::sptrExperiment _experiment;
    //! Pointer to the core library

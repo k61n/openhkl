@@ -28,33 +28,39 @@ namespace nsx {
 //! Experiment class, a data type containing a diffractometer and data sets.
 
 class Experiment {
+
  public:
+
    Experiment() = delete;
    Experiment(const Experiment& other);
-
    //! Construct an empty experiment from a given name and diffractometer
    Experiment(const std::string& name, const std::string& diffractometerName);
    ~Experiment() = default;
    Experiment& operator=(const Experiment& other);
 
+public:
+
+   //! Get the name of the Experiment
+   const std::string& name() const;
+   //! Sets the name of the experiment
+   void setName(const std::string& name);
    //! Returns a non-const pointer to the diffractometer related to the experiment
    Diffractometer* diffractometer();
-
    //! Returns a const pointer to the diffractometer related to the experiment
    const Diffractometer* diffractometer() const;
+   //! Set the diffractometer accordingly
+   void setDiffractometer(const std::string& diffractometerName);
+
+public:
 
    //! Gets a reference to the data
    const std::map<std::string, sptrDataSet>& data() const;
    //! Gets the pointer to a given data stored in the experiment
    sptrDataSet data(std::string name);
+   //! Gets the pointer to a given data stored in the experiment
+   sptrDataSet dataShortName(std::string name);
    //! Get number of data
    int numData() const {return  _data.size();};
-
-   const std::string& name() const;
-   // std::string getName() const;
-   //! Sets the name of the experiment
-   void setName(const std::string& name);
-
    //! Add some data to the experiment
    void addData(sptrDataSet data);
    //! Returns true if the experiment has a data
@@ -63,6 +69,7 @@ class Experiment {
    void removeData(const std::string& name);
 
 public:
+
    //! Add some data to the experiment
    void addPeakCollection(
       const std::string name, 
@@ -79,6 +86,7 @@ public:
    int numPeakCollections()const {return _peakCollections.size();};
 
 public:
+
    //! Add some data to the experiment
    void addUnitCell(const std::string& name, sptrUnitCell unit_cell);
    //! Returns true if the experiment has a data
@@ -89,6 +97,7 @@ public:
    void removeUnitCell(const std::string& name);
 
 public:
+
    //! Get the address of the peak finder
    nsx::PeakFinder* peakFinder() {return _peak_finder;};
    //! Transfer current peaks as collection
@@ -99,12 +108,14 @@ public:
    void integrateFoundPeaks( double peak_end, double bkg_begin, double bkg_end);
 
 public:
+
    //! Save to file
    bool saveToFile(std::string path) const;
    //! Load from file
-   bool loadFromFile(std::string path) {return true;};
+   bool loadFromFile(std::string path);
 
 private:
+
    //! The name of this experiment
    std::string _name = "No_name";
    //! A pointer to the detector assigned to this experiment

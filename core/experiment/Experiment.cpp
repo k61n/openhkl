@@ -25,6 +25,7 @@
 #include "core/raw/MetaData.h"
 
 #include "core/output/ExperimentExporter.h"
+#include "core/loader/ExperimentImporter.h"
 
 namespace nsx {
 
@@ -72,6 +73,11 @@ const std::map<std::string, sptrDataSet>& Experiment::data() const
     return _data;
 }
 
+void Experiment::setDiffractometer(const std::string& diffractometerName)
+{
+    _diffractometer.reset(Diffractometer::create(diffractometerName));
+}
+
 sptrDataSet Experiment::data(std::string name)
 {
     auto it = _data.find(name);
@@ -81,6 +87,36 @@ sptrDataSet Experiment::data(std::string name)
     }
     return it->second;
 }
+
+sptrDataSet Experiment::dataShortName(std::string name)
+{
+    std::map<std::string, sptrDataSet> temp;
+    for (std::map<std::string, sptrDataSet>::iterator it = _data.begin();
+    it != _data.end(); ++it){
+        std::string file_path = it->second->reader()->name();
+        std::string short_name;
+
+        size_t sep = file_path.find_last_of("\\/");
+        if (sep != std::string::npos)
+            file_path = file_path.substr(sep + 1, file_path.size() - sep - 1);
+
+        size_t dot = file_path.find_last_of(".");
+        if (dot != std::string::npos){
+            short_name = file_path.substr(0, dot);
+        }else{
+            short_name = file_path;
+        }
+        temp.insert(std::make_pair(short_name,it->second));
+    }
+
+    auto it = temp.find(name);
+    if (it == temp.end()) {
+        throw std::runtime_error(
+            "The data " + name + " could not be found in the experiment " + _name);
+    }
+    return it->second;
+}
+
 
 const std::string& Experiment::name() const
 {
@@ -105,7 +141,7 @@ void Experiment::addData(sptrDataSet data)
     std::string diffName = metadata.key<std::string>("Instrument");
 
     if (!(diffName.compare(_diffractometer->name()) == 0)) {
-        throw std::runtime_error("Mismatch between the diffractometers assigned to "
+        throw std::runtime_error("Mismatch between the diffractometer assigned to "
                                  "the experiment and the data");
     }
     double wav = metadata.key<double>("wavelength");
@@ -214,7 +250,7 @@ bool Experiment::saveToFile(std::string path) const
 {
     nsx::ExperimentExporter exporter;
 
-    bool success = exporter.createFile(path);
+    bool success = exporter.createFile(name(), _diffractometer->name(), path);
 
     if (success){
         std::map<std::string,DataSet*> data_sets;
@@ -242,5 +278,21 @@ bool Experiment::saveToFile(std::string path) const
     return success;
 }
 
+bool Experiment::loadFromFile(std::string path)
+{
+    nsx::ExperimentImporter importer;
+
+    bool success = importer.setFilePath(path, this);
+
+    if (success){
+        success = importer.loadData(this);
+    }
+
+    if (success){
+        success = importer.loadPeaks(this);
+    }
+    return success;
+
+}
 
 } // namespace nsx

@@ -102,6 +102,12 @@ class Peak3D {
     bool predicted() const;
 
     //! Update the integration of the peak
+    void setManually(
+        Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd,
+        double scale, double transmission, Intensity mean_bkg,
+        bool predicted, bool selected, bool masked );
+
+    //! Update the integration of the peak
     void updateIntegration(
         const IPeakIntegrator& integrator, double peakEnd, double bkgBegin, double bkgEnd);
     //! Returns the q vector of the peak, transformed into sample coordinates.

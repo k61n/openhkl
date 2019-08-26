@@ -30,7 +30,7 @@ class ExperimentExporter {
 public:
 
     //! Create the file
-    bool createFile(std::string path);
+    bool createFile(std::string name, std::string diffractometer, std::string path);
     //! Write the data into the current file
     bool writeData(const std::map<std::string, DataSet*> data);
     //! Write the peak data into the current file
@@ -45,10 +45,6 @@ public:
 private:
     //! The current file
     std::string _file_name;
-
-    
-
-
 };
 
 } // namespace nsx

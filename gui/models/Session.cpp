@@ -230,11 +230,19 @@ void Session::onDataChanged()
 void Session::onExperimentChanged()
 {
     gGui->onExperimentChanged();
-    onDataChanged();
-    
+    onDataChanged();   
 }
 
 void Session::onPeaksChanged()
 {
     gGui->onPeaksChanged();
 }
+
+void Session::loadExperimentFromFile(QString filename)
+{
+    createExperiment(QString::fromStdString("default"));
+    selectedExperiment()->experiment()->loadFromFile(filename.toStdString());
+    selectedExperiment()->generatePeakModels();
+    onExperimentChanged();
+}
+

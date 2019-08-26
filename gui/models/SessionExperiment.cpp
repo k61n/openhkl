@@ -141,6 +141,26 @@ void SessionExperiment::generatePeakModel(const QString& peakListName)
     generatePeakListModel();
 }
 
+void SessionExperiment::generatePeakModels()
+{
+    _peak_models.clear();
+
+    std::vector<std::string*> names = _experiment->getCollectionNames();
+
+    for (std::string* name :names){
+        
+        nsx::PeakCollection* peak_collection = _experiment->getPeakCollection(*name);
+
+        PeakCollectionItem* peak_collection_item = new PeakCollectionItem(peak_collection);
+        PeakCollectionModel* peak_collection_model = new PeakCollectionModel();
+        peak_collection_model->setRoot(peak_collection_item);
+        _peak_models.append(peak_collection_model);
+
+    }
+
+    generatePeakListModel();
+}
+
 PeakCollectionModel* SessionExperiment::peakModel(const QString& name)
 {
     std::string std_name = name.toStdString();

@@ -269,6 +269,25 @@ Ellipsoid Peak3D::qShape() const
 //        ReciprocalVector(pred_kf * state.detectorOrientation));
 //}
 
+
+void Peak3D::setManually(
+    Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd,
+    double scale, double transmission, Intensity mean_bkg, 
+    bool predicted, bool selected, bool masked)
+{
+    _peakEnd = peakEnd;
+    _bkgBegin = bkgBegin;
+    _bkgEnd = bkgEnd;
+    _scale = scale;
+    _selected = selected;
+    _masked = masked;
+    _predicted = predicted;
+    _transmission = transmission;
+    _meanBackground = mean_bkg;
+    _rawIntensity = intensity;
+}
+
+
 Intensity Peak3D::meanBackground() const
 {
     return _meanBackground;

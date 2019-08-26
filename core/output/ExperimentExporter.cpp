@@ -15,8 +15,6 @@
 
 #include "core/output/ExperimentExporter.h"
 
-
-
 #include "base/parser/BloscFilter.h"
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/UnitCell.h"
@@ -33,9 +31,10 @@
 #include <Eigen/Dense>
 #include <vector>
 #include <iostream>
+
 namespace nsx {
 
-bool ExperimentExporter::createFile(std::string path)
+bool ExperimentExporter::createFile(std::string name, std::string diffractometer, std::string path)
 {
     try{
 
@@ -43,6 +42,16 @@ bool ExperimentExporter::createFile(std::string path)
 
         H5::H5File* file = new H5::H5File(path.c_str(), H5F_ACC_TRUNC);
         _file_name = path;
+
+        H5::DataSpace metaExpSpace(H5S_SCALAR);
+        H5::StrType str80(H5::PredType::C_S1, 80);
+
+        H5::Attribute nameAtt(file->createAttribute("name", str80, metaExpSpace));
+        nameAtt.write(str80, name);
+
+        H5::Attribute diffAtt(file->createAttribute("diffractometer", str80, metaExpSpace));
+        diffAtt.write(str80, diffractometer);
+
         delete file;
         
     } catch (...){
@@ -91,7 +100,7 @@ bool ExperimentExporter::writeData(
 
             data_collection = new H5::Group(
                 file->createGroup(std::string("/DataCollections/"+name)));
-            
+
             blosc_init();
             blosc_set_nthreads(4);
 
@@ -276,6 +285,8 @@ bool ExperimentExporter::writePeaks(
         double* transimition;
         double* intensity;
         double* sigma;
+        double* mean_bkg_val;
+        double* mean_bkg_sig;
 
         //initialise the booleans
         bool* selected;
@@ -301,6 +312,8 @@ bool ExperimentExporter::writePeaks(
             transimition = new double[collection_item->numberOfPeaks()];
             intensity = new double[collection_item->numberOfPeaks()];
             sigma = new double[collection_item->numberOfPeaks()];
+            mean_bkg_val = new double[collection_item->numberOfPeaks()];
+            mean_bkg_sig = new double[collection_item->numberOfPeaks()];
 
             Eigen::Matrix<double,Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> center(collection_item->numberOfPeaks(), 3);
             Eigen::Matrix<double,Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> metric(3*collection_item->numberOfPeaks(), 3);
@@ -332,6 +345,8 @@ bool ExperimentExporter::writePeaks(
                 transimition[i] = peak->transmission();
                 intensity[i] = peak->rawIntensity().value();
                 sigma[i] = peak->rawIntensity().sigma();
+                mean_bkg_val[i] = peak->meanBackground().value();
+                mean_bkg_val[i] = peak->meanBackground().sigma();
 
                 selected[i] = peak->selected();
                 masked[i] = peak->masked();
@@ -361,7 +376,8 @@ bool ExperimentExporter::writePeaks(
                     unit_cells.push_back(temp.c_str());
                 }
                 
-                center.block( i, 0, 1, 3) = peak->shape().center();
+                Eigen::Vector3d temp_col = peak->shape().center();
+                center.block( i, 0, 1, 3) = Eigen::RowVector3d(temp_col(0), temp_col(1), temp_col(2));
                 metric.block( i * 3, 0, 3, 3) = peak->shape().metric();
 
             }
@@ -427,6 +443,22 @@ bool ExperimentExporter::writePeaks(
                     H5::PredType::NATIVE_DOUBLE, peak_space));
             sigma_H5.write(
                 sigma, H5::PredType::NATIVE_DOUBLE, 
+                peak_space, peak_space);
+
+            H5::DataSet mean_bkg_val_H5(
+                file->createDataSet(
+                    std::string("/PeakCollections/"+collection_name+"/BkgIntensity"),
+                    H5::PredType::NATIVE_DOUBLE, peak_space));
+            mean_bkg_val_H5.write(
+                mean_bkg_val, H5::PredType::NATIVE_DOUBLE, 
+                peak_space, peak_space);
+
+            H5::DataSet mean_bkg_sig_H5(
+                file->createDataSet(
+                    std::string("/PeakCollections/"+collection_name+"/BkgSigma"),
+                    H5::PredType::NATIVE_DOUBLE, peak_space));
+            mean_bkg_sig_H5.write(
+                mean_bkg_sig, H5::PredType::NATIVE_DOUBLE, 
                 peak_space, peak_space);
 
             H5::DataSet center_H5(
@@ -512,6 +544,10 @@ bool ExperimentExporter::writePeaks(
             delete[] bkg_end;
             delete[] scale;
             delete[] transimition;
+            delete[] intensity;
+            delete[] sigma;
+            delete[] mean_bkg_val;
+            delete[] mean_bkg_sig;
 
             //initialise the booleans
             delete[] selected;

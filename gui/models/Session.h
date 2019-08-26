@@ -44,6 +44,8 @@ class Session {
     void onExperimentChanged();
     void onPeaksChanged();
 
+   void loadExperimentFromFile(QString filename);
+
  private:
     QList<SessionExperiment*> _experiments;
     int selectedExperiment_ = -1;
