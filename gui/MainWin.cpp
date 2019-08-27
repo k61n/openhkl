@@ -126,6 +126,7 @@ void MainWin::readSettings()
 void MainWin::closeEvent(QCloseEvent* event)
 {
     saveSettings();
+    homeScreen_->saveSettings();
     delete triggers;
     delete menus_;
     gGui = nullptr;

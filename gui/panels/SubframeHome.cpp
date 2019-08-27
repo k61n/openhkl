@@ -36,8 +36,8 @@ SubframeHome::SubframeHome()
         50, 10, QSizePolicy::Fixed, QSizePolicy::Minimum);
     sub_layout->addSpacerItem(spacer_left);
 
-    setLeftLayout(sub_layout);
-    setRightLayout(sub_layout);
+    _setLeftLayout(sub_layout);
+    _setRightLayout(sub_layout);
 
     QSpacerItem* spacer_right = new QSpacerItem(
         10, 10, QSizePolicy::Expanding, QSizePolicy::Minimum);
@@ -48,37 +48,53 @@ SubframeHome::SubframeHome()
         10, 50, QSizePolicy::Minimum, QSizePolicy::Fixed);
     main_layout->addSpacerItem(spacer_bot);
 
+    readSettings();
+    _updateLastLoadedWidget();
+
 }
 
-void SubframeHome::setLeftLayout(QHBoxLayout* main_layout)
+void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 {
     QVBoxLayout* left = new QVBoxLayout;
-
     QHBoxLayout* left_top = new QHBoxLayout(); 
 
-    new_exp = new QPushButton();
-    new_exp->setIcon(QIcon(":/images/create_new.svg"));
-    new_exp->setText("Create new experiment");
-    new_exp->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    _new_exp = new QPushButton();
+    _new_exp->setIcon(QIcon(":/images/create_new.svg"));
+    _new_exp->setText("Create new experiment");
+    _new_exp->setSizePolicy(
+        QSizePolicy::Preferred, QSizePolicy::Preferred);
     connect(
-        new_exp, &QPushButton::clicked,
-        this, &SubframeHome::createNew
+        _new_exp, &QPushButton::clicked,
+        this, &SubframeHome::_createNew
     );
 
-    old_exp = new QPushButton();
-    old_exp->setIcon(QIcon(":/images/load_from_folder.svg"));
-    old_exp->setText("Load from file");
-    old_exp->setMinimumWidth(new_exp->sizeHint().width());
-    old_exp->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    _old_exp = new QPushButton();
+    _old_exp->setIcon(QIcon(":/images/load_from_folder.svg"));
+    _old_exp->setText("Load from file");
+    _old_exp->setMinimumWidth(_new_exp->sizeHint().width());
+    _old_exp->setSizePolicy(
+        QSizePolicy::Preferred, QSizePolicy::Preferred);
     connect(
-        old_exp, &QPushButton::clicked,
-        this, &SubframeHome::loadFromFile
+        _old_exp, &QPushButton::clicked,
+        this, &SubframeHome::_loadFromFile
     );
 
-    left_top->addWidget(new_exp);
-    left_top->addWidget(old_exp);
+    left_top->addWidget(_new_exp);
+    left_top->addWidget(_old_exp);
 
     left->addLayout(left_top);
+
+    _last_import_widget = new QListWidget(this);
+    _last_import_widget->setSizePolicy(
+        QSizePolicy::Preferred, QSizePolicy::Preferred);
+    _last_import_widget->setStyleSheet(
+        "background-color: transparent;");
+    connect(
+        _last_import_widget, &QListWidget::itemClicked,
+        this, &SubframeHome::_loadSelectedItem
+    );
+
+    left->addWidget(_last_import_widget);
 
     QSpacerItem* spacer_bottom = new QSpacerItem(
         10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding);
@@ -87,7 +103,7 @@ void SubframeHome::setLeftLayout(QHBoxLayout* main_layout)
     main_layout->addLayout(left);
 }
 
-void SubframeHome::setRightLayout(QHBoxLayout* main_layout)
+void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
 {
     QVBoxLayout* right = new QVBoxLayout;
     
@@ -96,37 +112,37 @@ void SubframeHome::setRightLayout(QHBoxLayout* main_layout)
     _open_experiments_view->setModel(_open_experiments_model.get());
     connect(
         _open_experiments_view, &ExperimentTableView::doubleClicked,
-        this, &SubframeHome::switchCurrentExperiment
+        this, &SubframeHome::_switchCurrentExperiment
     );
 
     right->addWidget(_open_experiments_view);
 
     QHBoxLayout* right_bot = new QHBoxLayout(); 
 
-    save_current = new QPushButton();
-    save_current->setIcon(QIcon(":/images/save.svg"));
-    save_current->setText("Save current");
-    save_current->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    _save_current = new QPushButton();
+    _save_current->setIcon(QIcon(":/images/save.svg"));
+    _save_current->setText("Save current");
+    _save_current->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     connect(
-        save_current, &QPushButton::clicked,
+        _save_current, &QPushButton::clicked,
         this, &SubframeHome::saveCurrent
     );
 
-    save_all = new QPushButton();
-    save_all->setIcon(QIcon(":/images/save.svg"));
-    save_all->setText("Save all");
-    save_all->setMinimumWidth(save_current->sizeHint().width());
-    save_all->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    _save_all = new QPushButton();
+    _save_all->setIcon(QIcon(":/images/save.svg"));
+    _save_all->setText("Save all");
+    _save_all->setMinimumWidth(_save_current->sizeHint().width());
+    _save_all->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
-    right_bot->addWidget(save_current);
-    right_bot->addWidget(save_all);
+    right_bot->addWidget(_save_current);
+    right_bot->addWidget(_save_all);
 
     right->addLayout(right_bot);
 
     main_layout->addLayout(right);
 }
 
-void SubframeHome::createNew()
+void SubframeHome::_createNew()
 {
     std::unique_ptr<ExperimentDialog> exp_dialog(new ExperimentDialog);
     exp_dialog->exec();
@@ -134,31 +150,47 @@ void SubframeHome::createNew()
     if (exp_dialog->result()){
         QString name = exp_dialog->experimentName();
         QString type = exp_dialog->instrumentName();
-        gSession->createExperiment(name, type);
+        bool success = gSession->createExperiment(name, type);
 
-        _open_experiments_model.reset();
-        _open_experiments_model = std::make_unique<ExperimentModel>();
-        _open_experiments_view->setModel(_open_experiments_model.get());
+        if (success){
+            _open_experiments_model.reset();
+            _open_experiments_model = std::make_unique<ExperimentModel>();
+            _open_experiments_view->setModel(_open_experiments_model.get());
+        }
     }
 }
 
-void SubframeHome::loadFromFile()
+void SubframeHome::_loadFromFile()
 {
-    QString fileName = QFileDialog::getOpenFileName(this,
+    QString file_path = QFileDialog::getOpenFileName(this,
         tr("Save the current experiment"), "",
         tr("Address Book (*.nsx);;All Files (*)"));
-    gSession->loadExperimentFromFile(fileName);
-    _open_experiments_model.reset();
-    _open_experiments_model = std::make_unique<ExperimentModel>();
-    _open_experiments_view->setModel(_open_experiments_model.get());
+    bool success = gSession->loadExperimentFromFile(file_path);
+
+    if (success){
+        _open_experiments_model.reset();
+        _open_experiments_model = std::make_unique<ExperimentModel>();
+        _open_experiments_view->setModel(_open_experiments_model.get());
+        _updateLastLoadedList(
+            QString::fromStdString(
+                gSession->selectedExperiment()->experiment()->name()),
+            file_path);
+    }
 }
 
 void SubframeHome::saveCurrent()
 {
-    QString fileName = QFileDialog::getSaveFileName(this,
+    QString file_path = QFileDialog::getSaveFileName(this,
         tr("Save the current experiment"), "",
         tr("NSXTool file (*.nsx);;All Files (*)"));
-    bool success = gSession->selectedExperiment()->saveToFile(fileName);
+    bool success = gSession->selectedExperiment()->saveToFile(file_path);
+
+    if (success){
+        _updateLastLoadedList(
+            QString::fromStdString(
+                gSession->selectedExperiment()->experiment()->name()),
+            file_path);
+    }
 }
 
 void SubframeHome::saveAll()
@@ -166,7 +198,7 @@ void SubframeHome::saveAll()
 
 }
 
-void SubframeHome::switchCurrentExperiment( const QModelIndex & index ) const
+void SubframeHome::_switchCurrentExperiment( const QModelIndex & index ) const
 {
     gSession->selectExperiment(index.row());
     emit _open_experiments_model->dataChanged(QModelIndex(), QModelIndex());
@@ -174,16 +206,60 @@ void SubframeHome::switchCurrentExperiment( const QModelIndex & index ) const
 
 void SubframeHome::saveSettings() const
 {
-    QSettings s;
-    s.beginGroup("lastLoaded");
-    // s.setValue("geometry", saveGeometry());
-    // s.setValue("state", saveState());
+    qRegisterMetaTypeStreamOperators<QList<QStringList>>("last_loaded.ini");
+    QSettings setting("last_loaded.ini", QSettings::IniFormat);
+    setting.setValue("lastLoaded", QVariant::fromValue(_last_imports));
+    
 }
 
 void SubframeHome::readSettings()
 {
-    QSettings s;
-    s.beginGroup("lastLoaded");
-    // restoreGeometry(s.value("geometry").toByteArray());
-    // restoreState(s.value("state").toByteArray());
+    qRegisterMetaTypeStreamOperators<QList<QStringList>>("last_loaded.ini");
+    QSettings setting("last_loaded.ini", QSettings::IniFormat);
+    _last_imports = setting.value("lastLoaded").value<QList<QStringList>>();
+}
+
+void SubframeHome::_updateLastLoadedList(QString name, QString file_path)
+{
+    QStringList temp = {name, file_path};
+    _last_imports.prepend(temp);
+
+    if (_last_imports.size() > 5){
+        _last_imports.removeLast();
+    }
+
+    _updateLastLoadedWidget();
+}
+
+void SubframeHome::_updateLastLoadedWidget()
+{
+    _last_import_widget->blockSignals(true);
+    _last_import_widget->clear();
+
+    QList<QStringList>::iterator it;
+    for (it = _last_imports.begin(); it != _last_imports.end(); ++it){
+        QListWidgetItem* item = new QListWidgetItem(
+            QIcon(":/images/experimentIcon.png"),
+            (*it).at(0)
+        );
+        item->setData(100, (*it).at(1));
+        _last_import_widget->addItem(item);
+    }
+
+    _last_import_widget->blockSignals(false);
+}
+
+void SubframeHome::_loadSelectedItem(QListWidgetItem * item)
+{
+    bool success = gSession->loadExperimentFromFile(item->data(100).toString());
+
+    if (success){
+        _open_experiments_model.reset();
+        _open_experiments_model = std::make_unique<ExperimentModel>();
+        _open_experiments_view->setModel(_open_experiments_model.get());
+        _updateLastLoadedList(
+            QString::fromStdString(
+                gSession->selectedExperiment()->experiment()->name()),
+            item->data(100).toString());
+    }
 }

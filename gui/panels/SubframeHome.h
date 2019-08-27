@@ -24,37 +24,59 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QListWidget>
 
 class SubframeHome : public QWidget {
- public:
+public:
+
+    //! Default constructor 
     SubframeHome();
 
- private:
-    void setLeftLayout(QHBoxLayout* main_layout);
-    void setRightLayout(QHBoxLayout* main_layout);
+private:
+
+    //! Set the left layout 
+    void _setLeftLayout(QHBoxLayout* main_layout);
+    //! Set the right layout
+    void _setRightLayout(QHBoxLayout* main_layout);
 
 private:
-    void createNew();
-    void loadFromFile(); 
-    void switchCurrentExperiment( const QModelIndex & index ) const;
 
+    //! Create a new experiment
+    void _createNew();
+    //! Load an experiment from file
+    void _loadFromFile(); 
+    //! Switch the current experiment through the model index
+    void _switchCurrentExperiment( const QModelIndex & index ) const;
+    //! Update the current list
+    void _updateLastLoadedList(QString name, QString file_path);
+    //! Update the current list widget
+    void _updateLastLoadedWidget();
+    //! Load the clicked item
+    void _loadSelectedItem(QListWidgetItem * item);
+
+public:
+
+    //! Save the current experiment
     void saveCurrent();
+    //! Save all experiments provided they have save paths (not implemented)
     void saveAll();
 
+    //! Read the settings
     void readSettings();
+    // ! Save the settings
     void saveSettings() const;
 
 private:
-    QPushButton* new_exp;
-    QPushButton* old_exp;
-
-    QPushButton* save_current;
-    QPushButton* save_all;
+    QPushButton* _new_exp;
+    QPushButton* _old_exp;
+    QPushButton* _save_current;
+    QPushButton* _save_all;
 
     ExperimentTableView* _open_experiments_view;
     std::unique_ptr<ExperimentModel> _open_experiments_model;
 
-    QList<QString> _slast_imports;
+    QList<QStringList> _last_imports;
+    QListWidget* _last_import_widget;
 };
 
 #endif // GUI_PANELS_SUBFRAMEHOME_H

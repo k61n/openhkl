@@ -35,23 +35,42 @@ Session::Session()
     loadDirectory = QDir::homePath();
 }
 
-void Session::createExperiment(QString experimentName, QString instrumentName)
+bool Session::createExperiment(QString experimentName, QString instrumentName)
 {
+    QList<QString> temp = experimentNames();
+    QList<QString>::iterator it;
+    for (it = temp.begin(); it != temp.end(); ++it){
+        if (*it == experimentName)
+            return false;
+    }
+
     SessionExperiment* experiment = new SessionExperiment(experimentName, instrumentName);
     _experiments.append(experiment);
     selectedExperiment_ = _experiments.size() - 1;
     gLogger->log("Experiment \"" + experimentName + "\" added");
     onExperimentChanged();
+
+    return true;
 }
 
-void Session::createExperiment(QString experimentName)
+bool Session::createExperiment(QString experimentName)
 {
+
+    QList<QString> temp = experimentNames();
+    QList<QString>::iterator it;
+    for (it = temp.begin(); it != temp.end(); ++it){
+        if (*it == experimentName)
+            return false;
+    }
+
     SessionExperiment* experiment = new SessionExperiment;
     experiment->experiment()->setName(experimentName.toStdString());
     _experiments.append(experiment);
     selectedExperiment_ = _experiments.size() - 1;
     gLogger->log("Experiment \"" + experimentName + "\" added");
     onExperimentChanged();
+
+    return true;
 }
 
 void Session::createDefaultExperiment()
@@ -238,11 +257,18 @@ void Session::onPeaksChanged()
     gGui->onPeaksChanged();
 }
 
-void Session::loadExperimentFromFile(QString filename)
+bool Session::loadExperimentFromFile(QString filename)
 {
-    createExperiment(QString::fromStdString("default"));
-    selectedExperiment()->experiment()->loadFromFile(filename.toStdString());
-    selectedExperiment()->generatePeakModels();
-    onExperimentChanged();
+    bool success = createExperiment(QString::fromStdString("default"));
+
+    if (success){
+        success = selectedExperiment()->experiment()->loadFromFile(filename.toStdString());
+    }
+    if (success){
+        selectedExperiment()->generatePeakModels();
+        onExperimentChanged();
+    }
+    return success;
+
 }
 
