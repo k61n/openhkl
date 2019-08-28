@@ -15,14 +15,29 @@
 #ifndef GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
 #define GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
 
+#include "core/peak/PeakCollection.h"
+
+#include "gui/graphics/DetectorView.h"
 #include "gui/views/PeakTableView.h"
-#include "gui/models/PeakModel.h"
-#include <QCR/widgets/controls.h>
-#include <QCR/widgets/views.h>
-#include <QDialogButtonBox>
+#include "gui/models/PeakCollectionModel.h"
+#include "gui/views/PeakTableView.h"
+#include "gui/utility/ColorButton.h"
+
+#include <QTableWidget>
+#include <QWidget>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QSplitter>
+#include <QCheckBox>
+#include <QSpinBox>
+#include <QDoubleSpinBox>
+#include <QComboBox>
+#include <QSizePolicy>
+#include <QGroupBox>
 
 //! Dialog to filter a peak list
-class PeakFilterDialog : public QcrWidget {
+class PeakFilterDialog : public QWidget {
 public:
 
    PeakFilterDialog();
@@ -35,41 +50,83 @@ public:
    void slotActionClicked(QAbstractButton* button);
    void slotUnitCellChanged(int index);
 
+
 private:
-   void doLayout();
+
+   //! Set up the GUI size policies
+   void setSizePolicies();
+   //! Build the input
+   void setInputUp();
+   //! Build the state
+   void setStateUp();
+   //! Build the unit-call
+   void setUnitCellUp();
+   //! Build the strength
+   void setStrengthUp();
+   //! Build the range
+   void setRangeUp();
+   //! Build the merge
+   void setMergeUp();
+
+private:
+
+   //! Run the filtering method
    void filterPeaks();
 
-   QcrCheckBox* selected;
-   QcrCheckBox* masked;
-   QcrCheckBox* predicted;
-   QcrCheckBox* indexedPeak;
-   QcrCheckBox* sapcegroupExtincted;
-   QcrCheckBox* removeOverlapping;
-   QcrCheckBox* keepComplementary;
-   QcrComboBox* unitCell;
+private:
 
-   QcrDoubleSpinBox* tolerance;
-   QcrDoubleSpinBox* strengthMin;
-   QcrDoubleSpinBox* strengthMax;
-   QcrDoubleSpinBox* drangeMin;
-   QcrDoubleSpinBox* drangeMax;
-   QcrDoubleSpinBox* significanceLevel;
+   //! The temporary collection
+   PeakCollectionModel* _peak_collection_model = 
+      new PeakCollectionModel();
+   //! The temporary collection
+   PeakCollectionItem* _peak_collection_item;
+   //! The model for the found peaks
+   nsx::PeakCollection* _peak_collection = 
+      new nsx::PeakCollection("temp", nsx::listtype::FOUND);
+   //! The available peak lists
+   QList<nsx::sptrDataSet> _peak_list;
 
-   QcrSpinBox* minNumberPeaks;
-   PeaksTableView* peaksTable;
+private:
 
-   QGroupBox* stateBox;
-   QGroupBox* byUnitCell;
-   QGroupBox* strengthBox;
-   QGroupBox* rangeBox;
-   QGroupBox* sparseGroup;
-   QGroupBox* mergeGroup;
-   
-   QDialogButtonBox* buttons;
-   QcrComboBox* peakList;
+   QHBoxLayout* _main_layout;
+   QVBoxLayout* _left_layout;
+   QSplitter* _right_element;
 
-   nsx::PeakList peaks_;
-   PeaksTableModel* model_;
+   QCheckBox* _selected;
+   QCheckBox* _masked;
+   QCheckBox* _predicted;
+   QCheckBox* _indexed_peaks;
+   QCheckBox* _extinct_spacegroup;
+   QCheckBox* _remove_overlaping;
+   QCheckBox* _keep_complementary;
+   QCheckBox* _unit_cell;
+
+   QDoubleSpinBox* _tolerance;
+   QDoubleSpinBox* _strength_min;
+   QDoubleSpinBox* _strength_max;
+   QDoubleSpinBox* _d_range_min;
+   QDoubleSpinBox* _d_range_max;
+   QDoubleSpinBox* _significance_level;
+
+   QSpinBox* _min_number_peaks;
+   PeaksTableView* _peaks_table;
+
+   QGroupBox* _input_box;
+   QGroupBox* _state_box;
+   QGroupBox* _unit_cell_box;
+   QGroupBox* _strength_box;
+   QGroupBox* _d_range_box;
+   QGroupBox* _sparse_box;
+   QGroupBox* _merge_box;
+
+   QComboBox* _exp_combo;
+   QComboBox* _peak_combo;
+
+   QSizePolicy* _size_policy_widgets;
+   QSizePolicy* _size_policy_box;
+   QSizePolicy* _size_policy_right;
+   QSizePolicy* _size_policy_fixed;
+
 };
 
 

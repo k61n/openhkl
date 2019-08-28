@@ -46,9 +46,6 @@
 
 PeakFinderFrame::PeakFinderFrame() : QWidget(), _pixmap(nullptr)
 {
-    // Layout
-    setAttribute(Qt::WA_DeleteOnClose);
-
     setSizePolicies();
     _main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical , this);
@@ -65,11 +62,9 @@ PeakFinderFrame::PeakFinderFrame() : QWidget(), _pixmap(nullptr)
     setBlobUp();
     setIntegrateUp();
     setPreviewUp();
-    _left_layout->addItem(
-        new QSpacerItem(
-            20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
     setFigureUp();
     setPeakTableUp();
+    
     _right_element->setSizePolicy(*_size_policy_right);
 
     _main_layout->addWidget(scroll_area);
@@ -430,6 +425,9 @@ void PeakFinderFrame::setPreviewUp()
     preview_box->contentArea.setSizePolicy(*_size_policy_box);
 
     _left_layout->addWidget(preview_box);
+    _left_layout->addItem(
+        new QSpacerItem(
+            20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
 
 void PeakFinderFrame::setFigureUp()

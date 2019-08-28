@@ -23,26 +23,22 @@
 #include "gui/views/PeakTableView.h"
 #include "gui/utility/ColorButton.h"
 
-#include <QCR/widgets/controls.h>
-#include <QCR/widgets/views.h>
-
 #include <QTableWidget>
 #include <QWidget>
 #include <QPushButton>
-
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QSplitter>
 #include <QCheckBox>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
-
+#include <QComboBox>
 #include <QSizePolicy>
-
 
 //! Frame which shows the settings to find peaks
 class PeakFinderFrame : public QWidget{
 public:
+
    PeakFinderFrame();
    //! Change the convolution parameters
    void updateConvolutionParameters();
@@ -54,6 +50,7 @@ public:
    void refreshAll(); 
 
 private:
+
    //! Set up the GUI size policies
    void setSizePolicies();
    //! Set up the data selection GUI
@@ -83,10 +80,12 @@ private:
    void accept();
 
 private:
+
    //! Update the datalist as an experiment was changed
    void setExperimentsUp();
 
 private:
+
    //! Update the datalist as an experiment was changed
    void updateDatasetList(int idx);
    //! Update the dataset related parameters
@@ -100,12 +99,13 @@ private:
    //! Grab the Integration parameters
    void grabIntegrationParameters();
 
-
 private:
+
    //! Convolution parameter map
    std::map<std::string, double> convolutionParameters();
 
 private:
+
    //! The temporary collection
    PeakCollectionModel* _peak_collection_model = 
       new PeakCollectionModel();
