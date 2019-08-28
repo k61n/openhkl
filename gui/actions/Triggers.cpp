@@ -14,26 +14,32 @@
 
 #include "gui/actions/Triggers.h"
 
+#include "gui/models/Session.h" //for gSession
+
 #include "gui/MainWin.h"
+
 #include "gui/dialogs/AbsorptionDialog.h"
 #include "gui/dialogs/HDF5ConverterDialog.h"
 #include "gui/dialogs/IntegrateDialog.h"
 #include "gui/dialogs/IsotopesDatabaseDialog.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/dialogs/MCAbsorptionDialog.h"
-#include "gui/dialogs/PeakFilterDialog.h"
 #include "gui/dialogs/PredictPeaksDialog.h"
 #include "gui/dialogs/ShapeLibraryDialog.h"
+
 #include "gui/frames/AutoIndexerFrame.h"
 #include "gui/frames/GlobalOffsetsFrame.h"
 #include "gui/frames/InstrumentStatesFrame.h"
-#include "gui/frames/PeakFinderFrame.h"
 #include "gui/frames/RefinerFrame.h"
 #include "gui/frames/MergedPeakInformationFrame.h"
 #include "gui/frames/UserDefinedUnitCellIndexerFrame.h"
-#include "gui/models/Session.h" //for gSession
-#include "gui/panels/SubframeSetup.h"
+
 #include "gui/panels/TabInstrument.h"
+
+#include "gui/subframe_experiment/SubframeSetup.h"
+#include "gui/subframe_find/SubframeFindPeaks.h"
+#include "gui/subframe_filter/SubframeFilterPeaks.h"
+
 #include <QDate>
 #include <QDesktopServices>
 #include <QInputDialog>

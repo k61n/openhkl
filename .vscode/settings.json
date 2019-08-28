@@ -1,6 +1,6 @@
 {
     "python.pythonPath": "/sbin/python",
-    "C_Cpp.default.cppStandard": "c++11",
+    "C_Cpp.default.cppStandard": "c++17",
     "C_Cpp.default.cStandard": "c11",
     "C_Cpp.default.includePath": [
         "/home/alexander/projects/NSX_GitLab/nsxtool",

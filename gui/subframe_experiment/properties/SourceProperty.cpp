@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/properties/SourceProperty.h"
+#include "gui/subframe_experiment/properties/SourceProperty.h"
 
 #include "base/utils/Units.h"
 #include "gui/models/Session.h"

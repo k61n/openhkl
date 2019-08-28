@@ -17,8 +17,8 @@
 
 #include "gui/panels/TabInstrument.h"
 #include "gui/panels/TabPeaks.h"
-#include "gui/properties/NumorProperty.h"
-#include "gui/properties/UnitCellProperty.h"
+#include "gui/subframe_experiment/properties/NumorProperty.h"
+#include "gui/subframe_experiment/properties/UnitCellProperty.h"
 
 //! Part of the main window that contains the property tabs
 class SubframeSetup : public QcrTabWidget {

@@ -18,7 +18,7 @@
 #include "gui/panels/SubframeImage.h"
 #include "gui/panels/SubframeLogger.h"
 #include "gui/panels/SubframePlot.h"
-#include "gui/panels/SubframeProperties.h"
+#include "gui/subframe_experiment/SubframeProperties.h"
 #include <QCR/widgets/views.h>
 
 class SubframeExperiment : public QcrWidget {

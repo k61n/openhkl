@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/panels/SubframeSetup.h"
+#include "gui/subframe_experiment/SubframeSetup.h"
 
 #include "gui/models/Session.h"
 

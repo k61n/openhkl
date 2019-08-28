@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_PROPERTIES_UNITCELLPROPERTY_H
-#define GUI_PROPERTIES_UNITCELLPROPERTY_H
+#ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H
+#define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H
 
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
@@ -45,4 +45,4 @@ class UnitCellProperty : public QcrWidget {
     QcrDoubleSpinBox* gamma;
 };
 
-#endif // GUI_PROPERTIES_UNITCELLPROPERTY_H
+#endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H

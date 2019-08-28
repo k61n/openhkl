@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/properties/DetectorProperty.h"
+#include "gui/subframe_experiment/properties/DetectorProperty.h"
 
 #include "core/detector/Detector.h"
 #include "gui/models/Session.h"

@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/panels/SubframeExperiment.h"
+#include "gui/subframe_experiment/SubframeExperiment.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>

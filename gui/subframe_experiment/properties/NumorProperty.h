@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_PROPERTIES_NUMORPROPERTY_H
-#define GUI_PROPERTIES_NUMORPROPERTY_H
+#ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H
+#define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H
 
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
@@ -32,4 +32,4 @@ class NumorProperty : public QcrWidget {
     QcrComboBox* numor;
 };
 
-#endif // GUI_PROPERTIES_NUMORPROPERTY_H
+#endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H

@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/properties/NumorProperty.h"
+#include "gui/subframe_experiment/properties/NumorProperty.h"
 
 #include "core/experiment/DataSet.h"
 #include "core/experiment/DataTypes.h"

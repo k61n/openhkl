@@ -15,9 +15,9 @@
 #ifndef GUI_PANELS_TABINSTRUMENT_H
 #define GUI_PANELS_TABINSTRUMENT_H
 
-#include "gui/properties/DetectorProperty.h"
-#include "gui/properties/SampleShapeProperties.h"
-#include "gui/properties/SourceProperty.h"
+#include "gui/subframe_experiment/properties/DetectorProperty.h"
+#include "gui/subframe_experiment/properties/SampleShapeProperties.h"
+#include "gui/subframe_experiment/properties/SourceProperty.h"
 
 //! Tab of the SubframeSetup that contains the detector, source and sample property tabs
 class TabInstrument : public QcrTabWidget {

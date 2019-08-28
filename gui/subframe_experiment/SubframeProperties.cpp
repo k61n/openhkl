@@ -12,11 +12,11 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/panels/SubframeProperties.h"
+#include "gui/subframe_experiment/SubframeProperties.h"
 
 #include "gui/MainWin.h"
 #include "gui/actions/Triggers.h"
-#include "gui/panels/SubframeSetup.h"
+#include "gui/subframe_experiment/SubframeSetup.h"
 
 SubframeProperties::SubframeProperties() : QcrDockWidget {"Properties"}
 {

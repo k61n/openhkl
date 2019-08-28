@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/dialogs/PeakFilterDialog.cpp
-//! @brief     Implements class PeakFilterDialog
+//! @file      gui/subframe_filter/SubframeFilterPeaks.cpp
+//! @brief     Implements class SubframeFilterPeaks
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/dialogs/PeakFilterDialog.h"
+#include "gui/subframe_filter/SubframeFilterPeaks.h"
 
 #include "core/analyse/PeakFilter.h"
 #include "gui/MainWin.h"

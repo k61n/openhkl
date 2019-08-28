@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/panels/SubframeExperiments.h"
+#include "gui/subframe_experiment/SubframeExperiments.h"
 
 #include "gui/MainWin.h"
 #include "gui/actions/Triggers.h"

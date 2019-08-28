@@ -15,12 +15,12 @@
 #ifndef GUI_MAINWIN_H
 #define GUI_MAINWIN_H
 
-#include "gui/dialogs/PeakFilterDialog.h"
+#include "gui/subframe_filter/SubframeFilterPeaks.h"
 #include "gui/frames/AutoIndexerFrame.h"
-#include "gui/frames/PeakFinderFrame.h"
+#include "gui/subframe_find/SubframeFindPeaks.h"
 #include "gui/graphics/DetectorScene.h"
-#include "gui/panels/SubframeExperiment.h"
-#include "gui/panels/SubframeHome.h"
+#include "gui/subframe_experiment/SubframeExperiment.h"
+#include "gui/subframe_home/SubframeHome.h"
 #include <QCR/widgets/mainwindow.h>
 #include <QStackedWidget>
 

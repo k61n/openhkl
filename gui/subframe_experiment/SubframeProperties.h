@@ -15,7 +15,7 @@
 #ifndef GUI_PANELS_SUBFRAMEPROPERTIES_H
 #define GUI_PANELS_SUBFRAMEPROPERTIES_H
 
-#include "gui/panels/SubframeSetup.h"
+#include "gui/subframe_experiment/SubframeSetup.h"
 
 //! Part of the main window that contains the setup
 class SubframeProperties : public QcrDockWidget {

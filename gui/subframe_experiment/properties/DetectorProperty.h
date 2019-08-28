@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_PROPERTIES_DETECTORPROPERTY_H
-#define GUI_PROPERTIES_DETECTORPROPERTY_H
+#ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_DETECTORPROPERTY_H
+#define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_DETECTORPROPERTY_H
 
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
@@ -37,4 +37,4 @@ class DetectorProperty : public QcrWidget {
     QTableWidget* axes;
 };
 
-#endif // GUI_PROPERTIES_DETECTORPROPERTY_H
+#endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_DETECTORPROPERTY_H

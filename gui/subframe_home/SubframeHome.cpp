@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/panels/SubframeHome.h"
+#include "gui/subframe_home/SubframeHome.h"
 
 #include "gui/models/Session.h"
 #include "gui/dialogs/ExperimentDialog.h"

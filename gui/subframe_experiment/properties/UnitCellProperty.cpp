@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/properties/UnitCellProperty.h"
+#include "gui/subframe_experiment/properties/UnitCellProperty.h"
 
 #include "gui/models/Session.h"
 #include "base/utils/Units.h"

@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/frames/PeakFinderFrame.cpp
+//! @file      gui/subframe_find/SubframeFindPeaks.cpp
 //! @brief     Implements classes FoundPeaks, PeakFinderFrame
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/frames/PeakFinderFrame.h"
+#include "gui/subframe_find/SubframeFindPeaks.h"
 
 #include "core/analyse/PeakFinder.h"
 #include "core/convolve/ConvolverFactory.h"

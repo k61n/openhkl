@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_PROPERTIES_SAMPLESHAPEPROPERTIES_H
-#define GUI_PROPERTIES_SAMPLESHAPEPROPERTIES_H
+#ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SAMPLESHAPEPROPERTIES_H
+#define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SAMPLESHAPEPROPERTIES_H
 
 #include <QCR/widgets/actions.h>
 #include <QCR/widgets/controls.h>
@@ -41,4 +41,4 @@ class SampleShapeProperties : public QcrWidget {
     QTableWidget* sampleGoniometer;
 };
 
-#endif // GUI_PROPERTIES_SAMPLESHAPEPROPERTIES_H
+#endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SAMPLESHAPEPROPERTIES_H

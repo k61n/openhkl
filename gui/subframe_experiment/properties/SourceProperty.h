@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_PROPERTIES_SOURCEPROPERTY_H
-#define GUI_PROPERTIES_SOURCEPROPERTY_H
+#ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SOURCEPROPERTY_H
+#define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SOURCEPROPERTY_H
 
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
@@ -39,4 +39,4 @@ class SourceProperty : public QcrWidget {
     QcrDoubleSpinBox* fwhm;
 };
 
-#endif // GUI_PROPERTIES_SOURCEPROPERTY_H
+#endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SOURCEPROPERTY_H
