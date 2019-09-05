@@ -30,6 +30,7 @@ PeakCollectionItem::PeakCollectionItem(nsx::PeakCollection* peak_collection)
     :QStandardItem()
 {
     _peak_collection = peak_collection;
+    _mode = PeakDisplayModes::VALID;
 
     std::vector<nsx::Peak3D*>* peak_list = _peak_collection->getPeakList();
     for (nsx::Peak3D* peak : *peak_list)
@@ -53,7 +54,7 @@ QVariant PeakCollectionItem::data(
     const QModelIndex &index, 
     int role) const
 {
-    return peakItemAt(index.row())->peakData(index, role);
+    return peakItemAt(index.row())->peakData(index, role, _mode);
 }
 
 PeakItem* PeakCollectionItem::peakItemAt(int row) const
@@ -190,4 +191,9 @@ int PeakCollectionItem::returnRowOfVisualItem(PeakItemGraphic* peak_graphic) con
             return i;
     }
     return 0;
+}
+
+void PeakCollectionItem::setFilterMode()
+{
+    _mode = PeakDisplayModes::FILTER;
 }

@@ -32,6 +32,31 @@ void PeakCollection::populate(
     }
 }
 
+void PeakCollection::populate(
+    const std::vector<nsx::Peak3D*>* peak_list) 
+{
+    reset();
+
+    for (nsx::Peak3D* peak : *peak_list){
+        std::unique_ptr<nsx::Peak3D> ptr(new Peak3D(*peak));
+        _peaks.push_back(std::move(ptr));
+    }
+}
+
+void PeakCollection::populateFromFiltered(PeakCollection* collection) 
+{
+    reset();
+
+    std::vector<nsx::Peak3D*>* peak_list = collection->getPeakList();
+
+    for (nsx::Peak3D* peak : *peak_list){
+        if (peak->caughtByFilter()){
+            std::unique_ptr<nsx::Peak3D> ptr(new Peak3D(*peak));
+            _peaks.push_back(std::move(ptr));
+        }
+    }
+}
+
 void PeakCollection::reset()
 {
     _peaks.clear();

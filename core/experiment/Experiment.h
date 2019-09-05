@@ -22,6 +22,7 @@
 #include "core/peak/PeakCollection.h"
 #include "tables/crystal/UnitCell.h"
 #include "core/integration/PixelSumIntegrator.h"
+#include "core/analyse/PeakFilter.h"
 
 namespace nsx {
 
@@ -84,6 +85,8 @@ public:
    std::vector<std::string*> getCollectionNames() const;
    //! Get the number of peak lists
    int numPeakCollections()const {return _peakCollections.size();};
+   //! Accept a filtering of the peaks and process it
+   void acceptFilter(std::string name, PeakCollection* collection);
 
 public:
 
@@ -99,13 +102,15 @@ public:
 public:
 
    //! Get the address of the peak finder
-   nsx::PeakFinder* peakFinder() {return _peak_finder;};
+   nsx::PeakFinder* peakFinder() {return _peak_finder.get();};
    //! Transfer current peaks as collection
    void acceptFoundPeaks(const std::string& name);
    //! Get the found peak integrator
-   nsx::PixelSumIntegrator* peakFoundIntegrator() {return _found_peak_integrator;};
+   nsx::PixelSumIntegrator* peakFoundIntegrator() {return _found_peak_integrator.get();};
    //! Set the found peak integrator
    void integrateFoundPeaks( double peak_end, double bkg_begin, double bkg_end);
+   //! Get the found peak integrator
+   nsx::PeakFilter* peakFilter() {return _peak_filter.get();};
 
 public:
 
@@ -128,9 +133,11 @@ private:
    //! A map of the unit cells with their name as index
    std::map<std::string, sptrUnitCell> _unit_cells;
    //! The Peak finder
-   nsx::PeakFinder* _peak_finder;// = new nsx::PeakFinder();
+   std::unique_ptr<nsx::PeakFinder> _peak_finder;
    //! The found peak integrator
-   nsx::PixelSumIntegrator* _found_peak_integrator;// = new nsx::PixelSumIntegrator(true, true);
+   std::unique_ptr<nsx::PixelSumIntegrator> _found_peak_integrator;
+   //! The peak filter
+   std::unique_ptr<nsx::PeakFilter> _peak_filter;
 
    //! The peak predictor
 

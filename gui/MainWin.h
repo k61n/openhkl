@@ -70,7 +70,7 @@ class MainWin : public QcrMainWindow {
     SubframeExperiment* experimentScreen_;
     SubframeHome* homeScreen_;
     PeakFinderFrame* finder_;
-    PeakFilterDialog* filter_;
+    SubframeFilterPeaks* filter_;
     AutoIndexerFrame* indexer_;
     class Menus* menus_;
 

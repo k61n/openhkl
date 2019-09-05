@@ -101,6 +101,13 @@ class Peak3D {
     //! Returns if the peak is predicted
     bool predicted() const;
 
+    //! Sets whether the peak is observed or predicted
+    void caughtYou(bool caught);
+    //! Sets whether the peak is observed or predicted
+    void rejectYou(bool reject);
+    //! Returns if the peak is predicted
+    bool caughtByFilter() const;
+
     //! Update the integration of the peak
     void setManually(
         Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd,
@@ -145,6 +152,8 @@ class Peak3D {
     bool _selected;
     bool _masked;
     bool _predicted;
+    bool _caught_by_filter;
+    bool _rejected_by_filter;
     double _transmission;
 
     sptrDataSet _data;

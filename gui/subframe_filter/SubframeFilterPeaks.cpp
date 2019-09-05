@@ -19,14 +19,60 @@
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Session.h"
+#include "core/peak/PeakCollection.h"
 
-PeakFilterDialog::PeakFilterDialog() : QWidget()
+#include <QFileInfo>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QHeaderView>
+#include <QItemDelegate>
+#include <QSpacerItem>
+#include <QTableWidgetItem>
+#include <QScrollBar>
+#include <QScrollArea>
+
+SubframeFilterPeaks::SubframeFilterPeaks() 
+    : QWidget(), 
+    _pixmap(nullptr),
+    _peak_collection_model(),
+    _peak_collection("temp", nsx::listtype::FOUND)
 {
 
     setSizePolicies();
     _main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical , this);
 
+    QScrollArea* scroll_area = new QScrollArea(this);
+    QWidget* scroll_widget = new QWidget();
+
+    // QSizePolicy size_policy_scroll_area;
+    // size_policy_scroll_area.setHorizontalPolicy(QSizePolicy::MinimumExpanding);
+    // size_policy_scroll_area.setVerticalPolicy(QSizePolicy::Preferred);
+
+    scroll_area->setSizePolicy(*_size_policy_box);
+    scroll_widget->setSizePolicy(*_size_policy_box);
+    _left_layout = new QVBoxLayout(scroll_widget);
+    scroll_area->setWidgetResizable(true);
+    scroll_area->setWidget(scroll_widget);
+
+    setInputUp();
+    setStateUp();
+    setUnitCellUp();
+    setStrengthUp();
+    setRangeUp();
+    setSparseUp();
+    setMergeUp();
+    setProceedUp();
+    setFigureUp();
+    setPeakTableUp();
+
+    _left_layout->addItem(
+        new QSpacerItem(
+            20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    _right_element->setSizePolicy(*_size_policy_right);
+
+    _main_layout->addWidget(scroll_area);
+    _main_layout->addWidget(_right_element);
 
     // if (gSession->selectedExperimentNum() < 0) {
     //     gLogger->log("## No experiment selected");
@@ -39,15 +85,18 @@ PeakFilterDialog::PeakFilterDialog() : QWidget()
     // }
 
     // peaks_ = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
-
-    // setAttribute(Qt::WA_DeleteOnClose);
-    // doLayout();
 }
 
-PeakFilterDialog::~PeakFilterDialog()
-{}
+SubframeFilterPeaks::~SubframeFilterPeaks()
+{
+    delete _size_policy_widgets;
+    delete _size_policy_box;
+    delete _size_policy_right;
+    delete _size_policy_fixed;
+    delete _peak_collection_item;
+}
 
-void PeakFilterDialog::setSizePolicies()
+void SubframeFilterPeaks::setSizePolicies()
 {
     _size_policy_widgets = new QSizePolicy();
     _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Preferred);
@@ -66,20 +115,52 @@ void PeakFilterDialog::setSizePolicies()
     _size_policy_fixed->setVerticalPolicy(QSizePolicy::Fixed);
 }
 
-void PeakFilterDialog::setInputUp()
+void SubframeFilterPeaks::setInputUp()
 {
+    _input_box = new Spoiler(QString::fromStdString("Input"));
 
+    QGridLayout* _input_grid = new QGridLayout();
 
+    QLabel* exp_label = new QLabel("Experiment");
+    exp_label->setAlignment(Qt::AlignRight);
+    _input_grid->addWidget(exp_label, 0, 0, 1, 1);
+
+    QLabel* list_label = new QLabel("Data-set");
+    list_label->setAlignment(Qt::AlignRight);
+    _input_grid->addWidget(list_label, 1, 0, 1, 1);
+   
+    _exp_combo = new QComboBox();
+    _peak_combo = new QComboBox();
+
+    _exp_combo->setMaximumWidth(1000);
+    _peak_combo->setMaximumWidth(1000);
+    
+    _exp_combo->setSizePolicy(*_size_policy_widgets);
+    _peak_combo->setSizePolicy(*_size_policy_widgets);
+
+    _input_grid->addWidget(_exp_combo, 0, 1, 1, 1);
+    _input_grid->addWidget(_peak_combo, 1, 1, 1, 1);
+
+    connect(
+        _exp_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged), 
+        this, &SubframeFilterPeaks::updatePeakList);
+
+    connect(
+        _peak_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged), 
+        this, &SubframeFilterPeaks::updateDatasetList);
+
+    _input_box->setContentLayout(*_input_grid, true);
+    _input_box->setSizePolicy(*_size_policy_box);
+    _input_box->contentArea.setSizePolicy(*_size_policy_box);
+
+    _left_layout->addWidget(_input_box);
 }
 
-void PeakFilterDialog::setStateUp()
+void SubframeFilterPeaks::setStateUp()
 {
-    _state_box = new QGroupBox("State");
-    _state_box->setCheckable(true);
-    _state_box->setChecked(true);
-    _state_box->setSizePolicy(*_size_policy_box);
+    _state_box = new SpoilerCheck("State");
 
-    QGridLayout* _state_box_layout = new QGridLayout(_state_box);
+    QGridLayout* _state_box_layout = new QGridLayout();
 
     _selected = new QCheckBox("Selected"); 
     _masked = new QCheckBox("Masked");
@@ -101,254 +182,492 @@ void PeakFilterDialog::setStateUp()
     _state_box_layout->addWidget(_predicted, 2,0,1,2);
     _state_box_layout->addWidget(_indexed_peaks, 3,0,1,2);
 
+    _state_box->setContentLayout(*_state_box_layout);
+    _state_box->setSizePolicy(*_size_policy_box);
+    _state_box->contentArea.setSizePolicy(*_size_policy_box);
+
     _left_layout->addWidget(_state_box);
 }
 
-void PeakFilterDialog::setUnitCellUp()
+void SubframeFilterPeaks::setUnitCellUp()
 {
+    _unit_cell_box = new SpoilerCheck("Indexed peaks by unit cell");
 
+    QGridLayout* _unit_cell_layout = new QGridLayout();
+
+    QLabel* unit_cell_label = new QLabel("Unit cell:");
+    unit_cell_label->setAlignment(Qt::AlignRight);
+    _unit_cell_layout->addWidget(unit_cell_label, 0, 0, 1, 1);
+
+    QLabel* tolerance_label = new QLabel("Tolerance:");
+    tolerance_label->setAlignment(Qt::AlignRight);
+    _unit_cell_layout->addWidget(tolerance_label, 1, 0, 1, 1);
+
+    _unit_cell = new QComboBox();
+
+    _tolerance = new QDoubleSpinBox();
+    _tolerance->setValue(0.2);
+    _tolerance->setMaximum(1000);
+    _tolerance->setDecimals(6);
+
+    _unit_cell->setSizePolicy(*_size_policy_widgets);
+    _tolerance->setSizePolicy(*_size_policy_widgets);
+
+    _unit_cell_layout->addWidget(_unit_cell,0,1,1,1);
+    _unit_cell_layout->addWidget(_tolerance,1,1,1,1);
+
+    _unit_cell_box->setContentLayout(*_unit_cell_layout);
+    _unit_cell_box->setSizePolicy(*_size_policy_box);
+    _unit_cell_box->contentArea.setSizePolicy(*_size_policy_box);
+
+    _left_layout->addWidget(_unit_cell_box);
+}
+
+void SubframeFilterPeaks::setStrengthUp()
+{
+    _strength_box = new SpoilerCheck("Strength (I/sigma)");
+
+    QGridLayout* strength_layout = new QGridLayout();
+
+    QLabel* min_label = new QLabel("Minimum:");
+    min_label->setAlignment(Qt::AlignRight);
+    strength_layout->addWidget(min_label,0, 0, 1, 1);
+
+    QLabel* max_label = new QLabel("Maximum:");
+    max_label->setAlignment(Qt::AlignRight);
+    strength_layout->addWidget(max_label,1, 0, 1, 1);
+
+    _strength_min = new QDoubleSpinBox();
+    _strength_min->setValue(1.00000);
+    _strength_min->setMaximum(1000);
+    _strength_min->setDecimals(6);
+
+    _strength_max = new QDoubleSpinBox();
+    _strength_max->setValue(3.00000);
+    _strength_max->setMaximum(1e10);
+    _strength_max->setDecimals(6);
+
+    _strength_min->setSizePolicy(*_size_policy_widgets);
+    _strength_max->setSizePolicy(*_size_policy_widgets);
+
+    strength_layout->addWidget(_strength_min,0,1,1,1);
+    strength_layout->addWidget(_strength_max,1,1,1,1);
+
+    _strength_box->setContentLayout(*strength_layout);
+    _strength_box->setSizePolicy(*_size_policy_box);
+    _strength_box->contentArea.setSizePolicy(*_size_policy_box);
+
+    _left_layout->addWidget(_strength_box);
+}
+
+void SubframeFilterPeaks::setRangeUp()
+{
+    _d_range_box = new SpoilerCheck("d range");
+
+    QGridLayout* d_range_layout = new QGridLayout();
+
+    QLabel* min_label = new QLabel("Minimum:");
+    min_label->setAlignment(Qt::AlignRight);
+    d_range_layout->addWidget(min_label,0, 0, 1, 1);
+
+    QLabel* max_label = new QLabel("Maximum:");
+    max_label->setAlignment(Qt::AlignRight);
+    d_range_layout->addWidget(max_label,1, 0, 1, 1);
+
+    _d_range_min = new QDoubleSpinBox();
+    _d_range_min->setMaximum(1000);
+    _d_range_min->setDecimals(6);
+    _d_range_min->setValue(0.0000);
+
+    _d_range_max = new QDoubleSpinBox();
+    _d_range_max->setMaximum(1000);
+    _d_range_max->setDecimals(6);
+    _d_range_max->setValue(100.00000);
+
+    _d_range_min->setSizePolicy(*_size_policy_widgets);
+    _d_range_max->setSizePolicy(*_size_policy_widgets);
+
+    d_range_layout->addWidget(_d_range_min,0,1,1,1);
+    d_range_layout->addWidget(_d_range_max,1,1,1,1);
+
+    _d_range_box->setContentLayout(*d_range_layout);
+    _d_range_box->setSizePolicy(*_size_policy_box);
+    _d_range_box->contentArea.setSizePolicy(*_size_policy_box);
+
+    _left_layout->addWidget(_d_range_box);
+}
+
+void SubframeFilterPeaks::setSparseUp()
+{
+    _sparse_box = new SpoilerCheck("Sparse dataset");
+
+    QGridLayout* sparse_layout = new QGridLayout();
+
+    QLabel* min_label = new QLabel("Minimum number of peaks:");
+    min_label->setAlignment(Qt::AlignRight);
+    sparse_layout->addWidget(min_label,0, 0, 1, 1);
+
+    _min_number_peaks = new QSpinBox();
+    _min_number_peaks->setValue(0);
+    _min_number_peaks->setMaximum(1000);
+
+    _min_number_peaks->setSizePolicy(*_size_policy_widgets);
+
+    sparse_layout->addWidget(_min_number_peaks,0,1,1,1);
+    
+    _sparse_box->setContentLayout(*sparse_layout);
+    _sparse_box->setSizePolicy(*_size_policy_box);
+    _sparse_box->contentArea.setSizePolicy(*_size_policy_box);
+
+    _left_layout->addWidget(_sparse_box);
+}
+
+void SubframeFilterPeaks::setMergeUp()
+{
+    _merge_box = new SpoilerCheck("Merged peak significance");
+
+    QGridLayout* merge_layout = new QGridLayout();
+
+    QLabel* significance_label = new QLabel("Significant level:");
+    significance_label->setAlignment(Qt::AlignRight);
+    merge_layout->addWidget(significance_label,0, 0, 1, 1);
+
+    _significance_level = new QDoubleSpinBox();
+    _significance_level->setValue(0.990000);
+    _significance_level->setMaximum(1000);
+    _significance_level->setDecimals(6);
+
+    _significance_level->setSizePolicy(*_size_policy_widgets);
+
+    merge_layout->addWidget(_significance_level,0, 1, 1, 1);
+
+    _merge_box->setContentLayout(*merge_layout);
+    _merge_box->setSizePolicy(*_size_policy_box);
+    _merge_box->contentArea.setSizePolicy(*_size_policy_box);
+
+    _left_layout->addWidget(_merge_box);
+}
+
+void SubframeFilterPeaks::setProceedUp()
+{
+    _remove_overlaping = new QCheckBox("Remove overlapping peaks");
+    _remove_overlaping->setChecked(false);
+    _remove_overlaping->setSizePolicy(*_size_policy_widgets);    
+    _left_layout->addWidget(_remove_overlaping);
+
+    _extinct_spacegroup = new QCheckBox("Remove extinct from spacegroup");
+    _extinct_spacegroup->setChecked(false);
+    _extinct_spacegroup->setSizePolicy(*_size_policy_widgets);    
+    _left_layout->addWidget(_extinct_spacegroup);
+
+    _keep_complementary = new QCheckBox("Keep the complementary selection");
+    _keep_complementary->setChecked(false);
+    _keep_complementary->setSizePolicy(*_size_policy_widgets);    
+    _left_layout->addWidget(_keep_complementary);
+
+    _filter_button = new QPushButton("Filter");
+    _filter_button->setSizePolicy(*_size_policy_widgets);
+    _left_layout->addWidget(_filter_button);
+
+    _save_button = new QPushButton("Save");
+    _save_button->setSizePolicy(*_size_policy_widgets);
+    _left_layout->addWidget(_save_button);
+
+    connect(
+        _filter_button, &QPushButton::clicked, 
+        this, &SubframeFilterPeaks::filterPeaks);
+
+    connect(
+        _save_button, &QPushButton::clicked, 
+        this, &SubframeFilterPeaks::accept);
 
 }
 
-void PeakFilterDialog::setStrengthUp()
+void SubframeFilterPeaks::setFigureUp()
 {
+    QGroupBox* figure_group = new QGroupBox("Preview");
+    QGridLayout* figure_grid = new QGridLayout(figure_group);
 
+    figure_group->setSizePolicy(*_size_policy_right);
 
+    _figure_view = new DetectorView(this);
+    _figure_view->getScene()->linkPeakModel(&_peak_collection_model);
+    _figure_view->scale(1, -1);
+    figure_grid->addWidget(_figure_view, 0,0,1,3);
+
+    _data_combo = new QComboBox(this);
+    _data_combo->setSizePolicy(*_size_policy_widgets);
+    figure_grid->addWidget(_data_combo, 1,0,1,1);
+
+    _figure_scroll = new QScrollBar(this);
+    _figure_scroll->setOrientation(Qt::Horizontal);
+    _figure_scroll->setSizePolicy(*_size_policy_widgets);
+    figure_grid->addWidget(_figure_scroll, 1,1,1,1);
+
+    _figure_spin = new QSpinBox(this);
+    _figure_spin->setSizePolicy(*_size_policy_fixed);
+    figure_grid->addWidget(_figure_spin, 1,2,1,1);
+
+    connect(
+        _figure_scroll, SIGNAL(valueChanged(int)), 
+        _figure_view->getScene(), SLOT(slotChangeSelectedFrame(int)));
+
+    connect(
+        _figure_scroll, SIGNAL(valueChanged(int)), 
+        _figure_spin, SLOT(setValue(int)));
+
+    connect(
+        _figure_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, 
+        this, &SubframeFilterPeaks::changeSelected);
+
+    _right_element->addWidget(figure_group);
 }
 
-void PeakFilterDialog::setRangeUp()
+void SubframeFilterPeaks::setPeakTableUp()
 {
+    QGroupBox* peak_group = new QGroupBox("Peaks");
+    QGridLayout* peak_grid = new QGridLayout(peak_group);
 
+    peak_group->setSizePolicy(*_size_policy_right);
 
+    _peak_table= new PeaksTableView(this);
+
+    _peak_table->setColumnHidden(0, true);
+    _peak_table->setColumnHidden(1, true);
+    _peak_table->setColumnHidden(2, true);
+
+    peak_grid->addWidget(_peak_table, 0,0,0,0);
+
+    _right_element->addWidget(peak_group);
 }
 
-void PeakFilterDialog::setMergeUp()
+void SubframeFilterPeaks::refreshAll()
 {
-
-
+    setParametersUp();
 }
 
-
-
-    // QVBoxLayout* whole = new QVBoxLayout(this);
-    // QHBoxLayout* upperLayout = new QHBoxLayout;
-
-
-
-    // _unit_cell_box = new QGroupBox("Indexed peaks by unit cell");
-    // _unit_cell_box->setCheckable(true);
-    // _unit_cell_box->setChecked(false);
-    // QHBoxLayout* byLayout = new QHBoxLayout(_unit_cell_box);
-    // // _unit_cell = new QComboBox();
-    // // byLayout->addWidget(new QLabel("Unit cell"));
-    // // byLayout->addWidget(_unit_cell);
-    // _tolerance = new QcrDoubleSpinBox("adhoc_tolerance", new QcrCell<double>(0.2), 10, 6);
-    // byLayout->addWidget(new QLabel("Tolerance"));
-    // byLayout->addWidget(_tolerance);
-    // byLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Expanding, QSizePolicy::Minimum));
-    // settings->addWidget(_unit_cell_box);
-
-    // _strength_box = new QGroupBox("Strength (I/sigma)");
-    // _strength_box->setCheckable(true);
-    // _strength_box->setChecked(false);
-    // QHBoxLayout* strengthLayout = new QHBoxLayout(_strength_box);
-    // _strength_min = new QcrDoubleSpinBox("adhoc_strengthmin", new QcrCell<double>(1.0), 10, 6);
-    // _strength_max = new QcrDoubleSpinBox("adhoc_strengthmax", new QcrCell<double>(3.0), 10, 6);
-    // strengthLayout->addWidget(new QLabel("Min"));
-    // strengthLayout->addWidget(_strength_min);
-    // strengthLayout->addWidget(new QLabel("Max"));
-    // strengthLayout->addWidget(_strength_max);
-    // strengthLayout->addItem(new QSpacerItem(20, 30, QSizePolicy::Expanding, QSizePolicy::Minimum));
-    // settings->addWidget(_strength_box);
-
-    // _d_range_box = new QGroupBox("d range");
-    // _d_range_box->setCheckable(true);
-    // _d_range_box->setChecked(false);
-    // QHBoxLayout* rangeLayout = new QHBoxLayout(_d_range_box);
-    // _d_range_min = new QcrDoubleSpinBox("adhoc_drangemin", new QcrCell<double>(0.0), 10, 6);
-    // _d_range_max = new QcrDoubleSpinBox("adhoc_drangemax", new QcrCell<double>(100.0), 10, 6);
-    // rangeLayout->addWidget(new QLabel("Min"));
-    // rangeLayout->addWidget(_d_range_min);
-    // rangeLayout->addWidget(new QLabel("Max"));
-    // rangeLayout->addWidget(_d_range_max);
-    // rangeLayout->addItem(new QSpacerItem(20, 30, QSizePolicy::Expanding, QSizePolicy::Minimum));
-    // settings->addWidget(_d_range_box);
-
-    // _extinct_spacegroup =
-    //     new QCheckBox("adhoc_extincted", "Space-group extincted", new QcrCell<bool>(false));
-    // settings->addWidget(_extinct_spacegroup);
-
-    // _sparse_box = new QGroupBox("Sparse dataset");
-    // _sparse_box->setCheckable(true);
-    // _sparse_box->setChecked(false);
-    // QHBoxLayout* sparse = new QHBoxLayout(_sparse_box);
-    // sparse->addWidget(new QLabel("Min number of peaks"));
-    // _min_number_peaks = new QcrSpinBox("adhoc_numPeaks", new QcrCell<int>(0), 5);
-    // sparse->addWidget(_min_number_peaks);
-    // sparse->addItem(new QSpacerItem(20, 40, QSizePolicy::Expanding, QSizePolicy::Minimum));
-    // settings->addWidget(_sparse_box);
-
-    // _merge_box = new QGroupBox("Merged peak significance");
-    // _merge_box->setCheckable(true);
-    // _merge_box->setChecked(false);
-    // QHBoxLayout* mergebox = new QHBoxLayout(_merge_box);
-    // mergebox->addWidget(new QLabel("Significant level"));
-    // _significance_level = new QcrDoubleSpinBox("adhoc_level", new QcrCell<double>(0.99), 10, 6);
-    // mergebox->addWidget(_significance_level);
-    // mergebox->addItem(new QSpacerItem(20, 40, QSizePolicy::Expanding, QSizePolicy::Minimum));
-    // settings->addWidget(_merge_box);
-
-    // _remove_overlaping = new QCheckBox(
-    //     "adhoc_removeOverlapping", "Remove overlapping peaks", new QcrCell<bool>(false));
-    // settings->addWidget(_remove_overlaping);
-    // _keep_complementary = new QCheckBox(
-    //     "adhoc_keepComplementary", "Keep the complementary selection", new QcrCell<bool>(false));
-    // settings->addWidget(_keep_complementary);
-    // upperLayout->addLayout(settings, 1);
-
-    // QVBoxLayout* tablelayout = new QVBoxLayout;
-    // // peakList = new QComboBox(
-    // //     "adhoc_peakListsPeakFilter", new QcrCell<int>(0),
-    // //     gSession->selectedExperiment()->getPeakListNames());
-    // // tablelayout->addWidget(peakList);
-    // // model_ = new PeaksTableModel(
-    // //     "adhoc_filterModel", gSession->selectedExperiment()->experiment(), peaks_);
-    // _peaks_table = new PeaksTableView;
-    // // peaksTable->setModel(model_);
-    // tablelayout->addWidget(_peaks_table);
-    // upperLayout->addLayout(tablelayout, 2);
-
-    // // whole->addLayout(upperLayout);
-    // // buttons = new QDialogButtonBox(
-    // //     QDialogButtonBox::Ok | QDialogButtonBox::Apply, Qt::Horizontal);
-    // // whole->addWidget(buttons);
-
-    // // peakList->setHook([this](int) {
-    // //     peaks_ = gSession->selectedExperiment()->getPeaks(peakList->currentText())->peaks_;
-    // //     model_->setPeaks(peaks_);
-    // // });
-    // // connect(buttons, &QDialogButtonBox::clicked, this, &PeakFilterDialog::slotActionClicked);
-// }
-
-void PeakFilterDialog::refreshData()
+void SubframeFilterPeaks::setParametersUp()
 {
-    if ((gSession->selectedExperimentNum() < 0) ||
-            (gSession->selectedExperiment()->getPeakListNames().empty()))
+    setExperimentsUp();
+}
+
+void SubframeFilterPeaks::setExperimentsUp()
+{
+    _exp_combo->blockSignals(true);
+    
+    _exp_combo->clear();
+    QList<QString> exp_list = gSession->experimentNames();
+
+    if (!exp_list.isEmpty()){
+        for (QString exp : exp_list) {
+            _exp_combo->addItem(exp);
+        }
+        _exp_combo->blockSignals(false);
+        
+        updatePeakList();
+        grabFilterParameters();
+    }
+}
+
+void SubframeFilterPeaks::updatePeakList()
+{
+    _peak_combo->blockSignals(true);
+
+    _peak_combo->clear();
+    _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
+
+    if (!_peak_list.isEmpty()){
+        _peak_combo->addItems(_peak_list);
+        _peak_combo->setCurrentIndex(0);
+
+        nsx::PeakFilter* filter = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
+        nsx::PeakCollection* collection = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->getPeakCollection(_peak_combo->currentText().toStdString());
+        filter->resetFiltering(collection);
+
+        updateDatasetList();
+        refreshPeakTable();
+    }
+    _peak_combo->blockSignals(false);
+}
+
+void SubframeFilterPeaks::updateDatasetList()
+{
+    _data_combo->blockSignals(true);
+    _data_combo->clear();
+    _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
+
+    if (!_data_list.isEmpty()){
+        for (nsx::sptrDataSet data : _data_list) {
+            QFileInfo fileinfo(QString::fromStdString(data->filename()));
+            _data_combo->addItem(fileinfo.baseName());
+        }
+        _data_combo->setCurrentIndex(0);
+        updateDatasetParameters(0);
+    }
+    _data_combo->blockSignals(false);
+}
+
+void SubframeFilterPeaks::updateDatasetParameters(int idx)
+{
+    if (_data_list.isEmpty() || idx < 0)
         return;
 
-    // if (!model_) {
-    //     return;
-        // model_ = new PeaksTableModel("peakFilterPeakModel",
-        //                              gSession->selectedExperiment()->experiment(),
-        //                              gSession->selectedExperiment()->getPeaks()->peaks_);
-        // peaksTable->setModel(model_);
-    // }
+    nsx::sptrDataSet data = _data_list.at(idx);
+
+    _figure_view->getScene()->slotChangeSelectedData(_data_list.at(idx), 0);
+    _figure_view->getScene()->setMaxIntensity(3000);
+
+    _figure_scroll->setMaximum(data->nFrames());
+    _figure_scroll->setMinimum(0);
+    
+    _figure_spin->setMaximum(data->nFrames());
+    _figure_spin->setMinimum(0);
+} 
+
+void SubframeFilterPeaks::grabFilterParameters()
+{
+    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+        return;
+
+    nsx::PeakFilter* filter = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
+
+    _tolerance->setValue(*(filter->unitCellTolerance()));
+    _strength_min->setValue(filter->strength()->at(0)); 
+    _strength_max->setValue(filter->strength()->at(1));
+    _d_range_min->setValue(filter->dRange()->at(0));
+    _d_range_max->setValue(filter->dRange()->at(1));
+    _significance_level->setValue(*(filter->significance()));
+
+    std::bitset<13> booleans = *(filter->booleans());
+    _selected->setChecked(bool(booleans[0]));
+    _masked->setChecked(bool(booleans[1]));
+    _predicted->setChecked(bool(booleans[2]));
+    _indexed_peaks->setChecked(bool(booleans[3]));
+    _extinct_spacegroup->setChecked(bool(booleans[4]));
+    _remove_overlaping->setChecked(bool(booleans[5]));
+    _keep_complementary->setChecked(bool(booleans[6]));
+
+    _state_box->checker(bool(booleans[7]));
+    _unit_cell_box->checker(bool(booleans[8]));
+    _strength_box->checker(bool(booleans[9]));
+    _d_range_box->checker(bool(booleans[10]));
+    _sparse_box->checker(bool(booleans[11]));
+    _merge_box->checker(bool(booleans[12]));
 }
 
-void PeakFilterDialog::filterPeaks()
+void SubframeFilterPeaks::setFilterParameters() const
 {
-    // nsx::PeakList filtered_peaks = peaks_;
+    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+        return;
 
-    // nsx::PeakFilter peak_filter;
+    nsx::PeakFilter* filter = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
 
-    // if (_state_box->isChecked()) {
-    //     filtered_peaks = peak_filter.selected(filtered_peaks, selected->isChecked());
-    //     filtered_peaks = peak_filter.masked(filtered_peaks, masked->isChecked());
-    //     filtered_peaks = peak_filter.predicted(filtered_peaks, predicted->isChecked());
-    // }
+    std::bitset<13> booleans;
+    if ( _selected->isChecked()) booleans.set(0);
+    if ( _masked->isChecked()) booleans.set(1);
+    if ( _predicted->isChecked()) booleans.set(2);
+    if ( _indexed_peaks->isChecked()) booleans.set(3);
+    if ( _extinct_spacegroup->isChecked()) booleans.set(4);
+    if ( _remove_overlaping->isChecked()) booleans.set(5);
+    if ( _keep_complementary->isChecked()) booleans.set(6);
 
-    // if (indexedPeak->isChecked())
-    //     filtered_peaks = peak_filter.indexed(filtered_peaks);
+    if ( _state_box->checked()) booleans.set(7);
+    if ( _unit_cell_box->checked()) booleans.set(8);
+    if ( _strength_box->checked()) booleans.set(9);
+    if ( _d_range_box->checked()) booleans.set(10);
+    if ( _sparse_box->checked()) booleans.set(11);
+    if ( _merge_box->checked()) booleans.set(12);
 
-    // if (_unit_cell_box->isChecked()) {
-    //     if (_unit_cell->count() > 0) {
-    //         nsx::sptrUnitCell unit_cell = _unit_cell->itemData(_unit_cell->currentIndex(), Qt::UserRole)
-    //                                           .value<nsx::sptrUnitCell>();
-    //         filtered_peaks = peak_filter.indexed(filtered_peaks, *unit_cell, tolerance->value());
-    //     }
-    // }
+    const std::array<double, 2> d_range {_d_range_min->value(), _d_range_max->value()};
+    const std::array<double, 2> strength {_strength_min->value(), _strength_max->value()};
 
-    // if (_strength_box->isChecked()) {
-    //     double smin = _strength_min->value();
-    //     double smax = _strength_max->value();
-
-    //     filtered_peaks = peak_filter.strength(filtered_peaks, smin, smax);
-    // }
-
-    // if (_d_range_box->isChecked()) {
-    //     double d_min = _d_range_min->value();
-    //     double d_max = _d_range_max->value();
-
-    //     filtered_peaks = peak_filter.dRange(filtered_peaks, d_min, d_max);
-    // }
-
-    // if (_extinct_spacegroup->isChecked())
-    //     filtered_peaks = peak_filter.extincted(filtered_peaks);
-
-    // if (_sparse_box->isChecked()) {
-    //     size_t min_num_peaks = static_cast<size_t>(_min_number_peaks->value());
-
-    //     filtered_peaks = peak_filter.sparseDataSet(filtered_peaks, min_num_peaks);
-    // }
-
-    // if (_merge_box->isChecked()) {
-    //     double significance_level = significanceLevel->value();
-
-    //     filtered_peaks = peak_filter.mergedPeaksSignificance(filtered_peaks, significance_level);
-    // }
-
-    // if (_remove_overlaping->isChecked())
-    //     filtered_peaks = peak_filter.overlapping(filtered_peaks);
-
-    // if (_keep_complementary->isChecked())
-    //     filtered_peaks = peak_filter.complementary(peaks_, filtered_peaks);
-
-    // model_->setPeaks(filtered_peaks);
+    filter->setBooleans(booleans);
+    filter->setUnitCellTolerance(_tolerance->value());
+    filter->setSignificance(_significance_level->value());
+    filter->setDRange(d_range);
+    filter->setStrength(strength);
+    filter->setUnitCellName(_unit_cell->currentText().toStdString());
 }
 
-void PeakFilterDialog::accept()
+
+void SubframeFilterPeaks::filterPeaks()
 {
-    // const nsx::PeakList& filtered_peaks = model_->peaks();
+    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+        return;
 
-    // if (!filtered_peaks.empty()) {
-    //     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(filtered_peaks));
+    setFilterParameters();
 
-    //     if (!dlg->exec())
-    //         return;
+    nsx::PeakFilter* filter = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
+    nsx::PeakCollection* collection = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->getPeakCollection(_peak_combo->currentText().toStdString());
+    filter->resetFiltering(collection);
+    filter->filter(collection);
 
-    //     Peaks* peaks = new Peaks(filtered_peaks, dlg->listName(), listtype::FILTERED, "unknown");
-    //     const Peaks* parent = gSession->selectedExperiment()->getPeaks(peakList->currentText());
-    //     peaks->parent = peakList->currentText();
-    //     peaks->convolutionkernel_ = parent->convolutionkernel_;
-    //     peaks->file_ = parent->file_;
-    //     gSession->selectedExperiment()->addPeaks(peaks, peakList->currentText());
-
-    //     QString message = "Applied peak filters on selected peaks. Remains ";
-    //     message += QString::number(filtered_peaks.size());
-    //     message += " out of ";
-    //     message += QString::number(peaks_.size());
-    //     message += " peaks";
-    //     gLogger->log(message);
-    // }
-
-    // QDialog::accept();
+    refreshPeakTable();
 }
 
-void PeakFilterDialog::slotActionClicked(QAbstractButton* button)
+void SubframeFilterPeaks::accept()
 {
-//     auto button_role = buttons->standardButton(button);
+    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+        return;
+    nsx::PeakCollection* collection = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->getPeakCollection(_peak_combo->currentText().toStdString());  
 
-//     switch (button_role) {
-//         case QDialogButtonBox::StandardButton::Apply: {
-//             filterPeaks();
-//             break;
-//         }
-//         case QDialogButtonBox::StandardButton::Ok: {
-//             accept();
-//             break;
-//         }
-//         default: {
-//             return;
-//         }
-//     }
+    std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
+    dlg->exec();
+    if (!dlg->listName().isEmpty()){
+        gSession->selectedExperiment()->experiment()->acceptFilter(
+            dlg->listName().toStdString(), collection);
+        gSession->selectedExperiment()->generatePeakModel(dlg->listName());
+    }
+    
+}
+
+void SubframeFilterPeaks::refreshPeakTable()
+{
+
+    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+        return;
+    nsx::PeakCollection* collection = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->getPeakCollection(_peak_combo->currentText().toStdString());
+    delete _peak_collection_item;
+    _peak_collection_item = new PeakCollectionItem(collection);
+    _peak_collection_item->setFilterMode();
+    _peak_collection_model.setRoot(_peak_collection_item);
+    _peak_table->setModel(&_peak_collection_model);
+
+    refreshPeakVisual();
+}
+
+void SubframeFilterPeaks::refreshPeakVisual()
+{   
+    if (_peak_collection_item->childCount()==0)
+        return;
+
+    bool caught;
+    PeakItemGraphic* graphic;
+
+    for (int i = 0; i < _peak_collection_item->childCount(); ++i){
+        PeakItem* peak = _peak_collection_item->peakItemAt(i);
+        graphic = peak->peakGraphic();
+        caught = peak->peak()->caughtByFilter();
+
+        if (caught){
+            graphic->showArea(true);
+            graphic->showLabel(false);
+            graphic->setSize(10);
+            graphic->setColor(Qt::darkGreen);
+        }else{
+            graphic->showArea(true);
+            graphic->showLabel(false);
+            graphic->setSize(10);
+            graphic->setColor(Qt::darkRed);
+        }
+    }
+    _figure_view->getScene()->update();
+}
+
+void SubframeFilterPeaks::changeSelected(PeakItemGraphic* peak_graphic)
+{   
+    int row = _peak_collection_item->returnRowOfVisualItem(peak_graphic);
+    QModelIndex index = _peak_collection_model.index(row, 0);
+    _peak_table->selectRow(row);
+    _peak_table->scrollTo(index, QAbstractItemView::PositionAtTop);
 }

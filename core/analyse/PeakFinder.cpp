@@ -645,6 +645,7 @@ void PeakFinder::find(DataList numors)
         }
 
         mergeCollidingBlobs(numor, blobs);
+        qDebug("PeakFinder::find: Found blob collisions\n");
 
         if (_handler) {
             _handler->setStatus("Blob finding complete.");
@@ -701,7 +702,7 @@ void PeakFinder::find(DataList numors)
                 _handler->setProgress(progress);
             }
         }
-
+        qDebug("PeakFinder::find: blob loop done\n");
         if (_handler) {
             _handler->setStatus(
                 ("Integrating " + std::to_string(numor_peaks.size()) + " peaks...").c_str());

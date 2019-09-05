@@ -122,7 +122,7 @@ void Actions::setupOptions()
 void Actions::setupPeaks()
 {
     autoIndexer.setTriggerHook([]() { new AutoIndexerFrame; });
-    filterPeaks.setTriggerHook([]() { new PeakFilterDialog; });
+    // filterPeaks.setTriggerHook([]() { new PeakFilterDialog; });
     userDefinedIndexer.setTriggerHook([]() { new UserDefinedUnitCellIndexerFrame; });
     assignUnitCell.setTriggerHook([]() {
         if (gSession->selectedExperimentNum() < 0) {

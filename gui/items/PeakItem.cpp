@@ -33,8 +33,7 @@ PeakItem::PeakItem(nsx::Peak3D* peak)
 }
 
 QVariant PeakItem::peakData(
-    const QModelIndex &index, 
-    int role) const
+    const QModelIndex &index, int role, PeakDisplayModes mode) const
 {
 
     int col = index.column();
@@ -105,6 +104,18 @@ QVariant PeakItem::peakData(
             if (!_peak->enabled())
                 return QBrush(Qt::red);
             break;
+        }
+        case Qt::BackgroundColorRole: {
+            switch(mode){
+                case PeakDisplayModes::FILTER: {
+                    if (_peak->caughtByFilter()){
+                        return QBrush(Qt::darkGreen);
+                    }else{
+                        return QBrush(Qt::darkRed);
+                    }
+                }    
+            break;
+            }
         }
         case Qt::ToolTipRole:
             switch (col) {

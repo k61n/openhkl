@@ -23,6 +23,9 @@
 #include "gui/views/PeakTableView.h"
 #include "gui/utility/ColorButton.h"
 
+#include "gui/utility/SpoilerCheck.h"
+#include "gui/utility/Spoiler.h"
+
 #include <QTableWidget>
 #include <QWidget>
 #include <QPushButton>
@@ -37,19 +40,18 @@
 #include <QGroupBox>
 
 //! Dialog to filter a peak list
-class PeakFilterDialog : public QWidget {
+class SubframeFilterPeaks : public QWidget {
 public:
 
-   PeakFilterDialog();
-   ~PeakFilterDialog();
-
-   void refreshData();
+   SubframeFilterPeaks();
+   ~SubframeFilterPeaks();
 
 public:
-   void accept();
-   void slotActionClicked(QAbstractButton* button);
-   void slotUnitCellChanged(int index);
 
+   //! Run the filtering method
+   void filterPeaks();
+   //! Refresh all th einputs
+   void refreshAll();
 
 private:
 
@@ -65,26 +67,56 @@ private:
    void setStrengthUp();
    //! Build the range
    void setRangeUp();
+   //! Build the sparse
+   void setSparseUp();
    //! Build the merge
    void setMergeUp();
+   //! Build the merge
+   void setProceedUp();
+   //! Set up the detector figure up
+   void setFigureUp();
+   //! Set the peak table view up
+   void setPeakTableUp();
+   //! Change the peak selected in the table
+   void changeSelected(PeakItemGraphic* peak_graphic);
+   //! Accept and save current list
+   void accept();
 
 private:
 
-   //! Run the filtering method
-   void filterPeaks();
+   //! Grab the finder parameters
+   void grabFilterParameters();
+   //! Set the finder parameters
+   void setFilterParameters() const;
+
+   //! Refresh all th einputs
+   void setParametersUp();
+   //! Refresh all th einputs
+   void setExperimentsUp();
+   //! Refresh all th einputs
+   void updatePeakList();
+   //! Update the datalist as an experiment was changed
+   void updateDatasetList();
+   //! Update the dataset related parameters
+   void updateDatasetParameters(int idx);
+
+   //! Refresh the found peaks list
+   void refreshPeakTable();
+   //! Refresh the found peaks visual properties
+   void refreshPeakVisual();
 
 private:
 
    //! The temporary collection
-   PeakCollectionModel* _peak_collection_model = 
-      new PeakCollectionModel();
+   PeakCollectionModel _peak_collection_model;
    //! The temporary collection
    PeakCollectionItem* _peak_collection_item;
    //! The model for the found peaks
-   nsx::PeakCollection* _peak_collection = 
-      new nsx::PeakCollection("temp", nsx::listtype::FOUND);
-   //! The available peak lists
-   QList<nsx::sptrDataSet> _peak_list;
+   nsx::PeakCollection _peak_collection ;
+   //! The loaded data list
+   QStringList _peak_list;
+   //! The loaded data list
+   QList<nsx::sptrDataSet> _data_list;
 
 private:
 
@@ -99,7 +131,7 @@ private:
    QCheckBox* _extinct_spacegroup;
    QCheckBox* _remove_overlaping;
    QCheckBox* _keep_complementary;
-   QCheckBox* _unit_cell;
+   QComboBox* _unit_cell;
 
    QDoubleSpinBox* _tolerance;
    QDoubleSpinBox* _strength_min;
@@ -111,21 +143,31 @@ private:
    QSpinBox* _min_number_peaks;
    PeaksTableView* _peaks_table;
 
-   QGroupBox* _input_box;
-   QGroupBox* _state_box;
-   QGroupBox* _unit_cell_box;
-   QGroupBox* _strength_box;
-   QGroupBox* _d_range_box;
-   QGroupBox* _sparse_box;
-   QGroupBox* _merge_box;
+   Spoiler* _input_box;
+   SpoilerCheck* _state_box;
+   SpoilerCheck* _unit_cell_box;
+   SpoilerCheck* _strength_box;
+   SpoilerCheck* _d_range_box;
+   SpoilerCheck* _sparse_box;
+   SpoilerCheck* _merge_box;
 
    QComboBox* _exp_combo;
    QComboBox* _peak_combo;
+   QComboBox* _data_combo;
 
+   QPushButton* _filter_button;
+   QPushButton* _save_button;
+   
    QSizePolicy* _size_policy_widgets;
    QSizePolicy* _size_policy_box;
    QSizePolicy* _size_policy_right;
    QSizePolicy* _size_policy_fixed;
+
+   DetectorView* _figure_view;
+   QGraphicsPixmapItem* _pixmap;
+   QSpinBox* _figure_spin;
+   QScrollBar* _figure_scroll;
+   PeaksTableView* _peak_table;
 
 };
 

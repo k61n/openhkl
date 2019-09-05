@@ -26,21 +26,27 @@ enum Column {
         intensity, sigmaIntensity, 
         numor, unitCell, d, count };
 
+enum PeakDisplayModes { VALID, FILTER };
+
 class PeakItem : public QStandardItem {
 
 public: 
-    enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Numor, uc, d, Count };
-
     PeakItem(nsx::Peak3D* peak);
     ~PeakItem() = default;
+
+public:
+
     //! Retrieve the data of column and row
-    QVariant peakData(const QModelIndex &index, int role ) const;
+    QVariant peakData(const QModelIndex &index, int role, PeakDisplayModes mode ) const;
     //! Get the peak pointer
     nsx::Peak3D* peak() {return _peak;};
     //! Get the graphical representation
     PeakItemGraphic* peakGraphic() {return _peak_graphic.get();};
+    //!The column enumerators
+    enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Numor, uc, d, Count };
 
 private:
+
     //! pointer to the data
     nsx::Peak3D* _peak;
     //! Generate the visual item

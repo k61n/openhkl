@@ -241,14 +241,15 @@ void ExperimentMetaReader::close()
         return;
 
     _file->close();
-    _group->close();
     _space->close();
     _memspace->close();
     _dataset->close();
+
     _space.reset();
     _memspace.reset();
     _dataset.reset();
     _file.reset();
+
     _isOpened = false;
 }
 

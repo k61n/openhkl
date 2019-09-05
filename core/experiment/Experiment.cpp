@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <utility>
 
@@ -34,8 +35,9 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
 {
     _diffractometer.reset(Diffractometer::create(diffractometerName));
 
-    _peak_finder = new nsx::PeakFinder();
-    _found_peak_integrator = new nsx::PixelSumIntegrator(true, true);
+    _peak_finder = std::make_unique<nsx::PeakFinder>();
+    _found_peak_integrator = std::make_unique<nsx::PixelSumIntegrator>(true, true);
+    _peak_filter = std::make_unique<nsx::PeakFilter>();
 }
 
 Experiment::Experiment(const Experiment& other)
@@ -44,8 +46,9 @@ Experiment::Experiment(const Experiment& other)
     _data = other._data;
     _diffractometer.reset(other._diffractometer->clone());
 
-    _peak_finder = new nsx::PeakFinder();
-    _found_peak_integrator = new nsx::PixelSumIntegrator(true, true);
+    _peak_finder = std::make_unique<nsx::PeakFinder>();
+    _found_peak_integrator = std::make_unique<nsx::PixelSumIntegrator>(true, true);
+    _peak_filter = std::make_unique<nsx::PeakFilter>();
 }
 
 Experiment& Experiment::operator=(const Experiment& other)
@@ -210,6 +213,13 @@ std::vector<std::string*> Experiment::getCollectionNames() const {
 		names.push_back(it->second->name());
 	}
     return names;
+}
+
+void Experiment::acceptFilter(std::string name, PeakCollection* collection)
+{
+    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, listtype::FILTERED));
+    ptr->populateFromFiltered(collection);
+    _peakCollections.insert(std::make_pair(name, std::move(ptr)));
 }
 
 void Experiment::addUnitCell(const std::string& name, sptrUnitCell unit_cell) {

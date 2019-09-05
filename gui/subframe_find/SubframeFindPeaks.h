@@ -87,7 +87,7 @@ private:
 private:
 
    //! Update the datalist as an experiment was changed
-   void updateDatasetList(int idx);
+   void updateDatasetList();
    //! Update the dataset related parameters
    void updateDatasetParameters(int idx);
 
@@ -107,13 +107,11 @@ private:
 private:
 
    //! The temporary collection
-   PeakCollectionModel* _peak_collection_model = 
-      new PeakCollectionModel();
+   PeakCollectionModel _peak_collection_model;
    //! The temporary collection
    PeakCollectionItem* _peak_collection_item;
    //! The model for the found peaks
-   nsx::PeakCollection* _peak_collection = 
-      new nsx::PeakCollection("temp", nsx::listtype::FOUND);
+   nsx::PeakCollection _peak_collection ;
    //! The loaded data list
    QList<nsx::sptrDataSet> _data_list;
 

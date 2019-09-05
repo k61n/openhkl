@@ -33,6 +33,10 @@ class PeakCollection{
 
     //! Populate the peaks
     void populate(const std::vector<std::shared_ptr<nsx::Peak3D>>* peak_list);
+    //! Populate the peaks
+    void populate(const std::vector<nsx::Peak3D*>* peak_list);
+    //! Populate the peaks
+    void populateFromFiltered(PeakCollection* collection);
     //! Reset the peaks
     void reset();
     //! Add a single peak

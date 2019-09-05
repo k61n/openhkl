@@ -23,10 +23,12 @@
 class PeakCollectionItem : public QStandardItem {
 
 public: 
+
     PeakCollectionItem(nsx::PeakCollection* peak_collection);
     ~PeakCollectionItem() = default;
 
 public: 
+
     //! Retrieve the number of children of this item
     int childCount() const;
     //! Retrieve the number of columns of this item
@@ -45,10 +47,14 @@ public:
     enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Numor, uc, d, Count };
     //! Return the row according to the vis. peak item pointer
     int returnRowOfVisualItem(PeakItemGraphic* peak_graphic) const;
+    //! Set the visual to filter mode
+    void setFilterMode();
 
 private:
+
     nsx::PeakCollection* _peak_collection;
     std::vector<PeakItem*> _peak_items;
+    PeakDisplayModes _mode;
 
 };
 

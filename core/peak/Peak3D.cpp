@@ -41,6 +41,8 @@ Peak3D::Peak3D(sptrDataSet data)
     , _selected(true)
     , _masked(false)
     , _predicted(true)
+    , _caught_by_filter(false)
+    , _rejected_by_filter(false)
     , _transmission(1.0)
     , _data(data)
     , _rockingCurve()
@@ -68,6 +70,9 @@ Peak3D::Peak3D(std::shared_ptr<nsx::Peak3D> peak)
     _rockingCurve = peak->rockingCurve();
     _meanBackground = peak->meanBackground();
     _rawIntensity = peak->rawIntensity();
+    
+    _caught_by_filter = false;
+    _rejected_by_filter = false;
 }
 
 void Peak3D::setShape(const Ellipsoid& shape)
@@ -269,6 +274,21 @@ Ellipsoid Peak3D::qShape() const
 //        ReciprocalVector(pred_kf * state.detectorOrientation));
 //}
 
+bool Peak3D::caughtByFilter() const
+{
+    if (_rejected_by_filter) return false;
+    return _caught_by_filter;
+}
+
+void Peak3D::caughtYou(bool caught)
+{
+    _caught_by_filter = caught;
+}
+
+void Peak3D::rejectYou(bool reject)
+{
+    _rejected_by_filter = reject;
+}
 
 void Peak3D::setManually(
     Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd,

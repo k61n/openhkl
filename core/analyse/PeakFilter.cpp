@@ -32,160 +32,122 @@
 
 namespace nsx {
 
-PeakList PeakFilter::mergedPeaksSignificance(const PeakList& peaks, double significance_level) const
+PeakFilter::PeakFilter()
 {
-    PeakFilter peak_filter;
+    _filter_compute.set(0);
+    _unit_cell = "";
+    _unit_cell_tolerance = 0.2;
+    _strength = {1.0,1000000.};
+    _d_range = {1.5, 50.0};
+    _significance = 0.9900;
+    _sparse = 100;
+}
 
-    PeakList filtered_peaks = peak_filter.hasUnitCell(peaks);
+void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
+{
+    filterHasUnitCell(peak_collection);
+    filterIndexTolerance(peak_collection);
+    std::map<nsx::sptrUnitCell, std::vector<nsx::Peak3D*>> peaks_per_unit_cell;
+    nsx::Peak3D* peak_ptr;
+    for (int i = 0 ; i < peak_collection->numberOfPeaks(); ++i){
+        peak_ptr = peak_collection->getPeak(i);
+        if (peak_ptr->caughtByFilter()){
+            auto unit_cell = peak_ptr->unitCell();
+            auto it = peaks_per_unit_cell.find(unit_cell);
 
-    std::map<nsx::sptrUnitCell, PeakList> peaks_per_unit_cell;
-
-    for (auto peak : filtered_peaks) {
-        auto unit_cell = peak->unitCell();
-
-        auto it = peaks_per_unit_cell.find(unit_cell);
-
-        if (it == peaks_per_unit_cell.end())
-            peaks_per_unit_cell.insert(std::make_pair(unit_cell, PeakList({peak})));
-        else
-            it->second.push_back(peak);
+            if (it == peaks_per_unit_cell.end()){
+                std::vector<nsx::Peak3D*> temp {peak_ptr};
+                peaks_per_unit_cell.insert(std::make_pair(unit_cell, temp));
+            }else{
+                it->second.push_back(peak_ptr);
+            }
+        }
     }
-
-    PeakList bad_peaks;
 
     for (auto p : peaks_per_unit_cell) {
         auto unit_cell = p.first;
 
         SpaceGroup group(unit_cell->spaceGroup());
-
         MergedData merged(group, true);
-
         PeakList filtered_peaks;
-        filtered_peaks =
-            peak_filter.indexed(filtered_peaks, *unit_cell, unit_cell->indexingTolerance());
 
         for (auto peak : filtered_peaks)
             merged.addPeak(peak);
 
         for (auto&& merged_peak : merged.mergedPeakSet()) {
-            // p value too high: reject peaks
-            if (merged_peak.pValue() > significance_level) {
+            if (merged_peak.pValue() > _significance) {
                 for (auto&& p : merged_peak.peaks())
-                    bad_peaks.push_back(p);
+                    p->rejectYou(true);
             }
         }
     }
 
-    for (auto it = filtered_peaks.begin(); it != filtered_peaks.end();) {
-        auto jt = std::find(bad_peaks.begin(), bad_peaks.end(), *it);
-        if (jt != bad_peaks.end()) {
-            it = filtered_peaks.erase(it);
-            bad_peaks.erase(jt);
-        } else {
-            ++it;
-        }
-    }
-
-    return filtered_peaks;
 }
 
-PeakList PeakFilter::sparseDataSet(const PeakList& peaks, size_t min_num_peaks)
+void PeakFilter::filterSparseDataSet(PeakCollection* peak_collection) const
 {
-    PeakList filtered_peaks;
+    std::map<sptrDataSet, std::vector<nsx::Peak3D*>> peaks_per_dataset;
 
-    // Gather the peaks per dataset
-    std::map<sptrDataSet, PeakList> peaks_per_dataset;
-    for (auto peak : peaks) {
-        auto data = peak->data();
+    nsx::Peak3D* peak_ptr;
+    for (int i = 0 ; i < peak_collection->numberOfPeaks(); ++i){
+        peak_ptr = peak_collection->getPeak(i);
+        auto data = peak_ptr->data();
         if (!data)
             continue;
 
         auto it = peaks_per_dataset.find(data);
-        if (it == peaks_per_dataset.end())
-            peaks_per_dataset.insert(std::make_pair(data, PeakList({peak})));
-        else
-            it->second.push_back(peak);
+        if (it == peaks_per_dataset.end()){
+            std::vector<nsx::Peak3D*> temp {peak_ptr};
+            peaks_per_dataset.insert(std::make_pair(data, temp));
+        }else{
+            it->second.push_back(peak_ptr);
+        }
     }
 
-    // Keep the peaks that belong to datasets with a number of peaks >
-    // min_num_peaks
     for (auto p : peaks_per_dataset) {
-        if (p.second.size() < min_num_peaks)
-            continue;
-
-        for (auto peak : p.second)
-            filtered_peaks.push_back(peak);
-    }
-
-    return filtered_peaks;
-}
-
-PeakList PeakFilter::extincted(const PeakList& peaks)
-{
-    PeakFilter peak_filter;
-
-    PeakList filtered_peaks = peak_filter.hasUnitCell(peaks);
-
-    std::map<nsx::sptrUnitCell, PeakList> peaks_per_unit_cell;
-
-    for (auto peak : filtered_peaks) {
-        auto unit_cell = peak->unitCell();
-
-        auto it = peaks_per_unit_cell.find(unit_cell);
-
-        if (it == peaks_per_unit_cell.end())
-            peaks_per_unit_cell.insert(std::make_pair(unit_cell, PeakList({peak})));
-        else
-            it->second.push_back(peak);
-    }
-
-    PeakList extincted_peaks;
-
-    for (auto p : peaks_per_unit_cell) {
-        PeakList indexed_peaks =
-            peak_filter.indexed(p.second, *(p.first), p.first->indexingTolerance());
-
-        SpaceGroup group(p.first->spaceGroup());
-
-        MergedData merged(group, true);
-
-        for (auto peak : indexed_peaks) {
-            merged.addPeak(peak);
-
-            MillerIndex hkl(peak->q(), *(p.first));
-
-            if (group.isExtinct(hkl))
-                extincted_peaks.push_back(peak);
+        if (p.second.size() > _sparse){
+            for (auto peak : p.second)
+                peak->caughtYou(true);
+        }else{
+            for (auto peak : p.second)
+                peak->rejectYou(true);
         }
     }
-
-    for (auto it = filtered_peaks.begin(); it != filtered_peaks.end();) {
-        auto jt = std::find(extincted_peaks.begin(), extincted_peaks.end(), *it);
-        if (jt != extincted_peaks.end()) {
-            it = filtered_peaks.erase(it);
-            extincted_peaks.erase(jt);
-        } else {
-            ++it;
-        }
-    }
-
-    return filtered_peaks;
 }
 
-PeakList PeakFilter::overlapping(const PeakList& peaks)
+void PeakFilter::filterExtincted(PeakCollection* peak_collection) const
 {
-    PeakList filtered_peaks(peaks);
+    filterHasUnitCell(peak_collection);
+    filterIndexTolerance(peak_collection);
+    nsx::Peak3D* peak_ptr;
+    for (int i = 0 ; i < peak_collection->numberOfPeaks(); ++i){
+        peak_ptr = peak_collection->getPeak(i);
+        if (peak_ptr->caughtByFilter()){
+            nsx::sptrUnitCell unit_cell = peak_ptr->unitCell();
+            SpaceGroup group(unit_cell->spaceGroup());
+            MillerIndex hkl(peak_ptr->q(), *(unit_cell));
+            if (group.isExtinct(hkl)) {
+                peak_ptr->rejectYou(true);
+            }
+        }
+    }
+}
 
+void PeakFilter::filterOverlapping(PeakCollection* peak_collection) const
+{
+    nsx::Peak3D* peak_ptr;
     std::vector<Ellipsoid> ellipsoids;
     std::set<Octree::collision_pair> collisions;
-
     Eigen::Vector3d lower(
-        std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity(),
+        std::numeric_limits<double>::infinity(), 
+        std::numeric_limits<double>::infinity(),
         std::numeric_limits<double>::infinity());
     Eigen::Vector3d upper(-lower);
 
-    for (auto peak : peaks) {
-        auto&& ellipsoid = peak->shape();
+    for (int i = 0 ; i < peak_collection->numberOfPeaks(); ++i){
+        peak_ptr = peak_collection->getPeak(i);
+        peak_ptr->caughtYou(true);
+        auto&& ellipsoid = peak_ptr->shape();
         ellipsoids.emplace_back(ellipsoid);
 
         Eigen::Vector3d p = ellipsoid.center();
@@ -199,182 +161,232 @@ PeakList PeakFilter::overlapping(const PeakList& peaks)
     // build octree
     Octree tree(lower, upper);
 
-    for (unsigned int i = 0; i < peaks.size(); ++i)
+    for (unsigned int i = 0; i < peak_collection->numberOfPeaks(); ++i)
         tree.addData(&ellipsoids[i]);
 
     collisions = tree.getCollisions();
-
-    PeakList colliding_peaks;
-
+    
     // handle collisions below
     for (auto collision : collisions) {
         unsigned int i = collision.first - &ellipsoids[0];
         unsigned int j = collision.second - &ellipsoids[0];
-        colliding_peaks.push_back(peaks[i]);
-        colliding_peaks.push_back(peaks[j]);
+        peak_collection->getPeak(i)->rejectYou(true);
+        peak_collection->getPeak(j)->rejectYou(true);
     }
+}
 
-    for (auto it = filtered_peaks.begin(); it != filtered_peaks.end();) {
-        auto jt = std::find(colliding_peaks.begin(), colliding_peaks.end(), *it);
-        if (jt != colliding_peaks.end()) {
-            it = filtered_peaks.erase(it);
-            colliding_peaks.erase(jt);
-        } else {
-            ++it;
+void PeakFilter::filterComplementary(PeakCollection* peak_collection) const
+{
+    // PeakList filtered_peaks;
+
+    // for (auto peak : peaks) {
+    //     auto it = std::find(other_peaks.begin(), other_peaks.end(), peak);
+    //     if (it == other_peaks.end())
+    //         filtered_peaks.push_back(peak);
+    // }
+}
+
+void PeakFilter::filterEnabled(PeakCollection* peak_collection) const
+{
+    nsx::Peak3D* peak_ptr;
+    for (int i = 0 ; i < peak_collection->numberOfPeaks(); ++i){
+        peak_ptr = peak_collection->getPeak(i);
+        if (peak_ptr->enabled()) {
+            peak_ptr->caughtYou(true);
+        }else{
+            peak_ptr->rejectYou(true);
         }
     }
-
-    return filtered_peaks;
 }
 
-PeakList PeakFilter::complementary(const PeakList& peaks, const PeakList& other_peaks) const
+void PeakFilter::filterSelected(PeakCollection* peak_collection) const
 {
-    PeakList filtered_peaks;
-
-    for (auto peak : peaks) {
-        auto it = std::find(other_peaks.begin(), other_peaks.end(), peak);
-        if (it == other_peaks.end())
-            filtered_peaks.push_back(peak);
+    nsx::Peak3D* peak_ptr;
+    for (int i = 0 ; i < peak_collection->numberOfPeaks(); ++i){
+        peak_ptr = peak_collection->getPeak(i);
+        if (peak_ptr->selected()) {
+            peak_ptr->caughtYou(true);
+        }else{
+            peak_ptr->rejectYou(true);
+        }
     }
-
-    return filtered_peaks;
 }
 
-PeakList PeakFilter::enabled(const PeakList& peaks, bool flag) const
+void PeakFilter::filterMasked(PeakCollection* peak_collection) const
 {
-    PeakList filtered_peaks;
-
-    std::copy_if(
-        peaks.begin(), peaks.end(), std::back_inserter(filtered_peaks),
-        [flag](sptrPeak3D peak) { return flag == peak->enabled(); });
-
-    return filtered_peaks;
-}
-
-PeakList PeakFilter::selected(const PeakList& peaks, bool flag) const
-{
-    PeakList filtered_peaks;
-
-    std::copy_if(
-        peaks.begin(), peaks.end(), std::back_inserter(filtered_peaks),
-        [flag](sptrPeak3D peak) { return flag == peak->selected(); });
-
-    return filtered_peaks;
-}
-
-PeakList PeakFilter::masked(const PeakList& peaks, bool flag) const
-{
-    PeakList filtered_peaks;
-
-    std::copy_if(
-        peaks.begin(), peaks.end(), std::back_inserter(filtered_peaks),
-        [flag](sptrPeak3D peak) { return flag == peak->masked(); });
-
-    return filtered_peaks;
-}
-
-PeakList PeakFilter::indexed(const PeakList& peaks, const UnitCell& cell, double tolerance) const
-{
-    PeakList filtered_peaks;
-
-    for (auto peak : peaks) {
-        MillerIndex miller_index(peak->q(), cell);
-        if (miller_index.indexed(tolerance))
-            filtered_peaks.push_back(peak);
+    nsx::Peak3D* peak_ptr;
+    for (int i = 0 ; i < peak_collection->numberOfPeaks(); ++i){
+        peak_ptr = peak_collection->getPeak(i);
+        if (peak_ptr->masked()){ 
+            peak_ptr->caughtYou(true);
+        }else{
+            peak_ptr->rejectYou(true);
+        }
     }
-
-    return filtered_peaks;
 }
 
-PeakList PeakFilter::indexed(const PeakList& peaks) const
+void PeakFilter::filterIndexed(PeakCollection* peak_collection) const
 {
-    PeakList filtered_peaks;
+    filterHasUnitCell(peak_collection);
+    nsx::Peak3D* peak_ptr;
+    for (int i = 0 ; i < peak_collection->numberOfPeaks(); ++i){
+        peak_ptr = peak_collection->getPeak(i);
+        if (peak_ptr->caughtByFilter()){
+            nsx::sptrUnitCell unit_cell = peak_ptr->unitCell();
+            MillerIndex hkl(peak_ptr->q(), *unit_cell);
+            if (hkl.indexed(_unit_cell_tolerance)) {
+            peak_ptr->caughtYou(true);
+            }else{
+                peak_ptr->rejectYou(true);
+            }
+        }
+    }
+}
 
-    for (auto peak : peaks) {
-        auto cell = peak->unitCell();
-
+void PeakFilter::filterIndexTolerance(PeakCollection* peak_collection) const
+{
+    nsx::Peak3D* peak_ptr;
+    for (int i = 0 ; i < peak_collection->numberOfPeaks(); ++i){
+        peak_ptr = peak_collection->getPeak(i);
+        auto cell = peak_ptr->unitCell();
         if (!cell)
             continue;
-        MillerIndex miller_index(peak->q(), *cell);
-        if (miller_index.indexed(cell->indexingTolerance()))
-            filtered_peaks.push_back(peak);
+        MillerIndex miller_index(peak_ptr->q(), *cell);
+        if (miller_index.indexed(cell->indexingTolerance())) {
+            peak_ptr->caughtYou(true);
+        }else{
+            peak_ptr->rejectYou(true);
+        }
     }
-
-    return filtered_peaks;
 }
 
-PeakList PeakFilter::unitCell(const PeakList& peaks, sptrUnitCell unit_cell) const
+void PeakFilter::filterUnitCell(PeakCollection* peak_collection) const
 {
-    PeakList filtered_peaks;
-
-    for (auto peak : peaks) {
-        if (peak->unitCell() == unit_cell)
-            filtered_peaks.push_back(peak);
+    nsx::Peak3D* peak_ptr;
+    for (int i = 0 ; i < peak_collection->numberOfPeaks(); ++i){
+        peak_ptr = peak_collection->getPeak(i);
+        if (peak_ptr->unitCell()->name() == _unit_cell) {
+            peak_ptr->caughtYou(true);
+        }else{
+            peak_ptr->rejectYou(true);
+        }
     }
-
-    return filtered_peaks;
 }
 
-PeakList PeakFilter::strength(const PeakList& peaks, double min, double max) const
+void PeakFilter::filterStrength(PeakCollection* peak_collection) const
 {
-    PeakList filtered_peaks;
-
-    for (auto peak : peaks) {
-        auto corrected_intensity = peak->correctedIntensity();
-
+    nsx::Peak3D* peak_ptr;
+    for (int i = 0 ; i < peak_collection->numberOfPeaks(); ++i){
+        peak_ptr = peak_collection->getPeak(i);
+        auto corrected_intensity = peak_ptr->correctedIntensity();
         double intensity = corrected_intensity.value();
         double sigma = corrected_intensity.sigma();
 
-        if (sigma < 1.0e-6)
+        if (sigma < 1.0e-6){
+            peak_ptr->rejectYou(true);
             continue;
+        }
 
         double i_over_sigma = intensity / sigma;
-
-        if (i_over_sigma >= min && i_over_sigma <= max)
-            filtered_peaks.push_back(peak);
+        if (i_over_sigma >= _strength[0] && i_over_sigma <= _strength[1]) {
+            peak_ptr->caughtYou(true);
+        }else{
+            peak_ptr->rejectYou(true);
+        }
     }
-
-    return filtered_peaks;
 }
 
-PeakList PeakFilter::predicted(const PeakList& peaks, bool flag) const
+void PeakFilter::filterPredicted(PeakCollection* peak_collection) const
 {
-    PeakList filtered_peaks;
-
-    std::copy_if(
-        peaks.begin(), peaks.end(), std::back_inserter(filtered_peaks),
-        [flag](sptrPeak3D peak) { return flag == peak->predicted(); });
-
-    return filtered_peaks;
+    nsx::Peak3D* peak_ptr;
+    for (int i = 0 ; i < peak_collection->numberOfPeaks(); ++i){
+        peak_ptr = peak_collection->getPeak(i);
+        if (peak_ptr->predicted()){
+            peak_ptr->caughtYou(true);
+        }else{
+            peak_ptr->rejectYou(true);
+        }
+    }
 }
 
-PeakList PeakFilter::dRange(const PeakList& peaks, double dmin, double dmax) const
+void PeakFilter::filterDRange(PeakCollection* peak_collection) const
 {
-    PeakList filtered_peaks;
-
-    for (auto peak : peaks) {
-        auto q = peak->q();
-
+    nsx::Peak3D* peak_ptr;
+    for (int i = 0 ; i < peak_collection->numberOfPeaks(); ++i){
+        peak_ptr = peak_collection->getPeak(i);
+        auto q = peak_ptr->q();
         double d = 1.0 / q.rowVector().norm();
-
-        if (d >= dmin && d <= dmax)
-            filtered_peaks.push_back(peak);
+        if ((d >= _d_range[0] && d <= _d_range[1])){
+            peak_ptr->caughtYou(true);
+        }else{
+            peak_ptr->rejectYou(true);
+        }
     }
-
-    return filtered_peaks;
 }
 
-PeakList PeakFilter::hasUnitCell(const PeakList& peaks) const
+void PeakFilter::filterHasUnitCell(PeakCollection* peak_collection) const
 {
-    PeakList filtered_peaks;
+    nsx::Peak3D* peak_ptr;
+    for (int i = 0 ; i < peak_collection->numberOfPeaks(); ++i){
+        peak_ptr = peak_collection->getPeak(i);
+        auto cell = peak_ptr->unitCell();
+        if (cell != nullptr) {
+            peak_ptr->caughtYou(true);
+        }else{
+            peak_ptr->rejectYou(true);
+        }
+    }
+}
 
-    for (auto peak : peaks) {
-        auto cell = peak->unitCell();
-        if (cell != nullptr)
-            filtered_peaks.push_back(peak);
+void PeakFilter::filter(PeakCollection* peak_collection) const
+{
+    if (_filter_compute[7]){
+        if (_filter_compute[0])
+            filterSelected(peak_collection);
+        if (_filter_compute[1])
+            filterMasked(peak_collection);
+        if (_filter_compute[2])
+            filterPredicted(peak_collection);
     }
 
-    return filtered_peaks;
+    if (_filter_compute[3])
+        filterIndexed(peak_collection);
+
+    if (_filter_compute[8]) {
+        if (!(_unit_cell == "")) {
+            filterIndexTolerance(peak_collection);
+        }
+    }
+
+    if (_filter_compute[9])
+        filterStrength(peak_collection);
+
+    if (_filter_compute[10])
+        filterDRange(peak_collection);
+
+    if (_filter_compute[4])
+        filterExtincted(peak_collection);
+
+    if (_filter_compute[11])
+        filterSparseDataSet(peak_collection);
+
+    if (_filter_compute[12])
+        filterSignificance(peak_collection);
+
+    if (_filter_compute[5])
+        filterOverlapping(peak_collection);
+
+    if (_filter_compute[6])
+        filterComplementary(peak_collection);
+
+}
+
+void PeakFilter::resetFiltering(PeakCollection* peak_collection) const
+{
+    for (int i = 0 ; i < peak_collection->numberOfPeaks(); ++i){
+        peak_collection->getPeak(i)->caughtYou(false);
+        peak_collection->getPeak(i)->rejectYou(false);
+    }
 }
 
 } // namespace nsx

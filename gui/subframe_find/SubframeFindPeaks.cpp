@@ -44,7 +44,11 @@
 
 
 
-PeakFinderFrame::PeakFinderFrame() : QWidget(), _pixmap(nullptr)
+PeakFinderFrame::PeakFinderFrame() 
+    : QWidget(), 
+    _pixmap(nullptr),
+    _peak_collection_model(),
+    _peak_collection("temp", nsx::listtype::FOUND)
 {
     setSizePolicies();
     _main_layout = new QHBoxLayout(this);
@@ -438,9 +442,10 @@ void PeakFinderFrame::setFigureUp()
     figure_group->setSizePolicy(*_size_policy_right);
 
     _figure_view = new DetectorView(this);
-    _figure_view->getScene()->linkPeakModel(_peak_collection_model);
+    _figure_view->getScene()->linkPeakModel(&_peak_collection_model);
+    _figure_view->scale(1, -1);
     figure_grid->addWidget(_figure_view, 0,0,1,2);
-
+    
     _figure_scroll = new QScrollBar(this);
     _figure_scroll->setOrientation(Qt::Horizontal);
     _figure_scroll->setSizePolicy(*_size_policy_widgets);
@@ -486,13 +491,17 @@ void PeakFinderFrame::setPeakTableUp()
 void PeakFinderFrame::refreshAll()
 {
     setParametersUp();
-    _figure_view->scale(1, -1);
 }
 
 void PeakFinderFrame::setParametersUp()
 {
-    refreshPeakTable();
+    QList<QString> exp_list = gSession->experimentNames();
+    if (exp_list.isEmpty()){
+        return;
+    }
+
     setExperimentsUp();
+    refreshPeakTable();
 
     _kernel_combo->blockSignals(true);
 
@@ -512,30 +521,33 @@ void PeakFinderFrame::setExperimentsUp()
     
     _exp_combo->clear();
     QList<QString> exp_list = gSession->experimentNames();
-    for (QString exp : exp_list) {
-        _exp_combo->addItem(exp);
+
+    if (!exp_list.isEmpty()){
+        for (QString exp : exp_list) {
+            _exp_combo->addItem(exp);
+        }
+        grabFinderParameters();
+        grabIntegrationParameters();
+        updateDatasetList();
     }
     _exp_combo->blockSignals(false);
-
-    grabFinderParameters();
-    grabIntegrationParameters();
-    updateDatasetList(0);
-    
 }
 
-void PeakFinderFrame::updateDatasetList(int idx)
+void PeakFinderFrame::updateDatasetList()
 {
     _data_combo->blockSignals(true);
     _data_combo->clear();
-    _data_list = gSession->experimentAt(idx)->allData();
-    for (nsx::sptrDataSet data : _data_list) {
-        QFileInfo fileinfo(QString::fromStdString(data->filename()));
-        _data_combo->addItem(fileinfo.baseName());
+    _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
+
+    if (!_data_list.isEmpty()){
+        for (nsx::sptrDataSet data : _data_list) {
+            QFileInfo fileinfo(QString::fromStdString(data->filename()));
+            _data_combo->addItem(fileinfo.baseName());
+        }
+        _data_combo->setCurrentIndex(0);
+        updateDatasetParameters(0);
     }
     _data_combo->blockSignals(false);
-
-    _data_combo->setCurrentIndex(0);
-    updateDatasetParameters(0);
 }
 
 void PeakFinderFrame::updateDatasetParameters(int idx)
@@ -559,10 +571,9 @@ void PeakFinderFrame::updateDatasetParameters(int idx)
     _figure_spin->setMinimum(0);
 } 
 
-
 void PeakFinderFrame::grabFinderParameters()
 {
-    nsx::PeakFinder* finder = gSession->selectedExperiment()->experiment()->peakFinder();
+    nsx::PeakFinder* finder = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
     _min_size_spin->setValue(finder->minSize());
     _max_size_spin->setValue(finder->maxSize());
@@ -603,12 +614,11 @@ void PeakFinderFrame::grabFinderParameters()
         currentRow++;
     }
     _kernel_para_table->resizeColumnsToContents();
-
 }
 
 void PeakFinderFrame::setFinderParameters()
 {
-    nsx::PeakFinder* finder = gSession->selectedExperiment()->experiment()->peakFinder();
+    nsx::PeakFinder* finder = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
     finder->setMinSize(_min_size_spin->value());
     finder->setMaxSize(_max_size_spin->value());
@@ -627,14 +637,12 @@ void PeakFinderFrame::setFinderParameters()
 
 void PeakFinderFrame::grabIntegrationParameters()
 {
-    nsx::PixelSumIntegrator* integrator = gSession->selectedExperiment()->experiment()->peakFoundIntegrator();
+    nsx::PixelSumIntegrator* integrator = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFoundIntegrator();
 
     _peak_area->setValue(integrator->peakEnd());
     _bkg_lower->setValue(integrator->backBegin());
     _bkg_upper->setValue(integrator->backEnd());
-
 }
-
 
 void PeakFinderFrame::updateConvolutionParameters()
 {
@@ -682,7 +690,7 @@ void PeakFinderFrame::find()
         data_list.push_back(_data_list.at(_data_combo->currentIndex()));
     }
 
-    nsx::PeakFinder* finder = gSession->selectedExperiment()->experiment()->peakFinder();
+    nsx::PeakFinder* finder = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
     nsx::sptrProgressHandler progHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler);
     ProgressView progressView(nullptr);
     progressView.watch(progHandler);
@@ -697,12 +705,11 @@ void PeakFinderFrame::find()
     } catch (std::exception& e) {
         return;
     }
-        
 }
 
 void PeakFinderFrame::integrate()
 {
-    nsx::sptrExperiment experiment = gSession->selectedExperiment()->experiment();
+    nsx::sptrExperiment experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
     experiment->integrateFoundPeaks(
         _peak_area->value(), 
         _bkg_lower->value(),
@@ -779,14 +786,19 @@ void PeakFinderFrame::refreshPeakTable()
     std::vector<std::shared_ptr<nsx::Peak3D>>* peaks = 
         gSession->selectedExperiment()->experiment()->peakFinder()->currentPeaks();
     
+    if (peaks == nullptr){
+        return;
+    }
+
     if (!(peaks->size()>0)){
         return;
     }
 
-    _peak_collection->populate(peaks);
-    _peak_collection_item = new PeakCollectionItem(_peak_collection);
-    _peak_collection_model->setRoot(_peak_collection_item);
-    _peak_table->setModel(_peak_collection_model);
+    _peak_collection.populate(peaks);
+    delete _peak_collection_item;
+    _peak_collection_item = new PeakCollectionItem(&_peak_collection);
+    _peak_collection_model.setRoot(_peak_collection_item);
+    _peak_table->setModel(&_peak_collection_model);
 
     _peak_table->setColumnHidden(0, true);
     _peak_table->setColumnHidden(1, true);
@@ -820,16 +832,13 @@ void PeakFinderFrame::refreshPeakVisual()
             graphic->setColor(_color_inactive->getColor());
         }
     }
-
     _figure_view->getScene()->update();
-
 }
 
 void PeakFinderFrame::changeSelected(PeakItemGraphic* peak_graphic)
 {   
     int row = _peak_collection_item->returnRowOfVisualItem(peak_graphic);
-    QModelIndex index = _peak_collection_model->index(row, 0);
+    QModelIndex index = _peak_collection_model.index(row, 0);
     _peak_table->selectRow(row);
     _peak_table->scrollTo(index, QAbstractItemView::PositionAtTop);
-
 }

@@ -52,14 +52,14 @@ MainWin::MainWin()
     homeScreen_ = new SubframeHome;
     experimentScreen_ = new SubframeExperiment;
     finder_ = new PeakFinderFrame;
-    // filter_ = new PeakFilterDialog;
+    filter_ = new SubframeFilterPeaks;
     // indexer_ = new AutoIndexerFrame;
 
     layoutStack_ = new QStackedWidget;
     layoutStack_->addWidget(homeScreen_);
     layoutStack_->addWidget(experimentScreen_);
     layoutStack_->addWidget(finder_);
-    // layoutStack_->addWidget(filter_);
+    layoutStack_->addWidget(filter_);
     // layoutStack_->addWidget(indexer_);
     layoutStack_->setCurrentIndex(0);
 
