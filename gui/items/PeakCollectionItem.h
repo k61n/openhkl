@@ -24,11 +24,14 @@ class PeakCollectionItem : public QStandardItem {
 
 public: 
 
+    PeakCollectionItem();
     PeakCollectionItem(nsx::PeakCollection* peak_collection);
     ~PeakCollectionItem() = default;
 
 public: 
 
+    //! Set the peak collection
+    void setPeakCollection(nsx::PeakCollection* peak_collection);
     //! Retrieve the number of children of this item
     int childCount() const;
     //! Retrieve the number of columns of this item
@@ -38,7 +41,7 @@ public:
     //! Get the peak collection pointer
     nsx::PeakCollection* peakCollection() const {return _peak_collection;};
     //! Get the peak items pointer
-    std::vector<PeakItem*>* peakItems() {return &_peak_items;};
+    std::vector<PeakItem*> peakItems() const;
     //! Returns the peak item at a given row
     PeakItem* peakItemAt(int row) const;
     //! The sorthing of the peaks
@@ -53,7 +56,7 @@ public:
 private:
 
     nsx::PeakCollection* _peak_collection;
-    std::vector<PeakItem*> _peak_items;
+    std::vector<std::unique_ptr<PeakItem>> _peak_items;
     PeakDisplayModes _mode;
 
 };

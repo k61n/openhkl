@@ -48,6 +48,7 @@ PeakFinderFrame::PeakFinderFrame()
     : QWidget(), 
     _pixmap(nullptr),
     _peak_collection_model(),
+    _peak_collection_item(),
     _peak_collection("temp", nsx::listtype::FOUND)
 {
     setSizePolicies();
@@ -478,6 +479,8 @@ void PeakFinderFrame::setPeakTableUp()
     peak_group->setSizePolicy(*_size_policy_right);
 
     _peak_table = new PeaksTableView(this);
+    _peak_collection_model.setRoot(&_peak_collection_item);
+    _peak_table->setModel(&_peak_collection_model);
 
     _peak_table->setColumnHidden(0, true);
     _peak_table->setColumnHidden(1, true);
@@ -563,6 +566,7 @@ void PeakFinderFrame::updateDatasetParameters(int idx)
 
     _figure_view->getScene()->slotChangeSelectedData(_data_list.at(idx), 0);
     _figure_view->getScene()->setMaxIntensity(3000);
+    _figure_view->getScene()->update();
 
     _figure_scroll->setMaximum(data->nFrames());
     _figure_scroll->setMinimum(0);
@@ -748,7 +752,6 @@ void PeakFinderFrame::accept()
 
 void PeakFinderFrame::refreshPreview()
 {
-
     nsx::sptrDataSet dataset = _data_combo->currentData().value<nsx::sptrDataSet>();
     int selected = 0;
     int nrows = dataset->nRows();
@@ -790,15 +793,10 @@ void PeakFinderFrame::refreshPeakTable()
         return;
     }
 
-    if (!(peaks->size()>0)){
-        return;
-    }
-
+    _figure_view->getScene()->clearPeakItems();
     _peak_collection.populate(peaks);
-    delete _peak_collection_item;
-    _peak_collection_item = new PeakCollectionItem(&_peak_collection);
-    _peak_collection_model.setRoot(_peak_collection_item);
-    _peak_table->setModel(&_peak_collection_model);
+    _peak_collection_item.setPeakCollection(&_peak_collection);
+    _peak_collection_model.setRoot(&_peak_collection_item);
 
     _peak_table->setColumnHidden(0, true);
     _peak_table->setColumnHidden(1, true);
@@ -809,14 +807,14 @@ void PeakFinderFrame::refreshPeakTable()
 
 void PeakFinderFrame::refreshPeakVisual()
 {   
-    if (_peak_collection_item->childCount()==0)
+    if (_peak_collection_item.childCount()==0)
         return;
 
     bool valid;
     PeakItemGraphic* graphic;
 
-    for (int i = 0; i < _peak_collection_item->childCount(); i++){
-        PeakItem* peak = _peak_collection_item->peakItemAt(i);
+    for (int i = 0; i < _peak_collection_item.childCount(); i++){
+        PeakItem* peak = _peak_collection_item.peakItemAt(i);
         graphic = peak->peakGraphic();
         valid = peak->peak()->enabled();
 
@@ -833,11 +831,12 @@ void PeakFinderFrame::refreshPeakVisual()
         }
     }
     _figure_view->getScene()->update();
+    _figure_view->getScene()->drawPeakitems();
 }
 
 void PeakFinderFrame::changeSelected(PeakItemGraphic* peak_graphic)
-{   
-    int row = _peak_collection_item->returnRowOfVisualItem(peak_graphic);
+{
+    int row = _peak_collection_item.returnRowOfVisualItem(peak_graphic);
     QModelIndex index = _peak_collection_model.index(row, 0);
     _peak_table->selectRow(row);
     _peak_table->scrollTo(index, QAbstractItemView::PositionAtTop);

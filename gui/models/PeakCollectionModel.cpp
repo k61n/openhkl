@@ -28,20 +28,21 @@ PeakCollectionModel::PeakCollectionModel(QObject *parent)
 
 void PeakCollectionModel::setRoot(PeakCollectionItem* peak_collection)
 {
+    beginResetModel();
+
     _root_item = peak_collection;
     _name = _root_item->peakCollection()->name();
 
     QModelIndex topleft_index = index(0, 0);
     QModelIndex bottomright_index = index(rowCount() - 1, columnCount() - 1);
-    emit dataChanged(topleft_index, bottomright_index);
 
+    endResetModel();
 }
 
 int PeakCollectionModel::rowCount(const QModelIndex & /*parent*/) const
 {
     if (!_root_item)
         return 0;
-
     return _root_item->childCount();
 }
 

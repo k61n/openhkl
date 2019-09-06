@@ -110,7 +110,7 @@ private:
    //! The temporary collection
    PeakCollectionModel _peak_collection_model;
    //! The temporary collection
-   PeakCollectionItem* _peak_collection_item;
+   PeakCollectionItem _peak_collection_item;
    //! The model for the found peaks
    nsx::PeakCollection _peak_collection ;
    //! The loaded data list

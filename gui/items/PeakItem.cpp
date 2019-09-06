@@ -113,9 +113,12 @@ QVariant PeakItem::peakData(
                     }else{
                         return QBrush(Qt::darkRed);
                     }
-                }    
-            break;
+                }
+                case PeakDisplayModes::VALID: {
+                    return QBrush();
+                }
             }
+            break;
         }
         case Qt::ToolTipRole:
             switch (col) {

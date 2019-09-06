@@ -130,9 +130,9 @@ void DetectorScene::drawPeakitems()
 
     clearPeakItems();
 
-    std::vector<PeakItem*>* peak_items = _peak_model->root()->peakItems();
+    std::vector<PeakItem*> peak_items = _peak_model->root()->peakItems();
 
-    for (PeakItem* peak_item : *peak_items) {
+    for (PeakItem* peak_item : peak_items) {
         nsx::Ellipsoid peak_ellipsoid = peak_item->peak()->shape();
         peak_ellipsoid.scale(peak_item->peak()->peakEnd());
         const nsx::AABB& aabb = peak_ellipsoid.aabb();

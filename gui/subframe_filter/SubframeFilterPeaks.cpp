@@ -35,6 +35,7 @@ SubframeFilterPeaks::SubframeFilterPeaks()
     : QWidget(), 
     _pixmap(nullptr),
     _peak_collection_model(),
+    _peak_collection_item(),
     _peak_collection("temp", nsx::listtype::FOUND)
 {
 
@@ -93,7 +94,6 @@ SubframeFilterPeaks::~SubframeFilterPeaks()
     delete _size_policy_box;
     delete _size_policy_right;
     delete _size_policy_fixed;
-    delete _peak_collection_item;
 }
 
 void SubframeFilterPeaks::setSizePolicies()
@@ -431,6 +431,8 @@ void SubframeFilterPeaks::setPeakTableUp()
     peak_group->setSizePolicy(*_size_policy_right);
 
     _peak_table= new PeaksTableView(this);
+    _peak_collection_model.setRoot(&_peak_collection_item);
+    _peak_table->setModel(&_peak_collection_model);
 
     _peak_table->setColumnHidden(0, true);
     _peak_table->setColumnHidden(1, true);
@@ -516,6 +518,7 @@ void SubframeFilterPeaks::updateDatasetParameters(int idx)
 
     _figure_view->getScene()->slotChangeSelectedData(_data_list.at(idx), 0);
     _figure_view->getScene()->setMaxIntensity(3000);
+    _figure_view->getScene()->update();
 
     _figure_scroll->setMaximum(data->nFrames());
     _figure_scroll->setMinimum(0);
@@ -623,29 +626,28 @@ void SubframeFilterPeaks::accept()
 
 void SubframeFilterPeaks::refreshPeakTable()
 {
-
     if (_peak_list.isEmpty() || _exp_combo->count() < 1)
         return;
+
+    _figure_view->getScene()->clearPeakItems();
     nsx::PeakCollection* collection = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->getPeakCollection(_peak_combo->currentText().toStdString());
-    delete _peak_collection_item;
-    _peak_collection_item = new PeakCollectionItem(collection);
-    _peak_collection_item->setFilterMode();
-    _peak_collection_model.setRoot(_peak_collection_item);
-    _peak_table->setModel(&_peak_collection_model);
+    _peak_collection_item.setPeakCollection(collection);
+    _peak_collection_item.setFilterMode();
+    _peak_collection_model.setRoot(&_peak_collection_item);
 
     refreshPeakVisual();
 }
 
 void SubframeFilterPeaks::refreshPeakVisual()
 {   
-    if (_peak_collection_item->childCount()==0)
+    if (_peak_collection_item.childCount()==0)
         return;
 
     bool caught;
     PeakItemGraphic* graphic;
 
-    for (int i = 0; i < _peak_collection_item->childCount(); ++i){
-        PeakItem* peak = _peak_collection_item->peakItemAt(i);
+    for (int i = 0; i < _peak_collection_item.childCount(); ++i){
+        PeakItem* peak = _peak_collection_item.peakItemAt(i);
         graphic = peak->peakGraphic();
         caught = peak->peak()->caughtByFilter();
 
@@ -662,11 +664,12 @@ void SubframeFilterPeaks::refreshPeakVisual()
         }
     }
     _figure_view->getScene()->update();
+    _figure_view->getScene()->drawPeakitems();
 }
 
 void SubframeFilterPeaks::changeSelected(PeakItemGraphic* peak_graphic)
 {   
-    int row = _peak_collection_item->returnRowOfVisualItem(peak_graphic);
+    int row = _peak_collection_item.returnRowOfVisualItem(peak_graphic);
     QModelIndex index = _peak_collection_model.index(row, 0);
     _peak_table->selectRow(row);
     _peak_table->scrollTo(index, QAbstractItemView::PositionAtTop);
