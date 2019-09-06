@@ -501,21 +501,22 @@ bool ExperimentExporter::writePeaks(
                 predicted, H5::PredType::NATIVE_HBOOL, 
                 peak_space, peak_space);
 
-            H5::StrType datatype(H5::PredType::C_S1, H5T_VARIABLE); 
+            H5::StrType data_str_type(H5::PredType::C_S1, H5T_VARIABLE); 
             H5::DataSet data_H5(
                 file->createDataSet(
                     std::string("/PeakCollections/"+collection_name+"/DataNames"),
-                    datatype, peak_space));
+                    data_str_type, peak_space));
             data_H5.write(
-                data_names.data(), datatype, 
+                data_names.data(), data_str_type, 
                 peak_space, peak_space);
 
+            H5::StrType uc_str_type(H5::PredType::C_S1, H5T_VARIABLE); 
             H5::DataSet unit_cell_H5(
                 file->createDataSet(
                     std::string("/PeakCollections/"+collection_name+"/UnitCells"),
-                    datatype, peak_space));
+                    uc_str_type, peak_space));
             unit_cell_H5.write(
-                unit_cells.data(), datatype, 
+                unit_cells.data(), uc_str_type, 
                 peak_space, peak_space);
 
             // Write all other metadata (int and double) into the "Experiment" Group

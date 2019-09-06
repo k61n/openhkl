@@ -195,6 +195,7 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
 
                 hsize_t dims_out[2];
                 space.getSimpleExtentDims(dims_out, nullptr);
+                std::cout<<dims_out[0]<<" "<<dims_out[1]<<std::endl;
                 char *char_data_names[dims_out[0]];
                 data_set.read((void*)char_data_names, datatype);
 
@@ -211,7 +212,7 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
             //Load the unit cell strings
             {
                 H5::StrType datatype(H5::PredType::C_S1, H5T_VARIABLE); 
-                H5::DataSet data_set = peak_collection.openDataSet("DataNames");
+                H5::DataSet data_set = peak_collection.openDataSet("UnitCells");
                 H5::DataType data_type = data_set.getDataType();
                 H5::DataSpace space(data_set.getSpace());
 
@@ -236,7 +237,7 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
 
             Eigen::Vector3d local_center;
             Eigen::Matrix3d local_metric;
-            sptrDataSet data_pointer;
+            
             for (int k=0; k < n_peaks; ++k){
 
                 local_center = Eigen::Vector3d(
@@ -247,7 +248,10 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
                     local_center,
                     local_metric);
 
-                data_pointer = experiment->dataShortName(std::string(data_names[k]));
+                std::cout<<"hey"<<std::endl;
+                std::cout<<std::string(data_names[k])<<data_names[k]<<std::endl;
+                sptrDataSet data_pointer = experiment->dataShortName(std::string(data_names[k]));
+                std::cout<<"hey"<<std::endl;
                 std::shared_ptr<nsx::Peak3D> peak = std::make_shared<nsx::Peak3D>(data_pointer,ellipsoid);
 
                 nsx::Intensity peak_intensity(intensity[k], sigma[k]);
