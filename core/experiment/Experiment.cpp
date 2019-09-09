@@ -38,6 +38,7 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _peak_finder = std::make_unique<nsx::PeakFinder>();
     _found_peak_integrator = std::make_unique<nsx::PixelSumIntegrator>(true, true);
     _peak_filter = std::make_unique<nsx::PeakFilter>();
+    _auto_indexer = std::make_unique<nsx::AutoIndexer>();
 }
 
 Experiment::Experiment(const Experiment& other)
@@ -49,6 +50,7 @@ Experiment::Experiment(const Experiment& other)
     _peak_finder = std::make_unique<nsx::PeakFinder>();
     _found_peak_integrator = std::make_unique<nsx::PixelSumIntegrator>(true, true);
     _peak_filter = std::make_unique<nsx::PeakFilter>();
+    _auto_indexer = std::make_unique<nsx::AutoIndexer>();
 }
 
 Experiment& Experiment::operator=(const Experiment& other)
@@ -222,26 +224,43 @@ void Experiment::acceptFilter(std::string name, PeakCollection* collection)
     _peakCollections.insert(std::make_pair(name, std::move(ptr)));
 }
 
-void Experiment::addUnitCell(const std::string& name, sptrUnitCell unit_cell) {
-    _unit_cells.insert(std::make_pair(name, unit_cell));
+void Experiment::addUnitCell(const std::string& name, sptrUnitCell unit_cell) 
+{
+    std::unique_ptr<UnitCell> ptr(new UnitCell(*unit_cell));
+    _unit_cells.insert(std::make_pair(name, std::move(ptr)));
 }
 
-bool Experiment::hasUnitCell(const std::string& name) const {
+bool Experiment::hasUnitCell(const std::string& name) const 
+{
     auto unit_cell = _unit_cells.find(name);
     return (unit_cell != _unit_cells.end());
 }
 
-sptrUnitCell Experiment::getUnitCell(const std::string& name) {
-    return _unit_cells[name];
+std::vector<std::string*> Experiment::getUnitCellNames() const 
+{
+    std::vector<std::string*> names;
+	for (
+        std::map<std::string,std::unique_ptr<PeakCollection>>::const_iterator it = _peakCollections.begin(); 
+        it != _peakCollections.end(); ++it) {
+		names.push_back(it->second->name());
+	}
+    return names;
 }
 
-void Experiment::removeUnitCell(const std::string& name) {
+UnitCell* Experiment::getUnitCell(const std::string& name) 
+{
+    return _unit_cells[name].get();
+}
+
+void Experiment::removeUnitCell(const std::string& name) 
+{
     auto unit_cell = _unit_cells.find(name);
     if (unit_cell != _unit_cells.end())
         _unit_cells.erase(unit_cell);
 }
 
-void Experiment::acceptFoundPeaks(const std::string& name) {
+void Experiment::acceptFoundPeaks(const std::string& name) 
+{
     addPeakCollection(name, _peak_finder->currentPeaks());
 }
 

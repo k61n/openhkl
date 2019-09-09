@@ -27,7 +27,7 @@
 #include "gui/dialogs/PredictPeaksDialog.h"
 #include "gui/dialogs/ShapeLibraryDialog.h"
 
-#include "gui/frames/AutoIndexerFrame.h"
+#include "gui/subframe_index/SubframeAutoIndexer.h"
 #include "gui/frames/GlobalOffsetsFrame.h"
 #include "gui/frames/InstrumentStatesFrame.h"
 #include "gui/frames/RefinerFrame.h"
@@ -121,7 +121,7 @@ void Actions::setupOptions()
 
 void Actions::setupPeaks()
 {
-    autoIndexer.setTriggerHook([]() { new AutoIndexerFrame; });
+    // autoIndexer.setTriggerHook([]() { new SubframeAutoIndexer; });
     // filterPeaks.setTriggerHook([]() { new PeakFilterDialog; });
     userDefinedIndexer.setTriggerHook([]() { new UserDefinedUnitCellIndexerFrame; });
     assignUnitCell.setTriggerHook([]() {

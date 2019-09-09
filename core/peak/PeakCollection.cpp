@@ -72,7 +72,7 @@ nsx::Peak3D* PeakCollection::getPeak(int index){
     return _peaks.at(index).get();
 }
 
-std::vector<nsx::Peak3D*>* PeakCollection::getPeakList()
+std::vector<nsx::Peak3D*>* PeakCollection::getPeakList() const 
 {
     std::vector<nsx::Peak3D*>* peak_list = new std::vector<nsx::Peak3D*>;
     for (int i = 0; i<_peaks.size();i++) {
@@ -80,7 +80,6 @@ std::vector<nsx::Peak3D*>* PeakCollection::getPeakList()
     }
     return peak_list;
 }
-
 
 int PeakCollection::numberOfPeaks() const 
 {

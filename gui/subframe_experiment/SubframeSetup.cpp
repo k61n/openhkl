@@ -68,3 +68,13 @@ void SubframeSetup::peaksChanged()
     if (enabled)
         peaks->selectedPeaksChanged();
 }
+
+void SubframeSetup::unitCellChanged()
+{
+    bool enabled = gSession->selectedExperimentNum() >= 0;
+    if (enabled)
+        enabled = gSession->selectedExperiment()->getUnitCellNames().size() > 0;
+    setTabEnabled((int)tab::UNITCELLS, enabled);
+    if (enabled)
+        unitcells->refreshInput();
+}

@@ -43,6 +43,7 @@ public:
    void onDataChanged();
    void onExperimentChanged();
    void onPeaksChanged();
+   void onUnitCellChanged();
 
    bool loadExperimentFromFile(QString filename);
 

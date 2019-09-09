@@ -65,7 +65,7 @@ void SideBar::onFilterPeaks()
 void SideBar::onIndexer()
 {
     gGui->layoutStack_->setCurrentIndex(4);
-    // gGui->indexer_->refreshData();
+    gGui->indexer_->refreshAll();
 }
 
 void SideBar::onInformation()

@@ -77,10 +77,13 @@ public:
 
 public:
 
+   //! Get the names of the Unit cells
+   QStringList getUnitCellNames();
+   
    void addUnitCell(nsx::sptrUnitCell uc) { unitCells_.append(uc); }
    nsx::sptrUnitCell getUnitCell(int index = -1);
    void removeUnitCell(int index = -1);
-   QStringList getUnitCellNames();
+
    void selectUnitCell(int select) { unitCellIndex_ = select; }
    QList<nsx::sptrUnitCell>* getUnitCellList(nsx::sptrUnitCell cell);
    

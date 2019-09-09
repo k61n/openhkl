@@ -32,14 +32,12 @@ UnitCellProperty::UnitCellProperty() : QcrWidget{"unitCellProperty"}
     QVBoxLayout* overallLayout = new QVBoxLayout(this);
     QHBoxLayout* horizontalLayout = new QHBoxLayout;
     QFormLayout* formLayout = new QFormLayout;
-    unitcells = new QcrComboBox("adhoc_unitCellsNames", new QcrCell<int>(0), []() {
-        QStringList a{""};
-        if (gSession->selectedExperimentNum() < 0)
-            return a;
-        a += gSession->selectedExperiment()->getUnitCellNames();
-        return a;
-    });
-    unitcells->setHook([=](int i) { selectedCellChanged(i); });
+    unitcells = new QComboBox();
+    connect(
+        unitcells, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged),
+        this, &UnitCellProperty::selectedCellChanged
+    );
+
     name = new QcrLineEdit("unitCellName", "");
     QObject::connect(name, &QcrLineEdit::editingFinished, [=]() {
         gSession->selectedExperiment()->getUnitCell()->setName(name->getValue().toStdString());
@@ -105,6 +103,14 @@ UnitCellProperty::UnitCellProperty() : QcrWidget{"unitCellProperty"}
         new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 7, 1, 1);
     overallLayout->addWidget(cellParameters);
     setRemake([=]() { });
+}
+
+void UnitCellProperty::refreshInput()
+{
+    QStringList a{""};
+    if (gSession->selectedExperimentNum() < 0)
+        return;
+    unitcells->addItems(gSession->selectedExperiment()->getUnitCellNames());
 }
 
 void UnitCellProperty::setZValue(int z)

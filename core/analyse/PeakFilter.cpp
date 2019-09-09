@@ -199,6 +199,15 @@ void PeakFilter::filterEnabled(PeakCollection* peak_collection) const
     }
 }
 
+std::vector<Peak3D*>* PeakFilter::filterEnabled(const std::vector<Peak3D*>* peaks_ptr, bool flag) const
+{
+  std::vector<Peak3D*>* filtered_peaks = new std::vector<Peak3D*>;
+  std::vector<Peak3D*> peaks = *peaks_ptr;
+  std::copy_if(peaks.begin(), peaks.end(), std::back_inserter(*filtered_peaks),
+               [flag](Peak3D* peak) { return flag == peak->enabled(); });
+  return filtered_peaks;
+}
+
 void PeakFilter::filterSelected(PeakCollection* peak_collection) const
 {
     nsx::Peak3D* peak_ptr;
@@ -241,6 +250,20 @@ void PeakFilter::filterIndexed(PeakCollection* peak_collection) const
             }
         }
     }
+}
+
+std::vector<Peak3D*>* PeakFilter::filterIndexed(
+    const std::vector<Peak3D*>* peaks_ptr, const UnitCell &cell, double tolerance) const
+{
+std::vector<Peak3D*>* filtered_peaks = new std::vector<Peak3D*>;
+  std::vector<Peak3D*> peaks = *peaks_ptr;
+  for (auto peak : peaks) {
+    MillerIndex miller_index(peak->q(), cell);
+    if (miller_index.indexed(tolerance)) {
+      filtered_peaks->push_back(peak);
+    }
+  }
+  return filtered_peaks;
 }
 
 void PeakFilter::filterIndexTolerance(PeakCollection* peak_collection) const

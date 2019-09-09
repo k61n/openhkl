@@ -23,6 +23,7 @@
 #include "tables/crystal/UnitCell.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/analyse/PeakFilter.h"
+#include "core/algo/AutoIndexer.h"
 
 namespace nsx {
 
@@ -94,15 +95,17 @@ public:
    void addUnitCell(const std::string& name, sptrUnitCell unit_cell);
    //! Returns true if the experiment has a data
    bool hasUnitCell(const std::string& name) const;
+   //! Get a list of loaded list names
+   std::vector<std::string*> getUnitCellNames() const;
    //! Returns the unit cell denoted by the name
-   sptrUnitCell getUnitCell(const std::string& name);
+   UnitCell* getUnitCell(const std::string& name);
    //! Remove a data from the experiment
    void removeUnitCell(const std::string& name);
 
 public:
 
    //! Get the address of the peak finder
-   nsx::PeakFinder* peakFinder() {return _peak_finder.get();};
+   nsx::PeakFinder* peakFinder() const {return _peak_finder.get();};
    //! Transfer current peaks as collection
    void acceptFoundPeaks(const std::string& name);
    //! Get the found peak integrator
@@ -111,6 +114,11 @@ public:
    void integrateFoundPeaks( double peak_end, double bkg_begin, double bkg_end);
    //! Get the found peak integrator
    nsx::PeakFilter* peakFilter() {return _peak_filter.get();};
+
+public:
+
+   //! Get the auto indexer
+   nsx::AutoIndexer* autoIndexer() const {return _auto_indexer.get();};
 
 public:
 
@@ -131,18 +139,17 @@ private:
    //! A map of the peaklists with their name as index
    std::map<std::string, std::unique_ptr<PeakCollection>> _peakCollections;
    //! A map of the unit cells with their name as index
-   std::map<std::string, sptrUnitCell> _unit_cells;
+   std::map<std::string, std::unique_ptr<UnitCell>> _unit_cells;
    //! The Peak finder
    std::unique_ptr<nsx::PeakFinder> _peak_finder;
    //! The found peak integrator
    std::unique_ptr<nsx::PixelSumIntegrator> _found_peak_integrator;
    //! The peak filter
    std::unique_ptr<nsx::PeakFilter> _peak_filter;
-
    //! The peak predictor
 
    //! The auto indexer
-
+   std::unique_ptr<nsx::AutoIndexer> _auto_indexer;
 };
 
 } // namespace nsx

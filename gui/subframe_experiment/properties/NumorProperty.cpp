@@ -47,44 +47,44 @@ NumorProperty::NumorProperty() : QcrWidget {"numorProperty"}
 
 void NumorProperty::onRemake()
 {
-    clear();
+    // clear();
 
-    if (gSession->selectedExperimentNum() >= 0) {
-        SessionExperiment* exp = gSession->selectedExperiment();
-        nsx::sptrDataSet data = exp->getData();
+    // if (gSession->selectedExperimentNum() >= 0) {
+    //     SessionExperiment* exp = gSession->selectedExperiment();
+    //     nsx::sptrDataSet data = exp->getData();
 
-        if (data) {
-            const nsx::MetaData& metadata = data->reader()->metadata();
-            const nsx::MetaDataMap& map = metadata.map();
+    //     if (data) {
+    //         const nsx::MetaData& metadata = data->reader()->metadata();
+    //         const nsx::MetaDataMap& map = metadata.map();
 
-            table->setColumnCount(2);
-            table->setRowCount(map.size());
+    //         table->setColumnCount(2);
+    //         table->setRowCount(map.size());
 
-            int numberLines = 0;
-            for (auto element : map) // Only int, double and string metadata are displayed.
-            {
-                QTableWidgetItem* col0 = new QTableWidgetItem();
-                QTableWidgetItem* col1 = new QTableWidgetItem();
-                col0->setData(Qt::EditRole, QString(element.first));
+    //         int numberLines = 0;
+    //         for (auto element : map) // Only int, double and string metadata are displayed.
+    //         {
+    //             QTableWidgetItem* col0 = new QTableWidgetItem();
+    //             QTableWidgetItem* col1 = new QTableWidgetItem();
+    //             col0->setData(Qt::EditRole, QString(element.first));
 
-                if (element.second.is<int>())
-                    col1->setData(Qt::EditRole, element.second.as<int>());
-                else if (element.second.is<double>())
-                    col1->setData(Qt::EditRole, element.second.as<double>());
-                else if (element.second.is<std::string>()) {
-                    col1->setData(
-                        Qt::EditRole, QString::fromStdString(element.second.as<std::string>()));
-                } else {
-                    delete col0;
-                    delete col1;
-                    continue;
-                }
-                table->setItem(numberLines, 0, col0);
-                table->setItem(numberLines++, 1, col1);
-            }
-            table->horizontalHeader()->setStretchLastSection(true);
-        }
-    }
+    //             if (element.second.is<int>())
+    //                 col1->setData(Qt::EditRole, element.second.as<int>());
+    //             else if (element.second.is<double>())
+    //                 col1->setData(Qt::EditRole, element.second.as<double>());
+    //             else if (element.second.is<std::string>()) {
+    //                 col1->setData(
+    //                     Qt::EditRole, QString::fromStdString(element.second.as<std::string>()));
+    //             } else {
+    //                 delete col0;
+    //                 delete col1;
+    //                 continue;
+    //             }
+    //             table->setItem(numberLines, 0, col0);
+    //             table->setItem(numberLines++, 1, col1);
+    //         }
+    //         table->horizontalHeader()->setStretchLastSection(true);
+    //     }
+    // }
 }
 
 void NumorProperty::clear()

@@ -737,15 +737,15 @@ std::map<std::string, double> PeakFinderFrame::convolutionParameters()
 
 void PeakFinderFrame::accept()
 {
-    nsx::PeakFinder* finder = gSession->selectedExperiment()->experiment()->peakFinder();
+    nsx::PeakFinder* finder = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
     if (!finder->currentPeaks()->empty()){
         gLogger->log("@accept");
         std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
         dlg->exec();
         if (!dlg->listName().isEmpty()){
-            gSession->selectedExperiment()->experiment()->acceptFoundPeaks(dlg->listName().toStdString());
-            gSession->selectedExperiment()->generatePeakModel(dlg->listName());
+            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->acceptFoundPeaks(dlg->listName().toStdString());
+            gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
         }
     }
 }
@@ -787,7 +787,7 @@ void PeakFinderFrame::refreshPreview()
 void PeakFinderFrame::refreshPeakTable()
 {
     std::vector<std::shared_ptr<nsx::Peak3D>>* peaks = 
-        gSession->selectedExperiment()->experiment()->peakFinder()->currentPeaks();
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder()->currentPeaks();
     
     if (peaks == nullptr){
         return;

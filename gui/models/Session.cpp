@@ -257,6 +257,11 @@ void Session::onPeaksChanged()
     gGui->onPeaksChanged();
 }
 
+void Session::onUnitCellChanged()
+{
+    gGui->onUnitCellChanged();
+}
+
 bool Session::loadExperimentFromFile(QString filename)
 {
     bool success = createExperiment(QString::fromStdString("default"));

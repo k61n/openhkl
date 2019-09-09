@@ -16,7 +16,7 @@
 #define GUI_MAINWIN_H
 
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
-#include "gui/frames/AutoIndexerFrame.h"
+#include "gui/subframe_index/SubframeAutoIndexer.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/subframe_experiment/SubframeExperiment.h"
@@ -43,6 +43,8 @@ class MainWin : public QcrMainWindow {
     void onExperimentChanged();
     //! Refreshes the parts of the main window that depend on the peaks
     void onPeaksChanged();
+    //! Refreshes the parts of the main window that depend on the peaks
+    void onUnitCellChanged();
     //! change the detector image view
     void changeView(int option) { experimentScreen_->image->changeView(option); }
     //! update the plot, plot the plottable item p
@@ -71,7 +73,7 @@ class MainWin : public QcrMainWindow {
     SubframeHome* homeScreen_;
     PeakFinderFrame* finder_;
     SubframeFilterPeaks* filter_;
-    AutoIndexerFrame* indexer_;
+    SubframeAutoIndexer* indexer_;
     class Menus* menus_;
 
     QByteArray initialState_;

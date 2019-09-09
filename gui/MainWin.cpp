@@ -53,14 +53,14 @@ MainWin::MainWin()
     experimentScreen_ = new SubframeExperiment;
     finder_ = new PeakFinderFrame;
     filter_ = new SubframeFilterPeaks;
-    // indexer_ = new AutoIndexerFrame;
+    indexer_ = new SubframeAutoIndexer;
 
     layoutStack_ = new QStackedWidget;
     layoutStack_->addWidget(homeScreen_);
     layoutStack_->addWidget(experimentScreen_);
     layoutStack_->addWidget(finder_);
     layoutStack_->addWidget(filter_);
-    // layoutStack_->addWidget(indexer_);
+    layoutStack_->addWidget(indexer_);
     layoutStack_->setCurrentIndex(0);
 
     setCentralWidget(layoutStack_);
@@ -91,13 +91,17 @@ void MainWin::onDataChanged()
 
 void MainWin::onExperimentChanged()
 {
-    // homeScreen_->remake();
     experimentScreen_->properties->experimentChanged();
 }
 
 void MainWin::onPeaksChanged()
 {
     experimentScreen_->properties->peaksChanged();
+}
+
+void MainWin::onUnitCellChanged()
+{
+    experimentScreen_->properties->unitCellChanged();
 }
 
 void MainWin::resetViews()

@@ -27,23 +27,19 @@
 
 namespace nsx {
 
-AutoIndexer::AutoIndexer(const std::shared_ptr<ProgressHandler>& handler)
-    : _peaks(), _solutions(), _handler(handler)
+AutoIndexer::AutoIndexer()
+    : _solutions(), 
+    _handler(nullptr)
 {
+    _params = IndexerParameters();
 }
 
-void AutoIndexer::autoIndex(const IndexerParameters& params)
+void AutoIndexer::autoIndex(PeakCollection* peak_collection)
 {
-    _params = params;
-
     // Find the Q-space directions along which the projection of the the Q-vectors
     // shows the highest periodicity
-    computeFFTSolutions();
-
-    refineSolutions();
-
-    // Remove the solution whose percentage of successfully indexed peaks is under
-    // a given cutoff
+    computeFFTSolutions(peak_collection);
+    refineSolutions(peak_collection);
     removeBad(_params.solutionCutoff);
 
     // refine the constrained unit cells in order to get the uncertainties
@@ -71,77 +67,80 @@ const std::vector<std::pair<sptrUnitCell, double>>& AutoIndexer::solutions() con
     return _solutions;
 }
 
-void AutoIndexer::computeFFTSolutions()
+void AutoIndexer::computeFFTSolutions(PeakCollection* peak_collection)
 {
+    std::vector<Peak3D*>* peaks = peak_collection->getPeakList();
+    
     _solutions.clear();
 
     // Store the q-vectors of the peaks for auto-indexing
     std::vector<ReciprocalVector> qvects;
 
-    // PeakFilter peak_filter;
-    // auto filtered_peaks = peak_filter.enabled(_peaks, true);
+    PeakFilter peak_filter;
+    std::vector<Peak3D*>* filtered_peaks = peak_filter.filterEnabled(peaks, true);
+    
+    for (size_t i = 0; i < filtered_peaks->size(); ++i) {
+        Peak3D* peak = filtered_peaks->at(i);
+        auto q = peak->q().rowVector();
+        qvects.push_back(ReciprocalVector(q));
+    }
 
-    // for (size_t i = 0; i < filtered_peaks.size(); ++i) {
-    //     auto& peak = filtered_peaks[i];
-    //     auto q = peak->q().rowVector();
-    //     qvects.push_back(ReciprocalVector(q));
-    // }
+    // Check that a minimum number of peaks have been selected for indexing
+    if (qvects.size() < 10) {
+        if (_handler)
+            _handler->log("AutoIndexer: too few peaks to index!");
+        throw std::runtime_error("Too few peaks to autoindex");
+    }
 
-    // // Check that a minimum number of peaks have been selected for indexing
-    // if (qvects.size() < 10) {
-    //     if (_handler)
-    //         _handler->log("AutoIndexer: too few peaks to index!");
-    //     throw std::runtime_error("Too few peaks to autoindex");
-    // }
+    if (_handler) {
+        _handler->log(
+            "Searching direct lattice vectors using" + std::to_string(qvects.size())
+            + "peaks defined on numors:");
+    }
 
-    // if (_handler) {
-    //     _handler->log(
-    //         "Searching direct lattice vectors using" + std::to_string(qvects.size())
-    //         + "peaks defined on numors:");
-    // }
+    // Sets up a FFT indexer object
+    FFTIndexing indexing(_params.subdiv, _params.maxdim);
 
-    // // Sets up a FFT indexer object
-    // FFTIndexing indexing(_params.subdiv, _params.maxdim);
+    // Find the best vectors via FFT
+    auto&& tvects = indexing.findOnSphere(qvects, _params.nVertices, _params.nSolutions);
+    qvects.clear();
 
-    // // Find the best vectors via FFT
-    // auto&& tvects = indexing.findOnSphere(qvects, _params.nVertices, _params.nSolutions);
-    // qvects.clear();
+    for (int i = 0; i < _params.nSolutions; ++i) {
+        for (int j = i + 1; j < _params.nSolutions; ++j) {
+            for (int k = j + 1; k < _params.nSolutions; ++k) {
+                // Build up a unit cell out of the current directions triplet
+                Eigen::Matrix3d A;
+                A.col(0) = tvects[i].first;
+                A.col(1) = tvects[j].first;
+                A.col(2) = tvects[k].first;
+                // Build a unit cell with direct vectors
+                auto cell = std::shared_ptr<UnitCell>(new UnitCell(A));
 
-    // for (int i = 0; i < _params.nSolutions; ++i) {
-    //     for (int j = i + 1; j < _params.nSolutions; ++j) {
-    //         for (int k = j + 1; k < _params.nSolutions; ++k) {
-    //             // Build up a unit cell out of the current directions triplet
-    //             Eigen::Matrix3d A;
-    //             A.col(0) = tvects[i].first;
-    //             A.col(1) = tvects[j].first;
-    //             A.col(2) = tvects[k].first;
-    //             // Build a unit cell with direct vectors
-    //             auto cell = std::shared_ptr<UnitCell>(new UnitCell(A));
+                // If the unit cell volume is below the user-defined minimum volume,
+                // skip it
+                if (cell->volume() < _params.minUnitCellVolume)
+                    continue;
 
-    //             // If the unit cell volume is below the user-defined minimum volume,
-    //             // skip it
-    //             if (cell->volume() < _params.minUnitCellVolume)
-    //                 continue;
+                bool equivalent = false;
 
-    //             bool equivalent = false;
-
-    //             // check to see if the cell is equivalent to a previous one. If so, skip
-    //             // it
-    //             for (auto solution : _solutions) {
-    //                 if (cell->equivalent(*solution.first, _params.unitCellEquivalenceTolerance)) {
-    //                     equivalent = true;
-    //                     break;
-    //                 }
-    //             }
-    //             // cell is equivalent to a previous one in the list
-    //             if (equivalent)
-    //                 continue;
-    //             // Add this solution to the list of solution with a scored to be defined
-    //             // futher
-    //             _solutions.push_back(std::make_pair(cell, -1.0));
-    //         }
-    //     }
-    // }
+                // check to see if the cell is equivalent to a previous one. If so, skip
+                // it
+                for (auto solution : _solutions) {
+                    if (cell->equivalent(*solution.first, _params.unitCellEquivalenceTolerance)) {
+                        equivalent = true;
+                        break;
+                    }
+                }
+                // cell is equivalent to a previous one in the list
+                if (equivalent)
+                    continue;
+                // Add this solution to the list of solution with a scored to be defined
+                // futher
+                _solutions.push_back(std::make_pair(cell, -1.0));
+            }
+        }
+    }
+    delete filtered_peaks;
 }
 
 void AutoIndexer::rankSolutions()
@@ -158,116 +157,122 @@ void AutoIndexer::rankSolutions()
         });
 }
 
-void AutoIndexer::refineSolutions()
+void AutoIndexer::refineSolutions(PeakCollection* peak_collection)
 {
-    //#pragma omp parallel for
-    // for (auto&& soln : _solutions) {
-    //     auto cell = soln.first;
-    //     cell->setIndexingTolerance(_params.indexingTolerance);
-    //     Eigen::Matrix3d B = cell->reciprocalBasis();
-    //     std::vector<Eigen::RowVector3d> hkls;
-    //     std::vector<Eigen::RowVector3d> qs;
-    //     std::vector<Eigen::Matrix3d> wt;
+    #pragma omp parallel for
+    for (auto&& soln : _solutions) {
+        std::vector<Peak3D*>* peaks = peak_collection->getPeakList();
 
-    //     PeakFilter peak_filter;
-    //     PeakList filtered_peaks;
-    //     filtered_peaks = peak_filter.enabled(_peaks, true);
-    //     filtered_peaks = peak_filter.indexed(filtered_peaks, *cell, cell->indexingTolerance());
+        auto cell = soln.first;
+        cell->setIndexingTolerance(_params.indexingTolerance);
+        Eigen::Matrix3d B = cell->reciprocalBasis();
+        std::vector<Eigen::RowVector3d> hkls;
+        std::vector<Eigen::RowVector3d> qs;
+        std::vector<Eigen::Matrix3d> wt;
 
-    //     int success = filtered_peaks.size();
-    //     for (auto peak : filtered_peaks) {
-    //         MillerIndex hkld(peak->q(), *cell);
-    //         hkls.emplace_back(hkld.rowVector().cast<double>());
-    //         qs.emplace_back(peak->q().rowVector());
+        PeakFilter peak_filter;
+        std::vector<Peak3D*>* enabled_peaks;
+        enabled_peaks = peak_filter.filterEnabled(peaks, true);
 
-    //         Eigen::Vector3d c = peak->shape().center();
-    //         Eigen::Matrix3d M = peak->shape().metric();
-    //         auto state = peak->data()->interpolatedState(c[2]);
-    //         Eigen::Matrix3d J = state.jacobianQ(c[0], c[1]);
-    //         Eigen::Matrix3d JI = J.inverse();
+        std::vector<Peak3D*>* filtered_peaks;
+        filtered_peaks = peak_filter.filterIndexed(enabled_peaks, *cell, cell->indexingTolerance());
 
-    //         Eigen::Matrix3d A = JI.transpose() * M * JI;
+        int success = filtered_peaks->size();
+        for (auto peak : *filtered_peaks) {
+            MillerIndex hkld(peak->q(), *cell);
+            hkls.emplace_back(hkld.rowVector().cast<double>());
+            qs.emplace_back(peak->q().rowVector());
 
-    //         Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(A);
-    //         Eigen::Matrix3d U = solver.eigenvectors();
+            Eigen::Vector3d c = peak->shape().center();
+            Eigen::Matrix3d M = peak->shape().metric();
+            auto state = peak->data()->interpolatedState(c[2]);
+            Eigen::Matrix3d J = state.jacobianQ(c[0], c[1]);
+            Eigen::Matrix3d JI = J.inverse();
 
-    //         Eigen::Matrix3d D;
-    //         D.setZero();
+            Eigen::Matrix3d A = JI.transpose() * M * JI;
 
-    //         for (auto i = 0; i < 3; ++i)
-    //             D(i, i) = std::sqrt(solver.eigenvalues()[i]);
+            Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(A);
+            Eigen::Matrix3d U = solver.eigenvectors();
 
-    //         wt.emplace_back(U.transpose() * D * U);
-    //     }
+            Eigen::Matrix3d D;
+            D.setZero();
 
-    //     // The number of peaks must be at least for a proper minimization
-    //     if (success < 10)
-    //         continue;
+            for (auto i = 0; i < 3; ++i)
+                D(i, i) = std::sqrt(solver.eigenvalues()[i]);
 
-    //     // Lambda to compute residuals
-    //     auto residuals = [&B, &hkls, &qs](Eigen::VectorXd& f) -> int {
-    //         int n = f.size() / 3;
+            wt.emplace_back(U.transpose() * D * U);
+        }
 
-    //         for (int i = 0; i < n; ++i) {
-    //             // auto dq = wt[i]*(qs[i]-hkls[i]*B).transpose();
-    //             auto dq = qs[i] - hkls[i] * B;
-    //             f(3 * i + 0) = dq(0);
-    //             f(3 * i + 1) = dq(1);
-    //             f(3 * i + 2) = dq(2);
-    //         }
-    //         return 0;
-    //     };
+        // The number of peaks must be at least for a proper minimization
+        if (success < 10)
+            continue;
 
-    //     // Pass by address the parameters to be fitted to the parameter store
-    //     FitParameters params;
-    //     for (int r = 0; r < 3; ++r) {
-    //         for (int c = 0; c < 3; ++c)
-    //             params.addParameter(&B(r, c));
-    //     }
+        // Lambda to compute residuals
+        auto residuals = [&B, &hkls, &qs](Eigen::VectorXd& f) -> int {
+            int n = f.size() / 3;
 
-    //     // Sets the Minimizer with the parameters store and the size of the residual
-    //     // vector
-    //     Minimizer minimizer;
-    //     minimizer.initialize(params, 3 * success);
-    //     minimizer.set_f(residuals);
-    //     minimizer.setxTol(1e-15);
-    //     minimizer.setfTol(1e-15);
-    //     minimizer.setgTol(1e-15);
+            for (int i = 0; i < n; ++i) {
+                // auto dq = wt[i]*(qs[i]-hkls[i]*B).transpose();
+                auto dq = qs[i] - hkls[i] * B;
+                f(3 * i + 0) = dq(0);
+                f(3 * i + 1) = dq(1);
+                f(3 * i + 2) = dq(2);
+            }
+            return 0;
+        };
 
-    //     // fails to fit
-    //     if (!minimizer.fit(500))
-    //         continue;
+        // Pass by address the parameters to be fitted to the parameter store
+        FitParameters params;
+        for (int r = 0; r < 3; ++r) {
+            for (int c = 0; c < 3; ++c)
+                params.addParameter(&B(r, c));
+        }
 
-    //     // Update the cell with the fitter one and reduce it
-    //     try {
-    //         cell->setReciprocalBasis(B);
-    //         cell->setIndexingTolerance(_params.indexingTolerance);
-    //         cell->reduce(_params.niggliReduction, _params.niggliTolerance, _params.gruberTolerance);
-    //         *cell = cell->applyNiggliConstraints();
-    //     } catch (std::exception& e) {
-    //         if (_handler)
-    //             _handler->log("exception: " + std::string(e.what()));
-    //         continue;
-    //     }
+        // Sets the Minimizer with the parameters store and the size of the residual
+        // vector
+        Minimizer minimizer;
+        minimizer.initialize(params, 3 * success);
+        minimizer.set_f(residuals);
+        minimizer.setxTol(1e-15);
+        minimizer.setfTol(1e-15);
+        minimizer.setgTol(1e-15);
 
-    //     // Define the final score of this solution by computing the percentage of
-    //     // the selected peaks which have been successfully indexed
+        // fails to fit
+        if (!minimizer.fit(500))
+            continue;
 
-    //     PeakList refiltered_peaks;
-        // refiltered_peaks = peak_filter.indexed(filtered_peaks, *cell, cell->indexingTolerance());
+        // Update the cell with the fitter one and reduce it
+        try {
+            cell->setReciprocalBasis(B);
+            cell->setIndexingTolerance(_params.indexingTolerance);
+            cell->reduce(_params.niggliReduction, _params.niggliTolerance, _params.gruberTolerance);
+            *cell = cell->applyNiggliConstraints();
+        } catch (std::exception& e) {
+            if (_handler)
+                _handler->log("exception: " + std::string(e.what()));
+            continue;
+        }
 
-        // double score = static_cast<double>(refiltered_peaks.size());
-        // double maxscore = static_cast<double>(filtered_peaks.size());
+        // Define the final score of this solution by computing the percentage of
+        // the selected peaks which have been successfully indexed
 
-    //     // Percentage of indexing
-    //     score /= 0.01 * maxscore;
-    //     soln.second = score;
-    // }
+        std::vector<Peak3D*>*  refiltered_peaks;
+        refiltered_peaks = peak_filter.filterIndexed(
+            filtered_peaks, *cell, cell->indexingTolerance());
+
+        double score = static_cast<double>(refiltered_peaks->size());
+        double maxscore = static_cast<double>(filtered_peaks->size());
+
+        // Percentage of indexing
+        score /= 0.01 * maxscore;
+        soln.second = score;
+
+        delete peaks;
+        delete enabled_peaks;
+        delete filtered_peaks;
+        delete refiltered_peaks;
+    }
 }
 
-void AutoIndexer::addPeak(sptrPeak3D peak)
-{
-    _peaks.push_back(peak);
-}
 
 } // namespace nsx

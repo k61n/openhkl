@@ -22,6 +22,7 @@
 class UnitCellProperty : public QcrWidget {
  public:
     UnitCellProperty();
+    void refreshInput();
 
  private:
     void setUnitCellName();
@@ -31,7 +32,7 @@ class UnitCellProperty : public QcrWidget {
     void selectedCellChanged(int cell);
     void printAllInformation();
 
-    QcrComboBox* unitcells;
+    QComboBox* unitcells;
     QcrLineEdit* name;
     QcrLineEdit* chemicalFormula;
     QcrLineEdit* spaceGroup;

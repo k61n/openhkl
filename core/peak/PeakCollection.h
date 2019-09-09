@@ -44,7 +44,7 @@ class PeakCollection{
     //! Returns the peak with the given index
     nsx::Peak3D* getPeak(int index);    
     //! Returns the peak with index
-    std::vector<nsx::Peak3D*>* getPeakList();
+    std::vector<nsx::Peak3D*>* getPeakList() const;
 
     //! Returns the amount of peaks
     int numberOfPeaks() const;

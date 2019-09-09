@@ -33,6 +33,7 @@ class SubframeSetup : public QcrTabWidget {
     void dataChanged();
     void experimentChanged();
     void peaksChanged();
+    void unitCellChanged();
 };
 
 #endif // GUI_PANELS_SUBFRAMESETUP_H

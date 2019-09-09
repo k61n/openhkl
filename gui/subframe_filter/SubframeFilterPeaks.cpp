@@ -46,10 +46,6 @@ SubframeFilterPeaks::SubframeFilterPeaks()
     QScrollArea* scroll_area = new QScrollArea(this);
     QWidget* scroll_widget = new QWidget();
 
-    // QSizePolicy size_policy_scroll_area;
-    // size_policy_scroll_area.setHorizontalPolicy(QSizePolicy::MinimumExpanding);
-    // size_policy_scroll_area.setVerticalPolicy(QSizePolicy::Preferred);
-
     scroll_area->setSizePolicy(*_size_policy_box);
     scroll_widget->setSizePolicy(*_size_policy_box);
     _left_layout = new QVBoxLayout(scroll_widget);
@@ -74,18 +70,6 @@ SubframeFilterPeaks::SubframeFilterPeaks()
 
     _main_layout->addWidget(scroll_area);
     _main_layout->addWidget(_right_element);
-
-    // if (gSession->selectedExperimentNum() < 0) {
-    //     gLogger->log("## No experiment selected");
-    //     return;
-    // }
-
-    // if (gSession->selectedExperiment()->getPeakListNames().empty()) {
-    //     gLogger->log("## No peaks to filter. Find peaks first.");
-    //     return;
-    // }
-
-    // peaks_ = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
 }
 
 SubframeFilterPeaks::~SubframeFilterPeaks()
@@ -380,7 +364,6 @@ void SubframeFilterPeaks::setProceedUp()
     connect(
         _save_button, &QPushButton::clicked, 
         this, &SubframeFilterPeaks::accept);
-
 }
 
 void SubframeFilterPeaks::setFigureUp()
@@ -433,11 +416,7 @@ void SubframeFilterPeaks::setPeakTableUp()
     _peak_table= new PeaksTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->setModel(&_peak_collection_model);
-
-    _peak_table->setColumnHidden(0, true);
-    _peak_table->setColumnHidden(1, true);
-    _peak_table->setColumnHidden(2, true);
-
+    
     peak_grid->addWidget(_peak_table, 0,0,0,0);
 
     _right_element->addWidget(peak_group);
@@ -617,11 +596,10 @@ void SubframeFilterPeaks::accept()
     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
     dlg->exec();
     if (!dlg->listName().isEmpty()){
-        gSession->selectedExperiment()->experiment()->acceptFilter(
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->acceptFilter(
             dlg->listName().toStdString(), collection);
-        gSession->selectedExperiment()->generatePeakModel(dlg->listName());
+        gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
     }
-    
 }
 
 void SubframeFilterPeaks::refreshPeakTable()

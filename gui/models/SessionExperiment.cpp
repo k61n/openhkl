@@ -83,26 +83,6 @@ QList<nsx::sptrDataSet> SessionExperiment::allData()
     return list;
 }
 
-// void SessionExperiment::addPeaks(Peaks* peaks, const QString& uppername)
-// {
-//     // if (uppername.length() == 0) {
-//     //     QVector<Peaks*> inner;
-//     //     QString listname = peaks->name_;
-//     //     peaks->name_ = "all peaks";
-//     //     inner.append(std::move(peaks));
-//     //     peakLists_.insert(listname, inner);
-//     //     gSession->onPeaksChanged();
-//     //     return;
-//     // }
-//     // QString upperlist = uppername;
-//     // if (uppername.contains('/'))
-//     //     upperlist = uppername.split('/').at(0);
-
-//     // peakLists_[upperlist].append(std::move(peaks));
-
-//     gSession->onPeaksChanged();
-// }
-
 QStringList SessionExperiment::getPeakListNames(int depth)
 {
     std::vector<std::string*> names = _experiment->getCollectionNames();
@@ -111,7 +91,6 @@ QStringList SessionExperiment::getPeakListNames(int depth)
     for (std::string* name :names){
         q_names<<QString::fromStdString(*name);
     }
-
     return q_names;
 }
 
@@ -197,11 +176,6 @@ std::vector<nsx::Peak3D*>* SessionExperiment::getPeaks(
         peakListName.toStdString());
 
     std::vector<nsx::Peak3D*>* peaks = peakCollection->getPeakList();
-
-    // if (upperindex == -1)
-    //     upperindex = 0;
-    // if (lowerindex == -1)
-    //     lowerindex = 0;
 
     return peaks;
 }
@@ -320,10 +294,13 @@ void SessionExperiment::removeUnitCell(int index)
 
 QStringList SessionExperiment::getUnitCellNames()
 {
-    QStringList names;
-    for (nsx::sptrUnitCell uc : unitCells_)
-        names.append(QString::fromStdString(uc->name()));
-    return names;
+    std::vector<std::string*> names = _experiment->getUnitCellNames();
+    QStringList q_names;
+
+    for (std::string* name :names){
+        q_names<<QString::fromStdString(*name);
+    }
+    return q_names;
 }
 
 void SessionExperiment::changeInstrument(const QString& instrumentname)
