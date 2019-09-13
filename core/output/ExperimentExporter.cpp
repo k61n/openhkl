@@ -79,24 +79,8 @@ bool ExperimentExporter::writeData(
             it != data.end(); ++it) {
 
             //Write the data
-            std::string data_name = it->first;
             DataSet* data_item = it->second;
-
-            std::string name;
-            std::string ext;
-
-            size_t sep = data_name.find_last_of("\\/");
-            if (sep != std::string::npos)
-                data_name = data_name.substr(sep + 1, data_name.size() - sep - 1);
-
-            size_t dot = data_name.find_last_of(".");
-            if (dot != std::string::npos){
-                name = data_name.substr(0, dot);
-                ext  = data_name.substr(dot, data_name.size() - dot);
-            }else{
-                name = data_name;
-                ext  = "";
-            }
+            std::string name = data_item->name();
 
             data_collection = new H5::Group(
                 file->createGroup(std::string("/DataCollections/"+name)));
@@ -352,23 +336,10 @@ bool ExperimentExporter::writePeaks(
                 masked[i] = peak->masked();
                 predicted[i] = peak->predicted();
 
-                std::string data_name = peak->data()->filename();
-                size_t sep = data_name.find_last_of("\\/");
-                if (sep != std::string::npos)
-                    data_name = data_name.substr(sep + 1, data_name.size() - sep - 1);
-
-                size_t dot = data_name.find_last_of(".");
-                if (dot != std::string::npos){
-                    name = data_name.substr(0, dot);
-                    ext  = data_name.substr(dot, data_name.size() - dot);
-                }else{
-                    name = data_name;
-                    ext  = "";
-                }
-
+                name = peak->data()->name();
                 data_names.push_back(name.c_str());
 
-                sptrUnitCell unit_cell = peak->unitCell();
+                UnitCell* unit_cell = peak->unitCell();
                 if (unit_cell){
                     unit_cells.push_back(unit_cell->name().c_str());
                 }else{
@@ -569,9 +540,67 @@ bool ExperimentExporter::writePeaks(
     return true;
 }
 
-bool ExperimentExporter::writeUnitCells()
+bool ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> unit_cells)
 {
     try{
+        H5::H5File* file = new H5::H5File(_file_name.c_str(), H5F_ACC_RDWR);
+        H5::Group* data_collections = new H5::Group(file->createGroup("/UnitCells"));
+        H5::DataSpace metaSpace(H5S_SCALAR);
+        H5::StrType str80(H5::PredType::C_S1, 80);
+        H5::Group* unit_cell_group;
+
+        for (
+            std::map<std::string,UnitCell*>::const_iterator it = unit_cells.begin(); 
+            it != unit_cells.end(); ++it) {
+
+            //Write the data
+            std::string unit_cell_name = it->first;
+            UnitCell* unit_cell = it->second;
+
+            uint z_val = unit_cell->z();
+            double tolerance = unit_cell->indexingTolerance();
+            UnitCellCharacter ch = unit_cell->character();
+
+            unit_cell_group = new H5::Group(
+                file->createGroup(std::string("/UnitCells/"+unit_cell_name)));
+
+            H5::Attribute a(unit_cell_group->createAttribute(
+                "a", H5::PredType::NATIVE_DOUBLE, metaSpace));
+            H5::Attribute b(unit_cell_group->createAttribute(
+                "b", H5::PredType::NATIVE_DOUBLE, metaSpace));
+            H5::Attribute c(unit_cell_group->createAttribute(
+                "c", H5::PredType::NATIVE_DOUBLE, metaSpace));
+            H5::Attribute alpha(unit_cell_group->createAttribute(
+                "alpha", H5::PredType::NATIVE_DOUBLE, metaSpace));
+            H5::Attribute gamma(unit_cell_group->createAttribute(
+                "beta", H5::PredType::NATIVE_DOUBLE, metaSpace));
+            H5::Attribute beta(unit_cell_group->createAttribute(
+                "gamma", H5::PredType::NATIVE_DOUBLE, metaSpace));
+            H5::Attribute index_tolerance(unit_cell_group->createAttribute(
+                "indexing_tolerance", H5::PredType::NATIVE_DOUBLE, metaSpace));
+            H5::Attribute bravais(unit_cell_group->createAttribute(
+                "bravais", str80, metaSpace));
+            H5::Attribute space_group(unit_cell_group->createAttribute(
+                "space_group", str80, metaSpace));
+            H5::Attribute z(unit_cell_group->createAttribute(
+                "z", H5::PredType::NATIVE_UINT, metaSpace));
+
+            a.write(H5::PredType::NATIVE_DOUBLE, &ch.a);
+            b.write(H5::PredType::NATIVE_DOUBLE, &ch.b);
+            c.write(H5::PredType::NATIVE_DOUBLE, &ch.c);
+            alpha.write(H5::PredType::NATIVE_DOUBLE, &ch.alpha);
+            beta.write(H5::PredType::NATIVE_DOUBLE, &ch.beta);
+            gamma.write(H5::PredType::NATIVE_DOUBLE, &ch.gamma);
+            index_tolerance.write(H5::PredType::NATIVE_DOUBLE, &tolerance);
+            bravais.write(str80, unit_cell->bravaisTypeSymbol());
+            space_group.write(str80, unit_cell->spaceGroup().symbol());
+            z.write(H5::PredType::NATIVE_UINT, &(z_val));
+
+            delete unit_cell_group;
+        }
+
+        delete data_collections;
+        delete file;
 
     } catch (...){
         return false;

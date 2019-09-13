@@ -60,9 +60,9 @@ class PeaksTableModel : public QcrTableModel {
  public slots:
     void slotChangeEnabledPeak(nsx::sptrPeak3D peak);
     void slotChangeMaskedPeaks(const nsx::PeakList& peaks);
-    void slotRemoveUnitCell(const nsx::sptrUnitCell unit_cell);
+    void slotRemoveUnitCell(nsx::UnitCell* unit_cell);
     void setUnitCell(
-        const nsx::sptrUnitCell& unitCell, QModelIndexList selectedPeaks = QModelIndexList());
+        nsx::UnitCell* unitCell, QModelIndexList selectedPeaks = QModelIndexList());
     void sortEquivalents();
  signals:
     void signalSelectedPeakChanged(nsx::sptrPeak3D peak);

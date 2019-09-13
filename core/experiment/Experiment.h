@@ -64,6 +64,8 @@ public:
    //! Get number of data
    int numData() const {return  _data.size();};
    //! Add some data to the experiment
+   void addData(std::string name, sptrDataSet data);
+   //! Add some data to the experiment
    void addData(sptrDataSet data);
    //! Returns true if the experiment has a data
    bool hasData(const std::string& name) const;
@@ -92,7 +94,7 @@ public:
 public:
 
    //! Add some data to the experiment
-   void addUnitCell(const std::string& name, sptrUnitCell unit_cell);
+   void addUnitCell(const std::string& name, UnitCell* unit_cell);
    //! Returns true if the experiment has a data
    bool hasUnitCell(const std::string& name) const;
    //! Get a list of loaded list names
@@ -101,6 +103,8 @@ public:
    UnitCell* getUnitCell(const std::string& name);
    //! Remove a data from the experiment
    void removeUnitCell(const std::string& name);
+   //! Get the number of peak lists
+   int numUnitCells() const {return _unit_cells.size();};
 
 public:
 

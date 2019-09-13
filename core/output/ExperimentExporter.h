@@ -38,7 +38,7 @@ public:
     //! Write the peak data into the current file
     bool writePeaks(const std::map<std::string, PeakCollection*> peakCollections);
     //! write the unit cells into current file
-    bool writeUnitCells();
+    bool writeUnitCells(const std::map<std::string, UnitCell*> unit_cells);
     //! Finish writing the current file
     bool finishWrite();
 

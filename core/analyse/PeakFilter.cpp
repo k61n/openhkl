@@ -47,7 +47,7 @@ void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
 {
     filterHasUnitCell(peak_collection);
     filterIndexTolerance(peak_collection);
-    std::map<nsx::sptrUnitCell, std::vector<nsx::Peak3D*>> peaks_per_unit_cell;
+    std::map<nsx::UnitCell*, std::vector<nsx::Peak3D*>> peaks_per_unit_cell;
     nsx::Peak3D* peak_ptr;
     for (int i = 0 ; i < peak_collection->numberOfPeaks(); ++i){
         peak_ptr = peak_collection->getPeak(i);
@@ -123,7 +123,7 @@ void PeakFilter::filterExtincted(PeakCollection* peak_collection) const
     for (int i = 0 ; i < peak_collection->numberOfPeaks(); ++i){
         peak_ptr = peak_collection->getPeak(i);
         if (peak_ptr->caughtByFilter()){
-            nsx::sptrUnitCell unit_cell = peak_ptr->unitCell();
+            nsx::UnitCell* unit_cell = peak_ptr->unitCell();
             SpaceGroup group(unit_cell->spaceGroup());
             MillerIndex hkl(peak_ptr->q(), *(unit_cell));
             if (group.isExtinct(hkl)) {
@@ -241,7 +241,7 @@ void PeakFilter::filterIndexed(PeakCollection* peak_collection) const
     for (int i = 0 ; i < peak_collection->numberOfPeaks(); ++i){
         peak_ptr = peak_collection->getPeak(i);
         if (peak_ptr->caughtByFilter()){
-            nsx::sptrUnitCell unit_cell = peak_ptr->unitCell();
+            nsx::UnitCell* unit_cell = peak_ptr->unitCell();
             MillerIndex hkl(peak_ptr->q(), *unit_cell);
             if (hkl.indexed(_unit_cell_tolerance)) {
             peak_ptr->caughtYou(true);

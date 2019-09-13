@@ -140,7 +140,7 @@ void RefinerFrame::refine()
     for (QModelIndex r : selected_rows)
         selected_peaks.push_back(allPeaks[r.row()]);
 
-    nsx::sptrUnitCell unit_cell = selected_peaks[0]->unitCell();
+    nsx::UnitCell* unit_cell = selected_peaks[0]->unitCell();
 
     if (!unit_cell) {
         gLogger->log("[ERROR] No unit cell set for the selected peaks");

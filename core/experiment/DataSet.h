@@ -108,10 +108,17 @@ class DataSet {
     //! Returns the data reader used to set this dataset
     std::shared_ptr<IDataReader> reader() const;
 
+    //! Return the name of the dataset
+    std::string name() const;
+    //! Set the name of the dataset
+    void setName(std::string name) {_name = name;};
+
  private:
     bool _isOpened;
 
     std::string _filename;
+
+    std::string _name;
 
     unsigned int _nFrames;
 

@@ -73,7 +73,9 @@ bool ExperimentImporter::loadData(Experiment* experiment)
             nsx::sptrDataSet data = std::shared_ptr<nsx::DataSet>(
                 new nsx::DataSet(reader));
 
-            experiment->addData(data);
+            std::string collection_name = data_collections.getObjnameByIdx(i);
+
+            experiment->addData(collection_name, data);
         }
 
     } catch (H5::Exception& e) {
@@ -248,10 +250,7 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
                     local_center,
                     local_metric);
 
-                std::cout<<"hey"<<std::endl;
-                std::cout<<std::string(data_names[k])<<data_names[k]<<std::endl;
                 sptrDataSet data_pointer = experiment->dataShortName(std::string(data_names[k]));
-                std::cout<<"hey"<<std::endl;
                 std::shared_ptr<nsx::Peak3D> peak = std::make_shared<nsx::Peak3D>(data_pointer,ellipsoid);
 
                 nsx::Intensity peak_intensity(intensity[k], sigma[k]);
@@ -285,8 +284,68 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
 bool ExperimentImporter::loadUnitCells(Experiment* experiment)
 {
     try{
+        H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
+        H5::Group unit_cells(file.openGroup("/UnitCells"));
+        
+        hsize_t object_num = unit_cells.getNumObjs();
+        for (int i = 0 ; i < object_num; ++i){
 
-    } catch (...){
+            double a = 0;
+            double b = 0;
+            double c = 0;
+            double alpha = 0;
+            double beta = 0;
+            double gamma = 0;
+            double indexing_tolerance = 0.1;
+            uint z = 1;
+            std::string bravais = "aP";
+            std::string space_group = "P 1";
+
+            std::string cell_name = unit_cells.getObjnameByIdx(i);
+            H5::Group unit_cell(file.openGroup(
+                "/UnitCells/"+cell_name));
+
+            // Read the info group and store in metadata
+            int n_meta = unit_cell.getNumAttrs();
+            for (int j = 0; j < n_meta; ++j) {
+                H5::Attribute attr = unit_cell.openAttribute(j);
+                H5::DataType typ = attr.getDataType();
+
+                if (attr.getName() == "a")
+                    attr.read(typ, &a);
+                if (attr.getName() == "b")
+                    attr.read(typ, &b);
+                if (attr.getName() == "c")
+                    attr.read(typ, &c);
+                if (attr.getName() == "alpha")
+                    attr.read(typ, &alpha);
+                if (attr.getName() == "beta")
+                    attr.read(typ, &beta);
+                if (attr.getName() == "gamma")
+                    attr.read(typ, &gamma);
+                if (attr.getName() == "indexing_tolerance")
+                    attr.read(typ, &indexing_tolerance);
+                if (attr.getName() == "bravais")
+                    attr.read(typ, bravais);
+                if (attr.getName() == "space_group")
+                    attr.read(typ, space_group);
+                if (attr.getName() == "z")
+                    attr.read(typ, &z);
+            }
+
+            UnitCell temp_cell(a, b, c, alpha, beta, gamma);
+            temp_cell.setBravaisType(BravaisType(bravais[0]));
+            temp_cell.setIndexingTolerance(indexing_tolerance);
+            temp_cell.setSpaceGroup(SpaceGroup(space_group));
+            temp_cell.setZ(z);
+            temp_cell.setLatticeCentring(LatticeCentring(bravais[1]));
+
+            experiment->addUnitCell(cell_name, &temp_cell);
+        }
+
+    } catch (H5::Exception& e) {
+        std::string what = e.getDetailMsg();
+        throw std::runtime_error(what);
         return false;
     }
     

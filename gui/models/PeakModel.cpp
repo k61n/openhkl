@@ -38,7 +38,7 @@ PeaksTableModel::PeaksTableModel(const QString& name, nsx::sptrExperiment experi
 {
 }
 
-void PeaksTableModel::slotRemoveUnitCell(const nsx::sptrUnitCell unit_cell)
+void PeaksTableModel::slotRemoveUnitCell(nsx::UnitCell* unit_cell)
 {
     Q_UNUSED(unit_cell)
 
@@ -161,7 +161,7 @@ QVariant PeaksTableModel::data(const QModelIndex& index, int role) const
 
     int row = index.row();
     int column = index.column();
-    nsx::sptrUnitCell cell = _peaks[row]->unitCell();
+    nsx::UnitCell* cell = _peaks[row]->unitCell();
     if (cell) {
         nsx::MillerIndex miller_index(_peaks[row]->q(), *cell);
         if (miller_index.indexed(cell->indexingTolerance())) {
@@ -208,7 +208,7 @@ QVariant PeaksTableModel::data(const QModelIndex& index, int role) const
                     return _peaks[row]->data()->reader()->metadata().key<int>("Numor");
                 }
                 case Column::unitCell: {
-                    nsx::sptrUnitCell unit_cell = _peaks[row]->unitCell();
+                    nsx::UnitCell* unit_cell = _peaks[row]->unitCell();
                     if (unit_cell)
                         return QString::fromStdString(unit_cell->name());
                     else
@@ -246,8 +246,8 @@ void PeaksTableModel::sort(int column, Qt::SortOrder order)
     switch (column) {
         case Column::h: {
             compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-                nsx::sptrUnitCell cell1 = p1->unitCell();
-                nsx::sptrUnitCell cell2 = p2->unitCell();
+                nsx::UnitCell* cell1 = p1->unitCell();
+                nsx::UnitCell* cell2 = p2->unitCell();
                 if (cell1 && cell2) {
                     nsx::MillerIndex miller_index1(p1->q(), *cell1);
                     nsx::MillerIndex miller_index2(p2->q(), *cell2);
@@ -260,8 +260,8 @@ void PeaksTableModel::sort(int column, Qt::SortOrder order)
         }
         case Column::k: {
             compareFn = [&](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-                nsx::sptrUnitCell cell1 = p1->unitCell();
-                nsx::sptrUnitCell cell2 = p2->unitCell();
+                nsx::UnitCell* cell1 = p1->unitCell();
+                nsx::UnitCell* cell2 = p2->unitCell();
                 if (cell1 && cell2) {
                     nsx::MillerIndex miller_index1(p1->q(), *cell1);
                     nsx::MillerIndex miller_index2(p2->q(), *cell2);
@@ -274,8 +274,8 @@ void PeaksTableModel::sort(int column, Qt::SortOrder order)
         }
         case Column::l: {
             compareFn = [](nsx::sptrPeak3D p1, nsx::sptrPeak3D p2) {
-                nsx::sptrUnitCell cell1 = p1->unitCell();
-                nsx::sptrUnitCell cell2 = p2->unitCell();
+                nsx::UnitCell* cell1 = p1->unitCell();
+                nsx::UnitCell* cell2 = p2->unitCell();
                 if (cell1 && cell2) {
                     nsx::MillerIndex miller_index1(p1->q(), *cell1);
                     nsx::MillerIndex miller_index2(p2->q(), *cell2);
@@ -336,8 +336,8 @@ void PeaksTableModel::sort(int column, Qt::SortOrder order)
         }
         case Column::unitCell: {
             compareFn = [&](nsx::sptrPeak3D p1, const nsx::sptrPeak3D p2) {
-                nsx::sptrUnitCell uc1 = p1->unitCell();
-                nsx::sptrUnitCell uc2 = p2->unitCell();
+                nsx::UnitCell* uc1 = p1->unitCell();
+                nsx::UnitCell* uc2 = p2->unitCell();
                 std::string uc1Name = uc1 ? uc1->name() : "";
                 std::string uc2Name = uc2 ? uc2->name() : "";
                 return (uc2Name < uc1Name);
@@ -384,7 +384,7 @@ void PeaksTableModel::sortEquivalents()
 {
     // todo: investigate this method. Likely incorrect if there are multiple unit
     // cells.
-    nsx::sptrUnitCell cell = _peaks[0]->unitCell();
+    nsx::UnitCell* cell = _peaks[0]->unitCell();
 
     // If no unit cell defined for the peak collection, return.
     if (!cell) {
@@ -399,7 +399,7 @@ void PeaksTableModel::sortEquivalents()
     });
 }
 
-void PeaksTableModel::setUnitCell(const nsx::sptrUnitCell& unitCell, QModelIndexList selectedPeaks)
+void PeaksTableModel::setUnitCell(nsx::UnitCell* unitCell, QModelIndexList selectedPeaks)
 {
     if (selectedPeaks.isEmpty()) {
         for (int i = 0; i < rowCount(); ++i)

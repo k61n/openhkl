@@ -106,10 +106,10 @@ QVariant ExperimentModel::valueOutput(const QModelIndex& index) const
             return QVariant(
                 gSession->experimentAt(row)->experiment()->numPeakCollections());
         }
-        // case 4 {
-        //     return QVariant(
-        //         gSession->experimentAt(row)->experiment());
-        // }
+        case 4: {
+            return QVariant(
+                gSession->experimentAt(row)->experiment()->numUnitCells());
+        }
         default: return QVariant();
     }
 }

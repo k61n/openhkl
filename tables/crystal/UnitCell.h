@@ -99,6 +99,8 @@ class UnitCell {
 
     //! Sets lattice centering type
     void setLatticeCentring(LatticeCentring centring);
+    //! Return the centering condition
+    char latticeCentering() const {return (char)_centring;};
 
     //! Sets Bravais type
     void setBravaisType(BravaisType bravais);

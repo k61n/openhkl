@@ -113,7 +113,7 @@ void PeakExporter::saveToShelX(std::string filename, nsx::PeakList* peakList)
     for (int i = 0; i < peakList->size(); i++){
         std::shared_ptr<nsx::Peak3D> peak = peakList->at(i);
         if (peak->selected()){
-            nsx::sptrUnitCell cell = peak->unitCell();
+            nsx::UnitCell* cell = peak->unitCell();
             if (cell){
                 nsx::MillerIndex miller_index(peak->q(), *cell);
                 if (miller_index.indexed(cell->indexingTolerance())){
@@ -180,7 +180,7 @@ void PeakExporter::saveToFullProf(std::string filename, nsx::PeakList* peakList)
     for (int i = 0; i < peakList->size(); i++){
         std::shared_ptr<nsx::Peak3D> peak = peakList->at(i);
         if (peak->selected()){
-            nsx::sptrUnitCell cell = peak->unitCell();
+            nsx::UnitCell* cell = peak->unitCell();
             if (cell){
                 nsx::MillerIndex miller_index(peak->q(), *cell);
                 if (miller_index.indexed(cell->indexingTolerance())){
@@ -248,7 +248,7 @@ void PeakExporter::saveToSCA(std::string filename, nsx::PeakList* peakList)
 {
     std::fstream file(filename, std::ios::out);
 
-    sptrUnitCell unitCell = peakList->at(0)->unitCell();
+    UnitCell* unitCell = peakList->at(0)->unitCell();
     UnitCellCharacter character = unitCell->character();
     std::string symbol = unitCell->spaceGroup().symbol();
     std::for_each(symbol.begin(), symbol.end(), [](char & c){c = ::tolower(c);});
@@ -273,7 +273,7 @@ void PeakExporter::saveToSCA(std::string filename, nsx::PeakList* peakList)
     for (int i = 0; i < peakList->size(); i++){
         std::shared_ptr<nsx::Peak3D> peak = peakList->at(i);
         if (peak->selected()){
-            nsx::sptrUnitCell cell = peak->unitCell();
+            nsx::UnitCell* cell = peak->unitCell();
             if (cell){
                 nsx::MillerIndex miller_index(peak->q(), *cell);
                 if (miller_index.indexed(cell->indexingTolerance())){
@@ -317,7 +317,7 @@ void PeakExporter::saveToSCA(
 {
     std::fstream file(filename, std::ios::out);
 
-    sptrUnitCell unitCell = peakList->at(0)->unitCell();
+    UnitCell* unitCell = peakList->at(0)->unitCell();
     UnitCellCharacter character = unitCell->character();
     std::string symbol = unitCell->spaceGroup().symbol();
     std::for_each(symbol.begin(), symbol.end(), [](char & c){c = ::tolower(c);});

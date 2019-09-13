@@ -41,7 +41,7 @@ QVariant PeakItem::peakData(
     Eigen::RowVector3i hkl = {0, 0, 0};
     Eigen::RowVector3d hkl_error = {0.0, 0.0, 0.0};
 
-    nsx::sptrUnitCell cell = _peak->unitCell();
+    nsx::UnitCell* cell = _peak->unitCell();
 
     if (cell) {
         nsx::MillerIndex miller_index(_peak->q(), *cell);
@@ -88,7 +88,7 @@ QVariant PeakItem::peakData(
                     return _peak->data()->reader()->metadata().key<int>("Numor");
                 }
                 case Column::uc: {
-                    nsx::sptrUnitCell unit_cell = _peak->unitCell();
+                    nsx::UnitCell* unit_cell = _peak->unitCell();
                     if (unit_cell)
                         return QString::fromStdString(unit_cell->name());
                     else

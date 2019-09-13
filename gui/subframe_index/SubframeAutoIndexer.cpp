@@ -438,7 +438,7 @@ void SubframeAutoIndexer::runAutoIndexer()
 void SubframeAutoIndexer::buildSolutionsTable()
 {
     // Create table with 9 columns
-    QStandardItemModel* model = new QStandardItemModel(_solutions.size(), 9, this);
+    QStandardItemModel* model = new QStandardItemModel(_solutions.size(), 10, this);
     model->setHorizontalHeaderItem(0, new QStandardItem("a"));
     model->setHorizontalHeaderItem(1, new QStandardItem("b"));
     model->setHorizontalHeaderItem(2, new QStandardItem("c"));
@@ -526,10 +526,21 @@ void SubframeAutoIndexer::acceptSolution()
         std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
         dlg->exec();
         if (!dlg->listName().isEmpty()){
+            _selected_unit_cell->setName(dlg->listName().toStdString());
             gSession->experimentAt(
                 _exp_combo->currentIndex())->experiment()->addUnitCell(
-                    dlg->listName().toStdString(), _selected_unit_cell);
+                    dlg->listName().toStdString(), _selected_unit_cell.get());
             gSession->onUnitCellChanged();
+
+            nsx::PeakCollection* collection = gSession->experimentAt(
+                _exp_combo->currentIndex())->experiment()->getPeakCollection(
+                    _peak_combo->currentText().toStdString());
+            std::vector<nsx::Peak3D*>* peaks = collection->getPeakList();
+            for (nsx::Peak3D* peak: *peaks)
+                peak->setUnitCell(gSession->experimentAt(
+                    _exp_combo->currentIndex())->experiment()->getUnitCell(
+                        dlg->listName().toStdString()));
+
         }
         
     }

@@ -92,8 +92,8 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
     switch (column) {
         case Column::h: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>&  p2) {
-                nsx::sptrUnitCell cell_1 = p1->peak()->unitCell();
-                nsx::sptrUnitCell cell_2 = p2->peak()->unitCell();
+                nsx::UnitCell* cell_1 = p1->peak()->unitCell();
+                nsx::UnitCell* cell_2 = p2->peak()->unitCell();
                 if (cell_1 && cell_2) {
                     nsx::MillerIndex miller_index1(p1->peak()->q(), *cell_1);
                     nsx::MillerIndex miller_index2(p2->peak()->q(), *cell_2);
@@ -106,8 +106,8 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
         }
         case Column::k: {
             compareFn = [&](std::unique_ptr<PeakItem>&  p1, std::unique_ptr<PeakItem>&  p2) {
-                nsx::sptrUnitCell cell_1 = p1->peak()->unitCell();
-                nsx::sptrUnitCell cell_2 = p2->peak()->unitCell();
+                nsx::UnitCell* cell_1 = p1->peak()->unitCell();
+                nsx::UnitCell* cell_2 = p2->peak()->unitCell();
                 if (cell_1 && cell_2) {
                     nsx::MillerIndex miller_index1(p1->peak()->q(), *cell_1);
                     nsx::MillerIndex miller_index2(p2->peak()->q(), *cell_2);
@@ -120,8 +120,8 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
         }
         case Column::l: {
             compareFn = [](std::unique_ptr<PeakItem>&  p1, std::unique_ptr<PeakItem>&  p2) {
-                nsx::sptrUnitCell cell_1 = p1->peak()->unitCell();
-                nsx::sptrUnitCell cell_2 = p2->peak()->unitCell();
+                nsx::UnitCell* cell_1 = p1->peak()->unitCell();
+                nsx::UnitCell* cell_2 = p2->peak()->unitCell();
                 if (cell_1 && cell_2) {
                     nsx::MillerIndex miller_index1(p1->peak()->q(), *cell_1);
                     nsx::MillerIndex miller_index2(p2->peak()->q(), *cell_2);
@@ -182,8 +182,8 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
         }
         case Column::uc: {
             compareFn = [&](std::unique_ptr<PeakItem>&  p1, std::unique_ptr<PeakItem>&  p2) {
-                nsx::sptrUnitCell uc_1 = p1->peak()->unitCell();
-                nsx::sptrUnitCell uc_2 = p2->peak()->unitCell();
+                nsx::UnitCell* uc_1 = p1->peak()->unitCell();
+                nsx::UnitCell* uc_2 = p2->peak()->unitCell();
                 std::string uc_1Name = uc_1 ? uc_1->name() : "";
                 std::string uc_2Name = uc_2 ? uc_2->name() : "";
                 return (uc_2Name < uc_1Name);

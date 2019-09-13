@@ -98,20 +98,7 @@ sptrDataSet Experiment::dataShortName(std::string name)
     std::map<std::string, sptrDataSet> temp;
     for (std::map<std::string, sptrDataSet>::iterator it = _data.begin();
     it != _data.end(); ++it){
-        std::string file_path = it->second->reader()->name();
-        std::string short_name;
-
-        size_t sep = file_path.find_last_of("\\/");
-        if (sep != std::string::npos)
-            file_path = file_path.substr(sep + 1, file_path.size() - sep - 1);
-
-        size_t dot = file_path.find_last_of(".");
-        if (dot != std::string::npos){
-            short_name = file_path.substr(0, dot);
-        }else{
-            short_name = file_path;
-        }
-        temp.insert(std::make_pair(short_name,it->second));
+        temp.insert(std::make_pair(it->second->name(),it->second));
     }
 
     auto it = temp.find(name);
@@ -166,6 +153,43 @@ void Experiment::addData(sptrDataSet data)
             throw std::runtime_error("trying to mix data with different wavelengths");
     }
     _data.insert(std::make_pair(filename, data));
+}
+
+void Experiment::addData(std::string name, sptrDataSet data)
+{
+    auto filename = data->filename();
+
+    // Add the data only if it does not exist in the current data map
+    if (_data.find(filename) != _data.end())
+        return;
+
+    const auto& metadata = data->reader()->metadata();
+
+    std::string diffName = metadata.key<std::string>("Instrument");
+
+    if (!(diffName.compare(_diffractometer->name()) == 0)) {
+        throw std::runtime_error("Mismatch between the diffractometer assigned to "
+                                 "the experiment and the data");
+    }
+    double wav = metadata.key<double>("wavelength");
+
+    // ensure that there is at least one monochromator!
+    if (_diffractometer->source().nMonochromators() == 0) {
+        Monochromator mono("mono");
+        _diffractometer->source().addMonochromator(mono);
+    }
+
+    auto& mono = _diffractometer->source().selectedMonochromator();
+
+    if (_data.empty())
+        mono.setWavelength(wav);
+    else {
+        if (std::abs(wav - mono.wavelength()) > 1e-5)
+            throw std::runtime_error("trying to mix data with different wavelengths");
+    }
+
+    data->setName(name);
+    _data.insert(std::make_pair(name, data));
 }
 
 bool Experiment::hasData(const std::string& name) const
@@ -224,7 +248,7 @@ void Experiment::acceptFilter(std::string name, PeakCollection* collection)
     _peakCollections.insert(std::make_pair(name, std::move(ptr)));
 }
 
-void Experiment::addUnitCell(const std::string& name, sptrUnitCell unit_cell) 
+void Experiment::addUnitCell(const std::string& name, UnitCell* unit_cell) 
 {
     std::unique_ptr<UnitCell> ptr(new UnitCell(*unit_cell));
     _unit_cells.insert(std::make_pair(name, std::move(ptr)));
@@ -301,6 +325,16 @@ bool Experiment::saveToFile(std::string path) const
         success = exporter.writePeaks(peak_collections);
     }
 
+    if (success){
+        std::map<std::string,UnitCell*> unit_cells;
+        for (
+            std::map<std::string,std::unique_ptr<UnitCell>>::const_iterator it = _unit_cells.begin(); 
+            it != _unit_cells.end(); ++it) {
+            unit_cells.insert(std::make_pair(it->first,it->second.get()));
+        }
+        success = exporter.writeUnitCells(unit_cells);
+    }
+
     if (success)
         success = exporter.finishWrite();
 
@@ -315,6 +349,10 @@ bool Experiment::loadFromFile(std::string path)
 
     if (success){
         success = importer.loadData(this);
+    }
+
+    if (success){
+        success = importer.loadUnitCells(this);
     }
 
     if (success){

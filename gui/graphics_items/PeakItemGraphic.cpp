@@ -51,7 +51,7 @@ void PeakItemGraphic::redraw()
 {
 
     QString peak_label;
-    nsx::sptrUnitCell unit_cell = _peak->unitCell();
+    nsx::UnitCell* unit_cell = _peak->unitCell();
     if (unit_cell) {
         nsx::MillerIndex miller_index(_peak->q(), *unit_cell);
         if (miller_index.indexed(unit_cell->indexingTolerance())) {
@@ -196,7 +196,7 @@ void PeakItemGraphic::plot(SXPlot* plot)
     // Now update text info:
     QString info;
 
-    if (nsx::sptrUnitCell cell = _peak->unitCell()) {
+    if (nsx::UnitCell* cell = _peak->unitCell()) {
         nsx::MillerIndex miller_index(_peak->q(), *cell);
         if (miller_index.indexed(cell->indexingTolerance())) {
             info = "(h,k,l):" + QString::number(miller_index[0]) + ","

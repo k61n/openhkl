@@ -79,12 +79,17 @@ public:
 
    //! Get the names of the Unit cells
    QStringList getUnitCellNames();
-   
+   //! Get the number of unit cells
+   int numUnitCells()const {return _experiment->numUnitCells();};
+   //! Add a unit cell to the experiment
    void addUnitCell(nsx::sptrUnitCell uc) { unitCells_.append(uc); }
+   //! Get a particular unit cell
    nsx::sptrUnitCell getUnitCell(int index = -1);
+   //! Delete a unit cell
    void removeUnitCell(int index = -1);
-
+   //! Select a unit cell
    void selectUnitCell(int select) { unitCellIndex_ = select; }
+   //! Get the list of unit cells
    QList<nsx::sptrUnitCell>* getUnitCellList(nsx::sptrUnitCell cell);
    
 public:
