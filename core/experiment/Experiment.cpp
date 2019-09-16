@@ -221,7 +221,9 @@ bool Experiment::hasPeakCollection(const std::string& name) const {
 }
 
 PeakCollection* Experiment::getPeakCollection(const std::string name){
-    return _peakCollections[name].get();
+    if (hasPeakCollection(name))
+        return _peakCollections[name].get();
+    return nullptr;
 }
 
 void Experiment::removePeakCollection(const std::string& name) {
@@ -273,7 +275,9 @@ std::vector<std::string*> Experiment::getUnitCellNames() const
 
 UnitCell* Experiment::getUnitCell(const std::string& name) 
 {
-    return _unit_cells[name].get();
+    if (hasUnitCell(name))
+        return _unit_cells[name].get();
+    return nullptr;
 }
 
 void Experiment::removeUnitCell(const std::string& name) 

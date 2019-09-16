@@ -343,7 +343,7 @@ bool ExperimentExporter::writePeaks(
                 if (unit_cell){
                     unit_cells.push_back(unit_cell->name().c_str());
                 }else{
-                    std::string temp = "";
+                    std::string temp = "NONE";
                     unit_cells.push_back(temp.c_str());
                 }
                 
@@ -559,23 +559,29 @@ bool ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> u
 
             uint z_val = unit_cell->z();
             double tolerance = unit_cell->indexingTolerance();
-            UnitCellCharacter ch = unit_cell->character();
+            Eigen::MatrixX3d rec = unit_cell->reciprocalBasis();
 
             unit_cell_group = new H5::Group(
                 file->createGroup(std::string("/UnitCells/"+unit_cell_name)));
 
-            H5::Attribute a(unit_cell_group->createAttribute(
-                "a", H5::PredType::NATIVE_DOUBLE, metaSpace));
-            H5::Attribute b(unit_cell_group->createAttribute(
-                "b", H5::PredType::NATIVE_DOUBLE, metaSpace));
-            H5::Attribute c(unit_cell_group->createAttribute(
-                "c", H5::PredType::NATIVE_DOUBLE, metaSpace));
-            H5::Attribute alpha(unit_cell_group->createAttribute(
-                "alpha", H5::PredType::NATIVE_DOUBLE, metaSpace));
-            H5::Attribute gamma(unit_cell_group->createAttribute(
-                "beta", H5::PredType::NATIVE_DOUBLE, metaSpace));
-            H5::Attribute beta(unit_cell_group->createAttribute(
-                "gamma", H5::PredType::NATIVE_DOUBLE, metaSpace));
+            H5::Attribute rec_00(unit_cell_group->createAttribute(
+                "rec_00", H5::PredType::NATIVE_DOUBLE, metaSpace));
+            H5::Attribute rec_01(unit_cell_group->createAttribute(
+                "rec_01", H5::PredType::NATIVE_DOUBLE, metaSpace));
+            H5::Attribute rec_02(unit_cell_group->createAttribute(
+                "rec_02", H5::PredType::NATIVE_DOUBLE, metaSpace));
+            H5::Attribute rec_10(unit_cell_group->createAttribute(
+                "rec_10", H5::PredType::NATIVE_DOUBLE, metaSpace));
+            H5::Attribute rec_11(unit_cell_group->createAttribute(
+                "rec_11", H5::PredType::NATIVE_DOUBLE, metaSpace));
+            H5::Attribute rec_12(unit_cell_group->createAttribute(
+                "rec_12", H5::PredType::NATIVE_DOUBLE, metaSpace));
+            H5::Attribute rec_20(unit_cell_group->createAttribute(
+                "rec_20", H5::PredType::NATIVE_DOUBLE, metaSpace));
+            H5::Attribute rec_21(unit_cell_group->createAttribute(
+                "rec_21", H5::PredType::NATIVE_DOUBLE, metaSpace));
+            H5::Attribute rec_22(unit_cell_group->createAttribute(
+                "rec_22", H5::PredType::NATIVE_DOUBLE, metaSpace));
             H5::Attribute index_tolerance(unit_cell_group->createAttribute(
                 "indexing_tolerance", H5::PredType::NATIVE_DOUBLE, metaSpace));
             H5::Attribute bravais(unit_cell_group->createAttribute(
@@ -585,12 +591,16 @@ bool ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> u
             H5::Attribute z(unit_cell_group->createAttribute(
                 "z", H5::PredType::NATIVE_UINT, metaSpace));
 
-            a.write(H5::PredType::NATIVE_DOUBLE, &ch.a);
-            b.write(H5::PredType::NATIVE_DOUBLE, &ch.b);
-            c.write(H5::PredType::NATIVE_DOUBLE, &ch.c);
-            alpha.write(H5::PredType::NATIVE_DOUBLE, &ch.alpha);
-            beta.write(H5::PredType::NATIVE_DOUBLE, &ch.beta);
-            gamma.write(H5::PredType::NATIVE_DOUBLE, &ch.gamma);
+            rec_00.write(H5::PredType::NATIVE_DOUBLE, &rec(0,0));
+            rec_01.write(H5::PredType::NATIVE_DOUBLE, &rec(0,1));
+            rec_02.write(H5::PredType::NATIVE_DOUBLE, &rec(0,2));
+            rec_10.write(H5::PredType::NATIVE_DOUBLE, &rec(1,0));
+            rec_11.write(H5::PredType::NATIVE_DOUBLE, &rec(1,1));
+            rec_12.write(H5::PredType::NATIVE_DOUBLE, &rec(1,2));
+            rec_20.write(H5::PredType::NATIVE_DOUBLE, &rec(2,0));
+            rec_21.write(H5::PredType::NATIVE_DOUBLE, &rec(2,1));
+            rec_22.write(H5::PredType::NATIVE_DOUBLE, &rec(2,2));
+            
             index_tolerance.write(H5::PredType::NATIVE_DOUBLE, &tolerance);
             bravais.write(str80, unit_cell->bravaisTypeSymbol());
             space_group.write(str80, unit_cell->spaceGroup().symbol());

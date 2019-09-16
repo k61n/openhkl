@@ -500,6 +500,7 @@ void SubframeAutoIndexer::selectSolutionTable()
 void SubframeAutoIndexer::selectSolutionHeader(int index)
 {
     _selected_unit_cell = _solutions[index].first;
+    _selected_unit_cell->printSelf(std::cout);
 
     nsx::PeakCollection* collection = gSession->experimentAt(
         _exp_combo->currentIndex())->experiment()->getPeakCollection(
@@ -540,7 +541,6 @@ void SubframeAutoIndexer::acceptSolution()
                 peak->setUnitCell(gSession->experimentAt(
                     _exp_combo->currentIndex())->experiment()->getUnitCell(
                         dlg->listName().toStdString()));
-
         }
         
     }

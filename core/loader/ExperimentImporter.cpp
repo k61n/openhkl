@@ -22,6 +22,8 @@
 #include "base/geometry/Ellipsoid.h"
 #include "core/peak/Intensity.h"
 
+#include <Eigen/Dense>
+
 namespace nsx {
 
 bool ExperimentImporter::setFilePath(std::string path, Experiment* experiment)
@@ -190,20 +192,18 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
             std::cout<<"Loading data-set names"<<std::endl;
             //Load the data_names
             {
-                H5::StrType datatype(H5::PredType::C_S1, H5T_VARIABLE); 
                 H5::DataSet data_set = peak_collection.openDataSet("DataNames");
                 H5::DataType data_type = data_set.getDataType();
                 H5::DataSpace space(data_set.getSpace());
 
-                hsize_t dims_out[2];
-                space.getSimpleExtentDims(dims_out, nullptr);
-                std::cout<<dims_out[0]<<" "<<dims_out[1]<<std::endl;
-                char *char_data_names[dims_out[0]];
-                data_set.read((void*)char_data_names, datatype);
+                hsize_t data_dims_out[2];
+                space.getSimpleExtentDims(data_dims_out, nullptr);
+                char *char_data_names[data_dims_out[0]];
+                data_set.read((void*)char_data_names, data_type);
 
-                for (int ii = 0; ii < dims_out[0]; ++ii){
+                for (int ii = 0; ii < data_dims_out[0]; ++ii){
                     std::string text;
-                    for (int jj = 0; jj < dims_out[1]-2; ++jj){
+                    for (int jj = 0; jj < strlen(char_data_names[ii]); ++jj){
                         text.append(std::string(1,char_data_names[ii][jj]));
                     }
                     data_names.push_back(text);
@@ -213,19 +213,19 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
             std::cout<<"Loading unit-cell names"<<std::endl;
             //Load the unit cell strings
             {
-                H5::StrType datatype(H5::PredType::C_S1, H5T_VARIABLE); 
-                H5::DataSet data_set = peak_collection.openDataSet("UnitCells");
-                H5::DataType data_type = data_set.getDataType();
-                H5::DataSpace space(data_set.getSpace());
+                H5::DataSet uc_data_set = peak_collection.openDataSet("UnitCells");
+                H5::DataType uc_data_type = uc_data_set.getDataType();
+                H5::DataSpace uc_space = uc_data_set.getSpace();
 
-                hsize_t dims_out[2];
-                space.getSimpleExtentDims(dims_out, nullptr);
-                char *char_unit_cells[dims_out[0]];
-                data_set.read((void*)char_unit_cells, datatype);
+                hsize_t uc_dims_out[2];
+                uc_space.getSimpleExtentDims(uc_dims_out, nullptr);
+                std::cout<<uc_dims_out[0]<<" " <<uc_dims_out[1]<<std::endl;
+                char *char_unit_cells[uc_dims_out[0]];
+                uc_data_set.read((void*)char_unit_cells, uc_data_type);
 
-                for (int ii = 0; ii < dims_out[0]; ++ii){
+                for (int ii = 0; ii < uc_dims_out[0]; ++ii){
                     std::string text;
-                    for (int jj = 0; jj < dims_out[1]-2; ++jj){
+                    for (int jj = 0; jj < strlen(char_unit_cells[ii]); ++jj){
                         text.append(std::string(1,char_unit_cells[ii][jj]));
                     }
                     unit_cells.push_back(text);
@@ -251,6 +251,7 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
                     local_metric);
 
                 sptrDataSet data_pointer = experiment->dataShortName(std::string(data_names[k]));
+                std::cout<<data_names[k]<<std::endl;
                 std::shared_ptr<nsx::Peak3D> peak = std::make_shared<nsx::Peak3D>(data_pointer,ellipsoid);
 
                 nsx::Intensity peak_intensity(intensity[k], sigma[k]);
@@ -261,6 +262,10 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
                     scale[k], transmission[k], peak_mean_bkg, 
                     predicted[k], selected[k], masked[k]
                     );
+
+                UnitCell* unit_cell_pointer = experiment->getUnitCell(std::string(unit_cells[k]));
+                std::cout<<unit_cells[k]<<std::endl;
+                peak->setUnitCell(unit_cell_pointer);
 
                 peaks.push_back(peak);
             }
@@ -290,13 +295,17 @@ bool ExperimentImporter::loadUnitCells(Experiment* experiment)
         hsize_t object_num = unit_cells.getNumObjs();
         for (int i = 0 ; i < object_num; ++i){
 
-            double a = 0;
-            double b = 0;
-            double c = 0;
-            double alpha = 0;
-            double beta = 0;
-            double gamma = 0;
-            double indexing_tolerance = 0.1;
+            double rec_00 = 1;
+            double rec_01 = 0; 
+            double rec_02 = 0;
+            double rec_10 = 0;
+            double rec_11 = 1; 
+            double rec_12 = 0;
+            double rec_20 = 0;
+            double rec_21 = 0; 
+            double rec_22 = 1;
+            
+            double indexing_tolerance = 0.2;
             uint z = 1;
             std::string bravais = "aP";
             std::string space_group = "P 1";
@@ -311,18 +320,25 @@ bool ExperimentImporter::loadUnitCells(Experiment* experiment)
                 H5::Attribute attr = unit_cell.openAttribute(j);
                 H5::DataType typ = attr.getDataType();
 
-                if (attr.getName() == "a")
-                    attr.read(typ, &a);
-                if (attr.getName() == "b")
-                    attr.read(typ, &b);
-                if (attr.getName() == "c")
-                    attr.read(typ, &c);
-                if (attr.getName() == "alpha")
-                    attr.read(typ, &alpha);
-                if (attr.getName() == "beta")
-                    attr.read(typ, &beta);
-                if (attr.getName() == "gamma")
-                    attr.read(typ, &gamma);
+                if (attr.getName() == "rec_00")
+                    attr.read(typ, &rec_00);
+                if (attr.getName() == "rec_01")
+                    attr.read(typ, &rec_01);
+                if (attr.getName() == "rec_02")
+                    attr.read(typ, &rec_02);
+                if (attr.getName() == "rec_10")
+                    attr.read(typ, &rec_10);
+                if (attr.getName() == "rec_11")
+                    attr.read(typ, &rec_11);
+                if (attr.getName() == "rec_12")
+                    attr.read(typ, &rec_12);
+                if (attr.getName() == "rec_20")
+                    attr.read(typ, &rec_20);
+                if (attr.getName() == "rec_21")
+                    attr.read(typ, &rec_21);
+                if (attr.getName() == "rec_22")
+                    attr.read(typ, &rec_22);
+
                 if (attr.getName() == "indexing_tolerance")
                     attr.read(typ, &indexing_tolerance);
                 if (attr.getName() == "bravais")
@@ -333,13 +349,17 @@ bool ExperimentImporter::loadUnitCells(Experiment* experiment)
                     attr.read(typ, &z);
             }
 
-            UnitCell temp_cell(a, b, c, alpha, beta, gamma);
+            Eigen::Matrix3d aa = Eigen::Matrix3d::Identity();
+            aa << rec_00,rec_01,rec_02,rec_10,rec_11,rec_12,rec_20,rec_21,rec_22;
+
+            UnitCell temp_cell(aa, true);
+            temp_cell.setName(cell_name);
             temp_cell.setBravaisType(BravaisType(bravais[0]));
             temp_cell.setIndexingTolerance(indexing_tolerance);
             temp_cell.setSpaceGroup(SpaceGroup(space_group));
             temp_cell.setZ(z);
             temp_cell.setLatticeCentring(LatticeCentring(bravais[1]));
-
+            temp_cell.printSelf(std::cout);
             experiment->addUnitCell(cell_name, &temp_cell);
         }
 

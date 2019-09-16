@@ -247,6 +247,12 @@ void UnitCell::printSelf(std::ostream& os) const
     os << std::fixed << std::setw(10) << std::setprecision(5) << rc.gamma / deg << std::endl;
     os << "Reciprocal basis (row vectors):" << std::endl;
     os << _b_transposed << std::endl;
+    os << "Niggli:" << std::endl;
+    os << _niggli.number << std::endl;
+    os << _niggli.typeI << std::endl;
+    os << _niggli.bravais << std::endl;
+    os << _niggli.C << std::endl;
+    os << _niggli.P << std::endl;
     //
     if (_material) {
         os << *(_material) << std::endl;
