@@ -18,9 +18,12 @@
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
 #include "gui/subframe_index/SubframeAutoIndexer.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
-#include "gui/graphics/DetectorScene.h"
+#include "gui/subframe_predict/SubframePredictPeaks.h"
 #include "gui/subframe_experiment/SubframeExperiment.h"
 #include "gui/subframe_home/SubframeHome.h"
+
+#include "gui/graphics/DetectorScene.h"
+
 #include <QCR/widgets/mainwindow.h>
 #include <QStackedWidget>
 
@@ -74,6 +77,8 @@ class MainWin : public QcrMainWindow {
     PeakFinderFrame* finder_;
     SubframeFilterPeaks* filter_;
     SubframeAutoIndexer* indexer_;
+    SubframePredictPeaks* predictor_;
+    
     class Menus* menus_;
 
     QByteArray initialState_;

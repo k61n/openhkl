@@ -16,8 +16,13 @@
 
 namespace nsx {
 
-PeakCollection::PeakCollection(std::string name, nsx::listtype type){
-    _name = name;
+PeakCollection::PeakCollection(){
+    _name = "No Name";
+    _type = nsx::listtype::FOUND;
+}
+
+PeakCollection::PeakCollection(const std::string& name, nsx::listtype type){
+    _name = std::string(name);
     _type = type;
 }
 
@@ -111,5 +116,21 @@ std::map<std::string, float>* PeakCollection::meta()
     return &_meta;
 }
 
+void PeakCollection::setShapeLibrary(ShapeLibrary shape_library)
+{
+    _shape_library = std::make_unique<ShapeLibrary>(shape_library);
+}
+
+void PeakCollection::setName(const std::string& name)
+{
+    if (name.empty())
+        return;
+    _name = std::string(name);
+}
+
+std::string PeakCollection::name() const
+{
+    return std::string(_name);
+}
 
 } // namespace nsx

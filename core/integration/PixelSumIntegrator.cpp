@@ -29,7 +29,7 @@ PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance)
 
 PixelSumIntegrator::~PixelSumIntegrator() {}
 
-bool PixelSumIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
+bool PixelSumIntegrator::compute(Peak3D* peak, const IntegrationRegion& region)
 {
     MeanBackgroundIntegrator::compute(peak, region);
     PeakCoordinateSystem frame(peak);

@@ -85,7 +85,7 @@ static void residuals(
     }
 }
 
-bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
+bool GaussianIntegrator::compute(Peak3D* peak, const IntegrationRegion& region)
 {
     if (!peak)
         return false;
@@ -189,7 +189,7 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     }
 }
 
-std::vector<double> GaussianIntegrator::profile(sptrPeak3D peak, const IntegrationRegion& region)
+std::vector<double> GaussianIntegrator::profile(Peak3D* peak, const IntegrationRegion& region)
 {
     const auto& events = region.data().events();
     const Eigen::Matrix3d A = peak->shape().metric();

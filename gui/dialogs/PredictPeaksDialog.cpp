@@ -31,10 +31,10 @@ PredictPeaksDialog::PredictPeaksDialog()
         qWarning() << "Call of predict peaks without selected experiment";
         return;
     }
-    if (!gSession->selectedExperiment()->getLibrary()) {
-        qWarning() << "Cannot predict peaks without a shape library";
-        return;
-    }
+    // if (!gSession->selectedExperiment()->getLibrary()) {
+    //     qWarning() << "Cannot predict peaks without a shape library";
+    //     return;
+    // }
 
     layout();
 }

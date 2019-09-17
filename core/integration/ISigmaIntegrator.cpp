@@ -27,7 +27,7 @@ ISigmaIntegrator::ISigmaIntegrator(sptrShapeLibrary library, double radius, doub
 {
 }
 
-bool ISigmaIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
+bool ISigmaIntegrator::compute(Peak3D* peak, const IntegrationRegion& region)
 {
     if (!_library)
         return false;

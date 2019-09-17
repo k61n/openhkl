@@ -642,21 +642,21 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
             if (!experiment_item)
                 ttip = QString("No experiment found");
             else {
-                nsx::sptrUnitCell selectedUnitCell = experiment_item->getUnitCell(0);
-                if (selectedUnitCell) {
-                    nsx::ReciprocalVector q = state.sampleQ(pos);
-                    nsx::MillerIndex miller_indices(q, *selectedUnitCell);
+                // nsx::sptrUnitCell selectedUnitCell = experiment_item->experimentgetUnitCell(0);
+                // if (selectedUnitCell) {
+                //     nsx::ReciprocalVector q = state.sampleQ(pos);
+                //     nsx::MillerIndex miller_indices(q, *selectedUnitCell);
 
-                    Eigen::RowVector3d hkl =
-                        miller_indices.rowVector().cast<double>() + miller_indices.error();
-                    ttip = QString("(%1,%2,%3) I: %4")
-                               .arg(hkl[0], 0, 'f', 2)
-                               .arg(hkl[1], 0, 'f', 2)
-                               .arg(hkl[2], 0, 'f', 2)
-                               .arg(intensity);
-                } else {
-                    ttip = QString("No unit cell selected");
-                }
+                //     Eigen::RowVector3d hkl =
+                //         miller_indices.rowVector().cast<double>() + miller_indices.error();
+                //     ttip = QString("(%1,%2,%3) I: %4")
+                //                .arg(hkl[0], 0, 'f', 2)
+                //                .arg(hkl[1], 0, 'f', 2)
+                //                .arg(hkl[2], 0, 'f', 2)
+                //                .arg(intensity);
+                // } else {
+                //     ttip = QString("No unit cell selected");
+                // }
             }
             break;
         }

@@ -25,7 +25,7 @@
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/dialogs/MCAbsorptionDialog.h"
 #include "gui/dialogs/PredictPeaksDialog.h"
-#include "gui/dialogs/ShapeLibraryDialog.h"
+#include "gui/subframe_predict/ShapeLibraryDialog.h"
 
 #include "gui/subframe_index/SubframeAutoIndexer.h"
 #include "gui/frames/GlobalOffsetsFrame.h"
@@ -135,7 +135,7 @@ void Actions::setupPeaks()
         }
         // gSession->selectedExperiment()->autoAssignUnitCell();
     });
-    buildShapeLibrary.setTriggerHook([]() { new ShapeLibraryDialog; });
+    // buildShapeLibrary.setTriggerHook([]() { new ShapeLibraryDialog; });
     refine.setTriggerHook([]() { new RefinerFrame; });
     normalize.setTriggerHook([]() {
         if (gSession->selectedExperimentNum() < 0)
@@ -156,10 +156,10 @@ void Actions::setupPeaks()
             return;
         if (gSession->selectedExperiment()->getUnitCellNames().empty())
             return;
-        nsx::sptrUnitCell cell = gSession->selectedExperiment()->getUnitCell();
-        nsx::SpaceGroup group = cell->spaceGroup();
+        // nsx::sptrUnitCell cell = gSession->selectedExperiment()->getUnitCell();
+        // nsx::SpaceGroup group = cell->spaceGroup();
         // nsx::PeakList list = gSession->selectedExperiment()->getUnitCell(cell);
-        qDebug() << "Space Group symbol: " << QString::fromStdString(group.symbol());
+        // qDebug() << "Space Group symbol: " << QString::fromStdString(group.symbol());
         // new MergedPeakInformationFrame(group, list);
     });
     correctAbsorption.setTriggerHook([]() {

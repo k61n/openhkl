@@ -27,7 +27,7 @@ class Profile1DIntegrator : public IPeakIntegrator {
     //! Construct integrator with given library, peak search radius, and frame bound
     Profile1DIntegrator(sptrShapeLibrary library, double radius, double nframes);
     //! Compute the integrated intensity of the given peakd
-    bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
+    bool compute(Peak3D* peak, const IntegrationRegion& region) override;
 
  private:
     sptrShapeLibrary _library;

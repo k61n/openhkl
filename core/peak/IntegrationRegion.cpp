@@ -29,7 +29,7 @@ IntegrationRegion::IntegrationRegion()
 }
 
 IntegrationRegion::IntegrationRegion(
-    sptrPeak3D peak, double peak_end, double bkg_begin, double bkg_end)
+    Peak3D* peak, double peak_end, double bkg_begin, double bkg_end)
     : _shape(peak->shape()), _peakEnd(peak_end), _bkgBegin(bkg_begin), _bkgEnd(bkg_end), _data(peak)
 {
     Ellipsoid bkg(_shape);

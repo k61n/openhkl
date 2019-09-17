@@ -77,25 +77,13 @@ public:
 
 public:
 
+   //! Add a unit cell to the experiment
+   void addUnitCell(std::string& name, nsx::UnitCell* unit_cell) 
+      { _experiment->addUnitCell(name, unit_cell); }
    //! Get the names of the Unit cells
    QStringList getUnitCellNames();
    //! Get the number of unit cells
    int numUnitCells()const {return _experiment->numUnitCells();};
-   //! Add a unit cell to the experiment
-   void addUnitCell(nsx::sptrUnitCell uc) { unitCells_.append(uc); }
-   //! Get a particular unit cell
-   nsx::sptrUnitCell getUnitCell(int index = -1);
-   //! Delete a unit cell
-   void removeUnitCell(int index = -1);
-   //! Select a unit cell
-   void selectUnitCell(int select) { unitCellIndex_ = select; }
-   //! Get the list of unit cells
-   QList<nsx::sptrUnitCell>* getUnitCellList(nsx::sptrUnitCell cell);
-   
-public:
-
-   void setLibrary(nsx::sptrShapeLibrary shapeLibrary) { _library = shapeLibrary; }
-   nsx::sptrShapeLibrary getLibrary() { return _library; }
    
 public: 
 
@@ -108,8 +96,6 @@ public:
 
    //! Pointer to the core experiment
    nsx::sptrExperiment _experiment;
-   //! Pointer to the core library
-   nsx::sptrShapeLibrary _library;
    //! The list of models for the peaks
    QList<PeakCollectionModel*> _peak_models; 
    //! The PeakListModel

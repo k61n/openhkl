@@ -30,6 +30,8 @@
 PeakCollectionItem::PeakCollectionItem()
     :QStandardItem()
 {
+    _peak_collection = nullptr;
+    _mode = PeakDisplayModes::VALID;
 }
 
 PeakCollectionItem::PeakCollectionItem(nsx::PeakCollection* peak_collection)
@@ -57,6 +59,16 @@ void PeakCollectionItem::setPeakCollection(nsx::PeakCollection* peak_collection)
         std::unique_ptr<PeakItem> item = std::make_unique<PeakItem>(peak); 
         _peak_items.push_back(std::move(item));
     }
+}
+
+std::string PeakCollectionItem::name() const
+{
+    std::string name = "No peak collection";
+
+    if (!(_peak_collection == nullptr))
+        return _peak_collection->name();
+    
+    return name;
 }
 
 int PeakCollectionItem::childCount() const

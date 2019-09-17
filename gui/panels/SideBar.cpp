@@ -30,6 +30,7 @@ SideBar::SideBar(QWidget *parent)
     QAction* finder = addAction(QIcon(":/images/findPeakIcon.png"), "Find Peaks");
     QAction* filter = addAction(QIcon(":/images/filterIcon.svg"), "Peak Filter");
     QAction* indexer = addAction(QIcon(":/images/findUnitCellIcon.png"), "Indexer");
+    QAction* predictor = addAction("Predictor");
     QAction* info = addAction(QIcon(":/images/peakInformationIcon.svg"), "Information");
 
     connect(home, &QAction::triggered, this, &SideBar::onHome);
@@ -37,6 +38,7 @@ SideBar::SideBar(QWidget *parent)
     connect(finder, &QAction::triggered, this, &SideBar::onFindPeaks);
     connect(filter, &QAction::triggered, this, &SideBar::onFilterPeaks);
     connect(indexer, &QAction::triggered, this, &SideBar::onIndexer);
+    connect(predictor, &QAction::triggered, this, &SideBar::onPredictor);
     connect(info, &QAction::triggered, this, &SideBar::onInformation);
 }
 
@@ -66,6 +68,12 @@ void SideBar::onIndexer()
 {
     gGui->layoutStack_->setCurrentIndex(4);
     gGui->indexer_->refreshAll();
+}
+
+void SideBar::onPredictor()
+{
+    gGui->layoutStack_->setCurrentIndex(5);
+    gGui->predictor_->refreshAll();
 }
 
 void SideBar::onInformation()

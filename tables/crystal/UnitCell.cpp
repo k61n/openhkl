@@ -381,12 +381,12 @@ void UnitCell::setName(const std::string& name)
 {
     if (name.empty())
         return;
-    _name = name;
+    _name = std::string(name);
 }
 
-const std::string& UnitCell::name() const
+std::string UnitCell::name() const
 {
-    return _name;
+    return std::string(_name);
 }
 
 void UnitCell::setIndexingTolerance(double tolerance)

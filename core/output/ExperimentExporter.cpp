@@ -600,7 +600,7 @@ bool ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> u
             rec_20.write(H5::PredType::NATIVE_DOUBLE, &rec(2,0));
             rec_21.write(H5::PredType::NATIVE_DOUBLE, &rec(2,1));
             rec_22.write(H5::PredType::NATIVE_DOUBLE, &rec(2,2));
-            
+
             index_tolerance.write(H5::PredType::NATIVE_DOUBLE, &tolerance);
             bravais.write(str80, unit_cell->bravaisTypeSymbol());
             space_group.write(str80, unit_cell->spaceGroup().symbol());

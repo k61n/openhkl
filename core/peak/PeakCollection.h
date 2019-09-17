@@ -16,6 +16,7 @@
 #define CORE_PEAK_PEAKCOLLECTION_H
 
 #include "core/peak/Peak3D.h"
+#include "core/shape/ShapeLibrary.h"
 
 namespace nsx {
 
@@ -25,11 +26,15 @@ enum class listtype {FOUND,FILTERED,PREDICTED};
 class PeakCollection{
 
  public:
-    //!Default contructor
-    PeakCollection(std::string name, nsx::listtype type);
 
-    //! Returns the amount of invalid peaks
-    std::string* name() {return &_name;};
+    //!Default contructor
+    PeakCollection();
+    PeakCollection(const std::string& name, nsx::listtype type);
+
+    //! Sets name of the unit cell
+    void setName(const std::string& name);
+    //! Returns the name
+    std::string name() const;
 
     //! Populate the peaks
     void populate(const std::vector<std::shared_ptr<nsx::Peak3D>>* peak_list);
@@ -56,6 +61,13 @@ class PeakCollection{
     //! Returns a fresh generated pointer to meta
     std::map<std::string, float>* meta();
 
+    //! Set the shape library needed for the peak prediction
+    void setShapeLibrary(ShapeLibrary shape_library);
+    //! Reset the shape library
+    void resetShapeLibrary() {_shape_library.reset(nullptr);};
+    //! Get the shape library
+    ShapeLibrary* shapeLibrary() const {return _shape_library.get();};
+
 private:
     std::vector<std::unique_ptr<nsx::Peak3D>> _peaks;
     std::string _name;
@@ -65,8 +77,10 @@ private:
 
     std::string _file_name;
     std::string _parent;
+
+    std::unique_ptr<ShapeLibrary> _shape_library;
 };
 
 } // namespace nsx
 
-#endif // GUI_MODELS_SESSIONEXPERIMENT_H
+#endif // CORE_PEAK_PEAKCOLLECTION_H

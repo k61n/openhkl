@@ -206,8 +206,8 @@ void Experiment::removeData(const std::string& name)
 }
 
 void Experiment::addPeakCollection(
-    const std::string name, 
-    const std::vector<std::shared_ptr<nsx::Peak3D>>* peaks) {
+    const std::string& name, 
+    const std::vector<nsx::Peak3D*>* peaks) {
     nsx::listtype type{listtype::FOUND};
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
     ptr->populate(peaks);
@@ -232,9 +232,9 @@ void Experiment::removePeakCollection(const std::string& name) {
         _peakCollections.erase(peaks);
 }
 
-std::vector<std::string*> Experiment::getCollectionNames() const {
+std::vector<std::string> Experiment::getCollectionNames() const {
     
-    std::vector<std::string*> names;
+    std::vector<std::string> names;
 	for (
         std::map<std::string,std::unique_ptr<PeakCollection>>::const_iterator it = _peakCollections.begin(); 
         it != _peakCollections.end(); ++it) {
@@ -262,12 +262,12 @@ bool Experiment::hasUnitCell(const std::string& name) const
     return (unit_cell != _unit_cells.end());
 }
 
-std::vector<std::string*> Experiment::getUnitCellNames() const 
+std::vector<std::string> Experiment::getUnitCellNames() const 
 {
-    std::vector<std::string*> names;
+    std::vector<std::string> names;
 	for (
-        std::map<std::string,std::unique_ptr<PeakCollection>>::const_iterator it = _peakCollections.begin(); 
-        it != _peakCollections.end(); ++it) {
+        std::map<std::string,std::unique_ptr<nsx::UnitCell>>::const_iterator it = _unit_cells.begin(); 
+        it != _unit_cells.end(); ++it) {
 		names.push_back(it->second->name());
 	}
     return names;
@@ -289,7 +289,8 @@ void Experiment::removeUnitCell(const std::string& name)
 
 void Experiment::acceptFoundPeaks(const std::string& name) 
 {
-    addPeakCollection(name, _peak_finder->currentPeaks());
+    std::vector<Peak3D*> peaks = _peak_finder->currentPeaks();
+    addPeakCollection(name, &peaks);
 }
 
 void Experiment::integrateFoundPeaks(
@@ -298,7 +299,7 @@ void Experiment::integrateFoundPeaks(
     for (nsx::sptrDataSet data : _peak_finder->currentData())
     {
         _found_peak_integrator->integrate(
-            *_peak_finder->currentPeaks(), data, 
+            _peak_finder->currentPeaks(), data, 
             peak_end, bkg_begin,  bkg_end);
     }
 }

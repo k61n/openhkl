@@ -31,7 +31,7 @@ public:
     //! Set the root item that will be used within the model
     PeakCollectionItem* root() const {return _root_item;};
     //! Retrieve the name
-    std::string* name() const {return _name;};
+    std::string name() const {return _name;};
     //! Retrieve the row count
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     //!retrieve the column count
@@ -51,9 +51,9 @@ public:
     //! The sorthing of the peaks
     void sort(int column, Qt::SortOrder order) override;
 
-private:
+public:
     PeakCollectionItem* _root_item = nullptr;
-    std::string* _name;
+    std::string _name;
 
 };
 

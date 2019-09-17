@@ -66,7 +66,7 @@ static void updateFit(
     I = Intensity(new_I, cov(1, 1));
 }
 
-bool Profile3DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
+bool Profile3DIntegrator::compute(Peak3D* peak, const IntegrationRegion& region)
 {
     if (!_library)
         return false;

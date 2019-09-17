@@ -39,20 +39,20 @@ UnitCellProperty::UnitCellProperty() : QcrWidget{"unitCellProperty"}
     );
 
     name = new QcrLineEdit("unitCellName", "");
-    QObject::connect(name, &QcrLineEdit::editingFinished, [=]() {
-        gSession->selectedExperiment()->getUnitCell()->setName(name->getValue().toStdString());
-    });
+    // QObject::connect(name, &QcrLineEdit::editingFinished, [=]() {
+    //     gSession->selectedExperiment()->getUnitCell()->setName(name->getValue().toStdString());
+    // });
     spaceGroup = new QcrLineEdit("spaceGroup", "");
     spaceGroup->setReadOnly(true);
     chemicalFormula = new QcrLineEdit("chemicalFormula", "");
-    QObject::connect(chemicalFormula, &QcrLineEdit::editingFinished, [=]() {
-        if (chemicalFormula->getValue().length() < 1)
-            return;
-        std::string formula = chemicalFormula->getValue().toStdString();
-        gSession->selectedExperiment()->getUnitCell()->setMaterial(
-                    std::make_unique<xsection::Material>(formula));
-        setMassDensity();
-    });
+    // QObject::connect(chemicalFormula, &QcrLineEdit::editingFinished, [=]() {
+    //     if (chemicalFormula->getValue().length() < 1)
+    //         return;
+    //     std::string formula = chemicalFormula->getValue().toStdString();
+    //     gSession->selectedExperiment()->getUnitCell()->setMaterial(
+    //                 std::make_unique<xsection::Material>(formula));
+    //     setMassDensity();
+    // });
     z = new QcrSpinBox("z", new QcrCell<int>(0), 3);
     indexingTolerance = new QcrDoubleSpinBox("indexingTolerance", new QcrCell<double>(0.00), 6, 4);
     indexingTolerance->setReadOnly(true);
@@ -115,64 +115,64 @@ void UnitCellProperty::refreshInput()
 
 void UnitCellProperty::setZValue(int z)
 {
-    nsx::sptrUnitCell unit_cell = gSession->selectedExperiment()->getUnitCell();
+    // nsx::sptrUnitCell unit_cell = gSession->selectedExperiment()->getUnitCell();
 
-    unit_cell->setZ(z);
-    setMassDensity();
+    // unit_cell->setZ(z);
+    // setMassDensity();
 }
 
 void UnitCellProperty::selectedCellChanged(int cell)
 {
     if (cell == 0)
         return;
-    nsx::sptrUnitCell selectedCell = gSession->selectedExperiment()->getUnitCell(cell-1);
-    gSession->selectedExperiment()->selectUnitCell(cell-1);
-    name->setCellValue(unitcells->currentText());
-    xsection::Material* material = selectedCell->material();
-    if (!material)
-        chemicalFormula->setCellValue("");
-    else
-        chemicalFormula->setCellValue(QString::fromStdString(selectedCell->material()->formula()));
-    spaceGroup->setCellValue(QString::fromStdString(selectedCell->spaceGroup().symbol()));
-    z->setCellValue(selectedCell->z());
-    indexingTolerance->setCellValue(selectedCell->indexingTolerance());
-    nsx::UnitCellCharacter unitcharacter = selectedCell->character();
-    a->setCellValue(unitcharacter.a);
-    b->setCellValue(unitcharacter.b);
-    c->setCellValue(unitcharacter.c);
-    alpha->setCellValue(unitcharacter.alpha);
-    beta->setCellValue(unitcharacter.beta);
-    gamma->setCellValue(unitcharacter.gamma);
-    printAllInformation();
+    // nsx::sptrUnitCell selectedCell = gSession->selectedExperiment()->getUnitCell(cell-1);
+    // gSession->selectedExperiment()->selectUnitCell(cell-1);
+    // name->setCellValue(unitcells->currentText());
+    // xsection::Material* material = selectedCell->material();
+    // if (!material)
+    //     chemicalFormula->setCellValue("");
+    // else
+    //     chemicalFormula->setCellValue(QString::fromStdString(selectedCell->material()->formula()));
+    // spaceGroup->setCellValue(QString::fromStdString(selectedCell->spaceGroup().symbol()));
+    // z->setCellValue(selectedCell->z());
+    // indexingTolerance->setCellValue(selectedCell->indexingTolerance());
+    // nsx::UnitCellCharacter unitcharacter = selectedCell->character();
+    // a->setCellValue(unitcharacter.a);
+    // b->setCellValue(unitcharacter.b);
+    // c->setCellValue(unitcharacter.c);
+    // alpha->setCellValue(unitcharacter.alpha);
+    // beta->setCellValue(unitcharacter.beta);
+    // gamma->setCellValue(unitcharacter.gamma);
+    // printAllInformation();
 }
 
 void UnitCellProperty::setMassDensity() const
 {
-    nsx::sptrUnitCell unit_cell = gSession->selectedExperiment()->getUnitCell();
+    // nsx::sptrUnitCell unit_cell = gSession->selectedExperiment()->getUnitCell();
 
-    xsection::Material* material = unit_cell->material();
-    if (!material)
-        return;
+    // xsection::Material* material = unit_cell->material();
+    // if (!material)
+    //     return;
 
-    double mm = material->molarMass();
-    mm *= z->value() / nsx::avogadro;
-    double volume = unit_cell->volume() * nsx::ang3;
-    material->setMassDensity(mm / volume);
+    // double mm = material->molarMass();
+    // mm *= z->value() / nsx::avogadro;
+    // double volume = unit_cell->volume() * nsx::ang3;
+    // material->setMassDensity(mm / volume);
 }
 
 void UnitCellProperty::printAllInformation()
 {
-    qDebug() << "Unit Cell Information:";
-    nsx::sptrUnitCell cell = gSession->selectedExperiment()->getUnitCell();
-    qDebug() << "name: " << QString::fromStdString(cell->name());
-    qDebug() << "volume: " << cell->volume();
-    qDebug() << "z: " << cell->z();
-    xsection::Material* material = cell->material();
-    if (!material) {
-        qDebug() << "material: none";
-        return;
-    }
-    qDebug() << "material: " << QString::fromStdString(material->formula());
-    qDebug() << "molar mass: " << material->molarMass();
-    qDebug() << "- - - - - - - - - - - - - - - - - - - - - ";
+    // qDebug() << "Unit Cell Information:";
+    // nsx::sptrUnitCell cell = gSession->selectedExperiment()->getUnitCell();
+    // qDebug() << "name: " << QString::fromStdString(cell->name());
+    // qDebug() << "volume: " << cell->volume();
+    // qDebug() << "z: " << cell->z();
+    // xsection::Material* material = cell->material();
+    // if (!material) {
+    //     qDebug() << "material: none";
+    //     return;
+    // }
+    // qDebug() << "material: " << QString::fromStdString(material->formula());
+    // qDebug() << "molar mass: " << material->molarMass();
+    // qDebug() << "- - - - - - - - - - - - - - - - - - - - - ";
 }

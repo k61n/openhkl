@@ -54,6 +54,7 @@ MainWin::MainWin()
     finder_ = new PeakFinderFrame;
     filter_ = new SubframeFilterPeaks;
     indexer_ = new SubframeAutoIndexer;
+    predictor_ = new SubframePredictPeaks;
 
     layoutStack_ = new QStackedWidget;
     layoutStack_->addWidget(homeScreen_);
@@ -61,6 +62,7 @@ MainWin::MainWin()
     layoutStack_->addWidget(finder_);
     layoutStack_->addWidget(filter_);
     layoutStack_->addWidget(indexer_);
+    layoutStack_->addWidget(predictor_);
     layoutStack_->setCurrentIndex(0);
 
     setCentralWidget(layoutStack_);

@@ -438,7 +438,7 @@ void UserDefinedUnitCellIndexerFrame::accept()
         UnitCellWidget* unit_cell_tab = dynamic_cast<UnitCellWidget*>(tabwidget->widget(i));
         if (!unit_cell_tab)
             continue;
-        gSession->selectedExperiment()->addUnitCell(unit_cell_tab->unitCell());
+        // gSession->selectedExperiment()->addUnitCell(unit_cell_tab->unitCell());
     }
 
     // emit _experiment_item->model()->itemChanged(peaks_item);

@@ -33,11 +33,11 @@
 
 namespace nsx {
 
-static PeakList buildPeaksFromMillerIndices(
+static std::vector<Peak3D*> buildPeaksFromMillerIndices(
     sptrDataSet data, const std::vector<MillerIndex>& hkls, const Eigen::Matrix3d& BU)
 {
     std::vector<ReciprocalVector> qs;
-    PeakList peaks;
+    std::vector<Peak3D*> peaks;
 
     for (auto idx : hkls)
         qs.emplace_back(idx.rowVector().cast<double>() * BU);
@@ -45,7 +45,7 @@ static PeakList buildPeaksFromMillerIndices(
     auto events = data->events(qs);
 
     for (auto event : events) {
-        sptrPeak3D peak(new Peak3D(data));
+        Peak3D* peak(new Peak3D(data));
         Eigen::Vector3d center = {event._px, event._py, event._frame};
 
         // dummy shape
@@ -59,20 +59,26 @@ static PeakList buildPeaksFromMillerIndices(
     return peaks;
 }
 
-PeakList predictPeaks(
-    ShapeLibrary library, sptrDataSet data, sptrUnitCell unit_cell, double dmin, double dmax,
-    double radius, double nframes, int min_neighbors, PeakInterpolation interpolation)
+std::vector<Peak3D*> predictPeaks(
+    ShapeLibrary* library, sptrDataSet data, 
+    UnitCell* unit_cell, double dmin, double dmax,
+    double radius, double nframes, int min_neighbors, 
+    PeakInterpolation interpolation)
 {
+    std::vector<Peak3D*> predicted_peaks;
+
     // Generate the Miller indices found in the [dmin,dmax] shell
     const auto& mono = data->reader()->diffractometer()->source().selectedMonochromator();
+
     const double wavelength = mono.wavelength();
+
     auto predicted_hkls = unit_cell->generateReflectionsInShell(dmin, dmax, wavelength);
 
-    PeakList peaks =
+    std::vector<Peak3D*> peaks =
         buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell->reciprocalBasis());
     qDebug() << "Computing shapes of " << peaks.size() << " calculated peaks...";
 
-    PeakList predicted_peaks;
+    
 
     for (auto peak : peaks) {
         peak->setUnitCell(unit_cell);
@@ -83,7 +89,7 @@ PeakList predictPeaks(
         // too few or no neighbouring peaks found)
         try {
             Eigen::Matrix3d cov =
-                library.meanCovariance(peak, radius, nframes, min_neighbors, interpolation);
+                library->meanCovariance(peak, radius, nframes, min_neighbors, interpolation);
             // Eigen::Matrix3d cov = _library->predictCovariance(p);
             Eigen::Vector3d center = peak->shape().center();
             peak->setShape(Ellipsoid(center, cov.inverse()));
@@ -130,7 +136,7 @@ struct FitData {
     Eigen::Vector3d q;
 
     //! Construct a FitData instance directly from a peak.
-    FitData(sptrPeak3D peak)
+    FitData(Peak3D* peak)
     {
         const auto* detector = peak->data()->reader()->diffractometer()->detector();
         Eigen::Vector3d center = peak->shape().center();
@@ -158,6 +164,21 @@ struct FitData {
         q = kf - ki;
     }
 };
+
+ShapeLibrary::ShapeLibrary()
+    : _profiles()
+    , _choleskyD()
+    , _choleskyM()
+    , _choleskyS()
+    , _detectorCoords(true)
+    , _peakScale(1)
+    , _bkgBegin(3)
+    , _bkgEnd(4)
+{
+    _choleskyD.fill(1e-6);
+    _choleskyM.fill(1e-6);
+    _choleskyS.fill(1e-6);
+}
 
 ShapeLibrary::ShapeLibrary(bool detector_coords, double peakScale, double bkgBegin, double bkgEnd)
     : _profiles()
@@ -216,7 +237,7 @@ double ShapeLibrary::bkgEnd() const
     return _bkgEnd;
 }
 
-bool ShapeLibrary::addPeak(sptrPeak3D peak, Profile3D&& profile, Profile1D&& integrated_profile)
+bool ShapeLibrary::addPeak(Peak3D* peak, Profile3D&& profile, Profile1D&& integrated_profile)
 {
     Eigen::Matrix3d A = peak->shape().inverseMetric();
     Eigen::Matrix3d cov = 0.5 * (A + A.transpose());
@@ -284,7 +305,7 @@ void ShapeLibrary::updateFit(int /*num_iterations*/)
 #endif
 }
 
-Eigen::Matrix3d ShapeLibrary::predictCovariance(sptrPeak3D peak) const
+Eigen::Matrix3d ShapeLibrary::predictCovariance(Peak3D* peak) const
 {
     FitData f(peak);
     return predictCovariance(f);
@@ -316,7 +337,7 @@ double ShapeLibrary::meanPearson() const
 Profile3D ShapeLibrary::meanProfile(const DetectorEvent& ev, double radius, double nframes) const
 {
     Profile3D mean;
-    PeakList neighbors = findNeighbors(ev, radius, nframes);
+    std::vector<Peak3D*> neighbors = findNeighbors(ev, radius, nframes);
 
     for (auto peak : neighbors) {
         // double weight = (1-r/radius) * (1-df/nframes);
@@ -331,7 +352,7 @@ Profile3D ShapeLibrary::meanProfile(const DetectorEvent& ev, double radius, doub
 std::vector<Intensity>
 ShapeLibrary::meanProfile1D(const DetectorEvent& ev, double radius, double nframes) const
 {
-    PeakList neighbors = findNeighbors(ev, radius, nframes);
+    std::vector<Peak3D*> neighbors = findNeighbors(ev, radius, nframes);
     std::vector<Intensity> mean_profile;
     const double inv_N = 1.0 / neighbors.size();
 
@@ -347,9 +368,9 @@ ShapeLibrary::meanProfile1D(const DetectorEvent& ev, double radius, double nfram
     return mean_profile;
 }
 
-PeakList ShapeLibrary::findNeighbors(const DetectorEvent& ev, double radius, double nframes) const
+std::vector<Peak3D*> ShapeLibrary::findNeighbors(const DetectorEvent& ev, double radius, double nframes) const
 {
-    PeakList neighbors;
+    std::vector<Peak3D*> neighbors;
     Eigen::Vector3d center(ev._px, ev._py, ev._frame);
 
     for (const auto& pair : _profiles) {
@@ -369,12 +390,12 @@ PeakList ShapeLibrary::findNeighbors(const DetectorEvent& ev, double radius, dou
 }
 
 Eigen::Matrix3d ShapeLibrary::meanCovariance(
-    sptrPeak3D reference_peak, double radius, double nframes, size_t min_neighbors,
+    Peak3D* reference_peak, double radius, double nframes, size_t min_neighbors,
     PeakInterpolation interpolation) const
 {
     Eigen::Matrix3d cov;
     cov.setZero();
-    PeakList neighbors =
+    std::vector<Peak3D*> neighbors =
         findNeighbors(DetectorEvent(reference_peak->shape().center()), radius, nframes);
 
     if (neighbors.empty() || (neighbors.size() < min_neighbors)) {

@@ -100,6 +100,15 @@ PeakFinder::PeakFinder()
     qDebug("PeakFinder::ctor done\n");
 }
 
+std::vector<Peak3D*> PeakFinder::currentPeaks()
+{
+    std::vector<Peak3D*> output;
+    for (sptrPeak3D peak: _current_peaks){
+        output.push_back(peak.get());
+    }
+    return output;
+}
+
 void PeakFinder::setHandler(const sptrProgressHandler& handler)
 {
     _handler = handler;

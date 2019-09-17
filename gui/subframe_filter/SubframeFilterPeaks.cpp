@@ -34,9 +34,9 @@
 SubframeFilterPeaks::SubframeFilterPeaks() 
     : QWidget(), 
     _pixmap(nullptr),
-    _peak_collection_model(),
+    _peak_collection("temp", nsx::listtype::FOUND),
     _peak_collection_item(),
-    _peak_collection("temp", nsx::listtype::FOUND)
+    _peak_collection_model()
 {
 
     setSizePolicies();

@@ -235,7 +235,7 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
             std::cout<<"Finished reading data from file"<<std::endl;
 
             std::cout<<"Creating the vector of peaks"<<std::endl;
-            std::vector<std::shared_ptr<nsx::Peak3D>> peaks;
+            std::vector<nsx::Peak3D*> peaks;
 
             Eigen::Vector3d local_center;
             Eigen::Matrix3d local_metric;
@@ -252,7 +252,7 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
 
                 sptrDataSet data_pointer = experiment->dataShortName(std::string(data_names[k]));
                 std::cout<<data_names[k]<<std::endl;
-                std::shared_ptr<nsx::Peak3D> peak = std::make_shared<nsx::Peak3D>(data_pointer,ellipsoid);
+                nsx::Peak3D* peak = new nsx::Peak3D(data_pointer,ellipsoid);
 
                 nsx::Intensity peak_intensity(intensity[k], sigma[k]);
                 nsx::Intensity peak_mean_bkg(mean_bkg_val[k], mean_bkg_sig[k]);
@@ -263,7 +263,7 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
                     predicted[k], selected[k], masked[k]
                     );
 
-                UnitCell* unit_cell_pointer = experiment->getUnitCell(std::string(unit_cells[k]));
+                UnitCell* unit_cell_pointer = experiment->getUnitCell(unit_cells[k]);
                 std::cout<<unit_cells[k]<<std::endl;
                 peak->setUnitCell(unit_cell_pointer);
 
@@ -304,7 +304,7 @@ bool ExperimentImporter::loadUnitCells(Experiment* experiment)
             double rec_20 = 0;
             double rec_21 = 0; 
             double rec_22 = 1;
-            
+
             double indexing_tolerance = 0.2;
             uint z = 1;
             std::string bravais = "aP";

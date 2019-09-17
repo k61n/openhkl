@@ -47,9 +47,9 @@
 PeakFinderFrame::PeakFinderFrame() 
     : QWidget(), 
     _pixmap(nullptr),
-    _peak_collection_model(),
+    _peak_collection("temp", nsx::listtype::FOUND),
     _peak_collection_item(),
-    _peak_collection("temp", nsx::listtype::FOUND)
+    _peak_collection_model()
 {
     setSizePolicies();
     _main_layout = new QHBoxLayout(this);
@@ -252,7 +252,6 @@ void PeakFinderFrame::setBlobUp()
     blob_para->contentArea.setSizePolicy(*_size_policy_box);
 
     _left_layout->addWidget(blob_para);
-
 }
 
 void PeakFinderFrame::setIntegrateUp()
@@ -739,7 +738,7 @@ void PeakFinderFrame::accept()
 {
     nsx::PeakFinder* finder = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
-    if (!finder->currentPeaks()->empty()){
+    if (!finder->currentPeaks().empty()){
         gLogger->log("@accept");
         std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
         dlg->exec();
@@ -786,15 +785,11 @@ void PeakFinderFrame::refreshPreview()
 
 void PeakFinderFrame::refreshPeakTable()
 {
-    std::vector<std::shared_ptr<nsx::Peak3D>>* peaks = 
+    std::vector<nsx::Peak3D*> peaks = 
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder()->currentPeaks();
-    
-    if (peaks == nullptr){
-        return;
-    }
 
     _figure_view->getScene()->clearPeakItems();
-    _peak_collection.populate(peaks);
+    _peak_collection.populate(&peaks);
     _peak_collection_item.setPeakCollection(&_peak_collection);
     _peak_collection_model.setRoot(&_peak_collection_item);
 

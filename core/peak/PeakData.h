@@ -27,7 +27,7 @@ namespace nsx {
 class PeakData {
  public:
     //! Construct instance associated to the given peak
-    PeakData(sptrPeak3D peak = nullptr);
+    PeakData(Peak3D* peak = nullptr);
     //! Returns the list of detector events associated to the peak
     const std::deque<DetectorEvent>& events() const;
     //! Returns the list of detector counts associated to the peak
@@ -40,7 +40,7 @@ class PeakData {
     void reset();
 
  private:
-    sptrPeak3D _peak;
+    Peak3D* _peak;
     PeakCoordinateSystem _system;
     std::deque<DetectorEvent> _events;
     std::deque<double> _counts;

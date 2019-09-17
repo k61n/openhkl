@@ -53,7 +53,7 @@ const std::vector<Intensity>& IPeakIntegrator::rockingCurve() const
 }
 
 void IPeakIntegrator::integrate(
-    PeakList peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end)
+    std::vector<Peak3D*> peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end)
 {
 
     _peak_end = peak_end;
@@ -63,7 +63,8 @@ void IPeakIntegrator::integrate(
     qDebug() << "IPeakIntegrator::integrate start";
     // integrate only those peaks that belong to the specified dataset
     auto it = std::remove_if(
-        peaks.begin(), peaks.end(), [&](const sptrPeak3D& peak) { return peak->data() != data; });
+        peaks.begin(), peaks.end(), [&](const Peak3D* peak) { 
+            return peak->data() != data; });
     qDebug() << "IPeakIntegrator::integrate DEB1";
     peaks.erase(it, peaks.end());
 
@@ -78,8 +79,8 @@ void IPeakIntegrator::integrate(
     size_t idx = 0;
     int num_frames_done = 0;
 
-    std::map<sptrPeak3D, IntegrationRegion> regions;
-    std::map<sptrPeak3D, bool> integrated;
+    std::map<Peak3D*, IntegrationRegion> regions;
+    std::map<Peak3D*, bool> integrated;
 
     for (auto peak : peaks) {
         try {
@@ -107,7 +108,7 @@ void IPeakIntegrator::integrate(
     }
 
     // only integrate the peaks with valid integration regions
-    it = std::remove_if(peaks.begin(), peaks.end(), [&](const sptrPeak3D& p) {
+    it = std::remove_if(peaks.begin(), peaks.end(), [&](Peak3D*& p) {
         return regions.find(p) == regions.end();
     });
     peaks.erase(it, peaks.end());

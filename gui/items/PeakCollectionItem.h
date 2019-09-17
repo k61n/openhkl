@@ -32,6 +32,8 @@ public:
 
     //! Set the peak collection
     void setPeakCollection(nsx::PeakCollection* peak_collection);
+    //! Retrieve the name of the collection if present
+    std::string name() const;
     //! Retrieve the number of children of this item
     int childCount() const;
     //! Retrieve the number of columns of this item

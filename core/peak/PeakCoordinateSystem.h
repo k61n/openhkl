@@ -37,8 +37,11 @@ namespace nsx {
 
 class PeakCoordinateSystem {
  public:
+
     //! Construct the coordinate system about the given peak.
     PeakCoordinateSystem(sptrPeak3D peak);
+    //! Construct the coordinate system about the given peak.
+    PeakCoordinateSystem(Peak3D* peak);
     //! Transform from detector coordinates in to peak coordinates.
     Eigen::Vector3d transform(const DetectorEvent& ev) const;
     //! Compute the Jacobian of the transformation from detector (x, y, frame) ->
@@ -56,7 +59,7 @@ class PeakCoordinateSystem {
 
  private:
     //! Reference peak about which the coordinate system is based
-    sptrPeak3D _peak;
+    nsx::Peak3D* _peak;
     //! DetectorEvent corresponding to peak center
     DetectorEvent _event;
     //! State of the instrument at the time peak was observed.

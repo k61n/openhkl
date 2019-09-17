@@ -24,9 +24,9 @@ namespace nsx {
 class GaussianIntegrator : public IPeakIntegrator {
  public:
     GaussianIntegrator(bool fit_center, bool fit_cov);
-    bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
+    bool compute(Peak3D* peak, const IntegrationRegion& region) override;
     //! Returns the analytic profile computed over the given integration region
-    std::vector<double> profile(sptrPeak3D peak, const IntegrationRegion& region);
+    std::vector<double> profile(Peak3D* peak, const IntegrationRegion& region);
 
  private:
     bool _fitCenter;

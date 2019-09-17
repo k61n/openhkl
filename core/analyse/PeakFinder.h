@@ -33,7 +33,7 @@ class PeakFinder {
 
     void find(DataList numors);
 
-    PeakList* currentPeaks() {return &_current_peaks;};
+    std::vector<Peak3D*> currentPeaks();
 
     DataList  currentData() {return _current_data;};
 

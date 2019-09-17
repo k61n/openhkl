@@ -31,7 +31,7 @@ namespace nsx {
 
 class Experiment {
 
- public:
+public:
 
    Experiment() = delete;
    Experiment(const Experiment& other);
@@ -40,7 +40,7 @@ class Experiment {
    ~Experiment() = default;
    Experiment& operator=(const Experiment& other);
 
-public:
+public: // General
 
    //! Get the name of the Experiment
    const std::string& name() const;
@@ -53,7 +53,7 @@ public:
    //! Set the diffractometer accordingly
    void setDiffractometer(const std::string& diffractometerName);
 
-public:
+public: // Data sets
 
    //! Gets a reference to the data
    const std::map<std::string, sptrDataSet>& data() const;
@@ -72,12 +72,12 @@ public:
    //! Remove a data from the experiment
    void removeData(const std::string& name);
 
-public:
+public: // Peak Collection
 
    //! Add some data to the experiment
    void addPeakCollection(
-      const std::string name, 
-      const std::vector<std::shared_ptr<nsx::Peak3D>>* peaks);
+      const std::string& name, 
+      const std::vector<nsx::Peak3D*>* peaks);
    //! Returns true if the experiment has a data
    bool hasPeakCollection(const std::string& name) const;
    //! Returns the peak list denoted by the name
@@ -85,20 +85,20 @@ public:
    //! Remove a data from the experiment
    void removePeakCollection(const std::string& name);
    //! Get a list of loaded list names
-   std::vector<std::string*> getCollectionNames() const;
+   std::vector<std::string> getCollectionNames() const;
    //! Get the number of peak lists
    int numPeakCollections()const {return _peakCollections.size();};
    //! Accept a filtering of the peaks and process it
-   void acceptFilter(std::string name, PeakCollection* collection);
+   void acceptFilter(const std::string name, PeakCollection* collection);
 
-public:
+public: // Unit cells
 
    //! Add some data to the experiment
    void addUnitCell(const std::string& name, UnitCell* unit_cell);
    //! Returns true if the experiment has a data
    bool hasUnitCell(const std::string& name) const;
    //! Get a list of loaded list names
-   std::vector<std::string*> getUnitCellNames() const;
+   std::vector<std::string> getUnitCellNames() const;
    //! Returns the unit cell denoted by the name
    UnitCell* getUnitCell(const std::string& name);
    //! Remove a data from the experiment
@@ -106,7 +106,7 @@ public:
    //! Get the number of peak lists
    int numUnitCells() const {return _unit_cells.size();};
 
-public:
+public: //Peak finder
 
    //! Get the address of the peak finder
    nsx::PeakFinder* peakFinder() const {return _peak_finder.get();};
@@ -119,19 +119,19 @@ public:
    //! Get the found peak integrator
    nsx::PeakFilter* peakFilter() {return _peak_filter.get();};
 
-public:
+public: // Autoindexer
 
    //! Get the auto indexer
    nsx::AutoIndexer* autoIndexer() const {return _auto_indexer.get();};
 
-public:
+public: // Save load
 
    //! Save to file
    bool saveToFile(std::string path) const;
    //! Load from file
    bool loadFromFile(std::string path);
 
-private:
+private: // private variables
 
    //! The name of this experiment
    std::string _name = "No_name";
