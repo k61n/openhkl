@@ -24,8 +24,6 @@
 #include "gui/dialogs/IsotopesDatabaseDialog.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/dialogs/MCAbsorptionDialog.h"
-#include "gui/dialogs/PredictPeaksDialog.h"
-#include "gui/subframe_predict/ShapeLibraryDialog.h"
 
 #include "gui/subframe_index/SubframeAutoIndexer.h"
 #include "gui/frames/GlobalOffsetsFrame.h"
@@ -143,14 +141,14 @@ void Actions::setupPeaks()
         // gSession->selectedExperiment()->normalizeToMonitor();
     });
     integratepeaks.setTriggerHook([]() { gSession->selectedExperiment()->integratePeaks(); });
-    predictPeaks.setTriggerHook([]() {
-        PredictPeaksDialog* dgl = new PredictPeaksDialog;
-        if (!dgl->exec()) {
-            dgl->deleteLater();
-            return;
-        }
-        dgl->deleteLater();
-    });
+    // predictPeaks.setTriggerHook([]() {
+    //     PredictPeaksDialog* dgl = new PredictPeaksDialog;
+    //     if (!dgl->exec()) {
+    //         dgl->deleteLater();
+    //         return;
+    //     }
+    //     dgl->deleteLater();
+    // });
     statistics.setTriggerHook([]() {
         if (gSession->selectedExperimentNum() < 0)
             return;
