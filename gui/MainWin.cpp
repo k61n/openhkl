@@ -49,23 +49,25 @@ MainWin::MainWin()
 
     addToolBar(Qt::LeftToolBarArea, new SideBar(this));
 
-    homeScreen_ = new SubframeHome;
-    experimentScreen_ = new SubframeExperiment;
-    finder_ = new PeakFinderFrame;
-    filter_ = new SubframeFilterPeaks;
-    indexer_ = new SubframeAutoIndexer;
-    predictor_ = new SubframePredictPeaks;
+    _home = new SubframeHome;
+    _experiment = new SubframeExperiment;
+    _finder = new PeakFinderFrame;
+    _filter = new SubframeFilterPeaks;
+    _indexer = new SubframeAutoIndexer;
+    _predictor = new SubframePredictPeaks;
+    _merger = new SubframeMergedPeaks;
 
-    layoutStack_ = new QStackedWidget;
-    layoutStack_->addWidget(homeScreen_);
-    layoutStack_->addWidget(experimentScreen_);
-    layoutStack_->addWidget(finder_);
-    layoutStack_->addWidget(filter_);
-    layoutStack_->addWidget(indexer_);
-    layoutStack_->addWidget(predictor_);
-    layoutStack_->setCurrentIndex(0);
+    _layout_stack = new QStackedWidget;
+    _layout_stack->addWidget(_home);
+    _layout_stack->addWidget(_experiment);
+    _layout_stack->addWidget(_finder);
+    _layout_stack->addWidget(_filter);
+    _layout_stack->addWidget(_indexer);
+    _layout_stack->addWidget(_predictor);
+    _layout_stack->addWidget(_merger);
+    _layout_stack->setCurrentIndex(0);
 
-    setCentralWidget(layoutStack_);
+    setCentralWidget(_layout_stack);
 
     readSettings();
     show();
@@ -86,24 +88,24 @@ void MainWin::refresh()
 
 void MainWin::onDataChanged()
 {
-    experimentScreen_->image->dataChanged();
-    experimentScreen_->properties->dataChanged();
+    _experiment->image->dataChanged();
+    _experiment->properties->dataChanged();
     // dockPlot_->dataChanged();
 }
 
 void MainWin::onExperimentChanged()
 {
-    experimentScreen_->properties->experimentChanged();
+    _experiment->properties->experimentChanged();
 }
 
 void MainWin::onPeaksChanged()
 {
-    experimentScreen_->properties->peaksChanged();
+    _experiment->properties->peaksChanged();
 }
 
 void MainWin::onUnitCellChanged()
 {
-    experimentScreen_->properties->unitCellChanged();
+    _experiment->properties->unitCellChanged();
 }
 
 void MainWin::resetViews()
@@ -132,7 +134,7 @@ void MainWin::readSettings()
 void MainWin::closeEvent(QCloseEvent* event)
 {
     saveSettings();
-    homeScreen_->saveSettings();
+    _home->saveSettings();
     delete triggers;
     delete menus_;
     gGui = nullptr;

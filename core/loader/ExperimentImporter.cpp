@@ -110,11 +110,15 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
             // Read the info group and store in metadata
             int n_meta = peak_collection_meta.getNumAttrs();
             int n_peaks = 0;
+            int type = 0;
             for (int j = 0; j < n_meta; ++j) {
                 H5::Attribute attr = peak_collection_meta.openAttribute(j);
                 H5::DataType typ = attr.getDataType();
                 if (attr.getName() == "num_peaks"){
                     attr.read(typ, &n_peaks);
+                }
+                if (attr.getName() == "Type"){
+                    attr.read(typ, &type);
                 }
             }
             std::cout<<"Found "<<n_peaks<<" to import"<<std::endl;
@@ -251,7 +255,6 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
                     local_metric);
 
                 sptrDataSet data_pointer = experiment->dataShortName(std::string(data_names[k]));
-                std::cout<<data_names[k]<<std::endl;
                 nsx::Peak3D* peak = new nsx::Peak3D(data_pointer,ellipsoid);
 
                 nsx::Intensity peak_intensity(intensity[k], sigma[k]);
@@ -264,14 +267,21 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
                     );
 
                 UnitCell* unit_cell_pointer = experiment->getUnitCell(unit_cells[k]);
-                std::cout<<unit_cells[k]<<std::endl;
                 peak->setUnitCell(unit_cell_pointer);
 
                 peaks.push_back(peak);
             }
             std::cout<<"Finished creating the vector of peaks"<<std::endl;
 
-            experiment->addPeakCollection(collection_name, &peaks);
+            listtype collection_type;
+            if (type == 0){
+                collection_type = listtype::FOUND;
+            }else{
+                collection_type = listtype::PREDICTED;
+            }
+
+            experiment->addPeakCollection(
+                collection_name, collection_type, peaks);
 
             std::cout<<"Created the peak collection"<<std::endl;
             

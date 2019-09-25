@@ -37,9 +37,9 @@ class PeakCollection{
     std::string name() const;
 
     //! Populate the peaks
-    void populate(const std::vector<std::shared_ptr<nsx::Peak3D>>* peak_list);
+    void populate(const std::vector<std::shared_ptr<nsx::Peak3D>> peak_list);
     //! Populate the peaks
-    void populate(const std::vector<nsx::Peak3D*>* peak_list);
+    void populate(const std::vector<nsx::Peak3D*> peak_list);
     //! Populate the peaks
     void populateFromFiltered(PeakCollection* collection);
     //! Reset the peaks
@@ -47,9 +47,17 @@ class PeakCollection{
     //! Add a single peak
     void addPeak(const std::shared_ptr<nsx::Peak3D> peak);
     //! Returns the peak with the given index
-    nsx::Peak3D* getPeak(int index);    
+    nsx::Peak3D* getPeak(int index);   
+
     //! Returns the peak with index
-    std::vector<nsx::Peak3D*>* getPeakList() const;
+    std::vector<nsx::Peak3D*> getPeakList() const;
+    //! Returns the peak with index
+    std::vector<nsx::Peak3D*> getFilteredPeakList() const;
+
+    //! Returns the peak with index
+    nsx::listtype type() const {return _type;};
+    //! Returns the peak with index
+    void setType(listtype type) {_type = type;};
 
     //! Returns the amount of peaks
     int numberOfPeaks() const;

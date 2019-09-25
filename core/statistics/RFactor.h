@@ -34,7 +34,7 @@ class RFactor : public IMergedPeakStatistic {
     }
     ~RFactor() {}
 
-    void calculate(const MergedData& data);
+    void calculate(MergedData* data);
 
     double Rmerge() { return _Rmerge; }
     double Rmeas() { return _Rmeas; }

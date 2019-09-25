@@ -316,6 +316,8 @@ bool ExperimentExporter::writePeaks(
 
             std::string name;
             std::string ext;
+            std::string temp = "NONE";
+            std::string unit_cell_name;
 
             for (int i = 0; i < collection_item->numberOfPeaks(); ++i) {
                 
@@ -339,11 +341,11 @@ bool ExperimentExporter::writePeaks(
                 name = peak->data()->name();
                 data_names.push_back(name.c_str());
 
-                UnitCell* unit_cell = peak->unitCell();
-                if (unit_cell){
-                    unit_cells.push_back(unit_cell->name().c_str());
+                UnitCell* unit_cell_ptr = peak->unitCell();
+                if (unit_cell_ptr){
+                    unit_cell_name = unit_cell_ptr->name();
+                    unit_cells.push_back(unit_cell_name.c_str());
                 }else{
-                    std::string temp = "NONE";
                     unit_cells.push_back(temp.c_str());
                 }
                 
@@ -500,7 +502,6 @@ bool ExperimentExporter::writePeaks(
 
             for (const auto& item : *map) {
                 int value;
-
                 try {
                     value = item.second;
                     H5::Attribute intAtt(
@@ -508,8 +509,19 @@ bool ExperimentExporter::writePeaks(
                     intAtt.write(H5::PredType::NATIVE_INT32, &value);
                 } catch (...) {
                 }
-
             }
+
+            H5::Attribute type_att(
+                meta_peak_group.createAttribute(
+                    "Type", H5::PredType::NATIVE_INT32, metaSpace));
+            if (collection_item->type() == listtype::FOUND){
+                int num = 0;
+                type_att.write(H5::PredType::NATIVE_INT32, &num);
+            }else{
+                int num = 1;
+                type_att.write(H5::PredType::NATIVE_INT32, &num);
+            }
+
             //initialise doubles
             delete[] peak_end;
             delete[] bkg_begin;

@@ -28,6 +28,13 @@
 #include "core/output/ExperimentExporter.h"
 #include "core/loader/ExperimentImporter.h"
 
+#include "core/integration/PixelSumIntegrator.h"
+#include "core/integration/GaussianIntegrator.h"
+#include "core/integration/ISigmaIntegrator.h"
+#include "core/integration/Profile3DIntegrator.h"
+#include "core/integration/Profile1DIntegrator.h"
+#include "core/integration/ShapeIntegrator.h"
+
 namespace nsx {
 
 Experiment::Experiment(const std::string& name, const std::string& diffractometerName)
@@ -35,10 +42,29 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
 {
     _diffractometer.reset(Diffractometer::create(diffractometerName));
 
-    _peak_finder = std::make_unique<nsx::PeakFinder>();
-    _found_peak_integrator = std::make_unique<nsx::PixelSumIntegrator>(true, true);
-    _peak_filter = std::make_unique<nsx::PeakFilter>();
-    _auto_indexer = std::make_unique<nsx::AutoIndexer>();
+    _peak_finder = std::make_unique<PeakFinder>();
+    _peak_filter = std::make_unique<PeakFilter>();
+    _auto_indexer = std::make_unique<AutoIndexer>();
+
+    _integrator_map.insert(std::make_pair(
+        std::string("Pixel sum integrator"),
+        std::make_unique<PixelSumIntegrator>(true, true)));
+
+    _integrator_map.insert(std::make_pair(
+        std::string("Gaussian integrator"),
+        std::make_unique<GaussianIntegrator>(true, true)));
+
+    _integrator_map.insert(std::make_pair(
+        std::string("I/Sigma integrator"),
+        std::make_unique<ISigmaIntegrator>()));
+
+    _integrator_map.insert(std::make_pair(
+        std::string("1d profile integrator"),
+        std::make_unique<Profile1DIntegrator>()));
+
+    _integrator_map.insert(std::make_pair(
+        std::string("3d profile integrator"),
+        std::make_unique<Profile3DIntegrator>()));
 }
 
 Experiment::Experiment(const Experiment& other)
@@ -47,10 +73,29 @@ Experiment::Experiment(const Experiment& other)
     _data = other._data;
     _diffractometer.reset(other._diffractometer->clone());
 
-    _peak_finder = std::make_unique<nsx::PeakFinder>();
-    _found_peak_integrator = std::make_unique<nsx::PixelSumIntegrator>(true, true);
-    _peak_filter = std::make_unique<nsx::PeakFilter>();
-    _auto_indexer = std::make_unique<nsx::AutoIndexer>();
+    _peak_finder = std::make_unique<PeakFinder>();
+    _peak_filter = std::make_unique<PeakFilter>();
+    _auto_indexer = std::make_unique<AutoIndexer>();
+
+    _integrator_map.insert(std::make_pair(
+        std::string("Pixel sum integrator"),
+        std::make_unique<PixelSumIntegrator>(true, true)));
+
+    _integrator_map.insert(std::make_pair(
+        std::string("Gaussian integrator"),
+        std::make_unique<GaussianIntegrator>(true, true)));
+
+    _integrator_map.insert(std::make_pair(
+        std::string("I/Sigma integrator"),
+        std::make_unique<ISigmaIntegrator>()));
+
+    _integrator_map.insert(std::make_pair(
+        std::string("1d profile integrator"),
+        std::make_unique<Profile1DIntegrator>()));
+
+    _integrator_map.insert(std::make_pair(
+        std::string("3d profile integrator"),
+        std::make_unique<Profile3DIntegrator>()));
 }
 
 Experiment& Experiment::operator=(const Experiment& other)
@@ -207,47 +252,86 @@ void Experiment::removeData(const std::string& name)
 
 void Experiment::addPeakCollection(
     const std::string& name, 
-    const std::vector<nsx::Peak3D*>* peaks) {
-    nsx::listtype type{listtype::FOUND};
+    const listtype type,
+    const std::vector<nsx::Peak3D*> peaks) 
+{
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
     ptr->populate(peaks);
-    
-    _peakCollections.insert(std::make_pair(name, std::move(ptr)));
+    _peak_collections.insert(std::make_pair(name, std::move(ptr)));
 }
 
 bool Experiment::hasPeakCollection(const std::string& name) const {
-    auto peaks = _peakCollections.find(name);
-    return (peaks != _peakCollections.end());
+    auto peaks = _peak_collections.find(name);
+    return (peaks != _peak_collections.end());
 }
 
 PeakCollection* Experiment::getPeakCollection(const std::string name){
+    std::cout<<hasPeakCollection(name)<<" "<<name<<std::endl;
     if (hasPeakCollection(name))
-        return _peakCollections[name].get();
+        return _peak_collections[name].get();
     return nullptr;
 }
 
 void Experiment::removePeakCollection(const std::string& name) {
-    auto peaks = _peakCollections.find(name);
-    if (peaks != _peakCollections.end())
-        _peakCollections.erase(peaks);
+    auto peaks = _peak_collections.find(name);
+    if (peaks != _peak_collections.end())
+        _peak_collections.erase(peaks);
 }
 
 std::vector<std::string> Experiment::getCollectionNames() const {
     
     std::vector<std::string> names;
 	for (
-        std::map<std::string,std::unique_ptr<PeakCollection>>::const_iterator it = _peakCollections.begin(); 
-        it != _peakCollections.end(); ++it) {
+        std::map<std::string,std::unique_ptr<PeakCollection>>::const_iterator it = _peak_collections.begin(); 
+        it != _peak_collections.end(); ++it) {
 		names.push_back(it->second->name());
+	}
+    return names;
+}
+
+std::vector<std::string> Experiment::getFoundCollectionNames() const {
+    
+    std::vector<std::string> names;
+	for (
+        std::map<std::string,std::unique_ptr<PeakCollection>>::const_iterator it = _peak_collections.begin(); 
+        it != _peak_collections.end(); ++it) {
+        if (it->second->type() == listtype::FOUND)
+		    names.push_back(it->second->name());
+	}
+    return names;
+}
+
+std::vector<std::string> Experiment::getPredictedCollectionNames() const {
+    
+    std::vector<std::string> names;
+	for (
+        std::map<std::string,std::unique_ptr<PeakCollection>>::const_iterator it = _peak_collections.begin(); 
+        it != _peak_collections.end(); ++it) {
+        if (it->second->type() == listtype::PREDICTED)
+		    names.push_back(it->second->name());
 	}
     return names;
 }
 
 void Experiment::acceptFilter(std::string name, PeakCollection* collection)
 {
-    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, listtype::FILTERED));
+    std::unique_ptr<PeakCollection> ptr(
+        new PeakCollection(name, collection->type()));
     ptr->populateFromFiltered(collection);
-    _peakCollections.insert(std::make_pair(name, std::move(ptr)));
+    _peak_collections.insert(std::make_pair(name, std::move(ptr)));
+}
+
+void Experiment::setMergedPeaks(
+    std::vector<PeakCollection*> peak_collections, 
+    bool friedel)
+{
+    _merged_peaks = std::make_unique<MergedData>(
+        peak_collections, friedel);
+}
+
+void Experiment::resetMergedPeaks()
+{
+    _merged_peaks.reset();
 }
 
 void Experiment::addUnitCell(const std::string& name, UnitCell* unit_cell) 
@@ -290,17 +374,48 @@ void Experiment::removeUnitCell(const std::string& name)
 void Experiment::acceptFoundPeaks(const std::string& name) 
 {
     std::vector<Peak3D*> peaks = _peak_finder->currentPeaks();
-    addPeakCollection(name, &peaks);
+    addPeakCollection(name, listtype::FOUND, peaks);
 }
 
-void Experiment::integrateFoundPeaks(
-    double peak_end, double bkg_begin, double bkg_end)
+IPeakIntegrator* Experiment::getIntegrator(const std::string& name) const
+{
+    std::map<std::string, std::unique_ptr<IPeakIntegrator>>::const_iterator it;
+    for(it = _integrator_map.begin(); it != _integrator_map.end(); ++it){
+        if (it->first == name)
+            return it->second.get();
+    }
+    return nullptr;
+}
+
+void Experiment::integratePeaks(
+    std::string integrator_name, PeakCollection* peak_collection)
 {   
-    for (nsx::sptrDataSet data : _peak_finder->currentData())
+
+    IPeakIntegrator* integrator = getIntegrator(integrator_name);
+
+    nsx::PeakFilter filter;
+    filter.resetFiltering(peak_collection);
+    filter.setDRange(std::array<double, 2UL>{
+        integrator->dMin(), integrator->dMax()});
+    filter.filterDRange(peak_collection);
+    std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
+    
+    std::map<std::string, sptrDataSet>::iterator it;
+    for (it = _data.begin(); it != _data.end(); ++it)
     {
-        _found_peak_integrator->integrate(
-            _peak_finder->currentPeaks(), data, 
-            peak_end, bkg_begin,  bkg_end);
+        integrator->integrate(
+            peaks,peak_collection->shapeLibrary(), it->second);
+    }
+}
+
+void Experiment::integrateFoundPeaks(std::string integrator_name)
+{   
+    IPeakIntegrator* integrator = getIntegrator(integrator_name);
+
+    for (sptrDataSet data : _peak_finder->currentData())
+    {
+        integrator->integrate(
+            _peak_finder->currentPeaks(), nullptr, data);
     }
 }
 
@@ -323,8 +438,8 @@ bool Experiment::saveToFile(std::string path) const
     if (success){
         std::map<std::string,PeakCollection*> peak_collections;
         for (
-            std::map<std::string,std::unique_ptr<PeakCollection>>::const_iterator it = _peakCollections.begin(); 
-            it != _peakCollections.end(); ++it) {
+            std::map<std::string,std::unique_ptr<PeakCollection>>::const_iterator it = _peak_collections.begin(); 
+            it != _peak_collections.end(); ++it) {
             peak_collections.insert(std::make_pair(it->first,it->second.get()));
         }
         success = exporter.writePeaks(peak_collections);
@@ -364,7 +479,6 @@ bool Experiment::loadFromFile(std::string path)
         success = importer.loadPeaks(this);
     }
     return success;
-
 }
 
 } // namespace nsx

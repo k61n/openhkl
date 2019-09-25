@@ -16,50 +16,88 @@
 
 namespace nsx {
 
-MergedData::MergedData(const SpaceGroup& grp, bool friedel)
-    : _group(grp), _friedel(friedel), _mergedPeakSet()
+MergedData::MergedData(
+    std::vector<PeakCollection*> peak_collections, bool friedel)
+    : _friedel(friedel), _merged_peak_set()
 {
+    _peak_collections = peak_collections;
+    UnitCell* unit_cell;
+
+    for (int i = 0; i < _peak_collections.size(); ++i){
+        std::vector<Peak3D*> peaks = _peak_collections[i]->getPeakList();
+        for (int j = 0; j < peaks.size(); ++j){
+            if (peaks[j]->unitCell())
+                unit_cell = peaks[j]->unitCell();
+        }
+    }
+
+    if (!unit_cell)
+        return;
+    
+    for (int i = 0; i < _peak_collections.size(); ++i){
+        std::vector<Peak3D*> peaks = _peak_collections[i]->getPeakList();
+        for (int j = 0; j < peaks.size(); ++j){
+            if (!(peaks[j]->unitCell() == unit_cell))
+                return;
+        }
+    }
+
+    _group = unit_cell->spaceGroup();
+
+    for (int i = 0; i < _peak_collections.size(); ++i){
+        std::vector<Peak3D*> peaks = _peak_collections[i]->getPeakList();
+        for (int j = 0; j < peaks.size(); ++j){
+            addPeak(peaks[j]);
+        }
+    }
 }
 
-bool MergedData::addPeak(const sptrPeak3D& peak)
+MergedData::MergedData(SpaceGroup space_group, bool friedel)
+    : _friedel(friedel), 
+    _merged_peak_set()
+{
+    _group = space_group;
+}
+
+bool MergedData::addPeak(Peak3D* peak)
 {
     MergedPeak new_peak(_group, _friedel);
     new_peak.addPeak(peak);
-    auto it = _mergedPeakSet.find(new_peak);
+    auto it = _merged_peak_set.find(new_peak);
 
-    if (it != _mergedPeakSet.end()) {
+    if (it != _merged_peak_set.end()) {
         MergedPeak merged(*it);
         merged.addPeak(peak);
-        _mergedPeakSet.erase(it);
-        _mergedPeakSet.emplace(std::move(merged));
+        _merged_peak_set.erase(it);
+        _merged_peak_set.emplace(std::move(merged));
         return false;
     }
-    _mergedPeakSet.emplace(std::move(new_peak));
+    _merged_peak_set.emplace(std::move(new_peak));
     return true;
 }
 
 const MergedPeakSet& MergedData::mergedPeakSet() const
 {
-    return _mergedPeakSet;
+    return _merged_peak_set;
 }
 
 size_t MergedData::totalSize() const
 {
     size_t total = 0;
 
-    for (const auto& peak : _mergedPeakSet)
+    for (const auto& peak : _merged_peak_set)
         total += peak.redundancy();
     return total;
 }
 
 double MergedData::redundancy() const
 {
-    return double(totalSize()) / double(_mergedPeakSet.size());
+    return double(totalSize()) / double(_merged_peak_set.size());
 }
 
 void MergedData::clear()
 {
-    _mergedPeakSet.clear();
+    _merged_peak_set.clear();
 }
 
 } // namespace nsx

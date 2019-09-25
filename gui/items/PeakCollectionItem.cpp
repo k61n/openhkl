@@ -40,8 +40,8 @@ PeakCollectionItem::PeakCollectionItem(nsx::PeakCollection* peak_collection)
     _peak_collection = peak_collection;
     _mode = PeakDisplayModes::VALID;
 
-    std::vector<nsx::Peak3D*>* peak_list = _peak_collection->getPeakList();
-    for (nsx::Peak3D* peak : *peak_list)
+    std::vector<nsx::Peak3D*> peak_list = _peak_collection->getPeakList();
+    for (nsx::Peak3D* peak : peak_list)
     {
         std::unique_ptr<PeakItem> item = std::make_unique<PeakItem>(peak); 
         _peak_items.push_back(std::move(item));
@@ -52,9 +52,9 @@ void PeakCollectionItem::setPeakCollection(nsx::PeakCollection* peak_collection)
 {
     _peak_collection = peak_collection;
 
-    std::vector<nsx::Peak3D*>* peak_list = _peak_collection->getPeakList();
+    std::vector<nsx::Peak3D*> peak_list = _peak_collection->getPeakList();
     _peak_items.clear();
-    for (nsx::Peak3D* peak : *peak_list)
+    for (nsx::Peak3D* peak : peak_list)
     {
         std::unique_ptr<PeakItem> item = std::make_unique<PeakItem>(peak); 
         _peak_items.push_back(std::move(item));

@@ -24,7 +24,9 @@ namespace nsx {
 class MeanBackgroundIntegrator : public IPeakIntegrator {
  public:
     MeanBackgroundIntegrator();
-    bool compute(Peak3D*, const IntegrationRegion& region) override;
+    bool compute(
+        Peak3D*, ShapeLibrary* shape_library, 
+        const IntegrationRegion& region) override;
 };
 
 } // namespace nsx

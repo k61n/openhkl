@@ -30,8 +30,6 @@
 #include "gui/models/Session.h"
 #include "gui/utility/Spoiler.h"
 
-#include <QCR/engine/mixin.h>
-
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -132,7 +130,10 @@ void PeakFinderFrame::setDataUp()
 
     connect(
         _exp_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged), 
-        this, &PeakFinderFrame::updateDatasetList);
+        this, [=](){
+            grabFinderParameters();
+            grabIntegrationParameters();
+            updateDatasetList();});
 
     connect(
         _data_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged), 
@@ -405,7 +406,8 @@ void PeakFinderFrame::setPreviewUp()
         this, &PeakFinderFrame::refreshPeakVisual);
 
     connect(
-        _width_active, static_cast<void (QSpinBox::*) (int) >(&QSpinBox::valueChanged), 
+        _width_active, static_cast<void (QSpinBox::*) (int) >(
+            &QSpinBox::valueChanged), 
         this, &PeakFinderFrame::refreshPeakVisual);
 
     connect(
@@ -640,7 +642,9 @@ void PeakFinderFrame::setFinderParameters()
 
 void PeakFinderFrame::grabIntegrationParameters()
 {
-    nsx::PixelSumIntegrator* integrator = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFoundIntegrator();
+    nsx::IPeakIntegrator* integrator = gSession->experimentAt(
+        _exp_combo->currentIndex())->experiment()->getIntegrator(
+        std::string("Pixel sum integrator"));
 
     _peak_area->setValue(integrator->peakEnd());
     _bkg_lower->setValue(integrator->backBegin());
@@ -713,11 +717,15 @@ void PeakFinderFrame::find()
 void PeakFinderFrame::integrate()
 {
     nsx::sptrExperiment experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-    experiment->integrateFoundPeaks(
-        _peak_area->value(), 
-        _bkg_lower->value(),
-        _bkg_upper->value()
-    );
+
+    nsx::IPeakIntegrator* integrator = experiment->getIntegrator(
+        "Pixel sum integrator");
+
+    integrator->setPeakEnd(_peak_area->value());
+    integrator->setBkgBegin(_bkg_lower->value());
+    integrator->setBkgEnd(_bkg_upper->value());
+
+    experiment->integrateFoundPeaks("Pixel sum integrator");
 
     refreshPeakTable();
 }
@@ -789,7 +797,7 @@ void PeakFinderFrame::refreshPeakTable()
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder()->currentPeaks();
 
     _figure_view->getScene()->clearPeakItems();
-    _peak_collection.populate(&peaks);
+    _peak_collection.populate(peaks);
     _peak_collection_item.setPeakCollection(&_peak_collection);
     _peak_collection_model.setRoot(&_peak_collection_item);
 

@@ -134,106 +134,106 @@ void RefinerFrame::refine()
         return;
     }
 
-    PeaksTableModel* peaks_model = dynamic_cast<PeaksTableModel*>(peaks->model());
-    nsx::PeakList allPeaks = peaks_model->peaks();
-    nsx::PeakList selected_peaks;
-    for (QModelIndex r : selected_rows)
-        selected_peaks.push_back(allPeaks[r.row()]);
+    // PeaksTableModel* peaks_model = dynamic_cast<PeaksTableModel*>(peaks->model());
+    // nsx::PeakList allPeaks = peaks_model->peaks();
+    // nsx::PeakList selected_peaks;
+    // for (QModelIndex r : selected_rows)
+    //     selected_peaks.push_back(allPeaks[r.row()]);
 
-    nsx::UnitCell* unit_cell = selected_peaks[0]->unitCell();
+    // nsx::UnitCell* unit_cell = selected_peaks[0]->unitCell();
 
-    if (!unit_cell) {
-        gLogger->log("[ERROR] No unit cell set for the selected peaks");
-        return;
-    }
+    // if (!unit_cell) {
+    //     gLogger->log("[ERROR] No unit cell set for the selected peaks");
+    //     return;
+    // }
 
-    int n_batches = numberBatches->value();
+    // int n_batches = numberBatches->value();
 
-    std::map<nsx::sptrDataSet, nsx::Refiner> refiners;
+    // std::map<nsx::sptrDataSet, nsx::Refiner> refiners;
 
-    std::set<nsx::sptrDataSet> data;
-    // get list of datasets
-    for (nsx::sptrPeak3D p : allPeaks)
-        data.insert(p->data());
+    // std::set<nsx::sptrDataSet> data;
+    // // get list of datasets
+    // for (nsx::sptrPeak3D p : allPeaks)
+    //     data.insert(p->data());
 
-    for (nsx::sptrDataSet d : data) {
-        nsx::PeakList reference_peaks, predicted_peaks;
+    // for (nsx::sptrDataSet d : data) {
+    //     nsx::PeakList reference_peaks, predicted_peaks;
 
-        // Keep the peak that belong to this data and split them between the found
-        // and predicted ones
-        for (nsx::sptrPeak3D peak : selected_peaks) {
-            if (peak->data() != d)
-                continue;
-            if (peak->predicted())
-                predicted_peaks.push_back(peak);
-            else
-                reference_peaks.push_back(peak);
-        }
+    //     // Keep the peak that belong to this data and split them between the found
+    //     // and predicted ones
+    //     for (nsx::sptrPeak3D peak : selected_peaks) {
+    //         if (peak->data() != d)
+    //             continue;
+    //         if (peak->predicted())
+    //             predicted_peaks.push_back(peak);
+    //         else
+    //             reference_peaks.push_back(peak);
+    //     }
 
-        gLogger->log(
-            "[INFO] " + QString::number(reference_peaks.size()) + " splitted into "
-            + QString::number(n_batches) + "refining batches.");
+    //     gLogger->log(
+    //         "[INFO] " + QString::number(reference_peaks.size()) + " splitted into "
+    //         + QString::number(n_batches) + "refining batches.");
 
-        std::vector<nsx::InstrumentState>& states = d->instrumentStates();
+    //     std::vector<nsx::InstrumentState>& states = d->instrumentStates();
 
-        nsx::Refiner refiner(states, unit_cell, reference_peaks, n_batches);
+    //     nsx::Refiner refiner(states, unit_cell, reference_peaks, n_batches);
 
-        if (refine_lattice->isChecked()) {
-            refiner.refineUB();
-            gLogger->log("[INFO] Refining UB matrix");
-        }
+    //     if (refine_lattice->isChecked()) {
+    //         refiner.refineUB();
+    //         gLogger->log("[INFO] Refining UB matrix");
+    //     }
 
-        if (refine_samplePosition->isChecked()) {
-            refiner.refineSamplePosition();
-            gLogger->log("[INFO] Refinining sample position");
-        }
+    //     if (refine_samplePosition->isChecked()) {
+    //         refiner.refineSamplePosition();
+    //         gLogger->log("[INFO] Refinining sample position");
+    //     }
 
-        if (refine_detectorPosition->isChecked()) {
-            refiner.refineDetectorOffset();
-            gLogger->log("[INFO] Refinining detector position");
-        }
+    //     if (refine_detectorPosition->isChecked()) {
+    //         refiner.refineDetectorOffset();
+    //         gLogger->log("[INFO] Refinining detector position");
+    //     }
 
-        if (refine_sampleOrientation->isChecked()) {
-            refiner.refineSampleOrientation();
-            gLogger->log("[INFO] Refinining sample orientation");
-        }
+    //     if (refine_sampleOrientation->isChecked()) {
+    //         refiner.refineSampleOrientation();
+    //         gLogger->log("[INFO] Refinining sample orientation");
+    //     }
 
-        if (refine_ki->isChecked()) {
-            refiner.refineKi();
-            gLogger->log("[INFO] Refining Ki");
-        }
+    //     if (refine_ki->isChecked()) {
+    //         refiner.refineKi();
+    //         gLogger->log("[INFO] Refining Ki");
+    //     }
 
-        bool success = refiner.refine();
+    //     bool success = refiner.refine();
 
-        if (success) {
-            gLogger->log(
-                "[INFO] Successfully refined parameters for numor "
-                + QString::fromStdString(d->filename()));
-            int updated = refiner.updatePredictions(predicted_peaks);
-            refiners.emplace(d, std::move(refiner));
-            gLogger->log("[INFO] done; updated " + QString::number(updated) + " peaks");
-        } else {
-            gLogger->log(
-                "[INFO] Failed to refine parameters for numor "
-                + QString::fromStdString(d->filename()));
-        }
-    }
+    //     if (success) {
+    //         gLogger->log(
+    //             "[INFO] Successfully refined parameters for numor "
+    //             + QString::fromStdString(d->filename()));
+    //         int updated = refiner.updatePredictions(predicted_peaks);
+    //         refiners.emplace(d, std::move(refiner));
+    //         gLogger->log("[INFO] done; updated " + QString::number(updated) + " peaks");
+    //     } else {
+    //         gLogger->log(
+    //             "[INFO] Failed to refine parameters for numor "
+    //             + QString::fromStdString(d->filename()));
+    //     }
+    // }
 
-    if (!refiners.empty()) {
-        if (tabs->count() == 2) {
-            QWidget* refiner_fit_tab = tabs->widget(1);
-            tabs->removeTab(1);
-            delete refiner_fit_tab;
-        }
-        RefinerFitWidget* refiner_fit_tab = new RefinerFitWidget(refiners);
-        tabs->addTab(refiner_fit_tab, "Fit");
-    }
+    // if (!refiners.empty()) {
+    //     if (tabs->count() == 2) {
+    //         QWidget* refiner_fit_tab = tabs->widget(1);
+    //         tabs->removeTab(1);
+    //         delete refiner_fit_tab;
+    //     }
+    //     RefinerFitWidget* refiner_fit_tab = new RefinerFitWidget(refiners);
+    //     tabs->addTab(refiner_fit_tab, "Fit");
+    // }
 
-    // Update the peak table view
-    QModelIndex topLeft = peaks_model->index(0, 0);
-    QModelIndex bottomRight =
-        peaks_model->index(peaks_model->rowCount() - 1, peaks_model->columnCount() - 1);
-    emit peaks_model->dataChanged(topLeft, bottomRight);
+    // // Update the peak table view
+    // QModelIndex topLeft = peaks_model->index(0, 0);
+    // QModelIndex bottomRight =
+    //     peaks_model->index(peaks_model->rowCount() - 1, peaks_model->columnCount() - 1);
+    // emit peaks_model->dataChanged(topLeft, bottomRight);
 }
 
 void RefinerFrame::accept()
@@ -289,7 +289,7 @@ void RefinerFitWidget::layout()
     dataLine->addItem(new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
     datalayout->addLayout(dataLine);
     above->addWidget(datagroup);
-    above->addWidget(new QTreeView);
+    // above->addWidget(new QTreeView);
     whole->addLayout(above);
     QLabel* boxlabel = new QLabel("Refined");
     boxlabel->setFrameShape(QLabel::Box);

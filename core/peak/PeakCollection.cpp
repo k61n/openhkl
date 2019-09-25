@@ -27,22 +27,22 @@ PeakCollection::PeakCollection(const std::string& name, nsx::listtype type){
 }
 
 void PeakCollection::populate(
-    const std::vector<std::shared_ptr<nsx::Peak3D>>* peak_list) 
+    const std::vector<std::shared_ptr<nsx::Peak3D>> peak_list) 
 {
     reset();
 
-    for (std::shared_ptr<nsx::Peak3D> peak : *peak_list){
+    for (std::shared_ptr<nsx::Peak3D> peak : peak_list){
         std::unique_ptr<nsx::Peak3D> ptr(new Peak3D(peak));
         _peaks.push_back(std::move(ptr));
     }
 }
 
 void PeakCollection::populate(
-    const std::vector<nsx::Peak3D*>* peak_list) 
+    const std::vector<nsx::Peak3D*> peak_list) 
 {
     reset();
 
-    for (nsx::Peak3D* peak : *peak_list){
+    for (nsx::Peak3D* peak : peak_list){
         std::unique_ptr<nsx::Peak3D> ptr(new Peak3D(*peak));
         _peaks.push_back(std::move(ptr));
     }
@@ -52,9 +52,9 @@ void PeakCollection::populateFromFiltered(PeakCollection* collection)
 {
     reset();
 
-    std::vector<nsx::Peak3D*>* peak_list = collection->getPeakList();
+    std::vector<nsx::Peak3D*> peak_list = collection->getPeakList();
 
-    for (nsx::Peak3D* peak : *peak_list){
+    for (nsx::Peak3D* peak : peak_list){
         if (peak->caughtByFilter()){
             std::unique_ptr<nsx::Peak3D> ptr(new Peak3D(*peak));
             _peaks.push_back(std::move(ptr));
@@ -77,11 +77,21 @@ nsx::Peak3D* PeakCollection::getPeak(int index){
     return _peaks.at(index).get();
 }
 
-std::vector<nsx::Peak3D*>* PeakCollection::getPeakList() const 
+std::vector<nsx::Peak3D*> PeakCollection::getPeakList() const 
 {
-    std::vector<nsx::Peak3D*>* peak_list = new std::vector<nsx::Peak3D*>;
+    std::vector<nsx::Peak3D*> peak_list;
     for (int i = 0; i<_peaks.size();i++) {
-        peak_list->push_back(_peaks[i].get());
+        peak_list.push_back(_peaks[i].get());
+    }
+    return peak_list;
+}
+
+std::vector<nsx::Peak3D*> PeakCollection::getFilteredPeakList() const 
+{
+    std::vector<nsx::Peak3D*> peak_list;
+    for (int i = 0; i<_peaks.size();i++) {
+        if(_peaks[i]->caughtByFilter())
+            peak_list.push_back(_peaks[i].get());
     }
     return peak_list;
 }

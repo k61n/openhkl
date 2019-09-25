@@ -379,8 +379,6 @@ const SpaceGroup& UnitCell::spaceGroup() const
 
 void UnitCell::setName(const std::string& name)
 {
-    if (name.empty())
-        return;
     _name = std::string(name);
 }
 

@@ -21,9 +21,9 @@
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCollection.h"
 #include "tables/crystal/UnitCell.h"
-#include "core/integration/PixelSumIntegrator.h"
 #include "core/analyse/PeakFilter.h"
 #include "core/algo/AutoIndexer.h"
+#include "core/analyse/MergedData.h"
 
 namespace nsx {
 
@@ -74,10 +74,11 @@ public: // Data sets
 
 public: // Peak Collection
 
-   //! Add some data to the experiment
+   //! Add a peak collection
    void addPeakCollection(
       const std::string& name, 
-      const std::vector<nsx::Peak3D*>* peaks);
+      const listtype type, 
+      const std::vector<nsx::Peak3D*> peaks);
    //! Returns true if the experiment has a data
    bool hasPeakCollection(const std::string& name) const;
    //! Returns the peak list denoted by the name
@@ -86,10 +87,24 @@ public: // Peak Collection
    void removePeakCollection(const std::string& name);
    //! Get a list of loaded list names
    std::vector<std::string> getCollectionNames() const;
+   //! Get a list of loaded list names
+   std::vector<std::string> getFoundCollectionNames() const;
+   //! Get a list of loaded list names
+   std::vector<std::string> getPredictedCollectionNames() const;
    //! Get the number of peak lists
-   int numPeakCollections()const {return _peakCollections.size();};
+   int numPeakCollections() const {return _peak_collections.size();};
    //! Accept a filtering of the peaks and process it
    void acceptFilter(const std::string name, PeakCollection* collection);
+
+public: // MergedData
+
+   //! Set the merged peak
+   void setMergedPeaks(
+      std::vector<PeakCollection*> peak_collections, bool friedel);
+   //! Reset the merged peak
+   void resetMergedPeaks();
+   //! Reset the merged peak
+   MergedData* getMergedPeaks() const {return _merged_peaks.get();};
 
 public: // Unit cells
 
@@ -113,16 +128,23 @@ public: //Peak finder
    //! Transfer current peaks as collection
    void acceptFoundPeaks(const std::string& name);
    //! Get the found peak integrator
-   nsx::PixelSumIntegrator* peakFoundIntegrator() {return _found_peak_integrator.get();};
-   //! Set the found peak integrator
-   void integrateFoundPeaks( double peak_end, double bkg_begin, double bkg_end);
-   //! Get the found peak integrator
    nsx::PeakFilter* peakFilter() {return _peak_filter.get();};
 
 public: // Autoindexer
 
    //! Get the auto indexer
    nsx::AutoIndexer* autoIndexer() const {return _auto_indexer.get();};
+
+public: // Integrator
+
+   //! Select integrator by idx
+   nsx::IPeakIntegrator* getIntegrator(const std::string& name) const;
+   //! Set the found peak integrator
+   void integratePeaks(
+      std::string integrator_name, 
+      PeakCollection* peak_collection);
+   //! Set the found peak integrator
+   void integrateFoundPeaks(std::string integrator);
 
 public: // Save load
 
@@ -137,23 +159,23 @@ private: // private variables
    std::string _name = "No_name";
    //! A pointer to the detector assigned to this experiment
    std::unique_ptr<Diffractometer> _diffractometer;
-   //! A map of the data related to the experiment. The keys are the basename of
-   //! their corresponding file.
+   //! A map of the data related to the experiment. 
    std::map<std::string, sptrDataSet> _data;
    //! A map of the peaklists with their name as index
-   std::map<std::string, std::unique_ptr<PeakCollection>> _peakCollections;
+   std::map<std::string, std::unique_ptr<PeakCollection>> _peak_collections;
+   //! A map of the peaklists with their name as index
+   std::unique_ptr<MergedData> _merged_peaks;
    //! A map of the unit cells with their name as index
    std::map<std::string, std::unique_ptr<UnitCell>> _unit_cells;
    //! The Peak finder
    std::unique_ptr<nsx::PeakFinder> _peak_finder;
-   //! The found peak integrator
-   std::unique_ptr<nsx::PixelSumIntegrator> _found_peak_integrator;
    //! The peak filter
    std::unique_ptr<nsx::PeakFilter> _peak_filter;
-   //! The peak predictor
-
    //! The auto indexer
    std::unique_ptr<nsx::AutoIndexer> _auto_indexer;
+   //! The found peak integrator
+   std::map<std::string, std::unique_ptr<nsx::IPeakIntegrator>> _integrator_map;
+
 };
 
 } // namespace nsx

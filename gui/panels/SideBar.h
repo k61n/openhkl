@@ -28,7 +28,7 @@ class SideBar : public QToolBar {
     void onFilterPeaks();
     void onIndexer();
     void onPredictor();
-    void onInformation();
+    void onMerger();
 
 };
 

@@ -14,6 +14,7 @@
 
 #include "gui/subframe_predict/ShapeLibraryDialog.h"
 
+#include "core/peak/PeakCollection.h"
 #include "core/analyse/PeakFilter.h"
 #include "core/experiment/DataSet.h"
 #include "core/integration/ShapeIntegrator.h"
@@ -82,7 +83,7 @@ void ShapeLibraryDialog::setUpParametrization(nsx::PeakCollection* peak_collecti
 {
     _collection_ptr = peak_collection;
 
-    _peaks = *(peak_collection->getPeakList());
+    _peaks = peak_collection->getPeakList();
     for (nsx::Peak3D* peak : _peaks)
         _data.insert(peak->data());
         
@@ -351,12 +352,16 @@ void ShapeLibraryDialog::build()
     nsx::ShapeIntegrator integrator(
         &_library, aabb, nx_val, ny_val, nz_val);
     integrator.setHandler(handler);
+    integrator.setPeakEnd(peak_scale_val);
+    integrator.setBkgBegin(bkg_begin_val);
+    integrator.setBkgEnd(bkg_end_val);
 
     for (nsx::sptrDataSet data : _data) {
         gLogger->log(
             "[INFO]Fitting profiles in dataset " + QString::fromStdString(data->filename()));
+
         integrator.integrate(
-            fit_peaks, data, _library.peakScale(), _library.bkgBegin(), _library.bkgEnd());
+            fit_peaks, &_library, data);
     }
     gLogger->log("[INFO]Done fitting profiles");
 
@@ -430,11 +435,8 @@ void ShapeLibraryDialog::drawFrame(int value)
 
 void ShapeLibraryDialog::selectTargetPeak(int row)
 {
-    PeaksTableModel* model = dynamic_cast<PeaksTableModel*>(_table->model());
 
-    const nsx::PeakList& peaks = model->peaks();
-
-    nsx::sptrPeak3D selected_peak = peaks[row];
+    nsx::Peak3D* selected_peak = _peak_collection_item.peakCollection()->getPeak(row);
 
     const Eigen::Vector3d& center = selected_peak->shape().center();
 

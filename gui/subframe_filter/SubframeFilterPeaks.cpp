@@ -127,11 +127,15 @@ void SubframeFilterPeaks::setInputUp()
 
     connect(
         _exp_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged), 
-        this, &SubframeFilterPeaks::updatePeakList);
+        this, [=](){
+            updatePeakList();
+            grabFilterParameters();});
 
     connect(
         _peak_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged), 
-        this, &SubframeFilterPeaks::updateDatasetList);
+        this, [=](){
+            updateDatasetList();
+            refreshPeakTable();});
 
     _input_box->setContentLayout(*_input_grid, true);
     _input_box->setSizePolicy(*_size_policy_box);

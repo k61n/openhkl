@@ -78,13 +78,14 @@ public:
 
 public:
 
-    //! Filter only enabled on a peak vector
-    std::vector<Peak3D*>* filterEnabled(
-        const std::vector<Peak3D*>* peaks_ptr, bool flag) const;
 
     //! Filter only enabled on a peak vector
-    std::vector<Peak3D*>* filterIndexed(
-        const std::vector<Peak3D*>* peaks_ptr, const UnitCell &cell, double tolerance) const;
+    std::vector<Peak3D*> filterEnabled(
+        const std::vector<Peak3D*> peaks_ptr, bool flag) const;
+
+    //! Filter only enabled on a peak vector
+    std::vector<Peak3D*> filterIndexed(
+        const std::vector<Peak3D*> peaks_ptr, const UnitCell &cell, double tolerance) const;
 
 public:
 

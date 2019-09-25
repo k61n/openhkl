@@ -94,6 +94,28 @@ QStringList SessionExperiment::getPeakListNames(int depth)
     return q_names;
 }
 
+QStringList SessionExperiment::getFoundNames(int depth)
+{
+    std::vector<std::string> names = _experiment->getFoundCollectionNames();
+    QStringList q_names;
+
+    for (std::string name :names){
+        q_names<<QString::fromStdString(name);
+    }
+    return q_names;
+}
+
+QStringList SessionExperiment::getPredictedNames(int depth)
+{
+    std::vector<std::string> names = _experiment->getPredictedCollectionNames();
+    QStringList q_names;
+
+    for (std::string name :names){
+        q_names<<QString::fromStdString(name);
+    }
+    return q_names;
+}
+
 void SessionExperiment::setSelected(std::string name)
 {
     _selected = peakModel(QString::fromStdString(name));
@@ -163,19 +185,20 @@ void SessionExperiment::generatePeakListModel()
     onPeaksChanged();
 }
 
-std::vector<nsx::Peak3D*>* SessionExperiment::getPeaks(
+std::vector<nsx::Peak3D*> SessionExperiment::getPeaks(
     const QString& peakListName, 
     int upperindex, 
     int lowerindex){
 
     if( !_experiment->hasPeakCollection(peakListName.toStdString())){
-        return nullptr;
+        std::vector<nsx::Peak3D*> peaks;
+        return peaks;
     }
 
     nsx::PeakCollection* peakCollection = _experiment->getPeakCollection(
         peakListName.toStdString());
 
-    std::vector<nsx::Peak3D*>* peaks = peakCollection->getPeakList();
+    std::vector<nsx::Peak3D*> peaks = peakCollection->getPeakList();
 
     return peaks;
 }
@@ -198,74 +221,6 @@ void SessionExperiment::changeInstrument(const QString& instrumentname)
 
     std::string expname = _experiment->name();
     _experiment = std::make_shared<nsx::Experiment>(expname, instrumentname.toStdString());
-}
-
-void SessionExperiment::integratePeaks()
-{
-    // if (peakLists_.empty()) {
-    //     qWarning() << "No peaks to integrate";
-    //     return;
-    // }
-
-    // IntegrateDialog* dialog = new IntegrateDialog;
-
-    // QMap<QString, std::function<nsx::IPeakIntegrator*()>> integratorMap;
-    // integratorMap["Pixel sum integrator"] = [=]() {
-    //     return new nsx::PixelSumIntegrator(dialog->fitCenter(), dialog->fitCov());
-    // };
-    // integratorMap["Gaussian integrator"] = [=]() {
-    //     return new nsx::GaussianIntegrator(dialog->fitCenter(), dialog->fitCov());
-    // };
-
-    // if (_library) {
-    //     integratorMap["3d profile integrator"] = [=]() {
-    //         return new nsx::Profile3DIntegrator(
-    //             _library, dialog->radius(), dialog->numberOfFrames(), false);
-    //     };
-    //     integratorMap["I/Sigma integrator"] = [=]() {
-    //         return new nsx::ISigmaIntegrator(_library, dialog->radius(), dialog->numberOfFrames());
-    //     };
-    //     integratorMap["1d profile integrator"] = [=]() {
-    //         return new nsx::Profile1DIntegrator(
-    //             _library, dialog->radius(), dialog->numberOfFrames());
-    //     };
-    // }
-
-    // dialog->setIntegrators(integratorMap.keys());
-    // dialog->show();
-
-    // if (!dialog->exec()) {
-    //     dialog->deleteLater();
-    //     return;
-    // }
-
-    // const double dmin = dialog->minimumD();
-    // const double dmax = dialog->maximumD();
-    // QList<nsx::sptrDataSet> numors = allData();
-
-    // nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
-    // ProgressView view(nullptr);
-    // view.watch(handler);
-
-    // nsx::PeakFilter filter;
-    // nsx::PeakList peaks = filter.dRange(getPeaks()->peaks_, dmin, dmax);
-
-    // for (nsx::sptrDataSet numor : numors) {
-    //     qDebug() << "Integrationg " << peaks.size() << " peaks";
-    //     std::unique_ptr<nsx::IPeakIntegrator> integrator(integratorMap[dialog->integrator()]());
-    //     integrator->setHandler(handler);
-    //     if (!_library) {
-    //         integrator->integrate(
-    //             peaks, numor, dialog->peakScale(), dialog->backgroundBegin(),
-    //             dialog->backgroundScale());
-    //     } else {
-    //         integrator->integrate(
-    //             peaks, numor, _library->peakScale(), _library->bkgBegin(), _library->bkgEnd());
-    //     }
-    // }
-
-    // qDebug() << "Done reintegrating peaks";
-    // dialog->deleteLater();
 }
 
 void SessionExperiment::onPeaksChanged()

@@ -23,15 +23,19 @@
 namespace nsx {
 
 PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance)
-    : MeanBackgroundIntegrator(), _fitCenter(fit_center), _fitCovariance(fit_covariance)
+    : MeanBackgroundIntegrator()
 {
+    setFitCenter(fit_center);
+    setFitCov(fit_covariance);
 }
 
 PixelSumIntegrator::~PixelSumIntegrator() {}
 
-bool PixelSumIntegrator::compute(Peak3D* peak, const IntegrationRegion& region)
+bool PixelSumIntegrator::compute(
+    Peak3D* peak, ShapeLibrary* shape_library, 
+    const IntegrationRegion& region)
 {
-    MeanBackgroundIntegrator::compute(peak, region);
+    MeanBackgroundIntegrator::compute(peak, shape_library, region);
     PeakCoordinateSystem frame(peak);
 
     const auto& events = region.data().events();
@@ -85,8 +89,8 @@ bool PixelSumIntegrator::compute(Peak3D* peak, const IntegrationRegion& region)
         f_max = std::max(ev._frame, f_max);
     }
 
-    Eigen::Vector3d center = _fitCenter ? blob.center() : peak->shape().center();
-    Eigen::Matrix3d cov = _fitCovariance ? blob.covariance() : peak->shape().inverseMetric();
+    Eigen::Vector3d center = fitCenter() ? blob.center() : peak->shape().center();
+    Eigen::Matrix3d cov = fitCov() ? blob.covariance() : peak->shape().inverseMetric();
 
     // center of mass is consistent
     if (std::isnan(center.norm()))

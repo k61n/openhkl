@@ -66,10 +66,12 @@ void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
 
     for (auto p : peaks_per_unit_cell) {
         auto unit_cell = p.first;
+        std::vector<PeakCollection*> collection_vector;
+        collection_vector.push_back(peak_collection);
 
         SpaceGroup group(unit_cell->spaceGroup());
-        MergedData merged(group, true);
-        PeakList filtered_peaks;
+        MergedData merged(collection_vector, true);
+        std::vector<Peak3D*> filtered_peaks = peak_collection->getFilteredPeakList();
 
         for (auto peak : filtered_peaks)
             merged.addPeak(peak);
@@ -81,7 +83,6 @@ void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
             }
         }
     }
-
 }
 
 void PeakFilter::filterSparseDataSet(PeakCollection* peak_collection) const
@@ -199,12 +200,13 @@ void PeakFilter::filterEnabled(PeakCollection* peak_collection) const
     }
 }
 
-std::vector<Peak3D*>* PeakFilter::filterEnabled(const std::vector<Peak3D*>* peaks_ptr, bool flag) const
+std::vector<Peak3D*> PeakFilter::filterEnabled(const std::vector<Peak3D*> input_peaks, bool flag) const
 {
-  std::vector<Peak3D*>* filtered_peaks = new std::vector<Peak3D*>;
-  std::vector<Peak3D*> peaks = *peaks_ptr;
-  std::copy_if(peaks.begin(), peaks.end(), std::back_inserter(*filtered_peaks),
-               [flag](Peak3D* peak) { return flag == peak->enabled(); });
+  std::vector<Peak3D*> filtered_peaks;
+  std::copy_if(
+      input_peaks.begin(), input_peaks.end(), 
+      std::back_inserter(filtered_peaks),
+      [flag](Peak3D* peak) { return flag == peak->enabled(); });
   return filtered_peaks;
 }
 
@@ -252,15 +254,15 @@ void PeakFilter::filterIndexed(PeakCollection* peak_collection) const
     }
 }
 
-std::vector<Peak3D*>* PeakFilter::filterIndexed(
-    const std::vector<Peak3D*>* peaks_ptr, const UnitCell &cell, double tolerance) const
+std::vector<Peak3D*> PeakFilter::filterIndexed(
+    const std::vector<Peak3D*> input_peaks, 
+    const UnitCell &cell, double tolerance) const
 {
-std::vector<Peak3D*>* filtered_peaks = new std::vector<Peak3D*>;
-  std::vector<Peak3D*> peaks = *peaks_ptr;
-  for (auto peak : peaks) {
+std::vector<Peak3D*> filtered_peaks;
+  for (auto peak : input_peaks) {
     MillerIndex miller_index(peak->q(), cell);
     if (miller_index.indexed(tolerance)) {
-      filtered_peaks->push_back(peak);
+      filtered_peaks.push_back(peak);
     }
   }
   return filtered_peaks;

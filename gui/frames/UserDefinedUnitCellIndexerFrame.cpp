@@ -232,25 +232,25 @@ void UserDefinedUnitCellIndexerFrame::slotSelectSolution(int index)
 
     selected_unit_cell->setName("new unit cell");
 
-    PeaksTableModel* peaks_model = dynamic_cast<PeaksTableModel*>(peaktable->model());
+    // PeaksTableModel* peaks_model = dynamic_cast<PeaksTableModel*>(peaktable->model());
 
-    const nsx::PeakList& peaks = peaks_model->peaks();
+    // const nsx::PeakList& peaks = peaks_model->peaks();
 
-    for (QModelIndex r : selected_rows)
-        peaks[r.row()]->setUnitCell(selected_unit_cell);
+    // for (QModelIndex r : selected_rows)
+    //     peaks[r.row()]->setUnitCell(selected_unit_cell);
 
-    UnitCellWidget* widget_unit_cell = new UnitCellWidget(
-        selected_unit_cell, "adhoc_" + QString::fromStdString(selected_unit_cell->name()));
-    tabwidget->addTab(widget_unit_cell, QString::fromStdString(selected_unit_cell->name()));
-    QCheckBox* checkbox = new QCheckBox();
-    checkbox->setChecked(true);
-    tabwidget->tabBar()->setTabButton(tabwidget->count() - 1, QTabBar::LeftSide, checkbox);
+    // UnitCellWidget* widget_unit_cell = new UnitCellWidget(
+    //     selected_unit_cell, "adhoc_" + QString::fromStdString(selected_unit_cell->name()));
+    // tabwidget->addTab(widget_unit_cell, QString::fromStdString(selected_unit_cell->name()));
+    // QCheckBox* checkbox = new QCheckBox();
+    // checkbox->setChecked(true);
+    // tabwidget->tabBar()->setTabButton(tabwidget->count() - 1, QTabBar::LeftSide, checkbox);
 
-    QModelIndex topLeft = peaks_model->index(0, 0);
-    QModelIndex bottomRight =
-        peaks_model->index(peaks_model->rowCount() - 1, peaks_model->columnCount() - 1);
+    // QModelIndex topLeft = peaks_model->index(0, 0);
+    // QModelIndex bottomRight =
+    //     peaks_model->index(peaks_model->rowCount() - 1, peaks_model->columnCount() - 1);
 
-    emit peaks_model->dataChanged(topLeft, bottomRight);
+    // emit peaks_model->dataChanged(topLeft, bottomRight);
 }
 
 void UserDefinedUnitCellIndexerFrame::slotTabEdited(int index)
@@ -283,13 +283,13 @@ void UserDefinedUnitCellIndexerFrame::slotTabEdited(int index)
     tabwidget->setTabText(index, unit_cell_name);
     unit_cell_tab->unitCell()->setName(unit_cell_name.toStdString());
 
-    PeaksTableModel* peaks_model = dynamic_cast<PeaksTableModel*>(peaktable->model());
+    // PeaksTableModel* peaks_model = dynamic_cast<PeaksTableModel*>(peaktable->model());
 
-    QModelIndex topleft_index = peaks_model->index(0, 0);
-    QModelIndex bottomright_index =
-        peaks_model->index(peaks_model->rowCount() - 1, peaks_model->columnCount() - 1);
+    // QModelIndex topleft_index = peaks_model->index(0, 0);
+    // QModelIndex bottomright_index =
+    //     peaks_model->index(peaks_model->rowCount() - 1, peaks_model->columnCount() - 1);
 
-    emit peaks_model->dataChanged(topleft_index, bottomright_index);
+    // emit peaks_model->dataChanged(topleft_index, bottomright_index);
 }
 
 void UserDefinedUnitCellIndexerFrame::slotTabRemoved(int index)
@@ -317,14 +317,14 @@ void UserDefinedUnitCellIndexerFrame::resetPeaks()
         delete tab;
     }
 
-    PeaksTableModel* peaks_model = dynamic_cast<PeaksTableModel*>(peaktable->model());
+    // PeaksTableModel* peaks_model = dynamic_cast<PeaksTableModel*>(peaktable->model());
 
-    // Update the peak table view
-    QModelIndex topLeft = peaks_model->index(0, 0);
-    QModelIndex bottomRight =
-        peaks_model->index(peaks_model->rowCount() - 1, peaks_model->columnCount() - 1);
+    // // Update the peak table view
+    // QModelIndex topLeft = peaks_model->index(0, 0);
+    // QModelIndex bottomRight =
+    //     peaks_model->index(peaks_model->rowCount() - 1, peaks_model->columnCount() - 1);
 
-    emit peaks_model->dataChanged(topLeft, bottomRight);
+    // emit peaks_model->dataChanged(topLeft, bottomRight);
 }
 
 void UserDefinedUnitCellIndexerFrame::index()
@@ -339,39 +339,39 @@ void UserDefinedUnitCellIndexerFrame::index()
         return;
     }
 
-    PeaksTableModel* peaks_model = dynamic_cast<PeaksTableModel*>(peaktable->model());
-    const nsx::PeakList& peaks = peaks_model->peaks();
+    // PeaksTableModel* peaks_model = dynamic_cast<PeaksTableModel*>(peaktable->model());
+    // const nsx::PeakList& peaks = peaks_model->peaks();
 
-    nsx::PeakList selected_peaks;
-    selected_peaks.reserve(selected_rows.size());
-    for (QModelIndex r : selected_rows)
-        selected_peaks.push_back(peaks[r.row()]);
+    // nsx::PeakList selected_peaks;
+    // selected_peaks.reserve(selected_rows.size());
+    // for (QModelIndex r : selected_rows)
+    //     selected_peaks.push_back(peaks[r.row()]);
 
-    nsx::UserDefinedUnitCellIndexerParameters parameters;
+    // nsx::UserDefinedUnitCellIndexerParameters parameters;
 
-    parameters.a = a->value();
-    parameters.b = b->value();
-    parameters.c = c->value();
-    parameters.alpha = alpha->value() * nsx::deg;
-    parameters.beta = beta->value() * nsx::deg;
-    parameters.gamma = gamma->value() * nsx::deg;
-    parameters.niggli_tolerance = niggli->value();
-    parameters.gruber_tolerance = gruber->value();
-    parameters.niggli_only = onlyNiggli->isChecked();
-    parameters.n_solutions = solutions->value();
-    parameters.indexing_tolerance = indexingTol->value();
-    parameters.indexing_threshold = indexingThreshold->value();
-    parameters.wavelength = wavelength->value();
-    parameters.distance_tolerance = distance->value();
-    parameters.angular_tolerance = angularTol->value();
-    parameters.max_n_q_vectors = maxQVectors->value();
-    indexer_.setParameters(parameters);
-    indexer_.setPeaks(selected_peaks);
-    gLogger->log("[INFO] Now running indexer...");
-    indexer_.run();
-    gLogger->log("[INFO] end running the indexer");
-    solutions_ = indexer_.solutions();
-    buildUnitCellsTable();
+    // parameters.a = a->value();
+    // parameters.b = b->value();
+    // parameters.c = c->value();
+    // parameters.alpha = alpha->value() * nsx::deg;
+    // parameters.beta = beta->value() * nsx::deg;
+    // parameters.gamma = gamma->value() * nsx::deg;
+    // parameters.niggli_tolerance = niggli->value();
+    // parameters.gruber_tolerance = gruber->value();
+    // parameters.niggli_only = onlyNiggli->isChecked();
+    // parameters.n_solutions = solutions->value();
+    // parameters.indexing_tolerance = indexingTol->value();
+    // parameters.indexing_threshold = indexingThreshold->value();
+    // parameters.wavelength = wavelength->value();
+    // parameters.distance_tolerance = distance->value();
+    // parameters.angular_tolerance = angularTol->value();
+    // parameters.max_n_q_vectors = maxQVectors->value();
+    // indexer_.setParameters(parameters);
+    // indexer_.setPeaks(selected_peaks);
+    // gLogger->log("[INFO] Now running indexer...");
+    // indexer_.run();
+    // gLogger->log("[INFO] end running the indexer");
+    // solutions_ = indexer_.solutions();
+    // buildUnitCellsTable();
 }
 
 void UserDefinedUnitCellIndexerFrame::buildUnitCellsTable()

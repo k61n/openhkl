@@ -43,6 +43,8 @@ public:
    SubframePredictPeaks();
    //! run the auto indexing
    void runPrediction();
+   //! run the auto indexing
+   void runIntegration();
    //! Refresh all the panels
    void refreshAll();
 
@@ -54,6 +56,8 @@ private:
    void setInputUp();
    //! Set the parameters values up
    void setParametersUp();
+   //! Set the integration values up
+   void setIntegrateUp();
    //! Build the buttons
    void setProceedUp();
    //! Set the peak table view up
@@ -114,15 +118,26 @@ private:
 
    Spoiler* _input_box;
    Spoiler* _para_box;
+   Spoiler* _integrate_box;
    Spoiler* _preview_box;
 
    QComboBox* _unit_cells;
    QComboBox* _interpolation;
+   QComboBox* _integrator;
+   QSpinBox* _min_neighbors;
    QDoubleSpinBox* _d_min;
    QDoubleSpinBox* _d_max;
    QDoubleSpinBox* _radius;
    QDoubleSpinBox* _n_frames;
-   QSpinBox* _min_neighbors;
+   QDoubleSpinBox* _peak_scale_int;
+   QDoubleSpinBox* _bkg_start_int;
+   QDoubleSpinBox* _bkg_end_int;
+   QDoubleSpinBox* _d_min_int;
+   QDoubleSpinBox* _d_max_int;
+   QDoubleSpinBox* _radius_int;
+   QDoubleSpinBox* _n_frames_int;
+   QCheckBox* _fit_center;
+   QCheckBox* _fit_covariance;
 
    QComboBox* _exp_combo;
    QComboBox* _peak_combo;
@@ -146,6 +161,7 @@ private:
    QPushButton* _build_shape_lib;
    QPushButton* _run_prediction;
    QPushButton* _save_button;
+   QPushButton* _run_integration;
 
    QSizePolicy* _size_policy_widgets;
    QSizePolicy* _size_policy_box;

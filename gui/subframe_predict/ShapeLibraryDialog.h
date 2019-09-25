@@ -23,7 +23,6 @@
 #include "core/shape/Profile3D.h"
 #include "core/shape/ShapeLibrary.h"
 #include "gui/models/ColorMap.h"
-#include "gui/models/PeakModel.h"
 
 #include <QGraphicsView>
 #include <QTableView>
@@ -40,6 +39,7 @@
 #include <QDoubleSpinBox>
 #include <QComboBox>
 #include <QSizePolicy>
+#include <QDialog>
 
 //! Dialog for building the shape library
 class ShapeLibraryDialog : public QDialog {
@@ -51,7 +51,6 @@ public:
 
 private:
 
-   void layout();
    void calculate();
    void build();
    void drawFrame(int value);

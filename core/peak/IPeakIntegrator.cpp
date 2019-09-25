@@ -53,13 +53,9 @@ const std::vector<Intensity>& IPeakIntegrator::rockingCurve() const
 }
 
 void IPeakIntegrator::integrate(
-    std::vector<Peak3D*> peaks, sptrDataSet data, double peak_end, double bkg_begin, double bkg_end)
+    std::vector<nsx::Peak3D*> peaks, 
+    ShapeLibrary* shape_library,sptrDataSet data)
 {
-
-    _peak_end = peak_end;
-    _bkg_begin = bkg_begin;
-    _bkg_end = bkg_end;
-
     qDebug() << "IPeakIntegrator::integrate start";
     // integrate only those peaks that belong to the specified dataset
     auto it = std::remove_if(
@@ -87,7 +83,9 @@ void IPeakIntegrator::integrate(
             // IntegrationRegion constructor may throw (e.g. peak on boundary of
             // image)
             regions.emplace(
-                std::make_pair(peak, IntegrationRegion(peak, peak_end, bkg_begin, bkg_end)));
+                std::make_pair(
+                    peak, 
+                    IntegrationRegion(peak, _peak_end, _bkg_begin, _bkg_end)));
             integrated.emplace(std::make_pair(peak, false));
         } catch (...) {
             peak->setSelected(false);
@@ -136,8 +134,9 @@ void IPeakIntegrator::integrate(
             if (result && !integrated[peak]) {
                 regions[peak].data().computeStandard();
                 try {
-                    if (compute(peak, regions[peak])){
-                        peak->updateIntegration(*this, peak_end, bkg_begin, bkg_end);
+                    if (compute(peak, shape_library, regions[peak])){
+                        peak->updateIntegration(
+                            *this, _peak_end, _bkg_begin, _bkg_end);
                     }else{
                         peak->setSelected(false);}
                 } catch (std::exception& e) {

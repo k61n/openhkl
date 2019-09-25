@@ -17,7 +17,6 @@
 
 #include "core/algo/UserDefinedIndexer.h"
 #include "gui/views/PeakTableView.h"
-#include "gui/models/PeakModel.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 #include <QDialogButtonBox>

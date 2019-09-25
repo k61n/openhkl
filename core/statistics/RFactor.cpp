@@ -21,9 +21,9 @@ static const double g_sqrt2pi = std::sqrt(2.0 / M_PI);
 
 namespace nsx {
 
-void RFactor::calculate(const MergedData& data)
+void RFactor::calculate(MergedData* data)
 {
-    auto&& peaks = data.mergedPeakSet();
+    auto&& peaks = data->mergedPeakSet();
 
     _Rmerge = 0;
     _Rmeas = 0;

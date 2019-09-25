@@ -21,6 +21,7 @@
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 #include "gui/subframe_experiment/SubframeExperiment.h"
 #include "gui/subframe_home/SubframeHome.h"
+#include "gui/subframe_combine/SubframeMergedPeaks.h"
 
 #include "gui/graphics/DetectorScene.h"
 
@@ -49,20 +50,20 @@ class MainWin : public QcrMainWindow {
     //! Refreshes the parts of the main window that depend on the peaks
     void onUnitCellChanged();
     //! change the detector image view
-    void changeView(int option) { experimentScreen_->image->changeView(option); }
+    void changeView(int option) { _experiment->image->changeView(option); }
     //! update the plot, plot the plottable item p
-    void updatePlot(PlottableItem* p) { experimentScreen_->plot->updatePlot(p); }
+    void updatePlot(PlottableItem* p) { _experiment->plot->updatePlot(p); }
     //! change the cursor tooltip on the detector scene
     void cursormode(int i)
     {
-        experimentScreen_->image->imageView->getScene()->changeCursorMode(i);
+        _experiment->image->imageView->getScene()->changeCursorMode(i);
     }
     //! export current plot to ASCII
-    void exportPlot() { experimentScreen_->plot->exportPlot(); }
+    void exportPlot() { _experiment->plot->exportPlot(); }
     //! plot the x and y data, e is the error to y
     void plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e)
     {
-        experimentScreen_->plot->plotData(x, y, e);
+        _experiment->plot->plotData(x, y, e);
     }
 
  private:
@@ -71,14 +72,15 @@ class MainWin : public QcrMainWindow {
     void saveSettings() const;
     void closeEvent(QCloseEvent* event) override;
 
-    QStackedWidget* layoutStack_;
-    SubframeExperiment* experimentScreen_;
-    SubframeHome* homeScreen_;
-    PeakFinderFrame* finder_;
-    SubframeFilterPeaks* filter_;
-    SubframeAutoIndexer* indexer_;
-    SubframePredictPeaks* predictor_;
-    
+    QStackedWidget* _layout_stack;
+    SubframeExperiment* _experiment;
+    SubframeHome* _home;
+    PeakFinderFrame* _finder;
+    SubframeFilterPeaks* _filter;
+    SubframeAutoIndexer* _indexer;
+    SubframePredictPeaks* _predictor;
+    SubframeMergedPeaks* _merger;
+
     class Menus* menus_;
 
     QByteArray initialState_;

@@ -46,12 +46,16 @@ public:
 public:
 
    //! Get the associated peaks
-   std::vector<nsx::Peak3D*>* getPeaks(
+   std::vector<nsx::Peak3D*> getPeaks(
       const QString& peakListName, 
       int upperindex = -1, 
       int lowerindex = -1);
    //! Get the names of peaks present in the core (depth obsolete)
    QStringList getPeakListNames(int depth = 1);
+   //! Get the names of peaks present in the core (depth obsolete)
+   QStringList getFoundNames(int depth = 1);
+   //! Get the names of peaks present in the core (depth obsolete)
+   QStringList getPredictedNames(int depth = 1);
    //! Get the number of peak lists
    int numPeakCollections()const {return _experiment->numPeakCollections();};
    //! Set the currently selected peakModel
@@ -72,8 +76,6 @@ public:
    QStandardItemModel* peakListModel() {return &_peak_list_model;};
    //! Tell the gui that peaks have changed
    void onPeaksChanged();
-   //! Integrate the the peaks (obsolete)
-   void integratePeaks();
 
 public:
 

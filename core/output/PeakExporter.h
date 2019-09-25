@@ -34,31 +34,29 @@ public:
         nsx::SpaceGroup spaceGroup, 
         bool inclFriedel);
     //! Saves the peak information to ShelX file format given a peak list.
-    void saveToShelX(
+    void saveToShelXMerged(
         std::string filename, 
-        nsx::PeakList* peakList);
+        nsx::MergedData* mergedData);
     //! Saves the peak information to ShelX file format given a merged peak list.
-    void saveToShelX(
+    void saveToFullProfMerged(
         std::string filename, 
         nsx::MergedData* mergedData);
     //! Saves the peak information to FullProf file format given a peak list.
-    void saveToFullProf(
+    void saveToSCAMerged(
         std::string filename, 
-        nsx::PeakList* peakList);
+        nsx::MergedData* mergedData);
     //! Saves the peak information to FullProf file format given a merged peak list.
-    void saveToFullProf(
+    void saveToShelXUnmerged(
         std::string filename, 
-        nsx::MergedData* mergedData, 
-        nsx::PeakList* peakList);
+        nsx::MergedData* mergedData);
     //! Saves the peak information to .sca file format given a peak list.
-    void saveToSCA(
+    void saveToFullProfUnmerged(
         std::string filename, 
-        nsx::PeakList* peakList);
+        nsx::MergedData* mergedData);
     //! Saves the peak information to .sca file format given a merged peak list.
-    void saveToSCA(
+    void saveToSCAUnmerged(
         std::string filename, 
-        nsx::MergedData* mergedData, 
-        nsx::PeakList* peakList);
+        nsx::MergedData* mergedData);
 
 private:
 };

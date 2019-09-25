@@ -69,7 +69,7 @@ const std::vector<std::pair<sptrUnitCell, double>>& AutoIndexer::solutions() con
 
 void AutoIndexer::computeFFTSolutions(PeakCollection* peak_collection)
 {
-    std::vector<Peak3D*>* peaks = peak_collection->getPeakList();
+    std::vector<Peak3D*> peaks = peak_collection->getPeakList();
     
     _solutions.clear();
 
@@ -77,10 +77,11 @@ void AutoIndexer::computeFFTSolutions(PeakCollection* peak_collection)
     std::vector<ReciprocalVector> qvects;
 
     PeakFilter peak_filter;
-    std::vector<Peak3D*>* filtered_peaks = peak_filter.filterEnabled(peaks, true);
+    std::vector<Peak3D*> filtered_peaks = peak_filter.filterEnabled(
+        peaks, true);
     
-    for (size_t i = 0; i < filtered_peaks->size(); ++i) {
-        Peak3D* peak = filtered_peaks->at(i);
+    for (size_t i = 0; i < filtered_peaks.size(); ++i) {
+        Peak3D* peak = filtered_peaks.at(i);
         auto q = peak->q().rowVector();
         qvects.push_back(ReciprocalVector(q));
     }
@@ -140,7 +141,6 @@ void AutoIndexer::computeFFTSolutions(PeakCollection* peak_collection)
             }
         }
     }
-    delete filtered_peaks;
 }
 
 void AutoIndexer::rankSolutions()
@@ -161,7 +161,7 @@ void AutoIndexer::refineSolutions(PeakCollection* peak_collection)
 {
     #pragma omp parallel for
     for (auto&& soln : _solutions) {
-        std::vector<Peak3D*>* peaks = peak_collection->getPeakList();
+        std::vector<Peak3D*> peaks = peak_collection->getPeakList();
 
         auto cell = soln.first;
         cell->setIndexingTolerance(_params.indexingTolerance);
@@ -171,14 +171,14 @@ void AutoIndexer::refineSolutions(PeakCollection* peak_collection)
         std::vector<Eigen::Matrix3d> wt;
 
         PeakFilter peak_filter;
-        std::vector<Peak3D*>* enabled_peaks;
-        enabled_peaks = peak_filter.filterEnabled(peaks, true);
+        std::vector<Peak3D*> enabled_peaks = peak_filter.filterEnabled(
+            peaks, true);
 
-        std::vector<Peak3D*>* filtered_peaks;
-        filtered_peaks = peak_filter.filterIndexed(enabled_peaks, *cell, cell->indexingTolerance());
+        std::vector<Peak3D*> filtered_peaks = peak_filter.filterIndexed(
+            enabled_peaks, *cell, cell->indexingTolerance());
 
-        int success = filtered_peaks->size();
-        for (auto peak : *filtered_peaks) {
+        int success = filtered_peaks.size();
+        for (auto peak : filtered_peaks) {
             MillerIndex hkld(peak->q(), *cell);
             hkls.emplace_back(hkld.rowVector().cast<double>());
             qs.emplace_back(peak->q().rowVector());
@@ -256,21 +256,16 @@ void AutoIndexer::refineSolutions(PeakCollection* peak_collection)
         // Define the final score of this solution by computing the percentage of
         // the selected peaks which have been successfully indexed
 
-        std::vector<Peak3D*>*  refiltered_peaks;
-        refiltered_peaks = peak_filter.filterIndexed(
+        std::vector<Peak3D*>  refiltered_peaks = peak_filter.filterIndexed(
             filtered_peaks, *cell, cell->indexingTolerance());
 
-        double score = static_cast<double>(refiltered_peaks->size());
-        double maxscore = static_cast<double>(filtered_peaks->size());
+        double score = static_cast<double>(refiltered_peaks.size());
+        double maxscore = static_cast<double>(filtered_peaks.size());
 
         // Percentage of indexing
         score /= 0.01 * maxscore;
         soln.second = score;
 
-        delete peaks;
-        delete enabled_peaks;
-        delete filtered_peaks;
-        delete refiltered_peaks;
     }
 }
 

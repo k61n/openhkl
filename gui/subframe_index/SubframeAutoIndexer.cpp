@@ -505,11 +505,10 @@ void SubframeAutoIndexer::selectSolutionHeader(int index)
     nsx::PeakCollection* collection = gSession->experimentAt(
         _exp_combo->currentIndex())->experiment()->getPeakCollection(
             _peak_combo->currentText().toStdString());
-    std::vector<nsx::Peak3D*>* peaks = collection->getPeakList();
 
-    for (nsx::Peak3D* peak: *peaks)
+    std::vector<nsx::Peak3D*> peaks = collection->getPeakList();
+    for (nsx::Peak3D* peak: peaks)
         peak->setUnitCell(_selected_unit_cell);
-
     refreshPeakTable();
 }
 
@@ -536,8 +535,9 @@ void SubframeAutoIndexer::acceptSolution()
             nsx::PeakCollection* collection = gSession->experimentAt(
                 _exp_combo->currentIndex())->experiment()->getPeakCollection(
                     _peak_combo->currentText().toStdString());
-            std::vector<nsx::Peak3D*>* peaks = collection->getPeakList();
-            for (nsx::Peak3D* peak: *peaks)
+                    
+            std::vector<nsx::Peak3D*> peaks = collection->getPeakList();
+            for (nsx::Peak3D* peak: peaks)
                 peak->setUnitCell(gSession->experimentAt(
                     _exp_combo->currentIndex())->experiment()->getUnitCell(
                         dlg->listName().toStdString()));

@@ -22,21 +22,23 @@
 
 namespace nsx {
 
-ISigmaIntegrator::ISigmaIntegrator(sptrShapeLibrary library, double radius, double nframes)
-    : PixelSumIntegrator(false, false), _library(library), _radius(radius), _nframes(nframes)
+ISigmaIntegrator::ISigmaIntegrator()
+    : PixelSumIntegrator(false, false)
 {
 }
 
-bool ISigmaIntegrator::compute(Peak3D* peak, const IntegrationRegion& region)
+bool ISigmaIntegrator::compute(
+    Peak3D* peak, ShapeLibrary* shape_library, 
+    const IntegrationRegion& region)
 {
-    if (!_library)
+    if (!shape_library)
         return false;
 
     if (!peak)
         return false;
 
     // first get mean background
-    PixelSumIntegrator::compute(peak, region);
+    PixelSumIntegrator::compute(peak, shape_library, region);
     const double mean_bkg = _meanBackground.value();
     const double var_bkg = _meanBackground.variance();
 
@@ -55,7 +57,8 @@ bool ISigmaIntegrator::compute(Peak3D* peak, const IntegrationRegion& region)
 
     try {
         // throws if there are no neighboring peaks within the bounds
-        mean_profile = _library->meanProfile1D(DetectorEvent(c), _radius, _nframes);
+        mean_profile = shape_library->meanProfile1D(
+            DetectorEvent(c), radius(), nFrames());
     } catch (...) {
         return false;
     }

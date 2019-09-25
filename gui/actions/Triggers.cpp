@@ -29,7 +29,7 @@
 #include "gui/frames/GlobalOffsetsFrame.h"
 #include "gui/frames/InstrumentStatesFrame.h"
 #include "gui/frames/RefinerFrame.h"
-#include "gui/frames/MergedPeakInformationFrame.h"
+// #include "gui/frames/MergedPeakInformationFrame.h"
 #include "gui/frames/UserDefinedUnitCellIndexerFrame.h"
 
 #include "gui/panels/TabInstrument.h"
@@ -104,16 +104,16 @@ void Actions::setupOptions()
     dSpacing.setTriggerHook([]() { gGui->cursormode(3); });
     millerIndices.setTriggerHook([]() { gGui->cursormode(4); });
     logarithmicScale.setHook([](bool checked) {
-        gGui->experimentScreen_->image->imageView->getScene()->setLogarithmic(checked);
+        gGui->_experiment->image->imageView->getScene()->setLogarithmic(checked);
     });
     showLabels.setHook([](bool checked) {
-        gGui->experimentScreen_->image->imageView->getScene()->showPeakLabels(checked);
+        gGui->_experiment->image->imageView->getScene()->showPeakLabels(checked);
     });
     showAreas.setHook([](bool checked) {
-        gGui->experimentScreen_->image->imageView->getScene()->showPeakAreas(checked);
+        gGui->_experiment->image->imageView->getScene()->showPeakAreas(checked);
     });
     drawPeakArea.setHook([](bool checked) {
-        gGui->experimentScreen_->image->imageView->getScene()->drawIntegrationRegion(checked);
+        gGui->_experiment->image->imageView->getScene()->drawIntegrationRegion(checked);
     });
 }
 
@@ -140,7 +140,7 @@ void Actions::setupPeaks()
             return;
         // gSession->selectedExperiment()->normalizeToMonitor();
     });
-    integratepeaks.setTriggerHook([]() { gSession->selectedExperiment()->integratePeaks(); });
+    // integratepeaks.setTriggerHook([]() { gSession->selectedExperiment()->integratePeaks(); });
     // predictPeaks.setTriggerHook([]() {
     //     PredictPeaksDialog* dgl = new PredictPeaksDialog;
     //     if (!dgl->exec()) {

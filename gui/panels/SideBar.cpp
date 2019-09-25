@@ -31,7 +31,7 @@ SideBar::SideBar(QWidget *parent)
     QAction* filter = addAction(QIcon(":/images/filterIcon.svg"), "Peak Filter");
     QAction* indexer = addAction(QIcon(":/images/findUnitCellIcon.png"), "Indexer");
     QAction* predictor = addAction("Predictor");
-    QAction* info = addAction(QIcon(":/images/peakInformationIcon.svg"), "Information");
+    QAction* info = addAction(QIcon(":/images/peakInformationIcon.svg"), "Merger");
 
     connect(home, &QAction::triggered, this, &SideBar::onHome);
     connect(experiment, &QAction::triggered, this, &SideBar::onExperiment);
@@ -39,44 +39,45 @@ SideBar::SideBar(QWidget *parent)
     connect(filter, &QAction::triggered, this, &SideBar::onFilterPeaks);
     connect(indexer, &QAction::triggered, this, &SideBar::onIndexer);
     connect(predictor, &QAction::triggered, this, &SideBar::onPredictor);
-    connect(info, &QAction::triggered, this, &SideBar::onInformation);
+    connect(info, &QAction::triggered, this, &SideBar::onMerger);
 }
 
 void SideBar::onHome()
 {
-    gGui->layoutStack_->setCurrentIndex(0);
+    gGui->_layout_stack->setCurrentIndex(0);
 }
 
 void SideBar::onExperiment()
 {
-    gGui->layoutStack_->setCurrentIndex(1);
+    gGui->_layout_stack->setCurrentIndex(1);
 }
 
 void SideBar::onFindPeaks()
 {
-    gGui->layoutStack_->setCurrentIndex(2);
-    gGui->finder_->refreshAll();
+    gGui->_layout_stack->setCurrentIndex(2);
+    gGui->_finder->refreshAll();
 }
 
 void SideBar::onFilterPeaks()
 {
-    gGui->layoutStack_->setCurrentIndex(3);
-    gGui->filter_->refreshAll();
+    gGui->_layout_stack->setCurrentIndex(3);
+    gGui->_filter->refreshAll();
 }
 
 void SideBar::onIndexer()
 {
-    gGui->layoutStack_->setCurrentIndex(4);
-    gGui->indexer_->refreshAll();
+    gGui->_layout_stack->setCurrentIndex(4);
+    gGui->_indexer->refreshAll();
 }
 
 void SideBar::onPredictor()
 {
-    gGui->layoutStack_->setCurrentIndex(5);
-    gGui->predictor_->refreshAll();
+    gGui->_layout_stack->setCurrentIndex(5);
+    gGui->_predictor->refreshAll();
 }
 
-void SideBar::onInformation()
+void SideBar::onMerger()
 {
-    //gGui->layoutStack_->setCurrentIndex(5);
+    gGui->_layout_stack->setCurrentIndex(6);
+    gGui->_merger->refreshAll();
 }
