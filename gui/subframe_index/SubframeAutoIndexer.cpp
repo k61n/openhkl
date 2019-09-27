@@ -388,7 +388,6 @@ void SubframeAutoIndexer::setIndexerParameters() const
         _exp_combo->currentIndex())->experiment()->autoIndexer();
 
     nsx::IndexerParameters parameters;
-
     parameters.niggliTolerance = _niggli->value();
     parameters.niggliReduction = _only_niggli->isChecked();
     parameters.gruberTolerance = _gruber->value();

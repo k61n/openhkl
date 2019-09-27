@@ -26,9 +26,9 @@ class SubframeExperiment : public QWidget {
  public:
     SubframeExperiment();
 
-    ImageWidget* image;
-    SubframeLogger* logger;
-    SubframePlot* plot;
+    ImagePanel* image;
+    LoggerPanel* logger;
+    PlotPanel* plot;
     PropertyPanel* properties;
 };
 

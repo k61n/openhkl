@@ -26,12 +26,9 @@ void run_test(const char* filename, const char* instrument)
     nsx::sptrDataSet dataf(factory.create("hdf", filename, diffractometer));
 
     experiment.addData(dataf);
-
     const int nrows = dataf->nRows();
     const int ncols = dataf->nCols();
-
     const int nframes = dataf->nFrames();
-
     const std::array<double, 9> fractions = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9};
 
     // different places to check the coordinate calculation

@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/panels/SubframePlot.cpp
-//! @brief     Implements class SubframePlot
+//! @file      gui/panels/PlotPanel.cpp
+//! @brief     Implements class PlotPanel
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -19,16 +19,16 @@
 #include "gui/graphics/PlotFactory.h"
 
 //-------------------------------------------------------------------------------------------------
-//! class SubframePlot
+//! class PlotPanel
 
-SubframePlot::SubframePlot() : QcrWidget {"Plotter"}
+PlotPanel::PlotPanel() : QcrWidget {"Plotter"}
 {
     anchor = new QHBoxLayout(this);
     plot = new SXPlot(this);
     anchor->addWidget(plot);
 }
 
-void SubframePlot::plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e)
+void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e)
 {
     if (plot->getType().compare("simple") != 0) {
         anchor->removeWidget(plot);
@@ -44,7 +44,7 @@ void SubframePlot::plotData(QVector<double>& x, QVector<double>& y, QVector<doub
     plot->replot();
 }
 
-void SubframePlot::updatePlot(PlottableItem* item)
+void PlotPanel::updatePlot(PlottableItem* item)
 {
     if (!item)
         return;
@@ -63,7 +63,7 @@ void SubframePlot::updatePlot(PlottableItem* item)
     // update();
 }
 
-void SubframePlot::exportPlot()
+void PlotPanel::exportPlot()
 {
     plot->exportToAscii();
 }

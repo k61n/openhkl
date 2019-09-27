@@ -29,7 +29,7 @@ static const double g_eps = 1e-5;
 namespace nsx {
 
 RefinementBatch::RefinementBatch(
-    InstrumentStateList& states, const UnitCell& uc, const PeakList& peaks)
+    InstrumentStateList& states, const UnitCell& uc, std::vector<nsx::Peak3D*> peaks)
     : _fmin(std::numeric_limits<double>().max())
     , _fmax(std::numeric_limits<double>().lowest())
     , _cell(new UnitCell(uc))
@@ -198,7 +198,7 @@ const std::vector<double>& RefinementBatch::costFunction() const
     return _cost_function;
 }
 
-const PeakList& RefinementBatch::peaks() const
+std::vector<nsx::Peak3D*> RefinementBatch::peaks() const
 {
     return _peaks;
 }

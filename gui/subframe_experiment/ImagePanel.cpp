@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/panels/SubframeImage.cpp
-//! @brief     Implements classes ImageWidget, SubframeImage
+//! @brief     Implements classes ImagePanel, SubframeImage
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -28,7 +28,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-ImageWidget::ImageWidget() : QcrWidget {"Image"}
+ImagePanel::ImagePanel() : QcrWidget {"Image"}
 {
     QHBoxLayout* overallLayout = new QHBoxLayout(this);
     QVBoxLayout* leftLayout = new QVBoxLayout;
@@ -82,7 +82,7 @@ ImageWidget::ImageWidget() : QcrWidget {"Image"}
     mode->setHook([=](int i) { imageView->getScene()->changeInteractionMode(i); });
 }
 
-void ImageWidget::dataChanged()
+void ImagePanel::dataChanged()
 {
     mode->setEnabled(false);
     intensityLayout->setEnabled(false);
@@ -106,7 +106,7 @@ void ImageWidget::dataChanged()
     }
 }
 
-void ImageWidget::changeView(int option)
+void ImagePanel::changeView(int option)
 {
     QTransform trans;
     trans.scale(-1, -1); // fromDetector (default; 0)
@@ -120,7 +120,7 @@ void ImageWidget::changeView(int option)
 
 SubframeImage::SubframeImage() : QcrDockWidget {"Image"}
 {
-    setWidget((centralWidget = new ImageWidget));
+    setWidget((centralWidget = new ImagePanel));
     connect(
         this, SIGNAL(visibilityChanged(bool)), &gGui->triggers->viewImage, SLOT(setChecked(bool)));
 }

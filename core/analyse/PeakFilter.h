@@ -78,7 +78,6 @@ public:
 
 public:
 
-
     //! Filter only enabled on a peak vector
     std::vector<Peak3D*> filterEnabled(
         const std::vector<Peak3D*> peaks_ptr, bool flag) const;

@@ -19,6 +19,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/analyse/PeakFinder.h"
 #include "core/peak/Peak3D.h"
+#include "core/peak/IPeakIntegrator.h"
 #include "core/peak/PeakCollection.h"
 #include "tables/crystal/UnitCell.h"
 #include "core/analyse/PeakFilter.h"

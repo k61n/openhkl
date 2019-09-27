@@ -34,7 +34,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     experiment.addData(dataf);
 
     nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
-    nsx::sptrPeakFinder peakFinder(new nsx::PeakFinder);
+
 
     auto callback = [progressHandler]() {
         auto log = progressHandler->getLog();
@@ -44,25 +44,27 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     progressHandler->setCallback(callback);
 
+    // #########################################################
+    // test the finder
     nsx::DataList numors;
     numors.push_back(dataf);
 
-    // propagate changes to peak finder
-    peakFinder->setMinSize(30);
-    peakFinder->setMaxSize(10000);
-    peakFinder->setMaxFrames(10);
-
     nsx::ConvolverFactory convolver_factory;
     auto convolver = convolver_factory.create("annular", {});
-    peakFinder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
 
-    peakFinder->setThreshold(15.0);
-    peakFinder->setPeakScale(1.0);
+    nsx::PeakFinder* peak_finder = experiment.peakFinder();
+    peak_finder->setMinSize(30);
+    peak_finder->setMaxSize(10000);
+    peak_finder->setPeakScale(1.0);
+    peak_finder->setMaxFrames(10);
+    peak_finder->setFramesBegin(0);
+    peak_finder->setFramesEnd(dataf->nFrames());
+    peak_finder->setThreshold(10);
+    peak_finder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
+    peak_finder->setHandler(progressHandler);
+    peak_finder->find(numors);
 
-    peakFinder->setHandler(progressHandler);
-
-    peakFinder->find(numors);
-    auto found_peaks = peakFinder->currentPeaks();
+    auto found_peaks = peak_finder->currentPeaks();
 
     try {
         CHECK(static_cast<int>(found_peaks.size()) >= 0);
@@ -72,68 +74,69 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     CHECK(found_peaks.size() >= 800);
 
-    nsx::PixelSumIntegrator integrator(false, false);
-    integrator.setHandler(progressHandler);
-    integrator.integrate(found_peaks, dataf, 2.7, 3.5, 4.0);
+    nsx::IPeakIntegrator* integrator = experiment.getIntegrator(
+        std::string("Pixel sum integrator"));
+    integrator->setPeakEnd(3.0);
+    integrator->setBkgBegin(3.5);
+    integrator->setBkgEnd(4.0);
+    integrator->setHandler(progressHandler);
+    experiment.integrateFoundPeaks("Pixel sum integrator");
+    experiment.acceptFoundPeaks("found_peaks");
 
+    // #########################################################
+    // Filter the peaks
+    nsx::PeakFilter* peak_filter = experiment.peakFilter();
+    std::bitset<13> booleans;
+    booleans.set(10);
+    const std::array<double, 2> d_range {1.5,50};
+    peak_filter->setBooleans(booleans);
+    peak_filter->setDRange(d_range);
+
+    nsx::PeakCollection* found_collection = experiment.getPeakCollection(
+        "found_peaks");
+    peak_filter->resetFiltering(found_collection);
+    peak_filter->filter(found_collection);
+
+    experiment.acceptFilter("filtered_peaks", found_collection);
+
+    CHECK(experiment.getPeakCollection(
+        "filtered_peaks")->getPeakList().size() >= 100);
+
+    // #########################################################
     // at this stage we have the peaks, now we index
-    nsx::IndexerParameters params;
-    nsx::AutoIndexer indexer(progressHandler);
+    nsx::AutoIndexer* auto_indexer = experiment.autoIndexer();
+    nsx::PeakCollection* filtered_peaks = experiment.getPeakCollection(
+        "filtered_peaks");
 
-    nsx::PeakFilter peak_filter;
-    nsx::PeakList selected_peaks;
-    selected_peaks = peak_filter.enabled(found_peaks, true);
+    nsx::IndexerParameters parameters;
+    auto_indexer->setParameters(parameters);
 
-    auto numIndexedPeaks = [&]() -> unsigned int {
-        unsigned int indexed_peaks = 0;
+    CHECK_NOTHROW(auto_indexer->autoIndex(filtered_peaks));
+    CHECK(auto_indexer->solutions().size() > 1);
 
-        for (auto&& peak : selected_peaks) {
-            double d = 1.0 / peak->q().rowVector().norm();
-
-            if (d < 2.0)
-                continue;
-
-            indexer.addPeak(peak);
-            ++indexed_peaks;
-        }
-        return indexed_peaks;
-    };
-
-    unsigned int indexed_peaks = numIndexedPeaks();
-
-    CHECK(indexed_peaks > 500);
-    CHECK_NOTHROW(indexer.autoIndex(params));
-    CHECK(indexer.solutions().size() > 1);
-
-    auto soln = indexer.solutions().front();
+    auto solution = auto_indexer->solutions().front();
 
     // correctly indexed at least 92% of peaks
-    CHECK(soln.second > 92.0);
+    CHECK(solution.second > 92.0);
 
     // set unit cell
-    auto cell = soln.first;
-    for (auto&& peak : found_peaks)
+    auto cell = solution.first;
+    for (auto&& peak : filtered_peaks->getPeakList())
         peak->setUnitCell(cell);
 
     // reintegrate peaks
-    integrator.integrate(found_peaks, dataf, 3.0, 4.0, 5.0);
+    integrator->setPeakEnd(3.0);
+    integrator->setBkgBegin(4.0);
+    integrator->setBkgEnd(5.0);
+    experiment.integrateFoundPeaks("Pixel sum integrator");
 
+    // #########################################################
     // compute shape library
-
-    // dataf->integratePeaks(found_peaks, integrator, 3.0, 4.0, 5.0);
-
-    indexed_peaks = numIndexedPeaks();
-    std::cout << indexed_peaks << std::endl;
-    CHECK(indexed_peaks > 500);
-
     int n_selected = 0;
-
-    for (auto peak : selected_peaks) {
+    for (auto peak : filtered_peaks->getPeakList()) {
         std::vector<nsx::ReciprocalVector> q_vectors;
         q_vectors.push_back(peak->q());
         auto events = dataf->events(q_vectors);
-
-        // CHECK(events.size() >= 1);
 
         if (events.size() == 0)
             continue;

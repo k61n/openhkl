@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/panels/SubframeLogger.h
-//! @brief     Defines class SubframeLogger
+//! @file      gui/panels/LoggerPanel.h
+//! @brief     Defines class LoggerPanel
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -19,10 +19,10 @@
 #include <QTextEdit>
 
 //! Subframe of the main window that shows the logger lines
-class SubframeLogger : public QcrWidget {
+class LoggerPanel : public QcrWidget {
     Q_OBJECT
  public:
-    SubframeLogger();
+    LoggerPanel();
 
  private slots:
     void slotPrintLog(const QString& line);

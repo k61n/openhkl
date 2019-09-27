@@ -19,7 +19,7 @@ class TestWorkFlow(unittest.TestCase):
         finder.setMaxSize(10000)
         finder.setMaxFrames(10)
 
-        convolver = nsx.AnnularConvolver({});
+        convolver = nsx.AnnularConvolver({})
 
         finder.setConvolver(convolver)
         finder.setThreshold(15.0)
@@ -80,4 +80,5 @@ class TestWorkFlow(unittest.TestCase):
                 library_size +=1
 
 if __name__ == '__main__':
-    unittest.main()
+    pass
+    # unittest.main()

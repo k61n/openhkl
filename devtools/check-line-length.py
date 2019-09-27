@@ -72,9 +72,9 @@ if nfexc>0:
     print( "total: %i/%i lines too long, in %i/%i files, longest in %s with %i chars" %
            (totexc, totlin, nfexc, nftot, fworst, lworst) )
     exitval = 1
-if nftab>0:
-    print( "total: %i/%i lines contain a TAB, in %i/%i files" %
-           (tottab, totlin, nftab, nftot) )
-    exitval = 1
+# if nftab>0:
+#     print( "total: %i/%i lines contain a TAB, in %i/%i files" %
+#            (tottab, totlin, nftab, nftot) )
+#     exitval = 1
 
 sys.exit(exitval)

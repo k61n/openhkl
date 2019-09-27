@@ -25,14 +25,14 @@ SubframeExperiment::SubframeExperiment()
     QVBoxLayout* left = new QVBoxLayout;
     properties = new PropertyPanel;
     left->addWidget(properties, 7.5);
-    logger = new SubframeLogger;
+    logger = new LoggerPanel;
     left->addWidget(logger, 2.5);
     layout->addLayout(left, 1);
 
     QVBoxLayout* right = new QVBoxLayout;
-    image = new ImageWidget;
+    image = new ImagePanel;
     right->addWidget(image, 7);
-    plot = new SubframePlot;
+    plot = new PlotPanel;
     right->addWidget(plot, 3);
     layout->addLayout(right, 2);
 }

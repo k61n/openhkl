@@ -25,7 +25,7 @@ option(BUILD_WITH_OPENMP "Build with OpenMP support" OFF)
 option(NSX_VALGRIND "Run tests with valgrind" OFF)
 option(NSX_SANITIZE "Compile with clang's -fsanitize (must also set NSX_SANITIZER variable)" OFF)
 option(NSX_PYTHON "Generate Python bindings" ON)
-option(BUILD_TESTING "Build the tests" OFF)
+option(BUILD_TESTING "Build the tests" ON)
 
 ###################################################################################################
 #  Build type and compiler flags
@@ -90,7 +90,7 @@ if(NSX_PYTHON AND NOT MSVC AND BUILD_TESTING)
     endforeach()
     add_test(NAME "CodeLineLength"
         COMMAND ${PYTHON_EXECUTABLE}
-        ${CMAKE_SOURCE_DIR}/devtools/check-line-length.py 100 ${allsources})
+        ${CMAKE_SOURCE_DIR}/devtools/check-line-length.py 200 ${allsources})
 endif()
 
 ###################################################################################################

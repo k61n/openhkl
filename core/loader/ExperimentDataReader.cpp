@@ -21,8 +21,12 @@
 
 namespace nsx {
 
-ExperimentDataReader::ExperimentDataReader(const std::string& file_name, const std::string& group_name,  Diffractometer* instrument)
-    : ExperimentMetaReader(file_name, group_name, instrument)
+ExperimentDataReader::ExperimentDataReader(
+    const std::string& file_name, 
+    const std::string& group_name,  
+    Diffractometer* instrument)
+    : ExperimentMetaReader(
+        file_name, group_name, instrument)
 {
 }
 
@@ -31,7 +35,11 @@ Eigen::MatrixXi ExperimentDataReader::data(size_t frame)
     if (!_isOpened)
         open();
     // HDF5 specification requires row-major storage
-    Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> m(_nRows, _nCols);
+    Eigen::Matrix<
+        int, 
+        Eigen::Dynamic, 
+        Eigen::Dynamic, 
+        Eigen::RowMajor> m(_nRows, _nCols);
 
     hsize_t count[3] = {1, _nRows, _nCols};
     hsize_t offset[3] = {frame, 0, 0};

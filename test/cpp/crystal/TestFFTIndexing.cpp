@@ -27,7 +27,6 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
     experiment.addData(data);
 
     nsx::IndexerParameters params;
-
     params.maxdim = 70.0;
     params.nSolutions = 10;
     params.nVertices = 10000;
@@ -57,11 +56,9 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
         qs.emplace_back(index.rowVector().cast<double>() * BU);
 
     auto events = data->events(qs);
-
-    std::vector<nsx::sptrPeak3D> peaks;
-
+    std::vector<nsx::Peak3D*> peaks;
     for (auto event : events) {
-        nsx::sptrPeak3D peak(new nsx::Peak3D(data));
+        nsx::Peak3D* peak = new nsx::Peak3D(data);
         Eigen::Vector3d center = {event._px, event._py, event._frame};
 
         // dummy shape
@@ -80,14 +77,14 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
 
     CHECK(peaks.size() >= 5900);
 
-    nsx::AutoIndexer indexer;
+    nsx::AutoIndexer* auto_indexer = experiment.autoIndexer();
+    nsx::PeakCollection* peak_collection = new nsx::PeakCollection();
+    peak_collection->populate(peaks);
+    auto_indexer->setParameters(params);
 
-    for (auto peak : peaks)
-        indexer.addPeak(peak);
+    CHECK_NOTHROW(auto_indexer->autoIndex(peak_collection));
 
-    CHECK_NOTHROW(indexer.autoIndex(params));
-
-    auto solutions = indexer.solutions();
+    auto solutions = auto_indexer->solutions();
 
     CHECK(solutions.size() > 1);
     CHECK(solutions.front().second > 99.9);

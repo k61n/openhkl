@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/panels/SubframePlot.h
-//! @brief     Defines class SubframePlot
+//! @file      gui/panels/PlotPanel.h
+//! @brief     Defines class PlotPanel
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -20,9 +20,9 @@
 #include <QHBoxLayout>
 
 //! Part of the main window that contains the plot
-class SubframePlot : public QcrWidget {
+class PlotPanel : public QcrWidget {
  public:
-    SubframePlot();
+    PlotPanel();
     void plotData(QVector<double>&, QVector<double>&, QVector<double>&);
     void updatePlot(PlottableItem* item);
     void exportPlot();

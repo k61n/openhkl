@@ -34,7 +34,10 @@
 
 namespace nsx {
 
-bool ExperimentExporter::createFile(std::string name, std::string diffractometer, std::string path)
+bool ExperimentExporter::createFile(
+    std::string name, 
+    std::string diffractometer, 
+    std::string path)
 {
     try{
 
@@ -67,7 +70,8 @@ bool ExperimentExporter::writeData(
     try{
         
         H5::H5File* file = new H5::H5File(_file_name.c_str(), H5F_ACC_RDWR);
-        H5::Group* data_collections = new H5::Group(file->createGroup("/DataCollections"));
+        H5::Group* data_collections = new H5::Group(
+            file->createGroup("/DataCollections"));
         H5::Group* data_collection;
         H5::Group* detector_group;
         H5::Group* sample_group;
