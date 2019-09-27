@@ -57,11 +57,8 @@ public:
    //! Get the names of peaks present in the core (depth obsolete)
    QStringList getPredictedNames(int depth = 1);
    //! Get the number of peak lists
-   int numPeakCollections()const {return _experiment->numPeakCollections();};
-   //! Set the currently selected peakModel
-   void setSelected(std::string name);
-   //! get the currently selected peakModel
-   PeakCollectionModel* selected();
+   int numPeakCollections() const {
+      return _experiment->numPeakCollections();};
    //! Generate a peak model based on the Peak collection in the core
    void generatePeakModel(const QString& peakListName);
    //! Generate a peak model based on the Peak collection in the core
@@ -69,11 +66,7 @@ public:
    //! Get the peaklist model by name
    PeakCollectionModel* peakModel(const QString& name);
    //! Get the peaklist model by number
-   PeakCollectionModel* peakModel(int i) {return _peak_models.at(i);};
-   //! generate a peakListModel
-   void generatePeakListModel();
-   //! Get the Peak list model
-   QStandardItemModel* peakListModel() {return &_peak_list_model;};
+   PeakCollectionModel* peakModel(int i);
    //! Tell the gui that peaks have changed
    void onPeaksChanged();
 
@@ -99,11 +92,9 @@ public:
    //! Pointer to the core experiment
    nsx::sptrExperiment _experiment;
    //! The list of models for the peaks
-   QList<PeakCollectionModel*> _peak_models; 
-   //! The PeakListModel
-   QStandardItemModel _peak_list_model;
-   //! The selected list
-   PeakCollectionModel* _selected = nullptr;
+   std::vector<PeakCollectionModel*> _peak_collection_models;
+   //! The list of models for the peaks
+   std::vector<PeakCollectionItem*> _peak_collection_items;
    //! Is this session experiment saved
    bool _saved = false;
    //! Save path variable

@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/panels/SubframeImage.h
-//! @brief     Defines classes ImageWidget, SubframeImage
+//! @brief     Defines classes ImagePanel, SubframeImage
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,17 +12,17 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_PANELS_SUBFRAMEIMAGE_H
-#define GUI_PANELS_SUBFRAMEIMAGE_H
+#ifndef GUI_SUBFRAME_EXPERIMENT_IMAGE_PANEL_H
+#define GUI_SUBFRAME_EXPERIMENT_IMAGE_PANEL_H
 
 #include "gui/graphics/DetectorView.h"
 #include <QCR/widgets/controls.h>
 #include <QCR/widgets/views.h>
 
 //! Part of the main window that contains the detector view
-class ImageWidget : public QcrWidget {
+class ImagePanel : public QcrWidget {
  public:
-    ImageWidget();
+    ImagePanel();
     void dataChanged();
     void changeView(int option);
     DetectorView* imageView;
@@ -36,11 +36,11 @@ class ImageWidget : public QcrWidget {
     QFrame* intensityLayout;
 };
 
-//! Dock widget of the main window that contains the ImageWidget
+//! Dock widget of the main window that contains the ImagePanel
 class SubframeImage : public QcrDockWidget {
  public:
     SubframeImage();
-    ImageWidget* centralWidget;
+    ImagePanel* centralWidget;
 };
 
-#endif // GUI_PANELS_SUBFRAMEIMAGE_H
+#endif // GUI_SUBFRAME_EXPERIMENT_IMAGE_PANEL_H

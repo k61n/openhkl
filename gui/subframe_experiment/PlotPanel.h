@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_PANELS_SUBFRAMEPLOT_H
-#define GUI_PANELS_SUBFRAMEPLOT_H
+#ifndef GUI_SUBFRAME_EXPERIMENT_PLOT_PANEL_H
+#define GUI_SUBFRAME_EXPERIMENT_PLOT_PANEL_H
 
 #include "gui/graphics_items/PlottableItem.h"
 #include <QCR/widgets/views.h>
@@ -33,4 +33,4 @@ class SubframePlot : public QcrWidget {
     QcrWidget* centralWidget;
 };
 
-#endif // GUI_PANELS_SUBFRAMEPLOT_H
+#endif // GUI_SUBFRAME_EXPERIMENT_PLOT_PANEL_H

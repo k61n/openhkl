@@ -39,8 +39,7 @@
 #include <QTableWidgetItem>
 #include <QScrollBar>
 #include <QScrollArea>
-
-
+#include <QLabel>
 
 PeakFinderFrame::PeakFinderFrame() 
     : QWidget(), 
@@ -747,7 +746,6 @@ void PeakFinderFrame::accept()
     nsx::PeakFinder* finder = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
     if (!finder->currentPeaks().empty()){
-        gLogger->log("@accept");
         std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
         dlg->exec();
         if (!dlg->listName().isEmpty()){

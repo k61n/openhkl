@@ -35,6 +35,7 @@
 #include <QDoubleSpinBox>
 #include <QComboBox>
 #include <QSizePolicy>
+#include <QLabel>
 
 //! Frame which shows the settings to find peaks
 class SubframePredictPeaks : public QWidget{
@@ -84,6 +85,8 @@ private:
    //! Get the parameters of the indexer
    void setPredictorParameters() const;
    //! Refresh the found peaks list
+   void refreshPeakShapeStatus();
+   //! Refresh the found peaks list
    void refreshPeakTable();
    //! Refresh the found peaks visual properties
    void refreshPeakVisual();
@@ -93,7 +96,6 @@ private:
    void openShapeBuilder();
    //! Accept and save current list
    void accept();
-
 
 private:
 

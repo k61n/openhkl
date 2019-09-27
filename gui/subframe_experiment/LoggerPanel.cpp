@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/panels/SubframeLogger.h"
+#include "gui/subframe_experiment/LoggerPanel.h"
 
 #include "gui/MainWin.h"
 #include "gui/actions/Triggers.h"

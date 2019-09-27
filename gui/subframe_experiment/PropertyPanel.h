@@ -12,22 +12,23 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_PANELS_SUBFRAMESETUP_H
-#define GUI_PANELS_SUBFRAMESETUP_H
+#ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTY_PANEL_H
+#define GUI_SUBFRAME_EXPERIMENT_PROPERTY_PANEL_H
 
-#include "gui/panels/TabInstrument.h"
-#include "gui/panels/TabPeaks.h"
+#include "gui/subframe_experiment/properties/InstrumentProperty.h" 
+#include "gui/subframe_experiment/properties/PeakProperties.h"
 #include "gui/subframe_experiment/properties/NumorProperty.h"
 #include "gui/subframe_experiment/properties/UnitCellProperty.h"
 
 //! Part of the main window that contains the property tabs
-class SubframeSetup : public QcrTabWidget {
+class PropertyPanel : public QTabWidget {
  public:
-    SubframeSetup();
+    PropertyPanel();
+
     NumorProperty* data;
     UnitCellProperty* unitcells;
-    TabPeaks* peaks;
-    TabInstrument* instrument;
+    PeakProperties* peaks;
+    InstrumentProperty* instrument;
 
     void setCurrent(int);
     void dataChanged();
@@ -36,4 +37,4 @@ class SubframeSetup : public QcrTabWidget {
     void unitCellChanged();
 };
 
-#endif // GUI_PANELS_SUBFRAMESETUP_H
+#endif // GUI_SUBFRAME_EXPERIMENT_PROPERTY_PANEL_H

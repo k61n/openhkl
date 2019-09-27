@@ -16,18 +16,23 @@
 #define GUI_PANELS_TABPEAKS_H
 
 #include "gui/views/PeakTableView.h"
-#include <QCR/widgets/controls.h>
-#include <QCR/widgets/views.h>
 
 #include <QComboBox>
+#include <QLabel>
 
 //! Tab of the SubframeSetup which contains the different peak lists
-class TabPeaks : public QcrWidget {
-   Q_OBJECT
+class PeakProperties : public QWidget {
+
 public:
-   TabPeaks();
+   PeakProperties();
    void selectedPeaksChanged();
    void selectedExperimentChanged();
+   void refreshInput();
+
+public:
+
+   void changedPeakSelection(const QString& name);
+
 
 private:
    QComboBox* peak_list_combo;
@@ -40,9 +45,6 @@ private:
    QLabel* peak_num;
    QLabel* valid;
    QLabel* non_valid;
-
-public slots:
-   void changedPeakSelection(const QString& name);
 
 
 };

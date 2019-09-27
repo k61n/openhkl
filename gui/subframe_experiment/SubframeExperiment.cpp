@@ -18,12 +18,12 @@
 #include <QVBoxLayout>
 
 SubframeExperiment::SubframeExperiment()
-    : QcrWidget{"ExperimentScreen"}
+    : QWidget()
 {
     QHBoxLayout* layout = new QHBoxLayout(this);
 
     QVBoxLayout* left = new QVBoxLayout;
-    properties = new SubframeSetup;
+    properties = new PropertyPanel;
     left->addWidget(properties, 7.5);
     logger = new SubframeLogger;
     left->addWidget(logger, 2.5);

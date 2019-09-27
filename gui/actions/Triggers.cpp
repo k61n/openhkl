@@ -32,9 +32,9 @@
 // #include "gui/frames/MergedPeakInformationFrame.h"
 #include "gui/frames/UserDefinedUnitCellIndexerFrame.h"
 
-#include "gui/panels/TabInstrument.h"
+// #include "gui/panels/TabInstrument.h"
 
-#include "gui/subframe_experiment/SubframeSetup.h"
+// #include "gui/subframe_experiment/SubframeSetup.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
 

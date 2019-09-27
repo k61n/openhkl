@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/panels/SubframeProperties.cpp
-//! @brief     Implements class SubframeProperties
+//! @file      gui/panels/TabInstrument.cpp
+//! @brief     Implements class TabInstrument
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,13 +12,16 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/subframe_experiment/SubframeProperties.h"
+#include "gui/subframe_experiment/properties/InstrumentProperty.h" 
 
-#include "gui/MainWin.h"
-#include "gui/actions/Triggers.h"
-#include "gui/subframe_experiment/SubframeSetup.h"
-
-SubframeProperties::SubframeProperties() : QcrDockWidget {"Properties"}
+InstrumentProperty::InstrumentProperty() : QTabWidget()
 {
-    setWidget((tabsframe = new SubframeSetup));
+    addTab((detector = new DetectorProperty), "Detector");
+    addTab((monoSource = new SourceProperty), "Monochromatic source");
+    addTab((sample = new SampleShapeProperties), "Sample");
+}
+
+void InstrumentProperty::setCurrent(int index)
+{
+    QTabWidget::setCurrentIndex(index);
 }

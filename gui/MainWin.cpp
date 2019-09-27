@@ -16,7 +16,7 @@
 
 #include "gui/actions/Menus.h"
 #include "gui/actions/Triggers.h"
-#include "gui/panels/SideBar.h"
+#include "gui/utility/SideBar.h"
 #include <QApplication>
 #include <QCloseEvent>
 #include <QProgressBar>

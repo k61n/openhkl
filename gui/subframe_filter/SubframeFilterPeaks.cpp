@@ -30,6 +30,7 @@
 #include <QTableWidgetItem>
 #include <QScrollBar>
 #include <QScrollArea>
+#include <QLabel>
 
 SubframeFilterPeaks::SubframeFilterPeaks() 
     : QWidget(), 

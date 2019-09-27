@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_PANELS_SUBFRAMELOGGER_H
-#define GUI_PANELS_SUBFRAMELOGGER_H
+#ifndef GUI_SUBFRAME_EXPERIMENT_LOGGER_PANEL_H
+#define GUI_SUBFRAME_EXPERIMENT_LOGGER_PANEL_H
 
 #include <QCR/widgets/views.h>
 #include <QTextEdit>
@@ -31,4 +31,4 @@ class SubframeLogger : public QcrWidget {
     QTextEdit* logText;
 };
 
-#endif // GUI_PANELS_SUBFRAMELOGGER_H
+#endif // GUI_SUBFRAME_EXPERIMENT_LOGGER_PANEL_H

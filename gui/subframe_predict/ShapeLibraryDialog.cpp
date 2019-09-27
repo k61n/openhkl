@@ -38,13 +38,11 @@
 #include <QVBoxLayout>
 #include <QtGlobal>
 
-ShapeLibraryDialog::ShapeLibraryDialog(nsx::PeakCollection* peak_collection):      QDialog(),
+ShapeLibraryDialog::ShapeLibraryDialog(nsx::PeakCollection* peak_collection)    : QDialog(),
     _peak_collection_item(),
     _peak_collection_model()
 {
-    setAttribute(Qt::WA_DeleteOnClose);
     setModal(true);
-
     setSizePolicies();
     setParametersUp();
     setPreviewUp();
@@ -75,8 +73,6 @@ ShapeLibraryDialog::ShapeLibraryDialog(nsx::PeakCollection* peak_collection):   
         reject_button, &QPushButton::clicked,
         this, &ShapeLibraryDialog::rejected
     );
-
-    show();
 }
 
 void ShapeLibraryDialog::setUpParametrization(nsx::PeakCollection* peak_collection)
@@ -374,7 +370,6 @@ void ShapeLibraryDialog::build()
 
 void ShapeLibraryDialog::calculate()
 {
-
     int nx_val = _nx->value();
     int ny_val = _ny->value();
     int nz_val = _nz->value();
@@ -435,7 +430,6 @@ void ShapeLibraryDialog::drawFrame(int value)
 
 void ShapeLibraryDialog::selectTargetPeak(int row)
 {
-
     nsx::Peak3D* selected_peak = _peak_collection_item.peakCollection()->getPeak(row);
 
     const Eigen::Vector3d& center = selected_peak->shape().center();

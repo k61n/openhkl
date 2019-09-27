@@ -16,17 +16,17 @@
 #define GUI_DIALOGS_LISTNAMEDIALOG_H
 
 #include "core/peak/Peak3D.h"
-#include <QCR/widgets/controls.h>
-#include <QCR/widgets/modal_dialogs.h>
+#include <QDialog>
+#include <QLineEdit>
 
 //! Dialog to name a specific peak list
-class ListNameDialog : public QcrModalDialog {
+class ListNameDialog : public QDialog {
  public:
     ListNameDialog();
     QString listName();
 
  private:
-    QcrLineEdit* name_;
+    QLineEdit* name_;
 
 };
 

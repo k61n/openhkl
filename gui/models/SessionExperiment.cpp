@@ -62,9 +62,12 @@ nsx::sptrDataSet SessionExperiment::getData(int index)
 {
     if (index == -1)
         index = dataIndex_;
+
     if (_experiment->data().empty())
         return nullptr;
+
     std::string selected = getDataNames().at(index).toStdString();
+
     return _experiment->data().at(selected);
 }
 
@@ -116,73 +119,56 @@ QStringList SessionExperiment::getPredictedNames(int depth)
     return q_names;
 }
 
-void SessionExperiment::setSelected(std::string name)
-{
-    _selected = peakModel(QString::fromStdString(name));
-}
-
-PeakCollectionModel* SessionExperiment::selected()
-{
-    return _selected;
-}
 
 void SessionExperiment::generatePeakModel(const QString& peakListName)
 {
-    if( !_experiment->hasPeakCollection(peakListName.toStdString())){
+    if( !_experiment->hasPeakCollection(peakListName.toStdString()))
         return;
-    }
+
     nsx::PeakCollection* peak_collection = _experiment->getPeakCollection(
         peakListName.toStdString());
 
     PeakCollectionItem* peak_collection_item = new PeakCollectionItem(peak_collection);
-    PeakCollectionModel* peak_collection_model = new PeakCollectionModel();
-    peak_collection_model->setRoot(peak_collection_item);
-    _peak_models.append(peak_collection_model);
+    _peak_collection_items.push_back(peak_collection_item);
 
-    generatePeakListModel();
+    PeakCollectionModel* peak_collection_model = new PeakCollectionModel;
+    peak_collection_model->setRoot(peak_collection_item);
+    _peak_collection_models.push_back(peak_collection_model);
+
 }
 
 void SessionExperiment::generatePeakModels()
 {
-    _peak_models.clear();
-
+    _peak_collection_models.clear();
     std::vector<std::string> names = _experiment->getCollectionNames();
 
     for (std::string name :names){
-        
         nsx::PeakCollection* peak_collection = _experiment->getPeakCollection(name);
 
         PeakCollectionItem* peak_collection_item = new PeakCollectionItem(peak_collection);
+        _peak_collection_items.push_back(peak_collection_item);
+
         PeakCollectionModel* peak_collection_model = new PeakCollectionModel();
         peak_collection_model->setRoot(peak_collection_item);
-        _peak_models.append(peak_collection_model);
-
+        _peak_collection_models.push_back(peak_collection_model);
     }
-
-    generatePeakListModel();
 }
 
 PeakCollectionModel* SessionExperiment::peakModel(const QString& name)
 {
     std::string std_name = name.toStdString();
-    for (int i = 0; i < _peak_models.size(); ++i) {
-        if (_peak_models.at(i)->name() == std_name)
-            return _peak_models.at(i);
+    for (int i = 0; i < _peak_collection_models.size(); ++i) {
+        if (_peak_collection_models.at(i)->name() == std_name)
+            return _peak_collection_models.at(i);
     }
-
     return nullptr;
 }
-   
-void SessionExperiment::generatePeakListModel()
-{
-    _peak_list_model.clear();
-    std::vector<std::string> names = _experiment->getCollectionNames();
-    for (std::string name :names){
-        QStandardItem* item = new QStandardItem(QString::fromStdString(name));
-        _peak_list_model.appendRow(item);
-    }
 
-    onPeaksChanged();
+PeakCollectionModel* SessionExperiment::peakModel(int i)
+{
+    if (i>=_peak_collection_models.size())
+        return nullptr;
+    return _peak_collection_models.at(i);
 }
 
 std::vector<nsx::Peak3D*> SessionExperiment::getPeaks(

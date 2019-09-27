@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/panels/SubframePlot.h"
+#include "gui/subframe_experiment/PlotPanel.h"
 
 #include "gui/MainWin.h"
 #include "gui/actions/Triggers.h"

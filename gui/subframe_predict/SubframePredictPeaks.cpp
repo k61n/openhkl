@@ -126,9 +126,9 @@ void SubframePredictPeaks::setInputUp()
         _exp_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged), 
         this, &SubframePredictPeaks::updatePeakList);
 
-    // connect(
-    //     _peak_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged), 
-    //     this, &SubframePredictPeaks::refreshPeakTable);
+    connect(
+        _peak_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged), 
+        this, &SubframePredictPeaks::refreshPeakShapeStatus);
 
     connect(
         _build_shape_lib, &QPushButton::clicked, 
@@ -606,6 +606,7 @@ void SubframePredictPeaks::updatePeakList()
         _peak_combo->addItems(_peak_list);
         _peak_combo->setCurrentIndex(0);
     }
+    refreshPeakShapeStatus();
     _peak_combo->blockSignals(false);
 }
 
@@ -765,7 +766,6 @@ void SubframePredictPeaks::runIntegration()
 
 void SubframePredictPeaks::accept()
 {
-    gLogger->log("@accept");
     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
     dlg->exec();
     if (!dlg->listName().isEmpty()){
@@ -777,16 +777,33 @@ void SubframePredictPeaks::accept()
     }
 }
 
+void SubframePredictPeaks::refreshPeakShapeStatus()
+{
+    bool shape_library_present = true;
+
+    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+        shape_library_present = false;
+    
+    if (shape_library_present){
+        nsx::PeakCollection* collection = gSession->experimentAt(
+            _exp_combo->currentIndex())->experiment()->getPeakCollection(
+                _peak_combo->currentText().toStdString());
+        if (collection->shapeLibrary() == nullptr)
+            shape_library_present = false;
+    }
+
+    _para_box->setEnabled(shape_library_present);
+    _integrate_box->setEnabled(shape_library_present);
+    _preview_box->setEnabled(shape_library_present);
+}
+
 void SubframePredictPeaks::refreshPeakTable()
 {
     if (_peak_list.isEmpty() || _exp_combo->count() < 1)
         return;
 
     _figure_view->getScene()->clearPeakItems();
-    nsx::PeakCollection* collection = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->getPeakCollection(_peak_combo->currentText().toStdString());
-    _peak_collection_item.setPeakCollection(collection);
     _peak_collection_model.setRoot(&_peak_collection_item);
-
     refreshPeakVisual();
 }
 
@@ -833,5 +850,10 @@ void SubframePredictPeaks::openShapeBuilder()
         _exp_combo->currentIndex())->experiment()->getPeakCollection(
             _peak_combo->currentText().toStdString()
         );
-    ShapeLibraryDialog* dialog = new ShapeLibraryDialog(peak_collection);
+
+    std::unique_ptr<ShapeLibraryDialog> dialog(
+        new ShapeLibraryDialog(peak_collection));
+
+    dialog->exec();
+    refreshPeakShapeStatus();
 }

@@ -15,35 +15,58 @@
 #ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H
 #define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H
 
-#include <QCR/widgets/controls.h>
-#include <QCR/widgets/views.h>
+#include <QWidget>
+#include <QDoubleSpinBox>
+#include <QSpinBox>
+#include <QComboBox>
+#include <QLineEdit>
 
 //! Property widget for unit cell
-class UnitCellProperty : public QcrWidget {
- public:
-    UnitCellProperty();
-    void refreshInput();
+class UnitCellProperty : public QWidget {
+   
+public:
 
- private:
-    void setUnitCellName();
-    void setChemicalFormula();
-    void setZValue(int z);
-    void setMassDensity() const;
-    void selectedCellChanged(int cell);
-    void printAllInformation();
+   //! Constructor
+   UnitCellProperty();
+   //! Public call to refresh the widget
+   void refreshInput();
 
-    QComboBox* unitcells;
-    QcrLineEdit* name;
-    QcrLineEdit* chemicalFormula;
-    QcrLineEdit* spaceGroup;
-    QcrSpinBox* z;
-    QcrDoubleSpinBox* indexingTolerance;
-    QcrDoubleSpinBox* a;
-    QcrDoubleSpinBox* b;
-    QcrDoubleSpinBox* c;
-    QcrDoubleSpinBox* alpha;
-    QcrDoubleSpinBox* beta;
-    QcrDoubleSpinBox* gamma;
+private:
+
+   //! Set up the GUI size policies
+   void setSizePolicies();
+   //! Change the name of the unit cell
+   void setUnitCellName();
+   //! Change the chemical formula
+   void setChemicalFormula();
+   //! Set the z value
+   void setZValue(int z);
+   //! Set the mass density
+   void setMassDensity() const;
+   //! Selection of unit cell changed
+   void selectedCellChanged(int cell);
+   //! Display all informations in QDebug
+   void printAllInformation();
+
+private: 
+
+   QComboBox* unitcells;
+   QLineEdit* name;
+   QLineEdit* chemicalFormula;
+   QLineEdit* spaceGroup;
+   QSpinBox* z;
+   QDoubleSpinBox* indexingTolerance;
+   QDoubleSpinBox* a;
+   QDoubleSpinBox* b;
+   QDoubleSpinBox* c;
+   QDoubleSpinBox* alpha;
+   QDoubleSpinBox* beta;
+   QDoubleSpinBox* gamma;
+
+   QSizePolicy* _size_policy_widgets;
+   QSizePolicy* _size_policy_box;
+   QSizePolicy* _size_policy_right;
+   QSizePolicy* _size_policy_fixed;
 };
 
 #endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H

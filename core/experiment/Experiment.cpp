@@ -366,9 +366,28 @@ UnitCell* Experiment::getUnitCell(const std::string& name)
 
 void Experiment::removeUnitCell(const std::string& name) 
 {
-    auto unit_cell = _unit_cells.find(name);
-    if (unit_cell != _unit_cells.end())
+    if (hasUnitCell(name)){
+        auto unit_cell = _unit_cells.find(name);
+        unit_cell->second.reset();
         _unit_cells.erase(unit_cell);
+    }
+}
+
+void Experiment::swapUnitCells(
+    const std::string& old_cell_name, 
+    const std::string& new_cell_name)
+{
+    UnitCell* old_cell = getUnitCell(old_cell_name);
+    UnitCell* new_cell = getUnitCell(new_cell_name);
+
+    std::map<std::string, std::unique_ptr<PeakCollection>>::const_iterator it;
+    for (it = _peak_collections.begin();it != _peak_collections.end(); ++it){
+        std::vector<Peak3D*> peaks = it->second.get()->getPeakList();
+        for (Peak3D* peak: peaks){
+            if (peak->unitCell() == old_cell)
+                peak->setUnitCell(new_cell);
+        }
+    }
 }
 
 void Experiment::acceptFoundPeaks(const std::string& name) 

@@ -21,7 +21,6 @@
 #include <QSettings>
 #include <QFileDialog>
 
-
 SubframeHome::SubframeHome()
     : QWidget()
 {

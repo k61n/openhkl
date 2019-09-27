@@ -118,6 +118,10 @@ public: // Unit cells
    UnitCell* getUnitCell(const std::string& name);
    //! Remove a data from the experiment
    void removeUnitCell(const std::string& name);
+   //! Remove a data from the experiment
+   void swapUnitCells(
+      const std::string& old_cell, 
+      const std::string& new_cell);
    //! Get the number of peak lists
    int numUnitCells() const {return _unit_cells.size();};
 

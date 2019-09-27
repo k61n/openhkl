@@ -12,23 +12,24 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_PANELS_SUBFRAMEEXPERIMENT_H
-#define GUI_PANELS_SUBFRAMEEXPERIMENT_H
+#ifndef GUI_SUBFRAME_EXPERIMENT_SUBFRAME_EXPERIMENT_H
+#define GUI_SUBFRAME_EXPERIMENT_SUBFRAME_EXPERIMENT_H
 
-#include "gui/panels/SubframeImage.h"
-#include "gui/panels/SubframeLogger.h"
-#include "gui/panels/SubframePlot.h"
-#include "gui/subframe_experiment/SubframeProperties.h"
-#include <QCR/widgets/views.h>
+#include "gui/subframe_experiment/ImagePanel.h"
+#include "gui/subframe_experiment/LoggerPanel.h"
+#include "gui/subframe_experiment/PlotPanel.h"
+#include "gui/subframe_experiment/PropertyPanel.h"
 
-class SubframeExperiment : public QcrWidget {
+#include <QWidget>
+
+class SubframeExperiment : public QWidget {
  public:
     SubframeExperiment();
 
     ImageWidget* image;
     SubframeLogger* logger;
     SubframePlot* plot;
-    SubframeSetup* properties;
+    PropertyPanel* properties;
 };
 
-#endif // GUI_PANELS_SUBFRAMEEXPERIMENT_H
+#endif // GUI_SUBFRAME_EXPERIMENT_SUBFRAME_EXPERIMENT_H

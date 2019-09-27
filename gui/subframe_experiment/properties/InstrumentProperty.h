@@ -12,17 +12,18 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_PANELS_TABINSTRUMENT_H
-#define GUI_PANELS_TABINSTRUMENT_H
+#ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_INSTRUMENTPROPERTY_H
+#define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_INSTRUMENTPROPERTY_H
 
 #include "gui/subframe_experiment/properties/DetectorProperty.h"
 #include "gui/subframe_experiment/properties/SampleShapeProperties.h"
 #include "gui/subframe_experiment/properties/SourceProperty.h"
 
 //! Tab of the SubframeSetup that contains the detector, source and sample property tabs
-class TabInstrument : public QcrTabWidget {
+class InstrumentProperty : public QTabWidget {
  public:
-    TabInstrument();
+    InstrumentProperty();
+
     DetectorProperty* detector;
     SourceProperty* monoSource;
     SampleShapeProperties* sample;
@@ -30,4 +31,4 @@ class TabInstrument : public QcrTabWidget {
     void setCurrent(int);
 };
 
-#endif // GUI_PANELS_TABINSTRUMENT_H
+#endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_INSTRUMENTPROPERTY_H

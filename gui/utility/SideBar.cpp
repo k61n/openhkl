@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/panels/SideBar.h"
+#include "gui/utility/SideBar.h"
 
 #include "gui/MainWin.h"
 #include "gui/models/Session.h"

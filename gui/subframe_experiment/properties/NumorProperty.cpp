@@ -18,77 +18,90 @@
 #include "core/experiment/DataTypes.h"
 #include "core/raw/IDataReader.h"
 #include "gui/models/Session.h"
+
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
 
-NumorProperty::NumorProperty() : QcrWidget {"numorProperty"}
+NumorProperty::NumorProperty() : QWidget()
 {
-    QFormLayout* formLayout = new QFormLayout(this);
-    table = new QTableWidget(this);
+    QGridLayout* grid_layout = new QGridLayout(this);
 
-    table->horizontalHeader()->setVisible(false);
-    table->verticalHeader()->setVisible(false);
-    table->setSelectionMode(QAbstractItemView::SingleSelection);
-    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _table = new QTableWidget(this);
 
-    numor = new QcrComboBox("adhoc_numors", new QcrCell<int>(0), []() {
-        if (gSession->selectedExperimentNum() < 0)
-            return QStringList {""};
-        return gSession->selectedExperiment()->getDataNames();
-    });
-    numor->setHook([](int i) { gSession->selectedExperiment()->selectData(i); });
-    formLayout->addRow("Data:", numor);
-    formLayout->addRow(table);
+    _table->horizontalHeader()->setVisible(false);
+    _table->verticalHeader()->setVisible(false);
+    _table->setSelectionMode(QAbstractItemView::SingleSelection);
+    _table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    setRemake([this]() { onRemake(); });
-    remake();
+    _numor_selector = new QComboBox();
+
+    grid_layout->addWidget(_numor_selector, 0, 0, 1, 1);
+    grid_layout->addWidget(_table, 1, 0, 1, 1);
+
+    connect(
+        _numor_selector, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged),
+        this, &NumorProperty::onChanged
+    );
 }
 
-void NumorProperty::onRemake()
+void NumorProperty::refreshInput()
 {
-    // clear();
+    _numor_selector->blockSignals(true);
+    _numor_selector->clear();
+    _numor_selector->addItems(
+        gSession->selectedExperiment()->getDataNames());
+    _numor_selector->blockSignals(false);
 
-    // if (gSession->selectedExperimentNum() >= 0) {
-    //     SessionExperiment* exp = gSession->selectedExperiment();
-    //     nsx::sptrDataSet data = exp->getData();
+    if (!gSession->selectedExperiment()->getDataNames().isEmpty())
+        onChanged();
+}
 
-    //     if (data) {
-    //         const nsx::MetaData& metadata = data->reader()->metadata();
-    //         const nsx::MetaDataMap& map = metadata.map();
+void NumorProperty::onChanged()
+{
+    clear();
 
-    //         table->setColumnCount(2);
-    //         table->setRowCount(map.size());
+    if (gSession->selectedExperimentNum() >= 0) {
+        SessionExperiment* exp = gSession->selectedExperiment();
+        nsx::sptrDataSet data = exp->getData(
+            _numor_selector->currentIndex());
 
-    //         int numberLines = 0;
-    //         for (auto element : map) // Only int, double and string metadata are displayed.
-    //         {
-    //             QTableWidgetItem* col0 = new QTableWidgetItem();
-    //             QTableWidgetItem* col1 = new QTableWidgetItem();
-    //             col0->setData(Qt::EditRole, QString(element.first));
+        if (data) {
+            const nsx::MetaData& metadata = data->reader()->metadata();
+            const nsx::MetaDataMap& map = metadata.map();
 
-    //             if (element.second.is<int>())
-    //                 col1->setData(Qt::EditRole, element.second.as<int>());
-    //             else if (element.second.is<double>())
-    //                 col1->setData(Qt::EditRole, element.second.as<double>());
-    //             else if (element.second.is<std::string>()) {
-    //                 col1->setData(
-    //                     Qt::EditRole, QString::fromStdString(element.second.as<std::string>()));
-    //             } else {
-    //                 delete col0;
-    //                 delete col1;
-    //                 continue;
-    //             }
-    //             table->setItem(numberLines, 0, col0);
-    //             table->setItem(numberLines++, 1, col1);
-    //         }
-    //         table->horizontalHeader()->setStretchLastSection(true);
-    //     }
-    // }
+            _table->setColumnCount(2);
+            _table->setRowCount(map.size());
+
+            int numberLines = 0;
+            for (auto element : map) // Only int, double and string metadata are displayed.
+            {
+                QTableWidgetItem* col0 = new QTableWidgetItem();
+                QTableWidgetItem* col1 = new QTableWidgetItem();
+                col0->setData(Qt::EditRole, QString(element.first));
+
+                if (element.second.is<int>())
+                    col1->setData(Qt::EditRole, element.second.as<int>());
+                else if (element.second.is<double>())
+                    col1->setData(Qt::EditRole, element.second.as<double>());
+                else if (element.second.is<std::string>()) {
+                    col1->setData(
+                        Qt::EditRole, QString::fromStdString(element.second.as<std::string>()));
+                } else {
+                    delete col0;
+                    delete col1;
+                    continue;
+                }
+                _table->setItem(numberLines, 0, col0);
+                _table->setItem(numberLines++, 1, col1);
+            }
+            _table->horizontalHeader()->setStretchLastSection(true);
+        }
+    }
 }
 
 void NumorProperty::clear()
 {
-    table->removeColumn(1);
-    table->removeColumn(0);
+    _table->removeColumn(1);
+    _table->removeColumn(0);
 }

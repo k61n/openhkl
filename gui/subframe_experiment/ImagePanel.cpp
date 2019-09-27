@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/panels/SubframeImage.h"
+#include "gui/subframe_experiment/ImagePanel.h"
 
 #include "core/experiment/DataSet.h"
 #include "gui/MainWin.h"

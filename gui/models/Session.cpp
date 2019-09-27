@@ -67,8 +67,8 @@ bool Session::createExperiment(QString experimentName)
     experiment->experiment()->setName(experimentName.toStdString());
     _experiments.append(experiment);
     selectedExperiment_ = _experiments.size() - 1;
-    gLogger->log("Experiment \"" + experimentName + "\" added");
     onExperimentChanged();
+    gLogger->log("Experiment \"" + experimentName + "\" added");
 
     return true;
 }
@@ -250,6 +250,7 @@ void Session::onExperimentChanged()
 {
     gGui->onExperimentChanged();
     onDataChanged();   
+    onUnitCellChanged();
 }
 
 void Session::onPeaksChanged()
