@@ -34,7 +34,7 @@
 
 SubframeFilterPeaks::SubframeFilterPeaks() 
     : QWidget(), 
-    _pixmap(nullptr),
+    // _pixmap(nullptr),
     _peak_collection("temp", nsx::listtype::FOUND),
     _peak_collection_item(),
     _peak_collection_model()
@@ -575,7 +575,6 @@ void SubframeFilterPeaks::setFilterParameters() const
     filter->setStrength(strength);
     filter->setUnitCellName(_unit_cell->currentText().toStdString());
 }
-
 
 void SubframeFilterPeaks::filterPeaks()
 {

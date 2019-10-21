@@ -86,7 +86,7 @@ QList<nsx::sptrDataSet> SessionExperiment::allData()
     return list;
 }
 
-QStringList SessionExperiment::getPeakListNames(int depth)
+QStringList SessionExperiment::getPeakListNames()
 {
     std::vector<std::string> names = _experiment->getCollectionNames();
     QStringList q_names;
@@ -97,7 +97,7 @@ QStringList SessionExperiment::getPeakListNames(int depth)
     return q_names;
 }
 
-QStringList SessionExperiment::getFoundNames(int depth)
+QStringList SessionExperiment::getFoundNames()
 {
     std::vector<std::string> names = _experiment->getFoundCollectionNames();
     QStringList q_names;
@@ -108,7 +108,7 @@ QStringList SessionExperiment::getFoundNames(int depth)
     return q_names;
 }
 
-QStringList SessionExperiment::getPredictedNames(int depth)
+QStringList SessionExperiment::getPredictedNames()
 {
     std::vector<std::string> names = _experiment->getPredictedCollectionNames();
     QStringList q_names;
@@ -173,8 +173,8 @@ PeakCollectionModel* SessionExperiment::peakModel(int i)
 
 std::vector<nsx::Peak3D*> SessionExperiment::getPeaks(
     const QString& peakListName, 
-    int upperindex, 
-    int lowerindex){
+    int /*upperindex*/, 
+    int /*lowerindex*/){
 
     if( !_experiment->hasPeakCollection(peakListName.toStdString())){
         std::vector<nsx::Peak3D*> peaks;

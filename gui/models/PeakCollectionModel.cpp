@@ -33,10 +33,6 @@ void PeakCollectionModel::setRoot(PeakCollectionItem* peak_collection)
     beginResetModel();
     _root_item = peak_collection;
     _name = _root_item->name();
-
-    QModelIndex topleft_index = index(0, 0);
-    QModelIndex bottomright_index = index(rowCount() - 1, columnCount() - 1);
-
     endResetModel();
 }
 

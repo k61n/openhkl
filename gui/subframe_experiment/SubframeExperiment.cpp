@@ -24,9 +24,9 @@ SubframeExperiment::SubframeExperiment()
 
     QVBoxLayout* left = new QVBoxLayout;
     properties = new PropertyPanel;
-    left->addWidget(properties, 7.5);
+    left->addWidget(properties, 7);
     logger = new LoggerPanel;
-    left->addWidget(logger, 2.5);
+    left->addWidget(logger, 2);
     layout->addLayout(left, 1);
 
     QVBoxLayout* right = new QVBoxLayout;

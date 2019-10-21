@@ -41,7 +41,7 @@ public:
     //! Manages the display and edition flags
     Qt::ItemFlags flags(const QModelIndex& index) const override;
     //! Returns header information
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 };
 
 #endif // GUI_MODELS_EXPERIMENTMODEL_H

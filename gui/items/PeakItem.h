@@ -51,8 +51,6 @@ private:
     nsx::Peak3D* _peak;
     //! Generate the visual item
     std::unique_ptr<PeakItemGraphic> _peak_graphic;
-    //! the number identifier
-    int _idx;
 };
 
 #endif // GUI_ITEMS_PEAKITEM_H

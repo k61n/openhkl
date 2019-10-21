@@ -88,7 +88,7 @@ static void residuals(
 }
 
 bool GaussianIntegrator::compute(
-    Peak3D* peak, ShapeLibrary* shape_library, 
+    Peak3D* peak, ShapeLibrary* /*shape_library*/, 
     const IntegrationRegion& region)
 {
     if (!peak)

@@ -50,12 +50,12 @@ public:
       const QString& peakListName, 
       int upperindex = -1, 
       int lowerindex = -1);
-   //! Get the names of peaks present in the core (depth obsolete)
-   QStringList getPeakListNames(int depth = 1);
-   //! Get the names of peaks present in the core (depth obsolete)
-   QStringList getFoundNames(int depth = 1);
-   //! Get the names of peaks present in the core (depth obsolete)
-   QStringList getPredictedNames(int depth = 1);
+   //! Get the names of peaks present in the core
+   QStringList getPeakListNames();
+   //! Get the names of peaks present in the core
+   QStringList getFoundNames();
+   //! Get the names of peaks present in the core
+   QStringList getPredictedNames();
    //! Get the number of peak lists
    int numPeakCollections() const {
       return _experiment->numPeakCollections();};
@@ -85,7 +85,7 @@ public:
    //! The save method
    bool saveToFile(QString path);
    //! Save as
-   void saveAs(QString path) const {return;};
+   void saveAs(QString /*path*/) const {return;};
 
  private:
 
@@ -102,7 +102,6 @@ public:
    //! TODO update
    QList<nsx::sptrUnitCell> unitCells_;
    QString selectedList_;
-   int unitCellIndex_ = -1;
    int dataIndex_ = -1;
 
 };

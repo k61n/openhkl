@@ -335,10 +335,6 @@ void SubframeAutoIndexer::updatePeakList()
         _peak_combo->addItems(_peak_list);
         _peak_combo->setCurrentIndex(0);
 
-        nsx::PeakFilter* filter = gSession->experimentAt(
-            _exp_combo->currentIndex())->experiment()->peakFilter();
-        nsx::PeakCollection* collection = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->getPeakCollection(_peak_combo->currentText().toStdString());
-
         refreshPeakTable();
         _solution_table->setModel(nullptr);
         _solutions.clear();
@@ -517,11 +513,7 @@ void SubframeAutoIndexer::acceptSolution()
     if (_peak_list.isEmpty() || _exp_combo->count() < 1)
         return;
 
-    if (_selected_unit_cell ){
-
-        nsx::PeakCollection* collection = gSession->experimentAt(
-            _exp_combo->currentIndex())->experiment()->getPeakCollection(
-                _peak_combo->currentText().toStdString());  
+    if (_selected_unit_cell ){ 
 
         std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
         dlg->exec();

@@ -33,19 +33,19 @@ public:
     //! Retrieve the name
     std::string name() const {return _name;};
     //! Retrieve the row count
-    int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     //!retrieve the column count
-    int columnCount(const QModelIndex &parent = QModelIndex()) const;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     //! Returns whether the selected peak is valid
     bool indexIsValid(const QModelIndex& index) const;
 
 public:
     //! Return the data of the item (Manages role interaction)
-    QVariant data(const QModelIndex& index, int role) const;
+    QVariant data(const QModelIndex& index, int role) const override;
     //! Manages the display and edition flags
-    Qt::ItemFlags flags(const QModelIndex& index) const;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
     //! Returns header information
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     //! Enumerator class for the model
     enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Numor, uc, d, Count };
     //! The sorthing of the peaks

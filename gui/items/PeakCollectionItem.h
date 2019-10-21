@@ -20,7 +20,7 @@
 #include "core/peak/Peak3D.h"
 #include <QStandardItem>
 
-class PeakCollectionItem : public QStandardItem {
+class PeakCollectionItem {
 
 public: 
 

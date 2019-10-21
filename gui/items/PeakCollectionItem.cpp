@@ -28,14 +28,12 @@
 
 
 PeakCollectionItem::PeakCollectionItem()
-    :QStandardItem()
 {
     _peak_collection = nullptr;
     _mode = PeakDisplayModes::VALID;
 }
 
 PeakCollectionItem::PeakCollectionItem(nsx::PeakCollection* peak_collection)
-    :QStandardItem()
 {
     _peak_collection = peak_collection;
     _mode = PeakDisplayModes::VALID;

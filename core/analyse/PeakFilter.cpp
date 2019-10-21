@@ -176,7 +176,7 @@ void PeakFilter::filterOverlapping(PeakCollection* peak_collection) const
     }
 }
 
-void PeakFilter::filterComplementary(PeakCollection* peak_collection) const
+void PeakFilter::filterComplementary(PeakCollection* /*peak_collection*/) const
 {
     // PeakList filtered_peaks;
 

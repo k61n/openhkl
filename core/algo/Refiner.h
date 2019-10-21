@@ -47,8 +47,8 @@ class Refiner {
     const std::vector<RefinementBatch>& batches() const;
 
  private:
+ 
     UnitCell* _cell;
-
     std::vector<RefinementBatch> _batches;
 };
 

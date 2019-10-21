@@ -69,6 +69,7 @@ DetectorScene::DetectorScene(QObject* parent)
     , _zoomend(0, 0)
     , _zoomrect(nullptr)
     , _zoomStack()
+    , _peak_graphics_items()
     , _itemSelected(false)
     , _image(nullptr)
     , _masks()
@@ -78,7 +79,6 @@ DetectorScene::DetectorScene(QObject* parent)
     , _colormap(new ColorMap())
     , _integrationRegion(nullptr)
     , _selected_peak_gi(nullptr)
-    , _peak_graphics_items()
     , _selected_peak(nullptr)
 {
 }
@@ -210,7 +210,7 @@ void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
     slotChangeSelectedFrame(frame);
 }
 
-void DetectorScene::slotChangeSelectedPeak(nsx::Peak3D* peak)
+void DetectorScene::slotChangeSelectedPeak(nsx::Peak3D* /*peak*/)
 {
     // if (peak == _selected_peak)
     //     return;
@@ -426,9 +426,9 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             if (!peak_item)
                 return;
 
-            nsx::Peak3D* peak = peak_item->peak();
+            // nsx::Peak3D* peak = peak_item->peak();
+            // gSession->onSelectedPeakChanged(peak);
 
-            //            gSession->onSelectedPeakChanged(peak);
         } else if (_mode == ZOOM) {
             qreal top = _zoomrect->rect().top();
             qreal bot = _zoomrect->rect().bottom();
@@ -669,11 +669,11 @@ void DetectorScene::loadCurrentImage()
     if (!_currentData)
         return;
 
-    const unsigned int green = (128u << 24) | (255u << 8);
-    const unsigned int yellow = (128u << 24) | (255u << 16) | (255u << 8);
-    const unsigned int transparent = 0;
+    // const unsigned int green = (128u << 24) | (255u << 8);
+    // const unsigned int yellow = (128u << 24) | (255u << 16) | (255u << 8);
+    // const unsigned int transparent = 0;
 
-    using EventType = nsx::IntegrationRegion::EventType;
+    // using EventType = nsx::IntegrationRegion::EventType;
 
     // Full image size, front of the stack
     QRect& full = _zoomStack.front();

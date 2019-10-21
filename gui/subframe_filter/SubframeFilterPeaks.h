@@ -141,7 +141,6 @@ private:
    QDoubleSpinBox* _significance_level;
 
    QSpinBox* _min_number_peaks;
-   PeaksTableView* _peaks_table;
 
    Spoiler* _input_box;
    SpoilerCheck* _state_box;
@@ -164,7 +163,7 @@ private:
    QSizePolicy* _size_policy_fixed;
 
    DetectorView* _figure_view;
-   QGraphicsPixmapItem* _pixmap;
+   // QGraphicsPixmapItem* _pixmap;
    QSpinBox* _figure_spin;
    QScrollBar* _figure_scroll;
    PeaksTableView* _peak_table;

@@ -108,8 +108,9 @@ const std::vector<RefinementBatch>& Refiner::batches() const
     return _batches;
 }
 
-int Refiner::updatePredictions(PeakList& peaks) const
+int Refiner::updatePredictions(PeakList& /*peaks*/) const
 {
+    return 0;
     // PeakFilter peak_filter;
     // PeakList filtered_peaks;
     // filtered_peaks = peak_filter.enabled(peaks, true);
