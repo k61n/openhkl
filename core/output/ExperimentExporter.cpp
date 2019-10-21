@@ -359,11 +359,17 @@ bool ExperimentExporter::writePeaks(
 
             }
 
-            hsize_t num_peaks[1] = {collection_item->numberOfPeaks()};
+            hsize_t num_peaks[1] = {
+                static_cast<unsigned long long>(
+                    collection_item->numberOfPeaks())};
             H5::DataSpace peak_space(1, num_peaks);
-            hsize_t center_peaks_h[2] = {collection_item->numberOfPeaks(), 3};
+            hsize_t center_peaks_h[2] = {
+                static_cast<unsigned long long>(
+                    collection_item->numberOfPeaks()), 3};
             H5::DataSpace center_space(2, center_peaks_h);
-            hsize_t metric_peaks_h[2] = {collection_item->numberOfPeaks()*3, 3};
+            hsize_t metric_peaks_h[2] = {
+                static_cast<unsigned long long>(
+                    collection_item->numberOfPeaks())*3, 3};
             H5::DataSpace metric_space(2, metric_peaks_h);
 
             H5::DataSet peak_end_H5(
