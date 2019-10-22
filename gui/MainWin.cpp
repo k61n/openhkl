@@ -23,6 +23,7 @@
 #include <QSettings>
 #include <QSplitter>
 #include <QStackedLayout>
+#include <QHBoxLayout>
 #include <QStatusBar>
 #include <QString>
 #include <QTimer>
@@ -46,8 +47,9 @@ MainWin::MainWin()
 
     // layout
     setContentsMargins(5, 5, 5, 5);
-
-    addToolBar(Qt::LeftToolBarArea, new SideBar(this));
+    QWidget* main_widget = new QWidget(this);
+    QHBoxLayout* main_layout = new QHBoxLayout();
+    main_layout->addWidget(new SideBar(main_widget));
 
     _home = new SubframeHome;
     _experiment = new SubframeExperiment;
@@ -57,7 +59,7 @@ MainWin::MainWin()
     _predictor = new SubframePredictPeaks;
     _merger = new SubframeMergedPeaks;
 
-    _layout_stack = new QStackedWidget;
+    _layout_stack = new QStackedWidget(main_widget);
     _layout_stack->addWidget(_home);
     _layout_stack->addWidget(_experiment);
     _layout_stack->addWidget(_finder);
@@ -67,8 +69,9 @@ MainWin::MainWin()
     _layout_stack->addWidget(_merger);
     _layout_stack->setCurrentIndex(0);
 
-    setCentralWidget(_layout_stack);
-
+    main_layout->addWidget(_layout_stack);
+    main_widget->setLayout(main_layout);
+    setCentralWidget(main_widget);
     readSettings();
     show();
 }

@@ -17,9 +17,12 @@
 
 #include <QToolBar>
 
-class SideBar : public QToolBar {
+class SideBar : public QWidget {
  public:
     SideBar(QWidget* parent = nullptr);
+    void addAction(QAction *action);
+    QAction *addAction( const QIcon &icon, const QString &text);
+    QSize minimumSizeHint() const;
 
  private:
     void onHome();
@@ -29,6 +32,19 @@ class SideBar : public QToolBar {
     void onIndexer();
     void onPredictor();
     void onMerger();
+
+protected:
+    void paintEvent(QPaintEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void leaveEvent(QEvent * event);
+
+    QAction *actionAt(const QPoint &at);
+private:
+    QList<QAction *> mActions;
+
+    QAction *mCheckedAction;
+    QAction *mOverAction;
 
 };
 
