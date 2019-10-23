@@ -739,6 +739,9 @@ void SubframePredictPeaks::runIntegration()
         nsx::IPeakIntegrator* integrator = 
             gSession->experimentAt(_exp_combo->currentIndex())->experiment()->getIntegrator(_integrator->currentText().toStdString());
 
+        nsx::ShapeLibrary* lib = 
+            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->getPeakCollection(_peak_combo->currentText().toStdString())->shapeLibrary();
+
         if (!integrator)
             return ;
 
@@ -753,9 +756,9 @@ void SubframePredictPeaks::runIntegration()
         integrator->setHandler(handler);
 
         gSession->experimentAt(
-            _exp_combo->currentIndex())->experiment()->integratePeaks(
+            _exp_combo->currentIndex())->experiment()->integratePredictedPeaks(
                 _integrator->currentText().toStdString(),
-                &_peak_collection);
+                &_peak_collection,lib);
 
         refreshPeakTable();
 

@@ -96,6 +96,18 @@ class ShapeLibrary {
     //! Returns the background end used for the library
     double bkgEnd() const;
 
+    //! Returns the background end used for the library
+    std::array<double, 6> choleskyD() const;
+
+    //! Returns the background end used for the library
+    std::array<double, 6> choleskyM() const;
+
+    //! Returns the background end used for the library
+    std::array<double, 6> choleskyS() const;
+    
+    //! Returns the background end used for the library
+    std::map<Peak3D*, std::pair<Profile3D, Profile1D>> profiles() const;
+
  private:
     //! Predict the (detector space) covariance given the fit data
     Eigen::Matrix3d predictCovariance(const FitData& data) const;

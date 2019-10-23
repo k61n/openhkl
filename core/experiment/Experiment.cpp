@@ -427,6 +427,26 @@ void Experiment::integratePeaks(
     }
 }
 
+void Experiment::integratePredictedPeaks(
+    std::string integrator_name, PeakCollection* peak_collection,
+    ShapeLibrary* shape_library)
+{   
+    IPeakIntegrator* integrator = getIntegrator(integrator_name);
+    nsx::PeakFilter filter;
+    filter.resetFiltering(peak_collection);
+    filter.setDRange(std::array<double, 2UL>{
+        integrator->dMin(), integrator->dMax()});
+    filter.filterDRange(peak_collection);
+    std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
+    
+    std::map<std::string, sptrDataSet>::iterator it;
+    for (it = _data.begin(); it != _data.end(); ++it)
+    {
+        integrator->integrate(
+            peaks,shape_library, it->second);
+    }
+}
+
 void Experiment::integrateFoundPeaks(std::string integrator_name)
 {   
     IPeakIntegrator* integrator = getIntegrator(integrator_name);

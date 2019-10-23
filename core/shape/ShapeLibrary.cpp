@@ -449,4 +449,24 @@ bool ShapeLibrary::detectorCoords() const
     return _detectorCoords;
 }
 
+std::array<double, 6> ShapeLibrary::choleskyD() const
+{
+    return _choleskyD;
+}
+
+std::array<double, 6> ShapeLibrary::choleskyM() const
+{
+    return _choleskyM;
+}
+
+std::array<double, 6> ShapeLibrary::choleskyS() const
+{
+    return _choleskyS;
+}
+
+std::map<Peak3D*, std::pair<Profile3D, Profile1D>> ShapeLibrary::profiles() const
+{
+    return _profiles;
+}
+
 } // namespace nsx

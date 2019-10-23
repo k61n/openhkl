@@ -142,12 +142,16 @@ public: // Autoindexer
 
 public: // Integrator
 
-   //! Select integrator by idx
    nsx::IPeakIntegrator* getIntegrator(const std::string& name) const;
    //! Set the found peak integrator
    void integratePeaks(
       std::string integrator_name, 
       PeakCollection* peak_collection);
+   //! Set the found peak integrator
+   void integratePredictedPeaks(
+      std::string integrator_name, 
+      PeakCollection* peak_collection,
+      ShapeLibrary* shape_library);
    //! Set the found peak integrator
    void integrateFoundPeaks(std::string integrator);
 
