@@ -38,6 +38,7 @@ SubframeExperiment::SubframeExperiment()
 
     QSplitter* right_spliter = new QSplitter();
     right_spliter->setOrientation(Qt::Orientation::Vertical);
+    right_spliter->setChildrenCollapsible(false);
 
     image = new ImagePanel;
     right_spliter->addWidget(image);
