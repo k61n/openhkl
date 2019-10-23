@@ -16,23 +16,35 @@
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QSplitter>
+#include <QWidget>
 
 SubframeExperiment::SubframeExperiment()
     : QWidget()
 {
     QHBoxLayout* layout = new QHBoxLayout(this);
+    QSplitter* spliter = new QSplitter(this);
 
-    QVBoxLayout* left = new QVBoxLayout;
+    QWidget* left_widget = new QWidget();
+    QVBoxLayout* left_layout = new QVBoxLayout;
+
     properties = new PropertyPanel;
-    left->addWidget(properties, 7);
+    left_layout->addWidget(properties, 7);
     logger = new LoggerPanel;
-    left->addWidget(logger, 2);
-    layout->addLayout(left, 1);
+    left_layout->addWidget(logger, 2);
 
-    QVBoxLayout* right = new QVBoxLayout;
+    left_widget->setLayout(left_layout);
+    spliter->addWidget(left_widget);
+
+    QSplitter* right_spliter = new QSplitter();
+    right_spliter->setOrientation(Qt::Orientation::Vertical);
+
     image = new ImagePanel;
-    right->addWidget(image, 7);
+    right_spliter->addWidget(image);
     plot = new PlotPanel;
-    right->addWidget(plot, 3);
-    layout->addLayout(right, 2);
+    right_spliter->addWidget(plot);
+
+    spliter->addWidget(right_spliter);
+
+    layout->addWidget(spliter);
 }
