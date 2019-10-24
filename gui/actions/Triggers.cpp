@@ -30,7 +30,7 @@
 #include "gui/frames/InstrumentStatesFrame.h"
 #include "gui/frames/RefinerFrame.h"
 // #include "gui/frames/MergedPeakInformationFrame.h"
-#include "gui/frames/UserDefinedUnitCellIndexerFrame.h"
+// #include "gui/frames/UserDefinedUnitCellIndexerFrame.h"
 
 // #include "gui/panels/TabInstrument.h"
 
@@ -121,18 +121,18 @@ void Actions::setupPeaks()
 {
     // autoIndexer.setTriggerHook([]() { new SubframeAutoIndexer; });
     // filterPeaks.setTriggerHook([]() { new PeakFilterDialog; });
-    userDefinedIndexer.setTriggerHook([]() { new UserDefinedUnitCellIndexerFrame; });
-    assignUnitCell.setTriggerHook([]() {
-        if (gSession->selectedExperimentNum() < 0) {
-            gLogger->log("[ERROR] No experiment selected");
-            return;
-        }
-        if (gSession->selectedExperiment()->getPeakListNames().empty()) {
-            gLogger->log("[ERROR] No peaks in selected experiment");
-            return;
-        }
+    // userDefinedIndexer.setTriggerHook([]() { new UserDefinedUnitCellIndexerFrame; });
+    // assignUnitCell.setTriggerHook([]() {
+    //     if (gSession->selectedExperimentNum() < 0) {
+    //         gLogger->log("[ERROR] No experiment selected");
+    //         return;
+    //     }
+    //     if (gSession->selectedExperiment()->getPeakListNames().empty()) {
+    //         gLogger->log("[ERROR] No peaks in selected experiment");
+    //         return;
+    //     }
         // gSession->selectedExperiment()->autoAssignUnitCell();
-    });
+    // });
     // buildShapeLibrary.setTriggerHook([]() { new ShapeLibraryDialog; });
     refine.setTriggerHook([]() { new RefinerFrame; });
     normalize.setTriggerHook([]() {

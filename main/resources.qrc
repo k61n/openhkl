@@ -15,5 +15,7 @@
         <file>images/uni_cell.svg</file>
         <file>images/experiment_info.svg</file>
         <file>images/home.svg</file>
+        <file>images/Add_item.svg</file>
+        <file>images/Delete_item.svg</file>
     </qresource>
 </RCC>

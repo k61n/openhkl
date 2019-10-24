@@ -20,6 +20,7 @@
 #include <QSpinBox>
 #include <QComboBox>
 #include <QLineEdit>
+#include <QPushButton>
 
 //! Property widget for unit cell
 class UnitCellProperty : public QWidget {
@@ -47,6 +48,14 @@ private:
    void selectedCellChanged(int cell);
    //! Display all informations in QDebug
    void printAllInformation();
+   //! Add unit cell (User defined)
+   void addUnitCell();
+   //! Remove a unit cell (deletion)
+   void removeUnitCell();
+   //! Reset the values
+   void resetFields();
+   //! Reset the values
+   void setInputEnabled(bool state);
 
 private: 
 
@@ -62,6 +71,9 @@ private:
    QDoubleSpinBox* alpha;
    QDoubleSpinBox* beta;
    QDoubleSpinBox* gamma;
+
+   QPushButton* _add;
+   QPushButton* _remove;
 
    QSizePolicy* _size_policy_widgets;
    QSizePolicy* _size_policy_box;

@@ -36,6 +36,7 @@ UnitCellProperty::UnitCellProperty() : QWidget()
 
     QVBoxLayout* overallLayout = new QVBoxLayout(this);
     QHBoxLayout* horizontalLayout = new QHBoxLayout;
+    QHBoxLayout* top_layout = new QHBoxLayout;
     QGridLayout* grid_layout = new QGridLayout;
 
     QLabel* label_ptr;
@@ -77,15 +78,20 @@ UnitCellProperty::UnitCellProperty() : QWidget()
     alpha = new QDoubleSpinBox();
     beta = new QDoubleSpinBox();
     gamma = new QDoubleSpinBox();
+
+    _add = new QPushButton();
+    _remove = new QPushButton();
+    _add->setIcon(QIcon(":/images/Add_item.svg"));
+    _remove->setIcon(QIcon(":/images/Delete_item.svg"));
     
     unitcells->setSizePolicy(*_size_policy_widgets);
 
     name->setSizePolicy(*_size_policy_widgets);
 
-    spaceGroup->setReadOnly(true);
+    // spaceGroup->setReadOnly(true);
     spaceGroup->setSizePolicy(*_size_policy_widgets);
 
-    indexingTolerance->setReadOnly(true);
+    // indexingTolerance->setReadOnly(true);
     indexingTolerance->setSizePolicy(*_size_policy_widgets);
 
     chemicalFormula->setSizePolicy(*_size_policy_widgets);
@@ -94,35 +100,38 @@ UnitCellProperty::UnitCellProperty() : QWidget()
 
     a->setButtonSymbols(QDoubleSpinBox::NoButtons);
     a->setSizePolicy(*_size_policy_widgets);
-    a->setReadOnly(true);
+    // a->setReadOnly(true);
     a->setDecimals(5);
 
     b->setButtonSymbols(QDoubleSpinBox::NoButtons);
     b->setSizePolicy(*_size_policy_widgets);
-    b->setReadOnly(true);
+    // b->setReadOnly(true);
     b->setDecimals(5);
 
     c->setButtonSymbols(QDoubleSpinBox::NoButtons);
     c->setSizePolicy(*_size_policy_widgets);
-    c->setReadOnly(true);
+    // c->setReadOnly(true);
     c->setDecimals(5);
 
     alpha->setButtonSymbols( QDoubleSpinBox::NoButtons);
     alpha->setSizePolicy(*_size_policy_widgets);
-    alpha->setReadOnly(true);
+    // alpha->setReadOnly(true);
     alpha->setDecimals(5);
 
     beta->setButtonSymbols(QDoubleSpinBox::NoButtons);
     beta->setSizePolicy(*_size_policy_widgets);
-    beta->setReadOnly(true);
+    // beta->setReadOnly(true);
     beta->setDecimals(5);
 
     gamma->setButtonSymbols(QDoubleSpinBox::NoButtons);
     gamma->setSizePolicy(*_size_policy_widgets);
-    gamma->setReadOnly(true);
+    // gamma->setReadOnly(true);
     gamma->setDecimals(5);
 
-    grid_layout->addWidget(unitcells, 0, 0, 1, 2);
+    top_layout->addWidget(unitcells);
+    top_layout->addWidget(_add);
+    top_layout->addWidget(_remove);
+
     grid_layout->addWidget(name, 1, 1, 1, 1);
     grid_layout->addWidget(spaceGroup, 2, 1, 1, 1);
     grid_layout->addWidget(chemicalFormula, 3, 1, 1, 1);
@@ -131,6 +140,7 @@ UnitCellProperty::UnitCellProperty() : QWidget()
 
     horizontalLayout->addLayout(grid_layout);
 
+    overallLayout->addLayout(top_layout);
     overallLayout->addLayout(horizontalLayout);
 
     QGroupBox* cellParameters = new QGroupBox("Cell parameters", this);
@@ -192,6 +202,19 @@ UnitCellProperty::UnitCellProperty() : QWidget()
         setMassDensity();
         printAllInformation();
     });
+
+    connect(
+        _add, &QPushButton::clicked,
+        this, &UnitCellProperty::addUnitCell
+    );
+
+    connect(
+        _remove, &QPushButton::clicked,
+        this, &UnitCellProperty::removeUnitCell
+    );
+
+    resetFields();
+    setInputEnabled(false);
 }
 
 void UnitCellProperty::setSizePolicies()
@@ -220,8 +243,48 @@ void UnitCellProperty::refreshInput()
     unitcells->addItems(gSession->selectedExperiment()->getUnitCellNames());
     unitcells->blockSignals(false);
 
+    bool state;
+    if (gSession->selectedExperiment()->experiment()->getUnitCellNames().size() == 0){
+        state = false;
+    }else{
+        state = true;
+    }
+
+    resetFields();
+    setInputEnabled(state);
+
     if (!gSession->selectedExperiment()->getUnitCellNames().isEmpty())
         selectedCellChanged(0);
+}
+
+void UnitCellProperty::setInputEnabled(bool state)
+{
+    name->setEnabled(state);
+    chemicalFormula->setEnabled(state);
+    spaceGroup->setEnabled(state);
+    z->setEnabled(state);
+    indexingTolerance->setEnabled(state);
+    a->setEnabled(state);
+    b->setEnabled(state);
+    c->setEnabled(state);
+    alpha->setEnabled(state);
+    beta->setEnabled(state);
+    gamma->setEnabled(state); 
+}
+
+void UnitCellProperty::resetFields()
+{
+    name->setText("None");
+    chemicalFormula->setText("");
+    spaceGroup->setText("");
+    z->setValue(0);
+    indexingTolerance->setValue(0);
+    a->setValue(0);
+    b->setValue(0);
+    c->setValue(0);
+    alpha->setValue(0);
+    beta->setValue(0);
+    gamma->setValue(0);
 }
 
 void UnitCellProperty::setZValue(int z)
@@ -287,4 +350,36 @@ void UnitCellProperty::printAllInformation()
     qDebug() << "material: " << QString::fromStdString(material->formula());
     qDebug() << "molar mass: " << material->molarMass();
     qDebug() << "- - - - - - - - - - - - - - - - - - - - - ";
+}
+
+void UnitCellProperty::addUnitCell()
+{
+    if (gSession->selectedExperimentNum() == -1)
+        return;
+
+    nsx::UnitCell uc = nsx::UnitCell();
+    uc.setName("New unit cell");
+
+    gSession->selectedExperiment()->experiment()->addUnitCell(
+        "New unit cell", &uc);
+
+    refreshInput();
+
+    int i = 0;
+    for (std::string value : gSession->selectedExperiment()->experiment()->getUnitCellNames()){
+        if (value == "New unit cell"){
+            selectedCellChanged(i);
+        }
+        ++i;
+    }
+}
+
+void UnitCellProperty::removeUnitCell()
+{
+    if (gSession->selectedExperimentNum() == -1)
+        return;
+    gSession->selectedExperiment()->experiment()->removeUnitCell(
+        name->text().toStdString());
+    refreshInput();
+    selectedCellChanged(0);
 }
