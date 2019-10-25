@@ -22,8 +22,8 @@
 
 namespace nsx {
 
-Profile1DIntegrator::Profile1DIntegrator(sptrShapeLibrary library, double radius, double nframes)
-    : IPeakIntegrator(), _library(library), _radius(radius), _nframes(nframes)
+Profile1DIntegrator::Profile1DIntegrator()
+    : IPeakIntegrator()
 {
 }
 
@@ -78,9 +78,9 @@ static void updateFit(
     I = Intensity(new_I, cov(1, 1));
 }
 
-bool Profile1DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
+bool Profile1DIntegrator::compute(Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region)
 {
-    if (!_library)
+    if (!shape_library)
         return false;
 
     if (!peak)
@@ -101,7 +101,8 @@ bool Profile1DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
 
     try {
         // throws if there are no neighboring peaks within the bounds
-        mean_profile = _library->meanProfile1D(DetectorEvent(c), _radius, _nframes);
+        mean_profile = shape_library->meanProfile1D(
+            DetectorEvent(c), radius(), nFrames());
     } catch (...) {
         return false;
     }

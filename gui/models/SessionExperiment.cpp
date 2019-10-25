@@ -23,56 +23,35 @@
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/integration/Profile1DIntegrator.h"
 #include "core/integration/Profile3DIntegrator.h"
+
 #include "gui/dialogs/IntegrateDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/models/Session.h"
+#include "gui/MainWin.h"
+#include "gui/items/PeakCollectionItem.h"
+
 #include <QDateTime>
 #include <QDebug>
 #include <QStringList>
-
-Peaks::Peaks()
-    : name_{"empty"}, type_{listtype::PREDICTED}
-    , convolutionkernel_{"unknown"}, file_{"none"}
-{
-    nsx::PeakList liste;
-    peaks_ = liste;
-}
-
-Peaks::Peaks(nsx::PeakList peaks, const QString &name, listtype type, const QString &kernel)
-    : peaks_{peaks}, name_{name}, type_{type}, convolutionkernel_{kernel}, file_{"unknown"}
-{
-//    nsx::sptrDataSet data = peaks_[0]->data();
-//    file_ = QString::fromStdString(data->filename());
-}
-
-int Peaks::numberValid() const {
-    int valid = 0;
-    for (nsx::sptrPeak3D peak : peaks_) {
-        if (peak->enabled())
-            valid++;
-    }
-    return valid;
-}
-
-int Peaks::numberInvalid() const {
-    return numberPeaks()-numberValid();
-}
-
-int Peaks::numberPeaks() const {
-    return peaks_.size();
-}
+#include <QStandardItem>
 
 SessionExperiment::SessionExperiment()
 {
     std::string experimentName = QDateTime::currentDateTime().toString().toStdString();
     std::set<std::string> instruments = nsx::getResourcesName("instruments");
     nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName, *instruments.begin()));
-    experiment_ = expPtr;
+    _experiment = expPtr;
+}
+
+SessionExperiment::SessionExperiment(QString name, QString instrument)
+{
+    nsx::sptrExperiment expPtr(new nsx::Experiment(name.toStdString(), instrument.toStdString()));
+    _experiment = expPtr;
 }
 
 QStringList SessionExperiment::getDataNames()
 {
-    std::map<std::string, nsx::sptrDataSet> datamap = experiment_->data();
+    std::map<std::string, nsx::sptrDataSet> datamap = _experiment->data();
     QStringList names;
     for (auto data : datamap)
         names.append(QString::fromStdString(data.first));
@@ -83,10 +62,13 @@ nsx::sptrDataSet SessionExperiment::getData(int index)
 {
     if (index == -1)
         index = dataIndex_;
-    if (experiment_->data().empty())
+
+    if (_experiment->data().empty())
         return nullptr;
+
     std::string selected = getDataNames().at(index).toStdString();
-    return experiment_->data().at(selected);
+
+    return _experiment->data().at(selected);
 }
 
 int SessionExperiment::getIndex(const QString& dataname)
@@ -97,252 +79,149 @@ int SessionExperiment::getIndex(const QString& dataname)
 
 QList<nsx::sptrDataSet> SessionExperiment::allData()
 {
-    std::map<std::string, nsx::sptrDataSet> map = experiment_->data();
+    std::map<std::string, nsx::sptrDataSet> map = _experiment->data();
     QList<nsx::sptrDataSet> list;
     for (auto data : map)
         list.append(data.second);
     return list;
 }
 
-void SessionExperiment::addPeaks(Peaks* peaks, const QString& uppername)
+QStringList SessionExperiment::getPeakListNames()
 {
-    if (uppername.length() == 0) {
-        QVector<Peaks*> inner;
-        QString listname = peaks->name_;
-        peaks->name_ = "all peaks";
-        inner.append(std::move(peaks));
-        peakLists_.insert(listname, inner);
-        gSession->onPeaksChanged();
+    std::vector<std::string> names = _experiment->getCollectionNames();
+    QStringList q_names;
+
+    for (std::string name :names){
+        q_names<<QString::fromStdString(name);
+    }
+    return q_names;
+}
+
+QStringList SessionExperiment::getFoundNames()
+{
+    std::vector<std::string> names = _experiment->getFoundCollectionNames();
+    QStringList q_names;
+
+    for (std::string name :names){
+        q_names<<QString::fromStdString(name);
+    }
+    return q_names;
+}
+
+QStringList SessionExperiment::getPredictedNames()
+{
+    std::vector<std::string> names = _experiment->getPredictedCollectionNames();
+    QStringList q_names;
+
+    for (std::string name :names){
+        q_names<<QString::fromStdString(name);
+    }
+    return q_names;
+}
+
+
+void SessionExperiment::generatePeakModel(const QString& peakListName)
+{
+    if( !_experiment->hasPeakCollection(peakListName.toStdString()))
         return;
-    }
-    QString upperlist = uppername;
-    if (uppername.contains('/'))
-        upperlist = uppername.split('/').at(0);
 
-    peakLists_[upperlist].append(std::move(peaks));
-    gSession->onPeaksChanged();
+    nsx::PeakCollection* peak_collection = _experiment->getPeakCollection(
+        peakListName.toStdString());
+
+    PeakCollectionItem* peak_collection_item = new PeakCollectionItem(peak_collection);
+    _peak_collection_items.push_back(peak_collection_item);
+
+    PeakCollectionModel* peak_collection_model = new PeakCollectionModel;
+    peak_collection_model->setRoot(peak_collection_item);
+    _peak_collection_models.push_back(peak_collection_model);
+
 }
 
-const Peaks* SessionExperiment::getPeaks(int upperindex, int lowerindex)
+void SessionExperiment::generatePeakModels()
 {
-    if (peakLists_.empty())
+    _peak_collection_models.clear();
+    std::vector<std::string> names = _experiment->getCollectionNames();
+
+    for (std::string name :names){
+        nsx::PeakCollection* peak_collection = _experiment->getPeakCollection(name);
+
+        PeakCollectionItem* peak_collection_item = new PeakCollectionItem(peak_collection);
+        _peak_collection_items.push_back(peak_collection_item);
+
+        PeakCollectionModel* peak_collection_model = new PeakCollectionModel();
+        peak_collection_model->setRoot(peak_collection_item);
+        _peak_collection_models.push_back(peak_collection_model);
+    }
+}
+
+PeakCollectionModel* SessionExperiment::peakModel(const QString& name)
+{
+    std::string std_name = name.toStdString();
+    for (int i = 0; i < _peak_collection_models.size(); ++i) {
+        if (_peak_collection_models.at(i)->name() == std_name)
+            return _peak_collection_models.at(i);
+    }
+    return nullptr;
+}
+
+PeakCollectionModel* SessionExperiment::peakModel(int i)
+{
+    if (i>=_peak_collection_models.size())
         return nullptr;
-
-    QString outername;
-    if (upperindex == -1)
-        return getPeaks(selectedList_);
-    else
-        outername = getPeakListNames(0).at(upperindex);
-    if (lowerindex == -1)
-        lowerindex = 0;
-    return peakLists_.value(outername).at(lowerindex);
+    return _peak_collection_models.at(i);
 }
 
-const Peaks* SessionExperiment::getPeaks(const QString& peakListName)
-{
-    if (peakLists_.empty())
-        return nullptr;
-    QString searchedName;
-    QString filteredName;
-    int index = -1;
-    if (!peakListName.contains("/")) {
-        index = 0;
-        searchedName = peakListName;
-    } else {
-        QStringList listnames = peakListName.split("/");
-        filteredName = listnames.at(1);
-        searchedName = listnames.at(0);
-        index = listNamesOf(searchedName).indexOf(filteredName);
+std::vector<nsx::Peak3D*> SessionExperiment::getPeaks(
+    const QString& peakListName, 
+    int /*upperindex*/, 
+    int /*lowerindex*/){
+
+    if( !_experiment->hasPeakCollection(peakListName.toStdString())){
+        std::vector<nsx::Peak3D*> peaks;
+        return peaks;
     }
 
-    return peakLists_.value(searchedName).at(index);
-}
+    nsx::PeakCollection* peakCollection = _experiment->getPeakCollection(
+        peakListName.toStdString());
 
-nsx::PeakList SessionExperiment::getPeakList(nsx::sptrUnitCell cell)
-{
-    nsx::PeakList ret;
-    for (QVector<Peaks*> vec : peakLists_) {
-        for (Peaks* peaks : vec) {
-            if (peaks->type_ != listtype::FILTERED) {
-                nsx::PeakList list = peaks->peaks_;
-                for (nsx::sptrPeak3D p : list) {
-                    if (p->unitCell() && p->unitCell()->name() == cell->name()){
-                            ret.push_back(p);
-                    }
-                }
-            }
-        }
-    }
-    return ret;
-}
+    std::vector<nsx::Peak3D*> peaks = peakCollection->getPeakList();
 
-nsx::PeakList SessionExperiment::getPeakList(nsx::sptrDataSet data)
-{
-    nsx::PeakList ret;
-    for (QVector<Peaks*> vec : peakLists_) {
-        for (Peaks* peaks : vec) {
-            if (peaks->type_ != listtype::FILTERED
-                    && peaks->file_ == QString::fromStdString(data->filename())) {
-                for (nsx::sptrPeak3D p : peaks->peaks_) {
-                    ret.push_back(p);
-                }
-            }
-        }
-    }
-    return ret;
-}
-
-QStringList SessionExperiment::getPeakListNames(int depth)
-{
-    QStringList outernames = peakLists_.keys();
-    if (depth == 0)
-        return outernames;
-    QStringList allnames;
-    for (QString outername : outernames) {
-        const QVector<Peaks*> inner = peakLists_.value(outername);
-        for (const Peaks* peaks : inner)
-            allnames.append(outername + "/" + peaks->name_);
-    }
-    return allnames;
-}
-
-QStringList SessionExperiment::listNamesOf(const QString &listname)
-{
-    QStringList namesInSearched;
-    const QVector<Peaks*> inner = peakLists_.value(listname);
-    for (const Peaks* peaks : inner)
-        namesInSearched.append(peaks->name_);
-    return namesInSearched;
-}
-
-void SessionExperiment::removePeaks(const QString& listname)
-{
-    QString toremove = listname;
-    if (listname.length() == 0) {
-        if (selectedList_.length() == 0)
-            toremove = getPeakListNames(1).at(0);
-        else
-            toremove = selectedList_;
-    }
-
-    if (!toremove.contains("/")) {
-        peakLists_.remove(toremove);
-        return;
-    }
-
-    QStringList names = toremove.split('/');
-    QString outername = names.at(0);
-    QString innername = names.at(1);
-    int index = listNamesOf(outername).indexOf(innername);
-    peakLists_[outername].removeAt(index);
-}
-
-void SessionExperiment::selectPeaks(const QString& listname)
-{
-    selectedList_ = listname;
-}
-
-nsx::sptrUnitCell SessionExperiment::getUnitCell(int index)
-{
-    if (index == -1) {
-        if (unitCellIndex_ == -1)
-            index = 0;
-        else
-            index = unitCellIndex_;
-    }
-
-    return unitCells_.at(index);
-}
-
-void SessionExperiment::removeUnitCell(int index)
-{
-    if (index == -1)
-        unitCells_.removeAt(unitCellIndex_);
-    else
-        unitCells_.removeAt(index);
+    return peaks;
 }
 
 QStringList SessionExperiment::getUnitCellNames()
 {
-    QStringList names;
-    for (nsx::sptrUnitCell uc : unitCells_)
-        names.append(QString::fromStdString(uc->name()));
-    return names;
+    std::vector<std::string> names = _experiment->getUnitCellNames();
+    QStringList q_names;
+
+    for (std::string name :names){
+        q_names<<QString::fromStdString(name);
+    }
+    return q_names;
 }
 
 void SessionExperiment::changeInstrument(const QString& instrumentname)
 {
-    if (!experiment_->data().empty())
+    if (!_experiment->data().empty())
         return;
 
-    std::string expname = experiment_->name();
-    experiment_ = std::make_shared<nsx::Experiment>(expname, instrumentname.toStdString());
+    std::string expname = _experiment->name();
+    _experiment = std::make_shared<nsx::Experiment>(expname, instrumentname.toStdString());
 }
 
-void SessionExperiment::integratePeaks()
+void SessionExperiment::onPeaksChanged()
 {
-    if (peakLists_.empty()) {
-        qWarning() << "No peaks to integrate";
-        return;
+    gGui->onPeaksChanged();
+}
+
+bool SessionExperiment::saveToFile(QString path)
+{
+    bool success = experiment()->saveToFile(path.toStdString());
+
+    if (success){
+        _save_path = path.toStdString();
+        _saved = true;
     }
 
-    IntegrateDialog* dialog = new IntegrateDialog;
-
-    QMap<QString, std::function<nsx::IPeakIntegrator*()>> integratorMap;
-    integratorMap["Pixel sum integrator"] = [=]() {
-        return new nsx::PixelSumIntegrator(dialog->fitCenter(), dialog->fitCov());
-    };
-    integratorMap["Gaussian integrator"] = [=]() {
-        return new nsx::GaussianIntegrator(dialog->fitCenter(), dialog->fitCov());
-    };
-
-    if (library_) {
-        integratorMap["3d profile integrator"] = [=]() {
-            return new nsx::Profile3DIntegrator(
-                library_, dialog->radius(), dialog->numberOfFrames(), false);
-        };
-        integratorMap["I/Sigma integrator"] = [=]() {
-            return new nsx::ISigmaIntegrator(library_, dialog->radius(), dialog->numberOfFrames());
-        };
-        integratorMap["1d profile integrator"] = [=]() {
-            return new nsx::Profile1DIntegrator(
-                library_, dialog->radius(), dialog->numberOfFrames());
-        };
-    }
-
-    dialog->setIntegrators(integratorMap.keys());
-    dialog->show();
-
-    if (!dialog->exec()) {
-        dialog->deleteLater();
-        return;
-    }
-
-    const double dmin = dialog->minimumD();
-    const double dmax = dialog->maximumD();
-    QList<nsx::sptrDataSet> numors = allData();
-
-    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
-    ProgressView view(nullptr);
-    view.watch(handler);
-
-    nsx::PeakFilter filter;
-    nsx::PeakList peaks = filter.dRange(getPeaks()->peaks_, dmin, dmax);
-
-    for (nsx::sptrDataSet numor : numors) {
-        qDebug() << "Integrationg " << peaks.size() << " peaks";
-        std::unique_ptr<nsx::IPeakIntegrator> integrator(integratorMap[dialog->integrator()]());
-        integrator->setHandler(handler);
-        if (!library_) {
-            integrator->integrate(
-                peaks, numor, dialog->peakScale(), dialog->backgroundBegin(),
-                dialog->backgroundScale());
-        } else {
-            integrator->integrate(
-                peaks, numor, library_->peakScale(), library_->bkgBegin(), library_->bkgEnd());
-        }
-    }
-
-    qDebug() << "Done reintegrating peaks";
-    dialog->deleteLater();
+    return success;
 }

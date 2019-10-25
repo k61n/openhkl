@@ -27,8 +27,8 @@
 #include "gui/graphics/CrystalFaceItem.h"
 #include "gui/graphics/CrystalNodeItem.h"
 #include "gui/graphics/CrystalScene.h"
-#include "gui/graphics/PinItem.h"
-#include "gui/graphics/RulerItem.h"
+#include "gui/graphics_items/PinItem.h"
+#include "gui/graphics_tools/RulerItem.h"
 
 CrystalScene::CrystalScene(nsx::ConvexHull* hull, QWidget* parent)
     : QGraphicsScene(parent), pixmapitem(0), _ruler(0), _pin(0), _hull(hull), _text(nullptr)

@@ -21,31 +21,37 @@ extern class Session* gSession; //!< global handle for Session
 
 //! Class which handles the organization of the gui
 class Session {
- public:
-    Session();
-    SessionExperiment* selectedExperiment();
-    void selectExperiment(int);
-    int selectedExperimentNum() { return selectedExperiment_; }
-    SessionExperiment* experimentAt(int i) { return experiments.at(i); }
-    int numExperiments() { return experiments.size(); }
+public:
+   Session();
 
-    void createExperiment();
-    void createDefaultExperiment();
-    void removeExperiment();
+   SessionExperiment* selectedExperiment();
+   void selectExperiment(int);
+   int selectedExperimentNum() { return selectedExperiment_; }
+   SessionExperiment* experimentAt(int i) { return _experiments.at(i); }
+   int numExperiments() { return _experiments.size(); }
+   QList<QString> experimentNames() const;
 
-    void loadData();
-    void loadRawData();
-    void removeData();
+   bool createExperiment(QString experimentName);
+   bool createExperiment(QString experimentName, QString instrumentName);
+   void createDefaultExperiment();
+   void removeExperiment();
 
-    void onDataChanged();
-    void onExperimentChanged();
-    void onPeaksChanged();
+   void loadData();
+   void loadRawData();
+   void removeData();
 
- private:
-    QList<SessionExperiment*> experiments;
-    int selectedExperiment_ = -1;
-    int selectedData = -1;
-    QString loadDirectory;
+   void onDataChanged();
+   void onExperimentChanged();
+   void onPeaksChanged();
+   void onUnitCellChanged();
+
+   bool loadExperimentFromFile(QString filename);
+
+private:
+   QList<SessionExperiment*> _experiments;
+   int selectedExperiment_ = -1;
+   int selectedData = -1;
+   QString loadDirectory;
 };
 
 #endif // GUI_MODELS_SESSION_H

@@ -154,87 +154,87 @@ UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& name)
 
 void UnitCellWidget::evaluateSpaceGroups()
 {
-    nsx::PeakList list;
-    nsx::PeakFilter filter;
+    // nsx::PeakList list;
+    // nsx::PeakFilter filter;
 
-    list = filter.enabled(gSession->selectedExperiment()->getPeakList(unitCell_), true);
-    list = filter.indexed(list, *unitCell_, unitCell_->indexingTolerance());
+    // // list = filter.enabled(gSession->selectedExperiment()->getUnitCell(unitCell_), true);
+    // list = filter.indexed(list, *unitCell_, unitCell_->indexingTolerance());
 
-    nsx::MillerIndexList hkls;
-    for (nsx::sptrPeak3D peak : list)
-        hkls.emplace_back(nsx::MillerIndex(peak->q(), *unitCell_).rowVector());
-    std::vector<std::string> compatibleSpaceGroups = unitCell_->compatibleSpaceGroups();
-    std::vector<std::pair<std::string, double>> groups;
-    for (std::string& symbol : compatibleSpaceGroups) {
-        nsx::SpaceGroup spacegroup = nsx::SpaceGroup(symbol);
+    // nsx::MillerIndexList hkls;
+    // for (nsx::sptrPeak3D peak : list)
+    //     hkls.emplace_back(nsx::MillerIndex(peak->q(), *unitCell_).rowVector());
+    // std::vector<std::string> compatibleSpaceGroups = unitCell_->compatibleSpaceGroups();
+    // std::vector<std::pair<std::string, double>> groups;
+    // for (std::string& symbol : compatibleSpaceGroups) {
+    //     nsx::SpaceGroup spacegroup = nsx::SpaceGroup(symbol);
 
-        std::pair<std::string, double> entry =
-            std::make_pair(symbol, 100.0 * (1 - spacegroup.fractionExtinct(hkls)));
+    //     std::pair<std::string, double> entry =
+    //         std::make_pair(symbol, 100.0 * (1 - spacegroup.fractionExtinct(hkls)));
 
-        // group is compatible with observed reflections, so add it to list
-        groups.push_back(entry);
-    }
+    //     // group is compatible with observed reflections, so add it to list
+    //     groups.push_back(entry);
+    // }
 
-    auto compare_fn = [](const std::pair<std::string, double>& a,
-                         const std::pair<std::string, double>& b) -> bool {
-        double quality_a = a.second;
-        double quality_b = b.second;
+    // auto compare_fn = [](const std::pair<std::string, double>& a,
+    //                      const std::pair<std::string, double>& b) -> bool {
+    //     double quality_a = a.second;
+    //     double quality_b = b.second;
 
-        // sort first by quality
-        if (quality_a != quality_b)
-            return quality_a > quality_b;
+    //     // sort first by quality
+    //     if (quality_a != quality_b)
+    //         return quality_a > quality_b;
 
-        // otherwise we sort by properties of the groups
-        nsx::SpaceGroup grp_a(a.first), grp_b(b.first);
+    //     // otherwise we sort by properties of the groups
+    //     nsx::SpaceGroup grp_a(a.first), grp_b(b.first);
 
-        // sort by group ID
-        return grp_a.id() < grp_b.id();
-    };
+    //     // sort by group ID
+    //     return grp_a.id() < grp_b.id();
+    // };
 
-    std::sort(groups.begin(), groups.end(), compare_fn);
+    // std::sort(groups.begin(), groups.end(), compare_fn);
 
-    qDebug() << "Done evaluating space groups";
+    // qDebug() << "Done evaluating space groups";
 
-    QStandardItemModel* model = new QStandardItemModel(groups.size(), 2, this);
+    // QStandardItemModel* model = new QStandardItemModel(groups.size(), 2, this);
 
-    model->setHorizontalHeaderItem(0, new QStandardItem("Symbol"));
-    model->setHorizontalHeaderItem(1, new QStandardItem("Group ID"));
-    model->setHorizontalHeaderItem(2, new QStandardItem("Bravais Type"));
-    model->setHorizontalHeaderItem(3, new QStandardItem("Agreement"));
+    // model->setHorizontalHeaderItem(0, new QStandardItem("Symbol"));
+    // model->setHorizontalHeaderItem(1, new QStandardItem("Group ID"));
+    // model->setHorizontalHeaderItem(2, new QStandardItem("Bravais Type"));
+    // model->setHorizontalHeaderItem(3, new QStandardItem("Agreement"));
 
-    unsigned int row = 0;
+    // unsigned int row = 0;
 
-    // Display solutions
-    for (auto&& item : groups) {
-        const std::string& symbol = std::get<0>(item);
-        double agreement = std::get<1>(item);
-        nsx::SpaceGroup grp(symbol);
+    // // Display solutions
+    // for (auto&& item : groups) {
+    //     const std::string& symbol = std::get<0>(item);
+    //     double agreement = std::get<1>(item);
+    //     nsx::SpaceGroup grp(symbol);
 
-        QStandardItem* col0 = new QStandardItem(QString::fromStdString(symbol));
-        QStandardItem* col1 = new QStandardItem(QString::number(grp.id()));
-        QStandardItem* col2 = new QStandardItem(QString::fromStdString(grp.bravaisTypeSymbol()));
-        QStandardItem* col3 = new QStandardItem(QString::number(agreement));
+    //     QStandardItem* col0 = new QStandardItem(QString::fromStdString(symbol));
+    //     QStandardItem* col1 = new QStandardItem(QString::number(grp.id()));
+    //     QStandardItem* col2 = new QStandardItem(QString::fromStdString(grp.bravaisTypeSymbol()));
+    //     QStandardItem* col3 = new QStandardItem(QString::number(agreement));
 
-        model->setItem(row, 0, col0);
-        model->setItem(row, 1, col1);
-        model->setItem(row, 2, col2);
-        model->setItem(row, 3, col3);
+    //     model->setItem(row, 0, col0);
+    //     model->setItem(row, 1, col1);
+    //     model->setItem(row, 2, col2);
+    //     model->setItem(row, 3, col3);
 
-        ++row;
-    }
-    spaceGroupOne = std::get<0>(groups[0]);
+    //     ++row;
+    // }
+    // spaceGroupOne = std::get<0>(groups[0]);
 
-    spaceGroupView->setModel(model);
-    spaceGroupView->setToolTip("Double click to select space group");
+    // spaceGroupView->setModel(model);
+    // spaceGroupView->setToolTip("Double click to select space group");
 
-    QObject::connect(spaceGroupView, &QTableView::doubleClicked, [=](const QModelIndex& index) {
-        std::string spaceGroupSymbol = std::get<0>(groups[index.row()]);
-        unitCell_->setSpaceGroup(spaceGroupSymbol);
-        wasSpaceGroupSet = true;
-        qDebug() << "UnitCellWidget: set SpaceGroup of UnitCell "
-                 << QString::fromStdString(unitCell_->name()) << " to "
-                 << QString::fromStdString(spaceGroupSymbol);
-    });
+    // QObject::connect(spaceGroupView, &QTableView::doubleClicked, [=](const QModelIndex& index) {
+    //     std::string spaceGroupSymbol = std::get<0>(groups[index.row()]);
+    //     unitCell_->setSpaceGroup(spaceGroupSymbol);
+    //     wasSpaceGroupSet = true;
+    //     qDebug() << "UnitCellWidget: set SpaceGroup of UnitCell "
+    //              << QString::fromStdString(unitCell_->name()) << " to "
+    //              << QString::fromStdString(spaceGroupSymbol);
+    // });
 }
 
 void UnitCellWidget::setSpaceGroup()

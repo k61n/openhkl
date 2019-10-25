@@ -33,16 +33,16 @@ MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel)
 {
 }
 
-bool MergedPeak::addPeak(const sptrPeak3D& peak)
+bool MergedPeak::addPeak(Peak3D* peak)
 {
-    const auto& cell = *peak->unitCell();
-    const auto& q = peak->q();
+    const UnitCell* cell = peak->unitCell();
+    const ReciprocalVector q = peak->q();
 
     if (_peaks.empty()) {
-        _hkl = MillerIndex(q, cell);
+        _hkl = MillerIndex(q, *cell);
         determineRepresentativeHKL();
     } else {
-        MillerIndex hkl(q, cell);
+        MillerIndex hkl(q, *cell);
         if (!_grp.isEquivalent(_hkl, hkl, _friedel))
             return false;
     }
@@ -98,7 +98,7 @@ void MergedPeak::determineRepresentativeHKL()
         _hkl(i) = int(std::lround(best_hkl(i)));
 }
 
-const PeakList& MergedPeak::peaks() const
+const std::vector<Peak3D*> MergedPeak::peaks() const
 {
     return _peaks;
 }

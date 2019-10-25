@@ -24,13 +24,11 @@ namespace nsx {
 
 class ISigmaIntegrator : public PixelSumIntegrator {
  public:
-    ISigmaIntegrator(sptrShapeLibrary library, double radius, double nframes);
-    bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
+    ISigmaIntegrator();
+    bool compute(
+       Peak3D* peak, ShapeLibrary* shape_library, 
+       const IntegrationRegion& region) override;
 
- private:
-    sptrShapeLibrary _library;
-    double _radius;
-    double _nframes;
 };
 
 } // namespace nsx

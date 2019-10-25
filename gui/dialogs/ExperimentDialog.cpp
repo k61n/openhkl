@@ -17,9 +17,11 @@
 #include "base/utils/Path.h"
 #include "core/instrument/HardwareParameters.h"
 #include "gui/MainWin.h"
+
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QHBoxLayout>
+
 
 namespace {
 QStringList allInstrumentNames()
@@ -43,21 +45,23 @@ QStringList allInstrumentNames()
 
 } // namespace
 
-ExperimentDialog::ExperimentDialog() : QcrModalDialog {"experimentDialog", gGui, "new Experiment"}
+ExperimentDialog::ExperimentDialog() : QDialog()
 {
+    setModal(true);
     resize(500, 130);
     setMinimumSize(500, 130);
     setMaximumSize(500, 130);
     QGridLayout* gridLayout = new QGridLayout(this);
     QHBoxLayout* horizontalLayout = new QHBoxLayout;
     horizontalLayout->addWidget(new QLabel("Name:"));
-    experiment = new QcrLineEdit("adhoc_experiment", "");
+    experiment = new QLineEdit("");
     experiment->setMaximumSize(200, 30);
     horizontalLayout->addWidget(experiment);
     gridLayout->addLayout(horizontalLayout, 0, 0, 1, 1);
     QHBoxLayout* horizontalLayout_2 = new QHBoxLayout;
     horizontalLayout_2->addWidget(new QLabel("Instrument:"));
-    instruments = new QcrComboBox("adhoc_instruments", new QcrCell<int>(0), allInstrumentNames());
+    instruments = new QComboBox();
+    instruments->addItems(allInstrumentNames());
     instruments->setInsertPolicy(QComboBox::InsertAlphabetically);
     horizontalLayout_2->addWidget(instruments);
     gridLayout->addLayout(horizontalLayout_2, 0, 1, 1, 1);
@@ -73,7 +77,7 @@ ExperimentDialog::ExperimentDialog() : QcrModalDialog {"experimentDialog", gGui,
 
 QString ExperimentDialog::experimentName()
 {
-    return experiment->getValue();
+    return experiment->text();
 }
 
 QString ExperimentDialog::instrumentName()

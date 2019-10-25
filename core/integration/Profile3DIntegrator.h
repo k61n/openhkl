@@ -24,14 +24,11 @@ namespace nsx {
 
 class Profile3DIntegrator : public IPeakIntegrator {
  public:
-    Profile3DIntegrator(
-        sptrShapeLibrary library, double radius, double nframes, bool detector_space);
-    bool compute(sptrPeak3D peak, const IntegrationRegion& region) override;
+    Profile3DIntegrator();
+    bool compute(
+        Peak3D* peak, ShapeLibrary* shape_library, 
+        const IntegrationRegion& region) override;
 
- private:
-    sptrShapeLibrary _library;
-    double _radius;
-    double _nframes;
 };
 
 } // namespace nsx

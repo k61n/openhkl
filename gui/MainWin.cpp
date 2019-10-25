@@ -16,11 +16,14 @@
 
 #include "gui/actions/Menus.h"
 #include "gui/actions/Triggers.h"
+#include "gui/utility/SideBar.h"
 #include <QApplication>
 #include <QCloseEvent>
 #include <QProgressBar>
 #include <QSettings>
 #include <QSplitter>
+#include <QStackedLayout>
+#include <QHBoxLayout>
 #include <QStatusBar>
 #include <QString>
 #include <QTimer>
@@ -44,13 +47,31 @@ MainWin::MainWin()
 
     // layout
     setContentsMargins(5, 5, 5, 5);
+    QWidget* main_widget = new QWidget(this);
+    QHBoxLayout* main_layout = new QHBoxLayout();
+    main_layout->addWidget(new SideBar(main_widget));
 
-    addDockWidget(Qt::RightDockWidgetArea, (dockImage_ = new SubframeImage));
-    addDockWidget(Qt::RightDockWidgetArea, (dockPlot_ = new SubframePlot));
-    addDockWidget(Qt::LeftDockWidgetArea, (dockExperiments_ = new SubframeExperiments));
-    addDockWidget(Qt::LeftDockWidgetArea, (dockProperties_ = new SubframeProperties));
-    addDockWidget(Qt::LeftDockWidgetArea, (dockLogger_ = new SubframeLogger));
+    _home = new SubframeHome;
+    _experiment = new SubframeExperiment;
+    _finder = new PeakFinderFrame;
+    _filter = new SubframeFilterPeaks;
+    _indexer = new SubframeAutoIndexer;
+    _predictor = new SubframePredictPeaks;
+    _merger = new SubframeMergedPeaks;
 
+    _layout_stack = new QStackedWidget(main_widget);
+    _layout_stack->addWidget(_home);
+    _layout_stack->addWidget(_experiment);
+    _layout_stack->addWidget(_finder);
+    _layout_stack->addWidget(_filter);
+    _layout_stack->addWidget(_indexer);
+    _layout_stack->addWidget(_predictor);
+    _layout_stack->addWidget(_merger);
+    _layout_stack->setCurrentIndex(0);
+
+    main_layout->addWidget(_layout_stack);
+    main_widget->setLayout(main_layout);
+    setCentralWidget(main_widget);
     readSettings();
     show();
 }
@@ -70,20 +91,24 @@ void MainWin::refresh()
 
 void MainWin::onDataChanged()
 {
-    dockImage_->centralWidget->dataChanged();
-    dockProperties_->tabsframe->dataChanged();
+    _experiment->image->dataChanged();
+    _experiment->properties->dataChanged();
     // dockPlot_->dataChanged();
 }
 
 void MainWin::onExperimentChanged()
 {
-    dockExperiments_->experimentChanged();
-    dockProperties_->tabsframe->experimentChanged();
+    _experiment->properties->experimentChanged();
 }
 
 void MainWin::onPeaksChanged()
 {
-    dockProperties_->tabsframe->peaksChanged();
+    _experiment->properties->peaksChanged();
+}
+
+void MainWin::onUnitCellChanged()
+{
+    _experiment->properties->unitCellChanged();
 }
 
 void MainWin::resetViews()
@@ -112,6 +137,7 @@ void MainWin::readSettings()
 void MainWin::closeEvent(QCloseEvent* event)
 {
     saveSettings();
+    _home->saveSettings();
     delete triggers;
     delete menus_;
     gGui = nullptr;

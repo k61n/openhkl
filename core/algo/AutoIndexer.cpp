@@ -27,23 +27,19 @@
 
 namespace nsx {
 
-AutoIndexer::AutoIndexer(const std::shared_ptr<ProgressHandler>& handler)
-    : _peaks(), _solutions(), _handler(handler)
+AutoIndexer::AutoIndexer()
+    : _solutions(), 
+    _handler(nullptr)
 {
+    _params = IndexerParameters();
 }
 
-void AutoIndexer::autoIndex(const IndexerParameters& params)
+void AutoIndexer::autoIndex(PeakCollection* peak_collection)
 {
-    _params = params;
-
     // Find the Q-space directions along which the projection of the the Q-vectors
     // shows the highest periodicity
-    computeFFTSolutions();
-
-    refineSolutions();
-
-    // Remove the solution whose percentage of successfully indexed peaks is under
-    // a given cutoff
+    computeFFTSolutions(peak_collection);
+    refineSolutions(peak_collection);
     removeBad(_params.solutionCutoff);
 
     // refine the constrained unit cells in order to get the uncertainties
@@ -71,18 +67,21 @@ const std::vector<std::pair<sptrUnitCell, double>>& AutoIndexer::solutions() con
     return _solutions;
 }
 
-void AutoIndexer::computeFFTSolutions()
+void AutoIndexer::computeFFTSolutions(PeakCollection* peak_collection)
 {
+    std::vector<Peak3D*> peaks = peak_collection->getPeakList();
+    
     _solutions.clear();
 
     // Store the q-vectors of the peaks for auto-indexing
     std::vector<ReciprocalVector> qvects;
 
     PeakFilter peak_filter;
-    auto filtered_peaks = peak_filter.enabled(_peaks, true);
-
+    std::vector<Peak3D*> filtered_peaks = peak_filter.filterEnabled(
+        peaks, true);
+    
     for (size_t i = 0; i < filtered_peaks.size(); ++i) {
-        auto& peak = filtered_peaks[i];
+        Peak3D* peak = filtered_peaks.at(i);
         auto q = peak->q().rowVector();
         qvects.push_back(ReciprocalVector(q));
     }
@@ -158,10 +157,12 @@ void AutoIndexer::rankSolutions()
         });
 }
 
-void AutoIndexer::refineSolutions()
+void AutoIndexer::refineSolutions(PeakCollection* peak_collection)
 {
-    //#pragma omp parallel for
+    #pragma omp parallel for
     for (auto&& soln : _solutions) {
+        std::vector<Peak3D*> peaks = peak_collection->getPeakList();
+
         auto cell = soln.first;
         cell->setIndexingTolerance(_params.indexingTolerance);
         Eigen::Matrix3d B = cell->reciprocalBasis();
@@ -170,9 +171,11 @@ void AutoIndexer::refineSolutions()
         std::vector<Eigen::Matrix3d> wt;
 
         PeakFilter peak_filter;
-        PeakList filtered_peaks;
-        filtered_peaks = peak_filter.enabled(_peaks, true);
-        filtered_peaks = peak_filter.indexed(filtered_peaks, *cell, cell->indexingTolerance());
+        std::vector<Peak3D*> enabled_peaks = peak_filter.filterEnabled(
+            peaks, true);
+
+        std::vector<Peak3D*> filtered_peaks = peak_filter.filterIndexed(
+            enabled_peaks, *cell, cell->indexingTolerance());
 
         int success = filtered_peaks.size();
         for (auto peak : filtered_peaks) {
@@ -253,8 +256,8 @@ void AutoIndexer::refineSolutions()
         // Define the final score of this solution by computing the percentage of
         // the selected peaks which have been successfully indexed
 
-        PeakList refiltered_peaks;
-        refiltered_peaks = peak_filter.indexed(filtered_peaks, *cell, cell->indexingTolerance());
+        std::vector<Peak3D*>  refiltered_peaks = peak_filter.filterIndexed(
+            filtered_peaks, *cell, cell->indexingTolerance());
 
         double score = static_cast<double>(refiltered_peaks.size());
         double maxscore = static_cast<double>(filtered_peaks.size());
@@ -262,12 +265,9 @@ void AutoIndexer::refineSolutions()
         // Percentage of indexing
         score /= 0.01 * maxscore;
         soln.second = score;
+
     }
 }
 
-void AutoIndexer::addPeak(sptrPeak3D peak)
-{
-    _peaks.push_back(peak);
-}
 
 } // namespace nsx

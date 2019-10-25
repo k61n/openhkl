@@ -35,6 +35,8 @@ class Peak3D {
     Peak3D(sptrDataSet data);
     //! Create peak belonging to data with given shape
     Peak3D(sptrDataSet data, const Ellipsoid& shape);
+    //! Creat the peak from another peak
+    Peak3D(std::shared_ptr<nsx::Peak3D> peak);
 
     //! Comparison operator used to sort peaks
     friend bool operator<(const Peak3D& p1, const Peak3D& p2);
@@ -78,7 +80,7 @@ class Peak3D {
 
     //! Sets the peak masking state
     void setMasked(bool masked);
-    //! eturn the peak masking state
+    //! Return the peak masking state
     bool masked() const;
 
     //! Returns true if peak is enable (selected and not masked)
@@ -91,13 +93,27 @@ class Peak3D {
 
     //! Add a unit cell to the peak, optionally make it the active cell
     void setUnitCell(sptrUnitCell uc);
+    void setUnitCell(UnitCell* uc);
     //! Returns the active unit cell
-    sptrUnitCell unitCell() const;
+    UnitCell* unitCell() const;
 
     //! Sets whether the peak is observed or predicted
     void setPredicted(bool predicted);
     //! Returns if the peak is predicted
     bool predicted() const;
+
+    //! Sets whether the peak is observed or predicted
+    void caughtYou(bool caught);
+    //! Sets whether the peak is observed or predicted
+    void rejectYou(bool reject);
+    //! Returns if the peak is predicted
+    bool caughtByFilter() const;
+
+    //! Update the integration of the peak
+    void setManually(
+        Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd,
+        double scale, double transmission, Intensity mean_bkg,
+        bool predicted, bool selected, bool masked );
 
     //! Update the integration of the peak
     void updateIntegration(
@@ -131,12 +147,14 @@ class Peak3D {
     //! Shape scale factor for end of background
     double _bkgEnd;
 
-    sptrUnitCell _unitCell;
+    UnitCell* _unitCell;
 
     double _scale;
     bool _selected;
     bool _masked;
     bool _predicted;
+    bool _caught_by_filter;
+    bool _rejected_by_filter;
     double _transmission;
 
     sptrDataSet _data;
@@ -144,8 +162,9 @@ class Peak3D {
     std::vector<Intensity> _rockingCurve;
 };
 
-using sptrPeak3D = std::shared_ptr<Peak3D>;
-using PeakList = std::vector<sptrPeak3D>;
+using sptrPeak3D    = std::shared_ptr<Peak3D>;
+using PeakList      = std::vector<sptrPeak3D>;
+using sptrPeakList  = std::shared_ptr<PeakList>;
 
 //! Sort peak into a list of equivalent peaks, using the space group symmetry,
 //! optionally including Friedel pairs (if this is not already a symmetry of the space group)

@@ -19,16 +19,17 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-ListNameDialog::ListNameDialog(nsx::PeakList list)
-    : QcrModalDialog {"adhoc_ListNameDialog", gGui, "List name dialog"}, list_ {list}
+ListNameDialog::ListNameDialog()
+    : QDialog()
 {
+    setModal(true);
     resize(500, 130);
     setMinimumSize(500, 130);
     setMaximumSize(500, 130);
 
     QVBoxLayout* whole = new QVBoxLayout(this);
     QHBoxLayout* line = new QHBoxLayout;
-    name_ = new QcrLineEdit("adhoc_listName", "");
+    name_ = new QLineEdit();
     line->addWidget(new QLabel("Peaklist name: "));
     line->addWidget(name_);
     whole->addLayout(line);
@@ -42,7 +43,7 @@ ListNameDialog::ListNameDialog(nsx::PeakList list)
 
 QString ListNameDialog::listName()
 {
-    if (name_->getValue() == "")
+    if (name_->text() == "")
         return "no name peaklist";
-    return name_->getValue();
+    return name_->text();
 }

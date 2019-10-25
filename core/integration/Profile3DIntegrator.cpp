@@ -22,9 +22,7 @@
 
 namespace nsx {
 
-Profile3DIntegrator::Profile3DIntegrator(
-    sptrShapeLibrary library, double radius, double nframes, bool /*detector_space*/)
-    : _library(library), _radius(radius), _nframes(nframes)
+Profile3DIntegrator::Profile3DIntegrator()
 {
 }
 
@@ -66,9 +64,11 @@ static void updateFit(
     I = Intensity(new_I, cov(1, 1));
 }
 
-bool Profile3DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
+bool Profile3DIntegrator::compute(
+    Peak3D* peak, ShapeLibrary* shape_library, 
+    const IntegrationRegion& region)
 {
-    if (!_library)
+    if (!shape_library)
         return false;
 
     if (!peak)
@@ -98,7 +98,8 @@ bool Profile3DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
 
     try {
         // throws if there are no neighboring peaks within the bounds
-        model_profile = _library->meanProfile(event, _radius, _nframes);
+        model_profile = shape_library->meanProfile(
+            event, radius(), nFrames());
     } catch (...) {
         return false;
     }
@@ -108,7 +109,7 @@ bool Profile3DIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regi
     // evaluate the model profile at the given events
     for (int i = 0; i < events.size(); ++i) {
         Eigen::Vector3d x;
-        if (_library->detectorCoords()) {
+        if (shape_library->detectorCoords()) {
             x(0) = events[i]._px;
             x(1) = events[i]._py;
             x(2) = events[i]._frame;

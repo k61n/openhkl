@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/frames/MergedPeakInformationFrame.cpp
-//! @brief     Implements class MergedPeakInformationFrame
+//! @file      gui/frames/PeakExporter.cpp
+//! @brief     Class for peak export to file
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -67,13 +67,13 @@ void PeakExporter::saveStatistics(
 
         nsx::MergedData merged_data_per_shell(spaceGroup, inclFriedel);
 
-        for (const nsx::sptrPeak3D& peak : resolutionShell.shell(i).peaks)
+        for (Peak3D* peak : resolutionShell.shell(i).peaks)
             merged_data_per_shell.addPeak(peak);
 
         nsx::CC cc;
-        cc.calculate(merged_data_per_shell);
+        cc.calculate(&merged_data_per_shell);
         nsx::RFactor rFactor;
-        rFactor.calculate(merged_data_per_shell);
+        rFactor.calculate(&merged_data_per_shell);
 
         file << std::fixed << std::setw(10) << std::setprecision(2)
              << d_upper
@@ -107,13 +107,21 @@ void PeakExporter::saveStatistics(
     file.close();
 }
 
-void PeakExporter::saveToShelX(std::string filename, nsx::PeakList* peakList)
+void PeakExporter::saveToShelXUnmerged(
+    std::string filename, nsx::MergedData* merged_data)
 {
+    std::vector<Peak3D*> peak_vector;
+    for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()){
+        for (auto unmerged_peak : peak.peaks()) {
+            peak_vector.push_back(unmerged_peak);
+        }
+    }
+
     std::fstream file(filename, std::ios::out);
-    for (int i = 0; i < peakList->size(); i++){
-        std::shared_ptr<nsx::Peak3D> peak = peakList->at(i);
+    for (int i = 0; i < peak_vector.size(); i++){
+        nsx::Peak3D* peak = peak_vector.at(i);
         if (peak->selected()){
-            nsx::sptrUnitCell cell = peak->unitCell();
+            nsx::UnitCell* cell = peak->unitCell();
             if (cell){
                 nsx::MillerIndex miller_index(peak->q(), *cell);
                 if (miller_index.indexed(cell->indexingTolerance())){
@@ -139,10 +147,10 @@ void PeakExporter::saveToShelX(std::string filename, nsx::PeakList* peakList)
     file.close();
 }
 
-void PeakExporter::saveToShelX(std::string filename, nsx::MergedData* mergedData)
+void PeakExporter::saveToShelXMerged(std::string filename, nsx::MergedData* merged_data)
 {
     std::fstream file(filename, std::ios::out);
-    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()){
+    for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()){
         const auto hkl = peak.index();
         nsx::Intensity I = peak.intensity();
         const double intensity = I.value();
@@ -165,22 +173,30 @@ void PeakExporter::saveToShelX(std::string filename, nsx::MergedData* mergedData
     file.close();
 }
 
-void PeakExporter::saveToFullProf(std::string filename, nsx::PeakList* peakList)
+void PeakExporter::saveToFullProfUnmerged(
+    std::string filename, nsx::MergedData* merged_data)
 {
     std::fstream file(filename, std::ios::out);
 
     file << "TITLE File written by ...\n";
     file << "(3i4,2F14.4,i5,4f8.2)\n";
 
-    std::shared_ptr<nsx::DataSet> data = peakList->at(0)->data();
+    std::vector<Peak3D*> peak_vector;
+    for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()){
+        for (auto unmerged_peak : peak.peaks()) {
+            peak_vector.push_back(unmerged_peak);
+        }
+    }
+
+    std::shared_ptr<nsx::DataSet> data = peak_vector.at(0)->data();
     double wavelength = data->reader()->metadata().key<double>("wavelength");
     file << std::fixed << std::setw(8) << std::setprecision(3) << wavelength;
     file << " 0 0" << std::endl;
 
-    for (int i = 0; i < peakList->size(); i++){
-        std::shared_ptr<nsx::Peak3D> peak = peakList->at(i);
+    for (int i = 0; i < peak_vector.size(); i++){
+        nsx::Peak3D* peak = peak_vector.at(i);
         if (peak->selected()){
-            nsx::sptrUnitCell cell = peak->unitCell();
+            nsx::UnitCell* cell = peak->unitCell();
             if (cell){
                 nsx::MillerIndex miller_index(peak->q(), *cell);
                 if (miller_index.indexed(cell->indexingTolerance())){
@@ -206,21 +222,26 @@ void PeakExporter::saveToFullProf(std::string filename, nsx::PeakList* peakList)
     file.close();
 }
 
-void PeakExporter::saveToFullProf(
-    std::string filename, nsx::MergedData* mergedData, 
-    nsx::PeakList* peakList)
+void PeakExporter::saveToFullProfMerged(
+    std::string filename, nsx::MergedData* merged_data)
 {
     std::fstream file(filename, std::ios::out);
 
     file << "TITLE File written by ...\n";
     file << "(3i4,2F14.4,i5,4f8.2)\n";
 
-    std::shared_ptr<nsx::DataSet> data = peakList->at(0)->data();
+    std::vector<Peak3D*> peak_vector;
+    for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()){
+        for (auto unmerged_peak : peak.peaks()) {
+            peak_vector.push_back(unmerged_peak);
+        }
+    }
+    std::shared_ptr<nsx::DataSet> data = peak_vector[0]->data();
     double wavelength = data->reader()->metadata().key<double>("wavelength");
     file << std::fixed << std::setw(8) << std::setprecision(3) << wavelength;
     file << " 0 0" << std::endl;
 
-    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()){
+    for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()){
         const auto hkl = peak.index();
         nsx::Intensity I = peak.intensity();
         const double intensity = I.value();
@@ -244,11 +265,18 @@ void PeakExporter::saveToFullProf(
     file.close();
 }
 
-void PeakExporter::saveToSCA(std::string filename, nsx::PeakList* peakList)
+void PeakExporter::saveToSCAUnmerged(
+    std::string filename, nsx::MergedData* merged_data)
 {
     std::fstream file(filename, std::ios::out);
 
-    sptrUnitCell unitCell = peakList->at(0)->unitCell();
+    std::vector<Peak3D*> peak_vector;
+    for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()){
+        for (auto unmerged_peak : peak.peaks()) {
+            peak_vector.push_back(unmerged_peak);
+        }
+    }
+    UnitCell* unitCell = peak_vector[0]->unitCell();
     UnitCellCharacter character = unitCell->character();
     std::string symbol = unitCell->spaceGroup().symbol();
     std::for_each(symbol.begin(), symbol.end(), [](char & c){c = ::tolower(c);});
@@ -270,10 +298,10 @@ void PeakExporter::saveToSCA(std::string filename, nsx::PeakList* peakList)
         << " " << symbol
         << std::endl;
 
-    for (int i = 0; i < peakList->size(); i++){
-        std::shared_ptr<nsx::Peak3D> peak = peakList->at(i);
+    for (int i = 0; i < peak_vector.size(); i++){
+        nsx::Peak3D* peak = peak_vector.at(i);
         if (peak->selected()){
-            nsx::sptrUnitCell cell = peak->unitCell();
+            nsx::UnitCell* cell = peak->unitCell();
             if (cell){
                 nsx::MillerIndex miller_index(peak->q(), *cell);
                 if (miller_index.indexed(cell->indexingTolerance())){
@@ -311,13 +339,18 @@ void PeakExporter::saveToSCA(std::string filename, nsx::PeakList* peakList)
     file.close();
 }
 
-void PeakExporter::saveToSCA(
-    std::string filename, nsx::MergedData* mergedData, 
-    nsx::PeakList* peakList)
+void PeakExporter::saveToSCAMerged(
+    std::string filename, nsx::MergedData* merged_data)
 {
     std::fstream file(filename, std::ios::out);
 
-    sptrUnitCell unitCell = peakList->at(0)->unitCell();
+    std::vector<Peak3D*> peak_vector;
+    for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()){
+        for (auto unmerged_peak : peak.peaks()) {
+            peak_vector.push_back(unmerged_peak);
+        }
+    }
+    UnitCell* unitCell = peak_vector.at(0)->unitCell();
     UnitCellCharacter character = unitCell->character();
     std::string symbol = unitCell->spaceGroup().symbol();
     std::for_each(symbol.begin(), symbol.end(), [](char & c){c = ::tolower(c);});
@@ -339,7 +372,7 @@ void PeakExporter::saveToSCA(
         << " " <<  symbol
         << std::endl;
 
-    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()){
+    for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()){
         const auto hkl = peak.index();
         nsx::Intensity I = peak.intensity();
         const double intensity = I.value();

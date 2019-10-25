@@ -19,6 +19,7 @@ TEST_CASE("test/peak_find/TestPeakFinder.cpp", "")
     nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
 
     CHECK(metadata.key<int>("nbang") == 2);
+    experiment.addData(dataf);
 
     dataf->open();
     numors.push_back(dataf);
@@ -26,8 +27,14 @@ TEST_CASE("test/peak_find/TestPeakFinder.cpp", "")
     nsx::PeakFinder peakFinder;
     peakFinder.setHandler(handler);
     peakFinder.setPeakScale(1.0);
+    peakFinder.setThreshold(10);
+    peakFinder.setMinSize(10);
+    peakFinder.setMaxSize(10000);
+    peakFinder.setFramesBegin(0);
+    peakFinder.setFramesEnd(dataf->nFrames());
 
-    auto found_peaks = peakFinder.find(numors);
+    peakFinder.find(numors);
+    auto found_peaks = peakFinder.currentPeaks();
     CHECK(found_peaks.size() == 1);
 
     dataf->close();

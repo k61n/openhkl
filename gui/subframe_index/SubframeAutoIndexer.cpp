@@ -1,0 +1,539 @@
+//  ***********************************************************************************************
+//
+//  NSXTool: data reduction for neutron single-crystal diffraction
+//
+//! @file      gui/subframe_index/SubframeAutoIndexer.cpp
+//! @brief     Implements class SubframeAutoIndexer
+//!
+//! @homepage  ###HOMEPAGE###
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
+#include "gui/subframe_index/SubframeAutoIndexer.h"
+
+#include "gui/dialogs/ListNameDialog.h"
+#include "base/utils/ProgressHandler.h"
+#include "base/utils/Units.h"
+#include "core/algo/AutoIndexer.h"
+#include "gui/frames/UnitCellWidget.h"
+#include "gui/models/Session.h"
+
+#include <QHeaderView>
+#include <QLabel>
+
+SubframeAutoIndexer::SubframeAutoIndexer() 
+    : QWidget(),
+    _peak_collection("temp", nsx::listtype::FOUND),
+    _peak_collection_item(),
+    _peak_collection_model()
+{
+    setSizePolicies();
+    _main_layout = new QHBoxLayout(this);
+    _right_element = new QSplitter(Qt::Vertical , this);
+
+    QScrollArea* scroll_area = new QScrollArea(this);
+    QWidget* scroll_widget = new QWidget();
+    
+    scroll_area->setSizePolicy(*_size_policy_box);
+    scroll_widget->setSizePolicy(*_size_policy_box);
+    _left_layout = new QVBoxLayout(scroll_widget);
+    scroll_area->setWidgetResizable(true);
+    scroll_area->setWidget(scroll_widget);
+
+    setInputUp();
+    setParametersUp();
+    setProceedUp();
+    setPeakTableUp();
+    setSolutionTableUp();
+    _left_layout->addItem(
+        new QSpacerItem(
+            20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    _right_element->setSizePolicy(*_size_policy_right);
+
+    _main_layout->addWidget(scroll_area);
+    _main_layout->addWidget(_right_element);
+}
+
+SubframeAutoIndexer::~SubframeAutoIndexer()
+{
+    delete _size_policy_widgets;
+    delete _size_policy_box;
+    delete _size_policy_right;
+    delete _size_policy_fixed;
+}
+
+void SubframeAutoIndexer::setSizePolicies()
+{
+    _size_policy_widgets = new QSizePolicy();
+    _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Preferred);
+    _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
+    
+    _size_policy_box = new QSizePolicy();
+    _size_policy_box->setHorizontalPolicy(QSizePolicy::Preferred);
+    _size_policy_box->setVerticalPolicy(QSizePolicy::Preferred);
+
+    _size_policy_right = new QSizePolicy();
+    _size_policy_right->setHorizontalPolicy(QSizePolicy::Expanding);
+    _size_policy_right->setVerticalPolicy(QSizePolicy::Expanding);
+
+    _size_policy_fixed = new QSizePolicy();
+    _size_policy_fixed->setHorizontalPolicy(QSizePolicy::Fixed);
+    _size_policy_fixed->setVerticalPolicy(QSizePolicy::Fixed);
+}
+
+void SubframeAutoIndexer::setInputUp()
+{
+    _input_box = new Spoiler(QString::fromStdString("Input"));
+
+    QGridLayout* _input_grid = new QGridLayout();
+
+    QLabel* exp_label = new QLabel("Experiment");
+    exp_label->setAlignment(Qt::AlignRight);
+    _input_grid->addWidget(exp_label, 0, 0, 1, 1);
+
+    QLabel* list_label = new QLabel("Data-set");
+    list_label->setAlignment(Qt::AlignRight);
+    _input_grid->addWidget(list_label, 1, 0, 1, 1);
+   
+    _exp_combo = new QComboBox();
+    _peak_combo = new QComboBox();
+
+    _exp_combo->setMaximumWidth(1000);
+    _peak_combo->setMaximumWidth(1000);
+    
+    _exp_combo->setSizePolicy(*_size_policy_widgets);
+    _peak_combo->setSizePolicy(*_size_policy_widgets);
+
+    _input_grid->addWidget(_exp_combo, 0, 1, 1, 1);
+    _input_grid->addWidget(_peak_combo, 1, 1, 1, 1);
+
+    connect(
+        _exp_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged), 
+        this, &SubframeAutoIndexer::updatePeakList);
+
+    connect(
+        _peak_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged), 
+        this, &SubframeAutoIndexer::refreshPeakTable);
+
+    _input_box->setContentLayout(*_input_grid, true);
+    _input_box->setSizePolicy(*_size_policy_box);
+    _input_box->contentArea.setSizePolicy(*_size_policy_box);
+
+    _left_layout->addWidget(_input_box);
+}
+
+void SubframeAutoIndexer::setParametersUp()
+{
+    _para_box = new Spoiler(QString::fromStdString("Parameters"));
+
+    QGridLayout* para_grid = new QGridLayout();
+
+    QLabel* label_ptr;
+
+    label_ptr = new QLabel("Gruber tol.:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    para_grid->addWidget(label_ptr, 0, 0, 1, 1);
+    label_ptr->setSizePolicy(*_size_policy_widgets);
+
+    label_ptr = new QLabel("Niggli tol.:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    para_grid->addWidget(label_ptr, 1, 0, 1, 1);
+    label_ptr->setSizePolicy(*_size_policy_widgets);
+   
+    label_ptr = new QLabel("Max. Cell dim.:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    para_grid->addWidget(label_ptr, 3, 0, 1, 1);
+    label_ptr->setSizePolicy(*_size_policy_widgets);
+
+    label_ptr = new QLabel("Q Vertices:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    para_grid->addWidget(label_ptr, 4, 0, 1, 1);
+    label_ptr->setSizePolicy(*_size_policy_widgets);
+
+    label_ptr = new QLabel("Subdiversions:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    para_grid->addWidget(label_ptr, 5, 0, 1, 1);
+    label_ptr->setSizePolicy(*_size_policy_widgets);
+
+    label_ptr = new QLabel("Solutions:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    para_grid->addWidget(label_ptr, 6, 0, 1, 1);
+    label_ptr->setSizePolicy(*_size_policy_widgets);
+
+    label_ptr = new QLabel("Min. Volume:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    para_grid->addWidget(label_ptr, 7, 0, 1, 1);
+    label_ptr->setSizePolicy(*_size_policy_widgets);
+
+    label_ptr = new QLabel("Indexing tol.:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    para_grid->addWidget(label_ptr, 8, 0, 1, 1);
+    label_ptr->setSizePolicy(*_size_policy_widgets);
+    
+    _gruber = new QDoubleSpinBox();
+    _niggli = new QDoubleSpinBox();
+    _only_niggli = new QCheckBox("Find Niggli cell only");
+    _max_cell_dimension = new QDoubleSpinBox();
+    _number_vertices = new QSpinBox();
+    _number_solutions = new QSpinBox();
+    _number_subdivisions = new QSpinBox();
+    _min_cell_volume = new QDoubleSpinBox();
+    _indexing_tolerance = new QDoubleSpinBox();
+
+    _gruber->setMaximumWidth(1000);
+    _gruber->setMaximum(100000);
+    _gruber->setDecimals(6);
+
+    _niggli->setMaximumWidth(1000);
+    _niggli->setMaximum(100000);
+    _niggli->setDecimals(6);
+
+    _only_niggli->setMaximumWidth(1000);
+
+    _max_cell_dimension->setMaximumWidth(1000);
+    _max_cell_dimension->setMaximum(100000);
+    _max_cell_dimension->setDecimals(6);
+
+    _number_vertices->setMaximumWidth(1000);
+    _number_vertices->setMaximum(1000);
+
+    _number_solutions->setMaximumWidth(1000);
+    _number_solutions->setMaximum(100000);
+
+    _number_subdivisions->setMaximumWidth(1000);
+
+    _min_cell_volume->setMaximumWidth(1000);
+    _min_cell_volume->setMaximum(100000);
+    _min_cell_volume->setDecimals(6);
+
+    _indexing_tolerance->setMaximumWidth(1000);
+    _indexing_tolerance->setMaximum(100000);
+    _indexing_tolerance->setDecimals(6);
+    
+    _gruber->setSizePolicy(*_size_policy_widgets);
+    _niggli->setSizePolicy(*_size_policy_widgets);
+    _only_niggli->setSizePolicy(*_size_policy_widgets);
+    _max_cell_dimension->setSizePolicy(*_size_policy_widgets);
+    _number_vertices->setSizePolicy(*_size_policy_widgets);
+    _number_solutions->setSizePolicy(*_size_policy_widgets);
+    _number_subdivisions->setSizePolicy(*_size_policy_widgets);
+    _min_cell_volume->setSizePolicy(*_size_policy_widgets);
+    _indexing_tolerance->setSizePolicy(*_size_policy_widgets);
+
+    para_grid->addWidget(_gruber, 0, 1, 1, 1);
+    para_grid->addWidget(_niggli, 1, 1, 1, 1);
+    para_grid->addWidget(_only_niggli, 2, 1, 1, 1);
+    para_grid->addWidget(_max_cell_dimension, 3, 1, 1, 1);
+    para_grid->addWidget(_number_vertices, 4, 1, 1, 1);
+    para_grid->addWidget(_number_solutions, 5, 1, 1, 1);
+    para_grid->addWidget(_number_subdivisions, 6, 1, 1, 1);
+    para_grid->addWidget(_min_cell_volume, 7, 1, 1, 1);
+    para_grid->addWidget(_indexing_tolerance, 8, 1, 1, 1);
+
+    _para_box->setContentLayout(*para_grid, true);
+    _para_box->setSizePolicy(*_size_policy_box);
+    _para_box->contentArea.setSizePolicy(*_size_policy_box);
+
+    _left_layout->addWidget(_para_box);
+}
+
+void SubframeAutoIndexer::setProceedUp()
+{
+    _solve_button = new QPushButton("Find Unit Cells");
+    _solve_button->setSizePolicy(*_size_policy_widgets);
+    _left_layout->addWidget(_solve_button);
+
+    _save_button = new QPushButton("Accept Solution");
+    _save_button->setSizePolicy(*_size_policy_widgets);
+    _left_layout->addWidget(_save_button);
+
+    connect(
+        _solve_button, &QPushButton::clicked, 
+        this, &SubframeAutoIndexer::runAutoIndexer);
+
+    connect(
+        _save_button, &QPushButton::clicked, 
+        this, &SubframeAutoIndexer::acceptSolution);
+
+}
+
+void SubframeAutoIndexer::setPeakTableUp()
+{
+    QGroupBox* peak_group = new QGroupBox("Peaks");
+    QGridLayout* peak_grid = new QGridLayout(peak_group);
+
+    peak_group->setSizePolicy(*_size_policy_right);
+
+    _peak_table= new PeaksTableView(this);
+    _peak_collection_model.setRoot(&_peak_collection_item);
+    _peak_table->setModel(&_peak_collection_model);
+
+    peak_grid->addWidget(_peak_table, 0,0,0,0);
+
+    _right_element->addWidget(peak_group);
+}
+
+void SubframeAutoIndexer::setSolutionTableUp()
+{
+    QGroupBox* solution_group = new QGroupBox("Solutions");
+    QGridLayout* solution_grid = new QGridLayout(solution_group);
+
+    solution_group->setSizePolicy(*_size_policy_right);
+
+    _solution_table = new UnitCellTableView(this);
+
+    solution_grid->addWidget(_solution_table, 0,0,0,0);
+
+    connect(
+        _solution_table->verticalHeader(), &QHeaderView::sectionClicked,
+        this, &SubframeAutoIndexer::selectSolutionHeader
+    );
+
+    connect(
+        _solution_table, &UnitCellTableView::clicked,
+        this, &SubframeAutoIndexer::selectSolutionTable
+    );
+
+    _right_element->addWidget(solution_group);
+}
+
+void SubframeAutoIndexer::refreshAll()
+{
+    setExperiments();
+}
+
+void SubframeAutoIndexer::setExperiments()
+{
+    _exp_combo->blockSignals(true);
+    
+    _exp_combo->clear();
+    QList<QString> exp_list = gSession->experimentNames();
+
+    if (!exp_list.isEmpty()){
+        for (QString exp : exp_list) {
+            _exp_combo->addItem(exp);
+        }
+        _exp_combo->blockSignals(false);
+        
+        updatePeakList();
+        grabIndexerParameters();
+    }
+}
+
+void SubframeAutoIndexer::updatePeakList()
+{
+    _peak_combo->blockSignals(true);
+
+    _peak_combo->clear();
+    _peak_list = gSession->experimentAt(
+        _exp_combo->currentIndex())->getPeakListNames();
+
+    if (!_peak_list.isEmpty()){
+        _peak_combo->addItems(_peak_list);
+        _peak_combo->setCurrentIndex(0);
+
+        refreshPeakTable();
+        _solution_table->setModel(nullptr);
+        _solutions.clear();
+        _selected_unit_cell = nullptr;
+    }
+    _peak_combo->blockSignals(false);
+}
+
+void SubframeAutoIndexer::refreshPeakTable()
+{
+    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+        return;
+
+    nsx::PeakCollection* collection = gSession->experimentAt(
+        _exp_combo->currentIndex())->experiment()->getPeakCollection(
+            _peak_combo->currentText().toStdString());
+    _peak_collection_item.setPeakCollection(collection);
+    _peak_collection_model.setRoot(&_peak_collection_item);
+}
+
+void SubframeAutoIndexer::grabIndexerParameters()
+{
+    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+        return;
+
+    nsx::AutoIndexer* auto_indexer = gSession->experimentAt(
+        _exp_combo->currentIndex())->experiment()->autoIndexer();
+    nsx::IndexerParameters parameters = auto_indexer->parameters();
+
+    _niggli->setValue(parameters.niggliTolerance);
+    _only_niggli->setChecked(parameters.niggliReduction);
+    _gruber->setValue(parameters.gruberTolerance);
+    _number_vertices->setValue(parameters.nVertices);
+    _number_subdivisions->setValue(parameters.subdiv);
+    _number_solutions->setValue(parameters.nSolutions);
+    _max_cell_dimension->setValue(parameters.maxdim);
+    _indexing_tolerance->setValue(parameters.indexingTolerance);
+    _min_cell_volume->setValue(parameters.minUnitCellVolume);
+}
+
+void SubframeAutoIndexer::setIndexerParameters() const
+{
+    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+        return;
+
+    nsx::AutoIndexer* auto_indexer = gSession->experimentAt(
+        _exp_combo->currentIndex())->experiment()->autoIndexer();
+
+    nsx::IndexerParameters parameters;
+    parameters.niggliTolerance = _niggli->value();
+    parameters.niggliReduction = _only_niggli->isChecked();
+    parameters.gruberTolerance = _gruber->value();
+    parameters.nVertices = _number_vertices->value();
+    parameters.subdiv = _number_subdivisions->value();
+    parameters.nSolutions = _number_solutions->value();
+    parameters.maxdim = _max_cell_dimension->value();
+    parameters.indexingTolerance = _indexing_tolerance->value();
+    parameters.minUnitCellVolume = _min_cell_volume->value();
+    
+    auto_indexer->setParameters(parameters);
+}
+
+void SubframeAutoIndexer::runAutoIndexer()
+{
+    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+        return;
+        
+    setIndexerParameters();
+
+    nsx::AutoIndexer* auto_indexer = gSession->experimentAt(
+        _exp_combo->currentIndex())->experiment()->autoIndexer();
+    nsx::PeakCollection* collection = gSession->experimentAt(
+        _exp_combo->currentIndex())->experiment()->getPeakCollection(
+            _peak_combo->currentText().toStdString());
+
+
+    std::shared_ptr<nsx::ProgressHandler> handler(new nsx::ProgressHandler());
+    auto_indexer->setHandler(handler);
+
+    _solutions.clear();
+    
+    try {
+        auto_indexer->autoIndex(collection);
+    } catch (const std::exception& e) {
+        gLogger->log("[ERROR] AutoIndex: " + QString::fromStdString(e.what()));
+        return;
+    }
+
+    _solutions = auto_indexer->solutions();
+
+    buildSolutionsTable();
+
+    auto_indexer->unsetHandler();
+    handler.reset();
+}
+
+void SubframeAutoIndexer::buildSolutionsTable()
+{
+    // Create table with 9 columns
+    QStandardItemModel* model = new QStandardItemModel(_solutions.size(), 10, this);
+    model->setHorizontalHeaderItem(0, new QStandardItem("a"));
+    model->setHorizontalHeaderItem(1, new QStandardItem("b"));
+    model->setHorizontalHeaderItem(2, new QStandardItem("c"));
+    model->setHorizontalHeaderItem(3, new QStandardItem(QString((QChar)0x03B1)));
+    model->setHorizontalHeaderItem(4, new QStandardItem(QString((QChar)0x03B2)));
+    model->setHorizontalHeaderItem(5, new QStandardItem(QString((QChar)0x03B3)));
+    model->setHorizontalHeaderItem(6, new QStandardItem("Volume"));
+    model->setHorizontalHeaderItem(7, new QStandardItem("Bravais type"));
+    model->setHorizontalHeaderItem(8, new QStandardItem("Quality"));
+
+    // Display solutions
+    for (unsigned int i = 0; i < _solutions.size(); ++i) {
+        nsx::sptrUnitCell cell = _solutions[i].first;
+        double quality = _solutions[i].second;
+
+        nsx::UnitCellCharacter ch = cell->character();
+        nsx::UnitCellCharacter sigma = cell->characterSigmas();
+
+        QStandardItem* col1 = new QStandardItem(
+            QString::number(ch.a, 'f', 3) + "(" + QString::number(sigma.a * 1000, 'f', 0) + ")");
+        QStandardItem* col2 = new QStandardItem(
+            QString::number(ch.b, 'f', 3) + "(" + QString::number(sigma.b * 1000, 'f', 0) + ")");
+        QStandardItem* col3 = new QStandardItem(
+            QString::number(ch.c, 'f', 3) + "(" + QString::number(sigma.c * 1000, 'f', 0) + ")");
+        QStandardItem* col4 = new QStandardItem(
+            QString::number(ch.alpha / nsx::deg, 'f', 3) + "("
+            + QString::number(sigma.alpha / nsx::deg * 1000, 'f', 0) + ")");
+        QStandardItem* col5 = new QStandardItem(
+            QString::number(ch.beta / nsx::deg, 'f', 3) + "("
+            + QString::number(sigma.beta / nsx::deg * 1000, 'f', 0) + ")");
+        QStandardItem* col6 = new QStandardItem(
+            QString::number(ch.gamma / nsx::deg, 'f', 3) + "("
+            + QString::number(sigma.gamma / nsx::deg * 1000, 'f', 0) + ")");
+        QStandardItem* col7 = new QStandardItem(QString::number(cell->volume(), 'f', 3));
+        QStandardItem* col8 = new QStandardItem(QString::fromStdString(cell->bravaisTypeSymbol()));
+        QStandardItem* col9 = new QStandardItem(QString::number(quality, 'f', 2) + "%");
+
+        model->setItem(i, 0, col1);
+        model->setItem(i, 1, col2);
+        model->setItem(i, 2, col3);
+        model->setItem(i, 3, col4);
+        model->setItem(i, 4, col5);
+        model->setItem(i, 5, col6);
+        model->setItem(i, 6, col7);
+        model->setItem(i, 7, col8);
+        model->setItem(i, 8, col9);
+    }
+    _solution_table->setModel(model);
+}
+
+void SubframeAutoIndexer::selectSolutionTable()
+{
+    QItemSelectionModel* select = _solution_table->selectionModel();
+    QModelIndexList indices =  select->selectedRows();
+    if (!indices.isEmpty())
+        selectSolutionHeader(indices[0].row());
+}
+
+void SubframeAutoIndexer::selectSolutionHeader(int index)
+{
+    _selected_unit_cell = _solutions[index].first;
+    _selected_unit_cell->printSelf(std::cout);
+
+    nsx::PeakCollection* collection = gSession->experimentAt(
+        _exp_combo->currentIndex())->experiment()->getPeakCollection(
+            _peak_combo->currentText().toStdString());
+
+    std::vector<nsx::Peak3D*> peaks = collection->getPeakList();
+    for (nsx::Peak3D* peak: peaks)
+        peak->setUnitCell(_selected_unit_cell);
+    refreshPeakTable();
+}
+
+void SubframeAutoIndexer::acceptSolution()
+{
+    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+        return;
+
+    if (_selected_unit_cell ){ 
+
+        std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
+        dlg->exec();
+        if (!dlg->listName().isEmpty()){
+            _selected_unit_cell->setName(dlg->listName().toStdString());
+            gSession->experimentAt(
+                _exp_combo->currentIndex())->experiment()->addUnitCell(
+                    dlg->listName().toStdString(), _selected_unit_cell.get());
+            gSession->onUnitCellChanged();
+
+            nsx::PeakCollection* collection = gSession->experimentAt(
+                _exp_combo->currentIndex())->experiment()->getPeakCollection(
+                    _peak_combo->currentText().toStdString());
+
+            std::vector<nsx::Peak3D*> peaks = collection->getPeakList();
+            for (nsx::Peak3D* peak: peaks)
+                peak->setUnitCell(gSession->experimentAt(
+                    _exp_combo->currentIndex())->experiment()->getUnitCell(
+                        dlg->listName().toStdString()));
+        }
+        
+    }
+}

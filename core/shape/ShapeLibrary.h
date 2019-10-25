@@ -36,8 +36,9 @@ enum class PeakInterpolation { NoInterpolation = 0, InverseDistance = 1, Intensi
 struct FitData;
 
 //! Helper function for predicting peaks
-PeakList predictPeaks(
-    ShapeLibrary library, sptrDataSet data, sptrUnitCell, double dmin, double dmax, double radius,
+std::vector<Peak3D*> predictPeaks(
+    ShapeLibrary* library, sptrDataSet data, UnitCell* unit_cell, 
+    double dmin, double dmax, double radius,
     double nframes, int min_neighbors, PeakInterpolation interpolation);
 
 //! Store a library of peak shapes, to be used for peak prediction and integration.
@@ -53,19 +54,20 @@ class ShapeLibrary {
     //! Construct an empty library.
     //! @param detector_coords if true, store profiles in detector coordinates;
     //! otherwise store in Kabsch coordinates
+    ShapeLibrary();
     ShapeLibrary(bool detector_coords, double peakScale, double bkgBegin, double bkgEnd);
 
     //! Returns whether the library is stored in detector coords or Kabsch coords
     bool detectorCoords() const;
 
     //! Add a reference peak to the library
-    bool addPeak(sptrPeak3D peak, Profile3D&& profile, Profile1D&& integrated_profile);
+    bool addPeak(Peak3D* peak, Profile3D&& profile, Profile1D&& integrated_profile);
 
     //! Update the fitted covariances
     void updateFit(int num_iterations);
 
     //! Predict the (detector space) covariance of a given peak
-    Eigen::Matrix3d predictCovariance(sptrPeak3D peak) const;
+    Eigen::Matrix3d predictCovariance(Peak3D* peak) const;
 
     //! Returns mean Pearson coefficient to measure quality of fit
     double meanPearson() const;
@@ -79,11 +81,11 @@ class ShapeLibrary {
 
     //! Returns the average peak covariance near the given detector event
     Eigen::Matrix3d meanCovariance(
-        sptrPeak3D reference_peak, double radius, double nframes, size_t min_neighbors,
+        Peak3D* reference_peak, double radius, double nframes, size_t min_neighbors,
         PeakInterpolation interpolation) const;
 
     //! Find neighbors of a given peak
-    PeakList findNeighbors(const DetectorEvent& ev, double radius, double nframes) const;
+    std::vector<Peak3D*> findNeighbors(const DetectorEvent& ev, double radius, double nframes) const;
 
     //! Returns the peak scale used for the library
     double peakScale() const;
@@ -94,12 +96,24 @@ class ShapeLibrary {
     //! Returns the background end used for the library
     double bkgEnd() const;
 
+    //! Returns the background end used for the library
+    std::array<double, 6> choleskyD() const;
+
+    //! Returns the background end used for the library
+    std::array<double, 6> choleskyM() const;
+
+    //! Returns the background end used for the library
+    std::array<double, 6> choleskyS() const;
+    
+    //! Returns the background end used for the library
+    std::map<Peak3D*, std::pair<Profile3D, Profile1D>> profiles() const;
+
  private:
     //! Predict the (detector space) covariance given the fit data
     Eigen::Matrix3d predictCovariance(const FitData& data) const;
 
     //! List of reference peak profiles
-    std::map<sptrPeak3D, std::pair<Profile3D, Profile1D>> _profiles;
+    std::map<Peak3D*, std::pair<Profile3D, Profile1D>> _profiles;
 
     //! Components of the Cholesky factor of beam divergence covariance matrix
     std::array<double, 6> _choleskyD;

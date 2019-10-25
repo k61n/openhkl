@@ -27,8 +27,10 @@
 namespace nsx {
 
 GaussianIntegrator::GaussianIntegrator(bool fit_center, bool fit_cov)
-    : IPeakIntegrator(), _fitCenter(fit_center), _fitCov(fit_cov)
+    : IPeakIntegrator()
 {
+    setFitCenter(fit_center);
+    setFitCov(fit_cov);
 }
 
 static Eigen::Matrix3d from_cholesky(const Eigen::VectorXd a)
@@ -85,7 +87,9 @@ static void residuals(
     }
 }
 
-bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& region)
+bool GaussianIntegrator::compute(
+    Peak3D* peak, ShapeLibrary* /*shape_library*/, 
+    const IntegrationRegion& region)
 {
     if (!peak)
         return false;
@@ -125,12 +129,12 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     params.addParameter(&B);
     params.addParameter(&I);
 
-    if (_fitCenter) {
+    if (fitCenter()) {
         for (size_t i = 0; i < 3; ++i)
             params.addParameter(&x0(i));
     }
 
-    if (_fitCov) {
+    if (fitCov()) {
         for (size_t i = 0; i < 6; ++i)
             params.addParameter(&a(i));
     }
@@ -189,7 +193,7 @@ bool GaussianIntegrator::compute(sptrPeak3D peak, const IntegrationRegion& regio
     }
 }
 
-std::vector<double> GaussianIntegrator::profile(sptrPeak3D peak, const IntegrationRegion& region)
+std::vector<double> GaussianIntegrator::profile(Peak3D* peak, const IntegrationRegion& region)
 {
     const auto& events = region.data().events();
     const Eigen::Matrix3d A = peak->shape().metric();

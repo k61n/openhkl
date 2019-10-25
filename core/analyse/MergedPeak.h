@@ -36,7 +36,7 @@ class MergedPeak {
     MergedPeak(const SpaceGroup& grp, bool friedel = false);
 
     //! Add a peak to the merged peak.
-    bool addPeak(const sptrPeak3D& peak);
+    bool addPeak(Peak3D* peak);
 
     //! Returns a representative Miller index of the peak.
     MillerIndex index() const;
@@ -54,7 +54,7 @@ class MergedPeak {
     double pValue() const;
 
     //! Returns vector of peaks used to compute the merged peak.
-    const PeakList& peaks() const;
+    const std::vector<Peak3D*> peaks() const;
 
     //! split the merged peak randomly into two, for calculation of CC
     std::pair<MergedPeak, MergedPeak> split() const;
@@ -66,7 +66,7 @@ class MergedPeak {
 
     MillerIndex _hkl;
     Intensity _intensitySum;
-    PeakList _peaks;
+    std::vector<Peak3D*> _peaks;
     SpaceGroup _grp;
     bool _friedel;
 };

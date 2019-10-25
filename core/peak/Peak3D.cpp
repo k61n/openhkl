@@ -41,6 +41,8 @@ Peak3D::Peak3D(sptrDataSet data)
     , _selected(true)
     , _masked(false)
     , _predicted(true)
+    , _caught_by_filter(false)
+    , _rejected_by_filter(false)
     , _transmission(1.0)
     , _data(data)
     , _rockingCurve()
@@ -50,6 +52,27 @@ Peak3D::Peak3D(sptrDataSet data)
 Peak3D::Peak3D(sptrDataSet data, const Ellipsoid& shape) : Peak3D(data)
 {
     setShape(shape);
+}
+
+Peak3D::Peak3D(std::shared_ptr<nsx::Peak3D> peak)
+{
+    setShape(peak->shape());
+    _peakEnd = peak->peakEnd();
+    _bkgBegin = peak->bkgBegin();
+    _bkgEnd = peak->bkgEnd();
+    _unitCell = peak->unitCell();
+    _scale = peak->scale();
+    _selected = peak->selected();
+    _masked = peak->masked();
+    _predicted = peak->predicted();
+    _transmission = peak->transmission();
+    _data = peak->data();
+    _rockingCurve = peak->rockingCurve();
+    _meanBackground = peak->meanBackground();
+    _rawIntensity = peak->rawIntensity();
+    
+    _caught_by_filter = false;
+    _rejected_by_filter = false;
 }
 
 void Peak3D::setShape(const Ellipsoid& shape)
@@ -79,10 +102,15 @@ const std::vector<Intensity>& Peak3D::rockingCurve() const
 
 void Peak3D::setUnitCell(sptrUnitCell uc)
 {
+    _unitCell = uc.get();
+}
+
+void Peak3D::setUnitCell(UnitCell* uc)
+{
     _unitCell = uc;
 }
 
-sptrUnitCell Peak3D::unitCell() const
+UnitCell* Peak3D::unitCell() const
 {
     return _unitCell;
 }
@@ -250,6 +278,40 @@ Ellipsoid Peak3D::qShape() const
 //        DirectVector(state.samplePosition),
 //        ReciprocalVector(pred_kf * state.detectorOrientation));
 //}
+
+bool Peak3D::caughtByFilter() const
+{
+    if (_rejected_by_filter) return false;
+    return _caught_by_filter;
+}
+
+void Peak3D::caughtYou(bool caught)
+{
+    _caught_by_filter = caught;
+}
+
+void Peak3D::rejectYou(bool reject)
+{
+    _rejected_by_filter = reject;
+}
+
+void Peak3D::setManually(
+    Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd,
+    double scale, double transmission, Intensity mean_bkg, 
+    bool predicted, bool selected, bool masked)
+{
+    _peakEnd = peakEnd;
+    _bkgBegin = bkgBegin;
+    _bkgEnd = bkgEnd;
+    _scale = scale;
+    _selected = selected;
+    _masked = masked;
+    _predicted = predicted;
+    _transmission = transmission;
+    _meanBackground = mean_bkg;
+    _rawIntensity = intensity;
+}
+
 
 Intensity Peak3D::meanBackground() const
 {

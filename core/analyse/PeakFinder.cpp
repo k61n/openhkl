@@ -85,7 +85,7 @@ namespace nsx {
 
 PeakFinder::PeakFinder()
     : _handler(nullptr)
-    , _threshold(3.0)
+    , _threshold(80.0)
     , _peakScale(1.0)
     , _current_label(0)
     , _minSize(30)
@@ -94,10 +94,17 @@ PeakFinder::PeakFinder()
     , _framesBegin(-1)
     , _framesEnd(-1)
 {
-    qDebug("PeakFinder::ctor ...\n");
     ConvolverFactory convolver_factory;
-    _convolver.reset(convolver_factory.create("annular", {}));
-    qDebug("PeakFinder::ctor done\n");
+    _convolver.reset(convolver_factory.create("annular", {{"r1", 5.}, {"r2", 10.}, {"r3", 15.}}));
+}
+
+std::vector<Peak3D*> PeakFinder::currentPeaks()
+{
+    std::vector<Peak3D*> output;
+    for (sptrPeak3D peak: _current_peaks){
+        output.push_back(peak.get());
+    }
+    return output;
 }
 
 void PeakFinder::setHandler(const sptrProgressHandler& handler)
@@ -582,10 +589,11 @@ void PeakFinder::mergeEquivalentBlobs(
  * merge colliding blobs
  *
  */
-PeakList PeakFinder::find(DataList numors)
+void PeakFinder::find(DataList numors)
 {
     qDebug("PeakFinder::find ... with %li numors\n", numors.size());
-    PeakList ret;
+    _current_peaks.clear();
+    _current_data = numors;
 
     int i = 0;
     for (auto&& numor : numors) {
@@ -620,20 +628,22 @@ PeakList PeakFinder::find(DataList numors)
         nsx::EquivalenceList local_equivalences;
 
         // determine begining and ending index of current thread
-        //#pragma omp for
-        //        for (size_t i = 0; i < numor->nFrames(); ++i) {
-        //          if (loop_begin == -1) {
-        //            loop_begin = i;
-        //          }
-        //          loop_end = i + 1;
-        //        }
+        #pragma omp for
+               for (size_t i = 0; i < numor->nFrames(); ++i) {
+                 if (loop_begin == -1) {
+                   loop_begin = i;
+                 }
+                 loop_end = i + 1;
+               }
 
         // find blobs within the current frame range
         qDebug("PeakFinder::find: findPrimary\n");
         findPrimaryBlobs(numor, local_blobs, local_equivalences, loop_begin, loop_end);
+        
 
         // merge adjacent blobs
         qDebug("PeakFinder::find: mergeBlobs\n");
+        std::cout<<local_blobs.size()<<std::endl;
         mergeEquivalentBlobs(local_blobs, local_equivalences);
 
         qDebug("PeakFinder::find: blob loop\n");
@@ -644,6 +654,7 @@ PeakList PeakFinder::find(DataList numors)
         }
 
         mergeCollidingBlobs(numor, blobs);
+        qDebug("PeakFinder::find: Found blob collisions\n");
 
         if (_handler) {
             _handler->setStatus("Blob finding complete.");
@@ -691,7 +702,7 @@ PeakList PeakFinder::find(DataList numors)
 
             p->setPredicted(false);
             numor_peaks.push_back(p);
-            ret.push_back(p);
+            _current_peaks.push_back(p);
 
             ++count;
 
@@ -700,13 +711,13 @@ PeakList PeakFinder::find(DataList numors)
                 _handler->setProgress(progress);
             }
         }
-
+        qDebug("PeakFinder::find: blob loop done\n");
         if (_handler) {
             _handler->setStatus(
                 ("Integrating " + std::to_string(numor_peaks.size()) + " peaks...").c_str());
             _handler->setProgress(0);
         }
-
+        std::cout<<"PeakFinder::find: "<<std::to_string(numor_peaks.size())<<" peaks found."<<std::endl;
         numor->close();
         if (_handler)
             _handler->log("Found " + std::to_string(numor_peaks.size()) + " peaks.");
@@ -718,7 +729,6 @@ PeakList PeakFinder::find(DataList numors)
         _handler->setProgress(100);
     }
     qDebug("exit PeakFinder::find\n");
-    return ret;
 }
 
 } // namespace nsx

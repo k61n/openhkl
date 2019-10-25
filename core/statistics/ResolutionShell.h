@@ -26,7 +26,7 @@ struct DShell {
     //! Maximum value of d, i.e. minimum resolution
     double dmax;
     //! List of peaks contained within the shell
-    PeakList peaks;
+    std::vector<Peak3D*> peaks;
 };
 
 //! Splits a set of peaks into a number of shells based on resolution.
@@ -37,7 +37,7 @@ class ResolutionShell {
     ResolutionShell(double dmin, double dmax, size_t num_shells);
     //! Add a peak to the list of shells.
     //! It will automatically be added to the appropriate shell.
-    void addPeak(const sptrPeak3D& peak);
+    void addPeak(Peak3D* peak);
     //! Returns the given shell.
     const DShell& shell(size_t i) const;
     //! Returns the number of shells.

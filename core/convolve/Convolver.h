@@ -43,9 +43,12 @@ class Convolver {
 
     //! Const getter for kernel parameter
     const std::map<std::string, double>& parameters() const;
-
+    //! Set convolver parameters
     void setParameters(const std::map<std::string, double>& parameters);
-
+    //! Set the type of the convolver (informative name)
+    void setType(std::string type){_convolver_type = type;};
+    //! get the name of the convolver
+    std::string type() const {return _convolver_type;};
     //! Convolve an image
     virtual RealMatrix convolve(const RealMatrix& image) = 0;
 
@@ -53,6 +56,7 @@ class Convolver {
 
  protected:
     std::map<std::string, double> _parameters;
+    std::string _convolver_type = "";
 };
 
 } // namespace nsx

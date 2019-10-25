@@ -99,7 +99,7 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
                 }
                 dset.read(&dm(i, 0), H5::PredType::NATIVE_DOUBLE, space, space);
             } catch (...) {
-                throw std::runtime_error("Coud not read " + axis.name() + " HDF5 dataset");
+                throw std::runtime_error("Could not read " + axis.name() + " HDF5 dataset");
             }
         } else {
             dm.row(i) = Eigen::VectorXd::Zero(_nFrames);

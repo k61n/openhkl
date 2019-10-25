@@ -31,7 +31,7 @@ class IntegrationRegion {
 
     IntegrationRegion(IntegrationRegion&& other) = default;
 
-    IntegrationRegion(sptrPeak3D peak, double peak_end, double bkg_begin, double bkg_end);
+    IntegrationRegion(Peak3D* peak, double peak_end, double bkg_begin, double bkg_end);
 
     //! Update the integration mask of the detector (peak, background, forbiddgen
     //! zones)

@@ -14,26 +14,30 @@
 
 #include "gui/actions/Triggers.h"
 
+#include "gui/models/Session.h" //for gSession
+
 #include "gui/MainWin.h"
+
 #include "gui/dialogs/AbsorptionDialog.h"
 #include "gui/dialogs/HDF5ConverterDialog.h"
 #include "gui/dialogs/IntegrateDialog.h"
 #include "gui/dialogs/IsotopesDatabaseDialog.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/dialogs/MCAbsorptionDialog.h"
-#include "gui/dialogs/PeakFilterDialog.h"
-#include "gui/dialogs/PredictPeaksDialog.h"
-#include "gui/dialogs/ShapeLibraryDialog.h"
-#include "gui/frames/AutoIndexerFrame.h"
+
+#include "gui/subframe_index/SubframeAutoIndexer.h"
 #include "gui/frames/GlobalOffsetsFrame.h"
 #include "gui/frames/InstrumentStatesFrame.h"
-#include "gui/frames/PeakFinderFrame.h"
-#include "gui/frames/RefinerFrame.h"
-#include "gui/frames/MergedPeakInformationFrame.h"
-#include "gui/frames/UserDefinedUnitCellIndexerFrame.h"
-#include "gui/models/Session.h" //for gSession
-#include "gui/panels/SubframeSetup.h"
-#include "gui/panels/TabInstrument.h"
+// #include "gui/frames/RefinerFrame.h"
+// #include "gui/frames/MergedPeakInformationFrame.h"
+// #include "gui/frames/UserDefinedUnitCellIndexerFrame.h"
+
+// #include "gui/panels/TabInstrument.h"
+
+// #include "gui/subframe_experiment/SubframeSetup.h"
+#include "gui/subframe_find/SubframeFindPeaks.h"
+#include "gui/subframe_filter/SubframeFilterPeaks.h"
+
 #include <QDate>
 #include <QDesktopServices>
 #include <QInputDialog>
@@ -51,18 +55,12 @@ Actions::Actions()
 
 void Actions::setupFiles()
 {
-    addExperiment.setTriggerHook([]() { gSession->createExperiment(); });
     quit.setTriggerHook([]() { gGui->close(); });
     removeExperiment.setTriggerHook([]() { gSession->removeExperiment(); });
 }
 
 void Actions::setupData()
 {
-    dataProperties.setTriggerHook([]() {
-        SubframeSetup* properties = gGui->dockProperties_->tabsframe;
-        int i = properties->indexOf(properties->data);
-        properties->setCurrent(i);
-    });
     loadData.setTriggerHook([]() { gSession->loadData(); });
     removeData.setTriggerHook([]() { gSession->removeData(); });
     importRaw.setTriggerHook([]() { gSession->loadRawData(); });
@@ -80,34 +78,6 @@ void Actions::setupExperiment() {}
 
 void Actions::setupInstrument()
 {
-    monochromaticSourceProperties.setTriggerHook([]() {
-        SubframeSetup* properties = gGui->dockProperties_->tabsframe;
-        TabInstrument* tab = properties->instrument;
-        int i = tab->indexOf(tab->monoSource);
-        properties->setCurrent(0);
-        tab->setCurrent(i);
-    });
-    shapeProperties.setTriggerHook([]() {
-        SubframeSetup* properties = gGui->dockProperties_->tabsframe;
-        TabInstrument* tab = properties->instrument;
-        int i = tab->indexOf(tab->sample);
-        properties->setCurrent(0);
-        tab->setCurrent(i);
-    });
-    sampleProperties.setTriggerHook([]() {
-        SubframeSetup* properties = gGui->dockProperties_->tabsframe;
-        TabInstrument* tab = properties->instrument;
-        int i = tab->indexOf(tab->sample);
-        properties->setCurrent(0);
-        tab->setCurrent(i);
-    });
-    detectorProperties.setTriggerHook([]() {
-        SubframeSetup* properties = gGui->dockProperties_->tabsframe;
-        TabInstrument* tab = properties->instrument;
-        int i = tab->indexOf(tab->detector);
-        properties->setCurrent(0);
-        tab->setCurrent(i);
-    });
     goniometer.setTriggerHook([]() { new GlobalOffsetsFrame(offsetMode::DETECTOR); });
     sampleGoniometer.setTriggerHook([]() { new GlobalOffsetsFrame(offsetMode::SAMPLE); });
     isotopesDatabase.setTriggerHook([]() {
@@ -134,66 +104,61 @@ void Actions::setupOptions()
     dSpacing.setTriggerHook([]() { gGui->cursormode(3); });
     millerIndices.setTriggerHook([]() { gGui->cursormode(4); });
     logarithmicScale.setHook([](bool checked) {
-        gGui->dockImage_->centralWidget->imageView->getScene()->setLogarithmic(checked);
+        gGui->_experiment->image->imageView->getScene()->setLogarithmic(checked);
     });
     showLabels.setHook([](bool checked) {
-        gGui->dockImage_->centralWidget->imageView->getScene()->showPeakLabels(checked);
+        gGui->_experiment->image->imageView->getScene()->showPeakLabels(checked);
     });
     showAreas.setHook([](bool checked) {
-        gGui->dockImage_->centralWidget->imageView->getScene()->showPeakAreas(checked);
+        gGui->_experiment->image->imageView->getScene()->showPeakAreas(checked);
     });
     drawPeakArea.setHook([](bool checked) {
-        gGui->dockImage_->centralWidget->imageView->getScene()->drawIntegrationRegion(checked);
+        gGui->_experiment->image->imageView->getScene()->drawIntegrationRegion(checked);
     });
 }
 
 void Actions::setupPeaks()
 {
-    peaksProperties.setTriggerHook([]() {
-        SubframeSetup* properties = gGui->dockProperties_->tabsframe;
-        int i = properties->indexOf(properties->peaks);
-        properties->setCurrent(i);
-    });
-    autoIndexer.setTriggerHook([]() { new AutoIndexerFrame; });
-    filterPeaks.setTriggerHook([]() { new PeakFilterDialog; });
-    userDefinedIndexer.setTriggerHook([]() { new UserDefinedUnitCellIndexerFrame; });
-    assignUnitCell.setTriggerHook([]() {
-        if (gSession->selectedExperimentNum() < 0) {
-            gLogger->log("[ERROR] No experiment selected");
-            return;
-        }
-        if (gSession->selectedExperiment()->getPeakListNames().empty()) {
-            gLogger->log("[ERROR] No peaks in selected experiment");
-            return;
-        }
+    // autoIndexer.setTriggerHook([]() { new SubframeAutoIndexer; });
+    // filterPeaks.setTriggerHook([]() { new PeakFilterDialog; });
+    // userDefinedIndexer.setTriggerHook([]() { new UserDefinedUnitCellIndexerFrame; });
+    // assignUnitCell.setTriggerHook([]() {
+    //     if (gSession->selectedExperimentNum() < 0) {
+    //         gLogger->log("[ERROR] No experiment selected");
+    //         return;
+    //     }
+    //     if (gSession->selectedExperiment()->getPeakListNames().empty()) {
+    //         gLogger->log("[ERROR] No peaks in selected experiment");
+    //         return;
+    //     }
         // gSession->selectedExperiment()->autoAssignUnitCell();
-    });
-    buildShapeLibrary.setTriggerHook([]() { new ShapeLibraryDialog; });
-    refine.setTriggerHook([]() { new RefinerFrame; });
-    normalize.setTriggerHook([]() {
-        if (gSession->selectedExperimentNum() < 0)
-            return;
-        // gSession->selectedExperiment()->normalizeToMonitor();
-    });
-    integratepeaks.setTriggerHook([]() { gSession->selectedExperiment()->integratePeaks(); });
-    predictPeaks.setTriggerHook([]() {
-        PredictPeaksDialog* dgl = new PredictPeaksDialog;
-        if (!dgl->exec()) {
-            dgl->deleteLater();
-            return;
-        }
-        dgl->deleteLater();
-    });
+    // });
+    // buildShapeLibrary.setTriggerHook([]() { new ShapeLibraryDialog; });
+    // refine.setTriggerHook([]() { new RefinerFrame; });
+    // normalize.setTriggerHook([]() {
+    //     if (gSession->selectedExperimentNum() < 0)
+    //         return;
+    //     // gSession->selectedExperiment()->normalizeToMonitor();
+    // });
+    // integratepeaks.setTriggerHook([]() { gSession->selectedExperiment()->integratePeaks(); });
+    // predictPeaks.setTriggerHook([]() {
+    //     PredictPeaksDialog* dgl = new PredictPeaksDialog;
+    //     if (!dgl->exec()) {
+    //         dgl->deleteLater();
+    //         return;
+    //     }
+    //     dgl->deleteLater();
+    // });
     statistics.setTriggerHook([]() {
         if (gSession->selectedExperimentNum() < 0)
             return;
         if (gSession->selectedExperiment()->getUnitCellNames().empty())
             return;
-        nsx::sptrUnitCell cell = gSession->selectedExperiment()->getUnitCell();
-        nsx::SpaceGroup group = cell->spaceGroup();
-        nsx::PeakList list = gSession->selectedExperiment()->getPeakList(cell);
-        qDebug() << "Space Group symbol: " << QString::fromStdString(group.symbol());
-        new MergedPeakInformationFrame(group, list);
+        // nsx::sptrUnitCell cell = gSession->selectedExperiment()->getUnitCell();
+        // nsx::SpaceGroup group = cell->spaceGroup();
+        // nsx::PeakList list = gSession->selectedExperiment()->getUnitCell(cell);
+        // qDebug() << "Space Group symbol: " << QString::fromStdString(group.symbol());
+        // new MergedPeakInformationFrame(group, list);
     });
     correctAbsorption.setTriggerHook([]() {
         if (gSession->selectedExperimentNum() < 0)
@@ -207,11 +172,6 @@ void Actions::setupPeaks()
 void Actions::setupRest()
 {
     reset.setTriggerHook([]() { gGui->resetViews(); });
-    viewExperiment.setHook([](bool check) { gGui->dockExperiments_->setVisible(check); });
-    viewImage.setHook([](bool check) { gGui->dockImage_->setVisible(check); });
-    viewLogger.setHook([](bool check) { gGui->dockLogger_->setVisible(check); });
-    viewPlotter.setHook([](bool check) { gGui->dockPlot_->setVisible(check); });
-    viewProperties.setHook([](bool check) { gGui->dockProperties_->setVisible(check); });
     exportPlot.setTriggerHook([]() { gGui->exportPlot(); });
     about.setTriggerHook([]() {
         QMessageBox::about(

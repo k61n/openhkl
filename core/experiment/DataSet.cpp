@@ -42,6 +42,7 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader)
     , _masks()
     , _background(0.0)
     , _reader(reader)
+    , _name("")
 {
     if (!fileExists(_filename))
         throw std::runtime_error("IData, file: " + _filename + " does not exist");
@@ -282,7 +283,6 @@ void DataSet::saveHDF5(const std::string& filename) // const
         }
     }
     file.close();
-    // blosc_destroy();
 }
 
 void DataSet::addMask(IMask* mask)
@@ -405,6 +405,30 @@ Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx)
 std::shared_ptr<IDataReader> DataSet::reader() const
 {
     return _reader;
+}
+
+std::string DataSet::name() const
+{
+    std::string name;
+    std::string ext;
+    std::string data_name = filename();
+
+    size_t sep = data_name.find_last_of("\\/");
+    if (sep != std::string::npos)
+        data_name = data_name.substr(sep + 1, data_name.size() - sep - 1);
+
+    size_t dot = data_name.find_last_of(".");
+    if (dot != std::string::npos){
+        name = data_name.substr(0, dot);
+        ext  = data_name.substr(dot, data_name.size() - dot);
+    }else{
+        name = data_name;
+        ext  = "";
+    }
+
+    if (!(_name == ""))
+        return _name;
+    return name;
 }
 
 } // namespace nsx

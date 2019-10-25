@@ -21,11 +21,29 @@
 
 namespace nsx {
 
-PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak) : _peak(peak)
+PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak) : _peak(peak.get())
 {
     if (!_peak)
         throw std::runtime_error("Cannot construct PeakCoordinateSystem from null Peak3d");
 
+    _event = DetectorEvent(peak->shape().center());
+    _state = peak->data()->interpolatedState(_event._frame);
+    _ki = _state.ki().rowVector();
+    _kf = peak->q().rowVector() * _state.sampleOrientationMatrix().transpose() + _ki;
+
+    _e1 = _kf.cross(_ki);
+    _e2 = _kf.cross(_e1);
+
+    _e1.normalize();
+    _e2.normalize();
+
+    _zeta = _e1.dot(_state.axis) * 180.0 / M_PI * _state.stepSize;
+    _e1 *= 180.0 / M_PI / _kf.norm();
+    _e2 *= 180.0 / M_PI / _kf.norm();
+}
+
+PeakCoordinateSystem::PeakCoordinateSystem(Peak3D* peak) : _peak(peak)
+{
     _event = DetectorEvent(peak->shape().center());
     _state = peak->data()->interpolatedState(_event._frame);
     _ki = _state.ki().rowVector();

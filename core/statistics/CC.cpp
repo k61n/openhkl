@@ -18,16 +18,16 @@ namespace nsx {
 
 CC::CC() : _CChalf(0), _CCstar(0) {}
 
-void CC::calculate(const MergedData& data)
+void CC::calculate(MergedData* data)
 {
     std::vector<MergedPeak> peaks;
 
-    for (auto&& peak : data.mergedPeakSet())
+    for (auto&& peak : data->mergedPeakSet())
         peaks.push_back(peak);
     calculate(peaks);
 }
 
-void CC::calculate(const std::vector<MergedPeak>& peaks)
+void CC::calculate(std::vector<MergedPeak> peaks)
 {
     double xx, xy, yy, x, y;
     xx = xy = yy = x = y = 0.0;

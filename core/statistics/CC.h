@@ -26,9 +26,9 @@ class CC {
  public:
     CC();
     //! Calculate the statistic on the given set of merged peaks.
-    void calculate(const std::vector<MergedPeak>& peaks);
+    void calculate(std::vector<MergedPeak> peaks);
     //! Calculate the statistic on the given data.
-    void calculate(const MergedData& data);
+    void calculate(MergedData* data);
     //! Returns CC half (correlation of a random split of data into two bags)
     double CChalf() const;
     //! Returns CC star (estimate)

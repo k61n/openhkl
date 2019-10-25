@@ -99,6 +99,8 @@ class UnitCell {
 
     //! Sets lattice centering type
     void setLatticeCentring(LatticeCentring centring);
+    //! Return the centering condition
+    char latticeCentering() const {return (char)_centring;};
 
     //! Sets Bravais type
     void setBravaisType(BravaisType bravais);
@@ -166,8 +168,8 @@ class UnitCell {
     //! Sets name of the unit cell
     void setName(const std::string& name);
 
-    //! Returns name of the unit cell
-    const std::string& name() const;
+    //! Returns the name
+    std::string name() const;
 
     //! Sets the integer tolerance for this unit cell
     void setIndexingTolerance(double tolerance);

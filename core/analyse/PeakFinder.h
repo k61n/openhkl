@@ -31,11 +31,16 @@ class PeakFinder {
  public:
     PeakFinder();
 
-    PeakList find(DataList numors);
+    void find(DataList numors);
+
+    std::vector<Peak3D*> currentPeaks();
+
+    DataList  currentData() {return _current_data;};
 
     void setHandler(const sptrProgressHandler& handler);
 
     void setPeakScale(double scale) { _peakScale = scale; }
+    double peakScale() const { return _peakScale; }
 
     void setMinSize(int minComp);
     int minSize() const;
@@ -57,8 +62,10 @@ class PeakFinder {
 #endif
 
     void setConvolver(const Convolver& convolver);
+    nsx::Convolver* convolver() const {return _convolver.get();}
 
     void setThreshold(double value);
+    int threshold() const {return _threshold;};
 
  private:
     void eliminateBlobs(std::map<int, Blob3D>& blobs) const;
@@ -94,6 +101,12 @@ class PeakFinder {
     int _framesBegin;
 
     int _framesEnd;
+
+    nsx::PeakList _current_peaks;
+
+    nsx::DataList _current_data;
+
+    
 };
 
 using sptrPeakFinder = std::shared_ptr<PeakFinder>;

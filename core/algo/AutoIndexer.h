@@ -17,6 +17,7 @@
 
 #include "base/utils/ProgressHandler.h"
 #include "core/peak/Peak3D.h"
+#include "core/peak/PeakCollection.h"
 #include "tables/crystal/UnitCell.h"
 
 namespace nsx {
@@ -55,36 +56,36 @@ struct IndexerParameters {
 
 //! Class to automatically index a set of peaks
 class AutoIndexer {
+
  public:
+
     //! Constructor
-    //! @param handler the handler that will monitor the progresses
-    AutoIndexer(const std::shared_ptr<ProgressHandler>& handler = nullptr);
-
+    AutoIndexer();
+    //! Return the parameters 
+    IndexerParameters parameters() const {return _params;};
+    //! Set the parameters 
+    void setParameters(IndexerParameters parameters) {_params = parameters;};
     //! Performs the auto-indexing
-    //! @param params the parameter of the auto-indexing algorithm
-    //! @return true if auto-indexing succeeded, false if failed // TODO fix this lie
-    void autoIndex(const IndexerParameters& params);
-
-    //! Add a peak for the auto-indexing procedure
-    void addPeak(sptrPeak3D peak);
-
+    void autoIndex(PeakCollection* peak_collection);
     //! Returns list of the best solutions ordered by percentage of successfully indexed peaks
     const std::vector<RankedSolution>& solutions() const;
 
+    //! Set the handler
+    void setHandler(std::shared_ptr<ProgressHandler> handler) {_handler = handler;};
+    //! Set the handler
+    void unsetHandler() {_handler = nullptr;};
+
  private:
-    void computeFFTSolutions();
 
-    void refineSolutions();
-
+    void computeFFTSolutions(PeakCollection* peak_collection);
+    void refineSolutions(PeakCollection* peak_collection);
     void rankSolutions();
-
     void refineConstraints();
-
     void removeBad(double quality);
 
-    IndexerParameters _params;
+private:
 
-    PeakList _peaks;
+    IndexerParameters _params;
 
     std::vector<RankedSolution> _solutions;
 
