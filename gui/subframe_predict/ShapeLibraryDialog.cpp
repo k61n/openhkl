@@ -38,7 +38,8 @@
 #include <QVBoxLayout>
 #include <QtGlobal>
 
-ShapeLibraryDialog::ShapeLibraryDialog(nsx::PeakCollection* peak_collection)    : QDialog(),
+ShapeLibraryDialog::ShapeLibraryDialog(nsx::PeakCollection* peak_collection): 
+    QDialog(),
     _peak_collection_item(),
     _peak_collection_model()
 {

@@ -56,6 +56,8 @@ private:
    void resetFields();
    //! Reset the values
    void setInputEnabled(bool state);
+   //! Launch the refinement tool
+   void launchRefiner();
 
 private: 
 
@@ -74,6 +76,7 @@ private:
 
    QPushButton* _add;
    QPushButton* _remove;
+   QPushButton* _refine;
 
    QSizePolicy* _size_policy_widgets;
    QSizePolicy* _size_policy_box;

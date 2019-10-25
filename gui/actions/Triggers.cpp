@@ -28,7 +28,7 @@
 #include "gui/subframe_index/SubframeAutoIndexer.h"
 #include "gui/frames/GlobalOffsetsFrame.h"
 #include "gui/frames/InstrumentStatesFrame.h"
-#include "gui/frames/RefinerFrame.h"
+// #include "gui/frames/RefinerFrame.h"
 // #include "gui/frames/MergedPeakInformationFrame.h"
 // #include "gui/frames/UserDefinedUnitCellIndexerFrame.h"
 
@@ -134,12 +134,12 @@ void Actions::setupPeaks()
         // gSession->selectedExperiment()->autoAssignUnitCell();
     // });
     // buildShapeLibrary.setTriggerHook([]() { new ShapeLibraryDialog; });
-    refine.setTriggerHook([]() { new RefinerFrame; });
-    normalize.setTriggerHook([]() {
-        if (gSession->selectedExperimentNum() < 0)
-            return;
-        // gSession->selectedExperiment()->normalizeToMonitor();
-    });
+    // refine.setTriggerHook([]() { new RefinerFrame; });
+    // normalize.setTriggerHook([]() {
+    //     if (gSession->selectedExperimentNum() < 0)
+    //         return;
+    //     // gSession->selectedExperiment()->normalizeToMonitor();
+    // });
     // integratepeaks.setTriggerHook([]() { gSession->selectedExperiment()->integratePeaks(); });
     // predictPeaks.setTriggerHook([]() {
     //     PredictPeaksDialog* dgl = new PredictPeaksDialog;

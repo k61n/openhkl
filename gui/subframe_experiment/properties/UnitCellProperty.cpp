@@ -15,6 +15,7 @@
 #include "gui/subframe_experiment/properties/UnitCellProperty.h"
 
 #include "gui/models/Session.h"
+#include "gui/dialogs/RefinerDialog.h"
 #include "base/utils/Units.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
@@ -83,15 +84,14 @@ UnitCellProperty::UnitCellProperty() : QWidget()
     _remove = new QPushButton();
     _add->setIcon(QIcon(":/images/Add_item.svg"));
     _remove->setIcon(QIcon(":/images/Delete_item.svg"));
+    _refine = new QPushButton("Refine parameters");
     
     unitcells->setSizePolicy(*_size_policy_widgets);
 
     name->setSizePolicy(*_size_policy_widgets);
 
-    // spaceGroup->setReadOnly(true);
     spaceGroup->setSizePolicy(*_size_policy_widgets);
 
-    // indexingTolerance->setReadOnly(true);
     indexingTolerance->setSizePolicy(*_size_policy_widgets);
 
     chemicalFormula->setSizePolicy(*_size_policy_widgets);
@@ -100,32 +100,26 @@ UnitCellProperty::UnitCellProperty() : QWidget()
 
     a->setButtonSymbols(QDoubleSpinBox::NoButtons);
     a->setSizePolicy(*_size_policy_widgets);
-    // a->setReadOnly(true);
     a->setDecimals(5);
 
     b->setButtonSymbols(QDoubleSpinBox::NoButtons);
     b->setSizePolicy(*_size_policy_widgets);
-    // b->setReadOnly(true);
     b->setDecimals(5);
 
     c->setButtonSymbols(QDoubleSpinBox::NoButtons);
     c->setSizePolicy(*_size_policy_widgets);
-    // c->setReadOnly(true);
     c->setDecimals(5);
 
     alpha->setButtonSymbols( QDoubleSpinBox::NoButtons);
     alpha->setSizePolicy(*_size_policy_widgets);
-    // alpha->setReadOnly(true);
     alpha->setDecimals(5);
 
     beta->setButtonSymbols(QDoubleSpinBox::NoButtons);
     beta->setSizePolicy(*_size_policy_widgets);
-    // beta->setReadOnly(true);
     beta->setDecimals(5);
 
     gamma->setButtonSymbols(QDoubleSpinBox::NoButtons);
     gamma->setSizePolicy(*_size_policy_widgets);
-    // gamma->setReadOnly(true);
     gamma->setDecimals(5);
 
     top_layout->addWidget(unitcells);
@@ -159,6 +153,7 @@ UnitCellProperty::UnitCellProperty() : QWidget()
     grid->addWidget(new QLabel(QString((QChar)0x03B1)), 0, 2, 1, 1);
     grid->addWidget(new QLabel(QString((QChar)0x03B2)), 1, 2, 1, 1);
     grid->addWidget(new QLabel(QString((QChar)0x03B3)), 2, 2, 1, 1);
+    grid->addWidget(_refine, 3, 0, 1, 4);
 
     overallLayout->addWidget(cellParameters);
     overallLayout->addStretch();
@@ -211,6 +206,11 @@ UnitCellProperty::UnitCellProperty() : QWidget()
     connect(
         _remove, &QPushButton::clicked,
         this, &UnitCellProperty::removeUnitCell
+    );
+
+    connect(
+        _refine, &QPushButton::clicked,
+        this, &UnitCellProperty::launchRefiner
     );
 
     resetFields();
@@ -382,4 +382,14 @@ void UnitCellProperty::removeUnitCell()
         name->text().toStdString());
     refreshInput();
     selectedCellChanged(0);
+}
+
+void UnitCellProperty::launchRefiner()
+{
+    std::unique_ptr<RefinerDialog> dialog(
+        new RefinerDialog(
+            gSession->selectedExperiment()->experiment()->getUnitCell(
+                unitcells->currentText().toStdString())));
+
+    dialog->exec();
 }
