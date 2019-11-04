@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "base/utils/Units.h"
+#include <string>
 
 namespace {
 using namespace nsx;

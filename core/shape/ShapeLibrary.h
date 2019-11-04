@@ -24,6 +24,7 @@
 
 #include <Eigen/Dense>
 #include <memory>
+#include <array>
 
 namespace nsx {
 
