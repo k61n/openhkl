@@ -21,35 +21,35 @@ class PlottableItem;
 
 //! Base class of the plot types of the SubframePlot
 class SXPlot : public QCustomPlot {
-    Q_OBJECT
- public:
-    static SXPlot* create(QWidget* parent);
+   Q_OBJECT
+public:
+   static SXPlot* create(QWidget* parent);
 
-    explicit SXPlot(QWidget* parent = 0);
-    void keyPressEvent(QKeyEvent*);
-    virtual ~SXPlot();
+   explicit SXPlot(QWidget* parent = 0);
+   void keyPressEvent(QKeyEvent*);
+   virtual ~SXPlot();
 
-    // Getters and setters
+   // Getters and setters
 
-    virtual std::string getType() const;
+   virtual std::string getType() const;
 
- public slots:
-    //
-    void mousePress();
-    //
-    void mouseWheel();
-    //! Update the plot
-    virtual void update(PlottableItem* item);
-    void titleDoubleClick(QMouseEvent* event, QCPPlotTitle* title);
-    //! Double click on the legend
-    void legendDoubleClick(QCPLegend* legend, QCPAbstractLegendItem* item);
-    //! Context menu
-    void setmenuRequested(QPoint);
-    //! Export the graphs into column ASCII format
-    void exportToAscii();
+public:
+   
+   void mousePress();
+   
+   void mouseWheel(QWheelEvent* wheel_event);
+   //! Update the plot
+   virtual void update(PlottableItem* item);
+   void titleDoubleClick(QMouseEvent* event, QCPPlotTitle* title);
+   //! Double click on the legend
+   void legendDoubleClick(QCPLegend* legend, QCPAbstractLegendItem* item);
+   //! Context menu
+   void setmenuRequested(QPoint);
+   //! Export the graphs into column ASCII format
+   void exportToAscii();
 
- private:
-    void copyViewToClipboard();
+private:
+   void copyViewToClipboard();
 };
 
 #endif // GUI_GRAPHICS_SXPLOT_H

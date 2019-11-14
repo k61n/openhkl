@@ -80,6 +80,11 @@ ReciprocalVector InstrumentState::ki() const
     return ReciprocalVector((ni / ni.norm()) / wavelength);
 }
 
+Eigen::Matrix3d InstrumentState::detectorOrientationMatrix() const
+{
+    return detectorOrientation;
+}
+
 Eigen::Matrix3d InstrumentState::sampleOrientationMatrix() const
 {
     return (sampleOrientationOffset * sampleOrientation).normalized().toRotationMatrix();

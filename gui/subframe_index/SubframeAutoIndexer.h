@@ -23,7 +23,6 @@
 #include "gui/views/PeakTableView.h"
 #include "gui/views/UnitCellTableView.h"
 #include "gui/utility/ColorButton.h"
-
 #include "gui/utility/Spoiler.h"
 
 #include <QTableWidget>

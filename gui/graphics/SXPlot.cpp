@@ -19,22 +19,30 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <fstream>
+#include <iostream>
 
 SXPlot::SXPlot(QWidget* parent) : QCustomPlot(parent)
 {
     legend->setSelectableParts(QCPLegend::spItems);
-    connect(this, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress()));
-    connect(this, SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
-    connect(
-        this, SIGNAL(titleDoubleClick(QMouseEvent*, QCPPlotTitle*)), this,
-        SLOT(titleDoubleClick(QMouseEvent*, QCPPlotTitle*)));
-    connect(
-        this, SIGNAL(legendDoubleClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)), this,
-        SLOT(legendDoubleClick(QCPLegend*, QCPAbstractLegendItem*)));
 
-    // Enable right button click to export ASCII data
-    setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(setmenuRequested(QPoint)));
+    // connect(
+    //     this, SIGNAL(mousePress(QMouseEvent*)), 
+    //     this, SLOT(mousePress()));
+
+    connect(
+        this, &QCustomPlot::mouseWheel, 
+        this, &SXPlot::mouseWheel);
+
+    // connect(
+    //     this, SIGNAL(titleDoubleClick(QMouseEvent*, QCPPlotTitle*)), this,
+    //     SLOT(titleDoubleClick(QMouseEvent*, QCPPlotTitle*)));
+    // connect(
+    //     this, SIGNAL(legendDoubleClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)), this,
+    //     SLOT(legendDoubleClick(QCPLegend*, QCPAbstractLegendItem*)));
+
+    // // Enable right button click to export ASCII data
+    // setContextMenuPolicy(Qt::CustomContextMenu);
+    // connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(setmenuRequested(QPoint)));
 }
 
 void SXPlot::update(PlottableItem* item) {Q_UNUSED(item)}
@@ -73,14 +81,43 @@ void SXPlot::mousePress()
         axisRect()->setRangeDrag(Qt::Horizontal | Qt::Vertical);
 }
 
-void SXPlot::mouseWheel()
+void SXPlot::mouseWheel(QWheelEvent* wheel_event)
 {
-    if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
-        axisRect()->setRangeZoom(xAxis->orientation());
-    else if (yAxis->selectedParts().testFlag(QCPAxis::spAxis))
-        axisRect()->setRangeZoom(yAxis->orientation());
-    else
-        axisRect()->setRangeZoom(Qt::Horizontal | Qt::Vertical);
+    QRect current_range = axisRect()->rect();
+
+    std::vector<double> edges {
+        xAxis->pixelToCoord(current_range.x()),
+        xAxis->pixelToCoord(current_range.x()+current_range.width()),
+        yAxis->pixelToCoord(current_range.y()),
+        yAxis->pixelToCoord(current_range.y()+current_range.height())};
+
+    std::vector<double> mouse_pos {
+        xAxis->pixelToCoord(wheel_event->pos().x()),
+        yAxis->pixelToCoord(wheel_event->pos().y())};
+
+    double factor;
+    if (wheel_event->angleDelta().y() < 0){
+        factor = 1.1;
+    }else{
+        factor = 0.9;
+    }
+
+    std::vector<double> new_edges {
+        mouse_pos[0] - (mouse_pos[0] - edges[0]) * factor,
+        mouse_pos[0] - (mouse_pos[0] - edges[1]) * factor,
+        mouse_pos[1] - (mouse_pos[1] - edges[2]) * factor,
+        mouse_pos[1] - (mouse_pos[1] - edges[3]) * factor};
+
+    if (xAxis->selectedParts().testFlag(QCPAxis::spAxis)){
+        xAxis->setRange(new_edges[0], new_edges[1]);
+    }else if(yAxis->selectedParts().testFlag(QCPAxis::spAxis)){
+        yAxis->setRange(new_edges[2], new_edges[3]);
+    }else{
+        xAxis->setRange(new_edges[0], new_edges[1]);
+        yAxis->setRange(new_edges[2], new_edges[3]);
+    }
+    replot();
+
 }
 
 SXPlot::~SXPlot() {}
