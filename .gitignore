@@ -15,7 +15,10 @@
 *.spl
 
 build/
+build_2/
 mybuild/
 qbuild/
+
+Testing/
+
 html/
-build_2/
