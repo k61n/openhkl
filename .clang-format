@@ -7,7 +7,7 @@ Standard: Cpp11
 BasedOnStyle: WebKit
 IndentWidth: 4
 
-AccessModifierOffset: 0
+AccessModifierOffset: -3
 AlignAfterOpenBracket: AlwaysBreak
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
