@@ -254,6 +254,12 @@ class UnitCell {
         const Eigen::Matrix3d& U0, const Eigen::Vector3d& uOffset,
         const Eigen::VectorXd& parameters) const;
 
+    //! Construct a new unit cell from a reference orientation, an
+    //! orientation offset, and a set of parameters.
+    void updateParameters(
+        const Eigen::Matrix3d& U0, const Eigen::Vector3d& uOffset,
+        const Eigen::VectorXd& parameters) ;
+
     //! Returns list of space groups which are compatible with the Bravais type of the cell
     std::vector<std::string> compatibleSpaceGroups() const;
 

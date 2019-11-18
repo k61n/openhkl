@@ -25,7 +25,6 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
-#include <QSpacerItem>
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QDebug>

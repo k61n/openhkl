@@ -32,9 +32,9 @@ Refiner::Refiner(
 {
     PeakFilter peak_filter;
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
-    //TODO
-    // filtered_peaks = peak_filter.enabled(peaks, true);
-    // filtered_peaks = peak_filter.indexed(filtered_peaks, *cell, cell->indexingTolerance());
+    filtered_peaks = peak_filter.filterEnabled(peaks, true);
+    filtered_peaks = peak_filter.filterIndexed(
+        filtered_peaks, *cell, cell->indexingTolerance());
 
     auto sort_peaks_by_frame = [](Peak3D* p1, Peak3D* p2) -> bool {
         auto&& c1 = p1->shape().center();
@@ -53,7 +53,7 @@ Refiner::Refiner(
         peaks_subset.push_back(filtered_peaks[i]);
 
         if (i + 1.1 >= (current_batch + 1) * batch_size) {
-            RefinementBatch b(states, *cell, peaks_subset);
+            RefinementBatch b(states, cell, peaks_subset);
             _batches.emplace_back(std::move(b));
             peaks_subset.clear();
             ++current_batch;
@@ -108,56 +108,54 @@ const std::vector<RefinementBatch>& Refiner::batches() const
     return _batches;
 }
 
-int Refiner::updatePredictions(PeakList& /*peaks*/) const
+int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
 {
-    return 0;
-    // PeakFilter peak_filter;
-    // PeakList filtered_peaks;
-    // filtered_peaks = peak_filter.enabled(peaks, true);
-    // //    filtered_peaks = peak_filter.predicted(filtered_peaks,true);
-    // filtered_peaks = peak_filter.unitCell(filtered_peaks, _cell);
-    // filtered_peaks = peak_filter.indexed(filtered_peaks, *_cell, _cell->indexingTolerance());
+    PeakFilter peak_filter;
+    std::vector<nsx::Peak3D*> filtered_peaks = peaks;
+    filtered_peaks = peak_filter.filterEnabled(peaks, true);
+    filtered_peaks = peak_filter.filterIndexed(
+        filtered_peaks, *_cell, _cell->indexingTolerance());
 
-    // PeakList pred_peaks;
-    // int updated = 0;
+    std::vector<nsx::Peak3D*> pred_peaks;
+    int updated = 0;
 
-    // for (auto&& peak : filtered_peaks) {
-    //     // find appropriate batch
-    //     const RefinementBatch* b = nullptr;
-    //     double z = peak->shape().center()[2];
-    //     for (auto&& batch : _batches) {
-    //         if (batch.contains(z)) {
-    //             b = &batch;
-    //             break;
-    //         }
-    //     }
+    for (nsx::Peak3D* peak : filtered_peaks) {
+        // find appropriate batch
+        const RefinementBatch* b = nullptr;
+        double z = peak->shape().center()[2];
+        for (auto&& batch : _batches) {
+            if (batch.contains(z)) {
+                b = &batch;
+                break;
+            }
+        }
 
-    //     // no appropriate batch
-    //     if (b == nullptr)
-    //         continue;
+        // no appropriate batch
+        if (b == nullptr)
+            continue;
 
-    //     auto batch_cell = b->cell();
+        auto batch_cell = b->cell();
 
-    //     // update the position
-    //     MillerIndex hkl(peak->q(), *batch_cell);
-    //     ReciprocalVector q_pred(hkl.rowVector().cast<double>() * batch_cell->reciprocalBasis());
-    //     auto events = peak->data()->events({q_pred});
+        // update the position
+        MillerIndex hkl(peak->q(), *batch_cell);
+        ReciprocalVector q_pred(hkl.rowVector().cast<double>() * batch_cell->reciprocalBasis());
+        auto events = peak->data()->events({q_pred});
 
-    //     // something wrong with new prediction...
-    //     if (events.size() != 1) {
-    //         peak->setSelected(false);
-    //         continue;
-    //     }
+        // something wrong with new prediction...
+        if (events.size() != 1) {
+            peak->setSelected(false);
+            continue;
+        }
 
-    //     try {
-    //         peak->setShape(Ellipsoid(
-    //             {events[0]._px, events[0]._py, events[0]._frame}, peak->shape().metric()));
-    //         ++updated;
-    //     } catch (...) {
-    //         peak->setSelected(false);
-    //     }
-    // }
-    // return updated;
+        try {
+            peak->setShape(Ellipsoid(
+                {events[0]._px, events[0]._py, events[0]._frame}, peak->shape().metric()));
+            ++updated;
+        } catch (...) {
+            peak->setSelected(false);
+        }
+    }
+    return updated;
 }
 
 } // namespace nsx

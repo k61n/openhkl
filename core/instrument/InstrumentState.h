@@ -65,6 +65,9 @@ class InstrumentState {
     const Diffractometer* diffractometer() const;
 
  public:
+    //! compute the sample orientation from fixed orientation and offset
+    Eigen::Matrix3d detectorOrientationMatrix() const;
+
     //! Detector orientation as read from metadata
     Eigen::Matrix3d detectorOrientation;
 

@@ -42,12 +42,12 @@ class Refiner {
     //! Perform the refinement with the maximum number of iterations as given.
     bool refine(unsigned int max_iter = 100);
     //! Update the centers of predicted peaks, after refinement.
-    int updatePredictions(PeakList& peaks) const;
+    int updatePredictions(std::vector<Peak3D*> peaks) const;
     //! Returns the individual peak/frame batches used during refinement.
     const std::vector<RefinementBatch>& batches() const;
 
  private:
- 
+
     UnitCell* _cell;
     std::vector<RefinementBatch> _batches;
 };

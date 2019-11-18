@@ -29,10 +29,10 @@ static const double g_eps = 1e-5;
 namespace nsx {
 
 RefinementBatch::RefinementBatch(
-    InstrumentStateList& states, const UnitCell& uc, std::vector<nsx::Peak3D*> peaks)
+    InstrumentStateList& states, UnitCell* uc, std::vector<nsx::Peak3D*> peaks)
     : _fmin(std::numeric_limits<double>().max())
     , _fmax(std::numeric_limits<double>().lowest())
-    , _cell(new UnitCell(uc))
+    , _cell(uc)
     , _peaks(peaks)
 {
     for (auto peak : peaks) {
@@ -158,10 +158,11 @@ bool RefinementBatch::refine(unsigned int max_iter)
     min.initialize(_params, _peaks.size() * 3);
     min.set_f([&](Eigen::VectorXd& fvec) { return residuals(fvec); });
     bool success = min.fit(max_iter);
+
     for (auto state : _states)
         state.get().refined = success;
 
-    *_cell = _cell->fromParameters(_u0, _uOffsets, _cellParameters);
+    _cell->updateParameters(_u0, _uOffsets, _cellParameters);
 
     return success;
 }
@@ -203,7 +204,7 @@ std::vector<nsx::Peak3D*> RefinementBatch::peaks() const
     return _peaks;
 }
 
-sptrUnitCell RefinementBatch::cell() const
+UnitCell* RefinementBatch::cell() const
 {
     return _cell;
 }

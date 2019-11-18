@@ -29,7 +29,7 @@ class RefinementBatch {
     //! Default constructor. Should not be used but needed for swig
     RefinementBatch() = default;
     //! Construct batch with initial unit cell and list of peaks.
-    RefinementBatch(InstrumentStateList& states, const UnitCell& uc, std::vector<nsx::Peak3D*> peaksmax);
+    RefinementBatch(InstrumentStateList& states, UnitCell* uc, std::vector<nsx::Peak3D*> peaksmax);
     //! Sets the lattice B matrix to be refined.
     void refineUB();
     //! Sets detector offsets in the given list of instrument states to be refined.
@@ -49,7 +49,7 @@ class RefinementBatch {
     //! Returns the list of peaks used for refinement.
     std::vector<nsx::Peak3D*> peaks() const;
     //! Returns the refined unit cell.
-    sptrUnitCell cell() const;
+    UnitCell* cell() const;
     //! Returns the matrix of parameter constraints.
     Eigen::MatrixXd constraintKernel() const;
     //! Determine if a given frame number is part of this batch.
@@ -62,7 +62,7 @@ class RefinementBatch {
 
     double _fmax;
 
-    sptrUnitCell _cell;
+    nsx::UnitCell* _cell;
 
     std::vector<nsx::Peak3D*> _peaks;
 

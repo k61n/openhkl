@@ -48,6 +48,8 @@ class FitParameters {
 
     //! Reset parameter values to their original state.
     void reset();
+    //! Return the parameter vector
+    std::vector<double*> values(){return _params;};
 
  private:
     //! Vector of addresses to fit parameters. Pointers are _not_ owned.
