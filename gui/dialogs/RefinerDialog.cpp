@@ -723,6 +723,8 @@ void RefinerDialog::_setGraphUp()
     _graph_layout = new QVBoxLayout();
 
     _visualise_plot = new SXPlot();
+    _visualise_plot->xAxis->setLabel("Frame");
+    _visualise_plot->yAxis->setLabel("Value");
     _visualise_plot->setSizePolicy(*_size_policy_right);
 
     _graph_layout->addWidget(_visualise_plot);
@@ -806,6 +808,7 @@ void RefinerDialog::_selectedDataChanged()
     
     _setInitialValues(_current_index_spin->value());
     _setRefinedValues(_current_index_spin->value());
+    _plot();
 }
 
 void RefinerDialog::_fetchAllInitialValues()
@@ -1280,11 +1283,11 @@ void RefinerDialog::refine()
                 "[INFO] Failed to refine parameters for numor "
                 + QString::fromStdString(data->filename());
         }
-        
     }
     
     gSession->onExperimentChanged();
     _fetchAllRefinedValues();
+    _plot();
 }
 
 void RefinerDialog::accept()
@@ -1317,6 +1320,15 @@ void RefinerDialog::_plot()
 
     int graph_num = 0;
 
+    std::vector<QColor> colors {
+        Qt::black,
+        Qt::blue,
+        Qt::red,
+        Qt::darkGreen,
+        Qt::darkMagenta,
+        Qt::darkYellow
+    };
+
     std::vector<std::string> position_names {
         "Position X:",
         "Position Y:",
@@ -1330,6 +1342,10 @@ void RefinerDialog::_plot()
             selected_text.end(), 
             position_names[index]) != selected_text.end())
         {
+            QPen pen;
+            pen.setColor(colors[index%6]);
+            pen.setWidth(3);
+
             QVector<double> x_ini(_sample_positions[data_set].size());
             QVector<double> y_ini(_sample_positions[data_set].size());
 
@@ -1339,6 +1355,11 @@ void RefinerDialog::_plot()
             }
             _visualise_plot->addGraph();
             _visualise_plot->graph(graph_num)->setData(x_ini, y_ini);
+            _visualise_plot->graph(graph_num)->setPen(pen);
+            _visualise_plot->graph(graph_num)->setName(
+                QString::fromStdString(
+                    position_names[index].substr(
+                        0, position_names[index].size()-1)));
             ++graph_num;
 
             if (!( refiners.find(data_set) == refiners.end() )) {
@@ -1351,8 +1372,18 @@ void RefinerDialog::_plot()
                     x_ref[i] = i;
                     y_ref[i] = _sample_positions_ref[data_set][i][index];
                 }
+
+                pen.setDashPattern(
+                    QVector<qreal>() << 5<< 2 );
+
                 _visualise_plot->addGraph();
                 _visualise_plot->graph(graph_num)->setData(x_ref, y_ref);
+                _visualise_plot->graph(graph_num)->setPen(pen);
+                _visualise_plot->graph(graph_num)->setName(
+                    QString::fromStdString(
+                        position_names[index].substr(
+                            0, position_names[index].size()-1)
+                        +" refined"));
                 ++graph_num;
             }
 
@@ -1378,6 +1409,10 @@ void RefinerDialog::_plot()
             selected_text.end(), 
             orientation_names[index]) != selected_text.end())
         {
+            QPen pen;
+            pen.setColor(colors[index%6]);
+            pen.setWidth(3);
+
             QVector<double> x_ini(_sample_orientations[data_set].size());
             QVector<double> y_ini(_sample_orientations[data_set].size());
 
@@ -1387,6 +1422,11 @@ void RefinerDialog::_plot()
             }
             _visualise_plot->addGraph();
             _visualise_plot->graph(graph_num)->setData(x_ini, y_ini);
+            _visualise_plot->graph(graph_num)->setPen(pen);
+            _visualise_plot->graph(graph_num)->setName(
+                QString::fromStdString(
+                    orientation_names[index].substr(
+                        0, orientation_names[index].size()-1)));
             ++graph_num;
 
             if (!( refiners.find(data_set) == refiners.end() )) {
@@ -1399,8 +1439,18 @@ void RefinerDialog::_plot()
                     x_ref[i] = i;
                     y_ref[i] = _sample_orientations_ref[data_set][i](index);
                 }
+
+                pen.setDashPattern(
+                    QVector<qreal>() << 5<< 2 );
+
                 _visualise_plot->addGraph();
                 _visualise_plot->graph(graph_num)->setData(x_ref, y_ref);
+                _visualise_plot->graph(graph_num)->setPen(pen);
+                _visualise_plot->graph(graph_num)->setName(
+                    QString::fromStdString(
+                        orientation_names[index].substr(
+                            0, orientation_names[index].size()-1)
+                        + " refined"));
                 ++graph_num;
             }
 
@@ -1409,4 +1459,3 @@ void RefinerDialog::_plot()
     _visualise_plot->replot();
 
 }
-

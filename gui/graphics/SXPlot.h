@@ -34,12 +34,24 @@ public:
    virtual std::string getType() const;
 
 public:
-   
-   void mousePress();
-   
+
+   //! Manage the mouse move
+   void mouseMove(QMouseEvent* mouse_event);
+   //! Manage the mouse press
+   void mousePress(QMouseEvent* mouse_event);
+   //! Manage the mouse release
+   void mouseRelease(QMouseEvent* mouse_event);
+   //! Manage the mouse wheel
    void mouseWheel(QWheelEvent* wheel_event);
+
+   //! Manage the zoom
+   void zoom(double x_init, double x_final, double y_init, double y_final);
+   //! Automatic zoom to fit all plotables
+   void resetZoom();
    //! Update the plot
    virtual void update(PlottableItem* item);
+
+   //! Manage double clicks
    void titleDoubleClick(QMouseEvent* event, QCPPlotTitle* title);
    //! Double click on the legend
    void legendDoubleClick(QCPLegend* legend, QCPAbstractLegendItem* item);
@@ -50,6 +62,12 @@ public:
 
 private:
    void copyViewToClipboard();
+
+
+private:
+   QPoint _zoom_rect_origin;
+   QCPItemRect* _zoom_box;
+
 };
 
 #endif // GUI_GRAPHICS_SXPLOT_H

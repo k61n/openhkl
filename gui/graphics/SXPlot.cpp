@@ -21,13 +21,31 @@
 #include <fstream>
 #include <iostream>
 
-SXPlot::SXPlot(QWidget* parent) : QCustomPlot(parent)
+SXPlot::SXPlot(QWidget* parent) : 
+    QCustomPlot(parent)
 {
-    legend->setSelectableParts(QCPLegend::spItems);
+    _zoom_box = new QCPItemRect(this);
+    _zoom_box->setVisible(false);
 
-    // connect(
-    //     this, SIGNAL(mousePress(QMouseEvent*)), 
-    //     this, SLOT(mousePress()));
+    legend->setSelectableParts(QCPLegend::spItems);
+    legend->setVisible(true);
+
+    setInteractions(
+        QCP::iSelectAxes |
+        QCP::iSelectLegend | 
+        QCP::iSelectPlottables);
+
+    connect(
+        this, &QCustomPlot::mouseMove, 
+        this, &SXPlot::mouseMove);
+
+    connect(
+        this, &QCustomPlot::mousePress, 
+        this, &SXPlot::mousePress);
+
+    connect(
+        this, &QCustomPlot::mouseRelease, 
+        this, &SXPlot::mouseRelease);
 
     connect(
         this, &QCustomPlot::mouseWheel, 
@@ -40,9 +58,11 @@ SXPlot::SXPlot(QWidget* parent) : QCustomPlot(parent)
     //     this, SIGNAL(legendDoubleClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)), this,
     //     SLOT(legendDoubleClick(QCPLegend*, QCPAbstractLegendItem*)));
 
-    // // Enable right button click to export ASCII data
-    // setContextMenuPolicy(Qt::CustomContextMenu);
-    // connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(setmenuRequested(QPoint)));
+    // Enable right button click to export ASCII data
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(
+        this, &QCustomPlot::customContextMenuRequested, 
+        this, &SXPlot::setmenuRequested);
 }
 
 void SXPlot::update(PlottableItem* item) {Q_UNUSED(item)}
@@ -71,14 +91,47 @@ void SXPlot::keyPressEvent(QKeyEvent* event)
         copyViewToClipboard();
 }
 
-void SXPlot::mousePress()
+void SXPlot::mousePress(QMouseEvent* mouse_event)
 {
-    if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
-        axisRect()->setRangeDrag(xAxis->orientation());
-    else if (yAxis->selectedParts().testFlag(QCPAxis::spAxis))
-        axisRect()->setRangeDrag(yAxis->orientation());
-    else
-        axisRect()->setRangeDrag(Qt::Horizontal | Qt::Vertical);
+    if(mouse_event->button() == Qt::LeftButton){
+        _zoom_rect_origin = mouse_event->pos();
+
+        _zoom_box->setBrush(
+            QBrush(QColor(160,160,164,50)));
+        _zoom_box->topLeft->setCoords(
+            xAxis->pixelToCoord(mouse_event->x()),
+            yAxis->pixelToCoord(mouse_event->y())
+        );
+        _zoom_box->bottomRight->setCoords(
+            xAxis->pixelToCoord(mouse_event->x()),
+            yAxis->pixelToCoord(mouse_event->y())
+        );
+        _zoom_box->setVisible(true);
+        replot();
+    }
+}
+
+void SXPlot::mouseMove(QMouseEvent* mouse_event)
+{
+    if(mouse_event->button() == Qt::LeftButton || _zoom_box->visible()){
+        _zoom_box->bottomRight->setCoords(
+            xAxis->pixelToCoord(mouse_event->x()),
+            yAxis->pixelToCoord(mouse_event->y())
+        );
+        replot();
+    }
+}
+
+void SXPlot::mouseRelease(QMouseEvent* mouse_event)
+{
+    if(mouse_event->button() == Qt::LeftButton || _zoom_box->visible()){
+        _zoom_box->setVisible(false);
+        zoom(
+            xAxis->pixelToCoord(_zoom_rect_origin.x()), 
+            xAxis->pixelToCoord(mouse_event->pos().x()),
+            yAxis->pixelToCoord(_zoom_rect_origin.y()), 
+            yAxis->pixelToCoord(mouse_event->pos().y()));
+    }
 }
 
 void SXPlot::mouseWheel(QWheelEvent* wheel_event)
@@ -118,6 +171,51 @@ void SXPlot::mouseWheel(QWheelEvent* wheel_event)
     }
     replot();
 
+}
+
+void SXPlot::zoom(double x_init, double x_final, double y_init, double y_final)
+{
+    xAxis->setRange(x_init, x_final);
+    yAxis->setRange(y_init, y_final);
+    replot();
+}
+
+void SXPlot::resetZoom()
+{
+    int plot_count = plottableCount();
+    
+    double x_max = -1e20;
+    double x_min = 1e20;
+    double y_max = -1e20;
+    double y_min = 1e20;
+
+    std::vector<double> values_x, values_y;
+
+    for (int i = 0; i < plot_count; ++i){
+        QCPGraph* graph_item = graph(i);
+        QCPDataMap* data_item = graph_item->data();
+
+        values_x.clear();
+        values_y.clear();
+        for (
+            QCPDataMap::iterator it = data_item->begin();
+            it != data_item->end();
+            ++it){
+            values_x.push_back(it->key);
+            values_y.push_back(it->value);
+        }
+
+        if (*(std::max_element(values_x.begin(), values_x.end()))> x_max)
+            x_max = *(std::max_element(values_x.begin(), values_x.end()));
+        if (*(std::min_element(values_x.begin(), values_x.end()))< x_min)
+            x_min = *(std::min_element(values_x.begin(), values_x.end()));
+        if (*(std::max_element(values_y.begin(), values_y.end()))> y_max)
+            y_max = *(std::max_element(values_y.begin(), values_y.end()));
+        if (*(std::min_element(values_y.begin(), values_y.end()))< y_min)
+            y_min = *(std::min_element(values_y.begin(), values_y.end()));
+    }
+
+    zoom(x_min, x_max, y_min, y_max);
 }
 
 SXPlot::~SXPlot() {}
@@ -196,8 +294,16 @@ void SXPlot::setmenuRequested(QPoint pos)
     // Add menu to export the graphs to ASCII if graphs are present
     if (this->graphCount()) {
         QMenu* menu = new QMenu(this);
-        QAction* expportASCII = menu->addAction("Export to ASCII");
+        QAction* reset_zoom = menu->addAction("Reset zoom");
+        QAction* expport_ASCII = menu->addAction("Export to ASCII");
         menu->popup(mapToGlobal(pos));
-        connect(expportASCII, SIGNAL(triggered()), this, SLOT(exportToAscii()));
+
+        connect(
+            reset_zoom, &QAction::triggered, 
+            this, &SXPlot::resetZoom);
+
+        connect(
+            expport_ASCII, &QAction::triggered, 
+            this, &SXPlot::exportToAscii);
     }
 }
