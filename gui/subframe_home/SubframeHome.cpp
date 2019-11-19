@@ -164,6 +164,10 @@ void SubframeHome::_loadFromFile()
     QString file_path = QFileDialog::getOpenFileName(this,
         tr("Save the current experiment"), "",
         tr("Address Book (*.nsx);;All Files (*)"));
+
+    if (file_path.isEmpty())
+        return;
+        
     bool success = gSession->loadExperimentFromFile(file_path);
 
     if (success){
