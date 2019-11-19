@@ -171,7 +171,6 @@ void PeakProperties::selectedExperimentChanged()
 void PeakProperties::addMenuRequested()
 {
     QMenu* menu = new QMenu(_add);
-    
 
     QAction* add_from_finder = menu->addAction("Add from peak finder ...");
     QAction* add_from_predictor = menu->addAction("Add from peak predictor ...");
@@ -185,7 +184,6 @@ void PeakProperties::addMenuRequested()
         this, &PeakProperties::jumpToPredictor);
 
     menu->popup(mapToGlobal(_add->geometry().bottomLeft()));
-
 }
 
 void PeakProperties::jumpToFinder()
