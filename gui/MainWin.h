@@ -92,4 +92,5 @@ class MainWin : public QMainWindow {
     friend class Actions;
     friend class SideBar;
 };
+
 #endif // GUI_MAINWIN_H
