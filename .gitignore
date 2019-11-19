@@ -22,3 +22,5 @@ qbuild/
 Testing/
 
 html/
+
+last_loaded.ini

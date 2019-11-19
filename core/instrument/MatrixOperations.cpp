@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/instrument/MatrixOperations.h"
-#include <unsupported/Eigen/MatrixFunctions>
+#include <Eigen/Core>
 
 namespace nsx {
 
