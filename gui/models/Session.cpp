@@ -19,10 +19,12 @@
 #include "core/instrument/HardwareParameters.h"
 #include "core/loader/RawDataReader.h"
 #include "core/raw/IDataReader.h"
+
 #include "gui/MainWin.h"
 #include "gui/dialogs/ExperimentDialog.h"
 #include "gui/dialogs/RawDataDialog.h"
 #include "gui/graphics/DetectorScene.h"
+
 #include <QCR/engine/logger.h>
 #include <QCR/engine/mixin.h>
 #include <QCR/widgets/modal_dialogs.h>

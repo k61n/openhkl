@@ -13,36 +13,58 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_experiment/properties/PeakProperties.h"
-
 #include "gui/models/Session.h"
+#include "gui/MainWin.h"
+
 #include <QCR/engine/logger.h>
 #include <QFormLayout>
 #include <QTreeView>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QStandardItemModel>
+#include <QMenu>
 
 PeakProperties::PeakProperties() : QWidget()
 {
-    peak_list_combo = new QComboBox();
-    peak_table = new PeaksTableView;
+    setSizePolicies();
+
+    _peak_list_combo = new QComboBox();
+
+    _peak_table = new PeaksTableView;
+    _add = new QPushButton();
+    _filter = new QPushButton();
+    _remove = new QPushButton();
 
     QVBoxLayout* layout = new QVBoxLayout(this);
-    layout->addWidget(peak_list_combo);
-    layout->addWidget(peak_table);
+    QHBoxLayout* top_layout = new QHBoxLayout;
 
-    type = new QLabel;
-    file_name = new QLabel;
-    kernel_name = new QLabel;
-    parent_name = new QLabel;
-    peak_num = new QLabel;
-    valid = new QLabel;
-    non_valid = new QLabel;
+    top_layout->addWidget(_peak_list_combo);
+    top_layout->addWidget(_add);
+    top_layout->addWidget(_filter);
+    top_layout->addWidget(_remove);
+
+    layout->addLayout(top_layout);
+    layout->addWidget(_peak_table);
+
+    _add->setIcon(QIcon(":/images/Add_item.svg"));
+    _filter->setIcon(QIcon(":/images/filterIcon.svg"));
+    _remove->setIcon(QIcon(":/images/Delete_item.svg"));
+
+    _peak_list_combo->setSizePolicy(*_size_policy_widgets);
+
+    _type = new QLabel;
+    _file_name = new QLabel;
+    _kernel_name = new QLabel;
+    _parent_name = new QLabel;
+    _peak_num = new QLabel;
+    _valid = new QLabel;
+    _non_valid = new QLabel;
 
     QFormLayout* left_side = new QFormLayout;
-    left_side->addRow("Type:", type);
-    left_side->addRow("Peaks:", peak_num);
-    left_side->addRow("Valid:", valid);
-    left_side->addRow("Not valid:", non_valid);
+    left_side->addRow("Type:", _type);
+    left_side->addRow("Peaks:", _peak_num);
+    left_side->addRow("Valid:", _valid);
+    left_side->addRow("Not valid:", _non_valid);
 
     QHBoxLayout* meta_box = new QHBoxLayout;
     meta_box->addLayout(left_side);
@@ -50,18 +72,52 @@ PeakProperties::PeakProperties() : QWidget()
     layout->addLayout(meta_box);
 
     connect(
-        peak_list_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged),
+        _peak_list_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged),
         this, &PeakProperties::selectedPeaksChanged
     );
+
+    connect(
+        _add, &QPushButton::clicked, 
+        this, &PeakProperties::addMenuRequested
+    );
+
+    connect(
+        _filter, &QPushButton::clicked, 
+        this, &PeakProperties::jumpToFilter
+    );
+
+    connect(
+        _remove, &QPushButton::clicked, 
+        this, &PeakProperties::deleteCollection
+    );
+}
+
+void PeakProperties::setSizePolicies()
+{
+    _size_policy_widgets = new QSizePolicy();
+    _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Expanding);
+    _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
+    
+    _size_policy_box = new QSizePolicy();
+    _size_policy_box->setHorizontalPolicy(QSizePolicy::Preferred);
+    _size_policy_box->setVerticalPolicy(QSizePolicy::Preferred);
+
+    _size_policy_right = new QSizePolicy();
+    _size_policy_right->setHorizontalPolicy(QSizePolicy::Expanding);
+    _size_policy_right->setVerticalPolicy(QSizePolicy::Expanding);
+
+    _size_policy_fixed = new QSizePolicy();
+    _size_policy_fixed->setHorizontalPolicy(QSizePolicy::Fixed);
+    _size_policy_fixed->setVerticalPolicy(QSizePolicy::Fixed);
 }
 
 void PeakProperties::refreshInput()
 {
-    peak_list_combo->blockSignals(true);
-    peak_list_combo->clear();
-    peak_list_combo->addItems(
+    _peak_list_combo->blockSignals(true);
+    _peak_list_combo->clear();
+    _peak_list_combo->addItems(
         gSession->selectedExperiment()->getPeakListNames());
-    peak_list_combo->blockSignals(false);
+    _peak_list_combo->blockSignals(false);
 
     if (!gSession->selectedExperiment()->getPeakListNames().isEmpty())
         selectedPeaksChanged();
@@ -69,40 +125,39 @@ void PeakProperties::refreshInput()
 
 void PeakProperties::selectedPeaksChanged()
 {
-    PeakCollectionModel* model = gSession->selectedExperiment()->peakModel(peak_list_combo->currentIndex());
-    peak_table->setModel(model);
+    PeakCollectionModel* model = gSession->selectedExperiment()->peakModel(_peak_list_combo->currentIndex());
+    _peak_table->setModel(model);
 
     if (!model){
-        type->setText("");
-        peak_num->setText("");
-        valid->setText("");
-        non_valid->setText("");
+        _type->setText("");
+        _peak_num->setText("");
+        _valid->setText("");
+        _non_valid->setText("");
         return;
     }
 
     nsx::listtype listType = model->root()->peakCollection()->type();
     switch (listType) {
         case nsx::listtype::FILTERED : {
-            type->setText("Filtered");
+            _type->setText("Filtered");
             break;
         }
         case nsx::listtype::FOUND : {
-            type->setText("Found");
+            _type->setText("Found");
             break;
         }
         case nsx::listtype::PREDICTED : {
-            type->setText("Predicted");
+            _type->setText("Predicted");
             break;
         }
     }
 
-    peak_num->setText(QString::number(
+    _peak_num->setText(QString::number(
         model->root()->peakCollection()->numberOfPeaks()));
-    valid->setText(QString::number(
+    _valid->setText(QString::number(
         model->root()->peakCollection()->numberOfValid()));
-    non_valid->setText(QString::number(
+    _non_valid->setText(QString::number(
         model->root()->peakCollection()->numberOfInvalid()));
-
 }
 
 void PeakProperties::selectedExperimentChanged()
@@ -111,4 +166,48 @@ void PeakProperties::selectedExperimentChanged()
         return;
 
     selectedPeaksChanged();
+}
+
+void PeakProperties::addMenuRequested()
+{
+    QMenu* menu = new QMenu(_add);
+    
+
+    QAction* add_from_finder = menu->addAction("Add from peak finder ...");
+    QAction* add_from_predictor = menu->addAction("Add from peak predictor ...");
+
+    connect(
+        add_from_finder, &QAction::triggered, 
+        this, &PeakProperties::jumpToFinder);
+
+    connect(
+        add_from_predictor, &QAction::triggered, 
+        this, &PeakProperties::jumpToPredictor);
+
+    menu->popup(mapToGlobal(_add->geometry().bottomLeft()));
+
+}
+
+void PeakProperties::jumpToFinder()
+{
+    gGui->sideBar()->manualSelect(2);
+}
+
+void PeakProperties::jumpToPredictor()
+{
+    gGui->sideBar()->manualSelect(5);
+}
+
+void PeakProperties::jumpToFilter()
+{
+    gGui->sideBar()->manualSelect(3);
+}
+
+void PeakProperties::deleteCollection()
+{
+    _peak_table->setModel(nullptr);
+
+    gSession->selectedExperiment()->removePeakModel(
+        _peak_list_combo->currentText());
+    refreshInput();
 }

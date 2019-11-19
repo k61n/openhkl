@@ -273,9 +273,11 @@ PeakCollection* Experiment::getPeakCollection(const std::string name){
 }
 
 void Experiment::removePeakCollection(const std::string& name) {
-    auto peaks = _peak_collections.find(name);
-    if (peaks != _peak_collections.end())
-        _peak_collections.erase(peaks);
+    if (hasPeakCollection(name)){
+        auto peak_collection = _peak_collections.find(name);
+        peak_collection->second.reset();
+        _peak_collections.erase(peak_collection);
+    }
 }
 
 std::vector<std::string> Experiment::getCollectionNames() const {
@@ -366,15 +368,6 @@ UnitCell* Experiment::getUnitCell(const std::string& name)
 
 void Experiment::removeUnitCell(const std::string& name) 
 {   
-    // std::map<std::string, std::unique_ptr<PeakCollection>>::iterator it;
-    // for (it = _peak_collections.begin(); it != _peak_collections.end(); ++it){
-    //     std::vector<Peak3D*> peaks = it->second.get()->getPeakList();
-    //     for (Peak3D* peak: peaks){
-    //         if (peak->unitCell()->name() == name)
-    //             peak->setUnitCell(nullptr);
-    //     }
-    // }
-
     if (hasUnitCell(name)){
         auto unit_cell = _unit_cells.find(name);
         unit_cell->second.reset();

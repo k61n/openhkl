@@ -49,7 +49,9 @@ MainWin::MainWin()
     setContentsMargins(5, 5, 5, 5);
     QWidget* main_widget = new QWidget(this);
     QHBoxLayout* main_layout = new QHBoxLayout();
-    main_layout->addWidget(new SideBar(main_widget));
+    
+    _side_bar = new SideBar(main_widget);
+    main_layout->addWidget(_side_bar);
 
     _home = new SubframeHome;
     _experiment = new SubframeExperiment;

@@ -22,16 +22,15 @@
 #include "gui/subframe_experiment/SubframeExperiment.h"
 #include "gui/subframe_home/SubframeHome.h"
 #include "gui/subframe_combine/SubframeMergedPeaks.h"
-
+#include "gui/utility/SideBar.h"
 #include "gui/graphics/DetectorScene.h"
 
-#include <QCR/widgets/mainwindow.h>
 #include <QStackedWidget>
 
 extern class MainWin* gGui; //!< global pointer to the main window
 
 //! Main window of the application
-class MainWin : public QcrMainWindow {
+class MainWin : public QMainWindow {
  public:
     MainWin();
     ~MainWin();
@@ -66,7 +65,11 @@ class MainWin : public QcrMainWindow {
         _experiment->plot->plotData(x, y, e);
     }
 
+    //! Get the Sidebar
+    SideBar* sideBar() {return _side_bar;};
+
  private:
+
     void refresh();
     void readSettings();
     void saveSettings() const;
@@ -80,6 +83,7 @@ class MainWin : public QcrMainWindow {
     SubframeAutoIndexer* _indexer;
     SubframePredictPeaks* _predictor;
     SubframeMergedPeaks* _merger;
+    SideBar* _side_bar;
 
     class Menus* menus_;
 
