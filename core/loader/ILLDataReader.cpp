@@ -81,7 +81,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, Diffractometer* diffra
     // Gets the value of the monitor for the first frame
     std::vector<int> vi;
     std::size_t skip3Lines = 3 * 81;
-    readIntsFromChar(
+    readNumFromChar<int>(
         _mapAddress + _headerSize + skip3Lines, _mapAddress + _headerSize + skip3Lines + 16, vi);
     if ((vi.size() != 2) || (vi[0] != int(_nAngles + 3))) {
         throw std::runtime_error("Problem parsing numor: mismatch between number "
@@ -95,7 +95,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, Diffractometer* diffra
     const char* beginValues = _mapAddress + _headerSize + fromStoFData;
     std::vector<double> vd;
     std::size_t FData = 81 * size_t(std::lround(std::ceil(vi[0] / 6.0)));
-    readDoublesFromChar(beginValues, beginValues + FData, vd);
+    readNumFromChar<double>(beginValues, beginValues + FData, vd);
 
     if (vd.size() != (_nAngles + 3)) {
         throw std::runtime_error("Problem parsing numor: mismatch between number "
@@ -195,7 +195,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, Diffractometer* diffra
     for (unsigned int i = 0; i < _nFrames; ++i) {
         std::vector<double> scannedValues;
         beginValues = start + i * (_dataLength + _skipChar) + fromStoFData;
-        readDoublesFromChar(beginValues, beginValues + FData, scannedValues);
+        readNumFromChar<double>(beginValues, beginValues + FData, scannedValues);
 
         // The values of the scanned axis starts from the 4th number of the FFFFFF
         // data block. The first three being set for the 'time', the 'monitor' and
