@@ -12,8 +12,6 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/utility/SideBar.h"
-
 #include "gui/MainWin.h"
 #include "gui/models/Session.h"
 
@@ -123,6 +121,19 @@ QAction *SideBar::addAction( const QIcon &icon, const QString &text)
     mActions.push_back(action);
     update();
     return action;
+}
+
+void SideBar::manualSelect(int index)
+{
+    QAction* tempAction = mActions[index];
+    if(mCheckedAction)
+        mCheckedAction->setChecked(false);
+    if(mOverAction == tempAction)
+        mOverAction = NULL;
+    mCheckedAction = tempAction;
+    mCheckedAction->trigger();
+    tempAction->setChecked(true);
+    update();
 }
 
 void SideBar::mousePressEvent(QMouseEvent *event)

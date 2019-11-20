@@ -34,6 +34,8 @@
 #include <QDebug>
 #include <QStringList>
 #include <QStandardItem>
+#include <iostream>
+#include <vector>
 
 SessionExperiment::SessionExperiment()
 {
@@ -152,6 +154,52 @@ void SessionExperiment::generatePeakModels()
         peak_collection_model->setRoot(peak_collection_item);
         _peak_collection_models.push_back(peak_collection_model);
     }
+}
+
+void SessionExperiment::removePeakModel(const QString& name)
+{
+    std::string std_name = name.toStdString();
+
+    nsx::PeakCollection* peak_collection = _experiment->getPeakCollection(
+        std_name);
+    
+    if (!peak_collection)
+        return;
+
+    int item_index = 0;
+    PeakCollectionItem* selected_item = nullptr;
+    for (PeakCollectionItem* peak_collection_item : _peak_collection_items){
+        if (peak_collection_item->name() == std_name){
+            selected_item = peak_collection_item;
+            break;
+        }
+        ++item_index;
+    }
+
+    if (!selected_item)
+        return;
+
+    int model_index = 0;
+    PeakCollectionModel* selected_model = nullptr;
+    for (PeakCollectionModel* peak_collection_model : _peak_collection_models){
+        if (peak_collection_model->root() == selected_item){
+            selected_model = peak_collection_model;
+            break;
+        }
+        ++model_index;
+    }
+
+    if (!selected_model)
+        return;
+
+    _peak_collection_models.erase(
+        _peak_collection_models.begin() + model_index);
+    _peak_collection_items.erase(
+        _peak_collection_items.begin() + item_index);
+
+    delete selected_model;
+    delete selected_item;
+    _experiment->removePeakCollection(std_name);
 }
 
 PeakCollectionModel* SessionExperiment::peakModel(const QString& name)

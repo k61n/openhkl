@@ -63,6 +63,8 @@ public:
    void generatePeakModel(const QString& peakListName);
    //! Generate a peak model based on the Peak collection in the core
    void generatePeakModels();
+   //! Generate a peak model based on the Peak collection in the core
+   void removePeakModel(const QString& name);
    //! Get the peaklist model by name
    PeakCollectionModel* peakModel(const QString& name);
    //! Get the peaklist model by number

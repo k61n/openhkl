@@ -23,6 +23,7 @@ class SideBar : public QWidget {
     void addAction(QAction *action);
     QAction *addAction( const QIcon &icon, const QString &text);
     QSize minimumSizeHint() const;
+    void manualSelect(int index);
 
  private:
     void onHome();
