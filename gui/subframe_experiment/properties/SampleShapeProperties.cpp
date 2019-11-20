@@ -16,12 +16,14 @@
 
 #include "base/utils/Units.h"
 #include "gui/models/Session.h"
+
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHeaderView>
 #include <QVBoxLayout>
+#include <QLabel>
 
-SampleShapeProperties::SampleShapeProperties() : QcrWidget {"sampleShapeProperties"}
+SampleShapeProperties::SampleShapeProperties() : QWidget()
 {
     QVBoxLayout* overallLayout = new QVBoxLayout(this);
     // SampleProperty
@@ -32,31 +34,31 @@ SampleShapeProperties::SampleShapeProperties() : QcrWidget {"sampleShapeProperti
     // ShapeProperty
     QGroupBox* shape = new QGroupBox("Shape", this);
     QFormLayout* form = new QFormLayout(shape);
-    loadMovieButton = new QcrTextTriggerButton("adhoc_movieButton", "Load crystal movie");
-    movie = new QcrLineEdit("adhoc_movie", "");
-    movie->setReadOnly(true);
-    volume = new QcrLineEdit("adhoc_volume", "");
-    volume->setReadOnly(true);
-    faces = new QcrLineEdit("adhoc_faces", "");
-    faces->setReadOnly(true);
-    edges = new QcrLineEdit("adhoc_edges", "");
-    edges->setReadOnly(true);
-    vertices = new QcrLineEdit("adhoc_vertices", "");
-    vertices->setReadOnly(true);
-    form->addRow(loadMovieButton, movie);
-    form->addRow("Volume", volume);
-    form->addRow("Faces", faces);
-    form->addRow("Edges", edges);
-    form->addRow("Vertices", vertices);
+
+    _movie = new QLineEdit();
+    _movie->setReadOnly(true);
+    _volume = new QLineEdit();
+    _volume->setReadOnly(true);
+    _faces = new QLineEdit();
+    _faces->setReadOnly(true);
+    _edges = new QLineEdit();
+    _edges->setReadOnly(true);
+    _vertices = new QLineEdit();
+    _vertices->setReadOnly(true);
+
+    // form->addRow(loadMovieButton, movie);
+    form->addRow("Volume", _volume);
+    form->addRow("Faces", _faces);
+    form->addRow("Edges", _edges);
+    form->addRow("Vertices", _vertices);
+
     // move together
     overallLayout->addWidget(new QLabel("Sample"));
     overallLayout->addWidget(sampleProperty);
     overallLayout->addWidget(shape);
-
-    setRemake([this]() { onRemake(); });
 }
 
-void SampleShapeProperties::onRemake()
+void SampleShapeProperties::refreshInput()
 {
     if (gSession->selectedExperimentNum() >= 0) {
         // SampleProperty
@@ -67,11 +69,12 @@ void SampleShapeProperties::onRemake()
 
         sampleGoniometer->setEditTriggers(QAbstractItemView::NoEditTriggers);
         sampleGoniometer->setRowCount(n_sample_gonio_axes);
-
         sampleGoniometer->setColumnCount(2);
+
         QTableWidgetItem* __qtablewidgetitem = new QTableWidgetItem();
         __qtablewidgetitem->setText("Name");
         sampleGoniometer->setHorizontalHeaderItem(0, __qtablewidgetitem);
+
         QTableWidgetItem* __qtablewidgetitem1 = new QTableWidgetItem();
         __qtablewidgetitem1->setText("Type");
         sampleGoniometer->setHorizontalHeaderItem(1, __qtablewidgetitem1);
@@ -94,19 +97,23 @@ void SampleShapeProperties::onRemake()
 
         // Shape
         const nsx::ConvexHull& hull = sample.shape();
+        _volume->setText(
+            QString::number(hull.volume() / nsx::mm3) + " mm^3");
+        _faces->setText(
+            QString::number(hull.nFaces()));
+        _edges->setText(
+            QString::number(hull.nEdges()));
+        _vertices->setText(
+            QString::number(hull.nVertices()));
 
-        volume->setCellValue(QString::number(hull.volume() / nsx::mm3) + " mm^3");
-        faces->setCellValue(QString::number(hull.nFaces()));
-        edges->setCellValue(QString::number(hull.nEdges()));
-        vertices->setCellValue(QString::number(hull.nVertices()));
     } else {
         // SampleProperty
         sampleGoniometer->removeColumn(1);
         sampleGoniometer->removeColumn(0);
         // Shape
-        volume->setCellValue("");
-        faces->setCellValue("");
-        edges->setCellValue("");
-        vertices->setCellValue("");
+        _volume->setText("");
+        _faces->setText("");
+        _edges->setText("");
+        _vertices->setText("");
     }
 }

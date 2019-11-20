@@ -16,12 +16,19 @@
 
 InstrumentProperty::InstrumentProperty() : QTabWidget()
 {
-    addTab((detector = new DetectorProperty), "Detector");
-    addTab((monoSource = new SourceProperty), "Monochromatic source");
-    addTab((sample = new SampleShapeProperties), "Sample");
+    addTab((_detector = new DetectorProperty), "Detector");
+    addTab((_monoSource = new SourceProperty), "Monochromatic source");
+    addTab((_sample = new SampleShapeProperties), "Sample");
 }
 
 void InstrumentProperty::setCurrent(int index)
 {
     QTabWidget::setCurrentIndex(index);
+}
+
+void InstrumentProperty::refreshInput() const
+{
+    _detector->refreshInput();
+    _monoSource->refreshInput();
+    _sample->refreshInput();
 }
