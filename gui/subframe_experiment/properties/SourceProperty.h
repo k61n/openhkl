@@ -15,28 +15,32 @@
 #ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SOURCEPROPERTY_H
 #define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SOURCEPROPERTY_H
 
-#include <QCR/widgets/controls.h>
-#include <QCR/widgets/views.h>
+#include <QComboBox>
+#include <QDoubleSpinBox>
 
 //! Property widget of the monochromatic source
-class SourceProperty : public QcrWidget {
+class SourceProperty : public QWidget {
  public:
+
     SourceProperty();
+    void refreshInput();
+    void clear();
 
  private:
-    void onRemake();
-    void clear();
+ 
     void onMonoChanged(int);
     void onWavelength(double);
     void onWidth(double);
     void onHeight(double);
     void onFwhm(double);
-    QcrComboBox* monochromators;
-    QcrComboBox* type;
-    QcrDoubleSpinBox* wavelength;
-    QcrDoubleSpinBox* width;
-    QcrDoubleSpinBox* height;
-    QcrDoubleSpinBox* fwhm;
+
+    QComboBox* _monochromators;
+    QComboBox* _type;
+    QDoubleSpinBox* _wavelength;
+    QDoubleSpinBox* _width;
+    QDoubleSpinBox* _height;
+    QDoubleSpinBox* _FWHM;
+
 };
 
 #endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SOURCEPROPERTY_H

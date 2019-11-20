@@ -26,10 +26,10 @@ PropertyPanel::PropertyPanel() : QTabWidget()
     setTabPosition(QTabWidget::North);
     setMinimumSize(270, 320);
 
-    addTab((instrument = new InstrumentProperty), "Instrument"); // 0
-    addTab((data = new NumorProperty), "Data"); // 1
-    addTab((unitcells = new UnitCellProperty), "Unit cells"); // 2
-    addTab((peaks = new PeakProperties), "Peaks"); // 3
+    addTab((_instrument = new InstrumentProperty), "Instrument"); // 0
+    addTab((_data = new NumorProperty), "Data"); // 1
+    addTab((_unitcells = new UnitCellProperty), "Unit cells"); // 2
+    addTab((_peaks = new PeakProperties), "Peaks"); // 3
 }
 
 void PropertyPanel::setCurrent(int index)
@@ -44,25 +44,27 @@ void PropertyPanel::dataChanged()
         enabled = !gSession->selectedExperiment()->getDataNames().empty();
     setTabEnabled((int)tab::DATA, enabled);
     if (enabled)
-        data->refreshInput();
+        _data->refreshInput();
 }
 
 void PropertyPanel::experimentChanged()
 {
-    peaks->selectedExperimentChanged();
+    _peaks->selectedExperimentChanged();
+    _instrument->refreshInput();
+
 }
 
 void PropertyPanel::peaksChanged()
 {
     bool enabled = gSession->selectedExperimentNum() >= 0;
     if (enabled)
-        peaks->refreshInput();
-        peaks->selectedPeaksChanged();
+        _peaks->refreshInput();
+        _peaks->selectedPeaksChanged();
 }
 
 void PropertyPanel::unitCellChanged()
 {
     bool enabled = gSession->selectedExperimentNum() >= 0;
     if (enabled)
-        unitcells->refreshInput();
+        _unitcells->refreshInput();
 }

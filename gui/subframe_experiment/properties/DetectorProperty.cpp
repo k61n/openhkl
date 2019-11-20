@@ -16,84 +16,105 @@
 
 #include "core/detector/Detector.h"
 #include "gui/models/Session.h"
+
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHeaderView>
 #include <QTableWidget>
+#include <QLabel>
 
-DetectorProperty::DetectorProperty() : QcrWidget {"detectorProperty"}
+DetectorProperty::DetectorProperty() : QWidget()
 {
     QAbstractSpinBox::ButtonSymbols symbols = QAbstractSpinBox::NoButtons;
-    width = new QcrDoubleSpinBox("adhoc_width", new QcrCell<double>(0.00), 4, 2);
-    width->setReadOnly(true);
-    width->setButtonSymbols(symbols);
-    height = new QcrDoubleSpinBox("adhoc_height", new QcrCell<double>(0.00), 4, 2);
-    height->setReadOnly(true);
-    height->setButtonSymbols(symbols);
-    distance = new QcrDoubleSpinBox("adhoc_distance", new QcrCell<double>(0.00), 4, 2);
-    distance->setReadOnly(true);
-    distance->setButtonSymbols(symbols);
-    rows = new QcrSpinBox("adhoc_rows", new QcrCell<int>(0), 4);
-    rows->setReadOnly(true);
-    rows->setButtonSymbols(symbols);
-    columns = new QcrSpinBox("adhoc_columns", new QcrCell<int>(0), 4);
-    columns->setReadOnly(true);
-    columns->setButtonSymbols(symbols);
+
+    _width = new QDoubleSpinBox();
+    _height = new QDoubleSpinBox();
+    _distance = new QDoubleSpinBox();
+    _rows = new QSpinBox();
+    _columns = new QSpinBox();
+
+    _width->setMaximum(1000.);
+    _width->setDecimals(4);
+    _width->setButtonSymbols(symbols);
+    _width->setReadOnly(true);
+
+    _height->setMaximum(1000.);
+    _height->setDecimals(4);
+    _height->setButtonSymbols(symbols);
+    _height->setReadOnly(true);
+    
+    _distance->setMaximum(1000.);
+    _distance->setDecimals(4);
+    _distance->setButtonSymbols(symbols);
+    _distance->setReadOnly(true);
+
+    _rows->setMaximum(1000);
+    _rows->setButtonSymbols(symbols);
+    _rows->setReadOnly(true);
+
+    _columns->setMaximum(1000);
+    _columns->setButtonSymbols(symbols);
+    _columns->setReadOnly(true);
+
     // groupBox Parameters
     QGroupBox* groupBox = new QGroupBox("Parameters", this);
     QGridLayout* gridLayout = new QGridLayout(groupBox);
+
     // Labels
     gridLayout->addWidget(new QLabel("Width"), 0, 0, 1, 1);
     gridLayout->addWidget(new QLabel("Height"), 0, 2, 1, 1);
     gridLayout->addWidget(new QLabel("Rows"), 1, 0, 1, 1);
     gridLayout->addWidget(new QLabel("Columns"), 1, 2, 1, 1);
     gridLayout->addWidget(new QLabel("Distance"), 2, 0, 1, 1);
+
     // Spin boxes
-    gridLayout->addWidget(width, 0, 1, 1, 1);
-    gridLayout->addWidget(height, 0, 3, 1, 1);
-    gridLayout->addWidget(rows, 1, 1, 1, 1);
-    gridLayout->addWidget(columns, 1, 3, 1, 1);
-    gridLayout->addWidget(distance, 2, 1, 1, 1);
+    gridLayout->addWidget(_width, 0, 1, 1, 1);
+    gridLayout->addWidget(_height, 0, 3, 1, 1);
+    gridLayout->addWidget(_rows, 1, 1, 1, 1);
+    gridLayout->addWidget(_columns, 1, 3, 1, 1);
+    gridLayout->addWidget(_distance, 2, 1, 1, 1);
+
     // groupBox Goniometer
     QGroupBox* group_2 = new QGroupBox("Goniometer", this);
     QVBoxLayout* layout = new QVBoxLayout(group_2);
-    axes = new QTableWidget(group_2);
-    layout->addWidget(axes);
+    _axes = new QTableWidget(group_2);
+    layout->addWidget(_axes);
 
-    QVBoxLayout* vboxlayout = new QVBoxLayout(this);
-    vboxlayout->addWidget(groupBox);
-    vboxlayout->addWidget(group_2);
+    QVBoxLayout* v_box_layout = new QVBoxLayout(this);
 
-    setRemake([this]() { onRemake(); });
-    remake();
+    v_box_layout->addWidget(groupBox);
+    v_box_layout->addWidget(group_2);
 }
 
 DetectorProperty::~DetectorProperty() {}
 
-void DetectorProperty::onRemake()
+void DetectorProperty::refreshInput()
 {
     if (gSession->selectedExperimentNum() >= 0) {
         nsx::Detector* detector =
             gSession->selectedExperiment()->experiment()->diffractometer()->detector();
-        width->setCellValue(detector->width());
-        height->setCellValue(detector->height());
-        distance->setCellValue(detector->distance());
-        rows->setCellValue(detector->nRows());
-        columns->setCellValue(detector->nCols());
+
+        _width->setValue(detector->width());
+        _height->setValue(detector->height());
+        _distance->setValue(detector->distance());
+        _rows->setValue(detector->nRows());
+        _columns->setValue(detector->nCols());
 
         const nsx::Gonio& detector_gonio = detector->gonio();
         size_t n_detector_gonio_axes = detector_gonio.nAxes();
-        axes->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        axes->setRowCount(n_detector_gonio_axes);
-        axes->setColumnCount(2);
+        _axes->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        _axes->setRowCount(n_detector_gonio_axes);
+        _axes->setColumnCount(2);
+
         QTableWidgetItem* __qtablewidgetitem = new QTableWidgetItem();
         __qtablewidgetitem->setText("Name");
-        axes->setHorizontalHeaderItem(0, __qtablewidgetitem);
+        _axes->setHorizontalHeaderItem(0, __qtablewidgetitem);
+
         QTableWidgetItem* __qtablewidgetitem1 = new QTableWidgetItem();
         __qtablewidgetitem1->setText("Type");
-        axes->setHorizontalHeaderItem(1, __qtablewidgetitem1);
-        axes->horizontalHeader()->setStretchLastSection(true);
-        axes->verticalHeader()->setVisible(false);
+        _axes->setHorizontalHeaderItem(1, __qtablewidgetitem1);
+        _axes->horizontalHeader()->setStretchLastSection(true);
+        _axes->verticalHeader()->setVisible(false);
         for (size_t i = 0; i < n_detector_gonio_axes; ++i) {
             const nsx::Axis& axis = detector_gonio.axis(i);
 
@@ -103,17 +124,16 @@ void DetectorProperty::onRemake()
             QTableWidgetItem* item0 = new QTableWidgetItem();
             item0->setData(Qt::DisplayRole, QString(axis.name().c_str()));
             item0->setBackground(axis.physical() ? QColor("#FFDDDD") : QColor("#DDFFDD"));
-            axes->setItem(i, 0, item0);
+            _axes->setItem(i, 0, item0);
 
-            axes->setItem(i, 1, new QTableWidgetItem(QString(os.str().c_str())));
+            _axes->setItem(i, 1, new QTableWidgetItem(QString(os.str().c_str())));
         }
     } else {
-        width->setCellValue(0.00);
-        height->setCellValue(0.00);
-        distance->setCellValue(0.00);
-        rows->setCellValue(0);
-        columns->setCellValue(0);
-        axes->removeColumn(1);
-        axes->removeColumn(0);
+        _width->setValue(0.00);
+        _height->setValue(0.00);
+        _distance->setValue(0.00);
+        _rows->setValue(0);
+        _columns->setValue(0);
+        _axes->clear();
     }
 }

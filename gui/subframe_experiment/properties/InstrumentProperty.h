@@ -24,11 +24,19 @@ class InstrumentProperty : public QTabWidget {
  public:
     InstrumentProperty();
 
-    DetectorProperty* detector;
-    SourceProperty* monoSource;
-    SampleShapeProperties* sample;
+    DetectorProperty* detector() {return _detector;};
+    SourceProperty* monoSource() {return _monoSource;};
+    SampleShapeProperties* sample() {return _sample;};
 
     void setCurrent(int);
+    void refreshInput() const;
+
+private:
+    DetectorProperty* _detector;
+    SourceProperty* _monoSource;
+    SampleShapeProperties* _sample;
+
+    
 };
 
 #endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_INSTRUMENTPROPERTY_H

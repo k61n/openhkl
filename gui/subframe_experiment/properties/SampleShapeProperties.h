@@ -15,30 +15,38 @@
 #ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SAMPLESHAPEPROPERTIES_H
 #define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SAMPLESHAPEPROPERTIES_H
 
-#include <QCR/widgets/actions.h>
-#include <QCR/widgets/controls.h>
-#include <QCR/widgets/views.h>
+
 #include <QTableWidget>
+#include <QLineEdit>
+
 
 //! Property widget for the sample and its shape
-class SampleShapeProperties : public QcrWidget {
- public:
-    SampleShapeProperties();
+class SampleShapeProperties : public QWidget {
 
- private:
-    void onRemake();
-    void clear();
-    void facesChanged();
-    void edgesChanged();
-    void verticesChanged();
-    void volumeChanged();
-    QcrLineEdit* movie;
-    QcrLineEdit* volume;
-    QcrLineEdit* faces;
-    QcrLineEdit* edges;
-    QcrLineEdit* vertices;
-    QcrTextTriggerButton* loadMovieButton;
-    QTableWidget* sampleGoniometer;
+public:
+
+   SampleShapeProperties();
+
+   void refreshInput();
+   void clear();
+
+private:
+   void facesChanged();
+   void edgesChanged();
+   void verticesChanged();
+   void volumeChanged();
+
+private:
+
+   QLineEdit* _movie;
+   QLineEdit* _volume;
+   QLineEdit* _faces;
+   QLineEdit* _edges;
+   QLineEdit* _vertices;
+
+   // QTextTriggerButton* loadMovieButton;
+
+   QTableWidget* sampleGoniometer;
 };
 
 #endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SAMPLESHAPEPROPERTIES_H

@@ -25,10 +25,10 @@ class PropertyPanel : public QTabWidget {
  public:
     PropertyPanel();
 
-    NumorProperty* data;
-    UnitCellProperty* unitcells;
-    PeakProperties* peaks;
-    InstrumentProperty* instrument;
+    NumorProperty* _data;
+    UnitCellProperty* _unitcells;
+    PeakProperties* _peaks;
+    InstrumentProperty* _instrument;
 
     void setCurrent(int);
     void dataChanged();

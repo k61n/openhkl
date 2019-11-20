@@ -16,59 +16,58 @@
 
 #include "base/utils/Units.h"
 #include "gui/models/Session.h"
-#include <QCR/engine/cell.h>
+
 #include <QFormLayout>
 
-SourceProperty::SourceProperty() : QcrWidget("sourceProperty")
+SourceProperty::SourceProperty() : QWidget()
 {
     QFormLayout* form = new QFormLayout(this);
 
-    type = new QcrComboBox("sourcetype", new QcrCell<int>(0), {"Neutron"});
-    type->setEnabled(false);
+    _type = new QComboBox();
+    _type->setEnabled(false);
 
-    monochromators = new QcrComboBox("monochromators", new QcrCell<int>(0), []() {
-        QStringList list;
-        int exp = gSession->selectedExperimentNum();
-        if (exp < 0)
-            return list;
-        const std::vector<nsx::Monochromator>& monos = gSession->selectedExperiment()
-                                                           ->experiment()
-                                                           ->diffractometer()
-                                                           ->source()
-                                                           .monochromators();
-        for (nsx::Monochromator m : monos)
-            list.append(QString::fromStdString(m.name()));
-        return list;
-    });
-    monochromators->setEnabled(true);
+    _monochromators = new QComboBox();    
+    _monochromators->setEnabled(true);
 
-    wavelength = new QcrDoubleSpinBox("wavelength", new QcrCell<double>(0.00), 5, 2);
-    wavelength->setButtonSymbols(QDoubleSpinBox::NoButtons);
-    fwhm = new QcrDoubleSpinBox("fwhm", new QcrCell<double>(0.00), 5, 2);
-    fwhm->setButtonSymbols(QDoubleSpinBox::NoButtons);
-    width = new QcrDoubleSpinBox("width", new QcrCell<double>(0.00), 5, 2);
-    width->setButtonSymbols(QDoubleSpinBox::NoButtons);
-    height = new QcrDoubleSpinBox("height", new QcrCell<double>(0.00), 5, 2);
-    height->setButtonSymbols(QDoubleSpinBox::NoButtons);
-    form->addRow("Type:", type);
-    form->addRow("Monochromators:", monochromators);
-    form->addRow("Wavelength (ang):", wavelength);
-    form->addRow("FWHM (ang):", fwhm);
-    form->addRow("Width (mm):", width);
-    form->addRow("Height (mm):", height);
+    _wavelength = new QDoubleSpinBox();
+    _wavelength->setButtonSymbols(QDoubleSpinBox::NoButtons);
+
+    _FWHM = new QDoubleSpinBox();
+    _FWHM->setButtonSymbols(QDoubleSpinBox::NoButtons);
+
+    _width = new QDoubleSpinBox();
+    _width->setButtonSymbols(QDoubleSpinBox::NoButtons);
+
+    _height = new QDoubleSpinBox();
+    _height->setButtonSymbols(QDoubleSpinBox::NoButtons);
+
+    form->addRow("Type:", _type);
+    form->addRow("Monochromators:", _monochromators);
+    form->addRow("Wavelength (ang):", _wavelength);
+    form->addRow("FWHM (ang):", _FWHM);
+    form->addRow("Width (mm):", _width);
+    form->addRow("Height (mm):", _height);
     form->addItem(new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
 
-    setRemake([this]() { onRemake(); });
-    remake();
+    QStringList list;
+    int exp = gSession->selectedExperimentNum();
+    if (exp < 0){
+        _monochromators->addItems(list);
+    }else{
+        const std::vector<nsx::Monochromator>& monos = gSession->selectedExperiment()
+            ->experiment()
+            ->diffractometer()
+            ->source()
+            .monochromators();
+        for (nsx::Monochromator m : monos)
+            list.append(QString::fromStdString(m.name()));
+        _monochromators->addItems(list);
+    }
 }
 
-void SourceProperty::onRemake()
+void SourceProperty::refreshInput()
 {
-    monochromators->remake();
     if (gSession->selectedExperimentNum() >= 0) {
-        wavelength->setHook([this](double v) { onWavelength(v); });
-        width->setHook([this](double v) { onWidth(v); });
-        height->setHook([this](double v) { onHeight(v); });
         onMonoChanged(0);
     } else {
         clear();
@@ -77,13 +76,10 @@ void SourceProperty::onRemake()
 
 void SourceProperty::clear()
 {
-    wavelength->setCellValue(0.00);
-    wavelength->setHook([](double) {});
-    fwhm->setCellValue(0.00);
-    width->setCellValue(0.00);
-    width->setHook([](double) {});
-    height->setCellValue(0.00);
-    height->setHook([](double) {});
+    _wavelength->setValue(0.00);
+    _FWHM->setValue(0.00);
+    _width->setValue(0.00);
+    _height->setValue(0.00);
 }
 
 void SourceProperty::onMonoChanged(int index)
@@ -93,10 +89,10 @@ void SourceProperty::onMonoChanged(int index)
 
     const nsx::Monochromator& mono = source.selectedMonochromator();
 
-    wavelength->setCellValue(mono.wavelength());
-    fwhm->setCellValue(mono.fullWidthHalfMaximum());
-    height->setCellValue(mono.height() / nsx::mm);
-    width->setCellValue(mono.width() / nsx::mm);
+    _wavelength->setValue(mono.wavelength());
+    _FWHM->setValue(mono.fullWidthHalfMaximum());
+    _height->setValue(mono.height() / nsx::mm);
+    _width->setValue(mono.width() / nsx::mm);
 }
 
 void SourceProperty::onWavelength(double wavelength)
