@@ -24,3 +24,5 @@ Testing/
 html/
 
 last_loaded.ini
+
+.DS_Store
