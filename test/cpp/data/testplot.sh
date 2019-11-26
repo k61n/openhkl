@@ -17,6 +17,29 @@
 file=$1
 scannr=$2
 
+
+function extract_data()
+{
+	local datanr=$1
+	echo "Extracting image ${datanr}..."
+
+	# read data
+	data=$(awk \
+		"/^IIII*$/ { ++block; inside=1; line=1; }; \
+		/^SSSS*$/ { inside=0; } \
+		{ if(block==${datanr}+1 && inside && line>2) \
+			{ print; } \
+		++line; \
+		}" \
+		D9_QSCAN)
+
+	data1d=$(echo -e ${data})
+	data1d="${data1d//[ \t]/\n}"
+
+	echo -e "plot \"-\" w points pt 7\n${data1d}\ne\n" > /tmp/${datanr}.gpl
+}
+
+
 if [[ ! -f $file ]]; then
 	echo "Please specify a valid file name."
 	exit -1
@@ -25,23 +48,18 @@ fi
 
 # find number of images
 num=$(awk "/^IIII*$/ { ++line } END { print line-1 }" D9_QSCAN)
-echo "$num images in file ${file}. Showing image ${scannr}..."
+echo "$num images in file ${file}."
 
 
-# read data
-data=$(awk \
-	"/^IIII*$/ { ++block; inside=1; line=1; }; \
-	/^SSSS*$/ { inside=0; } \
-	{ if(block==${scannr}+1 && inside && line>2) \
-		{ print; } \
-	++line; \
-	}" \
-	D9_QSCAN)
+# if no data set number is given, plot them all
+if [[ $scannr -eq "" ]]; then
+	for((i=1; i<=${num}; ++i)); do
+		extract_data ${i}
+		gnuplot -p /tmp/${i}.gpl
+	done
 
-echo -e "${data}"
-
-
-# plot
-plotargs=$(echo -e "plot \"-\" matrix with image\n${data}\ne")
-gnuplot -p -e "${plotargs}"
-
+# plot only one data set
+else
+	extract_data ${scannr}
+	gnuplot -p /tmp/${scannr}.gpl
+fi
