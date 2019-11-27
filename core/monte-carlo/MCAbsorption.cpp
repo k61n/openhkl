@@ -17,6 +17,7 @@
 
 #include "base/hull/ConvexHull.h"
 #include "base/hull/Triangle.h"
+#include "base/utils/Random.h"
 #include "core/monte-carlo/MCAbsorption.h"
 
 namespace nsx {
@@ -55,9 +56,6 @@ double MCAbsorption::run(
     unsigned int nIterations, const Eigen::Vector3d& outV,
     const Eigen::Matrix3d& sampleOrientation) const
 {
-    std::function<double(void)> random =
-        std::bind(std::uniform_real_distribution<double>(-0.5, 0.5), std::mt19937(std::time(0)));
-
     TrianglesList faces = _convex_hull.createFaceCache(sampleOrientation);
 
     if (faces.empty())
@@ -70,8 +68,8 @@ double MCAbsorption::run(
     unsigned int nHits(0);
 
     for (unsigned int i = 0; i < nIterations; ++i) {
-        double w = random() * _source_width;
-        double h = random() * _source_height;
+        double w = Random::doubleRange(-0.5, 0.5) * _source_width;
+        double h = Random::doubleRange(-0.5, 0.5) * _source_height;
         Eigen::Vector3d point(w, _source_y_pos, h);
 
         unsigned int nIntersections(0);
@@ -91,7 +89,7 @@ double MCAbsorption::run(
         if (times[0] > times[1])
             std::swap(times[0], times[1]);
 
-        double lpm = (0.5 + random()) * (times[1] - times[0]);
+        double lpm = (0.5 + Random::doubleRange(-0.5, 0.5)) * (times[1] - times[0]);
         point += lpm * dir + times[0] * dir;
 
         double t2;

@@ -2,6 +2,7 @@
 
 #include <Eigen/Dense>
 
+#include "base/utils/Random.h"
 #include "core/experiment/DataSet.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/geometry/Ellipsoid.h"
@@ -16,10 +17,6 @@
 //! noise
 void correct_image(Eigen::ArrayXXd &data, double gain, double baseline,
                    bool noise) {
-  static std::random_device rd;
-  static std::mt19937 gen(rd());
-  static std::normal_distribution<> normal(0.0, 1.0);
-
   const int nrows = data.rows();
   const int ncols = data.cols();
 
@@ -28,7 +25,7 @@ void correct_image(Eigen::ArrayXXd &data, double gain, double baseline,
   if (noise) {
     for (auto i = 0; i < ncols; ++i) {
       for (auto j = 0; j < nrows; ++j) {
-        const double x = normal(gen);
+        const double x = Random::gauss(0., 1.);
         const double d = data(j, i);
         const double scale = d <= 0 ? 0.0 : std::sqrt(data(j, i));
         data(j, i) += scale * x;
