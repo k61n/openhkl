@@ -20,6 +20,7 @@
 #include <gsl/gsl_cdf.h>
 
 #include "base/geometry/ReciprocalVector.h"
+#include "base/utils/Random.h"
 #include "core/analyse/MergedPeak.h"
 #include "core/experiment/DataSet.h"
 #include "core/peak/Peak3D.h"
@@ -112,9 +113,9 @@ std::pair<MergedPeak, MergedPeak> MergedPeak::split() const
         random_idx[j] = j;
 
     // randomly reorder
-    std::random_shuffle(random_idx.begin(), random_idx.end());
+    std::shuffle(random_idx.begin(), random_idx.end(), Random::getRNG());
 
-    unsigned int parity = std::rand() % 2;
+    unsigned int parity = Random::intRange() % 2;
 
     MergedPeak p1(_grp, _friedel), p2(_grp, _friedel);
 
