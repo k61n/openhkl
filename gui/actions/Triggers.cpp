@@ -104,16 +104,16 @@ void Actions::setupOptions()
     dSpacing.setTriggerHook([]() { gGui->cursormode(3); });
     millerIndices.setTriggerHook([]() { gGui->cursormode(4); });
     logarithmicScale.setHook([](bool checked) {
-        gGui->_experiment->getImage()->imageView->getScene()->setLogarithmic(checked);
+        gGui->_experiment->getImage()->getView()->getScene()->setLogarithmic(checked);
     });
     showLabels.setHook([](bool checked) {
-        gGui->_experiment->getImage()->imageView->getScene()->showPeakLabels(checked);
+        gGui->_experiment->getImage()->getView()->getScene()->showPeakLabels(checked);
     });
     showAreas.setHook([](bool checked) {
-        gGui->_experiment->getImage()->imageView->getScene()->showPeakAreas(checked);
+        gGui->_experiment->getImage()->getView()->getScene()->showPeakAreas(checked);
     });
     drawPeakArea.setHook([](bool checked) {
-        gGui->_experiment->getImage()->imageView->getScene()->drawIntegrationRegion(checked);
+        gGui->_experiment->getImage()->getView()->getScene()->drawIntegrationRegion(checked);
     });
 }
 

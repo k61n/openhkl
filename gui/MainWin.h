@@ -55,7 +55,7 @@ class MainWin : public QMainWindow {
     //! change the cursor tooltip on the detector scene
     void cursormode(int i)
     {
-        _experiment->getImage()->imageView->getScene()->changeCursorMode(i);
+        _experiment->getImage()->getView()->getScene()->changeCursorMode(i);
     }
     //! export current plot to ASCII
     void exportPlot() { _experiment->getPlot()->exportPlot(); }
