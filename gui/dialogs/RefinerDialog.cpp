@@ -353,13 +353,13 @@ void RefinerDialog::_setSampleUp()
     _sample_layout->addWidget(checkbox_ptr, 12, 0, 1, 1);
     checkbox_ptr->setSizePolicy(*_size_policy_widgets);
 
-    _sample_position_X = new QDoubleSpinBox;
-    _sample_position_Y = new QDoubleSpinBox;
-    _sample_position_Z = new QDoubleSpinBox;
+    _sample_position_X = new QScienceSpinBox(this);
+    _sample_position_Y = new QScienceSpinBox(this);
+    _sample_position_Z = new QScienceSpinBox(this);
 
-    _sample_position_X_ref = new QDoubleSpinBox;
-    _sample_position_Y_ref = new QDoubleSpinBox;
-    _sample_position_Z_ref = new QDoubleSpinBox;
+    _sample_position_X_ref = new QScienceSpinBox(this);
+    _sample_position_Y_ref = new QScienceSpinBox(this);
+    _sample_position_Z_ref = new QScienceSpinBox(this);
 
     _sample_layout->addWidget(_sample_position_X, 1, 1, 1, 1);
     _sample_layout->addWidget(_sample_position_Y, 2, 1, 1, 1);
@@ -368,25 +368,25 @@ void RefinerDialog::_setSampleUp()
     _sample_layout->addWidget(_sample_position_Y_ref, 2, 2, 1, 1);
     _sample_layout->addWidget(_sample_position_Z_ref, 3, 2, 1, 1);
 
-    _sample_orientation_00 = new QDoubleSpinBox;
-    _sample_orientation_01 = new QDoubleSpinBox;
-    _sample_orientation_02 = new QDoubleSpinBox;
-    _sample_orientation_10 = new QDoubleSpinBox;
-    _sample_orientation_11 = new QDoubleSpinBox;
-    _sample_orientation_12 = new QDoubleSpinBox;
-    _sample_orientation_20 = new QDoubleSpinBox;
-    _sample_orientation_21 = new QDoubleSpinBox;
-    _sample_orientation_22 = new QDoubleSpinBox;
+    _sample_orientation_00 = new QScienceSpinBox(this);
+    _sample_orientation_01 = new QScienceSpinBox(this);
+    _sample_orientation_02 = new QScienceSpinBox(this);
+    _sample_orientation_10 = new QScienceSpinBox(this);
+    _sample_orientation_11 = new QScienceSpinBox(this);
+    _sample_orientation_12 = new QScienceSpinBox(this);
+    _sample_orientation_20 = new QScienceSpinBox(this);
+    _sample_orientation_21 = new QScienceSpinBox(this);
+    _sample_orientation_22 = new QScienceSpinBox(this);
 
-    _sample_orientation_00_ref = new QDoubleSpinBox;
-    _sample_orientation_01_ref = new QDoubleSpinBox;
-    _sample_orientation_02_ref = new QDoubleSpinBox;
-    _sample_orientation_10_ref = new QDoubleSpinBox;
-    _sample_orientation_11_ref = new QDoubleSpinBox;
-    _sample_orientation_12_ref = new QDoubleSpinBox;
-    _sample_orientation_20_ref = new QDoubleSpinBox;
-    _sample_orientation_21_ref = new QDoubleSpinBox;
-    _sample_orientation_22_ref = new QDoubleSpinBox;
+    _sample_orientation_00_ref = new QScienceSpinBox(this);
+    _sample_orientation_01_ref = new QScienceSpinBox(this);
+    _sample_orientation_02_ref = new QScienceSpinBox(this);
+    _sample_orientation_10_ref = new QScienceSpinBox(this);
+    _sample_orientation_11_ref = new QScienceSpinBox(this);
+    _sample_orientation_12_ref = new QScienceSpinBox(this);
+    _sample_orientation_20_ref = new QScienceSpinBox(this);
+    _sample_orientation_21_ref = new QScienceSpinBox(this);
+    _sample_orientation_22_ref = new QScienceSpinBox(this);
 
     _sample_layout->addWidget(_sample_orientation_00, 4, 1, 1, 1);
     _sample_layout->addWidget(_sample_orientation_01, 5, 1, 1, 1);
@@ -407,13 +407,15 @@ void RefinerDialog::_setSampleUp()
     _sample_layout->addWidget(_sample_orientation_21_ref, 11, 2, 1, 1);
     _sample_layout->addWidget(_sample_orientation_22_ref, 12, 2, 1, 1);
 
-    QList<QDoubleSpinBox*> spin_boxes = _sample_layout->parentWidget()->findChildren<QDoubleSpinBox*>();
+    QList<QScienceSpinBox*> spin_boxes = _sample_layout->parentWidget()->findChildren<QScienceSpinBox*>();
 
-    foreach(QDoubleSpinBox* spin_box, spin_boxes){
+    foreach(QScienceSpinBox* spin_box, spin_boxes){
         spin_box->setSizePolicy(*_size_policy_fixed);
         spin_box->setButtonSymbols(QAbstractSpinBox::NoButtons);
         spin_box->setReadOnly(true);
-        spin_box->setDecimals(6);
+        // spin_box->setDecimals(6);
+        // spin_box->setMinimum(-1e6);
+        // spin_box->setMaximum(1e6);
     }
 
     QList<QCheckBox*> checkboxes = _sample_layout->parentWidget()->findChildren<QCheckBox*>();
@@ -501,13 +503,13 @@ void RefinerDialog::_setDetectorUp()
     _detector_layout->addWidget(label_ptr, 12, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    _detector_position_X = new QDoubleSpinBox;
-    _detector_position_Y = new QDoubleSpinBox;
-    _detector_position_Z = new QDoubleSpinBox;
+    _detector_position_X = new QScienceSpinBox(this);
+    _detector_position_Y = new QScienceSpinBox(this);
+    _detector_position_Z = new QScienceSpinBox(this);
 
-    _detector_position_X_ref = new QDoubleSpinBox;
-    _detector_position_Y_ref = new QDoubleSpinBox;
-    _detector_position_Z_ref = new QDoubleSpinBox;
+    _detector_position_X_ref = new QScienceSpinBox(this);
+    _detector_position_Y_ref = new QScienceSpinBox(this);
+    _detector_position_Z_ref = new QScienceSpinBox(this);
 
     _detector_layout->addWidget(_detector_position_X, 1, 1, 1, 1);
     _detector_layout->addWidget(_detector_position_Y, 2, 1, 1, 1);
@@ -516,25 +518,25 @@ void RefinerDialog::_setDetectorUp()
     _detector_layout->addWidget(_detector_position_Y_ref, 2, 2, 1, 1);
     _detector_layout->addWidget(_detector_position_Z_ref, 3, 2, 1, 1);
 
-    _detector_orientation_00 = new QDoubleSpinBox;
-    _detector_orientation_01 = new QDoubleSpinBox;
-    _detector_orientation_02 = new QDoubleSpinBox;
-    _detector_orientation_10 = new QDoubleSpinBox;
-    _detector_orientation_11 = new QDoubleSpinBox;
-    _detector_orientation_12 = new QDoubleSpinBox;
-    _detector_orientation_20 = new QDoubleSpinBox;
-    _detector_orientation_21 = new QDoubleSpinBox;
-    _detector_orientation_22 = new QDoubleSpinBox;
+    _detector_orientation_00 = new QScienceSpinBox(this);
+    _detector_orientation_01 = new QScienceSpinBox(this);
+    _detector_orientation_02 = new QScienceSpinBox(this);
+    _detector_orientation_10 = new QScienceSpinBox(this);
+    _detector_orientation_11 = new QScienceSpinBox(this);
+    _detector_orientation_12 = new QScienceSpinBox(this);
+    _detector_orientation_20 = new QScienceSpinBox(this);
+    _detector_orientation_21 = new QScienceSpinBox(this);
+    _detector_orientation_22 = new QScienceSpinBox(this);
 
-    _detector_orientation_00_ref = new QDoubleSpinBox;
-    _detector_orientation_01_ref = new QDoubleSpinBox;
-    _detector_orientation_02_ref = new QDoubleSpinBox;
-    _detector_orientation_10_ref = new QDoubleSpinBox;
-    _detector_orientation_11_ref = new QDoubleSpinBox;
-    _detector_orientation_12_ref = new QDoubleSpinBox;
-    _detector_orientation_20_ref = new QDoubleSpinBox;
-    _detector_orientation_21_ref = new QDoubleSpinBox;
-    _detector_orientation_22_ref = new QDoubleSpinBox;
+    _detector_orientation_00_ref = new QScienceSpinBox(this);
+    _detector_orientation_01_ref = new QScienceSpinBox(this);
+    _detector_orientation_02_ref = new QScienceSpinBox(this);
+    _detector_orientation_10_ref = new QScienceSpinBox(this);
+    _detector_orientation_11_ref = new QScienceSpinBox(this);
+    _detector_orientation_12_ref = new QScienceSpinBox(this);
+    _detector_orientation_20_ref = new QScienceSpinBox(this);
+    _detector_orientation_21_ref = new QScienceSpinBox(this);
+    _detector_orientation_22_ref = new QScienceSpinBox(this);
 
     _detector_layout->addWidget(_detector_orientation_00, 4, 1, 1, 1);
     _detector_layout->addWidget(_detector_orientation_01, 5, 1, 1, 1);
@@ -555,13 +557,15 @@ void RefinerDialog::_setDetectorUp()
     _detector_layout->addWidget(_detector_orientation_21_ref, 11, 2, 1, 1);
     _detector_layout->addWidget(_detector_orientation_22_ref, 12, 2, 1, 1);
 
-    QList<QDoubleSpinBox*> spin_boxes = _detector_layout->parentWidget()->findChildren<QDoubleSpinBox*>();
+    QList<QScienceSpinBox*> spin_boxes = _detector_layout->parentWidget()->findChildren<QScienceSpinBox*>();
 
-    foreach(QDoubleSpinBox* spin_box, spin_boxes){
+    foreach(QScienceSpinBox* spin_box, spin_boxes){
         spin_box->setSizePolicy(*_size_policy_fixed);
         spin_box->setButtonSymbols(QAbstractSpinBox::NoButtons);
         spin_box->setReadOnly(true);
-        spin_box->setDecimals(6);
+        // spin_box->setDecimals(6);
+        // spin_box->setMinimum(-1e6);
+        // spin_box->setMaximum(1e6);
     }
 }
 
@@ -609,19 +613,19 @@ void RefinerDialog::_setUnitCellUp()
     _uc_layout->addWidget(label_ptr, 6, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    _uc_a = new QDoubleSpinBox;
-    _uc_b = new QDoubleSpinBox;
-    _uc_c = new QDoubleSpinBox;
-    _uc_a_ref = new QDoubleSpinBox;
-    _uc_b_ref = new QDoubleSpinBox;
-    _uc_c_ref = new QDoubleSpinBox;
+    _uc_a = new QScienceSpinBox(this);
+    _uc_b = new QScienceSpinBox(this);
+    _uc_c = new QScienceSpinBox(this);
+    _uc_a_ref = new QScienceSpinBox(this);
+    _uc_b_ref = new QScienceSpinBox(this);
+    _uc_c_ref = new QScienceSpinBox(this);
 
-    _uc_alpha = new QDoubleSpinBox;
-    _uc_beta = new QDoubleSpinBox;
-    _uc_gamma = new QDoubleSpinBox;
-    _uc_alpha_ref = new QDoubleSpinBox;
-    _uc_beta_ref = new QDoubleSpinBox;
-    _uc_gamma_ref = new QDoubleSpinBox;
+    _uc_alpha = new QScienceSpinBox(this);
+    _uc_beta = new QScienceSpinBox(this);
+    _uc_gamma = new QScienceSpinBox(this);
+    _uc_alpha_ref = new QScienceSpinBox(this);
+    _uc_beta_ref = new QScienceSpinBox(this);
+    _uc_gamma_ref = new QScienceSpinBox(this);
 
     _uc_layout->addWidget(_uc_a, 1, 1, 1, 1);
     _uc_layout->addWidget(_uc_b, 2, 1, 1, 1);
@@ -636,13 +640,13 @@ void RefinerDialog::_setUnitCellUp()
     _uc_layout->addWidget(_uc_beta_ref, 5, 2, 1, 1);
     _uc_layout->addWidget(_uc_gamma_ref, 6, 2, 1, 1);
 
-    QList<QDoubleSpinBox*> spin_boxes = _uc_layout->parentWidget()->findChildren<QDoubleSpinBox*>();
+    QList<QScienceSpinBox*> spin_boxes = _uc_layout->parentWidget()->findChildren<QScienceSpinBox*>();
 
-    foreach(QDoubleSpinBox* spin_box, spin_boxes){
+    foreach(QScienceSpinBox* spin_box, spin_boxes){
         spin_box->setSizePolicy(*_size_policy_fixed);
         spin_box->setButtonSymbols(QAbstractSpinBox::NoButtons);
         spin_box->setReadOnly(true);
-        spin_box->setDecimals(6);
+        // spin_box->setDecimals(6);
     }
 }
 
@@ -685,17 +689,17 @@ void RefinerDialog::_setInstrumentUp()
     _instrument_layout->addWidget(label_ptr, 5, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    _ni_X = new QDoubleSpinBox;
-    _ni_Y = new QDoubleSpinBox;
-    _ni_Z = new QDoubleSpinBox;
-    _wavelength = new QDoubleSpinBox;
-    _wavelength_offset = new QDoubleSpinBox;
+    _ni_X = new QScienceSpinBox(this);
+    _ni_Y = new QScienceSpinBox(this);
+    _ni_Z = new QScienceSpinBox(this);
+    _wavelength = new QScienceSpinBox(this);
+    _wavelength_offset = new QScienceSpinBox(this);
 
-    _ni_X_ref = new QDoubleSpinBox;
-    _ni_Y_ref = new QDoubleSpinBox;
-    _ni_Z_ref = new QDoubleSpinBox;
-    _wavelength_ref = new QDoubleSpinBox;
-    _wavelength_offset_ref = new QDoubleSpinBox;
+    _ni_X_ref = new QScienceSpinBox(this);
+    _ni_Y_ref = new QScienceSpinBox(this);
+    _ni_Z_ref = new QScienceSpinBox(this);
+    _wavelength_ref = new QScienceSpinBox(this);
+    _wavelength_offset_ref = new QScienceSpinBox(this);
 
     _instrument_layout->addWidget(_ni_X, 1, 1, 1, 1);
     _instrument_layout->addWidget(_ni_Y, 2, 1, 1, 1);
@@ -708,13 +712,13 @@ void RefinerDialog::_setInstrumentUp()
     _instrument_layout->addWidget(_wavelength_ref, 4, 2, 1, 1);
     _instrument_layout->addWidget(_wavelength_offset_ref, 5, 2, 1, 1);
 
-    QList<QDoubleSpinBox*> spin_boxes = _instrument_layout->parentWidget()->findChildren<QDoubleSpinBox*>();
+    QList<QScienceSpinBox*> spin_boxes = _instrument_layout->parentWidget()->findChildren<QScienceSpinBox*>();
 
-    foreach(QDoubleSpinBox* spin_box, spin_boxes){
+    foreach(QScienceSpinBox* spin_box, spin_boxes){
         spin_box->setSizePolicy(*_size_policy_fixed);
         spin_box->setButtonSymbols(QAbstractSpinBox::NoButtons);
         spin_box->setReadOnly(true);
-        spin_box->setDecimals(6);
+        // spin_box->setDecimals(6);
     }
 }
 

@@ -19,10 +19,10 @@
 #include "gui/views/PeakTableView.h"
 
 #include "gui/graphics/SXPlot.h"
+#include "gui/utility/QScienceSpinBox.h"
 
 #include <QDialogButtonBox>
 #include <QListWidget>
-#include <QDoubleSpinBox>
 #include <QCheckBox>
 #include <QPushButton>
 #include <QGridLayout>
@@ -150,87 +150,87 @@ private:
    QSpinBox* _number_of_batches;
    QPushButton* _refine;
 
-   QDoubleSpinBox* _ni_X;
-   QDoubleSpinBox* _ni_Y;
-   QDoubleSpinBox* _ni_Z;
-   QDoubleSpinBox* _wavelength;
-   QDoubleSpinBox* _wavelength_offset;
+   QScienceSpinBox* _ni_X;
+   QScienceSpinBox* _ni_Y;
+   QScienceSpinBox* _ni_Z;
+   QScienceSpinBox* _wavelength;
+   QScienceSpinBox* _wavelength_offset;
 
-   QDoubleSpinBox* _ni_X_ref;
-   QDoubleSpinBox* _ni_Y_ref;
-   QDoubleSpinBox* _ni_Z_ref;
-   QDoubleSpinBox* _wavelength_ref;
-   QDoubleSpinBox* _wavelength_offset_ref;
+   QScienceSpinBox* _ni_X_ref;
+   QScienceSpinBox* _ni_Y_ref;
+   QScienceSpinBox* _ni_Z_ref;
+   QScienceSpinBox* _wavelength_ref;
+   QScienceSpinBox* _wavelength_offset_ref;
 
-   QDoubleSpinBox* _uc_a;
-   QDoubleSpinBox* _uc_b;
-   QDoubleSpinBox* _uc_c;
-   QDoubleSpinBox* _uc_alpha;
-   QDoubleSpinBox* _uc_beta;
-   QDoubleSpinBox* _uc_gamma;
+   QScienceSpinBox* _uc_a;
+   QScienceSpinBox* _uc_b;
+   QScienceSpinBox* _uc_c;
+   QScienceSpinBox* _uc_alpha;
+   QScienceSpinBox* _uc_beta;
+   QScienceSpinBox* _uc_gamma;
 
-   QDoubleSpinBox* _uc_a_ref;
-   QDoubleSpinBox* _uc_b_ref;
-   QDoubleSpinBox* _uc_c_ref;
-   QDoubleSpinBox* _uc_alpha_ref;
-   QDoubleSpinBox* _uc_beta_ref;
-   QDoubleSpinBox* _uc_gamma_ref;
+   QScienceSpinBox* _uc_a_ref;
+   QScienceSpinBox* _uc_b_ref;
+   QScienceSpinBox* _uc_c_ref;
+   QScienceSpinBox* _uc_alpha_ref;
+   QScienceSpinBox* _uc_beta_ref;
+   QScienceSpinBox* _uc_gamma_ref;
 
-   QDoubleSpinBox* _sample_position_X;
-   QDoubleSpinBox* _sample_position_Y;
-   QDoubleSpinBox* _sample_position_Z;
+   QScienceSpinBox* _sample_position_X;
+   QScienceSpinBox* _sample_position_Y;
+   QScienceSpinBox* _sample_position_Z;
 
-   QDoubleSpinBox* _sample_position_X_ref;
-   QDoubleSpinBox* _sample_position_Y_ref;
-   QDoubleSpinBox* _sample_position_Z_ref;
+   QScienceSpinBox* _sample_position_X_ref;
+   QScienceSpinBox* _sample_position_Y_ref;
+   QScienceSpinBox* _sample_position_Z_ref;
 
-   QDoubleSpinBox* _sample_orientation_00;
-   QDoubleSpinBox* _sample_orientation_01;
-   QDoubleSpinBox* _sample_orientation_02;
-   QDoubleSpinBox* _sample_orientation_10;
-   QDoubleSpinBox* _sample_orientation_11;
-   QDoubleSpinBox* _sample_orientation_12;
-   QDoubleSpinBox* _sample_orientation_20;
-   QDoubleSpinBox* _sample_orientation_21;
-   QDoubleSpinBox* _sample_orientation_22;
+   QScienceSpinBox* _sample_orientation_00;
+   QScienceSpinBox* _sample_orientation_01;
+   QScienceSpinBox* _sample_orientation_02;
+   QScienceSpinBox* _sample_orientation_10;
+   QScienceSpinBox* _sample_orientation_11;
+   QScienceSpinBox* _sample_orientation_12;
+   QScienceSpinBox* _sample_orientation_20;
+   QScienceSpinBox* _sample_orientation_21;
+   QScienceSpinBox* _sample_orientation_22;
 
-   QDoubleSpinBox* _sample_orientation_00_ref;
-   QDoubleSpinBox* _sample_orientation_01_ref;
-   QDoubleSpinBox* _sample_orientation_02_ref;
-   QDoubleSpinBox* _sample_orientation_10_ref;
-   QDoubleSpinBox* _sample_orientation_11_ref;
-   QDoubleSpinBox* _sample_orientation_12_ref;
-   QDoubleSpinBox* _sample_orientation_20_ref;
-   QDoubleSpinBox* _sample_orientation_21_ref;
-   QDoubleSpinBox* _sample_orientation_22_ref;
+   QScienceSpinBox* _sample_orientation_00_ref;
+   QScienceSpinBox* _sample_orientation_01_ref;
+   QScienceSpinBox* _sample_orientation_02_ref;
+   QScienceSpinBox* _sample_orientation_10_ref;
+   QScienceSpinBox* _sample_orientation_11_ref;
+   QScienceSpinBox* _sample_orientation_12_ref;
+   QScienceSpinBox* _sample_orientation_20_ref;
+   QScienceSpinBox* _sample_orientation_21_ref;
+   QScienceSpinBox* _sample_orientation_22_ref;
 
-   QDoubleSpinBox* _detector_position_X;
-   QDoubleSpinBox* _detector_position_Y;
-   QDoubleSpinBox* _detector_position_Z;
+   QScienceSpinBox* _detector_position_X;
+   QScienceSpinBox* _detector_position_Y;
+   QScienceSpinBox* _detector_position_Z;
 
-   QDoubleSpinBox* _detector_position_X_ref;
-   QDoubleSpinBox* _detector_position_Y_ref;
-   QDoubleSpinBox* _detector_position_Z_ref;
+   QScienceSpinBox* _detector_position_X_ref;
+   QScienceSpinBox* _detector_position_Y_ref;
+   QScienceSpinBox* _detector_position_Z_ref;
 
-   QDoubleSpinBox* _detector_orientation_00;
-   QDoubleSpinBox* _detector_orientation_01;
-   QDoubleSpinBox* _detector_orientation_02;
-   QDoubleSpinBox* _detector_orientation_10;
-   QDoubleSpinBox* _detector_orientation_11;
-   QDoubleSpinBox* _detector_orientation_12;
-   QDoubleSpinBox* _detector_orientation_20;
-   QDoubleSpinBox* _detector_orientation_21;
-   QDoubleSpinBox* _detector_orientation_22;
+   QScienceSpinBox* _detector_orientation_00;
+   QScienceSpinBox* _detector_orientation_01;
+   QScienceSpinBox* _detector_orientation_02;
+   QScienceSpinBox* _detector_orientation_10;
+   QScienceSpinBox* _detector_orientation_11;
+   QScienceSpinBox* _detector_orientation_12;
+   QScienceSpinBox* _detector_orientation_20;
+   QScienceSpinBox* _detector_orientation_21;
+   QScienceSpinBox* _detector_orientation_22;
 
-   QDoubleSpinBox* _detector_orientation_00_ref;
-   QDoubleSpinBox* _detector_orientation_01_ref;
-   QDoubleSpinBox* _detector_orientation_02_ref;
-   QDoubleSpinBox* _detector_orientation_10_ref;
-   QDoubleSpinBox* _detector_orientation_11_ref;
-   QDoubleSpinBox* _detector_orientation_12_ref;
-   QDoubleSpinBox* _detector_orientation_20_ref;
-   QDoubleSpinBox* _detector_orientation_21_ref;
-   QDoubleSpinBox* _detector_orientation_22_ref;
+   QScienceSpinBox* _detector_orientation_00_ref;
+   QScienceSpinBox* _detector_orientation_01_ref;
+   QScienceSpinBox* _detector_orientation_02_ref;
+   QScienceSpinBox* _detector_orientation_10_ref;
+   QScienceSpinBox* _detector_orientation_11_ref;
+   QScienceSpinBox* _detector_orientation_12_ref;
+   QScienceSpinBox* _detector_orientation_20_ref;
+   QScienceSpinBox* _detector_orientation_21_ref;
+   QScienceSpinBox* _detector_orientation_22_ref;
 
    QSizePolicy* _size_policy_widgets;
    QSizePolicy* _size_policy_box;
