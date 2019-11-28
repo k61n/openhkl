@@ -28,99 +28,99 @@
 
 //-------------------------------------------------------------------------------------------------
 
-ImagePanel::ImagePanel() : QcrWidget {"Image"}
+ImagePanel::ImagePanel() : QWidget()
 {
-    QHBoxLayout* overallLayout = new QHBoxLayout(this);
-    QVBoxLayout* leftLayout = new QVBoxLayout;
-    frameLayout = new QFrame(this);
-    QHBoxLayout* leftLowerLayout = new QHBoxLayout(frameLayout);
-    imageView = new DetectorView;
-    leftLayout->addWidget(imageView);
-    scrollbar = new QScrollBar(frameLayout);
-    QSizePolicy sizePolicy6(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    sizePolicy6.setHorizontalStretch(1);
-    sizePolicy6.setVerticalStretch(0);
-    sizePolicy6.setHeightForWidth(scrollbar->sizePolicy().hasHeightForWidth());
-    scrollbar->setSizePolicy(sizePolicy6);
-    scrollbar->setMouseTracking(true);
-    scrollbar->setFocusPolicy(Qt::WheelFocus);
-    scrollbar->setOrientation(Qt::Horizontal);
-    leftLowerLayout->addWidget(scrollbar);
-    frame = new QcrSpinBox("frame", new QcrCell<int>(1), 3);
-    leftLowerLayout->addWidget(frame);
-    leftLayout->addWidget(frameLayout);
-    intensityLayout = new QFrame(this);
-    QHBoxLayout* horizontalLayout = new QHBoxLayout(intensityLayout);
-    slide = new QSlider(intensityLayout);
-    slide->setMouseTracking(true);
-    slide->setAutoFillBackground(false);
-    slide->setMinimum(1);
-    slide->setMaximum(10000);
-    slide->setValue(5000);
-    imageView->getScene()->setMaxIntensity(5000);
-    slide->setSingleStep(1);
-    slide->setOrientation(Qt::Horizontal);
-    slide->setTickPosition(QSlider::NoTicks);
-    horizontalLayout->addWidget(slide);
-    mode = new QcrComboBox(
-        "adhoc_modus", new QcrCell<int>(1),
-        {"selection", "zoom", "line plot", "horizontal slice", "vertical slice", "rectangular mask",
-         "ellipsoidal mask"});
-    horizontalLayout->addWidget(mode);
-    leftLayout->addWidget(intensityLayout);
-    overallLayout->addLayout(leftLayout);
-    mode->setEnabled(false);
-    intensityLayout->setEnabled(false);
-    frameLayout->setEnabled(false);
+    // QHBoxLayout* overallLayout = new QHBoxLayout(this);
+    // QVBoxLayout* leftLayout = new QVBoxLayout;
+    // frameLayout = new QFrame(this);
+    // QHBoxLayout* leftLowerLayout = new QHBoxLayout(frameLayout);
+    // imageView = new DetectorView;
+    // leftLayout->addWidget(imageView);
+    // scrollbar = new QScrollBar(frameLayout);
+    // QSizePolicy sizePolicy6(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    // sizePolicy6.setHorizontalStretch(1);
+    // sizePolicy6.setVerticalStretch(0);
+    // sizePolicy6.setHeightForWidth(scrollbar->sizePolicy().hasHeightForWidth());
+    // scrollbar->setSizePolicy(sizePolicy6);
+    // scrollbar->setMouseTracking(true);
+    // scrollbar->setFocusPolicy(Qt::WheelFocus);
+    // scrollbar->setOrientation(Qt::Horizontal);
+    // leftLowerLayout->addWidget(scrollbar);
+    // frame = new QcrSpinBox("frame", new QcrCell<int>(1), 3);
+    // leftLowerLayout->addWidget(frame);
+    // leftLayout->addWidget(frameLayout);
+    // intensityLayout = new QFrame(this);
+    // QHBoxLayout* horizontalLayout = new QHBoxLayout(intensityLayout);
+    // slide = new QSlider(intensityLayout);
+    // slide->setMouseTracking(true);
+    // slide->setAutoFillBackground(false);
+    // slide->setMinimum(1);
+    // slide->setMaximum(10000);
+    // slide->setValue(5000);
+    // imageView->getScene()->setMaxIntensity(5000);
+    // slide->setSingleStep(1);
+    // slide->setOrientation(Qt::Horizontal);
+    // slide->setTickPosition(QSlider::NoTicks);
+    // horizontalLayout->addWidget(slide);
+    // mode = new QcrComboBox(
+    //     "adhoc_modus", new QcrCell<int>(1),
+    //     {"selection", "zoom", "line plot", "horizontal slice", "vertical slice", "rectangular mask",
+    //      "ellipsoidal mask"});
+    // horizontalLayout->addWidget(mode);
+    // leftLayout->addWidget(intensityLayout);
+    // overallLayout->addLayout(leftLayout);
+    // mode->setEnabled(false);
+    // intensityLayout->setEnabled(false);
+    // frameLayout->setEnabled(false);
 
-    connect(slide, SIGNAL(valueChanged(int)), imageView->getScene(), SLOT(setMaxIntensity(int)));
-    connect(
-        scrollbar, SIGNAL(valueChanged(int)), imageView->getScene(),
-        SLOT(slotChangeSelectedFrame(int)));
-    connect(scrollbar, &QScrollBar::valueChanged, [=](int i) { frame->setCellValue(i); });
-    frame->setHook([=](int i) { scrollbar->setValue(i); });
-    mode->setHook([=](int i) { imageView->getScene()->changeInteractionMode(i); });
+    // connect(slide, SIGNAL(valueChanged(int)), imageView->getScene(), SLOT(setMaxIntensity(int)));
+    // connect(
+    //     scrollbar, SIGNAL(valueChanged(int)), imageView->getScene(),
+    //     SLOT(slotChangeSelectedFrame(int)));
+    // connect(scrollbar, &QScrollBar::valueChanged, [=](int i) { frame->setCellValue(i); });
+    // frame->setHook([=](int i) { scrollbar->setValue(i); });
+    // mode->setHook([=](int i) { imageView->getScene()->changeInteractionMode(i); });
 }
 
 void ImagePanel::dataChanged()
 {
-    mode->setEnabled(false);
-    intensityLayout->setEnabled(false);
-    frameLayout->setEnabled(false);
-    imageView->getScene()->resetScene();
-    if (gSession->selectedExperimentNum() >= 0) {
-        nsx::sptrDataSet dataset = gSession->selectedExperiment()->getData(0);
-        if (dataset) {
-            mode->setEnabled(true);
-            intensityLayout->setEnabled(true);
-            frameLayout->setEnabled(true);
-            int frames = dataset->nFrames();
-            scrollbar->setMaximum(frames);
-            scrollbar->setMinimum(0);
-            scrollbar->setSingleStep(1);
-            frame->setMaximum(frames);
-            frame->setMinimum(0);
-            frame->setSingleStep(1);
-            imageView->getScene()->slotChangeSelectedData(dataset, 0);
-        }
-    }
+    // mode->setEnabled(false);
+    // intensityLayout->setEnabled(false);
+    // frameLayout->setEnabled(false);
+    // imageView->getScene()->resetScene();
+    // if (gSession->selectedExperimentNum() >= 0) {
+    //     nsx::sptrDataSet dataset = gSession->selectedExperiment()->getData(0);
+    //     if (dataset) {
+    //         mode->setEnabled(true);
+    //         intensityLayout->setEnabled(true);
+    //         frameLayout->setEnabled(true);
+    //         int frames = dataset->nFrames();
+    //         scrollbar->setMaximum(frames);
+    //         scrollbar->setMinimum(0);
+    //         scrollbar->setSingleStep(1);
+    //         frame->setMaximum(frames);
+    //         frame->setMinimum(0);
+    //         frame->setSingleStep(1);
+    //         imageView->getScene()->slotChangeSelectedData(dataset, 0);
+    //     }
+    // }
 }
 
 void ImagePanel::changeView(int option)
 {
-    QTransform trans;
-    trans.scale(-1, -1); // fromDetector (default; 0)
-    if (option == 1) // fromSample
-        trans.scale(-1, 1);
-    imageView->setTransform(trans);
-    imageView->fitScene();
+    // QTransform trans;
+    // trans.scale(-1, -1); // fromDetector (default; 0)
+    // if (option == 1) // fromSample
+    //     trans.scale(-1, 1);
+    // imageView->setTransform(trans);
+    // imageView->fitScene();
 }
 
 //  ***********************************************************************************************
 
-SubframeImage::SubframeImage() : QcrDockWidget {"Image"}
-{
-    setWidget((centralWidget = new ImagePanel));
-    connect(
-        this, SIGNAL(visibilityChanged(bool)), &gGui->triggers->viewImage, SLOT(setChecked(bool)));
-}
+// SubframeImage::SubframeImage() : QcrDockWidget {"Image"}
+// {
+//     setWidget((centralWidget = new ImagePanel));
+//     connect(
+//         this, SIGNAL(visibilityChanged(bool)), &gGui->triggers->viewImage, SLOT(setChecked(bool)));
+// }

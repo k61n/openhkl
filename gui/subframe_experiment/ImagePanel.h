@@ -16,31 +16,37 @@
 #define GUI_SUBFRAME_EXPERIMENT_IMAGE_PANEL_H
 
 #include "gui/graphics/DetectorView.h"
-#include <QCR/widgets/controls.h>
-#include <QCR/widgets/views.h>
+
+#include <QSpinBox>
+#include <QComboBox>
+#include <QFrame>
+#include <QScrollBar>
 
 //! Part of the main window that contains the detector view
-class ImagePanel : public QcrWidget {
- public:
-    ImagePanel();
-    void dataChanged();
-    void changeView(int option);
-    DetectorView* imageView;
+class ImagePanel : public QWidget {
 
- private:
-    QcrSpinBox* frame;
-    QFrame* frameLayout;
-    QcrComboBox* mode;
-    QSlider* slide;
-    QScrollBar* scrollbar;
-    QFrame* intensityLayout;
+public:
+
+   ImagePanel();
+   void dataChanged();
+   void changeView(int option);
+   DetectorView* imageView;
+
+private:
+
+   QSpinBox* frame;
+   QFrame* frameLayout;
+   QComboBox* mode;
+   QSlider* slide;
+   QScrollBar* scrollbar;
+   QFrame* intensityLayout;
 };
 
-//! Dock widget of the main window that contains the ImagePanel
-class SubframeImage : public QcrDockWidget {
- public:
-    SubframeImage();
-    ImagePanel* centralWidget;
-};
+// //! Dock widget of the main window that contains the ImagePanel
+// class SubframeImage : public QcrDockWidget {
+//  public:
+//     SubframeImage();
+//     ImagePanel* centralWidget;
+// };
 
 #endif // GUI_SUBFRAME_EXPERIMENT_IMAGE_PANEL_H
