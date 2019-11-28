@@ -23,13 +23,22 @@
 #include <QWidget>
 
 class SubframeExperiment : public QWidget {
- public:
+
+public:
+
     SubframeExperiment();
 
-    ImagePanel* image;
-    LoggerPanel* logger;
-    PlotPanel* plot;
-    PropertyPanel* properties;
+    ImagePanel* getImage() {return _image;};
+    LoggerPanel* getLogger() {return _logger;};
+    PlotPanel* getPlot() {return _plot;};
+    PropertyPanel* getProperty() {return _properties;};
+
+private:
+
+    ImagePanel* _image;
+    LoggerPanel* _logger;
+    PlotPanel* _plot;
+    PropertyPanel* _properties;
 };
 
 #endif // GUI_SUBFRAME_EXPERIMENT_SUBFRAME_EXPERIMENT_H

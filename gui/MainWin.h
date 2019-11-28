@@ -49,20 +49,20 @@ class MainWin : public QMainWindow {
     //! Refreshes the parts of the main window that depend on the peaks
     void onUnitCellChanged();
     //! change the detector image view
-    void changeView(int option) { _experiment->image->changeView(option); }
+    void changeView(int option) { _experiment->getImage()->changeView(option); }
     //! update the plot, plot the plottable item p
-    void updatePlot(PlottableItem* p) { _experiment->plot->updatePlot(p); }
+    void updatePlot(PlottableItem* p) { _experiment->getPlot()->updatePlot(p); }
     //! change the cursor tooltip on the detector scene
     void cursormode(int i)
     {
-        _experiment->image->imageView->getScene()->changeCursorMode(i);
+        _experiment->getImage()->imageView->getScene()->changeCursorMode(i);
     }
     //! export current plot to ASCII
-    void exportPlot() { _experiment->plot->exportPlot(); }
+    void exportPlot() { _experiment->getPlot()->exportPlot(); }
     //! plot the x and y data, e is the error to y
     void plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e)
     {
-        _experiment->plot->plotData(x, y, e);
+        _experiment->getPlot()->plotData(x, y, e);
     }
 
     //! Get the Sidebar

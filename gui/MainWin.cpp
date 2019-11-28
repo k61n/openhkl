@@ -93,23 +93,23 @@ void MainWin::refresh()
 
 void MainWin::onDataChanged()
 {
-    _experiment->image->dataChanged();
-    _experiment->properties->dataChanged();
+    _experiment->getImage()->dataChanged();
+    _experiment->getProperty()->dataChanged();
 }
 
 void MainWin::onExperimentChanged()
 {
-    _experiment->properties->experimentChanged();
+    _experiment->getProperty()->experimentChanged();
 }
 
 void MainWin::onPeaksChanged()
 {
-    _experiment->properties->peaksChanged();
+    _experiment->getProperty()->peaksChanged();
 }
 
 void MainWin::onUnitCellChanged()
 {
-    _experiment->properties->unitCellChanged();
+    _experiment->getProperty()->unitCellChanged();
 }
 
 void MainWin::resetViews()
