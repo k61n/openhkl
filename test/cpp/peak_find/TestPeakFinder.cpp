@@ -1,5 +1,6 @@
 #include "test/cpp/catch.hpp"
 
+#include "base/geometry/Ellipsoid.h"
 #include "base/utils/ProgressHandler.h"
 #include "core/algo/DataReaderFactory.h"
 #include "core/analyse/PeakFinder.h"
@@ -36,6 +37,20 @@ TEST_CASE("test/peak_find/TestPeakFinder.cpp", "")
     peakFinder.find(numors);
     auto found_peaks = peakFinder.currentPeaks();
     CHECK(found_peaks.size() == 1);
+
+    auto qvec = found_peaks[0]->q();
+    std::cout << "q = " << qvec << std::endl;
+
+    nsx::Ellipsoid elli_real = found_peaks[0]->shape();
+    nsx::Ellipsoid elli_recip = found_peaks[0]->qShape();
+
+    std::cout << "\nreal ellipse center:\n" << elli_real.center() << std::endl;
+    std::cout << "\nreal ellipse metric:\n" << elli_real.metric() << std::endl;
+    std::cout << "\nrecip ellipse center:\n" << elli_recip.center() << std::endl;
+    std::cout << "\nrecip ellipse metric:\n" << elli_recip.metric() << std::endl;
+
+    for(int i=0; i<3; ++i)
+        CHECK(qvec[i] == Approx(elli_recip.center()[i]).epsilon(1e-3));
 
     dataf->close();
 }

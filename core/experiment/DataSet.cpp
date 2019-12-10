@@ -330,7 +330,7 @@ std::vector<DetectorEvent> DataSet::events(const std::vector<ReciprocalVector>& 
         return kf.squaredNorm() < ki.squaredNorm();
     };
 
-    // lfor each sample q, determine the rotation that makes it intersect the Ewald sphere
+    // for each sample q, determine the rotation that makes it intersect the Ewald sphere
     for (const ReciprocalVector& sample_q : sample_qs) {
         const Eigen::RowVector3d& q_vect = sample_q.rowVector();
 

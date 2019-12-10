@@ -31,6 +31,10 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     nsx::Experiment experiment("test", "BioDiff2500");
     nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
 
+    nsx::Detector *detector = experiment.diffractometer()->detector();
+    std::cout << "Detector distance: " << detector->distance() << ", "
+        << "width: " << detector->width() << ", height: " << detector->height() << std::endl;
+
     experiment.addData(dataf);
 
     nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
@@ -66,6 +70,21 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     auto found_peaks = peak_finder->currentPeaks();
 
+    /*for(const nsx::Peak3D* pk : found_peaks)
+    {
+        if(!pk->enabled())
+            continue;
+
+        nsx::Ellipsoid elli_real = pk->shape();
+        nsx::Ellipsoid elli_recip = pk->qShape();
+        nsx::Intensity intensity = pk->rawIntensity();
+
+        std::cout << "real peak: " << elli_real.center().transpose() << ", ";
+        std::cout << "recip peak: " << elli_recip.center().transpose() << ", ";
+        std::cout << "intensity: " << intensity.value() << " +- " << intensity.sigma() << std::endl;
+    }*/
+
+
     try {
         CHECK(static_cast<int>(found_peaks.size()) >= 0);
     } catch (...) {
@@ -99,8 +118,25 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     experiment.acceptFilter("filtered_peaks", found_collection);
 
-    CHECK(experiment.getPeakCollection(
-        "filtered_peaks")->getPeakList().size() >= 100);
+    auto filteredPeaks = experiment.getPeakCollection("filtered_peaks")->getPeakList();
+
+    for(const nsx::Peak3D* pk : filteredPeaks)
+    {
+        if(!pk->enabled())
+            continue;
+
+        nsx::Ellipsoid elli_real = pk->shape();
+        nsx::Ellipsoid elli_recip = pk->qShape();
+        nsx::Intensity intensity = pk->rawIntensity();
+        nsx::Intensity background = pk->meanBackground();
+
+        std::cout << "real peak: " << elli_real.center().transpose() << ", ";
+        std::cout << "recip peak: " << elli_recip.center().transpose() << ", ";
+        std::cout << "intensity: " << intensity.value() << "+-" << intensity.sigma() << ", ";
+        std::cout << "background: " << background.value() << "+-" << background.sigma() << std::endl;
+    }
+
+    CHECK(filteredPeaks.size() >= 100);
 
     // #########################################################
     // at this stage we have the peaks, now we index
@@ -121,8 +157,14 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     // set unit cell
     auto cell = solution.first;
+    cell->printSelf(std::cout);
+
+
     for (auto&& peak : filtered_peaks->getPeakList())
+    {
         peak->setUnitCell(cell);
+        //std::cout << "recip peak: " << peak->q().rowVector() << std::endl;
+    }
 
     // reintegrate peaks
     integrator->setPeakEnd(3.0);
@@ -167,6 +209,11 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
         CHECK(q0(0) == Approx(q1(0)).epsilon(2e-2));
         CHECK(q0(1) == Approx(q1(1)).epsilon(2e-2));
         CHECK(q0(2) == Approx(q1(2)).epsilon(2e-2));
+
+        /*std::cout << q0 << std::endl;
+        std::cout << q1 << std::endl;
+        std::cout << p0.transpose() << std::endl;
+        std::cout << p1.transpose() << "\n" << std::endl;*/
     }
 
     CHECK(n_selected > 600);

@@ -29,7 +29,7 @@ struct Vertex;
 
 //! Convex hull, used for various purposes (?)
 
-//! This class implements an templated object-oriented adaptation of the 3D
+//! This class implements an object-oriented adaptation of the 3D
 //! incremental convex hull algorithm whose implementation in C has been
 //! described in: o'Rourke, Joseph. Computational geometry in C. Cambridge
 //! university press, 1998. 115-144.

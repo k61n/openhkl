@@ -16,7 +16,7 @@ TEST_CASE(__FILE__, "")
 		CHECK(ill.nRows() == 32);
 		CHECK(ill.nCols() == 32);
 
-	        auto dat = ill.data(20);
+		auto dat = ill.data(20);
 		std::cout << dat << std::endl;
 
 		CHECK(dat.sum() == 5646);

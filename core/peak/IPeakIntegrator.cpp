@@ -17,7 +17,6 @@
 #include "core/experiment/DataSet.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
-#include "tables/crystal/BrillouinZone.h"
 #include "tables/crystal/UnitCell.h"
 #include <QDebug>
 #include <QtGlobal>
