@@ -150,6 +150,21 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     CHECK_NOTHROW(auto_indexer->autoIndex(filtered_peaks));
     CHECK(auto_indexer->solutions().size() > 1);
 
+    std::cout << "Number of solutions: " << auto_indexer->solutions().size() << std::endl;
+    for(std::size_t solidx = 0; solidx < auto_indexer->solutions().size(); ++ solidx)
+    {
+        const auto& solution = auto_indexer->solutions()[solidx];
+        const auto& cell = solution.first;
+        double prob = solution.second;
+
+        std::cout << "\n================================================================================" << std::endl;
+        std::cout << "Solution " << solidx << " has " << prob << "% probability." << std::endl;
+        std::cout << "Unit cell:" << std::endl;
+        cell->printSelf(std::cout);
+        std::cout << "================================================================================\n" << std::endl;
+    }
+
+
     auto solution = auto_indexer->solutions().front();
 
     // correctly indexed at least 92% of peaks
