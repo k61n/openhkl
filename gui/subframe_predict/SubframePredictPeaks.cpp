@@ -651,6 +651,7 @@ void SubframePredictPeaks::updateDatasetParameters(int idx)
 
     _figure_view->getScene()->slotChangeSelectedData(_data_list.at(idx), 0);
     _figure_view->getScene()->setMaxIntensity(3000);
+    emit _figure_view->getScene()->dataChanged();
     _figure_view->getScene()->update();
 
     _figure_scroll->setMaximum(data->nFrames());
