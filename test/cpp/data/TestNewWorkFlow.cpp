@@ -32,8 +32,8 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     nsx::Experiment experiment("test", "BioDiff2500");
     nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
 
-    std::cout << "Dataset rows: " << dataf->nRows() 
-        << ", columns: " << dataf->nCols() 
+    std::cout << "Dataset columns: " << dataf->nCols()
+        << ", rows: " << dataf->nRows()
         << ", frames: " << dataf->nFrames() 
         << std::endl;
 
@@ -171,7 +171,8 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     experiment.acceptFilter("filtered_peaks", found_collection);
 
-    auto filteredPeaks = experiment.getPeakCollection("filtered_peaks")->getPeakList();
+    auto peakCollection = experiment.getPeakCollection("filtered_peaks");
+    auto filteredPeaks = peakCollection->getPeakList();
 
     for(const nsx::Peak3D* pk : filteredPeaks)
     {
@@ -188,6 +189,9 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
         std::cout << "intensity: " << intensity.value() << "+-" << intensity.sigma() << ", ";
         std::cout << "background: " << background.value() << "+-" << background.sigma() << std::endl;
     }
+
+    //peakCollection->exportToGnuplot("peaks_recip.gpl", true);
+    //peakCollection->exportToGnuplot("peaks_real.gpl", false);
 
     CHECK(filteredPeaks.size() >= 100);
 

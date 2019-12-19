@@ -126,6 +126,7 @@ bool ExperimentExporter::writeData(
             offset[1] = 0;
             offset[2] = 0;
 
+            // write frames
             H5::DataSpace memspace(3, count, nullptr);
             using IntMatrix = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
             for (offset[0] = 0; offset[0] < data_item->nFrames(); offset[0] += count[0]) {
