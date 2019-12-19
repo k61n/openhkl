@@ -24,6 +24,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/shape/ShapeLibrary.h"
 
+
 TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 {
     nsx::DataReaderFactory factory;
@@ -31,14 +32,66 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     nsx::Experiment experiment("test", "BioDiff2500");
     nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
 
+    std::cout << "Dataset rows: " << dataf->nRows() 
+        << ", columns: " << dataf->nCols() 
+        << ", frames: " << dataf->nFrames() 
+        << std::endl;
+
+
+    // save frames
+    /*for(int frame=0; frame<dataf->nFrames(); ++frame)
+    {
+        std::cout << "Saving frame " << frame << " ... ";
+        std::ofstream ofstrFrame("frame_" + std::to_string(frame) + ".dat");
+        //Eigen::MatrixXi frameDat = dataf->frame(frame);
+        //ofstrFrame << frameDat << std::endl;
+        Eigen::MatrixXd frameDat_corr = dataf->transformedFrame(frame);
+        ofstrFrame << frameDat_corr << std::endl;
+        std::cout << "done" << std::endl;
+    }*/
+
     nsx::Detector *detector = experiment.diffractometer()->detector();
     std::cout << "Detector distance: " << detector->distance() << ", "
-        << "width: " << detector->width() << ", height: " << detector->height() << std::endl;
+        << "width: " << detector->width() 
+        << ", height: " << detector->height()
+        << std::endl;
 
     experiment.addData(dataf);
 
-    nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
 
+    // output sample angles for each frame
+    const auto& sample_gonio = experiment.diffractometer()->sample().gonio();
+    size_t n_sample_gonio_axes = sample_gonio.nAxes();
+
+    std::cout << "\nSample angles for each frame:" << std::endl;
+    for (size_t i = 0; i < n_sample_gonio_axes; ++i)
+    {
+        const auto& axis = sample_gonio.axis(i);
+
+        std::cout << axis.name() << ": ";
+        for (size_t j = 0; j < dataf->nFrames(); ++j)
+            std::cout << (dataf->reader()->sampleStates()[j][i]/M_PI*180.) << ", ";
+        std::cout << std::endl;
+    }
+
+    // output detector angles for each frame
+    const auto& detector_gonio = experiment.diffractometer()->detector()->gonio();
+    size_t n_detector_gonio_axes = detector_gonio.nAxes();
+
+    std::cout << "\nDetector angles for each frame:" << std::endl;
+    for (size_t i = 0; i < n_detector_gonio_axes; ++i)
+    {
+        const auto& axis = detector_gonio.axis(i);
+
+        std::cout << axis.name() << ": ";
+        for (size_t j = 0; j < dataf->nFrames(); ++j)
+            std::cout << (dataf->reader()->detectorStates()[j][i]/M_PI*180.) << ", ";
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+
+
+    nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
 
     auto callback = [progressHandler]() {
         auto log = progressHandler->getLog();
@@ -151,7 +204,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     CHECK(auto_indexer->solutions().size() > 1);
 
     std::cout << "Number of solutions: " << auto_indexer->solutions().size() << std::endl;
-    for(std::size_t solidx = 0; solidx < auto_indexer->solutions().size(); ++ solidx)
+    for(std::size_t solidx = 0; solidx < auto_indexer->solutions().size(); ++solidx)
     {
         const auto& solution = auto_indexer->solutions()[solidx];
         const auto& cell = solution.first;
