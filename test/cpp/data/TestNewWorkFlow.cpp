@@ -25,6 +25,9 @@
 #include "core/shape/ShapeLibrary.h"
 
 
+//#define OUTPUT_INTERMEDIATE 1
+
+
 TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 {
     nsx::DataReaderFactory factory;
@@ -38,17 +41,26 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
         << std::endl;
 
 
-    // save frames
-    /*for(int frame=0; frame<dataf->nFrames(); ++frame)
+#ifdef OUTPUT_INTERMEDIATE
+    // export frames to gnuplot
+    for(int frame=0; frame<dataf->nFrames(); ++frame)
     {
         std::cout << "Saving frame " << frame << " ... ";
-        std::ofstream ofstrFrame("frame_" + std::to_string(frame) + ".dat");
+        std::ofstream ofstrFrame("frame_" + std::to_string(frame) + ".gpl");
         //Eigen::MatrixXi frameDat = dataf->frame(frame);
         //ofstrFrame << frameDat << std::endl;
         Eigen::MatrixXd frameDat_corr = dataf->transformedFrame(frame);
-        ofstrFrame << frameDat_corr << std::endl;
+        ofstrFrame << "set xrange [0:" << dataf->nCols() << "]\n";
+        ofstrFrame << "set yrange [0:" << dataf->nRows() << "]\n";
+        ofstrFrame << "set cbrange [0:100]\n";
+        ofstrFrame << "set logscale cb\n";
+        //ofstrFrame << "plot '-' u 1:(" << dataf->nRows() << "-$2):3 matrix w image\n";
+        ofstrFrame << "plot '-' matrix w image\n";
+        ofstrFrame << frameDat_corr << "\n";
+        ofstrFrame << "e" << std::endl;
         std::cout << "done" << std::endl;
-    }*/
+    }
+#endif
 
     nsx::Detector *detector = experiment.diffractometer()->detector();
     std::cout << "Detector distance: " << detector->distance() << ", "
@@ -123,7 +135,8 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     auto found_peaks = peak_finder->currentPeaks();
 
-    /*for(const nsx::Peak3D* pk : found_peaks)
+#ifdef OUTPUT_INTERMEDIATE
+    for(const nsx::Peak3D* pk : found_peaks)
     {
         if(!pk->enabled())
             continue;
@@ -135,7 +148,8 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
         std::cout << "real peak: " << elli_real.center().transpose() << ", ";
         std::cout << "recip peak: " << elli_recip.center().transpose() << ", ";
         std::cout << "intensity: " << intensity.value() << " +- " << intensity.sigma() << std::endl;
-    }*/
+    }
+#endif
 
 
     try {
@@ -190,8 +204,10 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
         std::cout << "background: " << background.value() << "+-" << background.sigma() << std::endl;
     }
 
-    //peakCollection->exportToGnuplot("peaks_recip.gpl", true);
-    //peakCollection->exportToGnuplot("peaks_real.gpl", false);
+#ifdef OUTPUT_INTERMEDIATE
+    peakCollection->exportToGnuplot("peaks_recip.gpl", true);
+    peakCollection->exportToGnuplot("peaks_real.gpl", false);
+#endif
 
     CHECK(filteredPeaks.size() >= 100);
 
