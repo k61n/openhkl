@@ -254,8 +254,12 @@ void DataSet::saveHDF5(const std::string& filename) // const
             info = item.second.as<std::string>();
             H5::Attribute intAtt(infogroup.createAttribute(item.first, str80, metaSpace));
             intAtt.write(str80, info);
-        } catch (...) {
-            // shouldn't there be some error handling here?
+        }
+        catch (const std::exception& ex) {
+            std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what() << std::endl;
+        }
+        catch (...) {
+            std::cerr << "Uncaught exception in " << __PRETTY_FUNCTION__ << std::endl;
         }
     }
 
@@ -277,8 +281,12 @@ void DataSet::saveHDF5(const std::string& filename) // const
                 H5::Attribute intAtt(metadatagroup.createAttribute(
                     item.first, H5::PredType::NATIVE_DOUBLE, metaSpace));
                 intAtt.write(H5::PredType::NATIVE_DOUBLE, &dvalue);
-            } catch (...) {
-                // shouldn't there be some error handling here?
+            }
+            catch (const std::exception& ex) {
+                std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what() << std::endl;
+            }
+            catch (...) {
+                std::cerr << "Uncaught exception in " << __PRETTY_FUNCTION__ << std::endl;
             }
         }
     }
@@ -330,7 +338,7 @@ std::vector<DetectorEvent> DataSet::events(const std::vector<ReciprocalVector>& 
         return kf.squaredNorm() < ki.squaredNorm();
     };
 
-    // lfor each sample q, determine the rotation that makes it intersect the Ewald sphere
+    // for each sample q, determine the rotation that makes it intersect the Ewald sphere
     for (const ReciprocalVector& sample_q : sample_qs) {
         const Eigen::RowVector3d& q_vect = sample_q.rowVector();
 

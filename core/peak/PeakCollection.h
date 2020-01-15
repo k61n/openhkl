@@ -76,6 +76,9 @@ class PeakCollection{
     //! Get the shape library
     ShapeLibrary* shapeLibrary() const {return _shape_library.get();};
 
+    // export peak list to gnuplot
+    bool exportToGnuplot(const char* filename, bool recip=true) const;
+
 private:
     std::vector<std::unique_ptr<nsx::Peak3D>> _peaks;
     std::string _name;

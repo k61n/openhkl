@@ -18,7 +18,6 @@
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/peak/Peak3D.h"
-#include "tables/crystal/BrillouinZone.h"
 #include "tables/crystal/UnitCell.h"
 
 namespace nsx {

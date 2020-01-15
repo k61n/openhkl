@@ -126,6 +126,7 @@ bool ExperimentExporter::writeData(
             offset[1] = 0;
             offset[2] = 0;
 
+            // write frames
             H5::DataSpace memspace(3, count, nullptr);
             using IntMatrix = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
             for (offset[0] = 0; offset[0] < data_item->nFrames(); offset[0] += count[0]) {
@@ -199,8 +200,12 @@ bool ExperimentExporter::writeData(
                     info = item.second.as<std::string>();
                     H5::Attribute intAtt(info_group->createAttribute(item.first, str80, metaSpace));
                     intAtt.write(str80, info);
-                } catch (...) {
-                    // shouldn't there be some error handling here?
+                } 
+                catch (const std::exception& ex) {
+                    std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what() << std::endl;
+                }
+                catch (...) {
+                    std::cerr << "Uncaught exception in " << __PRETTY_FUNCTION__ << std::endl;
                 }
             }
             delete info_group;
@@ -224,8 +229,12 @@ bool ExperimentExporter::writeData(
                         H5::Attribute intAtt(meta_data_group->createAttribute(
                             item.first, H5::PredType::NATIVE_DOUBLE, metaSpace));
                         intAtt.write(H5::PredType::NATIVE_DOUBLE, &d_value);
-                    } catch (...) {
-                        // shouldn't there be some error handling here?
+                    }
+                    catch (const std::exception& ex) {
+                        std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what() << std::endl;
+                    }
+                    catch (...) {
+                        std::cerr << "Uncaught exception in " << __PRETTY_FUNCTION__ << std::endl;
                     }
                 }
 
@@ -517,7 +526,12 @@ bool ExperimentExporter::writePeaks(
                     H5::Attribute intAtt(
                         meta_peak_group.createAttribute(item.first, H5::PredType::NATIVE_INT32, metaSpace));
                     intAtt.write(H5::PredType::NATIVE_INT32, &value);
-                } catch (...) {
+                } 
+                catch (const std::exception& ex) {
+                    std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what() << std::endl;
+                }
+                catch (...) {
+                    std::cerr << "Uncaught exception in " << __PRETTY_FUNCTION__ << std::endl;
                 }
             }
 

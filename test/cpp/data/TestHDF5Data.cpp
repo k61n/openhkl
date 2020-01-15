@@ -14,6 +14,7 @@ TEST_CASE("test/data/TestHDF5Data.cpp", "")
 
     dataf->open();
     Eigen::MatrixXi v = dataf->frame(0);
+    //std::cout << v << std::endl;
 
     // Check the total number of count in the frame 0
     CHECK(v.sum() == 1282584565);
