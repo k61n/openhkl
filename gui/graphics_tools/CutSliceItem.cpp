@@ -91,9 +91,10 @@ void CutSliceItem::plot(SXPlot* plot)
             y[comp++] = currentFrame.row(i).segment(xmin, dx).sum();
     }
     std::transform(y.begin(), y.end(), e.begin(), [](double p) { return sqrt(p); });
-    p->graph(0)->setDataValueError(x, y, e);
+    p->graph(0)->setData(x, y);
+    p->addErrorBars(p->graph(0), e);
     p->rescaleAxes();
-    p->replot(QCustomPlot::rpHint);
+    p->replot(QCustomPlot::rpRefreshHint);
 }
 
 bool CutSliceItem::isHorizontal() const

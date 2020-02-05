@@ -34,11 +34,9 @@ SimplePlot::SimplePlot(QWidget* parent) : SXPlot(parent)
     yAxis->setTickLabelFont(font);
 
     graph(0)->setPen(pen);
-    graph(0)->setErrorType(QCPGraph::etValue);
     graph(0)->setLineStyle(QCPGraph::lsLine);
     graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 6));
 
-    //    xAxis->setLabel("Frame (a.u.)");
     //    yAxis->setLabel("Intensity (counts)");
 
     //    // Setup legends
@@ -51,7 +49,7 @@ SimplePlot::SimplePlot(QWidget* parent) : SXPlot(parent)
         QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend
         | QCP::iSelectPlottables);
 
-    QCPPlotTitle* element = new QCPPlotTitle(this, "");
+    QCPTextElement* element = new QCPTextElement(this, "");
     element->setFont(QFont("Arial", 8, -1, true));
     plotLayout()->addElement(0, 0, element);
 }

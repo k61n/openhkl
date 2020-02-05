@@ -26,6 +26,8 @@ class PeakPlot : public SXPlot {
     explicit PeakPlot(QWidget* parent = 0);
 
     std::string getType() const;
+    QCPErrorBars* xErrorBars_; // new QCP 2.0 object
+    QCPErrorBars* yErrorBars_;
 };
 
 

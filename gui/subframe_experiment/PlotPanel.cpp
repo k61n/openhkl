@@ -39,7 +39,8 @@ void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>
         plot->setFocusPolicy(Qt::StrongFocus);
         anchor->addWidget(plot);
     }
-    plot->graph(0)->setDataValueError(x, y, e);
+    plot->graph(0)->setData(x, y);
+    plot->addErrorBars(plot->graph(0), e);
     plot->rescaleAxes();
     plot->replot();
 }
@@ -65,5 +66,5 @@ void PlotPanel::updatePlot(PlottableItem* item)
 
 void PlotPanel::exportPlot()
 {
-    plot->exportToAscii();
+    // plot->exportToAscii();
 }

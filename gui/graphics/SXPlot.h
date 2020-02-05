@@ -15,9 +15,10 @@
 #ifndef GUI_GRAPHICS_SXPLOT_H
 #define GUI_GRAPHICS_SXPLOT_H
 
-#include "3rdparty/QCustomPlot/QCustomPlot.h"
+#include "qcustomplot.h"
 
 class PlottableItem;
+
 
 //! Base class of the plot types of the SubframePlot
 class SXPlot : public QCustomPlot {
@@ -28,6 +29,10 @@ public:
    explicit SXPlot(QWidget* parent = 0);
    void keyPressEvent(QKeyEvent*);
    virtual ~SXPlot();
+
+   // Error bar handling
+   QCPErrorBars* errorBars;
+   void addErrorBars(QCPGraph* graph, QVector<double>& error);
 
    // Getters and setters
 
@@ -52,13 +57,13 @@ public:
    virtual void update(PlottableItem* item);
 
    //! Manage double clicks
-   void titleDoubleClick(QMouseEvent* event, QCPPlotTitle* title);
+   void titleDoubleClick(QMouseEvent* event, QCPTextElement* title);
    //! Double click on the legend
    void legendDoubleClick(QCPLegend* legend, QCPAbstractLegendItem* item);
    //! Context menu
    void setmenuRequested(QPoint);
    //! Export the graphs into column ASCII format
-   void exportToAscii();
+   // void exportToAscii(QCPErrorBars* errorBars);
 
 private:
    void copyViewToClipboard();
@@ -67,7 +72,6 @@ private:
 private:
    QPoint _zoom_rect_origin;
    QCPItemRect* _zoom_box;
-
 };
 
 #endif // GUI_GRAPHICS_SXPLOT_H

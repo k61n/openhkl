@@ -65,6 +65,14 @@ SXPlot::SXPlot(QWidget* parent) :
         this, &SXPlot::setmenuRequested);
 }
 
+void SXPlot::addErrorBars(QCPGraph* graph, QVector<double>& error)
+{
+  errorBars = new QCPErrorBars{graph->keyAxis(), graph->valueAxis()};
+  errorBars->setErrorType(QCPErrorBars::ErrorType::etValueError);
+  errorBars->setDataPlottable(graph);
+  errorBars->setData(error);
+}
+
 void SXPlot::update(PlottableItem* item) {Q_UNUSED(item)}
 
 std::string SXPlot::getType() const
@@ -183,7 +191,7 @@ void SXPlot::zoom(double x_init, double x_final, double y_init, double y_final)
 void SXPlot::resetZoom()
 {
     int plot_count = plottableCount();
-    
+
     double x_max = -1e20;
     double x_min = 1e20;
     double y_max = -1e20;
@@ -193,16 +201,16 @@ void SXPlot::resetZoom()
 
     for (int i = 0; i < plot_count; ++i){
         QCPGraph* graph_item = graph(i);
-        QCPDataMap* data_item = graph_item->data();
 
         values_x.clear();
         values_y.clear();
+
         for (
-            QCPDataMap::iterator it = data_item->begin();
-            it != data_item->end();
-            ++it){
-            values_x.push_back(it->key);
-            values_y.push_back(it->value);
+             QVector<QCPGraphData>::iterator it = graph_item->data()->begin();
+             it != graph_item->data()->end();
+             ++it){
+          values_x.push_back(it->key);
+          values_y.push_back(it->value);
         }
 
         if (*(std::max_element(values_x.begin(), values_x.end()))> x_max)
@@ -220,7 +228,7 @@ void SXPlot::resetZoom()
 
 SXPlot::~SXPlot() {}
 
-void SXPlot::titleDoubleClick(QMouseEvent* event, QCPPlotTitle* title)
+void SXPlot::titleDoubleClick(QMouseEvent* event, QCPTextElement* title)
 {
     Q_UNUSED(event)
     // Set the plot title by double clicking on it
@@ -251,43 +259,40 @@ void SXPlot::legendDoubleClick(QCPLegend* legend, QCPAbstractLegendItem* item)
     }
 }
 
-void SXPlot::exportToAscii()
-{
-    int ngraphs = this->graphCount();
+// void SXPlot::exportToAscii(QCPErrorBars* errorBars = NULL)
+// {
+//     int ngraphs = this->graphCount();
 
-    if (!ngraphs)
-        return;
+//     if (!ngraphs)
+//         return;
 
-    int npoints = graph(0)->data()->size();
-    if (!npoints)
-        return;
+//     int npoints = graph(0)->data()->size();
+//     if (!npoints)
+//         return;
 
-    QString fileName = QFileDialog::getSaveFileName(
-        this, tr("Choose ASCII file to export"), "", tr("Data File (*.dat)"));
+//     QString fileName = QFileDialog::getSaveFileName(
+//         this, tr("Choose ASCII file to export"), "", tr("Data File (*.dat)"));
 
-    std::ofstream file;
-    file.open(fileName.toStdString().c_str(), std::ios::out);
-    if (!file.is_open())
-        QMessageBox::critical(this, tr("NSXTool"), tr("Problem opening file"));
+//     std::ofstream file;
+//     file.open(fileName.toStdString().c_str(), std::ios::out);
+//     if (!file.is_open())
+//         QMessageBox::critical(this, tr("NSXTool"), tr("Problem opening file"));
 
-    // First column is the key, then 2n columns (value error)
-    Eigen::MatrixXd result(npoints, 2 * ngraphs + 1);
-
-    QCPDataMap* data = graph(0)->data();
-    int current = 0;
-    for (auto point : *data)
-        result(current++, 0) = point.key;
-    for (int i = 0; i < ngraphs; ++i) {
-        QCPDataMap* data = graph(i)->data();
-        int current = 0;
-        for (auto point : *data) {
-            result(current, 2 * i + 1) = point.value;
-            result(current++, 2 * i + 2) = 0.5 * (point.valueErrorPlus + point.valueErrorMinus);
-        }
-    }
-    file << result;
-    file.close();
-}
+//     // TODO: tidy up formatting in file
+//     for (unsigned ind = 0; ind < npoints; ++ind){
+//       file << graph(0)->data()->at(ind)->key << " ";
+//       for (unsigned ngraph = 0; ngraph < ngraphs; ++ngraph){
+//         file << graph(ngraph)->data()->at(ind)->value << " ";
+//         if (errorBars != NULL){
+//           double error = 0.5 * (errorBars->data()->at(ind).errorPlus +
+//                                 errorBars->data()->at(ind).errorMinus);
+//           file << error << " ";
+//         }
+//       }
+//       file << std::endl;
+//     }
+//     file.close();
+// }
 
 void SXPlot::setmenuRequested(QPoint pos)
 {
@@ -295,15 +300,15 @@ void SXPlot::setmenuRequested(QPoint pos)
     if (this->graphCount()) {
         QMenu* menu = new QMenu(this);
         QAction* reset_zoom = menu->addAction("Reset zoom");
-        QAction* expport_ASCII = menu->addAction("Export to ASCII");
+        // QAction* export_ASCII = menu->addAction("Export to ASCII");
         menu->popup(mapToGlobal(pos));
 
         connect(
             reset_zoom, &QAction::triggered, 
             this, &SXPlot::resetZoom);
 
-        connect(
-            expport_ASCII, &QAction::triggered, 
-            this, &SXPlot::exportToAscii);
+        // connect(
+        //     export_ASCII, &QAction::triggered, 
+        //     this, &SXPlot::exportToAscii);
     }
 }

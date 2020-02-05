@@ -66,7 +66,8 @@ void CutLineItem::plot(SXPlot* plot)
         y[i] /= sdist2;
     }
     std::transform(y.begin(), y.end(), e.begin(), [](double p) { return sqrt(p); });
-    p->graph(0)->setDataValueError(x, y, e);
+    p->graph(0)->setData(x, y);
+    p->addErrorBars(p->graph(0), e);
     p->rescaleAxes();
     p->replot();
 }
