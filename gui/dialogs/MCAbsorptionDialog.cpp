@@ -26,13 +26,11 @@ MCAbsorptionDialog::MCAbsorptionDialog() : QDialog{}
     setAttribute(Qt::WA_DeleteOnClose);
     QFormLayout* layout = new QFormLayout(this);
     selUnitCell = new QcrCell<int>(0);
-    QcrComboBox* crystals = new QcrComboBox("adhoc_mccrystals", selUnitCell, []() {
-        int numUnitCells = gSession->selectedExperiment()->getUnitCellNames().size();
-        QStringList a;
-        for (int i = 0; i < numUnitCells; i++)
-            a.append("crystal" + QString::number(i));
-        return a;
-    });
+    int numUnitCells = gSession->selectedExperiment()->getUnitCellNames().size();
+    QStringList a;
+    for (int i = 0; i < numUnitCells; i++)
+      a.append("crystal" + QString::number(i));
+    QcrComboBox* crystals = new QcrComboBox("adhoc_mccrystals", selUnitCell, a);
     layout->addRow("Crystal reference:", crystals);
     numRaysCell = new QcrCell<int>(1000);
     QcrSpinBox* numRays = new QcrSpinBox("aadhoc_MCRays", numRaysCell, 5);
