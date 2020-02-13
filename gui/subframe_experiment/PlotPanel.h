@@ -16,11 +16,11 @@
 #define GUI_SUBFRAME_EXPERIMENT_PLOT_PANEL_H
 
 #include "gui/graphics_items/PlottableItem.h"
-#include <QCR/widgets/views.h>
 #include <QHBoxLayout>
+#include <QWidget>
 
 //! Part of the main window that contains the plot
-class PlotPanel : public QcrWidget {
+class PlotPanel : public QWidget {
  public:
     PlotPanel();
     void plotData(QVector<double>&, QVector<double>&, QVector<double>&);
@@ -30,7 +30,7 @@ class PlotPanel : public QcrWidget {
  private:
     SXPlot* plot;
     QHBoxLayout* anchor;
-    QcrWidget* centralWidget;
+    QWidget* centralWidget;
 };
 
 #endif // GUI_SUBFRAME_EXPERIMENT_PLOT_PANEL_H

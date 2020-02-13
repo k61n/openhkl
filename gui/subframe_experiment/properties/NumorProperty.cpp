@@ -35,14 +35,24 @@ NumorProperty::NumorProperty() : QWidget()
     _table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     _numor_selector = new QComboBox();
+    _add = new QPushButton();
+
+    _add->setIcon(QIcon(":/images/Add_item.svg"));
 
     grid_layout->addWidget(_numor_selector, 0, 0, 1, 1);
-    grid_layout->addWidget(_table, 1, 0, 1, 1);
+    grid_layout->addWidget(_add, 0, 1, 1, 1);
+    grid_layout->addWidget(_table, 1, 0, 1, 2);
 
     connect(
         _numor_selector, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged),
         this, &NumorProperty::onChanged
     );
+
+    connect(
+        _add, &QPushButton::clicked, 
+        this, [](){gSession->loadRawData();}
+    );
+
 }
 
 void NumorProperty::refreshInput()

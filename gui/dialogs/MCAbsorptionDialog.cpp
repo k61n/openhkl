@@ -17,32 +17,40 @@
 #include "gui/models/Session.h"
 #include "core/experiment/DataSet.h"
 #include "core/monte-carlo/MCAbsorption.h"
-#include <QCR/widgets/actions.h>
-#include <QCR/widgets/controls.h>
+
 #include <QFormLayout>
+#include <QComboBox>
+#include <QSpinBox>
+#include <QPushButton>
 
 MCAbsorptionDialog::MCAbsorptionDialog() : QDialog{}
 {
     setAttribute(Qt::WA_DeleteOnClose);
     QFormLayout* layout = new QFormLayout(this);
-    selUnitCell = new QcrCell<int>(0);
-    QcrComboBox* crystals = new QcrComboBox("adhoc_mccrystals", selUnitCell, []() {
-        int numUnitCells = gSession->selectedExperiment()->getUnitCellNames().size();
-        QStringList a;
-        for (int i = 0; i < numUnitCells; i++)
-            a.append("crystal" + QString::number(i));
-        return a;
-    });
+
+    QComboBox* crystals = new QComboBox();
+    int numUnitCells = gSession->selectedExperiment()->getUnitCellNames().size();
+    QStringList a;
+    for (int i = 0; i < numUnitCells; i++)
+        a.append("crystal" + QString::number(i));
+    crystals->addItems(a);
     layout->addRow("Crystal reference:", crystals);
-    numRaysCell = new QcrCell<int>(1000);
-    QcrSpinBox* numRays = new QcrSpinBox("aadhoc_MCRays", numRaysCell, 5);
+
+    QSpinBox* numRays = new QSpinBox();
+    numRays->setMaximum(1000);
     layout->addRow("Number of rays:", numRays);
-    QcrTextTriggerButton* runMC = new QcrTextTriggerButton("adhoc_runMC", "Run Monte Carlo");
-    runMC->trigger()->setTriggerHook([=]() { runMCAbsorption(); });
+
+    QPushButton* runMC = new QPushButton("Run Monte Carlo");
     layout->addRow(runMC);
+
     progressBar = new QProgressBar(this);
     progressBar->setValue(0);
     layout->addRow(progressBar);
+
+    connect(
+        runMC, &QPushButton::clicked,
+        [=]() { runMCAbsorption(); }
+    );
 
     show();
 }

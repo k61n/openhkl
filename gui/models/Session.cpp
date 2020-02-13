@@ -25,10 +25,6 @@
 #include "gui/dialogs/RawDataDialog.h"
 #include "gui/graphics/DetectorScene.h"
 
-#include <QCR/engine/logger.h>
-#include <QCR/engine/mixin.h>
-#include <QCR/widgets/modal_dialogs.h>
-
 Session* gSession;
 
 Session::Session()
@@ -49,7 +45,6 @@ bool Session::createExperiment(QString experimentName, QString instrumentName)
     SessionExperiment* experiment = new SessionExperiment(experimentName, instrumentName);
     _experiments.append(experiment);
     selectedExperiment_ = _experiments.size() - 1;
-    gLogger->log("Experiment \"" + experimentName + "\" added");
     onExperimentChanged();
 
     return true;
@@ -70,14 +65,14 @@ bool Session::createExperiment(QString experimentName)
     _experiments.append(experiment);
     selectedExperiment_ = _experiments.size() - 1;
     onExperimentChanged();
-    gLogger->log("Experiment \"" + experimentName + "\" added");
 
     return true;
 }
 
 void Session::createDefaultExperiment()
 {
-    _experiments.push_back(new SessionExperiment);
+    SessionExperiment* experiment = new SessionExperiment("lol", "BioDiff2500");
+    _experiments.append(experiment);
     selectedExperiment_ = _experiments.size() - 1;
     onExperimentChanged();
 }
@@ -95,19 +90,11 @@ QList<QString> Session::experimentNames() const
 void Session::removeExperiment()
 {
     if (_experiments.size() == 0) {
-        gLogger->log("[WARNING] nothing to remove");
         return;
     }
     if (selectedExperiment_ == -1) {
-        gLogger->log(
-            "removing experiment \""
-            + QString::fromStdString(_experiments.at(0)->experiment()->name()) + "\"");
         _experiments.removeFirst();
     }
-    gLogger->log(
-        "removing experiment \""
-        + QString::fromStdString(_experiments.at(selectedExperiment_)->experiment()->name()) + "\"");
-    _experiments.removeAt(selectedExperiment_);
     selectedExperiment_ = _experiments.size() > 0 ? 0 : -1;
     onExperimentChanged();
 }
@@ -126,7 +113,7 @@ SessionExperiment* Session::selectedExperiment()
 
 void Session::loadData()
 {
-    QStringList filenames = QcrFileDialog::getOpenFileNames(
+    QStringList filenames = QFileDialog::getOpenFileNames(
         gGui, "import data", loadDirectory,
         "Data files(*.h5 *.hdf5 *.hdf *.fake *.nxs *.raw *.tif *.tiff);;all files (*.* *)");
 
@@ -161,12 +148,10 @@ void Session::loadData()
 void Session::removeData()
 {
     if (selectedExperiment_ == -1) {
-        gLogger->log("[ERROR] No experiment to remove data from");
         return;
     }
 
     if (selectedData == -1) {
-        gLogger->log("[ERROR] No data to remove");
         return;
     }
     std::string numorname = selectedExperiment()->getData(selectedData)->filename();
@@ -179,10 +164,7 @@ void Session::loadRawData()
     if (selectedExperiment_ < 0)
         createDefaultExperiment();
 
-    QStringList qfilenames;
-    qfilenames = QcrFileDialog::getOpenFileNames(
-        nullptr, "select raw data", loadDirectory, "", nullptr,
-        QFileDialog::Option::DontUseNativeDialog);
+    QStringList qfilenames = QFileDialog::getOpenFileNames();
 
     if (qfilenames.empty())
         return;
@@ -204,12 +186,10 @@ void Session::loadRawData()
     // If the experience already stores the current numor, skip it
     if (exp->hasData(filenames[0]))
         return;
-
     std::shared_ptr<nsx::DataSet> data;
     std::shared_ptr<nsx::IDataReader> reader;
 
     nsx::RawDataReaderParameters parameters;
-
     parameters.wavelength = dialog.wavelength();
     parameters.delta_omega = dialog.deltaOmega();
     parameters.delta_chi = dialog.deltaChi();
@@ -217,7 +197,6 @@ void Session::loadRawData()
     parameters.row_major = dialog.rowMajor();
     parameters.swap_endian = dialog.swapEndian();
     parameters.bpp = dialog.bpp();
-
     try {
         nsx::Diffractometer* diff = exp->diffractometer();
         reader.reset(new nsx::RawDataReader(filenames[0], diff));
@@ -229,16 +208,12 @@ void Session::loadRawData()
         raw_data_reader->end();
         data = std::make_shared<nsx::DataSet>(reader);
     } catch (std::exception& e) {
-        gLogger->log(
-            "reading numor " + qfilenames.at(0) + " failed: " + QString::fromStdString(e.what()));
         return;
     } catch (...) {
-        gLogger->log("reading numor " + qfilenames.at(0) + " failed, reason not known");
         return;
     }
-
     exp->addData(data);
-    selectedData = selectedExperiment()->getIndex(qfilenames.at(0));
+    // selectedData = selectedExperiment()->getIndex(qfilenames.at(0));
     onDataChanged();
 }
 

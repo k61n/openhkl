@@ -19,6 +19,7 @@
 #include <QGraphicsView>
 #include <QVBoxLayout>
 #include <fstream>
+#include <QPushButton>
 
 AbsorptionDialog::AbsorptionDialog() : QDialog{}
 {
@@ -41,32 +42,33 @@ AbsorptionDialog::AbsorptionDialog() : QDialog{}
     QWidget* layoutWidget2 = new QWidget(this);
     layoutWidget2->setGeometry(10, 10, 60, 340);
     QVBoxLayout* verticalLayout2 = new QVBoxLayout(layoutWidget2);
-    QcrIconTriggerButton* openFileButton = new QcrIconTriggerButton(
-                "adhoc_AbsorbOpenFile", "open ILL *jpr file", ":/resources/openFileIcon.png");
+
+    QPushButton* openFileButton = new QPushButton("open ILL *jpr file");
+    openFileButton->setIcon(QIcon(":/resources/openFileIcon.png"));
     verticalLayout2->addWidget(openFileButton);
-    rulerButton = new QcrIconTriggerButton("adhoc_CalibrateDistanceButton",
-                                           "calibrate distance using ruler",
-                                           ":/resources/IconcalibrateDistance.png");
+
+    rulerButton = new QPushButton("Calibrate distance using ruler");
+    rulerButton->setIcon(QIcon(":/resources/IconcalibrateDistance.png"));
     verticalLayout2->addWidget(rulerButton);
-    pickCenterButton = new QcrIconTriggerButton("adhoc_PickCenterButton",
-                                                "calibrate pin position",
-                                                ":/resources/IconpickCenter.png");
+
+    pickCenterButton = new QPushButton("Calibrate pin position");
+    pickCenterButton->setIcon(QIcon(":/resources/IconpickCenter.png"));
     verticalLayout2->addWidget(pickCenterButton);
-    pickPointButton = new QcrIconTriggerButton("adhoc_PickingPointsButton",
-                                               "add point to the hull",
-                                               ":/resources/IconpickingPoints.png");
+
+    pickPointButton = new QPushButton("Add point to the hull");
+    pickPointButton->setIcon(QIcon(":/resources/IconpickingPoints.png"));
     verticalLayout2->addWidget(pickPointButton);
-    removePointButton = new QcrIconTriggerButton("adhoc_RemovingPointsButton",
-                                                 "remove existing points",
-                                                 ":/resources/IconremovingPoints.png");
+
+    removePointButton = new QPushButton("remove existing points");
+    removePointButton->setIcon(QIcon(":/resources/IconremovingPoints.png"));
     verticalLayout2->addWidget(removePointButton);
-    triangulateButton = new QcrIconTriggerButton("adhoc_triangulateButton",
-                                                 "construct convex hull from points",
-                                                 ":/resources/Icontriangulate.png");
+
+    triangulateButton = new QPushButton("construct convex hull from points");
+    triangulateButton->setIcon(QIcon(":/resources/Icontriangulate.png"));
     verticalLayout2->addWidget(triangulateButton);
 
     crystalScene = new CrystalScene(
-                &gSession->selectedExperiment()->experiment()->diffractometer()->sample().shape());
+        &gSession->selectedExperiment()->experiment()->diffractometer()->sample().shape());
     crystalView->setScene(crystalScene);
 
     connect(scrollBar, &QScrollBar::valueChanged, [=](int i) {
@@ -77,40 +79,58 @@ AbsorptionDialog::AbsorptionDialog() : QDialog{}
         });
     });
 
-    rulerButton->trigger()->setTriggerHook([=]() {
-        crystalScene->activateCalibrateDistance();
-    });
-    pickCenterButton->trigger()->setTriggerHook([=]() {
-        crystalScene->activatePickCenter();
-    });
-    pickPointButton->trigger()->setTriggerHook([=]() {
-        crystalScene->activatePickingPoints();
-    });
-    removePointButton->trigger()->setTriggerHook([=]() {
-        crystalScene->activateRemovingPoints();
-    });
-    triangulateButton->trigger()->setTriggerHook([=]() {
-        crystalScene->triangulate();
-    });
-    openFileButton->trigger()->setTriggerHook([=]() {
-        QFileDialog dialog(this);
-        dialog.setFileMode(QFileDialog::ExistingFile);
+    connect(
+        rulerButton, &QPushButton::clicked,
+        [=]() {crystalScene->activateCalibrateDistance();}
+    );
 
-        QString fileName =
-                dialog.getOpenFileName(this, "Select video file", "", tr("Video file (*.info)"));
-        if (fileName.isEmpty())
-            return;
-        readInfoFile(fileName.toStdString());
-    });
+    connect(
+        pickCenterButton, &QPushButton::clicked,
+        [=]() {crystalScene->activatePickCenter();}
+    );
 
-    connect(crystalScene, &CrystalScene::calibrateDistanceOK, [=]() {
-        pickCenterButton->setEnabled(true);
-    });
-    connect(crystalScene, &CrystalScene::calibrateCenterOK, [=]() {
-        pickPointButton->setEnabled(true);
-        removePointButton->setEnabled(true);
-        triangulateButton->setEnabled(true);
-    });
+    connect(
+        pickPointButton, &QPushButton::clicked,
+        [=]() {crystalScene->activatePickingPoints();}
+    );
+
+    connect(
+        removePointButton, &QPushButton::clicked,
+        [=]() {crystalScene->activateRemovingPoints();}
+    );
+
+    connect(
+        triangulateButton, &QPushButton::clicked,
+        [=]() {crystalScene->triangulate();}
+    );
+
+    connect(
+        openFileButton, &QPushButton::clicked,
+        [=]() {
+            QFileDialog dialog(this);
+            dialog.setFileMode(QFileDialog::ExistingFile);
+
+            QString fileName =
+                    dialog.getOpenFileName(this, "Select video file", "", tr("Video file (*.info)"));
+            if (fileName.isEmpty())
+                return;
+            readInfoFile(fileName.toStdString());
+        }
+    );
+    
+    connect(
+        crystalScene, &CrystalScene::calibrateDistanceOK, 
+        [=]() {pickCenterButton->setEnabled(true);}
+    );
+
+    connect(
+        crystalScene, &CrystalScene::calibrateCenterOK, 
+        [=]() {
+            pickPointButton->setEnabled(true);
+            removePointButton->setEnabled(true);
+            triangulateButton->setEnabled(true);
+        }
+    );
 
     crystalView->setRenderHint(QPainter::Antialiasing);
 
@@ -149,8 +169,6 @@ void AbsorptionDialog::readInfoFile(const std::string &filename)
         file >> _instrumentName >> date;
         std::string diffType = _experiment->diffractometer()->name();
         if (_instrumentName.compare(diffType) != 0) {
-            qWarning() << "Instrument name in video file does not match "
-                   "the diffractometer name";
             return;
         }
 
@@ -165,8 +183,6 @@ void AbsorptionDialog::readInfoFile(const std::string &filename)
         const nsx::Gonio& sample_gonio = sample.gonio();
         std::size_t numberAngles = std::count(line.begin(), line.end(), ':');
         if (numberAngles == sample_gonio.nAxes()) {
-            qWarning() << "Number of goniometer axes in video file does "
-                   "not match instrument definition";
             return;
         }
 
@@ -179,8 +195,6 @@ void AbsorptionDialog::readInfoFile(const std::string &filename)
             is >> name >> value;
             const auto& axis = sample_gonio.axis(i);
             if (axis.name().compare(name) != 0) {
-                qWarning() << "Mismatch between axis names in video file "
-                       "and in instrument definition";
                 return;
             }
         }
@@ -207,7 +221,5 @@ void AbsorptionDialog::readInfoFile(const std::string &filename)
         // Load front image of the movie
         crystalScene->loadImage(QString::fromStdString(_imageList[0].second));
     }
-    qDebug() << "absorption correction file: " << QString::fromStdString(filename);
-    qDebug() << "found:" << _imageList.size() << " images";
     rulerButton->setEnabled(true);
 }

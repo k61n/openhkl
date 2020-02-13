@@ -18,6 +18,7 @@
 #include <QWidget>
 #include <QComboBox>
 #include <QTableWidget>
+#include <QPushButton>
 
 //! Property widget of the numor
 class NumorProperty : public QWidget {
@@ -40,6 +41,7 @@ private:
 
    QTableWidget* _table;
    QComboBox* _numor_selector;
+   QPushButton* _add;
 };
 
 #endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H

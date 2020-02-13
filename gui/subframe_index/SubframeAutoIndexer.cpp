@@ -419,7 +419,7 @@ void SubframeAutoIndexer::runAutoIndexer()
     try {
         auto_indexer->autoIndex(collection);
     } catch (const std::exception& e) {
-        gLogger->log("[ERROR] AutoIndex: " + QString::fromStdString(e.what()));
+        // gLogger->log("[ERROR] AutoIndex: " + QString::fromStdString(e.what()));
         return;
     }
 

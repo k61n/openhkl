@@ -16,7 +16,7 @@
 
 #include "core/experiment/DataSet.h"
 #include "gui/MainWin.h"
-#include "gui/actions/Triggers.h"
+#include "gui/actions/Actions.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/models/Session.h"
 

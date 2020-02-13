@@ -15,11 +15,10 @@
 #ifndef GUI_SUBFRAME_EXPERIMENT_LOGGER_PANEL_H
 #define GUI_SUBFRAME_EXPERIMENT_LOGGER_PANEL_H
 
-#include <QCR/widgets/views.h>
 #include <QTextEdit>
 
 //! Subframe of the main window that shows the logger lines
-class LoggerPanel : public QcrWidget {
+class LoggerPanel : public QWidget {
     Q_OBJECT
  public:
     LoggerPanel();

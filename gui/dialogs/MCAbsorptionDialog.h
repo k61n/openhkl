@@ -15,7 +15,6 @@
 #ifndef GUI_DIALOGS_MCABSORPTIONDIALOG_H
 #define GUI_DIALOGS_MCABSORPTIONDIALOG_H
 
-#include <QCR/engine/cell.h>
 #include <QDialog>
 #include <QProgressBar>
 
@@ -28,8 +27,6 @@ class MCAbsorptionDialog : public QDialog {
     void runMCAbsorption();
 
     QProgressBar* progressBar;
-    QcrCell<int>* selUnitCell;
-    QcrCell<int>* numRaysCell;
 };
 
 #endif // GUI_DIALOGS_MCABSORPTIONDIALOG_H

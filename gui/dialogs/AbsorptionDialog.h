@@ -19,7 +19,6 @@
 #include "core/instrument/InstrumentTypes.h"
 #include <QDialog>
 #include <QScrollBar>
-#include <QCR/widgets/actions.h>
 
 class AbsorptionDialog : public QDialog {
     Q_OBJECT
@@ -44,12 +43,13 @@ private:
    //! Pointer to the QGraphicsScene
    CrystalScene* crystalScene;
 
+private:
    QScrollBar* scrollBar;
-   QcrIconTriggerButton* rulerButton;
-   QcrIconTriggerButton* pickCenterButton;
-   QcrIconTriggerButton* pickPointButton;
-   QcrIconTriggerButton* removePointButton;
-   QcrIconTriggerButton* triangulateButton;
+   QPushButton* rulerButton;
+   QPushButton* pickCenterButton;
+   QPushButton* pickPointButton;
+   QPushButton* removePointButton;
+   QPushButton* triangulateButton;
 };
 
 #endif // GUI_DIALOGS_ABSORPTIONDIALOG_H
