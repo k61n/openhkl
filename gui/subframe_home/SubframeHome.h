@@ -41,10 +41,6 @@ private:
 
 private:
 
-    //! Create a new experiment
-    void _createNew();
-    //! Load an experiment from file
-    void _loadFromFile(); 
     //! Switch the current experiment through the model index
     void _switchCurrentExperiment( const QModelIndex & index ) const;
     //! Update the current list
@@ -56,6 +52,11 @@ private:
 
 public:
 
+    //! Create a new experiment
+    void createNew();
+    //! Load an experiment from file
+    void loadFromFile(); 
+    
     //! Save the current experiment
     void saveCurrent();
     //! Save all experiments provided they have save paths (not implemented)

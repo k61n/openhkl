@@ -21,11 +21,28 @@
 #include <QMenu>
 
 //! Initialize the menu bar.
-Menus::Menus(QMenuBar* mbar) : mbar_ {mbar}
+Menus::Menus(QMenuBar* menu_bar) : _menu_bar {menu_bar}
 {
     Actions* actions = gGui->triggers;
-    mbar->setNativeMenuBar(true);
+    
+    _menu_bar->setNativeMenuBar(true);
 
+    _file_menu  = _menu_bar->addMenu("File");
+    _edit_menu  = _menu_bar->addMenu("Edit");
+    _data_menu  = _menu_bar->addMenu("Data");
+    _peaks_menu = _menu_bar->addMenu("Peaks");
+    _view_menu  = _menu_bar->addMenu("View");
+    _help_menu  = _menu_bar->addMenu("Help");
+
+    // The file part
+    _file_menu->addAction(actions->new_experiment);
+    _file_menu->addAction(actions->load_experiment);
+    _file_menu->addSeparator();
+    _file_menu->addAction(actions->save_experiment);
+    _file_menu->addAction(actions->save_all_experiment);
+    _file_menu->addSeparator();
+    _file_menu->addAction(actions->remove_experiment);
+    _file_menu->addAction(actions->quit);
 
 
     // actionsToMenu(
@@ -98,7 +115,7 @@ Menus::Menus(QMenuBar* mbar) : mbar_ {mbar}
 
 QAction* Menus::separator() const
 {
-    QAction* ret = new QAction {mbar_};
+    QAction* ret = new QAction {_menu_bar};
     ret->setSeparator(true);
     return ret;
 }
@@ -106,7 +123,7 @@ QAction* Menus::separator() const
 QMenu* Menus::actionsToMenu(const char* menuName, QList<QAction*> actions)
 {
     QMenu* menu = new QMenu {menuName};
-    mbar_->addMenu(menu);
+    _menu_bar->addMenu(menu);
     menu->addActions(actions);
     QString prefix = QString("%1: ").arg(menu->title().remove('&'));
     for (auto action : actions)

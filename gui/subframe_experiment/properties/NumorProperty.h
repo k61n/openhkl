@@ -29,19 +29,31 @@ public:
    NumorProperty();
    //! Public call to refresh the widget
    void refreshInput();
-   
+   //! Set up the GUI size policies
+   void setSizePolicies();
+
 private:
 
    //! Refresh when changed
    void onChanged();
    //! Clear content
    void clear();
+   //! load selector
+   void addMenuRequested();
 
 private:
 
    QTableWidget* _table;
    QComboBox* _numor_selector;
+
    QPushButton* _add;
+   QPushButton* _remove;
+
+   QSizePolicy* _size_policy_widgets;
+   QSizePolicy* _size_policy_box;
+   QSizePolicy* _size_policy_right;
+   QSizePolicy* _size_policy_fixed;
+   
 };
 
 #endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H

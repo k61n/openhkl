@@ -200,31 +200,31 @@ void SideBar::onExperiment()
 void SideBar::onFindPeaks()
 {
     gGui->_layout_stack->setCurrentIndex(2);
-    gGui->_finder->refreshAll();
+    gGui->finder->refreshAll();
 }
 
 void SideBar::onFilterPeaks()
 {
     gGui->_layout_stack->setCurrentIndex(3);
-    gGui->_filter->refreshAll();
+    gGui->filter->refreshAll();
 }
 
 void SideBar::onIndexer()
 {
     gGui->_layout_stack->setCurrentIndex(4);
-    gGui->_indexer->refreshAll();
+    gGui->indexer->refreshAll();
 }
 
 void SideBar::onPredictor()
 {
     gGui->_layout_stack->setCurrentIndex(5);
-    gGui->_predictor->refreshAll();
+    gGui->predictor->refreshAll();
 }
 
 void SideBar::onMerger()
 {
     gGui->_layout_stack->setCurrentIndex(6);
-    gGui->_merger->refreshAll();
+    gGui->merger->refreshAll();
 }
 
 #undef action_height

@@ -16,14 +16,24 @@
 #define GUI_ACTIONS_TRIGGERS_H
 
 #include <QAction>
+#include <QObject>
+
 //! Collection of trigger and toggle actions, for use as member of MainWin.
-class Actions {
- public:
-    Actions();
-    // Files:
-   //  QAction addExperiment; 
-   //  QAction removeExperiment; 
-   //  QAction quit;
+class Actions: public QObject {
+   Q_OBJECT
+
+public:
+
+   Actions();
+
+   // Files:
+   QAction* new_experiment; 
+   QAction* load_experiment; 
+   QAction* save_experiment;
+   QAction* save_all_experiment;
+   QAction* remove_experiment; 
+   QAction* quit;
+
    //  // Experiment/Data:
    //  QAction convertHDF5;// {"convert", "convert to HDF5"};
    //  QAction dataProperties;// {"data properties", "properties"};

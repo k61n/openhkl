@@ -18,30 +18,41 @@
 #include "core/experiment/DataTypes.h"
 #include "core/raw/IDataReader.h"
 #include "gui/models/Session.h"
+#include "gui/MainWin.h"
 
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <QMenu>
 
 NumorProperty::NumorProperty() : QWidget()
 {
-    QGridLayout* grid_layout = new QGridLayout(this);
+    setSizePolicies();
+    
+    QVBoxLayout* layout = new QVBoxLayout(this);
+    QHBoxLayout* top_layout = new QHBoxLayout;
 
+    _numor_selector = new QComboBox(this);
+    _add = new QPushButton(this);
+    _remove = new QPushButton(this);
     _table = new QTableWidget(this);
+
+    _add->setIcon(QIcon(":/images/Add_item.svg"));
+    _remove->setIcon(QIcon(":/images/Delete_item.svg"));
 
     _table->horizontalHeader()->setVisible(false);
     _table->verticalHeader()->setVisible(false);
     _table->setSelectionMode(QAbstractItemView::SingleSelection);
     _table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    _numor_selector = new QComboBox();
-    _add = new QPushButton();
+    _numor_selector->setSizePolicy(*_size_policy_widgets);
+    
+    top_layout->addWidget(_numor_selector);
+    top_layout->addWidget(_add);
+    top_layout->addWidget(_remove);
 
-    _add->setIcon(QIcon(":/images/Add_item.svg"));
-
-    grid_layout->addWidget(_numor_selector, 0, 0, 1, 1);
-    grid_layout->addWidget(_add, 0, 1, 1, 1);
-    grid_layout->addWidget(_table, 1, 0, 1, 2);
+    layout->addLayout(top_layout);
+    layout->addWidget(_table);
 
     connect(
         _numor_selector, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged),
@@ -50,9 +61,47 @@ NumorProperty::NumorProperty() : QWidget()
 
     connect(
         _add, &QPushButton::clicked, 
-        this, [](){gSession->loadRawData();}
+        this, &NumorProperty::addMenuRequested
     );
 
+}
+
+void NumorProperty::setSizePolicies()
+{
+    _size_policy_widgets = new QSizePolicy();
+    _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Expanding);
+    _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
+    
+    _size_policy_box = new QSizePolicy();
+    _size_policy_box->setHorizontalPolicy(QSizePolicy::Preferred);
+    _size_policy_box->setVerticalPolicy(QSizePolicy::Preferred);
+
+    _size_policy_right = new QSizePolicy();
+    _size_policy_right->setHorizontalPolicy(QSizePolicy::Expanding);
+    _size_policy_right->setVerticalPolicy(QSizePolicy::Expanding);
+
+    _size_policy_fixed = new QSizePolicy();
+    _size_policy_fixed->setHorizontalPolicy(QSizePolicy::Fixed);
+    _size_policy_fixed->setVerticalPolicy(QSizePolicy::Fixed);
+}
+
+
+void NumorProperty::addMenuRequested()
+{
+    QMenu* menu = new QMenu(_add);
+
+    QAction* add_from_raw = menu->addAction("Add raw data...");
+    QAction* add_from_HDF5 = menu->addAction("Add hdf5 data...");
+
+    connect(
+        add_from_raw, &QAction::triggered, 
+        [](){gSession->loadRawData();});
+
+    connect(
+        add_from_HDF5, &QAction::triggered, 
+        [](){gSession->loadData();});
+
+    menu->popup(mapToGlobal(_add->geometry().bottomLeft()));
 }
 
 void NumorProperty::refreshInput()

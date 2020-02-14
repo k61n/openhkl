@@ -15,35 +15,9 @@
 #include "gui/actions/Actions.h"
 
 #include "gui/models/Session.h" //for gSession
+#include "gui/MainWin.h" // for gGui
 
-#include "gui/MainWin.h"
-
-#include "gui/dialogs/AbsorptionDialog.h"
-#include "gui/dialogs/HDF5ConverterDialog.h"
-#include "gui/dialogs/IntegrateDialog.h"
-#include "gui/dialogs/IsotopesDatabaseDialog.h"
-#include "gui/dialogs/ListNameDialog.h"
-#include "gui/dialogs/MCAbsorptionDialog.h"
-
-#include "gui/subframe_index/SubframeAutoIndexer.h"
-#include "gui/frames/GlobalOffsetsFrame.h"
-#include "gui/frames/InstrumentStatesFrame.h"
-// #include "gui/frames/RefinerFrame.h"
-// #include "gui/frames/MergedPeakInformationFrame.h"
-// #include "gui/frames/UserDefinedUnitCellIndexerFrame.h"
-
-// #include "gui/panels/TabInstrument.h"
-
-// #include "gui/subframe_experiment/SubframeSetup.h"
-#include "gui/subframe_find/SubframeFindPeaks.h"
-#include "gui/subframe_filter/SubframeFilterPeaks.h"
-
-#include <QDate>
-#include <QDesktopServices>
-#include <QInputDialog>
-#include <QObject>
-
-Actions::Actions()
+Actions::Actions():QObject()
 {
     setupData();
     setupExperiment();
@@ -56,17 +30,43 @@ Actions::Actions()
 
 void Actions::setupFiles()
 {
+   new_experiment = new QAction("New experiment..."); 
+   load_experiment = new QAction("Load experiment..."); 
+   save_experiment = new QAction("Save...");
+   save_all_experiment = new QAction("Save all");
+   remove_experiment = new QAction("Remove experiment..."); 
+   quit = new QAction("Quit");
 
-    // QObject::connect(
-    //     quit, &QAction::changed,
-    //     gGui, &MainWin::close
-    // );
-    // quit.setTriggerHook([]() { gGui->close(); });
-    // removeExperiment.setTriggerHook([]() { gSession->removeExperiment(); });
+   connect(
+       new_experiment, &QAction::triggered,
+       [](){gGui->home->createNew();}
+    );
+   connect(
+       load_experiment, &QAction::triggered,
+       [](){gGui->home->loadFromFile();}
+    );
+   connect(
+       save_experiment, &QAction::triggered,
+       [](){gGui->home->saveCurrent();}
+    );
+   connect(
+       save_all_experiment, &QAction::triggered,
+       [](){gGui->home->saveAll();}
+    );
+//    connect(
+//        remove_experiment, &QAction::triggered,
+//        [](){gGui->home->remo();}
+//     );
+   connect(
+       quit, &QAction::triggered,
+       [](){gGui->close();}
+    );
 }
 
 void Actions::setupData()
 {
+
+    
     // loadData.setTriggerHook([]() { gSession->loadData(); });
     // removeData.setTriggerHook([]() { gSession->removeData(); });
     // importRaw.setTriggerHook([]() { gSession->loadRawData(); });
