@@ -104,6 +104,9 @@ QVariant PeakCollectionModel::headerData(int section, Qt::Orientation orientatio
             case Column::Sigma: {
                 return QString(QChar(0x03C3)) + "(Int.)";
             }
+            case Column::Strength: {
+                return QString("Strength");
+            }
             case Column::Numor: {
                 return QString("Numor");
             }

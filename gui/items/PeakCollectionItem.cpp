@@ -182,6 +182,14 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
+    case Column::Strength: {
+      compareFn = [](std::unique_ptr<PeakItem>&  p1, std::unique_ptr<PeakItem>&  p2) {
+                    double strength1 = p1->peak()->correctedIntensity().strength();
+                    double strength2 = p2->peak()->correctedIntensity().strength();
+                    return (strength1 < strength2);
+                  };
+      break;
+    }
         case Column::Numor: {
             compareFn = [&](std::unique_ptr<PeakItem>&  p1, std::unique_ptr<PeakItem>&  p2) {
                 int numor_1 = p1->peak()->data()->reader()->metadata().key<int>("Numor");
@@ -239,3 +247,25 @@ std::vector<PeakItem*> PeakCollectionItem::peakItems() const
 
     return output;
 }
+
+int PeakCollectionItem::numberOfPeaks(void) const
+{
+    return _peak_items.size();
+}
+
+int PeakCollectionItem::numberCaughtByFilter(void) const
+{
+  int n_caught = 0;
+  for (int i=0; i<_peak_items.size(); ++i){
+    if (_peak_items.at(i)->caughtByFilter()){
+      ++n_caught;
+    }
+  }
+  return n_caught;
+}
+
+int PeakCollectionItem::numberRejectedByFilter(void) const
+{
+  return _peak_items.size()-numberCaughtByFilter();
+}
+

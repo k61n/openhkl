@@ -34,6 +34,9 @@ class Intensity {
     //! Returns the variance of the Intensity
     double variance() const;
 
+    //! Return the strength (I/sigma)
+    double strength() const;
+
     //! Returns the sum of two Intensity whose value and variance are summed.
     Intensity operator+(const Intensity& other) const;
     //! Returns the difference between two Intensity whose value are subtracted

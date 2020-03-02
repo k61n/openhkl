@@ -168,6 +168,9 @@ private:
    QScrollBar* _figure_scroll;
    PeaksTableView* _peak_table;
 
+   // For modifying the title of peak_group
+   QGroupBox* _preview_panel;
+
 };
 
 

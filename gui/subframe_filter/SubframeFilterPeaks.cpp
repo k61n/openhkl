@@ -31,9 +31,10 @@
 #include <QScrollBar>
 #include <QScrollArea>
 #include <QLabel>
+#include <sstream>
 
-SubframeFilterPeaks::SubframeFilterPeaks() 
-    : QWidget(), 
+SubframeFilterPeaks::SubframeFilterPeaks()
+    : QWidget(),
     // _pixmap(nullptr),
     _peak_collection("temp", nsx::listtype::FOUND),
     _peak_collection_item(),
@@ -228,7 +229,7 @@ void SubframeFilterPeaks::setStrengthUp()
 
     _strength_min = new QDoubleSpinBox();
     _strength_min->setValue(1.00000);
-    _strength_min->setMaximum(1000);
+    _strength_min->setMaximum(100000);
     _strength_min->setDecimals(6);
 
     _strength_max = new QDoubleSpinBox();
@@ -416,6 +417,7 @@ void SubframeFilterPeaks::setPeakTableUp()
     QGroupBox* peak_group = new QGroupBox("Peaks");
     QGridLayout* peak_grid = new QGridLayout(peak_group);
 
+    _preview_panel = peak_group;
     peak_group->setSizePolicy(*_size_policy_right);
 
     _peak_table= new PeaksTableView(this);
@@ -589,6 +591,16 @@ void SubframeFilterPeaks::filterPeaks()
     filter->resetFiltering(collection);
     filter->filter(collection);
 
+    int n_peaks = _peak_collection_item.numberOfPeaks();
+    int n_caught = _peak_collection_item.numberCaughtByFilter();
+
+    std::ostringstream oss;
+    oss << n_caught << " of " << n_peaks << " peaks caught by filter";
+    QString new_title = QString::fromUtf8(oss.str().c_str());
+    std::cout << n_caught << " of " << n_peaks << " peaks caught by filter"
+              << std::endl;
+    _preview_panel->setTitle(new_title);
+
     refreshPeakTable();
 }
 
@@ -596,7 +608,7 @@ void SubframeFilterPeaks::accept()
 {
     if (_peak_list.isEmpty() || _exp_combo->count() < 1)
         return;
-    nsx::PeakCollection* collection = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->getPeakCollection(_peak_combo->currentText().toStdString());  
+    nsx::PeakCollection* collection = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->getPeakCollection(_peak_combo->currentText().toStdString());
 
     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
     dlg->exec();
@@ -639,11 +651,13 @@ void SubframeFilterPeaks::refreshPeakVisual()
             graphic->showLabel(false);
             graphic->setSize(10);
             graphic->setColor(Qt::darkGreen);
+            graphic->setOutlineColor(Qt::transparent);
         }else{
             graphic->showArea(true);
             graphic->showLabel(false);
             graphic->setSize(10);
             graphic->setColor(Qt::darkRed);
+            graphic->setOutlineColor(Qt::transparent);
         }
     }
     _figure_view->getScene()->update();

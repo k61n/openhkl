@@ -54,6 +54,7 @@ QVariant PeakItem::peakData(
     double peak_d = 1.0 / (_peak->q().rowVector().norm());
     double intensity = _peak->correctedIntensity().value();
     double sigma_intensity = _peak->correctedIntensity().sigma();
+    double strength = _peak->correctedIntensity().strength();
     const Eigen::Vector3d& peak_center = _peak->shape().center();
     
     switch (role) {
@@ -83,6 +84,9 @@ QVariant PeakItem::peakData(
                 }
                 case Column::Sigma: {
                     return sigma_intensity;
+                }
+                case Column::Strength: {
+                    return strength;
                 }
                 case Column::Numor: {
                     return _peak->data()->reader()->metadata().key<int>("Numor");
@@ -129,4 +133,9 @@ QVariant PeakItem::peakData(
             break;
     }
     return QVariant::Invalid;
+}
+
+bool PeakItem::caughtByFilter(void) const
+{
+  return _peak->caughtByFilter();
 }

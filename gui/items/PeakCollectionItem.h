@@ -49,11 +49,17 @@ public:
     //! The sorthing of the peaks
     void sort(int column, Qt::SortOrder order);
     //! Enumerator class for the model
-    enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Numor, uc, d, Count };
+    enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Strength, Numor, uc, d, Count };
     //! Return the row according to the vis. peak item pointer
     int returnRowOfVisualItem(PeakItemGraphic* peak_graphic) const;
     //! Set the visual to filter mode
     void setFilterMode();
+    //! Return number of peaks caught by filter
+    int numberCaughtByFilter(void) const;
+    //! Return number of peaks rejected by filter
+    int numberRejectedByFilter(void) const;
+    //! Return number of peaks
+    int numberOfPeaks(void) const;
 
 private:
 
@@ -64,3 +70,4 @@ private:
 };
 
 #endif // GUI_ITEMS_PEAKCOLLECTIONITEM_H
+

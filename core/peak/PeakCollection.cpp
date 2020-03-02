@@ -13,7 +13,6 @@
 //  ***********************************************************************************************
 
 #include "core/peak/PeakCollection.h"
-#include <fstream>
 
 namespace nsx {
 
@@ -117,6 +116,21 @@ int PeakCollection::numberOfInvalid() const
     return numberOfPeaks()-numberOfValid();
 }
 
+int PeakCollection::numberCaughtByFilter() const
+{
+    int caught = 0;
+    for (int i=0; i<_peaks.size();++i){
+        if (_peaks.at(i)->caughtByFilter()){
+          caught++;
+        }
+    }
+}
+
+int PeakCollection::numberRejectedByFilter() const
+{
+    return numberOfPeaks()-numberCaughtByFilter();
+}
+
 std::map<std::string, float>* PeakCollection::meta() 
 {
     _meta.clear();
@@ -142,40 +156,6 @@ void PeakCollection::setName(const std::string& name)
 std::string PeakCollection::name() const
 {
     return std::string(_name);
-}
-
-bool PeakCollection::exportToGnuplot(const char* filename, bool recip) const
-{
-    std::ofstream ofstr(filename);
-    if(!ofstr)
-        return false;
-
-    if(recip)
-    {
-        ofstr << "set xlabel 'h (rlu)'\n";
-        ofstr << "set ylabel 'k (rlu)'\n";
-        ofstr << "set zlabel 'l (rlu)'\n";
-    }
-    else
-    {
-        ofstr << "set xlabel 'Pixel'\n";
-        ofstr << "set ylabel 'Pixel'\n";
-        ofstr << "set zlabel 'Frame'\n";
-    }
-
-    ofstr << "set xyplane 0\n";
-
-    ofstr << "splot '-' u 1:2:3:(sqrt($4*$5)/1e4) with points pt 7 ps variable lc black notitle\n";
-
-    for(const auto& peak : _peaks)
-    {
-        nsx::Ellipsoid elli = recip ? peak->qShape() : peak->shape();
-        ofstr << elli.center()[0] << " " << elli.center()[1] << " " << elli.center()[2];
-        ofstr << " " << peak->correctedIntensity().value() << " " << peak->correctedIntensity().sigma() << "\n";
-    }
-
-    ofstr << "e" << std::endl;
-    return true;
 }
 
 } // namespace nsx

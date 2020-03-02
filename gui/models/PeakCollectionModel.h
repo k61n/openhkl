@@ -47,7 +47,7 @@ public:
     //! Returns header information
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     //! Enumerator class for the model
-    enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Numor, uc, d, Count };
+    enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Strength, Numor, uc, d, Count };
     //! The sorthing of the peaks
     void sort(int column, Qt::SortOrder order) override;
 

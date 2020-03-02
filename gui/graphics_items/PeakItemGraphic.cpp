@@ -125,6 +125,11 @@ void PeakItemGraphic::setColor(QColor color)
     _center_gi->setBrush(QBrush(_color));
 }
 
+void PeakItemGraphic::setOutlineColor(QColor color)
+{
+  _center_gi->setPen(QPen(color));
+}
+
 nsx::Peak3D* PeakItemGraphic::peak() const
 {
     return _peak;
@@ -148,7 +153,6 @@ void PeakItemGraphic::paint(QPainter* painter, const QStyleOptionGraphicsItem* o
     Q_UNUSED(painter)
 
     // _label_gi->setVisible(_hovered || _show_label);
-
     // _center_gi->setVisible(_hovered || _show_center);
 }
 

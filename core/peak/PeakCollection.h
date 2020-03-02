@@ -65,6 +65,10 @@ class PeakCollection{
     int numberOfValid() const;
     //! Returns the amount of invalid peaks
     int numberOfInvalid() const;
+    // Returns number of peaks caught by filter
+    int numberCaughtByFilter() const;
+    // Returns number of peaks rejected by filter
+    int numberRejectedByFilter() const;
 
     //! Returns a fresh generated pointer to meta
     std::map<std::string, float>* meta();
@@ -75,9 +79,6 @@ class PeakCollection{
     void resetShapeLibrary() {_shape_library.reset(nullptr);};
     //! Get the shape library
     ShapeLibrary* shapeLibrary() const {return _shape_library.get();};
-
-    // export peak list to gnuplot
-    bool exportToGnuplot(const char* filename, bool recip=true) const;
 
 private:
     std::vector<std::unique_ptr<nsx::Peak3D>> _peaks;

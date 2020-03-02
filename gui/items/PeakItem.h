@@ -24,7 +24,8 @@
 enum Column { 
         h, k, l, px, py, frame, 
         intensity, sigmaIntensity, 
-        numor, unitCell, d, count };
+        strength, numor, unitCell,
+        d, count };
 
 enum PeakDisplayModes { VALID, FILTER };
 
@@ -43,7 +44,9 @@ public:
     //! Get the graphical representation
     PeakItemGraphic* peakGraphic() {return _peak_graphic.get();};
     //!The column enumerators
-    enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Numor, uc, d, Count };
+    enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Strength, Numor, uc, d, Count };
+    //! Whether the peak was caught by the filter
+    bool caughtByFilter(void) const;
 
 private:
 
