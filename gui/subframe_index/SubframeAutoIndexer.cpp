@@ -151,7 +151,7 @@ void SubframeAutoIndexer::setParametersUp()
     para_grid->addWidget(label_ptr, 4, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    label_ptr = new QLabel("Subdiversions:");
+    label_ptr = new QLabel("Subdivisions:");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 5, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
@@ -198,10 +198,10 @@ void SubframeAutoIndexer::setParametersUp()
     _number_vertices->setMaximumWidth(1000);
     _number_vertices->setMaximum(1000);
 
+    _number_subdivisions->setMaximumWidth(1000);
+
     _number_solutions->setMaximumWidth(1000);
     _number_solutions->setMaximum(100000);
-
-    _number_subdivisions->setMaximumWidth(1000);
 
     _min_cell_volume->setMaximumWidth(1000);
     _min_cell_volume->setMaximum(100000);
@@ -226,8 +226,8 @@ void SubframeAutoIndexer::setParametersUp()
     para_grid->addWidget(_only_niggli, 2, 1, 1, 1);
     para_grid->addWidget(_max_cell_dimension, 3, 1, 1, 1);
     para_grid->addWidget(_number_vertices, 4, 1, 1, 1);
-    para_grid->addWidget(_number_solutions, 5, 1, 1, 1);
-    para_grid->addWidget(_number_subdivisions, 6, 1, 1, 1);
+    para_grid->addWidget(_number_subdivisions, 5, 1, 1, 1);
+    para_grid->addWidget(_number_solutions, 6, 1, 1, 1);
     para_grid->addWidget(_min_cell_volume, 7, 1, 1, 1);
     para_grid->addWidget(_indexing_tolerance, 8, 1, 1, 1);
 
