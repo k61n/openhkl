@@ -103,16 +103,15 @@ DirectVector FlatDetector::pixelPosition(double px, double py) const
     return DirectVector(result);
 }
 
-DetectorEvent
-FlatDetector::constructEvent(const DirectVector& from, const ReciprocalVector& kf) const
+DetectorEvent FlatDetector::constructEvent(
+    const DirectVector& from, const ReciprocalVector& kf, const double frame) const
 {
-    const DetectorEvent no_event = {0, 0, -1, -1};
     const Eigen::Vector3d direction = kf.rowVector().transpose();
     double px, py, tof;
 
     double x = _distance - from[1];
     if (std::fabs(direction[1]) < 1e-10 || std::fabs(x) < 1e-10)
-        return no_event;
+        return {}; // no_event
 
     tof = x / direction[1];
     Eigen::Vector3d v = from.vector() + direction * tof;
@@ -121,9 +120,9 @@ FlatDetector::constructEvent(const DirectVector& from, const ReciprocalVector& k
     py = 0.5 * (_nRows * (2 * v[2] / _height + 1) - 1);
 
     if (px < 0 || px > _nCols || py < 0 || py > _nRows)
-        return no_event;
+        return {}; // no event
 
-    return {px, py, 0.0, tof};
+    return {px, py, frame, tof};
 }
 
 Eigen::Matrix3d FlatDetector::jacobian(double /*px*/, double /*py*/) const

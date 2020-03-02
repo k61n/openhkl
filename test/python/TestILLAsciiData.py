@@ -34,12 +34,12 @@ class TestILLAscii(unittest.TestCase):
         #self.assertAlmostEqual(states[2].sample.getValues()[2],-0.48583171E+02*deg)
 
         st = nsx.InstrumentState()
-        st = dataf.interpolatedState(0.5)
+        st = dataf.instrumentStates().interpolate(0.5)
         #self.assertAlmostEqual(st.detector.getValues()[0],states[0].detector.getValues()[0])
         #self.assertAlmostEqual(st.sample.getValues()[0],states[0].sample.getValues()[0]+0.5*(states[1].sample.getValues()[0]-states[0].sample.getValues()[0]))
 
         st = nsx.InstrumentState()
-        st = dataf.interpolatedState(2.3)
+        st = dataf.instrumentStates().interpolate(2.3)
         #self.assertAlmostEqual(st.detector.getValues()[0],states[2].detector.getValues()[0]+0.3*(states[3].detector.getValues()[0]-states[2].detector.getValues()[0]))
         #self.assertAlmostEqual(st.sample.getValues()[0],states[2].sample.getValues()[0]+0.3*(states[3].sample.getValues()[0]-states[2].sample.getValues()[0]))
 

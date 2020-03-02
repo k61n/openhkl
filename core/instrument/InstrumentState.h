@@ -35,15 +35,13 @@ class InstrumentState {
     InstrumentState(Diffractometer* diffractometer = nullptr);
     virtual ~InstrumentState() {}
 
-    //! Takes a direct vector in detector coordinates and computes kf in lab
-    //! coordinates
+    //! Takes a direct vector in detector coordinates and returns kf in lab coordinates
     ReciprocalVector kfLab(const DirectVector& detector_position) const;
 
     //! Returns source ki
     ReciprocalVector ki() const;
 
-    //! Takes direct vector in detector coordinates and computes q in sample
-    //! coordinates
+    //! Takes direct vector in detector coordinates and returns q in sample coordinates
     ReciprocalVector sampleQ(const DirectVector& detector_position) const;
 
     //! Returns the gamma angle associated to the given lab space position

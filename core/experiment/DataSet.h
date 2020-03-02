@@ -16,7 +16,8 @@
 #define CORE_EXPERIMENT_DATASET_H
 
 #include "base/mask/IMask.h"
-#include "core/instrument/InterpolatedState.h"
+#include "core/detector/Detector.h"
+#include "core/instrument/InstrumentStateList.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 
@@ -60,9 +61,6 @@ class DataSet {
     //! Gets the the sample states
     const InstrumentStateList& instrumentStates() const;
 
-    //! Gets the interpolated state of a given component
-    InterpolatedState interpolatedState(double frame) const;
-
     //! Add a new mask to the data
     void addMask(IMask* mask);
 
@@ -99,14 +97,13 @@ class DataSet {
     //! Export dataset to HDF5 format
     void saveHDF5(const std::string& filename);
 
-    //! Returns detector events corresponding to the list of q values.
-    std::vector<DetectorEvent> events(const std::vector<ReciprocalVector>& sample_qs) const;
-
     //! Returns the sample-space q vector corresponding to a detector event
     ReciprocalVector computeQ(const DetectorEvent& ev) const;
 
     //! Returns the data reader used to set this dataset
     std::shared_ptr<IDataReader> reader() const;
+
+    const Detector& detector() const;
 
     //! Return the name of the dataset
     std::string name() const;

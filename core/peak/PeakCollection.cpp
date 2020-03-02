@@ -27,38 +27,40 @@ PeakCollection::PeakCollection(const std::string& name, nsx::listtype type){
 }
 
 void PeakCollection::populate(
-    const std::vector<std::shared_ptr<nsx::Peak3D>> peak_list) 
+    const std::vector<std::shared_ptr<nsx::Peak3D>> peak_list)
 {
     reset();
-
-    for (std::shared_ptr<nsx::Peak3D> peak : peak_list){
-        std::unique_ptr<nsx::Peak3D> ptr(new Peak3D(peak));
-        _peaks.push_back(std::move(ptr));
-    }
+    for (std::shared_ptr<nsx::Peak3D> peak : peak_list)
+        push_back(*peak);
 }
 
 void PeakCollection::populate(
-    const std::vector<nsx::Peak3D*> peak_list) 
+    const std::vector<nsx::Peak3D*> peak_list)
 {
     reset();
-
-    for (nsx::Peak3D* peak : peak_list){
-        std::unique_ptr<nsx::Peak3D> ptr(new Peak3D(*peak));
-        _peaks.push_back(std::move(ptr));
-    }
+    for (nsx::Peak3D* peak : peak_list)
+        push_back(*peak);
 }
 
-void PeakCollection::populateFromFiltered(PeakCollection* collection) 
+void PeakCollection::push_back(const nsx::Peak3D& peak)
+{
+    _peaks.push_back(std::move(std::unique_ptr<nsx::Peak3D>{new Peak3D(peak)}));
+}
+
+void PeakCollection::addPeak(const std::shared_ptr<nsx::Peak3D>& peak)
+{
+    push_back(peak);
+}
+
+void PeakCollection::populateFromFiltered(PeakCollection* collection)
 {
     reset();
 
     std::vector<nsx::Peak3D*> peak_list = collection->getPeakList();
 
     for (nsx::Peak3D* peak : peak_list){
-        if (peak->caughtByFilter()){
-            std::unique_ptr<nsx::Peak3D> ptr(new Peak3D(*peak));
-            _peaks.push_back(std::move(ptr));
-        }
+        if (peak->caughtByFilter())
+            push_back(*peak);
     }
 }
 
@@ -67,17 +69,11 @@ void PeakCollection::reset()
     _peaks.clear();
 }
 
-void PeakCollection::addPeak(const std::shared_ptr<nsx::Peak3D> peak)
-{
-    std::unique_ptr<nsx::Peak3D> ptr(new Peak3D(peak));
-    _peaks.push_back(std::move(ptr));
-}
-
 nsx::Peak3D* PeakCollection::getPeak(int index){
     return _peaks.at(index).get();
 }
 
-std::vector<nsx::Peak3D*> PeakCollection::getPeakList() const 
+std::vector<nsx::Peak3D*> PeakCollection::getPeakList() const
 {
     std::vector<nsx::Peak3D*> peak_list;
     for (int i = 0; i<_peaks.size();i++) {
@@ -86,7 +82,7 @@ std::vector<nsx::Peak3D*> PeakCollection::getPeakList() const
     return peak_list;
 }
 
-std::vector<nsx::Peak3D*> PeakCollection::getFilteredPeakList() const 
+std::vector<nsx::Peak3D*> PeakCollection::getFilteredPeakList() const
 {
     std::vector<nsx::Peak3D*> peak_list;
     for (int i = 0; i<_peaks.size();i++) {
@@ -96,12 +92,12 @@ std::vector<nsx::Peak3D*> PeakCollection::getFilteredPeakList() const
     return peak_list;
 }
 
-int PeakCollection::numberOfPeaks() const 
+int PeakCollection::numberOfPeaks() const
 {
     return _peaks.size();
 }
 
-int PeakCollection::numberOfValid() const 
+int PeakCollection::numberOfValid() const
 {
     int valid = 0;
     for (int i = 0; i<_peaks.size();i++) {
@@ -111,7 +107,7 @@ int PeakCollection::numberOfValid() const
     return valid;
 }
 
-int PeakCollection::numberOfInvalid() const 
+int PeakCollection::numberOfInvalid() const
 {
     return numberOfPeaks()-numberOfValid();
 }

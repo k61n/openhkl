@@ -36,25 +36,19 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader)
     , _nFrames(0)
     , _nrows(0)
     , _ncols(0)
-    , _data()
-    , _states()
     , _fileSize(0)
-    , _masks()
     , _background(0.0)
     , _reader(reader)
-    , _name("")
 {
     if (!fileExists(_filename))
         throw std::runtime_error("IData, file: " + _filename + " does not exist");
 
-    auto diffractometer = _reader->diffractometer();
-
-    _nrows = diffractometer->detector()->nRows();
-    _ncols = diffractometer->detector()->nCols();
+    _nrows = detector().nRows();
+    _ncols = detector().nCols();
     _nFrames = _reader->metadata().key<int>("npdone");
 
     double wav = _reader->metadata().key<double>("wavelength");
-    diffractometer->source().selectedMonochromator().setWavelength(wav);
+    _reader->diffractometer()->source().selectedMonochromator().setWavelength(wav);
 
     // Getting Scan parameters for the detector
     _states.reserve(_nFrames);
@@ -111,28 +105,12 @@ std::size_t DataSet::nRows() const
     return _nrows;
 }
 
-InterpolatedState DataSet::interpolatedState(double frame) const
-{
-    if (frame > (_states.size() - 1) || frame < 0)
-        throw std::runtime_error(
-            "Error when interpolating state: invalid frame value: " + std::to_string(frame));
-
-    const std::size_t idx = std::size_t(std::lround(std::floor(frame)));
-    const std::size_t next = std::min(idx + 1, _states.size() - 1);
-    const double t = frame - idx;
-
-    const auto& nextState = _states[next];
-    const auto& prevState = _states[idx];
-
-    return InterpolatedState(prevState, nextState, t);
-}
-
-const std::vector<InstrumentState>& DataSet::instrumentStates() const
+const InstrumentStateList& DataSet::instrumentStates() const
 {
     return _states;
 }
 
-std::vector<InstrumentState>& DataSet::instrumentStates()
+InstrumentStateList& DataSet::instrumentStates()
 {
     return _states;
 }
@@ -209,7 +187,7 @@ void DataSet::saveHDF5(const std::string& filename) // const
 
     const auto& detectorStates = _reader->detectorStates();
 
-    const auto& detector_gonio = _reader->diffractometer()->detector()->gonio();
+    const auto& detector_gonio = detector().gonio();
     size_t n_detector_gonio_axes = detector_gonio.nAxes();
     for (size_t i = 0; i < n_detector_gonio_axes; ++i) {
         const auto& axis = detector_gonio.axis(i);
@@ -327,92 +305,29 @@ void DataSet::maskPeaks(PeakList& peaks) const
     }
 }
 
-std::vector<DetectorEvent> DataSet::events(const std::vector<ReciprocalVector>& sample_qs) const
-{
-    std::vector<DetectorEvent> events;
-
-    // return true if inside Ewald sphere, false otherwise
-    auto compute_sign = [](const Eigen::RowVector3d& q, const InterpolatedState& state) -> bool {
-        const Eigen::RowVector3d ki = state.ki().rowVector();
-        const Eigen::RowVector3d kf = ki + q * state.sampleOrientationMatrix().transpose();
-        return kf.squaredNorm() < ki.squaredNorm();
-    };
-
-    // for each sample q, determine the rotation that makes it intersect the Ewald sphere
-    for (const ReciprocalVector& sample_q : sample_qs) {
-        const Eigen::RowVector3d& q_vect = sample_q.rowVector();
-
-        double f0 = 0.0;
-        double f1 = nFrames() - 1;
-
-        auto state0 = interpolatedState(f0);
-        auto state1 = interpolatedState(f1);
-
-        bool s0 = compute_sign(q_vect, state0);
-        bool s1 = compute_sign(q_vect, state1);
-
-        // does not cross Ewald sphere, or crosses more than once
-        if (s0 == s1)
-            continue;
-
-        // now use bisection method to compute intersection to good accuracy
-        while (f1 - f0 > 1e-10) {
-            double f = 0.5 * (f0 + f1);
-            auto state = interpolatedState(f);
-            auto sign = compute_sign(q_vect, state);
-
-            // branch right
-            if (sign == s0) {
-                s0 = sign;
-                state0 = state;
-                f0 = f;
-            }
-            // branch left
-            else {
-                s1 = sign;
-                state1 = state;
-                f1 = f;
-            }
-        }
-
-        // now f stores the frame value at the intersection
-        const double f = 0.5 * (f0 + f1);
-        const auto state = interpolatedState(f);
-        Eigen::RowVector3d kf =
-            state.ki().rowVector() + q_vect * state.sampleOrientationMatrix().transpose();
-        const auto* detector = _reader->diffractometer()->detector();
-        auto event = detector->constructEvent(
-            DirectVector(state.samplePosition), ReciprocalVector((kf * state.detectorOrientation)));
-        bool accept = event._tof > 0;
-
-        if (accept) {
-            event._frame = f;
-            events.emplace_back(event);
-        }
-    }
-    return events;
-}
-
 ReciprocalVector DataSet::computeQ(const DetectorEvent& ev) const
 {
-    const auto& state = interpolatedState(ev._frame);
-    const auto* detector = _reader->diffractometer()->detector();
-    const auto& detector_position = DirectVector(detector->pixelPosition(ev._px, ev._py));
+    const auto& state = _states.interpolate(ev._frame);
+    const auto& detector_position = DirectVector(detector().pixelPosition(ev._px, ev._py));
     return state.sampleQ(detector_position);
 }
 
 Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx)
 {
-    const auto* detector = _reader->diffractometer()->detector();
     Eigen::ArrayXXd new_frame = frame(idx).cast<double>();
-    new_frame -= detector->baseline();
-    new_frame /= detector->gain();
+    new_frame -= detector().baseline();
+    new_frame /= detector().gain();
     return new_frame;
 }
 
 std::shared_ptr<IDataReader> DataSet::reader() const
 {
     return _reader;
+}
+
+const Detector& DataSet::detector() const
+{
+    return *_reader->diffractometer()->detector();
 }
 
 std::string DataSet::name() const

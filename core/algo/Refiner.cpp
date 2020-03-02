@@ -16,6 +16,7 @@
 #include <iterator>
 
 #include "core/algo/Refiner.h"
+#include "core/algo/Qs2Events.h"
 #include "core/analyse/PeakFilter.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/DataSet.h"
@@ -26,8 +27,8 @@
 
 namespace nsx {
 
-Refiner::Refiner(
-    InstrumentStateList& states, UnitCell* cell, std::vector<nsx::Peak3D*> peaks, int nbatches)
+Refiner::Refiner(InstrumentStateList& states, UnitCell* cell,
+                 std::vector<nsx::Peak3D*> peaks, int nbatches)
     : _cell(cell), _batches()
 {
     PeakFilter peak_filter;
@@ -116,13 +117,12 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
     filtered_peaks = peak_filter.filterIndexed(
         filtered_peaks, *_cell, _cell->indexingTolerance());
 
-    std::vector<nsx::Peak3D*> pred_peaks;
     int updated = 0;
 
     for (nsx::Peak3D* peak : filtered_peaks) {
         // find appropriate batch
         const RefinementBatch* b = nullptr;
-        double z = peak->shape().center()[2];
+        const double z = peak->shape().center()[2];
         for (auto&& batch : _batches) {
             if (batch.contains(z)) {
                 b = &batch;
@@ -137,9 +137,11 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
         auto batch_cell = b->cell();
 
         // update the position
-        MillerIndex hkl(peak->q(), *batch_cell);
-        ReciprocalVector q_pred(hkl.rowVector().cast<double>() * batch_cell->reciprocalBasis());
-        auto events = peak->data()->events({q_pred});
+        const MillerIndex hkl(peak->q(), *batch_cell);
+        const ReciprocalVector q_pred(
+            hkl.rowVector().cast<double>() * batch_cell->reciprocalBasis());
+        const std::vector<DetectorEvent> events = algo::qs2events(
+            {q_pred}, peak->data()->instrumentStates(), peak->data()->detector());
 
         // something wrong with new prediction...
         if (events.size() != 1) {

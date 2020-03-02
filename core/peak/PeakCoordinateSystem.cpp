@@ -27,7 +27,7 @@ PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak) : _peak(peak.get())
         throw std::runtime_error("Cannot construct PeakCoordinateSystem from null Peak3d");
 
     _event = DetectorEvent(peak->shape().center());
-    _state = peak->data()->interpolatedState(_event._frame);
+    _state = peak->data()->instrumentStates().interpolate(_event._frame);
     _ki = _state.ki().rowVector();
     _kf = peak->q().rowVector() * _state.sampleOrientationMatrix().transpose() + _ki;
 
@@ -45,7 +45,7 @@ PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak) : _peak(peak.get())
 PeakCoordinateSystem::PeakCoordinateSystem(Peak3D* peak) : _peak(peak)
 {
     _event = DetectorEvent(peak->shape().center());
-    _state = peak->data()->interpolatedState(_event._frame);
+    _state = peak->data()->instrumentStates().interpolate(_event._frame);
     _ki = _state.ki().rowVector();
     _kf = peak->q().rowVector() * _state.sampleOrientationMatrix().transpose() + _ki;
 
@@ -62,11 +62,10 @@ PeakCoordinateSystem::PeakCoordinateSystem(Peak3D* peak) : _peak(peak)
 
 Eigen::Vector3d PeakCoordinateSystem::transform(const DetectorEvent& ev) const
 {
-    auto det = _peak->data()->reader()->diffractometer()->detector();
-    auto position = det->pixelPosition(ev._px, ev._py);
+    auto position = _peak->data()->detector().pixelPosition(ev._px, ev._py);
     const Eigen::RowVector3d dk = _state.kfLab(position).rowVector() - _kf;
 
-// Kabsh coordinate system
+// Kabsch coordinate system
 #if 1
     const double eps1 = _e1.dot(dk);
     const double eps2 = _e2.dot(dk);

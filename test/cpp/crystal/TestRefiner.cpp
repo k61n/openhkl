@@ -114,7 +114,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     nsx::IndexerParameters parameters;
     auto_indexer->setParameters(parameters);
 
-    CHECK_NOTHROW(auto_indexer->autoIndex(filtered_peaks));
+    CHECK_NOTHROW(auto_indexer->autoIndex(filtered_peaks->getPeakList()));
     CHECK(auto_indexer->solutions().size() > 1);
 
     auto solution = auto_indexer->solutions().front();
@@ -122,7 +122,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     // correctly indexed at least 98% of peaks
     CHECK(solution.second > 98.0);
 
-    
+
 
     // set unit cell
     auto cell = solution.first;

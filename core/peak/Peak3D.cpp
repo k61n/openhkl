@@ -70,7 +70,7 @@ Peak3D::Peak3D(std::shared_ptr<nsx::Peak3D> peak)
     _rockingCurve = peak->rockingCurve();
     _meanBackground = peak->meanBackground();
     _rawIntensity = peak->rawIntensity();
-    
+
     _caught_by_filter = false;
     _rejected_by_filter = false;
 }
@@ -123,7 +123,7 @@ Intensity Peak3D::rawIntensity() const
 Intensity Peak3D::correctedIntensity() const
 {
     auto c = _shape.center();
-    auto state = _data->interpolatedState(c[2]);
+    auto state = _data->instrumentStates().interpolate(c[2]);
     const double lorentz = state.lorentzFactor(c[0], c[1]);
     const double factor = _scale / lorentz / _transmission;
     return rawIntensity() * factor / state.stepSize;
@@ -206,7 +206,7 @@ void Peak3D::setRawIntensity(const Intensity& i)
 ReciprocalVector Peak3D::q() const
 {
     auto pixel_coords = _shape.center();
-    auto state = _data->interpolatedState(pixel_coords[2]);
+    auto state = _data->instrumentStates().interpolate(pixel_coords[2]);
     const auto* detector = _data->reader()->diffractometer()->detector();
     auto detector_position =
         DirectVector(detector->pixelPosition(pixel_coords[0], pixel_coords[1]));
@@ -232,7 +232,7 @@ Ellipsoid Peak3D::qShape() const
         throw std::runtime_error("Attempted to compute q-shape of peak not attached to data");
 
     Eigen::Vector3d p = _shape.center();
-    auto state = _data->interpolatedState(p[2]);
+    auto state = _data->instrumentStates().interpolate(p[2]);
     Eigen::Vector3d q0 = q().rowVector();
 
     // Jacobian of map from detector coords to sample q space
@@ -243,41 +243,6 @@ Ellipsoid Peak3D::qShape() const
     const Eigen::Matrix3d q_inv_cov = JI.transpose() * _shape.metric() * JI;
     return Ellipsoid(q0, q_inv_cov);
 }
-
-// found unused (JWu 11jun19)
-// ReciprocalVector Peak3D::qPredicted() const
-//{
-//    if (!_unitCell)
-//        return {};
-//    auto index = MillerIndex(q(), *_unitCell);
-//    return ReciprocalVector(_unitCell->fromIndex(index.rowVector().cast<double>()));
-//}
-
-// found unused (JWu 11jun19)
-// DetectorEvent Peak3D::predictCenter(double frame) const
-//{
-//    const DetectorEvent no_event = {0, 0, -1, -1};
-//
-//    if (!_unitCell)
-//        return no_event;
-//
-//    auto index = MillerIndex(q(), *_unitCell);
-//    auto state = _data->interpolatedState(frame);
-//    Eigen::RowVector3d q_hkl = _unitCell->fromIndex(index.rowVector().cast<double>());
-//    Eigen::RowVector3d ki = state.ki().rowVector();
-//    Eigen::RowVector3d kf = q_hkl * state.sampleOrientationMatrix().transpose() + ki;
-//
-//    const double alpha = ki.norm() / kf.norm();
-//
-//    Eigen::RowVector3d kf1 = alpha * kf;
-//    Eigen::RowVector3d kf2 = -alpha * kf;
-//
-//    Eigen::RowVector3d pred_kf = (kf1 - kf).norm() < (kf2 - kf).norm() ? kf1 : kf2;
-//
-//    return _data->reader()->diffractometer()->detector()->constructEvent(
-//        DirectVector(state.samplePosition),
-//        ReciprocalVector(pred_kf * state.detectorOrientation));
-//}
 
 bool Peak3D::caughtByFilter() const
 {
@@ -297,7 +262,7 @@ void Peak3D::rejectYou(bool reject)
 
 void Peak3D::setManually(
     Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd,
-    double scale, double transmission, Intensity mean_bkg, 
+    double scale, double transmission, Intensity mean_bkg,
     bool predicted, bool selected, bool masked)
 {
     _peakEnd = peakEnd;

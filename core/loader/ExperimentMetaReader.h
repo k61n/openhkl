@@ -16,7 +16,6 @@
 #define CORE_LOADER_EXPERIMENTMETAREADER_H
 
 #include "core/raw/IDataReader.h" // inherits from
-
 #include <H5Cpp.h>
 
 namespace nsx {
@@ -28,8 +27,8 @@ public:
    ExperimentMetaReader(const ExperimentMetaReader& other) = delete;
 
    ExperimentMetaReader(
-      const std::string& file_name, 
-      const std::string& group_name, 
+      const std::string& file_name,
+      const std::string& group_name,
       Diffractometer* instrument);
 
    ~ExperimentMetaReader() override = default;

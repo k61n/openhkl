@@ -58,37 +58,31 @@ struct IndexerParameters {
 class AutoIndexer {
 
  public:
-
     //! Constructor
     AutoIndexer();
-    //! Return the parameters 
-    IndexerParameters parameters() const {return _params;};
-    //! Set the parameters 
-    void setParameters(IndexerParameters parameters) {_params = parameters;};
+    //! Return the parameters
+    IndexerParameters parameters() const { return _params; };
+    //! Set the parameters
+    void setParameters(IndexerParameters parameters) { _params = parameters; };
     //! Performs the auto-indexing
-    void autoIndex(PeakCollection* peak_collection);
+    void autoIndex(const std::vector<Peak3D*>& peaks);
     //! Returns list of the best solutions ordered by percentage of successfully indexed peaks
     const std::vector<RankedSolution>& solutions() const;
 
     //! Set the handler
-    void setHandler(std::shared_ptr<ProgressHandler> handler) {_handler = handler;};
+    void setHandler(std::shared_ptr<ProgressHandler> handler) { _handler = handler; };
     //! Set the handler
-    void unsetHandler() {_handler = nullptr;};
+    void unsetHandler() { _handler = nullptr; };
 
  private:
-
-    void computeFFTSolutions(PeakCollection* peak_collection);
-    void refineSolutions(PeakCollection* peak_collection);
+    void computeFFTSolutions(const std::vector<Peak3D*>& peaks);
+    void refineSolutions(const std::vector<Peak3D*>& peaks);
     void rankSolutions();
     void refineConstraints();
     void removeBad(double quality);
 
-private:
-
     IndexerParameters _params;
-
     std::vector<RankedSolution> _solutions;
-
     std::shared_ptr<ProgressHandler> _handler;
 };
 

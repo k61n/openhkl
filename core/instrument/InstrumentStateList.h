@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/instrument/InstrumentTypes.h
-//! @brief     Declares classes, defines data types
+//! @file      core/instrument/InstrumentStateList.h
+//! @brief     Defines class InstrumentStateList
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,20 +12,21 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INSTRUMENT_INSTRUMENTTYPES_H
-#define CORE_INSTRUMENT_INSTRUMENTTYPES_H
+#ifndef CORE_INSTRUMENT_INSTRUMENTSTATELIST_H
+#define CORE_INSTRUMENT_INSTRUMENTSTATELIST_H
 
-#include <memory>
+#include "core/instrument/InstrumentState.h"
+#include "core/instrument/InterpolatedState.h"
+#include <vector>
 
 namespace nsx {
 
-class DetectorEvent;
-class Experiment;
-class InstrumentState;
-class RotAxis;
+class InstrumentStateList : public std::vector<InstrumentState> {
+ public:
+    InterpolatedState interpolate(const double frame) const;
+};
 
-using sptrExperiment = std::shared_ptr<Experiment>;
 
 } // namespace nsx
 
-#endif // CORE_INSTRUMENT_INSTRUMENTTYPES_H
+#endif // CORE_INSTRUMENT_INSTRUMENTSTATELIST_H

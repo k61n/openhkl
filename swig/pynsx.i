@@ -282,17 +282,12 @@ using namespace nsx;
 
 %include "core/instrument/InstrumentTypes.h"
 %include "core/instrument/Monochromator.h"
-%include "core/instrument/Source.h"
 %include "core/instrument/Diffractometer.h"
 %include "core/instrument/Sample.h"
 %include "core/instrument/InstrumentState.h"
 %include "core/instrument/InterpolatedState.h"
+%include "core/instrument/InstrumentStateList.h"
 %include "core/instrument/Source.h"
-%include "core/instrument/InstrumentState.h"
-%include "core/instrument/InterpolatedState.h"
-%include "core/instrument/Monochromator.h"
-%include "core/instrument/Diffractometer.h"
-%template(InstrumentStateList) std::vector<nsx::InstrumentState>;
 
 %include "core/raw/MetaData.h"
 %include "core/raw/IDataReader.h"

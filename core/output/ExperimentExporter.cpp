@@ -35,12 +35,11 @@
 namespace nsx {
 
 bool ExperimentExporter::createFile(
-    std::string name, 
-    std::string diffractometer, 
+    std::string name,
+    std::string diffractometer,
     std::string path)
 {
     try{
-
         std::cout<<"Creating the file ... "<<std::endl;
 
         H5::H5File* file = new H5::H5File(path.c_str(), H5F_ACC_TRUNC);
@@ -56,7 +55,7 @@ bool ExperimentExporter::createFile(
         diffAtt.write(str80, diffractometer);
 
         delete file;
-        
+
     } catch (...){
         return false;
     }
@@ -68,7 +67,7 @@ bool ExperimentExporter::writeData(
     const std::map<std::string, DataSet*> data)
 {
     try{
-        
+
         H5::H5File* file = new H5::H5File(_file_name.c_str(), H5F_ACC_RDWR);
         H5::Group* data_collections = new H5::Group(
             file->createGroup("/DataCollections"));
@@ -79,7 +78,7 @@ bool ExperimentExporter::writeData(
         H5::Group* meta_data_group;
 
         for (
-            std::map<std::string,DataSet*>::const_iterator it = data.begin(); 
+            std::map<std::string,DataSet*>::const_iterator it = data.begin();
             it != data.end(); ++it) {
 
             //Write the data
@@ -182,7 +181,7 @@ bool ExperimentExporter::writeData(
                 sample_scan.write(&values(0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
             }
             delete sample_group;
-            
+
             const auto& map = data_item->reader()->metadata().map();
 
             // Write all string metadata into the "Info" group
@@ -200,7 +199,7 @@ bool ExperimentExporter::writeData(
                     info = item.second.as<std::string>();
                     H5::Attribute intAtt(info_group->createAttribute(item.first, str80, metaSpace));
                     intAtt.write(str80, info);
-                } 
+                }
                 catch (const std::exception& ex) {
                     std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what() << std::endl;
                 }
@@ -248,19 +247,18 @@ bool ExperimentExporter::writeData(
     } catch (...){
         return false;
     }
-    
+
     return true;
 }
 
 
-bool ExperimentExporter::writeInstrument(const Diffractometer* diffractometer)
+bool ExperimentExporter::writeInstrument(const Diffractometer*)
 {
     try{
-
+        // TODO ...
     } catch (...){
         return false;
     }
-    
     return true;
 }
 
@@ -279,7 +277,7 @@ bool ExperimentExporter::writePeaks(
         double* bkg_begin;
         double* bkg_end;
         double* scale;
-        double* transimition;
+        double* transmission;
         double* intensity;
         double* sigma;
         double* mean_bkg_val;
@@ -291,7 +289,7 @@ bool ExperimentExporter::writePeaks(
         bool* predicted;
 
         for (
-            std::map<std::string,PeakCollection*>::const_iterator it = peakCollections.begin(); 
+            std::map<std::string,PeakCollection*>::const_iterator it = peakCollections.begin();
             it != peakCollections.end(); ++it){
 
             //Write the data
@@ -306,7 +304,7 @@ bool ExperimentExporter::writePeaks(
             bkg_begin = new double[collection_item->numberOfPeaks()];
             bkg_end = new double[collection_item->numberOfPeaks()];
             scale = new double[collection_item->numberOfPeaks()];
-            transimition = new double[collection_item->numberOfPeaks()];
+            transmission = new double[collection_item->numberOfPeaks()];
             intensity = new double[collection_item->numberOfPeaks()];
             sigma = new double[collection_item->numberOfPeaks()];
             mean_bkg_val = new double[collection_item->numberOfPeaks()];
@@ -333,7 +331,7 @@ bool ExperimentExporter::writePeaks(
             std::string unit_cell_name;
 
             for (int i = 0; i < collection_item->numberOfPeaks(); ++i) {
-                
+
                 nsx::Peak3D* peak = collection_item->getPeak(i);
 
                 //set the values
@@ -341,7 +339,7 @@ bool ExperimentExporter::writePeaks(
                 bkg_begin[i] = peak->bkgBegin();
                 bkg_end[i] = peak->bkgEnd();
                 scale[i] = peak->scale();
-                transimition[i] = peak->transmission();
+                transmission[i] = peak->transmission();
                 intensity[i] = peak->rawIntensity().value();
                 sigma[i] = peak->rawIntensity().sigma();
                 mean_bkg_val[i] = peak->meanBackground().value();
@@ -361,7 +359,7 @@ bool ExperimentExporter::writePeaks(
                 }else{
                     unit_cells.push_back(temp.c_str());
                 }
-                
+
                 Eigen::Vector3d temp_col = peak->shape().center();
                 center.block( i, 0, 1, 3) = Eigen::RowVector3d(temp_col(0), temp_col(1), temp_col(2));
                 metric.block( i * 3, 0, 3, 3) = peak->shape().metric();
@@ -386,7 +384,7 @@ bool ExperimentExporter::writePeaks(
                     std::string("/PeakCollections/"+collection_name+"/PeakEnd"),
                     H5::PredType::NATIVE_DOUBLE, peak_space));
             peak_end_H5.write(
-                peak_end, H5::PredType::NATIVE_DOUBLE, 
+                peak_end, H5::PredType::NATIVE_DOUBLE,
                 peak_space, peak_space);
 
             H5::DataSet bkg_begin_H5(
@@ -394,7 +392,7 @@ bool ExperimentExporter::writePeaks(
                     std::string("/PeakCollections/"+collection_name+"/BkgBegin"),
                     H5::PredType::NATIVE_DOUBLE, peak_space));
             bkg_begin_H5.write(
-                bkg_begin, H5::PredType::NATIVE_DOUBLE, 
+                bkg_begin, H5::PredType::NATIVE_DOUBLE,
                 peak_space, peak_space);
 
             H5::DataSet bkg_end_H5(
@@ -402,7 +400,7 @@ bool ExperimentExporter::writePeaks(
                     std::string("/PeakCollections/"+collection_name+"/BkgEnd"),
                     H5::PredType::NATIVE_DOUBLE, peak_space));
             bkg_end_H5.write(
-                bkg_end, H5::PredType::NATIVE_DOUBLE, 
+                bkg_end, H5::PredType::NATIVE_DOUBLE,
                 peak_space, peak_space);
 
             H5::DataSet scale_H5(
@@ -410,15 +408,15 @@ bool ExperimentExporter::writePeaks(
                     std::string("/PeakCollections/"+collection_name+"/Scale"),
                     H5::PredType::NATIVE_DOUBLE, peak_space));
             scale_H5.write(
-                scale, H5::PredType::NATIVE_DOUBLE, 
+                scale, H5::PredType::NATIVE_DOUBLE,
                 peak_space, peak_space);
 
-            H5::DataSet transimition_H5(
+            H5::DataSet transmission_H5(
                 file->createDataSet(
                     std::string("/PeakCollections/"+collection_name+"/Transmission"),
                     H5::PredType::NATIVE_DOUBLE, peak_space));
-            transimition_H5.write(
-                transimition, H5::PredType::NATIVE_DOUBLE, 
+            transmission_H5.write(
+                transmission, H5::PredType::NATIVE_DOUBLE,
                 peak_space, peak_space);
 
             H5::DataSet intensity_H5(
@@ -426,7 +424,7 @@ bool ExperimentExporter::writePeaks(
                     std::string("/PeakCollections/"+collection_name+"/Intensity"),
                     H5::PredType::NATIVE_DOUBLE, peak_space));
             intensity_H5.write(
-                intensity, H5::PredType::NATIVE_DOUBLE, 
+                intensity, H5::PredType::NATIVE_DOUBLE,
                 peak_space, peak_space);
 
             H5::DataSet sigma_H5(
@@ -434,7 +432,7 @@ bool ExperimentExporter::writePeaks(
                     std::string("/PeakCollections/"+collection_name+"/Sigma"),
                     H5::PredType::NATIVE_DOUBLE, peak_space));
             sigma_H5.write(
-                sigma, H5::PredType::NATIVE_DOUBLE, 
+                sigma, H5::PredType::NATIVE_DOUBLE,
                 peak_space, peak_space);
 
             H5::DataSet mean_bkg_val_H5(
@@ -442,7 +440,7 @@ bool ExperimentExporter::writePeaks(
                     std::string("/PeakCollections/"+collection_name+"/BkgIntensity"),
                     H5::PredType::NATIVE_DOUBLE, peak_space));
             mean_bkg_val_H5.write(
-                mean_bkg_val, H5::PredType::NATIVE_DOUBLE, 
+                mean_bkg_val, H5::PredType::NATIVE_DOUBLE,
                 peak_space, peak_space);
 
             H5::DataSet mean_bkg_sig_H5(
@@ -450,7 +448,7 @@ bool ExperimentExporter::writePeaks(
                     std::string("/PeakCollections/"+collection_name+"/BkgSigma"),
                     H5::PredType::NATIVE_DOUBLE, peak_space));
             mean_bkg_sig_H5.write(
-                mean_bkg_sig, H5::PredType::NATIVE_DOUBLE, 
+                mean_bkg_sig, H5::PredType::NATIVE_DOUBLE,
                 peak_space, peak_space);
 
             H5::DataSet center_H5(
@@ -458,7 +456,7 @@ bool ExperimentExporter::writePeaks(
                     std::string("/PeakCollections/"+collection_name+"/Center"),
                     H5::PredType::NATIVE_DOUBLE, center_space));
             center_H5.write(
-                center.data(), H5::PredType::NATIVE_DOUBLE, 
+                center.data(), H5::PredType::NATIVE_DOUBLE,
                 center_space, center_space);
 
             H5::DataSet metric_H5(
@@ -466,7 +464,7 @@ bool ExperimentExporter::writePeaks(
                     std::string("/PeakCollections/"+collection_name+"/Metric"),
                     H5::PredType::NATIVE_DOUBLE, metric_space));
             metric_H5.write(
-                metric.data(), H5::PredType::NATIVE_DOUBLE, 
+                metric.data(), H5::PredType::NATIVE_DOUBLE,
                 metric_space, metric_space);
 
             H5::DataSet selected_H5(
@@ -474,7 +472,7 @@ bool ExperimentExporter::writePeaks(
                     std::string("/PeakCollections/"+collection_name+"/Selected"),
                     H5::PredType::NATIVE_HBOOL, peak_space));
             selected_H5.write(
-                selected, H5::PredType::NATIVE_HBOOL, 
+                selected, H5::PredType::NATIVE_HBOOL,
                 peak_space, peak_space);
 
             H5::DataSet masked_H5(
@@ -482,7 +480,7 @@ bool ExperimentExporter::writePeaks(
                     std::string("/PeakCollections/"+collection_name+"/Masked"),
                     H5::PredType::NATIVE_HBOOL, peak_space));
             masked_H5.write(
-                masked, H5::PredType::NATIVE_HBOOL, 
+                masked, H5::PredType::NATIVE_HBOOL,
                 peak_space, peak_space);
 
             H5::DataSet predicted_H5(
@@ -490,25 +488,25 @@ bool ExperimentExporter::writePeaks(
                     std::string("/PeakCollections/"+collection_name+"/Predicted"),
                     H5::PredType::NATIVE_HBOOL, peak_space));
             predicted_H5.write(
-                predicted, H5::PredType::NATIVE_HBOOL, 
+                predicted, H5::PredType::NATIVE_HBOOL,
                 peak_space, peak_space);
 
-            H5::StrType data_str_type(H5::PredType::C_S1, H5T_VARIABLE); 
+            H5::StrType data_str_type(H5::PredType::C_S1, H5T_VARIABLE);
             H5::DataSet data_H5(
                 file->createDataSet(
                     std::string("/PeakCollections/"+collection_name+"/DataNames"),
                     data_str_type, peak_space));
             data_H5.write(
-                data_names.data(), data_str_type, 
+                data_names.data(), data_str_type,
                 peak_space, peak_space);
 
-            H5::StrType uc_str_type(H5::PredType::C_S1, H5T_VARIABLE); 
+            H5::StrType uc_str_type(H5::PredType::C_S1, H5T_VARIABLE);
             H5::DataSet unit_cell_H5(
                 file->createDataSet(
                     std::string("/PeakCollections/"+collection_name+"/UnitCells"),
                     uc_str_type, peak_space));
             unit_cell_H5.write(
-                unit_cells.data(), uc_str_type, 
+                unit_cells.data(), uc_str_type,
                 peak_space, peak_space);
 
             // Write all other metadata (int and double) into the "Experiment" Group
@@ -526,7 +524,7 @@ bool ExperimentExporter::writePeaks(
                     H5::Attribute intAtt(
                         meta_peak_group.createAttribute(item.first, H5::PredType::NATIVE_INT32, metaSpace));
                     intAtt.write(H5::PredType::NATIVE_INT32, &value);
-                } 
+                }
                 catch (const std::exception& ex) {
                     std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what() << std::endl;
                 }
@@ -551,7 +549,7 @@ bool ExperimentExporter::writePeaks(
             delete[] bkg_begin;
             delete[] bkg_end;
             delete[] scale;
-            delete[] transimition;
+            delete[] transmission;
             delete[] intensity;
             delete[] sigma;
             delete[] mean_bkg_val;
@@ -561,7 +559,7 @@ bool ExperimentExporter::writePeaks(
             delete[] selected;
             delete[] masked;
             delete[] predicted;
-            
+
             delete peak_collection;
 
         }
@@ -572,7 +570,7 @@ bool ExperimentExporter::writePeaks(
     } catch (...){
         return false;
     }
-    
+
     return true;
 }
 
@@ -586,7 +584,7 @@ bool ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> u
         H5::Group* unit_cell_group;
 
         for (
-            std::map<std::string,UnitCell*>::const_iterator it = unit_cells.begin(); 
+            std::map<std::string,UnitCell*>::const_iterator it = unit_cells.begin();
             it != unit_cells.end(); ++it) {
 
             //Write the data
@@ -651,7 +649,7 @@ bool ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> u
     } catch (...){
         return false;
     }
-    
+
     return true;
 }
 
@@ -659,11 +657,11 @@ bool ExperimentExporter::finishWrite()
 {
     try{
         // _file->close();
-        
+
     } catch (...){
         return false;
     }
-    
+
     return true;
 }
 

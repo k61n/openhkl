@@ -12,6 +12,7 @@
 #include "base/utils/Units.h"
 #include "core/algo/AutoIndexer.h"
 #include "core/algo/DataReaderFactory.h"
+#include "core/algo/Qs2Events.h"
 #include "core/analyse/PeakFilter.h"
 #include "core/analyse/PeakFinder.h"
 #include "core/convolve/ConvolverFactory.h"
@@ -37,7 +38,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     std::cout << "Dataset columns: " << dataf->nCols()
         << ", rows: " << dataf->nRows()
-        << ", frames: " << dataf->nFrames() 
+        << ", frames: " << dataf->nFrames()
         << std::endl;
 
 
@@ -64,7 +65,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     nsx::Detector *detector = experiment.diffractometer()->detector();
     std::cout << "Detector distance: " << detector->distance() << ", "
-        << "width: " << detector->width() 
+        << "width: " << detector->width()
         << ", height: " << detector->height()
         << std::endl;
 
@@ -220,7 +221,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     nsx::IndexerParameters parameters;
     auto_indexer->setParameters(parameters);
 
-    CHECK_NOTHROW(auto_indexer->autoIndex(filtered_peaks));
+    CHECK_NOTHROW(auto_indexer->autoIndex(filtered_peaks->getPeakList()));
     CHECK(auto_indexer->solutions().size() > 1);
 
     std::cout << "Number of solutions: " << auto_indexer->solutions().size() << std::endl;
@@ -266,7 +267,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     for (auto peak : filtered_peaks->getPeakList()) {
         std::vector<nsx::ReciprocalVector> q_vectors;
         q_vectors.push_back(peak->q());
-        auto events = dataf->events(q_vectors);
+        auto events = nsx::algo::qs2events(q_vectors, dataf->instrumentStates(), dataf->detector());
 
         if (events.size() == 0)
             continue;

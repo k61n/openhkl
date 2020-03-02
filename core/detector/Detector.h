@@ -87,8 +87,8 @@ class Detector : public Component {
 
     //! Returns the detector event (pixel x, pixel y, time of flight) associated
     //! with a given kf. Returns with _negative_ tof if no such event is possible.
-    virtual DetectorEvent
-    constructEvent(const DirectVector& from, const ReciprocalVector& kf) const = 0;
+    virtual DetectorEvent constructEvent(
+        const DirectVector& from, const ReciprocalVector& kf, const double frame) const = 0;
 
     //! Returns the position of a given pixel in detector space. This takes into
     //! account the detector motions in detector space.
