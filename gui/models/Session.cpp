@@ -41,7 +41,7 @@ bool Session::createExperiment(QString experimentName, QString instrumentName)
 {
     QList<QString> temp = experimentNames();
     QList<QString>::iterator it;
-    for (it = temp.begin(); it != temp.end(); ++it){
+    for (it = temp.begin(); it != temp.end(); ++it) {
         if (*it == experimentName)
             return false;
     }
@@ -60,7 +60,7 @@ bool Session::createExperiment(QString experimentName)
 
     QList<QString> temp = experimentNames();
     QList<QString>::iterator it;
-    for (it = temp.begin(); it != temp.end(); ++it){
+    for (it = temp.begin(); it != temp.end(); ++it) {
         if (*it == experimentName)
             return false;
     }
@@ -86,7 +86,7 @@ QList<QString> Session::experimentNames() const
 {
     QList<QString> names;
 
-    for (int i = 0 ; i < _experiments.size(); i++) {
+    for (int i = 0; i < _experiments.size(); i++) {
         names.append(QString::fromStdString(_experiments.at(i)->experiment()->name()));
     }
     return names;
@@ -106,7 +106,8 @@ void Session::removeExperiment()
     }
     gLogger->log(
         "removing experiment \""
-        + QString::fromStdString(_experiments.at(selectedExperiment_)->experiment()->name()) + "\"");
+        + QString::fromStdString(_experiments.at(selectedExperiment_)->experiment()->name())
+        + "\"");
     _experiments.removeAt(selectedExperiment_);
     selectedExperiment_ = _experiments.size() > 0 ? 0 : -1;
     onExperimentChanged();
@@ -251,7 +252,7 @@ void Session::onDataChanged()
 void Session::onExperimentChanged()
 {
     gGui->onExperimentChanged();
-    onDataChanged();   
+    onDataChanged();
     onUnitCellChanged();
 }
 
@@ -269,14 +270,12 @@ bool Session::loadExperimentFromFile(QString filename)
 {
     bool success = createExperiment(QString::fromStdString("default"));
 
-    if (success){
+    if (success) {
         success = selectedExperiment()->experiment()->loadFromFile(filename.toStdString());
     }
-    if (success){
+    if (success) {
         selectedExperiment()->generatePeakModels();
         onExperimentChanged();
     }
     return success;
-
 }
-

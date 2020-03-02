@@ -108,7 +108,7 @@ class DataSet {
     //! Return the name of the dataset
     std::string name() const;
     //! Set the name of the dataset
-    void setName(std::string name) {_name = name;};
+    void setName(std::string name) { _name = name; };
 
  private:
     bool _isOpened;

@@ -15,8 +15,8 @@
 #ifndef GUI_DIALOGS_EXPERIMENTDIALOG_H
 #define GUI_DIALOGS_EXPERIMENTDIALOG_H
 
-#include <QDialog>
 #include <QComboBox>
+#include <QDialog>
 #include <QLineEdit>
 
 //! Dialog to get the experiment and instrument names

@@ -19,12 +19,12 @@ namespace nsx {
 
 
 std::random_device Random::_randdev;
-std::mt19937 Random::_rng(Random::_randdev());	// random number generator
+std::mt19937 Random::_rng(Random::_randdev()); // random number generator
 
 
 std::mt19937& Random::getRNG()
 {
-	return _rng;
+    return _rng;
 }
 
 
@@ -33,7 +33,7 @@ std::mt19937& Random::getRNG()
  */
 int Random::intRange(int a, int b)
 {
-	return std::uniform_int_distribution<int>(a, b)(Random::_rng);
+    return std::uniform_int_distribution<int>(a, b)(Random::_rng);
 }
 
 
@@ -42,7 +42,7 @@ int Random::intRange(int a, int b)
  */
 double Random::double01()
 {
-	return doubleRange(0., 1.);
+    return doubleRange(0., 1.);
 }
 
 
@@ -51,7 +51,7 @@ double Random::double01()
  */
 double Random::doubleRange(double a, double b)
 {
-	return std::uniform_real_distribution<double>(a, b)(Random::_rng);
+    return std::uniform_real_distribution<double>(a, b)(Random::_rng);
 }
 
 
@@ -60,7 +60,7 @@ double Random::doubleRange(double a, double b)
  */
 double Random::gauss(double mean, double sig)
 {
-	return std::normal_distribution<double>(mean, sig)(Random::_rng);
+    return std::normal_distribution<double>(mean, sig)(Random::_rng);
 }
 
 
@@ -69,7 +69,7 @@ double Random::gauss(double mean, double sig)
  */
 int Random::poisson(double mean)
 {
-	return std::poisson_distribution<int>(mean)(Random::_rng);
+    return std::poisson_distribution<int>(mean)(Random::_rng);
 }
 
 

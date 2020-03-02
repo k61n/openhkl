@@ -26,8 +26,7 @@ namespace algo {
 
 //! Returns detector events corresponding to the list of q values.
 std::vector<DetectorEvent> qs2events(
-    const std::vector<ReciprocalVector>& sample_qs,
-    const InstrumentStateList& states,
+    const std::vector<ReciprocalVector>& sample_qs, const InstrumentStateList& states,
     const Detector& detector);
 
 } // namespace algo

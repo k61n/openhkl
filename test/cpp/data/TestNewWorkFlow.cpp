@@ -36,26 +36,23 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     nsx::Experiment experiment("test", "BioDiff2500");
     nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
 
-    std::cout << "Dataset columns: " << dataf->nCols()
-        << ", rows: " << dataf->nRows()
-        << ", frames: " << dataf->nFrames()
-        << std::endl;
+    std::cout << "Dataset columns: " << dataf->nCols() << ", rows: " << dataf->nRows()
+              << ", frames: " << dataf->nFrames() << std::endl;
 
 
 #ifdef OUTPUT_INTERMEDIATE
     // export frames to gnuplot
-    for(int frame=0; frame<dataf->nFrames(); ++frame)
-    {
+    for (int frame = 0; frame < dataf->nFrames(); ++frame) {
         std::cout << "Saving frame " << frame << " ... ";
         std::ofstream ofstrFrame("frame_" + std::to_string(frame) + ".gpl");
-        //Eigen::MatrixXi frameDat = dataf->frame(frame);
-        //ofstrFrame << frameDat << std::endl;
+        // Eigen::MatrixXi frameDat = dataf->frame(frame);
+        // ofstrFrame << frameDat << std::endl;
         Eigen::MatrixXd frameDat_corr = dataf->transformedFrame(frame);
         ofstrFrame << "set xrange [0:" << dataf->nCols() << "]\n";
         ofstrFrame << "set yrange [0:" << dataf->nRows() << "]\n";
         ofstrFrame << "set cbrange [0:100]\n";
         ofstrFrame << "set logscale cb\n";
-        //ofstrFrame << "plot '-' u 1:(" << dataf->nRows() << "-$2):3 matrix w image\n";
+        // ofstrFrame << "plot '-' u 1:(" << dataf->nRows() << "-$2):3 matrix w image\n";
         ofstrFrame << "plot '-' matrix w image\n";
         ofstrFrame << frameDat_corr << "\n";
         ofstrFrame << "e" << std::endl;
@@ -63,11 +60,9 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     }
 #endif
 
-    nsx::Detector *detector = experiment.diffractometer()->detector();
+    nsx::Detector* detector = experiment.diffractometer()->detector();
     std::cout << "Detector distance: " << detector->distance() << ", "
-        << "width: " << detector->width()
-        << ", height: " << detector->height()
-        << std::endl;
+              << "width: " << detector->width() << ", height: " << detector->height() << std::endl;
 
     experiment.addData(dataf);
 
@@ -77,13 +72,12 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     size_t n_sample_gonio_axes = sample_gonio.nAxes();
 
     std::cout << "\nSample angles for each frame:" << std::endl;
-    for (size_t i = 0; i < n_sample_gonio_axes; ++i)
-    {
+    for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
         const auto& axis = sample_gonio.axis(i);
 
         std::cout << axis.name() << ": ";
         for (size_t j = 0; j < dataf->nFrames(); ++j)
-            std::cout << (dataf->reader()->sampleStates()[j][i]/M_PI*180.) << ", ";
+            std::cout << (dataf->reader()->sampleStates()[j][i] / M_PI * 180.) << ", ";
         std::cout << std::endl;
     }
 
@@ -92,13 +86,12 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     size_t n_detector_gonio_axes = detector_gonio.nAxes();
 
     std::cout << "\nDetector angles for each frame:" << std::endl;
-    for (size_t i = 0; i < n_detector_gonio_axes; ++i)
-    {
+    for (size_t i = 0; i < n_detector_gonio_axes; ++i) {
         const auto& axis = detector_gonio.axis(i);
 
         std::cout << axis.name() << ": ";
         for (size_t j = 0; j < dataf->nFrames(); ++j)
-            std::cout << (dataf->reader()->detectorStates()[j][i]/M_PI*180.) << ", ";
+            std::cout << (dataf->reader()->detectorStates()[j][i] / M_PI * 180.) << ", ";
         std::cout << std::endl;
     }
     std::cout << std::endl;
@@ -137,9 +130,8 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     auto found_peaks = peak_finder->currentPeaks();
 
 #ifdef OUTPUT_INTERMEDIATE
-    for(const nsx::Peak3D* pk : found_peaks)
-    {
-        if(!pk->enabled())
+    for (const nsx::Peak3D* pk : found_peaks) {
+        if (!pk->enabled())
             continue;
 
         nsx::Ellipsoid elli_real = pk->shape();
@@ -161,8 +153,8 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     CHECK(found_peaks.size() >= 800);
 
-    nsx::IPeakIntegrator* integrator = experiment.getIntegrator(
-        std::string("Pixel sum integrator"));
+    nsx::IPeakIntegrator* integrator =
+        experiment.getIntegrator(std::string("Pixel sum integrator"));
     integrator->setPeakEnd(3.0);
     integrator->setBkgBegin(3.5);
     integrator->setBkgEnd(4.0);
@@ -175,12 +167,11 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     nsx::PeakFilter* peak_filter = experiment.peakFilter();
     std::bitset<13> booleans;
     booleans.set(10);
-    const std::array<double, 2> d_range {1.5,50};
+    const std::array<double, 2> d_range {1.5, 50};
     peak_filter->setBooleans(booleans);
     peak_filter->setDRange(d_range);
 
-    nsx::PeakCollection* found_collection = experiment.getPeakCollection(
-        "found_peaks");
+    nsx::PeakCollection* found_collection = experiment.getPeakCollection("found_peaks");
     peak_filter->resetFiltering(found_collection);
     peak_filter->filter(found_collection);
 
@@ -189,9 +180,8 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     auto peakCollection = experiment.getPeakCollection("filtered_peaks");
     auto filteredPeaks = peakCollection->getPeakList();
 
-    for(const nsx::Peak3D* pk : filteredPeaks)
-    {
-        if(!pk->enabled())
+    for (const nsx::Peak3D* pk : filteredPeaks) {
+        if (!pk->enabled())
             continue;
 
         nsx::Ellipsoid elli_real = pk->shape();
@@ -202,7 +192,8 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
         std::cout << "real peak: " << elli_real.center().transpose() << ", ";
         std::cout << "recip peak: " << elli_recip.center().transpose() << ", ";
         std::cout << "intensity: " << intensity.value() << "+-" << intensity.sigma() << ", ";
-        std::cout << "background: " << background.value() << "+-" << background.sigma() << std::endl;
+        std::cout << "background: " << background.value() << "+-" << background.sigma()
+                  << std::endl;
     }
 
 #ifdef OUTPUT_INTERMEDIATE
@@ -215,8 +206,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     // #########################################################
     // at this stage we have the peaks, now we index
     nsx::AutoIndexer* auto_indexer = experiment.autoIndexer();
-    nsx::PeakCollection* filtered_peaks = experiment.getPeakCollection(
-        "filtered_peaks");
+    nsx::PeakCollection* filtered_peaks = experiment.getPeakCollection("filtered_peaks");
 
     nsx::IndexerParameters parameters;
     auto_indexer->setParameters(parameters);
@@ -225,17 +215,20 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     CHECK(auto_indexer->solutions().size() > 1);
 
     std::cout << "Number of solutions: " << auto_indexer->solutions().size() << std::endl;
-    for(std::size_t solidx = 0; solidx < auto_indexer->solutions().size(); ++solidx)
-    {
+    for (std::size_t solidx = 0; solidx < auto_indexer->solutions().size(); ++solidx) {
         const auto& solution = auto_indexer->solutions()[solidx];
         const auto& cell = solution.first;
         double prob = solution.second;
 
-        std::cout << "\n================================================================================" << std::endl;
+        std::cout
+            << "\n================================================================================"
+            << std::endl;
         std::cout << "Solution " << solidx << " has " << prob << "% probability." << std::endl;
         std::cout << "Unit cell:" << std::endl;
         cell->printSelf(std::cout);
-        std::cout << "================================================================================\n" << std::endl;
+        std::cout
+            << "================================================================================\n"
+            << std::endl;
     }
 
 
@@ -249,10 +242,9 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     cell->printSelf(std::cout);
 
 
-    for (auto&& peak : filtered_peaks->getPeakList())
-    {
+    for (auto&& peak : filtered_peaks->getPeakList()) {
         peak->setUnitCell(cell);
-        //std::cout << "recip peak: " << peak->q().rowVector() << std::endl;
+        // std::cout << "recip peak: " << peak->q().rowVector() << std::endl;
     }
 
     // reintegrate peaks

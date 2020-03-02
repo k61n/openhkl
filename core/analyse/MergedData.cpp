@@ -16,16 +16,15 @@
 
 namespace nsx {
 
-MergedData::MergedData(
-    std::vector<PeakCollection*> peak_collections, bool friedel)
+MergedData::MergedData(std::vector<PeakCollection*> peak_collections, bool friedel)
     : _friedel(friedel), _merged_peak_set()
 {
     _peak_collections = peak_collections;
     UnitCell* unit_cell;
 
-    for (int i = 0; i < _peak_collections.size(); ++i){
+    for (int i = 0; i < _peak_collections.size(); ++i) {
         std::vector<Peak3D*> peaks = _peak_collections[i]->getPeakList();
-        for (int j = 0; j < peaks.size(); ++j){
+        for (int j = 0; j < peaks.size(); ++j) {
             if (peaks[j]->unitCell())
                 unit_cell = peaks[j]->unitCell();
         }
@@ -33,10 +32,10 @@ MergedData::MergedData(
 
     if (!unit_cell)
         return;
-    
-    for (int i = 0; i < _peak_collections.size(); ++i){
+
+    for (int i = 0; i < _peak_collections.size(); ++i) {
         std::vector<Peak3D*> peaks = _peak_collections[i]->getPeakList();
-        for (int j = 0; j < peaks.size(); ++j){
+        for (int j = 0; j < peaks.size(); ++j) {
             if (!(peaks[j]->unitCell() == unit_cell))
                 return;
         }
@@ -44,17 +43,15 @@ MergedData::MergedData(
 
     _group = unit_cell->spaceGroup();
 
-    for (int i = 0; i < _peak_collections.size(); ++i){
+    for (int i = 0; i < _peak_collections.size(); ++i) {
         std::vector<Peak3D*> peaks = _peak_collections[i]->getPeakList();
-        for (int j = 0; j < peaks.size(); ++j){
+        for (int j = 0; j < peaks.size(); ++j) {
             addPeak(peaks[j]);
         }
     }
 }
 
-MergedData::MergedData(SpaceGroup space_group, bool friedel)
-    : _friedel(friedel), 
-    _merged_peak_set()
+MergedData::MergedData(SpaceGroup space_group, bool friedel) : _friedel(friedel), _merged_peak_set()
 {
     _group = space_group;
 }

@@ -21,35 +21,43 @@
 
 #include <QStandardItem>
 
-enum Column { 
-        h, k, l, px, py, frame, 
-        intensity, sigmaIntensity, 
-        strength, numor, unitCell,
-        d, count };
+enum Column {
+    h,
+    k,
+    l,
+    px,
+    py,
+    frame,
+    intensity,
+    sigmaIntensity,
+    strength,
+    numor,
+    unitCell,
+    d,
+    count
+};
 
 enum PeakDisplayModes { VALID, FILTER };
 
 class PeakItem : public QStandardItem {
 
-public: 
+ public:
     PeakItem(nsx::Peak3D* peak);
     ~PeakItem() = default;
 
-public:
-
+ public:
     //! Retrieve the data of column and row
-    QVariant peakData(const QModelIndex &index, int role, PeakDisplayModes mode ) const;
+    QVariant peakData(const QModelIndex& index, int role, PeakDisplayModes mode) const;
     //! Get the peak pointer
-    nsx::Peak3D* peak() {return _peak;};
+    nsx::Peak3D* peak() { return _peak; };
     //! Get the graphical representation
-    PeakItemGraphic* peakGraphic() {return _peak_graphic.get();};
-    //!The column enumerators
+    PeakItemGraphic* peakGraphic() { return _peak_graphic.get(); };
+    //! The column enumerators
     enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Strength, Numor, uc, d, Count };
     //! Whether the peak was caught by the filter
     bool caughtByFilter(void) const;
 
-private:
-
+ private:
     //! pointer to the data
     nsx::Peak3D* _peak;
     //! Generate the visual item

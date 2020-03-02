@@ -14,18 +14,16 @@
 
 #include "gui/subframe_predict/ShapeLibraryDialog.h"
 
-#include "core/peak/PeakCollection.h"
 #include "core/analyse/PeakFilter.h"
 #include "core/experiment/DataSet.h"
 #include "core/integration/ShapeIntegrator.h"
 #include "core/peak/Peak3D.h"
+#include "core/peak/PeakCollection.h"
 #include "core/peak/PeakCoordinateSystem.h"
 #include "core/shape/Profile3D.h"
 #include "core/shape/ShapeLibrary.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/models/ColorMap.h"
-#include "core/peak/Peak3D.h"
-#include "core/shape/ShapeLibrary.h"
 #include "gui/models/Session.h"
 
 #include <QCR/engine/logger.h>
@@ -38,10 +36,8 @@
 #include <QVBoxLayout>
 #include <QtGlobal>
 
-ShapeLibraryDialog::ShapeLibraryDialog(nsx::PeakCollection* peak_collection): 
-    QDialog(),
-    _peak_collection_item(),
-    _peak_collection_model()
+ShapeLibraryDialog::ShapeLibraryDialog(nsx::PeakCollection* peak_collection)
+    : QDialog(), _peak_collection_item(), _peak_collection_model()
 {
     setModal(true);
     setSizePolicies();
@@ -57,23 +53,16 @@ ShapeLibraryDialog::ShapeLibraryDialog(nsx::PeakCollection* peak_collection):
     main_layout->addLayout(widget_layout);
 
     QHBoxLayout* button_layout = new QHBoxLayout();
-    button_layout->addItem(new QSpacerItem(
-        0,10, QSizePolicy::Expanding, QSizePolicy::Fixed));
+    button_layout->addItem(new QSpacerItem(0, 10, QSizePolicy::Expanding, QSizePolicy::Fixed));
     QPushButton* accept_button = new QPushButton("Accept");
     button_layout->addWidget(accept_button);
     QPushButton* reject_button = new QPushButton("Cancel");
     button_layout->addWidget(reject_button);
     main_layout->addLayout(button_layout);
 
-    connect(
-        accept_button, &QPushButton::clicked,
-        this, &ShapeLibraryDialog::accept
-    );
+    connect(accept_button, &QPushButton::clicked, this, &ShapeLibraryDialog::accept);
 
-    connect(
-        reject_button, &QPushButton::clicked,
-        this, &ShapeLibraryDialog::rejected
-    );
+    connect(reject_button, &QPushButton::clicked, this, &ShapeLibraryDialog::rejected);
 }
 
 void ShapeLibraryDialog::setUpParametrization(nsx::PeakCollection* peak_collection)
@@ -83,7 +72,7 @@ void ShapeLibraryDialog::setUpParametrization(nsx::PeakCollection* peak_collecti
     _peaks = peak_collection->getPeakList();
     for (nsx::Peak3D* peak : _peaks)
         _data.insert(peak->data());
-        
+
     Eigen::Matrix3d cov;
     cov.setZero();
 
@@ -101,23 +90,15 @@ void ShapeLibraryDialog::setUpParametrization(nsx::PeakCollection* peak_collecti
     _peak_collection_model.setRoot(&_peak_collection_item);
     _table->setModel(&_peak_collection_model);
     _table->verticalHeader()->show();
-    _table->setSelectionBehavior(
-        QAbstractItemView::SelectionBehavior::SelectRows);
-    _table->setSelectionMode(
-        QAbstractItemView::SelectionMode::SingleSelection);
+    _table->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
+    _table->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
 
+    connect(_draw_frame, &QSlider::valueChanged, this, &ShapeLibraryDialog::drawFrame);
     connect(
-        _draw_frame, &QSlider::valueChanged, 
-        this, &ShapeLibraryDialog::drawFrame);
+        _table, &QTableView::clicked, [this](QModelIndex index) { selectTargetPeak(index.row()); });
     connect(
-        _table, &QTableView::clicked, 
-        [this](QModelIndex index) { 
-            selectTargetPeak(index.row()); });
-    connect(
-        _table->verticalHeader(), &QHeaderView::sectionClicked, 
-        this,
+        _table->verticalHeader(), &QHeaderView::sectionClicked, this,
         &ShapeLibraryDialog::selectTargetPeak);
-    
 }
 
 void ShapeLibraryDialog::setSizePolicies()
@@ -129,7 +110,7 @@ void ShapeLibraryDialog::setSizePolicies()
 
 void ShapeLibraryDialog::setParametersUp()
 {
-    //Set up the parameters
+    // Set up the parameters
     _parameter_widget = new QWidget();
     QFormLayout* form = new QFormLayout(_parameter_widget);
 
@@ -200,7 +181,7 @@ void ShapeLibraryDialog::setParametersUp()
 
     _build_library = new QPushButton("Build Library");
     _build_library->setSizePolicy(*_size_policy_widgets);
-    
+
     form->addRow("Number along x:", _nx);
     form->addRow("Number along y:", _ny);
     form->addRow("Number along z:", _nz);
@@ -215,15 +196,12 @@ void ShapeLibraryDialog::setParametersUp()
     form->addRow("Background end:", _background_end);
     form->addRow(_build_library);
 
-    connect(
-        _build_library, &QPushButton::clicked,
-        this, &ShapeLibraryDialog::build
-    );
+    connect(_build_library, &QPushButton::clicked, this, &ShapeLibraryDialog::build);
 }
 
 void ShapeLibraryDialog::setPreviewUp()
 {
-    //Set up the preview
+    // Set up the preview
     _preview_widget = new QWidget();
     QVBoxLayout* vertical = new QVBoxLayout(_preview_widget);
 
@@ -265,10 +243,7 @@ void ShapeLibraryDialog::setPreviewUp()
     left->addLayout(left_up);
 
     _calculate_mean_profile = new QPushButton("Calculate Profile");
-    connect(
-        _calculate_mean_profile, &QPushButton::clicked,
-        this, &ShapeLibraryDialog::calculate
-    );
+    connect(_calculate_mean_profile, &QPushButton::clicked, this, &ShapeLibraryDialog::calculate);
 
     left->addWidget(_calculate_mean_profile);
     horizontal->addLayout(left);
@@ -341,13 +316,9 @@ void ShapeLibraryDialog::build()
 
     double bkg_begin_val = _background_begin->value();
     double bkg_end_val = _background_end->value();
-    _library = nsx::ShapeLibrary(
-            !kabsch_coords, peak_scale_val, 
-            bkg_begin_val, bkg_end_val
-    );
+    _library = nsx::ShapeLibrary(!kabsch_coords, peak_scale_val, bkg_begin_val, bkg_end_val);
 
-    nsx::ShapeIntegrator integrator(
-        &_library, aabb, nx_val, ny_val, nz_val);
+    nsx::ShapeIntegrator integrator(&_library, aabb, nx_val, ny_val, nz_val);
     integrator.setHandler(handler);
     integrator.setPeakEnd(peak_scale_val);
     integrator.setBkgBegin(bkg_begin_val);
@@ -357,8 +328,7 @@ void ShapeLibraryDialog::build()
         gLogger->log(
             "[INFO]Fitting profiles in dataset " + QString::fromStdString(data->filename()));
 
-        integrator.integrate(
-            fit_peaks, &_library, data);
+        integrator.integrate(fit_peaks, &_library, data);
     }
     gLogger->log("[INFO]Done fitting profiles");
 

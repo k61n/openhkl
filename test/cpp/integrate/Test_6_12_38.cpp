@@ -66,7 +66,7 @@ TEST_CASE("test/integrate/Test_6_12_38.cpp", "")
     integrator.setPeakEnd(2.7);
     integrator.setPeakEnd(3.0);
     integrator.setPeakEnd(4.0);
-    integrator.integrate(peaks,nullptr, dataf);
+    integrator.integrate(peaks, nullptr, dataf);
 
     CHECK(peak.enabled() == true);
 }

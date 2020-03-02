@@ -15,10 +15,10 @@
 #include "gui/MainWin.h"
 #include "gui/models/Session.h"
 #include <QApplication>
-#include <QLoggingCategory>
 #include <QCR/engine/console.h>
 #include <QCR/engine/logger.h>
 #include <QCR/services/msg_handler.h>
+#include <QLoggingCategory>
 
 int main(int argc, char* argv[])
 {

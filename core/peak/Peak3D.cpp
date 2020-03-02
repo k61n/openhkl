@@ -246,7 +246,8 @@ Ellipsoid Peak3D::qShape() const
 
 bool Peak3D::caughtByFilter() const
 {
-    if (_rejected_by_filter) return false;
+    if (_rejected_by_filter)
+        return false;
     return _caught_by_filter;
 }
 
@@ -261,9 +262,8 @@ void Peak3D::rejectYou(bool reject)
 }
 
 void Peak3D::setManually(
-    Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd,
-    double scale, double transmission, Intensity mean_bkg,
-    bool predicted, bool selected, bool masked)
+    Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd, double scale,
+    double transmission, Intensity mean_bkg, bool predicted, bool selected, bool masked)
 {
     _peakEnd = peakEnd;
     _bkgBegin = bkgBegin;

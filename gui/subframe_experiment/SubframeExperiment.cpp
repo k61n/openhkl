@@ -15,12 +15,11 @@
 #include "gui/subframe_experiment/SubframeExperiment.h"
 
 #include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QSplitter>
+#include <QVBoxLayout>
 #include <QWidget>
 
-SubframeExperiment::SubframeExperiment()
-    : QWidget()
+SubframeExperiment::SubframeExperiment() : QWidget()
 {
     QHBoxLayout* layout = new QHBoxLayout(this);
     QSplitter* spliter = new QSplitter(this);

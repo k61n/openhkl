@@ -15,8 +15,8 @@
 #include <algorithm>
 #include <iterator>
 
-#include "core/algo/Refiner.h"
 #include "core/algo/Qs2Events.h"
+#include "core/algo/Refiner.h"
 #include "core/analyse/PeakFilter.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/DataSet.h"
@@ -27,15 +27,14 @@
 
 namespace nsx {
 
-Refiner::Refiner(InstrumentStateList& states, UnitCell* cell,
-                 std::vector<nsx::Peak3D*> peaks, int nbatches)
+Refiner::Refiner(
+    InstrumentStateList& states, UnitCell* cell, std::vector<nsx::Peak3D*> peaks, int nbatches)
     : _cell(cell), _batches()
 {
     PeakFilter peak_filter;
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
-    filtered_peaks = peak_filter.filterIndexed(
-        filtered_peaks, *cell, cell->indexingTolerance());
+    filtered_peaks = peak_filter.filterIndexed(filtered_peaks, *cell, cell->indexingTolerance());
 
     auto sort_peaks_by_frame = [](Peak3D* p1, Peak3D* p2) -> bool {
         auto&& c1 = p1->shape().center();
@@ -114,8 +113,7 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
     PeakFilter peak_filter;
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
-    filtered_peaks = peak_filter.filterIndexed(
-        filtered_peaks, *_cell, _cell->indexingTolerance());
+    filtered_peaks = peak_filter.filterIndexed(filtered_peaks, *_cell, _cell->indexingTolerance());
 
     int updated = 0;
 
@@ -140,8 +138,8 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
         const MillerIndex hkl(peak->q(), *batch_cell);
         const ReciprocalVector q_pred(
             hkl.rowVector().cast<double>() * batch_cell->reciprocalBasis());
-        const std::vector<DetectorEvent> events = algo::qs2events(
-            {q_pred}, peak->data()->instrumentStates(), peak->data()->detector());
+        const std::vector<DetectorEvent> events =
+            algo::qs2events({q_pred}, peak->data()->instrumentStates(), peak->data()->detector());
 
         // something wrong with new prediction...
         if (events.size() != 1) {

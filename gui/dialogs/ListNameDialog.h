@@ -27,7 +27,6 @@ class ListNameDialog : public QDialog {
 
  private:
     QLineEdit* name_;
-
 };
 
 #endif // GUI_DIALOGS_LISTNAMEDIALOG_H

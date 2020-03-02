@@ -26,8 +26,7 @@
 
 namespace nsx {
 
-GaussianIntegrator::GaussianIntegrator(bool fit_center, bool fit_cov)
-    : IPeakIntegrator()
+GaussianIntegrator::GaussianIntegrator(bool fit_center, bool fit_cov) : IPeakIntegrator()
 {
     setFitCenter(fit_center);
     setFitCov(fit_cov);
@@ -88,8 +87,7 @@ static void residuals(
 }
 
 bool GaussianIntegrator::compute(
-    Peak3D* peak, ShapeLibrary* /*shape_library*/, 
-    const IntegrationRegion& region)
+    Peak3D* peak, ShapeLibrary* /*shape_library*/, const IntegrationRegion& region)
 {
     if (!peak)
         return false;

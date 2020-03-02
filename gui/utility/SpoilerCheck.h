@@ -15,35 +15,35 @@
 #ifndef GUI_UTILITIES_SPOILERCHECK
 #define GUI_UTILITIES_SPOILERCHECK
 
+#include <QCheckBox>
 #include <QFrame>
 #include <QGridLayout>
+#include <QGroupBox>
 #include <QParallelAnimationGroup>
 #include <QScrollArea>
 #include <QToolButton>
-#include <QGroupBox>
-#include <QCheckBox>
 
 class SpoilerCheck : public QGroupBox {
     Q_OBJECT
 
-public:
+ public:
     QScrollArea contentArea;
-    explicit SpoilerCheck(const QString & title = "", const int animationDuration = 100, QWidget *parent = 0);
-    void setContentLayout(QLayout & contentLayout, bool toggled = false);
+    explicit SpoilerCheck(
+        const QString& title = "", const int animationDuration = 100, QWidget* parent = 0);
+    void setContentLayout(QLayout& contentLayout, bool toggled = false);
     bool checked() const;
 
-public slots:
+ public slots:
     void toggler(const bool check);
     void checker(const int state);
-    
-private:
+
+ private:
     QGridLayout mainLayout;
     QToolButton toggleButton;
     QFrame headerLine;
     QParallelAnimationGroup toggleAnimation;
-    int animationDuration{300};
+    int animationDuration {300};
     QCheckBox select;
-
 };
 
-#endif //GUI_UTILITIES_SPOILERCHECK
+#endif // GUI_UTILITIES_SPOILERCHECK

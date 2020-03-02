@@ -16,26 +16,26 @@
 
 namespace nsx {
 
-PeakCollection::PeakCollection(){
+PeakCollection::PeakCollection()
+{
     _name = "No Name";
     _type = nsx::listtype::FOUND;
 }
 
-PeakCollection::PeakCollection(const std::string& name, nsx::listtype type){
+PeakCollection::PeakCollection(const std::string& name, nsx::listtype type)
+{
     _name = std::string(name);
     _type = type;
 }
 
-void PeakCollection::populate(
-    const std::vector<std::shared_ptr<nsx::Peak3D>> peak_list)
+void PeakCollection::populate(const std::vector<std::shared_ptr<nsx::Peak3D>> peak_list)
 {
     reset();
     for (std::shared_ptr<nsx::Peak3D> peak : peak_list)
         push_back(*peak);
 }
 
-void PeakCollection::populate(
-    const std::vector<nsx::Peak3D*> peak_list)
+void PeakCollection::populate(const std::vector<nsx::Peak3D*> peak_list)
 {
     reset();
     for (nsx::Peak3D* peak : peak_list)
@@ -44,7 +44,7 @@ void PeakCollection::populate(
 
 void PeakCollection::push_back(const nsx::Peak3D& peak)
 {
-    _peaks.push_back(std::move(std::unique_ptr<nsx::Peak3D>{new Peak3D(peak)}));
+    _peaks.push_back(std::move(std::unique_ptr<nsx::Peak3D> {new Peak3D(peak)}));
 }
 
 void PeakCollection::addPeak(const std::shared_ptr<nsx::Peak3D>& peak)
@@ -58,7 +58,7 @@ void PeakCollection::populateFromFiltered(PeakCollection* collection)
 
     std::vector<nsx::Peak3D*> peak_list = collection->getPeakList();
 
-    for (nsx::Peak3D* peak : peak_list){
+    for (nsx::Peak3D* peak : peak_list) {
         if (peak->caughtByFilter())
             push_back(*peak);
     }
@@ -69,14 +69,15 @@ void PeakCollection::reset()
     _peaks.clear();
 }
 
-nsx::Peak3D* PeakCollection::getPeak(int index){
+nsx::Peak3D* PeakCollection::getPeak(int index)
+{
     return _peaks.at(index).get();
 }
 
 std::vector<nsx::Peak3D*> PeakCollection::getPeakList() const
 {
     std::vector<nsx::Peak3D*> peak_list;
-    for (int i = 0; i<_peaks.size();i++) {
+    for (int i = 0; i < _peaks.size(); i++) {
         peak_list.push_back(_peaks[i].get());
     }
     return peak_list;
@@ -85,8 +86,8 @@ std::vector<nsx::Peak3D*> PeakCollection::getPeakList() const
 std::vector<nsx::Peak3D*> PeakCollection::getFilteredPeakList() const
 {
     std::vector<nsx::Peak3D*> peak_list;
-    for (int i = 0; i<_peaks.size();i++) {
-        if(_peaks[i]->caughtByFilter())
+    for (int i = 0; i < _peaks.size(); i++) {
+        if (_peaks[i]->caughtByFilter())
             peak_list.push_back(_peaks[i].get());
     }
     return peak_list;
@@ -100,7 +101,7 @@ int PeakCollection::numberOfPeaks() const
 int PeakCollection::numberOfValid() const
 {
     int valid = 0;
-    for (int i = 0; i<_peaks.size();i++) {
+    for (int i = 0; i < _peaks.size(); i++) {
         if (_peaks.at(i)->enabled())
             valid++;
     }
@@ -109,30 +110,30 @@ int PeakCollection::numberOfValid() const
 
 int PeakCollection::numberOfInvalid() const
 {
-    return numberOfPeaks()-numberOfValid();
+    return numberOfPeaks() - numberOfValid();
 }
 
 int PeakCollection::numberCaughtByFilter() const
 {
     int caught = 0;
-    for (int i=0; i<_peaks.size();++i){
-        if (_peaks.at(i)->caughtByFilter()){
-          caught++;
+    for (int i = 0; i < _peaks.size(); ++i) {
+        if (_peaks.at(i)->caughtByFilter()) {
+            caught++;
         }
     }
 }
 
 int PeakCollection::numberRejectedByFilter() const
 {
-    return numberOfPeaks()-numberCaughtByFilter();
+    return numberOfPeaks() - numberCaughtByFilter();
 }
 
-std::map<std::string, float>* PeakCollection::meta() 
+std::map<std::string, float>* PeakCollection::meta()
 {
     _meta.clear();
-    _meta.insert(std::make_pair(std::string("num_peaks"),numberOfPeaks()));
-    _meta.insert(std::make_pair(std::string("num_valid"),numberOfValid()));
-    _meta.insert(std::make_pair(std::string("num_invalid"),numberOfInvalid()));
+    _meta.insert(std::make_pair(std::string("num_peaks"), numberOfPeaks()));
+    _meta.insert(std::make_pair(std::string("num_valid"), numberOfValid()));
+    _meta.insert(std::make_pair(std::string("num_invalid"), numberOfInvalid()));
     // _meta.insert(std::make_pair(std::string(),));
     return &_meta;
 }

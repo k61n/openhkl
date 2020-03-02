@@ -79,8 +79,8 @@ class IDataReader {
     //! Returns the size of the file in disk
     std::size_t fileSize() const; //
 
-   //! retrieve the filename from the dataset
-   std::string name() const;
+    //! retrieve the filename from the dataset
+    std::string name() const;
 
  protected:
     IDataReader() = delete;

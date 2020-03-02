@@ -27,7 +27,7 @@ class QGraphicsTextItem;
 class QWidget;
 
 class CrystalNodeItem;
-//class DialogCalibrateDistance;
+// class DialogCalibrateDistance;
 class PinItem;
 class RulerItem;
 
@@ -81,7 +81,7 @@ class CrystalScene : public QGraphicsScene {
     //! The coordinates of the points for the scale
     double scalebx, scaleby, scaleex, scaleey;
     //! Calibrate distance dialog
-    //DialogCalibrateDistance* _distancedialog;
+    // DialogCalibrateDistance* _distancedialog;
     double distance;
     double npixels;
     double aspectratio;

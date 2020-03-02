@@ -26,7 +26,7 @@ SourceProperty::SourceProperty() : QWidget()
     _type = new QComboBox();
     _type->setEnabled(false);
 
-    _monochromators = new QComboBox();    
+    _monochromators = new QComboBox();
     _monochromators->setEnabled(true);
 
     _wavelength = new QDoubleSpinBox();
@@ -51,14 +51,14 @@ SourceProperty::SourceProperty() : QWidget()
 
     QStringList list;
     int exp = gSession->selectedExperimentNum();
-    if (exp < 0){
+    if (exp < 0) {
         _monochromators->addItems(list);
-    }else{
+    } else {
         const std::vector<nsx::Monochromator>& monos = gSession->selectedExperiment()
-            ->experiment()
-            ->diffractometer()
-            ->source()
-            .monochromators();
+                                                           ->experiment()
+                                                           ->diffractometer()
+                                                           ->source()
+                                                           .monochromators();
         for (nsx::Monochromator m : monos)
             list.append(QString::fromStdString(m.name()));
         _monochromators->addItems(list);

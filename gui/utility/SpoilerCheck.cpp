@@ -3,7 +3,9 @@
 
 #include "SpoilerCheck.h"
 
-SpoilerCheck::SpoilerCheck(const QString & title, const int animationDuration, QWidget *parent) : QGroupBox(parent), animationDuration(animationDuration) {
+SpoilerCheck::SpoilerCheck(const QString& title, const int animationDuration, QWidget* parent)
+    : QGroupBox(parent), animationDuration(animationDuration)
+{
     toggleButton.setStyleSheet("QToolButton { border: none; }");
     toggleButton.setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toggleButton.setArrowType(Qt::ArrowType::RightArrow);
@@ -44,15 +46,12 @@ SpoilerCheck::SpoilerCheck(const QString & title, const int animationDuration, Q
 
     setLayout(&mainLayout);
 
-    connect(
-        &toggleButton, &QToolButton::clicked, 
-        this, &SpoilerCheck::toggler);
-    connect(
-        &select, &QCheckBox::stateChanged, 
-        this, &SpoilerCheck::checker);
+    connect(&toggleButton, &QToolButton::clicked, this, &SpoilerCheck::toggler);
+    connect(&select, &QCheckBox::stateChanged, this, &SpoilerCheck::checker);
 }
 
-void SpoilerCheck::setContentLayout(QLayout & contentLayout, bool toggled) {
+void SpoilerCheck::setContentLayout(QLayout& contentLayout, bool toggled)
+{
 
     delete contentArea.layout();
     contentArea.setLayout(&contentLayout);
@@ -60,8 +59,7 @@ void SpoilerCheck::setContentLayout(QLayout & contentLayout, bool toggled) {
     const auto collapsedHeight = sizeHint().height() - contentArea.maximumHeight();
     auto contentHeight = contentLayout.sizeHint().height();
 
-    if (toggled)
-    {   
+    if (toggled) {
         toggleButton.blockSignals(true);
         toggleButton.setChecked(true);
         toggleButton.setArrowType(Qt::ArrowType::DownArrow);
@@ -69,7 +67,7 @@ void SpoilerCheck::setContentLayout(QLayout & contentLayout, bool toggled) {
         this->setMinimumHeight(collapsedHeight + contentHeight);
         contentArea.setMaximumHeight(contentHeight);
         toggleButton.blockSignals(false);
-    }else{
+    } else {
         toggleButton.blockSignals(true);
         toggleButton.setChecked(false);
         toggleButton.setArrowType(Qt::ArrowType::RightArrow);
@@ -80,12 +78,14 @@ void SpoilerCheck::setContentLayout(QLayout & contentLayout, bool toggled) {
     }
 
     for (int i = 0; i < toggleAnimation.animationCount() - 1; ++i) {
-        QPropertyAnimation * spoilerAnimation = static_cast<QPropertyAnimation *>(toggleAnimation.animationAt(i));
+        QPropertyAnimation* spoilerAnimation =
+            static_cast<QPropertyAnimation*>(toggleAnimation.animationAt(i));
         spoilerAnimation->setDuration(animationDuration);
         spoilerAnimation->setStartValue(collapsedHeight);
         spoilerAnimation->setEndValue(collapsedHeight + contentHeight);
     }
-    QPropertyAnimation * contentAnimation = static_cast<QPropertyAnimation *>(toggleAnimation.animationAt(toggleAnimation.animationCount() - 1));
+    QPropertyAnimation* contentAnimation = static_cast<QPropertyAnimation*>(
+        toggleAnimation.animationAt(toggleAnimation.animationCount() - 1));
     contentAnimation->setDuration(animationDuration);
     contentAnimation->setStartValue(0);
     contentAnimation->setEndValue(contentHeight);
@@ -96,7 +96,8 @@ void SpoilerCheck::setContentLayout(QLayout & contentLayout, bool toggled) {
 void SpoilerCheck::toggler(const bool checked)
 {
     toggleButton.setArrowType(checked ? Qt::ArrowType::DownArrow : Qt::ArrowType::RightArrow);
-    toggleAnimation.setDirection(checked ? QAbstractAnimation::Forward : QAbstractAnimation::Backward);
+    toggleAnimation.setDirection(
+        checked ? QAbstractAnimation::Forward : QAbstractAnimation::Backward);
     toggleAnimation.start();
 }
 
@@ -107,10 +108,9 @@ void SpoilerCheck::checker(const int state)
 
 bool SpoilerCheck::checked() const
 {
-    if (select.checkState() == 0){
+    if (select.checkState() == 0) {
         return false;
-    }else{
+    } else {
         return true;
     }
 }
-

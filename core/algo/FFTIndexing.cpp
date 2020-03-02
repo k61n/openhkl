@@ -50,15 +50,15 @@ std::vector<Eigen::RowVector3d> algo::pointsOnSphere(unsigned int n_vertices)
         const double x = cos(phi) * r;
         const double z = sin(phi) * r;
 
-        result.push_back({x,y,z});
+        result.push_back({x, y, z});
     }
 
     return result;
 }
 
 std::vector<Eigen::RowVector3d> algo::findOnSphere(
-    const std::vector<ReciprocalVector>& qvects, unsigned int n_vertices,
-    unsigned int nsolutions, int nSubdiv, double amax)
+    const std::vector<ReciprocalVector>& qvects, unsigned int n_vertices, unsigned int nsolutions,
+    int nSubdiv, double amax)
 {
     std::vector<double> projs(qvects.size());
 
@@ -85,7 +85,7 @@ std::vector<Eigen::RowVector3d> algo::findOnSphere(
     std::vector<std::pair<Eigen::RowVector3d, double>> vectorWithQuality;
     vectorWithQuality.reserve(n_vertices);
 
-    for (const Eigen::RowVector3d q_direction: pointsOnSphere(n_vertices)) {
+    for (const Eigen::RowVector3d q_direction : pointsOnSphere(n_vertices)) {
 
         std::vector<double> hist(nPoints, 0); // reciprocal space histogram
         for (const auto& vect : qvects) {
@@ -121,15 +121,16 @@ std::vector<Eigen::RowVector3d> algo::findOnSphere(
                 {q_direction * (pos_max)*nSubdiv * amax / double(nPoints), value});
     }
 
-    std::sort(vectorWithQuality.begin(), vectorWithQuality.end(),
-              [](const auto& t1, const auto& t2) -> bool { return (t1.second > t2.second); });
+    std::sort(
+        vectorWithQuality.begin(), vectorWithQuality.end(),
+        [](const auto& t1, const auto& t2) -> bool { return (t1.second > t2.second); });
 
     if (nsolutions < vectorWithQuality.size())
         vectorWithQuality.erase(vectorWithQuality.begin() + nsolutions, vectorWithQuality.end());
 
     std::vector<Eigen::RowVector3d> result;
     result.reserve(vectorWithQuality.size());
-    for (const auto& pair: vectorWithQuality)
+    for (const auto& pair : vectorWithQuality)
         result.push_back(pair.first);
 
     return result;

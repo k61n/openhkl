@@ -15,15 +15,15 @@
 #ifndef GUI_MAINWIN_H
 #define GUI_MAINWIN_H
 
-#include "gui/subframe_filter/SubframeFilterPeaks.h"
-#include "gui/subframe_index/SubframeAutoIndexer.h"
-#include "gui/subframe_find/SubframeFindPeaks.h"
-#include "gui/subframe_predict/SubframePredictPeaks.h"
-#include "gui/subframe_experiment/SubframeExperiment.h"
-#include "gui/subframe_home/SubframeHome.h"
-#include "gui/subframe_combine/SubframeMergedPeaks.h"
-#include "gui/utility/SideBar.h"
 #include "gui/graphics/DetectorScene.h"
+#include "gui/subframe_combine/SubframeMergedPeaks.h"
+#include "gui/subframe_experiment/SubframeExperiment.h"
+#include "gui/subframe_filter/SubframeFilterPeaks.h"
+#include "gui/subframe_find/SubframeFindPeaks.h"
+#include "gui/subframe_home/SubframeHome.h"
+#include "gui/subframe_index/SubframeAutoIndexer.h"
+#include "gui/subframe_predict/SubframePredictPeaks.h"
+#include "gui/utility/SideBar.h"
 
 #include <QStackedWidget>
 
@@ -53,10 +53,7 @@ class MainWin : public QMainWindow {
     //! update the plot, plot the plottable item p
     void updatePlot(PlottableItem* p) { _experiment->plot->updatePlot(p); }
     //! change the cursor tooltip on the detector scene
-    void cursormode(int i)
-    {
-        _experiment->image->imageView->getScene()->changeCursorMode(i);
-    }
+    void cursormode(int i) { _experiment->image->imageView->getScene()->changeCursorMode(i); }
     //! export current plot to ASCII
     void exportPlot() { _experiment->plot->exportPlot(); }
     //! plot the x and y data, e is the error to y
@@ -66,10 +63,9 @@ class MainWin : public QMainWindow {
     }
 
     //! Get the Sidebar
-    SideBar* sideBar() {return _side_bar;};
+    SideBar* sideBar() { return _side_bar; };
 
  private:
-
     void refresh();
     void readSettings();
     void saveSettings() const;

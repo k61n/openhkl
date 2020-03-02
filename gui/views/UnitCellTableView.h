@@ -21,7 +21,6 @@ class UnitCellTableView : public QTableView {
     Q_OBJECT
  public:
     explicit UnitCellTableView(QWidget* parent = 0);
-
 };
 
 #endif // GUI_VIEWS_UNITCELLTABLEVIEW_H

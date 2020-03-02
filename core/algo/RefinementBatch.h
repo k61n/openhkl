@@ -16,8 +16,8 @@
 #define CORE_ALGO_REFINEMENTBATCH_H
 
 #include "base/fit/FitParameters.h"
-#include "core/instrument/InstrumentTypes.h"
 #include "core/instrument/InstrumentStateList.h"
+#include "core/instrument/InstrumentTypes.h"
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -30,8 +30,7 @@ class RefinementBatch {
     //! Default constructor. Should not be used but needed for swig
     RefinementBatch() = default;
     //! Construct batch with initial unit cell and list of peaks.
-    RefinementBatch(InstrumentStateList& states, UnitCell* uc,
-                    std::vector<nsx::Peak3D*> peaksmax);
+    RefinementBatch(InstrumentStateList& states, UnitCell* uc, std::vector<nsx::Peak3D*> peaksmax);
     //! Sets the lattice B matrix to be refined.
     void refineUB();
     //! Sets detector offsets in the given list of instrument states to be refined.

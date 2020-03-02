@@ -34,12 +34,13 @@ CrystalScene::CrystalScene(nsx::ConvexHull* hull, QWidget* parent)
     : QGraphicsScene(parent), pixmapitem(0), _ruler(0), _pin(0), _hull(hull), _text(nullptr)
 {
     distance = 1.0;
-//    _distancedialog = new DialogCalibrateDistance();
-//    connect(
-//        _distancedialog, SIGNAL(on_calibrateDistanceSpinBox_valueChanged(double)), this,
-//        SLOT(getDistance(double)));
-//    connect(
-//        _distancedialog, SIGNAL(on_calibrateDistanceButtonOK_accepted()), this, SLOT(stampScale()));
+    //    _distancedialog = new DialogCalibrateDistance();
+    //    connect(
+    //        _distancedialog, SIGNAL(on_calibrateDistanceSpinBox_valueChanged(double)), this,
+    //        SLOT(getDistance(double)));
+    //    connect(
+    //        _distancedialog, SIGNAL(on_calibrateDistanceButtonOK_accepted()), this,
+    //        SLOT(stampScale()));
     _ruler = new RulerItem;
     _pin = new PinItem;
     _pinCreated = false;
@@ -179,7 +180,7 @@ void CrystalScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
         scaleex = point.x();
         scaleey = point.y();
         mode = none;
-       // _distancedialog->show();
+        // _distancedialog->show();
     } else if (mode == pickCenter) {
         _pin->adjust(point.y(), _rotationAngle);
         calibrateCenterOK(point.x(), point.y());

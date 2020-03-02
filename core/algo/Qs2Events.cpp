@@ -19,8 +19,7 @@
 namespace nsx {
 
 std::vector<DetectorEvent> algo::qs2events(
-    const std::vector<ReciprocalVector>& sample_qs,
-    const InstrumentStateList& states,
+    const std::vector<ReciprocalVector>& sample_qs, const InstrumentStateList& states,
     const Detector& detector)
 {
     std::vector<DetectorEvent> events;
@@ -72,8 +71,7 @@ std::vector<DetectorEvent> algo::qs2events(
         Eigen::RowVector3d kf =
             state.ki().rowVector() + q_vect * state.sampleOrientationMatrix().transpose();
         DetectorEvent event = detector.constructEvent(
-            DirectVector(state.samplePosition),
-            ReciprocalVector(kf * state.detectorOrientation),
+            DirectVector(state.samplePosition), ReciprocalVector(kf * state.detectorOrientation),
             f);
         if (event._tof <= 0)
             continue;

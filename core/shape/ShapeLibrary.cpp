@@ -43,8 +43,8 @@ static std::vector<Peak3D*> buildPeaksFromMillerIndices(
     for (auto idx : hkls)
         qs.emplace_back(idx.rowVector().cast<double>() * BU);
 
-    const std::vector<DetectorEvent> events = algo::qs2events(
-        qs, data->instrumentStates(), data->detector());
+    const std::vector<DetectorEvent> events =
+        algo::qs2events(qs, data->instrumentStates(), data->detector());
 
     for (auto event : events) {
         Peak3D* peak(new Peak3D(data));
@@ -62,10 +62,8 @@ static std::vector<Peak3D*> buildPeaksFromMillerIndices(
 }
 
 std::vector<Peak3D*> predictPeaks(
-    ShapeLibrary* library, sptrDataSet data,
-    UnitCell* unit_cell, double dmin, double dmax,
-    double radius, double nframes, int min_neighbors,
-    PeakInterpolation interpolation)
+    ShapeLibrary* library, sptrDataSet data, UnitCell* unit_cell, double dmin, double dmax,
+    double radius, double nframes, int min_neighbors, PeakInterpolation interpolation)
 {
     std::vector<Peak3D*> predicted_peaks;
 
@@ -79,7 +77,6 @@ std::vector<Peak3D*> predictPeaks(
     std::vector<Peak3D*> peaks =
         buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell->reciprocalBasis());
     qDebug() << "Computing shapes of " << peaks.size() << " calculated peaks...";
-
 
 
     for (auto peak : peaks) {
@@ -370,7 +367,8 @@ ShapeLibrary::meanProfile1D(const DetectorEvent& ev, double radius, double nfram
     return mean_profile;
 }
 
-std::vector<Peak3D*> ShapeLibrary::findNeighbors(const DetectorEvent& ev, double radius, double nframes) const
+std::vector<Peak3D*>
+ShapeLibrary::findNeighbors(const DetectorEvent& ev, double radius, double nframes) const
 {
     std::vector<Peak3D*> neighbors;
     Eigen::Vector3d center(ev._px, ev._py, ev._frame);

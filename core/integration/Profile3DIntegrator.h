@@ -25,10 +25,8 @@ namespace nsx {
 class Profile3DIntegrator : public IPeakIntegrator {
  public:
     Profile3DIntegrator();
-    bool compute(
-        Peak3D* peak, ShapeLibrary* shape_library, 
-        const IntegrationRegion& region) override;
-
+    bool
+    compute(Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region) override;
 };
 
 } // namespace nsx

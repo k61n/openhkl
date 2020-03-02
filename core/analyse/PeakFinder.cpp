@@ -101,7 +101,7 @@ PeakFinder::PeakFinder()
 std::vector<Peak3D*> PeakFinder::currentPeaks()
 {
     std::vector<Peak3D*> output;
-    for (sptrPeak3D peak: _current_peaks){
+    for (sptrPeak3D peak : _current_peaks) {
         output.push_back(peak.get());
     }
     return output;
@@ -627,23 +627,23 @@ void PeakFinder::find(DataList numors)
         std::map<int, Blob3D> local_blobs = {{}};
         nsx::EquivalenceList local_equivalences;
 
-        // determine begining and ending index of current thread
-        #pragma omp for
-               for (size_t i = 0; i < numor->nFrames(); ++i) {
-                 if (loop_begin == -1) {
-                   loop_begin = i;
-                 }
-                 loop_end = i + 1;
-               }
+// determine begining and ending index of current thread
+#pragma omp for
+        for (size_t i = 0; i < numor->nFrames(); ++i) {
+            if (loop_begin == -1) {
+                loop_begin = i;
+            }
+            loop_end = i + 1;
+        }
 
         // find blobs within the current frame range
         qDebug("PeakFinder::find: findPrimary\n");
         findPrimaryBlobs(numor, local_blobs, local_equivalences, loop_begin, loop_end);
-        
+
 
         // merge adjacent blobs
         qDebug("PeakFinder::find: mergeBlobs\n");
-        std::cout<<local_blobs.size()<<std::endl;
+        std::cout << local_blobs.size() << std::endl;
         mergeEquivalentBlobs(local_blobs, local_equivalences);
 
         qDebug("PeakFinder::find: blob loop\n");
@@ -717,7 +717,8 @@ void PeakFinder::find(DataList numors)
                 ("Integrating " + std::to_string(numor_peaks.size()) + " peaks...").c_str());
             _handler->setProgress(0);
         }
-        std::cout<<"PeakFinder::find: "<<std::to_string(numor_peaks.size())<<" peaks found."<<std::endl;
+        std::cout << "PeakFinder::find: " << std::to_string(numor_peaks.size()) << " peaks found."
+                  << std::endl;
         numor->close();
         if (_handler)
             _handler->log("Found " + std::to_string(numor_peaks.size()) + " peaks.");

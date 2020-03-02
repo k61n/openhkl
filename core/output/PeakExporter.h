@@ -17,48 +17,33 @@
 
 #include "core/analyse/MergedData.h"
 #include "core/peak/Peak3D.h"
-#include "tables/crystal/SpaceGroup.h"
 #include "core/statistics/ResolutionShell.h"
+#include "tables/crystal/SpaceGroup.h"
 
 namespace nsx {
 
 //! Manages the export of peak information to file.
 class PeakExporter {
 
-public:
-
+ public:
     //! Saves the shell information to file.
     void saveStatistics(
-        std::string filename,  
-        nsx::ResolutionShell resolutionShell, 
-        nsx::SpaceGroup spaceGroup, 
+        std::string filename, nsx::ResolutionShell resolutionShell, nsx::SpaceGroup spaceGroup,
         bool inclFriedel);
     //! Saves the peak information to ShelX file format given a peak list.
-    void saveToShelXMerged(
-        std::string filename, 
-        nsx::MergedData* mergedData);
+    void saveToShelXMerged(std::string filename, nsx::MergedData* mergedData);
     //! Saves the peak information to ShelX file format given a merged peak list.
-    void saveToFullProfMerged(
-        std::string filename, 
-        nsx::MergedData* mergedData);
+    void saveToFullProfMerged(std::string filename, nsx::MergedData* mergedData);
     //! Saves the peak information to FullProf file format given a peak list.
-    void saveToSCAMerged(
-        std::string filename, 
-        nsx::MergedData* mergedData);
+    void saveToSCAMerged(std::string filename, nsx::MergedData* mergedData);
     //! Saves the peak information to FullProf file format given a merged peak list.
-    void saveToShelXUnmerged(
-        std::string filename, 
-        nsx::MergedData* mergedData);
+    void saveToShelXUnmerged(std::string filename, nsx::MergedData* mergedData);
     //! Saves the peak information to .sca file format given a peak list.
-    void saveToFullProfUnmerged(
-        std::string filename, 
-        nsx::MergedData* mergedData);
+    void saveToFullProfUnmerged(std::string filename, nsx::MergedData* mergedData);
     //! Saves the peak information to .sca file format given a merged peak list.
-    void saveToSCAUnmerged(
-        std::string filename, 
-        nsx::MergedData* mergedData);
+    void saveToSCAUnmerged(std::string filename, nsx::MergedData* mergedData);
 
-private:
+ private:
 };
 
 } // namespace nsx

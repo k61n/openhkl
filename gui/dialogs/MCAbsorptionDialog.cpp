@@ -14,14 +14,14 @@
 
 #include "gui/dialogs/MCAbsorptionDialog.h"
 
-#include "gui/models/Session.h"
 #include "core/experiment/DataSet.h"
 #include "core/monte-carlo/MCAbsorption.h"
+#include "gui/models/Session.h"
 #include <QCR/widgets/actions.h>
 #include <QCR/widgets/controls.h>
 #include <QFormLayout>
 
-MCAbsorptionDialog::MCAbsorptionDialog() : QDialog{}
+MCAbsorptionDialog::MCAbsorptionDialog() : QDialog {}
 {
     setAttribute(Qt::WA_DeleteOnClose);
     QFormLayout* layout = new QFormLayout(this);
@@ -29,7 +29,7 @@ MCAbsorptionDialog::MCAbsorptionDialog() : QDialog{}
     int numUnitCells = gSession->selectedExperiment()->getUnitCellNames().size();
     QStringList a;
     for (int i = 0; i < numUnitCells; i++)
-      a.append("crystal" + QString::number(i));
+        a.append("crystal" + QString::number(i));
     QcrComboBox* crystals = new QcrComboBox("adhoc_mccrystals", selUnitCell, a);
     layout->addRow("Crystal reference:", crystals);
     numRaysCell = new QcrCell<int>(1000);
@@ -86,12 +86,14 @@ void MCAbsorptionDialog::runMCAbsorption()
     //     const nsx::PeakList& peaks = gSession->selectedExperiment()->getPeakList(d.second);
     //     progressBar->setMaximum(peaks.size());
     //     progressBar->setFormat(
-    //         QString::fromStdString(d.second->filename()) + ": " + QString::number(progress) + "%");
+    //         QString::fromStdString(d.second->filename()) + ": " + QString::number(progress) +
+    //         "%");
     //     for (const nsx::sptrPeak3D& p : peaks) {
     //         Eigen::Vector3d coord = p->shape().center();
     //         nsx::InterpolatedState state = d.second->interpolatedState(coord[2]);
     //         nsx::DirectVector position =
-    //             d.second->reader()->diffractometer()->detector()->pixelPosition(coord[0], coord[1]);
+    //             d.second->reader()->diffractometer()->detector()->pixelPosition(coord[0],
+    //             coord[1]);
     //         nsx::ReciprocalVector kf = state.kfLab(position);
     //         // todo: check coordinate systems here, may not be consistent
     //         double transmission =

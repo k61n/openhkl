@@ -14,10 +14,10 @@
 
 #include "gui/frames/UnitCellWidget.h"
 
-#include "gui/models/Session.h"
 #include "base/utils/Units.h"
-#include "core/peak/Peak3D.h"
 #include "core/analyse/PeakFilter.h"
+#include "core/peak/Peak3D.h"
+#include "gui/models/Session.h"
 #include "tables/crystal/UnitCell.h"
 #include <QStandardItemModel>
 
@@ -51,17 +51,14 @@ UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& name)
     QcrDoubleSpinBox* c =
         new QcrDoubleSpinBox("adhoc_readC", new QcrCell<double>(character.c), 8, 4);
     c->setReadOnly(true);
-    QcrDoubleSpinBox* alpha =
-        new QcrDoubleSpinBox("adhoc_readAlpha",
-                             new QcrCell<double>(character.alpha / nsx::deg), 8, 4);
+    QcrDoubleSpinBox* alpha = new QcrDoubleSpinBox(
+        "adhoc_readAlpha", new QcrCell<double>(character.alpha / nsx::deg), 8, 4);
     alpha->setReadOnly(true);
-    QcrDoubleSpinBox* beta =
-        new QcrDoubleSpinBox("adhoc_readBeta",
-                             new QcrCell<double>(character.beta / nsx::deg), 8, 4);
+    QcrDoubleSpinBox* beta = new QcrDoubleSpinBox(
+        "adhoc_readBeta", new QcrCell<double>(character.beta / nsx::deg), 8, 4);
     beta->setReadOnly(true);
-    QcrDoubleSpinBox* gamma =
-        new QcrDoubleSpinBox("adhoc_readGamma",
-                             new QcrCell<double>(character.gamma / nsx::deg), 8, 4);
+    QcrDoubleSpinBox* gamma = new QcrDoubleSpinBox(
+        "adhoc_readGamma", new QcrCell<double>(character.gamma / nsx::deg), 8, 4);
     gamma->setReadOnly(true);
     unitgrid->addWidget(a, 1, 1, 1, 1);
     unitgrid->addWidget(b, 1, 3, 1, 1);
