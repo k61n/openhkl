@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/algo/FFTIndexing.h
-//! @brief     Defines class FFTIndexing
+//! @brief     Declares function findOnSphere
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -19,27 +19,20 @@
 
 namespace nsx {
 
-//! Class used for Fast-Fourier transform autoindexing.
+namespace algo {
 
-class FFTIndexing {
- public:
-    //! Type to store vector together with quality.
-    using tVector = std::pair<Eigen::RowVector3d, double>;
-    //! Constructor. Note that the success of FFT indexing is very sensitive to
-    //! choosing reasonable values of nSubdiva and amax.
-    FFTIndexing(int nSubdiv = 25, double amax = 50.0);
-    //! Method to search uniformly on the unit sphere to identify candidate
-    //! lattice directions. It is crucial to choose reasonable values of
-    //! n_vertices and nsolutions.
-    std::vector<tVector> findOnSphere(
+//! Returns approximately uniformly distributed points on a hemisphere.
+std::vector<Eigen::RowVector3d> pointsOnSphere(unsigned int n_vertices);
+
+//! Method to search uniformly on the unit sphere to identify candidate
+//! lattice directions. It is crucial to choose reasonable values of
+//! n_vertices and nsolutions. Note that the success of FFT indexing is very sensitive to
+//! choosing reasonable values of nSubdiva and amax.
+std::vector<Eigen::RowVector3d> findOnSphere(
         const std::vector<ReciprocalVector>& qvects, unsigned int n_vertices,
-        unsigned int nsolutions) const;
-    virtual ~FFTIndexing() = default;
+        unsigned int nsolutions, int nSubdiv = 25, double amax = 50.0);
 
- private:
-    int _nSubdiv;
-    double _amax;
-};
+} // namespace algo
 
 } // namespace nsx
 

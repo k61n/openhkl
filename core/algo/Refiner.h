@@ -26,7 +26,8 @@ class Refiner {
     //! Construct an instance to refine the given cell based on the given peak
     //! list, using the given number of frame batches. The peaks must belong to
     //! the same dataset.
-    Refiner(InstrumentStateList& states, UnitCell* cell, std::vector<nsx::Peak3D*> peaks, int nbatches);
+    Refiner(InstrumentStateList& states, UnitCell* cell,
+            std::vector<nsx::Peak3D*> peaks, int nbatches);
     //! Sets the lattice B matrix to be refined.
     void refineUB();
     //! Sets detector offsets in the given list of instrument states to be refined.

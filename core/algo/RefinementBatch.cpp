@@ -52,7 +52,7 @@ RefinementBatch::RefinementBatch(
 
         Eigen::Vector3d c = peak->shape().center();
         Eigen::Matrix3d M = peak->shape().metric();
-        auto state = peak->data()->interpolatedState(c[2]);
+        auto state = peak->data()->instrumentStates().interpolate(c[2]);
         Eigen::Matrix3d J = state.jacobianQ(c[0], c[1]);
         Eigen::Matrix3d JI = J.inverse();
         Eigen::Matrix3d A = JI.transpose() * M * JI;

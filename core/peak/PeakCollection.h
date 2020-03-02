@@ -40,14 +40,16 @@ class PeakCollection{
     void populate(const std::vector<std::shared_ptr<nsx::Peak3D>> peak_list);
     //! Populate the peaks
     void populate(const std::vector<nsx::Peak3D*> peak_list);
+    //! Append one peak
+    void push_back(const nsx::Peak3D& peak);
+    //! Append one peak
+    void addPeak(const std::shared_ptr<nsx::Peak3D>& peak);
     //! Populate the peaks
     void populateFromFiltered(PeakCollection* collection);
     //! Reset the peaks
     void reset();
-    //! Add a single peak
-    void addPeak(const std::shared_ptr<nsx::Peak3D> peak);
     //! Returns the peak with the given index
-    nsx::Peak3D* getPeak(int index);   
+    nsx::Peak3D* getPeak(int index);
 
     //! Returns the peak with index
     std::vector<nsx::Peak3D*> getPeakList() const;

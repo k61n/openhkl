@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/algo/FFTIndexing.cpp
-//! @brief     Implements class FFTIndexing
+//! @brief     Implements function findOnSphere
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -26,81 +26,85 @@
 
 namespace nsx {
 
-FFTIndexing::FFTIndexing(int nSubdiv, double amax) : _nSubdiv(nSubdiv), _amax(amax) {}
+//! Returns a list of approximately equal distributed points on the unit sphere.
+//!
+//! Only used by algo::findOnSphere, but exposed globally to allow for TestPointsOnSphere.
 
-std::vector<FFTIndexing::tVector> FFTIndexing::findOnSphere(
-    const std::vector<ReciprocalVector>& qvects, unsigned int n_vertices,
-    unsigned int nsolutions) const
+std::vector<Eigen::RowVector3d> algo::pointsOnSphere(unsigned int n_vertices)
 {
-    std::vector<double> projs(qvects.size());
-    double qMax = 0;
-
-    for (const auto& v : qvects) {
-        double norm = v.rowVector().squaredNorm();
-        if (norm > qMax)
-            qMax = norm;
-    }
-
-    qMax = sqrt(qMax); // max norm of all vectors
-    size_t nPoints = size_t(
-        std::lround(std::ceil(2 * qMax * _nSubdiv * _amax))); // number of points in histogram
-
-    if (nPoints % 2) {
-        ++nPoints;
-    }
-
-    size_t nPointsHalf = nPoints / 2;
-    double dq = 2 * qMax / nPoints;
-    double dqInv = 1.0 / dq;
-
-    std::vector<double> hist(nPoints, 0); // reciprocal space histogram
-    Eigen::FFT<double> fft; // FFT engine
-    std::vector<tVector> result;
+    std::vector<Eigen::RowVector3d> result;
     result.reserve(n_vertices);
 
-    // Generate the q direction on Q unit sphere using Fibonacci sphere algorithm
-    // See
-    // https://stackoverflow.com/questions/9600801/evenly-distributing-n-points-on-a-sphere
+    // We use the Fibonacci sphere algorithm, which is simple, and just good enough.
+    // See https://stackoverflow.com/questions/9600801/evenly-distributing-n-points-on-a-sphere.
     std::default_random_engine generator;
     std::uniform_real_distribution<double> distribution(0.0, 1.0);
-
     const double rnd(distribution(generator));
-
     const double offset = 2.0 / n_vertices;
-
     const double increment = M_PI * (3. - sqrt(5.));
 
     for (size_t i = 0; i < n_vertices; ++i) {
         const double y = ((i * offset) - 1) + (offset / 2);
         const double r = sqrt(1 - y * y);
-
         const double phi = fmod(i + rnd, n_vertices) * increment;
-
         const double x = cos(phi) * r;
         const double z = sin(phi) * r;
 
-        const Eigen::RowVector3d q_direction(x, y, z);
-        std::fill(hist.begin(), hist.end(), 0);
+        result.push_back({x,y,z});
+    }
 
+    return result;
+}
+
+std::vector<Eigen::RowVector3d> algo::findOnSphere(
+    const std::vector<ReciprocalVector>& qvects, unsigned int n_vertices,
+    unsigned int nsolutions, int nSubdiv, double amax)
+{
+    std::vector<double> projs(qvects.size());
+
+    // compute maximum length of input vectors
+    double qMax = 0;
+    for (const auto& v : qvects) {
+        double norm = v.rowVector().squaredNorm();
+        if (norm > qMax)
+            qMax = norm;
+    }
+    qMax = sqrt(qMax);
+
+    // set number of points in histogram
+    size_t nPoints = size_t(std::lround(std::ceil(2 * qMax * nSubdiv * amax)));
+    if (nPoints % 2)
+        ++nPoints;
+    size_t nPointsHalf = nPoints / 2;
+
+    double dq = 2 * qMax / nPoints;
+    double dqInv = 1.0 / dq;
+
+    Eigen::FFT<double> fft; // FFT engine
+
+    std::vector<std::pair<Eigen::RowVector3d, double>> vectorWithQuality;
+    vectorWithQuality.reserve(n_vertices);
+
+    for (const Eigen::RowVector3d q_direction: pointsOnSphere(n_vertices)) {
+
+        std::vector<double> hist(nPoints, 0); // reciprocal space histogram
         for (const auto& vect : qvects) {
             const Eigen::RowVector3d& q_vector = vect.rowVector();
             double proj = q_vector.dot(q_direction);
             size_t index = size_t((std::floor((proj + qMax) * dqInv)));
             if (index == nPoints)
                 --index;
-
-            hist[index] += 1.0;
+            hist[index] += 1;
         }
 
         std::vector<std::complex<double>> spectrum;
-
         fft.fwd(spectrum, hist); // Fourier transform the histogram
-        double FZero = std::abs(spectrum[0]); // zero mode
+        const double FZero = std::abs(spectrum[0]); // zero mode
         size_t pos_max = 0; // position of maximum mode, other than zero mode
         double value = 0; // value of maxmimum mode
 
-        for (size_t i = size_t(_nSubdiv / 2); i < nPointsHalf; ++i) {
-            double current = std::abs(spectrum[i]);
+        for (size_t i = size_t(nSubdiv / 2); i < nPointsHalf; ++i) {
+            const double current = std::abs(spectrum[i]);
 
             if (current < 0.7 * FZero)
                 continue;
@@ -113,16 +117,20 @@ std::vector<FFTIndexing::tVector> FFTIndexing::findOnSphere(
         }
 
         if (pos_max > 2)
-            result.push_back(
-                tVector(q_direction * (pos_max)*_nSubdiv * _amax / double(nPoints), value));
+            vectorWithQuality.push_back(
+                {q_direction * (pos_max)*nSubdiv * amax / double(nPoints), value});
     }
 
-    std::sort(result.begin(), result.end(), [](const tVector& t1, const tVector& t2) -> bool {
-        return (t1.second > t2.second);
-    });
+    std::sort(vectorWithQuality.begin(), vectorWithQuality.end(),
+              [](const auto& t1, const auto& t2) -> bool { return (t1.second > t2.second); });
 
-    if (nsolutions < result.size())
-        result.erase(result.begin() + nsolutions, result.end());
+    if (nsolutions < vectorWithQuality.size())
+        vectorWithQuality.erase(vectorWithQuality.begin() + nsolutions, vectorWithQuality.end());
+
+    std::vector<Eigen::RowVector3d> result;
+    result.reserve(vectorWithQuality.size());
+    for (const auto& pair: vectorWithQuality)
+        result.push_back(pair.first);
 
     return result;
 }

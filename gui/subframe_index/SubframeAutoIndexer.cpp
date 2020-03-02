@@ -24,7 +24,7 @@
 #include <QHeaderView>
 #include <QLabel>
 
-SubframeAutoIndexer::SubframeAutoIndexer() 
+SubframeAutoIndexer::SubframeAutoIndexer()
     : QWidget(),
     _peak_collection("temp", nsx::listtype::FOUND),
     _peak_collection_item(),
@@ -36,7 +36,7 @@ SubframeAutoIndexer::SubframeAutoIndexer()
 
     QScrollArea* scroll_area = new QScrollArea(this);
     QWidget* scroll_widget = new QWidget();
-    
+
     scroll_area->setSizePolicy(*_size_policy_box);
     scroll_widget->setSizePolicy(*_size_policy_box);
     _left_layout = new QVBoxLayout(scroll_widget);
@@ -70,7 +70,7 @@ void SubframeAutoIndexer::setSizePolicies()
     _size_policy_widgets = new QSizePolicy();
     _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Preferred);
     _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
-    
+
     _size_policy_box = new QSizePolicy();
     _size_policy_box->setHorizontalPolicy(QSizePolicy::Preferred);
     _size_policy_box->setVerticalPolicy(QSizePolicy::Preferred);
@@ -97,13 +97,13 @@ void SubframeAutoIndexer::setInputUp()
     QLabel* list_label = new QLabel("Data-set");
     list_label->setAlignment(Qt::AlignRight);
     _input_grid->addWidget(list_label, 1, 0, 1, 1);
-   
+
     _exp_combo = new QComboBox();
     _peak_combo = new QComboBox();
 
     _exp_combo->setMaximumWidth(1000);
     _peak_combo->setMaximumWidth(1000);
-    
+
     _exp_combo->setSizePolicy(*_size_policy_widgets);
     _peak_combo->setSizePolicy(*_size_policy_widgets);
 
@@ -111,11 +111,11 @@ void SubframeAutoIndexer::setInputUp()
     _input_grid->addWidget(_peak_combo, 1, 1, 1, 1);
 
     connect(
-        _exp_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged), 
+        _exp_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged),
         this, &SubframeAutoIndexer::updatePeakList);
 
     connect(
-        _peak_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged), 
+        _peak_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged),
         this, &SubframeAutoIndexer::refreshPeakTable);
 
     _input_box->setContentLayout(*_input_grid, true);
@@ -142,7 +142,7 @@ void SubframeAutoIndexer::setParametersUp()
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 1, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
-   
+
     label_ptr = new QLabel("Max. Cell dim.:");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 3, 0, 1, 1);
@@ -172,7 +172,7 @@ void SubframeAutoIndexer::setParametersUp()
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 8, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
-    
+
     _gruber = new QDoubleSpinBox();
     _niggli = new QDoubleSpinBox();
     _only_niggli = new QCheckBox("Find Niggli cell only");
@@ -212,7 +212,7 @@ void SubframeAutoIndexer::setParametersUp()
     _indexing_tolerance->setMaximumWidth(1000);
     _indexing_tolerance->setMaximum(100000);
     _indexing_tolerance->setDecimals(6);
-    
+
     _gruber->setSizePolicy(*_size_policy_widgets);
     _niggli->setSizePolicy(*_size_policy_widgets);
     _only_niggli->setSizePolicy(*_size_policy_widgets);
@@ -251,11 +251,11 @@ void SubframeAutoIndexer::setProceedUp()
     _left_layout->addWidget(_save_button);
 
     connect(
-        _solve_button, &QPushButton::clicked, 
+        _solve_button, &QPushButton::clicked,
         this, &SubframeAutoIndexer::runAutoIndexer);
 
     connect(
-        _save_button, &QPushButton::clicked, 
+        _save_button, &QPushButton::clicked,
         this, &SubframeAutoIndexer::acceptSolution);
 
 }
@@ -308,7 +308,7 @@ void SubframeAutoIndexer::refreshAll()
 void SubframeAutoIndexer::setExperiments()
 {
     _exp_combo->blockSignals(true);
-    
+
     _exp_combo->clear();
     QList<QString> exp_list = gSession->experimentNames();
 
@@ -317,7 +317,7 @@ void SubframeAutoIndexer::setExperiments()
             _exp_combo->addItem(exp);
         }
         _exp_combo->blockSignals(false);
-        
+
         updatePeakList();
         grabIndexerParameters();
     }
@@ -393,7 +393,7 @@ void SubframeAutoIndexer::setIndexerParameters() const
     parameters.maxdim = _max_cell_dimension->value();
     parameters.indexingTolerance = _indexing_tolerance->value();
     parameters.minUnitCellVolume = _min_cell_volume->value();
-    
+
     auto_indexer->setParameters(parameters);
 }
 
@@ -401,7 +401,7 @@ void SubframeAutoIndexer::runAutoIndexer()
 {
     if (_peak_list.isEmpty() || _exp_combo->count() < 1)
         return;
-        
+
     setIndexerParameters();
 
     nsx::AutoIndexer* auto_indexer = gSession->experimentAt(
@@ -415,9 +415,9 @@ void SubframeAutoIndexer::runAutoIndexer()
     auto_indexer->setHandler(handler);
 
     _solutions.clear();
-    
+
     try {
-        auto_indexer->autoIndex(collection);
+        auto_indexer->autoIndex(collection->getPeakList());
     } catch (const std::exception& e) {
         gLogger->log("[ERROR] AutoIndex: " + QString::fromStdString(e.what()));
         return;
@@ -513,7 +513,7 @@ void SubframeAutoIndexer::acceptSolution()
     if (_peak_list.isEmpty() || _exp_combo->count() < 1)
         return;
 
-    if (_selected_unit_cell ){ 
+    if (_selected_unit_cell ){
 
         std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
         dlg->exec();
@@ -534,6 +534,6 @@ void SubframeAutoIndexer::acceptSolution()
                     _exp_combo->currentIndex())->experiment()->getUnitCell(
                         dlg->listName().toStdString()));
         }
-        
+
     }
 }

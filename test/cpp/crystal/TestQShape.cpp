@@ -4,6 +4,7 @@
 
 #include "base/utils/ProgressHandler.h"
 #include "core/algo/DataReaderFactory.h"
+#include "core/algo/Qs2Events.h"
 #include "core/analyse/PeakFinder.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/experiment/DataSet.h"
@@ -13,7 +14,8 @@
 
 nsx::Ellipsoid toDetectorSpace(const nsx::Ellipsoid e, const nsx::sptrDataSet data)
 {
-    auto events = data->events({nsx::ReciprocalVector(e.center())});
+    auto events = nsx::algo::qs2events(
+        {nsx::ReciprocalVector(e.center())}, data->instrumentStates(), data->detector());
 
     // something bad happened
     if (events.size() != 1)
@@ -22,7 +24,7 @@ nsx::Ellipsoid toDetectorSpace(const nsx::Ellipsoid e, const nsx::sptrDataSet da
     const auto& event = events[0];
     //auto position =
     //    data->reader()->diffractometer()->detector()->pixelPosition(event._px, event._py);
-    auto state = data->interpolatedState(event._frame);
+    auto state = data->instrumentStates().interpolate(event._frame);
 
     // Jacobian of map from detector coords to sample q space
     Eigen::Matrix3d J = state.jacobianQ(event._px, event._py);

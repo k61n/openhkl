@@ -26,7 +26,7 @@ namespace nsx {
 
 class DirectVector {
  public:
-    DirectVector() = default;
+    DirectVector() = default; // required by Python wrapper of DirectVectorList
     DirectVector(const DirectVector& other) = default;
 
     //! Constructor from its 3 components

@@ -34,7 +34,7 @@
 #include <QSplitter>
 
 
-RefinerDialog::RefinerDialog(nsx::UnitCell* unit_cell) 
+RefinerDialog::RefinerDialog(nsx::UnitCell* unit_cell)
     : QDialog(),
     _current_frame(0)
 {
@@ -84,7 +84,7 @@ void RefinerDialog::_setSizePolicies()
     _size_policy_widgets = new QSizePolicy();
     _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Preferred);
     _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
-    
+
     _size_policy_box = new QSizePolicy();
     _size_policy_box->setHorizontalPolicy(QSizePolicy::Fixed);
     _size_policy_box->setVerticalPolicy(QSizePolicy::Preferred);
@@ -154,7 +154,7 @@ void RefinerDialog::_setInputUp()
     input_layout->addLayout(batch_layout);
 
     input_scroll->setWidget(input_content);
-    
+
     input_scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     input_scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     input_scroll->setMinimumWidth(
@@ -182,7 +182,7 @@ void RefinerDialog::_setInformationUp()
 
     QTabWidget* info_tab = new QTabWidget();
     info_tab->setSizePolicy(*_size_policy_right);
-    
+
     QScrollArea* sample_tab = new QScrollArea();
     QScrollArea* uc_tab = new QScrollArea();
     QScrollArea* instrument_tab = new QScrollArea();
@@ -230,7 +230,7 @@ void RefinerDialog::_setInformationUp()
     info_tab->addTab(uc_tab, "Unit cell");
     info_tab->addTab(instrument_tab, "Instrument");
     info_tab->addTab(detector_tab, "Detector");
-    
+
     _info_layout->addWidget(info_tab);
 
     _navigator = new QWidget();
@@ -262,16 +262,16 @@ void RefinerDialog::_setInformationUp()
 
     connect(
         _left, &QPushButton::clicked,
-        [=]() {_current_index_spin->stepDown();}  
+        [=]() {_current_index_spin->stepDown();}
     );
 
     connect(
         _right, &QPushButton::clicked,
-        [=]() {_current_index_spin->stepUp();}  
+        [=]() {_current_index_spin->stepUp();}
     );
 
     connect(
-        _current_index_spin, 
+        _current_index_spin,
         static_cast<void (QSpinBox::*) (int) >(&QSpinBox::valueChanged),
         this,
         [this](int val) {
@@ -282,7 +282,7 @@ void RefinerDialog::_setInformationUp()
     );
 
     connect(
-        _select_data, 
+        _select_data,
         static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged),
         this, &RefinerDialog::_selectedDataChanged
     );
@@ -744,7 +744,7 @@ void RefinerDialog::_setUnitCellDrop()
         _select_uc->setCurrentIndex(0);
     }
     _select_uc->blockSignals(false);
-}  
+}
 
 void RefinerDialog::_setPeakList()
 {
@@ -766,7 +766,7 @@ void RefinerDialog::_setDataList()
             _select_data_list->addItem(fileinfo.baseName());
         }
     }
-    _select_data_list->blockSignals(false);   
+    _select_data_list->blockSignals(false);
 }
 
 void RefinerDialog::_setDataDrop()
@@ -800,7 +800,7 @@ void RefinerDialog::_selectedDataChanged()
     nsx::sptrDataSet data_set = gSession->selectedExperiment()
         ->experiment()->data(
             _select_data->currentText().toStdString()
-        );  
+        );
     _current_index_spin->setMaximum(data_set->nFrames()-1);
     if (_current_index_spin->value() > data_set->nFrames()-1){
         _current_index_spin->setValue(data_set->nFrames()-1);
@@ -809,7 +809,7 @@ void RefinerDialog::_selectedDataChanged()
             _current_index_spin->value()
         );
     }
-    
+
     _setInitialValues(_current_index_spin->value());
     _setRefinedValues(_current_index_spin->value());
     _plot();
@@ -918,7 +918,7 @@ void RefinerDialog::_fetchAllRefinedValues()
     nsx::sptrDataSet data_set = gSession->selectedExperiment()
         ->experiment()->data(
             _select_data->currentText().toStdString()
-        );    
+        );
     QList<nsx::sptrDataSet> data_set_list = gSession->selectedExperiment()
         ->allData();
 
@@ -1001,7 +1001,7 @@ void RefinerDialog::_setInitialValues(int frame)
         return;
 
     nsx::sptrDataSet data_set = gSession->selectedExperiment()
-        ->experiment()->data(temp_text.toStdString());    
+        ->experiment()->data(temp_text.toStdString());
 
     _sample_orientation_00->setValue(
         _sample_orientations[data_set][frame](0, 0));
@@ -1089,7 +1089,7 @@ void RefinerDialog::_setRefinedValues(int frame)
         return;
 
     nsx::sptrDataSet data_set = gSession->selectedExperiment()
-        ->experiment()->data(temp_text.toStdString());    
+        ->experiment()->data(temp_text.toStdString());
 
     if ( refiners.find(data_set) == refiners.end() ) {
         return;
@@ -1216,7 +1216,7 @@ void RefinerDialog::refine()
         std::vector<nsx::Peak3D*> reference_peaks;
         std::vector<nsx::Peak3D*> predicted_peaks;
 
-        // Keep the peak that belong to this data and split them 
+        // Keep the peak that belong to this data and split them
         // between the found and predicted ones
         for (QListWidgetItem* peak_collection_item : selected_peaks) {
 
@@ -1224,7 +1224,7 @@ void RefinerDialog::refine()
             nsx::PeakCollection* peak_collection = gSession
                 ->selectedExperiment()->experiment()
                 ->getPeakCollection(peak_name);
-            std::vector<nsx::Peak3D*> temp_peaks = 
+            std::vector<nsx::Peak3D*> temp_peaks =
                 peak_collection->getPeakList();
 
             for(nsx::Peak3D* peak : temp_peaks){
@@ -1238,13 +1238,13 @@ void RefinerDialog::refine()
         }
 
         qDebug() <<
-            "[INFO] " 
-            + QString::number(reference_peaks.size()) 
+            "[INFO] "
+            + QString::number(reference_peaks.size())
             + " splitted into "
-            + QString::number(n_batches) 
+            + QString::number(n_batches)
             + "refining batches.";
 
-        std::vector<nsx::InstrumentState>& states = data->instrumentStates();
+        nsx::InstrumentStateList& states = data->instrumentStates();
 
         nsx::Refiner refiner(states, unit_cell, reference_peaks, n_batches);
 
@@ -1288,7 +1288,7 @@ void RefinerDialog::refine()
                 + QString::fromStdString(data->filename());
         }
     }
-    
+
     gSession->onExperimentChanged();
     _fetchAllRefinedValues();
     _plot();
@@ -1308,7 +1308,7 @@ void RefinerDialog::_plot()
         return;
 
     nsx::sptrDataSet data_set = gSession->selectedExperiment()
-        ->experiment()->data(temp_text.toStdString());    
+        ->experiment()->data(temp_text.toStdString());
 
     std::vector<std::string> selected_text;
 
@@ -1342,8 +1342,8 @@ void RefinerDialog::_plot()
     // Positions
     for (int index = 0; index < position_names.size(); ++index){
         if (std::find(
-            selected_text.begin(), 
-            selected_text.end(), 
+            selected_text.begin(),
+            selected_text.end(),
             position_names[index]) != selected_text.end())
         {
             QPen pen;
@@ -1409,8 +1409,8 @@ void RefinerDialog::_plot()
     // Orientations
     for (int index = 0; index < orientation_names.size(); ++index){
         if (std::find(
-            selected_text.begin(), 
-            selected_text.end(), 
+            selected_text.begin(),
+            selected_text.end(),
             orientation_names[index]) != selected_text.end())
         {
             QPen pen;

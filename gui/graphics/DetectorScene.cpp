@@ -62,7 +62,6 @@ DetectorScene::DetectorScene(QObject* parent)
     , _currentData(nullptr)
     , _currentFrameIndex(-1)
     , _currentIntensity(10)
-    , _currentFrame()
     , _cursorMode(PIXEL)
     , _mode(ZOOM)
     , _zoomstart(0, 0)
@@ -72,7 +71,6 @@ DetectorScene::DetectorScene(QObject* parent)
     , _peak_graphics_items()
     , _itemSelected(false)
     , _image(nullptr)
-    , _masks()
     , _lastClickedGI(nullptr)
     , _logarithmic(false)
     , _drawIntegrationRegion(false)
@@ -246,7 +244,7 @@ void DetectorScene::slotChangeSelectedFrame(int frame)
     loadCurrentImage();
     updateMasks();
     drawPeakitems();
-    
+
 }
 
 void DetectorScene::setMaxIntensity(int intensity)
@@ -591,19 +589,20 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     if (!_currentData)
         return;
     nsx::Diffractometer* instr = _currentData->reader()->diffractometer();
-    nsx::Detector* det = instr->detector();
+    const nsx::Detector& det = _currentData->detector();
 
-    int nrows = int(det->nRows());
-    int ncols = int(det->nCols());
+    const int nrows = int(det.nRows());
+    const int ncols = int(det.nCols());
 
-    int col = static_cast<int>(event->lastScenePos().x());
-    int row = static_cast<int>(event->lastScenePos().y());
+    const int col = static_cast<int>(event->lastScenePos().x());
+    const int row = static_cast<int>(event->lastScenePos().y());
 
     if (col < 0 || col > ncols - 1 || row < 0 || row > nrows - 1)
         return;
-    int intensity = _currentFrame(row, col);
+    const int intensity = _currentFrame(row, col);
 
-    nsx::InstrumentState state = _currentData->interpolatedState(_currentFrameIndex);
+    const nsx::InstrumentState state =
+        _currentData->instrumentStates().interpolate(_currentFrameIndex);
 
     const nsx::Monochromator& mono = instr->source().selectedMonochromator();
     double wave = mono.wavelength();
@@ -611,7 +610,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     QString ttip;
 
     nsx::DirectVector pos =
-        _currentData->reader()->diffractometer()->detector()->pixelPosition(col, row);
+        _currentData->detector().pixelPosition(col, row);
 
     double gamma = state.gamma(pos);
     double nu = state.nu(pos);

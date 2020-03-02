@@ -17,6 +17,7 @@
 
 #include "core/instrument/InstrumentState.h"
 #include "core/raw/MetaData.h"
+#include <vector>
 
 namespace nsx {
 

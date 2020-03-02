@@ -30,7 +30,7 @@ int nsx::UnitTest_DataSet::run()
 
     for (size_t i = 0; i < 100 * (dataf->nFrames() - 1); ++i) {
         double frame = double(i) / 100.0;
-        auto state = dataf->interpolatedState(frame);
+        auto state = dataf->instrumentStates().interpolate(frame);
         //auto lframe = std::lround(std::floor(frame));
     }
     return 0;
